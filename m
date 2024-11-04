@@ -1,167 +1,311 @@
-Return-Path: <linux-kernel+bounces-394278-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394280-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DA3E9BACD0
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 07:46:14 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7B199BACD3
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 07:47:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 76C531C210BF
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 06:46:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 60F96282017
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 06:47:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60AE118F2F7;
-	Mon,  4 Nov 2024 06:44:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49AA118D63C;
+	Mon,  4 Nov 2024 06:47:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="boyuWMU5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="V4OidpIG"
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A995918E04E;
-	Mon,  4 Nov 2024 06:44:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29D9F2CA8
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 06:47:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730702678; cv=none; b=AFHROyxoTaImqtpsk/tVGmNCFBdsS+8fLhFN+U7LRNu72/L+bPiCnD8/jqDKCSPCurr/IsFweaL+SKVbBeVb/q3aICj3zaHaC6Ef7GvV8UfzDesqHYMo3osJgzDwEOvaSb+XoWJdjt1ES4hYqt2m6O8Mi0UIKxuRFjJHpSDj1F0=
+	t=1730702825; cv=none; b=dr1i4KNAGW0YGC//sybeVjTzb/0Sn3rmLx1bu644Pp9znd8LhS3+m0qTy0gWHVqJU98yZrRpth4CFK7uBLKrc4/bHi/SsCJCEGBzR19auuPZcoOKnUexT/PvvkSYdaTU/U+C2Ut/6v1qpsBBsJJVayeRxyOFUElg3mq8tXHY5iA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730702678; c=relaxed/simple;
-	bh=js54YLhYust3jK8sIDaxO+svd/7b/xLRVpzqn3DDqgg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ml6oqNFAK90irJufnw6H3Sbk2ue2dUcJcwG3wpAB5jrPaoBaNgkx0m0lEdbmgloadvmepXTExZO9wkbY182UkE89QR3wcrp+XeVHCwJHdJDXOHIj7O5A6xorWfpXTfPrXNll1J5IsvGpZN/48/aVL3nIxz145j2dcbwSVj3dgLI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=boyuWMU5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79D0BC4CECE;
-	Mon,  4 Nov 2024 06:44:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730702678;
-	bh=js54YLhYust3jK8sIDaxO+svd/7b/xLRVpzqn3DDqgg=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=boyuWMU5QR8UXjvB/7EDUrlhx3vFtfiu7OAZVAbK0mObJvBu++DfrBFQ/9OVQUHT7
-	 T/uW4GMM5IVrPVi1kLKPSgVVyMTAQpZOFq8pS0vIgcGgOOMvv3F14b6vuTy61boIFE
-	 jR8ERhXZ3PHdHfhYbS0yVdDwGp3N4TmuLy2nND7VDoPS1ug495udtE02TBDi8Bpe3Z
-	 vB3Yfat+TByUsZrxT8JIf0+rlGlgNcheVPP4pN8QZVEjUerAaCKnJkRq99p2pM7I+4
-	 BEkDThD/eiogI+u72Om7M6ZMHLw6CQqcbRMaYDmHXrcD1TOxB4tdnG1ddfmdhQOiTo
-	 vb4hGwVy5BTdA==
-Message-ID: <fcfa2fec-7267-4d16-9f01-898b4223313d@kernel.org>
-Date: Mon, 4 Nov 2024 07:44:33 +0100
+	s=arc-20240116; t=1730702825; c=relaxed/simple;
+	bh=QuoOFd8I0O91IyHHYYbLVeeFKUGtvwexJyPQTlJsxKA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=gV3Z1qbfPT3hisWvcjsIqSAtDHAe0YkiN/sPtqqZtxJQLSiyYqflkFq6P9Fas36VCJuH9J+aS7ER2ER6XwN+VSBrG6ecgeNq5rj735zp+QAvOEsjIyKHww3gKCpkIdn0ffd5UOuN0dSrXZBp3DXR/A1JMady/lGPBJVGLGGzVz8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=V4OidpIG; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a9a5f555cfbso298269366b.1
+        for <linux-kernel@vger.kernel.org>; Sun, 03 Nov 2024 22:47:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1730702819; x=1731307619; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZcL58p8mF5Zl49nS7NSGvMtz/EmRjz2p/naj2ImhMnk=;
+        b=V4OidpIGWUx6Dt8CTFiWzdw5FBf9aPdAlQywiyPBIiMH0F4YXMzI46fgEsnDJMiP45
+         gpJiZGcgUtdPIfcSsf4u/yBWzkZYfauM5Nw1blWjyve6anyA0v/7c/HFfhJaxXUQe5tP
+         rKh60sJ0N/zetnD2QCzRcxOxOLcC6W1BdL+soks+l1a17O0KkKqtbqiR4zGXnJ9v6ffx
+         wivVmECFkGwEdBRqu1fj1lbeIKMSybNCUIgOdvgmmRZodhlMbjRqKL99+PBj3VPhiqPg
+         xqxRxMrtZcryhqB6p3EI+caWHj2/3IKuUTEx3pKoafIv8MaISmeWgb6L72frpGPKG5CW
+         USbg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730702819; x=1731307619;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ZcL58p8mF5Zl49nS7NSGvMtz/EmRjz2p/naj2ImhMnk=;
+        b=mVgBEJOjUFpygqj8YWzVpNbe6tFQFP3oovmHym5ezC27nJYMDaoFdlsYJ/jn9vp+yB
+         aXNl6fn2VHAZ3UC/Gzw1KVVX3bIGFyhBYUzL34hBCu27oYLzpXW2QuVnAYanNdmZEHtu
+         +ctNyS3uLuBBdhIrD7wO+CMdzIWEl/8xAoN+QsHPX1Q8/TzAALSP4jOBZsRpa/lYitZG
+         ogaMkMHzCPfDFOvngc/uNDc/y4tIkPW8NpMFdKrsMHvzZw0VPRHENUhrqCQN+YvdXXXq
+         qinILaJxoz5WWj3XRIdGBBfFUq8WS4j6zEdBYqg9TgA/2DDNbY01B+nvvWEiVFjogI0O
+         74og==
+X-Forwarded-Encrypted: i=1; AJvYcCUR9n1ewWx6Zn0sqF/OTq0HC4HRjQaq/NMEKJACxqnjF3vkU4zZuVlS1dBZ+aRttjuIMjwcvMHf8KF/CdU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwDQ7Gx36CaDbMvOi290sjMG3iCSOrGTJcFSYOYPXYUuqVJs9gb
+	VTS/Xxtid2wyr4w+KSJZxnoA95/mYJ0rjIGXXrarb8Jhqqrt9XqrvpFlLoJREX4=
+X-Google-Smtp-Source: AGHT+IFowEnMiDO/pTu4Oi8MLHthjGUPLyPZfFAjymH1tOvJMXm1s7ycGi2CQBqddOThNxzPIZCpmQ==
+X-Received: by 2002:a05:6402:524b:b0:5ce:afba:f48a with SMTP id 4fb4d7f45d1cf-5ceb935bbc3mr15128807a12.27.1730702819312;
+        Sun, 03 Nov 2024 22:46:59 -0800 (PST)
+Received: from localhost ([2a02:8071:b783:6940:6752:e162:c76c:a99b])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9e565ef55bsm509953566b.137.2024.11.03.22.46.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 03 Nov 2024 22:46:58 -0800 (PST)
+From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+To: Joerg Roedel <joro@8bytes.org>,
+	Will Deacon <will@kernel.org>
+Cc: Hector Martin <marcan@marcan.st>,
+	Sven Peter <sven@svenpeter.dev>,
+	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Rob Clark <robdclark@gmail.com>,
+	Yong Wu <yong.wu@mediatek.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Tomasz Jeznach <tjeznach@rivosinc.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Orson Zhai <orsonzhai@gmail.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Chunyan Zhang <zhang.lyra@gmail.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	Nicolin Chen <nicolinc@nvidia.com>,
+	Michael Shavit <mshavit@google.com>,
+	Mostafa Saleh <smostafa@google.com>,
+	Lu Baolu <baolu.lu@linux.intel.com>,
+	Georgi Djakov <quic_c_gdjako@quicinc.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	asahi@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-mediatek@lists.infradead.org,
+	linux-riscv@lists.infradead.org
+Subject: [PATCH] iommu: Switch back to struct platform_driver::remove()
+Date: Mon,  4 Nov 2024 07:46:50 +0100
+Message-ID: <20241104064650.799122-2-u.kleine-koenig@baylibre.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH tty-next v3 1/6] serial: 8250: Adjust the timeout for FIFO
- mode
-To: John Ogness <john.ogness@linutronix.de>,
- "Maciej W. Rozycki" <macro@orcam.me.uk>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Petr Mladek <pmladek@suse.com>, Sergey Senozhatsky
- <senozhatsky@chromium.org>, Steven Rostedt <rostedt@goodmis.org>,
- Thomas Gleixner <tglx@linutronix.de>, Esben Haabendal <esben@geanix.com>,
- linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Rengarajan S <rengarajan.s@microchip.com>,
- Jeff Johnson <quic_jjohnson@quicinc.com>,
- Serge Semin <fancer.lancer@gmail.com>,
- Lino Sanfilippo <l.sanfilippo@kunbus.com>,
- Wander Lairson Costa <wander@redhat.com>
-References: <20241025105728.602310-1-john.ogness@linutronix.de>
- <20241025105728.602310-2-john.ogness@linutronix.de>
- <837a7ecd-be29-4865-9543-cb6f7e7e46e7@kernel.org>
- <alpine.DEB.2.21.2410310349450.40463@angie.orcam.me.uk>
- <84sesclkqx.fsf@jogness.linutronix.de>
-Content-Language: en-US
-From: Jiri Slaby <jirislaby@kernel.org>
-Autocrypt: addr=jirislaby@kernel.org; keydata=
- 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
-In-Reply-To: <84sesclkqx.fsf@jogness.linutronix.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=7687; i=u.kleine-koenig@baylibre.com; h=from:subject; bh=QuoOFd8I0O91IyHHYYbLVeeFKUGtvwexJyPQTlJsxKA=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBnKG3bdCqjD+kFfznlIAVOFLi0hJACxdKIJdHQs d8zimMeLKiJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCZyht2wAKCRCPgPtYfRL+ TgZmCAC7iVNHyJXfgq1NuwUsLEKQCs0OdbK3FGJTFb087AzN3L8qoZWNQ/7naPMqAa/iO/4+GLC A2oKxi5X2YXXvN/Kvagsv2AIKk6AJIWZRiPsBFWj+Ps3gBnDLZgJ06lC7qiV+1i1/uGlT8iiVLZ vs03Vk0J5Z4QLsasSAI4jMdHc1DWGQ36eUKWoCE7UlpS9fKMTuh/6l7xI0DRyMSQbZ5jne7oyV6 iVuUCy8OTrl+hiJM3OKc27D8c5vO2QwVNuS2BuC/pmSLLBWDQ8MYAT0JekQ3ByC2urzrPcTq7QI fMrzr4D5inlV9p1UPCJQFs7/4VeLVbptwDWaOxKfcLSVvoUj
+X-Developer-Key: i=u.kleine-koenig@baylibre.com; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
+Content-Transfer-Encoding: 8bit
 
-On 31. 10. 24, 9:49, John Ogness wrote:
->>>> +	/* Allow timeout for each byte written. */
->>>> +	for (i = 0; i < tx_count; i++) {
->>>> +		if (wait_for_lsr(up, UART_LSR_THRE))
->>>
->>> This ensures you sent one character from the FIFO. The FIFO still can contain
->>> plenty of them. Did you want UART_LSR_TEMT?
->>
->>   The difference between THRE and TEMT is the state of the shift register
->> only[2]:
->>
->> "In the FIFO mode, TEMT is set when the transmitter FIFO and shift
->> register are both empty."
-> 
-> If we wait for TEMT, we lose significant advantages of having the FIFO.
+After commit 0edb555a65d1 ("platform: Make platform_driver::remove()
+return void") .remove() is (again) the right callback to implement for
+platform drivers.
 
-But you wait for THRE, so effectively waiting for FIFO to flush. The 
-difference is only one byte (TSR), or what am I missing?
+Convert all platform drivers below drivers/iommu to use .remove(), with
+the eventual goal to drop struct platform_driver::remove_new(). As
+.remove() and .remove_new() have the same prototypes, conversion is done
+by just changing the structure member name in the driver initializer.
 
->>> But what's the purpose of spinning _here_? The kernel can run and FIFO
->>> too. Without the kernel waiting for the FIFO.
-> 
-> When serial8250_console_fifo_write() exits, the caller just does a
-> single wait_for_xmitr() ... with a 10ms timeout. In the FIFO case, for
-> <=56k baudrates, it can easily hit the timeout and thus continue before
-> the FIFO has been emptied.
->> By waiting on UART_LSR_THRE after filling the FIFO,
-> serial8250_console_fifo_write() waits until the hardware has had a
-> chance to shift out all the data. Then the final wait_for_xmitr() in the
-> caller only waits for the final byte to go out on the line.
+Signed-off-by: Uwe Kleine-König <u.kleine-koenig@baylibre.com>
+---
+Hello,
 
-For the first loop, that's all right. But why would you want to wait for 
-the FIFO to flush at the end of the function? It's not only the last 
-byte, it's the last batch (aka 'tx_count'), right?
+I did a single patch for all of drivers/iommu. While I usually prefer to
+do one logical change per patch, this seems to be overengineering here
+as the individual changes are really trivial and shouldn't be much in
+the way for stable backports. But I'll happily split the patch if you
+prefer it split.
 
-> Please keep in mind that none of these timeouts should trigger during
-> normal operation.
-> 
-> For v4 I am doing some refactoring (as suggested by Andy) so that the
-> wait-code looks a bit cleaner.
+This is based on today's next, if conflicts arise when you apply it at
+some later time and don't want to resolve them, feel free to just drop
+the changes to the conflicting files. I'll notice and followup at a
+later time then. Or ask me for a fixed resend. (Having said that, I
+recommend b4 am -3 + git am -3 which should resolve most conflicts just
+fine.)
 
-OK, let's see then :).
+Best regards
+Uwe
 
-thanks,
+ drivers/iommu/apple-dart.c                  | 2 +-
+ drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c | 2 +-
+ drivers/iommu/arm/arm-smmu/arm-smmu.c       | 2 +-
+ drivers/iommu/arm/arm-smmu/qcom_iommu.c     | 4 ++--
+ drivers/iommu/ipmmu-vmsa.c                  | 2 +-
+ drivers/iommu/msm_iommu.c                   | 2 +-
+ drivers/iommu/mtk_iommu.c                   | 2 +-
+ drivers/iommu/mtk_iommu_v1.c                | 2 +-
+ drivers/iommu/omap-iommu.c                  | 2 +-
+ drivers/iommu/riscv/iommu-platform.c        | 2 +-
+ drivers/iommu/sprd-iommu.c                  | 2 +-
+ 11 files changed, 12 insertions(+), 12 deletions(-)
+
+diff --git a/drivers/iommu/apple-dart.c b/drivers/iommu/apple-dart.c
+index eb1e62cd499a..c5bde50d1c42 100644
+--- a/drivers/iommu/apple-dart.c
++++ b/drivers/iommu/apple-dart.c
+@@ -1352,7 +1352,7 @@ static struct platform_driver apple_dart_driver = {
+ 		.pm			= pm_sleep_ptr(&apple_dart_pm_ops),
+ 	},
+ 	.probe	= apple_dart_probe,
+-	.remove_new = apple_dart_remove,
++	.remove	= apple_dart_remove,
+ };
+ 
+ module_platform_driver(apple_dart_driver);
+diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
+index 826db8894fb7..efbc78bffd33 100644
+--- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
++++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
+@@ -4679,7 +4679,7 @@ static struct platform_driver arm_smmu_driver = {
+ 		.suppress_bind_attrs	= true,
+ 	},
+ 	.probe	= arm_smmu_device_probe,
+-	.remove_new = arm_smmu_device_remove,
++	.remove	= arm_smmu_device_remove,
+ 	.shutdown = arm_smmu_device_shutdown,
+ };
+ module_driver(arm_smmu_driver, platform_driver_register,
+diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu.c b/drivers/iommu/arm/arm-smmu/arm-smmu.c
+index 8321962b3714..4e9bb9f4c4bd 100644
+--- a/drivers/iommu/arm/arm-smmu/arm-smmu.c
++++ b/drivers/iommu/arm/arm-smmu/arm-smmu.c
+@@ -2372,7 +2372,7 @@ static struct platform_driver arm_smmu_driver = {
+ 		.suppress_bind_attrs    = true,
+ 	},
+ 	.probe	= arm_smmu_device_probe,
+-	.remove_new = arm_smmu_device_remove,
++	.remove = arm_smmu_device_remove,
+ 	.shutdown = arm_smmu_device_shutdown,
+ };
+ module_platform_driver(arm_smmu_driver);
+diff --git a/drivers/iommu/arm/arm-smmu/qcom_iommu.c b/drivers/iommu/arm/arm-smmu/qcom_iommu.c
+index b98a7a598b89..9ce2fe50b22c 100644
+--- a/drivers/iommu/arm/arm-smmu/qcom_iommu.c
++++ b/drivers/iommu/arm/arm-smmu/qcom_iommu.c
+@@ -759,7 +759,7 @@ static struct platform_driver qcom_iommu_ctx_driver = {
+ 		.of_match_table	= ctx_of_match,
+ 	},
+ 	.probe	= qcom_iommu_ctx_probe,
+-	.remove_new = qcom_iommu_ctx_remove,
++	.remove	= qcom_iommu_ctx_remove,
+ };
+ 
+ static bool qcom_iommu_has_secure_context(struct qcom_iommu_dev *qcom_iommu)
+@@ -931,7 +931,7 @@ static struct platform_driver qcom_iommu_driver = {
+ 		.pm		= &qcom_iommu_pm_ops,
+ 	},
+ 	.probe	= qcom_iommu_device_probe,
+-	.remove_new = qcom_iommu_device_remove,
++	.remove	= qcom_iommu_device_remove,
+ };
+ 
+ static int __init qcom_iommu_init(void)
+diff --git a/drivers/iommu/ipmmu-vmsa.c b/drivers/iommu/ipmmu-vmsa.c
+index ff55b8c30712..074daf1aac4e 100644
+--- a/drivers/iommu/ipmmu-vmsa.c
++++ b/drivers/iommu/ipmmu-vmsa.c
+@@ -1159,6 +1159,6 @@ static struct platform_driver ipmmu_driver = {
+ 		.pm = pm_sleep_ptr(&ipmmu_pm),
+ 	},
+ 	.probe = ipmmu_probe,
+-	.remove_new = ipmmu_remove,
++	.remove = ipmmu_remove,
+ };
+ builtin_platform_driver(ipmmu_driver);
+diff --git a/drivers/iommu/msm_iommu.c b/drivers/iommu/msm_iommu.c
+index 989e0869d805..ce40f0a419ea 100644
+--- a/drivers/iommu/msm_iommu.c
++++ b/drivers/iommu/msm_iommu.c
+@@ -838,6 +838,6 @@ static struct platform_driver msm_iommu_driver = {
+ 		.of_match_table = msm_iommu_dt_match,
+ 	},
+ 	.probe		= msm_iommu_probe,
+-	.remove_new	= msm_iommu_remove,
++	.remove		= msm_iommu_remove,
+ };
+ builtin_platform_driver(msm_iommu_driver);
+diff --git a/drivers/iommu/mtk_iommu.c b/drivers/iommu/mtk_iommu.c
+index c45313c43b9e..72b68d037b95 100644
+--- a/drivers/iommu/mtk_iommu.c
++++ b/drivers/iommu/mtk_iommu.c
+@@ -1794,7 +1794,7 @@ MODULE_DEVICE_TABLE(of, mtk_iommu_of_ids);
+ 
+ static struct platform_driver mtk_iommu_driver = {
+ 	.probe	= mtk_iommu_probe,
+-	.remove_new = mtk_iommu_remove,
++	.remove	= mtk_iommu_remove,
+ 	.driver	= {
+ 		.name = "mtk-iommu",
+ 		.of_match_table = mtk_iommu_of_ids,
+diff --git a/drivers/iommu/mtk_iommu_v1.c b/drivers/iommu/mtk_iommu_v1.c
+index ee4e55b6b190..480e57ea6635 100644
+--- a/drivers/iommu/mtk_iommu_v1.c
++++ b/drivers/iommu/mtk_iommu_v1.c
+@@ -745,7 +745,7 @@ static const struct dev_pm_ops mtk_iommu_v1_pm_ops = {
+ 
+ static struct platform_driver mtk_iommu_v1_driver = {
+ 	.probe	= mtk_iommu_v1_probe,
+-	.remove_new = mtk_iommu_v1_remove,
++	.remove	= mtk_iommu_v1_remove,
+ 	.driver	= {
+ 		.name = "mtk-iommu-v1",
+ 		.of_match_table = mtk_iommu_v1_of_ids,
+diff --git a/drivers/iommu/omap-iommu.c b/drivers/iommu/omap-iommu.c
+index 3f72aef8bd5b..b8ced5d0581c 100644
+--- a/drivers/iommu/omap-iommu.c
++++ b/drivers/iommu/omap-iommu.c
+@@ -1285,7 +1285,7 @@ static const struct of_device_id omap_iommu_of_match[] = {
+ 
+ static struct platform_driver omap_iommu_driver = {
+ 	.probe	= omap_iommu_probe,
+-	.remove_new = omap_iommu_remove,
++	.remove	= omap_iommu_remove,
+ 	.driver	= {
+ 		.name	= "omap-iommu",
+ 		.pm	= &omap_iommu_pm_ops,
+diff --git a/drivers/iommu/riscv/iommu-platform.c b/drivers/iommu/riscv/iommu-platform.c
+index da336863f152..382ba2841849 100644
+--- a/drivers/iommu/riscv/iommu-platform.c
++++ b/drivers/iommu/riscv/iommu-platform.c
+@@ -81,7 +81,7 @@ static const struct of_device_id riscv_iommu_of_match[] = {
+ 
+ static struct platform_driver riscv_iommu_platform_driver = {
+ 	.probe = riscv_iommu_platform_probe,
+-	.remove_new = riscv_iommu_platform_remove,
++	.remove = riscv_iommu_platform_remove,
+ 	.driver = {
+ 		.name = "riscv,iommu",
+ 		.of_match_table = riscv_iommu_of_match,
+diff --git a/drivers/iommu/sprd-iommu.c b/drivers/iommu/sprd-iommu.c
+index a2f4ffe6d949..e84806eee281 100644
+--- a/drivers/iommu/sprd-iommu.c
++++ b/drivers/iommu/sprd-iommu.c
+@@ -531,7 +531,7 @@ static struct platform_driver sprd_iommu_driver = {
+ 		.suppress_bind_attrs = true,
+ 	},
+ 	.probe	= sprd_iommu_probe,
+-	.remove_new = sprd_iommu_remove,
++	.remove	= sprd_iommu_remove,
+ };
+ module_platform_driver(sprd_iommu_driver);
+ 
+base-commit: c88416ba074a8913cf6d61b789dd834bbca6681c
 -- 
-js
-suse labs
+2.45.2
+
 
