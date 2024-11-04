@@ -1,146 +1,168 @@
-Return-Path: <linux-kernel+bounces-395215-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395216-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6ABB39BBA60
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 17:34:20 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13F689BBA61
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 17:34:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0707B1F2386C
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 16:34:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 374D01C2102C
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 16:34:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C934E1C07E4;
-	Mon,  4 Nov 2024 16:34:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A6961C1ABC;
+	Mon,  4 Nov 2024 16:34:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b="Lz6GIvOV"
-Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=apertussolutions.com header.i=dpsmith@apertussolutions.com header.b="fw4fj6Cl"
+Received: from sender4-of-o51.zoho.com (sender4-of-o51.zoho.com [136.143.188.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD1B62BB04
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 16:34:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.174
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730738053; cv=none; b=thA1uEn0nRQipEWCa5d/XpU3miCy9i8C8rvB0RfMsYqY0YsS1bCatLcgqbOn5TYzuJ4E4NhRQspERqXz88V6b5UBTJvB54vVaMHIs0Ykwr3jUStuxBp9HPYaZUvZ1fkzUChrcDsseYKh6TNAzwO89OMiJUZ1T143PhNQdFbrtZc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730738053; c=relaxed/simple;
-	bh=2BRjgS0AxpemRKCD7GDKfZ2a8oM9AU0aSXE8m73qv4E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QYJSIDur2GKoiksMhi/z0WizS7vQNEyRNFwl3szB9M7r9HLuVom1cUUDnF7t1xYmr2i6ILXhqZxSEMbKEkKivhlwn3NYwK8F/6xZnsY8NecCNvtFNxefV1pnkvmZpAlyR6OipaaH38anPOMb+qStPbu90qOD86Aih6QLj7EIM4Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org; spf=pass smtp.mailfrom=cmpxchg.org; dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b=Lz6GIvOV; arc=none smtp.client-ip=209.85.222.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmpxchg.org
-Received: by mail-qk1-f174.google.com with SMTP id af79cd13be357-7b1507c42faso407398085a.0
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 08:34:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20230601.gappssmtp.com; s=20230601; t=1730738048; x=1731342848; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=sX1khw0TKho0yFzPsMp3dwNcz3lK+q/XoPKlIPJlqlM=;
-        b=Lz6GIvOVeOA9mkqbPASHkrY9Spg7k2as9YNVxAd0U9KIfkYZtYHKGPjnwwmcxwnvFn
-         t6w0WNbMMh7m3eEy9t1yGb8S+NPBIsERoQ05K/JpT8eDktAfRtj4gyvlMnyKvQRpKLDR
-         S+WaPo6uadLEUZfFhryRpz+rwKQQEBa6Th9itMaTBtU6nljiMRVfxoEeepY8vtaxRxR2
-         3bJFJrRcyyEsrwseLJpPNGeXpPlwS39sMd+IZCSvpwPMn23pZJ3JyvINDiuyjRcOcBTP
-         bOKKXvR7ignLMe3Vic2h14OmcKwkVcBZp5Bw64S8VUS//lmnc1+TJuTOzB8zLVp0ey87
-         E8FQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730738048; x=1731342848;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sX1khw0TKho0yFzPsMp3dwNcz3lK+q/XoPKlIPJlqlM=;
-        b=LUTfPwKtHbhnC/RKXTNDduJPBBrm0oEUOA2gU0mkCzKo5sy3lDpn+NCe8zYzvETP3M
-         75jz2HdqRIpvcA+M7N4dG6z7YWz729Q5qaqt9npo30ctG+bsRKZU9kqCV0bSHtFAu7Di
-         mqj7y+SiDSsAMFXWMRcRcbdAPuYodCKq2DoEuq2Wp4wxeYWMjD03hno1e8AHBFUL0Jix
-         GtnEKhouH4Ujy6/v4jOSlUO/GEqFbpy+/oBc8wkx81Cdjgg1Bt2Y2qvWBDv9zeky1jq0
-         nyu2mvftpN5fKUGO9XItRiNOSNgudw9R6Ou6pgPyc/dY4WUqNAOi1Bw6ta5TpYZDkLbJ
-         bSLg==
-X-Forwarded-Encrypted: i=1; AJvYcCXyD501ulXAQt4BfuExsonJG9Q8GOn3hmFq1RIAJP4x+Domiox1Nct97DOALvyLHTOKFDt5IZg3lDoM5pY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzC0lBGEhshRy56hFgUA2uWjaB9ApRw/ubB4Pacnkj5H8J1laLx
-	qjKPxslBtmMH5dMeiUR0CE6YAOOTCxq5urIBrBB+MH2HawkfnU+LXOYKIf0568Y=
-X-Google-Smtp-Source: AGHT+IE5cRit64NOIWXFwfHPa/+8dF20E77ojQpVMudW8g0lIn+CghLrTU4e1Mcq/buC7Bkm41/HIg==
-X-Received: by 2002:a05:620a:240a:b0:7b1:45be:2e98 with SMTP id af79cd13be357-7b2f3cfa7c4mr2535810985a.10.1730738048549;
-        Mon, 04 Nov 2024 08:34:08 -0800 (PST)
-Received: from localhost ([2603:7000:c01:2716:da5e:d3ff:fee7:26e7])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b2f3a8114asm433769085a.106.2024.11.04.08.34.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Nov 2024 08:34:06 -0800 (PST)
-Date: Mon, 4 Nov 2024 11:34:02 -0500
-From: Johannes Weiner <hannes@cmpxchg.org>
-To: David Hildenbrand <david@redhat.com>
-Cc: Barry Song <21cnbao@gmail.com>, akpm@linux-foundation.org,
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-	Barry Song <v-songbaohua@oppo.com>,
-	Usama Arif <usamaarif642@gmail.com>,
-	Chengming Zhou <chengming.zhou@linux.dev>,
-	Yosry Ahmed <yosryahmed@google.com>, Nhat Pham <nphamcs@gmail.com>,
-	Hugh Dickins <hughd@google.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	Shakeel Butt <shakeel.butt@linux.dev>,
-	Andi Kleen <ak@linux.intel.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Chris Li <chrisl@kernel.org>, "Huang, Ying" <ying.huang@intel.com>,
-	Kairui Song <kasong@tencent.com>,
-	Ryan Roberts <ryan.roberts@arm.com>
-Subject: Re: [PATCH v2] mm: count zeromap read and set for swapout and swapin
-Message-ID: <20241104163402.GA810664@cmpxchg.org>
-References: <20241102101240.35072-1-21cnbao@gmail.com>
- <c7a90ccf-c1b1-480c-9f2a-88ef37c3d89e@redhat.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A3181C07CF;
+	Mon,  4 Nov 2024 16:34:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.51
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730738067; cv=pass; b=PxrxzOSBNPnxX1PJT/sq3zREqesOs5Y3i1YQV6bAWNqT0v10gNpd/dEJGk9hJbvGgUxu3Xls6sOVDW21Ms/W1p+T5zh6T0sQ0r8MAue9RmhajNRyHzcv9Bk+Fk999fM711sY4m4BzuqvhDo3/Geb5yM/3BwysLSRybFk3SAPzvM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730738067; c=relaxed/simple;
+	bh=O3ts0Sn5oGEmmtyGPHBGZeZGhbMncFy6kasQkaU0P2g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fqciQ6nJY/OmVuyMLqB71yK3OmO2wWn8MjMqPoAPzOkPlCQDiUd8jEFzKAwOtgfN6ksxDT4gwoTi3H4IK77UHFwXFr997bGwr0YJiTBBnsQwtGJOWdYyyJQzYrp3mdYF6u6OtrrmxkLZBG+qXyGuObAqhtcP2i/5/tX5lgkJ22I=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=apertussolutions.com; spf=pass smtp.mailfrom=apertussolutions.com; dkim=pass (1024-bit key) header.d=apertussolutions.com header.i=dpsmith@apertussolutions.com header.b=fw4fj6Cl; arc=pass smtp.client-ip=136.143.188.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=apertussolutions.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=apertussolutions.com
+ARC-Seal: i=1; a=rsa-sha256; t=1730738049; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=Q2PiTkVcUbcGRzJTo/jvoQgUSofZND60VcOH/YQfW9Bn5jgBx2kJ929Y4vB+w1pMdFZckvCjYMN2IV8FzMQxXoosV0rtHG+0QzPdA0ocvSRtI6Amvv7n8MTyV6px5Hx4mW2N3JfYRfXUGI4t5UWpR1DYsE+myRqhbib6YySeJmo=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1730738049; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=rsrQF6JmRXZQE7tb3or5gcxfQ5EVQBWdPFCL/XboCU4=; 
+	b=oMAFBe6Jz9EEMImxPVn4jBE7wj0SJJ9X4BqAj+pmYHGvQbaegW4ONSTzyupOVj3VfjoyjDBWId87NTFBhUjv5jYkAM1qpx03/cOOENs/CAdph3svAuNAmaCKPz6uf9Qy5oh4LRZgFasYOk389Ash/kNao5ymO7Akd+K9VeSNSKA=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=apertussolutions.com;
+	spf=pass  smtp.mailfrom=dpsmith@apertussolutions.com;
+	dmarc=pass header.from=<dpsmith@apertussolutions.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1730738049;
+	s=zoho; d=apertussolutions.com; i=dpsmith@apertussolutions.com;
+	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=rsrQF6JmRXZQE7tb3or5gcxfQ5EVQBWdPFCL/XboCU4=;
+	b=fw4fj6ClNoVpQVxUnVZ3q9VlZ1qG0zOXKaC7uZkU2gM6QTu0B3QCyUxXBQWpxhoG
+	bfWkjSc9Ethcu3C/ueWSaXLDKh2Ox/A2chz4pHtwJjOr1FkkqgH9bhYGXMfGC6FkvnV
+	O4xxgKGWpEKClxGbMt/ztuAubTNXG+nmjgXIP9VU=
+Received: by mx.zohomail.com with SMTPS id 1730738048053964.0860644735224;
+	Mon, 4 Nov 2024 08:34:08 -0800 (PST)
+Message-ID: <102f7de4-a2d0-4315-9bce-6489504180fb@apertussolutions.com>
+Date: Mon, 4 Nov 2024 11:34:06 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c7a90ccf-c1b1-480c-9f2a-88ef37c3d89e@redhat.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 0/4] Alternative TPM patches for Trenchboot
+To: James Bottomley <James.Bottomley@HansenPartnership.com>,
+ Ard Biesheuvel <ardb@kernel.org>
+Cc: Jarkko Sakkinen <jarkko@kernel.org>, x86@kernel.org,
+ Ross Philipson <ross.philipson@oracle.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Peter Huewe <peterhuewe@gmx.de>,
+ Jason Gunthorpe <jgg@ziepe.ca>,
+ "open list:TPM DEVICE DRIVER" <linux-integrity@vger.kernel.org>,
+ open list <linux-kernel@vger.kernel.org>, trenchboot-devel@googlegroups.com
+References: <20241102152226.2593598-1-jarkko@kernel.org>
+ <D5BW0P0HH0QL.7Y4HBLJGEDL8@kernel.org>
+ <e745226d-4722-43ed-86ad-89428f56fcba@apertussolutions.com>
+ <D5DCPWBQ2M7H.GAUEVUKGC3G0@kernel.org>
+ <CAMj1kXGd5KAXiFr3rEq3cQK=_970b=eRT4X6YKVSj2PhN6ACrw@mail.gmail.com>
+ <97d4e1a0-d86e-48a9-ad31-7e53d6885a96@apertussolutions.com>
+ <CAMj1kXFEJYVs7p6QLEAU-T+xfoWhkFi=PE9QpJ4Oo4oh3eM38Q@mail.gmail.com>
+ <7b324454-bc34-4cc4-bd12-99268a543508@apertussolutions.com>
+ <3bc70b659c1c86c0f08c6d91a6d894ce58825e04.camel@HansenPartnership.com>
+Content-Language: en-US
+From: "Daniel P. Smith" <dpsmith@apertussolutions.com>
+In-Reply-To: <3bc70b659c1c86c0f08c6d91a6d894ce58825e04.camel@HansenPartnership.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ZohoMailClient: External
 
-On Mon, Nov 04, 2024 at 01:42:08PM +0100, David Hildenbrand wrote:
-> On 02.11.24 11:12, Barry Song wrote:
-> > @@ -1599,6 +1599,16 @@ The following nested keys are defined.
-> >   	  pglazyfreed (npn)
-> >   		Amount of reclaimed lazyfree pages
-> >   
-> > +	  swpin_zero
-> > +		Number of pages moved into memory with zero content, meaning no
-> > +		copy exists in the backend swapfile, allowing swap-in to avoid
-> > +		I/O read overhead.
-> > +
-> > +	  swpout_zero
-> > +		Number of pages moved out of memory with zero content, meaning no
-> > +		copy is needed in the backend swapfile, allowing swap-out to avoid
-> > +		I/O write overhead.
+On 11/4/24 08:21, James Bottomley wrote:
+> On Mon, 2024-11-04 at 07:19 -0500, Daniel P. Smith wrote:
+>> On 11/4/24 06:55, 'Ard Biesheuvel' via trenchboot-devel wrote:
+> [...]
+>>> I was referring specifically to the read-write sysfs node that
+>>> permits user space to update the default TPM locality. Does it need
+>>> to be writable? And does it need to exist at all?
 > 
-> Hm, can make it a bit clearer that this is a pure optimization and refer 
-> to the other counters?
+> This was my question here, which never got answered as well:
 > 
-> swpin_zero
-> 	Portion of "pswpin" pages for which I/O was optimized out
-> 	because the page content was detected to be zero during swapout.
+> https://lore.kernel.org/linux-integrity/685f3f00ddf88e961e2d861b7c783010774fe19d.camel@HansenPartnership.com/
+> 
+>> Right, sorry. As I recall, that was introduce due to the sequence of
+>> how the TPM driver handled locality, moving back to Locality 0 after
+>> done sending cmds. In the Oracle implementation, the initramfs takes
+>> integrity measurements of the environment it is about to kexec into,
+>> eg.  target kernel, initramfs, file system, etc. Some of these
+>> measurements should go into PCR 17 and PCR 18, which requires
+>> Locality 2 to be able extend those PCRs. If the slmodule is able to
+>> set the locality for all PCR extends coming from user space to be
+>> Locality 2, that removes the current need for it.
+> 
+> Well, no, that's counter to the desire to have user space TPM commands
+> and kernel space TPM commands in different localities.  I thought the
+> whole point of having locality restricted PCRs is so that only trusted
+> entities (i.e. those able to access the higher locality) could extend
+> into them.  If you run every TPM command, regardless of source, in the
+> trusted locality, that makes the extends accessible to everyone and
+> thus destroys the trust boundary.
 
-AFAICS the zeropages currently don't show up in pswpin/pswpout, so
-these are independent counters, not subsets.
+As to Locality switching:
+The call sequence is,
+   tpm_pcr_extend -> tpm_find_get_ops -> tpm_try_get_ops ->
+     tpm_chip_start -> if (chip->locality == -1) tpm_request_locality
+And when the extend completes:
+   out: tpm_put_ops -> tpm_chip_stop -> tpm_relinquish_locality ->
+     chip->locality = -1;
 
-I'm leaning towards Barry's side on the fixes tag. When zswap handled
-the same-filled pages, we would count them in zswpin/out. From a user
-POV, especially one using zswap, the behavior didn't change, but the
-counts giving insight into this (potentially significant) VM activity
-disappeared. This is arguably a regression.
+We made slmodule set the locality value used by request/relinquish back 
+to 0 when it was done with its initialization and then the sysfs nodes 
+to allow the runtime to request it when it needed to send measurements. 
+This is because we did not want to pin how it works to the one use case
+currently focused on.
 
-> swpout_zero
-> 	Portion of "pswout" pages for which I/O was optimized out
-> 	because the page content was detected to be zero.
+By definition I provided earlier, in our use case the initramfs is part 
+of the TCB as it is embedded into the kernel. As to the locality roles, 
+according to TPM Platform Profile:
+  - Locality 2: Dynamically Launched OS (Dynamic OS) “runtime” environment.
+  - Locality 1: An environment for use by the Dynamic OS.
 
-Are we sure we want to commit to the "zero" in the name here? Until
-very recently, zswap optimized all same-filled pages. It's possible
-somebody might want to bring that back down the line.
+> It also doesn't sound like the above that anything in user space
+> actually needs this facility.  The measurements of kernel and initramfs
+> are already done by the boot stub (to PCR9, but that could be changed)
+> so we could do it all from the trusted entity.
 
-In reference to the above, I'd actually prefer putting them back into
-zswpin/zswpout. Sure, they're not handled by zswap.c proper, but this
-is arguably just an implementation detail; from a user POV this is
-still just (a form of) compression in lieu of IO to the swap backend.
+I apologies for not expressing this clearer, as that statement is 
+incorrect. The currently deployed use case works as follows:
 
-IMO there is no need for coming up with a separate category. Just add
-them to zswpin/zswpout and remove the CONFIG_ZSWAP guards from them?
+[SRTM] --> [GRUB] -- (DLE, terminates SRTM chain) -->
+   [CPU] -- (starts DRTM chain) --> [SINIT ACM] -->
+   [SL kernel + initramfs] -- (load/measure/kexec) --> [target kernel]
+
+As one can see, the SRTM is terminated and its components are not used 
+in the DRTM chain. This model reproduces the tboot model, with several 
+enhancements, including the ability for a single solution that supports 
+and works on Intel, AMD, and we are currently enabling Arm. It is not 
+the only model that can be used, which several were presented at 2020 
+Plumbers. A detailed version of a deployed implementation of the secure 
+upgrade use case was detailed in the 2021 FOSSDEM presentation. Where 
+the LCP policy is used to tell the ACM what [SL kernel + initramfs] are 
+allowed to be started by TXT. This allows the ability to launch into an 
+upgrade state without having to reboot.
+
+In case the question comes up from those not familiar, the kexec does an 
+GETSEC[SEXIT] which closes off access to Localities 1 and 2, thus 
+locking the DRTM PCR values. It brings the CPUs out of SMX mode so the 
+target kernel does not require to have any knowledge about running in 
+that mode.
+
+v/r,
+dps
 
