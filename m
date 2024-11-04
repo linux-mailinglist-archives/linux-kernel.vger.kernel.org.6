@@ -1,145 +1,112 @@
-Return-Path: <linux-kernel+bounces-394586-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394612-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AE409BB17D
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 11:47:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B124D9BB1D9
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 11:57:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 42A041F22894
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 10:47:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6617C1F214A5
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 10:57:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E5AD1B0F2C;
-	Mon,  4 Nov 2024 10:47:24 +0000 (UTC)
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 734041CBE8A;
+	Mon,  4 Nov 2024 10:52:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qOrLiBsz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53FD0290F;
-	Mon,  4 Nov 2024 10:47:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA26A1CB53A;
+	Mon,  4 Nov 2024 10:52:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730717244; cv=none; b=homyDOZcd3efwyMxJu3+PPbsRlIAHMtC5JTd7DiKIQVF2i46UVUvTsjYMUihFrMrMyBS13cHSsB31SEyNDbuMb5pPdP0NNvoBQTW/S3L8uy65FnkEjanC6anZQUX8ilt7JGRLy8lTlScyLrKDTpfs99ycI01h4YbdnJEIFQFVHc=
+	t=1730717524; cv=none; b=n3aRtM6b3D9ULQoN4XKRG21m3KrVmsi2Hbf8pvjalaPojWspXP8Xgc5PIZpLcGy0n++85xa0e2qWEC+YAoj95gHe/jKnv3rOZuKhHnHXWw1QLg4UsjAy+ue3kwXNDQzbpM5ZhcD+dhy/2QENgbbY3mbLZlZEOAd2KQcjD979tn8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730717244; c=relaxed/simple;
-	bh=fF/BJOYudXv+MdqZ0BpwPkVcSD5wC31ZfqhPishC4pM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=nDF2Cpf+jK2+VRezfV1iu0o9vZloUbKrmnwOGShfx/eboB0q3MNWuYYPhTAf5bQ2qadC/wbwlnaSTOMuaK41JsQ/ii642SnozTUTz7zekT1LKb9rdqxcV6DGASfZEnmWJBbXa1Z6c4hYE6MeHs7mr3JxZLVBLiOVL2dEaQnJtsU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a99ebb390a5so927714566b.1;
-        Mon, 04 Nov 2024 02:47:22 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730717241; x=1731322041;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=GQQEfUO1UteUr9ACef70Th0pKJE+Tg+KwybXseX/MFE=;
-        b=SZDLl+TPQHMRUjE9JpCotzO8JiUYJoV0Z8eCgSMAdkeCUduiKd5tX7cCO6EOPipd1V
-         z9ZTLvAGjPEszXZ74JjnPrXfiTJ0siIDtfWvIk64Sdyb5QyyyQuVhCJ30iHbhu22jZAO
-         720XLEYPxe6fD1lAMo2s3Cj3uCf88oFeQyrDhERTDqnu20dCRjCrut1XAy3Fzoq82YoS
-         GJ41beEi6pUCCYiqbkF45EUIghwjKwF5rXQ1errlEcWT9QQkiyynugvGTkVFLlWS2RCW
-         2xpotnG48PaMnL+RttakLiKiC2FzALO73/cEIExoeRyBaDWa0kP+9on1N2c7Ay8XZGTC
-         gpUg==
-X-Forwarded-Encrypted: i=1; AJvYcCV8iYIIf8mTf+W0Oq30UMUmgyPEj2wElmmAS5bcn4YGuhdMyG6cqt9u/6PuKWDGSlK3kos5tA4q/yqpYrjb@vger.kernel.org, AJvYcCVGHq/TAj1hGWkiH5kZqNk8Orkv6J4q/pm9MJkZQDVLU9Q51EM2IVW44lDj7BiXjJARs69jKLdZg7VpqqVwTI/BSRG3qDs4@vger.kernel.org, AJvYcCWeAONJ8g428gpzU/9B5LlsVfls4zLex+nLj3HVTIdvbblCpv/Hdq3gC2QkoV0LHlU9TGBI5qYkWgXbUrnkEiw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+qpy8Kli1QQZVGLwH3M4vnuEuLC/Z7OvtqW8t1Z1lDnzxU406
-	ibTntYtJHzCaIX1/SxoOQMFbMy41Z7jpCEdEmDjIVNm28rXK4iy1F3zSRw==
-X-Google-Smtp-Source: AGHT+IGJczchdEfg7PAI7b5vVk9OlDmJnRR0O1DDPuiuIWnFdZNY3LbItDcPyZsYPciUomWmnx1jMw==
-X-Received: by 2002:a17:907:7205:b0:a99:facf:cfc with SMTP id a640c23a62f3a-a9e55a87862mr1278049966b.17.1730717240215;
-        Mon, 04 Nov 2024 02:47:20 -0800 (PST)
-Received: from localhost (fwdproxy-lla-004.fbsv.net. [2a03:2880:30ff:4::face:b00c])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9e5663cd43sm544106866b.143.2024.11.04.02.47.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Nov 2024 02:47:19 -0800 (PST)
-From: Breno Leitao <leitao@debian.org>
-Date: Mon, 04 Nov 2024 02:47:16 -0800
-Subject: [PATCH] ima: kexec: Add RCU read lock protection for
- ima_measurements list traversal
+	s=arc-20240116; t=1730717524; c=relaxed/simple;
+	bh=gVFvhx02Zz3L6ndxfFvbk0IQyrrritUS0mptzTG0vsM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oa3Grq7IUIVmmvz2DCZjxTTBwx8m6zfz6epDNdx6aiv+zp0QaPhcwTFKa3Qj8dKidvPIf8nc5T2caRE7b76j9LF9H8+ah+BqLEA6A0KhvBKrrtqfcQFXewfMSZ2cWdwg9ySzqm3Jq95AleGyHcm1llGqwdeAHWaGv0Cu3O8fmQ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qOrLiBsz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9149C4AF15;
+	Mon,  4 Nov 2024 10:51:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730717524;
+	bh=gVFvhx02Zz3L6ndxfFvbk0IQyrrritUS0mptzTG0vsM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qOrLiBszEKx/23biOQZk87zRhMJbA40mNWdnFLnvO+6ASmNShr9lvrPB+EI3DS62T
+	 kSZVlihQi0B68GKMKPm4eItVYiIhxR0DqlCmT2g3IYfQVBqd/rtv+tqpP5+t+jPE8M
+	 yZYA4wdBbqmg2Qdlt5h+t2T+Qq+zy/Olf7wXwxtq1sIktHqX3a8nkb5sPcz86WnYrr
+	 BF9v34oINbsMKvRkxwf7EPwtkvT9CHBNz3Fjuqv0FmTXyTDprtgrUyhhAr1U0Vx6gJ
+	 33c2QO8hhrYsdMupxmk47+Kx1dS8UI5koZTpjb/6I5veUv/KKsdonu4flrgeluQDa5
+	 uolC1xPwyoy7w==
+Date: Mon, 4 Nov 2024 12:49:24 +0200
+From: Mike Rapoport <rppt@kernel.org>
+To: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: "Gowans, James" <jgowans@amazon.com>,
+	"quic_eberman@quicinc.com" <quic_eberman@quicinc.com>,
+	"kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+	"brauner@kernel.org" <brauner@kernel.org>,
+	"anthony.yznaga@oracle.com" <anthony.yznaga@oracle.com>,
+	"steven.sistare@oracle.com" <steven.sistare@oracle.com>,
+	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"seanjc@google.com" <seanjc@google.com>,
+	"Durrant, Paul" <pdurrant@amazon.co.uk>,
+	"pbonzini@redhat.com" <pbonzini@redhat.com>,
+	"linux-mm@kvack.org" <linux-mm@kvack.org>,
+	"Woodhouse, David" <dwmw@amazon.co.uk>,
+	"Saenz Julienne, Nicolas" <nsaenz@amazon.es>,
+	"viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+	"Graf (AWS), Alexander" <graf@amazon.de>,
+	"jack@suse.cz" <jack@suse.cz>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH 05/10] guestmemfs: add file mmap callback
+Message-ID: <ZyimtM-sQSmRblpm@kernel.org>
+References: <20240805093245.889357-1-jgowans@amazon.com>
+ <20240805093245.889357-6-jgowans@amazon.com>
+ <20241029120232032-0700.eberman@hu-eberman-lv.qualcomm.com>
+ <33a2fd519edc917d933517842cc077a19e865e3f.camel@amazon.com>
+ <20241031160635.GA35848@ziepe.ca>
+ <fe4dd4d2f5eb2209f0190d547fe29370554ceca8.camel@amazon.com>
+ <20241101134202.GB35848@ziepe.ca>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241104-ima_rcu-v1-1-5157460c5907@debian.org>
-X-B4-Tracking: v=1; b=H4sIADOmKGcC/x3MWwqAIBAF0K0M9ztBy0jcSkRITjUfPVCKINx70
- FnAeZE5CWd4epH4lizHDk+mIkxr2BdWEuEJta6tMdoq2cKYpksxuyYG10XdalSEM/Eszz/1Qyk
- f4oMEhFkAAAA=
-X-Change-ID: 20241104-ima_rcu-ee83da87d050
-To: Mimi Zohar <zohar@linux.ibm.com>, 
- Roberto Sassu <roberto.sassu@huawei.com>, 
- Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, 
- Eric Snowberg <eric.snowberg@oracle.com>, Paul Moore <paul@paul-moore.com>, 
- James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
- "Eric W. Biederman" <ebiederm@xmission.com>, 
- Andrew Morton <akpm@linux-foundation.org>, 
- Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>
-Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>, linux-integrity@vger.kernel.org, 
- linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, 
- noodles@earth.li, Breno Leitao <leitao@debian.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1553; i=leitao@debian.org;
- h=from:subject:message-id; bh=fF/BJOYudXv+MdqZ0BpwPkVcSD5wC31ZfqhPishC4pM=;
- b=owEBbQKS/ZANAwAIATWjk5/8eHdtAcsmYgBnKKY2QG3u+OgeyzQ7/nyKXGqN7uUqwCWc8KKBw
- mJZtFtrgoqJAjMEAAEIAB0WIQSshTmm6PRnAspKQ5s1o5Of/Hh3bQUCZyimNgAKCRA1o5Of/Hh3
- bWm5D/9G8GgbraopxFjvSPKhpNSrDcdPCB6JtFhbwfB66HfjNAzUjHTniPUsdVoa5k48TAGDLOT
- KC/yclvHcV6QMeCO/gy2wzY08zJKbVOnQFrnpZCSu24asHu5wh6+pCpp8cqzh7MpubsX/8a7n8m
- OGNxbzwsEOjuMUbX5rzYS28rYzA31buPYNtxNM9uThJxuAu98h56SHMqphZVKjkztI5Dmo1qaZa
- rvacn92tx64qGEggNHnnomdQSKTqprXD6T8heGGAojWPyzTb3O3JfdwOwbgDa2N59MTUjUwvST3
- BfcC1CNi7kUWIFl3rP2eS1vr2UoMvxDaV40FN5UQLGotapuhC1mRm7XjInIcZlSzB8NUJvZ3K4l
- ZIZ6dwUIpuZnoSzAhvE4Ajw8elOoUoZbs5kaKxBFcbtum3Ws4kVuR1EoTyNS/NJc+OdUiqWw4eC
- SmxOjrBBMq32t7RCsmumWDFa9F2QUZz77wYRdTxKFqt1s3wXbMiPtQDt2z/F6O39bWuLXwoOrvk
- ZaA/fLrfccODWB4p0gwiCKFq7+PGThcsX1TyfFhDZ2Sl3YYiOSIb9LOrc6E/IYM0OBa9kdXPuEq
- 3rRS+8lsoWaMDVtDsIVxzgdNfLsg8hBychDn7AcSAM+XhwRe4jq6/Xsb4PYkhnIC1Vo3ofm96ep
- SkADklTj+UUWUMg==
-X-Developer-Key: i=leitao@debian.org; a=openpgp;
- fpr=AC8539A6E8F46702CA4A439B35A3939FFC78776D
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241101134202.GB35848@ziepe.ca>
 
-Fix a potential RCU issue where ima_measurements list is traversed using
-list_for_each_entry_rcu() without proper RCU read lock protection. This
-caused warnings when CONFIG_PROVE_RCU was enabled:
+On Fri, Nov 01, 2024 at 10:42:02AM -0300, Jason Gunthorpe wrote:
+> On Fri, Nov 01, 2024 at 01:01:00PM +0000, Gowans, James wrote:
+> 
+> > Thanks Jason, that sounds perfect. I'll work on the next rev which will:
+> > - expose a filesystem which owns reserved/persistent memory, just like
+> > this patch.
+> 
+> Is this step needed?
+> 
+> If the guest memfd is already told to get 1G pages in some normal way,
+> why do we need a dedicated pool just for the KHO filesystem?
+> 
+> Back to my suggestion, can't KHO simply freeze the guest memfd and
+> then extract the memory layout, and just use the normal allocator?
+> 
+> Or do you have a hard requirement that only KHO allocated memory can
+> be preserved across kexec?
 
-  security/integrity/ima/ima_kexec.c:40 RCU-list traversed in non-reader section!!
-
-Add rcu_read_lock() before iterating over ima_measurements list to ensure
-proper RCU synchronization, consistent with other RCU list traversals in
-the codebase.
-
-Signed-off-by: Breno Leitao <leitao@debian.org>
-Fixes: 7b8589cc29e7 ("ima: on soft reboot, save the measurement list")
----
- security/integrity/ima/ima_kexec.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/security/integrity/ima/ima_kexec.c b/security/integrity/ima/ima_kexec.c
-index 52e00332defed39774c9e23e045f1377cfa30d0c..3b17ddb91d35ac806aedd2ee970ff365675dac0b 100644
---- a/security/integrity/ima/ima_kexec.c
-+++ b/security/integrity/ima/ima_kexec.c
-@@ -37,6 +37,7 @@ static int ima_dump_measurement_list(unsigned long *buffer_size, void **buffer,
+KHO does not allocate memory, it gets the ranges to preserve, makes sure
+they are not overwritten during kexec and can be retrieved by the second
+kernel.
+For KHO it does not matter if the memory comes from a normal or a special
+allocator.
  
- 	memset(&khdr, 0, sizeof(khdr));
- 	khdr.version = 1;
-+	rcu_read_lock();
- 	list_for_each_entry_rcu(qe, &ima_measurements, later) {
- 		if (file.count < file.size) {
- 			khdr.count++;
-@@ -46,6 +47,7 @@ static int ima_dump_measurement_list(unsigned long *buffer_size, void **buffer,
- 			break;
- 		}
- 	}
-+	rcu_read_unlock();
- 
- 	if (ret < 0)
- 		goto out;
+> Jason
 
----
-base-commit: f488649e40f8900d23b86afeab7d4b78c063d5d1
-change-id: 20241104-ima_rcu-ee83da87d050
-
-Best regards,
 -- 
-Breno Leitao <leitao@debian.org>
-
+Sincerely yours,
+Mike.
 
