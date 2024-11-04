@@ -1,168 +1,196 @@
-Return-Path: <linux-kernel+bounces-394719-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394720-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D20D9BB325
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 12:26:01 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 856C19BB326
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 12:26:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 51A5E284F64
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 11:26:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B6EF11C2223D
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 11:26:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9541D1BC073;
-	Mon,  4 Nov 2024 11:16:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1E711BD00A;
+	Mon,  4 Nov 2024 11:16:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="WZDz9AaA"
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="C0W3+372"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B95C41AA78E;
-	Mon,  4 Nov 2024 11:16:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17E691B392F
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 11:16:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730719009; cv=none; b=iJiwZglw40xOXC2E3RhYUt9Y31y61bkiEHZojPuYXqx+MisAIM+5dvcqk/Mp76cyQtBpWMBOyc7WyIW8GryWQFhM0EE71GuUkCbQfW9VFYTXb8eDK7mBjdyRLbyaCrWOfUZIakN8NdAOyslHheSuzWwukIuOkxmie2IBOVNpqpU=
+	t=1730719010; cv=none; b=OLqG1ezplA1wmGZuVHVloNGHcEN8smq33eRHA7gcjFzk2WJG4FzpB6e4PXA3ecI73uNm8fA6J2rJPQPfzw1Mg0WIikjswqyAfz5kEtfhmMXOyyMJSU7ecpE8PesAkAG/1w3ux2UVotUepIcAeC7AZ/FhvtaQaN3F76pcDV/CXg0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730719009; c=relaxed/simple;
-	bh=asl+bz8+CwiXw9CFavFPKpnA44+FONT9NATCJBSmHF0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GE31bW2Jkc5lOw9cSp3dchwbwcqaZY5i8zNTVAgwHd2RcWIvhmRRdYQwbjCjiLx7TL/umYqQ2sCerM829zXRyxX5GyrjcjUrAwMBwa1u2xyCGvi04kHMwo2Ashl60WwnlQ5ScGPHlFs0hVxDOhjhRRkQlSe4o05MhaO+WTYgFXU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=WZDz9AaA; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=y9ExVeNjKF0SfMQEmzTjWWX5US8Priue+XLniaZh+Qs=; b=WZDz9AaASfdZwB+BONRbuqU3Wv
-	QNpbAAt+sTh/U7VGjUC7WCNg/pCt4bq6dqjddhX15WsAKGPT0XTFc9mggSyeJofShH3kNxIHSMDR7
-	NyyVndtl8U9meMwJeff94rSB9tqQ0VQw7FYmJiv7TJuVYlqZ7q37NhUNc4VBajprhXAl9An00HU9a
-	PhkS85FDtvp9p4DH1e30Ibe0V3bgPblSlcOh9MZnUD+gefH2t8n9ZXRShMEGxsbYyWCSZDdypIQyM
-	Hj0zggcvqYoBJeAYCdX4uXsmFwFblS1R1iZ/AAFxCL5jvCysNYQPBRZzEQkrCgMcGTfRyLA0GdK4z
-	90eb4IsA==;
-Received: from [187.36.213.55] (helo=[192.168.1.103])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1t7v46-001WwT-Gt; Mon, 04 Nov 2024 12:16:10 +0100
-Message-ID: <06b96a7f-c9bb-4a65-8077-ba10e0ea1e7d@igalia.com>
-Date: Mon, 4 Nov 2024 08:16:02 -0300
+	s=arc-20240116; t=1730719010; c=relaxed/simple;
+	bh=qP4hDvDNGNshTtKv0xihRVPhLeM67stLE1XTEPYwHCs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KDj7vJVRvkGaXrSs3a7RP0ixKO8tI3DiSf4SNoANRZYPfMq+RivCSAUd4GAd3wg+U6Q/WdSZjjmNrHYWKt6SDKFBXBsa3dOSx72yGZbdbdt4GUOTjN58NEjVQCJEDGnlqhm6K1XKKU+6AJm9qi5z/ZwdydU1nxXe7+pjuACmF5U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=C0W3+372; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id C68D540E0163;
+	Mon,  4 Nov 2024 11:16:45 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id cQ1kvBB3nEVC; Mon,  4 Nov 2024 11:16:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1730719001; bh=KW8V/FzpAQG60s4wM40wPNAONpbD7YvdIN6uAJU0zqk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=C0W3+372k5Es2PW0I2K4w4495idnMZs+/cb3XXKfGp58Dm2wZWaXS8NfvZOMsvBJP
+	 M6Tw67jJTRWXuoiO+hnMfcFO40k9391F06AubHrQJHM0FQfxqjO18MjEok8EIC7HvF
+	 w5LX8IKbdVBLAfnV+1g+2I/Y1T6QxjWvexTWl44LX9QMwFRQTQvmtuH0bvQd26SQzj
+	 l/eH7R2YaO/D/QsupbRZRXR11EimCMyqlzI88AsPLi9pCWDl13wGQ4gTFz4G88z0Mt
+	 mI5IyGdmBgtzgxKCFffS6dFi5x2EhqgnIMcY0TZjPLKGmok00Kr35PQ69Oxdo117hs
+	 OAFjQGhdFphsQLjoEHNl0+u0l4NtKB48Q1wUp+oXC42OgjInUQHqw+YipR2irsqlsO
+	 IUdGY/KJr3wGwrfyG+ZOR356DHTffzIlsknaWmXm2xLukZBV2VMs8W3LYxy/R+gx6p
+	 Wd1TiZjK8yhwt4MgC/e6XiTlD6n2EcX8gNW3WVzMZg8okvvOPDXR5kLUBH7TWE2G7J
+	 N3TPpM5omudekbYoIXEEuG1lBzjDyNYzG5P1BO/dRIGhyNzqY4b7QKaQbiAVHLEtfZ
+	 aXWWHo7jU0Bxtcb7vfsDHhpTaUCa6SrFjt1rkVK/z0V/L4H2tNz2LdzX9jmVEu0l3W
+	 Wtrxp7ZjMeQ4aMesLJttcrnM=
+Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id AA97740E0265;
+	Mon,  4 Nov 2024 11:16:35 +0000 (UTC)
+Date: Mon, 4 Nov 2024 12:16:30 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: "Chang S. Bae" <chang.seok.bae@intel.com>
+Cc: linux-kernel@vger.kernel.org, x86@kernel.org, tglx@linutronix.de,
+	mingo@redhat.com, dave.hansen@linux.intel.com
+Subject: Re: [PATCH RFC 4/7] x86/microcode/intel: Prepare for microcode
+ staging
+Message-ID: <20241104111630.GSZyitDuXnBYmEFxvo@fat_crate.local>
+References: <20241001161042.465584-1-chang.seok.bae@intel.com>
+ <20241001161042.465584-5-chang.seok.bae@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 3/5] mm: move ``get_order_from_str()`` to internal.h
-To: Baolin Wang <baolin.wang@linux.alibaba.com>,
- Jonathan Corbet <corbet@lwn.net>, Andrew Morton <akpm@linux-foundation.org>,
- Hugh Dickins <hughd@google.com>, Barry Song <baohua@kernel.org>,
- David Hildenbrand <david@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
- Lance Yang <ioworker0@gmail.com>
-Cc: linux-mm@kvack.org, dri-devel@lists.freedesktop.org,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- kernel-dev@igalia.com
-References: <20241101165719.1074234-2-mcanal@igalia.com>
- <20241101165719.1074234-5-mcanal@igalia.com>
- <9d5ce0af-6fca-422f-b1f8-650879f8ff5a@linux.alibaba.com>
-Content-Language: en-US
-From: =?UTF-8?Q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>
-In-Reply-To: <9d5ce0af-6fca-422f-b1f8-650879f8ff5a@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241001161042.465584-5-chang.seok.bae@intel.com>
 
-Hi Baolin,
+On Tue, Oct 01, 2024 at 09:10:39AM -0700, Chang S. Bae wrote:
+> +static inline u64 staging_addr(u32 cpu)
+> +{
+> +	u32 lo, hi;
+> +
+> +	rdmsr_on_cpu(cpu, MSR_IA32_MCU_STAGING_MBOX_ADDR, &lo, &hi);
+> +	return lo | ((u64)hi << 32);
+> +}
 
-On 03/11/24 23:25, Baolin Wang wrote:
-> 
-> 
-> On 2024/11/2 00:54, Maíra Canal wrote:
->> In order to implement a kernel parameter similar to ``thp_anon=`` for
->> shmem, we'll need the function ``get_order_from_str()``.
->>
->> Instead of duplicating the function, move the function to a shared
->> header, in which both mm/shmem.c and mm/huge_memory.c will be able to
->> use it.
->>
->> Signed-off-by: Maíra Canal <mcanal@igalia.com>
->> ---
->>   mm/huge_memory.c | 38 +++++++++++++++-----------------------
->>   mm/internal.h    | 22 ++++++++++++++++++++++
->>   2 files changed, 37 insertions(+), 23 deletions(-)
->>
->> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
->> index f92068864469..a6edbd8c4f49 100644
->> --- a/mm/huge_memory.c
->> +++ b/mm/huge_memory.c
->> @@ -958,26 +958,6 @@ static int __init setup_transparent_hugepage(char 
->> *str)
->>   }
->>   __setup("transparent_hugepage=", setup_transparent_hugepage);
->> -static inline int get_order_from_str(const char *size_str)
->> -{
->> -    unsigned long size;
->> -    char *endptr;
->> -    int order;
->> -
->> -    size = memparse(size_str, &endptr);
->> -
->> -    if (!is_power_of_2(size))
->> -        goto err;
->> -    order = get_order(size);
->> -    if (BIT(order) & ~THP_ORDERS_ALL_ANON)
->> -        goto err;
->> -
->> -    return order;
->> -err:
->> -    pr_err("invalid size %s in thp_anon boot parameter\n", size_str);
->> -    return -EINVAL;
->> -}
->> -
->>   static char str_dup[PAGE_SIZE] __initdata;
->>   static int __init setup_thp_anon(char *str)
->>   {
->> @@ -1007,10 +987,22 @@ static int __init setup_thp_anon(char *str)
->>                   start_size = strsep(&subtoken, "-");
->>                   end_size = subtoken;
->> -                start = get_order_from_str(start_size);
->> -                end = get_order_from_str(end_size);
->> +                start = get_order_from_str(start_size, 
->> THP_ORDERS_ALL_ANON);
->> +                end = get_order_from_str(end_size, THP_ORDERS_ALL_ANON);
->>               } else {
->> -                start = end = get_order_from_str(subtoken);
->> +                start_size = end_size = subtoken;
->> +                start = end = get_order_from_str(subtoken,
->> +                                 THP_ORDERS_ALL_ANON);
->> +            }
->> +
->> +            if (start == -EINVAL) {
->> +                pr_err("invalid size %s in thp_anon boot 
->> parameter\n", start_size);
->> +                goto err;
->> +            }
->> +
->> +            if (end == -EINVAL) {
->> +                pr_err("invalid size %s in thp_anon boot 
->> parameter\n", end_size);
->> +                goto err;
->>               }
-> 
-> There are already checks for ‘start’ and ‘end’ below, and will print 
-> error messages if error occurs. So I suspect whether these repeated 
-> checks and error infor are helpful.
+A single usage site. Move its code there and get rid of the function.
 
-The idea is to explicitly show to the user which part of the kernel
-parameter is broke. Instead of saying that something is broken, it is
-going to return that, for example, "33K" is invalid.
+> +
+> +static bool need_staging(u64 *mmio_addrs, u64 pa)
+> +{
+> +	unsigned int i;
+> +
+> +	for (i = 0; mmio_addrs[i] != 0; i++) {
+> +		if (mmio_addrs[i] == pa)
+> +			return false;
+> +	}
+> +	mmio_addrs[i] = pa;
 
-Best Regards,
-- Maíra
+This is a weird function - its name is supposed to mean it queries something
+but then it has side effects too.
 
-> 
-> Anyway, I don't have a strong preference.
-> Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+> +	return true;
+> +}
+> +
+> +static void staging_microcode(void)
 
+stage_microcode().
+
+Functions should have verbs in their name and have the meaning of
+a "do-something".
+
+> +{
+> +	u64 *mmio_addrs, mmio_pa;
+> +	unsigned int totalsize;
+> +	int cpu;
+> +
+> +	totalsize = get_totalsize(&ucode_patch_late->hdr);
+> +	if (!IS_ALIGNED(totalsize, sizeof(u32)))
+> +		return;
+> +
+> +	mmio_addrs = kcalloc(nr_cpu_ids, sizeof(*mmio_addrs), GFP_KERNEL);
+> +	if (WARN_ON_ONCE(!mmio_addrs))
+> +		return;
+> +
+> +	for_each_cpu(cpu, cpu_online_mask) {
+
+Oh great, and someone went and offlined one of those CPUs right here. Fun.
+
+> +		mmio_pa = staging_addr(cpu);
+> +
+> +		if (need_staging(mmio_addrs, mmio_pa) &&
+> +		    !staging_work(mmio_pa, ucode_patch_late, totalsize)) {
+
+do_stage()
+
+> +			pr_err("Error: staging failed.\n");
+
+							... on CPU%d, err_val: 0x%x"\n"
+
+perhaps?
+
+For more info debugging something like that?
+
+> +			goto out;
+> +		}
+> +	}
+> +
+> +	pr_info("Staging succeeded.\n");
+
+		"Staging of patch revision 0x%x succeeded.\n"...
+
+more user-friendly.
+
+> +out:
+> +	kfree(mmio_addrs);
+> +}
+> +
+>  static enum ucode_state __apply_microcode(struct ucode_cpu_info *uci,
+>  					  struct microcode_intel *mc,
+>  					  u32 *cur_rev)
+> @@ -627,6 +676,7 @@ static struct microcode_ops microcode_intel_ops = {
+>  	.collect_cpu_info	= collect_cpu_info,
+>  	.apply_microcode	= apply_microcode_late,
+>  	.finalize_late_load	= finalize_late_load,
+> +	.staging_microcode	= staging_microcode,
+>  	.use_nmi		= IS_ENABLED(CONFIG_X86_64),
+>  };
+>  
+> diff --git a/arch/x86/kernel/cpu/microcode/internal.h b/arch/x86/kernel/cpu/microcode/internal.h
+> index cb58e83e4934..06c3c8db4ceb 100644
+> --- a/arch/x86/kernel/cpu/microcode/internal.h
+> +++ b/arch/x86/kernel/cpu/microcode/internal.h
+> @@ -120,6 +120,11 @@ void load_ucode_intel_bsp(struct early_load_data *ed);
+>  void load_ucode_intel_ap(void);
+>  void reload_ucode_intel(void);
+>  struct microcode_ops *init_intel_microcode(void);
+> +static inline bool staging_work(u64 mmio_pa, void *ucode_ptr, unsigned int totalsize)
+> +{
+> +	pr_debug_once("Need to implement the Staging code.\n");
+> +	return false;
+> +}
+>  #else /* CONFIG_CPU_SUP_INTEL */
+
+You better have an empty stub for that work function here too.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
