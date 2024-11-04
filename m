@@ -1,115 +1,124 @@
-Return-Path: <linux-kernel+bounces-394608-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394587-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F6E79BB1CA
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 11:56:02 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C12159BB180
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 11:50:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 29CD41F22818
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 10:56:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EF1171C21439
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 10:50:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F22061B21B9;
-	Mon,  4 Nov 2024 10:51:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12EC51B21A4;
+	Mon,  4 Nov 2024 10:50:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WJjAAZpa"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="AU5V7fnL"
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50EB81B4F1C;
-	Mon,  4 Nov 2024 10:51:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC61418C009
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 10:49:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730717502; cv=none; b=Zkv9RcWr5PAMggFuBu+9SG5u/QT1htnxGgDx4BiUhP+KxqrqL4Qjndm1248AASVT6HqjOUcLfhXifjF/rYRfFXNVLr68lBRTuOW9Wjct890xlktJ0onncXIy9/6t23Gass1TwiilDmPkwGgnpEqQatS0CyYPtrNJmRBmoKk36Jk=
+	t=1730717401; cv=none; b=dKkVegPhXe635UzTGOfoX0jfvw6UNrDEGXWWoJ8YFeG85NZefRfb6K7tXF/nqegZk3X8PCXY1LETu88efqLvXaHbGRDk6QB0zxDwhg2UeeFHPUM+DLeTW0I/Rh1imsi9K8kwXIBaTQwm65GMNTqUGpmdEatbqSPWcWYckwPkBZo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730717502; c=relaxed/simple;
-	bh=A1eAkzyOIOiq24BAVQfGndHmmHhzGaLA3wDADHEU4yE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=cQRuyVBsOh3BK5e/OInOPykHcoa+ZdzK+uWGV7LGitBd9cccjRPkZFMWV/wFYsgHEfz/HzBXXiyN8QresGKjuttoXSnoI2HecSXHAzjmIm1dvDESlYm9pQsS9Kt5eUAVFewOIR9xDVIvb/pq8pmEfg2zHSHETGU1CexAs5iH9bE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WJjAAZpa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8575BC4CECE;
-	Mon,  4 Nov 2024 10:51:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730717502;
-	bh=A1eAkzyOIOiq24BAVQfGndHmmHhzGaLA3wDADHEU4yE=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=WJjAAZpaNszCfqM4SHGdEdt2DaBNGnYiamxOd3fUxtpFixSdRmmEioyI9fE3htOL3
-	 Zjj2YERVWe/tO4tjK82QH/UwVOJf0eb2JFW4rh9yZi8a7D1GyfQYo58xB1r7z9lJi4
-	 MIDirbGJ6VzawswDSXg99y66Ogf9fuKwPWLIbMU702wm6EmnWIvQO+B81fSs7nBT+D
-	 4V/BBWPc3lEC9lHsjkwdsM1371kEiXYXkCICjijtCm2K0AAob48aTlkOiIet7Cj0PU
-	 gqECrVL7x6wENapp+9vykzMF2KuVzsU0XPA5bbH27RRF3vvEDhQFYx6u2uVW5+1jY1
-	 Uqe24YPeQLwDg==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: Alexey Klimov <alexey.klimov@linaro.org>,
-	Adam Skladowski <a39.skl@gmail.com>,
-	Prasad Kumpatla <quic_pkumpatl@quicinc.com>,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	Mohammad Rafi Shaik <quic_mohs@quicinc.com>,
-	Mark Brown <broonie@kernel.org>,
-	Sasha Levin <sashal@kernel.org>,
-	lgirdwood@gmail.com,
-	perex@perex.cz,
-	tiwai@suse.com,
-	krzysztof.kozlowski@linaro.org,
-	u.kleine-koenig@baylibre.com,
-	linux-sound@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.11 17/21] ASoC: codecs: wcd937x: add missing LO Switch control
-Date: Mon,  4 Nov 2024 05:49:53 -0500
-Message-ID: <20241104105048.96444-17-sashal@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241104105048.96444-1-sashal@kernel.org>
-References: <20241104105048.96444-1-sashal@kernel.org>
+	s=arc-20240116; t=1730717401; c=relaxed/simple;
+	bh=HjiluiYYU8ct9uzPa/9+3mrpL1aTF+xLCA8ImAoVnW8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ctmqbHOwkGMpyFxYAYel+QzvskVAY+E6Nemp5xwGzxelFFFeOojseE7hmmyYdKn5BCSgpwD6V/f6fJxqcJ+3OAQgbWG+0N4LJh/gXldsU9JYNV30QjRnAXQ1kAe2VcMdyzRS8jspoziDsmKpSOKuzDdxzXFh5+3wondYpRR8/eo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=AU5V7fnL; arc=none smtp.client-ip=209.85.208.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2fb5740a03bso37060521fa.1
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 02:49:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1730717398; x=1731322198; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=XeXQFy9Pj3a/4ODUXYJdySuoRgQr+QO7RlBYiaBrsZk=;
+        b=AU5V7fnLPInUAccZmsYThZC/FIOOhHmW3PGKooWGVc9ogmaLvR0mCiFk64r6C9nLPh
+         Fj0qV/ce132viVbNlqCheppIVYzRvsUTbLXzqoRxF4ISNpudn9vMefX9sNWoN8zSHakA
+         gHzkfG5N8dR6JweS6kUqa+Y6Pksb/YkY4BPiQytYtUFEvtNNvCANe5pqoWoLw47H6YXJ
+         /MJkWyRBxgaFp291ARQ62hRJxspi8XT2IAfIAmfmNMzr5JW+cdKltHBGK07vkB4uOKqm
+         jlobwEJiLmCifTwuyXvRzDFgZ7kluOZWRefQIYkIBEB5NJt1uqljnKZQDaCXAmgrmLMo
+         pS9g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730717398; x=1731322198;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XeXQFy9Pj3a/4ODUXYJdySuoRgQr+QO7RlBYiaBrsZk=;
+        b=tb7+Ay9srfNKms8shb4WvbGtPwmy49yWZt9T2zCWuMBASmkRxiHEX83DCrZToTzNh2
+         vxR3M+JiEsTq+P3wlEZDqM3T7gm61R9Do0a7D1osdst9i6V8VxkIPqDNVNev/ZpEpukc
+         ZNVqNW4zbGOKHt3R462mvRMhW/DNW1ZVXurDo7HoOQbCA7nQAnqpcTUY5LnziUc50PgC
+         swYaarP7zZRto0igdxnYDAuzPqbUv1nzehmEelueLIAU7N4Qi7qhkb0RHojQJwiQmSF0
+         CCb40kjON3XFylJ2jmeDnUXdvIzV89HQkqjF9PW2HpX1hNrF/Cn7HP/kRnUGzsAjn5v8
+         BVTw==
+X-Forwarded-Encrypted: i=1; AJvYcCX9Qjl5AKfNz7TPU39iD9G825hmFBWSqIiEuQHFbdObYkxILrNMGZVIy/+s0sC68F1If7VfQnzPWlqKrak=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzqv7qEWuF6l+0FK9n26duIZP15bFNVV0ibU3qr4ElSCFN1vK0H
+	B0akZcMoX2cuNSQoi7AH/LS6D8p/3HevxP1ooceUtzDvxEXySFvc7eBJVp7oVu0=
+X-Google-Smtp-Source: AGHT+IFkB+YOxqygY78jfvdT7ykV+NKLizBcQos+MO01VyMRIJ9LTRYILzClrQ7HWeqYmtT14mH4Sw==
+X-Received: by 2002:a2e:1302:0:b0:2fb:5723:c9ea with SMTP id 38308e7fff4ca-2fd059d336amr70161111fa.30.1730717397626;
+        Mon, 04 Nov 2024 02:49:57 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2fdef3b732bsm16206121fa.4.2024.11.04.02.49.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 04 Nov 2024 02:49:56 -0800 (PST)
+Date: Mon, 4 Nov 2024 12:49:54 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Sarthak Garg <quic_sartgarg@quicinc.com>
+Cc: Adrian Hunter <adrian.hunter@intel.com>, 
+	Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, quic_cang@quicinc.com, quic_nguyenb@quicinc.com, 
+	quic_rampraka@quicinc.com, quic_pragalla@quicinc.com, quic_sayalil@quicinc.com, 
+	quic_nitirawa@quicinc.com, quic_sachgupt@quicinc.com, quic_bhaskarv@quicinc.com, 
+	quic_narepall@quicinc.com, kernel@quicinc.com
+Subject: Re: [PATCH V1] mmc: sdhci-msm: Enable MMC_CAP_AGGRESSIVE_PM for
+ qualcomm controllers
+Message-ID: <konkbi4hvd7qc4rhokwrymzqntroy7gijk3ndwv5rluswdrykp@xsafrtrjzmuq>
+References: <20241104060722.10642-1-quic_sartgarg@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.11.6
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241104060722.10642-1-quic_sartgarg@quicinc.com>
 
-From: Alexey Klimov <alexey.klimov@linaro.org>
+On Mon, Nov 04, 2024 at 11:37:22AM +0530, Sarthak Garg wrote:
+> Enable MMC_CAP_AGGRESSIVE_PM for qualcomm controllers.
+> This enables runtime PM for eMMC/SD card.
 
-[ Upstream commit 041db4bbe04e8e0b48350b3bbbd9a799794d5c1e ]
+Could you please mention, which platforms were tested with this patch?
+Note, upstream kernel supports a lot of platforms, including MSM8974, I
+think the oldest one, which uses SDHCI.
 
-The wcd937x supports also AUX input but the control that sets correct
-soundwire port for this is missing. This control is required for audio
-playback, for instance, on qrb4210 RB2 board as well as on other
-SoCs.
+> 
+> Signed-off-by: Sarthak Garg <quic_sartgarg@quicinc.com>
+> ---
+>  drivers/mmc/host/sdhci-msm.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/mmc/host/sdhci-msm.c b/drivers/mmc/host/sdhci-msm.c
+> index e00208535bd1..6657f7db1b8e 100644
+> --- a/drivers/mmc/host/sdhci-msm.c
+> +++ b/drivers/mmc/host/sdhci-msm.c
+> @@ -2626,6 +2626,7 @@ static int sdhci_msm_probe(struct platform_device *pdev)
+>  		goto clk_disable;
+>  	}
+>  
+> +	msm_host->mmc->caps |= MMC_CAP_AGGRESSIVE_PM;
+>  	msm_host->mmc->caps |= MMC_CAP_WAIT_WHILE_BUSY | MMC_CAP_NEED_RSP_BUSY;
+>  
+>  	/* Set the timeout value to max possible */
+> -- 
+> 2.17.1
+> 
 
-Reported-by: Adam Skladowski <a39.skl@gmail.com>
-Reported-by: Prasad Kumpatla <quic_pkumpatl@quicinc.com>
-Suggested-by: Adam Skladowski <a39.skl@gmail.com>
-Suggested-by: Prasad Kumpatla <quic_pkumpatl@quicinc.com>
-Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc: Mohammad Rafi Shaik <quic_mohs@quicinc.com>
-Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
-Link: https://patch.msgid.link/20241022033132.787416-2-alexey.klimov@linaro.org
-Signed-off-by: Mark Brown <broonie@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- sound/soc/codecs/wcd937x.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/sound/soc/codecs/wcd937x.c b/sound/soc/codecs/wcd937x.c
-index af296b77a723a..63b25c321a03d 100644
---- a/sound/soc/codecs/wcd937x.c
-+++ b/sound/soc/codecs/wcd937x.c
-@@ -2049,6 +2049,8 @@ static const struct snd_kcontrol_new wcd937x_snd_controls[] = {
- 		       wcd937x_get_swr_port, wcd937x_set_swr_port),
- 	SOC_SINGLE_EXT("HPHR Switch", WCD937X_HPH_R, 0, 1, 0,
- 		       wcd937x_get_swr_port, wcd937x_set_swr_port),
-+	SOC_SINGLE_EXT("LO Switch", WCD937X_LO, 0, 1, 0,
-+		       wcd937x_get_swr_port, wcd937x_set_swr_port),
- 
- 	SOC_SINGLE_EXT("ADC1 Switch", WCD937X_ADC1, 1, 1, 0,
- 		       wcd937x_get_swr_port, wcd937x_set_swr_port),
 -- 
-2.43.0
-
+With best wishes
+Dmitry
 
