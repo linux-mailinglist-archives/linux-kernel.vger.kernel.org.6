@@ -1,59 +1,55 @@
-Return-Path: <linux-kernel+bounces-394234-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394235-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 359F99BAC37
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 06:48:43 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3262B9BAC3C
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 06:49:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE210281A9A
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 05:48:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6F62CB21175
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 05:48:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CB5818BC37;
-	Mon,  4 Nov 2024 05:48:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F140918C341;
+	Mon,  4 Nov 2024 05:48:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="O77Z6fJ9"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="0l2PahRp"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9146114E2FD;
-	Mon,  4 Nov 2024 05:48:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49E4718BC2C;
+	Mon,  4 Nov 2024 05:48:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730699305; cv=none; b=hnH1v8W+Etou6Aq2tHxcz0p5nXtwqA6HmlOSV+fwaf3XNpcDIKU4DGZcvv6qMFBo4f/NNqCjMC+inzJt4miegUbTEaUA0WLtIhHvWEesop2QMohIU9wWfRlmV1p2vmBgFBb195Y6HeviOP6vb1+5q5+UbcZPV3N7ubROssYTImA=
+	t=1730699321; cv=none; b=tTHwBw8BA7OHSvnLsw7nPzWrfSTraDsc41rSQ4kCvDYUDvxqWe3YpON1IQe2oCPBxvZf07i3Zu+nS17tveHuleN3oYG0KLnlNPUTaxo8gTVSkMzcFPNSFPchX+orPI+7YrokjPKOyCwsnH/mLHM22d+b0lNebV2reZy+m5y4JBs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730699305; c=relaxed/simple;
-	bh=B1KH/Bq2gXhpWwNvJdqHlM36GE9xSh5E23+vE+/6SPM=;
+	s=arc-20240116; t=1730699321; c=relaxed/simple;
+	bh=5fy6xKs7vhmUZBinU8ERiLTywxLCmF+rAnpbE/Um2aQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aW7q2l+0NRSQ37d/XCW+lWnZKwjWa54hALE64G86gmkPZZcVr9QNErZG3uDyLI4uKxDmQbzJe616jjB7sAtTwELC692x1tUwn0RbMI9xtrrHZN2amizV7gPKcAuvnQf2IRp2VVWtHDlk+J+TvtNXGIz/p/vHBXb7Xhttl5ESAeI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=O77Z6fJ9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96521C4CECE;
-	Mon,  4 Nov 2024 05:48:24 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=aIqyFLaiZRRkIXtvBQCXGbdTQPoGoeUFkk39vA3uKe+zmAvoHrHx36RhhD5xi8hsvBGw1MA98cYjIJA5QOu+hO3Jc3k9EI0Hcp9l4tkgh8b234PdsJXj5C7eY3lSB33xFS9VxE7fowVENyZdqh7wV6HiBxRbhJr5yY79M4o6C7I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=0l2PahRp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57BD5C4CECE;
+	Mon,  4 Nov 2024 05:48:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1730699305;
-	bh=B1KH/Bq2gXhpWwNvJdqHlM36GE9xSh5E23+vE+/6SPM=;
+	s=korg; t=1730699320;
+	bh=5fy6xKs7vhmUZBinU8ERiLTywxLCmF+rAnpbE/Um2aQ=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=O77Z6fJ9RU4Ps6WqWiBppB+u+B8lk9Cn8XA/RZwIqzC9Izp33ERkWP2nEvhbL7s2o
-	 JcXFkGnZtlspN1zmaI49XhGmvo0UUz/uRsusY527qXi1ncoutXhcsair879aizQrcb
-	 DgpsEgovKCxXrUnLvwdq5Qx0vlWDBfrSpJDek7Yo=
-Date: Mon, 4 Nov 2024 01:24:26 +0100
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: rafael@kernel.org, bhelgaas@google.com, ojeda@kernel.org,
-	alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net,
-	bjorn3_gh@protonmail.com, benno.lossin@proton.me, tmgross@umich.edu,
-	a.hindborg@samsung.com, aliceryhl@google.com, airlied@gmail.com,
-	fujita.tomonori@gmail.com, lina@asahilina.net, pstanner@redhat.com,
-	ajanulgu@redhat.com, lyude@redhat.com, robh@kernel.org,
-	daniel.almeida@collabora.com, saravanak@google.com,
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
-	Wedson Almeida Filho <wedsonaf@google.com>
-Subject: Re: [PATCH v3 08/16] rust: add `dev_*` print macros.
-Message-ID: <2024110409-speller-blasphemy-2539@gregkh>
-References: <20241022213221.2383-1-dakr@kernel.org>
- <20241022213221.2383-9-dakr@kernel.org>
+	b=0l2PahRptpiEAyN4wodVq4nyyBKrG2iT6AhSssgSZs12x9aXjOxFaAP3N0pwTcizi
+	 0hjt3vxUg4eg/t6fBn4ehlSbmIKddGTVTRJHCIzG8Xp/Y9VybmzsMblzQ7dGLO4WKI
+	 QD7fOU4iUdeofngSjTc8KUEXUZUkpAG2PYLruDZQ=
+Date: Mon, 4 Nov 2024 01:34:19 +0100
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
+	Paul Barker <paul.barker.ct@bp.renesas.com>,
+	Niklas =?iso-8859-1?Q?S=F6derlund?= <niklas.soderlund+renesas@ragnatech.se>,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	linux-renesas-soc@vger.kernel.org, netdev@vger.kernel.org,
+	linux-ide@vger.kernel.org, linux-sh@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH/RFC] MAINTAINERS: Re-add cancelled Renesas driver sections
+Message-ID: <2024110457-enhance-arrive-b781@gregkh>
+References: <0a189e2c4090a1b308e18005d2552e335bac354f.1729511337.git.geert+renesas@glider.be>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,25 +58,15 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241022213221.2383-9-dakr@kernel.org>
+In-Reply-To: <0a189e2c4090a1b308e18005d2552e335bac354f.1729511337.git.geert+renesas@glider.be>
 
-On Tue, Oct 22, 2024 at 11:31:45PM +0200, Danilo Krummrich wrote:
-> From: Wedson Almeida Filho <wedsonaf@google.com>
-> 
-> Implement `dev_*` print macros for `device::Device`.
-> 
-> They behave like the macros with the same names in C, i.e., they print
-> messages to the kernel ring buffer with the given level, prefixing the
-> messages with corresponding device information.
-> 
-> Signed-off-by: Wedson Almeida Filho <wedsonaf@google.com>
-> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
-> ---
->  rust/kernel/device.rs  | 319 ++++++++++++++++++++++++++++++++++++++++-
->  rust/kernel/prelude.rs |   2 +
->  2 files changed, 320 insertions(+), 1 deletion(-)
+On Mon, Oct 21, 2024 at 01:56:51PM +0200, Geert Uytterhoeven wrote:
+> +RENESAS R-CAR SATA DRIVER
+> +L:	linux-ide@vger.kernel.org
+> +L:	linux-renesas-soc@vger.kernel.org
+> +S:	Supported
+> +F:	Documentation/devicetree/bindings/ata/renesas,rcar-sata.yaml
+> +F:	drivers/ata/sata_rcar.c
 
-This is good to grab now, I've added it to my char-misc tree, thanks!
-
-greg k-h
+You can't have a "Supported" entry with no person assigned to it :(
 
