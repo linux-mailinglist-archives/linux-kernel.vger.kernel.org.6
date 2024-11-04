@@ -1,190 +1,229 @@
-Return-Path: <linux-kernel+bounces-394062-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394063-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E10D09BAA4E
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 02:26:37 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFE6C9BAA52
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 02:30:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A0871F212EB
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 01:26:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ACA9E1C20AA4
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 01:30:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACC501632C7;
-	Mon,  4 Nov 2024 01:26:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 667AC15C147;
+	Mon,  4 Nov 2024 01:29:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="mwumFI9E"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EUDKZ6Ux"
+Received: from mail-oo1-f43.google.com (mail-oo1-f43.google.com [209.85.161.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8110926AF6;
-	Mon,  4 Nov 2024 01:26:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2ACC926AF6;
+	Mon,  4 Nov 2024 01:29:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730683584; cv=none; b=Yqo/1fMW3YqhYxCxYQYi9kCPOHiHzKN6x8mQUTTZV1fokqVNPxMI5EeW4Fhymn9OBtc3Mfokt+B0ei4dj1NZjT2E7sekpYMiufNA68XBIlX2LP0jon7WQuYflJ++XclEpYq7chAM7oYKa8UkVHLXlfcXqlZae1EAUiH8NQod+8U=
+	t=1730683796; cv=none; b=qkk4hquaDc/KDOULZnrFazt+HQaAzH4Lw5TE6SDEvjNCUXNJgoH3/Snpcm4kPl3PPkPhE++l09YMintrsMOApMP9ewUXGD+dkRjAAfku0rHp45F+jOKpR7j87OtJHXW8EB0s1eo3JxjXOLeW5/96CidFLm6LOGeGGNWHAkeCU8s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730683584; c=relaxed/simple;
-	bh=KB98Un7mQM2y6mVpx6JRHoz0b/BTC5JATt4FtI33v0U=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=J1qx4+o9RB1t+YwBEwDSBgE9rvEfx/fmKVaCex32XUaVnDNo0SUjGLqzQYaQMKq/P5P/U9JIpcR/xCvWIUMPj8BdzUPVzliDl99s/ZS+ahJbMbVkZPSCP9mkqd9oB2vayK2fFv0FvSVRjcyL+TLbbdauCaW8VracaZ6g4D7WP50=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=mwumFI9E; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A3Nehke026061;
-	Mon, 4 Nov 2024 01:25:30 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=iMh8eF
-	HecHacE2bhwoTpB2hk6AqM865un55dFnhq1os=; b=mwumFI9ENq4rcML09znikW
-	bSKfPSoLpGiPwIVPNb+PTU/Z9iu2uh9/7IsfcbZ2541kn+9Pa1KaH43261DTcInL
-	pJ3rcjIjJBQ6fzmxg8ns9KWzD3Uc3+devvxJHHrJ42w5VT1xxl9HouMu+BQwVlnS
-	K2EOVqA7F3PdpEO8mnuj2Rhej4k3uU44TrsNEMww2Kr5veoMrGZuLbZbKka3UhPP
-	mwbaM/NWU4zi15DYpX7ZFZ8FllhKhAH1hafqawYZz+WNlB3YXAWAHnoeUXpPgJZB
-	zuibf6jNbtRmEvDez5JdDKt6c/vHhZGRrKjxNUpwH+T/eFfpc6soYKoS+By8HCdA
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42pk2106hs-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 04 Nov 2024 01:25:30 +0000 (GMT)
-Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4A41PT6m022592;
-	Mon, 4 Nov 2024 01:25:29 GMT
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42pk2106hq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 04 Nov 2024 01:25:29 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4A3J0Iri019625;
-	Mon, 4 Nov 2024 01:25:28 GMT
-Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 42p0mj1840-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 04 Nov 2024 01:25:28 +0000
-Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
-	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4A41PQfB13566404
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 4 Nov 2024 01:25:26 GMT
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 8B46020043;
-	Mon,  4 Nov 2024 01:25:26 +0000 (GMT)
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 0C94C20040;
-	Mon,  4 Nov 2024 01:25:26 +0000 (GMT)
-Received: from ozlabs.au.ibm.com (unknown [9.63.197.14])
-	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Mon,  4 Nov 2024 01:25:26 +0000 (GMT)
-Received: from jarvis.ozlabs.ibm.com (unknown [9.150.11.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ozlabs.au.ibm.com (Postfix) with ESMTPSA id 95503602B8;
-	Mon,  4 Nov 2024 12:25:07 +1100 (AEDT)
-Message-ID: <3b8312490c668a99b2a89667b7d1cbdf2019b885.camel@linux.ibm.com>
-Subject: Re: [PATCH v2 06/10] sysfs: treewide: constify attribute callback
- of bin_attribute::mmap()
-From: Andrew Donnellan <ajd@linux.ibm.com>
-To: Thomas =?ISO-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>,
-        Greg
- Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki"
- <rafael@kernel.org>,
-        Bjorn Helgaas	 <bhelgaas@google.com>,
-        Srinivas
- Kandagatla <srinivas.kandagatla@linaro.org>,
-        Davidlohr Bueso
- <dave@stgolabs.net>,
-        Jonathan Cameron <jonathan.cameron@huawei.com>,
-        Dave
- Jiang	 <dave.jiang@intel.com>,
-        Alison Schofield
- <alison.schofield@intel.com>,
-        Vishal Verma <vishal.l.verma@intel.com>,
-        Ira
- Weiny <ira.weiny@intel.com>,
-        Alex Deucher	 <alexander.deucher@amd.com>,
-        Christian =?ISO-8859-1?Q?K=F6nig?=	 <christian.koenig@amd.com>,
-        Xinhui Pan
- <Xinhui.Pan@amd.com>, David Airlie	 <airlied@gmail.com>,
-        Simona Vetter
- <simona@ffwll.ch>,
-        Dennis Dalessandro	
- <dennis.dalessandro@cornelisnetworks.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky	 <leon@kernel.org>,
-        Tudor Ambarus
- <tudor.ambarus@linaro.org>,
-        Pratyush Yadav	 <pratyush@kernel.org>,
-        Michael
- Walle <mwalle@kernel.org>,
-        Miquel Raynal	 <miquel.raynal@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Naveen Krishna Chatradhi <naveenkrishna.chatradhi@amd.com>,
-        Carlos Bilbao	
- <carlos.bilbao.osdev@gmail.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Ilpo
- =?ISO-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-        "David E. Box"
- <david.e.box@linux.intel.com>,
-        "James E.J. Bottomley"	
- <James.Bottomley@HansenPartnership.com>,
-        "Martin K. Petersen"	
- <martin.petersen@oracle.com>,
-        Richard Henderson
- <richard.henderson@linaro.org>,
-        Matt Turner <mattst88@gmail.com>,
-        Frederic
- Barrat <fbarrat@linux.ibm.com>,
-        Arnd Bergmann <arnd@arndb.de>, Logan
- Gunthorpe <logang@deltatee.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang	 <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>,
-        Dexuan Cui	 <decui@microsoft.com>
-Cc: Dan Williams <dan.j.williams@intel.com>, linux-kernel@vger.kernel.org,
-        linux-pci@vger.kernel.org, linux-cxl@vger.kernel.org,
-        amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        linux-rdma@vger.kernel.org, linux-mtd@lists.infradead.org,
-        platform-driver-x86@vger.kernel.org, linux-scsi@vger.kernel.org,
-        linux-usb@vger.kernel.org, linux-alpha@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-hyperv@vger.kernel.org
-Date: Mon, 04 Nov 2024 12:24:55 +1100
-In-Reply-To: <20241103-sysfs-const-bin_attr-v2-6-71110628844c@weissschuh.net>
-References: <20241103-sysfs-const-bin_attr-v2-0-71110628844c@weissschuh.net>
-	 <20241103-sysfs-const-bin_attr-v2-6-71110628844c@weissschuh.net>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.1 (3.54.1-1.fc41) 
+	s=arc-20240116; t=1730683796; c=relaxed/simple;
+	bh=hfuB5itnGYPzAEt+47JNgDkjO30ZfSS9cGPfrm2zg+o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=i9LGqmBz5O1nq/QEhx0/lXowTOQ6Az4VkADMLJ0/GOLKwagineFIdf4BMiCB1zA6RIjZeJxWXrHnHYDNjEYRFqzHoX9QAsIT0WHqkMjooKCDzqciOtKB/iuC8PvGvo5uU4UNimfs5tN2RKKmI7W/zE6OGU2HzKry9sXM/l3ziE8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EUDKZ6Ux; arc=none smtp.client-ip=209.85.161.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f43.google.com with SMTP id 006d021491bc7-5ebc0e13d25so1280500eaf.1;
+        Sun, 03 Nov 2024 17:29:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730683794; x=1731288594; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ciyiua8QyRfHQceByjZysMoGm4YlaklrovUMSEjMlik=;
+        b=EUDKZ6UxT8x46uFa4f2IJ2oBy01V8IW7G3A0Z2NO68/t2Wb4kIuHiYFx5oi6WJ7Ph4
+         GSbuW6iId7oYWWTnO/OivqqAL4KP3mC1AH1236OwiW402rUSuaGeOibUumkIfoZJPCOa
+         leGKRaaUD5i8B7CRivDoJjTw0xX6SHUgDUYdVTi1KWZtgfJ+7izcYSSDT4usFraWGOPe
+         SqwxR4mv2TxoNsbsIwVw7hZFlroT/X1Bx7Pu9N0sUf9+cuNix0uEPfJL4hZOQduxrQMm
+         ST0DCmGCZBqubYHq5jyZBT8bxkXlXWIjDdkRCdac8wcV4Mlofe6vcbIehc3ggBkI+puF
+         NL3A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730683794; x=1731288594;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Ciyiua8QyRfHQceByjZysMoGm4YlaklrovUMSEjMlik=;
+        b=crC1V3FUhcClGMckAGQcJtVlcAgRnwD28RV+UwO9TNOHQA+9NsNSM5XsaNaEvddCYI
+         14pg+ai8YmuX2afL1goE1Tmxi6xrBsJAiA31393nc70vL8lreqRCEPDs9Tp/T9T9K50Y
+         K9cTNmD54UgJLe8mYdILpbtbyKsfIrG88F97ob7GitW43ma4xVl/mFAMCssn6DJTrNf2
+         0adFG6x5UlFQdMOXKLGJpRxhNirv7Rnf9jDatAqNC8icjYLoKrFcOe3yFI1FKoIFD7dZ
+         XhDT5Fg2/l2aubesDx1xZt9rSVmb9I+tMIHPKCqflL1ZObDtDMLzWFs7HRsPJQzxKzkA
+         I6Jw==
+X-Forwarded-Encrypted: i=1; AJvYcCUVUF9RYxkOYKJzw0pKX0jfp/GyPHb7ZujyYcolJMNKQ/pcRK8Cswc8ZHqHYrPwelpsF3LzEmSgcW70M7Mq@vger.kernel.org, AJvYcCXHmrPS+UroE//O5hIVnth1R7WQSnUTucZSEOPEK8G+VJ8WewcywSoF6tlkJHuJkd7JvZU4xaMvVlS/@vger.kernel.org, AJvYcCXna69NiumoiBP7p5fkvZTXh6XylkVvYxQVXLtksBlXbsnEdfItL6/LXc4A7/Gp1/Zq8YyBf8BiGT1B@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzz0ShugbZBwJ/WZrQGy+b/CfyttjJVbsHeC6RqSxSqJ3LkKVrF
+	DXzQuWsnzwDBgrvpwdr7r0tmfGOFKHzHOuD/LwLhdjjmdiqMARnw1iSZdgz4IdPnkiSnBv5HIGm
+	y0erG4RYNRINdLj12hkv6bUjpvVRG4DDB
+X-Google-Smtp-Source: AGHT+IF4AWGqWHu2SptkCgPPvAKr3uKgusbkJCTmrX28ZyUZ8NvXvwsXXchRukLG7grm0BrU1SC2Hz67qRnP06VRoPo=
+X-Received: by 2002:a05:6820:1e88:b0:5eb:758c:fa64 with SMTP id
+ 006d021491bc7-5ec6db6d5f4mr7752175eaf.4.1730683793994; Sun, 03 Nov 2024
+ 17:29:53 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: IVwbyg3makWwSzhu8aJUQIgu4AbnB-xA
-X-Proofpoint-ORIG-GUID: b4TgSoTo26XoqfO5DuvsB1xx-Da_599i
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 spamscore=0
- clxscore=1011 suspectscore=0 impostorscore=0 bulkscore=0 malwarescore=0
- priorityscore=1501 adultscore=0 lowpriorityscore=0 mlxlogscore=906
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411040007
+References: <ZyH-JASRcpMXYsmH@standask-GA-A55M-S2HP>
+In-Reply-To: <ZyH-JASRcpMXYsmH@standask-GA-A55M-S2HP>
+From: Chunyan Zhang <zhang.lyra@gmail.com>
+Date: Mon, 4 Nov 2024 09:29:17 +0800
+Message-ID: <CAAfSe-tk4iqeqxSbb8TmsauLC7X3KMtyM51cSdj2wXiC=-5-Yg@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: pwm: sprd,ums512-pwm: convert to YAML
+To: Stanislav Jakubek <stano.jakubek@gmail.com>
+Cc: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <ukleinek@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Orson Zhai <orsonzhai@gmail.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
+	linux-pwm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Sun, 2024-11-03 at 17:03 +0000, Thomas Wei=C3=9Fschuh wrote:
-> The mmap() callbacks should not modify the struct
-> bin_attribute passed as argument.
-> Enforce this by marking the argument as const.
->=20
-> As there are not many callback implementers perform this change
-> throughout the tree at once.
->=20
-> Signed-off-by: Thomas Wei=C3=9Fschuh <linux@weissschuh.net>
+On Wed, 30 Oct 2024 at 17:36, Stanislav Jakubek <stano.jakubek@gmail.com> wrote:
+>
+> Convert the Spreadtrum/Unisoc UMS512 PWM controller bindings to DT schema.
+> Adjust filename to match compatible. Drop assigned-* properties as these
+> should not be needed.
+>
+> Signed-off-by: Stanislav Jakubek <stano.jakubek@gmail.com>
+> ---
+>  .../devicetree/bindings/pwm/pwm-sprd.txt      | 40 -----------
+>  .../bindings/pwm/sprd,ums512-pwm.yaml         | 66 +++++++++++++++++++
+>  2 files changed, 66 insertions(+), 40 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/pwm/pwm-sprd.txt
+>  create mode 100644 Documentation/devicetree/bindings/pwm/sprd,ums512-pwm.yaml
+>
+> diff --git a/Documentation/devicetree/bindings/pwm/pwm-sprd.txt b/Documentation/devicetree/bindings/pwm/pwm-sprd.txt
+> deleted file mode 100644
+> index 87b206fd0618..000000000000
+> --- a/Documentation/devicetree/bindings/pwm/pwm-sprd.txt
+> +++ /dev/null
+> @@ -1,40 +0,0 @@
+> -Spreadtrum PWM controller
+> -
+> -Spreadtrum SoCs PWM controller provides 4 PWM channels.
+> -
+> -Required properties:
+> -- compatible : Should be "sprd,ums512-pwm".
+> -- reg: Physical base address and length of the controller's registers.
+> -- clocks: The phandle and specifier referencing the controller's clocks.
+> -- clock-names: Should contain following entries:
+> -  "pwmn": used to derive the functional clock for PWM channel n (n range: 0 ~ 3).
+> -  "enablen": for PWM channel n enable clock (n range: 0 ~ 3).
+> -- #pwm-cells: Should be 2. See pwm.yaml in this directory for a description of
+> -  the cells format.
+> -
+> -Optional properties:
+> -- assigned-clocks: Reference to the PWM clock entries.
+> -- assigned-clock-parents: The phandle of the parent clock of PWM clock.
+> -
+> -Example:
+> -       pwms: pwm@32260000 {
+> -               compatible = "sprd,ums512-pwm";
+> -               reg = <0 0x32260000 0 0x10000>;
+> -               clock-names = "pwm0", "enable0",
+> -                       "pwm1", "enable1",
+> -                       "pwm2", "enable2",
+> -                       "pwm3", "enable3";
+> -               clocks = <&aon_clk CLK_PWM0>, <&aonapb_gate CLK_PWM0_EB>,
+> -                      <&aon_clk CLK_PWM1>, <&aonapb_gate CLK_PWM1_EB>,
+> -                      <&aon_clk CLK_PWM2>, <&aonapb_gate CLK_PWM2_EB>,
+> -                      <&aon_clk CLK_PWM3>, <&aonapb_gate CLK_PWM3_EB>;
+> -               assigned-clocks = <&aon_clk CLK_PWM0>,
+> -                       <&aon_clk CLK_PWM1>,
+> -                       <&aon_clk CLK_PWM2>,
+> -                       <&aon_clk CLK_PWM3>;
+> -               assigned-clock-parents = <&ext_26m>,
+> -                       <&ext_26m>,
+> -                       <&ext_26m>,
+> -                       <&ext_26m>;
+> -               #pwm-cells = <2>;
+> -       };
+> diff --git a/Documentation/devicetree/bindings/pwm/sprd,ums512-pwm.yaml b/Documentation/devicetree/bindings/pwm/sprd,ums512-pwm.yaml
+> new file mode 100644
+> index 000000000000..0344c2d99472
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/pwm/sprd,ums512-pwm.yaml
+> @@ -0,0 +1,66 @@
+> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/pwm/sprd,ums512-pwm.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Spreadtrum/Unisoc UMS512 PWM Controller
+> +
+> +maintainers:
+> +  - Orson Zhai <orsonzhai@gmail.com>
+> +  - Baolin Wang <baolin.wang7@gmail.com>
+> +  - Chunyan Zhang <zhang.lyra@gmail.com>
 
-Acked-by: Andrew Donnellan <ajd@linux.ibm.com> # ocxl
+I've moved myself to Reviewer in sprd entry of MAINTAINERS, so,
 
---=20
-Andrew Donnellan    OzLabs, ADL Canberra
-ajd@linux.ibm.com   IBM Australia Limited
+Reviewed-by: Chunyan Zhang <zhang.lyra@gmail.com>
+
+Thanks,
+Chunyan
+
+> +
+> +properties:
+> +  compatible:
+> +    const: sprd,ums512-pwm
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    maxItems: 8
+> +
+> +  clock-names:
+> +    items:
+> +      - const: pwm0
+> +      - const: enable0
+> +      - const: pwm1
+> +      - const: enable1
+> +      - const: pwm2
+> +      - const: enable2
+> +      - const: pwm3
+> +      - const: enable3
+> +
+> +  '#pwm-cells':
+> +    const: 2
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - clocks
+> +  - clock-names
+> +
+> +allOf:
+> +  - $ref: pwm.yaml#
+> +
+> +unevaluatedProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/clock/sprd,ums512-clk.h>
+> +
+> +    pwm@32260000 {
+> +      compatible = "sprd,ums512-pwm";
+> +      reg = <0x32260000 0x10000>;
+> +      clocks = <&aon_clk CLK_PWM0>, <&aonapb_gate CLK_PWM0_EB>,
+> +               <&aon_clk CLK_PWM1>, <&aonapb_gate CLK_PWM1_EB>,
+> +               <&aon_clk CLK_PWM2>, <&aonapb_gate CLK_PWM2_EB>,
+> +               <&aon_clk CLK_PWM3>, <&aonapb_gate CLK_PWM3_EB>;
+> +      clock-names = "pwm0", "enable0",
+> +                    "pwm1", "enable1",
+> +                    "pwm2", "enable2",
+> +                    "pwm3", "enable3";
+> +      #pwm-cells = <2>;
+> +    };
+> +...
+> --
+> 2.43.0
+>
 
