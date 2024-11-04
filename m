@@ -1,65 +1,65 @@
-Return-Path: <linux-kernel+bounces-395397-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395401-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3C819BBD6A
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 19:45:02 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DDF19BBD78
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 19:47:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E227B1C219E4
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 18:45:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 466DE1F22692
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 18:47:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 921A31CBA1C;
-	Mon,  4 Nov 2024 18:44:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2BAD1CB531;
+	Mon,  4 Nov 2024 18:47:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rbiDShIR"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NBdhTekT"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0DE518622;
-	Mon,  4 Nov 2024 18:44:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F5B519BBA;
+	Mon,  4 Nov 2024 18:47:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730745894; cv=none; b=Se1AIt1hmDzOUaBw3KtzpDB4DnjJfYIkFZk4QtbdPFZ6UrGoN29lr35eOwruPlT6bjGNQdU0yJySZc0AWf97Kwg3DrWkWUwEEkWl8xvnhv1U0GY49H+evvuGizwDFqQnQH8cj8B301pW0ai5bOYJFQTYyc9eiZV7oyHAAo3cjQA=
+	t=1730746038; cv=none; b=CQ/yO0c4505Qfg43eS4LtARNTR5/baSXOptOtn8xcSS0nhIZj/D94q07HIm2jzGNUsH4DEYAfmO/EPtIeK0iRonpoqv/irxLW6ACKz3LbQw5waphpbbP4NYZRzjdQWshMsf6lzOE2cYo7+Z2Wa6R5d/U69u6F2zPC/qnqWjDC28=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730745894; c=relaxed/simple;
-	bh=NyVQlMFDaeFVbSuBOFcWlKWF0LNcMOH+vquUoGrumDM=;
+	s=arc-20240116; t=1730746038; c=relaxed/simple;
+	bh=rWhTWVbW4mGA5mw9ohHUzN2aUaoDA1BFpsVVEDEm4CE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=n40tpWE8P3pq0/l0PzcG+bVlfdhhO8+RLhqzkcLclljrRa37deX9e9m+iWViHvc2j+oHFp0fZe0RSPbMDjYLKyYlvAzShGmKiPqZ/4ceTyJO6PTuPIQOV0qc/uyRJdDNsj2ky/rE2pSLftrwy5ymEMlr+U4Us5dGu6Mm+Xfo+B8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rbiDShIR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC926C4CECE;
-	Mon,  4 Nov 2024 18:44:49 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=HOu0SvpKeVuaOtnvzqf3y+Rce+cenpbLSOXlD8z/eNIdQa96S20N0c2+Y9M3uqPDla21sta3Vkr7pPpDBCK/SMyIRi7fwAWrynlBYL1rN4edQX1pkNhlvg4WWfhklI+a17bhNLCVv/FsrWweyg0pw70LTACMLwGIJxmnC9G8mrU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NBdhTekT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 029BAC4CECE;
+	Mon,  4 Nov 2024 18:47:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730745893;
-	bh=NyVQlMFDaeFVbSuBOFcWlKWF0LNcMOH+vquUoGrumDM=;
+	s=k20201202; t=1730746037;
+	bh=rWhTWVbW4mGA5mw9ohHUzN2aUaoDA1BFpsVVEDEm4CE=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rbiDShIR362g7b/18qH1G6xpiy7jgylY+yFf0pA7MeeuWV7naItK3k4+IhwF4DbvM
-	 y17iUtC3psiV61j7uMn20AUoUfVfo5jGYrmaCN/z1Bbl5KatvKCXXlhAHIx2m6QZb+
-	 S7ZOL+Zhb+uPev7uH19R/bs0USYAfsCrWexUcD7qyD3rUEQcJ5odd/8KNj1xoZJi9d
-	 /CBGTz/rcMyeZrOaogTAMm5LDPVjqvRyOesFK8gZ9BnNls2T5nvdW8YhyHP7v3tz9/
-	 M6JWacSXYF1rv+AjRFW6+KSz8IQ+GSaVgT/i635DP8gahleh9xu9ugnVWKdARtLboK
-	 G37IguSXP/jMw==
-Date: Mon, 4 Nov 2024 18:44:47 +0000
+	b=NBdhTekTdA/WpeLSglViKAU25A+dbJ2m5atIn1kG9m3IG/PkMCnp9SsoMI7qveMN7
+	 1RKFj2d5s3eR6cB8h1UtUItSmUErSlYA3V9P9rcVBvRGl1le/8fxHaYaQ42QqyaKU/
+	 SwPoyHFMk1f0c3zu3JwsrfqJa+DZVaxwZQHx2jiIwH2Tpfo8+52y768Q76Ee52TT7P
+	 wDQZdp298qgm6ALheVskJoyu52aQlLiM9M8SpPV8/WfaVcn1SEOMHQdK09dRdCM9K3
+	 55Lbeh33zG+h3rxNQ+V8Xk4Zg0KfzOULGiuI0wNT6n73kV6cnlUAT2EQyssffP/5r+
+	 +tH8DOCO1nhuQ==
+Date: Mon, 4 Nov 2024 18:47:11 +0000
 From: Conor Dooley <conor@kernel.org>
-To: Ciprian Costea <ciprianmarian.costea@oss.nxp.com>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>,
+To: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
+Cc: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
+	Tero Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, linux-i2c@vger.kernel.org,
-	devicetree@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Christophe Lizzi <clizzi@redhat.com>,
-	Alberto Ruiz <aruizrui@redhat.com>,
-	Enric Balletbo <eballetb@redhat.com>
-Subject: Re: [PATCH 1/2] dt-bindings: i2c: imx: add SoC specific compatible
- strings for S32G
-Message-ID: <20241104-stifling-remake-f5abdc8d82bc@spud>
-References: <20241104100044.3634076-1-ciprianmarian.costea@oss.nxp.com>
- <20241104100044.3634076-2-ciprianmarian.costea@oss.nxp.com>
+	Conor Dooley <conor+dt@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Kees Cook <kees@kernel.org>, Tony Luck <tony.luck@intel.com>,
+	"Guilherme G. Piccoli" <gpiccoli@igalia.com>,
+	Felipe Balbi <balbi@kernel.org>,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+	linux-hardening@vger.kernel.org, Devarsh Thakkar <devarsht@ti.com>,
+	Hari Nagalla <hnagalla@ti.com>, linux@ew.tq-group.com
+Subject: Re: [PATCH 2/5] dt-bindings: arm: ti: Add compatible for AM625-based
+ TQMa62xx SOM family and carrier board
+Message-ID: <20241104-floral-dexterous-7d3fee2ff616@spud>
+References: <cover.1730299760.git.matthias.schiffer@ew.tq-group.com>
+ <4f5ad877f44df35a3b2c7f336647f057c4e6377d.1730299760.git.matthias.schiffer@ew.tq-group.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,70 +67,65 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="v9eOVK6j83W6+2yi"
+	protocol="application/pgp-signature"; boundary="EATJd2ZSzXL2Ixpt"
 Content-Disposition: inline
-In-Reply-To: <20241104100044.3634076-2-ciprianmarian.costea@oss.nxp.com>
+In-Reply-To: <4f5ad877f44df35a3b2c7f336647f057c4e6377d.1730299760.git.matthias.schiffer@ew.tq-group.com>
 
 
---v9eOVK6j83W6+2yi
-Content-Type: text/plain; charset=us-ascii
+--EATJd2ZSzXL2Ixpt
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Nov 04, 2024 at 12:00:43PM +0200, Ciprian Costea wrote:
-> From: Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>
->=20
-> S32G2 and S32G3 SoCs use the same I2C controller as i.MX.
-> But there are small differences such as specific
-> <clock divider, register value> pairs.
-> So add new compatible strings 'nxp,s32g2-i2c'and 'nxp,s32g3-i2c'
-> for S32G2/S32G3 Socs.
+On Mon, Nov 04, 2024 at 10:47:25AM +0100, Matthias Schiffer wrote:
+> The TQMa62xx is a SoM family with a pluggable connector. The MBa62xx is
+> the matching reference/starterkit carrier board.
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
+Why all the wildcards? Why isn't there a compatible per device in the
+family?
 
 >=20
-> Signed-off-by: Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>
+> Signed-off-by: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
 > ---
->  Documentation/devicetree/bindings/i2c/i2c-imx.yaml | 4 ++++
->  1 file changed, 4 insertions(+)
+>  Documentation/devicetree/bindings/arm/ti/k3.yaml | 7 +++++++
+>  1 file changed, 7 insertions(+)
 >=20
-> diff --git a/Documentation/devicetree/bindings/i2c/i2c-imx.yaml b/Documen=
-tation/devicetree/bindings/i2c/i2c-imx.yaml
-> index 85ee1282d6d2..0682a5a10d41 100644
-> --- a/Documentation/devicetree/bindings/i2c/i2c-imx.yaml
-> +++ b/Documentation/devicetree/bindings/i2c/i2c-imx.yaml
-> @@ -18,6 +18,7 @@ properties:
->        - const: fsl,imx1-i2c
->        - const: fsl,imx21-i2c
->        - const: fsl,vf610-i2c
-> +      - const: nxp,s32g2-i2c
->        - items:
->            - enum:
->                - fsl,ls1012a-i2c
-> @@ -54,6 +55,9 @@ properties:
->                - fsl,imx8mn-i2c
->                - fsl,imx8mp-i2c
->            - const: fsl,imx21-i2c
-> +      - items:
-> +          - const: nxp,s32g3-i2c
-> +          - const: nxp,s32g2-i2c
+> diff --git a/Documentation/devicetree/bindings/arm/ti/k3.yaml b/Documenta=
+tion/devicetree/bindings/arm/ti/k3.yaml
+> index b0be02f9d1253..d8b52b95fba7b 100644
+> --- a/Documentation/devicetree/bindings/arm/ti/k3.yaml
+> +++ b/Documentation/devicetree/bindings/arm/ti/k3.yaml
+> @@ -73,6 +73,13 @@ properties:
+>            - const: toradex,verdin-am62          # Verdin AM62 Module
+>            - const: ti,am625
 > =20
->    reg:
->      maxItems: 1
+> +      - description: K3 AM625 SoC on TQ-Systems TQMa62xx SoM
+> +        items:
+> +          - enum:
+> +              - tq,am625-tqma6254-mba62xx # MBa62xx base board
+> +          - const: tq,am625-tqma6254
+> +          - const: ti,am625
+> +
+>        - description: K3 AM642 SoC
+>          items:
+>            - enum:
 > --=20
-> 2.45.2
+> TQ-Systems GmbH | M=FChlstra=DFe 2, Gut Delling | 82229 Seefeld, Germany
+> Amtsgericht M=FCnchen, HRB 105018
+> Gesch=E4ftsf=FChrer: Detlef Schneider, R=FCdiger Stahl, Stefan Schneider
+> https://www.tq-group.com/
 >=20
 
---v9eOVK6j83W6+2yi
+--EATJd2ZSzXL2Ixpt
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZykWDQAKCRB4tDGHoIJi
-0v8DAP9XNX1ulct9ojS/foqv8ALtBOLXzFnt7aMuq3U19E2PBAEA/KdNUxINJJt1
-gfRtCEPII6vTAjZsDFZkIl1RvT4MFQA=
-=eMVA
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZykWrwAKCRB4tDGHoIJi
+0jo3AQC+LelXQR2pEsAaZyVgw5FfWNOZ0ohjhWoy+Oi8MG8yzgEAtUuldRsTZUU+
+yG2hlyDNYR07kMS1/Md+DDOKJb2DJQ4=
+=lA4g
 -----END PGP SIGNATURE-----
 
---v9eOVK6j83W6+2yi--
+--EATJd2ZSzXL2Ixpt--
 
