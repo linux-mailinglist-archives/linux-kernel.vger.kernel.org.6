@@ -1,120 +1,119 @@
-Return-Path: <linux-kernel+bounces-394241-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394242-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61B039BAC53
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 07:07:12 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B82369BAC56
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 07:07:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 056C5B21855
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 06:07:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A13B1F22139
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 06:07:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 190DE18C02F;
-	Mon,  4 Nov 2024 06:07:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4C7A18C32C;
+	Mon,  4 Nov 2024 06:07:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M3vrlsfg"
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Ps0ZnanM"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F86E189914;
-	Mon,  4 Nov 2024 06:06:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C2E718BC0D;
+	Mon,  4 Nov 2024 06:07:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730700421; cv=none; b=ozEH45Dt75hvhwK1rdYSXfrtAZ+3BYKK66ITZxFCjFpfASmmvIktveOwv+AdJzeDg89V/nbqqEazXYAs3lomQ4BPXwb0JOIQElf4iB9fuhzZN65lXpxA1fyCBm6VL96Nx9UY7xrFaYZzw4WAoTpxBeOEcm970L0X4tDmn3/s8js=
+	t=1730700454; cv=none; b=DxgYEREguWrTF9rRBDrlDej1fPnqbJbmNy6g4OHxhxVqb64Cdqy/NLDvShsqyIZbMRN8Wwh/pEHqNrViqI4GBFGr7Zg76HYJGYALG+Tjf8IRVsgDxnb+MuYwIWS63KIXs+ckbxIerWtBJWmYntx0g0F9N3G+7OKb5hhv4j/BObA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730700421; c=relaxed/simple;
-	bh=EZnJdlfz5hvZ6tAgtg48RQwQz7DoCasQ1QKR1j1/LAY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=g/0LUKsytw4aQh5QVM/NmrQd3AVf2UiGwYpJCNcV2G1zpfLayNIBJ0lnE26WHUj6lDcZz294y1thqnwyJvjwQRz+oIUEVOt1Vl0RTE0Vr0AAwzw1FXV3NRlfVy1FrW3GKwfNsgchN2nCa/U/8ThgS22EtNPsPkEG34FNOPTzdZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=M3vrlsfg; arc=none smtp.client-ip=209.85.208.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2fb5fa911aaso53323311fa.2;
-        Sun, 03 Nov 2024 22:06:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730700418; x=1731305218; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=m6jQkrpv3MdS+5xKVIFE6860tge3gxXMaWgpp2Uy0w8=;
-        b=M3vrlsfgaO4Ya5MMFh+4t1kMQKekv0oE8E7i6pjsQLZb4/sOBpyN8hGd42cM0J7Hfm
-         dGPM+TW5/KAekCy8z35ePqsIB3Q76MvuPzSk1+MDaGe12m8xYJh0k9mXpssvAJH61EVO
-         1Zj2wzPiHV6SqNcJGzhPMSt99l1Ytn1pJ73Wp0mZRJ0a+ClgSREFRMlLppqu4dmrGlpk
-         ub1CDyUQy/wZXznZHsXzHC75fcZSJm9KAVMIDnq7xf34i+lOxQCRw/RQscPt19PwvpM4
-         UyMXiGLcnloePLhUH0RmwP2FcvfhFxbmzEJ4iIsoM9BeSjamEo3YDW5D5iOpMe1N6atF
-         muNw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730700418; x=1731305218;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=m6jQkrpv3MdS+5xKVIFE6860tge3gxXMaWgpp2Uy0w8=;
-        b=IqofcMwTkJIaes+ZT96risE7B7+tkvOMlZvNT+gHZE37e4umK9uJNmeDcDwg0uhwUo
-         8Co8DMZ8vi23cs5YwJDxxA9MKZxRv7wc2s0AKZmN3uVY7YmlGS2afpaIQPTX5Xy3RAW4
-         FQmAZF7vb71miWbtDadLOe19Bn9dskSmvSKF4P9R+EDsJbOk12WS72NlhnFt2EMn3US0
-         uRB10co+PIsHyM++sTreKwFz0EoGsYg18foMB7JYjwEGhTVGmtkOzCbpW+k/+T3IxQ4z
-         ehlA93WDfa3TrzCZrk5UQOtjLFF7Ks96rMJWzQdn7V9opFABCtzE9MLOtmOTuCFptcK2
-         d89Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWWxDPwGbid+KqwLZbRGaT+bF0r9rEmX3nW9cMCaWIlHd8W/vjmsoerQJWMEfaLISBrrkSURuxrZeJd@vger.kernel.org, AJvYcCXVMnGpwLk0Mgjp95Kph8N5o7p1qZcNp3ZYm9RZH+hHNeuOcA1DnTAMJKRLzUYBDHYfAHTe1EcSpxdKhRve@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyw8i3PSENYi1ceqJqgPum3/YLhkx+OIUn13bF+jZY3PbKr3tPh
-	ZdZ4uDtpTTdNYL+fQXAbz8atonK+1a6kpGh+cHarJNV0MFdig7Xhh4knKmYG
-X-Google-Smtp-Source: AGHT+IEQoFtFhAEtNK1sLHmReP5ogTKOoTOKksUbZIT3SlZPpjCKyRUuyr0b78o4npcXlMhtfo+jkA==
-X-Received: by 2002:a2e:a908:0:b0:2fb:2a1c:936d with SMTP id 38308e7fff4ca-2fedb7a1fd0mr75423731fa.10.1730700417856;
-        Sun, 03 Nov 2024 22:06:57 -0800 (PST)
-Received: from ?IPV6:2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703? ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2fdef3b8c91sm15148751fa.18.2024.11.03.22.06.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 03 Nov 2024 22:06:56 -0800 (PST)
-Message-ID: <bf50b6c0-af1a-4c7f-9c3e-ffbd3da87a80@gmail.com>
-Date: Mon, 4 Nov 2024 08:06:53 +0200
+	s=arc-20240116; t=1730700454; c=relaxed/simple;
+	bh=SUcaGBKEuufKEAxOQUtGgQ/TxG/c5ajxrCwDGqg9WOs=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=XXZLnjcK9hUTOLs5HQoTg9CmairXI9kCdcw5cpIo7u1eLjqsS9/ZKqS+mO2X8Z1t9gjCxTK5ncwQkF2j6fxsU76bp6+0MzwYi/6LaW2Go6m2vGqO4Q41+vwMmR4x5ID9OdAgv1SFBrMAsrGhfHhG2qc6Vx2cS0quZ56N0z6aCiQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Ps0ZnanM; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A3NLDH7026361;
+	Mon, 4 Nov 2024 06:07:28 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:date:from:message-id:subject:to; s=qcppdkim1; bh=s54UzP9JI7D6
+	AHRbqCrzy1vQqY3KlXI1sJJvVnKYbAw=; b=Ps0ZnanMIyEgwScbinIV9xVmWdgD
+	+4J+sk2zVSWUH1Kfd9SXdzY1/PrDXYCcNTtjBooeIQqgPas6NTDKAv2N2nak0ai+
+	31RTIH10P3Lh7J26fefH7kicg3Cm8MXuGn2NGMFUb3rDqE6Mz3mI25O5Uxtm2zUl
+	mmyVohDl6C9s8SYOEhFPkywG+sSnM0J8e1cR1FQInxa2WM20DIplrbpUEuVVA2Ml
+	c9doVL+Sv/XDB5DgdU8579EGrVFIbPQ4Xj/h3f6yxk4oI/ZqC1gy93b13DfDkprw
+	EgFMTkxIAzx/NDvgSR3h/XTQLegCAXqBROyWfbvNlioDepydUeVEhpmRig==
+Received: from apblrppmta01.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42ndc6u5kr-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 04 Nov 2024 06:07:28 +0000 (GMT)
+Received: from pps.filterd (APBLRPPMTA01.qualcomm.com [127.0.0.1])
+	by APBLRPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 4A467PNw025939;
+	Mon, 4 Nov 2024 06:07:25 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTPS id 42nd5kqw7e-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+	Mon, 04 Nov 2024 06:07:25 +0000
+Received: from APBLRPPMTA01.qualcomm.com (APBLRPPMTA01.qualcomm.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 4A467OFO025930;
+	Mon, 4 Nov 2024 06:07:24 GMT
+Received: from hu-maiyas-hyd.qualcomm.com (hu-sartgarg-hyd.qualcomm.com [10.213.105.147])
+	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTP id 4A467O31025928;
+	Mon, 04 Nov 2024 06:07:24 +0000
+Received: by hu-maiyas-hyd.qualcomm.com (Postfix, from userid 2339771)
+	id D8BCA5001D1; Mon,  4 Nov 2024 11:37:23 +0530 (+0530)
+From: Sarthak Garg <quic_sartgarg@quicinc.com>
+To: Adrian Hunter <adrian.hunter@intel.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Cc: linux-mmc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, quic_cang@quicinc.com,
+        quic_nguyenb@quicinc.com, quic_rampraka@quicinc.com,
+        quic_pragalla@quicinc.com, quic_sayalil@quicinc.com,
+        quic_nitirawa@quicinc.com, quic_sachgupt@quicinc.com,
+        quic_bhaskarv@quicinc.com, quic_narepall@quicinc.com,
+        kernel@quicinc.com, Sarthak Garg <quic_sartgarg@quicinc.com>
+Subject: [PATCH V1] mmc: sdhci-msm: Enable MMC_CAP_AGGRESSIVE_PM for qualcomm controllers
+Date: Mon,  4 Nov 2024 11:37:22 +0530
+Message-Id: <20241104060722.10642-1-quic_sartgarg@quicinc.com>
+X-Mailer: git-send-email 2.17.1
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 1_M2nQvFUXWR3diDO2n51JqGIgmHLkqC
+X-Proofpoint-GUID: 1_M2nQvFUXWR3diDO2n51JqGIgmHLkqC
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ lowpriorityscore=0 mlxlogscore=999 adultscore=0 clxscore=1011 mlxscore=0
+ phishscore=0 impostorscore=0 suspectscore=0 malwarescore=0 bulkscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411040053
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dt-bindings: mfd: bd71828: Use charger resistor in mOhm
- instead of MOhm
-To: Rob Herring <robh@kernel.org>, Andreas Kemnade <andreas@kemnade.info>
-Cc: lee@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, sre@kernel.org
-References: <20241029111112.33386-1-andreas@kemnade.info>
- <20241101192705.GA4062121-robh@kernel.org>
-Content-Language: en-US, en-AU, en-GB, en-BW
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-In-Reply-To: <20241101192705.GA4062121-robh@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
 
-On 01/11/2024 21:27, Rob Herring wrote:
-> On Tue, Oct 29, 2024 at 12:11:12PM +0100, Andreas Kemnade wrote:
->> Apparently there was some confusion regarding milliohm vs. megaohm.
->> (m/M). Use microohms to be able to properly specify the charger
->> resistor like other drivers do. This is not used yet by mainline code
->> yet. Specify a current sense resistor in milliohms range rathes then
->> megaohms range in the examples.
-> 
-> milliohms?
-> 
-> rathes?
-> 
->>
->> CC: sre@kernel.org
->> Reported-by: Matti Vaittinen <mazziesaccount@gmail.com>
->> Closes: https://lore.kernel.org/imx/6dcd724a-a55c-4cba-a45b-21e76b1973b0@gmail.com/T/#mf590875a9f4d3955cd1041d7196ff0c65c0a7e9d
->> Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
->> ---
->>   .../devicetree/bindings/mfd/rohm,bd71828-pmic.yaml  | 13 +++++++------
->>   1 file changed, 7 insertions(+), 6 deletions(-)
-> 
-> Looks like rohm,bd71815-pmic.yaml has the same problem.
+Enable MMC_CAP_AGGRESSIVE_PM for qualcomm controllers.
+This enables runtime PM for eMMC/SD card.
 
-Yes! Thanks for pointing it out. I'll wait for a while if Andreas wants 
-to fix them both at the same go. I'll send a fix for BD71815 if I've not 
-seen one in a week or so :)
+Signed-off-by: Sarthak Garg <quic_sartgarg@quicinc.com>
+---
+ drivers/mmc/host/sdhci-msm.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Yours,
-     --Matti
+diff --git a/drivers/mmc/host/sdhci-msm.c b/drivers/mmc/host/sdhci-msm.c
+index e00208535bd1..6657f7db1b8e 100644
+--- a/drivers/mmc/host/sdhci-msm.c
++++ b/drivers/mmc/host/sdhci-msm.c
+@@ -2626,6 +2626,7 @@ static int sdhci_msm_probe(struct platform_device *pdev)
+ 		goto clk_disable;
+ 	}
+ 
++	msm_host->mmc->caps |= MMC_CAP_AGGRESSIVE_PM;
+ 	msm_host->mmc->caps |= MMC_CAP_WAIT_WHILE_BUSY | MMC_CAP_NEED_RSP_BUSY;
+ 
+ 	/* Set the timeout value to max possible */
+-- 
+2.17.1
+
 
