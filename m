@@ -1,110 +1,149 @@
-Return-Path: <linux-kernel+bounces-394367-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394368-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42AEB9BAE08
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 09:27:30 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CF1F9BAE0B
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 09:28:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EEB7C1F22E2E
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 08:27:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8C928B21E3B
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 08:28:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C694F1AB51F;
-	Mon,  4 Nov 2024 08:27:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EEAB1AB507;
+	Mon,  4 Nov 2024 08:28:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N8z6Nl+J"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="G/GsfVUA"
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29D3B18BC0E;
-	Mon,  4 Nov 2024 08:27:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51C2419D086
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 08:28:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730708839; cv=none; b=d8umCQ+bneNQjM/tFN5x9ZgfE6zyNJzOaWt4LosP+YsHxjuFukI16IDjsmX0bOIqgcBYHtC3Cef1T/B2hlEi3+ASXjn+MkdP1KkwkXFbtxXAxK/ZZYBPdf3LCj1DNWEuujhK7S+DumO+J40IF0MNfQ+RJ98Z4wsGhpAdf+g+EHA=
+	t=1730708920; cv=none; b=dkrtCkbR3Mu+x69ynhPjkKy90IMHJH5otfjioHbiifb63I3PpjSFWZ34zWOFwcK642As+EZZjP1Ib/cLp1DnydNQI2714noRdV671eJ8n7UgPMqB7x9QoLSuHQZK//geaQ9md12Tj5mUMgVrFY3e+HAiiFMiT6Vu9hGcZXfj388=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730708839; c=relaxed/simple;
-	bh=OTtLPqoJ6FCGvPLO0Kk2ILGo2IyH9hAY+6Hic5r0rYQ=;
+	s=arc-20240116; t=1730708920; c=relaxed/simple;
+	bh=DMxdTs3P5a3spdGv0N8uVHm9YCakqkMYGmZziRgyw4o=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iaI7O9uc6ollNs/m8dRFBub7/Lr9BmymH6URlYR8UHKAVbbMVqd9Z17SwIatcoxU8CG4xi/foGqiLHNubkkdvqytDDVQiueOKLQxZpG6MpA3eBy8iuOBZejsXbIY8nSpK0lJS8/Ti4sZcl+76O5tShlZ+Ifygv27KhU85kMAjwY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N8z6Nl+J; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EE584C4CECE;
-	Mon,  4 Nov 2024 08:27:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730708838;
-	bh=OTtLPqoJ6FCGvPLO0Kk2ILGo2IyH9hAY+6Hic5r0rYQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=N8z6Nl+JJkVg59R6R97DmusBAZrpSl8nx4bhv2nOAtnH9HnlhB7ewO77Z4AQhry2M
-	 wFQ43vPU+pVPEhqMmjpYPC4vd7ShQ6f8SFhIyUoSFlIBpwlTHg8uu4A3YVdBd2FDn+
-	 XH4OyMc7TMsLBbSgyp4K7JfcC4SCKFATIRfzVIDYXcv+vqLN/0VK7bDGVjeLS8u3jh
-	 By4IsSQZLL9deCMnjJh3XXQ7TOC1Ly1ITMyGX4c2Cwbh0OCbXYVstllhrXqAVwroCK
-	 iYy/4Wi8vpJmP80uh/JVMQyLk/RogYise5789tzWty611Ya8WY6klI24aO+Ko0roRv
-	 LaYmMGOzx5Thw==
-Date: Mon, 4 Nov 2024 10:27:10 +0200
-From: Leon Romanovsky <leon@kernel.org>
-To: Jakub Kicinski <kuba@kernel.org>, Jason Gunthorpe <jgg@nvidia.com>
-Cc: Edward Srouji <edwards@nvidia.com>, linux-kernel@vger.kernel.org,
-	linux-rdma@vger.kernel.org, netdev@vger.kernel.org,
-	Saeed Mahameed <saeedm@nvidia.com>,
-	Tariq Toukan <tariqt@nvidia.com>, Yishai Hadas <yishaih@nvidia.com>
-Subject: Re: [PATCH rdma-next 0/2] Introduce mlx5 data direct placement (DDP)
-Message-ID: <20241104082710.GB99170@unreal>
-References: <cover.1725362773.git.leon@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=nBe1QWuWE0BcwGvxTrdU8INHDG5BGqZBqr+k6C7Gqe3VwVQrgwJEWs6yn+dYNxBl0Zuh3G8VptO6fnhWIdZFN0OTQf1mR76LUEiQIMmBMc2SQyjV9KcueR0DGSZM9UITGYtbQwaILPd44e9Rp9I0RkohWlyZmWp/bbYl1imzQdk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=G/GsfVUA; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-53a097aa3daso3563832e87.1
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 00:28:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1730708916; x=1731313716; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Sm0NqV/gx7zKCxHVaS9AeFPFUpX+otR+14tFIsVp0BU=;
+        b=G/GsfVUAorj7e42iDeumS1SH+yoOgsB2r/NcR7eDW1/VxjIKutrvneflZel2QFBhMq
+         oBd7jSHmaaiJC/3zQr+tCHcYZM7vOdtVGpQMoWgfNqRlB+gKIeIbJyPnWgTPbDKvcHrC
+         tZM3FzoiQdXmjb691+VuHZmOKejiHTsfkIaoZOKMEdYof77fYgL4KiFJbg6F3g0QM97x
+         LoLDQ1sSRl2f4YKN/ysYZMONloizH5xQoWtRmWXgJjIsl5rPzNe/2sUb6X79VSc6nr35
+         jZ24fQVZ9qicxWn/zKNxRRUttxO33qfq6SzrEUI38LAmZGCvgBU0GRK81ZLuDy9+IadY
+         KyiQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730708916; x=1731313716;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Sm0NqV/gx7zKCxHVaS9AeFPFUpX+otR+14tFIsVp0BU=;
+        b=cHdSr18AM4c72VLVxTAKj+pQ14FY89M+vguGMfjIPm/vvlCgiOTqQYBCEzDQtTDk1j
+         EwdNToWe2Cyhij9ZV7fqNzOV50I7LXAS/u2TLIN341mq+FhJ65nnm4b/HQ8GQfLL/zEE
+         wYIv/HG5lhDxd00YDBGHLIC56Ce5xCwaSz7BWdIw0Zbm4LVSZCQdEhdkzyagvxalHit0
+         5Ac+9mSpLOAhwEkzyWKljnjf5KYglqa/VgiBDHojNOcd2JZthS7MtM+tA2I903ooUqZy
+         yzxowlhDnT218QSlBspRzBfY2RoHjLvww9HIg4srCxhdujKyosXpLh5Am8JxrR4m2C5E
+         l2zw==
+X-Forwarded-Encrypted: i=1; AJvYcCUCsGkXheen05I6CiCtbrSIpfrWK2703aPtbzS5mbso/gDSOs0aLc941jTYI9zgqibONK8UCy/dYCKLP2g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwBGeUX7WDIvcfCVZrdZx1oHtGI3P6uqrHXTlRHA9r6hQ42PFwb
+	O4xIrImk7OLlvBthn/6eM2Sp0ceJz2nhaZ0U5w80sJGrqL8uKxaAXb/XLz1FYQE=
+X-Google-Smtp-Source: AGHT+IGLgVkoTtf12XBD4Hn20M4ZZFpHNiXrpMjOAFmET6eMB53wq32OvLmDjh9GwGxQ818JQEEEKw==
+X-Received: by 2002:a05:6512:2809:b0:52e:987f:cfc6 with SMTP id 2adb3069b0e04-53d65e25188mr4490074e87.51.1730708916242;
+        Mon, 04 Nov 2024 00:28:36 -0800 (PST)
+Received: from localhost (p50915d2d.dip0.t-ipconnect.de. [80.145.93.45])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381c10e7435sm12580653f8f.52.2024.11.04.00.28.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 04 Nov 2024 00:28:35 -0800 (PST)
+Date: Mon, 4 Nov 2024 09:28:34 +0100
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+To: Baolin Wang <baolin.wang@linux.alibaba.com>
+Cc: Stanislav Jakubek <stano.jakubek@gmail.com>, 
+	Orson Zhai <orsonzhai@gmail.com>, Chunyan Zhang <zhang.lyra@gmail.com>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, linux-pwm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: pwm: sprd,ums512-pwm: convert to YAML
+Message-ID: <jjfajijz7xkh6rh4ekmvta5rum7tod4ts2j3y7sbdkbhkcgryr@6bbxclrkyzgq>
+References: <ZyH-JASRcpMXYsmH@standask-GA-A55M-S2HP>
+ <ielio4ys77kgo5qsvrbbqfg6yzlit33yun4leei2giplbedsc4@5qmkwgvqe6xl>
+ <84dfe382-65d8-4743-84ba-d70699b6f5e7@linux.alibaba.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="sjemf23l2yoec6ux"
 Content-Disposition: inline
-In-Reply-To: <cover.1725362773.git.leon@kernel.org>
-
-On Tue, Sep 03, 2024 at 02:37:50PM +0300, Leon Romanovsky wrote:
-> From: Leon Romanovsky <leonro@nvidia.com>
-> 
-> Hi,
-> 
-> This series from Edward introduces mlx5 data direct placement (DDP)
-> feature. 
-> 
-> This feature allows WRs on the receiver side of the QP to be consumed
-> out of order, permitting the sender side to transmit messages without
-> guaranteeing arrival order on the receiver side.
-> 
-> When enabled, the completion ordering of WRs remains in-order,
-> regardless of the Receive WRs consumption order.
-> 
-> RDMA Read and RDMA Atomic operations on the responder side continue to
-> be executed in-order, while the ordering of data placement for RDMA
-> Write and Send operations is not guaranteed.
-> 
-> Thanks
-> 
-> Edward Srouji (2):
->   net/mlx5: Introduce data placement ordering bits
-
-Jakub,
-
-We applied this series to RDMA and first patch generates merge conflicts
-in include/linux/mlx5/mlx5_ifc.h between netdev and RDMA trees.
-
-Can you please pull shared mlx5-next branch to avoid it?
-
-Thanks
+In-Reply-To: <84dfe382-65d8-4743-84ba-d70699b6f5e7@linux.alibaba.com>
 
 
->   RDMA/mlx5: Support OOO RX WQE consumption
-> 
->  drivers/infiniband/hw/mlx5/main.c    |  8 +++++
->  drivers/infiniband/hw/mlx5/mlx5_ib.h |  1 +
->  drivers/infiniband/hw/mlx5/qp.c      | 51 +++++++++++++++++++++++++---
->  include/linux/mlx5/mlx5_ifc.h        | 24 +++++++++----
->  include/uapi/rdma/mlx5-abi.h         |  5 +++
->  5 files changed, 78 insertions(+), 11 deletions(-)
-> 
-> -- 
-> 2.46.0
-> 
-> 
+--sjemf23l2yoec6ux
+Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH] dt-bindings: pwm: sprd,ums512-pwm: convert to YAML
+MIME-Version: 1.0
+
+Hello,
+
+On Mon, Nov 04, 2024 at 10:52:09AM +0800, Baolin Wang wrote:
+> On 2024/11/4 04:24, Uwe Kleine-K=F6nig wrote:
+> > thanks for your patch, looks fine for me.
+> >=20
+> > On Wed, Oct 30, 2024 at 10:36:36AM +0100, Stanislav Jakubek wrote:
+> > > +maintainers:
+> > > +  - Orson Zhai <orsonzhai@gmail.com>
+> > > +  - Baolin Wang <baolin.wang7@gmail.com>
+> > > +  - Chunyan Zhang <zhang.lyra@gmail.com>
+> >=20
+> > An Ack from (at least one of) them would be great. I see Baolin Wang in
+>=20
+> Sorry for late reply. Look good to me though I'm not a DT schema expert. =
+So
+> Acked-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+>=20
+> > the recipients of this mail, but with a different address. Does the
+> > maintainer entry need updating?
+>=20
+> No need, I have already done the mail mapping:)
+
+Having an entry in .mailmap doesn't justify adding old/wrong email
+addresses. If your linux.alibaba.com address is the one that should be
+used, it should be listed here. Not everyone consults .mailmap before
+sending mail.
+
+If you agree I just substitute your address while applying.
+
+Best regards
+Uwe
+
+--sjemf23l2yoec6ux
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmcoha8ACgkQj4D7WH0S
+/k7nWQf+J9uiA1Rlu4ZD0jh6NqCygKQYHecAuykrLL79C4krqWgnAWc+ioV57EhP
+s2xp/VIycQfdFmbbOMtuWfVuBu6yq9sm9GKvR3jgU4UvNDo9rTMDkh41XdYvlypE
+o//QisOGsUEv9e7xoRcdFSw1GL7YvtKiOJ9i98Pa4bqIj2idZ7nSfCxrGWWVeO0a
+0WX9KWw6AzAUTpN2HjQYbJe15mT50nHpeWn5iurbX1NZhzYlmsPLxqVqll+6SoWn
+8pMkJTgsDWVC6ZzrmO0VtLcKmZMA7K4F1bdgRqC9VLffWcUGExkId/zTiMufVj9d
+c9RTKEUIiBn1Y1qG2rH9pEq40GbppA==
+=zE8Y
+-----END PGP SIGNATURE-----
+
+--sjemf23l2yoec6ux--
 
