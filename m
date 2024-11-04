@@ -1,174 +1,220 @@
-Return-Path: <linux-kernel+bounces-395211-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395213-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7754C9BBA57
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 17:27:07 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F9189BBA5B
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 17:28:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 04F2CB22488
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 16:27:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4262F1C21785
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 16:28:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52A6F1C3034;
-	Mon,  4 Nov 2024 16:26:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F83A1C2335;
+	Mon,  4 Nov 2024 16:28:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dNQN7FN9"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="vUxy+76d";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="5wKubNt2"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8EE84A08;
-	Mon,  4 Nov 2024 16:26:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AA0D4A08;
+	Mon,  4 Nov 2024 16:28:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730737608; cv=none; b=rhRIu5GTDSAavPb/jWxYo+sLNj5qeHgqeezxPovx/mAz+hiPZFLJC2SqPJHJ8tebBsulkjXMs3mPnzhtK5cPYp7PQaIvYUXr2w0sJQfvP1tIryIfn2ceX6BtCtmkflG7e/ETxFSZtC3Ex42uVzWKebIYpgeCE9xESUi6R01hE5Q=
+	t=1730737721; cv=none; b=Rscge52TbztiXul3LYdOc1LtQqG0ohyqDWZjc0cdxYNBXTaT9IVSqOdibpdAYj2vVsGw1MQ0o8PFNS7LkEKabWzEakgx8Rr7B1qTeYdSJuK4ikDnGcNMpJoCEztwlc4V6TP1fIxCV/j61YORU+2z55DwpD4GxstTuZb9rUISvBc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730737608; c=relaxed/simple;
-	bh=iVHZaWIxb1vbiCD6AvV5gqbVLV2k3/LS/b1t9CjFQZ4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kEqqW42HzwUu8njmTq5v06tVpoUH4pNEOEkMtZTeZb/cIty8RDXhXKVnHP0oygkXnK3JDBXh4UrAdlDrPWt4khQEwdW72WFlsDNx/u6BddIXF+Tz7Pvp6ar6DyJtKzqSJbS0FH9wctpnJh0KMm58fkp5PcntUq6YlnuKECuvejA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dNQN7FN9; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730737607; x=1762273607;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=iVHZaWIxb1vbiCD6AvV5gqbVLV2k3/LS/b1t9CjFQZ4=;
-  b=dNQN7FN9PpoIn20p1YbTqbiBEDVn+IEnP8Icgou4mPD7Ix/e9EmF6847
-   BfdD7xIg1e6csk4LtJh7c/zqIjJWG4TiUvT8G+pb7HzIFKC3NYoMeuC0k
-   wqlLLmgxy1Wy0jvvwlLFry64W02K1wk8OJHen8TfsbvsWsafpE4qjQltJ
-   URpXAAenyyB22a7lsnvy2aIuKTpBhmUn5TLFERojwWyBGpyL4vcLE5mwv
-   vP1E9mwhsz1/w4cWH1zH1BP6DeBn3dsFwApF+LfTEOnchD1NaMCS8WAHB
-   8sbrUcxoMlTBrBuXS2GLTeM1UW3Qn0BRSaXJ1GZ+WxtsL9iBw965zqCLi
-   g==;
-X-CSE-ConnectionGUID: VUHqm79tTvK7tLON3qaW/g==
-X-CSE-MsgGUID: Y3UyqmeAQ6a6vxXfLCXbEA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="41549021"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="41549021"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2024 08:26:46 -0800
-X-CSE-ConnectionGUID: ILa6z2FFSoeyqMIr75+u2g==
-X-CSE-MsgGUID: coYb8hJuTomn81C6XwiwAA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,257,1725346800"; 
-   d="scan'208";a="84049655"
-Received: from tfalcon-desk.amr.corp.intel.com (HELO [10.124.221.97]) ([10.124.221.97])
-  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2024 08:26:45 -0800
-Message-ID: <53c918b4-2e03-4f68-b3f3-d18f62d5805c@intel.com>
-Date: Mon, 4 Nov 2024 08:26:44 -0800
+	s=arc-20240116; t=1730737721; c=relaxed/simple;
+	bh=1R/Em5fCRSOK0NjH71GssW8QSlYQzsUdM7URV1RwhD8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GfbBhvJXiyRd6KH5KhE+EFBh1J+HmhrZk1s545q7pea+qtOyeToaOpKChzOkQxa3EtRRaOPOgiqbEuyLFDJbfYr0z3rpTyeg6zY6Vo+HnVUvBsojZNJWG+1nG5dqUbpXOhHkuTaaNI4LMUSC3LINq/OEkErrT9Z0NMQou3e32iQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=vUxy+76d; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=5wKubNt2; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Mon, 4 Nov 2024 17:28:32 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1730737715;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6jg03i2HOOyHrghHv90ujEbU+xepLRRkhBI0ZKP+Fm8=;
+	b=vUxy+76d/OOJGPok1D8si0OLswywxWeXl0IVefY4wS3UA6Lork9tiCRWNEiqJjTsvU3wB5
+	QnxOAjUxqB/9JoZLXGLmcq0NkqXAoy/xgUwHkg8mXU1srxxTkNzlIA/Bmy/6TA33vkcP+M
+	lbo16kWWoMu7EO3qoUu/rRfewiHuvfOnjrlwe2uMLGfX1vSy3mBL11CRhTuOFfT7AUult9
+	IONaNqxbMEhXe4/WimRIGdknrNowLOCOKCgf1O1ceMt/3GELokrEsBJAF8E7wzKow41nTj
+	AcVCqKq5wyOgVWRE+svj+bwHxKLFvzC9ZoxGsmnS/Itl5Rg3x5yZSU0u+MOEvg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1730737715;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6jg03i2HOOyHrghHv90ujEbU+xepLRRkhBI0ZKP+Fm8=;
+	b=5wKubNt2+FZCON3xpdYkEs+YhjDiMOv6tQfzEC8pkTVZoBwpmlCoDLaxRy1qbMmlcckeNZ
+	90bKNGpWDZipIMCg==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: syzbot <syzbot+d2adb332fe371b0595e3@syzkaller.appspotmail.com>
+Cc: andrii@kernel.org, ast@kernel.org, boqun.feng@gmail.com,
+	bpf@vger.kernel.org, daniel@iogearbox.net, eadavis@qq.com,
+	eddyz87@gmail.com, haoluo@google.com, john.fastabend@gmail.com,
+	jolsa@kernel.org, kpsingh@kernel.org, linux-kernel@vger.kernel.org,
+	longman@redhat.com, martin.lau@linux.dev, sdf@fomichev.me,
+	song@kernel.org, syzkaller-bugs@googlegroups.com,
+	yonghong.song@linux.dev, tglx@linutronix.de
+Subject: Re: [syzbot] [bpf?] WARNING: locking bug in bpf_map_put
+Message-ID: <20241104162832.OQvrGDiP@linutronix.de>
+References: <67251dc5.050a0220.529b6.015c.GAE@google.com>
+ <67283170.050a0220.3c8d68.0ad6.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] x86: cpu/bugs: add support for AMD ERAPS feature
-To: "Shah, Amit" <Amit.Shah@amd.com>,
- "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
- "x86@kernel.org" <x86@kernel.org>
-Cc: "corbet@lwn.net" <corbet@lwn.net>,
- "boris.ostrovsky@oracle.com" <boris.ostrovsky@oracle.com>,
- "kai.huang@intel.com" <kai.huang@intel.com>,
- "pawan.kumar.gupta@linux.intel.com" <pawan.kumar.gupta@linux.intel.com>,
- "jpoimboe@kernel.org" <jpoimboe@kernel.org>,
- "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
- "daniel.sneddon@linux.intel.com" <daniel.sneddon@linux.intel.com>,
- "Lendacky, Thomas" <Thomas.Lendacky@amd.com>,
- "seanjc@google.com" <seanjc@google.com>, "mingo@redhat.com"
- <mingo@redhat.com>, "pbonzini@redhat.com" <pbonzini@redhat.com>,
- "tglx@linutronix.de" <tglx@linutronix.de>, "Moger, Babu"
- <Babu.Moger@amd.com>, "Das1, Sandipan" <Sandipan.Das@amd.com>,
- "hpa@zytor.com" <hpa@zytor.com>, "peterz@infradead.org"
- <peterz@infradead.org>, "bp@alien8.de" <bp@alien8.de>,
- "Kaplan, David" <David.Kaplan@amd.com>
-References: <20241031153925.36216-1-amit@kernel.org>
- <20241031153925.36216-2-amit@kernel.org>
- <05c12dec-3f39-4811-8e15-82cfd229b66a@intel.com>
- <4b23d73d450d284bbefc4f23d8a7f0798517e24e.camel@amd.com>
- <bb90dce4-8963-476a-900b-40c3c00d8aac@intel.com>
- <b79c02aab50080cc8bee132eb5a0b12c42c4be06.camel@amd.com>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <b79c02aab50080cc8bee132eb5a0b12c42c4be06.camel@amd.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <67283170.050a0220.3c8d68.0ad6.GAE@google.com>
 
-On 11/4/24 08:13, Shah, Amit wrote:
-> I want to justify that not setting X86_FEATURE_RSB_CTXSW is still doing
-> the right thing, albeit in hardware.
+On 2024-11-03 18:29:04 [-0800], syzbot wrote:
+> syzbot has bisected this issue to:
+> 
+> commit 560af5dc839eef08a273908f390cfefefb82aa04
+> Author: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+> Date:   Wed Oct 9 15:45:03 2024 +0000
+> 
+>     lockdep: Enable PROVE_RAW_LOCK_NESTING with PROVE_LOCKING.
+> 
+> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=122a4740580000
+> start commit:   f9f24ca362a4 Add linux-next specific files for 20241031
+> git tree:       linux-next
+> final oops:     https://syzkaller.appspot.com/x/report.txt?x=112a4740580000
+> console output: https://syzkaller.appspot.com/x/log.txt?x=162a4740580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=328572ed4d152be9
+> dashboard link: https://syzkaller.appspot.com/bug?extid=d2adb332fe371b0595e3
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=174432a7980000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14ffe55f980000
+> 
+> Reported-by: syzbot+d2adb332fe371b0595e3@syzkaller.appspotmail.com
+> Fixes: 560af5dc839e ("lockdep: Enable PROVE_RAW_LOCK_NESTING with PROVE_LOCKING.")
+> 
+> For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
-Let's back up a bit.
+This is due to raw_spinlock_t in bucket::lock and the acquired
+spinlock_t underneath. Would it would to move free part outside of the
+locked section?
 
-In the kernel, we have security concerns if RSB contents remain across
-context switches.  If process A's RSB entries are left and then process
-B uses them, there's a problem.
-
-Today, we mitigate that issue with manual kernel RSB state zapping on
-context switches (X86_FEATURE_RSB_CTXSW).
-
-You're saying that this fancy new ERAPS feature includes a new mechanism
-to zap RSB state.  But that only triggers "each time a TLB flush happens".
-
-So what you're saying above is that you are concerned about RSB contents
-sticking around across context switches.  But instead of using
-X86_FEATURE_RSB_CTXSW, you believe that the new TLB-flush-triggered
-ERAPS flush can be used instead.
-
-Are we all on the same page so far?
-
-I think you're wrong.  We can't depend on ERAPS for this.  Linux doesn't
-flush the TLB on context switches when PCIDs are in play.  Thus, ERAPS
-won't flush the RSB and will leave bad state in there and will leave the
-system vulnerable.
-
-Or what am I missing?
+diff --git a/kernel/bpf/hashtab.c b/kernel/bpf/hashtab.c
+index b14b87463ee04..1d8d09fdd2da5 100644
+--- a/kernel/bpf/hashtab.c
++++ b/kernel/bpf/hashtab.c
+@@ -824,13 +824,14 @@ static bool htab_lru_map_delete_node(void *arg, struct bpf_lru_node *node)
+ 	hlist_nulls_for_each_entry_rcu(l, n, head, hash_node)
+ 		if (l == tgt_l) {
+ 			hlist_nulls_del_rcu(&l->hash_node);
+-			check_and_free_fields(htab, l);
+ 			bpf_map_dec_elem_count(&htab->map);
+ 			break;
+ 		}
+ 
+ 	htab_unlock_bucket(htab, b, tgt_l->hash, flags);
+ 
++	if (l == tgt_l)
++		check_and_free_fields(htab, l);
+ 	return l == tgt_l;
+ }
+ 
+@@ -1181,14 +1182,18 @@ static long htab_map_update_elem(struct bpf_map *map, void *key, void *value,
+ 	 * concurrent search will find it before old elem
+ 	 */
+ 	hlist_nulls_add_head_rcu(&l_new->hash_node, head);
+-	if (l_old) {
++	if (l_old)
+ 		hlist_nulls_del_rcu(&l_old->hash_node);
++	htab_unlock_bucket(htab, b, hash, flags);
++
++	if (l_old) {
+ 		if (!htab_is_prealloc(htab))
+ 			free_htab_elem(htab, l_old);
+ 		else
+ 			check_and_free_fields(htab, l_old);
+ 	}
+-	ret = 0;
++	return 0;
++
+ err:
+ 	htab_unlock_bucket(htab, b, hash, flags);
+ 	return ret;
+@@ -1433,14 +1438,15 @@ static long htab_map_delete_elem(struct bpf_map *map, void *key)
+ 
+ 	l = lookup_elem_raw(head, hash, key, key_size);
+ 
+-	if (l) {
++	if (l)
+ 		hlist_nulls_del_rcu(&l->hash_node);
+-		free_htab_elem(htab, l);
+-	} else {
++	else
+ 		ret = -ENOENT;
+-	}
+ 
+ 	htab_unlock_bucket(htab, b, hash, flags);
++
++	if (l)
++		free_htab_elem(htab, l);
+ 	return ret;
+ }
+ 
+@@ -1647,14 +1653,16 @@ static int __htab_map_lookup_and_delete_elem(struct bpf_map *map, void *key,
+ 		}
+ 
+ 		hlist_nulls_del_rcu(&l->hash_node);
+-		if (!is_lru_map)
+-			free_htab_elem(htab, l);
+ 	}
+ 
+ 	htab_unlock_bucket(htab, b, hash, bflags);
+ 
+-	if (is_lru_map && l)
+-		htab_lru_push_free(htab, l);
++	if (l) {
++		if (is_lru_map)
++			htab_lru_push_free(htab, l);
++		else
++			free_htab_elem(htab, l);
++	}
+ 
+ 	return ret;
+ }
+@@ -1851,15 +1859,12 @@ __htab_map_lookup_and_delete_batch(struct bpf_map *map,
+ 
+ 			/* bpf_lru_push_free() will acquire lru_lock, which
+ 			 * may cause deadlock. See comments in function
+-			 * prealloc_lru_pop(). Let us do bpf_lru_push_free()
+-			 * after releasing the bucket lock.
++			 * prealloc_lru_pop(). htab_lru_push_free() may allocate
++			 * sleeping locks. Let us do bpf_lru_push_free() after
++			 * releasing the bucket lock.
+ 			 */
+-			if (is_lru_map) {
+-				l->batch_flink = node_to_free;
+-				node_to_free = l;
+-			} else {
+-				free_htab_elem(htab, l);
+-			}
++			l->batch_flink = node_to_free;
++			node_to_free = l;
+ 		}
+ 		dst_key += key_size;
+ 		dst_val += value_size;
+@@ -1871,7 +1876,10 @@ __htab_map_lookup_and_delete_batch(struct bpf_map *map,
+ 	while (node_to_free) {
+ 		l = node_to_free;
+ 		node_to_free = node_to_free->batch_flink;
+-		htab_lru_push_free(htab, l);
++		if (is_lru_map)
++			htab_lru_push_free(htab, l);
++		else
++			free_htab_elem(htab, l);
+ 	}
+ 
+ next_batch:
 
