@@ -1,165 +1,102 @@
-Return-Path: <linux-kernel+bounces-394252-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394251-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3ED5E9BAC73
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 07:18:24 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44C689BAC70
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 07:18:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 70B501C2089C
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 06:18:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 09BAE281FFF
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 06:18:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13E7518DF89;
-	Mon,  4 Nov 2024 06:18:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B009185952;
+	Mon,  4 Nov 2024 06:18:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="hd1zx2oS"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YKlR3aGc"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F386818CC00;
-	Mon,  4 Nov 2024 06:18:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7BBCE552
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 06:17:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730701086; cv=none; b=ZjUuIxYtu6kOqZRbL/qoTfwYE4rhpYK2NZ4NiULcha6jUchV7peXptJHVldJleiI+hg+/89JXUHHm1uRhs6HL+dn208wEPkr3Z/9SK/sU5teZ0qjU7K7/TBZBdAWpnbN8azpV6SinbPs3FxhPUT3ndDmlfHNSM+DvzehgT04xus=
+	t=1730701082; cv=none; b=rD7AJzD1iOWVSdWVZMw0PoCT2UtXWl2AkZcK/WDj7sBgR4kn3eT158KCDX6BV90RrgHsn9KDG5Uj48A566tjAaxrlFSwwMFCrLDSYQk1nkExDR46nFkirYhc8mAqRvQGa44FtmTiOGw/wmk3CpE6yOv3ToOCZ/JYSqBbHWjfErE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730701086; c=relaxed/simple;
-	bh=kf73lXDv9ocArmuhHShudHik5NcfKKXQBWihK/qUA38=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=ZZfCLhLE/4sE4j6zSt/p2Vi1x3VgZGPS+mnj0GIfOjrWWrGQfXvwdvfz6Y0pPH16ALubEjA3GOTaTz72/Anm1+uwjWn8xcHMhx+RO+q9gx2M5EY1prQlhOzuC9Syfh25sfDpj17+pqfl3hEx8hRntdHY3yxWunCnSuKubDoIfCc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=hd1zx2oS; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A3MZbQi028240;
-	Mon, 4 Nov 2024 06:17:51 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	vFI/LlS1kryxpKHTB9pMut6HZM5dbPiK54teYpQZJbY=; b=hd1zx2oSdZQ1ga7V
-	vnRmRrrQxh70yH/y9RrvWjnQgllmxnyspnVlTD3MOHeMb0m0vp7nqM4gQMkV/vgx
-	9cfNwkh1TyM88awhY3p1xtBqTukTZHuNEEdwkH3vUOHjqrTDHTqp7UF7RKmCS9ze
-	iI//z14drMrek2Re+pPKru+SG954E+EeO6quGgTz+uHduuXDnUBofAEy5qZ5GBwu
-	1bWPGrjDBSCRLhp2SmE/65Fj7hdFdiehldgY3sn+cZgsvNUW8hapPX0p17fTYNP2
-	mijxGLBO4k0oHnoHWQhWAexT+qi434xfkbb+TVpvtnRkscIwg8Xf7lQ03KWerKuq
-	pX5oMQ==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42nd4uk851-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 04 Nov 2024 06:17:51 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4A46Hogw014307
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 4 Nov 2024 06:17:50 GMT
-Received: from [10.216.5.99] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 3 Nov 2024
- 22:17:46 -0800
-Message-ID: <aea4b392-3e1a-c8aa-f5da-99ec7d8e0d38@quicinc.com>
-Date: Mon, 4 Nov 2024 11:47:43 +0530
+	s=arc-20240116; t=1730701082; c=relaxed/simple;
+	bh=+p10IWtB1sSrA9yYFxJ5xn0FXS5OrAz3GX32mwmGlV0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bzhOAqa+aBy/oqrKqpE227vXT6Ad8OgxFY7E8a3yvEgvzJTI8THL5JfoEcz8ARnsn+cDUHeb4QFfTNNZpxTrTGcB1/0PV+qX4o3Cf6AUC2zgsH92/aWAkbh1rTs5/Bo+ZCwrxV0AUwlrsWmMgl0HgzwttTyVdE0ojkj2X4+Vyuo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YKlR3aGc; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1730701078;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Do/2TiELOGIeqU3m4GK74cp6r6SIjB0QSr9SYGDc+Tc=;
+	b=YKlR3aGc7hkVjYt/RGgYP4jqvaKMpwV4mp5SCaMo9/63RO07q9w0aoVi6RU0nNIo8LRBWn
+	A3n22N6cJLrT60ogTFdZIvnbZD9lTX0bUJetXgvE11cMIq5RbNbYyvDWfYwaM27UcYf5PE
+	oh0L9YBjVZgjCm2IQfX/F8Wenk/XXWc=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-533-2cIPdUKtPMy9hOiHaNGHWw-1; Mon,
+ 04 Nov 2024 01:17:57 -0500
+X-MC-Unique: 2cIPdUKtPMy9hOiHaNGHWw-1
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7F5A11955EE9;
+	Mon,  4 Nov 2024 06:17:55 +0000 (UTC)
+Received: from localhost (unknown [10.72.112.78])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id BF30719560AD;
+	Mon,  4 Nov 2024 06:17:52 +0000 (UTC)
+Date: Mon, 4 Nov 2024 14:17:48 +0800
+From: Baoquan He <bhe@redhat.com>
+To: Coiby Xu <coxu@redhat.com>
+Cc: kexec@lists.infradead.org, Ondrej Kozina <okozina@redhat.com>,
+	akpm@linux-foundation.org, Milan Broz <gmazyland@gmail.com>,
+	Thomas Staudt <tstaudt@de.ibm.com>,
+	Daniel P =?iso-8859-1?Q?=2E_Berrang=E9?= <berrange@redhat.com>,
+	Kairui Song <ryncsn@gmail.com>,
+	Jan Pazdziora <jpazdziora@redhat.com>,
+	Pingfan Liu <kernelfans@gmail.com>, Dave Young <dyoung@redhat.com>,
+	linux-kernel@vger.kernel.org, x86@kernel.org,
+	Dave Hansen <dave.hansen@intel.com>,
+	Vitaly Kuznetsov <vkuznets@redhat.com>,
+	Greg KH <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH v6 0/7] Support kdump with LUKS encryption by reusing
+ LUKS volume keys
+Message-ID: <ZyhnDBmhvsG2TZ5V@MiWiFi-R3L-srv>
+References: <20241029055223.210039-1-coxu@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH v3 2/3] PCI: qcom: Set linkup_irq if global IRQ handler is
- present
-Content-Language: en-US
-To: Bjorn Andersson <andersson@kernel.org>
-CC: Jingoo Han <jingoohan1@gmail.com>,
-        Manivannan Sadhasivam
-	<manivannan.sadhasivam@linaro.org>,
-        Lorenzo Pieralisi
-	<lpieralisi@kernel.org>,
-        =?UTF-8?Q?Krzysztof_Wilczy=c5=84ski?=
-	<kw@linux.com>,
-        Rob Herring <robh@kernel.org>, Bjorn Helgaas
-	<bhelgaas@google.com>,
-        <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <quic_mrana@quicinc.com>,
-        <quic_vbadigan@quicinc.com>
-References: <20241101-remove_wait-v3-0-7accf27f7202@quicinc.com>
- <20241101-remove_wait-v3-2-7accf27f7202@quicinc.com>
- <rbykc6qnqechpru4sehjvdo6iedeo4cankp3mwesdfnxyxsgs7@vj2p7wwfdqm7>
-From: Krishna Chaitanya Chundru <quic_krichai@quicinc.com>
-In-Reply-To: <rbykc6qnqechpru4sehjvdo6iedeo4cankp3mwesdfnxyxsgs7@vj2p7wwfdqm7>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: HAyAWGsjm5SWCq3nSvybY51u5DwEafJe
-X-Proofpoint-ORIG-GUID: HAyAWGsjm5SWCq3nSvybY51u5DwEafJe
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 malwarescore=0
- lowpriorityscore=0 bulkscore=0 phishscore=0 priorityscore=1501
- mlxlogscore=999 impostorscore=0 suspectscore=0 spamscore=0 mlxscore=0
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411040055
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241029055223.210039-1-coxu@redhat.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
+Hi Coiby,
 
+On 10/29/24 at 01:52pm, Coiby Xu wrote:
+> LUKS is the standard for Linux disk encryption, widely adopted by users,
+> and in some cases, such as Confidential VMs, it is a requirement. With 
+> kdump enabled, when the first kernel crashes, the system can boot into
+> the kdump/crash kernel to dump the memory image (i.e., /proc/vmcore) 
+> to a specified target. However, there are two challenges when dumping
+> vmcore to a LUKS-encrypted device:
 
-On 11/1/2024 9:00 PM, Bjorn Andersson wrote:
-> On Fri, Nov 01, 2024 at 05:04:13PM GMT, Krishna chaitanya chundru wrote:
->> In cases where a global IRQ handler is present to manage link up
->> interrupts, it may not be necessary to wait for the link to be up
->> during PCI initialization which optimizes the bootup time.
->>
->> So, set linkup_irq flag if global IRQ is present and In order to set the
->> linkup_irq flag before calling dw_pcie_host_init() API, which waits for
->> link to be up, move platform_get_irq_byname_optional() API
->> above dw_pcie_host_init().
->>
->> Signed-off-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
->> ---
->>   drivers/pci/controller/dwc/pcie-qcom.c | 5 ++++-
->>   1 file changed, 4 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
->> index ef44a82be058..474b7525442d 100644
->> --- a/drivers/pci/controller/dwc/pcie-qcom.c
->> +++ b/drivers/pci/controller/dwc/pcie-qcom.c
->> @@ -1692,6 +1692,10 @@ static int qcom_pcie_probe(struct platform_device *pdev)
->>   
->>   	platform_set_drvdata(pdev, pcie);
->>   
->> +	irq = platform_get_irq_byname_optional(pdev, "global");
->> +	if (irq > 0)
->> +		pp->linkup_irq = true;
-> 
-> This seems to only ever being used in dw_pcie_host_init(), would it make
-> sense to use a argument to the function to pass the parameter instead of
-> stashing it in the persistent data structure?
-> 
-dw_pcie_host_init() API is being used by multiple vendors under
-drivers/pci/controller/dwc/* it may not be ideal to change the argument
-here.
+I am doing RHEL code rebasing to upstream kernel, will review this next
+week.
 
-- Krishna Chaitanya.
-> Regards,
-> Bjorn
-> 
->> +
->>   	ret = dw_pcie_host_init(pp);
->>   	if (ret) {
->>   		dev_err(dev, "cannot initialize host\n");
->> @@ -1705,7 +1709,6 @@ static int qcom_pcie_probe(struct platform_device *pdev)
->>   		goto err_host_deinit;
->>   	}
->>   
->> -	irq = platform_get_irq_byname_optional(pdev, "global");
->>   	if (irq > 0) {
->>   		ret = devm_request_threaded_irq(&pdev->dev, irq, NULL,
->>   						qcom_pcie_global_irq_thread,
->>
->> -- 
->> 2.34.1
->>
->>
+Thanks
+Baoquan
+
 
