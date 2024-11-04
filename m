@@ -1,142 +1,120 @@
-Return-Path: <linux-kernel+bounces-394240-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394241-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA7649BAC4A
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 07:03:27 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61B039BAC53
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 07:07:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 17B101C2110C
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 06:03:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 056C5B21855
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 06:07:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB1B018BC37;
-	Mon,  4 Nov 2024 06:03:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 190DE18C02F;
+	Mon,  4 Nov 2024 06:07:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MSWywyYf"
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M3vrlsfg"
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0C6A44C7C;
-	Mon,  4 Nov 2024 06:03:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F86E189914;
+	Mon,  4 Nov 2024 06:06:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730700198; cv=none; b=XRrWk9zUKzf095doxunt+CaM63Yb6NVB3fkVsgyTX2NI54N1r7SplFqq/1ynuRTPpxosJkghiXmumHioen/RHNsxjtsJRNjDslpGPACgd6qIa/jjxLKolwlcbZ2vtgBOwEe8LRW8tOouXN2HY/UFTLuNbDf+kHLjUBDyc+MZyYk=
+	t=1730700421; cv=none; b=ozEH45Dt75hvhwK1rdYSXfrtAZ+3BYKK66ITZxFCjFpfASmmvIktveOwv+AdJzeDg89V/nbqqEazXYAs3lomQ4BPXwb0JOIQElf4iB9fuhzZN65lXpxA1fyCBm6VL96Nx9UY7xrFaYZzw4WAoTpxBeOEcm970L0X4tDmn3/s8js=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730700198; c=relaxed/simple;
-	bh=LYggjXp8GpI7PJACx8O6aW9vqmCc9mul1sf5sv1Dh2c=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VP0Ji2pRajR8p8WNPZF5FDcWOCZie5/k5Eh6uoCkNIJXTYWEdSwHRANds4gglGI8Q98vhn2026rjZyhSoZKpIaEzJjgQa0fTD6fnfadzpY0OpdwlS8/mNwh0Ocra8dxCuZv4g7mJ6Rz1b+wORFUA8bJvq01lWvHX2MPumWamHrs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MSWywyYf; arc=none smtp.client-ip=209.85.210.174
+	s=arc-20240116; t=1730700421; c=relaxed/simple;
+	bh=EZnJdlfz5hvZ6tAgtg48RQwQz7DoCasQ1QKR1j1/LAY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=g/0LUKsytw4aQh5QVM/NmrQd3AVf2UiGwYpJCNcV2G1zpfLayNIBJ0lnE26WHUj6lDcZz294y1thqnwyJvjwQRz+oIUEVOt1Vl0RTE0Vr0AAwzw1FXV3NRlfVy1FrW3GKwfNsgchN2nCa/U/8ThgS22EtNPsPkEG34FNOPTzdZQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=M3vrlsfg; arc=none smtp.client-ip=209.85.208.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-720d01caa66so2071683b3a.2;
-        Sun, 03 Nov 2024 22:03:16 -0800 (PST)
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2fb5fa911aaso53323311fa.2;
+        Sun, 03 Nov 2024 22:06:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730700196; x=1731304996; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=KiZG0fOXbzw+JLuxFaDRadC36mZ9plHKuKs+rpTWCms=;
-        b=MSWywyYfGBP9SqB9M5D0SwrO5h3NqRJb7oihIvIIRg6/GrSgmcEGVAypDERSAEOpkP
-         OmaMvtCpPA5krZVVUBuHA620gfG2FvKCaozDKelzrmDbU6FFJD4mhh2FGQGCaUxLNYBL
-         tAuEh0wjr15R9S35DOddKKcppLbySqV7NXOMCc1vOkVsQsPUA/pLp8FViAzBw1bIwnJ9
-         /iwAfNHkX5+m0mMRbRwZkleMxgkxRDBe+Kq2SLTyiTK8erNBnGPvy6oWTnOyZJ0gR57X
-         9WDM/a6lNyf08Telv3WCwcYtKKqcTVVpyMnLZ6WQFcgdBMedvJfSOqtyCKaNm+tmEvZV
-         VhzQ==
+        d=gmail.com; s=20230601; t=1730700418; x=1731305218; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=m6jQkrpv3MdS+5xKVIFE6860tge3gxXMaWgpp2Uy0w8=;
+        b=M3vrlsfgaO4Ya5MMFh+4t1kMQKekv0oE8E7i6pjsQLZb4/sOBpyN8hGd42cM0J7Hfm
+         dGPM+TW5/KAekCy8z35ePqsIB3Q76MvuPzSk1+MDaGe12m8xYJh0k9mXpssvAJH61EVO
+         1Zj2wzPiHV6SqNcJGzhPMSt99l1Ytn1pJ73Wp0mZRJ0a+ClgSREFRMlLppqu4dmrGlpk
+         ub1CDyUQy/wZXznZHsXzHC75fcZSJm9KAVMIDnq7xf34i+lOxQCRw/RQscPt19PwvpM4
+         UyMXiGLcnloePLhUH0RmwP2FcvfhFxbmzEJ4iIsoM9BeSjamEo3YDW5D5iOpMe1N6atF
+         muNw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730700196; x=1731304996;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=KiZG0fOXbzw+JLuxFaDRadC36mZ9plHKuKs+rpTWCms=;
-        b=bff/QoBKUCzytmuexPZjZZis4MA4LrD2VTzaAxOJ93M4d0UYoleLWuSUPbwWlwkIj2
-         hbxJvgfwTW3FBJl24PNRDdRMo9fGIXFIJ7Rt2+sjo6eJtlk3Jhrv3m9e6f4+UuJI/uM2
-         tC0rRljcolN/9/wpQNVZSzGYj5i1FPsf+pu9WaHziHm7B3cD0zyEyBcKkzMZsSwEPUSz
-         oY3E/ZGcJu+Y6bVO/LGuQ655uLbbjJvx3gQKpYsAX6A69AJM9ZJtm4UqRzht73W5YME2
-         HGWJS+oOK8eVJrJneN/Wggg3o0Xxg1Wf+2/KjyA7tdR4i/gqpOR5zNG79vsUA+PBeIk/
-         JKFg==
-X-Forwarded-Encrypted: i=1; AJvYcCV+X/WDLdUFAyZMRIEttbD68eD7w2/LDMPboB066RGJvHS9NrWxXmlA2p52lzrhvpdZetA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxr4xvcDCRWQS0Gxufrv9bF0NgJ+06xJ4NTekYFc60VmFCeTaox
-	sLeKcXCl6jXC3tXztb12Xseddi6vUvz6h3+am4LxPR9gu6o8BFOqIlIYTQ==
-X-Google-Smtp-Source: AGHT+IGf8/Xx+Lw7g03WO/cMC8GgPsRChEnGhXnsp5tnQP765kRwaDjrSb+a3Wd926A0lWJnoctOwQ==
-X-Received: by 2002:a05:6a21:3213:b0:1d9:275b:4ee1 with SMTP id adf61e73a8af0-1db91dbb5d5mr19974660637.24.1730700195695;
-        Sun, 03 Nov 2024 22:03:15 -0800 (PST)
-Received: from toolbox.alistair23.me (2403-580b-97e8-0-82ce-f179-8a79-69f4.ip6.aussiebb.net. [2403:580b:97e8:0:82ce:f179:8a79:69f4])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7ee459f8f9fsm6149123a12.60.2024.11.03.22.03.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 03 Nov 2024 22:03:15 -0800 (PST)
-From: Alistair Francis <alistair23@gmail.com>
-X-Google-Original-From: Alistair Francis <alistair.francis@wdc.com>
-To: linux-kernel@vger.kernel.org,
-	bpf@vger.kernel.org
-Cc: jolsa@kernel.org,
-	haoluo@google.com,
-	sdf@fomichev.me,
-	kpsingh@kernel.org,
-	john.fastabend@gmail.com,
-	yonghong.song@linux.dev,
-	alistair23@gmail.com,
-	Alistair Francis <alistair.francis@wdc.com>
-Subject: [PATCH] include: btf: Guard inline function with CONFIG_BPF_SYSCALL
-Date: Mon,  4 Nov 2024 16:03:00 +1000
-Message-ID: <20241104060300.421403-1-alistair.francis@wdc.com>
-X-Mailer: git-send-email 2.47.0
+        d=1e100.net; s=20230601; t=1730700418; x=1731305218;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=m6jQkrpv3MdS+5xKVIFE6860tge3gxXMaWgpp2Uy0w8=;
+        b=IqofcMwTkJIaes+ZT96risE7B7+tkvOMlZvNT+gHZE37e4umK9uJNmeDcDwg0uhwUo
+         8Co8DMZ8vi23cs5YwJDxxA9MKZxRv7wc2s0AKZmN3uVY7YmlGS2afpaIQPTX5Xy3RAW4
+         FQmAZF7vb71miWbtDadLOe19Bn9dskSmvSKF4P9R+EDsJbOk12WS72NlhnFt2EMn3US0
+         uRB10co+PIsHyM++sTreKwFz0EoGsYg18foMB7JYjwEGhTVGmtkOzCbpW+k/+T3IxQ4z
+         ehlA93WDfa3TrzCZrk5UQOtjLFF7Ks96rMJWzQdn7V9opFABCtzE9MLOtmOTuCFptcK2
+         d89Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWWxDPwGbid+KqwLZbRGaT+bF0r9rEmX3nW9cMCaWIlHd8W/vjmsoerQJWMEfaLISBrrkSURuxrZeJd@vger.kernel.org, AJvYcCXVMnGpwLk0Mgjp95Kph8N5o7p1qZcNp3ZYm9RZH+hHNeuOcA1DnTAMJKRLzUYBDHYfAHTe1EcSpxdKhRve@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyw8i3PSENYi1ceqJqgPum3/YLhkx+OIUn13bF+jZY3PbKr3tPh
+	ZdZ4uDtpTTdNYL+fQXAbz8atonK+1a6kpGh+cHarJNV0MFdig7Xhh4knKmYG
+X-Google-Smtp-Source: AGHT+IEQoFtFhAEtNK1sLHmReP5ogTKOoTOKksUbZIT3SlZPpjCKyRUuyr0b78o4npcXlMhtfo+jkA==
+X-Received: by 2002:a2e:a908:0:b0:2fb:2a1c:936d with SMTP id 38308e7fff4ca-2fedb7a1fd0mr75423731fa.10.1730700417856;
+        Sun, 03 Nov 2024 22:06:57 -0800 (PST)
+Received: from ?IPV6:2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703? ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2fdef3b8c91sm15148751fa.18.2024.11.03.22.06.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 03 Nov 2024 22:06:56 -0800 (PST)
+Message-ID: <bf50b6c0-af1a-4c7f-9c3e-ffbd3da87a80@gmail.com>
+Date: Mon, 4 Nov 2024 08:06:53 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] dt-bindings: mfd: bd71828: Use charger resistor in mOhm
+ instead of MOhm
+To: Rob Herring <robh@kernel.org>, Andreas Kemnade <andreas@kemnade.info>
+Cc: lee@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, sre@kernel.org
+References: <20241029111112.33386-1-andreas@kemnade.info>
+ <20241101192705.GA4062121-robh@kernel.org>
+Content-Language: en-US, en-AU, en-GB, en-BW
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+In-Reply-To: <20241101192705.GA4062121-robh@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-The static inline btf_type_is_struct_ptr() function calls
-btf_type_skip_modifiers() which is guarded by CONFIG_BPF_SYSCALL.
-btf_type_is_struct_ptr() is also only called by CONFIG_BPF_SYSCALL
-ifdef code, so let's only expose btf_type_is_struct_ptr() if
-CONFIG_BPF_SYSCALL is defined.
+On 01/11/2024 21:27, Rob Herring wrote:
+> On Tue, Oct 29, 2024 at 12:11:12PM +0100, Andreas Kemnade wrote:
+>> Apparently there was some confusion regarding milliohm vs. megaohm.
+>> (m/M). Use microohms to be able to properly specify the charger
+>> resistor like other drivers do. This is not used yet by mainline code
+>> yet. Specify a current sense resistor in milliohms range rathes then
+>> megaohms range in the examples.
+> 
+> milliohms?
+> 
+> rathes?
+> 
+>>
+>> CC: sre@kernel.org
+>> Reported-by: Matti Vaittinen <mazziesaccount@gmail.com>
+>> Closes: https://lore.kernel.org/imx/6dcd724a-a55c-4cba-a45b-21e76b1973b0@gmail.com/T/#mf590875a9f4d3955cd1041d7196ff0c65c0a7e9d
+>> Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
+>> ---
+>>   .../devicetree/bindings/mfd/rohm,bd71828-pmic.yaml  | 13 +++++++------
+>>   1 file changed, 7 insertions(+), 6 deletions(-)
+> 
+> Looks like rohm,bd71815-pmic.yaml has the same problem.
 
-Signed-off-by: Alistair Francis <alistair.francis@wdc.com>
----
- include/linux/btf.h | 21 ++++++++++-----------
- 1 file changed, 10 insertions(+), 11 deletions(-)
+Yes! Thanks for pointing it out. I'll wait for a while if Andreas wants 
+to fix them both at the same go. I'll send a fix for BD71815 if I've not 
+seen one in a week or so :)
 
-diff --git a/include/linux/btf.h b/include/linux/btf.h
-index b8a583194c4a9..66a816ba4f5d0 100644
---- a/include/linux/btf.h
-+++ b/include/linux/btf.h
-@@ -581,6 +581,16 @@ int get_kern_ctx_btf_id(struct bpf_verifier_log *log, enum bpf_prog_type prog_ty
- bool btf_types_are_same(const struct btf *btf1, u32 id1,
- 			const struct btf *btf2, u32 id2);
- int btf_check_iter_arg(struct btf *btf, const struct btf_type *func, int arg_idx);
-+
-+static inline bool btf_type_is_struct_ptr(struct btf *btf, const struct btf_type *t)
-+{
-+	if (!btf_type_is_ptr(t))
-+		return false;
-+
-+	t = btf_type_skip_modifiers(btf, t->type, NULL);
-+
-+	return btf_type_is_struct(t);
-+}
- #else
- static inline const struct btf_type *btf_type_by_id(const struct btf *btf,
- 						    u32 type_id)
-@@ -660,15 +670,4 @@ static inline int btf_check_iter_arg(struct btf *btf, const struct btf_type *fun
- 	return -EOPNOTSUPP;
- }
- #endif
--
--static inline bool btf_type_is_struct_ptr(struct btf *btf, const struct btf_type *t)
--{
--	if (!btf_type_is_ptr(t))
--		return false;
--
--	t = btf_type_skip_modifiers(btf, t->type, NULL);
--
--	return btf_type_is_struct(t);
--}
--
- #endif
--- 
-2.47.0
-
+Yours,
+     --Matti
 
