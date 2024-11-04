@@ -1,64 +1,62 @@
-Return-Path: <linux-kernel+bounces-394262-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394264-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A827E9BACA2
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 07:38:38 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0ABE89BACA9
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 07:40:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 54AEE1F2221D
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 06:38:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C12BD281A98
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 06:40:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C53C118CC10;
-	Mon,  4 Nov 2024 06:38:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7957318DF7E;
+	Mon,  4 Nov 2024 06:40:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OTaamrWS"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="IyPipN0X"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B10E938F97;
-	Mon,  4 Nov 2024 06:38:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29E3838F97;
+	Mon,  4 Nov 2024 06:40:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730702311; cv=none; b=NkNHK3qxkutTpqjf60qaCvDi5FZsX7mBJPfTo5KFHfVZAEk9DWpvtrfW33kk22OGm63tnRjaFdUPjvdoqPQdQKMInBoyudmF/bYla9oCdKEFKumXNNcEBRSjXF6axTLz1hm/pJqxHbcDBb781mTFnQ6wKOr9AO+GIskbBLG89d0=
+	t=1730702441; cv=none; b=f/XbBbM+R0wfyViouDfRApf9b5C1hDTU6JmbBCr0QbRpNxVHNRmjT0NARL9JmtyDHfRhqsjqv6JSZbh8ZCIxbuCzJnnIQl7wbH1JI9dU2n8ep6YhQssjmiQqR83i4GdttuxLzuwy9pJY2ZF6/r/ttjyxNPssF+MmJbeHpce/ZJA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730702311; c=relaxed/simple;
-	bh=w5IzZhNS0pyq3dZVWuxnPxZjGqxLGha5AZ2HRi5kLkE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UnsNBBaOXrfnl4CVvD8ekiqUfdllaM3XkjVjs42+/g7/Gs+IhQA7/fF3R14VpgngZJPNoeWdpaAS9hPsJ+JmimYvGQylyIRGLNt3HXq1bVoWF+4AxYHDUdOJ7HsMNPWbTwqnu9i9P1idw/+baHVTsEoj02JeKV/Uz0FV23fiksY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OTaamrWS; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730702309; x=1762238309;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=w5IzZhNS0pyq3dZVWuxnPxZjGqxLGha5AZ2HRi5kLkE=;
-  b=OTaamrWSJbqHLI7TPRMbRmth9uYMaJqm14xfNVKZfKR18SmZENsESSX1
-   arUH5nH/DEnfY1svaUINJZwhEFN0+JTAYDQRNdLfSV1MLBw7m94VB/2+k
-   TjPtgoTjMRIBLcZCsUD0Ia0l2i87nzm7HiuF4YOUTMg/qG8sH515fpcKm
-   N2VP+O2iIwAtbtmqG28QfXAVGpaRU/AgEEUbS3DaQRqbS9Zp9KBJxIuJY
-   +eIjmnYuTsCLKZU1nfQifHNvSRjGUxyyGxs3VE+mmbn/kzP8K1ZEiJy3O
-   ifKMJO96ASnenxj/JgEylYTM7pUTrFpITHyJ695iT2TxLXbWlxS9R2xbA
-   g==;
-X-CSE-ConnectionGUID: Lm5ESs1uRje2v3vUil3Pbw==
-X-CSE-MsgGUID: Nmy7KQwYQwSUUrrncwj4Qw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11245"; a="29801130"
-X-IronPort-AV: E=Sophos;i="6.11,256,1725346800"; 
-   d="scan'208";a="29801130"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2024 22:38:24 -0800
-X-CSE-ConnectionGUID: 3u7azeIwSYCzt9aSZon4Rw==
-X-CSE-MsgGUID: XYoWjP+nSS+br4byYIhU6w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,256,1725346800"; 
-   d="scan'208";a="114348431"
-Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.246.16.81])
-  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2024 22:38:19 -0800
-Message-ID: <8383c639-66ce-4252-b3e8-734cb6688b44@intel.com>
-Date: Mon, 4 Nov 2024 08:38:14 +0200
+	s=arc-20240116; t=1730702441; c=relaxed/simple;
+	bh=WRlbfbH8V+ZVE5u00EimMugItUuIhEkRBSYgoDOJvQs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=ahy58lcwz0HrY5NTIhPjTnjDk+mE5GOaaUAKjH/MxgdH83KPAHGJNeyzx8Q7UnefuX55xxJ3Y7xxwesXlABVl8wf6fju/nxXCHBnEg8rl0l1TfmQ78oPGv2qoI78y/fplY+In1Qa2qkfH/fRBtR9pV65R9nwMEVE5nUS4RppDsQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=IyPipN0X; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A40LNam028863;
+	Mon, 4 Nov 2024 06:40:35 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	akmgyX4ei7Y+AGwadML9tnYPiiiqBalW/jXlHP/suPU=; b=IyPipN0Xm0kihKs4
+	fsnj4YLeaRYyYajsa+LySURhrtKT4HAXicA/sWhS2n77NEA6EuJJcmYb65usP6xP
+	b73gXq2ifK9FHLcbzuw4LcVUWEqfMEOQ96/W14j48/HGj6Gt/mWspAl0OwmDB9vg
+	9dIBLbREUx/cfy3HKDKNM0Vp8vlSgf2sPAmhezK8MwPkTe5CyvaoCBeEF39OGT7S
+	YwJV5G/ROmdIFEz4iDqrWT3DHlB3GOgf+CYvJ2OPqcIqT03AUja1TeChrvSkFQAd
+	wIhGT9zZf7SZJ6Ym/KKPbz6bwxBjtT5OWvkCQ/XV7oSeQemFEfwvoe/lH7YMRDF9
+	4SqF0A==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42nd2s39sx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 04 Nov 2024 06:40:35 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4A46eYru032661
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 4 Nov 2024 06:40:34 GMT
+Received: from [10.218.15.248] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 3 Nov 2024
+ 22:40:30 -0800
+Message-ID: <00c9feac-722a-481a-9c57-36463fe0b3ff@quicinc.com>
+Date: Mon, 4 Nov 2024 12:10:27 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,57 +64,97 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 0/2] mmc: host: sdhci-esdhc-imx: implement emmc
- hardware reset
-To: Josua Mayer <josua@solid-run.com>, Haibo Chen <haibo.chen@nxp.com>,
- Ulf Hansson <ulf.hansson@linaro.org>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>
-Cc: Mikhail Anikin <mikhail.anikin@solid-run.com>,
- Jon Nettleton <jon@solid-run.com>, Yazan Shhady
- <yazan.shhady@solid-run.com>, Rabeeh Khoury <rabeeh@solid-run.com>,
- imx@lists.linux.dev, linux-mmc@vger.kernel.org, s32@nxp.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20241101-imx-emmc-reset-v3-0-184965eed476@solid-run.com>
+Subject: Re: [PATCH V2 1/3] dt-bindings: interconnect: Add EPSS L3 compatible
+ for SA8775P
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: Georgi Djakov <djakov@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konradybcio@kernel.org>,
+        Sibi Sankar <quic_sibis@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
+        <linux-pm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Odelu Kukatla
+	<quic_okukatla@quicinc.com>,
+        Mike Tipton <quic_mdtipton@quicinc.com>
+References: <20241026123058.28258-1-quic_rlaggysh@quicinc.com>
+ <20241026123058.28258-2-quic_rlaggysh@quicinc.com>
+ <7k2vnjop6xyshquqlbe22gm7o5empeluvsohfmq5ulnaas3keb@yzomhzi4w7vf>
+ <2ac4604c-a765-48b1-84b2-8979f18c29a7@quicinc.com>
+ <vljb7wwqaaqgdcm6whf5ymhnh4jbtswyibto4qpqmbgwvshudy@unh3jhbyeac6>
 Content-Language: en-US
-From: Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-In-Reply-To: <20241101-imx-emmc-reset-v3-0-184965eed476@solid-run.com>
-Content-Type: text/plain; charset=UTF-8
+From: Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>
+In-Reply-To: <vljb7wwqaaqgdcm6whf5ymhnh4jbtswyibto4qpqmbgwvshudy@unh3jhbyeac6>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: I_gM5_C0gQt9lcVl808fXY9dU4LOc6an
+X-Proofpoint-GUID: I_gM5_C0gQt9lcVl808fXY9dU4LOc6an
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0
+ lowpriorityscore=0 mlxlogscore=999 clxscore=1015 suspectscore=0
+ adultscore=0 priorityscore=1501 bulkscore=0 mlxscore=0 malwarescore=0
+ spamscore=0 impostorscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2409260000 definitions=main-2411040057
 
-On 1/11/24 13:42, Josua Mayer wrote:
-> Signed-off-by: Josua Mayer <josua@solid-run.com>
-> ---
-> Changes in v3:
-> - reused existing control register definition from sdhci-esdhc.h
->   (Reported-by: Bough Chen <haibo.chen@nxp.com>)
-> - placed both control register mask definitions next to each other
-> - fixed timeout write register name
-> - Link to v2: https://lore.kernel.org/r/20241030-imx-emmc-reset-v2-0-b3a823393974@solid-run.com
+
+
+On 11/1/2024 12:26 AM, Dmitry Baryshkov wrote:
+> On Wed, Oct 30, 2024 at 12:23:57PM +0530, Raviteja Laggyshetty wrote:
+>>
+>>
+>> On 10/26/2024 8:15 PM, Dmitry Baryshkov wrote:
+>>> On Sat, Oct 26, 2024 at 12:30:56PM +0000, Raviteja Laggyshetty wrote:
+>>>> Add Epoch Subsystem (EPSS) L3 interconnect provider binding on
+>>>> SA8775P SoCs.
+>>>>
+>>>> Signed-off-by: Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>
+>>>> ---
+>>>>  .../devicetree/bindings/interconnect/qcom,osm-l3.yaml         | 4 ++++
+>>>>  1 file changed, 4 insertions(+)
+>>>>
+>>>> diff --git a/Documentation/devicetree/bindings/interconnect/qcom,osm-l3.yaml b/Documentation/devicetree/bindings/interconnect/qcom,osm-l3.yaml
+>>>> index 21dae0b92819..042ca44c32ec 100644
+>>>> --- a/Documentation/devicetree/bindings/interconnect/qcom,osm-l3.yaml
+>>>> +++ b/Documentation/devicetree/bindings/interconnect/qcom,osm-l3.yaml
+>>>> @@ -34,6 +34,10 @@ properties:
+>>>>                - qcom,sm8250-epss-l3
+>>>>                - qcom,sm8350-epss-l3
+>>>>            - const: qcom,epss-l3
+>>>> +      - items:
+>>>> +          - enum:
+>>>> +              - qcom,sa8775p-epss-l3
+>>>> +          - const: qcom,epss-l3-perf
+>>>
+>>> Why is it -perf? What's so different about it?
+>>
+>> The EPSS instance in SA8775P uses PERF_STATE register instead of REG_L3_VOTE to scale L3 clocks.
+>> So adding new generic compatible "qcom,epss-l3-perf" for PERF_STATE register based l3 scaling.
 > 
-> Changes in v2:
-> - replaced udelay with usleep_range
->   (Reported-by: Adrian Hunter <adrian.hunter@intel.com>)
-> - added comments for delay values
->   (Reported-by: Peng Fan <peng.fan@nxp.com>)
-> - delay values based on JEDEC Standard No. 84-B51, 6.15.10 H/W Reset Operation,
->   on page 159
->   (Thanks to Bough Chen <haibo.chen@nxp.com>)
-> - added a second patch demonstrating a cosmetic issue revealed by first
->   patch - it bothered me during development but is not important
-> - Link to v1: https://lore.kernel.org/r/20241027-imx-emmc-reset-v1-1-d5d0c672864a@solid-run.com
+> Neither sm8250 nor sc7280 use this compatible, while they also use
+> PERF_STATE register.
 > 
-> ---
-> Josua Mayer (2):
->       mmc: host: sdhci-esdhc-imx: implement emmc hardware reset
->       mmc: host: sdhci-esdhc-imx: update esdhc sysctl dtocv bitmask
-
-For both:
-
-Acked-by: Adrian Hunter <adrian.hunter@intel.com>
-
+That is correct, both sm8250 and sc7280 use perf state register.
+The intention for adding "qcom,epss-l3-perf" generic compatible is to use it for the chipsets which use perf state register for l3 scaling.
+Using generic compatible avoids the need for adding chipset specific compatible in match table.
+>>
+>>
+>>>
+>>>>  
+>>>>    reg:
+>>>>      maxItems: 1
+>>>> -- 
+>>>> 2.39.2
+>>>>
+>>>
+>>
+> 
 
 
