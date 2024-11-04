@@ -1,239 +1,166 @@
-Return-Path: <linux-kernel+bounces-395666-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395668-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C9319BC163
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 00:24:35 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4799D9BC171
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 00:28:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D1A691F229CE
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 23:24:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D5CB282B6C
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 23:28:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2AE61FE0FB;
-	Mon,  4 Nov 2024 23:24:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76D6F1FE102;
+	Mon,  4 Nov 2024 23:27:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XD24IWSO"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uD6aQVKZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 578AD1FCC73;
-	Mon,  4 Nov 2024 23:24:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AAC11FDFB8;
+	Mon,  4 Nov 2024 23:27:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730762652; cv=none; b=Kujy0lOtUAkEUHxlIDFxqt1hK7LrOcKTw6UqhECT2XMBCCtkhxVaHmrOBObbWbqTDBjBopG3PhQGtv/MaqeRmaNpXIQI+2ov+eu0bZbU0wly1r+zVgPzEG46o9Ab0qHZ5ubo0YZyWY7UJ0ZkrUp5glSjvYGgUrgLWqlJsPv0cYM=
+	t=1730762866; cv=none; b=DUmZPgGllUSpsCScWP67LZ4WMz+xT3AIpFq7UTpxuw5IfdeNNr8pE5DNZPab2rE0JxBnk3V8TCMgYZF5jbe1vGmyB5Lai0nFa1jEqP98FoTjJg38Us1QgBtAOjRLVG82HwqMwtRC1PPLrujn7N1zC02qF3YkIxvSa4oXiQfAZTM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730762652; c=relaxed/simple;
-	bh=rZouVETtZGhmAnogkgsoInTm3VK56+MqD1INFZtJg7c=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=jvGcBnkCGD/60HAZ85r0+PXLWoZdyGQf/y1NDPfvxNwcVOdk7Ctwj9rwvcpGwSM4EwU2AKXDai+ZUW/IuXnxFN3vDbRijQbc+PAjpQwHk8xVh3glqoveg22P6sPfO4F5VhT3IFRRD4TX8/ClEazAgQ7zLQMtupcH7ws+SunLJ1k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XD24IWSO; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-43161e7bb25so36993735e9.2;
-        Mon, 04 Nov 2024 15:24:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730762649; x=1731367449; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0wPIwM40bx1j+Mxn/pS1QOU+XOTEjS6lfX8Jfkg/CQY=;
-        b=XD24IWSO/JvIDEZzfQyBmJLg1UavPBfKcK9zwx4nizqJM94wy62Fz5vKoqU2ui7b53
-         ZN6OU3ShRuFQInUBxuYgRZ93zMk+CSezaWElyjYcZ1/3wpoBhx9SL1fqnnEPQ+EuZ/OG
-         hn6MYQEPaOf26WNhpFdgeQS4139QJlLmrtTOSafCqtSvO6GkVZGETYYLKrbd+PoFBWRQ
-         bybx1551dqdvolxpVdJxq1ongNkPX0kqA2t7Lr/jRxlWS0acxztGGLTBKdve8SkIytDD
-         /xduN2MEOwkX5aL80BjeWxao/yXkiVYcUdOFuM9zDgQDgHUFVb9Y3bqSChGfTsXvNmSI
-         eaTA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730762649; x=1731367449;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0wPIwM40bx1j+Mxn/pS1QOU+XOTEjS6lfX8Jfkg/CQY=;
-        b=xFBGd58OxeRQPL0pREA8Gv2sR0Ke3/cvr97PfH3ebRx8ldvuCERo8HYteJafgEJNgi
-         wjMzbId/jYm7BNqnJxGKG9ZD6SczastH1JgE4LjyZTAuNkG9pyE2MnnygibMWSXfl9X9
-         6acSqQqtkEzsE/u4WoXtWT5jwBHbMaBPK5I6TpVY3+f0rKUdNXoVd2AVwAsIPxlsnGcu
-         XFuB5Rmyh5UV6sJVycOKFYrNyLgZ2CW8cG/dq2uWwBoGPtJHvAgNEC7xelr3WwrmZtwz
-         4v1CZdazONSXWtnCUjEYMc3ILn2jPNeMHunv01xLumNQmzjb569yN12D6rzTo8lmIeiG
-         a6Nw==
-X-Forwarded-Encrypted: i=1; AJvYcCUzFTO6NcirAInmHLPapi2uhybLmKb7sAXiTp4z46KfOoQGZsi2u/7HX/pTGEBmsxLk6ecQvJIDT5E=@vger.kernel.org, AJvYcCV0FJhGbQOIn2qHKfmydtbRaNTONp54mxXaVkTuE/86cJ1w91CGfTwUytZZ1Gl2E/5aJe0zhn8891+RGpHe@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywn4l5XzmdCgIkuyVNAA2S7NXLLIYa4yTk/kYZl8H7H2xJpgZcc
-	jAkIOnj/v8vgfLhXsCapXeAcSy/d1aN2LhOrXPYm/kdQDhExwUOK
-X-Google-Smtp-Source: AGHT+IEUmKor5n8Xnoxg6kVUSU4uH5QfZKnYbpvS3fhkkbLuoae9ahdbdfdvKwCVrJhzPyqQj+hxkw==
-X-Received: by 2002:a05:600c:1f82:b0:430:57f2:bae2 with SMTP id 5b1f17b1804b1-431bb9d14afmr176084295e9.23.1730762648610;
-        Mon, 04 Nov 2024 15:24:08 -0800 (PST)
-Received: from prasmi.Home ([2a06:5906:61b:2d00:b000:5e71:8a91:bce5])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4327d5ab254sm167156675e9.3.2024.11.04.15.24.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Nov 2024 15:24:08 -0800 (PST)
-From: Prabhakar <prabhakar.csengg@gmail.com>
-X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Prabhakar <prabhakar.csengg@gmail.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH v2 2/2] clk: renesas: r9a09g057: Add support for PLLVDO, CRU clocks, and resets
-Date: Mon,  4 Nov 2024 23:24:01 +0000
-Message-ID: <20241104232401.290423-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241104232401.290423-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20241104232401.290423-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+	s=arc-20240116; t=1730762866; c=relaxed/simple;
+	bh=G7tF/ZaqXBtDJLMTb97Oc+SktZk//Kx3oRVjwm2Gkec=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iMfr9ma5FM5iB+sdPQI+ndfM51faiAWWz/rSdiqVGlsTnRDmmrbVlCCzCVQfOR+CUMMgOC020tyydBrT60q6bI3PWwXC6wyIs3oc6FirponM3aGC8+VE9nH8tjmg1eu9f4qqmpUcBEEFUvDTV4354qXfHRoQYtp7o5KRUYqqpXo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uD6aQVKZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB3A7C4CECE;
+	Mon,  4 Nov 2024 23:27:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730762866;
+	bh=G7tF/ZaqXBtDJLMTb97Oc+SktZk//Kx3oRVjwm2Gkec=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=uD6aQVKZ8xYi+PTTwYupZ6PGdQoZjGxor3CJ6T/KZlWjFxurKitUGg4OsLqeVl22R
+	 oTMAQXmWqXP0EO6JaBIYZ9VEqoL35XGUitRTwgi+bJtDhjSL6UuAIcLW7XMfz2tbvE
+	 x3MFVpG1yHfJRXfsS6NaRprs6A1rIqEf/OZ8jX2sy+DwUFdsMetTULRZ3iOQoxlOsn
+	 5JoGBx6K0BrtfF9Z0+hxFGtNMWymLR+Dppngi0NxeJnTpYgOWeDN7FHowhaRXk3khA
+	 u6nha7LupF4lzkb6ryYEoHDIxLmpv0DY+XiF9diWn7xWUzJjMMZ/7hbbF3UF0ISQXS
+	 B++nhrf0RE3MQ==
+Date: Mon, 4 Nov 2024 16:27:41 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Mike Rapoport <rppt@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	Andreas Larsson <andreas@gaisler.com>,
+	Andy Lutomirski <luto@kernel.org>, Ard Biesheuvel <ardb@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
+	Brian Cain <bcain@quicinc.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Christoph Hellwig <hch@infradead.org>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Dinh Nguyen <dinguyen@kernel.org>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Guo Ren <guoren@kernel.org>, Helge Deller <deller@gmx.de>,
+	Huacai Chen <chenhuacai@kernel.org>, Ingo Molnar <mingo@redhat.com>,
+	Johannes Berg <johannes@sipsolutions.net>,
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+	Kent Overstreet <kent.overstreet@linux.dev>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Matt Turner <mattst88@gmail.com>, Max Filippov <jcmvbkbc@gmail.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Michal Simek <monstr@monstr.eu>, Oleg Nesterov <oleg@redhat.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Richard Weinberger <richard@nod.at>,
+	Russell King <linux@armlinux.org.uk>, Song Liu <song@kernel.org>,
+	Stafford Horne <shorne@gmail.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Vineet Gupta <vgupta@kernel.org>, Will Deacon <will@kernel.org>,
+	bpf@vger.kernel.org, linux-alpha@vger.kernel.org,
+	linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-csky@vger.kernel.org, linux-hexagon@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
+	linux-mips@vger.kernel.org, linux-mm@kvack.org,
+	linux-modules@vger.kernel.org, linux-openrisc@vger.kernel.org,
+	linux-parisc@vger.kernel.org, linux-riscv@lists.infradead.org,
+	linux-sh@vger.kernel.org, linux-snps-arc@lists.infradead.org,
+	linux-trace-kernel@vger.kernel.org, linux-um@lists.infradead.org,
+	linuxppc-dev@lists.ozlabs.org, loongarch@lists.linux.dev,
+	sparclinux@vger.kernel.org, x86@kernel.org
+Subject: Re: [PATCH v7 6/8] x86/module: prepare module loading for ROX
+ allocations of text
+Message-ID: <20241104232741.GA3843610@thelio-3990X>
+References: <20241023162711.2579610-1-rppt@kernel.org>
+ <20241023162711.2579610-7-rppt@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241023162711.2579610-7-rppt@kernel.org>
 
-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Hi Mike,
 
-Add support for the PLLVDO clock and its related CRU clocks and reset
-entries in the r9a09g057 CPG driver. Introduce `CLK_PLLVDO` and associated
-clocks like `CLK_PLLVDO_CRU0`, `CLK_PLLVDO_CRU1`, `CLK_PLLVDO_CRU2`, and
-`CLK_PLLVDO_CRU3`, along with their corresponding dividers.
+On Wed, Oct 23, 2024 at 07:27:09PM +0300, Mike Rapoport wrote:
+> From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
+> 
+> When module text memory will be allocated with ROX permissions, the
+> memory at the actual address where the module will live will contain
+> invalid instructions and there will be a writable copy that contains the
+> actual module code.
+> 
+> Update relocations and alternatives patching to deal with it.
+> 
+> Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+> Tested-by: kdevops <kdevops@lists.linux.dev>
 
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v1->v2
-- Replaced r9a09g057-cpg with r9a09g057 in commit header
-- Collected RB tag from Geert
----
- drivers/clk/renesas/r9a09g057-cpg.c | 45 +++++++++++++++++++++++++++++
- drivers/clk/renesas/rzv2h-cpg.h     |  6 ++++
- 2 files changed, 51 insertions(+)
+Hopefully the last time you have to hear from me, as I am only
+experiencing issues with only one of my test machines at this point and
+it is my only machine that supports IBT, so it seems to point to
+something specific with the IBT part of the FineIBT support. I notice
+either a boot hang or an almost immediate reboot (triple fault?). I
+guess this is how I missed reporting this earlier, as my machine was
+falling back to the default distribution kernel after the restart and I
+did not notice I was not actually testing a -next kernel.
 
-diff --git a/drivers/clk/renesas/r9a09g057-cpg.c b/drivers/clk/renesas/r9a09g057-cpg.c
-index 7c4507fd34e6..5aa9710aa402 100644
---- a/drivers/clk/renesas/r9a09g057-cpg.c
-+++ b/drivers/clk/renesas/r9a09g057-cpg.c
-@@ -28,6 +28,7 @@ enum clk_ids {
- 	CLK_PLLCLN,
- 	CLK_PLLDTY,
- 	CLK_PLLCA55,
-+	CLK_PLLVDO,
- 
- 	/* Internal Core Clocks */
- 	CLK_PLLCM33_DIV16,
-@@ -35,7 +36,13 @@ enum clk_ids {
- 	CLK_PLLCLN_DIV8,
- 	CLK_PLLCLN_DIV16,
- 	CLK_PLLDTY_ACPU,
-+	CLK_PLLDTY_ACPU_DIV2,
- 	CLK_PLLDTY_ACPU_DIV4,
-+	CLK_PLLDTY_DIV16,
-+	CLK_PLLVDO_CRU0,
-+	CLK_PLLVDO_CRU1,
-+	CLK_PLLVDO_CRU2,
-+	CLK_PLLVDO_CRU3,
- 
- 	/* Module Clocks */
- 	MOD_CLK_BASE,
-@@ -49,6 +56,12 @@ static const struct clk_div_table dtable_1_8[] = {
- 	{0, 0},
- };
- 
-+static const struct clk_div_table dtable_2_4[] = {
-+	{0, 2},
-+	{1, 4},
-+	{0, 0},
-+};
-+
- static const struct clk_div_table dtable_2_64[] = {
- 	{0, 2},
- 	{1, 4},
-@@ -69,6 +82,7 @@ static const struct cpg_core_clk r9a09g057_core_clks[] __initconst = {
- 	DEF_FIXED(".pllcln", CLK_PLLCLN, CLK_QEXTAL, 200, 3),
- 	DEF_FIXED(".plldty", CLK_PLLDTY, CLK_QEXTAL, 200, 3),
- 	DEF_PLL(".pllca55", CLK_PLLCA55, CLK_QEXTAL, PLL_CONF(0x64)),
-+	DEF_FIXED(".pllvdo", CLK_PLLVDO, CLK_QEXTAL, 105, 2),
- 
- 	/* Internal Core Clocks */
- 	DEF_FIXED(".pllcm33_div16", CLK_PLLCM33_DIV16, CLK_PLLCM33, 1, 16),
-@@ -78,7 +92,14 @@ static const struct cpg_core_clk r9a09g057_core_clks[] __initconst = {
- 	DEF_FIXED(".pllcln_div16", CLK_PLLCLN_DIV16, CLK_PLLCLN, 1, 16),
- 
- 	DEF_DDIV(".plldty_acpu", CLK_PLLDTY_ACPU, CLK_PLLDTY, CDDIV0_DIVCTL2, dtable_2_64),
-+	DEF_FIXED(".plldty_acpu_div2", CLK_PLLDTY_ACPU_DIV2, CLK_PLLDTY_ACPU, 1, 2),
- 	DEF_FIXED(".plldty_acpu_div4", CLK_PLLDTY_ACPU_DIV4, CLK_PLLDTY_ACPU, 1, 4),
-+	DEF_FIXED(".plldty_div16", CLK_PLLDTY_DIV16, CLK_PLLDTY, 1, 16),
-+
-+	DEF_DDIV(".pllvdo_cru0", CLK_PLLVDO_CRU0, CLK_PLLVDO, CDDIV3_DIVCTL3, dtable_2_4),
-+	DEF_DDIV(".pllvdo_cru1", CLK_PLLVDO_CRU1, CLK_PLLVDO, CDDIV4_DIVCTL0, dtable_2_4),
-+	DEF_DDIV(".pllvdo_cru2", CLK_PLLVDO_CRU2, CLK_PLLVDO, CDDIV4_DIVCTL1, dtable_2_4),
-+	DEF_DDIV(".pllvdo_cru3", CLK_PLLVDO_CRU3, CLK_PLLVDO, CDDIV4_DIVCTL2, dtable_2_4),
- 
- 	/* Core Clocks */
- 	DEF_FIXED("sys_0_pclk", R9A09G057_SYS_0_PCLK, CLK_QEXTAL, 1, 1),
-@@ -133,6 +154,18 @@ static const struct rzv2h_mod_clk r9a09g057_mod_clks[] __initconst = {
- 	DEF_MOD("sdhi_2_imclk2",		CLK_PLLCLN_DIV8, 10, 12, 5, 12),
- 	DEF_MOD("sdhi_2_clk_hs",		CLK_PLLCLN_DIV2, 10, 13, 5, 13),
- 	DEF_MOD("sdhi_2_aclk",			CLK_PLLDTY_ACPU_DIV4, 10, 14, 5, 14),
-+	DEF_MOD("cru_0_aclk",			CLK_PLLDTY_ACPU_DIV2, 13, 2, 6, 18),
-+	DEF_MOD_NO_PM("cru_0_vclk",		CLK_PLLVDO_CRU0, 13, 3, 6, 19),
-+	DEF_MOD("cru_0_pclk",			CLK_PLLDTY_DIV16, 13, 4, 6, 20),
-+	DEF_MOD("cru_1_aclk",			CLK_PLLDTY_ACPU_DIV2, 13, 5, 6, 21),
-+	DEF_MOD_NO_PM("cru_1_vclk",		CLK_PLLVDO_CRU1, 13, 6, 6, 22),
-+	DEF_MOD("cru_1_pclk",			CLK_PLLDTY_DIV16, 13, 7, 6, 23),
-+	DEF_MOD("cru_2_aclk",			CLK_PLLDTY_ACPU_DIV2, 13, 8, 6, 24),
-+	DEF_MOD_NO_PM("cru_2_vclk",		CLK_PLLVDO_CRU2, 13, 9, 6, 25),
-+	DEF_MOD("cru_2_pclk",			CLK_PLLDTY_DIV16, 13, 10, 6, 26),
-+	DEF_MOD("cru_3_aclk",			CLK_PLLDTY_ACPU_DIV2, 13, 11, 6, 27),
-+	DEF_MOD_NO_PM("cru_3_vclk",		CLK_PLLVDO_CRU3, 13, 12, 6, 28),
-+	DEF_MOD("cru_3_pclk",			CLK_PLLDTY_DIV16, 13, 13, 6, 29),
- };
- 
- static const struct rzv2h_reset r9a09g057_resets[] __initconst = {
-@@ -162,6 +195,18 @@ static const struct rzv2h_reset r9a09g057_resets[] __initconst = {
- 	DEF_RST(10, 7, 4, 24),		/* SDHI_0_IXRST */
- 	DEF_RST(10, 8, 4, 25),		/* SDHI_1_IXRST */
- 	DEF_RST(10, 9, 4, 26),		/* SDHI_2_IXRST */
-+	DEF_RST(12, 5, 5, 22),		/* CRU_0_PRESETN */
-+	DEF_RST(12, 6, 5, 23),		/* CRU_0_ARESETN */
-+	DEF_RST(12, 7, 5, 24),		/* CRU_0_S_RESETN */
-+	DEF_RST(12, 8, 5, 25),		/* CRU_1_PRESETN */
-+	DEF_RST(12, 9, 5, 26),		/* CRU_1_ARESETN */
-+	DEF_RST(12, 10, 5, 27),		/* CRU_1_S_RESETN */
-+	DEF_RST(12, 11, 5, 28),		/* CRU_2_PRESETN */
-+	DEF_RST(12, 12, 5, 29),		/* CRU_2_ARESETN */
-+	DEF_RST(12, 13, 5, 30),		/* CRU_2_S_RESETN */
-+	DEF_RST(12, 14, 5, 31),		/* CRU_3_PRESETN */
-+	DEF_RST(12, 15, 6, 0),		/* CRU_3_ARESETN */
-+	DEF_RST(13, 0, 6, 1),		/* CRU_3_S_RESETN */
- };
- 
- const struct rzv2h_cpg_info r9a09g057_cpg_info __initconst = {
-diff --git a/drivers/clk/renesas/rzv2h-cpg.h b/drivers/clk/renesas/rzv2h-cpg.h
-index 0723df4c1134..ed8d2cad3260 100644
---- a/drivers/clk/renesas/rzv2h-cpg.h
-+++ b/drivers/clk/renesas/rzv2h-cpg.h
-@@ -33,12 +33,18 @@ struct ddiv {
- 
- #define CPG_CDDIV0		(0x400)
- #define CPG_CDDIV1		(0x404)
-+#define CPG_CDDIV3		(0x40C)
-+#define CPG_CDDIV4		(0x410)
- 
- #define CDDIV0_DIVCTL2	DDIV_PACK(CPG_CDDIV0, 8, 3, 2)
- #define CDDIV1_DIVCTL0	DDIV_PACK(CPG_CDDIV1, 0, 2, 4)
- #define CDDIV1_DIVCTL1	DDIV_PACK(CPG_CDDIV1, 4, 2, 5)
- #define CDDIV1_DIVCTL2	DDIV_PACK(CPG_CDDIV1, 8, 2, 6)
- #define CDDIV1_DIVCTL3	DDIV_PACK(CPG_CDDIV1, 12, 2, 7)
-+#define CDDIV3_DIVCTL3	DDIV_PACK(CPG_CDDIV3, 12, 1, 15)
-+#define CDDIV4_DIVCTL0	DDIV_PACK(CPG_CDDIV4, 0, 1, 16)
-+#define CDDIV4_DIVCTL1	DDIV_PACK(CPG_CDDIV4, 4, 1, 17)
-+#define CDDIV4_DIVCTL2	DDIV_PACK(CPG_CDDIV4, 8, 1, 18)
- 
- /**
-  * Definitions of CPG Core Clocks
--- 
-2.43.0
+Checking out the version of this change that is in next-20241104, commit
+7ca6ed09db62 ("x86/module: prepare module loading for ROX allocations of
+text"), it boots with either 'cfi=off' or 'cfi=kcfi' but it exhibits the
+issues noted above with 'cfi=fineibt'. At the immediate parent, commit
+b575d981092f ("arch: introduce set_direct_map_valid_noflush()"), all
+three combinations boot fine.
 
+  $ uname -r; tr ' ' '\n' </proc/cmdline | grep cfi=
+
+  6.12.0-rc5-debug-00214-g7ca6ed09db62
+  cfi=kcfi
+
+  6.12.0-rc5-debug-00214-g7ca6ed09db62
+  cfi=off
+
+  6.12.0-rc5-debug-00213-gb575d981092f
+  cfi=fineibt
+
+  6.12.0-rc5-debug-00213-gb575d981092f
+  cfi=kcfi
+
+  6.12.0-rc5-debug-00213-gb575d981092f
+  cfi=off
+
+I do not think this machine has an accessible serial port and I do not
+think IBT virtualization is supported via either KVM or TCG in QEMU, so
+I am not sure how to get more information about what is going on here. I
+wanted to try reverting these changes on top of next-20241104 but there
+was a non-trivial conflict in mm/execmem.c due to some changes on top,
+so I just tested in the mm history.
+
+If there is any other information I can provide or patches I can test, I
+am more than happy to do so.
+
+Cheers,
+Nathan
 
