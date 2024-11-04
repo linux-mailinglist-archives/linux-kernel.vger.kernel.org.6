@@ -1,128 +1,198 @@
-Return-Path: <linux-kernel+bounces-394910-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394911-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83D7A9BB5D4
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 14:22:44 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A34F9BB5D6
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 14:22:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 470BB281AC9
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 13:22:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A4CD01F2248E
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 13:22:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA5AD42A9F;
-	Mon,  4 Nov 2024 13:22:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05D73175A5;
+	Mon,  4 Nov 2024 13:22:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="TEDGmUiM";
-	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="UuTKtIlz"
-Received: from bedivere.hansenpartnership.com (bedivere.hansenpartnership.com [96.44.175.130])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Lu4kk/++"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23CC62B9BC;
-	Mon,  4 Nov 2024 13:21:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.44.175.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53A8A6FB9;
+	Mon,  4 Nov 2024 13:22:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730726520; cv=none; b=I/CXq7+rJyO5QGHszpMd/YRn9cgoKWo8dVOnRcOYtuZCQov5TXYD7g45becruef66vWcAQmJBlIMxIN4zBUSdJjEQ5ncGVteKAVo2fGJYJRietaCjCK9a5UetaD/0tBYzgnXrhLIM2Bhx9YY31DiGuRIFdFYdbzY9EWsXP4ubko=
+	t=1730726539; cv=none; b=JBLg5gICa4Y9dRqkUWhdkhzEU5tZEThjFm0a5BSVj3RgJuMWo9fPL6EgGzxrT8HtcJzEEDHjAjjWCLwQ24g8aE3WaqmPC5iXPiX7bnIEAfxVDfohzaj5/zpt4qli97NHsR0u8Ag6g/0PnJXmjluTk0WIQOh1Da8zu+m4G4fnEIc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730726520; c=relaxed/simple;
-	bh=XWiezMdHQhwVAQ8FS0dYPAP0vsMdPsMcHS8Bdu27PCs=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=CZFF5sevy75Y+DGuKU3oRIl5kOmV3ubU+0C/QnNqrhgIzZdgkDGddddka3Hyp02Ghyr0lOTj4+bRBWBt9/tliOzqkCisI+kzpXQ/LlhQaoq7KUUpIPgkO/ZUOAxGwtfqDA5vld1E8lE9/CHz8wBanf8yhEN7hvgH90/tH2TR6SQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=TEDGmUiM; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=UuTKtIlz; arc=none smtp.client-ip=96.44.175.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=hansenpartnership.com; s=20151216; t=1730726516;
-	bh=XWiezMdHQhwVAQ8FS0dYPAP0vsMdPsMcHS8Bdu27PCs=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-	b=TEDGmUiM1pAQv0SxNv+MicVlNshvHOaypSIY2DUUZeU9i5dXfpB+XOGDlK2w2hzs0
-	 hrtT9o8fU8J5pw+pXlR0E5oI/9WiV0SqD3ILwezUxS3TmAXX/5aPrhcWg/ZKfhCrQ0
-	 q5ss4euAOD8W2ArIZbW5HNu6B1cN28bt0SoAzUdc=
-Received: from localhost (localhost [127.0.0.1])
-	by bedivere.hansenpartnership.com (Postfix) with ESMTP id 93EFF12869C9;
-	Mon, 04 Nov 2024 08:21:56 -0500 (EST)
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
- by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavis, port 10024)
- with ESMTP id JV_hL4Tmk4bz; Mon,  4 Nov 2024 08:21:56 -0500 (EST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=hansenpartnership.com; s=20151216; t=1730726515;
-	bh=XWiezMdHQhwVAQ8FS0dYPAP0vsMdPsMcHS8Bdu27PCs=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-	b=UuTKtIlzvkhrSqdMfExl/QMP3DzspfuEpSRJ6AIxw+1b/M55rnTDhF1IVhAeEc2QQ
-	 lQDezNvU5IFv2U5Bxb1QwES53gtATg07N8hbrM91E+02AjGuqJYotaIAFtZGyaFTBa
-	 r0X9fRZBIDbbDqDBkxHdwVaYr/28pArA4JLcnJcs=
-Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::a774])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id EEF9F1286919;
-	Mon, 04 Nov 2024 08:21:54 -0500 (EST)
-Message-ID: <3bc70b659c1c86c0f08c6d91a6d894ce58825e04.camel@HansenPartnership.com>
-Subject: Re: [RFC PATCH 0/4] Alternative TPM patches for Trenchboot
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-To: "Daniel P. Smith" <dpsmith@apertussolutions.com>, Ard Biesheuvel
-	 <ardb@kernel.org>
-Cc: Jarkko Sakkinen <jarkko@kernel.org>, x86@kernel.org, Ross Philipson
- <ross.philipson@oracle.com>, Thomas Gleixner <tglx@linutronix.de>, Peter
- Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>, "open list:TPM
- DEVICE DRIVER" <linux-integrity@vger.kernel.org>, open list
- <linux-kernel@vger.kernel.org>,  trenchboot-devel@googlegroups.com
-Date: Mon, 04 Nov 2024 08:21:50 -0500
-In-Reply-To: <7b324454-bc34-4cc4-bd12-99268a543508@apertussolutions.com>
-References: <20241102152226.2593598-1-jarkko@kernel.org>
-	 <D5BW0P0HH0QL.7Y4HBLJGEDL8@kernel.org>
-	 <e745226d-4722-43ed-86ad-89428f56fcba@apertussolutions.com>
-	 <D5DCPWBQ2M7H.GAUEVUKGC3G0@kernel.org>
-	 <CAMj1kXGd5KAXiFr3rEq3cQK=_970b=eRT4X6YKVSj2PhN6ACrw@mail.gmail.com>
-	 <97d4e1a0-d86e-48a9-ad31-7e53d6885a96@apertussolutions.com>
-	 <CAMj1kXFEJYVs7p6QLEAU-T+xfoWhkFi=PE9QpJ4Oo4oh3eM38Q@mail.gmail.com>
-	 <7b324454-bc34-4cc4-bd12-99268a543508@apertussolutions.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.42.4 
+	s=arc-20240116; t=1730726539; c=relaxed/simple;
+	bh=Tj2FqFQ7r2b4f3vcnV2ejn2hN8icLGVwIvwRHnFu6LA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pbAi0VrC0gA9q56bXMTm4ec0CNl+dRjVMLQ7P1xqlUwTVOOFnz+uNx3E/49k8QTGcY4S/4bnK3+E3K3YSdYACw1uGKLhAuy7zq4NUvFVsusMoIEnnaW3hzF3BlOCWO35hcP1w0hGeRryPmEw41Hg3zUJe8Id2Ib4Byv7tISFW+g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Lu4kk/++; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA785C4CED1;
+	Mon,  4 Nov 2024 13:22:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730726537;
+	bh=Tj2FqFQ7r2b4f3vcnV2ejn2hN8icLGVwIvwRHnFu6LA=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=Lu4kk/++HaJgFQNzO2vYoHRA/4OazSta4k/aueQRYLiY+Db/YoNkBsR1VUyz55OZH
+	 7fDpYM5kelv49kFSvd6A5TRWCyvRbhbMyYW/N5BZar0JaS2+LS1EDECQUm68+4XORX
+	 Dfk5XxrJJKdFdkb5EM4GfkVJlbZ15jklzRWWoZY6IhbOEgy9kUz4LYSCoPoo1HGf7u
+	 rd1DMHceezwsg9p8g7qodXrAqMlpu4JtqoDTSFv8ZAHOqNXBiSLFYKdt67SCN/jYkh
+	 tnR+gsNjFA+L6/Uiv+hNUAB2FZpTmwW91g0TJwvQoZOSvYdBZd0Pc+fq8S1d6QtR88
+	 DfNJ7F4zO68hA==
+Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-e2e340218daso4124166276.0;
+        Mon, 04 Nov 2024 05:22:17 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCU296Lv2CKO3ciTMCzlqJ+TL1Ajg5wTV02xY2Kko7IU7OUuS00mtxSf3cFJ8AW/6VQ9W4lQ9WMhFSGl@vger.kernel.org, AJvYcCVj9ucTu18L3Hmx3KntSf2CPO1frW3957+y9uOunT2tIIP95Amczl4wRQfAAVvRd20At4AXUeEwEb2wSOp0@vger.kernel.org
+X-Gm-Message-State: AOJu0YwTGZDSQz+vQgUdaF22Hb6Y9ZprdufCZr1PgkcSOhwUeaAynxbw
+	bXtUsEBdqVrMGoVrUr3mctDlu4jcdM8puId+8g4YVbPVB2kZrTkqe8VDkZj802rvWCd4DmqmYwD
+	O80kw0G+U8A2qSL5/zD46uSa8Pg==
+X-Google-Smtp-Source: AGHT+IGeqHEHHvv5WLP3SxrhgX6E1Sdt1m4eiSmZCbSQ1YICeESTFlOi/vfYQlC2v1SaGAP7PYV4swW7rypB4eXi2xE=
+X-Received: by 2002:a05:6902:2701:b0:e28:a4f9:c2ff with SMTP id
+ 3f1490d57ef6-e30e5b79503mr12339543276.55.1730726537038; Mon, 04 Nov 2024
+ 05:22:17 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+References: <20241014193528.1896905-2-robh@kernel.org>
+In-Reply-To: <20241014193528.1896905-2-robh@kernel.org>
+From: Rob Herring <robh@kernel.org>
+Date: Mon, 4 Nov 2024 07:22:05 -0600
+X-Gmail-Original-Message-ID: <CAL_Jsq+QdfZbkeeY2PWAq_5OpeSF=QpcL7OKWpz7byuXNLRG1w@mail.gmail.com>
+Message-ID: <CAL_Jsq+QdfZbkeeY2PWAq_5OpeSF=QpcL7OKWpz7byuXNLRG1w@mail.gmail.com>
+Subject: Re: [PATCH] arm64: dts: marvell: Drop undocumented SATA phy names
+To: Andrew Lunn <andrew@lunn.ch>, Gregory Clement <gregory.clement@bootlin.com>, 
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Russell King <linux@armlinux.org.uk>
+Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Frank Wunderlich <linux@fw-web.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 2024-11-04 at 07:19 -0500, Daniel P. Smith wrote:
-> On 11/4/24 06:55, 'Ard Biesheuvel' via trenchboot-devel wrote:
-[...]
-> > I was referring specifically to the read-write sysfs node that
-> > permits user space to update the default TPM locality. Does it need
-> > to be writable? And does it need to exist at all?
+On Mon, Oct 14, 2024 at 2:37=E2=80=AFPM Rob Herring (Arm) <robh@kernel.org>=
+ wrote:
+>
+> While "phy-names" is allowed for sata-port nodes, the names used aren't
+> documented and are incorrect ("sata-phy" is what's documented). The name
+> for a single entry is fairly useless, so just drop the property.
+>
+> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+> ---
+> Cc: Frank Wunderlich <linux@fw-web.de>
+>
+> There's also this 2 year old patch fixing other SATA errors[1] which
+> was never picked up. :(
+>
+> [1] https://lore.kernel.org/linux-arm-kernel/20220311210357.222830-3-linu=
+x@fw-web.de/
+>
+>  arch/arm64/boot/dts/marvell/armada-7040-db.dts             | 1 -
+>  arch/arm64/boot/dts/marvell/armada-7040-mochabin.dts       | 2 --
+>  arch/arm64/boot/dts/marvell/armada-8040-clearfog-gt-8k.dts | 1 -
+>  arch/arm64/boot/dts/marvell/armada-8040-db.dts             | 2 --
+>  arch/arm64/boot/dts/marvell/armada-8040-mcbin.dtsi         | 1 -
+>  arch/arm64/boot/dts/marvell/armada-8040-puzzle-m801.dts    | 2 --
+>  6 files changed, 9 deletions(-)
 
-This was my question here, which never got answered as well:
+Ping.
 
-https://lore.kernel.org/linux-integrity/685f3f00ddf88e961e2d861b7c783010774fe19d.camel@HansenPartnership.com/
-
-> Right, sorry. As I recall, that was introduce due to the sequence of
-> how the TPM driver handled locality, moving back to Locality 0 after
-> done sending cmds. In the Oracle implementation, the initramfs takes 
-> integrity measurements of the environment it is about to kexec into,
-> eg.  target kernel, initramfs, file system, etc. Some of these
-> measurements should go into PCR 17 and PCR 18, which requires
-> Locality 2 to be able extend those PCRs. If the slmodule is able to
-> set the locality for all PCR extends coming from user space to be
-> Locality 2, that removes the current need for it.
-
-Well, no, that's counter to the desire to have user space TPM commands
-and kernel space TPM commands in different localities.  I thought the
-whole point of having locality restricted PCRs is so that only trusted
-entities (i.e. those able to access the higher locality) could extend
-into them.  If you run every TPM command, regardless of source, in the
-trusted locality, that makes the extends accessible to everyone and
-thus destroys the trust boundary.
-
-It also doesn't sound like the above that anything in user space
-actually needs this facility.  The measurements of kernel and initramfs
-are already done by the boot stub (to PCR9, but that could be changed)
-so we could do it all from the trusted entity.
-
-Regards,
-
-James
-
+>
+> diff --git a/arch/arm64/boot/dts/marvell/armada-7040-db.dts b/arch/arm64/=
+boot/dts/marvell/armada-7040-db.dts
+> index 5e5baf6beea4..1e0ab35cc686 100644
+> --- a/arch/arm64/boot/dts/marvell/armada-7040-db.dts
+> +++ b/arch/arm64/boot/dts/marvell/armada-7040-db.dts
+> @@ -214,7 +214,6 @@ &cp0_sata0 {
+>
+>         sata-port@1 {
+>                 phys =3D <&cp0_comphy3 1>;
+> -               phy-names =3D "cp0-sata0-1-phy";
+>         };
+>  };
+>
+> diff --git a/arch/arm64/boot/dts/marvell/armada-7040-mochabin.dts b/arch/=
+arm64/boot/dts/marvell/armada-7040-mochabin.dts
+> index 40b7ee7ead72..7af949092b91 100644
+> --- a/arch/arm64/boot/dts/marvell/armada-7040-mochabin.dts
+> +++ b/arch/arm64/boot/dts/marvell/armada-7040-mochabin.dts
+> @@ -433,13 +433,11 @@ &cp0_sata0 {
+>         /* 7 + 12 SATA connector (J24) */
+>         sata-port@0 {
+>                 phys =3D <&cp0_comphy2 0>;
+> -               phy-names =3D "cp0-sata0-0-phy";
+>         };
+>
+>         /* M.2-2250 B-key (J39) */
+>         sata-port@1 {
+>                 phys =3D <&cp0_comphy3 1>;
+> -               phy-names =3D "cp0-sata0-1-phy";
+>         };
+>  };
+>
+> diff --git a/arch/arm64/boot/dts/marvell/armada-8040-clearfog-gt-8k.dts b=
+/arch/arm64/boot/dts/marvell/armada-8040-clearfog-gt-8k.dts
+> index 67892f0d2863..7005a32a6e1e 100644
+> --- a/arch/arm64/boot/dts/marvell/armada-8040-clearfog-gt-8k.dts
+> +++ b/arch/arm64/boot/dts/marvell/armada-8040-clearfog-gt-8k.dts
+> @@ -475,7 +475,6 @@ &cp1_sata0 {
+>
+>         sata-port@1 {
+>                 phys =3D <&cp1_comphy0 1>;
+> -               phy-names =3D "cp1-sata0-1-phy";
+>         };
+>  };
+>
+> diff --git a/arch/arm64/boot/dts/marvell/armada-8040-db.dts b/arch/arm64/=
+boot/dts/marvell/armada-8040-db.dts
+> index 92897bd7e6cf..2ec19d364e62 100644
+> --- a/arch/arm64/boot/dts/marvell/armada-8040-db.dts
+> +++ b/arch/arm64/boot/dts/marvell/armada-8040-db.dts
+> @@ -145,11 +145,9 @@ &cp0_sata0 {
+>
+>         sata-port@0 {
+>                 phys =3D <&cp0_comphy1 0>;
+> -               phy-names =3D "cp0-sata0-0-phy";
+>         };
+>         sata-port@1 {
+>                 phys =3D <&cp0_comphy3 1>;
+> -               phy-names =3D "cp0-sata0-1-phy";
+>         };
+>  };
+>
+> diff --git a/arch/arm64/boot/dts/marvell/armada-8040-mcbin.dtsi b/arch/ar=
+m64/boot/dts/marvell/armada-8040-mcbin.dtsi
+> index c864df9ec84d..e88ff5b179c8 100644
+> --- a/arch/arm64/boot/dts/marvell/armada-8040-mcbin.dtsi
+> +++ b/arch/arm64/boot/dts/marvell/armada-8040-mcbin.dtsi
+> @@ -245,7 +245,6 @@ &cp0_sata0 {
+>         /* CPM Lane 5 - U29 */
+>         sata-port@1 {
+>                 phys =3D <&cp0_comphy5 1>;
+> -               phy-names =3D "cp0-sata0-1-phy";
+>         };
+>  };
+>
+> diff --git a/arch/arm64/boot/dts/marvell/armada-8040-puzzle-m801.dts b/ar=
+ch/arm64/boot/dts/marvell/armada-8040-puzzle-m801.dts
+> index 42a60f3dd5d1..3e5e0651ce68 100644
+> --- a/arch/arm64/boot/dts/marvell/armada-8040-puzzle-m801.dts
+> +++ b/arch/arm64/boot/dts/marvell/armada-8040-puzzle-m801.dts
+> @@ -408,12 +408,10 @@ &cp0_sata0 {
+>
+>         sata-port@0 {
+>                 phys =3D <&cp0_comphy2 0>;
+> -               phy-names =3D "cp0-sata0-0-phy";
+>         };
+>
+>         sata-port@1 {
+>                 phys =3D <&cp0_comphy5 1>;
+> -               phy-names =3D "cp0-sata0-1-phy";
+>         };
+>  };
+>
+> --
+> 2.45.2
+>
 
