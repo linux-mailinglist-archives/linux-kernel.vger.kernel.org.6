@@ -1,311 +1,256 @@
-Return-Path: <linux-kernel+bounces-394898-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394895-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A9509BB582
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 14:12:56 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E79609BB57A
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 14:10:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4EA2282B78
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 13:12:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 54F85B2426F
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 13:10:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1376E1BBBDD;
-	Mon,  4 Nov 2024 13:12:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58BC11BD03B;
+	Mon,  4 Nov 2024 13:10:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bBPW9Ela"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	dkim=pass (1024-bit key) header.d=amazon.co.uk header.i=@amazon.co.uk header.b="QoTIF90w"
+Received: from smtp-fw-80006.amazon.com (smtp-fw-80006.amazon.com [99.78.197.217])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B623B1BAEDC
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 13:12:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D74A1BCA0A;
+	Mon,  4 Nov 2024 13:10:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.217
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730725969; cv=none; b=S/JGHK5fpFYngOaas0jfOX3GJBIFDa9gGlhsr8+AwrOnpkkYESHU9S3X52R6OlwfP5BqSdF8RAO/4TmSYOYmu/OdpEwZ2ZaDY5X0bbsy8Qz1p/f2RUcfLqNSELLjirPsqr1IchqUIWPu1Uf7zgE8DfcnCAVR2fJe1EkMFK36OHM=
+	t=1730725836; cv=none; b=SdxEWwYhFu8XBOMhS+FwFcSwwEavDKuGVEaTJndb1gzXetXPc1yPtRtSnG6akP0GL+QTWEXZoXw2EYmNCkPEB8WZ7rpb9MQq9fNGgDBnl6F9FQHezWeZrryGDWuFhGAaLgHkTM5gLyomPNWjCEsikg0u86n6B9hTLCxYMu70Qwo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730725969; c=relaxed/simple;
-	bh=OHqRIXhhgYXeFheeoDwpeP8qBgK0WapujvgW1kroUZc=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Fob08D/xLr1F92TR7YSiB3QmcYtkxM0bs7BYY0sCjluz/A2C/IhpUFStKhigFY7fhV9MKJ8hkHy62fCaADId8qaB9ujSMzWUKTwhFJTDTf3lXNfhsKPXCp4dsuLBU7ssP5oz/gaBBclhdH73X1IrCw9OoSRvq8qDCAdAtgXDxrg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bBPW9Ela; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730725967; x=1762261967;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version:content-transfer-encoding;
-  bh=OHqRIXhhgYXeFheeoDwpeP8qBgK0WapujvgW1kroUZc=;
-  b=bBPW9ElaPLYLVoscc9JTbW4yGCe8w4fa8/TgBosXzMifWXyCcgI2+sVS
-   kB1fzZXzDu/8zDB2GFiB8aPuYQ7euVhjhoWCzI0/k9R7Rs9S33hoiz83Z
-   di+5It0jipnTxd0s5q1iyVtGVtQ4X4iBKG9OcYdOA3Vm0R8C9F2Ozz8vl
-   hP4azCGndVlo3piWb5y77VxBuFVFfdxl0BorEGY3VHTpudYTve4tCcpcE
-   TO5yBFBS/dULLXDvHfKiH/6kroJ1a0Jc0CmIIar4l6z49BjsmkG8GHceQ
-   X57W+WZJsLBLnzv7PsruyiGLDld1GVXwVtff7fOL8XVRbYy4QiksOO8ME
-   Q==;
-X-CSE-ConnectionGUID: eWWX30L4TtCeYgtG1Evh2g==
-X-CSE-MsgGUID: gCi4BRbxQrCAnIhvgS19Ww==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="30274059"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="30274059"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2024 05:12:47 -0800
-X-CSE-ConnectionGUID: w+6orqxHTL2wDVxuQn9LxQ==
-X-CSE-MsgGUID: Dl7LuxZTRAup44iZGNs7/w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,257,1725346800"; 
-   d="scan'208";a="114438131"
-Received: from yhuang6-desk2.sh.intel.com (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
-  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2024 05:12:41 -0800
-From: "Huang, Ying" <ying.huang@intel.com>
-To: Barry Song <21cnbao@gmail.com>
-Cc: Johannes Weiner <hannes@cmpxchg.org>,  Yosry Ahmed
- <yosryahmed@google.com>,  Usama Arif <usamaarif642@gmail.com>,
-  akpm@linux-foundation.org,  linux-mm@kvack.org,
-  linux-kernel@vger.kernel.org,  Barry Song <v-songbaohua@oppo.com>,
-  Kanchana P Sridhar <kanchana.p.sridhar@intel.com>,  David Hildenbrand
- <david@redhat.com>,  Baolin Wang <baolin.wang@linux.alibaba.com>,  Chris
- Li <chrisl@kernel.org>,  Kairui Song <kasong@tencent.com>,  Ryan Roberts
- <ryan.roberts@arm.com>,  Michal Hocko <mhocko@kernel.org>,  Roman Gushchin
- <roman.gushchin@linux.dev>,  Shakeel Butt <shakeel.butt@linux.dev>,
-  Muchun Song <muchun.song@linux.dev>
-Subject: Re: [PATCH RFC] mm: mitigate large folios usage and swap thrashing
- for nearly full memcg
-In-Reply-To: <CAGsJ_4yALxTVuHOf_y00DbYp=kjEZuL3q6sWfn2Wf-Y+_G5RjA@mail.gmail.com>
-	(Barry Song's message of "Mon, 4 Nov 2024 21:06:46 +1300")
-References: <20241027001444.3233-1-21cnbao@gmail.com>
-	<33c5d5ca-7bc4-49dc-b1c7-39f814962ae0@gmail.com>
-	<CAGsJ_4wdgptMK0dDTC5g66OE9WDxFDt7ixDQaFCjuHdTyTEGiA@mail.gmail.com>
-	<e8c6d46c-b8cf-4369-aa61-9e1b36b83fe3@gmail.com>
-	<CAJD7tkZ60ROeHek92jgO0z7LsEfgPbfXN9naUC5j7QjRQxpoKw@mail.gmail.com>
-	<852211c6-0b55-4bdd-8799-90e1f0c002c1@gmail.com>
-	<CAJD7tkaXL_vMsgYET9yjYQW5pM2c60fD_7r_z4vkMPcqferS8A@mail.gmail.com>
-	<c76635d7-f382-433a-8900-72bca644cdaa@gmail.com>
-	<CAJD7tkYSRCjtEwP=o_n_ZhdfO8nga-z-a=RirvcKL7AYO76XJw@mail.gmail.com>
-	<20241031153830.GA799903@cmpxchg.org>
-	<87a5ef8ppq.fsf@yhuang6-desk2.ccr.corp.intel.com>
-	<CAGsJ_4yALxTVuHOf_y00DbYp=kjEZuL3q6sWfn2Wf-Y+_G5RjA@mail.gmail.com>
-Date: Mon, 04 Nov 2024 21:09:09 +0800
-Message-ID: <871pzr87t6.fsf@yhuang6-desk2.ccr.corp.intel.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1730725836; c=relaxed/simple;
+	bh=Z2mbvpWFAdMTDdYcO4ugyL1b/eLURJbnO0cdjQkMi0g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=aTxoXK6YzjHYIwg2lvQYUZlpXg8hVxTYtoup7yFB898d4uH9CKQhu3ayW/XbG4C0p0MYk3l6EVkjU88+++ctvWubTJI//rnpjv5UV2SR8NkFvHvOgxCQthGQPsjg8qYssd3W2bOp39AuryeopnRBPhwAGT9Lg/HqfFeRKbihgF8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.co.uk; spf=pass smtp.mailfrom=amazon.co.uk; dkim=pass (1024-bit key) header.d=amazon.co.uk header.i=@amazon.co.uk header.b=QoTIF90w; arc=none smtp.client-ip=99.78.197.217
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.co.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.uk
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.co.uk; i=@amazon.co.uk; q=dns/txt;
+  s=amazon201209; t=1730725835; x=1762261835;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=1btoMBa04UyDS7nxAQeta6RxSxmw/jW1eQwuNLcFWgs=;
+  b=QoTIF90wZ8QEM6c9ZU1c6D0fCy/devysZRUFiMxBNaDETFcCS5TF0buN
+   ySxxtWnlKlPf32IA5bfYodyMaJudiRTQRBTDk+pHfQX1kDo9YrHYf+PEz
+   nip4s4G7eE/JK5iAUVs1d1cAILUXF5mKVrE/AHe/DprZ0wqumiJEKW/CR
+   s=;
+X-IronPort-AV: E=Sophos;i="6.11,257,1725321600"; 
+   d="scan'208";a="1844949"
+Received: from pdx4-co-svc-p1-lb2-vlan3.amazon.com (HELO smtpout.prod.us-east-1.prod.farcaster.email.amazon.dev) ([10.25.36.214])
+  by smtp-border-fw-80006.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2024 13:10:06 +0000
+Received: from EX19MTAEUB002.ant.amazon.com [10.0.10.100:54379]
+ by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.22.75:2525] with esmtp (Farcaster)
+ id 22e5bca5-2878-4e31-8cc8-18fdd76ac967; Mon, 4 Nov 2024 13:10:04 +0000 (UTC)
+X-Farcaster-Flow-ID: 22e5bca5-2878-4e31-8cc8-18fdd76ac967
+Received: from EX19D022EUA002.ant.amazon.com (10.252.50.201) by
+ EX19MTAEUB002.ant.amazon.com (10.252.51.59) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
+ Mon, 4 Nov 2024 13:09:59 +0000
+Received: from EX19MTAUEC002.ant.amazon.com (10.252.135.146) by
+ EX19D022EUA002.ant.amazon.com (10.252.50.201) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
+ Mon, 4 Nov 2024 13:09:59 +0000
+Received: from email-imr-corp-prod-iad-all-1b-a03c1db8.us-east-1.amazon.com
+ (10.43.8.6) by mail-relay.amazon.com (10.252.135.146) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id
+ 15.2.1258.34 via Frontend Transport; Mon, 4 Nov 2024 13:09:59 +0000
+Received: from [127.0.0.1] (dev-dsk-roypat-1c-dbe2a224.eu-west-1.amazon.com [172.19.88.180])
+	by email-imr-corp-prod-iad-all-1b-a03c1db8.us-east-1.amazon.com (Postfix) with ESMTPS id 238228042B;
+	Mon,  4 Nov 2024 13:09:54 +0000 (UTC)
+Message-ID: <90c9d8c0-814e-4c86-86ef-439cb5552cb6@amazon.co.uk>
+Date: Mon, 4 Nov 2024 13:09:53 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v3 0/6] Direct Map Removal for guest_memfd
+To: David Hildenbrand <david@redhat.com>, <tabba@google.com>,
+	<quic_eberman@quicinc.com>, <seanjc@google.com>, <pbonzini@redhat.com>,
+	<jthoughton@google.com>, <ackerleytng@google.com>, <vannapurve@google.com>,
+	<rppt@kernel.org>
+CC: <graf@amazon.com>, <jgowans@amazon.com>, <derekmn@amazon.com>,
+	<kalyazin@amazon.com>, <xmarcalx@amazon.com>, <linux-mm@kvack.org>,
+	<corbet@lwn.net>, <catalin.marinas@arm.com>, <will@kernel.org>,
+	<chenhuacai@kernel.org>, <kernel@xen0n.name>, <paul.walmsley@sifive.com>,
+	<palmer@dabbelt.com>, <aou@eecs.berkeley.edu>, <hca@linux.ibm.com>,
+	<gor@linux.ibm.com>, <agordeev@linux.ibm.com>, <borntraeger@linux.ibm.com>,
+	<svens@linux.ibm.com>, <gerald.schaefer@linux.ibm.com>, <tglx@linutronix.de>,
+	<mingo@redhat.com>, <bp@alien8.de>, <dave.hansen@linux.intel.com>,
+	<x86@kernel.org>, <hpa@zytor.com>, <luto@kernel.org>, <peterz@infradead.org>,
+	<rostedt@goodmis.org>, <mhiramat@kernel.org>,
+	<mathieu.desnoyers@efficios.com>, <shuah@kernel.org>, <kvm@vger.kernel.org>,
+	<linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <loongarch@lists.linux.dev>,
+	<linux-riscv@lists.infradead.org>, <linux-s390@vger.kernel.org>,
+	<linux-trace-kernel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>
+References: <20241030134912.515725-1-roypat@amazon.co.uk>
+ <4aa0ccf4-ebbe-4244-bc85-8bc8dcd14e74@redhat.com>
+ <27646c08-f724-49f7-9f45-d03bad500219@amazon.co.uk>
+ <d1a69eb7-85d5-4ffa-88e2-f4841713c1d7@redhat.com>
+From: Patrick Roy <roypat@amazon.co.uk>
+Content-Language: en-US
+Autocrypt: addr=roypat@amazon.co.uk; keydata=
+ xjMEY0UgYhYJKwYBBAHaRw8BAQdA7lj+ADr5b96qBcdINFVJSOg8RGtKthL5x77F2ABMh4PN
+ NVBhdHJpY2sgUm95IChHaXRodWIga2V5IGFtYXpvbikgPHJveXBhdEBhbWF6b24uY28udWs+
+ wpMEExYKADsWIQQ5DAcjaM+IvmZPLohVg4tqeAbEAgUCY0UgYgIbAwULCQgHAgIiAgYVCgkI
+ CwIEFgIDAQIeBwIXgAAKCRBVg4tqeAbEAmQKAQC1jMl/KT9pQHEdALF7SA1iJ9tpA5ppl1J9
+ AOIP7Nr9SwD/fvIWkq0QDnq69eK7HqW14CA7AToCF6NBqZ8r7ksi+QLOOARjRSBiEgorBgEE
+ AZdVAQUBAQdAqoMhGmiXJ3DMGeXrlaDA+v/aF/ah7ARbFV4ukHyz+CkDAQgHwngEGBYKACAW
+ IQQ5DAcjaM+IvmZPLohVg4tqeAbEAgUCY0UgYgIbDAAKCRBVg4tqeAbEAtjHAQDkh5jZRIsZ
+ 7JMNkPMSCd5PuSy0/Gdx8LGgsxxPMZwePgEAn5Tnh4fVbf00esnoK588bYQgJBioXtuXhtom
+ 8hlxFQM=
+In-Reply-To: <d1a69eb7-85d5-4ffa-88e2-f4841713c1d7@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 
-Barry Song <21cnbao@gmail.com> writes:
 
-> On Mon, Nov 4, 2024 at 7:46=E2=80=AFPM Huang, Ying <ying.huang@intel.com>=
- wrote:
+Hi David,
+
+On 11/4/24 12:18, David Hildenbrand wrote:
+> On 31.10.24 11:42, Patrick Roy wrote:
+>> On Thu, 2024-10-31 at 09:50 +0000, David Hildenbrand wrote:
+>>> On 30.10.24 14:49, Patrick Roy wrote:
+>>>> Unmapping virtual machine guest memory from the host kernel's direct map
+>>>> is a successful mitigation against Spectre-style transient execution
+>>>> issues: If the kernel page tables do not contain entries pointing to
+>>>> guest memory, then any attempted speculative read through the direct map
+>>>> will necessarily be blocked by the MMU before any observable
+>>>> microarchitectural side-effects happen. This means that Spectre-gadgets
+>>>> and similar cannot be used to target virtual machine memory. Roughly 60%
+>>>> of speculative execution issues fall into this category [1, Table 1].
+>>>>
+>>>> This patch series extends guest_memfd with the ability to remove its
+>>>> memory from the host kernel's direct map, to be able to attain the above
+>>>> protection for KVM guests running inside guest_memfd.
+>>>>
+>>>> === Changes to v2 ===
+>>>>
+>>>> - Handle direct map removal for physically contiguous pages in arch code
+>>>>     (Mike R.)
+>>>> - Track the direct map state in guest_memfd itself instead of at the
+>>>>     folio level, to prepare for huge pages support (Sean C.)
+>>>> - Allow configuring direct map state of not-yet faulted in memory
+>>>>     (Vishal A.)
+>>>> - Pay attention to alignment in ftrace structs (Steven R.)
+>>>>
+>>>> Most significantly, I've reduced the patch series to focus only on
+>>>> direct map removal for guest_memfd for now, leaving the whole "how to do
+>>>> non-CoCo VMs in guest_memfd" for later. If this separation is
+>>>> acceptable, then I think I can drop the RFC tag in the next revision
+>>>> (I've mainly kept it here because I'm not entirely sure what to do with
+>>>> patches 3 and 4).
+>>>
+>>> Hi,
+>>>
+>>> keeping upcoming "shared and private memory in guest_memfd" in mind, I
+>>> assume the focus would be to only remove the direct map for private memory?
+>>>
+>>> So in the current upstream state, you would only be removing the direct
+>>> map for private memory, currently translating to "encrypted"/"protected"
+>>> memory that is inaccessible either way already.
+>>>
+>>> Correct?
 >>
->> Johannes Weiner <hannes@cmpxchg.org> writes:
->>
->> > On Wed, Oct 30, 2024 at 02:18:09PM -0700, Yosry Ahmed wrote:
->> >> On Wed, Oct 30, 2024 at 2:13=E2=80=AFPM Usama Arif <usamaarif642@gmai=
-l.com> wrote:
->> >> > On 30/10/2024 21:01, Yosry Ahmed wrote:
->> >> > > On Wed, Oct 30, 2024 at 1:25=E2=80=AFPM Usama Arif <usamaarif642@=
-gmail.com> wrote:
->> >> > >>>> I am not sure that the approach we are trying in this patch is=
- the right way:
->> >> > >>>> - This patch makes it a memcg issue, but you could have memcg =
-disabled and
->> >> > >>>> then the mitigation being tried here wont apply.
->> >> > >>>
->> >> > >>> Is the problem reproducible without memcg? I imagine only if the
->> >> > >>> entire system is under memory pressure. I guess we would want t=
-he same
->> >> > >>> "mitigation" either way.
->> >> > >>>
->> >> > >> What would be a good open source benchmark/workload to test with=
-out limiting memory
->> >> > >> in memcg?
->> >> > >> For the kernel build test, I can only get zswap activity to happ=
-en if I build
->> >> > >> in cgroup and limit memory.max.
->> >> > >
->> >> > > You mean a benchmark that puts the entire system under memory
->> >> > > pressure? I am not sure, it ultimately depends on the size of mem=
-ory
->> >> > > you have, among other factors.
->> >> > >
->> >> > > What if you run the kernel build test in a VM? Then you can limit=
- is
->> >> > > size like a memcg, although you'd probably need to leave more room
->> >> > > because the entire guest OS will also subject to the same limit.
->> >> > >
->> >> >
->> >> > I had tried this, but the variance in time/zswap numbers was very h=
-igh.
->> >> > Much higher than the AMD numbers I posted in reply to Barry. So fou=
-nd
->> >> > it very difficult to make comparison.
->> >>
->> >> Hmm yeah maybe more factors come into play with global memory
->> >> pressure. I am honestly not sure how to test this scenario, and I
->> >> suspect variance will be high anyway.
->> >>
->> >> We can just try to use whatever technique we use for the memcg limit
->> >> though, if possible, right?
->> >
->> > You can boot a physical machine with mem=3D1G on the commandline, which
->> > restricts the physical range of memory that will be initialized.
->> > Double check /proc/meminfo after boot, because part of that physical
->> > range might not be usable RAM.
->> >
->> > I do this quite often to test physical memory pressure with workloads
->> > that don't scale up easily, like kernel builds.
->> >
->> >> > >>>> - Instead of this being a large folio swapin issue, is it more=
- of a readahead
->> >> > >>>> issue? If we zswap (without the large folio swapin series) and=
- change the window
->> >> > >>>> to 1 in swap_vma_readahead, we might see an improvement in lin=
-ux kernel build time
->> >> > >>>> when cgroup memory is limited as readahead would probably caus=
-e swap thrashing as
->> >> > >>>> well.
->> >
->> > +1
->> >
->> > I also think there is too much focus on cgroup alone. The bigger issue
->> > seems to be how much optimistic volume we swap in when we're under
->> > pressure already. This applies to large folios and readahead; global
->> > memory availability and cgroup limits.
->>
->> The current swap readahead logic is something like,
->>
->> 1. try readahead some pages for sequential access pattern, mark them as
->>    readahead
->>
->> 2. if these readahead pages get accessed before swapped out again,
->>    increase 'hits' counter
->>
->> 3. for next swap in, try readahead 'hits' pages and clear 'hits'.
->>
->> So, if there's heavy memory pressure, the readaheaded pages will not be
->> accessed before being swapped out again (in 2 above), the readahead
->> pages will be minimal.
->>
->> IMHO, mTHP swap-in is kind of swap readahead in effect.  That is, in
->> addition to the pages accessed are swapped in, the adjacent pages are
->> swapped in (swap readahead) too.  If these readahead pages are not
->> accessed before swapped out again, system runs into more severe
->> thrashing.  This is because we lack the swap readahead window scaling
->> mechanism as above.  And, this is why I suggested to combine the swap
->> readahead mechanism and mTHP swap-in by default before.  That is, when
->> kernel swaps in a page, it checks current swap readahead window, and
->> decides mTHP order according to window size.  So, if there are heavy
->> memory pressure, so that the nearby pages will not be accessed before
->> being swapped out again, the mTHP swap-in order can be adjusted
->> automatically.
+>> Yea, with the upcomming "shared and private" stuff, I would expect the
+>> the shared<->private conversions would call the routines from patch 3 to
+>> restore direct map entries on private->shared, and zap them on
+>> shared->private.
+> 
+> I wanted to follow-up to the discussion we had in the bi-weekly call.
+
+Thanks for summarizing!
+
+> We talked about shared (faultable) vs. private (unfaultable), and how it
+> would interact with the directmap patches here.
+> 
+> As discussed, having private (unfaultable) memory with the direct-map
+> removed and shared (faultable) memory with the direct-mapping can make
+> sense for non-TDX/AMD-SEV/... non-CoCo use cases. Not sure about CoCo,
+> the discussion here seems to indicate that it might currently not be
+> required.
 >
-> This might help reduce memory reclamation thrashing for kernel build
-> workload running in a memory limited memcg which might not benefit
-> from mTHP that much. But this mechanism has clear disadvantages:
->
-> 1. Loss of large folios: For example, if you're using app A and then swit=
-ch
-> to app B, a significant portion (around 60%) of A's memory might be swapp=
-ed
-> out as it moves to the background. When you switch back to app A, a large
-> portion of the memory originally in mTHP could be lost while swapping
-> in small folios.
+> So one thing we could do is that shared (faultable) will have a direct
+> mapping and be gup-able and private (unfaultable) memory will not have a
+> direct mapping and is, by design, not gup-able.> 
+> Maybe it could make sense to not have a direct map for all guest_memfd
+> memory, making it behave like secretmem (and it would be easy to
+> implement)? But I'm not sure if that is really desirable in VM context.
 
-Why?  Most app A pages could be swapped in as mTHP if all readahead
-pages are accessed before being swapped out again.
+This would work for us (in this scenario, the swiotlb areas would be
+"traditional" memory, e.g. set to shared via mem attributes instead of
+"shared" inside KVM), it's kinda what I had prototyped in my v1 of this
+series (well, we'd need to figure out how to get the mappings of gmem
+back into KVM, since in this setup, short-circuiting it into
+userspace_addr wouldn't work, unless we banish swiotlb into a different
+memslot altogether somehow). But I don't think it'd work for pKVM, iirc
+they need GUP on gmem, and also want direct map removal (... but maybe,
+the gmem VMA for non-CoCo usecase and the gmem VMA for pKVM could be
+behave differently?  non-CoCo gets essentially memfd_secret, pKVM gets
+GUP+no faults of private mem).
 
-> Essentially, systems with a user interface operate quite differently from=
- kernel
-> build workloads running under a memory-limited memcg, as they switch
-> applications between the foreground and background.
->
-> 2. Fragmentation of swap slots: This fragmentation increases the likeliho=
-od of
-> mTHP swapout failures, as it makes it harder to maintain contiguous memory
-> blocks in swap.
->
-> 3. Prevent the implementation of large block compression and decompression
-> to achieve higher compression ratios and significantly lower CPU consumpt=
-ion,
-> as small folio swap-ins may still remain the predominant approach.
->
-> Memory-limited systems often face challenges with larger page sizes. Even=
- on
-> systems that support various base page sizes, such as 4KB, 16KB, and 64KB
-> on ARM64, using 16KB or 64KB as the base page size is not always the best
-> choice.  With mTHP, we have already enabled per-size settings. For this k=
-ernel
-> build workload operating within a limited memcg, enabling only 16kB is li=
-kely
-> the best option for optimizing performance and minimizing thrashing.
-> /sys/kernel/mm/transparent_hugepage/hugepages-16kB/enabled
->
-> We could focus on mTHP and seek strategies to minimize thrashing when free
-> memory is severely limited :-)
+> Having a mixture of "has directmap" and "has no directmap" for shared
+> (faultable) memory should not be done. Similarly, private memory really
+> should stay "unfaultable".
 
-IIUC, mTHP can improve performance but may waste memory too.  The best
-mTHP order may be different for different workloads and system states
-(e.g. high memory pressure).  So, we need a way to identify the best
-mTHP order automatically.
+You've convinced me that having both GUP-able and non GUP-able
+memory in the same VMA will be tricky. However, I'm less convinced on
+why private memory should stay unfaultable; only that it shouldn't be
+faultable into a VMA that also allows GUP. Can we have two VMAs? One
+that disallows GUP, but allows userspace access to shared and private,
+and one that allows GUP, but disallows accessing private memory? Maybe
+via some `PROT_NOGUP` flag to `mmap`? I guess this is a slightly
+different spin of the above idea.
 
-Swap readahead window size auto-scaling can be used to design a method
-to identify the best mTHP order for swap-in.  I'm open to other possible
-methods too.
+> I think one of the points raised during the bi-weekly call was that
+> using a viommu/swiotlb might be the right call, such that all memory can
+> be considered private (unfaultable) that is not explicitly
+> shared/expected to be modified by the hypervisor (-> faultable, ->
+> GUP-able).
+> 
+> Further, I think Sean had some good points why we should explore that
+> direction, but I recall that there were some issue to be sorted out
+> (interpreted instructions requiring direct map when accessing "private"
+> memory?), not sure if that is already working/can be made working in KVM.
 
-I admit a fixed mTHP order can be best for some specific workloads or
-system states.  However, it may be hard to find one mTHP order that
-works well for all workloads and system states.
+Yeah, the big one is MMIO instruction emulation on x86, which does guest
+page table walks and instruction fetch (and particularly the latter
+cannot be known ahead-of-time by the guest, aka cannot be explicitly
+"shared"). That's what the majority of my v2 series was about. For
+traditional memslots, KVM handles these via get_user and friends, but if
+we don't have a VMA that allows faulting all of gmem, then that's
+impossible, and we're in "temporarily restore direct map" land. Which
+comes with significantly performance penalties due to TLB flushes.
 
->> > It happens to manifest with THP in cgroups because that's what you
->> > guys are testing. But IMO, any solution to this problem should
->> > consider the wider scope.
->> >
->> >> > >>> I think large folio swapin would make the problem worse anyway.=
- I am
->> >> > >>> also not sure if the readahead window adjusts on memory pressur=
-e or
->> >> > >>> not.
->> >> > >>>
->> >> > >> readahead window doesnt look at memory pressure. So maybe the sa=
-me thing is being
->> >> > >> seen here as there would be in swapin_readahead?
->> >> > >
->> >> > > Maybe readahead is not as aggressive in general as large folio
->> >> > > swapins? Looking at swap_vma_ra_win(), it seems like the maximum =
-order
->> >> > > of the window is the smaller of page_cluster (2 or 3) and
->> >> > > SWAP_RA_ORDER_CEILING (5).
->> >> > Yes, I was seeing 8 pages swapin (order 3) when testing. So might
->> >> > be similar to enabling 32K mTHP?
->> >>
->> >> Not quite.
->> >
->> > Actually, I would expect it to be...
->>
->> Me too.
->>
->> >> > > Also readahead will swapin 4k folios AFAICT, so we don't need a
->> >> > > contiguous allocation like large folio swapin. So that could be
->> >> > > another factor why readahead may not reproduce the problem.
->> >>
->> >> Because of this ^.
->> >
->> > ...this matters for the physical allocation, which might require more
->> > reclaim and compaction to produce the 32k. But an earlier version of
->> > Barry's patch did the cgroup margin fallback after the THP was already
->> > physically allocated, and it still helped.
->> >
->> > So the issue in this test scenario seems to be mostly about cgroup
->> > volume. And then 8 4k charges should be equivalent to a singular 32k
->> > charge when it comes to cgroup pressure.
->>
+> What's your opinion after the call and the next step for use cases like
+> you have in mind (IIRC firecracker, which wants to not have the
+> direct-map for guest memory where it can be avoided)?
 
---
-Best Regards,
-Huang, Ying
+Yea, the usecase is for Firecracker to not have direct map entries for
+guest memory, unless needed for I/O (-> swiotlb).
+
+As for next steps, let's determine once and for all if we can do the
+KVM-internal guest memory accesses for MMIO emulation through userspace
+mappings (although if we can't I'll have some serious soul-searching to
+do, because all other solutions we talked about so far also have fairly
+big drawbacks; on-demand direct map reinsertion has terrible
+performance, protection keys would limit us to 15 VMs on the host, and
+the page table swapping runs into problems with NMIs if I understood
+Sean correctly last Thursday :( ).
+
+> -- 
+> Cheers,
+> 
+> David / dhildenb
+
+Best, 
+Patrick
 
