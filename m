@@ -1,116 +1,121 @@
-Return-Path: <linux-kernel+bounces-394314-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394315-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D359F9BAD47
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 08:39:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 47A8B9BAD4A
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 08:39:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 10CD21C20969
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 07:39:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 793891C2084F
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 07:39:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 238BE19A2B0;
-	Mon,  4 Nov 2024 07:39:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E41E819A2B0;
+	Mon,  4 Nov 2024 07:39:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="T6BGzjR9"
-Received: from mout.web.de (mout.web.de [212.227.17.11])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="SE/cgJV3"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDB8E19882C;
-	Mon,  4 Nov 2024 07:39:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D801F18C91D;
+	Mon,  4 Nov 2024 07:39:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730705950; cv=none; b=P6sK23yQl13N1e3QdzezAn4K0lmqgvvJ3GhjUmTJicn8FF+x62jyY7pjUz2NCS6bYmgnJTdGrqJOpJvVUUNKZcxtk/GGnMnhuO3YQdTbEeRkCy/Sgz825a5tpSj2UumZ9BXtiZ5VjtHOPYcwSjA+ke/uit1pglNtZg3LbLKVMdY=
+	t=1730705964; cv=none; b=ixDXmTE3ZFopDHhq/6dsaJsBSMQoxybklADo6IAxGCbJmaQTaqXzPSsyPSOLKnFy5r2PeRpOVgm/QRJkFOBvDbydcMZNIrgexFWA2024V5Rn7UOvHIuuTFygPYHhBbbEk/XHDx2/PsXXbZfPsGT3nyF6OAkEAx8h4zGlWJYkvBU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730705950; c=relaxed/simple;
-	bh=dIgNhzZFyb1tXkgTHvIdpDIM02zQr2IiVDUJNky1d/w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uiyW/nt6w/up9YFhlg5hnM7NIO+ENWJqSA8cMuO7HCP3yVwFrYM9Ar+I829CUxmLy/nAqW6RFl3znZqHMk194u/yItc4SBtRHk8nFbY0bnVXiiAqwBMkDJzHWPqkP6dkposk9AP7h6meSWpAKz0ljQUX8u20xO7znDoOegDCzNA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=T6BGzjR9; arc=none smtp.client-ip=212.227.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1730705914; x=1731310714; i=markus.elfring@web.de;
-	bh=dIgNhzZFyb1tXkgTHvIdpDIM02zQr2IiVDUJNky1d/w=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=T6BGzjR9qHpHgAiSuapqTrEoCeH2muA5KZvtfw4WveK+c/L8Lj6CRg/k9+ykopay
-	 lQFrZkN7Tpef0vCOVZVnX7xIjcg3AABrpjMSaaOddF0k0N1DqnqxwrVpHBFg06hia
-	 cSHMebibM6BYPzxsnvLXGYRFcFaZqE8j/Mcz6KVTVMqrzA5Z8jteKD4NS07iiU/e+
-	 NMGlBxo7+rLxfhQ1l0VhMClYDI+cudRROQ/+qbeT8FWoC3lCAlV/OzzqQkd1OGN/G
-	 UnufZOK5ukfEmJyL7mVFrPk0/Vr0Yy1c5lCcTRWNWVy5aH4uoGen13aLpYiJxbnsR
-	 iM7yPxDkn6j962hfHA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.88.95]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MVaYw-1tHfHJ38I0-00MHDG; Mon, 04
- Nov 2024 08:38:33 +0100
-Message-ID: <8e0f08e3-c1a8-4143-b204-f4f3d4c944d0@web.de>
-Date: Mon, 4 Nov 2024 08:38:23 +0100
+	s=arc-20240116; t=1730705964; c=relaxed/simple;
+	bh=EuciNS5DwxcaQ6if4KZA905IlGyJKinycC+GWe0epZo=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=qvqScSvjbR7+lg7aZeE6hgVMN48dCEdQZ1+m3IXCyVpFXzmuHfPLHjp17QnxNJ/ALxYnnOH+Ry1sdpssk2bQ0quCb/w0yexSJ8baW4jdYjBIC0OMOiDq+CdAfqkfSmAHzezUE7uZD7QYV6GbSkJfYTGUrXl+x+I2jvpvjjuZojg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=SE/cgJV3; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A40N8p0014974;
+	Mon, 4 Nov 2024 07:39:19 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=mNUdxXCv7YCalvaIKQLHai
+	Pt6a9l564KxuANsNfjvpg=; b=SE/cgJV33ca2KcBkKKWk6wZh0t0gjIZJ9aPuDd
+	BDPJLTybSr5JlHCxRezpMg7AgU9taMZy2UpCU/8rauwUCCWxnvpseKU1CkeOAtp+
+	orrTteUVeSdBl9oaJemfBhQlyhLQrCpzZLiG3HEZFEbmvPQWPJkRGJeJ3/vmxbHY
+	Nlnh/XIJVxc8q6g3yzYA54yaJ2EtmRxfeiAo6I6kx7qw7KfF2lFVSZO02WNUi+Ob
+	IVIzt3LqCojmsonFtRyQ9iRv7J3gAfyhB7xBXyt5WT17hZaXedgivXH4K7fupD4N
+	8f3iDTWZpl//Kyp+t664Ed2ztXNCeCIfv6Ty7GtKt9FqnA9g==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42nd11udxk-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 04 Nov 2024 07:39:19 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4A47dIEH027695
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 4 Nov 2024 07:39:18 GMT
+Received: from hu-varada-blr.qualcomm.com (10.80.80.8) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Sun, 3 Nov 2024 23:39:15 -0800
+From: Varadarajan Narayanan <quic_varada@quicinc.com>
+To: <andersson@kernel.org>, <konradybcio@kernel.org>, <conor@kernel.org>,
+        <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC: Varadarajan Narayanan <quic_varada@quicinc.com>
+Subject: [PATCH v1 0/3] qcom: ipq5424: Add LLCC/system-cache-controller
+Date: Mon, 4 Nov 2024 13:08:37 +0530
+Message-ID: <20241104073840.3686674-1-quic_varada@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: netlink: Fix off-by-one error in netlink_proto_init()
-To: Kuniyuki Iwashima <kuniyu@amazon.com>, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Jinjie Ruan <ruanjinjie@huawei.com>,
- Jiri Pirko <jiri@resnulli.us>, Juntong Deng <juntong.deng@outlook.com>,
- Nikolay Aleksandrov <razor@blackwall.org>, Paolo Abeni <pabeni@redhat.com>,
- Simon Horman <horms@kernel.org>, Thomas Graf <tgraf@suug.ch>
-References: <80516b25-a42d-48e1-bcf9-27efe58f44c6@web.de>
- <20241103173133.96629-1-kuniyu@amazon.com>
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20241103173133.96629-1-kuniyu@amazon.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:FWtIKQ7c0Cwrs4FPnWy8DKm3sh5ESkKIxeAU8qkiAf3WHjUN3lx
- YcH29QVaV/VMK9EFuzFjJ9Mz+zZkMXxMYwgqx4KLtUhMucPcF2f/A5OgwiTG0ZPd1Lfy1B4
- bKN2A8SnA9dkbXhDtoKZfRDtrX6F13LNYl1/pGfuVFEAYDoA65DNaRfT+gDiLFDGM0CDqZR
- xBqtXXO8zid9X/amSB8eA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:PVYWG6k8Mp0=;kBSwYs89OCNIhYO0Aiji6oDDsP5
- +yQ/1a9mfn4F0Mt3cGU18c3MjjGyGKPndUEoCitNam1dhbf0wAXOM5qc9LQvyiCAUK5Ffhgde
- xOPvetRVjPIdazWu36PtyvwteHmEXPtuL1KL76qhVuWMBwIGJC//G+Q9J0JbBjQsOnlTH78hO
- k0m19/jJO58AsMO+ypO6Ubi+mptkK6tVwnqa3e9hU/bDWzau7DfvQvz7rCztVVboR8mqW0X+H
- z2taCszAMrHm97MiCJW0G9VxszmrJ4Uj7YLujWaVqok8W9SeEyJPDTtNZIZgu9VXLm/3dk4sD
- rYke6xtmObgaPI+6sK4pQQGsynf3S0Uy0YiflM25n3fPmSIIx3qFz7j45Al5sKOu4or/PkNA8
- ydePFy/pDU9Dq5sw//2pLgAeD85eLjHnzfuPhj9jXLXV7ZI6nDhtdbl1v+ibEcP7c/lHSqMBz
- 7EvmhnkVCyAySYlDpxgGsjxv646K7iJiDNUPraYgC6jWWJZjnpVdjuqHw6INDAffi1AJDavFm
- IQxpuafvM8Zl0ZNVa+7FVelXcAxxLV/wdDI5YLm9h85/2O5gTRstjgAyHpi0qDaTm1F3TqOdO
- seFJMM+XKNE/72jk0/MMnEhrT2dKjdr5nPjHMxWoDX400gwD7DxteXg/+beIjU+aNTYwSH830
- C0zj6TGExN+EwHbg1Fmcf4atWLB2hFCPyw/HoVt/0aXhg5XTwHkBHHBM5bgVoszVnQF2sNQZs
- QKNcaVPsyEY+7EjOWs/sraMkxeeOjrXHfLjc97I88KHPVh4VVCusD9IjcpYiCXV2csWbg9zrt
- dRZL9KMOcYC75wKvJ/vNiGkg==
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: etaIk9VRmSiyGaLo5WMzwlSbVgMCvPK3
+X-Proofpoint-ORIG-GUID: etaIk9VRmSiyGaLo5WMzwlSbVgMCvPK3
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 mlxlogscore=817
+ mlxscore=0 clxscore=1011 lowpriorityscore=0 phishscore=0
+ priorityscore=1501 impostorscore=0 spamscore=0 bulkscore=0 suspectscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411040067
 
-=E2=80=A6
->> Thus use the comparison operator =E2=80=9C>=3D=E2=80=9D instead for the=
- affected while loop.
->
-> This patch is already applied to net-next.
-> https://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.git/comm=
-it/?id=3Dbc74d329ceba
+Unlike other Qcom SoCs, IPQ5424 doesn't have multiple instances
+of LLCC IP and hence doesn't have a LLCC_BROADCAST register
+space, and the LLCC & LLCC_BROADCAST point to the same register
+space.
 
-Thanks for your reminder on the commit bc74d329ceba23f998ead4f716266da5afe=
-319f7
-("netlink: Remove the dead code in netlink_proto_init()") from 2024-10-31
-for another contribution by Jinjie Ruan (also according to your suggestion=
-).
+Alter the driver accordingly and add the relevant entries for
+enabling LLCC/system-cache-controller on the Qcom IPQ5424 SoC.
 
-See also:
-https://lore.kernel.org/linux-kernel/20241028182421.6692-1-kuniyu@amazon.c=
-om/
-https://lore.kernel.org/linux-kernel/20241030012147.357400-1-ruanjinjie@hu=
-awei.com/
+Depends On:
+https://lore.kernel.org/linux-arm-msm/20241028060506.246606-1-quic_srichara@quicinc.com/
 
-Regards,
-Markus
+Varadarajan Narayanan (3):
+  dt-bindings: cache: qcom,llcc: Add IPQ5424 compatible
+  soc: qcom: llcc: Update configuration data for IPQ5424
+  arm64: dts: qcom: ipq5424: Add LLCC/system-cache-controller
+
+ .../devicetree/bindings/cache/qcom,llcc.yaml  | 20 ++++++-
+ arch/arm64/boot/dts/qcom/ipq5424.dtsi         |  7 +++
+ drivers/soc/qcom/llcc-qcom.c                  | 60 +++++++++++++++++--
+ 3 files changed, 81 insertions(+), 6 deletions(-)
+
+
+base-commit: a39230ecf6b3057f5897bc4744a790070cfbe7a8
+prerequisite-patch-id: 1090fe9cee19a52dc8595e2fecef659199828246
+prerequisite-patch-id: 491c9f6c32738c4eb4398962c1ae7c625cd43238
+prerequisite-patch-id: 1651c75547b539eb46eb4d02630e364f262860bf
+prerequisite-patch-id: 7ce54f0af6083e897067a7e5cd9561198f3d4d41
+prerequisite-patch-id: 0a04fdee4b5b76cd5b734c666f7c8f5561e3e9d8
+prerequisite-patch-id: 084f6dced27c39b600711dde2f797b43393cde73
+-- 
+2.34.1
+
 
