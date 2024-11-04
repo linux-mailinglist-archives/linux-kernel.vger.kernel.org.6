@@ -1,130 +1,146 @@
-Return-Path: <linux-kernel+bounces-395264-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395215-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C75FF9BBB11
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 18:06:20 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6ABB39BBA60
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 17:34:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E9D21F21A80
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 17:06:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0707B1F2386C
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 16:34:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A57431CBA01;
-	Mon,  4 Nov 2024 17:03:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C934E1C07E4;
+	Mon,  4 Nov 2024 16:34:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=antgroup.com header.i=@antgroup.com header.b="jOH3dmFq"
-Received: from out0-220.mail.aliyun.com (out0-220.mail.aliyun.com [140.205.0.220])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b="Lz6GIvOV"
+Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 439481C82E3;
-	Mon,  4 Nov 2024 17:03:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.205.0.220
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD1B62BB04
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 16:34:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730739799; cv=none; b=JBki0jogcnlW4rHdWm3z37I4aRWpip3nC6if9CKtdsrgVLMuRGNxaBWhFsT+W5G2zqxFPfesJsz+Xj7pK4KvKvBLc0BwZw30LfgzTfB+zTsmIJExUKV/7T2r/aUsm7e4LlO8J6QIRYDMjugNwSNxH9VsdlkY1XBKyrfPgIP6hmQ=
+	t=1730738053; cv=none; b=thA1uEn0nRQipEWCa5d/XpU3miCy9i8C8rvB0RfMsYqY0YsS1bCatLcgqbOn5TYzuJ4E4NhRQspERqXz88V6b5UBTJvB54vVaMHIs0Ykwr3jUStuxBp9HPYaZUvZ1fkzUChrcDsseYKh6TNAzwO89OMiJUZ1T143PhNQdFbrtZc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730739799; c=relaxed/simple;
-	bh=RD6ACfGQMfkzmvPFOmFJqfSuqq5hmkgyOO7L+g/02OI=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=pI+SVqT7TYZRpgUvAD6Ft/9N+lY/1OpNpqXiVfNe5VNCyPqlrz9k5+1USN29FgWHgL2HYJAIHwrzFLEDDD1E5Iup8ksv+NJf6EpzY69t1M7BTCkh+ObE+YGezVXdsYM1ZAZeTs7AS9e7p+vwqTslYp519O16hk/F7QevKpTP3VY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=antgroup.com; spf=pass smtp.mailfrom=antgroup.com; dkim=pass (1024-bit key) header.d=antgroup.com header.i=@antgroup.com header.b=jOH3dmFq; arc=none smtp.client-ip=140.205.0.220
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=antgroup.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antgroup.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=antgroup.com; s=default;
-	t=1730739793; h=From:To:Subject:Date:Message-Id:MIME-Version;
-	bh=McKha1hmKH1clDOz2fCI8A4BsEcNH5WhtqM/+Bq5yME=;
-	b=jOH3dmFqM+Ir+b5ZM1Pk/gUNuPjx1bADUL2Pd9QgPe0or5WpJkABnpraMB659wQvwL234/DWRaCYKl/X6FAv2E7qqT6xLweAm5Nnvh8JCjDW+R9uItwvLetOCCuHoYb1kpnvqEGgP/nd0MoPK5MJBkrGGjXU8f7xjNHBb770tOc=
-Received: from ubuntu..(mailfrom:tiwei.btw@antgroup.com fp:SMTPD_---.a0U4bET_1730737936 cluster:ay29)
-          by smtp.aliyun-inc.com;
-          Tue, 05 Nov 2024 00:32:17 +0800
-From: "Tiwei Bie" <tiwei.btw@antgroup.com>
-To: richard@nod.at,
-	anton.ivanov@cambridgegreys.com,
-	johannes@sipsolutions.net
-Cc:  <linux-um@lists.infradead.org>,
-   <linux-kernel@vger.kernel.org>,
-  "Tiwei Bie" <tiwei.btw@antgroup.com>,
-   <stable@vger.kernel.org>
-Subject: [PATCH 4/4] um: vector: Do not use drvdata in release
-Date: Tue, 05 Nov 2024 00:32:03 +0800
-Message-Id: <20241104163203.435515-5-tiwei.btw@antgroup.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241104163203.435515-1-tiwei.btw@antgroup.com>
-References: <20241104163203.435515-1-tiwei.btw@antgroup.com>
+	s=arc-20240116; t=1730738053; c=relaxed/simple;
+	bh=2BRjgS0AxpemRKCD7GDKfZ2a8oM9AU0aSXE8m73qv4E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QYJSIDur2GKoiksMhi/z0WizS7vQNEyRNFwl3szB9M7r9HLuVom1cUUDnF7t1xYmr2i6ILXhqZxSEMbKEkKivhlwn3NYwK8F/6xZnsY8NecCNvtFNxefV1pnkvmZpAlyR6OipaaH38anPOMb+qStPbu90qOD86Aih6QLj7EIM4Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org; spf=pass smtp.mailfrom=cmpxchg.org; dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b=Lz6GIvOV; arc=none smtp.client-ip=209.85.222.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmpxchg.org
+Received: by mail-qk1-f174.google.com with SMTP id af79cd13be357-7b1507c42faso407398085a.0
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 08:34:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cmpxchg-org.20230601.gappssmtp.com; s=20230601; t=1730738048; x=1731342848; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=sX1khw0TKho0yFzPsMp3dwNcz3lK+q/XoPKlIPJlqlM=;
+        b=Lz6GIvOVeOA9mkqbPASHkrY9Spg7k2as9YNVxAd0U9KIfkYZtYHKGPjnwwmcxwnvFn
+         t6w0WNbMMh7m3eEy9t1yGb8S+NPBIsERoQ05K/JpT8eDktAfRtj4gyvlMnyKvQRpKLDR
+         S+WaPo6uadLEUZfFhryRpz+rwKQQEBa6Th9itMaTBtU6nljiMRVfxoEeepY8vtaxRxR2
+         3bJFJrRcyyEsrwseLJpPNGeXpPlwS39sMd+IZCSvpwPMn23pZJ3JyvINDiuyjRcOcBTP
+         bOKKXvR7ignLMe3Vic2h14OmcKwkVcBZp5Bw64S8VUS//lmnc1+TJuTOzB8zLVp0ey87
+         E8FQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730738048; x=1731342848;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sX1khw0TKho0yFzPsMp3dwNcz3lK+q/XoPKlIPJlqlM=;
+        b=LUTfPwKtHbhnC/RKXTNDduJPBBrm0oEUOA2gU0mkCzKo5sy3lDpn+NCe8zYzvETP3M
+         75jz2HdqRIpvcA+M7N4dG6z7YWz729Q5qaqt9npo30ctG+bsRKZU9kqCV0bSHtFAu7Di
+         mqj7y+SiDSsAMFXWMRcRcbdAPuYodCKq2DoEuq2Wp4wxeYWMjD03hno1e8AHBFUL0Jix
+         GtnEKhouH4Ujy6/v4jOSlUO/GEqFbpy+/oBc8wkx81Cdjgg1Bt2Y2qvWBDv9zeky1jq0
+         nyu2mvftpN5fKUGO9XItRiNOSNgudw9R6Ou6pgPyc/dY4WUqNAOi1Bw6ta5TpYZDkLbJ
+         bSLg==
+X-Forwarded-Encrypted: i=1; AJvYcCXyD501ulXAQt4BfuExsonJG9Q8GOn3hmFq1RIAJP4x+Domiox1Nct97DOALvyLHTOKFDt5IZg3lDoM5pY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzC0lBGEhshRy56hFgUA2uWjaB9ApRw/ubB4Pacnkj5H8J1laLx
+	qjKPxslBtmMH5dMeiUR0CE6YAOOTCxq5urIBrBB+MH2HawkfnU+LXOYKIf0568Y=
+X-Google-Smtp-Source: AGHT+IE5cRit64NOIWXFwfHPa/+8dF20E77ojQpVMudW8g0lIn+CghLrTU4e1Mcq/buC7Bkm41/HIg==
+X-Received: by 2002:a05:620a:240a:b0:7b1:45be:2e98 with SMTP id af79cd13be357-7b2f3cfa7c4mr2535810985a.10.1730738048549;
+        Mon, 04 Nov 2024 08:34:08 -0800 (PST)
+Received: from localhost ([2603:7000:c01:2716:da5e:d3ff:fee7:26e7])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b2f3a8114asm433769085a.106.2024.11.04.08.34.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 04 Nov 2024 08:34:06 -0800 (PST)
+Date: Mon, 4 Nov 2024 11:34:02 -0500
+From: Johannes Weiner <hannes@cmpxchg.org>
+To: David Hildenbrand <david@redhat.com>
+Cc: Barry Song <21cnbao@gmail.com>, akpm@linux-foundation.org,
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+	Barry Song <v-songbaohua@oppo.com>,
+	Usama Arif <usamaarif642@gmail.com>,
+	Chengming Zhou <chengming.zhou@linux.dev>,
+	Yosry Ahmed <yosryahmed@google.com>, Nhat Pham <nphamcs@gmail.com>,
+	Hugh Dickins <hughd@google.com>,
+	Matthew Wilcox <willy@infradead.org>,
+	Shakeel Butt <shakeel.butt@linux.dev>,
+	Andi Kleen <ak@linux.intel.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Chris Li <chrisl@kernel.org>, "Huang, Ying" <ying.huang@intel.com>,
+	Kairui Song <kasong@tencent.com>,
+	Ryan Roberts <ryan.roberts@arm.com>
+Subject: Re: [PATCH v2] mm: count zeromap read and set for swapout and swapin
+Message-ID: <20241104163402.GA810664@cmpxchg.org>
+References: <20241102101240.35072-1-21cnbao@gmail.com>
+ <c7a90ccf-c1b1-480c-9f2a-88ef37c3d89e@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c7a90ccf-c1b1-480c-9f2a-88ef37c3d89e@redhat.com>
 
-The drvdata is not available in release. Let's just use container_of()
-to get the vector_device instance. Otherwise, removing a vector device
-will result in a crash:
+On Mon, Nov 04, 2024 at 01:42:08PM +0100, David Hildenbrand wrote:
+> On 02.11.24 11:12, Barry Song wrote:
+> > @@ -1599,6 +1599,16 @@ The following nested keys are defined.
+> >   	  pglazyfreed (npn)
+> >   		Amount of reclaimed lazyfree pages
+> >   
+> > +	  swpin_zero
+> > +		Number of pages moved into memory with zero content, meaning no
+> > +		copy exists in the backend swapfile, allowing swap-in to avoid
+> > +		I/O read overhead.
+> > +
+> > +	  swpout_zero
+> > +		Number of pages moved out of memory with zero content, meaning no
+> > +		copy is needed in the backend swapfile, allowing swap-out to avoid
+> > +		I/O write overhead.
+> 
+> Hm, can make it a bit clearer that this is a pure optimization and refer 
+> to the other counters?
+> 
+> swpin_zero
+> 	Portion of "pswpin" pages for which I/O was optimized out
+> 	because the page content was detected to be zero during swapout.
 
-RIP: 0033:vector_device_release+0xf/0x50
-RSP: 00000000e187bc40  EFLAGS: 00010202
-RAX: 0000000060028f61 RBX: 00000000600f1baf RCX: 00000000620074e0
-RDX: 000000006220b9c0 RSI: 0000000060551c80 RDI: 0000000000000000
-RBP: 00000000e187bc50 R08: 00000000603ad594 R09: 00000000e187bb70
-R10: 000000000000135a R11: 00000000603ad422 R12: 00000000623ae028
-R13: 000000006287a200 R14: 0000000062006d30 R15: 00000000623700b6
-Kernel panic - not syncing: Segfault with no mm
-CPU: 0 UID: 0 PID: 16 Comm: kworker/0:1 Not tainted 6.12.0-rc6-g59b723cd2adb #1
-Workqueue: events mc_work_proc
-Stack:
- 60028f61 623ae028 e187bc80 60276fcd
- 6220b9c0 603f5820 623ae028 00000000
- e187bcb0 603a2bcd 623ae000 62370010
-Call Trace:
- [<60028f61>] ? vector_device_release+0x0/0x50
- [<60276fcd>] device_release+0x70/0xba
- [<603a2bcd>] kobject_put+0xba/0xe7
- [<60277265>] put_device+0x19/0x1c
- [<60281266>] platform_device_put+0x26/0x29
- [<60281e5f>] platform_device_unregister+0x2c/0x2e
- [<60029422>] vector_remove+0x52/0x58
- [<60031316>] ? mconsole_reply+0x0/0x50
- [<600310c8>] mconsole_remove+0x160/0x1cc
- [<603b19f4>] ? strlen+0x0/0x15
- [<60066611>] ? __dequeue_entity+0x1a9/0x206
- [<600666a7>] ? set_next_entity+0x39/0x63
- [<6006666e>] ? set_next_entity+0x0/0x63
- [<60038fa6>] ? um_set_signals+0x0/0x43
- [<6003070c>] mc_work_proc+0x77/0x91
- [<60057664>] process_scheduled_works+0x1b3/0x2dd
- [<60055f32>] ? assign_work+0x0/0x58
- [<60057f0a>] worker_thread+0x1e9/0x293
- [<6005406f>] ? set_pf_worker+0x0/0x64
- [<6005d65d>] ? arch_local_irq_save+0x0/0x2d
- [<6005d748>] ? kthread_exit+0x0/0x3a
- [<60057d21>] ? worker_thread+0x0/0x293
- [<6005dbf1>] kthread+0x126/0x12b
- [<600219c5>] new_thread_handler+0x85/0xb6
+AFAICS the zeropages currently don't show up in pswpin/pswpout, so
+these are independent counters, not subsets.
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Tiwei Bie <tiwei.btw@antgroup.com>
----
- arch/um/drivers/vector_kern.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+I'm leaning towards Barry's side on the fixes tag. When zswap handled
+the same-filled pages, we would count them in zswpin/out. From a user
+POV, especially one using zswap, the behavior didn't change, but the
+counts giving insight into this (potentially significant) VM activity
+disappeared. This is arguably a regression.
 
-diff --git a/arch/um/drivers/vector_kern.c b/arch/um/drivers/vector_kern.c
-index c992da83268d..64c09db392c1 100644
---- a/arch/um/drivers/vector_kern.c
-+++ b/arch/um/drivers/vector_kern.c
-@@ -815,7 +815,8 @@ static struct platform_driver uml_net_driver = {
- 
- static void vector_device_release(struct device *dev)
- {
--	struct vector_device *device = dev_get_drvdata(dev);
-+	struct vector_device *device =
-+		container_of(dev, struct vector_device, pdev.dev);
- 	struct net_device *netdev = device->dev;
- 
- 	list_del(&device->list);
--- 
-2.34.1
+> swpout_zero
+> 	Portion of "pswout" pages for which I/O was optimized out
+> 	because the page content was detected to be zero.
 
+Are we sure we want to commit to the "zero" in the name here? Until
+very recently, zswap optimized all same-filled pages. It's possible
+somebody might want to bring that back down the line.
+
+In reference to the above, I'd actually prefer putting them back into
+zswpin/zswpout. Sure, they're not handled by zswap.c proper, but this
+is arguably just an implementation detail; from a user POV this is
+still just (a form of) compression in lieu of IO to the swap backend.
+
+IMO there is no need for coming up with a separate category. Just add
+them to zswpin/zswpout and remove the CONFIG_ZSWAP guards from them?
 
