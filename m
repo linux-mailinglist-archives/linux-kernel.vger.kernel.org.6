@@ -1,168 +1,246 @@
-Return-Path: <linux-kernel+bounces-395584-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395585-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82DAA9BC01C
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 22:32:37 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AA139BC020
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 22:32:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE17E1C21054
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 21:32:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CFAC3282820
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 21:32:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B71C31FCC6C;
-	Mon,  4 Nov 2024 21:32:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59FE81FCC78;
+	Mon,  4 Nov 2024 21:32:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="twwhuzn5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EAuterMa"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EDA219BBA;
-	Mon,  4 Nov 2024 21:32:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730755949; cv=none; b=kn9sWEzbaQFJlvJ4tJMI6oZuMKqHElXUgnxKkpFx+ihwroONJGv97j6DENiVA0YM/qKETSbP0qxZRRd0khy2xXfxkqomd1loLOHSyhRTOVagZuFjNPLbHjuhqgtVmhKruM/jQXiJXCHg50Gv+oSgIeMLeSlrOBWnBr0jyJRsH+E=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730755949; c=relaxed/simple;
-	bh=CaSTjw7VNvlfbt9T9gHr6/MklZUOZLnkk9iGT2oFZ/s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qzNHOp33ccGI8UhT4V2Ra7XhhA6RhVhitqubFROS7g4qHzBdXXVve5tQmWC5cFyfJDBKK+MrD10yyQW6E8BJ4zfZGaJmPmrxnBbL+nynBFf6UrrxmZMP2qKVh/+TFjlzRBjq4smCu0Xlo23TO5yXUIHo40QBRXwoBmpWdwjWGAw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=twwhuzn5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87AC7C4CECE;
-	Mon,  4 Nov 2024 21:32:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730755948;
-	bh=CaSTjw7VNvlfbt9T9gHr6/MklZUOZLnkk9iGT2oFZ/s=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=twwhuzn5BrsZwg+6BbEdbLr9N8OJAW8FsBiOV4strufGFZQHdzJIF4VvR+dMdXGwT
-	 dqz7T+cwthLwstzQp864guC1Qti9lqurImzFpEFZtDdPCNHNFKp2Y7kwgoN5kz+0Z3
-	 d6qHkinr4Q9fgOBVY5ugxDt9eEadLQTMf3lYvdDwNc3adk7VxQhab1ac5a3QmaCm50
-	 I4SbIoRap6S5m2SIzsFnLv49m5HJ6QE7vzWhZ4pD6gg5OGTD5n8hHi+yqz4BTuPvoT
-	 Mc1QhVyQhsyVuuUJqZg5Jy+JXAwSzqwlhbd2mbS2FGacJV208Uj1j3kzNbVTwcqbwr
-	 0iMslghptqeyQ==
-Date: Mon, 4 Nov 2024 13:32:25 -0800
-From: Kees Cook <kees@kernel.org>
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: Koichiro Den <koichiro.den@gmail.com>, cl@linux.com, penberg@kernel.org,
-	rientjes@google.com, iamjoonsoo.kim@lge.com,
-	akpm@linux-foundation.org, roman.gushchin@linux.dev,
-	42.hyeyoo@gmail.com, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH] mm/slab: fix warning caused by duplicate kmem_cache
- creation in kmem_buckets_create
-Message-ID: <202411041330.7A0F716E5@keescook>
-References: <20241104150837.2756047-1-koichiro.den@gmail.com>
- <9e6fd342-ef7f-4648-afa3-bf704c87bf8f@suse.cz>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C42C41FCC6C
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 21:32:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.16
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730755967; cv=fail; b=QkfAarbfsr/I5z8D9lkZEMxXpiD+1Ch4qB9BRpgvlFXiiPJAfisNq1IUy+5+Fk9ExRR1dJFGtGkXTW5jJlDEoZ5zzmVZmyPs24mUSozsUAABKLGc58/8YQh6Bo+AEIwiGIHq5K9xDv5bbw0feAEqza7NUnlonK23l6BGD0ajh0U=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730755967; c=relaxed/simple;
+	bh=KuhuCrkfVx3YmJvvkvcdn1jymczq5dQAzxIf2poTaXU=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=LZeF7owVB8BjtZH2HUK10QWpmiD1nTcz9OeV0vph2nujNaz38r1jBVUaE8e66B7NQ08OR2ORS37kYVADaXWVl+yK4GpcPF24WS0xiUBSsvYssMrADSlzFdPs3eXnQrB0fSL1myC+aOBW0P4XthP/CcRI2kAR1JM+PZGKiPFJR0U=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EAuterMa; arc=fail smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730755966; x=1762291966;
+  h=date:from:to:cc:subject:message-id:references:
+   in-reply-to:mime-version;
+  bh=KuhuCrkfVx3YmJvvkvcdn1jymczq5dQAzxIf2poTaXU=;
+  b=EAuterMatcnvr9uw1VYiSdBu3TYyXnBfMDB42YezUsUm+40l4MOxviEZ
+   lDNjgWlR1Ymloh/kiQTPoU5PziQ5hFs/FO51USzTp3aC+okpHYOyMfAUV
+   LQtqDgjqqQ6R2uIpxUukvnEbmV5duQ5Eq1NtAP98swEUDyKTMAXF9zU6R
+   Jsl+0H7UvuqLTj0RwY4B6aMG3HZuWEuek0/EwAxKf4nkfc3uNpbqfoHxu
+   EQ/Svo2xuFscx768MZlnZZ/gwpRf/TI0/B5/gISu/48qKTplZQr9uyfq8
+   GH/BqKFVUDscTIhchYaFZULrh0wkWnzfz1Q+eUkAfVVaIyMRMIe47hTcp
+   w==;
+X-CSE-ConnectionGUID: SfLJZK8kQ3uIR4LNyhNtEw==
+X-CSE-MsgGUID: NWQErhyISbaiIfPrSOiExg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="30638304"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="30638304"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2024 13:32:45 -0800
+X-CSE-ConnectionGUID: epdVtY3hQpCXRHpd0UpVEQ==
+X-CSE-MsgGUID: a4nJKToQShyAGQuYZ1i2ww==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,258,1725346800"; 
+   d="scan'208";a="84208047"
+Received: from orsmsx602.amr.corp.intel.com ([10.22.229.15])
+  by orviesa007.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 04 Nov 2024 13:32:46 -0800
+Received: from orsmsx601.amr.corp.intel.com (10.22.229.14) by
+ ORSMSX602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Mon, 4 Nov 2024 13:32:44 -0800
+Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
+ orsmsx601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Mon, 4 Nov 2024 13:32:44 -0800
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (104.47.59.176)
+ by edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Mon, 4 Nov 2024 13:32:44 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=GbraKozjzkoUQ1prK+ucQmKc1oUEh4NUBE5TAcxz9H0A76C/SzzyK36/XNvoLby8n0VnE/FHLEwRpqoeGrIzRc03u3refdkrYVITYZ6URiC3Vp+c79BRptB0aR1VDXOwW7IPoYYGRtwXxhbXcEl6RHBFC39nTjh3Rxf2sCbcpXIMgQZXfROISSz2GXy9izPmIKvMqjuTaIsQACrLORpsIe51TRDdGUJ2dc+gOU69ZtqM2F5f89RG7XKonDBWbloR5owkLVl6hi3FXq8S7JCQfVkPTv89RUGnCQNajXU5zKSxhevDh079fUM32SKZCuWBYRlQzMHIdmBUYI3AkuaNSQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=K36wwWifNnC4Ilx5rfrDRS0t4KRhiDT/3iSDHbmQGks=;
+ b=GU12hKznb198Drv+fnH5PktTbqXwq5xJGd45pWISIydfEVlj7IF1I3zMGSVlDMuCEe5khs2hoAmu47OqKJQKwcvhjwYyEpp1jEKJkSM4T4bLcc1b0J9ngY6A+ZKx9jVgaK7jMxI7FkfqK/lg3JCskN8s18+qZx97RAm56MdBZF6Sask1nzfZNaLllLwYmdcnuKbzMJZ8krGMrP+lvORZ65hKeMmmXKxFiW2U2UB8tGwvPtjWU58HE+8v4kUhhQ8yISX15NmYnNi4hVHsufpZemjWUfIApwKdXzY2L6EXR8aGCjFUrIgQjpAgKd/Ly8u3Ee/sD4jEebw8L2ycYo1gxw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from BYAPR11MB2854.namprd11.prod.outlook.com (2603:10b6:a02:c9::12)
+ by LV1PR11MB8790.namprd11.prod.outlook.com (2603:10b6:408:2b1::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8114.30; Mon, 4 Nov
+ 2024 21:32:40 +0000
+Received: from BYAPR11MB2854.namprd11.prod.outlook.com
+ ([fe80::8a98:4745:7147:ed42]) by BYAPR11MB2854.namprd11.prod.outlook.com
+ ([fe80::8a98:4745:7147:ed42%7]) with mapi id 15.20.8114.020; Mon, 4 Nov 2024
+ 21:32:40 +0000
+Date: Mon, 4 Nov 2024 16:32:35 -0500
+From: Rodrigo Vivi <rodrigo.vivi@intel.com>
+To: <linux@treblig.org>
+CC: <jani.nikula@linux.intel.com>, <joonas.lahtinen@linux.intel.com>,
+	<tursulin@ursulin.net>, <airlied@gmail.com>, <simona@ffwll.ch>,
+	<intel-gfx@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] drm/i915/gt: Remove unused
+ execlists_unwind_incomplete_requests
+Message-ID: <Zyk9c9qDN4jqr757@intel.com>
+References: <20241103144936.238116-1-linux@treblig.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20241103144936.238116-1-linux@treblig.org>
+X-ClientProxiedBy: MW4PR04CA0367.namprd04.prod.outlook.com
+ (2603:10b6:303:81::12) To BYAPR11MB2854.namprd11.prod.outlook.com
+ (2603:10b6:a02:c9::12)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9e6fd342-ef7f-4648-afa3-bf704c87bf8f@suse.cz>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BYAPR11MB2854:EE_|LV1PR11MB8790:EE_
+X-MS-Office365-Filtering-Correlation-Id: a03a9186-4dbc-4b39-cd62-08dcfd18358d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?kFOHyDmm3Y82AJgLR+iiZsm0CBbeZ165PU4PXidrb+lc5NOIFMMLMw691gH6?=
+ =?us-ascii?Q?pSrYxCyM2GSXmwjGuO4ClopLQ8Zb+ILayqAe9yYKhyWv94YUSSvYKAm0OzGe?=
+ =?us-ascii?Q?rp3jSfS9fQuO6a6LGCaZCGnd1Als8UvDBSzPIyFnsHaVSBpn7o2qase9GjmD?=
+ =?us-ascii?Q?MYz8tV5rY7nSBvHh+7LJI3IhRKflQxvHi7FCK5K8bv90lGJJTwpiBcRd7OWO?=
+ =?us-ascii?Q?xc3XdDKMQOKsDlH9JBWEbbEmBkS4Va65dka7DI6tMLsKtAW31bhpi6AeIj8d?=
+ =?us-ascii?Q?ycK2IEFW8jB04Yet0okPKF2ASYA1A6vs52n1O8/LVxna72fAjgbiQkJS7Wh6?=
+ =?us-ascii?Q?pc9U1yCSrJSD7ThvpMpSiIumRr/+5UK/Su8iUuTXA8C1A9ePwvkmD1T6+i/u?=
+ =?us-ascii?Q?WPCIEDh8COPFOYqvL/ML9pImOxlivTNc/Zheek5zfvm/cPKHZzxlmiTsf3Jh?=
+ =?us-ascii?Q?FHlgNWbgAFejHbquCnbchaHsoB+AVL9i49lZTmhKQbbn2E/XAakrDUW8LKzn?=
+ =?us-ascii?Q?1qp3HUYvcIsNJpcNe59QtKSG8cRjg+ysel8XMABMcOLcJO1h0xFgiyc6Dp1n?=
+ =?us-ascii?Q?nFesbQq7OuIHSetVLkofVn3zsxnFBs96VwMbaKvBlwUsmncf5TIMR0w04pOj?=
+ =?us-ascii?Q?PJeRmwkf5D7ZaYBfXTVs9ddrJHgh7nMoIDNOnpEMrx0TprMKNyZLXuv7r7Xx?=
+ =?us-ascii?Q?BVeTby0Hlg6KAeaErT132QqHVgXOnnMQ2HyzTpYLSs6tM4zflZz5493gXK5M?=
+ =?us-ascii?Q?1CS3z+29ouV2meMWZXmAMGsJH/vZE8D5g2gd4gwTB1Hp7HSgkbsqbIQxzxsJ?=
+ =?us-ascii?Q?9iHaxSPRURTvJndktv4+0h63SoK19aIQtMAGha7QORQYxjy+Klm9AadzcKcc?=
+ =?us-ascii?Q?ahcOlOzuwspWDcGPt0hChvli2xyWN5wfrboFTRio8urQcnYC6RgTaCvBQJJU?=
+ =?us-ascii?Q?mprpT7JCt/VQgtKhbR6ebX083vWaU+HzyUvGC4pXA9q2OrijLG8dFlQK3yiR?=
+ =?us-ascii?Q?dz+Zflw9T4ft2eBVAOJe93OF1oW9audhlhwTPkbPZCxDbwrdGOBSPwNODAXb?=
+ =?us-ascii?Q?qf9nDwFzlH2ASyKvgYgPlFV3TRVb7vTfSwiZoaxmOLggMMT1cZYXpzVeRfC6?=
+ =?us-ascii?Q?8R+XNUXeIasnyIlu1PTSJoBNSzpZucJtWg1NI4flbXkqS9h18uflWo0T6Tn5?=
+ =?us-ascii?Q?nRn1/0u85lmkwH05u9nROLWGLDFcGZVPnmnhifo3Q6JK1gtXIBxyjqwCAp6Q?=
+ =?us-ascii?Q?ThGY6phuJBeplLO7HaKsvfRekb1ek7atvJ8iefuOdwf77lnKVvqmwVoj79Wc?=
+ =?us-ascii?Q?t3QpxOUjx6lrbPy1veKW7ga9?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR11MB2854.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?z5ksq6YHFiROC+zPZxR8XPuG0iLwJWBEFYthZZ6sEkfJldPZqDBtYWQishg4?=
+ =?us-ascii?Q?eEMM5NAhtCQnoaCMlz89me54IbsqEY2axkFM5NthZluvQybm/L6ur17oaLSz?=
+ =?us-ascii?Q?ZkyOwVvysgf60MhZzKNUGxdOzfFUtF/LTpM+UETLukmPNWM6A+/D/aw7Dh/n?=
+ =?us-ascii?Q?vKLjBj8el4DzOH157XinukIpT5QdIw6tSHUNYqYVeGxtzUBra+ihPCIJ5miu?=
+ =?us-ascii?Q?fyP2xXhI1t27G7495ci3KTcjZPa1WRC3etALuQ+d6omshRuu+IMxcAK+htNf?=
+ =?us-ascii?Q?HQBIWcqvAoaCIcsqDILgKJIZjyzMt8EfzgDIlEqOwUyEONOxkUZoRPpDlrIf?=
+ =?us-ascii?Q?Zk3U1GsBNW7H3E7vhmBc+eWdyYaoaj/cwvM7e012zg2TKLvev1YlffC+Olk5?=
+ =?us-ascii?Q?usNqQp8lcDnXVmxepiRTrUuqEzu+8OnXaWFMYIcot4vFesv0S2XxmJQhLdpG?=
+ =?us-ascii?Q?XvjZRqoIyOYN4DYCpxdmrDfcapdd5CnK8pcqu0Y/VjfZKq8TdAbyFYalOx4M?=
+ =?us-ascii?Q?S0MevpIgVpH186CVvrrOYbKVl6hOaQwEuV2eXQKXJpofNbzcphQMAlS6KkRl?=
+ =?us-ascii?Q?xm/MlFeTMwtA8psaqgW5w+NWL+RKOCAKSk2ggCoZzzAzkoGJ6ed4a9IbfrEU?=
+ =?us-ascii?Q?tTh0bijH1D3erbbxAmBqgHa4sCJUycwJUUk3m98XGI+tkd7tHLDCiB9V+zGD?=
+ =?us-ascii?Q?zrx1DMxS5zQx4s6O1SVJEjrNzZsV/7iqgRDdUUkgqWytQGdf7QmxIaXg9L/L?=
+ =?us-ascii?Q?pjafbf4NFv/UfuTbXSf8SCGcwPfuACJhDmBf5kPOgMq/EAfMQFoVA1p8YTi+?=
+ =?us-ascii?Q?nxeCHP7KaSNRvdi29IodZWaOuZg8i37iWfOqE4v02S8yxQyKLUA4rzWvqQjQ?=
+ =?us-ascii?Q?Qii1GGs2dusMYMrQAi/HCa0CsYjqNW87wTnM8DYe2dkmuJV/55NUwHbH1MLj?=
+ =?us-ascii?Q?tcryXNuIJX3NsIPCnE2LbFBGp/q+4u+uH/0inFMwwNa/fiU5PT0DlUgfDjM0?=
+ =?us-ascii?Q?TUG+0VAWKrv1BiAcqbV5NFecMH6dRLgKL/9r3C9z4OQUFjbJxMjOaMvgnZPH?=
+ =?us-ascii?Q?ZXOkyZOknYgNKjRk8VLpq1RyKrkA0/En0huZbKR6oKTBxdOkVULKyqHTuZK1?=
+ =?us-ascii?Q?78oB8q0wU8bZwj6/2dh7WP+GzGWDSjyow1zShXxn92qOVTtKSqt+UXKVehoO?=
+ =?us-ascii?Q?cehvbTP+G53DdJtjCkV7DOPQRQj5CfIN+a8K2aq9+tw2Q4HUD+jxDz3ceutk?=
+ =?us-ascii?Q?lMVSiziwb3X1FzjLtAZ0e9JvN7QCY8VNFw2tvN1E/uN1HQ4kd7zDebzuzTSh?=
+ =?us-ascii?Q?ajvcDcX6H1gl1F2aiUjDjpbPkWCjd5kJsRFqlMJ8JAgdwwTAw/bSm9uWOFKY?=
+ =?us-ascii?Q?OXmtbIXdhhW5kkvxdEgOseI+OhcVasCuHoRL0VRCPLryEFLCNQnqgpeYOarE?=
+ =?us-ascii?Q?EMMTIsNxeq6iMrIGwG6uFYqWYziQufbK8TEdwd38jf98816q4WR3RklNRgbb?=
+ =?us-ascii?Q?gZXH6mPt1fGw1xTT8+NHQI5C0TiLlTtRFXI9ZotT+WMms2hRGXZmH6iFp8+s?=
+ =?us-ascii?Q?4chK5RDHjTjgdODrvZCOsimzN1H+fagKNB7929zS5B/9wGQz0Gq5yD0xf4j6?=
+ =?us-ascii?Q?6w=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: a03a9186-4dbc-4b39-cd62-08dcfd18358d
+X-MS-Exchange-CrossTenant-AuthSource: BYAPR11MB2854.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Nov 2024 21:32:40.1920
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: NtZl8F5z98g7mbg/lRnyahIsaZYPNqZIL1kO3OGjfNlzwtzNhzrhWgZ9ZTbazhjWNpnWq1i7PqLkS5tMk4i78g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV1PR11MB8790
+X-OriginatorOrg: intel.com
 
-On Mon, Nov 04, 2024 at 04:40:12PM +0100, Vlastimil Babka wrote:
-> On 11/4/24 16:08, Koichiro Den wrote:
-> > Commit b035f5a6d852 ("mm: slab: reduce the kmalloc() minimum alignment
-> > if DMA bouncing possible") reduced ARCH_KMALLOC_MINALIGN to 8 on arm64.
-> > However, with KASAN_HW_TAGS enabled, arch_slab_minalign() becomes 16.
-> > This causes kmalloc_caches[*][8] to be aliased to kmalloc_caches[*][16],
-> > resulting in kmem_buckets_create() attempting to create a kmem_cache for
-> > size 16 twice. This duplication triggers warnings on boot:
-> > 
-> > [    2.325108] ------------[ cut here ]------------
-> > [    2.325135] kmem_cache of name 'memdup_user-16' already exists
-> > [    2.325783] WARNING: CPU: 0 PID: 1 at mm/slab_common.c:107 __kmem_cache_create_args+0xb8/0x3b0
-> > [    2.327957] Modules linked in:
-> > [    2.328550] CPU: 0 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.12.0-rc5mm-unstable-arm64+ #12
-> > [    2.328683] Hardware name: QEMU QEMU Virtual Machine, BIOS 2024.02-2 03/11/2024
-> > [    2.328790] pstate: 61000009 (nZCv daif -PAN -UAO -TCO +DIT -SSBS BTYPE=--)
-> > [    2.328911] pc : __kmem_cache_create_args+0xb8/0x3b0
-> > [    2.328930] lr : __kmem_cache_create_args+0xb8/0x3b0
-> > [    2.328942] sp : ffff800083d6fc50
-> > [    2.328961] x29: ffff800083d6fc50 x28: f2ff0000c1674410 x27: ffff8000820b0598
-> > [    2.329061] x26: 000000007fffffff x25: 0000000000000010 x24: 0000000000002000
-> > [    2.329101] x23: ffff800083d6fce8 x22: ffff8000832222e8 x21: ffff800083222388
-> > [    2.329118] x20: f2ff0000c1674410 x19: f5ff0000c16364c0 x18: ffff800083d80030
-> > [    2.329135] x17: 0000000000000000 x16: 0000000000000000 x15: 0000000000000000
-> > [    2.329152] x14: 0000000000000000 x13: 0a73747369786520 x12: 79646165726c6120
-> > [    2.329169] x11: 656820747563205b x10: 2d2d2d2d2d2d2d2d x9 : 0000000000000000
-> > [    2.329194] x8 : 0000000000000000 x7 : 0000000000000000 x6 : 0000000000000000
-> > [    2.329210] x5 : 0000000000000000 x4 : 0000000000000000 x3 : 0000000000000000
-> > [    2.329226] x2 : 0000000000000000 x1 : 0000000000000000 x0 : 0000000000000000
-> > [    2.329291] Call trace:
-> > [    2.329407]  __kmem_cache_create_args+0xb8/0x3b0
-> > [    2.329499]  kmem_buckets_create+0xfc/0x320
-> > [    2.329526]  init_user_buckets+0x34/0x78
-> > [    2.329540]  do_one_initcall+0x64/0x3c8
-> > [    2.329550]  kernel_init_freeable+0x26c/0x578
-> > [    2.329562]  kernel_init+0x3c/0x258
-> > [    2.329574]  ret_from_fork+0x10/0x20
-> > [    2.329698] ---[ end trace 0000000000000000 ]---
-> > 
-> > [    2.403704] ------------[ cut here ]------------
-> > [    2.404716] kmem_cache of name 'msg_msg-16' already exists
-> > [    2.404801] WARNING: CPU: 2 PID: 1 at mm/slab_common.c:107 __kmem_cache_create_args+0xb8/0x3b0
-> > [    2.404842] Modules linked in:
-> > [    2.404971] CPU: 2 UID: 0 PID: 1 Comm: swapper/0 Tainted: G        W          6.12.0-rc5mm-unstable-arm64+ #12
-> > [    2.405026] Tainted: [W]=WARN
-> > [    2.405043] Hardware name: QEMU QEMU Virtual Machine, BIOS 2024.02-2 03/11/2024
-> > [    2.405057] pstate: 60400009 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-> > [    2.405079] pc : __kmem_cache_create_args+0xb8/0x3b0
-> > [    2.405100] lr : __kmem_cache_create_args+0xb8/0x3b0
-> > [    2.405111] sp : ffff800083d6fc50
-> > [    2.405115] x29: ffff800083d6fc50 x28: fbff0000c1674410 x27: ffff8000820b0598
-> > [    2.405135] x26: 000000000000ffd0 x25: 0000000000000010 x24: 0000000000006000
-> > [    2.405153] x23: ffff800083d6fce8 x22: ffff8000832222e8 x21: ffff800083222388
-> > [    2.405169] x20: fbff0000c1674410 x19: fdff0000c163d6c0 x18: ffff800083d80030
-> > [    2.405185] x17: 0000000000000000 x16: 0000000000000000 x15: 0000000000000000
-> > [    2.405201] x14: 0000000000000000 x13: 0a73747369786520 x12: 79646165726c6120
-> > [    2.405217] x11: 656820747563205b x10: 2d2d2d2d2d2d2d2d x9 : 0000000000000000
-> > [    2.405233] x8 : 0000000000000000 x7 : 0000000000000000 x6 : 0000000000000000
-> > [    2.405248] x5 : 0000000000000000 x4 : 0000000000000000 x3 : 0000000000000000
-> > [    2.405271] x2 : 0000000000000000 x1 : 0000000000000000 x0 : 0000000000000000
-> > [    2.405287] Call trace:
-> > [    2.405293]  __kmem_cache_create_args+0xb8/0x3b0
-> > [    2.405305]  kmem_buckets_create+0xfc/0x320
-> > [    2.405315]  init_msg_buckets+0x34/0x78
-> > [    2.405326]  do_one_initcall+0x64/0x3c8
-> > [    2.405337]  kernel_init_freeable+0x26c/0x578
-> > [    2.405348]  kernel_init+0x3c/0x258
-> > [    2.405360]  ret_from_fork+0x10/0x20
-> > [    2.405370] ---[ end trace 0000000000000000 ]---
-> > 
-> > To address this, alias kmem_cache for sizes smaller than min alignment
-> > to the aligned sized kmem_cache, as done with the default system kmalloc
-> > bucket.
-> > 
-> > Cc: <stable@vger.kernel.org> # 6.11.x
-> > Fixes: b32801d1255b ("mm/slab: Introduce kmem_buckets_create() and family")
-> > Signed-off-by: Koichiro Den <koichiro.den@gmail.com>
-> > ---
+On Sun, Nov 03, 2024 at 02:49:36PM +0000, linux@treblig.org wrote:
+> From: "Dr. David Alan Gilbert" <linux@treblig.org>
 > 
-> Thanks for catching this.
-> Wonder if we could make this a lot simpler in kmem_buckets_create() by
-> starting with the current:
+> execlists_unwind_incomplete_requests() is unused since 2021's
+> commit eb5e7da736f3 ("drm/i915/guc: Reset implementation for new GuC
+> interface")
 > 
-> size = kmalloc_caches[KMALLOC_NORMAL][idx]->object_size;
+> Remove it.
 > 
-> and adding:
-> 
-> aligned_idx = __kmalloc_index(size, false);
-> 
-> now the rest of the loop iteration would work with aligned_idx and if it
-> differs from idx, we assign the cache pointer also to idx, etc.
-> 
-> This should avoid duplicating the alignment calculation as we just extract
-> from kmalloc_caches[] the result of what new_kmalloc_cache() already did?
+> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
 
-Yeah, I was thinking similar stuff -- the aligned stuff is the alias for
-the actual stuff.
+Reviewed-by: Rodrigo Vivi <rodrigo.vivi@intel.com>
 
-I like the bitmask for tracking the aliases. :)
+and pushed to drm-intel-gt-next
 
--- 
-Kees Cook
+thanks for the patch.
+
+> ---
+>  drivers/gpu/drm/i915/gt/intel_engine.h               | 3 ---
+>  drivers/gpu/drm/i915/gt/intel_execlists_submission.c | 9 ---------
+>  2 files changed, 12 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/i915/gt/intel_engine.h b/drivers/gpu/drm/i915/gt/intel_engine.h
+> index 40269e4c1e31..325da0414d94 100644
+> --- a/drivers/gpu/drm/i915/gt/intel_engine.h
+> +++ b/drivers/gpu/drm/i915/gt/intel_engine.h
+> @@ -126,9 +126,6 @@ execlists_active(const struct intel_engine_execlists *execlists)
+>  	return active;
+>  }
+>  
+> -struct i915_request *
+> -execlists_unwind_incomplete_requests(struct intel_engine_execlists *execlists);
+> -
+>  static inline u32
+>  intel_read_status_page(const struct intel_engine_cs *engine, int reg)
+>  {
+> diff --git a/drivers/gpu/drm/i915/gt/intel_execlists_submission.c b/drivers/gpu/drm/i915/gt/intel_execlists_submission.c
+> index 72090f52fb85..4a80ffa1b962 100644
+> --- a/drivers/gpu/drm/i915/gt/intel_execlists_submission.c
+> +++ b/drivers/gpu/drm/i915/gt/intel_execlists_submission.c
+> @@ -405,15 +405,6 @@ __unwind_incomplete_requests(struct intel_engine_cs *engine)
+>  	return active;
+>  }
+>  
+> -struct i915_request *
+> -execlists_unwind_incomplete_requests(struct intel_engine_execlists *execlists)
+> -{
+> -	struct intel_engine_cs *engine =
+> -		container_of(execlists, typeof(*engine), execlists);
+> -
+> -	return __unwind_incomplete_requests(engine);
+> -}
+> -
+>  static void
+>  execlists_context_status_change(struct i915_request *rq, unsigned long status)
+>  {
+> -- 
+> 2.47.0
+> 
 
