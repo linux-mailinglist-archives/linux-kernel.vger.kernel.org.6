@@ -1,175 +1,112 @@
-Return-Path: <linux-kernel+bounces-394812-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394828-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46E489BB442
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 13:11:32 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 591DF9BB490
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 13:20:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A0891C21814
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 12:11:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 04FD81F2241A
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 12:20:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AEB51B3944;
-	Mon,  4 Nov 2024 12:11:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E3541B4F15;
+	Mon,  4 Nov 2024 12:20:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="mJ88Vh8f"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=tecnico.ulisboa.pt header.i=@tecnico.ulisboa.pt header.b="CRaAeQ4K"
+Received: from smtp1.tecnico.ulisboa.pt (smtp1.tecnico.ulisboa.pt [193.136.128.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C978C1B5336
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 12:11:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92D991B21BB
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 12:20:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.136.128.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730722282; cv=none; b=sLGa8aYUJv2OU+fwvMktJLhkSbIErWdWoqDD//JhGNGky9klplX31JapwlbZxCeApIaW4KZ2i1AIlZRCooAWCkYYECHLoN5G2mWj85N80m+P/XIJzXiIUrbduJOezITtNRzUtLliKzZmyLcmJCBW9gAOS3F3u6I5hM+YnRNyi6s=
+	t=1730722852; cv=none; b=YxIMujvENRtP1A6T0F7X0bHby4z+67FD8Cj5ceX29pk6payjkdeZJBR40ZO9fDD6zvTh7VLvEeWRY/eSnAPh7Ep2lTdgbIISSnOeQ1Xi6BVpeyPAW29yPTZveixqlIAUShgSRBkHWUbJLwz78VJ9NP3otfNua14zb7N5TI9UrDQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730722282; c=relaxed/simple;
-	bh=EW/+kcRIbtWGNG3/HSSUqqzHxBuvplmY1+As85O/USI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ltqfc/AE/moXcSxa66sMJPAPNwqZq5crMqO1KOvp+PQbbzGPN9QUpYtUE4EBF4ygB+jzhctAxorof6X78LhtdC+Qu3NbSsoisdKEtkJ9FrZkbW1ytLV+Js/3trJiWoNsk3PQQwJv49WvqjPVbEQyw5mHI+aglQzQsE/SZRiqN80=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=mJ88Vh8f; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4315f24a6bbso31938675e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 04:11:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1730722279; x=1731327079; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=TZ56fmXjiTYLxN4xJpDGh5ZMZmSWUVoHQN6nZMrXMmc=;
-        b=mJ88Vh8f4AgqdZfk6jOIOxM/mqdr9htX0xvZa6bK5j/v/qP1gv7qRBKwsfXaA4j3Nq
-         2pBlTY/M2TgbIMc4M/kwFFQL+dqv/Iu/dSJ+ETnMXZDq7nriS1JUUrEsRryGE2hPSt9S
-         7PTbgZsfMwW6StKBNNUsOhh0hDbY6E5UrP5FhN/hLG7byRh5Yy53XLfiVg+8qzr+A1Bv
-         k+3ZeN+ZsX7Xieyg9jCRZeT+JCgookHmAvD6uqAzWiYljoiC1QFOoVlgoVex37l60Z9G
-         cU3qe6kYYaWsCryBHQBpc1WZR0O3VXM7NgrcsD1snktUZVEmxniQ+Nl4H5WFX+gBf9XU
-         +bZg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730722279; x=1731327079;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=TZ56fmXjiTYLxN4xJpDGh5ZMZmSWUVoHQN6nZMrXMmc=;
-        b=Jh9amo6GXLiJpumT1QoQ2oT3d5n8n9ok7pgGqN2ScrSG5P+7MLAE4OgkVcwQnqo5lp
-         X+4Mqqe7gOSb/FRnt9Cg1icQ0I1mKg0fzYhsvvBbwGXVJpIpOMd2QI2FE2C6/AS6rIwp
-         Hin1DITPHJHGXgbEoTqslUuyzFhC9J7I2mGtQP8xPQ2MMrX/S/aKNVbtIyuCQ/q1asYi
-         mFF64RLx2hZGYQxnmBdEwwRrmbTzNGIoRlKqPsr706Maq5K1ze5KJP0e57k6nzr1YlB2
-         GGRuej3JX6sxnqwYaM964o32X18MfEm3bQmOFLOGCuf+/9DPktrLdzrlZIZuY74ZvdN6
-         rvsQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVFDI6gAve2YWGFlVbjsRFtVAmC+KSBb9bLuVETTqAcRp9FtPqi5XtRwmqi6Xu4WbBauuJ0xvWn8G7qg3c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwBXwDn3qiFSfRypQGK3KtoKeDgc5+7HFOOU9Y/Z0+5/4ggV8zr
-	YvGW9plQh4T3yVUToj8fniJ86VoOD1zaKKhRZVHkQjFzV8+JPGrB2edIaffGHKo=
-X-Google-Smtp-Source: AGHT+IG0KNeictXp2keg0xKTrwSw2dpZ3byLRxQUDBWwUtsFo73cuCa8JZLWaGjBv/Dn/iKV+Gzl5g==
-X-Received: by 2002:a05:600c:1f0e:b0:431:5ba2:2450 with SMTP id 5b1f17b1804b1-4319ad253ecmr271545645e9.33.1730722278899;
-        Mon, 04 Nov 2024 04:11:18 -0800 (PST)
-Received: from ?IPV6:2a01:e0a:e17:9700:16d2:7456:6634:9626? ([2a01:e0a:e17:9700:16d2:7456:6634:9626])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4327d698144sm156541575e9.39.2024.11.04.04.11.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 04 Nov 2024 04:11:18 -0800 (PST)
-Message-ID: <b823ad91-af5c-43a7-bf16-78d683937e0e@rivosinc.com>
-Date: Mon, 4 Nov 2024 13:11:17 +0100
+	s=arc-20240116; t=1730722852; c=relaxed/simple;
+	bh=s9gQN2SpE6AzjNfjKKCELsz24974cBjufKf7Ow0Xbl4=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:
+	 References:In-Reply-To; b=ql3LQf95z43DeePeHAyQFglzF/qBFeCGWEbu0AMkFKvYFE13RA0xjfd0r9CFsqdLoZdjmA35Aa5QzvhAFOIbP1VlKftNuHrwBt3FuYzye5cqQ+ukXoGIH/PB4AKc8Xe3R5cKfnM3R6q1oyazjKJN2+sf9EY7IoC/ilIruIWTtls=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tecnico.ulisboa.pt; spf=pass smtp.mailfrom=tecnico.ulisboa.pt; dkim=pass (1024-bit key) header.d=tecnico.ulisboa.pt header.i=@tecnico.ulisboa.pt header.b=CRaAeQ4K; arc=none smtp.client-ip=193.136.128.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tecnico.ulisboa.pt
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tecnico.ulisboa.pt
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by smtp1.tecnico.ulisboa.pt (Postfix) with ESMTP id C51BF6006BA4;
+	Mon,  4 Nov 2024 12:11:54 +0000 (WET)
+X-Virus-Scanned: by amavis-2.13.0 (20230106) (Debian) at tecnico.ulisboa.pt
+Received: from smtp1.tecnico.ulisboa.pt ([127.0.0.1])
+ by localhost (smtp1.tecnico.ulisboa.pt [127.0.0.1]) (amavis, port 10025)
+ with LMTP id oDOtJgU_cQon; Mon,  4 Nov 2024 12:11:52 +0000 (WET)
+Received: from mail1.tecnico.ulisboa.pt (mail1.ist.utl.pt [193.136.128.10])
+	by smtp1.tecnico.ulisboa.pt (Postfix) with ESMTPS id 245656006BAB;
+	Mon,  4 Nov 2024 12:11:52 +0000 (WET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tecnico.ulisboa.pt;
+	s=mail; t=1730722312;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=s9gQN2SpE6AzjNfjKKCELsz24974cBjufKf7Ow0Xbl4=;
+	b=CRaAeQ4KZzRUY8BeMjb1SuPhI7NGFOkleUW9HfEXTtEUqwl9TftuW8ESmPhugnWK9mocym
+	3YhxL/I+kzEe8qPZgsyEwKL9AiwMJRL+y3l3rsAb33AW5PBU/oyTP6rvRHydC4MwqBpfFr
+	pyszNkZa1URg/cGgbVAFskYTwlR+jMA=
+Received: from localhost (unknown [165.225.92.235])
+	(Authenticated sender: ist187313)
+	by mail1.tecnico.ulisboa.pt (Postfix) with ESMTPSA id A029036012B;
+	Mon,  4 Nov 2024 12:11:50 +0000 (WET)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/3] riscv: hwprobe: export bfloat16 ISA extension
-To: Inochi Amaoto <inochiama@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Evan Green <evan@rivosinc.com>,
- Charlie Jenkins <charlie@rivosinc.com>,
- Andrew Jones <ajones@ventanamicro.com>, Andy Chiu <andybnac@gmail.com>,
- Xiao Wang <xiao.w.wang@intel.com>, Samuel Holland <samuel.holland@sifive.com>
-Cc: linux-doc@vger.kernel.org, linux-riscv@lists.infradead.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- Yixun Lan <dlan@gentoo.org>, Longbin Li <looong.bin@gmail.com>
-References: <20241103074959.1135240-1-inochiama@gmail.com>
- <20241103074959.1135240-4-inochiama@gmail.com>
-Content-Language: en-US
-From: =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@rivosinc.com>
-In-Reply-To: <20241103074959.1135240-4-inochiama@gmail.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Date: Mon, 04 Nov 2024 12:11:44 +0000
+Message-Id: <D5DDUQJOZ4HW.1XDOASECJR714@tecnico.ulisboa.pt>
+Subject: Re: [REGRESSION] GM20B pmu timeout
+From: "Diogo Ivo" <diogo.ivo@tecnico.ulisboa.pt>
+To: "Linux regressions mailing list" <regressions@lists.linux.dev>,
+ <kherbst@redhat.com>, <lyude@redhat.com>, <dakr@redhat.com>,
+ <airlied@gmail.com>, <simona@ffwll.ch>, <bskeggs@nvidia.com>,
+ <dri-devel@lists.freedesktop.org>, <nouveau@lists.freedesktop.org>,
+ <linux-kernel@vger.kernel.org>
+X-Mailer: aerc 0.18.2-0-ge037c095a049
+References: <20241010133253.30311-1-diogo.ivo@tecnico.ulisboa.pt>
+ <041511ee-4556-422a-8604-30b5e0dfd21c@leemhuis.info>
+In-Reply-To: <041511ee-4556-422a-8604-30b5e0dfd21c@leemhuis.info>
 
+Hello,
 
+On Tue Oct 15, 2024 at 7:13 PM WEST, Linux regression tracking (Thorsten Le=
+emhuis) wrote:
+> Hi, Thorsten here, the Linux kernel's regression tracker.
+>
+> On 10.10.24 15:32, Diogo Ivo wrote:
+> >=20
+> > Somewhere between 6.11-rc4 and 6.11-rc5 the following error message is =
+displayed
+> > when trying to initialize a nvc0_screen on the Tegra X1's GM20B:
+> >=20
+> > [ 34.431210] nouveau 57000000.gpu: pmu:hpq: timeout waiting for queue r=
+eady
+> > [ 34.438145] nouveau 57000000.gpu: gr: init failed, -110
+> > nvc0_screen_create:1075 - Error allocating PGRAPH context for M2MF: -11=
+0
+> > failed to create GPU screen
+>
+> Thx for the report. Hmmm. No reply so far. :-/
+>
+> Diogo, maybe report this here as well:
+> https://gitlab.freedesktop.org/drm/nouveau/-/issues/
+>
+> Afterwards drop a link to the ticket here. Reporting nouveau issues via
+> email should work, but maybe you have more luck there.
+>
+> Ciao, Thorsten (wearing his 'the Linux kernel's regression tracker' hat)
 
-On 03/11/2024 08:49, Inochi Amaoto wrote:
-> Export Zfbmin, Zvfbfmin, Zvfbfwma ISA extension through hwprobe.
-> 
-> Signed-off-by: Inochi Amaoto <inochiama@gmail.com>
-> ---
->  Documentation/arch/riscv/hwprobe.rst  | 12 ++++++++++++
->  arch/riscv/include/uapi/asm/hwprobe.h |  3 +++
->  arch/riscv/kernel/sys_hwprobe.c       |  3 +++
->  3 files changed, 18 insertions(+)
-> 
-> diff --git a/Documentation/arch/riscv/hwprobe.rst b/Documentation/arch/riscv/hwprobe.rst
-> index 85b709257918..8c30dd06f3c0 100644
-> --- a/Documentation/arch/riscv/hwprobe.rst
-> +++ b/Documentation/arch/riscv/hwprobe.rst
-> @@ -239,6 +239,18 @@ The following keys are defined:
->         ratified in commit 98918c844281 ("Merge pull request #1217 from
->         riscv/zawrs") of riscv-isa-manual.
->  
-> +  * :c:macro:`RISCV_HWPROBE_EXT_ZFBFMIN`: The Zfbfmin extension is supported as
-> +       defined in the RISC-V ISA manual starting from commit 4dc23d6229de
-> +       ("Added Chapter title to BF16").
-> +
-> +  * :c:macro:`RISCV_HWPROBE_EXT_ZVFBFMIN`: The Zvfbfmin extension is supported as
-> +       defined in the RISC-V ISA manual starting from commit 4dc23d6229de
-> +       ("Added Chapter title to BF16").
-> +
-> +  * :c:macro:`RISCV_HWPROBE_EXT_ZVFBFWMA`: The Zvfbfwma extension is supported as
-> +       defined in the RISC-V ISA manual starting from commit 4dc23d6229de
-> +       ("Added Chapter title to BF16").
-> +
->  * :c:macro:`RISCV_HWPROBE_KEY_CPUPERF_0`: Deprecated.  Returns similar values to
->       :c:macro:`RISCV_HWPROBE_KEY_MISALIGNED_SCALAR_PERF`, but the key was
->       mistakenly classified as a bitmask rather than a value.
-> diff --git a/arch/riscv/include/uapi/asm/hwprobe.h b/arch/riscv/include/uapi/asm/hwprobe.h
-> index 1e153cda57db..95d00a065b4e 100644
-> --- a/arch/riscv/include/uapi/asm/hwprobe.h
-> +++ b/arch/riscv/include/uapi/asm/hwprobe.h
-> @@ -72,6 +72,9 @@ struct riscv_hwprobe {
->  #define		RISCV_HWPROBE_EXT_ZCF		(1ULL << 46)
->  #define		RISCV_HWPROBE_EXT_ZCMOP		(1ULL << 47)
->  #define		RISCV_HWPROBE_EXT_ZAWRS		(1ULL << 48)
-> +#define		RISCV_HWPROBE_EXT_ZFBFMIN	(1ULL << 49)
-> +#define		RISCV_HWPROBE_EXT_ZVFBFMIN	(1ULL << 50)
-> +#define		RISCV_HWPROBE_EXT_ZVFBFWMA	(1ULL << 51)
->  #define RISCV_HWPROBE_KEY_CPUPERF_0	5
->  #define		RISCV_HWPROBE_MISALIGNED_UNKNOWN	(0 << 0)
->  #define		RISCV_HWPROBE_MISALIGNED_EMULATED	(1 << 0)
-> diff --git a/arch/riscv/kernel/sys_hwprobe.c b/arch/riscv/kernel/sys_hwprobe.c
-> index cea0ca2bf2a2..de1966bd1776 100644
-> --- a/arch/riscv/kernel/sys_hwprobe.c
-> +++ b/arch/riscv/kernel/sys_hwprobe.c
-> @@ -131,6 +131,8 @@ static void hwprobe_isa_ext0(struct riscv_hwprobe *pair,
->  			EXT_KEY(ZVE64D);
->  			EXT_KEY(ZVE64F);
->  			EXT_KEY(ZVE64X);
-> +			EXT_KEY(ZVFBFMIN);
-> +			EXT_KEY(ZVFBFWMA);
->  			EXT_KEY(ZVFH);
->  			EXT_KEY(ZVFHMIN);
->  			EXT_KEY(ZVKB);
-> @@ -147,6 +149,7 @@ static void hwprobe_isa_ext0(struct riscv_hwprobe *pair,
->  			EXT_KEY(ZCD);
->  			EXT_KEY(ZCF);
->  			EXT_KEY(ZFA);
-> +			EXT_KEY(ZFBFMIN);
->  			EXT_KEY(ZFH);
->  			EXT_KEY(ZFHMIN);
->  		}
+Gentle ping on this topic.
 
-
-Looks good to me !
-
-Reviewed-by: Clément Léger <cleger@rivosinc.com>
-
-Thanks
+Thanks,
+Diogo
 
