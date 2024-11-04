@@ -1,98 +1,160 @@
-Return-Path: <linux-kernel+bounces-394434-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394435-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C3E59BAF1A
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 10:08:25 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25A5A9BAF1B
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 10:08:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D3749B2369E
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 09:08:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA264282B3D
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 09:08:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C46E21AAE30;
-	Mon,  4 Nov 2024 09:08:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7358F1ABEBB;
+	Mon,  4 Nov 2024 09:08:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="ojaM3Bx2"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="gPrdysaw"
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 666E219D8BE;
-	Mon,  4 Nov 2024 09:08:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 665411AE009
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 09:08:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730711283; cv=none; b=RhnnYCYJPeIg7HhjvxJADo60+hjxkluOCroG/0qWpZv1oZSxqR4hCqPUCFrsrUPPJHgcyo2ZfGr24y/F4F/cVvBKiY36syJTLn4TJdpxdsYHuRcX3BSqd19Sm4ARtAGQQqffZlYPi5fs8iSZn2m4hCoeUK6oCTXhDTsrhTG29uY=
+	t=1730711291; cv=none; b=b/mAGTZyrlD2Q8BbRphbW/hAAEV+4SbH2Sk1U3GSmkN0n4kJwDLnB+0lRDr0ve59chXWALcNfhSuNSAbheccxIEe3YBAS6leW65VWtpt4fjKq9GGOF0e2nf0xuiEKmF3BiPQj6IfS/Nfp+bFiz829tWe0N6eTRb/qAOoe8PbXak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730711283; c=relaxed/simple;
-	bh=nvTvcMq87NAEajnxg84zXbjs+exdQHrT/KIDHDbHkJA=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=alJtBdFh2/1E/4iukVNZV10AsS6/USk1LM0vYynxZg3QUqhap2KISKqZ+fUfusqdwh0wfmd+9fgd+/w4f0UAYFtJHiDzM1RS7TkH6m4GKG4xjBc1qzmFxSorZUIt5ArSpU63faic4/DveQRjmt7V+8WaJJqXKn/eZkmYjmYSmO4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=ojaM3Bx2; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1730711281; x=1762247281;
-  h=from:to:subject:date:message-id:mime-version;
-  bh=nvTvcMq87NAEajnxg84zXbjs+exdQHrT/KIDHDbHkJA=;
-  b=ojaM3Bx2FoINjEIqF1QRHxDctgIhmVliOYwLfDs7OL7scajBF+1IlJZR
-   Lk2kMNvRVdxw0ZnWlrPPd3YygkKhp2m2RicM08v9my2PLA99ZAtXjHWiO
-   GZXXMFgN9bIDAJeVKJGBamMi3S7oLiLqnEIbRqthu7w+7QLmX+hM7o63D
-   cCQ35ZsyNJ3lH+cIMP0x2VyW8sywPGFV42Cg/pYfHM8oRIVaOuDY+CIQz
-   dwYusMqZ5GaivkBTguHFcJntIG2TvY2S5HQ94X5s1jguTjLVPzZhsFDXF
-   aQ8hUa/yhFiwnW+FHfUkKxiNg2MlxsIimHXEIabvk+SNRRZy4Ree252UB
-   Q==;
-X-CSE-ConnectionGUID: b8mzosZWTB24zVJMTbB3MA==
-X-CSE-MsgGUID: vs7EqtfEQX2zAGjHUUNH8Q==
-X-IronPort-AV: E=Sophos;i="6.11,256,1725346800"; 
-   d="scan'208";a="201261156"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa6.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 04 Nov 2024 02:08:00 -0700
-Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Mon, 4 Nov 2024 02:07:56 -0700
-Received: from training-HP-280-G1-MT-PC.microchip.com (10.10.85.11) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server id
- 15.1.2507.35 via Frontend Transport; Mon, 4 Nov 2024 02:07:52 -0700
-From: Divya Koppera <divya.koppera@microchip.com>
-To: <andrew@lunn.ch>, <arun.ramadoss@microchip.com>,
-	<UNGLinuxDriver@microchip.com>, <hkallweit1@gmail.com>,
-	<linux@armlinux.org.uk>, <davem@davemloft.net>, <edumazet@google.com>,
-	<kuba@kernel.org>, <pabeni@redhat.com>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <richardcochran@gmail.com>
-Subject: [PATCH net-next 0/5] Add ptp library for Microchip phys
-Date: Mon, 4 Nov 2024 14:37:45 +0530
-Message-ID: <20241104090750.12942-1-divya.koppera@microchip.com>
-X-Mailer: git-send-email 2.17.1
+	s=arc-20240116; t=1730711291; c=relaxed/simple;
+	bh=TdUwawy+SxSRobT90coWOPO+PHUjgZdJup23l0G+qB4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PZYQoVX5lUCtsB1Uw98Bg+MQUo42GYbcqg2q0GP2R8tXpH3HYcJbW2u1Csk+mJUSwWvGTZhYYnsDRyuPBNbsNij/PUr5Ao3E4acuHpkPEpR8y9GeqVg1+DjQ47oyhmyNDfI5tv1BVl6MZEb139nKhk9f3WQ78qhsUQjE6FOXHnQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=gPrdysaw; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a93c1cc74fdso620157366b.3
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 01:08:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1730711284; x=1731316084; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZeinyN/5Nec/44C5dTybhhrHH4wmAkP5DqVHdTtI3c8=;
+        b=gPrdysawRi0IIgzQYDg+C3mCBH5FVmasPxuXkKYaSuw+hzhopTi6A0djs5w60UcDDE
+         DJNMsoSrH3j/qQkRwkfAQqfJWRQte5LAas1j/jvgVB4J3WiMxLGAxWOxkWwXC66jZdBm
+         V2mzCt5pUN3MVfHFbmSFT4IrZ2gga3EvdUfPXR+ItnKT9lk6VhhmwAd84pEtCjie755B
+         m/iwEwaAxKGyxDbvomGOxXCxvzW7Ie000dV9iKiMdl+NqhzklzLDY2vJI2qLWMdGG3Iw
+         QyU2qX1ZZfwwcjhaZ00fvEEt7t4OpXiyHMlAtw3vZcNIYL9paP01xOdEkYTolKZc7IoH
+         6AWw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730711284; x=1731316084;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZeinyN/5Nec/44C5dTybhhrHH4wmAkP5DqVHdTtI3c8=;
+        b=nPCRLNYVtIoB9RYaWVlKdYusk98Qt/D/IxyHaTs3CNDawGJrPGfZXf8rhA30yuH9ue
+         6mhuddQeVvIVTklRWCSb7ckzzqv6b16ED4oTWdRSM3RifNOUzs6Fj0l4W3D1iJVyXsni
+         TORbKGFIGu1HN702wlNSnyRzliR6MpI/YvE+EoO6LPrFGbNNp8a7bOATv2BSRG2RSkMD
+         aE2/tbo+wgwKXPHx2KE7MAevmuMqPM4f2mzj6DNpCu/LzLfjR1t82z8retd26Pqld/3G
+         SNtokNL6QyQ2RE/TH3CMMtWjR5NDJqNvi/ryYGztohZT9rwKwIT2FfXaVtrX1DExnxvY
+         m8Tw==
+X-Forwarded-Encrypted: i=1; AJvYcCVrg/uCkDlTkT7Sre2Jj/YUIWn9Xdb+Ca15VfeaIxCHIDrQ2mfP9GmxY8LCQZ3SwWYDYtFaw5l13TgfYVg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxBhFw9JRWfnScatNx/UQ+LD9r5nZs5DJDPDQvlqTv3gfuj1TT8
+	XaHQervyeTA2T9Fubz2N75pHUvsBDEx/3t+85NNjkPax7BKo313yEtQ/RC4rvBU=
+X-Google-Smtp-Source: AGHT+IHbjqQG3EbTVZChskg4oJ3EPibMoamir516XriRk8GBfxJS4NEjIPq5u7GVGdstesR3PRimKA==
+X-Received: by 2002:a17:907:1c02:b0:a99:a9b6:2eb6 with SMTP id a640c23a62f3a-a9e652c179emr1170000866b.0.1730711283666;
+        Mon, 04 Nov 2024 01:08:03 -0800 (PST)
+Received: from localhost (p50915d2d.dip0.t-ipconnect.de. [80.145.93.45])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9e563093e5sm523477966b.0.2024.11.04.01.08.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 04 Nov 2024 01:08:03 -0800 (PST)
+Date: Mon, 4 Nov 2024 10:08:02 +0100
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+To: George Stark <gnstark@salutedevices.com>
+Cc: neil.armstrong@linaro.org, khilman@baylibre.com, jbrunet@baylibre.com, 
+	martin.blumenstingl@googlemail.com, linux-pwm@vger.kernel.org, linux-amlogic@lists.infradead.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kernel@salutedevices.com
+Subject: Re: [PATCH v2 1/4] pwm: meson: Simplify get_state() callback
+Message-ID: <ll3i664yuojtueo5c5uzclduylbrjxf3r672jjb5hgtbslx6jj@fvcefnjftqmq>
+References: <20241016152553.2321992-1-gnstark@salutedevices.com>
+ <20241016152553.2321992-2-gnstark@salutedevices.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="gvh7qusglqyop6c6"
+Content-Disposition: inline
+In-Reply-To: <20241016152553.2321992-2-gnstark@salutedevices.com>
 
-Adds support of ptp library in Microchip phys
 
-Divya Koppera (5):
-  net: phy: microchip_ptp : Add header file for Microchip ptp library
-  net: phy: microchip_ptp : Add ptp library for Microchip phys
-  net: phy: Kconfig: Add ptp library support and  1588 optional flag in
-    Microchip phys
-  net: phy: Makefile: Add makefile support for ptp in Microchip phys
-  net: phy: microchip_t1 : Add initialization of ptp for lan887x
+--gvh7qusglqyop6c6
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v2 1/4] pwm: meson: Simplify get_state() callback
+MIME-Version: 1.0
 
- drivers/net/phy/Kconfig         |   9 +-
- drivers/net/phy/Makefile        |   1 +
- drivers/net/phy/microchip_ptp.c | 990 ++++++++++++++++++++++++++++++++
- drivers/net/phy/microchip_ptp.h | 217 +++++++
- drivers/net/phy/microchip_t1.c  |  29 +-
- 5 files changed, 1242 insertions(+), 4 deletions(-)
- create mode 100644 drivers/net/phy/microchip_ptp.c
- create mode 100644 drivers/net/phy/microchip_ptp.h
+On Wed, Oct 16, 2024 at 06:25:50PM +0300, George Stark wrote:
+> In .get_state() callback meson_pwm_channel struct are used to store
+> lo and hi reg values but they are never reused after that so
+> for clearness use local variable instead.
+>=20
+> Signed-off-by: George Stark <gnstark@salutedevices.com>
+> ---
+>  drivers/pwm/pwm-meson.c | 9 +++++----
+>  1 file changed, 5 insertions(+), 4 deletions(-)
+>=20
+> diff --git a/drivers/pwm/pwm-meson.c b/drivers/pwm/pwm-meson.c
+> index 98e6c1533312..2ef632caebcc 100644
+> --- a/drivers/pwm/pwm-meson.c
+> +++ b/drivers/pwm/pwm-meson.c
+> @@ -310,6 +310,7 @@ static int meson_pwm_get_state(struct pwm_chip *chip,=
+ struct pwm_device *pwm,
+>  	struct meson_pwm *meson =3D to_meson_pwm(chip);
+>  	struct meson_pwm_channel_data *channel_data;
+>  	struct meson_pwm_channel *channel;
+> +	unsigned int hi, lo;
+>  	u32 value;
+> =20
+>  	channel =3D &meson->channels[pwm->hwpwm];
+> @@ -319,11 +320,11 @@ static int meson_pwm_get_state(struct pwm_chip *chi=
+p, struct pwm_device *pwm,
+>  	state->enabled =3D value & channel_data->pwm_en_mask;
+> =20
+>  	value =3D readl(meson->base + channel_data->reg_offset);
+> -	channel->lo =3D FIELD_GET(PWM_LOW_MASK, value);
+> -	channel->hi =3D FIELD_GET(PWM_HIGH_MASK, value);
+> +	lo =3D FIELD_GET(PWM_LOW_MASK, value);
+> +	hi =3D FIELD_GET(PWM_HIGH_MASK, value);
+> =20
+> -	state->period =3D meson_pwm_cnt_to_ns(chip, pwm, channel->lo + channel-=
+>hi);
+> -	state->duty_cycle =3D meson_pwm_cnt_to_ns(chip, pwm, channel->hi);
+> +	state->period =3D meson_pwm_cnt_to_ns(chip, pwm, lo + hi);
+> +	state->duty_cycle =3D meson_pwm_cnt_to_ns(chip, pwm, hi);
+> =20
+>  	state->polarity =3D PWM_POLARITY_NORMAL;
 
--- 
-2.17.1
+Fine for me if you drop the local variable channel as found by the build
+bot.
 
+Best regards
+Uwe
+
+--gvh7qusglqyop6c6
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmcoju8ACgkQj4D7WH0S
+/k7vqQf9EAur5SOfIWCiCkCZxW/Scb5JUD1k+pcoodOq/QAeYaAQXNkffAIjVnkU
+Z4y1vJ8j6gQr/WXYQdbOQ4Qj7G5m9DJQmxyYdv0Cog9PKmAmVyHGLmi+zxGJ+kZb
+Dq8JuERY7/Le7vPFWFwOhpq/1n5gnsg9Dd7ZlA/hN55VL3cWXft9eVBj5e8DGBym
+qN4tnX3Hz494Bm/71xJM3D311Vaq6HYYvXdoY9HzFaNXh3mvJHqgB3ysekBRMt3f
+RCyuCe0yQcwKsGqKLJmNJOzxPgx0Wpmdv+qcYKv50Ubr0sTs4HPhSnYYEFksu3IC
+IuJjdsPpo1Ts5mAkwLAFdXzdAR9pXA==
+=NrRk
+-----END PGP SIGNATURE-----
+
+--gvh7qusglqyop6c6--
 
