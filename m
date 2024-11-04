@@ -1,324 +1,176 @@
-Return-Path: <linux-kernel+bounces-394120-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394121-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40FBE9BAAC0
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 03:12:47 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AEB59BAAC5
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 03:22:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C41101F226D8
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 02:12:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 11F8F1F21662
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 02:22:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A87311632D9;
-	Mon,  4 Nov 2024 02:12:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E0D5166F31;
+	Mon,  4 Nov 2024 02:21:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Y3s3B8E6"
-Received: from out-189.mta1.migadu.com (out-189.mta1.migadu.com [95.215.58.189])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H0U+9dyh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D35043214
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 02:12:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E1E37603F;
+	Mon,  4 Nov 2024 02:21:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730686360; cv=none; b=gWMzPdL12d7a33fN2NrkJsDyjaTZrCgm6J8pbwqQDreBsfhgLWamDgMJkj+Zpb66WwtrUQnkMhoLqmELBaZ6NH7D2qyq1QhEZYIprBDHNDSv0REGz/YKt9zUVk0+1OmkhU4JAhXfL3Z4UHiDUHoX/5CKyJsVWv96XiLfpyj08Tw=
+	t=1730686912; cv=none; b=apQ8iBl9kuFPTPeyQeoP5kBF80jH0q2hASVHxcDLruue3PSODbbHXSerxdkU9cCj4I8b2Nhtq4oGag84BNQsn7IjnIkdUZqsfvZRgPuqeZ7biKsuBwP9c00+gbzS1ZmcQvCLi3b0qV9LCMQlmxd57rPwjrjIi94Q66e6SrNw0hg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730686360; c=relaxed/simple;
-	bh=Aq+g9zjzXgLlBEn62nblVp+7Ru0ZlXhweAF/WZlbf/Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=G0j/Z/a439OwDk5yLkkOFob9f3e0IvUPAXUcMZJk/unYX7kyxrmnZRC0n4sYcH4hfNhxifDLxXVLtFh25raXj/qXuWRYPJ+IOsqJi7uNc5yTs8PRJSNNtntl3FiJY+nQ54RSo8/DAflDCbRKGsv4mJU2cRwaeGO4eMMSBhGpxzA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Y3s3B8E6; arc=none smtp.client-ip=95.215.58.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <07a5170b-8a7b-44c6-8ad1-af8d4c361661@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1730686354;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+NLIq6E1rAhGMwYQwDhRmVx3L0gQuv/WE61i9e5og3I=;
-	b=Y3s3B8E6e+JHg8Q1rYQETmFD65AOdOAkXrehnxdba/gRaO91uleRAqLE+exnA+V5pEHBqO
-	lryZ8MseadYcbP4OF7NzuygTGC5NwpMkf8g72l5NpgO4eW+nqTJ9p5m9a8VPGQGfEZZ4+K
-	wjZnCTdALYNTJ2IcIRybADFbIPMrolw=
-Date: Mon, 4 Nov 2024 10:12:23 +0800
+	s=arc-20240116; t=1730686912; c=relaxed/simple;
+	bh=1tcggB/GHix8frE72Yp+mCAP/HIONKZbEjU2qKYxPC4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=F+KmNSAKfVZmtMi0waIUV+WfCJkwigm9OLPWlVvjqUCLwjg4bXHmn0dZGlQh81hMQS/JEhMJuaPYU+fjuvyO4bxHZIPLHI63cwZ6Bc34ekEsWHJmez0j0/2NqTw8LLhedE4xUH342BsblygoqPXfJJf0EZBPodeR4xbW0dcOJro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H0U+9dyh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1CC10C4AF09;
+	Mon,  4 Nov 2024 02:21:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730686912;
+	bh=1tcggB/GHix8frE72Yp+mCAP/HIONKZbEjU2qKYxPC4=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=H0U+9dyhjvx0nwrhweIMrtw69s/iyKOiCCGBrJ2GVxvt1jeksTpdjKdCA6zKbP1cn
+	 1idFD/onQW3Om/lrKSSpNQVvxO1XQTBhnR8VIA0ol4lMU+dSJjKsFkjpNxA1KS+Bp7
+	 QDKAx5jM4e3G7hkQTcnrJG1OpE+DxSKdcm7CDoQ+gqCUe21ak3FUEGWeSVUg7qXkCq
+	 JZb7qcsyNDfhOgZWqyUn+aPWy8KIu4qIJCjI7riHHUOYmi7HccwnEnGX97xwU2TzHd
+	 InX6VY8b4ebptis6y9rrimlfQCSexlf6J7CWmSPumqaFNo76V2A3SEENU7woXV5fBz
+	 VcmLXtvCg8HHg==
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a9a3dc089d8so629853666b.3;
+        Sun, 03 Nov 2024 18:21:52 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCU/nIUzMtQVAW+cKViE+xAEeX7+4Q6qtGZAQDbFNsIyCr/4831Uh2f5TsNifFRCtsHJRwC02STRG+kB5m6W@vger.kernel.org, AJvYcCX0mU508gLtlujG1oG+iW4WBX8j3Vn3B5bcceZxKlbbCV6rRt3SvVtv7wtsgg6z10vIqaE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy2aupoiNPbKwN/HykJsdUTWoyND340+CJLpfVDkphCMk140odO
+	LMhZ5KrCJ0qEyjmD/QvoW2F25ZzdFbDDu6pmkwZBpUC8luUTA+f/EIZZCCApGgg9I+qQHj3pgzf
+	N0awDqaNWNdZqCVRK+f3JlifdXJk=
+X-Google-Smtp-Source: AGHT+IGVRk4kNX2sK07GgPWmR05AatJnpVg09BYrcls4Sf4y/EcEbjEgl3o85bto2nxYgIGRqyuNmvbmmEm5trXqa0g=
+X-Received: by 2002:a17:907:3d8f:b0:a99:4a8f:c83f with SMTP id
+ a640c23a62f3a-a9e65490cdcmr1178297566b.5.1730686910626; Sun, 03 Nov 2024
+ 18:21:50 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH] docs/zh_CN: add the translation of kbuild/llvm.rst
-To: Dongliang Mu <dzm91@hust.edu.cn>, Alex Shi <alexs@kernel.org>,
- Yanteng Si <siyanteng@loongson.cn>, Jonathan Corbet <corbet@lwn.net>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Nathan Chancellor <nathan@kernel.org>,
- Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling
- <morbo@google.com>, Justin Stitt <justinstitt@google.com>
-Cc: hust-os-kernel-patches@googlegroups.com, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
- llvm@lists.linux.dev
-References: <20241023153235.1291567-1-dzm91@hust.edu.cn>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Yanteng Si <si.yanteng@linux.dev>
-In-Reply-To: <20241023153235.1291567-1-dzm91@hust.edu.cn>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+References: <20240815071545.925867-1-maobibo@loongson.cn> <20240815071545.925867-2-maobibo@loongson.cn>
+ <3e88f855-5edc-9416-0348-ea16cd860a1f@loongson.cn>
+In-Reply-To: <3e88f855-5edc-9416-0348-ea16cd860a1f@loongson.cn>
+From: Huacai Chen <chenhuacai@kernel.org>
+Date: Mon, 4 Nov 2024 10:21:40 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H44ph_XhEtKDvoHQK2pqm3Bj1AMHm_mOWMnvWk94sdgCQ@mail.gmail.com>
+Message-ID: <CAAhV-H44ph_XhEtKDvoHQK2pqm3Bj1AMHm_mOWMnvWk94sdgCQ@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] LoongArch: Fix AP booting issue in VM mode
+To: maobibo <maobibo@loongson.cn>
+Cc: Tianrui Zhao <zhaotianrui@loongson.cn>, WANG Xuerui <kernel@xen0n.name>, kvm@vger.kernel.org, 
+	loongarch@lists.linux.dev, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-
-
-
-在 2024/10/23 23:32, Dongliang Mu 写道:
-> Finish the translation of kbuild/llvm.rst and move llvm from TODO
-> to the main body.
+On Wed, Aug 28, 2024 at 9:34=E2=80=AFAM maobibo <maobibo@loongson.cn> wrote=
+:
 >
-> Update to commit 145082ebfcf0 ("Documentation/llvm: turn make command
-> for ccache into code block")
+> ping.
+Queued, thanks.
+
+Huacai
+
 >
-> Signed-off-by: Dongliang Mu <dzm91@hust.edu.cn>
-Reviewed-by: Yanteng Si <si.yanteng@linux.dev>
-
-
-Thanks,
-Yanteng
-> ---
->   .../translations/zh_CN/kbuild/index.rst       |   3 +-
->   .../translations/zh_CN/kbuild/llvm.rst        | 203 ++++++++++++++++++
->   2 files changed, 205 insertions(+), 1 deletion(-)
->   create mode 100644 Documentation/translations/zh_CN/kbuild/llvm.rst
 >
-> diff --git a/Documentation/translations/zh_CN/kbuild/index.rst b/Documentation/translations/zh_CN/kbuild/index.rst
-> index 0ba96aecb13a..3f9ab52fa5bb 100644
-> --- a/Documentation/translations/zh_CN/kbuild/index.rst
-> +++ b/Documentation/translations/zh_CN/kbuild/index.rst
-> @@ -17,6 +17,7 @@
->       gcc-plugins
->       kbuild
->       reproducible-builds
-> +    llvm
->   
->   TODO:
->   
-> @@ -25,7 +26,7 @@ TODO:
->   - makefiles
->   - modules
->   - issues
-> -- llvm
-> +
->   
->   .. only::  subproject and html
->   
-> diff --git a/Documentation/translations/zh_CN/kbuild/llvm.rst b/Documentation/translations/zh_CN/kbuild/llvm.rst
-> new file mode 100644
-> index 000000000000..f71092144a26
-> --- /dev/null
-> +++ b/Documentation/translations/zh_CN/kbuild/llvm.rst
-> @@ -0,0 +1,203 @@
-> +.. SPDX-License-Identifier: GPL-2.0
-> +
-> +.. include:: ../disclaimer-zh_CN.rst
-> +
-> +:Original: Documentation/kbuild/llvm.rst
-> +:Translator: 慕冬亮 Dongliang Mu <dzm91@hust.edu.cn>
-> +
-> +==========================
-> +使用 Clang/LLVM 构建 Linux
-> +==========================
-> +
-> +本文档介绍如何使用 Clang 和 LLVM 工具构建 Linux 内核。
-> +
-> +关于
-> +----
-> +
-> +Linux 内核传统上一直使用 GNU 工具链（如 GCC 和 binutils）进行编译。持续的工作使得
-> +`Clang <https://clang.llvm.org/>`_ 和 `LLVM <https://llvm.org/>`_ 工具可
-> +作为可行的替代品。一些发行版，如 `Android <https://www.android.com/>`_、
-> +`ChromeOS <https://www.chromium.org/chromium-os>`_、`OpenMandriva
-> +<https://www.openmandriva.org/>`_ 和 `Chimera Linux
-> +<https://chimera-linux.org/>`_ 使用 Clang 编译的内核。谷歌和 Meta 的数据中心
-> +集群也运行由 Clang 编译的内核。
-> +
-> +`LLVM 是由 C++ 对象实现的工具链组件集合 <https://www.aosabook.org/en/llvm.html>`_。
-> +Clang 是 LLVM 的前端，支持 C 语言和内核所需的 GNU C 扩展，其发音为 "klang"，而非
-> +"see-lang"。
-> +
-> +使用 LLVM 构建
-> +--------------
-> +
-> +通过以下命令调用 ``make``::
-> +
-> +	make LLVM=1
-> +
-> +为主机目标进行编译。对于交叉编译::
-> +
-> +	make LLVM=1 ARCH=arm64
-> +
-> +LLVM= 参数
-> +----------
-> +
-> +LLVM 有 GNU binutils 工具的替代品。这些工具可以单独启用。以下是支持的 make 变量
-> +完整列表::
-> +
-> +	make CC=clang LD=ld.lld AR=llvm-ar NM=llvm-nm STRIP=llvm-strip \
-> +	  OBJCOPY=llvm-objcopy OBJDUMP=llvm-objdump READELF=llvm-readelf \
-> +	  HOSTCC=clang HOSTCXX=clang++ HOSTAR=llvm-ar HOSTLD=ld.lld
-> +
-> +``LLVM=1`` 扩展为上述命令。
-> +
-> +如果你的 LLVM 工具不在 PATH 中，你可以使用以斜杠结尾的 LLVM 变量提供它们的位置::
-> +
-> +	make LLVM=/path/to/llvm/
-> +
-> +这将使用 ``/path/to/llvm/clang``、``/path/to/llvm/ld.lld`` 等工具。也可以
-> +使用以下命令::
-> +
-> +	PATH=/path/to/llvm:$PATH make LLVM=1
-> +
-> +如果你的 LLVM 工具带有版本后缀，并且你希望测试该特定版本而非无后缀的可执行文件，
-> +类似于 ``LLVM=1``，你可以使用 ``LLVM`` 变量传递该后缀::
-> +
-> +	make LLVM=-14
-> +
-> +这将使用 ``clang-14``、``ld.lld-14`` 等工具。为了支持带有版本后缀的树外路径组合，
-> +我们建议::
-> +
-> +	PATH=/path/to/llvm/:$PATH make LLVM=-14
-> +
-> +``LLVM=0`` 与省略 ``LLVM`` 完全不同，它将表现得像 ``LLVM=1``。如果你只希望使用
-> +某些 LLVM 工具，请使用它们各自的 make 变量。
-> +
-> +在通过不同命令配置和构建时，应为每次调用 ``make`` 设置相同的 ``LLVM=`` 值。如果
-> +运行的脚本最终会调用 ``make``，则还应将 ``LLVM=`` 设置为环境变量。
-> +
-> +交叉编译
-> +--------
-> +
-> +单个 Clang 编译器二进制文件（及其对应的 LLVM 工具）通常会包含所有支持的后端，这可以
-> +简化交叉编译，尤其是使用 ``LLVM=1`` 时。如果仅使用 LLVM 工具，``CROSS_COMPILE``
-> +或目标三元组前缀就变得不必要。示例::
-> +
-> +	make LLVM=1 ARCH=arm64
-> +
-> +作为混合 LLVM 和 GNU 工具的示例，对于像 ``ARCH=s390`` 这样目前尚不支持
-> +``ld.lld`` 或 ``llvm-objcopy`` 的目标，你可以通过以下方式调用 ``make``::
-> +
-> +	make LLVM=1 ARCH=s390 LD=s390x-linux-gnu-ld.bfd \
-> +	  OBJCOPY=s390x-linux-gnu-objcopy
-> +
-> +此示例将调用 ``s390x-linux-gnu-ld.bfd`` 作为链接器和
-> +``s390x-linux-gnu-objcopy``，因此请确保它们在你的 ``$PATH`` 中。
-> +
-> +当 ``LLVM=1`` 未设置时，``CROSS_COMPILE`` 不会用于给 Clang 编译器二进制文件
-> +（或相应的 LLVM 工具）添加前缀，而 GNU 工具则需要这样做。
-> +
-> +LLVM_IAS= 参数
-> +--------------
-> +
-> +Clang 可以编译汇编代码。你可以传递 ``LLVM_IAS=0`` 禁用此行为，使 Clang 调用
-> +相应的非集成汇编器。示例::
-> +
-> +	make LLVM=1 LLVM_IAS=0
-> +
-> +在交叉编译时，你需要使用 ``CROSS_COMPILE`` 与 ``LLVM_IAS=0``，从而设置
-> +``--prefix=`` 使得编译器可以对应的非集成汇编器（通常，在面向另一种架构时，
-> +你不想使用系统汇编器）。例如::
-> +
-> +	make LLVM=1 ARCH=arm LLVM_IAS=0 CROSS_COMPILE=arm-linux-gnueabi-
-> +
-> +Ccache
-> +------
-> +
-> +``ccache`` 可以与 ``clang`` 一起使用，以改善后续构建（尽管在不同构建之间
-> +KBUILD_BUILD_TIMESTAMP_ 应设置为同一确定值，以避免 100% 的缓存未命中，
-> +详见 Reproducible_builds_ 获取更多信息）::
-> +
-> +	KBUILD_BUILD_TIMESTAMP='' make LLVM=1 CC="ccache clang"
-> +
-> +.. _KBUILD_BUILD_TIMESTAMP: kbuild.html#kbuild-build-timestamp
-> +.. _Reproducible_builds: reproducible-builds.html#timestamps
-> +
-> +支持的架构
-> +----------
-> +
-> +LLVM 并不支持 Linux 内核所有可支持的架构，同样，即使 LLVM 支持某一架构，也并不意味着在
-> +该架构下内核可以正常构建或工作。以下是当前 ``CC=clang`` 或 ``LLVM=1`` 支持的架构总结。
-> +支持级别对应于 MAINTAINERS 文件中的 "S" 值。如果某个架构未列出，则表示 LLVM 不支持它
-> +或存在已知问题。使用最新的稳定版 LLVM 或甚至开发版本通常会得到最佳结果。一个架构的
-> +``defconfig`` 通常预期能够良好工作，但某些配置可能存在尚未发现的问题。欢迎在以下
-> +问题跟踪器中提交错误报告！
-> +
-> +.. list-table::
-> +   :widths: 10 10 10
-> +   :header-rows: 1
-> +
-> +   * - 架构
-> +     - 支持级别
-> +     - ``make`` 命令
-> +   * - arm
-> +     - 支持
-> +     - ``LLVM=1``
-> +   * - arm64
-> +     - 支持
-> +     - ``LLVM=1``
-> +   * - hexagon
-> +     - 维护
-> +     - ``LLVM=1``
-> +   * - loongarch
-> +     - 维护
-> +     - ``LLVM=1``
-> +   * - mips
-> +     - 维护
-> +     - ``LLVM=1``
-> +   * - powerpc
-> +     - 维护
-> +     - ``LLVM=1``
-> +   * - riscv
-> +     - 支持
-> +     - ``LLVM=1``
-> +   * - s390
-> +     - 维护
-> +     - ``LLVM=1`` （LLVM >= 18.1.0），``CC=clang`` （LLVM < 18.1.0）
-> +   * - um (用户模式)
-> +     - 维护
-> +     - ``LLVM=1``
-> +   * - x86
-> +     - 支持
-> +     - ``LLVM=1``
-> +
-> +获取帮助
-> +--------
-> +
-> +- `网站 <https://clangbuiltlinux.github.io/>`_
-> +- `邮件列表 <https://lore.kernel.org/llvm/>`_: <llvm@lists.linux.dev>
-> +- `旧邮件列表档案 <https://groups.google.com/g/clang-built-linux>`_
-> +- `问题跟踪器 <https://github.com/ClangBuiltLinux/linux/issues>`_
-> +- IRC: #clangbuiltlinux 在 irc.libera.chat
-> +- `Telegram <https://t.me/ClangBuiltLinux>`_: @ClangBuiltLinux
-> +- `维基 <https://github.com/ClangBuiltLinux/linux/wiki>`_
-> +- `初学者问题 <https://github.com/ClangBuiltLinux/linux/issues?q=is%3Aopen+is%3Aissue+label%3A%22good+first+issue%22>`_
-> +
-> +.. _zh_cn_getting_llvm:
-> +
-> +获取 LLVM
-> +---------
-> +
-> +我们在 `kernel.org <https://kernel.org/pub/tools/llvm/>`_ 提供预编译的稳定版 LLVM。
-> +这些版本已经针对 Linux 内核构建，使用配置文件数据进行优化。相较于其他发行版中的 LLVM，它们应该
-> +能提高内核构建时间。
-> +
-> +以下是一些有助于从源代码构建 LLVM 或通过发行版的包管理器获取 LLVM 的链接。
-> +
-> +- https://releases.llvm.org/download.html
-> +- https://github.com/llvm/llvm-project
-> +- https://llvm.org/docs/GettingStarted.html
-> +- https://llvm.org/docs/CMake.html
-> +- https://apt.llvm.org/
-> +- https://www.archlinux.org/packages/extra/x86_64/llvm/
-> +- https://github.com/ClangBuiltLinux/tc-build
-> +- https://github.com/ClangBuiltLinux/linux/wiki/Building-Clang-from-source
-> +- https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/
-
+> On 2024/8/15 =E4=B8=8B=E5=8D=883:15, Bibo Mao wrote:
+> > Native IPI is used for AP booting, it is booting interface between
+> > OS and BIOS firmware. The paravirt ipi is only used inside OS, native
+> > IPI is necessary to boot AP.
+> >
+> > When booting AP, BP writes kernel entry address in the HW mailbox of
+> > AP and send IPI interrupt to AP. AP executes idle instruction and
+> > waits for interrupt or SW events, and clears IPI interrupt and jumps
+> > to kernel entry from HW mailbox.
+> >
+> > Between BP writes HW mailbox and is ready to send IPI to AP, AP is woke=
+n
+> > up by SW events and jumps to kernel entry, so ACTION_BOOT_CPU IPI
+> > interrupt will keep pending during AP booting. And native IPI interrupt
+> > handler needs be registered so that it can clear pending native IPI, el=
+se
+> > there will be endless IRQ handling during AP booting stage.
+> >
+> > Here native ipi interrupt is initialized even if paravirt IPI is used.
+> >
+> > Fixes: 74c16b2e2b0c ("LoongArch: KVM: Add PV IPI support on guest side"=
+)
+> >
+> > Signed-off-by: Bibo Mao <maobibo@loongson.cn>
+> > ---
+> >   arch/loongarch/kernel/paravirt.c | 19 +++++++++++++++++++
+> >   1 file changed, 19 insertions(+)
+> >
+> > diff --git a/arch/loongarch/kernel/paravirt.c b/arch/loongarch/kernel/p=
+aravirt.c
+> > index 9c9b75b76f62..348920b25460 100644
+> > --- a/arch/loongarch/kernel/paravirt.c
+> > +++ b/arch/loongarch/kernel/paravirt.c
+> > @@ -13,6 +13,9 @@ static int has_steal_clock;
+> >   struct static_key paravirt_steal_enabled;
+> >   struct static_key paravirt_steal_rq_enabled;
+> >   static DEFINE_PER_CPU(struct kvm_steal_time, steal_time) __aligned(64=
+);
+> > +#ifdef CONFIG_SMP
+> > +static struct smp_ops old_ops;
+> > +#endif
+> >
+> >   static u64 native_steal_clock(int cpu)
+> >   {
+> > @@ -55,6 +58,11 @@ static void pv_send_ipi_single(int cpu, unsigned int=
+ action)
+> >       int min, old;
+> >       irq_cpustat_t *info =3D &per_cpu(irq_stat, cpu);
+> >
+> > +     if (unlikely(action =3D=3D ACTION_BOOT_CPU)) {
+> > +             old_ops.send_ipi_single(cpu, action);
+> > +             return;
+> > +     }
+> > +
+> >       old =3D atomic_fetch_or(BIT(action), &info->message);
+> >       if (old)
+> >               return;
+> > @@ -71,6 +79,12 @@ static void pv_send_ipi_mask(const struct cpumask *m=
+ask, unsigned int action)
+> >       __uint128_t bitmap =3D 0;
+> >       irq_cpustat_t *info;
+> >
+> > +     if (unlikely(action =3D=3D ACTION_BOOT_CPU)) {
+> > +             /* Use native IPI to boot AP */
+> > +             old_ops.send_ipi_mask(mask, action);
+> > +             return;
+> > +     }
+> > +
+> >       if (cpumask_empty(mask))
+> >               return;
+> >
+> > @@ -141,6 +155,8 @@ static void pv_init_ipi(void)
+> >   {
+> >       int r, swi;
+> >
+> > +     /* Init native ipi irq since AP booting uses it */
+> > +     old_ops.init_ipi();
+> >       swi =3D get_percpu_irq(INT_SWI0);
+> >       if (swi < 0)
+> >               panic("SWI0 IRQ mapping failed\n");
+> > @@ -179,6 +195,9 @@ int __init pv_ipi_init(void)
+> >               return 0;
+> >
+> >   #ifdef CONFIG_SMP
+> > +     old_ops.init_ipi        =3D mp_ops.init_ipi;
+> > +     old_ops.send_ipi_single =3D mp_ops.send_ipi_single;
+> > +     old_ops.send_ipi_mask   =3D mp_ops.send_ipi_mask;
+> >       mp_ops.init_ipi         =3D pv_init_ipi;
+> >       mp_ops.send_ipi_single  =3D pv_send_ipi_single;
+> >       mp_ops.send_ipi_mask    =3D pv_send_ipi_mask;
+> >
+>
+>
 
