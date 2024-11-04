@@ -1,92 +1,57 @@
-Return-Path: <linux-kernel+bounces-394400-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394401-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 985449BAE81
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 09:49:08 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78A119BAE83
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 09:49:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0B7DFB229F3
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 08:49:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E643FB210E4
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 08:49:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 131421AB6D4;
-	Mon,  4 Nov 2024 08:48:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63F0F1AB531;
+	Mon,  4 Nov 2024 08:49:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="arkw82XE"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NUtB+P8o"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2A0B1AA7BE;
-	Mon,  4 Nov 2024 08:48:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B99591AA7BE;
+	Mon,  4 Nov 2024 08:49:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730710135; cv=none; b=Ur74W9pmczwgVi2SApsb/xarucIB7/8J/+oeKz4gW5BQGB1OHLzG2eMOk4w0QlnZDvxfEl/6zRf0BwqjzXJp7zFFY/GfjdQZd1XvPUBwD1y+we+Rv/brLZjV7IEXba3GFhebJvRSpVRbAJ8H6hUZKoF2I/8FldLPFf1yvyDsf9g=
+	t=1730710160; cv=none; b=lR3zBHuQMhfQNqHNu1E8G+ifoZbgX+WCk7PTiRyRLBZ52zvfjq8Fdr8p0kWgAZ1aGabcn5+iOzWmJtkf4pVIGwgJ2V0M9Yns7dNinmqh4G+Lgne+j5SL6x/GoHnou0xQlpw5i0CJcyIfcc/2+8Xj6U7VFU42qAlQ+ZrBx/7qAbs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730710135; c=relaxed/simple;
-	bh=5+i72FmZ741eQj/KKoKDxRcngb3xinsXBjALXLspk8w=;
+	s=arc-20240116; t=1730710160; c=relaxed/simple;
+	bh=1W+aHVELLPkleC4uw2SzmYEmjTKAOffe9qKQM3Ly0Xo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eZosqDKmurhGYI7Co3nmxI9l6w88aG5YvISjl/iB2U225QvsFsxGarAyT3P9S4OqljQiaYgyt+soO05e6vlWlIpR3+0eXeWZd3ZrHtYAAl8qIml3FQozz+N2DeNYSCHD88h5UVoF/lyNY0kbBqDEOmsaPhCFLpKRhzJb4/oqMqQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=arkw82XE; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5cedea84d77so382036a12.1;
-        Mon, 04 Nov 2024 00:48:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730710132; x=1731314932; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=+ZZ+0RjkzenRGrYKXv3Grrd59Lbf3Pn66/QGdrg4mvE=;
-        b=arkw82XEU85j/VEAMfUyq29hPO4qx8mqs6zT/faDy7jpFz9XeNBEbvzfcRNFMP4YKD
-         J6eLGiU11eGsrzwF9BWpsqJMoVhSlxedK+Df5ew70JuSriwpV7h/GymitSdw8Q/Zg01K
-         SpExxsAwJixam4OOfyGkuAHa0zQxdkzGj8WN7jZ3JRSW0jP0597rpHlmlKHuEB9OroIu
-         4OMKdNQYbOqpwFqkXk+s3rodyPuvszmFfnWnHjuqO1MNk0KtaDimEDkrKdzCzP/DiEVw
-         FYvIKMphqSOkPT5KwQKj1ywC9j18Qxn5aV8aUGCjDV6xUtURDCQx51skSbKmeNBhIc3G
-         KmnA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730710132; x=1731314932;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+ZZ+0RjkzenRGrYKXv3Grrd59Lbf3Pn66/QGdrg4mvE=;
-        b=NYt9nLzi6UCqGcA+abFCy3h55X1Z0Hrrxi94OrB2v4RKCyHBKCbhGYhaWb6K0VdRjS
-         +O44HTlei2PuPM9gvCQXKIDoF8KDdphL7B5X38YjBPalpphDFR456ZeOhY/IlJ3rmInO
-         ZoRdBYV2DRUQT8GfxenZw9NvNVn/AmgagD03e6WQ3Zc0RvCH0/yrQY7E3UU6HjfeOVyB
-         NXv8Q5Gk8hMFAEaxK79RtqUcqEDw/J0dn/qFpvWaGudQfSIRwl/VEui3iKMprY+8s3L7
-         iTAzILk3b2ELOLWSd9SWYzPu2ba10Ftlvr4DNuxeDRPpayUgOJ5g9FX2rl5L017wZlIx
-         LWng==
-X-Forwarded-Encrypted: i=1; AJvYcCUq8R7+k4sTI8388AVzyRud1w3P9bdOf0wFksvmYF0e6raIkd5BTluo4NcX+XaYsXVvV1mtKbuLajI=@vger.kernel.org, AJvYcCW9ozONZvKOPIx4trJ15bk1dV68MG6xFJN7uHPhhhm8c4d8i/8PPU887i0Qoeke+FZlg+rg9HGj2PuSBkR7@vger.kernel.org, AJvYcCWA1jF/GOC1fCAdTEm/e38/qTfms1C4/x8QqfGsZqaR7I9OQbVCSKMsDbyH0qxtg6D6AKzvTO9ooG0bqA==@vger.kernel.org, AJvYcCWnKIZmLudQPNh93zreF04wNJB3mNCcV7EdvzItixKOxSVsTy9huy5AieE8ySDI564qQRaMTsmkhA6U@vger.kernel.org, AJvYcCWxS/LyHlmb6OY72QaxmW8ItTfr195jopys/sNBqoFJ6V58VmL9nzkVfa14EJggdI1AhDFfk3XZvpU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzPZqZIu96MWf1NGpB0aovczcP3UqVC1l4kmRZ1CBC66uv9BbTP
-	WTizYsSDlcfvDKv8ae4JrYf2UTWf0YpKq01oM4s9dUGZLHN3DoaR
-X-Google-Smtp-Source: AGHT+IGpRKouQd21becr4NL7JTcNVTWUEzIT1ATcrtRapmmpmOnf8sfq9N/NkZy3dwUV4Zteb6HUlw==
-X-Received: by 2002:a05:6402:274b:b0:5ce:df46:70f4 with SMTP id 4fb4d7f45d1cf-5cedf467240mr505986a12.36.1730710131795;
-        Mon, 04 Nov 2024 00:48:51 -0800 (PST)
-Received: from standask-GA-A55M-S2HP (lu-nat-113-247.ehs.sk. [188.123.113.247])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5ceac76fb46sm3957953a12.26.2024.11.04.00.48.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Nov 2024 00:48:51 -0800 (PST)
-Date: Mon, 4 Nov 2024 09:48:49 +0100
-From: Stanislav Jakubek <stano.jakubek@gmail.com>
-To: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Orson Zhai <orsonzhai@gmail.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Chunyan Zhang <zhang.lyra@gmail.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>, Pavel Machek <pavel@ucw.cz>,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	Sebastian Reichel <sre@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc: devicetree@vger.kernel.org, linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-rtc@vger.kernel.org
-Subject: [PATCH v3 2/2] dt-bindings: mfd: sprd,sc2731: reference
- sprd,sc2731-efuse bindings
-Message-ID: <cd8cc95b59c31418b174bba521dd2599a7929fda.1730709384.git.stano.jakubek@gmail.com>
-References: <efd200c3b5b75405e4e450d064b026f10ae2f8e0.1730709384.git.stano.jakubek@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Akl1qOoLpKaQmKykUrVjUBgNSpTFBhThG0Q22NXlY5xbFxS2kUKkc/CLeZwZdg39r2muGeJKxeHVdjGiyTGHyr8KfoUxqgo3cVGM8CBzadMDPrk4rD6scWU3Dk2PwLZ5y0Me2GywYV0s27d97bPOGoWeouTg4S1Wwc0FqNgk1cI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NUtB+P8o; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D5F48C4CECE;
+	Mon,  4 Nov 2024 08:49:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730710160;
+	bh=1W+aHVELLPkleC4uw2SzmYEmjTKAOffe9qKQM3Ly0Xo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=NUtB+P8oMMe1gKg7RVajCD1uLYeIgbixISIoCSIUdGuxzKD9VM3zEpZ1Wx53lpRcH
+	 KH4HiBVW/nl/NPnQDtQ7bSILoCWtZyxcqDjsNkL5A7ltet3xrEP3QXNSHWmrGHXjC/
+	 rrFlMZC3WFvG8+y+um8y/fS7k2UxGXhiuTcGo1GDeE7A7EWZ7xk7fsU2TjbOcX9wc1
+	 3QOSrVOCEdivpDLrEdUPybxMZl7ThFfO4vJkSh0TlYtOS24nd1EfKGwUiZedMDWBEx
+	 34Ij3c/v0UgayzI856Pex96F7na4Os9Sti1HNN7tBYVRyFCfBe84OxtpEIMl/DF9i4
+	 +70rudjdQWoKg==
+Date: Mon, 4 Nov 2024 09:49:15 +0100
+From: Joel Granados <joel.granados@kernel.org>
+To: Sasha Levin <sashal@kernel.org>
+Cc: Christoph Hellwig <hch@infradead.org>, Kees Cook <kees@kernel.org>, 
+	torvalds@linux-foundation.org, ksummit@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: Re: linus-next: improving functional testing for to-be-merged
+ pull requests
+Message-ID: <z2zehszaude6q2jicvdkjz7bgr22zxxayw5vgbjrhgoghqxhia@ngjos2ihibjo>
+References: <ZxZ8MStt4e8JXeJb@sashalap>
+ <792F4759-EA33-48B8-9AD0-FA14FA69E86E@kernel.org>
+ <ZxdKwtTd7LvpieLK@infradead.org>
+ <ZyAUO0b3z_f_kVnj@sashalap>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -95,83 +60,63 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <efd200c3b5b75405e4e450d064b026f10ae2f8e0.1730709384.git.stano.jakubek@gmail.com>
+In-Reply-To: <ZyAUO0b3z_f_kVnj@sashalap>
 
-Directly reference the sc2731-efuse bindings to simplify the schema.
-Remove the duplicate example from the efuse bindings.
+On Mon, Oct 28, 2024 at 06:46:19PM -0400, Sasha Levin wrote:
+> On Mon, Oct 21, 2024 at 11:48:34PM -0700, Christoph Hellwig wrote:
+> >On Mon, Oct 21, 2024 at 09:54:53PM -0700, Kees Cook wrote:
+> >> For example, for a given PR, the bot can report:
+> >>
+> >> - Were the patches CCed to a mailing list?
+> >> - A histogram of how long the patches were in next (to show bake times)
+> >> - Are any patches associated with test failures? (0day and many other
+> >> CIs are already running tests against -next; parse those reports)
+> >>
+> >> We could have a real pre-submit checker! :)
+> >
+> >That would be very useful.  Items 1 and 2 should be trivial, 3 would
+> >require a bit of work but would still be very useful.
+> 
+> If you've been following so far, there is a bot that is capable of doing
+> most of the above
+> (https://git.kernel.org/pub/scm/linux/kernel/git/sashal/next-analysis.git/).
+> 
+> Here's a histogram that describes v6.12-rc4..v6.12-rc5 as far as how
+> long commits spent in -next:
+> 
+> Days in linux-next:
+> ----------------------------------------
+>   0 | +++++++++++++++++++++++++++++++++++++++++++++++++ (89)
+> <1 | +++++++++++ (21)
+>   1 | +++++++++++ (21)
+>   2 | +++++++++++++++++++++++++ (45)
+>   3 | ++++++++++++++ (25)
+>   4 | +++++ (10)
+>   5 |
+>   6 | + (2)
+>   7 |
+>   8 | + (3)
+>   9 | ++ (4)
+> 10 |
+> 11 | +++ (6)
+> 12 |
+> 13 |
+> 14+| ++++++++ (15)
+This looks super nice. Sometimes I need to answer how long a
+commit/series has been in next to either take it out of the PR or to at
+least have a comment to Linus.
+I see that I can use the script like `histo.sh /PATH/TO/DB COMMIT-ID`,
+which is exactly what I would expect.
 
-Signed-off-by: Stanislav Jakubek <stano.jakubek@gmail.com>
----
-Changes in V3:
-- new patch due to a missing dependency in the MFD tree 
+Is the idea to run the scripts from
+https://git.kernel.org/pub/scm/linux/kernel/git/sashal/next-analysis.git
+or to populate ones own DB in linux-next and then run histo?
 
-Link to V2: https://lore.kernel.org/lkml/ZyExK01iprBHhGm6@standask-GA-A55M-S2HP/
-Link to V1: https://lore.kernel.org/lkml/Zr3X1RoQs7ElTnlJ@standask-GA-A55M-S2HP/
+thx
 
- .../devicetree/bindings/mfd/sprd,sc2731.yaml  | 10 +------
- .../bindings/nvmem/sprd,sc2731-efuse.yaml     | 29 -------------------
- 2 files changed, 1 insertion(+), 38 deletions(-)
+Best
 
-diff --git a/Documentation/devicetree/bindings/mfd/sprd,sc2731.yaml b/Documentation/devicetree/bindings/mfd/sprd,sc2731.yaml
-index 8beec7e8e4c6..bd5f2504b44b 100644
---- a/Documentation/devicetree/bindings/mfd/sprd,sc2731.yaml
-+++ b/Documentation/devicetree/bindings/mfd/sprd,sc2731.yaml
-@@ -67,15 +67,7 @@ patternProperties:
- 
-   "^efuse@[0-9a-f]+$":
-     type: object
--    additionalProperties: true
--    properties:
--      compatible:
--        enum:
--          - sprd,sc2720-efuse
--          - sprd,sc2721-efuse
--          - sprd,sc2723-efuse
--          - sprd,sc2730-efuse
--          - sprd,sc2731-efuse
-+    $ref: /schemas/nvmem/sprd,sc2731-efuse.yaml#
- 
-   "^fuel-gauge@[0-9a-f]+$":
-     type: object
-diff --git a/Documentation/devicetree/bindings/nvmem/sprd,sc2731-efuse.yaml b/Documentation/devicetree/bindings/nvmem/sprd,sc2731-efuse.yaml
-index dc25fe3d1841..8672bde24a9b 100644
---- a/Documentation/devicetree/bindings/nvmem/sprd,sc2731-efuse.yaml
-+++ b/Documentation/devicetree/bindings/nvmem/sprd,sc2731-efuse.yaml
-@@ -36,33 +36,4 @@ allOf:
-   - $ref: nvmem-deprecated-cells.yaml#
- 
- unevaluatedProperties: false
--
--examples:
--  - |
--    pmic {
--      #address-cells = <1>;
--      #size-cells = <0>;
--
--      efuse@380 {
--        compatible = "sprd,sc2731-efuse";
--        reg = <0x380>;
--        hwlocks = <&hwlock 12>;
--        #address-cells = <1>;
--        #size-cells = <1>;
--
--        /* Data cells */
--        fgu_calib: calib@6 {
--          reg = <0x6 0x2>;
--          bits = <0 9>;
--        };
--
--        adc_big_scale: calib@24 {
--          reg = <0x24 0x2>;
--        };
--
--        adc_small_scale: calib@26 {
--          reg = <0x26 0x2>;
--        };
--      };
--    };
- ...
 -- 
-2.43.0
 
+Joel Granados
 
