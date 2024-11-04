@@ -1,328 +1,167 @@
-Return-Path: <linux-kernel+bounces-394274-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394278-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 248E79BACCE
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 07:45:18 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DA3E9BACD0
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 07:46:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D7BF9281347
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 06:45:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 76C531C210BF
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 06:46:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A2F01AB6D4;
-	Mon,  4 Nov 2024 06:44:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60AE118F2F7;
+	Mon,  4 Nov 2024 06:44:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fra3msms"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="boyuWMU5"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E4BA18E02E
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 06:44:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A995918E04E;
+	Mon,  4 Nov 2024 06:44:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730702647; cv=none; b=B+RTwHNIG+NhNAXFJPGS9GPcw+WgT2gfICnvLI4a2BA1fBE1nI9gEpyOJ0yop50fEGNNqraTIdLIv9BtlKZxmUElRaQ58O/urZSw8t2zggl5CGE8tQEIyqZqXknXvexTkaFYjFP+ungRlfpO1EIYN+MkBr4tdzjuZdqqkGVNrK4=
+	t=1730702678; cv=none; b=AFHROyxoTaImqtpsk/tVGmNCFBdsS+8fLhFN+U7LRNu72/L+bPiCnD8/jqDKCSPCurr/IsFweaL+SKVbBeVb/q3aICj3zaHaC6Ef7GvV8UfzDesqHYMo3osJgzDwEOvaSb+XoWJdjt1ES4hYqt2m6O8Mi0UIKxuRFjJHpSDj1F0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730702647; c=relaxed/simple;
-	bh=NJj0K2gdXXAJLf7drNqE5H8SvCozOqHpTpJbbKTSkmI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Lf4pEwJm3QaHwxn1VN0dTe+FUSV864MaqFp+Y0wrlLOa4TX4+V/wFtPZXmmWOXQAGL0P60Q6OV4bfabMpOJUYyswWU6LhHcfTwM9Y4fco/0hqV267bNxGggmZK8Tu6UjnE9tM/cuOtAIKLMqzlQ/hwLoOdyNQvQZv8VSw3FiVjA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fra3msms; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 24523C4CEDA;
-	Mon,  4 Nov 2024 06:44:07 +0000 (UTC)
+	s=arc-20240116; t=1730702678; c=relaxed/simple;
+	bh=js54YLhYust3jK8sIDaxO+svd/7b/xLRVpzqn3DDqgg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ml6oqNFAK90irJufnw6H3Sbk2ue2dUcJcwG3wpAB5jrPaoBaNgkx0m0lEdbmgloadvmepXTExZO9wkbY182UkE89QR3wcrp+XeVHCwJHdJDXOHIj7O5A6xorWfpXTfPrXNll1J5IsvGpZN/48/aVL3nIxz145j2dcbwSVj3dgLI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=boyuWMU5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79D0BC4CECE;
+	Mon,  4 Nov 2024 06:44:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730702647;
-	bh=NJj0K2gdXXAJLf7drNqE5H8SvCozOqHpTpJbbKTSkmI=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=fra3msms5YdBzc2coae7HhaOu3fDjRwCIzlBJoxtmGfYt5WDe16E7QAicWS7Njm65
-	 WT5BF7NwKwsSypWlLvBZs8XUkCatqxFTZJ8X6H2ExGuefMXJ3O/GtCoTEeqdEwgzZc
-	 Bl0fwtIqrJqXkLGbszTqZXMlb44dzj22ZLwfug+NAcMmyj9FQlVfVLM8gNYdHOQWIa
-	 ahHTlslmNHPHRyiBKg3keTd4vfhMueZ5GvMXeDUPgiD42zXuZ7dgXGa016S+wBMxpU
-	 qtOpak3NZddM3M1VGh+vRaAs7Z2zbzSxPq4obP7/vc+tL4xSEcUqv/X2/mu6Htjhtq
-	 jzcXqZ4JAeHUg==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 197F0D111B3;
-	Mon,  4 Nov 2024 06:44:07 +0000 (UTC)
-From: Hermes Wu via B4 Relay <devnull+Hermes.wu.ite.com.tw@kernel.org>
-Date: Mon, 04 Nov 2024 14:43:40 +0800
-Subject: [PATCH v7 10/10] drm/bridge: it6505: add I2C functionality on AUX
+	s=k20201202; t=1730702678;
+	bh=js54YLhYust3jK8sIDaxO+svd/7b/xLRVpzqn3DDqgg=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=boyuWMU5QR8UXjvB/7EDUrlhx3vFtfiu7OAZVAbK0mObJvBu++DfrBFQ/9OVQUHT7
+	 T/uW4GMM5IVrPVi1kLKPSgVVyMTAQpZOFq8pS0vIgcGgOOMvv3F14b6vuTy61boIFE
+	 jR8ERhXZ3PHdHfhYbS0yVdDwGp3N4TmuLy2nND7VDoPS1ug495udtE02TBDi8Bpe3Z
+	 vB3Yfat+TByUsZrxT8JIf0+rlGlgNcheVPP4pN8QZVEjUerAaCKnJkRq99p2pM7I+4
+	 BEkDThD/eiogI+u72Om7M6ZMHLw6CQqcbRMaYDmHXrcD1TOxB4tdnG1ddfmdhQOiTo
+	 vb4hGwVy5BTdA==
+Message-ID: <fcfa2fec-7267-4d16-9f01-898b4223313d@kernel.org>
+Date: Mon, 4 Nov 2024 07:44:33 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH tty-next v3 1/6] serial: 8250: Adjust the timeout for FIFO
+ mode
+To: John Ogness <john.ogness@linutronix.de>,
+ "Maciej W. Rozycki" <macro@orcam.me.uk>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Petr Mladek <pmladek@suse.com>, Sergey Senozhatsky
+ <senozhatsky@chromium.org>, Steven Rostedt <rostedt@goodmis.org>,
+ Thomas Gleixner <tglx@linutronix.de>, Esben Haabendal <esben@geanix.com>,
+ linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Rengarajan S <rengarajan.s@microchip.com>,
+ Jeff Johnson <quic_jjohnson@quicinc.com>,
+ Serge Semin <fancer.lancer@gmail.com>,
+ Lino Sanfilippo <l.sanfilippo@kunbus.com>,
+ Wander Lairson Costa <wander@redhat.com>
+References: <20241025105728.602310-1-john.ogness@linutronix.de>
+ <20241025105728.602310-2-john.ogness@linutronix.de>
+ <837a7ecd-be29-4865-9543-cb6f7e7e46e7@kernel.org>
+ <alpine.DEB.2.21.2410310349450.40463@angie.orcam.me.uk>
+ <84sesclkqx.fsf@jogness.linutronix.de>
+Content-Language: en-US
+From: Jiri Slaby <jirislaby@kernel.org>
+Autocrypt: addr=jirislaby@kernel.org; keydata=
+ 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
+In-Reply-To: <84sesclkqx.fsf@jogness.linutronix.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241104-v7-upstream-v7-10-8b71fd0f1d2d@ite.com.tw>
-References: <20241104-v7-upstream-v7-0-8b71fd0f1d2d@ite.com.tw>
-In-Reply-To: <20241104-v7-upstream-v7-0-8b71fd0f1d2d@ite.com.tw>
-To: Andrzej Hajda <andrzej.hajda@intel.com>, 
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- Hermes Wu <hermes.wu@ite.com.tw>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
- Pin-yen Lin <treapking@chromium.org>, 
- Kenneth Hung <Kenneth.Hung@ite.com.tw>, Pet Weng <Pet.Weng@ite.com.tw>, 
- Hermes Wu <Hermes.wu@ite.com.tw>, 
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1730702658; l=6930;
- i=Hermes.wu@ite.com.tw; s=20241101; h=from:subject:message-id;
- bh=J4rvU2IuQU84l+7pDQWlWwKvnpve8QmHuGwdiA2w++k=;
- b=AvxiQg6SF9UmzrBagdxvaSHUrGPFNZNhgSe/rzzrwOSkZmbuqwfgxHxzqsYsAEJwGO8Uv/NbS
- UQZQjPaYXp/CEOC20KyTlUV1H7l/WxszbWNuMqd4YcRJV2CHFE2q5Yt
-X-Developer-Key: i=Hermes.wu@ite.com.tw; a=ed25519;
- pk=FOYYbsP2Nlw6mjB3rLFYSLmAiENzj4AWQly5XTcDuMM=
-X-Endpoint-Received: by B4 Relay for Hermes.wu@ite.com.tw/20241101 with
- auth_id=268
-X-Original-From: Hermes Wu <Hermes.wu@ite.com.tw>
-Reply-To: Hermes.wu@ite.com.tw
 
-From: Hermes Wu <Hermes.wu@ite.com.tw>
+On 31. 10. 24, 9:49, John Ogness wrote:
+>>>> +	/* Allow timeout for each byte written. */
+>>>> +	for (i = 0; i < tx_count; i++) {
+>>>> +		if (wait_for_lsr(up, UART_LSR_THRE))
+>>>
+>>> This ensures you sent one character from the FIFO. The FIFO still can contain
+>>> plenty of them. Did you want UART_LSR_TEMT?
+>>
+>>   The difference between THRE and TEMT is the state of the shift register
+>> only[2]:
+>>
+>> "In the FIFO mode, TEMT is set when the transmitter FIFO and shift
+>> register are both empty."
+> 
+> If we wait for TEMT, we lose significant advantages of having the FIFO.
 
-DisplayPort AUX protocol supports I2C transport which is capable of
-reading EDID or supports MCCS.
+But you wait for THRE, so effectively waiting for FIFO to flush. The 
+difference is only one byte (TSR), or what am I missing?
 
-In drm_dp_helper, drm_dp_i2c_xfer() packs I2C requests into a
-sequence of AUX requests.
-it6505_aux_i2c_operation() is implemented to match drm_dp_i2c_xfer()
-operactions.
-it6505_aux_i2c_transfer() adds I2C functionality
-for it6505_aux_transfer().
+>>> But what's the purpose of spinning _here_? The kernel can run and FIFO
+>>> too. Without the kernel waiting for the FIFO.
+> 
+> When serial8250_console_fifo_write() exits, the caller just does a
+> single wait_for_xmitr() ... with a 10ms timeout. In the FIFO case, for
+> <=56k baudrates, it can easily hit the timeout and thus continue before
+> the FIFO has been emptied.
+>> By waiting on UART_LSR_THRE after filling the FIFO,
+> serial8250_console_fifo_write() waits until the hardware has had a
+> chance to shift out all the data. Then the final wait_for_xmitr() in the
+> caller only waits for the final byte to go out on the line.
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Signed-off-by: Hermes Wu <hermes.wu@ite.com.tw>
----
- drivers/gpu/drm/bridge/ite-it6505.c | 177 +++++++++++++++++++++++++++++++++++-
- 1 file changed, 175 insertions(+), 2 deletions(-)
+For the first loop, that's all right. But why would you want to wait for 
+the FIFO to flush at the end of the function? It's not only the last 
+byte, it's the last batch (aka 'tx_count'), right?
 
-diff --git a/drivers/gpu/drm/bridge/ite-it6505.c b/drivers/gpu/drm/bridge/ite-it6505.c
-index 83e2df618c97f8fe3e59789ffb810ce8639f96bb..c2a846f5d8d9b7251913c82d21f7957401e35e5e 100644
---- a/drivers/gpu/drm/bridge/ite-it6505.c
-+++ b/drivers/gpu/drm/bridge/ite-it6505.c
-@@ -268,6 +268,18 @@
- #define REG_SSC_CTRL1 0x189
- #define REG_SSC_CTRL2 0x18A
- 
-+#define REG_AUX_USER_CTRL 0x190
-+#define EN_USER_AUX BIT(0)
-+#define USER_AUX_DONE BIT(1)
-+#define AUX_EVENT BIT(4)
-+
-+#define REG_AUX_USER_DATA_REC 0x191
-+#define M_AUX_IN_REC   0xF0
-+#define M_AUX_OUT_REC  0x0F
-+
-+#define REG_AUX_USER_REPLY 0x19A
-+#define REG_AUX_USER_RXB(n) (n + 0x19B)
-+
- #define RBR DP_LINK_BW_1_62
- #define HBR DP_LINK_BW_2_7
- #define HBR2 DP_LINK_BW_5_4
-@@ -303,6 +315,8 @@
- #define MAX_EQ_LEVEL 0x03
- #define AUX_WAIT_TIMEOUT_MS 15
- #define AUX_FIFO_MAX_SIZE 16
-+#define AUX_I2C_MAX_SIZE 4
-+#define AUX_I2C_DEFER_RETRY 4
- #define PIXEL_CLK_DELAY 1
- #define PIXEL_CLK_INVERSE 0
- #define ADJUST_PHASE_THRESHOLD 80000
-@@ -325,7 +339,12 @@
- enum aux_cmd_type {
- 	CMD_AUX_NATIVE_READ = 0x0,
- 	CMD_AUX_NATIVE_WRITE = 0x5,
-+	CMD_AUX_GI2C_ADR = 0x08,
-+	CMD_AUX_GI2C_READ = 0x09,
-+	CMD_AUX_GI2C_WRITE = 0x0A,
- 	CMD_AUX_I2C_EDID_READ = 0xB,
-+	CMD_AUX_I2C_READ = 0x0D,
-+	CMD_AUX_I2C_WRITE = 0x0C,
- 
- 	/* KSV read with AUX FIFO extend from CMD_AUX_NATIVE_READ*/
- 	CMD_AUX_GET_KSV_LIST = 0x10,
-@@ -1107,6 +1126,161 @@ static ssize_t it6505_aux_do_transfer(struct it6505 *it6505,
- 	return ret;
- }
- 
-+static bool it6505_aux_i2c_reply_defer(u8 reply)
-+{
-+	if (reply == DP_AUX_NATIVE_REPLY_DEFER || reply == DP_AUX_I2C_REPLY_DEFER)
-+		return true;
-+	return false;
-+}
-+
-+static bool it6505_aux_i2c_reply_nack(u8 reply)
-+{
-+	if (reply == DP_AUX_NATIVE_REPLY_NACK || reply == DP_AUX_I2C_REPLY_NACK)
-+		return true;
-+	return false;
-+}
-+
-+static int it6505_aux_i2c_wait(struct it6505 *it6505, u8 *reply)
-+{
-+	int err = 0;
-+	unsigned long timeout;
-+	struct device *dev = it6505->dev;
-+
-+	timeout = jiffies + msecs_to_jiffies(AUX_WAIT_TIMEOUT_MS) + 1;
-+
-+	do {
-+		if (it6505_read(it6505, REG_AUX_USER_CTRL) & AUX_EVENT)
-+			break;
-+		if (time_after(jiffies, timeout)) {
-+			dev_err(dev, "Timed out waiting AUX I2C, BUSY = %X\n",
-+				it6505_aux_op_finished(it6505));
-+			err = -ETIMEDOUT;
-+			goto end_aux_i2c_wait;
-+		}
-+		usleep_range(300, 800);
-+	} while (!it6505_aux_op_finished(it6505));
-+
-+	*reply = it6505_read(it6505, REG_AUX_USER_REPLY) >> 4;
-+
-+	if (*reply == 0)
-+		goto end_aux_i2c_wait;
-+
-+	if (it6505_aux_i2c_reply_defer(*reply))
-+		err = -EBUSY;
-+	else if (it6505_aux_i2c_reply_nack(*reply))
-+		err = -ENXIO;
-+
-+end_aux_i2c_wait:
-+	it6505_set_bits(it6505, REG_AUX_USER_CTRL, USER_AUX_DONE, USER_AUX_DONE);
-+	return err;
-+}
-+
-+static int it6505_aux_i2c_readb(struct it6505 *it6505, u8 *buf, size_t size, u8 *reply)
-+{
-+	int ret, i;
-+	int retry;
-+
-+	for (retry = 0; retry < AUX_I2C_DEFER_RETRY; retry++) {
-+		it6505_write(it6505, REG_AUX_CMD_REQ, CMD_AUX_GI2C_READ);
-+
-+		ret = it6505_aux_i2c_wait(it6505, reply);
-+		if (it6505_aux_i2c_reply_defer(*reply))
-+			continue;
-+		if (ret >= 0)
-+			break;
-+	}
-+
-+	for (i = 0; i < size; i++)
-+		buf[i] = it6505_read(it6505, REG_AUX_USER_RXB(0 + i));
-+
-+	return size;
-+}
-+
-+static int it6505_aux_i2c_writeb(struct it6505 *it6505, u8 *buf, size_t size, u8 *reply)
-+{
-+	int i, ret;
-+	int retry;
-+
-+	for (i = 0; i < size; i++)
-+		it6505_write(it6505, REG_AUX_OUT_DATA0 + i, buf[i]);
-+
-+	for (retry = 0; retry < AUX_I2C_DEFER_RETRY; retry++) {
-+		it6505_write(it6505, REG_AUX_CMD_REQ, CMD_AUX_GI2C_WRITE);
-+
-+		ret = it6505_aux_i2c_wait(it6505, reply);
-+		if (it6505_aux_i2c_reply_defer(*reply))
-+			continue;
-+		if (ret >= 0)
-+			break;
-+	}
-+	return size;
-+}
-+
-+static ssize_t it6505_aux_i2c_operation(struct it6505 *it6505,
-+					struct drm_dp_aux_msg *msg)
-+{
-+	int ret;
-+	ssize_t request_size, data_cnt = 0;
-+	u8 *buffer = msg->buffer;
-+
-+	/* set AUX user mode */
-+	it6505_set_bits(it6505, REG_AUX_CTRL,
-+			AUX_USER_MODE | AUX_NO_SEGMENT_WR, AUX_USER_MODE);
-+	it6505_set_bits(it6505, REG_AUX_USER_CTRL, EN_USER_AUX, EN_USER_AUX);
-+	/* clear AUX FIFO */
-+	it6505_set_bits(it6505, REG_AUX_CTRL,
-+			AUX_EN_FIFO_READ | CLR_EDID_FIFO,
-+			AUX_EN_FIFO_READ | CLR_EDID_FIFO);
-+
-+	it6505_set_bits(it6505, REG_AUX_CTRL,
-+			AUX_EN_FIFO_READ | CLR_EDID_FIFO, 0x00);
-+
-+	it6505_write(it6505, REG_AUX_ADR_0_7, 0x00);
-+	it6505_write(it6505, REG_AUX_ADR_8_15, msg->address << 1);
-+
-+	if (msg->size == 0) {
-+		/* IIC Start/STOP dummy write */
-+		it6505_write(it6505, REG_AUX_ADR_16_19, msg->request);
-+		it6505_write(it6505, REG_AUX_CMD_REQ, CMD_AUX_GI2C_ADR);
-+		ret = it6505_aux_i2c_wait(it6505, &msg->reply);
-+		goto end_aux_i2c_transfer;
-+	}
-+
-+	/* IIC data transfer */
-+	data_cnt = 0;
-+	do {
-+		request_size = min_t(ssize_t, msg->size - data_cnt, AUX_I2C_MAX_SIZE);
-+		it6505_write(it6505, REG_AUX_ADR_16_19,
-+			     msg->request | ((request_size - 1) << 4));
-+		if ((msg->request & DP_AUX_I2C_READ) == DP_AUX_I2C_READ)
-+			ret = it6505_aux_i2c_readb(it6505, &buffer[data_cnt],
-+						   request_size, &msg->reply);
-+		else
-+			ret = it6505_aux_i2c_writeb(it6505, &buffer[data_cnt],
-+						    request_size, &msg->reply);
-+
-+		if (ret < 0)
-+			goto end_aux_i2c_transfer;
-+
-+		data_cnt += request_size;
-+	} while (data_cnt < msg->size);
-+	ret = data_cnt;
-+end_aux_i2c_transfer:
-+
-+	it6505_set_bits(it6505, REG_AUX_USER_CTRL, EN_USER_AUX, 0);
-+	it6505_set_bits(it6505, REG_AUX_CTRL, AUX_USER_MODE, 0);
-+	return ret;
-+}
-+
-+static ssize_t it6505_aux_i2c_transfer(struct drm_dp_aux *aux,
-+				       struct drm_dp_aux_msg *msg)
-+{
-+	struct it6505 *it6505 = container_of(aux, struct it6505, aux);
-+
-+	guard(mutex)(&it6505->aux_lock);
-+	return it6505_aux_i2c_operation(it6505, msg);
-+}
-+
- static ssize_t it6505_aux_transfer(struct drm_dp_aux *aux,
- 				   struct drm_dp_aux_msg *msg)
- {
-@@ -1116,9 +1290,8 @@ static ssize_t it6505_aux_transfer(struct drm_dp_aux *aux,
- 	int ret;
- 	enum aux_cmd_reply reply;
- 
--	/* IT6505 doesn't support arbitrary I2C read / write. */
- 	if (is_i2c)
--		return -EINVAL;
-+		return it6505_aux_i2c_transfer(aux, msg);
- 
- 	switch (msg->request) {
- 	case DP_AUX_NATIVE_READ:
+> Please keep in mind that none of these timeouts should trigger during
+> normal operation.
+> 
+> For v4 I am doing some refactoring (as suggested by Andy) so that the
+> wait-code looks a bit cleaner.
 
+OK, let's see then :).
+
+thanks,
 -- 
-2.34.1
-
-
+js
+suse labs
 
