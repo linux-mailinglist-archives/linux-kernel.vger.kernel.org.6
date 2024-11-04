@@ -1,61 +1,59 @@
-Return-Path: <linux-kernel+bounces-395360-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395363-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CED669BBCDD
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 19:08:13 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B57C9BBCF0
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 19:10:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 91A2F28232D
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 18:08:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F578283702
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 18:10:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51E4A1C9EAF;
-	Mon,  4 Nov 2024 18:08:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 081E31CBA1F;
+	Mon,  4 Nov 2024 18:10:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H+nlp8nv"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OMfO1/O0"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B06FC224F0
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 18:08:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4260A179958;
+	Mon,  4 Nov 2024 18:10:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730743687; cv=none; b=YzLGNmauz4+jPQlFCiLwmon40thB53Ps1mdzg6j6ZeD21MP0lakD3UpNgbaZNgVAZOorjUckMKHqq1LkdBrjSMK6AKgJMu/ufgAaRJxcpPxZkvyobNv9vXx4wnWFWWNAa0pvNNSlxoIobEc+O3PfeF11/dje9LdFJz9jedi1k2M=
+	t=1730743828; cv=none; b=o+pE9KC8wE/u5ao+w01qeRcXdBFDx19011Mwjc1EvczYMcCR0B27XCEQYVrfwo1SFCXuOKhzy5RSJRd/YLj8Xk6vay8WL2hRMg/K+PwowEjdwkgjA2a74F7QslAhvoJDUY5F/xheSYF2O6U3FFTKTVoMF7qG0o5JKPeMggTzgY4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730743687; c=relaxed/simple;
-	bh=PVnrBL4lkjktcJ+d1zuTLRbNSKpea3enMqS82gtgDdE=;
+	s=arc-20240116; t=1730743828; c=relaxed/simple;
+	bh=A9QEobhM0Tk66PTKUxkoy2PH75AkXVl7kAtDO3RqV40=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LwEEiEGfSzbohV2y42yJRqNG+mR6tYE3TmXDwctxBu89FlWpjQlXJ2o+Po4f2C9Jpj9yJNh75ldXqVb3inOnjXY3r+2pB4irFK4iPpnQLYQA3TNUIyuQB3PRvN8di9tuSGhATrT6TSV0uhl5VJEBnVaFcIkqJO/ba+jtqrh+Dh4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H+nlp8nv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0AAD6C4CECE;
-	Mon,  4 Nov 2024 18:08:06 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=XOV6DPlq1Mc9DQ6U52srcznqkmxy74+v00RZTkFo/+ZZj/K76iinpZ+f91xKDpp6kyqMpkn17c8/7Wra90l+b89ZmYd8Irvc3ZYRpDU9ViaByPh5FSUMaeavEdCgnQ8oaehEzFWm5+IXIo3DRmCC4QafFPSO3NusmuqF4VotuE8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OMfO1/O0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D5F8FC4CECE;
+	Mon,  4 Nov 2024 18:10:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730743687;
-	bh=PVnrBL4lkjktcJ+d1zuTLRbNSKpea3enMqS82gtgDdE=;
+	s=k20201202; t=1730743828;
+	bh=A9QEobhM0Tk66PTKUxkoy2PH75AkXVl7kAtDO3RqV40=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=H+nlp8nvIcoB9P8nky4+5VamsTcU4SmIHwVifd91p4+CczWtgx0IsmfnAaffaBNeT
-	 0bXVUC+fscyYmMFkq2WNRw25f/ZWDjTbiIwWTz430egNEVX4QYGET+qyNQ3djupsDU
-	 2wqVtftsnY50wlo4Fg522CphKNonZ69nJQExRk9dAD79E8yYbvjqXdHp8gtuzxSnra
-	 wEQ4Gd30Gx6Lblv3wIvbqaONfJIUmJPJeYxDWGWqJBDAAafqIobQmZ5/6vbdYy9OMI
-	 PvD7xhub+4qJjOHN3a5gywN3aYcL4B8tf2rXfSQj1vNDUepBtETTiwkYCYKcxBykZp
-	 FyWEnpFmbPqzA==
-Date: Mon, 4 Nov 2024 08:08:05 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Boqun Feng <boqun.feng@gmail.com>
-Cc: Hillf Danton <hdanton@sina.com>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Marco Elver <elver@google.com>, linux-kernel@vger.kernel.org,
-	gregkh@linuxfoundation.org
-Subject: Re: [BUG] -next lockdep invalid wait context
-Message-ID: <ZykNhbMOrlgCXFYJ@slm.duckdns.org>
-References: <41619255-cdc2-4573-a360-7794fc3614f7@paulmck-laptop>
- <e06d69c9-f067-45c6-b604-fd340c3bd612@suse.cz>
- <ZyK0YPgtWExT4deh@elver.google.com>
- <66a745bb-d381-471c-aeee-3800a504f87d@paulmck-laptop>
- <20241102001224.2789-1-hdanton@sina.com>
- <ZyV2DfuIPsISds-1@Boquns-Mac-mini.local>
+	b=OMfO1/O0f3WTFHcevl3ZKLDtacBxMdE3BT7RFEx/b3+uCvKbbdhBTvloMt0wa0OwX
+	 n90Z5gcaPjxU3VikQM87AaL+farAbSj6GceGjTrdFooAVP1M8KvLcXwQ38fUeWBv8N
+	 nSueT0gGDtEoY8EFJAIpvIVUUWXl5Q+eF6EU53irRc2UnkG16rz8Z0sqp62Nd22MA5
+	 VHQu3uGLJaQJEr8WHqAb0R2V4++l7ByYkHuVDtoe7B8G75lQBftyc2Y6tQRfZwmKhm
+	 h8Lgj1UBc9z/xdcPqGhAJ2c/yL+WIAA6KPIsfzCpa8AVQaSz9Mv0vPpuMxziyvvJML
+	 5V3YtcPfQjK/A==
+Date: Mon, 4 Nov 2024 18:10:26 +0000
+From: Eric Biggers <ebiggers@kernel.org>
+To: linux-kernel@vger.kernel.org
+Cc: linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-crypto@vger.kernel.org, linux-ext4@vger.kernel.org,
+	linux-f2fs-devel@lists.sourceforge.net, linux-mips@vger.kernel.org,
+	linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
+	linux-scsi@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+	loongarch@lists.linux.dev, sparclinux@vger.kernel.org,
+	x86@kernel.org, Ard Biesheuvel <ardb@kernel.org>
+Subject: Re: [PATCH v3 05/18] arm/crc32: expose CRC32 functions through lib
+Message-ID: <20241104181026.GC1049313@google.com>
+References: <20241103223154.136127-1-ebiggers@kernel.org>
+ <20241103223154.136127-6-ebiggers@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,40 +62,38 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZyV2DfuIPsISds-1@Boquns-Mac-mini.local>
+In-Reply-To: <20241103223154.136127-6-ebiggers@kernel.org>
 
-Hello,
+On Sun, Nov 03, 2024 at 02:31:41PM -0800, Eric Biggers wrote:
+> -static int __init crc32_pmull_mod_init(void)
+> -{
+> -	if (elf_hwcap2 & HWCAP2_PMULL) {
+> -		crc32_pmull_algs[0].update = crc32_pmull_update;
+> -		crc32_pmull_algs[1].update = crc32c_pmull_update;
+> -
+> -		if (elf_hwcap2 & HWCAP2_CRC32) {
+> -			fallback_crc32 = crc32_armv8_le;
+> -			fallback_crc32c = crc32c_armv8_le;
+> -		} else {
+> -			fallback_crc32 = crc32_le;
+> -			fallback_crc32c = __crc32c_le;
+> -		}
+> -	} else if (!(elf_hwcap2 & HWCAP2_CRC32)) {
+> -		return -ENODEV;
+> -	}
+[...]
+> +static u32 crc32_le_scalar(u32 crc, const u8 *p, size_t len)
+> +{
+> +	if (static_branch_likely(&have_crc32))
+> +		return crc32_armv8_le(crc, p, len);
+> +	return crc32_le_base(crc, p, len);
+> +}
 
-On Fri, Nov 01, 2024 at 05:45:01PM -0700, Boqun Feng wrote:
-...
-> Because it's a different bug.
-> 
-> 	schedule():
-> 	  __schedule():
-> 	    rq_lock(); // <- rq lock is a raw spin lock, so no sleep inside
-> 	    switch_mm_irqs_off():
-> 	      trace_tlb_flush():
-> 	        bpf_trace_run2():
-> 		  stack_map_get_build_id_offset():
-> 		    mmap_read_trylock(): // this is actually ok, because
-> 		    			 // trylock() on rwsem won't
-> 					 // sleep.
-> 		      __mmap_lock_trace_acquire_returned():
-> 		        get_mm_memcg_path():
-> 			  cgroup_path():
-> 			    kernfs_path_from_node():
-> 			      read_lock_irqsave(); // on RT, read_lock()
-> 			      			   // is a rwsem IIUC,
-> 						   // so might sleep.
-> 						   // hence the issue.
-> 
-> Maybe kernfs can use RCU instead of read_lock here? I don't know...
+kernel test robot reported a build error on this patch,
+"undefined symbol: __kcfi_typeid_crc32_armv8_le".  It's because crc32-core.S
+uses SYM_TYPED_FUNC_START(crc32_armv8_le), and this patch makes crc32_armv8_le
+be called only via direct calls, not indirect calls as it was before.  I will
+fix this by replacing SYM_TYPED_FUNC_START by SYM_FUNC_START.
 
-Yeah, we should be able to make kn->name RCU protected and drop the usage of
-the rename lock in read paths.
-
-Thanks.
-
--- 
-tejun
+- Eric
 
