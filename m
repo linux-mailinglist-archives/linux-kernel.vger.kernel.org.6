@@ -1,236 +1,192 @@
-Return-Path: <linux-kernel+bounces-395108-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395109-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E32779BB8AB
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 16:12:59 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D7779BB8AD
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 16:13:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1174B1C23E42
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 15:12:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 876701F22502
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 15:13:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE9221C07D8;
-	Mon,  4 Nov 2024 15:12:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFDF21BE86E;
+	Mon,  4 Nov 2024 15:12:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nls8Z+aZ"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gOh5D6sV"
+Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 513601BD4FD
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 15:12:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CACD34A08;
+	Mon,  4 Nov 2024 15:12:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730733134; cv=none; b=GrjGGZclMXCaayiEo2ccov/lbh8AfPLuDthkiaS5cx2I04DGirabWoU0QdUmgsUrDu6jR5auMsysx6BQUbCunQkuobNPdtPlPy2uXQf5inpKucgB3TTxVu7Cn7tdXs+Kwr3YgyFJ5uWBIVuKhGiNKZygxMkHBQKyJCV4BqDqkEE=
+	t=1730733159; cv=none; b=WpYSfalhvHyqJUzJHZeQlAW/K7+wtGumtZJ2+RRsW10Tt7fCe2QJT72erRd+/hjKEh33sQHXBUQGEyTkodZK1YN2C5nThg0A7SXtbbPdacutkFLYRJCEXxen+Gob6wVqWG8R31qNmvkIWkQhXySj71BPMlTujDOEXLD5YaVe53Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730733134; c=relaxed/simple;
-	bh=TjGtaE+LQxifGKsMsXRpdf+jrPSEjvUZi5NAZ2+Y6dw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O2z3CqzA7e5ONf4tEDq75RYP8cmAW7lE44xCwC9OeGEag0/UN/C9erFwPiOVxOFfohle5955mzkJZSLlS8O/tofbQrccnIImt+YOPhuLM+bvudJsFXVUCdbM+Bg00+MOM7TYstFNcasqgQaDWDSRj+kZA8P4qmXnvlINFLeGi0U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=nls8Z+aZ; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-20cceb8d8b4so27801875ad.1
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 07:12:11 -0800 (PST)
+	s=arc-20240116; t=1730733159; c=relaxed/simple;
+	bh=QcNuwWfbczk+E+5MT8TaTZWOIKC6RH2KHUsuZhOYL6c=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RZtmmb+RhVmw5Z8XNWm/bFI1kbPqWZ72cFhjcGR+Af997sFPsUlbDT6gDwhj9Az5DYLNe3pNJ+nt6jLKb0b6alEpzYSGKyJvK1rGVutINIcGNIcfF2Jx38u6WwZPecYlrXcxvppww6RFftS4RNv6afoh0KUHQNZTdgI/LU9Cp70=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gOh5D6sV; arc=none smtp.client-ip=209.85.216.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-2e2ee0a47fdso755641a91.2;
+        Mon, 04 Nov 2024 07:12:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1730733130; x=1731337930; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=IWAz5TdjV0s3G3j5HR50h22mQFRBfFcqS1CejLxUMh4=;
-        b=nls8Z+aZHhEyydGpZb4RZyFMNJKyDxHlz8rnIhnVlQf8jzqWHfXJWHRwLwadwZhpDD
-         vWq2FY+tOc4uYEBlsCWzXjTYnNcIKgfZaWVp6e7dJWz1z4dUqDFDwtLLS7mmlAZ+hz6y
-         /sWgJUzvegpXWDMDigELwdUN5h6ZnsQ9k9FTGU3bDbzA9h5TUx8G98gOsDBw2HDh2hPg
-         oDAGxez/je2UJIkIsAr25S3T+9tbtgYzezbsj3zAH9tzj7OFqTQe4f5TuG/OpLo0D5cA
-         ii3xmqwldGsEo2Rstc0WUKl5Ihg44nRO1V+HplujtpUaoFqHQ3DaCgCkGJbtNsbzzyFS
-         w1uA==
+        d=gmail.com; s=20230601; t=1730733156; x=1731337956; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KviHfL3GhPgk1194ewkZ7Elw3O84xMVSBocbCkmPTLs=;
+        b=gOh5D6sV3UwJ/nahfiLOz2Z21AaNZU3wL+MIkVedxBw09X6Y+VnNXy8hKDrjan4v6x
+         lXJppJBSXSnQ8gEA/r2hkR/DToCroFCn/hStqCoH4+KyAK/D2ZLCnyU0dAixvm9bV4Xa
+         N0rU2Ig9jgv4FgDBk3XE8FGmuYBh05BHInQY9cTIDDZ2AaL01b9kCMCv4I4CH3NYfmlg
+         XRa+JzUANbQxtYAuPRjVKkPXLynaWc8j0spxXJdUi4HpMnta73sXSriB0fAU8aDTbJqR
+         jKfxuRR3M7eiCp5ejMIWdmbVkTLpwGhynyNxWx/kFYveW9zzei7OutiDRavyI5Fq1Otx
+         KLtA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730733130; x=1731337930;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=IWAz5TdjV0s3G3j5HR50h22mQFRBfFcqS1CejLxUMh4=;
-        b=uIljbwl/G47zu87w3UigaZTXCys+OSIPaoLriiK4uveKOxSzRudyKZ5p38cRKKYHQR
-         8ah4qfl9UD10Ft7jvO4Etq4qR0gD1RyJnYTG82HA8I42PmQIr2aJ0wAU5Y9Zgvcn47he
-         qU4ivBVbY9wTkP5Nrjzy84YZr3IefsPMvkovmM2YJfJFwRjnRrxssw0Wyd0TbWkk9E1M
-         a515nT2eRoJS+Cwwlu2XGH9cC4HMRrvsl/oPchG6ZhfI4HEH9Fn3Pj9rWZJgHNuz0ZPw
-         py27FPIQDc/5wnXymSkG3QGxGrqTxE7yr2jpRfmdcFLuYbJsawTRXqEPib3L7dHrSmsw
-         jErA==
-X-Forwarded-Encrypted: i=1; AJvYcCU2zmOflq6prTh41XQa28OfWVk/UIpUUnaCJiOn7fYtQNOTPw2BEAw7png2POu5lmx7JU0WR+QtjeSs4eI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz5+fIRMByW+NjJR+iq60htJRE1fIf51ZhG44RHNcXz3ihL72VH
-	KKUOivpjvHFv8hz0rDESsZgN8hfL3drJzCu0QVdPK0/6o0XmZ092LKIBfAtgyg==
-X-Google-Smtp-Source: AGHT+IF/DA7LNyMgu1pnTQkftl5jvkj6Flffim544TjwWV+oZb0jj3oRtdO+6se3chWJxM92S10XOw==
-X-Received: by 2002:a17:902:ccd2:b0:20c:9026:93a with SMTP id d9443c01a7336-2111946831emr213769535ad.19.1730733130510;
-        Mon, 04 Nov 2024 07:12:10 -0800 (PST)
-Received: from thinkpad ([2409:40f4:3049:1cc7:217b:63a:40ce:2e01])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21105707e12sm62411805ad.82.2024.11.04.07.12.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Nov 2024 07:12:09 -0800 (PST)
-Date: Mon, 4 Nov 2024 20:42:02 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Stefan Eichenberger <eichest@gmail.com>
-Cc: hongxing.zhu@nxp.com, l.stach@pengutronix.de, lpieralisi@kernel.org,
-	kw@linux.com, robh@kernel.org, bhelgaas@google.com,
-	shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
-	festevam@gmail.com, francesco.dolcini@toradex.com, Frank.li@nxp.com,
-	linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	imx@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Stefan Eichenberger <stefan.eichenberger@toradex.com>
-Subject: Re: [PATCH v4] PCI: imx6: Add suspend/resume support for i.MX6QDL
-Message-ID: <20241104151202.k6v6fxwyb44n7qw6@thinkpad>
-References: <20241030103250.83640-1-eichest@gmail.com>
+        d=1e100.net; s=20230601; t=1730733156; x=1731337956;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=KviHfL3GhPgk1194ewkZ7Elw3O84xMVSBocbCkmPTLs=;
+        b=riSklfJG3yfw+3iJ4t6pPKHRu3oBm0CvA00m6YiFvkQciTW7pHpOC58MGiu+H6s26X
+         4w6yLObyIOyOPvBO4DDMAZVTbelB2JH1pqUm3ylJGl6sm9IK+LlAS6PeYNYjN+zajHTH
+         vr1Yw0l/emyOYPbTjUoirCUJW14HqJgwX6z1Ib80l8Aaeo1QmJBr23HmWsf0p4UoViM5
+         cfoE4SQTq9zUoMoKrcOrzNeex9kqC3pFhUrRdwOxDRys10dQJeZwqtv4yWT6wMqcdIX2
+         TZ4AZM0+6NjyjzA22S/ZkyA7KLDmuVSon6Thy6p2O550iuMCrA7Nr3iOw06JlV+mM8v5
+         3fkg==
+X-Forwarded-Encrypted: i=1; AJvYcCUJ0+M6mlKvS1TmYoS8HI0giIjxP09Y5sypIKK1K6FZr+Rac6uTAKdAnK84olH5y3fi4XfEnuXJ@vger.kernel.org, AJvYcCVAXeibTObmicbQ9qnJgyUALr7CmW3pPHFxqb2e+X7QXXeuq0IPyc4qrrWk77m2qlfXadFJP4RQB0LTqlY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy2KxwpO2NnduCtmdAv8jaepLL1Qq8jDbsz00FoTBMJDjFCzzUS
+	/o7v3CQ6VdZbO/PS8CnSgaPyqFWnSYSQ4iSc2CeKZeLlcYwzmlKmFGeCmj5I04b0Sjip1LmnSEL
+	rtnp0bvF4rHRe/yiXipbxKwvHo9Y=
+X-Google-Smtp-Source: AGHT+IH6q+c/r/8XZVBV6BuFehgtpcxWK806Z2lT5bLMqawbzEthFokNLqHNCackCtMD0b/aN73UxVUip01R2w8zoec=
+X-Received: by 2002:a17:90b:3b48:b0:2e2:c423:8e16 with SMTP id
+ 98e67ed59e1d1-2e8f0f4ccbdmr16257661a91.1.1730733155852; Mon, 04 Nov 2024
+ 07:12:35 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241030103250.83640-1-eichest@gmail.com>
+References: <20241029133141.45335-1-pchelkin@ispras.ru> <ZyDvOdEuxYh7jK5l@sashalap>
+ <20241029-3ca95c1f41e96c39faf2e49a-pchelkin@ispras.ru> <20241104-61da90a19c561bb5ed63141b-pchelkin@ispras.ru>
+In-Reply-To: <20241104-61da90a19c561bb5ed63141b-pchelkin@ispras.ru>
+From: Alex Deucher <alexdeucher@gmail.com>
+Date: Mon, 4 Nov 2024 10:12:24 -0500
+Message-ID: <CADnq5_OR9T5Ocxu6pRu38uzdmcV7_um_6aK4vYefhMiZ0gJJSA@mail.gmail.com>
+Subject: Re: [PATCH 0/1] On DRM -> stable process
+To: Fedor Pchelkin <pchelkin@ispras.ru>
+Cc: Sasha Levin <sashal@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	stable@vger.kernel.org, Alex Deucher <alexander.deucher@amd.com>, 
+	Harry Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>, 
+	Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+	"Pan, Xinhui" <Xinhui.Pan@amd.com>, David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+	Fangzhi Zuo <Jerry.Zuo@amd.com>, Wayne Lin <wayne.lin@amd.com>, amd-gfx@lists.freedesktop.org, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	lvc-project@linuxtesting.org, Alexey Khoroshilov <khoroshilov@ispras.ru>, 
+	Mario Limonciello <mario.limonciello@amd.com>, Jonathan Gray <jsg@jsg.id.au>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 30, 2024 at 11:32:45AM +0100, Stefan Eichenberger wrote:
-> From: Stefan Eichenberger <stefan.eichenberger@toradex.com>
-> 
-> The suspend/resume functionality is currently broken on the i.MX6QDL
-> platform, as documented in the NXP errata (ERR005723):
-> https://www.nxp.com/docs/en/errata/IMX6DQCE.pdf
-> 
-> This patch addresses the issue by sharing most of the suspend/resume
-> sequences used by other i.MX devices, while avoiding modifications to
-> critical registers that disrupt the PCIe functionality. It targets the
-> same problem as the following downstream commit:
-> https://github.com/nxp-imx/linux-imx/commit/4e92355e1f79d225ea842511fcfd42b343b32995
-> 
-> Unlike the downstream commit, this patch also resets the connected PCIe
-> device if possible. Without this reset, certain drivers, such as ath10k
-> or iwlwifi, will crash on resume. The device reset is also done by the
-> driver on other i.MX platforms, making this patch consistent with
-> existing practices.
-> 
-> Without this patch, suspend/resume will fail on i.MX6QDL devices if a
-> PCIe device is connected. Upon resuming, the kernel will hang and
-> display an error. Here's an example of the error encountered with the
-> ath10k driver:
-> ath10k_pci 0000:01:00.0: Unable to change power state from D3hot to D0, device inaccessible
-> Unhandled fault: imprecise external abort (0x1406) at 0x0106f944
-> 
-> Signed-off-by: Stefan Eichenberger <stefan.eichenberger@toradex.com>
+On Mon, Nov 4, 2024 at 9:55=E2=80=AFAM Fedor Pchelkin <pchelkin@ispras.ru> =
+wrote:
+>
+> On Tue, 29. Oct 18:12, Fedor Pchelkin wrote:
+> > On Tue, 29. Oct 10:20, Sasha Levin wrote:
+> > > On Tue, Oct 29, 2024 at 04:31:40PM +0300, Fedor Pchelkin wrote:
+> > > > BTW, a question to the stable-team: what Git magic (3-way-merge?) l=
+et the
+> > > > duplicate patch be applied successfully? The patch context in stabl=
+e trees
+> > > > was different to that moment so should the duplicate have been expe=
+cted to
+> > > > fail to be applied?
+> > >
+> > > Just plain git... Try it yourself :)
+> > >
+> > > $ git checkout 282f0a482ee6
+> > > HEAD is now at 282f0a482ee61 drm/amd/display: Skip Recompute DSC Para=
+ms if no Stream on Link
+> > >
+> > > $ git cherry-pick 7c887efda1
+> >
+> > 7c887efda1 is the commit backported to linux-6.1.y. Of course it will a=
+pply
+> > there.
+> >
+> > What I mean is that the upstream commit for 7c887efda1 is 8151a6c13111b=
+465dbabe07c19f572f7cbd16fef.
+> >
+> > And cherry-picking 8151a6c13111b465dbabe07c19f572f7cbd16fef to linux-6.=
+1.y
+> > on top of 282f0a482ee6 will not result in duplicating the change, at le=
+ast
+> > with my git configuration.
+> >
+> > I just don't understand how a duplicating if-statement could be produce=
+d in
+> > result of those cherry-pick'ings and how the content of 7c887efda1 was
+> > generated.
+> >
+> > $ git checkout 282f0a482ee6
+> > HEAD is now at 282f0a482ee6 drm/amd/display: Skip Recompute DSC Params =
+if no Stream on Link
+> >
+> > $ git cherry-pick 8151a6c13111b465dbabe07c19f572f7cbd16fef
+> > Auto-merging drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.=
+c
+> > HEAD detached at 282f0a482ee6
+> > You are currently cherry-picking commit 8151a6c13111.
+> >   (all conflicts fixed: run "git cherry-pick --continue")
+> >   (use "git cherry-pick --skip" to skip this patch)
+> >   (use "git cherry-pick --abort" to cancel the cherry-pick operation)
+> > The previous cherry-pick is now empty, possibly due to conflict resolut=
+ion.
+> > If you wish to commit it anyway, use:
+> >
+> >     git commit --allow-empty
+> >
+> > Otherwise, please use 'git cherry-pick --skip'
+>
+> Sasha,
+>
+> my concern is that maybe there is some issue with the scripts used for th=
+e
+> preparation of backport patches.
+>
+> There are two different upstream commits performing the exact same change=
+:
+> - 50e376f1fe3bf571d0645ddf48ad37eb58323919
+> - 8151a6c13111b465dbabe07c19f572f7cbd16fef
 
-Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+There were cases where I needed to cherry-pick fixes from -next to
+-fixes.  In the past I had not used -x when cherry-picking because I
+got warnings about references to commits that were not yet in
+mainline.  I have since started using -x when cherry-picking things
+from -next to -fixes.
 
-- Mani
+Alex
 
-> ---
-> Changes in v4:
-> - Improve commit message (Bjorn)
-> - Fix style issue on comments (Bjorn)
-> - s/msi/MSI (Bjorn)
-> 
-> Changes in v3:
-> - Added a new flag to the driver data to indicate that the suspend/resume
->   is broken on the i.MX6QDL platform. (Frank)
-> - Fix comments to be more relevant (Mani)
-> - Use imx_pcie_assert_core_reset in suspend (Mani)
-> 
->  drivers/pci/controller/dwc/pci-imx6.c | 57 +++++++++++++++++++++------
->  1 file changed, 46 insertions(+), 11 deletions(-)
-> 
-> diff --git a/drivers/pci/controller/dwc/pci-imx6.c b/drivers/pci/controller/dwc/pci-imx6.c
-> index 808d1f1054173..c8d5c90aa4d45 100644
-> --- a/drivers/pci/controller/dwc/pci-imx6.c
-> +++ b/drivers/pci/controller/dwc/pci-imx6.c
-> @@ -82,6 +82,11 @@ enum imx_pcie_variants {
->  #define IMX_PCIE_FLAG_HAS_SERDES		BIT(6)
->  #define IMX_PCIE_FLAG_SUPPORT_64BIT		BIT(7)
->  #define IMX_PCIE_FLAG_CPU_ADDR_FIXUP		BIT(8)
-> +/*
-> + * Because of ERR005723 (PCIe does not support L2 power down) we need to
-> + * workaround suspend resume on some devices which are affected by this errata.
-> + */
-> +#define IMX_PCIE_FLAG_BROKEN_SUSPEND		BIT(9)
->  
->  #define imx_check_flag(pci, val)	(pci->drvdata->flags & val)
->  
-> @@ -1237,9 +1242,19 @@ static int imx_pcie_suspend_noirq(struct device *dev)
->  		return 0;
->  
->  	imx_pcie_msi_save_restore(imx_pcie, true);
-> -	imx_pcie_pm_turnoff(imx_pcie);
-> -	imx_pcie_stop_link(imx_pcie->pci);
-> -	imx_pcie_host_exit(pp);
-> +	if (imx_check_flag(imx_pcie, IMX_PCIE_FLAG_BROKEN_SUSPEND)) {
-> +		/*
-> +		 * The minimum for a workaround would be to set PERST# and to
-> +		 * set the PCIE_TEST_PD flag. However, we can also disable the
-> +		 * clock which saves some power.
-> +		 */
-> +		imx_pcie_assert_core_reset(imx_pcie);
-> +		imx_pcie->drvdata->enable_ref_clk(imx_pcie, false);
-> +	} else {
-> +		imx_pcie_pm_turnoff(imx_pcie);
-> +		imx_pcie_stop_link(imx_pcie->pci);
-> +		imx_pcie_host_exit(pp);
-> +	}
->  
->  	return 0;
->  }
-> @@ -1253,14 +1268,32 @@ static int imx_pcie_resume_noirq(struct device *dev)
->  	if (!(imx_pcie->drvdata->flags & IMX_PCIE_FLAG_SUPPORTS_SUSPEND))
->  		return 0;
->  
-> -	ret = imx_pcie_host_init(pp);
-> -	if (ret)
-> -		return ret;
-> -	imx_pcie_msi_save_restore(imx_pcie, false);
-> -	dw_pcie_setup_rc(pp);
-> +	if (imx_check_flag(imx_pcie, IMX_PCIE_FLAG_BROKEN_SUSPEND)) {
-> +		ret = imx_pcie->drvdata->enable_ref_clk(imx_pcie, true);
-> +		if (ret)
-> +			return ret;
-> +		ret = imx_pcie_deassert_core_reset(imx_pcie);
-> +		if (ret)
-> +			return ret;
-> +		/*
-> +		 * Using PCIE_TEST_PD seems to disable MSI and powers down the
-> +		 * root complex. This is why we have to setup the rc again and
-> +		 * why we have to restore the MSI register.
-> +		 */
-> +		ret = dw_pcie_setup_rc(&imx_pcie->pci->pp);
-> +		if (ret)
-> +			return ret;
-> +		imx_pcie_msi_save_restore(imx_pcie, false);
-> +	} else {
-> +		ret = imx_pcie_host_init(pp);
-> +		if (ret)
-> +			return ret;
-> +		imx_pcie_msi_save_restore(imx_pcie, false);
-> +		dw_pcie_setup_rc(pp);
->  
-> -	if (imx_pcie->link_is_up)
-> -		imx_pcie_start_link(imx_pcie->pci);
-> +		if (imx_pcie->link_is_up)
-> +			imx_pcie_start_link(imx_pcie->pci);
-> +	}
->  
->  	return 0;
->  }
-> @@ -1485,7 +1518,9 @@ static const struct imx_pcie_drvdata drvdata[] = {
->  	[IMX6Q] = {
->  		.variant = IMX6Q,
->  		.flags = IMX_PCIE_FLAG_IMX_PHY |
-> -			 IMX_PCIE_FLAG_IMX_SPEED_CHANGE,
-> +			 IMX_PCIE_FLAG_IMX_SPEED_CHANGE |
-> +			 IMX_PCIE_FLAG_BROKEN_SUSPEND |
-> +			 IMX_PCIE_FLAG_SUPPORTS_SUSPEND,
->  		.dbi_length = 0x200,
->  		.gpr = "fsl,imx6q-iomuxc-gpr",
->  		.clk_names = imx6q_clks,
-> -- 
-> 2.43.0
-> 
-
--- 
-மணிவண்ணன் சதாசிவம்
+>
+> 50e376f1fe3bf571d0645ddf48ad37eb58323919 was backported to stable kernels
+> at first. After that, attempts to backport 8151a6c13111b465dbabe07c19f572=
+f7cbd16fef
+> to those stables should be expected to fail, no? Git would have complaine=
+d
+> about this - the patch was already applied.
+>
+> It is just strange that the (exact same) change made by the commits is
+> duplicated by backporting tools. As it is not the first case where DRM
+> patches are involved per Greg's statement [1], I wonder if something can =
+be
+> done on stable-team's side to avoid such odd behavior in future.
+>
+> [1]: https://lore.kernel.org/stable/20241007035711.46624-1-jsg@jsg.id.au/=
+T/#u
+>
+> --
+> Thanks,
+> Fedor
 
