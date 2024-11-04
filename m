@@ -1,219 +1,115 @@
-Return-Path: <linux-kernel+bounces-394727-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394728-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 249B89BB33A
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 12:28:10 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15BBF9BB365
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 12:32:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5193C1C21D95
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 11:28:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 08170B29FE5
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 11:28:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FBEE1C2339;
-	Mon,  4 Nov 2024 11:19:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F3F11C3038;
+	Mon,  4 Nov 2024 11:20:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UIP9E0Ra"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2B9F1B394E;
-	Mon,  4 Nov 2024 11:19:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 011A11B394D;
+	Mon,  4 Nov 2024 11:20:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730719189; cv=none; b=LTw8FF0c6eDB340xjygTPtnOSaVDgkBxa3ocEXaYx3wrhtCvg9aew7pwxqDnH0ipvz6SGkrXF+YhkWLoXvbr3JEx1znXrGmrt3eJOYN8+egtchk18OWWOQigM1/C+nJII8Zou6on23495nEMvIN/OOwMgMO3eLq+RAWk9KPSBIw=
+	t=1730719201; cv=none; b=aQPrR3o1flxZ+OH1X47Hp9tP22wPcbi8Vf50L1xvqox/+yll6oey5MsOXeXwPk6fbaji3DlNsF56Q8szLKhl/Sa+5Qnrocbxmv1zuTP9M22o2g647dVACdxAc/tpWlDJi63ZjpCyRzmXRdjzbA2zeBi1DNxM60WYZeXh/6Dgep4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730719189; c=relaxed/simple;
-	bh=w4DhfcqhD35OLZhCD/yjFqQsPzQFGG5lrGkMuG3Ix1U=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=DlaWkAshJNQPZc0+aAHJ18kzzp649qN62+ki7aWWWUOimlhHAXwkSfMEMfQjszkuaSQLpeeYn/XeypJ524hyYvPNH+Ugfm7T2CgNhbbISCUTvJehjINCg66h6yvJ9Pz7taWDFjYaIJpV7FOeTbGODacvo8K4y+eOOLqzhaWbocg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 966C9C4CECE;
-	Mon,  4 Nov 2024 11:19:47 +0000 (UTC)
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: iommu@lists.linux.dev,
-	linux-mm@kvack.org
-Cc: linux-kernel@vger.kernel.org,
-	Ido Schimmel <idosch@idosch.org>,
-	Ido Schimmel <idosch@nvidia.com>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Joerg Roedel <joro@8bytes.org>,
-	Will Deacon <will@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>
-Subject: [PATCH] kmemleak: iommu/iova: Fix transient kmemleak false positive
-Date: Mon,  4 Nov 2024 11:19:44 +0000
-Message-Id: <20241104111944.2207155-1-catalin.marinas@arm.com>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1730719201; c=relaxed/simple;
+	bh=cY33B02f8szVFbWSo1IQ5weKa0vYy6o23iYaDlbeQMI=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=NdRM9r2FxHHs3IY8S3S76b5foSixz10xle7GL45eA8iqwKZSUE29vCTb85np1mLIt9YC08qkDSKddrbPtRP9kYfKXgKuGOQsUTeGRzVEWa1+6YXHa9plCzZUY3SKpOyG1e/Dhg2MieMMAEHLE/iMVfouQGaahs8hUp3SgywCYDI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UIP9E0Ra; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BEAA7C4CECE;
+	Mon,  4 Nov 2024 11:19:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730719200;
+	bh=cY33B02f8szVFbWSo1IQ5weKa0vYy6o23iYaDlbeQMI=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=UIP9E0RaNUsBSCPMqdDp2sCJlCa/4ioeF0NaoJAr3tljrNmOYW4l/yvH/b1wkhCDi
+	 DfJ05oU3fIqAUtM6YtWamKC4RYV4fWtszl/ctXAnvYCZETKobKd+1bpeFoSwcV7PXy
+	 8M3Y+2r3alSCyylqTnRyDRXU7UfJL3vTYfgNq9iwrBung0NR8/PPR2O6wDaT7h7PUn
+	 x1P0978VSxvUaM0YPDlO3TCJ6JP3D4Jax8eCe6vux6EJHI91i9dpRpHFhwSXAzf+z9
+	 YxHjGWZxvuInZpC/fCJPJAIVcGoxQHvOqBJZprA3san23C9UGsKbRe1Df2t1ELeP7r
+	 QPPIkf6JNa8cA==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 04 Nov 2024 13:19:55 +0200
+Message-Id: <D5DCR279TZY5.1C7KRTFPGD3WU@kernel.org>
+Cc: <x86@kernel.org>, "Ross Philipson" <ross.philipson@oracle.com>, "Ard
+ Biesheuvel" <ardb@kernel.org>, "Thomas Gleixner" <tglx@linutronix.de>,
+ "Peter Huewe" <peterhuewe@gmx.de>, "Jason Gunthorpe" <jgg@ziepe.ca>, "open
+ list:TPM DEVICE DRIVER" <linux-integrity@vger.kernel.org>, "open list"
+ <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH 0/4] Alternative TPM patches for Trenchboot
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: "Jarkko Sakkinen" <jarkko@kernel.org>, "Daniel P. Smith"
+ <dpsmith@apertussolutions.com>
+X-Mailer: aerc 0.18.2
+References: <20241102152226.2593598-1-jarkko@kernel.org>
+ <D5BW0P0HH0QL.7Y4HBLJGEDL8@kernel.org>
+ <e745226d-4722-43ed-86ad-89428f56fcba@apertussolutions.com>
+ <D5DCPWBQ2M7H.GAUEVUKGC3G0@kernel.org>
+In-Reply-To: <D5DCPWBQ2M7H.GAUEVUKGC3G0@kernel.org>
 
-The introduction of iova_depot_pop() in 911aa1245da8 ("iommu/iova: Make
-the rcache depot scale better") confused kmemleak by moving a struct
-iova_magazine object from a singly linked list to rcache->depot and
-resetting the 'next' pointer referencing it. Unlike doubly linked lists,
-the content of the object being referred is never changed on removal
-from a singly linked list and the kmemleak checksum heuristics do not
-detect such scenario. This leads to false positives like:
+On Mon Nov 4, 2024 at 1:18 PM EET, Jarkko Sakkinen wrote:
+> On Mon Nov 4, 2024 at 12:57 PM EET, Daniel P. Smith wrote:
+> > On 11/2/24 14:00, Jarkko Sakkinen wrote:
+> > > On Sat Nov 2, 2024 at 5:22 PM EET, Jarkko Sakkinen wrote:
+> > >> It is not really my problem but I'm also wondering how the
+> > >> initialization order is managed. What if e.g. IMA happens to
+> > >> initialize before slmodule?
+> > >=20
+> > > The first obvious observation from Trenchboot implementation is that =
+it
+> > > is 9/10 times worst idea ever to have splitted root of trust. Here it
+> > > is realized by an LKM for slmodule.
+> >
+> > First, there is no conflict between IMA and slmodule. With your change=
+=20
+> > to make locality switching a one shot, the only issue would be if IMA=
+=20
+> > were to run first and issue a locality switch to Locality 0, thus=20
+> > blocking slmodule from switching to Locality 2. As for PCR usage, IMA=
+=20
+> > uses the SRTM PCRs, which are completely accessible under Locality 2.
+>
+> Just pointing out a possible problem (e.g. with  TPM2_PolicyLocality).
+>
+> > Honestly, a better path forward would be to revisit the issue that is
+> > driving most of that logic existing, which is the lack of a TPM
+> > interface code in the setup kernel. As a reminder, this issue is due to
+> > the TPM maintainers position that the only TPM code in the kernel can b=
+e
+> > the mainline driver. Which, unless something has changed, is impossible
+> > to compile into the setup kernel due to its use of mainline kernel
+> > constructs not present in the setup kernel.
+>
+> I don't categorically reject adding some code to early setup. We have
+> some shared code EFI stub but you have to explain your changes
+> proeprly. Getting rejection in some early version to some approach,
+> and being still pissed about that years forward is not really way
+> to go IMHO.
 
-unreferenced object 0xffff8881a5301000 (size 1024):
-  comm "softirq", pid 0, jiffies 4306297099 (age 462.991s)
-  hex dump (first 32 bytes):
-    00 00 00 00 00 00 00 00 e7 7d 05 00 00 00 00 00  .........}......
-    0f b4 05 00 00 00 00 00 b4 96 05 00 00 00 00 00  ................
-  backtrace:
-    [<ffffffff819f5f08>] __kmem_cache_alloc_node+0x1e8/0x320
-    [<ffffffff818a239a>] kmalloc_trace+0x2a/0x60
-    [<ffffffff8231d31e>] free_iova_fast+0x28e/0x4e0
-    [<ffffffff82310860>] fq_ring_free_locked+0x1b0/0x310
-    [<ffffffff8231225d>] fq_flush_timeout+0x19d/0x2e0
-    [<ffffffff813e95ba>] call_timer_fn+0x19a/0x5c0
-    [<ffffffff813ea16b>] __run_timers+0x78b/0xb80
-    [<ffffffff813ea5bd>] run_timer_softirq+0x5d/0xd0
-    [<ffffffff82f1d915>] __do_softirq+0x205/0x8b5
+... and ignoring fixes that took me almost one day to fully get together
+is neither.
 
-Introduce kmemleak_transient_leak() which resets the object checksum
-requiring another scan pass before it is reported (if still
-unreferenced). Call this new API in iova_depot_pop().
+These address the awful commit messages, tpm_tis-only filtering and not
+allowing repetition in the calls.
 
-Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
-Reported-by: Ido Schimmel <idosch@idosch.org>
-Tested-by: Ido Schimmel <idosch@nvidia.com>
-Cc: Robin Murphy <robin.murphy@arm.com>
-Cc: Joerg Roedel <joro@8bytes.org>
-Cc: Will Deacon <will@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Link: https://lore.kernel.org/r/ZY1osaGLyT-sdKE8@shredder/
----
-
-This could be two patches but I thought the rationale for a new kmemleak
-API goes better with its use in the iova code. Happy to move the 6 lines
-iova change to a separate patch but they should still go in together.
-Given that there are more line under mm/, I'd say it better goes in via
-the mm tree with the relevant acks from the iommu folk.
-
-Thanks.
-
- Documentation/dev-tools/kmemleak.rst |  1 +
- drivers/iommu/iova.c                 |  6 +++++
- include/linux/kmemleak.h             |  4 +++
- mm/kmemleak.c                        | 39 ++++++++++++++++++++++++++++
- 4 files changed, 50 insertions(+)
-
-diff --git a/Documentation/dev-tools/kmemleak.rst b/Documentation/dev-tools/kmemleak.rst
-index 2cb00b53339f..7d784e03f3f9 100644
---- a/Documentation/dev-tools/kmemleak.rst
-+++ b/Documentation/dev-tools/kmemleak.rst
-@@ -161,6 +161,7 @@ See the include/linux/kmemleak.h header for the functions prototype.
- - ``kmemleak_free_percpu``	 - notify of a percpu memory block freeing
- - ``kmemleak_update_trace``	 - update object allocation stack trace
- - ``kmemleak_not_leak``	 - mark an object as not a leak
-+- ``kmemleak_transient_leak``	 - mark an object as a transient leak
- - ``kmemleak_ignore``		 - do not scan or report an object as leak
- - ``kmemleak_scan_area``	 - add scan areas inside a memory block
- - ``kmemleak_no_scan``	 - do not scan a memory block
-diff --git a/drivers/iommu/iova.c b/drivers/iommu/iova.c
-index 16c6adff3eb7..5b5400efb657 100644
---- a/drivers/iommu/iova.c
-+++ b/drivers/iommu/iova.c
-@@ -6,6 +6,7 @@
-  */
- 
- #include <linux/iova.h>
-+#include <linux/kmemleak.h>
- #include <linux/module.h>
- #include <linux/slab.h>
- #include <linux/smp.h>
-@@ -673,6 +674,11 @@ static struct iova_magazine *iova_depot_pop(struct iova_rcache *rcache)
- {
- 	struct iova_magazine *mag = rcache->depot;
- 
-+	/*
-+	 * As the mag->next pointer is moved to rcache->depot and reset via
-+	 * the mag->size assignment, mark it as a transient false positive.
-+	 */
-+	kmemleak_transient_leak(mag->next);
- 	rcache->depot = mag->next;
- 	mag->size = IOVA_MAG_SIZE;
- 	rcache->depot_size--;
-diff --git a/include/linux/kmemleak.h b/include/linux/kmemleak.h
-index 6a3cd1bf4680..93a73c076d16 100644
---- a/include/linux/kmemleak.h
-+++ b/include/linux/kmemleak.h
-@@ -26,6 +26,7 @@ extern void kmemleak_free_part(const void *ptr, size_t size) __ref;
- extern void kmemleak_free_percpu(const void __percpu *ptr) __ref;
- extern void kmemleak_update_trace(const void *ptr) __ref;
- extern void kmemleak_not_leak(const void *ptr) __ref;
-+extern void kmemleak_transient_leak(const void *ptr) __ref;
- extern void kmemleak_ignore(const void *ptr) __ref;
- extern void kmemleak_scan_area(const void *ptr, size_t size, gfp_t gfp) __ref;
- extern void kmemleak_no_scan(const void *ptr) __ref;
-@@ -93,6 +94,9 @@ static inline void kmemleak_update_trace(const void *ptr)
- static inline void kmemleak_not_leak(const void *ptr)
- {
- }
-+static inline void kmemleak_transient_leak(const void *ptr)
-+{
-+}
- static inline void kmemleak_ignore(const void *ptr)
- {
- }
-diff --git a/mm/kmemleak.c b/mm/kmemleak.c
-index 0400f5e8ac60..72e09ac9140b 100644
---- a/mm/kmemleak.c
-+++ b/mm/kmemleak.c
-@@ -934,6 +934,28 @@ static void make_black_object(unsigned long ptr, unsigned int objflags)
- 	paint_ptr(ptr, KMEMLEAK_BLACK, objflags);
- }
- 
-+/*
-+ * Reset the checksum of an object. The immediate effect is that it will not
-+ * be reported as a leak during the next scan until its checksum is updated.
-+ */
-+static void reset_checksum(unsigned long ptr)
-+{
-+	unsigned long flags;
-+	struct kmemleak_object *object;
-+
-+	object = find_and_get_object(ptr, 0);
-+	if (!object) {
-+		kmemleak_warn("Not resetting the checksum of an unknown object at 0x%08lx\n",
-+			      ptr);
-+		return;
-+	}
-+
-+	raw_spin_lock_irqsave(&object->lock, flags);
-+	object->checksum = 0;
-+	raw_spin_unlock_irqrestore(&object->lock, flags);
-+	put_object(object);
-+}
-+
- /*
-  * Add a scanning area to the object. If at least one such area is added,
-  * kmemleak will only scan these ranges rather than the whole memory block.
-@@ -1202,6 +1224,23 @@ void __ref kmemleak_not_leak(const void *ptr)
- }
- EXPORT_SYMBOL(kmemleak_not_leak);
- 
-+/**
-+ * kmemleak_transient_leak - mark an allocated object as transient false positive
-+ * @ptr:	pointer to beginning of the object
-+ *
-+ * Calling this function on an object will cause the memory block to not be
-+ * reported as a leak temporarily. This may happen, for example, if the object
-+ * is part of a singly linked list and the ->next reference to it is changed.
-+ */
-+void __ref kmemleak_transient_leak(const void *ptr)
-+{
-+	pr_debug("%s(0x%px)\n", __func__, ptr);
-+
-+	if (kmemleak_enabled && ptr && !IS_ERR(ptr))
-+		reset_checksum((unsigned long)ptr);
-+}
-+EXPORT_SYMBOL(kmemleak_transient_leak);
-+
- /**
-  * kmemleak_ignore - ignore an allocated object
-  * @ptr:	pointer to beginning of the object
+BR, Jarkko
 
