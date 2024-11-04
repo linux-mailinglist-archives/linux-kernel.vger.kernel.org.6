@@ -1,163 +1,122 @@
-Return-Path: <linux-kernel+bounces-394263-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394262-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62E619BACA5
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 07:38:53 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A827E9BACA2
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 07:38:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E88551F22181
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 06:38:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 54AEE1F2221D
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 06:38:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D82AC18D651;
-	Mon,  4 Nov 2024 06:38:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C53C118CC10;
+	Mon,  4 Nov 2024 06:38:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="nZcjlJE2"
-Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OTaamrWS"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E025C1741E0;
-	Mon,  4 Nov 2024 06:38:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B10E938F97;
+	Mon,  4 Nov 2024 06:38:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730702327; cv=none; b=A5iFKE2vGHb4Uf9LOyvd+whrdNf7ZoJBHjkE/IZ1Kw8+0J3r1AMXlRAXGxOKDtvNU3iO1GODkb3lRrgXrel3qOCCOX0T9RU4Nxrp7WEwNK0fK/c6PykYms/MlU0oK5dgAJ6c+SuIy/ko7ow7CyrK0BM9vL3nSxT2Gz2TufUqm/w=
+	t=1730702311; cv=none; b=NkNHK3qxkutTpqjf60qaCvDi5FZsX7mBJPfTo5KFHfVZAEk9DWpvtrfW33kk22OGm63tnRjaFdUPjvdoqPQdQKMInBoyudmF/bYla9oCdKEFKumXNNcEBRSjXF6axTLz1hm/pJqxHbcDBb781mTFnQ6wKOr9AO+GIskbBLG89d0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730702327; c=relaxed/simple;
-	bh=Fdh28i9yaL2QRgsXLb9NyUvhop4Ep0eQkAUyT/RTIUs=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ivZGoP5dGiwlN30v5tfHinTnKtjV6kmGjet56gonrHbyxMS3uMe3BmnBepKbS+8p4CC6cvZSX9xPMgrgQgnSu/49031K4ulyEYTFbxaAr/PVAElV+4smBtAJKobwoK03frTuvnWlKREf2LY77VjXPwqLuqn2XB1bUxlEANwD8os=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=nZcjlJE2; arc=none smtp.client-ip=198.47.23.248
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4A46cLcE057212;
-	Mon, 4 Nov 2024 00:38:21 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1730702301;
-	bh=nGVz5KejI+6GMQUMN3KYKvT7myfaxUoc/i4p+RM9ypI=;
-	h=From:To:CC:Subject:Date;
-	b=nZcjlJE2WqciqJjHksmXiRxrbAMM7mRxyb86cqdanUPb1aT7ZE/R5fKJIl9zGhLbW
-	 8CXjSqZ4Eqyl/SkNeQ+PwdByUbZh/aFUQWP9eLvJ92m+CC71y/RxQy/UMjv+L+9esq
-	 jXV38vPcsrCmy5QnwoILsLkvyIXroRVyQpHYplNk=
-Received: from DFLE104.ent.ti.com (dfle104.ent.ti.com [10.64.6.25])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4A46cL9m106737;
-	Mon, 4 Nov 2024 00:38:21 -0600
-Received: from DFLE104.ent.ti.com (10.64.6.25) by DFLE104.ent.ti.com
- (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 4
- Nov 2024 00:38:21 -0600
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE104.ent.ti.com
- (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Mon, 4 Nov 2024 00:38:21 -0600
-Received: from lcpd911.dhcp.ti.com (lcpd911.dhcp.ti.com [172.24.227.226])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4A46cHVi123048;
-	Mon, 4 Nov 2024 00:38:18 -0600
-From: Dhruva Gole <d-gole@ti.com>
-To: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>
-CC: <linux-pm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        Dhruva Gole <d-gole@ti.com>, Rob Herring <robh@kernel.org>,
-        Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Bryan Brattlof <bb@ti.com>,
-        Wadim Egorov
-	<w.egorov@phytec.de>
-Subject: [PATCH V3] arm64: dts: ti: k3-am62: use opp_efuse_table for opp-table syscon
-Date: Mon, 4 Nov 2024 12:07:08 +0530
-Message-ID: <20241104063707.3604302-1-d-gole@ti.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1730702311; c=relaxed/simple;
+	bh=w5IzZhNS0pyq3dZVWuxnPxZjGqxLGha5AZ2HRi5kLkE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UnsNBBaOXrfnl4CVvD8ekiqUfdllaM3XkjVjs42+/g7/Gs+IhQA7/fF3R14VpgngZJPNoeWdpaAS9hPsJ+JmimYvGQylyIRGLNt3HXq1bVoWF+4AxYHDUdOJ7HsMNPWbTwqnu9i9P1idw/+baHVTsEoj02JeKV/Uz0FV23fiksY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OTaamrWS; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730702309; x=1762238309;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=w5IzZhNS0pyq3dZVWuxnPxZjGqxLGha5AZ2HRi5kLkE=;
+  b=OTaamrWSJbqHLI7TPRMbRmth9uYMaJqm14xfNVKZfKR18SmZENsESSX1
+   arUH5nH/DEnfY1svaUINJZwhEFN0+JTAYDQRNdLfSV1MLBw7m94VB/2+k
+   TjPtgoTjMRIBLcZCsUD0Ia0l2i87nzm7HiuF4YOUTMg/qG8sH515fpcKm
+   N2VP+O2iIwAtbtmqG28QfXAVGpaRU/AgEEUbS3DaQRqbS9Zp9KBJxIuJY
+   +eIjmnYuTsCLKZU1nfQifHNvSRjGUxyyGxs3VE+mmbn/kzP8K1ZEiJy3O
+   ifKMJO96ASnenxj/JgEylYTM7pUTrFpITHyJ695iT2TxLXbWlxS9R2xbA
+   g==;
+X-CSE-ConnectionGUID: Lm5ESs1uRje2v3vUil3Pbw==
+X-CSE-MsgGUID: Nmy7KQwYQwSUUrrncwj4Qw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11245"; a="29801130"
+X-IronPort-AV: E=Sophos;i="6.11,256,1725346800"; 
+   d="scan'208";a="29801130"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2024 22:38:24 -0800
+X-CSE-ConnectionGUID: 3u7azeIwSYCzt9aSZon4Rw==
+X-CSE-MsgGUID: XYoWjP+nSS+br4byYIhU6w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,256,1725346800"; 
+   d="scan'208";a="114348431"
+Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.246.16.81])
+  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2024 22:38:19 -0800
+Message-ID: <8383c639-66ce-4252-b3e8-734cb6688b44@intel.com>
+Date: Mon, 4 Nov 2024 08:38:14 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 0/2] mmc: host: sdhci-esdhc-imx: implement emmc
+ hardware reset
+To: Josua Mayer <josua@solid-run.com>, Haibo Chen <haibo.chen@nxp.com>,
+ Ulf Hansson <ulf.hansson@linaro.org>, Shawn Guo <shawnguo@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>
+Cc: Mikhail Anikin <mikhail.anikin@solid-run.com>,
+ Jon Nettleton <jon@solid-run.com>, Yazan Shhady
+ <yazan.shhady@solid-run.com>, Rabeeh Khoury <rabeeh@solid-run.com>,
+ imx@lists.linux.dev, linux-mmc@vger.kernel.org, s32@nxp.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20241101-imx-emmc-reset-v3-0-184965eed476@solid-run.com>
+Content-Language: en-US
+From: Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+In-Reply-To: <20241101-imx-emmc-reset-v3-0-184965eed476@solid-run.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Add another entry in the wkup_conf for the syscon node, and then use
-that for the syscon in opp-table.
+On 1/11/24 13:42, Josua Mayer wrote:
+> Signed-off-by: Josua Mayer <josua@solid-run.com>
+> ---
+> Changes in v3:
+> - reused existing control register definition from sdhci-esdhc.h
+>   (Reported-by: Bough Chen <haibo.chen@nxp.com>)
+> - placed both control register mask definitions next to each other
+> - fixed timeout write register name
+> - Link to v2: https://lore.kernel.org/r/20241030-imx-emmc-reset-v2-0-b3a823393974@solid-run.com
+> 
+> Changes in v2:
+> - replaced udelay with usleep_range
+>   (Reported-by: Adrian Hunter <adrian.hunter@intel.com>)
+> - added comments for delay values
+>   (Reported-by: Peng Fan <peng.fan@nxp.com>)
+> - delay values based on JEDEC Standard No. 84-B51, 6.15.10 H/W Reset Operation,
+>   on page 159
+>   (Thanks to Bough Chen <haibo.chen@nxp.com>)
+> - added a second patch demonstrating a cosmetic issue revealed by first
+>   patch - it bothered me during development but is not important
+> - Link to v1: https://lore.kernel.org/r/20241027-imx-emmc-reset-v1-1-d5d0c672864a@solid-run.com
+> 
+> ---
+> Josua Mayer (2):
+>       mmc: host: sdhci-esdhc-imx: implement emmc hardware reset
+>       mmc: host: sdhci-esdhc-imx: update esdhc sysctl dtocv bitmask
 
-Marking entire wkup_conf as "syscon", "simple-mfd" is wrong and needs to
-be addressed similar to how other child-nodes in wkup_conf are implemented
-in the same file.
+For both:
 
-Signed-off-by: Dhruva Gole <d-gole@ti.com>
----
+Acked-by: Adrian Hunter <adrian.hunter@intel.com>
 
-Since the driver fixes for ti-cpufreq.c have made it in -next [1],
-The DT fixes for SK-AM62x can be supported with support for legacy
-style DT as well. This has been tested on SK-AM62x [2]
-
-[2] https://gist.github.com/DhruvaG2000/40b80cc04a9ac90c86445d6e67ece4cb
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/drivers/cpufreq/ti-cpufreq.c?id=1724ae88efcbcd0daeb203ffeb4a2c0e59f2ddf7
-
-Changelog:
-v3:
-- Update syscon@43000000 to say bus@...
-- Validated that these changes don't break U-Boot:
-https://gist.github.com/DhruvaG2000/2833b895dc79d5ce16265ecf15310add
-- Link to v2:
-https://lore.kernel.org/all/20241030044553.3225383-1-d-gole@ti.com/
-
-v2:
-- Deleted PATCH to Make the AM625 efuse_offset 0, because with [1] we no
-  longer break backward compatibility and hence need to preserve the old
-  offset.
-- Link to v1:
-  https://lore.kernel.org/linux-arm-kernel/20240902093222.2828345-3-d-gole@ti.com/
-
----
-
- arch/arm64/boot/dts/ti/k3-am62-wakeup.dtsi | 9 +++++++--
- arch/arm64/boot/dts/ti/k3-am625.dtsi       | 2 +-
- 2 files changed, 8 insertions(+), 3 deletions(-)
-
-diff --git a/arch/arm64/boot/dts/ti/k3-am62-wakeup.dtsi b/arch/arm64/boot/dts/ti/k3-am62-wakeup.dtsi
-index e0afafd532a5..9b8a1f85aa15 100644
---- a/arch/arm64/boot/dts/ti/k3-am62-wakeup.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-am62-wakeup.dtsi
-@@ -8,9 +8,9 @@
- #include <dt-bindings/bus/ti-sysc.h>
- 
- &cbass_wakeup {
--	wkup_conf: syscon@43000000 {
-+	wkup_conf: bus@43000000 {
- 		bootph-all;
--		compatible = "syscon", "simple-mfd";
-+		compatible = "simple-bus";
- 		reg = <0x00 0x43000000 0x00 0x20000>;
- 		#address-cells = <1>;
- 		#size-cells = <1>;
-@@ -22,6 +22,11 @@ chipid: chipid@14 {
- 			reg = <0x14 0x4>;
- 		};
- 
-+		opp_efuse_table: syscon@18 {
-+			compatible = "ti,am62-opp-efuse-table", "syscon";
-+			reg = <0x18 0x4>;
-+		};
-+
- 		cpsw_mac_syscon: ethernet-mac-syscon@200 {
- 			compatible = "ti,am62p-cpsw-mac-efuse", "syscon";
- 			reg = <0x200 0x8>;
-diff --git a/arch/arm64/boot/dts/ti/k3-am625.dtsi b/arch/arm64/boot/dts/ti/k3-am625.dtsi
-index c3d1db47dc9f..c249883a8a8d 100644
---- a/arch/arm64/boot/dts/ti/k3-am625.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-am625.dtsi
-@@ -108,7 +108,7 @@ cpu3: cpu@3 {
- 	a53_opp_table: opp-table {
- 		compatible = "operating-points-v2-ti-cpu";
- 		opp-shared;
--		syscon = <&wkup_conf>;
-+		syscon = <&opp_efuse_table>;
- 
- 		opp-200000000 {
- 			opp-hz = /bits/ 64 <200000000>;
-
-base-commit: dec9255a128e19c5fcc3bdb18175d78094cc624d
--- 
-2.34.1
 
 
