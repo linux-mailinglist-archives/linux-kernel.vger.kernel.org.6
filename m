@@ -1,107 +1,299 @@
-Return-Path: <linux-kernel+bounces-394729-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394730-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 891349BB348
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 12:30:04 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CEEC9BB33F
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 12:29:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EDAE3B2A26B
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 11:28:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B09981C22287
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 11:29:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7952F1C3F0A;
-	Mon,  4 Nov 2024 11:20:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87B601C4A20;
+	Mon,  4 Nov 2024 11:21:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="n7VSrnfM"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ql0xCViH"
+Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EBB51AC458;
-	Mon,  4 Nov 2024 11:20:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 782EE18A6BA;
+	Mon,  4 Nov 2024 11:21:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730719238; cv=none; b=Rkdo7zIYIZcRImbfCZiKR8bBfJg345Acf9px6La5FNFRBMGaxtjrsdi/QkxAvuODC9qD/IWRtEh3K2pYebgWa7BtmzRjeP71vl0PzCrHcSWqnY91pb/WCmrCvw47K6+DHW9vNFQ7iKHkuhO99QzVCqRwPOOT5JPAxBGqZpEuOcw=
+	t=1730719284; cv=none; b=o+tX97UhKx37mrINMWPG2k8rAiz9uYJiem6GfwTFmKoLaI/UYedy99/uSeJUPHY4hHTx89gcGBwlBZ6eRb5ohlkJH9QZWEWnfRKDSXr2OmXutnkSYcbtrCOVUJceOsbG02KytEDMB1KxkkO/VgqAJaBxjUFFP5hByvFeDYUU5hY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730719238; c=relaxed/simple;
-	bh=VKU/tb7DYOTetaqBJlKR839RYdQxIBWMEDaJYFJAMVc=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YqJ3Nso7ggjoeobeeanTPsjta8qPLBWJsHHAsVwBhTp4ePqx2uPIUybsCNIWoJHdQ52fbBCTZy1hP0a1cwy9kIHC+f0rAT4yZoDuF8/NZOffFCLIwp4DAyRTWn2+Pfct0+RSU0Bk9Qcap/9FZqeJven2XZsUZgFD/ITqlMbV7MU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=n7VSrnfM; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730719237; x=1762255237;
-  h=date:from:to:subject:message-id:references:mime-version:
-   in-reply-to;
-  bh=VKU/tb7DYOTetaqBJlKR839RYdQxIBWMEDaJYFJAMVc=;
-  b=n7VSrnfMxQX9pHYF6qQyeDYQ4itdh4wnbgoWMAQxfJP8yDHG+OniVpwD
-   fEIwBHOggo79UZHdgR3D64u0zlb9x5mARliZwnnSEg6rf57tkdw4qDdy1
-   VyKEq8hkn1D9k7TxW/GNy8WILmdGXv542fv0ooKz/nu+l6xYBJRd1ZgAj
-   UnfmjYtJOoxN28h2e7+n9Q56Pmd04WcVx7KYbfOyDz5+uMA76Fwv5VcDa
-   8EwaYlVZvWIcmy8/V4rjV+zpi3aE9duy81NqN7ltRCwNw1q6lQVPBsfWw
-   aZL/KAFgWj5Zp9mZGKbgyHxiRtGv40HUCsxQLoim2yRwuF4b0CTGlnD+b
-   w==;
-X-CSE-ConnectionGUID: nneO+gDnQ7aK3vpLog1/YA==
-X-CSE-MsgGUID: ZwqAeuDFR1eezxR6132v4g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="30264694"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="30264694"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2024 03:20:36 -0800
-X-CSE-ConnectionGUID: vaZRDFczT9+pICghNuC+Vg==
-X-CSE-MsgGUID: bZE0rVAxTU6ytFwy3A6aZw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,256,1725346800"; 
-   d="scan'208";a="88199494"
-Received: from smile.fi.intel.com ([10.237.72.154])
-  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2024 03:20:35 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1t7v8K-0000000B26W-1Zfg;
-	Mon, 04 Nov 2024 13:20:32 +0200
-Date: Mon, 4 Nov 2024 13:20:32 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Chen-Yu Tsai <wenst@chromium.org>, linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 1/1] i2c: Use *-y instead of *-objs in Makefile
-Message-ID: <ZyiuAIgubo4oZ5dw@smile.fi.intel.com>
-References: <20241018150337.2182181-1-andriy.shevchenko@linux.intel.com>
- <ZyTIf8l1ghcyzJUH@smile.fi.intel.com>
- <ZyTNA34Y1BRxMhhn@shikoro>
- <ZyTSZTcNU63F2GjY@smile.fi.intel.com>
- <ZyTTs8gFx5r_N5Pi@smile.fi.intel.com>
- <ZyiqcHFJFFnBYmTN@shikoro>
+	s=arc-20240116; t=1730719284; c=relaxed/simple;
+	bh=5dWmHeM8L+SOWpGeKy8DQhq+sQL1Cc1fMcoqmHjSiCk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=ihonotw4fMMyvpuVp7NkgEomWfomyCY/39+IYcDPBgofoXng3P5BJCV6HX30yiEQ1HPsnI1hWZ+REX3Gz/AvHc4LdhpPcQyhI35UbKbVHJ6/g6WqIMEo0z+iFmpdRa+BMG6RXsDRYI/Hqpz7WNqAICLHBzWLk52YuZd4UJle8kY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=ql0xCViH; arc=none smtp.client-ip=198.47.19.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4A4BKtUN015957;
+	Mon, 4 Nov 2024 05:20:55 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1730719255;
+	bh=p8zpcibKY3hqksAHMVTShQ6+sIn7mqMODAwSQ0CsTEA=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=ql0xCViHBWFugoltjL0DiHLK5GPOC2702OZOcj2HQFeNnOttIPqkE75n7MR+dci4+
+	 DYtiOQvfmoluKpkZdo0qpPIjA8v+c0T6CvY8zjFgMuq07yQMvfrbSZSizuvSeK/Tfg
+	 YEPPS7dZakeuifFqFZzdezbbAnKONqT7XekNW37w=
+Received: from DFLE102.ent.ti.com (dfle102.ent.ti.com [10.64.6.23])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4A4BKtlx018500;
+	Mon, 4 Nov 2024 05:20:55 -0600
+Received: from DFLE111.ent.ti.com (10.64.6.32) by DFLE102.ent.ti.com
+ (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 4
+ Nov 2024 05:20:54 -0600
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE111.ent.ti.com
+ (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Mon, 4 Nov 2024 05:20:54 -0600
+Received: from [10.24.69.25] (danish-tpc.dhcp.ti.com [10.24.69.25])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4A4BKlVs041849;
+	Mon, 4 Nov 2024 05:20:48 -0600
+Message-ID: <0e661e6a-6057-4a16-bc41-b96cd18e8fe7@ti.com>
+Date: Mon, 4 Nov 2024 16:50:47 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZyiqcHFJFFnBYmTN@shikoro>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v2 2/4] net: hsr: Add VLAN CTAG filter support
+To: Paolo Abeni <pabeni@redhat.com>, <geliang@kernel.org>,
+        <liuhangbin@gmail.com>, <dan.carpenter@linaro.org>, <jiri@resnulli.us>,
+        <n.zhandarovich@fintech.ru>, <aleksander.lobakin@intel.com>,
+        <lukma@denx.de>, <horms@kernel.org>, <jan.kiszka@siemens.com>,
+        <diogo.ivo@siemens.com>, <shuah@kernel.org>, <kuba@kernel.org>,
+        <edumazet@google.com>, <davem@davemloft.net>, <andrew+netdev@lunn.ch>
+CC: <linux-kselftest@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <netdev@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <srk@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
+        Roger Quadros
+	<rogerq@kernel.org>, <m-malladi@ti.com>
+References: <20241024103056.3201071-1-danishanwar@ti.com>
+ <20241024103056.3201071-3-danishanwar@ti.com>
+ <96516e40-5b1b-4bce-a041-7618c03c5de3@redhat.com>
+Content-Language: en-US
+From: MD Danish Anwar <danishanwar@ti.com>
+In-Reply-To: <96516e40-5b1b-4bce-a041-7618c03c5de3@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Mon, Nov 04, 2024 at 01:05:20PM +0200, Wolfram Sang wrote:
+Hi Paolo,
+
+On 31/10/24 8:07 pm, Paolo Abeni wrote:
 > 
-> > > Shouldn't be separated commit anyway?
 > 
-> Can be argued.
+> On 10/24/24 12:30, MD Danish Anwar wrote:
+>> From: Murali Karicheri <m-karicheri2@ti.com>
+>>
+>> This patch adds support for VLAN ctag based filtering at slave devices.
+>> The slave ethernet device may be capable of filtering ethernet packets
+>> based on VLAN ID. This requires that when the VLAN interface is created
+>> over an HSR/PRP interface, it passes the VID information to the
+>> associated slave ethernet devices so that it updates the hardware
+>> filters to filter ethernet frames based on VID. This patch adds the
+>> required functions to propagate the vid information to the slave
+>> devices.
+>>
+>> Signed-off-by: Murali Karicheri <m-karicheri2@ti.com>
+>> Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
+>> ---
+>>  net/hsr/hsr_device.c | 71 +++++++++++++++++++++++++++++++++++++++++++-
+>>  1 file changed, 70 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/net/hsr/hsr_device.c b/net/hsr/hsr_device.c
+>> index 0ca47ebb01d3..ff586bdc2bde 100644
+>> --- a/net/hsr/hsr_device.c
+>> +++ b/net/hsr/hsr_device.c
+>> @@ -515,6 +515,68 @@ static void hsr_change_rx_flags(struct net_device *dev, int change)
+>>  	}
+>>  }
+>>  
+>> +static int hsr_ndo_vlan_rx_add_vid(struct net_device *dev,
+>> +				   __be16 proto, u16 vid)
+>> +{
+>> +	struct hsr_port *port;
+>> +	struct hsr_priv *hsr;
+>> +	int ret = 0;
+>> +
+>> +	hsr = netdev_priv(dev);
+>> +
+>> +	hsr_for_each_port(hsr, port) {
+>> +		if (port->type == HSR_PT_MASTER)
+>> +			continue;
+> 
+> If the desired behavior is to ignore INTERLINK port, I think you should
+> explicitly skip them here, otherwise you will end-up in a
+> nondeterministic state.
+> 
 
-I have an evidence for my side: LKP complained as my (thanks to be a separate)
-patch unveiled the issue in the Kconfig there. Meaning that required a new version
-of the change, while the core part is not affected anyhow.
+Sure, I will change this to
 
-> This patch applied to for-next, thanks!
+	hsr_for_each_port(hsr, port) {
+		if (port->type == HSR_PT_MASTER ||
+		    port->type = HSR_PT_INTERLINK)
+			continue;
 
-Thank you!
+>> +		ret = vlan_vid_add(port->dev, proto, vid);
+>> +		switch (port->type) {
+>> +		case HSR_PT_SLAVE_A:
+>> +			if (ret) {
+>> +				netdev_err(dev, "add vid failed for Slave-A\n");
+>> +				return ret;
+>> +			}
+>> +			break;
+>> +
+>> +		case HSR_PT_SLAVE_B:
+>> +			if (ret) {
+>> +				/* clean up Slave-A */
+>> +				netdev_err(dev, "add vid failed for Slave-B\n");
+>> +				vlan_vid_del(port->dev, proto, vid);
+> 
+> This code relies on a specific port_list order - which is actually
+> respected at list creation time. Still such assumption looks fragile and
+> may lead to long term bugs.
+> 
+
+Agreed. The code is expecting HSR_PT_SLAVE_A to come first and add vid
+for it. Then vid is added for HSR_PT_SLAVE_B. if vlan_vid_add fails for
+HSR_PT_SLAVE_B, vid is deleted for HSR_PT_SLAVE_A before returning.
+
+> I think would be better to refactor the above loop handling arbitrary
+> HSR_PT_SLAVE_A, HSR_PT_SLAVE_B order. Guestimate is that the complexity
+> will not increase measurably.
+> 
+
+I understand this will be better. But how would I figure out which port
+came first.
+
+The current implementation is to add vid for first port. If it fails it
+returns. If it passes it adds vid for second port. If it fails it clears
+vid of first port and returns. If it passes function returns 0.
+
+Now how do I keep this behavior and also handle ports arbitrary. If the
+same order is not guaranteed to be preserved, how would I know which
+port came first so that it can be deleted if second port fails?
+
+One idea I have is to keep two boolean flags is_slave_a_added,
+is_slave_b_added. And based on these flags we can determine if cleanup
+is needed or not.
+
+The add function will then look like this,
+
+static int hsr_ndo_vlan_rx_add_vid(struct net_device *dev,
+				   __be16 proto, u16 vid)
+{
+	bool is_slave_a_added, is_slave_b_added;
+	struct hsr_port *port;
+	struct hsr_priv *hsr;
+	int ret = 0;
+
+	hsr = netdev_priv(dev);
+
+	hsr_for_each_port(hsr, port) {
+		if (port->type == HSR_PT_MASTER ||
+		    port->type = HSR_PT_INTERLINK)
+			continue;
+
+		ret = vlan_vid_add(port->dev, proto, vid);
+		switch (port->type) {
+		case HSR_PT_SLAVE_A:
+			if (ret) {
+				/* clean up Slave-B */
+				netdev_err(dev, "add vid failed for Slave-A\n");
+				if (is_slave_b_added)
+					vlan_vid_del(port->dev, proto, vid);
+				return ret;
+			} else {
+				is_slave_a_added = true;
+			}
+			break;
+
+		case HSR_PT_SLAVE_B:
+			if (ret) {
+				/* clean up Slave-A */
+				netdev_err(dev, "add vid failed for Slave-B\n");
+				if (is_slave_a_added)
+					vlan_vid_del(port->dev, proto, vid);
+				return ret;
+			} else {
+				is_slave_b_added = true;
+			}
+			break;
+		default:
+			break;
+		}
+	}
+
+	return 0;
+}
+
+Let me know if this is OK. Or if you have some other method to handle
+the ports arbitrary.
+
+>> +				return ret;
+>> +			}
+>> +			break;
+>> +		default:
+>> +			break;
+>> +		}
+>> +	}
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static int hsr_ndo_vlan_rx_kill_vid(struct net_device *dev,
+>> +				    __be16 proto, u16 vid)
+>> +{
+>> +	struct hsr_port *port;
+>> +	struct hsr_priv *hsr;
+>> +
+>> +	hsr = netdev_priv(dev);
+>> +
+>> +	hsr_for_each_port(hsr, port) {
+>> +		if (port->type == HSR_PT_MASTER)
+>> +			continue;
+> 
+> I think it would be more consistent just removing the above statement...
+> 
+
+Sure. I'll do it.
+
+>> +		switch (port->type) {
+>> +		case HSR_PT_SLAVE_A:
+>> +		case HSR_PT_SLAVE_B:
+>> +			vlan_vid_del(port->dev, proto, vid);
+>> +			break;
+>> +		default:> +			break;
+> 
+> ... MASTER and INTERLINK port will be ignored anyway.
+> 
+
+Sure.
+
+>> +		}
+>> +	}
+>> +
+>> +	return 0;
+>> +}
+>> +
+>>  static const struct net_device_ops hsr_device_ops = {
+>>  	.ndo_change_mtu = hsr_dev_change_mtu,
+>>  	.ndo_open = hsr_dev_open,
+> 
+> Cheers,
+> 
+> Paolo
+> 
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
-
+Thanks and Regards,
+Danish
 
