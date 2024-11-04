@@ -1,98 +1,155 @@
-Return-Path: <linux-kernel+bounces-394789-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394790-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDE569BB3EC
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 12:54:08 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B04B9BB3EE
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 12:55:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 826CA2835BC
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 11:54:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DAB361F21B80
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 11:55:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5ED771B3933;
-	Mon,  4 Nov 2024 11:54:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g5AJpkIC"
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A3081ABEDC;
-	Mon,  4 Nov 2024 11:54:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72F7C1B3936;
+	Mon,  4 Nov 2024 11:55:24 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 932781B392B
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 11:55:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730721242; cv=none; b=BQ8xxNrK1WhvazED1MebD3GBpmqIcp9K6p9HYWjE9bFR5c6FbAkqkUl555s1TdxAGY4H1csxfIuwueYOzs+vZnDqhw1LZTn4hTfMYA1h6mi8q9f0QzGXnDZJ56QzZdQHmoa5ZTlKLhY4cNU2q+UHPJjl/ICJL9Kmm0DvLibIhgQ=
+	t=1730721324; cv=none; b=eorvXn3kvc+32MfDu1jWZ4ouWdBoNPGO1lGiX8zHTFkkbIiZfnXXR2zhVKasfUY1DFG8qYq4GBVw2D1trPnKFkUXREgXCcCX14dlzo9ORHpbvUYeIluwN1xyqEebOP2G2XogqiyEuaIIFcPCRE/EhaO3WZbudjb3ONbAQOg2+3o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730721242; c=relaxed/simple;
-	bh=9oCCQHDIR/wWCebYEb4OwIHMj8KuW9UZvQqffw9+o6A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MRNHQjuciL20fNiS9QxtTigk9F5YB/f/R1SDc9rxTNNcfDf+kGc+blJ/7Ux5UZyh5hIFN0SNkCMz0W0R9ZmCy5aPysbun2TlWqd/Kc4GVpTyNoR3a7o/G3kYoPZPD0wxPsmVc/BVAmOU0X6r4DOf1xTIgI1pla2004SKUD+8Bug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g5AJpkIC; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-53c73f01284so4568930e87.0;
-        Mon, 04 Nov 2024 03:54:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730721239; x=1731326039; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9oCCQHDIR/wWCebYEb4OwIHMj8KuW9UZvQqffw9+o6A=;
-        b=g5AJpkIC1Pv+KFrlzB60ddZaQWe8r8AJ3owOmCDgiu7xuBjRK0xwqVmUxUj1TUVU03
-         nPiPIzXqxwbAtEBjshfGADkZTv/BnQrCwcsSm6jM7uhA1wBySTqlkVd1G8QG6iwbXGJN
-         VYOX9X2IfDYeY4r4e6vrhrvE6oa98cyPK5Yzz4mtx8jiW3PE7bma87E3DDp0GtzIGtTM
-         VdMYgxQSMcFQGn8jpNPX6SP4+lVfA7K0EWM2ingZHFxD/mbp6dpfOuAFY75VLdf36VET
-         bzCTb7/xPcuc2KCzc0s21gNQpyj/hRdSgUqZ2S3yvxrZatRD/0P700t53nV3r9FF7xWc
-         OXUw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730721239; x=1731326039;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9oCCQHDIR/wWCebYEb4OwIHMj8KuW9UZvQqffw9+o6A=;
-        b=meKH3pan4NYC6SsJkbVU8Oa52LUBCw168IMmbuXS84xukj8f06fRw3Q/rdcu79wamw
-         E4XWagJNCuC7qqFaI9Bi12ws/vWuNlUd9cTKeQU+tmzG2LSaNg2qLnkssQdDM9CLOYPe
-         vfYhoLdRf7BByeTvWsyWCBsAgSBub4SO9vWcdrvwVPeDlDuftG/GNF4kZIHXJK9rukTU
-         Arp4hCB6OhydlUx6nN1gHPAnpoQ9wzFj7JIDNE6kfldQ9/vp3DEbzBoRaDE1+yKbNAzK
-         Ldrc1wTCNa+gXKLXAvjkrv7Uw744v31PVQSVyq+RRoXBxbSQm5Ud9GSqBeJjZQd4CcjE
-         pO0Q==
-X-Forwarded-Encrypted: i=1; AJvYcCV745LInLkf3qIH+a5+GW+WRq8TW/j7xR8J8uKDwXGyqLIep4sqNozrQnNwM1kUVF6YetZB3JUp+pA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxnHJvuagauivYCbSNJ/Crv8Ht4OYpbpCfPfz01XP3tRICQLV+l
-	4vzV1IwW1T+T04M0M01ZZtV43/3XLsFBUhEM+d1KusTrRVtzbnGh8ZgPWjqe
-X-Google-Smtp-Source: AGHT+IGoCujG4x/64wc2erIbt4eP01F1+dPTpxpuUjLqJXFQuIDmFkMWs2YUZdOQkcHx/cdCHIiNFA==
-X-Received: by 2002:a05:6512:b8a:b0:536:54e9:3a63 with SMTP id 2adb3069b0e04-53c79ea562amr6688287e87.49.1730721239007;
-        Mon, 04 Nov 2024 03:53:59 -0800 (PST)
-Received: from grain.localdomain ([5.18.251.97])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53c7bc96281sm1657553e87.15.2024.11.04.03.53.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Nov 2024 03:53:58 -0800 (PST)
-Received: by grain.localdomain (Postfix, from userid 1000)
-	id 34D285A003D; Mon,  4 Nov 2024 14:53:58 +0300 (MSK)
-Date: Mon, 4 Nov 2024 14:53:58 +0300
-From: Cyrill Gorcunov <gorcunov@gmail.com>
-To: LKML <linux-kernel@vger.kernel.org>, linux-efi@vger.kernel.org
-Cc: Ard Biesheuvel <ardb@kernel.org>
-Subject: Re: [PATCH] efi: Fix memory leak in efivar_ssdt_load
-Message-ID: <Zyi11v-6V_ivKS5x@grain>
-References: <ZyizcvscUWIyZYdE@grain>
+	s=arc-20240116; t=1730721324; c=relaxed/simple;
+	bh=z1Rs3oIzWXpJJEB7tixIBqfCMIPqqY3WEg3jAc8FD+8=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=Cul/1lWFLvwvwyStvKB426xeUgUd+3MR7irer45HqLQuxnOCaHoW7cYijFm4T8ReUvuMvb87GbGu0CV4RNp+BL1EQW2nCxngg3uhWyl6Cj7EuxOIZQNCrjZWGzmv5ZwoJ6qRfoLNJ0fA3T/QiLED7nNZburPsL7MK5NCR6Ux62Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B48A5FEC;
+	Mon,  4 Nov 2024 03:55:50 -0800 (PST)
+Received: from [192.168.178.6] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9B7C43F6A8;
+	Mon,  4 Nov 2024 03:55:18 -0800 (PST)
+Message-ID: <425cb94a-96b3-4863-8bbb-78e18d5a4939@arm.com>
+Date: Mon, 4 Nov 2024 12:55:00 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZyizcvscUWIyZYdE@grain>
-User-Agent: Mutt/2.2.12 (2023-09-09)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 17/24] sched/fair: Implement delayed dequeue
+From: Dietmar Eggemann <dietmar.eggemann@arm.com>
+To: Phil Auld <pauld@redhat.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: mingo@redhat.com, juri.lelli@redhat.com, vincent.guittot@linaro.org,
+ rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+ vschneid@redhat.com, linux-kernel@vger.kernel.org, kprateek.nayak@amd.com,
+ wuyun.abel@bytedance.com, youssefesmat@chromium.org, tglx@linutronix.de,
+ efault@gmx.de, Christian Loehle <christian.loehle@arm.com>
+References: <20240727102732.960974693@infradead.org>
+ <20240727105030.226163742@infradead.org>
+ <20241101124715.GA689589@pauld.westford.csb>
+ <ed46d844-e0b0-46fd-a164-9bfad538a7a9@arm.com>
+Content-Language: en-US
+In-Reply-To: <ed46d844-e0b0-46fd-a164-9bfad538a7a9@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Mon, Nov 04, 2024 at 02:43:46PM +0300, Cyrill Gorcunov wrote:
-> When we load ssdt from efi variable (specified with efivar_ssdt=something
-> boot command line argument) a name for the variable is allocated
-> dynamically because we traverse all efi variables. Unlike an acpi table
-> data, which is later used by acpi engine, the name is no longer needed
-> once traverse is complete -- don't forget to free this memory.
++cc Christian Loehle <christian.loehle@arm.com>
 
-Drop it for a while: found that ret variable is shadowed while compiler
-didn't spit a warn about, not a bug but better fix it. Will send v2.
+On 04/11/2024 10:28, Dietmar Eggemann wrote:
+> Hi Phil,
+> 
+> On 01/11/2024 13:47, Phil Auld wrote:
+>>
+>> Hi Peterm
+>>
+>> On Sat, Jul 27, 2024 at 12:27:49PM +0200 Peter Zijlstra wrote:
+>>> Extend / fix 86bfbb7ce4f6 ("sched/fair: Add lag based placement") by
+>>> noting that lag is fundamentally a temporal measure. It should not be
+>>> carried around indefinitely.
+>>>
+>>> OTOH it should also not be instantly discarded, doing so will allow a
+>>> task to game the system by purposefully (micro) sleeping at the end of
+>>> its time quantum.
+>>>
+>>> Since lag is intimately tied to the virtual time base, a wall-time
+>>> based decay is also insufficient, notably competition is required for
+>>> any of this to make sense.
+>>>
+>>> Instead, delay the dequeue and keep the 'tasks' on the runqueue,
+>>> competing until they are eligible.
+>>>
+>>> Strictly speaking, we only care about keeping them until the 0-lag
+>>> point, but that is a difficult proposition, instead carry them around
+>>> until they get picked again, and dequeue them at that point.
+>>
+>> This one is causing a 10-20% performance hit on our filesystem tests.
+>>
+>> On 6.12-rc5 (so with the latest follow ons) we get:
+>>
+>> with DELAY_DEQUEUE the bandwidth is 510 MB/s
+>> with NO_DELAY_DEQUEUE the bandwidth is 590 MB/s
+>>
+>> The test is fio, something like this:
+>>
+>> taskset -c 1,2,3,4,5,6,7,8 fio --rw randwrite --bs 4k --runtime 1m --fsync 0 --iodepth 32 --direct 1 --ioengine libaio --numjobs 8 --size 30g --nrfiles 1 --loops 1 --name default --randrepeat 1 --time_based --group_reporting --directory /testfs
+> 
+> I'm not seeing this on my i7-13700K running tip sched/core (1a6151017ee5
+> - sched: psi: pass enqueue/dequeue flags to psi callbacks directly
+> (2024-10-26 Johannes Weiner)) (6.12.0-rc4 - based)
+> 
+> Using 'taskset 0xaaaaa' avoiding SMT and running only on P-cores.
+                 ^^^^^^^
+> 
+> vanilla features: 990MB/s (mean out of 5 runs, σ:  9.38)
+> NO_DELAY_DEQUEUE: 992MB/s (mean out of 5 runs, σ: 10.61)
+
+Christian Loehle just told me that my cpumask looks odd. Should be
+0xaaaa instead.
+
+Retested:
+
+vanilla features: 954MB/s (mean out of 5 runs, σ: 30.83)
+NO_DELAY_DEQUEUE: 932MB/s (mean out of 5 runs, σ: 28.10)
+
+Now there are only 8 CPUs (instead of 10) for the 8 (+2) fio tasks. σ
+went up probably because of more wakeup/preemption latency.
+
+> 
+> # sudo lshw -class disk -class storage
+>   *-nvme                    
+>        description: NVMe device
+>        product: GIGABYTE GP-ASM2NE6500GTTD
+>        vendor: Phison Electronics Corporation
+>        physical id: 0
+>        bus info: pci@0000:01:00.0
+>        logical name: /dev/nvme0
+>        version: EGFM13.2
+>        ...
+>        capabilities: nvme pciexpress msix msi pm nvm_express bus_master cap_list
+>        configuration: driver=nvme latency=0 nqn=nqn.2014.08.org.nvmexpress:19871987SN215108954872 GIGABYTE GP-ASM2NE6500GTTD state=live
+>        resources: irq:16 memory:70800000-70803fff
+> 
+> # mount | grep ^/dev/nvme0
+> /dev/nvme0n1p2 on / type ext4 (rw,relatime,errors=remount-ro)
+> 
+> Which disk device you're using?
+> 
+>>
+>> In this case it's ext4, but I'm not sure it will be FS specific.
+>>
+>> I should have the machine and setup next week to poke further but I wanted
+>> to mention it now just in case any one has an "aha" moment.
+>>
+>> It seems to only effect these FS loads. Other perf tests are not showing any
+>> issues that I am aware of.
+> 
+> [...]
+> 
+> 
+
 
