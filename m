@@ -1,165 +1,156 @@
-Return-Path: <linux-kernel+bounces-394677-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394679-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE4379BB2A8
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 12:14:01 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC0419BB2AE
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 12:14:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 938E8280628
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 11:14:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 244A0B25CF5
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 11:14:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7365F1B6CE3;
-	Mon,  4 Nov 2024 10:57:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 971071CACE9;
+	Mon,  4 Nov 2024 10:57:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EADOQrSt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=apertussolutions.com header.i=dpsmith@apertussolutions.com header.b="GIIdlh5w"
+Received: from sender4-of-o51.zoho.com (sender4-of-o51.zoho.com [136.143.188.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9447E1B4F24;
-	Mon,  4 Nov 2024 10:56:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730717819; cv=none; b=oRBgYkOkFYPZng/LqDIa1f+L5+0QV9wFMfMUiPBu0oR46kfqZxIPOLN6JOr8yOEG8pO3CYL7Rl4+/gXMfV57WDgob+aOtUY/vAsXGztVyYc90wp7xOu9PF76eqXywR8wbOiUvGPd9HjsSx3GZlZVShIWWvuXSVmbb1FfE07BmGQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730717819; c=relaxed/simple;
-	bh=6qFxuwoqjmsBXA5afiRPckV6EYzE55EhM//TIyBTrQ4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RX/u69nqfzdjM28rBltoLSiqtM+WNhwFa1UaRXLk267VbKeAio3z4s/dGLdF+zqX1nmEGx1mMQxOmj3ha2Ofg7v+iLy17B7oVfX3mHEJfbuvg1+aAu0NxC+Hvw/u3OgglnMeiWcfEg615atuQYbCXIJaW+2AVK4X2++UsMzf5aI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EADOQrSt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21EEAC4AF0B;
-	Mon,  4 Nov 2024 10:56:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730717818;
-	bh=6qFxuwoqjmsBXA5afiRPckV6EYzE55EhM//TIyBTrQ4=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=EADOQrSt03YURgotEa0RPC+Q+iLgiLTpyDunuCSyI8JrnJ8j4YEhKIdjW/X9XmfJY
-	 sTCnqIY+Z2AkNeyzcvIvr+dGT6FfLBfZvlbrdb8z2SiV9hm+elSOB97O2rE7ro9EXq
-	 0i/CQC7v2klAcuIyDxn2pg7/smSOsw0dT4Hhws9swr3/XRUtzPo+CxQGrrBX7df8D/
-	 5J0t2oN4EkGyZAZoiEf4JRfD6nAiE3emF0OuGcBGMMWHNR23yXfKnSbJVb11OHm5BV
-	 KUm+3gkbO7B14khPoblQ7uBvr3V7hMm9Omm80Fu2OU58gX+loUjMi/2DNHEoGYci8U
-	 QgiPNae8TP/uQ==
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2fb5014e2daso35066781fa.0;
-        Mon, 04 Nov 2024 02:56:58 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCU7xoBdSw7WBFogoDHrvE/HqzdjwEOMmImfj5rv727+uNW/nWwMxb3aiB7GFtwozVTPQXy86AO1OXkOnA==@vger.kernel.org, AJvYcCVTNBsOqHLkgtJGigBa/isJCHgbsiNKmrI5+kvbgDZcJMeFzwkEWE8ebTXv9KJOhRQuLTjesgqi70UBQw==@vger.kernel.org, AJvYcCWhDBFSu3muOSQSSs5FLIsmxVvCuKCon8MkpgER6rPwM10QDNjNEyRL4fy7UB6uE1jQSxbEmD5xrN1k1Q==@vger.kernel.org, AJvYcCWmhuBs1pzG9bt5+VLjZi5DL2AB1zkrHH/DB9jywzV8yx+aa4/gkdW/FLE+qWNExzJp4VElgRen2cxA3g==@vger.kernel.org, AJvYcCXGlD8wbx/QOszbqxlvihfhb/O3PE1S70sQ7efuGiglxTzoFONrTZEvN3S9PVnXA2m5TMzVC/M/BgrAIgZw@vger.kernel.org, AJvYcCXY3zmKZULtzD2Qr1zBSDOYio63vSwOslNKHj+27/utSV9rOR3qtlx3vUvQunPMQJzsmsyZ+7+XTmLwAw==@vger.kernel.org, AJvYcCXYoWKKilKSRHmfTlQo4SNi/uvKlFp3wszbHnscl+4A/hvKqyecntMb+onVXOjIloFhiiooKJqfzczT@vger.kernel.org
-X-Gm-Message-State: AOJu0YxZv9/XWtQTI9Xl/GbxNVl6C/JDclJIDl6e10MIEY986QPphn4W
-	42vPreOs/bE68tplLb8Kx6uGt4UNZMTFJFzrF25lhdJXu53MTiejtzRWcsgi/hgiTtoaYuiP0zT
-	5igiVkkHpuBqsmNl8GzpBN9pUgZA=
-X-Google-Smtp-Source: AGHT+IGbnKnh4aAfaULtSCmiukLUpnKZU5MlHxJghtOAuKX/zIcXfbKXe/xSvudBsLa83HeLXpJgE1iAQVUbiw2PNrM=
-X-Received: by 2002:a05:651c:1508:b0:2fa:fc41:cf80 with SMTP id
- 38308e7fff4ca-2fedb7ecd4amr43930581fa.43.1730717816511; Mon, 04 Nov 2024
- 02:56:56 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B17621B372C;
+	Mon,  4 Nov 2024 10:57:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.51
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730717852; cv=pass; b=gIFLeMWqaK9dSCVudhMP0U1nJpDlfrm0w+8SRW/noI4Fi8tqj/D2axd0qnRQfUN0SQswD3y/HFv9jfW7AJNijYZyGrEsywoLjUhJKMGnOqF6NGncTjEjMGN3bMH6ubQWyJVpfLgZ2PzB78kfjmcGSskc+vEVLJQ3Rih/B/8iPXI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730717852; c=relaxed/simple;
+	bh=fOpkG52q1A+HtoIJfAJXCeTIHRMQs3xXp9NhZVlXvBU=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=r52sT4yMwk8wqkURbsIfZ6yplUTjEbiLJU82gNQ8bQIXcK/J/SokM1+cNTisZ/fsWtxPVfmZBa87K46xWDRKLjMFVDijBdgSMHhVlu3NbYT7UzVrNL8naXqOEqs9BGLQH2GFQqd6JbTbGe6N0sO2N5kLR1cPYp4pBzc92171Z0w=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=apertussolutions.com; spf=pass smtp.mailfrom=apertussolutions.com; dkim=pass (1024-bit key) header.d=apertussolutions.com header.i=dpsmith@apertussolutions.com header.b=GIIdlh5w; arc=pass smtp.client-ip=136.143.188.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=apertussolutions.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=apertussolutions.com
+ARC-Seal: i=1; a=rsa-sha256; t=1730717831; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=WoxPHBCaNZsN1PY8VHPMdaSTmp0IMj5cvLoFQLiAI5qJ4BBGbczBnqxh3Z2mPLEW7+io+aEhtsqwbr/RjjZX1yMlxqfzBqanemwJ/063J/UC0SSPLyRokWC/wfMoY3ysSzUcuOrDWUs2fSpjGLqigr7ky719ANCjs4dizuxGNFU=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1730717831; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=NCYgbbjvLSlIO5KLUNVwElkEFTf5UhLG5MjWOWtA/BM=; 
+	b=dKsvtcyVHJ9/D7wfPZ1iqk3YFjDgvdoUkcxXwulzhP5uLYeARLEY8SmkQbPwceQhVmjeJe2+632e2hLoQfuxoQxwpxYBlf9tr5TH1/hJfiAvnI/2roLChg1qPEmpQMyk8uUxpEs+06b9yKHd/SHHSkBW2Q2gd2c7Abi2qN4p010=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=apertussolutions.com;
+	spf=pass  smtp.mailfrom=dpsmith@apertussolutions.com;
+	dmarc=pass header.from=<dpsmith@apertussolutions.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1730717831;
+	s=zoho; d=apertussolutions.com; i=dpsmith@apertussolutions.com;
+	h=Message-ID:Date:Date:MIME-Version:From:From:Subject:Subject:To:To:Cc:Cc:References:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=NCYgbbjvLSlIO5KLUNVwElkEFTf5UhLG5MjWOWtA/BM=;
+	b=GIIdlh5wirXlKagVoJfCMGEKO+314eFkR70UHRm+iBDyI8RLB4WFavmAvSsr3qc9
+	RsUKu+zOlxOCn/SQ7HMOSi6fVGtOhF5/9RgqA8AMy6d8rH40onYH5QCHbrCBssANph1
+	Gh5TmacJR4b/iaPS2XblexVQX4CZT0Kzrfb6eNsw=
+Received: by mx.zohomail.com with SMTPS id 1730717828500465.26295474390076;
+	Mon, 4 Nov 2024 02:57:08 -0800 (PST)
+Message-ID: <e745226d-4722-43ed-86ad-89428f56fcba@apertussolutions.com>
+Date: Mon, 4 Nov 2024 05:57:01 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241103223154.136127-1-ebiggers@kernel.org> <20241103223154.136127-5-ebiggers@kernel.org>
-In-Reply-To: <20241103223154.136127-5-ebiggers@kernel.org>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Mon, 4 Nov 2024 11:56:45 +0100
-X-Gmail-Original-Message-ID: <CAMj1kXH3C1xP7865V-mJ+3=FDHTR-df909=7jift_Z6dmp58Gw@mail.gmail.com>
-Message-ID: <CAMj1kXH3C1xP7865V-mJ+3=FDHTR-df909=7jift_Z6dmp58Gw@mail.gmail.com>
-Subject: Re: [PATCH v3 04/18] crypto: crc32 - don't unnecessarily register
- arch algorithms
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org, 
-	linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, 
-	linux-mips@vger.kernel.org, linux-riscv@lists.infradead.org, 
-	linux-s390@vger.kernel.org, linux-scsi@vger.kernel.org, 
-	linuxppc-dev@lists.ozlabs.org, loongarch@lists.linux.dev, 
-	sparclinux@vger.kernel.org, x86@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+From: "Daniel P. Smith" <dpsmith@apertussolutions.com>
+Subject: Re: [RFC PATCH 0/4] Alternative TPM patches for Trenchboot
+To: Jarkko Sakkinen <jarkko@kernel.org>
+Cc: x86@kernel.org, Ross Philipson <ross.philipson@oracle.com>,
+ Ard Biesheuvel <ardb@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+ Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
+ "open list:TPM DEVICE DRIVER" <linux-integrity@vger.kernel.org>,
+ open list <linux-kernel@vger.kernel.org>
+References: <20241102152226.2593598-1-jarkko@kernel.org>
+ <D5BW0P0HH0QL.7Y4HBLJGEDL8@kernel.org>
+Content-Language: en-US
+In-Reply-To: <D5BW0P0HH0QL.7Y4HBLJGEDL8@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ZohoMailClient: External
 
-On Sun, 3 Nov 2024 at 23:32, Eric Biggers <ebiggers@kernel.org> wrote:
->
-> From: Eric Biggers <ebiggers@google.com>
->
-> Instead of registering the crc32-$arch and crc32c-$arch algorithms if
-> the arch-specific code was built, only register them when that code was
-> built *and* is not falling back to the base implementation at runtime.
->
-> This avoids confusing users like btrfs which checks the shash driver
-> name to determine whether it is crc32c-generic.
->
-> (It would also make sense to change btrfs to test the crc32_optimization
-> flags itself, so that it doesn't have to use the weird hack of parsing
-> the driver name.  This change still makes sense either way though.)
->
-> Signed-off-by: Eric Biggers <ebiggers@google.com>
+On 11/2/24 14:00, Jarkko Sakkinen wrote:
+> On Sat Nov 2, 2024 at 5:22 PM EET, Jarkko Sakkinen wrote:
+>> It is not really my problem but I'm also wondering how the
+>> initialization order is managed. What if e.g. IMA happens to
+>> initialize before slmodule?
+> 
+> The first obvious observation from Trenchboot implementation is that it
+> is 9/10 times worst idea ever to have splitted root of trust. Here it
+> is realized by an LKM for slmodule.
 
-Reviewed-by: Ard Biesheuvel <ardb@kernel.org>
+First, there is no conflict between IMA and slmodule. With your change 
+to make locality switching a one shot, the only issue would be if IMA 
+were to run first and issue a locality switch to Locality 0, thus 
+blocking slmodule from switching to Locality 2. As for PCR usage, IMA 
+uses the SRTM PCRs, which are completely accessible under Locality 2.
 
-> ---
->  crypto/crc32_generic.c  | 8 ++++++--
->  crypto/crc32c_generic.c | 8 ++++++--
->  2 files changed, 12 insertions(+), 4 deletions(-)
->
-> diff --git a/crypto/crc32_generic.c b/crypto/crc32_generic.c
-> index cc064ea8240e..783a30b27398 100644
-> --- a/crypto/crc32_generic.c
-> +++ b/crypto/crc32_generic.c
-> @@ -155,19 +155,23 @@ static struct shash_alg algs[] = {{
->         .base.cra_ctxsize       = sizeof(u32),
->         .base.cra_module        = THIS_MODULE,
->         .base.cra_init          = crc32_cra_init,
->  }};
->
-> +static int num_algs;
-> +
->  static int __init crc32_mod_init(void)
->  {
->         /* register the arch flavor only if it differs from the generic one */
-> -       return crypto_register_shashes(algs, 1 + IS_ENABLED(CONFIG_CRC32_ARCH));
-> +       num_algs = 1 + ((crc32_optimizations() & CRC32_LE_OPTIMIZATION) != 0);
-> +
-> +       return crypto_register_shashes(algs, num_algs);
->  }
->
->  static void __exit crc32_mod_fini(void)
->  {
-> -       crypto_unregister_shashes(algs, 1 + IS_ENABLED(CONFIG_CRC32_ARCH));
-> +       crypto_unregister_shashes(algs, num_algs);
->  }
->
->  subsys_initcall(crc32_mod_init);
->  module_exit(crc32_mod_fini);
->
-> diff --git a/crypto/crc32c_generic.c b/crypto/crc32c_generic.c
-> index 04b03d825cf4..985da981d6e2 100644
-> --- a/crypto/crc32c_generic.c
-> +++ b/crypto/crc32c_generic.c
-> @@ -195,19 +195,23 @@ static struct shash_alg algs[] = {{
->         .base.cra_ctxsize       = sizeof(struct chksum_ctx),
->         .base.cra_module        = THIS_MODULE,
->         .base.cra_init          = crc32c_cra_init,
->  }};
->
-> +static int num_algs;
-> +
->  static int __init crc32c_mod_init(void)
->  {
->         /* register the arch flavor only if it differs from the generic one */
-> -       return crypto_register_shashes(algs, 1 + IS_ENABLED(CONFIG_CRC32_ARCH));
-> +       num_algs = 1 + ((crc32_optimizations() & CRC32C_OPTIMIZATION) != 0);
-> +
-> +       return crypto_register_shashes(algs, num_algs);
->  }
->
->  static void __exit crc32c_mod_fini(void)
->  {
-> -       crypto_unregister_shashes(algs, 1 + IS_ENABLED(CONFIG_CRC32_ARCH));
-> +       crypto_unregister_shashes(algs, num_algs);
->  }
->
->  subsys_initcall(crc32c_mod_init);
->  module_exit(crc32c_mod_fini);
->
-> --
-> 2.47.0
->
->
+The RoT for DRTM is the CPU/microcode, and that is not split. I am going 
+to assume that you are speaking about the delay between the time of 
+collecting measurement to the time of storing measurement? As a 
+refresher, an RTM trust chain is constructed using the transitive 
+trust[1] process. As noted in the definition, the Linux kernel in this 
+case is considered a group of functions that were all evaluated and 
+considered functions to be equally part of the TCB. This means you are 
+trusting actions at time interval M equally to an action taken at time 
+interval N. If one attempts to construct an argument that claims this is 
+invalid, that would mean all RTM trust chains constructed in this manner 
+are invalidated, including SRTM aka SecureBoot. This means as long as 
+the measurements are recorded before the TCB is extended again, then it 
+does not matter if it is done at time M or time N.
+
+Bringing this back to SecureLaunch, there would only be an issue if 
+slmodule could be built as an external loadable module, thus not being 
+part of the "group of functions" measured and executed by the SINIT ACM. 
+AFAICT, slmodule can only either be compiled in or out, not as a 
+loadable module. If there is a path we missed that allows it to be built 
+as a loadable module, then that needs correcting. Due to this comment, I 
+went testing KCONFIG options and could not come up with a way for this 
+to occur. I did see that we probably should change CONFIG_SECURE_LAUNCH 
+dependency from TCG_TPM to TPM_TIS and TCG_CRB. Just to avoid an invalid 
+configuration where the necessary interfaces were not present, leading 
+to triggering a TXT reset of the platform.
+
+[1] Transitive trust (TCG D-RTM Architecture - Version 1.0.0)
+Also known as "inductive trust." In this process, the Root of Trust 
+gives a trustworthy description of a second group of functions. Based on 
+this description, an interested entity can determine the trust it is to 
+place in this second group of functions. If the interested entity 
+determines that the trust level of the second group of functions is 
+acceptable, the trust boundary is extended from the Root of Trust to
+include the second group of functions. In this case, the process can be
+iterated. The second group of functions can give a trustworthy 
+description of the third group of functions, etc. Transitive trust is 
+used to provide a trustworthy description of platform characteristics.
+
+> So based on that usually a literal and unquestionable truth, when it
+> comes to securing platforms, the next question is how to make a single
+> atomic root of trust for Trenchboot.
+As mentioned above, there is no split currently.
+
+> There is really only one answer I think of for this it to make slmodule
+> part of the tpm_tis_core and also init order will be sorted out.
+
+Only if your assertion that it was split, which it is not.
+
+> I'll describe the steps forward.
+
+Honestly, a better path forward would be to revisit the issue that is
+driving most of that logic existing, which is the lack of a TPM
+interface code in the setup kernel. As a reminder, this issue is due to
+the TPM maintainers position that the only TPM code in the kernel can be
+the mainline driver. Which, unless something has changed, is impossible
+to compile into the setup kernel due to its use of mainline kernel
+constructs not present in the setup kernel.
+
+v/r,
+dps
+
+
 
