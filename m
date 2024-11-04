@@ -1,107 +1,92 @@
-Return-Path: <linux-kernel+bounces-394868-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394869-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 863479BB51A
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 13:53:09 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44AE19BB51F
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 13:53:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B47B28180A
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 12:53:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 75A541C20B51
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 12:53:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B2441BAED6;
-	Mon,  4 Nov 2024 12:52:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="c4/LBGY7"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F41EB1BBBD6;
+	Mon,  4 Nov 2024 12:53:10 +0000 (UTC)
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B03F469D;
-	Mon,  4 Nov 2024 12:52:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69FE61B6CFE;
+	Mon,  4 Nov 2024 12:53:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730724775; cv=none; b=VcbC7V5frz3x9MfQuGdh4x+Yv9n02eLAARzKb53PJehkfMn0DPELqrcVdGzmB9RJWRh6kEIPDAFEbI7x530mzuNVuDhQp7ouW+eo7cN3M7WNDC17mXNLkY5XrxzTFXe8KYDbrui7m4vn9VkE6d0vPXmCwvO6hPxllkuUxEOPFk8=
+	t=1730724790; cv=none; b=HOgOno/aW5CWwM/BAE++lrkckLWkqhV9grMwgiJWLAXc8LFQmwcVaAtKPTUXog4Mtj2W6z2TkrbYV2In51QMsRctfRTtNDGvkEevhCnKwUNQ1Nb1BbvfuqbWjO+UakumaRAhZii6H1EawnZGgKe1Pr37cPR6yW7JmysLQzeNF9I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730724775; c=relaxed/simple;
-	bh=ANTbVCW0p743koiKmSwP6yybPkRApgMTvYOFrIgxO78=;
+	s=arc-20240116; t=1730724790; c=relaxed/simple;
+	bh=gilSNoWQMNdGklRFQgFhfjvxiTNJuGwF0N1Xv7U5/Pk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SAbvrq8gtLMWQPSbPdeGWjVpEYpW8fHEL9UsmWrVOzIHKXOv2JakQkAG+RLwChczUNMxWA4mI1QrsVfKqkt7Hb4POLh6hFTa602le7D75pEBA8PBOOc21SbmlPAjbm/XqYtxTf2hYtlyvXX/YGXSxRLZjJmSpohXm8ejKYFQ9HU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=c4/LBGY7; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
-	:Subject; bh=kADjd8kqhUMSYcoq7QoZ4zsjQnCSkY2oLGDs2k8/ZTw=; b=c4/LBGY7fiL13fAD
-	N4K+Xsn7zJd1CpCwHNxm9LXWSU3JZp6gfZWccHQWhuQsRjoowM/SbqIxGLgBau9ndwkWf7VAnyFVe
-	iJYP/JAa3uHZi+iyAt+LeGPjwj7+TXa8gvaqj/qY9KW6QFwX5L2WKSLBL5P0R9fKaPL65XBld+qKs
-	4x9Amy9jxlYdRHI2M4yhgVJyV+lDo8Ua9kbdRHJZ2dm+NtO+U5iNP25GL8c/kd+3P4ae17yMH9m+J
-	TitjipHbjeDjSEv2j+TL/eh2W+JHtzUOf7/1EZYhbqIJefmOmVpNYoL+8Y6FnwZmBs1YC0Y4Z5Pw4
-	kuJ9yXWKUedthU2yqg==;
-Received: from dg by mx.treblig.org with local (Exim 4.96)
-	(envelope-from <dg@treblig.org>)
-	id 1t7wZb-00FJyz-1v;
-	Mon, 04 Nov 2024 12:52:47 +0000
-Date: Mon, 4 Nov 2024 12:52:47 +0000
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
-To: Kalle Valo <kvalo@kernel.org>
-Cc: pkshih@realtek.com, linux-wireless@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] rtlwifi: Remove more unused functions
-Message-ID: <ZyjDn0R7gzDQ4jnT@gallifrey>
-References: <20241103153857.255450-1-linux@treblig.org>
- <20241103153857.255450-3-linux@treblig.org>
- <87y11zxwlr.fsf@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=SVAD3oY3o9ipAH3rJQBtTVcfId0cXaA/jPjkxudLZOXFYCdVgUgMOjC1dZs0E0+DymwTN0TzkhV13Wl8UgFqHRpoj6tJDZvnC2gx3FyVS1gek+v3GxM5uyN2VFl4hufUSBfjeyrfBxywiFj+tHiSDxMfp6lhJo/u5ImFJUhNzv8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id D6983227AAF; Mon,  4 Nov 2024 13:53:02 +0100 (CET)
+Date: Mon, 4 Nov 2024 13:53:02 +0100
+From: Christoph Hellwig <hch@lst.de>
+To: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Christoph Hellwig <hch@lst.de>, Robin Murphy <robin.murphy@arm.com>,
+	Leon Romanovsky <leon@kernel.org>, Jens Axboe <axboe@kernel.dk>,
+	Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+	Sagi Grimberg <sagi@grimberg.me>,
+	Leon Romanovsky <leonro@nvidia.com>,
+	Keith Busch <kbusch@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Logan Gunthorpe <logang@deltatee.com>,
+	Yishai Hadas <yishaih@nvidia.com>,
+	Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
+	Kevin Tian <kevin.tian@intel.com>,
+	Alex Williamson <alex.williamson@redhat.com>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	=?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+	linux-rdma@vger.kernel.org, iommu@lists.linux.dev,
+	linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org,
+	kvm@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH v1 07/17] dma-mapping: Implement link/unlink ranges API
+Message-ID: <20241104125302.GA11168@lst.de>
+References: <cover.1730298502.git.leon@kernel.org> <f8c7f160c9ae97fef4ccd355f9979727552c7374.1730298502.git.leon@kernel.org> <51c5a5d5-6f90-4c42-b0ef-b87791e00f20@arm.com> <20241104091048.GA25041@lst.de> <20241104121924.GC35848@ziepe.ca>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <87y11zxwlr.fsf@kernel.org>
-X-Chocolate: 70 percent or better cocoa solids preferably
-X-Operating-System: Linux/6.1.0-21-amd64 (x86_64)
-X-Uptime: 12:50:18 up 180 days, 4 min,  1 user,  load average: 0.03, 0.04,
- 0.00
-User-Agent: Mutt/2.2.12 (2023-09-09)
+In-Reply-To: <20241104121924.GC35848@ziepe.ca>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-* Kalle Valo (kvalo@kernel.org) wrote:
-> linux@treblig.org writes:
+On Mon, Nov 04, 2024 at 08:19:24AM -0400, Jason Gunthorpe wrote:
+> > That's a good point.  Only mapped through host bridge P2P can even
+> > end up here, so the address is a perfectly valid physical address
+> > in the host.  But I'm not sure if all arch_sync_dma_for_device
+> > implementations handle IOMMU memory fine.
 > 
-> > From: "Dr. David Alan Gilbert" <linux@treblig.org>
-> >
-> > exhalbtc_dbg_control(), exhalbtc_stack_update_profile_info(),
-> > exhalbtc_set_hci_version(), and exhalbtc_set_bt_patch_version() are
-> > unused since their addition in 2014 by
-> > commit aa45a673b291 ("rtlwifi: btcoexist: Add new mini driver")
-> >
-> > Remove them.
-> >
-> > Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
-> 
-> 'wifi:' missing.
+> I was told on x86 if you do a cache flush operation on MMIO there is a
+> chance it will MCE. Recently had some similar discussions about ARM
+> where it was asserted some platforms may have similar.
 
-Oops, can add that.
+On x86 we never flush caches for DMA operations anyway, so x86 isn't
+really the concern here, but architectures that do cache incoherent DMA
+to PCIe devices.  Which isn't a whole lot as most SOCs try to avoid that
+for PCIe even if they lack DMA coherent for lesser peripherals, but I bet
+there are some on arm/arm64 and maybe riscv or mips.
 
-> Also in both patches the subject could be more unique.
+> It would be safest to only call arch flushing calls on memory that is
+> mapped cachable. We can assume that a P2P target is never CPU
+> mapped cachable, regardless of how the DMA is routed.
 
-Do you have suggestions? I don't know the code to give good titles.
-They're both 'btcoexist'; I could merge them into one
+Yes.  I.e. force DMA_ATTR_SKIP_CPU_SYNC for P2P.
 
-wifi: wtlwifi: Remove btcoexist deadcode
-
-Dave
-
-> 
-> -- 
-> https://patchwork.kernel.org/project/linux-wireless/list/
-> 
-> https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
--- 
- -----Open up your eyes, open up your mind, open up your code -------   
-/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
-\        dave @ treblig.org |                               | In Hex /
- \ _________________________|_____ http://www.treblig.org   |_______/
 
