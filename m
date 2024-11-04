@@ -1,398 +1,162 @@
-Return-Path: <linux-kernel+bounces-395489-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395487-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 809BA9BBE9E
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 21:11:25 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05E0B9BBE9B
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 21:10:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3FD6C2827C2
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 20:11:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 94A58B212EB
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 20:10:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F05991D5ACE;
-	Mon,  4 Nov 2024 20:11:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A7F51D54E3;
+	Mon,  4 Nov 2024 20:10:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="cuG0pVGR"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CJIeWv9N"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D6F41D5ACC;
-	Mon,  4 Nov 2024 20:11:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730751066; cv=pass; b=PIb2OrMAynXZSG6CyyGGq1N5xihW3ENGBPQ6E17qUDiW6AowlSOqnTyCSpL9HGAlemMLPKgifQ7EUUwlornj25C3G6smTst+eCTdFXGDMJS9/25aXZEndDloli6NouMegkYCrJ0CrMsynS0+EYK+riPMAMoA1TCMLOMzgnC0rOA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730751066; c=relaxed/simple;
-	bh=4+x9MC5vXV+H0w4kYzXf16x3TkSrj72vXjDhMrMnKys=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=c7v0MpW+mgjGXr168DfRvF9HYi1JWwcLyUffgf1MzOLeYKAVHI5NolZ8v1FDwi9aXM4CGk5fg27daNWMYBDTjAf5P9O0q1QciV+YyaiC8doOtuklEblFIldAtXOzMej2rrMXXXEMbFBhp0lGWx59YbtJhHMJlCQgLzHVrIGzUMM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=cuG0pVGR; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1730751046; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=DNiJTIOq5KyRkwmBjqj2bN1SPvnbtULBgbiNmj/zRF6KoTHddG+LcQ616OBfOquYtxRmCoxBwU0Qe4DtzVprkONFXF+ygOwCYbq9ivlO9//DGljQX48zHfMuVdnMGXQlSxvRAJJxwdJiVTuOaRt6LWSgokjBjzOlGhM4OBa9QNg=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1730751046; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=zZeWPEoD8myYFBQDadziLxRjtNlmI25spnkRIwgIVC4=; 
-	b=JvAwT7Fyaolh9SirD0OmrCo66GJLXI9jLXzUlRxqHRbi9ZS63WjqVrSCemDAf6+RDd0mPRBBiULvR6HCLX8vbfHFsc+uesSntsFMh65Gdeuc6wO1paod86/8GfHn+nk5Nsl5nk+qr3f0OQPQqKcE5tHctavW83IYrTvCr7eXjeI=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1730751046;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
-	bh=zZeWPEoD8myYFBQDadziLxRjtNlmI25spnkRIwgIVC4=;
-	b=cuG0pVGRSFAsa98gy1TpSu+fgXncfuhl3TG2QhDLzdLCB18Dv+RxCQDGGR4ML7Tn
-	oJs1LzoizRXtrDooyUth67pMjljHR7A1sDgDoFOUNYevEAYd6TDf2E+tbPNwZ2uqTnc
-	+T2uk5RzlUrACKD/NMaHPMfVwX3lW47ZjcGe7z4g=
-Received: by mx.zohomail.com with SMTPS id 1730751045250713.8181828510562;
-	Mon, 4 Nov 2024 12:10:45 -0800 (PST)
-Content-Type: text/plain;
-	charset=utf-8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C16F11CC178;
+	Mon,  4 Nov 2024 20:10:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730751045; cv=none; b=uHkNEgTaCMOxfIihVirB95SbrzKyQqpdhHNJHOk2Z81ZNu1D/zcaEKJcrIIlbVwIY6RNxG6RfgdcnzAEWn+zczjA4QnG5YYGbUJRwx/j0uB4tw7jKfQyH413d5E7LVP1K/Gm0ZeymwVelAYOXqOIBxsdhRiAkxkRFSbCiHtX6oA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730751045; c=relaxed/simple;
+	bh=tUNWRUswbV+yPH0A+ffgjWD45tdsi4QpLxmNsVWjNXQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=W9iKCG5VRrVn519Ow6JE2qWyEhs2GsYwoDlABF0bEBm5WLEo7pMBwQRnDVA5/fTXiUAb3SZhayETBrfGJ0Y39+kHmY1TBcMUOTvNQIElNlSu76pgCmCt//7cdDtCBOq8GyXTdgFVYd0J4js+BuKJnxKf+ZVUcfUoVNaY+dN+/yU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CJIeWv9N; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6DAAC4CECE;
+	Mon,  4 Nov 2024 20:10:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730751045;
+	bh=tUNWRUswbV+yPH0A+ffgjWD45tdsi4QpLxmNsVWjNXQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=CJIeWv9NUsgwdg//+YiqX2FuQ63C9QanxWn19n2uEI3hK31cWhpUrpjoyXS8kqVZW
+	 FG1SllCQedJHqY03AxnwXLjOnamVbDtp324BR3PfvYHgSxt7o33hI2VyKJK+r9xYIK
+	 s1e6zCK9jcL7HPR06U2vXHks0PHsb2swuY2m1r2SioEhEfpxMc6kcGX2CxEkSsm45B
+	 rfCMBiJ+2FZvHm7R64Fv7Sp4O8FTL7d8LXTMxaIIv8eEtuRetALg+8SqNf70GLGBD6
+	 RiSsEUtfj1hsZ00V6srBUaWbwEh69RfmVSjEPt0wU/WyY2aUCoxQjo/qMQ7OLV4pl7
+	 AuseJn+IzoTpw==
+Date: Mon, 4 Nov 2024 17:10:41 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>, Ian Rogers <irogers@google.com>,
+	Dima Kogan <dima@secretsauce.net>,
+	Alexander Lobakin <aleksander.lobakin@intel.com>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/4] perf-probe: Require '@' prefix for filename always
+Message-ID: <ZykqQTMbA8PlaIBW@x1>
+References: <173073702882.2098439.13342508872190995896.stgit@mhiramat.roam.corp.google.com>
+ <173073704685.2098439.2208365513857043203.stgit@mhiramat.roam.corp.google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.200.121\))
-Subject: Re: [PATCH] rust: irq: add support for request_irq()
-From: Daniel Almeida <daniel.almeida@collabora.com>
-In-Reply-To: <CAH5fLgjRJtdpcOZySpRN-keLSMJjJdfXZGOhy_cEbiM3uNU7Tw@mail.gmail.com>
-Date: Mon, 4 Nov 2024 17:10:30 -0300
-Cc: Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>,
- Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>,
- =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <benno.lossin@proton.me>,
- Andreas Hindborg <a.hindborg@kernel.org>,
- Trevor Gross <tmgross@umich.edu>,
- linux-kernel@vger.kernel.org,
- rust-for-linux@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <45D09BD8-208C-4195-BACB-95B0922C5324@collabora.com>
-References: <20241024-topic-panthor-rs-request_irq-v1-1-7cbc51c182ca@collabora.com>
- <CAH5fLgjRJtdpcOZySpRN-keLSMJjJdfXZGOhy_cEbiM3uNU7Tw@mail.gmail.com>
-To: Alice Ryhl <aliceryhl@google.com>
-X-Mailer: Apple Mail (2.3826.200.121)
-X-ZohoMailClient: External
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <173073704685.2098439.2208365513857043203.stgit@mhiramat.roam.corp.google.com>
 
-Hi Alice, thanks for the review!
+On Tue, Nov 05, 2024 at 01:17:26AM +0900, Masami Hiramatsu (Google) wrote:
+> From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+ 
+> Currently perf probe allows user to specify probing place without '@'
+> prefix, for example, both `-V file:line` and `-V function:line` are
+> allowed. But this makes a problem if a (demangled) function name is
+> hard to be distinguished from a file name.
+ 
+> This changes the perf-probe to require '@' prefix for filename even
+> without function name. For example, `-V @file:line` and
+> `-V function:line` are acceptable.
+ 
+> With this change, users can specify filename or function correctly.
 
+Well, this will break scripts that use perf probe for a given file,
+probably the right thing not to break backwards compatibility is to
+continue accepting and when there is a real conflict, an ambiguity that
+makes differentiating from file to function names, then refuse it,
+stating that it is ambiguous, probably spelling out the names of the
+files and functions that match so and stating that to make it
+unambiguoius, prefix file names with @.
 
-> On 28 Oct 2024, at 12:29, Alice Ryhl <aliceryhl@google.com> wrote:
->=20
-> On Thu, Oct 24, 2024 at 4:20=E2=80=AFPM Daniel Almeida
-> <daniel.almeida@collabora.com> wrote:
->>=20
->> Both regular and threaded versions are supported.
->>=20
->> Signed-off-by: Daniel Almeida <daniel.almeida@collabora.com>
->=20
-
-Yeah, as I was saying, my latest patches were sent with some provisional
-commit messages. Sometimes these things slip through.
-
-In fact, as this was my first time switching to b4, it took me a while =
-to
-realize I had sent the patches to myself only, so you can see I started =
-off
-with the =E2=80=9Cwrong foot=E2=80=9D here.
-
-> I left some comments below:
->=20
->> diff --git a/rust/kernel/irq/request.rs b/rust/kernel/irq/request.rs
->> new file mode 100644
->> index =
-0000000000000000000000000000000000000000..4b5c5b80c3f43d482132423c2c52cfa5=
-696b7661
->> --- /dev/null
->> +++ b/rust/kernel/irq/request.rs
->> @@ -0,0 +1,450 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +// SPDX-FileCopyrightText: Copyright 2019 Collabora ltd.
->=20
-> should this be 2024?
->=20
->> +/// The value that can be returned from an IrqHandler;
->> +pub enum IrqReturn {
->> +    /// The interrupt was not from this device or was not handled.
->> +    None =3D bindings::irqreturn_IRQ_NONE as _,
->> +
->> +    /// The interrupt was handled by this device.
->> +    Handled =3D bindings::irqreturn_IRQ_HANDLED as _,
->> +}
->> +
->> +/// Callbacks for an IRQ handler.
->> +pub trait Handler: Sync {
->> +    /// The actual handler function. As usual, sleeps are not =
-allowed in IRQ
->> +    /// context.
->> +    fn handle_irq(&self) -> IrqReturn;
->> +}
->> +
->> +/// A registration of an IRQ handler for a given IRQ line.
->> +///
->> +/// # Invariants
->> +///
->> +/// * We own an irq handler using `&self` as its private data.
->=20
-> The invariants section is usually last.
->=20
->> +/// # Examples
->> +///
->> +/// The following is an example of using `Registration`:
->> +///
->> +/// ```
->> +/// use kernel::prelude::*;
->> +/// use kernel::irq;
->> +/// use kernel::irq::Registration;
->> +/// use kernel::sync::Arc;
->> +/// use kernel::sync::lock::SpinLock;
->> +///
->> +/// // Declare a struct that will be passed in when the interrupt =
-fires. The u32
->> +/// // merely serves as an example of some internal data.
->> +/// struct Data(u32);
->> +///
->> +/// // [`handle_irq`] returns &self. This example illustrates =
-interior
->> +/// // mutability can be used when share the data between process =
-context and IRQ
->> +/// // context.
->> +/// //
->> +/// // Ideally, this example would be using a version of SpinLock =
-that is aware
->> +/// // of `spin_lock_irqsave` and `spin_lock_irqrestore`, but that =
-is not yet
->> +/// // implemented.
->> +///
->> +/// type Handler =3D SpinLock<Data>;
->=20
-> I doubt this will compile outside of the kernel crate. It fails the
-> orphan rule because your driver neither owns the SpinLock type or the
-> Handler trait. You should move `SpinLock` inside `Data` instead.
->=20
->> +/// impl kernel::irq::Handler for Handler {
->> +///     // This is executing in IRQ context in some CPU. Other CPUs =
-can still
->> +///     // try to access to data.
->> +///     fn handle_irq(&self) -> irq::IrqReturn {
->> +///         // We now have exclusive access to the data by locking =
-the SpinLock.
->> +///         let mut handler =3D self.lock();
->> +///         handler.0 +=3D 1;
->> +///
->> +///         IrqReturn::Handled
->> +///     }
->> +/// }
->> +///
->> +/// // This is running in process context.
->> +/// fn register_irq(irq: u32, handler: Handler) -> =
-Result<irq::Registration<Handler>> {
->=20
-> Please try compiling the example. The return type should be
-> Result<Arc<irq::Registration<Handler>>>.
-
-Sorry, I was under the impression that `rustdoc` would compile the =
-examples too.
-
->=20
->> +///     let registration =3D Registration::register(irq, =
-irq::flags::SHARED, "my-device", handler)?;
->> +///
->> +///     // You can have as many references to the registration as =
-you want, so
->> +///     // multiple parts of the driver can access it.
->> +///     let registration =3D Arc::pin_init(registration)?;
->> +///
->> +///     // The handler may be called immediately after the function =
-above
->> +///     // returns, possibly in a different CPU.
->> +///
->> +///     // The data can be accessed from the process context too.
->> +///     registration.handler().lock().0 =3D 42;
->> +///
->> +///     Ok(registration)
->> +/// }
->> +///
->> +/// # Ok::<(), Error>(())
->> +///```
->> +#[pin_data(PinnedDrop)]
->> +pub struct Registration<T: Handler> {
->> +    irq: u32,
->> +    #[pin]
->> +    handler: Opaque<T>,
->> +}
->> +
->> +impl<T: Handler> Registration<T> {
->> +    /// Registers the IRQ handler with the system for the given IRQ =
-number. The
->> +    /// handler must be able to be called as soon as this function =
-returns.
->> +    pub fn register(
->> +        irq: u32,
->> +        flags: Flags,
->> +        name: &'static CStr,
->=20
-> Does the name need to be 'static?
-
-Actually, the lifetime relationship that we want to express here is that =
-`name` should
-live for at least as long as &self.
-
-Most of the time in C, this is solved by having `name` point to a =
-statically allocated string,
-usually a string literal, so this version of the patch implemented that.
-
-What about:
-
-```
-Registration<=E2=80=98a> {
-	name: PhantomData<&=E2=80=98a CStr>
-}
-```
-
-Where calling register() with some c_str!(=E2=80=9Cfoo=E2=80=9D) would =
-create a Registration<=E2=80=99static>
-anyways?
-
-
->> +        handler: T,
->> +    ) -> impl PinInit<Self, Error> {
->> +        try_pin_init!(Self {
->> +            irq,
->> +            handler: Opaque::new(handler)
->> +        })
->> +        .pin_chain(move |slot| {
->> +            // SAFETY:
->> +            // - `handler` points to a valid function defined below.
->> +            // - only valid flags can be constructed using the =
-`flags` module.
->> +            // - `devname` is a nul-terminated string with a 'static =
-lifetime.
->> +            // - `ptr` is a cookie used to identify the handler. The =
-same cookie is
->> +            // passed back when the system calls the handler.
->> +            to_result(unsafe {
->> +                bindings::request_irq(
->> +                    irq,
->> +                    Some(handle_irq_callback::<T>),
->> +                    flags.0,
->> +                    name.as_char_ptr(),
->> +                    &*slot as *const _ as *mut core::ffi::c_void,
->=20
-> Can simplify to `slot as *mut c_void` or `slot.cast()`.
->=20
->> +                )
->> +            })?;
->> +
->> +            Ok(())
->> +        })
->> +    }
->> +
->> +    /// Returns a reference to the handler that was registered with =
-the system.
->> +    pub fn handler(&self) -> &T {
->> +        // SAFETY: `handler` is initialized in `register`.
->> +        unsafe { &*self.handler.get() }
->=20
-> This relies on T being Sync as it could also get accessed by the irq
-> handler in parallel. You probably want the SAFETY comment to mention
-> that.
->=20
->> +    }
->> +}
->> +
->> +#[pinned_drop]
->> +impl<T: Handler> PinnedDrop for Registration<T> {
->> +    fn drop(self: Pin<&mut Self>) {
->> +        // SAFETY:
->> +        // - `self.irq` is the same as the one passed to =
-`reques_irq`.
->> +        // -  `&self` was passed to `request_irq` as the cookie. It =
-is
->> +        // guaranteed to be unique by the type system, since each =
-call to
->> +        // `register` will return a different instance of =
-`Registration`.
->> +        //
->> +        // Notice that this will block until all handlers finish =
-executing, so,
->> +        // at no point will &self be invalid while the handler is =
-running.
->> +        unsafe { bindings::free_irq(self.irq, &*self as *const _ as =
-*mut core::ffi::c_void) };
->=20
-> I can't tell if this creates a pointer to the Registration or a
-> pointer to a pointer to the Registration. Please spell out the type:
-> ```
-> &*self as *const Self as *mut core::ffi::c_void
-> ```
-
-My thought process here is that Pin<Ptr<T>> dereferences to Ptr::Target, =
-i.e. Self,
-which is then borrowed, i.e. &Self.
-
-I do not see how this can create a pointer to a pointer, but you=E2=80=99r=
-e right, it=E2=80=99s
-always good to be more explicit by spelling out the full type. I will =
-fix that.
-
-
->=20
->> +    }
->> +}
->> +
->> +/// The value that can be returned from =
-`ThreadedHandler::handle_irq`.
->> +pub enum ThreadedIrqReturn {
->> +    /// The interrupt was not from this device or was not handled.
->> +    None =3D bindings::irqreturn_IRQ_NONE as _,
->> +
->> +    /// The interrupt was handled by this device.
->> +    Handled =3D bindings::irqreturn_IRQ_HANDLED as _,
->> +
->> +    /// The handler wants the handler thread to wake up.
->> +    WakeThread =3D bindings::irqreturn_IRQ_WAKE_THREAD as _,
->> +}
->> +
->> +/// The value that can be returned from =
-`ThreadedFnHandler::thread_fn`.
->> +pub enum ThreadedFnReturn {
->> +    /// The thread function did not make any progress.
->> +    None =3D bindings::irqreturn_IRQ_NONE as _,
->> +
->> +    /// The thread function ran successfully.
->> +    Handled =3D bindings::irqreturn_IRQ_HANDLED as _,
->> +}
->=20
-> This is the same as IrqReturn?
-
-Thanks for noticing this. It indeed ended up as the same type after all.
-
->=20
->> +/// Callbacks for a threaded IRQ handler.
->> +pub trait ThreadedHandler: Sync {
->> +    /// The actual handler function. As usual, sleeps are not =
-allowed in IRQ
->> +    /// context.
->> +    fn handle_irq(&self) -> ThreadedIrqReturn;
->> +
->> +    /// The threaded handler function. This function is called from =
-the irq
->> +    /// handler thread, which is automatically created by the =
-system.
->> +    fn thread_fn(&self) -> ThreadedFnReturn;
->> +}
->=20
-> Most of my comments above also reply to ThreadedHandler.
->=20
-> Alice
-
-=E2=80=94 Daniel
-
+- Arnaldo
+ 
+> Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> ---
+>  tools/perf/util/probe-event.c |   31 +++++++++----------------------
+>  1 file changed, 9 insertions(+), 22 deletions(-)
+> 
+> diff --git a/tools/perf/util/probe-event.c b/tools/perf/util/probe-event.c
+> index 665dcce482e1..913a27cbb5d9 100644
+> --- a/tools/perf/util/probe-event.c
+> +++ b/tools/perf/util/probe-event.c
+> @@ -1341,7 +1341,7 @@ static bool is_c_func_name(const char *name)
+>   * Stuff 'lr' according to the line range described by 'arg'.
+>   * The line range syntax is described by:
+>   *
+> - *         SRC[:SLN[+NUM|-ELN]]
+> + *         @SRC[:SLN[+NUM|-ELN]]
+>   *         FNC[@SRC][:SLN[+NUM|-ELN]]
+>   */
+>  int parse_line_range_desc(const char *arg, struct line_range *lr)
+> @@ -1404,16 +1404,10 @@ int parse_line_range_desc(const char *arg, struct line_range *lr)
+>  			err = -ENOMEM;
+>  			goto err;
+>  		}
+> +		if (*name != '\0')
+> +			lr->function = name;
+> +	} else
+>  		lr->function = name;
+> -	} else if (strpbrk_esc(name, "/."))
+> -		lr->file = name;
+> -	else if (is_c_func_name(name))/* We reuse it for checking funcname */
+> -		lr->function = name;
+> -	else {	/* Invalid name */
+> -		semantic_error("'%s' is not a valid function name.\n", name);
+> -		err = -EINVAL;
+> -		goto err;
+> -	}
+>  
+>  	return 0;
+>  err:
+> @@ -1463,7 +1457,7 @@ static int parse_perf_probe_point(char *arg, struct perf_probe_event *pev)
+>  
+>  	/*
+>  	 * <Syntax>
+> -	 * perf probe [GRP:][EVENT=]SRC[:LN|;PTN]
+> +	 * perf probe [GRP:][EVENT=]@SRC[:LN|;PTN]
+>  	 * perf probe [GRP:][EVENT=]FUNC[@SRC][+OFFS|%return|:LN|;PAT]
+>  	 * perf probe %[GRP:]SDT_EVENT
+>  	 */
+> @@ -1516,19 +1510,12 @@ static int parse_perf_probe_point(char *arg, struct perf_probe_event *pev)
+>  	/*
+>  	 * Check arg is function or file name and copy it.
+>  	 *
+> -	 * We consider arg to be a file spec if and only if it satisfies
+> -	 * all of the below criteria::
+> -	 * - it does not include any of "+@%",
+> -	 * - it includes one of ":;", and
+> -	 * - it has a period '.' in the name.
+> -	 *
+> +	 * We consider arg to be a file spec if it starts with '@'.
+>  	 * Otherwise, we consider arg to be a function specification.
+>  	 */
+> -	if (!strpbrk_esc(arg, "+@%")) {
+> -		ptr = strpbrk_esc(arg, ";:");
+> -		/* This is a file spec if it includes a '.' before ; or : */
+> -		if (ptr && memchr(arg, '.', ptr - arg))
+> -			file_spec = true;
+> +	if (*arg == '@') {
+> +		file_spec = true;
+> +		arg++;
+>  	}
+>  
+>  	ptr = strpbrk_esc(arg, ";:+@%");
 
