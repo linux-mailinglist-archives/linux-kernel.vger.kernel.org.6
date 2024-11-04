@@ -1,357 +1,329 @@
-Return-Path: <linux-kernel+bounces-395648-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395649-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3F809BC0FC
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 23:36:12 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83A449BC105
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 23:37:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9DE34282F5A
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 22:36:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BBFB8B21946
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 22:37:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE18C1FCC7F;
-	Mon,  4 Nov 2024 22:36:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 860FA1FE10D;
+	Mon,  4 Nov 2024 22:36:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VP9DIm8M"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lKeHRR0H"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E1DB1FC3
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 22:36:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.9
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730759766; cv=fail; b=fJx5Lf+W+JJqQxPivm7LKZgSILbjjqJfNHHbqixJXaHN9VDCXkmJmzUjyHjzbiFy3Xu1JylwvgpTCFZCQHBbnP2q35F/el5+5NxcnonSvMAIG+oAaJmiMMgEdHrCEtGS8dYEad2SAgLLvGLWFUU8pUee/ll9JZn9V+r/sM3vZKE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730759766; c=relaxed/simple;
-	bh=FL8ZuT7nqUb7wpPHo2elXLvgzJE9WtofoFYNtHV9BR0=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=in7jVMI7Tg7nXxIukTFj+Spl4+Ef9ZKnqapSpeDgrsUdLfEVN6aRAya9PAl114z4nVidB80ZaGLlT2yYmwg+sCu4eSodOxQ/Z1j5pzREBhJdSLb3ZK5R+6znoVYRZ+6K4W0jZTsM6fiFUm56UF0FpFG45ZERezwiha2BS42nNS8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VP9DIm8M; arc=fail smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDA181FCF4D
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 22:36:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730759807; cv=none; b=ihExcv1D2fXRi6bUnIojUhhVLJp4AvEyb6QPSJdTbegffr+nD+G9Jve8MVr4Pns3cf9r0vuHm6+U9cMeIU/fdENzgi8xgAmj7RcY8OAKiq7GoJMs7uaGHQVtOBlq7h8HWwxGjf9yo05Z9B6uViubSoczVRZxwB2S45Vg+MAvc6U=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730759807; c=relaxed/simple;
+	bh=z/YO6aIKK1gBG7MJxQAGv3yHdYbiCkNkoA9YtgrKINQ=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=n+YWTJCnh43EFcK7W8Lqwr7GyUR3kzxjhUnX9URUi4gjYT0Abk1JLKn64uGp4VzeDK/OY8dmh7TynNnT/O7SZA6BcoA47ny4bs6wt99KW7LpE0H5tY38uimXApgb/9uHv96treCahKwQeJ0FLZ7MaOurZ10YPjAp8guS+P1NHKY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lKeHRR0H; arc=none smtp.client-ip=198.175.65.11
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730759764; x=1762295764;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=FL8ZuT7nqUb7wpPHo2elXLvgzJE9WtofoFYNtHV9BR0=;
-  b=VP9DIm8MZ+GaRrl3Hg1OZ8qczcgBSAq8Wl+5nCx8ELA5TemYI5TeATXT
-   WE7Pwt7RRaVjWuEXXNq4T77/A7kDMu9TS2dB0Sq3UPtSkY4kulenUAbfH
-   pkRNGXhInkUJiGql4FVOtWD5SBnRUzp6awj1RvisCWfT5N6aipT3xAmlN
-   7xisAnMCYe7nW7zUoSRncn4fgZfFGN/ORDuC38iFrmSRJI4HT26sHW7YO
-   KmNi3vw+SWFVIKSF6gesQVQ5zM7ACII66D5yGz9lfc+Cpadtnv8GSp3Yo
-   zzCGAjzi/rmqBngzRLBFZrm8m7+jSXQStfJ1vTdtRfe8OitQVrMbOZNyU
-   w==;
-X-CSE-ConnectionGUID: 5JIKKwpiQ2qgwGUPPIY98A==
-X-CSE-MsgGUID: KThRvmARQAGfkYG5erRs6A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11246"; a="41112723"
-X-IronPort-AV: E=Sophos;i="6.11,258,1725346800"; 
-   d="scan'208";a="41112723"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2024 14:36:03 -0800
-X-CSE-ConnectionGUID: GAwwujKBRk2FcmXsdzONqA==
-X-CSE-MsgGUID: VEcdZlnsTq6DCRjCCCzqgQ==
+  t=1730759806; x=1762295806;
+  h=date:from:to:cc:subject:message-id;
+  bh=z/YO6aIKK1gBG7MJxQAGv3yHdYbiCkNkoA9YtgrKINQ=;
+  b=lKeHRR0HFN5nkjKk4z3O4MjohQZo1RO+WxorO4N0ySDHSuSL1vFpmcWz
+   vQl59a7P3RZeRWFOoiIbONlxQWt4o0FrM8dbrsKft1jjga/FnSCJL5Zcx
+   wic5qOEnt2SQePk4/ZjVFskOv3QJDKSJuj0ZMh60qm4UsnpC4eczxNYcu
+   nMrRpLpcYt4qvpO2XCtPRAbenpeHzjGfxDQPBwt5jLFfZfJbPjLpgaeye
+   T/LuU8NlBjcE5hEla5TpF2Kj+hpMhkXwj44/evzG0LmeXfp7aM0TTy/wl
+   KCcCkUz3T8wFPw3VAXqj2kzWGJdccfOQ2Zc8i7kHhse/snA/zAoYvpoaE
+   Q==;
+X-CSE-ConnectionGUID: WilV9NSdQZ26/xjpTb5TJA==
+X-CSE-MsgGUID: RSECHENiRU+8bJm69WL8Xg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="41028480"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="41028480"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2024 14:36:46 -0800
+X-CSE-ConnectionGUID: dCvZ3jj1QxOYnj+K1DKEvA==
+X-CSE-MsgGUID: yuPTJFsYSbqBXh9mJDWaGQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.11,258,1725346800"; 
-   d="scan'208";a="87727715"
-Received: from fmsmsx603.amr.corp.intel.com ([10.18.126.83])
-  by fmviesa003.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 04 Nov 2024 14:36:02 -0800
-Received: from fmsmsx603.amr.corp.intel.com (10.18.126.83) by
- fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Mon, 4 Nov 2024 14:36:02 -0800
-Received: from FMSEDG603.ED.cps.intel.com (10.1.192.133) by
- fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Mon, 4 Nov 2024 14:36:02 -0800
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (104.47.58.43) by
- edgegateway.intel.com (192.55.55.68) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Mon, 4 Nov 2024 14:36:01 -0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Zjin7I2+wMHdkAJzH5mFE97X8BCG1P8/S82OMqNS+A5+VOHuipklrv5V3DMkJBilcjaT+wMlQVz4RbyKcXFNgAehpiS2uwfoN1FkW9OINnAEsVqTFzpOOgoWgcEXs/snty+yrPm6dXLALobDPRxtmsSyCIetvDdHZsF1VbnnuqxyXf6E0h7ve1w7rQ68ijUluoIaJ9UTMOMYeMBXgzwD3smisBHm7gSeWuB/5r702UeiQDGop3cK+mcIXx+mmiDpArK1XQME6IeDF/UH7Ue+p5aFY7dnS6yU5y9mVRIAYCEqnWihQwxbidVPnA5bksS3vN89R2mFV3ocmeM7NA7MCg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=/w5UHfxIXVS6NAiu3MquhQ0bI4XAVzup0c7Kp4Q8EV0=;
- b=wppk6X9XvzqR8kcb06+m0BElLZTrSCw9pBOeIjKxD/0A5DsPVowJkvhhlmaC7ubRv9JG++S6dwub1vvmMJ4i42fG1TWs7qjC4gmTN1eiky7wXXXpe7Oe9+/m/5I9haos/EOs6WNAoNDrNqrevDe52MBFHA/tLQNX3lIMqc6kD1Z4NmRmO212h8h3UZUsK6rZyTPHtnWMwV8TtlbEOs2d/tRPgIXpyQzZjocVx5NiX8b6IaCThMgQNUCAk9QbwtEu7eRZtz8wmMSBac+g7fBxnyMAowfMLh+mWJt6kg5agNp8euj7mto2kPo5Y+2D1rwgzKtpIW9KJasJTpqlUKiMew==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from IA1PR11MB6097.namprd11.prod.outlook.com (2603:10b6:208:3d7::17)
- by SN7PR11MB6703.namprd11.prod.outlook.com (2603:10b6:806:268::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8114.30; Mon, 4 Nov
- 2024 22:35:56 +0000
-Received: from IA1PR11MB6097.namprd11.prod.outlook.com
- ([fe80::8f29:c6c9:9eb2:6392]) by IA1PR11MB6097.namprd11.prod.outlook.com
- ([fe80::8f29:c6c9:9eb2:6392%4]) with mapi id 15.20.8114.028; Mon, 4 Nov 2024
- 22:35:56 +0000
-Message-ID: <b3a52af9-e298-7baa-19b3-8931d03731d1@intel.com>
-Date: Mon, 4 Nov 2024 14:36:15 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Firefox/91.0 Thunderbird/91.11.0
-Subject: Re: [PATCH 2/2] x86/resctrl: Don't workqueue local event counter
- reads
-Content-Language: en-US
-To: Peter Newman <peternewman@google.com>, Reinette Chatre
-	<reinette.chatre@intel.com>
-CC: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
-	<x86@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>, Tony Luck
-	<tony.luck@intel.com>, Babu Moger <babu.moger@amd.com>, James Morse
-	<james.morse@arm.com>, Martin Kletzander <nert.pinx@gmail.com>, Shaopeng Tan
-	<tan.shaopeng@fujitsu.com>, <linux-kernel@vger.kernel.org>,
-	<eranian@google.com>
-References: <20241031142553.3963058-1-peternewman@google.com>
- <20241031142553.3963058-2-peternewman@google.com>
-From: Fenghua Yu <fenghua.yu@intel.com>
-In-Reply-To: <20241031142553.3963058-2-peternewman@google.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SJ0PR03CA0274.namprd03.prod.outlook.com
- (2603:10b6:a03:39e::9) To IA1PR11MB6097.namprd11.prod.outlook.com
- (2603:10b6:208:3d7::17)
+   d="scan'208";a="84128446"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by fmviesa010.fm.intel.com with ESMTP; 04 Nov 2024 14:36:44 -0800
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t85gg-000lM1-0L;
+	Mon, 04 Nov 2024 22:36:42 +0000
+Date: Tue, 05 Nov 2024 06:36:24 +0800
+From: kernel test robot <lkp@intel.com>
+To: "x86-ml" <x86@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [tip:x86/cpu] BUILD SUCCESS
+ b5cbd5ff79a06395a17f8f524f6f8e90dcfe42d1
+Message-ID: <202411050617.lBgEqecX-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: IA1PR11MB6097:EE_|SN7PR11MB6703:EE_
-X-MS-Office365-Filtering-Correlation-Id: bb96c1ae-3c80-43b6-5f14-08dcfd210c6a
-X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?My9LcjhoZSttNVBXNTRRcUZETEZ6UFFtMmtMVTlmVXBKY2ZrNy9mTGwyeUxV?=
- =?utf-8?B?Z3k4cE1OMDR3M1FrSXhwRUZDdWliTWhYQm44VldoV0hGQmZkUEVVN2VscFpo?=
- =?utf-8?B?V1k3aXhxOXlSQ2swKzZtVVQ4ZERCNGhLWlgzS3QxMmhNZldMSTRsRGlTMWV3?=
- =?utf-8?B?dlhCZTYzalowUzZ1aUNqWGVOV3dEWU4rQitzSVpjMXY3VUN6amlaei9GQm1P?=
- =?utf-8?B?ZWxpYlNERHlhOG96TStkOURqdThlaXMwc0pLN21LVDg0VzVjMDcrTS9QakRM?=
- =?utf-8?B?ampXUks3Z3JiWWlKdEF6M09pdFQxc1lMTVhnY2RDOStGeE9YeFFKV3dOY3c5?=
- =?utf-8?B?QXRHS2VwQTU2dnJRVDNMZTRCc3NmaGV6QXA5WlRZRmxlYWpib0tQVFlPbEM5?=
- =?utf-8?B?SkNBUVMyUXR0YTEvczJaVVpsSzdrV1VFVDQweGJFbjN5Vmt4ek83Z1JkL3ZQ?=
- =?utf-8?B?UnphQWtTR1dSL243dkFUbGFNd1M5eXRlU0hKTm9sQy82MkpIcUxKajIxYkI1?=
- =?utf-8?B?WHJXMENUSkY3bjJkdFlIY2N4ZTl3cE9Sb0VOTW5kTUVOLzNyQ2ZwVnpxSk5E?=
- =?utf-8?B?eWMrWWVtVXlyZW5CbmZuWHZIbGllOFhYL2h3bzdIVHc4L3QrTGFHSTNEaDN2?=
- =?utf-8?B?N1AveTJFZXlHYzl2VXNwUGYwVXBiQW94b0oyU0FjNlZZM3hESy9iV29BL3FO?=
- =?utf-8?B?VkNvRCtDbEdvM3E2am9JdDZRb01Hb1NBSUFCK25yS09lNEhCenprWThuSUlu?=
- =?utf-8?B?a3F5SUo0QjJQZHJWSmFHV21KUGZtTUJsQnV1LzkweXRDY1hhc0F5bjQveVMz?=
- =?utf-8?B?TDdFWTQ2cU5kSEo2NjhLd0RJSHhvekFYSVlNSVgrQUlUUFowM0NoSkhLV3NJ?=
- =?utf-8?B?ekI1ek04OFBaV3I4MFZkSjBBUGZjNmNFUk50eHlSZzZWVWE4L2ViL3psQVFT?=
- =?utf-8?B?OXR2MUZtYTFicEdpWkxCK1JHUlk3TlZyUllOYStMWFYrdDRQVDdnblpxZ2hY?=
- =?utf-8?B?dXkxSTA0T3RmL2pCemJyQkJ2ZHFMQjJ2U0tQdzk0LzE1K2NjZkgvb0RvSGNX?=
- =?utf-8?B?QlJUeTN5V1ZmcDFaUmRaVlFkVFlsMVNZblRlMmRYN2ZaMHA0VkNuaFArSTZw?=
- =?utf-8?B?WkhIdGFzOHk2K0dPRGowbGZwK1FQOXd0NGNTRmZOemVYRWtiSDh2V2wvdDBS?=
- =?utf-8?B?bkxGWndsWFkzempIVU5HL0d4TytaeEZJdWwxRXlEKysrSDJwNTMwS2pRanF5?=
- =?utf-8?B?eEluaGZNMkkra1puQVNoWDhEenBXaXZJbG5wSkRtdi9OdG9ZZDZkWDhFa2Na?=
- =?utf-8?B?TXBrWWduQVpaSVh3N2F3dUMzb3p2R2hNQXRralRoUmZYdVI4dmY2YlhXbEc5?=
- =?utf-8?B?eG9wYVBaQXowbTg1NndGcEI3cWM1OUVRMzJrdjVIZEpDMmFOQUcrQnA1N0Fh?=
- =?utf-8?B?Q01jcVB3Q1RnYkRpVGFaZkYvenNrZW1yU1ZJNkE2ekxlbGhneUhKQlpzemZK?=
- =?utf-8?B?ejBHWTFTWHNwODBzaElBM1RqTzNvWGtBR3hsOVp3R3RNY2w0aW5CRGw1d0dR?=
- =?utf-8?B?Uk9qdjZ5TlduMUFJbzEzZ3NlSy9mQTcxVGpiclM2VjRKcXVMM3VDNGpCdy9X?=
- =?utf-8?B?KzIxckZxY0ZOY1UrYks1S3ZKY1NROHJpL0ltSXN3VEJDMER3TnNycTRhYXZC?=
- =?utf-8?B?SHZEaVp2MjNaSFowVldqd1VuVDVlOXF4Uk8zSmYrcW5sV2U1ZTMyMCtuclpa?=
- =?utf-8?Q?wdyasuuMawTpWjC0jSxKyzksqkUM97qBNP9RBwp?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA1PR11MB6097.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?bnExZDk0THFSbE1SVzZxZFVNQk1RQzFQWEt6R3huODRMcmJqSGQ2OTdvOXND?=
- =?utf-8?B?VG1sbFNuWmNEQk1oYlNlUlhlUE5uYmpkcVlZZFByTVBJTjhWMmNzRzJCRXdQ?=
- =?utf-8?B?dUk2dGI3Vmp6VHY2OE5lYm5jZkM5aXdZOW5oUE11TlBFQ0p6NnNuU294M2My?=
- =?utf-8?B?Rm1DenhXYnBENUFCK29mUlFpZkgyNnlvbzBlYUU0TktOVXFEYXpHc01ORXVt?=
- =?utf-8?B?RmwwYm9ZMG43ZU1MWmJMTFFIeXhRRnYvM3ZtcGlqYkxrMnJDV0plckYwcFhy?=
- =?utf-8?B?L3phY29lUlR2SzRPKzVkU0l5c284MTg3SXhlZzZQeHVrbDI4YTNRanlyY1NS?=
- =?utf-8?B?aEZJOHdueVJreEJnT1pvV0FOVjlIU3p6WXFxY0s4N1FMTEpwbHRGVkhYeFBJ?=
- =?utf-8?B?OHg1YVZMTHhHdVpQRE1TSVBDVHY0TzVGV2l3SmpvREpSTk5nczlaT1l2UXY2?=
- =?utf-8?B?Z25tZ2FFVnBwVmtuQ3RodXNPTHhrckFKSmxWemhUd0dqSTVicmZZa3ZEWVNk?=
- =?utf-8?B?bHFjNXNHRTE1REdYbW5iNUVic2JXREFyR1lxeVY4cE1wM1orMFpzMlhMVUlN?=
- =?utf-8?B?SytDUFJXMmpRM25EMEF2SjBoN3hhc3dOT3ExWW5yN1k2OEFBbEFsbDYyZlJl?=
- =?utf-8?B?MFhUR1llVnBKNS9QR2Y4Mzluc205QjJwSndYL0FnczlpVzhYem9HNE00VDNL?=
- =?utf-8?B?WWtxSXhwNnJuRUZ3Z1kzTVRVeDlWQ1hQRk9UTkVzZjhoWjR2eUVKOHdJekNY?=
- =?utf-8?B?SGovZXluS3JDNjJxQ0VPNTV1N21iWkxVK3lEbFRsNEVlVkNRRmFCY1pCdkRs?=
- =?utf-8?B?SnVEZEJMS2NyR1RESzJxSS9vMkJab1U2SVBwczhiOCtyZnZUcXdwSTVBaTE3?=
- =?utf-8?B?NkVJdFN3a1pMcWk4YWpsSEFRa1EvQkx3L1A0bStOblpqbjcrMDQ1WGd4ZitF?=
- =?utf-8?B?YUZBNDUzOEpxUW9pTm5BeTlNc1JjTk53eVl2emNMUUlreXNLdDJpM1psandp?=
- =?utf-8?B?QTlRazYyQ2hsWlY0cHlMaThNMngrZ0poYUcvMGpWdUdDbWNVaTZ5K3V3TTNs?=
- =?utf-8?B?aVlIOUZ3TXR6OEhERzFZcWdiTUY1MlUxaVFLc2k2OEFYWjV5ekZKUVFRT0VZ?=
- =?utf-8?B?SVdSRVRtcXppaEUzUXRUNUFEb1BOQWo5czN3Yy9ucmM1RHVodkI4YmtvSFhW?=
- =?utf-8?B?Q0tGTEEreTdmdGREVkIvNThsSXhzdFBRK0huc0VlQXNEQjlzUHJSNW9jWjZ6?=
- =?utf-8?B?alMvSmp0L3dSdUJpNXBQQ3VpYWgzVzRlaWpTWTlyYllsVVRmNE9nNGwzdHh3?=
- =?utf-8?B?eDNGL0RJQlkwWmgzejV3d3BlcnBXV1NaQTJZUjJVSmZsQ2JSVGNrSXRGS2h2?=
- =?utf-8?B?NmNCV0pnZkZpSzNwSFM3LzBoUTByb2RVbWxKTFJFTGVTbXZzQVJNRlNPZlB6?=
- =?utf-8?B?UzRYZG9mODB0b2JaTS85U0hsM2QrWTIrb1lVQ1ZVUlE3VmRiS0pUSDlFSVEv?=
- =?utf-8?B?QUhxUmpSd3VpN21Nb1B4ckxhMWF1Z1hKb3VnN0lKcCt6aFQzSW9nUTZQVnRB?=
- =?utf-8?B?Z0xQTitlM1NManRPdHI4YlN6bUNnUENRelFnUjh3SkQ3ajhFcjBDYXdvLzRm?=
- =?utf-8?B?RjdnV1I2TWZoQkIvdmhxS2xzZW1NaWVsSEZKYjFJUHJpZGpHeUhmR2JCcW5v?=
- =?utf-8?B?NkRwc1l2Mm94UXdBNjZwZFpzYVIwZ3pGVmxPWllvMXEzc0lUeE0yYU56VkVu?=
- =?utf-8?B?d1NqdWNLaEdUOTRkdjhxaXppV3BCMENraHYrSHBwRzI2WG9SZTBJUXQxU0F5?=
- =?utf-8?B?YW9iOWJjMERiYXU4UW1ZSEJIYWIzemtVUDJ5Vll3VWdoK0FVTjA1WTZIdGd1?=
- =?utf-8?B?Q2xLVmdGOU5kQ21GVGluVUJaeHFnM1RCOTIzK2I1ZGxoN042VzI2K0pBejYv?=
- =?utf-8?B?S3VhUDZQY3lpN1Z0N1BPTWZCeEVPbFVpYkdMc0w5VDlTKzJIdVVaK252SGZy?=
- =?utf-8?B?UHluMy9uK0E5ZU4wUHQvd2tUdU42MGNLcHpUeWdKcjZyNlg1UnlWWmthM2JB?=
- =?utf-8?B?TWlLd25OdHZUc1NyV2ZYZHRCV1laTktueUVJQzRyRncxbHFRNGhoVER6R2ZU?=
- =?utf-8?Q?SHUE3OBpWIU2/dCrxGZvmX9bV?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: bb96c1ae-3c80-43b6-5f14-08dcfd210c6a
-X-MS-Exchange-CrossTenant-AuthSource: IA1PR11MB6097.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Nov 2024 22:35:56.5860
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 2qDoyMuElQTDZvnxqNWb2R2AF5+2kDfNA3KZkNROZLPpbhLSvmfDHx8poq/PQdhoR68ASbL54w/1dskXz6jtAg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR11MB6703
-X-OriginatorOrg: intel.com
 
-Hi, Peter,
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/cpu
+branch HEAD: b5cbd5ff79a06395a17f8f524f6f8e90dcfe42d1  x86/bugs: Add support for AMD ERAPS feature
 
-On 10/31/24 07:25, Peter Newman wrote:
-> Performance-conscious users may use threads bound to CPUs within a
-> specific monitoring domain to ensure that all bandwidth counters can be
-> read efficiently. The hardware counters are only accessible to CPUs
-> within the domain, so requests from CPUs outside the domain are
-> forwarded to a kernel worker or IPI handler, incurring a substantial
-> performance penalty on each read.  Recently, this penalty was observed
-> to be paid by local reads as well.
-> 
-> To support blocking implementations of resctrl_arch_rmid_read(),
-> mon_event_read() switched to smp_call_on_cpu() in most cases to read
-> event counters using a kernel worker thread. Unlike
-> smp_call_function_any(), which optimizes to a local function call when
-> the calling CPU is in the target cpumask, smp_call_on_cpu() queues the
-> work unconditionally.
-> 
-> Add a fast-path to ensure that requests bound to within the monitoring
-> domain are read using a simple function call into mon_event_count()
-> regardless of whether all CPUs in the target domain are using nohz_full.
-> 
-> This is significant when supporting configurations such as a dual-socket
-> AMD Zen2, with 32 L3 monitoring domains and 256 RMIDs. To read both MBM
-> counters for all groups on all domains requires 32768 (32*256*2) counter
-> reads. The resolution of global, per-group MBM data which can be
-> provided is therefore sensitive to the cost of each counter read.
-> Furthermore, redirecting this much work to IPI handlers or worker
-> threads at a regular interval is disruptive to the present workload.
-> 
-> The test program fastcat, which was introduced in an earlier path, was
-> used to simulate the impact of this change on an optimized event
-> counter-reading procedure. The goal is to maximize the frequency at
-> which MBM counters can be dumped, so the benchmark determines the cost
-> of an additional global MBM counter sample.
-> 
-> The total number of cycles needed to read all local and total MBM
-> counters for a large number of monitoring groups was collected using the
-> perf tool. The test was run bound to a single CPU: once targeting
-> counters in the local domain and again for counters in a remote domain.
-> The cost of a dry-run reading no counters was substracted from the total
-> of each run to remove one-time setup costs.
-> 
-> AMD EPYC 7B12 64-Core Processor (250 mon groups)
-> 
-> Local Domain:   3.25M -> 1.22M (-62.5%)
-> Remote Domain:  7.91M -> 8.05M (+2.9%)
-> 
-> Intel(R) Xeon(R) Gold 6268CL CPU @ 2.80GHz (190 mon groups)
-> 
-> Local Domain:   2.98M -> 2.21M (-25.8%)
-> Remote Domain:  4.49M -> 4.62M (+3.1%)
-> 
-> Note that there is a small increase in overhead for remote domains,
-> which results from the introduction of a put_cpu() call to reenable
-> preemption after determining whether the fast path can be used. Users
-> sensitive to this cost should consider avoiding the remote counter read
-> penalty completely.
-> 
-> Also note that the Remote Domain results and the baseline Local Domain
-> results only measure cycles in the test program. Because all counter
-> reading work was carried out in kernel worker threads, the total system
-> cost of the operation is greater.
-> 
-> Fixes: 09909e098113 ("x86/resctrl: Queue mon_event_read() instead of sending an IPI")
-> 
-> Signed-off-by: Peter Newman <peternewman@google.com>
-> ---
->   arch/x86/kernel/cpu/resctrl/ctrlmondata.c | 28 +++++++++++++++++++++++
->   1 file changed, 28 insertions(+)
-> 
-> diff --git a/arch/x86/kernel/cpu/resctrl/ctrlmondata.c b/arch/x86/kernel/cpu/resctrl/ctrlmondata.c
-> index 200d89a640270..daaff1cfd3f24 100644
-> --- a/arch/x86/kernel/cpu/resctrl/ctrlmondata.c
-> +++ b/arch/x86/kernel/cpu/resctrl/ctrlmondata.c
-> @@ -541,6 +541,31 @@ void mon_event_read(struct rmid_read *rr, struct rdt_resource *r,
->   		return;
->   	}
->   
-> +	/*
-> +	 * If a performance-conscious caller has gone to the trouble of binding
-> +	 * their thread to the monitoring domain of the event counter, ensure
-> +	 * that the counters are read directly. smp_call_on_cpu()
-> +	 * unconditionally uses a work queue to read the counter, substantially
-> +	 * increasing the cost of the read.
-> +	 *
-> +	 * Preemption must be disabled to prevent a migration out of the domain
-> +	 * after the CPU is checked, which would result in reading the wrong
-> +	 * counters. Note that this makes the (slow) remote path a little slower
-> +	 * by requiring preemption to be reenabled when redirecting the request
-> +	 * to another domain was in fact necessary.
-> +	 *
-> +	 * In the case where all eligible target CPUs are nohz_full and
-> +	 * smp_call_function_any() is used, keep preemption disabled to avoid
-> +	 * the cost of reenabling it twice in the same read.
-> +	 */
-> +	cpu = get_cpu();
-> +	if (cpumask_test_cpu(cpu, cpumask)) {
-> +		mon_event_count(rr);
-> +		resctrl_arch_mon_ctx_free(r, evtid, rr->arch_mon_ctx);
-> +		put_cpu();
-> +		return;
-> +	}
+elapsed time: 1003m
 
-This fast path code is a duplicate part of smp_call_funcion_any().
+configs tested: 237
+configs skipped: 8
 
-In nohz_full() case, the fast path doesn't gain much and even hurts 
-remote domain performance:
-1. On local domain, it may gain a little bit because it has a few lines 
-less than directly calling smp_call_function_any(). But the gain is 
-minor due to a lines less code, not due to heavy weight queued work.
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
-2. On remote domain, it degrades performance because get_cpu() and 
-put_cpu() are both called twice: one in the fast path code and one in 
-smp_call_function_any(). As you mentioned earlier, put_cpu() impacts 
-performance. I think get_cpu() has same impact too.
+tested configs:
+alpha                             allnoconfig    gcc-14.1.0
+alpha                            allyesconfig    clang-20
+alpha                            allyesconfig    gcc-13.3.0
+alpha                               defconfig    gcc-14.1.0
+arc                              allmodconfig    clang-20
+arc                              allmodconfig    gcc-13.2.0
+arc                               allnoconfig    gcc-14.1.0
+arc                              allyesconfig    clang-20
+arc                              allyesconfig    gcc-13.2.0
+arc                                 defconfig    gcc-14.1.0
+arc                        nsim_700_defconfig    clang-20
+arc                        nsim_700_defconfig    gcc-14.1.0
+arc                   randconfig-001-20241104    gcc-14.1.0
+arc                   randconfig-002-20241104    gcc-14.1.0
+arc                    vdk_hs38_smp_defconfig    gcc-14.1.0
+arm                              allmodconfig    clang-20
+arm                              allmodconfig    gcc-14.1.0
+arm                               allnoconfig    gcc-14.1.0
+arm                              allyesconfig    clang-20
+arm                              allyesconfig    gcc-14.1.0
+arm                       aspeed_g5_defconfig    gcc-14.1.0
+arm                        clps711x_defconfig    gcc-14.1.0
+arm                     davinci_all_defconfig    clang-20
+arm                                 defconfig    gcc-14.1.0
+arm                          exynos_defconfig    clang-20
+arm                       imx_v4_v5_defconfig    gcc-14.1.0
+arm                       imx_v6_v7_defconfig    clang-20
+arm                          ixp4xx_defconfig    gcc-14.1.0
+arm                      jornada720_defconfig    clang-20
+arm                        keystone_defconfig    gcc-14.1.0
+arm                        multi_v7_defconfig    clang-20
+arm                         orion5x_defconfig    clang-20
+arm                          pxa3xx_defconfig    clang-20
+arm                   randconfig-001-20241104    gcc-14.1.0
+arm                   randconfig-002-20241104    gcc-14.1.0
+arm                   randconfig-003-20241104    gcc-14.1.0
+arm                   randconfig-004-20241104    gcc-14.1.0
+arm                         vf610m4_defconfig    clang-20
+arm64                            allmodconfig    clang-20
+arm64                             allnoconfig    gcc-14.1.0
+arm64                               defconfig    gcc-14.1.0
+arm64                 randconfig-001-20241104    gcc-14.1.0
+arm64                 randconfig-002-20241104    gcc-14.1.0
+arm64                 randconfig-003-20241104    gcc-14.1.0
+arm64                 randconfig-004-20241104    gcc-14.1.0
+csky                              allnoconfig    gcc-14.1.0
+csky                                defconfig    gcc-14.1.0
+csky                  randconfig-001-20241104    gcc-14.1.0
+csky                  randconfig-002-20241104    gcc-14.1.0
+hexagon                          allmodconfig    clang-20
+hexagon                           allnoconfig    gcc-14.1.0
+hexagon                          allyesconfig    clang-20
+hexagon                             defconfig    gcc-14.1.0
+hexagon               randconfig-001-20241104    gcc-14.1.0
+hexagon               randconfig-002-20241104    gcc-14.1.0
+i386                             allmodconfig    clang-19
+i386                             allmodconfig    gcc-12
+i386                              allnoconfig    clang-19
+i386                              allnoconfig    gcc-12
+i386                             allyesconfig    clang-19
+i386                             allyesconfig    gcc-12
+i386        buildonly-randconfig-001-20241104    gcc-12
+i386        buildonly-randconfig-002-20241104    gcc-12
+i386        buildonly-randconfig-003-20241104    gcc-12
+i386        buildonly-randconfig-004-20241104    gcc-12
+i386        buildonly-randconfig-005-20241104    gcc-12
+i386        buildonly-randconfig-006-20241104    gcc-12
+i386                                defconfig    clang-19
+i386                  randconfig-001-20241104    gcc-12
+i386                  randconfig-002-20241104    gcc-12
+i386                  randconfig-003-20241104    gcc-12
+i386                  randconfig-004-20241104    gcc-12
+i386                  randconfig-005-20241104    gcc-12
+i386                  randconfig-006-20241104    gcc-12
+i386                  randconfig-011-20241104    gcc-12
+i386                  randconfig-012-20241104    gcc-12
+i386                  randconfig-013-20241104    gcc-12
+i386                  randconfig-014-20241104    gcc-12
+i386                  randconfig-015-20241104    gcc-12
+i386                  randconfig-016-20241104    gcc-12
+loongarch                        allmodconfig    gcc-14.1.0
+loongarch                         allnoconfig    gcc-14.1.0
+loongarch                           defconfig    gcc-14.1.0
+loongarch             randconfig-001-20241104    gcc-14.1.0
+loongarch             randconfig-002-20241104    gcc-14.1.0
+m68k                             allmodconfig    gcc-14.1.0
+m68k                              allnoconfig    gcc-14.1.0
+m68k                             allyesconfig    gcc-14.1.0
+m68k                         apollo_defconfig    gcc-14.1.0
+m68k                                defconfig    gcc-14.1.0
+m68k                        m5307c3_defconfig    gcc-14.1.0
+m68k                           virt_defconfig    gcc-14.1.0
+microblaze                       allmodconfig    gcc-14.1.0
+microblaze                        allnoconfig    gcc-14.1.0
+microblaze                       allyesconfig    gcc-14.1.0
+microblaze                          defconfig    gcc-14.1.0
+microblaze                      mmu_defconfig    gcc-14.1.0
+mips                              allnoconfig    gcc-14.1.0
+mips                         bigsur_defconfig    gcc-14.1.0
+mips                          eyeq5_defconfig    gcc-14.1.0
+mips                           ip28_defconfig    gcc-14.1.0
+mips                        qi_lb60_defconfig    clang-20
+mips                       rbtx49xx_defconfig    gcc-14.1.0
+nios2                             allnoconfig    gcc-14.1.0
+nios2                               defconfig    gcc-14.1.0
+nios2                 randconfig-001-20241104    gcc-14.1.0
+nios2                 randconfig-002-20241104    gcc-14.1.0
+openrisc                          allnoconfig    clang-20
+openrisc                          allnoconfig    gcc-14.1.0
+openrisc                         allyesconfig    gcc-14.1.0
+openrisc                            defconfig    gcc-12
+openrisc                  or1klitex_defconfig    gcc-14.1.0
+parisc                           allmodconfig    gcc-14.1.0
+parisc                            allnoconfig    clang-20
+parisc                            allnoconfig    gcc-14.1.0
+parisc                           allyesconfig    gcc-14.1.0
+parisc                              defconfig    gcc-12
+parisc                randconfig-001-20241104    gcc-14.1.0
+parisc                randconfig-002-20241104    gcc-14.1.0
+parisc64                            defconfig    gcc-14.1.0
+powerpc                    adder875_defconfig    gcc-14.1.0
+powerpc                          allmodconfig    gcc-14.1.0
+powerpc                           allnoconfig    clang-20
+powerpc                           allnoconfig    gcc-14.1.0
+powerpc                          allyesconfig    clang-20
+powerpc                          allyesconfig    gcc-14.1.0
+powerpc                    amigaone_defconfig    gcc-14.1.0
+powerpc                      arches_defconfig    gcc-14.1.0
+powerpc                    gamecube_defconfig    clang-20
+powerpc                     mpc512x_defconfig    gcc-14.1.0
+powerpc                 mpc834x_itx_defconfig    gcc-14.1.0
+powerpc                  mpc866_ads_defconfig    gcc-14.1.0
+powerpc                     ppa8548_defconfig    gcc-14.1.0
+powerpc                     rainier_defconfig    gcc-14.1.0
+powerpc               randconfig-001-20241104    gcc-14.1.0
+powerpc               randconfig-002-20241104    gcc-14.1.0
+powerpc               randconfig-003-20241104    gcc-14.1.0
+powerpc                     taishan_defconfig    gcc-14.1.0
+powerpc                         wii_defconfig    gcc-14.1.0
+powerpc64             randconfig-001-20241104    gcc-14.1.0
+powerpc64             randconfig-002-20241104    gcc-14.1.0
+powerpc64             randconfig-003-20241104    gcc-14.1.0
+riscv                            allmodconfig    clang-20
+riscv                            allmodconfig    gcc-14.1.0
+riscv                             allnoconfig    clang-20
+riscv                             allnoconfig    gcc-14.1.0
+riscv                            allyesconfig    clang-20
+riscv                            allyesconfig    gcc-14.1.0
+riscv                               defconfig    gcc-12
+riscv                    nommu_k210_defconfig    clang-20
+riscv                 randconfig-001-20241104    gcc-14.1.0
+riscv                 randconfig-002-20241104    gcc-14.1.0
+s390                             allmodconfig    gcc-14.1.0
+s390                              allnoconfig    clang-20
+s390                             allyesconfig    gcc-14.1.0
+s390                          debug_defconfig    clang-20
+s390                                defconfig    gcc-12
+s390                  randconfig-001-20241104    gcc-14.1.0
+s390                  randconfig-002-20241104    gcc-14.1.0
+sh                               allmodconfig    gcc-14.1.0
+sh                                allnoconfig    gcc-14.1.0
+sh                               allyesconfig    gcc-14.1.0
+sh                         ap325rxa_defconfig    gcc-14.1.0
+sh                         apsh4a3a_defconfig    gcc-14.1.0
+sh                                  defconfig    gcc-12
+sh                ecovec24-romimage_defconfig    gcc-14.1.0
+sh                          landisk_defconfig    gcc-14.1.0
+sh                          lboxre2_defconfig    gcc-14.1.0
+sh                     magicpanelr2_defconfig    clang-20
+sh                     magicpanelr2_defconfig    gcc-14.1.0
+sh                          r7780mp_defconfig    gcc-14.1.0
+sh                    randconfig-001-20241104    gcc-14.1.0
+sh                    randconfig-002-20241104    gcc-14.1.0
+sh                      rts7751r2d1_defconfig    gcc-14.1.0
+sh                          sdk7786_defconfig    gcc-14.1.0
+sh                           se7712_defconfig    gcc-14.1.0
+sh                           se7724_defconfig    gcc-14.1.0
+sh                   secureedge5410_defconfig    gcc-14.1.0
+sh                           sh2007_defconfig    gcc-14.1.0
+sh                   sh7724_generic_defconfig    gcc-14.1.0
+sh                   sh7770_generic_defconfig    clang-20
+sh                              ul2_defconfig    gcc-14.1.0
+sparc                            allmodconfig    gcc-14.1.0
+sparc64                          alldefconfig    gcc-14.1.0
+sparc64                             defconfig    gcc-12
+sparc64               randconfig-001-20241104    gcc-14.1.0
+sparc64               randconfig-002-20241104    gcc-14.1.0
+um                               alldefconfig    clang-20
+um                               allmodconfig    clang-20
+um                                allnoconfig    clang-17
+um                                allnoconfig    clang-20
+um                               allyesconfig    clang-20
+um                               allyesconfig    gcc-12
+um                                  defconfig    gcc-12
+um                             i386_defconfig    gcc-12
+um                    randconfig-001-20241104    gcc-14.1.0
+um                    randconfig-002-20241104    gcc-14.1.0
+um                           x86_64_defconfig    gcc-12
+x86_64                            allnoconfig    clang-19
+x86_64                           allyesconfig    clang-19
+x86_64      buildonly-randconfig-001-20241104    gcc-12
+x86_64      buildonly-randconfig-002-20241104    gcc-12
+x86_64      buildonly-randconfig-003-20241104    gcc-12
+x86_64      buildonly-randconfig-004-20241104    gcc-12
+x86_64      buildonly-randconfig-005-20241104    gcc-12
+x86_64      buildonly-randconfig-006-20241104    gcc-12
+x86_64                              defconfig    clang-19
+x86_64                              defconfig    gcc-11
+x86_64                                  kexec    clang-19
+x86_64                                  kexec    gcc-12
+x86_64                randconfig-001-20241104    gcc-12
+x86_64                randconfig-002-20241104    gcc-12
+x86_64                randconfig-003-20241104    gcc-12
+x86_64                randconfig-004-20241104    gcc-12
+x86_64                randconfig-005-20241104    gcc-12
+x86_64                randconfig-006-20241104    gcc-12
+x86_64                randconfig-011-20241104    gcc-12
+x86_64                randconfig-012-20241104    gcc-12
+x86_64                randconfig-013-20241104    gcc-12
+x86_64                randconfig-014-20241104    gcc-12
+x86_64                randconfig-015-20241104    gcc-12
+x86_64                randconfig-016-20241104    gcc-12
+x86_64                randconfig-071-20241104    gcc-12
+x86_64                randconfig-072-20241104    gcc-12
+x86_64                randconfig-073-20241104    gcc-12
+x86_64                randconfig-074-20241104    gcc-12
+x86_64                randconfig-075-20241104    gcc-12
+x86_64                randconfig-076-20241104    gcc-12
+x86_64                               rhel-8.3    gcc-12
+x86_64                           rhel-8.3-bpf    clang-19
+x86_64                         rhel-8.3-kunit    clang-19
+x86_64                           rhel-8.3-ltp    clang-19
+x86_64                          rhel-8.3-rust    clang-19
+xtensa                            allnoconfig    gcc-14.1.0
+xtensa                generic_kc705_defconfig    gcc-14.1.0
+xtensa                randconfig-001-20241104    gcc-14.1.0
+xtensa                randconfig-002-20241104    gcc-14.1.0
 
-The fast path only gains in none nohz_full() case.
-
-So maybe it's better to move the fast path code into the non nohz_full() 
-case? With this change, you may have the following benefits:
-
-1. No performance impact on nohz_full() case (either local or remote 
-domain).
-2. Improve performance on non nohz_full() case as you intended in this 
-patch.
-3. The fast path focuses on fixing the right performance bottleneck.
-
-> +
->   	cpu = cpumask_any_housekeeping(cpumask, RESCTRL_PICK_ANY_CPU);
->   
->   	/*
-> @@ -554,6 +579,9 @@ void mon_event_read(struct rmid_read *rr, struct rdt_resource *r,
->   	else
->   		smp_call_on_cpu(cpu, smp_mon_event_count, rr, false);
->   
-> +	/* If smp_call_function_any() was used, preemption is reenabled here. */
-> +	put_cpu();
-> +
->   	resctrl_arch_mon_ctx_free(r, evtid, rr->arch_mon_ctx);
->   }
->   
-
-Thanks.
-
--Fenghua
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
