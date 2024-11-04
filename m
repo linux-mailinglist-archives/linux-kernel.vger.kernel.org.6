@@ -1,81 +1,79 @@
-Return-Path: <linux-kernel+bounces-394694-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394695-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F1FF9BB2ED
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 12:19:42 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88E769BB2EF
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 12:19:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E40D3284C2E
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 11:19:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 34C561F227D5
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 11:19:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD1B91C3021;
-	Mon,  4 Nov 2024 11:08:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE5B61C07DE;
+	Mon,  4 Nov 2024 11:08:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="L4fPlMFa"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DW9QWAx5"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E292D1C232D
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 11:08:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F8831B3954
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 11:08:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730718490; cv=none; b=DrcYoNsnWM42uFVch2Yx6yXOIvlj4vRhLEPTM17nZLYCEsOsSePYVn0wNC/rum8NcgntMb4ounHCxujDPlPrOWSBMFrrpXe2btAVQEvvmlFF1IrtAbdTKecuM5JHBspE4bjV1y8ynxe/XAJjb+fWVcM70s9NEz7YEeJN801M15k=
+	t=1730718531; cv=none; b=gfmyfx+xe5KRvP5QLKaNKxKnKI4q8Dy5UR3RiOQbYVOjczLNrojlNS5Co2qpTQTdkS1JUQ0cmrla9dCMQiTAlXzV/VAgbp47xmtWCOR53mjCdw9Ti8Dt6TqMgoJZlq+IZYCVh9fo2pCPqfGbcm/MU7ULO+55RKlpCp8lhbVjTiE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730718490; c=relaxed/simple;
-	bh=TlWYsh/tWFexC/eaSPh4TES8aBRMPNL3l+Ql19A0KdE=;
+	s=arc-20240116; t=1730718531; c=relaxed/simple;
+	bh=s5P19hNeuAnGUdrMJ/5Mqch/0JAtnNtGyau8mT1WKzc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Z/dF7nqe6q2m09iTh/fY+7BhhfDCH+McQPCz1XN4NO4BZjqMVtmuykhb6zWt3rHge3Y8UcSlp0ZND71+ytjfPX+q21l3O0LGhRlht5/1RsgDzfVtiyhopbDnV58jh0WlAQGmHdsxncthAjaSr0l7sH3ikASyXhS4kkn7EXHkIUE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=fail smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=L4fPlMFa; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A3NvIkp010819
-	for <linux-kernel@vger.kernel.org>; Mon, 4 Nov 2024 11:08:08 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	MHxDEh2fTvWYJLflbd4GMYSu1K2/F3475Vm6BDDWikI=; b=L4fPlMFaexiGZl52
-	uE/Rxvyw+yrmT8zwY6Q6wgUtGfcAo7HGCmWBgeAP/key7BJuNlFD8B9/1QCuJr0R
-	frIC9T6nIHnR0FP8JvvQigtL98I5wjx/UcnLdv8UWmQe0s4l5yLqbz6yn99VBM3C
-	1SnoiHeFhwOVHdMr48ScD4Aj53XzsHKzIV47RMnobEyh5m3nVWtgKdUd9I+OfoMw
-	NmNxYvZ4oxuttGFh2iZ27//N3l1WgbY6v7iJmqIkQPo+d5qRvqQ+KtVi9c43GoVx
-	iC5+jT5br/DqyrwUpYzmurYdQ0MiywGwoRF6OV3CsK9U7csBZ6D6/OR5VBFAgFeC
-	wkmujg==
-Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com [209.85.219.69])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42nd8hbuaj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 11:08:08 +0000 (GMT)
-Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-6cbe6e6bcf2so11506356d6.2
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 03:08:07 -0800 (PST)
+	 In-Reply-To:Content-Type; b=NH7hKLmEZX0HnUpBZxdKf//4i0ZgDUqNgeb4mjDoaLo18p92auoC6m623ZgFkzBNkP3UyRYIEpvt4QzAdKY0pAnIZB3bzD6EPNAlJH3o+nqpzrmip2qN0QYrm7CYIasQY3mz9H/MbpBeQBg//1x8fWOWWNwNIsNNXW3CnwdG0MY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DW9QWAx5; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1730718528;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=eiPSsBINkhUGJeoO3ADfkXjMLznBBsiB9KM89Hnjm4M=;
+	b=DW9QWAx51Nv/ZIAdNH3ObuUvUpozYuq1HpSwCeAqbWD/MODGJCbAepC9It75HesqRk1Gva
+	ur2tFoEI3zvXGql1MbIEP1CyAqEPzUflQkMweieb0/h2sx8wTkGIevp2oXgajskkRq0di+
+	lhMrMcz0PeZVdVd7KZ4NQQuWy4jo8P8=
+Received: from mail-ed1-f69.google.com (mail-ed1-f69.google.com
+ [209.85.208.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-507-neF9Fw41OQCrUNfIa3R7Ig-1; Mon, 04 Nov 2024 06:08:47 -0500
+X-MC-Unique: neF9Fw41OQCrUNfIa3R7Ig-1
+Received: by mail-ed1-f69.google.com with SMTP id 4fb4d7f45d1cf-5c934ceea1fso3203605a12.2
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 03:08:47 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730718487; x=1731323287;
+        d=1e100.net; s=20230601; t=1730718526; x=1731323326;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=MHxDEh2fTvWYJLflbd4GMYSu1K2/F3475Vm6BDDWikI=;
-        b=fS85eENvruGKlqVSDsT4qCdB/UUxYWKzVfHY+a/kb0AT37Ru4JHJD4P26r8jipCZnY
-         SWTzLqMMLKH3V8flAxoVdu2+UV1NTLmz2foBgJTr1DjT5779yBUjTfA1atf56aS1gyg0
-         u3NPJiv5qWEYB5P0VIWwa0vwYt3qBo1sEPUva4tw4wBZvDJ/reKTwhanDfuk/3M4vT5U
-         +Yj344rn0zn8koNaHbhLLkfjobjNiuQBuKQw2A+rKWpstOp8C5etJsRgWsNNAynmy200
-         EwWlKfBzTq+nUoSDo3La8v2sAXX3iocjbOmU9AfXvcA/GPSFPQkVsxWoebgLIs/Xv8tt
-         k2Iw==
-X-Forwarded-Encrypted: i=1; AJvYcCVK/owWl2CxIxBf9PDS0fTUutz/U6h3kOufrn8QUzGiPut+Hb7lFLUQHd6QSNvoq3r9OiAykgRedA7NpoM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YywPaRLUch5E0cZs0k20SpKOKsH4LFaGLptQxlpLh16+dk3n20T
-	RTHnhLFzzcAnV1ee9MsRT/0iyMmqNbPtzOWatqke0qRqv6dIj9raQtmbLchSSrlWsZFr1uMGeOP
-	6dam9jFd724Jswz3KLeNCANtkGZAD6hPuJOhgRpV87eGSD3uwZwxR0zBkgb9TBxc=
-X-Received: by 2002:a05:620a:4491:b0:7b1:4351:c344 with SMTP id af79cd13be357-7b193f5b0cfmr2082875785a.14.1730718486847;
-        Mon, 04 Nov 2024 03:08:06 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IE+aCC2RzIzzCty1UQRivhxqMsi6YryphPrhekUj7zYXO36kDiESq+6rykwo0xBdVBUrO9BcA==
-X-Received: by 2002:a05:620a:4491:b0:7b1:4351:c344 with SMTP id af79cd13be357-7b193f5b0cfmr2082874585a.14.1730718486551;
-        Mon, 04 Nov 2024 03:08:06 -0800 (PST)
-Received: from [192.168.212.120] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9e564c530esm537730166b.75.2024.11.04.03.08.04
+        bh=eiPSsBINkhUGJeoO3ADfkXjMLznBBsiB9KM89Hnjm4M=;
+        b=CyMHE2LdFzpNIbszQK6F/FcrzZwuANe++v5NFO8dIYWEMB9qjIoYDHDaQd3fNHghLc
+         Q3sn12e44Z1sjaL6kDM7T73lOuNSblcKUUbVFhv93yX1Be/86Kgm/KC7j5MQP5zuOPeA
+         hD+F7OM1RFdSW414sy4T8FoVPZYfSF1LecjVyh8KNaOS7rXZmw4sGmCIC75SHx6AE3vE
+         IQ9+a86TvB5FcJ8l2ESzR3tqFCQcXwFGGjrTAiRf6/DGPYvaGrk/RVlylgtHYI9fEvy7
+         xvpoTogq3IdJeZKZPaSTZ1rlfYyxKG/ATCejRcauaZwl7Z/0uqTzp3zHpf1MgXd+MMsS
+         HsZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUDoA1a7eB7/FbXmBE8LwhYTcCCAI1RT9XVx/9xACebjge56MGj8VGWPa1kUXCYTNc9Rep8HwapeQ/5dvQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyo3B7vmeUV9GMBw2lwjiX35p0UB/mwUAJPyUzgp7OzxHADDXJe
+	uQ1nI/tuhVnxAGPj0nhd6KX7ps3w3c+Zfp0H4t6qc4DMORZm+TBonbyBLf+90yYZKcpb2OzVsBF
+	z3OSpRlk6lKqSi6uGJcD3AyM/YXyhC175jFK5IrSMqG5DweWQCglZhttf8N3S/L4qVIJf4Q==
+X-Received: by 2002:a05:6402:1d4c:b0:5ce:de14:65d0 with SMTP id 4fb4d7f45d1cf-5cede146642mr966712a12.0.1730718526162;
+        Mon, 04 Nov 2024 03:08:46 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGpuDyO8D1nRRXTlTJuNJPSHeW3WHC0+/HSstAONVJrZSkZK8THp6jyRFyHZaAKg2FAXzHvYw==
+X-Received: by 2002:a05:6402:1d4c:b0:5ce:de14:65d0 with SMTP id 4fb4d7f45d1cf-5cede146642mr966691a12.0.1730718525615;
+        Mon, 04 Nov 2024 03:08:45 -0800 (PST)
+Received: from [10.40.98.157] ([78.108.130.194])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5ceac7c8c91sm4128304a12.75.2024.11.04.03.08.43
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 04 Nov 2024 03:08:06 -0800 (PST)
-Message-ID: <993fc6d6-d135-4a31-96e7-3270ac287d82@oss.qualcomm.com>
-Date: Mon, 4 Nov 2024 12:08:04 +0100
+        Mon, 04 Nov 2024 03:08:44 -0800 (PST)
+Message-ID: <e25fb120-965d-42e3-9f0a-7aa9bc1c9dee@redhat.com>
+Date: Mon, 4 Nov 2024 12:08:41 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,41 +81,64 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 2/3] arm64: dts: qcom: qcs8300: Add watchdog node
-To: Xin Liu <quic_liuxin@quicinc.com>, Bjorn Andersson
- <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel@quicinc.com,
-        quic_jiegan@quicinc.com, quic_aiquny@quicinc.com,
-        quic_tingweiz@quicinc.com
-References: <20241029031222.1653123-1-quic_liuxin@quicinc.com>
- <20241029031222.1653123-3-quic_liuxin@quicinc.com>
+Subject: Re: [PATCH] media: atomisp: hmm_bo: Fix spelling errors in hmm_bo.h
+To: "Everest K.C." <everestkc@everestkc.com.np>, mchehab@kernel.org,
+ sakari.ailus@linux.intel.com
+Cc: linux-media@vger.kernel.org, linux-staging@lists.linux.dev,
+ linux-kernel@vger.kernel.org
+References: <20240918082203.4941-1-everestkc@everestkc.com.np>
 Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20241029031222.1653123-3-quic_liuxin@quicinc.com>
+From: Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <20240918082203.4941-1-everestkc@everestkc.com.np>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: w9M5lTQMFr4tOIjMG4cdCQBhhtNEunew
-X-Proofpoint-GUID: w9M5lTQMFr4tOIjMG4cdCQBhhtNEunew
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 malwarescore=0
- priorityscore=1501 phishscore=0 clxscore=1015 mlxscore=0 impostorscore=0
- bulkscore=0 mlxlogscore=804 adultscore=0 suspectscore=0 lowpriorityscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
- definitions=main-2411040098
 
-On 29.10.2024 4:12 AM, Xin Liu wrote:
-> Add the watchdog node for QCS8300 SoC.
+Hi,
+
+On 18-Sep-24 10:21 AM, Everest K.C. wrote:
+> Fixed spelling errors reported by codespell in
+> drivers/staging/media/atomisp/include/hmm/hmm_bo.h
+> as follows:
+>         increse --> increase
+> 	decrese --> decrease
 > 
-> Signed-off-by: Xin Liu <quic_liuxin@quicinc.com>
+> Signed-off-by: Everest K.C. <everestkc@everestkc.com.np>
+
+Thank you for your patch(es).
+
+I have merged this/these in my media-atomisp branch:
+https://git.kernel.org/pub/scm/linux/kernel/git/hansg/linux.git/log/?h=media-atomisp
+
+And this/these will be included in my next pull-request to
+Mauro (to media subsystem maintainer)
+
+Regards,
+
+Hans
+
+
 > ---
+>  drivers/staging/media/atomisp/include/hmm/hmm_bo.h | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/staging/media/atomisp/include/hmm/hmm_bo.h b/drivers/staging/media/atomisp/include/hmm/hmm_bo.h
+> index b4c03e0ca9c0..6d3c74156345 100644
+> --- a/drivers/staging/media/atomisp/include/hmm/hmm_bo.h
+> +++ b/drivers/staging/media/atomisp/include/hmm/hmm_bo.h
+> @@ -159,12 +159,12 @@ void hmm_bo_device_exit(struct hmm_bo_device *bdev);
+>  int hmm_bo_device_inited(struct hmm_bo_device *bdev);
+>  
+>  /*
+> - * increse buffer object reference.
+> + * increase buffer object reference.
+>   */
+>  void hmm_bo_ref(struct hmm_buffer_object *bo);
+>  
+>  /*
+> - * decrese buffer object reference. if reference reaches 0,
+> + * decrease buffer object reference. if reference reaches 0,
+>   * release function of the buffer object will be called.
+>   *
+>   * this call is also used to release hmm_buffer_object or its
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-
-Konrad
 
