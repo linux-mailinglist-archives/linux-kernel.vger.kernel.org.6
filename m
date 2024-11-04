@@ -1,223 +1,148 @@
-Return-Path: <linux-kernel+bounces-394464-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394467-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 100B09BAF7B
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 10:20:44 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CD919BAF8B
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 10:22:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4400282245
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 09:20:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 29AE6281BCD
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 09:22:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1F031AC458;
-	Mon,  4 Nov 2024 09:20:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA8A31AD3E5;
+	Mon,  4 Nov 2024 09:22:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="gSibGHcX"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="sFRV2jaX"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14D026FC5;
-	Mon,  4 Nov 2024 09:20:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63FB2BA34;
+	Mon,  4 Nov 2024 09:22:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730712036; cv=none; b=a4dy5j4749QD2b1uebAZId0DtOtfKcDWjwiMR3hWjH+JdIk6XTcfdYOQ0xX7tWjSqDYFWeJnAIyo+6ekRs6QT6S6X6f8fcvf/JX+xgFuSrJJ1C4LfvVtBRXJXVEhIB58oLuMHLYL2jP6I1mhGkzmx2AFC947n1z1uBLyLYFQ4Bs=
+	t=1730712170; cv=none; b=XtZOqklR/m2RhdS2hP4406zC0hwODYrd/ol3O8Hm1ppMNwYki4uQxbYdoQgsNJcLF982P9VtZIBFcYB7gyPWAKaA0EYzYDRV2RMLxhQ/ygp6yD1BoYlY4VhhVFqMQPjwNbH9kK+ckDUj3jl5mGKINIlerBQTZUPlhFMrW4uRxQ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730712036; c=relaxed/simple;
-	bh=9MoJFLHTsj+z0yLlrwSovtPsMAGDgZCB1w2bSpJSUVs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WSFGO+OOUhi5yZtNsrLOqcVsjKVu4TOr/UJN8qTFeSOAmpgHCd13QKc0xD8E+twhYS6IkrRQbyfq0HhdQyqt8L12T6v+yx4qJy/b6t37w7MKNTm3aR8feBAuFGKPUORYFTYY+kRhTdK7VsjNC3rMsuNsp/b16W/574nrP/Hk1ZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=gSibGHcX; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from ideasonboard.com (mob-5-90-48-188.net.vodafone.it [5.90.48.188])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 63E9822E;
-	Mon,  4 Nov 2024 10:20:25 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1730712025;
-	bh=9MoJFLHTsj+z0yLlrwSovtPsMAGDgZCB1w2bSpJSUVs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gSibGHcXzairr8MfE2TfeC3Tru75uXM+NYntAPxUKjGvWjw43TxdtzFDVZmrZswnu
-	 qPFT9BZ4d+jWlW98o3XA/uPvjAnrilLv3nPF88wP4tU/y6cB7TesSyBQurpJuUxStp
-	 qRV2WkY8veRbR3he5KjaM0nirIolnjT04I8A6YN8=
-Date: Mon, 4 Nov 2024 10:20:28 +0100
-From: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-To: Jai Luthra <jai.luthra@ideasonboard.com>
-Cc: Dave Stevenson <dave.stevenson@raspberrypi.com>, 
-	Sakari Ailus <sakari.ailus@linux.intel.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/3] media: i2c: imx219: make HBLANK r/w to allow longer
- exposures
-Message-ID: <efhupkcwr5ujwujdxigtltu5lrvdoa4shnquio4hwa2jijkvdu@ofxy5zvslvf7>
-References: <20241029-imx219_fixes-v1-0-b45dc3658b4e@ideasonboard.com>
- <20241029-imx219_fixes-v1-2-b45dc3658b4e@ideasonboard.com>
+	s=arc-20240116; t=1730712170; c=relaxed/simple;
+	bh=tHjJ2iRlxincQ6ybuhGA93RH1ppVQ/RZT1X70YwkjtE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AIeo19WMddHbzV59v7Qv0bhBbMEpK65ht8VoYLetIWLR9MPW8eTZXaSeoXdsQKep0zviwL5wSV/9eUA/UD5rhLw9HGs6yoq2EVzUqe9eobJCe6OQxvCvKckf4dbxq4qeEqu0t5QKYstoHtJLuXGPq6d8+tSCVi+cahm2Pk3bvYc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=sFRV2jaX; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A489oSP003826;
+	Mon, 4 Nov 2024 09:22:04 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=BgtOlU
+	YcexH28p6ZLGkQs9farVzwCdQjbGABQPsJEZA=; b=sFRV2jaXiqRF9vwmAJSZjR
+	J+/ruI5vjVq2OxrsONgqH9P3XR4mPpYZ4kqi/PpzJC/RkMRx0cBSNlpVvHcqqcUJ
+	kYeG01cOSREN367acc3bzfVmLNALXmm6OPLy/zT1xbv+Y1LVz4SVAlxAJXdT3BXY
+	7RTqSJ33l20fe6ASiyoXRDEgYFsUvluPRHYTr/2KlJia1PrP4CBVv1P9naPMF1MY
+	ZmMRpYiejm3C1jufQWwbmlyMUz0TrRHrHCqyt+jVtJ/IAmGxIYQjxsfq2BTNVdvJ
+	PA1G+ICOMilXo02uQOzWiqGIu3DZJfsTmFAEoBad9oYDjMQBlg+tmNUBt0q+IvdA
+	==
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42ptgyg9gm-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 04 Nov 2024 09:22:04 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4A498xnA032050;
+	Mon, 4 Nov 2024 09:22:03 GMT
+Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 42nydmhurk-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 04 Nov 2024 09:22:03 +0000
+Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
+	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4A49M1aS54788574
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 4 Nov 2024 09:22:01 GMT
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 2FBDE2004B;
+	Mon,  4 Nov 2024 09:22:01 +0000 (GMT)
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 4E51E20043;
+	Mon,  4 Nov 2024 09:21:59 +0000 (GMT)
+Received: from [9.203.115.143] (unknown [9.203.115.143])
+	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Mon,  4 Nov 2024 09:21:59 +0000 (GMT)
+Message-ID: <1916cb5c-cb3d-427c-bcf0-2c1b905fd6d1@linux.ibm.com>
+Date: Mon, 4 Nov 2024 14:51:57 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241029-imx219_fixes-v1-2-b45dc3658b4e@ideasonboard.com>
-
-Hi Jai, Dave
-
-On Tue, Oct 29, 2024 at 02:27:36PM +0530, Jai Luthra wrote:
-> From: Dave Stevenson <dave.stevenson@raspberrypi.com>
->
-> The HBLANK control was read-only, and always configured such
-> that the sensor HTS register was 3448. This limited the maximum
-> exposure time that could be achieved to around 1.26 secs.
->
-> Make HBLANK read/write so that the line time can be extended,
-> and thereby allow longer exposures (and slower frame rates).
-> Retain the overall HTS setting when changing modes rather than
-> resetting it to a default.
->
-> Signed-off-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
-> Signed-off-by: Jai Luthra <jai.luthra@ideasonboard.com>
-> ---
->  drivers/media/i2c/imx219.c | 35 +++++++++++++++++++++++------------
->  1 file changed, 23 insertions(+), 12 deletions(-)
->
-> diff --git a/drivers/media/i2c/imx219.c b/drivers/media/i2c/imx219.c
-> index f98aad74fe584a18e2fe7126f92bf294762a54e3..de9230d4ad81f085640be254db9391ae7ad20773 100644
-> --- a/drivers/media/i2c/imx219.c
-> +++ b/drivers/media/i2c/imx219.c
-> @@ -76,8 +76,10 @@
->
->  #define IMX219_VBLANK_MIN		32
->
-> -/* HBLANK control - read only */
-> -#define IMX219_PPL_DEFAULT		3448
-> +/* HBLANK control range */
-> +#define IMX219_PPL_MIN			3448
-> +#define IMX219_PPL_MAX			0x7ff0
-
-nit: I wold have rather made these two either both hex or both
-decimal (my preference is for hex as it matches the registers
-0x1144-0x1147 registers)
-
-Also, yes:
-min_line_length_pck = 0x0d78 = 3448
-
-but:
-min_line_blanking_pck = 0xa8 = 168
-
-But as the max supported output width is 3280 and (3448 - 168 = 3280) I
-think it's fine listing PLL_MIN only
-
-> +#define IMX219_REG_HTS			CCI_REG16(0x0162)
->
->  #define IMX219_REG_LINE_LENGTH_A	CCI_REG16(0x0162)
->  #define IMX219_REG_X_ADD_STA_A		CCI_REG16(0x0164)
-> @@ -422,6 +424,10 @@ static int imx219_set_ctrl(struct v4l2_ctrl *ctrl)
->  		cci_write(imx219->regmap, IMX219_REG_VTS,
->  			  format->height + ctrl->val, &ret);
->  		break;
-> +	case V4L2_CID_HBLANK:
-> +		cci_write(imx219->regmap, IMX219_REG_HTS,
-> +			  format->width + ctrl->val, &ret);
-
-According to Sakari's comment, should you in the next patch scale
-hblank by the rate factor has done for vts and pixel rate ?
-
-> +		break;
->  	case V4L2_CID_TEST_PATTERN_RED:
->  		cci_write(imx219->regmap, IMX219_REG_TESTP_RED,
->  			  ctrl->val, &ret);
-> @@ -496,12 +502,11 @@ static int imx219_init_controls(struct imx219 *imx219)
->  					   V4L2_CID_VBLANK, IMX219_VBLANK_MIN,
->  					   IMX219_VTS_MAX - mode->height, 1,
->  					   mode->vts_def - mode->height);
-> -	hblank = IMX219_PPL_DEFAULT - mode->width;
-> +	hblank = IMX219_PPL_MIN - mode->width;
->  	imx219->hblank = v4l2_ctrl_new_std(ctrl_hdlr, &imx219_ctrl_ops,
-> -					   V4L2_CID_HBLANK, hblank, hblank,
-> +					   V4L2_CID_HBLANK, hblank,
-> +					   IMX219_PPL_MIN - mode->width,
-
-Can't you use 'hblank' again here ?
-
->  					   1, hblank);
-> -	if (imx219->hblank)
-> -		imx219->hblank->flags |= V4L2_CTRL_FLAG_READ_ONLY;
->  	exposure_max = mode->vts_def - 4;
->  	exposure_def = (exposure_max < IMX219_EXPOSURE_DEFAULT) ?
->  		exposure_max : IMX219_EXPOSURE_DEFAULT;
-> @@ -842,6 +847,7 @@ static int imx219_set_pad_format(struct v4l2_subdev *sd,
->  	crop->top = (IMX219_NATIVE_HEIGHT - crop->height) / 2;
->
->  	if (fmt->which == V4L2_SUBDEV_FORMAT_ACTIVE) {
-> +		u32 prev_hts = format->width + imx219->hblank->val;
->  		int exposure_max;
->  		int exposure_def;
->  		int hblank;
-> @@ -861,13 +867,18 @@ static int imx219_set_pad_format(struct v4l2_subdev *sd,
->  					 exposure_max, imx219->exposure->step,
->  					 exposure_def);
->  		/*
-> -		 * Currently PPL is fixed to IMX219_PPL_DEFAULT, so hblank
-> -		 * depends on mode->width only, and is not changeble in any
-> -		 * way other than changing the mode.
-> +		 * Retain PPL setting from previous mode so that the
-> +		 * line time does not change on a mode change.
-> +		 * Limits have to be recomputed as the controls define
-> +		 * the blanking only, so PPL values need to have the
-> +		 * mode width subtracted.
-
-Two years ago I wrote this
-https://patchwork.linuxtv.org/project/linux-media/patch/20221121181515.34008-2-jacopo@jmondi.org/
-
-which hasn't progressed since then but I presume was based on some
-sort of consensus.
-
-Is it worth a respin ?
-
->  		 */
-> -		hblank = IMX219_PPL_DEFAULT - mode->width;
-> -		__v4l2_ctrl_modify_range(imx219->hblank, hblank, hblank, 1,
-> -					 hblank);
-> +		hblank = prev_hts - mode->width;
-
-And as far as I can tell mode->width == format->width because of the
-above
-
-	imx219_update_pad_format(imx219, mode, &fmt->format, fmt->format.code);
-	format = v4l2_subdev_state_get_format(state, 0);
-	*format = fmt->format;
-
-so here you have
-
-		u32 prev_hts = format->width + imx219->hblank->val;
-                hblank = (format->widht + imx219->hblank->val)
-                       - format->width;
-
-so that:
-                hblank == imx219->hblank->val;
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] selftests/ftrace: update kprobe syntax error test for
+ ppc64le
+To: Segher Boessenkool <segher@kernel.crashing.org>
+Cc: Shuah Khan <shuah@kernel.org>, linux-kselftest@vger.kernel.org,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Masami Hiramatsu
+ <mhiramat@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Madhavan Srinivasan <maddy@linux.ibm.com>,
+        "Naveen N. Rao"
+ <naveen@kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        linux-trace-kernel@vger.kernel.org,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
+References: <20241101191925.1550493-1-hbathini@linux.ibm.com>
+ <20241101205948.GW29862@gate.crashing.org>
+Content-Language: en-US
+From: Hari Bathini <hbathini@linux.ibm.com>
+In-Reply-To: <20241101205948.GW29862@gate.crashing.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: 8GtkEmTnIot0mf1svQRW34AKbisKBiaf
+X-Proofpoint-ORIG-GUID: 8GtkEmTnIot0mf1svQRW34AKbisKBiaf
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ phishscore=0 clxscore=1011 bulkscore=0 mlxlogscore=999 spamscore=0
+ mlxscore=0 lowpriorityscore=0 malwarescore=0 suspectscore=0
+ impostorscore=0 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2409260000 definitions=main-2411040081
 
 
-> +		__v4l2_ctrl_modify_range(imx219->hblank,
-> +					 IMX219_PPL_MIN - mode->width,
-> +					 IMX219_PPL_MAX - mode->width,
-> +					 1, IMX219_PPL_MIN - mode->width);
-> +		__v4l2_ctrl_s_ctrl(imx219->hblank, hblank);
 
-So here you're writing hblank to the same value (clamped by the
-framework in the new limits). So you're not retaining line lenght but
-the blanking value, which seems to contradict the comment. Or am I
-missing something here ?
+On 02/11/24 2:29 am, Segher Boessenkool wrote:
+> Hi!
+> 
+> On Sat, Nov 02, 2024 at 12:49:25AM +0530, Hari Bathini wrote:
+>> For ppc64le, depending on the kernel configuration used, offset 16
+>> from function start address can also be considered function entry.
+>> Update the test case to accommodate such configurations.
+> 
+> (This is true for all ELfv2, not just LE.  For the kernel that is about
+> the same).
+> 
+> The LEP and GEP can differ by zero, one, two, four, eight, or sixteen
+> insns (where an insn is four bytes).  Four insns is common, yes, but
+> maybe you can support all?  See the function symbol's st_other field
+> to see what the offset is:
+> 0, 1: zero insns, zero bytes
+> N = 2..6: 1 << (N-2) insns, i.e. 1<<N bytes
+> 7: reserved
+> 
+> (This is the top 3 bits of st_other, the other bits have other meanings).
+> 
+> Four insns is common, yes, but by no means the only possibility.
+
+Hi Segher,
+
+Querying for function arguments is supported on kprobes only at function
+entry. This is a negative test case where the offset is intentionally
+set beyond function entry while querying for function arguments.
+I guess, simply setting the offset to 20 (vfs_read is anyway
+going to be beyond 5 instructions) instead of 8 for powerpc would
+make all platforms and ABI variants happy?
 
 Thanks
-  j
-
->  	}
->
->  	return 0;
->
-> --
-> 2.47.0
->
->
+Hari
 
