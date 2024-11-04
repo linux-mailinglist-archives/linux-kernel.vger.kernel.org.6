@@ -1,103 +1,186 @@
-Return-Path: <linux-kernel+bounces-394377-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394378-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25B149BAE27
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 09:33:37 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F30939BAE2D
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 09:34:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 572FE1C210AF
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 08:33:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1FCD91C211DE
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 08:34:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2445D19D8B2;
-	Mon,  4 Nov 2024 08:33:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAADD18B48A;
+	Mon,  4 Nov 2024 08:34:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="v1J3pWP+"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Tt1DIjZq"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 134D117B428;
-	Mon,  4 Nov 2024 08:33:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CF8C132111
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 08:34:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730709203; cv=none; b=HBejPDSMHeLkzqeS7tbUqu5AeY74mEJyOKd4QyX4VVFJoN54asePznLLA702PKGBCLyd+RTmNf6+YWh7W5a8FqVf8slRLRY+SEfufIGXQzYedolMoNLnS1EnKLxP3BxQyK+G5Rz9vyyHpuioGBi6yhb9fcXo1VPMGH5/rfvRfJg=
+	t=1730709262; cv=none; b=kTb+Zd6iFxBcU0ENQyX74l4uQhaiJFp0Rp9P08L+Mr3hInzAsi7ic9iQfIVD5613OCxPWvqQFC8jxVEbnZ4h8LhM2bYJO2qFdI1pvfzNazuJSf8fhPQTXig/gWlbobqLl4jBJTwVgD1bBJ8xUvaKY0Vmr8AdU4fcDgrYaz2fLtk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730709203; c=relaxed/simple;
-	bh=EqMKummwQ7vaqd9KFscfZmZPOeKFWLCcnWoz9iNuZ7o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ic3Z0Iv7TyCUNh/W9dd+sdX5EbU0a6vhSG8D3SfF3gQuzzkaXv6eqV/ZG3b6+b5uqoZqgfGT5TZSueWsQu2gxsmrZBK8P2cSi7Pj4YZE78kuWiCj+baJoV/zc0sKgWmuSLkZ56uH8fBp+cFHJzbeNZg1Q7uIJ98crmenIrdY5qU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=v1J3pWP+; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from ideasonboard.com (mob-5-90-48-188.net.vodafone.it [5.90.48.188])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 4DC25236;
-	Mon,  4 Nov 2024 09:33:13 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1730709193;
-	bh=EqMKummwQ7vaqd9KFscfZmZPOeKFWLCcnWoz9iNuZ7o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=v1J3pWP+hpJKZoRVjeOi1PKWtBMsd46Ml1SgqwkAO0CBHH/WslH0g1DcuFz4SeKxB
-	 u3kc39pLaulPXwbwxI9dNAbDvioSdslWkk2Z8uwxuelLCwpOiQRmR6TOzCyTSykmiL
-	 dR0p8Qo8up40VstC0Z5J7SFdnAs91nEiup/v6sIU=
-Date: Mon, 4 Nov 2024 09:33:16 +0100
-From: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-To: Jai Luthra <jai.luthra@ideasonboard.com>
-Cc: Dave Stevenson <dave.stevenson@raspberrypi.com>, 
-	Sakari Ailus <sakari.ailus@linux.intel.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	David Plowman <david.plowman@raspberrypi.com>
-Subject: Re: [PATCH 1/3] media: i2c: imx219: Correct the minimum vblanking
- value
-Message-ID: <p75bv6cdt3xuiticrw4qlrma62idasocvflpyv424r5gmqwssz@4jed7vwesukf>
-References: <20241029-imx219_fixes-v1-0-b45dc3658b4e@ideasonboard.com>
- <20241029-imx219_fixes-v1-1-b45dc3658b4e@ideasonboard.com>
+	s=arc-20240116; t=1730709262; c=relaxed/simple;
+	bh=iPapASz6aSeaJhVnQhr+zJowiyNX6G+1Nt1rrILwx84=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=c3g6jUCz10WXN3NonGTFzaQ5rnrjl7+XNVldbmNtCiGbBTJjKqRbGjTiXPY/yjtUqYqcLAZlkdKVOKo5I/MhQAlCTXmhwDYgD4sRQP6MyU1LbvV2H9AmY9DGoLzQNoRJ1+8YgqQjegnS5eWWQjJWU1f3vBF6+e4NnUz68ehxiPE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Tt1DIjZq; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-37d4b0943c7so2478197f8f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 00:34:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1730709258; x=1731314058; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=0ApKzuM1Dy1yHlR1OnkyQgRDQp0Q55UQ4hWD1IiDoII=;
+        b=Tt1DIjZqxDA8vBHdDmEFlG130xBjAQsldgAjeZRFcsDZqHvvB/A92FrUJnYqxcUZ+a
+         5Fbd8tVxs8a9DGXpgH/8muLWANlK2jHO1bgNnCfms6g7QCqH+CpR/xyzeJHnapBKKaP+
+         CrILoCHo2awlBDgJMnV6GFJvH9o1qw4CyZk8SznOOD+hnwMznNT6RMSJZwh3Pjy/g1IM
+         G7sDuINpwz8AhsBQ7eralTPLCHPXqh4To/Xx3VsRZGKd2epjhZp8SNY01auSwG0CJ3b8
+         JiZeAdW9/cPO9aSDuVfhEZB51Paxm3e96UrqwYQNA0I+5o9QgaHnWg+6LFOlHxO/0Rv3
+         xu9Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730709258; x=1731314058;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=0ApKzuM1Dy1yHlR1OnkyQgRDQp0Q55UQ4hWD1IiDoII=;
+        b=odjWxgnEhtu0lYPcmXB/QrO27QwcrXKVbkXoINrSwuaGph2cwJij6wsb9bv8HtbCyF
+         RQPRVMi0D8elBhMZ62kkU/JkTWt3TLT3py6qbtf0geITBlV9LkalKHkPL/PkAnTv9O/H
+         DN7Gxi5sYEC3nI1CSd4WQwwfTTlzFh1CWKKGSLj7RACk+UpdopLv2V34m3fS51NRcVba
+         bn0RKL8gvOciS657dgQaV4bsMU0NX/IQUySaoCFmgb0U0qlY39bwT+n5cj1jaa503SBS
+         fDfGpiSk5HluVzkmzX30cWeyIAWatE465J+dc8x7xOxpYo6NEcvFBh0gQLPbsrw+Sy1g
+         SqfA==
+X-Forwarded-Encrypted: i=1; AJvYcCXbKixTiHaCvc9TnetyBEBMBQXCGSpOtOI0lCBmjyaGJj1D09JSjKRLvjX6QZUgrF8v5a0QT4lhJSaLffA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YybykBdAILb4OV+fhubg+xyQNWZ6PQfgRB5fhMCoKJG01WFgRtu
+	6GvSCPh2M/2+4bxlJ3q9ayPgd+WF+HVNLBIIOn8C3la0TOhyzNzp2k6Pw/YXBsU=
+X-Google-Smtp-Source: AGHT+IFxmI5A9LHrUN21bEWOHNg1hm+NCdXeoy97NqjdjCzBuK2/l+VfezM4eItvxCTFN1s/k5MfCg==
+X-Received: by 2002:adf:edc2:0:b0:37d:4ebe:164b with SMTP id ffacd0b85a97d-380611e1252mr20361114f8f.44.1730709257844;
+        Mon, 04 Nov 2024 00:34:17 -0800 (PST)
+Received: from ?IPV6:2a01:e0a:982:cbb0:5b00:c640:4c96:8a97? ([2a01:e0a:982:cbb0:5b00:c640:4c96:8a97])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381c113dd95sm12652484f8f.83.2024.11.04.00.34.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 04 Nov 2024 00:34:17 -0800 (PST)
+Message-ID: <e4bf88e3-e77f-49dd-84b8-e3fa3d8ee95e@linaro.org>
+Date: Mon, 4 Nov 2024 09:34:15 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241029-imx219_fixes-v1-1-b45dc3658b4e@ideasonboard.com>
+User-Agent: Mozilla Thunderbird
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH] drm/bridge: it6505: Fix inverted reset polarity
+To: Chen-Yu Tsai <wenst@chromium.org>, Andrzej Hajda
+ <andrzej.hajda@intel.com>, Robert Foss <rfoss@kernel.org>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+ stable@vger.kernel.org
+References: <20241029095411.657616-1-wenst@chromium.org>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <20241029095411.657616-1-wenst@chromium.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Jai
-
-On Tue, Oct 29, 2024 at 02:27:35PM +0530, Jai Luthra wrote:
-> From: David Plowman <david.plowman@raspberrypi.com>
->
-> The datasheet for this sensor documents the minimum vblanking as being
-> 32 lines. It does fix some problems with occasional black lines at the
-> bottom of images (tested on Raspberry Pi).
->
-> Signed-off-by: David Plowman <david.plowman@raspberrypi.com>
-> Signed-off-by: Jai Luthra <jai.luthra@ideasonboard.com>
-
-Confirmed by the documentation of register 0x114a/0x114b
-
-Reviewed-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-
+On 29/10/2024 10:54, Chen-Yu Tsai wrote:
+> The IT6505 bridge chip has a active low reset line. Since it is a
+> "reset" and not an "enable" line, the GPIO should be asserted to
+> put it in reset and deasserted to bring it out of reset during
+> the power on sequence.
+> 
+> The polarity was inverted when the driver was first introduced, likely
+> because the device family that was targeted had an inverting level
+> shifter on the reset line.
+> 
+> The MT8186 Corsola devices already have the IT6505 in their device tree,
+> but the whole display pipeline is actually disabled and won't be enabled
+> until some remaining issues are sorted out. The other known user is
+> the MT8183 Kukui / Jacuzzi family; their device trees currently do not
+> have the IT6505 included.
+> 
+> Fix the polarity in the driver while there are no actual users.
+> 
+> Fixes: b5c84a9edcd4 ("drm/bridge: add it6505 driver")
+> Cc: <stable@vger.kernel.org>
+> Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
 > ---
->  drivers/media/i2c/imx219.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/media/i2c/imx219.c b/drivers/media/i2c/imx219.c
-> index e78a80b2bb2e455c857390b188c128b28c224778..f98aad74fe584a18e2fe7126f92bf294762a54e3 100644
-> --- a/drivers/media/i2c/imx219.c
-> +++ b/drivers/media/i2c/imx219.c
-> @@ -74,7 +74,7 @@
->  #define IMX219_REG_VTS			CCI_REG16(0x0160)
->  #define IMX219_VTS_MAX			0xffff
->
-> -#define IMX219_VBLANK_MIN		4
-> +#define IMX219_VBLANK_MIN		32
->
->  /* HBLANK control - read only */
->  #define IMX219_PPL_DEFAULT		3448
->
-> --
-> 2.47.0
->
->
+>   drivers/gpu/drm/bridge/ite-it6505.c | 8 ++++----
+>   1 file changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/bridge/ite-it6505.c b/drivers/gpu/drm/bridge/ite-it6505.c
+> index 7502a5f81557..df7ecdf0f422 100644
+> --- a/drivers/gpu/drm/bridge/ite-it6505.c
+> +++ b/drivers/gpu/drm/bridge/ite-it6505.c
+> @@ -2618,9 +2618,9 @@ static int it6505_poweron(struct it6505 *it6505)
+>   	/* time interval between OVDD and SYSRSTN at least be 10ms */
+>   	if (pdata->gpiod_reset) {
+>   		usleep_range(10000, 20000);
+> -		gpiod_set_value_cansleep(pdata->gpiod_reset, 0);
+> -		usleep_range(1000, 2000);
+>   		gpiod_set_value_cansleep(pdata->gpiod_reset, 1);
+> +		usleep_range(1000, 2000);
+> +		gpiod_set_value_cansleep(pdata->gpiod_reset, 0);
+>   		usleep_range(25000, 35000);
+>   	}
+>   
+> @@ -2651,7 +2651,7 @@ static int it6505_poweroff(struct it6505 *it6505)
+>   	disable_irq_nosync(it6505->irq);
+>   
+>   	if (pdata->gpiod_reset)
+> -		gpiod_set_value_cansleep(pdata->gpiod_reset, 0);
+> +		gpiod_set_value_cansleep(pdata->gpiod_reset, 1);
+>   
+>   	if (pdata->pwr18) {
+>   		err = regulator_disable(pdata->pwr18);
+> @@ -3205,7 +3205,7 @@ static int it6505_init_pdata(struct it6505 *it6505)
+>   		return PTR_ERR(pdata->ovdd);
+>   	}
+>   
+> -	pdata->gpiod_reset = devm_gpiod_get(dev, "reset", GPIOD_OUT_LOW);
+> +	pdata->gpiod_reset = devm_gpiod_get(dev, "reset", GPIOD_OUT_HIGH);
+>   	if (IS_ERR(pdata->gpiod_reset)) {
+>   		dev_err(dev, "gpiod_reset gpio not found");
+>   		return PTR_ERR(pdata->gpiod_reset);
+
+Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
 
