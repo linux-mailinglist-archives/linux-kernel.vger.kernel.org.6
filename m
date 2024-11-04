@@ -1,92 +1,98 @@
-Return-Path: <linux-kernel+bounces-394753-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394754-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CBD49BB37F
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 12:35:05 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7147B9BB382
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 12:35:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 08076281B1C
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 11:35:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B27A1C20B7D
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 11:35:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF7E31B21A0;
-	Mon,  4 Nov 2024 11:31:06 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8030D1B21A7;
+	Mon,  4 Nov 2024 11:32:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="k0a7qXn5"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B28FD185B4D
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 11:31:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B92115B97D;
+	Mon,  4 Nov 2024 11:32:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730719866; cv=none; b=RphdH9jfqQ6E/79ghQfjBaiyCkT5iz1u9KBRoRSN2yKabzfAa/N7u45hstCJwAIR70ZJopkZac8XUbZPb/H7AE+Vtk50pup9AsmmtKv473wsvoLWrUs3hfnRHnX/p9L82B/TZjbb+BKxf2kNo3/CYRawfR/re5UoexfpOXOeMOw=
+	t=1730719972; cv=none; b=n3RMIZp7+QbSl7oPGVg8iFJSxuLXiekcOvEG8PRzRrz+oPmFzjHOyTY7Fwc5Une7fQ6M/hQUyKvT9DvmKZLpkjsHgY812RyWuvUuvGwo6kD/ZAAefOoB6F38b8M3c9XrCqGfXn+l2UWmuwm5WaYfsZkslbY9JcLRuIwfnq7YCtM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730719866; c=relaxed/simple;
-	bh=USTEXjGieWszLGj5z6r32OOADjpD4CWIcX6mjLJKHQ4=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=csRXmwxOSFiwKPbN4XZHIr0P1KtvPajnc8h5zRGwBOjTsWA8Q71U2Xwb0DPAzk89vJSp5wkrQg9D3llLhNSD0x5aYrPy9NzNIAQaBeFf3fsagIffdcbSHZ/WBLjxOi8wvJzLRMtuXwVP30BZz2tn9wG+MK5JZjieoUb+bRtzXos=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a6b3808522so29393285ab.3
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 03:31:04 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730719864; x=1731324664;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7K+Rxi0VCaGxt4BQbyfBUCQ8LjiJXLegtr22yoocie0=;
-        b=SGnlZf4+2z0yL6Ff6Bac2WEZcaRd8PgosWSs1HljASJoANoRZ2PWFsa42MatvrElGT
-         bW2p6d1LOEMbJLGHjkImYe+n9ljTuy8a3UzphK/R9219MJZ8vM/jRdsji2N+N4UEVEct
-         5nsn42voPbebJKvzntc2bvppOlrJfJaHKZtJm1SMSR7IQwe/CPnrH6BZIMij13ZdjIzL
-         KItnCC+Zi4HJ22jOA1fyNTx4EesKrumLoXseyt0OK+sGQ45lCYpMP9b+ojJo8E843zE7
-         /aGqlOIWP13fQsEdq2eNFOVzXtT1HDXs3wupASBbRqQHNLjoQIz9TS/oKISc/HVq8Ofw
-         wUew==
-X-Forwarded-Encrypted: i=1; AJvYcCV8b7J/6LDo5mVV3iEo/DTURhGLfx9NGrxU/Wygn8R/CuI/jnRZcWcKPJEESA+3dlCo6FFtKwWTkcy8H5k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwdL5yForLozRTS/cbW5xWUjc2dU8VGNgD5uRxJYLvLXVc+M8jS
-	UZgv8geRRjZCrUD1N3oZna/r9wTjHXLoByytR5XXCHo1dHEKJIEzAdszvZ6WYB8dwKugUMixSja
-	7J7T1MWtISpDnKPj5GqDOR/yTU7AAQLsgUMkAcx57CoTQjVZeIDXHod0=
-X-Google-Smtp-Source: AGHT+IEHvYw/XzmB2HY4/rJQxloYCEvLWoq1GowHu4aappO6X751IG15/mI2XWUfsn57t3nkVzFOEfFEIWW4ziCCkwXvAQWgEKMz
+	s=arc-20240116; t=1730719972; c=relaxed/simple;
+	bh=rBO7w7nz8IYviAX1BUMrSFsTKK2vbG0eTeURGUP/aIA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UP/1ZvR8cNSKTOlHYC5GCCGQtlcvGNvQkevwB5gbX8Qwfr3XUCry5Lx+3zzM0R2su9eOA6N+ORlJAwydbpk6panxpQ0Pw4iPxHaAVDfFUJubPS3K8wTAlmSqm5XJHh/+36irfZVTqtT4XUiaTcHkbasOI8XpnVMbS/MhtOYO/+A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=k0a7qXn5; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=BHpl1stRNcKUhfO8nh0FsJ9Z+el0uh1zfXKfLPvp/aE=; b=k0a7qXn5V4Zlb6eq+YMJGtAHwo
+	1lFqnfoakT4Iv4GM5pYF95r1JA9Ga2IMWi6t6IiieB6x3IhH7AMqCHA7ZxNgeeJngrQK7A/QEJLQz
+	5gdbgSQ1A/b/wuh1EKaSmmPWi4KpOMw0BIDHA3ENhggeGgEfpIRboN9m6mkm7QE85viDBgLWs/Qvk
+	CpwMQqqsr5vxookhrcmxMyj8xB69MROGxy+CL81P4CUgiUVkB+JPqOULjNSopuupy7ulqFiei2HRX
+	Nb4InjtU7kfpj2RFlaCCl8QmT/dbCVKITjhihkNnMbKHPzQEeSHuIYK1LEpzsqql26mUvCflrKLaE
+	vcDTi0Ng==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1t7vK6-0000000BJJu-044J;
+	Mon, 04 Nov 2024 11:32:42 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id B5EB33006AB; Mon,  4 Nov 2024 12:32:40 +0100 (CET)
+Date: Mon, 4 Nov 2024 12:32:40 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Florian Weimer <fweimer@redhat.com>
+Cc: =?iso-8859-1?Q?Andr=E9?= Almeida <andrealmeid@igalia.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Darren Hart <dvhart@infradead.org>,
+	Davidlohr Bueso <dave@stgolabs.net>, Arnd Bergmann <arnd@arndb.de>,
+	sonicadvance1@gmail.com, linux-kernel@vger.kernel.org,
+	kernel-dev@igalia.com, linux-api@vger.kernel.org,
+	Nathan Chancellor <nathan@kernel.org>
+Subject: Re: [PATCH v2 0/3] futex: Create set_robust_list2
+Message-ID: <20241104113240.GB24862@noisy.programming.kicks-ass.net>
+References: <20241101162147.284993-1-andrealmeid@igalia.com>
+ <87ldy170x9.fsf@oldenburg.str.redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1707:b0:39f:5e18:239d with SMTP id
- e9e14a558f8ab-3a6b02fbee5mr99594675ab.15.1730719864025; Mon, 04 Nov 2024
- 03:31:04 -0800 (PST)
-Date: Mon, 04 Nov 2024 03:31:03 -0800
-In-Reply-To: <6728a3a7.050a0220.35b515.01b9.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6728b077.050a0220.35b515.01ba.GAE@google.com>
-Subject: Re: [syzbot] [io-uring?] [usb?] WARNING in io_get_cqe_overflow (2)
-From: syzbot <syzbot+e333341d3d985e5173b2@syzkaller.appspotmail.com>
-To: asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87ldy170x9.fsf@oldenburg.str.redhat.com>
 
-syzbot has bisected this issue to:
+On Sat, Nov 02, 2024 at 10:58:42PM +0100, Florian Weimer wrote:
 
-commit 3f1a546444738b21a8c312a4b49dc168b65c8706
-Author: Jens Axboe <axboe@kernel.dk>
-Date:   Sat Oct 26 01:27:39 2024 +0000
+> QEMU hints towards further problems (in linux-user/syscall.c):
+> 
+>     case TARGET_NR_set_robust_list:
+>     case TARGET_NR_get_robust_list:
+>         /* The ABI for supporting robust futexes has userspace pass
+>          * the kernel a pointer to a linked list which is updated by
+>          * userspace after the syscall; the list is walked by the kernel
+>          * when the thread exits. Since the linked list in QEMU guest
+>          * memory isn't a valid linked list for the host and we have
+>          * no way to reliably intercept the thread-death event, we can't
+>          * support these. Silently return ENOSYS so that guest userspace
+>          * falls back to a non-robust futex implementation (which should
+>          * be OK except in the corner case of the guest crashing while
+>          * holding a mutex that is shared with another process via
+>          * shared memory).
+>          */
+>         return -TARGET_ENOSYS;
 
-    io_uring/rsrc: get rid of per-ring io_rsrc_node list
+I don't think we can sanely fix that. Can't QEMU track the robust thing
+itself and use waitpid() to discover the thread is gone and fudge things
+from there?
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=15aaa1f7980000
-start commit:   c88416ba074a Add linux-next specific files for 20241101
-git tree:       linux-next
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=17aaa1f7980000
-console output: https://syzkaller.appspot.com/x/log.txt?x=13aaa1f7980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=704b6be2ac2f205f
-dashboard link: https://syzkaller.appspot.com/bug?extid=e333341d3d985e5173b2
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16ec06a7980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12c04740580000
 
-Reported-by: syzbot+e333341d3d985e5173b2@syzkaller.appspotmail.com
-Fixes: 3f1a54644473 ("io_uring/rsrc: get rid of per-ring io_rsrc_node list")
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
