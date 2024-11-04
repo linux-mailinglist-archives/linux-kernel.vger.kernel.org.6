@@ -1,104 +1,124 @@
-Return-Path: <linux-kernel+bounces-394659-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394664-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D09CE9BB26C
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 12:09:18 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B8319BB27E
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 12:10:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0DE241C21620
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 11:09:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E486A28455E
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 11:10:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0826B1EC008;
-	Mon,  4 Nov 2024 10:55:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45F5D1F4FD5;
+	Mon,  4 Nov 2024 10:55:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ehvVF8Ab"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TMbH6SIZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DF601EBA0B
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 10:55:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BE151C4A29;
+	Mon,  4 Nov 2024 10:55:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730717705; cv=none; b=myGw9Qti6WYu2mD4QMpylx2r5Nos1HBjCc1Ibf6b9GOxRW3ByScj4qIOiMsrJ9sm5U9rHBeLkhXYNPank1Y1gVvK83Zk/SqyPgJok/dY8RKe5NNKLv+l87L7IAwaenqpc+jCZ873ALCnpovgQgX4SW0UEKUU7h07dqRCXC9Xjpc=
+	t=1730717721; cv=none; b=gRTv4YUbYsegc+VHy/pQsQKkY8tyZLiBPFpvzNbueon8b80J7DrujfLdC4pVz90Ilpd2XdDQkM5h5zjmh6yKyWClGJXmuRRc++gYC4oIvuxe4Xm+mJ5s4qGJ4HGhgLkjXI8rqilcwpMzrkaMpbj9nnjMkA4VhTrbkSt2Ejzf8dE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730717705; c=relaxed/simple;
-	bh=I9OiWUCyKv2i9D1CwAcyraCsNGRc6/tNnnnAMUwXakI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tB19jJkKZ3TSSZCvPOi8vr1PLANhuXXQRai46ceUyaqWYhCJiSmvEMrjSo8gsw3H5cGzx8IAKWdzAovlCcuH4Elrz1h3bHxqC6GlqXxPJLey4E6p24Q06rpOzXT5tG6XXSj5PXXfc4cMCoWJiZMDV+pShZtTDzoIWwi1dHY/WyI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ehvVF8Ab; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-539ee1acb86so3962329e87.0
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 02:55:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1730717701; x=1731322501; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=upe7MW1samf6eEWvfqgJG4VdfRS5tGsncnrDJbr4CFw=;
-        b=ehvVF8Abiyfq0cgPrRjJP2WUEJidSxnLx2yAPiqikwx+hPBxsxdzyGtv9WwnfHNIvJ
-         AWm4yO2A2GufN+3Jk5qRQTHTb2NM5PV1oNp2W0PwRfJaLzUQ0RpOFXyznX3LE6kLknzs
-         8M1rKwTD7XEd8AZQfsuwruJzbFJBm3o1/Cx0b+lyxWruJAoyx1YIHb+ZOqoZmvezyIiS
-         YNtsm22wD0i/NE5IbBSjStg6eYgnoi8MRYlHtuBNioStR7C9jc0Oc8ZqQHtwF2044rku
-         J6OTEPJuVupVxKl2JU8hSQT4XubuPSlM/r35HoCjYYPOlU+i1Bp7HruFsjrZ5x6UVpx7
-         Pv6w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730717701; x=1731322501;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=upe7MW1samf6eEWvfqgJG4VdfRS5tGsncnrDJbr4CFw=;
-        b=pmVVMPVPNgeKRYVAGn/2IsmMSEdtv4O0gWNHNg7GiThdNsd2ncwnOjfMVgefqWLS+C
-         PG6/7rkG0EqmvgDynv385OUSk8QRshqhBpe9yYeM0yhSDtDrPOlcFDAuJ4/aa/1EBej9
-         oWTdJ5vFhstowScf8r4RxDeRvobpUrSWTz3IPp8NS81MMSnktqEqIjrIllGhR+Zeyiwe
-         w3g65z0A329tm7HDrpirwQFrAi0PzYl5XaCen07F5lW20mXBiu6FAZ2dvoA1/1wlHQpb
-         cIMaW5np0uGhw83hIOZrPM7PONddBHTlECQbzmxxNpYnoR4qD387PEOa9uobsIrqEn3k
-         iJqw==
-X-Forwarded-Encrypted: i=1; AJvYcCUKCSeEa1a/8VbfRzMaMRo1o1JfbWDwGM+Y3gFghzQMHD3G9g45OLaVhymCkCrauDY3Hu/Juo0lqkpyIgE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwHkDBJU2fJmrOmlK0N7t6J49P1h3QkG7GHe9FDn7hQhYeAAi/T
-	uK1D2Gje2oDRmD5hadLFxFiDnMLhxmrkGg4afWWl3StrC6TAQOpHBmwhl5LDFjs=
-X-Google-Smtp-Source: AGHT+IHUBwMeOaPmp1xgOzS0MycFuKWOfrs4hmJDzT6l2IQ76clWN20uWq7MD2t7TvXn3CfLtTD79Q==
-X-Received: by 2002:a05:6512:6cd:b0:536:52ed:a23f with SMTP id 2adb3069b0e04-53d65d945a9mr5861120e87.0.1730717700730;
-        Mon, 04 Nov 2024 02:55:00 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53c7bc96136sm1631523e87.10.2024.11.04.02.54.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Nov 2024 02:54:59 -0800 (PST)
-Date: Mon, 4 Nov 2024 12:54:57 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: Re: [PATCH 2/2] soc: qcom: rmtfs: constify rmtfs_class
-Message-ID: <c2agcw3hnwknxtsp5al4bfyjlzauyrz6d43imcbagp2wm5rmrd@y3t5kmbxuxgo>
-References: <20241014130303.123394-1-brgl@bgdev.pl>
- <20241014130303.123394-2-brgl@bgdev.pl>
+	s=arc-20240116; t=1730717721; c=relaxed/simple;
+	bh=p64mwLku2/YIZc/xxK4/4E1rHz+ebYmUk+Mbny9VOnE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KIyVeiMfmWSgnsFVeUQ63SWDG7c2HTDxQpegC7JC3zHcynHfD09dB4gZSNteemd6OUvJDb1cTwwFM3ITj2k8KHR8HMFNbls8B4vzDSKwkSX6TzsVq2sYDQtqrbzOiuKcDsEA1NjLuWRVg828c0TvVmlfSuuU4vPsRTSP5U8LkJo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TMbH6SIZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C233C4CECE;
+	Mon,  4 Nov 2024 10:55:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730717721;
+	bh=p64mwLku2/YIZc/xxK4/4E1rHz+ebYmUk+Mbny9VOnE=;
+	h=From:To:Cc:Subject:Date:From;
+	b=TMbH6SIZ//JvlF/NgVTbFHEEgEWQz2pQYEqglHW/bsv1bfEBMAQW6S5f+BVCnX0A2
+	 syuM9sNW3+h8RvQGVj6XEEwOkyiN0KQCzN/XjC7uxyoqNvVkJGQSuU4UxWdPEyUmpq
+	 xLejqQ7xf8joKB8Y8435/QlmcEzzsrKptydKrEWsAJLwB3jp0CboBgvgeQWnD9cpzl
+	 hryzp8xF5pnu3PZwmGCnwQHo/O09EEax/fwth2FmuLuWQNHnhRHiDK4dhrCOvJJJCM
+	 11fKDFZ2Ff9AE73L8BR3sEu4QG2GzI2v7nq2vlNqh/y+g36nNM4/M/yDCkW4ruoUji
+	 QjZgqa5k2e/aA==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: Hans de Goede <hdegoede@redhat.com>,
+	Mark Brown <broonie@kernel.org>,
+	Sasha Levin <sashal@kernel.org>,
+	cezary.rojewski@intel.com,
+	liam.r.girdwood@linux.intel.com,
+	peter.ujfalusi@linux.intel.com,
+	yung-chuan.liao@linux.intel.com,
+	ranjani.sridharan@linux.intel.com,
+	kai.vehmanen@linux.intel.com,
+	perex@perex.cz,
+	tiwai@suse.com,
+	pierre-louis.bossart@linux.dev,
+	alban.boye@protonmail.com,
+	tomlohave@gmail.com,
+	u.kleine-koenig@baylibre.com,
+	linux-sound@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.4 1/6] ASoC: Intel: bytcr_rt5640: Add DMI quirk for Vexia Edu Atla 10 tablet
+Date: Mon,  4 Nov 2024 05:55:05 -0500
+Message-ID: <20241104105517.98071-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241014130303.123394-2-brgl@bgdev.pl>
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 5.4.284
+Content-Transfer-Encoding: 8bit
 
-On Mon, Oct 14, 2024 at 03:03:03PM +0200, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> 
-> The rmtfs class object is never modified and can be made constant.
-> 
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> ---
->  drivers/soc/qcom/rmtfs_mem.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
+From: Hans de Goede <hdegoede@redhat.com>
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+[ Upstream commit 0107f28f135231da22a9ad5756bb16bd5cada4d5 ]
 
+The Vexia Edu Atla 10 tablet mostly uses the BYTCR tablet defaults,
+but as happens on more models it is using IN1 instead of IN3 for
+its internal mic and JD_SRC_JD2_IN4N instead of JD_SRC_JD1_IN4P
+for jack-detection.
+
+Add a DMI quirk for this to fix the internal-mic and jack-detection.
+
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Link: https://patch.msgid.link/20241024211615.79518-2-hdegoede@redhat.com
+Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ sound/soc/intel/boards/bytcr_rt5640.c | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
+
+diff --git a/sound/soc/intel/boards/bytcr_rt5640.c b/sound/soc/intel/boards/bytcr_rt5640.c
+index 057ecfe2c8b5c..53a15be38b56f 100644
+--- a/sound/soc/intel/boards/bytcr_rt5640.c
++++ b/sound/soc/intel/boards/bytcr_rt5640.c
+@@ -909,6 +909,21 @@ static const struct dmi_system_id byt_rt5640_quirk_table[] = {
+ 					BYT_RT5640_SSP0_AIF2 |
+ 					BYT_RT5640_MCLK_EN),
+ 	},
++	{	/* Vexia Edu Atla 10 tablet */
++		.matches = {
++			DMI_MATCH(DMI_BOARD_VENDOR, "AMI Corporation"),
++			DMI_MATCH(DMI_BOARD_NAME, "Aptio CRB"),
++			/* Above strings are too generic, also match on BIOS date */
++			DMI_MATCH(DMI_BIOS_DATE, "08/25/2014"),
++		},
++		.driver_data = (void *)(BYT_RT5640_IN1_MAP |
++					BYT_RT5640_JD_SRC_JD2_IN4N |
++					BYT_RT5640_OVCD_TH_2000UA |
++					BYT_RT5640_OVCD_SF_0P75 |
++					BYT_RT5640_DIFF_MIC |
++					BYT_RT5640_SSP0_AIF2 |
++					BYT_RT5640_MCLK_EN),
++	},
+ 	{	/* Voyo Winpad A15 */
+ 		.matches = {
+ 			DMI_MATCH(DMI_BOARD_VENDOR, "AMI Corporation"),
 -- 
-With best wishes
-Dmitry
+2.43.0
+
 
