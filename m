@@ -1,171 +1,158 @@
-Return-Path: <linux-kernel+bounces-394530-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394527-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C77E9BB0A0
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 11:08:46 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A5749BB09A
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 11:08:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C468A1F216ED
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 10:08:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D5E17B2257B
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 10:08:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D09B1B219C;
-	Mon,  4 Nov 2024 10:08:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34FA31B0F19;
+	Mon,  4 Nov 2024 10:08:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="cKHu7gBu"
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="ggM8l7oV"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DD5A1B0F1C
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 10:08:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 118A51AF0DD;
+	Mon,  4 Nov 2024 10:08:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730714891; cv=none; b=tN9m0AfthRhJ8HSOzl42oZovNBe9mbcf0F++upQ0+j7qez4M9nJ/AIjaPwXzpF2EhtdPX9n2Jluh012r5GS0zDUT24oUB6j8w/D+59q/qxYzEiFMmFM/5ImOB/GE5NVfn3nqXfjwsKyuM5liqmm0vmEpQmOlUpL/5zmLiZJIGpo=
+	t=1730714889; cv=none; b=HEmz95dfxmwhz9BwimYNlKX/whjXmu+FCDMVJnV46TuOKyZFb61FzKjCyVm91ipASgpAqVVyJwi0pgDt5G1iRHBTjeCUgJDOuh8nBCCdMFua7p+R5UEEtzV7CFUtqkaJLddxmmQjLl2ssi2zAAXqrRhhKq/PIL5Y7I/305TeBxA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730714891; c=relaxed/simple;
-	bh=rFgxEKAY53F1vr1UjWz5Op/T157tTAWmRMUpgFYnWY0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:MIME-Version:
-	 Content-Type:References; b=Lr7UP8sVB3+o3SaQ0RmwRBINyDVysjVAkC8yxi/tDQMvWwmWpKpsYw5Bg23Iie7gzhCGPMc02ropmFOSTIPumOcz34gmyXfXx/7BGiPVHHCWdEwAvKPZzBeMgj0bHCRGXl7tt58UzU/n4O4ldhgt8y150JOqngTvX8HGTFweukY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=cKHu7gBu; arc=none smtp.client-ip=210.118.77.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20241104100802euoutp02fa91cfd47abc1168660085a3bcc0470a~EvAQRTakH0773007730euoutp02O
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 10:08:02 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20241104100802euoutp02fa91cfd47abc1168660085a3bcc0470a~EvAQRTakH0773007730euoutp02O
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1730714882;
-	bh=vxNiS8XZmEMSZYQqnfyixq5+aqnBLp9jGcPWzOWdRC0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=cKHu7gBuasc5eAfb7TwtV0Zl+MIpwGHveZ8zwqQkNxenzEcc1UO1TAQsrq6QIx68f
-	 YtTWO3WBI0sv6WMJ5K/N7RmAkkgshKdT4VhaJ/4+oeAw3JK3GupBNUgI2ed4I5OoOT
-	 4xkOpRnBcpejidyZmwotjHNB7LDkge5mNW0kGaJw=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-	20241104100802eucas1p1b33700ff4fdd391202998a0330c0d8cc~EvAP2EG1X0455904559eucas1p1I;
-	Mon,  4 Nov 2024 10:08:02 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-	eusmges3new.samsung.com (EUCPMTA) with SMTP id CD.DE.20397.10D98276; Mon,  4
-	Nov 2024 10:08:01 +0000 (GMT)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20241104100801eucas1p27cd0d7b9b5b4500604470664884c42fb~EvAPT3Z4K2364623646eucas1p2V;
-	Mon,  4 Nov 2024 10:08:01 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20241104100801eusmtrp1757aa91b22956a42dc6fbe959ac26d29~EvAPS0WIq1011310113eusmtrp1a;
-	Mon,  4 Nov 2024 10:08:01 +0000 (GMT)
-X-AuditID: cbfec7f5-e59c770000004fad-56-67289d012784
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-	eusmgms2.samsung.com (EUCPMTA) with SMTP id 52.B7.19654.10D98276; Mon,  4
-	Nov 2024 10:08:01 +0000 (GMT)
-Received: from AMDC4942.home (unknown [106.210.136.40]) by
-	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20241104100800eusmtip1e1410955ce324ec0762b7beedd809821~EvAOeo3AI2849928499eusmtip1S;
-	Mon,  4 Nov 2024 10:08:00 +0000 (GMT)
-From: Michal Wilczynski <m.wilczynski@samsung.com>
-To: drew@pdp7.com, guoren@kernel.org, wefu@redhat.com,
-	jassisinghbrar@gmail.com, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, paul.walmsley@sifive.com, palmer@dabbelt.com,
-	aou@eecs.berkeley.edu, m.szyprowski@samsung.com, samuel.holland@sifive.com,
-	emil.renner.berthing@canonical.com
-Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, christophe.jaillet@wanadoo.fr, Michal Wilczynski
-	<m.wilczynski@samsung.com>
-Subject: [PATCH v6 3/3] riscv: dts: thead: Add mailbox node
-Date: Mon,  4 Nov 2024 11:07:34 +0100
-Message-Id: <20241104100734.1276116-4-m.wilczynski@samsung.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241104100734.1276116-1-m.wilczynski@samsung.com>
+	s=arc-20240116; t=1730714889; c=relaxed/simple;
+	bh=f8HYPb8VjRWHbkzsO7hlkNdCSNC8iTfyKwTeOs/Jfl0=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Rdwlxa4fDGjrE/qeQEHbZNo3ZMOTjoEj2J70QxdmzO9h5E5KYJdQWkdBMwMeuutN9uU4Q9X7GKDKz3CLRxJGBIgYcG/dlMWWSpVElAMbkEUR7KyedcfG/HPDD5UGMpn2EaiqkiD01Bh7EEl9zXXe1nXq89gJcxqE5ln7Yx5bKbU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=ggM8l7oV; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A49APa3021749;
+	Mon, 4 Nov 2024 10:07:43 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=f8HYPb
+	8VjRWHbkzsO7hlkNdCSNC8iTfyKwTeOs/Jfl0=; b=ggM8l7oVNId+3+uGWJ3F3+
+	Az2Ig8L0hd3vwQoZ3Di8B3h4J5VRGynRlE8KgKLIs9mRy5pKf6UvlEqU6dgnd/9D
+	nSDEJoIdH0G+BkopVApIT0oDcPHVi48lz4mJSnRTsQMKaN6TtdjnKHJopWC9aye9
+	Y7g75bbtAAaHuVvJBKk9OJgRDIQIYa3SI7YsOCkrTEBV5+eHcIp6r1UsLHEq4EcE
+	1Z1y/mpWsV4diCmQufz9EIZsXCVVFE/OHfpvVNlrDoQYb7WiknDS3MLaqhpl+Vs/
+	DBh0LK2yBwh2SoW/uU6JlU7xjmdDbgLAdTfjI6dBU1PW/btLQBNAS46oAHJbeoHw
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42pud5066a-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 04 Nov 2024 10:07:43 +0000 (GMT)
+Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4A4A7gts004252;
+	Mon, 4 Nov 2024 10:07:42 GMT
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42pud50664-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 04 Nov 2024 10:07:42 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4A49l0NZ008430;
+	Mon, 4 Nov 2024 10:07:41 GMT
+Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 42nywk3kc9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 04 Nov 2024 10:07:41 +0000
+Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
+	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4A4A7dVS65077744
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 4 Nov 2024 10:07:39 GMT
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 4D20720091;
+	Mon,  4 Nov 2024 10:07:39 +0000 (GMT)
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id AF9A220090;
+	Mon,  4 Nov 2024 10:07:38 +0000 (GMT)
+Received: from [127.0.0.1] (unknown [9.152.108.100])
+	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Mon,  4 Nov 2024 10:07:38 +0000 (GMT)
+Message-ID: <d5137f25846ebf585383de4d994d388eabab9d60.camel@linux.ibm.com>
+Subject: Re: [PATCH bpf] selftests/bpf: Add a copyright notice to
+ lpm_trie_map_get_next_key
+From: Ilya Leoshkevich <iii@linux.ibm.com>
+To: Hou Tao <houtao@huaweicloud.com>, Byeonguk Jeong <jungbu2855@gmail.com>
+Cc: andrii@kernel.org, daniel@iogearbox.net, martin.lau@linux.dev,
+        Alexei
+ Starovoitov <ast@kernel.org>, bpf@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date: Mon, 04 Nov 2024 11:07:38 +0100
+In-Reply-To: <925cb852-df24-81b6-318a-ee6a628d43c7@huaweicloud.com>
+References: <ZycSXwjH4UTvx-Cn@ub22>
+	 <925cb852-df24-81b6-318a-ee6a628d43c7@huaweicloud.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrOKsWRmVeSWpSXmKPExsWy7djP87qMczXSDa7OtbDY+nsWu8XWg3NZ
-	LdbsPcdkMf/IOVaLe5e2MFlc6lzBaPFibyOLxbUVc9ktXs66x2ZxedccNottn1vYLNYeuctu
-	sf7rfCaLl5d7mC3aZvFb/N+zg91i9bkrLBYt+6ewOAh5zGroZfN48/Ili8fhji/sHjtn3WX3
-	2LSqk81j85J6j5a1x5g83u+7yubRt2UVo8el5uvsHp83yXl8vrueNYAnissmJTUnsyy1SN8u
-	gSvj5dcWtoIjXBUn75xlbGDcz9HFyMEhIWAiMeGYSRcjJ4eQwApGibX7dCDsL0D2heQuRi4g
-	+zOjxJz2DmaQBEj96i1PWSESyxklpm3oZoJw3jBKfDy0gQ2kik3ASOLB8vlgVSIC65kknu1e
-	xg6SYBZYxyjx6Yo9iC0sYC3x4e4TsLEsAqoSF6ZNZAWxeQXsJfqubmSCWCcvsf/gWbAaTgEH
-	iV+9X5ggagQlTs58wgIxU16ieetsZpBlEgK7OSWWvXrNBtHsIrH53nxWCFtY4tXxLewQtozE
-	6ck9LBB2vsSDrZ+gfquR2NlzHMq2lrhz7hcbKIyYBTQl1u/Shwg7Svz7eYMVEnR8EjfeCkKc
-	wCcxadt0Zogwr0RHmxBEtZrE1J5euKXnVmyD+spDYt2EI8wTGBVnIXlmFpJnZiHsXcDIvIpR
-	PLW0ODc9tdg4L7Vcrzgxt7g0L10vOT93EyMwLZ7+d/zrDsYVrz7qHWJk4mA8xCjBwawkwjsv
-	VT1diDclsbIqtSg/vqg0J7X4EKM0B4uSOK9qinyqkEB6YklqdmpqQWoRTJaJg1OqgWnKrxPM
-	7jq6OYfULrC+7FpfuXqis6K8+cygPLNPs7byn/5x+1ny+Zt6V8WvBPcvkxbO/VRjfmPPFrfI
-	N+/5OBJ/P7x4nK0keFcK3yv/h5zbfi3Z3uL1482etqeFX758Yf/6X6Rr/tELG7U6b75Vnrr3
-	8qzAzx0rGE/9W/JO+dLePlF7hiPvz289ck334C+Ri3eWXrio2JBSfemRlswupwJdb+vzbtUf
-	XzolR62eE7LrbECLpkC/lmTuTf7A43EGHRaOy2Pm8zQFdYuu4b736aMxa1HscoFv/6SKY2yi
-	Pk5wu7vg4Nt5P0PPHI67L2G3gNmaTV5hv/msfe1fp7sKrbijcu60+6UZ+xennRBzPy45Q4ml
-	OCPRUIu5qDgRABP2Lrj6AwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrOIsWRmVeSWpSXmKPExsVy+t/xu7qMczXSDWZMFrPY+nsWu8XWg3NZ
-	LdbsPcdkMf/IOVaLe5e2MFlc6lzBaPFibyOLxbUVc9ktXs66x2ZxedccNottn1vYLNYeuctu
-	sf7rfCaLl5d7mC3aZvFb/N+zg91i9bkrLBYt+6ewOAh5zGroZfN48/Ili8fhji/sHjtn3WX3
-	2LSqk81j85J6j5a1x5g83u+7yubRt2UVo8el5uvsHp83yXl8vrueNYAnSs+mKL+0JFUhI7+4
-	xFYp2tDCSM/Q0kLPyMRSz9DYPNbKyFRJ384mJTUnsyy1SN8uQS/j5dcWtoIjXBUn75xlbGDc
-	z9HFyMkhIWAisXrLU1YQW0hgKaPE2ydaEHEZiWvdL1kgbGGJP9e62CBqXjFKPDgTBmKzCRhJ
-	PFg+H6xXRGA/k8Trs0VdjFwczAKbGCUurexnB0kIC1hLfLj7hBnEZhFQlbgwbSJYA6+AvUTf
-	1Y1MEAvkJfYfPAtWwyngIPGr9wsTxDJ7iYMH9jBC1AtKnJz5BOwgZqD65q2zmScwCsxCkpqF
-	JLWAkWkVo0hqaXFuem6xkV5xYm5xaV66XnJ+7iZGYAxvO/Zzyw7Gla8+6h1iZOJgPMQowcGs
-	JMI7L1U9XYg3JbGyKrUoP76oNCe1+BCjKdDdE5mlRJPzgUkkryTe0MzA1NDEzNLA1NLMWEmc
-	l+3K+TQhgfTEktTs1NSC1CKYPiYOTqkGpkKDcxJNLBO5f86LFAg/dTEs+cCkqHefnK//YVKf
-	NGu96NQZOsv/TF9nV3743rxPS+YrtbiX/kyzOB14eUXvw0T1Xz8T3xRHcagarZY4FVakJ21m
-	+M94zeEbHpUbTWc2BB2s/vRKjqlrxiXtvCWh5w9OzQviEsrbetEpvydc8bjC9bU8S74LXTXN
-	ulqQtr0jeP7BE+LFERP/3ftwMDWlOdz/0Pm/yTwJe96EvP7ObPq0Yd/U8NcP+57cuVT5/rbv
-	hJm3HzQobvpSIzrp7eLsNZ6RO668cdCL2egqtVd76kKN3ct4/diN2ZU29W4Xi7oup7U76SGT
-	UH7Q+T63n0vjMw/lrJMMmMp39nmVZ0vjhydKLMUZiYZazEXFiQCe0wTnagMAAA==
-X-CMS-MailID: 20241104100801eucas1p27cd0d7b9b5b4500604470664884c42fb
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20241104100801eucas1p27cd0d7b9b5b4500604470664884c42fb
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20241104100801eucas1p27cd0d7b9b5b4500604470664884c42fb
-References: <20241104100734.1276116-1-m.wilczynski@samsung.com>
-	<CGME20241104100801eucas1p27cd0d7b9b5b4500604470664884c42fb@eucas1p2.samsung.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: eCZKVjMiPO-fZnlvsgHXnS5e5h0DNfqO
+X-Proofpoint-GUID: qG9CBpujW-v2rW9RMmtxHZCshnlStUUl
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 phishscore=0
+ mlxlogscore=319 mlxscore=0 suspectscore=0 spamscore=0 malwarescore=0
+ adultscore=0 priorityscore=1501 clxscore=1011 impostorscore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411040089
 
-Add mailbox device tree node. This work is based on the vendor kernel [1].
+On Mon, 2024-11-04 at 09:34 +0800, Hou Tao wrote:
+> Hi,
+>=20
+> On 11/3/2024 2:04 PM, Byeonguk Jeong wrote:
+> > Hi,
+> >=20
+> > The selftest "verifier_bits_iter/bad words" has been failed with
+> > retval 115, while I did not touched anything but a comment.
+> >=20
+> > Do you have any idea why it failed? I am not sure whether it
+> > indicates
+> > any bugs in the kernel.
+> >=20
+> > Best,
+> > Byeonguk
+>=20
+> Sorry for the inconvenience. It seems the test case
+> "verifier_bits_iter/bad words" is flaky. It may fail randomly, such
+> as
+> in [1]. I think calling bpf_probe_read_kernel_common() on 3GB addr
+> under
+> s390 host may succeed and the content of the memory address will
+> decide
+> whether the test case will succeed or not. Do not know the reason why
+> reading 3GB address succeeds under s390. Hope to get some insight
+> from
+> Ilya.=C2=A0 I think we could fix the failure first by using NULL as the
+> address of bad words just like null_pointer test case does. Will
+> merge
+> the test in bad_words into the null_pointer case.
 
-Link: https://github.com/revyos/thead-kernel.git [1]
+Hi,
 
-Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
----
- arch/riscv/boot/dts/thead/th1520.dtsi | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+s390 kernel runs in a completely separate address space, there is no
+user/kernel split at TASK_SIZE. The same address may be valid in both
+the kernel and the user address spaces, there is no way to tell by
+looking at it. The config option related to this property is
+ARCH_HAS_NON_OVERLAPPING_ADDRESS_SPACE.
 
-diff --git a/arch/riscv/boot/dts/thead/th1520.dtsi b/arch/riscv/boot/dts/thead/th1520.dtsi
-index 6992060e6a54..89de5634d3d3 100644
---- a/arch/riscv/boot/dts/thead/th1520.dtsi
-+++ b/arch/riscv/boot/dts/thead/th1520.dtsi
-@@ -520,6 +520,22 @@ timer7: timer@ffffc3303c {
- 			status = "disabled";
- 		};
- 
-+		mbox_910t: mailbox@ffffc38000 {
-+			compatible = "thead,th1520-mbox";
-+			reg = <0xff 0xffc38000 0x0 0x6000>,
-+			      <0xff 0xffc40000 0x0 0x6000>,
-+			      <0xff 0xffc4c000 0x0 0x2000>,
-+			      <0xff 0xffc54000 0x0 0x2000>;
-+			reg-names = "local", "remote-icu0", "remote-icu1", "remote-icu2";
-+			clocks = <&clk CLK_MBOX0>, <&clk CLK_MBOX1>, <&clk CLK_MBOX2>,
-+				 <&clk CLK_MBOX3>;
-+			clock-names = "clk-local", "clk-remote-icu0", "clk-remote-icu1",
-+				      "clk-remote-icu2";
-+			interrupt-parent = <&plic>;
-+			interrupts = <28 IRQ_TYPE_LEVEL_HIGH>;
-+			#mbox-cells = <1>;
-+		};
-+
- 		ao_gpio0: gpio@fffff41000 {
- 			compatible = "snps,dw-apb-gpio";
- 			reg = <0xff 0xfff41000 0x0 0x1000>;
--- 
-2.34.1
+Also, unfortunately, 0 is a valid address in the s390 kernel address
+space.
 
+I wonder if we could use -4095 as an address that cannot be
+dereferenced on all platforms?
+
+Best regards,
+Ilya
 
