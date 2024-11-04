@@ -1,174 +1,131 @@
-Return-Path: <linux-kernel+bounces-394492-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394493-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A1139BAFED
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 10:39:17 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B91379BAFEF
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 10:39:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 123F41F235D9
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 09:39:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E83BF1C22160
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 09:39:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A0A81AE861;
-	Mon,  4 Nov 2024 09:39:13 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 856181AE006;
+	Mon,  4 Nov 2024 09:39:45 +0000 (UTC)
+Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04FCC1AC426
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 09:39:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E128C1ADFE2;
+	Mon,  4 Nov 2024 09:39:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730713153; cv=none; b=U9GL0+/pPK3xHkEyy9H49Rl02NRbHp4XpN04H4B/FJpX+SkY0GfvWruTcBdYvFOg9FSr4BU2S2PgKQ5FeaAVy53q9j+3fBFnJ3e55IJ4GSGqrY9t23HAajrOgArZxRoAsaRhAKFy8vWJsicRJw/Xp+GMX9XSVROPQZA/uiXoHz8=
+	t=1730713185; cv=none; b=Xev+EUh0MN8oROUbYdDIS4TSF9m3sMsTC+h0CUIi5H3VwKrbUad6cSJqZIWaYSX6yAR3m0Pvt+d0IJtHk+g2mWV7LWKQSMAPpB5lSmJqx71tiE9utjcE8AZyAxUSOPLuZIoxtl7nk34EcSjju+FBLLH78sV+G3blG/DSopWRtvQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730713153; c=relaxed/simple;
-	bh=4lLU8yg8a4RCxzMArT/7z31wwCcdW3fYlKsKjZeWhdc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=c2t3ugUUWUiHPPoDNl8kaQ32Y6Ovt/eBzVtLhl8KfjaCCpcqUYbtcOzYdk056ugz0mRLh6/ziK9jetvqMIIoPygeS75QxYhKjI+S5OcyfvNa4XpyJh0w5VFfcXVBZcUMyllNzrSDl2JC1YXToAPvWXsTV0fmQAD0i9AHozNHrXg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1t7tY6-0000aX-Mp; Mon, 04 Nov 2024 10:39:02 +0100
-Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1t7tY5-001xM7-2T;
-	Mon, 04 Nov 2024 10:39:01 +0100
-Received: from mfe by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1t7tY5-00DP6z-27;
-	Mon, 04 Nov 2024 10:39:01 +0100
-Date: Mon, 4 Nov 2024 10:39:01 +0100
-From: Marco Felsch <m.felsch@pengutronix.de>
-To: Stefan Wahren <wahrenst@gmx.net>
-Cc: Philipp Zabel <p.zabel@pengutronix.de>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Catalin Popescu <catalin.popescu@leica-geosystems.com>,
-	Mark Brown <broonie@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	linux-arm-kernel@lists.infradead.org, linux-mmc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-next@vger.kernel.org,
-	regressions@lists.linux.dev
-Subject: Re: [PATCH RFC] mmc: pwrseq_simple: Handle !RESET_CONTROLLER properly
-Message-ID: <20241104093901.rb5ozxt7qkdgoatc@pengutronix.de>
-References: <20241102134522.333047-1-wahrenst@gmx.net>
+	s=arc-20240116; t=1730713185; c=relaxed/simple;
+	bh=W32oNkulwtwhEDioXljJnDxL8PjHM91WVcY5wZM+wMw=;
+	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=t5XP/cBFFxtFmQpuG3wU8HE1OafqhTvjPASXDHR6nNJltLmQJw+oxR79vr96f1kA7o45GRzsEXpMeM+R2YawLG2eyS10bC1pFZ+eSPJHBU6rmnwbfccswXr6tkF9jd3olbVDV65aD7rj9ne5tN7aXWtSHOAO2syg4XVVk8+WX6A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.214])
+	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4Xhmdw5jmpz1ypC0;
+	Mon,  4 Nov 2024 17:39:48 +0800 (CST)
+Received: from dggemv703-chm.china.huawei.com (unknown [10.3.19.46])
+	by mail.maildlp.com (Postfix) with ESMTPS id 1FEFC1A016C;
+	Mon,  4 Nov 2024 17:39:39 +0800 (CST)
+Received: from kwepemn100017.china.huawei.com (7.202.194.122) by
+ dggemv703-chm.china.huawei.com (10.3.19.46) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Mon, 4 Nov 2024 17:39:38 +0800
+Received: from [10.67.121.110] (10.67.121.110) by
+ kwepemn100017.china.huawei.com (7.202.194.122) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Mon, 4 Nov 2024 17:39:38 +0800
+Subject: Re: [PATCH v11 3/4] hisi_acc_vfio_pci: register debugfs for hisilicon
+ migration driver
+To: Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>, "Alex
+ Williamson" <alex.williamson@redhat.com>
+CC: "jgg@nvidia.com" <jgg@nvidia.com>, Jonathan Cameron
+	<jonathan.cameron@huawei.com>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linuxarm@openeuler.org" <linuxarm@openeuler.org>
+References: <20241025090143.64472-1-liulongfang@huawei.com>
+ <20241025090143.64472-4-liulongfang@huawei.com>
+ <20241031160430.59f4b944.alex.williamson@redhat.com>
+ <df5129f8-e9c2-b1c0-e2de-9211738d88c4@huawei.com>
+ <019a0cab-76b7-a3c0-d93f-5384efea1f67@huawei.com>
+ <133e223b22df4ab4b4802163d0c42407@huawei.com>
+From: liulongfang <liulongfang@huawei.com>
+Message-ID: <d0e80aa2-b44a-1862-bdcb-aa8268cc0fc5@huawei.com>
+Date: Mon, 4 Nov 2024 17:39:37 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241102134522.333047-1-wahrenst@gmx.net>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mfe@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+In-Reply-To: <133e223b22df4ab4b4802163d0c42407@huawei.com>
+Content-Type: text/plain; charset="gbk"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ kwepemn100017.china.huawei.com (7.202.194.122)
 
-Hi Stefan,
+On 2024/11/4 16:56, Shameerali Kolothum Thodi wrote:
+> 
+> 
+>> -----Original Message-----
+>> From: liulongfang <liulongfang@huawei.com>
+>> Sent: Monday, November 4, 2024 8:31 AM
+>> To: Alex Williamson <alex.williamson@redhat.com>
+>> Cc: jgg@nvidia.com; Shameerali Kolothum Thodi
+>> <shameerali.kolothum.thodi@huawei.com>; Jonathan Cameron
+>> <jonathan.cameron@huawei.com>; kvm@vger.kernel.org; linux-
+>> kernel@vger.kernel.org; linuxarm@openeuler.org
+>> Subject: Re: [PATCH v11 3/4] hisi_acc_vfio_pci: register debugfs for hisilicon
+>> migration driver
+> [...]
+> 
+>>>>> +
+>>>>> +	seq_printf(seq,
+>>>>> +		 "acc device:\n"
+>>>>> +		 "guest driver load: %u\n"
+>>>>> +		 "device opened: %d\n"
+>>>>> +		 "migrate data length: %lu\n",
+>>>>> +		 hisi_acc_vdev->vf_qm_state,
+>>>>> +		 hisi_acc_vdev->dev_opened,
+>>>>> +		 debug_migf->total_length);
+>>>>
+>>>> This debugfs entry is described as returning the data from the last
+>>>> migration, but vf_qm_state and dev_opened are relative to the current
+>>>> device/guest driver state.  Both seem to have no relevance to the data
+>>>> in debug_migf.
+>>>>
+>>>
+>>> The benefit of dev_opened retention is that user can obtain the device
+>> status
+>>> during the cat migf_data operation.
+>>>
+>>
+>> I will remove dev_opened in the next version.
+>> And hisi_acc_vdev->vf_qm_state is changed to debug_migf-
+>>> vf_data.vf_qm_state
+>> Keep information about whether the device driver in the Guest OS is loaded
+>> when live migration occurs.
+> 
+> I think you already get that when you dump debug_migf->vf_data.
+> So not required.
+>
+OK, vf_qm_state still needs to be deleted.
 
-On 24-11-02, Stefan Wahren wrote:
-> The recent introduction of reset control in pwrseq_simple introduced
-> a regression for platforms without RESET_CONTROLLER support, because
+Thanks,
+Longfang.
 
-This is what I was afraid of :/
-
-> devm_reset_control_get_optional_shared() would return NULL and make all
-> resets no-ops. Instead of enforcing this dependency rely on this behavior
-> to determine reset support. As a benefit we can get the rid of the
-> use_reset flag.
+> Thanks,
+> Shameer
 > 
-> Fixes: 73bf4b7381f7 ("mmc: pwrseq_simple: add support for one reset control")
-> Signed-off-by: Stefan Wahren <wahrenst@gmx.net>
-> ---
->  drivers/mmc/core/pwrseq_simple.c | 16 +++++++---------
->  1 file changed, 7 insertions(+), 9 deletions(-)
-> 
-> Hi,
-> will trying to reproduce the Rpi 4 regression from here [1], I found
-> the issue above. I'm pretty sure the Rpi 4 regression is caused by the same
-> commit. Unfortunately I wasn't able to reproduce it.
-> 
-> [1] - https://lore.kernel.org/linux-next/6724d7d5.170a0220.1281e9.910a@mx.google.com/T/#u
-> 
-> diff --git a/drivers/mmc/core/pwrseq_simple.c b/drivers/mmc/core/pwrseq_simple.c
-> index 24e4e63a5dc8..b8782727750e 100644
-> --- a/drivers/mmc/core/pwrseq_simple.c
-> +++ b/drivers/mmc/core/pwrseq_simple.c
-> @@ -32,7 +32,6 @@ struct mmc_pwrseq_simple {
->  	struct clk *ext_clk;
->  	struct gpio_descs *reset_gpios;
->  	struct reset_control *reset_ctrl;
-> -	bool use_reset;
->  };
-> 
->  #define to_pwrseq_simple(p) container_of(p, struct mmc_pwrseq_simple, pwrseq)
-> @@ -71,7 +70,7 @@ static void mmc_pwrseq_simple_pre_power_on(struct mmc_host *host)
->  		pwrseq->clk_enabled = true;
->  	}
-> 
-> -	if (pwrseq->use_reset) {
-> +	if (pwrseq->reset_ctrl) {
->  		reset_control_deassert(pwrseq->reset_ctrl);
->  		reset_control_assert(pwrseq->reset_ctrl);
->  	} else
-> @@ -82,7 +81,7 @@ static void mmc_pwrseq_simple_post_power_on(struct mmc_host *host)
->  {
->  	struct mmc_pwrseq_simple *pwrseq = to_pwrseq_simple(host->pwrseq);
-> 
-> -	if (pwrseq->use_reset)
-> +	if (pwrseq->reset_ctrl)
->  		reset_control_deassert(pwrseq->reset_ctrl);
->  	else
->  		mmc_pwrseq_simple_set_gpios_value(pwrseq, 0);
-> @@ -95,7 +94,7 @@ static void mmc_pwrseq_simple_power_off(struct mmc_host *host)
->  {
->  	struct mmc_pwrseq_simple *pwrseq = to_pwrseq_simple(host->pwrseq);
-> 
-> -	if (pwrseq->use_reset)
-> +	if (pwrseq->reset_ctrl)
->  		reset_control_assert(pwrseq->reset_ctrl);
->  	else
->  		mmc_pwrseq_simple_set_gpios_value(pwrseq, 1);
-> @@ -137,15 +136,14 @@ static int mmc_pwrseq_simple_probe(struct platform_device *pdev)
->  		return dev_err_probe(dev, PTR_ERR(pwrseq->ext_clk), "external clock not ready\n");
-> 
->  	ngpio = of_count_phandle_with_args(dev->of_node, "reset-gpios", "#gpio-cells");
-> -	if (ngpio == 1)
-> -		pwrseq->use_reset = true;
-> -
-> -	if (pwrseq->use_reset) {
-> +	if (ngpio == 1) {
->  		pwrseq->reset_ctrl = devm_reset_control_get_optional_shared(dev, NULL);
->  		if (IS_ERR(pwrseq->reset_ctrl))
->  			return dev_err_probe(dev, PTR_ERR(pwrseq->reset_ctrl),
->  					     "reset control not ready\n");
-> -	} else {
-> +	}
-> +
-
-Can we add a comment like:
-
-/*
- * Fallback to gpio based reset control in case of multiple reset lines
- * are specified or the platform doesn't have support for RESET at all.
- */
-
-Regards,
-  Marco
-
-> +	if (!pwrseq->reset_ctrl) {
->  		pwrseq->reset_gpios = devm_gpiod_get_array(dev, "reset", GPIOD_OUT_HIGH);
->  		if (IS_ERR(pwrseq->reset_gpios) &&
->  		    PTR_ERR(pwrseq->reset_gpios) != -ENOENT &&
-> --
-> 2.34.1
-> 
+> .
 > 
 
