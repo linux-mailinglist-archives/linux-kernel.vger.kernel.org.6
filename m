@@ -1,105 +1,88 @@
-Return-Path: <linux-kernel+bounces-395058-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395059-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1CDA9BB7E9
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 15:35:28 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 988009BB7EC
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 15:35:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A792C1F22F3F
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 14:35:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 44D5A1F23CC0
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 14:35:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BC0A1AE850;
-	Mon,  4 Nov 2024 14:35:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 000391BBBCA;
+	Mon,  4 Nov 2024 14:35:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QjtT+7b5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="I0Csyc5D"
+Received: from out-183.mta1.migadu.com (out-183.mta1.migadu.com [95.215.58.183])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5BDE70839;
-	Mon,  4 Nov 2024 14:35:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEE9C139CFA
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 14:35:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730730903; cv=none; b=gSat/j70ngx+us1uzeQ0JWGxGUdVc0l++jDHcRQjCD4UVe6v8t4InkAXG3+TMhb7H6yJt85inr07uLxeqWHvz4+2iEyi1CJMsq3jhtuk4aBp859obx32p2MjoMOagSUhblgxB/Ond229UOPH45p50NDkEAZlDT8XUgNCg0UkIas=
+	t=1730730918; cv=none; b=c5ZDcW5EKaIPiNCv3CcvNKAhMGqCAfz2vM1nvds2b4eRSO2hoUE6AJyhIZyJLttZcZiZSHNVTTEHGQHucDMxNMjZPXXliDIQOI2lgIZw1n/J2qeA2pz83t9WaWMiB9Eo6DJTLwHztgh0Q+zVV6BwrzYgq2Z+MuEGmxniDXSk8ok=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730730903; c=relaxed/simple;
-	bh=r2ry74pVmp0n33EFjc8I7+2VSluyMRgJAOoUydcYAao=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=mnQDjnVWBgP1DrKXxlGeJ+uAFnS7SYvMUN2o1weualRgZ1d2dHFUwzQLsRSCLvdg9BWRgqe/8Ry3T+Cp6MHVmJKmh7eNljB6P2vozlr03ZuoZw3MMh+YqrwOijS1gSQ4sk6USdXp/2btuKAyYHHXFs7WZFN+/7dApjrSMp9NlcI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QjtT+7b5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B614CC4CECE;
-	Mon,  4 Nov 2024 14:35:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730730902;
-	bh=r2ry74pVmp0n33EFjc8I7+2VSluyMRgJAOoUydcYAao=;
-	h=Date:From:To:Cc:Subject:From;
-	b=QjtT+7b5OAJKG0WR4IeE0XL7DhRQ73oU8iHsf9/5HEAXtMEoEgA+GGfYC2vxIV2iR
-	 ETpdi47eG4YPiABKRLL5oryQ5sT61SlF1CbSOFNHJpbW6Ekw3LrvwRqxb+6qun48Lg
-	 HZVg2j3SxriSzxauHnYHnh2+cTYlXJwgz4CgzSJ+xtqG/VH5WUJkLVqM0jvxUeeE39
-	 yfp2/cNyFtJsQLdYSkfOsDh/mHh0/wZjTfasE1c/d07Q9mLoGH7/bi7cRev5O+hsi7
-	 cqR/R1BIjw6hOYbB8TzG7KU3ojhFXUX8Ezh3A4XafuJVnHwsQFPu7FJ7xJf3HBH0iv
-	 3qdGnkmwMiEZg==
-Date: Mon, 4 Nov 2024 11:34:58 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Ian Rogers <irogers@google.com>,
-	Athira Rajeev <atrajeev@linux.vnet.ibm.com>,
-	Howard Chu <howardchu95@gmail.com>,
-	James Clark <james.clark@linaro.org>, Leo Yan <leo.yan@linux.dev>,
-	Stephen Rothwell <sfr@canb.auug.org.au>,
-	Thomas Richter <tmricht@linux.ibm.com>,
-	Veronika Molnarova <vmolnaro@redhat.com>,
-	Weilin Wang <weilin.wang@intel.com>, Ze Gao <zegao2021@gmail.com>,
-	zhaimingbing <zhaimingbing@cmss.chinamobile.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	linux-perf-users@vger.kernel.org
-Subject: [PATCH 1/1] perf tests: Remove dangling CFLAGS for removed attr.o
- object
-Message-ID: <ZyjbksKYnV22zmz-@x1>
+	s=arc-20240116; t=1730730918; c=relaxed/simple;
+	bh=M82jIejFV+MChQ1/KJD8IKDnQp4OCQNY3+0ds1/tTQo=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=MLpr2o9rU+PHhXxpKJwEqJ8PHr7GH/wmGFvmpSiOkzbr9W1hOMcL0xpQcIIQc0oSqac9paB2v0nXzUpr5pAtVwu24vwTpCkERmbXuxEOq82E42YRI28YxrRc0kTgqohZVyeslgfQRwPrZzBVddsgjtYpzCfJqruzvrb95NYsuXs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=I0Csyc5D; arc=none smtp.client-ip=95.215.58.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1730730913;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PagbPAUOLjNCOcfPaoot9ZhU5uAtqnI9H7IEWfp5xzI=;
+	b=I0Csyc5Den/B+CJYA/BpGPOMtUVDUCrmtMLgAGJokP/M6bhkugGds+/vNyEBGGJvCUvBTm
+	L8BWkpP7F57qzVBSLl/H/eJE+lh1iY17lO2Txbbr9i6DGCgp4LehsJ1VZRhVgl8y6hQejJ
+	bXMIOFwzB04mJD7X2FxA1j55QYXXU7c=
+From: Luis Henriques <luis.henriques@linux.dev>
+To: Luis Henriques <luis.henriques@linux.dev>
+Cc: Xiubo Li <xiubli@redhat.com>,  Ilya Dryomov <idryomov@gmail.com>,
+  ceph-devel@vger.kernel.org,  linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH v2] ceph: ceph: fix out-of-bound array access when
+ doing a file read
+In-Reply-To: <87ldz9ma5b.fsf@linux.dev> (Luis Henriques's message of "Mon, 30
+	Sep 2024 16:30:40 +0100")
+References: <20240905135700.16394-1-luis.henriques@linux.dev>
+	<e1c50195-07a9-4634-be01-71f4567daa54@redhat.com>
+	<87plphm32k.fsf@linux.dev>
+	<bb7c03b3-f922-4146-8644-bd9889e1bf86@redhat.com>
+	<87ldz9ma5b.fsf@linux.dev>
+Date: Mon, 04 Nov 2024 14:34:58 +0000
+Message-ID: <878qtzcbjh.fsf@camandro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Migadu-Flow: FLOW_OUT
 
-Since the C test wrapper for attr.py was removed we don't have an attr.o
-object for that CFLAGS_attr.o to apply for, remove it.
+Hi Xiubo, Hi Ilya,
 
-Fixes: 3a447031f5fc21c4 ("perf test: Remove C test wrapper for attr.py")
-Cc: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
-Cc: Howard Chu <howardchu95@gmail.com>
-Cc: Ian Rogers <irogers@google.com>
-Cc: James Clark <james.clark@linaro.org>
-Cc: Leo Yan <leo.yan@linux.dev>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Thomas Richter <tmricht@linux.ibm.com>
-Cc: Veronika Molnarova <vmolnaro@redhat.com>
-Cc: Weilin Wang <weilin.wang@intel.com>
-Cc: Ze Gao <zegao2021@gmail.com>
-Cc: zhaimingbing <zhaimingbing@cmss.chinamobile.com>
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/tests/Build | 1 -
- 1 file changed, 1 deletion(-)
+On Mon, Sep 30 2024, Luis Henriques wrote:
+[...]
+> Hi Xiubo,
+>
+> I know you've been busy, but I was wondering if you (or someone else) had
+> a chance to have a look at this.  It's pretty easy to reproduce, and it
+> has been seen in production.  Any chances of getting some more feedback on
+> this fix?
 
-diff --git a/tools/perf/tests/Build b/tools/perf/tests/Build
-index 03cbdf7c50a09be4..01ed9335db4dba4e 100644
---- a/tools/perf/tests/Build
-+++ b/tools/perf/tests/Build
-@@ -72,7 +72,6 @@ ifeq ($(SRCARCH),$(filter $(SRCARCH),x86 arm arm64 powerpc))
- perf-test-$(CONFIG_DWARF_UNWIND) += dwarf-unwind.o
- endif
- 
--CFLAGS_attr.o         += -DBINDIR="BUILD_STR($(bindir_SQ))" -DPYTHON="BUILD_STR($(PYTHON_WORD))"
- CFLAGS_python-use.o   += -DPYTHONPATH="BUILD_STR($(OUTPUT)python)" -DPYTHON="BUILD_STR($(PYTHON_WORD))"
- CFLAGS_dwarf-unwind.o += -fno-optimize-sibling-calls
- 
--- 
-2.47.0
+It has been a while since I first reported this issue.  Taking the risk of
+being "that annoying guy", I'd like to ping you again on this.  I've
+managed to reproduce the issue very easily, and it's also being triggered
+very frequently in production.  Any news?
 
+Cheers,
+--=20
+Lu=C3=ADs
 
