@@ -1,144 +1,128 @@
-Return-Path: <linux-kernel+bounces-394288-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394289-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C0EA9BACE5
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 07:57:15 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D6D19BACE8
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 07:58:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 03315282149
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 06:57:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D66201F22C83
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 06:58:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73F7D18E056;
-	Mon,  4 Nov 2024 06:57:06 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A810718DF85;
+	Mon,  4 Nov 2024 06:58:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="F7yKJWsn"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C9B318C91D
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 06:57:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29FCC18E356
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 06:58:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730703426; cv=none; b=mWhRFHF24UQO9COQpyp2VUIwAKmswt2eR6GaqxdeP/Tw9hIq8myZD0btJ1pBjcwaC20H3kvz5fdriqL4S9HI4xP5Jre0CjemlkiJkAzB+NplpjZEi3ZwV93DxEV9f///fp95z+9nRWLYFl/tZ10JZf6NvwUHGLxNteZnfRRebw4=
+	t=1730703483; cv=none; b=oNsgqmnFMw3mnv/XkRv176WpmBDPmgQIhf5wzkZ95vySadwKTIR8YvQs1G2nvJWMRwVQYVkWXdCtygHuRsfa8mR+EXZW60kx1HXH4yaOG4uDkBbXkzr/8o9dZL5e2s+vJSfT1IDTgC1N4/j565KVNosC/6HwvLwX8zqHMZM+B64=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730703426; c=relaxed/simple;
-	bh=7u3PVP7XeLnXBb7y0pIyLPAOxq6idjR9oXlLVtoMRWk=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=DN6d0+N0XHivwuf7hg8O89jya/qBu/hvCjGvuCoXPARKhkjKMXNY+/itDoLw///Rnfilc6pX6eIx4eRkk2koaxolJn10klyMsClpBIsj2g9bgUVsRrOoFFgiQu2ZSwG5QzYJA85Yl8HmovEBxltwdr2WZSUljpbKHLJduMxEGm8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-83abf68e7ffso426254339f.1
-        for <linux-kernel@vger.kernel.org>; Sun, 03 Nov 2024 22:57:04 -0800 (PST)
+	s=arc-20240116; t=1730703483; c=relaxed/simple;
+	bh=qR0sgzWfwEEsmU51aUsEmp3CyE6nMOGg+kYlHBe1T3I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BguwYf+QKM+OKwVtk0Hq/2jzZGNVFtUNobJ3re9oSi6cQho/3jwCz71pPu/fTKwVo/ip/zGvECds9Tp71RDyXXMZX3Qvd3d2qNjM0spq1ipSnE11p/RHIA7jpa/1k0EXDL1agyuno9nWmysqjSafUf8MLm04pODtKalegeC02W8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=F7yKJWsn; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a93c1cc74fdso599778266b.3
+        for <linux-kernel@vger.kernel.org>; Sun, 03 Nov 2024 22:58:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1730703479; x=1731308279; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=uThArOGSFE57krQRUMDraU1QLts27MJWPFmXg/jVzao=;
+        b=F7yKJWsniAjK8JmAawYt8si8sJOqaR7iDxMG9i2oyHCf9PiVJe0fwJmkQyL4gEt64m
+         PkvZfq5+qV2erqwQjUnTR1MCjxUsFxnxlIUjnf7jLTT2iF5zRAtqS48/dW1oSTKGx+W+
+         D+L6EsvVVtkSATni+BM0sEfUEODDg/6lzCkwDP52x0nHKGp08NtJE7VjQZZytS17mO5R
+         cJybwXy3xfC6ojJJR3jVXwpGK1BpXAPxYB+20aBuD3yEOsxpVPvEVD8jVJCkSWeGASW+
+         DHsDyr3XlxFyjDayFW9nZOGaePs2QOQa4OrSuBGDytU+hkkYOoxOoTdmt2FAGUgKD2Sp
+         OTZg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730703423; x=1731308223;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
+        d=1e100.net; s=20230601; t=1730703479; x=1731308279;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=cS56byKtsj1CuaOp8CMIOFr+yZjq6JATOWy1qBHCB3Y=;
-        b=EfiVOjJbId+rQAVL+b62MPK4YSYxiDBV04DkkFosm+0KhUlrMHG1d7Fs1dbpTWgy6z
-         LIc5EWt5CWDKUHpiszveGUkiBZgtaliRktc9o1HCsnyzKKs1whZixHHLTt48anGC9zpa
-         HXT+Dq2X6jpB30Nxy83/EyNfpH6zhbTPUPJ9FQMhgby5DgKYNCSVzZGl+p9kB7Q5IjLN
-         /f8xCX5VjR0+zDapE8WginUIoz4KimPyjnGhmhjiPNLD+uoZcjKo08RT/NGcypsXzYF6
-         X213AojdfXLr/yGsDHs+jylXHG+7/3uOZJDsJhnyrCWKVo1W8CLoVi1X/52NIxVjh/Mc
-         EnPA==
-X-Forwarded-Encrypted: i=1; AJvYcCXK/Xtps/TrH36G6s7t6aJu+mL6E5I6mJsV7JJYSFNWpV9+xzueugJzj2i+asJHZ3VvXiEpbcU/CHPqNpc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxDPVpzUcmxjVmJ6/2N4+oQAv7mxcV2ec7hcZAcADBXWnnV5clG
-	7t4+JQ1Vh5Dy5+tDL6MvJ9nrefRwHzojLFKEjxadyJy3WlrG2wIx0nYNq19h2nrn7AtWkBD8Kyx
-	OcKPyklzQ6N1GvzNTtzE88I16n3hDKeoPCH+hZjohisupavK9utnwA1k=
-X-Google-Smtp-Source: AGHT+IF9NRi1wtC75+dFdmgUK+o3W5wazJccOcbwGFbyTRSX9gytRCMUlAFpjg5r+pEv3KgtFTrVdfHpgSJ+4xyJSfyYTUEE8Yeo
+        bh=uThArOGSFE57krQRUMDraU1QLts27MJWPFmXg/jVzao=;
+        b=Zb+OvTlHVRJlJ2DL0gBXjSw5xK+WM6HsWyZ+gweznAMd5VcnELZF9Xg5fmQTAYyaEG
+         yvSLyiuPW9Z8KQOb4m43MBWzy7qFbpDsbz5cuZk8C7DcD1hpUUM6Rg2I2lPjdQZfArgE
+         zH8Y72XO3R63ikqxrks2SFmN3ll06goeIUL02tQiYjkBZMp6hnYSZnzv5MZVTeUlfk62
+         AJqlgZwmmprXnibZ5Foh2yrCzwyqEZSiH5X1P1Xchj9jaIvV+IIBUWIvKZvzhIHzm9Ih
+         ksiyOzC+1dlW+dMDrSkSFZNbtBSvtBw+yQhnFkKxoH5JIGs1FkrK54y3Sqt1ND2eZEQq
+         11XA==
+X-Forwarded-Encrypted: i=1; AJvYcCX2GUsbOs/P0gcq4Z6csNKaDOcDN5RJPYnY6xz3Jo/2cSfDbSFaPRcIErSAmlyTCFvZLnx5ozPt/i/Xqik=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzDsCT6A/Y8KXkjFDxJzUuTGtIvxTWpmRfIg08qv3cM8h58EWUk
+	VJEbiQDx5dQdd5ZTuM1ZwFTUADohdSgzVmYZBMYY2c4ev7x6jyt7hfDkGHXr7+A=
+X-Google-Smtp-Source: AGHT+IHLXK4gEkLEnHzWZ+cB+wkZBRPe7wOaRk4G7SgrwXJKrL1Hs1gkERB9uAnQeROLxS1qFQqIYg==
+X-Received: by 2002:a17:907:3f23:b0:a9a:55de:11f4 with SMTP id a640c23a62f3a-a9e658bc988mr946437466b.54.1730703479261;
+        Sun, 03 Nov 2024 22:57:59 -0800 (PST)
+Received: from [192.168.0.157] ([79.115.63.225])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9e564c53d6sm513811066b.68.2024.11.03.22.57.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 03 Nov 2024 22:57:58 -0800 (PST)
+Message-ID: <97e61bf9-8539-414e-88fc-2d8b451057b1@linaro.org>
+Date: Mon, 4 Nov 2024 06:57:57 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:164d:b0:3a3:4122:b56e with SMTP id
- e9e14a558f8ab-3a4ed31449emr296904625ab.26.1730703423648; Sun, 03 Nov 2024
- 22:57:03 -0800 (PST)
-Date: Sun, 03 Nov 2024 22:57:03 -0800
-In-Reply-To: <3c01986b19c041931fe7bb542b1b00069b2e458a.camel@gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6728703f.050a0220.35b515.01b1.GAE@google.com>
-Subject: Re: [syzbot] [ocfs2?] VFS: Busy inodes after unmount (use-after-free)
-From: syzbot <syzbot+0af00f6a2cba2058b5db@syzkaller.appspotmail.com>
-To: clm@fb.com, dsterba@suse.com, josef@toxicpanda.com, 
-	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	sunjunchao2870@gmail.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] mtd: spi-nor: xmc: Add support for XM25LU64C The
+ device is produced by Wuhan Xinxin Semiconductor Manufacturing Corp. (XMC)
+ and found on some routers from Chinese manufactures.
+To: Ssunk <ssunkkan@gmail.com>
+Cc: pratyush@kernel.org, mwalle@kernel.org, miquel.raynal@bootlin.com,
+ richard@nod.at, vigneshr@ti.com, linux-mtd@lists.infradead.org,
+ linux-kernel@vger.kernel.org, hhlee@google.com, roccochen@google.com
+References: <20241103142126.3406-1-ssunkkan@gmail.com>
+Content-Language: en-US
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+In-Reply-To: <20241103142126.3406-1-ssunkkan@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hello,
-
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-VFS: Busy inodes after unmount (use-after-free)
-
-ocfs2: Unmounting device (7,0) on (node local)
-VFS: Busy inodes after unmount of loop0 (ocfs2)
-------------[ cut here ]------------
-kernel BUG at fs/super.c:652!
-Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN PTI
-CPU: 0 UID: 0 PID: 6441 Comm: syz-executor Not tainted 6.12.0-rc6-syzkaller-g59b723cd2adb #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-RIP: 0010:generic_shutdown_super+0x2ca/0x2d0 fs/super.c:650
-Code: 1b 48 89 d8 48 c1 e8 03 42 80 3c 28 00 74 08 48 89 df e8 f9 23 ed ff 48 8b 13 48 c7 c7 80 be 18 8c 4c 89 e6 e8 87 3f ad 09 90 <0f> 0b 0f 1f 40 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90
-RSP: 0018:ffffc9000354fd20 EFLAGS: 00010246
-RAX: 000000000000002f RBX: ffffffff8ee531e0 RCX: e6b6b127fe74ba00
-RDX: 0000000000000000 RSI: 0000000080000000 RDI: 0000000000000000
-RBP: 1ffff1100f467cf0 R08: ffffffff8174a12c R09: fffffbfff1cf9fd0
-R10: dffffc0000000000 R11: fffffbfff1cf9fd0 R12: ffff88807a33e668
-R13: dffffc0000000000 R14: ffffffff8c49f718 R15: ffff88807a33e780
-FS:  0000555593ff6500(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000000c00221c000 CR3: 0000000060ea2000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- kill_block_super+0x44/0x90 fs/super.c:1710
- deactivate_locked_super+0xc4/0x130 fs/super.c:473
- cleanup_mnt+0x41f/0x4b0 fs/namespace.c:1373
- task_work_run+0x24f/0x310 kernel/task_work.c:239
- resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
- exit_to_user_mode_loop kernel/entry/common.c:114 [inline]
- exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
- __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
- syscall_exit_to_user_mode+0x168/0x370 kernel/entry/common.c:218
- do_syscall_64+0x100/0x230 arch/x86/entry/common.c:89
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f8ed837fa47
-Code: a8 ff ff ff f7 d8 64 89 01 48 83 c8 ff c3 0f 1f 44 00 00 31 f6 e9 09 00 00 00 66 0f 1f 84 00 00 00 00 00 b8 a6 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 01 c3 48 c7 c2 a8 ff ff ff f7 d8 64 89 02 b8
-RSP: 002b:00007ffcdc5c5528 EFLAGS: 00000246 ORIG_RAX: 00000000000000a6
-RAX: 0000000000000000 RBX: 0000000000000000 RCX: 00007f8ed837fa47
-RDX: 0000000000000000 RSI: 0000000000000009 RDI: 00007ffcdc5c55e0
-RBP: 00007ffcdc5c55e0 R08: 0000000000000000 R09: 0000000000000000
-R10: 00000000ffffffff R11: 0000000000000246 R12: 00007ffcdc5c6660
-R13: 00007f8ed83f11cc R14: 000000000001b0d9 R15: 00007ffcdc5c66a0
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:generic_shutdown_super+0x2ca/0x2d0 fs/super.c:650
-Code: 1b 48 89 d8 48 c1 e8 03 42 80 3c 28 00 74 08 48 89 df e8 f9 23 ed ff 48 8b 13 48 c7 c7 80 be 18 8c 4c 89 e6 e8 87 3f ad 09 90 <0f> 0b 0f 1f 40 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90
-RSP: 0018:ffffc9000354fd20 EFLAGS: 00010246
-RAX: 000000000000002f RBX: ffffffff8ee531e0 RCX: e6b6b127fe74ba00
-RDX: 0000000000000000 RSI: 0000000080000000 RDI: 0000000000000000
-RBP: 1ffff1100f467cf0 R08: ffffffff8174a12c R09: fffffbfff1cf9fd0
-R10: dffffc0000000000 R11: fffffbfff1cf9fd0 R12: ffff88807a33e668
-R13: dffffc0000000000 R14: ffffffff8c49f718 R15: ffff88807a33e780
-FS:  0000555593ff6500(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000563a27431950 CR3: 0000000060ea2000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Hi,
 
 
-Tested on:
+On 11/3/24 2:21 PM, Ssunk wrote:
+> The data sheet can be found here:
+> https://www.xmcwh.com/uploads/954/XM25LU64C%20_%20Ver1.4.pdf
 
-commit:         59b723cd Linux 6.12-rc6
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=10202d5f980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=dc23b43a0f2f7cf7
-dashboard link: https://syzkaller.appspot.com/bug?extid=0af00f6a2cba2058b5db
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+you probably won't need a flash entry at all because it seems that this
+flash supports SFDP. The flash can be initialized solely based on its
+SFDP tables. Have you tried probing the flash without this patch?
 
-Note: no patches were applied.
+> 
+> Signed-off-by: Kankan Sun <ssunkkan@gmail.com>
+> ---
+> V1 -> V2: Removed redundant Signed-off-by information
+> V2 -> V3: cc more maintainer
+> 
+>  drivers/mtd/spi-nor/xmc.c | 5 +++++
+>  1 file changed, 5 insertions(+)
+> 
+> diff --git a/drivers/mtd/spi-nor/xmc.c b/drivers/mtd/spi-nor/xmc.c
+> index d5a06054b0dd..83e83c1c1266 100644
+> --- a/drivers/mtd/spi-nor/xmc.c
+> +++ b/drivers/mtd/spi-nor/xmc.c
+> @@ -19,6 +19,11 @@ static const struct flash_info xmc_nor_parts[] = {
+>  		.name = "XM25QH128A",
+>  		.size = SZ_16M,
+>  		.no_sfdp_flags = SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ,
+> +	}, {
+> +		.id = SNOR_ID(0x16, 0x41, 0x17),
+> +		.name = "XM25LU64C",
+> +		.size = SZ_8M,
+> +		.no_sfdp_flags = SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ,
+>  	},
+>  };
+>  
 
