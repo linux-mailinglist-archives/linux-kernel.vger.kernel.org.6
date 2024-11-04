@@ -1,54 +1,87 @@
-Return-Path: <linux-kernel+bounces-394372-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394373-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D72219BAE1A
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 09:31:23 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E8CA9BAE1B
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 09:31:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 065A51C211B7
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 08:31:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E0042814B1
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 08:31:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF40B18BB8F;
-	Mon,  4 Nov 2024 08:31:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9BCD18B498;
+	Mon,  4 Nov 2024 08:31:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d5ygXMoX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IWKBxuYT"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E32F9189B97;
-	Mon,  4 Nov 2024 08:31:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0181618F2F7
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 08:31:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730709076; cv=none; b=GroPdKQgI7acq4pIA2hiOoMyCHGfmbRD6htHJClF5Kn40aB5mvlG/5sy6BOqIyEkv9gulB5//uSd2Ypnxh4tTluUPTEXHK0m0oQrrGLFYSG4iXyJFrVQ0OMoe8DMQeLNLiLKcQfmjvpwcB4Khxc/HhXY7XrHPohc3F8pA1yrsFw=
+	t=1730709083; cv=none; b=eKnGUQVBhMdrfe5A5v7ZWtZ8rBle7I6cEtUFZ6v8mhlCpM47B73kNyFy8wXz9L9y8cuVFxptgXc6Vvd0yjeGTyQNAm/7lcEmOV0BNYAjA1KKBwW9glKH/hS/StfyHK3sfKbUJ6oyhiQUwPAs5hJBWpIX9dlMZkauToZy2OpbioI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730709076; c=relaxed/simple;
-	bh=3lXcI2gDCvD8Bf4i9kaGY28TLmCxro0UCE61VCrGrGg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LHGzAJ/rgmM7xc/YlKpuNBzlD6tJ82pQxWga2qyXqHx4MADV5zuMPWGuUmX8XLaKYNaxJSB5zPI1q/92BI/8Ck/01+lww0V0OrpvkDNgrM57cZ7QqHfYEMxRUs/uNH71KyU6CLN/LX9ZpjuNjCHg7eArWln+647xIzBJhZv6npQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d5ygXMoX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94A30C4CED2;
-	Mon,  4 Nov 2024 08:31:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730709075;
-	bh=3lXcI2gDCvD8Bf4i9kaGY28TLmCxro0UCE61VCrGrGg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=d5ygXMoXUAFfecUVU98LugXn+MulotJgeTT0oDQuAwdLiLCrh3Ezixh7szyA1Mps3
-	 YZn4idSwMESzO10FY6462jcRHGaYjfFcCuyRuyNkvJOo3sQDQVrj9tViXqZrI00zZJ
-	 jXBgqF/D9DLPyN+jAfY7m0vHhMqCV1wEa+4HxBA+j2r8DkCLhInGZjVVxwEDE3tcwR
-	 Vd0pBI1esp1/he72I20MkmkGQv6z3UzXHNm4bAFDayC+DiAZeM+RDqjflZ4aZm5n75
-	 3y/+06OQveRHajORXGbEpUW8/ZeqkhkeIZlyvDhBQD+CQUv+ogCQtt6TOY7eaQ9rjw
-	 8zdwk3r3d2UsQ==
-Date: Mon, 4 Nov 2024 10:31:09 +0200
-From: Leon Romanovsky <leon@kernel.org>
-To: Junxian Huang <huangjunxian6@hisilicon.com>
-Cc: jgg@ziepe.ca, linux-rdma@vger.kernel.org, linuxarm@huawei.com,
-	linux-kernel@vger.kernel.org, tangchengchang@huawei.com
-Subject: Re: [PATCH for-next] RDMA/hns: Support mmapping reset state to
- userspace
-Message-ID: <20241104083109.GC99170@unreal>
-References: <20241014130731.1650279-1-huangjunxian6@hisilicon.com>
+	s=arc-20240116; t=1730709083; c=relaxed/simple;
+	bh=RMFwDMojD3zrSAgOcjuKC+xriirvgs/o1aANeynXSuQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=QxwVWZAfpX8E+WVrcC44fIeB+Ng3ehpUfvSQEM4Rwc83ePz0Zn06rgXzMiERIABHg12tTuUzDL8fQwJevBa0u+FE1KLdYgwGeGX8wItcwm2MUNi6Gte7inV/XqqvhuWhR/1XqVy4OeDYR3FUoUa/fhF06ReikG0fJc8tbWSJnwU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IWKBxuYT; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4314c452180so28650495e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 00:31:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1730709078; x=1731313878; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=T5vDLGsbEr0SVIowN1t5ye+7OUL4pjjT2D7werAFSjM=;
+        b=IWKBxuYTkq6vrWktIU4NQb+ppiLmusdhAA+wKIM7dsIqwjibfjojLeWeUzYwEXwvCL
+         dZS2u2L9YQQHdglBiFuBnLy1AHlVZOYDgoiK/TAJ4fq9bX5tkb+1ce4T2kTAfX3QF6+8
+         C6z7zn+Jp7RpdnIsnk0qO0t4hlA4Awz7z9WQj27+q89wybZw75T1rnNpuK2HKwsLz4VF
+         3LGCsJyJZuIVs5eZ+qJM2Gvy5e1EdPhLeUcNgtInjTDsJ8rlMzh0N9LCiqimUcwk8+Rq
+         lxB4gGS3Xf6LOnvHG2Ct/OtuiHTDyc6mK7ZXyVtIzSp8YID/a3pnDdhg8+g8qTx6BVPS
+         rBEA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730709078; x=1731313878;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=T5vDLGsbEr0SVIowN1t5ye+7OUL4pjjT2D7werAFSjM=;
+        b=r2800j0LQJAUdnUla/wNRfSlqlWugbHFCxpOM7Y613o7QG6N10+KU7SaRnI7SpwmE+
+         XcVX3Om2JTQjyUFY3GBr+x9pxybZVCgRfTIaL9wcUVkrvjV948xRkS0gsEUCgxjfNyyQ
+         9t98JivuMcE7lX9qu6rj7rT0Yw+P/slM0C6MhuT70Iara6R2BFMOmwVLJPbTSCVRtQ6d
+         FoGnYpBJBDIU9BI4jlVcQoGR9k8+Pu2MF1iVw9ztsd/6nHfj8oomLZ5/L1KPemTxnVAM
+         sEwJdYmo2SD6yKeAXpS5097esrIDwVKgczlf4GhjFgXZEE6ZB+dbU7DAEhqgrBWQj1Y3
+         x0nA==
+X-Forwarded-Encrypted: i=1; AJvYcCVniuslctJ77ZVDgqYtkL1YJHJjsPgvZQnK2ZWXNSSQCMM1KDZHd+LPv5wvu4vQTqnjfFAHneWUruHSRCY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwHp5Fokx6iIUV7eoXCwyF2mqBm+uIqQnvPUvvAYNxJRrjZ+/Ai
+	6w2FLSUbYPCpjIqlIUHqxTFry6MkHh4POysRh9c2mOcclhqbJSgnQgSLWAhQ1js=
+X-Google-Smtp-Source: AGHT+IFFiT8xMGT+o7kM5vRaU6KjK8tqr+AcRQcVqXIZYuM1L7HGi9LZqQfv+QQLXIRdVtTWEYW6xA==
+X-Received: by 2002:a5d:64a7:0:b0:374:c7cd:8818 with SMTP id ffacd0b85a97d-381c79e366dmr9155476f8f.22.1730709078297;
+        Mon, 04 Nov 2024 00:31:18 -0800 (PST)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381c10d439esm12549514f8f.44.2024.11.04.00.31.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 04 Nov 2024 00:31:17 -0800 (PST)
+Date: Mon, 4 Nov 2024 11:31:13 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: oe-kbuild@lists.linux.dev,
+	Kanchana P Sridhar <kanchana.p.sridhar@intel.com>,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	hannes@cmpxchg.org, yosryahmed@google.com, nphamcs@gmail.com,
+	chengming.zhou@linux.dev, usamaarif642@gmail.com,
+	ryan.roberts@arm.com, ying.huang@intel.com, 21cnbao@gmail.com,
+	akpm@linux-foundation.org, linux-crypto@vger.kernel.org,
+	herbert@gondor.apana.org.au, davem@davemloft.net,
+	clabbe@baylibre.com, ardb@kernel.org, ebiggers@google.com,
+	surenb@google.com, kristen.c.accardi@intel.com, zanussi@kernel.org
+Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev, wajdi.k.feghali@intel.com,
+	vinodh.gopal@intel.com, kanchana.p.sridhar@intel.com
+Subject: Re: [PATCH v2 13/13] mm: zswap: Compress batching with Intel IAA in
+ zswap_store() of large folios.
+Message-ID: <89728727-0fd2-4539-bc89-17a699d7179a@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,264 +90,71 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241014130731.1650279-1-huangjunxian6@hisilicon.com>
+In-Reply-To: <20241103032111.333282-14-kanchana.p.sridhar@intel.com>
 
-On Mon, Oct 14, 2024 at 09:07:31PM +0800, Junxian Huang wrote:
-> From: Chengchang Tang <tangchengchang@huawei.com>
-> 
-> Mmap reset state to notify userspace about HW reset. The mmaped flag
-> hw_ready will be initiated to a non-zero value. When HW is reset,
-> the mmap page will be zapped and userspace will get a zero value of
-> hw_ready.
+Hi Kanchana,
 
-I didn't forget that patch, but not applying now as it seems extremely
-sketchy for me, so waiting for anyone to come and say their opinion too.
+kernel test robot noticed the following build warnings:
 
-Thanks
+url:    https://github.com/intel-lab-lkp/linux/commits/Kanchana-P-Sridhar/crypto-acomp-Define-two-new-interfaces-for-compress-decompress-batching/20241103-112337
+base:   5c4cf96cd70230100b5d396d45a5c9a332539d19
+patch link:    https://lore.kernel.org/r/20241103032111.333282-14-kanchana.p.sridhar%40intel.com
+patch subject: [PATCH v2 13/13] mm: zswap: Compress batching with Intel IAA in zswap_store() of large folios.
+config: x86_64-randconfig-161-20241104 (https://download.01.org/0day-ci/archive/20241104/202411040859.2z0MfFkR-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
 
-> 
-> Signed-off-by: Chengchang Tang <tangchengchang@huawei.com>
-> Signed-off-by: Junxian Huang <huangjunxian6@hisilicon.com>
-> ---
->  drivers/infiniband/hw/hns/hns_roce_device.h |  4 ++
->  drivers/infiniband/hw/hns/hns_roce_hw_v2.c  | 47 ++++++++++++++++++++-
->  drivers/infiniband/hw/hns/hns_roce_main.c   | 36 ++++++++++++++++
->  include/uapi/rdma/hns-abi.h                 |  6 +++
->  4 files changed, 91 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/infiniband/hw/hns/hns_roce_device.h b/drivers/infiniband/hw/hns/hns_roce_device.h
-> index 0b1e21cb6d2d..59bca8067a7f 100644
-> --- a/drivers/infiniband/hw/hns/hns_roce_device.h
-> +++ b/drivers/infiniband/hw/hns/hns_roce_device.h
-> @@ -202,6 +202,7 @@ struct hns_roce_uar {
->  enum hns_roce_mmap_type {
->  	HNS_ROCE_MMAP_TYPE_DB = 1,
->  	HNS_ROCE_MMAP_TYPE_DWQE,
-> +	HNS_ROCE_MMAP_TYPE_RESET,
->  };
->  
->  struct hns_user_mmap_entry {
-> @@ -216,6 +217,7 @@ struct hns_roce_ucontext {
->  	struct list_head	page_list;
->  	struct mutex		page_mutex;
->  	struct hns_user_mmap_entry *db_mmap_entry;
-> +	struct hns_user_mmap_entry *reset_mmap_entry;
->  	u32			config;
->  };
->  
-> @@ -1020,6 +1022,8 @@ struct hns_roce_dev {
->  	int			loop_idc;
->  	u32			sdb_offset;
->  	u32			odb_offset;
-> +	struct page		*reset_page; /* store reset state */
-> +	void			*reset_kaddr; /* addr of reset page */
->  	const struct hns_roce_hw *hw;
->  	void			*priv;
->  	struct workqueue_struct *irq_workq;
-> diff --git a/drivers/infiniband/hw/hns/hns_roce_hw_v2.c b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
-> index f1feaa79f78e..2f72074b7cf9 100644
-> --- a/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
-> +++ b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
-> @@ -37,6 +37,7 @@
->  #include <linux/kernel.h>
->  #include <linux/types.h>
->  #include <linux/workqueue.h>
-> +#include <linux/vmalloc.h>
->  #include <net/addrconf.h>
->  #include <rdma/ib_addr.h>
->  #include <rdma/ib_cache.h>
-> @@ -2865,6 +2866,36 @@ static int free_mr_init(struct hns_roce_dev *hr_dev)
->  	return ret;
->  }
->  
-> +static int hns_roce_v2_get_reset_page(struct hns_roce_dev *hr_dev)
-> +{
-> +	struct hns_roce_reset_state *state;
-> +
-> +	hr_dev->reset_page = alloc_page(GFP_KERNEL | __GFP_ZERO);
-> +	if (!hr_dev->reset_page)
-> +		return -ENOMEM;
-> +
-> +	hr_dev->reset_kaddr = vmap(&hr_dev->reset_page, 1, VM_MAP, PAGE_KERNEL);
-> +	if (!hr_dev->reset_kaddr)
-> +		goto err_with_vmap;
-> +
-> +	state = hr_dev->reset_kaddr;
-> +	state->hw_ready = 1;
-> +
-> +	return 0;
-> +
-> +err_with_vmap:
-> +	put_page(hr_dev->reset_page);
-> +	return -ENOMEM;
-> +}
-> +
-> +static void hns_roce_v2_put_reset_page(struct hns_roce_dev *hr_dev)
-> +{
-> +	vunmap(hr_dev->reset_kaddr);
-> +	hr_dev->reset_kaddr = NULL;
-> +	put_page(hr_dev->reset_page);
-> +	hr_dev->reset_page = NULL;
-> +}
-> +
->  static int get_hem_table(struct hns_roce_dev *hr_dev)
->  {
->  	unsigned int qpc_count;
-> @@ -2944,14 +2975,21 @@ static int hns_roce_v2_init(struct hns_roce_dev *hr_dev)
->  {
->  	int ret;
->  
-> +	ret = hns_roce_v2_get_reset_page(hr_dev);
-> +	if (ret) {
-> +		dev_err(hr_dev->dev,
-> +			"reset state init failed, ret = %d.\n", ret);
-> +		return ret;
-> +	}
-> +
->  	/* The hns ROCEE requires the extdb info to be cleared before using */
->  	ret = hns_roce_clear_extdb_list_info(hr_dev);
->  	if (ret)
-> -		return ret;
-> +		goto err_clear_extdb_failed;
->  
->  	ret = get_hem_table(hr_dev);
->  	if (ret)
-> -		return ret;
-> +		goto err_clear_extdb_failed;
->  
->  	if (hr_dev->is_vf)
->  		return 0;
-> @@ -2967,6 +3005,9 @@ static int hns_roce_v2_init(struct hns_roce_dev *hr_dev)
->  err_llm_init_failed:
->  	put_hem_table(hr_dev);
->  
-> +err_clear_extdb_failed:
-> +	hns_roce_v2_put_reset_page(hr_dev);
-> +
->  	return ret;
->  }
->  
-> @@ -2980,6 +3021,8 @@ static void hns_roce_v2_exit(struct hns_roce_dev *hr_dev)
->  	if (!hr_dev->is_vf)
->  		hns_roce_free_link_table(hr_dev);
->  
-> +	hns_roce_v2_put_reset_page(hr_dev);
-> +
->  	if (hr_dev->pci_dev->revision == PCI_REVISION_ID_HIP09)
->  		free_dip_list(hr_dev);
->  }
-> diff --git a/drivers/infiniband/hw/hns/hns_roce_main.c b/drivers/infiniband/hw/hns/hns_roce_main.c
-> index 49315f39361d..1620d4318480 100644
-> --- a/drivers/infiniband/hw/hns/hns_roce_main.c
-> +++ b/drivers/infiniband/hw/hns/hns_roce_main.c
-> @@ -324,6 +324,7 @@ hns_roce_user_mmap_entry_insert(struct ib_ucontext *ucontext, u64 address,
->  				ucontext, &entry->rdma_entry, length, 0);
->  		break;
->  	case HNS_ROCE_MMAP_TYPE_DWQE:
-> +	case HNS_ROCE_MMAP_TYPE_RESET:
->  		ret = rdma_user_mmap_entry_insert_range(
->  				ucontext, &entry->rdma_entry, length, 1,
->  				U32_MAX);
-> @@ -341,6 +342,20 @@ hns_roce_user_mmap_entry_insert(struct ib_ucontext *ucontext, u64 address,
->  	return entry;
->  }
->  
-> +static int hns_roce_alloc_reset_entry(struct ib_ucontext *uctx)
-> +{
-> +	struct hns_roce_ucontext *context = to_hr_ucontext(uctx);
-> +	struct hns_roce_dev *hr_dev = to_hr_dev(uctx->device);
-> +
-> +	context->reset_mmap_entry = hns_roce_user_mmap_entry_insert(
-> +		uctx, (u64)page_to_phys(hr_dev->reset_page), PAGE_SIZE,
-> +		HNS_ROCE_MMAP_TYPE_RESET);
-> +	if (!context->reset_mmap_entry)
-> +		return -ENOMEM;
-> +
-> +	return 0;
-> +}
-> +
->  static void hns_roce_dealloc_uar_entry(struct hns_roce_ucontext *context)
->  {
->  	if (context->db_mmap_entry)
-> @@ -369,6 +384,7 @@ static int hns_roce_alloc_ucontext(struct ib_ucontext *uctx,
->  	struct hns_roce_dev *hr_dev = to_hr_dev(uctx->device);
->  	struct hns_roce_ib_alloc_ucontext_resp resp = {};
->  	struct hns_roce_ib_alloc_ucontext ucmd = {};
-> +	struct rdma_user_mmap_entry *rdma_entry;
->  	int ret = -EAGAIN;
->  
->  	if (!hr_dev->active)
-> @@ -421,6 +437,13 @@ static int hns_roce_alloc_ucontext(struct ib_ucontext *uctx,
->  
->  	resp.cqe_size = hr_dev->caps.cqe_sz;
->  
-> +	ret = hns_roce_alloc_reset_entry(uctx);
-> +	if (ret)
-> +		goto error_fail_reset_entry;
-> +
-> +	rdma_entry = &context->reset_mmap_entry->rdma_entry;
-> +	resp.reset_mmap_key = rdma_user_mmap_get_offset(rdma_entry);
-> +
->  	ret = ib_copy_to_udata(udata, &resp,
->  			       min(udata->outlen, sizeof(resp)));
->  	if (ret)
-> @@ -429,6 +452,9 @@ static int hns_roce_alloc_ucontext(struct ib_ucontext *uctx,
->  	return 0;
->  
->  error_fail_copy_to_udata:
-> +	rdma_user_mmap_entry_remove(&context->reset_mmap_entry->rdma_entry);
-> +
-> +error_fail_reset_entry:
->  	if (hr_dev->caps.flags & HNS_ROCE_CAP_FLAG_CQ_RECORD_DB ||
->  	    hr_dev->caps.flags & HNS_ROCE_CAP_FLAG_QP_RECORD_DB)
->  		mutex_destroy(&context->page_mutex);
-> @@ -448,6 +474,8 @@ static void hns_roce_dealloc_ucontext(struct ib_ucontext *ibcontext)
->  	struct hns_roce_ucontext *context = to_hr_ucontext(ibcontext);
->  	struct hns_roce_dev *hr_dev = to_hr_dev(ibcontext->device);
->  
-> +	rdma_user_mmap_entry_remove(&context->reset_mmap_entry->rdma_entry);
-> +
->  	if (hr_dev->caps.flags & HNS_ROCE_CAP_FLAG_CQ_RECORD_DB ||
->  	    hr_dev->caps.flags & HNS_ROCE_CAP_FLAG_QP_RECORD_DB)
->  		mutex_destroy(&context->page_mutex);
-> @@ -485,6 +513,14 @@ static int hns_roce_mmap(struct ib_ucontext *uctx, struct vm_area_struct *vma)
->  	case HNS_ROCE_MMAP_TYPE_DWQE:
->  		prot = pgprot_device(vma->vm_page_prot);
->  		break;
-> +	case HNS_ROCE_MMAP_TYPE_RESET:
-> +		if (vma->vm_flags & (VM_WRITE | VM_EXEC)) {
-> +			ret = -EINVAL;
-> +			goto out;
-> +		}
-> +		vm_flags_set(vma, VM_DONTEXPAND);
-> +		prot = vma->vm_page_prot;
-> +		break;
->  	default:
->  		ret = -EINVAL;
->  		goto out;
-> diff --git a/include/uapi/rdma/hns-abi.h b/include/uapi/rdma/hns-abi.h
-> index 94e861870e27..065eb2e0a690 100644
-> --- a/include/uapi/rdma/hns-abi.h
-> +++ b/include/uapi/rdma/hns-abi.h
-> @@ -136,6 +136,7 @@ struct hns_roce_ib_alloc_ucontext_resp {
->  	__u32	max_inline_data;
->  	__u8	congest_type;
->  	__u8	reserved0[7];
-> +	__aligned_u64 reset_mmap_key;
->  };
->  
->  struct hns_roce_ib_alloc_ucontext {
-> @@ -153,4 +154,9 @@ struct hns_roce_ib_create_ah_resp {
->  	__u8 tc_mode;
->  };
->  
-> +struct hns_roce_reset_state {
-> +	__u32 hw_ready;
-> +	__u32 reserved;
-> +};
-> +
->  #endif /* HNS_ABI_USER_H */
-> -- 
-> 2.33.0
-> 
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+| Closes: https://lore.kernel.org/r/202411040859.2z0MfFkR-lkp@intel.com/
+
+smatch warnings:
+mm/zswap.c:1788 zswap_store_propagate_errors() warn: variable dereferenced before check 'sbp->entry' (see line 1785)
+
+vim +1788 mm/zswap.c
+
+c1252ac91d6a6a Kanchana P Sridhar 2024-11-02  1771  static __always_inline void zswap_store_propagate_errors(
+c1252ac91d6a6a Kanchana P Sridhar 2024-11-02  1772  	struct zswap_store_pipeline_state *zst,
+c1252ac91d6a6a Kanchana P Sridhar 2024-11-02  1773  	u8 error_batch_idx)
+c1252ac91d6a6a Kanchana P Sridhar 2024-11-02  1774  {
+c1252ac91d6a6a Kanchana P Sridhar 2024-11-02  1775  	u8 i;
+c1252ac91d6a6a Kanchana P Sridhar 2024-11-02  1776  
+c1252ac91d6a6a Kanchana P Sridhar 2024-11-02  1777  	if (zst->errors[error_batch_idx])
+c1252ac91d6a6a Kanchana P Sridhar 2024-11-02  1778  		return;
+c1252ac91d6a6a Kanchana P Sridhar 2024-11-02  1779  
+c1252ac91d6a6a Kanchana P Sridhar 2024-11-02  1780  	for (i = 0; i < zst->nr_comp_pages; ++i) {
+c1252ac91d6a6a Kanchana P Sridhar 2024-11-02  1781  		struct zswap_store_sub_batch_page *sbp = &zst->sub_batch[i];
+c1252ac91d6a6a Kanchana P Sridhar 2024-11-02  1782  
+c1252ac91d6a6a Kanchana P Sridhar 2024-11-02  1783  		if (sbp->batch_idx == error_batch_idx) {
+c1252ac91d6a6a Kanchana P Sridhar 2024-11-02  1784  			if (!sbp->error) {
+c1252ac91d6a6a Kanchana P Sridhar 2024-11-02 @1785  				if (!IS_ERR_VALUE(sbp->entry->handle))
+                                                                                                  ^^^^^^^^^^^^^^^^^^
+Dereferenced
+
+c1252ac91d6a6a Kanchana P Sridhar 2024-11-02  1786  					zpool_free(zst->pool->zpool, sbp->entry->handle);
+c1252ac91d6a6a Kanchana P Sridhar 2024-11-02  1787  
+c1252ac91d6a6a Kanchana P Sridhar 2024-11-02 @1788  				if (sbp->entry) {
+                                                                                    ^^^^^^^^^^
+Checked too late
+
+c1252ac91d6a6a Kanchana P Sridhar 2024-11-02  1789  					zswap_entry_cache_free(sbp->entry);
+c1252ac91d6a6a Kanchana P Sridhar 2024-11-02  1790  					sbp->entry = NULL;
+c1252ac91d6a6a Kanchana P Sridhar 2024-11-02  1791  				}
+c1252ac91d6a6a Kanchana P Sridhar 2024-11-02  1792  				sbp->error = -EINVAL;
+c1252ac91d6a6a Kanchana P Sridhar 2024-11-02  1793  			}
+c1252ac91d6a6a Kanchana P Sridhar 2024-11-02  1794  		}
+c1252ac91d6a6a Kanchana P Sridhar 2024-11-02  1795  	}
+c1252ac91d6a6a Kanchana P Sridhar 2024-11-02  1796  
+c1252ac91d6a6a Kanchana P Sridhar 2024-11-02  1797  	/*
+c1252ac91d6a6a Kanchana P Sridhar 2024-11-02  1798  	 * Set zswap status for the folio to "error"
+c1252ac91d6a6a Kanchana P Sridhar 2024-11-02  1799  	 * for use in swap_writepage.
+c1252ac91d6a6a Kanchana P Sridhar 2024-11-02  1800  	 */
+c1252ac91d6a6a Kanchana P Sridhar 2024-11-02  1801  	zst->errors[error_batch_idx] = -EINVAL;
+c1252ac91d6a6a Kanchana P Sridhar 2024-11-02  1802  }
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
+
 
