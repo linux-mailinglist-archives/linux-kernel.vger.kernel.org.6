@@ -1,94 +1,231 @@
-Return-Path: <linux-kernel+bounces-395524-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395525-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BD159BBF19
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 21:55:56 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33E6A9BBF1A
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 21:56:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 07C32B226F3
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 20:55:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC08B1F21CBA
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 20:56:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49CA21F7541;
-	Mon,  4 Nov 2024 20:55:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C76041F709C;
+	Mon,  4 Nov 2024 20:56:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="brrJZD4G"
-Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CBznkAg1"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 533B1192B91;
-	Mon,  4 Nov 2024 20:55:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAD841F709D
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 20:56:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730753745; cv=none; b=A0AIEsxAOC+fvfNPqerCpZIgl72H47XM8ph3vxo1ZTKW42/7fRbN8YesnEUSYI/flxX5hsLGoiqg/AjG+fLqAYbIi1yF26BYNrCTdDPDR5UwR4W5j3bnQV77JfrtIigX9lp0T8OLRZklbV/7ZYAN1hvDnrQXeq5g+/UTyjWxjvo=
+	t=1730753771; cv=none; b=ki12I1z0W8Vu+8EyLdtpqF/S7KV/GS81G9SkE8hbsylGxbTglIE/msgKSJdfWlilJ2CloNdTthFh0RM1h0Ba0qxSHsHaxQnNL7jomYT5p4mRmxwiAaNb2SDuEyqs9F9QJuTg6UJ/+dCuZ4Or3L40cegeQEOyEU5nQklX3EZGuYY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730753745; c=relaxed/simple;
-	bh=w/BwBLYfkwC6ASNtsfliDcKXZSmaBz4dLFMzkH88W2U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VakuopKBZkyhMi7qaVKKLvr6pJYxm7Xt5nqt0/nxCAa/sh45JA6vS/JprJ7/xSG8x7s/MqCcETekcJBX29Xeu26fb6kZztEEna9r58G9zBo0RJ+qAMAyjiRdQvrVg9Vgv0yToh6tcJT98x5S+ZwYw8rr9BJjdhjkk/U8kEk3Dro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=brrJZD4G; arc=none smtp.client-ip=217.70.183.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 6AA081BF205;
-	Mon,  4 Nov 2024 20:55:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1730753740;
+	s=arc-20240116; t=1730753771; c=relaxed/simple;
+	bh=2KI5XFTU98HXDG36kwZW/lk2zJjqlCVydw5AJQ3PLyA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=h1JsZL05SknDVFM+5bAoToEivBxJ4cmtecuASu2gFbKgnHUhxOLyfaOu3v4h6SsLUytIt9TfY0hFO7VqXo85VKyWVUIjZMqwSffaTAgzGqnEfq35tJZT392p4PBQu7jbwfJr+3EwXZDrKOcNe6ZcXP+Mp9CeM/vyT3eGfiHubtU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CBznkAg1; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1730753767;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nbox0dlasLe1pqTORk1m61pBMBl2JDQYGoux2ZohVCk=;
-	b=brrJZD4GS3iZTjnuuKgSpZ1Vt0SWtjSsJOoi3SNyzcw4Qr5fXybiVriwJQIF6xLsxmk6mZ
-	LQnlgPlSL4gYG+txVLaBuZ6Gu+vVbYlcz99CznupJDU3pq/Pyg+O7/8BwIsv4mehsjAUxW
-	931Dv2+zIbnNTtlCY4pQL+qI0IbqqzyVscswIJVm3ntGKuTJ4jx7x1c09qgSOzhEZMgw8V
-	cfygLDrcLDQpELLHCF4sR31C4PdKQeqjSJijC3DTB3Lgxcw+U2A4Liw8xAr2NKt3beMqQS
-	i88CDqtn4AYlN32iIYowxf4PPM/6OXJFurpupRPqqd0dgrlTRDqA327/Ba931g==
-Date: Mon, 4 Nov 2024 21:55:39 +0100
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: Conor Dooley <conor@kernel.org>
-Cc: Conor Dooley <conor.dooley@microchip.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Daire McNamara <daire.mcnamara@microchip.com>,
-	linux-rtc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RESEND] dt-bindings: rtc: mpfs-rtc: remove Lewis from
- maintainers
-Message-ID: <202411042055393b9cf4be@mail.local>
-References: <20241015-surcharge-caucasian-095d1fd2fa27@wendy>
- <20241104-immodest-finishing-354430b8e386@spud>
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=EEYiaNO7s2bihQb9W4XJaTGINNezVORGFn1ktPS/JY8=;
+	b=CBznkAg1YyA4UOmbW0heg2RtqFfBmjLdMdskdeszOaf75lhfcudcyAe8Jxbidg/FAR+uhU
+	Oauedr3CuNyHNeeHU8vBUf0b1DTPULzvL3y7IxrJqwATTgLbvGzJixT11Xn2mevynvzR0v
+	QiF1y7j+MIrLinzkb/0q++/heTeboSo=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-683-zeh2LDtXPWWRBTz0XHOqow-1; Mon, 04 Nov 2024 15:56:06 -0500
+X-MC-Unique: zeh2LDtXPWWRBTz0XHOqow-1
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-43151a9ea95so31373755e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 12:56:06 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730753765; x=1731358565;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EEYiaNO7s2bihQb9W4XJaTGINNezVORGFn1ktPS/JY8=;
+        b=R540DYVfu+YDtFl9A3SJzHb3uFD98R1RuYc1aWN7p6ENujsRyYMl9q+SVU+0XxP5Td
+         GEdOl6pKPp3QJX39IYUC/lgVSzTNo43vvQvjyoHO2rEeQICR3mvGFlpn0jRk6cM3wxks
+         UbZzIdyUAIYoUUgxkpeV3JFlV/CJ8VByNj9aWAJ1hu/RuiSpRoRxOEVedh1i8fUMMZwC
+         HL7VB1LV/O/ec6Vm/Wp5WeyUeHPXg+Feb2g1+l54AD0wVdw47r7hKWCy7OuLStiohaPc
+         wKr1llQQr58TNBSplmSONE1I4KvWsuxIZ/nDlusuEiRhH1R0NPV9znARzN962V2yTAUH
+         e3ww==
+X-Forwarded-Encrypted: i=1; AJvYcCWUzdi6cQolp3aou+fLhsjMmRZyw6dz9lc0La9LuC0QuOw/z6MIqJdK0yewc1s2GZRkdFD30axaoqNt/F4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzBw14mijRj2I2YmEYBzPXIKFGl+zi5LVveab83H7htLrr3cG3C
+	j82uQh7hy9Umwa2zzOrEoD8L7Czhk6D15Xq2YObgK9kC6zd1xByPrJgEEhl6m4Aa/8VbgfRTI3c
+	2Om/mBN7l1UeSZmMdgHO4oE9Z1M87VjwkOZrPNl2wXSIwQq350hs/p7eIZ0nXjg==
+X-Received: by 2002:a05:600c:4ed4:b0:428:b4a:7001 with SMTP id 5b1f17b1804b1-43288c32703mr92877045e9.15.1730753765437;
+        Mon, 04 Nov 2024 12:56:05 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGxxNIYMiblHm/J9DB0MX7t5k6YmcmpS0PJU/MRfyjyWG+fkW80KHE2FRXYIcRBC2xcx37b+A==
+X-Received: by 2002:a05:600c:4ed4:b0:428:b4a:7001 with SMTP id 5b1f17b1804b1-43288c32703mr92876925e9.15.1730753765078;
+        Mon, 04 Nov 2024 12:56:05 -0800 (PST)
+Received: from ?IPV6:2003:cb:c72f:e500:e96a:8043:1211:8e6a? (p200300cbc72fe500e96a804312118e6a.dip0.t-ipconnect.de. [2003:cb:c72f:e500:e96a:8043:1211:8e6a])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-431bd947c03sm194042305e9.28.2024.11.04.12.56.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 04 Nov 2024 12:56:04 -0800 (PST)
+Message-ID: <410abcf1-d43c-4368-b217-4ff894903440@redhat.com>
+Date: Mon, 4 Nov 2024 21:56:02 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241104-immodest-finishing-354430b8e386@spud>
-X-GND-Sasl: alexandre.belloni@bootlin.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] mm: count zeromap read and set for swapout and swapin
+To: Usama Arif <usamaarif642@gmail.com>, Johannes Weiner <hannes@cmpxchg.org>
+Cc: Barry Song <21cnbao@gmail.com>, akpm@linux-foundation.org,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ Barry Song <v-songbaohua@oppo.com>, Chengming Zhou
+ <chengming.zhou@linux.dev>, Yosry Ahmed <yosryahmed@google.com>,
+ Nhat Pham <nphamcs@gmail.com>, Hugh Dickins <hughd@google.com>,
+ Matthew Wilcox <willy@infradead.org>, Shakeel Butt <shakeel.butt@linux.dev>,
+ Andi Kleen <ak@linux.intel.com>, Baolin Wang
+ <baolin.wang@linux.alibaba.com>, Chris Li <chrisl@kernel.org>,
+ "Huang, Ying" <ying.huang@intel.com>, Kairui Song <kasong@tencent.com>,
+ Ryan Roberts <ryan.roberts@arm.com>
+References: <20241102101240.35072-1-21cnbao@gmail.com>
+ <c7a90ccf-c1b1-480c-9f2a-88ef37c3d89e@redhat.com>
+ <20241104163402.GA810664@cmpxchg.org>
+ <c9c5bea0-7542-4587-9d02-0dc25574c548@redhat.com>
+ <3ac28c1a-44d4-4b10-966e-0907df716da0@gmail.com>
+Content-Language: en-US
+From: David Hildenbrand <david@redhat.com>
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <3ac28c1a-44d4-4b10-966e-0907df716da0@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 04/11/2024 19:06:08+0000, Conor Dooley wrote:
-> On Tue, Oct 15, 2024 at 07:52:05AM +0100, Conor Dooley wrote:
-> > Lewis hasn't worked at Microchip for a while, and IIRC never actually
-> > worked on the RTC in the first place. Remove him from the maintainers
-> > list in the binding, leaving Daire.
-> > 
-> > Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
-> > ---
-> > Noticed him in the CC list of your resend, figured it was worth removing
-> > him.
+On 04.11.24 19:48, Usama Arif wrote:
 > 
-> Could you pick this up Alexandre? I've got no contact info for Lewis, so
-> I doubt you'll see an ack from him...
+> 
+> On 04/11/2024 17:10, David Hildenbrand wrote:
+>> On 04.11.24 17:34, Johannes Weiner wrote:
+>>> On Mon, Nov 04, 2024 at 01:42:08PM +0100, David Hildenbrand wrote:
+>>>> On 02.11.24 11:12, Barry Song wrote:
+>>>>> @@ -1599,6 +1599,16 @@ The following nested keys are defined.
+>>>>>           pglazyfreed (npn)
+>>>>>             Amount of reclaimed lazyfree pages
+>>>>>     +      swpin_zero
+>>>>> +        Number of pages moved into memory with zero content, meaning no
+>>>>> +        copy exists in the backend swapfile, allowing swap-in to avoid
+>>>>> +        I/O read overhead.
+>>>>> +
+>>>>> +      swpout_zero
+>>>>> +        Number of pages moved out of memory with zero content, meaning no
+>>>>> +        copy is needed in the backend swapfile, allowing swap-out to avoid
+>>>>> +        I/O write overhead.
+>>>>
+>>>> Hm, can make it a bit clearer that this is a pure optimization and refer
+>>>> to the other counters?
+>>>>
+>>>> swpin_zero
+>>>>      Portion of "pswpin" pages for which I/O was optimized out
+>>>>      because the page content was detected to be zero during swapout.
+>>>
+>>> AFAICS the zeropages currently don't show up in pswpin/pswpout, so
+>>> these are independent counters, not subsets.
+>>
+>> Ah. now I understand the problem. The whole "move out of memory" "move into memory" here is quite confusing TBH. We're not moving anything, we're optimizing out the move completely ... yes, you could call it compression (below).
+>>
+>>>
+>>> I'm leaning towards Barry's side on the fixes tag.
+>>
+>> I think the documentation when to use the Fixes: tag is pretty clear.
+>>
+>> Introducing new counters can hardly be considered a bugfix. Missing to adjust some counters that *existing tools* would know/use might be  IMO (below).
+>>
+>>>   When zswap handled
+>>> the same-filled pages, we would count them in zswpin/out. From a user
+>>> POV, especially one using zswap, the behavior didn't change, but the
+>>> counts giving insight into this (potentially significant) VM activity
+>>> disappeared. This is arguably a regression.
+>>>>> swpout_zero
+>>>>      Portion of "pswout" pages for which I/O was optimized out
+>>>>      because the page content was detected to be zero.
+>>>
+>>> Are we sure we want to commit to the "zero" in the name here? Until
+>>> very recently, zswap optimized all same-filled pages. It's possible
+>>> somebody might want to bring that back down the line.
+>>
+>> Agreed.
+>>
+>>>
+>>> In reference to the above, I'd actually prefer putting them back into
+>>> zswpin/zswpout. Sure, they're not handled by zswap.c proper, but this
+>>> is arguably just an implementation detail; from a user POV this is
+>>> still just (a form of) compression in lieu of IO to the swap backend.
+>>>
+>>> IMO there is no need for coming up with a separate category. Just add
+>>> them to zswpin/zswpout and remove the CONFIG_ZSWAP guards from them?
+>>
+> 
+> hmm, I actually don't like the idea of using zswpin/zswpout. Its a
+> bit confusing if zswap is disabled and zswap counters are incrementing?
+> 
+> Also, it means that when zswap is enabled, you won't be able to distinguish
+> between zswap and zeropage optimization.
 
-I will, I'm super late on the RTC patch queue.
-
-
+Does it matter? Because in the past the same would have happened, no 
+(back when this was done in zswap code)?
 
 -- 
-Alexandre Belloni, co-owner and COO, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Cheers,
+
+David / dhildenb
+
 
