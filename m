@@ -1,78 +1,80 @@
-Return-Path: <linux-kernel+bounces-394847-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394851-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 844B09BB4CF
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 13:41:32 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 306D89BB4DA
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 13:43:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B69271C21C68
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 12:41:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AF1ABB2494E
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 12:43:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 342B01B1D65;
-	Mon,  4 Nov 2024 12:41:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E38B1B3933;
+	Mon,  4 Nov 2024 12:42:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PtaIRm2e"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=aiven.io header.i=@aiven.io header.b="GWWQCx9x"
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0701B18C025
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 12:41:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E87BB1ABEDC
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 12:42:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730724085; cv=none; b=X/Cpg8VbI+54S+AVPNARh9mWlU2NTyhuFUUPW2RKRWFZSEl9Fu2hELp4WWJYeq8aVI0/vuNkQkpZs0hK9JGUpu9vcwxP3iDpSjFsDWJHBXHlv/Fi5nq5HqL4g0AeLU+1XzCVP/7pf1UqX5MX30dOJaNhpFfzbZ/ee1KXV4hlh1A=
+	t=1730724177; cv=none; b=B5IB34fYyShl7sv5CsXatYMvLcPqCWSM5Od48OfSNhkqQ/1abEkqdYwk4tgnIcvYG3112t9c6BTK6vv39OMofa4WmA/4n5g8v3A61iVvhWVnlCYJQHib9LqyvFZxvIcn0cIoxnYq+qWrslmc7K1YXv+G2T+2X1Fga7mfsgEzKnA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730724085; c=relaxed/simple;
-	bh=K2670CLvWu848B9Z+a2LlS5M3E7jNuSgLozZti5polE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sQCKJYWT38d1cKmEnAlKXGzWucAMG0prTObjeRP36QYR9Kr1pwgk9YATjeCo/+7cfymvOdDapBC0tY+SsBIlfx3ogD8rZ2tZOU1xpSWJYyNEIS35D976obYckl/c05dL0P5mInGX8UBuPEuTlA/5q+vvFnwJ36HT5uxhH09TR20=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PtaIRm2e; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1730724082;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=aKQ0/YooIp1QYyef8Z9BF7zgosXNwWGR/ZRQNwN6Nbo=;
-	b=PtaIRm2eIcIDb6xUCVhtZ8XvsWUMClLAruk5ffaBgWoRM+Cvii5o/mo+6/LmqjfhpwaAYy
-	dY6HCsMOZaSnAJcZ/9J3wUvJpszNfho8Xez0KfcupbZQD8bw1NS28sequMxK/ObVJz81Bv
-	yohlq0i+u3yPZ4LSTpckISPE77FMcig=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-185-JVFTtb9zNw-d_g3XSvp-jg-1; Mon,
- 04 Nov 2024 07:41:21 -0500
-X-MC-Unique: JVFTtb9zNw-d_g3XSvp-jg-1
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 249C81954AE4;
-	Mon,  4 Nov 2024 12:41:18 +0000 (UTC)
-Received: from wcosta-thinkpadt14gen4.rmtbr.csb (unknown [10.22.64.126])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id D7D66300018D;
-	Mon,  4 Nov 2024 12:41:11 +0000 (UTC)
-From: Wander Lairson Costa <wander@redhat.com>
-To: Tony Nguyen <anthony.l.nguyen@intel.com>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Clark Williams <clrkwllms@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	intel-wired-lan@lists.osuosl.org (moderated list:INTEL ETHERNET DRIVERS),
-	netdev@vger.kernel.org (open list:NETWORKING DRIVERS),
-	linux-kernel@vger.kernel.org (open list),
-	linux-rt-devel@lists.linux.dev (open list:Real-time Linux (PREEMPT_RT):Keyword:PREEMPT_RT)
-Cc: tglx@linutronix.de,
-	Wander Lairson Costa <wander@redhat.com>
-Subject: [PATCH] Revert "igb: Disable threaded IRQ for igb_msix_other"
-Date: Mon,  4 Nov 2024 09:40:50 -0300
-Message-ID: <20241104124050.22290-1-wander@redhat.com>
+	s=arc-20240116; t=1730724177; c=relaxed/simple;
+	bh=IPvEnzYv1ZCXrN2PlDfCL0rkSO3hxGvJg6ElxwVmFAg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DV921S+Imzx6N/gw133IxdHvddCTieXZMYUPpqD0jqE57sfSxGCwZUeiMxD4MegFQNQxRV5AJJbTsvGr2j9NQZ8X0S0GPHGlFUUTJodF1K3xBC0eTYS+npIoPngsoaHMzErUvyhlOCsVGH7L1MhHvVZEQiPrH4H6sAKp45mdF+8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=aiven.io; spf=pass smtp.mailfrom=aiven.io; dkim=pass (1024-bit key) header.d=aiven.io header.i=@aiven.io header.b=GWWQCx9x; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=aiven.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aiven.io
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-539e3f35268so5131192e87.3
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 04:42:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=aiven.io; s=google; t=1730724174; x=1731328974; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=IPvEnzYv1ZCXrN2PlDfCL0rkSO3hxGvJg6ElxwVmFAg=;
+        b=GWWQCx9x7VNVu9mVmfgTVzDD/BMqt0tSa2YdYsCErxfpl0Qw+HNetInL2jy2f906Jx
+         1LemAUeExhvDlZ4EU7NpEanZNftEseqwFmjXvEEtgt0rrooiAJPctlwClhmFyE4ciQTl
+         3F6f2F+qwBfb6RpV5QKF0uxQRhhSddA5Rralw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730724174; x=1731328974;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=IPvEnzYv1ZCXrN2PlDfCL0rkSO3hxGvJg6ElxwVmFAg=;
+        b=YxZY+IAe3joQR/BOD8zyOIDLxKB8/9CRwcb3j16yYN3Y/qem+mpaUjOGPacGYZLmZY
+         6vFCBsjYiryZVttHIaoZSXE9Nn+0W69wiAUuERUKg5K81M35QEyr0PJK+GDB2rzTRnL/
+         XabiuSt6GXPTVjtZUJnhhQl+U9l8OiDF7JGU81yZaS2sf/Tq4SoHDW25t82rvGVlLB57
+         tZzUP4Ns2btAq8eV2uvo7q7pcoGE10CGXcV/jcl9YM6A735iI22r59siaTu8MCpiyh8u
+         Zo4uosrR3Xof4J4gvRzTM1i9ds/YYAT6iwkOP7c073fqRpLAivZtmx6qj6xm4p03Vsfv
+         5HBg==
+X-Forwarded-Encrypted: i=1; AJvYcCV0wTmV+CkkPIJ2r2VLYOZ22duXVuyfHVT53eT9N8nbcUVyctGfsXOmcS27BvMnoJ7xSi0NDrSVsxl2k4Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzdFjrQz9RqvssEEyDyMwOzv4P2Ev5bjct6jYg/N7eK1an2ErUt
+	FKSz/hRHbUJVTMGmZ3uRA6nvDqvVDjE6kBlCb/bps5N4fngeJBmYmRfh9vWj2HY=
+X-Google-Smtp-Source: AGHT+IF9JIDhBxE4JO9TsU9zUsb+lHX1Ew/DDycr5M9Wq8vjS+4XfXIXAte9E7LEpHb0iSTZfAqgYg==
+X-Received: by 2002:a05:6512:3d09:b0:536:9f02:17b4 with SMTP id 2adb3069b0e04-53d65e1abb3mr5805002e87.40.1730724174024;
+        Mon, 04 Nov 2024 04:42:54 -0800 (PST)
+Received: from ox.aiven-management.aivencloud.com (n114-74-229-70.bla3.nsw.optusnet.com.au. [114.74.229.70])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211057071fasm60567525ad.84.2024.11.04.04.42.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 04 Nov 2024 04:42:53 -0800 (PST)
+From: Orange Kao <orange@aiven.io>
+To: tony.luck@intel.com,
+	qiuxu.zhuo@intel.com
+Cc: bp@alien8.de,
+	james.morse@arm.com,
+	orange@kaosy.org,
+	linux-edac@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	mchehab@kernel.org,
+	rric@kernel.org
+Subject: [PATCH 0/3] EDAC/igen6: Avoid segmentation fault and add polling support
+Date: Mon,  4 Nov 2024 12:40:51 +0000
+Message-ID: <20241104124237.124109-1-orange@aiven.io>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,33 +82,16 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-This reverts commit 338c4d3902feb5be49bfda530a72c7ab860e2c9f.
+Hi Qiuxu.
 
-Sebastian noticed the ISR indirectly acquires spin_locks, which are
-sleeping locks under PREEMPT_RT, which leads to kernel splats.
+Thank you for your help and guidance. Here is the updated patch set to fix
+segmentation fault and to add polling support.
 
-Signed-off-by: Wander Lairson Costa <wander@redhat.com>
-Reported-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
----
- drivers/net/ethernet/intel/igb/igb_main.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Patch 1: Avoid segmentation fault during rmmod
+Patch 2: Initialize edac_op_state according to the configuration data
+Patch 3: Add polling support
 
-diff --git a/drivers/net/ethernet/intel/igb/igb_main.c b/drivers/net/ethernet/intel/igb/igb_main.c
-index b83df5f94b1f..f1d088168723 100644
---- a/drivers/net/ethernet/intel/igb/igb_main.c
-+++ b/drivers/net/ethernet/intel/igb/igb_main.c
-@@ -907,7 +907,7 @@ static int igb_request_msix(struct igb_adapter *adapter)
- 	int i, err = 0, vector = 0, free_vector = 0;
- 
- 	err = request_irq(adapter->msix_entries[vector].vector,
--			  igb_msix_other, IRQF_NO_THREAD, netdev->name, adapter);
-+			  igb_msix_other, 0, netdev->name, adapter);
- 	if (err)
- 		goto err_out;
- 
--- 
-2.47.0
+Please let me know if you would like me to change or improve anything.
 
 
