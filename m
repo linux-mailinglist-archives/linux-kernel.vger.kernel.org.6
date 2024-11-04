@@ -1,96 +1,82 @@
-Return-Path: <linux-kernel+bounces-395192-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395197-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4D309BBA2A
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 17:20:09 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63CDD9BBA34
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 17:21:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F9E91F210DB
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 16:20:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B7961F22ADB
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 16:21:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ECE01C2325;
-	Mon,  4 Nov 2024 16:19:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C20D1C243C;
+	Mon,  4 Nov 2024 16:19:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Yd/WUUTD"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kUfTB2vv"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3B481C3306;
-	Mon,  4 Nov 2024 16:19:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00BF142AA6;
+	Mon,  4 Nov 2024 16:19:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730737170; cv=none; b=djc+IyiZxwHKm8dTqmsN5HDkc9C3SLZgjrTeq3tyqrE2/JLYEAybOT5IyM6fS15Mgn5LKdvNW/3l+4FG4p7/WLT21/SsXtcKrr8rlaoc/wUxVCY3hxVhIqAtuRCt5QtIYcX33JzI3NVn9/LhaOIjSsSqqRBn3dNELWVgMBdsxho=
+	t=1730737193; cv=none; b=GuEjyu3mvzwaPrIsyo7QsgMPXymPabVbrlrlWAwXcuKErdnTN3m0mlR3W0VwNlT6azWEMIG9foRFRHaomu0sNCfJ4wZzljluSkzSPFsZneFWhkqj/P1Ygab4IvPByrehAame+UFq5ScZJzcA14OIl1xS5YZI1w79+yj2O4fVaKI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730737170; c=relaxed/simple;
-	bh=Ker+jU5B5xJ8qmLEeFWhwdk8dS9RSWc1QCh5i90moJw=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=PZVlTygo2dGti7CRd1YFJE2A1CLWM1pXKNJdmZrLGqfrCd7g7en6NLIUUu0yQnKGvXebAH4EvW97OhsvWWwfymLUa9scYKMNg12KEN3c/9RALuJf/5PzZmS0YKc8LavuNRQTwJ4g23JSkA+ombosULvqs/AU3c1/yVwljN8gTAc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Yd/WUUTD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B897C4CED1;
-	Mon,  4 Nov 2024 16:19:29 +0000 (UTC)
+	s=arc-20240116; t=1730737193; c=relaxed/simple;
+	bh=DXOrN7Qat5xsjGc+y7PGlfGGMhhuz39fBqnNJVF2MZM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=V6e6wf/b7M2IDuqm0JatAMv0ZQ57WYqocCWatqC6KQXHmadzLxoqKtMhLeUHtax/zAflAb9mF9cs0nQXfRtWsG/UGXBZ7nd0BnhVBAwkFuRoRbp7Y+T/+Xwc6eDhENGt3AT1VH+XQQ2QdXR1m9iVO5yM8QKV+PNMw5Dj7k/nhDM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kUfTB2vv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F70DC4CECE;
+	Mon,  4 Nov 2024 16:19:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730737170;
-	bh=Ker+jU5B5xJ8qmLEeFWhwdk8dS9RSWc1QCh5i90moJw=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Yd/WUUTDpVlQs9pQnCxdO9eOg6GXaO+GxpAA4/xWSM/zUHCTb4IH+lu73vE7pCCO4
-	 9O9B/iLRR2PKOm1nut/JxCYuVO+XK7UcT8CtgCW0WdgnYxV/eLEZCB3WPuJWvmNrRJ
-	 Z24ogMpLNNWW4oxuRBWv/0cHEIjzvN6jQjuAGPmMOkmqFAsC1ZPSlHcQc9GZwRFNhs
-	 Qhtr/SakeyXE3LzwS+Tn8h8iT+mck1R2qEMu3hRA4WGATM5vek59m1HwXaL4Mewtot
-	 ihFhnl9tmu4ns8LTs54s8M/uyVJ8HniuKq65b5Qsey02RMYIVGH9oVLXql+L+lz39y
-	 m0vcmyPX3Vt6A==
-Date: Mon, 4 Nov 2024 08:19:28 -0800
-From: Jakub Kicinski <kuba@kernel.org>
-To: Li Li <dualli@chromium.org>
-Cc: dualli@google.com, corbet@lwn.net, davem@davemloft.net,
- edumazet@google.com, pabeni@redhat.com, donald.hunter@gmail.com,
- gregkh@linuxfoundation.org, arve@android.com, tkjos@android.com,
- maco@android.com, joel@joelfernandes.org, brauner@kernel.org,
- cmllamas@google.com, surenb@google.com, arnd@arndb.de,
- masahiroy@kernel.org, bagasdotme@gmail.com, horms@kernel.org,
- linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
- netdev@vger.kernel.org, hridya@google.com, smoreland@google.com,
- kernel-team@android.com
-Subject: Re: [PATCH net-next v7 2/2] binder: report txn errors via generic
- netlink
-Message-ID: <20241104081928.7e383c93@kernel.org>
-In-Reply-To: <CANBPYPj4VCYuhOTxPSHBGNtpRyG5wRzuMxRB49eSDXXjrxb7TA@mail.gmail.com>
-References: <20241031092504.840708-1-dualli@chromium.org>
-	<20241031092504.840708-3-dualli@chromium.org>
-	<20241103151554.5fc79ce1@kernel.org>
-	<CANBPYPj4VCYuhOTxPSHBGNtpRyG5wRzuMxRB49eSDXXjrxb7TA@mail.gmail.com>
+	s=k20201202; t=1730737192;
+	bh=DXOrN7Qat5xsjGc+y7PGlfGGMhhuz39fBqnNJVF2MZM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=kUfTB2vvlo6tGQzjTfqVQguVCEEquylrSvGItWBBiWL6xKnwtAlXHzBQS33T7qCr4
+	 pMUAylL2VFtHqrmcH8Jgcn5Bn8Yt75Hl+eL1Rz+7vIR1Hbs5vpCKvzGgGW71jZUVn4
+	 9nrsBe5J0630IHS/ak2YVu+mERe8uz6lBHa6L1UmLpQC0dEnb7wBONuZE2J02A7xPf
+	 VyZuGP568XikffCY7aZS8vwgrpUpr51VrZ4SsvcnfAYZuRtYttGNs8nq5rcaXslPFM
+	 SbuHgK+1LY1g+RQ7A0bKSypkAeFB1ZCEBnNYnSlXXGxNCDzYH8BIvXq5P700Y0J9EJ
+	 UTBFKzQHjcp+g==
+Date: Mon, 4 Nov 2024 10:19:50 -0600
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Varadarajan Narayanan <quic_varada@quicinc.com>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+	conor@kernel.org, linux-kernel@vger.kernel.org,
+	konradybcio@kernel.org, andersson@kernel.org, krzk+dt@kernel.org
+Subject: Re: [PATCH v1 1/3] dt-bindings: cache: qcom,llcc: Add IPQ5424
+ compatible
+Message-ID: <173073719041.380640.10202387939372853981.robh@kernel.org>
+References: <20241104073840.3686674-1-quic_varada@quicinc.com>
+ <20241104073840.3686674-2-quic_varada@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241104073840.3686674-2-quic_varada@quicinc.com>
 
-On Sun, 3 Nov 2024 22:25:44 -0800 Li Li wrote:
-> > You're trying to register multiple families with different names?
-> > The family defines the language / protocol. If you have multiple
-> > entities to multiplex you should do that based on attributes inside
-> > the messages.
+
+On Mon, 04 Nov 2024 13:08:38 +0530, Varadarajan Narayanan wrote:
+> Document the Last Level Cache Controller on IPQ5424. The
+> 'broadcast' register space is present only in chipsets that have
+> multiple instances of LLCC IP. Since IPQ5424 has only one
+> instance, both the LLCC and LLCC_BROADCAST points to the same
+> register space.
 > 
-> My initial plan was to use a single "binder" family, which was more
-> straightforward and cleaner. As Android uses multiple binder contexts
-> to isolate system framework and vendor domains[1], Grek KH suggested
-> the netlink messages from different binder contexts should also be
-> isolated for security reason[2]. Personally I'm fine with either
-> approach. Please kindly advice which implementation is better.
+> Hence, allow only '1' reg & reg-names entry for IPQ5424.
 > 
-> And I'll fix other issues you mentioned above.
+> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
+> ---
+>  .../devicetree/bindings/cache/qcom,llcc.yaml  | 20 +++++++++++++++++--
+>  1 file changed, 18 insertions(+), 2 deletions(-)
+> 
 
-Greg is obviously right, but using different family names will not help
-you in any way. There is no action of "opening" a socket for a generic
-netlink family, one generic netlink socket can talk to all families.
-The only built in checking netlink provides is that you can declare 
-an operation as requiring admin privileges, or network capability
-(namespaced or global).
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
-Unless those are good enough for you - I think you should do all 
-the security isolation within your code, manually.
 
