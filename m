@@ -1,125 +1,83 @@
-Return-Path: <linux-kernel+bounces-394956-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394983-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6C809BB67B
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 14:40:46 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CA109BB6DD
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 14:57:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A738280E6C
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 13:40:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C2532820E9
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 13:57:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 963266F06D;
-	Mon,  4 Nov 2024 13:39:12 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABCDB13B797;
+	Mon,  4 Nov 2024 13:56:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="hv7h3cjF"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C8D08BEE
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 13:39:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D79212DD8A
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 13:56:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730727552; cv=none; b=Hnclxv4Yo+ADbo77+bvF0+9jnTHrVs1KxRm7tHSNgyA6puSaXNMMwmKHUhBcHcg2KxHU0pcKWbDUnRJXvjugzly7kTBAKAFP0d1OidXimhB0yQskFDBrIk9GDkYnZ04QupJNg86AlYfhg5i9SRjMusIxyQX90e6YUOxlHQg4ous=
+	t=1730728613; cv=none; b=KAmvI7S1wpjiRit3da09JKN75pqkVGvz7YPp4dIsQxZWlBLNkZo95yTGWvcpQYxuokGXkjd4K0igs1EjPx0d/M+ip83rc4SHdR+gYtYqda7QBM2w3xz0vYUlTFmO1qTCnmVmU9rIGNH4a5uGZbA76JreI1HNAi389cdSLa5fyIU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730727552; c=relaxed/simple;
-	bh=WlxLRHsEKt5E0xzrDqmgFT1xoYLbcZ9Baly/pFKaHvc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YPjihmMzhh0na4Ae5RpA5B5SF0Qx2eEgLwWJfwF3Huj8wmcMCzJBBog1jqDHQyVAC0/ULSa8vO7mUPxRsscxV5v5SvBaWBl5IGDleHGaQFVz2/TT1G8xrjLtPBwnASDrPqe9mCl6gk6wTPE4HO+WsbEewy/UOS/yRJyhMCeZV04=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD259C4CED1;
-	Mon,  4 Nov 2024 13:39:10 +0000 (UTC)
-Message-ID: <c767306e-e248-4395-b4ec-2bdfec56ef49@linux-m68k.org>
-Date: Mon, 4 Nov 2024 23:39:08 +1000
+	s=arc-20240116; t=1730728613; c=relaxed/simple;
+	bh=WdKSOwkN/bOae/okVujhYJk8LYHuMtI0ie1V/+WX+l0=;
+	h=Message-Id:Date:From:To:Cc:Subject; b=WP9aCf7v9HvzxpF1uMbXi49X9+9KMfohEZDfEqvs06ygtNbG/1dDfaCtz/JR7Yg2lhiQeROxZ/kaZNrjxQWjCPDNP+3TySbytmmRL8g1AxPpEsa4CDGEyDSkK/+E8Xlu3QysqZ6ZIJrtH3IstOnhAKeo2lImUnwSaVfoFx0xyKM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=hv7h3cjF; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=Subject:Cc:To:From:Date:Message-Id:
+	Sender:Reply-To:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:In-Reply-To:References;
+	bh=WdKSOwkN/bOae/okVujhYJk8LYHuMtI0ie1V/+WX+l0=; b=hv7h3cjF8wAf7uUZGLlYJ95mOt
+	HV3j+NQ9vD13LRgtAWz/9rjzraUCo9CfOP3I2L3Z7SSftu3Jm9JDoptWYJxW4/rS3M7xQe+IDfstg
+	XfX2u7j3HEVI2f+QrpH/iYE6zl+6USwMAL2sxZ6Oxa53/EZGBd6eYWgkprp2vepk7L4/5MFkhbYSV
+	llflTAaWzyRUGYCwww+GQcOAr+tvH2QAJkdSpraGj2BtabQWiHGSALq2WckReLPxynywBqrVczj12
+	qnGeprgc/CQ/POpPRiscTx2E2KRXUy6/oIuehlO+hRm7Oa2A8unZz8UgsSJL9uHAKEQW+k6e2urHk
+	dKZt+6BQ==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1t7xZX-0000000BL7y-1Q6H;
+	Mon, 04 Nov 2024 13:56:47 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 0)
+	id 4C58430042E; Mon,  4 Nov 2024 14:56:46 +0100 (CET)
+Message-Id: <20241104133909.669111662@infradead.org>
+User-Agent: quilt/0.65
+Date: Mon, 04 Nov 2024 14:39:09 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: mingo@kernel.org,
+ lucas.demarchi@intel.com
+Cc: linux-kernel@vger.kernel.org,
+ peterz@infradead.org,
+ willy@infradead.org,
+ acme@kernel.org,
+ namhyung@kernel.org,
+ mark.rutland@arm.com,
+ alexander.shishkin@linux.intel.com,
+ jolsa@kernel.org,
+ irogers@google.com,
+ adrian.hunter@intel.com,
+ kan.liang@linux.intel.com
+Subject: [PATCH 00/19] perf: Make perf_pmu_unregister() usable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] m68k: coldfire/device.c: only build FEC when HW macros
- are defined
-To: Antonio Quartulli <antonio@mandelbit.com>
-Cc: geert@linux-m68k.org, linux-m68k@lists.linux-m68k.org,
- linux-kernel@vger.kernel.org
-References: <20241029214315.26710-1-antonio@mandelbit.com>
-Content-Language: en-US
-From: Greg Ungerer <gerg@linux-m68k.org>
-In-Reply-To: <20241029214315.26710-1-antonio@mandelbit.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
 
-Hi Antonio,
+Hi,
 
-On 30/10/24 07:43, Antonio Quartulli wrote:
-> When CONFIG_FEC is set (due to COMPILE_TEST) along with
-> CONFIG_M54xx, coldfire/device.c has compile errors due to
-> missing MCFEC_* and MCF_IRQ_FEC_* symbols.
-> 
-> Make the whole FEC blocks dependent on having the HW macros
-> defined, rather than on CONFIG_FEC itself.
-> 
-> This fix is very similar to commit e6e1e7b19fa1 ("m68k: coldfire/device.c: only build for MCF_EDMA when h/w macros are defined")
-> 
-> Fixes: b7ce7f0d0efc ("m68knommu: merge common ColdFire FEC platform setup code")
-> To: Greg Ungerer <gerg@linux-m68k.org>
-> To: Geert Uytterhoeven <geert@linux-m68k.org>
-> Cc: linux-m68k@lists.linux-m68k.org
-> Cc: linux-kernel@vger.kernel.org
-> Signed-off-by: Antonio Quartulli <antonio@mandelbit.com>
+Lucas convinced me that perf_pmu_unregister() is a trainwreck; after
+considering a few options I was like, how hard could it be..
 
-Thanks, looks good. Applied to the m68knommu git tree, for-next branch.
-
-Regards
-Greg
+So find here a few patches that clean things up in preparation and then a final
+patch that makes unregistering a PMU work by introducing a new event state
+(REVOKED) and ensuring that any event in such a state will never get to using
+it's PMU methods ever again.
 
 
-> ---
->   arch/m68k/coldfire/device.c | 8 ++++----
->   1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/arch/m68k/coldfire/device.c b/arch/m68k/coldfire/device.c
-> index 7dab46728aed..b6958ec2a220 100644
-> --- a/arch/m68k/coldfire/device.c
-> +++ b/arch/m68k/coldfire/device.c
-> @@ -93,7 +93,7 @@ static struct platform_device mcf_uart = {
->   	.dev.platform_data	= mcf_uart_platform_data,
->   };
->   
-> -#if IS_ENABLED(CONFIG_FEC)
-> +#ifdef MCFFEC_BASE0
->   
->   #ifdef CONFIG_M5441x
->   #define FEC_NAME	"enet-fec"
-> @@ -145,6 +145,7 @@ static struct platform_device mcf_fec0 = {
->   		.platform_data		= FEC_PDATA,
->   	}
->   };
-> +#endif /* MCFFEC_BASE0 */
->   
->   #ifdef MCFFEC_BASE1
->   static struct resource mcf_fec1_resources[] = {
-> @@ -182,7 +183,6 @@ static struct platform_device mcf_fec1 = {
->   	}
->   };
->   #endif /* MCFFEC_BASE1 */
-> -#endif /* CONFIG_FEC */
->   
->   #if IS_ENABLED(CONFIG_SPI_COLDFIRE_QSPI)
->   /*
-> @@ -624,12 +624,12 @@ static struct platform_device mcf_flexcan0 = {
->   
->   static struct platform_device *mcf_devices[] __initdata = {
->   	&mcf_uart,
-> -#if IS_ENABLED(CONFIG_FEC)
-> +#ifdef MCFFEC_BASE0
->   	&mcf_fec0,
-> +#endif
->   #ifdef MCFFEC_BASE1
->   	&mcf_fec1,
->   #endif
-> -#endif
->   #if IS_ENABLED(CONFIG_SPI_COLDFIRE_QSPI)
->   	&mcf_qspi,
->   #endif
 
