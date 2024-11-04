@@ -1,133 +1,93 @@
-Return-Path: <linux-kernel+bounces-395466-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395467-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EBD39BBE3C
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 20:47:50 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C7B79BBE41
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 20:52:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AB37CB21820
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 19:47:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D67C2827CE
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 19:52:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B99121CBE84;
-	Mon,  4 Nov 2024 19:47:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C73861CC881;
+	Mon,  4 Nov 2024 19:52:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="udHXCplV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="cAQ0lG44"
+Received: from out-186.mta0.migadu.com (out-186.mta0.migadu.com [91.218.175.186])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FE8723A6;
-	Mon,  4 Nov 2024 19:47:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EDDD23A6
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 19:52:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.186
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730749659; cv=none; b=RZnrPvz7ITbvz14XqgPaeiIaQkGUXuSmZvyF4DePa1xGoHblHzwesHdJA7WkfkN9Qr/pY/C5UzOKXR71cRGvncIcZaUnY5P1tlbYxSjlGFLQfMBYfImS8WmbOE7bT5u0997gl679Zl9rZsRWDT9Mosy9Y7HriKh1bCXJ3pmCad4=
+	t=1730749953; cv=none; b=IdGo9YaD6rcojcXR9JZyKb2UQ1ve4TwATIAHeVtoLu19xdor95zoH+6cPXRmkyjBet0CdxlE0ASLllZd2V8+7p3TqYATttwAUwsGO4fSjDdvOINKFBXHDifYOqnRf7MNe3W6XM4a26+p/aJqYvmPZQ+Yby4npfO8+hjoDWdAvdk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730749659; c=relaxed/simple;
-	bh=i17H9M/iiBGemD1DQucLp1BewH56A334xN5xMh6KFes=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jakyMdXBYjIE+SbDRhWvzX8i2FqdyI6hQvQNP+1SBZjKOtA90Y33qgVtJJY/rVo9iDD2vsjqEwvvCIcvZ7TChToPI86gFVBv2V0LZN11U+WUzW6CApct9/1GgWt0IZnPtnhbi3N4elPPY7TlX3AJaQFMzGwo+FSLb0T4V3y///c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=udHXCplV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C60BC4CECE;
-	Mon,  4 Nov 2024 19:47:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730749659;
-	bh=i17H9M/iiBGemD1DQucLp1BewH56A334xN5xMh6KFes=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=udHXCplVtZYX7NAbj3+fqN6B/yqhEpflhqyanCizCxbJJpRvy2kDQd93ScwrcqHYo
-	 StUReLRnAIkXWYOJ+rOv1Cp6cXHubJ8/BI3SKiRWP77XSsCUxJaq4b8E7YA+7jO7yW
-	 FtWtzLgqCEbvwaPV8/2ohw6cpCA8ouy/pt29o53n/0l7VJtMDhS8kwHdsc6aMwJYsB
-	 FVVFRzYMGYGL1g4VG67TwPCLFcpnV+xvNxT7tALastQC9uOWK2AlMWkq1J4lMSc88p
-	 FpodFIm9+wdoXVAc/ZQv+ShHOHFWnuAtlzSribP1qX8LTwb7cFCWeTPGRkpmRFpvAS
-	 t/mWzBsP6cmNA==
-Date: Mon, 4 Nov 2024 11:47:36 -0800
-From: Namhyung Kim <namhyung@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	James Clark <james.clark@linaro.org>,
-	Howard Chu <howardchu95@gmail.com>,
-	Athira Jajeev <atrajeev@linux.vnet.ibm.com>,
-	Michael Petlan <mpetlan@redhat.com>,
-	Veronika Molnarova <vmolnaro@redhat.com>,
-	Dapeng Mi <dapeng1.mi@linux.intel.com>,
-	Thomas Richter <tmricht@linux.ibm.com>,
-	Ilya Leoshkevich <iii@linux.ibm.com>,
-	Colin Ian King <colin.i.king@gmail.com>,
-	Weilin Wang <weilin.wang@intel.com>,
-	Andi Kleen <ak@linux.intel.com>,
-	Josh Poimboeuf <jpoimboe@redhat.com>, linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH v5 06/21] perf script: Move find_scripts to
- browser/scripts.c
-Message-ID: <Zykk2MJ4REGCaqVw@google.com>
-References: <20241031014252.753588-1-irogers@google.com>
- <20241031014252.753588-7-irogers@google.com>
- <ZyPX7ayIO4teziDX@x1>
- <CAP-5=fVgJu8BJWFVUkCy1Zsi3piTPdV-GXL1bTpWZeO=nm=jrg@mail.gmail.com>
+	s=arc-20240116; t=1730749953; c=relaxed/simple;
+	bh=nNkQEz7q1y9TA9WHY/dcUZQ0DF9WN7rRvFNtajJJ+zQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=dNdVmSHaKiuqcFCWtnKhsDXoe3pYuzb5YfK9I2trxbHdF+NUKZb0zdbaJdsFioniXit4wYEo2OhQfR91FTxtT7m4SH0Fj+A2x4kvOaZwOuIbaP6UwfkDiikhMrXa2e10j3m39mf8SwG0jW8KfPMMRt19LGgDZFYff9f1UkffQOM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=cAQ0lG44; arc=none smtp.client-ip=91.218.175.186
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1730749948;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=EGVrayaSxuajQ0X9yfhxdRUCreSD+4GY2Mj0JWo6b5E=;
+	b=cAQ0lG44JiIahSI5ZJeZ43i3ciy/9XtFdb4qqvYIBxUQuHUjiUNooulBW2GhInqpBzKKWl
+	9ZnxIzDYZM9QzLebFZ1HHOHqBxoiWxmq7H76jAyMARCFvUyqFIT91djElI5IeNi+i9EeFe
+	7eLgxYLWxSevUT2cx41ou/QzbPwdUNw=
+From: Sui Jingfeng <sui.jingfeng@linux.dev>
+To: Jani Nikula <jani.nikula@linux.intel.com>,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Tvrtko Ursulin <tursulin@ursulin.net>
+Cc: David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	intel-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	Sui Jingfeng <sui.jingfeng@linux.dev>
+Subject: [PATCH] drm/i915: Use sg_set_buf(), sg_dma_address() helper
+Date: Tue,  5 Nov 2024 03:52:20 +0800
+Message-Id: <20241104195220.655343-1-sui.jingfeng@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAP-5=fVgJu8BJWFVUkCy1Zsi3piTPdV-GXL1bTpWZeO=nm=jrg@mail.gmail.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Thu, Oct 31, 2024 at 01:51:36PM -0700, Ian Rogers wrote:
-> On Thu, Oct 31, 2024 at 12:18 PM Arnaldo Carvalho de Melo
-> <acme@kernel.org> wrote:
-> >
-> > On Wed, Oct 30, 2024 at 06:42:37PM -0700, Ian Rogers wrote:
-> > > The only use of find_scripts is in browser/scripts.c but the
-> > > definition in builtin causes linking problems requiring a stub in
-> > > python.c. Move the function to allow the stub to be removed.
-> > >
-> > > Rewrite the directory iteration to use openat so that large character
-> > > arrays aren't needed. The arrays are warned about potential buffer
-> > > overflows by GCC now that all the code exists in a single C file.
-> >
-> > Introducing is_directory_at() should be done as a prep patch, as the
-> > rest of the patch below could end up being reverted after some other
-> > patch used it, making the process more difficult.
-> >
-> > I mentioned cases like this in the past, so doing it again just for the
-> > record.
-> 
-> This is highlighted in the commit message:
-> ```
-> Rewrite the directory iteration to use openat so that large character
-> arrays aren't needed. The arrays are warned about potential buffer
-> overflows by GCC now that all the code exists in a single C file.
-> ```
-> so without the change the code wouldn't build. The new is_directory_at
-> function is effectively 2 statements fstatat and S_ISDIR on the
-> result, it is put next to is_directory for consistency but could have
-> been a static function in the only C file to use it.
-> 
-> For the record, patches introducing 2 line long functions can be
-> excessively noisy, especially in a 21 patch series. There is always
-> the declared but not used build error to worry about - here things
-> couldn't just be simply moved due to triggering a different build
-> error. Given the simplicity of the function here I made a decision not
-> to split up the work - the commit message would likely be longer than
-> the function. The work never intended to introduce is_directory_at but
-> was forced into it through a desire not to disable compiler warnings.
+This patch switch to use sg_set_buf() and sg_dma_address() helpers, no
+function change.
 
-This patch does more than just moving the code which can be easy to miss
-something in the middle.  I think you can move the code as is without
-introducing build errors and then add new changes like using openat() on
-top (you may separate the change out of this series).  I think it's
-ok to have a small change if it clearly has different semantics.
+Signed-off-by: Sui Jingfeng <sui.jingfeng@linux.dev>
+---
+ drivers/gpu/drm/i915/i915_gpu_error.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-Thanks,
-Namhyung
+diff --git a/drivers/gpu/drm/i915/i915_gpu_error.c b/drivers/gpu/drm/i915/i915_gpu_error.c
+index 135ded17334e..9680cde47b5a 100644
+--- a/drivers/gpu/drm/i915/i915_gpu_error.c
++++ b/drivers/gpu/drm/i915/i915_gpu_error.c
+@@ -66,10 +66,8 @@
+ static void __sg_set_buf(struct scatterlist *sg,
+ 			 void *addr, unsigned int len, loff_t it)
+ {
+-	sg->page_link = (unsigned long)virt_to_page(addr);
+-	sg->offset = offset_in_page(addr);
+-	sg->length = len;
+-	sg->dma_address = it;
++	sg_set_buf(sg, addr, len);
++	sg_dma_address(sg) = it;
+ }
+ 
+ static bool __i915_error_grow(struct drm_i915_error_state_buf *e, size_t len)
+-- 
+2.34.1
 
 
