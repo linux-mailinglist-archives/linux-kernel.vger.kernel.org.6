@@ -1,197 +1,164 @@
-Return-Path: <linux-kernel+bounces-394971-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394973-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 901789BB6B5
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 14:51:44 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F3269BB6BC
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 14:52:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B3EFB1C22E18
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 13:51:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1A03C1C23265
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 13:52:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 277794EB50;
-	Mon,  4 Nov 2024 13:51:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA00383CD3;
+	Mon,  4 Nov 2024 13:52:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eP4oibdr"
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="TNddlwN/"
+Received: from mail-ua1-f49.google.com (mail-ua1-f49.google.com [209.85.222.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9358170805;
-	Mon,  4 Nov 2024 13:51:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A1A48BEE
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 13:52:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730728291; cv=none; b=dbXpktEvqr5gztR6BuKoNKA3I5UjzJdSKe9AyTpcLyaztXtJh0s18NqVUU67k1TreQfupfaRj/FwgrJvyC8+jvhf8EZ5OUX9NiqpOehXoua+27diAcbJwUVLlWv3dzPi1JLyrr3J229PLSZDMKG5vYevapCkZ1GQYsiwFn2qZ/E=
+	t=1730728352; cv=none; b=JQ0Y/aKiEAgc7nNLgoGLmeHwVxy/aLrSZgU7onSTCCk3YZUeEMmIEmnjusX6VG5XE78C4xbb6Rjj8jQl/y6TFCjSX5PoLPU4C9fbBgiEU7P1IbkRwtnVlZHGgBVjD+kkFOf04qHgwiraGX5bEsFZ8BDzhyjbC90+k2qtDaR9aJI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730728291; c=relaxed/simple;
-	bh=1w2eRE72QIY6UPS8PbgUFDNBykn84o7fCfcWxqfb9Ng=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FJ2AHASgZ16beLihUuhZmGIxmMjaeGMCteltDniUdDMsGTHhkZ4h/umyd6PNanZRcXnwOr/lqrPfdDxXg+UPgZTFRR1duwwzSfYpwpd/9FiESKtUyzTxZoFBcx1QNA+3ktDQOF+FXq+HSqfgJdoa6f7r6UwrlVqwTPFaplFazkI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eP4oibdr; arc=none smtp.client-ip=209.85.210.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-71e953f4e7cso3315603b3a.3;
-        Mon, 04 Nov 2024 05:51:29 -0800 (PST)
+	s=arc-20240116; t=1730728352; c=relaxed/simple;
+	bh=va+mJ8jqYuF1m2DMlIh3VClRv2mNCKxpQOuHse15mgE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hUzDmfl93mNex8efFzQLdwCyOv8vd8bqutsIsj2MTo4L119Ll9SLdG2QZriRZU5ZaYSIxv7hwRVEnIPH4CxlSFFNjQkaeh8xZGW6J1zhJG+uwKb8HLz1i/wxA0TDW1UVNsWDwXJaFOGPfQiPOM6T/imBfzvMKvxSXCBdGGV3RN0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=TNddlwN/; arc=none smtp.client-ip=209.85.222.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-ua1-f49.google.com with SMTP id a1e0cc1a2514c-84fc7b58d4dso1157411241.0
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 05:52:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730728289; x=1731333089; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=RisdBhDozfhIAK5Mme80AcSFBcqV8wUI4AjA2PHwUtc=;
-        b=eP4oibdr+S4V+J/Yyb5+ZndTWPPnr3v9DkwJLzWgIYmG7gk/IxYQ0RdOjYY89C1mZQ
-         19fSqi6luHvak9YoKXfLIHOIVu2+2JbfseVuucCuxvmp+m5Wu2cJYfi79vaJ26tEKKgE
-         3hbaj9WqE/bLEBM4p3eWBvP/HrH5+xkDX6TrstUZrCBgRrcqNgOJ+24C2XU1OHY3c8UG
-         H304yM9QNq0vwWAamlwRtAyvYBN3R2BHHCq1yfWHsj6P8Z1/liuFmaV5meQjN6pa7qPE
-         u9MvCQ1Oxry2KDYIlj7gkN8Fs0vNAR3TtXNC2li89zwPSuJEzrLQAPc0CfDnJRGQQr75
-         YuYQ==
+        d=ziepe.ca; s=google; t=1730728349; x=1731333149; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=EkBaJUaQmNlDT9UG7F3IUEDB61PJd1lepS1O8vS2Df4=;
+        b=TNddlwN/cQFlt9b9NOt4ygwx4ZmhdBnD7UfEqeL0yjQxKSL4n2gd4M6UaUGP4tOFL4
+         YuDG5FuzEu7aQQ4U2Ak4kTWSWSL7pEIowGcwnpuKcdxz16CGtbmzPEAdyt83jXZqbfGU
+         IHojgiML0TF/a44/SfqOP53DqR1P2zxpRF3cqXyECVvQJEEUaz8xBPf+Yp6osgB1tMJU
+         rPHo7yuMB7lCs2OKBGFOnWom33RdUE0FUwr9oQmPO/dbhu9U7RL+i8Nn+eAJmmU7tgLx
+         l2ps9Leuc9AuGigcaoqZgKVPB8n0g4AMAloCHCsvocu84DwwJaEhLIdxm1s5/3di0NL2
+         eonQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730728289; x=1731333089;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RisdBhDozfhIAK5Mme80AcSFBcqV8wUI4AjA2PHwUtc=;
-        b=tr7lC2z5ltf+pGaCHDXoAa3iO11llgOu/TmN+GTiUAAGPDFoB5IpKdMlQdFg09Tmuu
-         bNGeGzIKDZsViQhSujLHaF31jEXkGFJBs/LpM7EnxTKXVOc7JPUhRhFjbJvG5xQcWnPJ
-         3cp9wiLr9iPZ5+gIJomPMwyJy/KvLHpTGUdmhOfJLCAbXx4dZWMwiyuC9TQ5nrEpGSXu
-         u8QneRU+Bi4/LeFUArt3KpFD5BJ4F/AYiPmGyctosjhcRwdB/n8Ity7Y+kWMY46ov7SK
-         J9A0jz6AUAugt+aDKUUihxL9vYDwK7mnsxvxOE/VKkHTiOggmqbAUO4tPTKkUYkYzrLI
-         oRlQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVIfZt/Gv58XMSKFW8QHG/GEisqNaXDrXD9WJZGUS/ky6D2SKIvta9rVPNZ3WeiBDaBeAACBz/jRg0aJb4=@vger.kernel.org, AJvYcCVTRBpt8sNAuBcaX1sb4azzO7kn5rfxYr3hDITlNFeU6HVKBIcgv+Dz+jgQQ6q8+2oz8Ll6+gyS4SeX@vger.kernel.org, AJvYcCWIi+BNZsxqyA8a2EjBhicLsb7D5TKS5R3dHXjRwQ3en6h7fF6wjwaGIO8h5C0CHqf8WFYrTJdWEu2l@vger.kernel.org, AJvYcCWx3AsyjxDBltN7oyqkf5gPOEKzKrvouw8Q+5yMosBgtdoLg2ogmbE+JFTUXyjniHnPe/rbbuIwekqUnZe6@vger.kernel.org, AJvYcCWxUg1YaeXcPl6BSYb+TW17Oi+0j7o2a6iAzMBz1tg/61UwqAeG7HOg+cTWkmSDAZx1QpSOGwCtSrDs@vger.kernel.org
-X-Gm-Message-State: AOJu0YzGIIk7wdvWnCPmaU/Wr0Nv1n7FYF3fHAqQT4Wz7xMF/oHWzkvZ
-	v1uTGenBBx60YiICu5pjctIJx6QuMPVg/ytVFJWbEsxMvlSvkLlN
-X-Google-Smtp-Source: AGHT+IFT9MWN3Z5rfIFhSF9LIZsbbBcASg5951HhUUaBr+5y8PILt51QH8l3yj+ywBZD5Kub3Sm5ng==
-X-Received: by 2002:a05:6a00:14d3:b0:71d:fe64:e3fa with SMTP id d2e1a72fcca58-720c9990cc3mr18918463b3a.19.1730728288694;
-        Mon, 04 Nov 2024 05:51:28 -0800 (PST)
-Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-720bc1b91d3sm7397947b3a.38.2024.11.04.05.51.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 04 Nov 2024 05:51:27 -0800 (PST)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <2a5c17c9-db8c-492d-87e7-c9872b2d5100@roeck-us.net>
-Date: Mon, 4 Nov 2024 05:51:26 -0800
+        d=1e100.net; s=20230601; t=1730728349; x=1731333149;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=EkBaJUaQmNlDT9UG7F3IUEDB61PJd1lepS1O8vS2Df4=;
+        b=nUbS0lJnLH54enCo3CzRwvDquvs/mTDuDNiBbi668/ku3eJil4RZCbQpoFaXZjEkws
+         WvLET5r8YDe8LbYbbc+kau45XbdpLWSSTUrkZxRgtf87P40McgLAqfYXpQS/z64hkZHJ
+         7EC4yWU46hDnHChLtKJT2ikZE+3KzNPi6ds9zvUyxVc9jKaYa6PagELrzjUzyA4RwFF2
+         V41OA2Ga2Rol5xeBxtFci41y14cnbLvsScBCD5LVYDJOO/sFnr5NGnwa6sZzsiNF16nP
+         kxlR+LsNUHrMFQk+FVqS3ODwAq3kBjucqzYSAmK+/juAXrAYU7vauA8l0ujiQazKDWOq
+         YMHw==
+X-Forwarded-Encrypted: i=1; AJvYcCXxL4kvqFV2Pg8utj/cruiDDpwWB+5ism2i48Ndc3jubN7yDbkPJ/781ljBQ2WwIJK7TMMDBdDY+PbkloY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxPYGIzCr3U2d8uS5bK7vej/8438j7AjkrMyKce8rMT/uXBqox9
+	Ciwa35QaGASOqHtegifpsO7EB+7nHIiG/03QNrtc46kVPLviCc/iomWtychioC0=
+X-Google-Smtp-Source: AGHT+IFmlPTEulo8PrBSa4hLGepjHWucd1eo0mnO56qT1Ydh9XheeGVoeKHcAHFWhX+avIDDQrBpSQ==
+X-Received: by 2002:a05:6102:3753:b0:4a4:8756:d899 with SMTP id ada2fe7eead31-4a9543ece24mr15248394137.29.1730728348895;
+        Mon, 04 Nov 2024 05:52:28 -0800 (PST)
+Received: from ziepe.ca (hlfxns017vw-142-68-128-5.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.128.5])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-462ad0adffesm47192441cf.32.2024.11.04.05.52.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 04 Nov 2024 05:52:28 -0800 (PST)
+Received: from jgg by wakko with local (Exim 4.97)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1t7xVL-00000000hsn-2kgO;
+	Mon, 04 Nov 2024 09:52:27 -0400
+Date: Mon, 4 Nov 2024 09:52:27 -0400
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	Davidlohr Bueso <dave@stgolabs.net>,
+	Jonathan Cameron <jonathan.cameron@huawei.com>,
+	Dave Jiang <dave.jiang@intel.com>,
+	Alison Schofield <alison.schofield@intel.com>,
+	Vishal Verma <vishal.l.verma@intel.com>,
+	Ira Weiny <ira.weiny@intel.com>,
+	Alex Deucher <alexander.deucher@amd.com>,
+	Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>,
+	Xinhui Pan <Xinhui.Pan@amd.com>, David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Dennis Dalessandro <dennis.dalessandro@cornelisnetworks.com>,
+	Leon Romanovsky <leon@kernel.org>,
+	Tudor Ambarus <tudor.ambarus@linaro.org>,
+	Pratyush Yadav <pratyush@kernel.org>,
+	Michael Walle <mwalle@kernel.org>,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	Richard Weinberger <richard@nod.at>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Naveen Krishna Chatradhi <naveenkrishna.chatradhi@amd.com>,
+	Carlos Bilbao <carlos.bilbao.osdev@gmail.com>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>,
+	"David E. Box" <david.e.box@linux.intel.com>,
+	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>,
+	Richard Henderson <richard.henderson@linaro.org>,
+	Matt Turner <mattst88@gmail.com>,
+	Frederic Barrat <fbarrat@linux.ibm.com>,
+	Andrew Donnellan <ajd@linux.ibm.com>, Arnd Bergmann <arnd@arndb.de>,
+	Logan Gunthorpe <logang@deltatee.com>,
+	"K. Y. Srinivasan" <kys@microsoft.com>,
+	Haiyang Zhang <haiyangz@microsoft.com>,
+	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	linux-cxl@vger.kernel.org, amd-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org, linux-rdma@vger.kernel.org,
+	linux-mtd@lists.infradead.org, platform-driver-x86@vger.kernel.org,
+	linux-scsi@vger.kernel.org, linux-usb@vger.kernel.org,
+	linux-alpha@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+	linux-hyperv@vger.kernel.org
+Subject: Re: [PATCH v2 05/10] sysfs: treewide: constify attribute callback of
+ bin_is_visible()
+Message-ID: <20241104135227.GE35848@ziepe.ca>
+References: <20241103-sysfs-const-bin_attr-v2-0-71110628844c@weissschuh.net>
+ <20241103-sysfs-const-bin_attr-v2-5-71110628844c@weissschuh.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 4/6] hwmon: (pmbus/core) clear faults after setting
- smbalert mask
-To: Jerome Brunet <jbrunet@baylibre.com>
-Cc: Jean Delvare <jdelvare@suse.com>, Jonathan Corbet <corbet@lwn.net>,
- Patrick Rudolph <patrick.rudolph@9elements.com>,
- Naresh Solanki <naresh.solanki@9elements.com>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>, linux-hwmon@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-i2c@vger.kernel.org
-References: <20241024-tps25990-v3-0-b6a6e9d4b506@baylibre.com>
- <20241024-tps25990-v3-4-b6a6e9d4b506@baylibre.com>
- <fa3ccd3b-7dab-45b2-92ec-49400e39114c@roeck-us.net>
- <1jo72v5rnp.fsf@starbuckisacylon.baylibre.com>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-In-Reply-To: <1jo72v5rnp.fsf@starbuckisacylon.baylibre.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241103-sysfs-const-bin_attr-v2-5-71110628844c@weissschuh.net>
 
-On 11/4/24 00:28, Jerome Brunet wrote:
-> On Fri 01 Nov 2024 at 08:10, Guenter Roeck <linux@roeck-us.net> wrote:
+On Sun, Nov 03, 2024 at 05:03:34PM +0000, Thomas Weißschuh wrote:
+> The is_bin_visible() callbacks should not modify the struct
+> bin_attribute passed as argument.
+> Enforce this by marking the argument as const.
 > 
->> On Thu, Oct 24, 2024 at 08:10:38PM +0200, Jerome Brunet wrote:
->>> pmbus_write_smbalert_mask() ignores the errors if the chip can't set
->>> smbalert mask the standard way. It is not necessarily a problem for the irq
->>> support if the chip is otherwise properly setup but it may leave an
->>> uncleared fault behind.
->>>
->>> pmbus_core will pick the fault on the next register_check(). The register
->>> check will fails regardless of the actual register support by the chip.
->>>
->>> This leads to missing attributes or debugfs entries for chips that should
->>> provide them.
->>>
->>> We cannot rely on register_check() as PMBUS_SMBALERT_MASK may be read-only.
->>>
->>> Unconditionally clear the page fault after setting PMBUS_SMBALERT_MASK to
->>> avoid the problem.
->>>
->>> Suggested-by: Guenter Roeck <linux@roeck-us.net>
->>> Fixes: 221819ca4c36 ("hwmon: (pmbus/core) Add interrupt support")
->>> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
->>> ---
->>>   drivers/hwmon/pmbus/pmbus_core.c | 7 ++++++-
->>>   1 file changed, 6 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/drivers/hwmon/pmbus/pmbus_core.c b/drivers/hwmon/pmbus/pmbus_core.c
->>> index ce697ca03de01c0e5a352f8f6b72671137721868..a0a397d571caa1a6620ef095f9cf63d94e8bda1d 100644
->>> --- a/drivers/hwmon/pmbus/pmbus_core.c
->>> +++ b/drivers/hwmon/pmbus/pmbus_core.c
->>> @@ -3346,7 +3346,12 @@ static int pmbus_regulator_notify(struct pmbus_data *data, int page, int event)
->>>   
->>>   static int pmbus_write_smbalert_mask(struct i2c_client *client, u8 page, u8 reg, u8 val)
->>>   {
->>> -	return _pmbus_write_word_data(client, page, PMBUS_SMBALERT_MASK, reg | (val << 8));
->>> +	int ret;
->>> +
->>> +	ret = _pmbus_write_word_data(client, page, PMBUS_SMBALERT_MASK, reg | (val << 8));
->>> +	pmbus_clear_fault_page(client, -1);
->>
->> Why -1 and not page ?
+> As there are not many callback implementers perform this change
+> throughout the tree at once.
 > 
-> The idea was to clear the fault on the page we are on, basically just skipping
-> setting the page again.
-> 
-> I'll change to 'page'
-> 
-Or just add a comment explaining the '-1'.
+> Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+> ---
+>  drivers/cxl/port.c                      |  2 +-
+>  drivers/gpu/drm/amd/amdgpu/amdgpu_psp.c |  2 +-
+>  drivers/infiniband/hw/qib/qib_sysfs.c   |  2 +-
+>  drivers/mtd/spi-nor/sysfs.c             |  2 +-
+>  drivers/nvmem/core.c                    |  3 ++-
+>  drivers/pci/pci-sysfs.c                 |  2 +-
+>  drivers/pci/vpd.c                       |  2 +-
+>  drivers/platform/x86/amd/hsmp.c         |  2 +-
+>  drivers/platform/x86/intel/sdsi.c       |  2 +-
+>  drivers/scsi/scsi_sysfs.c               |  2 +-
+>  drivers/usb/core/sysfs.c                |  2 +-
+>  include/linux/sysfs.h                   | 30 +++++++++++++++---------------
+>  12 files changed, 27 insertions(+), 26 deletions(-)
 
-Thanks,
-Guenter
+For infiniband:
 
+Acked-by: Jason Gunthorpe <jgg@nvidia.com>
 
