@@ -1,119 +1,116 @@
-Return-Path: <linux-kernel+bounces-395050-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395051-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E3189BB7CD
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 15:30:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 303C69BB7D4
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 15:30:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 02C03285AE5
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 14:30:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E14E128642D
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 14:30:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42AF21B21A1;
-	Mon,  4 Nov 2024 14:30:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09E6E1B2180;
+	Mon,  4 Nov 2024 14:30:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="rAhEW1ko"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="DmpTyiC4"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25ABD17B428
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 14:30:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF0742AE93;
+	Mon,  4 Nov 2024 14:30:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730730601; cv=none; b=lnFM1UABkRxblDZ2udHBOF0JiDNB7n2BdhrHh0XXAhh6qAIT0WquCPXoO4aWr1IugK3JV7ruwdnJq6/ZNebv74Vr+cnLeZ7J/S+NumOtnacVyRVtK2rBtCi8wQFBCaZAGk5ccp/dw/rnU/uID9D9p11yMUJOeyXUiMw7A2lO2RM=
+	t=1730730630; cv=none; b=M2OQ8eCH8nhvg1agveSfQmsagRHBw29Ewtqrcpu4RmgNltUS3dV14X0U66iAqwLt8Ru9IhQ7gfGuSvH9AYbgUO80izn/RROCCKQxsGEiE7mQc823EaLIW6ygau/Xs7NnpugGma4SnRAy9DJJIHshpVuh5cJFXyVn8kLv6FqZtR4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730730601; c=relaxed/simple;
-	bh=78JxXVMu8D98x7ixcMyfUiTSVm7iqOh0y7JOIzqGGBw=;
+	s=arc-20240116; t=1730730630; c=relaxed/simple;
+	bh=ob7Ymv2VtFIWc3A9FGPeqHYSg5qYODu1P4mcfNOJwDY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tXxptcaldGzE3LqV+k304iJJYkzQFrPISrqOEe5APETNeckOmP0Uak0PPOUhi7YMnWRNFLcFQdvRCFuvf7N1v4BEgbKkqdVCOWwn12hGPJKQqVDYj6dRqk6ycM4ngYskO3g+wl/n4NR26+TEfxnBq8gPeFaT+OUEDq8UWOSxFfc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=rAhEW1ko; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=DqVc+7fEDa9hrMbW4NCEftqGuUhZwEhix7cq9nYHxTY=; b=rAhEW1koCe1WxT+feWWXrDpvHQ
-	C+xo9fnHOo1SBIbo1Cd5xXRZCnnpEfWBKLLXuLDqmaZ9FKH5HLYdMcSy+snjGt1aojHKLKFCxNSeH
-	RYOK5x40QCNPVNOvq4RFfKZqLsXrMedC1enQks0zb+hfkekmgyc8AM1nU7ljM9zBPEDA2cLf5pPL6
-	//Hzo0JInIl1luqRYlGReoSlxciO+3BA/3+TSEerm2QzLul/ZuWXlB9ZwN0JeNhi9a+fBJA/3nIMx
-	zQ8+CQee44fmKVkAshJjG5qGdp7AU0dQa6kRzScOLfxC8hLDk7z4xyaPkO2xX7rydGRm7mzdPbx6U
-	8eZNafHA==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1t7y5Z-0000000BM0g-3gb8;
-	Mon, 04 Nov 2024 14:29:54 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 4034F30073F; Mon,  4 Nov 2024 15:29:53 +0100 (CET)
-Date: Mon, 4 Nov 2024 15:29:53 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Borislav Petkov <bp@alien8.de>
-Cc: david.kaplan@amd.com, jpoimboe@redhat.com, linux-kernel@vger.kernel.org,
-	x86@kernel.org
-Subject: Re: [RFC][PATCH 2/2] x86: Clean up default rethunk warning
-Message-ID: <20241104142953.GG24862@noisy.programming.kicks-ass.net>
-References: <20241007083210.043925135@infradead.org>
- <20241007083844.119369498@infradead.org>
- <20241104114728.GTZyi0UHYKx-ZHL4kh@fat_crate.local>
+	 Content-Type:Content-Disposition:In-Reply-To; b=e5HIJ/eWF2KzNzdtIulR0wjynA3luHpuCkGlT0MOmixUNGMrjg1QnTnp0mXGFZvPiYbF78sH9uv372jnJsqMaLeRO3SDJD43acOsHxX0xouv0HKSRYnTLxLgj4onBZWlCbgj+pVlwM6AOmUYp8YwlXn7NKD7FBAaKLUpmkY9fcE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=DmpTyiC4; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 3CC5040E0220;
+	Mon,  4 Nov 2024 14:30:24 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id B6WcrwVm8o4Z; Mon,  4 Nov 2024 14:30:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1730730620; bh=r7TPsYnu7shSZRrjt86Hei071WcOU4iKf7oZwIKF00U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DmpTyiC4e4k/hOuVIVm0mbOFwL6hhkpI5na2QLF9fNHDEYsXj4a9vv6VYK5aJI3v7
+	 AkVD7FpZ30Hob/88JRMpEqKvQzDdABvfqtPO9p3IwAb4CyTkbilOYDw/ifR2cQtSH7
+	 mBwurJ/nKdCa8FeSF65VXAQ0T8NFLLpSRWSue3Jn+/GW9P2LDH48tYrmYWdKc1A/2/
+	 kmQuJZ2Cy7zENnQI0pjzw4ctK5scJiw3WkwYZiUcrOAQpGxmuobm9VYQw0/30JI55F
+	 sY7ATdCvTeTWdTyhhjfdDCEQbMkpnyHKezJgdIJMSRGuRdlF9mmqR/Xoebynj3D+uY
+	 Xaj9Q8CNLW6w0QQzK4lSKqAmRC/drKtp6FW23XAdIxm+LECZpIexndeGeUzWAFJk0u
+	 XdAJN5gl3/iCHMWQgaLrYwLECzWJQI4mRVJS0FV5p+RMFfyn9SNa5Qr0kjHZ4a7yZ1
+	 7fST4PZaRhws4Z0+Fh45vUEYeU2/8H1PyO2uXxh+dTk7QgfifP3gj1lKUIHaXi8fhc
+	 Mn6uNwQf+TJfIz9epVy+duT8irWjPDtrI+EhdZ6r1GqZYr+dNSy6j3+cBXGAaQSP4H
+	 dM8zIx2G9TALYkH7BClAJdyMTnD3gwwWsAFFNKJXtFH257VC9Wkb6cBe7KChon1P4P
+	 rGjZq34yuH0lcLvS4SWQskWo=
+Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 37F8D40E0261;
+	Mon,  4 Nov 2024 14:29:59 +0000 (UTC)
+Date: Mon, 4 Nov 2024 15:29:58 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Yazen Ghannam <yazen.ghannam@amd.com>
+Cc: linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org,
+	tony.luck@intel.com, x86@kernel.org, avadhut.naik@amd.com,
+	john.allen@amd.com, mario.limonciello@amd.com, bhelgaas@google.com,
+	Shyam-sundar.S-k@amd.com, richard.gong@amd.com, jdelvare@suse.com,
+	linux@roeck-us.net, clemens@ladisch.de, hdegoede@redhat.com,
+	ilpo.jarvinen@linux.intel.com, linux-pci@vger.kernel.org,
+	linux-hwmon@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+	naveenkrishna.chatradhi@amd.com, carlos.bilbao.osdev@gmail.com
+Subject: Re: [PATCH 10/16] x86/amd_nb: Move SMN access code to a new amd_smn
+ driver
+Message-ID: <20241104142958.GVZyjaZtONnLIJAUo7@fat_crate.local>
+References: <20241023172150.659002-1-yazen.ghannam@amd.com>
+ <20241023172150.659002-11-yazen.ghannam@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241104114728.GTZyi0UHYKx-ZHL4kh@fat_crate.local>
+In-Reply-To: <20241023172150.659002-11-yazen.ghannam@amd.com>
 
-On Mon, Nov 04, 2024 at 12:47:28PM +0100, Borislav Petkov wrote:
-> On Mon, Oct 07, 2024 at 10:32:12AM +0200, Peter Zijlstra wrote:
-> > -	.section .text..__x86.indirect_thunk
-> > +#define WARN_ONCE							\
-> 
-> This should be in the asm section of arch/x86/include/asm/bug.h so that other
-> asm code can use it. It will come in handy...
-> 
-> > +	1: ALTERNATIVE "", "ud2", X86_FEATURE_ALWAYS ;			\
-> 
-> ... but uff, you can't because of this ALTERNATIVE. This is a conditional
-> WARN_ONCE.  Yuck.
-> 
-> I guess ALT_WARN_ONCE or so...
+On Wed, Oct 23, 2024 at 05:21:44PM +0000, Yazen Ghannam wrote:
+> diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+> index ba5252d8e21c..a03ffa5b6bb1 100644
+> --- a/arch/x86/Kconfig
+> +++ b/arch/x86/Kconfig
+> @@ -3128,6 +3128,9 @@ config AMD_NODE
+>  	def_bool y
+>  	depends on CPU_SUP_AMD && PCI
+>  
+> +config AMD_SMN
+> +	def_bool y
+> +	depends on AMD_NODE
 
-Yeah, Josh already said similar things.
+Why is this a separate compilation unit and not part of amd_node.c? Especially
+if it depends on it.
 
-> > +	ASM_BUGTABLE_FLAGS(1b, 0, 0, BUGFLAG_WARNING | BUGFLAG_ONCE) ;	\
-> > +	REACHABLE
-> >  
-> > +	.section .text..__x86.indirect_thunk
-> >  
-> >  .macro POLINE reg
-> >  	ANNOTATE_INTRA_FUNCTION_CALL
-> > @@ -382,16 +387,15 @@ SYM_FUNC_END(call_depth_return_thunk)
-> >  SYM_CODE_START(__x86_return_thunk)
-> >  	UNWIND_HINT_FUNC
-> >  	ANNOTATE_NOENDBR
-> > -#if defined(CONFIG_MITIGATION_UNRET_ENTRY) || \
-> > -    defined(CONFIG_MITIGATION_SRSO) || \
-> > -    defined(CONFIG_MITIGATION_CALL_DEPTH_TRACKING)
-> > -	ALTERNATIVE __stringify(ANNOTATE_UNRET_SAFE; ret), \
-> > -		   "jmp warn_thunk_thunk", X86_FEATURE_ALWAYS
-> > -#else
-> > +
-> > +#ifdef CONFIG_X86_64
-> > +	WARN_ONCE
-> > +#endif
-> 
-> And you can add an empty 32-bit WARN_ONCE macro so that we don't have this
-> ifdeffery here where ifdeffery gives the last drop of making this file totally
-> unreadable...
+I don't see the real need for having smaller compilation units. Both the node
+and the smn stuff will end up being built-in in 99% of the configs. So why are
+we making separate Kconfig items and yadda yadda?
 
-I just realized all the rethunk crap is 64bit only anyway. So it don't
-matter.
+Just do a single amd_node and that's it. We can always split later, if really
+needed.
 
-But the reason I did this is that we never rewrite thunk calls on 32bit
-(really, we should just strip all mitigation shit from it and leave it
-to rot).
+-- 
+Regards/Gruss,
+    Boris.
 
+https://people.kernel.org/tglx/notes-about-netiquette
 
