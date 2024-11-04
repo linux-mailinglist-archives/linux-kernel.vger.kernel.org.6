@@ -1,156 +1,115 @@
-Return-Path: <linux-kernel+bounces-395522-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395521-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 376469BBF14
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 21:54:52 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 034C99BBF11
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 21:53:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 712E01C217A7
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 20:54:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BCA382828A3
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 20:53:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BCC01F709D;
-	Mon,  4 Nov 2024 20:54:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 396CB1F7577;
+	Mon,  4 Nov 2024 20:53:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="FHBWxwic"
-Received: from mslow1.mail.gandi.net (mslow1.mail.gandi.net [217.70.178.240])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="Cex94fSH"
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 690FD1E3DC4;
-	Mon,  4 Nov 2024 20:54:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.178.240
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0CC81F709D
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 20:53:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730753683; cv=none; b=MVxWJ6JRdTqvFRrJquiiWLa7hxLLmLaw5p36OLfQhbzUHdAO0wHI5PeQAyrPNCPTO1iZoRrC/U24T8svXcpMwgSxhuzaA0vulV50OBAoGNVs+9f8va7IYEmE6ADt6akDotuhLLZorkPs7+UVSG5NdJ2Vpu6DwnRaSWxuRLTUvU8=
+	t=1730753607; cv=none; b=APLvK5sOiy8AEanpMG3b4i0XtSddsOgRtVttPTdC3JjiVyuPOa9Z/RaajpLl5V9YOMMLsYuxFZpwdEizDyZbSAJ82MXfyJ7GUfn+DGKAz6AGCS5LMSBFYwYuLeBopg3BZGbx+Vn0fnSWfnDQMm8Hp3WLijTcblwJ7G29YxQ1L6Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730753683; c=relaxed/simple;
-	bh=ZgeNd1bfUF12nDGkJYPjV9nUIu9hYIHX0uPzkkN2XeI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R3QZSE/3L07s6/zXbUWiORKj1TB7w0iahfYxcdEEXSzkfHFbejy5tmBD21FGb+jYqSkjZuDcRw09XBVemZyHzStXedLTcRBQ0IVjmYvA8kSd1jqb86uShXH7PIv2YWB0Lczr3piWbI4tbLSYvX3yGmaLzaRrB8lM/o0ECJw6hcU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=FHBWxwic; arc=none smtp.client-ip=217.70.178.240
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from relay1-d.mail.gandi.net (unknown [217.70.183.193])
-	by mslow1.mail.gandi.net (Postfix) with ESMTP id 194B9C0C5B;
-	Mon,  4 Nov 2024 20:50:49 +0000 (UTC)
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 9F2FB240005;
-	Mon,  4 Nov 2024 20:50:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1730753441;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Av38HQLIY4y7fKHlkHPls4j0u9OzeVAPPLDifWMIiEg=;
-	b=FHBWxwictm6bRzRsy2mGAWYYMx27D0RNHtw/tyZaw8BmDO1+aSSTIgFONc+SX+7gePJsvT
-	t4Qz81MJ1UHPyTBlHiI/uJ4enb0QpGsMWkX1Y05W+lMMUFOCInYXFENVMg4EDfMN3DIXK/
-	l2a28vHAdlxhYw1wF71DVh3URmvFNjYKmgIEo8hAA6PE83xqe9MaSPpcXMT7LfCAfFWAl4
-	bvP5ILe+H4emHqOqQu3zSTc86DBEKg9nyfZbpgDCudz/+RuhVKsYj6zFDmjARvA4MTbIiA
-	yjTdh+C7IrmmcyDb2liKMJKT+AeJtK0Q3AGDmofn5tSj1sd7xVnPZDwZCx4o3g==
-Date: Mon, 4 Nov 2024 21:50:40 +0100
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: CL Wang <cl634@andestech.com>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	linux-rtc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, tim609@andestech.com
-Subject: Re: [PATCH V3 1/1] dt-bindings: rtc: add atcrtc100 Real Time Clock
-Message-ID: <20241104205040adb479a7@mail.local>
-References: <20241104144053.1136083-1-cl634@andestech.com>
- <20241104144053.1136083-2-cl634@andestech.com>
+	s=arc-20240116; t=1730753607; c=relaxed/simple;
+	bh=GctGlx/ZW9M23AexhGHCmKdR0fPkJz1XCHRtRABF/0A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ck13Bv61mkil/qzxnvN1VH1ieMCftN/COqCF7cKILFZERpysaU4LbrLEcQfJIepLVBQKnn3hIfogCwhZNueL7QhJV4l2QlaLPSfnQG30ygl9FLzW0/NkN4xo7VHOboeFj/NW6qJ6D18aUZyMqeUsZn1vwINkihch0KLqSe8gYWk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=Cex94fSH; arc=none smtp.client-ip=178.60.130.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=lKRMqSRXhZhQYwWjC1ENLPJFMwrROYi/BPiNAXWtjBg=; b=Cex94fSHmswdP5+z/xU0dsFgb1
+	NB4yHtqdKIXC9Rz6SCbdUDkCp8tezJMrDoZhb1MJfyp1ZLFNXSatLUYACSDfdJO1yZY/zIuwUfYUc
+	XzZfY03sus86hu+INRn07YuoBr1HYtpmo026qfq8LHTdJKyXMhKQHTja84IzRrKchCeaoSYwqjx1S
+	xhEDDrkt/ewa5hN/5eG+xJqsynrs3Kj4HvdF09NQ9qJiTOXRfI2A1oZM85zFYLTRQWIcbcpA35BtS
+	8L2xvnF1gp31cZ1nrT6LIf1g4mxj88COZlHmdhlFYCPY4Igve6eB9aA4bT7AiJ2iEasxB+n5xGqwH
+	s8Tt+ikg==;
+Received: from [177.172.124.78] (helo=[192.168.15.100])
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+	id 1t844C-001pbo-TO; Mon, 04 Nov 2024 21:52:53 +0100
+Message-ID: <00a99b3e-3fad-42fb-8dc8-4f45d158c4c1@igalia.com>
+Date: Mon, 4 Nov 2024 17:52:43 -0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241104144053.1136083-2-cl634@andestech.com>
-X-GND-Sasl: alexandre.belloni@bootlin.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RESEND v9 1/2] drm/atomic: Let drivers decide which planes
+ to async flip
+To: Christopher Snowhill <chris@kode54.net>
+Cc: kernel-dev@igalia.com, Simon Ser <contact@emersion.fr>,
+ Thomas Zimmermann <tzimmermann@suse.de>, joshua@froggi.es,
+ ville.syrjala@linux.intel.com, Daniel Stone <daniel@fooishbar.org>,
+ Xaver Hugl <xaver.hugl@gmail.com>, Harry Wentland <harry.wentland@amd.com>,
+ Simona Vetter <simona@ffwll.ch>, Alex Deucher <alexander.deucher@amd.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, amd-gfx@lists.freedesktop.org,
+ Leo Li <sunpeng.li@amd.com>, =?UTF-8?Q?Christian_K=C3=B6nig?=
+ <christian.koenig@amd.com>, David Airlie <airlied@gmail.com>,
+ Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>, Xinhui Pan
+ <Xinhui.Pan@amd.com>, dmitry.baryshkov@linaro.org
+References: <20241101-tonyk-async_flip-v9-0-681814efbfbe@igalia.com>
+ <20241101-tonyk-async_flip-v9-1-681814efbfbe@igalia.com>
+ <D5CC3U00B7CG.IGKCIES8PC2J@kode54.net>
+Content-Language: en-US
+From: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
+In-Reply-To: <D5CC3U00B7CG.IGKCIES8PC2J@kode54.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 04/11/2024 22:40:53+0800, CL Wang wrote:
-> Document devicetree bindings for the Andes atcrtc100 Real Time Clock.
+Hi Christopher,
+
+Em 03/11/2024 03:36, Christopher Snowhill escreveu:
+> On Fri Nov 1, 2024 at 11:23 AM PDT, André Almeida wrote:
+>> Currently, DRM atomic uAPI allows only primary planes to be flipped
+>> asynchronously. However, each driver might be able to perform async
+>> flips in other different plane types. To enable drivers to set their own
+>> restrictions on which type of plane they can or cannot flip, use the
+>> existing atomic_async_check() from struct drm_plane_helper_funcs to
+>> enhance this flexibility, thus allowing different plane types to be able
+>> to do async flips as well.
+>>
+>> In order to prevent regressions and such, we keep the current policy: we
+>> skip the driver check for the primary plane, because it is always
+>> allowed to do async flips on it.
+>>
+>> Signed-off-by: André Almeida <andrealmeid@igalia.com>
 > 
-> Signed-off-by: CL Wang <cl634@andestech.com>
-> ---
->  .../bindings/rtc/andestech,atcrtc100.yaml     | 44 +++++++++++++++++++
->  MAINTAINERS                                   |  1 +
->  2 files changed, 45 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/rtc/andestech,atcrtc100.yaml
+> Should I do a R-b too? 
+
+If you can review the code, it's always really appreciated.
+
+> The changes looked sound enough for me to feel
+> like testing it as well. Tested Borderlands Game of the Year Enhanced on
+> my RX 7700 XT at maximum settings at 1080p165, and the tearing support in
+> labwc allowed it to reach over 700fps. No problems from the hardware
+> cursor.
+
+Thanks for testing and reporting!
+
 > 
-> diff --git a/Documentation/devicetree/bindings/rtc/andestech,atcrtc100.yaml b/Documentation/devicetree/bindings/rtc/andestech,atcrtc100.yaml
-> new file mode 100644
-> index 000000000000..cf99cff76734
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/rtc/andestech,atcrtc100.yaml
-> @@ -0,0 +1,44 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/rtc/andestech,atcrtc100.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Andes ATCRTC100 Real-Time Clock
-> +
-> +maintainers:
-> +  - CL Wang <cl634@andestech.com>
-> +
-> +allOf:
-> +  - $ref: rtc.yaml#
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - andestech,atcrtc100
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  interrupts:
-> +    items:
-> +      - description: Periodic timekeeping interrupt
-> +      - description: RTC alarm interrupt
-> +
-> +  wakeup-source: true
-
-The driver misuses this property. wakeup-source is mutually exclusive
-with the alarm interrupt. The driver requires both interrupts to be
-present so the property is useless (which is expected as the interrupt
-lines are always connected to the CPU)
-
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - interrupts
-> +
-> +unevaluatedProperties: false
-> +
-> +examples:
-> +  - |
-> +    rtc@f0300000 {
-> +        compatible = "andestech,atcrtc100";
-> +        reg = <0xf0300000 0x100>;
-> +        interrupts = <1>, <2>;
-> +        wakeup-source;
-> +    };
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 10342c0fa599..372d7ea53c98 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -3357,6 +3357,7 @@ F:	include/linux/mfd/atc260x/*
->  ATCRTC100 RTC DRIVER
->  M:	CL Wang <cl634@andestech.com>
->  S:	Supported
-> +F:	Documentation/devicetree/bindings/rtc/andestech,atcrtc100.yaml
->  F:	drivers/rtc/rtc-atcrtc100.c
->  
->  ATHEROS 71XX/9XXX GPIO DRIVER
-> -- 
-> 2.34.1
+> Tested-by: Christopher Snowhill <chris@kode54.net>
 > 
-
--- 
-Alexandre Belloni, co-owner and COO, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
 
