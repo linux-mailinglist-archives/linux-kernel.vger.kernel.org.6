@@ -1,235 +1,149 @@
-Return-Path: <linux-kernel+bounces-395404-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395405-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22BF59BBD80
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 19:49:48 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B5E49BBD87
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 19:51:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A8D401F21F85
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 18:49:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 51191B21D16
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 18:51:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D2741CB9E5;
-	Mon,  4 Nov 2024 18:49:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEE6C1CBA1F;
+	Mon,  4 Nov 2024 18:51:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AiHaKP8+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="pRrGCkFq"
+Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D343919BBA;
-	Mon,  4 Nov 2024 18:49:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D81381C9EC0
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 18:51:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730746178; cv=none; b=FTyhPiKivqD50xip0cUHVWuwspgdB7zKK4JJ4UXjgy/dR9bPiqlH8NIED5zSXPlD1xnFtIGiIsUc+7BnpzfOiQWwj/OAo5mBUfqc9GR+dd1Ms9aEpcFYN4PzljS3DYv3Gr5EBl4/a+C4B68Z/XVpJap1fCci5mBs3p/hHndjILw=
+	t=1730746275; cv=none; b=rysNEdNABEjRxy1TsuJrGFbWGhrdM7aj+UUeAdyUVk18xG3/ZBPTFbfG093CWKZoPa+hZlY4nUnCd6LQB+ww/N6LZlq2gNOI2kbsU4torFSRTvgMJaazfKN2F5r/M9JK6VGVormQU019dkoi6zl8zaS5nPYJLxjGa5pkk+67I3k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730746178; c=relaxed/simple;
-	bh=6xH53IhT0TJpyNorkchqFjFvXwlo4Osd48zybI+w52w=;
+	s=arc-20240116; t=1730746275; c=relaxed/simple;
+	bh=i+JUo1WbG9fBZEzMBxei4ZEoysCHsSLRrRJGVjEMQvk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tp/6DMEQgfUoqknKdbZwRgjGWm8+Mk/lUuJ7pJuCviGtRkjgIkUmPm5EunPfnxmKr7Ub1EmZBrJSL++NM6gi9aolsVIcsVDrNpwHQFEb/zMSDSoqP4tYZ6BpwSuZ5p21LwOiy+ES8dBkLjd1HClz63x3gH977gqbjUp5abDZTng=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AiHaKP8+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85C24C4CECE;
-	Mon,  4 Nov 2024 18:49:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730746178;
-	bh=6xH53IhT0TJpyNorkchqFjFvXwlo4Osd48zybI+w52w=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=AiHaKP8+Aqe9E4ixvWAlPw8snyH+4TsToC8aOcmTaKI3EdTgvUJ+veldiNqt3FPIs
-	 SEo7xwUpNLVFKyoxFa8LIOJ3oS+fURHUwPXId/H+T5YUMDeMzD2pUVKE5g7HjgjS7S
-	 25zGYOUcsSYYkOTxgZ3MX4OYaXroGl6nZhHXIHsgxmCxsJ2VOmcZsDYkTZvpKDG8jx
-	 BSprX9Bz3p0bHuS4TFuUEG84Z+21wKVZOEejaStaz7OhDM/ljiuveyVqRQhwidhg5h
-	 PcFI7MAJvKiX9afUKlU5yb0nQebLUaugv/8QmFUIxhUx+2TlGwj7U0EXpMFv23bg18
-	 wkCmrh0LLzLIw==
-Date: Mon, 4 Nov 2024 18:49:33 +0000
-From: Conor Dooley <conor@kernel.org>
-To: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Naresh Solanki <naresh.solanki@9elements.com>, jdelvare@suse.com,
-	Andrew Jeffery <andrew@codeconstruct.com.au>,
-	Conor Dooley <conor.dooley@microchip.com>,
-	linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, krzk+dt@kernel.org, sylv@sylv.io,
-	linux-arm-kernel@lists.infradead.org, linux-hwmon@vger.kernel.org,
-	linux@roeck-us.net, Joel Stanley <joel@jms.id.au>,
-	conor+dt@kernel.org
-Subject: Re: [PATCH v6 1/2] dt-bindings: arm: aspeed: add IBM SBP1 board
-Message-ID: <20241104-saturate-device-d020a0d7321f@spud>
-References: <20241104092220.2268805-1-naresh.solanki@9elements.com>
- <173072771091.3690717.11563964377469449295.robh@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=CwqUIt3kBUTTG3nnuutt56u4xstuCB1s5BYExDyveWlAkPbK+7qla8tig0sZ0Ds6R7TVBRRkxqjr1x3r42dmxEA+bBHode3tqv98LtLW+q1Oc+FgxJ1VHlda8Rl4H2JSdSDsa5kKEV29dq4O+3earl6dvxl+NLBKYWJSphaZh2Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=pRrGCkFq; arc=none smtp.client-ip=209.85.215.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
+Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-7ea68af2f62so3497367a12.3
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 10:51:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fastly.com; s=google; t=1730746273; x=1731351073; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=sWJfwtCH7EJrpJfmQrqLh3OrqN5mIv7D0ga+Lf0aVEw=;
+        b=pRrGCkFqAdHpzg8NHknffTNpV2qViVALW5mBF4+6xzYj6yapNvbo8XsJMkp8F5R8Zr
+         3cnNpWu77qX+lElwFvfChOMITdq/tjtzWFqDk5jZGT8OhraXJ6ha2XeAfJLyX5TMMs0j
+         jAOtjK30OCmBaLD1BGsQOLvmss/C60dPMvfeQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730746273; x=1731351073;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=sWJfwtCH7EJrpJfmQrqLh3OrqN5mIv7D0ga+Lf0aVEw=;
+        b=FpKPjRL5bJuNBnB4ZWbN/QSCfVDnQJ+us7kAOJcnZucwYVP+9HCT7y4jiEav3+dVMB
+         YUnhG0yJ0YrSavXbaHK/R9e8frFzR56a9VI7HYLLcifd0Q+t+zKg9enA7MYGYmVS+kH8
+         UMBLSa8jNdssBtVN4OkMZA9Ky/gV3BZekLv8GVtYEHQ5NOtpJza7hK3sK8qyUYMLYoPM
+         jOa13ZC4tiI89yW60GkeOnxpizWIXRNe6vgkL67DL5b6trByTosTxj97zIBfyZGSLi+M
+         BGjRbLwvlmxk1gc+CQTT6ezd0isUq980QHrASxZPfb/WWz0mHEMcqLa00Ib8CHVIaD2H
+         u53g==
+X-Forwarded-Encrypted: i=1; AJvYcCVayb0gnbtZUkiW85YW+gozStWte35tWhvdaMWSLgEzs341NbwXX7NTskf0QTnZGH7+U+jf2pClIMgBaKk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YygEVtR4GUhOHV4CszQp70D/JCQRdCSY1tAjNG7WlfEZag+SPDq
+	QblXcDeh9DQuv3o9D0cgAJDreZ65msCeYBzIKhJofstYjiOMYiyT4B0ynceKIHI=
+X-Google-Smtp-Source: AGHT+IHWOygf8u1N20udthJq/ON31qkCTfTapdoM6eneR+DaWGQ7PM5fmjk8Rm84lqYDYvD8FX9TbA==
+X-Received: by 2002:a17:90b:3d87:b0:2e2:af6c:79b2 with SMTP id 98e67ed59e1d1-2e94c51c61bmr19532397a91.29.1730746273096;
+        Mon, 04 Nov 2024 10:51:13 -0800 (PST)
+Received: from LQ3V64L9R2 (c-24-6-151-244.hsd1.ca.comcast.net. [24.6.151.244])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e92fa0eda6sm10277879a91.4.2024.11.04.10.51.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 04 Nov 2024 10:51:11 -0800 (PST)
+Date: Mon, 4 Nov 2024 10:51:08 -0800
+From: Joe Damato <jdamato@fastly.com>
+To: Jonathan Corbet <corbet@lwn.net>
+Cc: Bagas Sanjaya <bagasdotme@gmail.com>, netdev@vger.kernel.org,
+	hdanton@sina.com, pabeni@redhat.com, namangulati@google.com,
+	edumazet@google.com, amritha.nambiar@intel.com,
+	sridhar.samudrala@intel.com, sdf@fomichev.me, peter@typeblog.net,
+	m2shafiei@uwaterloo.ca, bjorn@rivosinc.com, hch@infradead.org,
+	willy@infradead.org, willemdebruijn.kernel@gmail.com,
+	skhawaja@google.com, kuba@kernel.org,
+	Martin Karsten <mkarsten@uwaterloo.ca>,
+	"David S. Miller" <davem@davemloft.net>,
+	Simon Horman <horms@kernel.org>,
+	Linux Documentation <linux-doc@vger.kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux BPF <bpf@vger.kernel.org>
+Subject: Re: [PATCH net-next v5 7/7] docs: networking: Describe irq suspension
+Message-ID: <ZykXnG8M7qXsQcYq@LQ3V64L9R2>
+Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Bagas Sanjaya <bagasdotme@gmail.com>, netdev@vger.kernel.org,
+	hdanton@sina.com, pabeni@redhat.com, namangulati@google.com,
+	edumazet@google.com, amritha.nambiar@intel.com,
+	sridhar.samudrala@intel.com, sdf@fomichev.me, peter@typeblog.net,
+	m2shafiei@uwaterloo.ca, bjorn@rivosinc.com, hch@infradead.org,
+	willy@infradead.org, willemdebruijn.kernel@gmail.com,
+	skhawaja@google.com, kuba@kernel.org,
+	Martin Karsten <mkarsten@uwaterloo.ca>,
+	"David S. Miller" <davem@davemloft.net>,
+	Simon Horman <horms@kernel.org>,
+	Linux Documentation <linux-doc@vger.kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux BPF <bpf@vger.kernel.org>
+References: <20241103052421.518856-1-jdamato@fastly.com>
+ <20241103052421.518856-8-jdamato@fastly.com>
+ <ZyinhIlMIrK58ABF@archie.me>
+ <ZykRdK6WgfR_4p5X@LQ3V64L9R2>
+ <87v7x296wq.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="aHEnBD9/syuq+wBO"
-Content-Disposition: inline
-In-Reply-To: <173072771091.3690717.11563964377469449295.robh@kernel.org>
-
-
---aHEnBD9/syuq+wBO
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <87v7x296wq.fsf@trenco.lwn.net>
 
-On Mon, Nov 04, 2024 at 08:39:21AM -0600, Rob Herring (Arm) wrote:
->=20
-> On Mon, 04 Nov 2024 14:52:14 +0530, Naresh Solanki wrote:
-> > Document the new compatibles used on IBM SBP1.
-> >=20
-> > Signed-off-by: Naresh Solanki <naresh.solanki@9elements.com>
-> > Acked-by: Conor Dooley <conor.dooley@microchip.com>
-> > ---
-> > Changes in V4:
-> > - Retain Acked-by from v2.
-> > - Fix alphabetic order
-> > ---
-> >  Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml | 1 +
-> >  1 file changed, 1 insertion(+)
-> >=20
->=20
->=20
-> My bot found new DTB warnings on the .dts files added or changed in this
-> series.
->=20
-> Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
-> are fixed by another series. Ultimately, it is up to the platform
-> maintainer whether these warnings are acceptable or not. No need to reply
-> unless the platform maintainer has comments.
->=20
-> If you already ran DT checks and didn't see these error(s), then
-> make sure dt-schema is up to date:
->=20
->   pip3 install dtschema --upgrade
->=20
->=20
-> New warnings running 'make CHECK_DTBS=3Dy aspeed/aspeed-bmc-ibm-sbp1.dtb'=
- for 20241104092220.2268805-1-naresh.solanki@9elements.com:
+On Mon, Nov 04, 2024 at 11:43:17AM -0700, Jonathan Corbet wrote:
+> Joe Damato <jdamato@fastly.com> writes:
+> 
+> > On Mon, Nov 04, 2024 at 05:52:52PM +0700, Bagas Sanjaya wrote:
+> >> On Sun, Nov 03, 2024 at 05:24:09AM +0000, Joe Damato wrote:
+> >> > +It is important to note that choosing a large value for ``gro_flush_timeout``
+> >> > +will defer IRQs to allow for better batch processing, but will induce latency
+> >> > +when the system is not fully loaded. Choosing a small value for
+> >> > +``gro_flush_timeout`` can cause interference of the user application which is
+> >> > +attempting to busy poll by device IRQs and softirq processing. This value
+> >> > +should be chosen carefully with these tradeoffs in mind. epoll-based busy
+> >> > +polling applications may be able to mitigate how much user processing happens
+> >> > +by choosing an appropriate value for ``maxevents``.
+> >> > +
+> >> > +Users may want to consider an alternate approach, IRQ suspension, to help deal
+> >>                                                                      to help dealing
+> >> > +with these tradeoffs.
+> >> > +
+> >
+> > Thanks for the careful review. I read this sentence a few times and
+> > perhaps my English grammar isn't great, but I think it should be
+> > one of:
+> >
+> > Users may want to consider an alternate approach, IRQ suspension, to
+> > help deal with these tradeoffs.  (the original)
+> 
+> The original is just fine here.  Bagas, *please* do not bother our
+> contributors with this kind of stuff, it does not help.
 
-Really? This many warnings on a v6?
+Thanks for the feedback. I had been preparing a v6 based on Bagas'
+comments below where you snipped about in the documentation, etc.
 
->=20
-> arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-sbp1.dtb: timer: 'clocks' does no=
-t match any of the regexes: 'pinctrl-[0-9]+'
-> 	from schema $id: http://devicetree.org/schemas/timer/arm,arch_timer.yaml#
-> arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-sbp1.dtb: /sdram@1e6e0000: failed=
- to match any schema with compatible: ['aspeed,ast2600-sdram-edac', 'syscon=
-']
-> arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-sbp1.dtb: bus@1e600000: compatibl=
-e: ['aspeed,ast2600-ahbc', 'syscon'] is too long
-> 	from schema $id: http://devicetree.org/schemas/bus/aspeed,ast2600-ahbc.y=
-aml#
-> arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-sbp1.dtb: syscon@1e6e2000: 'smp-m=
-emram@180' does not match any of the regexes: '^interrupt-controller@[0-9a-=
-f]+$', '^p2a-control@[0-9a-f]+$', '^pinctrl(@[0-9a-f]+)?$', '^silicon-id@[0=
--9a-f]+$', 'pinctrl-[0-9]+'
-> 	from schema $id: http://devicetree.org/schemas/mfd/aspeed,ast2x00-scu.ya=
-ml#
-> arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-sbp1.dtb: /ahb/apb@1e6e0000/sysco=
-n@1e6e2000/smp-memram@180: failed to match any schema with compatible: ['as=
-peed,ast2600-smpmem']
-> arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-sbp1.dtb: /ahb/apb@1e6e0000/sysco=
-n@1e6e2000/interrupt-controller@560: failed to match any schema with compat=
-ible: ['aspeed,ast2600-scu-ic0']
-> arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-sbp1.dtb: /ahb/apb@1e6e0000/sysco=
-n@1e6e2000/interrupt-controller@570: failed to match any schema with compat=
-ible: ['aspeed,ast2600-scu-ic1']
-> arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-sbp1.dtb: /ahb/apb@1e6e0000/displ=
-ay@1e6e6000: failed to match any schema with compatible: ['aspeed,ast2600-g=
-fx', 'syscon']
-> arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-sbp1.dtb: adc@1e6e9000: 'interrup=
-ts' does not match any of the regexes: 'pinctrl-[0-9]+'
-> 	from schema $id: http://devicetree.org/schemas/iio/adc/aspeed,ast2600-ad=
-c.yaml#
-> arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-sbp1.dtb: adc@1e6e9100: 'interrup=
-ts' does not match any of the regexes: 'pinctrl-[0-9]+'
-> 	from schema $id: http://devicetree.org/schemas/iio/adc/aspeed,ast2600-ad=
-c.yaml#
-> arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-sbp1.dtb: crypto@1e6fa000: 'aspee=
-d,ahbc' does not match any of the regexes: 'pinctrl-[0-9]+'
-> 	from schema $id: http://devicetree.org/schemas/crypto/aspeed,ast2600-acr=
-y.yaml#
-> arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-sbp1.dtb: /ahb/video@1e700000: fa=
-iled to match any schema with compatible: ['aspeed,ast2600-video-engine']
-> arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-sbp1.dtb: sdc@1e740000: sdhci@1e7=
-40100:compatible: ['aspeed,ast2600-sdhci', 'sdhci'] is too long
-> 	from schema $id: http://devicetree.org/schemas/mmc/aspeed,sdhci.yaml#
-> arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-sbp1.dtb: sdc@1e740000: sdhci@1e7=
-40200:compatible: ['aspeed,ast2600-sdhci', 'sdhci'] is too long
-> 	from schema $id: http://devicetree.org/schemas/mmc/aspeed,sdhci.yaml#
-> arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-sbp1.dtb: /ahb/sdc@1e740000/sdhci=
-@1e740100: failed to match any schema with compatible: ['aspeed,ast2600-sdh=
-ci', 'sdhci']
-> arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-sbp1.dtb: /ahb/sdc@1e740000/sdhci=
-@1e740200: failed to match any schema with compatible: ['aspeed,ast2600-sdh=
-ci', 'sdhci']
-> arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-sbp1.dtb: /ahb/apb@1e780000/timer=
-@1e782000: failed to match any schema with compatible: ['aspeed,ast2600-tim=
-er']
-> arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-sbp1.dtb: lpc@1e789000: lpc-snoop=
-@80: 'clocks' does not match any of the regexes: 'pinctrl-[0-9]+'
-> 	from schema $id: http://devicetree.org/schemas/mfd/aspeed-lpc.yaml#
-> arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-sbp1.dtb: lpc@1e789000: reg-io-wi=
-dth: 4 is not of type 'object'
-> 	from schema $id: http://devicetree.org/schemas/mfd/aspeed-lpc.yaml#
-> arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-sbp1.dtb: kcs@24: 'clocks' does n=
-ot match any of the regexes: 'pinctrl-[0-9]+'
-> 	from schema $id: http://devicetree.org/schemas/ipmi/aspeed,ast2400-kcs-b=
-mc.yaml#
-> arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-sbp1.dtb: kcs@28: 'clocks' does n=
-ot match any of the regexes: 'pinctrl-[0-9]+'
-> 	from schema $id: http://devicetree.org/schemas/ipmi/aspeed,ast2400-kcs-b=
-mc.yaml#
-> arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-sbp1.dtb: kcs@2c: 'clocks' does n=
-ot match any of the regexes: 'pinctrl-[0-9]+'
-> 	from schema $id: http://devicetree.org/schemas/ipmi/aspeed,ast2400-kcs-b=
-mc.yaml#
-> arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-sbp1.dtb: kcs@114: 'clocks' does =
-not match any of the regexes: 'pinctrl-[0-9]+'
-> 	from schema $id: http://devicetree.org/schemas/ipmi/aspeed,ast2400-kcs-b=
-mc.yaml#
-> arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-sbp1.dtb: /ahb/apb@1e780000/lpc@1=
-e789000/lhc@a0: failed to match any schema with compatible: ['aspeed,ast260=
-0-lhc']
-> arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-sbp1.dtb: /ahb/apb@1e780000/lpc@1=
-e789000/ibt@140: failed to match any schema with compatible: ['aspeed,ast26=
-00-ibt-bmc']
-> arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-sbp1.dtb: /ahb/apb@1e780000/bus@1=
-e78a000/i2c@280/bmc-slave@10: failed to match any schema with compatible: [=
-'ipmb-dev']
-> arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-sbp1.dtb: fsi@1e79b000: compatibl=
-e: ['aspeed,ast2600-fsi-master', 'fsi-master'] is too long
-> 	from schema $id: http://devicetree.org/schemas/fsi/aspeed,ast2600-fsi-ma=
-ster.yaml#
-> arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-sbp1.dtb: /ahb/apb@1e790000/fsi@1=
-e79b000: failed to match any schema with compatible: ['aspeed,ast2600-fsi-m=
-aster', 'fsi-master']
-> arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-sbp1.dtb: fsi@1e79b100: compatibl=
-e: ['aspeed,ast2600-fsi-master', 'fsi-master'] is too long
-> 	from schema $id: http://devicetree.org/schemas/fsi/aspeed,ast2600-fsi-ma=
-ster.yaml#
-> arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-sbp1.dtb: /ahb/apb@1e790000/fsi@1=
-e79b100: failed to match any schema with compatible: ['aspeed,ast2600-fsi-m=
-aster', 'fsi-master']
-> arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-sbp1.dtb: /ahb/apb@1e790000/dma-c=
-ontroller@1e79e000: failed to match any schema with compatible: ['aspeed,as=
-t2600-udma']
->=20
->=20
->=20
->=20
->=20
-
---aHEnBD9/syuq+wBO
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZykXPQAKCRB4tDGHoIJi
-0rMWAQDlKZmiJuot7oP6aowJtnVfHH76ohyheufSc66w5m0cpQEAnaA4tO/Xidyx
-qN6rj7vtGBTORT4bzSgiKVOGQ9hkqgw=
-=xs2s
------END PGP SIGNATURE-----
-
---aHEnBD9/syuq+wBO--
+Should I continue to prepare a v6? It would only contain
+documentation changes in this patch; I can't really tell if a v6 is
+necessary or not.
 
