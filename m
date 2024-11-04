@@ -1,117 +1,208 @@
-Return-Path: <linux-kernel+bounces-394218-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394222-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 140E19BAC0E
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 06:30:50 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14DE09BAC19
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 06:36:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD1D5281175
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 05:30:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 94B3B1F21436
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 05:36:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E43E717FAC2;
-	Mon,  4 Nov 2024 05:30:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5E1C18BC06;
+	Mon,  4 Nov 2024 05:36:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="FzDv4pgy"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="UT1udimv"
+Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0ED5323A6;
-	Mon,  4 Nov 2024 05:30:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58EB0189916;
+	Mon,  4 Nov 2024 05:36:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730698240; cv=none; b=jp1L7HN9uW69jcgJD/YYlyrilobR8LuJmp+Xc0lK0hCg/aTH2DvnDHx5oJH/Xh2O7nAcoPmCk8iQZq1VZEE/aqGGAgtjXfM+KruQE5/nZgFlYYf64OjB17oO12OsbQn39VIfOj9rAKZdr//Dz9WYZV56k0SEXuBAjonDupGpKkE=
+	t=1730698591; cv=none; b=nAzt5BbPjMp7ia3t5EhysvrJg1WOBLfJ9EcupS7MGPj7onA2n4AuRkZ8/EZACTnXDwrc81SxxwoDv9e5KE7/oLPWDTIuYOYRT3/5kg03ZhtkN3WDXDUpww+X8h5WVyPimShb2R/4okpB1T0sjN/k6QfmUiwoiRGsaV5hBLlAq+U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730698240; c=relaxed/simple;
-	bh=qvywv4i84HAZLPotuvJYvDl4s71VUQ8CS52LsQUJl90=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=Gd1u75Q10ib+JeKoMTR27EjaZ3f00xKHt+12qNKLncoEG7RWDwyra4srnjtQ6hJBACvOUSliU9D9XvgAYnUz5ZO9/5qWFhgB7hN9f702BQk5jcfpr9GmJ6V1M/f+3kRIJ1pVvSAY4f669TbJoRQUK8l17DHcCI82e3QAjEpDp3A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=FzDv4pgy; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1730698231;
-	bh=LdGLsZfaRCHdLDyP+nbDEj6UUqJgvbVO4i4FE6dRPm0=;
-	h=Date:From:To:Cc:Subject:From;
-	b=FzDv4pgyYj4vjp3MRzTtp58Uijlw1kwJXr6IkRw3UdMOKOlGM8zmWCr7+vasGT8ym
-	 w16vGsN+7eWVdjVVWboP0F4aaYuTOgnVEEKXAzYHAMXIGcGTPejzCuewgh1SFd3bPd
-	 Qsqs8488JDAPsL+FL3xB3OdokDZMDuS2d7fvfbs1qqcmIVVFotw8FmwZL+py8R79xi
-	 MHEkcaBVVDEpmhlPXXz+uPi4o2eEotn6T8xoZn+1j0kKdNv1gbIMIfxkXuF9A7Y2AQ
-	 kAjxtnig+BQLjknrXY0YJVe7mMT4+LooyvfX+2XuMYTtAwA4imeQh1ZTDE+0L1RotD
-	 Rknxm2rXCH7YQ==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Xhg6G1SFZz4wbv;
-	Mon,  4 Nov 2024 16:30:29 +1100 (AEDT)
-Date: Mon, 4 Nov 2024 16:30:29 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: David Miller <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Networking <netdev@vger.kernel.org>
-Cc: Jiri Pirko <jiri@nvidia.com>, Jiri Pirko <jiri@resnulli.us>, Linux
- Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: build warnings after merge of the net-next tree
-Message-ID: <20241104163029.73e65994@canb.auug.org.au>
+	s=arc-20240116; t=1730698591; c=relaxed/simple;
+	bh=M8fiDdWP9TqU5G7C4KsM1hZt+cILpRsYqCPpihJWIdA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=S1Fp5rR+OTIXm7F27j9YXPY3FLNW1HiTFtiHtGpcMRrzQDSd2YehKLFB61Nvbimp0k1yxuKeIcA6u/NoqqgfnbgY6RIA9r0K/laXveFlCILxWM9sg+Y25A+0+CmuOjpm4ih/4EGByUEbv3DbalO6T3BvTUj44xkTXYdyrIU/kAw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=UT1udimv; arc=none smtp.client-ip=85.214.62.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
+Received: from [192.168.1.107] (87-97-112-21.pool.digikabel.hu [87.97.112.21])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
+	(No client certificate requested)
+	(Authenticated sender: hs@denx.de)
+	by phobos.denx.de (Postfix) with ESMTPSA id A4FEF89138;
+	Mon,  4 Nov 2024 06:36:24 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
+	s=phobos-20191101; t=1730698586;
+	bh=zNgk47u3wRfC4zw7b391h07FE1WMd6Q9cZ/grbxNFII=;
+	h=Date:Subject:To:Cc:References:From:Reply-To:In-Reply-To:From;
+	b=UT1udimvre//bCB8aCJMPmxDMRwwAdn3E0ZYyRJVoH2NwLTtZRBNze6zYt5Ai4F5J
+	 DSLoOd20gmFYKvNu30OaNmNsPZpYPlZOysocQX8dPiRiJ7fi29vW9opYLE4HTOhex2
+	 5aszpyqKACMCbtew+NhiUORrALUxkUVALm98l5aTTqts2bwvJXQX29gBhuajSrr5QA
+	 0S/DRJLoQcTgmA3qYXiAWgbiNcmhvtGSnS86UVlU3bAHsotu9vWbk8WQcvzvDLdiy0
+	 SOlyOu5xuNfMCkbYiVKI5JYdrFc8zc/e8c+jFBOzasqiM+u9U8n7ZF5sPYeyNHFNDK
+	 B/8BeSD3YBJUA==
+Message-ID: <5340fb82-bda0-d22f-23df-de620c8d61c3@denx.de>
+Date: Mon, 4 Nov 2024 06:33:55 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/ErO2t_M7Ic+YdiztVBPF4rT";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.2.0
+Subject: Re: [PATCH v2 3/3] arm64: dts: imx8mp: add aristainetos3 board
+ support
+Content-Language: en-US
+To: Shawn Guo <shawnguo2@yeah.net>
+Cc: linux-kernel@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>,
+ Fabio Estevam <festevam@gmail.com>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Rob Herring <robh@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
+ Shawn Guo <shawnguo@kernel.org>, devicetree@vger.kernel.org,
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
+References: <20241031151238.67753-1-hs@denx.de>
+ <20241031151238.67753-4-hs@denx.de> <ZydFO6b6oe9widaa@dragon>
+From: Heiko Schocher <hs@denx.de>
+Reply-To: hs@denx.de
+In-Reply-To: <ZydFO6b6oe9widaa@dragon>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
+X-Virus-Status: Clean
 
---Sig_/ErO2t_M7Ic+YdiztVBPF4rT
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hello Shawn,
 
-Hi all,
+removed the changes which are clear...
 
-After merging the net-next tree, today's linux-next build (htmldocs)
-produced these warnings:
+On 03.11.24 10:41, Shawn Guo wrote:
+> On Thu, Oct 31, 2024 at 04:12:37PM +0100, Heiko Schocher wrote:
+>> Add support for the i.MX8MP based aristainetos3 boards from ABB.
+>>
+>> The board uses a ABB specific SoM from ADLink, based on NXP
+>> i.MX8MP SoC. The SoM is used on 3 different carrier boards,
+>> with small differences.
+>>
+>> Signed-off-by: Heiko Schocher <hs@denx.de>
+>> ---
+>>
+[...]
+>> diff --git a/arch/arm64/boot/dts/freescale/imx8mp-aristainetos3a-som-v1.dtsi b/arch/arm64/boot/dts/freescale/imx8mp-aristainetos3a-som-v1.dtsi
+>> new file mode 100644
+>> index 000000000000..ced35e1d72b7
+>> --- /dev/null
+>> +++ b/arch/arm64/boot/dts/freescale/imx8mp-aristainetos3a-som-v1.dtsi
+[...]
+>> +	pcie0_refclk: pcie0-refclk {
+> 
+> Can we name the node clock-xxx?
 
-include/uapi/linux/dpll.h:103: warning: Enum value 'DPLL_CLOCK_QUALITY_LEVE=
-L_ITU_OPT1_PRC' not described in enum 'dpll_clock_quality_level'
-include/uapi/linux/dpll.h:103: warning: Enum value 'DPLL_CLOCK_QUALITY_LEVE=
-L_ITU_OPT1_SSU_A' not described in enum 'dpll_clock_quality_level'
-include/uapi/linux/dpll.h:103: warning: Enum value 'DPLL_CLOCK_QUALITY_LEVE=
-L_ITU_OPT1_SSU_B' not described in enum 'dpll_clock_quality_level'
-include/uapi/linux/dpll.h:103: warning: Enum value 'DPLL_CLOCK_QUALITY_LEVE=
-L_ITU_OPT1_EEC1' not described in enum 'dpll_clock_quality_level'
-include/uapi/linux/dpll.h:103: warning: Enum value 'DPLL_CLOCK_QUALITY_LEVE=
-L_ITU_OPT1_PRTC' not described in enum 'dpll_clock_quality_level'
-include/uapi/linux/dpll.h:103: warning: Enum value 'DPLL_CLOCK_QUALITY_LEVE=
-L_ITU_OPT1_EPRTC' not described in enum 'dpll_clock_quality_level'
-include/uapi/linux/dpll.h:103: warning: Enum value 'DPLL_CLOCK_QUALITY_LEVE=
-L_ITU_OPT1_EEEC' not described in enum 'dpll_clock_quality_level'
-include/uapi/linux/dpll.h:103: warning: Enum value 'DPLL_CLOCK_QUALITY_LEVE=
-L_ITU_OPT1_EPRC' not described in enum 'dpll_clock_quality_level'
+renamed from rename pcie0-refclk to clock-pcie0-ref
 
-Introduced by commit
+[...]
+>> +	/* SX1509(0) U2605 */
+>> +	gpio6: pinctrl@3f {
+>> +		#gpio-cells = <2>;
+>> +		#interrupt-cells = <2>;
+>> +		compatible = "semtech,sx1509q";
+>> +		reg = <0x3f>;
 
-  a1afb959add1 ("dpll: add clock quality level attribute and op")
+I moved compatible and reg to the beginning of the node,
+as you commented this also on other places.
 
---=20
-Cheers,
-Stephen Rothwell
+>> +
+>> +		semtech,probe-reset;
+>> +		gpio-controller;
+>> +		interrupt-controller;
+>> +
+>> +		interrupt-parent = <&gpio1>;
+>> +		interrupts = <12 IRQ_TYPE_EDGE_FALLING>;
+>> +	};
 
---Sig_/ErO2t_M7Ic+YdiztVBPF4rT
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+Should I remove newlines here too?... but looking into the example from
 
------BEGIN PGP SIGNATURE-----
+Documentation/devicetree/bindings/pinctrl/semtech,sx1501q.yaml
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmcoW/UACgkQAVBC80lX
-0GwFkQgAkh2G3fUKKV49+3wAQqDz20IZZz+ZAnLUGsO3FrCwmAgtgRmiLH+zGHCK
-cmzeEELRDGcoUMhufkPq/39VCkwKRXSc0FlB3so+x/z0SdLjFrYkBVjskqQU2d9Y
-joBSeP3L59FiUc0LGGXjqgzcgzO+MuENHmSta5drE7x3TenZU5bgAy0B2fc5DT/j
-89biyYzYjQgejYaQw2EXGo+I7MnzJ4f2QWnnKvDdZ8BmKcNCUTiOoakKaB7ad1ub
-SDaIT8Xj0n34qKn00rsweF+KGgV6mbZKAyjr2d/iNMbKoWIV7xtShYDraICX4tqX
-EIz5fefg+ZPyGhqDTSVIwoJqT5RDiA==
-=VMw1
------END PGP SIGNATURE-----
+there are this newlines ... so I let this lines in... or?
 
---Sig_/ErO2t_M7Ic+YdiztVBPF4rT--
+>> +
+>> +	/* SX1509(1) U2606 */
+>> +	gpio7: pinctrl@70 {
+>> +		#gpio-cells = <2>;
+>> +		#interrupt-cells = <2>;
+>> +		compatible = "semtech,sx1509q";
+>> +		reg = <0x70>;
+
+I moved compatible and reg to the beginning of the node here too.
+
+>> +
+>> +		semtech,probe-reset;
+>> +		gpio-controller;
+>> +		interrupt-controller;
+>> +
+>> +		interrupt-parent = <&gpio4>;
+>> +		interrupts = <19 IRQ_TYPE_EDGE_FALLING>;
+>> +
+>> +		gpio6-cfg {
+>> +			pins = "gpio6";
+>> +			output-high;
+>> +		};
+>> +
+>> +		gpio7-cfg {
+>> +			pins = "gpio7";
+>> +			output-high;
+>> +		};
+>> +	};
+
+and let the newlines as I did...
+
+>> +
+>> +	/* RTC U2607 */
+>> +	rtc0: rtc@51 {
+> 
+> I2C slave nodes should be sorted in addresses.
+
+done.
+
+> 
+>> +		compatible = "nxp,pcf8563";
+>> +		reg = <0x51>;
+>> +		#clock-cells = <0>;
+>> +	};
+>> +};
+>> +
+>> +&irqsteer_hdmi {
+>> +	status = "okay";
+>> +};
+>> +
+>> +&lcdif1 {
+>> +	status = "disabled";
+>> +};
+>> +
+>> +&lcdif2 {
+>> +	status = "disabled";
+>> +};
+>> +
+>> +/* HDMI */
+>> +&lcdif3 {
+>> +	status = "okay";
+>> +
+> 
+> Unneeded newline.
+
+Many thanks for your review, and sorry, for trivial fixes...
+
+bye,
+Heiko
+
+-- 
+DENX Software Engineering GmbH,      Managing Director: Erika Unter
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+Phone: +49-8142-66989-52   Fax: +49-8142-66989-80   Email: hs@denx.de
 
