@@ -1,98 +1,171 @@
-Return-Path: <linux-kernel+bounces-394754-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394755-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7147B9BB382
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 12:35:27 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98D869BB385
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 12:35:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B27A1C20B7D
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 11:35:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA3CF1C2239C
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 11:35:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8030D1B21A7;
-	Mon,  4 Nov 2024 11:32:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEE3C1B6CF3;
+	Mon,  4 Nov 2024 11:33:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="k0a7qXn5"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B92115B97D;
-	Mon,  4 Nov 2024 11:32:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="IF4ar2z8"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.2])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A95C1B395D;
+	Mon,  4 Nov 2024 11:33:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730719972; cv=none; b=n3RMIZp7+QbSl7oPGVg8iFJSxuLXiekcOvEG8PRzRrz+oPmFzjHOyTY7Fwc5Une7fQ6M/hQUyKvT9DvmKZLpkjsHgY812RyWuvUuvGwo6kD/ZAAefOoB6F38b8M3c9XrCqGfXn+l2UWmuwm5WaYfsZkslbY9JcLRuIwfnq7YCtM=
+	t=1730720003; cv=none; b=IfY5DStjtN4Kvei2BYUsw8yqtOPETKv3xgMT3iEw9z/U3zaQMw2KA/jWhXLTbRUkQQk0jA1M5dZuGZw7hb1WpT1B+d37HR5fRIWKHmAYEjqD+RfGUSKeGv6ZrFEFwQoZQKmB+/9n/OVu67+OXw2qgfngVYP26MMrLrjbsvJNoVU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730719972; c=relaxed/simple;
-	bh=rBO7w7nz8IYviAX1BUMrSFsTKK2vbG0eTeURGUP/aIA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UP/1ZvR8cNSKTOlHYC5GCCGQtlcvGNvQkevwB5gbX8Qwfr3XUCry5Lx+3zzM0R2su9eOA6N+ORlJAwydbpk6panxpQ0Pw4iPxHaAVDfFUJubPS3K8wTAlmSqm5XJHh/+36irfZVTqtT4XUiaTcHkbasOI8XpnVMbS/MhtOYO/+A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=k0a7qXn5; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=BHpl1stRNcKUhfO8nh0FsJ9Z+el0uh1zfXKfLPvp/aE=; b=k0a7qXn5V4Zlb6eq+YMJGtAHwo
-	1lFqnfoakT4Iv4GM5pYF95r1JA9Ga2IMWi6t6IiieB6x3IhH7AMqCHA7ZxNgeeJngrQK7A/QEJLQz
-	5gdbgSQ1A/b/wuh1EKaSmmPWi4KpOMw0BIDHA3ENhggeGgEfpIRboN9m6mkm7QE85viDBgLWs/Qvk
-	CpwMQqqsr5vxookhrcmxMyj8xB69MROGxy+CL81P4CUgiUVkB+JPqOULjNSopuupy7ulqFiei2HRX
-	Nb4InjtU7kfpj2RFlaCCl8QmT/dbCVKITjhihkNnMbKHPzQEeSHuIYK1LEpzsqql26mUvCflrKLaE
-	vcDTi0Ng==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1t7vK6-0000000BJJu-044J;
-	Mon, 04 Nov 2024 11:32:42 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id B5EB33006AB; Mon,  4 Nov 2024 12:32:40 +0100 (CET)
-Date: Mon, 4 Nov 2024 12:32:40 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Florian Weimer <fweimer@redhat.com>
-Cc: =?iso-8859-1?Q?Andr=E9?= Almeida <andrealmeid@igalia.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Darren Hart <dvhart@infradead.org>,
-	Davidlohr Bueso <dave@stgolabs.net>, Arnd Bergmann <arnd@arndb.de>,
-	sonicadvance1@gmail.com, linux-kernel@vger.kernel.org,
-	kernel-dev@igalia.com, linux-api@vger.kernel.org,
-	Nathan Chancellor <nathan@kernel.org>
-Subject: Re: [PATCH v2 0/3] futex: Create set_robust_list2
-Message-ID: <20241104113240.GB24862@noisy.programming.kicks-ass.net>
-References: <20241101162147.284993-1-andrealmeid@igalia.com>
- <87ldy170x9.fsf@oldenburg.str.redhat.com>
+	s=arc-20240116; t=1730720003; c=relaxed/simple;
+	bh=UJODazVPcj9ulQdRw7qCL6k6lq/obUPC1HuFiRatleA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=dZ3XLDBxER+o4VjNOrPhDedAKtEyizfefkYWK7PO77rQYtaqn+J8sdw6KzCtMbTyeg6jhFVII2htio6SG322cATfrtvQuAXR7ZSE+9+O0s7cTNk0DM2CGk9Es+2/jv2e3kVUAgMODxsJUffQmbehjN735NFPtckVmCrXDU8WrdU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=IF4ar2z8; arc=none smtp.client-ip=220.197.31.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=UJODa
+	zVPcj9ulQdRw7qCL6k6lq/obUPC1HuFiRatleA=; b=IF4ar2z8GoksaeJybUaw2
+	5/HjOlOZBP2EwqMkwWdYlqUS1oPdyyRSChWP1bCA5razy+BNO2sfBVg80vox7rmE
+	jSaXMFUsrVoFWHEdnL/qhbvGwX9YHtE7xNldaiFGr4lMMZg/Q+iMQtxpf+jxsBVx
+	ebMdbgNf5+cuzYjzsN46+k=
+Received: from H00576042-PD8FB.china.huawei.com (unknown [223.104.150.4])
+	by gzga-smtp-mtada-g0-1 (Coremail) with SMTP id _____wB3eknlsChnBcbjFA--.13181S2;
+	Mon, 04 Nov 2024 19:32:55 +0800 (CST)
+From: huyizhen2024@163.com
+To: j.vosburgh@gmail.com
+Cc: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	tbogendoerfer@suse.de,
+	chengyechun1@huawei.com,
+	kuba@kernel.org,
+	andy@greyhouse.net
+Subject: [Discuss]Why enable individual port in bonding 8023ad?
+Date: Mon,  4 Nov 2024 19:32:53 +0800
+Message-Id: <20241104113253.2537-1-huyizhen2024@163.com>
+X-Mailer: git-send-email 2.29.0.windows.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87ldy170x9.fsf@oldenburg.str.redhat.com>
+Content-Transfer-Encoding: quoted-printable
+X-CM-TRANSID:_____wB3eknlsChnBcbjFA--.13181S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxWw1UKr4DKw4kGr4DXr4DXFb_yoWrCF4xpF
+	4kJ3ZrGr9F9r1Fq3y7Cw4DWws7ursaqayDJryUG3yUZayDJw1FkrsY9rZ09a9rX3ykC347
+	Xrs3KF12qF4DZ3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07j7eOJUUUUU=
+X-CM-SenderInfo: pkx1x6hkhqjiisu6il2tof0z/1tbiox2Np2coq3tIKAAAsr
 
-On Sat, Nov 02, 2024 at 10:58:42PM +0100, Florian Weimer wrote:
-
-> QEMU hints towards further problems (in linux-user/syscall.c):
-> 
->     case TARGET_NR_set_robust_list:
->     case TARGET_NR_get_robust_list:
->         /* The ABI for supporting robust futexes has userspace pass
->          * the kernel a pointer to a linked list which is updated by
->          * userspace after the syscall; the list is walked by the kernel
->          * when the thread exits. Since the linked list in QEMU guest
->          * memory isn't a valid linked list for the host and we have
->          * no way to reliably intercept the thread-death event, we can't
->          * support these. Silently return ENOSYS so that guest userspace
->          * falls back to a non-robust futex implementation (which should
->          * be OK except in the corner case of the guest crashing while
->          * holding a mutex that is shared with another process via
->          * shared memory).
->          */
->         return -TARGET_ENOSYS;
-
-I don't think we can sanely fix that. Can't QEMU track the robust thing
-itself and use waitpid() to discover the thread is gone and fudge things
-from there?
-
+Why is individual aggregator's port enabled in function ad_agg_selection_lo=
+gic ? I have found no basis for this in the IEEE 802.3ad standard.=0D
+=0D
+In fact, I had the same problem as chengyechun <chengyechun1@huawei.com> an=
+d Thomas Bogendoerfer <tbogendoerfer@suse.de>.=0D
+https://lore.kernel.org/netdev/c464627d07434469b363134ad10e3b4c@huawei.com/=
+=0D
+https://lore.kernel.org/netdev/20240404114908.134034-1-tbogendoerfer@suse.d=
+e/T/=0D
+=0D
+I use port 1 and port 2 form a bond interface and use nftables to discard L=
+ACP packets received by port 1. =0D
+=0D
+The bond configuration is as follows:=0D
+BONDING_OPTS=3D'mode=3D4 miimon=3D100 lacp_rate=3Dfast xmit_hash_policy=3Dl=
+ayer3+4'=0D
+TYPE=3DBond=0D
+BONDING_MASTER=3Dyes=0D
+BOOTPROTO=3Dstatic=0D
+NM_CONTROLLED=3Dno=0D
+IPV4_FAILURE_FATAL=3Dno=0D
+IPV6INIT=3Dyes=0D
+IPV6_AUTOCONF=3Dyes=0D
+IPV6_DEFROUTE=3Dyes=0D
+IPV6_FAILURE_FATAL=3Dno=0D
+IPV6_ADDR_GEN_MODE=3Dstable-privacy=0D
+NAME=3Dbond0=0D
+DEVICE=3Dbond0=0D
+ONBOOT=3Dyes=0D
+IPADDR=3D1.1.1.38=0D
+NETMASK=3D255.255.0.0=0D
+IPV6ADDR=3D1:1:1::39/64=0D
+=0D
+The slave configuration is as follows: and I have four similar slaves enp13=
+s0=0D
+NAME=3Denp12s0=0D
+DEVICE=3Denp12s0=0D
+BOOTPROTO=3Dnone=0D
+ONBOOT=3Dyes=0D
+USERCTL=3Dno=0D
+NM_CONTROLLED=3Dno=0D
+MASTER=3Dbond0=0D
+SLAVE=3Dyes=0D
+IPV6INIT=3Dyes=0D
+IPV6_AUTOCONF=3Dyes=0D
+IPV6_DEFROUTE=3Dyes=0D
+IPV6_FAILURE_FATAL=3Dno=0D
+=0D
+The nftables configuration is as follows:=0D
+# cat /etc/nftables.conf=0D
+table netdev filter {=0D
+chain ingress {=0D
+type filter hook ingress device enp13s0 priority 0; policy accept;=0D
+meta protocol 0x8809 drop=0D
+}=0D
+}=0D
+Then nft -f /etc/nftables.conf to apply this conf.=0D
+=0D
+During aggregation, the time sequence is as follows:=0D
+1. When bond0 receives the NETDEV_PRE_UP event, port 1 chooses as the activ=
+e LAG. Since port 1 has not received the LACPDU, port 1 is considered as an=
+ individual port and is enabled by __enable_port in function ad_agg_selecti=
+on_logic. =0D
+[37.643701] bond0: bond_netdev_event received NETDEV_PRE_UP=0D
+[37.643740] bond0: (slave enp13s0): LAG 1 chosen as the active LAG=0D
+2. The MUX state machine of port 2 enters the AD_MUX_WAITING state.=0D
+[37.643763] bond0: (slave enp14s0): Mux Machine: Port=3D2, Last State=3D0, =
+Curr State=3D1=0D
+[37.748705] bond0: (slave enp14s0): Mux Machine: Port=3D2, Last State=3D1, =
+Curr State=3D2=0D
+3. Port 2 receives the LACPDU, since port 2 has partner but port 1 has no p=
+artner, port 2 is elected as the best aggregator by ad_agg_selection_logic,=
+ then __disable_ports port 1. Port 2 is not enabled just like port 1 becaus=
+e port 2 has partner. At the same time, the MUX state machine of port 2 is =
+still in AD_MUX_WAITING (it takes about 2s AD_WAIT_WHILE_TIMER). At this ti=
+me, the system does not have any enabled port (or usable slave).=0D
+[37.960715] bond0: (slave enp14s0): LAG 2 chosen as the active LAG=0D
+4. Two seconds later, the MUX state machine of port 2 enters the AD_MUX_COL=
+LECTING_DISTRIBUTING state and enabled by ad_mux_machine. The system finall=
+y has an enabled port.=0D
+[39.976696] bond0: (slave enp14s0): Mux Machine: Port=3D2, Last State=3D2, =
+Curr State=3D3=0D
+[40.084710] bond0: (slave enp14s0): Mux Machine: Port=3D2, Last State=3D3, =
+Curr State=3D4=0D
+=0D
+Within the range from [37.960715] to [40.084710], the system does not have =
+any available port. The bond_xmit_3ad_xor_slave_get cannot obtain an availa=
+ble slave port. The bond_3ad_xor_xmit return drop, and the bond port cannot=
+ send packets.=0D
+=0D
+But if port 2 does not receive LACPDU, then almost all the time the bond ca=
+n send packets on port 1. (except that the MUX state machine of port 1 chan=
+ges from AD_MUX_ATTACHED to AD_MUX_COLLECTING_DISTRIBUTING, which is about =
+100 ms)=0D
+In the scenario where port 1 cannot receive LACPDUs and port 2 cannot recei=
+ve LACPDUs, the behavior of the bond interface should be the same. That is,=
+ whatever port 1 or port 2 cannot receive LACPDU, packets cannot be transmi=
+tted within an equal time, 2s or 100ms. But Port 1 cannot receive LACPDUs l=
+eads to 2s packet loss and port 2 cannot receive LACPDUs leads to 100 ms pa=
+cket loss.=0D
+Therefore, it is critical to understand why the individuals aggregator's po=
+rt is enabled in the function ad_agg_selection_logic. The status of the MUX=
+ state machine of port 1 is not verified. Actually, when port 1 is enabled,=
+ the MUX state machine of port 1 is not processed. According to the IEEE 80=
+2.3ad standard, the status of port 1 should be disabled.=0D
 
 
