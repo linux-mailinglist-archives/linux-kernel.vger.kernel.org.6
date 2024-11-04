@@ -1,129 +1,137 @@
-Return-Path: <linux-kernel+bounces-394460-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394462-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 845A79BAF69
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 10:16:30 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94B039BAF6E
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 10:16:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 441F62818C9
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 09:16:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D28B1F214D2
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 09:16:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6057E1ADFEA;
-	Mon,  4 Nov 2024 09:16:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB1601ADFEB;
+	Mon,  4 Nov 2024 09:16:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MGPVCOF6"
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="NGm/no/C"
+Received: from mx0a-0016f401.pphosted.com (mx0a-0016f401.pphosted.com [67.231.148.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2260D1ADFF5
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 09:16:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9490514B06C;
+	Mon,  4 Nov 2024 09:16:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.148.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730711771; cv=none; b=aXEhJ8F1ra6uneOnYXyUpC1/FOK8PFoJivvZICVxjTeoXn3+wKJX7Z98B5sHvS6GNX11Sp95hfXOHPYURmMejmOy7kDrQ3tzk3L2Ksas/qg7kDWgZeEhGGRB4nT98hZfahETn6seVi/VZ430BmRfaHKmKB4P0EiG4AYdos6xNjI=
+	t=1730711802; cv=none; b=ERc1sGhRMC0azAXwzBpKiDZPgucX5/2K7sti+HN+CiojrBgzV3sgpINirf1P+5AIrECcakf2vyWZz9rwfexxjnXXELUtYgJ8TaapyGVNcPZRAKDghFC1uXNVpawdLmskAMEWkGxlIZg8z/MQ9UpvzZzfVOguHSAKKnHG2xD+VgU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730711771; c=relaxed/simple;
-	bh=8qvvIbXZBoOhUrurg+FXL7IS9N/nTjxufCJF6UXmVG0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Y4Yw2aHt0nq1OeqCByx3tNRfPhKneraiHWmzoLajgiZE9eArGeekQh/9B0hySE6zeNC1nTHRZvBn57w+PJIiWK9vSIgrOrw741ElhK2Vv/8B3gKEt7FxZASMjSF8UVs/uMEi61WA3dZTcZQsHBFVouDHV1cuhW/xwHofkctK6LY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=MGPVCOF6; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a9a850270e2so664084066b.0
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 01:16:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1730711768; x=1731316568; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=vjW0MeEanGzE6qJjI2t+OcWT0D3B+88t+GC9PRoygKY=;
-        b=MGPVCOF6Hn02fyYFq3XHuUsgwuVGc5oyXa8OzGESEDC6S7b4/elG7NJGvM+YWbDJI4
-         a1wH5CMtOoyseSQxuzMUxjXvQR1sDJtXj3a2cX+nwQ4pdOxRQQi5iL/WcrtJtpnNszhs
-         tv/y2szsY6WRjpeqZ169bD+pywwJP7f2mXDHWZK9IC1cI00O9Mp0vJfybv6Hl4fPwmSA
-         HMLFN3nj+CZ9ytgqwYrjXjUqQFBj0NOxFu3r8ZhdlWZQRVtx0ZuDs4heUBVzzMFp2oph
-         ReVW8VaW++qCLmH5i7CcjRkq3r7PP9pnfGhF4m5At28adj0De086FXKzcvUk/rMPSA/f
-         SLcw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730711768; x=1731316568;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vjW0MeEanGzE6qJjI2t+OcWT0D3B+88t+GC9PRoygKY=;
-        b=ppg6LkUBJZyKdOqFIqO12FWMv/Y1xOlcUNI5h0+3Rn7Qx2tmzQArwFowDK0S10S9W/
-         qKPeLHxxZ6GFKjzpho4aJWP1556ETljG/ox9TErU5sgRhMUA7DWmfGyHGg8fstfWb1c0
-         uJoNAOfV5ECT2fYFpfnStQbAuZRAX80IfF7Z9T/9rgBPS8MbbZpw83cYIkq+7BwJXQXp
-         eG77wushxN4CIQtiLkIncTCu1olkYi84yTvwuktEqxrZWUabu3217K00l4BvDEO4wGLf
-         rDxhsDT/nCBtA/CR9vMVCqRBTd3b86QsILYOAarp0ODxVZc8LHUmI5FmrF7hTRsykklC
-         pVxQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV7sz9djIncBK9a32X90PyEf+8HXGwq6DPa4U1eAQkcLRujxCY96nzIkrI2gg+Va0n03pgk7jNj61WqnFI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyhx3zBLUFYGlP7h/rr8ZK76USonhdSQgDKz929SRdAWKWpFDuo
-	KUYCxKnLbg8gc+Vrukj6dUzXMOoNlT/roCoNf1Qt5NP90re9P5LASdgdcMnaIA==
-X-Google-Smtp-Source: AGHT+IEi3CGJRpuLDqOUs4AbQRJ6VtgvGgoK9lVUe7GdygoxskVpKy2yxyMGcjqfE0/N3aK1DynM8A==
-X-Received: by 2002:a17:907:2dac:b0:a9a:82e2:e8ce with SMTP id a640c23a62f3a-a9e6587e288mr1306429766b.40.1730711768194;
-        Mon, 04 Nov 2024 01:16:08 -0800 (PST)
-Received: from google.com (40.162.204.35.bc.googleusercontent.com. [35.204.162.40])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9e56494295sm535883266b.14.2024.11.04.01.16.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Nov 2024 01:16:07 -0800 (PST)
-Date: Mon, 4 Nov 2024 09:16:05 +0000
-From: Quentin Perret <qperret@google.com>
-To: Lukasz Luba <lukasz.luba@arm.com>
-Cc: Jinjie Ruan <ruanjinjie@huawei.com>, rafael@kernel.org, pavel@ucw.cz,
-	len.brown@intel.com, linux-pm@vger.kernel.org,
-	daniel.lezcano@linaro.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] PM: EM: Fix uninitialized power in em_create_perf_table
-Message-ID: <ZyiQ1YS81ZjE1Qlu@google.com>
-References: <20241104090351.1352997-1-ruanjinjie@huawei.com>
- <3386f37a-55f4-43e0-a991-7cf4ece2e55a@arm.com>
+	s=arc-20240116; t=1730711802; c=relaxed/simple;
+	bh=sW1oLLdhu3P93i3lUdlHXIgmk8ofXwGR218zPgmAIPk=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=e4og/Qya5VJmkFi6bkI77v59Wb+aqg1qa50wTK1JS48MTpcW4eVD4qF93XRc6JFvAb6RGV8PXGbt3hPhRqxqfea96msntdDBDhLi19nidXyTghL7eWMSIb/3zX3r/x3UXUFLzI2qkIaCej/6Iw+JoXNkKUWSNB0wDzE0fmnrlLo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=NGm/no/C; arc=none smtp.client-ip=67.231.148.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
+Received: from pps.filterd (m0431384.ppops.net [127.0.0.1])
+	by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A40kOkG011977;
+	Mon, 4 Nov 2024 01:16:33 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=pfpt0220; bh=P/SgrtOrXq9m3vz3An/mm6E
+	IIckisMQpwoQ3ezaHZ9k=; b=NGm/no/CpUcljoI/uzJaqWKkMyc5epPJp/EJRa4
+	ZJ2kz8frzIPeXXEQoETuWsG9JES55iNnZRgnVu6bAXfxinw+LTH3Sg8sVcKDpnlx
+	HF4db3EgcYUjSGpe6k0f+Dr2AXhmdHezMH7xb5plgURrD34dUSkFxfhwfqoDZjs8
+	qLnGJ9C8eRdp7wSvWoRyiSszSVqj9mqFEnPDVxlPBpWr/IHzAoIllwspAUaDCvvz
+	v9mY6Ts8SzqSJUkNk/RRj57BfckLbNOZFkacRe84Q7L6gYDYN3tqE7Gz16zMPPQG
+	44EPOU37xp+4X0i3gxxMeoEIdxFGSxESyZQ/hqIzdzfMLPw==
+Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
+	by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 42p97c17r6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 04 Nov 2024 01:16:33 -0800 (PST)
+Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
+ DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Mon, 4 Nov 2024 01:16:31 -0800
+Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
+ (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Mon, 4 Nov 2024 01:16:31 -0800
+Received: from IPBU-BLR-SERVER1.marvell.com (IPBU-BLR-SERVER1.marvell.com [10.28.8.41])
+	by maili.marvell.com (Postfix) with ESMTP id 28DB93F705F;
+	Mon,  4 Nov 2024 01:16:29 -0800 (PST)
+From: Gowthami Thiagarajan <gthiagarajan@marvell.com>
+To: <bhelgaas@google.com>, <linux-pci@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC: Gowthami Thiagarajan <gthiagarajan@marvell.com>
+Subject: [PATCH] PCI : Fix pcie_flag_reg in set_pcie_port_type
+Date: Mon, 4 Nov 2024 14:46:27 +0530
+Message-ID: <20241104091627.400120-1-gthiagarajan@marvell.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3386f37a-55f4-43e0-a991-7cf4ece2e55a@arm.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-ORIG-GUID: 1CSdxfY_J70drflIktYj1_BkHkU6J3xI
+X-Proofpoint-GUID: 1CSdxfY_J70drflIktYj1_BkHkU6J3xI
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.687,Hydra:6.0.235,FMLib:17.0.607.475
+ definitions=2020-10-13_15,2020-10-13_02,2020-04-07_01
 
-On Monday 04 Nov 2024 at 09:14:36 (+0000), Lukasz Luba wrote:
-> Hi Jinjie,
-> 
-> On 11/4/24 09:03, Jinjie Ruan wrote:
-> > In em_create_perf_table(), power is uninitialized and passed the pointer
-> > to active_power() hook, but the hook function may not assign it and
-> > return 0, such as mtk_cpufreq_get_cpu_power(), so the later zero check for
-> 
-> Please fix the driver. I have checked that function. It must return
-> -EINVAL when the 'policy' is not found. We cannot progress with power=0.
-> 
-> 
-> > power is not invalid, initialize power to zero to fix it.
-> > 
-> > Cc: stable@vger.kernel.org
-> > Fixes: 7d9895c7fbfc ("PM / EM: introduce em_dev_register_perf_domain function")
-> > Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
-> > ---
-> >   kernel/power/energy_model.c | 2 +-
-> >   1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/kernel/power/energy_model.c b/kernel/power/energy_model.c
-> > index 927cc55ba0b3..866a3e9c05b2 100644
-> > --- a/kernel/power/energy_model.c
-> > +++ b/kernel/power/energy_model.c
-> > @@ -344,7 +344,7 @@ static int em_create_perf_table(struct device *dev, struct em_perf_domain *pd,
-> >   				struct em_data_callback *cb,
-> >   				unsigned long flags)
-> >   {
-> > -	unsigned long power, freq, prev_freq = 0;
-> > +	unsigned long power = 0, freq, prev_freq = 0;
-> >   	int nr_states = pd->nr_perf_states;
-> >   	int i, ret;
-> 
-> 
-> This patch proposal is just a workaround.
-> 
-> When you send a patch to that MTK driver, I can review it for you so
-> please add me on CC.
+The port type in set_pcie_port_type is not set proper when an invalid
+topology is detected. Since the port type was not set proper, the child's
+extended config space becomes inaccessible.
 
-We raced, but +1 to the above :-)
+[   70.440438] pci 0002:00:00.0: [177d:a002] type 01 class 0x060401
+[   70.463056] pci 0002:00:00.0: reg 0x38: [mem 0x600000000000-0x6000000007ff pref]
+[   71.806936] pci 0002:00:00.0: bridge configuration invalid ([bus 00-00]), reconfiguring
+[   71.906688] pci (null): claims to be downstream port but is acting as upstream port, correcting type
+[   71.916138] pci 0002:01:00.0: [177d:a002] type 01 class 0x060401
+[   71.935982] pci 0002:01:00.0: reg 0x38: [mem 0x600000000000-0x6000000007ff pref]
+[   72.134703] pci 0002:01:00.0: bridge configuration invalid ([bus 00-00]), reconfiguring
+[   72.198956] pci_bus 0002:02: extended config space not accessible
+.......
+[   83.762956] pci_bus 0002:03: extended config space not accessible
+[   83.792530] pci 0002:03:00.0: [177d:a065] type 00 class 0x020000
+[   83.813188] pci 0002:03:00.0: reg 0x10: [mem 0x600000000000-0x6003ffffffff 64bit pref]
+[   83.832490] pci 0002:03:00.0: reg 0x18: [mem 0x600000000000-0x600003ffffff 64bit pref]
+[   83.848507] pci 0002:03:00.0: reg 0x20: [mem 0x600000000000-0x60000000ffff 64bit pref]
+[   83.935564] pci_bus 0002:03: busn_res: [bus 03-ff] end is updated to 03
+[   83.998804] pci_bus 0002:04: extended config space not accessible
+[   84.025026] pci 0002:04:00.0: [177d:a063] type 00 class 0x020000
+[   84.055298] pci 0002:04:00.0: reg 0x18: [mem 0x600000000000-0x600003ffffff 64bit pref]
+[   84.147582] pci_bus 0002:04: busn_res: [bus 04-ff] end is updated to 04
+[   84.202778] pci_bus 0002:05: extended config space not accessible
+[   84.228684] pci 0002:05:00.0: [177d:a063] type 00 class 0x020000
+[   84.258887] pci 0002:05:00.0: reg 0x18: [mem 0x600000000000-0x600003ffffff 64bit pref]
+
+Signed-off-by: Gowthami Thiagarajan <gthiagarajan@marvell.com>
+---
+ drivers/pci/probe.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
+index 4f68414c3086..263ec21451d9 100644
+--- a/drivers/pci/probe.c
++++ b/drivers/pci/probe.c
+@@ -1596,7 +1596,7 @@ void set_pcie_port_type(struct pci_dev *pdev)
+ 		if (pcie_downstream_port(parent)) {
+ 			pci_info(pdev, "claims to be downstream port but is acting as upstream port, correcting type\n");
+ 			pdev->pcie_flags_reg &= ~PCI_EXP_FLAGS_TYPE;
+-			pdev->pcie_flags_reg |= PCI_EXP_TYPE_UPSTREAM;
++			pdev->pcie_flags_reg |= PCI_EXP_TYPE_UPSTREAM << 4;
+ 		}
+ 	} else if (type == PCI_EXP_TYPE_UPSTREAM) {
+ 		/*
+@@ -1607,7 +1607,7 @@ void set_pcie_port_type(struct pci_dev *pdev)
+ 		if (pci_pcie_type(parent) == PCI_EXP_TYPE_UPSTREAM) {
+ 			pci_info(pdev, "claims to be upstream port but is acting as downstream port, correcting type\n");
+ 			pdev->pcie_flags_reg &= ~PCI_EXP_FLAGS_TYPE;
+-			pdev->pcie_flags_reg |= PCI_EXP_TYPE_DOWNSTREAM;
++			pdev->pcie_flags_reg |= PCI_EXP_TYPE_DOWNSTREAM << 4;
+ 		}
+ 	}
+ }
+-- 
+2.25.1
+
 
