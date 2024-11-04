@@ -1,186 +1,251 @@
-Return-Path: <linux-kernel+bounces-394813-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394814-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9462C9BB44A
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 13:13:14 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53AA69BB44B
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 13:13:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D19A1F2498B
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 12:13:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC49E1F2497D
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 12:13:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74BE01B652B;
-	Mon,  4 Nov 2024 12:13:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCBDC1B652C;
+	Mon,  4 Nov 2024 12:13:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="UDfMoCJT"
-Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="kdalWzpO"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93A911B4F15;
-	Mon,  4 Nov 2024 12:13:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24BB61B4F15;
+	Mon,  4 Nov 2024 12:13:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730722386; cv=none; b=mrqPWi0qQxZXZ+NcKCjIalHtXBWWLqLUrn+PaKObWcf/Pagd5jG7o7hBZngN7KFwdxQLgC7M81hZ7OR1jXhwY4k4ufQMd0r+H1eWqNa36skRvqpjId2e2FM6nyhfn18I9ycj5PltCrhFnJtLYhI3YTHUzEBOfvYwlZTbW6gYysY=
+	t=1730722405; cv=none; b=NTntM5UmUJ6qzqCyO72twUuX+s8qAvrf8Lk36vCBpsNck4Ev1cmvDZOsbxUdEHEsojlW8bykw5W1zgnCDEjRo5hP/OH66Gm9p9IqP/H+iCqOc9sjCkJ20Rj6L9xETaCtVUrssMs3+15s7Usv75xk44DLG1xaE8WpbxoUZBTosUk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730722386; c=relaxed/simple;
-	bh=3EfRZikjOd6hHl542PDBgADBfoEuuFC9YaROOj7fHUM=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=J+AU4nCO0wr4caxB+xgq71xkUnxUZ4oUUzF9tT8L6rbnISTG10+FXFMEOpmic2xcSDPqXjK8G4QoeWXXOTe7hOXD0XqyB8CpIgwApVnNM0uY76xVEqGHjclqawykIFdyVsbtm0nN8EWJMD80HZ2WCTroGuZ9nZqJO+ihkNbnlo8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=UDfMoCJT; arc=none smtp.client-ip=198.47.23.248
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4A4CCk5Q009117;
-	Mon, 4 Nov 2024 06:12:46 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1730722366;
-	bh=qWe9yZVKp9lQnh1EpUy8j2D7QQ0wdm66TmKhai599sk=;
-	h=From:To:CC:Subject:Date;
-	b=UDfMoCJTV+OGWMHtkPnHWN9EQM+kivRS0GVX96oRPdV51uw3MbS0mQV7aMqc+cQ3w
-	 Bj2FRHFLDF2TiqyuBK10uutjHXwjvPA4V9X2ntKwYxGN+h7pLK/gyhHfU7ifa9Y3r6
-	 0DOpvYVYEsFOf/T5/IDWRjPLOssmmnEvucN57lEE=
-Received: from DLEE106.ent.ti.com (dlee106.ent.ti.com [157.170.170.36])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4A4CCkk1023279
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Mon, 4 Nov 2024 06:12:46 -0600
-Received: from DLEE104.ent.ti.com (157.170.170.34) by DLEE106.ent.ti.com
- (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 4
- Nov 2024 06:12:45 -0600
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE104.ent.ti.com
- (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Mon, 4 Nov 2024 06:12:45 -0600
-Received: from a-dutta.dhcp.ti.com (a-dutta.dhcp.ti.com [10.24.68.112])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4A4CCfqu002463;
-	Mon, 4 Nov 2024 06:12:42 -0600
-From: Anurag Dutta <a-dutta@ti.com>
-To: <nm@ti.com>, <vigneshr@ti.com>, <kristo@kernel.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <vaishnav.a@ti.com>,
-        <j-keerthy@ti.com>
-CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <u-kumar1@ti.com>
-Subject: [PATCH v2] arm64: dts: ti: k3-j784s4: Fix clock IDs for MCSPI instances
-Date: Mon, 4 Nov 2024 17:42:41 +0530
-Message-ID: <20241104121241.102027-1-a-dutta@ti.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1730722405; c=relaxed/simple;
+	bh=c1+dZrjYSFCH7uQsyYckwZD/L6GG2H2kWKeJkEmFapA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Nas7bqydaB/fvlrfaqhOBQIETwlQumr58iQjzy4IdA542x+4gZRNRionXlaADzEJPWvEEC59UXl3TGKFN0AJ9eRskfq+6JEuDTVjIMaXqgL54F9vYYYhygWF+zxTB+F7/uEP3pIEI/WorsohF0iHdvPeUOIryb5ETAL1HYna20E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=kdalWzpO; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A4BfskL012085;
+	Mon, 4 Nov 2024 12:13:22 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=xKXkot
+	FI4sjSkLqsBcciFLFs+T5q9Lom7epCVHqTUf8=; b=kdalWzpOEqLRUzOP3ZDmGO
+	7EFU7qnXjWKPwRnjq6h9QMfjtC4L9Tr9q2iiP85gUluE9qELZH+8Z+jsOWkezNF0
+	YXrUMWiSojVFqsfBv8yN2nezjULjzM5/uEvKRW0q55525r6dNMO1FE8+6QHFgqNw
+	kplX6wqkZ7t/Fkg0pJ3XpYtxhgXFXHeLPaJTl9wqOy/QyACeKtbnDRFZGv4cgD8N
+	S43E7rDNeLU57cRG+baJsJ4JqsH0Ote+iad6dqJdsnRv80gBLBQXNNKrOi/smJhk
+	omgdk0MDxV1XRF5hNJRVosGhuocvpLRxtGPAtuMMfcb5USVPI+/i382XsNN+oeiw
+	==
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42pwkg83vp-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 04 Nov 2024 12:13:21 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4A4BD7aI012237;
+	Mon, 4 Nov 2024 12:13:21 GMT
+Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 42p140sxw4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 04 Nov 2024 12:13:20 +0000
+Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
+	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4A4CDHfj30671578
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 4 Nov 2024 12:13:17 GMT
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 3482120063;
+	Mon,  4 Nov 2024 12:13:17 +0000 (GMT)
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id C9D8520043;
+	Mon,  4 Nov 2024 12:13:16 +0000 (GMT)
+Received: from [9.171.49.1] (unknown [9.171.49.1])
+	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Mon,  4 Nov 2024 12:13:16 +0000 (GMT)
+Message-ID: <5bd1d878-69d0-4d27-9129-6fb8126ccb31@linux.ibm.com>
+Date: Mon, 4 Nov 2024 13:13:16 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] s390/uvdevice: Support longer secret lists
+To: Steffen Eiden <seiden@linux.ibm.com>, linux-kernel@vger.kernel.org,
+        linux-s390@vger.kernel.org
+Cc: Ingo Franzki <ifranzki@linux.ibm.com>,
+        Christoph Schlameuss <schlameuss@linux.ibm.com>,
+        Claudio Imbrenda <imbrenda@linux.ibm.com>, borntraeger@linux.ibm.com
+References: <20241031093541.1641849-1-seiden@linux.ibm.com>
+Content-Language: en-US
+From: Janosch Frank <frankja@linux.ibm.com>
+Autocrypt: addr=frankja@linux.ibm.com; keydata=
+ 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
+In-Reply-To: <20241031093541.1641849-1-seiden@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: Fl6xkvTP2rwac-ftxcpgEA9kmfHyQdOw
+X-Proofpoint-GUID: Fl6xkvTP2rwac-ftxcpgEA9kmfHyQdOw
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 mlxscore=0
+ priorityscore=1501 adultscore=0 malwarescore=0 clxscore=1015 spamscore=0
+ phishscore=0 lowpriorityscore=0 bulkscore=0 mlxlogscore=999
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411040106
 
-The clock IDs for multiple MCSPI instances across wakeup domain
-in J784s4 are incorrect when compared with documentation [1]. Fix
-the clock IDs to their appropriate values.
+On 10/31/24 10:35 AM, Steffen Eiden wrote:
+> Enable the list IOCTL to provide lists longer than on page (85 entries).
 
-[1]https://software-dl.ti.com/tisci/esd/latest/5_soc_doc/j784s4/clocks.html
+s/on/one/
 
-Fixes: e23d5a3d116d ("arm64: dts: ti: k3-j784s4: Add MCSPI nodes")
+> The list IOCTL accepts argument length up to 8 pages in page granularity
+> and will fill the argument up to this length with entries until the list
+> ends. User space unaware of this enhancement will still receive one page
+> of data and an uv_rc 0x0100.
 
-Signed-off-by: Anurag Dutta <a-dutta@ti.com>
----
+Once the length check is fixed I'll be happy with this patch.
 
-Hi all,
-The original series is : [1]. It is a series of 4 patches out of which the first 3
-have already been applied to branch ti-k3-dts-next on [2]. However, the fourth patch 
-[4/4] arm64: dts: ti: k3-j784s4: Fix clock IDs for MCSPI instances does not apply
-cleanly because the changes should be in arch/arm64/boot/dts/ti/k3-j784s4-j742s2-main-common.dtsi
-and not in arch/arm64/boot/dts/ti/k3-j784s4-main.dtsi.
-  
-v2: Changelog:
-- Changed the clock IDs in arch/arm64/boot/dts/ti/k3-j784s4-j742s2-main-common.dtsi instead of
-arch/arm64/boot/dts/ti/k3-j784s4-main.dtsi
+> 
+> Signed-off-by: Steffen Eiden <seiden@linux.ibm.com>
+> ---
+> Reworked the whole list-creation loop. Hardened+simplified the implementation.
+> Now, only the actual data filled by the CP is copied to userspace.
+> 
+>   arch/s390/include/uapi/asm/uvdevice.h |  1 +
+>   drivers/s390/char/uvdevice.c          | 72 ++++++++++++++++++++-------
+>   2 files changed, 54 insertions(+), 19 deletions(-)
+> 
+> diff --git a/arch/s390/include/uapi/asm/uvdevice.h b/arch/s390/include/uapi/asm/uvdevice.h
+> index 4947f26ad9fb..c584250d4a35 100644
+> --- a/arch/s390/include/uapi/asm/uvdevice.h
+> +++ b/arch/s390/include/uapi/asm/uvdevice.h
+> @@ -71,6 +71,7 @@ struct uvio_uvdev_info {
+>   #define UVIO_ATT_ADDITIONAL_MAX_LEN	0x8000
+>   #define UVIO_ADD_SECRET_MAX_LEN		0x100000
+>   #define UVIO_LIST_SECRETS_LEN		0x1000
+> +#define UVIO_LIST_SECRETS_MAX_LEN	0x8000
 
-Link to v1: https://lore.kernel.org/all/20241023104532.3438851-5-a-dutta@ti.com/
+Since we're only ever allocating a page in the kernel it doesn't really 
+make sense to arbitrarily limit this IMHO.
 
-[1] https://lore.kernel.org/all/20241023104532.3438851-1-a-dutta@ti.com/
-[2] https://git.kernel.org/pub/scm/linux/kernel/git/ti/linux.git
- 
-.../dts/ti/k3-j784s4-j742s2-main-common.dtsi     | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+A check for 0 and page alignment should be enough.
 
-diff --git a/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-main-common.dtsi b/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-main-common.dtsi
-index 7721852c1f68..f27f7ae51479 100644
---- a/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-main-common.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-main-common.dtsi
-@@ -2040,7 +2040,7 @@ main_spi0: spi@2100000 {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
- 		power-domains = <&k3_pds 376 TI_SCI_PD_EXCLUSIVE>;
--		clocks = <&k3_clks 376 1>;
-+		clocks = <&k3_clks 376 0>;
- 		status = "disabled";
- 	};
- 
-@@ -2051,7 +2051,7 @@ main_spi1: spi@2110000 {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
- 		power-domains = <&k3_pds 377 TI_SCI_PD_EXCLUSIVE>;
--		clocks = <&k3_clks 377 1>;
-+		clocks = <&k3_clks 377 0>;
- 		status = "disabled";
- 	};
- 
-@@ -2062,7 +2062,7 @@ main_spi2: spi@2120000 {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
- 		power-domains = <&k3_pds 378 TI_SCI_PD_EXCLUSIVE>;
--		clocks = <&k3_clks 378 1>;
-+		clocks = <&k3_clks 378 0>;
- 		status = "disabled";
- 	};
- 
-@@ -2073,7 +2073,7 @@ main_spi3: spi@2130000 {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
- 		power-domains = <&k3_pds 379 TI_SCI_PD_EXCLUSIVE>;
--		clocks = <&k3_clks 379 1>;
-+		clocks = <&k3_clks 379 0>;
- 		status = "disabled";
- 	};
- 
-@@ -2084,7 +2084,7 @@ main_spi4: spi@2140000 {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
- 		power-domains = <&k3_pds 380 TI_SCI_PD_EXCLUSIVE>;
--		clocks = <&k3_clks 380 1>;
-+		clocks = <&k3_clks 380 0>;
- 		status = "disabled";
- 	};
- 
-@@ -2095,7 +2095,7 @@ main_spi5: spi@2150000 {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
- 		power-domains = <&k3_pds 381 TI_SCI_PD_EXCLUSIVE>;
--		clocks = <&k3_clks 381 1>;
-+		clocks = <&k3_clks 381 0>;
- 		status = "disabled";
- 	};
- 
-@@ -2106,7 +2106,7 @@ main_spi6: spi@2160000 {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
- 		power-domains = <&k3_pds 382 TI_SCI_PD_EXCLUSIVE>;
--		clocks = <&k3_clks 382 1>;
-+		clocks = <&k3_clks 382 0>;
- 		status = "disabled";
- 	};
- 
-@@ -2117,7 +2117,7 @@ main_spi7: spi@2170000 {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
- 		power-domains = <&k3_pds 383 TI_SCI_PD_EXCLUSIVE>;
--		clocks = <&k3_clks 383 1>;
-+		clocks = <&k3_clks 383 0>;
- 		status = "disabled";
- 	};
- 
--- 
-2.34.1
+>   #define UVIO_RETR_SECRET_MAX_LEN	0x2000
+>   
+>   #define UVIO_DEVICE_NAME "uv"
+> diff --git a/drivers/s390/char/uvdevice.c b/drivers/s390/char/uvdevice.c
+> index 1f90976293e8..667d573e54b0 100644
+> --- a/drivers/s390/char/uvdevice.c
+> +++ b/drivers/s390/char/uvdevice.c
+> @@ -297,6 +297,43 @@ static int uvio_add_secret(struct uvio_ioctl_cb *uv_ioctl)
+>   	return ret;
+>   }
+>   
+> +/*
+> + * Do the actual secret list creation. Calls the list-UVC until there is no more
+
+list secrets UVC
+
+> + * space in the user buffer, or the list ends.
+> + */
+> +static int uvio_get_list(void *zpage, struct uvio_ioctl_cb *uv_ioctl)
+> +{
+> +	const size_t data_off = offsetof(struct uv_secret_list, secrets);
+> +	u8 __user *user_buf = (u8 __user *)uv_ioctl->argument_addr;
+> +	struct uv_secret_list *list = zpage;
+> +	u16 num_secrets_stored = 0;
+> +	size_t user_off = data_off;
+> +	size_t copy_len;
+> +
+> +	do {
+> +		uv_list_secrets(list, list->next_secret_idx, &uv_ioctl->uv_rc,
+> +				&uv_ioctl->uv_rrc);
+> +		if (uv_ioctl->uv_rc != UVC_RC_EXECUTED &&
+> +		    uv_ioctl->uv_rc != UVC_RC_MORE_DATA)
+> +			break;
+> +
+> +		copy_len = sizeof(list->secrets[0]) * list->num_secr_stored;
+> +		WARN_ON(copy_len > sizeof(list->secrets));
+> +
+> +		if (copy_to_user(user_buf + user_off, list->secrets, copy_len))
+> +			return -EFAULT;
+> +
+> +		user_off += copy_len;
+> +		num_secrets_stored += list->num_secr_stored;
+> +	} while (uv_ioctl->uv_rc == UVC_RC_MORE_DATA &&
+> +		 user_off + sizeof(*list) <= uv_ioctl->argument_len);
+> +
+> +	list->num_secr_stored = num_secrets_stored;
+> +	if (copy_to_user(user_buf, list, data_off))
+> +		return -EFAULT;
+> +	return 0;
+> +}
+> +
+>   /** uvio_list_secrets() - perform a List Secret UVC
+>    * @uv_ioctl: ioctl control block
+>    *
+> @@ -308,6 +345,12 @@ static int uvio_add_secret(struct uvio_ioctl_cb *uv_ioctl)
+>    *
+>    * The argument specifies the location for the result of the UV-Call.
+>    *
+> + * Argument len must be a multiple of a page; 1-8 pages allowed.
+
+Fix comment when adjusting len check.
+
+> + * The list secrets IOCTL will call the list UVC multiple times and fill
+> + * the provided user-buffer with list elements until either the list ends or
+> + * the buffer is full. The list header is merged over all list header from the
+> + * individual UVCs.
+> + *
+
 
 
