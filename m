@@ -1,124 +1,92 @@
-Return-Path: <linux-kernel+bounces-395308-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395310-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44A679BBC24
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 18:36:53 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F1199BBC2F
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 18:41:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A0E8284A78
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 17:36:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6FC531C2175D
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 17:41:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EF581CACDE;
-	Mon,  4 Nov 2024 17:36:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F6F91C9B81;
+	Mon,  4 Nov 2024 17:41:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="CIRF+EHc";
-	dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="DH/nCuB3"
-Received: from a7-47.smtp-out.eu-west-1.amazonses.com (a7-47.smtp-out.eu-west-1.amazonses.com [54.240.7.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="bdsxy9nV"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14C741BF7FC;
-	Mon,  4 Nov 2024 17:36:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.240.7.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B93F1C82E6;
+	Mon,  4 Nov 2024 17:41:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730741792; cv=none; b=PDxnvYzrKM+kvljEPjXIWy9Xn5WXtva3VTRhY4X5+pRU69ZccmDwSGelqBQ9vfytBz864jgry+NGil+OfGJ+/HJMWLXILRwciZ05CVV1DHFFd9v6mKMhLiDNMw1lyh3T6WcNH19L12FBekoQ/8jeI9BASi6SfU6T/0Tapt+BG1c=
+	t=1730742078; cv=none; b=J68o5cHQZpzCyoOmcZwsn4bG87N7ISrIJqycExNm2GeXLSW2dU6aLZ6y2hW1Jw/gj2pJjCi7GHCsstkeQCpNUcQrvVkYYKkYt/Ufx8dzQ+Lkcd1o8IpeqF95hBMjHo+DccgjsvDzJhu+zgBanfQB2CWCn8K1Nen6rLb1AxLHMj4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730741792; c=relaxed/simple;
-	bh=94hCjKcduiczE0wvCl6xthLzM/0FYi9pPwSy54aZqTE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=bUaUCykZMtsecQPMqK8ctD2+zSZJGrU6RKhORKG8QBwyFWuaU/8z39RUexeTIfqkCpmMy0hacbuGKgeSkZHhkvMER+wTfGxZvlV28GIme+mrxXIgMQEzLNqBAt08GN+X6GgsdxEnQFOcMvVg2LOl07Cip1ipBpWLNbct3sY7C90=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=amazonses.collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=CIRF+EHc; dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b=DH/nCuB3; arc=none smtp.client-ip=54.240.7.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazonses.collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-	s=bc7lryepznv65m6r2ewkpoafjt4fiq42; d=collabora.com; t=1730741788;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding;
-	bh=94hCjKcduiczE0wvCl6xthLzM/0FYi9pPwSy54aZqTE=;
-	b=CIRF+EHcEwNIw/ANsum1vtxx+H2IDK/YCvNYKDJDrkUQfsTOmUQ8l6dIoLcUJrIJ
-	KslMazeP+C+PfURiTYnGbONdOqzDwgIXd8e8aB4FeHkcWwwnX8KDCjL6lxG70T3Dpc2
-	mx+1dENZn/COUqKBAehzPeZIkeMV5acyWkUvokW38ks6pyKtNMRIs241S6c7yqsDoeb
-	xZNqK3rYNrEjtLRxf6lbT4u6B8f4uwIopux0SMHonL2cey9ipbpXPfGb2oSy89ZDBvN
-	ANnw5L1sOqbdWlnQSnV9FCYMG6lN4cQqsj/iix/WTHNiZJJOmlyorlqDhAffnlP0p5y
-	clE9b1k65Q==
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-	s=uku4taia5b5tsbglxyj6zym32efj7xqv; d=amazonses.com; t=1730741788;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Feedback-ID;
-	bh=94hCjKcduiczE0wvCl6xthLzM/0FYi9pPwSy54aZqTE=;
-	b=DH/nCuB3vwJLFE12/fGQ4WwumN4pripTBf3lniasyiqUkd1ML/u62/haTeHNuMWo
-	83R/2dT9Eoz+f3QE/MO35EG0GHiS4gmX2ZVhNtvdMsbHH3W7OyD72U3MxIyNDcoxjT8
-	/9UW+VAC4vDjPuBeiURhLte9tiWyUAiUqIiOdYF8=
-From: Benjamin Gaignard <benjamin.gaignard@collabora.com>
-To: ezequiel@vanguardiasur.com.ar, p.zabel@pengutronix.de, 
-	mchehab@kernel.org
-Cc: linux-media@vger.kernel.org, linux-rockchip@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, kernel@collabora.com, 
-	Benjamin Gaignard <benjamin.gaignard@collabora.com>
-Subject: [PATCH 2/2] media: verisilicon: Fix IMX8 native pixels format steps values
-Date: Mon, 4 Nov 2024 17:36:28 +0000
-Message-ID: <01020192f83fdef5-358ea072-9630-473f-9407-53be13d85864-000000@eu-west-1.amazonses.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241104173623.1058335-1-benjamin.gaignard@collabora.com>
-References: <20241104173623.1058335-1-benjamin.gaignard@collabora.com>
+	s=arc-20240116; t=1730742078; c=relaxed/simple;
+	bh=xnVTWkalRJCWw5WZlC8+5KqaanyJ1FOj72eGA4hFVdM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aKDGCZcC9JatjuzsiWJ6gJrl4F/2XtAS5OOq+Y6E8eeexPf753CVyvfTNWI7I3qcmwGxYCcf1cxGCPXH4XxryTVjSW4fSimwjO+duzyNis/lCr4FUgD5Hbt0C19dACHChka1iwugCwu3JzpUpsOrGvA29kfcBb+/0Zx1YTHuB6k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=bdsxy9nV; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 5C6A840E0163;
+	Mon,  4 Nov 2024 17:41:14 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id 9BzomZbwGONy; Mon,  4 Nov 2024 17:41:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1730742067; bh=ziPRZMN9GLRMfEhJa/LLVOSx0r9syDdWy5ak1INEYhc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=bdsxy9nVL+I63jgx8zDI0M0t3b72VUIS/gN4FixbaiKDI/SpYtUiWvTfOn3BcRO9E
+	 tNRYzht26YTkNlB15up7i8LXhXOk4bvP6onJ4DjVCjZlU5dJvrcLcvsaulWbPObcjv
+	 UFs3CJ1ONPJriTkrkEz42LNSqzs2lNQzsHXoySqna4DppsyK9IAE/9VSbwyZcjPneZ
+	 t09prQSMFBr6p735Z5kw36AGSZcpfUu8eAmrgGZAZthKYWMugJe+JH59+ZBm999WPu
+	 GVuVPteJUIp0I/ncDaewSN04FSboyWk1V9g/5mptbNeiNvEJtsU5Cd4JYByRr1+u9m
+	 13uUu5sTyq+keGVvEgaJRzrqs4bGrAlnMghxhy2a03F2nc9uYjzyYUOicmpW3Ct+0q
+	 v3oSI4scKgDuoY8w2LYVL+8OIEFNLsYDROOLy/k4kwH6VhwxfHkLPty4IoXm0loCQs
+	 8mLZrw3Y9vMz4aiOJ2lx5Koro662hTtqptKUeh6QDEVoOJYD3PhfcOSNkbJCufOO9R
+	 27LFRRqJVtuenUGZ9581kk7pzLXXsaXvm2WhhbDX7SrjoM6PtDIl9ZTEOl+N3QTzDe
+	 1cIhamJARXtLTofUQCxFW7OyIrnqayIkF9OxsqBHcPHEEGL7PYVB2PeUGQHyCdJ9LM
+	 E6wNlVUq1Ec4ri36UttGdZac=
+Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 2D85440E0028;
+	Mon,  4 Nov 2024 17:40:58 +0000 (UTC)
+Date: Mon, 4 Nov 2024 18:40:52 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Orange Kao <orange@aiven.io>
+Cc: tony.luck@intel.com, qiuxu.zhuo@intel.com, james.morse@arm.com,
+	orange@kaosy.org, linux-edac@vger.kernel.org,
+	linux-kernel@vger.kernel.org, mchehab@kernel.org, rric@kernel.org
+Subject: Re: [PATCH 3/3] EDAC/igen6: Add polling support
+Message-ID: <20241104174052.GHZykHJEiU2KPqIMRr@fat_crate.local>
+References: <20241104124237.124109-1-orange@aiven.io>
+ <20241104124237.124109-4-orange@aiven.io>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Feedback-ID: ::1.eu-west-1.YpP9ZbxnARFfy3Cb5pfsLd/pdsXBCNK0KEM7HforL4k=:AmazonSES
-X-SES-Outgoing: 2024.11.04-54.240.7.47
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241104124237.124109-4-orange@aiven.io>
 
-Hantro decoder non post-processed pixels formats steps are different
-from post-processed ones.
-Fix the steps according to hardware limitation.
-Since reference frame pixels format issue has been fix, it is possible
-to use V4L2_PIX_FMT_NV15_4L4 rather V4L2_PIX_FMT_P010_4L4 for 10bits
-streams.
+On Mon, Nov 04, 2024 at 12:40:54PM +0000, Orange Kao wrote:
+> +module_param(edac_op_state, int, 0444);
+> +MODULE_PARM_DESC(edac_op_state, "EDAC Error Reporting state: 0=Poll, Others or default=Auto detect");
 
-Fluster VP9 score goes up to 207/305.
-HEVC score is still 141/147.
+Why is this module parameter here instead of detecting those broken machines
+and enabling polling on them by default and automatically?
 
-Signed-off-by: Benjamin Gaignard <benjamin.gaignard@collabora.com>
----
- drivers/media/platform/verisilicon/imx8m_vpu_hw.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/media/platform/verisilicon/imx8m_vpu_hw.c b/drivers/media/platform/verisilicon/imx8m_vpu_hw.c
-index f850d8bddef6..35799da534ed 100644
---- a/drivers/media/platform/verisilicon/imx8m_vpu_hw.c
-+++ b/drivers/media/platform/verisilicon/imx8m_vpu_hw.c
-@@ -187,23 +187,23 @@ static const struct hantro_fmt imx8m_vpu_g2_dec_fmts[] = {
- 		.frmsize = {
- 			.min_width = FMT_MIN_WIDTH,
- 			.max_width = FMT_UHD_WIDTH,
--			.step_width = TILE_MB_DIM,
-+			.step_width = 8,
- 			.min_height = FMT_MIN_HEIGHT,
- 			.max_height = FMT_UHD_HEIGHT,
--			.step_height = TILE_MB_DIM,
-+			.step_height = 32,
- 		},
- 	},
- 	{
--		.fourcc = V4L2_PIX_FMT_P010_4L4,
-+		.fourcc = V4L2_PIX_FMT_NV15_4L4,
- 		.codec_mode = HANTRO_MODE_NONE,
- 		.match_depth = true,
- 		.frmsize = {
- 			.min_width = FMT_MIN_WIDTH,
- 			.max_width = FMT_UHD_WIDTH,
--			.step_width = TILE_MB_DIM,
-+			.step_width = 8,
- 			.min_height = FMT_MIN_HEIGHT,
- 			.max_height = FMT_UHD_HEIGHT,
--			.step_height = TILE_MB_DIM,
-+			.step_height = 32,
- 		},
- 	},
- 	{
 -- 
-2.43.0
+Regards/Gruss,
+    Boris.
 
+https://people.kernel.org/tglx/notes-about-netiquette
 
