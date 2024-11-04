@@ -1,72 +1,86 @@
-Return-Path: <linux-kernel+bounces-394090-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394069-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F1F29BAA7A
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 02:45:17 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F9959BAA63
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 02:41:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C7D911C21C3D
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 01:45:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1AD041F21614
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 01:41:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88CA5173347;
-	Mon,  4 Nov 2024 01:41:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A8B6161326;
+	Mon,  4 Nov 2024 01:41:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MFkuTGFs"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eMY5SUM7"
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6517C1ABEC7
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 01:41:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA4646FD5;
+	Mon,  4 Nov 2024 01:41:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730684508; cv=none; b=bRjbw+YzSlsqkYzFwJ7YOkx3KMi37aV6cunisiWzmezNTjRGazzmJIC5Y1sWATfGFKBYgzrQw4BqNbtufZiuIXBX2wE4a3qVhFuTD9RSYaKmlCDTHrrSxvDL8h11+OJ3x9jVoInqf/9DZFHNbEah89V1kdE1rP/tb4q04LmQkMA=
+	t=1730684467; cv=none; b=M84g2e03nET1DJGTejXOpt8YtIgHlCa6vQePb7f96Y//fMOQXqcbJqtZTb30p/BaifG2tfMqP4uQexCvMjXpV/ohk3TfeWHx482G7yIcaa+VJczDhO6Ku92p0lnURSBPPtjgL2n4Hd5wy+2VRb/+bppAkKebwPUeXa93FAh2KyY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730684508; c=relaxed/simple;
-	bh=RjyMbzs1u1VZ99xwpXgLIBhgK5JbywVeNN9P5Z+O5sU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=KpBrAWkQha0HUw/eLCgD8w6v4AHVIk6CYi41a/+xIWN8ypXXNR6S1FtSEOrSgD2nCwoluQjYRXe5UIck3VAjO+qsxevc17g9/GmmURSmEDKNyof9LjzPKjaVLdQYPsU1CsRYJbntNa0//i0Li+rglbSwvigHxu8DJQAHS8fPdvI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MFkuTGFs; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730684507; x=1762220507;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=RjyMbzs1u1VZ99xwpXgLIBhgK5JbywVeNN9P5Z+O5sU=;
-  b=MFkuTGFsCxVNnQQhEKdYjejwnUWvTja+s72yhH0dA6krSQJ6Ruep05EM
-   Yz9hCskdWG9aYL960LgnHeqrimxtCAx/8AS5QutLK9QMEF6X4Ly7jN9+o
-   Uy7MT+I2atoUYa7TPzOihZUdr79ei4D9vOyqZ2dzbBKBdJRJkCzrj8DSa
-   lJr5ZMlfQNarOHtud3fakCw4SVKgmbZm1vVD7WXUr2AOg0h2qhrJGrTgH
-   xiYewKtUMjNTUhgLRfTXpyEqZL2f3ik6UrSWpPYUSNeCQZhpP6xQkTPao
-   lAIPTHd6Hs8PQbRn2vCb0oEPVJtfoD0YMUfJUvGhXJ/So8wSONVs8xRyx
-   A==;
-X-CSE-ConnectionGUID: g7vYiI8pSSaVoBk0ubX8/g==
-X-CSE-MsgGUID: 7COs5zsqQG+m03LmLGoN3Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="30221969"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="30221969"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2024 17:41:47 -0800
-X-CSE-ConnectionGUID: s14UIzNBRsaDRwMMM2zycQ==
-X-CSE-MsgGUID: CkXgiWLpTsK5gqAWUfv0Lw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,256,1725346800"; 
-   d="scan'208";a="88020910"
-Received: from allen-sbox.sh.intel.com ([10.239.159.30])
-  by fmviesa005.fm.intel.com with ESMTP; 03 Nov 2024 17:41:46 -0800
-From: Lu Baolu <baolu.lu@linux.intel.com>
-To: Joerg Roedel <joro@8bytes.org>
-Cc: iommu@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 19/19] iommu/vt-d: Drain PRQs when domain removed from RID
-Date: Mon,  4 Nov 2024 09:40:39 +0800
-Message-ID: <20241104014040.106100-20-baolu.lu@linux.intel.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241104014040.106100-1-baolu.lu@linux.intel.com>
-References: <20241104014040.106100-1-baolu.lu@linux.intel.com>
+	s=arc-20240116; t=1730684467; c=relaxed/simple;
+	bh=tC4PqQJJYcdMyZvQ+5LwuLep63laWjsCpdNbGMW0fbE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=gm+nE4+uP2sWwvkx+sxKQkO+wX1z9PwNUQbquYZOSOVczjyOs/gt5KTf8wZXriicEKlc52bwN38Dj9WhYZ2SE7vLnc6jAr0/u0fuJccmig9m14aY3Gzp70vFIprFMt+FIVZN6+3tYim97QJdzaspjAb8fAgnj6u2qecZW3//YvQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eMY5SUM7; arc=none smtp.client-ip=209.85.210.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-71e7086c231so3072560b3a.0;
+        Sun, 03 Nov 2024 17:41:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730684465; x=1731289265; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=I6lIXV9swQCB9hiaNbT3cZZ02Y4/nQybP/TZFkA0ruQ=;
+        b=eMY5SUM7qhj0VMgR09cTivyXIyQG3kL8ZgbuBgZB5oCDJYOGCpk9ik2bD0TeQYaW9S
+         oXGmepFYwnhdTiiSpCBHngxLSw92v1+vAsB7t4okLGsL+Ipogk+LYojQ/mTi3qhFnClK
+         96X6rG4Lfin0rIi7Sjjyi3oO1WuFflD9f/d9W6Xu0gaFK4jm9Byl+MokMccerBjaffUU
+         RBIAYW8pE4LJWS8pfnF5QkmqouE+KDcxNZauBd/+Y/rAjgszFzr9/a4wGfvZllPLWkM4
+         JiYQj3inoj3xNNcqL667+NkGuBNxHNDNW8HAN/klkKuWSa93YYYpxmA/8JgY0rbbUEv4
+         +bJw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730684465; x=1731289265;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=I6lIXV9swQCB9hiaNbT3cZZ02Y4/nQybP/TZFkA0ruQ=;
+        b=KZj/yGt3BLtgqc5GMHL6nOcbwLqXVLBYnDGZXv58hhBD4r/j3ySCKOWZmXB5jKHPIx
+         1Iity6B+LHEFxvnX2xk0MWd75ZF8a2uolFyMEKvQk+97p0pUDsl0kjB1EC923FsVcQ5v
+         5JM6NbTlLDi6N2EdiEJ3oNgrhSy5ioG/qzXCDiAvkgl0kdALjaOzEV5OUNiRvDEpJBvF
+         xoHWgTA809CEyC9up5Qp/dkx2hH5+mXIkgPLFGFlSPzpjUB2yOk5apy3nzRhvDMHb4oK
+         l9b9Enz/Byu2MsWK8FBnAYx1wgv9tx4z8jUNxbfZ4rTa7BMfdIvZEJwS00/gXOiiCjdq
+         shvw==
+X-Forwarded-Encrypted: i=1; AJvYcCXThPCSREuhVw2NP484RcjDEq33obO74llYiqpHJCgpWEg1sw/B5Ccw9NW466tt2Jq0bZGv5Do0r6nRn9w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzKDQsJ5+uIW7VUUt+M/Vn6J5YPwY+99M9MCy6lFX2VJH1lv+PK
+	0qtnPX1NcogSNJXzUqQRrZI0PSdpZVBkkpjNiaNf0c0D6HfylcRK
+X-Google-Smtp-Source: AGHT+IEleneOzPh8AcU0YpyHeBsvSXiWFO8A4OagbGaaN0pkrKH4OXemu5YZHxUMCuxXv/PDznx3Pw==
+X-Received: by 2002:a05:6a21:4d8b:b0:1d0:2531:b2b9 with SMTP id adf61e73a8af0-1d9a851ef40mr39255164637.36.1730684465021;
+        Sun, 03 Nov 2024 17:41:05 -0800 (PST)
+Received: from localhost.localdomain ([2607:f130:0:105:216:3cff:fef7:9bc7])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-720bc1e5995sm6238815b3a.70.2024.11.03.17.40.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 03 Nov 2024 17:41:04 -0800 (PST)
+From: zhangshida <starzhangzsd@gmail.com>
+X-Google-Original-From: zhangshida <zhangshida@kylinos.cn>
+To: djwong@kernel.org,
+	dchinner@redhat.com,
+	leo.lilong@huawei.com,
+	wozizhi@huawei.com,
+	osandov@fb.com,
+	xiang@kernel.org,
+	zhangjiachen.jaycee@bytedance.com
+Cc: linux-xfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	zhangshida@kylinos.cn,
+	starzhangzsd@gmail.com
+Subject: [PATCH 0/5] *** Introduce new space allocation algorithm ***
+Date: Mon,  4 Nov 2024 09:40:41 +0800
+Message-Id: <20241104014046.3783425-1-zhangshida@kylinos.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,109 +89,112 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-As this iommu driver now supports page faults for requests without
-PASID, page requests should be drained when a domain is removed from
-the RID2PASID entry.
+From: Shida Zhang <zhangshida@kylinos.cn>
 
-This results in the intel_iommu_drain_pasid_prq() call being moved to
-intel_pasid_tear_down_entry(). This indicates that when a translation
-is removed from any PASID entry and the PRI has been enabled on the
-device, page requests are drained in the domain detachment path.
+Hi all,
 
-The intel_iommu_drain_pasid_prq() helper has been modified to support
-sending device TLB invalidation requests for both PASID and non-PASID
-cases.
+Recently, we've been encounter xfs problems from our two
+major users continuously.
+They are all manifested as the same phonomenon: a xfs 
+filesystem can't touch new file when there are nearly
+half of the available space even with sparse inode enabled.
 
-Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
-Reviewed-by: Yi Liu <yi.l.liu@intel.com>
-Link: https://lore.kernel.org/r/20241101045543.70086-1-baolu.lu@linux.intel.com
----
- drivers/iommu/intel/iommu.c |  1 -
- drivers/iommu/intel/pasid.c |  1 +
- drivers/iommu/intel/prq.c   | 26 +++++++++-----------------
- 3 files changed, 10 insertions(+), 18 deletions(-)
+It turns out that the filesystem is too fragmented to have
+enough continuous free space to create a new file.
 
-diff --git a/drivers/iommu/intel/iommu.c b/drivers/iommu/intel/iommu.c
-index 87a3563dfe54..3878f35be09d 100644
---- a/drivers/iommu/intel/iommu.c
-+++ b/drivers/iommu/intel/iommu.c
-@@ -4069,7 +4069,6 @@ static void intel_iommu_remove_dev_pasid(struct device *dev, ioasid_t pasid,
- 	intel_iommu_debugfs_remove_dev_pasid(dev_pasid);
- 	kfree(dev_pasid);
- 	intel_pasid_tear_down_entry(iommu, dev, pasid, false);
--	intel_iommu_drain_pasid_prq(dev, pasid);
- }
- 
- static int intel_iommu_set_dev_pasid(struct iommu_domain *domain,
-diff --git a/drivers/iommu/intel/pasid.c b/drivers/iommu/intel/pasid.c
-index 7e76062a7ad2..31665fb62e1c 100644
---- a/drivers/iommu/intel/pasid.c
-+++ b/drivers/iommu/intel/pasid.c
-@@ -265,6 +265,7 @@ void intel_pasid_tear_down_entry(struct intel_iommu *iommu, struct device *dev,
- 		iommu->flush.flush_iotlb(iommu, did, 0, 0, DMA_TLB_DSI_FLUSH);
- 
- 	devtlb_invalidation_with_pasid(iommu, dev, pasid);
-+	intel_iommu_drain_pasid_prq(dev, pasid);
- }
- 
- /*
-diff --git a/drivers/iommu/intel/prq.c b/drivers/iommu/intel/prq.c
-index 621cd26504b3..c2d792db52c3 100644
---- a/drivers/iommu/intel/prq.c
-+++ b/drivers/iommu/intel/prq.c
-@@ -63,26 +63,18 @@ void intel_iommu_drain_pasid_prq(struct device *dev, u32 pasid)
- 	struct dmar_domain *domain;
- 	struct intel_iommu *iommu;
- 	struct qi_desc desc[3];
--	struct pci_dev *pdev;
- 	int head, tail;
- 	u16 sid, did;
--	int qdep;
- 
- 	info = dev_iommu_priv_get(dev);
--	if (WARN_ON(!info || !dev_is_pci(dev)))
--		return;
--
- 	if (!info->pri_enabled)
- 		return;
- 
- 	iommu = info->iommu;
- 	domain = info->domain;
--	pdev = to_pci_dev(dev);
- 	sid = PCI_DEVID(info->bus, info->devfn);
- 	did = domain ? domain_id_iommu(domain, iommu) : FLPT_DEFAULT_DID;
- 
--	qdep = pci_ats_queue_depth(pdev);
--
- 	/*
- 	 * Check and wait until all pending page requests in the queue are
- 	 * handled by the prq handling thread.
-@@ -114,15 +106,15 @@ void intel_iommu_drain_pasid_prq(struct device *dev, u32 pasid)
- 	desc[0].qw0 = QI_IWD_STATUS_DATA(QI_DONE) |
- 			QI_IWD_FENCE |
- 			QI_IWD_TYPE;
--	desc[1].qw0 = QI_EIOTLB_PASID(pasid) |
--			QI_EIOTLB_DID(did) |
--			QI_EIOTLB_GRAN(QI_GRAN_NONG_PASID) |
--			QI_EIOTLB_TYPE;
--	desc[2].qw0 = QI_DEV_EIOTLB_PASID(pasid) |
--			QI_DEV_EIOTLB_SID(sid) |
--			QI_DEV_EIOTLB_QDEP(qdep) |
--			QI_DEIOTLB_TYPE |
--			QI_DEV_IOTLB_PFSID(info->pfsid);
-+	if (pasid == IOMMU_NO_PASID) {
-+		qi_desc_iotlb(iommu, did, 0, 0, DMA_TLB_DSI_FLUSH, &desc[1]);
-+		qi_desc_dev_iotlb(sid, info->pfsid, info->ats_qdep, 0,
-+				  MAX_AGAW_PFN_WIDTH, &desc[2]);
-+	} else {
-+		qi_desc_piotlb(did, pasid, 0, -1, 0, &desc[1]);
-+		qi_desc_dev_iotlb_pasid(sid, info->pfsid, pasid, info->ats_qdep,
-+					0, MAX_AGAW_PFN_WIDTH, &desc[2]);
-+	}
- qi_retry:
- 	reinit_completion(&iommu->prq_complete);
- 	qi_submit_sync(iommu, desc, 3, QI_OPT_WAIT_DRAIN);
+Life still has to goes on. 
+But from our users' perspective, worse than the situation
+that xfs is hard to use is that xfs is non-able to use, 
+since even one single file can't be created now. 
+
+So we try to introduce a new space allocation algorithm to
+solve this.
+
+To achieve that, we try to propose a new concept:
+   Allocation Fields, where its name is borrowed from the 
+mathmatical concepts(Groups,Rings,Fields), will be 
+abbrivated as AF in the rest of the article. 
+
+what is a AF?
+An one-pic-to-say-it-all version of explaination:
+
+|<--------+ af 0 +-------->|<--+ af 1 +-->| af 2|
+|------------------------------------------------+
+| ag 0 | ag 1 | ag 2 | ag 3| ag 4 | ag 5 | ag 6 |
++------------------------------------------------+
+
+A text-based definition of AF:
+1.An AF is a incore-only concept comparing with the on-disk
+  AG concept.
+2.An AF is consisted of a continuous series of AGs. 
+3.Lower AFs will NEVER go to higher AFs for allocation if 
+  it can complete it in the current AF.
+
+Rule 3 can serve as a barrier between the AF to slow down
+the over-speed extending of fragmented pieces. 
+
+With these patches applied, the code logic will be exactly
+the same as the original code logic, unless you run with the
+extra mount opiton. For example:
+   mount -o af1=1 $dev $mnt
+
+That will change the default AF layout:
+
+|<--------+ af 0 +--------->| 
+|----------------------------
+| ag 0 | ag 1 | ag 2 | ag 3 |
++----------------------------
+
+to :
+
+|<-----+ af 0 +----->|<af 1>| 
+|----------------------------
+| ag 0 | ag 1 | ag 2 | ag 3 |
++----------------------------
+
+So the 'af1=1' here means the start agno is one ag away from
+the m_sb.agcount.
+
+We did some tests verify it. You can verify it yourself
+by running the following the command:
+
+1. Create an 1g sized img file and formated it as xfs:
+  dd if=/dev/zero of=test.img bs=1M count=1024
+  mkfs.xfs -f test.img
+  sync
+2. Make a mount directory:
+  mkdir mnt
+3. Run the auto_frag.sh script, which will call another scripts
+  frag.sh. These scripts will be attached in the mail. 
+  To enable the AF, run:
+    ./auto_frag.sh 1
+  To disable the AF, run:
+    ./auto_frag.sh 0
+
+Please feel free to communicate with us if you have any thoughts
+about these problems.
+
+Cheers,
+Shida
+
+
+Shida Zhang (5):
+  xfs: add two wrappers for iterating ags in a AF
+  xfs: add two mp member to record the alloction field layout
+  xfs: add mount options as a way to change the AF layout
+  xfs: add infrastructure to support AF allocation algorithm
+  xfs: modify the logic to comply with AF rules
+
+ fs/xfs/libxfs/xfs_ag.h         | 17 ++++++++++++
+ fs/xfs/libxfs/xfs_alloc.c      | 20 ++++++++++++++-
+ fs/xfs/libxfs/xfs_alloc.h      |  2 ++
+ fs/xfs/libxfs/xfs_bmap.c       | 47 ++++++++++++++++++++++++++++++++--
+ fs/xfs/libxfs/xfs_bmap_btree.c |  2 ++
+ fs/xfs/xfs_mount.h             |  3 +++
+ fs/xfs/xfs_super.c             | 12 ++++++++-
+ 7 files changed, 99 insertions(+), 4 deletions(-)
+
 -- 
-2.43.0
+2.33.0
 
 
