@@ -1,206 +1,263 @@
-Return-Path: <linux-kernel+bounces-394509-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394510-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 524DE9BB042
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 10:52:00 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9313D9BB047
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 10:52:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AA397B21DD2
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 09:51:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B66D21C2182B
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 09:52:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A2CE1AF0BA;
-	Mon,  4 Nov 2024 09:51:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 761971AF0D5;
+	Mon,  4 Nov 2024 09:52:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PDRihWz7"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="R0nlh7Jq"
+Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CAA21ABEDC;
-	Mon,  4 Nov 2024 09:51:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2E5F1ADFE2
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 09:52:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730713909; cv=none; b=lf0vQ5LC+yB7ysZrBHab52ZAwpmQ6N/XwpHlJmgc1DG6nYNK9Fh18S3+dfTU2hk9vkkW6x2RGvZ1x0iNXL3J/s88vVJo8Aba+yUd3y0zA7ToGk19OnSkEPgH1gMLGyhoBI6xXCzO0TeN7KBNTUENVABhbNbfuW+TiEkborafcd0=
+	t=1730713943; cv=none; b=U/PQysc72eHjxGgG2avbjQ/AwDoNjWPtEjmUDBkTZGsL62UAtuNa1IFejrq60KWXxRg6L/KyRYhWwJPoULjxSj4TxTMCZKt2Gz3I1xXfy4uJjpGjzMW3OJvb2FM1WUIpXNOTbeFEUM7SaOyFXBFUg+ZF9bOSekGY7P8x8+y2dbc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730713909; c=relaxed/simple;
-	bh=ahGyIshc8FNCbmySdQOO1svr5ucdSpcHZk1Nk2dWoqg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KqS4+uBdl1CdBLTT/uOH5zGPRMCuq9FhjhYJB8E0Fqlpo81zx/nHlQmL92y36pMkjOOp/fEsAfCMIQe/2GOT1oxU/mdlpe8oyniM6zxhdtd6He7rJzStc0+rcvVgceVapiKL8ik08Oi8KGpCH4FzQUToHpfHafsVAvWJozzN5bg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PDRihWz7; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730713907; x=1762249907;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=ahGyIshc8FNCbmySdQOO1svr5ucdSpcHZk1Nk2dWoqg=;
-  b=PDRihWz7jxWuOOezJ6i686YfbkeGM+0945QYW9aSVnYvx6Bv/GRgmz81
-   KpRvgSRT4gefYjjVHsQKRpMMjGxqXHjjXJWA1v/64dz6OJMdvlWZR8mr6
-   uARVdwI1iZOp/kDRoYx1Q2+OCvoHkcVjFy2la/mdlHOVaf1CQVyqn4mqk
-   8mMUuXGq6FXGNOqssD0Zk+ZpstMsrdvZUNOYupUlxyBtx9EZzSQ6ze7sN
-   8bSn5q+azPaZZ5xNwa3xzc9CVnqZNW3RhwaTtLcjFufunexWVpAR7nB0q
-   DlbWlV8LPNaeEVUUPe0LPTH1RT72MOIwq81yzFkZePZIVj0WhMOZNFKIY
-   g==;
-X-CSE-ConnectionGUID: HxIfwBOoSTCnGtRvNgamWw==
-X-CSE-MsgGUID: Eks0lRvFTm+aQKsXFE0ZYg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11245"; a="47908571"
-X-IronPort-AV: E=Sophos;i="6.11,256,1725346800"; 
-   d="scan'208";a="47908571"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2024 01:51:47 -0800
-X-CSE-ConnectionGUID: Pn0mpa4YSQeLt4fQQd9r4w==
-X-CSE-MsgGUID: ghOYaXyWTU+x+1k/Rp85kA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,256,1725346800"; 
-   d="scan'208";a="83282586"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa007.fm.intel.com with ESMTP; 04 Nov 2024 01:51:45 -0800
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id 2E7CA1C4; Mon, 04 Nov 2024 11:51:44 +0200 (EET)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	dmaengine@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Viresh Kumar <vireshk@kernel.org>,
-	Vinod Koul <vkoul@kernel.org>,
-	stable@vger.kernel.org,
-	Ferry Toth <fntoth@gmail.com>
-Subject: [PATCH v5 1/1] dmaengine: dw: Select only supported masters for ACPI devices
-Date: Mon,  4 Nov 2024 11:50:50 +0200
-Message-ID: <20241104095142.157925-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
+	s=arc-20240116; t=1730713943; c=relaxed/simple;
+	bh=htvv2ldxMzj1c0babXojfnz7M65rvSO62jWp9rRBuLE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UyzSvD/eGVqnndxBnNbDzWYIRaTEstTMrGohsG4rWbsi7t2e5+H322aN/u+w6nXBPINqMN+M2e2f9Alv2xAPDOCr7MEuN/dcXgIitvh/QdS5XuJnPu1TxMH++62Uj9YwhH5Y3MdYc9m+Bx9IQ4Zs0mPzOPel1eLnOypxx8XtZcM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=R0nlh7Jq; arc=none smtp.client-ip=209.85.128.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-6e9ed5e57a7so30239187b3.1
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 01:52:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1730713941; x=1731318741; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ybC/g10HAfyDHcrJc6E2zJthZS9rSbdAKDgt4jSd7Jg=;
+        b=R0nlh7JqQBSsbgUD9In+kgpwzEZ9Hs3v4dTkQjnhLHBxkbXCT8OdoSQ+M2iipfrxCs
+         kPKcD/ZFQOKef04LPIozz6Kh8N2O1e6yfgw1xK3q2jrzThuNyq3LCg/SKVPLOFMeb9Gm
+         yIWorjmo2Lylf84fSKeFPW8+wSCZP1pPsNPUmy5ufj+qbW67NvboK3v+6hGuTC/jGSUL
+         I6ckGS4g75M6Yq4MvHYR2TW4mMsgZur2ki2yeKbX6TNzxd9H8Do4wgQi4AVkKzu17ebT
+         HEWbhFYsQwNiJaYdROw0fJYElXK+l7AQJSSOTd8ryhPfFbMaot6GdnxeP1DdIXucdxLV
+         F7iQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730713941; x=1731318741;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ybC/g10HAfyDHcrJc6E2zJthZS9rSbdAKDgt4jSd7Jg=;
+        b=OEYSirhqZ228bK8bVYZlOPZVC67JfVBFwNH1Vg5ECSgidcGi7DHMt17o6o3XlFadFh
+         KfFw5+zuyEgwaceEZ/rZqAsCi+RRu2m+Nrtd9r0lIjoM2t23PJmk45g3+rm22BCKb3BA
+         eZcS3j6raBFdnDIfS6OZ0Ks+PVHok3V2t+avm25gIU62ROmWS3KB4yqrIciWnzD3E30q
+         ee24jdWCpIupaoQaIf29kwLF3nppYkiJ9LLW0DUDPfXGh652fTkKxn5xdzrLoV5VZK5L
+         KOWqAaItp6gJc2JKBoPEJoIi8eU/1zkQbOgXg02kmLPwHmCNWujyv686fi6rVLZGlE0V
+         70YQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVimraVIxcOwbfOPCyePf5fPiaMSTvepZxDBlNR7X/pCG1NUykpa7cxHnhqnVIRtQtLYuvHeGvFYSTROsw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxRJiWSfTrIeRPeUTOokI4sY4kufD8wiNSiBsF+8WO1AMuq+UZ9
+	cawIBuCoJnm8yH60QxfCnbHrgyF8OC7O2elJayLa2WLoxTm+tYT/EUi7RNgKwlLQoTJ41A9IJrN
+	ZEHQHaohy81Sci/XtayoostL/1+qE8HTx+Km0hg==
+X-Google-Smtp-Source: AGHT+IHSdMtnJp6l1SJWZqQt26XqnUQYugn+OdEkAPVBspbyRD2J5UPJxL4Tzt211JmThaoRmsKPftiBRc61oMrL7aQ=
+X-Received: by 2002:a0d:e341:0:b0:6ea:6e90:7e3e with SMTP id
+ 00721157ae682-6ea6e9085cemr56164317b3.14.1730713940978; Mon, 04 Nov 2024
+ 01:52:20 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <1728368130-37213-1-git-send-email-shawn.lin@rock-chips.com>
+ <1728368130-37213-6-git-send-email-shawn.lin@rock-chips.com>
+ <CAPDyKForpLcmkqruuTfD6kkJhp_4CKFABWRxFVYNskGL1tjO=w@mail.gmail.com>
+ <3969bae0-eeb8-447a-86a5-dfdac0b136cd@rock-chips.com> <CAPDyKFo=GcHG2sGQBrXJ7VWyp59QOmbLCAvHQ3krUympEkid_A@mail.gmail.com>
+ <98e0062c-aeb1-4bea-aa2b-4a99115c9da4@rock-chips.com> <20241103120223.abkwgej4svas4epr@thinkpad>
+ <6f3f2d17-4ca2-44ad-b8df-72986d4b3174@rock-chips.com>
+In-Reply-To: <6f3f2d17-4ca2-44ad-b8df-72986d4b3174@rock-chips.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Mon, 4 Nov 2024 10:51:45 +0100
+Message-ID: <CAPDyKFqMuFMf0+2+mPZaGGtBRfavg0LTkhbrCeqh7kHeqq-yZQ@mail.gmail.com>
+Subject: Re: [PATCH v3 5/5] scsi: ufs: rockchip: initial support for UFS
+To: Shawn Lin <shawn.lin@rock-chips.com>
+Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Rob Herring <robh+dt@kernel.org>, 
+	"James E . J . Bottomley" <James.Bottomley@hansenpartnership.com>, 
+	"Martin K . Petersen" <martin.petersen@oracle.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>, 
+	Alim Akhtar <alim.akhtar@samsung.com>, Avri Altman <avri.altman@wdc.com>, 
+	Bart Van Assche <bvanassche@acm.org>, YiFeng Zhao <zyf@rock-chips.com>, Liang Chen <cl@rock-chips.com>, 
+	linux-scsi@vger.kernel.org, linux-rockchip@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-pm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The recently submitted fix-commit revealed a problem in the iDMA 32-bit
-platform code. Even though the controller supported only a single master
-the dw_dma_acpi_filter() method hard-coded two master interfaces with IDs
-0 and 1. As a result the sanity check implemented in the commit
-b336268dde75 ("dmaengine: dw: Add peripheral bus width verification")
-got incorrect interface data width and thus prevented the client drivers
-from configuring the DMA-channel with the EINVAL error returned. E.g.,
-the next error was printed for the PXA2xx SPI controller driver trying
-to configure the requested channels:
+On Mon, 4 Nov 2024 at 07:38, Shawn Lin <shawn.lin@rock-chips.com> wrote:
+>
+> =E5=9C=A8 2024/11/3 20:02, Manivannan Sadhasivam =E5=86=99=E9=81=93:
+> > On Fri, Oct 18, 2024 at 05:20:08PM +0800, Shawn Lin wrote:
+> >> Hi Ulf,
+> >>
+> >> =E5=9C=A8 2024/10/18 17:07, Ulf Hansson =E5=86=99=E9=81=93:
+> >>> On Thu, 10 Oct 2024 at 03:21, Shawn Lin <shawn.lin@rock-chips.com> wr=
+ote:
+> >>>>
+> >>>> Hi Ulf
+> >>>>
+> >>>> =E5=9C=A8 2024/10/9 21:15, Ulf Hansson =E5=86=99=E9=81=93:
+> >>>>> [...]
+> >>>>>
+> >>>>>> +
+> >>>>>> +static int ufs_rockchip_runtime_suspend(struct device *dev)
+> >>>>>> +{
+> >>>>>> +       struct ufs_hba *hba =3D dev_get_drvdata(dev);
+> >>>>>> +       struct ufs_rockchip_host *host =3D ufshcd_get_variant(hba)=
+;
+> >>>>>> +       struct generic_pm_domain *genpd =3D pd_to_genpd(dev->pm_do=
+main);
+> >>>>>
+> >>>>> pd_to_genpd() isn't safe to use like this. It's solely to be used b=
+y
+> >>>>> genpd provider drivers.
+> >>>>>
+> >>>>>> +
+> >>>>>> +       clk_disable_unprepare(host->ref_out_clk);
+> >>>>>> +
+> >>>>>> +       /*
+> >>>>>> +        * Shouldn't power down if rpm_lvl is less than level 5.
+> >>>>>
+> >>>>> Can you elaborate on why we must not power-off the power-domain whe=
+n
+> >>>>> level is less than 5?
+> >>>>>
+> >>>>
+> >>>> Because ufshcd driver assume the controller is active and the link i=
+s on
+> >>>> if level is less than 5. So the default resume policy will not try t=
+o
+> >>>> recover the registers until the first error happened. Otherwise if t=
+he
+> >>>> level is >=3D5, it assumes the controller is off and the link is dow=
+n,
+> >>>> then it will restore the registers and link.
+> >>>>
+> >>>> And the level is changeable via sysfs.
+> >>>
+> >>> Okay, thanks for clarifying.
+> >>>
+> >>>>
+> >>>>> What happens if we power-off anyway when the level is less than 5?
+> >>>>>
+> >>>>>> +        * This flag will be passed down to platform power-domain =
+driver
+> >>>>>> +        * which has the final decision.
+> >>>>>> +        */
+> >>>>>> +       if (hba->rpm_lvl < UFS_PM_LVL_5)
+> >>>>>> +               genpd->flags |=3D GENPD_FLAG_RPM_ALWAYS_ON;
+> >>>>>> +       else
+> >>>>>> +               genpd->flags &=3D ~GENPD_FLAG_RPM_ALWAYS_ON;
+> >>>>>
+> >>>>> The genpd->flags is not supposed to be changed like this - and
+> >>>>> especially not from a genpd consumer driver.
+> >>>>>
+> >>>>> I am trying to understand a bit more of the use case here. Let's se=
+e
+> >>>>> if that helps me to potentially suggest an alternative approach.
+> >>>>>
+> >>>>
+> >>>> I was not familiar with the genpd part, so I haven't come up with
+> >>>> another solution. It would be great if you can guide me to the right
+> >>>> way.
+> >>>
+> >>> I have been playing with the existing infrastructure we have at hand
+> >>> to support this, but I need a few more days to be able to propose
+> >>> something for you.
+> >>>
+> >>
+> >> Much appreciate.
+> >>
+> >>>>
+> >>>>>> +
+> >>>>>> +       return ufshcd_runtime_suspend(dev);
+> >>>>>> +}
+> >>>>>> +
+> >>>>>> +static int ufs_rockchip_runtime_resume(struct device *dev)
+> >>>>>> +{
+> >>>>>> +       struct ufs_hba *hba =3D dev_get_drvdata(dev);
+> >>>>>> +       struct ufs_rockchip_host *host =3D ufshcd_get_variant(hba)=
+;
+> >>>>>> +       int err;
+> >>>>>> +
+> >>>>>> +       err =3D clk_prepare_enable(host->ref_out_clk);
+> >>>>>> +       if (err) {
+> >>>>>> +               dev_err(hba->dev, "failed to enable ref out clock =
+%d\n", err);
+> >>>>>> +               return err;
+> >>>>>> +       }
+> >>>>>> +
+> >>>>>> +       reset_control_assert(host->rst);
+> >>>>>> +       usleep_range(1, 2);
+> >>>>>> +       reset_control_deassert(host->rst);
+> >>>>>> +
+> >>>>>> +       return ufshcd_runtime_resume(dev);
+> >>>>>> +}
+> >>>>>> +
+> >>>>>> +static int ufs_rockchip_system_suspend(struct device *dev)
+> >>>>>> +{
+> >>>>>> +       struct ufs_hba *hba =3D dev_get_drvdata(dev);
+> >>>>>> +       struct ufs_rockchip_host *host =3D ufshcd_get_variant(hba)=
+;
+> >>>>>> +
+> >>>>>> +       /* Pass down desired spm_lvl to Firmware */
+> >>>>>> +       arm_smccc_smc(ROCKCHIP_SIP_SUSPEND_MODE, ROCKCHIP_SLEEP_PD=
+_CONFIG,
+> >>>>>> +                       host->pd_id, hba->spm_lvl < 5 ? 1 : 0, 0, =
+0, 0, 0, NULL);
+> >>>>>
+> >>>>> Can you please elaborate on what goes on here? Is this turning off =
+the
+> >>>>> power-domain that the dev is attached to - or what is actually
+> >>>>> happening?
+> >>>>>
+> >>>>
+> >>>> This smc call is trying to ask firmware not to turn off the power-do=
+mian
+> >>>> that the UFS is attached to and also not to turn off the power of UF=
+S
+> >>>> conntroller.
+> >>>
+> >>> Okay, thanks for clarifying!
+> >>>
+> >>> A follow up question, don't you need to make a corresponding smc call
+> >>> to inform the FW that it's okay to turn off the power-domain at some
+> >>> point?
+> >>>
+> >>
+> >> Yes. Each time entering sleep, we teach FW if it need to turn off or k=
+eep
+> >> power-domain, for instance "hba->spm_lvl < 5 ? 1 : 0" , 0 means
+> >> off and 1 means on.
+> >>
+> >
+> > We had a requirement to notify the genpd provider from consumer to not =
+turn off
+> > the power domain during system suspend. So Ulf came up with an API for
+> > consumers, device_set_wakeup_path() setting the 'dev->power.wakeup_path=
+' which
+> > will be honored by the genpd core. Will that work for you?
+>
+> Yes, that works. And we may need a symmetrical call, for instance,
+> device_clr_wakeup_path() to allow genpd provider to turn off the power
+> domain as well.
 
-> [  164.525604] pxa2xx_spi_pci 0000:00:07.1: DMA slave config failed
-> [  164.536105] pxa2xx_spi_pci 0000:00:07.1: failed to get DMA TX descriptor
-> [  164.543213] spidev spi-SPT0001:00: SPI transfer failed: -16
+The PM core clears the flag in device_prepare(). The flag is typically
+supposed to be set from a ->suspend() callback, so there should be no
+need for an additional function that clears the flag, I think.
 
-The problem would have been spotted much earlier if the iDMA 32-bit
-controller supported more than one master interfaces. But since it
-supports just a single master and the iDMA 32-bit specific code just
-ignores the master IDs in the CTLLO preparation method, the issue has
-been gone unnoticed so far.
+[...]
 
-Fix the problem by specifying the default master ID for both memory
-and peripheral devices in the driver data. Thus the issue noticed for
-the iDMA 32-bit controllers will be eliminated and the ACPI-probed
-DW DMA controllers will be configured with the correct master ID by
-default.
-
-Cc: stable@vger.kernel.org
-Fixes: b336268dde75 ("dmaengine: dw: Add peripheral bus width verification")
-Fixes: 199244d69458 ("dmaengine: dw: add support of iDMA 32-bit hardware")
-Reported-by: Ferry Toth <fntoth@gmail.com>
-Closes: https://lore.kernel.org/dmaengine/ZuXbCKUs1iOqFu51@black.fi.intel.com/
-Reported-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Closes: https://lore.kernel.org/dmaengine/ZuXgI-VcHpMgbZ91@black.fi.intel.com/
-Tested-by: Ferry Toth <fntoth@gmail.com>
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
-v5: rebranded to follow the compliances
-
-Vinod, please apply this for v6.12-rcX as we have a problem to fix.
-
- drivers/dma/dw/acpi.c     | 6 ++++--
- drivers/dma/dw/internal.h | 8 ++++++++
- drivers/dma/dw/pci.c      | 4 ++--
- 3 files changed, 14 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/dma/dw/acpi.c b/drivers/dma/dw/acpi.c
-index c510c109d2c3..b6452fffa657 100644
---- a/drivers/dma/dw/acpi.c
-+++ b/drivers/dma/dw/acpi.c
-@@ -8,13 +8,15 @@
- 
- static bool dw_dma_acpi_filter(struct dma_chan *chan, void *param)
- {
-+	struct dw_dma *dw = to_dw_dma(chan->device);
-+	struct dw_dma_chip_pdata *data = dev_get_drvdata(dw->dma.dev);
- 	struct acpi_dma_spec *dma_spec = param;
- 	struct dw_dma_slave slave = {
- 		.dma_dev = dma_spec->dev,
- 		.src_id = dma_spec->slave_id,
- 		.dst_id = dma_spec->slave_id,
--		.m_master = 0,
--		.p_master = 1,
-+		.m_master = data->m_master,
-+		.p_master = data->p_master,
- 	};
- 
- 	return dw_dma_filter(chan, &slave);
-diff --git a/drivers/dma/dw/internal.h b/drivers/dma/dw/internal.h
-index 563ce73488db..f1bd06a20cd6 100644
---- a/drivers/dma/dw/internal.h
-+++ b/drivers/dma/dw/internal.h
-@@ -51,11 +51,15 @@ struct dw_dma_chip_pdata {
- 	int (*probe)(struct dw_dma_chip *chip);
- 	int (*remove)(struct dw_dma_chip *chip);
- 	struct dw_dma_chip *chip;
-+	u8 m_master;
-+	u8 p_master;
- };
- 
- static __maybe_unused const struct dw_dma_chip_pdata dw_dma_chip_pdata = {
- 	.probe = dw_dma_probe,
- 	.remove = dw_dma_remove,
-+	.m_master = 0,
-+	.p_master = 1,
- };
- 
- static const struct dw_dma_platform_data idma32_pdata = {
-@@ -72,6 +76,8 @@ static __maybe_unused const struct dw_dma_chip_pdata idma32_chip_pdata = {
- 	.pdata = &idma32_pdata,
- 	.probe = idma32_dma_probe,
- 	.remove = idma32_dma_remove,
-+	.m_master = 0,
-+	.p_master = 0,
- };
- 
- static const struct dw_dma_platform_data xbar_pdata = {
-@@ -88,6 +94,8 @@ static __maybe_unused const struct dw_dma_chip_pdata xbar_chip_pdata = {
- 	.pdata = &xbar_pdata,
- 	.probe = idma32_dma_probe,
- 	.remove = idma32_dma_remove,
-+	.m_master = 0,
-+	.p_master = 0,
- };
- 
- #endif /* _DMA_DW_INTERNAL_H */
-diff --git a/drivers/dma/dw/pci.c b/drivers/dma/dw/pci.c
-index ad2d4d012cf7..e8a0eb81726a 100644
---- a/drivers/dma/dw/pci.c
-+++ b/drivers/dma/dw/pci.c
-@@ -56,10 +56,10 @@ static int dw_pci_probe(struct pci_dev *pdev, const struct pci_device_id *pid)
- 	if (ret)
- 		return ret;
- 
--	dw_dma_acpi_controller_register(chip->dw);
--
- 	pci_set_drvdata(pdev, data);
- 
-+	dw_dma_acpi_controller_register(chip->dw);
-+
- 	return 0;
- }
- 
--- 
-2.43.0.rc1.1336.g36b5255a03ac
-
+Kind regards
+Uffe
 
