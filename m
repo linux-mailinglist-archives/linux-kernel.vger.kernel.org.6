@@ -1,70 +1,126 @@
-Return-Path: <linux-kernel+bounces-394682-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394683-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BEE99BB2B6
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 12:15:25 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DE7F9BB2BB
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 12:15:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3FEA3282A33
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 11:15:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 458671F20B69
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 11:15:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E1E71AF0A7;
-	Mon,  4 Nov 2024 11:00:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B28D91CC16B;
+	Mon,  4 Nov 2024 11:01:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Pqx1JFQs"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l4+Xl87n"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 941D91AF0A6;
-	Mon,  4 Nov 2024 11:00:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0924B1CBA17;
+	Mon,  4 Nov 2024 11:01:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730718031; cv=none; b=Vf3blQNy7dytwSXbS6UTRvcIU8iSylRFsr2Lf502ZYNjJX996TwR8Liqw8EfAymdQnGzA9MrMmxiVgF4dj9m6/XOtOGpVHLlfFmrojSLJ7m1djzOQ3ujyINqQghLlrlaiH+HqJz6x3EfyqbmZlXXU9UvTOLS+uK9YMuVI17JWTI=
+	t=1730718078; cv=none; b=lwty5NwT+u8f+DcoZPRy4FsfOavauD8zfXP+FPkBYof9vI96Vor4Nin5v6NJyncl4cLUcIz+Mwtrs5z6TAhvDRniCX/iVx6EpBD5qHA2Ls0R8xA2qtFOat1ygmm8C04L8xZxmzY4ddGZDwjmVuOWasWzomfdjVdjBu9uvYbbC6c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730718031; c=relaxed/simple;
-	bh=6nmX+b3S8jCKaBd2TT1Kq6gm3xB8cIG2E651H7rkYjg=;
+	s=arc-20240116; t=1730718078; c=relaxed/simple;
+	bh=InLkB2MYSWERbYRy5Zs78I/f+NsxdGB1dKTMdljGdTU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=l4NChSgpdBPkdjY0o+adXK+hjZJdxW9cN6U/+X771rgkZPbKW5ApLxMZGLLbIYcnX7EjqMrf5h/YUB/uAmNop6mLfSwqLgPQs8+dSCovxEN4n3TLwBpLVithcmManI4NytT1brOiwJiLIQlocyNsw0xVQDGpsYb81MAhQEynOrU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Pqx1JFQs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07C25C4CECE;
-	Mon,  4 Nov 2024 11:00:29 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=LdGvZnpiJYkJh3A4ixWGgZek//vX9sqoN6q/GbAW/UM8aZWeHZX3JcdmcjoZC/+WrSX0RNggrkqA3U/JHHv5+2S9Y5JTNv+uSn7+YAmmCPwzIltJ+T7M6aKazrgqTpvXwt051HY34l2FHlDaFh6karEVDy1zIMIdr27PAv9AL20=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l4+Xl87n; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4FFA1C4CECE;
+	Mon,  4 Nov 2024 11:01:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730718031;
-	bh=6nmX+b3S8jCKaBd2TT1Kq6gm3xB8cIG2E651H7rkYjg=;
+	s=k20201202; t=1730718077;
+	bh=InLkB2MYSWERbYRy5Zs78I/f+NsxdGB1dKTMdljGdTU=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Pqx1JFQsNMax76wukI4F6tAYH2g5FhaqO39Jpf/0Vg1Jk/TzNdOArKcGaR7FsNu9k
-	 AJsA+J01dryLYHUg9WX0Sk9mYG5M2NPgsle/Es4PIoRQ+gzvDAQyrhvv/ff3RbroM9
-	 4CfNzb4MQAn+4vTwFy1EOYXYEPw8Er5nPGA3ZGkVv2pW35quno8abit6LpGbAkFj60
-	 ZeUxHu6WsczJjg7UaKkVn/2AtdsGbeqSPDpzRK5lC+9dUhAq9msI6w/2XylDlnaVkI
-	 WzUPZLKkmQvWrt3MeJd8xTACut0SsXjm21BDzrZwtg5N/O8fLNJ1dw0YOUbWE6bfBV
-	 MHQR/Vnk0pOJg==
-Date: Mon, 4 Nov 2024 11:00:26 +0000
-From: Will Deacon <will@kernel.org>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Catalin Marinas <catalin.marinas@arm.com>, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] arm64/fpsimd: Fix a typo
-Message-ID: <20241104110025.GA11157@willie-the-truck>
-References: <2cbcb42615e9265bccc9b746465d7998382e605d.1730539907.git.christophe.jaillet@wanadoo.fr>
+	b=l4+Xl87n99a+En+xoQJw/hS9w8A86ATtprwIGfI81lwPumVbhvCX/jbHsDL5EyPWP
+	 C0XPMQRdXNWEbHLWpMSTH9BOwKV3vFCMR18DXPVGjCJeZE0r45z63K8xMPjC/n0Y94
+	 3ZdkAeAttzANk6U7HK8QfYnyGrQYF0hhGEoZn+XL4uU6rwwvOuW57bIQ4MA0shOq5w
+	 6DvfSVKz3VJHdlD7WKMo9CSv3MnsWdX/Im8m384tOsA6lWR+B2jdb9hJQZWe7/jRoB
+	 d0d5nBiheYyV6WjHbgrnAAUqClBHNdXJH8SVRyLI+pMT6dAYbGq75/qDohpnZadUVD
+	 UroN52GM2PRtQ==
+Date: Mon, 4 Nov 2024 06:01:15 -0500
+From: Sasha Levin <sashal@kernel.org>
+To: Joel Granados <joel.granados@kernel.org>
+Cc: Christoph Hellwig <hch@infradead.org>, Kees Cook <kees@kernel.org>,
+	torvalds@linux-foundation.org, ksummit@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: Re: linus-next: improving functional testing for to-be-merged
+ pull requests
+Message-ID: <ZyipewUEwqrQ-z9b@sashalap>
+References: <ZxZ8MStt4e8JXeJb@sashalap>
+ <792F4759-EA33-48B8-9AD0-FA14FA69E86E@kernel.org>
+ <ZxdKwtTd7LvpieLK@infradead.org>
+ <ZyAUO0b3z_f_kVnj@sashalap>
+ <z2zehszaude6q2jicvdkjz7bgr22zxxayw5vgbjrhgoghqxhia@ngjos2ihibjo>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-In-Reply-To: <2cbcb42615e9265bccc9b746465d7998382e605d.1730539907.git.christophe.jaillet@wanadoo.fr>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <z2zehszaude6q2jicvdkjz7bgr22zxxayw5vgbjrhgoghqxhia@ngjos2ihibjo>
 
-On Sat, Nov 02, 2024 at 10:31:54AM +0100, Christophe JAILLET wrote:
-> s/FPSMID/FPSIMD/
-> M and I inversted. Fix it
+On Mon, Nov 04, 2024 at 09:49:15AM +0100, Joel Granados wrote:
+>On Mon, Oct 28, 2024 at 06:46:19PM -0400, Sasha Levin wrote:
+>> On Mon, Oct 21, 2024 at 11:48:34PM -0700, Christoph Hellwig wrote:
+>> >On Mon, Oct 21, 2024 at 09:54:53PM -0700, Kees Cook wrote:
+>> >> For example, for a given PR, the bot can report:
+>> >>
+>> >> - Were the patches CCed to a mailing list?
+>> >> - A histogram of how long the patches were in next (to show bake times)
+>> >> - Are any patches associated with test failures? (0day and many other
+>> >> CIs are already running tests against -next; parse those reports)
+>> >>
+>> >> We could have a real pre-submit checker! :)
+>> >
+>> >That would be very useful.  Items 1 and 2 should be trivial, 3 would
+>> >require a bit of work but would still be very useful.
+>>
+>> If you've been following so far, there is a bot that is capable of doing
+>> most of the above
+>> (https://git.kernel.org/pub/scm/linux/kernel/git/sashal/next-analysis.git/).
+>>
+>> Here's a histogram that describes v6.12-rc4..v6.12-rc5 as far as how
+>> long commits spent in -next:
+>>
+>> Days in linux-next:
+>> ----------------------------------------
+>>   0 | +++++++++++++++++++++++++++++++++++++++++++++++++ (89)
+>> <1 | +++++++++++ (21)
+>>   1 | +++++++++++ (21)
+>>   2 | +++++++++++++++++++++++++ (45)
+>>   3 | ++++++++++++++ (25)
+>>   4 | +++++ (10)
+>>   5 |
+>>   6 | + (2)
+>>   7 |
+>>   8 | + (3)
+>>   9 | ++ (4)
+>> 10 |
+>> 11 | +++ (6)
+>> 12 |
+>> 13 |
+>> 14+| ++++++++ (15)
+>This looks super nice. Sometimes I need to answer how long a
+>commit/series has been in next to either take it out of the PR or to at
+>least have a comment to Linus.
+>I see that I can use the script like `histo.sh /PATH/TO/DB COMMIT-ID`,
+>which is exactly what I would expect.
 
-inversted? Fix it
+Thanks!
 
-Will
+>Is the idea to run the scripts from
+>https://git.kernel.org/pub/scm/linux/kernel/git/sashal/next-analysis.git
+>or to populate ones own DB in linux-next and then run histo?
+
+You can use the DB in the git repo, but prep.sh is provided in case you
+want to create your own or if I stop updating the repo for some reason.
+
+-- 
+Thanks,
+Sasha
 
