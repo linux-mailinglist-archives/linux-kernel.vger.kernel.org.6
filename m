@@ -1,93 +1,130 @@
-Return-Path: <linux-kernel+bounces-395457-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395464-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB6229BBE22
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 20:39:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95CAB9BBE35
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 20:43:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DBEEF1C21BAA
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 19:39:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D7581F22946
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 19:43:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 924671CBE85;
-	Mon,  4 Nov 2024 19:39:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CCE7192D7D;
+	Mon,  4 Nov 2024 19:43:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=engleder-embedded.com header.i=@engleder-embedded.com header.b="MP21eILF"
-Received: from mx23lb.world4you.com (mx23lb.world4you.com [81.19.149.133])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SJN5lcrH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE27F1CB9F4
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 19:39:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.19.149.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C4481CBE9E
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 19:43:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730749182; cv=none; b=TpC2o0+mAeaE4oJoMAGhc2weXem8HtpM1yGSoencRygxMcu2tfL35Iwe9P+QEXNx00TX2+tRNy4lKD7FYtS9yFdz1eOuTRTxJUAFeTEJuHzHJVuDLHvfpk4GOnwDfdKmbm9kPiCPS4qSWMmWa4fxjp0/+rxvWvEmL044Vx8w8Gg=
+	t=1730749396; cv=none; b=p5rLAiXY8GGDAr+p+Afujf4ZkeJkJylOjf3sbxojiJi1Ds7AkNR3lvOMQfaj1l4Jg6epa+0j0rgsKyNwqTufW4yz8Casy8RLJ3M+qIM7dCm1HL8jfGSZmkWtfvSD/JbGtAJHJR+Gl7Kd7efs5B/LClIlThbq5085MGKZrZ4CuAU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730749182; c=relaxed/simple;
-	bh=+B3nxoAbM7IvON1QNfB1ja3ozuOlz5PyC7PTePvhZsw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
-	 In-Reply-To:Content-Type; b=QIziGfmeG5HBMlzzCRSwNbCY2moEiFvt+zCmcpw+qWkV1raoKubxBWlPy7ltM2aOw0MdzY864u6juPr7LPxswpl9wfkmYDe3eE9MCF2qF1OjJzPEaYiO149Prf3EDKLrZ/2sGi8mhk30Shgz7ReOSuAICoKaNYR9IqF52nslOJs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=engleder-embedded.com; spf=pass smtp.mailfrom=engleder-embedded.com; dkim=pass (1024-bit key) header.d=engleder-embedded.com header.i=@engleder-embedded.com header.b=MP21eILF; arc=none smtp.client-ip=81.19.149.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=engleder-embedded.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=engleder-embedded.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=engleder-embedded.com; s=dkim11; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:Cc:References:To:Subject:MIME-Version:Date:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=C6J4u5oaCQeyUbtrmZlkpXqPZsKrUCB+j84MBiIcXCs=; b=MP21eILFQ60L3bdD/X7HSRFR0e
-	D0MuVuZcifGDuyybVE946gLV6b5S/adF5dDpwvrGyfNqG+lEY+x4ZMZ6Ac0o9uvdxHh72UipH7hQ5
-	PCCjACaFhmmh5mbl03ZEY/NICNTZhEvMyPj+cMsHHFxtiM6Gq8k2ehNsc5u4Kt6SNMKM=;
-Received: from [88.117.52.189] (helo=[10.0.0.160])
-	by mx23lb.world4you.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.97.1)
-	(envelope-from <gerhard@engleder-embedded.com>)
-	id 1t82vD-000000004rT-3Wmg;
-	Mon, 04 Nov 2024 20:39:32 +0100
-Message-ID: <70a07591-8075-4322-b8bc-fa37f56a6130@engleder-embedded.com>
-Date: Mon, 4 Nov 2024 20:39:30 +0100
+	s=arc-20240116; t=1730749396; c=relaxed/simple;
+	bh=Hm1H/22MmFwgZBIeoAEvCZhK8r00qON+EuqF4n2bpoI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ix6DnwoSfzUJPf4IWVOGKuJAzgH+UybkVtnuzNtqpMtAeMwhRvAW47X5RlQZQP8510Zkv+XB7e83ZYVK/0nWjTIQNTSNoQd4Xn53MmaPqh/oUHLQ+2ds8pmRLUm2DYgwxOATZj3Jc8JzefH2rgHQxOvdrtA/xJCMcBF7OskY4nY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SJN5lcrH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0232AC4CECE;
+	Mon,  4 Nov 2024 19:43:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730749396;
+	bh=Hm1H/22MmFwgZBIeoAEvCZhK8r00qON+EuqF4n2bpoI=;
+	h=From:To:Cc:Subject:Date:From;
+	b=SJN5lcrHmNEKd6OtVn5Tiq0Klj3va4TiOWaq/g6kDoBVSlRsYGv+eVHk6IhdS24et
+	 /iAzm2i6cqIH2QGVlEiRxh7zADPJb5NY+SWR772vafl6eT8pcgAOJ+kK9+Jk3ogFkz
+	 ihExdcktwWako1TqvmA9kHE9BcOSXgr1g6O2mn6P3l/d3rjQDA9lGWc/qNNbb+MFDI
+	 INyuS8QK9ZX3nGZYbVFoTLsiWbrmdRHhyk/BbXiyZ2WA4ijtGRpasMhJGjn7jWfz0l
+	 oqBO5GUlTsUojpzrnAADNvBoewYMerSxStSnybI+nD70VbtBeC0s/g657u3PEZCRZh
+	 I/X5Y1xD9ySTQ==
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Joe Perches <joe@perches.com>,
+	Arnd Bergmann <arnd@arndb.de>
+Cc: linux-kernel@vger.kernel.org
+Subject: [PATCH] MAINTAINERS: Fix list entries with display names
+Date: Mon,  4 Nov 2024 13:40:34 -0600
+Message-ID: <20241104194033.321817-2-robh@kernel.org>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] misc: keba: Add hardware dependency
-To: Jean Delvare <jdelvare@suse.de>
-References: <20241104142217.1dad57cf@endymion.delvare>
- <HE1PR0702MB37691DB97DE68A3BABB7AC63BA512@HE1PR0702MB3769.eurprd07.prod.outlook.com>
-Content-Language: en-US
-Cc: Arnd Bergmann <arnd@arndb.de>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- LKML <linux-kernel@vger.kernel.org>
-From: Gerhard Engleder <gerhard@engleder-embedded.com>
-In-Reply-To: <HE1PR0702MB37691DB97DE68A3BABB7AC63BA512@HE1PR0702MB3769.eurprd07.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-AV-Do-Run: Yes
+Content-Transfer-Encoding: 8bit
 
-> Only propose KEBA CP500 drivers on architectures where the device exists, unless build-testing.
-> 
-> Signed-off-by: Jean Delvare <jdelvare@suse.de>
-> Cc: Gerhard Engleder <eg@keba.com>
-> ---
->   drivers/misc/keba/Kconfig |    1 +
->   1 file changed, 1 insertion(+)
-> 
-> --- linux-6.12-rc4.orig/drivers/misc/keba/Kconfig
-> +++ linux-6.12-rc4/drivers/misc/keba/Kconfig
-> @@ -1,6 +1,7 @@
->   # SPDX-License-Identifier: GPL-2.0
->   config KEBA_CP500
->          tristate "KEBA CP500 system FPGA support"
-> +       depends on X86_64 || ARM64 || COMPILE_TEST
->          depends on PCI
->          select AUXILIARY_BUS
->          help
+get_maintainers.pl doesn't expect list entries to have a display name.
+Entries with a display name are omitted and print just the description:
 
-Thanks!
+ (open list:PIN CONTROLLER - FREESCALE)
 
-Reviewed-by: Gerhard Engleder <eg@keba.com>
+These cases are pretty much aliases to a few people, not lists which
+are archived and can be subscribed to. Change these cases to be reviewers
+instead.
+
+Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+---
+Maybe get_maintainers.pl and/or the tests for MAINTAINERS should be 
+fixed as well.
+
+ MAINTAINERS | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index c27f3190737f..13aedadb3262 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -2797,7 +2797,7 @@ ARM/NXP S32G ARCHITECTURE
+ R:	Chester Lin <chester62515@gmail.com>
+ R:	Matthias Brugger <mbrugger@suse.com>
+ R:	Ghennadi Procopciuc <ghennadi.procopciuc@oss.nxp.com>
+-L:	NXP S32 Linux Team <s32@nxp.com>
++R:	NXP S32 Linux Team <s32@nxp.com>
+ L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+ S:	Maintained
+ F:	arch/arm64/boot/dts/freescale/s32g*.dts*
+@@ -16417,8 +16417,8 @@ F:	arch/nios2/
+ 
+ NITRO ENCLAVES (NE)
+ M:	Alexandru Ciobotaru <alcioa@amazon.com>
++R:	The AWS Nitro Enclaves Team <aws-nitro-enclaves-devel@amazon.com>
+ L:	linux-kernel@vger.kernel.org
+-L:	The AWS Nitro Enclaves Team <aws-nitro-enclaves-devel@amazon.com>
+ S:	Supported
+ W:	https://aws.amazon.com/ec2/nitro/nitro-enclaves/
+ F:	Documentation/virt/ne_overview.rst
+@@ -16429,8 +16429,8 @@ F:	samples/nitro_enclaves/
+ 
+ NITRO SECURE MODULE (NSM)
+ M:	Alexander Graf <graf@amazon.com>
++R:	The AWS Nitro Enclaves Team <aws-nitro-enclaves-devel@amazon.com>
+ L:	linux-kernel@vger.kernel.org
+-L:	The AWS Nitro Enclaves Team <aws-nitro-enclaves-devel@amazon.com>
+ S:	Supported
+ W:	https://aws.amazon.com/ec2/nitro/nitro-enclaves/
+ F:	drivers/misc/nsm.c
+@@ -18244,8 +18244,8 @@ M:	Fabio Estevam <festevam@gmail.com>
+ M:	Shawn Guo <shawnguo@kernel.org>
+ M:	Jacky Bai <ping.bai@nxp.com>
+ R:	Pengutronix Kernel Team <kernel@pengutronix.de>
++R:	NXP S32 Linux Team <s32@nxp.com>
+ L:	linux-gpio@vger.kernel.org
+-L:	NXP S32 Linux Team <s32@nxp.com>
+ S:	Maintained
+ F:	Documentation/devicetree/bindings/pinctrl/fsl,*
+ F:	Documentation/devicetree/bindings/pinctrl/nxp,s32*
+@@ -19373,7 +19373,7 @@ F:	drivers/ras/amd/fmpm.c
+ 
+ RASPBERRY PI PISP BACK END
+ M:	Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+-L:	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>
++R:	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>
+ L:	linux-media@vger.kernel.org
+ S:	Maintained
+ F:	Documentation/devicetree/bindings/media/raspberrypi,pispbe.yaml
+-- 
+2.45.2
+
 
