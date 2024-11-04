@@ -1,102 +1,123 @@
-Return-Path: <linux-kernel+bounces-395445-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395446-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAF3C9BBDF4
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 20:27:34 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A73D99BBDF6
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 20:28:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 288991C21B3A
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 19:27:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5399C1F22990
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 19:28:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD3C11C3026;
-	Mon,  4 Nov 2024 19:27:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1FA61C4A0A;
+	Mon,  4 Nov 2024 19:28:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="klx0eLPS"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fcnrM6M/"
+Received: from mail-oo1-f54.google.com (mail-oo1-f54.google.com [209.85.161.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 970C818C342;
-	Mon,  4 Nov 2024 19:27:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C37C41E89C;
+	Mon,  4 Nov 2024 19:28:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730748449; cv=none; b=W6JNgerrAHHiwQ5Ob4z/vnPK2ZLA7Tk+XOEGCxTzc4/lsucofqQ77eslhl9Xjh0uTdNxnFkI5wasXQoktdRqt0yLsWqXyCvXWElNa6/XNaohsib1VWMZIUVQhXzqvV1s2z6wryQIuo6Z6pRiPNCpda5yUnqPONuMcRhgV7ibmSU=
+	t=1730748505; cv=none; b=FntqYk53hCn9FxJMrSJdNmm/SA9Fn+IS/SdvWqE3OAUEngdbdNHV8fh7WdlxQ7wPAbAKxz1PQ/j/XhgiAmNxhDsmlHXg2JqT1Z/cPRCcod93D4kn2gOmmJaDP6v+tcz1xYdVBCg8AJEwCjXFSYriouFM/gcYXmOhW98TxYSKNdc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730748449; c=relaxed/simple;
-	bh=5ahiCxIeZ7Zrt1cRCp5O4yGFLwbtDrlU6FhUnRAbct8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=gwNlCqKGyC0Hj9X4Ld9Iu7NRvkwYD5XxZT1zHWKOyfekxWgnHG5WArTqaDsPp7turOXI6NOEqjGudWb5rWeXF3bha5lTAqJCqW4jyFSaNUDQtX8U/VYMAriZJFXKyhGMqmJfsS5ql22zl8EocMB9DpUPQQHfAY9Ix/r50DYeC94=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=klx0eLPS; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net B0B1242C30
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1730748446; bh=MHJe88wvtxmCRW4ig638nW8IyXo/qVPt9CcKtlrPNmk=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=klx0eLPSMwaoBnjz9CLwEYI3z7WCAB93gg4Niq8lpCA2We7OMAqwIH3BJnURQgp/B
-	 HNHq/Hotc/1FSWgVk0RBDJx93ap0TEmHaQmv//p663DWHIGDDnyP10vkfB/XS0pznZ
-	 6p3wgL1gGlAYbVuhTzgjmvjigjxLQ/ruT5RdQ8eTTXCcMa7Y9TAyevozZxooZPTCTI
-	 I4KYEusl72ACasNjAHg11ig8DlbiVTN9UR3iyz8X0p6RPER/Dv6lrYyJ2AxD3bMURF
-	 CneFXoroeK7NJX+D1cG5YKTrvvtZM5CdrbB5lCFvLfrCbRN8rhDYJQeoXywmx+aQv2
-	 CQ5V5C3DdmPbg==
-Received: from localhost (unknown [IPv6:2601:280:5e00:625::1fe])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id B0B1242C30;
-	Mon,  4 Nov 2024 19:27:26 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: xu.xin16@zte.com.cn, alexs@kernel.org, si.yanteng@linux.dev,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- mudongliangabcd@gmail.com, seakeel@gmail.com
-Cc: wang.yaxin@zte.com.cn, fan.yu9@zte.com.cn, xu.xin16@zte.com.cn,
- he.peilin@zte.com.cn, tu.qiang35@zte.com.cn, qiu.yutan@zte.com.cn,
- zhang.yunkai@zte.com.cn
-Subject: Re: [PATCH linux-next v8 RESEND] Docs/zh_CN: Translate
- physical_memory.rst to Simplified Chinese
-In-Reply-To: <20241028135321916ZWK032bHhlbncjvmzDkZs@zte.com.cn>
-References: <20241028135321916ZWK032bHhlbncjvmzDkZs@zte.com.cn>
-Date: Mon, 04 Nov 2024 12:27:25 -0700
-Message-ID: <87ikt294v6.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1730748505; c=relaxed/simple;
+	bh=kY8rhl1u8JXsgPMEsKOkYjiyyMTZiXz/kDPAj9DOkhY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=OTFwbEMnbYYYSDs32SH/HKds5BilNSSiaFfzpaDR3aoercMrBW/UAtCqYX0uNEP4dyDZ5Wy8qOXOYHNnwv+bfULtgTC5EF0cjS633FM6GYSz+ILMAVmgGtymgfOIChs5fLIzWuRRDIafSwpY1uIri/p4eC55K0KqW5jb+3srqt4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fcnrM6M/; arc=none smtp.client-ip=209.85.161.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f54.google.com with SMTP id 006d021491bc7-5ebc27fdc30so2430913eaf.2;
+        Mon, 04 Nov 2024 11:28:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730748503; x=1731353303; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VzNSBwfqv5RMOk+iTL2p4n+4xz8bY6vzv1XRWCkFoUw=;
+        b=fcnrM6M/B/A6T9174ZZhVFy+8bzgvhsF8ISwqMb1r6GML1HyFbfODVt0d3DdVb9sWK
+         YA5Ljh7OtyRUsOCsHif7yHOO4znHcbIbgNQOMniMCRH/L5fLv59Rxiwhqd0MefjOrAH3
+         2SBHb/A1xaP9NUmc+NQqPYessM7xEiQ4WIAQri9sokoDlXrOcg5SvXkpaWfkb72gcAj2
+         1wygQJHQzYZ0iudpwaGIUaeVjEgOBu8/8KT5l48v9Qykyj21JJOgPMu1HRw+X/XOpbmV
+         uNUyrvbUlEibDf+hNRtHT2wU0G2RbIhhsuUWMZWGB1r6Me4qI95hq/JCxJlxfu6FkUy9
+         nffA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730748503; x=1731353303;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=VzNSBwfqv5RMOk+iTL2p4n+4xz8bY6vzv1XRWCkFoUw=;
+        b=CYihLbP/n3Qx/JTs70FxeBtg3B7jZEs04ugL/qOId/bUFYWSupDVFcKT0rns/ahGtR
+         FIhx/BhcnnhdPQRNQQC+J0KvigfPmI0yItEYDdjIFVUSruFbZ9toLMTDsXTBA+DEIhmE
+         n8CVYO2t8Im621hybb1/BDhMQVCHJFSDSYtW9sjKU/Xp0m2Sd3n1ogAAkTTnSBAXLU2W
+         MUeZGNBz6flhd9TarHlb74Wn6I2zoE+RjrXtG0Ab7K7zzs0ALevJRT/aQprCH3LfqiuZ
+         J82S8mm3l68FTZplN+RKxo9l0zji4b5hax8Cdyxw8bC7TxZzccJ0Lib1Wnkxz6Voe8bn
+         yl6g==
+X-Forwarded-Encrypted: i=1; AJvYcCWsJ2d0uZWXCpye/afO/hwAS4IQVWaP0Snf1soi6op8XMnbk72fA2/PMbxda4+wjZ5DMMhy3/CBc+Vca6Ro@vger.kernel.org, AJvYcCXrpOGudEH9DACAVrKoNXzLqq48VZKpDXzyW8JD35ccGvuy7BNFB/eUoQLo77WTbAch7H5jVr49duqd@vger.kernel.org
+X-Gm-Message-State: AOJu0YyTf5FDG8Yq+8JEjltrjzN7yAYnRDYMh+fa5ivonOmG6tLScSXH
+	ZB5Ei+aBfHWyQqKlbbM6FsTJrYAYGroFcppm5vyZd/ZkOANiLuk4BjJ/4E7I9xk2o7OdVj6I7wU
+	J557tA3SI8SwB7WQeOdxbFhZXZQ0=
+X-Google-Smtp-Source: AGHT+IGIG32r9in+QfMAZeroaZPlTVZht5B6vJdC60syp76/vE/ZoshB2cvJMG3UXj+CkQFMi/mJ7Er8nRgBVNx+lZY=
+X-Received: by 2002:a05:6820:1885:b0:5ee:bb2:bdd4 with SMTP id
+ 006d021491bc7-5ee0bb2c243mr4053231eaf.1.1730748502801; Mon, 04 Nov 2024
+ 11:28:22 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20241025125110.1347757-1-valentina.fernandezalanis@microchip.com>
+ <20241025125110.1347757-4-valentina.fernandezalanis@microchip.com>
+ <CABb+yY3cDD-E-P1MPKQjdX7R2XVVKjwXUW-BANWcz-9aR6kskA@mail.gmail.com> <ee8b10e3-ccd2-409e-82d0-612107f3fe26@microchip.com>
+In-Reply-To: <ee8b10e3-ccd2-409e-82d0-612107f3fe26@microchip.com>
+From: Jassi Brar <jassisinghbrar@gmail.com>
+Date: Mon, 4 Nov 2024 13:28:11 -0600
+Message-ID: <CABb+yY1Oy-vdXSQBQHoqzsK8xpXXfHw5ZQ5Q6gjv0gdFK2hwDA@mail.gmail.com>
+Subject: Re: [PATCH v2 3/3] mailbox: add Microchip IPC support
+To: Valentina.FernandezAlanis@microchip.com
+Cc: paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu, 
+	peterlin@andestech.com, Conor.Dooley@microchip.com, conor+dt@kernel.org, 
+	ycliang@andestech.com, dminus@andestech.com, 
+	prabhakar.mahadev-lad.rj@bp.renesas.com, robh@kernel.org, krzk+dt@kernel.org, 
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-OK, I have applied this patch.  A couple of comments for future reference:
-
-<xu.xin16@zte.com.cn> writes:
-
-> From: Yaxin Wang <wang.yaxin@zte.com.cn>
+On Mon, Nov 4, 2024 at 1:01=E2=80=AFPM <Valentina.FernandezAlanis@microchip=
+.com> wrote:
 >
-> This patch translates the "physical_memory.rst" document into
-> Simplified Chinese to improve accessibility for Chinese-speaking
-> developers and users.
+> On 03/11/2024 00:23, Jassi Brar wrote:
 
-Our documentation requests that patch changelogs be phrased in the
-imperative tense and avoid terms like "this patch".  Some maintainers
-are quite insistent about that; I'm not one of them, but it is better to
-follow that guidance.
+> Regarding the EXPORT function, I understand that it=E2=80=99s also possib=
+le to
+> retrieve con_priv from mbox_chan in the client. However, I felt it would
+> be cleaner to export the function to obtain the channel ID directly,
+> rather than declaring the struct ipc_chan_info in a header file to make
+> it accessible to the client.
+>
+> If necessary, I can remove the function and instead expose struct
+> ipc_chan_info in linux/mailbox/mchp-ipc.h.
+>
+Yes please avoid EXPORT at any cost. They are only acceptable when no
+other means exist.
 
-> The translation was done with attention to technical accuracy
-> and readability, ensuring that the document remains informative
-> and useful in its translated form.
+> >
+> >> +static struct platform_driver mchp_ipc_driver =3D {
+> >> +       .driver =3D {
+> >> +               .name =3D "microchip_ipc",
+> >> +               .of_match_table =3D mchp_ipc_of_match,
+> >> +       },
+> >> +       .probe =3D mchp_ipc_probe,
+> > The driver could be built as a module, so please provide .remove()
+> > even if you never intend to unload it.
+> In this particular case, there is nothing specific to implement in the
+> .remove() function because all resources allocated in the .probe()
+> function are managed using devm_*
 
-This is not helpful in a changelog; if you have not paid such attention,
-you should not be submitting the patch in the first place.  Comments
-like this can go after the "---" line if you really need to include
-them. 
-
-> Update to commit 7332f9e45d2e("docs/mm: Physical Memory: Fix grammar")
-
-...and this I don't understand at all; why do you need to reference that
-patch here?
-
-Thanks,
-
-jon
+OK.
 
