@@ -1,95 +1,133 @@
-Return-Path: <linux-kernel+bounces-395048-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395049-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7A699BB7CB
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 15:29:33 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F29559BB7CC
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 15:29:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C7BA2850DE
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 14:29:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2204A1C21FFA
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 14:29:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D54B1B1D65;
-	Mon,  4 Nov 2024 14:29:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9CBF1AC88B;
+	Mon,  4 Nov 2024 14:29:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VI6LSM0r"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="tNznIsLm";
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="Dni0tHAU"
+Received: from bedivere.hansenpartnership.com (bedivere.hansenpartnership.com [96.44.175.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E56F72AEFE;
-	Mon,  4 Nov 2024 14:29:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA625185B4D
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 14:29:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.44.175.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730730562; cv=none; b=mhaRqLfuaz4z6RYWJOELftbD9wC6o/87QDJhYc2g9wceFENrOzUpLnWI7L6wInRzt3knR2X05+VsNJAOivMXKQx+LjUIEoZx2PcbNGJrrX4iOQvpgy+zkouzxpaE8ByXzz89TGNC3buGrw8lfvsfnU3UhGoklDTfNGr+reszbBg=
+	t=1730730577; cv=none; b=q9c8EZ2Hz9yw//RVWJRmR4x6gD6tFLM/PbBM/ml9+WXCH1PKwSRvxlYtgL/vdLMx3pd/qg2t6dRscH8QZagvYL+7pyd6kfFhNp7SGhxyoondbIhCgT0R+9FgoF6wHczdBIKas6YuziXcASNDBBcLt+aho3dzdjlQfy9EZ7e8abg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730730562; c=relaxed/simple;
-	bh=EXddGjljuXfiyst3teC3kH4+6NzpEAOhemaF87o1HEE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HPXi1QezbWb6c5W5Q4siHcHgO6jtVmmx+cgibA4C4gQXSmsmp7UhTH/ZsHkrZKk3vqtuS/oEVvPhoBp08vMig3amzI1ghA9w6MsvG+IL282eLGFVEAyk82iBLi6xtqRiBwObBhOe69f8oizMQzvQGVapi0uyFnyWgSzUfYjSd3U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VI6LSM0r; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D4ADC4CECE;
-	Mon,  4 Nov 2024 14:29:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730730561;
-	bh=EXddGjljuXfiyst3teC3kH4+6NzpEAOhemaF87o1HEE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VI6LSM0rNQv+75kEV8qCjeTF/lBf5PCB1iwVeAFYrDNCyw0yWDtIx0iBL4qJIBo25
-	 w8TW5FpmWM/N67WF8UWtQihC+CaXwAMN6/TFERLSNW50+ffDQLSKD4s+nc5CgMJWCE
-	 fjdJcsNldAlHHwXuMlD8oDawBI/9rMVrNFAbIeRh3HXKz1nophDh1nUNnpa5qvyGDe
-	 cZKn/6lsOF2ptEXxcLVlvlB7UaKemEq30MqnxxW69dH01/XdghIDGarEGGpdbsWbuH
-	 i/kg9r6SQm3BmPTTntIEvjwDmqXV1EgMeCUzvzObmLN5Tr/rxMyk2jXFsJNkjVzlZW
-	 IUuKPhAtpBUOQ==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1t7y50-0000000087N-0Es2;
-	Mon, 04 Nov 2024 15:29:18 +0100
-Date: Mon, 4 Nov 2024 15:29:18 +0100
-From: Johan Hovold <johan@kernel.org>
-To: Qiang Yu <quic_qianyu@quicinc.com>
-Cc: manivannan.sadhasivam@linaro.org, vkoul@kernel.org, kishon@kernel.org,
-	robh@kernel.org, andersson@kernel.org, konradybcio@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, mturquette@baylibre.com,
-	sboyd@kernel.org, abel.vesa@linaro.org, quic_msarkar@quicinc.com,
-	quic_devipriy@quicinc.com, dmitry.baryshkov@linaro.org,
-	kw@linux.com, lpieralisi@kernel.org, neil.armstrong@linaro.org,
-	linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-	johan+linaro@kernel.org
-Subject: Re: [PATCH v8 4/5] PCI: qcom: Disable ASPM L0s for X1E80100
-Message-ID: <ZyjaPtGtRlsIO64b@hovoldconsulting.com>
-References: <20241101030902.579789-1-quic_qianyu@quicinc.com>
- <20241101030902.579789-5-quic_qianyu@quicinc.com>
+	s=arc-20240116; t=1730730577; c=relaxed/simple;
+	bh=ZAdw3ycbQtDIRnnmmbxv15KDyRbeiPm8mNAI3lRZvbQ=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=URM/GzSXro3xIITk4y/+8aeKF80S+cNhVAu6jYa8ev93tqZaWyDPGkNLJ2UKcDFvHqBXZ6fOhH64PJaVagyTJodJPWiokpwTrvmhYgWFShBbq/9UbwWaFTrm2WW7wGefevvoojMxyU55eZzc03NL/hIyyKP93Wa5xwtS0L8Pc4E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=tNznIsLm; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=Dni0tHAU; arc=none smtp.client-ip=96.44.175.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=hansenpartnership.com; s=20151216; t=1730730575;
+	bh=ZAdw3ycbQtDIRnnmmbxv15KDyRbeiPm8mNAI3lRZvbQ=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+	b=tNznIsLmEFEazrnPe8pjZ629KrZYVVhe99MOhdfuc6YIEeh+YN7HOw9tXiSoV9ZSE
+	 jpzAYUrbfupPU7zJ6sYoMpGpsE6WJMWgws4huCsH3EzaxhEnDwiomXI6yd2W4mhJiV
+	 sECGowtPyZlSUiioYMMN4xnyQs0PiMpalmaUt4To=
+Received: from localhost (localhost [127.0.0.1])
+	by bedivere.hansenpartnership.com (Postfix) with ESMTP id 0D0961286ACB;
+	Mon, 04 Nov 2024 09:29:35 -0500 (EST)
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+ by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavis, port 10024)
+ with ESMTP id zX46con-PA7d; Mon,  4 Nov 2024 09:29:34 -0500 (EST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=hansenpartnership.com; s=20151216; t=1730730574;
+	bh=ZAdw3ycbQtDIRnnmmbxv15KDyRbeiPm8mNAI3lRZvbQ=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+	b=Dni0tHAULbW+8RXiRM5YlYfaFPNsSK61f2PJXCpvf6T27XvcjShxeMzqN0D7nl9vY
+	 yVTdFb3q7wYAh3gAs91Ww+wugTQGEguZDU5wR+8USB07xd3ZW8cMNwqvotUrvqOpKy
+	 HdsJZRH9XJGGD5ptBd6h31djvOY0gs/3s2vadJKI=
+Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::a774])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id E967F1286AA4;
+	Mon, 04 Nov 2024 09:29:33 -0500 (EST)
+Message-ID: <83c50ab23fbe0727edb489b3d59264896331ce40.camel@HansenPartnership.com>
+Subject: Re: [PATCH RFC v2 2/2] tsm: Add TVM Measurement Sample Code
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+To: Alexey Kardashevskiy <aik@amd.com>, Cedric Xing <cedric.xing@intel.com>,
+  Dan Williams <dan.j.williams@intel.com>, Samuel Ortiz
+ <sameo@rivosinc.com>, Lukas Wunner <lukas@wunner.de>,  Dionna Amalie Glaze
+ <dionnaglaze@google.com>, Qinkun Bao <qinkun@google.com>, Mikko Ylinen
+ <mikko.ylinen@linux.intel.com>,  Kuppuswamy Sathyanarayanan
+ <sathyanarayanan.kuppuswamy@linux.intel.com>
+Cc: linux-kernel@vger.kernel.org, linux-coco@lists.linux.dev
+Date: Mon, 04 Nov 2024 09:29:32 -0500
+In-Reply-To: <5ef943d9-1ce6-4b20-8c6c-7cba4f1b3ea9@amd.com>
+References: <20241031-tsm-rtmr-v2-0-1a6762795911@intel.com>
+	 <20241031-tsm-rtmr-v2-2-1a6762795911@intel.com>
+	 <5ef943d9-1ce6-4b20-8c6c-7cba4f1b3ea9@amd.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.42.4 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241101030902.579789-5-quic_qianyu@quicinc.com>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Oct 31, 2024 at 08:09:01PM -0700, Qiang Yu wrote:
-> Currently, the cfg_1_9_0 which is being used for X1E80100 doesn't disable
-> ASPM L0s. However, hardware team recommends to disable L0s as the PHY init
-> sequence is not tuned support L0s. Hence reuse cfg_sc8280xp for X1E80100.
+On Mon, 2024-11-04 at 19:40 +1100, Alexey Kardashevskiy wrote:
+> On 1/11/24 03:50, Cedric Xing wrote:
+> > This sample kernel module demonstrates how to make MRs accessible
+> > to user mode through TSM.
+> > 
+> > Once loaded, this module registers a virtual measurement provider
+> > with the TSM core and will result in the directory tree below.
+> > 
+> > /sys/kernel/tsm/
+> > └── measurement-example
+> >      ├── config_mr
+> >      │   ├── digest
+> >      │   └── hash_algo
 > 
-> Note that the config_sid() callback is not present in cfg_sc8280xp, don't
-> concern about this because config_sid() callback is originally a no-op
-> for X1E80100.
-> 
-> Signed-off-by: Qiang Yu <quic_qianyu@quicinc.com>
-> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> Do we actually need this many nodes? A digest is 64bytes long (or 128
+> chars), hash_algo is lot less, "config_mr" could just print 
+> human-readable 2 lines (one with the algo, one with the digest), just
+> like many other things in sysfs.
 
-This one should also have been marked for backporting:
+Actually, that's not supposed to be like anything in sysfs.  Attributes
+are supposed to have one value per file:
 
-Fixes: 6d0c39324c5f ("PCI: qcom: Add X1E80100 PCIe support")
-Cc: stable@vger.kernel.org	# 6.9
+https://docs.kernel.org/filesystems/sysfs.html#attributes
 
-Looks much better now either way:
+However, as I keep saying, this structure doesn't support systems, like
+the TPM, which can have multiple hashes per measurement register, so I
+still think the structure should be
 
-Reviewed-by: Johan Hovold <johan+linaro@kernel.org>
+<measurement type>/<pcr number>/<hash>/digest
+
+to allow for that.  I even think even Intel will be forced to use agile
+cryptography one day: even if Shor's algorithm isn't realised post
+quantum, the hash and curve will have to expand to at least 512 bits
+and there's bound to be several candidates plus backwards compatibility
+problems.
+
+[...]
+> It looks that /sys/kernel/tsm/full_report is a binary concatenation
+> of 6 digests, with no hash_algo and no hint which digest is which,
+> hardly a "structure". I do understand it is an example though :)
+
+That doesn't sound right: the rtmrs can be extended post launch, so
+this should be some type of log of all the post launch measurements to
+allow the relying system to examine the events as well as the final
+value.
+
+James
+
 
