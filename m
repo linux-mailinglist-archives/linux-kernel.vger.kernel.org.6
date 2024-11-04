@@ -1,219 +1,170 @@
-Return-Path: <linux-kernel+bounces-395097-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395098-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55FA99BB874
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 16:03:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 605279BB87D
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 16:04:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 137A8285CF9
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 15:03:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C551F2860DD
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 15:04:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8006A1531D8;
-	Mon,  4 Nov 2024 15:03:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DE511BBBFC;
+	Mon,  4 Nov 2024 15:04:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Y9gF75dg"
-Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1nam02on2059.outbound.protection.outlook.com [40.107.96.59])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Le5ArvP7"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 442284A08
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 15:03:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.96.59
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730732624; cv=fail; b=PvyUsxSIJ9gPMsefU5MkT0kU3xEDfvcpuftNsLTU4J0YVEQezQtnq08zb3l3onYU+W9eU1VH6ld8EtuqKLWGN0CWOkgiLRdBbPtX6tqnNtxy1PB55Sf6h2pv/ynlQQ6gJuXBoIWtcrcIOns4hoH8sIGprg4N8ZDVxYIDQ6Wx5As=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730732624; c=relaxed/simple;
-	bh=huorUpUO7MvfiZOhMNGybL+5rG1+YkGmYejDkT4rqD0=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=MxnXmplqzsJpe+8BL/khDgn+kJBu6lIzjpP6rT20dsqCaGOZenQRAN8b4WOm99JWQTjnUeFgLMptLhIBNKwwsPZRs4CsEKVXW9F7/FU3uYLu/0QSBsIOJci0iSJm+76i3zjNrUzAOfG5on2CnmIUOShdZdtRb8OtAIsMkvDwbGc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Y9gF75dg; arc=fail smtp.client-ip=40.107.96.59
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Vya78H4qWjQPvhE0yYVZzZG+ydiHcWjIQPiS3mY3spYGjgO+oGAY0nXLEAxikRi/xxjwilnfw7ajVspZMqsaQu5eJBFzt9LosNIqoTaKxUIXYLBHcVTq8joYiY9spo9RTPzmj3GxaLR3GysoBSU9O+gDvWLpzK56i7BOBXAhF9Cf5cDHXRJY8ShAD2x5VMNaBBA2ig7kwqaFSnXzaxaXtcdBorm7ZfiCojuKcGg6ja1+qC19AUKFUbeh5PLwhhK1wnLsQfo1XJuSRWYYqdfJQRCb/yD10/d4RiX6SVRG0jeRsp37IpzmJ2p8h0VZjFKqud5zH6ztoqmA1Eq3fhy88Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=6nrC08hryPfK2/605wLYXyZiESBgGm09prPioKSywpw=;
- b=Qh85dVZCnNyuTpOF1mZ6oQH3QAfKUfHuNzAs8RbPvuDld+yXq/EYVs6VVBAcL10s2k8EWZZZdE0YgQRtkOMkUEaHjSPHnSQ4uQUceB3OJRXwgPaJU15sah0M++M+/04p28wqHci+/YXP1i5VJk+yCFHfOSokXl3gr9yTQsy1gl0SDU6VM9K+2t4anrbJxverO/GNPxonOF2M+QyW6IgkWRMSc50/PhOAhLAi99+T4rCObbEl+IXnJZzue5bnZuB8WdSzAi7duhs+hn7k81PhNCgVm4Jre70d0ObiJ1wAJsYM6YIOqq8ENRuW/P+8RfTO5qPaADGX+Mwd2VPcAyVSug==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=6nrC08hryPfK2/605wLYXyZiESBgGm09prPioKSywpw=;
- b=Y9gF75dghHdHAbtH6rjxA5k7lwW5NWoDKV6XEwoU3wPVHheGIVb8qrUMaoixq4ShS6BtTyJMUOdXrAZwqmJ6pWC7IxdWex2hJizG4PbCd91f13bS0GniOeeLnEi7o5PZ88IhOvHkDe42c9S2RY2goWqZtDTC8jKPJ3COUR9n3aM=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DM4PR12MB5070.namprd12.prod.outlook.com (2603:10b6:5:389::22)
- by LV3PR12MB9094.namprd12.prod.outlook.com (2603:10b6:408:19e::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8114.31; Mon, 4 Nov
- 2024 15:03:40 +0000
-Received: from DM4PR12MB5070.namprd12.prod.outlook.com
- ([fe80::20a9:919e:fd6b:5a6e]) by DM4PR12MB5070.namprd12.prod.outlook.com
- ([fe80::20a9:919e:fd6b:5a6e%5]) with mapi id 15.20.8114.028; Mon, 4 Nov 2024
- 15:03:40 +0000
-Message-ID: <1e0d8039-5721-7172-877f-e3b0bbf216d2@amd.com>
-Date: Mon, 4 Nov 2024 09:03:38 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH v5 5/8] x86/sev: Map only the RMP table entries instead of
- the full RMP range
-To: Borislav Petkov <bp@alien8.de>
-Cc: linux-kernel@vger.kernel.org, x86@kernel.org,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Dave Hansen <dave.hansen@linux.intel.com>,
- Michael Roth <michael.roth@amd.com>, Ashish Kalra <ashish.kalra@amd.com>,
- Nikunj A Dadhania <nikunj@amd.com>, Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
-References: <cover.1730143962.git.thomas.lendacky@amd.com>
- <f48b9b551abb544fb7f997b9465680637f014dec.1730143962.git.thomas.lendacky@amd.com>
- <20241104062845.GPZyhpnWueB-jCEl2H@fat_crate.local>
-Content-Language: en-US
-From: Tom Lendacky <thomas.lendacky@amd.com>
-In-Reply-To: <20241104062845.GPZyhpnWueB-jCEl2H@fat_crate.local>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SN1PR12CA0067.namprd12.prod.outlook.com
- (2603:10b6:802:20::38) To DM4PR12MB5070.namprd12.prod.outlook.com
- (2603:10b6:5:389::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C17033997
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 15:04:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730732687; cv=none; b=LrZ1hvl4vorvS7kNVsUIVM7AvBcslEMevpRWE60YtoZYdvSmAWxM8Xr4zmohP+Hx46mwPT4a2gR5bbWIUkknVJvIHTpBoMgNAxBOCOHKvByA4NW4VWAKBsjFtMgtZvMZnpxZ8BmCZ4eO4oG8Kx4TEW1QggueNcdsNh94qHjxMRs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730732687; c=relaxed/simple;
+	bh=b64hH3uC6UTPYvdLtiLvWZgQcvOdjgEny/RklsbEraA=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:References:
+	 In-Reply-To:Content-Type; b=tOE2tfHTDxilsfdNeQUk0zqPe/ZALFkggVTSUNoLApTF78brZjEdYQrjgNjHixjdo0C6adSzArv7UCsWRy2Ubu+HMhfFL492v/LYW8TMFa8tWDr2o7xx6Qb7dHc/OBoOriWBILEK0BOgV4Jhw+EJ8w33diV4jJ9PteIa3HtFppc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Le5ArvP7; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4315baa51d8so38420455e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 07:04:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1730732683; x=1731337483; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=PkHezRVB5IW8ZGwe7184Mv0JG0GlE7Z/SJRIUFUBnn4=;
+        b=Le5ArvP74jvJdKXH90AxXv6HvPiJv+vL2wfquIhu1fWYK1HNCsoq7GHVmz3g0r2oIu
+         rIT3jbdTc6Cd2IUg+/Z+8ppvunX6rXQ8uPAkC5c9TGhgZIM2Gh4UxAF2Z+NRg7TqYG1f
+         rF+a1JyCW0mSXsiNqFOU+9wp0vXzAo0GW+ceJMCnjnWzQQWHNHUuEVHnDKtBSp87egL3
+         g5n8eY6g/o+QP9gnrOEmpp93I07W9yBWi040j88HD6kGiFWp9KURYbJS1ymgb5qGdOKG
+         WLBEnn2sWQe8r1k1vAPyve/QOKHRN+IJPBg5UL2buYpcuSQFceBkDXV7/nsuEL2s0VIq
+         kdwA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730732683; x=1731337483;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=PkHezRVB5IW8ZGwe7184Mv0JG0GlE7Z/SJRIUFUBnn4=;
+        b=tEei4o9RxSiP6v2twtkmNW+9PHG5GeUahS1XAgZlXIQbWSd6pI5KPDhtIMMKq9f7az
+         oI9EKgT1rOp762jGcemZfctE2QQjCIvIuiQ4iY0vfIrsqVTXbG79DZ3D9Su5wf9x2ti/
+         thiJcb2u2uKtMgo00egFhMFpyzs7iYzsClcxOqp35uxuTzcXFNFIxXARh+9pcFFIpEom
+         9ssSoxfpRNsNH8xSDh3avmMfCs9A6YxaImWqK0LP4ezFLjjnv/iikHo6BnN9+UxpHYRx
+         3oZMlqhH//Yssa6QivuAZ9aIkvt99BBxZr3iwGMuNpSHDWFg2sRhfLAIiw7r1GiKeROE
+         spDA==
+X-Forwarded-Encrypted: i=1; AJvYcCVywteNhEATQFS4m2Sg4HjbpMj99OytGsjEbI9WcE87+7VuW2vnT2eAsEglw5yHmOlYLrb/D5c4Q8n3JUM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwTRANdM5dnpO+1zpK8oS0elqr9dz6YwyI/5382ANfjrznYYiIC
+	UvA4CFU1C72zyhJ8Yd21epl1zO0HD4/uoZtxXu+9ykDohDh/t/ohe2L7GCYzkdU=
+X-Google-Smtp-Source: AGHT+IHjmYRuVPaZFPEnmcnbEfj6qAKFYzc9mqwaUK54XQYXITaiaYcy6kaXUXlkJ5ui5oryxUMDYQ==
+X-Received: by 2002:a05:600c:46cf:b0:431:58bc:ad5e with SMTP id 5b1f17b1804b1-4327b80c8bamr122885355e9.28.1730732683356;
+        Mon, 04 Nov 2024 07:04:43 -0800 (PST)
+Received: from ?IPV6:2a01:e0a:982:cbb0:5b00:c640:4c96:8a97? ([2a01:e0a:982:cbb0:5b00:c640:4c96:8a97])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4327d5c6623sm154916145e9.20.2024.11.04.07.04.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 04 Nov 2024 07:04:42 -0800 (PST)
+Message-ID: <8d7ab244-ca34-4b90-9d9f-39217d3335b5@linaro.org>
+Date: Mon, 4 Nov 2024 16:04:41 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR12MB5070:EE_|LV3PR12MB9094:EE_
-X-MS-Office365-Filtering-Correlation-Id: ac60cd27-42dc-4bd1-df5c-08dcfce1ddf6
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?UGF4Y2dYczdUOWFQcjRxdk0xV3lOalZ2QTQwOVB3S3B4QmhIQTVpQ1VNYjRD?=
- =?utf-8?B?VTRPTHl2L2o2WFcwZlBRblRzaVEvcjhzbUZoUlFSRWJvRGhYUXhJdWtjdTRv?=
- =?utf-8?B?QnFOVXp4bkE5aWdwcnZUM0k0L3N5TEpqc2JPQlN3NmNYU09LczltLzRqN0tK?=
- =?utf-8?B?SktvK1psVFNNMWI5a0RJcW5yYjFpNWlvektrWjN3WTNqak9mbndaUmdyUXlx?=
- =?utf-8?B?Y0R6OHpwUmNnaXljK0twcnVuSjVQOUIyanlqTDkwbU5xVWVxZS9GTlVtYy9w?=
- =?utf-8?B?Sk9pc0VUTHpuSUhKOHp2NHFvanZCOGdhMDh1YkYrZVV2NTM1Vi8rYVpoMkRr?=
- =?utf-8?B?TWpMa3FaL2VUUGZ3bUJiT0YyRlVaUTlUL1ZtYlRYMmRPcC8zZGJpRDFMckxI?=
- =?utf-8?B?LzFLV1M3bGRKMFpwZ0t3VFFwVkE5dmp4NCtTQ2cyaStKdDdSb1daazJaZDJy?=
- =?utf-8?B?K0xpWnJ3dWpnN0F6cjNQc2xDVGFsRExaekxMa0lhZG0rSTIweHFIYkwxaCtu?=
- =?utf-8?B?bkt6cnFCa1JPbUUyTThZRGdRRVNnTklCbWJ0YWhzcGRvYlZ2cExmT0RkczNT?=
- =?utf-8?B?dE1IalZzQlIxQVVaVURMbURUcTI5bkF6NkJabGxLWStLU3RhQ2JGTURSSkw3?=
- =?utf-8?B?Q1pkQkpzeXdHN2JOQzRPMXN3a0FtclpkTTROY3Q3bzZGVE11WDhCendIZEtQ?=
- =?utf-8?B?ZlVZNUVTcW9xZVV2WnJRWkRKZC92VlZZdFBsMTlZdzFuV0VVSCs4TmZlOVht?=
- =?utf-8?B?enEzWEc3YkxCdTVpbmlPUVpsbWVQay9Za0ZEbUJHS3p6VEhGY2NHa2t6NG05?=
- =?utf-8?B?akY5VFlhVHpzdHAvUFgvblpxeTlzNytCTnUrVGlKaWQ2aVVBMTVtcGIxRHVR?=
- =?utf-8?B?NlZLNDRFNTBFcGNYRlN6ajhjUUh0Q3lWWjhNNm9ldk1WbE5PYTVGUyt4b05k?=
- =?utf-8?B?MzBEWCs1RGhka0VsV2VGc0lpOGNqRlhJQTZBZXI1WVVLOUxySE03WHlpN1dU?=
- =?utf-8?B?d0VDQmM2cmo4eVBEUnpIazhwOWtwc1k5Rkw0OWZ3dTFGQTNUd1dSMmtkb3g4?=
- =?utf-8?B?YW9pdGNnQmtrek5Qd2JocWxYNGtWd09kbjlnSEJRNlFpWmJrOXlMQk9iRzl5?=
- =?utf-8?B?WHRGQWJsUTN3MFZhMmljc01Sd2lkRHAxcElSVXB5RXlodTh6dm9JS2NaN2xD?=
- =?utf-8?B?ajhxTkwzU1R2d09EWlFtZExSM0RuR3c0S2xOc2J0Qmh4dUpOaHVvRHZmamJ2?=
- =?utf-8?B?UFdlME5kRzdzNXdpQWtWS1kyL1NEdmhTRkx6TEE5MGxXT09xeWJwS2ZSR2Fw?=
- =?utf-8?B?TUUxUFJRdy83M213QTljVFAxVFQ3d1hHYjVlV3JobWVnYUlCUUpKQmRNRC9B?=
- =?utf-8?B?QzF4UEgzcEY0R2k4T0dmeGlScmVJR2tBZ2VOeHVQNVd1MDZ6MjNoaHllemx4?=
- =?utf-8?B?c3ZCeTllSFFMTEhqaWdHci9EeWRURTZUYkJ4MDdrZ0NFU1BFaS9RVmM5QWV5?=
- =?utf-8?B?TVVEcG9oc1JtaUpWNVBtdHlkQU9KdHo2S1BHUUN2RUVZdHUwbzQ1WFpzUlN6?=
- =?utf-8?B?Z1ZScFdPaFdTRDNwZVdJa0ZRL1hRNXZDNjVmaCtpc3JBbFdkWWJ2eUxMam96?=
- =?utf-8?B?THlVZjN3RTJ3cTA4RkpFU0FONUpWdWdBdFlCNFdBbDNmd05HNVE2MkVRZllS?=
- =?utf-8?B?SGs1SnlPMjRpblZwMzk0bFBxYXpZTVFmR2hpbysxTkR3b2FMYjcrZ2JWYksx?=
- =?utf-8?Q?4PMzEs1O2AdIBmqszJV4JWL7XTbjll+RWYvWF5P?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB5070.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?OGhxZ2FzeU4wSm9aT09ybnFTRG1XdHZTbDVaUWRFemFuSnBZMHFQbHZ1SE8z?=
- =?utf-8?B?TmtRK1pHcnRvRWF0MHNzdm5FaHFxaDJZMklFekkzNHhzcFdBWVRlaDJpaUdR?=
- =?utf-8?B?TUV0eXhGb2ppWm40dWQ3bVNlVUhCd0I2K2d0Y2ZPRGFYWlJ2WmVyZDZFdzFE?=
- =?utf-8?B?akVRNUVNYzFVTkJSbDVSVVJrcVRrbEFpM0YrZ0h3bnMrMWtDcGp6S1c1L2g5?=
- =?utf-8?B?Mm1xVTB4YmYvUTVtOUhOUmh5Sy9KZWg0TElCV1lpaktUVGs5aWlwVUs3Y3NC?=
- =?utf-8?B?NUdPamJvMUpGZmlsNEpGNWQ3cGtUSldFczhSejRUT0s1aG9oTmVvakJ2SW9B?=
- =?utf-8?B?N3FwYzdFdk9ibFVIWFprQlB2Y3N6aHdOZmsxdU1TQ3c1Z1FwVERlalpGSi9n?=
- =?utf-8?B?aHc5L2Fvall5TXhYSHV0bm1hekxEK1BxcHI0c3gyVndDZXc3d24zc0FUR3g5?=
- =?utf-8?B?bzNtSVdxRGhOMXBtSUFwVkdjbUJ1aERwWVdPNGlFMkVHdmNxaG0xUjRkWGsx?=
- =?utf-8?B?dFI3MnVSb25SVWxBSUxka2lFNk4zY1N3cGt5RitSWjRQRXZGdGtBUHh6aUJN?=
- =?utf-8?B?bVdXd0h5eW9kcjZhUllwaHE0Q3ZBUGRVZGU2Y2R0Y2g5dlcvRmhELy94VmFk?=
- =?utf-8?B?dUEveTQ1S0tTZTVkTks5MmE1WlRPMDI1ZE9ZVjZPNGp4eWhBeEwrdzFzUGNa?=
- =?utf-8?B?ZEVYYmlLM3dFL3QwMXVld1JXN1gvTDEvdjVWSW1TOTlYbTgrMUprNTdDZ29J?=
- =?utf-8?B?LzVRSW1za3pZaTI2NGdNK1hzQlAySmhkaHJtKy9HdDJvNXVvclRNR0g3NldG?=
- =?utf-8?B?YlNWUkE5ZklzQTUrZ21JSEp2aTAvcHE2LzNwOTdYRXpxZ2R5ZXRlVWhpT09I?=
- =?utf-8?B?bWxLbTRnSDlEZTVEMlNKUFdVRStrNjd5ZHpDN2l1SXc2dXE3cDdSQ0NjeUZM?=
- =?utf-8?B?cDFzSkFUNXFlalVleVJKQ2t6U0I4RmJ4NjhmMnZ2am1IRG91eG8yMmRZdXJ2?=
- =?utf-8?B?aDZzQTZZSmFjL0R4ZmwrbzdxVml3RThHL1NDV0l6OVRxVHc2NkJUSzV4SmFV?=
- =?utf-8?B?UFhxc0gxMStVRExWVVd3Nm9VMjVTaVVlRkJzMUJybXN0VHFrRTZlY0pNWnJ5?=
- =?utf-8?B?dEJGUWpOWjNhVmVReHhqZU5xaStVY1RFZ2xIOHR4dHQzRlhuU0tqeXpqLzJJ?=
- =?utf-8?B?Z21iNkFqc3M4ZU12YURYb0U3Nys0SllqWnpGL3ZGZ2o4bDVQV3BWSUlEaE51?=
- =?utf-8?B?TUlrZ2VjdUE1YUZHaWg1UWI3QnkvSkgySXQyNllLL1FRRHFKTHNLSUxKQXlW?=
- =?utf-8?B?U0RPV2lKeitYUDBESjJhaTVZL0o0OWZmTDVlc3diOXgrQWVNbmxkV3hCd21L?=
- =?utf-8?B?VEpjd0lmUTNybDRpZzJ0TitvWFp1c2RXMEJieW5zbE03cVRoWnVydlNTdzZD?=
- =?utf-8?B?cUlnZGdhS1pVY2NsdnZmVHBYR3BSL2ZPc1RjZlBlR1dha09KbThpQmlraUk2?=
- =?utf-8?B?VzFnUTNvQWtMeTRrTnJId1VSUXhOdzJQc2N6TEdrakRQc0w1ZzlHM0l1Y1Bx?=
- =?utf-8?B?U0toMU5EOHJJZWJFa0o3SE91eGprcVc3QytNYWdvSUIwQ2JMVjRyNDEvclp1?=
- =?utf-8?B?cHczOGxsSWFLQ01wV2pOcWo2bEdNa0N2VHg3bXEzOUVlU1hTTVZDSGJPSGsw?=
- =?utf-8?B?TGFOVTkyYnR6SG9TT2hGRnZkMEp0VVJ3MmxYNzFwa3FOSEZWQVdiSnh5eXZl?=
- =?utf-8?B?UCtRYWs5RDVXNHRudFd3ZzlDTjJ4dENkSG45ZXFSaXIxV0xMc3hkT3ZmcTVP?=
- =?utf-8?B?WXJVRFUvVjBuaDA4Rjk3elBIWnhSZ2pBeWQ4bFYwYTJsczZjbDIydEJDUnN0?=
- =?utf-8?B?VXZqS3NsdFVGN0ZDdVdBZHdEMFMrUzI2Y0U2WEQyaDk0a042QWZ6a3g1TnB0?=
- =?utf-8?B?Z2Fyb0NmUU5Wc3k5ODBtZWJKR2VIRUdWOEgxTkczUmZKR050Ym55M0UvOFJx?=
- =?utf-8?B?MkxIZlEyanpYVVNRYTF2RTFxbUp1Sm9ObGF4QnVyQWJRdnc2SnZMdUJmVmMz?=
- =?utf-8?B?RnJXRitPNzZLYm9mMmRSKzJyakxWakkrQy9ENm9wUm1wbzQ3REpXZWZhM1RP?=
- =?utf-8?Q?vqDBPfqEJhY5uNVCKVVk56GQ2?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ac60cd27-42dc-4bd1-df5c-08dcfce1ddf6
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB5070.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Nov 2024 15:03:40.3474
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: X/gXFAIsLushS4gL+cRLZSygCTCJPOTRrQGvjajTRxjaRITm1Ntw0po3lQRD0mVj6G+SkF4iZ8wviLoNU76etA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV3PR12MB9094
+User-Agent: Mozilla Thunderbird
+From: neil.armstrong@linaro.org
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH] arm64: dts: qcom: sm8650: Fix CDSP context banks unit
+ addresses
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Ling Xu <quic_lxu5@quicinc.com>,
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20241104144204.114279-1-krzysztof.kozlowski@linaro.org>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <20241104144204.114279-1-krzysztof.kozlowski@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 11/4/24 00:28, Borislav Petkov wrote:
-> On Mon, Oct 28, 2024 at 02:32:40PM -0500, Tom Lendacky wrote:
->> @@ -224,7 +246,14 @@ static int __init snp_rmptable_init(void)
->>  	if (val & MSR_AMD64_SYSCFG_SNP_EN)
->>  		goto skip_enable;
->>  
->> -	memset(rmptable_start, 0, probed_rmp_size);
->> +	/* Zero out the RMP bookkeeping area */
->> +	if (!init_rmptable_bookkeeping()) {
+On 04/11/2024 15:42, Krzysztof Kozlowski wrote:
+> There is a mismatch between 'reg' property and unit address for last
+> there CDSP compute context banks.  Current values were taken as-is from
+> downstream source.  Considering that 'reg' is used by Linux driver as
+> SID of context bank and that least significant bytes of IOMMU value
+> match the 'reg', assume the unit-address is wrong and needs fixing.
+> This also won't have any practical impact, except adhering to Devicetree
+> spec.
 > 
-> So let's call it what it is then:
+> Fixes: dae8cdb0a9e1 ("arm64: dts: qcom: sm8650: Add three missing fastrpc-compute-cb nodes")
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
+>   arch/arm64/boot/dts/qcom/sm8650.dtsi | 6 +++---
+>   1 file changed, 3 insertions(+), 3 deletions(-)
 > 
-> diff --git a/arch/x86/virt/svm/sev.c b/arch/x86/virt/svm/sev.c
-> index 5871c924c0b2..8145a7b14fa2 100644
-> --- a/arch/x86/virt/svm/sev.c
-> +++ b/arch/x86/virt/svm/sev.c
-> @@ -173,7 +173,7 @@ void __init snp_fixup_e820_tables(void)
->  	__snp_fixup_e820_tables(probed_rmp_base + probed_rmp_size);
->  }
->  
-> -static bool __init init_rmptable_bookkeeping(void)
-> +static bool __init clear_rmptable_bookkeeping(void)
+> diff --git a/arch/arm64/boot/dts/qcom/sm8650.dtsi b/arch/arm64/boot/dts/qcom/sm8650.dtsi
+> index 3d8a807a81c9..367fdd090768 100644
+> --- a/arch/arm64/boot/dts/qcom/sm8650.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/sm8650.dtsi
+> @@ -5622,7 +5622,7 @@ compute-cb@8 {
+>   
+>   					/* note: secure cb9 in downstream */
+>   
+> -					compute-cb@10 {
+> +					compute-cb@12 {
+>   						compatible = "qcom,fastrpc-compute-cb";
+>   						reg = <12>;
+>   
+> @@ -5632,7 +5632,7 @@ compute-cb@10 {
+>   						dma-coherent;
+>   					};
+>   
+> -					compute-cb@11 {
+> +					compute-cb@13 {
+>   						compatible = "qcom,fastrpc-compute-cb";
+>   						reg = <13>;
+>   
+> @@ -5642,7 +5642,7 @@ compute-cb@11 {
+>   						dma-coherent;
+>   					};
+>   
+> -					compute-cb@12 {
+> +					compute-cb@14 {
+>   						compatible = "qcom,fastrpc-compute-cb";
+>   						reg = <14>;
+>   
 
-Sure.
-
-Thanks,
-Tom
-
->  {
->  	void *bk;
->  
-> @@ -246,8 +246,7 @@ static int __init snp_rmptable_init(void)
->  	if (val & MSR_AMD64_SYSCFG_SNP_EN)
->  		goto skip_enable;
->  
-> -	/* Zero out the RMP bookkeeping area */
-> -	if (!init_rmptable_bookkeeping()) {
-> +	if (!clear_rmptable_bookkeeping()) {
->  		memunmap(rmptable_start);
->  		goto nosnp;
->  	}
-> 
-> 
+Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
 
