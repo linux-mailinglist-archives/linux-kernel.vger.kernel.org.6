@@ -1,152 +1,240 @@
-Return-Path: <linux-kernel+bounces-394544-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394545-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEC6F9BB0DA
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 11:19:34 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2E5B9BB0DE
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 11:20:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4C958B22C0E
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 10:19:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 39BA91F21479
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 10:20:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 729A21AF0DD;
-	Mon,  4 Nov 2024 10:19:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06A501AF0DD;
+	Mon,  4 Nov 2024 10:20:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="moyF9DbF"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="a08OoHr3"
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2056.outbound.protection.outlook.com [40.107.220.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E4431AE009
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 10:19:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730715565; cv=none; b=qoGkBKCLgYijhSwcaSW/q/kA04tESUpqAsiHQVGeWRW5uH9djYE+KxiwJEJRoia67XwKohxXxjeQ3dQ82LeihP8tYlT3QN17DOcSh9wZZmec/61tMVZk+g2bv6E94IjKXyLSvcmmmQY12CzZpeUXioYPumCoVVXQbk+7iCFnMkU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730715565; c=relaxed/simple;
-	bh=p02u5ugaKpWhKVqfxEAznxhLGO4mT4uCMsWfpBLALds=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=buJ5T08F6Yn8ClLyqk9ftm03TnMWZqfDGdPNml45SmYtI0OQoj6hVfyygw9jSkbXTO+p782ze+Pu5WR9DBLucpCI7O+0uKrOU6cTW3AZD2dnTmfsoBvMyBL5qfc7HZkA2jcATBPNJlToFRieYEbJaIETCL5lsex+UNKuJLDbeYQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=moyF9DbF; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-43152b79d25so34090495e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 02:19:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1730715562; x=1731320362; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ISWAroPoW2Cp/mKeny0CkcawM1MmOld3TK+B1w8Xgd4=;
-        b=moyF9DbFW0KZ2QxpaCTUaY3aTqXQpt1GdP1Qcu8jZUI+kwn/o+zrC8rvbZGwz7dJ41
-         AxXxVzjoOCye0ZZo4f9ac7Ie+zbWUDgGjLXltbnQ3bfQh+i3sO7tYB+KpnmwQdMx6PG4
-         ozYRdeVmtY5OR0YSufayJSJLmUHopu/3SZPoNoQMbdfSt3NYNLMFHdonnk4LRHyjksbm
-         Wzuk6gq76S5kFC93WlLB0ivXOu0bLROV820CY2ZU3XWqHnZNcnITy4Forl3kSz6xCvRf
-         3cpl9ivfFBCm+wsdtW0ouHE2UX+NlFpq04ym3Do6ge0TlxVWikTCHhw/6rJyZ3VuHE1g
-         1xiA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730715562; x=1731320362;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ISWAroPoW2Cp/mKeny0CkcawM1MmOld3TK+B1w8Xgd4=;
-        b=DIEf/zF6axkr7gSBB+Q0IzhQAhwe16AIflYmFgAFKU6JDO+qlIfqDlxO9FgJ/hdnUH
-         H8fqmwj7WXCOUukaIHACm+xN9FRLoGhHV/2nLxmT23Da7NLjnoCbc3sq+DsS3vhW7mWb
-         qrRVIffhIGlD4R5X5XXlqXC4bEZBGYqqQkA50DbTew0nymdj0aLr4ME72m90U8CZH6DI
-         eyUqa+8WVHRyrIow4zLEY+8KomJesNR/Qj8iMPWu8NbGupWggJuCzcBm75FH+u9r7xAw
-         AU7FWKoa8uTGa5ilC6v84YeYH+IFMGuhEChj3o4r8PpsIYuGxcKlxotVZGpBcynRhr+T
-         0cmg==
-X-Forwarded-Encrypted: i=1; AJvYcCUFigUf+ySvL4UltzQpIXvxVo9xLoLMMiCpOelv14ygf9Xj6Z39EOZe8ws/IIwryTBU/G1bNEgXe8n3hZw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxKLFzkGh0QCzqmp9NFO3lVqiU2lPVELNtXCI51htdhT7cGU/mW
-	9UjNZ0LJtoiPQz2SWOZ5YluB4jdf1OJAhKPs2O3udB8nM10GVvJiz/E0f02ih3M=
-X-Google-Smtp-Source: AGHT+IGHBx2Wfh4vX522CnWiby+5Vc1dK4lFkw+tq96nrFTY32QtNrkmHCTwETHp0Q7Y5pJBnfMIXw==
-X-Received: by 2002:a05:600c:548d:b0:431:60ac:9b0c with SMTP id 5b1f17b1804b1-4327b6fd376mr124782995e9.20.1730715561767;
-        Mon, 04 Nov 2024 02:19:21 -0800 (PST)
-Received: from localhost (p50915d2d.dip0.t-ipconnect.de. [80.145.93.45])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4327d5e8915sm148643405e9.27.2024.11.04.02.19.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Nov 2024 02:19:20 -0800 (PST)
-From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: Lars-Peter Clausen <lars@metafoo.de>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Dumitru Ceclan <dumitru.ceclan@analog.com>,
-	Nuno Sa <nuno.sa@analog.com>,
-	Guillaume Ranquet <granquet@baylibre.com>,
-	linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] iio: adc: ad7124: Disable all channels at probe time
-Date: Mon,  4 Nov 2024 11:19:04 +0100
-Message-ID: <20241104101905.845737-2-u.kleine-koenig@baylibre.com>
-X-Mailer: git-send-email 2.45.2
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1DF818C020;
+	Mon,  4 Nov 2024 10:20:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.56
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730715606; cv=fail; b=LcneNANqqXQmZqeyG91KiK2u/WDK/roy+jVMpyi1rHbWGoLj8SYPlrX5dhHGdhSOUHeRJkmK12t0SrnvkA+PyIMiDvrneCRf78C9ooCbns41dUn4Ljy8tfL5RwW2Hh4jIRxYv/Ugcf4fWilkymJmCzXzC91UaLFV4SukKPV4SCM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730715606; c=relaxed/simple;
+	bh=f7lNV3xvmnqgOy8yNjWEKbScVqNdxKlhsRnUmJtw9Vc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=Lew7RyyUftRaWFxF06m2MqdXv8IpuquMjU+/GtgEt8fFj/XNhpWDUzIV0d0otTw69sEKAaCopo8QS1uqN95F/7UOzEa/5NbE82b8GfS7LZ2DEKwsqy+XNKvEmDpxSm+tQUoD9NsJSeMmIhR5XGM2v6feVukOveyV7EWosyuuyoU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=a08OoHr3; arc=fail smtp.client-ip=40.107.220.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=yFjYXXHhd5+nwXX5pFhSumMfgI0VDsD+tB1DaVM0J0xn3/fUMASWx7somzUuZppby/WECBj01vIUI2Qoi2EGI+AuMvvhpaB4C/y1HyWFMdvp2xG1sbQhO21xJgzHzTx5nEfELCxB86pSNYbA1BHDBsRlTRhWJn7x4GNumUvEcU/CkCi/2GCmRJpNsUxzAM35lHmI5YgCTRIMxk2EHC1mRGtBA4OEjYvSgQ0+K3Kq59qTvutH/UC1glSFqtfngsi6cJcGq3w5OawpKFBGR7Nw6MvHgFvL56cgl2vHOuHuAq+Fbe2bzWETkKpZMAuMzpsAf0V0/QA8O8aHBdxk09AL4g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=CxurNx6d5AHto7I4f9BSlwdf9oV9NR/+WNt3u4hy+rU=;
+ b=awnHL9iQtPOwooKgjplnpQG+Kels8zwiaJ5i7bcrHasNps4+4WnDEFKoEnjNMkO8kR6l+c0BQsja/viDp8m9iCXOztG5WUmdcYXnVx4wfL24shWMoZ6hQhPHItqFAaKze9ALjeKqCDFJ+XcFyxxMAgCK7VLuQ73u3WqRW3UPpf3qcFvz2q/LOb51PAVKr4r8X5gUwUtLNkwfrlND7WqQksdNciTVotX6ee9rONOJ39ceP70FBzYCZlC1Zmuj6y3BhORrYN0vq5kl7oJKRSnAVix5Y4kQLEJmyIecLG1KgKbmcsVB4dLHsCa03/Rf+OIDfOpbY7u7jYM/vV1J93OnxA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=CxurNx6d5AHto7I4f9BSlwdf9oV9NR/+WNt3u4hy+rU=;
+ b=a08OoHr3s67mZfc8LUZ4/4codx5onUD95q4QCEwTVrkz0K10uXr0/l8NbEzrKbFPMEYKrDSju7rOAoCImpELZW4NZOBUy6g6Cnd3OpLK97NpgAsmxgJwdfsQyUD35Spv5dtPUEp3TghfEMK5sYZVKem+p61oU88qk7W2HzcJLvE=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DS7PR12MB8252.namprd12.prod.outlook.com (2603:10b6:8:ee::7) by
+ PH7PR12MB7020.namprd12.prod.outlook.com (2603:10b6:510:1ba::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8114.30; Mon, 4 Nov
+ 2024 10:20:01 +0000
+Received: from DS7PR12MB8252.namprd12.prod.outlook.com
+ ([fe80::2d0c:4206:cb3c:96b7]) by DS7PR12MB8252.namprd12.prod.outlook.com
+ ([fe80::2d0c:4206:cb3c:96b7%6]) with mapi id 15.20.8114.028; Mon, 4 Nov 2024
+ 10:20:01 +0000
+Date: Mon, 4 Nov 2024 15:49:49 +0530
+From: "Gautham R. Shenoy" <gautham.shenoy@amd.com>
+To: Cristian Prundeanu <cpru@amazon.com>
+Cc: linux-tip-commits@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Bjoern Doebel <doebel@amazon.com>,
+	Hazem Mohamed Abuelfotoh <abuehaze@amazon.com>,
+	Geoff Blake <blakgeof@amazon.com>, Ali Saidi <alisaidi@amazon.com>,
+	Csaba Csoma <csabac@amazon.com>,
+	Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+	K Prateek Nayak <kprateek.nayak@amd.com>
+Subject: Re: [PATCH 0/2] [tip: sched/core] sched: Disable PLACE_LAG and
+ RUN_TO_PARITY and move them to sysctl
+Message-ID: <ZyifxfSV8k5vC0iG@BLRRASHENOY1.amd.com>
+References: <ZxuujhhrJcoYOdMJ@BLRRASHENOY1.amd.com>
+ <20241029045749.37257-1-cpru@amazon.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241029045749.37257-1-cpru@amazon.com>
+X-ClientProxiedBy: PN2PR01CA0178.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:c01:26::33) To DS7PR12MB8252.namprd12.prod.outlook.com
+ (2603:10b6:8:ee::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2510; i=u.kleine-koenig@baylibre.com; h=from:subject; bh=p02u5ugaKpWhKVqfxEAznxhLGO4mT4uCMsWfpBLALds=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBnKJ+Zur8byYe7r6sBCec7CjSYmSuaMA0BkMcL7 8U72Z2JZQiJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCZyifmQAKCRCPgPtYfRL+ Tph2B/0Q0OQGXvioezD7/2j1hrcpeyLTWoQpl3jeMqbAHoTixhKqjkGqYFX2hfyKQl/aklir2+4 YOnMiGarQRVtQFY30FVdtTCdktbT/qb2Wub3y+/oe4hTvjnWIx9o+8Kd1BqYhQ0FIkwunaFYi52 QaCWInxtFQ2U/BEh920lUnaMFqLjCIqgF5PMsO67YkuY9cElbZAqNEDuq0DVBopTj24kFG2s9GK eDXXgKfh7KrZIAtWIona9NWS+a0Cd6PaBv5slOwiqeIQySHwTYnXg8SxkibA5PviXVZlb8yrm1z JX0Ww4IbUZd8mW6cIEBs0miHDPDsz689Y46otMzTZDw9i1Uo
-X-Developer-Key: i=u.kleine-koenig@baylibre.com; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS7PR12MB8252:EE_|PH7PR12MB7020:EE_
+X-MS-Office365-Filtering-Correlation-Id: be058bef-bb48-4164-8a43-08dcfcba3da3
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|7416014|376014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?JRloBRTIEdUTwHilknkeCbX684lpKBY8ZAKkbvHaPLC8TlahRjdOmd/T1iQr?=
+ =?us-ascii?Q?cdKutRBXKWbix+ctxXUiaqSnFHWlnKiZKOXvIB4Gl5kjn+xIMhXtrFW8yksc?=
+ =?us-ascii?Q?+m61+dwr8JK1MWSnCI4l7dooaQiU7Qwoqt1CDN1VPpi3dEAVe3SS4KLeThjC?=
+ =?us-ascii?Q?HuVhHR9OkFXxznDOrYXFBkkOA8yZKb8Ad5gy/woL7zoIPZxJpnnDkGf2jMXr?=
+ =?us-ascii?Q?7tdf/iV6yc8rcWLSNsgBp6tFz28B+jdvCYaY9J12k3VA4+nZL5oN7y4JeJYu?=
+ =?us-ascii?Q?J9BhDevgw93Qqp0y578mnH3dQAgovF/MzPY/qiLExMiiS+CYpg6x3sM855WY?=
+ =?us-ascii?Q?Zw404UPyQft00U1RvKAt0yl9mjYtHKZgivAY/xHg/GI1cZxOiQkcjdVcw0L+?=
+ =?us-ascii?Q?uFRXsWDo/cikvoIF5iJAvv2Bv6oRZ06pHxhUV6hF3Wx3f+YbJk690jlIuf2h?=
+ =?us-ascii?Q?nD6y/w0q8+H0G1+s/BXFhWBEVrR8FDaYBnbHwcBVOSVQAjHF4SyBPHeflvCJ?=
+ =?us-ascii?Q?vO9NQrOoe7gnvxKP8UCdc3RorL/J+3M8fYGAQ9Pgoj1Lz4B/HrSRNuBr56AB?=
+ =?us-ascii?Q?FhTFnpZZXf1F7pIJoKvOjLRcL8RMKaeuyasmIfdwz+MUt5tOCdGUo2SF3k+p?=
+ =?us-ascii?Q?DUaobW3XNsby7KL+7tOTuuidvXMVNiBRFktBV70x1HxUDFLDwepH4O3WnIO5?=
+ =?us-ascii?Q?/YNKas2oV/lZfKFdc0t/DGhPb6nwT5/0SHLXACzUq+YzPxNMbM7Ot3Tn5djK?=
+ =?us-ascii?Q?cAOfKsJ1U1S5InC12kIqbx8gkG0eWAM10yuqOpcZZ3tgP03hqc9LQKyZZ/RE?=
+ =?us-ascii?Q?Jii8y3myRjIaFPPWtU7gUNIqaJhHsRcP5UW86w2LZNCim40wuwSI4e5SiLe9?=
+ =?us-ascii?Q?7UfqNhfkK5g7LIKwGQgUcsLUkMmcXxzZWTLQfVgsWqXanGP+txZPOVJwlTxh?=
+ =?us-ascii?Q?zH4r6I6iPNMK2wtJCBshtIeoZmsSJ8wHZ4NWlZMNnrOduTtgv7HLDxzegIqD?=
+ =?us-ascii?Q?zxiYIeCo/NMzi3Nzg50hmpg3YMGB2vobgJ9MeTcNhq1TOWr4QxdU1OwspFB0?=
+ =?us-ascii?Q?SjklDWzfw3RGfOpb3Ylqhzj2I+zGBgxTcfesqn3xfBpLWApLdEL4cudrwKx0?=
+ =?us-ascii?Q?6VDuucgu5gCw38QAAPzV9s4u4B6S40yJqH00AQ8cEYI92LmDBwkmNm9/GPCl?=
+ =?us-ascii?Q?LHUI1HoKB4IrTxMtrnuorynHcimgYJ0QU2NPsFd9jdvQxr5hQ6gn/Kf6wAp0?=
+ =?us-ascii?Q?0pPAneAIcCc+MdNrK+ggbczmCEIvH1xO7oEj4+PY2GsrfkMIt1jodxC91Ezv?=
+ =?us-ascii?Q?3MuEKYH02dZGZbhzWweuT+gb?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB8252.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?m0PwYhKeaL8tOOkvnLvXiiyU6jDbZqOOpbz1n1PG70K1S4zelWjOXa8tkNiF?=
+ =?us-ascii?Q?MPETnY195rGHf1On2YyMnxzOC07mvYX3KVCBaMBAaQ+pwUHSqCK0Wxi35xB7?=
+ =?us-ascii?Q?hykqAXPxz8qCmOk+41enamLGCDHH9QJMA/wGKQ/O/qcJCa/ogJ9LivI7sOfK?=
+ =?us-ascii?Q?xpCXOZ8Q7n3xZNartRxWAhFMN4BEXeMvDvuudT8Gh21e+DmCQ2uAlAXqw0SN?=
+ =?us-ascii?Q?afHbcy//O/0HEjKF+nYNGgDHUqWR5oT1m50qSK8QGv/8Kq3Fd0CS2yphJ9jQ?=
+ =?us-ascii?Q?HVIfPK/HGxUUptxLJvRkzQVcu9HCJgnltZzuazIKsI3Tv1S+k7AFR38uig+V?=
+ =?us-ascii?Q?sH6gX90Swz+o8zDZ3UV8PbyL9srAxGWNisNtHAREcjg85Yt+Jhv2vw2PagYs?=
+ =?us-ascii?Q?5p4bQ0qjMDGZVN8vCfOvxncb2nz1rAqvQVkJYkGJYsagsH+4FDe4SObULtKQ?=
+ =?us-ascii?Q?he+JrsoP5p/l99qPIv5US6UzOeqLqVZBF5uksMEj/2ru05BRUjYNCzDkyZPQ?=
+ =?us-ascii?Q?+CM4daHaDV6fxPJapn1G28+jsNmzaW9bUCnnzk7JI3JTTSTmFy1Byv1BIHau?=
+ =?us-ascii?Q?Xavs1gHrabqLcgLUXNDIzjb+bWguhB+jvI8l0WnIBjFTQN4dfRAsAPLJ5Tpy?=
+ =?us-ascii?Q?7cbgWFb1PZTqyIglbUXla/i/A1qRjF7mTDkCt9TLq2FJBwpZBPC8X1zYTajX?=
+ =?us-ascii?Q?L78y2aFcvZqvgRnK4QgwbS0rELf0JR/CfhCUZggDBg5+UrUpWvv8LrboNP0t?=
+ =?us-ascii?Q?OqSWoWztN25tMQrfvq73GpKj+xwuJ1xdDUSZ7kB8JCVSW6yVwJCXdGt8Bmdf?=
+ =?us-ascii?Q?D89Q0m2EmzQEabbqK5cwwyeT1047hX5dukUlWvVZkaTJ+qN9KT/S2ti29gHW?=
+ =?us-ascii?Q?ot56rEoenzp+q1I2+LJxM7NHvVZYN4rJ5YXPa9RDxGnj3hn7vf5Hnn0haZyM?=
+ =?us-ascii?Q?2it/Uqect0aw79wNyWRIEveFqjYTuRA0RWcQEZKxl2l/qfqN1AxOXcxmAUdF?=
+ =?us-ascii?Q?Aqg7AmUsALQBuHEOKXq0MI/iMTyhDbB6EiwmknfGWSJCO2P9pIK4uhq4dtAH?=
+ =?us-ascii?Q?TQZZkQNNmIrTr6mfIFse4fICk58NCjlmzTmNximSnih2IvoqrRAxyuGOvNPl?=
+ =?us-ascii?Q?rh/Qa457awPXIQgUl7q1PwTCgnMwetEGM0dLwppmQxRu0hRdf+IwfsXS5KQE?=
+ =?us-ascii?Q?lsNQqmzN1myytJ8vLomjjki4KahGQ0LDhAT7hS4IsxCfjXWUG3bL1wokynmG?=
+ =?us-ascii?Q?HW2PP5iqdw4m2CyT8QI1Fjkgdll6ec7/L6ih2nwsdajqSyDBM27IiznWUS84?=
+ =?us-ascii?Q?rjk077cFW9NTBgZDtjfbBzIrjMq3ek8LikR8C/FMjgjH96+fR5wKk5W72dBc?=
+ =?us-ascii?Q?a0wtYPV3l+o4TGv/BRPKtvxfI/diDNZdGeiQnoRhzoeHfR3bX8XelIcuUMcL?=
+ =?us-ascii?Q?8OOnoYaTmzBvj0R184BXHfAXcvS3qQAAi/vmxYnszYKORYFfLYNTSWYBmWdb?=
+ =?us-ascii?Q?J1mHIX3iZ8isULTWpIxKbdKDk18WWEAaT3cxeuEFWY1Mmd5nVkaeuBTHT1/k?=
+ =?us-ascii?Q?TNbdYApGvIcrmeeMMX6jbNuze/WgCW2o0haZvirC?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: be058bef-bb48-4164-8a43-08dcfcba3da3
+X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB8252.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Nov 2024 10:20:01.1925
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: XeSzSuctgOgYQgTYx6Af7ib3P2tXajbe+ywpitk2d95++tWfHApA05SF0Cn6JOSu+pHFbvVkkZoR1fWq96Yv/w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB7020
 
-When during a measurement two channels are enabled, two measurements are
-done that are reported sequencially in the DATA register. As the code
-triggered by reading one of the sysfs properties expects that only one
-channel is enabled it only reads the first data set which might or might
-not belong to the intended channel.
+On Mon, Oct 28, 2024 at 11:57:49PM -0500, Cristian Prundeanu wrote:
+> Hi Gautham,
+> 
+> On 2024-10-25, 09:44, "Gautham R. Shenoy" <gautham.shenoy@amd.com <mailto:gautham.shenoy@amd.com>> wrote:
+> 
+> > On Thu, Oct 24, 2024 at 07:12:49PM +1100, Benjamin Herrenschmidt wrote:
+> > > On Sat, 2024-10-19 at 02:30 +0000, Prundeanu, Cristian wrote:
+> > > > 
+> > > > The hammerdb test is a bit more complex than sysbench. It uses two
+> > > > independent physical machines to perform a TPC-C derived test [1], aiming
+> > > > to simulate a real-world database workload. The machines are allocated as
+> > > > an AWS EC2 instance pair on the same cluster placement group [2], to avoid
+> > > > measuring network bottlenecks instead of server performance. The SUT
+> > > > instance runs mysql configured to use 2 worker threads per vCPU (32
+> > > > total); the load generator instance runs hammerdb configured with 64
+> > > > virtual users and 24 warehouses [3]. Each test consists of multiple
+> > > > 20-minute rounds, run consecutively on multiple independent instance
+> > > > pairs.
+> > > 
+> > > Would it be possible to produce something that Prateek and Gautham
+> > > (Hi Gautham btw !) can easily consume to reproduce ?
+> > > 
+> > > Maybe a container image or a pair of container images hammering each
+> > > other ? (the simpler the better).
+> > 
+> > Yes, that would be useful. Please share your recipe. We will try and
+> > reproduce it at our end. In our testing from a few months ago (some of
+> > which was presented at OSPM 2024), most of the database related
+> > regressions that we observed with EEVDF went away after running these
+> > the server threads under SCHED_BATCH.
+> 
+> I am working on a repro package that is self contained and as simple to 
+> share as possible.
 
-To prevent this situation disable all channels during probe. This fixes
-a problem in practise because the reset default for channel 0 is
-enabled. So all measurements before the first measurement on channel 0
-(which disables channel 0 at the end) might report wrong values.
+Sorry for the delay in response. I was away for the Diwali festival.
+Thank you for working on the repro package.
 
-Fixes: 7b8d045e497a ("iio: adc: ad7124: allow more than 8 channels")
-Reviewed-by: Nuno Sa <nuno.sa@analog.com>
-Signed-off-by: Uwe Kleine-König <u.kleine-koenig@baylibre.com>
----
-Hello,
 
-this patch was part of a series before. The remaining patches are still
-under discussion. As this is a fix orthogonal to the other patches of
-the series (apart from the other relevant change there also being
-necessary to make the ad7124 work for me) it IMHO makes sense to apply
-this one already now. There are machines that don't suffer from the
-other issue (i.e. the device irq becoming pending by spi traffic), so
-this fix is also valuable stand alone. It's IMHO good enough to go in
-before v6.12.
+> 
+> My testing with SCHED_BATCH is meanwhile concluded. It did reduce the 
+> regression to less than half - but only with WAKEUP_PREEMPTION enabled. 
+> When using NO_WAKEUP_PREEMPTION, there was no performance change compared 
+> to SCHED_OTHER.
+> 
+> (At the risk of stating the obvious, using SCHED_BATCH only to get back to 
+> the default CFS performance is still only a workaround, just as disabling 
+> PLACE_LAG+RUN_TO_PARITY is; these give us more room to investigate the 
+> root cause in EEVDF, but shouldn't be seen as viable alternate solutions.)
+> 
+> Do you have more detail on the database regressions you saw a few months 
+> ago? What was the magnitude, and which workloads did it manifest on?
 
-The previous submission is available at
-https://lore.kernel.org/linux-iio/20241028160748.489596-10-u.kleine-koenig@baylibre.com/
 
-b4 ignored Nuno's Reviewed-by tag with
+There were three variants of sysbench + MySQL which showed regression
+with EEVDF.
 
-	NOTE: some trailers ignored due to from/email mismatches:
-	    ! Trailer: Reviewed-by: Nuno Sa <nuno.sa@analog.com>
-	     Msg From: Nuno Sá <noname.nuno@gmail.com>
+1. 1 Table, 10M Rows, read-only queries.
+2. 3 Tables, 10M Rows each, read-only queries.
+3. 1 Segmented Table, 10M Rows, read-only queries.
 
-I wonder if other maintainers use b4 apply's -S by default, because I
-often run into this issue but don't see others mentioning that.
-I added the tag here anyhow.
+These saw regressions in the range of 9-12%.
 
- drivers/iio/adc/ad7124.c | 3 +++
- 1 file changed, 3 insertions(+)
+The other database workload which showed regression was MongoDB + YCSB
+workload c. There the magnitude of the regression was around 17%.
 
-diff --git a/drivers/iio/adc/ad7124.c b/drivers/iio/adc/ad7124.c
-index a5d91933f505..749304d38415 100644
---- a/drivers/iio/adc/ad7124.c
-+++ b/drivers/iio/adc/ad7124.c
-@@ -917,6 +917,9 @@ static int ad7124_setup(struct ad7124_state *st)
- 		 * set all channels to this default value.
- 		 */
- 		ad7124_set_channel_odr(st, i, 10);
-+
-+		/* Disable all channels to prevent unintended conversions. */
-+		ad_sd_write_reg(&st->sd, AD7124_CHANNEL(i), 2, 0);
- 	}
- 
- 	ret = ad_sd_write_reg(&st->sd, AD7124_ADC_CONTROL, 2, st->adc_control);
+As mentioned by Dietmar, we observed these regressions to go away with
+the original EEVDF complete patches which had a feature called
+RESPECT_SLICE which allowed a running task to run till its slice gets
+over without being preempted by a newly woken up task.
 
-base-commit: 9852d85ec9d492ebef56dc5f229416c925758edc
--- 
-2.45.2
+However, Peter suggested exploring SCHED_BATCH which fixed the
+regression even without EEVDF complete patchset.
 
+> 
+> -Cristian
+
+--
+Thanks and Regards
+gautham.
 
