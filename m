@@ -1,84 +1,57 @@
-Return-Path: <linux-kernel+bounces-395078-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395079-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18DA19BB829
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 15:42:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 248CC9BB82B
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 15:43:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4AB3B1C22BA7
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 14:42:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 47E4D1C22651
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 14:43:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 069AF1369B6;
-	Mon,  4 Nov 2024 14:42:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A626B1B6D02;
+	Mon,  4 Nov 2024 14:43:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ONxtur4F"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="lXS/O6AD"
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B76261534E6
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 14:42:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CD7433FE;
+	Mon,  4 Nov 2024 14:43:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730731330; cv=none; b=rBKl36yjWgl6uatmK+AWsxRmo7aS02oNo/n/9+rdqJJ+gvt4HLrNQpfgD9T6AyZuTY42CEj/TIUap7/eHXfgzRjhaZ1XTg1CNpPxAtAao7uW3AKVK/67JbpnZfrQdq+vHs7kjd1/eyeLD0bSKRhb6/nljQvEecd11LEIQjCVW+k=
+	t=1730731423; cv=none; b=Gv6FA2GVYB4MqhCGjUbXgrBhi0zM8yYdeal83BZ2upbwQoG3Astoy/jatNhZOplaVr/Ar2s/07yPqknXp8OBDhx4xyWStgzkD1el0znz4/AjYtmzrcElJQ9N0RKrjhAz98l78DrI3MTLJT7tv7chqBbp+LQ01HTO0lDpS0oI1Kw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730731330; c=relaxed/simple;
-	bh=SO84wGYFqTt+rUJm2RCZaiMvDvMTJZ/y9NNnuC1FJVk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=L6oVFSv6rZdsHAwXpp6zsBIRtHREmBgL0dYhgUuHGqiKMCtCkkZp8b0kLq+st69LHPS/v4MyuLA3944PbDSwaoYK3jq6mRIiuUCHZ/4UOwq8aYR7wJDvPKLUcaCzd2/m34lL2ddDxiqk3QkHH60aHja10UWJk+kY1t/AtOKAreU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ONxtur4F; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3807e72c468so514152f8f.3
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 06:42:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1730731327; x=1731336127; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=xse+8Y0ibORmsTXcFf9GAQ7JBYEUIvDbYNRpRr9Ulac=;
-        b=ONxtur4F0Uc/Lj2z4Dh0/gNIiyTzOyvdC13RTYFL5xgOdtqFAM7d+rcd2sun182n6r
-         v94furB8hvnbViOoqPhn3A5b+GHoDZlSCXnaYpz0EzrpBlHgWiG5/p120pCvPVDW+Mzu
-         bJMd5IZnTPx29zKDhpZEHPf7wwGtCbrVkKLSeemRLh07263//KfpdIesmDvPjy0V0Akn
-         CKVbOofAM2T3dIcpkMcx5ZRlWn6cIqYvTCXgM3BAOClPz9m7zrr7MAVNXZQ6sq6JXQ33
-         6C1n6AGdFtz7JsS557EVvTnSYy54+kE4zFrcja+3Q2HPhYs7oBh93G2VnvLvUAjUNGCy
-         g0tg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730731327; x=1731336127;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=xse+8Y0ibORmsTXcFf9GAQ7JBYEUIvDbYNRpRr9Ulac=;
-        b=sih8Kmoxnl4CVi4Hkv+EvvjDCiu8y5DBOsbCbd/WEZUYBM0I6yYFWiuwXB8E5PGvLX
-         ZMuYkAyrB+dc46HUzlET1NiewEkV8HaeHmvDq68l4NlQ4DNGzs4RZPiRus3BHou+E0L2
-         YXoWa149sxPTUVztEDt61GEOylsZ+ddXywmXyhnPz1grfMSXmCaMi+iZi2+m67Ataq+U
-         8wfUJp+na6F6Sb5NSzfplaSmVvNEjYwcFr7CEWEX5YQOm0wkONt8fQbkOF+VvhwKpQTC
-         K7EmnGPszeTUGlQeq3l88m4wT/GF2zhi/MIwoB17MBUSPNCRhArESdEV0TdhMVccqPr/
-         g8Lw==
-X-Forwarded-Encrypted: i=1; AJvYcCVrfAv4sgqrqMjhOjbw3xUot+XezqQtY/Cb3yn1n1wIMdZi10QqBX/57HAQJ2sf315j8MD6MBKw7abz3gg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyFdMH/X5Tdv1nzt8dK9JTp+fPt0IE1Fc3WOYxmlQVRD4UVhL7T
-	KX93ZxiDEs40tZd7KClTF0gLYEnvgaLiJFxpSN+iHYLVXsRDjxgY0UMwrZkjPuo=
-X-Google-Smtp-Source: AGHT+IESYHxXdCiy8abyGwDONyQaWjmIt1sRqKhV+PO4KcL3AbtW4so9yq3KTHkBFOIwm2tU7Vmelw==
-X-Received: by 2002:a5d:5f94:0:b0:374:bde8:3b46 with SMTP id ffacd0b85a97d-380611a7665mr12316766f8f.2.1730731326951;
-        Mon, 04 Nov 2024 06:42:06 -0800 (PST)
-Received: from krzk-bin.. ([178.197.211.167])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4327d5bf225sm154433685e9.11.2024.11.04.06.42.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Nov 2024 06:42:06 -0800 (PST)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Ling Xu <quic_lxu5@quicinc.com>,
-	linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH] arm64: dts: qcom: sm8650: Fix CDSP context banks unit addresses
-Date: Mon,  4 Nov 2024 15:42:04 +0100
-Message-ID: <20241104144204.114279-1-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1730731423; c=relaxed/simple;
+	bh=ijgQU0+eO0qXU44b40w/VCG1UuGwEIvODuM/LYdJkAw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=X/Efy8ucUW1uusnT9nxPpc9dBhjEll7fqo0SQaKO1uH/+dm3O8XeJTdRX2ETHTfpHKin5t0PqQCQJCbCHPQDHezxSGGDCAtu9izMfbVWiEjJmNvOa1frKKCzieg3ongruVebi/fve/MtFP3VEJNUOEBkS/F+uQIg4JLvnIKuVUc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=lXS/O6AD; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
+	:Subject; bh=v9p+fDPULefYeYR05M2yrJxg/cfLTDU/hHtfl2JV4pU=; b=lXS/O6ADZI1vTbEZ
+	dGn2EHwrgUKEyprPd53V2NXhU86SZIGkuDVBts3V+p/pWzWXtgkqhV3Sw3vrcIa51W3CMIDzt8bFn
+	GNIOGI0wGRTNut3Cp3tJImC+h5VxEHWpFKNmyOF9n/zGdsZlN9mb1l2TW7QSKSvGq+ydeyo1e+GzV
+	AFpRM1UciWPBbtjFKtGgnA7IgB1Bzc/jPMbpBuweLumJV78eqLmUFkYNzXnHRV2zbovA0ba3iKkhC
+	YBBwf/RiWgUW+h60+/i6QETtAPmJTAD7AU4id437TwJsH9u83QsSVD4lQHBEHPVrksR8dQlkLFqqY
+	zxAH+XwzDIAnfohWeA==;
+Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
+	by mx.treblig.org with esmtp (Exim 4.96)
+	(envelope-from <linux@treblig.org>)
+	id 1t7yIn-00FLmY-0e;
+	Mon, 04 Nov 2024 14:43:33 +0000
+From: linux@treblig.org
+To: pkshih@realtek.com,
+	kvalo@kernel.org,
+	linux-wireless@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	"Dr. David Alan Gilbert" <linux@treblig.org>
+Subject: [PATCH v2] wifi: rtlwifi: Remove some exhalbtc deadcode
+Date: Mon,  4 Nov 2024 14:43:31 +0000
+Message-ID: <20241104144331.29262-1-linux@treblig.org>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,52 +60,204 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-There is a mismatch between 'reg' property and unit address for last
-there CDSP compute context banks.  Current values were taken as-is from
-downstream source.  Considering that 'reg' is used by Linux driver as
-SID of context bank and that least significant bytes of IOMMU value
-match the 'reg', assume the unit-address is wrong and needs fixing.
-This also won't have any practical impact, except adhering to Devicetree
-spec.
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
 
-Fixes: dae8cdb0a9e1 ("arm64: dts: qcom: sm8650: Add three missing fastrpc-compute-cb nodes")
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+exhalbtc_rf_status_notify(), exhalbtc_coex_dm_switch() and
+exhalbtc_antenna_detection() are unused since they were added in 2017's
+commit 7937f02d1953 ("rtlwifi: btcoex: hook external functions for newer
+chips")
+
+Remove them.
+
+This leaves ex_btc8723b1ant_coex_dm_reset() unused.
+
+Remove it.
+
+exhalbtc_dbg_control(), exhalbtc_stack_update_profile_info(),
+exhalbtc_set_hci_version(), and exhalbtc_set_bt_patch_version() are
+unused since their addition in 2014 by
+commit aa45a673b291 ("rtlwifi: btcoexist: Add new mini driver")
+
+Remove them.
+
+Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
 ---
- arch/arm64/boot/dts/qcom/sm8650.dtsi | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ .../rtlwifi/btcoexist/halbtc8723b1ant.c       | 11 ---
+ .../rtlwifi/btcoexist/halbtc8723b1ant.h       |  1 -
+ .../realtek/rtlwifi/btcoexist/halbtcoutsrc.c  | 79 -------------------
+ .../realtek/rtlwifi/btcoexist/halbtcoutsrc.h  | 10 ---
+ 4 files changed, 101 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/qcom/sm8650.dtsi b/arch/arm64/boot/dts/qcom/sm8650.dtsi
-index 3d8a807a81c9..367fdd090768 100644
---- a/arch/arm64/boot/dts/qcom/sm8650.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sm8650.dtsi
-@@ -5622,7 +5622,7 @@ compute-cb@8 {
+diff --git a/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtc8723b1ant.c b/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtc8723b1ant.c
+index 039bbedb41c2..379193b24428 100644
+--- a/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtc8723b1ant.c
++++ b/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtc8723b1ant.c
+@@ -3409,17 +3409,6 @@ void ex_btc8723b1ant_pnp_notify(struct btc_coexist *btcoexist, u8 pnp_state)
+ 	}
+ }
  
- 					/* note: secure cb9 in downstream */
+-void ex_btc8723b1ant_coex_dm_reset(struct btc_coexist *btcoexist)
+-{
+-	struct rtl_priv *rtlpriv = btcoexist->adapter;
+-
+-	rtl_dbg(rtlpriv, COMP_BT_COEXIST, DBG_LOUD,
+-		"[BTCoex], *****************Coex DM Reset****************\n");
+-
+-	halbtc8723b1ant_init_hw_config(btcoexist, false, false);
+-	halbtc8723b1ant_init_coex_dm(btcoexist);
+-}
+-
+ void ex_btc8723b1ant_periodical(struct btc_coexist *btcoexist)
+ {
+ 	struct rtl_priv *rtlpriv = btcoexist->adapter;
+diff --git a/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtc8723b1ant.h b/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtc8723b1ant.h
+index 9d41e11388ad..a4506d838dc7 100644
+--- a/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtc8723b1ant.h
++++ b/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtc8723b1ant.h
+@@ -197,7 +197,6 @@ void ex_btc8723b1ant_rf_status_notify(struct btc_coexist *btcoexist,
+ 				      u8 type);
+ void ex_btc8723b1ant_halt_notify(struct btc_coexist *btcoexist);
+ void ex_btc8723b1ant_pnp_notify(struct btc_coexist *btcoexist, u8 pnpstate);
+-void ex_btc8723b1ant_coex_dm_reset(struct btc_coexist *btcoexist);
+ void ex_btc8723b1ant_periodical(struct btc_coexist *btcoexist);
+ void ex_btc8723b1ant_display_coex_info(struct btc_coexist *btcoexist,
+ 				       struct seq_file *m);
+diff --git a/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtcoutsrc.c b/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtcoutsrc.c
+index be4c0e60d44d..478cca33e5e3 100644
+--- a/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtcoutsrc.c
++++ b/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtcoutsrc.c
+@@ -1708,19 +1708,6 @@ void exhalbtc_bt_info_notify(struct btc_coexist *btcoexist,
+ 	halbtc_normal_low_power(btcoexist);
+ }
  
--					compute-cb@10 {
-+					compute-cb@12 {
- 						compatible = "qcom,fastrpc-compute-cb";
- 						reg = <12>;
+-void exhalbtc_rf_status_notify(struct btc_coexist *btcoexist, u8 type)
+-{
+-	if (!halbtc_is_bt_coexist_available(btcoexist))
+-		return;
+-
+-	if (IS_HARDWARE_TYPE_8821(btcoexist->adapter)) {
+-	} else if (IS_HARDWARE_TYPE_8723B(btcoexist->adapter)) {
+-		if (btcoexist->board_info.btdm_ant_num == 1)
+-			ex_btc8723b1ant_rf_status_notify(btcoexist, type);
+-	} else if (IS_HARDWARE_TYPE_8192E(btcoexist->adapter)) {
+-	}
+-}
+-
+ void exhalbtc_halt_notify(struct btc_coexist *btcoexist)
+ {
+ 	if (!halbtc_is_bt_coexist_available(btcoexist))
+@@ -1768,31 +1755,6 @@ void exhalbtc_pnp_notify(struct btc_coexist *btcoexist, u8 pnp_state)
+ 	}
+ }
  
-@@ -5632,7 +5632,7 @@ compute-cb@10 {
- 						dma-coherent;
- 					};
+-void exhalbtc_coex_dm_switch(struct btc_coexist *btcoexist)
+-{
+-	struct rtl_priv *rtlpriv = btcoexist->adapter;
+-
+-	if (!halbtc_is_bt_coexist_available(btcoexist))
+-		return;
+-	btcoexist->statistics.cnt_coex_dm_switch++;
+-
+-	halbtc_leave_low_power(btcoexist);
+-
+-	if (IS_HARDWARE_TYPE_8723B(btcoexist->adapter)) {
+-		if (btcoexist->board_info.btdm_ant_num == 1) {
+-			btcoexist->stop_coex_dm = true;
+-			ex_btc8723b1ant_coex_dm_reset(btcoexist);
+-			exhalbtc_set_ant_num(rtlpriv,
+-					     BT_COEX_ANT_TYPE_DETECTED, 2);
+-			ex_btc8723b2ant_init_hwconfig(btcoexist);
+-			ex_btc8723b2ant_init_coex_dm(btcoexist);
+-			btcoexist->stop_coex_dm = false;
+-		}
+-	}
+-
+-	halbtc_normal_low_power(btcoexist);
+-}
+-
+ void exhalbtc_periodical(struct btc_coexist *btcoexist)
+ {
+ 	if (!halbtc_is_bt_coexist_available(btcoexist))
+@@ -1820,29 +1782,6 @@ void exhalbtc_periodical(struct btc_coexist *btcoexist)
+ 	halbtc_normal_low_power(btcoexist);
+ }
  
--					compute-cb@11 {
-+					compute-cb@13 {
- 						compatible = "qcom,fastrpc-compute-cb";
- 						reg = <13>;
+-void exhalbtc_dbg_control(struct btc_coexist *btcoexist,
+-			  u8 code, u8 len, u8 *data)
+-{
+-	if (!halbtc_is_bt_coexist_available(btcoexist))
+-		return;
+-	btcoexist->statistics.cnt_dbg_ctrl++;
+-
+-	halbtc_leave_low_power(btcoexist);
+-
+-	halbtc_normal_low_power(btcoexist);
+-}
+-
+-void exhalbtc_antenna_detection(struct btc_coexist *btcoexist, u32 cent_freq,
+-				u32 offset, u32 span, u32 seconds)
+-{
+-	if (!halbtc_is_bt_coexist_available(btcoexist))
+-		return;
+-}
+-
+-void exhalbtc_stack_update_profile_info(void)
+-{
+-}
+-
+ void exhalbtc_update_min_bt_rssi(struct btc_coexist *btcoexist, s8 bt_rssi)
+ {
+ 	if (!halbtc_is_bt_coexist_available(btcoexist))
+@@ -1851,24 +1790,6 @@ void exhalbtc_update_min_bt_rssi(struct btc_coexist *btcoexist, s8 bt_rssi)
+ 	btcoexist->stack_info.min_bt_rssi = bt_rssi;
+ }
  
-@@ -5642,7 +5642,7 @@ compute-cb@11 {
- 						dma-coherent;
- 					};
- 
--					compute-cb@12 {
-+					compute-cb@14 {
- 						compatible = "qcom,fastrpc-compute-cb";
- 						reg = <14>;
- 
+-void exhalbtc_set_hci_version(struct btc_coexist *btcoexist, u16 hci_version)
+-{
+-	if (!halbtc_is_bt_coexist_available(btcoexist))
+-		return;
+-
+-	btcoexist->stack_info.hci_version = hci_version;
+-}
+-
+-void exhalbtc_set_bt_patch_version(struct btc_coexist *btcoexist,
+-				   u16 bt_hci_version, u16 bt_patch_version)
+-{
+-	if (!halbtc_is_bt_coexist_available(btcoexist))
+-		return;
+-
+-	btcoexist->bt_info.bt_real_fw_ver = bt_patch_version;
+-	btcoexist->bt_info.bt_hci_ver = bt_hci_version;
+-}
+-
+ void exhalbtc_set_chip_type(struct btc_coexist *btcoexist, u8 chip_type)
+ {
+ 	switch (chip_type) {
+diff --git a/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtcoutsrc.h b/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtcoutsrc.h
+index a96a995dd850..d8d88a989806 100644
+--- a/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtcoutsrc.h
++++ b/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtcoutsrc.h
+@@ -763,19 +763,9 @@ void exhalbtc_mediastatus_notify(struct btc_coexist *btcoexist,
+ void exhalbtc_special_packet_notify(struct btc_coexist *btcoexist, u8 pkt_type);
+ void exhalbtc_bt_info_notify(struct btc_coexist *btcoexist, u8 *tmp_buf,
+ 			     u8 length);
+-void exhalbtc_rf_status_notify(struct btc_coexist *btcoexist, u8 type);
+ void exhalbtc_halt_notify(struct btc_coexist *btcoexist);
+ void exhalbtc_pnp_notify(struct btc_coexist *btcoexist, u8 pnp_state);
+-void exhalbtc_coex_dm_switch(struct btc_coexist *btcoexist);
+ void exhalbtc_periodical(struct btc_coexist *btcoexist);
+-void exhalbtc_dbg_control(struct btc_coexist *btcoexist, u8 code, u8 len,
+-			  u8 *data);
+-void exhalbtc_antenna_detection(struct btc_coexist *btcoexist, u32 cent_freq,
+-				u32 offset, u32 span, u32 seconds);
+-void exhalbtc_stack_update_profile_info(void);
+-void exhalbtc_set_hci_version(struct btc_coexist *btcoexist, u16 hci_version);
+-void exhalbtc_set_bt_patch_version(struct btc_coexist *btcoexist,
+-				   u16 bt_hci_version, u16 bt_patch_version);
+ void exhalbtc_update_min_bt_rssi(struct btc_coexist *btcoexist, s8 bt_rssi);
+ void exhalbtc_set_bt_exist(struct btc_coexist *btcoexist, bool bt_exist);
+ void exhalbtc_set_chip_type(struct btc_coexist *btcoexist, u8 chip_type);
 -- 
-2.43.0
+2.47.0
 
 
