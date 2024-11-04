@@ -1,255 +1,205 @@
-Return-Path: <linux-kernel+bounces-395104-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395103-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7EA1F9BB898
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 16:08:39 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E70B49BB894
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 16:08:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A16B286972
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 15:08:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4CEE5B219C7
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 15:08:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31E691C07C5;
-	Mon,  4 Nov 2024 15:08:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAB121BD017;
+	Mon,  4 Nov 2024 15:08:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kBrrHCBc"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WBlbkZno"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9F0B1BF7FC
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 15:08:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F8B82B9A2;
+	Mon,  4 Nov 2024 15:08:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730732896; cv=none; b=WVlKWY71ji46LNIE3pzZO/JMi+TOBLpnNqJGjikOKEFm7lDWXBbGOS4bk4XxRsDAEhwQnzQwmJV+w7eYknpG3BSCYV90hAlxTejH20fX/3bbiQYR6X4aw+a5eVtxicvBgxrokCSheMxUhKyrR6Oo9aZVmt7Ui3RY2Gc/+U0cWT4=
+	t=1730732891; cv=none; b=YathMAfJ+HAEr4Zn9U0sEs8qyhJdp9mPEV5U0yNKIJBAe8tgaL0uYDYYOSJGp5jlyyhhJO5T2T8GZF717l9UWX11Cda71vQyeB1CrhemA0RnEbXKPojTs1GREl15yv9ssobWThYV3lSgBiYO7jBN5mj2fxu9lfX1FCwMtqt2BSo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730732896; c=relaxed/simple;
-	bh=hI1wQ/fZNIAIQ/ZGwRLRxWBlSdPDkqRQnUGOX3vJ9To=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LPZ7u11gaPQBxEvxguoPmiSywgzvJnDxssHYtFCMtRkBVxdrYXk9yNa1RZpDZE5/+KRDko33EhBdVJSQEFXqRdpScbVEetYpei9udL3nZvA8nsLnNYArDXQIkCDHQ2HLug0BBCy7WoyshFL4/nMZ1Drnt/bIQNpjII0MsDz7KjA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kBrrHCBc; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-20cbcd71012so50192985ad.3
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 07:08:14 -0800 (PST)
+	s=arc-20240116; t=1730732891; c=relaxed/simple;
+	bh=IsoBeoOuXvcoft0v4lHIDZ8sMTlBJsV7lMY+XpcmlMQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Jte/2WosBEQRDglYNgJ64syM97RTp6z6H4OC6KM7iEc1ozhhlIGHGdqpUP9HE9OifzeWDEJGUsJFHIErnGR1fflonB7ojL0Lvvvk6QchA4IK76hAkQ2OQzPIRL+zT6iTqyekunPHd8lP8faIlE3Ms9Sj/PEpVP8+8cBCAIWh+RY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WBlbkZno; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-21116b187c4so28593155ad.3;
+        Mon, 04 Nov 2024 07:08:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1730732894; x=1731337694; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=fTaUplHrH7M+dnB2sEL6yj29zt9plqFajNCOZAfkhqU=;
-        b=kBrrHCBc8gUd+/hPU4mIMEi8/pxZn5tr1cR8J+h0ZBGbuI5tmjOUQ4zz/Wn3yNsDQ5
-         e2w7QYWd8Oen8cr3ZKbS95DeNGEKbYQKKj6jsiPawuW/4IZzxrz0qrUbdJI6HfjgBnQJ
-         jny4vL2Fo3Q1UflB2RidWdST/PlWSv7E7LnCuELjwgwYShlKyUDFsggP9Nhunn65GDD1
-         /37zwh0FZ4g9VpXwLcCQf+h3uF2vHcbPfxLEEnROa2w6tXtYd5IY1Uz70uV8xRpUmbtv
-         9y0oMFrx2ex23lT16/xykJ2AdJaRlQycw0KKuqd9Mg7/FdXsRCbRBAuCIT/4ZN6bWugz
-         IjuA==
+        d=gmail.com; s=20230601; t=1730732889; x=1731337689; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=DBB6jNpH4DxwaaTTUakWm0IRWPaKflm6p9RFhXcCmW0=;
+        b=WBlbkZnoVKp6iDPdrhg5FfAdWXo08J6ktItzytK7C6qR4PIe+feXU62XM0H91PybX9
+         9LaUiR2LCONoXuT/t3YsIhDeMjy9pR67RcI7BxQ55HAr/Lp2iL7A+8K4MzDoSNhmmWmq
+         xS2D6yAFQBztBHYiXONTtBglPx1KzyBI+NsARWLLycie/QVzSXl/R8z/MLC0JyL0Z6Bh
+         fMga8Shs+brvxO1MY1t3hha7WRCrGXGCFmAsHmakQk8H87IIXec+9+jAimjTk8aGp9CA
+         8p1GnE6cM8ee4upg22vD/GxcBG/Lc5ykTRlJEYx3RVcfsCKAFDH3o19XEvRWQebTwVOo
+         Nz4w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730732894; x=1731337694;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=fTaUplHrH7M+dnB2sEL6yj29zt9plqFajNCOZAfkhqU=;
-        b=kIvRnyBozI8Rdcw0844PUxGRP8w2yCDuOfPINCx5pXnKa/FwDwzKA2DbnyYzmSAVdN
-         gqgZbIcOsISDyl0/WrvC6jP7QkTpaCo324/RCJ+5ZrdnXUHDLK9+SUZGB69rOHUGsbZf
-         DxbLvZM5LB/0mY+7RxP0CdRU2QBACmBO5mqNNSxh7OZL6s6mjPeYx5p7rDAS9krpe4tL
-         K5zjhEtmAYYuMmNH01gTe1Tw3zDJ75q3AdDQVbbfwWIcMLxK+hAXCMpChGWUf93EUwHD
-         Lkr554sc/XWC7choo306GIJj0qk9zEZ/BQmrqCH67cLybrU4kRmL0lBGt++YCHazbITU
-         /+3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWZZmMVeqKkCtfqeHO9n1u5FS3qzZDR8Bo+ObUyBSmDy/Df+2g5VrFec9Rtb3PU22Xb3f+3ydfMK5lYS5M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyQVQQK9ebLT+gjBpPZ+gnwxW10i/+PEOt+c47mUsEey5qwr9QT
-	CJaOBnStGLufGA/JdcuPh2/P2D5IIEiC5iuvq/KdgGU6hKX9Z2WURAxlXpab6A==
-X-Google-Smtp-Source: AGHT+IHOenWnujTBSBIpKLJWamkVwB46u9SIX/kMarM+ODiUVeqEfeHc6c4RexMW87XtzdjqQNduWA==
-X-Received: by 2002:a17:902:eccd:b0:20b:59be:77b with SMTP id d9443c01a7336-2111aec8329mr165149345ad.6.1730732893820;
-        Mon, 04 Nov 2024 07:08:13 -0800 (PST)
-Received: from thinkpad ([2409:40f4:3049:1cc7:217b:63a:40ce:2e01])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211057a6815sm62677185ad.135.2024.11.04.07.08.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Nov 2024 07:08:13 -0800 (PST)
-Date: Mon, 4 Nov 2024 20:38:05 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Shawn Lin <shawn.lin@rock-chips.com>, Rob Herring <robh+dt@kernel.org>,
-	"James E . J . Bottomley" <James.Bottomley@hansenpartnership.com>,
-	"Martin K . Petersen" <martin.petersen@oracle.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Avri Altman <avri.altman@wdc.com>,
-	Bart Van Assche <bvanassche@acm.org>,
-	YiFeng Zhao <zyf@rock-chips.com>, Liang Chen <cl@rock-chips.com>,
-	linux-scsi@vger.kernel.org, linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-pm@vger.kernel.org
-Subject: Re: [PATCH v3 5/5] scsi: ufs: rockchip: initial support for UFS
-Message-ID: <20241104150805.q7g3bfvbsdx3b6u4@thinkpad>
-References: <1728368130-37213-1-git-send-email-shawn.lin@rock-chips.com>
- <1728368130-37213-6-git-send-email-shawn.lin@rock-chips.com>
- <CAPDyKForpLcmkqruuTfD6kkJhp_4CKFABWRxFVYNskGL1tjO=w@mail.gmail.com>
- <3969bae0-eeb8-447a-86a5-dfdac0b136cd@rock-chips.com>
- <CAPDyKFo=GcHG2sGQBrXJ7VWyp59QOmbLCAvHQ3krUympEkid_A@mail.gmail.com>
- <98e0062c-aeb1-4bea-aa2b-4a99115c9da4@rock-chips.com>
- <20241103120223.abkwgej4svas4epr@thinkpad>
- <6f3f2d17-4ca2-44ad-b8df-72986d4b3174@rock-chips.com>
- <CAPDyKFqMuFMf0+2+mPZaGGtBRfavg0LTkhbrCeqh7kHeqq-yZQ@mail.gmail.com>
+        d=1e100.net; s=20230601; t=1730732889; x=1731337689;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DBB6jNpH4DxwaaTTUakWm0IRWPaKflm6p9RFhXcCmW0=;
+        b=DHC49YY3uy5FnW9+ztZF2P6uILegB3wN7C+oWBEioI1L+4RpFP4e/x6tZ1XyV0/DYn
+         oPqQuz5eb73xzuSLhzZXxnXXP0YyawMJ6g8qKo4BL7zpVOHo2N5/gYWkz31jIEl2vSuK
+         g3Z2Rw4BpdRu3K/8OCugt75ckpbCkCMsoUMWDhgMMCrctWNqwzJ952vqrZSBQj0T2Pe8
+         HnpZs5tHbCgc7qzu0vTVuaIOz1ipC/dDdEw1pUJiYrju9LfYX+2AgVxt6kai3hEWJ8HX
+         aVOCBwvQqKa3b464UtNf/quyjgtLqLiLhx9d4SVBdQgCMaJnvcIuIOzWDQcxOoeEu/0a
+         wJKw==
+X-Forwarded-Encrypted: i=1; AJvYcCUGBRYdaZrgCdKtA3O1YNFXY7xNpBfEcOq8bE+5Oa8+zwnwjWrLKuWl0Vcg63vNX5IBM39q/KedRrrt6JsG@vger.kernel.org, AJvYcCWFro5CnVt8NdzkAskj+Tns+quUjiyeFrMc6hnYfnJldEThsBT4T8i6/OY/a85XK0BMKEthYRSW5Qpw@vger.kernel.org, AJvYcCWGIUtjefeVBIT64gWOtbC1tH8hbJX3M7En1Itt2KUdZW/6YlfZbKq7ptl0VU7wcSBpFGw0980JoGS8@vger.kernel.org, AJvYcCWfmptIG6Jm7vrAjkCde6qEcdTnq7i8X2VNsjlIrgwQ1ldHAI7duYEPdh0ZxLfB1mybqExbAK2PcuZa@vger.kernel.org, AJvYcCXKJBaoBaHsCArsExncFBGw9jHEUlCgoMr/0v16QntopvOh1CPu9Y4YVd1UqbdlORk2AyLlYJlFV9w6AmE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz2dBgeV16AgzLW4FrxmGnxCEQJNGlEJaTeKc/s8ZmjlbBzdw/s
+	AibNJ/tJKSlAanCF2YEILMsZynTZYN5RaMnTiLCEVPBmaSe/ZVjC
+X-Google-Smtp-Source: AGHT+IG+OuQXOInv0hxhYMn5CM696EiVv8dRR1LoB+4lm8OEQdDhYosPpUxZEDavQa4HFPHpOSZbEA==
+X-Received: by 2002:a17:903:22c8:b0:20c:b090:c87 with SMTP id d9443c01a7336-2111af6b706mr183688035ad.29.1730732888510;
+        Mon, 04 Nov 2024 07:08:08 -0800 (PST)
+Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211057087dasm62416555ad.85.2024.11.04.07.08.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 04 Nov 2024 07:08:07 -0800 (PST)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <8af73d65-cc16-4219-892d-d49f0d5581e7@roeck-us.net>
+Date: Mon, 4 Nov 2024 07:08:05 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAPDyKFqMuFMf0+2+mPZaGGtBRfavg0LTkhbrCeqh7kHeqq-yZQ@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 3/6] hwmon: (pmbus/core) add wp module param
+To: Jerome Brunet <jbrunet@baylibre.com>
+Cc: Jean Delvare <jdelvare@suse.com>, Jonathan Corbet <corbet@lwn.net>,
+ Patrick Rudolph <patrick.rudolph@9elements.com>,
+ Naresh Solanki <naresh.solanki@9elements.com>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>, linux-hwmon@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-i2c@vger.kernel.org
+References: <20241024-tps25990-v3-0-b6a6e9d4b506@baylibre.com>
+ <20241024-tps25990-v3-3-b6a6e9d4b506@baylibre.com>
+ <47164712-876e-4bb8-a4fa-4b3d91f2554b@roeck-us.net>
+ <1jjzdj5qyy.fsf@starbuckisacylon.baylibre.com>
+ <fa79de78-aed9-4cd3-bff9-310f2b4a32c9@roeck-us.net>
+ <1jfro783na.fsf@starbuckisacylon.baylibre.com>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
+In-Reply-To: <1jfro783na.fsf@starbuckisacylon.baylibre.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Nov 04, 2024 at 10:51:45AM +0100, Ulf Hansson wrote:
-> On Mon, 4 Nov 2024 at 07:38, Shawn Lin <shawn.lin@rock-chips.com> wrote:
-> >
-> > 在 2024/11/3 20:02, Manivannan Sadhasivam 写道:
-> > > On Fri, Oct 18, 2024 at 05:20:08PM +0800, Shawn Lin wrote:
-> > >> Hi Ulf,
-> > >>
-> > >> 在 2024/10/18 17:07, Ulf Hansson 写道:
-> > >>> On Thu, 10 Oct 2024 at 03:21, Shawn Lin <shawn.lin@rock-chips.com> wrote:
-> > >>>>
-> > >>>> Hi Ulf
-> > >>>>
-> > >>>> 在 2024/10/9 21:15, Ulf Hansson 写道:
-> > >>>>> [...]
-> > >>>>>
-> > >>>>>> +
-> > >>>>>> +static int ufs_rockchip_runtime_suspend(struct device *dev)
-> > >>>>>> +{
-> > >>>>>> +       struct ufs_hba *hba = dev_get_drvdata(dev);
-> > >>>>>> +       struct ufs_rockchip_host *host = ufshcd_get_variant(hba);
-> > >>>>>> +       struct generic_pm_domain *genpd = pd_to_genpd(dev->pm_domain);
-> > >>>>>
-> > >>>>> pd_to_genpd() isn't safe to use like this. It's solely to be used by
-> > >>>>> genpd provider drivers.
-> > >>>>>
-> > >>>>>> +
-> > >>>>>> +       clk_disable_unprepare(host->ref_out_clk);
-> > >>>>>> +
-> > >>>>>> +       /*
-> > >>>>>> +        * Shouldn't power down if rpm_lvl is less than level 5.
-> > >>>>>
-> > >>>>> Can you elaborate on why we must not power-off the power-domain when
-> > >>>>> level is less than 5?
-> > >>>>>
-> > >>>>
-> > >>>> Because ufshcd driver assume the controller is active and the link is on
-> > >>>> if level is less than 5. So the default resume policy will not try to
-> > >>>> recover the registers until the first error happened. Otherwise if the
-> > >>>> level is >=5, it assumes the controller is off and the link is down,
-> > >>>> then it will restore the registers and link.
-> > >>>>
-> > >>>> And the level is changeable via sysfs.
-> > >>>
-> > >>> Okay, thanks for clarifying.
-> > >>>
-> > >>>>
-> > >>>>> What happens if we power-off anyway when the level is less than 5?
-> > >>>>>
-> > >>>>>> +        * This flag will be passed down to platform power-domain driver
-> > >>>>>> +        * which has the final decision.
-> > >>>>>> +        */
-> > >>>>>> +       if (hba->rpm_lvl < UFS_PM_LVL_5)
-> > >>>>>> +               genpd->flags |= GENPD_FLAG_RPM_ALWAYS_ON;
-> > >>>>>> +       else
-> > >>>>>> +               genpd->flags &= ~GENPD_FLAG_RPM_ALWAYS_ON;
-> > >>>>>
-> > >>>>> The genpd->flags is not supposed to be changed like this - and
-> > >>>>> especially not from a genpd consumer driver.
-> > >>>>>
-> > >>>>> I am trying to understand a bit more of the use case here. Let's see
-> > >>>>> if that helps me to potentially suggest an alternative approach.
-> > >>>>>
-> > >>>>
-> > >>>> I was not familiar with the genpd part, so I haven't come up with
-> > >>>> another solution. It would be great if you can guide me to the right
-> > >>>> way.
-> > >>>
-> > >>> I have been playing with the existing infrastructure we have at hand
-> > >>> to support this, but I need a few more days to be able to propose
-> > >>> something for you.
-> > >>>
-> > >>
-> > >> Much appreciate.
-> > >>
-> > >>>>
-> > >>>>>> +
-> > >>>>>> +       return ufshcd_runtime_suspend(dev);
-> > >>>>>> +}
-> > >>>>>> +
-> > >>>>>> +static int ufs_rockchip_runtime_resume(struct device *dev)
-> > >>>>>> +{
-> > >>>>>> +       struct ufs_hba *hba = dev_get_drvdata(dev);
-> > >>>>>> +       struct ufs_rockchip_host *host = ufshcd_get_variant(hba);
-> > >>>>>> +       int err;
-> > >>>>>> +
-> > >>>>>> +       err = clk_prepare_enable(host->ref_out_clk);
-> > >>>>>> +       if (err) {
-> > >>>>>> +               dev_err(hba->dev, "failed to enable ref out clock %d\n", err);
-> > >>>>>> +               return err;
-> > >>>>>> +       }
-> > >>>>>> +
-> > >>>>>> +       reset_control_assert(host->rst);
-> > >>>>>> +       usleep_range(1, 2);
-> > >>>>>> +       reset_control_deassert(host->rst);
-> > >>>>>> +
-> > >>>>>> +       return ufshcd_runtime_resume(dev);
-> > >>>>>> +}
-> > >>>>>> +
-> > >>>>>> +static int ufs_rockchip_system_suspend(struct device *dev)
-> > >>>>>> +{
-> > >>>>>> +       struct ufs_hba *hba = dev_get_drvdata(dev);
-> > >>>>>> +       struct ufs_rockchip_host *host = ufshcd_get_variant(hba);
-> > >>>>>> +
-> > >>>>>> +       /* Pass down desired spm_lvl to Firmware */
-> > >>>>>> +       arm_smccc_smc(ROCKCHIP_SIP_SUSPEND_MODE, ROCKCHIP_SLEEP_PD_CONFIG,
-> > >>>>>> +                       host->pd_id, hba->spm_lvl < 5 ? 1 : 0, 0, 0, 0, 0, NULL);
-> > >>>>>
-> > >>>>> Can you please elaborate on what goes on here? Is this turning off the
-> > >>>>> power-domain that the dev is attached to - or what is actually
-> > >>>>> happening?
-> > >>>>>
-> > >>>>
-> > >>>> This smc call is trying to ask firmware not to turn off the power-domian
-> > >>>> that the UFS is attached to and also not to turn off the power of UFS
-> > >>>> conntroller.
-> > >>>
-> > >>> Okay, thanks for clarifying!
-> > >>>
-> > >>> A follow up question, don't you need to make a corresponding smc call
-> > >>> to inform the FW that it's okay to turn off the power-domain at some
-> > >>> point?
-> > >>>
-> > >>
-> > >> Yes. Each time entering sleep, we teach FW if it need to turn off or keep
-> > >> power-domain, for instance "hba->spm_lvl < 5 ? 1 : 0" , 0 means
-> > >> off and 1 means on.
-> > >>
-> > >
-> > > We had a requirement to notify the genpd provider from consumer to not turn off
-> > > the power domain during system suspend. So Ulf came up with an API for
-> > > consumers, device_set_wakeup_path() setting the 'dev->power.wakeup_path' which
-> > > will be honored by the genpd core. Will that work for you?
-> >
-> > Yes, that works. And we may need a symmetrical call, for instance,
-> > device_clr_wakeup_path() to allow genpd provider to turn off the power
-> > domain as well.
+On 11/4/24 06:39, Jerome Brunet wrote:
+> On Mon 04 Nov 2024 at 06:18, Guenter Roeck <linux@roeck-us.net> wrote:
 > 
-> The PM core clears the flag in device_prepare(). The flag is typically
-> supposed to be set from a ->suspend() callback, so there should be no
-> need for an additional function that clears the flag, I think.
+>> On 11/4/24 00:43, Jerome Brunet wrote:
+>>
+>>>>> +/*
+>>>>> + * PMBus write protect forced mode:
+>>>>> + * PMBus may come up with a variety of write protection configuration.
+>>>>> + * 'pmbus_wp' may be used if a particular write protection is necessary.
+>>>>> + * The ability to actually alter the protection may also depend on the chip
+>>>>> + * so the actual runtime write protection configuration may differ from
+>>>>> + * the requested one. pmbus_core currently support the following value:
+>>>>> + * - 0: write protection removed
+>>>>> + * - 1: write protection fully enabled, including OPERATION and VOUT_COMMAND
+>>>>> + *      registers. Chips essentially become read-only with this.
+>>>>
+>>>> Would it be desirable to also suppport the ability to set the output voltage
+>>>> but not limits (PB_WP_VOUT) ?
+>>> I was starting simple, it is doable sure.
+>>> It is not something I will be able to test on actual since does not
+>>> support that.
+>>> Do you want me to add "2: write protection enable execpt for
+>>> VOUT_COMMAND." ?
+>>>
+>>
+>> Please add it. I have a number of PMBus test boards and will be able to test it.
+>>
+>> Thee are three options, though. Per specification:
+> 
+> Any preference for the value mapped to each mode ? Using the one from
+> the spec does not seem practical (32768, 16384, 8192).
+> 
+> The bit number, maybe (7, 6, 5) ?
+> 
+> or just by order strongest locking ?
+> 
+>>
+>> 1000 0000 Disable all writes except to the WRITE_PROTECT command
+> 
+> 3
+> 
+>> 0100 0000 Disable all writes except to the WRITE_PROTECT, OPERATION and
+>>            PAGE commands
+> 
+> 2
+> 
+>> 0010 0000 Disable all writes except to the WRITE_PROTECT, OPERATION,
+>>            PAGE, ON_OFF_CONFIG and VOUT_COMMAND commands
+> 
+> 1 ?
 > 
 
-Yeah, that's my understanding as well though I didn't look into PM core deeply.
+Bit number does not make sense since those are just commands which happen
+to use individual bits. Also, module parameters should as much as possible
+be abstract and not reflect HW 1:1. Strongest locking as you suggested as
+second option makes more sense, since 0 means "no locking".
 
-- Mani
+Thanks,
+Guenter
 
--- 
-மணிவண்ணன் சதாசிவம்
 
