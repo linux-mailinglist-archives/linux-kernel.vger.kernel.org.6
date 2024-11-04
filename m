@@ -1,119 +1,96 @@
-Return-Path: <linux-kernel+bounces-395468-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395423-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFB139BBE48
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 20:54:37 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF9CC9BBDB6
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 20:07:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A9FAC282707
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 19:54:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0BA281C21CAE
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 19:07:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FD931CCEFA;
-	Mon,  4 Nov 2024 19:54:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F6171CCB46;
+	Mon,  4 Nov 2024 19:07:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="i2R1XHVn"
-Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UGOiEUyh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D74B523A6;
-	Mon,  4 Nov 2024 19:54:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF1501CC899
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 19:07:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730750066; cv=none; b=E8LPpYOPkobkmC/alC5KipYkYNhtve7CWNzuWBdX8hjaWOYm2y4IYStmj5dC8NwFKZutslE8I89yVajgLwjdULGeiRdnShT09Ic1NIPGwDfdZPcMmKd6kcoflETT3fMVK1F5xEkQylT9Sy29ENSPBfrPrPi/On61iIYXetmd49w=
+	t=1730747224; cv=none; b=uKYkk/UV8GuWyU7YTGZixhqU3W19KImTkiuChcZU5LRmzrpb0ovh05bet/f3FGgMLSiVH2XZjPFVLrk4VAd4q8LD6P3aUFvdM04vfHEIQmAgasumyHXJzVxLu/UWGBXPH4+Oy6P9vgGM653dZuIFU4dqEC+rOyf4cXLsEqPd0sU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730750066; c=relaxed/simple;
-	bh=XcxlVyk2RSruormQ40uCAg2WHwIJC0YqvJ6x7wf5Hn4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=EsZOctPUQOo3hwsm3WG9dD+6KZ3vvwoGH7Uyv65Au8OWBQIR8j5MJcxiVviO1ymXHvvjONHOkA5eQXFeyVBYJySify5boicL2aJD5f4AsKwdYsZ3dfQRNTd8gyCtGp/jipxHhJOzwfJa0jKgaXh3evdrivXBXx8orU7OvM4EYjs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=fail (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=i2R1XHVn reason="signature verification failed"; arc=none smtp.client-ip=79.96.170.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
-Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
- by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.0)
- id a55bd3338b64d975; Mon, 4 Nov 2024 19:54:21 +0100
-Received: from kreacher.localnet (unknown [195.136.19.94])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 67113950B7B;
-	Mon,  4 Nov 2024 19:54:21 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
-	s=dkim; t=1730746461;
-	bh=XcxlVyk2RSruormQ40uCAg2WHwIJC0YqvJ6x7wf5Hn4=;
-	h=From:Subject:Date;
-	b=i2R1XHVn09jcoSQFG8ZGQWjuJgTJ346GBsHyMRds1+QsqQgHK632rI2OdI1p45iYn
-	 3Clstbbt6KBzK45OFhJEwPHae/wqVRXhEVt0ndVVeTLZiypAXbKXzu5SgtMcMhX9LN
-	 wUH+0ImaXQxIguYvbP116b7vGbtNk7d7rTlxLVBXaoPsy1XzV/2PCVj0934ZxeSveS
-	 MRUvHhNgNr6sJa7rEgO5pVG37JxJkWud4KMxAxky5of9xUQGkIapZpcG2IKMbrxhwz
-	 zOWqJX2QbigKA30Fd6OUhDbobfbAY8IUKitlRl9VuCT3lBIOjiSxOX7JC+XolXbUwD
-	 B3F+7dwynuEmA==
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Linux PM <linux-pm@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
- Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
-Subject:
- [PATCH v1 2/2] cpufreq: intel_pstate: Update asym capacity for CPUs that were
- offline initially
-Date: Mon, 04 Nov 2024 19:53:53 +0100
-Message-ID: <1913414.tdWV9SEqCh@rjwysocki.net>
-In-Reply-To: <12555220.O9o76ZdvQC@rjwysocki.net>
-References: <12555220.O9o76ZdvQC@rjwysocki.net>
+	s=arc-20240116; t=1730747224; c=relaxed/simple;
+	bh=Dl0TMpSb2eAzhg61AwTW0r0i9OW2iff6l56nxYhwNq0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Vc4VtC1tFcyKjRncXlIvf8fAxxqILq8M5qkOwVtnwLXFcajxpctP7t04mI06aYYhEWchNJm+ctNwZXAuKp5yZ3wa6bbGagSaWwkYPlOLDO2gO/FrgiSsO6LwIF7kVzvcvChfdPBOYMc1c3sr6R2vQjwF8yjT42pTN7BRrIwu0ww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UGOiEUyh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28193C4CED0;
+	Mon,  4 Nov 2024 19:07:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730747224;
+	bh=Dl0TMpSb2eAzhg61AwTW0r0i9OW2iff6l56nxYhwNq0=;
+	h=From:To:Cc:Subject:Date:From;
+	b=UGOiEUyhyhHRCJ+RkTlev41cqWdhI+paCp1rekR5Lz075hpnzNynja9Vj1qOBXafp
+	 fSTuXdIxDf8XcLcddBl2KCcf6YfU+SxFzp67Z0Kbw/6MbQi9HdNDkOCLKivIPAcTQq
+	 LUYD7BMeEt6cCZz07lVm3noE29xw/2JnYZVz3laryy34jukjejO1x+n40HuKMsJXGj
+	 IUzzwlcIRHTzbcu27xa7TnxPrlb4+zGkn+6fVGdtbQeXs0lTti9QN11Je2gHWuNWTD
+	 iiaKD0UWAUjudL1VgbQsa+jg2eLqZvCQbivXQ0aZghGIdN/Tl4iyiZSLMmLITqiLle
+	 a03WV8bpJoUbQ==
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] misc: atmel-ssc: Use of_property_present() for non-boolean properties
+Date: Mon,  4 Nov 2024 13:06:59 -0600
+Message-ID: <20241104190700.275573-1-robh@kernel.org>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="UTF-8"
-X-CLIENT-IP: 195.136.19.94
-X-CLIENT-HOSTNAME: 195.136.19.94
-X-VADE-SPAMSTATE: clean
-X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeeftddrvdeliedgudduiecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfjqffogffrnfdpggftiffpkfenuceurghilhhouhhtmecuudehtdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepfdftrghfrggvlhculfdrucghhihsohgtkhhifdcuoehrjhifsehrjhifhihsohgtkhhirdhnvghtqeenucggtffrrghtthgvrhhnpedvffeuiedtgfdvtddugeeujedtffetteegfeekffdvfedttddtuefhgeefvdejhfenucfkphepudelhedrudefiedrudelrdelgeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeduleehrddufeeirdduledrleegpdhhvghlohepkhhrvggrtghhvghrrdhlohgtrghlnhgvthdpmhgrihhlfhhrohhmpehrjhifsehrjhifhihsohgtkhhirdhnvghtpdhnsggprhgtphhtthhopeegpdhrtghpthhtoheplhhinhhugidqphhmsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepshhrihhnihhvrghsrdhprghnughruhhvrggurgeslhhinhhugidrihhnthgvlhdrtghomhdprhgtphhtthhopehrihgtrghrughordhnvghrihdqtggrlhguvghrohhnsehlihhnuhigrdhinhhtvghlrdgtohhm
-X-DCC--Metrics: v370.home.net.pl 0; Body=4 Fuz1=4 Fuz2=4
+Content-Transfer-Encoding: 8bit
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+The use of of_property_read_bool() for non-boolean properties is
+deprecated in favor of of_property_present() when testing for property
+presence.
 
-Commit 929ebc93ccaa ("cpufreq: intel_pstate: Set asymmetric CPU
-capacity on hybrid systems") overlooked a corner case in which some
-CPUs may be offline to start with and brought back online later,
-after the intel_pstate driver has been registered, so their asymmetric
-capacity will not be set.
-
-Address this by calling hybrid_update_capacity() in the CPU
-initialization path that is executed instead of the online path
-for those CPUs.
-
-Note that this asymmetric capacity update will be skipped during
-driver initialization and mode switches because hybrid_max_perf_cpu
-is NULL in those cases.
-
-Fixes: 929ebc93ccaa ("cpufreq: intel_pstate: Set asymmetric CPU capacity on hybrid systems")
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
 ---
- drivers/cpufreq/intel_pstate.c |    5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/misc/atmel-ssc.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Index: linux-pm/drivers/cpufreq/intel_pstate.c
-===================================================================
---- linux-pm.orig/drivers/cpufreq/intel_pstate.c
-+++ linux-pm/drivers/cpufreq/intel_pstate.c
-@@ -2275,6 +2275,11 @@ static void intel_pstate_get_cpu_pstates
- 		} else {
- 			cpu->pstate.scaling = perf_ctl_scaling;
- 		}
-+		/*
-+		 * If the CPU is going online for the first time and it was
-+		 * offline initially, asym capacity scaling needs to be updated.
-+		 */
-+		hybrid_update_capacity(cpu);
- 	} else {
- 		cpu->pstate.scaling = perf_ctl_scaling;
- 		cpu->pstate.max_pstate = pstate_funcs.get_max(cpu->cpu);
-
-
+diff --git a/drivers/misc/atmel-ssc.c b/drivers/misc/atmel-ssc.c
+index 6eac0f335915..1d0322dfaf79 100644
+--- a/drivers/misc/atmel-ssc.c
++++ b/drivers/misc/atmel-ssc.c
+@@ -153,7 +153,7 @@ static int ssc_sound_dai_probe(struct ssc_device *ssc)
+ 
+ 	ssc->sound_dai = false;
+ 
+-	if (!of_property_read_bool(np, "#sound-dai-cells"))
++	if (!of_property_present(np, "#sound-dai-cells"))
+ 		return 0;
+ 
+ 	id = of_alias_get_id(np, "ssc");
+@@ -176,7 +176,7 @@ static void ssc_sound_dai_remove(struct ssc_device *ssc)
+ #else
+ static inline int ssc_sound_dai_probe(struct ssc_device *ssc)
+ {
+-	if (of_property_read_bool(ssc->pdev->dev.of_node, "#sound-dai-cells"))
++	if (of_property_present(ssc->pdev->dev.of_node, "#sound-dai-cells"))
+ 		return -ENOTSUPP;
+ 
+ 	return 0;
+-- 
+2.45.2
 
 
