@@ -1,55 +1,52 @@
-Return-Path: <linux-kernel+bounces-395456-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395457-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D6529BBE1A
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 20:37:56 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB6229BBE22
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 20:39:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 623F5B21414
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 19:37:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DBEEF1C21BAA
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 19:39:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61A801CC881;
-	Mon,  4 Nov 2024 19:37:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 924671CBE85;
+	Mon,  4 Nov 2024 19:39:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b="Hq94fEEw"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.18])
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=engleder-embedded.com header.i=@engleder-embedded.com header.b="MP21eILF"
+Received: from mx23lb.world4you.com (mx23lb.world4you.com [81.19.149.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DFFA1C876D;
-	Mon,  4 Nov 2024 19:37:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE27F1CB9F4
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 19:39:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.19.149.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730749063; cv=none; b=RHhg9kJB8LKsfMZLP9PyDWvcxw6G1sky2zb1x0dLT0CCIxJjm5OXYu/7WYaDr7OaO9qYImy+2uI4VyytgI7YIDxoI95ZCpKdx0XtV7vttF7/iwzH6//FRm6FY91T3LgdGSj04X5lGc9mziVdAp499++7LGI0LmJnZk/3cYPyZrg=
+	t=1730749182; cv=none; b=TpC2o0+mAeaE4oJoMAGhc2weXem8HtpM1yGSoencRygxMcu2tfL35Iwe9P+QEXNx00TX2+tRNy4lKD7FYtS9yFdz1eOuTRTxJUAFeTEJuHzHJVuDLHvfpk4GOnwDfdKmbm9kPiCPS4qSWMmWa4fxjp0/+rxvWvEmL044Vx8w8Gg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730749063; c=relaxed/simple;
-	bh=/JXW2R0LchTZmcQ88Qn1IKszBGN9/UOK3xrZwi1QnxE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CQ2zZ0PUYDL2WZkH50WO8cwyVhIyc77XXk4aE4uGo4qXk/6a6x+s5kpjSstNwYBfqNrKbIwE0deM1TUDISwtzfsUjfAC6kVwU6yDx0hF/SEptgm7uXpjCcvfmnRfe+Rrmr3Gum8qkUwLSODFfMmoeWGynWyZGQuK1PEvQ2LFbBE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b=Hq94fEEw; arc=none smtp.client-ip=212.227.15.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
-	s=s31663417; t=1730749047; x=1731353847; i=wahrenst@gmx.net;
-	bh=HHRJUUe4qBU3jMnR/014D6ykMod61nDwsGapWt+8eV8=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=Hq94fEEwOp2b+g18twxwSd1BXAVnk0g5Kf/7PLMX325lojcA1FKhQsPudl5O2FYU
-	 56WSopfFIfL613fT/mEi1Wk5krRJY7R5WJ4/QqQCv/Oy6dC+mEhaalDzJF973ebq4
-	 MzTmywK1o+z6Y2vL80jasoQWQX15xoBwdtzYfobOibtNObVhG+7GoH65oy8ZhbNZD
-	 XJCmh73xFlPM9gacD3xzKNpt0JeLfPFzUrF5c0laQo26+YTUWY4yYU09C/eEFABds
-	 Z5azlSqyiQ/i6cgY1cg+x0+nLApWYPm1Kyr3x7id4KXx4pjITtuCV4z20VQC3hFBf
-	 0dyuntjDb2/CxgsAvw==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.1.105] ([37.4.248.43]) by mail.gmx.net (mrgmx005
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1M5wLZ-1tAXrJ3vYJ-002Bap; Mon, 04
- Nov 2024 20:37:27 +0100
-Message-ID: <e42a6573-fc0d-4a12-9895-09c1889fc759@gmx.net>
-Date: Mon, 4 Nov 2024 20:37:25 +0100
+	s=arc-20240116; t=1730749182; c=relaxed/simple;
+	bh=+B3nxoAbM7IvON1QNfB1ja3ozuOlz5PyC7PTePvhZsw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
+	 In-Reply-To:Content-Type; b=QIziGfmeG5HBMlzzCRSwNbCY2moEiFvt+zCmcpw+qWkV1raoKubxBWlPy7ltM2aOw0MdzY864u6juPr7LPxswpl9wfkmYDe3eE9MCF2qF1OjJzPEaYiO149Prf3EDKLrZ/2sGi8mhk30Shgz7ReOSuAICoKaNYR9IqF52nslOJs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=engleder-embedded.com; spf=pass smtp.mailfrom=engleder-embedded.com; dkim=pass (1024-bit key) header.d=engleder-embedded.com header.i=@engleder-embedded.com header.b=MP21eILF; arc=none smtp.client-ip=81.19.149.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=engleder-embedded.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=engleder-embedded.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=engleder-embedded.com; s=dkim11; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:Cc:References:To:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=C6J4u5oaCQeyUbtrmZlkpXqPZsKrUCB+j84MBiIcXCs=; b=MP21eILFQ60L3bdD/X7HSRFR0e
+	D0MuVuZcifGDuyybVE946gLV6b5S/adF5dDpwvrGyfNqG+lEY+x4ZMZ6Ac0o9uvdxHh72UipH7hQ5
+	PCCjACaFhmmh5mbl03ZEY/NICNTZhEvMyPj+cMsHHFxtiM6Gq8k2ehNsc5u4Kt6SNMKM=;
+Received: from [88.117.52.189] (helo=[10.0.0.160])
+	by mx23lb.world4you.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.97.1)
+	(envelope-from <gerhard@engleder-embedded.com>)
+	id 1t82vD-000000004rT-3Wmg;
+	Mon, 04 Nov 2024 20:39:32 +0100
+Message-ID: <70a07591-8075-4322-b8bc-fa37f56a6130@engleder-embedded.com>
+Date: Mon, 4 Nov 2024 20:39:30 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,79 +54,40 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC] mmc: pwrseq_simple: Handle !RESET_CONTROLLER properly
-To: Mark Brown <broonie@kernel.org>
-Cc: Philipp Zabel <p.zabel@pengutronix.de>,
- Ulf Hansson <ulf.hansson@linaro.org>,
- Catalin Popescu <catalin.popescu@leica-geosystems.com>,
- Florian Fainelli <florian.fainelli@broadcom.com>,
- Marco Felsch <m.felsch@pengutronix.de>,
- linux-arm-kernel@lists.infradead.org, linux-mmc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-next@vger.kernel.org,
- regressions@lists.linux.dev
-References: <20241102134522.333047-1-wahrenst@gmx.net>
- <20241104093901.rb5ozxt7qkdgoatc@pengutronix.de>
+Subject: Re: [PATCH] misc: keba: Add hardware dependency
+To: Jean Delvare <jdelvare@suse.de>
+References: <20241104142217.1dad57cf@endymion.delvare>
+ <HE1PR0702MB37691DB97DE68A3BABB7AC63BA512@HE1PR0702MB3769.eurprd07.prod.outlook.com>
 Content-Language: en-US
-From: Stefan Wahren <wahrenst@gmx.net>
-In-Reply-To: <20241104093901.rb5ozxt7qkdgoatc@pengutronix.de>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ LKML <linux-kernel@vger.kernel.org>
+From: Gerhard Engleder <gerhard@engleder-embedded.com>
+In-Reply-To: <HE1PR0702MB37691DB97DE68A3BABB7AC63BA512@HE1PR0702MB3769.eurprd07.prod.outlook.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:3QUeJFnW8IfUDzUNR3gHgR1GLzSJwBr2VWJeYALXvvQo2Dx3pKc
- R/3ZgYDtC+toB/++6G0GvS/CXbk0ckOVkqertfY4jQYMXzN69VurWjmsBcPrfvcE6OVphnM
- gpHlZ0zTROZGsN0flINwOO6bdY7NAA8P1RGBwO52pds9HQ5WwQSFp1P9Y8R/JjPMl5QX4z6
- +2IIj9CzENqrj9jnJiSWQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:h5KB0udMUDs=;AI4WhMe78Bj/ADR/ZjjqpSQXFYu
- TVpk8jdDCDyDs2eavH9OmRT9BOMyWmtKz5+fu4jGuNfVg1O8vvj3O1nn99I0d5wj+plKAfHTW
- ulONPu1XpBkrgeRdtlUvOKx8cR1R+EFggHUouFfdcIJrRSxgs3btp5vsWTYoQouir+BkyCujN
- zwtSD+Cv1MqitaOXJ+XsJN1LgCUvlSXO3Xw39PE4tSgdpd2gtxa2AY+Q7Mp6RA1TzDD7HFDcR
- Z00L9Cw3mL/uxBezrMAyAjx/f3DrhmovYZK8gnw3dVgdAv6auRut3gCilZq7YNue12Bw8zwCb
- MOZYhCo2RA0MKy/0KRFm3I78OM8SCfIw7v+3fFfsXWTIAhY9gJ4p6wQs2T262ohRjnPwD1tjJ
- RuP5o+RzsQcP13csIbkQPDzXaInyrqIDPsLjcXiojinbrIUEdEM8vim+x7ZRrBg22YXeKSxNl
- WN927O8oR5QIwQXzEDRIsJ5S5aaXnegykPwBR270z+z15aFtKy2H6qWHf7CvYXFSFYUpVIlCK
- wFNW9H3+R5Emwo2e5Lb4PZgGhx+qhkkd4crxdWsQ5/Ys9iXOHrgn/aKG0xn0xi/QaZb7hvdU5
- nYE4XCgMY34NL8F3+jOWg6fVPRoaNuJN6cvkbkbhxl/8FvpS+H9YSdTUmq+DPveyOXzZr5fws
- LNPTG4rvBLjz90dqufEqHAglEbLWplhOcxek0sDuGmHMbmuC5V0hXFgI0JdLNAmARDsb76czm
- ytXa7vs5bYMcRSS9K1SKn6sgGzS+yRa1Ro2dy0vd/fJeWCcc4BMEldW2R3g1q+ZyHzXePwwMo
- sibno5DLHfnVfd/b7mm3W42A==
+Content-Transfer-Encoding: 7bit
+X-AV-Do-Run: Yes
 
-Hi Mark,
+> Only propose KEBA CP500 drivers on architectures where the device exists, unless build-testing.
+> 
+> Signed-off-by: Jean Delvare <jdelvare@suse.de>
+> Cc: Gerhard Engleder <eg@keba.com>
+> ---
+>   drivers/misc/keba/Kconfig |    1 +
+>   1 file changed, 1 insertion(+)
+> 
+> --- linux-6.12-rc4.orig/drivers/misc/keba/Kconfig
+> +++ linux-6.12-rc4/drivers/misc/keba/Kconfig
+> @@ -1,6 +1,7 @@
+>   # SPDX-License-Identifier: GPL-2.0
+>   config KEBA_CP500
+>          tristate "KEBA CP500 system FPGA support"
+> +       depends on X86_64 || ARM64 || COMPILE_TEST
+>          depends on PCI
+>          select AUXILIARY_BUS
+>          help
 
-Am 04.11.24 um 10:39 schrieb Marco Felsch:
-> Hi Stefan,
->
-> On 24-11-02, Stefan Wahren wrote:
->> The recent introduction of reset control in pwrseq_simple introduced
->> a regression for platforms without RESET_CONTROLLER support, because
-> This is what I was afraid of :/
->
->> devm_reset_control_get_optional_shared() would return NULL and make all
->> resets no-ops. Instead of enforcing this dependency rely on this behavi=
-or
->> to determine reset support. As a benefit we can get the rid of the
->> use_reset flag.
->>
->> Fixes: 73bf4b7381f7 ("mmc: pwrseq_simple: add support for one reset con=
-trol")
->> Signed-off-by: Stefan Wahren <wahrenst@gmx.net>
->> ---
->>   drivers/mmc/core/pwrseq_simple.c | 16 +++++++---------
->>   1 file changed, 7 insertions(+), 9 deletions(-)
->>
->> Hi,
->> will trying to reproduce the Rpi 4 regression from here [1], I found
->> the issue above. I'm pretty sure the Rpi 4 regression is caused by the =
-same
->> commit. Unfortunately I wasn't able to reproduce it.
->>
->> [1] - https://lore.kernel.org/linux-next/6724d7d5.170a0220.1281e9.910a@=
-mx.google.com/T/#u
-I think i've a better unterstanding of the regression in your case. I
-noticed on my Raspberry Pi 3 B+ that this change in combination with
-arm64/defconfig causes a huge delay until wifi is probed (~ 32 seconds).
-Maybe this is caused by the fact that RESET_GPIO is build as a module,
-while PWRSEQ_SIMPLE is builtin. But this doesn't explain why the driver
-seem to never probe in your case.
+Thanks!
 
-Regards
+Reviewed-by: Gerhard Engleder <eg@keba.com>
 
