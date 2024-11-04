@@ -1,228 +1,215 @@
-Return-Path: <linux-kernel+bounces-395141-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395172-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E6419BB90F
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 16:34:37 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0B3A9BB9D9
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 17:08:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DE297B22E1D
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 15:34:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF188281D59
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 16:08:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B2151C07C3;
-	Mon,  4 Nov 2024 15:34:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 476CC1C07F7;
+	Mon,  4 Nov 2024 16:08:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XkeoXENC"
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="T58QmFrh"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A16141B85C9;
-	Mon,  4 Nov 2024 15:34:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB0061C07E5;
+	Mon,  4 Nov 2024 16:08:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730734463; cv=none; b=dYdsZHv+Sim68K36MoU9DHRWF/ietgly0AdAYRAMOcPNgFL+n+NcEHVjq1M1iRN/c1Agr5+KzXWaIKeTV8THJrT/OrvQNWJdN/9F/lfp+WumtUBX89AMDDFjaPbuZ/eThJAGy6zRIOW8Dcv7LrWP8RH82++0PpqucCrghwnBhyo=
+	t=1730736520; cv=none; b=NlBMizffosPU6FHd3DvCxYAC913brB+u551mvl8mwi2ZXbZoeodxWQFFgOVUXm2Ongi+Acr9FHxw8fn0Ct5h63Im3tO7cjd9np0S/kvbOkENpeikwj/7Jf9+VExquS9FcFYuC+rbwcw9Jd2qUjxbZSFtNfqQhMwEhG8WWB4hc0g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730734463; c=relaxed/simple;
-	bh=KBs/HrNwMD8/oDYt7oSX1TAQI8xFWMmsDeorNSH5xpQ=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:References:
-	 In-Reply-To:Content-Type; b=PW+3fOsmKFxlpX8JXgBtaDyVAea/yH3H12SXgEjpUDz3LOF+XcfiOBRsIaWXfaGMaPNiijS8gmSaj0oQrM8FehzQ821Pb7r2XP4G90QiIAsNzsSrIqF76AKQrZTBozhxW45iPpoKijeflRnKSv5HGbB99ve6jnLuG9hlU3VsDfo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XkeoXENC; arc=none smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5cb74434bc5so5185277a12.0;
-        Mon, 04 Nov 2024 07:34:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730734459; x=1731339259; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :to:from:subject:user-agent:mime-version:date:message-id:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=x5FkVR8qf3LHcgQyoMYPRUmgOXjYywcsV7jbmR3b7AA=;
-        b=XkeoXENCUyxvJFMn+xqBQPaTgOkE6P+tmXZjg3DhIyMLU3UH5GVw1oUGjM6oe/xhzC
-         VyPSKln2GGn5WDJpvpEQ6UiVfcCXAhd13/bIULqhG9T99kMKQ6UruNCoW5RtS5foLywY
-         WuWNqlKUa1EwJTwacKGpHOJrscPDNG7R7tWsgHGk3dHSbIP4hn6tVMqLF9Wu3y+Ktpyz
-         NwWbe7mCEJPFwAoklX+yXE1QujJA+usBUqcearWNSDfnCog63RxRvxOobLvXz3m9oWsB
-         GS5tD8Ulk0+0HpaUH26pAkteeMYprJB1AzZ+cBkc+J70k4u6DEJau0qDa/e1Bem6mG09
-         Sp+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730734459; x=1731339259;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :to:from:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=x5FkVR8qf3LHcgQyoMYPRUmgOXjYywcsV7jbmR3b7AA=;
-        b=dxXQ4Awqg53PpZ7ulw6wW89ryj4AQ4RnTWw6l7n/uCDpS1VINQVofKPUbDFMSlEDiY
-         GCa8UPQlo1JbIFteA/PQ87U7gXTRG4URUiLHr73MljVB2AfsXDKqYcQoLus3oOdPm22n
-         JAnIgGLocyVo0YGXKSgRFi+jW9OYP4w3W6kLxhAWbllUpnIvQuMI2kaFj7wN3ppdDP9t
-         BCIRT7yDz5TyIkm0IW84r+BFL+7qziYTYyBABN/Ubo/CdkpGBnrfN1fjRfNZeqI6gTF4
-         x+RfMBBFeWQcXYxQ01/XJVIYCTuiddh7xzScrz/5MXK0UBYXiHFZIs9iHV1tY+CXLUdB
-         iYUA==
-X-Forwarded-Encrypted: i=1; AJvYcCUgBT26Tuv7AHNvM+hpZBXLHIF5/6JSwizwKAGBlQZS3Z85G77ltKOWEZpwsLbI+HvT3yntOgwqzl7ayqZ1@vger.kernel.org, AJvYcCVB7IkXilHKVsUsTXa2+FbzI5XEz2HyEM5rqi7Ru3sQDYf97QIlepVpsjTiaEEL/ngfSM0cTzICW+fN@vger.kernel.org, AJvYcCXaMw+4vqVJDirTonv7Vmeil+v6btojQG7w2sDLOY0sbkU3EnX4TGunBzuaZF7oeKrCNxoEDMuCRA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzzF/VGJ+LHj3t1SQ9Z1dtJsI+KDKY6RfhYVhzZZ/U3BiwJ5qVi
-	S07xA6SnN/sHOfSbT/60exml8W+ZneM3YXuk5muftzO6iMg7R9wd
-X-Google-Smtp-Source: AGHT+IGZw3ZWntQ5Zrh5953YGJj5aES92AofZAuTaqSZZCJIiAa6TfoR0MSycUX/KD0+I0ErTp9Tzg==
-X-Received: by 2002:a17:906:6a1e:b0:a77:c95e:9b1c with SMTP id a640c23a62f3a-a9e654f89b5mr1175452866b.27.1730734458738;
-        Mon, 04 Nov 2024 07:34:18 -0800 (PST)
-Received: from [192.168.42.239] ([163.114.131.193])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9e565e08d0sm562457666b.115.2024.11.04.07.34.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 04 Nov 2024 07:34:18 -0800 (PST)
-Message-ID: <16f43422-91aa-4c6d-b36c-3e9cb52b1ff2@gmail.com>
-Date: Mon, 4 Nov 2024 15:34:24 +0000
+	s=arc-20240116; t=1730736520; c=relaxed/simple;
+	bh=AKZxtJ4ffU13mmHVTasjpozRFhvW4v2i47Nv2xkHlUs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sPtsSZog0GqoMI+BHJufatStgq10tNiClLrUKperKyODszwxaXlZtA75JmJzq68MhOKul2dKuVgTi/V1/xIDBzvnfM2ybcm1U8Ir7d6nVMgZ3hrIhqBtpUlH9XmIS8Rdu+Z7csB070AJO9EdRT54/dj/1a+PjqP2cbAlnsyL2EM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=T58QmFrh; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A4FeGol015296;
+	Mon, 4 Nov 2024 16:08:37 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=pp1; bh=uCZFnTPm6MfL+4NTgwEJRO4AQGJM7gK8Yn7cfGTQO
+	ig=; b=T58QmFrh07lglIZkr4JWJ0o8hwUhsch0SlZUoZoJrCKTNXjjpZC632/ih
+	3Qz2KAqmTjoRXqy98xtAgKazkP+/y+vs9Hc8aOuOrYO8+zEjAWpDvebSDmGaxg/N
+	ReL4V3B5aIivkui8Nv7C0pH1E/lemZmF3VDflrM208+nQqmLS+4mhxkd26blCotn
+	+C/ASbcWH/hI/+oO5173VN/mBlZCjDlDqxqb1yeyWiDBdYhx8iaLKikyauGUgwaT
+	JDGrB4KfZSaoviA5b3LN+d1BiUq4JtVV89KjXhAcWqTAPJiKWETJg5yM4EGiVvYM
+	mSJnBqitKupLw7OPmklBb27tfx41g==
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42q14303nw-5
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 04 Nov 2024 16:08:37 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4A4ENdFY023983;
+	Mon, 4 Nov 2024 15:36:13 GMT
+Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 42nxsxxj6m-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 04 Nov 2024 15:36:13 +0000
+Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
+	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4A4Fa9lh33292978
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 4 Nov 2024 15:36:09 GMT
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id C470320043;
+	Mon,  4 Nov 2024 15:36:09 +0000 (GMT)
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id A5D7F20040;
+	Mon,  4 Nov 2024 15:36:09 +0000 (GMT)
+Received: from tuxmaker.boeblingen.de.ibm.com (unknown [9.152.85.9])
+	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Mon,  4 Nov 2024 15:36:09 +0000 (GMT)
+From: Steffen Eiden <seiden@linux.ibm.com>
+To: linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org
+Cc: Ingo Franzki <ifranzki@linux.ibm.com>,
+        Christoph Schlameuss <schlameuss@linux.ibm.com>,
+        Janosch Frank <frankja@linux.ibm.com>,
+        Claudio Imbrenda <imbrenda@linux.ibm.com>, borntraeger@linux.ibm.com
+Subject: [PATCH v3] s390/uvdevice: Support longer secret lists
+Date: Mon,  4 Nov 2024 16:36:09 +0100
+Message-ID: <20241104153609.1361388-1-seiden@linux.ibm.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [syzbot] [io-uring?] [usb?] WARNING in io_get_cqe_overflow (2)
-From: Pavel Begunkov <asml.silence@gmail.com>
-To: Jens Axboe <axboe@kernel.dk>,
- syzbot <syzbot+e333341d3d985e5173b2@syzkaller.appspotmail.com>,
- io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-usb@vger.kernel.org, syzkaller-bugs@googlegroups.com
-References: <6728b077.050a0220.35b515.01ba.GAE@google.com>
- <13da163a-d088-4b4d-8ad1-dbf609b03228@gmail.com>
- <b29d2635-d640-4b8e-ad43-1aa25c20d7c8@kernel.dk>
- <965a473d-596a-4cf4-8ec2-a8626c4c73f6@gmail.com>
-Content-Language: en-US
-In-Reply-To: <965a473d-596a-4cf4-8ec2-a8626c4c73f6@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: zWPRhq9sGEdPvMOfHW1Z6BAxZL85Wj6f
+X-Proofpoint-ORIG-GUID: zWPRhq9sGEdPvMOfHW1Z6BAxZL85Wj6f
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 spamscore=0
+ mlxscore=0 phishscore=0 bulkscore=0 clxscore=1015 impostorscore=0
+ priorityscore=1501 malwarescore=0 mlxlogscore=826 lowpriorityscore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411040137
 
-On 11/4/24 15:27, Pavel Begunkov wrote:
-> On 11/4/24 15:08, Jens Axboe wrote:
->> On 11/4/24 6:13 AM, Pavel Begunkov wrote:
->>> On 11/4/24 11:31, syzbot wrote:
->>>> syzbot has bisected this issue to:
->>>>
->>>> commit 3f1a546444738b21a8c312a4b49dc168b65c8706
->>>> Author: Jens Axboe <axboe@kernel.dk>
->>>> Date:   Sat Oct 26 01:27:39 2024 +0000
->>>>
->>>>       io_uring/rsrc: get rid of per-ring io_rsrc_node list
->>>>
->>>> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=15aaa1f7980000
->>>> start commit:   c88416ba074a Add linux-next specific files for 20241101
->>>> git tree:       linux-next
->>>> final oops:     https://syzkaller.appspot.com/x/report.txt?x=17aaa1f7980000
->>>> console output: https://syzkaller.appspot.com/x/log.txt?x=13aaa1f7980000
->>>> kernel config:  https://syzkaller.appspot.com/x/.config?x=704b6be2ac2f205f
->>>> dashboard link: https://syzkaller.appspot.com/bug?extid=e333341d3d985e5173b2
->>>> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16ec06a7980000
->>>> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12c04740580000
->>>>
->>>> Reported-by: syzbot+e333341d3d985e5173b2@syzkaller.appspotmail.com
->>>> Fixes: 3f1a54644473 ("io_uring/rsrc: get rid of per-ring io_rsrc_node list")
->>>>
->>>> For information about bisection process see: https://goo.gl/tpsmEJ#bisection
->>>
->>> Previously all puts were done by requests, which in case of an exiting
->>> ring were fallback'ed to normal tw. Now, the unregister path posts CQEs,
->>> while the original task is still alive. Should be fine in general because
->>> at this point there could be no requests posting in parallel and all
->>> is synchronised, so it's a false positive, but we need to change the assert
->>> or something else.
->>
->> Maybe something ala the below? Also changes these triggers to be
->> _once(), no point spamming them.
->>
->> diff --git a/io_uring/io_uring.h b/io_uring/io_uring.h
->> index 00409505bf07..7792ed91469b 100644
->> --- a/io_uring/io_uring.h
->> +++ b/io_uring/io_uring.h
->> @@ -137,10 +137,11 @@ static inline void io_lockdep_assert_cq_locked(struct io_ring_ctx *ctx)
->>            * Not from an SQE, as those cannot be submitted, but via
->>            * updating tagged resources.
->>            */
->> -        if (ctx->submitter_task->flags & PF_EXITING)
->> -            lockdep_assert(current_work());
->> +        if (ctx->submitter_task->flags & PF_EXITING ||
->> +            percpu_ref_is_dying(&ctx->refs))
-> 
-> io_move_task_work_from_local() executes requests with a normal
-> task_work of a possible alive task, which which will the check.
-> 
-> I was thinking to kill the extra step as it doesn't make sense,
-> git garbage digging shows the patch below, but I don't remember
-> if it has ever been tested.
-> 
-> 
-> commit 65560732da185c85f472e9c94e6b8ff147fc4b96
-> Author: Pavel Begunkov <asml.silence@gmail.com>
-> Date:   Fri Jun 7 13:13:06 2024 +0100
-> 
->      io_uring: skip normal tw with DEFER_TASKRUN
->      DEFER_TASKRUN execution first falls back to normal task_work and only
->      then, when the task is dying, to workers. It's cleaner to remove the
->      middle step and use workers as the only fallback. It also detaches
->      DEFER_TASKRUN and normal task_work handling from each other.
->      Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+Enable the list IOCTL to provide lists longer than one page (85 entries).
+The list IOCTL now accepts any argument length in page granularity.
+It fills the argument up to this length with entries until the list
+ends. User space unaware of this enhancement will still receive one page
+of data and an uv_rc 0x0100.
 
-Not sure what spacing got broken here.
+Signed-off-by: Steffen Eiden <seiden@linux.ibm.com>
+---
+ v3: remove upper boundary (8 pages) for arg len
 
-Regardless, the rule with sth like that should be simpler,
-i.e. a ctx is getting killed => everything is run from fallback/kthread.
+ drivers/s390/char/uvdevice.c | 71 ++++++++++++++++++++++++++----------
+ 1 file changed, 52 insertions(+), 19 deletions(-)
 
-> diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-> index 9789cf8c68c1..d9e3661ff93d 100644
-> --- a/io_uring/io_uring.c
-> +++ b/io_uring/io_uring.c
-> @@ -1111,9 +1111,8 @@ static inline struct llist_node *io_llist_xchg(struct llist_head *head,
->       return xchg(&head->first, new);
->   }
-> 
-> -static __cold void io_fallback_tw(struct io_uring_task *tctx, bool sync)
-> +static __cold void __io_fallback_tw(struct llist_node *node, bool sync)
->   {
-> -    struct llist_node *node = llist_del_all(&tctx->task_list);
->       struct io_ring_ctx *last_ctx = NULL;
->       struct io_kiocb *req;
-> 
-> @@ -1139,6 +1138,13 @@ static __cold void io_fallback_tw(struct io_uring_task *tctx, bool sync)
->       }
->   }
-> 
-> +static __cold void io_fallback_tw(struct io_uring_task *tctx, bool sync)
-> +{
-> +    struct llist_node *node = llist_del_all(&tctx->task_list);
-> +
-> +    __io_fallback_tw(node, sync);
-> +}
-> +
->   struct llist_node *tctx_task_work_run(struct io_uring_task *tctx,
->                         unsigned int max_entries,
->                         unsigned int *count)
-> @@ -1287,13 +1293,7 @@ static void __cold io_move_task_work_from_local(struct io_ring_ctx *ctx)
->       struct llist_node *node;
-> 
->       node = llist_del_all(&ctx->work_llist);
-> -    while (node) {
-> -        struct io_kiocb *req = container_of(node, struct io_kiocb,
-> -                            io_task_work.node);
-> -
-> -        node = node->next;
-> -        io_req_normal_work_add(req);
-> -    }
-> +    __io_fallback_tw(node, false);
->   }
-> 
->   static bool io_run_local_work_continue(struct io_ring_ctx *ctx, int events,
-> diff --git a/io_uring/io_uring.h b/io_uring/io_uring.h
-> index e46d13e8a215..bc0a800b5ae7 100644
-> --- a/io_uring/io_uring.h
-> +++ b/io_uring/io_uring.h
-> @@ -128,7 +128,7 @@ static inline void io_lockdep_assert_cq_locked(struct io_ring_ctx *ctx)
->            * Not from an SQE, as those cannot be submitted, but via
->            * updating tagged resources.
->            */
-> -        if (ctx->submitter_task->flags & PF_EXITING)
-> +        if (percpu_ref_is_dying(&ctx->refs))
->               lockdep_assert(current_work());
->           else
->               lockdep_assert(current == ctx->submitter_task);
-> 
-
+diff --git a/drivers/s390/char/uvdevice.c b/drivers/s390/char/uvdevice.c
+index 1f90976293e8..7551b03d5f99 100644
+--- a/drivers/s390/char/uvdevice.c
++++ b/drivers/s390/char/uvdevice.c
+@@ -297,6 +297,43 @@ static int uvio_add_secret(struct uvio_ioctl_cb *uv_ioctl)
+ 	return ret;
+ }
+ 
++/*
++ * Do the actual secret list creation. Calls the list secrets UVC until there
++ * is no more space in the user buffer, or the list ends.
++ */
++static int uvio_get_list(void *zpage, struct uvio_ioctl_cb *uv_ioctl)
++{
++	const size_t data_off = offsetof(struct uv_secret_list, secrets);
++	u8 __user *user_buf = (u8 __user *)uv_ioctl->argument_addr;
++	struct uv_secret_list *list = zpage;
++	u16 num_secrets_stored = 0;
++	size_t user_off = data_off;
++	size_t copy_len;
++
++	do {
++		uv_list_secrets(list, list->next_secret_idx, &uv_ioctl->uv_rc,
++				&uv_ioctl->uv_rrc);
++		if (uv_ioctl->uv_rc != UVC_RC_EXECUTED &&
++		    uv_ioctl->uv_rc != UVC_RC_MORE_DATA)
++			break;
++
++		copy_len = sizeof(list->secrets[0]) * list->num_secr_stored;
++		WARN_ON(copy_len > sizeof(list->secrets));
++
++		if (copy_to_user(user_buf + user_off, list->secrets, copy_len))
++			return -EFAULT;
++
++		user_off += copy_len;
++		num_secrets_stored += list->num_secr_stored;
++	} while (uv_ioctl->uv_rc == UVC_RC_MORE_DATA &&
++		 user_off + sizeof(*list) <= uv_ioctl->argument_len);
++
++	list->num_secr_stored = num_secrets_stored;
++	if (copy_to_user(user_buf, list, data_off))
++		return -EFAULT;
++	return 0;
++}
++
+ /** uvio_list_secrets() - perform a List Secret UVC
+  * @uv_ioctl: ioctl control block
+  *
+@@ -308,6 +345,12 @@ static int uvio_add_secret(struct uvio_ioctl_cb *uv_ioctl)
+  *
+  * The argument specifies the location for the result of the UV-Call.
+  *
++ * Argument length must be a multiple of a page.
++ * The list secrets IOCTL will call the list UVC multiple times and fill
++ * the provided user-buffer with list elements until either the list ends or
++ * the buffer is full. The list header is merged over all list header from the
++ * individual UVCs.
++ *
+  * If the List Secrets UV facility is not present, UV will return invalid
+  * command rc. This won't be fenced in the driver and does not result in a
+  * negative return value.
+@@ -318,31 +361,21 @@ static int uvio_add_secret(struct uvio_ioctl_cb *uv_ioctl)
+  */
+ static int uvio_list_secrets(struct uvio_ioctl_cb *uv_ioctl)
+ {
+-	void __user *user_buf_arg = (void __user *)uv_ioctl->argument_addr;
+-	struct uv_cb_guest_addr uvcb = {
+-		.header.len = sizeof(uvcb),
+-		.header.cmd = UVC_CMD_LIST_SECRETS,
+-	};
+-	void *secrets = NULL;
+-	int ret = 0;
++	void *zpage = NULL;
++	int rc;
+ 
+-	if (uv_ioctl->argument_len != UVIO_LIST_SECRETS_LEN)
++	if (uv_ioctl->argument_len == 0 ||
++	    uv_ioctl->argument_len % UVIO_LIST_SECRETS_LEN != 0)
+ 		return -EINVAL;
+ 
+-	secrets = kvzalloc(UVIO_LIST_SECRETS_LEN, GFP_KERNEL);
+-	if (!secrets)
++	zpage = (void *)get_zeroed_page(GFP_KERNEL);
++	if (!zpage)
+ 		return -ENOMEM;
+ 
+-	uvcb.addr = (u64)secrets;
+-	uv_call_sched(0, (u64)&uvcb);
+-	uv_ioctl->uv_rc = uvcb.header.rc;
+-	uv_ioctl->uv_rrc = uvcb.header.rrc;
+-
+-	if (copy_to_user(user_buf_arg, secrets, UVIO_LIST_SECRETS_LEN))
+-		ret = -EFAULT;
++	rc = uvio_get_list(zpage, uv_ioctl);
+ 
+-	kvfree(secrets);
+-	return ret;
++	free_page((unsigned long)zpage);
++	return rc;
+ }
+ 
+ /** uvio_lock_secrets() - perform a Lock Secret Store UVC
 -- 
-Pavel Begunkov
+2.45.2
+
 
