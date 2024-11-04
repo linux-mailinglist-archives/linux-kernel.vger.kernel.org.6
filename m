@@ -1,144 +1,77 @@
-Return-Path: <linux-kernel+bounces-395040-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395042-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C49ED9BB7A6
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 15:25:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DF6A9BB7AF
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 15:25:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 717E11F23FF0
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 14:25:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC7411F2451E
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 14:25:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF5DC178CDE;
-	Mon,  4 Nov 2024 14:25:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R89pu2Sk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CCF32AEFE;
+	Mon,  4 Nov 2024 14:25:50 +0000 (UTC)
+Received: from Atcsqr.andestech.com (60-248-80-70.hinet-ip.hinet.net [60.248.80.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3676E1B0F12;
-	Mon,  4 Nov 2024 14:25:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4C6C4C62E;
+	Mon,  4 Nov 2024 14:25:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.248.80.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730730303; cv=none; b=jhWfBYjtFSmcKDpiCk3/pHN0y2r9FYgXQT7D+/7w3qQtE5g/Iy4Nc1WHblnznPFcstZA7Mxv71fzZLdwjKPCcvyVSTub3fTYQ31MQphE9hilxH5SS9GMp/IEDpE4w+K9G5ItA9ViMtvOkNAPlwoohw0gyODZqcM8J0UrLfkV7k0=
+	t=1730730350; cv=none; b=XY+WlD2zejNJ/wwLvRqrPujPMhglvhUlGY4Rbu4R3ZrfKgME2Q2ryGxpra4cdYeoMSx0VNitPI6TGMbpiWyC/JM2Jjdd5LkvCFMfKfd8ro5kbcWgFKgHS5yeRCjjup+HDHbzL/vBAyHqEGa5IUeG4GoOgpkQbpYaSPqazrHVm8w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730730303; c=relaxed/simple;
-	bh=aCdsocZNwSc0LaEHFPOtq6uw+UtTQbPbYCLT6rdIiSg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eIc9BDnYivApnUFMnoHfBmOFyTE3ZG4Kf0gfrfzK4nohbKtjaZLcXnQsX9G3rEPVidihORbmlMZSyXpyipBihx0VzJMjlkGjsPL1cAvgge/7/zRnM0FdtjOrNpthKEE/DIxcQRyYKcSdk8XzAFDtpx1TzsQskWoLK8VpDjY9mc0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R89pu2Sk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9A29C4CECE;
-	Mon,  4 Nov 2024 14:25:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730730302;
-	bh=aCdsocZNwSc0LaEHFPOtq6uw+UtTQbPbYCLT6rdIiSg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=R89pu2SkbTOdSoRFVO+RZw5wfgA4U27LfJeYYH88bCe+nfxHdadx02d8l9jhs8zid
-	 VrhbYNlRXhCr0Q59Q9+5nKXv8H2c1BwKOpmeMl+iNfLAGzPE0TH0kXY5h82VjvBbuK
-	 PVu3y1owBEg93MLEfo812PRB9qr+j1BwMNkIt7ke+Cjars0M+tMypPYeLcBc7rBZx5
-	 Y9cTGR7QhoXaXhGcUbDJuLJtxMEABrinBwwWZVTLBs+DBFxogiMaitSSm4sNHLb9w1
-	 PzuV8Rd94Va0gkGfpz2mNKhvLiScchTKZeAOUiGVs1SOr45IOTZePGcQYR7v98RXrt
-	 Oah2MOc+r3XXg==
-Date: Mon, 4 Nov 2024 23:24:58 +0900
-From: William Breathitt Gray <wbg@kernel.org>
-To: Jiasheng Jiang <jiashengjiangcool@gmail.com>
-Cc: fabrice.gasnier@foss.st.com, mcoquelin.stm32@gmail.com,
-	alexandre.torgue@foss.st.com, Jonathan.Cameron@huawei.com,
-	benjamin.gaignard@st.com, gregkh@linuxfoundation.org,
-	linux-iio@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Jiasheng Jiang <jiashengjiangcool@outlook.com>
-Subject: Re: [PATCH] counter: stm32-timer-cnt: Add check for clk_enable()
-Message-ID: <ZyjZOt4LXL6vVrEC@ishi>
-References: <20241103182502.8384-1-jiashengjiangcool@gmail.com>
+	s=arc-20240116; t=1730730350; c=relaxed/simple;
+	bh=z0y+HaDyaSIYhvh+RIMunRAMXQMC7d3KvGn6esiCkpk=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=gRR4samDV6vpILHc3uLXfXSIRv+jBQvYCT1WLdSdfFWYm9iYCbeoTTmlyhGvjgcJKn0tv7LG10hekWrG5gDP0U6ko85EDjcMj/m6c6rmLH1W67Ke+x6CMfNzU0YNlA6SNoWSOapVZa94uS5d22XHt4iGJ2/T7v+7xjfSQkyinYE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=andestech.com; spf=pass smtp.mailfrom=andestech.com; arc=none smtp.client-ip=60.248.80.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=andestech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=andestech.com
+Received: from mail.andestech.com (ATCPCS34.andestech.com [10.0.1.134])
+	by Atcsqr.andestech.com with ESMTPS id 4A4EPXwM062393
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=OK);
+	Mon, 4 Nov 2024 22:25:33 +0800 (+08)
+	(envelope-from cl634@andestech.com)
+Received: from swlinux02.andestech.com (10.0.15.183) by ATCPCS34.andestech.com
+ (10.0.1.134) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 4 Nov
+ 2024 22:25:33 +0800
+From: CL Wang <cl634@andestech.com>
+To: <cl634@andestech.com>, <alexandre.belloni@bootlin.com>,
+        <linux-rtc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: <tim609@andestech.com>
+Subject: [PATCH V3 0/1] rtc: atcrtc100: Add andes atcrtc100 RTC driver
+Date: Mon, 4 Nov 2024 22:25:20 +0800
+Message-ID: <20241104142521.1100437-1-cl634@andestech.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="A18abvT+dU0C7JZH"
-Content-Disposition: inline
-In-Reply-To: <20241103182502.8384-1-jiashengjiangcool@gmail.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: ATCPCS33.andestech.com (10.0.1.100) To
+ ATCPCS34.andestech.com (10.0.1.134)
+X-DNSRBL: 
+X-SPAM-SOURCE-CHECK: pass
+X-MAIL:Atcsqr.andestech.com 4A4EPXwM062393
 
+The atcrtc100 module includes a real time counter with alarm.
+Add a RTC driver for this function.
 
---A18abvT+dU0C7JZH
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+CL Wang (1):
+  rtc: atcrtc100: Add driver for atcrtc100 RTC
 
-On Sun, Nov 03, 2024 at 06:25:02PM +0000, Jiasheng Jiang wrote:
-> From: Jiasheng Jiang <jiashengjiangcool@outlook.com>
->=20
-> Add check for the return value of clk_enable() in order to catch the
-> potential exception.
->=20
-> Fixes: c5b8425514da ("counter: stm32-timer-cnt: add power management supp=
-ort")
-> Fixes: ad29937e206f ("counter: Add STM32 Timer quadrature encoder")
-> Signed-off-by: Jiasheng Jiang <jiashengjiangcool@outlook.com>
-> ---
->  drivers/counter/stm32-timer-cnt.c | 12 +++++++++---
->  1 file changed, 9 insertions(+), 3 deletions(-)
->=20
-> diff --git a/drivers/counter/stm32-timer-cnt.c b/drivers/counter/stm32-ti=
-mer-cnt.c
-> index 186e73d6ccb4..0593c9b73992 100644
-> --- a/drivers/counter/stm32-timer-cnt.c
-> +++ b/drivers/counter/stm32-timer-cnt.c
-> @@ -214,11 +214,15 @@ static int stm32_count_enable_write(struct counter_=
-device *counter,
->  {
->  	struct stm32_timer_cnt *const priv =3D counter_priv(counter);
->  	u32 cr1;
-> +	int ret;
-> =20
->  	if (enable) {
->  		regmap_read(priv->regmap, TIM_CR1, &cr1);
-> -		if (!(cr1 & TIM_CR1_CEN))
-> -			clk_enable(priv->clk);
-> +		if (!(cr1 & TIM_CR1_CEN)) {
-> +			ret =3D clk_enable(priv->clk);
-> +			if (ret)
-> +				return ret;
-> +		}
-> =20
->  		regmap_update_bits(priv->regmap, TIM_CR1, TIM_CR1_CEN,
->  				   TIM_CR1_CEN);
-> @@ -816,7 +820,9 @@ static int __maybe_unused stm32_timer_cnt_resume(stru=
-ct device *dev)
->  		return ret;
-> =20
->  	if (priv->enabled) {
-> -		clk_enable(priv->clk);
-> +		ret =3D clk_enable(priv->clk);
-> +		if (ret)
-> +			return ret;
-> =20
->  		/* Restore registers that may have been lost */
->  		regmap_write(priv->regmap, TIM_SMCR, priv->bak.smcr);
-> --=20
-> 2.25.1
+ MAINTAINERS                 |   5 +
+ drivers/rtc/Kconfig         |  15 ++
+ drivers/rtc/Makefile        |   1 +
+ drivers/rtc/rtc-atcrtc100.c | 479 ++++++++++++++++++++++++++++++++++++
+ 4 files changed, 500 insertions(+)
+ create mode 100644 drivers/rtc/rtc-atcrtc100.c
 
-It's not necessarily clear that an error in the count_enable_write()
-callback or cnt_resume() callback is due to a clk_enable() failure. You
-should call dev_err before returning to indicate the reason for the
-error code.
+-- 
+2.34.1
 
-William Breathitt Gray
-
---A18abvT+dU0C7JZH
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEARYKAB0WIQSNN83d4NIlKPjon7a1SFbKvhIjKwUCZyjZOgAKCRC1SFbKvhIj
-K91QAQClpsDPi83ln4ZTMU9XMQcBPRklZisDe1L9SMCTzqjm3gEAq1L5KoqpNOaf
-YPPuPhpOYxmyb3wS6y/mZ8IWf4PZ9QQ=
-=zJcy
------END PGP SIGNATURE-----
-
---A18abvT+dU0C7JZH--
 
