@@ -1,152 +1,146 @@
-Return-Path: <linux-kernel+bounces-394791-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394795-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D8389BB3F0
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 12:55:43 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE7B59BB3FC
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 12:57:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C25B31C2116E
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 11:55:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A9B01F22172
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 11:57:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14ACA1B3937;
-	Mon,  4 Nov 2024 11:55:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1F191B4F21;
+	Mon,  4 Nov 2024 11:57:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z9TchSO2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ZmVdyk0Z"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64D334430;
-	Mon,  4 Nov 2024 11:55:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87D641B395E;
+	Mon,  4 Nov 2024 11:57:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730721331; cv=none; b=YjfoZOMiCv6LshEzXVjHXE4CsoJfwYMKo+Z2vbRbYHagu1QXVJQFj8hYMv1/nCFqp/tbUYxi0nNSBxwKb8G3t4zO6JNcPbsLqIyfvCJVtFq54Wj9P+51I/ZOETNosQuMtMxWp7y6O8VamCFbEtpYM40W+6F7xOI8xxM3MIWxbbY=
+	t=1730721440; cv=none; b=LewsE4Abi5VPJvM1mzESnnLV5+QdTSmgdRBtp6JZDFcI9PJZ/qIiasu2g9MW9cBrIuhgHmVzdADOx7LfKsLrspbGmVMSp7UnRNjKfE9k4EZo3X4GlyCVQGzYG+uf/htUYtyMdqvidruj9loay8SCtArcFAa1wZZTE+732SuvjVQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730721331; c=relaxed/simple;
-	bh=dSvQG2gdzCgovIp1SHu/ZXST84or/Z8UQImA0c+6RSo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PT0UjWBaVOUZVBo1/VO5FIrFyHYMAMGdx9Fbzv/rdM3v2HbOWkQHCIHTZtQ3BKgXDxMzQXiAHe39hMTT6l6fkL3kmI0AmZpYSdL3QqxiP8WfxIfY6LoDVDujlruhFVOQvz6mN7Gimczc53sluqKkZfXxc9LxbSw2OiKRLhbavYg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z9TchSO2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F169EC4CED7;
-	Mon,  4 Nov 2024 11:55:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730721331;
-	bh=dSvQG2gdzCgovIp1SHu/ZXST84or/Z8UQImA0c+6RSo=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Z9TchSO2UHJQ3yUH/sJK/2qP6ZVzbwA/1OacZC0bMtWpsuVBJR7yHmXDUakGq1Bmd
-	 yLdot0+LveoyHfLKN7Zw0oBw4wqKf7Vx79Qj12nJ2r77BboJjhTDBtqG7PEM8tcPhI
-	 Xthuq5LsnRja3j4s4hH1uKlOVSjJ5jOc6CYsCC0q1ZTmvEItuN9+CKGhgIOGOhTP1m
-	 6ysmw2utTZi7WIWhIRmFM17BcihOdkW2uOkgauimFBI0wNnCsFTKPeh9K/McQNnKY4
-	 sHf6Mme91LQAVp9GZZFw+8SnC4wBNoxbHMKttMUC+gwQVORoanEpqZLM0uv9dFBbu1
-	 7y0H5uyErPDkg==
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2fb599aac99so34205381fa.1;
-        Mon, 04 Nov 2024 03:55:30 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCWY2ADCYQi/TCNwdGpgaKKMjmayg515V/PolJh1qIpBpObW5PEZhSUCgJU7n9t7RH2qPH1e7mH7442QHVi4@vger.kernel.org, AJvYcCXS+FeD8L8h7D0S3JYrdtWDYeMUraM45HoeP08AeUM6GTe4c8FaCHW4fIsauEIgL4szWyzS6YVDz13HqlNtIDA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJThTWMr/dXv91taPdp46qFwHTz+J6hg0/SMkcWtH3ojL81a4+
-	dATXDlWHdT/2wDB1b5KR5vLbXSR/imq8RJPjlIXXLzg7vt/YTyWN8eZIoxOSiKRC0Dt1KVjyzWw
-	y08usoJykARmh5agetUehtp4Sz+0=
-X-Google-Smtp-Source: AGHT+IGrVfNMKT4eiJ9enlaTFPJYd4xEefhHhklhSnDylaakCVK1O+Ad9dgJHMb5IsefHr8JaEq26sQU7EDdMqX4g54=
-X-Received: by 2002:a2e:b8c5:0:b0:2fc:9afe:1157 with SMTP id
- 38308e7fff4ca-2fedb794dc0mr51085401fa.2.1730721329211; Mon, 04 Nov 2024
- 03:55:29 -0800 (PST)
+	s=arc-20240116; t=1730721440; c=relaxed/simple;
+	bh=QmsSbqmL16wj+NACmj89vDdlgmKhHGDQfgCaZDarkyI=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=NmBXSPUctJ7/xQr0oc6wDKGwRXJic6PcsYD/a3dDrFFCDBUCwafCygTAFn5QK+xYjyzV5EnQTI7435OJWaCewHdIHazLl+ocDAJyarLzvSkNQbvx6P6ElikVpwQaawGuDZoMytswby39LMEOLnMJMOSLbDArXTT6MosRcXLtVQs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ZmVdyk0Z; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A4Bj2LF026158;
+	Mon, 4 Nov 2024 11:57:09 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:message-id:mime-version:subject:to; s=
+	qcppdkim1; bh=xV3/4B0Zt1puTX7hsBvzE6wSFY80zQus3hiUjW89J2g=; b=Zm
+	Vdyk0Z797GZS59es5zQZYAS0MFaQ5W+OyJzTuOipPhG0cCshHuo5qj7anfoeiyu2
+	K5nLCHfsRwhcgZQPqhwOale7Uo8TzEOburtcigXA1quN6dz8QfW88KyCh++VAros
+	mDR87pQe3FF28bzBglBSOBEkLJoWGrmzX+YLPETUyFDZJ7dxkGJA0RqwXl4Wtu6B
+	F30PqZbSiwqLj9xP9vbHBQsHOZa6gqs/Ye7aT+K3UXzxh7Xz4iu9rIQSI1Dnkk2m
+	qgvRktXZUrNmNS+83+cvqMaDxJWQ1FGrLIhN2rHpG0jqMkdQNw6gNek5kVo8KVd9
+	gP9E+3iR2qEEvID5eWYw==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42nd1fm2wv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 04 Nov 2024 11:57:08 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4A4BuLlt022768
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 4 Nov 2024 11:56:21 GMT
+Received: from jinlmao-gv.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Mon, 4 Nov 2024 03:56:18 -0800
+From: Mao Jinlong <quic_jinlmao@quicinc.com>
+To: Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Mike Leach
+	<mike.leach@linaro.org>, James Clark <james.clark@arm.com>,
+        Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Mao Jinlong <quic_jinlmao@quicinc.com>,
+        "Alexander
+ Shishkin" <alexander.shishkin@linux.intel.com>
+CC: <coresight@lists.linaro.org>, <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>
+Subject: [PATCH v6 0/3] coresight: Add static trace id support
+Date: Mon, 4 Nov 2024 19:56:01 +0800
+Message-ID: <20241104115604.14522-1-quic_jinlmao@quicinc.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241102152226.2593598-1-jarkko@kernel.org> <D5BW0P0HH0QL.7Y4HBLJGEDL8@kernel.org>
- <e745226d-4722-43ed-86ad-89428f56fcba@apertussolutions.com>
- <D5DCPWBQ2M7H.GAUEVUKGC3G0@kernel.org> <CAMj1kXGd5KAXiFr3rEq3cQK=_970b=eRT4X6YKVSj2PhN6ACrw@mail.gmail.com>
- <97d4e1a0-d86e-48a9-ad31-7e53d6885a96@apertussolutions.com>
-In-Reply-To: <97d4e1a0-d86e-48a9-ad31-7e53d6885a96@apertussolutions.com>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Mon, 4 Nov 2024 12:55:17 +0100
-X-Gmail-Original-Message-ID: <CAMj1kXFEJYVs7p6QLEAU-T+xfoWhkFi=PE9QpJ4Oo4oh3eM38Q@mail.gmail.com>
-Message-ID: <CAMj1kXFEJYVs7p6QLEAU-T+xfoWhkFi=PE9QpJ4Oo4oh3eM38Q@mail.gmail.com>
-Subject: Re: [RFC PATCH 0/4] Alternative TPM patches for Trenchboot
-To: "Daniel P. Smith" <dpsmith@apertussolutions.com>
-Cc: Jarkko Sakkinen <jarkko@kernel.org>, x86@kernel.org, 
-	Ross Philipson <ross.philipson@oracle.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>, 
-	"open list:TPM DEVICE DRIVER" <linux-integrity@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, 
-	trenchboot-devel@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: T_3FVF6u-hTGRusG1sx8Z_WoScL2Qa0X
+X-Proofpoint-ORIG-GUID: T_3FVF6u-hTGRusG1sx8Z_WoScL2Qa0X
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 adultscore=0
+ impostorscore=0 bulkscore=0 mlxlogscore=999 spamscore=0 phishscore=0
+ malwarescore=0 mlxscore=0 clxscore=1015 lowpriorityscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411040105
 
-On Mon, 4 Nov 2024 at 12:52, Daniel P. Smith
-<dpsmith@apertussolutions.com> wrote:
->
-> On 11/4/24 06:27, Ard Biesheuvel wrote:
-> > On Mon, 4 Nov 2024 at 12:18, Jarkko Sakkinen <jarkko@kernel.org> wrote:
-> >>
-> >> On Mon Nov 4, 2024 at 12:57 PM EET, Daniel P. Smith wrote:
-> >>> On 11/2/24 14:00, Jarkko Sakkinen wrote:
-> >>>> On Sat Nov 2, 2024 at 5:22 PM EET, Jarkko Sakkinen wrote:
-> >>>>> It is not really my problem but I'm also wondering how the
-> >>>>> initialization order is managed. What if e.g. IMA happens to
-> >>>>> initialize before slmodule?
-> >>>>
-> >>>> The first obvious observation from Trenchboot implementation is that it
-> >>>> is 9/10 times worst idea ever to have splitted root of trust. Here it
-> >>>> is realized by an LKM for slmodule.
-> >>>
-> >>> First, there is no conflict between IMA and slmodule. With your change
-> >>> to make locality switching a one shot, the only issue would be if IMA
-> >>> were to run first and issue a locality switch to Locality 0, thus
-> >>> blocking slmodule from switching to Locality 2. As for PCR usage, IMA
-> >>> uses the SRTM PCRs, which are completely accessible under Locality 2.
-> >>
-> >> Just pointing out a possible problem (e.g. with  TPM2_PolicyLocality).
-> >>
-> >>> Honestly, a better path forward would be to revisit the issue that is
-> >>> driving most of that logic existing, which is the lack of a TPM
-> >>> interface code in the setup kernel. As a reminder, this issue is due to
-> >>> the TPM maintainers position that the only TPM code in the kernel can be
-> >>> the mainline driver. Which, unless something has changed, is impossible
-> >>> to compile into the setup kernel due to its use of mainline kernel
-> >>> constructs not present in the setup kernel.
-> >>
-> >> I don't categorically reject adding some code to early setup. We have
-> >> some shared code EFI stub but you have to explain your changes
-> >> proeprly. Getting rejection in some early version to some approach,
-> >> and being still pissed about that years forward is not really way
-> >> to go IMHO.
-> >>
-> >
-> > Daniel has been nothing but courteous and patient, and you've waited
-> > 11 revision to come up with some bikeshedding patches that don't
-> > materially improve anything.
-> >
-> > So commenting on Daniel's approach here is uncalled for.
-> >
-> > Can we please converge on this?
-> >
-> > Daniel - if no component can be built as a module, there should be no
-> > reason for the set_default_locality() hook to be exported to modules
-> > right? And do we even need a sysfs node to expose this information?
->
-> Hi Ard,
->
-> The only reason off the top of my head of why it was exported was to
-> support the fact that the tpm module itself could be built as a module,
-> not that we were looking for it to be done so.
->
+Some HW has static trace id which cannot be changed via
+software programming. For this case, configure the trace id
+in device tree with "arm,static-trace-id = <xxx>", and
+call coresight_trace_id_get_static_system_id with the trace id value
+in device probe function. The id will be reserved for the HW
+all the time if the device is probed.
 
-But the inclusion of the secure launch module will force the TPM
-module to be builtin too, surely.
+Changes since V5:
+1. Remove the warn for staic id not available.
+2. Drop the system_id if registering the coresight device fails.
+3. Return busy when static id is not available in dummy driver.
 
-> As to sysfs, there is the TXT register content that we would like to
-> have exposed, and they should be readonly. For context to contrast with,
-> tboot user space utility txt-stat worked by trying to read the TXT
-> register address space via /dev/mem, think enough is said there. The
-> other purpose we used sysfs was management of the DRTM log. We used it
-> to provide a means to ensure the DRTM eventlog is extended when
-> measurements are sent to the DRTM PCRs and then to be able to retrieve
-> the final log.
->
+Changes since V4:
+1. Use fwnode_property_read_u32 in fwnode_property_read_u32.
+2. Update date and version in sysfs-bus-coresight-devices-dummy-source
 
-I was referring specifically to the read-write sysfs node that permits
-user space to update the default TPM locality. Does it need to be
-writable? And does it need to exist at all?
+Changes since V3:
+1. Adda new API function
+int coresight_trace_id_get_system_static_id(int trace_id).
+2. Use the term "static trace id" for these devices where
+the hardware sets a non-programmable trace ID. 
+
+Changes since V2:
+1. Change "trace-id" to "arm,trace-id".
+2. Add trace id flag for getting preferred id or ODD id.
+
+Changes since V1:
+1. Add argument to coresight_trace_id_get_system_id for preferred id
+instead of adding new function coresight_trace_id_reserve_system_id.
+2. Add constraint to trace-id in dt-binding file.
+
+Mao Jinlong (3):
+  dt-bindings: arm: Add arm,static-trace-id for coresight dummy source
+  coresight: Add support to get static id for system trace sources
+  coresight: dummy: Add static trace id support for dummy source
+
+ .../sysfs-bus-coresight-devices-dummy-source  | 15 ++++
+ .../arm/arm,coresight-dummy-source.yaml       |  6 ++
+ drivers/hwtracing/coresight/coresight-dummy.c | 81 ++++++++++++++++---
+ .../hwtracing/coresight/coresight-platform.c  |  6 ++
+ .../hwtracing/coresight/coresight-trace-id.c  | 39 ++++++---
+ .../hwtracing/coresight/coresight-trace-id.h  |  9 +++
+ include/linux/coresight.h                     |  1 +
+ 7 files changed, 137 insertions(+), 20 deletions(-)
+ create mode 100644 Documentation/ABI/testing/sysfs-bus-coresight-devices-dummy-source
+
+-- 
+2.17.1
+
 
