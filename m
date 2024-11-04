@@ -1,170 +1,105 @@
-Return-Path: <linux-kernel+bounces-395527-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395528-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 052219BBF20
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 22:00:50 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FEE29BBF24
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 22:01:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 55F51B21673
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 21:00:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D349D1F225AC
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 21:01:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94BF11F7542;
-	Mon,  4 Nov 2024 21:00:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBC891F7545;
+	Mon,  4 Nov 2024 21:01:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r4mevY+T"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ai9X7ook"
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E12FF18DF8F;
-	Mon,  4 Nov 2024 21:00:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C16418DF89;
+	Mon,  4 Nov 2024 21:01:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730754040; cv=none; b=TAAyzR5xrGtbe/vBHz+ePUXmsK5IVZVBUXtmeZ5iZ9ALpfyyUbXxpd52Q7iAJwnpGSkjaJTH5v8v04U2auUkyJEOjf68x9dtgAAOnKueXJC52q7l5dILYq7Aixg7y+iqo820J+JOhe3fDKPlGzq/6djP1ulCnq1lsJPIb3/KwiU=
+	t=1730754092; cv=none; b=oE/vs6JMGfmXfdvkzHW05fqT8R+Mj7Ec5niZS2Z8MxmP1mEbxkhkAT0eZ9+vXYzIaoLFnkzcsiW2We7FNqBwqEUhgTMhGx9d+ggmiG+vOoVUhVbg2hkoWoIVk/mN0v0ZkOMVARZEgSQ6KN8aNxuNdfLimhrujg4jIK7YENoL7mw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730754040; c=relaxed/simple;
-	bh=+JnuYJJgahecdEeb1aApIjChwSEPKJ0iG6ZTn0zz9I8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=t6g3DxnKuSWF4DFpnFFc2ZajItKQXUO7DO36vRIw0A/siF/wxt2i/AlzIAOiTcAuEVHA9ftplxKMrVYoH0zHPNKhe9RqkAqrmu+cUUiAQU++M2N4uBOS2l8FOV1RtMzYp0K0pgn4kXiEtKkHBWP3LR/cdk94gZJniu/7wVSzxFE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r4mevY+T; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC32FC4CECE;
-	Mon,  4 Nov 2024 21:00:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730754039;
-	bh=+JnuYJJgahecdEeb1aApIjChwSEPKJ0iG6ZTn0zz9I8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=r4mevY+T/fi/gyAlN3rIuUjLExZmg5XdyI+cAIsOKBJ1e666rfkoBmxr69SAc0+ig
-	 7GoOxfdVvLP8QdqEEqVnLCqwe/fcIrOhA5mkoZQglxGM21hB8m2Y9PjnbnI5EZKzjs
-	 k9Zs2wKR6dkmwsk1ztZhauP2+CcbzauVInTRpHUp63KDIdkoLuQkhaZVVMW/T60cnh
-	 Vmct/oj4YPADmwhn3QpgmGxJWL9RRVaCuGYSENM+NmlgZ7YtiRrRgbJuQRaluiAXPo
-	 CPvydklNv7mcStai/SUIVxWonF4eJyZj35FL8/EI5rkoXQ25tdyF4YhXXBxMv8o93z
-	 9Czwh8U/AW7lw==
-Date: Mon, 4 Nov 2024 13:00:36 -0800
-From: Namhyung Kim <namhyung@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	James Clark <james.clark@linaro.org>,
-	Howard Chu <howardchu95@gmail.com>,
-	Athira Jajeev <atrajeev@linux.vnet.ibm.com>,
-	Michael Petlan <mpetlan@redhat.com>,
-	Veronika Molnarova <vmolnaro@redhat.com>,
-	Dapeng Mi <dapeng1.mi@linux.intel.com>,
-	Thomas Richter <tmricht@linux.ibm.com>,
-	Ilya Leoshkevich <iii@linux.ibm.com>,
-	Colin Ian King <colin.i.king@gmail.com>,
-	Weilin Wang <weilin.wang@intel.com>,
-	Andi Kleen <ak@linux.intel.com>,
-	Josh Poimboeuf <jpoimboe@redhat.com>, linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH v5 06/21] perf script: Move find_scripts to
- browser/scripts.c
-Message-ID: <Zyk19KgzI7ybPkQ4@google.com>
-References: <20241031014252.753588-1-irogers@google.com>
- <20241031014252.753588-7-irogers@google.com>
- <ZyPX7ayIO4teziDX@x1>
- <CAP-5=fVgJu8BJWFVUkCy1Zsi3piTPdV-GXL1bTpWZeO=nm=jrg@mail.gmail.com>
- <Zykk2MJ4REGCaqVw@google.com>
- <CAP-5=fXQpej43wxEtMYFbxdofHtUi98X68W4AaR9UCfsbDir5A@mail.gmail.com>
- <ZykxD41c6gWQoIrQ@x1>
- <CAP-5=fWf8guTgqwfrrct3AGYDC=Lb1Oxo7kXU_x1yEr5urFSkQ@mail.gmail.com>
+	s=arc-20240116; t=1730754092; c=relaxed/simple;
+	bh=ALFJFS3Rkcgm97W6TEJgZ8185IfAfAw8q7GSv94pm9g=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pa8HyC7eBhFEsxanFkcEXhTWdMZrCccQdkn6EO/evsq2xMKpn3Abxxf0wsdklT71G60rAPqgscxTb8pfSPn9jiSm/zAoI8WHST8ohFua0DFL+Q3/O4uBOLRTKL4k+L8LFL7qF6sgR6vXLFj/jm1UkMqZTLPjjVexWD1Yqk1d1HU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ai9X7ook; arc=none smtp.client-ip=209.85.210.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-72097a5ca74so4443845b3a.3;
+        Mon, 04 Nov 2024 13:01:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730754090; x=1731358890; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=EOZ30S4SAP3QuaB6bi4m6ZHBaGMcsecLVZhaad9YKzY=;
+        b=ai9X7ookgJVWfxINgORMejXj7YrO0rnBj8zFCFphDNNHqTDEMjVf1pq/+eRUig60So
+         wW9Hc0KfxgZpssXq3gt5bSzOAh3RKblQDA1odh5BU+UJlmn26JnzPBdFrrm1nmMpAmsf
+         /VWLI3q4sU7tPuIaXvOZavZT2qHY3/q1TZkq0as2UEdzWJSQx+NtfEVNfyzbJze3Y5Fa
+         /8s3BZEkHKIO0FQOCWRGiOmLc6Crfg4nFJweH/obagW6j+LNON7e+P0Qmz+VohT0F4Nl
+         p2j9UaASH5chVX8Nh6vDwwTLUrZzXLk75zK94XXP9wuB1CQedR9sjmIN3b2Jp2KTuJHD
+         0rFw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730754090; x=1731358890;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=EOZ30S4SAP3QuaB6bi4m6ZHBaGMcsecLVZhaad9YKzY=;
+        b=sOkqBVWuFiHdRUHVcU3Uy8YH/tzcYhKj2whkbRGmAu74xEPciu+3Yk4huq+Kkb6jaY
+         AKWyyZ3Wtc7XxGhIQ/iNdo/FtmpMU7wqCyHJ74Ow81fXdPHjDdr4/3XE3Gr5FnlcYA7V
+         MQ7qGGgyjq/BiUk+esfn7sRQ0U/8bBLNg+DrxR+Z01oZwgTPTd5KER5HwSqvOcvKC+j/
+         PwIJ1tvmKtycmrtzoOA0wCbGywUbNkauk6TvlKthcWsZo3/Qv46wstY5nGZVU+4uy6vZ
+         juuDS8su5SScYz0YZutG2g3loabr/OWrpGgiuHnPMaef8YYAtMrCH4R0yibyWqvCHwJJ
+         Wgmw==
+X-Forwarded-Encrypted: i=1; AJvYcCU3jaG/BjpH+3KgDpKClYTA/f2PWrjc8CYmRbFaBTDhrWZdfo7EfrIztq7ybbJomO6JsHYjpa9ybscDHyI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwVEZfwsmE0/JpMrJYn16f89xLVtfGCOgxH8YORE/YsEBuzuDRn
+	t2p/zaal6R0lK+dBOh6VQuOE/I/L0LncZOu9Q32HXgK+zVj7OyWKwoFYY44c
+X-Google-Smtp-Source: AGHT+IG2k9jTJ8w3WT4q0Xp/IKcaQ8oJnjwc3KL97LKHzDgZ2ZetMe5DuSuE2uDGPwM8iqmYNZlNOg==
+X-Received: by 2002:a05:6a00:4fc4:b0:720:36c5:b53b with SMTP id d2e1a72fcca58-720c99b5c7fmr18641347b3a.17.1730754090153;
+        Mon, 04 Nov 2024 13:01:30 -0800 (PST)
+Received: from ryzen.lan ([2601:644:8200:dab8::a86])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-720bc1b8971sm8307755b3a.12.2024.11.04.13.01.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 04 Nov 2024 13:01:29 -0800 (PST)
+From: Rosen Penev <rosenp@gmail.com>
+To: netdev@vger.kernel.org
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
+	maxime.chevallier@bootlin.com,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	linuxppc-dev@lists.ozlabs.org (open list:FREESCALE QUICC ENGINE UCC ETHERNET DRIVER),
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH net-next 0/4] net: ucc_geth: devm cleanups
+Date: Mon,  4 Nov 2024 13:01:23 -0800
+Message-ID: <20241104210127.307420-1-rosenp@gmail.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAP-5=fWf8guTgqwfrrct3AGYDC=Lb1Oxo7kXU_x1yEr5urFSkQ@mail.gmail.com>
 
-On Mon, Nov 04, 2024 at 12:48:01PM -0800, Ian Rogers wrote:
-> On Mon, Nov 4, 2024 at 12:39 PM Arnaldo Carvalho de Melo
-> <acme@kernel.org> wrote:
-> >
-> > On Mon, Nov 04, 2024 at 12:34:47PM -0800, Ian Rogers wrote:
-> > > On Mon, Nov 4, 2024 at 11:47 AM Namhyung Kim <namhyung@kernel.org> wrote:
-> > > >
-> > > > On Thu, Oct 31, 2024 at 01:51:36PM -0700, Ian Rogers wrote:
-> > > > > On Thu, Oct 31, 2024 at 12:18 PM Arnaldo Carvalho de Melo
-> > > > > <acme@kernel.org> wrote:
-> > > > > >
-> > > > > > On Wed, Oct 30, 2024 at 06:42:37PM -0700, Ian Rogers wrote:
-> > > > > > > The only use of find_scripts is in browser/scripts.c but the
-> > > > > > > definition in builtin causes linking problems requiring a stub in
-> > > > > > > python.c. Move the function to allow the stub to be removed.
-> > > > > > >
-> > > > > > > Rewrite the directory iteration to use openat so that large character
-> > > > > > > arrays aren't needed. The arrays are warned about potential buffer
-> > > > > > > overflows by GCC now that all the code exists in a single C file.
-> > > > > >
-> > > > > > Introducing is_directory_at() should be done as a prep patch, as the
-> > > > > > rest of the patch below could end up being reverted after some other
-> > > > > > patch used it, making the process more difficult.
-> > > > > >
-> > > > > > I mentioned cases like this in the past, so doing it again just for the
-> > > > > > record.
-> > > > >
-> > > > > This is highlighted in the commit message:
-> > > > > ```
-> > > > > Rewrite the directory iteration to use openat so that large character
-> > > > > arrays aren't needed. The arrays are warned about potential buffer
-> > > > > overflows by GCC now that all the code exists in a single C file.
-> > > > > ```
-> > > > > so without the change the code wouldn't build. The new is_directory_at
-> > > > > function is effectively 2 statements fstatat and S_ISDIR on the
-> > > > > result, it is put next to is_directory for consistency but could have
-> > > > > been a static function in the only C file to use it.
-> > > > >
-> > > > > For the record, patches introducing 2 line long functions can be
-> > > > > excessively noisy, especially in a 21 patch series. There is always
-> > > > > the declared but not used build error to worry about - here things
-> > > > > couldn't just be simply moved due to triggering a different build
-> > > > > error. Given the simplicity of the function here I made a decision not
-> > > > > to split up the work - the commit message would likely be longer than
-> > > > > the function. The work never intended to introduce is_directory_at but
-> > > > > was forced into it through a desire not to disable compiler warnings.
-> > > >
-> > > > This patch does more than just moving the code which can be easy to miss
-> > > > something in the middle.  I think you can move the code as is without
-> > > > introducing build errors and then add new changes like using openat() on
-> > > > top (you may separate the change out of this series).  I think it's
-> > > > ok to have a small change if it clearly has different semantics.
-> > >
-> > > If you are trying to bisect to find something that broke a build,
-> > > having commits that knowingly break the build will cause the bisect to
-> > > fail. The bisect will falsely fail on the known to be broken commit.
-> >
-> > I'm not understanding, AFAIK nobody is advocating for breaking
-> > bisection, just to first instroduce a function, then use it to avoid:
-> >
-> > 1) Introduce function foo() and use it for feature bar()
-> > 2) Somebody else uses function foo()
-> > 3) We find a justification to revert 1) but can't, since it will break
-> >    2) so we need to add 4) that removes bar() from 1).
-> 
-> Namhyung was asking that the c&p of code be 1 patch then "add new
-> changes like using openat() on top". That is:
-> 
-> patch 1: add is_directory_at - introduce the 2 line helper function
-> patch 2: move the code
-> patch 3: update the code to use is_directory_at
-> 
-> patch 2 is known broken as patch 3 is fixing it.
-> 
-> Hopefully this is clear.
+Also added a small fix for NVMEM mac addresses.
 
-Actually I don't care about the patch ordering.  My request is not
-to break build and just to separate different changes out. :)
+This was tested as working on a Watchguard T10 device.
 
-Thanks,
-Namhyung
+Rosen Penev (4):
+  net: ucc_geth: use devm for kmemdup
+  net: ucc_geth: use devm for alloc_etherdev
+  net: ucc_geth: use devm for register_netdev
+  net: ucc_geth: fix usage with NVMEM MAC address
+
+ drivers/net/ethernet/freescale/ucc_geth.c | 34 ++++++++++-------------
+ 1 file changed, 14 insertions(+), 20 deletions(-)
+
+-- 
+2.47.0
 
 
