@@ -1,100 +1,131 @@
-Return-Path: <linux-kernel+bounces-394221-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394223-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2A499BAC17
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 06:36:05 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DE1D9BAC1A
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 06:39:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B2D61F21446
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 05:36:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F2644281844
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 05:39:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32AFD18BB9F;
-	Mon,  4 Nov 2024 05:35:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73C40189916;
+	Mon,  4 Nov 2024 05:39:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="uBn1lVBk"
-Received: from out30-97.freemail.mail.aliyun.com (out30-97.freemail.mail.aliyun.com [115.124.30.97])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YIi0ubwE"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B04F94501A;
-	Mon,  4 Nov 2024 05:35:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.97
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A4564501A
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 05:39:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730698557; cv=none; b=Dvr6FQ1Pw4kSGVoKlU8XdljH/E96TmrCWl+IOmYjykY6xUuzDP8ttZUMRo4gmbQjgvyx2qvfUVJ0rbSAGwb1TMRIsyCLnt2NG1iTDtWEmg2Mr/2QLDDjLe5aTQSxXZ3B7jkLLRwaWGInW0ed8e3PeYy7oCjaUoAC6/8m9ZPbHHo=
+	t=1730698744; cv=none; b=Kh8LbGfc9CYrTCLtRaDWfzCJZWnIP46gTcf2EWOjrG+LsEMu7xYoH3HrxPuxr+6ND8CwtWUgf4LSCUnFWKxxlu+qupr1GiORFqIn3ZA6iIKdI103VsLCB9+SOY2Ru3JZ1znG3PM2fJpmA0/7oCIam/jrkxofhGCLFrDWWQ+o8L4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730698557; c=relaxed/simple;
-	bh=+VX/Oiw5W46/PGALbZeMkp1/TGJN/RYXjeM0o2OZ0gg=;
-	h=Message-ID:Subject:Date:From:To:Cc:References:In-Reply-To; b=c9AQdyLnYTHY2LyXdPFfBgIGqQfGFQwrc9amwbUtdaS5/Dj944zgOlYALiR4/Ix95jGTZS6I9mCHTDiEllmsCI83Xdl5rVXP3IHM3fwh8/93KWLIgNrkqpauXdJJCgR6u/gRN0KEga0Yb4h8CwndNL6zahtSqnkkXcPVo7AX48E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=uBn1lVBk; arc=none smtp.client-ip=115.124.30.97
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1730698546; h=Message-ID:Subject:Date:From:To;
-	bh=j4U3gdu7FRXfq+K0kfikfSREVeUUEhxJFR0a5tFt+kA=;
-	b=uBn1lVBkjn5LTji5uk81HiLewddxDIScdj1IGYcPCe8Q1QLzU1GgtTQWMTRd6O8c0w3N06veqcVh02gSUI/XoB7CxvC3nWJ7wonm4Ru/2HVe3Kl4PU3OQuEpWDc3pm9eE/grQZrvUS9+2nosVO8TaxZsXbPbofp9+FSeooyl3Lw=
-Received: from localhost(mailfrom:xuanzhuo@linux.alibaba.com fp:SMTPD_---0WIalYbK_1730698545 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Mon, 04 Nov 2024 13:35:45 +0800
-Message-ID: <1730698521.639766-1-xuanzhuo@linux.alibaba.com>
-Subject: Re: [PATCH RESEND net-next] net: tcp: replace the document for "lsndtime" in tcp_sock
-Date: Mon, 4 Nov 2024 13:35:21 +0800
-From: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
-To: Menglong Dong <menglong8.dong@gmail.com>
-Cc: dsahern@kernel.org,
- kuba@kernel.org,
- weiwan@google.com,
- netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- Menglong Dong <dongml2@chinatelecom.cn>,
- edumazet@google.com,
- lixiaoyan@google.com
-References: <20241030113108.2277758-1-dongml2@chinatelecom.cn>
-In-Reply-To: <20241030113108.2277758-1-dongml2@chinatelecom.cn>
+	s=arc-20240116; t=1730698744; c=relaxed/simple;
+	bh=N2F0Z+pezwp5AWD+0LxHqGuCFdbPTJShRAaWJR/1MhM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=gMxmdup57Qx7RUBx/kvnFo9gD1WeBgH9LKl7VLmQTRJe+b49iHIKksZbYvgq3efggOXR9DlA69/9gOL4s0zqWvHsioKitB2QgE54hP7pVg6aBt/Vc82vzIIAW+wW5GsAbYzwffhlk51Cv1GnKiowaKQmcMAslWsQH3VuvZtOkVE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YIi0ubwE; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-207115e3056so34797955ad.2
+        for <linux-kernel@vger.kernel.org>; Sun, 03 Nov 2024 21:39:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730698743; x=1731303543; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=dtdowl6ashFE99iWon9UNhidq4cexD1HxOX3fIyG2pg=;
+        b=YIi0ubwE0CLuKtgaRLCSQionqTx1I8/NrloBrtEVm7iGtZrrUClgLdNyMzfbDkYLtW
+         CCSujZrcVSnTP48nFcN0dWgPyMoQUm3oFC15oFFBXjSzl4xqApzJ6VSN4rJChndWCHyf
+         yddPJ56q/ATl5AkSmGwaoxnLRWtxIRMmNyTwm50tLv64sTBrOOTff+AHKNS8sgkFhAwD
+         GkzUqezQ5zgcG+KctyHbwASYya9iaVog6pfUDuxbv42vHK52/j5SMEwsRFDGaXVRTboi
+         jsxhcm1xqhqfgGQLzr5+228D+RdIJ9WsIf52lDXpxKioAN+Flrd6X9OHAkGOzTWs/c4Z
+         xicA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730698743; x=1731303543;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=dtdowl6ashFE99iWon9UNhidq4cexD1HxOX3fIyG2pg=;
+        b=PU+/l114kJvXp8kr4lw5K4kUp4n1bXGUGX+6NtcQKSGmUxjKogBdBPtR3VniE65Z4s
+         mX5C9XyIH+cWfXEnxa6C+gywuDy4AzI0oMrHwVh0BNLAIko8LNXvMaSp534Gsu+PK4vD
+         3gu6/EOWJXXel5zWbI6ZHeVKgx996F2UDkNHhrUwlDVsjuYxm+s+YKmuCE2PZuH/RXVM
+         AvqtTODjFm02aJXFkgxA/6q3mltpDZ0rBU4cUGxXk/J0HYsyQokQm6MKf0OoI4rbN8yn
+         rmsbOBgGCEdMqyidBXzwqOFqeeKlP3T2mmdJFjC0RIVRdLk18Til9B+mvmaHvTfR9Ak/
+         styw==
+X-Gm-Message-State: AOJu0YxUAEO84xrXH40LMqIGCuopEPnisNKGllLnsw4u8tgkZ9r8ji/E
+	BV3ia2TPRAQ3PgOemEyOQuFiRWpdWzSEhCr+jn2KjSmQBh8n1jig
+X-Google-Smtp-Source: AGHT+IGRRIhA3wvMiuvTn5Zjq6jUrOXBBpoJmscqnp/9RTU200Yq/bT9XZAXOlIeXV+sk1byX2harA==
+X-Received: by 2002:a17:902:ce90:b0:20c:9bf9:1d97 with SMTP id d9443c01a7336-210c6ce5cd5mr340650925ad.60.1730698742539;
+        Sun, 03 Nov 2024 21:39:02 -0800 (PST)
+Received: from advait-kdeneon.lan ([2409:40d0:1223:a5a8:190e:4c3e:ea3b:84a3])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211056eda5fsm54357355ad.7.2024.11.03.21.38.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 03 Nov 2024 21:39:02 -0800 (PST)
+From: Advait Dhamorikar <advaitdhamorikar@gmail.com>
+To: Andy Whitcroft <apw@canonical.com>,
+	Joe Perches <joe@perches.com>,
+	Dwaipayan Ray <dwaipayanray1@gmail.com>,
+	Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc: linux-kernel@vger.kernel.org,
+	skhan@linuxfoundation.org,
+	anupnewsmail@gmail.com,
+	Advait Dhamorikar <advaitdhamorikar@gmail.com>
+Subject: [PATCH RESEND] scripts/checkpatch: Fix multiple Reported-by: false positive warning
+Date: Mon,  4 Nov 2024 11:08:24 +0530
+Message-Id: <20241104053824.36672-1-advaitdhamorikar@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Wed, 30 Oct 2024 19:31:08 +0800, Menglong Dong <menglong8.dong@gmail.com> wrote:
-> The document for "lsndtime" in struct tcp_sock is placed in the wrong
-> place, so let's replace it in the proper place.
->
-> Fixes: d5fed5addb2b ("tcp: reorganize tcp_sock fast path variables")
-> Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
+If multiple Reported-by: tags are used, the
+checkpatch script throws a false positive warning
+even when there is a Closes tag following the two
+tags. This fix checks if the closes tag is present
+after multiple Reported-by tags.
 
-Reviewed-by: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
+Here is an example of the same:
+> WARNING: Reported-by: should be immediately followed by Closes: with a
+> URL to the report
+> #10:
+> Reported-by: Kernel test bot <ppppqqqq@ymail.com>
+> Reported-by: Some Person <xxxyyy@gmail.com>
 
+> total: 0 errors, 1 warnings, 0 checks, 8 lines checked
 
-> ---
->  include/linux/tcp.h | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
->
-> diff --git a/include/linux/tcp.h b/include/linux/tcp.h
-> index 6a5e08b937b3..f88daaa76d83 100644
-> --- a/include/linux/tcp.h
-> +++ b/include/linux/tcp.h
-> @@ -200,7 +200,6 @@ struct tcp_sock {
->
->  	/* TX read-mostly hotpath cache lines */
->  	__cacheline_group_begin(tcp_sock_read_tx);
-> -	/* timestamp of last sent data packet (for restart window) */
->  	u32	max_window;	/* Maximal window ever seen from peer	*/
->  	u32	rcv_ssthresh;	/* Current window clamp			*/
->  	u32	reordering;	/* Packet reordering metric.		*/
-> @@ -263,7 +262,7 @@ struct tcp_sock {
->  	u32	chrono_stat[3];	/* Time in jiffies for chrono_stat stats */
->  	u32	write_seq;	/* Tail(+1) of data held in tcp send buffer */
->  	u32	pushed_seq;	/* Last pushed seq, required to talk to windows */
-> -	u32	lsndtime;
-> +	u32	lsndtime;	/* timestamp of last sent data packet (for restart window) */
->  	u32	mdev_us;	/* medium deviation			*/
->  	u32	rtt_seq;	/* sequence number to update rttvar	*/
->  	u64	tcp_wstamp_ns;	/* departure time for next sent data packet */
-> --
-> 2.39.5
->
->
+Signed-off-by: Advait Dhamorikar <advaitdhamorikar@gmail.com>
+---
+ scripts/checkpatch.pl | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
+
+diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+index 4427572b2477..c74519f02180 100755
+--- a/scripts/checkpatch.pl
++++ b/scripts/checkpatch.pl
+@@ -3188,10 +3188,13 @@ sub process {
+ 			if ($sign_off =~ /^reported(?:|-and-tested)-by:$/i) {
+ 				if (!defined $lines[$linenr]) {
+ 					WARN("BAD_REPORTED_BY_LINK",
+-					     "Reported-by: should be immediately followed by Closes: with a URL to the report\n" . $herecurr . "\n");
+-				} elsif ($rawlines[$linenr] !~ /^closes:\s*/i) {
++						"Reported-by: should be immediately followed by Closes: with a URL to the report\n" . $herecurr . "\n");
++				} elsif ($lines[$linenr] =~ /^reported(?:|-and-tested)-by:/i && $lines[$linenr + 1] =~ /^reported(?:|-and-tested)-by:/i) {
++       				 # Do nothing if the next line is another Reported-by:
++                }
++				elsif ($lines[$linenr]  =~ /^reported(?:|-and-tested)-by:/i && $lines[$linenr + 1] !~ /^closes:\s*/i) {
+ 					WARN("BAD_REPORTED_BY_LINK",
+-					     "Reported-by: should be immediately followed by Closes: with a URL to the report\n" . $herecurr . $rawlines[$linenr] . "\n");
++						"Reported-by: should be immediately followed by Closes: with a URL to the report\n" . "#" . ($linenr + 1) . ":" . "\n" . $rawlines[$linenr] . "\n");
+ 				}
+ 			}
+ 		}
+-- 
+2.34.1
+
 
