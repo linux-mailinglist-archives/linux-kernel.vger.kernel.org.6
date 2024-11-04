@@ -1,219 +1,270 @@
-Return-Path: <linux-kernel+bounces-394776-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394777-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD5B99BB3C2
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 12:46:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 69D019BB3C7
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 12:47:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E4DF91C22403
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 11:46:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D01E1C210C4
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 11:47:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A64A1B3945;
-	Mon,  4 Nov 2024 11:46:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 633CC1B392C;
+	Mon,  4 Nov 2024 11:47:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="t91F5m3h"
-Received: from EUR02-AM0-obe.outbound.protection.outlook.com (mail-am0eur02on2066.outbound.protection.outlook.com [40.107.247.66])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nrN3fTDf"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4A4A1B0F2C;
-	Mon,  4 Nov 2024 11:46:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.247.66
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730720772; cv=fail; b=LxuY/M3MVrBLUIxeqzikpTLWDosxljQel0pnpwi+KPByW6vdPy3b669yrdQXyv39c5DkrgmoCcR3Ac0/cVloWpE4mcvXWOGp1SAbFKkMAN+POxmE5GK1s85l+hKcN+sMnAqaU6RGVHE9D99+FgdCtnfhcfMajlcvfxL0Hcib2Pw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730720772; c=relaxed/simple;
-	bh=A0fhL477UubuK2RrdRs2G9lHrv5N9drPQ4LtEAYDCQ4=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=fhX8q+wtv+xzEvTc+oe7YWM4KUBudiqPAL7PgrI7s/RWnA3MR1VypgelTGQoxDqgYCtwKR0cKdu8aH99Qw0+mE16YpiyTaz90wpVv65glGL+08PmeLtNfDE2LCBWfEUeAHm27cQyIqtK16yWdt3rB/6ZCx9qB55i7h63nDtMlTQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=t91F5m3h; arc=fail smtp.client-ip=40.107.247.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=fuB1OAErZA5degsxa2J18OcpG9BxuIX2778ptuDgEny6U5qZLy+0qbXz+nmF0ChL2+jnGU8XsyIez1plYjBnSFV2lI1PX9WPTjDU3HhL5RdGY2sS0Cgcr9EX55C4OqpCaPXRAMUyYKMIzbOVjC7nPGx2nSQn2EjQENKulHpr8b9rmjYfj4PVXI/U6XeMg/12jC/md9OYiC3nifBfzH0g8L15t/rMDcZIVPY4d3pMe/xMStLgcvyVR14Y1uNtgSRFmcX+jwFNtsiMoGd/3FTq2aeUK2lZkdpFYq9bEnooIcjrt4GULq6LuGBnsqW4zzLuNLiRh7STo366vZYlDBsHMg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=A0gsoD5fxiStSEFQCJfd3h2WQnic3J99x+e/vw68DC8=;
- b=wu0Evh0EPauOs4kec1nAbI79W6hG6GpIIM8gm6oshjCjfkupnsxP9YO2raOQ1KvAnP+WPlIOqADIbTqYOTIu9qXx15ZYbdrZjZ9gm9d+19SUwY+IApieYVq9zeGZgSwgg5AO+tgYggcPP3iTl5xRrVDACa2OJB0aFr3iNRY69EbMSw/U8Brt2Txk4CaRdv+OaCbPP2509MOtlbOHGGbsTMh2w6XdavRHDFwIO1CsNKIGktXKnsrw+c/R7F+1S6bjzbsf7/NuUFqxcDG2+5yAobXxVCuYrRO+VC4BZJnRZvH6sMI8pQGaEXMctmYX6DGdEBZe8AuDgdieF50IX20aDQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector1-NXP1-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=A0gsoD5fxiStSEFQCJfd3h2WQnic3J99x+e/vw68DC8=;
- b=t91F5m3hlCRvXtNU9YS1ZR+5nujzNEitTDLvsC+jv0w+ik7hDzkk78YBbZ9PoabWMqIYfL4VY2aW7o4+wxJectpZbYpw5gZYkcHjoukAlImn2seLKMueuvoRXhkGlC/BdfUGpSA6SgqESu9Yk3C53r7C4sbueoSjx+VMB8Yv8et31y0o8ddOmDuXfUhurjxx0QO8e82emOha765s1zn/Lyqp9lulVllB7qr2B5jMBwkuI46a1v1Cw9vPJMoIut1NiPakhXdSOULGqrZ+WlP6y5mUVpnN5ptCU7Ho/vwEXdIUHj+u3xjJlQv2b2hfBiV44ZqD5BNrDkvsaEPC4CJiuw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-Received: from AM9PR04MB8487.eurprd04.prod.outlook.com (2603:10a6:20b:41a::6)
- by DU2PR04MB8952.eurprd04.prod.outlook.com (2603:10a6:10:2e3::24) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8114.30; Mon, 4 Nov
- 2024 11:46:02 +0000
-Received: from AM9PR04MB8487.eurprd04.prod.outlook.com
- ([fe80::6d7a:8d2:f020:455]) by AM9PR04MB8487.eurprd04.prod.outlook.com
- ([fe80::6d7a:8d2:f020:455%5]) with mapi id 15.20.8114.028; Mon, 4 Nov 2024
- 11:46:02 +0000
-Message-ID: <73d0eddd-f36d-4bcb-ae23-e0f21c3eb178@oss.nxp.com>
-Date: Mon, 4 Nov 2024 13:45:58 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 6/7] pinctrl: s32cc: add driver for GPIO functionality
-To: Markus Elfring <Markus.Elfring@web.de>, linux-gpio@vger.kernel.org,
- devicetree@vger.kernel.org, s32@nxp.com, Bartosz Golaszewski
- <brgl@bgdev.pl>, Chester Lin <chester62515@gmail.com>,
- Conor Dooley <conor+dt@kernel.org>, Dong Aisheng <aisheng.dong@nxp.com>,
- Fabio Estevam <festevam@gmail.com>,
- Ghennadi Procopciuc <Ghennadi.Procopciuc@nxp.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jacky Bai
- <ping.bai@nxp.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Larisa Grigore <larisa.grigore@nxp.com>, Lee Jones <lee@kernel.org>,
- Linus Walleij <linus.walleij@linaro.org>,
- Matthias Brugger <mbrugger@suse.com>, "Rafael J. Wysocki"
- <rafael@kernel.org>, Rob Herring <robh@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, kernel@pengutronix.de,
- Alberto Ruiz <aruizrui@redhat.com>, Christophe Lizzi <clizzi@redhat.com>,
- Enric Balletbo <eballetb@redhat.com>
-References: <20241101080614.1070819-7-andrei.stefanescu@oss.nxp.com>
- <fdf5702a-b739-4643-8288-86e6cfb8403d@web.de>
-Content-Language: en-US
-From: Andrei Stefanescu <andrei.stefanescu@oss.nxp.com>
-In-Reply-To: <fdf5702a-b739-4643-8288-86e6cfb8403d@web.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: AM0PR01CA0119.eurprd01.prod.exchangelabs.com
- (2603:10a6:208:168::24) To AM9PR04MB8487.eurprd04.prod.outlook.com
- (2603:10a6:20b:41a::6)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9F901AF0A0
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 11:47:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730720832; cv=none; b=gQxd9W2V2t84cOXAmyic4/jgesg2JP8wcQojOaEakCGdabxTbypbkvCE5+R63/8Of+6tZc3d3TwY60snkTCBZMn6ErAQIm7klBGCxxTHzvj70oQ8eu4pfaEBvGwBoV0eAtjsekqr8D4R+CMQ4GUDy8yEs4oKkfyFm3UtksGb/gM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730720832; c=relaxed/simple;
+	bh=PyullqZk2NrriXcY6CBFMfbW7+XiGUFm8DUyVMWaVk4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=U4y5dEeC/PZ8OM/pAP5mpK4+RcbOPleQfV0B0EkUGEuPmmMxOOmt5SS85kJq/WWJtVwS6S0sjq7sLAFa+V4y+/tvEsW5p3dZ+IfqpRuKwwzo8k0zu+WNia8SAlo9f8E5UcJdB+d82+FGN1DxEo6UlRInlgBsAWZhF4vgtlU2S10=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=nrN3fTDf; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-37d6ff1cbe1so2964755f8f.3
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 03:47:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1730720829; x=1731325629; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=lh5+3KGOkaelrIB4Nl2tEoQoHe7RgDBZJ7Oaq3ExHpo=;
+        b=nrN3fTDfe5xoy6oP6JIY/CdvjsmXpAqHqzWB85/a4SjJlQm637V/8xI+9ywb5Iz5uc
+         tG0DrkTTUUG8Jxc6c6u/nVXa1WoCjQeG8iT6kxysRg5s8deh37Vc7ok0h81GxokMPMHe
+         1M6uZkZbjJfu5Zc5EMLO+FS5H4xn9KY897K5sC5nL6N+2cWqV5Jxo60UPrdRehjQV14Y
+         ryLi6kjkvtgKHGgd87POanMKdd1iRxtoJDCdO9B6/ky/nJsfr7vueIL6S8rzJcqjkq8A
+         85qtKpft+Pq/tfLJ7/49XODpC8qqF5Sv4f3ezK9CzkMRVo2Fi47M2UP5+Pyod6HZeGU8
+         3seg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730720829; x=1731325629;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=lh5+3KGOkaelrIB4Nl2tEoQoHe7RgDBZJ7Oaq3ExHpo=;
+        b=OclVJ6YRZeTgbDIFlgFasvxcRJ5dfxAdIHGXCA2EByAuymTCeJ29+fZSPSBTQU1egi
+         1OyvuM0dVb5InDPXesGbpjyRzfnGdR2RLjHNQJCcBvC5HM5xVV/Ly2HE9RLQ+leMDamf
+         ZQmoldcO92uzaeMk7Z124doo0OJAeMSOj8UAD+32LUScYnOXptbxMmDYHsbFM4/vvk9h
+         kEenBd1eC2GPTtfavChvfhKqHNltobPslBxO99mETs7EbLUSX9xPGjYtESREqamVhnDV
+         aIEOzSy8mZtr8MIRSFrZHrGgz2vo/cuyIhP1qw+FZgn0LUwafuCx2RlDZkWyRR83KO4r
+         es6Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVcdHVdex7QuEJCOZZjQW4Nx+WeGOUhhyuZei46k7/g/5qwg8BnOZFEnFEgtNwfNiUxRIig4OZI1b0aldQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzFyrr1JBLKs+rkmSM6whL6lUz2rVbw2Rh51EPT2sFTQzUNWQdt
+	g9xJh78XpO81sM9Kaz45al7dAswWyWQcGDhiQ23SWQkTX+IbourH8MXG7Thn46Y=
+X-Google-Smtp-Source: AGHT+IGpbkSWgNkUv+H2MDavqFNOI/hX8U3WpCkkxEpPxrbnjPpDbaoC59i6YBF7QSDjt9Pl6iuLIA==
+X-Received: by 2002:a5d:64a1:0:b0:37d:4fe9:b6a7 with SMTP id ffacd0b85a97d-381bea1c1f4mr13084577f8f.36.1730720828889;
+        Mon, 04 Nov 2024 03:47:08 -0800 (PST)
+Received: from [192.168.68.163] ([145.224.66.181])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381c10b7c13sm13193474f8f.13.2024.11.04.03.47.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 04 Nov 2024 03:47:08 -0800 (PST)
+Message-ID: <ed15526d-9b1a-4204-92a3-4d319b03b790@linaro.org>
+Date: Mon, 4 Nov 2024 11:47:06 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM9PR04MB8487:EE_|DU2PR04MB8952:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8cf6f5cd-e4c7-4323-2ddd-08dcfcc641ee
-X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|7416014|376014|366016|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?Z3BMeDRWT3FMek5nYUFpTGRiZG1KWnIxOUxsSGZCQ3lUUzJ3UVU3eFRlMFRY?=
- =?utf-8?B?Y1NhQmhyT1gyT0FGeTgrNS9LY2lhOVhEOFlzODdCdXlidjBDNGgvS2Vnd3VO?=
- =?utf-8?B?SmNJZi93SEg1K1VMSlJ1cHJWVzMrY3FJSWIyRjg2UHB4Tys0RUVUYVpJaVJB?=
- =?utf-8?B?eVY5TVJ5bEFVMGc5L2Q3Sk1yT29HcVkwQ3h2bGk4dHdKV1hvS0NXYTRFdmpF?=
- =?utf-8?B?aEhHUWNubUtKZm41aEMwOXA3b0FIMjdiVkoxN2xkRWlqbTJGNUZCMWxtMGtp?=
- =?utf-8?B?U0FoSS9BclpnVnNkbHByVEo1ZHBDV1NzTjRZODFEODlKQndzdFhZa2VzbHVK?=
- =?utf-8?B?QktlSkhNYkdWOEdFQm9jUEo0cGVDOXV0RWdOYlpmVXEyejRPeDcyYUVNWkFr?=
- =?utf-8?B?L3BWc1Fva1U3ZTN3QkZwWVROalNxNU56MjhPQnAwa2pVekkraWZ2Z3ErYjk2?=
- =?utf-8?B?OGFhS3NEQXpTb0ZnV1ZBUXFQTHI1S3UvQ0l5cU1KSitRd0dDakRuUVdBc1VS?=
- =?utf-8?B?NFFPVkRuUEM3TmY3WVN1dTd1dTUvekNxVWN2blFxVzJOWjRDOUJoU2hKTHJ5?=
- =?utf-8?B?NXRTczVtUklZNHhCU0hVS2dGTVp1Rk1Gd2tONjl6cDhwWHRjT3ZsMmtIdGY2?=
- =?utf-8?B?WSsvVDRCeGt5QUdtanpLMllyczVVVUxjcWlYenlGYTJrSkM0TkJwT0xWVHYy?=
- =?utf-8?B?YTFVbGU1SGVWeGVGdThPcklnY2d2Y0lXWThFc2ZCTUlqa2hnOUxtODBWeXp3?=
- =?utf-8?B?SFExY3kyUzg5Q05DTnJtS2NWbHJHTDhLS3IreGsrK25TS0FQMUxEQWNXWWRS?=
- =?utf-8?B?VEh5aGdMa1d6SWcyM2t4YmthWnJ1VU5VZTNoS2Z4OXlTaHhYdmtEUmhpNnF5?=
- =?utf-8?B?QVpEajVrR1IxK2VGL2xVZ0ZjQ2Z2a3hodkJRNXJPeFJjc2dwWkd2SldEYldz?=
- =?utf-8?B?a3p3ZEIxUmFWMDc2VVZTT1JpR3JoSzkvWlpUcE5vYXFDY1dBRmlMYXFPSllH?=
- =?utf-8?B?dmJiT0NTZGZDc3dWQy9mdDRDRVZwYzRCQVJ1UjQ0bm5nM3EyelpDdXlQRWQx?=
- =?utf-8?B?MFk3REJTSTJFZ2w4WFBvQ0IwVlNIVGJENWVIamo5NUttMTVOd0pkamRnbUlI?=
- =?utf-8?B?L3h6M0xXWUZPL1B5WHRmdnlvaEtrNUNMalkxSjhMUWZCRzdGdFJMUXFGdnQ4?=
- =?utf-8?B?d2JYbUpyTUdpeVlNQ3hjdVNNa1pFNE1aR1VpeUdpUkJUcnIxcGJOWWZWWkxZ?=
- =?utf-8?B?YmUwa2NLYWNERUFYbmZkWS9kZkJhWHNabTE3WUlJRmNidmlBSHFSazlWVTVL?=
- =?utf-8?B?U3VNeEszTm4xVUxqd3FVSXRjcW9EbWNLTGIzMXZPNDJRSFcwaVBkSHovUWgw?=
- =?utf-8?B?SnJvVU1GZlZqQ2U1ZkhYd2R2LzhpM25xZklZT01GSDhmSEdLTU1JaUFyL3Bh?=
- =?utf-8?B?MWRoamhEdmhjY05PNmJub21zdGh1TUQ5ek8vSWxtaUtiN0RJeXB6d1UzczNC?=
- =?utf-8?B?VW94YlBYazVkWWVJdFc2cEIvb2FUdm9vZk8yU0czZWNpUGlZNWF1WVg0aFI0?=
- =?utf-8?B?U3RvRHNyaUtzb01tSVhMeTlkNGZXZ0hJeit2SG84eGJreWlLVWRsV1Z5NmlP?=
- =?utf-8?B?WjdaQjVQYmtwVU9hZjB2VVVFdmRCRzJxVTR6NzJFaGF4cWZLK0hSQTVlelY2?=
- =?utf-8?B?bThLNnUycUVFK1RVV1ZZcGZ1NzZGdFJ3cVpBS3hxakdGdE84aE1JWDcvclVt?=
- =?utf-8?Q?+MT76GSHn4mPBXKRH8=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM9PR04MB8487.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?LzVCRGkvRFE5eEovMnN0SGxuT2t1Y1h1ZjY2UldTcVE1aEJXOHRXVFhwU3F6?=
- =?utf-8?B?ZHNudW8zMGx5aGlnSUhlQTJnT2M0QjdRQmZRbGZCcUo5dldPcHZ3M091YWlH?=
- =?utf-8?B?OGlGcmx1OUVoSkVJR21BSUthZXpkb1JTL2ZDOFMzSWUzemlNNW8zSXNRZXFl?=
- =?utf-8?B?ajBESlZpWUpLMkdLc0JyUFZtSmY3L3p5bHpNRlRJRHRzaHRmdHlnSjFUUVNq?=
- =?utf-8?B?OXhZemNwRXRUd0pFQjNuckdHWDBmcWZPN2hPOXo4blFPTDhSRkxOTTdyTnln?=
- =?utf-8?B?SDIyVmh3T1NkNDg4bUlNL0k3bVExTE5ES0IwL25BKy9nR0h6QndLVnduN0JC?=
- =?utf-8?B?WGM2NjJvdCtLbk9iWEx0bjJaejFsNWs2QU1ibzNFblUxMkFWSngrSVA4a0ZR?=
- =?utf-8?B?bmw4aVVSa1dEM0Qxa0FjVnp2WlJScXFTckdyNDh1SjNTL3FISlQrVVRLS1p1?=
- =?utf-8?B?MVYyencyN1dYTVlmVVYyTnFSVUlicnB0V3JJRnNwLzlNdEkzdmYzWU12WXdS?=
- =?utf-8?B?RlYyUzV0dWR4RVJJTjlwVnZQSXczTlB4VWJadUMxbEt4WDNiaGd5ZUV5U3l5?=
- =?utf-8?B?UjZjTThvMUl0K0k5a0dtN2I1a0Z0TzRudTlSWi9BcFMreVBPL1llNGJvYWli?=
- =?utf-8?B?WGtrbmZuZFlweDZFcUIwYzZ0Z0lpaHcrYWhGNkhnMm91ZEhJTnpaRzVia1NO?=
- =?utf-8?B?ZDRSUHhpVit2dVRrMjhxMDZFb1NpbXhaQmxuSEM1NFN0OUpiQXpML0NPdXJY?=
- =?utf-8?B?WFhlSFZ3QnRqSmZVc2hHZExoOXBLVURSRit3RU8xem9CakhnTzF5bVRJN0FK?=
- =?utf-8?B?WGRpZVJ1V05pSTZkSFlGRmFaMHpmUTJVWXF0dlA2Z3RWQjAyTXRJbGZ0cGRE?=
- =?utf-8?B?M2k2aEswKzJONWhYaDkzZ0xBQzA5VHBuVEh6b0lsSjhHcjdIT1Bna1M2Q3p3?=
- =?utf-8?B?MENnMTdYdXF5Tm9qUzBObkMxcHEvWHJoeHY1bkRUTnFiMDFCaWpld1NzN2ZX?=
- =?utf-8?B?Wm5ERjNwRmZzNnlLSXc5bWxpY05xRFMwbllSNUowSS93eWJFOW0zb24xNENj?=
- =?utf-8?B?cVJuUDJqdFdwYWJaRXRZR2QrMUhMUC9tN1dlQUJ1Rm1WT1FxRTU4VUtGdXlL?=
- =?utf-8?B?Q2QwSWpSMGNCVGtxV1BJZmdKMlNsSVNPOWdoaG02bnduaDhUNjZlSlBuSVlK?=
- =?utf-8?B?N05CbUVNdkppdVFySnkzMXloakI5T1N1eEZhYkoyNEpmT0dxYy9heWszZ09q?=
- =?utf-8?B?azdQUUhSSjRyVk9CNWVGNnZha2JyNnJPdlk0cnh1RGNPZ2JSd0IvaVpUaE9q?=
- =?utf-8?B?bkxsQ1NHOHhrT1pwWm00aFlqbzdtZmVtbzB3RlpCOWlobzY4Z2dlT2JpU1M3?=
- =?utf-8?B?MWJCVVFmRG9HQWpXODROeTNtT1FoSUZsRjN3QkxyMWVXTUNEYktZbUhvZ2VJ?=
- =?utf-8?B?N3V0dGk4TCtSMm44VVdFcXpSZW1VbEs2MTM5bjNBTm8vb3VmODhJWldVTkd1?=
- =?utf-8?B?L0FiZXAwZy9STHRVMnBOV0JReXVXUXgzM3dYR0lFeDVNclE0ejFSTUFDK0lK?=
- =?utf-8?B?TnppMUhZMlFwVkJRZVRmRnVCNGlFSkU3WDNTS0h6OGUvOFZkTngxd2RVaisr?=
- =?utf-8?B?TmlPK3lmSklVWXBBMmNHUEM5QlVwWjdPT1NRTmwxK2xaNjZYeWJQNm1uc1RT?=
- =?utf-8?B?aTB0eDgzUDhQeEZYQ1h0MU5hejNCS2R0b2ViR0g3bFlONjRQTGJyczZKWGNT?=
- =?utf-8?B?VHdvQnJTYUduNytTUWNtdHdldlR1V2toR3YyMkJ1NlNtNzAwOGhUN1dFb0Rz?=
- =?utf-8?B?Ny9janMzaGkySjlkOXY3WEFhV1g5bzcrREFtQWdGY0xrUTJMeHlVOGF2d1c0?=
- =?utf-8?B?NHpZSlNtYmJWektkMTU4QjYwZkFZeXdLRUZ2M0E1TWwvck5MM2FZeFJlRk56?=
- =?utf-8?B?OGYyaC9ER3l3STd3YS8rd1lqZ0RYeDhDRUc0MS9GZEJFWGpFRmg4eGMwQUVP?=
- =?utf-8?B?UC8vMURGV3pzUGJmb3Q1M1VtM3FjOFpnOWFsYmEwaHVoUnZkaWJYbjhvTFds?=
- =?utf-8?B?QXZaRHlVYVRnSTFEVVdzUkJiNTNtNEcrc1FkUXpBVDNzckhiOTdjd29Idm9H?=
- =?utf-8?B?VXp5dmtJKzlUR1JPRGs5R3NMdy9KUVNYaXRLQkYrSHNTRzhXRzVucm1VRkhB?=
- =?utf-8?B?a1E9PQ==?=
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8cf6f5cd-e4c7-4323-2ddd-08dcfcc641ee
-X-MS-Exchange-CrossTenant-AuthSource: AM9PR04MB8487.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Nov 2024 11:46:02.0924
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 7uj3LLrF5iZS8glgK4jGmZTBjQKsQ1a8gsibELF8+5gx9wH83idN3T0gg2lSLTmnKALy+ofeXWkKsKsVWl0XDMopUr4nL0L3KLMbR+zH8PY=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU2PR04MB8952
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] perf arm-spe: Add support for SPE Data Source
+ packet on AmpereOne
+To: Ilkka Koskinen <ilkka@os.amperecomputing.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-perf-users@vger.kernel.org,
+ linux-kernel@vger.kernel.org, John Garry <john.g.garry@oracle.com>,
+ Will Deacon <will@kernel.org>, Mike Leach <mike.leach@linaro.org>,
+ Leo Yan <leo.yan@linux.dev>, Peter Zijlstra <peterz@infradead.org>,
+ Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+ Adrian Hunter <adrian.hunter@intel.com>,
+ "Liang, Kan" <kan.liang@linux.intel.com>,
+ Graham Woodward <graham.woodward@arm.com>
+References: <20241031213533.11148-1-ilkka@os.amperecomputing.com>
+ <20241031213533.11148-3-ilkka@os.amperecomputing.com>
+Content-Language: en-US
+From: James Clark <james.clark@linaro.org>
+In-Reply-To: <20241031213533.11148-3-ilkka@os.amperecomputing.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Markus,
 
-On 01/11/2024 17:45, Markus Elfring wrote:
->> Add basic GPIO functionality (request, free, get, set) for the existing
->> pinctrl SIUL2 driver since the hardware for pinctrl&GPIO is tightly
->> coupled.
-> …
->> +++ b/drivers/pinctrl/nxp/pinctrl-s32cc.c
-> …
->> +static int s32_gpio_request(struct gpio_chip *gc, unsigned int gpio)
->> +{
-> …
->> +	spin_lock_irqsave(&ipctl->gpio_configs_lock, flags);
->> +	list_add(&gpio_pin->list, &ipctl->gpio_configs);
->> +	spin_unlock_irqrestore(&ipctl->gpio_configs_lock, flags);
-> …
+
+On 31/10/2024 9:35 pm, Ilkka Koskinen wrote:
+> Decode SPE Data Source packets on AmpereOne. The field is IMPDEF.
 > 
-> Under which circumstances would you become interested to apply a statement
-> like “guard(spinlock_irqsave)(&ipctl->gpio_configs_lock);”?
-
-Thank you for the suggestion! I will fix it in v6.
-
-Best regards,
-Andrei
-
-> https://elixir.bootlin.com/linux/v6.12-rc5/source/include/linux/spinlock.h#L551
+> Signed-off-by: Ilkka Koskinen <ilkka@os.amperecomputing.com>
+> ---
+>   .../util/arm-spe-decoder/arm-spe-decoder.h    |  9 +++
+>   tools/perf/util/arm-spe.c                     | 65 +++++++++++++++++++
+>   2 files changed, 74 insertions(+)
 > 
-> Regards,
-> Markus
+> diff --git a/tools/perf/util/arm-spe-decoder/arm-spe-decoder.h b/tools/perf/util/arm-spe-decoder/arm-spe-decoder.h
+> index 358c611eeddb..4bcd627e859f 100644
+> --- a/tools/perf/util/arm-spe-decoder/arm-spe-decoder.h
+> +++ b/tools/perf/util/arm-spe-decoder/arm-spe-decoder.h
+> @@ -67,6 +67,15 @@ enum arm_spe_common_data_source {
+>   	ARM_SPE_COMMON_DS_DRAM		= 0xe,
+>   };
+>   
+> +enum arm_spe_ampereone_data_source {
+> +	ARM_SPE_AMPEREONE_LOCAL_CHIP_CACHE_OR_DEVICE    = 0x0,
+> +	ARM_SPE_AMPEREONE_SLC                           = 0x3,
+> +	ARM_SPE_AMPEREONE_REMOTE_CHIP_CACHE             = 0x5,
+> +	ARM_SPE_AMPEREONE_DDR                           = 0x7,
+> +	ARM_SPE_AMPEREONE_L1D                           = 0x8,
+> +	ARM_SPE_AMPEREONE_L2D                           = 0x9,
+> +};
+> +
+>   struct arm_spe_record {
+>   	enum arm_spe_sample_type type;
+>   	int err;
+> diff --git a/tools/perf/util/arm-spe.c b/tools/perf/util/arm-spe.c
+> index 9586416be30a..700d4bc8d8ec 100644
+> --- a/tools/perf/util/arm-spe.c
+> +++ b/tools/perf/util/arm-spe.c
+> @@ -103,6 +103,30 @@ struct arm_spe_queue {
+>   	u32				flags;
+>   };
+>   
+> +struct arm_spe_source_mapping {
+> +	u16 source;
+> +	enum arm_spe_common_data_source common_src;
+> +};
+> +
+> +#define MAP_SOURCE(src, common)				\
+> +	{						\
+> +		.source = ARM_SPE_##src,		\
+> +		.common_src = ARM_SPE_COMMON_##common,  \
+> +	}
+> +
+> +static int arm_spe__map_to_common_source(u16 source,
+> +					 struct arm_spe_source_mapping *tbl,
+> +					 int nr_sources)
+> +{
+> +	while (nr_sources--) {
+> +		if (tbl->source == source)
+> +			return tbl->common_src;
+> +		tbl++;
+> +	}
+> +
+
+Hi Ilkka,
+
+I think a simple switch statement here would be easier to follow than 
+the loop, custom macro and then having the mappings in some other place:
+
+switch(source)
+case 0x0: /* AMPEREONE_LOCAL_CHIP_CACHE_OR_DEVICE */
+   return DS_PEER_CORE;
+
+etc...
+
+> +	return -1;
+
+And the default case can return 0xfff directly, which avoids the if else 
+later only to convert this -1 back into 0xfff.
+
+> +}
+> +
+>   static void arm_spe_dump(struct arm_spe *spe __maybe_unused,
+>   			 unsigned char *buf, size_t len)
+>   {
+> @@ -443,6 +467,11 @@ static const struct midr_range common_ds_encoding_cpus[] = {
+>   	{},
+>   };
+>   
+> +static const struct midr_range ampereone_ds_encoding_cpus[] = {
+> +	MIDR_ALL_VERSIONS(MIDR_AMPERE1A),
+> +	{},
+> +};
+> +
+>   static void arm_spe__sample_flags(struct arm_spe_queue *speq)
+>   {
+>   	const struct arm_spe_record *record = &speq->decoder->record;
+> @@ -532,6 +561,38 @@ static void arm_spe__synth_data_source_common(const struct arm_spe_record *recor
+>   	}
+>   }
+>   
+> +static struct arm_spe_source_mapping ampereone_sources[] = {
+> +	MAP_SOURCE(AMPEREONE_LOCAL_CHIP_CACHE_OR_DEVICE, DS_PEER_CORE),
+> +	MAP_SOURCE(AMPEREONE_SLC, DS_SYS_CACHE),
+> +	MAP_SOURCE(AMPEREONE_REMOTE_CHIP_CACHE, DS_REMOTE),
+> +	MAP_SOURCE(AMPEREONE_DDR, DS_DRAM),
+> +	MAP_SOURCE(AMPEREONE_L1D, DS_L1D),
+> +	MAP_SOURCE(AMPEREONE_L2D, DS_L2),
+> +};
+> +
+> +/*
+> + * Source is IMPDEF. Here we convert the source code used on AmpereOne cores
+> + * to the common (Neoverse, Cortex) to avoid duplicating the decoding code.
+> + */
+> +static void arm_spe__synth_data_source_ampereone(const struct arm_spe_record *record,
+> +						 union perf_mem_data_src *data_src)
+> +{
+> +	int common_src;
+> +	struct arm_spe_record common_record;
+> +
+> +	common_src = arm_spe__map_to_common_source(record->source,
+> +						   ampereone_sources,
+> +						   ARRAY_SIZE(ampereone_sources));
+> +	if (common_src < 0)
+> +		 /* Assign a bogus value that's not used for common coding */
+> +		common_record.source = 0xfff;
+> +	else
+> +		common_record.source = common_src;
+> +
+> +	common_record.op = record->op;
+> +	arm_spe__synth_data_source_common(&common_record, data_src);
+> +}
+> +
+>   static void arm_spe__synth_memory_level(const struct arm_spe_record *record,
+>   					union perf_mem_data_src *data_src)
+>   {
+> @@ -606,6 +667,8 @@ static u64 arm_spe__synth_data_source(struct arm_spe_queue *speq,
+>   	union perf_mem_data_src	data_src = { .mem_op = PERF_MEM_OP_NA };
+>   	bool is_common = arm_spe__is_ds_encoding_supported(speq,
+>   						common_ds_encoding_cpus);
+> +	bool is_ampereone = arm_spe__is_ds_encoding_supported(speq,
+> +						ampereone_ds_encoding_cpus);
+
+I know this probably already works, but we don't really need is_common 
+is_ampere etc, it will only grow anyway. All we need is a list of midrs 
+and function pairs. That also avoids doing is_ampereone even after we 
+already know is_common == true.
+
+static const struct data_src[] = {
+...
+	DS(MIDR_ALL_VERSIONS(MIDR_NEOVERSE_V2), common_ds),
+	DS(MIDR_ALL_VERSIONS(MIDR_AMPERE1A), ampere_ds),
+	{},
+...
+};
+
+"arm_spe__is_ds_encoding_supported" then becomes a direct call to 
+"arm_spe__synth_ds" and we can drop the is_ampereone and is_common vars. 
+Then adding new ones doesn't require changing the function anymore.
+
+>   
+>   	if (record->op & ARM_SPE_OP_LD)
+>   		data_src.mem_op = PERF_MEM_OP_LOAD;
+> @@ -616,6 +679,8 @@ static u64 arm_spe__synth_data_source(struct arm_spe_queue *speq,
+>   
+>   	if (is_common)
+>   		arm_spe__synth_data_source_common(record, &data_src);
+> +	else if (is_ampereone)
+> +		arm_spe__synth_data_source_ampereone(record, &data_src);
+>   	else
+>   		arm_spe__synth_memory_level(record, &data_src);
+>   
 
 
