@@ -1,120 +1,127 @@
-Return-Path: <linux-kernel+bounces-394705-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394714-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 096739BB30A
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 12:22:23 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C879E9BB315
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 12:24:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C177E284996
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 11:22:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 05D741C217D6
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 11:24:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 520101D47D2;
-	Mon,  4 Nov 2024 11:11:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 834A71D63CF;
+	Mon,  4 Nov 2024 11:14:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="nfRDemp9"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hGl1cZd3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C53FB1C68AA
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 11:11:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D894C1B21BC;
+	Mon,  4 Nov 2024 11:14:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730718714; cv=none; b=rD3PLwAGDMNQutsbRHYSiwKN/PKYA27mTIpoH3HnmD+VdTxbXLiaaHMN1oU3bTp5OaX3dYH0K+fjXO/6gBrwvQCGvLQ8HUhXwM9YOcPTqZ9U9Lm9tBpTehiNPCCLKjvamakZcSh42jqhdGu8d23EITVIXg/Mj1qtQetVb13d52o=
+	t=1730718868; cv=none; b=UqmogAaRHlx6Xg1TzTArDXV9i+Utigzd3RRsR+AgAXfzLEL5C0FBk21KLzR+gN9KhpOMGEofNA2L+BrybM8I8vgcno86c3Tm+w5n8LqAz3L+pbOBhtwT/BFEJwXilDS99AajLxfHCT5z+K9A5nYUAmmkeRVrOkfySevtRtd6lHw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730718714; c=relaxed/simple;
-	bh=QF5qeqPKv1tyCvIMTbga0xwDQ0otiI62wU1788A6G4s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=G0My7plgew4KJdjPozS3yoQDTG500S3AR2ZyKh5qXoE+pTOXFFXg8IFBjPYdtTyw/1TgF77EWxwPnkGyBVTTFxGm5oRtUFGGxe+l+O4EIaioXVo7eoWonKIOOvbHjhM6gDZC+5sM5GnRD7+M2Gllc56PqPJBdplELn3VXhNtz6c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=fail smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=nfRDemp9; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A3NO0qZ015176
-	for <linux-kernel@vger.kernel.org>; Mon, 4 Nov 2024 11:11:50 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	FnLOBHCGGtHyCjziPaoUnh3eyHhBuYonYqV3aXjJRbw=; b=nfRDemp9yCbyjxxm
-	sJEPwdHKuno8l4+TcI1JntZ/pZL78aWE+QPPhK6oUOyslqJWEeH3X3p8DHDgXkNp
-	ZdUABjrVfAlfatS80imq4hmQNr3CgL6q63gi14eI1gR/TJtez7Jz8nL8AnJd/o3v
-	J3wlB66R3sYf9EpOHCeCmqE4dtRjoOCPHbmPbDaSz0BsRRm6tI9pSOspQdbi+o0p
-	DbnRmBMcEOdspcss16d83esFb2nrVZXREPAoEU8sAu+mlMQAdKPCaISoQibY6x4s
-	Hm9431xz1Lrk2uZEpqBtLZRHCAzta/49lXaqhgfNP6JeqxHnpViuXRwYRcSib3Vd
-	cBeekQ==
-Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com [209.85.219.70])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42nd11uxxx-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 11:11:50 +0000 (GMT)
-Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-6d37d9868b8so117006d6.1
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 03:11:50 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730718710; x=1731323510;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FnLOBHCGGtHyCjziPaoUnh3eyHhBuYonYqV3aXjJRbw=;
-        b=Me0JDgZobZ7Me3USuu6JaxhI5wZnDzfDivxcOlWtPO0i+TF/aNgG1No4jR4CV/sDHu
-         YrwQoxujU5zNefM29m+aDEtFehKYQVWG6bdvMsvO3PA7FzvfP0xoU5D8iUtpvHb6x/Hx
-         dGzA+dcpXGWkW4OhHf/pHWLCrFTvv1OtstSiFb1FplUJcW02iHCV9OLMHMM+hL5gDup/
-         L0lTfC+gYc8Ds+/y7QQFkPrJNbokSPzla+qo/Qnu6IWfCchNFtWNoDgmM2VGOsx8bk6v
-         reIQnBsr2mEC+hX6fCaYqZ0G8lIldcZqM+tqkoygGVY3MrhXfiiqLEFT7ZMSkbVs3KgW
-         lCKw==
-X-Forwarded-Encrypted: i=1; AJvYcCVH76mdr4ena7huXuJP+OjpmXQf8UpFUabgxux4VgPc/sDtJIYq0WMh30E0WamZM3StmdJti6/3YIKDJ40=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyV1j7rFF1B5Be4au0F1WdTl32XntkGbUV0r3Nyjnq+eOAF8i/S
-	M5rRZcZYvNcpuMECPiJiMp3/tdIIzVEBFZHRjH9CBKt9cDS+zz1mkITULiSgMWMr5XTYYydEO2h
-	640cIfeTZ56aSPh/T6oqPOCZXvP/1sL2Ev4DBg1X+kE1bAh/Ou3mkHdEAV6wK4cw=
-X-Received: by 2002:a05:6214:234d:b0:6c5:3338:2503 with SMTP id 6a1803df08f44-6d1858886d8mr235370776d6.11.1730718709863;
-        Mon, 04 Nov 2024 03:11:49 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEthW7hWd0uAwrn8o30FFKo+68/sUmkTx97LA8okPZrmjtw/NrlKbGtAzwGCR1uo9lHM4+CfQ==
-X-Received: by 2002:a05:6214:234d:b0:6c5:3338:2503 with SMTP id 6a1803df08f44-6d1858886d8mr235370556d6.11.1730718709555;
-        Mon, 04 Nov 2024 03:11:49 -0800 (PST)
-Received: from [192.168.212.120] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9e565dfa8bsm541905066b.103.2024.11.04.03.11.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 04 Nov 2024 03:11:49 -0800 (PST)
-Message-ID: <350c6332-e6c3-4d8c-b147-36fba68b3190@oss.qualcomm.com>
-Date: Mon, 4 Nov 2024 12:11:47 +0100
+	s=arc-20240116; t=1730718868; c=relaxed/simple;
+	bh=xSEGve5ZFz4au7Yl8PLV8lKxWgq5DKLCVU2jOAHKCKg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TPrSMDB9/WJBaWHH6T9YbqM0C0NTirOqeONAfj6Wdkz1z3NQe+7Br85FqSBMyiTi4WdYvyMAnN0HNw+E7PY5gdNB/Lx7dNn9Cho1eaLU53REDCH6qNwGuQpdwPufd6ZMvzsI1rJdCzC4BrKMrGLMXgeK2eOxsZJqcmuySMQMgP8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hGl1cZd3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25F61C4CED1;
+	Mon,  4 Nov 2024 11:14:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730718868;
+	bh=xSEGve5ZFz4au7Yl8PLV8lKxWgq5DKLCVU2jOAHKCKg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hGl1cZd3iaMgJCJ0/0ArZbRgNthLliN4uJws/RHWqxjaCbGmnZHTSYDHo7gbxqSec
+	 P5gsX6qE03b7FGK3UcTSKRenBiyiNGZIW0NPOZAVtGE1yrLl2LnGGzG6ovwMjB7yGP
+	 i5SWiyRa2np2MXGbDSQ7u2V2LsICbC+4j18IypOmPucU9lUYEvtzdS+o6aLxSN+KYe
+	 Irgw3CLemG2S4CDLZUvsp//4DiP2NaFIJ35xdX3LfocpeBNp+3rNohxRlCRU2eZyFM
+	 8knwCRsXM6HS9jEcTe25E6EXRdlZNeNIpnFwB4nTxex3/NkYtC0BEFI3It8PeGvmeh
+	 NRvWGAhgwbgaQ==
+Date: Mon, 4 Nov 2024 13:11:48 +0200
+From: Mike Rapoport <rppt@kernel.org>
+To: "Gowans, James" <jgowans@amazon.com>
+Cc: "jgg@ziepe.ca" <jgg@ziepe.ca>,
+	"quic_eberman@quicinc.com" <quic_eberman@quicinc.com>,
+	"kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+	"brauner@kernel.org" <brauner@kernel.org>,
+	"anthony.yznaga@oracle.com" <anthony.yznaga@oracle.com>,
+	"steven.sistare@oracle.com" <steven.sistare@oracle.com>,
+	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"Durrant, Paul" <pdurrant@amazon.co.uk>,
+	"Woodhouse, David" <dwmw@amazon.co.uk>,
+	"pbonzini@redhat.com" <pbonzini@redhat.com>,
+	"seanjc@google.com" <seanjc@google.com>,
+	"linux-mm@kvack.org" <linux-mm@kvack.org>,
+	"Saenz Julienne, Nicolas" <nsaenz@amazon.es>,
+	"Graf (AWS), Alexander" <graf@amazon.de>,
+	"viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+	"jack@suse.cz" <jack@suse.cz>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH 05/10] guestmemfs: add file mmap callback
+Message-ID: <Zyir9FOnMJoSJreD@kernel.org>
+References: <20240805093245.889357-1-jgowans@amazon.com>
+ <20240805093245.889357-6-jgowans@amazon.com>
+ <20241029120232032-0700.eberman@hu-eberman-lv.qualcomm.com>
+ <33a2fd519edc917d933517842cc077a19e865e3f.camel@amazon.com>
+ <20241031160635.GA35848@ziepe.ca>
+ <fe4dd4d2f5eb2209f0190d547fe29370554ceca8.camel@amazon.com>
+ <20241101134202.GB35848@ziepe.ca>
+ <9df04c57f9d5f351bb1b4eeef764bf9ccc6711b1.camel@amazon.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: dts: qcom: qcs8300: Add PMU support for QCS8300
-To: Jingyi Wang <quic_jingyw@quicinc.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>
-Cc: quic_tengfan@quicinc.com, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241101-qcs8300_pmu-v1-1-3f3d744a3482@quicinc.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20241101-qcs8300_pmu-v1-1-3f3d744a3482@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: Tk8BWrh5g6cZqvEDiAWYpk5CD7ciu5ET
-X-Proofpoint-ORIG-GUID: Tk8BWrh5g6cZqvEDiAWYpk5CD7ciu5ET
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 mlxlogscore=803
- mlxscore=0 clxscore=1015 lowpriorityscore=0 phishscore=0
- priorityscore=1501 impostorscore=0 spamscore=0 bulkscore=0 suspectscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411040098
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9df04c57f9d5f351bb1b4eeef764bf9ccc6711b1.camel@amazon.com>
 
-On 1.11.2024 7:44 AM, Jingyi Wang wrote:
-> Add Performance Monitoring Unit(PMU) nodes on the QCS8300 platform.
+On Sat, Nov 02, 2024 at 08:24:15AM +0000, Gowans, James wrote:
+> On Fri, 2024-11-01 at 10:42 -0300, Jason Gunthorpe wrote:
+> > 
+> > On Fri, Nov 01, 2024 at 01:01:00PM +0000, Gowans, James wrote:
+> > 
+> > > Thanks Jason, that sounds perfect. I'll work on the next rev which will:
+> > > - expose a filesystem which owns reserved/persistent memory, just like
+> > > this patch.
+> > 
+> > Is this step needed?
+> > 
+> > If the guest memfd is already told to get 1G pages in some normal way,
+> > why do we need a dedicated pool just for the KHO filesystem?
+> > 
+> > Back to my suggestion, can't KHO simply freeze the guest memfd and
+> > then extract the memory layout, and just use the normal allocator?
+> > 
+> > Or do you have a hard requirement that only KHO allocated memory can
+> > be preserved across kexec?
 > 
-> Signed-off-by: Jingyi Wang <quic_jingyw@quicinc.com>
-> ---
+> KHO can persist any memory ranges which are not MOVABLE. Provided that
+> guest_memfd does non-movable allocations then serialising and persisting
+> should be possible.
+> 
+> There are other requirements here, specifically the ability to be
+> *guaranteed* GiB-level allocations, have the guest memory out of the
+> direct map for secret hiding, and remove the struct page overhead.
+> Struct page overhead could be handled via HVO. But considering that the
+> memory must be out of the direct map it seems unnecessary to have struct
+> pages, and unnecessary to have it managed by an existing allocator.
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Having memory out of direct map does not preclude manipulations of struct
+page unless that memory is completely out of the kernel control (e.g.
+excluded by mem=X) and this is not necessarily the case even for VM hosts.
 
-Konrad
+It's not not necessary to manage the memory using an existing allocator,
+but I think a specialized allocator should not be a part of guestmemfs.`
+ 
+> JG
+
+-- 
+Sincerely yours,
+Mike.
 
