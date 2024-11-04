@@ -1,175 +1,233 @@
-Return-Path: <linux-kernel+bounces-394443-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394445-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA0FD9BAF2E
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 10:10:42 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D4279BAF38
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 10:11:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD9081C237E2
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 09:10:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BFF9B2822D1
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 09:11:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7695B1A7240;
-	Mon,  4 Nov 2024 09:09:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68EFF1ADFED;
+	Mon,  4 Nov 2024 09:10:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RG9tPlHN"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="gInoj0cg"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01E601AC8AE
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 09:09:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F369E185B4D;
+	Mon,  4 Nov 2024 09:10:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730711388; cv=none; b=GJJukVcEIWin+U9D18hfMsO52y/gxSUmD7yM5f1xFmGeesJhWZkwHOF38iUW6BvaXEVlIpTox6NLJHs8qBz35ei8K3wxCxsplE0pPiZOe122JZc+MtLimeoaCfqSx6VWD9hnkoavb58dhEKHtiE/48F51dvjOpWctOa7mvNxKU4=
+	t=1730711455; cv=none; b=UiYvChSVz8PBGwf3/+jf0ZWUFsKbSjykxQwpCGuh4M+aN1PUsHWfi797TnbnKVWJONU+7DbUaSqfQje5wjOG9Dep4u5sHSY+Uw5XNdQyxCrPyd6Nhe4seYj7ggb6CZYeHMm/OXJqLYqfSI7CBqxXQerwC0juZBouNrorw5moVC0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730711388; c=relaxed/simple;
-	bh=5LNOtpZh+tqWVD6bW5xdLkwiPv6GmRmb3Fl/t/Yl0tg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QRrQTPcK7UT4cf2yvDl7vObOoFMUkJMc+aI3blWDccYGNGPJpB5KB5TSN/C97ycD/L+bTofySxaEnB/QwHc54N5CDPE8+Zx1hJ9u7uXJOv+Vu6A+Q6O+SMOYCe73n5iRYN2UtNw512b0XyLiLiNJkM942DgcfhkIpMUa1y0H74E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RG9tPlHN; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1730711385;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=/1z646k7mvlmH1OcTxfgNh5E5GkUChQHV68Fk2Uby2g=;
-	b=RG9tPlHNK0Tlk3in7Zj2k0b9V5D1u9qx2zHvJXM2XB27S1WDqNcJd046o6V3kW8jS2I4Qi
-	XMpWeNX6azcbWcMdT0+VS1Lc3JFxevWZZsTdypysijjn4tSTfadutFWev1ahEnHg9CENOk
-	eIpYfgpHOei70paexsCDXjPS3djZ9qY=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-187-XOe6nL95NF6uFZyIFtPDJw-1; Mon, 04 Nov 2024 04:09:42 -0500
-X-MC-Unique: XOe6nL95NF6uFZyIFtPDJw-1
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-43151e4ef43so28570435e9.3
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 01:09:41 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730711381; x=1731316181;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=/1z646k7mvlmH1OcTxfgNh5E5GkUChQHV68Fk2Uby2g=;
-        b=nZBe6rwzp6kecNQGcsMWbYodOxRuS4pqbfSyL3R+HUeHGJmP80Z6rgjukxaj1KaBdR
-         LZsLkrUGqu72hVbB8v6amSkMWeLvrel0e+a6naxfuqTCrTfEdwW6Kt4gOLRTllFHh16d
-         rqnTncnDn1dRdyn8Rl7gjTiK/bcLmHAlwQgkhSxKM4KwEwrOto4ggMdyd9acBv0eDeRn
-         STDra5wcuzXmac8HaBIbA+YQhlXFa7SzfKAaUZCgntZXCNwGYtKoI/EecZIOPm3qckH7
-         8U+vmnYukJxrMDyr2cp4+RsEehN7ZmcCoM+pqALI/O8ecuhm8tUbXr2siN4sSQETDjso
-         2mBA==
-X-Forwarded-Encrypted: i=1; AJvYcCW3m3b4vM56IJm9XKJ/RGs88l40+67h0hUtoFGbQmT0keB8dZcY7jfnwSGDuOuOPgMne/vnJNcM32tslZg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YytB+ThqOfNrMtzRW2VShWT0SE/oE5pAD7mOICLqRufDZRKuL2z
-	u/QqqwOZbdz+v/wXQ7AjCnCeuDbKUuNHNeH3za52+kIzvPwT3DOOoLAbHTQl1i6edliroR3dAGc
-	sr97xFcsSDKyu/1m8poNeZSsZhBylexgzD+h3VqS8vGYEYXKmWGq2LhE1Ffgg9A==
-X-Received: by 2002:a05:600c:4ecc:b0:431:3c67:fb86 with SMTP id 5b1f17b1804b1-4327b801f83mr126267955e9.33.1730711380954;
-        Mon, 04 Nov 2024 01:09:40 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IE5sii3kFjhsK4+qP8SPEI91Fj3jaqVMmmytAvV89wJahLWb/4Ax256PzFvTgi+UyMASdChtw==
-X-Received: by 2002:a05:600c:4ecc:b0:431:3c67:fb86 with SMTP id 5b1f17b1804b1-4327b801f83mr126267805e9.33.1730711380549;
-        Mon, 04 Nov 2024 01:09:40 -0800 (PST)
-Received: from ?IPV6:2a09:80c0:192:0:5dac:bf3d:c41:c3e7? ([2a09:80c0:192:0:5dac:bf3d:c41:c3e7])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-431b43ab29csm186660655e9.0.2024.11.04.01.09.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 04 Nov 2024 01:09:39 -0800 (PST)
-Message-ID: <0b925d54-cf55-4b79-b415-dbea04ecaa00@redhat.com>
-Date: Mon, 4 Nov 2024 10:09:38 +0100
+	s=arc-20240116; t=1730711455; c=relaxed/simple;
+	bh=TOiLZB9+TUCbyQ6juA160AS0UCAnllOUb5owxKncID8=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=nK+JjSMTN2Rj0z0HZ22zsZcDGTapbR89ZwXgrMYnpDDO5k/RWfbpXTOt5R7srN4JRYq9xzPWgoNAuxu4ZPFThO5GPzOeY0oE4ahviAedbW+YEB8OPOz9SYBUMQddZeYZB3hQwOmmd4GVUN163G2EZlp210sHkcuG1Vmgx2P8vJw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=gInoj0cg; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A3Nw1ku032546;
+	Mon, 4 Nov 2024 09:10:31 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=VVyP+kG/x/vvff0g4CI/xA
+	Tpn2KE+IcyF3JSkSbQ9Zg=; b=gInoj0cghHJriHPZrAghmX7V+6y3k9xHXe0RWg
+	+LXoRP6qeM7y/nLOOUNtVS0xfopsyaYWZUGbgDNOrgNTMp1DqEUz8VibMkQNvmw0
+	3qUyhV5rgFXJJTwquecUc3VaAvYM9JH4dE4hjowi1XH8NrR+Dv8GnOCTBs/omiTZ
+	IbKW45C0bCTMrtpZDQzEASi/D9RV6OjD0fKHSPAuQG/RfO8By0hDiPvniF2mS6TX
+	f0LaS2zlj5RxhZJFj1a/NoFln1xcUAvJeTIdUGuZHH97nINIzP43AjcqhiUky4Zg
+	5+eqq3+SEkAj1yMT75B6c2mK99jVOJwvO0Ik//Sd1p1HjsWg==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42p5ye1qa6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 04 Nov 2024 09:10:30 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4A49AT11017116
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 4 Nov 2024 09:10:29 GMT
+Received: from lijuang2-gv.ap.qualcomm.com (10.80.80.8) by
+ nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Mon, 4 Nov 2024 01:10:23 -0800
+From: Lijuan Gao <quic_lijuang@quicinc.com>
+Subject: [PATCH v5 0/5] Add initial support for QCS615 SoC and QCS615 RIDE
+ board
+Date: Mon, 4 Nov 2024 17:10:07 +0800
+Message-ID: <20241104-add_initial_support_for_qcs615-v5-0-9dde8d7b80b0@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] MAINTAINERS/MEMORY MANAGEMENT: add document files for mm
-To: SeongJae Park <sj@kernel.org>, Andrew Morton <akpm@linux-foundation.org>
-Cc: Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org, kernel-team@meta.com
-References: <20241101202311.53935-1-sj@kernel.org>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <20241101202311.53935-1-sj@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAHCPKGcC/62RwW7DIBBEf8XiXCog4Ng+5T+qysLLOlk1Ng4QN
+ 1WUfy9xUjWHVr30OCv2zexwZhEDYWRNcWYBZ4rkxyzMU8FgZ8ctcnJZMyWUllJobp1raaREdt/
+ G4zT5kNreh/YAsZSGl0IbUJWslelYhkwBezotBi+vWe8oJh8+Fr9ZXqc3tFDqL/SsueDCGiOhd
+ G6l1eZwJKARnsEP7AqfzX8CL7f4AfM0Urrd8N1KU1x9RC1rfufB3sMbd4FmDNytte3QlXVldDN
+ r9ljo16oSS8R3m2Dn/LbNtpNN1O3xMSYiVLYCBbXKJPUjScqFdOin4IffOKtOqL7s7Vpik7vPn
+ M5G5Pn1QKkpRjwlfv9nmc+/fALYWC1mHQIAAA==
+To: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Thomas Gleixner
+	<tglx@linutronix.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon
+	<will@kernel.org>
+CC: <kernel@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        lijuang <quic_lijuang@quicinc.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.15-dev-99b12
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1730711423; l=5567;
+ i=quic_lijuang@quicinc.com; s=20240827; h=from:subject:message-id;
+ bh=TOiLZB9+TUCbyQ6juA160AS0UCAnllOUb5owxKncID8=;
+ b=yFhKjOYgT/VpkN3LvicTpOnL/CLsEY2c5kSJOyfLJWuBmpy3krJ47+R2k8KElL2iK3x6geIoa
+ tSGBseBo7/SCSzHg+g0YSSR0xDbRWpONdi97pq7DO4s3wxSEH1JPzb6
+X-Developer-Key: i=quic_lijuang@quicinc.com; a=ed25519;
+ pk=1zeM8FpQK/J1jSFHn8iXHeb3xt7F/3GvHv7ET2RNJxE=
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: c1YygsRHlWKqlAfTiLzitq83E_FfM9b5
+X-Proofpoint-GUID: c1YygsRHlWKqlAfTiLzitq83E_FfM9b5
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 bulkscore=0
+ mlxscore=0 spamscore=0 lowpriorityscore=0 adultscore=0 malwarescore=0
+ suspectscore=0 priorityscore=1501 clxscore=1015 mlxlogscore=999
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411040081
 
-On 01.11.24 21:23, SeongJae Park wrote:
-> Memory managment subsystem documents ('admin-guide/mm/' and 'mm/' under
-> 'Documentation/') are not marked as managed under memory management
-> subsystem.  This makes 'get_maintainer.pl' for changes to the documents
-> sub-optimal.  Mark the documents as part of mm subsystem on MAINTAINERS
-> file.
-> 
-> Signed-off-by: SeongJae Park <sj@kernel.org>
-> ---
->   MAINTAINERS | 2 ++
->   1 file changed, 2 insertions(+)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 8a18c2e135cd..2a2e92129646 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -14794,6 +14794,8 @@ S:	Maintained
->   W:	http://www.linux-mm.org
->   T:	git git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm
->   T:	quilt git://git.kernel.org/pub/scm/linux/kernel/git/akpm/25-new
-> +F:	Documentation/admin-guide/mm/
-> +F:	Documentation/mm/
->   F:	include/linux/gfp.h
->   F:	include/linux/gfp_types.h
->   F:	include/linux/memfd.h
+Introduces the Device Tree for the QCS615 platform.
 
+Features added and enabled:
+- CPUs with PSCI idle states
+- Interrupt-controller with PDC wakeup support
+- Timers, TCSR Clock Controllers
+- Reserved Shared memory
+- QFPROM
+- TLMM
+- Watchdog
+- RPMH controller
+- Sleep stats driver
+- Rpmhpd power controller
+- Interconnect
+- GCC and Rpmhcc
+- QUP with Uart serial support
 
-Acked-by: David Hildenbrand <david@redhat.com>
+Bindings and base Device Tree for the QCS615 SoC are splited
+in four parts:
+- 1-2: Binding files for QCS615 SoC and PDC (Reviewed)
+- 3-4: Initial DTSI and RIDE board device tree
+- 5  : Enable uart related configs
 
+Bindings Dependencies:
+- watchdog: https://lore.kernel.org/all/20240920-add_watchdog_compatible_for_qcs615-v2-1-427944f1151e@quicinc.com/ - Reviewed
+- qfprom: https://lore.kernel.org/all/20240912-add_qfprom_compatible_for_qcs615-v1-1-9ef2e26c14ee@quicinc.com/ - Reviewed
+- tcsr: https://lore.kernel.org/all/20240920-add_tcsr_compatible_for_qcs615-v2-1-8ce2dbc7f72c@quicinc.com/ - Applied
+- tlmm: https://lore.kernel.org/all/20240920-add_qcs615_pinctrl_driver-v2-1-e03c42a9d055@quicinc.com/ - Applied
+- interconnect: https://lore.kernel.org/all/20240924143958.25-2-quic_rlaggysh@quicinc.com/ - Applied
+- rpmhcc: https://lore.kernel.org/all/20241022-qcs615-clock-driver-v4-1-3d716ad0d987@quicinc.com/  - Reviewed
+- gcc: https://lore.kernel.org/all/20241022-qcs615-clock-driver-v4-3-3d716ad0d987@quicinc.com/ - Reviewed
+- rpmhpd: https://lore.kernel.org/all/20240927-add_qcs615_qcs8300_powerdomains_driver_support-v2-3-18c030ad7b68@quicinc.com/ - Applied
+
+Build Dependencies:
+- tlmm: https://lore.kernel.org/all/20240920-add_qcs615_pinctrl_driver-v2-2-e03c42a9d055@quicinc.com/ - Applied
+- rpmhcc: https://lore.kernel.org/all/20241022-qcs615-clock-driver-v4-2-3d716ad0d987@quicinc.com/ - Reviewed
+- gcc: https://lore.kernel.org/all/20241022-qcs615-clock-driver-v4-4-3d716ad0d987@quicinc.com/
+
+Patch made the following verifications:
+- Successfully passed dt_binding_check with DT_CHECKER_FLAGS=-m for earch binding file
+- Successfully passed dtbs_check with W=1 for dts
+- Verified CPU Hotplug, idle and online CPUs on QCS615 ride board
+- Checked pinctrl-maps path
+- Verified watchdog functionality with "echo 1 > /dev/watchdog", can trigger
+  a watchdog bark and later bite
+- Verified functionality with UART console on QCS615 ride board
+- RPMH controller driver probed successfully
+- Sleep stats driver probed successfully and checked qcom_stats
+  node on QCS615 ride board
+
+Signed-off-by: lijuang <quic_lijuang@quicinc.com>
+---
+Changes in v5:
+- Remove applied patches 2 and 4
+- Update the titles and commit messages of the initial DTSI and ride DTS
+- Update the commit message of defconfig patch
+- Pad register addresses to 8 hex digits
+- Link to v4: https://lore.kernel.org/r/20241022-add_initial_support_for_qcs615-v4-0-0a551c6dd342@quicinc.com
+
+Changes in v4:
+- Configure vreg_l17a to High Power Mode (HPM) as it supplies power to UFS
+  and eMMC, which can be utilized as boot devices.
+- Link to v3: https://lore.kernel.org/r/20240926-add_initial_support_for_qcs615-v3-0-e37617e91c62@quicinc.com
+
+Changes in v3:
+- Added interconnect, GCC, RPMHCC, QPU, and RPMHPD related nodes for UART console
+- Enabled UART condole on ride board device
+- Link to v2: https://lore.kernel.org/r/20240913-add_initial_support_for_qcs615-v2-0-9236223e7dab@quicinc.com
+
+Changes in v2:
+- Collected reviewed-bys
+- Removed extra blank line
+- Removed redundant function
+- Renamed xo-board to xo-board-clk and move it and sleep-clk to board dts
+- Renamed system-sleep to cluster_sleep_2
+- Removed cluster1
+- Added entry-method for idle-states
+- Added DTS chassis type
+- Added TCSR Clock Controllers
+- Added Reserved Shared memory
+- Added QFPROM
+- Added TLMM
+- Added Watchdog
+- Added RPMH controller
+- Added Sleep stats driver
+- Link to v1: https://lore.kernel.org/r/20240828-add_initial_support_for_qcs615-v1-0-5599869ea10f@quicinc.com
+
+---
+Lijuan Gao (5):
+      dt-bindings: arm: qcom: document QCS615 and the reference board
+      dt-bindings: qcom,pdc: document QCS615 Power Domain Controller
+      arm64: dts: qcom: add QCS615 platform
+      arm64: dts: qcom: add base QCS615 RIDE
+      arm64: defconfig: enable clock controller, interconnect and pinctrl for QCS615
+
+ Documentation/devicetree/bindings/arm/qcom.yaml    |   6 +
+ .../bindings/interrupt-controller/qcom,pdc.yaml    |   1 +
+ arch/arm64/boot/dts/qcom/Makefile                  |   1 +
+ arch/arm64/boot/dts/qcom/qcs615-ride.dts           | 219 +++++++
+ arch/arm64/boot/dts/qcom/qcs615.dtsi               | 688 +++++++++++++++++++++
+ arch/arm64/configs/defconfig                       |   3 +
+ 6 files changed, 918 insertions(+)
+---
+base-commit: ec29543c01b3dbfcb9a2daa4e0cd33afb3c30c39
+change-id: 20241104-add_initial_support_for_qcs615-6045c281925b
+prerequisite-change-id: 20240919-qcs615-clock-driver-d74abed69854:v4
+prerequisite-patch-id: cd9fc0a399ab430e293764d0911a38109664ca91
+prerequisite-patch-id: 07f2c7378c7bbd560f26b61785b6814270647f1b
+prerequisite-patch-id: a57054b890d767b45cca87e71b4a0f6bf6914c2f
+prerequisite-patch-id: 5a8e9ea15a2c3d60b4dbdf11b4e2695742d6333c
+prerequisite-change-id: 20240920-add_watchdog_compatible_for_qcs615-eec8a8c2c924:v2
+prerequisite-patch-id: 3a76212d3a3e930d771312ff9349f87aee5c55d5
+prerequisite-change-id: 20240911-add_qfprom_compatible_for_qcs615-e3b02f6fa71e:v1
+prerequisite-patch-id: 8a2454d5e07e56a6dd03f762f498051065635d85
+
+Best regards,
 -- 
-Cheers,
-
-David / dhildenb
+lijuang <quic_lijuang@quicinc.com>
 
 
