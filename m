@@ -1,112 +1,142 @@
-Return-Path: <linux-kernel+bounces-395279-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395280-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CFB09BBB39
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 18:13:16 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F328A9BBB3B
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 18:13:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4093A281171
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 17:13:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E70D1F2154C
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 17:13:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE0241C4A09;
-	Mon,  4 Nov 2024 17:12:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="F4V+x0I/"
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D5451C4A08;
+	Mon,  4 Nov 2024 17:13:35 +0000 (UTC)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DBA41C4A3C;
-	Mon,  4 Nov 2024 17:12:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A88DB1C3034
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 17:13:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730740376; cv=none; b=ejoyEzSH5lPS1taVj3wxYmOYNadc41Acl+sb3vyatuKDZAYtesjksejjDKQUV7TjFUudmUJ7kRxbIh8TQMJVT7WxtzV15lJqkkVguL6twPt2guzp4bAbPIvrRfiD/iXQmEdhBI62RR3E/1wIltOmUTlQa38//usxpUXvVE74qLA=
+	t=1730740415; cv=none; b=Cl33+Ad9yBWz6bhuyLktjsc93AsaXlGv1MUh/czUKdNmDRHGu9gjdZO2fL8CgbuHpP59OzA/9xUqQ5baGSsEbQkwInhCRea6ivUJCg73LCsFSpP+8w93xFCwT3JGxr/Bd8Ao2zFyiebUwknk+iszOxygyPMLVerlWNLtf241P84=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730740376; c=relaxed/simple;
-	bh=U2n+VratdOLz+XI1C0YnsMs73NGJc0lLzHsILwqI6FE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Crrt7ZMEtNXt7HREInyTPC7zb+aNVQ4nqte84ZyK/DJgqhLBLlmLsy3Dvok0K/B5EA8bPagADimJHajavsMs0zY5VF+bXE3WKdxAwrMfPuunmx2nWOwGFhqm8LM/zhYPcuawRpLGMPLlE/dpYJrRKE7PCgoi1a23xzIVnUrIgjI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=F4V+x0I/; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=q8iLecLEKa/r3VYIqb+8t/jQ6aKfvsWL9FBNV9ep8SI=; b=F4V+x0I/tUhbdjsnHjapWOGEb7
-	YbSq2hbHkNTSHjLDHu0IKPMQ1Da82KrK2A975/AT7MHTAThCs8kVIfPg1RT/+MpLE9WSqcynPnTH7
-	6lFqm7jPWS+3OruLMcmw6fqY4N75LC7rykazqA2X6JXYefNt/q8mMKOQmHZsodhEy+/4RwR8OQYY2
-	n42CmbVf8dH1RA4yZ5jKdqExr3Lv1ti3ls2X7CWI9IBlTWmVBRUkugQGaa0yTuZPnPIu58Cpmsb4N
-	rQytygBZMlzlzR/jgSzvEQvbDinPwR4GtPO66KZhzwXlaPc8v+gl0b/JOTXPvgpnps93H72Tc58At
-	UcEo1o/g==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1t80dH-0000000B3C5-2DAw;
-	Mon, 04 Nov 2024 17:12:51 +0000
-Date: Mon, 4 Nov 2024 17:12:51 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Daniel Yang <danielyangkang@gmail.com>
-Cc: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	"open list:FILESYSTEMS (VFS and infrastructure)" <linux-fsdevel@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	syzbot+d2125fcb6aa8c4276fd2@syzkaller.appspotmail.com
-Subject: Re: [PATCH] fix: general protection fault in iter_file_splice_write
-Message-ID: <20241104171251.GU1350452@ZenIV>
-References: <20241104084240.301877-1-danielyangkang@gmail.com>
+	s=arc-20240116; t=1730740415; c=relaxed/simple;
+	bh=G8Ku4+gnMNQxGjwnwfpFle0PN06wg5ZR1TJLyaP3EEw=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=Jy6dSGXe9ezM6bX9p7jc3Ew9Z08ZPHyhdCnj1OXeh5lEMBQMnHpKA51WtiSnEdYHRHvSOo1eS5SB0bdy3Vhlo2R5c453kfeLrV4wRf2olRgWgYHAvrUWU9AqhceQeCEaXRU/Uo2UWg43z+lAU6vjGVLUiyurkZtrbkQNtmNPI6s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-83ac354a75fso504202439f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 09:13:33 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730740413; x=1731345213;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Oz2AZID5JvkC+uYPtICCB0YgXhCUefbGhxCMrWVQg6A=;
+        b=KltmadigmmGY4M76ZYR0zrxgHrzyCFYUDnPYx6mAb58XbAdWKBvLKgg5ac4MVwGnk8
+         pfs8rUcQHHIbd7m+J4R9eLzA2vbntWJ4TStfWac1v8ItZs/4E8hThHp16AGkQJwH4l3N
+         TyC0UmGhQyslv0dVspJg9mt4I/dbCHKvMAfiG+EnCSG1FG9g3YARsBWR/7BHBSCutQOR
+         BS3ErkdI57VF9c3/bEzOF7VKJHPeTaLzQv2PmKc7dyl/IQ+6qDRT7vjiTeBUysgFAEKC
+         CpQtUPISVVvO2Kim/mh9vwg20Ol4kkqbD8nG2+KENPb7Ur01xF8SleNxJpBXmic6/tC7
+         7Jnw==
+X-Forwarded-Encrypted: i=1; AJvYcCVriAVLCR37q1oFNhX+QZLDRlQuMGuzcdfiAUFz7e5b0sMQE/I7Aj7QauzgEo4s7oojr4r807m6rEIg8UI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx5ARAlcpEImeO+5sdeo7CPZooCRhpcXHyeynfuEoZ1ZnlR309n
+	Ulqqlk/HFX9lLxyvoWsBYdCDazW8rEDuVlo6SLpkUgasy4gJMCPXRffZfZrvOsSjcFKcaGPa8cW
+	mQGTvJ872y7vnXxwM6u07bJvo1FcYQxjvNgBsvaX2F5sAALtfo5MCirQ=
+X-Google-Smtp-Source: AGHT+IHt35m5zRDXKTreY+nYM02FF50L60osu4Bux0ACgDHGdDRStRM5pw1ygZ9Kf9LLM+bBDLsEsV0uL3pwsUiOANcX9Z9ViHdz
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241104084240.301877-1-danielyangkang@gmail.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+X-Received: by 2002:a05:6e02:20cd:b0:3a0:8c5f:90c0 with SMTP id
+ e9e14a558f8ab-3a6b02cf8edmr134955305ab.10.1730740412962; Mon, 04 Nov 2024
+ 09:13:32 -0800 (PST)
+Date: Mon, 04 Nov 2024 09:13:32 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <672900bc.050a0220.701a.000e.GAE@google.com>
+Subject: [syzbot] [pm?] INFO: trying to register non-static key in
+ netdev_unregister_kobject (2)
+From: syzbot <syzbot+70bd31b69512b90375b6@syzkaller.appspotmail.com>
+To: gregkh@linuxfoundation.org, len.brown@intel.com, 
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
+	netdev@vger.kernel.org, pavel@ucw.cz, rafael@kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Nov 04, 2024 at 12:42:39AM -0800, Daniel Yang wrote:
-> The function iter_file_splice_write() calls pipe_buf_release() which has
-> a nullptr dereference in ops->release. Add check for buf->ops not null
-> before calling pipe_buf_release().
-> 
-> Signed-off-by: Daniel Yang <danielyangkang@gmail.com>
-> Reported-by: syzbot+d2125fcb6aa8c4276fd2@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/bug?extid=d2125fcb6aa8c4276fd2
-> Fixes: 2df86547b23d ("netfs: Cut over to using new writeback code")
-> ---
->  fs/splice.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/splice.c b/fs/splice.c
-> index 06232d7e5..b8c503e47 100644
-> --- a/fs/splice.c
-> +++ b/fs/splice.c
-> @@ -756,7 +756,8 @@ iter_file_splice_write(struct pipe_inode_info *pipe, struct file *out,
->  			if (ret >= buf->len) {
->  				ret -= buf->len;
->  				buf->len = 0;
-> -				pipe_buf_release(pipe, buf);
-> +				if (buf->ops)
-> +					pipe_buf_release(pipe, buf);
->  				tail++;
->  				pipe->tail = tail;
->  				if (pipe->files)
+Hello,
 
-Wait a minute.  If nothing else, all those buffers should've passed through
-pipe_buf_confirm() just prior to the call of ->write_iter(); just what had
-managed to zero their ->ops and what else had that whatever it had been
-done to them?
+syzbot found the following issue on:
 
-Note that pipe must've been held locked all along, so I suspect that we
-ended up with ->write_iter() claiming to have consumed more than it had
-been given.  That could've ended up with the second loop running around
-the pipe->bufs[], having already emptied each of them and trying to
-find where the hell had that extra data come from.
+HEAD commit:    157a4881225b Merge branch 'add-ethernet-dts-schema-for-qcs..
+git tree:       net-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=108ca630580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=9a3b9ec43446307a
+dashboard link: https://syzkaller.appspot.com/bug?extid=70bd31b69512b90375b6
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
 
-I'd suggest checking which ->write_iter() instance had been called and
-hunting for bogus return values in there.  Again, ->write_iter(iocb, from)
-should never return more than the value of iov_iter_count(from) prior
-to the call; any instance told "write those 42 bytes" should never
-reply with "here, I've written 69 of them", lest it confuses the living
-fuck out of the callers.
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/b088f73cb031/disk-157a4881.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/dadddc2fd943/vmlinux-157a4881.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/941f3e9fcf4e/bzImage-157a4881.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+70bd31b69512b90375b6@syzkaller.appspotmail.com
+
+INFO: trying to register non-static key.
+The code is fine but needs lockdep annotation, or maybe
+you didn't initialize this object before use?
+turning off the locking correctness validator.
+CPU: 0 UID: 0 PID: 15994 Comm: kbnepd bnep0 Not tainted 6.12.0-rc4-syzkaller-01012-g157a4881225b #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+ assign_lock_key+0x241/0x280 kernel/locking/lockdep.c:981
+ register_lock_class+0x1cf/0x980 kernel/locking/lockdep.c:1295
+ __lock_acquire+0xf0/0x2050 kernel/locking/lockdep.c:5077
+ lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5825
+ __raw_spin_lock_irq include/linux/spinlock_api_smp.h:119 [inline]
+ _raw_spin_lock_irq+0xd3/0x120 kernel/locking/spinlock.c:170
+ spin_lock_irq include/linux/spinlock.h:376 [inline]
+ pm_runtime_set_memalloc_noio+0x13d/0x260 drivers/base/power/runtime.c:228
+ netdev_unregister_kobject+0x178/0x250 net/core/net-sysfs.c:2109
+ unregister_netdevice_many_notify+0x1859/0x1da0 net/core/dev.c:11513
+ unregister_netdevice_many net/core/dev.c:11541 [inline]
+ unregister_netdevice_queue+0x303/0x370 net/core/dev.c:11413
+ unregister_netdevice include/linux/netdevice.h:3175 [inline]
+ unregister_netdev+0x1c/0x30 net/core/dev.c:11559
+ bnep_session+0x2e0e/0x3000 net/bluetooth/bnep/core.c:525
+ kthread+0x2f0/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
