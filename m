@@ -1,76 +1,62 @@
-Return-Path: <linux-kernel+bounces-395060-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395058-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 119F19BB7ED
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 15:35:58 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1CDA9BB7E9
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 15:35:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8BBF7B26301
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 14:35:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A792C1F22F3F
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 14:35:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A09D1B3928;
-	Mon,  4 Nov 2024 14:35:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BC0A1AE850;
+	Mon,  4 Nov 2024 14:35:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="e7MDwz66"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QjtT+7b5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11FAB1B6D02
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 14:35:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5BDE70839;
+	Mon,  4 Nov 2024 14:35:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730730924; cv=none; b=tRu0O7GpbQJ492JrHK9yZKYkh4xDzYa+QHDXfEye+2Z0QP85hMm3oBTjThPR72HPujYTIHlbCXYY4PS1qXofp7Gb05YaoMJoShM6B58NUgbiGeTasYMoTO67jfoV0t41PTGtLe0+RkaLT9x94538RDxdJKWQJN7ff6zfThsIia0=
+	t=1730730903; cv=none; b=gSat/j70ngx+us1uzeQ0JWGxGUdVc0l++jDHcRQjCD4UVe6v8t4InkAXG3+TMhb7H6yJt85inr07uLxeqWHvz4+2iEyi1CJMsq3jhtuk4aBp859obx32p2MjoMOagSUhblgxB/Ond229UOPH45p50NDkEAZlDT8XUgNCg0UkIas=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730730924; c=relaxed/simple;
-	bh=52dzUwWrNteuyWEOyKqFCD7AkweuwycSceX/+/drMCw=;
+	s=arc-20240116; t=1730730903; c=relaxed/simple;
+	bh=r2ry74pVmp0n33EFjc8I7+2VSluyMRgJAOoUydcYAao=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=nqaoWKa7CNpGRS4QQjlipso2XdoQ9M06FmmMGJKMDqbpiBtKQ4fygF7zmq+CCDVO7lsDxwoGqs7hECFBKLo6Pg2BMlEBLRsw3W1n9UIzegwFaLPKnoDR3/nQ56IDOw74tU4GWNi/gxw2Ux7i8RPdBpPibA6+JaUHnAvnno9oQWI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=e7MDwz66; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730730923; x=1762266923;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=52dzUwWrNteuyWEOyKqFCD7AkweuwycSceX/+/drMCw=;
-  b=e7MDwz66edpN+QXKdKXUNFM8Xbov2PTqgeb65hx0soAd5N/PQUYjhiDL
-   OHOWFRkvsn/r2KMvtFydRj+KC5e2S0RlDoSpBi5OQ80Faba5DGCueaTCZ
-   RZW8IQr21zxekKj+Fxxdt2Wrj2Hs0raXKmb8kOAzwqiWFff4i2LywH8IT
-   tY18RU+GKXyqUnGs/Fy3kgy04nl9vBCs4PChu0EZGQs1592LjBNKm8ne3
-   V5q5vN58iWhSk65feQbEOzdD6QJM9MHqEvIkK24KGfDCPA5UlVJTD75BZ
-   aqByLr/SWfhV3xX7SMd9vxWXeyKoGmtqi1wkHywd2PzVHeNZqLwdwosc9
-   Q==;
-X-CSE-ConnectionGUID: 4xSokE1BQ26zCJs8cNPjCg==
-X-CSE-MsgGUID: LYrRKn6FRM26CYyr9A12TA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="30206268"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="30206268"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2024 06:35:17 -0800
-X-CSE-ConnectionGUID: mnXtu6QKQOW4JUY02e6Ohg==
-X-CSE-MsgGUID: ZDcWuvDvQXyRYsZn/d/n4Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,257,1725346800"; 
-   d="scan'208";a="121138407"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by orviesa001.jf.intel.com with ESMTP; 04 Nov 2024 06:35:16 -0800
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1t7yAj-000kvH-30;
-	Mon, 04 Nov 2024 14:35:13 +0000
-Date: Mon, 4 Nov 2024 22:34:55 +0800
-From: kernel test robot <lkp@intel.com>
-To: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev,
-	"Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-	LKML <linux-kernel@vger.kernel.org>
-Subject: [gustavoars:testing/wfamnae-next20241028-sa-with-flex 13/26]
- drivers/net/phy/aquantia/aquantia_leds.o: warning: objtool:
- aqr_phy_led_polarity_set+0x118: sibling call from callable instruction with
- modified stack frame
-Message-ID: <202411042241.KaXFKg7U-lkp@intel.com>
+	 Content-Disposition; b=mnQDjnVWBgP1DrKXxlGeJ+uAFnS7SYvMUN2o1weualRgZ1d2dHFUwzQLsRSCLvdg9BWRgqe/8Ry3T+Cp6MHVmJKmh7eNljB6P2vozlr03ZuoZw3MMh+YqrwOijS1gSQ4sk6USdXp/2btuKAyYHHXFs7WZFN+/7dApjrSMp9NlcI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QjtT+7b5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B614CC4CECE;
+	Mon,  4 Nov 2024 14:35:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730730902;
+	bh=r2ry74pVmp0n33EFjc8I7+2VSluyMRgJAOoUydcYAao=;
+	h=Date:From:To:Cc:Subject:From;
+	b=QjtT+7b5OAJKG0WR4IeE0XL7DhRQ73oU8iHsf9/5HEAXtMEoEgA+GGfYC2vxIV2iR
+	 ETpdi47eG4YPiABKRLL5oryQ5sT61SlF1CbSOFNHJpbW6Ekw3LrvwRqxb+6qun48Lg
+	 HZVg2j3SxriSzxauHnYHnh2+cTYlXJwgz4CgzSJ+xtqG/VH5WUJkLVqM0jvxUeeE39
+	 yfp2/cNyFtJsQLdYSkfOsDh/mHh0/wZjTfasE1c/d07Q9mLoGH7/bi7cRev5O+hsi7
+	 cqR/R1BIjw6hOYbB8TzG7KU3ojhFXUX8Ezh3A4XafuJVnHwsQFPu7FJ7xJf3HBH0iv
+	 3qdGnkmwMiEZg==
+Date: Mon, 4 Nov 2024 11:34:58 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Ian Rogers <irogers@google.com>,
+	Athira Rajeev <atrajeev@linux.vnet.ibm.com>,
+	Howard Chu <howardchu95@gmail.com>,
+	James Clark <james.clark@linaro.org>, Leo Yan <leo.yan@linux.dev>,
+	Stephen Rothwell <sfr@canb.auug.org.au>,
+	Thomas Richter <tmricht@linux.ibm.com>,
+	Veronika Molnarova <vmolnaro@redhat.com>,
+	Weilin Wang <weilin.wang@intel.com>, Ze Gao <zegao2021@gmail.com>,
+	zhaimingbing <zhaimingbing@cmss.chinamobile.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org
+Subject: [PATCH 1/1] perf tests: Remove dangling CFLAGS for removed attr.o
+ object
+Message-ID: <ZyjbksKYnV22zmz-@x1>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,23 +66,40 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/gustavoars/linux.git testing/wfamnae-next20241028-sa-with-flex
-head:   0e7c24c783de39e1f965e8c23e96a7de29dfbfca
-commit: b304d4c5cf207285c3820dc9a50bf09c06e46d42 [13/26] treewide_some: fix multiple -Wfamnae warnings that must be audited separately
-config: loongarch-randconfig-001-20241104 (https://download.01.org/0day-ci/archive/20241104/202411042241.KaXFKg7U-lkp@intel.com/config)
-compiler: loongarch64-linux-gcc (GCC) 14.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241104/202411042241.KaXFKg7U-lkp@intel.com/reproduce)
+Since the C test wrapper for attr.py was removed we don't have an attr.o
+object for that CFLAGS_attr.o to apply for, remove it.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202411042241.KaXFKg7U-lkp@intel.com/
+Fixes: 3a447031f5fc21c4 ("perf test: Remove C test wrapper for attr.py")
+Cc: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
+Cc: Howard Chu <howardchu95@gmail.com>
+Cc: Ian Rogers <irogers@google.com>
+Cc: James Clark <james.clark@linaro.org>
+Cc: Leo Yan <leo.yan@linux.dev>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Thomas Richter <tmricht@linux.ibm.com>
+Cc: Veronika Molnarova <vmolnaro@redhat.com>
+Cc: Weilin Wang <weilin.wang@intel.com>
+Cc: Ze Gao <zegao2021@gmail.com>
+Cc: zhaimingbing <zhaimingbing@cmss.chinamobile.com>
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/tests/Build | 1 -
+ 1 file changed, 1 deletion(-)
 
-All warnings (new ones prefixed by >>):
-
->> drivers/net/phy/aquantia/aquantia_leds.o: warning: objtool: aqr_phy_led_polarity_set+0x118: sibling call from callable instruction with modified stack frame
-
+diff --git a/tools/perf/tests/Build b/tools/perf/tests/Build
+index 03cbdf7c50a09be4..01ed9335db4dba4e 100644
+--- a/tools/perf/tests/Build
++++ b/tools/perf/tests/Build
+@@ -72,7 +72,6 @@ ifeq ($(SRCARCH),$(filter $(SRCARCH),x86 arm arm64 powerpc))
+ perf-test-$(CONFIG_DWARF_UNWIND) += dwarf-unwind.o
+ endif
+ 
+-CFLAGS_attr.o         += -DBINDIR="BUILD_STR($(bindir_SQ))" -DPYTHON="BUILD_STR($(PYTHON_WORD))"
+ CFLAGS_python-use.o   += -DPYTHONPATH="BUILD_STR($(OUTPUT)python)" -DPYTHON="BUILD_STR($(PYTHON_WORD))"
+ CFLAGS_dwarf-unwind.o += -fno-optimize-sibling-calls
+ 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.47.0
+
 
