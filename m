@@ -1,127 +1,93 @@
-Return-Path: <linux-kernel+bounces-394644-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394642-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B34D19BB23D
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 12:05:22 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E6439BB239
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 12:04:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77E7128391B
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 11:05:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F6311C21A31
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 11:04:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D271C1DAC80;
-	Mon,  4 Nov 2024 10:54:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dlOHg/sP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1D201C07EE;
+	Mon,  4 Nov 2024 10:54:04 +0000 (UTC)
+Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [195.130.132.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 391661C1746;
-	Mon,  4 Nov 2024 10:54:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF63D1D9A42
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 10:54:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730717662; cv=none; b=n87lEwkosG6jN7mr0WkhQVvQ+Md6IlmKR9jjHgToR1OJ0Yvm8JNa9m99a5yFtQyIaOtw+SJm9pmiX7ghiyRHVcvZphXCObah7N023/mazITtkDPQdWge6WzUS95jUdOqaia/OnI1mn6ediiip7aHnSAF+nrZfaqHw6t3twg5chQ=
+	t=1730717644; cv=none; b=NHI5c3WT4nLJtNVzlHDHnCcDEveeBWl3wbQWtt6VtcPxKk0rGpi2lHXBETqXUWgJJnHnfPzTR7ZILHi2V8rvGKREU5cLElTLYgjESv5lFfDIRmbq9PtyZyEgWj5vkiYJI2ZMB5et+TxLwYZAnnYJ19g5VwCStG0ztk9tLycDjmc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730717662; c=relaxed/simple;
-	bh=a+bbiG3SFKj1AMAqvdZrshg2uoJeyHWsEIDh1NhuEWg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=o0JOkEkVggBtVi86MT0KjVMt5R77FP/KWPlqz2BXp6lQM7eqOXo+VFTM9GsjIf77dlJ1tbltMHQrjEOyHSjUNX1H8TCPg62hHrZZfXJZfwtcsjxMxgwz1QzyAAiwXdBe9stbpX679zDr65PCV50dFgD1B690diDPZ2FXU/tP2VA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dlOHg/sP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6B27C4CECE;
-	Mon,  4 Nov 2024 10:54:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730717661;
-	bh=a+bbiG3SFKj1AMAqvdZrshg2uoJeyHWsEIDh1NhuEWg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=dlOHg/sPSwtjXaeTsL2VGuw51kVihuNdTioj2au62xZhPAKFhZdCka5Enf+uX75Lz
-	 XMSY1CaAVgonaKFEKfDOk2vJdvPsOcvjijiiNbPTxPbkwV1nYuv7es6ZrSR7VWQvIi
-	 6mFe8KLiqlqmTh8lndH42Jkh8bD66JVZzHzjDIwyYqTUISWx7zWs/dMj8BuCRQyPZ/
-	 iypvmHIvgGM2gDi7XOzcKq/i+e4emY7DOb9a30u03G7HuotDdVMPXiw1Bb4JGqMv84
-	 J9iMTVrVH8wOKiAxi2bktWd9weoBKsa2d/KLTL97M+gESC1YE8815/i6SdnzNjTfe7
-	 6fSEJs7ZvmMow==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: Hans de Goede <hdegoede@redhat.com>,
-	Mark Brown <broonie@kernel.org>,
-	Sasha Levin <sashal@kernel.org>,
-	cezary.rojewski@intel.com,
-	liam.r.girdwood@linux.intel.com,
-	peter.ujfalusi@linux.intel.com,
-	yung-chuan.liao@linux.intel.com,
-	ranjani.sridharan@linux.intel.com,
-	kai.vehmanen@linux.intel.com,
-	perex@perex.cz,
-	tiwai@suse.com,
-	pierre-louis.bossart@linux.dev,
-	tomlohave@gmail.com,
-	alban.boye@protonmail.com,
-	u.kleine-koenig@baylibre.com,
-	linux-sound@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.15 02/10] ASoC: Intel: bytcr_rt5640: Add DMI quirk for Vexia Edu Atla 10 tablet
-Date: Mon,  4 Nov 2024 05:53:51 -0500
-Message-ID: <20241104105414.97666-2-sashal@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241104105414.97666-1-sashal@kernel.org>
-References: <20241104105414.97666-1-sashal@kernel.org>
+	s=arc-20240116; t=1730717644; c=relaxed/simple;
+	bh=APcFNFk/zxuy3y5w8EFdvDprJvlMu8Z5AsSdBpSE1RE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=szM5Anju/62bC+JglO+2lI6DtS/65rs/KCscz/9fqwyxukOnl9qqtgf7X6fhNpegnL8QF9Mdr3IK5I2NnIjTh4EyN4Rqz+N3M0rSSUhOcKig0+PpBe9s/VbExcPNV07SkWv/+IyDm3xPXfdeHcs5pXT7jZIAueFQ5MMcWxKX23U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:cff2:a4e4:667a:351c])
+	by xavier.telenet-ops.be with cmsmtp
+	id Yatt2D0042b9NYg01attZ2; Mon, 04 Nov 2024 11:53:53 +0100
+Received: from rox.of.borg ([192.168.97.57])
+	by ramsan.of.borg with esmtp (Exim 4.95)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1t7uiD-006FYJ-Af;
+	Mon, 04 Nov 2024 11:53:53 +0100
+Received: from geert by rox.of.borg with local (Exim 4.95)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1t7uiW-00E1KD-VE;
+	Mon, 04 Nov 2024 11:53:52 +0100
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Bartosz Golaszewski <brgl@bgdev.pl>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Andreas Larsson <andreas@gaisler.com>
+Cc: linux-gpio@vger.kernel.org,
+	sparclinux@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2] gpio: GPIO_GRGPIO should depend on OF
+Date: Mon,  4 Nov 2024 11:53:51 +0100
+Message-Id: <aa59c35722c43d13eabbefc4617adae5f2f52e9c.1730717575.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 5.15.170
 Content-Transfer-Encoding: 8bit
 
-From: Hans de Goede <hdegoede@redhat.com>
+While the Aeroflex Gaisler GRGPIO driver has no build-time dependency on
+gpiolib-of, it supports only DT-based configuration, and is used only on
+DT systems.  Hence add a dependency on OF, to prevent asking the user
+about this driver when configuring a kernel without DT support.
 
-[ Upstream commit 0107f28f135231da22a9ad5756bb16bd5cada4d5 ]
-
-The Vexia Edu Atla 10 tablet mostly uses the BYTCR tablet defaults,
-but as happens on more models it is using IN1 instead of IN3 for
-its internal mic and JD_SRC_JD2_IN4N instead of JD_SRC_JD1_IN4P
-for jack-detection.
-
-Add a DMI quirk for this to fix the internal-mic and jack-detection.
-
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-Link: https://patch.msgid.link/20241024211615.79518-2-hdegoede@redhat.com
-Signed-off-by: Mark Brown <broonie@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Fixes: bc40668def384256 ("gpio: grgpio: drop Kconfig dependency on OF_GPIO")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Andreas Larsson <andreas@gaisler.com>
 ---
- sound/soc/intel/boards/bytcr_rt5640.c | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+v2:
+  - Add Reviewed-by,
+  - Depend on OF instead of OF_GPIO.
+---
+ drivers/gpio/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/sound/soc/intel/boards/bytcr_rt5640.c b/sound/soc/intel/boards/bytcr_rt5640.c
-index 899a8435a1eb8..8706fef8ccce8 100644
---- a/sound/soc/intel/boards/bytcr_rt5640.c
-+++ b/sound/soc/intel/boards/bytcr_rt5640.c
-@@ -1102,6 +1102,21 @@ static const struct dmi_system_id byt_rt5640_quirk_table[] = {
- 					BYT_RT5640_SSP0_AIF2 |
- 					BYT_RT5640_MCLK_EN),
- 	},
-+	{	/* Vexia Edu Atla 10 tablet */
-+		.matches = {
-+			DMI_MATCH(DMI_BOARD_VENDOR, "AMI Corporation"),
-+			DMI_MATCH(DMI_BOARD_NAME, "Aptio CRB"),
-+			/* Above strings are too generic, also match on BIOS date */
-+			DMI_MATCH(DMI_BIOS_DATE, "08/25/2014"),
-+		},
-+		.driver_data = (void *)(BYT_RT5640_IN1_MAP |
-+					BYT_RT5640_JD_SRC_JD2_IN4N |
-+					BYT_RT5640_OVCD_TH_2000UA |
-+					BYT_RT5640_OVCD_SF_0P75 |
-+					BYT_RT5640_DIFF_MIC |
-+					BYT_RT5640_SSP0_AIF2 |
-+					BYT_RT5640_MCLK_EN),
-+	},
- 	{	/* Voyo Winpad A15 */
- 		.matches = {
- 			DMI_MATCH(DMI_BOARD_VENDOR, "AMI Corporation"),
+diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+index 3eec4f0e47064fa6..d0d31a087ee9b369 100644
+--- a/drivers/gpio/Kconfig
++++ b/drivers/gpio/Kconfig
+@@ -340,6 +340,7 @@ config GPIO_GRANITERAPIDS
+ 
+ config GPIO_GRGPIO
+ 	tristate "Aeroflex Gaisler GRGPIO support"
++	depends on OF || COMPILE_TEST
+ 	select GPIO_GENERIC
+ 	select IRQ_DOMAIN
+ 	help
 -- 
-2.43.0
+2.34.1
 
 
