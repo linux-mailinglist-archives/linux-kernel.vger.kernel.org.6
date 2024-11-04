@@ -1,33 +1,33 @@
-Return-Path: <linux-kernel+bounces-394159-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394160-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 535F99BAB3E
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 04:26:18 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C51279BAB3F
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 04:26:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 73B331C21B23
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 03:26:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1F7A7B22A0C
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 03:26:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6392A1A3AA9;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF80E1A7AF6;
 	Mon,  4 Nov 2024 03:24:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="a1yYhKyn"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nE4YXAnn"
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E168718E02E;
-	Mon,  4 Nov 2024 03:24:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60BCE18FC7C;
+	Mon,  4 Nov 2024 03:24:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730690645; cv=none; b=Y4T5xwyr/6XA/QClqhD43rwzRrfaCu4QNxPICfDeHkwjLBkReV021hJureCtXrBnrMAz1XHCMGg79p2TYkIhIOMvu/xRFCDA3Wn2IpxubDKMHLVtcmZWn8nKbuyckbcfj01IIqkcRJs4v8I2bsyxmXzSF6CNUizCtHQXrN7l6vo=
+	t=1730690646; cv=none; b=YrxtDzIzSHNL9FXrqi9gv695PZ2vBbbqK3NB5oLEXc2VOESoBzOMNaUjwN7pMTcRv21W/oWKofMh3TYcNcybWQ73Vd9VpHlYNNQUUC2I0wBEosbzI9pX2cyHCNmOgDJRN3enckQWySTqnHfF+5hCaZQfFXNTMafAYJHjIqczZ+g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730690645; c=relaxed/simple;
-	bh=SN4JfljAOUO2ko07B02SZ/VWRc532b/vb4Qu1zSiY7Q=;
+	s=arc-20240116; t=1730690646; c=relaxed/simple;
+	bh=YRLDQntUqAiTAHoXLlFFneQK20cy3UtJZIMNELWRj8c=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=VzshkyZrfcbT8BOk+rKXYhnQ8lJ/2wam9ajrSAUZpPnMcGQJMDwxxgFupzSj3vAnZyCvfFZxsvGC1ZuKNTB+J1cA71R3krrdVAnhJd0e9igsCPjLpNLKzOa5w9nQoaglGJb97WG49mtYjodPz4ZTcmUcwdrH7+4HwGGDB+Nh/h0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=a1yYhKyn; arc=none smtp.client-ip=192.198.163.14
+	 MIME-Version; b=s87ufwI5Hcxd4UiK0HNl0EdHejx9CKQuLKbK6DCYssf50We5Sp+oBOSH8D00yZRVCpBOVZnRmJgi9dQrQP6VRKqDzZvvKJHBB8GXQP5v4PZiMrb3l1FocQHq58sUTIvPwOiI+HqKUdZCwn6hyStfXTMPiQpiREWw9x4ZZyHK+7w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nE4YXAnn; arc=none smtp.client-ip=192.198.163.14
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
@@ -35,28 +35,28 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   t=1730690644; x=1762226644;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=SN4JfljAOUO2ko07B02SZ/VWRc532b/vb4Qu1zSiY7Q=;
-  b=a1yYhKynr4l5w/GyMWr1gpljIRij5JLImjPiNEQHfwJBweaOh6d2L9j1
-   NQonHM6sP35mKZvb2XhZJlQJnOBfgVjdYRm1Vw8D/Pbw1A4jMPNU52I/B
-   ETACIbsehZp7Qb+5m6nstupOVrU3b64xMofRMgUKqv3RUbflIDpB+6C0X
-   /YtxNtGV1EOUrnFlPdLDku9gPmXKZWyEzjWpuH/gmEA+VcJk3SGPEpiiy
-   BWW4XUzUxKqFiwE6HXcGibkhb+NX1CWuZgplmGVkTcfiwMNa0K9qsZrgQ
-   /zJeczd6IS3yFTB9ywnUXVjuGtAHDrrWiiRQE87ZKCeoAtjMAXOlRZTFK
-   w==;
-X-CSE-ConnectionGUID: EXzBH0mdQ2mSd7ia+UOBRQ==
-X-CSE-MsgGUID: U5XfWfivStu4oLMpZQZD3g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11245"; a="30594309"
+  bh=YRLDQntUqAiTAHoXLlFFneQK20cy3UtJZIMNELWRj8c=;
+  b=nE4YXAnnV1GuAqTcg4yM/XZRem37VoCsOGu1oI1KXsoKOuuJQQtKydlX
+   nroRFaWDFtQuTrfO0c6zUMVTZUUejl2W5iBhDV3FMEjzlG/UbFEdyHr/4
+   wlpxMl9pPNJkbfQvwT1tRaA9Q5pYJYpKP4DpKHhEsK0QgdXL/nIjaYKRY
+   aZYu/JlyaU1AY2S6fMGN/XVL7CXzLd07yUKu/fMhMYE3dEob5sEJU3/Jv
+   HVHmv6THGmTvngfG8SKuVp8N9bOEvHkCcGKZ/3iBv/z7Sn2VpK4lVxWut
+   EO18KnzhZt7aItEvjbCqbr3YN5+Pq1oGqrN8OYPabp8nAMurRN+i8HgHj
+   A==;
+X-CSE-ConnectionGUID: XA7DEfz1R2SG+AsBE1yNUA==
+X-CSE-MsgGUID: voeS5PJvRISik+yeo90qyg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11245"; a="30594313"
 X-IronPort-AV: E=Sophos;i="6.11,256,1725346800"; 
-   d="scan'208";a="30594309"
+   d="scan'208";a="30594313"
 Received: from fmviesa001.fm.intel.com ([10.60.135.141])
   by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2024 19:23:57 -0800
-X-CSE-ConnectionGUID: fGpctmThRiWAR6XKv9WB6Q==
-X-CSE-MsgGUID: eYp6Z4epS+erJKbtnJU5Ww==
+X-CSE-ConnectionGUID: sJcKRCqbQYOlQ/3TOXqWdg==
+X-CSE-MsgGUID: Zs5ymgZeQtKAw5KQxYyCvw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.11,256,1725346800"; 
-   d="scan'208";a="114331837"
+   d="scan'208";a="114331846"
 Received: from yungchua-ws.ostc.intel.com (HELO yungchua-ws.intel.com) ([10.54.69.90])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2024 19:23:57 -0800
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2024 19:23:58 -0800
 From: Bard Liao <yung-chuan.liao@linux.intel.com>
 To: linux-sound@vger.kernel.org,
 	vkoul@kernel.org
@@ -64,9 +64,9 @@ Cc: vinod.koul@linaro.org,
 	linux-kernel@vger.kernel.org,
 	pierre-louis.bossart@linux.dev,
 	bard.liao@intel.com
-Subject: [PATCH 11/12] soundwire: generic_bandwidth_allocation: select data lane
-Date: Mon,  4 Nov 2024 03:23:57 +0000
-Message-Id: <20241104032358.669705-12-yung-chuan.liao@linux.intel.com>
+Subject: [PATCH 12/12] soundwire: generic_bandwidth_allocation: add lane in sdw_group_params
+Date: Mon,  4 Nov 2024 03:23:58 +0000
+Message-Id: <20241104032358.669705-13-yung-chuan.liao@linux.intel.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20241104032358.669705-1-yung-chuan.liao@linux.intel.com>
 References: <20241104032358.669705-1-yung-chuan.liao@linux.intel.com>
@@ -78,225 +78,289 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-If a peripheral supports multi-lane, we can use data lane x to extend
-the bandwidth. The patch suggests to select data lane x where x > 0
-when bandwidth is not enough on data lane 0.
+All active streams with the same parameters are grouped together and the
+params are stored in the sdw_group struct. We compute the required
+bandwidth for each group. However, each lane has individual bandwidth.
+Therefore, we should separate different lanes in different params groups.
+Add lane variable to separate params groups.
 
 Signed-off-by: Bard Liao <yung-chuan.liao@linux.intel.com>
 Reviewed-by: Ranjani Sridharan <ranjani.sridharan@linux.intel.com>
 ---
- .../soundwire/generic_bandwidth_allocation.c  | 133 +++++++++++++++++-
- drivers/soundwire/stream.c                    |  20 ++-
- 2 files changed, 146 insertions(+), 7 deletions(-)
+ drivers/soundwire/bus.h                       |   1 +
+ .../soundwire/generic_bandwidth_allocation.c  | 122 +++++++++++++-----
+ 2 files changed, 90 insertions(+), 33 deletions(-)
 
+diff --git a/drivers/soundwire/bus.h b/drivers/soundwire/bus.h
+index ff03b97f1d8b..fc990171b3f7 100644
+--- a/drivers/soundwire/bus.h
++++ b/drivers/soundwire/bus.h
+@@ -151,6 +151,7 @@ struct sdw_transport_data {
+ 	int hstop;
+ 	int block_offset;
+ 	int sub_block_offset;
++	unsigned int lane;
+ };
+ 
+ struct sdw_dpn_prop *sdw_get_slave_dpn_prop(struct sdw_slave *slave,
 diff --git a/drivers/soundwire/generic_bandwidth_allocation.c b/drivers/soundwire/generic_bandwidth_allocation.c
-index d2632af9c8af..39b4d25ab19e 100644
+index 39b4d25ab19e..faf04d82ba0a 100644
 --- a/drivers/soundwire/generic_bandwidth_allocation.c
 +++ b/drivers/soundwire/generic_bandwidth_allocation.c
-@@ -336,6 +336,82 @@ static bool is_clock_scaling_supported(struct sdw_bus *bus)
- 	return true;
+@@ -18,6 +18,7 @@
+ 
+ struct sdw_group_params {
+ 	unsigned int rate;
++	unsigned int lane;
+ 	int full_bw;
+ 	int payload_bw;
+ 	int hwidth;
+@@ -27,6 +28,7 @@ struct sdw_group {
+ 	unsigned int count;
+ 	unsigned int max_size;
+ 	unsigned int *rates;
++	unsigned int *lanes;
+ };
+ 
+ void sdw_compute_slave_ports(struct sdw_master_runtime *m_rt,
+@@ -48,6 +50,9 @@ void sdw_compute_slave_ports(struct sdw_master_runtime *m_rt,
+ 		slave_total_ch = 0;
+ 
+ 		list_for_each_entry(p_rt, &s_rt->port_list, port_node) {
++			if (p_rt->lane != t_data->lane)
++				continue;
++
+ 			ch = hweight32(p_rt->ch_mask);
+ 
+ 			sdw_fill_xport_params(&p_rt->transport_params,
+@@ -105,6 +110,8 @@ static void sdw_compute_master_ports(struct sdw_master_runtime *m_rt,
+ 	t_data.hstart = hstart;
+ 
+ 	list_for_each_entry(p_rt, &m_rt->port_list, port_node) {
++		if (p_rt->lane != params->lane)
++			continue;
+ 
+ 		sdw_fill_xport_params(&p_rt->transport_params, p_rt->num,
+ 				      false, SDW_BLK_GRP_CNT_1, sample_int,
+@@ -131,6 +138,7 @@ static void sdw_compute_master_ports(struct sdw_master_runtime *m_rt,
+ 		(*port_bo) += bps * ch;
+ 	}
+ 
++	t_data.lane = params->lane;
+ 	sdw_compute_slave_ports(m_rt, &t_data);
  }
  
-+/**
-+ * is_lane_connected_to_all_peripherals: Check if the given manager lane connects to all peripherals
-+ * So that all peripherals can use the manager lane.
-+ *
-+ * @m_rt: Manager runtime
-+ * @lane: Lane number
-+ */
-+static bool is_lane_connected_to_all_peripherals(struct sdw_master_runtime *m_rt, unsigned int lane)
-+{
-+	struct sdw_slave_prop *slave_prop;
-+	struct sdw_slave_runtime *s_rt;
-+	int i;
-+
-+	list_for_each_entry(s_rt, &m_rt->slave_rt_list, m_rt_node) {
-+		slave_prop = &s_rt->slave->prop;
-+		for (i = 1; i < SDW_MAX_LANES; i++) {
-+			if (slave_prop->lane_maps[i] == lane) {
-+				dev_dbg(&s_rt->slave->dev,
-+					"M lane %d is connected to P lane %d\n",
-+					lane, i);
-+				break;
-+			}
-+		}
-+		if (i == SDW_MAX_LANES) {
-+			dev_dbg(&s_rt->slave->dev, "M lane %d is not connected\n", lane);
-+			return false;
-+		}
-+	}
-+	return true;
-+}
-+
-+static int get_manager_lane(struct sdw_bus *bus, struct sdw_master_runtime *m_rt,
-+			    struct sdw_slave_runtime *s_rt, unsigned int curr_dr_freq)
-+{
-+	struct sdw_slave_prop *slave_prop = &s_rt->slave->prop;
-+	struct sdw_port_runtime *m_p_rt;
-+	unsigned int required_bandwidth;
-+	int m_lane;
-+	int l;
-+
-+	for (l = 1; l < SDW_MAX_LANES; l++) {
-+		if (!slave_prop->lane_maps[l])
-+			continue;
-+
-+		required_bandwidth = 0;
-+		list_for_each_entry(m_p_rt, &m_rt->port_list, port_node) {
-+			required_bandwidth += m_rt->stream->params.rate *
-+					      hweight32(m_p_rt->ch_mask) *
-+					      m_rt->stream->params.bps;
-+		}
-+		if (required_bandwidth <=
-+		    curr_dr_freq - bus->lane_used_bandwidth[l]) {
-+			/* Check if m_lane is connected to all Peripherals */
-+			if (!is_lane_connected_to_all_peripherals(m_rt,
-+				slave_prop->lane_maps[l])) {
-+				dev_dbg(bus->dev,
-+					"Not all Peripherals are connected to M lane %d\n",
-+					slave_prop->lane_maps[l]);
-+				continue;
-+			}
-+			m_lane = slave_prop->lane_maps[l];
-+			dev_dbg(&s_rt->slave->dev, "M lane %d is used\n", m_lane);
-+			bus->lane_used_bandwidth[l] += required_bandwidth;
-+			/*
-+			 * Use non-zero manager lane, subtract the lane 0
-+			 * bandwidth that is already calculated
-+			 */
-+			bus->params.bandwidth -= required_bandwidth;
-+			return m_lane;
-+		}
-+	}
-+
-+	/* No available multi lane found, only lane 0 can be used */
-+	return 0;
-+}
-+
- /**
-  * sdw_compute_bus_params: Compute bus parameters
-  *
-@@ -343,10 +419,16 @@ static bool is_clock_scaling_supported(struct sdw_bus *bus)
-  */
- static int sdw_compute_bus_params(struct sdw_bus *bus)
+@@ -138,69 +146,93 @@ static void _sdw_compute_port_params(struct sdw_bus *bus,
+ 				     struct sdw_group_params *params, int count)
  {
--	unsigned int curr_dr_freq = 0;
- 	struct sdw_master_prop *mstr_prop = &bus->prop;
--	int i, clk_values, ret;
-+	struct sdw_slave_prop *slave_prop;
-+	struct sdw_port_runtime *m_p_rt;
-+	struct sdw_port_runtime *s_p_rt;
-+	struct sdw_master_runtime *m_rt;
-+	struct sdw_slave_runtime *s_rt;
-+	unsigned int curr_dr_freq = 0;
-+	int i, l, clk_values, ret;
- 	bool is_gear = false;
-+	int m_lane = 0;
- 	u32 *clk_buf;
+ 	struct sdw_master_runtime *m_rt;
+-	int hstop = bus->params.col - 1;
+-	int port_bo, i;
++	int port_bo, i, l;
++	int hstop;
  
- 	if (mstr_prop->num_clk_gears) {
-@@ -373,11 +455,26 @@ static int sdw_compute_bus_params(struct sdw_bus *bus)
- 				(bus->params.max_dr_freq >>  clk_buf[i]) :
- 				clk_buf[i] * SDW_DOUBLE_RATE_FACTOR;
+ 	/* Run loop for all groups to compute transport parameters */
+-	for (i = 0; i < count; i++) {
+-		port_bo = 1;
++	for (l = 0; l < SDW_MAX_LANES; l++) {
++		if (l > 0 && !bus->lane_used_bandwidth[l])
++			continue;
++		/* reset hstop for each lane */
++		hstop = bus->params.col - 1;
++		for (i = 0; i < count; i++) {
++			if (params[i].lane != l)
++				continue;
++			port_bo = 1;
  
--		if (curr_dr_freq * (mstr_prop->default_col - 1) <
-+		if (curr_dr_freq * (mstr_prop->default_col - 1) >=
- 		    bus->params.bandwidth * mstr_prop->default_col)
--			continue;
-+			break;
- 
--		break;
-+		list_for_each_entry(m_rt, &bus->m_rt_list, bus_node) {
-+			/*
-+			 * Get the first s_rt that will be used to find the available lane that
-+			 * can be used. No need to check all Peripherals because we can't use
-+			 * multi-lane if we can't find any available lane for the first Peripheral.
-+			 */
-+			s_rt = list_first_entry(&m_rt->slave_rt_list,
-+						struct sdw_slave_runtime, m_rt_node);
-+
-+			/*
-+			 * Find the available Manager lane that connected to the first Peripheral.
-+			 */
-+			m_lane = get_manager_lane(bus, m_rt, s_rt, curr_dr_freq);
-+			if (m_lane > 0)
-+				goto out;
-+		}
- 
- 		/*
- 		 * TODO: Check all the Slave(s) port(s) audio modes and find
-@@ -391,6 +488,32 @@ static int sdw_compute_bus_params(struct sdw_bus *bus)
- 			__func__, bus->params.bandwidth);
- 		return -EINVAL;
- 	}
-+out:
-+	/* multilane can be used */
-+	if (m_lane > 0) {
-+		/* Set Peripheral lanes */
-+		list_for_each_entry(s_rt, &m_rt->slave_rt_list, m_rt_node) {
-+			slave_prop = &s_rt->slave->prop;
-+			for (l = 1; l < SDW_MAX_LANES; l++) {
-+				if (slave_prop->lane_maps[l] == m_lane) {
-+					list_for_each_entry(s_p_rt, &s_rt->port_list, port_node) {
-+						s_p_rt->lane = l;
-+						dev_dbg(&s_rt->slave->dev,
-+							"Set P lane %d for port %d\n",
-+							l, s_p_rt->num);
-+					}
-+					break;
-+				}
+-		list_for_each_entry(m_rt, &bus->m_rt_list, bus_node) {
+-			sdw_compute_master_ports(m_rt, &params[i], &port_bo, hstop);
++			list_for_each_entry(m_rt, &bus->m_rt_list, bus_node) {
++				sdw_compute_master_ports(m_rt, &params[i], &port_bo, hstop);
 +			}
-+		}
-+		/*
-+		 * Set Manager lanes. Configure the last m_rt in bus->m_rt_list only since
-+		 * we don't want to touch other m_rts that are already working.
-+		 */
-+		list_for_each_entry(m_p_rt, &m_rt->port_list, port_node) {
-+			m_p_rt->lane = m_lane;
-+		}
-+	}
++
++			hstop = hstop - params[i].hwidth;
+ 		}
+-
+-		hstop = hstop - params[i].hwidth;
+ 	}
+ }
  
- 	if (!mstr_prop->default_frame_rate || !mstr_prop->default_row)
- 		return -EINVAL;
-diff --git a/drivers/soundwire/stream.c b/drivers/soundwire/stream.c
-index a4a668135d16..b0868f71b63e 100644
---- a/drivers/soundwire/stream.c
-+++ b/drivers/soundwire/stream.c
-@@ -1674,6 +1674,9 @@ EXPORT_SYMBOL(sdw_disable_stream);
- static int _sdw_deprepare_stream(struct sdw_stream_runtime *stream)
+ static int sdw_compute_group_params(struct sdw_bus *bus,
+ 				    struct sdw_group_params *params,
+-				    int *rates, int count)
++				    struct sdw_group *group)
  {
  	struct sdw_master_runtime *m_rt;
 +	struct sdw_port_runtime *p_rt;
-+	unsigned int multi_lane_bandwidth;
-+	unsigned int bandwidth;
- 	struct sdw_bus *bus;
- 	int state = stream->state;
- 	int ret = 0;
-@@ -1695,9 +1698,22 @@ static int _sdw_deprepare_stream(struct sdw_stream_runtime *stream)
- 			return ret;
+ 	int sel_col = bus->params.col;
+ 	unsigned int rate, bps, ch;
+-	int i, column_needed = 0;
++	int i, l, column_needed;
+ 
+ 	/* Calculate bandwidth per group */
+-	for (i = 0; i < count; i++) {
+-		params[i].rate = rates[i];
++	for (i = 0; i < group->count; i++) {
++		params[i].rate = group->rates[i];
++		params[i].lane = group->lanes[i];
+ 		params[i].full_bw = bus->params.curr_dr_freq / params[i].rate;
+ 	}
+ 
+ 	list_for_each_entry(m_rt, &bus->m_rt_list, bus_node) {
+-		rate = m_rt->stream->params.rate;
+-		bps = m_rt->stream->params.bps;
+-		ch = m_rt->ch_count;
++		list_for_each_entry(p_rt, &m_rt->port_list, port_node) {
++			rate = m_rt->stream->params.rate;
++			bps = m_rt->stream->params.bps;
++			ch = hweight32(p_rt->ch_mask);
+ 
+-		for (i = 0; i < count; i++) {
+-			if (rate == params[i].rate)
+-				params[i].payload_bw += bps * ch;
++			for (i = 0; i < group->count; i++) {
++				if (rate == params[i].rate && p_rt->lane == params[i].lane)
++					params[i].payload_bw += bps * ch;
++			}
+ 		}
+ 	}
+ 
+-	for (i = 0; i < count; i++) {
+-		params[i].hwidth = (sel_col *
+-			params[i].payload_bw + params[i].full_bw - 1) /
+-			params[i].full_bw;
++	for (l = 0; l < SDW_MAX_LANES; l++) {
++		if (l > 0 && !bus->lane_used_bandwidth[l])
++			continue;
++		/* reset column_needed for each lane */
++		column_needed = 0;
++		for (i = 0; i < group->count; i++) {
++			if (params[i].lane != l)
++				continue;
+ 
+-		column_needed += params[i].hwidth;
++			params[i].hwidth = (sel_col * params[i].payload_bw +
++					    params[i].full_bw - 1) / params[i].full_bw;
++
++			column_needed += params[i].hwidth;
++			/* There is no control column for lane 1 and above */
++			if (column_needed > sel_col)
++				return -EINVAL;
++			/* Column 0 is control column on lane 0 */
++			if (params[i].lane == 0 && column_needed > sel_col - 1)
++				return -EINVAL;
++		}
+ 	}
+ 
+-	if (column_needed > sel_col - 1)
+-		return -EINVAL;
+ 
+ 	return 0;
+ }
+ 
+ static int sdw_add_element_group_count(struct sdw_group *group,
+-				       unsigned int rate)
++				       unsigned int rate, unsigned int lane)
+ {
+ 	int num = group->count;
+ 	int i;
+ 
+ 	for (i = 0; i <= num; i++) {
+-		if (rate == group->rates[i])
++		if (rate == group->rates[i] && lane == group->lanes[i])
+ 			break;
+ 
+ 		if (i != num)
+@@ -208,6 +240,7 @@ static int sdw_add_element_group_count(struct sdw_group *group,
+ 
+ 		if (group->count >= group->max_size) {
+ 			unsigned int *rates;
++			unsigned int *lanes;
+ 
+ 			group->max_size += 1;
+ 			rates = krealloc(group->rates,
+@@ -215,10 +248,20 @@ static int sdw_add_element_group_count(struct sdw_group *group,
+ 					 GFP_KERNEL);
+ 			if (!rates)
+ 				return -ENOMEM;
++
+ 			group->rates = rates;
++
++			lanes = krealloc(group->lanes,
++					 (sizeof(int) * group->max_size),
++					 GFP_KERNEL);
++			if (!lanes)
++				return -ENOMEM;
++
++			group->lanes = lanes;
  		}
  
-+		multi_lane_bandwidth = 0;
-+
-+		list_for_each_entry(p_rt, &m_rt->port_list, port_node) {
-+			if (!p_rt->lane)
-+				continue;
-+
-+			bandwidth = m_rt->stream->params.rate * hweight32(p_rt->ch_mask) *
-+				    m_rt->stream->params.bps;
-+			multi_lane_bandwidth += bandwidth;
-+			bus->lane_used_bandwidth[p_rt->lane] -= bandwidth;
-+			if (!bus->lane_used_bandwidth[p_rt->lane])
-+				p_rt->lane = 0;
-+		}
- 		/* TODO: Update this during Device-Device support */
--		bus->params.bandwidth -= m_rt->stream->params.rate *
--			m_rt->ch_count * m_rt->stream->params.bps;
-+		bandwidth = m_rt->stream->params.rate * m_rt->ch_count * m_rt->stream->params.bps;
-+		bus->params.bandwidth -= bandwidth - multi_lane_bandwidth;
+-		group->rates[group->count++] = rate;
++		group->rates[group->count] = rate;
++		group->lanes[group->count++] = lane;
+ 	}
  
- 		/* Compute params */
- 		if (bus->compute_params) {
+ 	return 0;
+@@ -228,6 +271,7 @@ static int sdw_get_group_count(struct sdw_bus *bus,
+ 			       struct sdw_group *group)
+ {
+ 	struct sdw_master_runtime *m_rt;
++	struct sdw_port_runtime *p_rt;
+ 	unsigned int rate;
+ 	int ret = 0;
+ 
+@@ -237,6 +281,13 @@ static int sdw_get_group_count(struct sdw_bus *bus,
+ 	if (!group->rates)
+ 		return -ENOMEM;
+ 
++	group->lanes = kcalloc(group->max_size, sizeof(int), GFP_KERNEL);
++	if (!group->lanes) {
++		kfree(group->rates);
++		group->rates = NULL;
++		return -ENOMEM;
++	}
++
+ 	list_for_each_entry(m_rt, &bus->m_rt_list, bus_node) {
+ 		if (m_rt->stream->state == SDW_STREAM_DEPREPARED)
+ 			continue;
+@@ -246,11 +297,16 @@ static int sdw_get_group_count(struct sdw_bus *bus,
+ 					     struct sdw_master_runtime,
+ 					     bus_node)) {
+ 			group->rates[group->count++] = rate;
+-
+-		} else {
+-			ret = sdw_add_element_group_count(group, rate);
++		}
++		/*
++		 * Different ports could use different lane, add group element
++		 * even if m_rt is the first entry
++		 */
++		list_for_each_entry(p_rt, &m_rt->port_list, port_node) {
++			ret = sdw_add_element_group_count(group, rate, p_rt->lane);
+ 			if (ret < 0) {
+ 				kfree(group->rates);
++				kfree(group->lanes);
+ 				return ret;
+ 			}
+ 		}
+@@ -284,8 +340,7 @@ static int sdw_compute_port_params(struct sdw_bus *bus)
+ 	}
+ 
+ 	/* Compute transport parameters for grouped streams */
+-	ret = sdw_compute_group_params(bus, params,
+-				       &group.rates[0], group.count);
++	ret = sdw_compute_group_params(bus, params, &group);
+ 	if (ret < 0)
+ 		goto free_params;
+ 
+@@ -295,6 +350,7 @@ static int sdw_compute_port_params(struct sdw_bus *bus)
+ 	kfree(params);
+ out:
+ 	kfree(group.rates);
++	kfree(group.lanes);
+ 
+ 	return ret;
+ }
 -- 
 2.34.1
 
