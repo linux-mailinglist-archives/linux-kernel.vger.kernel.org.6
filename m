@@ -1,146 +1,229 @@
-Return-Path: <linux-kernel+bounces-394758-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394761-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB2EC9BB38B
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 12:36:19 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD4979BB3C6
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 12:47:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A67E1F22DF2
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 11:36:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 133D7B2B994
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 11:36:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E9FE1B2180;
-	Mon,  4 Nov 2024 11:35:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HHPl7Yko"
-Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 076B418C930
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 11:35:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70F9A1B219A;
+	Mon,  4 Nov 2024 11:35:37 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33D181B3931
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 11:35:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730720111; cv=none; b=mFAMUu0bX7BUUK9Ihk2/WZS0lDDTjvXOOTmHqbCjGeQowRpb8uJ+6+xZXrlCTtFaDrxCaqg+zqYcrg9PwUnhNz0Wvl8c3o2JAF13KePjX1a1DbkJgUAlfGiOP+fL/kYyMN1Mu0QAZSXW2Dc+6X/8rJussoUsYY7yDW7AFfrezds=
+	t=1730720136; cv=none; b=XB4LFPySAZ3dd/EjqLqCwPQMRGTyQfDAgnyM2gSBQlgd23LnUwfqERZiJp3syw1QS5jB/EdF4QXtsDF2DNq7Qc2j0TpaG1zXrsGAYHltauUe3jK1B1MTTBfL/A+Fs7VfwnR2fgTRtOW/pUqHD+nf4w4Fk5b6RRHt4DwoxZpT8MY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730720111; c=relaxed/simple;
-	bh=v7y3fY03KoFpdy9AC7A0PLBPjDMIEf1ClFKqwm812L8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BgdO07nDd43chCpTwxnMn0yh2kD89FOCFRJJkv8S4DKpMFCRaT6/kB+SThp6/PHG+J0mSps11SG9MtzBKWaqoaMtXFvAlhX+5+w0mX4txo670fj74gCVQvCQdkodbVc2wUn8tNqfjDyoTwEGo9ltpmpOv1iFA3k+n8d7CU0mohk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HHPl7Yko; arc=none smtp.client-ip=209.85.128.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-6e3b7b3e9acso34489057b3.1
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 03:35:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1730720109; x=1731324909; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=U+q526szksjV4oUTdEUzEItSXwLxa3VoCkmyV8G7Sbw=;
-        b=HHPl7YkoOdIFXuSUv5MM75eq7FWRoPgYAlBG7WJs3d/CLM1gLxW4u6i1dbDD46VBWK
-         yTzjf+9PXWRwgeIP7gDyxXXF2sou9R3C1RlusxOXonneMM/cgYK+x5mRZQRoG140yFkI
-         Fb+vKGRab6SyG0zAUACZeM78t84hSZuInJS45bqANScWhU23W0JofEjoZOEcCucha8dq
-         NGO0E4dtazCPRnIPbuR2vjyT2KQrVMffKY4HjHeR+fQC32eIIGdIirHO2u/AW4+dhY7n
-         P/dO9qFWPyXvju4KpQm9ijEOE0tqm0rVlqdn/0V7wxFb+tFYXCDoRLJk79OQnnSaMUp7
-         ZB+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730720109; x=1731324909;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=U+q526szksjV4oUTdEUzEItSXwLxa3VoCkmyV8G7Sbw=;
-        b=b5xEbnsIpeBpVhu2v/O/pHuztRSYnHuOhy0F8BSvtiP/vM167CWJWvCy1Qy0iHxDEw
-         GHArY0Kg4nCVuNuzBs3r3GQNk3EbHy1AOVNyandbmzRMIXPoPclg70eDC8yV4JzufBTM
-         N8eiV9zcJCwGYFkcv+xM89ji743KnJFb39ACM1gJhdfEvNwsqIzwsrmHBavbc+gfAmS7
-         YtmxyAvkxweimFRf4DJI9S44JYiJSrQzofp+Abcj7h4tPIXVaaLfB+OgOE1a3ZZhaUPT
-         KKfLJNQk0BaMFcKraHs2RdcxK10hN+nmNDuiIcgpwPafXKP2epd5jYCKYkuiUzvDWF29
-         +NdA==
-X-Forwarded-Encrypted: i=1; AJvYcCX8G7bQDbP4OttpvnuJzv8X7DTTUS6dLiVz3PIOKZEjDvLTli4g5lqgRv9WXVW5s6MWiQJ7rgXpsN7PCjU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxtIPsksyR7y3eO1CCAClSgPxPcbdq/4R2T/Dc+FzUnnpe9VQ2Z
-	mKieAPITtgsURgZdEKpJfsF1orx+9J6pkAm2gUZJdO8xdm3G7x5Q3KBezFZJ/T2sFslq1jVfLJ9
-	4ta9KAniNCB1N6slfEgqNtIMyeVgEr6Zg2d9pzw==
-X-Google-Smtp-Source: AGHT+IG/P2mRXyw/LNVggtIlhZam9RfjN+tz6hskDj9CnkjlIOHIK1FW4HU1XswdomDcaoi15YZfNPFVGYESfvaEO6c=
-X-Received: by 2002:a05:690c:4d01:b0:6e3:2b5e:918f with SMTP id
- 00721157ae682-6ea64c12827mr124473837b3.44.1730720109012; Mon, 04 Nov 2024
- 03:35:09 -0800 (PST)
+	s=arc-20240116; t=1730720136; c=relaxed/simple;
+	bh=Fw3Ths9vDwnK8u5nmacNwwahWbw6A4tR5lr9+d5obaU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BSouTV4qnna4ol30h+ctDGM9+i9ujHYBnox+0k/d7qITghK/gXhWqgFocNs4Lp56dmm8zi1nrX0zkpOSKpVbgbKrjkdh4rWf36dGxfwU90MvG78IekghdhowAsCFuMKLz3wje9BAWMwYllVJ/YAFhhoMsbHyDseHgNuKh2nZFxA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1DC0FFEC;
+	Mon,  4 Nov 2024 03:36:03 -0800 (PST)
+Received: from [10.57.88.110] (unknown [10.57.88.110])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B01A03F66E;
+	Mon,  4 Nov 2024 03:35:31 -0800 (PST)
+Message-ID: <8c2b95e0-ff3b-4b9b-b9de-76df933ffd88@arm.com>
+Date: Mon, 4 Nov 2024 11:35:29 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241103-rework-qseecom-v1-0-1d75d4eedc1e@linaro.org>
- <20241103-rework-qseecom-v1-2-1d75d4eedc1e@linaro.org> <02171841-acd3-4f26-987d-1376caf11481@oss.qualcomm.com>
-In-Reply-To: <02171841-acd3-4f26-987d-1376caf11481@oss.qualcomm.com>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Mon, 4 Nov 2024 11:34:57 +0000
-Message-ID: <CAA8EJpqwY+kuOV1xu4vw8pC5AFhpK+J7P9mnyLeHfaf=CJkRMw@mail.gmail.com>
-Subject: Re: [PATCH 2/2] firmware: qcom: scm: rework QSEECOM allowlist
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] kmemleak: iommu/iova: Fix transient kmemleak false
+ positive
+To: Catalin Marinas <catalin.marinas@arm.com>, iommu@lists.linux.dev,
+ linux-mm@kvack.org
+Cc: linux-kernel@vger.kernel.org, Ido Schimmel <idosch@idosch.org>,
+ Ido Schimmel <idosch@nvidia.com>, Joerg Roedel <joro@8bytes.org>,
+ Will Deacon <will@kernel.org>, Andrew Morton <akpm@linux-foundation.org>
+References: <20241104111944.2207155-1-catalin.marinas@arm.com>
+From: Robin Murphy <robin.murphy@arm.com>
+Content-Language: en-GB
+In-Reply-To: <20241104111944.2207155-1-catalin.marinas@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, 4 Nov 2024 at 11:24, Konrad Dybcio
-<konrad.dybcio@oss.qualcomm.com> wrote:
->
-> On 3.11.2024 4:37 PM, Dmitry Baryshkov wrote:
-> > Listing individual machines in qcom_scm_qseecom_allowlist doesn't scale.
-> > Allow it to function as allow and disallow list at the same time by the
-> > means of the match->data and list the SoC families instead of devices.
-> >
-> > In case a particular device has buggy or incompatible firmware user
-> > still can disable QSEECOM by specifying qcom_scm.qseecom=off kernel
-> > param and (in the longer term) adding machine-specific entry to the
-> > qcom_scm_qseecom_allowlist table.
-> >
-> > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> > ---
-> >  drivers/firmware/qcom/qcom_scm.c | 37 ++++++++++++++++++++-----------------
-> >  1 file changed, 20 insertions(+), 17 deletions(-)
-> >
-> > diff --git a/drivers/firmware/qcom/qcom_scm.c b/drivers/firmware/qcom/qcom_scm.c
-> > index 9fed03d0a4b7e5709edf2db9a58b5326301008b4..6f70fbb0ddfbf88542ff2b3ed2bc372c2f3ce9eb 100644
-> > --- a/drivers/firmware/qcom/qcom_scm.c
-> > +++ b/drivers/firmware/qcom/qcom_scm.c
-> > @@ -1743,28 +1743,23 @@ module_param(qseecom, charp, 0);
-> >
-> >  /*
-> >   * We do not yet support re-entrant calls via the qseecom interface. To prevent
-> > - * any potential issues with this, only allow validated machines for now. Users
-> > + * any potential issues with this, only allow validated platforms for now. Users
-> >   * still can manually enable or disable it via the qcom_scm.qseecom modparam.
-> > + *
-> > + * To disable QSEECOM for a particular machine, add compatible entry and set
->                                                        ^ a
->
-> > + * data to (void *)false.
-> >   */
-> >  static const struct of_device_id qcom_scm_qseecom_allowlist[] __maybe_unused = {
-> > -     { .compatible = "dell,xps13-9345" },
-> > -     { .compatible = "lenovo,flex-5g" },
-> > -     { .compatible = "lenovo,thinkpad-t14s" },
-> > -     { .compatible = "lenovo,thinkpad-x13s", },
-> > -     { .compatible = "lenovo,yoga-slim7x" },
-> > -     { .compatible = "microsoft,arcata", },
-> > -     { .compatible = "microsoft,romulus13", },
-> > -     { .compatible = "microsoft,romulus15", },
-> > -     { .compatible = "qcom,sc8180x-primus" },
-> > -     { .compatible = "qcom,x1e80100-crd" },
-> > -     { .compatible = "qcom,x1e80100-qcp" },
-> > +     { .compatible = "qcom,sc8180x", .data = (void *)true },
-> > +     { .compatible = "qcom,sc8280xp", .data = (void *)true },
-> > +     { .compatible = "qcom,x1e80100", .data = (void *)true },
-> >       { }
-> >  };
->
-> + Steev I think you had some unhappy machine
->
-> And maybe 8180 Primus?
+On 2024-11-04 11:19 am, Catalin Marinas wrote:
+> The introduction of iova_depot_pop() in 911aa1245da8 ("iommu/iova: Make
+> the rcache depot scale better") confused kmemleak by moving a struct
+> iova_magazine object from a singly linked list to rcache->depot and
+> resetting the 'next' pointer referencing it. Unlike doubly linked lists,
+> the content of the object being referred is never changed on removal
+> from a singly linked list and the kmemleak checksum heuristics do not
+> detect such scenario. This leads to false positives like:
+> 
+> unreferenced object 0xffff8881a5301000 (size 1024):
+>    comm "softirq", pid 0, jiffies 4306297099 (age 462.991s)
+>    hex dump (first 32 bytes):
+>      00 00 00 00 00 00 00 00 e7 7d 05 00 00 00 00 00  .........}......
+>      0f b4 05 00 00 00 00 00 b4 96 05 00 00 00 00 00  ................
+>    backtrace:
+>      [<ffffffff819f5f08>] __kmem_cache_alloc_node+0x1e8/0x320
+>      [<ffffffff818a239a>] kmalloc_trace+0x2a/0x60
+>      [<ffffffff8231d31e>] free_iova_fast+0x28e/0x4e0
+>      [<ffffffff82310860>] fq_ring_free_locked+0x1b0/0x310
+>      [<ffffffff8231225d>] fq_flush_timeout+0x19d/0x2e0
+>      [<ffffffff813e95ba>] call_timer_fn+0x19a/0x5c0
+>      [<ffffffff813ea16b>] __run_timers+0x78b/0xb80
+>      [<ffffffff813ea5bd>] run_timer_softirq+0x5d/0xd0
+>      [<ffffffff82f1d915>] __do_softirq+0x205/0x8b5
+> 
+> Introduce kmemleak_transient_leak() which resets the object checksum
+> requiring another scan pass before it is reported (if still
+> unreferenced). Call this new API in iova_depot_pop().
 
-I don't think I understand this comment, could you please explain?
+Acked-by: Robin Murphy <robin.murphy@arm.com>
 
--- 
-With best wishes
-Dmitry
+> Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
+> Reported-by: Ido Schimmel <idosch@idosch.org>
+> Tested-by: Ido Schimmel <idosch@nvidia.com>
+> Cc: Robin Murphy <robin.murphy@arm.com>
+> Cc: Joerg Roedel <joro@8bytes.org>
+> Cc: Will Deacon <will@kernel.org>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Link: https://lore.kernel.org/r/ZY1osaGLyT-sdKE8@shredder/
+> ---
+> 
+> This could be two patches but I thought the rationale for a new kmemleak
+> API goes better with its use in the iova code. Happy to move the 6 lines
+> iova change to a separate patch but they should still go in together.
+> Given that there are more line under mm/, I'd say it better goes in via
+> the mm tree with the relevant acks from the iommu folk.
+> 
+> Thanks.
+> 
+>   Documentation/dev-tools/kmemleak.rst |  1 +
+>   drivers/iommu/iova.c                 |  6 +++++
+>   include/linux/kmemleak.h             |  4 +++
+>   mm/kmemleak.c                        | 39 ++++++++++++++++++++++++++++
+>   4 files changed, 50 insertions(+)
+> 
+> diff --git a/Documentation/dev-tools/kmemleak.rst b/Documentation/dev-tools/kmemleak.rst
+> index 2cb00b53339f..7d784e03f3f9 100644
+> --- a/Documentation/dev-tools/kmemleak.rst
+> +++ b/Documentation/dev-tools/kmemleak.rst
+> @@ -161,6 +161,7 @@ See the include/linux/kmemleak.h header for the functions prototype.
+>   - ``kmemleak_free_percpu``	 - notify of a percpu memory block freeing
+>   - ``kmemleak_update_trace``	 - update object allocation stack trace
+>   - ``kmemleak_not_leak``	 - mark an object as not a leak
+> +- ``kmemleak_transient_leak``	 - mark an object as a transient leak
+>   - ``kmemleak_ignore``		 - do not scan or report an object as leak
+>   - ``kmemleak_scan_area``	 - add scan areas inside a memory block
+>   - ``kmemleak_no_scan``	 - do not scan a memory block
+> diff --git a/drivers/iommu/iova.c b/drivers/iommu/iova.c
+> index 16c6adff3eb7..5b5400efb657 100644
+> --- a/drivers/iommu/iova.c
+> +++ b/drivers/iommu/iova.c
+> @@ -6,6 +6,7 @@
+>    */
+>   
+>   #include <linux/iova.h>
+> +#include <linux/kmemleak.h>
+>   #include <linux/module.h>
+>   #include <linux/slab.h>
+>   #include <linux/smp.h>
+> @@ -673,6 +674,11 @@ static struct iova_magazine *iova_depot_pop(struct iova_rcache *rcache)
+>   {
+>   	struct iova_magazine *mag = rcache->depot;
+>   
+> +	/*
+> +	 * As the mag->next pointer is moved to rcache->depot and reset via
+> +	 * the mag->size assignment, mark it as a transient false positive.
+> +	 */
+> +	kmemleak_transient_leak(mag->next);
+>   	rcache->depot = mag->next;
+>   	mag->size = IOVA_MAG_SIZE;
+>   	rcache->depot_size--;
+> diff --git a/include/linux/kmemleak.h b/include/linux/kmemleak.h
+> index 6a3cd1bf4680..93a73c076d16 100644
+> --- a/include/linux/kmemleak.h
+> +++ b/include/linux/kmemleak.h
+> @@ -26,6 +26,7 @@ extern void kmemleak_free_part(const void *ptr, size_t size) __ref;
+>   extern void kmemleak_free_percpu(const void __percpu *ptr) __ref;
+>   extern void kmemleak_update_trace(const void *ptr) __ref;
+>   extern void kmemleak_not_leak(const void *ptr) __ref;
+> +extern void kmemleak_transient_leak(const void *ptr) __ref;
+>   extern void kmemleak_ignore(const void *ptr) __ref;
+>   extern void kmemleak_scan_area(const void *ptr, size_t size, gfp_t gfp) __ref;
+>   extern void kmemleak_no_scan(const void *ptr) __ref;
+> @@ -93,6 +94,9 @@ static inline void kmemleak_update_trace(const void *ptr)
+>   static inline void kmemleak_not_leak(const void *ptr)
+>   {
+>   }
+> +static inline void kmemleak_transient_leak(const void *ptr)
+> +{
+> +}
+>   static inline void kmemleak_ignore(const void *ptr)
+>   {
+>   }
+> diff --git a/mm/kmemleak.c b/mm/kmemleak.c
+> index 0400f5e8ac60..72e09ac9140b 100644
+> --- a/mm/kmemleak.c
+> +++ b/mm/kmemleak.c
+> @@ -934,6 +934,28 @@ static void make_black_object(unsigned long ptr, unsigned int objflags)
+>   	paint_ptr(ptr, KMEMLEAK_BLACK, objflags);
+>   }
+>   
+> +/*
+> + * Reset the checksum of an object. The immediate effect is that it will not
+> + * be reported as a leak during the next scan until its checksum is updated.
+> + */
+> +static void reset_checksum(unsigned long ptr)
+> +{
+> +	unsigned long flags;
+> +	struct kmemleak_object *object;
+> +
+> +	object = find_and_get_object(ptr, 0);
+> +	if (!object) {
+> +		kmemleak_warn("Not resetting the checksum of an unknown object at 0x%08lx\n",
+> +			      ptr);
+> +		return;
+> +	}
+> +
+> +	raw_spin_lock_irqsave(&object->lock, flags);
+> +	object->checksum = 0;
+> +	raw_spin_unlock_irqrestore(&object->lock, flags);
+> +	put_object(object);
+> +}
+> +
+>   /*
+>    * Add a scanning area to the object. If at least one such area is added,
+>    * kmemleak will only scan these ranges rather than the whole memory block.
+> @@ -1202,6 +1224,23 @@ void __ref kmemleak_not_leak(const void *ptr)
+>   }
+>   EXPORT_SYMBOL(kmemleak_not_leak);
+>   
+> +/**
+> + * kmemleak_transient_leak - mark an allocated object as transient false positive
+> + * @ptr:	pointer to beginning of the object
+> + *
+> + * Calling this function on an object will cause the memory block to not be
+> + * reported as a leak temporarily. This may happen, for example, if the object
+> + * is part of a singly linked list and the ->next reference to it is changed.
+> + */
+> +void __ref kmemleak_transient_leak(const void *ptr)
+> +{
+> +	pr_debug("%s(0x%px)\n", __func__, ptr);
+> +
+> +	if (kmemleak_enabled && ptr && !IS_ERR(ptr))
+> +		reset_checksum((unsigned long)ptr);
+> +}
+> +EXPORT_SYMBOL(kmemleak_transient_leak);
+> +
+>   /**
+>    * kmemleak_ignore - ignore an allocated object
+>    * @ptr:	pointer to beginning of the object
+
 
