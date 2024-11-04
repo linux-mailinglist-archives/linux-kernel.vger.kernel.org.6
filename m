@@ -1,120 +1,131 @@
-Return-Path: <linux-kernel+bounces-395277-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395278-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CE319BBB34
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 18:12:32 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 887449BBB38
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 18:12:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E0F71C20D15
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 17:12:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4718B2817E7
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 17:12:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4B341C4A0A;
-	Mon,  4 Nov 2024 17:12:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 563201C4A01;
+	Mon,  4 Nov 2024 17:12:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="iX2q3kly"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="hz7n0cAM"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D2D81BC063;
-	Mon,  4 Nov 2024 17:12:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 149721C07DA
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 17:12:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730740343; cv=none; b=N9gIxrcL1Gpk8rjkC+SJnmnQN3rDxUwZVxYwytbzIBii0ri6GEz+y5TOQ3bBzwzeP4hGcrsFjxUcnFTXBgAXp3jFmRTcHZunbKugzW3Yp8xc4FL8Q/6wg9v12Uhqhy5Iu/7CwgNaxTHGk2ZgVmST315Mkur7vBSXwDOKo7tRiXM=
+	t=1730740371; cv=none; b=nKGIhxQ3A1K+5U3MTsb6nmtdQ3XT+1lJSYYnt6yvNi79SOu42gi4iYHC38MuLswj8xCS58oiR4jXECuSDPluU8ncEE+obf2Y7cCdRx7SepnUo12tcngU7nOJ59oIQ3+F0NIbjpi/22jqO2wnjkcDZmu/MubbnF6yP5lgCNUoOns=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730740343; c=relaxed/simple;
-	bh=hlW3nIWVL5Db3nxpqovS/7E3UEXnG0/pFjbnueckOcY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=MXQ9OforHKDeVArRxSvll9epuEiwAGBE1Zi+SCwY7RswG12sFxuAHej13DP4HugBSBrSYRHZLct4SCedfuNY27dTyUdOCx/kitDGoAayUftADEIMV71aiP5qAOmAqXlgPZypZJekCRIFRzlMGfu0sURN68JmdKw03D5NMQXbFL8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=iX2q3kly; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A4BjYx4026443;
-	Mon, 4 Nov 2024 17:12:12 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	BeCnEGykaYEk4EgJ7ihgNRfZLqbRJA/d8HCeWrka304=; b=iX2q3kly++kBOFC7
-	Rwdlsb5OD/MZVjWQtKmUncEAamlRvKnAMLtcgP2xrLRpRCLxTkIo2WwSGapb+aON
-	t27rL2J2f4VTQmQ0EL60dN2GShRGYUpuenAnhtaLvtX7ItmP6giNNNdzZVOksHUn
-	MZshh057akq54CeXWDjKOMbdKae9RQMuLyrdFK+J7Y5doG/F9XDMBFGKCUAhYrZl
-	gZSneNADOLIRH6MVKD0ozc7B3jGJ/1mvhMPV/oUaLYSpy9oGbwdaLf64A4vR6ARE
-	NlvreKcHCv0bnUhW3x5spO6UBwYEa3plO0kerWfeju7j/myVh1M3xFhmPXXt1Gtf
-	N+Brxg==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42nd1fmyra-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 04 Nov 2024 17:12:12 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4A4HCBSY009671
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 4 Nov 2024 17:12:11 GMT
-Received: from [10.48.242.250] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 4 Nov 2024
- 09:12:10 -0800
-Message-ID: <0bc2e4b0-4dad-4341-a41e-a98fbc4b1658@quicinc.com>
-Date: Mon, 4 Nov 2024 09:12:09 -0800
+	s=arc-20240116; t=1730740371; c=relaxed/simple;
+	bh=2yDeCwWeanhRfjDcg3QZSEc/Uy0EkHEvsV/TrF/rvl4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=O42Xne+JZqyhHzTq4KZgyaZ56C44d2i07oZZy4I/LQa2hYpkWPV/EQKozN6dL6PbDq63CMiJTV4AfYOJhedzD/kq7OUUJYKLOuXpdu66rgLrqXLeJry8IiLKvibyqQDEfKimZKLZqmDVeArsDYa9AZBGpb51hpb0iBE4wMj1Sxg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=hz7n0cAM; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-539e13375d3so4575841e87.3
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 09:12:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1730740368; x=1731345168; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2yDeCwWeanhRfjDcg3QZSEc/Uy0EkHEvsV/TrF/rvl4=;
+        b=hz7n0cAMJzvaCd5LAUAMmtMAoJFN6Qwse0QIK++5Rcuv/RVLV2QqyIKi/bnn/i2tWp
+         LuHqf4BY9CHJYIhnIKacRIBcDTpV4mu6Gs6euajF7OEVnpUEWaGSfBXZSMbrIdABsw/W
+         vW0PyKsCtuwzp46wuAmhWklMGghFc5h4cNwxM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730740368; x=1731345168;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2yDeCwWeanhRfjDcg3QZSEc/Uy0EkHEvsV/TrF/rvl4=;
+        b=W9YqxSyHc84iBsuWGkSoEMM154X/dAzxgnByO7bHcgNyCgSSi7/Aw6ciZcYDSYtWsc
+         Ldm1sDz4PqFtsEUPMo7b/HJ+/eNAa34ObV4wMPtDEkb+4reixgAB6UmFVKceCh2JYDAI
+         ddi4Rnb90lGmBJzU16wHuqBYa4/hJZimc6f4XssMTv0ZILzJU7hAlSRFk9qZd01X/fxq
+         SKg2V2hKzJz99WNDza5m1ffSaVT737RszM1mpCL3DXkqUHPtC8+vFWcoSWLjU2pU2EGR
+         BPK1Q2UgrtVn32scG2sthHeB4x4Fp3O9/1tP9vkBa9TORW0jhb+PhcnGqGQfJOwK+23N
+         TiCg==
+X-Forwarded-Encrypted: i=1; AJvYcCWp+sGzTbY/l4x2d7V5NUXxy8XDmgMTKj/Yi6QU1X8U7P9fAydxOyq3Mx0Tx70pdaaYogo1ISj+1Z/AM54=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxocSPixzt/MSmI8LlmthFVJeIbHAYQlKDt6KjLMdko1oEH4Vw0
+	gdhHOPJTfJeHb08gvUVg2HRGb3sBVIkx0ALsjsANqkp/eaORGWDMbp/28WByjDb5JovOzKe7pIm
+	c51+vKliDLgTwwRBjZxyerjw2uHsFcYyIfEHC
+X-Google-Smtp-Source: AGHT+IEjX0KYihsg5M12Yt94xgwDXRaw8vbt/BnR8UnvYMxv/mjOptO88w2Qrs4232astMC3NZm9KHekpOYU9jnJJKs=
+X-Received: by 2002:a05:6512:239a:b0:533:4b70:8722 with SMTP id
+ 2adb3069b0e04-53c79e2fa52mr7351705e87.15.1730740368184; Mon, 04 Nov 2024
+ 09:12:48 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] wifi: nl80211: fix bounds checker error in
- nl80211_parse_sched_scan
-To: Aleksei Vetrov <vvvvvv@google.com>,
-        Johannes Berg
-	<johannes@sipsolutions.net>,
-        Kees Cook <kees@kernel.org>,
-        "Gustavo A. R.
- Silva" <gustavoars@kernel.org>,
-        Dmitry Antipov <dmantipov@yandex.ru>
-CC: <linux-wireless@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-hardening@vger.kernel.org>, <stable@vger.kernel.org>
-References: <20241029-nl80211_parse_sched_scan-bounds-checker-fix-v2-1-c804b787341f@google.com>
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Content-Language: en-US
-In-Reply-To: <20241029-nl80211_parse_sched_scan-bounds-checker-fix-v2-1-c804b787341f@google.com>
+References: <20241031092504.840708-1-dualli@chromium.org> <20241031092504.840708-3-dualli@chromium.org>
+ <20241103151554.5fc79ce1@kernel.org> <CANBPYPj4VCYuhOTxPSHBGNtpRyG5wRzuMxRB49eSDXXjrxb7TA@mail.gmail.com>
+ <20241104081928.7e383c93@kernel.org>
+In-Reply-To: <20241104081928.7e383c93@kernel.org>
+From: Li Li <dualli@chromium.org>
+Date: Mon, 4 Nov 2024 09:12:37 -0800
+Message-ID: <CANBPYPjo0KKm3JbPk=E8Nuv05i=EeR93PHWjSU8fcH-GVWV94w@mail.gmail.com>
+Subject: Re: [PATCH net-next v7 2/2] binder: report txn errors via generic netlink
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: dualli@google.com, corbet@lwn.net, davem@davemloft.net, 
+	edumazet@google.com, pabeni@redhat.com, donald.hunter@gmail.com, 
+	gregkh@linuxfoundation.org, arve@android.com, tkjos@android.com, 
+	maco@android.com, joel@joelfernandes.org, brauner@kernel.org, 
+	cmllamas@google.com, surenb@google.com, arnd@arndb.de, masahiroy@kernel.org, 
+	bagasdotme@gmail.com, horms@kernel.org, linux-kernel@vger.kernel.org, 
+	linux-doc@vger.kernel.org, netdev@vger.kernel.org, hridya@google.com, 
+	smoreland@google.com, kernel-team@android.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: rDFkmgpesmK2zhLKJ52g5uHr2cbaeixx
-X-Proofpoint-ORIG-GUID: rDFkmgpesmK2zhLKJ52g5uHr2cbaeixx
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 adultscore=0
- impostorscore=0 bulkscore=0 mlxlogscore=565 spamscore=0 phishscore=0
- malwarescore=0 mlxscore=0 clxscore=1015 lowpriorityscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411040143
+Content-Transfer-Encoding: quoted-printable
 
-On 10/29/2024 6:22 AM, Aleksei Vetrov wrote:
-> The channels array in the cfg80211_scan_request has a __counted_by
-> attribute attached to it, which points to the n_channels variable. This
-> attribute is used in bounds checking, and if it is not set before the
-> array is filled, then the bounds sanitizer will issue a warning or a
-> kernel panic if CONFIG_UBSAN_TRAP is set.
-> 
-> This patch sets the size of allocated memory as the initial value for
-> n_channels. It is updated with the actual number of added elements after
-> the array is filled.
-> 
-> Fixes: aa4ec06c455d ("wifi: cfg80211: use __counted_by where appropriate")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Aleksei Vetrov <vvvvvv@google.com>
-Reviewed-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+On Mon, Nov 4, 2024 at 8:19=E2=80=AFAM Jakub Kicinski <kuba@kernel.org> wro=
+te:
+>
+> On Sun, 3 Nov 2024 22:25:44 -0800 Li Li wrote:
+> > > You're trying to register multiple families with different names?
+> > > The family defines the language / protocol. If you have multiple
+> > > entities to multiplex you should do that based on attributes inside
+> > > the messages.
+> >
+> > My initial plan was to use a single "binder" family, which was more
+> > straightforward and cleaner. As Android uses multiple binder contexts
+> > to isolate system framework and vendor domains[1], Grek KH suggested
+> > the netlink messages from different binder contexts should also be
+> > isolated for security reason[2]. Personally I'm fine with either
+> > approach. Please kindly advice which implementation is better.
+> >
+> > And I'll fix other issues you mentioned above.
+>
+> Greg is obviously right, but using different family names will not help
+> you in any way. There is no action of "opening" a socket for a generic
+> netlink family, one generic netlink socket can talk to all families.
+> The only built in checking netlink provides is that you can declare
+> an operation as requiring admin privileges, or network capability
+> (namespaced or global).
+>
+> Unless those are good enough for you - I think you should do all
+> the security isolation within your code, manually.
 
-And it is exactly this kind of issue why I'm not accepting any __counted_by()
-changes in ath.git without actually testing the code that is modified.
+That's why binder genl uses unicast instead of multicast. The administratio=
+n
+process of the OS (Android in this case) always runs before any other user
+applications, which registers itself to the kernel binder driver and uses i=
+t
+exclusively. With a unified family name, the same userspace admin process
+has access to all binder contexts. With separate family names, each domain
+admin process can register itself to the corresponding binder context.
 
-/jeff
-
+So, do you think the current implementation of registering multiple familie=
+s
+with different names acceptable? Or is there a better way to do it? Thank
+you very much!
 
