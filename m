@@ -1,64 +1,66 @@
-Return-Path: <linux-kernel+bounces-394952-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394948-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4E109BB66E
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 14:39:20 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1DA89BB662
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 14:38:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E8FC81C21F62
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 13:39:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B1512280FC1
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 13:38:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D7101531D8;
-	Mon,  4 Nov 2024 13:38:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C29F762EB;
+	Mon,  4 Nov 2024 13:38:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="NopvYOf4"
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="tI+JlqZ3"
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D8A913AD06;
-	Mon,  4 Nov 2024 13:38:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37FC84C62E;
+	Mon,  4 Nov 2024 13:38:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730727505; cv=none; b=vDi7IVi88dSHyxrs4YNW1C3+AfK7CI7V4jsITUy6IH3OrS9A0Y/s4hnztRVu6LnRel6LveFyUiyr9li6OSGBXAvje6joXqBfIiieI4EsJwSksJbV1fgfEo+YFPMqjftp75lPKXAWftBoNAancENC7lW9YnqG3oniK73J4tu18u0=
+	t=1730727498; cv=none; b=m/zpUic/21LaUb78WuzghiiKJSWNp1uIwqRI/uDMVI91T2Nvxc3QIR5xukNfiofcXNHsHV3jviqyltYaxjyhHF26O3rIv2qt0W6yVRoe/qle8w3CHLI0ella2TefPt1/7t5G1NOqdftiIm+wXH9TLI1Gu7jvaRpO7sVsoE6Zrd0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730727505; c=relaxed/simple;
-	bh=nb50FcRXGbkHVWHED55Ne7lUWE97SSW6moxTOdvw9ac=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=aQSK+HuM2fRc0mIvOUUVp4naUTOxmlpf+X34tJOEEQ9vw0iSE+/bkORHZfOWZIs6eNo3H0dYVuuFgciWNDeZSPdG0QKbwQVlT56nrSwm6BLk/j4OWv7kaj+OQvidyqOnAAxKRLIz1NemN8qMb4mO6KWoAu7JBfEGQOxATd5dDlc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=NopvYOf4; arc=none smtp.client-ip=185.132.182.106
+	s=arc-20240116; t=1730727498; c=relaxed/simple;
+	bh=DOMHloKF4UN4qlkttRPn0qxlabsJq5KTXbS9OAb2WUc=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=JPy7IAgA7F85yLJYA00GNSPJO/SOaG6v1+Gl4fdT4i9NE5bRsA02JSskDwNbq84H7Chqvq62bSaPIed9WwuELd852g43o1KItZjkO/495sGshMSf2FIIerObeErqe0oa59IarO+GzAuUZ5dW11KmU2BsKqSDiYYWm0pE91wBGPc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=tI+JlqZ3; arc=none smtp.client-ip=91.207.212.93
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A4AfqkT029108;
-	Mon, 4 Nov 2024 14:37:59 +0100
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A4B02Dk001094;
+	Mon, 4 Nov 2024 14:37:53 +0100
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=selector1; bh=RCD3Q2YdIVAxPFAAJwbPXm
-	d28Y6JXATrIQ5pwcB4yzU=; b=NopvYOf4lkojTI3Qekra4C84gk8Rcys1krOXjm
-	Bl4QON9GLkit10ECuSbTfq7cdRAof3R4RUrOERfn4vXAjrkxI+hAZNgnkez5dGhS
-	DEuL+TaVa812Jh514d4pD5egZJDknW26a5KFf90DzUswy4nlx1Z/K777bekLsx4C
-	fFbFYxgT8sL1L+J4eAzMHbCKeVoQvp7T1BWZquskTaqfvIV2uJA3krGJf18ZvgKU
-	LllcjYLhCT0cZMALWZ07xsglpjp0uVUdRT4ntr+nlSp30adz4pQBPBDu3YdGTB6D
-	Sxk//PSwCPIJwCirgnVEze1tuzQeUJjMusGvhqoRCFkRGh+g==
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	GC977nshZkMWBVY/wKvcQDvyN5arEAKIKgjZHxchAjQ=; b=tI+JlqZ3R7Lpvn+d
+	ggNSvmsYWIGygwLRUFLaWCG7SW/rRAhDGi8/iEmxy40qI58Ms23/IxXT8fxZRS8t
+	OzKoSJMuzb4V9YPjSPBRYgr7xc5kXRz9micoyScP6v3gyaawazy1Q4j8A5ZNiXuv
+	n0sGjds0Gfi+dMWlj5nQZ5+xLRrFTaZSXlYTX5SQFN0S5mGkEGOwSG4CMTg9c/qs
+	kt4B1/XsSrKGekH2cQPszTG6VSWG03I8xAFf01BKIPunzsWmVd8H5b80e1IUQ9AQ
+	OaX9Wpefpa14RzlRCfMOWAFYZbCvkaSsNtOpHs/nFbXm/UysR+amJnYAe7Igtdp4
+	KW5A8Q==
 Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 42nd0578u3-1
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 42ncyyxxru-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 04 Nov 2024 14:37:59 +0100 (CET)
+	Mon, 04 Nov 2024 14:37:53 +0100 (CET)
 Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id B6F0B40045;
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id B6D8840044;
 	Mon,  4 Nov 2024 14:36:48 +0100 (CET)
-Received: from Webmail-eu.st.com (eqndag1node4.st.com [10.75.129.133])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id E67CD28A180;
-	Mon,  4 Nov 2024 14:35:53 +0100 (CET)
-Received: from SAFDAG1NODE1.st.com (10.75.90.17) by EQNDAG1NODE4.st.com
- (10.75.129.133) with Microsoft SMTP Server (version=TLS1_2,
+Received: from Webmail-eu.st.com (eqndag1node6.st.com [10.75.129.135])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 9A12C28A87F;
+	Mon,  4 Nov 2024 14:35:54 +0100 (CET)
+Received: from SAFDAG1NODE1.st.com (10.75.90.17) by EQNDAG1NODE6.st.com
+ (10.75.129.135) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Mon, 4 Nov
- 2024 14:35:53 +0100
+ 2024 14:35:54 +0100
 Received: from localhost (10.48.86.121) by SAFDAG1NODE1.st.com (10.75.90.17)
  with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Mon, 4 Nov
- 2024 14:35:53 +0100
+ 2024 14:35:54 +0100
 From: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
 To: Bjorn Andersson <andersson@kernel.org>,
         Mathieu Poirier
@@ -73,10 +75,12 @@ CC: <linux-stm32@st-md-mailman.stormreply.com>,
         <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <op-tee@lists.trustedfirmware.org>, <devicetree@vger.kernel.org>,
         Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-Subject: [PATCH v13 0/7] Introduction of a remoteproc tee to load signed firmware
-Date: Mon, 4 Nov 2024 14:35:08 +0100
-Message-ID: <20241104133515.256497-1-arnaud.pouliquen@foss.st.com>
+Subject: [PATCH v13 1/7] remoteproc: core: Introduce rproc_pa_to_va helper
+Date: Mon, 4 Nov 2024 14:35:09 +0100
+Message-ID: <20241104133515.256497-2-arnaud.pouliquen@foss.st.com>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20241104133515.256497-1-arnaud.pouliquen@foss.st.com>
+References: <20241104133515.256497-1-arnaud.pouliquen@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,95 +95,87 @@ X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
  definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
 
-Main updates from version V12[1]:
-Fix warning build by fixing the inline declaration in
-remoteproc_tee.h (when CONFIG_REMOTEPROC_TEE is not set).
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202410262040.PWNrKv2Q-lkp@intel.com/
+When a resource table is loaded by an external entity such as U-boot or
+OP-TEE, we do not necessarily get the device address(da) but the physical
+address(pa).
+This helper performs similar translation than the rproc_da_to_va()
+but based on a physical address.
 
-Main updates from version V11[2]:
-- rename structures, functions, and variables from "tee_rproc_xxx" to
-  "rproc_tee_xxx",
-- update rproc_tee_register to return an error instead of
-  "struct rproc_tee *" pointer
-  
-[1] https://lore.kernel.org/lkml/20241025205924.2087768-1-arnaud.pouliquen@foss.st.com/
-[2] https://lore.kernel.org/lkml/ZxZ4cBilIlpf3IPw@p14s/T/
+Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+---
+ drivers/remoteproc/remoteproc_core.c | 46 ++++++++++++++++++++++++++++
+ include/linux/remoteproc.h           |  1 +
+ 2 files changed, 47 insertions(+)
 
-Tested-on: commit 42f7652d3eb5 ("Linux 6.12-rc4")
-Description of the feature:
---------------------------
-This series proposes the implementation of a remoteproc tee driver to
-communicate with a TEE trusted application responsible for authenticating
-and loading the remoteproc firmware image in an Arm secure context.
-
-1) Principle:
-
-The remoteproc tee driver provides services to communicate with the OP-TEE
-trusted application running on the Trusted Execution Context (TEE).
-The trusted application in TEE manages the remote processor lifecycle:
-
-- authenticating and loading firmware images,
-- isolating and securing the remote processor memories,
-- supporting multi-firmware (e.g., TF-M + Zephyr on a Cortex-M33),
-- managing the start and stop of the firmware by the TEE.
-
-2) Format of the signed image:
-
-Refer to:
-https://github.com/OP-TEE/optee_os/blob/master/ta/remoteproc/src/remoteproc_core.c#L18-L57
-
-3) OP-TEE trusted application API:
-
-Refer to:
-https://github.com/OP-TEE/optee_os/blob/master/ta/remoteproc/include/ta_remoteproc.h
-
-4) OP-TEE signature script
-
-Refer to:
-https://github.com/OP-TEE/optee_os/blob/master/scripts/sign_rproc_fw.py
-
-Example of usage:
-sign_rproc_fw.py --in <fw1.elf> --in <fw2.elf> --out <signed_fw.sign> --key ${OP-TEE_PATH}/keys/default.pem
-
-
-5) Impact on User space Application
-
-No sysfs impact. The user only needs to provide the signed firmware image
-instead of the ELF image.
-
-
-For more information about the implementation, a presentation is available here
-(note that the format of the signed image has evolved between the presentation
-and the integration in OP-TEE).
-
-https://resources.linaro.org/en/resource/6c5bGvZwUAjX56fvxthxds
-
-Arnaud Pouliquen (7):
-  remoteproc: core: Introduce rproc_pa_to_va helper
-  remoteproc: Add TEE support
-  remoteproc: core: Refactor resource table cleanup into
-    rproc_release_fw
-  remoteproc: Introduce release_fw optional operation
-  dt-bindings: remoteproc: Add compatibility for TEE support
-  remoteproc: stm32: Create sub-functions to request shutdown and
-    release
-  remoteproc: stm32: Add support of an OP-TEE TA to load the firmware
-
- .../bindings/remoteproc/st,stm32-rproc.yaml   |  58 +-
- drivers/remoteproc/Kconfig                    |  10 +
- drivers/remoteproc/Makefile                   |   1 +
- drivers/remoteproc/remoteproc_core.c          |  72 ++-
- drivers/remoteproc/remoteproc_tee.c           | 510 ++++++++++++++++++
- drivers/remoteproc/stm32_rproc.c              | 139 +++--
- include/linux/remoteproc.h                    |   8 +
- include/linux/remoteproc_tee.h                | 105 ++++
- 8 files changed, 848 insertions(+), 55 deletions(-)
- create mode 100644 drivers/remoteproc/remoteproc_tee.c
- create mode 100644 include/linux/remoteproc_tee.h
-
-
-base-commit: 42f7652d3eb527d03665b09edac47f85fb600924
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index f276956f2c5c..ace11ea17097 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -230,6 +230,52 @@ void *rproc_da_to_va(struct rproc *rproc, u64 da, size_t len, bool *is_iomem)
+ }
+ EXPORT_SYMBOL(rproc_da_to_va);
+ 
++/**
++ * rproc_pa_to_va() - lookup the kernel virtual address for a physical address of a remoteproc
++ * memory
++ *
++ * @rproc: handle of a remote processor
++ * @pa: remoteproc physical address
++ * @len: length of the memory region @pa is pointing to
++ * @is_iomem: optional pointer filled in to indicate if @da is iomapped memory
++ *
++ * This function is a helper function similar to rproc_da_to_va() but it deals with physical
++ * addresses instead of device addresses.
++ *
++ * Return: a valid kernel address on success or NULL on failure
++ */
++void *rproc_pa_to_va(struct rproc *rproc, phys_addr_t pa, size_t len, bool *is_iomem)
++{
++	struct rproc_mem_entry *carveout;
++	void *ptr = NULL;
++
++	list_for_each_entry(carveout, &rproc->carveouts, node) {
++		int offset = pa - carveout->dma;
++
++		/*  Verify that carveout is allocated */
++		if (!carveout->va)
++			continue;
++
++		/* try next carveout if da is too small */
++		if (offset < 0)
++			continue;
++
++		/* try next carveout if da is too large */
++		if (offset + len > carveout->len)
++			continue;
++
++		ptr = carveout->va + offset;
++
++		if (is_iomem)
++			*is_iomem = carveout->is_iomem;
++
++		break;
++	}
++
++	return ptr;
++}
++EXPORT_SYMBOL(rproc_pa_to_va);
++
+ /**
+  * rproc_find_carveout_by_name() - lookup the carveout region by a name
+  * @rproc: handle of a remote processor
+diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+index b4795698d8c2..8fd0d7f63c8e 100644
+--- a/include/linux/remoteproc.h
++++ b/include/linux/remoteproc.h
+@@ -690,6 +690,7 @@ int rproc_detach(struct rproc *rproc);
+ int rproc_set_firmware(struct rproc *rproc, const char *fw_name);
+ void rproc_report_crash(struct rproc *rproc, enum rproc_crash_type type);
+ void *rproc_da_to_va(struct rproc *rproc, u64 da, size_t len, bool *is_iomem);
++void *rproc_pa_to_va(struct rproc *rproc, phys_addr_t pa, size_t len, bool *is_iomem);
+ 
+ /* from remoteproc_coredump.c */
+ void rproc_coredump_cleanup(struct rproc *rproc);
 -- 
 2.25.1
 
