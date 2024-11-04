@@ -1,146 +1,205 @@
-Return-Path: <linux-kernel+bounces-394389-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394396-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AAC79BAE57
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 09:42:57 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A95C89BAE6C
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 09:45:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB95A1C211E6
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 08:42:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3297A1F224DC
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 08:45:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97ED4195811;
-	Mon,  4 Nov 2024 08:42:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 127801AB50B;
+	Mon,  4 Nov 2024 08:45:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XwufyBBd"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="U3mXCPQN"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B29718B488
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 08:42:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB76C1422D4;
+	Mon,  4 Nov 2024 08:45:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730709772; cv=none; b=XVvYc+F3v4t+qXQ4VpNd0QSq1oF88f0iUMn6IG8c9wlQixhMVID2krPro8UcsY+ML9+oOCIJo4m86RJX8VS8eZrNJ1c5PKtJDPiR5j8MVNvbjEA2EL2WVY4OPMTa8T17HEce6Z2FtjqDBCiTImerDcOcR2a98ueroxLb6nqH3WQ=
+	t=1730709930; cv=none; b=Xo4JrVVyG6oUpQnRusOsc82WZzlgOh3TRnIxFCWcqgcDkQMuRNoAc/kuBKLvwQEKjYfi0/G8NP3U5YE2sLZ1xtZuL011hEFO4htQKzcVj311RmpTcDfI767chhkdztWXTDKVBS4s5CE0i1N9DG6BVxBI4eWZaF0WlDMkWC26lVI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730709772; c=relaxed/simple;
-	bh=PMGJRTXJeSK/uC86GqSqce1IAHbTUORnZbtV9juvMH0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=d5xdve/1nqvCaU312+hsV3xFJOT4Tj6+3to1KSi3RzqUcteG0LQd73nL+YTz3OW3eSV1qN/fHGdJ+3KqvYju0jlv9Ua1N68Ek+YQggr+jkblm9/lBGz1tICwWfQOvhL+aeXvqlaWkJnLtE6KC49FFe/5Prm7jjzHsFYUpqsT0DI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XwufyBBd; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-37d495d217bso3580667f8f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 00:42:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1730709768; x=1731314568; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=hH2a7p6u9/6yeJieZT1sX7At96845cspMVVeyTD+9Yo=;
-        b=XwufyBBdpu6JsDwY6j8DYBbUMSko6y9xes3gVGb0Xt8oaEThAcQHrmSmkaotiN1QlU
-         Y8Bv2hp9qZwz4GUuanPFFarzv9qGMO4gQEmJF3isbeFj39y2Kn+TJf2MGAGJYGUynAfl
-         uOF5cF+1iAKQrmb60I6y0QpASciWSNnbRlQ1BYBy9+ymMqVNAW4fO0y13ocbx1bURPvi
-         JQs0wTZVT1qWxCbkGjVk0umsj40A95iZJjubSpaYJD/8FYONdK/uFzTD8m5GoI047gna
-         4maI4zRW8zJ9kdQh4XzDTcrthHcW2JYsRsQ6L6cINAWbUNRfQgSXb8+t/ZeUfr6uXoke
-         noIQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730709768; x=1731314568;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hH2a7p6u9/6yeJieZT1sX7At96845cspMVVeyTD+9Yo=;
-        b=t3dMhjv9W2SYd/2wVQB/m5XDUHUbMJD4EwehLSUXvn41kRllIgQHx9emjt1+f+1Rn0
-         /bCtbgifwr4Akx2EyPPjNqTMGwXZT7zB9KLrlBSRNjiTAHhlvN9F6/tdWe9yhC3R5Zwr
-         +6zOUczrGJWql3jkV5l4Syfx0iF189xul2vF7/tuTTy2O/dGLCabIWMkN7ky2vAwyEJb
-         iccTSZ7Dv29eAJIU3P7i1NaDsfkbRGxlwKW6geJPle/l6OohgOBzN8u037cySwCrvHOe
-         UlPYaK44Hh9qVO5TDCZnJ2mG9em/AYOlyGTxbFTrYuaL0piQazN1tzlOCHTGJP1oUMkf
-         xiLQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUB/UHw5F4OTjCY8TMwaR4n066nw5hRcgjK/FT8eioFYLpG/p2WZxNQVQUrVmB9H/S+ULoF8MI7GaBcZxw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxrsjlPiyLOm61x+u8xPQoLFWBtz7keL6fDmxsgaVbLxkmmK6FB
-	8Fmz4phHdHgmFZOPyWFdf8FqQMfHvaEZ70mNTOa6LaecE/ZrVLwPctG9gC800YI=
-X-Google-Smtp-Source: AGHT+IH0YvBRoj68w9YDPGUZW+eoW3tHfaMzoBGwO/I57qJ6sY1IOTj/JfSskMotJCV0el88/SyLcQ==
-X-Received: by 2002:a5d:6dab:0:b0:37e:d2b8:883a with SMTP id ffacd0b85a97d-381c7a464c6mr12433759f8f.12.1730709767667;
-        Mon, 04 Nov 2024 00:42:47 -0800 (PST)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381c10d7e0fsm12460840f8f.47.2024.11.04.00.42.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Nov 2024 00:42:47 -0800 (PST)
-Date: Mon, 4 Nov 2024 11:42:42 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Dave Penkler <dpenkler@gmail.com>
-Cc: gregkh@linuxfoundation.org, linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org, skhan@linuxfoundation.org,
-	arnd@arndb.de
-Subject: Re: [PATCH 04/11] staging: gpib: Update messaging and usb_device
- refs in agilent_usb
-Message-ID: <e51ffd6a-b002-40df-94c0-02eb8cbe8c76@stanley.mountain>
-References: <20241103212617.13076-1-dpenkler@gmail.com>
- <20241103212617.13076-5-dpenkler@gmail.com>
+	s=arc-20240116; t=1730709930; c=relaxed/simple;
+	bh=2/5Ky+jC5gjVZXuR/smrXJRvzH5WRkbXn2obO6nTz5w=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=IjFK+5GYy9BMmsFKWKXjsI9RE5mUEz7kQVmy4zD6iBdadwdGkEUEEf6PeBYNeHca6gomragCywbcNaV2aGH/QkiiRacn8TPZsAfzdkKtuHj/yXbkRYgA/lrCBRq8oYdW8wql/+isL3D9bIU3Xpyvs+4ozkeRPoR9X5UO1wHPix0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=U3mXCPQN; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730709929; x=1762245929;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=2/5Ky+jC5gjVZXuR/smrXJRvzH5WRkbXn2obO6nTz5w=;
+  b=U3mXCPQNyScr4NgdPruGnBK7MiDMwzhcgMDkLjcAy23cTO+OHvb16Q49
+   hIqRrfdQSd6Hg4XExhoObmTj0nlLxE4wg2d3l69DDi619bnmFTyFXMxDi
+   iL5uMmAp4JxUZB0F84RDkVho4X+e0yrNd0pvXgf6z2bH6/aD1e2bcgBcw
+   /xziyXCbiG5x1gN7u9CDfRQ6GX/+tT07nf878kZTajtZw+5rYjE8sP44g
+   DJd5Bl8Pzrv1fd/gPAUJs3Qlt3x/TBUT6u1ZIKicDN23s/4bkKxbrMZRQ
+   +3vtQjjzJeFUHRbqT/SnjHNlBMC4DeVMQyrdEpiYtYcA1lvNanzqE3vh4
+   g==;
+X-CSE-ConnectionGUID: csutf2fCQEqPxAm1m7ZISw==
+X-CSE-MsgGUID: dBsrUo0PR0agPPOiijgY+A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11245"; a="29824335"
+X-IronPort-AV: E=Sophos;i="6.11,256,1725346800"; 
+   d="scan'208";a="29824335"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2024 00:45:28 -0800
+X-CSE-ConnectionGUID: 5QDdrfw8QH+l0ctJyqaGrA==
+X-CSE-MsgGUID: fq6N5rDITgCTh03ASNidTQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,256,1725346800"; 
+   d="scan'208";a="83473311"
+Received: from yzhao56-desk.sh.intel.com ([10.239.159.62])
+  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2024 00:45:26 -0800
+From: Yan Zhao <yan.y.zhao@intel.com>
+To: pbonzini@redhat.com,
+	seanjc@google.com
+Cc: linux-kernel@vger.kernel.org,
+	kvm@vger.kernel.org,
+	Yan Zhao <yan.y.zhao@intel.com>
+Subject: [PATCH 2/2] KVM: guest_memfd: Remove RCU-protected attribute from slot->gmem.file
+Date: Mon,  4 Nov 2024 16:43:03 +0800
+Message-ID: <20241104084303.29909-1-yan.y.zhao@intel.com>
+X-Mailer: git-send-email 2.43.2
+In-Reply-To: <20241104084137.29855-1-yan.y.zhao@intel.com>
+References: <20241104084137.29855-1-yan.y.zhao@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241103212617.13076-5-dpenkler@gmail.com>
+Content-Transfer-Encoding: 8bit
 
-On Sun, Nov 03, 2024 at 10:26:10PM +0100, Dave Penkler wrote:
-> Replace GPIB_DPRINTK with dev_dbg
-> Replace pr_xxx with dev_xxx wherever possible
-> Use previously initialized usb_device pointer for usb_put_dev()
-> 
-> Signed-off-by: Dave Penkler <dpenkler@gmail.com>
-> ---
->  .../gpib/agilent_82357a/agilent_82357a.c      | 266 ++++++++++--------
->  1 file changed, 156 insertions(+), 110 deletions(-)
-> 
-> diff --git a/drivers/staging/gpib/agilent_82357a/agilent_82357a.c b/drivers/staging/gpib/agilent_82357a/agilent_82357a.c
-> index 748aadc5cebc..68b40831b9ad 100644
-> --- a/drivers/staging/gpib/agilent_82357a/agilent_82357a.c
-> +++ b/drivers/staging/gpib/agilent_82357a/agilent_82357a.c
-> @@ -15,11 +15,11 @@
->  #include "tms9914.h"
->  
->  MODULE_LICENSE("GPL");
-> -MODULE_DESCRIPTION("GPIB driver for Agilent 82357A/B usb adapter");
-> +MODULE_DESCRIPTION("GPIB driver for Agilent 82357A/B usb adapters");
+Remove the RCU-protected attribute from slot->gmem.file. No need to use RCU
+primitives rcu_assign_pointer()/synchronize_rcu() to update this pointer.
 
-This should go in a patch by itself.
+- slot->gmem.file is updated in 3 places:
+  kvm_gmem_bind(), kvm_gmem_unbind(), kvm_gmem_release().
+  All of them are protected by kvm->slots_lock.
 
->  
->  #define MAX_NUM_82357A_INTERFACES 128
->  static struct usb_interface *agilent_82357a_driver_interfaces[MAX_NUM_82357A_INTERFACES];
-> -DEFINE_MUTEX(agilent_82357a_hotplug_lock);
-> +DEFINE_MUTEX(agilent_82357a_hotplug_lock); // protect board insertion and removal
+- slot->gmem.file is read in 2 paths:
+  (1) kvm_gmem_populate
+        kvm_gmem_get_file
+        __kvm_gmem_get_pfn
 
+  (2) kvm_gmem_get_pfn
+         kvm_gmem_get_file
+         __kvm_gmem_get_pfn
 
-This too.
+  Path (1) kvm_gmem_populate() requires holding kvm->slots_lock, so
+  slot->gmem.file is protected by the kvm->slots_lock in this path.
 
->  
->  static unsigned int agilent_82357a_update_status(gpib_board_t *board, unsigned int clear_mask);
->  
-> @@ -29,9 +29,6 @@ static void agilent_82357a_bulk_complete(struct urb *urb)
->  {
->  	struct agilent_82357a_urb_ctx *context = urb->context;
->  
-> -//	printk("debug: %s: status=0x%x, error_count=%i, actual_length=%i\n", __func__,
-> -//		urb->status, urb->error_count, urb->actual_length);
-> -
->  	up(&context->complete);
->  }
->  
-> @@ -80,16 +77,17 @@ static int agilent_82357a_send_bulk_msg(struct agilent_82357a_priv *a_priv, void
->  	if (timeout_msecs)
->  		mod_timer(&a_priv->bulk_timer, jiffies + msecs_to_jiffies(timeout_msecs));
->  
-> -	//printk("%s: submitting urb\n", __func__);
-> +	//dev_dbg(&usb_dev->dev, "%s: submitting urb\n", __func__);
+  Path (2) kvm_gmem_get_pfn() does not require holding kvm->slots_lock.
+  However, it's also not guarded by rcu_read_lock() and rcu_read_unlock().
+  So synchronize_rcu() in kvm_gmem_unbind()/kvm_gmem_release() actually
+  will not wait for the readers in kvm_gmem_get_pfn() due to lack of RCU
+  read-side critical section.
 
-Just delete this.
+  The path (2) kvm_gmem_get_pfn() is safe without RCU protection because:
+  a) kvm_gmem_bind() is called on a new memslot, before the memslot is
+     visible to kvm_gmem_get_pfn().
+  b) kvm->srcu ensures that kvm_gmem_unbind() and freeing of a memslot
+     occur after the memslot is no longer visible to kvm_gmem_get_pfn().
+  c) get_file_active() ensures that kvm_gmem_get_pfn() will not access the
+     stale file if kvm_gmem_release() sets it to NULL.  This is because if
+     kvm_gmem_release() occurs before kvm_gmem_get_pfn(), get_file_active()
+     will return NULL; if get_file_active() does not return NULL,
+     kvm_gmem_release() should not occur until after kvm_gmem_get_pfn()
+     releases the file reference.
 
-regards,
-dan carpenter
+Signed-off-by: Yan Zhao <yan.y.zhao@intel.com>
+---
+ include/linux/kvm_host.h |  2 +-
+ virt/kvm/guest_memfd.c   | 23 ++++++++++-------------
+ 2 files changed, 11 insertions(+), 14 deletions(-)
+
+diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
+index c7e4f8be3e17..3c3088a9e336 100644
+--- a/include/linux/kvm_host.h
++++ b/include/linux/kvm_host.h
+@@ -600,7 +600,7 @@ struct kvm_memory_slot {
+ 
+ #ifdef CONFIG_KVM_PRIVATE_MEM
+ 	struct {
+-		struct file __rcu *file;
++		struct file *file;
+ 		pgoff_t pgoff;
+ 	} gmem;
+ #endif
+diff --git a/virt/kvm/guest_memfd.c b/virt/kvm/guest_memfd.c
+index 651c2f08df62..9d9bf3d033bd 100644
+--- a/virt/kvm/guest_memfd.c
++++ b/virt/kvm/guest_memfd.c
+@@ -267,9 +267,7 @@ static int kvm_gmem_release(struct inode *inode, struct file *file)
+ 	filemap_invalidate_lock(inode->i_mapping);
+ 
+ 	xa_for_each(&gmem->bindings, index, slot)
+-		rcu_assign_pointer(slot->gmem.file, NULL);
+-
+-	synchronize_rcu();
++		WRITE_ONCE(slot->gmem.file, NULL);
+ 
+ 	/*
+ 	 * All in-flight operations are gone and new bindings can be created.
+@@ -298,8 +296,7 @@ static inline struct file *kvm_gmem_get_file(struct kvm_memory_slot *slot)
+ 	/*
+ 	 * Do not return slot->gmem.file if it has already been closed;
+ 	 * there might be some time between the last fput() and when
+-	 * kvm_gmem_release() clears slot->gmem.file, and you do not
+-	 * want to spin in the meanwhile.
++	 * kvm_gmem_release() clears slot->gmem.file.
+ 	 */
+ 	return get_file_active(&slot->gmem.file);
+ }
+@@ -510,11 +507,11 @@ int kvm_gmem_bind(struct kvm *kvm, struct kvm_memory_slot *slot,
+ 	}
+ 
+ 	/*
+-	 * No synchronize_rcu() needed, any in-flight readers are guaranteed to
+-	 * be see either a NULL file or this new file, no need for them to go
+-	 * away.
++	 * memslots of flag KVM_MEM_GUEST_MEMFD are immutable to change, so
++	 * kvm_gmem_bind() must occur on a new memslot.
++	 * Readers are guaranteed to see this new file.
+ 	 */
+-	rcu_assign_pointer(slot->gmem.file, file);
++	WRITE_ONCE(slot->gmem.file, file);
+ 	slot->gmem.pgoff = start;
+ 
+ 	xa_store_range(&gmem->bindings, start, end - 1, slot, GFP_KERNEL);
+@@ -550,8 +547,7 @@ void kvm_gmem_unbind(struct kvm_memory_slot *slot)
+ 
+ 	filemap_invalidate_lock(file->f_mapping);
+ 	xa_store_range(&gmem->bindings, start, end - 1, NULL, GFP_KERNEL);
+-	rcu_assign_pointer(slot->gmem.file, NULL);
+-	synchronize_rcu();
++	WRITE_ONCE(slot->gmem.file, NULL);
+ 	filemap_invalidate_unlock(file->f_mapping);
+ 
+ 	fput(file);
+@@ -563,11 +559,12 @@ static struct folio *__kvm_gmem_get_pfn(struct file *file,
+ 					pgoff_t index, kvm_pfn_t *pfn,
+ 					bool *is_prepared, int *max_order)
+ {
++	struct file *gmem_file = READ_ONCE(slot->gmem.file);
+ 	struct kvm_gmem *gmem = file->private_data;
+ 	struct folio *folio;
+ 
+-	if (file != slot->gmem.file) {
+-		WARN_ON_ONCE(slot->gmem.file);
++	if (file != gmem_file) {
++		WARN_ON_ONCE(gmem_file);
+ 		return ERR_PTR(-EFAULT);
+ 	}
+ 
+-- 
+2.43.2
 
 
