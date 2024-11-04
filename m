@@ -1,106 +1,120 @@
-Return-Path: <linux-kernel+bounces-394891-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394892-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EBCA9BB566
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 14:06:50 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B39C9BB56C
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 14:07:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AC7C7B240AD
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 13:06:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 203DA28144E
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 13:07:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC0CA1BBBC4;
-	Mon,  4 Nov 2024 13:06:40 +0000 (UTC)
-Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29BD01BBBD7;
+	Mon,  4 Nov 2024 13:07:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="dg6wG72P"
+Received: from mout.web.de (mout.web.de [212.227.17.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C043B1B6D0B;
-	Mon,  4 Nov 2024 13:06:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB09E1B6CFB;
+	Mon,  4 Nov 2024 13:07:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730725600; cv=none; b=FMYtLjPjk3Q93hV84sGDWaleSFXh2gsaNTk9EPdiCVZNgMI0sroCETfENWJf0ffoKLpslV1Vdzi5goTL4SwMjPRFPnu483UZfU+V3selwyw3cgPz+MeQjv1/x6yHB5fPT5bipp9nXBVbv2Ll+tgREKO9/TcKxjMkeKViJVIeHCM=
+	t=1730725651; cv=none; b=uOoQwQxQMm9TK+NoCAV7ithwmoC+gCK14g9FUGL6DPk8kIMECXUN4+KQ56kFdrklGSBz16JJVFPWh7UaFyWcRXLg4rh4ZiPLQHw2GHnPd7QEHMMQHAhFnMEfmuTIzRGtYEHdMxZ1YGLBruN8h2r+28h/UILvxtAvH78hUu4ti+A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730725600; c=relaxed/simple;
-	bh=Z8Csq6hrKg3KO0AmuTvJHxxhxuekmefkA3lKLHhWbtA=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:Cc:To:
-	 References:In-Reply-To; b=frdPTouaSPrvsaRTj1sDVWK/eBzMY2zlL/q5InV7kODFRe1oz0tJfX2ByhkHeN2rX65UHWMSWH83BzWn+kwufABm0hhWBqZD6UZR3/6vKfw5PSssIxQNsaF7yl6eib49GMZbWRkktOf6+mgiNH3RkWVHmj0NjtLp6fmvYWQhumo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.215.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-7eae96e6624so3005910a12.2;
-        Mon, 04 Nov 2024 05:06:38 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730725598; x=1731330398;
-        h=in-reply-to:references:to:cc:from:subject:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=zZzOT97FdjuvYJUzFPlXRhKn4ZHWlskpvnv56Nhd+Gg=;
-        b=EJKbeNbdWia8kJ3rZUoVQBEd4OB+7ZgxWl3aRneCiQ727B0FW1P2ATSVGA1RykkqBO
-         RVQNbH8CibA35ntrG6SyvuJZKthVUX6SfQnAbtA/gX9Gdk1BTO3zwJvICGvuWw44foND
-         80soMYeTNnF4A73erGFQohL9ZJv9fIIkKX2Sm5C3iAaUPRNXwF/b1I8al/+7Nm2IBzGx
-         fQiGT8jpKpUd8ABrHoK3UKkH5DRd+1yWocjGdtr7dO5Rx733pGyfzDpDUSyudov2imAR
-         ZhEUPvLGrWL3QeJVXPC755gkTtE7vCBJcXVw8wJDvZhVq2atM4QJ55msjrCSV36AsDNl
-         PHtw==
-X-Forwarded-Encrypted: i=1; AJvYcCXmLeLhrOMLyMweOFnv/s67G1OtiJXmZC4IPjjsiUCNlRankaer89CE7WQ+sZqto652bhlil/fpi9zQYBk=@vger.kernel.org, AJvYcCXqOuKk+kseNwOm3VZjumxQJE7yW/jmVNRvgpb8D8b6Xr7wewfpcmVJbfs1RA3epzg5OLlG3K/TrEAB@vger.kernel.org
-X-Gm-Message-State: AOJu0YyFYlw9szoN0JhiDmMnRfymW3lvIG4ILX2vCVS1XtKVM28Mwq9y
-	RBqki0jRPuVHPo6ryowarqu9suphLPL79g4tYtTV4JI4bVqwhKnw5y5qx0g9
-X-Google-Smtp-Source: AGHT+IHCAHuac8LcRXb6oXySdYiXNuST/E5hZ792qvOEl2kds238Dclz1//IuMmOtE6OMUv4eXmd6A==
-X-Received: by 2002:a17:90b:3755:b0:2e2:de27:db09 with SMTP id 98e67ed59e1d1-2e8f1078c4dmr33747346a91.19.1730725597840;
-        Mon, 04 Nov 2024 05:06:37 -0800 (PST)
-Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e93da8e879sm7544666a91.10.2024.11.04.05.06.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Nov 2024 05:06:37 -0800 (PST)
+	s=arc-20240116; t=1730725651; c=relaxed/simple;
+	bh=0n5oPcRcDR1kORlFGe5xEi5VBvf/0YL+KeYz4ezAu4Q=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=Et/wtNEc8y8r6pF9Gto88re64G6svdTsUSKZRkksOYTJfGLi3wYl89Et/z47PUe2o32Q6IojOAia5J0Fq4j9VYvd2WL+lkub3dUQYxJfk7gwjfE7VIiGQFxFjETyiEYj6P0lvQ7N+0uGNxOcKUM3MK9DwwSlhhz3wdROXd+nN/8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=dg6wG72P; arc=none smtp.client-ip=212.227.17.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1730725622; x=1731330422; i=markus.elfring@web.de;
+	bh=X/JcBLG9ZRntCDhqwrCH8dA655EdL6Qk+i6w/V5Velc=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=dg6wG72PmBCTajz3zqwq23eIktpX+4mDA7NiR/yM9gRFG4w2lO6WZiTrqnG7YI1A
+	 CPDw5TVG4ILOZe4bMIqxcBJned5HJM8dyPFWAmErKGc6danEy3DBdlWutRk0h9Aeo
+	 sQW4gC8S1XAJ5rK8Na/rck/F53KDmJcigj5Kserk2dTfLnkF4ZrlAKzIIy+0YQRVp
+	 /EjasB2ZeU/GK9Ysq0IluAY6GvAwZKQXpGIXjD2aqPsWZ6SgH5J3/FVaDpfDJE8h8
+	 wMWwCoNCM8UpJLZKF8fqPWdcPgkGhilRiIPe4WORdj48Eu+2g3CyMiW4NJd305dhO
+	 0gt/fHmKH6qIPdH86g==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.88.95]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MECGl-1t0YOh1GC5-004TGg; Mon, 04
+ Nov 2024 14:07:02 +0100
+Message-ID: <c64a0c92-4528-4c87-ac2e-00ee2ec666ad@web.de>
+Date: Mon, 4 Nov 2024 14:06:56 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+To: Shu-hsiang Yang <Shu-hsiang.Yang@mediatek.com>,
+ Project_Global_Chrome_Upstream_Group@mediatek.com,
+ linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+ linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org,
+ Angelo Gioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
+ Sumit Semwal <sumit.semwal@linaro.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Hidenori Kobayashi <hidenorik@chromium.org>,
+ =?UTF-8?B?U2h1bi1ZaSBXYW5nICjnjovpoIblhIQp?= <Shun-Yi.Wang@mediatek.com>,
+ teddy.chen@mediatek.com, yaya.chang@mediatek.com,
+ Yunke Cao <yunkec@chromium.org>
+References: <20241009111551.27052-6-Shu-hsiang.Yang@mediatek.com>
+Subject: Re: [PATCH 05/10] media: platform: mediatek: add isp_7x camsys unit
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20241009111551.27052-6-Shu-hsiang.Yang@mediatek.com>
 Content-Type: text/plain; charset=UTF-8
-Date: Mon, 04 Nov 2024 22:06:35 +0900
-Message-Id: <D5DF0QIO2UZQ.29U999LYCC05M@rocinante>
-Subject: Re: [PATCH v4 1/2] PCI: mediatek-gen3: Add support for setting
- max-link-speed limit
-From: =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>
-Cc: <ryder.lee@mediatek.com>, <jianjun.wang@mediatek.com>,
- <lpieralisi@kernel.org>, <robh@kernel.org>, <bhelgaas@google.com>,
- <matthias.bgg@gmail.com>, <linux-mediatek@lists.infradead.org>,
- <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
- <kernel@collabora.com>, <fshao@chromium.org>, "Manivannan Sadhasivam"
- <manivannan.sadhasivam@linaro.org>
-To: "AngeloGioacchino Del Regno" <angelogioacchino.delregno@collabora.com>,
- <linux-pci@vger.kernel.org>
-X-Mailer: aerc 0.18.2
-References: <20241104114935.172908-1-angelogioacchino.delregno@collabora.com> <20241104114935.172908-2-angelogioacchino.delregno@collabora.com>
-In-Reply-To: <20241104114935.172908-2-angelogioacchino.delregno@collabora.com>
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:bRyeFpZaX8wNJrlK6hdPLRc1mevh68UYevrSMj6u1GEWHCvYp0U
+ U7WMp+S6fbcCQsjvUzIRvGihCk2wnelpSPybJxv9aPgPvJH/2Q9Bp4FCbLhymk1TJdLACVY
+ tNke6VamALyDNd9theYf/QpwhLZShCQDhsO6KJzXj7Aihi1qKCJefHw1nU1/9YGR4Mh0VA4
+ 3t22eg/S+4Y5juXqsxN2w==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:H3ddCuVI+08=;FuKuZdqE+LyO/ovYd7kI/LBYHH7
+ 1BquZJV7yDnZAq3QrkDvghilD4FPiEtRngTsk3KCj/omyHEfMVhKkX3zjOI6ddAMMKvJtI77U
+ v2nNOBon+Y5RKrDtdAKDwNPQpaNmnK8ZnxNzaNBDpkTrv2YLlzkH1YsNtlWAcFR0uy7nQ54c7
+ g55gmNEf7mk+GO8GM+b/VZRxtOc/ln1BBa2BE3HMRPZh0dAnffyko2z0yYuH2i7VqK8ZT96zU
+ 97OeKp0acHRETcR/WuIHP4LWNeq+TqlPa58qYIzc6SpOrAXNpZUGF6/op3zXDQQwrdkcUYABO
+ k1qPEuF455UBguUPoXaHmqwrlrrhLQgJfBphfAI/LhZwdNa1UTLafQEF7sCTt09j90rDpEwsc
+ vxVb5aQwAOudnybxQaYkHYfkO9+r2iBm7NWmR+19l8uEHJvmBEGA1Ae2jSian+hfwKmsGFfS6
+ An8akll0stTcaY3+aXRp36l5L8IgYHqpu43tlR7j6iNxZCl+4TLOmDEX8CyzSi6AwCc/hJhs/
+ cIuefjktwSXY0gol2oRmCXTd4+JPpvFoPcfsVUM6xez6Oj+mmpQ2CrmdQHAUHTIi1pueS+7Xk
+ 3q4/RUqz26ieSi1k+khwxlaJt6sCIYdkXtOPD3BikHFQtWCetvIiU8R+oZa9QGYEvGWNz8a2R
+ 9v8Ds7T9O5D8//Vnsnt+XFBUzi9f20lvfBG3HDCvxVG+5bmuR4ruvL6lkHKFL6jHUJcHZXUuG
+ j0ZN6ro3CkEghF7k9u1sjPWivH8BbyD9PgWXHFUEl7f+HaLB6FPW5F4ayuvpAns38oY6knOiB
+ TRqKsdO5ojH//9XY5JYKHO3w==
 
-Hello,
+=E2=80=A6
+> +++ b/drivers/media/platform/mediatek/isp/isp_7x/camsys/mtk_cam.c
+> @@ -0,0 +1,4168 @@
+=E2=80=A6
+> +void mtk_cam_dev_req_try_queue(struct mtk_cam_device *cam)
+> +{
+=E2=80=A6
+> +	spin_lock(&cam->running_job_lock);
+> +	job_count =3D cam->running_job_count;
+> +	spin_unlock(&cam->running_job_lock);
+=E2=80=A6
 
-> +	if (err > 0) {
+Under which circumstances would you become interested to apply a statement
+like =E2=80=9Cguard(spinlock)(&cam->running_job_lock);=E2=80=9D?
+https://elixir.bootlin.com/linux/v6.12-rc6/source/include/linux/spinlock.h=
+#L559
 
-You could drop > 0 here.
-
-> +		/* Get the maximum speed supported by the controller */
-> +		max_speed =3D mtk_pcie_get_controller_max_link_speed(pcie);
-> +
-> +		/* Set max_link_speed only if the controller supports it */
-> +		if (max_speed >=3D 0 && max_speed <=3D err) {
-> +			pcie->max_link_speed =3D err;
-> +			dev_dbg(pcie->dev,
-> +				"Max controller link speed Gen%d, override to Gen%u",
-> +				max_speed, pcie->max_link_speed);
-> +		}
-> +	}
-
-I wonder if this debug message would be better served as a warning to let
-the user know that the speed has been overridden due to the platform
-limitation.  Thoughts?
-
-Also, there is no need to sent a new series if you fine with the
-suggestions.  I will mend the code on the branch when applying.
-
-	Krzysztof
+Regards,
+Markus
 
