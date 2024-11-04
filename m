@@ -1,131 +1,112 @@
-Return-Path: <linux-kernel+bounces-395278-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395279-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 887449BBB38
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 18:12:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CFB09BBB39
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 18:13:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4718B2817E7
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 17:12:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4093A281171
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 17:13:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 563201C4A01;
-	Mon,  4 Nov 2024 17:12:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE0241C4A09;
+	Mon,  4 Nov 2024 17:12:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="hz7n0cAM"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="F4V+x0I/"
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 149721C07DA
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 17:12:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DBA41C4A3C;
+	Mon,  4 Nov 2024 17:12:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730740371; cv=none; b=nKGIhxQ3A1K+5U3MTsb6nmtdQ3XT+1lJSYYnt6yvNi79SOu42gi4iYHC38MuLswj8xCS58oiR4jXECuSDPluU8ncEE+obf2Y7cCdRx7SepnUo12tcngU7nOJ59oIQ3+F0NIbjpi/22jqO2wnjkcDZmu/MubbnF6yP5lgCNUoOns=
+	t=1730740376; cv=none; b=ejoyEzSH5lPS1taVj3wxYmOYNadc41Acl+sb3vyatuKDZAYtesjksejjDKQUV7TjFUudmUJ7kRxbIh8TQMJVT7WxtzV15lJqkkVguL6twPt2guzp4bAbPIvrRfiD/iXQmEdhBI62RR3E/1wIltOmUTlQa38//usxpUXvVE74qLA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730740371; c=relaxed/simple;
-	bh=2yDeCwWeanhRfjDcg3QZSEc/Uy0EkHEvsV/TrF/rvl4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=O42Xne+JZqyhHzTq4KZgyaZ56C44d2i07oZZy4I/LQa2hYpkWPV/EQKozN6dL6PbDq63CMiJTV4AfYOJhedzD/kq7OUUJYKLOuXpdu66rgLrqXLeJry8IiLKvibyqQDEfKimZKLZqmDVeArsDYa9AZBGpb51hpb0iBE4wMj1Sxg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=hz7n0cAM; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-539e13375d3so4575841e87.3
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 09:12:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1730740368; x=1731345168; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2yDeCwWeanhRfjDcg3QZSEc/Uy0EkHEvsV/TrF/rvl4=;
-        b=hz7n0cAMJzvaCd5LAUAMmtMAoJFN6Qwse0QIK++5Rcuv/RVLV2QqyIKi/bnn/i2tWp
-         LuHqf4BY9CHJYIhnIKacRIBcDTpV4mu6Gs6euajF7OEVnpUEWaGSfBXZSMbrIdABsw/W
-         vW0PyKsCtuwzp46wuAmhWklMGghFc5h4cNwxM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730740368; x=1731345168;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2yDeCwWeanhRfjDcg3QZSEc/Uy0EkHEvsV/TrF/rvl4=;
-        b=W9YqxSyHc84iBsuWGkSoEMM154X/dAzxgnByO7bHcgNyCgSSi7/Aw6ciZcYDSYtWsc
-         Ldm1sDz4PqFtsEUPMo7b/HJ+/eNAa34ObV4wMPtDEkb+4reixgAB6UmFVKceCh2JYDAI
-         ddi4Rnb90lGmBJzU16wHuqBYa4/hJZimc6f4XssMTv0ZILzJU7hAlSRFk9qZd01X/fxq
-         SKg2V2hKzJz99WNDza5m1ffSaVT737RszM1mpCL3DXkqUHPtC8+vFWcoSWLjU2pU2EGR
-         BPK1Q2UgrtVn32scG2sthHeB4x4Fp3O9/1tP9vkBa9TORW0jhb+PhcnGqGQfJOwK+23N
-         TiCg==
-X-Forwarded-Encrypted: i=1; AJvYcCWp+sGzTbY/l4x2d7V5NUXxy8XDmgMTKj/Yi6QU1X8U7P9fAydxOyq3Mx0Tx70pdaaYogo1ISj+1Z/AM54=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxocSPixzt/MSmI8LlmthFVJeIbHAYQlKDt6KjLMdko1oEH4Vw0
-	gdhHOPJTfJeHb08gvUVg2HRGb3sBVIkx0ALsjsANqkp/eaORGWDMbp/28WByjDb5JovOzKe7pIm
-	c51+vKliDLgTwwRBjZxyerjw2uHsFcYyIfEHC
-X-Google-Smtp-Source: AGHT+IEjX0KYihsg5M12Yt94xgwDXRaw8vbt/BnR8UnvYMxv/mjOptO88w2Qrs4232astMC3NZm9KHekpOYU9jnJJKs=
-X-Received: by 2002:a05:6512:239a:b0:533:4b70:8722 with SMTP id
- 2adb3069b0e04-53c79e2fa52mr7351705e87.15.1730740368184; Mon, 04 Nov 2024
- 09:12:48 -0800 (PST)
+	s=arc-20240116; t=1730740376; c=relaxed/simple;
+	bh=U2n+VratdOLz+XI1C0YnsMs73NGJc0lLzHsILwqI6FE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Crrt7ZMEtNXt7HREInyTPC7zb+aNVQ4nqte84ZyK/DJgqhLBLlmLsy3Dvok0K/B5EA8bPagADimJHajavsMs0zY5VF+bXE3WKdxAwrMfPuunmx2nWOwGFhqm8LM/zhYPcuawRpLGMPLlE/dpYJrRKE7PCgoi1a23xzIVnUrIgjI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=F4V+x0I/; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=q8iLecLEKa/r3VYIqb+8t/jQ6aKfvsWL9FBNV9ep8SI=; b=F4V+x0I/tUhbdjsnHjapWOGEb7
+	YbSq2hbHkNTSHjLDHu0IKPMQ1Da82KrK2A975/AT7MHTAThCs8kVIfPg1RT/+MpLE9WSqcynPnTH7
+	6lFqm7jPWS+3OruLMcmw6fqY4N75LC7rykazqA2X6JXYefNt/q8mMKOQmHZsodhEy+/4RwR8OQYY2
+	n42CmbVf8dH1RA4yZ5jKdqExr3Lv1ti3ls2X7CWI9IBlTWmVBRUkugQGaa0yTuZPnPIu58Cpmsb4N
+	rQytygBZMlzlzR/jgSzvEQvbDinPwR4GtPO66KZhzwXlaPc8v+gl0b/JOTXPvgpnps93H72Tc58At
+	UcEo1o/g==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1t80dH-0000000B3C5-2DAw;
+	Mon, 04 Nov 2024 17:12:51 +0000
+Date: Mon, 4 Nov 2024 17:12:51 +0000
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Daniel Yang <danielyangkang@gmail.com>
+Cc: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	"open list:FILESYSTEMS (VFS and infrastructure)" <linux-fsdevel@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	syzbot+d2125fcb6aa8c4276fd2@syzkaller.appspotmail.com
+Subject: Re: [PATCH] fix: general protection fault in iter_file_splice_write
+Message-ID: <20241104171251.GU1350452@ZenIV>
+References: <20241104084240.301877-1-danielyangkang@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241031092504.840708-1-dualli@chromium.org> <20241031092504.840708-3-dualli@chromium.org>
- <20241103151554.5fc79ce1@kernel.org> <CANBPYPj4VCYuhOTxPSHBGNtpRyG5wRzuMxRB49eSDXXjrxb7TA@mail.gmail.com>
- <20241104081928.7e383c93@kernel.org>
-In-Reply-To: <20241104081928.7e383c93@kernel.org>
-From: Li Li <dualli@chromium.org>
-Date: Mon, 4 Nov 2024 09:12:37 -0800
-Message-ID: <CANBPYPjo0KKm3JbPk=E8Nuv05i=EeR93PHWjSU8fcH-GVWV94w@mail.gmail.com>
-Subject: Re: [PATCH net-next v7 2/2] binder: report txn errors via generic netlink
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: dualli@google.com, corbet@lwn.net, davem@davemloft.net, 
-	edumazet@google.com, pabeni@redhat.com, donald.hunter@gmail.com, 
-	gregkh@linuxfoundation.org, arve@android.com, tkjos@android.com, 
-	maco@android.com, joel@joelfernandes.org, brauner@kernel.org, 
-	cmllamas@google.com, surenb@google.com, arnd@arndb.de, masahiroy@kernel.org, 
-	bagasdotme@gmail.com, horms@kernel.org, linux-kernel@vger.kernel.org, 
-	linux-doc@vger.kernel.org, netdev@vger.kernel.org, hridya@google.com, 
-	smoreland@google.com, kernel-team@android.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241104084240.301877-1-danielyangkang@gmail.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Mon, Nov 4, 2024 at 8:19=E2=80=AFAM Jakub Kicinski <kuba@kernel.org> wro=
-te:
->
-> On Sun, 3 Nov 2024 22:25:44 -0800 Li Li wrote:
-> > > You're trying to register multiple families with different names?
-> > > The family defines the language / protocol. If you have multiple
-> > > entities to multiplex you should do that based on attributes inside
-> > > the messages.
-> >
-> > My initial plan was to use a single "binder" family, which was more
-> > straightforward and cleaner. As Android uses multiple binder contexts
-> > to isolate system framework and vendor domains[1], Grek KH suggested
-> > the netlink messages from different binder contexts should also be
-> > isolated for security reason[2]. Personally I'm fine with either
-> > approach. Please kindly advice which implementation is better.
-> >
-> > And I'll fix other issues you mentioned above.
->
-> Greg is obviously right, but using different family names will not help
-> you in any way. There is no action of "opening" a socket for a generic
-> netlink family, one generic netlink socket can talk to all families.
-> The only built in checking netlink provides is that you can declare
-> an operation as requiring admin privileges, or network capability
-> (namespaced or global).
->
-> Unless those are good enough for you - I think you should do all
-> the security isolation within your code, manually.
+On Mon, Nov 04, 2024 at 12:42:39AM -0800, Daniel Yang wrote:
+> The function iter_file_splice_write() calls pipe_buf_release() which has
+> a nullptr dereference in ops->release. Add check for buf->ops not null
+> before calling pipe_buf_release().
+> 
+> Signed-off-by: Daniel Yang <danielyangkang@gmail.com>
+> Reported-by: syzbot+d2125fcb6aa8c4276fd2@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=d2125fcb6aa8c4276fd2
+> Fixes: 2df86547b23d ("netfs: Cut over to using new writeback code")
+> ---
+>  fs/splice.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/splice.c b/fs/splice.c
+> index 06232d7e5..b8c503e47 100644
+> --- a/fs/splice.c
+> +++ b/fs/splice.c
+> @@ -756,7 +756,8 @@ iter_file_splice_write(struct pipe_inode_info *pipe, struct file *out,
+>  			if (ret >= buf->len) {
+>  				ret -= buf->len;
+>  				buf->len = 0;
+> -				pipe_buf_release(pipe, buf);
+> +				if (buf->ops)
+> +					pipe_buf_release(pipe, buf);
+>  				tail++;
+>  				pipe->tail = tail;
+>  				if (pipe->files)
 
-That's why binder genl uses unicast instead of multicast. The administratio=
-n
-process of the OS (Android in this case) always runs before any other user
-applications, which registers itself to the kernel binder driver and uses i=
-t
-exclusively. With a unified family name, the same userspace admin process
-has access to all binder contexts. With separate family names, each domain
-admin process can register itself to the corresponding binder context.
+Wait a minute.  If nothing else, all those buffers should've passed through
+pipe_buf_confirm() just prior to the call of ->write_iter(); just what had
+managed to zero their ->ops and what else had that whatever it had been
+done to them?
 
-So, do you think the current implementation of registering multiple familie=
-s
-with different names acceptable? Or is there a better way to do it? Thank
-you very much!
+Note that pipe must've been held locked all along, so I suspect that we
+ended up with ->write_iter() claiming to have consumed more than it had
+been given.  That could've ended up with the second loop running around
+the pipe->bufs[], having already emptied each of them and trying to
+find where the hell had that extra data come from.
+
+I'd suggest checking which ->write_iter() instance had been called and
+hunting for bogus return values in there.  Again, ->write_iter(iocb, from)
+should never return more than the value of iov_iter_count(from) prior
+to the call; any instance told "write those 42 bytes" should never
+reply with "here, I've written 69 of them", lest it confuses the living
+fuck out of the callers.
 
