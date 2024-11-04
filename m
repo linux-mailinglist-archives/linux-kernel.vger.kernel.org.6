@@ -1,307 +1,280 @@
-Return-Path: <linux-kernel+bounces-394774-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394775-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E6749BB3CF
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 12:48:55 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5055C9BB3BE
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 12:46:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8012DB253CC
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 11:45:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C9C61C223AB
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 11:46:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38D501B372C;
-	Mon,  4 Nov 2024 11:45:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 450421B372C;
+	Mon,  4 Nov 2024 11:45:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="IQjV1Okq"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="CIKxeh5v";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="PZXyS6QR";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="CIKxeh5v";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="PZXyS6QR"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50C201B21AF;
-	Mon,  4 Nov 2024 11:45:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81BEB16EC0E
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 11:45:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730720733; cv=none; b=E8nm8deEQ/AyKooHau2FgywCuvVXkiaC6IHdslryvRkoiETSJab7O9/ccpfCvlg0eYcCfwUwdho7qeB/aDyFUy+Bf1pC7t2u5thgoiSkWZBBAYcg/MluHXLXH0FCyHgWw/ssxTSU8rXApS0J74bKERljjGPQ/Y9GZkHzP7vvrBY=
+	t=1730720755; cv=none; b=gug2aOOWMzefa7W33joca0w4RuTSWWw9vF3Gxpx1sawq1nnyaFcxxmbuWsWIH864hz6Hsq8DAIQZRERIpn1x8FTHIAhjg4gDc66xoYVu+ajfzYCf6+noeyaCKGeuvVzMQrAXN+g1FiZ0vAaukHfwQA4/9AuY59d+n6TmbxIjcQg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730720733; c=relaxed/simple;
-	bh=KVDby3c7DfMjMMwDb+3rQ9nlHeE4Avrp8aPfYCVqQbE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZIUbDjhmXPKP5lhYfj9OzsgBygOZ5Gckpv9WHgYg6gUYjPNINKwd/YlEz+Bzn6qWTb6VZa8WDPLh/+OLy46FAhG37YgmCFde+JkLg+FOYSiQdJBvBJzrW+iD1WxvmWq1FuaFbPu3of0u3+B+GUQipYl5PxFzwD4M7x1gco7xyk4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=IQjV1Okq; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=mYq2E5JqCpFxnnaQge2hIZbWTa3Or6pRl9pnrxRgOwA=; b=IQjV1OkqHH4Tgw5q5Eji03dmw3
-	CYzrCgtzK5De54IbL3dsTmmMV00KpBjzzyrd9Rav5/FvRwOWoT5aYiTTfLeXFE+qIRNjcH0BWWLf3
-	wrserS0aDM+kdcmlybZXwbOcswLILUastnrpSvGZZt/ZOyr3BP6zhuOmNNrRwLw5sQaR1qURtDl7P
-	7aCF5J2GJhYWD8oBN/QbCWTyoOQCZL/3DlREe+0XRCLSdYURbWVabK48l0jGxUHoOpxcq7M1Euhn6
-	bHMN2sb5h5Ib41iI5jQaQbsRxn+pH305Kxs50doIndy/CAHaHz2rYFR/V7T7islZ7nJIHcYsswWMi
-	xNKEJQvA==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1t7vW6-000000017vV-2NZE;
-	Mon, 04 Nov 2024 11:45:07 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 58C81300324; Mon,  4 Nov 2024 12:45:06 +0100 (CET)
-Date: Mon, 4 Nov 2024 12:45:06 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: syzbot <syzbot+39f85d612b7c20d8db48@syzkaller.appspotmail.com>,
-	Liam.Howlett@oracle.com, akpm@linux-foundation.org,
-	jannh@google.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	lorenzo.stoakes@oracle.com, syzkaller-bugs@googlegroups.com,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Marco Elver <elver@google.com>,
-	Andrey Konovalov <andreyknvl@gmail.com>,
-	kasan-dev <kasan-dev@googlegroups.com>,
-	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
-	Alexander Potapenko <glider@google.com>,
-	Waiman Long <longman@redhat.com>, dvyukov@google.com,
-	vincenzo.frascino@arm.com, paulmck@kernel.org, frederic@kernel.org,
-	neeraj.upadhyay@kernel.org, joel@joelfernandes.org,
-	josh@joshtriplett.org, boqun.feng@gmail.com, urezki@gmail.com,
-	rostedt@goodmis.org, mathieu.desnoyers@efficios.com,
-	jiangshanlai@gmail.com, qiang.zhang1211@gmail.com, mingo@redhat.com,
-	peterz@infradead.org, juri.lelli@redhat.com,
-	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-	bsegall@google.com, mgorman@suse.de, vschneid@redhat.com,
-	tj@kernel.org, cl@linux.com, penberg@kernel.org,
-	rientjes@google.com, iamjoonsoo.kim@lge.com, vbabka@suse.cz,
-	roman.gushchin@linux.dev, 42.hyeyoo@gmail.com, rcu@vger.kernel.org
-Subject: Re: [syzbot] [mm?] WARNING: locking bug in __rmqueue_pcplist
-Message-ID: <20241104114506.GC24862@noisy.programming.kicks-ass.net>
-References: <67275485.050a0220.3c8d68.0a37.GAE@google.com>
- <ee48b6e9-3f7a-49aa-ae5b-058b5ada2172@suse.cz>
- <b9a674c1-860c-4448-aeb2-bf07a78c6fbf@suse.cz>
+	s=arc-20240116; t=1730720755; c=relaxed/simple;
+	bh=dt3ywtIcZdAqd1RIcNUdaWvxTGDeN65Lml5b096vYrs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nHPGPzXQzXDutv0A/CkmR0c8Ip1JJRxcaeP/O5H8bRZIZNLulvmXeghcmS3JSnEa0aLC5gpHSV/Ytb9Aa3Y6+B77S2cDodf/fdNiFBX2YJZyRwmVzCpUXX+zxc8Om9zGViAvA2aO6djBJfqKzJxRZQQf3ZqIEAxZ1alDrPUbSAg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=CIKxeh5v; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=PZXyS6QR; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=CIKxeh5v; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=PZXyS6QR; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 865FB21E8F;
+	Mon,  4 Nov 2024 11:45:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1730720751; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=7jdXmAKMKDFjcbluumBKxTyPOR5iiGpNO1xmBUem+jg=;
+	b=CIKxeh5v17OKWwBqBsk0f3AflWwVsBJOc1N7iY27WEuZHhNQPEzxj+Q2eq5vru3k+6R7FG
+	JlyR3ArGhmm8cdKEy0XUUmD+eWjv75OlNN8pfXCdxu9afhk6OwD0O6k2cViybLeKbiZfIP
+	8Q7TqsLUXZUEY0/K04VGdRuP5aRnAnc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1730720751;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=7jdXmAKMKDFjcbluumBKxTyPOR5iiGpNO1xmBUem+jg=;
+	b=PZXyS6QRh8t0MyrD3+dCVpMIccwhnSj37fWI04RJ3FUU9MvmZztOkABin9RtxJDi1VidLj
+	e9T4YTXjXwGgzmAA==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=CIKxeh5v;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=PZXyS6QR
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1730720751; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=7jdXmAKMKDFjcbluumBKxTyPOR5iiGpNO1xmBUem+jg=;
+	b=CIKxeh5v17OKWwBqBsk0f3AflWwVsBJOc1N7iY27WEuZHhNQPEzxj+Q2eq5vru3k+6R7FG
+	JlyR3ArGhmm8cdKEy0XUUmD+eWjv75OlNN8pfXCdxu9afhk6OwD0O6k2cViybLeKbiZfIP
+	8Q7TqsLUXZUEY0/K04VGdRuP5aRnAnc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1730720751;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=7jdXmAKMKDFjcbluumBKxTyPOR5iiGpNO1xmBUem+jg=;
+	b=PZXyS6QRh8t0MyrD3+dCVpMIccwhnSj37fWI04RJ3FUU9MvmZztOkABin9RtxJDi1VidLj
+	e9T4YTXjXwGgzmAA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4D72D1373E;
+	Mon,  4 Nov 2024 11:45:51 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id pa6BEu+zKGfiSQAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Mon, 04 Nov 2024 11:45:51 +0000
+Message-ID: <79335db3-4528-446e-a839-272645133e19@suse.cz>
+Date: Mon, 4 Nov 2024 12:45:51 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b9a674c1-860c-4448-aeb2-bf07a78c6fbf@suse.cz>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/5] mm/slub: Improve data handling of krealloc() when
+ orig_size is enabled
+Content-Language: en-US
+To: Feng Tang <feng.tang@intel.com>, Kees Cook <keescook@chromium.org>
+Cc: Marco Elver <elver@google.com>, Andrew Morton
+ <akpm@linux-foundation.org>, Christoph Lameter <cl@linux.com>,
+ Pekka Enberg <penberg@kernel.org>, David Rientjes <rientjes@google.com>,
+ Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+ Roman Gushchin <roman.gushchin@linux.dev>,
+ Hyeonggon Yoo <42.hyeyoo@gmail.com>, Andrey Konovalov
+ <andreyknvl@gmail.com>, Shuah Khan <skhan@linuxfoundation.org>,
+ David Gow <davidgow@google.com>, Danilo Krummrich <dakr@kernel.org>,
+ Alexander Potapenko <glider@google.com>,
+ Andrey Ryabinin <ryabinin.a.a@gmail.com>, Dmitry Vyukov
+ <dvyukov@google.com>, Vincenzo Frascino <vincenzo.frascino@arm.com>,
+ "linux-mm@kvack.org" <linux-mm@kvack.org>,
+ "kasan-dev@googlegroups.com" <kasan-dev@googlegroups.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ Eric Dumazet <edumazet@google.com>
+References: <20240911064535.557650-1-feng.tang@intel.com>
+ <d3dd32ba-2866-40ce-ad2b-a147dcd2bf86@suse.cz>
+ <CANpmjNM5XjwwSc8WrDE9=FGmSScftYrbsvC+db+82GaMPiQqvQ@mail.gmail.com>
+ <49ef066d-d001-411e-8db7-f064bdc2104c@suse.cz>
+ <2382d6e1-7719-4bf9-8a4a-1e2c32ee7c9f@suse.cz>
+ <ZwzNtGALCG9jUNUD@feng-clx.sh.intel.com>
+ <a34e6796-e550-465c-92dc-ee659716b918@suse.cz>
+ <Zw0UKtx5d2hnHvDV@feng-clx.sh.intel.com>
+ <0e8d49d2-e89b-44df-9dff-29e8f24de105@suse.cz>
+ <Zw0otGNgqPUeTdWJ@feng-clx.sh.intel.com>
+ <Zyiv40cZcaCKlGtM@feng-clx.sh.intel.com>
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ EP+ylKVEKb0Q2A==
+In-Reply-To: <Zyiv40cZcaCKlGtM@feng-clx.sh.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Queue-Id: 865FB21E8F
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_DN_EQ_ADDR_SOME(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	FREEMAIL_CC(0.00)[google.com,linux-foundation.org,linux.com,kernel.org,lge.com,linux.dev,gmail.com,linuxfoundation.org,arm.com,kvack.org,googlegroups.com,vger.kernel.org];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[22];
+	MID_RHS_MATCH_FROM(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TO_DN_SOME(0.00)[]
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -3.01
+X-Spam-Flag: NO
 
-On Mon, Nov 04, 2024 at 12:25:03PM +0100, Vlastimil Babka wrote:
-> On 11/4/24 12:11, Vlastimil Babka wrote:
-
-> >>  __alloc_pages_noprof+0x292/0x710 mm/page_alloc.c:4771
-> >>  alloc_pages_mpol_noprof+0x3e8/0x680 mm/mempolicy.c:2265
-> >>  stack_depot_save_flags+0x666/0x830 lib/stackdepot.c:627
-> >>  kasan_save_stack+0x4f/0x60 mm/kasan/common.c:48
-> >>  __kasan_record_aux_stack+0xac/0xc0 mm/kasan/generic.c:544
-> >>  task_work_add+0xd9/0x490 kernel/task_work.c:77
-> > 
-> > It seems the decision if stack depot is allowed to allocate here depends on
-> > TWAF_NO_ALLOC added only recently. So does it mean it doesn't work as intended?
+On 11/4/24 12:28, Feng Tang wrote:
+> On Mon, Oct 14, 2024 at 10:20:36PM +0800, Tang, Feng wrote:
+>> On Mon, Oct 14, 2024 at 03:12:09PM +0200, Vlastimil Babka wrote:
+>> > > 
+>> > >> So I think in __do_krealloc() we should do things manually to determine ks
+>> > >> and not call ksize(). Just not break any of the cases ksize() handles
+>> > >> (kfence, large kmalloc).
+>> > > 
+>> > > OK, originally I tried not to expose internals of __ksize(). Let me
+>> > > try this way.
+>> > 
+>> > ksize() makes assumptions that a user outside of slab itself is calling it.
+>> > 
+>> > But we (well mostly Kees) also introduced kmalloc_size_roundup() to avoid
+>> > querying ksize() for the purposes of writing beyond the original
+>> > kmalloc(size) up to the bucket size. So maybe we can also investigate if the
+>> > skip_orig_size_check() mechanism can be removed now?
+>> 
+>> I did a quick grep, and fortunately it seems that the ksize() user are
+>> much less than before. We used to see some trouble in network code, which
+>> is now very clean without the need to skip orig_size check. Will check
+>> other call site later.
+>  
 > 
-> I guess __run_posix_cpu_timers() needs to pass TWAF_NO_ALLOC too?
+> I did more further check about ksize() usage, and there are still some
+> places to be handled. The thing stands out is kfree_sensitive(), and
+> another potential one is sound/soc/codecs/cs-amp-lib-test.c
+> 
+> Some details:
+> 
+> * Thanks to Kees Cook, who has cured many cases of ksize() as below:
+>   
+>   drivers/base/devres.c:        total_old_size = ksize(container_of(ptr, struct devres, data));
+>   drivers/net/ethernet/intel/igb/igb_main.c:        } else if (size > ksize(q_vector)) {   
+>   net/core/skbuff.c:        *size = ksize(data);
+>   net/openvswitch/flow_netlink.c:        new_acts_size = max(next_offset + req_size, ksize(*sfa) * 2);
+>   kernel/bpf/verifier.c:        alloc_bytes = max(ksize(orig), kmalloc_size_roundup(bytes));
+> 
+> * Some callers use ksize() mostly for calculation or sanity check,
+>   and not for accessing those extra space, which are fine:
+> 
+>   drivers/gpu/drm/drm_managed.c:        WARN_ON(dev + 1 > (struct drm_device *) (container + ksize(container)));
+>   lib/kunit/string-stream-test.c:        actual_bytes_used = ksize(stream);
+>   lib/kunit/string-stream-test.c:                actual_bytes_used += ksize(frag_container);
+>   lib/kunit/string-stream-test.c:                actual_bytes_used += ksize(frag_container->fragment);
+>   mm/nommu.c:                return ksize(objp);
+>   mm/util.c:                        memcpy(n, kasan_reset_tag(p), ksize(p));
+>   security/tomoyo/gc.c:        tomoyo_memory_used[TOMOYO_MEMORY_POLICY] -= ksize(ptr);
+>   security/tomoyo/memory.c:                const size_t s = ksize(ptr);
+>   drivers/md/dm-vdo/memory-alloc.c:                        add_kmalloc_block(ksize(p));
+>   drivers/md/dm-vdo/memory-alloc.c:                add_kmalloc_block(ksize(p));
+>   drivers/md/dm-vdo/memory-alloc.c:                        remove_kmalloc_block(ksize(ptr));
+> 	
+> * One usage may need to be handled 
+>  
+>   sound/soc/codecs/cs-amp-lib-test.c:        KUNIT_ASSERT_GE_MSG(test, ksize(buf), priv->cal_blob->size, "Buffer to small");
+> 
+> * bigger problem is the kfree_sensitive(), which will use ksize() to
+>   get the total size and then zero all of them.
+>   
+>   One solution for this could be get the kmem_cache first, and
+>   do the skip_orig_size_check() 
 
-Yeah, or we just accept that kasan_record_aux_stack() is a horrible
-thing and shouldn't live in functions that try their bestest to
-locklessly setup async work at all.
+Maybe add a parameter for __ksize() that controls if we do
+skip_orig_size_check(), current ksize() will pass "false" to it (once
+remaining wrong users are handled), then another ksize_internal() variant
+will pass "true" and be used from kfree_sensitive()?
 
-That thing has only ever caused trouble :/
+> Thanks,
+> Feng
 
-Also see 156172a13ff0.
-
-How about we do the below at the very least?
-
----
- include/linux/kasan.h     |  2 --
- include/linux/task_work.h |  1 -
- kernel/irq_work.c         |  2 +-
- kernel/rcu/tiny.c         |  2 +-
- kernel/rcu/tree.c         |  4 ++--
- kernel/sched/core.c       |  2 +-
- kernel/task_work.c        | 12 +-----------
- kernel/workqueue.c        |  2 +-
- mm/kasan/generic.c        | 16 +++-------------
- mm/slub.c                 |  2 +-
- 10 files changed, 11 insertions(+), 34 deletions(-)
-
-diff --git a/include/linux/kasan.h b/include/linux/kasan.h
-index 00a3bf7c0d8f..1a623818e8b3 100644
---- a/include/linux/kasan.h
-+++ b/include/linux/kasan.h
-@@ -488,7 +488,6 @@ void kasan_cache_create(struct kmem_cache *cache, unsigned int *size,
- void kasan_cache_shrink(struct kmem_cache *cache);
- void kasan_cache_shutdown(struct kmem_cache *cache);
- void kasan_record_aux_stack(void *ptr);
--void kasan_record_aux_stack_noalloc(void *ptr);
- 
- #else /* CONFIG_KASAN_GENERIC */
- 
-@@ -506,7 +505,6 @@ static inline void kasan_cache_create(struct kmem_cache *cache,
- static inline void kasan_cache_shrink(struct kmem_cache *cache) {}
- static inline void kasan_cache_shutdown(struct kmem_cache *cache) {}
- static inline void kasan_record_aux_stack(void *ptr) {}
--static inline void kasan_record_aux_stack_noalloc(void *ptr) {}
- 
- #endif /* CONFIG_KASAN_GENERIC */
- 
-diff --git a/include/linux/task_work.h b/include/linux/task_work.h
-index 2964171856e0..db1690e01346 100644
---- a/include/linux/task_work.h
-+++ b/include/linux/task_work.h
-@@ -21,7 +21,6 @@ enum task_work_notify_mode {
- 	TWA_NMI_CURRENT,
- 
- 	TWA_FLAGS = 0xff00,
--	TWAF_NO_ALLOC = 0x0100,
- };
- 
- static inline bool task_work_pending(struct task_struct *task)
-diff --git a/kernel/irq_work.c b/kernel/irq_work.c
-index 2f4fb336dda1..73f7e1fd4ab4 100644
---- a/kernel/irq_work.c
-+++ b/kernel/irq_work.c
-@@ -147,7 +147,7 @@ bool irq_work_queue_on(struct irq_work *work, int cpu)
- 	if (!irq_work_claim(work))
- 		return false;
- 
--	kasan_record_aux_stack_noalloc(work);
-+	kasan_record_aux_stack(work);
- 
- 	preempt_disable();
- 	if (cpu != smp_processor_id()) {
-diff --git a/kernel/rcu/tiny.c b/kernel/rcu/tiny.c
-index b3b3ce34df63..4b3f31911465 100644
---- a/kernel/rcu/tiny.c
-+++ b/kernel/rcu/tiny.c
-@@ -250,7 +250,7 @@ EXPORT_SYMBOL_GPL(poll_state_synchronize_rcu);
- void kvfree_call_rcu(struct rcu_head *head, void *ptr)
- {
- 	if (head)
--		kasan_record_aux_stack_noalloc(ptr);
-+		kasan_record_aux_stack(ptr);
- 
- 	__kvfree_call_rcu(head, ptr);
- }
-diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-index b1f883fcd918..7eae9bd818a9 100644
---- a/kernel/rcu/tree.c
-+++ b/kernel/rcu/tree.c
-@@ -3083,7 +3083,7 @@ __call_rcu_common(struct rcu_head *head, rcu_callback_t func, bool lazy_in)
- 	}
- 	head->func = func;
- 	head->next = NULL;
--	kasan_record_aux_stack_noalloc(head);
-+	kasan_record_aux_stack(head);
- 	local_irq_save(flags);
- 	rdp = this_cpu_ptr(&rcu_data);
- 	lazy = lazy_in && !rcu_async_should_hurry();
-@@ -3807,7 +3807,7 @@ void kvfree_call_rcu(struct rcu_head *head, void *ptr)
- 		return;
- 	}
- 
--	kasan_record_aux_stack_noalloc(ptr);
-+	kasan_record_aux_stack(ptr);
- 	success = add_ptr_to_bulk_krc_lock(&krcp, &flags, ptr, !head);
- 	if (!success) {
- 		run_page_cache_worker(krcp);
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 5de31c312189..dafc668a156e 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -10519,7 +10519,7 @@ void task_tick_mm_cid(struct rq *rq, struct task_struct *curr)
- 		return;
- 
- 	/* No page allocation under rq lock */
--	task_work_add(curr, work, TWA_RESUME | TWAF_NO_ALLOC);
-+	task_work_add(curr, work, TWA_RESUME);
- }
- 
- void sched_mm_cid_exit_signals(struct task_struct *t)
-diff --git a/kernel/task_work.c b/kernel/task_work.c
-index c969f1f26be5..2ffd5a6db91b 100644
---- a/kernel/task_work.c
-+++ b/kernel/task_work.c
-@@ -64,17 +64,7 @@ int task_work_add(struct task_struct *task, struct callback_head *work,
- 		if (!IS_ENABLED(CONFIG_IRQ_WORK))
- 			return -EINVAL;
- 	} else {
--		/*
--		 * Record the work call stack in order to print it in KASAN
--		 * reports.
--		 *
--		 * Note that stack allocation can fail if TWAF_NO_ALLOC flag
--		 * is set and new page is needed to expand the stack buffer.
--		 */
--		if (flags & TWAF_NO_ALLOC)
--			kasan_record_aux_stack_noalloc(work);
--		else
--			kasan_record_aux_stack(work);
-+		kasan_record_aux_stack(work);
- 	}
- 
- 	head = READ_ONCE(task->task_works);
-diff --git a/kernel/workqueue.c b/kernel/workqueue.c
-index 9949ffad8df0..65b8314b2d53 100644
---- a/kernel/workqueue.c
-+++ b/kernel/workqueue.c
-@@ -2180,7 +2180,7 @@ static void insert_work(struct pool_workqueue *pwq, struct work_struct *work,
- 	debug_work_activate(work);
- 
- 	/* record the work call stack in order to print it in KASAN reports */
--	kasan_record_aux_stack_noalloc(work);
-+	kasan_record_aux_stack(work);
- 
- 	/* we own @work, set data and link */
- 	set_work_pwq(work, pwq, extra_flags);
-diff --git a/mm/kasan/generic.c b/mm/kasan/generic.c
-index 6310a180278b..ac9f6682bb2f 100644
---- a/mm/kasan/generic.c
-+++ b/mm/kasan/generic.c
-@@ -521,12 +521,12 @@ size_t kasan_metadata_size(struct kmem_cache *cache, bool in_object)
- 			sizeof(struct kasan_free_meta) : 0);
- }
- 
--static void __kasan_record_aux_stack(void *addr, depot_flags_t depot_flags)
-+void kasan_record_aux_stack(void *addr)
- {
- 	struct slab *slab = kasan_addr_to_slab(addr);
- 	struct kmem_cache *cache;
- 	struct kasan_alloc_meta *alloc_meta;
--	void *object;
-+	void *object
- 
- 	if (is_kfence_address(addr) || !slab)
- 		return;
-@@ -538,17 +538,7 @@ static void __kasan_record_aux_stack(void *addr, depot_flags_t depot_flags)
- 		return;
- 
- 	alloc_meta->aux_stack[1] = alloc_meta->aux_stack[0];
--	alloc_meta->aux_stack[0] = kasan_save_stack(0, depot_flags);
--}
--
--void kasan_record_aux_stack(void *addr)
--{
--	return __kasan_record_aux_stack(addr, STACK_DEPOT_FLAG_CAN_ALLOC);
--}
--
--void kasan_record_aux_stack_noalloc(void *addr)
--{
--	return __kasan_record_aux_stack(addr, 0);
-+	alloc_meta->aux_stack[0] = kasan_save_stack(0, 0);
- }
- 
- void kasan_save_alloc_info(struct kmem_cache *cache, void *object, gfp_t flags)
-diff --git a/mm/slub.c b/mm/slub.c
-index 5b832512044e..b8c4bf3fe0d0 100644
---- a/mm/slub.c
-+++ b/mm/slub.c
-@@ -2300,7 +2300,7 @@ bool slab_free_hook(struct kmem_cache *s, void *x, bool init,
- 			 * We have to do this manually because the rcu_head is
- 			 * not located inside the object.
- 			 */
--			kasan_record_aux_stack_noalloc(x);
-+			kasan_record_aux_stack(x);
- 
- 			delayed_free->object = x;
- 			call_rcu(&delayed_free->head, slab_free_after_rcu_debug);
 
