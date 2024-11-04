@@ -1,215 +1,143 @@
-Return-Path: <linux-kernel+bounces-395172-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395142-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0B3A9BB9D9
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 17:08:48 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E3E39BB913
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 16:36:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF188281D59
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 16:08:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 31E7B1F223C1
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 15:36:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 476CC1C07F7;
-	Mon,  4 Nov 2024 16:08:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE0651BF804;
+	Mon,  4 Nov 2024 15:36:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="T58QmFrh"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i8yc4lDU"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB0061C07E5;
-	Mon,  4 Nov 2024 16:08:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D67313C827
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 15:36:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730736520; cv=none; b=NlBMizffosPU6FHd3DvCxYAC913brB+u551mvl8mwi2ZXbZoeodxWQFFgOVUXm2Ongi+Acr9FHxw8fn0Ct5h63Im3tO7cjd9np0S/kvbOkENpeikwj/7Jf9+VExquS9FcFYuC+rbwcw9Jd2qUjxbZSFtNfqQhMwEhG8WWB4hc0g=
+	t=1730734592; cv=none; b=bTxMS5+f+MS8WMhoRmFYbIEbQ20n0wf9ISGNMFbem0BnS/6O9JT+fnZ3GOh7wZAQowYN0tl29kG7PJoRKIBO9yOZPpzkyfmjdcEcFujTTSCqytE/noNEWB7saQGmM6ojiamGMs05GoeKhHYG8318r3EpatMOIc4D84WBSvDQHGw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730736520; c=relaxed/simple;
-	bh=AKZxtJ4ffU13mmHVTasjpozRFhvW4v2i47Nv2xkHlUs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sPtsSZog0GqoMI+BHJufatStgq10tNiClLrUKperKyODszwxaXlZtA75JmJzq68MhOKul2dKuVgTi/V1/xIDBzvnfM2ybcm1U8Ir7d6nVMgZ3hrIhqBtpUlH9XmIS8Rdu+Z7csB070AJO9EdRT54/dj/1a+PjqP2cbAlnsyL2EM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=T58QmFrh; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A4FeGol015296;
-	Mon, 4 Nov 2024 16:08:37 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=pp1; bh=uCZFnTPm6MfL+4NTgwEJRO4AQGJM7gK8Yn7cfGTQO
-	ig=; b=T58QmFrh07lglIZkr4JWJ0o8hwUhsch0SlZUoZoJrCKTNXjjpZC632/ih
-	3Qz2KAqmTjoRXqy98xtAgKazkP+/y+vs9Hc8aOuOrYO8+zEjAWpDvebSDmGaxg/N
-	ReL4V3B5aIivkui8Nv7C0pH1E/lemZmF3VDflrM208+nQqmLS+4mhxkd26blCotn
-	+C/ASbcWH/hI/+oO5173VN/mBlZCjDlDqxqb1yeyWiDBdYhx8iaLKikyauGUgwaT
-	JDGrB4KfZSaoviA5b3LN+d1BiUq4JtVV89KjXhAcWqTAPJiKWETJg5yM4EGiVvYM
-	mSJnBqitKupLw7OPmklBb27tfx41g==
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42q14303nw-5
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 04 Nov 2024 16:08:37 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4A4ENdFY023983;
-	Mon, 4 Nov 2024 15:36:13 GMT
-Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 42nxsxxj6m-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 04 Nov 2024 15:36:13 +0000
-Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
-	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4A4Fa9lh33292978
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 4 Nov 2024 15:36:09 GMT
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id C470320043;
-	Mon,  4 Nov 2024 15:36:09 +0000 (GMT)
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id A5D7F20040;
-	Mon,  4 Nov 2024 15:36:09 +0000 (GMT)
-Received: from tuxmaker.boeblingen.de.ibm.com (unknown [9.152.85.9])
-	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Mon,  4 Nov 2024 15:36:09 +0000 (GMT)
-From: Steffen Eiden <seiden@linux.ibm.com>
-To: linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org
-Cc: Ingo Franzki <ifranzki@linux.ibm.com>,
-        Christoph Schlameuss <schlameuss@linux.ibm.com>,
-        Janosch Frank <frankja@linux.ibm.com>,
-        Claudio Imbrenda <imbrenda@linux.ibm.com>, borntraeger@linux.ibm.com
-Subject: [PATCH v3] s390/uvdevice: Support longer secret lists
-Date: Mon,  4 Nov 2024 16:36:09 +0100
-Message-ID: <20241104153609.1361388-1-seiden@linux.ibm.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1730734592; c=relaxed/simple;
+	bh=FTxyyNtpjjEJ8pmJ46Ma08R/3lLHfHVUUIJ/tfMeDW4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=k97oV7IQvX4i8ZoJBybMNm418YXmOrY3hU3Ytf7hJWHFj9suPCutPQhmZq3F1eRSiU/j8gnQE4XF1CJY5YT3XeZmSsMVTCbXKv9WfVFcf2bLPg/QGfyqpqZ/nyRt9c5rx0JmuJzHnl8ZrHbrLP7YBYyUu7Z7mDT+y1PkcSqk8aU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i8yc4lDU; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a9a850270e2so730791166b.0
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 07:36:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730734589; x=1731339389; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=iZ4JKX2LorURTLXKxWOksbQI0A4yoB4RGsDEqwmYGRk=;
+        b=i8yc4lDUq8Q1qmMU8gen1SYY9m9PasqC5lqlplMTbGEUoglxK04pyGMQvOyTpPJHSa
+         g5WYv9kDDDyrIl4IH1LuxLWx16hAaPiwSuBeNQVLaaXYgy38/Oshxu5Ebb72PkJI8+9B
+         QqCfhP8aAb+V35fNqb41riU0RwtnrTdbq4Og31TvDlq5P0qqNNiltI1YvcCCxde3LClB
+         bcskKa4aTD1FE/hxjzJAX/G5RqzewT8kR9t957g41TPGMxj1fQmnIB9GsGpL07bpa5s3
+         bS7Y1OZW2WnrNXkV0qOKMPphXHUIvaQPEHOButNb96QJuPU9eIsm/wb7YpOeim+oQVwR
+         6KmQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730734589; x=1731339389;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=iZ4JKX2LorURTLXKxWOksbQI0A4yoB4RGsDEqwmYGRk=;
+        b=aSSi9MzMBrT5WCwbbbG9ztR+INBoo9h2trxqeGT7BOhTQ13rRYptvCNeTm8tFpUDn4
+         7t7Fe97Sr17h52WTdBtBxGUJUaOQOS1g/ny1u/sNmWM6AvfnRnHn8Obk1sLoNpoOxS/N
+         qUxBe466o9nkvQlD/vOFZY+fKq9da3gQlaLSfrxMmNBeC9r+TklMpWAQ6LLHCoD7EgjC
+         k7OekeuH/ExhMAegdzlximcRsQL3yez7M6X4diI+1o6eUCQrxN3Sww72ggvzT2CGUosm
+         wB5vZcA8fArpISyo4KpZLnf2dx81PoMSeZSwRjGPWvCSu+8aMn201W/EQjwy3mgz60s3
+         85QQ==
+X-Gm-Message-State: AOJu0YyfV8sPxYfsj3BfWh2w0/zp+puRYr9hWQdEKaP0rdcNDGb2gbw/
+	4Fwd4niM9HuOf5LZwbsC6vk8/2ss1SrzvCI/rTNuTaNFn2+H6Dn8
+X-Google-Smtp-Source: AGHT+IGbuqxlPK+WlcGvI2zXPinuwZlTD4rpgt/wgraslP9/65dYiROBkdZaAagn720RVFaIlBEwGA==
+X-Received: by 2002:a17:907:9408:b0:a99:f887:ec09 with SMTP id a640c23a62f3a-a9e655b92b0mr1167778466b.35.1730734588391;
+        Mon, 04 Nov 2024 07:36:28 -0800 (PST)
+Received: from [192.168.1.100] ([46.248.82.114])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9e5664d165sm566991266b.185.2024.11.04.07.36.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 04 Nov 2024 07:36:27 -0800 (PST)
+Message-ID: <0dac9a18-e993-d60d-9b13-da2cd0c3bd4c@gmail.com>
+Date: Mon, 4 Nov 2024 16:36:26 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: zWPRhq9sGEdPvMOfHW1Z6BAxZL85Wj6f
-X-Proofpoint-ORIG-GUID: zWPRhq9sGEdPvMOfHW1Z6BAxZL85Wj6f
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 spamscore=0
- mlxscore=0 phishscore=0 bulkscore=0 clxscore=1015 impostorscore=0
- priorityscore=1501 malwarescore=0 mlxlogscore=826 lowpriorityscore=0
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411040137
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH 03/19] perf: Fix perf_pmu_register() vs perf_init_event()
+Content-Language: en-US
+To: Peter Zijlstra <peterz@infradead.org>, mingo@kernel.org,
+ lucas.demarchi@intel.com
+Cc: linux-kernel@vger.kernel.org, willy@infradead.org, acme@kernel.org,
+ namhyung@kernel.org, mark.rutland@arm.com,
+ alexander.shishkin@linux.intel.com, jolsa@kernel.org, irogers@google.com,
+ adrian.hunter@intel.com, kan.liang@linux.intel.com
+References: <20241104133909.669111662@infradead.org>
+ <20241104135517.858805880@infradead.org>
+From: Uros Bizjak <ubizjak@gmail.com>
+In-Reply-To: <20241104135517.858805880@infradead.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Enable the list IOCTL to provide lists longer than one page (85 entries).
-The list IOCTL now accepts any argument length in page granularity.
-It fills the argument up to this length with entries until the list
-ends. User space unaware of this enhancement will still receive one page
-of data and an uv_rc 0x0100.
 
-Signed-off-by: Steffen Eiden <seiden@linux.ibm.com>
----
- v3: remove upper boundary (8 pages) for arg len
 
- drivers/s390/char/uvdevice.c | 71 ++++++++++++++++++++++++++----------
- 1 file changed, 52 insertions(+), 19 deletions(-)
+On 4. 11. 24 14:39, Peter Zijlstra wrote:
+> There is a fairly obvious race between perf_init_event() doing
+> idr_find() and perf_pmu_register() doing idr_alloc() with an
+> incompletely initialized pmu pointer.
+> 
+> Avoid by doing idr_alloc() on a NULL pointer to register the id, and
+> swizzling the real pmu pointer at the end using idr_replace().
+> 
+> Also making sure to not set pmu members after publishing the pmu, duh.
+> 
+> [ introduce idr_cmpxchg() in order to better handle the idr_replace()
+>    error case -- if it were to return an unexpected pointer, it will
+>    already have replaced the value and there is no going back. ]
+> 
+> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> ---
+>   kernel/events/core.c |   28 ++++++++++++++++++++++++++--
+>   1 file changed, 26 insertions(+), 2 deletions(-)
+> 
+> --- a/kernel/events/core.c
+> +++ b/kernel/events/core.c
+> @@ -11739,6 +11739,21 @@ static int pmu_dev_alloc(struct pmu *pmu
+>   static struct lock_class_key cpuctx_mutex;
+>   static struct lock_class_key cpuctx_lock;
+>   
+> +static bool idr_cmpxchg(struct idr *idr, unsigned long id, void *old, void *new)
+> +{
+> +	void *tmp, *val = idr_find(idr, id);
+> +
+> +	if (val != old)
+> +		return false;
+> +
+> +	tmp = idr_replace(idr, new, id);
+> +	if (IS_ERR(tmp))
+> +		return false;
+> +
+> +	WARN_ON_ONCE(tmp != val);
+> +	return true;
+> +}
 
-diff --git a/drivers/s390/char/uvdevice.c b/drivers/s390/char/uvdevice.c
-index 1f90976293e8..7551b03d5f99 100644
---- a/drivers/s390/char/uvdevice.c
-+++ b/drivers/s390/char/uvdevice.c
-@@ -297,6 +297,43 @@ static int uvio_add_secret(struct uvio_ioctl_cb *uv_ioctl)
- 	return ret;
- }
- 
-+/*
-+ * Do the actual secret list creation. Calls the list secrets UVC until there
-+ * is no more space in the user buffer, or the list ends.
-+ */
-+static int uvio_get_list(void *zpage, struct uvio_ioctl_cb *uv_ioctl)
-+{
-+	const size_t data_off = offsetof(struct uv_secret_list, secrets);
-+	u8 __user *user_buf = (u8 __user *)uv_ioctl->argument_addr;
-+	struct uv_secret_list *list = zpage;
-+	u16 num_secrets_stored = 0;
-+	size_t user_off = data_off;
-+	size_t copy_len;
-+
-+	do {
-+		uv_list_secrets(list, list->next_secret_idx, &uv_ioctl->uv_rc,
-+				&uv_ioctl->uv_rrc);
-+		if (uv_ioctl->uv_rc != UVC_RC_EXECUTED &&
-+		    uv_ioctl->uv_rc != UVC_RC_MORE_DATA)
-+			break;
-+
-+		copy_len = sizeof(list->secrets[0]) * list->num_secr_stored;
-+		WARN_ON(copy_len > sizeof(list->secrets));
-+
-+		if (copy_to_user(user_buf + user_off, list->secrets, copy_len))
-+			return -EFAULT;
-+
-+		user_off += copy_len;
-+		num_secrets_stored += list->num_secr_stored;
-+	} while (uv_ioctl->uv_rc == UVC_RC_MORE_DATA &&
-+		 user_off + sizeof(*list) <= uv_ioctl->argument_len);
-+
-+	list->num_secr_stored = num_secrets_stored;
-+	if (copy_to_user(user_buf, list, data_off))
-+		return -EFAULT;
-+	return 0;
-+}
-+
- /** uvio_list_secrets() - perform a List Secret UVC
-  * @uv_ioctl: ioctl control block
-  *
-@@ -308,6 +345,12 @@ static int uvio_add_secret(struct uvio_ioctl_cb *uv_ioctl)
-  *
-  * The argument specifies the location for the result of the UV-Call.
-  *
-+ * Argument length must be a multiple of a page.
-+ * The list secrets IOCTL will call the list UVC multiple times and fill
-+ * the provided user-buffer with list elements until either the list ends or
-+ * the buffer is full. The list header is merged over all list header from the
-+ * individual UVCs.
-+ *
-  * If the List Secrets UV facility is not present, UV will return invalid
-  * command rc. This won't be fenced in the driver and does not result in a
-  * negative return value.
-@@ -318,31 +361,21 @@ static int uvio_add_secret(struct uvio_ioctl_cb *uv_ioctl)
-  */
- static int uvio_list_secrets(struct uvio_ioctl_cb *uv_ioctl)
- {
--	void __user *user_buf_arg = (void __user *)uv_ioctl->argument_addr;
--	struct uv_cb_guest_addr uvcb = {
--		.header.len = sizeof(uvcb),
--		.header.cmd = UVC_CMD_LIST_SECRETS,
--	};
--	void *secrets = NULL;
--	int ret = 0;
-+	void *zpage = NULL;
-+	int rc;
- 
--	if (uv_ioctl->argument_len != UVIO_LIST_SECRETS_LEN)
-+	if (uv_ioctl->argument_len == 0 ||
-+	    uv_ioctl->argument_len % UVIO_LIST_SECRETS_LEN != 0)
- 		return -EINVAL;
- 
--	secrets = kvzalloc(UVIO_LIST_SECRETS_LEN, GFP_KERNEL);
--	if (!secrets)
-+	zpage = (void *)get_zeroed_page(GFP_KERNEL);
-+	if (!zpage)
- 		return -ENOMEM;
- 
--	uvcb.addr = (u64)secrets;
--	uv_call_sched(0, (u64)&uvcb);
--	uv_ioctl->uv_rc = uvcb.header.rc;
--	uv_ioctl->uv_rrc = uvcb.header.rrc;
--
--	if (copy_to_user(user_buf_arg, secrets, UVIO_LIST_SECRETS_LEN))
--		ret = -EFAULT;
-+	rc = uvio_get_list(zpage, uv_ioctl);
- 
--	kvfree(secrets);
--	return ret;
-+	free_page((unsigned long)zpage);
-+	return rc;
- }
- 
- /** uvio_lock_secrets() - perform a Lock Secret Store UVC
--- 
-2.45.2
+Can the above function be named idr_try_cmpxchg?
 
+cmpxchg family of functions return an old value from the location and 
+one would expect that idr_cmpxchg() returns an old value from *idr, too. 
+idr_cmpxchg() function however returns success/failure status, and this 
+is also what functions from try_cmpxchg family return.
+
+Uros.
 
