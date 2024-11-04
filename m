@@ -1,134 +1,114 @@
-Return-Path: <linux-kernel+bounces-394353-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394354-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFC569BADD1
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 09:15:15 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98DE39BADD4
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 09:16:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 67FC21F21560
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 08:15:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA1C41C2149C
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 08:16:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 054E91AAE30;
-	Mon,  4 Nov 2024 08:15:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 296AB18E050;
+	Mon,  4 Nov 2024 08:15:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GjT+Bwgs"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="ojCDsTPG"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76D2B189F3E;
-	Mon,  4 Nov 2024 08:15:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DAF8171E43
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 08:15:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730708108; cv=none; b=pG3eVgkLCmYSpVXOVjCFmRgSPpPpL53knmhBFCfebUU3JgSENP6Ah5BxTrcsYX1J4UoZWw42/LQh3nO+HuTC1zt/pzEIITve1W81dIu+ROVNUQdiLO7PXVB0dqUmYImHEuffdnU0CAheckASCtVUwIk0lwY7Uhol+I+f3CfubCc=
+	t=1730708156; cv=none; b=DgXz5SJnabVGovirfpeHm+kda3RhGnk8ch0AVjYMN50hbFQ+dK6Xqy6iXB2mZNCr9S9BmFwAtmc+W/6+pvdkWrgAAOoNBThhHNmC2dY/xo5XBdzpzkQpBbw0UTvNfR3I/NClUV962MkkjSBcAE+VrbqA86BF9wEpWG6vxfPNkFY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730708108; c=relaxed/simple;
-	bh=hT4FCH486t3V3Qz4Rmmzls3k8/phtgySsg9h1wAxi/A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Bv2TkjnppI5BPtNSb6gZAxOHyur3Fw3mneK9A08nwHGH0OfPjyE/67qPDDsqiumMBiWo+0Ll2BLoSOzRVJITiN8WsY0Wf/JsI9kSrQhulBmPzMTWxbmopglbYtEFYSPPadZhhOY/d31KDAl720f9PmBLngFWnz7B8uiR/NDIdLg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GjT+Bwgs; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730708107; x=1762244107;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=hT4FCH486t3V3Qz4Rmmzls3k8/phtgySsg9h1wAxi/A=;
-  b=GjT+BwgsPdXzH/zFL3L5h6mrGE5iYpXTSHJUuwRfqyQiP3pTYXaMLNv+
-   +FHIc1J3Ec2QdFSQCd++wn4m0t6ygfbJN1KM7+EYS7nFAtnXm3+vI36iB
-   3KKbF5CMh7qtk+EuCfdRGaUlwy6YJHJAAAbBsaXp3hnGqtOnvTIWTaDGJ
-   pBTO/MuUn4Fj0VxfDxARKKuPRyWNV5QiAMd5YHOK66PDCWVes6VESCH5T
-   VuBEV20xr41IA1J9gb927L4E6FZZguQSnUbjDpCwvc8/diAAyK8XjElu8
-   ADY8KGjw+PkuWn/v92c0CEzUYkTeack/ah2WLoTLZZRUU8E97MYVKxYty
-   w==;
-X-CSE-ConnectionGUID: u/UKKqXiQMOL2FreRrWHcQ==
-X-CSE-MsgGUID: Y5fVdlpVRiO+SLlmfieOpw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11245"; a="34313586"
-X-IronPort-AV: E=Sophos;i="6.11,256,1725346800"; 
-   d="scan'208";a="34313586"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2024 00:15:06 -0800
-X-CSE-ConnectionGUID: 1ovYFQR0RfaFuhcD762Azw==
-X-CSE-MsgGUID: 2zHcmJctSg2Xa6a/evKhEA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,256,1725346800"; 
-   d="scan'208";a="83922798"
-Received: from smile.fi.intel.com ([10.237.72.154])
-  by fmviesa010.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2024 00:15:04 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1t7sEo-0000000AyiB-1hvd;
-	Mon, 04 Nov 2024 10:15:02 +0200
-Date: Mon, 4 Nov 2024 10:15:02 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH net-next v1 1/1] nfc: mrvl: Don't use "proxy" headers
-Message-ID: <ZyiChsS_zrHlet3E@smile.fi.intel.com>
-References: <20241101083910.3362945-1-andriy.shevchenko@linux.intel.com>
- <20241103081740.7bc006c1@kernel.org>
+	s=arc-20240116; t=1730708156; c=relaxed/simple;
+	bh=a4EMiUXgoVenzw1GK5Ky6jQqTFcXg2iRCJqQwmCryPA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=SlEgYZnDRYvop5q4gr+7JU+owTPF4PVK0/+S7qb0V33Y3dGrIc9zm3JPfe4UUvXtbo6EofO65Cbj1tglsyvF/W/ilVGc7edmCZra7I7Grc7Ay8uKx8flMVCxdFuU299HaChKmOkm/gqv4Bh6Qgdx8RRqA1zz3SE8UFNwIQ9VV00=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=ojCDsTPG; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-37d4a5ecc44so2479178f8f.2
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 00:15:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1730708153; x=1731312953; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tIeuAM5GJsoytHloglyBSVaHbZX6KID4/un87zATwOc=;
+        b=ojCDsTPG02IOQCwEJV15LB/mTlymOxrfu1FXwyMQZHhJE/SLSlvXblYDfs8EKUGZyo
+         KfhuJl9WCP6jtV7BF22Ae4qcpXl4QF63d62uJq3fMa9rhgNJjHD7fD31BxmAureUU2mm
+         5RZlzVCK6HV0742MXX8FqdDBsM2Pcvcb0P3CMzn6zSLyQvzsXyHXtSUThKhPnem55hqe
+         o3pu2N9JjXMOyyzdiHt334YIxlBLjiwYiReKFgk0MBpeV9aeW4RDggG3GT1bgOz4/79g
+         fpq4plYlE2jXGwuGGFEFQWvN5KtL/gw/rf5ugmUQnDRM/kYR2KtbghgrMv+A9gv8fMum
+         4HCQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730708153; x=1731312953;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=tIeuAM5GJsoytHloglyBSVaHbZX6KID4/un87zATwOc=;
+        b=oJJ4eHt49D+4SPria4OI2gfxxZ2PuTNV2l6fYnzED1TBlXs5wcv6eTAEbFEkICcnoS
+         NBzDIyrcys+nL89URxgb54TbyoOoKB9q9waROL/OnqMkZO0ZPHHnbXkG3PmdQ11T0aNj
+         cns+T8EfC6PujjcBP0tiZhulvOuRHkkNDuIhiMRJ4whzBq8nbTIry4INelmI4haMQSbP
+         VQRubwnOajwfOtVMTsTwhOL49gaM3PYxGEJGwNxTI7R8xnqnhSLxwxu44nEEsrjk22Uy
+         eUOoGQZ4DvcpYRmosKzDE+VUGsuYdxVYxxOuzusTSsgMTXLdAbSbFuYWhXlQ0fOnwely
+         cyAw==
+X-Forwarded-Encrypted: i=1; AJvYcCURwprXxCXVPPyBW9MNzjQ/3RA1RlIjTwTs+j6Vm3BInelfulAd7vycZchxJQ9DAyDIFSPSZEXGUAe3iZQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw/WU5q1R24BzOVbUE/+tDJDev81f2jR71Q6BszXlzat45C6g1h
+	AWY49oGKk7G2AT24OYOTjlB4CsH5lMR/sxRzA41riOO+QLN8coqZgc/tUG5F+GI=
+X-Google-Smtp-Source: AGHT+IEajS/InjMYYE7jd+ThlpM+g6VJvVw3N8PDF6JP88z4/XY+6wRBdCeIrZMVCeki4dDBp5Hdqw==
+X-Received: by 2002:adf:fc8b:0:b0:37d:5026:f787 with SMTP id ffacd0b85a97d-380611e10f1mr20694357f8f.38.1730708153494;
+        Mon, 04 Nov 2024 00:15:53 -0800 (PST)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:2603:7936:7734:a187])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381c10b7c13sm12674140f8f.13.2024.11.04.00.15.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 04 Nov 2024 00:15:53 -0800 (PST)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Bartosz Golaszewski <brgl@bgdev.pl>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	William Breathitt Gray <wbg@kernel.org>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/2] gpio: Replace deprecated PCI functions in ACCES drivers
+Date: Mon,  4 Nov 2024 09:15:51 +0100
+Message-ID: <173070814804.11535.16592270962077876800.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20241101-pci_iomap_region_gpio_acces-v1-0-26eb1dc93e45@kernel.org>
+References: <20241101-pci_iomap_region_gpio_acces-v1-0-26eb1dc93e45@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241103081740.7bc006c1@kernel.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Sun, Nov 03, 2024 at 08:17:40AM -0800, Jakub Kicinski wrote:
-> On Fri,  1 Nov 2024 10:39:10 +0200 Andy Shevchenko wrote:
-> > Subject: [PATCH net-next v1 1/1] nfc: mrvl: Don't use "proxy" headers
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+
+
+On Fri, 01 Nov 2024 16:15:07 +0900, William Breathitt Gray wrote:
+> pcim_iomap_regions() and pcim_iomap_table() have been deprecated in
+> commit e354bb84a4c1 ("PCI: Deprecate pcim_iomap_table(),
+> pcim_iomap_regions_request_all()").
 > 
-> What is a "proxy" header?
-
-The "proxy" header is any header that the code rely on to include other(s)
-*not related* to that header headers. Hopefully, despite too many words
-"header" you got the idea.
-
-> Guessing by the two patches you posted - are you trying to get rid of
-> of_gpio.h?
-
-In this particular case:
-1) I want to get rid of deprecated of_gpio.h;
-2) but at the same time it *is* a "proxy" header in this case.
-
-> > Update header inclusions to follow IWYU (Include What You Use)
-> > principle.
+> Replace these functions with pcim_iomap_region() for the pci-idio-16 and
+> pcie-idio-24 drivers.
 > 
-> I'm definitely on board with cleaning this up, but would prefer
-> to make sure we can validate new patches against introducing
-> regressions.
+> [...]
 
-0-day LKP quite likely will notice any issues with this (it's quite good
-at it), and so far it reported A-OK.
+Applied, thanks!
 
-> Otherwise the stream of patches will be never ending.
+[1/2] gpio: pci-idio-16: Replace deprecated PCI functions
+      commit: aeca17561dc32fcf8c105e2d6207fdf3356c7c94
+[2/2] gpio: pcie-idio-24: Replace deprecated PCI functions
+      commit: 09db69a84eca80374045063bdc8db6a21fddd7fe
 
-I know, and this is pity. And there was an attempt to make clang based tool
-for that, but no move forward as far as I can see. So, you are welcome to help
-developing such a tool.
-
-> What tooling do you use?
-
-My brains and my expertise in Linux Kernel project for the dependency hell
-we have in the headers.
-
-> Is it easy to integrate into a CI system?
-
-I don't think so.
-
-Can we have this being applied meanwhile, please? It's a showstopper for
-getting rid of of_gpio.h rather sooner than later.
-
+Best regards,
 -- 
-With Best Regards,
-Andy Shevchenko
-
-
+Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
