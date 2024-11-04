@@ -1,152 +1,115 @@
-Return-Path: <linux-kernel+bounces-394703-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394704-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A94C9BB304
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 12:21:53 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B09519BB307
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 12:22:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E39D1C20834
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 11:21:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E44B1F22319
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 11:22:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D33D1D4324;
-	Mon,  4 Nov 2024 11:11:40 +0000 (UTC)
-Received: from andre.telenet-ops.be (andre.telenet-ops.be [195.130.132.53])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 447581C57A5;
+	Mon,  4 Nov 2024 11:11:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FmHYaZxC"
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6115E1AF0AD
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 11:11:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5DAA1D432D
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 11:11:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730718700; cv=none; b=GgyqD/M/vgCxv8ZUVMcB25oztVoYBGZj6BX5Nompv3+BsEYQT0NjC6HQtwb89uKASumcbT0tk3WoYFqH65lfGVrCo99YOnY/vEDEq/fPTUdsBVRQxktC5jUjyjfRpY2dsJgwGn3L3xZa4AW6BGITjMSGOLOJavMfsii9TTGgk0U=
+	t=1730718702; cv=none; b=L8eBXMe1LLUZ20d3LuSYhlOEiHGiY9FKS15jLJt4vVkiDOAo/oeTQkMWhsH8dq91p7lcpywfQdltNOG8N7pVUBfU+TiEvyoSRrQwPeIihuKkbdR0D078Yuj8hWeNsVFkp0wx/YnXtI9Q346ra2iurvAwJooXOGLSdfnyfWSY/y4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730718700; c=relaxed/simple;
-	bh=VhoUkpsHTJztdL+oXJxlBixKh5kjVJmfAaHE1uMRi4g=;
-	h=From:To:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=o5ybK1eBKPwpB40fPRyaW8M5Vsqc/aRNUr70sKK055pPLgCnisUm8+vPT1/Z5ajw5AsYlyzNEV6Y3eU6LtFrZsO+CY0TvfW4rGN3ht+Xly8vu87nJ99EdXasEUdkR4iyjAa97ekaSgL/Pu8uuno00WR3l5ecmP0nHvmYytd+lT0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:cff2:a4e4:667a:351c])
-	by andre.telenet-ops.be with cmsmtp
-	id YbBU2D00E2b9NYg01bBUsL; Mon, 04 Nov 2024 12:11:28 +0100
-Received: from rox.of.borg ([192.168.97.57])
-	by ramsan.of.borg with esmtp (Exim 4.95)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1t7uzB-006FZD-0R
-	for linux-kernel@vger.kernel.org;
-	Mon, 04 Nov 2024 12:11:24 +0100
-Received: from geert by rox.of.borg with local (Exim 4.95)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1t7uzU-00E1cG-LX
-	for linux-kernel@vger.kernel.org;
-	Mon, 04 Nov 2024 12:11:24 +0100
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: linux-kernel@vger.kernel.org
-Subject: Build regressions/improvements in v6.12-rc6
-Date: Mon,  4 Nov 2024 12:11:24 +0100
-Message-Id: <20241104111124.3342797-1-geert@linux-m68k.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <CAHk-=whORbp07SkmAUbXTRtjk7imEgWXReGMaeteMg-gAFU_cA@mail.gmail.com>
-References: <CAHk-=whORbp07SkmAUbXTRtjk7imEgWXReGMaeteMg-gAFU_cA@mail.gmail.com>
+	s=arc-20240116; t=1730718702; c=relaxed/simple;
+	bh=aS1RV5IccN4VjdNkh+IjN+mznBIRUHS1uP6nDzF8Z60=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZBU8N0Ph2EtK4J5ElV6AhYFzYiUlKyPoVw1AVp8njdEMFQYqhfuQGcosejTUrFO5O/ptIL+ZIOOoyuKG0kN/0B6TEUUtB7ED8UCY/TGfF+7Ym6vf5LjGJfkkM0jkAJVPgcmZ6Fg0XyBv+ALONy1/80a0/plOh6p5R4Z4Py4WqUE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FmHYaZxC; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-539e4b7409fso3897348e87.0
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 03:11:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1730718699; x=1731323499; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=fXfPeWafmveGhp9XKGGoB6z88NY3VZN6ji8tXCrwgCk=;
+        b=FmHYaZxC19GwamqDkdYl5Pk5ZWKkIpm13Vz7E6hmyxWHycoIKiSJ2w6XDpiBIvS2RJ
+         TbfepxSXl1KnHYaRX1n57nIjeRYfnJj5jrK2DAj83lghB/Ex546vmWz5N3zIfh3C7Q7M
+         JgGBUmiRqEUF4zHevu/zn4JCFab3sVvKu+WGv+q9zYzxAvTAsNq2Dy0PauUCIbCo8tIe
+         sOhuhBaTkR3ygYj14RoNMLloOcWLZWqRwmvaACmViA2BFmLFApeSTlcG7XPGsJIePSCr
+         sd4dIP+dQ0wy0ehXeqQl741w/KrUg5tIWYym3VozMg6fmwiJwP/3PU+RU3uOt0fJw8yN
+         J7dA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730718699; x=1731323499;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fXfPeWafmveGhp9XKGGoB6z88NY3VZN6ji8tXCrwgCk=;
+        b=R+lIxPbPuGp2pQD2gkaQSOwTuHGglx9jsvsAp06WMt8ozIFXeXHiHaPjL4mT7tqEKB
+         OOhbZr3IUqkbCHB3Vd0BR2oAdji1Wj7ve4AYIPIXz/CcZ8EshdFXCIFJr7F7aRAJ7odi
+         WCcwt9hLbR320VCEXhrLLZ7NE5soWMWkrgKAYraQ9PbpcOjNsdHZHN7aLaQnE+QjTDid
+         +D3kPB91dYY2KsaUkHBLwtPJlZBo65ZZA8PZWUh6ZsInhBuQgpovOOicPAEM97RAaIcL
+         M396TMfFDtH1+vOl56mGN0KymL0Xs+93fBCbMV9L/zkBJSs+HxPQJS/oOx8CADG6t38f
+         Ms8A==
+X-Forwarded-Encrypted: i=1; AJvYcCVI7Mz+eKAGjBnQ3YULUukxfMADDMQW6Wesm8VP6rdqGRrcBPlq7YbyWdwwQfY3UgLofOF/3FYdqT+2aAQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YznqB9LuC8p+bzlqLxIuse8qVJSLxPB6gkonUerhiKkbKrXC91O
+	sNM7Nvg36PX4NUEu0q3mWpQT0m0+z5UgyxFh6q3Ql9NIXaJvSm+MKVDvOK3uXuo=
+X-Google-Smtp-Source: AGHT+IGqEF0e+IXoOCiPA1wD1EErF4DZpjMchrltLY3F4aIzKOLMtZB0smShDHkNlyYp+oQw+xv7+A==
+X-Received: by 2002:a05:6512:20ca:b0:539:e263:331c with SMTP id 2adb3069b0e04-53c7bbee92dmr4530622e87.17.1730718698968;
+        Mon, 04 Nov 2024 03:11:38 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53c7bde091csm1646261e87.251.2024.11.04.03.11.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 04 Nov 2024 03:11:37 -0800 (PST)
+Date: Mon, 4 Nov 2024 13:11:35 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Lijuan Gao <quic_lijuang@quicinc.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Will Deacon <will@kernel.org>, kernel@quicinc.com, linux-arm-msm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v5 5/5] arm64: defconfig: enable clock controller,
+ interconnect and pinctrl for QCS615
+Message-ID: <ovzq44ymgqwnretjmifaygqbjaxewxyx3ritjwcvb2d7hio26v@3i3xw5x3icym>
+References: <20241104-add_initial_support_for_qcs615-v5-0-9dde8d7b80b0@quicinc.com>
+ <20241104-add_initial_support_for_qcs615-v5-5-9dde8d7b80b0@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241104-add_initial_support_for_qcs615-v5-5-9dde8d7b80b0@quicinc.com>
 
-Below is the list of build error/warning regressions/improvements in
-v6.12-rc6[1] compared to v6.11[2].
+On Mon, Nov 04, 2024 at 05:10:12PM +0800, Lijuan Gao wrote:
+> Enable clock controller, interconnect and pinctrl for Qualcomm QCS615
+> platform to boot to UART console.
+> 
+> The serial engine depends on GCC, interconnect, and pinctrl. It is
+> necessary to build them as built-in modules because the debug console
+> must be registered before userspace is launched. The primary reason for
+> this is that, for example, systemd opens /dev/console at launch (i.e.,
+> when the init process starts). Therefore, if we register the console after
+> this, we will not receive console output from systemd.
+> 
+> Signed-off-by: Lijuan Gao <quic_lijuang@quicinc.com>
+> ---
+>  arch/arm64/configs/defconfig | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
 
-Summarized:
-  - build errors: +3/-7
-  - build warnings: +32/-3
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
-JFYI, when comparing v6.12-rc6[1] to v6.12-rc5[3], the summaries are:
-  - build errors: +0/-4
-  - build warnings: +0/-1
-
-Note that there may be false regressions, as some logs are incomplete.
-Still, they're build errors/warnings.
-
-Happy fixing! ;-)
-
-Thanks to the linux-next team for providing the build service.
-
-[1] http://kisskb.ellerman.id.au/kisskb/branch/linus/head/59b723cd2adbac2a34fc8e12c74ae26ae45bf230/ (all 194 configs)
-[2] http://kisskb.ellerman.id.au/kisskb/branch/linus/head/98f7e32f20d28ec452afb208f9cffc08448a2652/ (131 out of 194 configs)
-[3] http://kisskb.ellerman.id.au/kisskb/branch/linus/head/81983758430957d9a5cb3333fe324fd70cf63e7e/ (all 194 configs)
-
-
-*** ERRORS ***
-
-3 error regressions:
-  + /kisskb/src/crypto/async_tx/async_tx.c: error: no previous prototype for '__async_tx_find_channel' [-Werror=missing-prototypes]:  => 43:1
-  + /kisskb/src/drivers/net/ethernet/freescale/fs_enet/mii-bitbang.c: error: format '%x' expects argument of type 'unsigned int', but argument 4 has type 'resource_size_t {aka long long unsigned int}' [-Werror=format=]:  => 126:37
-  + /kisskb/src/drivers/net/ethernet/freescale/fs_enet/mii-bitbang.c: error: format '%x' expects argument of type 'unsigned int', but argument 4 has type 'resource_size_t' {aka 'long long unsigned int'} [-Werror=format=]:  => 126:46
-
-7 error improvements:
-  - /kisskb/src/drivers/md/dm-integrity.c: error: logical not is only applied to the left hand side of comparison [-Werror=logical-not-parentheses]: 4720:45 => 
-  - /kisskb/src/drivers/media/platform/nxp/imx-pxp.h: error: initializer element is not constant: 582:38 => 
-  - {standard input}: Error: displacement to undefined symbol .L142 overflows 8-bit field : 1070 => 
-  - {standard input}: Error: displacement to undefined symbol .L161 overflows 8-bit field : 1075 => 
-  - {standard input}: Error: pcrel too far: 1061, 1060, 1059 => 1397
-  - {standard input}: Error: unknown pseudo-op: `.l18': 1111 => 
-  - {standard input}: Error: unknown pseudo-op: `.siz': 1273 => 
-
-
-*** WARNINGS ***
-
-32 warning regressions:
-  + .config: warning: override: reassigning to symbol MIPS_CPS_NS16550_SHIFT: 15210, 15216 => 15350, 15342, 15344
-  + .config: warning: override: reassigning to symbol UML_NET_MCAST:  => 14881, 15124
-  + /kisskb/src/arch/mips/cavium-octeon/executive/cvmx-helper-errata.c: warning: no previous prototype for '__cvmx_helper_errata_qlm_disable_2nd_order_cdr' [-Wmissing-prototypes]:  => 49:6
-  + /kisskb/src/arch/mips/cavium-octeon/executive/cvmx-interrupt-decodes.c: warning: no previous prototype for '__cvmx_interrupt_gmxx_rxx_int_en_enable' [-Wmissing-prototypes]:  => 53:6
-  + /kisskb/src/arch/mips/cavium-octeon/octeon-platform.c: warning: no previous prototype for 'octeon_fill_mac_addresses' [-Wmissing-prototypes]:  => 701:13
-  + /kisskb/src/arch/mips/cavium-octeon/smp.c: warning: no previous prototype for 'octeon_send_ipi_single' [-Wmissing-prototypes]:  => 100:6
-  + /kisskb/src/arch/mips/kernel/cevt-bcm1480.c: warning: no previous prototype for 'sb1480_clockevent_init' [-Wmissing-prototypes]:  => 96:6
-  + /kisskb/src/arch/mips/kernel/csrc-bcm1480.c: warning: no previous prototype for 'sb1480_clocksource_init' [-Wmissing-prototypes]:  => 37:13
-  + /kisskb/src/arch/mips/mm/c-octeon.c: warning: no previous prototype for 'cache_parity_error_octeon_non_recoverable' [-Wmissing-prototypes]:  => 351:17
-  + /kisskb/src/arch/mips/mm/c-octeon.c: warning: no previous prototype for 'cache_parity_error_octeon_recoverable' [-Wmissing-prototypes]:  => 342:17
-  + /kisskb/src/arch/mips/mm/c-octeon.c: warning: no previous prototype for 'register_co_cache_error_notifier' [-Wmissing-prototypes]:  => 297:5
-  + /kisskb/src/arch/mips/mm/c-octeon.c: warning: no previous prototype for 'unregister_co_cache_error_notifier' [-Wmissing-prototypes]:  => 303:5
-  + /kisskb/src/arch/mips/mm/cerr-sb1.c: warning: no previous prototype for 'sb1_cache_error' [-Wmissing-prototypes]:  => 165:17
-  + /kisskb/src/arch/mips/pci/msi-octeon.c: warning: no previous prototype for 'octeon_msi_initialize' [-Wmissing-prototypes]:  => 343:12
-  + /kisskb/src/arch/mips/pci/pci-octeon.c: warning: no previous prototype for 'octeon_pci_pcibios_map_irq' [-Wmissing-prototypes]:  => 234:12
-  + /kisskb/src/arch/mips/pci/pcie-octeon.c: warning: no previous prototype for 'octeon_pcie_pcibios_map_irq' [-Wmissing-prototypes]:  => 1471:5
-  + /kisskb/src/arch/mips/sibyte/bcm1480/irq.c: warning: no previous prototype for 'init_bcm1480_irqs' [-Wmissing-prototypes]:  => 200:13
-  + /kisskb/src/arch/mips/sibyte/bcm1480/setup.c: warning: no previous prototype for 'bcm1480_setup' [-Wmissing-prototypes]:  => 104:13
-  + /kisskb/src/arch/mips/sibyte/bcm1480/smp.c: warning: no previous prototype for 'bcm1480_mailbox_interrupt' [-Wmissing-prototypes]:  => 158:6
-  + /kisskb/src/arch/mips/sibyte/bcm1480/smp.c: warning: no previous prototype for 'bcm1480_smp_init' [-Wmissing-prototypes]:  => 49:6
-  + /kisskb/src/arch/mips/sibyte/bcm1480/time.c: warning: no previous prototype for 'plat_time_init' [-Wmissing-prototypes]:  => 10:13
-  + /kisskb/src/arch/mips/sibyte/swarm/rtc_m41t81.c: warning: no previous prototype for 'm41t81_get_time' [-Wmissing-prototypes]:  => 186:10
-  + /kisskb/src/arch/mips/sibyte/swarm/rtc_m41t81.c: warning: no previous prototype for 'm41t81_probe' [-Wmissing-prototypes]:  => 219:5
-  + /kisskb/src/arch/mips/sibyte/swarm/rtc_m41t81.c: warning: no previous prototype for 'm41t81_set_time' [-Wmissing-prototypes]:  => 139:5
-  + /kisskb/src/arch/mips/sibyte/swarm/rtc_xicor1241.c: warning: no previous prototype for 'xicor_get_time' [-Wmissing-prototypes]:  => 167:10
-  + /kisskb/src/arch/mips/sibyte/swarm/rtc_xicor1241.c: warning: no previous prototype for 'xicor_probe' [-Wmissing-prototypes]:  => 203:5
-  + /kisskb/src/arch/mips/sibyte/swarm/rtc_xicor1241.c: warning: no previous prototype for 'xicor_set_time' [-Wmissing-prototypes]:  => 108:5
-  + /kisskb/src/arch/mips/sibyte/swarm/setup.c: warning: no previous prototype for 'swarm_be_handler' [-Wmissing-prototypes]:  => 59:5
-  + /kisskb/src/drivers/net/ethernet/sgi/meth.c: warning: no previous prototype for 'meth_reset' [-Wmissing-prototypes]:  => 271:5
-  + /kisskb/src/drivers/watchdog/octeon-wdt-main.c: warning: no previous prototype for 'octeon_wdt_nmi_stage3' [-Wmissing-prototypes]:  => 210:6
-  + warning: unmet direct dependencies detected for HOTPLUG_CPU:  => N/A
-  + {standard input}: Warning: macro instruction expanded into multiple instructions:  => 339, 338, 285
-
-3 warning improvements:
-  - .config: warning: override: reassigning to symbol UML_NET_SLIRP: 15006, 14765 => 
-  - /kisskb/src/fs/ext4/readpage.c: warning: the frame size of 1120 bytes is larger than 1024 bytes [-Wframe-larger-than=]: 391:1 => 
-  - modpost: WARNING: modpost: lib/test_bitmap: section mismatch in reference: find_next_bit+0x40 (section: .text.unlikely) -> test_print (section: .init.rodata): N/A => 
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+-- 
+With best wishes
+Dmitry
 
