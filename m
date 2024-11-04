@@ -1,336 +1,100 @@
-Return-Path: <linux-kernel+bounces-394404-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394405-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66BBA9BAE89
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 09:50:15 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EF939BAE8C
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 09:50:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB4FA1F2335A
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 08:50:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A50EC1F21CB3
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 08:50:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1345518A6C3;
-	Mon,  4 Nov 2024 08:50:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mTvW/bXY"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C09811AB6FF;
+	Mon,  4 Nov 2024 08:50:26 +0000 (UTC)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F86E1494B1;
-	Mon,  4 Nov 2024 08:50:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D79011AAE1D
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 08:50:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730710206; cv=none; b=OsjOevcrGHLvDeKGvqj3gsgwMBqB9LUBy17XB4p/6Ld7dNXXPeKmaZ7yLkN9GBtreCGp0AxrIxqwUjP7dn6+XlIFW/nJy8hIlWrHLKV3vaX6tqR+J+mX90wd0AULvNzLLUrYwvVfdAFeFd5fStrWZE4ZGLaiHYtB/9gFUkCS7KY=
+	t=1730710226; cv=none; b=B+/mzPVO4aR7iOXEXlyJUWr273GIbq4Os9u+Kzq7bLY8TR3YKSvh2Eu4fYUP46rAoyU8YrAaSwgKi3mQBp6d5SlX3gbQub61l2xQyGgsBYPkrvgBJO4s0WeZhyDH/qr5Wql0LHlupeyTBoTdyp+OUrENhjHdv6wursSu/yvZZYw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730710206; c=relaxed/simple;
-	bh=5o4cDQtU8wPPXLF0ckxsf8HLWysGFSinbqKa6qqgBoc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=R/odKmXmlxDFfBSqUR9edqrZfvtTeFh3fwcfAtHdeywVHix0luSvDaC6v9bdLb95nDZ3P2se3sg2Fs174Ikx3cYbs9RMH2OZoMPCIXfo3Zpgg1CvN1/m7Yx9JXPU25sU8yYIqcbLIiGx2eg3IaozjcxoZK8B8x4914EEW1vIpow=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mTvW/bXY; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730710204; x=1762246204;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=5o4cDQtU8wPPXLF0ckxsf8HLWysGFSinbqKa6qqgBoc=;
-  b=mTvW/bXYlavZ0mrCzfy5gJmlPg7hkN5qjPrYuuIvZJMnQ7AIMA1xsXoM
-   uEIC/0OQAWXJFTK8IgOeOW/1lahYu/mTaepTxt9PCSuqTyZqwdm0p6K5Z
-   oifosgMWYbtZBwrX3mBOSbmYElrcWCw8UwSGMYj8ok7SW0H0nfElLvOxA
-   0hj0xDlLuV4oUJDZ2Rj0fHld0AkbTlCGV3AT9Uj3s4gK8vMYga+jI7qoG
-   6b5TBYubWbO1NUvUyHwv51Opnc/RUK+xQULJAnJtPNU2eznLcnDcIMoAx
-   wJd0qqBaywKXbwTtIv1/7cVwbPxTuwuiMxgr+JGurFdKhdMfJS552tXCI
-   g==;
-X-CSE-ConnectionGUID: gY9UTFOITsKX+S0/nTFmgQ==
-X-CSE-MsgGUID: /l5dCslKSpmomd6bMgEEBg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="52957360"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="52957360"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2024 00:50:01 -0800
-X-CSE-ConnectionGUID: HPnvxhSkRHq83KnY8LJc4Q==
-X-CSE-MsgGUID: qXQqZ0N7RHWSBd3Dg9zOow==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,256,1725346800"; 
-   d="scan'208";a="106938291"
-Received: from unknown (HELO [10.238.12.149]) ([10.238.12.149])
-  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2024 00:49:55 -0800
-Message-ID: <f95cd8c6-af5c-4d8f-99a8-16d0ec56d9a4@linux.intel.com>
-Date: Mon, 4 Nov 2024 16:49:52 +0800
+	s=arc-20240116; t=1730710226; c=relaxed/simple;
+	bh=abpzgPcE0tClxTTnJrrnJs81KOD53MlzjqO6y5O1u4I=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=dIT1w6tHUaT2PMnyHPJELrxKFDOl491Io2q3HFCk0bE0sl3sclHAUkJiHC1fYFXRw1l+dILS+ZnKobAAqPp/qghDWDbnp22QjnCtCm3cBXZnH5Ovs5M5pUDFv4Oc6WllKvBCV3XXpP1Gc2JguI2QiXPt/lg5x81dMtLoZFKWQGg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-83ac0354401so450288739f.3
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 00:50:24 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730710224; x=1731315024;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=BZsHnwYK/Q8ued/GJkpPndJ8wZEFcqomrGeEB2XCGVs=;
+        b=cLDfY/Ds7+kHEuE3m38n6Q0U6fSD7Q47f1tGMM3gJaHJAEKQSGNs1F9UPehRD5yNHH
+         pkD9iqgWAjplX3ilBry1RJaiy/eUcYl6jRCxe32mnJGt5J8p1/DMdj8aCJzDm4UBTBLN
+         jBFk1SxZ1+kFgO4VoJYWXaLrEtS0btpq6nDAsxChTj2vKdtj/Kw2sojQ2zsp2BlIMd7c
+         CRVhR8T3Fadk26tBxJBTnzaSsCYkgiN91qlbPwI5hCtRMYTHLDs/G+aC5qbnlhx6lmPh
+         MIuv0vTI3KJS88pORa5EUUUAaS7lDmhYqST07fQLPcykp24Cqvwd0T69LP+2l4dAGz4l
+         9avg==
+X-Forwarded-Encrypted: i=1; AJvYcCVUGp2DTAIu0oVs1vp/WrdtlHE2RKxbKMdMktBsqIefSl9L0XPRWhTFuif+Aa3lZmml1gkWHoJYbgeycy4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxBTCWX8XtjV4DdQgX2IbmCdYtap9GVdNgbORr0VMcWtrBdYUy0
+	d06yupmxHMpLnxdRDnmoqrWWwXz9DjyjXVoO0fGSrFGM3Jv/mJJLdk6FP21X0NOe//3PjJIy1rh
+	BoXf1Y7jFl09fJIitouwASPJ2oG9YPS8RiT3MtKxi1XTONwymo8VYIv4=
+X-Google-Smtp-Source: AGHT+IFqjFvRIGqFys7UL3sZzgrR6TeYpNnX/ESfI03l++OvjzdNvdy2RzHquIyZbne1L6pMIZ4VCzNhCnd9sboeguwi1pxU+yda
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/2] KVM: x86: Check hypercall's exit to userspace
- generically
-To: Sean Christopherson <seanjc@google.com>, Kai Huang <kai.huang@intel.com>
-Cc: Rick P Edgecombe <rick.p.edgecombe@intel.com>,
- Xiaoyao Li <xiaoyao.li@intel.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "yuan.yao@linux.intel.com" <yuan.yao@linux.intel.com>,
- "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
- Isaku Yamahata <isaku.yamahata@intel.com>,
- "pbonzini@redhat.com" <pbonzini@redhat.com>
-References: <20240826022255.361406-1-binbin.wu@linux.intel.com>
- <20240826022255.361406-2-binbin.wu@linux.intel.com>
- <ZyKbxTWBZUdqRvca@google.com>
- <3f158732a66829faaeb527a94b8df78d6173befa.camel@intel.com>
- <ZyLWMGcgj76YizSw@google.com>
- <1cace497215b025ed8b5f7815bdeb23382ecad32.camel@intel.com>
- <ZyUEMLoy6U3L4E8v@google.com>
-Content-Language: en-US
-From: Binbin Wu <binbin.wu@linux.intel.com>
-In-Reply-To: <ZyUEMLoy6U3L4E8v@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:17ce:b0:3a6:af3c:56ae with SMTP id
+ e9e14a558f8ab-3a6b02cf905mr92223925ab.11.1730710224161; Mon, 04 Nov 2024
+ 00:50:24 -0800 (PST)
+Date: Mon, 04 Nov 2024 00:50:24 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67288ad0.050a0220.35b515.01b7.GAE@google.com>
+Subject: [syzbot] Monthly can report (Nov 2024)
+From: syzbot <syzbot+list9fa5fba6c1580c496e3a@syzkaller.appspotmail.com>
+To: linux-can@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	mkl@pengutronix.de, netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
+Hello can maintainers/developers,
 
+This is a 31-day syzbot report for the can subsystem.
+All related reports/information can be found at:
+https://syzkaller.appspot.com/upstream/s/can
 
+During the period, 0 new issues were detected and 0 were fixed.
+In total, 6 issues are still open and 53 have been fixed so far.
 
-On 11/2/2024 12:39 AM, Sean Christopherson wrote:
-> On Fri, Nov 01, 2024, Kai Huang wrote:
->> On Thu, 2024-10-31 at 07:54 -0700, Sean Christopherson wrote:
->>> On Thu, Oct 31, 2024, Kai Huang wrote:
->>> -	ret = __kvm_emulate_hypercall(vcpu, nr, a0, a1, a2, a3, op_64_bit, cpl);
->>> -	if (nr == KVM_HC_MAP_GPA_RANGE && !ret)
->>> -		/* MAP_GPA tosses the request to the user space. */
->>> -		return 0;
->>> +	r = __kvm_emulate_hypercall(vcpu, nr, a0, a1, a2, a3, op_64_bit, cpl, &ret);
->>> +	if (r <= r)
->>> +		return r;
->> ... should be:
->>
->> 	if (r <= 0)
->> 		return r;
->>
->> ?
->>
->> Another option might be we move "set hypercall return value" code inside
->> __kvm_emulate_hypercall().  So IIUC the reason to split
->> __kvm_emulate_hypercall() out is for TDX, and while non-TDX uses RAX to carry
->> the hypercall return value, TDX uses R10.
->>
->> We can additionally pass a "kvm_hypercall_set_ret_func" function pointer to
->> __kvm_emulate_hypercall(), and invoke it inside.  Then we can change
->> __kvm_emulate_hypercall() to return:
->>      < 0 error,
->>      ==0 return to userspace,
->>      > 0 go back to guest.
-> Hmm, and the caller can still handle kvm_skip_emulated_instruction(), because the
-> return value is KVM's normal pattern.
->
-> I like it!
->
-> But, there's no need to pass a function pointer, KVM can write (and read) arbitrary
-> GPRs, it's just avoided in most cases so that the sanity checks and available/dirty
-> updates are elided.  For this code though, it's easy enough to keep kvm_rxx_read()
-> for getting values, and eating the overhead of a single GPR write is a perfectly
-> fine tradeoff for eliminating the return multiplexing.
->
-> Lightly tested.  Assuming this works for TDX and passes testing, I'll post a
-> mini-series next week.
->
-> --
-> From: Sean Christopherson <seanjc@google.com>
-> Date: Fri, 1 Nov 2024 09:04:00 -0700
-> Subject: [PATCH] KVM: x86: Refactor __kvm_emulate_hypercall() to accept reg
->   names, not values
->
-> Rework __kvm_emulate_hypercall() to take the names of input and output
-> (guest return value) registers, as opposed to taking the input values and
-> returning the output value.  As part of the refactor, change the actual
-> return value from __kvm_emulate_hypercall() to be KVM's de facto standard
-> of '0' == exit to userspace, '1' == resume guest, and -errno == failure.
->
-> Using the return value for KVM's control flow eliminates the multiplexed
-> return value, where '0' for KVM_HC_MAP_GPA_RANGE (and only that hypercall)
-> means "exit to userspace".
->
-> Use the direct GPR accessors to read values to avoid the pointless marking
-> of the registers as available, but use kvm_register_write_raw() for the
-> guest return value so that the innermost helper doesn't need to multiplex
-> its return value.  Using the generic kvm_register_write_raw() adds very
-> minimal overhead, so as a one-off in a relatively slow path it's well
-> worth the code simplification.
->
-> Suggested-by: Kai Huang <kai.huang@intel.com>
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
-> ---
->   arch/x86/include/asm/kvm_host.h | 15 +++++++++----
->   arch/x86/kvm/x86.c              | 40 +++++++++++++--------------------
->   2 files changed, 27 insertions(+), 28 deletions(-)
->
-> diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-> index 6d9f763a7bb9..9e66fde1c4e4 100644
-> --- a/arch/x86/include/asm/kvm_host.h
-> +++ b/arch/x86/include/asm/kvm_host.h
-> @@ -2179,10 +2179,17 @@ static inline void kvm_clear_apicv_inhibit(struct kvm *kvm,
->   	kvm_set_or_clear_apicv_inhibit(kvm, reason, false);
->   }
->   
-> -unsigned long __kvm_emulate_hypercall(struct kvm_vcpu *vcpu, unsigned long nr,
-> -				      unsigned long a0, unsigned long a1,
-> -				      unsigned long a2, unsigned long a3,
-> -				      int op_64_bit, int cpl);
-> +int ____kvm_emulate_hypercall(struct kvm_vcpu *vcpu, unsigned long nr,
-> +			      unsigned long a0, unsigned long a1,
-> +			      unsigned long a2, unsigned long a3,
-> +			      int op_64_bit, int cpl, int ret_reg);
-> +
-> +#define __kvm_emulate_hypercall(_vcpu, nr, a0, a1, a2, a3, op_64_bit, cpl, ret)	\
-> +	____kvm_emulate_hypercall(vcpu,						\
-> +				  kvm_##nr##_read(vcpu), kvm_##a0##_read(vcpu),	\
-> +				  kvm_##a1##_read(vcpu), kvm_##a2##_read(vcpu),	\
-> +				  kvm_##a3##_read(vcpu), op_64_bit, cpl, VCPU_REGS_##ret)
-> +
->   int kvm_emulate_hypercall(struct kvm_vcpu *vcpu);
->   
->   int kvm_mmu_page_fault(struct kvm_vcpu *vcpu, gpa_t cr2_or_gpa, u64 error_code,
-> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> index e09daa3b157c..425a301911a6 100644
-> --- a/arch/x86/kvm/x86.c
-> +++ b/arch/x86/kvm/x86.c
-> @@ -9998,10 +9998,10 @@ static int complete_hypercall_exit(struct kvm_vcpu *vcpu)
->   	return kvm_skip_emulated_instruction(vcpu);
->   }
->   
-> -unsigned long __kvm_emulate_hypercall(struct kvm_vcpu *vcpu, unsigned long nr,
-> -				      unsigned long a0, unsigned long a1,
-> -				      unsigned long a2, unsigned long a3,
-> -				      int op_64_bit, int cpl)
-> +int ____kvm_emulate_hypercall(struct kvm_vcpu *vcpu, unsigned long nr,
-> +			      unsigned long a0, unsigned long a1,
-> +			      unsigned long a2, unsigned long a3,
-> +			      int op_64_bit, int cpl, int ret_reg)
->   {
->   	unsigned long ret;
->   
-> @@ -10086,15 +10086,18 @@ unsigned long __kvm_emulate_hypercall(struct kvm_vcpu *vcpu, unsigned long nr,
->   
->   out:
->   	++vcpu->stat.hypercalls;
-> -	return ret;
-> +
-> +	if (!op_64_bit)
-> +		ret = (u32)ret;
-> +
-> +	kvm_register_write_raw(vcpu, ret_reg, ret);
-> +	return 1;
->   }
-> -EXPORT_SYMBOL_GPL(__kvm_emulate_hypercall);
-> +EXPORT_SYMBOL_GPL(____kvm_emulate_hypercall);
->   
->   int kvm_emulate_hypercall(struct kvm_vcpu *vcpu)
->   {
-> -	unsigned long nr, a0, a1, a2, a3, ret;
-> -	int op_64_bit;
-> -	int cpl;
-> +	int r;
->   
->   	if (kvm_xen_hypercall_enabled(vcpu->kvm))
->   		return kvm_xen_hypercall(vcpu);
-> @@ -10102,23 +10105,12 @@ int kvm_emulate_hypercall(struct kvm_vcpu *vcpu)
->   	if (kvm_hv_hypercall_enabled(vcpu))
->   		return kvm_hv_hypercall(vcpu);
->   
-> -	nr = kvm_rax_read(vcpu);
-> -	a0 = kvm_rbx_read(vcpu);
-> -	a1 = kvm_rcx_read(vcpu);
-> -	a2 = kvm_rdx_read(vcpu);
-> -	a3 = kvm_rsi_read(vcpu);
-> -	op_64_bit = is_64_bit_hypercall(vcpu);
-> -	cpl = kvm_x86_call(get_cpl)(vcpu);
-> -
-> -	ret = __kvm_emulate_hypercall(vcpu, nr, a0, a1, a2, a3, op_64_bit, cpl);
-> -	if (nr == KVM_HC_MAP_GPA_RANGE && !ret)
-> -		/* MAP_GPA tosses the request to the user space. */
-> +	r = __kvm_emulate_hypercall(vcpu, rax, rbx, rcx, rdx, rsi,
-> +				    is_64_bit_hypercall(vcpu),
-> +				    kvm_x86_call(get_cpl)(vcpu), RAX);
-Now, the register for return code of the hypercall can be specified.
-But in  ____kvm_emulate_hypercall(), the complete_userspace_io callback
-is hardcoded to complete_hypercall_exit(), which always set return code
-to RAX.
+Some of the still happening issues:
 
-We can allow the caller to pass in the cui callback, or assign different
-version according to the input 'ret_reg'.  So that different callers can use
-different cui callbacks.  E.g., TDX needs to set return code to R10 in cui
-callback.
+Ref Crashes Repro Title
+<1> 7872    Yes   WARNING: refcount bug in j1939_session_put
+                  https://syzkaller.appspot.com/bug?extid=ad601904231505ad6617
+<2> 4947    Yes   WARNING: refcount bug in sk_skb_reason_drop
+                  https://syzkaller.appspot.com/bug?extid=d4e8dc385d9258220c31
+<3> 3045    Yes   WARNING: refcount bug in j1939_xtp_rx_cts
+                  https://syzkaller.appspot.com/bug?extid=5a1281566cc25c9881e0
+<4> 523     Yes   WARNING: refcount bug in get_taint (2)
+                  https://syzkaller.appspot.com/bug?extid=72d3b151aacf9fa74455
 
-How about:
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-index dba78f22ab27..0fba98685f42 100644
---- a/arch/x86/include/asm/kvm_host.h
-+++ b/arch/x86/include/asm/kvm_host.h
-@@ -2226,13 +2226,15 @@ static inline void kvm_clear_apicv_inhibit(struct kvm *kvm,
-  int ____kvm_emulate_hypercall(struct kvm_vcpu *vcpu, unsigned long nr,
-                               unsigned long a0, unsigned long a1,
-                               unsigned long a2, unsigned long a3,
--                             int op_64_bit, int cpl, int ret_reg);
-+                             int op_64_bit, int cpl, int ret_reg,
-+                             int (*cui)(struct kvm_vcpu *vcpu));
+To disable reminders for individual bugs, reply with the following command:
+#syz set <Ref> no-reminders
 
--#define __kvm_emulate_hypercall(_vcpu, nr, a0, a1, a2, a3, op_64_bit, cpl, ret)        \
-+#define __kvm_emulate_hypercall(_vcpu, nr, a0, a1, a2, a3, op_64_bit, cpl, ret, cui)   \
-____kvm_emulate_hypercall(vcpu, \
-                                   kvm_##nr##_read(vcpu), kvm_##a0##_read(vcpu), \
-                                   kvm_##a1##_read(vcpu), kvm_##a2##_read(vcpu), \
--                                 kvm_##a3##_read(vcpu), op_64_bit, cpl, VCPU_REGS_##ret)
-+                                 kvm_##a3##_read(vcpu), op_64_bit, cpl, VCPU_REGS_##ret, \
-+                                 cui)
+To change bug's subsystems, reply with:
+#syz set <Ref> subsystems: new-subsystem
 
-  int kvm_emulate_hypercall(struct kvm_vcpu *vcpu);
-
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index 6e0a518aec4a..b68690c4a4c0 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -10019,7 +10019,8 @@ static int complete_hypercall_exit(struct kvm_vcpu *vcpu)
-  int ____kvm_emulate_hypercall(struct kvm_vcpu *vcpu, unsigned long nr,
-                               unsigned long a0, unsigned long a1,
-                               unsigned long a2, unsigned long a3,
--                             int op_64_bit, int cpl, int ret_reg)
-+                             int op_64_bit, int cpl, int ret_reg,
-+                             int (*cui)(struct kvm_vcpu *vcpu))
-  {
-         unsigned long ret;
-
-@@ -10093,7 +10094,7 @@ int ____kvm_emulate_hypercall(struct kvm_vcpu *vcpu, unsigned long nr,
-                         vcpu->run->hypercall.flags |= KVM_EXIT_HYPERCALL_LONG_MODE;
-
-                 WARN_ON_ONCE(vcpu->run->hypercall.flags & KVM_EXIT_HYPERCALL_MBZ);
--               vcpu->arch.complete_userspace_io = complete_hypercall_exit;
-+               vcpu->arch.complete_userspace_io = cui;
-                 /* stat is incremented on completion. */
-                 return 0;
-         }
-@@ -10125,7 +10126,7 @@ int kvm_emulate_hypercall(struct kvm_vcpu *vcpu)
-
-         r = __kvm_emulate_hypercall(vcpu, rax, rbx, rcx, rdx, rsi,
-                                     is_64_bit_hypercall(vcpu),
--                                   kvm_x86_call(get_cpl)(vcpu), RAX);
-+                                   kvm_x86_call(get_cpl)(vcpu), RAX, complete_hypercall_exit);
-         if (r <= 0)
-                 return 0;
-
-
-> +	if (r <= 0)
->   		return 0;
->   
-> -	if (!op_64_bit)
-> -		ret = (u32)ret;
-> -	kvm_rax_write(vcpu, ret);
-> -
->   	return kvm_skip_emulated_instruction(vcpu);
->   }
->   EXPORT_SYMBOL_GPL(kvm_emulate_hypercall);
->
-> base-commit: 911785b796e325dec83b32050f294e278a306211
-
+You may send multiple commands in a single email message.
 
