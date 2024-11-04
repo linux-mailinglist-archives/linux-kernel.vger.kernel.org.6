@@ -1,119 +1,119 @@
-Return-Path: <linux-kernel+bounces-394350-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394351-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEA789BADBE
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 09:10:00 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 092AF9BADCA
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 09:12:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 47143B20E62
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 08:09:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 357F61C212D7
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 08:12:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C6B51AA7A2;
-	Mon,  4 Nov 2024 08:09:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 187011A7AF1;
+	Mon,  4 Nov 2024 08:12:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="EMDhNSOa"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KK+oTxFF"
+Received: from mail-oi1-f177.google.com (mail-oi1-f177.google.com [209.85.167.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20EB019993E
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 08:09:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17ED7171E43;
+	Mon,  4 Nov 2024 08:12:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730707790; cv=none; b=Y7b413SX163y10Fa+GhA+45ST8Bec9YwOUEqj8yZok/xDcnHGBMC4ORxLgMFfYJXMoFY91zjbn+hJ3O69rlceEewN3S/fB1ldOIlpoVWojvMU9B/nCMChvUiO5s42hzxO08Xv6kV3Xlm/h6B0LL0G0i41WwW/r7qEDl4ySQIW2U=
+	t=1730707953; cv=none; b=mQMOTRPYfnQGtCNISLK32Qw3sJY67nJdSY0RjxmbV+W5PCzpEohyXyq2vAo1dll7FWjRhS9WgCRhLw2oq1Vfa8waUpojD/Xmuzo5g52+D2/N/CQrB4RYNX2p9aTrThnh5TSMzM0Hd5mD2IbGnG96EAbBYbYLKRzXqORWu+hmGNo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730707790; c=relaxed/simple;
-	bh=Yz31SLbOPrOYc3soJoY0aJGiMShQP5qyX8fLZnLuJzk=;
+	s=arc-20240116; t=1730707953; c=relaxed/simple;
+	bh=XCX6qrzCMImbBpxh+YBej+RlpN9TLIbz23OhwpXYnmc=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Xg0J0L3Jm0nKUoGVjbh5YEV8bjBWtJ4VUqM2xgtycwnR3xGmijyjW14AjjZPLKxamw5/DKnQ3k05hd0kHwhWWyz/pOmq3aKoexYIGxBkvY30YJYF8sjRjS1tp3Kihx7oVLpWyZpC74XmK0N+SsaatY4+gJ/tcH6Pe4KLPMu6c4Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=EMDhNSOa; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-539f4d8ef66so4967528e87.1
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 00:09:48 -0800 (PST)
+	 To:Cc:Content-Type; b=GDVXjPVv4Ms+8LrH/+husEGOMWQc8XnisY+7EjwfjiFi5cLVzgxMsqwNrXEsEaFHgR63OpOsSaoaGz+mRpaH1/5KfIi2ksSLf35lqMQtdcUngDTvbLJfV4X/WrNWZfg85Z9bku1ul0dzo7Jznd8/lOeTOAhDhK4jfeFeIpXsH7U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KK+oTxFF; arc=none smtp.client-ip=209.85.167.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oi1-f177.google.com with SMTP id 5614622812f47-3e60f6ea262so1817098b6e.1;
+        Mon, 04 Nov 2024 00:12:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1730707787; x=1731312587; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1730707950; x=1731312750; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=3jdxm002ELEzRqrM4SMC60ngOqNzEBgO5QnfMayxWmU=;
-        b=EMDhNSOaGB/qxmmG/559oHtWN1vmHR2wBDBXhXkic0Fimxc72zshMXQBpc6WElphSH
-         I7hGl9WESNGTzBMxq4DoHDTJ+IfaGmHjNxnT9kTRfHGpRxeZeZSTP1+4IpyLFiy2WWmX
-         /Hp7SNq76zvsJagc+yeWR8T+8Np3P4U9ouCnDwouyOJscpZ6BaV2KfoCZiYoUpgcD/Xe
-         03EeQ4/AKwjcPDEyJ2cUxrSR6iTJuGUM+fI0LpNxeHRmNsH0qLp9M0RRecD3MGolnG13
-         GWblNGanreCD+IO/8rqzjuubxM3AyDjttLfweWWXswaaZpXez7Xy2r4LfjcmtRfKZKZx
-         1Isw==
+        bh=XCX6qrzCMImbBpxh+YBej+RlpN9TLIbz23OhwpXYnmc=;
+        b=KK+oTxFFcs+u1i9CwjG4zVojW2e+ghWt9HKgipoDkavZwKtbKWcsjHrYc8FqcvY78n
+         3svg1HhDulsgcqPuvy3y0+eJCKQDMUEKmCsYziSeOQfEZfHkwB4k5j7AbRfYDdGhrel7
+         oaVqmymH/oShujOcy5Jr28bRnhxmnOFw1+BGvOyjA2wnegPQrcC96gunjNaSFjcaK+os
+         4TDJ85hRhXX6x0Un8j/dd1hXhwdv8imgqSN/yP9XPe35qYAYmmTUKHGgyvlhffOLHuzy
+         5MXMb30blvSdFXIvSA3HLBhUEKGGoAP2T6HMzV0g3xwzfubAKxlVjFvrRm3fLXTXLApj
+         D+AA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730707787; x=1731312587;
+        d=1e100.net; s=20230601; t=1730707950; x=1731312750;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=3jdxm002ELEzRqrM4SMC60ngOqNzEBgO5QnfMayxWmU=;
-        b=oeaEVp+fFmD4qoBAlbamY3chcRCnbBs2EItibw36I9lcvRvb+a69XPwkupB2VUzHuO
-         P+v85aCPjHyJwT46tXj0vo2lsUkFPjCDYXSXp/bNFdlHnBAPI83oDFIRh5GEPaMLghy+
-         K5+KTeYLKqcaMaxCfquEpbjULqci7Pw1VY4ABI9Obpcwf1IiJpZlIHkAy37s3fMprK+m
-         PCIldoIW8rCPRYydYq++syj2nFKHKFquVtl6AGf8m57NR8bST9/gENHInUIlL2QZrAIa
-         NAZSvGP+C0tEPWx010QA5isyawBOKfXNoXOY15xdy/MnzGICyHBi5AWyd8PFMYH4l5S+
-         FTxg==
-X-Forwarded-Encrypted: i=1; AJvYcCVHljdBMAc4QwVC+csd6L+vhPlPthzwOMgiFjTlP7dwo77qK01xsbVUr8tMW1Gaqc3WZqhZ/idFECxtzFg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwnmDHL7WfFN/LTkJ+RPpvneHxeInWAY0PdR0rhIhnh0KviK0eA
-	UBCfANvIAJd9XU/JYgH1QYPfzYRwum6bJL13fm7cp2o7bHYXcKyFNRsBF/2NqqvDakc3/g3+oJp
-	EfJVGZjxmbgSFfZlM5Nmyd12e3IWYZJa73zAZlw==
-X-Google-Smtp-Source: AGHT+IEUJqYCSOK9mvoxQ0z9hQN77cUr9bmHztXbsHJLHPrlaXp8WRMBeNzUjFWI1hIuKtg4LUVOrCEwJe9ptMvknC4=
-X-Received: by 2002:a2e:a98e:0:b0:2fa:ddb5:77f4 with SMTP id
- 38308e7fff4ca-2fcbe096105mr139956391fa.38.1730707787042; Mon, 04 Nov 2024
- 00:09:47 -0800 (PST)
+        bh=XCX6qrzCMImbBpxh+YBej+RlpN9TLIbz23OhwpXYnmc=;
+        b=AZEod8kNasDJ1PgFK+QevTNfC0JhA9hysft6W/UXYI93ZAbgC1Sr0qTiFJaJRfvW0l
+         2qqt+P1QsbrFq1BFE4KPFV4JDxE9Au1yxaawkwjzoXEVK+OK6On1g2iypRt5kigL705C
+         ALz77FHhu3yAmcrJmUxHAOFc09mRVxPxPalDAGj0opZFL/dL3pwGqOYeLxfDyLiKmSVz
+         pVMMM44ApM1+0USRpg5WE8z2qehScK1Zq7tkdDnF3FqER7C7yzANcA3DaRUuGQO9cyxN
+         UgL4tniGbgkx60K/OlrBnYJRY3b7qvVEnCGgrG0Ew+ssvN22yFJTQsGlzQnx29tFqxE9
+         Mtjg==
+X-Forwarded-Encrypted: i=1; AJvYcCVV7KER+SdLRgxBaTYEQqpUC4T4qdyveaQvJUHVlcIdz6GXxyvDkwrfIt1VmhNtea5telUI29JQHdH9@vger.kernel.org, AJvYcCWpaOGpU//TvlLWcQUFGnNYrg41T6Z452EmOXyUB7jnIfdm4hztUrs7hzmdo3ILsroDDnizW10VY0ZZ@vger.kernel.org, AJvYcCX2uiiDVX1wByIwWmnMzOEffG3sng6vLbtp3JXnnSp+3sdfE4PtejfDXTr3MNkf4ndDlrssUO1jiiBeXfk=@vger.kernel.org, AJvYcCXY6xK2uyHlmQS3XDC/upY8ZP0skZuj68dJ/dcN687cKOlG8z81Qo6YrLMdXQ47liaKF+YjYfHd5m6hIs+I@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZbAqZatLQecCMRLF6dWP3/xkEHG4OXWc48vBUth8+ZwFfrjMC
+	iB2LGlXvGZOWMaQ0upngb/U0ysMJo1EudX9SMphq3Sm/YZFFPR14MUHVOSSvieWyTjfl7NRp+/N
+	B0yc70Dxb3eP/rVgkvwJwdQW8Py8=
+X-Google-Smtp-Source: AGHT+IHyNmXIv/Qkf7hr1oDZ5RSdZMwySKzbkHyHElTN8xOk9/nD1kciEaKHao+bZTDKxz2iSJGs2BZ1r4zKnk+g5NA=
+X-Received: by 2002:a05:6808:448b:b0:3e6:23b7:bf4c with SMTP id
+ 5614622812f47-3e63846135emr26460681b6e.13.1730707950027; Mon, 04 Nov 2024
+ 00:12:30 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241014130303.123394-1-brgl@bgdev.pl>
-In-Reply-To: <20241014130303.123394-1-brgl@bgdev.pl>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Mon, 4 Nov 2024 09:09:35 +0100
-Message-ID: <CAMRc=Mfv5MnVAtwCSFwghEH67hbxDgw+Jg9W4dTGq2+Pj0ppTA@mail.gmail.com>
-Subject: Re: [PATCH 1/2] soc: qcom: rmtfs: allow building the module with COMPILE_TEST=y
-To: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+References: <20241022052905.4062682-1-kcfeng0@nuvoton.com> <20241022052905.4062682-3-kcfeng0@nuvoton.com>
+ <319d7395-680b-478a-aec3-08bae9177f73@roeck-us.net>
+In-Reply-To: <319d7395-680b-478a-aec3-08bae9177f73@roeck-us.net>
+From: Ban Feng <baneric926@gmail.com>
+Date: Mon, 4 Nov 2024 16:12:18 +0800
+Message-ID: <CALz278a9ypz+2j7yfHQ1t9M_HxJW_8oW6rmYOOgUSKCTxMz+Vg@mail.gmail.com>
+Subject: Re: [PATCH v6 2/2] hwmon: Add driver for I2C chip Nuvoton NCT7363Y
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: jdelvare@suse.com, robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, 
+	conor+dt@kernel.org, corbet@lwn.net, linux-hwmon@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-doc@vger.kernel.org, openbmc@lists.ozlabs.org, kwliu@nuvoton.com, 
+	kcfeng0@nuvoton.com, DELPHINE_CHIU@wiwynn.com, Bonnie_Lo@wiwynn.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 14, 2024 at 3:03=E2=80=AFPM Bartosz Golaszewski <brgl@bgdev.pl>=
- wrote:
+On Fri, Nov 1, 2024 at 10:48=E2=80=AFPM Guenter Roeck <linux@roeck-us.net> =
+wrote:
 >
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> On Tue, Oct 22, 2024 at 01:29:05PM +0800, baneric926@gmail.com wrote:
+> > From: Ban Feng <kcfeng0@nuvoton.com>
+> >
+> > The NCT7363Y is a fan controller which provides up to 16
+> > independent FAN input monitors. It can report each FAN input count
+> > values. The NCT7363Y also provides up to 16 independent PWM
+> > outputs. Each PWM can output specific PWM signal by manual mode to
+> > control the FAN duty outside.
+> >
+> > Signed-off-by: Ban Feng <kcfeng0@nuvoton.com>
 >
-> Make it possible to build the module when COMPILE_TEST is enabled for
-> better build coverage.
+> Applied. I did fix a couple of the nitpicks raised by Christophe,
+> but I did not replace for_each_child_of_node() with
+> for_each_child_of_node_scoped() since I can not test the code
+> and did not want to make a functional change.
 >
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> ---
->  drivers/soc/qcom/Kconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/soc/qcom/Kconfig b/drivers/soc/qcom/Kconfig
-> index 74b9121240f8..58e63cf0036b 100644
-> --- a/drivers/soc/qcom/Kconfig
-> +++ b/drivers/soc/qcom/Kconfig
-> @@ -139,7 +139,7 @@ config QCOM_RAMP_CTRL
->
->  config QCOM_RMTFS_MEM
->         tristate "Qualcomm Remote Filesystem memory driver"
-> -       depends on ARCH_QCOM
-> +       depends on ARCH_QCOM || COMPILE_TEST
->         select QCOM_SCM
->         help
->           The Qualcomm remote filesystem memory driver is used for alloca=
-ting
-> --
-> 2.43.0
->
+> Thanks,
+> Guenter
 
-Gentle ping.
+Hi Guenter,
 
-Bart
+Appreciate your kind support,
+I'll keep following your version and check the part of
+for_each_child_of_node_scoped.
+
+Thanks,
+Ban
 
