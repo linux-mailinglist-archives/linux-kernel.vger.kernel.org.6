@@ -1,273 +1,150 @@
-Return-Path: <linux-kernel+bounces-395113-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395114-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6BA59BB8B7
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 16:15:12 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3949D9BB8BD
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 16:15:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A6BE6281F5E
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 15:15:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E17A81F217E5
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 15:15:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 257811607AB;
-	Mon,  4 Nov 2024 15:15:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2D0A1BD018;
+	Mon,  4 Nov 2024 15:15:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b="MAHwzciq";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="RpgEJMuh"
-Received: from flow-b3-smtp.messagingengine.com (flow-b3-smtp.messagingengine.com [202.12.124.138])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="KnXzrRwP"
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1EC62B9A2;
-	Mon,  4 Nov 2024 15:14:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.138
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 696B4374C4
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 15:15:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730733304; cv=none; b=VWcFhhIHLQlgI1DMCOQcNT+BtbkdNvRLfFnrOijJuxZ4B3OojmoaY4t824hJOLnqDE2ts+nK93ybtTichyMiRI8EwRJhjb1IlBYT1REHZ52DwTHNnkRbKimE5VJoCmG4P6eUcy1ymIPXdISEOfEFn7G2CsuCwu6r7ppOgUw9UcY=
+	t=1730733347; cv=none; b=XzNB3M8naK490geqsCZda/Ukm7gRXqssoQ/63OgeQquyYwM+x3VLCh0dbsMtbVScXTPTSzhFAY6N4br16y4E25q0Kaj0YdM1epW7ZWnYgbHImX2Dl9wIoAJjseEyLlvIYrrmN+zhdob7xOCB5h8CWlQ34MBXgpen5zXxQteMDnY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730733304; c=relaxed/simple;
-	bh=kTYnw999nI/JqFsVK3bbbPIO4nM5nyfIH9Mdw+awRCk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kNcDMgkgw86K0QwV/NaafKYkdKEqnCmhRZw5qcJlaC3X0qjNR3utVEWH+90HE1hvrgWS0g2hTzr9F6j6SiE3ONYyIrVW6X7y1YQ2dgKzyRpVkxzMhh+lJHSkuOkSiBhYTZyxXaUQMSQQNCVmIhiEMoF40u34ya/gnLKrlVWPf4M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net; spf=pass smtp.mailfrom=queasysnail.net; dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b=MAHwzciq; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=RpgEJMuh; arc=none smtp.client-ip=202.12.124.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=queasysnail.net
-Received: from phl-compute-08.internal (phl-compute-08.phl.internal [10.202.2.48])
-	by mailflow.stl.internal (Postfix) with ESMTP id 4282A1D40250;
-	Mon,  4 Nov 2024 10:14:58 -0500 (EST)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-08.internal (MEProxy); Mon, 04 Nov 2024 10:14:58 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=queasysnail.net;
-	 h=cc:cc:content-type:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm1; t=1730733298; x=
-	1730736898; bh=3t9S8lMLsxZ1l3HwamcmToJ6jU6n7DJ3ZQs7SNN8Hic=; b=M
-	AHwzciqVjMKKlxsMroKfrWYj5+RS/+kjkeRxP22cj4OLrn6yPV4r2GTyrZepKjFa
-	1QXM9SqJpzab0QJqVkgKeZZr7Gwjo4pYd+L5zIfE7uJHS+7Hif64oewXF3xhHDSn
-	rHO51dzAxxxVepdMHWjPch871rwu1dkmW9bp0U6rgMtANZfI2itHG2qyVMvzbO9u
-	T9ssSyhQ7UYU2A5ngyApd81WGxo+V3nFKJC64qeU7uEHU0coHxvvoRAnibr3nLFz
-	4buop86n2YKIFKB0Ae4gyeE2EGGrxE/nckXCKBPpVmSzLa+kKbBU5AFZzRz3+Ws5
-	P/3wBGJ03FPdsSVOzMoVg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
-	1730733298; x=1730736898; bh=3t9S8lMLsxZ1l3HwamcmToJ6jU6n7DJ3ZQs
-	7SNN8Hic=; b=RpgEJMuhNjKezwpkkFC9FefBRL4pCAvhaljD6qj6LsTWeeE5J7n
-	lhxLHm2O2q0FO+x9oso698a+cXrD1kCfW92TIA6jswsAcXkjQ/OGZVQq//meigEk
-	kt9AOrnVjw5OlMVFp+0FO0q8M18Gs8loPY6nG7HvDE/vfMDkbv/ab0LFtobU5sOk
-	g0wWprw3oWfXmAYTYnKBXhoR4vApKoGKa77Gn57mQLfcGzVspWJoKTJCoirwbvZG
-	0kmQTO7cYmyJ4VOFEB5N5d5R1eEdb17ye6cf/277l4SryE1QEMbXyKjX1FObU5kl
-	cP72/m8V+qdNFA19dptUOaNZ1uW32239qDw==
-X-ME-Sender: <xms:8eQoZ_LQsKsq3EqKMGVb7qr5lVLUqJGmIVERuS04WjM8YeOt6soKtg>
-    <xme:8eQoZzJ_ELm3eCWgOtnDhPcyqnycdV5RuIstPhqfJKOPFpkFqDFcjaw00kqZOnbuI
-    cRyGwd5jQDxDSp2Ses>
-X-ME-Received: <xmr:8eQoZ3tsxTPHIYnlVEz93_C0ft-JIOKRMYrUCXhftEk6Lru8oN1rqBWSSjuw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdeliedgjedvucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtjeen
-    ucfhrhhomhepufgrsghrihhnrgcuffhusghrohgtrgcuoehsugesqhhuvggrshihshhnrg
-    hilhdrnhgvtheqnecuggftrfgrthhtvghrnhepuefhhfffgfffhfefueeiudegtdefhfek
-    geetheegheeifffguedvuefffefgudffnecuvehluhhsthgvrhfuihiivgeptdenucfrrg
-    hrrghmpehmrghilhhfrhhomhepshgusehquhgvrghshihsnhgrihhlrdhnvghtpdhnsggp
-    rhgtphhtthhopeduuddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheprghnthhonh
-    hiohesohhpvghnvhhpnhdrnhgvthdprhgtphhtthhopegvughumhgriigvthesghhoohhg
-    lhgvrdgtohhmpdhrtghpthhtohepkhhusggrsehkvghrnhgvlhdrohhrghdprhgtphhtth
-    hopehprggsvghnihesrhgvughhrghtrdgtohhmpdhrtghpthhtohepughonhgrlhgurdhh
-    uhhnthgvrhesghhmrghilhdrtghomhdprhgtphhtthhopehshhhurghhsehkvghrnhgvlh
-    drohhrghdprhgtphhtthhopehrhigriigrnhhovhdrshdrrgesghhmrghilhdrtghomhdp
-    rhgtphhtthhopegrnhgurhgvfieslhhunhhnrdgthhdprhgtphhtthhopehnvghtuggvvh
-    esvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:8eQoZ4YezVoEN7itU2VG_p2WoaN59K977P6RyrNVbXfE4zB01eiUyw>
-    <xmx:8eQoZ2YnjobwfIBfKcYrHYS0ZetYmM1GDE92pV90O8UE_oJm4UA-Ag>
-    <xmx:8eQoZ8AG20jetaub2NhxzGIgym1DE9NDr4zp4XY59mkU_X-tEfUnNA>
-    <xmx:8eQoZ0bx7_hf0EqTNLcQ5YUG5SlMJcinK4lbyxsUau4bueTCTbTIxg>
-    <xmx:8eQoZ8NpZC-2xPS8DPENXui-NuvkzcESRUmoB-dcrDYthvLLW0pFlWpd>
-Feedback-ID: i934648bf:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 4 Nov 2024 10:14:57 -0500 (EST)
-Date: Mon, 4 Nov 2024 16:14:55 +0100
-From: Sabrina Dubroca <sd@queasysnail.net>
-To: Antonio Quartulli <antonio@openvpn.net>
-Cc: Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Donald Hunter <donald.hunter@gmail.com>,
-	Shuah Khan <shuah@kernel.org>, ryazanov.s.a@gmail.com,
-	Andrew Lunn <andrew@lunn.ch>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH net-next v11 18/23] ovpn: implement peer
- add/get/dump/delete via netlink
-Message-ID: <Zyjk781vOqV4kXhJ@hog>
-References: <20241029-b4-ovpn-v11-0-de4698c73a25@openvpn.net>
- <20241029-b4-ovpn-v11-18-de4698c73a25@openvpn.net>
+	s=arc-20240116; t=1730733347; c=relaxed/simple;
+	bh=yC5x0Kr3GQ+y52MwCBTCIIJOZYvx1zk4EFtR7xU0I1M=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pQ1x9Qn9uscPhqihzv+OM5UhaNOG5CMuLnGb5LoVGlUwjS9OxKsczFPDe2k46zGG+403rz7UvYUwxD/A2qU5OQoOscSqFYFaZa6rooCNccpkNFww1/vc+eTCM55rq987+JdS0I7Sl+RQIOl8Zg6ri2sE5/SnCj0yZRODcvmP+8k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com; spf=pass smtp.mailfrom=amarulasolutions.com; dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b=KnXzrRwP; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amarulasolutions.com
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-539f2b95775so4763954e87.1
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 07:15:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google; t=1730733343; x=1731338143; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=JCLk/wc3MKwAF912ySsq2eZpu6hxxtGQsnffSicJSqo=;
+        b=KnXzrRwP0AsVCqQLjqUJb9BhDAmBFq3YHt1G7KeatiEfceBb5M/9+CzdmjkDPN7A1H
+         Sik6Xmxp5xf8W3eSeVMlWUW0KXxC+fIDiviTfbGp5bvF2rYkh9KnKl93TSh6++lYOTkE
+         CPGcJv3CHGaMNYvqFex6AveJiQP+bnOJDUF8Q=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730733343; x=1731338143;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=JCLk/wc3MKwAF912ySsq2eZpu6hxxtGQsnffSicJSqo=;
+        b=ASm2yky3bkoot+kc7UFUheLWgth/KIgzD1nG/m1eDzpKCWjUNbLYzGTXymky2m9PHD
+         7i0XpCrdsRuBguDW83YrldNzzhctkWmQS9tgN96nN2BexlOMRuxjdJEMFlUG5RuAWeLp
+         a1VlpXbLWmaGmqkLqCQwOCoisD6efmXadWOuZWh1YOKp/m087ShS2mLog+7QB3jP4cai
+         /cSkM4hX/2mRitYXg1up2Ocl8aYdI3fPrJk8qarIa237XD95rLeJaMiik/i2EZh4qFai
+         XA+YtUHJEHaj88etzSqjG7eQhGxPgnh+/DYk2OSGuwYzt1Wg2hkasbpR8YKqdZbE4Euc
+         xVsw==
+X-Gm-Message-State: AOJu0Yyi1uZzRRmR8JF7/jgW7WJQ+8R+RfjYFpC9bfvzdgzpnGhaxnBf
+	CVuACK9yH46kGzAr61dybWsDQZbhQsmFuzRadxMXnJwiuv/mKlWJ1/zvrn8yVAra2oLVLHsfJ4m
+	O
+X-Google-Smtp-Source: AGHT+IHZ+MhzY+cG10/XeJWXQh7+JhLBbhGrXh2ptOIna5FlTvipU/iFvh7dLTIkTlqmlf8NGjimig==
+X-Received: by 2002:a05:6512:1087:b0:539:936c:9845 with SMTP id 2adb3069b0e04-53d65e0b4afmr9070518e87.37.1730733343135;
+        Mon, 04 Nov 2024 07:15:43 -0800 (PST)
+Received: from dario-ThinkPad-T14s-Gen-2i.amarulasolutions.com ([2.196.40.195])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9e564c4fafsm561885666b.47.2024.11.04.07.15.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 04 Nov 2024 07:15:42 -0800 (PST)
+From: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+To: linux-kernel@vger.kernel.org
+Cc: linux-amarula@amarulasolutions.com,
+	Dario Binacchi <dario.binacchi@amarulasolutions.com>,
+	Michael Trimarchi <michael@amarulasolutions.com>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Fabio Estevam <festevam@gmail.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Rob Herring <robh@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Shawn Guo <shawnguo@kernel.org>,
+	devicetree@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v2] arm64: dts: imx8mn-bsh-smm-s2/pro: add simple-framebuffer
+Date: Mon,  4 Nov 2024 16:15:20 +0100
+Message-ID: <20241104151539.1678388-1-dario.binacchi@amarulasolutions.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241029-b4-ovpn-v11-18-de4698c73a25@openvpn.net>
+Content-Transfer-Encoding: 8bit
 
-2024-10-29, 11:47:31 +0100, Antonio Quartulli wrote:
-> +static int ovpn_nl_peer_precheck(struct ovpn_struct *ovpn,
-> +				 struct genl_info *info,
-> +				 struct nlattr **attrs)
-> +{
-> +	if (NL_REQ_ATTR_CHECK(info->extack, info->attrs[OVPN_A_PEER], attrs,
-> +			      OVPN_A_PEER_ID))
-> +		return -EINVAL;
-> +
-> +	if (attrs[OVPN_A_PEER_REMOTE_IPV4] && attrs[OVPN_A_PEER_REMOTE_IPV6]) {
-> +		NL_SET_ERR_MSG_MOD(info->extack,
-> +				   "cannot specify both remote IPv4 or IPv6 address");
-> +		return -EINVAL;
-> +	}
-> +
-> +	if (!attrs[OVPN_A_PEER_REMOTE_IPV4] &&
-> +	    !attrs[OVPN_A_PEER_REMOTE_IPV6] && attrs[OVPN_A_PEER_REMOTE_PORT]) {
-> +		NL_SET_ERR_MSG_MOD(info->extack,
-> +				   "cannot specify remote port without IP address");
-> +		return -EINVAL;
-> +	}
-> +
-> +	if (!attrs[OVPN_A_PEER_REMOTE_IPV4] &&
-> +	    attrs[OVPN_A_PEER_LOCAL_IPV4]) {
-> +		NL_SET_ERR_MSG_MOD(info->extack,
-> +				   "cannot specify local IPv4 address without remote");
-> +		return -EINVAL;
-> +	}
-> +
-> +	if (!attrs[OVPN_A_PEER_REMOTE_IPV6] &&
-> +	    attrs[OVPN_A_PEER_LOCAL_IPV6]) {
+Add a simple-framebuffer node for U-Boot to further fill and activate.
 
-I think these consistency checks should account for v4mapped
-addresses. With remote=v4mapped and local=v6 we'll end up with an
-incorrect ipv4 "local" address (taken out of the ipv6 address's first
-4B by ovpn_peer_reset_sockaddr). With remote=ipv6 and local=v4mapped,
-we'll pass the last 4B of OVPN_A_PEER_LOCAL_IPV6 to
-ovpn_peer_reset_sockaddr and try to read 16B (the full ipv6 address)
-out of that.
+Co-developed-by: Michael Trimarchi <michael@amarulasolutions.com>
+Signed-off-by: Michael Trimarchi <michael@amarulasolutions.com>
+Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
 
-> +		NL_SET_ERR_MSG_MOD(info->extack,
-> +				   "cannot specify local IPV6 address without remote");
-> +		return -EINVAL;
-> +	}
+---
 
+Changes in v2:
+- Fix the warnings:
+  (ranges_format): /chosen:ranges: empty "ranges" property but its #address-cells (1) differs from / (2)
+  (ranges_format): /chosen:ranges: empty "ranges" property but its #size-cells (1) differs from / (2)
+  by setting both #address-cells and #size-cells to 2.
 
-[...]
->  int ovpn_nl_peer_set_doit(struct sk_buff *skb, struct genl_info *info)
->  {
-[...]
-> +	ret = ovpn_nl_peer_modify(peer, info, attrs);
-> +	if (ret < 0) {
-> +		ovpn_peer_put(peer);
-> +		return ret;
-> +	}
-> +
-> +	/* ret == 1 means that VPN IPv4/6 has been modified and rehashing
-> +	 * is required
-> +	 */
-> +	if (ret > 0) {
+ .../freescale/imx8mn-bsh-smm-s2-display.dtsi  | 28 +++++++++++++++++++
+ 1 file changed, 28 insertions(+)
 
-&& mode == MP ?
-
-I don't see ovpn_nl_peer_modify checking that before returning 1, and
-in P2P mode ovpn->peers will be NULL.
-
-> +		spin_lock_bh(&ovpn->peers->lock);
-> +		ovpn_peer_hash_vpn_ip(peer);
-> +		spin_unlock_bh(&ovpn->peers->lock);
-> +	}
-> +
-> +	ovpn_peer_put(peer);
-> +
-> +	return 0;
-> +}
-
->  int ovpn_nl_peer_get_dumpit(struct sk_buff *skb, struct netlink_callback *cb)
->  {
-[...]
-> +	} else {
-> +		rcu_read_lock();
-> +		hash_for_each_rcu(ovpn->peers->by_id, bkt, peer,
-> +				  hash_entry_id) {
-> +			/* skip already dumped peers that were dumped by
-> +			 * previous invocations
-> +			 */
-> +			if (last_idx > 0) {
-> +				last_idx--;
-> +				continue;
-> +			}
-
-If a peer that was dumped during a previous invocation is removed in
-between, we'll miss one that's still present in the overall dump. I
-don't know how much it matters (I guses it depends on how the results
-of this dump are used by userspace), so I'll let you decide if this
-needs to be fixed immediately or if it can be ignored for now.
-
-> +
-> +			if (ovpn_nl_send_peer(skb, info, peer,
-> +					      NETLINK_CB(cb->skb).portid,
-> +					      cb->nlh->nlmsg_seq,
-> +					      NLM_F_MULTI) < 0)
-> +				break;
-> +
-> +			/* count peers being dumped during this invocation */
-> +			dumped++;
-> +		}
-> +		rcu_read_unlock();
-> +	}
-> +
-> +out:
-> +	netdev_put(ovpn->dev, &ovpn->dev_tracker);
-> +
-> +	/* sum up peers dumped in this message, so that at the next invocation
-> +	 * we can continue from where we left
-> +	 */
-> +	cb->args[1] += dumped;
-> +	return skb->len;
->  }
->  
->  int ovpn_nl_peer_del_doit(struct sk_buff *skb, struct genl_info *info)
->  {
-> -	return -EOPNOTSUPP;
-> +	struct nlattr *attrs[OVPN_A_PEER_MAX + 1];
-> +	struct ovpn_struct *ovpn = info->user_ptr[0];
-> +	struct ovpn_peer *peer;
-> +	u32 peer_id;
-> +	int ret;
-> +
-> +	if (GENL_REQ_ATTR_CHECK(info, OVPN_A_PEER))
-> +		return -EINVAL;
-> +
-> +	ret = nla_parse_nested(attrs, OVPN_A_PEER_MAX, info->attrs[OVPN_A_PEER],
-> +			       ovpn_peer_nl_policy, info->extack);
-> +	if (ret)
-> +		return ret;
-> +
-> +	if (NL_REQ_ATTR_CHECK(info->extack, info->attrs[OVPN_A_PEER], attrs,
-> +			      OVPN_A_PEER_ID))
-> +		return -EINVAL;
-> +
-> +	peer_id = nla_get_u32(attrs[OVPN_A_PEER_ID]);
-> +
-> +	peer = ovpn_peer_get_by_id(ovpn, peer_id);
-> +	if (!peer)
-
-maybe c/p the extack from ovpn_nl_peer_get_doit?
-
-> +		return -ENOENT;
-> +
-> +	netdev_dbg(ovpn->dev, "%s: peer id=%u\n", __func__, peer->id);
-> +	ret = ovpn_peer_del(peer, OVPN_DEL_PEER_REASON_USERSPACE);
-> +	ovpn_peer_put(peer);
-> +
-> +	return ret;
->  }
-
+diff --git a/arch/arm64/boot/dts/freescale/imx8mn-bsh-smm-s2-display.dtsi b/arch/arm64/boot/dts/freescale/imx8mn-bsh-smm-s2-display.dtsi
+index 7675583a6b67..98dec3c42060 100644
+--- a/arch/arm64/boot/dts/freescale/imx8mn-bsh-smm-s2-display.dtsi
++++ b/arch/arm64/boot/dts/freescale/imx8mn-bsh-smm-s2-display.dtsi
+@@ -4,6 +4,34 @@
+  */
+ 
+ / {
++	chosen {
++		#address-cells = <2>;
++		#size-cells = <2>;
++		ranges;
++
++		framebuffer-panel0 {
++			compatible = "simple-framebuffer";
++			clocks = <&clk IMX8MN_CLK_DISP_PIXEL_ROOT>, /* lcdif */
++				 <&clk IMX8MN_CLK_DISP_APB_ROOT>,
++				 <&clk IMX8MN_CLK_DISP_AXI_ROOT>,
++				 <&clk IMX8MN_VIDEO_PLL1>,
++				 <&clk IMX8MN_CLK_DISP_AXI_ROOT>, /* pgc_dispmix */
++				 <&clk IMX8MN_CLK_DISP_APB_ROOT>,
++				 <&clk IMX8MN_CLK_DISP_AXI>,
++				 <&clk IMX8MN_CLK_DISP_APB>,
++				 <&clk IMX8MN_SYS_PLL2_1000M>,
++				 <&clk IMX8MN_SYS_PLL1_800M>,
++				 <&clk IMX8MN_CLK_DSI_CORE>, /* mipi_disi */
++				 <&clk IMX8MN_CLK_DSI_PHY_REF>;
++
++			power-domains = <&disp_blk_ctrl IMX8MN_DISPBLK_PD_LCDIF>,
++					<&disp_blk_ctrl IMX8MN_DISPBLK_PD_MIPI_DSI>;
++			dvdd-supply = <&reg_3v3_dvdd>;
++			avdd-supply = <&reg_v3v3_avdd>;
++			status = "disabled";
++		};
++	};
++
+ 	backlight: backlight {
+ 		compatible = "pwm-backlight";
+ 		pwms = <&pwm1 0 700000 0>;	/* 700000 ns = 1337Hz */
 -- 
-Sabrina
+2.43.0
+
 
