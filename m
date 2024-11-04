@@ -1,189 +1,172 @@
-Return-Path: <linux-kernel+bounces-395573-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395574-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A69EF9BBFF6
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 22:24:12 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 930D69BC001
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 22:25:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA3D51C218C0
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 21:24:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5334C282549
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 21:25:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B0451FCC63;
-	Mon,  4 Nov 2024 21:24:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bAK73Xg4"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53D361FCC79;
+	Mon,  4 Nov 2024 21:25:29 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF1DE1FCC56
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 21:24:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4614D1B6CE4
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 21:25:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730755447; cv=none; b=Tf7+IcBj+9cWtNsLSCFDQlt6dKgzRhtAoQNS+8yKWcgsrdErDf67k3tr1bOYGG13QHx9/v5CeeOhElPTciwfgOeKiz3HFyQ8+qnk8dj9QI4oEJF9vMAreqNdDMD8uXdHmaE+UiciV9EKiDk4f08uEtD+umcCO8baPH3LELhKF5g=
+	t=1730755528; cv=none; b=N0D6K/TYQFpWaD5KZbVYz9wkhf762cYWDxyjT3Z3Me9FNnDMTwSsMHjXgkl/ySuSLtojBhgLhaRABm4rCbcg4oMM4fqYYjMFB7yf8cHhuEygpaBzT9beuPR1jXcEP7EH6z70gQZvZu8PTKSzipodfNeaDpLC9ktw7pIIwV7YSSo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730755447; c=relaxed/simple;
-	bh=T4JaBfS/7QNEWz/7/vyx2x9vMuzg6nsLyg9CA96NUkY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RC0Y+PcPwWbHe8C2lePX+o6qEWpCRx3k4VszSo7hP9cIHiGEhbDCxGiBRv+Oh6Goh5nVgU/6yuLhcF9XTwNNRJHaxlIY8kNiTyTfRywezaG5pP/3Mj51X8zcMB4TNdZkFJr7Zm6kYu7EmRWIKaAdBDCu6kOQxm/FCqw/kBM8ITk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bAK73Xg4; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3807dd08cfcso4002937f8f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 13:24:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730755444; x=1731360244; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=o/2yu7UvclEjFD80MpaPkf/0nw6X3u5y/74H0s6nPtE=;
-        b=bAK73Xg4RKAsd8pmj0I6dNOHojLCdqRnasL8q2uz56HvablBN8ATHMr9QTMhv+as+0
-         w+TBld5IEwUpoNFUvJDy7v7S+33PdhRbzHswaTbU+9YegequHykdqaLhoN75YK57XvM9
-         KaQ6VyfEh2mfVPCLg/oG4aijuqjz4JMd8d3uMdwc5GAKuwOcTGHIenLxtHQlOmCf3Orp
-         5zDYcNj8yOrKqqVoeZXRyfa9UuulwOhWDq8KSLzvEqx2LiiqzUBGWg6bz9RZjZQ5xjeU
-         PF0WoZQ5PhfpRIWldzgRElY6sJQOVp7ffP3GEfLnlIWN6B23sM8mCLapQ1BXmclZ7OxA
-         8Y0g==
+	s=arc-20240116; t=1730755528; c=relaxed/simple;
+	bh=Rre4DbdsOxeLgoI5LSbnhb9diCbHE4TntsWN6o3Ahq4=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=BkQH/MCZE+J1G+R4fFXlZSVxyw2vcLsJgMs/UrC5XRqC0x+x2UIuKpYFvNb7P8jk0b5+BDAyCHkhpbyIagUqCpyt6aIht8w/NCcAB9A1kiALcNDWlfR57UqezSq0+dicALclLQ3KvESIhMY3/jRU7QkCY7uW4jpS2iU3YWkuLJo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a4f3d7d13fso45880745ab.0
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 13:25:27 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730755444; x=1731360244;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=o/2yu7UvclEjFD80MpaPkf/0nw6X3u5y/74H0s6nPtE=;
-        b=kr1kOHlRZaPVvu9i+BR55uwS0LlithNcSAPN+bxqQxqJrbKmyt7ZMDgLMmyn4PWGw/
-         AuJFPAsjTonYjTPYX6X4KWBF0lomo9QmbqoG1W8k4XwUtEuAcyVrcY6+JORpbXz2iueP
-         YFZfdISGIrHT3EchYGf9USswjJ8naEKgOo6EEOXK0DLa65FPEaDIaqxWWSVu1IlHc6tV
-         fF4r6iJl5SZ+PVpGeA3GS/aGB9WZM3kNtGKgws01F8tms4FNULwhMXtvmZHIqbR4G2yu
-         CHn8TiQ3D2ak+Y2X3LWrA97cKm0m8c+lmgIzPATdwqbroZ6XV/gvvesFCum4f/XhBxsh
-         uywA==
-X-Forwarded-Encrypted: i=1; AJvYcCV0i6JkJ3A4jp9VR0iNtBNzh8Qq6Z9HtzBsh4DLKFsvhV69RpmwqaH9cNA5smwF3r8/3UY0MpCyWmVhTM4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwUTK3iEJ01j+bDUrOJQhrTc/kIQhMq1qMjPPYt0YhhK/Da+W2x
-	N4XRWzp/7ucXzQvUTKUwRq7JZ8LkLr9nZh271L0FD7G2B/O4N3BE
-X-Google-Smtp-Source: AGHT+IEtoXGebHuHOKWu8sWKvgbachVIM1d0ifzwpPlcjVESbb9RWPN7ltg5rPUimEiiVmwZDqQ9Ug==
-X-Received: by 2002:a5d:5847:0:b0:37d:4619:f975 with SMTP id ffacd0b85a97d-381c7a5d351mr16267861f8f.19.1730755443715;
-        Mon, 04 Nov 2024 13:24:03 -0800 (PST)
-Received: from ?IPV6:2a02:6b67:d751:7400:c2b:f323:d172:e42a? ([2a02:6b67:d751:7400:c2b:f323:d172:e42a])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381c10d40casm14211218f8f.27.2024.11.04.13.24.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 04 Nov 2024 13:24:03 -0800 (PST)
-Message-ID: <79deed1a-9b0e-42e0-be2f-f0c3ef5fee11@gmail.com>
-Date: Mon, 4 Nov 2024 21:24:02 +0000
+        d=1e100.net; s=20230601; t=1730755526; x=1731360326;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=SAsKvAp8Sst3NYJtT1LShmmNbzN8YlFhKi+LB2P10Gs=;
+        b=YzOeMEcVLj94YlJM/ruGUR5nQ7Agx3KYbPjV0B9QnMBedyv+ZvFN/UFyqHxyL52ogn
+         3kDkVlGIoqtaVnIQqJuEf0SVy9Q9a0K9VuD8B0eiHYNcgncpTiFq6ACFlSePAyt/HbtX
+         PTaqbKZktI0PFwDJtI3ZlKVIecDr0vZZAnq/Mh181wAGuvVL/Y57fB8QEnrIRyGQT6Pg
+         Ysr2FLa+mPtw7sb0y0kK4iKFgdUPhSMy0tUqPm1x16nmsuHuDa9tU33nIlgkGhJgl65h
+         JJ4swTSaXDSWHSOIrxna6UEed+qcJehVMLiPhH6hqdsZMMYkJfFcnDmoVRvRyJtfJPce
+         L3KQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXh1yrZiEkX3FfpFWu9kAXfDqXQChXHhV0WTdSq8B7UoiKepWAbTxDni+yunmAuzgY2ROfId4F9tT8vKqg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyfpgKN+RXVhj1WyRgLoBvoxc3khJ1UmiaKZnBvZJbWJhTJnlJk
+	ZX9EznzDp0c5Aj+z85yoTnmy6E3vpphlk5pX/7FOn3oAXsbeF0zH2rLrbD2vTzqoIpk6lciVQJ+
+	JZ7LIhjBgyAW5cwN69hvr6gyiiBjbREoJm7AZoFZp6YbxMVd9jMBRRwk=
+X-Google-Smtp-Source: AGHT+IHthQkVIqK9FjtxcEWleyaboaWzlDMUbs0UcaxRBaxZT6t2Tla3mP4Y2/hhLaOfFQ8UdxWHvCZczEKkhNOrCtEZlNAraFYZ
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] mm: count zeromap read and set for swapout and swapin
-To: David Hildenbrand <david@redhat.com>, Johannes Weiner <hannes@cmpxchg.org>
-Cc: Barry Song <21cnbao@gmail.com>, akpm@linux-foundation.org,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- Barry Song <v-songbaohua@oppo.com>, Chengming Zhou
- <chengming.zhou@linux.dev>, Yosry Ahmed <yosryahmed@google.com>,
- Nhat Pham <nphamcs@gmail.com>, Hugh Dickins <hughd@google.com>,
- Matthew Wilcox <willy@infradead.org>, Shakeel Butt <shakeel.butt@linux.dev>,
- Andi Kleen <ak@linux.intel.com>, Baolin Wang
- <baolin.wang@linux.alibaba.com>, Chris Li <chrisl@kernel.org>,
- "Huang, Ying" <ying.huang@intel.com>, Kairui Song <kasong@tencent.com>,
- Ryan Roberts <ryan.roberts@arm.com>, joshua.hahnjy@gmail.com
-References: <20241102101240.35072-1-21cnbao@gmail.com>
- <c7a90ccf-c1b1-480c-9f2a-88ef37c3d89e@redhat.com>
- <20241104163402.GA810664@cmpxchg.org>
- <c9c5bea0-7542-4587-9d02-0dc25574c548@redhat.com>
- <3ac28c1a-44d4-4b10-966e-0907df716da0@gmail.com>
- <410abcf1-d43c-4368-b217-4ff894903440@redhat.com>
-Content-Language: en-US
-From: Usama Arif <usamaarif642@gmail.com>
-In-Reply-To: <410abcf1-d43c-4368-b217-4ff894903440@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:3d06:b0:3a6:c122:508c with SMTP id
+ e9e14a558f8ab-3a6c1225323mr89295815ab.19.1730755526457; Mon, 04 Nov 2024
+ 13:25:26 -0800 (PST)
+Date: Mon, 04 Nov 2024 13:25:26 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67293bc6.050a0220.2edce.14fb.GAE@google.com>
+Subject: [syzbot] [wireless?] WARNING in kcov_remote_start (6)
+From: syzbot <syzbot+3f51ad7ac3ae57a6fdcc@syzkaller.appspotmail.com>
+To: johannes@sipsolutions.net, linux-kernel@vger.kernel.org, 
+	linux-wireless@vger.kernel.org, netdev@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+
+Hello,
+
+syzbot found the following issue on:
+
+HEAD commit:    3e5e6c9900c3 Merge tag 'nfsd-6.12-3' of git://git.kernel.o..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=11406b40580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=f527353e21e067e8
+dashboard link: https://syzkaller.appspot.com/bug?extid=3f51ad7ac3ae57a6fdcc
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/3c9dd6858e45/disk-3e5e6c99.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/4d49c920af4f/vmlinux-3e5e6c99.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/9905ad94dc22/bzImage-3e5e6c99.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+3f51ad7ac3ae57a6fdcc@syzkaller.appspotmail.com
+
+netdevsim netdevsim4 netdevsim1: unset [1, 0] type 2 family 0 port 6081 - 0
+netdevsim netdevsim4 netdevsim2: unset [1, 0] type 2 family 0 port 6081 - 0
+netdevsim netdevsim4 netdevsim3: unset [1, 0] type 2 family 0 port 6081 - 0
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 16141 at kernel/kcov.c:872 kcov_remote_start+0x542/0x7d0 kernel/kcov.c:872
+Modules linked in:
+CPU: 0 UID: 0 PID: 16141 Comm: syz.4.2741 Not tainted 6.12.0-rc5-syzkaller-00308-g3e5e6c9900c3 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+RIP: 0010:kcov_remote_start+0x542/0x7d0 kernel/kcov.c:872
+Code: 4c 89 ff be 03 00 00 00 e8 9b df 1f 03 e9 04 fb ff ff e8 d1 af 29 0a 41 f7 c6 00 02 00 00 0f 84 f2 fa ff ff e9 7f fc ff ff 90 <0f> 0b 90 e8 06 cd 29 0a 89 c0 48 c7 c7 c0 d4 02 00 48 03 3c c5 50
+RSP: 0018:ffffc9000d826610 EFLAGS: 00010002
+RAX: 0000000080000200 RBX: ffff888033771e00 RCX: 0000000000000002
+RDX: dffffc0000000000 RSI: ffffffff8c0adc40 RDI: ffffffff8c603460
+RBP: 0000000000000000 R08: ffffffff9429786f R09: 1ffffffff2852f0d
+R10: dffffc0000000000 R11: fffffbfff2852f0e R12: ffffffff8194e367
+R13: ffff888025389780 R14: 0000000000000246 R15: ffff8880b862d4c0
+FS:  00007ff44c8056c0(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fdf652656c0 CR3: 000000001fed8000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ kcov_remote_start_common include/linux/kcov.h:50 [inline]
+ ieee80211_rx_list+0x799/0x3780 net/mac80211/rx.c:5444
+ ieee80211_rx_napi+0x18a/0x3c0 net/mac80211/rx.c:5485
+ ieee80211_rx include/net/mac80211.h:5138 [inline]
+ ieee80211_handle_queued_frames+0xe7/0x1e0 net/mac80211/main.c:441
+ ieee80211_stop_device+0x3f/0xf0 net/mac80211/util.c:1587
+ ieee80211_do_stop+0x1cb5/0x2300 net/mac80211/iface.c:721
+ ieee80211_stop+0x436/0x4a0 net/mac80211/iface.c:780
+ __dev_close_many+0x219/0x300 net/core/dev.c:1560
+ __dev_close net/core/dev.c:1572 [inline]
+ __dev_change_flags+0x30e/0x6f0 net/core/dev.c:8843
+ dev_change_flags+0x8b/0x1a0 net/core/dev.c:8917
+ do_setlink+0xcd0/0x41f0 net/core/rtnetlink.c:2929
+ rtnl_group_changelink net/core/rtnetlink.c:3476 [inline]
+ __rtnl_newlink net/core/rtnetlink.c:3735 [inline]
+ rtnl_newlink+0x1119/0x20a0 net/core/rtnetlink.c:3772
+ rtnetlink_rcv_msg+0x73f/0xcf0 net/core/rtnetlink.c:6675
+ netlink_rcv_skb+0x1e3/0x430 net/netlink/af_netlink.c:2551
+ netlink_unicast_kernel net/netlink/af_netlink.c:1331 [inline]
+ netlink_unicast+0x7f6/0x990 net/netlink/af_netlink.c:1357
+ netlink_sendmsg+0x8e4/0xcb0 net/netlink/af_netlink.c:1901
+ sock_sendmsg_nosec net/socket.c:729 [inline]
+ __sock_sendmsg+0x221/0x270 net/socket.c:744
+ ____sys_sendmsg+0x52a/0x7e0 net/socket.c:2607
+ ___sys_sendmsg net/socket.c:2661 [inline]
+ __sys_sendmsg+0x292/0x380 net/socket.c:2690
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7ff44b97e719
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ff44c805038 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
+RAX: ffffffffffffffda RBX: 00007ff44bb35f80 RCX: 00007ff44b97e719
+RDX: 0000000000000000 RSI: 0000000020000040 RDI: 0000000000000003
+RBP: 00007ff44b9f132e R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 00007ff44bb35f80 R15: 00007fffdca94ea8
+ </TASK>
 
 
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-On 04/11/2024 20:56, David Hildenbrand wrote:
-> On 04.11.24 19:48, Usama Arif wrote:
->>
->>
->> On 04/11/2024 17:10, David Hildenbrand wrote:
->>> On 04.11.24 17:34, Johannes Weiner wrote:
->>>> On Mon, Nov 04, 2024 at 01:42:08PM +0100, David Hildenbrand wrote:
->>>>> On 02.11.24 11:12, Barry Song wrote:
->>>>>> @@ -1599,6 +1599,16 @@ The following nested keys are defined.
->>>>>>           pglazyfreed (npn)
->>>>>>             Amount of reclaimed lazyfree pages
->>>>>>     +      swpin_zero
->>>>>> +        Number of pages moved into memory with zero content, meaning no
->>>>>> +        copy exists in the backend swapfile, allowing swap-in to avoid
->>>>>> +        I/O read overhead.
->>>>>> +
->>>>>> +      swpout_zero
->>>>>> +        Number of pages moved out of memory with zero content, meaning no
->>>>>> +        copy is needed in the backend swapfile, allowing swap-out to avoid
->>>>>> +        I/O write overhead.
->>>>>
->>>>> Hm, can make it a bit clearer that this is a pure optimization and refer
->>>>> to the other counters?
->>>>>
->>>>> swpin_zero
->>>>>      Portion of "pswpin" pages for which I/O was optimized out
->>>>>      because the page content was detected to be zero during swapout.
->>>>
->>>> AFAICS the zeropages currently don't show up in pswpin/pswpout, so
->>>> these are independent counters, not subsets.
->>>
->>> Ah. now I understand the problem. The whole "move out of memory" "move into memory" here is quite confusing TBH. We're not moving anything, we're optimizing out the move completely ... yes, you could call it compression (below).
->>>
->>>>
->>>> I'm leaning towards Barry's side on the fixes tag.
->>>
->>> I think the documentation when to use the Fixes: tag is pretty clear.
->>>
->>> Introducing new counters can hardly be considered a bugfix. Missing to adjust some counters that *existing tools* would know/use might be  IMO (below).
->>>
->>>>   When zswap handled
->>>> the same-filled pages, we would count them in zswpin/out. From a user
->>>> POV, especially one using zswap, the behavior didn't change, but the
->>>> counts giving insight into this (potentially significant) VM activity
->>>> disappeared. This is arguably a regression.
->>>>>> swpout_zero
->>>>>      Portion of "pswout" pages for which I/O was optimized out
->>>>>      because the page content was detected to be zero.
->>>>
->>>> Are we sure we want to commit to the "zero" in the name here? Until
->>>> very recently, zswap optimized all same-filled pages. It's possible
->>>> somebody might want to bring that back down the line.
->>>
->>> Agreed.
->>>
->>>>
->>>> In reference to the above, I'd actually prefer putting them back into
->>>> zswpin/zswpout. Sure, they're not handled by zswap.c proper, but this
->>>> is arguably just an implementation detail; from a user POV this is
->>>> still just (a form of) compression in lieu of IO to the swap backend.
->>>>
->>>> IMO there is no need for coming up with a separate category. Just add
->>>> them to zswpin/zswpout and remove the CONFIG_ZSWAP guards from them?
->>>
->>
->> hmm, I actually don't like the idea of using zswpin/zswpout. Its a
->> bit confusing if zswap is disabled and zswap counters are incrementing?
->>
->> Also, it means that when zswap is enabled, you won't be able to distinguish
->> between zswap and zeropage optimization.
-> 
-> Does it matter? Because in the past the same would have happened, no (back when this was done in zswap code)?
-> 
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-When it was in zswap code, there was zswap_same_filled_pages stat as well to see
-how many zero-filled pages were part of zswap. (Not the same as counter, but you
-could still get a good idea about same filled page usage).
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
-The other thing is it affects zram as well..
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
 
-Maybe We could have a hybrid approach?
-i.e. have the zswpin/zswpout counter incremented at zero filled pages as suggested,
-but then also have a zero_swapped stat that tells how much of the zeromap is 
-currently set (similar to zswapped).
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
 
+If you want to undo deduplication, reply with:
+#syz undup
 
