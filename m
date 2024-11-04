@@ -1,127 +1,76 @@
-Return-Path: <linux-kernel+bounces-394967-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394968-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 125C29BB6A0
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 14:48:07 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B3839BB6A5
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 14:50:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7AD2EB22A99
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 13:48:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EFA8E281B4B
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 13:50:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 177BD7E111;
-	Mon,  4 Nov 2024 13:47:50 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD192433D1;
+	Mon,  4 Nov 2024 13:49:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="Bp7LY+tM"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D11470829
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 13:47:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EBE28BEE;
+	Mon,  4 Nov 2024 13:49:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730728069; cv=none; b=ts02xl0PJBtnUTQ+e1oscz7vYI9Uxmqys9f4roMs0uwqvt/MokkQlSMX4XUSGoEqAAaVE7s8qtCrw4Z3WxmKF/a/x+Je7DT94mODfE9SxqF2XLpUcek2emhuNYu0xswccDxCJOmhmuTSPjOWqvY+2ZVuMUfRUcazdTTYvbL1eB4=
+	t=1730728195; cv=none; b=tLYurtf5Bxa2txhweOQZgpKVSeUmzqEr741USZhBvAX57gkxMULtkHnV5Qj2GN01Jf2RO1+tPY4KCPJIfZ9IZpdlVhJnGBd5vQmxPWmNGn4L+CjfhFbvdr7gwd5CtSFgyPXtr7z1gl/5I4e2A1llP6D6SZE7YkCrtzZ8NgH8zvg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730728069; c=relaxed/simple;
-	bh=F8zjRma3PeVfYCzJfvrQelK0l9hyDiCWuPTWjeZFPOQ=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=ZxJkVEwrzToV6A5v7+I0zkmqMsWw8aDyGw1ocHt5NPbELCAmywg11wfifRJrM3dpbLeOaiFIcGoDLczoaIzMvBGMJD8JZ1maPe32UdJOhgqJH2+6CPaUpkZvBOAHGsmny0aM29tIsnzPyiEUGb3E8S46uc9vln3AkhDZiOnhDf8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1t7xQj-0004ok-Rl; Mon, 04 Nov 2024 14:47:41 +0100
-Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1t7xQj-001zYZ-0t;
-	Mon, 04 Nov 2024 14:47:41 +0100
-Received: from pza by lupine with local (Exim 4.96)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1t7xQj-000EVu-0d;
-	Mon, 04 Nov 2024 14:47:41 +0100
-Message-ID: <6e8b3c1d4c5232e006030f03a9b06a6294970d6c.camel@pengutronix.de>
-Subject: Re: [PATCH v2 0/2] Fix dtc warnings when building the LAN966x
- device tree overlay
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Herve Codina <herve.codina@bootlin.com>, Stephen Rothwell
-	 <sfr@canb.auug.org.au>, Rob Herring <robh@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Arnd Bergmann
- <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Allan
- Nielsen <allan.nielsen@microchip.com>, Horatiu Vultur
- <horatiu.vultur@microchip.com>,  Steen Hegelund
- <steen.hegelund@microchip.com>, Thomas Petazzoni
- <thomas.petazzoni@bootlin.com>
-Date: Mon, 04 Nov 2024 14:47:41 +0100
-In-Reply-To: <20241031160122.40cf61e0@bootlin.com>
-References: <20241029084338.194942-1-herve.codina@bootlin.com>
-	 <20241031160122.40cf61e0@bootlin.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+	s=arc-20240116; t=1730728195; c=relaxed/simple;
+	bh=0h24Z/KmOBeWc61kIufk+VlXZiXL62drrzwhEeQScZM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PKoNJhS+7wnir8pxf/VrjOB86OdBMf9bANIiTFzuCda0xUuphNJ8+uZMMQQysTN49jH0lORH3EGX4ZTSst5CjfhQF4GTc4FealCNkEzcL1mup48gTzfHj0Rlu8+nu/6jIsH2261386j96sxExy2gi0fqniG9AkZlbR1cMptRNFA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=Bp7LY+tM; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=zfHUUBEvbnEiK3TFZcwygJuDOsuq2mvLTMARsCEc7ok=; b=Bp7LY+tM/ioObqhADkWHMt2DKN
+	3YL1XXE4BYMytefuFFK67hjdsrMadTofYG2qDhkItzEJUYYa+EiPFKEMIYeMDvS2n9CapOmz/nWcc
+	gAfsaSpDnkJv933zIzySYDdpCjGsSDUjfX4G1SvFMJRAM6jZv3Rp4vPVMp3xsdDxEv3Y=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1t7xSo-00C6mP-HG; Mon, 04 Nov 2024 14:49:50 +0100
+Date: Mon, 4 Nov 2024 14:49:50 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Alistair Francis <alistair23@gmail.com>
+Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	linux@armlinux.org.uk, hkallweit1@gmail.com,
+	Alistair Francis <alistair.francis@wdc.com>
+Subject: Re: [PATCH] include: mdio: Guard inline function with CONFIG_MDIO
+Message-ID: <9ae6af15-790a-4d34-901d-55fca0be9fd2@lunn.ch>
+References: <20241104070950.502719-1-alistair.francis@wdc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241104070950.502719-1-alistair.francis@wdc.com>
 
-On Do, 2024-10-31 at 16:01 +0100, Herve Codina wrote:
-> Hi Philipp,
->=20
->=20
-> On Tue, 29 Oct 2024 09:43:34 +0100
-> Herve Codina <herve.codina@bootlin.com> wrote:
->=20
-> > dtc generates 3 kinds of warnings when it builds the LAN966x dtso.
-> >=20
-> > - missing or empty reg/ranges property
-> >     .../pci-ep-bus@0/cpu_clk: missing or empty reg/ranges property
-> >     .../pci-ep-bus@0/ddr_clk: missing or empty reg/ranges property
-> >     .../pci-ep-bus@0/sys_clk: missing or empty reg/ranges property
-> >   Patch 1 in this series fixes these warnings
-> >=20
-> > - Missing interrupt-parent
-> >    .../pci-ep-bus@0/oic@e00c0120: Missing interrupt-parent
-> >   This warning was quickly silenced by Philipp [1].
-> >   Patch 2 in this series fixes the warning and should replace the patch
-> >   applied by Philipp to silence the warning.
-> >=20
-> > - Warning (avoid_unnecessary_addr_size)
-> >    /fragment@0/__overlay__: unnecessary #address-cells/#size-cells with=
-out "ranges", "dma-ranges" or child "reg" property
-> >   This warning should be fixed in dtc.
-> >   A patch has already be sent by Philip to fix it [2].
-> >=20
-> > [1] https://lore.kernel.org/all/57793bb01e02f03e215dfa6f8783df18034ae2e=
-a.camel@pengutronix.de/
-> > [2] https://lore.kernel.org/devicetree-compiler/20241025161307.3629901-=
-1-p.zabel@pengutronix.de/T/#u
-> >=20
->=20
-> Both patches in this series have been reviewed by Rob.
->=20
-> I think it is a green light to have them applied in the reset tree.
-> Your opinion?
+On Mon, Nov 04, 2024 at 05:09:50PM +1000, Alistair Francis wrote:
+> The static inline functions mdio45_ethtool_gset() and
+> mdio45_ethtool_ksettings_get() call mdio45_ethtool_gset_npage() and
+> mdio45_ethtool_ksettings_get_npage() which are both guarded by
+> CONFIG_MDIO. So let's only expose mdio45_ethtool_gset() and
+> mdio45_ethtool_ksettings_get() if CONFIG_MDIO is defined.
 
-Applied to reset/next, thanks!
+Why? Are you fixing a linker error? A compiler error?
 
-[1/2] misc: lan966x_pci: Fix dtc warns 'missing or empty reg/ranges propert=
-y'
-      https://git.pengutronix.de/cgit/pza/linux/commit/?id=3D344ea0d36b8c
-[2/2] misc: lan966x_pci: Fix dtc warn 'Missing interrupt-parent'
-      https://git.pengutronix.de/cgit/pza/linux/commit/?id=3Dcf3e10cc0e88
+In general, we don't want #ifdef if they are not necessary, because
+they reduce the effectiveness of build testing.
 
-I've dropped the Makefile patch ("misc: Silence warning when building
-the LAN966x device tree overlay").
-
-regards
-Philipp
+	Andrew
 
