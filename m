@@ -1,129 +1,111 @@
-Return-Path: <linux-kernel+bounces-395236-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395250-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18D509BBAAD
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 17:56:48 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0D949BBAE6
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 18:02:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 99340B20D49
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 16:56:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C20CE1C213C6
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 17:02:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B028B1C3027;
-	Mon,  4 Nov 2024 16:56:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sk7Qu41H"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35FCF1C1738;
+	Mon,  4 Nov 2024 17:00:11 +0000 (UTC)
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 129951369B6;
-	Mon,  4 Nov 2024 16:56:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E867762EB;
+	Mon,  4 Nov 2024 17:00:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730739397; cv=none; b=nfrX7YleIiaY69JqRP2bYJTFpFoOs1v7Op5W4KEHeIWPPL4v4kXyzI2ldVPaUOexPyNi0c1DilPqfJ5SHe8QX1KHGTa/Tn1v03hvJphXKekLN0qNhQByIfgnfgJ+96culk0d/IIYNQtWrz0Dao1gn8IVdfS6gaapcDVC7L6n2B4=
+	t=1730739610; cv=none; b=gNqKJ64E7uo/8wNGZjRpw0EdesKO6KGAsFQOBG+IC31JZrCtQinOorMMg5VSPNkrXZZiTJ86NhFNEaAVMbzlv6595oK9GEAJPBcB5EJTr3Qy0oM2lG5kNkAMoOv/jYWHXH51LQ6u0wMVQGSQ87N1up5uQIQaXuVXBoSmhSBvuRs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730739397; c=relaxed/simple;
-	bh=+KgTmQ9m+fs9YTuWdW7aG+cCQ9cVogjvZwU1FhHJIBg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CA9mpefYv7E8inzXMNmZb0OptQkusBht0kA8RI6ItpnAfezpmyEQ2TdRbMXOEO50Bu3vk0NrjiISC2UWE/rUQdQDTyJpuMF1d9quwZxgIgq3ovXIGpH8x/mc9MhepZXM3Qc7711PkMN1gi5eyw76VHoCen4I8YpTmur8wgTBck4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sk7Qu41H; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7B63C4CECE;
-	Mon,  4 Nov 2024 16:56:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730739396;
-	bh=+KgTmQ9m+fs9YTuWdW7aG+cCQ9cVogjvZwU1FhHJIBg=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=sk7Qu41H4GkK0MG2aMjjpLAHn/f6KnCk4oe6CHBze16mQjzwOC/UaY0c7r0SiTPOH
-	 qKZwV2CPtTeooezXzOmTxG66O52TrRi4gDz5tgLUMh2OLJFg3EPgxYzLfGs/r/9irA
-	 vYOBQ1N0vc4RfC1O8JHaWM1MBAyH1CdImQN6iOdF1Q29JhCPmORQQnht+c8M5GLI0A
-	 d0Ms3Nh+T2UaVCFYLgnPeE7CEV6Nwc4CscqvpkD2DOPd8AQy5d48JEggUB9fOM23Hv
-	 bR7kNBrcFXP0SatIgcPxnoffV4P51K7Z4P3SSAsGEvD4cZHv2ux2tyAzvqsRH6Jvey
-	 tecx++q9Ce0uQ==
-Received: by mail-ot1-f51.google.com with SMTP id 46e09a7af769-71807ad76a8so2313890a34.0;
-        Mon, 04 Nov 2024 08:56:36 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVS6uzjSnYyfoNmz0xZO+fXAPV2Emddp0hIwZi4M/o7vTZS3o7/DqlzoIu4CNSJ/u61WZSHuvpO0wQM@vger.kernel.org, AJvYcCXHziFUjMVhh5x0mRz4lbclRrsW6FneulxtvCRIRhofXTYu0+Xq7r6/lcXDF4eTyG6OETLa6ymVTrgWS8R0@vger.kernel.org
-X-Gm-Message-State: AOJu0YyHaNjVOzSu5hIxut0itcZCxp0tF2SVxIB9gGC8BmNUS61gGqnf
-	2+TzQxF+c4prKhR0GL3t4FqFUZvfy1izD8WTR2vWG/k+nuuJqj3vCDAPtfg6F/GqHeg0+7IGSbl
-	NGuLx0qxaRJ7x9jsi/PpS/qtswFQ=
-X-Google-Smtp-Source: AGHT+IGqClGbcCdHSjv8Vf4H2PhPkz4ezPZJC6cNLWeX2RBDPTAbEMbkUZvikotdP6EMbyljFkVsYmeSKRAxbeMvM08=
-X-Received: by 2002:a05:6871:c703:b0:277:f14c:844b with SMTP id
- 586e51a60fabf-2948463078fmr14817784fac.37.1730739396262; Mon, 04 Nov 2024
- 08:56:36 -0800 (PST)
+	s=arc-20240116; t=1730739610; c=relaxed/simple;
+	bh=c4j2AxiCBmK8TPRGxeBDDR2DRCu2KEePS5LYL/cGw8w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VtBVuC3yEMXLQiSoPR3LgEGoBNHxshPLH27jS+AUyPR66lTQf+6jPioLZm+qQXgQTMtRbRrf7gDhanV+89OC5FvzxxVHsd5YZ6SC4e2OItpUj3VFCJZykjY7IpidY3E9QbWZZKffORd/51cpQyqCpmj5UDnnuJvH42zw2d0xoNo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-71e49ad46b1so3834005b3a.1;
+        Mon, 04 Nov 2024 09:00:08 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730739608; x=1731344408;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=X40B+sMh1eGF1F0jxlLbQBcht+sGrnCIA4ApgNyX+v0=;
+        b=WrKCbzv7DgFTRBwVQkQZV1bGFG5Swa7i5lHIpoXgCatJGzQQhSSOx63yR0IeEMQRHA
+         qm9X5EGkkg3830G7qSrH1ik/OxhaM1NPfYe7IBSMgHqKq9ZLMuvbHHbAXWPFhPGjvRIy
+         Mtin5x27SnjM98eDii5+7JDgVFidJPspBc36dbpfAsXUcm3rgeYXuQbkunOX6xyT0hra
+         hEAadmu/jLkh9HGjFH/uwzaZDtd84ZYDn4SYKbmx6sQuD2dnervJkBsZlB7rBcxnrYdl
+         eYjs+J664KnzxO+Sddm8BoQO+6lrrUkoDKz4+QVQtSv6VA2xTPWkh7kAPNFU+fyz/nUI
+         C8Rw==
+X-Forwarded-Encrypted: i=1; AJvYcCW30k446v/kIV+G69rGgsUf5pE3G0ItJWRTOsi4oIf0j5gM1sgqXSFYtJ9VJ4ZbR19sgduoPRA5ehZT5qg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxKNVU0NaJRmm/JpYx2TU6g+5eHT7+dpDxgfhr34QVZNmMzw5ms
+	UeQ28n0NnW1Dg8ZLGdHttTur8yDbr8uUHau1myWqSJ+uhUltya9ogjkjMVdQ
+X-Google-Smtp-Source: AGHT+IFTmb9Csi7s44ZdeNILi3UIE6RcdAkVf+D6pNViSfkFFQF6wwO/W5zTeviYxlBEXREuuveNEA==
+X-Received: by 2002:aa7:8f97:0:b0:720:aa27:2e55 with SMTP id d2e1a72fcca58-720aa2737f6mr20398086b3a.14.1730739608131;
+        Mon, 04 Nov 2024 09:00:08 -0800 (PST)
+Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-720bc2eb586sm7981636b3a.149.2024.11.04.09.00.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 04 Nov 2024 09:00:07 -0800 (PST)
+Date: Tue, 5 Nov 2024 02:00:05 +0900
+From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: linux-pci@vger.kernel.org, ryder.lee@mediatek.com,
+	jianjun.wang@mediatek.com, lpieralisi@kernel.org, robh@kernel.org,
+	bhelgaas@google.com, matthias.bgg@gmail.com,
+	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, kernel@collabora.com,
+	fshao@chromium.org
+Subject: Re: [PATCH v4 0/2] PCI: mediatek-gen3: Support limiting link speed
+ and width
+Message-ID: <20241104170005.GA4055778@rocinante>
+References: <20241104114935.172908-1-angelogioacchino.delregno@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241030162754.2110946-1-andriy.shevchenko@linux.intel.com> <63b16433-9f80-492f-9389-633a9852a223@weissschuh.net>
-In-Reply-To: <63b16433-9f80-492f-9389-633a9852a223@weissschuh.net>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Mon, 4 Nov 2024 17:56:25 +0100
-X-Gmail-Original-Message-ID: <CAJZ5v0ip=JacAZTLigdivuASCtNdqp=RZv99OMNiNPt4WYcnxA@mail.gmail.com>
-Message-ID: <CAJZ5v0ip=JacAZTLigdivuASCtNdqp=RZv99OMNiNPt4WYcnxA@mail.gmail.com>
-Subject: Re: [PATCH v1 1/1] ACPI: battery: Check for error code from
- devm_mutex_init() call
-To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas@weissschuh.net>, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>, 
-	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241104114935.172908-1-angelogioacchino.delregno@collabora.com>
 
-On Wed, Oct 30, 2024 at 5:42=E2=80=AFPM Thomas Wei=C3=9Fschuh <thomas@weiss=
-schuh.net> wrote:
->
-> Hi Andy,
->
-> Oct 30, 2024 10:28:03 Andy Shevchenko <andriy.shevchenko@linux.intel.com>=
-:
->
-> > Even if it's not critical, the avoidance of checking the error code
-> > from devm_mutex_init() call today diminishes the point of using devm
-> > variant of it. Tomorrow it may even leak something. Add the missed
-> > check.
->
-> Thanks!
->
-> Assuming you found this via some sort of tool and you already fixed up al=
-l the other places in the tree missing these checks,
-> wouldn't it make sense to mark devm_mutex_init() as __must_check?
->
-> > Fixes: 0710c1ce5045 ("ACPI: battery: initialize mutexes through devm_ A=
-PIs")
-> > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
->
-> Reviewed-by: Thomas Wei=C3=9Fschuh <linux@weissschuh.net>
+Hello,
 
-Applied, thanks!
+> Changes in v4:
+>  - Addressed comments from Jianjun Wang's review on v3
+> 
+> Changes in v3:
+>  - Addressed comments from Fei Shao's review on v2
+> 
+> Changes in v2:
+>  - Rebased on next-20240917
+> 
+> This series adds support for limiting the PCI-Express link speed
+> (or PCIe gen restriction) and link width (number of lanes) in the
+> pcie-mediatek-gen3 driver.
+> 
+> The maximum supported pcie gen is read from the controller itself,
+> so defining a max gen through platform data for each SoC is avoided.
+> 
+> Both are done by adding support for the standard devicetree properties
+> `max-link-speed` and `num-lanes`.
+> 
+> Please note that changing the bindings is not required, as those do
+> already allow specifying those properties for this controller.
 
-> > ---
-> > drivers/acpi/battery.c | 8 ++++++--
-> > 1 file changed, 6 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/drivers/acpi/battery.c b/drivers/acpi/battery.c
-> > index 66662712e288..70f706d7634f 100644
-> > --- a/drivers/acpi/battery.c
-> > +++ b/drivers/acpi/battery.c
-> > @@ -1226,8 +1226,12 @@ static int acpi_battery_add(struct acpi_device *=
-device)
-> >     strscpy(acpi_device_name(device), ACPI_BATTERY_DEVICE_NAME);
-> >     strscpy(acpi_device_class(device), ACPI_BATTERY_CLASS);
-> >     device->driver_data =3D battery;
-> > -   devm_mutex_init(&device->dev, &battery->lock);
-> > -   devm_mutex_init(&device->dev, &battery->sysfs_lock);
-> > +   result =3D devm_mutex_init(&device->dev, &battery->lock);
-> > +   if (result)
-> > +       return result;
-> > +   result =3D devm_mutex_init(&device->dev, &battery->sysfs_lock);
-> > +   if (result)
-> > +       return result;
-> >     if (acpi_has_method(battery->device->handle, "_BIX"))
-> >         set_bit(ACPI_BATTERY_XINFO_PRESENT, &battery->flags);
-> >
-> > --
-> > 2.43.0.rc1.1336.g36b5255a03ac
->
+Applied to controller/mediatek, thank you!
+
+[01/02] PCI: mediatek-gen3: Add support for setting max-link-speed limit
+        https://git.kernel.org/pci/pci/c/ade7da14954a
+
+[02/02] PCI: mediatek-gen3: Add support for restricting link width
+        https://git.kernel.org/pci/pci/c/6e73c5898973
+
+	Krzysztof
 
