@@ -1,182 +1,134 @@
-Return-Path: <linux-kernel+bounces-394441-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394442-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CCC19BAF2A
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 10:10:17 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDD1E9BAF2C
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 10:10:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8E092B2426D
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 09:10:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 279111C236D2
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 09:10:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AADF1ADFED;
-	Mon,  4 Nov 2024 09:09:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D59A1AC453;
+	Mon,  4 Nov 2024 09:09:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="G+FryC7y"
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uADB5x8t"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A2CF1AC8B9
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 09:09:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5D7214B06C;
+	Mon,  4 Nov 2024 09:09:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730711362; cv=none; b=sayl6tHABfVdbzXhNdR4EvPhxAWYy6DQQ8xleQMEaKhl+lOuGFXO4meI/Sk1l4cBUI4o6xvv/XZqVWgfpdZArF0DqA40ROJ8+lwvAJM4+GTH/ZdSJfUfiU110nYKmvJU3iOOe24bSj5GY7i5CbfwQuGrKfSfpVyIi0g8A+uz7cU=
+	t=1730711380; cv=none; b=qYnOL9iW/H+1xVTRcezTplTVi0vceOw8zgJo091rNfA8jTBiken1fyVfvgki3VYj2LY/Ffwx1nyDigBYvZbDjYTYdSTf9gTepyse/9IuS0xt62PawbHo7EVSuGup/wsIJ4XwyxW7dOT6y9vxk2tvk5UG0Y4kENDorHO7ZhAbzdQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730711362; c=relaxed/simple;
-	bh=ifqPukSiWEbvQx2BNyq44t24PrtspIIZb3U4Z0syxko=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=a51gJXDTIhJJ2ubcC7yfCsGB2HeV+CMmouF34A8jWbG7vk8B9MjoSM3Zku3ER2IF3+EBLqDYEfxNhbq4+SkaNszqGtmiTuO3j8yP730cYz4k52TLOQJEr3j8QCSofJ8o375ocJ9H9eX/1s1/moC94KW6ivHlKx5Cz+vwWnNq5x0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=G+FryC7y; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5c9388a00cfso4833880a12.3
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 01:09:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1730711359; x=1731316159; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=055q6HVRLMtsIiCxhqKFgJlzoVTgwNt+2YbIpiGOuNo=;
-        b=G+FryC7yB7FbtEYO8s6Kq4+9k3AOvtRu4ULtV2B05UMo/Ja/6oZnC+ueNFi25DtNx6
-         hdHvhzcwchq/YBPHcpFhimO2gYdk/Cb/khUvB3WKmodzQXVAZmHJsSdPiUrYmdN9If0h
-         Q9NiDtjRoYPsXZIUqHuxBbzxfFEz7dO7K7yWcj0D0bXEl58Gfw0GEhSeMjHQpYd+thXc
-         2bJQu7mcf09c5j5Lfu3cjLbW2jxDnlCp4wdPf24I5L8A9GL5vYQOMZHmvft2HJ2XEdF1
-         1xJFwM9MCHc99osyTleMoX2MsCj78kzxTCzpwXU17l/5edlt51pqTPsBBDxEa2rsMY7g
-         dWbA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730711359; x=1731316159;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=055q6HVRLMtsIiCxhqKFgJlzoVTgwNt+2YbIpiGOuNo=;
-        b=u9tiIT+ue0fXa5DQ7tWciomZzePWejj+uxeMFUXvRAys+Ooact4LnnRBnm7gsmgq+j
-         I6MT8jUVlb9V3p18W//92cBpQsujfoY10koCxvlyGgXSCuwr13BVJHuRFOqfoGpg/twY
-         oEf2SpQhSihOsE2SpeOsMk36bbmFWq1hXqbVg9pNAkukiZdqL43dPZhKDuxxRbIEXotv
-         74r7Wox1kyX+F4sogxcMz9f4KFUJa4HalAxfDSbrs4vWvrldHAkBMYMsOLzQfki+T9Ou
-         491YwVPo8LV8zAIPYNXS7h3xOvD3Wv8243Yo8FCktgC2ocBW1kaHnEFQywUfnNEuiqYM
-         8anw==
-X-Forwarded-Encrypted: i=1; AJvYcCWrftZHy4+OLtaFiC2VdcvNhL38m4xaF8G2BxkHCnXhZzKQb7uQigYy5ZtOtdEisy6MsWti0GHoh5UFZzc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyqcf+iHFImJwEhpR7Uq3wqyELLgvrY9hXn8bhyfPYjX2ES/OHK
-	Pp7UCddEXDph8fd4mBwVOwMOsyiVanZG9TfW6Xw/BICAZYA/axzf7I0rYzeP0pKh0GUIBV33IyJ
-	wnOebgrTFzY1hPb9mXo9JqazOpF44RbEJADVwNw==
-X-Google-Smtp-Source: AGHT+IG7T23Pew0G4bjyo8FIV5YjqVKWXQFF//1S8lbRwvUhNbZuSM2H8qF/oqLViu8AJNrr6QEfuupKRznSgIqZeV4=
-X-Received: by 2002:a05:6402:51ca:b0:5ce:d397:9f5 with SMTP id
- 4fb4d7f45d1cf-5ced3970cbemr2889559a12.24.1730711358703; Mon, 04 Nov 2024
- 01:09:18 -0800 (PST)
+	s=arc-20240116; t=1730711380; c=relaxed/simple;
+	bh=p7qpbaqhbmJX447uOtF7GuF2HIEGbTdNCNoq7ws8jQA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Orp6jtk5Ykjn20aTLHgMQMIb73ZjWjbVwuHu8vSWnvuSEcO9QRNltDKrj3LNHbNZu5AWB+KizAkcjwb8rz/uU3P6ehPdQkuJO4SAj+oWsrhJNTYPTpQCwgArkdL2Z95keew1z7CmJgs7SSH+F87arKbNtbLfHfV3VvPlHaKDV38=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uADB5x8t; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB01EC4CED2;
+	Mon,  4 Nov 2024 09:09:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730711380;
+	bh=p7qpbaqhbmJX447uOtF7GuF2HIEGbTdNCNoq7ws8jQA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=uADB5x8tNubvrip+tz64HMnF6pICxVFPqHkGz28LXDAB86sIIFBeVd47+F77Hx1hC
+	 NScSHbsDyOaMbNuTo5TVKN2EfWwWpLhFjEyKLDvf2u3ami6WLFoVLWCY5ihS25Rdpz
+	 WSfLaCh0PUa4EEMdLlDwrGOGDuJpbLuNH01vblr3R/HGYm/G9UD/blx6GmX4QHhWNG
+	 F6SMux90BWyBhsRrmkkX5Ihae5k9oVB8S/5LRtyv1D4FA5iDhcPjbG7p9KBV3T1wdx
+	 Ev+G9A00teqFDq1tv1q2jx1BH2VTv3hhxhr0UwrRUG5mDamA60PiRefOmg/dYbvrE5
+	 S6QH84RTsJmVA==
+Message-ID: <5ba048b4-f621-4dc5-8ba6-58d95e224fe1@kernel.org>
+Date: Mon, 4 Nov 2024 10:09:36 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241103145153.105097-14-alexghiti@rivosinc.com> <202411041609.gxjI2dsw-lkp@intel.com>
-In-Reply-To: <202411041609.gxjI2dsw-lkp@intel.com>
-From: Alexandre Ghiti <alexghiti@rivosinc.com>
-Date: Mon, 4 Nov 2024 10:09:07 +0100
-Message-ID: <CAHVXubj8EXCXNPuJ+hqrHwyujjz3GDcqqMjQ4ZFC5VbmZurV3w@mail.gmail.com>
-Subject: Re: [PATCH v6 13/13] riscv: Add qspinlock support
-To: kernel test robot <lkp@intel.com>
-Cc: Jonathan Corbet <corbet@lwn.net>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, Andrea Parri <parri.andrea@gmail.com>, 
-	Nathan Chancellor <nathan@kernel.org>, Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Arnd Bergmann <arnd@arndb.de>, Leonardo Bras <leobras@redhat.com>, Guo Ren <guoren@kernel.org>, 
-	linux-doc@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
-	linux-arch@vger.kernel.org, oe-kbuild-all@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v1 1/1] nfc: mrvl: Don't use "proxy" headers
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241101083910.3362945-1-andriy.shevchenko@linux.intel.com>
+ <2dc98d01-6353-478c-b6ad-d6eac63c53da@kernel.org>
+ <ZyiA0Hx6z4hHqwe0@smile.fi.intel.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
+ QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
+ gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
+ /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
+ iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
+ VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
+ 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
+ xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
+ eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
+ AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
+ MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
+ Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
+ ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
+ vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
+ oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
+ lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
+ t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
+ uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
+ 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
+ 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
+In-Reply-To: <ZyiA0Hx6z4hHqwe0@smile.fi.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Nov 4, 2024 at 10:05=E2=80=AFAM kernel test robot <lkp@intel.com> w=
-rote:
->
-> Hi Alexandre,
->
-> kernel test robot noticed the following build warnings:
->
-> [auto build test WARNING on arnd-asm-generic/master]
-> [also build test WARNING on robh/for-next tip/locking/core linus/master v=
-6.12-rc6]
-> [cannot apply to next-20241101]
-> [If your patch is applied to the wrong git tree, kindly drop us a note.
-> And when submitting patch, we suggest to use '--base' as documented in
-> https://git-scm.com/docs/git-format-patch#_base_tree_information]
->
-> url:    https://github.com/intel-lab-lkp/linux/commits/Alexandre-Ghiti/ri=
-scv-Move-cpufeature-h-macros-into-their-own-header/20241103-230614
-> base:   https://git.kernel.org/pub/scm/linux/kernel/git/arnd/asm-generic.=
-git master
-> patch link:    https://lore.kernel.org/r/20241103145153.105097-14-alexghi=
-ti%40rivosinc.com
-> patch subject: [PATCH v6 13/13] riscv: Add qspinlock support
-> compiler: clang version 19.1.3 (https://github.com/llvm/llvm-project ab51=
-eccf88f5321e7c60591c5546b254b6afab99)
->
-> If you fix the issue in a separate patch/commit (i.e. not just a new vers=
-ion of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202411041609.gxjI2dsw-lkp=
-@intel.com/
->
-> includecheck warnings: (new ones prefixed by >>)
-> >> arch/riscv/include/asm/spinlock.h: asm/ticket_spinlock.h is included m=
-ore than once.
-> >> arch/riscv/include/asm/spinlock.h: asm/qspinlock.h is included more th=
-an once.
+On 04/11/2024 09:07, Andy Shevchenko wrote:
+> On Sat, Nov 02, 2024 at 09:00:04AM +0100, Krzysztof Kozlowski wrote:
+>> On 01/11/2024 09:39, Andy Shevchenko wrote:
+>>> Update header inclusions to follow IWYU (Include What You Use)
+>>> principle.
+> 
+> ...
+> 
+>>> -#include <linux/module.h>
+>>>  #include <linux/delay.h>
+>>> -#include <linux/of_gpio.h>
+>>> +#include <linux/device.h>
+>>> +#include <linux/err.h>
+>>> +#include <linux/module.h>
+>>> +#include <linux/of.h>
+>>> +#include <linux/printk.h>
+>>
+>> Do we really include printk?
+> 
+> Yes, we use it here.
 
-Yes but that's in a #ifdef/#elif#else clause so nothing to do here!
+Yes, I know, I meant if this is actual practice and coding style,
+regardless of IWYU.
 
->
-> vim +10 arch/riscv/include/asm/spinlock.h
->
->      8
->      9  #define __no_arch_spinlock_redefine
->   > 10  #include <asm/ticket_spinlock.h>
->     11  #include <asm/qspinlock.h>
->     12  #include <asm/jump_label.h>
->     13
->     14  /*
->     15   * TODO: Use an alternative instead of a static key when we are a=
-ble to parse
->     16   * the extensions string earlier in the boot process.
->     17   */
->     18  DECLARE_STATIC_KEY_TRUE(qspinlock_key);
->     19
->     20  #define SPINLOCK_BASE_DECLARE(op, type, type_lock)               =
-       \
->     21  static __always_inline type arch_spin_##op(type_lock lock)       =
-       \
->     22  {                                                                =
-       \
->     23          if (static_branch_unlikely(&qspinlock_key))              =
-       \
->     24                  return queued_spin_##op(lock);                   =
-       \
->     25          return ticket_spin_##op(lock);                           =
-       \
->     26  }
->     27
->     28  SPINLOCK_BASE_DECLARE(lock, void, arch_spinlock_t *)
->     29  SPINLOCK_BASE_DECLARE(unlock, void, arch_spinlock_t *)
->     30  SPINLOCK_BASE_DECLARE(is_locked, int, arch_spinlock_t *)
->     31  SPINLOCK_BASE_DECLARE(is_contended, int, arch_spinlock_t *)
->     32  SPINLOCK_BASE_DECLARE(trylock, bool, arch_spinlock_t *)
->     33  SPINLOCK_BASE_DECLARE(value_unlocked, int, arch_spinlock_t)
->     34
->     35  #elif defined(CONFIG_RISCV_QUEUED_SPINLOCKS)
->     36
->     37  #include <asm/qspinlock.h>
->     38
->     39  #else
->     40
->   > 41  #include <asm/ticket_spinlock.h>
->     42
->
-> --
-> 0-DAY CI Kernel Test Service
-> https://github.com/intel/lkp-tests/wiki
+Best regards,
+Krzysztof
+
 
