@@ -1,92 +1,118 @@
-Return-Path: <linux-kernel+bounces-394049-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394050-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F06449BA9B0
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 01:08:45 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE7E99BA9B2
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 01:09:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A3CF41F21B94
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 00:08:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 06D331C20A8B
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 00:09:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 532A420ED;
-	Mon,  4 Nov 2024 00:08:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BF0620ED;
+	Mon,  4 Nov 2024 00:09:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SdwRVVbN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H3KULfUO"
+Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F90617C;
-	Mon,  4 Nov 2024 00:08:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BAEB2594;
+	Mon,  4 Nov 2024 00:09:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730678919; cv=none; b=YctLlnnE31rK7mJ1I5R08qSOZMecCLjoOtZiQr5h8gf/K7mJPTWT9HFf5oMO8hQ4Rzm3+K7KVdzaTR3JdrvW/O1D1Ho08EwtGDOuuXMsLZQ53zn881IamWk+ft7shlbz4QSmvcQxojddDU0Unj4Cdjm0WKjSoWkZSjawFO5EAkM=
+	t=1730678946; cv=none; b=V8o224tH02v684PoEB8EpVbEQ3sPhLVpar9L+bgW9gDxI4y4IbSZLXM0YK+CP/MM92uNE6MDlz26q6YOg/54833xN0r3IhCMFYkXQKbSuNxhO/TSkdw5APRV+DW+aa1lZcaXTvvYudaj+tvxqFxf2M+uRnYS+IvpRwqicPMpcVM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730678919; c=relaxed/simple;
-	bh=CXcuQOiUiATkoADXBmgKDVrSp/xTc0KVAz/6LenqVkU=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To; b=hyzJNocZC8En2yt7yp07sGCKSMbxJrFM9iTCRn/4Ul22Bm2kkcf2H9XMqiOGYY948lC0+xVcAI0CPND37bJTmJFAJkbFGeFtB3At5/0nSXk8gyjpBh0wUDTGyNRRcMtQwApgsaFCcxBgE9WOzqm9JhijobfU+4Wm8SZmIoUVNng=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SdwRVVbN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C790C4CECD;
-	Mon,  4 Nov 2024 00:08:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730678918;
-	bh=CXcuQOiUiATkoADXBmgKDVrSp/xTc0KVAz/6LenqVkU=;
-	h=Date:Cc:Subject:From:To:From;
-	b=SdwRVVbN26L4jyTl7xQZWPxBQopk0QJBFkbvFXU/Qnp/9JTemX4vW6YfOxaeXHcBH
-	 fuKi6hKAaViMp+xQ8RRnNfZf0a4qcM9LaiemCuXTittaL+NgnSZUZzLVSDgCoK3nWp
-	 VyCJ0OQc3l947g5YtNswfHDHshS3Jz1jtHtvUARliSZ61e/cIZzV8LKjTQp9VtYszr
-	 udH+dysxTEWeT9pS2CSjvOu+ZphMkdlHAMyW0i7EUBjozG7psJU8EjvtbxM6R/XVbI
-	 eE1pCRTva64Q7tEzzD3eNeV/8Gr15tMALNzweAkkSaiF9+RrgOSP4sCV6xM3IepYMI
-	 QiSVlr44gVZ9A==
+	s=arc-20240116; t=1730678946; c=relaxed/simple;
+	bh=g3P8YTzB6Y88wmELwzImGVKqks84YxL6j8F2uU/UbVE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PcLVmLuZDnfOPVbJf/P2qEh/W4CUGQuXRecDwK6LC4lJ0aouyVIUnG06nz1FpqKhh8gGrBKyJo9BYd/ec8n/3fDn3DmSAOHPW/G8WKL2WSFCdstnTZmUT8E2nhknoQYnmSNCUxtSxFnrKKhPUxNrKxjFfeEUvz2ICQkf9OJ8+GY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H3KULfUO; arc=none smtp.client-ip=209.85.128.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-6e5a5a59094so32932127b3.3;
+        Sun, 03 Nov 2024 16:09:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730678944; x=1731283744; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9PX6+JWTSLsRsx6aLOO1HsVjRWrGwh0LXWGLa/mQmJQ=;
+        b=H3KULfUOnQjBhfn+y0eW9rOEcRQeTRYXSp1ObXkkfB8dsugeOxAtnlGJLP1n8opRl0
+         6lim+1pLwOgCXKPPHbsKu3H38YNCPbppZ4Kc/jQeZaeoz1bpDKhzzW9gVeWvjUQusEGd
+         Ka/t+nBQH1EEg6GsaJYqNBgTIxznQL/dEXSGV9iQqwhAGxzNMXuXdqukVz2HFQ6MTJlG
+         zu+Xvdmnk0hg8LxPhtyjVF+eSskIa69RANSg94RCh4eKTNyWQmsttDk3VC0DUumdezhy
+         Tq+g/EMBcllGgwHoteJO06Ub1OeGTAi5OSCGVsEJ+xd5iPfwaiX0vwAJw/g5pMQhXf6d
+         u6CQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730678944; x=1731283744;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9PX6+JWTSLsRsx6aLOO1HsVjRWrGwh0LXWGLa/mQmJQ=;
+        b=cFhj94JIpQ3LXR3I8VMaesspPd6rAlIrlsfcMmt8jIM+/xQVukyAmgcyHPgMYG8Jbm
+         2JaYzGDwtNQWyOJpy9qHK+Up/rZ4JHVKAXmwMPaD2LnCL8WXVcsBNU6tZ0qivYsjPGnN
+         zQhqC+khMjrCaUFf9aKPew+BvCCj4wU5+vglT/rjQnkv40nbH6sqHLDkPV41fbHimnOZ
+         C1PIFcnJ2TIIaepT4UIvqAggWiKy3hUy17+6aYC2/7ihQVGOXlMeUnrx0uKqM6TWySiM
+         jZalyg7Q0Znxa/ku/xi617xQP2gNKlN/fLJLyGSaLoJ4SDNVX5bBZ3yOemB8q393gEXo
+         VAIQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVIXRFfntCRcrLcIdGhjWjRjDlsohoioDx5ZEEa2oHfxPjfN0Ht2bRO9ZLiOnQvakdpoDZfr7xDTDMr9xQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx1xt/penUSMoCizu5ucemtT9qm/dhtdShUlO2Kxna2HtdV+uaZ
+	vSOgukwa91spazztob9LLvaSKu74sgf2y5JujSkTAaq4iHe9a+dwqrrzm8Avj032wUSENZMTzBC
+	t+XIFqG3ktSNs46p929A7CHYV98o=
+X-Google-Smtp-Source: AGHT+IGsZJ5dSBT4uscp0sJ895Q/4hXkOhe1NnNJK8zrIRKTYSQw2U7nVsoSrLZPdUn+QtN+SmO7pEwL+0DgKVHgdss=
+X-Received: by 2002:a05:690c:610c:b0:6e3:26dd:1bf5 with SMTP id
+ 00721157ae682-6ea64b0f17emr95678177b3.20.1730678943985; Sun, 03 Nov 2024
+ 16:09:03 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
+References: <20241030205147.7442-1-rosenp@gmail.com> <20241103135958.28eba405@kernel.org>
+ <CAKxU2N8bO4j-2++NH-4Ju4aXgSWXcdSJ9EDfUo=U-hxVF+AXvQ@mail.gmail.com>
+In-Reply-To: <CAKxU2N8bO4j-2++NH-4Ju4aXgSWXcdSJ9EDfUo=U-hxVF+AXvQ@mail.gmail.com>
+From: Rosen Penev <rosenp@gmail.com>
+Date: Sun, 3 Nov 2024 16:08:53 -0800
+Message-ID: <CAKxU2N-AkTDOXt6mBS3Sk3jVFBY036P3+rPX7fM-mVstebYpXg@mail.gmail.com>
+Subject: Re: [PATCH net-next] net: bnx2x: use ethtool string helpers
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: netdev@vger.kernel.org, Sudarsana Kalluru <skalluru@marvell.com>, 
+	Manish Chopra <manishc@marvell.com>, Andrew Lunn <andrew+netdev@lunn.ch>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Paolo Abeni <pabeni@redhat.com>, open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Mon, 04 Nov 2024 02:08:32 +0200
-Message-Id: <D5CYH0IJXX72.35A25M1YICZRP@kernel.org>
-Cc: "Peter Huewe" <peterhuewe@gmx.de>, "Jason Gunthorpe" <jgg@ziepe.ca>,
- "David Howells" <dhowells@redhat.com>, <keyrings@vger.kernel.org>,
- <linux-integrity@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [GIT PULL] TPM DEVICE DRIVER: tpmdd-next-6.12-rc7
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "Linus Torvalds" <torvalds@linux-foundation.org>
-X-Mailer: aerc 0.18.2
 
-The following changes since commit 11066801dd4b7c4d75fce65c812723a80c1481ae=
+On Sun, Nov 3, 2024 at 4:03=E2=80=AFPM Rosen Penev <rosenp@gmail.com> wrote=
 :
-
-  Merge tag 'linux_kselftest-fixes-6.12-rc6' of git://git.kernel.org/pub/sc=
-m/linux/kernel/git/shuah/linux-kselftest (2024-11-01 16:05:50 -1000)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git tags=
-/tpmdd-next-6.12-rc7
-
-for you to fetch changes up to 9265fed6db601ee2ec47577815387458ef4f047a:
-
-  tpm: Lock TPM chip in tpm_pm_suspend() first (2024-11-04 01:59:08 +0200)
-
-----------------------------------------------------------------
-Hi,
-
-This pull request fixes a race condition between tpm_pm_suspend() and
-tpm_hwrng_read() (I think for good now):
-
-https://bugzilla.kernel.org/show_bug.cgi?id=3D219383
-
-BR, Jarkko
-
-----------------------------------------------------------------
-Jarkko Sakkinen (1):
-      tpm: Lock TPM chip in tpm_pm_suspend() first
-
- drivers/char/tpm/tpm-chip.c      |  4 ----
- drivers/char/tpm/tpm-interface.c | 32 ++++++++++++++++++++++----------
- 2 files changed, 22 insertions(+), 14 deletions(-)
+>
+> On Sun, Nov 3, 2024 at 2:00=E2=80=AFPM Jakub Kicinski <kuba@kernel.org> w=
+rote:
+> >
+> > On Wed, 30 Oct 2024 13:51:47 -0700 Rosen Penev wrote:
+> > > @@ -3220,13 +3212,13 @@ static void bnx2x_get_strings(struct net_devi=
+ce *dev, u32 stringset, u8 *buf)
+> > >                       start =3D 0;
+> > >               else
+> > >                       start =3D 4;
+> > > -             memcpy(buf, bnx2x_tests_str_arr + start,
+> > > -                    ETH_GSTRING_LEN * BNX2X_NUM_TESTS(bp));
+> > > +             for (i =3D start; i < BNX2X_NUM_TESTS_SF; i++)
+> > > +                     ethtool_puts(&buf, bnx2x_tests_str_arr[i]);
+> >
+> > There are three cases - MF, SF and VF.
+> > You seem to have covered SF and MF, but not VF.
+> #define BNX2X_NUM_TESTS_SF              7
+> #define BNX2X_NUM_TESTS_MF              3
+> #define BNX2X_NUM_TESTS(bp)             (IS_MF(bp) ? BNX2X_NUM_TESTS_MF :=
+ \
+>                                              IS_VF(bp) ? 0 : BNX2X_NUM_TE=
+STS_SF)
+>
+> VF is SF.
+hrm so BNX2X_NUM_TESTS returns 0, 3, or 7. Makes sense to do an early exit.
+> > --
+> > pw-bot: cr
 
