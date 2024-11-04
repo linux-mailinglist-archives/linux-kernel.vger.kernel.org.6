@@ -1,80 +1,61 @@
-Return-Path: <linux-kernel+bounces-394737-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394739-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D95BD9BB351
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 12:30:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 279339BB357
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 12:31:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9DD1D2859AA
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 11:30:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB514285404
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 11:31:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 900681B4F1C;
-	Mon,  4 Nov 2024 11:25:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D8F31AF0B3;
+	Mon,  4 Nov 2024 11:26:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="j1OZnMeQ"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="OOQDsTLK"
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88A991B3922
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 11:25:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCA961AF0A6;
+	Mon,  4 Nov 2024 11:26:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730719535; cv=none; b=rk+PCDR3GGAjpDl1OnuUj0Sq41s5bv+TmiWYTng63oFq4ADOxvCcsmVF45BRZur4oe3b0V7EJXgFqcLU7Y4/qU7Eii22rx8J6OcxDL9/Noutw3NWbD17L7GOSASxEkSThXVJGkvSwK7k3DncPwYnoefjrcYEfTfGs0WqKEv97kk=
+	t=1730719579; cv=none; b=j5/4MU7+yz1ym/NClMN7Nm8RKgcm6D7TLFR+PNLLRcRk7CgQBuBbOrJbiFYSbY/oKrbDmEpn3I4BPM2KbzAkCgZqUIEGaNX8J7SpsSI/2pM6UonehVjcRrFfuDKQXa7QhvqSZbgJbDYwBNahXTkDbIOVlGyywYqtkLU75Gbde2U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730719535; c=relaxed/simple;
-	bh=Tmgmz4GR+9cwFu9AC7t02k+vRU80gzDp6e6LvUYKI8M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Pw5ogZTiyAZ88QhJTYRd7AyQBT8RPLHO07t5q4FGBO4EF69xvPBxr1iTXQxKZ+1jjmANxjnEUQ4rb94FKiEnj90lMTiRUj2bqquilyYTeuvFHhWogSX9+UtVfEvWRUMHvUU5iUCwsB5qYhO09e5zN5a/DoFIRADtSpBmZRFxH1s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=fail smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=j1OZnMeQ; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A3NuTZq029777
-	for <linux-kernel@vger.kernel.org>; Mon, 4 Nov 2024 11:25:33 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	jcdE780GkitDhih7tdyFso9EhnKjR+Hdo4ZyfDFdfjw=; b=j1OZnMeQuD4xnZIK
-	NbRxY0NeqWiPKOnXwUEQKj9RDggmuIfn6DqZnAC3tEyl5JRhCB9NEDcUZIphQKJn
-	nJOmFsSDcb6993y8AYE7Q6uX/Kv+sl8ogBP0hasfggmf0DKHMbynYRTJnG3e4Tib
-	3JolegVu9l7Q7itMCD6HwbDMuUDssuAgC/28JszQm7ctD1pqHzvJ09tQAyDwx4p4
-	SXXxVNL+281LYDAU/Yj0uppbXrLzyEQORiNqQw0GTcKXEtQAKmH7sO6zLUfcdrfz
-	IyOGLJbamnX6G/3hD1DMC/v1v9IpcIKXDV8LjxBFkw6av0bJuey8e304+1OwYISW
-	YoWArA==
-Received: from mail-oi1-f199.google.com (mail-oi1-f199.google.com [209.85.167.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42nd2r3wnb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 11:25:32 +0000 (GMT)
-Received: by mail-oi1-f199.google.com with SMTP id 5614622812f47-3e61c30daf2so425819b6e.3
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 03:25:32 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730719532; x=1731324332;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jcdE780GkitDhih7tdyFso9EhnKjR+Hdo4ZyfDFdfjw=;
-        b=MJd4EgN/9Iaz4BJzv7+sQkKmB4EF9TBDidEs4bOQSz8+Ua0YiT438YMdfAglfjyze9
-         MoDuwtSTYbxCgSZcLYgScMhEwXFv31VH2WkkG1LBIySwnJIs+KB/q5ZciILrKhYKIEvc
-         7O6fj9Ojs//cwhTUqTnaGQfGJUpN22+5MFN0hcb4YgB3/aaT/1gSj3Dgk4FvueYITDBR
-         0NMMTrmjtMEluWEyZEBGSa75EXeqbCaT+IIrc/tgzIgx7kTDNBYCvEBS7Tgp7mqxilEe
-         RaJVUGzvXNwLMvnA4YAa08BoPPcixAKnqTeOrqO2HVqdNoZ0KZFeShXwtdoGN5iEXTqs
-         mAbQ==
-X-Gm-Message-State: AOJu0Yx0xWhQWOxZ5YpPrgcsjkZc2ewjzjnkf9TmFl2giwVo8/MAMPxL
-	lusXw86TFarOmhmCbASE2QeU+foND/cy8VfV1Tud6KSgb/3xEKq226EBmXjYeFhp/O3qxeemL9k
-	8Q+ShJCnKp4PWOYfdqNZuTk+9i7UKkkYDpxyH3zJk7f1ySJTO/YyDAbk7pX3y9hA=
-X-Received: by 2002:a54:4583:0:b0:3e5:fa82:9188 with SMTP id 5614622812f47-3e6384c4e83mr6722875b6e.9.1730719531618;
-        Mon, 04 Nov 2024 03:25:31 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEPMHgbkvO9CmVr31mXjUPHasBRdXrgCQTzj8H7KuUj0yd1zFTHMB4QY9AUiy468jryHZwSgg==
-X-Received: by 2002:a54:4583:0:b0:3e5:fa82:9188 with SMTP id 5614622812f47-3e6384c4e83mr6722859b6e.9.1730719531272;
-        Mon, 04 Nov 2024 03:25:31 -0800 (PST)
-Received: from [192.168.212.120] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9e56493edbsm539687766b.38.2024.11.04.03.25.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 04 Nov 2024 03:25:30 -0800 (PST)
-Message-ID: <dbed68f8-ec8e-47e2-a2d7-e57363b23e20@oss.qualcomm.com>
-Date: Mon, 4 Nov 2024 12:25:27 +0100
+	s=arc-20240116; t=1730719579; c=relaxed/simple;
+	bh=L7u8TSr3hsUVl5lbJJeYekyvk5tXBYjfFui3QFFAxXg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=uMakVXpQBHxVK9AC+F7L6yWdlVkodjobTSuXsIDg0MUOAwhINkI6yQmbrnSA4BPw+XfvVIST2EShMdHeoVtP/dhzP+gv6P01k4jFSc+lvHJVZIEQlnWD7Fle8fb5WG+3daCIuZ7XZ5/2FcAvNGs/+IQMe13HFuAXu4AvRo6az48=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=OOQDsTLK; arc=none smtp.client-ip=198.47.19.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4A4BPq8f093248;
+	Mon, 4 Nov 2024 05:25:53 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1730719553;
+	bh=8lCZg7hiaSBMwhl2ZVyK4acZDVshxBaN2CgueTXDG1A=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=OOQDsTLKapMaRRAeD7RUmMELnmCCHYSMumW68hUPhZxX2zSeSjccYHOZQPUATj8Rf
+	 HIZjveUwV4hCmk5WA6iGLvqSb9MHWLrAdE7yByiAfsg5dojK0cHMNsXznECXV2SqxF
+	 mquhJziAPs1Sph8dmPnV0I/ivn06gjT04wz92nGU=
+Received: from DFLE115.ent.ti.com (dfle115.ent.ti.com [10.64.6.36])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4A4BPq8K020829;
+	Mon, 4 Nov 2024 05:25:52 -0600
+Received: from DFLE105.ent.ti.com (10.64.6.26) by DFLE115.ent.ti.com
+ (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 4
+ Nov 2024 05:25:52 -0600
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE105.ent.ti.com
+ (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Mon, 4 Nov 2024 05:25:52 -0600
+Received: from [10.249.139.24] ([10.249.139.24])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4A4BPk51046583;
+	Mon, 4 Nov 2024 05:25:47 -0600
+Message-ID: <7c3318f4-a2d4-4cbf-8a93-33c6a8afd6c4@ti.com>
+Date: Mon, 4 Nov 2024 16:55:46 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,66 +63,51 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V3 3/3] arm64: dts: qcom: Add X1E001DE Snapdragon Devkit
- for Windows
-To: Sibi Sankar <quic_sibis@quicinc.com>, andersson@kernel.org,
-        konradybcio@kernel.org, krzk+dt@kernel.org, robh+dt@kernel.org,
-        dmitry.baryshkov@linaro.org
-Cc: linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, conor+dt@kernel.org, abel.vesa@linaro.org,
-        srinivas.kandagatla@linaro.org, quic_jjohnson@quicinc.com,
-        maz@kernel.org, jens.glathe@oldschoolsolutions.biz
-References: <20241025123227.3527720-1-quic_sibis@quicinc.com>
- <20241025123227.3527720-4-quic_sibis@quicinc.com>
+Subject: Re: [PATCH net v3] net: ti: icssg-prueth: Fix 1 PPS sync
+To: Jakub Kicinski <kuba@kernel.org>
+CC: <vigneshr@ti.com>, <grygorii.strashko@ti.com>, <horms@kernel.org>,
+        <jan.kiszka@siemens.com>, <diogo.ivo@siemens.com>, <pabeni@redhat.com>,
+        <edumazet@google.com>, <davem@davemloft.net>, <andrew+netdev@lunn.ch>,
+        <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <srk@ti.com>,
+        Roger Quadros
+	<rogerq@kernel.org>, <danishanwar@ti.com>,
+        Vadim Fedorenko
+	<vadim.fedorenko@linux.dev>
+References: <20241028111051.1546143-1-m-malladi@ti.com>
+ <20241031185905.610c982f@kernel.org>
 Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20241025123227.3527720-4-quic_sibis@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
+From: "Malladi, Meghana" <m-malladi@ti.com>
+In-Reply-To: <20241031185905.610c982f@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: 4XsOukRUWLIxn_BcXDheb1rIgxkHNmS8
-X-Proofpoint-GUID: 4XsOukRUWLIxn_BcXDheb1rIgxkHNmS8
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- mlxlogscore=996 priorityscore=1501 malwarescore=0 bulkscore=0
- lowpriorityscore=0 suspectscore=0 clxscore=1015 phishscore=0 spamscore=0
- mlxscore=0 adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411040100
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On 25.10.2024 2:32 PM, Sibi Sankar wrote:
-> Add initial support for x1e001de devkit platform. This includes:
+
+
+On 11/1/2024 7:29 AM, Jakub Kicinski wrote:
+> On Mon, 28 Oct 2024 16:40:52 +0530 Meghana Malladi wrote:
+>> The first PPS latch time needs to be calculated by the driver
+>> (in rounded off seconds) and configured as the start time
+>> offset for the cycle. After synchronizing two PTP clocks
+>> running as master/slave, missing this would cause master
+>> and slave to start immediately with some milliseconds
+>> drift which causes the PPS signal to never synchronize with
+>> the PTP master.
 > 
-> -DSPs
-> -Ethernet (RTL8125BG) over the pcie 5 instance.
-> -NVme
-> -Wifi
-> -USB-C ports
+> You're reading a 64b value in chunks, is it not possible that it'd wrap
+> in between reads? This can be usually detected by reading high twice and
+> making sure it didn't change.
 > 
-> Link: https://www.qualcomm.com/news/releases/2024/05/qualcomm-accelerates-development-for-copilot--pcs-with-snapdrago
-> Signed-off-by: Sibi Sankar <quic_sibis@quicinc.com>
-> ---
+> Please fix or explain in the commit message why this is not a problem..
+Yes I agree that there might be a wrap if the read isn't atomic. As 
+suggested by Andrew I am currently not using custom read where I can 
+implement the logic you suggested (reading high twice and making sure if 
+didn't change). Can you share me some references where this logic is 
+implemented in the kernel, so I can directly use that instead of writing 
+custom functions.
 
-[...]
+Regards,
+Meghana.
 
-> +	vreg_nvme: regulator-nvme {
-> +		compatible = "regulator-fixed";
-> +
-> +		regulator-name = "VREG_NVME_3P3";
-> +		regulator-min-microvolt = <3300000>;
-> +		regulator-max-microvolt = <3300000>;
-> +
-> +		gpio = <&tlmm 18 GPIO_ACTIVE_HIGH>;
-> +		enable-active-high;
-> +
-> +		pinctrl-names = "default";
-> +		pinctrl-0 = <&nvme_reg_en>;
-
-these are backwards
-
-otherwise lgtm
-
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-
-Konrad
 
