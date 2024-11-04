@@ -1,148 +1,270 @@
-Return-Path: <linux-kernel+bounces-395105-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395106-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 508659BB89C
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 16:08:56 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A10229BB8A1
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 16:11:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D4C29B2378C
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 15:08:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F185282731
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 15:11:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52A991BDABE;
-	Mon,  4 Nov 2024 15:08:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1DBF1BC077;
+	Mon,  4 Nov 2024 15:11:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="aTFlEPDO"
-Received: from mail-io1-f50.google.com (mail-io1-f50.google.com [209.85.166.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pmkuydGB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 612BF1BD018
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 15:08:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EC034A08;
+	Mon,  4 Nov 2024 15:10:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730732911; cv=none; b=IBcs2nE6YKfA9O9jEDeMWROnrVD66L0hKBxx5x9VYEGbUC9VyE+lToU4iwiKAlUkKbwd0baiU1bc+wLaR0aYod4yJsfjNDCbPYxFCozg0A8M1QLiLazEUNvgomIZrEfkYK9SKQcCaj+ZqSvqZCGlbBRIhXwBtGjtkC2fSx5GkLs=
+	t=1730733061; cv=none; b=GaAsv9wYP32vaH+NyZA22JkWUTa7I9Js3F1RCiI9/LJkeUzX1i31LrLFqw6Ta/qkDmSVfyvueH4G3r95An3QMiM9NoEJINGXezE+RLp1oMthcQTpwxBJLNhOmUpcU5dT20LTy2+s3gxgtz9q1eYolmFohjaZDrzaindkF4LLve8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730732911; c=relaxed/simple;
-	bh=0okJolI+3u+H6AyLn0dUVhA+PvbYVJC2JYACRMFf7K4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=VPhvZOkH+3kvr6Hb1wvytpjoZayj4vZQPmyFRqjxdonZmLD9WYFFwNlcqykTsD3xCyhdlPr52pRd7Ki2fTllioErCdh8cwS/rmTWlTwZMmN3e1+q1CtrCGH7thJkjOCAlqN/tiRKaC02xJYY6TMgQz31g4n3oKC/9hgdONi0JAs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=aTFlEPDO; arc=none smtp.client-ip=209.85.166.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f50.google.com with SMTP id ca18e2360f4ac-83ab5b4b048so203759639f.2
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 07:08:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1730732907; x=1731337707; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=R5hbyR4HgcG/h6N+KF/CfSJlYRWEx4uL0iA5dLnxVNk=;
-        b=aTFlEPDO+PPabydDMSTmrJLsto9ZIcUXYUYQZiL4N4N+Xz4/0qvY2YXx/FQVNIKwMY
-         E++uD4EEBfho0HkDquSs/5jNBIPGwLQHwyF2a60Wskl6aZ1nErW9KAY5e7m+NUcK70qM
-         NwWp3rSFmcePBrGqMRUQjtrEGst4gCRiheXYE7xNr97uuIQGxWs0FPL7LiiIEGGXtRxI
-         jyf0VcMuKj5FmnYbf8OCevsngMzCwLyQ6OabQSzG8rG+lze/GevFcKuERIF/n+0KWEZa
-         xcu8AgrvL/wTC5v90oBpjChs/h/wIjTHThWL0z1Va/N5UtkIz/eBr6srqrogjDJG6cVO
-         DcNA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730732907; x=1731337707;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=R5hbyR4HgcG/h6N+KF/CfSJlYRWEx4uL0iA5dLnxVNk=;
-        b=CpFewQbhxchoDThahQOaYMWhy9i2V9IbAo5E1aIVfwOpK6hp5IDBCRMbxA9HBMXbtV
-         5XRQg83bLmETr7Ti+ooFhew8M3qvz2b01XTNwgMQ7VlwCS0+RWIrasYAtSlbcwj331sT
-         eYnkdOcr2gGKlqinN6TPUvlVWvtEmy3/x3WenuB13yd1ipzkTFDVCLcOBjZThm+c+Maq
-         8V68JIRuMW2R71eS3z9TixOic2tuOVXYQGqfWLWBWfh9Wj+JT3zA0VL0JejmQJeLWpdj
-         lebqnm+VL8RtxuDcJNR+zd3njcYCppyvD7pl3k/r/GiYWUGHfJvHBoV60WVJl3YW8Tun
-         MQqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWSfuAgekmnFulLC5E5sCxrjMcABFi+g8upGErFN8Dyo02bCzemFc25Q/9hubcaOL+NubGySfkYtuj3bY8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz89PtpsT22t6OXmlpxQny/L1APHc8PEcIyVhsnir+dSqeQSzTI
-	iKn0NeWinkFV63s0sBku9LzEv/xl5thynGG+d/ss8KuxjQrQUQRD0xaSDI9Nk7w=
-X-Google-Smtp-Source: AGHT+IE1M40BFmOXwjOwOEtq4B8wpMssMFuDDE7DRCvyikF5mFcU9Yjz9UpHrLMo9U43l+nSetxOLQ==
-X-Received: by 2002:a05:6602:2cd0:b0:83a:7a19:1de0 with SMTP id ca18e2360f4ac-83b1c5cd847mr3851257039f.14.1730732907001;
-        Mon, 04 Nov 2024 07:08:27 -0800 (PST)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-83b67b2b669sm217599539f.19.2024.11.04.07.08.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 04 Nov 2024 07:08:26 -0800 (PST)
-Message-ID: <b29d2635-d640-4b8e-ad43-1aa25c20d7c8@kernel.dk>
-Date: Mon, 4 Nov 2024 08:08:24 -0700
+	s=arc-20240116; t=1730733061; c=relaxed/simple;
+	bh=bbxL55ej1fJpzc5IyybWkBIoqYVKwxL4tVm6wKg2dIM=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=kcF5ZPfZnLn7Lbw9Oae8nv1C6EQ67jYfgqA9LsAuSMCEqTbaq3MGLYhmiAOA2M1qB7oJXWY5dimI2L5IxzuqGR7fnRpj5MQdzxmhYGb3N4YdErrWStxhBeyB7r6FcmnVqeuuj5cL2BWeOySqN8QKBJRSjcJYF1jnO6yVo9+Z2Yo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pmkuydGB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0FC5C4CED1;
+	Mon,  4 Nov 2024 15:10:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730733059;
+	bh=bbxL55ej1fJpzc5IyybWkBIoqYVKwxL4tVm6wKg2dIM=;
+	h=From:Date:Subject:To:Cc:From;
+	b=pmkuydGBlpLuaueHhAaRhlDARdbZx7m6D6suikrwWAtMVYWbAEolrHUfLHTBDUjkk
+	 w4u4HmLhWxdAD+J1fMYvjCj73ICJyxHBzOByZfEbhJL9PQyWBkv7SuLl8UcrmZqzYk
+	 nhzHiKQISaQgUDt6ehLVG9h2JmF14tLwqKdFvRxR/SC/3AmgdH27rIzo5KPG8z+WS+
+	 2ZMxlZYGg+DKbQiJQ6paYv6nPJ2X/KD7JgKU0mJnm8BYoSdYBpzBqgbgGop/7+KVmB
+	 u0jWPVwcvoXXrWxI/bkgeRpMCotE3M8dphIVBY2sPI3wPqIF1LfpbtkI86U7X5rmBA
+	 10+LlnoTYt2ww==
+From: Konrad Dybcio <konradybcio@kernel.org>
+Date: Mon, 04 Nov 2024 16:10:53 +0100
+Subject: [PATCH] soc: qcom: llcc: Flip the manual slice configuration
+ condition
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [syzbot] [io-uring?] [usb?] WARNING in io_get_cqe_overflow (2)
-To: Pavel Begunkov <asml.silence@gmail.com>,
- syzbot <syzbot+e333341d3d985e5173b2@syzkaller.appspotmail.com>,
- io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-usb@vger.kernel.org, syzkaller-bugs@googlegroups.com
-References: <6728b077.050a0220.35b515.01ba.GAE@google.com>
- <13da163a-d088-4b4d-8ad1-dbf609b03228@gmail.com>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <13da163a-d088-4b4d-8ad1-dbf609b03228@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20241104-topic-llcc_flip-v1-1-3003c846d131@oss.qualcomm.com>
+X-B4-Tracking: v=1; b=H4sIAPzjKGcC/x3MQQqAIBBA0avErBNULKOrRERNYw2IiUYE0d2Tl
+ m/x/wOZElOGvnog0cWZj1Cg6gpwn8NGgtdi0FIbpaQR5xEZhfeIk/McBXZWS2zaxToNpYqJHN/
+ /cRjf9wMCbrMSYQAAAA==
+X-Change-ID: 20241104-topic-llcc_flip-c8720c56b7f2
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: Marijn Suijten <marijn.suijten@somainline.org>, 
+ linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1730733057; l=6838;
+ i=konrad.dybcio@oss.qualcomm.com; s=20230215; h=from:subject:message-id;
+ bh=F+Rslf0SZN+x3vFZjIvMAPqOTSQCYVtS+KPD8ujn5bs=;
+ b=iy6Qp9kzOWDOArZ1GA3bIgkZlPoyycq64a5hc7PPlUP9qP7KrSH5pmQmw5YEXGIlAEwnbk9bw
+ 0vOm57cCf4lDIrl5hGC9l6d3Q7gnqqooxRuR5AnVeip98uCIOj6a3lW
+X-Developer-Key: i=konrad.dybcio@oss.qualcomm.com; a=ed25519;
+ pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
 
-On 11/4/24 6:13 AM, Pavel Begunkov wrote:
-> On 11/4/24 11:31, syzbot wrote:
->> syzbot has bisected this issue to:
->>
->> commit 3f1a546444738b21a8c312a4b49dc168b65c8706
->> Author: Jens Axboe <axboe@kernel.dk>
->> Date:   Sat Oct 26 01:27:39 2024 +0000
->>
->>      io_uring/rsrc: get rid of per-ring io_rsrc_node list
->>
->> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=15aaa1f7980000
->> start commit:   c88416ba074a Add linux-next specific files for 20241101
->> git tree:       linux-next
->> final oops:     https://syzkaller.appspot.com/x/report.txt?x=17aaa1f7980000
->> console output: https://syzkaller.appspot.com/x/log.txt?x=13aaa1f7980000
->> kernel config:  https://syzkaller.appspot.com/x/.config?x=704b6be2ac2f205f
->> dashboard link: https://syzkaller.appspot.com/bug?extid=e333341d3d985e5173b2
->> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16ec06a7980000
->> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12c04740580000
->>
->> Reported-by: syzbot+e333341d3d985e5173b2@syzkaller.appspotmail.com
->> Fixes: 3f1a54644473 ("io_uring/rsrc: get rid of per-ring io_rsrc_node list")
->>
->> For information about bisection process see: https://goo.gl/tpsmEJ#bisection
-> 
-> Previously all puts were done by requests, which in case of an exiting
-> ring were fallback'ed to normal tw. Now, the unregister path posts CQEs,
-> while the original task is still alive. Should be fine in general because
-> at this point there could be no requests posting in parallel and all
-> is synchronised, so it's a false positive, but we need to change the assert
-> or something else.
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
-Maybe something ala the below? Also changes these triggers to be
-_once(), no point spamming them.
+Commit c14e64b46944 ("soc: qcom: llcc: Support chipsets that can write
+to llcc") made the code not configure certain registers on SDM845 due
+to firmware security policies. That turned out only to concern SDM845,
+but the condition was chosen such that all other entries (for SoCs that
+didnot need it) were required to set .need_llcc_cfg = true.
 
-diff --git a/io_uring/io_uring.h b/io_uring/io_uring.h
-index 00409505bf07..7792ed91469b 100644
---- a/io_uring/io_uring.h
-+++ b/io_uring/io_uring.h
-@@ -137,10 +137,11 @@ static inline void io_lockdep_assert_cq_locked(struct io_ring_ctx *ctx)
- 		 * Not from an SQE, as those cannot be submitted, but via
- 		 * updating tagged resources.
- 		 */
--		if (ctx->submitter_task->flags & PF_EXITING)
--			lockdep_assert(current_work());
-+		if (ctx->submitter_task->flags & PF_EXITING ||
-+		    percpu_ref_is_dying(&ctx->refs))
-+			lockdep_assert_once(current_work());
- 		else
--			lockdep_assert(current == ctx->submitter_task);
-+			lockdep_assert_once(current == ctx->submitter_task);
+Flip the condition, so the default is "doesn't need the workaround".
+
+Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+---
+ drivers/soc/qcom/llcc-qcom.c | 25 ++++---------------------
+ 1 file changed, 4 insertions(+), 21 deletions(-)
+
+diff --git a/drivers/soc/qcom/llcc-qcom.c b/drivers/soc/qcom/llcc-qcom.c
+index a470285f54a875bf2262aac7b0f84ed8fd028ef1..560c2e5d0b6bbaca32a7cc54fd086b22017be22a 100644
+--- a/drivers/soc/qcom/llcc-qcom.c
++++ b/drivers/soc/qcom/llcc-qcom.c
+@@ -137,7 +137,7 @@ struct qcom_llcc_config {
+ 	const u32 *reg_offset;
+ 	const struct llcc_edac_reg_offset *edac_reg_offset;
+ 	int size;
+-	bool need_llcc_cfg;
++	bool skip_llcc_cfg;
+ 	bool no_edac;
+ 	bool irq_configured;
+ };
+@@ -2650,28 +2650,24 @@ static const struct qcom_llcc_config qdu1000_cfg[] = {
+ 	{
+ 		.sct_data       = qdu1000_data_8ch,
+ 		.size		= ARRAY_SIZE(qdu1000_data_8ch),
+-		.need_llcc_cfg	= true,
+ 		.reg_offset	= llcc_v2_1_reg_offset,
+ 		.edac_reg_offset = &llcc_v2_1_edac_reg_offset,
+ 	},
+ 	{
+ 		.sct_data       = qdu1000_data_4ch,
+ 		.size           = ARRAY_SIZE(qdu1000_data_4ch),
+-		.need_llcc_cfg  = true,
+ 		.reg_offset     = llcc_v2_1_reg_offset,
+ 		.edac_reg_offset = &llcc_v2_1_edac_reg_offset,
+ 	},
+ 	{
+ 		.sct_data       = qdu1000_data_4ch,
+ 		.size           = ARRAY_SIZE(qdu1000_data_4ch),
+-		.need_llcc_cfg  = true,
+ 		.reg_offset     = llcc_v2_1_reg_offset,
+ 		.edac_reg_offset = &llcc_v2_1_edac_reg_offset,
+ 	},
+ 	{
+ 		.sct_data       = qdu1000_data_2ch,
+ 		.size           = ARRAY_SIZE(qdu1000_data_2ch),
+-		.need_llcc_cfg  = true,
+ 		.reg_offset     = llcc_v2_1_reg_offset,
+ 		.edac_reg_offset = &llcc_v2_1_edac_reg_offset,
+ 	},
+@@ -2681,7 +2677,6 @@ static const struct qcom_llcc_config sa8775p_cfg[] = {
+ 	{
+ 		.sct_data	= sa8775p_data,
+ 		.size		= ARRAY_SIZE(sa8775p_data),
+-		.need_llcc_cfg	= true,
+ 		.reg_offset	= llcc_v2_1_reg_offset,
+ 		.edac_reg_offset = &llcc_v2_1_edac_reg_offset,
+ 	},
+@@ -2691,7 +2686,6 @@ static const struct qcom_llcc_config sc7180_cfg[] = {
+ 	{
+ 		.sct_data	= sc7180_data,
+ 		.size		= ARRAY_SIZE(sc7180_data),
+-		.need_llcc_cfg	= true,
+ 		.reg_offset	= llcc_v1_reg_offset,
+ 		.edac_reg_offset = &llcc_v1_edac_reg_offset,
+ 	},
+@@ -2701,7 +2695,6 @@ static const struct qcom_llcc_config sc7280_cfg[] = {
+ 	{
+ 		.sct_data	= sc7280_data,
+ 		.size		= ARRAY_SIZE(sc7280_data),
+-		.need_llcc_cfg	= true,
+ 		.reg_offset	= llcc_v1_reg_offset,
+ 		.edac_reg_offset = &llcc_v1_edac_reg_offset,
+ 	},
+@@ -2711,7 +2704,6 @@ static const struct qcom_llcc_config sc8180x_cfg[] = {
+ 	{
+ 		.sct_data	= sc8180x_data,
+ 		.size		= ARRAY_SIZE(sc8180x_data),
+-		.need_llcc_cfg	= true,
+ 		.reg_offset	= llcc_v1_reg_offset,
+ 		.edac_reg_offset = &llcc_v1_edac_reg_offset,
+ 	},
+@@ -2721,7 +2713,6 @@ static const struct qcom_llcc_config sc8280xp_cfg[] = {
+ 	{
+ 		.sct_data	= sc8280xp_data,
+ 		.size		= ARRAY_SIZE(sc8280xp_data),
+-		.need_llcc_cfg	= true,
+ 		.reg_offset	= llcc_v1_reg_offset,
+ 		.edac_reg_offset = &llcc_v1_edac_reg_offset,
+ 	},
+@@ -2731,7 +2722,7 @@ static const struct qcom_llcc_config sdm845_cfg[] = {
+ 	{
+ 		.sct_data	= sdm845_data,
+ 		.size		= ARRAY_SIZE(sdm845_data),
+-		.need_llcc_cfg	= false,
++		.skip_llcc_cfg	= true,
+ 		.reg_offset	= llcc_v1_reg_offset,
+ 		.edac_reg_offset = &llcc_v1_edac_reg_offset,
+ 		.no_edac	= true,
+@@ -2742,7 +2733,6 @@ static const struct qcom_llcc_config sm6350_cfg[] = {
+ 	{
+ 		.sct_data	= sm6350_data,
+ 		.size		= ARRAY_SIZE(sm6350_data),
+-		.need_llcc_cfg	= true,
+ 		.reg_offset	= llcc_v1_reg_offset,
+ 		.edac_reg_offset = &llcc_v1_edac_reg_offset,
+ 	},
+@@ -2752,7 +2742,6 @@ static const struct qcom_llcc_config sm7150_cfg[] = {
+ 	{
+ 		.sct_data       = sm7150_data,
+ 		.size           = ARRAY_SIZE(sm7150_data),
+-		.need_llcc_cfg	= true,
+ 		.reg_offset	= llcc_v1_reg_offset,
+ 		.edac_reg_offset = &llcc_v1_edac_reg_offset,
+ 	},
+@@ -2762,7 +2751,6 @@ static const struct qcom_llcc_config sm8150_cfg[] = {
+ 	{
+ 		.sct_data       = sm8150_data,
+ 		.size           = ARRAY_SIZE(sm8150_data),
+-		.need_llcc_cfg	= true,
+ 		.reg_offset	= llcc_v1_reg_offset,
+ 		.edac_reg_offset = &llcc_v1_edac_reg_offset,
+ 	},
+@@ -2772,7 +2760,6 @@ static const struct qcom_llcc_config sm8250_cfg[] = {
+ 	{
+ 		.sct_data       = sm8250_data,
+ 		.size           = ARRAY_SIZE(sm8250_data),
+-		.need_llcc_cfg	= true,
+ 		.reg_offset	= llcc_v1_reg_offset,
+ 		.edac_reg_offset = &llcc_v1_edac_reg_offset,
+ 	},
+@@ -2782,7 +2769,6 @@ static const struct qcom_llcc_config sm8350_cfg[] = {
+ 	{
+ 		.sct_data       = sm8350_data,
+ 		.size           = ARRAY_SIZE(sm8350_data),
+-		.need_llcc_cfg	= true,
+ 		.reg_offset	= llcc_v1_reg_offset,
+ 		.edac_reg_offset = &llcc_v1_edac_reg_offset,
+ 	},
+@@ -2792,7 +2778,6 @@ static const struct qcom_llcc_config sm8450_cfg[] = {
+ 	{
+ 		.sct_data       = sm8450_data,
+ 		.size           = ARRAY_SIZE(sm8450_data),
+-		.need_llcc_cfg	= true,
+ 		.reg_offset	= llcc_v2_1_reg_offset,
+ 		.edac_reg_offset = &llcc_v2_1_edac_reg_offset,
+ 	},
+@@ -2802,7 +2787,6 @@ static const struct qcom_llcc_config sm8550_cfg[] = {
+ 	{
+ 		.sct_data       = sm8550_data,
+ 		.size           = ARRAY_SIZE(sm8550_data),
+-		.need_llcc_cfg	= true,
+ 		.reg_offset	= llcc_v2_1_reg_offset,
+ 		.edac_reg_offset = &llcc_v2_1_edac_reg_offset,
+ 	},
+@@ -2812,7 +2796,6 @@ static const struct qcom_llcc_config sm8650_cfg[] = {
+ 	{
+ 		.sct_data       = sm8650_data,
+ 		.size           = ARRAY_SIZE(sm8650_data),
+-		.need_llcc_cfg	= true,
+ 		.reg_offset	= llcc_v2_1_reg_offset,
+ 		.edac_reg_offset = &llcc_v2_1_edac_reg_offset,
+ 	},
+@@ -2822,7 +2805,6 @@ static const struct qcom_llcc_config x1e80100_cfg[] = {
+ 	{
+ 		.sct_data	= x1e80100_data,
+ 		.size		= ARRAY_SIZE(x1e80100_data),
+-		.need_llcc_cfg	= true,
+ 		.reg_offset	= llcc_v2_1_reg_offset,
+ 		.edac_reg_offset = &llcc_v2_1_edac_reg_offset,
+ 		.irq_configured = true,
+@@ -3175,7 +3157,8 @@ static int _qcom_llcc_cfg_program(const struct llcc_slice_config *config,
+ 			return ret;
  	}
- #endif
- }
+ 
+-	if (cfg->need_llcc_cfg) {
++	/* At least SDM845 disallows non-secure writes to these registers */
++	if (!cfg->skip_llcc_cfg) {
+ 		u32 disable_cap_alloc, retain_pc;
+ 
+ 		disable_cap_alloc = config->dis_cap_alloc << config->slice_id;
 
+---
+base-commit: 1ffec08567f426a1c593e038cadc61bdc38cb467
+change-id: 20241104-topic-llcc_flip-c8720c56b7f2
+
+Best regards,
 -- 
-Jens Axboe
+Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+
 
