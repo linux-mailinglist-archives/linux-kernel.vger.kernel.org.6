@@ -1,139 +1,107 @@
-Return-Path: <linux-kernel+bounces-394559-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394558-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFCBE9BB126
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 11:31:45 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 585BE9BB124
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 11:31:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 944DF284217
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 10:31:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 88B101C215A3
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 10:31:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DDD51B21B6;
-	Mon,  4 Nov 2024 10:31:26 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32DFA1B2188;
+	Mon,  4 Nov 2024 10:31:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VPMm5EZh"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 661C81B219A
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 10:31:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFC871AC458;
+	Mon,  4 Nov 2024 10:31:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730716286; cv=none; b=I+Yy2TNKOkvtolsFp8K4zgaVAzupOaSi1pZ5whPHEGpaojeJH+a04TE2UeZgpyACDjhpoPd1QR4rMsCLO4cJ5RnSimLEck+xye4n6XO9U7bTteLQkragfdNi6So6RzBTmKRFyLCkqlLdglGRlYp2bZ4Qgs8tu7jsDh0AY2D6MIo=
+	t=1730716282; cv=none; b=LbAvupPyaSm6D69PG4uXrlJVFLzkToa9t2a7hewLwtyh/JVaYsVqsuANAsDP9vHXHJ7dHehkMjrLG/EV880cEJCYqOqA11D3vAFqiXuv+njaBCZ/5FOYuc+KyHqHPEW+MwgMCSkZQeMF/qRPIDe+Nux/mdcxB57LVr4OCuGP6Q8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730716286; c=relaxed/simple;
-	bh=eAs6U/Aoz/rGj94QOQ/UC48WAhVymTQAGlUCh//91io=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=K+4MRDyFNACykjr68eLuQ+NpCQZpZ2plokvbaCLNi6QC+dvW6z2HlWsM0LzUoGRkEFQcWeprwTLX0CsGmQIbrP9eF+FwMam7xYHHdljPPPlutjAu5Mma3JDbalc/n+U0v0JYytgLKS688qHSw+ge3U7gYf7km4QMCipAGd0kHO8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1t7uMS-0004VW-1j; Mon, 04 Nov 2024 11:31:04 +0100
-Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1t7uMQ-001xkX-2s;
-	Mon, 04 Nov 2024 11:31:02 +0100
-Received: from pengutronix.de (pd9e595f8.dip0.t-ipconnect.de [217.229.149.248])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id 80A293678E4;
-	Mon, 04 Nov 2024 10:31:02 +0000 (UTC)
-Date: Mon, 4 Nov 2024 11:31:02 +0100
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Sean Nyekjaer <sean@geanix.com>, 
-	Vincent Mailhol <mailhol.vincent@wanadoo.fr>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
-	Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-can@vger.kernel.org, 
-	netdev@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH] dt-bindings: can: convert tcan4x5x.txt to DT schema
-Message-ID: <20241104-upbeat-wondrous-crane-6f20a3-mkl@pengutronix.de>
-References: <20241104085616.469862-1-sean@geanix.com>
- <ee47c6d7-4197-4f5d-b39e-aab70a9337d6@kernel.org>
+	s=arc-20240116; t=1730716282; c=relaxed/simple;
+	bh=KNnTuRjeph/PxeFWH2OjkqD6QF+athM8Qh94/GVFiuE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ffliakHTvFpidUtiEVpDBqf+w1w2DZ7hOozSk0uPYhLRp8RLRs7I0DXEviw7Oyukn76TAaBYFD8BzN5S3dBxBnIpt26Azn6GiQ4G6Ptq5PhbEUso+b+waVXJ1q0GH8FCdIqSmg/KmwV6xKX5sS6EcaKcwfntPnCMpK8nYQw0BTo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VPMm5EZh; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-539fb49c64aso5372255e87.0;
+        Mon, 04 Nov 2024 02:31:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730716279; x=1731321079; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=slUFAVbY5/wKAk/TmOVIAwa4COIPRsTBYPw4oUXG8Jw=;
+        b=VPMm5EZhm5+Lcjv/iJrtd5k7lszncWZ1HrjczoBu+P0MOCtaLsm0dmBMUEat0104Kj
+         NvgzDkHB7C87t6YXcq6V/vc5eqDNcqNNM1aDO9YzBC7yI2EBf/W+ch6X48Jr+yPwTFDl
+         tiRrq+eBCMQDn4PQrFZ4GjJQJj9VzELmNzrCInGaiZp+1mQpPQFi6q4FYrgdmaxNdSUw
+         GP75slstaLMJlmMW4GbFKA09x8upgnboG+ymSYtRKY0yuSCAxJYvnxBmq2qTot7w92y3
+         kcasDMk2IaBCNjn0QlkGxNR+1m9EUdgilMiYs7G/zbBJOW222ugmHLOF7L/zUguYJkut
+         4sjQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730716279; x=1731321079;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=slUFAVbY5/wKAk/TmOVIAwa4COIPRsTBYPw4oUXG8Jw=;
+        b=n/uMuRlbsbn9x9Gse22henLyJ4/8Wi21s9fa4Lw5kRP2Fdf0QMG5DFEVPuH2lM6UYn
+         daRdArCdudWVTJrh6Mux1l1ljhqS0TU1kmGwczLDXf844Y+xHVgghIePfu81N3Fsmb5Z
+         XmZ5IXpSu9sBn7BPSq2I9N8ixL/MJ4zpmWuwXYd+rBtATzCyx0aj5OiQH9evb9Q0p0mT
+         tvl6kRPs686buGF69qPGCf5PdEyHdUrOzs/J7WDG24n4p5/GCtQ0s6WfUWy0gvYaSwWT
+         d9ZQgxsBAKE0FU3WYwEwiNNdKaKPfvJK8gWdBmtSMSVP690GnBTYiurGp9xEyhTbt2Hm
+         ApsQ==
+X-Forwarded-Encrypted: i=1; AJvYcCULziOa0pGHsh9o4IipikwpTJFp5dBEPj01BoWaSdGDee2DpGeGbNrahX3TfzEGWIRVuse0zx9D9HGJst8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyI2ycu+t8LhLzOrZBI+IUaoS4uQ2GGhmfpksaOXjG161XybU0H
+	ZsPoznzLfRuve17BW1jErn4XQlN8FYbMyBnEbDAHs2SxJe3u4wQ2
+X-Google-Smtp-Source: AGHT+IGK+lmHk4o+V9+0ikSoBiJZqg6QykoW+ZRxIDliOFYdRFEcSLMUbdhefW3br9WByiTmjmgPvw==
+X-Received: by 2002:ac2:4c56:0:b0:535:6a34:b8c3 with SMTP id 2adb3069b0e04-53d65dca63dmr9144991e87.5.1730716278359;
+        Mon, 04 Nov 2024 02:31:18 -0800 (PST)
+Received: from [192.168.1.146] (87-94-132-183.rev.dnainternet.fi. [87.94.132.183])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53c7bdcbe44sm1617800e87.201.2024.11.04.02.31.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 04 Nov 2024 02:31:16 -0800 (PST)
+Message-ID: <229a3c3f-aad3-48b7-8d04-18ee1ab8c9fb@gmail.com>
+Date: Mon, 4 Nov 2024 12:31:16 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="q6hhbmkqjpisipvc"
-Content-Disposition: inline
-In-Reply-To: <ee47c6d7-4197-4f5d-b39e-aab70a9337d6@kernel.org>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/2] rust: add dma coherent allocator abstraction.
+To: Alice Ryhl <aliceryhl@google.com>,
+ Abdiel Janulgue <abdiel.janulgue@gmail.com>
+Cc: rust-for-linux@vger.kernel.org, daniel.almeida@collabora.com,
+ a.hindborg@kernel.org, linux-kernel@vger.kernel.org, dakr@redhat.com,
+ airlied@redhat.com, miguel.ojeda.sandonis@gmail.com, wedsonaf@gmail.com,
+ Andreas Hindborg <a.hindborg@samsung.com>
+References: <20241104090711.3000818-1-abdiel.janulgue@gmail.com>
+ <20241104090711.3000818-3-abdiel.janulgue@gmail.com>
+ <CAH5fLgisLyW-d9rsHJ8Vp8HpWh7PZxtkXooVQyMTxs445Ah4GQ@mail.gmail.com>
+ <f6889ce1-f1e0-438d-a9e6-4340a92cb6ef@gmail.com>
+ <CAH5fLggDqXiyXLbmGQfUcgx3nCv+uhsqwWBwk2j522v8jOp9aw@mail.gmail.com>
+Content-Language: en-US
+From: Abdiel Janulgue <abdiel.janulgue@gmail.com>
+In-Reply-To: <CAH5fLggDqXiyXLbmGQfUcgx3nCv+uhsqwWBwk2j522v8jOp9aw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
 
---q6hhbmkqjpisipvc
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [RFC PATCH] dt-bindings: can: convert tcan4x5x.txt to DT schema
-MIME-Version: 1.0
 
-On 04.11.2024 10:27:04, Krzysztof Kozlowski wrote:
-> > +properties:
-> > +  compatible:
-> > +    oneOf:
-> > +      - enum:
-> > +          - ti,tcan4552
-> > +          - ti,tcan4553
-> > +          - ti,tcan4x5x
->=20
-> That's not really what old binding said.
->=20
-> It said for example:
-> "ti,tcan4552", "ti,tcan4x5x"
->=20
-> Which is not allowed above. You need list. Considering there are no
-> in-tree users of ti,tcan4x5x alone, I would allow only lists followed by
-> ti,tcan4x5x. IOW: disallow ti,tcan4x5x alone.
+On 04/11/2024 12:00, Alice Ryhl wrote:
+> 
+> You'll need your own trait, or you can build_assert! that the size is
+> non-zero in the constructor. 
 
-I'd like to keep the old binding.
+I think we can catch this in the constructor. I'll try the build_assert! 
+approach first as it's simpler.
 
-> Mention this change to the binding in the commit message.
-
-The tcan4x5x chip family has 2 registers for automatic detection of the
-chip variant. While the ID2 register of the tcan4550 is 0x0, the
-registers for the tcan4552 and tcan4553 contain 4552 and 4553
-respectively in ASCII.
-
-The driver was originally added for the tcan4550 chip, but currently
-only has a compatible for "ti,tcan4x5x".
-
-Marc
-
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde          |
-Embedded Linux                   | https://www.pengutronix.de |
-Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
-
---q6hhbmkqjpisipvc
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEUEC6huC2BN0pvD5fKDiiPnotvG8FAmcoomIACgkQKDiiPnot
-vG8YrQf+JyvOYVVRW9nzhFGD9KVtlS8zKgG295wWe20oC5McULoWS3U8prFRcq1y
-Kv4fIwo5MzkWeX7ZMQjDtAPg25+C/GbnDIg7O5sZjt3iZng+D3TyXLRf0Qufj/rF
-HdJR4of7x7eYnh1Ft+Q9jlg7dY8i/r54v5msiMhQnj3z3U6zvMjoq4g8LVQMYU13
-P6HosfwXnjA4920KPdaGxgbxEaKPz5nCKZYlJck2AlElzcFILd2S8zjUTacEVIUK
-H5gaXpBXtu2A4/zPWg0f9AVhij4RAkjk63Cdc99rNiH91ZT+e8qhdmbDWm27bie/
-yqOH3AwjkRWeVQXZxaSRs4mNeVkN9A==
-=Lfas
------END PGP SIGNATURE-----
-
---q6hhbmkqjpisipvc--
+/Abdiel
 
