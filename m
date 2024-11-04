@@ -1,115 +1,107 @@
-Return-Path: <linux-kernel+bounces-394728-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394729-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15BBF9BB365
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 12:32:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 891349BB348
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 12:30:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 08170B29FE5
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 11:28:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EDAE3B2A26B
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 11:28:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F3F11C3038;
-	Mon,  4 Nov 2024 11:20:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7952F1C3F0A;
+	Mon,  4 Nov 2024 11:20:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UIP9E0Ra"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="n7VSrnfM"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 011A11B394D;
-	Mon,  4 Nov 2024 11:20:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EBB51AC458;
+	Mon,  4 Nov 2024 11:20:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730719201; cv=none; b=aQPrR3o1flxZ+OH1X47Hp9tP22wPcbi8Vf50L1xvqox/+yll6oey5MsOXeXwPk6fbaji3DlNsF56Q8szLKhl/Sa+5Qnrocbxmv1zuTP9M22o2g647dVACdxAc/tpWlDJi63ZjpCyRzmXRdjzbA2zeBi1DNxM60WYZeXh/6Dgep4=
+	t=1730719238; cv=none; b=Rkdo7zIYIZcRImbfCZiKR8bBfJg345Acf9px6La5FNFRBMGaxtjrsdi/QkxAvuODC9qD/IWRtEh3K2pYebgWa7BtmzRjeP71vl0PzCrHcSWqnY91pb/WCmrCvw47K6+DHW9vNFQ7iKHkuhO99QzVCqRwPOOT5JPAxBGqZpEuOcw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730719201; c=relaxed/simple;
-	bh=cY33B02f8szVFbWSo1IQ5weKa0vYy6o23iYaDlbeQMI=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=NdRM9r2FxHHs3IY8S3S76b5foSixz10xle7GL45eA8iqwKZSUE29vCTb85np1mLIt9YC08qkDSKddrbPtRP9kYfKXgKuGOQsUTeGRzVEWa1+6YXHa9plCzZUY3SKpOyG1e/Dhg2MieMMAEHLE/iMVfouQGaahs8hUp3SgywCYDI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UIP9E0Ra; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BEAA7C4CECE;
-	Mon,  4 Nov 2024 11:19:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730719200;
-	bh=cY33B02f8szVFbWSo1IQ5weKa0vYy6o23iYaDlbeQMI=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=UIP9E0RaNUsBSCPMqdDp2sCJlCa/4ioeF0NaoJAr3tljrNmOYW4l/yvH/b1wkhCDi
-	 DfJ05oU3fIqAUtM6YtWamKC4RYV4fWtszl/ctXAnvYCZETKobKd+1bpeFoSwcV7PXy
-	 8M3Y+2r3alSCyylqTnRyDRXU7UfJL3vTYfgNq9iwrBung0NR8/PPR2O6wDaT7h7PUn
-	 x1P0978VSxvUaM0YPDlO3TCJ6JP3D4Jax8eCe6vux6EJHI91i9dpRpHFhwSXAzf+z9
-	 YxHjGWZxvuInZpC/fCJPJAIVcGoxQHvOqBJZprA3san23C9UGsKbRe1Df2t1ELeP7r
-	 QPPIkf6JNa8cA==
+	s=arc-20240116; t=1730719238; c=relaxed/simple;
+	bh=VKU/tb7DYOTetaqBJlKR839RYdQxIBWMEDaJYFJAMVc=;
+	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YqJ3Nso7ggjoeobeeanTPsjta8qPLBWJsHHAsVwBhTp4ePqx2uPIUybsCNIWoJHdQ52fbBCTZy1hP0a1cwy9kIHC+f0rAT4yZoDuF8/NZOffFCLIwp4DAyRTWn2+Pfct0+RSU0Bk9Qcap/9FZqeJven2XZsUZgFD/ITqlMbV7MU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=n7VSrnfM; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730719237; x=1762255237;
+  h=date:from:to:subject:message-id:references:mime-version:
+   in-reply-to;
+  bh=VKU/tb7DYOTetaqBJlKR839RYdQxIBWMEDaJYFJAMVc=;
+  b=n7VSrnfMxQX9pHYF6qQyeDYQ4itdh4wnbgoWMAQxfJP8yDHG+OniVpwD
+   fEIwBHOggo79UZHdgR3D64u0zlb9x5mARliZwnnSEg6rf57tkdw4qDdy1
+   VyKEq8hkn1D9k7TxW/GNy8WILmdGXv542fv0ooKz/nu+l6xYBJRd1ZgAj
+   UnfmjYtJOoxN28h2e7+n9Q56Pmd04WcVx7KYbfOyDz5+uMA76Fwv5VcDa
+   8EwaYlVZvWIcmy8/V4rjV+zpi3aE9duy81NqN7ltRCwNw1q6lQVPBsfWw
+   aZL/KAFgWj5Zp9mZGKbgyHxiRtGv40HUCsxQLoim2yRwuF4b0CTGlnD+b
+   w==;
+X-CSE-ConnectionGUID: nneO+gDnQ7aK3vpLog1/YA==
+X-CSE-MsgGUID: ZwqAeuDFR1eezxR6132v4g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="30264694"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="30264694"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2024 03:20:36 -0800
+X-CSE-ConnectionGUID: vaZRDFczT9+pICghNuC+Vg==
+X-CSE-MsgGUID: bZE0rVAxTU6ytFwy3A6aZw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,256,1725346800"; 
+   d="scan'208";a="88199494"
+Received: from smile.fi.intel.com ([10.237.72.154])
+  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2024 03:20:35 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1t7v8K-0000000B26W-1Zfg;
+	Mon, 04 Nov 2024 13:20:32 +0200
+Date: Mon, 4 Nov 2024 13:20:32 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Chen-Yu Tsai <wenst@chromium.org>, linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 1/1] i2c: Use *-y instead of *-objs in Makefile
+Message-ID: <ZyiuAIgubo4oZ5dw@smile.fi.intel.com>
+References: <20241018150337.2182181-1-andriy.shevchenko@linux.intel.com>
+ <ZyTIf8l1ghcyzJUH@smile.fi.intel.com>
+ <ZyTNA34Y1BRxMhhn@shikoro>
+ <ZyTSZTcNU63F2GjY@smile.fi.intel.com>
+ <ZyTTs8gFx5r_N5Pi@smile.fi.intel.com>
+ <ZyiqcHFJFFnBYmTN@shikoro>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Mon, 04 Nov 2024 13:19:55 +0200
-Message-Id: <D5DCR279TZY5.1C7KRTFPGD3WU@kernel.org>
-Cc: <x86@kernel.org>, "Ross Philipson" <ross.philipson@oracle.com>, "Ard
- Biesheuvel" <ardb@kernel.org>, "Thomas Gleixner" <tglx@linutronix.de>,
- "Peter Huewe" <peterhuewe@gmx.de>, "Jason Gunthorpe" <jgg@ziepe.ca>, "open
- list:TPM DEVICE DRIVER" <linux-integrity@vger.kernel.org>, "open list"
- <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC PATCH 0/4] Alternative TPM patches for Trenchboot
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "Jarkko Sakkinen" <jarkko@kernel.org>, "Daniel P. Smith"
- <dpsmith@apertussolutions.com>
-X-Mailer: aerc 0.18.2
-References: <20241102152226.2593598-1-jarkko@kernel.org>
- <D5BW0P0HH0QL.7Y4HBLJGEDL8@kernel.org>
- <e745226d-4722-43ed-86ad-89428f56fcba@apertussolutions.com>
- <D5DCPWBQ2M7H.GAUEVUKGC3G0@kernel.org>
-In-Reply-To: <D5DCPWBQ2M7H.GAUEVUKGC3G0@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZyiqcHFJFFnBYmTN@shikoro>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Mon Nov 4, 2024 at 1:18 PM EET, Jarkko Sakkinen wrote:
-> On Mon Nov 4, 2024 at 12:57 PM EET, Daniel P. Smith wrote:
-> > On 11/2/24 14:00, Jarkko Sakkinen wrote:
-> > > On Sat Nov 2, 2024 at 5:22 PM EET, Jarkko Sakkinen wrote:
-> > >> It is not really my problem but I'm also wondering how the
-> > >> initialization order is managed. What if e.g. IMA happens to
-> > >> initialize before slmodule?
-> > >=20
-> > > The first obvious observation from Trenchboot implementation is that =
-it
-> > > is 9/10 times worst idea ever to have splitted root of trust. Here it
-> > > is realized by an LKM for slmodule.
-> >
-> > First, there is no conflict between IMA and slmodule. With your change=
-=20
-> > to make locality switching a one shot, the only issue would be if IMA=
-=20
-> > were to run first and issue a locality switch to Locality 0, thus=20
-> > blocking slmodule from switching to Locality 2. As for PCR usage, IMA=
-=20
-> > uses the SRTM PCRs, which are completely accessible under Locality 2.
->
-> Just pointing out a possible problem (e.g. with  TPM2_PolicyLocality).
->
-> > Honestly, a better path forward would be to revisit the issue that is
-> > driving most of that logic existing, which is the lack of a TPM
-> > interface code in the setup kernel. As a reminder, this issue is due to
-> > the TPM maintainers position that the only TPM code in the kernel can b=
-e
-> > the mainline driver. Which, unless something has changed, is impossible
-> > to compile into the setup kernel due to its use of mainline kernel
-> > constructs not present in the setup kernel.
->
-> I don't categorically reject adding some code to early setup. We have
-> some shared code EFI stub but you have to explain your changes
-> proeprly. Getting rejection in some early version to some approach,
-> and being still pissed about that years forward is not really way
-> to go IMHO.
+On Mon, Nov 04, 2024 at 01:05:20PM +0200, Wolfram Sang wrote:
+> 
+> > > Shouldn't be separated commit anyway?
+> 
+> Can be argued.
 
-... and ignoring fixes that took me almost one day to fully get together
-is neither.
+I have an evidence for my side: LKP complained as my (thanks to be a separate)
+patch unveiled the issue in the Kconfig there. Meaning that required a new version
+of the change, while the core part is not affected anyhow.
 
-These address the awful commit messages, tpm_tis-only filtering and not
-allowing repetition in the calls.
+> This patch applied to for-next, thanks!
 
-BR, Jarkko
+Thank you!
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
