@@ -1,129 +1,134 @@
-Return-Path: <linux-kernel+bounces-394338-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394337-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94CC99BAD91
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 09:00:52 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A08D39BAD8E
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 09:00:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 415DC1F222B2
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 08:00:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 660D9282020
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 08:00:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A21C11AAE23;
-	Mon,  4 Nov 2024 08:00:34 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D80D1A76CE;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B42919D8B2;
 	Mon,  4 Nov 2024 08:00:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 648CA18A93F;
+	Mon,  4 Nov 2024 08:00:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730707234; cv=none; b=KccaBwCfnohmY5cUYUZST++DLcZwm1BSupiHMK3WFl+VRuBYbr0tWaKevh4PLWTVaa/R0mo37UDie4EFxhOetSktDiUMqB8W2Ii3cL88FXXssGbjccjJM+eulunUpVCI4OOXngMEoYvMyn15coUP7oWkqOmL1tjl8ArrqL2hI+k=
+	t=1730707231; cv=none; b=hr76pY5kYmBlc0R2rvsD4c9wwZ6y1NZICmHFrQkuhna6MRKXk6X/otpPxBcgCKgiQKrQYXWENNDIBXJMw8vAlGv3KT+SdnQQVpkdnNuBSDGAQ8BetCX2xDeun6L/e/P/lKpNVqmm9H1pEb56ewxqd/UlXC80njaaow576aOcpqk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730707234; c=relaxed/simple;
-	bh=fwqwuIcmUdxsD8dz+GsxzWQ47SZiWrWx2zOOvvyqhOY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=adCzmHH4yJaB5JKcHeLJ0c31BYTpkJ5jLO+ask2bgQT8/j8mSJGpNkP0NUpsWAet1KFnXJPORRoNDMhEtKrDdi4nX9x8o31ziz7Gj1TMXedoZiESYmABGN6sErk7R+wRO19V6G38IxIxFgJZ97tZ2frBDzURO8Vox7pp+VJLUpA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EF54DFEC;
-	Mon,  4 Nov 2024 00:01:00 -0800 (PST)
-Received: from arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E5B2A3F6A8;
-	Mon,  4 Nov 2024 00:00:27 -0800 (PST)
-Date: Mon, 4 Nov 2024 09:00:00 +0100
-From: Beata Michalska <beata.michalska@arm.com>
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-pm@vger.kernel.org, ionela.voinescu@arm.com,
-	sudeep.holla@arm.com, will@kernel.org, catalin.marinas@arm.com,
-	rafael@kernel.org, sumitg@nvidia.com, yang@os.amperecomputing.com,
-	vanshikonda@os.amperecomputing.com, lihuisong@huawei.com,
-	zhanjie9@hisilicon.com
-Subject: Re: [PATCH v7 1/4] cpufreq: Introduce an optional cpuinfo_avg_freq
- sysfs entry
-Message-ID: <Zyh_ACbOkSsjcPX3@arm.com>
-References: <20240913132944.1880703-1-beata.michalska@arm.com>
- <20240913132944.1880703-2-beata.michalska@arm.com>
- <20241029070429.m7q5dkumitoyqxq2@vireshk-i7>
+	s=arc-20240116; t=1730707231; c=relaxed/simple;
+	bh=AdGbmYTuxw465OdvTXQSCs61a1R0cZiPSHg1LjSX4/Q=;
+	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=Xf9gRlXRb04Zf1xjqssyaBFqU9HBTfKzOBmQM0I2OfZqP7WcNxQttr4qTvlsh10Z0ABBG+zr1yHH75GwpKjVa1SpT6qBcf2OyPIRPDZo87AfqI4SGyxRtQxZPhtN/Rw7cl589BX6vnbTCsQomVoe/5hbiQ5okvq1eBhehZptf2c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4XhkPD019zzyVPF;
+	Mon,  4 Nov 2024 15:58:39 +0800 (CST)
+Received: from dggemv711-chm.china.huawei.com (unknown [10.1.198.66])
+	by mail.maildlp.com (Postfix) with ESMTPS id 67BEC18010F;
+	Mon,  4 Nov 2024 16:00:24 +0800 (CST)
+Received: from kwepemn100017.china.huawei.com (7.202.194.122) by
+ dggemv711-chm.china.huawei.com (10.1.198.66) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Mon, 4 Nov 2024 16:00:12 +0800
+Received: from [10.67.121.110] (10.67.121.110) by
+ kwepemn100017.china.huawei.com (7.202.194.122) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Mon, 4 Nov 2024 16:00:12 +0800
+Subject: Re: [PATCH v11 4/4] Documentation: add debugfs description for hisi
+ migration
+To: Alex Williamson <alex.williamson@redhat.com>
+CC: <jgg@nvidia.com>, <shameerali.kolothum.thodi@huawei.com>,
+	<jonathan.cameron@huawei.com>, <kvm@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linuxarm@openeuler.org>
+References: <20241025090143.64472-1-liulongfang@huawei.com>
+ <20241025090143.64472-5-liulongfang@huawei.com>
+ <20241031160952.3b93d4af.alex.williamson@redhat.com>
+From: liulongfang <liulongfang@huawei.com>
+Message-ID: <f56da6a9-5b4d-fb3e-d96e-bd46991443fd@huawei.com>
+Date: Mon, 4 Nov 2024 16:00:11 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241029070429.m7q5dkumitoyqxq2@vireshk-i7>
+In-Reply-To: <20241031160952.3b93d4af.alex.williamson@redhat.com>
+Content-Type: text/plain; charset="gbk"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ kwepemn100017.china.huawei.com (7.202.194.122)
 
-On Tue, Oct 29, 2024 at 12:34:29PM +0530, Viresh Kumar wrote:
-> Apologies for the delay from my side. September was mostly holidays
-> for me and then I was stuck with other stuff plus email backlog and
-> this series was always a painful point to return to :(
-Thanks for getting back to me on this one!
+On 2024/11/1 6:09, Alex Williamson wrote:
+> On Fri, 25 Oct 2024 17:01:43 +0800
+> Longfang Liu <liulongfang@huawei.com> wrote:
 > 
-> On 13-09-24, 14:29, Beata Michalska wrote:
-> > Currently the CPUFreq core exposes two sysfs attributes that can be used
-> > to query current frequency of a given CPU(s): namely cpuinfo_cur_freq
-> > and scaling_cur_freq. Both provide slightly different view on the
-> > subject and they do come with their own drawbacks.
-> > 
-> > cpuinfo_cur_freq provides higher precision though at a cost of being
-> > rather expensive. Moreover, the information retrieved via this attribute
-> > is somewhat short lived as frequency can change at any point of time
-> > making it difficult to reason from.
-> > 
-> > scaling_cur_freq, on the other hand, tends to be less accurate but then
-> > the actual level of precision (and source of information) varies between
-> > architectures making it a bit ambiguous.
-> > 
-> > The new attribute, cpuinfo_avg_freq, is intended to provide more stable,
-> > distinct interface, exposing an average frequency of a given CPU(s), as
-> > reported by the hardware, over a time frame spanning no more than a few
-> > milliseconds. As it requires appropriate hardware support, this
-> > interface is optional.
+>> Add a debugfs document description file to help users understand
+>> how to use the hisilicon accelerator live migration driver's
+>> debugfs.
+>>
+>> Update the file paths that need to be maintained in MAINTAINERS
+>>
+>> Signed-off-by: Longfang Liu <liulongfang@huawei.com>
+>> Reviewed-by: Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>
+>> ---
+>>  .../ABI/testing/debugfs-hisi-migration        | 25 +++++++++++++++++++
+>>  1 file changed, 25 insertions(+)
+>>  create mode 100644 Documentation/ABI/testing/debugfs-hisi-migration
+>>
+>> diff --git a/Documentation/ABI/testing/debugfs-hisi-migration b/Documentation/ABI/testing/debugfs-hisi-migration
+>> new file mode 100644
+>> index 000000000000..89e4fde5ec6a
+>> --- /dev/null
+>> +++ b/Documentation/ABI/testing/debugfs-hisi-migration
+>> @@ -0,0 +1,25 @@
+>> +What:		/sys/kernel/debug/vfio/<device>/migration/hisi_acc/dev_data
+>> +Date:		Oct 2024
+>> +KernelVersion:  6.12
 > 
-> From what I recall, the plan is to:
-> - keep cpuinfo_cur_freq as it is, not expose for x86 and call ->get()
->   for ARM.
-> 
-> - introduce cpuinfo_avg_freq() and make it return frequency from hw
->   counters for both ARM and Intel and others who provide the API.
-> 
-> - update scaling_cur_freq() to only return the requested frequency or
->   error in case of X86 and update documentation to reflect the same.
->   Right now or after some time ? How much time ?
-> 
->   Rafael ?
+> We're currently targeting v6.13, which is likely Jan 2025.  Thanks,
 >
-> > diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
-> > index 04fc786dd2c0..3493e5a9500d 100644
-> > --- a/drivers/cpufreq/cpufreq.c
-> > +++ b/drivers/cpufreq/cpufreq.c
-> > @@ -752,6 +752,16 @@ __weak unsigned int arch_freq_get_on_cpu(int cpu)
-> >  	return 0;
-> >  }
-> >  
-> > +__weak int arch_freq_avg_get_on_cpu(int cpu)
-> > +{
-> > +	return -EOPNOTSUPP;
-> > +}
-> > +
-> > +static inline bool cpufreq_avg_freq_supported(struct cpufreq_policy *policy)
-> > +{
-> > +	return arch_freq_avg_get_on_cpu(policy->cpu) >= 0;
-> > +}
-> 
-> And why aren't we simply reusing arch_freq_get_on_cpu() here ?
-We need a way to discover whether the new sysfs attrib is to be enabled or not.
-I guess I could change the signature for arch_freq_get_on_cpu to return an error
-if that functionality is not supported for given policy ?
 
----
-Best Regards
-Beata
+OK!
+
+Thanks.
+Longfang.
+
+> Alex
 > 
-> -- 
-> viresh
+>> +Contact:	Longfang Liu <liulongfang@huawei.com>
+>> +Description:	Read the configuration data and some status data
+>> +		required for device live migration. These data include device
+>> +		status data, queue configuration data, some task configuration
+>> +		data and device attribute data. The output format of the data
+>> +		is defined by the live migration driver.
+>> +
+>> +What:		/sys/kernel/debug/vfio/<device>/migration/hisi_acc/migf_data
+>> +Date:		Oct 2024
+>> +KernelVersion:  6.12
+>> +Contact:	Longfang Liu <liulongfang@huawei.com>
+>> +Description:	Read the data from the last completed live migration.
+>> +		This data includes the same device status data as in "dev_data".
+>> +		The migf_data is the dev_data that is migrated.
+>> +
+>> +What:		/sys/kernel/debug/vfio/<device>/migration/hisi_acc/cmd_state
+>> +Date:		Oct 2024
+>> +KernelVersion:  6.12
+>> +Contact:	Longfang Liu <liulongfang@huawei.com>
+>> +Description:	Used to obtain the device command sending and receiving
+>> +		channel status. Returns failure or success logs based on the
+>> +		results.
+> 
+> 
+> .
+> 
 
