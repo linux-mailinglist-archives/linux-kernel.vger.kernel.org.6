@@ -1,149 +1,315 @@
-Return-Path: <linux-kernel+bounces-394494-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394436-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 651F19BAFF3
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 10:40:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 093A39BAF1E
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 10:08:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9714F1C2217A
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 09:40:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 121BB1C22987
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 09:08:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41BFA1AE00C;
-	Mon,  4 Nov 2024 09:40:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D1911AC891;
+	Mon,  4 Nov 2024 09:08:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="WbV5qoMS"
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="qILZgofb"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B54AB1AC426
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 09:40:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFB241AA7BE;
+	Mon,  4 Nov 2024 09:08:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730713235; cv=none; b=kc3mBrC6dbbTNxJ9tisy/uKqS71Mddivws8nfhStJpiCywXFvt2VRP/b/atNaDQpbwSK+QAWRh9kmuSgWzsRSLddG3hiyMYaANQI44zm86DlJdoJUF1WH+5mieexsOTr2oRi9NRwzMH1nbt5Agda2cEbDnR0vq+eEui7QxT1tGc=
+	t=1730711313; cv=none; b=Xo6O2rzZdozX4zYc1YEZmqkxXX0/ri//V07xBA6nOZPES41MICabNo8auFR3G/d9/kneJrKwIeKtDySa7BW80rhcvFHIv4FsQxYFfc5/RwDPznyKl9rL9MBt46zMCy0KEl4E8UEqBtMZGgXssp1cbDTwjC/scItvwCHVyn9QyRc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730713235; c=relaxed/simple;
-	bh=/2KWbTeIX8OFyjJnGDxLsfFpKtH0vHpcfurYnQGh9qk=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:MIME-Version:
-	 Content-Type:References; b=ZPtt9UXsyC0YOz/l+Olz4WaFq+Lc6Pqfv6CqvPBnCAIo66cf+zambA+e+IYqwyckDpFna58lm8UIvzIuJp7Nzv6DwV3N88AoEB7mPhKOh7KFMD46gqJY/85LnnBqVOY2sfXOUVKonAxHoiM3D77CgT2pcVeMc9w3CiZdJe7ZmSA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=WbV5qoMS; arc=none smtp.client-ip=203.254.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20241104094024epoutp0425bbb460aa86f3efe0a1ab619063de4c~EuoILMVhM2701927019epoutp04c
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 09:40:24 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20241104094024epoutp0425bbb460aa86f3efe0a1ab619063de4c~EuoILMVhM2701927019epoutp04c
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1730713224;
-	bh=/2KWbTeIX8OFyjJnGDxLsfFpKtH0vHpcfurYnQGh9qk=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=WbV5qoMS2c/2HCrxiQebd3ssuLJCXYymmIt7uqgfze6G0m92ADzsimjdfLxTBJzMI
-	 kFPUzCx+9sBsgn2xAIEGUB/34P+4WaC4q0ne/G/Lj9A8GPBPmuDOuUL6D5wjS7AA80
-	 XQkPQcjPf6FtQbr42vjrRztxEDY0WopV6TpLqjk0=
-Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTP id
-	20241104094024epcas5p19f2baa060a32014627aef72cdb4c641a~EuoH64rqM2520225202epcas5p1N;
-	Mon,  4 Nov 2024 09:40:24 +0000 (GMT)
-Received: from epsmges5p3new.samsung.com (unknown [182.195.38.179]) by
-	epsnrtp4.localdomain (Postfix) with ESMTP id 4XhmfZ1hSSz4x9Pq; Mon,  4 Nov
-	2024 09:40:22 +0000 (GMT)
-Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
-	epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	49.74.09800.48698276; Mon,  4 Nov 2024 18:40:20 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
-	20241104072914epcas5p2d44c91a277995d5c69bacd4e4308933d~Es1mOsiEQ2271622716epcas5p23;
-	Mon,  4 Nov 2024 07:29:14 +0000 (GMT)
-Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
-	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20241104072914epsmtrp188c60915ea9c82d5676ee59a90969a29~Es1mOBVzt0180401804epsmtrp1X;
-	Mon,  4 Nov 2024 07:29:14 +0000 (GMT)
-X-AuditID: b6c32a4b-23fff70000002648-67-672896845931
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	E2.98.07371.9C778276; Mon,  4 Nov 2024 16:29:13 +0900 (KST)
-Received: from testpc11818.samsungds.net (unknown [109.105.118.18]) by
-	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20241104072913epsmtip2d779602a1dd38bcd762dc37d60793f5f~Es1lU23lA1188611886epsmtip2F;
-	Mon,  4 Nov 2024 07:29:12 +0000 (GMT)
-From: hexue <xue01.he@samsung.com>
-To: axboe@kernel.dk
-Cc: asml.silence@gmail.com, io-uring@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: Re: [PATCH v9 1/1] io_uring: releasing CPU resources when
- polling
-Date: Mon,  4 Nov 2024 15:29:07 +0800
-Message-Id: <20241104072907.768671-1-xue01.he@samsung.com>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <a9b7a578-cf47-474f-8714-297437b385cd@kernel.dk>
+	s=arc-20240116; t=1730711313; c=relaxed/simple;
+	bh=F3D3XEVw6M/iBwfhcpsVw1ETCoilcXoJrcXSsKxL8zY=;
+	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=MnqFEWb2/NLfIEWgtFzm8pL2urljtIYK9/Xf/V6Lwl+m62cX+tZXrPIRB4EULU2fLiBSxFqdAAYmXeEhAdGXonYv9xpBkmbfTXNWj14XJQRdye61Kj4Ms3YrXA/AlpSRGaoOugi00QeKBrSHFAaH7VZiv4uIkJgI2jGiPjRij70=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=qILZgofb; arc=none smtp.client-ip=68.232.153.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1730711312; x=1762247312;
+  h=from:to:subject:date:message-id:in-reply-to:references:
+   mime-version;
+  bh=F3D3XEVw6M/iBwfhcpsVw1ETCoilcXoJrcXSsKxL8zY=;
+  b=qILZgofb+/Lh4Z6sNH+KdfVRpSTtu5JZOma599Jj0QLKuBZLWDxHr16R
+   oBcoXkOItT5EXe+QYdfvIvu1IwXW5OenvNu75h9FmK+NdKd0Tcq3QOaqt
+   UkYekRa3skKSLrA3C8bydoBQwasIbpeK3L/Frb0t2D1ExdR7JWQU9g42E
+   24GQJT9VpIneyUriAxA+KuYoRkVkA67hVALAVc9ENdasCdkOhEf/MMAw+
+   /qw3Qspzs/CXh1kYTLCnnI27+B1xr4cLrHXaoLHxliGKGs3rretDk6/xM
+   ChRyb1x2UZ+si1QuzXm9tgOjNZQbX3mxbnx6EIW0CEQXjPqS3qftei98q
+   Q==;
+X-CSE-ConnectionGUID: C3Qhg4IRR+O+O4w6DPDpdQ==
+X-CSE-MsgGUID: zb1DgidETUqXVZijPrGsFQ==
+X-IronPort-AV: E=Sophos;i="6.11,256,1725346800"; 
+   d="scan'208";a="33830816"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa3.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 04 Nov 2024 02:08:25 -0700
+Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Mon, 4 Nov 2024 02:08:00 -0700
+Received: from training-HP-280-G1-MT-PC.microchip.com (10.10.85.11) by
+ chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server id
+ 15.1.2507.35 via Frontend Transport; Mon, 4 Nov 2024 02:07:57 -0700
+From: Divya Koppera <divya.koppera@microchip.com>
+To: <andrew@lunn.ch>, <arun.ramadoss@microchip.com>,
+	<UNGLinuxDriver@microchip.com>, <hkallweit1@gmail.com>,
+	<linux@armlinux.org.uk>, <davem@davemloft.net>, <edumazet@google.com>,
+	<kuba@kernel.org>, <pabeni@redhat.com>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <richardcochran@gmail.com>
+Subject: [PATCH net-next 1/5] net: phy: microchip_ptp : Add header file for Microchip ptp library
+Date: Mon, 4 Nov 2024 14:37:46 +0530
+Message-ID: <20241104090750.12942-2-divya.koppera@microchip.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20241104090750.12942-1-divya.koppera@microchip.com>
+References: <20241104090750.12942-1-divya.koppera@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmplk+LIzCtJLcpLzFFi42LZdlhTQ7dlmka6QesJKYs5q7YxWqy+289m
-	8a71HIvFr+67jBaXd81hszg74QOrA5vHzll32T0uny316NuyitHj8ya5AJaobJuM1MSU1CKF
-	1Lzk/JTMvHRbJe/geOd4UzMDQ11DSwtzJYW8xNxUWyUXnwBdt8wcoN1KCmWJOaVAoYDE4mIl
-	fTubovzSklSFjPziElul1IKUnAKTAr3ixNzi0rx0vbzUEitDAwMjU6DChOyM5Ue/Mhd8Zq2Y
-	vPMyYwPjTZYuRk4OCQETiT037zJ3MXJxCAnsZpSYc3k+C4TziVHiw6urUJlvjBI7F7fBtaz4
-	3gFVtZdR4sCymYwQzg9GidmXZzCDVLEJKEns3/KBEcQWERCW2N/RCtTBwcEsECJx80wESFhY
-	IEBi/b+vYOUsAqoSl7/2sYPYvAJWEr/nb2GDWCYvcbNrP1gNp4CtxPQv85khagQlTs58AnYQ
-	M1BN89bZYJdKCFxil+h8so8JotlFovv9dHYIW1ji1fEtULaUxMv+Nig7X2Ly9/WMEHaNxLrN
-	76C+tJb4d2UP1M2aEut36UOEZSWmnlrHBLGXT6L39xOoVbwSO+bB2EoSS46sgBopIfF7wiJW
-	CNtDYv7Xk9AQncAo8WjuHPYJjAqzkPwzC8k/sxBWL2BkXsUomVpQnJueWmxaYJyXWg6P5eT8
-	3E2M4PSo5b2D8dGDD3qHGJk4GA8xSnAwK4nwzktVTxfiTUmsrEotyo8vKs1JLT7EaAoM8InM
-	UqLJ+cAEnVcSb2hiaWBiZmZmYmlsZqgkzvu6dW6KkEB6YklqdmpqQWoRTB8TB6dUA5NL6dOK
-	2RPUT0rp91qnbXc5WFViNTPbKXD7QzGJr7PtpvinpuUo30k6y/TMVqns4r7gaGuxGXP4z79u
-	d127+fvho+mzlDfmpQee1koPfHIvJ+HXk70R6/kn1TTMZjdiWnjVbVryJLcj9R0a30rDZ+72
-	LvnEavLENG5J8Ta9mqNivsUMTLVPM196lbnt9pvsqh45+dHjbxsPfmSLnPXzbteXH8w7Dmqt
-	/93BxBF5JWl7kOPVepfyPzuT0h+Yu7Afue/WpJQU/GPyaZu/bVInujMPTPrzpmj5BdmanulX
-	+nabFahciT5pvcLqD4uxxwS2SeZyAbvk/7pnH/8jxcgj9GJpr2PM41NtFfze35eu3afEUpyR
-	aKjFXFScCACwjSJMGAQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrFLMWRmVeSWpSXmKPExsWy7bCSvO7Jco10g48zzSzmrNrGaLH6bj+b
-	xbvWcywWv7rvMlpc3jWHzeLshA+sDmweO2fdZfe4fLbUo2/LKkaPz5vkAliiuGxSUnMyy1KL
-	9O0SuDKWH/3KXPCZtWLyzsuMDYw3WboYOTkkBEwkVnzvALK5OIQEdjNKfL90jxkiISGx49Ef
-	VghbWGLlv+fsILaQwDdGiTVPwkFsNgElif1bPjCC2CJANfs7WsGGMguESXTtOAPWKyzgJ3Hr
-	9kWwmSwCqhKXv/aBzeEVsJL4PX8LG8R8eYmbXfvBajgFbCWmf5kPZHMA7bKR6NmZBlEuKHFy
-	5hOo8fISzVtnM09gFJiFJDULSWoBI9MqRsnUguLc9NxkwwLDvNRyveLE3OLSvHS95PzcTYzg
-	4NXS2MF4b/4/vUOMTByMhxglOJiVRHjnpaqnC/GmJFZWpRblxxeV5qQWH2KU5mBREuc1nDE7
-	RUggPbEkNTs1tSC1CCbLxMEp1cB0Ul3dtfGGO7vSbhFGUbtTvrM3zU28uJ7Tvz336OEXi793
-	Ra2Rr7mXYKnDXKjW0ZXKGpydv1lTXfhYrZ+500fHm0e2mRTYT9c+9v21zp0lzm41bms+vTH3
-	Zbo6b5/kFw2WRocF+5va/sU8ufgrYfeP0t3zFBXEd815fNHrgqmA4q9Xh1L6+Hp+Vzgq9Ybc
-	X3tp8oXzT/vnbYxjVE76XLfl3PlO2U635Qkfs2bdbvuwPVpuf6rOzATh1b+uGPJ5B8tIvFR7
-	GlMYl1KsKvTsataZ4GuFQZEvF22Y8M+wjItt8hLhp6HSAXNehzd9fvcj5eZhthk6k74f+XJT
-	e07CKrlbStlT9N/fY1E/kKKprfBaiaU4I9FQi7moOBEAcfWJSs0CAAA=
-X-CMS-MailID: 20241104072914epcas5p2d44c91a277995d5c69bacd4e4308933d
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20241104072914epcas5p2d44c91a277995d5c69bacd4e4308933d
-References: <a9b7a578-cf47-474f-8714-297437b385cd@kernel.dk>
-	<CGME20241104072914epcas5p2d44c91a277995d5c69bacd4e4308933d@epcas5p2.samsung.com>
+Content-Type: text/plain
 
-On 11/1/2024 08:06, Jens Axboe wrote:
->On 11/1/24 3:19 AM, hexue wrote:
->> A new hybrid poll is implemented on the io_uring layer. Once IO issued,
->> it will not polling immediately, but block first and re-run before IO
->> complete, then poll to reap IO. This poll function could be a suboptimal
->> solution when running on a single thread, it offers the performance lower
->> than regular polling but higher than IRQ, and CPU utilization is also lower
->> than polling.
->
->This looks much better now.
->
->Do you have a patch for liburing to enable testing of hybrid polling
->as well? Don't care about perf numbers for that, but it should get
->exercised.
+This ptp header file library will cover ptp macros for future phys in Microchip
+where addresses will be same but base offset and mmd address may changes.
 
-Sure, I'll add some liburing test cases and submit patch soon.
-Thank you.
+Signed-off-by: Divya Koppera <divya.koppera@microchip.com>
+---
+ drivers/net/phy/microchip_ptp.h | 217 ++++++++++++++++++++++++++++++++
+ 1 file changed, 217 insertions(+)
+ create mode 100644 drivers/net/phy/microchip_ptp.h
 
---
-Xue
+diff --git a/drivers/net/phy/microchip_ptp.h b/drivers/net/phy/microchip_ptp.h
+new file mode 100644
+index 000000000000..617418bf9abb
+--- /dev/null
++++ b/drivers/net/phy/microchip_ptp.h
+@@ -0,0 +1,217 @@
++/* SPDX-License-Identifier: GPL-2.0
++ * Copyright (C) 2024 Microchip Technology
++ */
++
++#ifndef _MICROCHIP_PTP_H
++#define _MICROCHIP_PTP_H
++
++#ifdef CONFIG_NETWORK_PHY_TIMESTAMPING
++
++#include <linux/ptp_clock_kernel.h>
++#include <linux/ptp_clock.h>
++#include <linux/ptp_classify.h>
++#include <linux/net_tstamp.h>
++#include <linux/mii.h>
++#include <linux/phy.h>
++
++#define MCHP_PTP_CMD_CTL(b)			((b) + 0x0)
++#define MCHP_PTP_CMD_CTL_LTC_STEP_NSEC		BIT(6)
++#define MCHP_PTP_CMD_CTL_LTC_STEP_SEC		BIT(5)
++#define MCHP_PTP_CMD_CTL_CLOCK_LOAD		BIT(4)
++#define MCHP_PTP_CMD_CTL_CLOCK_READ		BIT(3)
++#define MCHP_PTP_CMD_CTL_EN			BIT(1)
++#define MCHP_PTP_CMD_CTL_DIS			BIT(0)
++
++#define MCHP_PTP_REF_CLK_CFG(b)			((b) + 0x2)
++#define MCHP_PTP_REF_CLK_SRC_250MHZ		0x0
++#define MCHP_PTP_REF_CLK_PERIOD_OVERRIDE	BIT(9)
++#define MCHP_PTP_REF_CLK_PERIOD			4
++#define MCHP_PTP_REF_CLK_CFG_SET	(MCHP_PTP_REF_CLK_SRC_250MHZ |\
++					 MCHP_PTP_REF_CLK_PERIOD_OVERRIDE |\
++					 MCHP_PTP_REF_CLK_PERIOD)
++
++#define MCHP_PTP_LTC_SEC_HI(b)			((b) + 0x5)
++#define MCHP_PTP_LTC_SEC_MID(b)			((b) + 0x6)
++#define MCHP_PTP_LTC_SEC_LO(b)			((b) + 0x7)
++#define MCHP_PTP_LTC_NS_HI(b)			((b) + 0x8)
++#define MCHP_PTP_LTC_NS_LO(b)			((b) + 0x9)
++#define MCHP_PTP_LTC_RATE_ADJ_HI(b)		((b) + 0xc)
++#define MCHP_PTP_LTC_RATE_ADJ_HI_DIR		BIT(15)
++#define MCHP_PTP_LTC_RATE_ADJ_LO(b)		((b) + 0xd)
++#define MCHP_PTP_LTC_STEP_ADJ_HI(b)		((b) + 0x12)
++#define MCHP_PTP_LTC_STEP_ADJ_HI_DIR		BIT(15)
++#define MCHP_PTP_LTC_STEP_ADJ_LO(b)		((b) + 0x13)
++#define MCHP_PTP_LTC_READ_SEC_HI(b)		((b) + 0x29)
++#define MCHP_PTP_LTC_READ_SEC_MID(b)		((b) + 0x2a)
++#define MCHP_PTP_LTC_READ_SEC_LO(b)		((b) + 0x2b)
++#define MCHP_PTP_LTC_READ_NS_HI(b)		((b) + 0x2c)
++#define MCHP_PTP_LTC_READ_NS_LO(b)		((b) + 0x2d)
++#define MCHP_PTP_OP_MODE(b)			((b) + 0x41)
++#define MCHP_PTP_OP_MODE_DIS			0
++#define MCHP_PTP_OP_MODE_STANDALONE		1
++#define MCHP_PTP_LATENCY_CORRECTION_CTL(b)	((b) + 0x44)
++#define MCHP_PTP_PREDICTOR_EN			BIT(6)
++#define MCHP_PTP_TX_PRED_DIS			BIT(1)
++#define MCHP_PTP_RX_PRED_DIS			BIT(0)
++#define MCHP_PTP_LATENCY_SETTING		(MCHP_PTP_PREDICTOR_EN | \
++						 MCHP_PTP_TX_PRED_DIS | \
++						 MCHP_PTP_RX_PRED_DIS)
++
++#define MCHP_PTP_INT_EN(b)			((b) + 0x0)
++#define MCHP_PTP_INT_STS(b)			((b) + 0x01)
++#define MCHP_PTP_INT_TX_TS_OVRFL_EN		BIT(3)
++#define MCHP_PTP_INT_TX_TS_EN			BIT(2)
++#define MCHP_PTP_INT_RX_TS_OVRFL_EN		BIT(1)
++#define MCHP_PTP_INT_RX_TS_EN			BIT(0)
++#define MCHP_PTP_INT_ALL_MSK		(MCHP_PTP_INT_TX_TS_OVRFL_EN | \
++					 MCHP_PTP_INT_TX_TS_EN | \
++					 MCHP_PTP_INT_RX_TS_OVRFL_EN |\
++					 MCHP_PTP_INT_RX_TS_EN)
++
++#define MCHP_PTP_CAP_INFO(b)			((b) + 0x2e)
++#define MCHP_PTP_TX_TS_CNT(v)			(((v) & GENMASK(11, 8)) >> 8)
++#define MCHP_PTP_RX_TS_CNT(v)			((v) & GENMASK(3, 0))
++
++#define MCHP_PTP_RX_PARSE_CONFIG(b)		((b) + 0x42)
++#define MCHP_PTP_RX_PARSE_L2_ADDR_EN(b)		((b) + 0x44)
++#define MCHP_PTP_RX_PARSE_IPV4_ADDR_EN(b)	((b) + 0x45)
++
++#define MCHP_PTP_RX_TIMESTAMP_CONFIG(b)		((b) + 0x4e)
++#define MCHP_PTP_RX_TIMESTAMP_CONFIG_PTP_FCS_DIS BIT(0)
++
++#define MCHP_PTP_RX_VERSION(b)			((b) + 0x48)
++#define MCHP_PTP_RX_TIMESTAMP_EN(b)		((b) + 0x4d)
++
++#define MCHP_PTP_RX_INGRESS_NS_HI(b)		((b) + 0x54)
++#define MCHP_PTP_RX_INGRESS_NS_HI_TS_VALID	BIT(15)
++
++#define MCHP_PTP_RX_INGRESS_NS_LO(b)		((b) + 0x55)
++#define MCHP_PTP_RX_INGRESS_SEC_HI(b)		((b) + 0x56)
++#define MCHP_PTP_RX_INGRESS_SEC_LO(b)		((b) + 0x57)
++#define MCHP_PTP_RX_MSG_HEADER2(b)		((b) + 0x59)
++
++#define MCHP_PTP_TX_PARSE_CONFIG(b)		((b) + 0x82)
++#define MCHP_PTP_PARSE_CONFIG_LAYER2_EN		BIT(0)
++#define MCHP_PTP_PARSE_CONFIG_IPV4_EN		BIT(1)
++#define MCHP_PTP_PARSE_CONFIG_IPV6_EN		BIT(2)
++
++#define MCHP_PTP_TX_PARSE_L2_ADDR_EN(b)		((b) + 0x84)
++#define MCHP_PTP_TX_PARSE_IPV4_ADDR_EN(b)	((b) + 0x85)
++
++#define MCHP_PTP_TX_VERSION(b)			((b) + 0x88)
++#define MCHP_PTP_MAX_VERSION(x)			(((x) & GENMASK(7, 0)) << 8)
++#define MCHP_PTP_MIN_VERSION(x)			((x) & GENMASK(7, 0))
++
++#define MCHP_PTP_TX_TIMESTAMP_EN(b)		((b) + 0x8d)
++#define MCHP_PTP_TIMESTAMP_EN_SYNC		BIT(0)
++#define MCHP_PTP_TIMESTAMP_EN_DREQ		BIT(1)
++#define MCHP_PTP_TIMESTAMP_EN_PDREQ		BIT(2)
++#define MCHP_PTP_TIMESTAMP_EN_PDRES		BIT(3)
++#define MCHP_PTP_TIMESTAMP_EN_ALL		(MCHP_PTP_TIMESTAMP_EN_SYNC |\
++						 MCHP_PTP_TIMESTAMP_EN_DREQ |\
++						 MCHP_PTP_TIMESTAMP_EN_PDREQ |\
++						 MCHP_PTP_TIMESTAMP_EN_PDRES)
++
++#define MCHP_PTP_TX_TIMESTAMP_CONFIG(b)		((b) + 0x8e)
++#define MCHP_PTP_TX_TIMESTAMP_CONFIG_PTP_FCS_DIS BIT(0)
++
++#define MCHP_PTP_TX_MOD(b)			((b) + 0x8f)
++#define MCHP_PTP_TX_MOD_PTP_SYNC_TS_INSERT	BIT(12)
++#define MCHP_PTP_TX_MOD_PTP_FU_TS_INSERT	BIT(11)
++
++#define MCHP_PTP_TX_EGRESS_NS_HI(b)		((b) + 0x94)
++#define MCHP_PTP_TX_EGRESS_NS_HI_TS_VALID	BIT(15)
++
++#define MCHP_PTP_TX_EGRESS_NS_LO(b)		((b) + 0x95)
++#define MCHP_PTP_TX_EGRESS_SEC_HI(b)		((b) + 0x96)
++#define MCHP_PTP_TX_EGRESS_SEC_LO(b)		((b) + 0x97)
++#define MCHP_PTP_TX_MSG_HEADER2(b)		((b) + 0x99)
++
++#define MCHP_PTP_TSU_GEN_CONFIG(b)		((b) + 0xc0)
++#define MCHP_PTP_TSU_GEN_CFG_TSU_EN		BIT(0)
++
++#define MCHP_PTP_TSU_HARD_RESET(b)		((b) + 0xc1)
++#define MCHP_PTP_TSU_HARDRESET			BIT(0)
++
++/* Represents 1ppm adjustment in 2^32 format with
++ * each nsec contains 4 clock cycles in 250MHz.
++ * The value is calculated as following: (1/1000000)/((2^-32)/4)
++ */
++#define MCHP_PTP_1PPM_FORMAT			17179
++#define MCHP_PTP_FIFO_SIZE			8
++#define MCHP_PTP_MAX_ADJ				31249999
++
++#define BASE_CLK(p)		((p)->clk_base_addr)
++#define BASE_PORT(p)		((p)->port_base_addr)
++#define PTP_MMD(p)		((p)->mmd)
++
++enum ptp_fifo_dir {
++	PTP_INGRESS_FIFO,
++	PTP_EGRESS_FIFO
++};
++
++struct mchp_ptp_clock {
++	struct mii_timestamper mii_ts;
++	struct phy_device *phydev;
++
++	struct sk_buff_head tx_queue;
++	struct sk_buff_head rx_queue;
++
++	struct list_head rx_ts_list;
++	/* Lock for Rx ts fifo */
++	spinlock_t rx_ts_lock;
++
++	int hwts_tx_type;
++	enum hwtstamp_rx_filters rx_filter;
++	int layer;
++	int version;
++
++	struct ptp_clock *ptp_clock;
++	struct ptp_clock_info caps;
++
++	/* Lock for phc */
++	struct mutex ptp_lock;
++
++	u16 port_base_addr;
++	u16 clk_base_addr;
++	u8 mmd;
++};
++
++struct mchp_ptp_rx_ts {
++	struct list_head list;
++	u32 seconds;
++	u32 nsec;
++	u16 seq_id;
++};
++
++struct mchp_ptp_clock *mchp_ptp_probe(struct phy_device *phydev, u8 mmd,
++				      u16 clk_base, u16 port_base);
++
++int mchp_config_ptp_intr(struct mchp_ptp_clock *ptp_clock,
++			 u16 reg, u16 val, bool enable);
++
++irqreturn_t mchp_ptp_handle_interrupt(struct mchp_ptp_clock *ptp_clock);
++
++#else
++
++static inline struct mchp_ptp_clock *mchp_ptp_probe(struct phy_device *phydev,
++						    u8 mmd, u16 clk_base,
++						    u16 port_base)
++{
++	return 0;
++}
++
++static inline int mchp_config_ptp_intr(struct mchp_ptp_clock *ptp_clock,
++				       u16 reg, u16 val, bool enable)
++{
++	return 0;
++}
++
++static inline irqreturn_t mchp_ptp_handle_interrupt(struct mchp_ptp_clock *ptp_clock)
++{
++	return IRQ_NONE;
++}
++
++#endif //CONFIG_NETWORK_PHY_TIMESTAMPING
++
++#endif //_MICROCHIP_PTP_H
+-- 
+2.17.1
+
 
