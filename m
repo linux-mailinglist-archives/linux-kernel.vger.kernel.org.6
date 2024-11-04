@@ -1,106 +1,98 @@
-Return-Path: <linux-kernel+bounces-394433-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394434-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59E3B9BAF18
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 10:08:11 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C3E59BAF1A
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 10:08:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D1352825ED
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 09:08:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D3749B2369E
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 09:08:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD6491ABEC1;
-	Mon,  4 Nov 2024 09:07:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C46E21AAE30;
+	Mon,  4 Nov 2024 09:08:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="G8I+GZjB"
-Received: from out-175.mta0.migadu.com (out-175.mta0.migadu.com [91.218.175.175])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="ojaM3Bx2"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47A57189F47
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 09:07:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 666E219D8BE;
+	Mon,  4 Nov 2024 09:08:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730711276; cv=none; b=lJL0Z9V0CPL8/3B732YOks9E8YUizFLBqdZ9teXzz2KEif0L6R1U9iJVWjr/JLvgxhF6Lq6li6UDa2/XO7Ui8OzCx++Wi6G596X/nfUE6BjLzOan+S+jjJ3WeLz1uvr/GvDCUuVwOLHOaOdD19QVMMeZgUYln1HFHhSVFEh6HFY=
+	t=1730711283; cv=none; b=RhnnYCYJPeIg7HhjvxJADo60+hjxkluOCroG/0qWpZv1oZSxqR4hCqPUCFrsrUPPJHgcyo2ZfGr24y/F4F/cVvBKiY36syJTLn4TJdpxdsYHuRcX3BSqd19Sm4ARtAGQQqffZlYPi5fs8iSZn2m4hCoeUK6oCTXhDTsrhTG29uY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730711276; c=relaxed/simple;
-	bh=7AG4qVUkwZFOIyYdh/9T0tnmHf4IKmUf8QBaqSFwuwY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=dAdYJMsfmU2ZUJ2ZGL4E8+RP9Wz2LkgMY5t9T3kJUHhc/K/SaG7Hm77YElilXooj/TXF+p2tpLL10L4Ch7CTdbTOTFuZztOOzr5iz3ce59bWNA1eR52T+ChWCHefJo0z6bbk8mhmVIkt8eIcP8Mo+daL2+O0nwyybreC47FgpKM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=G8I+GZjB; arc=none smtp.client-ip=91.218.175.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1730711270;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=Mh+uxOp22bgHxfo2q4H0OrdD7oJsIQLnF9VKJ19HjM4=;
-	b=G8I+GZjBuRR17ujuAjfw/1wJ9OIktEqIzoWeUIJDSxh3VBkxqqRhtWaQ+dNlOldR7dYCYE
-	BS9mEpCIPyjREFvNZ7ZJaprEZP7p/cfBzF+dN1FrZHMBJKDCRiB8gfRhvd5tXAnTE1OyTq
-	R5dVcCEtZCxE5X6awlY6NOo2aLlHPas=
-From: Sui Jingfeng <sui.jingfeng@linux.dev>
-To: Rob Clark <robdclark@gmail.com>,
-	Sean Paul <sean@poorly.run>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Marijn Suijten <marijn.suijten@somainline.org>
-Cc: David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	linux-arm-msm@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	freedreno@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	Sui Jingfeng <sui.jingfeng@linux.dev>
-Subject: [PATCH] drm/msm: Check return value of of_dma_configure()
-Date: Mon,  4 Nov 2024 17:07:38 +0800
-Message-Id: <20241104090738.529848-1-sui.jingfeng@linux.dev>
+	s=arc-20240116; t=1730711283; c=relaxed/simple;
+	bh=nvTvcMq87NAEajnxg84zXbjs+exdQHrT/KIDHDbHkJA=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=alJtBdFh2/1E/4iukVNZV10AsS6/USk1LM0vYynxZg3QUqhap2KISKqZ+fUfusqdwh0wfmd+9fgd+/w4f0UAYFtJHiDzM1RS7TkH6m4GKG4xjBc1qzmFxSorZUIt5ArSpU63faic4/DveQRjmt7V+8WaJJqXKn/eZkmYjmYSmO4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=ojaM3Bx2; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1730711281; x=1762247281;
+  h=from:to:subject:date:message-id:mime-version;
+  bh=nvTvcMq87NAEajnxg84zXbjs+exdQHrT/KIDHDbHkJA=;
+  b=ojaM3Bx2FoINjEIqF1QRHxDctgIhmVliOYwLfDs7OL7scajBF+1IlJZR
+   Lk2kMNvRVdxw0ZnWlrPPd3YygkKhp2m2RicM08v9my2PLA99ZAtXjHWiO
+   GZXXMFgN9bIDAJeVKJGBamMi3S7oLiLqnEIbRqthu7w+7QLmX+hM7o63D
+   cCQ35ZsyNJ3lH+cIMP0x2VyW8sywPGFV42Cg/pYfHM8oRIVaOuDY+CIQz
+   dwYusMqZ5GaivkBTguHFcJntIG2TvY2S5HQ94X5s1jguTjLVPzZhsFDXF
+   aQ8hUa/yhFiwnW+FHfUkKxiNg2MlxsIimHXEIabvk+SNRRZy4Ree252UB
+   Q==;
+X-CSE-ConnectionGUID: b8mzosZWTB24zVJMTbB3MA==
+X-CSE-MsgGUID: vs7EqtfEQX2zAGjHUUNH8Q==
+X-IronPort-AV: E=Sophos;i="6.11,256,1725346800"; 
+   d="scan'208";a="201261156"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa6.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 04 Nov 2024 02:08:00 -0700
+Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Mon, 4 Nov 2024 02:07:56 -0700
+Received: from training-HP-280-G1-MT-PC.microchip.com (10.10.85.11) by
+ chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server id
+ 15.1.2507.35 via Frontend Transport; Mon, 4 Nov 2024 02:07:52 -0700
+From: Divya Koppera <divya.koppera@microchip.com>
+To: <andrew@lunn.ch>, <arun.ramadoss@microchip.com>,
+	<UNGLinuxDriver@microchip.com>, <hkallweit1@gmail.com>,
+	<linux@armlinux.org.uk>, <davem@davemloft.net>, <edumazet@google.com>,
+	<kuba@kernel.org>, <pabeni@redhat.com>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <richardcochran@gmail.com>
+Subject: [PATCH net-next 0/5] Add ptp library for Microchip phys
+Date: Mon, 4 Nov 2024 14:37:45 +0530
+Message-ID: <20241104090750.12942-1-divya.koppera@microchip.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain
 
-Because the of_dma_configure() will returns '-EPROBE_DEFER' if the probe
-procedure of the specific platform IOMMU driver is not finished yet. It
-can also return other error code for various reasons.
+Adds support of ptp library in Microchip phys
 
-Stop pretending that it will always suceess, quit if it fail.
+Divya Koppera (5):
+  net: phy: microchip_ptp : Add header file for Microchip ptp library
+  net: phy: microchip_ptp : Add ptp library for Microchip phys
+  net: phy: Kconfig: Add ptp library support and  1588 optional flag in
+    Microchip phys
+  net: phy: Makefile: Add makefile support for ptp in Microchip phys
+  net: phy: microchip_t1 : Add initialization of ptp for lan887x
 
-Signed-off-by: Sui Jingfeng <sui.jingfeng@linux.dev>
----
- drivers/gpu/drm/msm/adreno/a6xx_gmu.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ drivers/net/phy/Kconfig         |   9 +-
+ drivers/net/phy/Makefile        |   1 +
+ drivers/net/phy/microchip_ptp.c | 990 ++++++++++++++++++++++++++++++++
+ drivers/net/phy/microchip_ptp.h | 217 +++++++
+ drivers/net/phy/microchip_t1.c  |  29 +-
+ 5 files changed, 1242 insertions(+), 4 deletions(-)
+ create mode 100644 drivers/net/phy/microchip_ptp.c
+ create mode 100644 drivers/net/phy/microchip_ptp.h
 
-diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c b/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
-index 37927bdd6fbe..b26dfe0a76c5 100644
---- a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
-+++ b/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
-@@ -1605,7 +1605,9 @@ int a6xx_gmu_wrapper_init(struct a6xx_gpu *a6xx_gpu, struct device_node *node)
- 
- 	gmu->dev = &pdev->dev;
- 
--	of_dma_configure(gmu->dev, node, true);
-+	ret = of_dma_configure(gmu->dev, node, true);
-+	if (ret)
-+		return ret;
- 
- 	pm_runtime_enable(gmu->dev);
- 
-@@ -1670,7 +1672,9 @@ int a6xx_gmu_init(struct a6xx_gpu *a6xx_gpu, struct device_node *node)
- 
- 	gmu->dev = &pdev->dev;
- 
--	of_dma_configure(gmu->dev, node, true);
-+	ret = of_dma_configure(gmu->dev, node, true);
-+	if (ret)
-+		return ret;
- 
- 	/* Fow now, don't do anything fancy until we get our feet under us */
- 	gmu->idle_level = GMU_IDLE_STATE_ACTIVE;
 -- 
-2.34.1
+2.17.1
 
 
