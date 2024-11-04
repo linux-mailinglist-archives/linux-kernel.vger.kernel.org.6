@@ -1,111 +1,63 @@
-Return-Path: <linux-kernel+bounces-395687-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395688-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C1C89BC1AC
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 00:50:44 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FB2E9BC1AE
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 00:51:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DBA13B21869
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 23:50:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D87FE28167D
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 23:51:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A78BA1FE0F1;
-	Mon,  4 Nov 2024 23:50:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="PAupFm0e"
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0695139CFF
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 23:50:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C76D21FE0E5;
+	Mon,  4 Nov 2024 23:51:10 +0000 (UTC)
+Received: from angie.orcam.me.uk (angie.orcam.me.uk [78.133.224.34])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B784718C015;
+	Mon,  4 Nov 2024 23:51:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.133.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730764233; cv=none; b=NC8BwWfkenVgp6kWXo+uj6evHU+jIXKFIi+d/AHwivfuZtJNzstZSwsw/cbCR+Qc1H2Z4H4NaK7o9KdTz0A54R7Pd2WqgsNIQfrahQR67lccMlurjeBoCyzXqCzbEKeJ30zJvEq86Jmk9LAtAYgxRzkUemVnnl9+S+ZrVtonmg8=
+	t=1730764270; cv=none; b=RiINk7GFMP4GsAkFz8KLCZY2PtGa0mtGPAXtsNmkjQO5tcTLGz2Y2aNnMDDs/QRVTfRoTpCk2CSduRf1Evuqm1VE/AHcbJxX3tD4lOWe4VU+ORPfIgd0a4gfbtZ9HZt8qs26yl2onIJQ9+jjL17R6+W1BvwBHXwyXt4PvL1L3G4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730764233; c=relaxed/simple;
-	bh=XHPVifGKXEqy8LE0q970p31W+sJjEWNZsP8R4d+Uo/0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dFQQb2mKD9sDwqBJqMHR/Y/JZGzH2y1zEsCeV9RKeIgpu+xwbvoDgBNDSo93G1oyn3RZPyLGZmTmkDbdK6xeVzDbvwIqipQqiXuYcP3cttpoQMK51RE0jxDwOjk5Kco794cutbq2pM6zWUsdPWsrJ/dcMWxPDsGBOhxhnS39bo8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=PAupFm0e; arc=none smtp.client-ip=209.85.210.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-71e49ad46b1so4200522b3a.1
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 15:50:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fastly.com; s=google; t=1730764231; x=1731369031; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xDd2iS+HO9f2ODni7moor8fgiPBiv84xu1qF5aO0f1E=;
-        b=PAupFm0eJU7oNszuHR2EeZK4hapGIJPeBS8WlM8xPtypTNhw2aO46E27q2yuXrq6Bk
-         DT7nizFxDqRWYe1NkbBl0n0JIAton2M8UXAPc+DOL/7Dt/3IWsvtk5Ff5ZZvVm0M3MTh
-         aSMAKyfnTALzmerGhwNuWMGXyxqf560gmpK1U=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730764231; x=1731369031;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xDd2iS+HO9f2ODni7moor8fgiPBiv84xu1qF5aO0f1E=;
-        b=U4+UUvFZRCgvQxmIxDXLnE4a4QYnEzN4G12iUUQpV0Vb7cSQPiOH/CcVnzPDVeF7X7
-         aAHBdIGf606QcPLsw7t7+G7MSLwpVRfiBPre8KTFn9+CYb81EqOqQK4Sg2rR5CImY1Wp
-         8BFjNjvWzazILYv9zMztpx0qgWkjoNS63lTSM+RHoIheHnCJw58GI1G9dTIyGQ9rgCMB
-         /ztqGXcBg9Xur7Tbxesrcbn2U4tLVAFglXHsnxKGxQNRNxio2W9vZG/uA6D+z1xVWu/2
-         TtEPhUlPHwokT4K/9r4FFNrTY4KXX73uPPkWy4Opos4BU0fTNSa2RDCTfcVKokvLSq/G
-         SDFA==
-X-Forwarded-Encrypted: i=1; AJvYcCWrtHsiFtISXWAlH8ehiisGf7/IrUjVWm16BFqgdTOf8k3dZVp+0uJeYsp8aP7lxsL5A8K38i3Xwa0d4gk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywn0o0eDuYPX9l74YFDQUJ1fvY0qlm75XWWJG/dmkiqjCa6rIwp
-	u46sfGdTV+UyUk50tuIQHVwugO2KOpQMhpV6oDriMkuhK14L/0rM82Y2ktxpHaRm+NCv+r60ZZ0
-	0
-X-Google-Smtp-Source: AGHT+IHWzRXiGYvo8KNQLD4r4zmqsgkH7TShcEy59N1FdgKJ1Bm2tsdY9K3y3uV5t2Tk3W5BdjOUug==
-X-Received: by 2002:a05:6a00:14c9:b0:71e:cf8:d6fa with SMTP id d2e1a72fcca58-72062fdad1bmr45801290b3a.15.1730764231110;
-        Mon, 04 Nov 2024 15:50:31 -0800 (PST)
-Received: from LQ3V64L9R2 (c-24-6-151-244.hsd1.ca.comcast.net. [24.6.151.244])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-720bc1ef8adsm8276729b3a.84.2024.11.04.15.50.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Nov 2024 15:50:30 -0800 (PST)
-Date: Mon, 4 Nov 2024 15:50:27 -0800
-From: Joe Damato <jdamato@fastly.com>
-To: Stanislav Fomichev <sdf@fomichev.me>
-Cc: netdev@vger.kernel.org, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, andrew+netdev@lunn.ch,
-	shuah@kernel.org, horms@kernel.org, almasrymina@google.com,
-	willemb@google.com, petrm@nvidia.com
-Subject: Re: [PATCH net-next v7 05/12] selftests: ncdevmem: Remove default
- arguments
-Message-ID: <Zyldw-Ozq7PqbicM@LQ3V64L9R2>
-Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
-	Stanislav Fomichev <sdf@fomichev.me>, netdev@vger.kernel.org,
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, andrew+netdev@lunn.ch,
-	shuah@kernel.org, horms@kernel.org, almasrymina@google.com,
-	willemb@google.com, petrm@nvidia.com
-References: <20241104181430.228682-1-sdf@fomichev.me>
- <20241104181430.228682-6-sdf@fomichev.me>
+	s=arc-20240116; t=1730764270; c=relaxed/simple;
+	bh=hzURyC9DN4sSJq8RqKFggFrKsbsIfB5dN0tDIK/DqNo=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=KvzbgeXTlNN1WHXaRZiG5OZDWvXrlXkj/Qu7AbH6YfbtiuE2CC7XRkfKjNwUPFF4NMl8o1eMk6EaE+GHvsnERPCfBwqFtyS6UOa/Hy27+p4eIwadlygvlnwsC8zaN+ynBh+s6SuAkeL49Jl5t7tzGBv+UmcbSOXtYG4iSPZkcbU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk; spf=none smtp.mailfrom=orcam.me.uk; arc=none smtp.client-ip=78.133.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=orcam.me.uk
+Received: by angie.orcam.me.uk (Postfix, from userid 500)
+	id EA6F992009C; Tue,  5 Nov 2024 00:51:05 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+	by angie.orcam.me.uk (Postfix) with ESMTP id E34FF92009B;
+	Mon,  4 Nov 2024 23:51:05 +0000 (GMT)
+Date: Mon, 4 Nov 2024 23:51:05 +0000 (GMT)
+From: "Maciej W. Rozycki" <macro@orcam.me.uk>
+To: Thorsten Blum <thorsten.blum@linux.dev>
+cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+    linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] MIPS: kernel: proc: Use str_yes_no() helper function
+In-Reply-To: <F2FC5695-440E-4A29-B683-4335452F6FAB@linux.dev>
+Message-ID: <alpine.DEB.2.21.2411042349440.9262@angie.orcam.me.uk>
+References: <20241102220437.22480-2-thorsten.blum@linux.dev> <alpine.DEB.2.21.2411031921020.9262@angie.orcam.me.uk> <F2FC5695-440E-4A29-B683-4335452F6FAB@linux.dev>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241104181430.228682-6-sdf@fomichev.me>
+Content-Type: text/plain; charset=US-ASCII
 
-On Mon, Nov 04, 2024 at 10:14:23AM -0800, Stanislav Fomichev wrote:
-> To make it clear what's required and what's not. Also, some of the
-> values don't seem like a good defaults; for example eth1.
-> 
-> Move the invocation comment to the top, add missing -s to the client
-> and cleanup the client invocation a bit to make more readable.
-> 
-> Reviewed-by: Mina Almasry <almasrymina@google.com>
-> Signed-off-by: Stanislav Fomichev <sdf@fomichev.me>
-> ---
->  tools/testing/selftests/net/ncdevmem.c | 61 ++++++++++++++++----------
->  1 file changed, 39 insertions(+), 22 deletions(-)
+On Tue, 5 Nov 2024, Thorsten Blum wrote:
 
-Reviewed-by: Joe Damato <jdamato@fastly.com>
+> > I like this cleanup, but now that it matters I suggest restructuring code 
+> > such that the latter `seq_printf' is converted as well.
+> 
+> What about the comma and newline? Using str_yes_no() would remove them.
+
+ This is why a minor code restructuring is needed so that the comma and 
+the new line are produced elsewhere (arguably a cleaner structure anyway).
+
+  Maciej
 
