@@ -1,300 +1,280 @@
-Return-Path: <linux-kernel+bounces-394245-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394246-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97AB59BAC5F
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 07:10:20 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B44D79BAC63
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 07:13:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BBC7A1C20F94
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 06:10:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E9AF2B212EB
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 06:13:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9897718C331;
-	Mon,  4 Nov 2024 06:10:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A27F18C357;
+	Mon,  4 Nov 2024 06:12:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="QPHDYCKd"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B30226FC5;
-	Mon,  4 Nov 2024 06:10:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="HpYzSPCG"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7ADED6FC5;
+	Mon,  4 Nov 2024 06:12:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730700609; cv=none; b=d+ZoVGGJ7zvUXcm2T4ubDQx6oUnEoSnUXiwVc3ArY6aKCHjqofz39CwItR0lMs0yp5yvIL3Z+NXJNmaCC4EmGtdG/k6ief+cBoxRnZQoeLLJaDnNdhNqPjxoDF94NN9Dit85hYkQBHhjBN4m8ukxWV6fV65ykLHMQ16RUhkM9w8=
+	t=1730700769; cv=none; b=IS3kd1JJoivfhyuow+hCbFfDZLn0uH4e07iW8btQ51AQB64uptS15MF+FYO8MeeAJMfT1NpTgNMvmb5/SiIaLDZGHP0ZP/VlxZm2pPjPdPXpIAJUm115PV2uyw6JXe92sONScg6HilwmPhTzVQ+aauB2NI2O3yxbLnYoPBq3gH0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730700609; c=relaxed/simple;
-	bh=O31O2O5Ml9DeUY+KrstEERdkkjDklegiNijd/LOR5Sk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=FOaTIZUIvAdMr1SyPrHJqraC2KflIZYMXq3d7yTRxhcT4HvjkcTQ9NIm+QWCok7+iuOqdPC14hU/Xbvt8zyCkVuWVVrQkWmCmo9BkqrXuBRr4lwTzqwlggwBcpKoHIgGWIeBDifxuEmD22vww/u56cVbWZD0ptbbeUbMZQCTCCk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=QPHDYCKd; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A3Nmqms007472;
-	Mon, 4 Nov 2024 06:09:40 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	sUEJwqIyHQe/eNtDprQ+WF121QuOoETVna1GcAuX+eU=; b=QPHDYCKdJt828Z+2
-	kki706orZdDmVzjxCgD+UX6rQrITSLRwubhqaQQtofr6erCJLyy46i6gFotg9HPw
-	kmdY8zWoge0/VXse2lS3rYvgXR6mfHX16fK7Qs6OWkjldkG5HWOgVev9Hr6O/8VM
-	wK21UMeaaVCeWHe6VgMqIZu9d4JWdR9kdjT/pvqpV9weY9JhRprx57j3cv1XCGrR
-	kWg8uS3iXY7MObt5sMoVLFE20XIE4+qd/El3aqaEexMDzywBmVCj1U2VAzAM/CL+
-	sXJSYkwrP/Zb9t7sVw+J+ZnTyK+PaC5FLSlg5aD63YTaBWEs9n2pekgA9CXDXtdk
-	2YYJOg==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42nd2s37s8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 04 Nov 2024 06:09:40 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4A469cK2007605
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 4 Nov 2024 06:09:39 GMT
-Received: from [10.216.5.99] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 3 Nov 2024
- 22:09:34 -0800
-Message-ID: <629873af-74f1-0c31-5239-b2703fe6405a@quicinc.com>
-Date: Mon, 4 Nov 2024 11:39:31 +0530
+	s=arc-20240116; t=1730700769; c=relaxed/simple;
+	bh=ki9vFG3nfLFbUqAXf6jzfsbvTSQlqjL9yWAin/0ah8U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EqQDAhT1I72Kvhpod/HWxfGR/6c9MOpTtj+hKEydT8UNz1FZ1h4B3VgJ95YYo9EWTs5xMnAng0GExT10/C+Lw/MQy/vy39RyH7cmVONvNhd4tHAYlcB+odhRqnMJ9IwT9NKKrfWdZ551r0/gw97mJW5ahFzlOoO79ojyPF5jXtc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=HpYzSPCG; arc=none smtp.client-ip=220.197.31.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
+	Content-Type; bh=paESjsr5A0A1ELZZUT9Rrg6vQ8i0QK8Ld0xxSWGQ1xY=;
+	b=HpYzSPCGh50YAd9lmjiig+zFH7EvrjVB71Fdrw61xeSO9G6HxBdQBxiNX3v5VS
+	PTW9s8LnnTrYSETLmwWfwc1HOCLyS827jFC+dxV+AZNxaCI56gnCY3Quz6xnhQsc
+	mVNdCurcKVgiHBQsMXW/r/M4AHtz5BUrQJ5HlWnGEFylE=
+Received: from iZ0xi1olgj2q723wq4k6skZ (unknown [47.252.33.72])
+	by gzga-smtp-mtada-g1-0 (Coremail) with SMTP id _____wDXPybOZShnwx48Ag--.2216S2;
+	Mon, 04 Nov 2024 14:12:34 +0800 (CST)
+Date: Mon, 4 Nov 2024 14:12:29 +0800
+From: Jiayuan Chen <mrpre@163.com>
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: netdev@vger.kernel.org, bpf@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, martin.lau@kernel.org
+Subject: Re: [PATCH 1/2] bpf: Introduce cpu affinity for sockmap
+Message-ID: <gbtlzrhme5yrbvlwkswlzz44lims7dymougc7376c5hugosqqh@qqrjg6wtmnan>
+References: <20241101023832.32404-1-mrpre@163.com>
+ <CAEf4BzbVqcCN1p8ydLN17LygK5R=gBYJV0A-cnycjtsUzrX34g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH v6 2/2] PCI: Enable runtime pm of the host bridge
-To: Bjorn Helgaas <helgaas@kernel.org>
-CC: Kevin Xie <kevin.xie@starfivetech.com>,
-        Lorenzo Pieralisi
-	<lpieralisi@kernel.org>,
-        =?UTF-8?Q?Krzysztof_Wilczy=c5=84ski?=
-	<kw@linux.com>,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        "Rob Herring" <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-        <Markus.Elfring@web.de>, <quic_mrana@quicinc.com>, <rafael@kernel.org>,
-        <m.szyprowski@samsung.com>, <linux-pm@vger.kernel.org>,
-        <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20241101222019.GA1318435@bhelgaas>
-Content-Language: en-US
-From: Krishna Chaitanya Chundru <quic_krichai@quicinc.com>
-In-Reply-To: <20241101222019.GA1318435@bhelgaas>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: x91juxvf9rHHA_HdXc-ZrGVh5K_kJ7O2
-X-Proofpoint-GUID: x91juxvf9rHHA_HdXc-ZrGVh5K_kJ7O2
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0
- lowpriorityscore=0 mlxlogscore=999 clxscore=1015 suspectscore=0
- adultscore=0 priorityscore=1501 bulkscore=0 mlxscore=0 malwarescore=0
- spamscore=0 impostorscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2409260000 definitions=main-2411040053
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAEf4BzbVqcCN1p8ydLN17LygK5R=gBYJV0A-cnycjtsUzrX34g@mail.gmail.com>
+X-CM-TRANSID:_____wDXPybOZShnwx48Ag--.2216S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW3GF4kWr4xGFyDWr4fKF13twb_yoW3KF4rpF
+	Z5Ga1UCF4DJayUZw1aq3yUWr4avw48G3WjkFZxKa4Yyr9IgrykWF18KF1a9F1fur4kCr40
+	vrW2gryjk3yUZaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07U7R67UUUUU=
+X-CM-SenderInfo: xpus2vi6rwjhhfrp/1tbiWwmNp2coXlurDQAAsU
 
+On Fri, Nov 01, 2024 at 12:25:51PM -0700, Andrii Nakryiko wrote:
+> On Thu, Oct 31, 2024 at 7:40 PM mrpre <mrpre@163.com> wrote:
+> >
+> > Why we need cpu affinity:
+> > Mainstream data planes, like Nginx and HAProxy, utilize CPU affinity
+> > by binding user processes to specific CPUs. This avoids interference
+> > between processes and prevents impact from other processes.
+> >
+> > Sockmap, as an optimization to accelerate such proxy programs,
+> > currently lacks the ability to specify CPU affinity. The current
+> > implementation of sockmap handling backlog is based on workqueue,
+> > which operates by calling 'schedule_delayed_work()'. It's current
+> > implementation prefers to schedule on the local CPU, i.e., the CPU
+> > that handled the packet under softirq.
+> >
+> > For extremely high traffic with large numbers of packets,
+> > 'sk_psock_backlog' becomes a large loop.
+> >
+> > For multi-threaded programs with only one map, we expect different
+> > sockets to run on different CPUs. It is important to note that this
+> > feature is not a general performance optimization. Instead, it
+> > provides users with the ability to bind to specific CPU, allowing
+> > them to enhance overall operating system utilization based on their
+> > own system environments.
+> >
+> > Implementation:
+> > 1.When updating the sockmap, support passing a CPU parameter and
+> > save it to the psock.
+> > 2.When scheduling psock, determine which CPU to run on using the
+> > psock's CPU information.
+> > 3.For thoes sockmap without CPU affinity, keep original logic by using
+> > 'schedule_delayed_work()'.
+> >
+> > Performance Testing:
+> > 'client <-> sockmap proxy <-> server'
+> >
+> > Using 'iperf3' tests, with the iperf server bound to CPU5 and the iperf
+> > client bound to CPU6, performance without using CPU affinity is
+> > around 34 Gbits/s, and CPU usage is concentrated on CPU5 and CPU6.
+> > '''
+> > [  5] local 127.0.0.1 port 57144 connected to 127.0.0.1 port 10000
+> > [ ID] Interval           Transfer     Bitrate
+> > [  5]   0.00-1.00   sec  3.95 GBytes  33.9 Gbits/sec
+> > [  5]   1.00-2.00   sec  3.95 GBytes  34.0 Gbits/sec
+> > ......
+> > '''
+> >
+> > With using CPU affinity, the performnce is close to direct connection
+> > (without any proxy).
+> > '''
+> > [  5] local 127.0.0.1 port 56518 connected to 127.0.0.1 port 10000
+> > [ ID] Interval           Transfer     Bitrate
+> > [  5]   0.00-1.00   sec  7.76 GBytes  66.6 Gbits/sec
+> > [  5]   1.00-2.00   sec  7.76 GBytes  66.7 Gbits/sec
+> > ......
+> > '''
+> >
+> > Signed-off-by: Jiayuan Chen <mrpre@163.com>
+> > ---
+> >  include/linux/bpf.h      |  3 ++-
+> >  include/linux/skmsg.h    |  8 ++++++++
+> >  include/uapi/linux/bpf.h |  4 ++++
+> >  kernel/bpf/syscall.c     | 23 +++++++++++++++++------
+> >  net/core/skmsg.c         | 11 +++++++----
+> >  net/core/sock_map.c      | 12 +++++++-----
+> >  6 files changed, 45 insertions(+), 16 deletions(-)
+> >
+> > diff --git a/include/linux/bpf.h b/include/linux/bpf.h
+> > index c3ba4d475174..a56028c389e7 100644
+> > --- a/include/linux/bpf.h
+> > +++ b/include/linux/bpf.h
+> > @@ -3080,7 +3080,8 @@ int bpf_prog_test_run_syscall(struct bpf_prog *prog,
+> >
+> >  int sock_map_get_from_fd(const union bpf_attr *attr, struct bpf_prog *prog);
+> >  int sock_map_prog_detach(const union bpf_attr *attr, enum bpf_prog_type ptype);
+> > -int sock_map_update_elem_sys(struct bpf_map *map, void *key, void *value, u64 flags);
+> > +int sock_map_update_elem_sys(struct bpf_map *map, void *key, void *value, u64 flags,
+> > +                            s32 target_cpu);
+> >  int sock_map_bpf_prog_query(const union bpf_attr *attr,
+> >                             union bpf_attr __user *uattr);
+> >  int sock_map_link_create(const union bpf_attr *attr, struct bpf_prog *prog);
+> > diff --git a/include/linux/skmsg.h b/include/linux/skmsg.h
+> > index d9b03e0746e7..919425a92adf 100644
+> > --- a/include/linux/skmsg.h
+> > +++ b/include/linux/skmsg.h
+> > @@ -117,6 +117,7 @@ struct sk_psock {
+> >         struct delayed_work             work;
+> >         struct sock                     *sk_pair;
+> >         struct rcu_work                 rwork;
+> > +       s32                             target_cpu;
+> >  };
+> >
+> >  int sk_msg_alloc(struct sock *sk, struct sk_msg *msg, int len,
+> > @@ -514,6 +515,13 @@ static inline bool sk_psock_strp_enabled(struct sk_psock *psock)
+> >         return !!psock->saved_data_ready;
+> >  }
+> >
+> > +static inline int sk_psock_strp_get_cpu(struct sk_psock *psock)
+> > +{
+> > +       if (psock->target_cpu != -1)
+> > +               return psock->target_cpu;
+> > +       return WORK_CPU_UNBOUND;
+> > +}
+> > +
+> >  #if IS_ENABLED(CONFIG_NET_SOCK_MSG)
+> >
+> >  #define BPF_F_STRPARSER        (1UL << 1)
+> > diff --git a/include/uapi/linux/bpf.h b/include/uapi/linux/bpf.h
+> > index f28b6527e815..2019a87b5d4a 100644
+> > --- a/include/uapi/linux/bpf.h
+> > +++ b/include/uapi/linux/bpf.h
+> > @@ -1509,6 +1509,10 @@ union bpf_attr {
+> >                         __aligned_u64 next_key;
+> >                 };
+> >                 __u64           flags;
+> > +               union {
+> > +                       /* specify the CPU where the sockmap job run on */
+> > +                       __aligned_u64 target_cpu;
+> 
+> I have no opinion on the feature itself, I'll leave this to others.
+> But from UAPI perspective:
+> 
+> a) why is this a u64 and not, say, int?
+> b) maybe we should just specify this as flags and not have to update
+> all the UAPIs (including libbpf-side)? Just add a new
+> BPF_F_SOCKNMAP_TARGET_CPU flag or something, and specify that highest
+> 32 bits specify the CPU itself?
+> 
+> We have similar schema for some other helpers, so not *that* unusual.
+> 
+Thank you for your response. I think I should clarify my thoughts:
 
+My idea is to pass a user-space pointer, with the pointer being null
+to indicate that the user has not provided anything.For example, when
+users use the old interface 'bpf_map_update_elem' and pass in u64 of
+0, it means that the user hasn't specified a CPU. If a u32 or another
+type of value is passed in, when it is 0, it's ambiguous whether this
+indicates target CPU 0 or that the user hasn't provided a value. So
+my design involves passing a user-space pointer.
 
-On 11/2/2024 3:50 AM, Bjorn Helgaas wrote:
-> On Fri, Nov 01, 2024 at 07:04:46AM +0530, Krishna Chaitanya Chundru wrote:
->> On 10/29/2024 9:05 PM, Bjorn Helgaas wrote:
->>> On Thu, Oct 17, 2024 at 09:05:51PM +0530, Krishna chaitanya chundru wrote:
->>>> The Controller driver is the parent device of the PCIe host bridge,
->>>> PCI-PCI bridge and PCIe endpoint as shown below.
->>>>
->>>>           PCIe controller(Top level parent & parent of host bridge)
->>>>                           |
->>>>                           v
->>>>           PCIe Host bridge(Parent of PCI-PCI bridge)
->>>>                           |
->>>>                           v
->>>>           PCI-PCI bridge(Parent of endpoint driver)
->>>>                           |
->>>>                           v
->>>>                   PCIe endpoint driver
->>>>
->>>> Now, when the controller device goes to runtime suspend, PM framework
->>>> will check the runtime PM state of the child device (host bridge) and
->>>> will find it to be disabled. So it will allow the parent (controller
->>>> device) to go to runtime suspend. Only if the child device's state was
->>>> 'active' it will prevent the parent to get suspended.
->>>>
->>>> It is a property of the runtime PM framework that it can only
->>>> follow continuous dependency chains.  That is, if there is a device
->>>> with runtime PM disabled in a dependency chain, runtime PM cannot be
->>>> enabled for devices below it and above it in that chain both at the
->>>> same time.
->>>>
->>>> Since runtime PM is disabled for host bridge, the state of the child
->>>> devices under the host bridge is not taken into account by PM framework
->>>> for the top level parent, PCIe controller. So PM framework, allows
->>>> the controller driver to enter runtime PM irrespective of the state
->>>> of the devices under the host bridge. And this causes the topology
->>>> breakage and also possible PM issues like controller driver goes to
->>>> runtime suspend while endpoint driver is doing some transfers.
->>>>
->>>> Because of the above, in order to enable runtime PM for a PCIe
->>>> controller device, one needs to ensure that runtime PM is enabled for
->>>> all devices in every dependency chain between it and any PCIe endpoint
->>>> (as runtime PM is enabled for PCIe endpoints).
->>>>
->>>> This means that runtime PM needs to be enabled for the host bridge
->>>> device, which is present in all of these dependency chains.
->>>
->>> Earlier I asked about how we can verify that no other drivers need a
->>> change like the starfive one:
->>> https://lore.kernel.org/r/20241012140852.GA603197@bhelgaas
->>
->> I added those details in cover letter as you suggested to add them in
->> cover letter.
-> 
-> Indeed I did suggest it for the cover letter, sorry for my confusion
-> at not finding it in the commit log.
-> 
-> I actually think we need something in the patch commit log itself,
-> since the cover letter doesn't make it into git.
-> 
-> And probably a comment in the code as well, since this seems to change
-> the requirements on the callers of pci_host_probe().
-> 
-ack
->> "PM framework expectes parent runtime pm enabled before enabling runtime
->> pm of the child. As PCIe starfive device is enabling runtime pm after
->> the pci_host_probe which enables runtime pm of the child device i.e for
->> the bridge device a warning is shown saying "pcie-starfive 940000000.pcie:
->> Enabling runtime PM for inactive device with active children" and also
->> shows possible circular locking dependency detected message.
->>
->> As it is must to enable parent device's runtime PM before enabling child's
->> runtime pm as the pcie-starfive device runtime pm is enabled after child
->> runtime starfive device is seeing the warning.
->>
->> In the first patch fix the pcie-starfive driver by enabling runtime
->> pm before calling pci_host_probe().
->>
->> All other PCIe controller drivers are enabling runtime pm before
->> calling pci_host_probe() which is as expected so don't require any
->> fix like pcie-starfive driver."
-> 
-> I'm sure that you looked at the following paths through
-> pci_host_common_probe(), which as far as I can tell, do not call
-> pm_runtime_enable() before pci_host_probe():
-> 
->    apple_pcie_probe
->      pci_host_common_probe
->        pci_host_probe
-> 
->    mc_host_probe
->      pci_host_common_probe
->        pci_host_probe
-> 
-> And the following use pci_host_common_probe() directly as their
-> .probe() method:
-> 
->    gen_pci_driver in pci-host-common.c
->    thunder_ecam_driver in pci-thunder-ecam.c
->    thunder_pem_driver in pci-thunder-pem.c
->    hisi_pcie_almost_ecam_driver in dwc/pcie-hisi.c
->    
-> Are all these safe as well?  These all end up in pci_host_probe()
-> without having done anything to enable runtime PM on the
-> PCIe controller platform_device.
-> 
-these drivers are not calling runtime_pm_enable in their drivers and
-due to that it will not have any impact on these drivers.
-> Looking at your diagram above, IIUC this patch enables runtime PM for
-> the PCIe host bridge, and the requirement is that runtime PM is
-> already enabled for the PCIe controller above it?
-> 
-> Is it always *possible* for that PCIe controller to enable runtime PM?
-> Might there exist PCIe controllers that cannot enable runtime PM
-> because they lack something in hardware or in the driver?
-> 
-> Maybe this patch should only enable runtime PM for the host bridge if
-> the controller already has runtime PM enabled?
-> 
-irrespective of the controller runtime pm, we can enable host bridge
-runtime pm. if the controller driver want to enable runtime pm they
-need to make sure runtime pm is enabled before we enable the runtime
-of the host bridge, otherwise it will not have any impact as they are
-not even registering with runtime pm here.
+I also considered using the highest 32 bits of the flag as target_cpu, but
+this approach still encounters the ambiguity mentioned above. Of course
+for programs using libbpf, I can naturally init all the higher 32 bits
+default to 1 to indicate the user hasn't specified a CPU, but this is
+incompatible with programs not using libbpf. Another approach could be
+that a value of 1 for the higher 32 bits indicates CPU 0, and 2 indicates
+CPU 1..., but this seems odd and would require a helper to assist users
+in passing arguments.
 
->>> I guess this sentence is basically how we verify all drivers are safe
->>> with this change?
->>>
->>> Since this patch adds devm_pm_runtime_enable() in pci_host_probe(),
->>> can we expand this along the lines of this so it's more specific about
->>> what we need to verify?
->>>
->>>     Every host bridge driver must call pm_runtime_enable() before
->>>     runtime PM is enabled by pci_host_probe().
->>>
->>> Please correct me if that's not the right requirement.>
->>
->> yes this is correct requirement only. Do you want us to add this for
->> this patch .
-> 
-> I would like to have a one-sentence statement of what the callers need
-> to do, including the actual function names.  Otherwise it's a pretty
-> big burden on reviewers to verify things.
-> 
-ack, once above discussions gets concluded I will send a new patch
-series with these details.
+There is another method, like providing an extra 'attr', to replace the
+passed 'target_cpu', which maintains the general nature of 
+'map_update_elem' interface, like:
+'''
++struct extra_bpf_attr {
++    u32 target_cpu;
++};
+struct { /* anonymous struct used by BPF_MAP_*_ELEM commands */
+    __u32   map_fd;
+    __aligned_u64 key;
+    union {
+        __aligned_u64 value;
+        __aligned_u64 next_key;
+    };
+    __u64   flags;
+    +struct extra_bpf_attr extra;
+};
 
-- Krishna chaitanya
->>>> After this change, the host bridge device will be runtime-suspended
->>>> by the runtime PM framework automatically after suspending its last
->>>> child and it will be runtime-resumed automatically before resuming its
->>>> first child which will allow the runtime PM framework to track
->>>> dependencies between the host bridge device and all of its
->>>> descendants.
->>>>
->>>> Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
->>>> Signed-off-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
->>>> ---
->>>> Changes in v6:
->>>> - no change
->>>> Changes in v5:
->>>> - call pm_runtime_no_callbacks() as suggested by Rafael.
->>>> - include the commit texts as suggested by Rafael.
->>>> - Link to v4: https://lore.kernel.org/linux-pci/20240708-runtime_pm-v4-1-c02a3663243b@quicinc.com/
->>>> Changes in v4:
->>>> - Changed pm_runtime_enable() to devm_pm_runtime_enable() (suggested by mayank)
->>>> - Link to v3: https://lore.kernel.org/lkml/20240609-runtime_pm-v3-1-3d0460b49d60@quicinc.com/
->>>> Changes in v3:
->>>> - Moved the runtime API call's from the dwc driver to PCI framework
->>>>     as it is applicable for all (suggested by mani)
->>>> - Updated the commit message.
->>>> - Link to v2: https://lore.kernel.org/all/20240305-runtime_pm_enable-v2-1-a849b74091d1@quicinc.com
->>>> Changes in v2:
->>>> - Updated commit message as suggested by mani.
->>>> - Link to v1: https://lore.kernel.org/r/20240219-runtime_pm_enable-v1-1-d39660310504@quicinc.com
->>>> ---
->>>>    drivers/pci/probe.c | 5 +++++
->>>>    1 file changed, 5 insertions(+)
->>>>
->>>> diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
->>>> index 4f68414c3086..8409e1dde0d1 100644
->>>> --- a/drivers/pci/probe.c
->>>> +++ b/drivers/pci/probe.c
->>>> @@ -3106,6 +3106,11 @@ int pci_host_probe(struct pci_host_bridge *bridge)
->>>>    		pcie_bus_configure_settings(child);
->>>>    	pci_bus_add_devices(bus);
->>>> +
->>>> +	pm_runtime_set_active(&bridge->dev);
->>>> +	pm_runtime_no_callbacks(&bridge->dev);
->>>> +	devm_pm_runtime_enable(&bridge->dev);
->>>> +
->>>>    	return 0;
->>>>    }
->>>>    EXPORT_SYMBOL_GPL(pci_host_probe);
->>>>
->>>> -- 
->>>> 2.34.1
->>>>
+static int bpf_map_update_value(struct bpf_map *map, struct file *map_file,
+-                               void *key, void *value, __u64 flags)
++                               void *key, void *value, __u64 flags, struct bpf_attr_extra *extra);
+'''
+
+> > +               };
+> >         };
+> >
+> >         struct { /* struct used by BPF_MAP_*_BATCH commands */
+> > diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
+> > index 8254b2973157..95f719b9c3f3 100644
+> > --- a/kernel/bpf/syscall.c
+> > +++ b/kernel/bpf/syscall.c
+> > @@ -239,10 +239,9 @@ static int bpf_obj_pin_uptrs(struct btf_record *rec, void *obj)
+> >  }
+> >
+> >  static int bpf_map_update_value(struct bpf_map *map, struct file *map_file,
+> > -                               void *key, void *value, __u64 flags)
+> > +                               void *key, void *value, __u64 flags, s32 target_cpu)
+> 
+> yeah, this is what I'm talking about. Think how ridiculous it is for a
+> generic "BPF map update" operation to accept the "target_cpu"
+> parameter.
+> 
+> pw-bot: cr
+> 
+> >  {
+> >         int err;
+> > -
+> 
+> why? don't break whitespace formatting
+> 
+> >         /* Need to create a kthread, thus must support schedule */
+> >         if (bpf_map_is_offloaded(map)) {
+> >                 return bpf_map_offload_update_elem(map, key, value, flags);
+> > @@ -252,7 +251,7 @@ static int bpf_map_update_value(struct bpf_map *map, struct file *map_file,
+> >                 return map->ops->map_update_elem(map, key, value, flags);
+> >         } else if (map->map_type == BPF_MAP_TYPE_SOCKHASH ||
+> >                    map->map_type == BPF_MAP_TYPE_SOCKMAP) {
+> > -               return sock_map_update_elem_sys(map, key, value, flags);
+> > +               return sock_map_update_elem_sys(map, key, value, flags, target_cpu);
+> >         } else if (IS_FD_PROG_ARRAY(map)) {
+> >                 return bpf_fd_array_map_update_elem(map, map_file, key, value,
+> >                                                     flags);
+> 
+> [...]
+
 
