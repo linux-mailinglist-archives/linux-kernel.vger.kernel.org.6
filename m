@@ -1,144 +1,124 @@
-Return-Path: <linux-kernel+bounces-395663-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395664-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CD709BC15A
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 00:22:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B64FF9BC15D
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 00:24:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E14E4282AD4
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 23:22:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7AE412829F8
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 23:24:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D80BC1FCC73;
-	Mon,  4 Nov 2024 23:22:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A3531FDF8D;
+	Mon,  4 Nov 2024 23:24:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h5JG2yRA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l41MyBwY"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B35C3C6BA;
-	Mon,  4 Nov 2024 23:22:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3474F3C6BA;
+	Mon,  4 Nov 2024 23:24:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730762534; cv=none; b=c9bE6nQ4W2OFLwmKThvUcVer88l7OylgAZP6fV4B31dXkN0lQHh8AzA0F/3LZp8s+GSpdV7q7aj4YRBmueiSbTi7sIy0h8c/cJzXV/6/7lp6nUwkTLaU9gzz/omDnmy/HfjbOL/+TqH8uMaCXEm8ljwaTscsW08iZyil+qZ5A2Q=
+	t=1730762649; cv=none; b=CBdbO+4Kve01WWbMtTW2GjkHKpdQGunDzWBaxnbqyQZZCE28lTtZGJFuDUCt8zCwbejH3no0EqGXNIeL7noHRYZldgrPnzBEdQ0MLpQK8BmecOi9N9LoUMnPoRmxIQ9Tgp7qPYQPMqtbfslePiZrDvTD5yW6m2ahU8zqn2ATzXo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730762534; c=relaxed/simple;
-	bh=GdJwSfKUqTDy07ce4q/7vwI85c4xMt3VIdX6qK2UUI4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CPjcd/Fz1ZuHUIULJnim4x5+yN35MIzhvFEcq/umJ+o+huPeeaCwNKN/QvXGOGn8+JgB6k+4YX/FhEtotRzDx6jvi8vXMV4c5DcP8c0iz8jaF/+ALWrMsa1i8uXLz6JW8/tqQubf52FWAMExAC2JRxTbNQc400MPcvrXFpYrf9w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h5JG2yRA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 00050C4CECE;
-	Mon,  4 Nov 2024 23:22:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730762533;
-	bh=GdJwSfKUqTDy07ce4q/7vwI85c4xMt3VIdX6qK2UUI4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=h5JG2yRAe/OPI8CFWltbrblYdIokgfpSTpOjJJYPocHI8dEuus9LmXhrIGA7KRgzu
-	 mT+c+CRZqFjbxgDoBzTGDX9t5E18icQqjLayat60YxQQGEhwf/2za9qv4ur3ynm1rB
-	 UpSOq5UuQvGKT2MKJCVxaI/P0Opkg1Xp8wNllF+qbb3kUNJNCEYEJlDRYCf9rdVKI4
-	 yGvLzmFf57iq0I2iZoYK729awiaYmN4sseESk7VRWLltJ3F8XQVLMzZljtLs3btOv7
-	 4+fN0z8YnN2tNZM+ChiCmyFPXMpMIKmh1LdoXG+wqdbPbaVFuW70ylZ42OCyKByw8b
-	 Yc72YW0DsHCzg==
-Date: Mon, 4 Nov 2024 15:22:11 -0800
-From: Namhyung Kim <namhyung@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	James Clark <james.clark@linaro.org>,
-	Howard Chu <howardchu95@gmail.com>,
-	Athira Jajeev <atrajeev@linux.vnet.ibm.com>,
-	Michael Petlan <mpetlan@redhat.com>,
-	Veronika Molnarova <vmolnaro@redhat.com>,
-	Dapeng Mi <dapeng1.mi@linux.intel.com>,
-	Thomas Richter <tmricht@linux.ibm.com>,
-	Ilya Leoshkevich <iii@linux.ibm.com>,
-	Colin Ian King <colin.i.king@gmail.com>,
-	Weilin Wang <weilin.wang@intel.com>,
-	Andi Kleen <ak@linux.intel.com>,
-	Josh Poimboeuf <jpoimboe@redhat.com>, linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH v5 06/21] perf script: Move find_scripts to
- browser/scripts.c
-Message-ID: <ZylXI4zj7Hs8Uvov@google.com>
-References: <ZyPX7ayIO4teziDX@x1>
- <CAP-5=fVgJu8BJWFVUkCy1Zsi3piTPdV-GXL1bTpWZeO=nm=jrg@mail.gmail.com>
- <Zykk2MJ4REGCaqVw@google.com>
- <CAP-5=fXQpej43wxEtMYFbxdofHtUi98X68W4AaR9UCfsbDir5A@mail.gmail.com>
- <ZykxD41c6gWQoIrQ@x1>
- <CAP-5=fWf8guTgqwfrrct3AGYDC=Lb1Oxo7kXU_x1yEr5urFSkQ@mail.gmail.com>
- <Zyk19KgzI7ybPkQ4@google.com>
- <CAP-5=fXj1-wqt+Bs-0ZypRsaZw2VP0qyKdeeRHpjUD5BwO9OBg@mail.gmail.com>
- <ZylGJF7Ux3JdJllo@google.com>
- <CAP-5=fUz_LSJ4v4aaAWoLMQRXAtsqeQSjcyRun2kBVXUHTzvUA@mail.gmail.com>
+	s=arc-20240116; t=1730762649; c=relaxed/simple;
+	bh=VY2BICNr1OBOM7eB3xGIZqvFEJnWLz0g/DQUSXE7WuY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=q73lVkFgBrSUyn7eFISiQUBA/dF4X86cvjAgIz91opHmOIVE4rmuboxnGXHlD6U8nOhzh2bnHhd2x/vEmil990hJx2ZzocbqemOqNd3FcPvPCnAV7DxwsInNhiW+tllfoSUARrxffDkk7vPfmTXB6dtnHHGc7qocdxe6h4VpPPQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l41MyBwY; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-43167ff0f91so42692675e9.1;
+        Mon, 04 Nov 2024 15:24:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730762646; x=1731367446; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=E/AJelCwUAatEpHj0W+/VFCFi8oaAAF1DPEUolZ3lZk=;
+        b=l41MyBwYVudyVnnyo3WW+kAjPqUKjHM9Kz8jZDYyFaRRtFM8QswQzYVdl8Ao7+89jB
+         7kFcO6KyIqBBPFh8CxKROKtAthcl1wrWosJ+R7H0e2rTDiy4zZ98IvstSDIMR1EyAKkx
+         H950nqAw3pCoIX2r0IjCwxMfJoLKIGCRDARgloZtBwU5R1lr4bGFWPGJUjPvVmx72Y0H
+         FXhDeGiPMY6SxP0jfZOEbBDFf7Wy8bgSYpzdGJpilggXIzyPXKY5gOKzyAbcGuRSeXRv
+         bv1buJaG5smQLnFAdpgZH/vsc7+f88+ZmlDB3cZIZPBH6lStEj7zScPaRpFS1cPnMJL+
+         6QLg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730762646; x=1731367446;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=E/AJelCwUAatEpHj0W+/VFCFi8oaAAF1DPEUolZ3lZk=;
+        b=TPkFUJxOvC83k9M8zS43ocv3DAI/81ZNqlD9DuTVIF1GRZ5p2N81ueJUc1bx/CeZrt
+         1l0MTyoL09V3gr+/UVmHMyDgmDBnzNnwGKbik7uUYdFvke2sBKq9b0/U/UgWBgB581mb
+         Yypp47WevNG9U7C6BILV9C+N2Qkt32YSNr8AJkGYnv2j2UbKu8lCBHUMUzst3QpeD+oL
+         G5oePixwttj/P5ZSWIzQhihmUa2sX+21YDFeR5w5Nf0eqPxFPqNU4UCn/IS7gY3eOyxf
+         zq8aiMi0T8HZTOMldIVBWfY420RYTZ4jKATFrZuoZryfZ0P+/xWTGuZQFdZt5ooj2HkV
+         tcUw==
+X-Forwarded-Encrypted: i=1; AJvYcCVnQp2Z6mHZbCFqE/sZjrIk/xO5OVjtWdyS3Ar0KKh2qxiJT7zsal0yvO8yajEPbBkbn/mo/XNOMlc=@vger.kernel.org, AJvYcCVou5D0CJxHXawd4k8/AlzgxiUoZozAIEByrt1GXPhN+/UWqHsOSGMbpxCCac/D8nSzgzeDBhvKP/B9JW9l@vger.kernel.org
+X-Gm-Message-State: AOJu0YyQj3oH7ysxY0A833gu+JGQqX8ztmDEaaPSaVGu9vXkzcpZL4t9
+	l7tLeaz08Ko61S26nANfroavO0hY7MmnutbloQMXdvZ6R+wHteqq
+X-Google-Smtp-Source: AGHT+IGFNofRiofz2zd5oO5zy4MSJ9efqwyx95YXop6INmj+R1VufUWycYTGRldJAhRwQ+IAwIbYLA==
+X-Received: by 2002:a05:600c:3b14:b0:42c:de34:34c1 with SMTP id 5b1f17b1804b1-4327b6f9590mr150318615e9.2.1730762646241;
+        Mon, 04 Nov 2024 15:24:06 -0800 (PST)
+Received: from prasmi.Home ([2a06:5906:61b:2d00:b000:5e71:8a91:bce5])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4327d5ab254sm167156675e9.3.2024.11.04.15.24.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 04 Nov 2024 15:24:05 -0800 (PST)
+From: Prabhakar <prabhakar.csengg@gmail.com>
+X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Prabhakar <prabhakar.csengg@gmail.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH v2 0/2] clk: renesas: rzv2h-cpg: Add CRU and CSI clocks
+Date: Mon,  4 Nov 2024 23:23:59 +0000
+Message-ID: <20241104232401.290423-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAP-5=fUz_LSJ4v4aaAWoLMQRXAtsqeQSjcyRun2kBVXUHTzvUA@mail.gmail.com>
 
-On Mon, Nov 04, 2024 at 02:20:30PM -0800, Ian Rogers wrote:
-> On Mon, Nov 4, 2024 at 2:09 PM Namhyung Kim <namhyung@kernel.org> wrote:
-> >
-> > On Mon, Nov 04, 2024 at 01:06:35PM -0800, Ian Rogers wrote:
-> > > On Mon, Nov 4, 2024 at 1:00 PM Namhyung Kim <namhyung@kernel.org> wrote:
-> > > >
-> > > > On Mon, Nov 04, 2024 at 12:48:01PM -0800, Ian Rogers wrote:
-> > > > > Namhyung was asking that the c&p of code be 1 patch then "add new
-> > > > > changes like using openat() on top". That is:
-> > > > >
-> > > > > patch 1: add is_directory_at - introduce the 2 line helper function
-> > > > > patch 2: move the code
-> > > > > patch 3: update the code to use is_directory_at
-> > > > >
-> > > > > patch 2 is known broken as patch 3 is fixing it.
-> > > > >
-> > > > > Hopefully this is clear.
-> > > >
-> > > > Actually I don't care about the patch ordering.  My request is not
-> > > > to break build and just to separate different changes out. :)
-> > >
-> > > So, patch 2 can't be separated from patch 3 - are we agreed? So we
-> > > squash patch 2 with patch 3. Patch 1 is trivial and fails to meet the
-> > > bar of a meaningful change, so we squash that. We end up with this
-> > > patch. If there's a later revert and a dependence of the 2 liner, just
-> > > don't revert that part of the change. We've never had such a revert so
-> > > it is hard to see why we need to generate so much churn because of it.
-> >
-> > As I said the patch 1 should be the c&p and no need to introduce
-> > is_directory_at() before that.  Why not doing
-> >
-> >  patch1: move the code
-> >  patch2: add and use is_directory_at() + openat()
-> >
-> > ?
-> 
-> Because placing all the code in 1 file expands GCC's analysis and the
-> build fails. In the commit message I describe this:
-> "The arrays are warned about potential buffer overflows by GCC now
-> that all the code exists in a single C file."
-> A standard unsound workaround to this is to change "sizeof(...)" to
-> "sizeof(...) - 1", as it is ugly I added is_directory_at to not suffer
-> the problem as the arrays are gone.
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Ok, it's strange that this type of analysis depends on the placement.
-Anyway it seems there's a problem in the code already.  Then we can fix
-it first and then move.  How about this?
+Hi All,
 
- patch1: add and use is_directory_at() + openat()
- patch2: move the code
+This patch series aims to add CRU/CSI clock and reset entries to the
+RZ/V2H(P) clock driver.
 
-Thanks,
-Namhyung
+1] patch#1:
+ Allows exclusion of external and specific RZ/V2H(P) clocks, such as those
+ in CRU block, from Runtime PM using a new no_pm flag and helper function.
+2] patch#2
+  Extends the r9a09g057 driver to include PLLVDO, its related CRU clocks
+  (CRU0-CRU3), and corresponding reset entries.
+
+v1->v2
+- Update code to skip external clocks from runtime PM
+
+Cheers,
+Prabhakar
+
+Lad Prabhakar (2):
+  clk: renesas: rzv2h-cpg: Add selective Runtime PM support for clocks
+  clk: renesas: r9a09g057: Add support for PLLVDO, CRU clocks, and
+    resets
+
+ drivers/clk/renesas/r9a09g057-cpg.c | 45 +++++++++++++++++++++++++++++
+ drivers/clk/renesas/rzv2h-cpg.c     | 39 +++++++++++++++++++++++++
+ drivers/clk/renesas/rzv2h-cpg.h     | 18 ++++++++++--
+ 3 files changed, 99 insertions(+), 3 deletions(-)
+
+-- 
+2.43.0
 
 
