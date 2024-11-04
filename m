@@ -1,117 +1,101 @@
-Return-Path: <linux-kernel+bounces-395027-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395028-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A3EF9BB74E
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 15:16:21 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6656B9BB751
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 15:16:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC1E01F20F91
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 14:16:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22CD5285728
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 14:16:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC710139D04;
-	Mon,  4 Nov 2024 14:16:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10FAF13B7AE;
+	Mon,  4 Nov 2024 14:16:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bQi5W3sx"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YSDf6X5U"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97E301C695
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 14:16:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6983A111AD;
+	Mon,  4 Nov 2024 14:16:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730729776; cv=none; b=LK3uHu4zuQiGDbtPz6mPq6ZWIvczu4DqteT+qrh/9jc822myuI5TyaumSsWzmK8Fr7DtXMXrZvPyzEHYCATno52mYLohPNDfAqN+MhPZQIwMm/Tg0P/dHXSkMr+9yl9EHYKV+E+TP2NNOYpjNdnos6CQYkJgREXymEduYiGveIw=
+	t=1730729784; cv=none; b=tpKwNVjeTlUSEVMaZ7sHiTlE/foriHKq/of8boz02rcidwHuQd7IEL4zqXo4D5MM8B/7V5QU+pUaf8unujpPncKRucnKO30+6TLoc6rMIiQFJN7BMA8Ia3fzps6Be6j6syAUdXYZ8daYPTdK+g1/Y4O/gbHzPNKzWRlAYcxPB4I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730729776; c=relaxed/simple;
-	bh=rxLe7Y9dqzlB+Lxzy1TU9l7LFoc0kg5jLg97h5pT9qI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QiX2k0dzxsGyZoEl5blM0FXDAMF9LEhcQ6se2FLtmcfkltZWDN+Qk4PgE1P44PSA9GToTtaekraQzhg9uHydzdn2kd3/0DBDQYE32uuTXuCkyHzCUPMNOlnxxKRdjyV0IrLViPjD+jkQPFjzZ0V0wYBzuSiaxeA9TcFUC0AcZGw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=bQi5W3sx; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a9eaf93e40dso2767166b.0
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 06:16:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1730729772; x=1731334572; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rxLe7Y9dqzlB+Lxzy1TU9l7LFoc0kg5jLg97h5pT9qI=;
-        b=bQi5W3sx4hM0DtYGpUlKNcfEFiJ2anS7PHjerpygiADvOpzBBh0ewFe7suMPF/i2Uz
-         L98BYATKHdvOCcpiPNtCj2e0A8oGR2YnfLfEd7FPSOotohqBJVKKOznGlPGHGzS6si4t
-         q2lLot8C2eT8xehl/q6hbo2UBhggjexZF0F4/5oUt7cmkTh+4BWQEfGGa5Iss55lSHTC
-         ZB6hCpx1IE2F8yU+KSdg2OVIWwFJg4Uo1hgeKcAMnUgFbndARKoVdT21Lxd+Y/bngunv
-         QJyWL0R5lN1zfycBKFXvBihHYMBzXfhIGC0W9Vt+ynyw8ml/GBLwQIzWh3TzbOCHU+FC
-         SdBg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730729772; x=1731334572;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rxLe7Y9dqzlB+Lxzy1TU9l7LFoc0kg5jLg97h5pT9qI=;
-        b=LecO2itSviSpmkv/3lZ/L8KChVbtPAMvty7tjDTQiHFQTBApPNHDkj48zjlbrOlYUK
-         zU3oVXogmrBHNqffrLepd9ec8SJRvP4IkfQ2YWAGi3QYR3D7LS6zC+eyccdJuD+kAozM
-         oqNQK8k9i4687XsdJ6pRJYJ3g5AAu3Js4evzW0zQQ5FJ5En3M8DJLcQy+obykRbKT+ML
-         sEDVvy8faifXy4Wa6cUiFDsPBiKQX8rOSndAiKN5k1yqlfqHBn3+1aUbKHjlyIHlcaAE
-         E/abw7USCm0PwhWJ4LoGmr2hteGp/IGlbse58W4ewSmfPdUT+MBegsvimbCiwABUlpuJ
-         mTfw==
-X-Forwarded-Encrypted: i=1; AJvYcCVI5j5sDqpSUCxAanbP6qjp8AYt2P4IHPKQ8toDpelprIZ0f2BXfb9JzQH3N8lWQNVHWaLAVCUsXP5VRfo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxLkvECPIWhBGBO0viwEkacob86OnDMf9AjHRUGm8gb8fFvzB4i
-	FpEoFGGe7CvhHlRC62gtAX1KrCn4T4zuGCZPx09Esq8PQUgWRJ2z36VyrEsPruqpr4ZOESTM3R5
-	xRMTpS1MLecyG7moZbHCC5QPRYTA+NuzMhZAq
-X-Google-Smtp-Source: AGHT+IEQp7CxSTcIpzbhac/Om/w+DYXGFRp4tTHPbDjHlSeM3TjAN+8VSUdY2j7RPrLZVT6+CnlfSBSnLTMAkCgEvdc=
-X-Received: by 2002:a17:907:94cd:b0:a9a:230b:fb5e with SMTP id
- a640c23a62f3a-a9de5d6eb83mr3029233366b.4.1730729771530; Mon, 04 Nov 2024
- 06:16:11 -0800 (PST)
+	s=arc-20240116; t=1730729784; c=relaxed/simple;
+	bh=NHtGRcHt0tNEtOAmt8eYChejJpE34p65uqV3SGg3qXU=;
+	h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:
+	 MIME-Version:Content-Type; b=HbAcC2mKODKUJ6BzMPT2g0g0+TIluCE6Q/Jg0hxuMExxV2CUTVPV2IhJe8Vifly7LaPod9HbZnpLcyly03CMXE1towoya3nsfK7co3weuqP0Kk/0ePahbRZGKdnVqMTqNVEtSCLGiqrqNYkr8ehO245tsk3H6s+nRip31yZgCdc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YSDf6X5U; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A97FC4CED2;
+	Mon,  4 Nov 2024 14:16:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730729784;
+	bh=NHtGRcHt0tNEtOAmt8eYChejJpE34p65uqV3SGg3qXU=;
+	h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+	b=YSDf6X5UV7u2hiSlK2AluccXuhJvtfXSOXkpIXZsMH+AzsMlkVcF4VT5jhHFalbSQ
+	 7xzHGvPzh8TOdtNu/JPxvC4Mv3OEUULr4DSw5K+GPOYmivgYAL//PLQl30IVYqn95D
+	 CnQO5cgrWSp8+JTVyb45rPnIJQqkoW/78FaZ7mRDt/W2PevK7jRLh0aQE7rExeRBRT
+	 N66JZJCEtgiE07qtAI7whl1iKCppnG6L77DqXizhzwmPSqRa9y4yMTnPVDMQEWmX8G
+	 2q+lxENmjWeVUcAc5tpnmkiZYvqQSiHRpwQmhVcfyH5ybHX/VUM6qVX00ssNl92Ae1
+	 HzVoHzizw0XbA==
+From: Kalle Valo <kvalo@kernel.org>
+To: "Dr. David Alan Gilbert" <linux@treblig.org>
+Cc: pkshih@realtek.com,  linux-wireless@vger.kernel.org,
+  linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] rtlwifi: Remove more unused functions
+References: <20241103153857.255450-1-linux@treblig.org>
+	<20241103153857.255450-3-linux@treblig.org>
+	<87y11zxwlr.fsf@kernel.org> <ZyjDn0R7gzDQ4jnT@gallifrey>
+Date: Mon, 04 Nov 2024 16:16:21 +0200
+In-Reply-To: <ZyjDn0R7gzDQ4jnT@gallifrey> (David Alan Gilbert's message of
+	"Mon, 4 Nov 2024 12:52:47 +0000")
+Message-ID: <87msif6q4q.fsf@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1730244116.git.babu.moger@amd.com> <d27c3a15ccb11c6ba76794eba6cf7c013b0bb074.1730244116.git.babu.moger@amd.com>
-In-Reply-To: <d27c3a15ccb11c6ba76794eba6cf7c013b0bb074.1730244116.git.babu.moger@amd.com>
-From: Peter Newman <peternewman@google.com>
-Date: Mon, 4 Nov 2024 15:16:00 +0100
-Message-ID: <CALPaoCh1BWdWww8Kztd13GBaY9mMeZX268fOQgECRytiKm-nPQ@mail.gmail.com>
-Subject: Re: [PATCH v9 19/26] x86/resctrl: Add the interface to unassign a MBM counter
-To: Babu Moger <babu.moger@amd.com>
-Cc: corbet@lwn.net, reinette.chatre@intel.com, tglx@linutronix.de, 
-	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, 
-	fenghua.yu@intel.com, x86@kernel.org, hpa@zytor.com, thuth@redhat.com, 
-	paulmck@kernel.org, rostedt@goodmis.org, akpm@linux-foundation.org, 
-	xiongwei.song@windriver.com, pawan.kumar.gupta@linux.intel.com, 
-	daniel.sneddon@linux.intel.com, perry.yuan@amd.com, sandipan.das@amd.com, 
-	kai.huang@intel.com, xiaoyao.li@intel.com, seanjc@google.com, 
-	jithu.joseph@intel.com, brijesh.singh@amd.com, xin3.li@intel.com, 
-	ebiggers@google.com, andrew.cooper3@citrix.com, mario.limonciello@amd.com, 
-	james.morse@arm.com, tan.shaopeng@fujitsu.com, tony.luck@intel.com, 
-	vikas.shivappa@linux.intel.com, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, maciej.wieczor-retman@intel.com, 
-	eranian@google.com, jpoimboe@kernel.org, thomas.lendacky@amd.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-Hi Babu,
+"Dr. David Alan Gilbert" <linux@treblig.org> writes:
 
-On Wed, Oct 30, 2024 at 12:25=E2=80=AFAM Babu Moger <babu.moger@amd.com> wr=
-ote:
+> * Kalle Valo (kvalo@kernel.org) wrote:
+>> linux@treblig.org writes:
+>> 
+>> > From: "Dr. David Alan Gilbert" <linux@treblig.org>
+>> >
+>> > exhalbtc_dbg_control(), exhalbtc_stack_update_profile_info(),
+>> > exhalbtc_set_hci_version(), and exhalbtc_set_bt_patch_version() are
+>> > unused since their addition in 2014 by
+>> > commit aa45a673b291 ("rtlwifi: btcoexist: Add new mini driver")
+>> >
+>> > Remove them.
+>> >
+>> > Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+>> 
+>> 'wifi:' missing.
 >
-> The mbm_cntr_assign mode provides a limited number of hardware counters
-> that can be assigned to an RMID, event pair to monitor bandwidth while
-> assigned. If all counters are in use, the kernel will show an error
-> message: "Out of MBM assignable counters" when a new assignment is
-> requested. To make space for a new assignment, users must unassign an
-> already assigned counter.
+> Oops, can add that.
 >
-> Introduce an interface that allows for the unassignment of counter IDs
-> from both the group and the domain. Additionally, ensure that the global
-> counter is released if it is no longer assigned to any domains.
+>> Also in both patches the subject could be more unique.
+>
+> Do you have suggestions? I don't know the code to give good titles.
+> They're both 'btcoexist'; I could merge them into one
+>
+> wifi: wtlwifi: Remove btcoexist deadcode
 
-This seems unnecessarily restrictive. What's wrong with monitoring
-different groups in different domains?
+No good suggestions really. Usually I add what I'm removing to the
+subject but as this patch is removing several functions the subject
+would be too long. Maybe something like 'wifi: rtlwifi: remove several
+unused exhalbtc_*() functions?' just to throw out some ideas, I'm sure
+you can come with better ones.
 
+-- 
+https://patchwork.kernel.org/project/linux-wireless/list/
 
--Peter
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
