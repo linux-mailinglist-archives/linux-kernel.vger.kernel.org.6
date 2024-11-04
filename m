@@ -1,85 +1,98 @@
-Return-Path: <linux-kernel+bounces-394357-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394359-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C4F79BADE5
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 09:20:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id AA3189BADEB
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 09:21:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED67C1F22C0D
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 08:20:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 565351F228BA
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 08:21:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0078B1AB505;
-	Mon,  4 Nov 2024 08:20:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B46AD1AAE10;
+	Mon,  4 Nov 2024 08:21:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ildBtHOt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="CGXv0AkY"
+Received: from out30-100.freemail.mail.aliyun.com (out30-100.freemail.mail.aliyun.com [115.124.30.100])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51E0E18A6C8;
-	Mon,  4 Nov 2024 08:20:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC0A518FC7C;
+	Mon,  4 Nov 2024 08:21:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730708439; cv=none; b=ZmSZUyUYgPzitjZRXEaQVadrcv48auddfW1e24GTSUhlMSuv/hV2OhULLAIrL0/MT2hQ7hZfc40kwjiFeTtr+dK7I3ZGRtthXMVh2PE2KBw8u2lJK9gVCBqmLSrFlqajJ1LnitiB65WpM9yPMQtgJHUDWeg41gCbx57uRJ2jDFk=
+	t=1730708481; cv=none; b=ICmVq8zJ+BsezONiEiW4hSuwkPjxSv/wazctN52PjDwP0anUe3dhiVvla/iZ7VHvqA2GZLvXGnaHahhI9FNLRcmKrdfEkhHJ7JVcXHNSGk6SwuhgSSxah8dllEDnSarQ+wmoMBWBnr31FKKkjW1qCfQGJp5x9mRyn0lXJ/jw3rc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730708439; c=relaxed/simple;
-	bh=cYP19ayu+a4SMDF4NOeELfl0OpEhHMtWimQnty+HFbs=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=dEttj6Fh7P8l7iNcAK2uW0se/Y2w2mImzokBBSRWrLH4MELQKefCiGRsXpXC+x566msDmi7cDUaRTaFtfLec5MplOPwU+DdXjt3i1v9QpQUjASu9xXVuopaxwOPmbC7gdI+9OvrjLziupCMTsBcWdEySpF2IHpwqRlWNrypLPlg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ildBtHOt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 489A4C4CECE;
-	Mon,  4 Nov 2024 08:20:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730708437;
-	bh=cYP19ayu+a4SMDF4NOeELfl0OpEhHMtWimQnty+HFbs=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=ildBtHOthxY2xYf4c27zaUM9PV+jhvDrx3RUjssqP2KFOhmJZ3591kzCBoiW6byb6
-	 vmwpK0tz38tzPRH0DppvBhQ7rB+LFGm4sbhbyNHwXNYr9lJx7plL8RTKlnZsRScxli
-	 1+k9uzT7Rpv/J8znVoqXKBz8OqAYEVbkI+B3p1nyelbbOgW80O1bQR/Ilnt3jjSci3
-	 x31uUrmIKnRDUDS/AZYniR12LhUAjneaxXKgBTeootA7+amVCecdShUbUhuu7pKLoq
-	 8EMM+vVZy9IyQIFWCd7Jzhxy5Acol3pwQ49mJi9S7jbsUGp3L57RBgwNpnWcmlcIVl
-	 UadMeP4nr1k6Q==
-From: Leon Romanovsky <leon@kernel.org>
-To: Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>
-Cc: Edward Srouji <edwards@nvidia.com>, linux-kernel@vger.kernel.org, 
- linux-rdma@vger.kernel.org, netdev@vger.kernel.org, 
- Saeed Mahameed <saeedm@nvidia.com>, Tariq Toukan <tariqt@nvidia.com>, 
- Yishai Hadas <yishaih@nvidia.com>, Leon Romanovsky <leon@kernel.org>
-In-Reply-To: <cover.1725362773.git.leon@kernel.org>
-References: <cover.1725362773.git.leon@kernel.org>
-Subject: Re: (subset) [PATCH rdma-next 0/2] Introduce mlx5 data direct
- placement (DDP)
-Message-Id: <173070843405.153955.14255141986719362482.b4-ty@kernel.org>
-Date: Mon, 04 Nov 2024 03:20:34 -0500
+	s=arc-20240116; t=1730708481; c=relaxed/simple;
+	bh=/NHMSmiKagh8k4QI2PD8QCbsekeNsMzZplddfeOLh/c=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=ANGxhwjwryD3YBTFQj2OwRSsCskF/c2SmZL3WipiApUKWYWcPB+Z01NY0j2D6RXwMWjzGUrEJLIJFQI7Tynso4iXrHvbSiGVmjKi6rx2jnmQ65eTv0k+RFVRCJ+8F5A+dJRtylkxV2RJv3sDu0kpc+hqmznBHmq1LapwHPED9aY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=CGXv0AkY; arc=none smtp.client-ip=115.124.30.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1730708475; h=From:To:Subject:Date:Message-Id:MIME-Version:Content-Type;
+	bh=OevIAV73VFpELMkDuAHgCh1n+i8KBe/1HDt6dlqIi5g=;
+	b=CGXv0AkYBXQ5LpeGx52UMX4/M5m+gdiYcY+IKy7aONUYuv4wNevREHCSns4Y2fuol2sTbX10/9+Syk6zg0neBZRuhHHsTxhGyK5fpGyfkyyF3OxYiyqqnaWe7WlcbEqH4gQtvtCbfi6LoLRE7Mo/EvKiKkXcslaByFZl8vaf8D0=
+Received: from localhost(mailfrom:jiapeng.chong@linux.alibaba.com fp:SMTPD_---0WIdgWGI_1730708470 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Mon, 04 Nov 2024 16:21:15 +0800
+From: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
+To: chuck.lever@oracle.com
+Cc: jlayton@kernel.org,
+	neilb@suse.de,
+	okorniev@redhat.com,
+	Dai.Ngo@oracle.com,
+	tom@talpey.com,
+	linux-nfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Jiapeng Chong <jiapeng.chong@linux.alibaba.com>,
+	Abaci Robot <abaci@linux.alibaba.com>
+Subject: [PATCH -next] fs/nfsd: Remove the unused variable sb
+Date: Mon,  4 Nov 2024 16:21:09 +0800
+Message-Id: <20241104082109.49986-1-jiapeng.chong@linux.alibaba.com>
+X-Mailer: git-send-email 2.32.0.3.g01195cf9f
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-37811
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
+Variable sb is not effectively used, so delete it.
 
-On Tue, 03 Sep 2024 14:37:50 +0300, Leon Romanovsky wrote:
-> From: Leon Romanovsky <leonro@nvidia.com>
-> 
-> Hi,
-> 
-> This series from Edward introduces mlx5 data direct placement (DDP)
-> feature.
-> 
-> [...]
+fs/nfsd/nfs4state.c:7988:22: warning: variable ‘sb’ set but not used.
 
-Applied, thanks!
+Reported-by: Abaci Robot <abaci@linux.alibaba.com>
+Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=11648
+Signed-off-by: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
+---
+ fs/nfsd/nfs4state.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-[2/2] RDMA/mlx5: Support OOO RX WQE consumption
-      https://git.kernel.org/rdma/rdma/c/ded397366b5540
-
-Best regards,
+diff --git a/fs/nfsd/nfs4state.c b/fs/nfsd/nfs4state.c
+index 5d47a28ef62d..45e487bf0582 100644
+--- a/fs/nfsd/nfs4state.c
++++ b/fs/nfsd/nfs4state.c
+@@ -7986,7 +7986,6 @@ nfsd4_lock(struct svc_rqst *rqstp, struct nfsd4_compound_state *cstate,
+ 	struct nfsd4_blocked_lock *nbl = NULL;
+ 	struct file_lock *file_lock = NULL;
+ 	struct file_lock *conflock = NULL;
+-	struct super_block *sb;
+ 	__be32 status = 0;
+ 	int lkflg;
+ 	int err;
+@@ -8006,7 +8005,6 @@ nfsd4_lock(struct svc_rqst *rqstp, struct nfsd4_compound_state *cstate,
+ 	status = fh_verify(rqstp, &cstate->current_fh, S_IFREG, 0);
+ 	if (status != nfs_ok)
+ 		return status;
+-	sb = cstate->current_fh.fh_dentry->d_sb;
+ 
+ 	if (lock->lk_is_new) {
+ 		if (nfsd4_has_session(cstate))
 -- 
-Leon Romanovsky <leon@kernel.org>
+2.32.0.3.g01195cf9f
 
 
