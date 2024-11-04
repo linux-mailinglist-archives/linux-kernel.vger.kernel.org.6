@@ -1,309 +1,162 @@
-Return-Path: <linux-kernel+bounces-395023-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395024-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 372859BB744
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 15:14:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C726D9BB746
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 15:15:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB26C28375E
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 14:14:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 882AF28159D
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 14:15:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A3BB13D246;
-	Mon,  4 Nov 2024 14:14:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DE4D13C9DE;
+	Mon,  4 Nov 2024 14:14:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NWV/ppQZ"
-Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NlnhbKDA"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEDED2AE90;
-	Mon,  4 Nov 2024 14:14:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5786E13B58C
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 14:14:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730729682; cv=none; b=H8dZPmIf4HvH0Q0yvYJRwHzFnI3oH+Bc5SD1jcax8ePx4gO/RMCjkcHIJ+c1LoBM+dPJ4wcyi2j7/XHglBF+AQJHQ2OPUA39UZ4XkjIg1Ih+bj9zdYAwJesKTVL0MLFRBzBDX9ONu1Q/zuAakDPboiX0xZy1erb6UhS3K89Gvmo=
+	t=1730729693; cv=none; b=o3iAZCWWOpFfGwbbiFAk2giV7Fa+jJWMGVDwZ02070T4zFvH0Ed/xgevAQK7STdh+I5yOfU/vYVUm92wYk8O67EihhLD/xHgsHRQbvcC4YJTweQXuh9oqlt4NuQ4GDTonKrCXte56rk9zbZ8IR47xe4tJPs90Mpr1+xXtGA3/2o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730729682; c=relaxed/simple;
-	bh=22IkpLsTJ3lJP8P21zcOPBy6UAX1xZrcihsucCCaPlM=;
+	s=arc-20240116; t=1730729693; c=relaxed/simple;
+	bh=91L69n/sZkR4JPMDUQpE1/7SZD5NRrYr4/jcmwqwWFo=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MZuncB4kq6R7bLrSDteRq56vydqamK3ybN4kEoBNT6z5joAlQKGjJePc0RXcRUzhOO6El5vey6pe93nyLy0gRn54pFZsNhwbwMbftuSIqZrw5oIpOIidAsQt0CsuSlE35Ei61CW7n/aP2GprhbHLsxb0zCb0THPMMghX1N1746k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NWV/ppQZ; arc=none smtp.client-ip=209.85.216.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2e3fca72a41so3505945a91.1;
-        Mon, 04 Nov 2024 06:14:40 -0800 (PST)
+	 To:Cc:Content-Type; b=swh/cbAs5dRFwYJ6QPDefAEDhuU2IHYFyItt33QG0TUEFzHWDZOBxGmuqA/jsRRbDQCojTOA7Bz35qeL3HfkXPF1Tqg59xG3XL80aPD5/2/Y56MMMtDsQCN7N4I2dGOFAhsFrPbwMWSUBsTXRECPSZgzGChGKY511N2iB67Z6lo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=NlnhbKDA; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a9e8522c10bso282564566b.1
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 06:14:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730729680; x=1731334480; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1730729690; x=1731334490; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=edAMo1PY72zkfTpbMxA+qP1Jihl1VWVJ/LFLScOHZxs=;
-        b=NWV/ppQZPq1od17fFWqrgKK+lBUUN5JsZPZwLPixef7DEaGHl642KHOUmUU8OaFw7A
-         0y7dBuTRKAYropKFnC7pNiUM9vFHyHWBn/5GthgjhB+L/BsbfnMJP9BL4beaf7zATToN
-         OCqsZnAaV4yHTH3Cfz+pEhW83jsw7m4EeKUsOABNqJ9FuGgm9+TepOU7HUv8uuO2xw8y
-         QtJnCMWPtszW9qj4vyDqYVkOivR/rOM+MIESi+uZfl1ZQYoak4rrmyGDwnFir2ekrxNW
-         bDmVj1/mm1KGS1x6JMED3kcSyUJMNm/Op0Ye6N2RjZzOfKz4eVvl00Kf1SR22s+wXZv5
-         92VQ==
+        bh=gn88j0Ga2kJJHNdL5doEI2tU8rFzUABq/SQi+F1FGuY=;
+        b=NlnhbKDAXzcAQBRg0+8SRIqUNO+L6k+rCh0aCB5UiR6TquKVjnjso4w4iyjW/f9wL6
+         BE3B5/DhETTI9Ws45n1DRlwxIVRLiDRg4+FrHHb5rekpuKoNgKcp+/8X3AiGeayynQ3q
+         deVaa8qMtdc3YRYDecha08ruocJL0qoMMCyz5j3/HizIatOJF9er8jPK0m4GV4NzLS1P
+         5lAmFq2biberfA/HShaMYeQtiPOMPMsttA2FGCIPN1byjq6ZHZkyFWIAoFj3oDC0xHNF
+         jQi1B0vKMrjONEUL4RHqyAsmiTQU+pE4U4u//6C+7DQZbMosLI3SGv931Cgnunko3X/F
+         DMXg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730729680; x=1731334480;
+        d=1e100.net; s=20230601; t=1730729690; x=1731334490;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=edAMo1PY72zkfTpbMxA+qP1Jihl1VWVJ/LFLScOHZxs=;
-        b=vDqgZK4JPKQfOHiFbYbWz+gTADdiP8jD/oB9tyJda2iZk+gp5vmppmP65mqBQ1N0hu
-         1pG9XIJzhgzUiRxwSXya/mqUlqE8nw0XMViaViTCbYyUSdlGdhTV10QWU/AGrYarhVEM
-         mJvg4ZL82yJ6MzEW1GMVpojZNx6MmCccyzExIDY58O1EgFsi5Cq2DVo19zM8YNsOV5sc
-         FxLQNkO1OHtfAjcliWaCtrTwd2ch4V+H9ZfUoBGm6/cy9ZEZVfhNk3kvgSbBajrg99aB
-         na3LGsaxYNpX2NozgfGaUTiOlCikzkhCGkeSm7GKGKaip0DZZrJnsfppsZnEjNpNmvJp
-         fMiQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU3XRNon+o1EKH+o4MwU0125cj3LtmJiK6oNrX2TAW6qhWWziYPfJVcUx2tQDvixwZOZ3K9rTeZ@vger.kernel.org, AJvYcCWKdyChPf62ThqR6Z8oFFPpkuV+4MzJrXLDxxaB3NrdP1WKjyAwcg+T716/rZfLlfdGCqnnCncd53W/+lI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxz8huRM3cEbCooF6BEe+l+THcLaIQlRYl6Vz+agD6PZv+OGLPz
-	VOdzWPxYm0FMuZjTXZwzT1LKfEsPy9s67sbrA1HZSsPJG17C1AIv3rrVne1t/3c7+yyfVfP32ui
-	OxaRYFJ897r6XkS70MyuUe388VBc=
-X-Google-Smtp-Source: AGHT+IEmoWv2BQyjgSKvNZTyFnFU/aFLKu2M11dcp+q5xS3jkjmpk2PvhiOnId+cOj9tdQGGbgL5byubxkd+rHQu7UM=
-X-Received: by 2002:a17:90b:2dcc:b0:2e2:7f8f:3ad7 with SMTP id
- 98e67ed59e1d1-2e93c1595b5mr21780271a91.7.1730729679934; Mon, 04 Nov 2024
- 06:14:39 -0800 (PST)
+        bh=gn88j0Ga2kJJHNdL5doEI2tU8rFzUABq/SQi+F1FGuY=;
+        b=h1sQh+Da+vWJtmN/ILqUIqCkCJxlIBB6tNfY2pTXl5MTMpZ+S0wGerfDmanHA1bCfC
+         RIy5Lzir8nKnNcxtD3uI+tjEiwON5nJamh2Mk3Y6i9xRY69H3iI6QVwsbNao8sVj+Fjz
+         8A3E9IIJhwjb6xIY51LfbyJ1OERhauRiHwbew/jvbJSTW2gkfUQ//nxzduH1bEQ0GW+8
+         GGprLMxLxSSv9Tx0yTUDmejdsAJFEwIetVAssDzD8JJMRH2jxM5jA/mcTgt8t/hamXnF
+         YldzWr1Ze7bEK5gyQY7dYOx0owXrUbgRkazFlMUIx+RYSdLyDNY3EF1kC2hzfoolr+qp
+         UeRw==
+X-Forwarded-Encrypted: i=1; AJvYcCWFLZOCZknmE/l335BKz2S/aMX61pkob5TD7zyarjRik8lHZw+Zn6XWUoYc8Ppu5RmPgjPVjVT8YNDqiO0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy17ztx3BprBcAemrPtJkav/CGH4jVXPYJpEqhPzEyaiwHshYNb
+	SV21Wubl7rQN27DT46d0oPJLKobl55sGkvVtvknamgXZYrpMKSa4gFBlDV0tpKqX3VSSYrARRNX
+	TGYVDl7sW7imZmyivIH/C/1Ikw0jrW+7WP0o2
+X-Google-Smtp-Source: AGHT+IH6Nbfbdlf5hFDIImhiemSQf8jgNboXuUGdcxwKg33n7aPJk81DoUHQv1iGE0RB77Jjaxp5Cn9DxhDq1IA4MBM=
+X-Received: by 2002:a17:907:3e1d:b0:a9e:21e5:d6cc with SMTP id
+ a640c23a62f3a-a9e65435e10mr1091261866b.20.1730729689451; Mon, 04 Nov 2024
+ 06:14:49 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241021155241.943665-1-Frank.Li@nxp.com> <DU2PR04MB86770FFB0CAEEBE95B91F5FC8C4C2@DU2PR04MB8677.eurprd04.prod.outlook.com>
- <CAHCN7xJya+XjAP+kn5MePdrqNxaLnkYag23UaNatoh09ize+AA@mail.gmail.com> <AS8PR04MB8676D33E00DE6B0B961B5EB58C512@AS8PR04MB8676.eurprd04.prod.outlook.com>
-In-Reply-To: <AS8PR04MB8676D33E00DE6B0B961B5EB58C512@AS8PR04MB8676.eurprd04.prod.outlook.com>
-From: Adam Ford <aford173@gmail.com>
-Date: Mon, 4 Nov 2024 08:14:28 -0600
-Message-ID: <CAHCN7xKj9XYnsaTjFfE_jn7rsN86wv0bxKq3o83WNkamrqeU1g@mail.gmail.com>
-Subject: Re: [PATCH v2 1/1] phy: freescale: imx8m-pcie: Do CMN_RST just before
- PHY PLL lock check
-To: Hongxing Zhu <hongxing.zhu@nxp.com>
-Cc: Frank Li <frank.li@nxp.com>, "vkoul@kernel.org" <vkoul@kernel.org>, 
-	"festevam@gmail.com" <festevam@gmail.com>, "imx@lists.linux.dev" <imx@lists.linux.dev>, 
-	"kernel@pengutronix.de" <kernel@pengutronix.de>, "kishon@kernel.org" <kishon@kernel.org>, 
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"linux-phy@lists.infradead.org" <linux-phy@lists.infradead.org>, 
-	Marcel Ziswiler <marcel.ziswiler@toradex.com>, 
-	"s.hauer@pengutronix.de" <s.hauer@pengutronix.de>, "shawnguo@kernel.org" <shawnguo@kernel.org>, 
-	"stable@vger.kernel.org" <stable@vger.kernel.org>
+References: <cover.1730244116.git.babu.moger@amd.com> <265f3700ac0c0d33703806fdc3d096b08c992efc.1730244116.git.babu.moger@amd.com>
+In-Reply-To: <265f3700ac0c0d33703806fdc3d096b08c992efc.1730244116.git.babu.moger@amd.com>
+From: Peter Newman <peternewman@google.com>
+Date: Mon, 4 Nov 2024 15:14:36 +0100
+Message-ID: <CALPaoCjLn8CZtPjTtd1ojj3RxNwpmmpUD-bb6nfsXcYTezEceQ@mail.gmail.com>
+Subject: Re: [PATCH v9 14/26] x86/resctrl: Introduce interface to display
+ number of free counters
+To: Babu Moger <babu.moger@amd.com>
+Cc: corbet@lwn.net, reinette.chatre@intel.com, tglx@linutronix.de, 
+	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, 
+	fenghua.yu@intel.com, x86@kernel.org, hpa@zytor.com, thuth@redhat.com, 
+	paulmck@kernel.org, rostedt@goodmis.org, akpm@linux-foundation.org, 
+	xiongwei.song@windriver.com, pawan.kumar.gupta@linux.intel.com, 
+	daniel.sneddon@linux.intel.com, perry.yuan@amd.com, sandipan.das@amd.com, 
+	kai.huang@intel.com, xiaoyao.li@intel.com, seanjc@google.com, 
+	jithu.joseph@intel.com, brijesh.singh@amd.com, xin3.li@intel.com, 
+	ebiggers@google.com, andrew.cooper3@citrix.com, mario.limonciello@amd.com, 
+	james.morse@arm.com, tan.shaopeng@fujitsu.com, tony.luck@intel.com, 
+	vikas.shivappa@linux.intel.com, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, maciej.wieczor-retman@intel.com, 
+	eranian@google.com, jpoimboe@kernel.org, thomas.lendacky@amd.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sun, Nov 3, 2024 at 11:19=E2=80=AFPM Hongxing Zhu <hongxing.zhu@nxp.com>=
- wrote:
+Hi Babu,
+
+On Wed, Oct 30, 2024 at 12:24=E2=80=AFAM Babu Moger <babu.moger@amd.com> wr=
+ote:
 >
-> > -----Original Message-----
-> > From: Adam Ford <aford173@gmail.com>
-> > Sent: 2024=E5=B9=B411=E6=9C=882=E6=97=A5 3:53
-> > To: Hongxing Zhu <hongxing.zhu@nxp.com>
-> > Cc: Frank Li <frank.li@nxp.com>; vkoul@kernel.org; festevam@gmail.com;
-> > imx@lists.linux.dev; kernel@pengutronix.de; kishon@kernel.org;
-> > linux-arm-kernel@lists.infradead.org; linux-kernel@vger.kernel.org;
-> > linux-phy@lists.infradead.org; Marcel Ziswiler <marcel.ziswiler@toradex=
-.com>;
-> > s.hauer@pengutronix.de; shawnguo@kernel.org; stable@vger.kernel.org
-> > Subject: Re: [PATCH v2 1/1] phy: freescale: imx8m-pcie: Do CMN_RST just=
- before
-> > PHY PLL lock check
-> >
-> > On Mon, Oct 21, 2024 at 11:06=E2=80=AFPM Hongxing Zhu <hongxing.zhu@nxp=
-.com>
-> > wrote:
-> > >
-> > > > -----Original Message-----
-> > > > From: Frank Li <frank.li@nxp.com>
-> > > > Sent: 2024=E5=B9=B410=E6=9C=8821=E6=97=A5 23:53
-> > > > To: vkoul@kernel.org
-> > > > Cc: Frank Li <frank.li@nxp.com>; festevam@gmail.com; Hongxing Zhu
-> > > > <hongxing.zhu@nxp.com>; imx@lists.linux.dev; kernel@pengutronix.de;
-> > > > kishon@kernel.org; linux-arm-kernel@lists.infradead.org;
-> > > > linux-kernel@vger.kernel.org; linux-phy@lists.infradead.org; Marcel
-> > > > Ziswiler <marcel.ziswiler@toradex.com>; s.hauer@pengutronix.de;
-> > > > shawnguo@kernel.org; stable@vger.kernel.org
-> > > > Subject: [PATCH v2 1/1] phy: freescale: imx8m-pcie: Do CMN_RST just
-> > > > before PHY PLL lock check
-> > > >
-> > > > From: Richard Zhu <hongxing.zhu@nxp.com>
-> > > >
-> > > > When enable initcall_debug together with higher debug level below.
-> > > > CONFIG_CONSOLE_LOGLEVEL_DEFAULT=3D9
-> > > > CONFIG_CONSOLE_LOGLEVEL_QUIET=3D9
-> > > > CONFIG_MESSAGE_LOGLEVEL_DEFAULT=3D7
-> > > >
-> > > > The initialization of i.MX8MP PCIe PHY might be timeout failed rand=
-omly.
-> > > > To fix this issue, adjust the sequence of the resets refer to the
-> > > > power up sequence listed below.
-> > > >
-> > > > i.MX8MP PCIe PHY power up sequence:
-> > > >                           /----------------------------------------=
------
-> > > > 1.8v supply     ---------/
-> > > >                     /----------------------------------------------=
------
-> > > > 0.8v supply     ---/
-> > > >
-> > > >                 ---\ /---------------------------------------------=
------
-> > > >                     X        REFCLK Valid
-> > > > Reference Clock ---/ \---------------------------------------------=
------
-> > > >                              --------------------------------------=
------
-> > > >                              |
-> > > > i_init_restn    --------------
-> > > >                                     -------------------------------=
------
-> > > >                                     |
-> > > > i_cmn_rstn      ---------------------
-> > > >                                          --------------------------=
------
-> > > >                                          | o_pll_lock_done
-> > > > --------------------------
-> > > >
-> > > > Logs:
-> > > > imx6q-pcie 33800000.pcie: host bridge /soc@0/pcie@33800000 ranges:
-> > > > imx6q-pcie 33800000.pcie:       IO 0x001ff80000..0x001ff8ffff ->
-> > > > 0x0000000000
-> > > > imx6q-pcie 33800000.pcie:      MEM 0x0018000000..0x001fefffff ->
-> > > > 0x0018000000
-> > > > probe of clk_imx8mp_audiomix.reset.0 returned 0 after 1052 usecs
-> > > > probe of 30e20000.clock-controller returned 0 after 32971 usecs phy
-> > > > phy-32f00000.pcie-phy.4: phy poweron failed --> -110 probe of
-> > > > 30e10000.dma-controller returned 0 after 10235 usecs imx6q-pcie
-> > > > 33800000.pcie: waiting for PHY ready timeout!
-> > > > dwhdmi-imx 32fd8000.hdmi: Detected HDMI TX controller v2.13a with
-> > > > HDCP
-> > > > (samsung_dw_hdmi_phy2) imx6q-pcie 33800000.pcie: probe with driver
-> > > > imx6q-pcie failed with error -110
-> > > >
-> > > > Fixes: dce9edff16ee ("phy: freescale: imx8m-pcie: Add i.MX8MP PCIe
-> > > > PHY
-> > > > support")
-> > > > Cc: stable@vger.kernel.org
-> > > > Signed-off-by: Richard Zhu <hongxing.zhu@nxp.com>
-> > > > Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> > > >
-> > > > v2 changes:
-> > > > - Rebase to latest fixes branch of linux-phy git repo.
-> > > > - Richard's environment have problem and can't sent out patch. So I
-> > > > help post this fix patch.
-> >
-> > Even with this patch, I am still seeing an occasional timeout on 8MP.
-> > I looked at some logs on a similarly functioning 8MM and I can't get th=
-is error to
-> > appear on Mini that I see on Plus.
-> >
-> > The TRM doesn't document the timing of the startup sequence, like this =
-e-mail
-> > patch did nor does it state how long a reasonable timeout should take. =
-So, I
-> > started looking through the code and I noticed that the Mini asserts th=
-e reset at
-> > the beginning, then makes all the changes, and de-asserts the resets to=
-ward the
-> > end.  Is there any reason we should not assert one or both of the reset=
-s on
-> > 8MP before setting up the reset of the registers like the way Mini does=
- it?
-> Yes, I had the similar confusions when I try to bring up i.MX8MP PCIe.
-> i.MX8MP PCIe resets have the different designs but I don't know the reaso=
-n and
-> the details. These resets shouldn't be asserted/de-asserted as Mini does =
-during
->  the initialization.
->
-> On i.MX8MP, these resets should be configured one-shot. I used to toggle =
-them
-> in my own experiments. Unfortunately, the PCIe PHY wouldn't be functional=
+> Provide the interface to display the number of free monitoring counters
+> available for assignment in each doamin when mbm_cntr_assign is supported=
 .
-
-I started testing adding the resets before I asked, because it appears
-to be working ok, but if you're suggesting it's a bad idea, I won't
-continue down that path.  Do you have any other suggestions on how to
-eliminate the occasional timeout error?  I still see it at times on a
-cold-boot even with this latest patch applied.
-
-thanks
-
-adam
-
 >
-> Best Regards
-> Richard Zhu
-> >
-> > adam
-> >
-> > > > ---
-> > > Hi Frank:
-> > > Thanks a lot for your kindly help.
-> > > Since my server is down, I can't send out this v2 in the past days.
-> > >
-> > > Hi Vinod:
-> > > Sorry for the late reply, and bring you inconvenience.
-> > >
-> > > Best Regards
-> > > Richard Zhu
-> > >
-> > > >  drivers/phy/freescale/phy-fsl-imx8m-pcie.c | 10 +++++-----
-> > > >  1 file changed, 5 insertions(+), 5 deletions(-)
-> > > >
-> > > > diff --git a/drivers/phy/freescale/phy-fsl-imx8m-pcie.c
-> > > > b/drivers/phy/freescale/phy-fsl-imx8m-pcie.c
-> > > > index 11fcb1867118c..e98361dcdeadf 100644
-> > > > --- a/drivers/phy/freescale/phy-fsl-imx8m-pcie.c
-> > > > +++ b/drivers/phy/freescale/phy-fsl-imx8m-pcie.c
-> > > > @@ -141,11 +141,6 @@ static int imx8_pcie_phy_power_on(struct phy
-> > > > *phy)
-> > > >                          IMX8MM_GPR_PCIE_REF_CLK_PLL);
-> > > >       usleep_range(100, 200);
-> > > >
-> > > > -     /* Do the PHY common block reset */
-> > > > -     regmap_update_bits(imx8_phy->iomuxc_gpr, IOMUXC_GPR14,
-> > > > -                        IMX8MM_GPR_PCIE_CMN_RST,
-> > > > -                        IMX8MM_GPR_PCIE_CMN_RST);
-> > > > -
-> > > >       switch (imx8_phy->drvdata->variant) {
-> > > >       case IMX8MP:
-> > > >               reset_control_deassert(imx8_phy->perst);
-> > > > @@ -156,6 +151,11 @@ static int imx8_pcie_phy_power_on(struct phy
-> > > > *phy)
-> > > >               break;
-> > > >       }
-> > > >
-> > > > +     /* Do the PHY common block reset */
-> > > > +     regmap_update_bits(imx8_phy->iomuxc_gpr, IOMUXC_GPR14,
-> > > > +                        IMX8MM_GPR_PCIE_CMN_RST,
-> > > > +                        IMX8MM_GPR_PCIE_CMN_RST);
-> > > > +
-> > > >       /* Polling to check the phy is ready or not. */
-> > > >       ret =3D readl_poll_timeout(imx8_phy->base +
-> > > > IMX8MM_PCIE_PHY_CMN_REG075,
-> > > >                                val, val =3D=3D ANA_PLL_DONE, 10,
-> > 20000);
-> > > > --
-> > > > 2.34.1
-> > >
-> > > --
-> > > linux-phy mailing list
-> > > linux-phy@lists.infradead.org
-> > > https://eur01.safelinks.protection.outlook.com/?url=3Dhttps%3A%2F%2Fl=
-ist
-> > >
-> > s.infradead.org%2Fmailman%2Flistinfo%2Flinux-phy&data=3D05%7C02%7Chongx=
-i
-> > >
-> > ng.zhu%40nxp.com%7C666c8968b3094147ed4408dcfaaec631%7C686ea1d3bc
-> > 2b4c6f
-> > >
-> > a92cd99c5c301635%7C0%7C0%7C638660875771545687%7CUnknown%7CTWF
-> > pbGZsb3d8
-> > >
-> > eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%
-> > 7C0
-> > > %7C%7C%7C&sdata=3D3Mg4SqcaA%2FlbScveriGBBMOq1YOTt3okydgHmjmdLps
-> > %3D&reser
-> > > ved=3D0
+> Signed-off-by: Babu Moger <babu.moger@amd.com>
+> ---
+> v9: New patch.
+> ---
+>  Documentation/arch/x86/resctrl.rst     |  4 ++++
+>  arch/x86/kernel/cpu/resctrl/monitor.c  |  1 +
+>  arch/x86/kernel/cpu/resctrl/rdtgroup.c | 33 ++++++++++++++++++++++++++
+>  3 files changed, 38 insertions(+)
+>
+> diff --git a/Documentation/arch/x86/resctrl.rst b/Documentation/arch/x86/=
+resctrl.rst
+> index 2f3a86278e84..2bc58d974934 100644
+> --- a/Documentation/arch/x86/resctrl.rst
+> +++ b/Documentation/arch/x86/resctrl.rst
+> @@ -302,6 +302,10 @@ with the following files:
+>         memory bandwidth tracking to a single memory bandwidth event per
+>         monitoring group.
+>
+> +"available_mbm_cntrs":
+> +       The number of free monitoring counters available assignment in ea=
+ch domain
+> +       when the architecture supports mbm_cntr_assign mode.
+
+It seems you need to clarify that counters are only available to a
+domain when they're available in all domains:
+
+resctrl# for i in `seq 100`; do
+> mkdir mon_groups/m${i}
+> done
+resctrl# cat info/L3_MON/available_mbm_cntrs
+0=3D0;1=3D0;2=3D0;3=3D0;4=3D0;5=3D0;6=3D0;7=3D0;8=3D0;9=3D0;10=3D0;11=3D0;1=
+2=3D0;16=3D0;17=3D0;18=3D0;19=3D0;20=3D0;21=3D0;22=3D0;23=3D0;24=3D0;25=3D0=
+;26=3D0;27=3D0;28=3D0
+
+resctrl# cd info/L3_MON/
+L3_MON# echo '/m1/0=3D_' > mbm_assign_control
+L3_MON# cat available_mbm_cntrs
+0=3D2;1=3D0;2=3D0;3=3D0;4=3D0;5=3D0;6=3D0;7=3D0;8=3D0;9=3D0;10=3D0;11=3D0;1=
+2=3D0;16=3D0;17=3D0;18=3D0;19=3D0;20=3D0;21=3D0;22=3D0;23=3D0;24=3D0;25=3D0=
+;26=3D0;27=3D0;28=3D0
+L3_MON# echo '/m16/0+t' > mbm_assign_control
+-bash: echo: write error: Invalid argument
+L3_MON# cat ../last_cmd_status
+Out of MBM assignable counters
+Assign operation '+t' failed on the group /m16/
+
+L3_MON# rmdir ../../mon_groups/m1
+L3_MON# cat available_mbm_cntrs
+0=3D2;1=3D2;2=3D2;3=3D2;4=3D2;5=3D2;6=3D2;7=3D2;8=3D2;9=3D2;10=3D2;11=3D2;1=
+2=3D2;16=3D2;17=3D2;18=3D2;19=3D2;20=3D2;21=3D2;22=3D2;23=3D2;24=3D2;25=3D2=
+;26=3D2;27=3D2;28=3D2
+L3_MON# echo '/m16/0+t' > mbm_assign_control
+L3_MON#
+
+
+-Peter
 
