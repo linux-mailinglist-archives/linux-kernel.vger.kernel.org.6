@@ -1,81 +1,75 @@
-Return-Path: <linux-kernel+bounces-395032-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395033-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39FE89BB761
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 15:18:26 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 985B39BB770
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 15:19:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C2051C23654
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 14:18:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F7CA285D7A
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 14:19:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EB691442F2;
-	Mon,  4 Nov 2024 14:18:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BD6B1AC42C;
+	Mon,  4 Nov 2024 14:18:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ZFl3mqvP"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KwEHLner"
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F7C913D53B
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 14:18:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFDDC18BB84;
+	Mon,  4 Nov 2024 14:18:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730729893; cv=none; b=Q9dYiZAZaSVH8VULbTrr6RutWBQESxFV+SlYwW6rm3Qv4VTk+VAg9IKwbbWXKm/0HqEVw6nSLFcGMQkbbvwCggBerMx7ySRagQDEplimy4tDAAvm0nwogpFcyroZL2f32qutFK6l7zB0q6yO+ID+drlNgW13ESGsfXh2c55F2T8=
+	t=1730729912; cv=none; b=cBYi0FvaafFFaWrxzFMffGseA0HuGGR/zLP0ZgR+4VhZqhwiFNA+9Z2TMd9AKxIU4g5Dxlh5V9HWAguSLWcTuwP58D4wy4MQK0IEr0rIrcmIquIlNIdHxMsaK+5Frk6tpJayS27Q2QEiCxAGA3YAZzIbbWGTEaeBj61bVxoAUnQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730729893; c=relaxed/simple;
-	bh=Teyavt3wsHUxjvyFAZiKpPT387B+tlsdvE9LyLGy+W0=;
+	s=arc-20240116; t=1730729912; c=relaxed/simple;
+	bh=/Chv4Lh3NM8TilLfeoC96pG13MDmYyVvZbe/UZppYDE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kqzmCUJuHDUZrmPmGfF0RvMkdPfunrHyoSg8Bg/LYpQYDb9I4SAfIWsnI4nqWQctEtGHXY+yeZIaCqVcp0YiZEVqvw/FOc1w8g1o70tIZlM/IcqJGLrHIHiYhGNZajBh3mTsA/08eEqRHeigzNn9FkZTfh8xw3jQGGy4qfaZQX0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=fail smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ZFl3mqvP; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A4BYlF3001294
-	for <linux-kernel@vger.kernel.org>; Mon, 4 Nov 2024 14:18:10 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	u1v/WVvHGAo0bVyM2Taoht+/F9lPQwBWyf6U4K1s2Xk=; b=ZFl3mqvPbcrqu5Fm
-	/tdQBLyc1RjQhobSxIgv3AoflRkDcnVMqMoINj4uQJrMxqktvTB6rn27n9CmqOur
-	Czq75fWmigZZLMbsJ3t53Gt3ZlRiL4Oif9NVq9/u6JkNSNGmiNGPPnnGG0k9LB3L
-	aGAlhLDddL7oTD+Wd3bunyRsHIPHHWHYvqvo4O143vt5SH/0Zt1aaDCu3Rp+Xvgn
-	/vCyTIy46BxEQR+9JKGPTpu7VgLGNVhjhD4A++Ad3Qv8iQ4d55wwJvkZeaRBNg/j
-	85kvTB7L9V3m5tKT7c0vJWwULTmzd5GWtwwZnvcq1U17sJpeNR3iBxRltqp/3bLo
-	nn1YmA==
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42p5ye2mm2-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 14:18:10 +0000 (GMT)
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a6bf7f7576so3621015ab.2
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 06:18:10 -0800 (PST)
+	 In-Reply-To:Content-Type; b=CZMrEw2NDA/JTSZbpzPSjWSxAJTvQzBYQCo8XtwEsPHeHGPcFs15m6FY0Dk/L0ljD0KQbM8zXozF8eSgSirXKDCexFRv0dke7Ayg/eFxFAPHFEtP3ljTGk8aU6OYi09Vu62kaqMo+BKVz5nSTNBgRVowjKMKynN3ljAeh83XcQY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KwEHLner; arc=none smtp.client-ip=209.85.210.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-720d14c8dbfso2989620b3a.0;
+        Mon, 04 Nov 2024 06:18:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730729910; x=1731334710; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=EomflUWH20cDIjIkMNoiRS0Ceod1M+LUF8r7f2ao0zk=;
+        b=KwEHLnerpQNKW2oOrfV5nLrsJDW5Aqh1Pmd0zzR1v9neK6Ga/Kofb2XhJwI00y8lyC
+         4zUxnur29T1BDR02vtBkk2E534C4gnz8Jpmqs40gzRFImstEx5H5t/Rb4J8W73LXPmFd
+         xCIlX0NEKk73UT3A+yaaNJtbvv35uy1uEbrGhz0YL7gSLCS/xYhs28w+yPDrYGYn33Bj
+         qcSa9OOrhzc0Yp3CQcPuQFL/Nwi9L7tcyXKxzI0WNgAD7qWpfsNM0pbLfrh/yOklwxQT
+         J0xlPLyBKCs2wNrCMc5BkrVRBU1QiVU74Aj75vG9n9wD5/Bbkc0w++5jHDiu8VgkFJ5G
+         HSOQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730729889; x=1731334689;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=u1v/WVvHGAo0bVyM2Taoht+/F9lPQwBWyf6U4K1s2Xk=;
-        b=HitGmefM37tqab6yd5vq/AbrgYDe3Xw6TK0knZyGAnCvwiPVOl3g59xySfdxV6D79k
-         xJ8Z7P27xTzao4oC+vEi24RZJ2NmCTR/pmGeC7CIsuhTOgXtZVjRoHyAmHLrc1lFaJyu
-         Nm1sil68bFT88HkUTJY889X/0ZqKPO0NOQ/wrWJRliMzZLLWWQxIIV7fCV6GtP3x36NH
-         27lP/1B090cfGZ3bNJhseJqpjI85tWYMA2wotOXbkK7+nBGtR5nm/CSL5S9Kw1tQcoOS
-         VTY+wPpELL6kQCPAxCNnHwWuRnY1/OhhVmZydxk6rkL3uSXJPgeCIYjFPD7x1s57/SoY
-         Ao5A==
-X-Forwarded-Encrypted: i=1; AJvYcCW6Kq199KYLGXdaobfcXmBrJGX6eTfBEXrSkHyShTkSQ31j70kiUaJEGR8YnrzXchcW7sQYqhwH7rBOIs8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyPuqg5scxDR+wwWdhs3zrLcBnyXn9fp2H5ha5xRwpctSh2FULq
-	7ydKmA9yt/jYDldNwGiQW8WipVxRkHTfVr3Y4+ivTguztphp8nU+DgbbNCToZpr/HHiS9v4MKpA
-	BVCJQhzyBpRLjbUvIPUeTu6WMHIqlTU6OnkoGRsH0XZLImDJA7Ku90mTXZDNjzPY=
-X-Received: by 2002:a92:c561:0:b0:3a3:af94:4610 with SMTP id e9e14a558f8ab-3a4ed314920mr76085985ab.7.1730729889312;
-        Mon, 04 Nov 2024 06:18:09 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFCE3MSfa+IhWcVZ63OZ1NsqKoHNMmvePwJ57m9ObdgTyluZNlPMfMOzkM+3rGnAfblsK0Ltg==
-X-Received: by 2002:a92:c561:0:b0:3a3:af94:4610 with SMTP id e9e14a558f8ab-3a4ed314920mr76085745ab.7.1730729888716;
-        Mon, 04 Nov 2024 06:18:08 -0800 (PST)
-Received: from [192.168.212.120] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9e566442easm555348766b.166.2024.11.04.06.18.04
+        d=1e100.net; s=20230601; t=1730729910; x=1731334710;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EomflUWH20cDIjIkMNoiRS0Ceod1M+LUF8r7f2ao0zk=;
+        b=NaFtZQzwt1KdB026fU6V8E3XrI/zC/z5TxekhMHsM9ZwzNIWedaw6stAjdeeAebhzN
+         wuMYoJoDl7jy2w1nwVVm3eQXkGGB29GTX8XKRDfzAQrhTOG+eBBudqPgZX81Ryc26bPg
+         U3x/JW5OKuPuaTlsrINhCmJEUbAJbv+8Y9+H0im2a0l6lTLf1MV2FEzJB5mA7WjFZ8mj
+         vq1TynLhHRrt9edL8WH0JhPLAfn+9wdmZTLOPfBBTt5iLvVx7L9dQrq9UFio0i735G5y
+         ABF1gUKyROlBBT0qrWnyNbeXJFSf2bo1NrqvHsKOOhIA2ARRZfHr2r74XsFk11+TrMPk
+         aSZg==
+X-Forwarded-Encrypted: i=1; AJvYcCUWwGK0GAyhBdBVEWD6aJZ5QrAkDGZ3kypEjFG+/UvMLOeRTEYrI1225KWwTnMkgjjnfAh/+DF6dIRQ@vger.kernel.org, AJvYcCVNKaEUgFzc1NBm60v58ZPPb05qUscHCOGgCsTOR1ZI6yobWz90zi4fpxsuKv5GRQR2X8SN2oFn3hlr@vger.kernel.org, AJvYcCW2YFbnui5aBCb9AIqY9fpLabb1QJxF/D3kAzLDYeivOpqbOqR/owbOCAGVz3s50rdJQt+AyrT5+SuY@vger.kernel.org, AJvYcCWL3wGBRElxN1z9pioKip+vI208Pwx7qR7ZMOAVVG4bKi1JaoaqUOAYEqTsrDh6+zScsdvysIsN/qJPJ4kh@vger.kernel.org, AJvYcCXABk/aW+QA0de9+IruNfZGglwDmb4G9L2vN0pCUot4IM3kfRx8cB7qTQJGb5/mfc/B1jwdCT+G1UxpT2Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyGrzOysIaZWWb253zZXC4Twj65V9d/sIwlCrv3KG7+Yxy5gtOR
+	taD2EIfMQ89BfO86DjR1iMULeIh0bxaz9+OPcH1HhFXQ2TnkOVz+
+X-Google-Smtp-Source: AGHT+IHmq91h/VGwfTg2kZ1Kcbf1CrWhmg5nKQ49/4Fo5+DxsEeXL/Du1kVgg7Gc5MY+4+QwCXzX7A==
+X-Received: by 2002:a05:6a20:244c:b0:1db:e536:974b with SMTP id adf61e73a8af0-1dbe5369943mr2357337637.34.1730729909851;
+        Mon, 04 Nov 2024 06:18:29 -0800 (PST)
+Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-720bc1ea68asm7420203b3a.47.2024.11.04.06.18.27
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 04 Nov 2024 06:18:07 -0800 (PST)
-Message-ID: <e1871824-78c8-436f-a41c-16ac1614004a@oss.qualcomm.com>
-Date: Mon, 4 Nov 2024 15:18:03 +0100
+        Mon, 04 Nov 2024 06:18:28 -0800 (PST)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <fa79de78-aed9-4cd3-bff9-310f2b4a32c9@roeck-us.net>
+Date: Mon, 4 Nov 2024 06:18:27 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,87 +77,110 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 1/3] drm/msm/adreno: Add support for ACD
-To: Akhil P Oommen <quic_akhilpo@quicinc.com>,
-        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>, linux-arm-msm@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        devicetree@vger.kernel.org
-References: <20241012-gpu-acd-v1-0-1e5e91aa95b6@quicinc.com>
- <20241012-gpu-acd-v1-1-1e5e91aa95b6@quicinc.com>
- <1543ae2a-76ff-4b36-adae-37076e48b7f8@oss.qualcomm.com>
- <20241021220914.vrxiyeoxjyxweovu@hu-akhilpo-hyd.qualcomm.com>
+Subject: Re: [PATCH v3 3/6] hwmon: (pmbus/core) add wp module param
+To: Jerome Brunet <jbrunet@baylibre.com>
+Cc: Jean Delvare <jdelvare@suse.com>, Jonathan Corbet <corbet@lwn.net>,
+ Patrick Rudolph <patrick.rudolph@9elements.com>,
+ Naresh Solanki <naresh.solanki@9elements.com>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>, linux-hwmon@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-i2c@vger.kernel.org
+References: <20241024-tps25990-v3-0-b6a6e9d4b506@baylibre.com>
+ <20241024-tps25990-v3-3-b6a6e9d4b506@baylibre.com>
+ <47164712-876e-4bb8-a4fa-4b3d91f2554b@roeck-us.net>
+ <1jjzdj5qyy.fsf@starbuckisacylon.baylibre.com>
 Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20241021220914.vrxiyeoxjyxweovu@hu-akhilpo-hyd.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
+In-Reply-To: <1jjzdj5qyy.fsf@starbuckisacylon.baylibre.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: _1minbWZ8-QwxpML_IBmCFIemymdnBQI
-X-Proofpoint-GUID: _1minbWZ8-QwxpML_IBmCFIemymdnBQI
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 bulkscore=0
- mlxscore=0 spamscore=0 lowpriorityscore=0 adultscore=0 malwarescore=0
- suspectscore=0 priorityscore=1501 clxscore=1015 mlxlogscore=994
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411040124
 
-On 22.10.2024 12:09 AM, Akhil P Oommen wrote:
-> On Mon, Oct 21, 2024 at 11:38:41AM +0200, Konrad Dybcio wrote:
->> On 11.10.2024 10:29 PM, Akhil P Oommen wrote:
->>> ACD a.k.a Adaptive Clock Distribution is a feature which helps to reduce
->>> the power consumption. In some chipsets, it is also a requirement to
->>> support higher GPU frequencies. This patch adds support for GPU ACD by
->>> sending necessary data to GMU and AOSS. The feature support for the
->>> chipset is detected based on devicetree data.
->>>
->>> Signed-off-by: Akhil P Oommen <quic_akhilpo@quicinc.com>
->>> ---
+On 11/4/24 00:43, Jerome Brunet wrote:
+
+>>> +/*
+>>> + * PMBus write protect forced mode:
+>>> + * PMBus may come up with a variety of write protection configuration.
+>>> + * 'pmbus_wp' may be used if a particular write protection is necessary.
+>>> + * The ability to actually alter the protection may also depend on the chip
+>>> + * so the actual runtime write protection configuration may differ from
+>>> + * the requested one. pmbus_core currently support the following value:
+>>> + * - 0: write protection removed
+>>> + * - 1: write protection fully enabled, including OPERATION and VOUT_COMMAND
+>>> + *      registers. Chips essentially become read-only with this.
 >>
->> [...]
->>
->>> +
->>> +	/* Initialize qmp node to talk to AOSS */
->>> +	gmu->qmp = qmp_get(gmu->dev);
->>> +	if (IS_ERR(gmu->qmp)) {
->>> +		cmd->enable_by_level = 0;
->>> +		return dev_err_probe(gmu->dev, PTR_ERR(gmu->qmp), "Failed to initialize qmp\n");
->>> +	}
->>
->> I'm still in favor of keeping qmp_get where it currently is, so that
->> probe can fail/defer faster
+>> Would it be desirable to also suppport the ability to set the output voltage
+>> but not limits (PB_WP_VOUT) ?
 > 
-> Sorry, I somehow missed this email from you until now.
+> I was starting simple, it is doable sure.
+> It is not something I will be able to test on actual since does not
+> support that.
 > 
-> If it fails, then it probably doesn't matter if it is a bit late. But for defer, isn't there
-> some optimizations to track the dependency from devicetree data? I am
-> not entirely sure!
-
-There's devlink for clocks/supplies etc, it doesn't apply universally
-for all phandle references IIUC.
-
+> Do you want me to add "2: write protection enable execpt for VOUT_COMMAND." ?
 > 
-> Since qmp node is related to ACD, I felt it is better to:
->   1. Keep all acd probe related code in a single place.
->   2. Be more opportunistic in skipping qmp_get() wherever possible.
-> 
-> But if you still have strong opinion on this, I can move it back in the
-> next revision (v3).
 
-I suppose the answer is yes, I have a strong opinion :D
+Please add it. I have a number of PMBus test boards and will be able to test it.
 
-Konrad
+Thee are three options, though. Per specification:
+
+1000 0000 Disable all writes except to the WRITE_PROTECT command
+0100 0000 Disable all writes except to the WRITE_PROTECT, OPERATION and
+           PAGE commands
+0010 0000 Disable all writes except to the WRITE_PROTECT, OPERATION,
+           PAGE, ON_OFF_CONFIG and VOUT_COMMAND commands
+
+The driver uses OPERATION and VOUT_COMMAND, so we should have options
+to disable them separately. It may be desirable, for example, to be able
+to turn on a regulator but not to change the voltages. Also, since
+full write protection also disables writes to the page register,
+the impact of full write protection on multi-page chips needs to be
+documented.
+
+Thanks,
+Guenter
+
 
