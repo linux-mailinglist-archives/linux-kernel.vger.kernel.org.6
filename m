@@ -1,127 +1,153 @@
-Return-Path: <linux-kernel+bounces-395205-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395206-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C8C59BBA44
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 17:23:23 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35F669BBA45
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 17:23:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CDF981C24675
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 16:23:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF70A1F216D9
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 16:23:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9855B1C302C;
-	Mon,  4 Nov 2024 16:22:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D7F61C4622;
+	Mon,  4 Nov 2024 16:22:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="SppinLlP"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BLgy17U9"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDAA41C07EF
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 16:22:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4F211C07EF
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 16:22:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730737333; cv=none; b=jjRTzI4iSePjGZBNLhZpxxg5DmdkRipOSTQtUyq3PYKLSr81pE22DK7gblMpqLnfIKKCMOA9cjAb2wlDwDJl7HRmw4zETylKx5is4p8mNxc7zUiTIgWjrDs5gsG6LpiLz+A7rD9JONMlU9KpD9A325hc6WAvps7SJI/cm1XEPUc=
+	t=1730737348; cv=none; b=gh/8y8TvZA3UQVFRVekvxgRIbweE9UfWJVak+PtDHjxTFx3TTWEmOEBXMca9vZwiYw8ovWaBmeFc9c5b/OzQcywU73sj222FBNNf3bz7OF938VaWtSUtAWR33sJq2cFWrMI/U86OigjTGy0m0scItNTm/HgwYst4vy4ttgFUkjo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730737333; c=relaxed/simple;
-	bh=1IJVTOdevInuCFt0TT64VQzJrQeBcyo57p7osJy8EOM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iWdEWKtI68uE3V2a/uEjJ7xzFOySpmXHABd8wO3RGO/Z0Cy8bGrM0tTWEghX4ajUNagiXT7Lg41U3jqZRiF821np9BFYLgwyjkbjuHNjMyPAOjdoqCy2YNsO6mdY7oChM7kRFVHyqrFR8CvHZwWvi71jBf49YXFLAyCJLgelrpU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=SppinLlP; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a9a16b310f5so725050566b.0
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 08:22:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1730737329; x=1731342129; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=1IJVTOdevInuCFt0TT64VQzJrQeBcyo57p7osJy8EOM=;
-        b=SppinLlPgyjmCh2MfqTsfW5HaAGziwj269neHwN6KD+zC93SZkd4fWQg9SFyzUiScQ
-         i4DyIHpBEcEDwvdyuDVHZaiA/8lje9vusISReAXmuljOhFu+u0YXA5erRZkJDy2KN+QT
-         fDq+x68uSx+Zgs+1RiiCjkRUxyd7W1BlJ7OuWZCFbnp6zsPKsZpazr6nUb5m9bu8KPpN
-         Qmnxer5DYb3Au3eTHZTtgik9Mokj/89guk50+HCzxaH9hsHxwxRITgr+lCL49R5snTlJ
-         9hQVW6++ijEiakI/jEDqs81BwVAz2HHgc/Tko3f+jGuGb0xkDdi6yhWBB9pk1N3laJg6
-         YCAg==
+	s=arc-20240116; t=1730737348; c=relaxed/simple;
+	bh=IQeGnFrlKcJMyxCdPHDpA8uwABSsBIQVxA+KFfNERGI=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=EwCE7Z701i4+zCKKRk5Cgyep7hCY8ZfQp8rHUau4FsCpE2TA0nWch1gW9BeLHOZEhofCAf7S6NfNyUhS2xU7mdwIuQsGHI9RAxrkHFrrecCYh1cBTKHy8cmZ1eWE4/GFK1wd/CY/baF2DG7xuA6hGBFMXHQOqkTpBZmwMkjMvsI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BLgy17U9; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1730737345;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=DDAuBted5dLeURKBGQFzMNRty5vbrd8/225x2WxUwFs=;
+	b=BLgy17U9Mz5TrlC8rzJN3pxrQZYLuOVkN3GJ4eYRqNSB8uXPJpeENeuUDll61JJFigKKfe
+	DdiQeElsdDU95mjM6HpCuZWyfBti1vkTSH1Znq/OSfz02a5aTNb7ac3284afmwI2k8uC+o
+	lrjOSjv6PQqgZpWZJmwwVwWA9IVnKkQ=
+Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
+ [209.85.218.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-201-nmpvpLDROYeODdbhUJvr9Q-1; Mon, 04 Nov 2024 11:22:24 -0500
+X-MC-Unique: nmpvpLDROYeODdbhUJvr9Q-1
+Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-a9a1e429a8fso363947166b.0
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 08:22:24 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730737329; x=1731342129;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1IJVTOdevInuCFt0TT64VQzJrQeBcyo57p7osJy8EOM=;
-        b=pB22Xd/g7Of+HeICGaRTcvKPtt4QqZ7/vL97T4mHhEFJhI0v7fQbkUcHFzRWeTZQMB
-         7aAJ3qH0tElyTjv1PUwvpHCzioll6tcp5P7DGrkB+p3ndYvRpHos5qUT5wsgzKYDLmsi
-         tqCBDMaGfG2NJvCQtaBJQy7vFvbTePEjgn3r/Izlon63yU5/PF7UWKcqSw3aR4ipFBxS
-         GXaYfT7VWNEcTVBVzaQh+xtkiGSicP9Oxxklv1fyemtxFNfoKEO1qd3i+9cJ2pL4tr8v
-         nhQq5j1IooJhXfNOW+Iy8N4FvtaW13eyo/CHd9CIxMTYdOZ0Gl5nyeJvNHpL3U1ZRQ47
-         f8+w==
-X-Forwarded-Encrypted: i=1; AJvYcCWi87M1fjCU1ZLXmABzLeOj67a2a+H1+/NZoTDZR8TH7TRG9TipT04fnyIXlgfzjpnS+zfffGXUDuBvl2A=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywcj5x9odmtnb3QwgQveISxFWjF2Cpywy0Hxo69D/q7wHSi0IqY
-	ecqNi1n1pD5YE8g12h++G9KMzxmSG6b6vzfCMbq8csukEg44ICE4UnQYZdq0n8U=
-X-Google-Smtp-Source: AGHT+IEIxI5kzSOoP15F+IAqnvkf4bEB0uP9CKSZmNbKww+N79Bfsg6uYpHMWT+RGeNBfeWTUF9b4A==
-X-Received: by 2002:a17:907:7e8f:b0:a99:dde6:9f42 with SMTP id a640c23a62f3a-a9e50b935bcmr1467166566b.47.1730737329029;
-        Mon, 04 Nov 2024 08:22:09 -0800 (PST)
-Received: from blackdock.suse.cz ([193.86.92.181])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9eb16f85e8sm1618166b.84.2024.11.04.08.22.08
+        d=1e100.net; s=20230601; t=1730737343; x=1731342143;
+        h=content-transfer-encoding:mime-version:message-id:date:references
+         :in-reply-to:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=DDAuBted5dLeURKBGQFzMNRty5vbrd8/225x2WxUwFs=;
+        b=BKbGHAPm9ioaf4coLV0Zga2qPXjbqeajEOIyRzDItC+of288/zdIH3O7U3Q1tO9sRD
+         UYbXIo7r0m4wwnb8LtpaBZxBiYZ2g1QPs+lD19Q26SnpBD84MYNlDBPa7NY+yr/P3ovt
+         CPh5pt34vHSxa0aq/zCN7Y5v0ugqw4qh/9rE20u3WbAYOoNj+m/UtGE+fKvkAWIrbyqK
+         aywCYy5s75neMCKauF7uY4ddTNDS97fZ8PIXthIUfErnDxghhL3DyjiTGVEa/1Q2BvUD
+         ZcmksMhDZeZ3oSM8Z/rSnhDLv2qu1gP5ZvZ89kNBI9b/H1cGAJgCDw9is52QpCHBDaAe
+         Z/aA==
+X-Forwarded-Encrypted: i=1; AJvYcCURj/U565+FVoUl2YYbm4NrenFF3xdRRU+nds7MZOW3tw1HU+eo3lIg68qIPRQFkYPD/BCler9EURqVWcw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwIAG67YvDid8QIuoe6NHeuLaPzuxYp9kKzLr6xmTVrAu0Upvch
+	/4aokSC7DpTSWP6bewVIbli9AWmpf0ionajZuxl4TqZKXr/p+4qM83XMNS8BGn4uHbHeD2w2c4N
+	LWpor3nJU8ozy3K2BRR5P7dZh1Ri3+AmxWSNw5i2HaD6gHNVyJJX6g+WfrurjrA==
+X-Received: by 2002:a17:907:1c85:b0:a9a:1f38:e736 with SMTP id a640c23a62f3a-a9e654fb423mr1309267266b.31.1730737343245;
+        Mon, 04 Nov 2024 08:22:23 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHOiR6QMYgQdW4+mshnrfOWBlpQZoTzVQuyXvd/zEM+yk9iclHiooZDENzVV+mOV9mrs3qrAQ==
+X-Received: by 2002:a17:907:1c85:b0:a9a:1f38:e736 with SMTP id a640c23a62f3a-a9e654fb423mr1309263966b.31.1730737342768;
+        Mon, 04 Nov 2024 08:22:22 -0800 (PST)
+Received: from alrua-x1.borgediget.toke.dk ([45.145.92.2])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9eb16d9ef8sm1803866b.70.2024.11.04.08.22.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Nov 2024 08:22:08 -0800 (PST)
-Date: Mon, 4 Nov 2024 17:22:06 +0100
-From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
-To: Kinsey Ho <kinseyho@google.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, 
-	Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>, 
-	Roman Gushchin <roman.gushchin@linux.dev>, Shakeel Butt <shakeel.butt@linux.dev>, 
-	Muchun Song <muchun.song@linux.dev>, Pasha Tatashin <pasha.tatashin@soleen.com>, 
-	David Rientjes <rientjes@google.com>, willy@infradead.org, Vlastimil Babka <vbabka@suse.cz>, 
-	David Hildenbrand <david@redhat.com>, Joel Granados <joel.granados@kernel.org>, 
-	Kaiyang Zhao <kaiyang2@cs.cmu.edu>, Sourav Panda <souravpanda@google.com>, 
-	linux-kernel@vger.kernel.org, cgroups@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH mm-unstable v1 2/2] mm, swap: add pages allocated for
- struct swap_cgroup to vmstat
-Message-ID: <427pnhob4jjh6shhwypbsvaqgqvikgvxche2llbieagksbu2je@dwneoygkvixc>
-References: <20241031224551.1736113-1-kinseyho@google.com>
- <20241031224551.1736113-3-kinseyho@google.com>
+        Mon, 04 Nov 2024 08:22:22 -0800 (PST)
+Received: by alrua-x1.borgediget.toke.dk (Postfix, from userid 1000)
+	id 4EE44164C05D; Mon, 04 Nov 2024 17:22:21 +0100 (CET)
+From: Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>
+To: Alexander Lobakin <aleksander.lobakin@intel.com>
+Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+ <pabeni@redhat.com>, Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann
+ <daniel@iogearbox.net>, John Fastabend <john.fastabend@gmail.com>, Andrii
+ Nakryiko <andrii@kernel.org>, Maciej Fijalkowski
+ <maciej.fijalkowski@intel.com>, Stanislav Fomichev <sdf@fomichev.me>,
+ Magnus Karlsson <magnus.karlsson@intel.com>,
+ nex.sw.ncis.osdt.itp.upstreaming@intel.com, bpf@vger.kernel.org,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v3 09/18] page_pool: allow mixing PPs within
+ one bulk
+In-Reply-To: <1c32ebcd-ae94-42fb-9b18-726da532161f@intel.com>
+References: <20241030165201.442301-1-aleksander.lobakin@intel.com>
+ <20241030165201.442301-10-aleksander.lobakin@intel.com>
+ <87ldy39k2g.fsf@toke.dk> <1c32ebcd-ae94-42fb-9b18-726da532161f@intel.com>
+X-Clacks-Overhead: GNU Terry Pratchett
+Date: Mon, 04 Nov 2024 17:22:21 +0100
+Message-ID: <87y11z7yv6.fsf@toke.dk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="xsnkmnsfnfqko6pa"
-Content-Disposition: inline
-In-Reply-To: <20241031224551.1736113-3-kinseyho@google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
+Alexander Lobakin <aleksander.lobakin@intel.com> writes:
 
---xsnkmnsfnfqko6pa
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> From: Toke H=C3=B8iland-J=C3=B8rgensen <toke@redhat.com>
+> Date: Fri, 01 Nov 2024 14:09:59 +0100
+>
+>> Alexander Lobakin <aleksander.lobakin@intel.com> writes:
+>>=20
+>>> The main reason for this change was to allow mixing pages from different
+>>> &page_pools within one &xdp_buff/&xdp_frame. Why not?
+>>> Adjust xdp_return_frame_bulk() and page_pool_put_page_bulk(), so that
+>>> they won't be tied to a particular pool. Let the latter create a
+>>> separate bulk of pages which's PP is different and flush it recursively.
+>>> This greatly optimizes xdp_return_frame_bulk(): no more hashtable
+>>> lookups. Also make xdp_flush_frame_bulk() inline, as it's just one if +
+>>> function call + one u32 read, not worth extending the call ladder.
+>>>
+>>> Signed-off-by: Alexander Lobakin <aleksander.lobakin@intel.com>
+>>=20
+>> Neat idea, but one comment, see below:
+>
+> [...]
+>
+>>> +	if (sub.count)
+>>> +		page_pool_put_page_bulk(sub.q, sub.count, true);
+>>> +
+>>=20
+>> In the worst case here, this function can recursively call itself
+>> XDP_BULK_QUEUE_SIZE (=3D16) times. Which will blow ~2.5k of stack size,
+>> and lots of function call overhead. I'm not saying this level of
+>> recursion is likely to happen today, but who knows about future uses? So
+>> why not make it iterative instead of recursive (same basic idea, but
+>> some kind of 'goto begin', or loop, instead of the recursive call)?
+>
+> Oh, great idea!
+> I was also unsure about the recursion here. Initially, I wanted header
+> split frames, which usually have linear/header part from one PP and
+> frag/payload part from second PP, to be efficiently recycled in bulks.
+> Currently, it's not possible, as a bulk will look like [1, 2, 1, 2, ...]
+> IOW will be flush every frame.
+> But I realize the recursion is not really optimal here, just the first
+> that came to my mind. I'll give you Suggested-by here (or
+> Co-developed-by?), really liked your approach :>
 
-Hello Kinsey.
+Sure, co-developed-by SGTM :)
 
-On Thu, Oct 31, 2024 at 10:45:51PM GMT, Kinsey Ho <kinseyho@google.com> wrote:
-> Export the number of pages allocated for storing struct swap_cgroup in
-> vmstat using global system-wide counters.
+-Toke
 
-This consumption is quite static (it only changes between swapon/swapoff
-switches). The resulting value can be calculated as a linear combination
-of entries in /proc/swaps already (if you know the right coefficients).
-
-I'm not sure this warrants the new entry (or is my assumption about
-static-ness wrong?)
-
-Michal
-
---xsnkmnsfnfqko6pa
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQTd6mfF2PbEZnpdoAkt3Wney77BSQUCZyj0rAAKCRAt3Wney77B
-SY9LAP9/jdQUnp8MsUTsmirYbLEY5QeOWGUXcJ1lihd7wb/XxAD+M2sjppH7KZ56
-DqztrEdrWYgFudgEBgGGKuXkH178EQo=
-=xrK9
------END PGP SIGNATURE-----
-
---xsnkmnsfnfqko6pa--
 
