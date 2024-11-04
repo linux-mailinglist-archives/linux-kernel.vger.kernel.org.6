@@ -1,137 +1,133 @@
-Return-Path: <linux-kernel+bounces-394830-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394832-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBA599BB498
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 13:23:42 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F1A29BB4A1
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 13:24:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A30DC1F2138C
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 12:23:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E334DB23D91
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 12:24:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF7F91B5EBC;
-	Mon,  4 Nov 2024 12:23:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8A401B4F3F;
+	Mon,  4 Nov 2024 12:24:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a+M3vrgj"
-Received: from mail-pl1-f195.google.com (mail-pl1-f195.google.com [209.85.214.195])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MAsqbXoj"
+Received: from mail-vk1-f176.google.com (mail-vk1-f176.google.com [209.85.221.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 778D01B0F2B;
-	Mon,  4 Nov 2024 12:23:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D675F1B0F2B;
+	Mon,  4 Nov 2024 12:24:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730723013; cv=none; b=Ao8RuZw3LtPNFwQ8AHez5Xi+rSSE6HAI0UjYXQz98kUTDZDz9BYTEY4H/gyzo9UIEhVFtmnnGYpPGN0Z2qrCj9alKct3idGsb5M6Yo/DsBVvK4KXh6kkYFgSzDpTdAnKjNeRVoWXqwPCcqUtQB6iCkKKneTQvQ2GwvaF91uqGJM=
+	t=1730723083; cv=none; b=FLk97VA1BZgipqpvLHdLcXcsDB5dGph6fsMYOc/xBJ4MY2/UnDkaAUEmFZzeXbVyRTqMZMJ20y97xh3ze1z1eCaVNrm0zmsm9cut8fp2saOVrjE8DeEBz3E75dHEETfED8x35kKXZrnVrGPWYX3n5nH04enh+Y/RXqpwF2ZUI3A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730723013; c=relaxed/simple;
-	bh=ZFwj51A2gbZA7vJSStsy0TIypVjePjyNWxkZO2XfIEc=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=HKKM9EUxhkZaZD5ulikYBUaDW7wqdfV2C4GOt/prDF2+VC9BMnM0823YehLjSNlBr0tiibPXtoeLY2IClsLH0UohUxYLbLDTNui4mNstpOrKlTXqpmHph1Bd7WGfApAUXnoWT5Onw783kXeT52EpX2//LzfwXSaQqNWEPV2M2vA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a+M3vrgj; arc=none smtp.client-ip=209.85.214.195
+	s=arc-20240116; t=1730723083; c=relaxed/simple;
+	bh=CuX881Htq2G9MyF7JVoCeQrvUEVRmKlh4ut54sjNC7E=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=OSa0IYUmd/87+ovbiqwDbwvCu860ZlTyUAGsInaFcX5rSi+M17hSSZVtpi86PRjHpZW/lJVD9/HJLBEz+1Sn6FI4SM8pzMZo1y/E2GR5qbuzfClaQEe65s7pdGlSlzjo9sKI6dFCYHVy7IpoOwZKYUJ4biAL00SX0Mj47BQR7k8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MAsqbXoj; arc=none smtp.client-ip=209.85.221.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f195.google.com with SMTP id d9443c01a7336-20ce5e3b116so31260885ad.1;
-        Mon, 04 Nov 2024 04:23:31 -0800 (PST)
+Received: by mail-vk1-f176.google.com with SMTP id 71dfb90a1353d-50d3d4d2ad2so1718337e0c.0;
+        Mon, 04 Nov 2024 04:24:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730723011; x=1731327811; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:cc:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=fiCZNrw+g0MfYd+wHoshXkkg40DDzaFGOl5IzkgDf8E=;
-        b=a+M3vrgj3twLLQ4O/48ElZVQa8MFsoFKNwgdmouzjw/IZnDpJ4l8slZMTjbccF0RDM
-         fTh4sPUEG70nGnYUUoIUdVc3xz28wKTcxWG/evbf3L50HH5O/pI//QUfYVtYVj3Lorye
-         ZVuLBHnDTH7tGL0Q3YWAABB1IyJHU3EfAYKqZNxg/kpZvYcofKUtFktuCiM7pKH0xh7f
-         d09ExQWeFA7QabUimfSa0qr8crza48cRIevq0mGL1jAs+dTDstHMOqx8iljLLpv7aoFR
-         2FIaChyZZcHpodfptS4+P3ySKAXhcKzgmcTFIIhM5rwx/SY32eFwmL8khfpeT8UC3tDr
-         yOMg==
+        d=gmail.com; s=20230601; t=1730723081; x=1731327881; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Wo274/Jfmrl9jyJf2hcMW3bSE/BVnJ64CRAlMkPhKUg=;
+        b=MAsqbXojs8dcmW9JDcI6yEuoXZigeVdAXQvSY9DQNw4ER9Qh+zm/LR1nck2Ji1fIgk
+         hLAQ7rbwXda0OYkj3jA15ac44gBwZ/6urifB0K1TBmY7szqj4hS9BPMuTUtpQ516ByvV
+         qalFN+07NCzUHuO5sDV4EDUwt328vetD9dmwdM2uLlnwwHEMCC2Ue1GIRnqgEgS0Jn7y
+         5XekwCgBifHvAedldBmr+fpUJegFePdo0v5iDrv1kLiIYCIOOZYJ2RvYntCXEQr1EryY
+         owdN+Anbz6AZ93wjOtbAd8onDseXgDuMtvjTQlqKdzcmSdV98x8o+7hQNPsjLSOyHlNe
+         uKrA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730723011; x=1731327811;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:cc:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=fiCZNrw+g0MfYd+wHoshXkkg40DDzaFGOl5IzkgDf8E=;
-        b=M3zP9FbE86Grha/JH+6AWxwRMuMgvvXfy2dBQAA72GnwWhYv963gZgt2EykxUlhe0R
-         KZ3gz/Az53qnVpS1e87jnriyEXi/hQklh0YpvIs2AbIAoeeHUMnPXddpTZqq/GHvJnO+
-         D1/r88PSEboka+EmUyzkjCre+wrXWRFEYQJbf6pkRCp7HSOlOAiaD05kYCiwR+ZXkoIN
-         FLpdt3ie+yWPjke3OMx9C/qI6j618/4ZZPWY32A5EThul+1flCfmaySXWaQ09OwIHsOl
-         3TcrebIfP0dG6o97gUJlFcdAFeS0oKNMUIO0NBWDZrJR7HtFwmYew8rGalIoCCjK1Z6f
-         os1g==
-X-Forwarded-Encrypted: i=1; AJvYcCVyLRfogmS87XCWKNDkVtzifRK2mrvCKY486hBvzP2JcrQ6dxAsWp4PW8IUhoqvUvi6cYioAWhthETR@vger.kernel.org, AJvYcCWDLVteqvozi9ZFBG6PJiAhvP9gDKWVa1pv1sBTOmVHpXGluomkejjN3QSeFssNaRmFunMUR0dyBgHDYkpQ@vger.kernel.org, AJvYcCXQPnbq5R/H1hkggU6f3U4QiNmMXZo1c81phIfSF3jgE6aEb25QJzBeqv4FTuf8M19hd9uwOFenRMNu@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy4M0M0WCEQGifFJIeZni3pn3tAiMgwXGvLRTwe3J9zEH3Mg7wb
-	hJHlkrEet/Y88EqMkaNgNjHWwkdlgWiH3UgAcUelY45RLBs8xV+o
-X-Google-Smtp-Source: AGHT+IHLvWMCkXJUq+FJuMDRusJubVpqKeDmaeSEQmUKm01US5Q5+wIpwJg+l9Cfx8xC6auYaOIr6A==
-X-Received: by 2002:a17:903:2343:b0:210:e75e:4649 with SMTP id d9443c01a7336-2111af3fbfbmr177573405ad.17.1730723010690;
-        Mon, 04 Nov 2024 04:23:30 -0800 (PST)
-Received: from [127.0.0.1] ([2602:f919:106::1b8])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211057d3c3esm59811605ad.245.2024.11.04.04.23.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 04 Nov 2024 04:23:30 -0800 (PST)
-Message-ID: <edfaccd7-ac96-47fc-a174-912c8aaf0f5e@gmail.com>
-Date: Mon, 4 Nov 2024 20:23:23 +0800
+        d=1e100.net; s=20230601; t=1730723081; x=1731327881;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Wo274/Jfmrl9jyJf2hcMW3bSE/BVnJ64CRAlMkPhKUg=;
+        b=C4oRi/Yg+DGhbIejgWcEy2Mg6l1odG3H+F3/Ycyd7vqUma5grUHB7BK2rm9JJkqGkL
+         qR6wZH1+3yTaQMrqwmjRl8S4rOcmQOQaDWxi87fpLjsoNMQ87Ix6oMqiEoLJwrE86/U3
+         RozmGUjsMMfseVBnCrRS6nlMY8A4hdJXfJ7In9KlhwwucwGIXep3/xByLdMQ2aVrET4W
+         rXz3a+fxmiI98Lr2LJPH9SlHA5OFcwXmK1bisMGvhbtGdxaLuCgmgW45JVq/mEYrav/R
+         NA2EOmNefZSVLkICLALnphAQytH3GHpgk+rE1+SgPNWNR55FEsY31o/75jGyE9JLbatx
+         9sbA==
+X-Forwarded-Encrypted: i=1; AJvYcCURlSg1Bd1nI654lM1m9p7PXNe0VUptA4mpDWnk9AucH8XpgCs4qpuxdRSssAb6tlAFBnXgsHAOx/pdct8pXMliIak=@vger.kernel.org, AJvYcCVjWwgBpjZ3mun2t3E4L+kCE/gz7PGRGWZ+WHpEaHbMSMhCUmGVscNlqlqJMaq6853C/JVzC/L+bZY=@vger.kernel.org, AJvYcCWlmo7Bg398KP834A9vBNBIjBJTih+eW2nXlWzpJvEgHQtF8GfDuaS+eT2OLMm11MjgwC5/2pEcIyEPW+cF@vger.kernel.org
+X-Gm-Message-State: AOJu0YyT4H7mZbOr+/Qnaqejj8+ieQUbYCDrcXT/ENcbiIAtutMVX3F2
+	DM8Jmgytdnkinw3soMySHVsEHd4yF2aTns8yq88jFF83hN8615aAXv7Rl3Y61xsm1UMdZl3R0PC
+	OCIhnBsy00k1fguwsYD8PdNj/teo=
+X-Google-Smtp-Source: AGHT+IEFuIKEHUz2N0Td4TW4ap5UwUm7A4CtQG+0lfgO1HBunFwE3KhNTWiSxDOdOn6hE6z2q/i8kfbKH1pNha9OOME=
+X-Received: by 2002:a05:6122:2a01:b0:508:4997:18c6 with SMTP id
+ 71dfb90a1353d-51226f993c1mr10034054e0c.0.1730723080698; Mon, 04 Nov 2024
+ 04:24:40 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: troymitchell988@gmail.com, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v2 0/2] riscv: spacemit: add i2c support to K1 SoC
-To: Andi Shyti <andi.shyti@kernel.org>
-References: <20241028053220.346283-1-TroyMitchell988@gmail.com>
- <stpzkggfwseaqy6kbppiog4xfbpq4r2jwix2nvredbmmjqzbsi@wkllt4jlingv>
-Content-Language: en-US
-From: Troy Mitchell <troymitchell988@gmail.com>
-In-Reply-To: <stpzkggfwseaqy6kbppiog4xfbpq4r2jwix2nvredbmmjqzbsi@wkllt4jlingv>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20241028212914.1057715-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20241028212914.1057715-3-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdX5z5APK7JWtnqBBmtPpFYx_G1d_k9yxbv8vnvyuTsEWA@mail.gmail.com>
+In-Reply-To: <CAMuHMdX5z5APK7JWtnqBBmtPpFYx_G1d_k9yxbv8vnvyuTsEWA@mail.gmail.com>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Mon, 4 Nov 2024 12:24:14 +0000
+Message-ID: <CA+V-a8t6b6cbn+q7y9eUgoEx=y0uVrZytp88+dRmepipnwyyUA@mail.gmail.com>
+Subject: Re: [PATCH 2/2] clk: renesas: r9a09g057-cpg: Add support for PLLVDO,
+ CRU clocks, and resets
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2024/10/31 19:43, Andi Shyti wrote:
-> Hi Tony,
-> 
-> On Mon, Oct 28, 2024 at 01:32:18PM +0800, Troy Mitchell wrote:
->> Hi all,
->>
->> This patch implements I2C driver for the SpacemiT K1 SoC,
->> providing basic support for I2C read/write communication which
->> compatible with standard I2C bus specifications.
->>
->> In this version, the driver defaults to use fast-speed-mode and
->> interrupts for transmission, and does not support DMA, high-speed mode, or FIFO.
->>
->> The docs of I2C can be found here, in chapter 16.1 I2C [1]
->>
->> Link: https://developer.spacemit.com/documentation?token=Rn9Kw3iFHirAMgkIpTAcV2Arnkf#part5 [1]
->>
->> Troy Mitchell (2):
->>   dt-bindings: i2c: spacemit: add support for K1 SoC
->>   i2c: spacemit: add support for SpacemiT K1 SoC
-> 
-> As Krzysztof has asked, please do provide the changelog, it's
-> important to track the progress of your series.
-I saw a compilation warning sent to me by the robot, and I've
-fixed the warning. Should I resend V2 with the changelog
-what I miss or send V3?
+Hi Geert,
 
-Thank for your response.
-> 
-> Thanks,
-> Andi
-> 
->>  .../bindings/i2c/spacemit,k1-i2c.yaml         |  51 ++
->>  drivers/i2c/busses/Kconfig                    |  18 +
->>  drivers/i2c/busses/Makefile                   |   1 +
->>  drivers/i2c/busses/i2c-k1.c                   | 658 ++++++++++++++++++
->>  4 files changed, 728 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/i2c/spacemit,k1-i2c.yaml
->>  create mode 100644 drivers/i2c/busses/i2c-k1.c
->>
->> -- 
->> 2.34.1
->>
+Thank you for the review.
 
--- 
-Troy Mitchell
+On Wed, Oct 30, 2024 at 4:57=E2=80=AFPM Geert Uytterhoeven <geert@linux-m68=
+k.org> wrote:
+>
+> s/r9a09g057-cpg/r9a09g057/
+>
+I will fix this as part of v2.
+
+Cheers,
+Prabhakar
+
+> On Mon, Oct 28, 2024 at 10:29=E2=80=AFPM Prabhakar <prabhakar.csengg@gmai=
+l.com> wrote:
+> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> >
+> > Add support for the PLLVDO clock and its related CRU clocks and reset
+> > entries in the r9a09g057 CPG driver. Introduce `CLK_PLLVDO` and associa=
+ted
+> > clocks like `CLK_PLLVDO_CRU0`, `CLK_PLLVDO_CRU1`, `CLK_PLLVDO_CRU2`, an=
+d
+> > `CLK_PLLVDO_CRU3`, along with their corresponding dividers.
+> >
+> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>
+> Gr{oetje,eeting}s,
+>
+>                         Geert
+>
+>
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m6=
+8k.org
+>
+> In personal conversations with technical people, I call myself a hacker. =
+But
+> when I'm talking to journalists I just say "programmer" or something like=
+ that.
+>                                 -- Linus Torvalds
 
