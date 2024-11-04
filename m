@@ -1,254 +1,196 @@
-Return-Path: <linux-kernel+bounces-394815-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394816-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6ED69BB44D
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 13:13:43 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15ED69BB461
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 13:14:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D02C1F24990
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 12:13:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 36E5CB23139
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 12:14:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 096611B6CFF;
-	Mon,  4 Nov 2024 12:13:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 001E41B85DB;
+	Mon,  4 Nov 2024 12:14:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d60U2+qB"
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eJJqf0TI"
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EF921B6CE2
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 12:13:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 896C21B652B;
+	Mon,  4 Nov 2024 12:13:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730722408; cv=none; b=Tx5gaTLl0AgOIRlVmWruinD8+fBFWfdra7a7o5z26sGvKkH7quX8WydYNkJZ455ecDm5v/Q6Kf9+1rFVlMpmCfMaETOPob3kAo0u3aceg4ZH1xlLTL0JtuxozQPtlZ+Lib6a1hyNR89jae9NZ9yAtROXxVo6aQfbIoAyOUYRMyc=
+	t=1730722440; cv=none; b=JtIOgBpJiUn8rTb/AZqdVXxMF7wX52Ogh1CDYJ2Zf5xs9V0zpEn442BZhGsopYTNqSYRFIKFWpe+68fhiMcxF0m9UjkgLLANJJ6mk4Rr5NVo8/F4H1cbuiQojXX0ZhGX6ruZha4rlyWyRIvXUEpZW+qHDExYsbqaM4m7pOK3Usc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730722408; c=relaxed/simple;
-	bh=bW4fWPSQpMD46o+ViPF/dX8EbYjK1xzM+VKw3kA6Cxs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rV2XzEA33IIIUCNZYZOt+JHLd2zd2hFMgafC0vleJ+7vSN/Fg+z8CWU0V7YbJRojfWssV730khA6gTWXCHBkMEhlN1dooD9SH9AVlQFpsvBvDD0Vcvkk7FxcuY646487mj9wgMpJcAb9FfQM1EESnYEOtGsrmo1X0+ngYIkwocM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d60U2+qB; arc=none smtp.client-ip=209.85.208.180
+	s=arc-20240116; t=1730722440; c=relaxed/simple;
+	bh=+FgPmna2yZYdpj3UFinnNH2q5GuuHS84mHOrxv7TxxM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uR4m53kN5gNXlwySb0TkerQCF8xDF2oFiWLlgw6JaSONzM9DZPtzbLmprqNDLNYlzzOHBPwKGYlHddBNqxYiuC1wzzqrUcIX0IbsEwlFYXQ7nAorqBnvtAoNJn5hQpCpO9tS4i/5n4UgXolag2MnY+Uk8z2+d6dU1nRJEjhenP8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eJJqf0TI; arc=none smtp.client-ip=209.85.167.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2fb4af0b6beso60329761fa.3
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 04:13:26 -0800 (PST)
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-539e13375d3so4154478e87.3;
+        Mon, 04 Nov 2024 04:13:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730722404; x=1731327204; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=bOJk7OfXsT+Xw5K8e1e2bLMEk9P7tYgMnLJCrbfvplY=;
-        b=d60U2+qBXzoSFSmPUnMap4Z6+V4q1/FX3hUB7Zeo8YtUmG4UWWeROVzyayShgZlD+5
-         kKMd4khixNSXDyVQ7wXSv3FTPntu0A7Uoi2k/onf1B+fc7YMVcO0D19PGXsa+VEmfjx5
-         KaxqbWK/2dh+javNYDh0XJnq1x3a5DFcLx49h9w9iQdf/YnZL4HJY6gSKfo0laS0ECeY
-         apIGY+JxbS7NDLwczKPD3gw4dQOS1m1vi1CiLHpqPH4ZkrRc86Gm3f1dybkAbSMEB/6a
-         DF5w9pWxIT9BDGB7VYoCaIisJpUvcZPTOfgkPvenSp0s20VKCXEiV+SgAuuWx2R4D/F0
-         QKJg==
+        d=gmail.com; s=20230601; t=1730722437; x=1731327237; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FYskZ8T2jr5T8EblrfJJEhdK6BsHIwyTYKsdEZJGC9g=;
+        b=eJJqf0TIkl8oal7cuwK+ijQFIXcW00ywgxq7L6UlJIltcUV0LZnVuPdMWOgSD634J2
+         nIGMjp1PGoVwNIXgqWVtTNB5roFwvhdcBUxWD+kbW26ylsj0saQA8UirUq6LJ/mcEWBP
+         nZkBvmXlhlNdEOhkWH6usubp1B+oach/Hu/6psfdKdowoOTbrlbcjXdKs+pGfZKdP9AV
+         QYf9+nAph09MPjTt2P5t/18cIyqe30mX70Lope7gxZqhzYAoDzS7hYe+Xrl9U3xbyV7K
+         E63Tvdb28Gb+a8FQklx2b4pgxH1iAGpJIOB4QC8YV+x0tojhSmaRdRfsG0gi8piWGGM7
+         vGNQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730722404; x=1731327204;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=bOJk7OfXsT+Xw5K8e1e2bLMEk9P7tYgMnLJCrbfvplY=;
-        b=mMXq9ZTJ3Szo/cg3IidMiG3c3DF1PhOlvFOgop4E57j0UDJrv2OFP96TulNplaWksr
-         6XMRXnrW9SoBo6aJr/BbsPDNw/7au/9ZJ0gXFa7l+5uKC4TmMos6du4owEdGs+mgk2IU
-         LIXsOfZy5AOV1tj9mYk/ycK/8Kv0B7QVuoTuQQnEBkNlSXgJjepqHKGeNRbB1LCGjwsc
-         HOCR9aErMrwDH5BFQXBrvik5JbDYUAo7fXtFjD07Qw28naYmdijg6vT+MPw0yqUCh1UT
-         nee5BAF3//GZpywlXAXKwmDp/593GWw/j7nvzoKDqmP76HIMV6ZpNfH+vfyFmCOMhxlM
-         ALVA==
-X-Forwarded-Encrypted: i=1; AJvYcCU+NRGAot4LMOdllnDtwFNyF4IS1h8/Utp0d7F+leIS1HVDnacfmaPpTZPZxBQE1yy7wmPX4kqPlE2xSzQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxWTsY1TmAjvdXgYHak37FKEC8naezFebZgC2JpmKoUjcfVyqob
-	Py576qSZCZNPkSIR3+17gUOFJzKCqEFDwRvBlWcxDuu+y0q7kOnW
-X-Google-Smtp-Source: AGHT+IFKs7aDMWR5bYmRZraqFa5M5X+Gd4nCdqEynWIk2yfgXDEdIi5TtwnA+VsCByPQsjSqfCK3eg==
-X-Received: by 2002:a05:651c:2123:b0:2fa:c0c2:d311 with SMTP id 38308e7fff4ca-2fedb794b2dmr86293771fa.5.1730722404011;
-        Mon, 04 Nov 2024 04:13:24 -0800 (PST)
-Received: from ?IPV6:2a03:83e0:1126:4:eb:d0d0:c7fd:c82c? ([2620:10d:c092:500::5:76d9])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9e56641249sm545170566b.156.2024.11.04.04.13.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 04 Nov 2024 04:13:23 -0800 (PST)
-Message-ID: <3f684183-c6df-4f2f-9e33-91ce43c791eb@gmail.com>
-Date: Mon, 4 Nov 2024 12:13:22 +0000
+        d=1e100.net; s=20230601; t=1730722437; x=1731327237;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=FYskZ8T2jr5T8EblrfJJEhdK6BsHIwyTYKsdEZJGC9g=;
+        b=o6K1LZC+OF2O2pNIqnQkz8iU/ZS9aXSI4cbX419nVEBgzxm9nBSbJVzc5wqb/4o8O1
+         SXvVBC9e5J0KUiifm3uxjs3dm5ggcCFS4IzYevsDwAExogsaNc32ZpyIoXPxYfEcpBew
+         Pid+jBwfA0bxMcmsF9zfyNN2WPQGNEIgroOXoedVKCkzt08YVevIx9yUEFJKK9ogNIdY
+         XtTT2ezGdGmJ0tBdWL2LY39kuilXAkXxrUehveeEwBfZTNh2mQ9CWQ4DrDQArQUHhQRQ
+         VGzxiB4zPrYp8W/vV55IdjqOuQa5c5wJ0JncnsZPchn/qHIP+cUe3pOulfJU9GhYioQS
+         rVYg==
+X-Forwarded-Encrypted: i=1; AJvYcCUyZ3Sz1xDXUMEbQb92t3Qo6j+Eg5w1btmJ+YgTcxFJZnAPDHdm4HDGnU7Ly2oSCtUqy53OGea9oP0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz72GxfeDJh7zCnbaL1wAyLkvvYeJAsBbCvenCuge6hdATG8v0I
+	qHyP/8tyL91BZv3EdY3183Gf+aJcLRXfdB61gUB9ZWziDiX1LTgZPG5xFHMw
+X-Google-Smtp-Source: AGHT+IFbNToplnnRUfn1KF9Fr4torBzIilIwgS+jtoCykgAETFELOGlixWAh20O2s93UKXwn7sRtWw==
+X-Received: by 2002:a05:6512:1595:b0:539:e2cc:d380 with SMTP id 2adb3069b0e04-53c79e494ebmr7420697e87.27.1730722436375;
+        Mon, 04 Nov 2024 04:13:56 -0800 (PST)
+Received: from grain.localdomain ([5.18.251.97])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53c7bde3265sm1666224e87.278.2024.11.04.04.13.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 04 Nov 2024 04:13:56 -0800 (PST)
+Received: by grain.localdomain (Postfix, from userid 1000)
+	id 6CF475A0127; Mon,  4 Nov 2024 15:13:55 +0300 (MSK)
+Date: Mon, 4 Nov 2024 15:13:55 +0300
+From: Cyrill Gorcunov <gorcunov@gmail.com>
+To: LKML <linux-kernel@vger.kernel.org>, linux-efi@vger.kernel.org
+Cc: Ard Biesheuvel <ardb@kernel.org>
+Subject: [PATCH v2] efi: Fix memory leak in efivar_ssdt_load
+Message-ID: <Zyi6g8W0OqKcng6S@grain>
+References: <ZyizcvscUWIyZYdE@grain>
+ <Zyi11v-6V_ivKS5x@grain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC] mm: mitigate large folios usage and swap thrashing
- for nearly full memcg
-To: "Huang, Ying" <ying.huang@intel.com>, Johannes Weiner
- <hannes@cmpxchg.org>, Barry Song <21cnbao@gmail.com>
-Cc: Yosry Ahmed <yosryahmed@google.com>, akpm@linux-foundation.org,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- Barry Song <v-songbaohua@oppo.com>,
- Kanchana P Sridhar <kanchana.p.sridhar@intel.com>,
- David Hildenbrand <david@redhat.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>, Chris Li <chrisl@kernel.org>,
- Kairui Song <kasong@tencent.com>, Ryan Roberts <ryan.roberts@arm.com>,
- Michal Hocko <mhocko@kernel.org>, Roman Gushchin <roman.gushchin@linux.dev>,
- Shakeel Butt <shakeel.butt@linux.dev>, Muchun Song <muchun.song@linux.dev>
-References: <20241027001444.3233-1-21cnbao@gmail.com>
- <33c5d5ca-7bc4-49dc-b1c7-39f814962ae0@gmail.com>
- <CAGsJ_4wdgptMK0dDTC5g66OE9WDxFDt7ixDQaFCjuHdTyTEGiA@mail.gmail.com>
- <e8c6d46c-b8cf-4369-aa61-9e1b36b83fe3@gmail.com>
- <CAJD7tkZ60ROeHek92jgO0z7LsEfgPbfXN9naUC5j7QjRQxpoKw@mail.gmail.com>
- <852211c6-0b55-4bdd-8799-90e1f0c002c1@gmail.com>
- <CAJD7tkaXL_vMsgYET9yjYQW5pM2c60fD_7r_z4vkMPcqferS8A@mail.gmail.com>
- <c76635d7-f382-433a-8900-72bca644cdaa@gmail.com>
- <CAJD7tkYSRCjtEwP=o_n_ZhdfO8nga-z-a=RirvcKL7AYO76XJw@mail.gmail.com>
- <20241031153830.GA799903@cmpxchg.org>
- <87a5ef8ppq.fsf@yhuang6-desk2.ccr.corp.intel.com>
-Content-Language: en-US
-From: Usama Arif <usamaarif642@gmail.com>
-In-Reply-To: <87a5ef8ppq.fsf@yhuang6-desk2.ccr.corp.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zyi11v-6V_ivKS5x@grain>
+User-Agent: Mutt/2.2.12 (2023-09-09)
 
+When we load ssdt from efi variable (specified with efivar_ssdt=something
+boot command line argument) a name for the variable is allocated
+dynamically because we traverse all efi variables. Unlike an acpi table
+data, which is later used by acpi engine, the name is no longer needed
+once traverse is complete -- don't forget to free this memory.
 
+Same time we silently ignore any errors happened here lets print
+a message if something went wrong (but do not exit since this is
+not a critical error and the system should continue to boot).
 
-On 04/11/2024 06:42, Huang, Ying wrote:
-> Johannes Weiner <hannes@cmpxchg.org> writes:
-> 
->> On Wed, Oct 30, 2024 at 02:18:09PM -0700, Yosry Ahmed wrote:
->>> On Wed, Oct 30, 2024 at 2:13 PM Usama Arif <usamaarif642@gmail.com> wrote:
->>>> On 30/10/2024 21:01, Yosry Ahmed wrote:
->>>>> On Wed, Oct 30, 2024 at 1:25 PM Usama Arif <usamaarif642@gmail.com> wrote:
->>>>>>>> I am not sure that the approach we are trying in this patch is the right way:
->>>>>>>> - This patch makes it a memcg issue, but you could have memcg disabled and
->>>>>>>> then the mitigation being tried here wont apply.
->>>>>>>
->>>>>>> Is the problem reproducible without memcg? I imagine only if the
->>>>>>> entire system is under memory pressure. I guess we would want the same
->>>>>>> "mitigation" either way.
->>>>>>>
->>>>>> What would be a good open source benchmark/workload to test without limiting memory
->>>>>> in memcg?
->>>>>> For the kernel build test, I can only get zswap activity to happen if I build
->>>>>> in cgroup and limit memory.max.
->>>>>
->>>>> You mean a benchmark that puts the entire system under memory
->>>>> pressure? I am not sure, it ultimately depends on the size of memory
->>>>> you have, among other factors.
->>>>>
->>>>> What if you run the kernel build test in a VM? Then you can limit is
->>>>> size like a memcg, although you'd probably need to leave more room
->>>>> because the entire guest OS will also subject to the same limit.
->>>>>
->>>>
->>>> I had tried this, but the variance in time/zswap numbers was very high.
->>>> Much higher than the AMD numbers I posted in reply to Barry. So found
->>>> it very difficult to make comparison.
->>>
->>> Hmm yeah maybe more factors come into play with global memory
->>> pressure. I am honestly not sure how to test this scenario, and I
->>> suspect variance will be high anyway.
->>>
->>> We can just try to use whatever technique we use for the memcg limit
->>> though, if possible, right?
->>
->> You can boot a physical machine with mem=1G on the commandline, which
->> restricts the physical range of memory that will be initialized.
->> Double check /proc/meminfo after boot, because part of that physical
->> range might not be usable RAM.
->>
->> I do this quite often to test physical memory pressure with workloads
->> that don't scale up easily, like kernel builds.
->>
->>>>>>>> - Instead of this being a large folio swapin issue, is it more of a readahead
->>>>>>>> issue? If we zswap (without the large folio swapin series) and change the window
->>>>>>>> to 1 in swap_vma_readahead, we might see an improvement in linux kernel build time
->>>>>>>> when cgroup memory is limited as readahead would probably cause swap thrashing as
->>>>>>>> well.
->>
->> +1
->>
->> I also think there is too much focus on cgroup alone. The bigger issue
->> seems to be how much optimistic volume we swap in when we're under
->> pressure already. This applies to large folios and readahead; global
->> memory availability and cgroup limits.
-> 
-> The current swap readahead logic is something like,
-> 
-> 1. try readahead some pages for sequential access pattern, mark them as
->    readahead
-> 
-> 2. if these readahead pages get accessed before swapped out again,
->    increase 'hits' counter
-> 
-> 3. for next swap in, try readahead 'hits' pages and clear 'hits'.
-> 
-> So, if there's heavy memory pressure, the readaheaded pages will not be
-> accessed before being swapped out again (in 2 above), the readahead
-> pages will be minimal.
-> 
-> IMHO, mTHP swap-in is kind of swap readahead in effect.  That is, in
-> addition to the pages accessed are swapped in, the adjacent pages are
-> swapped in (swap readahead) too.  If these readahead pages are not
-> accessed before swapped out again, system runs into more severe
-> thrashing.  This is because we lack the swap readahead window scaling
-> mechanism as above.  And, this is why I suggested to combine the swap
-> readahead mechanism and mTHP swap-in by default before.  That is, when
-> kernel swaps in a page, it checks current swap readahead window, and
-> decides mTHP order according to window size.  So, if there are heavy
-> memory pressure, so that the nearby pages will not be accessed before
-> being swapped out again, the mTHP swap-in order can be adjusted
-> automatically.
+Also while here -- add a note why we keep ssdt table on success.
 
-This is a good idea to do, but I think the issue is that readahead
-is a folio flag and not a page flag, so only works when folio size is 1.
+Signed-off-by: Cyrill Gorcunov <gorcunov@gmail.com>
+Cc: Ard Biesheuvel <ardb@kernel.org>
+---
+It is still unclear for me why we don't exit with error if acpi_load_table
+failed but continue to iterate keys and don't report a caller with error
+instead. I didn't change this logic for backward compatibility sake but
+still looks suspicious.
 
-In the swapin_readahead swapcache path, the current implementation decides
-the ra_window based on hits, which is incremented in swap_cache_get_folio
-if it has not been gotten from swapcache before.
-The problem would be that we need information on how many distinct pages in
-a large folio that has been swapped in have been accessed to decide the
-hits/window size, which I don't think is possible. As once the entire large
-folio has been swapped in, we won't get a fault.
+ drivers/firmware/efi/efi.c |   41 ++++++++++++++++++++++++++++-------------
+ 1 file changed, 28 insertions(+), 13 deletions(-)
 
-
-> 
->> It happens to manifest with THP in cgroups because that's what you
->> guys are testing. But IMO, any solution to this problem should
->> consider the wider scope.
->>
->>>>>>> I think large folio swapin would make the problem worse anyway. I am
->>>>>>> also not sure if the readahead window adjusts on memory pressure or
->>>>>>> not.
->>>>>>>
->>>>>> readahead window doesnt look at memory pressure. So maybe the same thing is being
->>>>>> seen here as there would be in swapin_readahead?
->>>>>
->>>>> Maybe readahead is not as aggressive in general as large folio
->>>>> swapins? Looking at swap_vma_ra_win(), it seems like the maximum order
->>>>> of the window is the smaller of page_cluster (2 or 3) and
->>>>> SWAP_RA_ORDER_CEILING (5).
->>>> Yes, I was seeing 8 pages swapin (order 3) when testing. So might
->>>> be similar to enabling 32K mTHP?
->>>
->>> Not quite.
->>
->> Actually, I would expect it to be...
-> 
-> Me too.
-> 
->>>>> Also readahead will swapin 4k folios AFAICT, so we don't need a
->>>>> contiguous allocation like large folio swapin. So that could be
->>>>> another factor why readahead may not reproduce the problem.
->>>
->>> Because of this ^.
->>
->> ...this matters for the physical allocation, which might require more
->> reclaim and compaction to produce the 32k. But an earlier version of
->> Barry's patch did the cgroup margin fallback after the THP was already
->> physically allocated, and it still helped.
->>
->> So the issue in this test scenario seems to be mostly about cgroup
->> volume. And then 8 4k charges should be equivalent to a singular 32k
->> charge when it comes to cgroup pressure.
-> 
-> --
-> Best Regards,
-> Huang, Ying
-
+Index: linux-tip.git/drivers/firmware/efi/efi.c
+===================================================================
+--- linux-tip.git.orig/drivers/firmware/efi/efi.c
++++ linux-tip.git/drivers/firmware/efi/efi.c
+@@ -273,6 +273,7 @@ static __init int efivar_ssdt_load(void)
+ 	efi_char16_t *name = NULL;
+ 	efi_status_t status;
+ 	efi_guid_t guid;
++	int ret = 0;
+ 
+ 	if (!efivar_ssdt[0])
+ 		return 0;
+@@ -294,8 +295,8 @@ static __init int efivar_ssdt_load(void)
+ 			efi_char16_t *name_tmp =
+ 				krealloc(name, name_size, GFP_KERNEL);
+ 			if (!name_tmp) {
+-				kfree(name);
+-				return -ENOMEM;
++				ret = -ENOMEM;
++				goto out;
+ 			}
+ 			name = name_tmp;
+ 			continue;
+@@ -309,26 +310,38 @@ static __init int efivar_ssdt_load(void)
+ 		pr_info("loading SSDT from variable %s-%pUl\n", efivar_ssdt, &guid);
+ 
+ 		status = efi.get_variable(name, &guid, NULL, &data_size, NULL);
+-		if (status != EFI_BUFFER_TOO_SMALL || !data_size)
+-			return -EIO;
++		if (status != EFI_BUFFER_TOO_SMALL || !data_size) {
++			ret = -EIO;
++			goto out;
++		}
+ 
+ 		data = kmalloc(data_size, GFP_KERNEL);
+-		if (!data)
+-			return -ENOMEM;
++		if (!data) {
++			ret = -ENOMEM;
++			goto out;
++		}
+ 
+ 		status = efi.get_variable(name, &guid, NULL, &data_size, data);
+ 		if (status == EFI_SUCCESS) {
+-			acpi_status ret = acpi_load_table(data, NULL);
+-			if (ret)
+-				pr_err("failed to load table: %u\n", ret);
+-			else
++			acpi_status acpi_ret = acpi_load_table(data, NULL);
++			if (ACPI_FAILURE(acpi_ret)) {
++				pr_err("efivar_ssdt: failed to load table: %u\n",
++				       acpi_ret);
++			} else {
++				/*
++				 * The @data will be in use by ACPI engine,
++				 * do not free it!
++				 */
+ 				continue;
++			}
+ 		} else {
+-			pr_err("failed to get var data: 0x%lx\n", status);
++			pr_err("efivar_ssdt: failed to get var data: 0x%lx\n", status);
+ 		}
+ 		kfree(data);
+ 	}
+-	return 0;
++out:
++	kfree(name);
++	return ret;
+ }
+ #else
+ static inline int efivar_ssdt_load(void) { return 0; }
+@@ -433,7 +446,9 @@ static int __init efisubsys_init(void)
+ 		error = generic_ops_register();
+ 		if (error)
+ 			goto err_put;
+-		efivar_ssdt_load();
++		error = efivar_ssdt_load();
++		if (error)
++			pr_err("efi: failed to load SSDT, error %d.\n", error);
+ 		platform_device_register_simple("efivars", 0, NULL, 0);
+ 	}
+ 
 
