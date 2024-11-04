@@ -1,145 +1,156 @@
-Return-Path: <linux-kernel+bounces-394253-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394254-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 670109BAC78
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 07:21:40 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5F209BAC7A
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 07:21:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0870EB21814
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 06:21:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7BDFFB2167B
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 06:21:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CEA118CC1A;
-	Mon,  4 Nov 2024 06:21:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28A4717583;
+	Mon,  4 Nov 2024 06:21:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="C5nfLtGx"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WAcSxn4s"
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72C9E17583
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 06:21:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 290BDE552;
+	Mon,  4 Nov 2024 06:21:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730701283; cv=none; b=Fd8F9r0fCtjq9N/bAUzyZPMAfUZWWWWxof3xDsN4neFWtaGC3gfDXUjPQZ7/jXqTT8I2xLBgnN3q2sWpZR/nWKFh6D/3SFbSZpexbOOzHVfrNyhKGcfD7qI0HBrz65iluh6jAE/pncXloGdYjU5CVRMA/npMg2sK0LGlGq5ynOc=
+	t=1730701305; cv=none; b=JTMuEnt7zgodtHP35/r6iKXReas6pOh3ff2YB5zt240951iuUgyCFFvQgoyPtBEx8t834wBZjPP9sMaUaS/bwZlFOuPzOZniwjs93qQ5lfHZGMYqsaaSX/8HNW9Bm2oTA3ncVfAs4tElnHVQ9OjZ5Kaw0GCznLqEO3YccTmQTnM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730701283; c=relaxed/simple;
-	bh=lDpSsq7UijUNAks9mue3LanPLcT5oA2uO4ieCjRuamc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qqZQCzyGt4y/9l8QeO6TTO5asPEcdJZPYJNqOU49FHxxOCoz2Wh7Bh5At00biaKbKCHqqfTUtbL9/igJyDNTR4b95wbaVlkRE1D/kzu8JwUEKKw4EseNgWJO265TO8xdsP1R50RMs35IeFxCXmI2+FzWxizZX9tjpleEWjk9jPI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=C5nfLtGx; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1730701280;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/Yt6e01JiHs6xDUFc4KUXQd8i1elq2u0nXKuucFyQGQ=;
-	b=C5nfLtGxsFHw+kCR4Io+aPSPNXA28rScFPcj4q+oa91Snmr4y5FMvfG5XImTGPkgV284JT
-	R2hJCqOCUjttUjZ1atgBQDsfMDmc/EIuH6Mxc2tznvZ7+0EjoPn4yht0UtiY2Z95kcWiA6
-	2f6EQdmcR1PKOeUcYq613TEbo3rqZMQ=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-49-b2Wj_TLPNE6Ox6N8IQMnvg-1; Mon,
- 04 Nov 2024 01:21:16 -0500
-X-MC-Unique: b2Wj_TLPNE6Ox6N8IQMnvg-1
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A026619560B4;
-	Mon,  4 Nov 2024 06:21:13 +0000 (UTC)
-Received: from localhost (unknown [10.72.112.78])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id DA7C11956052;
-	Mon,  4 Nov 2024 06:21:10 +0000 (UTC)
-Date: Mon, 4 Nov 2024 14:21:06 +0800
-From: Baoquan He <bhe@redhat.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	linux-s390@vger.kernel.org, virtualization@lists.linux.dev,
-	kvm@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	kexec@lists.infradead.org, Heiko Carstens <hca@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Sven Schnelle <svens@linux.ibm.com>,
-	"Michael S. Tsirkin" <mst@redhat.com>,
-	Jason Wang <jasowang@redhat.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
-	Vivek Goyal <vgoyal@redhat.com>, Dave Young <dyoung@redhat.com>,
-	Thomas Huth <thuth@redhat.com>, Cornelia Huck <cohuck@redhat.com>,
-	Janosch Frank <frankja@linux.ibm.com>,
-	Claudio Imbrenda <imbrenda@linux.ibm.com>,
-	Eric Farman <farman@linux.ibm.com>,
-	Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH v1 00/11] fs/proc/vmcore: kdump support for virtio-mem on
- s390
-Message-ID: <Zyhn0oz+ze0xY2AR@MiWiFi-R3L-srv>
-References: <20241025151134.1275575-1-david@redhat.com>
+	s=arc-20240116; t=1730701305; c=relaxed/simple;
+	bh=XEw+EaA1wvQ78GBZ/rCvyQ8G3Ye51QaxE3ljjsbFUCE=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=o59IcbBYVcwfulZvZCxWStGH7voBZpZSQvLwrDCng/nWHdAnRbDo+0JEYSGu9DVRu6Qa7jgUyBGaeuEDM6fahjjnj8Lyn/IPO/ihLcLrcIXN/11gtyxYU0RTPdE2U76SHdA3BOH8mBYAULWgeoD4Z9bzQ5zVJz7qNY/MHr9FYGc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WAcSxn4s; arc=none smtp.client-ip=209.85.210.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-71e4e481692so3687644b3a.1;
+        Sun, 03 Nov 2024 22:21:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730701303; x=1731306103; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:to:from:subject:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XEw+EaA1wvQ78GBZ/rCvyQ8G3Ye51QaxE3ljjsbFUCE=;
+        b=WAcSxn4sxoRFLQx83zcwt2qRFViz7wYpzx/6bJ6m97yacNmo4NhJ+krjNQYtCJrtCd
+         6gcbytqowRpeI/p3sPNuSUcOz6LCbcGWFUuHMF733v6urPtNPMGHX502H70fHi8Ncg0g
+         4HLFIOVuwPWDps3/pfdo9U4OEQgrYzx0zls9D2A81o1FUUmMgLT/ejMmYn3c25zT2S04
+         qrCMMFOB3xr9R6t1SSo/gm1OjgpKk3kWaVMjEWl4OWZr1nG1F7iFdLyhT/IbdifJ5kQz
+         ypbPNTMXvIPcU34Xr2hCQdCHbfHxtEQfjQLnBv2XoPlGiVxsHhgVLwEFXfa5rbbj9lFQ
+         ecOA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730701303; x=1731306103;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:to:from:subject:message-id:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=XEw+EaA1wvQ78GBZ/rCvyQ8G3Ye51QaxE3ljjsbFUCE=;
+        b=F0CSC/HCQI+fhMv2yuH0Jk3o+y4/1MgSlff3UEZ8FWR3mCVAURL4mwGw3CXKJzJcc8
+         gkQHWx/cuuyWmr60ghqISnjqkSke8/gURwa4NbVuoLo3+DlXf+6HfwDQiENpj3zWKGyM
+         0kXvYOr7rudyHBj3mazCZCF+tAHHJb1tbhGZZ3Syy/Fwq2EbtBtRA/T4fcBiK09HVq45
+         g3qoRGmo+f3GVbPieqwz/+LFpZsAK8bcvtGT4UIVV4R3rS6eNK9RtqGPyRt4kkPHbPM9
+         6DiUmh+FYELh//CTdQgv7XJRhhggeKoP+McDXiV4mfACrXXkQ3HPNV6DsvQjBQkPaEvr
+         3KyA==
+X-Forwarded-Encrypted: i=1; AJvYcCX5RMnZ7Ku5GeQFGYtCpACK939eFgsYaMrOQA8q8M+wkuzuum7170CPXjUdTg4+d/EvU6KqurwzJbS+Vg==@vger.kernel.org, AJvYcCXnmzl4z9j8xQE3K1KNhQdNBHd9YB1k7k7uJoggQPSYu3kHKi4A/pN84DmwP8/LP5fvL2UR3TKqXb2lbUpc@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw0kiK4hsdKaYiEg4gULV0c0Zy4/RxbDqRyq0mtQsptCVQ47p5Z
+	Tq6HbHlkgMmfxHeH5gVVgE0pbRsTmzKTbgD/FaNa+Ngs99HHCyze
+X-Google-Smtp-Source: AGHT+IG5SRxooOG7307bNGRUX6CouAaj+/FLK8oLbbBA4JteqTJTsQ+1nfH9VkQkJN9zLQ966ZYikg==
+X-Received: by 2002:a05:6a21:170f:b0:1d9:1071:9175 with SMTP id adf61e73a8af0-1dba54f3fadmr14599261637.32.1730701303229;
+        Sun, 03 Nov 2024 22:21:43 -0800 (PST)
+Received: from [10.172.23.36] ([38.207.141.200])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e92fbfb04asm9071449a91.50.2024.11.03.22.21.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 03 Nov 2024 22:21:42 -0800 (PST)
+Message-ID: <3c01986b19c041931fe7bb542b1b00069b2e458a.camel@gmail.com>
+Subject: Re: [syzbot] [btrfs?] VFS: Busy inodes after unmount
+ (use-after-free)
+From: Julian Sun <sunjunchao2870@gmail.com>
+To: syzbot <syzbot+0af00f6a2cba2058b5db@syzkaller.appspotmail.com>, 
+ clm@fb.com, dsterba@suse.com, josef@toxicpanda.com,
+ linux-btrfs@vger.kernel.org,  linux-kernel@vger.kernel.org,
+ syzkaller-bugs@googlegroups.com
+Date: Mon, 04 Nov 2024 14:21:39 +0800
+In-Reply-To: <000000000000229e6205f3144e05@google.com>
+References: <000000000000229e6205f3144e05@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241025151134.1275575-1-david@redhat.com>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-On 10/25/24 at 05:11pm, David Hildenbrand wrote:
-> This is based on "[PATCH v3 0/7] virtio-mem: s390 support" [1], which adds
-> virtio-mem support on s390.
-> 
-> The only "different than everything else" thing about virtio-mem on s390
-> is kdump: The crash (2nd) kernel allocates+prepares the elfcore hdr
-> during fs_init()->vmcore_init()->elfcorehdr_alloc(). Consequently, the
-> crash kernel must detect memory ranges of the crashed/panicked kernel to
-> include via PT_LOAD in the vmcore.
-> 
-> On other architectures, all RAM regions (boot + hotplugged) can easily be
-> observed on the old (to crash) kernel (e.g., using /proc/iomem) to create
-> the elfcore hdr.
-> 
-> On s390, information about "ordinary" memory (heh, "storage") can be
-> obtained by querying the hypervisor/ultravisor via SCLP/diag260, and
-> that information is stored early during boot in the "physmem" memblock
-> data structure.
-> 
-> But virtio-mem memory is always detected by as device driver, which is
-> usually build as a module. So in the crash kernel, this memory can only be
-> properly detected once the virtio-mem driver started up.
-> 
-> The virtio-mem driver already supports the "kdump mode", where it won't
-> hotplug any memory but instead queries the device to implement the
-> pfn_is_ram() callback, to avoid reading unplugged memory holes when reading
-> the vmcore.
-> 
-> With this series, if the virtio-mem driver is included in the kdump
-> initrd -- which dracut already takes care of under Fedora/RHEL -- it will
-> now detect the device RAM ranges on s390 once it probes the devices, to add
-> them to the vmcore using the same callback mechanism we already have for
-> pfn_is_ram().
-> 
-> To add these device RAM ranges to the vmcore ("patch the vmcore"), we will
-> add new PT_LOAD entries that describe these memory ranges, and update
-> all offsets vmcore size so it is all consistent.
-> 
-> Note that makedumfile is shaky with v6.12-rcX, I made the "obvious" things
-> (e.g., free page detection) work again while testing as documented in [2].
-> 
-> Creating the dumps using makedumpfile seems to work fine, and the
-> dump regions (PT_LOAD) are as expected. I yet have to check in more detail
-> if the created dumps are good (IOW, the right memory was dumped, but it
-> looks like makedumpfile reads the right memory when interpreting the
-> kernel data structures, which is promising).
-> 
-> Patch #1 -- #6 are vmcore preparations and cleanups
+On Wed, 2023-01-25 at 02:43 -0800, syzbot wrote:
+> Hello,
+>=20
+> syzbot found the following issue on:
+>=20
+> HEAD commit:=C2=A0=C2=A0=C2=A0 edb2f0dc90f2 Merge branch 'for-next/core' =
+into for-
+> kernelci
+> git tree:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0
+> git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-
+> kernelci
+> console output: https://syzkaller.appspot.com/x/log.txt?x=3D1484d22e48000=
+0
+> kernel config:=C2=A0
+> https://syzkaller.appspot.com/x/.config?x=3Da1c301efa2b11613
+> dashboard link:
+> https://syzkaller.appspot.com/bug?extid=3D0af00f6a2cba2058b5db
+> compiler:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Debian clang version 13.0.1=
+-
+> ++20220126092033+75e33f71c2da-1~exp1~20220126212112.63, GNU ld (GNU
+> Binutils for Debian) 2.35.2
+> userspace arch: arm64
+> syz repro:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0
+> https://syzkaller.appspot.com/x/repro.syz?x=3D15e20341480000
+> C reproducer:=C2=A0=C2=A0 https://syzkaller.appspot.com/x/repro.c?x=3D154=
+fa4f1480000
+>=20
+> Downloadable assets:
+> disk image:
+> https://storage.googleapis.com/syzbot-assets/ca1677dc6969/disk-edb2f0dc.r=
+aw.xz
+> vmlinux:
+> https://storage.googleapis.com/syzbot-assets/22527595a2dd/vmlinux-edb2f0d=
+c.xz
+> kernel image:
+> https://storage.googleapis.com/syzbot-assets/45308e5f6962/Image-edb2f0dc.=
+gz.xz
+> mounted in repro:
+> https://storage.googleapis.com/syzbot-assets/6105a892b6d5/mount_0.gz
+>=20
+> IMPORTANT: if you fix the issue, please add the following tag to the
+> commit:
+> Reported-by: syzbot+0af00f6a2cba2058b5db@syzkaller.appspotmail.com
+>=20
+> VFS: Busy inodes after unmount of loop0. Self-destruct in 5 seconds.=C2=
+=A0
+> Have a nice day...
+> VFS: Busy inodes after unmount of loop0. Self-destruct in 5 seconds.=C2=
+=A0
+> Have a nice day...
+>=20
+>=20
+> ---
+> This report is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ=C2=A0for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+>=20
+> syzbot will keep track of this issue. See:
+> https://goo.gl/tpsmEJ#status=C2=A0for how to communicate with syzbot.
+> syzbot can test patches for this issue, for details see:
+> https://goo.gl/tpsmEJ#testing-patches
 
-Thanks for CC-ing me, I will review the patch 1-6, vmcore part next
-week.
+#syz test
 
+--=20
+Julian Sun <sunjunchao2870@gmail.com>
 
