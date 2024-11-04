@@ -1,332 +1,519 @@
-Return-Path: <linux-kernel+bounces-395390-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395391-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7872C9BBD47
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 19:29:22 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AD889BBD4C
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 19:30:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F19441F2164C
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 18:29:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A00AB1F2273D
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 18:30:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 005E31CB514;
-	Mon,  4 Nov 2024 18:29:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A9DC1CB537;
+	Mon,  4 Nov 2024 18:30:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XkKx3Jw7"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YmeDx3d6"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4FB01C6F70;
-	Mon,  4 Nov 2024 18:29:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.16
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730744954; cv=fail; b=RGUJCZqEoK/SnIvoqxjg1R3aoBdkJcHMFEs/C9bD989v8q7wu/AXqOwP41pRcplmmkgiXpHSlfacNJZ4OlEoZILyow0dNOMyu0XIxVwcw1Go+MWj4Feh3BYxcEReM20ubsib1sxfD4faNiLEtSOyuLIFdkQSZ0O9q/vNGIr0b+8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730744954; c=relaxed/simple;
-	bh=bk/a2M+YyTVGLklyPs0AkStQSEU3KsfdBmB1fp9rNHo=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=cF+gK83F9HiMKW9KiKD1le3MhRwX5Lam88hcSCssS8Sqa1sSPeZjPZB1dPVBej7206aNjoUePpUhk3hKxJKCEiQLcG2wvf2HaBPLYby54w/ZADoDZklkvMYiirwNiU2HFAxXc7TF8w3ckWPJ/lfcrbojVGAV5NuAeuOQ0s89j5Y=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XkKx3Jw7; arc=fail smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03F4C182D2;
+	Mon,  4 Nov 2024 18:30:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730745040; cv=none; b=KwJDxk064oxz78UtsvZ2adcsY5g145h+O/80l12gxyerwk4PnCBBkR/LsNb6MXsWCTltxc4X+T1A9WQHP+5/+Wz0SKB/GG4egzpiy7i6Flgm/hnxSC8a3vzLeYilhs/5GT1DsXmLe339tHcX3+vT/8Zc9le/mp6w8bzfomMWEEw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730745040; c=relaxed/simple;
+	bh=C2fhijROzD0lfQjXa8BjNOGY9b2uNVrsa28LgMif6WE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fG9F1JZYzrTHzwpUC9sfz6Or8hYYXdZgs0yni/J/LYdBrjylFRLVECz2xCOiGajsRm71J2AIqn+NmMdeAWacGFIST2E/BvnI4xDlozelAIGqJiz3CWiXuOjdiyoOaP1Uv7tmsN/AbOdgzNE3ZbfuonReXf6lalAe6tjtUJXxSVI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YmeDx3d6; arc=none smtp.client-ip=192.198.163.13
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730744951; x=1762280951;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=bk/a2M+YyTVGLklyPs0AkStQSEU3KsfdBmB1fp9rNHo=;
-  b=XkKx3Jw7LfYuAKb1gfnU1L2rBQhEUyVN4UivFvR+2DzIrOArZuw3uAVd
-   2u1q1YUon6nuUPLGWOAsvDUKATvcN0lGAE9oMlXLovmQ9fNa3yKTcvZP3
-   dpPchClQYRdlRkc/OqcJsxN25nalKWyd2zzDj08n/PIeF8ZGAFweIDUaT
-   KrhhwpquCqHzbdy7gqzWELb20j/1oElAp7hbadhBgcTKA0b25cz4Fxjyw
-   LH5R62RtRZkoiN9WPggTHFmLxW3NGSPFfkUJJJfYq7lO2+4gL8KlilfHu
-   dTExNQ+4bjXcEVYsOH+PnODV7gkyB+OojQakw1Y90hWpSt32HagaoEVFm
-   Q==;
-X-CSE-ConnectionGUID: Qhj9v+08Q02V9Vl6POAZsw==
-X-CSE-MsgGUID: nMbeTSPBQ66ts50nqpzGig==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="30622422"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="30622422"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2024 10:29:10 -0800
-X-CSE-ConnectionGUID: gPJ/bsspTP2axq3TF3xgsQ==
-X-CSE-MsgGUID: NrtKsBOlQj+Aa6iB0AE48Q==
+  t=1730745038; x=1762281038;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=C2fhijROzD0lfQjXa8BjNOGY9b2uNVrsa28LgMif6WE=;
+  b=YmeDx3d60v2tgQySlwymcj5VlGTylEHyRlkIdt4DpR2QCamKimTk/QcL
+   /k60GXUXYz5Ork4ywP72nXC0fxKUW1UgQ5PGw7TfYGYKLJrtesmmakG68
+   qPTc/LVtXcnnX/VVDyRp9eoReKsS9QaiL4kEqMdo6Phs3GgosdWe+kKhz
+   nCEyq56E/4+0/oTY2BGhtEf3+nP2YhbeNRuLEtKlKvqrkxuNNbsNHWPtX
+   k5qyKV+VCVb/9UHdNJtQyCLPnIxkA40gXiT49aBSGalCPXgy4qpQWlDqO
+   oFEEEBKI/3Qz/DEkynCcmplH82AapWeV+sm83qzDRSwiDjOAbIaDo1iHZ
+   g==;
+X-CSE-ConnectionGUID: lNrpIqy0Rp22UPGpPW3TTQ==
+X-CSE-MsgGUID: TK168hfDQN+sX8SETSSywA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11246"; a="33298536"
+X-IronPort-AV: E=Sophos;i="6.11,257,1725346800"; 
+   d="scan'208";a="33298536"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2024 10:30:37 -0800
+X-CSE-ConnectionGUID: rjoYVnQmT7WMR2rZB9zNhQ==
+X-CSE-MsgGUID: kjYlSa++TRWDWNwZjZl/fg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.11,257,1725346800"; 
-   d="scan'208";a="88882953"
-Received: from orsmsx601.amr.corp.intel.com ([10.22.229.14])
-  by orviesa004.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 04 Nov 2024 10:29:10 -0800
-Received: from orsmsx601.amr.corp.intel.com (10.22.229.14) by
- ORSMSX601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Mon, 4 Nov 2024 10:29:09 -0800
-Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
- orsmsx601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Mon, 4 Nov 2024 10:29:09 -0800
-Received: from NAM02-SN1-obe.outbound.protection.outlook.com (104.47.57.49) by
- edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Mon, 4 Nov 2024 10:29:09 -0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=lyaaV+ExDBCaR6xzcY9ZCsOFVEDgPAvIspT/YQBy5Y4srgsnKqvWo+FCoC/OLw4wP8LqZB2O74xV0ckurUf2i15y3doll+Dg4jkrh7udEkQ9+mirXFMMEbmBgsA4LuSPc4QKvujwrJvScHbzQgfdRjvUtyUM8zCOWZsxhn2QtPkizesgbmk1CLCkUgq1tCrlMOdUr8L1ih4OaUzWIiW5N5QQXRY5hIoZ0seBvq/Xr2qtUIFER+pz+fyzDikM3HkEHH4ufgTsl6z9gjv5ja3Hm4MGPcTnfHiTmDH47Fu//nZhP3tXy89gvq+ybHUZ61ePEv9fBsCwlTYJHLH9q6i7Vw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=HyAqXXirxrEnL201+WXSWiFZ2subZ7fZux25g2ejZTE=;
- b=wx7MOPXI8iGrVYA2xRHSZZ3TovOMcaTHMVVlBln+jXex+QJUeZA1QrayJ3tEm02p87xs+1wxUikuPWqUre6Vvv5MqjdeFJgsjeEsWtzCTUBbeWpQOJk1dOn6jQEQoM8TBcmHUcw+AUxV8o8yO8CN3FgyCu9djFH1keiptB2FRINJ14F6DKIyBwBAOyVOAAVF1u5p0dMVpD+7kb+4+rJkriqV0f0v/sXLh5zZ+v32wLDpHAOiEKn2/EkLPlX0KEEB2SAy6rEOGVxPkNQouG8QbQjsQmurB6/PZzwkezXY0bYawdgeo8frC4R/iTRzSG6VGzz8xmbb3wKmZn/to00jfg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from SJ0PR11MB5678.namprd11.prod.outlook.com (2603:10b6:a03:3b8::22)
- by BN9PR11MB5260.namprd11.prod.outlook.com (2603:10b6:408:135::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8114.31; Mon, 4 Nov
- 2024 18:29:06 +0000
-Received: from SJ0PR11MB5678.namprd11.prod.outlook.com
- ([fe80::812:6f53:13d:609c]) by SJ0PR11MB5678.namprd11.prod.outlook.com
- ([fe80::812:6f53:13d:609c%4]) with mapi id 15.20.8114.028; Mon, 4 Nov 2024
- 18:29:06 +0000
-From: "Sridhar, Kanchana P" <kanchana.p.sridhar@intel.com>
-To: Dan Carpenter <dan.carpenter@linaro.org>, "oe-kbuild@lists.linux.dev"
-	<oe-kbuild@lists.linux.dev>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>,
-	"hannes@cmpxchg.org" <hannes@cmpxchg.org>, "yosryahmed@google.com"
-	<yosryahmed@google.com>, "nphamcs@gmail.com" <nphamcs@gmail.com>,
-	"chengming.zhou@linux.dev" <chengming.zhou@linux.dev>,
-	"usamaarif642@gmail.com" <usamaarif642@gmail.com>, "ryan.roberts@arm.com"
-	<ryan.roberts@arm.com>, "Huang, Ying" <ying.huang@intel.com>,
-	"21cnbao@gmail.com" <21cnbao@gmail.com>, "akpm@linux-foundation.org"
-	<akpm@linux-foundation.org>, "linux-crypto@vger.kernel.org"
-	<linux-crypto@vger.kernel.org>, "herbert@gondor.apana.org.au"
-	<herbert@gondor.apana.org.au>, "davem@davemloft.net" <davem@davemloft.net>,
-	"clabbe@baylibre.com" <clabbe@baylibre.com>, "ardb@kernel.org"
-	<ardb@kernel.org>, "ebiggers@google.com" <ebiggers@google.com>,
-	"surenb@google.com" <surenb@google.com>, "Accardi, Kristen C"
-	<kristen.c.accardi@intel.com>, "zanussi@kernel.org" <zanussi@kernel.org>,
-	"Sridhar, Kanchana P" <kanchana.p.sridhar@intel.com>
-CC: lkp <lkp@intel.com>, "oe-kbuild-all@lists.linux.dev"
-	<oe-kbuild-all@lists.linux.dev>, "Feghali, Wajdi K"
-	<wajdi.k.feghali@intel.com>, "Gopal, Vinodh" <vinodh.gopal@intel.com>
-Subject: RE: [PATCH v2 13/13] mm: zswap: Compress batching with Intel IAA in
- zswap_store() of large folios.
-Thread-Topic: [PATCH v2 13/13] mm: zswap: Compress batching with Intel IAA in
- zswap_store() of large folios.
-Thread-Index: AQHbLZ9+ci0x3FTQ5E26KU1IJnhgwrKmzJGAgACll0A=
-Date: Mon, 4 Nov 2024 18:29:06 +0000
-Message-ID: <SJ0PR11MB5678990C825FE48D67D9B0C4C9512@SJ0PR11MB5678.namprd11.prod.outlook.com>
-References: <20241103032111.333282-14-kanchana.p.sridhar@intel.com>
- <89728727-0fd2-4539-bc89-17a699d7179a@stanley.mountain>
-In-Reply-To: <89728727-0fd2-4539-bc89-17a699d7179a@stanley.mountain>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SJ0PR11MB5678:EE_|BN9PR11MB5260:EE_
-x-ms-office365-filtering-correlation-id: 1f70954d-0230-44d3-0028-08dcfcfe911c
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014|38070700018|921020;
-x-microsoft-antispam-message-info: =?us-ascii?Q?X3vSudW2vi7GTqyKHmY88R2/hwhupbF56paVEEDqo7dPeePNoX59Lr1C9TOM?=
- =?us-ascii?Q?1G65hkhDSSrQJGXTmEr388iC3OrFM5E2cuqg3gqy/fklWe23EcgWzmu25mVs?=
- =?us-ascii?Q?klNtNHGiKOKEPBuK65yLcBIPFWyDeRQETnZrOOZngZddP76d2Ls5tKkuy/DV?=
- =?us-ascii?Q?c7g8fEImCbbCQ3NzoZB4W5q6jbLg3sl8Jrg86W4eD+MKA0yL4tETgv5W/9qO?=
- =?us-ascii?Q?HJGhhMLB+uXsb0zfPSkI4xph23QuV50No5PvpcF//bNOPCm8RvqJ0M/pd2s5?=
- =?us-ascii?Q?V0gBhT/6OWijNwTfERF8UfRQxalJVnlDNNCI38qT0zOPlyxHQqkmyf6xP+8y?=
- =?us-ascii?Q?ZVhix4RrXdF5BFA5poGqpAdsLNA0RgCqNwroiHK479wGhG6lO3IF/4vPQrEw?=
- =?us-ascii?Q?UaiJXMNB04uT/YlSs624MPGbCuX2VQMRFs9F6U+JyUuVcMfUxKrVeWexgcBT?=
- =?us-ascii?Q?Duu09aT7MGxPSegbs1YG9C+1p6zoc/j0AUIw7dpWoBbtwM1TGCzwCKbjXZhH?=
- =?us-ascii?Q?1QzUzU6cQVHzrhJnYxrQiFj31DlUV84rQdmja1nhrjMm1HYpTas4lv3OpidJ?=
- =?us-ascii?Q?vXGa3c6nS8Ow1ukkvy37k+x2DSjye6fPDcA9I3ziUg2HYb1SWmlR7Jiv2iXo?=
- =?us-ascii?Q?u8NzH8JGCRm8s7VaSukIoS7cTh0oo8Gstp98d8RwpWz8IMlcWRWsWcJ5c+As?=
- =?us-ascii?Q?N2LWWtkhPs1jyeAoHYxQKRGp6O5sNUa4OTbcuzK9Mk5NpFj2gqIzT8HgUpS6?=
- =?us-ascii?Q?NuTKYG7HtUlzcAOyQPUgPDiNKMPDp7vW7T0FTyf82eh5iOyhTdeQ0a3uqWY4?=
- =?us-ascii?Q?6pfYv68HhE0PaVqnXe4klWkkftprdDg+lu1p6xee/Y0xphn15B32zFNoWsiI?=
- =?us-ascii?Q?XjNcVENYaC142tFHfr4csPPy4VJPF99ndDckTWuq7zwEjcve01ztxVhACU8k?=
- =?us-ascii?Q?T/4xHnOfY/YtTofPRYA0APeIaFv9qO/ZUUsc9yhjacSmhHb2RQxNMCvtiq/A?=
- =?us-ascii?Q?/M3p4BFg6rDs0VDmN1PvY/KyjYv7Pucjym/pPLuKvk+UDR3f0CakK4RsITqv?=
- =?us-ascii?Q?XoFUsSkHl7fcBiXnQNQoRWgGp60zXMfjkzEaTocevg50H0c2flC9ayhVp7zg?=
- =?us-ascii?Q?Eng3RLl4g9NJ45UE2/BK68TAn32ddCsB9ZCXeAQJLml6eh+by0173G8YDh0Z?=
- =?us-ascii?Q?w4dI8xY82zh2d1yRhVyHpUoY+B2Kr01VCYkF8IoMxuPHJPT/1zzxXzVEDxj3?=
- =?us-ascii?Q?2FJuZm6lXYsm/PpjLhE8r2G7gbhTaaDvUUJd845oMIKifOTuD8oUFSFlSE3e?=
- =?us-ascii?Q?e8hP2EWi2D5ZqMKTkszzaLzUem1Rv1JF4xVS4xyUgmeRpw=3D=3D?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR11MB5678.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014)(38070700018)(921020);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?Uvhyo8Z8IINT4iJ2O9hlXyhq7RxRgyiXF9l6ug/gfwbAq5brjrN37i6YqEpj?=
- =?us-ascii?Q?aEC0clSYXozUH36FB4FtbAVgWIN8v7cGHQMIU54Sm7+pYbYkyKRgtcbRPOnR?=
- =?us-ascii?Q?yy5+xiQgA4DiPe4AErTnBjcEGtKqDmXuAXi2ZdSvsMfQh7z/JQFQksNvZTnp?=
- =?us-ascii?Q?qfw57OqjN4f9r/O415rWNZuLe0IDVZf9AU0hEsndgOOSkDuVsXX4tw76TIy8?=
- =?us-ascii?Q?Sb2jJP9ysvUrXDZBspNb3urovoiqMMxneWpDzyJ3+GnZlsiGpnxswlpjYMGC?=
- =?us-ascii?Q?zpt4W0dZfPv28laNbCJTyW2cWaxoOBgSRdkR+/O50Ozgxy+fUBy3sH36ID+Y?=
- =?us-ascii?Q?1upmZo3QxMcjby75jhpe/kPL3ERYgqhKWxQa9U+EnHChYuS8ePB2W+lXGRz2?=
- =?us-ascii?Q?l+4+FjQcIdGodyy9HJpqM8icPbmOFggCkmgCaS7CjL5Bbb2hkStD/Rs2nfT3?=
- =?us-ascii?Q?si0EgeEnxmnsIcZyx7ZH/oNDq0xEXZH7X+9TnAm6Js4vk1c5gpvV47evC5eW?=
- =?us-ascii?Q?XuhmaVkEb3gaD/IBwWUl2jXjweBpTtDFRbqTrdLbqwZYCprff0ygikOX1W1C?=
- =?us-ascii?Q?ivagRqB6zFerunZT9EJjyzRIq80QKhusFMzqGSfceuNUwSUHw8lBoZE6IsB6?=
- =?us-ascii?Q?2Xcc105Oz5BgxvDuGmhzrs9qxCkvgOSkW/YoGTgOJtZJ3peKL6St5RX1C3Av?=
- =?us-ascii?Q?MA06tfjTQKITXxfT3iDoNzDIDNOuDKSY4HOGU0Rz09K88lfXr9ko+Maf9y7f?=
- =?us-ascii?Q?RyuvMmdhE0qgHG04ID2dJeBxKMuWuzrZUFJpJntX7zAFikzbHCAlyf42usoe?=
- =?us-ascii?Q?h2FFTe5Xdh5pWvggDxsGnyQX9XeIOvMNVe+XsIuw39MLA8fNwwTR78dYbT3k?=
- =?us-ascii?Q?yb7jsCE8a0epD1foT6jVgFRj+6aIxv34RLuUa88Sjwl/af588liEfQrso1gb?=
- =?us-ascii?Q?esXJ2sb/nRXUyUskKdjbIdg4ECFsZUepLKHWR4/ezEkVTh5j3QHmlBYMJ9Br?=
- =?us-ascii?Q?vLEIcLHb16VzBiSNSv8xUs585ekTkM8FohTwKPnk4jnChPsbyJJr9Ee0NvCX?=
- =?us-ascii?Q?F/FZnNYq6Sne9PQx5O8EokzIWI2hRRV5cbca5KsFUskY+Nwun/q7sar5FHt7?=
- =?us-ascii?Q?MKXhewSw/xtj1mL+jsnlnYLuobpB8jqWlYPOV1CJTKKj3D60bdqSh3f9l5pb?=
- =?us-ascii?Q?vMjvvA1OQGW1spynQAahbwDTfva319CBeUoH+qHH/iu7c9/i+pMZbmAGfy5l?=
- =?us-ascii?Q?+bpclDvLPhG7vGyZS2jWKSoHh4aomDpSZyQboU1qf/LgS44zUQxugan7jguH?=
- =?us-ascii?Q?j11yPlMufE7aJisYYDveKCy/AIYfGO8XmMFCS7iqzg1Kv9vJDRc0fsDD7zGS?=
- =?us-ascii?Q?TDUFeAqCq8Hl4huVnFxH8JRF3dkkbfD4u79VVtwZk5sug+ECITAcNhM/sCHZ?=
- =?us-ascii?Q?jO5+WfP6ncts8mquWZMirBOjjUzfhW0/YxZEO91aqMl+b+UAMrQtap/ZI+kj?=
- =?us-ascii?Q?KgMAAwBmHrkYqhH8a8RJo9dr/ULTEZfZ3BujfayTgMDLNjZhXTGs60UE87iy?=
- =?us-ascii?Q?gE3EAz5lPvy3VcpjYIGyrjCYSwLCKOpZlGPQg8P4RzHL0yJskOHHncOqMKUQ?=
- =?us-ascii?Q?MA=3D=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+   d="scan'208";a="88250633"
+Received: from lstrano-mobl6.amr.corp.intel.com (HELO [10.125.109.168]) ([10.125.109.168])
+  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2024 10:30:34 -0800
+Message-ID: <bea6b1d7-19ee-4e02-ab59-c5aa4cc696da@intel.com>
+Date: Mon, 4 Nov 2024 11:30:33 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SJ0PR11MB5678.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1f70954d-0230-44d3-0028-08dcfcfe911c
-X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Nov 2024 18:29:06.5742
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: zqxgW0jzjLP20mMrTiSVVOVOMeG39L/cafnuCNBtzCNRpL0yEzuUm60/EYXaDfZZBOFfApw0cX9ndeqe/og1lRYVklR+8Uwv8derMfge9SE=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN9PR11MB5260
-X-OriginatorOrg: intel.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v15 08/15] cxl/memfeature: Add CXL memory device ECS
+ control feature
+To: shiju.jose@huawei.com, linux-edac@vger.kernel.org,
+ linux-cxl@vger.kernel.org, linux-acpi@vger.kernel.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org
+Cc: bp@alien8.de, tony.luck@intel.com, rafael@kernel.org, lenb@kernel.org,
+ mchehab@kernel.org, dan.j.williams@intel.com, dave@stgolabs.net,
+ jonathan.cameron@huawei.com, gregkh@linuxfoundation.org,
+ sudeep.holla@arm.com, jassisinghbrar@gmail.com, alison.schofield@intel.com,
+ vishal.l.verma@intel.com, ira.weiny@intel.com, david@redhat.com,
+ Vilas.Sridharan@amd.com, leo.duran@amd.com, Yazen.Ghannam@amd.com,
+ rientjes@google.com, jiaqiyan@google.com, Jon.Grimm@amd.com,
+ dave.hansen@linux.intel.com, naoya.horiguchi@nec.com, james.morse@arm.com,
+ jthoughton@google.com, somasundaram.a@hpe.com, erdemaktas@google.com,
+ pgonda@google.com, duenwen@google.com, gthelen@google.com,
+ wschwartz@amperecomputing.com, dferguson@amperecomputing.com,
+ wbs@os.amperecomputing.com, nifan.cxl@gmail.com, tanxiaofei@huawei.com,
+ prime.zeng@hisilicon.com, roberto.sassu@huawei.com,
+ kangkang.shen@futurewei.com, wanghuiqiang@huawei.com, linuxarm@huawei.com
+References: <20241101091735.1465-1-shiju.jose@huawei.com>
+ <20241101091735.1465-9-shiju.jose@huawei.com>
+Content-Language: en-US
+From: Dave Jiang <dave.jiang@intel.com>
+In-Reply-To: <20241101091735.1465-9-shiju.jose@huawei.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Dan,
 
-> -----Original Message-----
-> From: Dan Carpenter <dan.carpenter@linaro.org>
-> Sent: Monday, November 4, 2024 12:31 AM
-> To: oe-kbuild@lists.linux.dev; Sridhar, Kanchana P
-> <kanchana.p.sridhar@intel.com>; linux-kernel@vger.kernel.org; linux-
-> mm@kvack.org; hannes@cmpxchg.org; yosryahmed@google.com;
-> nphamcs@gmail.com; chengming.zhou@linux.dev;
-> usamaarif642@gmail.com; ryan.roberts@arm.com; Huang, Ying
-> <ying.huang@intel.com>; 21cnbao@gmail.com; akpm@linux-foundation.org;
-> linux-crypto@vger.kernel.org; herbert@gondor.apana.org.au;
-> davem@davemloft.net; clabbe@baylibre.com; ardb@kernel.org;
-> ebiggers@google.com; surenb@google.com; Accardi, Kristen C
-> <kristen.c.accardi@intel.com>; zanussi@kernel.org
-> Cc: lkp <lkp@intel.com>; oe-kbuild-all@lists.linux.dev; Feghali, Wajdi K
-> <wajdi.k.feghali@intel.com>; Gopal, Vinodh <vinodh.gopal@intel.com>;
-> Sridhar, Kanchana P <kanchana.p.sridhar@intel.com>
-> Subject: Re: [PATCH v2 13/13] mm: zswap: Compress batching with Intel IAA
-> in zswap_store() of large folios.
->=20
-> Hi Kanchana,
->=20
-> kernel test robot noticed the following build warnings:
->=20
-> url:    https://github.com/intel-lab-lkp/linux/commits/Kanchana-P-
-> Sridhar/crypto-acomp-Define-two-new-interfaces-for-compress-decompress-
-> batching/20241103-112337
-> base:   5c4cf96cd70230100b5d396d45a5c9a332539d19
-> patch link:    https://lore.kernel.org/r/20241103032111.333282-14-
-> kanchana.p.sridhar%40intel.com
-> patch subject: [PATCH v2 13/13] mm: zswap: Compress batching with Intel
-> IAA in zswap_store() of large folios.
-> config: x86_64-randconfig-161-20241104 (https://download.01.org/0day-
-> ci/archive/20241104/202411040859.2z0MfFkR-lkp@intel.com/config)
-> compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
->=20
-> If you fix the issue in a separate patch/commit (i.e. not just a new vers=
-ion of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-> | Closes: https://lore.kernel.org/r/202411040859.2z0MfFkR-lkp@intel.com/
->=20
-> smatch warnings:
-> mm/zswap.c:1788 zswap_store_propagate_errors() warn: variable
-> dereferenced before check 'sbp->entry' (see line 1785)
->=20
-> vim +1788 mm/zswap.c
->=20
-> c1252ac91d6a6a Kanchana P Sridhar 2024-11-02  1771  static
-> __always_inline void zswap_store_propagate_errors(
-> c1252ac91d6a6a Kanchana P Sridhar 2024-11-02  1772  	struct
-> zswap_store_pipeline_state *zst,
-> c1252ac91d6a6a Kanchana P Sridhar 2024-11-02  1773  	u8
-> error_batch_idx)
-> c1252ac91d6a6a Kanchana P Sridhar 2024-11-02  1774  {
-> c1252ac91d6a6a Kanchana P Sridhar 2024-11-02  1775  	u8 i;
-> c1252ac91d6a6a Kanchana P Sridhar 2024-11-02  1776
-> c1252ac91d6a6a Kanchana P Sridhar 2024-11-02  1777  	if (zst-
-> >errors[error_batch_idx])
-> c1252ac91d6a6a Kanchana P Sridhar 2024-11-02  1778
-> 	return;
-> c1252ac91d6a6a Kanchana P Sridhar 2024-11-02  1779
-> c1252ac91d6a6a Kanchana P Sridhar 2024-11-02  1780  	for (i =3D 0; i <
-> zst->nr_comp_pages; ++i) {
-> c1252ac91d6a6a Kanchana P Sridhar 2024-11-02  1781
-> 	struct zswap_store_sub_batch_page *sbp =3D &zst->sub_batch[i];
-> c1252ac91d6a6a Kanchana P Sridhar 2024-11-02  1782
-> c1252ac91d6a6a Kanchana P Sridhar 2024-11-02  1783  		if
-> (sbp->batch_idx =3D=3D error_batch_idx) {
-> c1252ac91d6a6a Kanchana P Sridhar 2024-11-02  1784
-> 	if (!sbp->error) {
-> c1252ac91d6a6a Kanchana P Sridhar 2024-11-02 @1785
-> 		if (!IS_ERR_VALUE(sbp->entry->handle))
->                                                                          =
-                         ^^^^^^^^^^^^^^^^^^
-> Dereferenced
->=20
-> c1252ac91d6a6a Kanchana P Sridhar 2024-11-02  1786
-> 			zpool_free(zst->pool->zpool, sbp->entry->handle);
-> c1252ac91d6a6a Kanchana P Sridhar 2024-11-02  1787
-> c1252ac91d6a6a Kanchana P Sridhar 2024-11-02 @1788
-> 		if (sbp->entry) {
->                                                                          =
-           ^^^^^^^^^^
-> Checked too late
 
-Thanks for pointing this out.  The implementation makes sure that all
-sbp->entry values are valid before it gets to zswap_store_propagate_errors(=
-).
-That said, I agree, the sbp->entry check can be done earlier to make the
-code more correct/readable. I will fix this in v3.
+On 11/1/24 2:17 AM, shiju.jose@huawei.com wrote:
+> From: Shiju Jose <shiju.jose@huawei.com>
+> 
+> CXL spec 3.1 section 8.2.9.9.11.2 describes the DDR5 ECS (Error Check
+> Scrub) control feature.
+> The Error Check Scrub (ECS) is a feature defined in JEDEC DDR5 SDRAM
+> Specification (JESD79-5) and allows the DRAM to internally read, correct
+> single-bit errors, and write back corrected data bits to the DRAM array
+> while providing transparency to error counts.
+> 
+> The ECS control allows the requester to change the log entry type, the ECS
+> threshold count (provided the request falls within the limits specified in
+> DDR5 mode registers), switch between codeword mode and row count mode, and
+> reset the ECS counter.
+> 
+> Register with EDAC device driver, which retrieves the ECS attribute
+> descriptors from the EDAC ECS and exposes the ECS control attributes to
+> userspace via sysfs. For example, the ECS control for the memory media FRU0
+> in CXL mem0 device is located at /sys/bus/edac/devices/cxl_mem0/ecs_fru0/
+> 
+> Signed-off-by: Shiju Jose <shiju.jose@huawei.com>
+> ---
+>  drivers/cxl/core/memfeature.c | 342 +++++++++++++++++++++++++++++++++-
+>  1 file changed, 339 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/cxl/core/memfeature.c b/drivers/cxl/core/memfeature.c
+> index 41298acc01de..e641396a32f5 100644
+> --- a/drivers/cxl/core/memfeature.c
+> +++ b/drivers/cxl/core/memfeature.c
+> @@ -17,7 +17,7 @@
+>  #include <cxl.h>
+>  #include <cxlmem.h>
+>  
+> -#define CXL_DEV_NUM_RAS_FEATURES	1
+> +#define CXL_DEV_NUM_RAS_FEATURES	2
+>  #define CXL_DEV_HOUR_IN_SECS	3600
+>  
+>  #define CXL_SCRUB_NAME_LEN	128
+> @@ -309,15 +309,314 @@ static const struct edac_scrub_ops cxl_ps_scrub_ops = {
+>  	.set_cycle_duration = cxl_patrol_scrub_write_scrub_cycle,
+>  };
+>  
+> +/* CXL DDR5 ECS control definitions */
+> +static const uuid_t cxl_ecs_uuid =
+> +	UUID_INIT(0xe5b13f22, 0x2328, 0x4a14, 0xb8, 0xba, 0xb9, 0x69, 0x1e, 0x89, 0x33, 0x86);
+> +
+> +struct cxl_ecs_context {
+> +	u16 num_media_frus;
+> +	u16 get_feat_size;
+> +	u16 set_feat_size;
+> +	u8 get_version;
+> +	u8 set_version;
+> +	u16 set_effects;
+> +	struct cxl_memdev *cxlmd;
+> +};
+> +
+> +enum {
+> +	CXL_ECS_PARAM_LOG_ENTRY_TYPE,
+> +	CXL_ECS_PARAM_THRESHOLD,
+> +	CXL_ECS_PARAM_MODE,
+> +	CXL_ECS_PARAM_RESET_COUNTER,
+> +};
+> +
+> +#define	CXL_ECS_LOG_ENTRY_TYPE_MASK	GENMASK(1, 0)
+> +#define	CXL_ECS_REALTIME_REPORT_CAP_MASK	BIT(0)
+> +#define	CXL_ECS_THRESHOLD_COUNT_MASK	GENMASK(2, 0)
+> +#define	CXL_ECS_COUNT_MODE_MASK	BIT(3)
+> +#define	CXL_ECS_RESET_COUNTER_MASK	BIT(4)
+> +
+> +enum {
+> +	ECS_THRESHOLD_256 = 3,
+> +	ECS_THRESHOLD_1024 = 4,
+> +	ECS_THRESHOLD_4096 = 5,
+> +};
+> +
+> +static const u16 ecs_supp_threshold[] = {
+> +	[ECS_THRESHOLD_256] = 256,
+> +	[ECS_THRESHOLD_1024] = 1024,
+> +	[ECS_THRESHOLD_4096] = 4096,
+> +};
+> +
+> +enum {
+> +	ECS_LOG_ENTRY_TYPE_DRAM = 0x0,
+> +	ECS_LOG_ENTRY_TYPE_MEM_MEDIA_FRU = 0x1,
+> +};
+> +
+> +enum cxl_ecs_count_mode {
+> +	ECS_MODE_COUNTS_ROWS = 0,
+> +	ECS_MODE_COUNTS_CODEWORDS = 1,
+> +};
+> +
+> +/**
+> + * struct cxl_ecs_params - CXL memory DDR5 ECS parameter data structure.
+> + * @log_entry_type: ECS log entry type, per DRAM or per memory media FRU.
+> + * @threshold: ECS threshold count per GB of memory cells.
+> + * @count_mode: codeword/row count mode
+> + *		0 : ECS counts rows with errors
+> + *		1 : ECS counts codeword with errors
+> + * @reset_counter: [IN] reset ECC counter to default value.
+> + */
+> +struct cxl_ecs_params {
+> +	u8 log_entry_type;
+> +	u16 threshold;
+> +	enum cxl_ecs_count_mode count_mode;
+> +	u8 reset_counter;
+> +};
+> +
+> +struct cxl_ecs_fru_rd_attrs {
+> +	u8 ecs_cap;
+> +	__le16 ecs_config;
+> +	u8 ecs_flags;
+> +}  __packed;
+> +
+> +struct cxl_ecs_rd_attrs {
+> +	u8 ecs_log_cap;
+> +	struct cxl_ecs_fru_rd_attrs fru_attrs[];
+> +}  __packed;
+> +
+> +struct cxl_ecs_fru_wr_attrs {
+> +	__le16 ecs_config;
+> +} __packed;
+> +
+> +struct cxl_ecs_wr_attrs {
+> +	u8 ecs_log_cap;
+> +	struct cxl_ecs_fru_wr_attrs fru_attrs[];
+> +}  __packed;
+> +
+> +/* CXL DDR5 ECS control functions */
+> +static int cxl_mem_ecs_get_attrs(struct device *dev,
+> +				 struct cxl_ecs_context *cxl_ecs_ctx,
+> +				 int fru_id, struct cxl_ecs_params *params)
+> +{
+> +	struct cxl_memdev *cxlmd = cxl_ecs_ctx->cxlmd;
+> +	struct cxl_dev_state *cxlds = cxlmd->cxlds;
+> +	struct cxl_memdev_state *mds = to_cxl_memdev_state(cxlds);
+> +	struct cxl_ecs_fru_rd_attrs *fru_rd_attrs;
+> +	size_t rd_data_size;
+> +	u8 threshold_index;
+> +	size_t data_size;
+> +
+> +	rd_data_size = cxl_ecs_ctx->get_feat_size;
+> +
+> +	struct cxl_ecs_rd_attrs *rd_attrs __free(kfree) =
+> +					kmalloc(rd_data_size, GFP_KERNEL);
+> +	if (!rd_attrs)
+> +		return -ENOMEM;
+> +
+> +	params->log_entry_type = 0;
+> +	params->threshold = 0;
+> +	params->count_mode = 0;
+> +	data_size = cxl_get_feature(mds, cxl_ecs_uuid,
+> +				    CXL_GET_FEAT_SEL_CURRENT_VALUE,
+> +				    rd_attrs, rd_data_size);
+> +	if (!data_size)
+> +		return -EIO;
+> +
+> +	fru_rd_attrs = rd_attrs->fru_attrs;
+> +	params->log_entry_type = FIELD_GET(CXL_ECS_LOG_ENTRY_TYPE_MASK,
+> +					   rd_attrs->ecs_log_cap);
+> +	threshold_index = FIELD_GET(CXL_ECS_THRESHOLD_COUNT_MASK,
+> +				    fru_rd_attrs[fru_id].ecs_config);
+> +	params->threshold = ecs_supp_threshold[threshold_index];
+> +	params->count_mode = FIELD_GET(CXL_ECS_COUNT_MODE_MASK,
+> +				       fru_rd_attrs[fru_id].ecs_config);
+> +	return 0;
+> +}
+> +
+> +static int cxl_mem_ecs_set_attrs(struct device *dev,
+> +				 struct cxl_ecs_context *cxl_ecs_ctx,
+> +				 int fru_id, struct cxl_ecs_params *params,
+> +				 u8 param_type)
+> +{
+> +	struct cxl_memdev *cxlmd = cxl_ecs_ctx->cxlmd;
+> +	struct cxl_dev_state *cxlds = cxlmd->cxlds;
+> +	struct cxl_memdev_state *mds = to_cxl_memdev_state(cxlds);
+> +	struct cxl_ecs_fru_rd_attrs *fru_rd_attrs;
+> +	struct cxl_ecs_fru_wr_attrs *fru_wr_attrs;
+> +	size_t rd_data_size, wr_data_size;
+> +	u16 num_media_frus, count;
+> +	size_t data_size;
+> +	int ret;
+> +
+> +	num_media_frus = cxl_ecs_ctx->num_media_frus;
+> +	rd_data_size = cxl_ecs_ctx->get_feat_size;
+> +	wr_data_size = cxl_ecs_ctx->set_feat_size;
+> +	struct cxl_ecs_rd_attrs *rd_attrs __free(kfree) =
+> +				kmalloc(rd_data_size, GFP_KERNEL);
+> +	if (!rd_attrs)
+> +		return -ENOMEM;
+> +
+> +	data_size = cxl_get_feature(mds, cxl_ecs_uuid,
+> +				    CXL_GET_FEAT_SEL_CURRENT_VALUE,
+> +				    rd_attrs, rd_data_size);
+> +	if (!data_size)
+> +		return -EIO;
+> +
+> +	struct cxl_ecs_wr_attrs *wr_attrs __free(kfree) =
+> +					kmalloc(wr_data_size, GFP_KERNEL);
+> +	if (!wr_attrs)
+> +		return -ENOMEM;
+> +
+> +	/*
+> +	 * Fill writable attributes from the current attributes read
+> +	 * for all the media FRUs.
+> +	 */
+> +	fru_rd_attrs = rd_attrs->fru_attrs;
+> +	fru_wr_attrs = wr_attrs->fru_attrs;
+> +	wr_attrs->ecs_log_cap = rd_attrs->ecs_log_cap;
+> +	for (count = 0; count < num_media_frus; count++)
+> +		fru_wr_attrs[count].ecs_config = fru_rd_attrs[count].ecs_config;
+> +
+> +	/* Fill attribute to be set for the media FRU */
+> +	switch (param_type) {
+> +	case CXL_ECS_PARAM_LOG_ENTRY_TYPE:
+> +		if (params->log_entry_type != ECS_LOG_ENTRY_TYPE_DRAM &&
+> +		    params->log_entry_type != ECS_LOG_ENTRY_TYPE_MEM_MEDIA_FRU) {
+> +			dev_err(dev,
+> +				"Invalid CXL ECS scrub log entry type(%d) to set\n",
+> +			       params->log_entry_type);
+> +			dev_err(dev,
+> +				"Log Entry Type 0: per DRAM  1: per Memory Media FRU\n");
+> +			return -EINVAL;
+> +		}
+> +		wr_attrs->ecs_log_cap = FIELD_PREP(CXL_ECS_LOG_ENTRY_TYPE_MASK,
+> +						   params->log_entry_type);
+> +		break;
+> +	case CXL_ECS_PARAM_THRESHOLD:
+> +		fru_wr_attrs[fru_id].ecs_config &= ~CXL_ECS_THRESHOLD_COUNT_MASK;
+> +		switch (params->threshold) {
+> +		case 256:
 
-Thanks,
-Kanchana
+Why not just use the enums instead?
+> +			fru_wr_attrs[fru_id].ecs_config |= FIELD_PREP(CXL_ECS_THRESHOLD_COUNT_MASK,
+> +								  ECS_THRESHOLD_256);
+> +			break;
+> +		case 1024:
+> +			fru_wr_attrs[fru_id].ecs_config |= FIELD_PREP(CXL_ECS_THRESHOLD_COUNT_MASK,
+> +								  ECS_THRESHOLD_1024);
+> +			break;
+> +		case 4096:
+> +			fru_wr_attrs[fru_id].ecs_config |= FIELD_PREP(CXL_ECS_THRESHOLD_COUNT_MASK,
+> +								  ECS_THRESHOLD_4096);
+> +			break;
+> +		default:
+> +			dev_err(dev,
+> +				"Invalid CXL ECS scrub threshold count(%d) to set\n",
+> +				params->threshold);
+> +			dev_err(dev,
+> +				"Supported scrub threshold counts: %u, %u, %u\n",
+> +				ecs_supp_threshold[ECS_THRESHOLD_256],
+> +				ecs_supp_threshold[ECS_THRESHOLD_1024],
+> +				ecs_supp_threshold[ECS_THRESHOLD_4096]);
+> +			return -EINVAL;
+> +		}
+> +		break;
+> +	case CXL_ECS_PARAM_MODE:
+> +		if (params->count_mode != ECS_MODE_COUNTS_ROWS &&
+> +		    params->count_mode != ECS_MODE_COUNTS_CODEWORDS) {
+> +			dev_err(dev,
+> +				"Invalid CXL ECS scrub mode(%d) to set\n",
+> +				params->count_mode);
+> +			dev_err(dev,
+> +				"Supported ECS Modes: 0: ECS counts rows with errors,"
+> +				" 1: ECS counts codewords with errors\n");
+> +			return -EINVAL;
+> +		}
+> +		fru_wr_attrs[fru_id].ecs_config &= ~CXL_ECS_COUNT_MODE_MASK;
+> +		fru_wr_attrs[fru_id].ecs_config |= FIELD_PREP(CXL_ECS_COUNT_MODE_MASK,
+> +							      params->count_mode);
+> +		break;
+> +	case CXL_ECS_PARAM_RESET_COUNTER:
+> +		if (params->reset_counter != 1)
 
->=20
-> c1252ac91d6a6a Kanchana P Sridhar 2024-11-02  1789
-> 			zswap_entry_cache_free(sbp->entry);
-> c1252ac91d6a6a Kanchana P Sridhar 2024-11-02  1790
-> 			sbp->entry =3D NULL;
-> c1252ac91d6a6a Kanchana P Sridhar 2024-11-02  1791
-> 		}
-> c1252ac91d6a6a Kanchana P Sridhar 2024-11-02  1792
-> 		sbp->error =3D -EINVAL;
-> c1252ac91d6a6a Kanchana P Sridhar 2024-11-02  1793
-> 	}
-> c1252ac91d6a6a Kanchana P Sridhar 2024-11-02  1794  		}
-> c1252ac91d6a6a Kanchana P Sridhar 2024-11-02  1795  	}
-> c1252ac91d6a6a Kanchana P Sridhar 2024-11-02  1796
-> c1252ac91d6a6a Kanchana P Sridhar 2024-11-02  1797  	/*
-> c1252ac91d6a6a Kanchana P Sridhar 2024-11-02  1798  	 * Set zswap
-> status for the folio to "error"
-> c1252ac91d6a6a Kanchana P Sridhar 2024-11-02  1799  	 * for use in
-> swap_writepage.
-> c1252ac91d6a6a Kanchana P Sridhar 2024-11-02  1800  	 */
-> c1252ac91d6a6a Kanchana P Sridhar 2024-11-02  1801  	zst-
-> >errors[error_batch_idx] =3D -EINVAL;
-> c1252ac91d6a6a Kanchana P Sridhar 2024-11-02  1802  }
->=20
-> --
-> 0-DAY CI Kernel Test Service
-> https://github.com/intel/lkp-tests/wiki
+Compare with magic number?
+
+> +			return -EINVAL;
+> +
+> +		fru_wr_attrs[fru_id].ecs_config &= ~CXL_ECS_RESET_COUNTER_MASK;
+> +		fru_wr_attrs[fru_id].ecs_config |= FIELD_PREP(CXL_ECS_RESET_COUNTER_MASK,
+> +							      params->reset_counter);
+> +		break;
+> +	default:
+> +		dev_err(dev, "Invalid CXL ECS parameter to set\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	ret = cxl_set_feature(mds, cxl_ecs_uuid, cxl_ecs_ctx->set_version,
+> +			      wr_attrs, wr_data_size,
+> +			      CXL_SET_FEAT_FLAG_DATA_SAVED_ACROSS_RESET);
+> +	if (ret) {
+> +		dev_err(dev, "CXL ECS set feature failed ret=%d\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +#define CXL_ECS_GET_ATTR(attrib)						\
+> +static int cxl_ecs_get_##attrib(struct device *dev, void *drv_data,		\
+> +				int fru_id, u32 *val)				\
+> +{										\
+> +	struct cxl_ecs_context *ctx = drv_data;					\
+> +	struct cxl_ecs_params params;						\
+> +	int ret;								\
+> +										\
+> +	ret = cxl_mem_ecs_get_attrs(dev, ctx, fru_id, &params);			\
+> +	if (ret)								\
+> +		return ret;							\
+> +										\
+> +	*val = params.attrib;							\
+> +										\
+> +	return 0;								\
+> +}
+> +
+> +CXL_ECS_GET_ATTR(log_entry_type)
+> +CXL_ECS_GET_ATTR(count_mode)
+> +CXL_ECS_GET_ATTR(threshold)
+> +
+> +#define CXL_ECS_SET_ATTR(attrib, param_type)						\
+> +static int cxl_ecs_set_##attrib(struct device *dev, void *drv_data,			\
+> +				int fru_id, u32 val)					\
+> +{											\
+> +	struct cxl_ecs_context *ctx = drv_data;						\
+> +	struct cxl_ecs_params params = {						\
+> +		.attrib = val,								\
+> +	};										\
+> +											\
+> +	return cxl_mem_ecs_set_attrs(dev, ctx, fru_id, &params, (param_type));		\
+> +}
+> +CXL_ECS_SET_ATTR(log_entry_type, CXL_ECS_PARAM_LOG_ENTRY_TYPE)
+> +CXL_ECS_SET_ATTR(count_mode, CXL_ECS_PARAM_MODE)
+> +CXL_ECS_SET_ATTR(reset_counter, CXL_ECS_PARAM_RESET_COUNTER)
+> +CXL_ECS_SET_ATTR(threshold, CXL_ECS_PARAM_THRESHOLD)
+> +
+> +static const struct edac_ecs_ops cxl_ecs_ops = {
+> +	.get_log_entry_type = cxl_ecs_get_log_entry_type,
+> +	.set_log_entry_type = cxl_ecs_set_log_entry_type,
+> +	.get_mode = cxl_ecs_get_count_mode,
+> +	.set_mode = cxl_ecs_set_count_mode,
+> +	.reset = cxl_ecs_set_reset_counter,
+> +	.get_threshold = cxl_ecs_get_threshold,
+> +	.set_threshold = cxl_ecs_set_threshold,
+> +};
+> +
+>  int cxl_mem_ras_features_init(struct cxl_memdev *cxlmd, struct cxl_region *cxlr)
+>  {
+>  	struct edac_dev_feature ras_features[CXL_DEV_NUM_RAS_FEATURES];
+>  	struct cxl_patrol_scrub_context *cxl_ps_ctx;
+>  	char cxl_dev_name[CXL_SCRUB_NAME_LEN];
+> +	struct cxl_ecs_context *cxl_ecs_ctx;
+>  	struct cxl_feat_entry feat_entry;
+>  	struct cxl_memdev_state *mds;
+>  	struct cxl_dev_state *cxlds;
+>  	int num_ras_features = 0;
+> +	int num_media_frus;
+>  	u8 scrub_inst = 0;
+>  	int rc, i;
+>  
+> @@ -344,10 +643,10 @@ int cxl_mem_ras_features_init(struct cxl_memdev *cxlmd, struct cxl_region *cxlr)
+>  		rc = cxl_get_supported_feature_entry(mds, &cxl_patrol_scrub_uuid,
+>  						     &feat_entry);
+>  		if (rc < 0)
+> -			return rc;
+> +			goto feat_scrub_done;
+>  
+>  		if (!(feat_entry.attr_flags & CXL_FEAT_ENTRY_FLAG_CHANGABLE))
+> -			return -EOPNOTSUPP;
+> +			goto feat_scrub_done;
+>  	}
+>  
+>  	cxl_ps_ctx = devm_kzalloc(&cxlmd->dev, sizeof(*cxl_ps_ctx), GFP_KERNEL);
+> @@ -378,6 +677,43 @@ int cxl_mem_ras_features_init(struct cxl_memdev *cxlmd, struct cxl_region *cxlr)
+>  	ras_features[num_ras_features].ctx = cxl_ps_ctx;
+>  	num_ras_features++;
+>  
+> +feat_scrub_done:
+> +	if (!cxlr) {
+> +		rc = cxl_get_supported_feature_entry(mds, &cxl_ecs_uuid,
+> +						     &feat_entry);
+> +		if (rc < 0)
+> +			goto feat_ecs_done;
+> +
+> +		if (!(feat_entry.attr_flags & CXL_FEAT_ENTRY_FLAG_CHANGABLE))
+> +			goto feat_ecs_done;
+> +		num_media_frus = (feat_entry.get_feat_size - sizeof(struct cxl_ecs_rd_attrs)) /
+> +					sizeof(struct cxl_ecs_fru_rd_attrs);
+> +		if (!num_media_frus)
+> +			goto feat_ecs_done;
+> +
+> +		cxl_ecs_ctx = devm_kzalloc(&cxlmd->dev, sizeof(*cxl_ecs_ctx),
+> +					   GFP_KERNEL);
+> +		if (!cxl_ecs_ctx)
+> +			goto feat_ecs_done;
+> +		*cxl_ecs_ctx = (struct cxl_ecs_context) {
+> +			.get_feat_size = feat_entry.get_feat_size,
+> +			.set_feat_size = feat_entry.set_feat_size,
+> +			.get_version = feat_entry.get_feat_ver,
+> +			.set_version = feat_entry.set_feat_ver,
+> +			.set_effects = feat_entry.set_effects,
+> +			.num_media_frus = num_media_frus,
+> +			.cxlmd = cxlmd,
+> +		};
+> +
+> +		ras_features[num_ras_features].ft_type = RAS_FEAT_ECS;
+> +		ras_features[num_ras_features].ecs_ops = &cxl_ecs_ops;
+> +		ras_features[num_ras_features].ctx = cxl_ecs_ctx;
+> +		ras_features[num_ras_features].ecs_info.num_media_frus =
+> +								num_media_frus;
+> +		num_ras_features++;
+> +	}
+
+The function is getting awfully large. Maybe a helper function?
+
+DJ
+
+> +
+> +feat_ecs_done:
+>  	return edac_dev_register(&cxlmd->dev, cxl_dev_name, NULL,
+>  				 num_ras_features, ras_features);
+>  }
 
 
