@@ -1,68 +1,71 @@
-Return-Path: <linux-kernel+bounces-395177-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395178-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A6C29BB9E7
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 17:11:48 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62CEF9BB9EC
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 17:12:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F5232829B7
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 16:11:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B48C1F22664
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 16:12:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FCC11C3F36;
-	Mon,  4 Nov 2024 16:11:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6A6C1C1AB1;
+	Mon,  4 Nov 2024 16:12:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WPSqAL9r"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bdwUCbNm"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDD4E1C3038;
-	Mon,  4 Nov 2024 16:11:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44B232AF12;
+	Mon,  4 Nov 2024 16:12:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730736676; cv=none; b=Ofeyr+RTKYmsa+YoBC1UfcnNar9ELxj3lx9ctWv2RlzUnUw5XBfrybAOvY4YIbzcJYdlQbMECMYFA14GhWwlEvj/uHIZKCmcEa9lq5G8GVflZpnKiwywyc17pbGR73y038UJnJAnJMT+VGB2L5ou//UYTVBLU61SBlR8oNxbEG8=
+	t=1730736762; cv=none; b=FMRbxXm9KiYSHBs8BZlXhPLqdBOfYc7aJXM9nUWekZcNh/ez7e6VTFtMIHw7EearhZ6q9TcjJuk3s46Tfo67eTKdYu7ee3KRfNnvB1pqwL/ee8vEA/ZsWaPQZncWOO/ZLUYFRiw7zKRmoOLKApsKzn3aA4xVAKlAzNuf4wgZq8U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730736676; c=relaxed/simple;
-	bh=jbyllvauex8tqMFMdTXvyGQZhUUfwaEX119Q+OwRS8Q=;
+	s=arc-20240116; t=1730736762; c=relaxed/simple;
+	bh=CSI8nmFVeCBUZm3j23aCaLtGEVXGHX7F+EO7hopFI+Y=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nPVtgA62RZ+XFB3BIDUpfWK/ZYMkZuWPzjFWu2STx4Tjw9qXhhWcfXsXyJDLEwex1f7xDhNJ0fVdhXiv0cmmkdo/djIzLPAQbBaFZdlPVqYSQ5UMpj/nwSqNnlrL/69dlLZaHjSMJGGdIB36kKyN6dIvLy75rHTWpnpDjj9Oa6A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WPSqAL9r; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2CB9AC4CECE;
-	Mon,  4 Nov 2024 16:11:16 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=TqMQAfuMxzXqitz/FM5fD3pE29f2W1C5eQswkUymYVfwAwjPXr3NCHwAkQ22sM94sb7Jj7u0x8GU85Yji5shtuZaLGaxoODGNHunxvcQtBKCF87e0ELuqfc2BcnZxE4xw5bIjd3Ui2qGi8UKlkEbdCdp349e8lu21VUVWCd2KZg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bdwUCbNm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D564C4CECE;
+	Mon,  4 Nov 2024 16:12:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730736676;
-	bh=jbyllvauex8tqMFMdTXvyGQZhUUfwaEX119Q+OwRS8Q=;
+	s=k20201202; t=1730736759;
+	bh=CSI8nmFVeCBUZm3j23aCaLtGEVXGHX7F+EO7hopFI+Y=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WPSqAL9r7pR+YYgkjx32AH6bnZwqoXvXuHe/u3PpYj4MhpV0Im/igYgiP/e4/0jm6
-	 zGvkvBkHDYlrVGdmTx0WomIU9b1rg4A9JYT9Br8Zt9hKhdjVY9vE+YND95au5U9MMf
-	 feL6CE8owPys3IPt/U7E4h8OlYuEjJRYdRyWwPy/eNaw+PcNn14UeKXP2qA5FU3WD1
-	 80xjzPxXRuw8EIwnISGJBLSWTcp8Tvziz86C7rmecrIvGMwIlJNTHY2/NlnK2cCIeh
-	 tOhs+1WJ9pknlx7l3FMrLr6kLK4LLMZSzQ2fN3hHMSZ9xuEWXKWAeZgvVtqOLLQyQt
-	 kYDrgeRDu5zWQ==
-Date: Mon, 4 Nov 2024 10:11:14 -0600
+	b=bdwUCbNmHML9PrNRdfy29kUrRCJ+UtUsiVXu0fQDqOvjEDs1MiwEtWWsiE4TNtwCr
+	 15ttqIq17BRC9+3YTw8CQf1lIqQSb8DpE8Aqd6NFQjCvWdh6tnVjypmIbECUbk5EqU
+	 Rs+HYZR/snvujBQGJylaQ71jiUH+YmzyUYqQsTU8tzG/jq3jInKe5RrOyUeoI0BRrr
+	 X+OVVN4KzoshoecdzH9MWUr0wVrs2UhQpRNybBQbQKg6EFVcIJQG0KZrZgsd859jzN
+	 WQwHpxAZZwXAIcnelk0ZpR10LFHinC8ACu2kJ9+5k8K3burokUgzCmfAdxnBjizLpx
+	 gTsgy9KArpFbQ==
+Date: Mon, 4 Nov 2024 10:12:37 -0600
 From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Christian Marangi <ansuelsmth@gmail.com>
-Cc: upstream@airoha.com, Antoine Tenart <atenart@kernel.org>,
-	llvm@lists.linux.dev, Will Deacon <will@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Waiman Long <longman@redhat.com>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org,
-	Bill Wendling <morbo@google.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Conor Dooley <conor+dt@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>, devicetree@vger.kernel.org,
-	Ingo Molnar <mingo@redhat.com>,
-	Justin Stitt <justinstitt@google.com>
-Subject: Re: [PATCH v6 2/3] dt-bindings: crypto: Add Inside Secure SafeXcel
- EIP-93 crypto engine
-Message-ID: <173073667299.300346.12132353760971181964.robh@kernel.org>
-References: <20241102175045.10408-1-ansuelsmth@gmail.com>
- <20241102175045.10408-2-ansuelsmth@gmail.com>
+To: Liu Ying <victor.liu@nxp.com>
+Cc: thierry.reding@gmail.com, linux-kernel@vger.kernel.org,
+	krzk+dt@kernel.org, tzimmermann@suse.de, mchehab@kernel.org,
+	mripard@kernel.org, geert+renesas@glider.be, jonas@kwiboo.se,
+	nfraprado@collabora.com, jernej.skrabec@gmail.com,
+	kernel@pengutronix.de, prabhakar.mahadev-lad.rj@bp.renesas.com,
+	quic_jesszhan@quicinc.com, Laurent.pinchart@ideasonboard.com,
+	sam@ravnborg.org, arnd@arndb.de, neil.armstrong@linaro.org,
+	imx@lists.linux.dev, devicetree@vger.kernel.org,
+	dmitry.baryshkov@linaro.org, s.hauer@pengutronix.de,
+	tomi.valkeinen@ideasonboard.com, shawnguo@kernel.org,
+	simona@ffwll.ch, will@kernel.org, conor+dt@kernel.org,
+	marex@denx.de, quic_bjorande@quicinc.com, andrzej.hajda@intel.com,
+	catalin.marinas@arm.com, rfoss@kernel.org,
+	sakari.ailus@linux.intel.com, airlied@gmail.com,
+	maarten.lankhorst@linux.intel.com, linux-media@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org, hverkuil@xs4all.nl,
+	biju.das.jz@bp.renesas.com, festevam@gmail.com
+Subject: Re: [PATCH v5 08/13] dt-bindings: display: Document dual-link LVDS
+ display common properties
+Message-ID: <173073675713.309604.179338628102616229.robh@kernel.org>
+References: <20241104032806.611890-1-victor.liu@nxp.com>
+ <20241104032806.611890-9-victor.liu@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -71,36 +74,37 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241102175045.10408-2-ansuelsmth@gmail.com>
+In-Reply-To: <20241104032806.611890-9-victor.liu@nxp.com>
 
 
-On Sat, 02 Nov 2024 18:50:34 +0100, Christian Marangi wrote:
-> Add bindings for the Inside Secure SafeXcel EIP-93 crypto engine.
+On Mon, 04 Nov 2024 11:28:01 +0800, Liu Ying wrote:
+> Dual-link LVDS displays receive odd pixels and even pixels separately from
+> dual LVDS links.  One link receives odd pixels and the other receives even
+> pixels.  Some of those displays may also use only one LVDS link to receive
+> all pixels, being odd and even agnostic.  Document common properties for
+> those displays by extending LVDS display common properties defined in
+> lvds.yaml.
 > 
-> The IP is present on Airoha SoC and on various Mediatek devices and
-> other SoC under different names like mtk-eip93 or PKTE.
-> 
-> All the compatible that currently doesn't have any user are defined but
-> rejected waiting for an actual device that makes use of them.
-> 
-> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+> Suggested-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> Signed-off-by: Liu Ying <victor.liu@nxp.com>
 > ---
-> Changes v6:
-> - Add SoC specific compatible
-> - Add now supported entry for compatible with no user
-> Changes v5:
-> - Comment out compatible with no current user
-> Changes v4:
-> - Out of RFC
-> Changes v3:
-> - Add SoC compatible with generic one
-> Changes v2:
-> - Change to better compatible
-> - Add description for EIP93 models
+> v5:
+> * Use patternProperties to define port@0 and port@1.  (Biju)
+> * Require port@0 or port@1.
 > 
->  .../crypto/inside-secure,safexcel-eip93.yaml  | 67 +++++++++++++++++++
->  1 file changed, 67 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/crypto/inside-secure,safexcel-eip93.yaml
+> v4:
+> * Squash change for advantech,idk-2121wr.yaml and
+>   panel-simple-lvds-dual-ports.yaml with lvds-dual-ports.yaml.  (Rob)
+> * Improve description in lvds-dual-ports.yaml.  (Krzysztof)
+> 
+> v3:
+> * New patch.  (Dmitry)
+> 
+>  .../bindings/display/lvds-dual-ports.yaml     | 63 +++++++++++++++++++
+>  .../display/panel/advantech,idk-2121wr.yaml   | 14 +----
+>  .../panel/panel-simple-lvds-dual-ports.yaml   | 20 +-----
+>  3 files changed, 65 insertions(+), 32 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/display/lvds-dual-ports.yaml
 > 
 
 Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
