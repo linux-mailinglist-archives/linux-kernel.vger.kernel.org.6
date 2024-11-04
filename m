@@ -1,162 +1,232 @@
-Return-Path: <linux-kernel+bounces-395024-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395045-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C726D9BB746
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 15:15:02 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6AA99BB7B9
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 15:27:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 882AF28159D
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 14:15:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 85F07281F58
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 14:27:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DE4D13C9DE;
-	Mon,  4 Nov 2024 14:14:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AD051B0F2D;
+	Mon,  4 Nov 2024 14:27:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NlnhbKDA"
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Gpf0Qcm9"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5786E13B58C
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 14:14:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CADA68BEE;
+	Mon,  4 Nov 2024 14:27:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730729693; cv=none; b=o3iAZCWWOpFfGwbbiFAk2giV7Fa+jJWMGVDwZ02070T4zFvH0Ed/xgevAQK7STdh+I5yOfU/vYVUm92wYk8O67EihhLD/xHgsHRQbvcC4YJTweQXuh9oqlt4NuQ4GDTonKrCXte56rk9zbZ8IR47xe4tJPs90Mpr1+xXtGA3/2o=
+	t=1730730450; cv=none; b=jC7fCmwfk+rBMfakqrZjHny4giLTTSfbkw2Auiw5UBPwuvazO7iiAXA+4lFDena/bN+K7bCuGaYtRKHp+oWpg7tx0Ii8BnMB8ybMHdJd/erKOYnS9zYylJ4Gs1q+jJHOkBP8e96F7mxvoy0posh4GYmslEU5cqneIrXJw/UKNCk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730729693; c=relaxed/simple;
-	bh=91L69n/sZkR4JPMDUQpE1/7SZD5NRrYr4/jcmwqwWFo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=swh/cbAs5dRFwYJ6QPDefAEDhuU2IHYFyItt33QG0TUEFzHWDZOBxGmuqA/jsRRbDQCojTOA7Bz35qeL3HfkXPF1Tqg59xG3XL80aPD5/2/Y56MMMtDsQCN7N4I2dGOFAhsFrPbwMWSUBsTXRECPSZgzGChGKY511N2iB67Z6lo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=NlnhbKDA; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a9e8522c10bso282564566b.1
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 06:14:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1730729690; x=1731334490; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gn88j0Ga2kJJHNdL5doEI2tU8rFzUABq/SQi+F1FGuY=;
-        b=NlnhbKDAXzcAQBRg0+8SRIqUNO+L6k+rCh0aCB5UiR6TquKVjnjso4w4iyjW/f9wL6
-         BE3B5/DhETTI9Ws45n1DRlwxIVRLiDRg4+FrHHb5rekpuKoNgKcp+/8X3AiGeayynQ3q
-         deVaa8qMtdc3YRYDecha08ruocJL0qoMMCyz5j3/HizIatOJF9er8jPK0m4GV4NzLS1P
-         5lAmFq2biberfA/HShaMYeQtiPOMPMsttA2FGCIPN1byjq6ZHZkyFWIAoFj3oDC0xHNF
-         jQi1B0vKMrjONEUL4RHqyAsmiTQU+pE4U4u//6C+7DQZbMosLI3SGv931Cgnunko3X/F
-         DMXg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730729690; x=1731334490;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gn88j0Ga2kJJHNdL5doEI2tU8rFzUABq/SQi+F1FGuY=;
-        b=h1sQh+Da+vWJtmN/ILqUIqCkCJxlIBB6tNfY2pTXl5MTMpZ+S0wGerfDmanHA1bCfC
-         RIy5Lzir8nKnNcxtD3uI+tjEiwON5nJamh2Mk3Y6i9xRY69H3iI6QVwsbNao8sVj+Fjz
-         8A3E9IIJhwjb6xIY51LfbyJ1OERhauRiHwbew/jvbJSTW2gkfUQ//nxzduH1bEQ0GW+8
-         GGprLMxLxSSv9Tx0yTUDmejdsAJFEwIetVAssDzD8JJMRH2jxM5jA/mcTgt8t/hamXnF
-         YldzWr1Ze7bEK5gyQY7dYOx0owXrUbgRkazFlMUIx+RYSdLyDNY3EF1kC2hzfoolr+qp
-         UeRw==
-X-Forwarded-Encrypted: i=1; AJvYcCWFLZOCZknmE/l335BKz2S/aMX61pkob5TD7zyarjRik8lHZw+Zn6XWUoYc8Ppu5RmPgjPVjVT8YNDqiO0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy17ztx3BprBcAemrPtJkav/CGH4jVXPYJpEqhPzEyaiwHshYNb
-	SV21Wubl7rQN27DT46d0oPJLKobl55sGkvVtvknamgXZYrpMKSa4gFBlDV0tpKqX3VSSYrARRNX
-	TGYVDl7sW7imZmyivIH/C/1Ikw0jrW+7WP0o2
-X-Google-Smtp-Source: AGHT+IH6Nbfbdlf5hFDIImhiemSQf8jgNboXuUGdcxwKg33n7aPJk81DoUHQv1iGE0RB77Jjaxp5Cn9DxhDq1IA4MBM=
-X-Received: by 2002:a17:907:3e1d:b0:a9e:21e5:d6cc with SMTP id
- a640c23a62f3a-a9e65435e10mr1091261866b.20.1730729689451; Mon, 04 Nov 2024
- 06:14:49 -0800 (PST)
+	s=arc-20240116; t=1730730450; c=relaxed/simple;
+	bh=mAacIEPRCIZdP88OUMaz6TpMwLO0OSldJPKYresI8kE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ec0UYBlMcbtHmyRL8ZSfTZNLOkagsZMKs+GRxNFxD8GeWeFb3WqzipSmnlOLV07zIK5k6yzJNf3qYr0NExuJnsZJz++r/ZhD/DrW+t6ZLqRNCI8i0pjRrRUHuCu26KwR+EuS6gWKJyrIgnFfGbLfflrSyKx8EsqNo4bXmtSU2VA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Gpf0Qcm9; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730730449; x=1762266449;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=mAacIEPRCIZdP88OUMaz6TpMwLO0OSldJPKYresI8kE=;
+  b=Gpf0Qcm9gQp0ECJc5Q+VsbUmoDliFKNQGWd7y/os7e8KSwHMTqmHB0TD
+   o94NYAQaNZfHlKuZ8V97eP8CwckTX0ezzxNnlczE3P5v4VrqE/CkVio2e
+   DcvcoFsv5qhLwGzrcTGSzWnFfSEhqNH4vWgVgRADiERfowJqBc/Wsxh6q
+   XjNhs7sPlRobUwo6s6cJdmYpB+R9wZ+ji91YkFFIShI2awe+s4VSAHp0E
+   Jt7rQ/1PDZlA70xXCdX7bBBjn59F+I/E5dkTZm3uxJd7GpvHAAJE4jbqH
+   75WXJMF0pOtW+UpauHoi+tv10cPk5ly08PV+I/DOU1Pbequ+95m3UrgvD
+   Q==;
+X-CSE-ConnectionGUID: huMsl/EFQearlXQVicIS7Q==
+X-CSE-MsgGUID: X5STIALZRyO6HGBpG1GCVg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11246"; a="29851215"
+X-IronPort-AV: E=Sophos;i="6.11,257,1725346800"; 
+   d="scan'208";a="29851215"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2024 06:14:45 -0800
+X-CSE-ConnectionGUID: a0sBERauQP+/Cc23e6O4DA==
+X-CSE-MsgGUID: 466nElIvTsGCmVPB2Hxwfg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,257,1725346800"; 
+   d="scan'208";a="88235457"
+Received: from kuha.fi.intel.com ([10.237.72.152])
+  by fmviesa004.fm.intel.com with SMTP; 04 Nov 2024 06:14:41 -0800
+Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Mon, 04 Nov 2024 16:14:40 +0200
+Date: Mon, 4 Nov 2024 16:14:40 +0200
+From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To: Abhishek Pandit-Subedi <abhishekpandit@chromium.org>
+Cc: tzungbi@kernel.org, linux-usb@vger.kernel.org,
+	chrome-platform@lists.linux.dev, dmitry.baryshkov@linaro.org,
+	jthies@google.com, akuchynski@google.com, pmalani@chromium.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 3/7] usb: typec: Auto enter control for alternate modes
+Message-ID: <ZyjW0CMXgGIt-usC@kuha.fi.intel.com>
+References: <20241030212854.998318-1-abhishekpandit@chromium.org>
+ <20241030142833.v2.3.I439cffc7bf76d94f5850eb85980f1197c4f9154c@changeid>
+ <ZyOVIKGlrlj7kc9-@kuha.fi.intel.com>
+ <CANFp7mX-DkyFqwoaq_4V1XEDBqK7bj6-nz2aJi7idM=Q2TT49w@mail.gmail.com>
+ <ZyTesZ3gCmYDmrA6@kuha.fi.intel.com>
+ <CANFp7mWim9VH+KLH3A+RJ5YFuvrVwDUgU2q8_qvDM3=jzYd6xg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1730244116.git.babu.moger@amd.com> <265f3700ac0c0d33703806fdc3d096b08c992efc.1730244116.git.babu.moger@amd.com>
-In-Reply-To: <265f3700ac0c0d33703806fdc3d096b08c992efc.1730244116.git.babu.moger@amd.com>
-From: Peter Newman <peternewman@google.com>
-Date: Mon, 4 Nov 2024 15:14:36 +0100
-Message-ID: <CALPaoCjLn8CZtPjTtd1ojj3RxNwpmmpUD-bb6nfsXcYTezEceQ@mail.gmail.com>
-Subject: Re: [PATCH v9 14/26] x86/resctrl: Introduce interface to display
- number of free counters
-To: Babu Moger <babu.moger@amd.com>
-Cc: corbet@lwn.net, reinette.chatre@intel.com, tglx@linutronix.de, 
-	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, 
-	fenghua.yu@intel.com, x86@kernel.org, hpa@zytor.com, thuth@redhat.com, 
-	paulmck@kernel.org, rostedt@goodmis.org, akpm@linux-foundation.org, 
-	xiongwei.song@windriver.com, pawan.kumar.gupta@linux.intel.com, 
-	daniel.sneddon@linux.intel.com, perry.yuan@amd.com, sandipan.das@amd.com, 
-	kai.huang@intel.com, xiaoyao.li@intel.com, seanjc@google.com, 
-	jithu.joseph@intel.com, brijesh.singh@amd.com, xin3.li@intel.com, 
-	ebiggers@google.com, andrew.cooper3@citrix.com, mario.limonciello@amd.com, 
-	james.morse@arm.com, tan.shaopeng@fujitsu.com, tony.luck@intel.com, 
-	vikas.shivappa@linux.intel.com, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, maciej.wieczor-retman@intel.com, 
-	eranian@google.com, jpoimboe@kernel.org, thomas.lendacky@amd.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CANFp7mWim9VH+KLH3A+RJ5YFuvrVwDUgU2q8_qvDM3=jzYd6xg@mail.gmail.com>
 
-Hi Babu,
+On Fri, Nov 01, 2024 at 09:53:14AM -0700, Abhishek Pandit-Subedi wrote:
+> On Fri, Nov 1, 2024 at 6:59 AM Heikki Krogerus
+> <heikki.krogerus@linux.intel.com> wrote:
+> >
+> > On Thu, Oct 31, 2024 at 03:48:45PM -0700, Abhishek Pandit-Subedi wrote:
+> > > On Thu, Oct 31, 2024 at 7:33 AM Heikki Krogerus
+> > > <heikki.krogerus@linux.intel.com> wrote:
+> > > >
+> > > > On Wed, Oct 30, 2024 at 02:28:34PM -0700, Abhishek Pandit-Subedi wrote:
+> > > > > Add controls for whether an alternate mode is automatically entered when
+> > > > > a partner connects. The auto_enter control is only available on ports
+> > > > > and applies immediately after a partner connects. The default behavior
+> > > > > is to enable auto enter and drivers must explicitly disable it.
+> > > > >
+> > > > > Signed-off-by: Abhishek Pandit-Subedi <abhishekpandit@chromium.org>
+> > > > > ---
+> > > > >
+> > > > > (no changes since v1)
+> > > > >
+> > > > >  Documentation/ABI/testing/sysfs-bus-typec |  9 +++++++
+> > > > >  drivers/usb/typec/altmodes/displayport.c  |  6 +++--
+> > > > >  drivers/usb/typec/altmodes/thunderbolt.c  |  3 ++-
+> > > > >  drivers/usb/typec/class.c                 | 31 +++++++++++++++++++++++
+> > > > >  include/linux/usb/typec.h                 |  2 ++
+> > > > >  include/linux/usb/typec_altmode.h         |  2 ++
+> > > > >  6 files changed, 50 insertions(+), 3 deletions(-)
+> > > > >
+> > > > > diff --git a/Documentation/ABI/testing/sysfs-bus-typec b/Documentation/ABI/testing/sysfs-bus-typec
+> > > > > index 205d9c91e2e1..f09d05727b82 100644
+> > > > > --- a/Documentation/ABI/testing/sysfs-bus-typec
+> > > > > +++ b/Documentation/ABI/testing/sysfs-bus-typec
+> > > > > @@ -12,6 +12,15 @@ Description:
+> > > > >
+> > > > >               Valid values are boolean.
+> > > > >
+> > > > > +What:                /sys/bus/typec/devices/.../auto_enter
+> > > > > +Date:                September 2024
+> > > > > +Contact:     Heikki Krogerus <heikki.krogerus@linux.intel.com>
+> > > > > +Description:
+> > > > > +             Controls whether a mode will be automatically entered when a partner is
+> > > > > +             connected.
+> > > > > +
+> > > > > +             This field is only valid and displayed on a port. Valid values are boolean.
+> > > >
+> > > > So, why can't this be controlled with the "active" property of the
+> > > > port altmode instead? That's why it's there.
+> > > >
+> > > > Sorry if I missed something in v1 related to this question.
+> > >
+> > > There was a bit of discussion around this in another patch in v1:
+> > > https://patchwork.kernel.org/project/chrome-platform/patch/20240925092505.8.Ic14738918e3d026fa2d85e95fb68f8e07a0828d0@changeid/
+> > > And this patch is probably a good place to continue that discussion.
+> > >
+> > > With the way altmodes drivers currently work, they will auto-enter
+> > > when probed. So if you have a partner that supports both displayport
+> > > and thunderbolt, they will both attempt to auto-enter on probe. I
+> > > think I could use the `active` field instead so that the port altmode
+> > > blocks entry until userspace enables it -- this would avoid the need
+> > > to add one more sysfs ABI. I'll actually go ahead and do this for the
+> > > next patch series I send up.
+> > >
+> > > However, the underlying problem I'm trying to solve still exists: how
+> > > do you choose a specific altmode to enter if there are multiple to
+> > > choose from? I tried to implement a method that first tries USB4 and
+> > > then Thunderbolt and then DP but I realized that the altmode drivers
+> > > don't necessarily bind immediately after a partner altmode is
+> > > registered so I can't just call `activate` (since no ops are attached
+> > > to the partner altmode yet). Do you have any thoughts about how to
+> > > handle multiple modes as well as how to handle fallback mode entry
+> > > (i.e. thunderbolt fails so you try DPAM next)?
+> >
+> > If the user space needs to take over control of the entry order, then
+> > can't it just de-activate all port alt modes by default, and then
+> > activate the one that needs to enter? The port driver probable needs
+> > to implent the "activate" callback for this.
+> >
+> > The user space can see when the driver is bound to a device by
+> > monitoring the uevents, no?
+> 
+> This requires userspace intervention to do the correct thing. Let's
+> take a real world example:
+> 
+> I have a TBT4 dock that supports DPAM (svid 0xff01), TBT (svid 0x8087)
+> and also USB4.
+> 
+> * When I plug in the dock, it enumerates and registers the partner
+> altmodes. The altmode bus matches typec_displayport and
+> typec_thunderbolt and loads the drivers for them. By default, both
+> drivers will try to activate their altmode on probe(). Having a
+> userspace daemon disable the altmode on the ports and enable them on
+> connection will probably work here.
+> * If I boot with the dock connected, the same thing happens but my
+> userspace daemon may not be running yet. What should the default
+> kernel behavior be to enter alt-modes then? When you throw USB4 into
+> the mix, this becomes another can of worms since you probably don't
+> want to downgrade from USB4 to DPAM.
 
-On Wed, Oct 30, 2024 at 12:24=E2=80=AFAM Babu Moger <babu.moger@amd.com> wr=
-ote:
->
-> Provide the interface to display the number of free monitoring counters
-> available for assignment in each doamin when mbm_cntr_assign is supported=
-.
->
-> Signed-off-by: Babu Moger <babu.moger@amd.com>
-> ---
-> v9: New patch.
-> ---
->  Documentation/arch/x86/resctrl.rst     |  4 ++++
->  arch/x86/kernel/cpu/resctrl/monitor.c  |  1 +
->  arch/x86/kernel/cpu/resctrl/rdtgroup.c | 33 ++++++++++++++++++++++++++
->  3 files changed, 38 insertions(+)
->
-> diff --git a/Documentation/arch/x86/resctrl.rst b/Documentation/arch/x86/=
-resctrl.rst
-> index 2f3a86278e84..2bc58d974934 100644
-> --- a/Documentation/arch/x86/resctrl.rst
-> +++ b/Documentation/arch/x86/resctrl.rst
-> @@ -302,6 +302,10 @@ with the following files:
->         memory bandwidth tracking to a single memory bandwidth event per
->         monitoring group.
->
-> +"available_mbm_cntrs":
-> +       The number of free monitoring counters available assignment in ea=
-ch domain
-> +       when the architecture supports mbm_cntr_assign mode.
+If you have already entered USB4, then all alt modes need fail to
+enter with -EBUSY, just like when another alt mode was already
+entered successfully. Right now the port driver is responsible of
+checking USB4 status, but we can easily add a check for the usb_mode
+of the partner to the typec_altmode_enter().
 
-It seems you need to clarify that counters are only available to a
-domain when they're available in all domains:
+The default entry order will in practice be the order in which the
+modes are discovered (so USB4 will always be first), but the port
+drivers can of course influence this by registering the modes in a
+specific order - first-come, first-served. But that is only useful if
+the port driver knows the priorities of the modes.
 
-resctrl# for i in `seq 100`; do
-> mkdir mon_groups/m${i}
-> done
-resctrl# cat info/L3_MON/available_mbm_cntrs
-0=3D0;1=3D0;2=3D0;3=3D0;4=3D0;5=3D0;6=3D0;7=3D0;8=3D0;9=3D0;10=3D0;11=3D0;1=
-2=3D0;16=3D0;17=3D0;18=3D0;19=3D0;20=3D0;21=3D0;22=3D0;23=3D0;24=3D0;25=3D0=
-;26=3D0;27=3D0;28=3D0
+You can leave the decision to the user space for example by adding
+that "no_auto_enter", that's not a problem, but it still does not
+require a new sysfs attribute file. You just use that flag to set the
+default value for the "active" attribute.
 
-resctrl# cd info/L3_MON/
-L3_MON# echo '/m1/0=3D_' > mbm_assign_control
-L3_MON# cat available_mbm_cntrs
-0=3D2;1=3D0;2=3D0;3=3D0;4=3D0;5=3D0;6=3D0;7=3D0;8=3D0;9=3D0;10=3D0;11=3D0;1=
-2=3D0;16=3D0;17=3D0;18=3D0;19=3D0;20=3D0;21=3D0;22=3D0;23=3D0;24=3D0;25=3D0=
-;26=3D0;27=3D0;28=3D0
-L3_MON# echo '/m16/0+t' > mbm_assign_control
--bash: echo: write error: Invalid argument
-L3_MON# cat ../last_cmd_status
-Out of MBM assignable counters
-Assign operation '+t' failed on the group /m16/
+> On ChromeOS, prior to this patch series, our userspace daemon (typecd)
+> could handle all of this in userspace since it could just wait for
+> `num_alt_modes` to be filled on partner-attach before trying to enter
+> the right mode (via a side-band channel to the EC). After this change,
+> typecd will be in a similar bind -- it will have to wait until all
+> attached partner SVIDs have drivers attached (if available).
+> 
+> Underlying all this, I guess the real need here is for some sort of
+> signal that says: All partner modes are registered, any necessary
+> drivers for these modes are bound and you are ready to make a decision
+> on which mode to enter. Then, we could iteratively try to enter the
+> best mode (USB4 > TBT > DP) and report failure conditions on why it
+> couldn't be entered (i.e. Cable speed, partner problem / link
+> training, etc). This could be done in kernel or userspace depending on
+> the system.
 
-L3_MON# rmdir ../../mon_groups/m1
-L3_MON# cat available_mbm_cntrs
-0=3D2;1=3D2;2=3D2;3=3D2;4=3D2;5=3D2;6=3D2;7=3D2;8=3D2;9=3D2;10=3D2;11=3D2;1=
-2=3D2;16=3D2;17=3D2;18=3D2;19=3D2;20=3D2;21=3D2;22=3D2;23=3D2;24=3D2;25=3D2=
-;26=3D2;27=3D2;28=3D2
-L3_MON# echo '/m16/0+t' > mbm_assign_control
-L3_MON#
+In user space you use the "num_alt_modes" to see how many alt modes
+there are, and then simply wait for all of them (or just the ones that
+you are interested in) get registered and bind to a driver. After that
+you can enter which ever you want. I don't think you need anything
+else there.
 
+If you still need some way to tell the port drivers how to prioritise
+the modes without user space, then I think you need some way for the
+firmware to be able to deliver that information to the driver.
 
--Peter
+thanks,
+
+-- 
+heikki
 
