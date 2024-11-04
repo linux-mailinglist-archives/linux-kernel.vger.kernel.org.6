@@ -1,113 +1,135 @@
-Return-Path: <linux-kernel+bounces-394821-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394822-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 727D69BB474
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 13:16:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6508F9BB479
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 13:17:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B5F88B2264A
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 12:16:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D0B51F23313
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 12:17:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A5C21B3928;
-	Mon,  4 Nov 2024 12:16:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AF1A1B3944;
+	Mon,  4 Nov 2024 12:17:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ISYXWq50"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="xoHTRAOm"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C54C715C139;
-	Mon,  4 Nov 2024 12:16:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FED51B0F3E
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 12:17:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730722595; cv=none; b=OjhUd3suT0RTeb+tkuT4HLWLoV0ms6Rl4iH3POOk01wBUTAtxG3XnZHqQPBjeVC55WYdoHH2BsPk5NYuUAIAndCMU6rvEi3axJSlrilb0w9laHr9zl8f9qYeRtv+YAJPK7O8frXti1fWJaadk6Gyr6kJ+LlTSSxMOHSOtXTXAu0=
+	t=1730722646; cv=none; b=DYWHxIuMudq5nQ0/JkGLDsHSnTPaEdMe1sz7hQburqgDzPx97pT7C/HobCYBhI3V+XC+8IMVMZRq4btktUKJgjFg+uVZ+ymd1Bdu0qX7nLLRoxVt2t5OcKt0o+1+ukpMZq5mc2XR5RUEAHw2KzBAXiltGwiEplvi6rykuyCTIxk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730722595; c=relaxed/simple;
-	bh=2q5cM5jBgPwB0S1xjxKGbk0Ij/bx8viMdMSL73+1hxw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LNlhAnm4MInVgqjsSbstdB5SDLusgWhoNdgJVQugzwe3Ta3jYCoawVU4C+La4d88GC52OWlp0zWNB5lAYI9tQkduovi4arcrkjIpwS7xvD+97iSsA9+DWMY+Xjxk4oLjMgTdW37daGML+JjIojRpPca1uxKjDd2eBzEa31didaY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ISYXWq50; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CDD52C4CECE;
-	Mon,  4 Nov 2024 12:16:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730722595;
-	bh=2q5cM5jBgPwB0S1xjxKGbk0Ij/bx8viMdMSL73+1hxw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ISYXWq50pkwY7IaQdLnqnQ6LvPiNyernU2Y9U8ikMDdaBY/QUiNnbnJaAjDHFHbE7
-	 2FTHnBZPsWJFGKCeKpc5tiYQjPPxEh8sgbHbSJmJOpl0SNguGBm3ALc4bmaJUkQWoe
-	 slpJ5z/q+IRU5Yfof5et6OVUeCw4mAOiMXana6Xz1YOLvt/QLwegp8PWVr8cgNR3YC
-	 JbviL7aHu7oMmJsgdV61397zHvO33QupWW8n2/Q+u6As8aPZykV7hwN9T7evw/rldT
-	 N0tF1yyvtaf6GTzIDzDiPvA5wraIjCLUKNMA5L+y5gEplnCJF0BKLFDJ2K7Qkd4seK
-	 dR1QNONAnfuTw==
-Date: Mon, 4 Nov 2024 12:16:28 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: Venkata Prasad Potturu <venkataprasad.potturu@amd.com>,
-	linux-sound@vger.kernel.org, alsa-devel@alsa-project.org,
-	LKML <linux-kernel@vger.kernel.org>,
-	Basavaraj Hiregoudar <Basavaraj.Hiregoudar@amd.com>,
-	Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
-	Emil Velikov <emil.velikov@collabora.com>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mario Limonciello <mario.limonciello@amd.com>,
-	Sunil-kumar Dommati <Sunil-kumar.Dommati@amd.com>,
-	syed saba kareem <ssabakar@amd.com>, Takashi Iwai <tiwai@suse.com>,
-	Vijendar Mukunda <Vijendar.Mukunda@amd.com>
-Subject: Re: [PATCH] ASoC: amd: acp: Fix for ACP SOF dmic tplg component load
- failure
-Message-ID: <d53810ac-a7f6-47da-aa12-0562ed565008@sirena.org.uk>
-References: <20241104091312.1108299-1-venkataprasad.potturu@amd.com>
- <e1ac11b3-b746-4564-8daa-3527aa13e348@web.de>
+	s=arc-20240116; t=1730722646; c=relaxed/simple;
+	bh=/UhFzu8yWBE3BjF/oPbXDjeBIAvYu4E4/NaYNakjbR8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Jp07zWVZabmV0G9y4TmBdF3FgwqQVjEckEdkrgJ/r3qao6bSkNudIL3EcLhHr9iLOOUc768wIFiMZgYrom8dYBH0bQhCdOHUhfrJ7iBXB9zUe60+UCI8gDgf/E7lq1/4lFNfNh/CPLASiZVsm6YpoW1TEdKDzU9BO5n/OsCr41A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=xoHTRAOm; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-20ca388d242so39481455ad.2
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 04:17:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1730722645; x=1731327445; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=5kQZWCzIhxI9ZXfcfMMtM58/ZtX8V/ECMx6VB6xWUdw=;
+        b=xoHTRAOmXNumWKiP+jACHiND/rUbOUNkDE2XETvRgaC3zPC04i/aSnzwqfrSKmokij
+         He30GUEYxKdH3fones5tUQchbsBE9NEc/JdJgIUz8Q5w9VcaKfM9cGlEVm8vG2Bn4mLj
+         RLSeg4Jl3O3qDbo9QAOwn4wIzY1aWKqdnQTxRZSIpHzoXgsemF5TbYE/rrgVl/ytHpla
+         pt2jivuN+M4LJ0k7sKLghK6dYsXbir/63pn5cJ2QObbM+ecS70B9YgbFpFYCjVNL3MlB
+         zMfLrsHJLZvIRhNj7ec1efirA/bBX1JLbx2gJuvCmHFY9Z4FlTkQ/pxQ5EDHJl4gbUtz
+         jXZQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730722645; x=1731327445;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=5kQZWCzIhxI9ZXfcfMMtM58/ZtX8V/ECMx6VB6xWUdw=;
+        b=jTEJLuZ6ocikSpRdSHFUZu2+KF1deLEC6h6zDN1PKvDxrQCm+RJ+n5+A/r14xPWGk3
+         bJAoXhkzPDsqwUqAB0Df8NkI/SK46fPalw71mrMQCgI1eKdE4ssz7085nxAfYcK7of+b
+         JizuNg5DmobayRzdPUJ42qFutuxV2FZh6nIZ6LaJjsFXH7ssbZthVdKs0I/hJhuG33te
+         lsItjaqZLCgl0nsTY0x1/hgor9yClEzeScKtZP2aH5uCUDAC+T2N9CT5VH1RUPWtxq+J
+         atsdGWud4P4ywo+Rvi+cQ9xfnBMJqS2ggN/TDO6Q22xIuXy2qNZIxGlfsz3aGWEQ7mCJ
+         tmuA==
+X-Forwarded-Encrypted: i=1; AJvYcCU9oEXuV8RoRnhDH+eYuAqqzU/fkRkz6iyaM+crhIj5MTVnQn7+oySne7qYSG6Kc5+EG/Ceib1Qe7AsuHs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxRQc4NkjAdWc23KrOKbV4BVIxEBupROg14++F7AD0Yyu0yOBuZ
+	rigbwjRZY0/GWdEEAmXNkd/v2hSGcntz774VS3+RNr+rhzCeN8f7pHY60PKaI3pAq5kjlcPM81k
+	qBBGi1LF/FPlVU9t7Klh3nCiRdGHGFdW5FBzT
+X-Google-Smtp-Source: AGHT+IHvf51l5Fhl0nIdVQ+m8T/XcjQYNb/wYNbXZ2oFtF4pT5gjR2FO3JZi9f58vxAaXuMVA2M5H3KK5yq06FN+nBo=
+X-Received: by 2002:a17:902:e884:b0:20b:3f70:2e05 with SMTP id
+ d9443c01a7336-2111afd6c99mr175024815ad.41.1730722644347; Mon, 04 Nov 2024
+ 04:17:24 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="kTb8e3B9zP668jr+"
-Content-Disposition: inline
-In-Reply-To: <e1ac11b3-b746-4564-8daa-3527aa13e348@web.de>
-X-Cookie: The meek are contesting the will.
+References: <67275485.050a0220.3c8d68.0a37.GAE@google.com> <ee48b6e9-3f7a-49aa-ae5b-058b5ada2172@suse.cz>
+ <b9a674c1-860c-4448-aeb2-bf07a78c6fbf@suse.cz> <20241104114506.GC24862@noisy.programming.kicks-ass.net>
+In-Reply-To: <20241104114506.GC24862@noisy.programming.kicks-ass.net>
+From: Marco Elver <elver@google.com>
+Date: Mon, 4 Nov 2024 13:16:48 +0100
+Message-ID: <CANpmjNPmQYJ7pv1N3cuU8cP18u7PP_uoZD8YxwZd4jtbof9nVQ@mail.gmail.com>
+Subject: Re: [syzbot] [mm?] WARNING: locking bug in __rmqueue_pcplist
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Vlastimil Babka <vbabka@suse.cz>, 
+	syzbot <syzbot+39f85d612b7c20d8db48@syzkaller.appspotmail.com>, 
+	Liam.Howlett@oracle.com, akpm@linux-foundation.org, jannh@google.com, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, lorenzo.stoakes@oracle.com, 
+	syzkaller-bugs@googlegroups.com, 
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Andrey Konovalov <andreyknvl@gmail.com>, 
+	kasan-dev <kasan-dev@googlegroups.com>, Andrey Ryabinin <ryabinin.a.a@gmail.com>, 
+	Alexander Potapenko <glider@google.com>, Waiman Long <longman@redhat.com>, dvyukov@google.com, 
+	vincenzo.frascino@arm.com, paulmck@kernel.org, frederic@kernel.org, 
+	neeraj.upadhyay@kernel.org, joel@joelfernandes.org, josh@joshtriplett.org, 
+	boqun.feng@gmail.com, urezki@gmail.com, rostedt@goodmis.org, 
+	mathieu.desnoyers@efficios.com, jiangshanlai@gmail.com, 
+	qiang.zhang1211@gmail.com, mingo@redhat.com, juri.lelli@redhat.com, 
+	vincent.guittot@linaro.org, dietmar.eggemann@arm.com, bsegall@google.com, 
+	mgorman@suse.de, vschneid@redhat.com, tj@kernel.org, cl@linux.com, 
+	penberg@kernel.org, rientjes@google.com, iamjoonsoo.kim@lge.com, 
+	roman.gushchin@linux.dev, 42.hyeyoo@gmail.com, rcu@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
+On Mon, 4 Nov 2024 at 12:45, Peter Zijlstra <peterz@infradead.org> wrote:
+>
+> On Mon, Nov 04, 2024 at 12:25:03PM +0100, Vlastimil Babka wrote:
+> > On 11/4/24 12:11, Vlastimil Babka wrote:
+>
+> > >>  __alloc_pages_noprof+0x292/0x710 mm/page_alloc.c:4771
+> > >>  alloc_pages_mpol_noprof+0x3e8/0x680 mm/mempolicy.c:2265
+> > >>  stack_depot_save_flags+0x666/0x830 lib/stackdepot.c:627
+> > >>  kasan_save_stack+0x4f/0x60 mm/kasan/common.c:48
+> > >>  __kasan_record_aux_stack+0xac/0xc0 mm/kasan/generic.c:544
+> > >>  task_work_add+0xd9/0x490 kernel/task_work.c:77
+> > >
+> > > It seems the decision if stack depot is allowed to allocate here depends on
+> > > TWAF_NO_ALLOC added only recently. So does it mean it doesn't work as intended?
+> >
+> > I guess __run_posix_cpu_timers() needs to pass TWAF_NO_ALLOC too?
+>
+> Yeah, or we just accept that kasan_record_aux_stack() is a horrible
+> thing and shouldn't live in functions that try their bestest to
+> locklessly setup async work at all.
+>
+> That thing has only ever caused trouble :/
+>
+> Also see 156172a13ff0.
+>
+> How about we do the below at the very least?
 
---kTb8e3B9zP668jr+
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I'd be in favor, it simplifies things. And stack depot should be able
+to replenish its pool sufficiently in the "non-aux" cases i.e. regular
+allocations.
 
-On Mon, Nov 04, 2024 at 10:35:23AM +0100, Markus Elfring wrote:
-> =E2=80=A6
-> > As SOF framework assigns dailink->stream name, overriding stream name
-> > other than link name causes SOF dmic component load failure.
-> =E2=80=A6
-
-> Will another imperative wording be helpful for an improved change descrip=
-tion?
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/D=
-ocumentation/process/submitting-patches.rst?h=3Dv6.12-rc5#n94
-
-Feel free to ignore Markus, he has a long history of sending
-unhelpful review comments and continues to ignore repeated requests
-to stop.
-
---kTb8e3B9zP668jr+
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmcouxsACgkQJNaLcl1U
-h9BKcAf/TNNGFpwVuNpRbVlSMez8V2eMkz5wyQajdqcAKWhgfpA4LjxqXW/f4A1g
-ZEHgOPg7WdSnazsqaI/t/q8JOj/j7S033Cw1z6RGT/pXs/CnYnlbi6NSeSSXaUZ9
-vS6ouSn/2qdgqePwSAjcqMUYS5bEHlkI5iBIGcBAugKcBK2W0VI3s679ss+Br83m
-+3CHGp4XNiV5LKQyCx948EItuH3d0ncdxTPjgyTUQiPz/WeT9s3xY/TAShRPaB1s
-vt+hfxCNCttGrKtq4+iTNc9l63W2B1cxEjrGrc8WO7Jy7QzDu4RN6boru6xJng7o
-NVY1DEAQ2MYP+8N76znghsRRZkPYrw==
-=9nQZ
------END PGP SIGNATURE-----
-
---kTb8e3B9zP668jr+--
+Worst case we fail to record some aux stacks, but I think that's only
+really bad if there's a bug around one of these allocations. In
+general the probabilities of this being a regression are extremely
+small - same as I argued back in
+https://lore.kernel.org/all/20210913112609.2651084-1-elver@google.com/
 
