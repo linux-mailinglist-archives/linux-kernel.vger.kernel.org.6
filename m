@@ -1,210 +1,213 @@
-Return-Path: <linux-kernel+bounces-395094-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395095-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C07729BB86B
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 16:00:36 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D5309BB86D
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 16:01:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 75D18283F2C
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 15:00:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F42B1C21DE6
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 15:01:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D40C1BBBFC;
-	Mon,  4 Nov 2024 15:00:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C71BF1B6CEA;
+	Mon,  4 Nov 2024 15:00:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="A7vRpaHy"
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2069.outbound.protection.outlook.com [40.107.223.69])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RcUcCydQ"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A78591F60A;
-	Mon,  4 Nov 2024 15:00:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.69
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730732426; cv=fail; b=cqLJTHKaNC/3JDnqZtlwWsezkhi3Sx0PxPCWTS8VghUsjaRgXglE5OK8bN0a84fUTRyFlFGkHcKalr9CzXHviru6RSxLW1seEd1+G5fDIAIKMMeC+o/X+aqKMWBvVbEfTVYZHEB0KBHHuvRiI82oTQ6KNEfSoHMtfxuAj5QM6X0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730732426; c=relaxed/simple;
-	bh=XZemMTIY0WUnzM1iRvdSSV6Kj1Oz5GoIlpnha2Bo9Pc=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=iEGgO6WPM1bF3rHpf/dbRc77Ddht7Q/dOBoeEB9BKSnSivFNQ3qCsrtPxqPs2SEsENjfKoh/Yk4kyiKzAVgS2ryGoFsDfnBj0Ob/5FHd+xyfnakpeqDx6gfjR7zhUsbHaX4yYSW9TEu+JlsgsZD04R4HVxSb7fEEMWue7tcnq+c=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=A7vRpaHy; arc=fail smtp.client-ip=40.107.223.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=TfbVollayi0yZzZAx9kVGrjH/IDBiWFB47YgfN6u9r60NKFXdmSDkNpfnwCEPSnUVuJ7K84QCLJqVnZaBJ/mo328Kah1a5gbn7GdUTWxOvNaoBH9BNq01jD26H61d5Bg5SiSb3NUT0rNPrMd/hSuFp4W8WUrrMsRU5e16PsQ8702eJ/leeUhNuVUba4lfFexgMtll1Vq2Q3HfhYBx+ZaWvxBsiD5m4Q/CnUF0R56Oa4i++qgpnnURaaETgV2TeHcQM0MgZokQZEiz1jsX8bGSdhiVPK45/auEn0vEt4rIz91eurKiDTxSz9b2zIZ2gcIXpzlGHn/aoZvhclIChSAaQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=XZemMTIY0WUnzM1iRvdSSV6Kj1Oz5GoIlpnha2Bo9Pc=;
- b=lA88fRhUS2N9Md5Xpy0DLhzG+1PhmSvidaLfFXf+P6ey8Nem8DXgFuCnvFwZHJuWky+SoTLUTeIx6VoPBbwuswyzmJHKOUAS8OcSaoM+3bwqkvcw6Y5Y2PR1UMKWpoBk7rhvBnzCFrGH8nuth1QLBb29kf6ija9GaL3GseSz/hjjcB+ugeUWlQrkwq3mokGERTNIkNeg4TRVxUMeQeA25eMz9+hqh6WbEZTw3ld3nbodM+yLfZOb/HiK8eHneWuQZFhvvVn22sES00bQIVrDEHvBfMYFJub1hqIu+6ge752zDrI3eAHy14Zl3gdm/uwRwNqzrgGcbhAEgUyOkt/vzg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=XZemMTIY0WUnzM1iRvdSSV6Kj1Oz5GoIlpnha2Bo9Pc=;
- b=A7vRpaHyWJ0jNSrGQF83iRLGbTBXME6/W69pcPU9UFiHGjN+X0TxshAhwoYms+YRXW4C8wpCG9LTXRiimR4veLTiNLKyRS8RJjV8dXeYA25W1bpeoq4XYL5lftPHN4Bh8r2l+7tzqKbSsaJOvCA/memygnfoWDyuvmgowUc9GAc=
-Received: from SA1PR12MB6945.namprd12.prod.outlook.com (2603:10b6:806:24c::16)
- by DS0PR12MB8343.namprd12.prod.outlook.com (2603:10b6:8:fd::8) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8114.30; Mon, 4 Nov 2024 15:00:19 +0000
-Received: from SA1PR12MB6945.namprd12.prod.outlook.com
- ([fe80::67ef:31cd:20f6:5463]) by SA1PR12MB6945.namprd12.prod.outlook.com
- ([fe80::67ef:31cd:20f6:5463%7]) with mapi id 15.20.8114.023; Mon, 4 Nov 2024
- 15:00:19 +0000
-From: "Shah, Amit" <Amit.Shah@amd.com>
-To: "andrew.cooper3@citrix.com" <andrew.cooper3@citrix.com>
-CC: "corbet@lwn.net" <corbet@lwn.net>, "boris.ostrovsky@oracle.com"
-	<boris.ostrovsky@oracle.com>, "kai.huang@intel.com" <kai.huang@intel.com>,
-	"jpoimboe@kernel.org" <jpoimboe@kernel.org>, "dave.hansen@linux.intel.com"
-	<dave.hansen@linux.intel.com>, "daniel.sneddon@linux.intel.com"
-	<daniel.sneddon@linux.intel.com>, "Lendacky, Thomas"
-	<Thomas.Lendacky@amd.com>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"mingo@redhat.com" <mingo@redhat.com>, "seanjc@google.com"
-	<seanjc@google.com>, "pbonzini@redhat.com" <pbonzini@redhat.com>,
-	"pawan.kumar.gupta@linux.intel.com" <pawan.kumar.gupta@linux.intel.com>,
-	"Moger, Babu" <Babu.Moger@amd.com>, "Das1, Sandipan" <Sandipan.Das@amd.com>,
-	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "hpa@zytor.com"
-	<hpa@zytor.com>, "peterz@infradead.org" <peterz@infradead.org>,
-	"bp@alien8.de" <bp@alien8.de>, "Kaplan, David" <David.Kaplan@amd.com>,
-	"tglx@linutronix.de" <tglx@linutronix.de>, "x86@kernel.org" <x86@kernel.org>
-Subject: Re: [PATCH 1/2] x86: cpu/bugs: add support for AMD ERAPS feature
-Thread-Topic: [PATCH 1/2] x86: cpu/bugs: add support for AMD ERAPS feature
-Thread-Index: AQHbK6w5P1k2kYbMrUGkcWui1gHZ+rKhevwAgAVc0QCAAGNIAIAAAhgA
-Date: Mon, 4 Nov 2024 15:00:19 +0000
-Message-ID: <bbc3dfd40ab27bd6badbafddd88d10cbe29fd536.camel@amd.com>
-References: <c3fbf18a4ec015039388617ed899db98272cf181.camel@amd.com>
-	 <e9711ae1-b983-4f3e-89b4-513db62e4eef@citrix.com>
-In-Reply-To: <e9711ae1-b983-4f3e-89b4-513db62e4eef@citrix.com>
-Accept-Language: en-DE, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SA1PR12MB6945:EE_|DS0PR12MB8343:EE_
-x-ms-office365-filtering-correlation-id: 9f6ea741-c5d9-492b-4426-08dcfce16655
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|1800799024|366016|7416014|376014|38070700018;
-x-microsoft-antispam-message-info:
- =?utf-8?B?ZVVIdDYzVkVsUEViSG1BQkZUWElwdFpZZzE0K3Y4cE9abXVqMmptSFBBME45?=
- =?utf-8?B?dDlUdCs2M0UxeEZ5WHc5SWJpTjhXSUxZazluaTFxZ3dLeHFzWkUwK1F3R1Av?=
- =?utf-8?B?UzJtOTdBb1ZXbVkwU2FqM0JJd1V3N014Z1lRdCsvdndhMHB3dm56ajk2SnFv?=
- =?utf-8?B?T0lOaXpYZ2Y3K2VTNEV0UkdHbm5JZ1JvSnB3WnJ4NlFLeEpyMlI5Vm9wTmxv?=
- =?utf-8?B?ZGRxZEhjSGw3ZlVnckZMT04vRjBKeHQvQ1NMc2tIN1BwZ0hXV3R5UkwwS3JN?=
- =?utf-8?B?SkI1R1ZCT2ZWSUdSc2tXbGEyRlRpS1BmTzVOTFBQZ0xaa1BZMHF6WitSMWJ3?=
- =?utf-8?B?NTNYNVZya3NUODN2dnZOU2xjdFd2NGVZWG5RMnp2ZWJxQm8vSTlZVDYvNklx?=
- =?utf-8?B?cEJMU1B0N3ZkQlI3L09oWGRHWWc4RFp6cUkzeloxRmNPRm1sTEFKSmhCZllM?=
- =?utf-8?B?UFByMkN2YW9VUEdqTFNSeGhhZHpGcDJFNEFPd1IwNThoRm9udXc5KzR0cFQy?=
- =?utf-8?B?WWVjWDRQTm1yK3dieE1nQS8rWmVhcHI0a01iNmpWbXFpb05QN2taYkh6bGho?=
- =?utf-8?B?M3ZodE5ya1RIMXE1Y2FYTlgxODVpZ01CM055N2NCOFhaeUcrdmNmRENTVzlp?=
- =?utf-8?B?OE5FV3VFUmh3ZENjSWlxSVYySHRxOURRWURMOWRBRUJwcW00MjJRMEQvTFNk?=
- =?utf-8?B?V3UxbC9CQVREMlVvOFBUZXZwQ2dWUGMyL3NUTTVtNm52eVJ4MitPQ2o4VkpY?=
- =?utf-8?B?d3pkTWdHS3c4QWE0djdxdVAzNCsrSXdFaWEzK2lnTUordG90VXNTTmZQV2pV?=
- =?utf-8?B?VUovejh4eG9MRDVEKzVnU1B4ZlZwdGdHNHdXbWxIL3owc0dWNGc1ZGNIL0NK?=
- =?utf-8?B?a0FETFVocmJiUnZuOGhrYmFrYVFuamMzaWZFSzJLOXpBNWh3KzdaTDhlZ1JI?=
- =?utf-8?B?cFpROHFVUVBzbmRUbE11eHFrYTJGQlcwYitaUVc4T1NEMSt5aTNuU0gyVVhh?=
- =?utf-8?B?Rzg3bWQxcTZtVkNBMEZ1dTkxOE16bURkSnJHN2ozLzZnQ3BUclFWZ0NoMzRw?=
- =?utf-8?B?VitBelNwbmRGcUdzV3ZvUGtsRytFWmpnUUNlTm9jb1JnSExla2ZRSWpIbWNs?=
- =?utf-8?B?ZUoyTTI3MzJkUnU4RzFaa3B4Sks0S1J2L2JaaHR4cUNTMm50U0F2WktndEoy?=
- =?utf-8?B?eXY0L0FHYXVpemg2ZVBYNGg5S2FVdnBJb1JWTGdKN3d3ZEtpNnlFQkkrOUJx?=
- =?utf-8?B?UmxLVFdDQ0dUTzBNZ0tyNENSb0puWWhXSkxsdGdXTmo3K29zQ00wbmpvZDNu?=
- =?utf-8?B?Q2pBSEhyYzNoZXgwcGRTY1lUQm1KTkcyM3l3c2t3ekpsTEQ1YjQ0aURIa3Rx?=
- =?utf-8?B?SnFNSEZGNkNGU2xxMHovMGRrbHRoNVo3OU1zVklRWGJJeTJrN0lMVFBLamth?=
- =?utf-8?B?cUplbWU4QXV6SlJLaDhvd0YzMTFyM3NGdzVwY2xxWFpwVFdEZmNZOWRJQVRQ?=
- =?utf-8?B?WDQwd2NYLzE5dzJ2RkNENEIxbEhJZ0p4OFhrWkxqK3NJSjFWVUlmVGVyZW90?=
- =?utf-8?B?R0ZCZ0p5UnhiZVFZa3MzRk4vNi9VYkc5NEFVamIzekh4UW52c3QyRktPaFNm?=
- =?utf-8?B?Syt6bGZUN3lZQ1NLOVpyYXJFSzdzbVAyaVhudXZ0RWZ6SE5DVUMzQ29BRzJx?=
- =?utf-8?B?UmkyZTlyTEs4dmdhZTE4WFZyYXhGdTY3b3VWMmJMcWpGMXQ3cjB3YUFrK3VT?=
- =?utf-8?Q?eBbCs6FTJxUSpK2Qe8w5gKaMBhay28m4H5pbJrw?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR12MB6945.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?YWRCWHFIVFVvM0JVYmhGZGlVeWFQOHhJcHZvWm9XYzJIb3U0dHBISExyeEpv?=
- =?utf-8?B?ZHhqSFNMUWN3Rmw4OFN0NGJRc0MvZldBd1lKalV1eit5aVJFdVRmalRJR2lL?=
- =?utf-8?B?SVl5OXNyVXdVSFJYbGtuaU9WRkpZMjc4aXlJaDRGSUdiNFcrWHluTVI0SHl0?=
- =?utf-8?B?cm5icGpVaUp1UlUvL0JwU3pHNlBFeU52ak5PZmpmMUg0UWsxY1JYVWU4OVBm?=
- =?utf-8?B?M1lzQkVHQ3hyUWQ0ZjJueFJpNVkycmg0ZndoOGdCdGdNTiswTEhZQWQ1UjBw?=
- =?utf-8?B?b3FrbXQwRlpaY1pQWmp3bDF6VGhsczJzZStkZFUxVE85cy84Skg5V1o1Qy9S?=
- =?utf-8?B?NTg2OE1FWE8vYi9pQ0pEaVlWdG12WmpkM1UrblYyVXhSVndnZklldm53MUFz?=
- =?utf-8?B?WVRxRTNNaCtSME8vSUlCMDlwejN2cDBsR2ZPSng0ZlRwVTFtd0NNUUFHTUN4?=
- =?utf-8?B?aEZtVllpQUFDbnJMdkNKOEFzWW5aUVhYNDJVUU1iL0xwUGhTNnBhbUQxbTg4?=
- =?utf-8?B?RGwvNTVXWU5HVk5LMFUrcUN6VjNJUm5jR2trRW1LOXlMRW9OZVI4a0RzRnEy?=
- =?utf-8?B?KzRPVmd5bWlsaTk1Y3Nld0pYS2JLR1Z3SlE3WnQ0OXo1UTJ5RUN3bXorK1Av?=
- =?utf-8?B?U3NHVVFKaU1IVEhucXFzT3pvbWZrdWZ6MmZjNithVFFWODR0TEVPV3dlN1VP?=
- =?utf-8?B?MmxIV0JSOWl0aFgyT3BPMXY1dmlESU9JVi9KdFBWVjJUTXlCMEhBd2dUbUpD?=
- =?utf-8?B?TnkvQkVHV0cyalh4TWhTK2h3eVZTeWUyVjRXanB5UzUwMitxUzZQLzBwVXpz?=
- =?utf-8?B?d1hxVUI5SjRPa0oyOEtpZk9VNmhBSzhuaWVDMDBENVpwT255UW5UN2p2eldo?=
- =?utf-8?B?Mlp1VVJqQ2d2SEwvdEFkRDgrS2pxMUdpdm1YZUlBSjk3TGRZc3k3WUxtWnZi?=
- =?utf-8?B?b1c0d2J2Nmp1WTB3QVljcnRYbEdYWWRJTTdFbi9CSGd2K2FrT0FIV3J6Mjh3?=
- =?utf-8?B?b0JISklLRjZXeHRrUW03K2FUSmxGN29vSHhRbWtVZ1diNW5KOFcreURTN2Er?=
- =?utf-8?B?MzAvbENPMk9ubmdWQVJRc2lIWGhqazBmdy85VmNQbTEzeUt3M3dXUlp5TVhk?=
- =?utf-8?B?UXN6K25ZcEZ1T3g2cGZ6NFhSZ0NSVzJxTWVRSnpYVDZHSU1RYnFIcnhGRUtu?=
- =?utf-8?B?aHo2MFV3bm5JQWpXdHZzaVpnZjBmVnpaTFRDUFA1MUlPYXZzVUplSUlCOVQr?=
- =?utf-8?B?aU5NOXNzM2Vaamo1cDBhdDdyMXZnRFZWRmdyY2VGcGZlUE9hL0cwL0RmdTNi?=
- =?utf-8?B?UjA5VGZFU29vZ0Jha1cvZnVnc2FXQ2JSdlVjMWlkcjAzSk1nbktBT3JmcTlw?=
- =?utf-8?B?L1VTNEFFRG5aRkE5WGUzLzRRc2xYRC81U0ZSVFFJb2ZwRWhuK1NnV2JBZ1Fr?=
- =?utf-8?B?aXQ5cldsNDBwNk45Y3V0RzRJTlpRMCtRcmxiQ2tTMm1odlRMbE9LZXpxQitq?=
- =?utf-8?B?U2pnOS9oZTdOcUNkUm9iSjdjTHQ3UUd5ZUt1OWthVjNPaXg0cndCMFFjRkZz?=
- =?utf-8?B?R1BXREZTQUVPU25kRWVVcnBsME43amhBNVZ5UDhYTTR0ZC9naWxUNmFkMmo1?=
- =?utf-8?B?WmRLSGdLeUR0aTVyb1JnSHJ3R2UrdmQxUlBBRlUrYlROTDZ1QVpaMXlrZ2w3?=
- =?utf-8?B?L3p1bEVxRm44VTFIOUluWHpvdXhlQVRsMDN4SDNodldiRnZLZEovZFdmOW9K?=
- =?utf-8?B?SUc3WDdXajc4Ry92c0VIOG95NE5KU2w1eDI4ak4xVG9JRkJObFVsTks4MnFT?=
- =?utf-8?B?ZXZqUDdvTUh1ZUxIRk90Sjl0TUlrSHAvN0FvendwVWZJbENCSFJSaW9XUUk0?=
- =?utf-8?B?S0M3TVg0MTNEYWM4VGpkNCtZbk5KRXU5VFFqZEVKOUUxcDhLSWtCZHZaSVBx?=
- =?utf-8?B?MUhCSk9PeW1MbVQ0eWwzblY3L0ZKMHZ2TS9nSkxMTHA1ZDJjZWFMOU1xS2Vu?=
- =?utf-8?B?VFJ0VUxYd0k1M1BhREFHM3c0c05JOFZlV0lvcEpCWVJHdldBeUVXM21hbGVm?=
- =?utf-8?B?N3hDSXpwZ1c1YS9FN2R2TW03cjU1bFBLbklTQ3dsblhRSTBrdWI0WnJVWmk1?=
- =?utf-8?Q?fVuB6T4gE0XyzQHVH7kNif6f6?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <7E288B779F7E434898BA158774118E95@namprd12.prod.outlook.com>
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 861C52B9A2
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 15:00:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730732455; cv=none; b=oex4siLFOK3QFdLUdQP2UzlGGsH3Tlrk5yhfnHwZjYx2D+rZ6h3b/gAyjiKu408mKmOz3QwDUZ9iydg5Y0+MMg8g7mZ2fJcEF2WX5UpOMiNWSdJF3LBafUa1y1V+simOuPg6FSs/wcPHb4MFDuYh8woLnbWicy8KIZCz7kqOkOQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730732455; c=relaxed/simple;
+	bh=6CwdJQ+w8zHSNyvm3QdjuWgxa1oGhK+8wtCuWv4RDc0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YA9sGGCN6Tjc/xfFYCkdy/SuXEagwJ6rC3SSdco17JWz8GmgX+4JXiiVClP8MdG59DqLyhgEsyejlBEoj7IRophnVDj1E+HfhB/xYU0RMtpzimd7WUmph8yUj5nHy1PcOz7CKLD3yAQ2XXSog+GtzfjnhorGXozLGbjG9e5midw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RcUcCydQ; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730732454; x=1762268454;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=6CwdJQ+w8zHSNyvm3QdjuWgxa1oGhK+8wtCuWv4RDc0=;
+  b=RcUcCydQ+MCqJucmDWz47JsWOFtcIV7tNumItNIHBv/irtiHD1KwjrMf
+   JKcFE2qUKD2xKpHmy4Wpd4Q+JkqAUqdV5aapKfHSnuSGffwq6wyruADLr
+   kmadnyXwKVvSC5VDM/wP6TD6oLIZUEdHi+OwIbBv2GeeJcNeR02Q1+HbP
+   7CILrz5vCllzYQLOHYaLblWaCx6YnaLdCGfF8lgN9rXDEjAzh+jfiyUD7
+   YOJa9xIa5rcJpG447EoYXJ4ZY9xknD9e4kxSf90gRb86jhgyW0erpsxfF
+   xBaPjYSa7MyixCstFrk2OjkduDFO4geaP0UXos2zQTYLpDSGctmdvIq1u
+   A==;
+X-CSE-ConnectionGUID: pKJF0sjfRJa48ALCdtSbQw==
+X-CSE-MsgGUID: B3PyI+x6RSq+KQR4LO3PKw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="30285316"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="30285316"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2024 07:00:53 -0800
+X-CSE-ConnectionGUID: rs+2s/WbT/6R8OdFFhV8OA==
+X-CSE-MsgGUID: URAQmgMyRIGeqZBM7vZ93Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,257,1725346800"; 
+   d="scan'208";a="83200205"
+Received: from mylly.fi.intel.com (HELO [10.237.72.58]) ([10.237.72.58])
+  by fmviesa006.fm.intel.com with ESMTP; 04 Nov 2024 07:00:51 -0800
+Message-ID: <583c5381-11fe-4fc0-83b4-512c2aae50bd@linux.intel.com>
+Date: Mon, 4 Nov 2024 17:00:50 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SA1PR12MB6945.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9f6ea741-c5d9-492b-4426-08dcfce16655
-X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Nov 2024 15:00:19.4017
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: GsFEEVx2a2nUN0nvyA3NrNkESADK79YOykr0ODQ6oqOFPvyL7OPi+ql5clCeUGSAUUjTLsFpBMiN87XLDuRrfg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB8343
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 5/6] i3c: master: Add support for SETAASA CCC
+To: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc: Sanket.Goswami@amd.com, linux-i3c@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20241023055118.1400286-1-Shyam-sundar.S-k@amd.com>
+ <20241023055118.1400286-6-Shyam-sundar.S-k@amd.com>
+Content-Language: en-US
+From: Jarkko Nikula <jarkko.nikula@linux.intel.com>
+In-Reply-To: <20241023055118.1400286-6-Shyam-sundar.S-k@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-T24gTW9uLCAyMDI0LTExLTA0IGF0IDE0OjUyICswMDAwLCBBbmRyZXcgQ29vcGVyIHdyb3RlOg0K
-PiA+IFVuZm9ydHVuYXRlbHksIHRoYXQncyBhbGwgd2UgaGF2ZSByaWdodCBub3cgaW4gdGhlIG9m
-ZmljaWFsDQo+ID4gZG9jdW1lbnRhdGlvbi4NCj4gPiANCj4gPiBJJ3ZlIHB1dCB1cCBzb21lIG5v
-dGVzIGluDQo+ID4gaHR0cHM6Ly9hbWl0c2hhaC5uZXQvMjAyNC8xMS9lcmFwcy1yZWR1Y2VzLXNv
-ZnR3YXJlLXRheC1mb3ItaGFyZHdhcmUtYnVncy8NCj4gDQo+IEkgYXBwcmVjaWF0ZSB0aGUgYXR0
-ZW1wdCB0byBnZXQgYSBmZXcgZGV0YWlscyBvdXQsIGJ1dCB0aGlzIGlzIHZlcnkNCj4gY29uZnVz
-ZWQgb24gYnVuY2ggb2YgZGV0YWlscy4NCj4gDQo+IE1vc3QgaW1wb3J0YW50bHksIHlvdSd2ZSBk
-ZXNjcmliZWQgSW50ZWwgUlNCIHVuZGVyZmxvd3MsIGJ1dCBuYW1lZCBpdA0KPiBBTUQgQlRDLg0K
-PiANCj4gIlJldGJsZWVkIiBpcyB0d28gdG90YWxseSBkaWZmZXJlbnQgdGhpbmdzLsKgwqAgSSBi
-ZWdnZWQgdGhlDQo+IGRpc2NvdmVyZXJzDQo+IHRvIGdpdmUgaXQgdHdvIG5hbWVzLCBhbmQgSSBh
-bHNvIGJlZ2dlZCB0aGUgeDg2IG1haW50YWluZXJzIHRvIG5vdA0KPiBhbGlhcw0KPiB0aGVtIGlu
-IExpbnV4J3MgdmlldyBvZiB0aGUgd29ybGQsIGJ1dCBhbGFzLg0KPiANCj4gQU1EJ3MgQlRDIGNv
-bWVzIGZyb20gYSBiYWQgYnJhbmNoIHR5cGUgcHJlZGljdGlvbiwgYW5kIGEgbGF0ZSByZXN0ZWVy
-DQo+IGZyb20gdGhlIHJldCB1b3AgZXhlY3V0aW5nLsKgwqAgSXQgaGFzIG5vdGhpbmcgdG8gZG8g
-d2l0aCBSQVMvUlNCDQo+IHVuZGVyZmxvdyBjb25kaXRpb25zLg0KDQpCVEMgaW5kZWVkIGlzIG9u
-bHkgYnJhbmNoLXR5cGUgY29uZnVzaW9uLiAgVGhlIHBvaW50IEkgd2FudGVkIHRvIG1ha2UNCnRo
-ZXJlIGlzIHRoYXQgdG8gZW50aXJlbHkgZ2V0IHJpZCBvZiBYODZfRkVBVFVSRV9SU0JfQ1RYVywg
-SSBoYWQgdG8NCmNvbmZpcm0gdGhhdCBBTUQgQ1BVcyBkbyBub3Qgc3BlY3VsYXRlIHJldHVybiBh
-ZGRyZXNzZXMgZnJvbSB0aGUgQlRCIG9yDQpCSEIgc2luY2UgQlRDIHdhcyBmaXhlZC4gIChPciwg
-aW4gb3RoZXIgd29yZHMsIHRvIGNsYXJpZnkgdGhlIHByZXZpb3VzDQpjb21tZW50cyB0aGVyZSB0
-aGF0IHNhaWQgdGhhdCBBTUQgcHJlZGljdHMgZnJvbSB0aGUgQlRCL0JIQiBpbiBldmVyeQ0KY2Fz
-ZSkuDQoNClNvIC0gdGhlIG9ubHkgcG9pbnQgaW4gc2F5aW5nIEJUQ19OTyBpcyByZWxldmFudCBo
-ZXJlIGlzIG1lIGNvbmZpcm1pbmcNCnRoYXQgQU1EIGlzIG5vdCBnb2luZyB0byBzcGVjdWxhdGUg
-cmV0dXJuIGFkZHJlc3NlcyBmcm9tIG91dHNpZGUgb2YgdGhlDQpSU0IuIEFuZCB0aGF0IGNvbW1l
-bnQgY2FuIG5vdyByZWZsZWN0IHJlYWxpdHkuDQoNCgkJQW1pdA0K
+On 10/23/24 8:51 AM, Shyam Sundar S K wrote:
+> I3C devices like DIMMs over SPD use SETAASA for bus discovery instead of
+> SETDASA. Add a new routine for I3C host controller drivers to use. If the
+> I3C slave on the bus is an SPD device, skip the regular DAA process.
+> 
+> According to the SPD spec[1], use SETAASA for bus discovery, and avoid
+> sending RSTDAA and DISEC, as they are considered illegal. Skip this entire
+> process if the slave is SPD-compliant, as indicated by the "jdec_spd" flag
+> from the BIOS.
+> 
+> [1] https://www.jedec.org/system/files/docs/JESD300-5B.01.pdf
+> (section 2.4 and 2.6.3)
+> 
+SETAASA seems to come in MIPI v1.1.1 specification. I think worth to 
+mention in commit log.
+
+> Co-developed-by: Sanket Goswami <Sanket.Goswami@amd.com>
+> Signed-off-by: Sanket Goswami <Sanket.Goswami@amd.com>
+> Signed-off-by: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
+> ---
+>   drivers/i3c/master.c               | 32 +++++++++++++++++++++++++++++-
+>   drivers/i3c/master/dw-i3c-master.c |  1 +
+>   include/linux/i3c/ccc.h            |  1 +
+>   include/linux/i3c/master.h         |  1 +
+>   4 files changed, 34 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/i3c/master.c b/drivers/i3c/master.c
+> index ba6f17cb8aa6..1596efd6d82a 100644
+> --- a/drivers/i3c/master.c
+> +++ b/drivers/i3c/master.c
+> @@ -1657,6 +1657,21 @@ i3c_master_register_new_i3c_devs(struct i3c_master_controller *master)
+>   	}
+>   }
+>   
+> +static int i3c_master_setaasa_locked(struct i3c_master_controller *master)
+> +{
+> +	struct i3c_ccc_cmd_dest dest;
+> +	struct i3c_ccc_cmd cmd;
+> +	int ret;
+> +
+> +	i3c_ccc_cmd_dest_init(&dest, I3C_BROADCAST_ADDR, 0);
+> +	i3c_ccc_cmd_init(&cmd, false, I3C_CCC_SETAASA, &dest, 1);
+> +
+> +	ret = i3c_master_send_ccc_cmd_locked(master, &cmd);
+> +	i3c_ccc_cmd_dest_cleanup(&dest);
+> +
+> +	return ret;
+> +}
+> +
+>   static int i3c_master_add_spd_dev(struct i3c_master_controller *master,
+>   				  struct i3c_dev_boardinfo *boardinfo)
+>   {
+> @@ -1684,6 +1699,10 @@ static int i3c_master_add_spd_dev(struct i3c_master_controller *master,
+>   		i3cdev->info.pid = i3cdev->boardinfo->pid;
+>   		i3cdev->info.dyn_addr = i3cdev->boardinfo->init_dyn_addr;
+>   
+> +		ret = i3c_master_setaasa_locked(master);
+> +		if (ret)
+> +			goto err_free_dev;
+> +
+>   		i3c_bus_normaluse_lock(&master->bus);
+>   		i3c_master_register_new_i3c_devs(master);
+>   		i3c_bus_normaluse_unlock(&master->bus);
+> @@ -1907,7 +1926,14 @@ static int i3c_master_bus_init(struct i3c_master_controller *master)
+>   		goto err_bus_cleanup;
+>   	}
+>   
+> -	i3c_master_add_spd_dev(master, i3cboardinfo);
+> +	/*
+> +	 * If the I3C slave on the bus is SPD device, then do not follow the regular
+> +	 * DAA process. Also, as per SPD spec SETAASA is required for the bus discovery
+> +	 * and sending RSTDAA and DISEC is considered as illegal. So skip the entire process
+> +	 * if the jdec_spd flag has been identified from the BIOS.
+> +	 */
+> +	if (master->jdec_spd)
+> +		return i3c_master_add_spd_dev(master, i3cboardinfo);
+>   
+>   	if (master->ops->set_speed) {
+>   		ret = master->ops->set_speed(master, I3C_OPEN_DRAIN_SLOW_SPEED);
+> @@ -2311,6 +2337,10 @@ static int i3c_acpi_configure_master(struct i3c_master_controller *master)
+>   		return -ENODEV;
+>   	}
+>   
+> +	status = acpi_evaluate_object(master->ahandle, "_STR", NULL, NULL);
+> +	if (ACPI_SUCCESS(status))
+> +		master->jdec_spd = true;
+> +
+
+Am I right "_STR" object should carry a string "jdec_spd"? But this code 
+is not actually checking it, only the existence of _STR?
+
+>   	num_dev = device_get_child_node_count(dev);
+>   	if (!num_dev) {
+>   		dev_err(&master->dev, "Error: no child node present\n");
+> diff --git a/drivers/i3c/master/dw-i3c-master.c b/drivers/i3c/master/dw-i3c-master.c
+> index f683e2a398ad..90a43209e55e 100644
+> --- a/drivers/i3c/master/dw-i3c-master.c
+> +++ b/drivers/i3c/master/dw-i3c-master.c
+> @@ -282,6 +282,7 @@ static bool dw_i3c_master_supports_ccc_cmd(struct i3c_master_controller *m,
+>   	case I3C_CCC_GETSTATUS:
+>   	case I3C_CCC_GETMXDS:
+>   	case I3C_CCC_GETHDRCAP:
+> +	case I3C_CCC_SETAASA:
+>   		return true;
+>   	default:
+>   		return false;
+> diff --git a/include/linux/i3c/ccc.h b/include/linux/i3c/ccc.h
+> index ad59a4ae60d1..a145d766ab6f 100644
+> --- a/include/linux/i3c/ccc.h
+> +++ b/include/linux/i3c/ccc.h
+> @@ -32,6 +32,7 @@
+>   #define I3C_CCC_DEFSLVS			I3C_CCC_ID(0x8, true)
+>   #define I3C_CCC_ENTTM			I3C_CCC_ID(0xb, true)
+>   #define I3C_CCC_ENTHDR(x)		I3C_CCC_ID(0x20 + (x), true)
+> +#define I3C_CCC_SETAASA			I3C_CCC_ID(0x29, true)
+>   
+>   /* Unicast-only commands */
+>   #define I3C_CCC_SETDASA			I3C_CCC_ID(0x7, false)
+> diff --git a/include/linux/i3c/master.h b/include/linux/i3c/master.h
+> index 367faf7c4bf3..cd8390d8b469 100644
+> --- a/include/linux/i3c/master.h
+> +++ b/include/linux/i3c/master.h
+> @@ -516,6 +516,7 @@ struct i3c_master_controller {
+>   	const struct i3c_master_controller_ops *ops;
+>   	unsigned int secondary : 1;
+>   	unsigned int init_done : 1;
+> +	unsigned int jdec_spd : 1;
+>   	unsigned int hotjoin: 1;
+>   	struct {
+>   		struct list_head i3c;
+
 
