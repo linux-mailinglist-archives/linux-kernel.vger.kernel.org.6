@@ -1,82 +1,113 @@
-Return-Path: <linux-kernel+bounces-394330-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394332-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16BE59BAD7C
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 08:54:45 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92E4E9BAD81
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 08:57:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B28F81F222D4
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 07:54:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BDB951C21070
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 07:57:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 319DD1A76C0;
-	Mon,  4 Nov 2024 07:54:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1122519AA5D;
+	Mon,  4 Nov 2024 07:57:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ln+DPNx2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="oC4uW4rK"
+Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BD3A18C320;
-	Mon,  4 Nov 2024 07:54:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4E6318C320;
+	Mon,  4 Nov 2024 07:57:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730706868; cv=none; b=R8gs+T16Xp0fAk/J8w6phrofnNMCdB9+p4IKGxqSzbgHGVwLoXCN30ISRcAUqlz3I21+vQsAnix0WExLdTsBy3stwBd7G49pYbzGJq+8wD/wtq3TeTQYBMtaERcRTkn1cYTXU1JpeaiJane0MznC5zEUmP1OkXkV18I9h6S8vxk=
+	t=1730707028; cv=none; b=gRjWXOM0cpy+PQnXfXPbWpmXPgfSuw8l5Qw4N3qePXtTMyp0qU1ctKtLDCMS0KpDqFWBkdWsuApHomICvdyV2Koec3VK/XLNZlgRZ6EVAi5+sSZftmWHBwFnCdrm/3JSrIGobOikFSvwp0nJYvfYVEG8osgn+BmdC+b49I0eQOY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730706868; c=relaxed/simple;
-	bh=WcJE9u7/cHNDb3aaEpLhI+NLJpDcAK5VkMSewML5Cn4=;
-	h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:
-	 MIME-Version:Content-Type; b=qBplUT2tqMb0tjuVM+F/PA+HR9ISxb6ZXT5YDMTGZqUX2200Lzi45r2Gk9jowCWRqzN52u2uojvaKyk7/F4M6+UxhWh5y9fMRJPRwSbI0djWj8eMTk4YXJ9QkCh/Kyce5087jX67wXEDVFfLBzzNWxCZZbMRsmxASHnCDwTxtWY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ln+DPNx2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11CB1C4CECE;
-	Mon,  4 Nov 2024 07:54:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730706867;
-	bh=WcJE9u7/cHNDb3aaEpLhI+NLJpDcAK5VkMSewML5Cn4=;
-	h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-	b=ln+DPNx2RsXrQdJlflDw6BpIsToLGbqLKAx6X1BHzSppuaFNY0uDPA6wwufZXF52u
-	 a2iHd1i8p2ROeFnPeJyumOL1z2Q97ajkpiCSVqJnkhxQ2Zudo9MTyJookqyLoDZ2VH
-	 rSIE0Mx9V6Z267rX9R5Q3b6vlVc/BiN7LmW79zEixfYdIvFaeFlTRzUvWfaRkshJ25
-	 mTvIyqd8tb6pofxkYIGlKaM3mgs9f/uNgrAGis6SuOFtYYN+lEmoYcN+PsO0kEEcjC
-	 LyvcUWRXhg2LRxJaKdQ7iSEJ7qg5pMB8w1exEPcZI9jSkL8wNji8FF1LJ/QxVZ4ZAg
-	 aYwa8PLxUyGrg==
-From: Kalle Valo <kvalo@kernel.org>
-To: linux@treblig.org
-Cc: pkshih@realtek.com,  linux-wireless@vger.kernel.org,
-  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] rtlwifi: Remove more unused functions
-References: <20241103153857.255450-1-linux@treblig.org>
-	<20241103153857.255450-3-linux@treblig.org>
-Date: Mon, 04 Nov 2024 09:54:24 +0200
-In-Reply-To: <20241103153857.255450-3-linux@treblig.org> (linux@treblig.org's
-	message of "Sun, 3 Nov 2024 15:38:57 +0000")
-Message-ID: <87y11zxwlr.fsf@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
+	s=arc-20240116; t=1730707028; c=relaxed/simple;
+	bh=X/dRJ1Gkhm6/NRFvQ+4mJB+CftfVKw4BMgBeKwyvhAs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WN344hw/mQi+mWTCP/U++xuMlHcZcbLsy9cMDtAhU4+485sv1HrqBdtIi8GtaS6/VXb6Psm+5cUVtwoGUXxm72qReXDtgLj61rwb4Uj+zpcMUeCnEwsOPPb0G3ap6uLmtnraCqFmi10W84QMmjIhulC5xgq4uaNm7IODYV6glnY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=oC4uW4rK; arc=none smtp.client-ip=85.214.62.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
+Received: from [192.168.1.107] (87-97-112-21.pool.digikabel.hu [87.97.112.21])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
+	(No client certificate requested)
+	(Authenticated sender: hs@denx.de)
+	by phobos.denx.de (Postfix) with ESMTPSA id 78E05888D5;
+	Mon,  4 Nov 2024 08:57:03 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
+	s=phobos-20191101; t=1730707024;
+	bh=2lhytOz/pMLw6cwoN72tfr5dCndGkwWb50ggJNngL6Q=;
+	h=Date:Subject:To:Cc:References:Reply-To:From:In-Reply-To:From;
+	b=oC4uW4rKzPa98MJMV3tddMN7nd3UbXkHVvUeAEYPtrnwaGOe1ezUvowN8GKP0IDvT
+	 Qhc2aumIuJiwxzOc3br2cNL8YDgkQYjmoDMh+ZqNo08iSjr3lYWDmXWwhYzk2bbv/K
+	 Uu6bgFK+aUskJ/PfxusWxP39mIlu4fISR9bNAqi4nE48xK6fpAeQcOTBncC3R5t0Rt
+	 I9qLWEYUKkaH8AILQ4OXa6LjSbMXIZ4Di37hVApg8MVXv1n62wCPbhcJUHg6r8yTlW
+	 AXf07mzwkqZswRY6m7kAayldZbRyuxbBn8G2scrFM01VVP099iA7gFR6hlYJ/SkC4X
+	 sGfXoKH2kRvnA==
+Message-ID: <4e5a3f32-f959-8106-ac32-f802353dbcf6@denx.de>
+Date: Mon, 4 Nov 2024 08:54:38 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.2.0
+Subject: Re: [PATCH v2 3/3] arm64: dts: imx8mp: add aristainetos3 board
+ support
+Content-Language: en-US
+To: Shawn Guo <shawnguo2@yeah.net>
+Cc: linux-kernel@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>,
+ Fabio Estevam <festevam@gmail.com>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Rob Herring <robh@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
+ Shawn Guo <shawnguo@kernel.org>, devicetree@vger.kernel.org,
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
+References: <20241031151238.67753-1-hs@denx.de>
+ <20241031151238.67753-4-hs@denx.de> <ZydFO6b6oe9widaa@dragon>
+ <5340fb82-bda0-d22f-23df-de620c8d61c3@denx.de> <Zyh0AgJZh1//17Te@dragon>
+Reply-To: hs@denx.de
+From: Heiko Schocher <hs@denx.de>
+In-Reply-To: <Zyh0AgJZh1//17Te@dragon>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
+X-Virus-Status: Clean
 
-linux@treblig.org writes:
+Hello Shawn,
 
-> From: "Dr. David Alan Gilbert" <linux@treblig.org>
->
-> exhalbtc_dbg_control(), exhalbtc_stack_update_profile_info(),
-> exhalbtc_set_hci_version(), and exhalbtc_set_bt_patch_version() are
-> unused since their addition in 2014 by
-> commit aa45a673b291 ("rtlwifi: btcoexist: Add new mini driver")
->
-> Remove them.
->
-> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+On 04.11.24 08:13, Shawn Guo wrote:
+> On Mon, Nov 04, 2024 at 06:33:55AM +0100, Heiko Schocher wrote:
+>>>> +
+>>>> +		semtech,probe-reset;
+>>>> +		gpio-controller;
+>>>> +		interrupt-controller;
+>>>> +
+>>>> +		interrupt-parent = <&gpio1>;
+>>>> +		interrupts = <12 IRQ_TYPE_EDGE_FALLING>;
+>>>> +	};
+>>
+>> Should I remove newlines here too?... but looking into the example from
+>>
+>> Documentation/devicetree/bindings/pinctrl/semtech,sx1501q.yaml
+>>
+>> there are this newlines ... so I let this lines in... or?
+> 
+> Not having newlines in middle of property list is just a style that
+> I prefer for IMX device trees.
 
-'wifi:' missing. Also in both patches the subject could be more unique.
+I remove them too than!
 
+Thanks!
+
+bye,
+Heiko
 -- 
-https://patchwork.kernel.org/project/linux-wireless/list/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+DENX Software Engineering GmbH,      Managing Director: Erika Unter
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+Phone: +49-8142-66989-52   Fax: +49-8142-66989-80   Email: hs@denx.de
 
