@@ -1,101 +1,400 @@
-Return-Path: <linux-kernel+bounces-394819-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394820-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF69E9BB46F
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 13:15:50 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C9869BB472
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 13:16:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D6881C21A29
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 12:15:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A2D011F23368
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 12:16:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F5D21B4F3E;
-	Mon,  4 Nov 2024 12:15:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED5811B4F3F;
+	Mon,  4 Nov 2024 12:15:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GTa2rsvq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="HQUCRxCE"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0236D1B219A;
-	Mon,  4 Nov 2024 12:15:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAE4615C139
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 12:15:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730722545; cv=none; b=F4jf1VaSOFfavJlHLQ12A5j1krtJNXp19l4iiRUtvflEHVOWjGV/2psY+UFV7EY8ms7UupavoKz9EFNT7hNzwp8WBEnCiQXg7c29jv3XTAKAq3vV6PI90jBkOQhC+AB3N41P0/EJAqY+Sje9tShrvotEqCKmp970F5TZzIO/YCI=
+	t=1730722554; cv=none; b=lQj2ZhtQm/gGB6Oh5KkrG4w/mdojeMrCMhcgd2tqwLKciY4nBE/KBtXli2W/ZgQujYSh9tbO+AxL6mcZfi9U57z6yt8sGSdGv66OvWwvDzf9y5bdVjnZNsut6tNlzyWhy0wRJhp30gwMI9QJP0NChxKqo3tkEK5OAYyMQQOv7mw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730722545; c=relaxed/simple;
-	bh=0/3/77k9Ef5Ak6iuPGM688m8GhlJiR98MSLrIIecHw8=;
+	s=arc-20240116; t=1730722554; c=relaxed/simple;
+	bh=w2x6ovKDK+RaRKbTdn4vmFFYuzNswsz+kI0ClUZaYDM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=c+LpkHXVZVZblIDdhH81qnWYV5lrqe+xMN6CsCAX66K/dUHSWS1PBNx8TdsNtHIbdw01Yvq0Uq9qfI1IyCCTjkakv0N49UwVBZ3f7Bf9at6Mgp7OdJZZh/1WW+MUdhohC/+Z1AT0YudJdnColgQ/PM1xvUFgz+5ShHhNTP7ACaY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GTa2rsvq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D694C4CECE;
-	Mon,  4 Nov 2024 12:15:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730722544;
-	bh=0/3/77k9Ef5Ak6iuPGM688m8GhlJiR98MSLrIIecHw8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GTa2rsvqJIpATsLMvpym945fVMi8w5kVzUMAdCsn7m2/Y6nIrd9DpiSDeT27p7WUy
-	 YtUrB/QKPiR2ZBFmr40VoAfOjod2rtYuzWKyPHQhF3qcHHLvPWnfAXlXV8OqrAXItH
-	 C9GUckxNM2+hH8rb38sVjFGMqSvYCOt/rr1NVwz8f8nBe9E36Wq0ykDArP7yDg5vbP
-	 mjONDPMfGSziTGNYaNER50Vj2myvfGywHAMMbPYKXEqxFQ2+wlC+zvBQpt6boVV4jD
-	 adoPrtUarANuzDjp/QZ4vkyieSDQ9xEDkpCK+qQN08TicQYxRUIjSUZGjxP1QYuE/u
-	 ZTC6J6hhhkIuw==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1t7vzh-000000005Gm-3jOg;
-	Mon, 04 Nov 2024 13:15:41 +0100
-Date: Mon, 4 Nov 2024 13:15:41 +0100
-From: Johan Hovold <johan@kernel.org>
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] firmware: qcom: scm: rework QSEECOM allowlist
-Message-ID: <Zyi67e5Os0RhXNjn@hovoldconsulting.com>
-References: <20241103-rework-qseecom-v1-0-1d75d4eedc1e@linaro.org>
- <20241103-rework-qseecom-v1-2-1d75d4eedc1e@linaro.org>
- <02171841-acd3-4f26-987d-1376caf11481@oss.qualcomm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=mCbUvf/MLiNYiJhyFQJSy4uuAobDHMBNMHL+DtaZLI+5z01qpoM1mdChaF7KXaZbsbDCtJulQhB5qcKIDfjW87vk4RNIUs726oowEakFqoH5GpRPl3EIFU/fHCjSE883wMjNn7zabUlqXnBeSKbBOpwE1D5RNYuEDTmB867XyaE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=HQUCRxCE; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-20c7ee8fe6bso36207805ad.2
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 04:15:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1730722552; x=1731327352; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=W7AQtQwh5XwBf5DE/8aulvDQwybobvqaigExgcMas5c=;
+        b=HQUCRxCED8YEzLspTSpjUxF6IhwtwFU/vKnl67ZiDw4VPpKj3yaPpb6L+WmqokvPTv
+         66iTk5NU5qd8RXtXtCFUSgtEBNeFWI1MiNUThGrGD+PSAInPPj+Mruk0JIuPUD6i/nBp
+         4BY8DTbeviOszluXY0Oi8BB4oWi9ISot74OMyHsxEse/C6LCe8sQj7JT9BPEYo9Y6gqg
+         cIMj/+t8oXVLtzCgk5EHEoPQZzWvhLpDrB7XakHqKWve7mw4rh5BRqZE9EKiOOoqZn4h
+         q2gnPnC+aHigOPnhv/SOwjCyAz3+bAp7v/Yc2MZ3OsE1x+S5f4QNx4rJBVmPGqXjCFy3
+         hEKQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730722552; x=1731327352;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=W7AQtQwh5XwBf5DE/8aulvDQwybobvqaigExgcMas5c=;
+        b=MREf5tHnrqzjuZPiGv3bmFXG7f/ga+qawZ/gHKQBnTRcmIeHByUTwWoSv8JJ65rXx4
+         uWCjEVng8ida7OXTvk/zOb2Cx3yqwqqYl5XNgf1O8d0vpfME9IL+SCiET9HB1Yz/3XcX
+         tp8ihswiZuZ5xc3PM2TymMgcGgRgdIZCI27RfnDphAfQf4Cr40cR2GH8RO/5oIe70M1k
+         h74d3YTyDJYPin9fZLziAF9ezMiBDfULI1sAOtY1vOagJzyMiLgQ0vj90uzmZ3U8XB+4
+         6D4puxwJuG+YAG7JcC4RYQ3POwUQPP4xoR0HMFjjaJzUo3TMEvLOlN4aGQkFMn1A7Ghk
+         gMaQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV8Rhqj/mowLRor6pOVrFSmaNbwJ2BYGdeKsG4ze0Lv3gMCBpOouDaUKJfEMgbv3HVPa4vd4Ts/l9SaB9s=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxvqi+reMFRGQar4M4AXIpdLdrS1TqcyUSdS/W2vprN7nkcn5gg
+	ZN5dg7zaF6kQTRKwE8uPB8HXl9bMAZBBRmwf9z4o6FNvxEYnwawn+NLlqqveH10=
+X-Google-Smtp-Source: AGHT+IFx7/6RECjaK46hKWx2etOjpv6VJ7ml11BpX8/5iacM2hZgso5bznO8FcClEIKx+2J9+6i6AQ==
+X-Received: by 2002:a17:902:f546:b0:20b:9f8c:e9de with SMTP id d9443c01a7336-210c68995ccmr434877625ad.13.1730722551874;
+        Mon, 04 Nov 2024 04:15:51 -0800 (PST)
+Received: from dread.disaster.area (pa49-186-86-168.pa.vic.optusnet.com.au. [49.186.86.168])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211057a2b2esm60061345ad.172.2024.11.04.04.15.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 04 Nov 2024 04:15:51 -0800 (PST)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+	(envelope-from <david@fromorbit.com>)
+	id 1t7vzn-00A2SF-37;
+	Mon, 04 Nov 2024 23:15:47 +1100
+Date: Mon, 4 Nov 2024 23:15:47 +1100
+From: Dave Chinner <david@fromorbit.com>
+To: Stephen Zhang <starzhangzsd@gmail.com>
+Cc: djwong@kernel.org, dchinner@redhat.com, leo.lilong@huawei.com,
+	wozizhi@huawei.com, osandov@fb.com, xiang@kernel.org,
+	zhangjiachen.jaycee@bytedance.com, linux-xfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org, zhangshida@kylinos.cn
+Subject: Re: [PATCH 0/5] *** Introduce new space allocation algorithm ***
+Message-ID: <Zyi683yYTcnKz+Y7@dread.disaster.area>
+References: <20241104014439.3786609-1-zhangshida@kylinos.cn>
+ <ZyhAOEkrjZzOQ4kJ@dread.disaster.area>
+ <CANubcdVbimowVMdoH+Tzk6AZuU7miwf4PrvTv2Dh0R+eSuJ1CQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <02171841-acd3-4f26-987d-1376caf11481@oss.qualcomm.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CANubcdVbimowVMdoH+Tzk6AZuU7miwf4PrvTv2Dh0R+eSuJ1CQ@mail.gmail.com>
 
-On Mon, Nov 04, 2024 at 12:23:57PM +0100, Konrad Dybcio wrote:
-> On 3.11.2024 4:37 PM, Dmitry Baryshkov wrote:
-
-> >  static const struct of_device_id qcom_scm_qseecom_allowlist[] __maybe_unused = {
-> > -	{ .compatible = "dell,xps13-9345" },
-> > -	{ .compatible = "lenovo,flex-5g" },
-> > -	{ .compatible = "lenovo,thinkpad-t14s" },
-> > -	{ .compatible = "lenovo,thinkpad-x13s", },
-> > -	{ .compatible = "lenovo,yoga-slim7x" },
-> > -	{ .compatible = "microsoft,arcata", },
-> > -	{ .compatible = "microsoft,romulus13", },
-> > -	{ .compatible = "microsoft,romulus15", },
-> > -	{ .compatible = "qcom,sc8180x-primus" },
-> > -	{ .compatible = "qcom,x1e80100-crd" },
-> > -	{ .compatible = "qcom,x1e80100-qcp" },
-> > +	{ .compatible = "qcom,sc8180x", .data = (void *)true },
-> > +	{ .compatible = "qcom,sc8280xp", .data = (void *)true },
-> > +	{ .compatible = "qcom,x1e80100", .data = (void *)true },
-> >  	{ }
-> >  };
+On Mon, Nov 04, 2024 at 05:25:38PM +0800, Stephen Zhang wrote:
+> Dave Chinner <david@fromorbit.com> 于2024年11月4日周一 11:32写道：
+> >
+> > On Mon, Nov 04, 2024 at 09:44:34AM +0800, zhangshida wrote:
+> > > From: Shida Zhang <zhangshida@kylinos.cn>
+> > >
+> > > Hi all,
+> > >
+> > > Recently, we've been encounter xfs problems from our two
+> > > major users continuously.
+> > > They are all manifested as the same phonomenon: a xfs
+> > > filesystem can't touch new file when there are nearly
+> > > half of the available space even with sparse inode enabled.
+> >
+> > What application is causing this, and does using extent size hints
+> > make the problem go away?
+> >
 > 
-> + Steev I think you had some unhappy machine
+> Both are database-like applications, like mysql. Their source code
+> isn't available to us. And I doubt if they have the ability to modify the
+> database source code...
+
+Ok, so I did a bit of research. It's the MySQL transparent page
+compression algorithm that is the problem here. Essentially what
+this does is this:
+
+Write : Page -> Transform -> Write transformed page to disk -> Punch hole
+
+Read  : Page from disk -> Transform -> Original Page
+
+Essentially, every page is still indexed at the expected offset,
+but the data is compressed and the space that is saved by the
+compression is then punched out of the filesystem. Basically it
+makes every database page region on disk sparse, and it does it via
+brute force.
+
+This is -awful- for most filesystems. We use a similar technique in
+fstests to generate worst case file and free space fragmentation
+('punch_alternating') for exercising this sort of behaviour, and it
+really does screw up performance and functionality on all the major
+Linux filesysetms. XFS is the canary because of the way it
+dynamically allocates inodes.
+
+It's also awful for performance. There can be no concurrency in
+database IO when it is doing hole punching like this. Hole punching
+completely serialises all operations on that file, so it cannot be
+doing read(), write() or even IO whilst the hole punch is being
+done. 
+
+IOWs, page compression allows the database to store more data in the
+filesystem, but it does so at a cost. The cost is that it degrades
+the filesystem free space badly over time. Hence as the FS fills up,
+stuff really starts to slow down and, in some cases, stop working...
+
+As the old saying goes: TANSTAAFL.
+
+(There Ain't No Such Thing As A Free Lunch)
+
+If you can't turn off page compression via a database configuration
+flag, you could always shim the fallocate() syscall to always return
+-EOPNOTSUPP to fallocate(FALLOC_FL_PUNCH_HOLE)....
+
+> > Also, xfs_info and xfs_spaceman free space histograms would be
+> > useful information.
+> >
 > 
-> And maybe 8180 Primus?
+> There are two such cases.
+> In one case:
+> $ xfs_info disk.img
+> meta-data=disk.img               isize=512    agcount=344, agsize=1638400 blks
+>          =                       sectsz=4096  attr=2, projid32bit=1
+>          =                       crc=1        finobt=1, sparse=1, rmapbt=0
+>          =                       reflink=1
+> data     =                       bsize=4096   blocks=563085312, imaxpct=25
+>          =                       sunit=64     swidth=64 blks
+> naming   =version 2              bsize=4096   ascii-ci=0, ftype=1
+> log      =internal log           bsize=4096   blocks=12800, version=2
+>          =                       sectsz=4096  sunit=1 blks, lazy-count=1
+> realtime =none                   extsz=4096   blocks=0, rtextents=0
 
-I have a sc8280xp crd here where variables can only be read, not stored
-(e.g. similar to the Lenovo Yoga C630). In it's current configuration
-the machine boots from UFS and this could possibly be related to how it
-has been provisioned, but this is the reason why "qcom,sc8280xp-crd" is
-not already in the above list.
+This filesystem has 344 6GB AGs. That is .... not good. This will
+make the free space fragmentation problems worse than having
+4-16AGs (default for a fs of that size) because the free space is
+already fragmented into lots of small disjoint regions even when the
+filesytem is empty.
 
-Johan
+> $ xfs_db -c freesp disk.img
+>    from      to extents  blocks    pct
+>       1       1 43375262 43375262  22.32
+>       2       3 64068226 150899026  77.66
+>       4       7       1       5   0.00
+>      32      63       3     133   0.00
+>     256     511       1     315   0.00
+>    1024    2047       1    1917   0.00
+>    8192   16383       2   20477   0.01
+
+Yeah, 100 million free space extents, 600GB of space indexed in
+them, and there's *nothing* the filesystem can do about it because
+that's what exactly happens when you have a 16kB database page size
+and every 16kB page write involves a 1-3 block hole punch in the
+16kB region of the file.
+
+> > > It turns out that the filesystem is too fragmented to have
+> > > enough continuous free space to create a new file.
+> >
+> > > Life still has to goes on.
+> > > But from our users' perspective, worse than the situation
+> > > that xfs is hard to use is that xfs is non-able to use,
+> > > since even one single file can't be created now.
+> > >
+> > > So we try to introduce a new space allocation algorithm to
+> > > solve this.
+> > >
+> > > To achieve that, we try to propose a new concept:
+> > >    Allocation Fields, where its name is borrowed from the
+> > > mathmatical concepts(Groups,Rings,Fields), will be
+> >
+> > I have no idea what this means. We don't have rings or fields,
+> > and an allocation group is simply a linear address space range.
+> > Please explain this concept (pointers to definitions and algorithms
+> > appreciated!)
+> >
+> >
+> > > abbrivated as AF in the rest of the article.
+> > >
+> > > what is a AF?
+> > > An one-pic-to-say-it-all version of explaination:
+> > >
+> > > |<--------+ af 0 +-------->|<--+ af 1 +-->| af 2|
+> > > |------------------------------------------------+
+> > > | ag 0 | ag 1 | ag 2 | ag 3| ag 4 | ag 5 | ag 6 |
+> > > +------------------------------------------------+
+> > >
+> > > A text-based definition of AF:
+> > > 1.An AF is a incore-only concept comparing with the on-disk
+> > >   AG concept.
+> > > 2.An AF is consisted of a continuous series of AGs.
+> > > 3.Lower AFs will NEVER go to higher AFs for allocation if
+> > >   it can complete it in the current AF.
+> > >
+> > > Rule 3 can serve as a barrier between the AF to slow down
+> > > the over-speed extending of fragmented pieces.
+> >
+> > To a point, yes. But it's not really a reliable solution, because
+> > directories are rotored across all AGs. Hence if the workload is
+> > running across multiple AGs, then all of the AFs can be being
+> > fragmented at the same time.
+> >
+> 
+> You mean the inode of the directory is expected to be distributed
+> evenly over the entire system, and the file extent of that directory will be
+> distributed in the same way?
+
+The directory -structure- is distributed across all AGs. Each newly
+created directly is placed in a different AG to it's parent inode.
+Each file created in a directory is located in the same AG as the
+parent directory inode. Inodes then try to alllocate data as close
+to the inode as possible (i.e. allocation targets the same AG). This
+keeps related data and metadata close together (i.e. preserved
+locality of reference) and allows for delayed allocation
+optimisations like multi-file write clustering....
+
+This means that when you have something like a kernel source tree,
+it will be distributed across every AG in the filesystem because
+it's a complex directory tree with many files in it.
+
+Of course, this all changes when you mount with "inode32". Inodes
+are all located in the <1TB region, and the initial data allocation
+target for each inode is distributed across AGs in the >1TG region.
+There is no locality between the inode and it's data, and the
+behaviour of the filesystem from an IO perspective is completely
+different.
+
+> The ideal layout of af to be constructed is to limit the higher af
+> in the small part of the entire [0, agcount). Like:
+> 
+> |<-----+ af 0 +----->|<af 1>|
+> |----------------------------
+> | ag 0 | ag 1 | ag 2 | ag 3 |
+> +----------------------------
+> 
+> So for much of the ags(0, 1, 2) in af 0, that will not be a problem.
+> And for the ag in the small part, like ag 3.
+> if there is inode in ag3, and there comes the space allocation of the
+> inode, it will not find space in ag 3 first. It will still search from the
+> af0 to af1, whose logic is reflected in the patch:
+
+That was not clear from your description. I'm not about to try to
+reverse engineer your proposed allocation algorithm from the code
+you have presented. Looking at the implementation doesn't inform me
+about the design and intent of the allocation policy.
+
+> [PATCH 4/5] xfs: add infrastructure to support AF allocation algorithm
+> 
+> it says:
+> 
+> + /* if start_agno is not in current AF range, make it be. */
+> + if ((start_agno < start_af) || (start_agno > end_af))
+> +       start_agno = start_af;
+> which means, the start_agno will not be used to comply with locality
+> principle.
+
+Which is basically the inode32 algorithm done backwards.
+
+> > > 3.Lower AFs will NEVER go to higher AFs for allocation if
+> > >   it can complete it in the current AF.
+> 
+> From that rule, we can infer that,
+>      For any specific af, if len1 > len2, then,
+>      P(len1) <= P(len2)
+> 
+> where P(len) represents the probability of the success allocation for an
+> exact *len* length of extent.
+>
+> To prove that, Imagine we have to allocate two extent at len 1 and 4 in af 0,
+> if we can allocate len 4 in af 0, then we can allocate len 1 in af 0.
+> but,
+> if we can allocate len 1 in af 1, we may not allocate len 4 in af 0.
+>
+> So, P(len1) <= P(len2).
+> 
+> That means it will naturally form a layer of different len. like:
+> 
+>        +------------------------+
+>        |            8           |
+> af 2   |    1   8     8  1      |
+>        |       1   1            |
+>        +------------------------+
+>        |                        |
+>        |    4                   |
+>        |          4             |
+> af 1   |        4     1         |
+>        |    1       4           |
+>        |                  4     |
+>        +------------------------+
+>        |                        |
+>        |  1     1     1         |
+>        |                        |
+>        |           1            |
+>        |  1  1 4       1        |
+> af 0   |           1            |
+>        |      1                 |
+>        |                  1     |
+>        |          1             |
+>        |                        |
+>        +------------------------+
+> 
+> So there is no need so provide extra preference control info for
+> an allocation. It will naturally find where it should go.
+
+This appears to be a "first fit from index zero" selection routine.
+It optimises for discontiguous, small IO hole filling over
+locality preserving large contiguous allocation, concurrency and IO
+load distribution. XFS optimises for the latter, not the former.
+
+First fit allocation generally results in performance hotspots in
+large storage arrays. e.g. with a linear concat of two luns, a
+first-fit from zero algorithm will not direct any IO to the second
+lun until the first lun is almost entirely full. IOWs, half the
+performance of the storage hardware is not being used with such an
+algorithm. The larger the storage array gets, the worse this
+under-utilisation becomes, and hence we have never needed to
+optimise for such an inefficient IO pattern as the innodb page
+compression algorithm uses.
+
+FWIW, as this appears to be a first-fit algorithm, why is there
+a need for special "AF"s to control behaviour? I may be missing
+something else, but if we treat each AG as an AF, then we
+effectively get the same result, right?
+
+The only issue would be AG contention would result in allocations in
+higher AGs before the lower AGs are completely full, but the
+filesystem would still always fill from one end to the other as this
+AF construct is attempting to do. That leaves space for inodes to be
+allocated right up until the last AG in the fs becomes too
+fragmented to allocate inodes.
+
+AFAICT, this "reserve AG space for inodes" behaviour that you are
+trying to acheive is effectively what the inode32 allocator already
+implements. By forcing inode allocation into the AGs below 1TB and
+preventing data from being allocated in those AGs until allocation
+in all the AGs above start failing, it effectively provides the same
+functionality but without the constraints of a global first fit
+allocation policy.
+
+We can do this with any AG by setting it up to prefer metadata,
+but given we already have the inode32 allocator we can run some
+tests to see if setting the metadata-preferred flag makes the
+existing allocation policies do what is needed.
+
+That is, mkfs a new 2TB filesystem with the same 344AG geometry as
+above, mount it with -o inode32 and run the workload that fragments
+all the free space. What we should see is that AGs in the upper TB
+of the filesystem should fill almost to full before any significant
+amount of allocation occurs in the AGs in the first TB of space.
+
+If that's the observed behaviour, then I think this problem can be
+solved by adding a mechanism to control which AGs in the filesystem
+are metadata preferred...
+
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
 
