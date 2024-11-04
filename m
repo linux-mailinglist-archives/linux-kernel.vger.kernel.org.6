@@ -1,240 +1,171 @@
-Return-Path: <linux-kernel+bounces-394279-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394267-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D57319BACD1
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 07:46:25 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DD249BACB6
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 07:44:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD5241C2166E
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 06:46:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 60C181C20CA7
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 06:44:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA126185936;
-	Mon,  4 Nov 2024 06:46:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AB7818E05E;
+	Mon,  4 Nov 2024 06:44:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JSLNj2/2"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d8BjxGkN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8516F165EE8
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 06:46:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD85F18CC1B
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 06:44:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730702766; cv=none; b=S0HbezUqlDCzeXc7jyTpaPrsEVxogj1iWov3VYXoJqiIYWQjOFrJ/4XabZ572eELFCqUDa4pxZFol01bNeaG2MpKw8cnp9lIW7n1OKirj9voArJ3c0webCJlI4HQmy4olBh9gkhss7UltCW2wC6c5sKkd6nipYdhodxgaaMp/E8=
+	t=1730702646; cv=none; b=nCI+fMtv+ZpQlDEFdqy3h5vUcRVoRbhGr450Ij4/4OVG0yFycLSoALjBfqkAZ2jAO9KVW80+TY+VqMwj0QL3UdKhi+JlPOY4Iyvc63L9eCZBZtakFcdr4bggpJeLDVGXCebFxn7GMjA8Rehwo4Sge96TNa0tIJq1vYNNAV3cWh8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730702766; c=relaxed/simple;
-	bh=9vGR0YQIvHMo6L5jVnyVbE9ShD0ZT3SSjFtwHagm3Fg=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=cxviOBZ8/7COens7AOuWspqSPejUX4WG2RnQG0DLNF7YBcWGnZNV8+fGlLKjqa52ZbjOKXTHxlP/HYOsvty3gWzZHbedRDyTXwaouYb7C1MmPmchugofJdbDjzoW/T2GODlWkSVi7aDqYsPQuU/SGcxByRoXrpu2s3hdKRriRUc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JSLNj2/2; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730702763; x=1762238763;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version:content-transfer-encoding;
-  bh=9vGR0YQIvHMo6L5jVnyVbE9ShD0ZT3SSjFtwHagm3Fg=;
-  b=JSLNj2/2L29BAJd+yoFqZZ27dFYnXLUDUtK5rxuzKE0Fri3wxiOG+yiv
-   0mwQJbWyvWacCh9lLnGiT7lTSs7xX0HKAK7KOAtGmuQ4u8XwU5shVjmv+
-   uYHzORO7FQIiTAXD/4ycgtf6z7TIyEK+c1dBhmab0d5eJkh2xvS3A3YnM
-   AnosSFTHNF9ym5e0A5jlbtwo18GcaDz+Gn7InfEdUpdXbuWOeOCf8UITP
-   /lkU4v/yGoruWnwJDn9YJ2OoJSdLfm5TzEkpYLOxibNZGQk3034gXsAwd
-   f0BTsRRtw7fx+2bFEKVwQKyc+WXrD1G/41enF2sFlgPB2DNnE8SpoqFYe
-   A==;
-X-CSE-ConnectionGUID: NXA61YwCQ8+xW1R60PfVLQ==
-X-CSE-MsgGUID: 6t8bA5MATKGzV2T5o1l+gw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11245"; a="18003271"
-X-IronPort-AV: E=Sophos;i="6.11,256,1725346800"; 
-   d="scan'208";a="18003271"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2024 22:46:03 -0800
-X-CSE-ConnectionGUID: 4VnCjYr1QGi6HIQAGYiobA==
-X-CSE-MsgGUID: dXoz8yVPQx2ps68GIKnJXg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,256,1725346800"; 
-   d="scan'208";a="83443891"
-Received: from yhuang6-desk2.sh.intel.com (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
-  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2024 22:45:58 -0800
-From: "Huang, Ying" <ying.huang@intel.com>
-To: Johannes Weiner <hannes@cmpxchg.org>,  Barry Song <21cnbao@gmail.com>
-Cc: Yosry Ahmed <yosryahmed@google.com>,  Usama Arif
- <usamaarif642@gmail.com>,  akpm@linux-foundation.org,  linux-mm@kvack.org,
-  linux-kernel@vger.kernel.org,  Barry Song <v-songbaohua@oppo.com>,
-  Kanchana P Sridhar <kanchana.p.sridhar@intel.com>,  David Hildenbrand
- <david@redhat.com>,  Baolin Wang <baolin.wang@linux.alibaba.com>,  Chris
- Li <chrisl@kernel.org>,  Kairui Song <kasong@tencent.com>,  Ryan Roberts
- <ryan.roberts@arm.com>,  Michal Hocko <mhocko@kernel.org>,  Roman Gushchin
- <roman.gushchin@linux.dev>,  Shakeel Butt <shakeel.butt@linux.dev>,
-  Muchun Song <muchun.song@linux.dev>
-Subject: Re: [PATCH RFC] mm: mitigate large folios usage and swap thrashing
- for nearly full memcg
-In-Reply-To: <20241031153830.GA799903@cmpxchg.org> (Johannes Weiner's message
-	of "Thu, 31 Oct 2024 11:38:30 -0400")
-References: <20241027001444.3233-1-21cnbao@gmail.com>
-	<33c5d5ca-7bc4-49dc-b1c7-39f814962ae0@gmail.com>
-	<CAGsJ_4wdgptMK0dDTC5g66OE9WDxFDt7ixDQaFCjuHdTyTEGiA@mail.gmail.com>
-	<e8c6d46c-b8cf-4369-aa61-9e1b36b83fe3@gmail.com>
-	<CAJD7tkZ60ROeHek92jgO0z7LsEfgPbfXN9naUC5j7QjRQxpoKw@mail.gmail.com>
-	<852211c6-0b55-4bdd-8799-90e1f0c002c1@gmail.com>
-	<CAJD7tkaXL_vMsgYET9yjYQW5pM2c60fD_7r_z4vkMPcqferS8A@mail.gmail.com>
-	<c76635d7-f382-433a-8900-72bca644cdaa@gmail.com>
-	<CAJD7tkYSRCjtEwP=o_n_ZhdfO8nga-z-a=RirvcKL7AYO76XJw@mail.gmail.com>
-	<20241031153830.GA799903@cmpxchg.org>
-Date: Mon, 04 Nov 2024 14:42:25 +0800
-Message-ID: <87a5ef8ppq.fsf@yhuang6-desk2.ccr.corp.intel.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1730702646; c=relaxed/simple;
+	bh=N2BEphD6E+ts757yq9dfmmqSySIs2TwDaeNZtjT8DQ8=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=e6OMILze2itPhVddg04ZZ75WA1uoYll9RYlMEpDqQ0IxW+5iQeEZXJB2RFE003V0tFMPaP2kzc91DZ+HCq04ZjFB9+2MzZJZyyUObPMI6vSlw3JA38yyiGrLwTdvUdKNWP9Nvg6haCuFc3fy2UU+v5IFJIDVVvkwBSEwzEyLO04=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d8BjxGkN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 3ACCAC4CECE;
+	Mon,  4 Nov 2024 06:44:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730702646;
+	bh=N2BEphD6E+ts757yq9dfmmqSySIs2TwDaeNZtjT8DQ8=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=d8BjxGkNhwqEQ1w/TPSJgwkgN/et1iaMVP1zw14U5aA4CnDnOYrzSpqTSkkaqkPmE
+	 jbwcjpi5PdzeHjdBbpenFsKGFzoii2ae5TB2B6DeWesRFo4kcDFa9NQYv8NlhCe2NQ
+	 OqRKlAcLWpxEmANuT3dYxw51TSOhLOkZ+9lM1AZO9QfKBma4I/L2vfBETzdQj+sEa5
+	 zWbmU4iwlq/GUtJi8AzLyiujbcJZjtLqK6lIcIK+GKWJMsrlpz+RD8WPFu0eD+/BUt
+	 YDzZ/ACxBi6IVCQc37gLD84l04iAWuQNqhU8OCdLduPvvKZA7CHMVqlkwLr6HpWL0G
+	 9LxqTaZRGb5JA==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21B5ED111AD;
+	Mon,  4 Nov 2024 06:44:06 +0000 (UTC)
+From: Hermes Wu via B4 Relay <devnull+Hermes.wu.ite.com.tw@kernel.org>
+Subject: [PATCH v7 00/10] drm/bridge: it6505: fix HDCP CTS fail items and
+ add MCCS support
+Date: Mon, 04 Nov 2024 14:43:30 +0800
+Message-Id: <20241104-v7-upstream-v7-0-8b71fd0f1d2d@ite.com.tw>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIABJtKGcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyzHUUlJIzE
+ vPSU3UzU4B8JSMDIxNDQwND3TJz3dKC4pKi1MRcXXPT1MQUozSjNFMzcyWgjoKi1LTMCrBp0bG
+ 1tQBAzplEXQAAAA==
+X-Change-ID: 20241101-v7-upstream-75ead2f2f567
+To: Andrzej Hajda <andrzej.hajda@intel.com>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Hermes Wu <hermes.wu@ite.com.tw>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+ Pin-yen Lin <treapking@chromium.org>, 
+ Kenneth Hung <Kenneth.Hung@ite.com.tw>, Pet Weng <Pet.Weng@ite.com.tw>, 
+ Hermes Wu <Hermes.wu@ite.com.tw>, 
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1730702658; l=2910;
+ i=Hermes.wu@ite.com.tw; s=20241101; h=from:subject:message-id;
+ bh=N2BEphD6E+ts757yq9dfmmqSySIs2TwDaeNZtjT8DQ8=;
+ b=SnEN66Llgw53Ax04tEB9EPogFfgJEnebxA2xp/6yJ0r/3ojcYg2jVR1CrBzaKZ/7O0Gzl+QKt
+ IDXftIsWc6pCifgJ3F51AP/xEG0oehgeu4c1MWR8K3g1EszvJUWRpfD
+X-Developer-Key: i=Hermes.wu@ite.com.tw; a=ed25519;
+ pk=FOYYbsP2Nlw6mjB3rLFYSLmAiENzj4AWQly5XTcDuMM=
+X-Endpoint-Received: by B4 Relay for Hermes.wu@ite.com.tw/20241101 with
+ auth_id=268
+X-Original-From: Hermes Wu <Hermes.wu@ite.com.tw>
+Reply-To: Hermes.wu@ite.com.tw
 
-Johannes Weiner <hannes@cmpxchg.org> writes:
+There are lots of failure items while running HDCP CTS using UNIGRAF DPR-100.
+In Order to fix those failures, HDCP flow needs to be changed.
 
-> On Wed, Oct 30, 2024 at 02:18:09PM -0700, Yosry Ahmed wrote:
->> On Wed, Oct 30, 2024 at 2:13=E2=80=AFPM Usama Arif <usamaarif642@gmail.c=
-om> wrote:
->> > On 30/10/2024 21:01, Yosry Ahmed wrote:
->> > > On Wed, Oct 30, 2024 at 1:25=E2=80=AFPM Usama Arif <usamaarif642@gma=
-il.com> wrote:
->> > >>>> I am not sure that the approach we are trying in this patch is th=
-e right way:
->> > >>>> - This patch makes it a memcg issue, but you could have memcg dis=
-abled and
->> > >>>> then the mitigation being tried here wont apply.
->> > >>>
->> > >>> Is the problem reproducible without memcg? I imagine only if the
->> > >>> entire system is under memory pressure. I guess we would want the =
-same
->> > >>> "mitigation" either way.
->> > >>>
->> > >> What would be a good open source benchmark/workload to test without=
- limiting memory
->> > >> in memcg?
->> > >> For the kernel build test, I can only get zswap activity to happen =
-if I build
->> > >> in cgroup and limit memory.max.
->> > >
->> > > You mean a benchmark that puts the entire system under memory
->> > > pressure? I am not sure, it ultimately depends on the size of memory
->> > > you have, among other factors.
->> > >
->> > > What if you run the kernel build test in a VM? Then you can limit is
->> > > size like a memcg, although you'd probably need to leave more room
->> > > because the entire guest OS will also subject to the same limit.
->> > >
->> >
->> > I had tried this, but the variance in time/zswap numbers was very high.
->> > Much higher than the AMD numbers I posted in reply to Barry. So found
->> > it very difficult to make comparison.
->>=20
->> Hmm yeah maybe more factors come into play with global memory
->> pressure. I am honestly not sure how to test this scenario, and I
->> suspect variance will be high anyway.
->>=20
->> We can just try to use whatever technique we use for the memcg limit
->> though, if possible, right?
->
-> You can boot a physical machine with mem=3D1G on the commandline, which
-> restricts the physical range of memory that will be initialized.
-> Double check /proc/meminfo after boot, because part of that physical
-> range might not be usable RAM.
->
-> I do this quite often to test physical memory pressure with workloads
-> that don't scale up easily, like kernel builds.
->
->> > >>>> - Instead of this being a large folio swapin issue, is it more of=
- a readahead
->> > >>>> issue? If we zswap (without the large folio swapin series) and ch=
-ange the window
->> > >>>> to 1 in swap_vma_readahead, we might see an improvement in linux =
-kernel build time
->> > >>>> when cgroup memory is limited as readahead would probably cause s=
-wap thrashing as
->> > >>>> well.
->
-> +1
->
-> I also think there is too much focus on cgroup alone. The bigger issue
-> seems to be how much optimistic volume we swap in when we're under
-> pressure already. This applies to large folios and readahead; global
-> memory availability and cgroup limits.
+The DisplayPort AUX protocol supports I2C transport.
+In Order to support MCCS via the aux channel, the aux-i2c operation is added.
 
-The current swap readahead logic is something like,
+v6->v7
+	-[3/10] add header <linux/bitfield.h> included
 
-1. try readahead some pages for sequential access pattern, mark them as
-   readahead
+	links:
+	https://lore.kernel.org/all/20241016-upstream-v6-v6-0-4d93a0c46de1@ite.com.tw/
 
-2. if these readahead pages get accessed before swapped out again,
-   increase 'hits' counter
+v5->v6:
+	-keep the commit message wrapped at 72-75 chars.
+	-[10/10] fix return variable being used without being initialized
 
-3. for next swap in, try readahead 'hits' pages and clear 'hits'.
+v4->v5:
+	-add more messages for changes.
+	-[2/10] modified AUX transfer data size judgment.
+		change for-loop to do-while.
+	-[7/10] change for-loop to do-while.
+	-[9/10] change wait timer with timer_after()
 
-So, if there's heavy memory pressure, the readaheaded pages will not be
-accessed before being swapped out again (in 2 above), the readahead
-pages will be minimal.
+	links:
+	https://lore.kernel.org/all/20240926074755.22176-4-Hermes.Wu@ite.com.tw/
+	https://lore.kernel.org/all/20240926075134.22394-1-Hermes.Wu@ite.com.tw/
 
-IMHO, mTHP swap-in is kind of swap readahead in effect.  That is, in
-addition to the pages accessed are swapped in, the adjacent pages are
-swapped in (swap readahead) too.  If these readahead pages are not
-accessed before swapped out again, system runs into more severe
-thrashing.  This is because we lack the swap readahead window scaling
-mechanism as above.  And, this is why I suggested to combine the swap
-readahead mechanism and mTHP swap-in by default before.  That is, when
-kernel swaps in a page, it checks current swap readahead window, and
-decides mTHP order according to window size.  So, if there are heavy
-memory pressure, so that the nearby pages will not be accessed before
-being swapped out again, the mTHP swap-in order can be adjusted
-automatically.
+v3->v4:
+	-split changes  into patches.
 
-> It happens to manifest with THP in cgroups because that's what you
-> guys are testing. But IMO, any solution to this problem should
-> consider the wider scope.
->
->> > >>> I think large folio swapin would make the problem worse anyway. I =
-am
->> > >>> also not sure if the readahead window adjusts on memory pressure or
->> > >>> not.
->> > >>>
->> > >> readahead window doesnt look at memory pressure. So maybe the same =
-thing is being
->> > >> seen here as there would be in swapin_readahead?
->> > >
->> > > Maybe readahead is not as aggressive in general as large folio
->> > > swapins? Looking at swap_vma_ra_win(), it seems like the maximum ord=
-er
->> > > of the window is the smaller of page_cluster (2 or 3) and
->> > > SWAP_RA_ORDER_CEILING (5).
->> > Yes, I was seeing 8 pages swapin (order 3) when testing. So might
->> > be similar to enabling 32K mTHP?
->>=20
->> Not quite.
->
-> Actually, I would expect it to be...
+v2->v3:
+	-split aux read  KSV function to a patch.
+	-[1/3] new in v3
+	-[2/3] add description of patch
 
-Me too.
+v1->v2:
+	- ignored.
 
->> > > Also readahead will swapin 4k folios AFAICT, so we don't need a
->> > > contiguous allocation like large folio swapin. So that could be
->> > > another factor why readahead may not reproduce the problem.
->>=20
->> Because of this ^.
->
-> ...this matters for the physical allocation, which might require more
-> reclaim and compaction to produce the 32k. But an earlier version of
-> Barry's patch did the cgroup margin fallback after the THP was already
-> physically allocated, and it still helped.
->
-> So the issue in this test scenario seems to be mostly about cgroup
-> volume. And then 8 4k charges should be equivalent to a singular 32k
-> charge when it comes to cgroup pressure.
+To: Andrzej Hajda <andrzej.hajda@intel.com>
+To: Neil Armstrong <neil.armstrong@linaro.org>
+To: Robert Foss <rfoss@kernel.org>
+To: Laurent Pinchart <Laurent.pinchart@ideasonboard.com>
+To: Jonas Karlman <jonas@kwiboo.se>
+To: Jernej Skrabec <jernej.skrabec@gmail.com>
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+To: Maxime Ripard <mripard@kernel.org>
+To: Thomas Zimmermann <tzimmermann@suse.de>
+To: David Airlie <airlied@gmail.com>
+To: Simona Vetter <simona@ffwll.ch>
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+To: Hermes Wu <hermes.wu@ite.com.tw>
+Cc: dri-devel@lists.freedesktop.org
+Cc: linux-kernel@vger.kernel.org
+Cc: Pin-yen Lin <treapking@chromium.org>
+Cc: Kenneth Hung <Kenneth.Hung@ite.com.tw>
+Cc: Pet Weng <Pet.Weng@ite.com.tw> 
 
---
-Best Regards,
-Huang, Ying
+Signed-off-by: Hermes Wu <Hermes.wu@ite.com.tw>
+---
+Hermes Wu (10):
+      drm/bridge: it6505: Change definition of AUX_FIFO_MAX_SIZE
+      drm/bridge: it6505: improve AUX operation for edid read
+      drm/bridge: it6505: add AUX operation for HDCP KSV list read
+      drm/bridge: it6505: Change definition MAX_HDCP_DOWN_STREAM_COUNT
+      drm/bridge: it6505: fix HDCP Bstatus check
+      drm/bridge: it6505: fix HDCP encryption when R0 ready
+      drm/bridge: it6505: fix HDCP CTS KSV list read with UNIGRAF DPR-100.
+      drm/bridge: it6505: fix HDCP CTS compare V matching
+      drm/bridge: it6505: fix HDCP CTS KSV list wait timer
+      drm/bridge: it6505: add I2C functionality on AUX
+
+ drivers/gpu/drm/bridge/ite-it6505.c | 335 ++++++++++++++++++++++++++++++------
+ 1 file changed, 278 insertions(+), 57 deletions(-)
+---
+base-commit: 4d1c251e8889b4629789425fe85adfc6d39666ac
+change-id: 20241101-v7-upstream-75ead2f2f567
+
+Best regards,
+-- 
+Hermes Wu <Hermes.wu@ite.com.tw>
+
+
 
