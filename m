@@ -1,272 +1,140 @@
-Return-Path: <linux-kernel+bounces-394565-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394574-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B17E99BB137
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 11:35:23 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 014249BB14E
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 11:39:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 028A9B2392F
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 10:35:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD7FE1F23012
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 10:39:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 089441B0F3C;
-	Mon,  4 Nov 2024 10:35:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="BaLsYvBF"
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2055.outbound.protection.outlook.com [40.107.223.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7651C155392;
-	Mon,  4 Nov 2024 10:35:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.55
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730716513; cv=fail; b=mxepuRX6wR3XTNgKApVRPMU36ga1R9zf5uiFycKBAgmK/p7cWljARh0tG/Q7yzH/IBT/+cvZueTQckRCbt/C3SxKqBjKVlHM+Tx1Mm5VYIdR0V/B7cyHI8Vkgiy4tMPB43ttbD5/tUhIz6Rev65d2p3tLccrx4drJOSXPPdv72s=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730716513; c=relaxed/simple;
-	bh=IPn93IHGiKK/GWnHwMz2N4KtAeLV8aEkeKFs0Dt0RTc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=GBdSBHCglqPz/vmB7VcibIXXGvn+6RYMGFTDrtfFErCtkeMZ6aAyMMgNzvy1Hy/BGDMOtEJazL0mH+6mx2YpBm0tVFCxKzCjByu8ydfA5+dSeOwfBG6naXklPRN7SKd0F0p8bc5pGF4+l65R6/iauLOvmItY+H/jkZp3tNqGCRA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=BaLsYvBF; arc=fail smtp.client-ip=40.107.223.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=EGqD7W8WFCOn4XT2Il06Myi5M0c3QNTJRQHI1wrwY5Bm9JyYoCMDy80cfmKJ0Gju6wGgI4LPAxbz2PV/YMOkrGgsVg1bvv1tJAo2QQGVy0xDPsBhwx5/jqVhqUeYRpVNEMRU9+6PZqGYv08mTGgMwa6cyz6givGtcnxOEoJu3B7TwxM6dj5dF+ydYNv+cj/kgyRaL4NaI6JFziosWUTTe6R313MCMctQ/s/PzSi7dCEjThYETwVw3JHC/dE5OvZL1VzDCvbsjB3GYD//qBVDZhYQmk5eqsT0YSY5Yup6rmODeIZu9aTyZ3CEz4C6EaAzpZez2JSFdEh8OdraTRG9Kg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=UMPCvpty8bvYlxxda9KtYEpA33IxSbmzjG/LLp0K/yA=;
- b=JMPPEvs2UdimKwJURfFRDBOPwBbn7fgt3wN4yhCBSmzCH7ITNDPlUrjJYF1O8IbZMfr5wgQ1uhC8N+50zHiWMY9U0gI4Q0rL5cvIz4tLsWzPGcYel6C+CH5p1Q+DZULKQGyxkyYlNetMLra29KqmYjD/PRXAh9RBou0AQSBCcrL1GRqczoulen97eXf/ueswZfoyPHWvvZHz8i/e4PuT2w7oltyYG866VnmqxaZyGuGujW2ctRctKLJlkLddb2V5vN+5bDpLjpOADxvVwtJeGBNAgfgs1ZfRxQg+2meFuZHrj9gv6S4feW8QHYIK+OXX+FXK+ztWoNqkfyWhOCa4zw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=amazon.com smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=UMPCvpty8bvYlxxda9KtYEpA33IxSbmzjG/LLp0K/yA=;
- b=BaLsYvBF4S5OKQklaL4ZLSf/i829fvJco1Bz1VwT+sALCZDqXXRKTSZJ8gybhAJkgJF7tC02pz/cPmryR/NklQPnlOFiGLcIT0CnASJBbeGJHgYc6jJAG0prsq8D07mCN5FZtX1cH1MJJb+5lz7ckZPdDgvaIv5cupbJ1pz+BUw=
-Received: from BY5PR04CA0006.namprd04.prod.outlook.com (2603:10b6:a03:1d0::16)
- by DM4PR12MB7718.namprd12.prod.outlook.com (2603:10b6:8:102::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8114.30; Mon, 4 Nov
- 2024 10:35:09 +0000
-Received: from SJ1PEPF00002312.namprd03.prod.outlook.com
- (2603:10b6:a03:1d0:cafe::56) by BY5PR04CA0006.outlook.office365.com
- (2603:10b6:a03:1d0::16) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8114.30 via Frontend
- Transport; Mon, 4 Nov 2024 10:35:08 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- SJ1PEPF00002312.mail.protection.outlook.com (10.167.242.166) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8137.17 via Frontend Transport; Mon, 4 Nov 2024 10:35:08 +0000
-Received: from [10.252.216.179] (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 4 Nov
- 2024 04:35:03 -0600
-Message-ID: <d3306655-c4e7-20ab-9656-b1b01417983c@amd.com>
-Date: Mon, 4 Nov 2024 16:04:56 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E7F91B6CE4;
+	Mon,  4 Nov 2024 10:38:38 +0000 (UTC)
+Received: from gate.crashing.org (gate.crashing.org [63.228.1.57])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C0701B394C;
+	Mon,  4 Nov 2024 10:38:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.228.1.57
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730716717; cv=none; b=RIPxT81VOgu9O99Qi82D0hI2DLAcsw2c0JT4VuDiG2rnQ+alDS7YIQPxd63F3gcU2U4eAUPtIa9f7aatf01JkB2Sl1TKx6bbZYLgJ1o2HD8SkfGa6C8y6rTDiKrqnyVSkXHypRZ+2S1hZxv9sjBot3E4ZWPHKdgYHkYni/NvadU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730716717; c=relaxed/simple;
+	bh=HGPGB0Mg253q0yrFI7BDnmDh/7TP1a+ibRRnqp9yLT0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Mime-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YoEXvYmS9rQ26lQ7JmVBsbM7iqO9oBjitB5ZXt0o1t7hokT/0iEIR1YYoDf6GdT+9F+kS3kCJ25TlJqrpC5kw1XznK/4eGzaMWx+zufI6IfUKJ7zTmiQzkAVXQOv0DnKtLIEUzAtQcOdFf6WRyNGaE9mHek2WGALHrS2xywpikY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org; spf=pass smtp.mailfrom=kernel.crashing.org; arc=none smtp.client-ip=63.228.1.57
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.crashing.org
+Received: from gate.crashing.org (localhost.localdomain [127.0.0.1])
+	by gate.crashing.org (8.14.1/8.14.1) with ESMTP id 4A4AaIGG013804;
+	Mon, 4 Nov 2024 04:36:18 -0600
+Received: (from segher@localhost)
+	by gate.crashing.org (8.14.1/8.14.1/Submit) id 4A4AaGdn013795;
+	Mon, 4 Nov 2024 04:36:16 -0600
+X-Authentication-Warning: gate.crashing.org: segher set sender to segher@kernel.crashing.org using -f
+Date: Mon, 4 Nov 2024 04:36:15 -0600
+From: Segher Boessenkool <segher@kernel.crashing.org>
+To: Hari Bathini <hbathini@linux.ibm.com>
+Cc: Shuah Khan <shuah@kernel.org>, linux-kselftest@vger.kernel.org,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Madhavan Srinivasan <maddy@linux.ibm.com>,
+        "Naveen N. Rao" <naveen@kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        linux-trace-kernel@vger.kernel.org,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
+Subject: Re: [PATCH] selftests/ftrace: update kprobe syntax error test for ppc64le
+Message-ID: <20241104103615.GZ29862@gate.crashing.org>
+References: <20241101191925.1550493-1-hbathini@linux.ibm.com> <20241101205948.GW29862@gate.crashing.org> <1916cb5c-cb3d-427c-bcf0-2c1b905fd6d1@linux.ibm.com> <20241104094431.GY29862@gate.crashing.org> <245fed6f-5fb4-4925-ba0a-fb2f32e650d0@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.6.1
-Subject: Re: [PATCH 0/2] [tip: sched/core] sched: Disable PLACE_LAG and
- RUN_TO_PARITY and move them to sysctl
-Content-Language: en-US
-To: Cristian Prundeanu <cpru@amazon.com>, "Gautham R. Shenoy"
-	<gautham.shenoy@amd.com>
-CC: <linux-tip-commits@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	"Peter Zijlstra" <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	<x86@kernel.org>, <linux-arm-kernel@lists.infradead.org>, Bjoern Doebel
-	<doebel@amazon.com>, Hazem Mohamed Abuelfotoh <abuehaze@amazon.com>, "Geoff
- Blake" <blakgeof@amazon.com>, Ali Saidi <alisaidi@amazon.com>, Csaba Csoma
-	<csabac@amazon.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>
-References: <ZxuujhhrJcoYOdMJ@BLRRASHENOY1.amd.com>
- <20241029045749.37257-1-cpru@amazon.com>
- <ZyifxfSV8k5vC0iG@BLRRASHENOY1.amd.com>
-From: K Prateek Nayak <kprateek.nayak@amd.com>
-In-Reply-To: <ZyifxfSV8k5vC0iG@BLRRASHENOY1.amd.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ1PEPF00002312:EE_|DM4PR12MB7718:EE_
-X-MS-Office365-Filtering-Correlation-Id: 407de3c6-8941-4e1c-38ba-08dcfcbc5abf
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|82310400026|376014|7416014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?N2RpTlpodk02TVpRdHlEMXVFN3RIc00rVG83dWdQWHN4cWtMNCtuN0VLaXh3?=
- =?utf-8?B?M3RIRFRNaElHZVBFRzZzVW5ISDNhWlBGU3luUGs1NlVsQWw0Z2M2T0ZmTWdY?=
- =?utf-8?B?ZTgyQWRLM0N6TnJWZDZNL0Z5TDUyczhIWVVuRXVnUXA0eWJKZjZreFJrK2F4?=
- =?utf-8?B?S2NkcWtRVm1iUFRTNHJrdmZBMDVjcXMzZ3IydWZ6YzJvek1iZkRUcXQ2ZURt?=
- =?utf-8?B?bk01MWRlNjNTUkVXWEtVOXVkaWlyS3gxdUJ5RS8wck5NUXJMZW01Ni9NbFBT?=
- =?utf-8?B?QnlhcUpPdzU1eE8ybis2VTlGc2VVQzRXS2JTZ0E3Nlo2T1Y2clkzUjdzWmph?=
- =?utf-8?B?aVRid2xMd0F1NUdXS3Avb0ZJQStXblBwS3RVN0ZJV3pWdGtBTGtyNXVDQXlE?=
- =?utf-8?B?TWdKQU1TcUNyRVZabkhPdTRWN29wZmpDUzRZOTlqd1EyalZVV2o0cy9VM1N6?=
- =?utf-8?B?WHk3VXJpSjB2UGw3WHQ5cmduOEFNOTl6Z3BSOVZGb01BTHZYYXNEUnk0Q1Bs?=
- =?utf-8?B?ZlhIbVFFRGdhZGIycFFhVGdvbUNZNjZPaFZyOHNuWDdmNGhlUXltd2xNRmdk?=
- =?utf-8?B?YUIrLzVaNi9sMDBLaUNLTVN5bk9nZFJnaStjaTN0SGFmNkxrNnAwQ2FQZGZK?=
- =?utf-8?B?cFA2czZKcm54L3hFOUNTYTd3SUZGak1OckZMSmduM2NBTHZ3aS9pN3oyalBj?=
- =?utf-8?B?TkhySmNHQXYvMWQyYkNBTjEzT0ZMMGVmelZ3RXVQcGJ0RDhaVlJGZG5KaWt0?=
- =?utf-8?B?aldZYVpwK0NFSWp4OHY0VFJCQzEvWFJneEx6ejc1ZHdVSy9JdlNKczgwaUtS?=
- =?utf-8?B?aGhXMzEvYnB6UFM2c3JXSEhkZ21tWDNGU0hvWHZVa1J4SS9aMThOMWpyZGRv?=
- =?utf-8?B?M3pqWkdsQnc3dHFBK1JYRERPSHVXMnBGbzFYWmpYTE8vU2xKYWhvOUUyODBB?=
- =?utf-8?B?R0FOYThMV3JXYi9qeXZrVVcxMmFPODVadFdzOEI0ME5jTUZLQ21nNW1sWDRq?=
- =?utf-8?B?eFRTTjFVdVp0ajUzR3hVRVJPM0lyRVRIbGgzL1Btb3pyLzNVM1lMOUh6UzdI?=
- =?utf-8?B?eXhGNGZyZDJCRU04eTkyRjBZMXNyYU9GUkoyenFnZGtBSkRJZjIrNXBaYmVv?=
- =?utf-8?B?MmZRSGVtTys1VUl4cFg4aTBsUzhEQWZ2UjlTOTNWMTlQZEhpemlkQ2ZCbldh?=
- =?utf-8?B?Qmt6WndFc1JvWlFmSzZWTWlxUlRtcElqVkZBbHhKTkpUZUdOa0oxN0xyVmNq?=
- =?utf-8?B?T2oxSjZTVFVaM0pHd0U2ZENqVjBQalFTMWRncEMwNmtoUlo1eFNMWjdWQVNu?=
- =?utf-8?B?T2JabmdpS1oyWjl0cldSblZKZWxPUXpBdHBSVUQ1aTZXMm03bkdib0VlSHd2?=
- =?utf-8?B?M3FJbm9zVXpZbGdjYmpHaC9obG8xczlucXJmMWg5S0RWcTBNQ2Vlc1NZRHo0?=
- =?utf-8?B?ZWFyeHR2VnhyVVQvYUpkbnlYREtjcVE2LzJ2MWNwWVdrWDRaVmlxclhmSjVa?=
- =?utf-8?B?TitPdTM4S3VraHNQejBiK1lWUlpLSXlWQWl6ZzJ4ZVZtVld1SUZwUU56QVQ1?=
- =?utf-8?B?cE9wOFRJbUc1c3VPakxSUUMxaEtjcGE2eEV6dERTT1FyOFFJUWZaVlp0U2hn?=
- =?utf-8?B?TklNdHVSeXN3TU51VXBYa0xlZnowbUhlYUdUZFcvNkN6VWJ4KzVpdE5KZG1G?=
- =?utf-8?B?NjNZdnl0bHpjcEMyNkIxV05BRFNCeU5KSWNMWU1XQ295NVlDazRrY3g2dSs1?=
- =?utf-8?B?alYwZThiRFZBSGZ5dDJhNXVxUUQ2MXQyenJqVWdUbVBPSUFrZ0ZKR01Ma2pK?=
- =?utf-8?B?b2k3WXhUdTF5ZUJ0RzgwYlVsNWlOMHk5UFJjZzNyWWY4TStaVjBQck8zM3po?=
- =?utf-8?B?cTR4ZDY2cURua1I2ZndRV0ttR0lSL2JvZkQzMWJKY0ZJTEE9PQ==?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(82310400026)(376014)(7416014)(1800799024);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Nov 2024 10:35:08.4737
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 407de3c6-8941-4e1c-38ba-08dcfcbc5abf
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SJ1PEPF00002312.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB7718
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <245fed6f-5fb4-4925-ba0a-fb2f32e650d0@linux.ibm.com>
+User-Agent: Mutt/1.4.2.3i
 
-Hello Cristian, Gautham,
+Hi!
 
-On 11/4/2024 3:49 PM, Gautham R. Shenoy wrote:
-> On Mon, Oct 28, 2024 at 11:57:49PM -0500, Cristian Prundeanu wrote:
->> Hi Gautham,
->>
->> On 2024-10-25, 09:44, "Gautham R. Shenoy" <gautham.shenoy@amd.com <mailto:gautham.shenoy@amd.com>> wrote:
->>
->>> On Thu, Oct 24, 2024 at 07:12:49PM +1100, Benjamin Herrenschmidt wrote:
->>>> On Sat, 2024-10-19 at 02:30 +0000, Prundeanu, Cristian wrote:
->>>>>
->>>>> The hammerdb test is a bit more complex than sysbench. It uses two
->>>>> independent physical machines to perform a TPC-C derived test [1], aiming
->>>>> to simulate a real-world database workload. The machines are allocated as
->>>>> an AWS EC2 instance pair on the same cluster placement group [2], to avoid
->>>>> measuring network bottlenecks instead of server performance. The SUT
->>>>> instance runs mysql configured to use 2 worker threads per vCPU (32
->>>>> total); the load generator instance runs hammerdb configured with 64
->>>>> virtual users and 24 warehouses [3]. Each test consists of multiple
->>>>> 20-minute rounds, run consecutively on multiple independent instance
->>>>> pairs.
->>>>
->>>> Would it be possible to produce something that Prateek and Gautham
->>>> (Hi Gautham btw !) can easily consume to reproduce ?
->>>>
->>>> Maybe a container image or a pair of container images hammering each
->>>> other ? (the simpler the better).
->>>
->>> Yes, that would be useful. Please share your recipe. We will try and
->>> reproduce it at our end. In our testing from a few months ago (some of
->>> which was presented at OSPM 2024), most of the database related
->>> regressions that we observed with EEVDF went away after running these
->>> the server threads under SCHED_BATCH.
->>
->> I am working on a repro package that is self contained and as simple to
->> share as possible.
+On Mon, Nov 04, 2024 at 03:40:26PM +0530, Hari Bathini wrote:
+> On 04/11/24 3:14 pm, Segher Boessenkool wrote:
+> >On Mon, Nov 04, 2024 at 02:51:57PM +0530, Hari Bathini wrote:
+> >>On 02/11/24 2:29 am, Segher Boessenkool wrote:
+> >>>On Sat, Nov 02, 2024 at 12:49:25AM +0530, Hari Bathini wrote:
+> >>>>For ppc64le, depending on the kernel configuration used, offset 16
+> >>>>from function start address can also be considered function entry.
+> >>>>Update the test case to accommodate such configurations.
+> >>>
+> >>>(This is true for all ELfv2, not just LE.  For the kernel that is about
+> >>>the same).
+> >>>
+> >>>The LEP and GEP can differ by zero, one, two, four, eight, or sixteen
+> >>>insns (where an insn is four bytes).  Four insns is common, yes, but
+> >>>maybe you can support all?  See the function symbol's st_other field
+> >>>to see what the offset is:
+> >>>0, 1: zero insns, zero bytes
+> >>>N = 2..6: 1 << (N-2) insns, i.e. 1<<N bytes
+> >>>7: reserved
+> >>>
+> >>>(This is the top 3 bits of st_other, the other bits have other meanings).
+> >>>
+> >>>Four insns is common, yes, but by no means the only possibility.
+> >>
+> >>Hi Segher,
+> >>
+> >>Querying for function arguments is supported on kprobes only at function
+> >>entry. This is a negative test case where the offset is intentionally
+> >>set beyond function entry while querying for function arguments.
+> >>I guess, simply setting the offset to 20 (vfs_read is anyway
+> >>going to be beyond 5 instructions) instead of 8 for powerpc would
+> >>make all platforms and ABI variants happy?
+> >
+> >I have no idea.  What is this "offset" anyway?
 > 
-> Sorry for the delay in response. I was away for the Diwali festival.
-> Thank you for working on the repro package.
-> 
-> 
->>
->> My testing with SCHED_BATCH is meanwhile concluded. It did reduce the
->> regression to less than half - but only with WAKEUP_PREEMPTION enabled.
->> When using NO_WAKEUP_PREEMPTION, there was no performance change compared
->> to SCHED_OTHER.
->>
->> (At the risk of stating the obvious, using SCHED_BATCH only to get back to
->> the default CFS performance is still only a workaround, just as disabling
->> PLACE_LAG+RUN_TO_PARITY is; these give us more room to investigate the
->> root cause in EEVDF, but shouldn't be seen as viable alternate solutions.)
->>
->> Do you have more detail on the database regressions you saw a few months
->> ago? What was the magnitude, and which workloads did it manifest on?
-> 
-> 
-> There were three variants of sysbench + MySQL which showed regression
-> with EEVDF.
-> 
-> 1. 1 Table, 10M Rows, read-only queries.
-> 2. 3 Tables, 10M Rows each, read-only queries.
-> 3. 1 Segmented Table, 10M Rows, read-only queries.
-> 
-> These saw regressions in the range of 9-12%.
-> 
-> The other database workload which showed regression was MongoDB + YCSB
-> workload c. There the magnitude of the regression was around 17%.
-> 
-> As mentioned by Dietmar, we observed these regressions to go away with
-> the original EEVDF complete patches which had a feature called
-> RESPECT_SLICE which allowed a running task to run till its slice gets
-> over without being preempted by a newly woken up task.
-> 
-> However, Peter suggested exploring SCHED_BATCH which fixed the
-> regression even without EEVDF complete patchset.
+> offset (in bytes) from function start address..
 
-Adding to that, since we had to test a variety of workloads, often where
-number of threads autoscales, we used the following methodology to check
-if using SCHED_BATCH solves the regressions observed:
+But what is there?
 
-     # echo 1 > /sys/kernel/tracing/events/task/enable
-     # cat dump_python.py
-     import time
-     import sys
-     
-     with open("/sys/kernel/tracing/trace_pipe") as tf:
-       for l in tf:
-         if not l.startswith("#") or "comm=bash" not in l:
-           pid_start = l.index("pid=") + 4
-           pid = int(l[pid_start: l.index(" ", pid_start)])
-           print(pid)
-           sys.stdout.flush()
+> >This is just the ELFv2 ABI.  No platform can make up its own thing at
+> >all (well, none decided to be gratuitously incompatible, so far).  And
+> >there are no "ABI variants"!
+> 
+> The test case applies for ABIv1 & ABIv2. All ppc32 & ppc64 platforms..
 
-     # watch 'python3 dump_python.py | while read i; do chrt -v -b --pid 0 $i; done'
+Hrm.  So you allow essentially random entry points on other ABIs to
+work?
+
+> >You're just making assumptions here that are based on nothing else but
+> >observations of what is done most of the time.  That might work for a
+> >while -- maybe a long while even! -- but it can easily break down.
+> 
+> Hmmm.. I understand that you want the test case to read st_other field
+> but would you rather suggest an offset of 64?
+
+I have no idea what "offset" means here.
+
+> Is a GEP of 8/16 instructions going to be true anytime soon or is it
+> true already for some cases? The reason I ask that is some kprobe/ftrace
+> code in the kernel might need a bit of re-look if that is the case.
+
+An entry point has no instructions at all.  Oh, you mean the code at
+the GEP.
+
+The LEP can already be all the allowed distances after the GEP.  And
+the .localentry GAS directive already supports all those distances
+always.  Not a lot of code written in assembler does use that, and
+certainly GCC does not use a lot of the freedom it has here, but it
+could (and so could assembler programmers).  Typically people will want
+to make the code here as short as possible, and there are restrictions
+on what is *allowed* to be done here anyway (ld, the link editor, can
+change this code after all!), so it is not too likely you will ever see
+big code at the GEP often, but times change, etc.
 
 
-Post running the above, we launch the benchmark. It is not pretty but it
-has worked for various different kind of benchmarks we've tested.
-
-On an addition note, since EEVDF got rid of both "wakeup_granularity_ns"
-and "latency_ns", and SCHED_BATCH helps with the absence of former, have
-you tested using a larger values of "base_slice_ns" in tandum with
-SCHED_BATCH / NO_WAKEUP_PREEMPTION ?
-
-> 
->>
->> -Cristian
-> 
-> --
-> Thanks and Regards
-> gautham.
-
--- 
-Thanks and Regards,
-Prateek
+Segher
 
