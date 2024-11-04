@@ -1,354 +1,311 @@
-Return-Path: <linux-kernel+bounces-394897-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394898-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D63D79BB580
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 14:12:03 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A9509BB582
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 14:12:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 64D701F21FF3
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 13:12:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4EA2282B78
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 13:12:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85EEF1BE23F;
-	Mon,  4 Nov 2024 13:11:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1376E1BBBDD;
+	Mon,  4 Nov 2024 13:12:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="LNwmbqLq"
-Received: from mail-m1973175.qiye.163.com (mail-m1973175.qiye.163.com [220.197.31.75])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bBPW9Ela"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D38C21B81C1;
-	Mon,  4 Nov 2024 13:11:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.75
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B623B1BAEDC
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 13:12:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730725900; cv=none; b=GeIy6vzU1L7KisKmCsbABqzzaoh77mHKjXoECPdYw+szv5QrvJ7JsMxxbxrB8MWGxY/ZvU7Qf+DcMjXndcbIIUyp+kq4jp8teFbvB2cl6tRQFfdKNV1oyMIWhZTH7LQZfHSzKGSziKy1yeaCHjEt9OwN5ZPPpGJb/2NJv19pRXU=
+	t=1730725969; cv=none; b=S/JGHK5fpFYngOaas0jfOX3GJBIFDa9gGlhsr8+AwrOnpkkYESHU9S3X52R6OlwfP5BqSdF8RAO/4TmSYOYmu/OdpEwZ2ZaDY5X0bbsy8Qz1p/f2RUcfLqNSELLjirPsqr1IchqUIWPu1Uf7zgE8DfcnCAVR2fJe1EkMFK36OHM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730725900; c=relaxed/simple;
-	bh=pymx5FbEA3OfOrxn/cViQ3L3clatLTb162PCEKy7YWw=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=rE3QGFks04cEHN+1ECHfofG9VNQxo/Si1O6m6rzHr2oBlqlQmY0lDaaYbYgI3dEtAK2lzskGNROp7d4svvXbpmeoavvuP3mxaAcVI7bP6FJ4yEJF7i/VhaRdXlH8IFyIwp6MbxkOsU/Rrz26zjGNFgZghMampfSVBMAj07k+pIA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=LNwmbqLq; arc=none smtp.client-ip=220.197.31.75
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
-Received: from [172.16.12.45] (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 1b345651;
-	Mon, 4 Nov 2024 14:21:45 +0800 (GMT+08:00)
-Message-ID: <161ad092-4e7c-4ca1-ade7-d512a0b39799@rock-chips.com>
-Date: Mon, 4 Nov 2024 14:21:45 +0800
+	s=arc-20240116; t=1730725969; c=relaxed/simple;
+	bh=OHqRIXhhgYXeFheeoDwpeP8qBgK0WapujvgW1kroUZc=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Fob08D/xLr1F92TR7YSiB3QmcYtkxM0bs7BYY0sCjluz/A2C/IhpUFStKhigFY7fhV9MKJ8hkHy62fCaADId8qaB9ujSMzWUKTwhFJTDTf3lXNfhsKPXCp4dsuLBU7ssP5oz/gaBBclhdH73X1IrCw9OoSRvq8qDCAdAtgXDxrg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bBPW9Ela; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730725967; x=1762261967;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version:content-transfer-encoding;
+  bh=OHqRIXhhgYXeFheeoDwpeP8qBgK0WapujvgW1kroUZc=;
+  b=bBPW9ElaPLYLVoscc9JTbW4yGCe8w4fa8/TgBosXzMifWXyCcgI2+sVS
+   kB1fzZXzDu/8zDB2GFiB8aPuYQ7euVhjhoWCzI0/k9R7Rs9S33hoiz83Z
+   di+5It0jipnTxd0s5q1iyVtGVtQ4X4iBKG9OcYdOA3Vm0R8C9F2Ozz8vl
+   hP4azCGndVlo3piWb5y77VxBuFVFfdxl0BorEGY3VHTpudYTve4tCcpcE
+   TO5yBFBS/dULLXDvHfKiH/6kroJ1a0Jc0CmIIar4l6z49BjsmkG8GHceQ
+   X57W+WZJsLBLnzv7PsruyiGLDld1GVXwVtff7fOL8XVRbYy4QiksOO8ME
+   Q==;
+X-CSE-ConnectionGUID: eWWX30L4TtCeYgtG1Evh2g==
+X-CSE-MsgGUID: gCi4BRbxQrCAnIhvgS19Ww==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="30274059"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="30274059"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2024 05:12:47 -0800
+X-CSE-ConnectionGUID: w+6orqxHTL2wDVxuQn9LxQ==
+X-CSE-MsgGUID: Dl7LuxZTRAup44iZGNs7/w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,257,1725346800"; 
+   d="scan'208";a="114438131"
+Received: from yhuang6-desk2.sh.intel.com (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
+  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2024 05:12:41 -0800
+From: "Huang, Ying" <ying.huang@intel.com>
+To: Barry Song <21cnbao@gmail.com>
+Cc: Johannes Weiner <hannes@cmpxchg.org>,  Yosry Ahmed
+ <yosryahmed@google.com>,  Usama Arif <usamaarif642@gmail.com>,
+  akpm@linux-foundation.org,  linux-mm@kvack.org,
+  linux-kernel@vger.kernel.org,  Barry Song <v-songbaohua@oppo.com>,
+  Kanchana P Sridhar <kanchana.p.sridhar@intel.com>,  David Hildenbrand
+ <david@redhat.com>,  Baolin Wang <baolin.wang@linux.alibaba.com>,  Chris
+ Li <chrisl@kernel.org>,  Kairui Song <kasong@tencent.com>,  Ryan Roberts
+ <ryan.roberts@arm.com>,  Michal Hocko <mhocko@kernel.org>,  Roman Gushchin
+ <roman.gushchin@linux.dev>,  Shakeel Butt <shakeel.butt@linux.dev>,
+  Muchun Song <muchun.song@linux.dev>
+Subject: Re: [PATCH RFC] mm: mitigate large folios usage and swap thrashing
+ for nearly full memcg
+In-Reply-To: <CAGsJ_4yALxTVuHOf_y00DbYp=kjEZuL3q6sWfn2Wf-Y+_G5RjA@mail.gmail.com>
+	(Barry Song's message of "Mon, 4 Nov 2024 21:06:46 +1300")
+References: <20241027001444.3233-1-21cnbao@gmail.com>
+	<33c5d5ca-7bc4-49dc-b1c7-39f814962ae0@gmail.com>
+	<CAGsJ_4wdgptMK0dDTC5g66OE9WDxFDt7ixDQaFCjuHdTyTEGiA@mail.gmail.com>
+	<e8c6d46c-b8cf-4369-aa61-9e1b36b83fe3@gmail.com>
+	<CAJD7tkZ60ROeHek92jgO0z7LsEfgPbfXN9naUC5j7QjRQxpoKw@mail.gmail.com>
+	<852211c6-0b55-4bdd-8799-90e1f0c002c1@gmail.com>
+	<CAJD7tkaXL_vMsgYET9yjYQW5pM2c60fD_7r_z4vkMPcqferS8A@mail.gmail.com>
+	<c76635d7-f382-433a-8900-72bca644cdaa@gmail.com>
+	<CAJD7tkYSRCjtEwP=o_n_ZhdfO8nga-z-a=RirvcKL7AYO76XJw@mail.gmail.com>
+	<20241031153830.GA799903@cmpxchg.org>
+	<87a5ef8ppq.fsf@yhuang6-desk2.ccr.corp.intel.com>
+	<CAGsJ_4yALxTVuHOf_y00DbYp=kjEZuL3q6sWfn2Wf-Y+_G5RjA@mail.gmail.com>
+Date: Mon, 04 Nov 2024 21:09:09 +0800
+Message-ID: <871pzr87t6.fsf@yhuang6-desk2.ccr.corp.intel.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: shawn.lin@rock-chips.com, Rob Herring <robh+dt@kernel.org>,
- "James E . J . Bottomley" <James.Bottomley@hansenpartnership.com>,
- "Martin K . Petersen" <martin.petersen@oracle.com>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
- Alim Akhtar <alim.akhtar@samsung.com>, Avri Altman <avri.altman@wdc.com>,
- Bart Van Assche <bvanassche@acm.org>, YiFeng Zhao <zyf@rock-chips.com>,
- Liang Chen <cl@rock-chips.com>, linux-scsi@vger.kernel.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, linux-pm@vger.kernel.org
-Subject: Re: [PATCH v3 5/5] scsi: ufs: rockchip: initial support for UFS
-To: Ulf Hansson <ulf.hansson@linaro.org>
-References: <1728368130-37213-1-git-send-email-shawn.lin@rock-chips.com>
- <1728368130-37213-6-git-send-email-shawn.lin@rock-chips.com>
- <CAPDyKForpLcmkqruuTfD6kkJhp_4CKFABWRxFVYNskGL1tjO=w@mail.gmail.com>
- <3969bae0-eeb8-447a-86a5-dfdac0b136cd@rock-chips.com>
- <CAPDyKFo=GcHG2sGQBrXJ7VWyp59QOmbLCAvHQ3krUympEkid_A@mail.gmail.com>
- <98e0062c-aeb1-4bea-aa2b-4a99115c9da4@rock-chips.com>
- <CAPDyKFogrPEEe1A3Kghjj3-SSJT2xEoKfo_hU7KZk+d9bZxEYQ@mail.gmail.com>
- <90ff835d-f3b2-4b7c-aa1a-575e231a57e6@rock-chips.com>
- <CAPDyKFouCV3hCcJ9VuS0App34YyBd6vVNSJr6JZbYGGpffwaWA@mail.gmail.com>
-Content-Language: en-GB
-From: Shawn Lin <shawn.lin@rock-chips.com>
-In-Reply-To: <CAPDyKFouCV3hCcJ9VuS0App34YyBd6vVNSJr6JZbYGGpffwaWA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGk1JHlZDQ00aHh0eTEpMSE1WFRQJFh
-	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSUhCSE
-	NVSktLVUpCS0tZBg++
-X-HM-Tid: 0a92f5d6271e09cckunm1b345651
-X-HM-MType: 1
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6KxA6KRw6TTIZHjo8I0lDCBE1
-	Ix5PFBdVSlVKTEhLTEtKSEtMT05DVTMWGhIXVQgTGgwVVRcSFTsJFBgQVhgTEgsIVRgUFkVZV1kS
-	C1lBWU5DVUlJVUxVSkpPWVdZCAFZQUpLTUhPNwY+
-DKIM-Signature:a=rsa-sha256;
-	b=LNwmbqLqy9e8OFiCIIw0xVOxN4oaruWyYfzIszHydWvOWsI3y6E2fWq2N/8R61Y+Z+EhNH7T5vu4Cn+nXJ+kfCIl5z65hxHY6eWGILGhT46afkViIqj1xy+VQuE/fkHeUhukWNFVTO8fl47EvrynMv0xIr1l9Bbmzd1j0x9i1AI=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
-	bh=L4J/3IWG/HYqO2bLvK7VYapIuJWoSsnKEAmsrCf4H6Y=;
-	h=date:mime-version:subject:message-id:from;
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-在 2024/11/1 23:12, Ulf Hansson 写道:
-> On Mon, 21 Oct 2024 at 02:43, Shawn Lin <shawn.lin@rock-chips.com> wrote:
->>
->> 在 2024/10/18 18:03, Ulf Hansson 写道:
->>> On Fri, 18 Oct 2024 at 11:20, Shawn Lin <shawn.lin@rock-chips.com> wrote:
->>>>
->>>> Hi Ulf,
->>>>
->>>> 在 2024/10/18 17:07, Ulf Hansson 写道:
->>>>> On Thu, 10 Oct 2024 at 03:21, Shawn Lin <shawn.lin@rock-chips.com> wrote:
->>>>>>
->>>>>> Hi Ulf
->>>>>>
->>>>>> 在 2024/10/9 21:15, Ulf Hansson 写道:
->>>>>>> [...]
->>>>>>>
->>>>>>>> +
->>>>>>>> +static int ufs_rockchip_runtime_suspend(struct device *dev)
->>>>>>>> +{
->>>>>>>> +       struct ufs_hba *hba = dev_get_drvdata(dev);
->>>>>>>> +       struct ufs_rockchip_host *host = ufshcd_get_variant(hba);
->>>>>>>> +       struct generic_pm_domain *genpd = pd_to_genpd(dev->pm_domain);
->>>>>>>
->>>>>>> pd_to_genpd() isn't safe to use like this. It's solely to be used by
->>>>>>> genpd provider drivers.
->>>>>>>
->>>>>>>> +
->>>>>>>> +       clk_disable_unprepare(host->ref_out_clk);
->>>>>>>> +
->>>>>>>> +       /*
->>>>>>>> +        * Shouldn't power down if rpm_lvl is less than level 5.
->>>>>>>
->>>>>>> Can you elaborate on why we must not power-off the power-domain when
->>>>>>> level is less than 5?
->>>>>>>
->>>>>>
->>>>>> Because ufshcd driver assume the controller is active and the link is on
->>>>>> if level is less than 5. So the default resume policy will not try to
->>>>>> recover the registers until the first error happened. Otherwise if the
->>>>>> level is >=5, it assumes the controller is off and the link is down,
->>>>>> then it will restore the registers and link.
->>>>>>
->>>>>> And the level is changeable via sysfs.
->>>>>
->>>>> Okay, thanks for clarifying.
->>>>>
->>>>>>
->>>>>>> What happens if we power-off anyway when the level is less than 5?
->>>>>>>
->>>>>>>> +        * This flag will be passed down to platform power-domain driver
->>>>>>>> +        * which has the final decision.
->>>>>>>> +        */
->>>>>>>> +       if (hba->rpm_lvl < UFS_PM_LVL_5)
->>>>>>>> +               genpd->flags |= GENPD_FLAG_RPM_ALWAYS_ON;
->>>>>>>> +       else
->>>>>>>> +               genpd->flags &= ~GENPD_FLAG_RPM_ALWAYS_ON;
->>>>>>>
->>>>>>> The genpd->flags is not supposed to be changed like this - and
->>>>>>> especially not from a genpd consumer driver.
->>>>>>>
->>>>>>> I am trying to understand a bit more of the use case here. Let's see
->>>>>>> if that helps me to potentially suggest an alternative approach.
->>>>>>>
->>>>>>
->>>>>> I was not familiar with the genpd part, so I haven't come up with
->>>>>> another solution. It would be great if you can guide me to the right
->>>>>> way.
->>>>>
->>>>> I have been playing with the existing infrastructure we have at hand
->>>>> to support this, but I need a few more days to be able to propose
->>>>> something for you.
->>>>>
->>>>
->>>> Much appreciate.
->>>>
->>>>>>
->>>>>>>> +
->>>>>>>> +       return ufshcd_runtime_suspend(dev);
->>>>>>>> +}
->>>>>>>> +
->>>>>>>> +static int ufs_rockchip_runtime_resume(struct device *dev)
->>>>>>>> +{
->>>>>>>> +       struct ufs_hba *hba = dev_get_drvdata(dev);
->>>>>>>> +       struct ufs_rockchip_host *host = ufshcd_get_variant(hba);
->>>>>>>> +       int err;
->>>>>>>> +
->>>>>>>> +       err = clk_prepare_enable(host->ref_out_clk);
->>>>>>>> +       if (err) {
->>>>>>>> +               dev_err(hba->dev, "failed to enable ref out clock %d\n", err);
->>>>>>>> +               return err;
->>>>>>>> +       }
->>>>>>>> +
->>>>>>>> +       reset_control_assert(host->rst);
->>>>>>>> +       usleep_range(1, 2);
->>>>>>>> +       reset_control_deassert(host->rst);
->>>>>>>> +
->>>>>>>> +       return ufshcd_runtime_resume(dev);
->>>>>>>> +}
->>>>>>>> +
->>>>>>>> +static int ufs_rockchip_system_suspend(struct device *dev)
->>>>>>>> +{
->>>>>>>> +       struct ufs_hba *hba = dev_get_drvdata(dev);
->>>>>>>> +       struct ufs_rockchip_host *host = ufshcd_get_variant(hba);
->>>>>>>> +
->>>>>>>> +       /* Pass down desired spm_lvl to Firmware */
->>>>>>>> +       arm_smccc_smc(ROCKCHIP_SIP_SUSPEND_MODE, ROCKCHIP_SLEEP_PD_CONFIG,
->>>>>>>> +                       host->pd_id, hba->spm_lvl < 5 ? 1 : 0, 0, 0, 0, 0, NULL);
->>>>>>>
->>>>>>> Can you please elaborate on what goes on here? Is this turning off the
->>>>>>> power-domain that the dev is attached to - or what is actually
->>>>>>> happening?
->>>>>>>
->>>>>>
->>>>>> This smc call is trying to ask firmware not to turn off the power-domian
->>>>>> that the UFS is attached to and also not to turn off the power of UFS
->>>>>> conntroller.
->>>>>
->>>>> Okay, thanks for clarifying!
->>>>>
->>>>> A follow up question, don't you need to make a corresponding smc call
->>>>> to inform the FW that it's okay to turn off the power-domain at some
->>>>> point?
->>>>>
->>>>
->>>> Yes. Each time entering sleep, we teach FW if it need to turn off or
->>>> keep power-domain, for instance "hba->spm_lvl < 5 ? 1 : 0" , 0 means
->>>> off and 1 means on.
->>>
->>> I see. So you need to make the call each time when entering the system suspend?
->>>
->>> Or would it be okay to just make it once, when the spm_lvl is changed?
->>
->> Thers is no nofity when changing spm_lvl.
->>
->>>
->>> Another way to deal with it, would be to make the smc call each time
->>> the power-domain is turned-on, based on spm_lvl too of course.
->>>
->>> Would that work?
->>
->> Yes, that works. Another option is to cache power-domain states and
->> check spm_lvl locally. If it doesn't change, we skip smc call.
-> 
-> Apologize for the delay! I needed to think a bit more carefully about
-> how to suggest moving this forward.
-> 
-> My conclusion is that we need to extend the PM domain infrastructure
-> (genpd in particular), to allow drivers to dynamically inform whether
-> it's okay to turn on/off the PM domain in runtime.
-> 
-> There is a similar thing already available, which is to use dev PM qos
-> along with the genpd governor, but that would not work in this case
-> because it may prevent runtime suspend for the device in question too.
-> I have therefore cooked a patch for genpd, see below. I think you can
-> fold it into your next version of the series. See also additional
-> suggestions below the patch.
+Barry Song <21cnbao@gmail.com> writes:
 
-Thanks, Ulf.  I'll fold it into my v4 series and fix the code in UFS 
-driver and genpd provider according to your suggestions.
+> On Mon, Nov 4, 2024 at 7:46=E2=80=AFPM Huang, Ying <ying.huang@intel.com>=
+ wrote:
+>>
+>> Johannes Weiner <hannes@cmpxchg.org> writes:
+>>
+>> > On Wed, Oct 30, 2024 at 02:18:09PM -0700, Yosry Ahmed wrote:
+>> >> On Wed, Oct 30, 2024 at 2:13=E2=80=AFPM Usama Arif <usamaarif642@gmai=
+l.com> wrote:
+>> >> > On 30/10/2024 21:01, Yosry Ahmed wrote:
+>> >> > > On Wed, Oct 30, 2024 at 1:25=E2=80=AFPM Usama Arif <usamaarif642@=
+gmail.com> wrote:
+>> >> > >>>> I am not sure that the approach we are trying in this patch is=
+ the right way:
+>> >> > >>>> - This patch makes it a memcg issue, but you could have memcg =
+disabled and
+>> >> > >>>> then the mitigation being tried here wont apply.
+>> >> > >>>
+>> >> > >>> Is the problem reproducible without memcg? I imagine only if the
+>> >> > >>> entire system is under memory pressure. I guess we would want t=
+he same
+>> >> > >>> "mitigation" either way.
+>> >> > >>>
+>> >> > >> What would be a good open source benchmark/workload to test with=
+out limiting memory
+>> >> > >> in memcg?
+>> >> > >> For the kernel build test, I can only get zswap activity to happ=
+en if I build
+>> >> > >> in cgroup and limit memory.max.
+>> >> > >
+>> >> > > You mean a benchmark that puts the entire system under memory
+>> >> > > pressure? I am not sure, it ultimately depends on the size of mem=
+ory
+>> >> > > you have, among other factors.
+>> >> > >
+>> >> > > What if you run the kernel build test in a VM? Then you can limit=
+ is
+>> >> > > size like a memcg, although you'd probably need to leave more room
+>> >> > > because the entire guest OS will also subject to the same limit.
+>> >> > >
+>> >> >
+>> >> > I had tried this, but the variance in time/zswap numbers was very h=
+igh.
+>> >> > Much higher than the AMD numbers I posted in reply to Barry. So fou=
+nd
+>> >> > it very difficult to make comparison.
+>> >>
+>> >> Hmm yeah maybe more factors come into play with global memory
+>> >> pressure. I am honestly not sure how to test this scenario, and I
+>> >> suspect variance will be high anyway.
+>> >>
+>> >> We can just try to use whatever technique we use for the memcg limit
+>> >> though, if possible, right?
+>> >
+>> > You can boot a physical machine with mem=3D1G on the commandline, which
+>> > restricts the physical range of memory that will be initialized.
+>> > Double check /proc/meminfo after boot, because part of that physical
+>> > range might not be usable RAM.
+>> >
+>> > I do this quite often to test physical memory pressure with workloads
+>> > that don't scale up easily, like kernel builds.
+>> >
+>> >> > >>>> - Instead of this being a large folio swapin issue, is it more=
+ of a readahead
+>> >> > >>>> issue? If we zswap (without the large folio swapin series) and=
+ change the window
+>> >> > >>>> to 1 in swap_vma_readahead, we might see an improvement in lin=
+ux kernel build time
+>> >> > >>>> when cgroup memory is limited as readahead would probably caus=
+e swap thrashing as
+>> >> > >>>> well.
+>> >
+>> > +1
+>> >
+>> > I also think there is too much focus on cgroup alone. The bigger issue
+>> > seems to be how much optimistic volume we swap in when we're under
+>> > pressure already. This applies to large folios and readahead; global
+>> > memory availability and cgroup limits.
+>>
+>> The current swap readahead logic is something like,
+>>
+>> 1. try readahead some pages for sequential access pattern, mark them as
+>>    readahead
+>>
+>> 2. if these readahead pages get accessed before swapped out again,
+>>    increase 'hits' counter
+>>
+>> 3. for next swap in, try readahead 'hits' pages and clear 'hits'.
+>>
+>> So, if there's heavy memory pressure, the readaheaded pages will not be
+>> accessed before being swapped out again (in 2 above), the readahead
+>> pages will be minimal.
+>>
+>> IMHO, mTHP swap-in is kind of swap readahead in effect.  That is, in
+>> addition to the pages accessed are swapped in, the adjacent pages are
+>> swapped in (swap readahead) too.  If these readahead pages are not
+>> accessed before swapped out again, system runs into more severe
+>> thrashing.  This is because we lack the swap readahead window scaling
+>> mechanism as above.  And, this is why I suggested to combine the swap
+>> readahead mechanism and mTHP swap-in by default before.  That is, when
+>> kernel swaps in a page, it checks current swap readahead window, and
+>> decides mTHP order according to window size.  So, if there are heavy
+>> memory pressure, so that the nearby pages will not be accessed before
+>> being swapped out again, the mTHP swap-in order can be adjusted
+>> automatically.
+>
+> This might help reduce memory reclamation thrashing for kernel build
+> workload running in a memory limited memcg which might not benefit
+> from mTHP that much. But this mechanism has clear disadvantages:
+>
+> 1. Loss of large folios: For example, if you're using app A and then swit=
+ch
+> to app B, a significant portion (around 60%) of A's memory might be swapp=
+ed
+> out as it moves to the background. When you switch back to app A, a large
+> portion of the memory originally in mTHP could be lost while swapping
+> in small folios.
 
-> 
-> From: Ulf Hansson <ulf.hansson@linaro.org>
-> Date: Fri, 1 Nov 2024 15:55:56 +0100
-> Subject: [PATCH] pmdomain: core: Introduce dev_pm_genpd_rpm_always_on()
-> 
-> For some usecases a consumer driver requires its device to remain power-on
-> from the PM domain perspective during runtime. Using dev PM qos along with
-> the genpd governors, doesn't work for this case as would potentially
-> prevent the device from being runtime suspended too.
-> 
-> To support these usecases, let's introduce dev_pm_genpd_rpm_always_on() to
-> allow consumers drivers to dynamically control the behaviour in genpd for a
-> device that is attached to it.
-> 
-> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
-> ---
->   drivers/pmdomain/core.c   | 34 ++++++++++++++++++++++++++++++++++
->   include/linux/pm_domain.h |  7 +++++++
->   2 files changed, 41 insertions(+)
-> 
-> diff --git a/drivers/pmdomain/core.c b/drivers/pmdomain/core.c
-> index a6c8b85dd024..e86e270b7eb9 100644
-> --- a/drivers/pmdomain/core.c
-> +++ b/drivers/pmdomain/core.c
-> @@ -697,6 +697,36 @@ bool dev_pm_genpd_get_hwmode(struct device *dev)
->   }
->   EXPORT_SYMBOL_GPL(dev_pm_genpd_get_hwmode);
-> 
-> +/**
-> + * dev_pm_genpd_rpm_always_on() - Control if the PM domain can be powered off.
-> + *
-> + * @dev: Device for which the PM domain may need to stay on for.
-> + * @on: Value to set or unset for the condition.
-> + *
-> + * For some usecases a consumer driver requires its device to remain power-on
-> + * from the PM domain perspective during runtime. This function allows the
-> + * behaviour to be dynamically controlled for a device attached to a genpd.
-> + *
-> + * It is assumed that the users guarantee that the genpd wouldn't be detached
-> + * while this routine is getting called.
-> + *
-> + * Return: Returns 0 on success and negative error values on failures.
-> + */
-> +int dev_pm_genpd_rpm_always_on(struct device *dev, bool on)
-> +{
-> +       struct generic_pm_domain *genpd;
-> +
-> +       genpd = dev_to_genpd_safe(dev);
-> +       if (!genpd)
-> +               return -ENODEV;
-> +
-> +       genpd_lock(genpd);
-> +       dev_gpd_data(dev)->rpm_always_on = on;
-> +       genpd_unlock(genpd);
-> +
-> +       return 0;
-> +}
-> +
->   static int _genpd_power_on(struct generic_pm_domain *genpd, bool timed)
->   {
->          unsigned int state_idx = genpd->state_idx;
-> @@ -868,6 +898,10 @@ static int genpd_power_off(struct
-> generic_pm_domain *genpd, bool one_dev_on,
->                  if (!pm_runtime_suspended(pdd->dev) ||
->                          irq_safe_dev_in_sleep_domain(pdd->dev, genpd))
->                          not_suspended++;
-> +
-> +               /* The device may need its PM domain to stay powered on. */
-> +               if (to_gpd_data(pdd)->rpm_always_on)
-> +                       return -EBUSY;
->          }
-> 
->          if (not_suspended > 1 || (not_suspended == 1 && !one_dev_on))
-> diff --git a/include/linux/pm_domain.h b/include/linux/pm_domain.h
-> index 45646bfcaf1a..d4c4a7cf34bd 100644
-> --- a/include/linux/pm_domain.h
-> +++ b/include/linux/pm_domain.h
-> @@ -260,6 +260,7 @@ struct generic_pm_domain_data {
->          unsigned int rpm_pstate;
->          unsigned int opp_token;
->          bool hw_mode;
-> +       bool rpm_always_on;
->          void *data;
->   };
-> 
-> @@ -292,6 +293,7 @@ ktime_t dev_pm_genpd_get_next_hrtimer(struct device *dev);
->   void dev_pm_genpd_synced_poweroff(struct device *dev);
->   int dev_pm_genpd_set_hwmode(struct device *dev, bool enable);
->   bool dev_pm_genpd_get_hwmode(struct device *dev);
-> +int dev_pm_genpd_rpm_always_on(struct device *dev, bool on);
-> 
->   extern struct dev_power_governor simple_qos_governor;
->   extern struct dev_power_governor pm_domain_always_on_gov;
-> @@ -375,6 +377,11 @@ static inline bool dev_pm_genpd_get_hwmode(struct
-> device *dev)
->          return false;
->   }
-> 
-> +static inline int dev_pm_genpd_rpm_always_on(struct device *dev, bool on)
-> +{
-> +       return -EOPNOTSUPP;
-> +}
-> +
->   #define simple_qos_governor            (*(struct dev_power_governor *)(NULL))
->   #define pm_domain_always_on_gov                (*(struct
-> dev_power_governor *)(NULL))
->   #endif
+Why?  Most app A pages could be swapped in as mTHP if all readahead
+pages are accessed before being swapped out again.
 
+> Essentially, systems with a user interface operate quite differently from=
+ kernel
+> build workloads running under a memory-limited memcg, as they switch
+> applications between the foreground and background.
+>
+> 2. Fragmentation of swap slots: This fragmentation increases the likeliho=
+od of
+> mTHP swapout failures, as it makes it harder to maintain contiguous memory
+> blocks in swap.
+>
+> 3. Prevent the implementation of large block compression and decompression
+> to achieve higher compression ratios and significantly lower CPU consumpt=
+ion,
+> as small folio swap-ins may still remain the predominant approach.
+>
+> Memory-limited systems often face challenges with larger page sizes. Even=
+ on
+> systems that support various base page sizes, such as 4KB, 16KB, and 64KB
+> on ARM64, using 16KB or 64KB as the base page size is not always the best
+> choice.  With mTHP, we have already enabled per-size settings. For this k=
+ernel
+> build workload operating within a limited memcg, enabling only 16kB is li=
+kely
+> the best option for optimizing performance and minimizing thrashing.
+> /sys/kernel/mm/transparent_hugepage/hugepages-16kB/enabled
+>
+> We could focus on mTHP and seek strategies to minimize thrashing when free
+> memory is severely limited :-)
+
+IIUC, mTHP can improve performance but may waste memory too.  The best
+mTHP order may be different for different workloads and system states
+(e.g. high memory pressure).  So, we need a way to identify the best
+mTHP order automatically.
+
+Swap readahead window size auto-scaling can be used to design a method
+to identify the best mTHP order for swap-in.  I'm open to other possible
+methods too.
+
+I admit a fixed mTHP order can be best for some specific workloads or
+system states.  However, it may be hard to find one mTHP order that
+works well for all workloads and system states.
+
+>> > It happens to manifest with THP in cgroups because that's what you
+>> > guys are testing. But IMO, any solution to this problem should
+>> > consider the wider scope.
+>> >
+>> >> > >>> I think large folio swapin would make the problem worse anyway.=
+ I am
+>> >> > >>> also not sure if the readahead window adjusts on memory pressur=
+e or
+>> >> > >>> not.
+>> >> > >>>
+>> >> > >> readahead window doesnt look at memory pressure. So maybe the sa=
+me thing is being
+>> >> > >> seen here as there would be in swapin_readahead?
+>> >> > >
+>> >> > > Maybe readahead is not as aggressive in general as large folio
+>> >> > > swapins? Looking at swap_vma_ra_win(), it seems like the maximum =
+order
+>> >> > > of the window is the smaller of page_cluster (2 or 3) and
+>> >> > > SWAP_RA_ORDER_CEILING (5).
+>> >> > Yes, I was seeing 8 pages swapin (order 3) when testing. So might
+>> >> > be similar to enabling 32K mTHP?
+>> >>
+>> >> Not quite.
+>> >
+>> > Actually, I would expect it to be...
+>>
+>> Me too.
+>>
+>> >> > > Also readahead will swapin 4k folios AFAICT, so we don't need a
+>> >> > > contiguous allocation like large folio swapin. So that could be
+>> >> > > another factor why readahead may not reproduce the problem.
+>> >>
+>> >> Because of this ^.
+>> >
+>> > ...this matters for the physical allocation, which might require more
+>> > reclaim and compaction to produce the 32k. But an earlier version of
+>> > Barry's patch did the cgroup margin fallback after the THP was already
+>> > physically allocated, and it still helped.
+>> >
+>> > So the issue in this test scenario seems to be mostly about cgroup
+>> > volume. And then 8 4k charges should be equivalent to a singular 32k
+>> > charge when it comes to cgroup pressure.
+>>
+
+--
+Best Regards,
+Huang, Ying
 
