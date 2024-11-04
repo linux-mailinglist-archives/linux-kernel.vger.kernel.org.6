@@ -1,166 +1,188 @@
-Return-Path: <linux-kernel+bounces-394451-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394455-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C31C99BAF4D
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 10:12:53 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7ED729BAF59
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 10:13:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 86E0C280F65
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 09:12:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B67E3B23A52
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 09:13:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D84A1AC426;
-	Mon,  4 Nov 2024 09:11:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABB5D1AB6F1;
+	Mon,  4 Nov 2024 09:13:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hssNPxY9"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="QnmO26VV"
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2060.outbound.protection.outlook.com [40.107.223.60])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 117D11ABEC1
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 09:11:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730711499; cv=none; b=YZYdNUIS8NW+HbKKMhL5i+CYfFiPznDeMI9OSC1BSUN2zrsx9RxmpARQWLNbTcAD9tPq09b1cpqggspcgPnsDCJzhVpy8sTpKlzYICLF4gIepuWPg7HB0Lr4CjhvEEWfbKyGIjJubjg8GpDTakukwHvuPAfAZfj6at+PelbQ3Ks=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730711499; c=relaxed/simple;
-	bh=tWFxkRLt/fLOUsterIBkjf+5P4MGei/wC4OAn0qV78Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YY7gKPrznL51qy580sNlKThdP7rXIFvoFzFCC+gy/XwH0XFXfEvMF2/rcZYwE8zmcEnHR2gHw+dpyZAtC1/NaWA/PgXvWghzP4oyUAMIxfZIya26hpo+X60sg6wNwuFbADpiHecid4h9Evux8Ygr9rTo7sVqU9yybccnTFeQD5M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hssNPxY9; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1730711497;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=F5GBnbTWa1MyC7D6IBGUS3qI/n0lLUpUo8vpqAqxL/o=;
-	b=hssNPxY94vHbxgCaFqyPa7mqR+ToM6vImUeuQag/0m0kglBxgQjodgVm4axF0Zng4JfOSC
-	4Ga9w6aG9U9qsg/iwVcRmC2gRlf7hRIAxITdIVQo1Db2rENmocz318g2ucF/ddqJSI9HXT
-	MGVFXHZr3JnaDaU31SUC0Vms65o92/E=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-325-zSQF-e_SPNSEKi7Dgphy6g-1; Mon, 04 Nov 2024 04:11:36 -0500
-X-MC-Unique: zSQF-e_SPNSEKi7Dgphy6g-1
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-4315af466d9so26727535e9.3
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 01:11:35 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730711495; x=1731316295;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=F5GBnbTWa1MyC7D6IBGUS3qI/n0lLUpUo8vpqAqxL/o=;
-        b=ApC2okr4L0w5q5vv6RxoVGjs4aqvq1RVXSi/ITaEgIZ0YW5J0swL38yKQgmnEWFGoH
-         GGCfLJFpVrcRPZKAxmir6wPCjiD6izYMlG4Uzu/w1ZDWVNTB37CcqlPwjozrx6y01yQS
-         425LK6u/uBn1KXzCI6jAw48ksOggoMKK9JlKY3j3qoYzoJcERMYjuF1ZUqmzpGQZTDdL
-         qDvRkRBZFmG3yhX/Vq2RJGBNkgkT8itIsTWfz49icWTH8cYpNv7mRI+gr1ncLVypUYOe
-         Xp/u94y3i4tDnLSUJltOuZQ1KD/7phKM7UM/mVICC//YEpw5/sLgGXC8K9jqtYEAhNPg
-         d6Kg==
-X-Forwarded-Encrypted: i=1; AJvYcCWVeprihCy+Z+BNvKLAvO7pP7iMCHCusYDMhr+D/dizDNAcBFvcmDKFBX7PqotQV8XBR3SzIMcL4Z1WWWE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxlhPvDAOf2w0BS4dX6laO+v3P+UlS8DLKbwmWAlabgdo4Ljmdv
-	8ekU0+KxYbx/0zGr7TqHMTsZ/+4xFAhsaD1EZxjJzr0e7pq+kgDaKN1NeaSPasNtPHCO+ZyinN+
-	riYFftOs88sVGWtgxM3rrzJoXhu+hQnG+DwHVeD0bW+Mxx0fssuPuqmsOy9xdcg==
-X-Received: by 2002:a05:600c:a41:b0:42a:a6d2:3270 with SMTP id 5b1f17b1804b1-432832562aemr95620305e9.21.1730711494815;
-        Mon, 04 Nov 2024 01:11:34 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IE2oEen6hZ9Tpzjl+0FcjG6DVLxdS7k3BMPeNTAGjmdzWfXq16F04C+WZVLVGBJoQRI7XFkfw==
-X-Received: by 2002:a05:600c:a41:b0:42a:a6d2:3270 with SMTP id 5b1f17b1804b1-432832562aemr95619905e9.21.1730711494430;
-        Mon, 04 Nov 2024 01:11:34 -0800 (PST)
-Received: from ?IPV6:2a09:80c0:192:0:5dac:bf3d:c41:c3e7? ([2a09:80c0:192:0:5dac:bf3d:c41:c3e7])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381c113de0esm12664081f8f.85.2024.11.04.01.11.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 04 Nov 2024 01:11:33 -0800 (PST)
-Message-ID: <3700141f-e12f-4a58-8e36-5f95ef500d8b@redhat.com>
-Date: Mon, 4 Nov 2024 10:11:31 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E04B1AC8AE;
+	Mon,  4 Nov 2024 09:13:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.60
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730711611; cv=fail; b=R0SxH5gJkCKBpEsyI1HI/z5z3W9Q+ScEXJCcz2PZUOAMNUXn0n/YJRof340PlfsRWre+wgBFyKFLR9wx4J+nT5n0RIL8TyVbZl1VMWe/Xes7BRxyaVXb1YpGjUKe+MksWHypVbBxK1ZnY8Eg6SF4M83zny5r0sKC5CfZjiSyor4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730711611; c=relaxed/simple;
+	bh=s/ttbCKYGCQAyBg3k8aAJ8YN3CnoFMqeymrKJHMbdKQ=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=NvCOv4t9bSWkHpymnohzvKf0hmwFLVot9WuY5rqlucUPE3WBjBQUzNPIgRt8I3HJTGVlqJYUGIqZ7uJ6KdBRBlT6+0bg9KxJ6t0if7m7D3Ok1M6UhY8G4xP9AfzA8AUbTvVh/fei8GCpyBRyxXX3/RvMLR7INFNRmgbbuyHXi/0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=QnmO26VV; arc=fail smtp.client-ip=40.107.223.60
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=NRpu+8kNT0+zVxdMnCwERxqBph+mIJ697wktfo12YACaAxftpEcDW0L2VNlTTFZvfHXMFOsvenfI+zEIQgVJDkPaJuaudGw0b2ZZTGquv4Uy7TuBTNXw/EOJOxdeGY5ykDK4eB5735RSTZmZPAv4gA0rFwv+AEEhjlx4MjPkRgj6qGV95y52paTvBMpjmfC8zFM5gFtoc5vVkC4kyN7/MvhZQvyP+ttKvyqMgwVxxckKW/w1Ec229UA/znuFF8yyb58AXjfjvjnzfSyDJjSY8+3hkFXptHJYs6B2l4vDhofQuhQN3+QnGBCaCF3R4Kb+VKd8K0657SVPSu1lAefo4g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=H3XTEcGdcJdq740imtppkEgkuDroXgp5hq4UxzUuc64=;
+ b=FqHu6Q5OwT87hjQ3TX7C4A2/BEjPaC8VjDfkKaVH70gIL79+JxZncJCiS2j9cClBzdM9Y1rLn4ijP4lyeVhA/4q/YnTzPhjlsdb+5V00aJrXbayHv72XcktxM2ut7aAM1v9fS8zHoDqVnvVx2FPEubEkduUGXxjf1cWwfqF7oJcZHQQQf4zBC/QUTqo01938kB67k4uAJjb4siLC3DWTkTYRactyW+SuKMGe5SpGc5p/y17euxqjDbWwD9k3uGk9djYV4g18bTZed706c8kJp54tutN+HsyNgiKWueDHInbEhzbLmF+Sl5Tj5SHFBiPpajEKXhQx9GGQFhF3r/LyeQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=H3XTEcGdcJdq740imtppkEgkuDroXgp5hq4UxzUuc64=;
+ b=QnmO26VVByeHWETT05EZMGvU12EOvsg67vVwKQ9VnMzwSwUO2MpGRQKsw2qaKUCQNFtNqTQ37VECn5KM2s3jxTRDiN7ERia0DAJxo9vczgooeP6whx4U3gPhoj12VZcFz2ahNVetopx/CSBoXr+UVmN+MmB3vADwK6GwDE671dk=
+Received: from SJ0PR03CA0229.namprd03.prod.outlook.com (2603:10b6:a03:39f::24)
+ by DM4PR12MB6062.namprd12.prod.outlook.com (2603:10b6:8:b2::7) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8114.30; Mon, 4 Nov 2024 09:13:27 +0000
+Received: from SJ1PEPF00002311.namprd03.prod.outlook.com
+ (2603:10b6:a03:39f:cafe::c3) by SJ0PR03CA0229.outlook.office365.com
+ (2603:10b6:a03:39f::24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8114.30 via Frontend
+ Transport; Mon, 4 Nov 2024 09:13:27 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ SJ1PEPF00002311.mail.protection.outlook.com (10.167.242.165) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8137.17 via Frontend Transport; Mon, 4 Nov 2024 09:13:27 +0000
+Received: from SATLEXMB05.amd.com (10.181.40.146) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 4 Nov
+ 2024 03:13:23 -0600
+Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB05.amd.com
+ (10.181.40.146) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 4 Nov
+ 2024 03:13:22 -0600
+Received: from prasad-lnx-mach.amd.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
+ Transport; Mon, 4 Nov 2024 03:13:18 -0600
+From: Venkata Prasad Potturu <venkataprasad.potturu@amd.com>
+To: <broonie@kernel.org>, <alsa-devel@alsa-project.org>
+CC: <mario.limonciello@amd.com>, <Vijendar.Mukunda@amd.com>,
+	<Basavaraj.Hiregoudar@amd.com>, <Sunil-kumar.Dommati@amd.com>,
+	<ssabakar@amd.com>, Venkata Prasad Potturu <venkataprasad.potturu@amd.com>,
+	Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>, Cristian Ciocaltea
+	<cristian.ciocaltea@collabora.com>, Emil Velikov
+	<emil.velikov@collabora.com>, Krzysztof Kozlowski
+	<krzysztof.kozlowski@linaro.org>, "open list:SOUND - SOC LAYER / DYNAMIC
+ AUDIO POWER MANAGEM..." <linux-sound@vger.kernel.org>, open list
+	<linux-kernel@vger.kernel.org>
+Subject: [PATCH] ASoC: amd: acp: Fix for ACP SOF dmic tplg component load failure
+Date: Mon, 4 Nov 2024 14:43:10 +0530
+Message-ID: <20241104091312.1108299-1-venkataprasad.potturu@amd.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 3/3] acpi,srat: give memory block size advice based on
- CFMWS alignment
-To: Gregory Price <gourry@gourry.net>, x86@kernel.org,
- linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org, linux-mm@kvack.org
-Cc: linux-cxl@vger.kernel.org, Jonathan.Cameron@huawei.com,
- dan.j.williams@intel.com, rrichter@amd.com, Terry.Bowman@amd.com,
- dave.jiang@intel.com, ira.weiny@intel.com, alison.schofield@intel.com,
- dave.hansen@linux.intel.com, luto@kernel.org, peterz@infradead.org,
- tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
- rafael@kernel.org, lenb@kernel.org, osalvador@suse.de,
- gregkh@linuxfoundation.org, akpm@linux-foundation.org, rppt@kernel.org
-References: <20241101134706.1185-1-gourry@gourry.net>
- <20241101134706.1185-4-gourry@gourry.net>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <20241101134706.1185-4-gourry@gourry.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+Received-SPF: None (SATLEXMB05.amd.com: venkataprasad.potturu@amd.com does not
+ designate permitted sender hosts)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ1PEPF00002311:EE_|DM4PR12MB6062:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3452061f-21b1-464d-6598-08dcfcb0f18f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|1800799024|376014|7416014|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?xcez+bzxBA6JbyKIKIYJ4bbQfbenEpcV13FOGskoFriTcssYG9NiwCDZ6tTZ?=
+ =?us-ascii?Q?obH+GhfjAhM1jF9aienidVWA0oB59Jy8ExFh2u/ZBtCqf01qtzYjkwovyy5L?=
+ =?us-ascii?Q?yad8E6QLNCIJnFFHiiJkwn6gZHWzE+kIlTu/bnGnCTTAWh029tZ63Q4zVZWM?=
+ =?us-ascii?Q?O84VDA54moiYKG9abVeZPjKV3a4MXw/086aythQagt8kuDJIrQTj5PmaFB6/?=
+ =?us-ascii?Q?IQMAlnwGqwoDJisQwZKwCNuUXxsZCt2rIR8ifSFQxG5qOl1MtYQtDUfS7LMt?=
+ =?us-ascii?Q?5Fjd9BFCpD0Sv9B+REAXtAAZ2SEbxFwqz+gFGAGjXMHejS/EWVp3UUDOGBVT?=
+ =?us-ascii?Q?rfCQN8+j0RlfDYeI26Wug5WmeDq3e78iu1HKgt4V+4kkl8HwQnU6vK/H4JPL?=
+ =?us-ascii?Q?QAA8gEkh5uoT5gMy/WQ+v2SVovovpHJjwH/LH0EQDvdCZvAmZYk+2S/SArgE?=
+ =?us-ascii?Q?KzhXUEH/c8lhw5Y45njmW6kJ/BXf9WnpNT5zdBvRSLfH5eRyitOwDjLVS2kU?=
+ =?us-ascii?Q?CumE8aAmqsyd5gV54IyDw2m6/6WoSjJ+7kelpAMQEInjgE8jeyZemQfrwcey?=
+ =?us-ascii?Q?TFKt+Iv2438QrjU/MrqdOvOZi+2ZRJ5HkNNBiQnIY2i6zMZcTTE2Fw9acarR?=
+ =?us-ascii?Q?iu95fzECAZTgbqGoGdiQ71W5b1mTtiRVcGcz2A7PjUfPWiWbQZNv0ONmsqj1?=
+ =?us-ascii?Q?ZD8f6bp7P4TBOoaHr8kz3iRP1Ur/+B/jhVVWxlAqtMd+02hWGDuYh6AgF3UX?=
+ =?us-ascii?Q?/QsXruQSphVPokJksdqpGzml4KYfRfhGRn1GlLGmN7lEHA1UpxpFUB289fSE?=
+ =?us-ascii?Q?GmZWinVmGx2wwwIZOcsusFado4RsG6ytPLfX4zennoGVmpe0B4naVaGvfN+F?=
+ =?us-ascii?Q?m6vaRbW/buocs7n7XMazEFdgsPvsKh62OX5Dh4t0W+8oIj1xKZRNkpJzX3ce?=
+ =?us-ascii?Q?rtGWOe3zWJRKwa043wd7j2CwHUYgB9WEysmKcEWpgvdTOy3jQFYd9RNcR4le?=
+ =?us-ascii?Q?l46/15k8E3Q5iMgGLg2gre1kp8Z6VJrl4V/gOMbCopG6iX+d7v5sQMsif+am?=
+ =?us-ascii?Q?bJ+kJznfr++DjdUupihZwHHdGANp4d1zapzb9xNucuw0vdd5Y6exhJoCjhPI?=
+ =?us-ascii?Q?9vX5lI6Ft5QKVW8vWZW+oY/Vom/PA+QgANORIFOPN8s5sHgGX61UnPSOZsI3?=
+ =?us-ascii?Q?UkQUiIBghC4RT990lxtBZ+JjTBWyUTQN0Gqj6HTJ3D/+JpqnjfoXqH1I05gN?=
+ =?us-ascii?Q?6Iku1YI7M3qRxWG9o7ZT7B0PIk8FOeoTcfVeHEyiK3ItHYGxZe0WN54Md3Ti?=
+ =?us-ascii?Q?oXU9gUGML5YRVvdag8E+DVWmCO5w28J+w3zrWdou4Ju7Vnik+GgVnN4R2HQm?=
+ =?us-ascii?Q?FSWXiCzydJkqpwum4tZrH3dW+umA2zHqH+K+NfE4FVjs2fjBaQ=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(376014)(7416014)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Nov 2024 09:13:27.5355
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3452061f-21b1-464d-6598-08dcfcb0f18f
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ1PEPF00002311.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB6062
 
-On 01.11.24 14:47, Gregory Price wrote:
-> Capacity is stranded when CFMWS regions are not aligned to block size.
-> On x86, block size increases with capacity (2G blocks @ 64G capacity).
-> 
-> Use CFMWS base/size to report memory block size alignment advice.
-> 
-> Suggested-by: Dan Williams <dan.j.williams@intel.com>
-> Signed-off-by: Gregory Price <gourry@gourry.net>
-> ---
+Stream name mismatch with topology file causes tplg load failure.
 
-Acked-by: David Hildenbrand <david@redhat.com>
+As SOF framework assigns dailink->stream name, overriding stream name
+other than link name causes SOF dmic component load failure.
 
+[   35.474995] snd_sof_amd_acp70 0000:c4:00.5: error: can't connect DAI ACPDMIC0.IN stream acp-dmic-codec
+[   35.475001] snd_sof_amd_acp70 0000:c4:00.5: failed to add widget type 28 name : ACPDMIC0.IN stream acp-dmic-codec
+[   35.475013] sof_mach acp70-dsp: ASoC: failed to load widget ACPDMIC0.IN
+[   35.475018] sof_mach acp70-dsp: ASoC: topology: could not load header: -22
+[   35.475072] snd_sof_amd_acp70 0000:c4:00.5: error: tplg component load failed -22
+[   35.475083] snd_sof_amd_acp70 0000:c4:00.5: error: failed to load DSP topology -22
+[   35.475090] snd_sof_amd_acp70 0000:c4:00.5: ASoC: error at snd_soc_component_probe on 0000:c4:00.5: -22
+[   35.475117] sof_mach acp70-dsp: ASoC: failed to instantiate card -22
+[   35.475254] sof_mach acp70-dsp: error -EINVAL: Failed to register card(sof-acp70-dsp)
+[   35.475261] sof_mach acp70-dsp: probe with driver sof_mach failed with error -22
+
+Fixes: b2385de2ae11 ("ASoC: amd: acp: Add stream name to ACP PDM DMIC devices")
+
+Signed-off-by: Venkata Prasad Potturu <venkataprasad.potturu@amd.com>
+---
+ sound/soc/amd/acp/acp-mach-common.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/sound/soc/amd/acp/acp-mach-common.c b/sound/soc/amd/acp/acp-mach-common.c
+index 67aa0ad83486..d314253207d5 100644
+--- a/sound/soc/amd/acp/acp-mach-common.c
++++ b/sound/soc/amd/acp/acp-mach-common.c
+@@ -1561,7 +1561,6 @@ int acp_sofdsp_dai_links_create(struct snd_soc_card *card)
+ 
+ 	if (drv_data->dmic_cpu_id == DMIC) {
+ 		links[i].name = "acp-dmic-codec";
+-		links[i].stream_name = "DMIC capture";
+ 		links[i].id = DMIC_BE_ID;
+ 		links[i].codecs = dmic_codec;
+ 		links[i].num_codecs = ARRAY_SIZE(dmic_codec);
 -- 
-Cheers,
-
-David / dhildenb
+2.39.2
 
 
