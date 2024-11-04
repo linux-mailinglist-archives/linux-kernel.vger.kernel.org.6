@@ -1,183 +1,182 @@
-Return-Path: <linux-kernel+bounces-394440-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394441-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 804659BAF26
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 10:09:58 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CCC19BAF2A
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 10:10:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DC9C4B24021
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 09:09:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8E092B2426D
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 09:10:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B1721B0103;
-	Mon,  4 Nov 2024 09:08:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AADF1ADFED;
+	Mon,  4 Nov 2024 09:09:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="qmESNuTL"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="G+FryC7y"
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D13B31AC458;
-	Mon,  4 Nov 2024 09:08:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A2CF1AC8B9
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 09:09:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730711333; cv=none; b=aQY3n2kUElqNdTtShYI5KJOWL+ukXHOkiKd/sXyx1RLBIQZ5c4UGyE/9tfjTUNWsEgOJ9W/QB6fDXwfePxV5c0kgF5WdaF2GaTU7a0iBpxIP5GzSZmHurtuntDQVjcjiAQMc6vOzeJUxOvAYZ38r7IxhFggfN70n7ZpLdWnnEAM=
+	t=1730711362; cv=none; b=sayl6tHABfVdbzXhNdR4EvPhxAWYy6DQQ8xleQMEaKhl+lOuGFXO4meI/Sk1l4cBUI4o6xvv/XZqVWgfpdZArF0DqA40ROJ8+lwvAJM4+GTH/ZdSJfUfiU110nYKmvJU3iOOe24bSj5GY7i5CbfwQuGrKfSfpVyIi0g8A+uz7cU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730711333; c=relaxed/simple;
-	bh=/cFKz9ZTZlBH6GEhxrrNisrcY1Sf2JsbEbTGGhMslJQ=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=mKissKVZNbU89E2m++oURL3lGhna/2begdSXxFNVLia2/J1f4gECWcBj42ogKOVOh8Z7LG2BenWOKx8MXyaJgTbxGy8OipoxSouqjwC8rXFadZk8JynAjiWrMeLCRbBm+hhYK2obylnw4Kpq47gg7x112bPC/GLpU28vGOmFiVQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=qmESNuTL; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1730711332; x=1762247332;
-  h=from:to:subject:date:message-id:in-reply-to:references:
-   mime-version;
-  bh=/cFKz9ZTZlBH6GEhxrrNisrcY1Sf2JsbEbTGGhMslJQ=;
-  b=qmESNuTLfTQDKy1ZOJZ8ePxS7Di1cMCuVGTXAZgYYWk5EIoOfq+NCuo4
-   GGsxufjDdGfMnJPVMpk6kk7RmwkNeJ3N4D2l848r6mwwe+m683967wUTa
-   njQ+WLZ7xxEj85mCu/c4Xi1pPLfCpqKUlrjzmjkd8tvP5nrvS6awj9/S4
-   85zExVxM8KYnrZpaScqexTBoN2mbyFDLLez9XtzW6Pb9hXkAWTSmA//Zz
-   8bu8eUgTAlpY1OhkjqK+tD3jr+a/q2i12VrWF2HWfZ/RE8y8cXYIb8cha
-   UTjuluxPbxbfngQ4EU7DCiOGVr3vyVILb0WhLAAxHNjC71uOw9+san7US
-   g==;
-X-CSE-ConnectionGUID: 76DCBbJASTWMbmfvXbdxcw==
-X-CSE-MsgGUID: hKMK2P+cSB+EcZckZ4PJgQ==
-X-IronPort-AV: E=Sophos;i="6.11,256,1725346800"; 
-   d="scan'208";a="33830845"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa3.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 04 Nov 2024 02:08:50 -0700
-Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Mon, 4 Nov 2024 02:08:19 -0700
-Received: from training-HP-280-G1-MT-PC.microchip.com (10.10.85.11) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server id
- 15.1.2507.35 via Frontend Transport; Mon, 4 Nov 2024 02:08:15 -0700
-From: Divya Koppera <divya.koppera@microchip.com>
-To: <andrew@lunn.ch>, <arun.ramadoss@microchip.com>,
-	<UNGLinuxDriver@microchip.com>, <hkallweit1@gmail.com>,
-	<linux@armlinux.org.uk>, <davem@davemloft.net>, <edumazet@google.com>,
-	<kuba@kernel.org>, <pabeni@redhat.com>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <richardcochran@gmail.com>
-Subject: [PATCH net-next 5/5] net: phy: microchip_t1 : Add initialization of ptp for lan887x
-Date: Mon, 4 Nov 2024 14:37:50 +0530
-Message-ID: <20241104090750.12942-6-divya.koppera@microchip.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20241104090750.12942-1-divya.koppera@microchip.com>
-References: <20241104090750.12942-1-divya.koppera@microchip.com>
+	s=arc-20240116; t=1730711362; c=relaxed/simple;
+	bh=ifqPukSiWEbvQx2BNyq44t24PrtspIIZb3U4Z0syxko=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=a51gJXDTIhJJ2ubcC7yfCsGB2HeV+CMmouF34A8jWbG7vk8B9MjoSM3Zku3ER2IF3+EBLqDYEfxNhbq4+SkaNszqGtmiTuO3j8yP730cYz4k52TLOQJEr3j8QCSofJ8o375ocJ9H9eX/1s1/moC94KW6ivHlKx5Cz+vwWnNq5x0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=G+FryC7y; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5c9388a00cfso4833880a12.3
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 01:09:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1730711359; x=1731316159; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=055q6HVRLMtsIiCxhqKFgJlzoVTgwNt+2YbIpiGOuNo=;
+        b=G+FryC7yB7FbtEYO8s6Kq4+9k3AOvtRu4ULtV2B05UMo/Ja/6oZnC+ueNFi25DtNx6
+         hdHvhzcwchq/YBPHcpFhimO2gYdk/Cb/khUvB3WKmodzQXVAZmHJsSdPiUrYmdN9If0h
+         Q9NiDtjRoYPsXZIUqHuxBbzxfFEz7dO7K7yWcj0D0bXEl58Gfw0GEhSeMjHQpYd+thXc
+         2bJQu7mcf09c5j5Lfu3cjLbW2jxDnlCp4wdPf24I5L8A9GL5vYQOMZHmvft2HJ2XEdF1
+         1xJFwM9MCHc99osyTleMoX2MsCj78kzxTCzpwXU17l/5edlt51pqTPsBBDxEa2rsMY7g
+         dWbA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730711359; x=1731316159;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=055q6HVRLMtsIiCxhqKFgJlzoVTgwNt+2YbIpiGOuNo=;
+        b=u9tiIT+ue0fXa5DQ7tWciomZzePWejj+uxeMFUXvRAys+Ooact4LnnRBnm7gsmgq+j
+         I6MT8jUVlb9V3p18W//92cBpQsujfoY10koCxvlyGgXSCuwr13BVJHuRFOqfoGpg/twY
+         oEf2SpQhSihOsE2SpeOsMk36bbmFWq1hXqbVg9pNAkukiZdqL43dPZhKDuxxRbIEXotv
+         74r7Wox1kyX+F4sogxcMz9f4KFUJa4HalAxfDSbrs4vWvrldHAkBMYMsOLzQfki+T9Ou
+         491YwVPo8LV8zAIPYNXS7h3xOvD3Wv8243Yo8FCktgC2ocBW1kaHnEFQywUfnNEuiqYM
+         8anw==
+X-Forwarded-Encrypted: i=1; AJvYcCWrftZHy4+OLtaFiC2VdcvNhL38m4xaF8G2BxkHCnXhZzKQb7uQigYy5ZtOtdEisy6MsWti0GHoh5UFZzc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyqcf+iHFImJwEhpR7Uq3wqyELLgvrY9hXn8bhyfPYjX2ES/OHK
+	Pp7UCddEXDph8fd4mBwVOwMOsyiVanZG9TfW6Xw/BICAZYA/axzf7I0rYzeP0pKh0GUIBV33IyJ
+	wnOebgrTFzY1hPb9mXo9JqazOpF44RbEJADVwNw==
+X-Google-Smtp-Source: AGHT+IG7T23Pew0G4bjyo8FIV5YjqVKWXQFF//1S8lbRwvUhNbZuSM2H8qF/oqLViu8AJNrr6QEfuupKRznSgIqZeV4=
+X-Received: by 2002:a05:6402:51ca:b0:5ce:d397:9f5 with SMTP id
+ 4fb4d7f45d1cf-5ced3970cbemr2889559a12.24.1730711358703; Mon, 04 Nov 2024
+ 01:09:18 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20241103145153.105097-14-alexghiti@rivosinc.com> <202411041609.gxjI2dsw-lkp@intel.com>
+In-Reply-To: <202411041609.gxjI2dsw-lkp@intel.com>
+From: Alexandre Ghiti <alexghiti@rivosinc.com>
+Date: Mon, 4 Nov 2024 10:09:07 +0100
+Message-ID: <CAHVXubj8EXCXNPuJ+hqrHwyujjz3GDcqqMjQ4ZFC5VbmZurV3w@mail.gmail.com>
+Subject: Re: [PATCH v6 13/13] riscv: Add qspinlock support
+To: kernel test robot <lkp@intel.com>
+Cc: Jonathan Corbet <corbet@lwn.net>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk@kernel.org>, Andrea Parri <parri.andrea@gmail.com>, 
+	Nathan Chancellor <nathan@kernel.org>, Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Arnd Bergmann <arnd@arndb.de>, Leonardo Bras <leobras@redhat.com>, Guo Ren <guoren@kernel.org>, 
+	linux-doc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
+	linux-arch@vger.kernel.org, oe-kbuild-all@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add initialization of ptp for lan887x.
+On Mon, Nov 4, 2024 at 10:05=E2=80=AFAM kernel test robot <lkp@intel.com> w=
+rote:
+>
+> Hi Alexandre,
+>
+> kernel test robot noticed the following build warnings:
+>
+> [auto build test WARNING on arnd-asm-generic/master]
+> [also build test WARNING on robh/for-next tip/locking/core linus/master v=
+6.12-rc6]
+> [cannot apply to next-20241101]
+> [If your patch is applied to the wrong git tree, kindly drop us a note.
+> And when submitting patch, we suggest to use '--base' as documented in
+> https://git-scm.com/docs/git-format-patch#_base_tree_information]
+>
+> url:    https://github.com/intel-lab-lkp/linux/commits/Alexandre-Ghiti/ri=
+scv-Move-cpufeature-h-macros-into-their-own-header/20241103-230614
+> base:   https://git.kernel.org/pub/scm/linux/kernel/git/arnd/asm-generic.=
+git master
+> patch link:    https://lore.kernel.org/r/20241103145153.105097-14-alexghi=
+ti%40rivosinc.com
+> patch subject: [PATCH v6 13/13] riscv: Add qspinlock support
+> compiler: clang version 19.1.3 (https://github.com/llvm/llvm-project ab51=
+eccf88f5321e7c60591c5546b254b6afab99)
+>
+> If you fix the issue in a separate patch/commit (i.e. not just a new vers=
+ion of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202411041609.gxjI2dsw-lkp=
+@intel.com/
+>
+> includecheck warnings: (new ones prefixed by >>)
+> >> arch/riscv/include/asm/spinlock.h: asm/ticket_spinlock.h is included m=
+ore than once.
+> >> arch/riscv/include/asm/spinlock.h: asm/qspinlock.h is included more th=
+an once.
 
-Signed-off-by: Divya Koppera <divya.koppera@microchip.com>
----
- drivers/net/phy/microchip_t1.c | 29 ++++++++++++++++++++++++++---
- 1 file changed, 26 insertions(+), 3 deletions(-)
+Yes but that's in a #ifdef/#elif#else clause so nothing to do here!
 
-diff --git a/drivers/net/phy/microchip_t1.c b/drivers/net/phy/microchip_t1.c
-index 71d6050b2833..0a8b88d577c3 100644
---- a/drivers/net/phy/microchip_t1.c
-+++ b/drivers/net/phy/microchip_t1.c
-@@ -10,11 +10,15 @@
- #include <linux/ethtool.h>
- #include <linux/ethtool_netlink.h>
- #include <linux/bitfield.h>
-+#include "microchip_ptp.h"
- 
- #define PHY_ID_LAN87XX				0x0007c150
- #define PHY_ID_LAN937X				0x0007c180
- #define PHY_ID_LAN887X				0x0007c1f0
- 
-+#define MCHP_PTP_LTC_BASE_ADDR			0xe000
-+#define MCHP_PTP_PORT_BASE_ADDR			(MCHP_PTP_LTC_BASE_ADDR + 0x800)
-+
- /* External Register Control Register */
- #define LAN87XX_EXT_REG_CTL                     (0x14)
- #define LAN87XX_EXT_REG_CTL_RD_CTL              (0x1000)
-@@ -229,6 +233,7 @@
- 
- #define LAN887X_INT_STS				0xf000
- #define LAN887X_INT_MSK				0xf001
-+#define LAN887X_INT_MSK_P1588_MOD_INT_MSK	BIT(3)
- #define LAN887X_INT_MSK_T1_PHY_INT_MSK		BIT(2)
- #define LAN887X_INT_MSK_LINK_UP_MSK		BIT(1)
- #define LAN887X_INT_MSK_LINK_DOWN_MSK		BIT(0)
-@@ -319,6 +324,7 @@ struct lan887x_regwr_map {
- 
- struct lan887x_priv {
- 	u64 stats[ARRAY_SIZE(lan887x_hw_stats)];
-+	struct mchp_ptp_clock *clock;
- };
- 
- static int lan937x_dsp_workaround(struct phy_device *phydev, u16 ereg, u8 bank)
-@@ -1472,6 +1478,12 @@ static int lan887x_probe(struct phy_device *phydev)
- 
- 	phydev->priv = priv;
- 
-+	priv->clock = mchp_ptp_probe(phydev, MDIO_MMD_VEND1,
-+				     MCHP_PTP_LTC_BASE_ADDR,
-+				     MCHP_PTP_PORT_BASE_ADDR);
-+	if (IS_ERR(priv->clock))
-+		return PTR_ERR(priv->clock);
-+
- 	return lan887x_phy_setup(phydev);
- }
- 
-@@ -1518,6 +1530,7 @@ static void lan887x_get_strings(struct phy_device *phydev, u8 *data)
- 
- static int lan887x_config_intr(struct phy_device *phydev)
- {
-+	struct lan887x_priv *priv = phydev->priv;
- 	int rc;
- 
- 	if (phydev->interrupts == PHY_INTERRUPT_ENABLED) {
-@@ -1538,11 +1551,18 @@ static int lan887x_config_intr(struct phy_device *phydev)
- 		rc = phy_read_mmd(phydev, MDIO_MMD_VEND1, LAN887X_INT_STS);
- 	}
- 
--	return rc < 0 ? rc : 0;
-+	if (rc < 0)
-+		return rc;
-+
-+	return mchp_config_ptp_intr(priv->clock, LAN887X_INT_MSK,
-+				    LAN887X_INT_MSK_P1588_MOD_INT_MSK,
-+				    (phydev->interrupts == PHY_INTERRUPT_ENABLED));
- }
- 
- static irqreturn_t lan887x_handle_interrupt(struct phy_device *phydev)
- {
-+	struct lan887x_priv *priv = phydev->priv;
-+	int rc = IRQ_NONE;
- 	int irq_status;
- 
- 	irq_status = phy_read_mmd(phydev, MDIO_MMD_VEND1, LAN887X_INT_STS);
-@@ -1553,10 +1573,13 @@ static irqreturn_t lan887x_handle_interrupt(struct phy_device *phydev)
- 
- 	if (irq_status & LAN887X_MX_CHIP_TOP_LINK_MSK) {
- 		phy_trigger_machine(phydev);
--		return IRQ_HANDLED;
-+		rc = IRQ_HANDLED;
- 	}
- 
--	return IRQ_NONE;
-+	if (irq_status & LAN887X_INT_MSK_P1588_MOD_INT_MSK)
-+		rc = mchp_ptp_handle_interrupt(priv->clock);
-+
-+	return rc;
- }
- 
- static int lan887x_cd_reset(struct phy_device *phydev,
--- 
-2.17.1
-
+>
+> vim +10 arch/riscv/include/asm/spinlock.h
+>
+>      8
+>      9  #define __no_arch_spinlock_redefine
+>   > 10  #include <asm/ticket_spinlock.h>
+>     11  #include <asm/qspinlock.h>
+>     12  #include <asm/jump_label.h>
+>     13
+>     14  /*
+>     15   * TODO: Use an alternative instead of a static key when we are a=
+ble to parse
+>     16   * the extensions string earlier in the boot process.
+>     17   */
+>     18  DECLARE_STATIC_KEY_TRUE(qspinlock_key);
+>     19
+>     20  #define SPINLOCK_BASE_DECLARE(op, type, type_lock)               =
+       \
+>     21  static __always_inline type arch_spin_##op(type_lock lock)       =
+       \
+>     22  {                                                                =
+       \
+>     23          if (static_branch_unlikely(&qspinlock_key))              =
+       \
+>     24                  return queued_spin_##op(lock);                   =
+       \
+>     25          return ticket_spin_##op(lock);                           =
+       \
+>     26  }
+>     27
+>     28  SPINLOCK_BASE_DECLARE(lock, void, arch_spinlock_t *)
+>     29  SPINLOCK_BASE_DECLARE(unlock, void, arch_spinlock_t *)
+>     30  SPINLOCK_BASE_DECLARE(is_locked, int, arch_spinlock_t *)
+>     31  SPINLOCK_BASE_DECLARE(is_contended, int, arch_spinlock_t *)
+>     32  SPINLOCK_BASE_DECLARE(trylock, bool, arch_spinlock_t *)
+>     33  SPINLOCK_BASE_DECLARE(value_unlocked, int, arch_spinlock_t)
+>     34
+>     35  #elif defined(CONFIG_RISCV_QUEUED_SPINLOCKS)
+>     36
+>     37  #include <asm/qspinlock.h>
+>     38
+>     39  #else
+>     40
+>   > 41  #include <asm/ticket_spinlock.h>
+>     42
+>
+> --
+> 0-DAY CI Kernel Test Service
+> https://github.com/intel/lkp-tests/wiki
 
