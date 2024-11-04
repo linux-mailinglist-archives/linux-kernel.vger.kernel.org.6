@@ -1,263 +1,126 @@
-Return-Path: <linux-kernel+bounces-394414-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394411-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 256CA9BAEC8
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 09:57:34 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 043AF9BAEB6
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 09:56:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 459911C206FD
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 08:57:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 35F251C20E16
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 08:56:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69D9F1AF0BB;
-	Mon,  4 Nov 2024 08:56:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b="Nb9buJXz"
-Received: from www530.your-server.de (www530.your-server.de [188.40.30.78])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87D661ABEB7;
+	Mon,  4 Nov 2024 08:56:29 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6546E1ABEA5;
-	Mon,  4 Nov 2024 08:56:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.40.30.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 632AD1AB510;
+	Mon,  4 Nov 2024 08:56:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730710609; cv=none; b=JTI2fM02C9Ox+Hwj+Q4rMKM1BFHj9SWt56i1SIwus4Igx7ae/JuA4/8IUK9OJuYr9YbQ6rZykOKjQvX/b73BR6e3ljW1kB0IhVabiTGOnm4G42zjNmNjVtgQF5BIHV1GCWd4GVlekPVvbgXf948+OZx8/5uBUwBRt/3sYX2/UeM=
+	t=1730710589; cv=none; b=Prfjm5LIpiQnd+CCZqq3EwXkwW1R0+MHZrCYuuwk1U67sxyffT05/kVGOoMwQeQep7x95t/2ynYrw+EqcD1doD3rn81YFrB8eJ6s0WyUxN98NktMG7w6MqOfhSOCyHq2KjgqmpR/Dixcvg0FL9CTI2HLXxIssg6sf2xv7z4dzS4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730710609; c=relaxed/simple;
-	bh=DbA2AEzCZovDIsw1ZlFZ8GDzT6MXyd0MnqvqEW2ykrU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZV0dxqH2OLlCeuTNqrVpt7W+2bsh8Gy7emDPDrmJqIapnoebMvLsRw0OqtjAZzWkV8SCMNJGgxjQYCARKB3/E4d1bCfwvA2PsfElwmLcoPebKCsHjfvGOKWVEuVm5kYPHfsAukQCRt2aO2FU+oEfuQBYTrpy7Xn2OwfF0Z+CtTc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com; spf=pass smtp.mailfrom=geanix.com; dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b=Nb9buJXz; arc=none smtp.client-ip=188.40.30.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=geanix.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=geanix.com;
-	s=default2211; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:
-	Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:In-Reply-To:References;
-	bh=l/EQKtXU0ivrCC+MIz2pary8R5/8USRLvyKAY9Yy/mI=; b=Nb9buJXzFJqBghSp8frhQOW6LC
-	1B5luLCs+8k/Dd2IAHihMYKoZPHK5Z9UlGPondaumnKJU0oJc9src2K35KpZRMYzFFvSxUcI4mwHj
-	SIMfdKbV5e6L0Bp+y40mAh5a9euQocXuaXfcmfnokgNkV06SUhrvniAXoCOPJrxpckqssGos2Z/um
-	jycHo1tIvc8OjK9xR6dmJUkr2Fc9kKpztfxNdgQfXsZh1KECycDIrMF/aObLU8d+Jjhgpto3UzX0B
-	Lo5LALHqy5+bsC8GynrztyIZmIXmoni/tYTKJ4RXYxOn10inAJfJ/ogjeU3ztRhiEslxVvde8Z6zG
-	EimE9TwA==;
-Received: from sslproxy01.your-server.de ([78.46.139.224])
-	by www530.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <sean@geanix.com>)
-	id 1t7st2-0005XE-99; Mon, 04 Nov 2024 09:56:36 +0100
-Received: from [185.17.218.86] (helo=zen..)
-	by sslproxy01.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <sean@geanix.com>)
-	id 1t7st1-000Gvx-1d;
-	Mon, 04 Nov 2024 09:56:35 +0100
-From: Sean Nyekjaer <sean@geanix.com>
-To: Marc Kleine-Budde <mkl@pengutronix.de>,
-	Vincent Mailhol <mailhol.vincent@wanadoo.fr>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: Sean Nyekjaer <sean@geanix.com>,
-	linux-can@vger.kernel.org,
-	netdev@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [RFC PATCH] dt-bindings: can: convert tcan4x5x.txt to DT schema
-Date: Mon,  4 Nov 2024 09:56:15 +0100
-Message-ID: <20241104085616.469862-1-sean@geanix.com>
-X-Mailer: git-send-email 2.46.2
+	s=arc-20240116; t=1730710589; c=relaxed/simple;
+	bh=ksUKJzxkBHp/ZUk9remqaGSesCQlE9k8+7etB29cbVY=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=ZM1lYirGUk3MKD663F8lEmHvgiQ4E4TbGQOWNkNEhwfWNalzMfo8bCh11E3s38vSxueniA0LwQcEX+hnH/fWbcOU9/ukTO5/5HLhXeomhFdq2bzmAvnM+46tTzyoH00uowsV5KWJQuONU7+13wW1hXGZzSZyZqnIlRNMjGuc0fg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XhlZ45SC1z6LDDk;
+	Mon,  4 Nov 2024 16:51:24 +0800 (CST)
+Received: from frapeml500006.china.huawei.com (unknown [7.182.85.219])
+	by mail.maildlp.com (Postfix) with ESMTPS id AB5A7140864;
+	Mon,  4 Nov 2024 16:56:23 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (7.182.85.71) by
+ frapeml500006.china.huawei.com (7.182.85.219) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Mon, 4 Nov 2024 09:56:18 +0100
+Received: from frapeml500008.china.huawei.com ([7.182.85.71]) by
+ frapeml500008.china.huawei.com ([7.182.85.71]) with mapi id 15.01.2507.039;
+ Mon, 4 Nov 2024 09:56:18 +0100
+From: Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>
+To: liulongfang <liulongfang@huawei.com>, Alex Williamson
+	<alex.williamson@redhat.com>
+CC: "jgg@nvidia.com" <jgg@nvidia.com>, Jonathan Cameron
+	<jonathan.cameron@huawei.com>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linuxarm@openeuler.org" <linuxarm@openeuler.org>
+Subject: RE: [PATCH v11 3/4] hisi_acc_vfio_pci: register debugfs for hisilicon
+ migration driver
+Thread-Topic: [PATCH v11 3/4] hisi_acc_vfio_pci: register debugfs for
+ hisilicon migration driver
+Thread-Index: AQHbJrzKeGN2ukv9KEK1yDMX2/cverKhY3oAgAVbw4CAAApcAIAAFygQ
+Date: Mon, 4 Nov 2024 08:56:18 +0000
+Message-ID: <133e223b22df4ab4b4802163d0c42407@huawei.com>
+References: <20241025090143.64472-1-liulongfang@huawei.com>
+ <20241025090143.64472-4-liulongfang@huawei.com>
+ <20241031160430.59f4b944.alex.williamson@redhat.com>
+ <df5129f8-e9c2-b1c0-e2de-9211738d88c4@huawei.com>
+ <019a0cab-76b7-a3c0-d93f-5384efea1f67@huawei.com>
+In-Reply-To: <019a0cab-76b7-a3c0-d93f-5384efea1f67@huawei.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Authenticated-Sender: sean@geanix.com
-X-Virus-Scanned: Clear (ClamAV 0.103.10/27447/Sun Nov  3 10:33:29 2024)
 
-Convert binding doc tcan4x5x.txt to yaml.
 
-Signed-off-by: Sean Nyekjaer <sean@geanix.com>
----
 
-Can we somehow reference bosch,mram-cfg from the bosch,m_can.yaml?
-I have searched for yaml files that tries the same, but it's usually
-includes a whole node.
+> -----Original Message-----
+> From: liulongfang <liulongfang@huawei.com>
+> Sent: Monday, November 4, 2024 8:31 AM
+> To: Alex Williamson <alex.williamson@redhat.com>
+> Cc: jgg@nvidia.com; Shameerali Kolothum Thodi
+> <shameerali.kolothum.thodi@huawei.com>; Jonathan Cameron
+> <jonathan.cameron@huawei.com>; kvm@vger.kernel.org; linux-
+> kernel@vger.kernel.org; linuxarm@openeuler.org
+> Subject: Re: [PATCH v11 3/4] hisi_acc_vfio_pci: register debugfs for hisi=
+licon
+> migration driver
+[...]
 
-I have also tried:
-$ref: /schema/bosch,m_can.yaml#/properties/bosch,mram-cfg
+> >>> +
+> >>> +	seq_printf(seq,
+> >>> +		 "acc device:\n"
+> >>> +		 "guest driver load: %u\n"
+> >>> +		 "device opened: %d\n"
+> >>> +		 "migrate data length: %lu\n",
+> >>> +		 hisi_acc_vdev->vf_qm_state,
+> >>> +		 hisi_acc_vdev->dev_opened,
+> >>> +		 debug_migf->total_length);
+> >>
+> >> This debugfs entry is described as returning the data from the last
+> >> migration, but vf_qm_state and dev_opened are relative to the current
+> >> device/guest driver state.  Both seem to have no relevance to the data
+> >> in debug_migf.
+> >>
+> >
+> > The benefit of dev_opened retention is that user can obtain the device
+> status
+> > during the cat migf_data operation.
+> >
+>=20
+> I will remove dev_opened in the next version.
+> And hisi_acc_vdev->vf_qm_state is changed to debug_migf-
+> >vf_data.vf_qm_state
+> Keep information about whether the device driver in the Guest OS is loade=
+d
+> when live migration occurs.
 
-Any hints to share a property?
+I think you already get that when you dump debug_migf->vf_data.
+So not required.
 
- .../devicetree/bindings/net/can/tcan4x5x.txt  | 48 ---------
- .../bindings/net/can/ti,tcan4x5x.yaml         | 97 +++++++++++++++++++
- 2 files changed, 97 insertions(+), 48 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/net/can/tcan4x5x.txt
- create mode 100644 Documentation/devicetree/bindings/net/can/ti,tcan4x5x.yaml
-
-diff --git a/Documentation/devicetree/bindings/net/can/tcan4x5x.txt b/Documentation/devicetree/bindings/net/can/tcan4x5x.txt
-deleted file mode 100644
-index 20c0572c9853..000000000000
---- a/Documentation/devicetree/bindings/net/can/tcan4x5x.txt
-+++ /dev/null
-@@ -1,48 +0,0 @@
--Texas Instruments TCAN4x5x CAN Controller
--================================================
--
--This file provides device node information for the TCAN4x5x interface contains.
--
--Required properties:
--	- compatible:
--		"ti,tcan4552", "ti,tcan4x5x"
--		"ti,tcan4553", "ti,tcan4x5x" or
--		"ti,tcan4x5x"
--	- reg: 0
--	- #address-cells: 1
--	- #size-cells: 0
--	- spi-max-frequency: Maximum frequency of the SPI bus the chip can
--			     operate at should be less than or equal to 18 MHz.
--	- interrupt-parent: the phandle to the interrupt controller which provides
--                    the interrupt.
--	- interrupts: interrupt specification for data-ready.
--
--See Documentation/devicetree/bindings/net/can/bosch,m_can.yaml for additional
--required property details.
--
--Optional properties:
--	- reset-gpios: Hardwired output GPIO. If not defined then software
--		       reset.
--	- device-state-gpios: Input GPIO that indicates if the device is in
--			      a sleep state or if the device is active. Not
--			      available with tcan4552/4553.
--	- device-wake-gpios: Wake up GPIO to wake up the TCAN device. Not
--			     available with tcan4552/4553.
--	- wakeup-source: Leave the chip running when suspended, and configure
--			 the RX interrupt to wake up the device.
--
--Example:
--tcan4x5x: tcan4x5x@0 {
--		compatible = "ti,tcan4x5x";
--		reg = <0>;
--		#address-cells = <1>;
--		#size-cells = <1>;
--		spi-max-frequency = <10000000>;
--		bosch,mram-cfg = <0x0 0 0 16 0 0 1 1>;
--		interrupt-parent = <&gpio1>;
--		interrupts = <14 IRQ_TYPE_LEVEL_LOW>;
--		device-state-gpios = <&gpio3 21 GPIO_ACTIVE_HIGH>;
--		device-wake-gpios = <&gpio1 15 GPIO_ACTIVE_HIGH>;
--		reset-gpios = <&gpio1 27 GPIO_ACTIVE_HIGH>;
--		wakeup-source;
--};
-diff --git a/Documentation/devicetree/bindings/net/can/ti,tcan4x5x.yaml b/Documentation/devicetree/bindings/net/can/ti,tcan4x5x.yaml
-new file mode 100644
-index 000000000000..62c108fac6b3
---- /dev/null
-+++ b/Documentation/devicetree/bindings/net/can/ti,tcan4x5x.yaml
-@@ -0,0 +1,97 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/net/can/ti,tcan4x5x.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Texas Instruments TCAN4x5x CAN Controller
-+
-+maintainers:
-+  - Marc Kleine-Budde <mkl@pengutronix.de>
-+
-+allOf:
-+  - $ref: can-controller.yaml#
-+
-+properties:
-+  compatible:
-+    oneOf:
-+      - enum:
-+          - ti,tcan4552
-+          - ti,tcan4553
-+          - ti,tcan4x5x
-+
-+  reg:
-+    maxItems: 1
-+
-+  interrupts:
-+    maxItems: 1
-+
-+  clocks:
-+    maxItems: 1
-+
-+  vdd-supply:
-+    description: Regulator that powers the CAN controller.
-+
-+  xceiver-supply:
-+    description: Regulator that powers the CAN transceiver.
-+
-+  reset-gpios:
-+    description: Hardwired output GPIO. If not defined then software reset.
-+    maxItems: 1
-+
-+  device-state-gpios:
-+    description: Input GPIO that indicates if the device is in a sleep state or if the device is active.
-+      Not available with tcan4552/4553.
-+    maxItems: 1
-+
-+  device-wake-gpios:
-+    description: Wake up GPIO to wake up the TCAN device. Not available with tcan4552/4553.
-+    maxItems: 1
-+
-+  bosch,mram-cfg:
-+    $ref: bosch,m_can.yaml#
-+
-+  spi-max-frequency:
-+    description:
-+      Must be half or less of "clocks" frequency.
-+    maximum: 10000000
-+
-+  wakeup-source:
-+    $ref: /schemas/types.yaml#/definitions/flag
-+    description:
-+      Enable CAN remote wakeup.
-+
-+required:
-+  - compatible
-+  - reg
-+  - interrupts
-+  - clocks
-+  - bosch,mram-cfg
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/gpio/gpio.h>
-+    #include <dt-bindings/interrupt-controller/irq.h>
-+
-+    spi {
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+
-+        can@0 {
-+            compatible = "ti,tcan4x5x";
-+            reg = <0>;
-+            clocks = <&can0_osc>;
-+            pinctrl-names = "default";
-+            pinctrl-0 = <&can0_pins>;
-+            spi-max-frequency = <10000000>;
-+            bosch,mram-cfg = <0x0 0 0 16 0 0 1 1>;
-+            interrupt-parent = <&gpio1>;
-+            interrupts = <14 IRQ_TYPE_LEVEL_LOW>;
-+            device-state-gpios = <&gpio3 21 GPIO_ACTIVE_HIGH>;
-+            device-wake-gpios = <&gpio1 15 GPIO_ACTIVE_HIGH>;
-+            reset-gpios = <&gpio1 27 GPIO_ACTIVE_HIGH>;
-+            wakeup-source;
-+        };
-+    };
--- 
-2.46.2
+Thanks,
+Shameer
 
 
