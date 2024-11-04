@@ -1,110 +1,145 @@
-Return-Path: <linux-kernel+bounces-394249-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394253-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A2949BAC6C
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 07:17:04 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 670109BAC78
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 07:21:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E7601F2227A
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 06:17:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0870EB21814
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 06:21:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67D1F18C340;
-	Mon,  4 Nov 2024 06:16:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CEA118CC1A;
+	Mon,  4 Nov 2024 06:21:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YRlGmAvx"
-Received: from mail-yw1-f196.google.com (mail-yw1-f196.google.com [209.85.128.196])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="C5nfLtGx"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F758E552;
-	Mon,  4 Nov 2024 06:16:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72C9E17583
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 06:21:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730701015; cv=none; b=vGQVEqPhofcMA8CBtNoNTWIYZznRDmdStqnMGvcSzayaYvsakXw4ouAG8YCMe83yJZvFwgWNZaCB7ZewKIbFxzJQao7S/mhPqvSICTNTeUr1+eAjyU9QWrs0KtJJ1iTGjRXKIwG1QNtC/1VD2L8hE9/7MHeRfFfbXnrJiqQTDRw=
+	t=1730701283; cv=none; b=Fd8F9r0fCtjq9N/bAUzyZPMAfUZWWWWxof3xDsN4neFWtaGC3gfDXUjPQZ7/jXqTT8I2xLBgnN3q2sWpZR/nWKFh6D/3SFbSZpexbOOzHVfrNyhKGcfD7qI0HBrz65iluh6jAE/pncXloGdYjU5CVRMA/npMg2sK0LGlGq5ynOc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730701015; c=relaxed/simple;
-	bh=Kiw8a+xA3aXfOth7seODVyspc+w1aMxA9R4BE8XJd/M=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=S4wm47LlEBGiUDCwaHZeGKCDMwnokHqhHtoC1ClZBSfqUniBtqG8j1VV+a1UCTH6b9/oW6dwOKaKpe01wUP2C0mmPbT49G39JU9qUhYppSAvaabOX0gaZCSvt+2vjpeMf2ftOUopaC/loBT8a6jixCtxbTVsHI8k+RK0xSL+pmI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YRlGmAvx; arc=none smtp.client-ip=209.85.128.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f196.google.com with SMTP id 00721157ae682-6ea339a41f1so32217937b3.2;
-        Sun, 03 Nov 2024 22:16:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730701013; x=1731305813; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Kiw8a+xA3aXfOth7seODVyspc+w1aMxA9R4BE8XJd/M=;
-        b=YRlGmAvxd9XyQ50C3LsyYNHHRv9BNmaAtvhuvuEnIHPPhZ2tmyfO/pfY/zfmG53bRv
-         Nh4Ouca4YPvNFur/53FNctWfe0br8tE2DTDF0/ZB7/R3q+6UYZ5KcKnaINNt1fySYru1
-         Soj/+Krj2+0SquXj9bYInUAAMl3gISTOWPzcmGpe5K3GY6/PvcS+b9cdesVMxctB3k1I
-         uxAR71CzraIaCSw5JLtdeeJ/ki7Uj/M84X4Z6D7+7sEn48C+bLNGOZTJ1YVesljWr2Ye
-         g3pmufA2ITtWk2zUqWal56w7EiC8xh7O4e8Bt4n0IiEDPbJLpEm9UQLoA6r7C8IvWQvx
-         A4/Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730701013; x=1731305813;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Kiw8a+xA3aXfOth7seODVyspc+w1aMxA9R4BE8XJd/M=;
-        b=k92a4f4PXisEteNTtzwPPlOQgeWP1VKK8Xce+Qf7A5SD1gtc/GuCNTOW3Kw3RER2PS
-         o26pmEap1tSNCD6REjln/Vm4vTRnrLMPHr5PUvJmydnFL5N6G5axoAb7nuxMZqfHNh2z
-         S5ab4MuidlxB3tHggL7r/k+2itCw7hv6cKf6i7Fqb5ga+xFum/hwfQ9ef/S+CDZXasGt
-         honymDzeNcwwEyuHhMCxpxHItoMqeYnKzk7kWrQ9H/U69lESvJ4uFZhs7G8zjZYM84K+
-         ZJtHka4C00WcS+EohUgchsb8fatB6wAU/NLDRxrHWSAqWd13kCxztL2nLOmSXt5r8D+V
-         JTPw==
-X-Forwarded-Encrypted: i=1; AJvYcCUAHoHSER03b6wjq//PQfCHpn8BvNeEcLIvI1AQX/HqO8Yj18s6IxHvHNyDi9pfQGctrMjyRAowJ47f45s=@vger.kernel.org, AJvYcCXAJ77zj0Mrq8kRlf/Zpb64o/FDO+6Hd/VACrE+GNiTZhfLfXPPDTOg7h6rGvCAL84fy55VKZck@vger.kernel.org
-X-Gm-Message-State: AOJu0YwaweGR0eOgO9mf8VJ1526QgRwrZA+w+nLcwpH2yZm+4aLghU5F
-	tJORrw/vr3mw2YHYZMgjzHgh2SO6jV3kD+YbdvxSHNHpbM5aDpE6cfU1ptjN6YObclYd7kkCvZt
-	WZt2nZ/mBMpCj56S14nQ39nfqwDk=
-X-Google-Smtp-Source: AGHT+IGJB4eiqFsQlBpPDbvU+9TL2+/+gaI/Zv3VT7t7LsbHIO6fEc83s+vpuAuSa2pFhS7jDrTbuwDE+xp0UbbZ9U4=
-X-Received: by 2002:a05:690c:6410:b0:6e5:af24:92fa with SMTP id
- 00721157ae682-6ea523cc89fmr144655627b3.21.1730701013395; Sun, 03 Nov 2024
- 22:16:53 -0800 (PST)
+	s=arc-20240116; t=1730701283; c=relaxed/simple;
+	bh=lDpSsq7UijUNAks9mue3LanPLcT5oA2uO4ieCjRuamc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qqZQCzyGt4y/9l8QeO6TTO5asPEcdJZPYJNqOU49FHxxOCoz2Wh7Bh5At00biaKbKCHqqfTUtbL9/igJyDNTR4b95wbaVlkRE1D/kzu8JwUEKKw4EseNgWJO265TO8xdsP1R50RMs35IeFxCXmI2+FzWxizZX9tjpleEWjk9jPI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=C5nfLtGx; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1730701280;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/Yt6e01JiHs6xDUFc4KUXQd8i1elq2u0nXKuucFyQGQ=;
+	b=C5nfLtGxsFHw+kCR4Io+aPSPNXA28rScFPcj4q+oa91Snmr4y5FMvfG5XImTGPkgV284JT
+	R2hJCqOCUjttUjZ1atgBQDsfMDmc/EIuH6Mxc2tznvZ7+0EjoPn4yht0UtiY2Z95kcWiA6
+	2f6EQdmcR1PKOeUcYq613TEbo3rqZMQ=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-49-b2Wj_TLPNE6Ox6N8IQMnvg-1; Mon,
+ 04 Nov 2024 01:21:16 -0500
+X-MC-Unique: b2Wj_TLPNE6Ox6N8IQMnvg-1
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A026619560B4;
+	Mon,  4 Nov 2024 06:21:13 +0000 (UTC)
+Received: from localhost (unknown [10.72.112.78])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id DA7C11956052;
+	Mon,  4 Nov 2024 06:21:10 +0000 (UTC)
+Date: Mon, 4 Nov 2024 14:21:06 +0800
+From: Baoquan He <bhe@redhat.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	linux-s390@vger.kernel.org, virtualization@lists.linux.dev,
+	kvm@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	kexec@lists.infradead.org, Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	"Michael S. Tsirkin" <mst@redhat.com>,
+	Jason Wang <jasowang@redhat.com>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
+	Vivek Goyal <vgoyal@redhat.com>, Dave Young <dyoung@redhat.com>,
+	Thomas Huth <thuth@redhat.com>, Cornelia Huck <cohuck@redhat.com>,
+	Janosch Frank <frankja@linux.ibm.com>,
+	Claudio Imbrenda <imbrenda@linux.ibm.com>,
+	Eric Farman <farman@linux.ibm.com>,
+	Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH v1 00/11] fs/proc/vmcore: kdump support for virtio-mem on
+ s390
+Message-ID: <Zyhn0oz+ze0xY2AR@MiWiFi-R3L-srv>
+References: <20241025151134.1275575-1-david@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241030113108.2277758-1-dongml2@chinatelecom.cn> <20241103152715.498aae63@kernel.org>
-In-Reply-To: <20241103152715.498aae63@kernel.org>
-From: Menglong Dong <menglong8.dong@gmail.com>
-Date: Mon, 4 Nov 2024 14:17:59 +0800
-Message-ID: <CADxym3YLqzU8wKSzrz=LCHz5EKEtKaAhHbzWZ1iVhQiHTg+cmg@mail.gmail.com>
-Subject: Re: [PATCH RESEND net-next] net: tcp: replace the document for
- "lsndtime" in tcp_sock
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: edumazet@google.com, lixiaoyan@google.com, dsahern@kernel.org, 
-	weiwan@google.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Menglong Dong <dongml2@chinatelecom.cn>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241025151134.1275575-1-david@redhat.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-On Mon, Nov 4, 2024 at 7:27=E2=80=AFAM Jakub Kicinski <kuba@kernel.org> wro=
-te:
->
-> On Wed, 30 Oct 2024 19:31:08 +0800 Menglong Dong wrote:
-> > Fixes: d5fed5addb2b ("tcp: reorganize tcp_sock fast path variables")
->
-> Fixes is for bug fixes. Please drop the fixes tag and add a normal text
-> reference like:
+On 10/25/24 at 05:11pm, David Hildenbrand wrote:
+> This is based on "[PATCH v3 0/7] virtio-mem: s390 support" [1], which adds
+> virtio-mem support on s390.
+> 
+> The only "different than everything else" thing about virtio-mem on s390
+> is kdump: The crash (2nd) kernel allocates+prepares the elfcore hdr
+> during fs_init()->vmcore_init()->elfcorehdr_alloc(). Consequently, the
+> crash kernel must detect memory ranges of the crashed/panicked kernel to
+> include via PT_LOAD in the vmcore.
+> 
+> On other architectures, all RAM regions (boot + hotplugged) can easily be
+> observed on the old (to crash) kernel (e.g., using /proc/iomem) to create
+> the elfcore hdr.
+> 
+> On s390, information about "ordinary" memory (heh, "storage") can be
+> obtained by querying the hypervisor/ultravisor via SCLP/diag260, and
+> that information is stored early during boot in the "physmem" memblock
+> data structure.
+> 
+> But virtio-mem memory is always detected by as device driver, which is
+> usually build as a module. So in the crash kernel, this memory can only be
+> properly detected once the virtio-mem driver started up.
+> 
+> The virtio-mem driver already supports the "kdump mode", where it won't
+> hotplug any memory but instead queries the device to implement the
+> pfn_is_ram() callback, to avoid reading unplugged memory holes when reading
+> the vmcore.
+> 
+> With this series, if the virtio-mem driver is included in the kdump
+> initrd -- which dracut already takes care of under Fedora/RHEL -- it will
+> now detect the device RAM ranges on s390 once it probes the devices, to add
+> them to the vmcore using the same callback mechanism we already have for
+> pfn_is_ram().
+> 
+> To add these device RAM ranges to the vmcore ("patch the vmcore"), we will
+> add new PT_LOAD entries that describe these memory ranges, and update
+> all offsets vmcore size so it is all consistent.
+> 
+> Note that makedumfile is shaky with v6.12-rcX, I made the "obvious" things
+> (e.g., free page detection) work again while testing as documented in [2].
+> 
+> Creating the dumps using makedumpfile seems to work fine, and the
+> dump regions (PT_LOAD) are as expected. I yet have to check in more detail
+> if the created dumps are good (IOW, the right memory was dumped, but it
+> looks like makedumpfile reads the right memory when interpreting the
+> kernel data structures, which is promising).
+> 
+> Patch #1 -- #6 are vmcore preparations and cleanups
 
-Yeah, I see now. The fix here is just like a typos fix, and no
-Fixes tag is needed.
+Thanks for CC-ing me, I will review the patch 1-6, vmcore part next
+week.
 
->
-> Commit d5fed5addb2b ("tcp: reorganize tcp_sock fast path variables")
-> moved the fields around and misplaced the documentation for "lsndtime".
-
-I'll send a V2 with such a comment.
-
-Thanks!
-Menglong Dong
-
-> --
-> pw-bot: cr
 
