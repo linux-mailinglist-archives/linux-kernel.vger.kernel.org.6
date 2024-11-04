@@ -1,249 +1,125 @@
-Return-Path: <linux-kernel+bounces-394547-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394548-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA84C9BB0E8
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 11:22:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id F0A989BB0EC
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 11:22:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 091231C21539
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 10:22:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E18F1C215F2
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 10:22:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D69E1B0F1C;
-	Mon,  4 Nov 2024 10:22:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 408F91B0F2D;
+	Mon,  4 Nov 2024 10:22:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="PR37RNnU";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="oEM5LkoX"
-Received: from fhigh-a4-smtp.messagingengine.com (fhigh-a4-smtp.messagingengine.com [103.168.172.155])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rut4Py5v"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C971C1AF4EE
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 10:22:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.155
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91A551B0F09;
+	Mon,  4 Nov 2024 10:22:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730715758; cv=none; b=KvDAAXnj1b34J7l10CDn7OXFMog9ZupUnWSwQjhZqDV1Dx9/ztT65YVWca8DEWct9MR6YmesvIKDdi6D+dkaOMwuL6j4s5WmY2fgPmklM5aQ9M+M/B+uahbGDOM6AlW5JfidZsVu+2F9S2I1bsFcODF+kkjCG4RkMnYuupb+ht8=
+	t=1730715771; cv=none; b=MeUe2TL2L10erg068N68o1MzzLdV8nCaEK6i2AO0ZdSsFJdV81B4XVk6Maf/2mQ8xnTjOruGBw20X2TRKz6jGgPuyb87RgyjJWd8y9F6lTiC1x6fiZgwS/C7W9Wb4AUGuWCkEEd7tmHftwJiz0PfFEylXNvuhcTmLbcWGJbEKvY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730715758; c=relaxed/simple;
-	bh=A0UL6T+JMBlmeQCnuqSKyXXFW6C0TYffPyTQDsuHiuY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=peF5XxrJ+SPEAmivjGT4edu+qAqDvmVi1N7N5SlebvU5Ld7fVHAEipgKx7nUnAGfmLJ5p7u6HIJjlXVw9kpw/NFKtHqBAs6pN8N95X3WyUaVMGg1huy4Y+U9ePFB1hukndQdgkmsYjsA3lThCxIOI4yIsha6TTDxMHBlZ4+91Go=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=PR37RNnU; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=oEM5LkoX; arc=none smtp.client-ip=103.168.172.155
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shutemov.name
-Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id E72321140096;
-	Mon,  4 Nov 2024 05:22:34 -0500 (EST)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-05.internal (MEProxy); Mon, 04 Nov 2024 05:22:34 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
-	 h=cc:cc:content-type:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm1; t=1730715754; x=
-	1730802154; bh=UHr/11CY5vimw/kUTbl69+FDNYXMEkNeCHZa+XkrXOk=; b=P
-	R37RNnU5KwkJMS1buoBEmY5ES4Suo5WaKshNldMIuDnNUSjYG6Ekpzhi9jgpbUGB
-	R+rUe59qdzKeyWBYzSlYb+jv9oKyu6MJ5wLJKdi9svXG2MId2CFYQU6uuoNvO0gr
-	DoCePc2RIgA08KfrKDH0tu0K22xA9rSp74+AUYQENTxjNcHrEBUAooHbciRF6JrX
-	yTpxWYHL/zaJXd6KK0+u1h1+lu0bbJehzFCSrnXKGVp5HICBKBIsRVHeb/kxFqmj
-	Xxd4up3sOjJtBrZGDuHqF6952faOw4k6Kug3GZ6AseGuooYOgElpJ8NGMcY/YGQl
-	htO+JEODDeELS5IbYZ+ZA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
-	1730715754; x=1730802154; bh=UHr/11CY5vimw/kUTbl69+FDNYXMEkNeCHZ
-	a+XkrXOk=; b=oEM5LkoXN+sqMBZCSUsB2W1aGwf41X6sS/EQwGXOPPxc9a4PfWO
-	htfflqEXV6DNLy+OlZ70GpdrqZBtR0k9H+qAxjJjy38GfGFHR5gbqasYGufIdr8s
-	zSA1VIe1WM/K/g97s0cxoVgrRS9Xo6zKjjmiO9JrlWA0i6w93pOJw4399SO9IPIw
-	yEXbfkPb94Dq+9S7AoPxYA183G/l54WVe/hxkrLr3v5L63gOI81g8OQK5Xom5eer
-	m0BLPQc01jqLOOZQoN2+rb+Ojc6EtV8lC3qMn8hfnTJDFlORfUDw4et8Uxy9AkWw
-	xJ23O5CUAlng/5l1Zmhs14WBiy//ywzbhUg==
-X-ME-Sender: <xms:aqAoZ6KMkUYOv8OD9eGuGlCjbIPFLh-_v1Vlb0PVl-sOChBk5bX1Dw>
-    <xme:aqAoZyKJoDn6HFKLb_OZuTU42ynbyKj0KGaO6mWA7g56p574Di0ip8MZLAslebnqb
-    _2OztrlJwdU1PSRG_4>
-X-ME-Received: <xmr:aqAoZ6tHR6NOP-Mj4yaT2FCNC2KmcOcr862IEro4PLfUNdQ1hRhgacTaLnufngnPgVx1wA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdeliedgudegucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtsfdttddtvden
-    ucfhrhhomhepfdfmihhrihhllhcutedrucfuhhhuthgvmhhovhdfuceokhhirhhilhhlse
-    hshhhuthgvmhhovhdrnhgrmhgvqeenucggtffrrghtthgvrhhnpeffvdevueetudfhhfff
-    veelhfetfeevveekleevjeduudevvdduvdelteduvefhkeenucevlhhushhtvghrufhiii
-    gvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehkihhrihhllhesshhhuhhtvghmohhv
-    rdhnrghmvgdpnhgspghrtghpthhtohepkedpmhhouggvpehsmhhtphhouhhtpdhrtghpth
-    htohepkhhirhhilhhlrdhshhhuthgvmhhovheslhhinhhugidrihhnthgvlhdrtghomhdp
-    rhgtphhtthhopehmshhtsehrvgguhhgrthdrtghomhdprhgtphhtthhopehjrghsohifrg
-    hnghesrhgvughhrghtrdgtohhmpdhrtghpthhtohepgihurghniihhuhhosehlihhnuhig
-    rdgrlhhisggrsggrrdgtohhmpdhrtghpthhtohepvghpvghrvgiimhgrsehrvgguhhgrth
-    drtghomhdprhgtphhtthhopehvihhrthhurghlihiirghtihhonheslhhishhtshdrlhhi
-    nhhugidruggvvhdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvg
-    hrnhgvlhdrohhrghdprhgtphhtthhopehhohhnghihuhdrnhhinhhgsehlihhnuhigrdhi
-    nhhtvghlrdgtohhm
-X-ME-Proxy: <xmx:aqAoZ_aRRDDeqN2hDj0MrG_vv1ZNltuKwPb-4PMbgCLUQ8XJAgrpvQ>
-    <xmx:aqAoZxbuYEfcBII8kSA9PHJLuqkN4cNTteGJ18O2jjS7Dp0RgZbqTw>
-    <xmx:aqAoZ7C_W4sdsgQJu0P_dDKfetQ7KGhYR8v5H7Hx9zaV3b6t2uje5Q>
-    <xmx:aqAoZ3ZPJo2-c10dHgUBq8Xyy1tY6mTOliwUw649Pi5Hvg1We_eEsw>
-    <xmx:aqAoZ_Nw09S10VgT9tfJqcMhCEJ24SL3QiI4dQ-yo7abUrDCf1qdYeFP>
-Feedback-ID: ie3994620:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 4 Nov 2024 05:22:31 -0500 (EST)
-Date: Mon, 4 Nov 2024 12:22:26 +0200
-From: "Kirill A. Shutemov" <kirill@shutemov.name>
-To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Cc: "Michael S. Tsirkin" <mst@redhat.com>, 
-	Jason Wang <jasowang@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
-	Eugenio =?utf-8?B?UMOpcmV6?= <eperezma@redhat.com>, virtualization@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	Hongyu Ning <hongyu.ning@linux.intel.com>
-Subject: Re: [PATCH] virtio: Remove virtio devices on device_shutdown()
-Message-ID: <witv2eh3lxidto53m2twxht4lxhfjbcjwzaggalhtnqf73wpng@tzmwda7eeiaa>
-References: <20240808075141.3433253-1-kirill.shutemov@linux.intel.com>
- <20240808075701-mutt-send-email-mst@kernel.org>
- <yknu4iege3drk6t2x7pvm2l2cocg4r5qk5jzmboej6dqk5ym2z@g4clogtuuibe>
- <20240808105006-mutt-send-email-mst@kernel.org>
- <lszslulefumddbqnhni55sgdfddptw3yb5vfavgnlyiv6wi3vn@44e4tttbvwaz>
+	s=arc-20240116; t=1730715771; c=relaxed/simple;
+	bh=nMfTLLFzcG1ZcG1H25Gar8chdwYJf1C0bitXKfycbJ4=;
+	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
+	 Message-Id:Subject; b=FjgDZIB1xSLCJcxwpBcuoRYF6z/FGBrNyhIo0VveQieFMakNb5BuAsLZBkqpF6uYhVgyH/jRNzrrhUXO8E9D/t8z9VdccBs2FQ23+kMG/32KU5RsXHCiLouRhftfPLWV0aLwqaRyoDiJdMEOEl2dNBVzO8bAmGxgnjnKc5ML7QM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rut4Py5v; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC163C4CECE;
+	Mon,  4 Nov 2024 10:22:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730715771;
+	bh=nMfTLLFzcG1ZcG1H25Gar8chdwYJf1C0bitXKfycbJ4=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=rut4Py5vVrIi6BT1pfGKTCXZcGyAz3HgoAkBuQSfnktQis/5pd67FT7i3fpSNt9lI
+	 RVmQ/2kxQEXTovrZLkvfIa/FXiEjXcpP//w/H7jFsMfmapoMbnCENuiSNhAEGfWS3q
+	 8m+AvAmgpE41vBfzwg/cpYykzPHK+afTeqCCR7u3IHp8wsH9WXoRW+1IMKc/TCgFYM
+	 WWYErn3sC4kK9WLypVS8iGMb4Yd0uq0SbYOJXODcA/jZPeZnDn89od35lemgHI3s0S
+	 oYjrDUruelmeCbTg2CNcmhGXaZy/ojbtD/KTN+dETvSoSy/Pl/i23azPrCfw3k6GK4
+	 CO3QFKAgO/ErA==
+Date: Mon, 04 Nov 2024 04:22:48 -0600
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <lszslulefumddbqnhni55sgdfddptw3yb5vfavgnlyiv6wi3vn@44e4tttbvwaz>
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Sean Nyekjaer <sean@geanix.com>
+Cc: Conor Dooley <conor+dt@kernel.org>, 
+ "David S. Miller" <davem@davemloft.net>, linux-can@vger.kernel.org, 
+ devicetree@vger.kernel.org, Jakub Kicinski <kuba@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Vincent Mailhol <mailhol.vincent@wanadoo.fr>, linux-kernel@vger.kernel.org, 
+ Eric Dumazet <edumazet@google.com>, Marc Kleine-Budde <mkl@pengutronix.de>, 
+ netdev@vger.kernel.org, Paolo Abeni <pabeni@redhat.com>
+In-Reply-To: <20241104085616.469862-1-sean@geanix.com>
+References: <20241104085616.469862-1-sean@geanix.com>
+Message-Id: <173071576894.2866974.11023196178832654081.robh@kernel.org>
+Subject: Re: [RFC PATCH] dt-bindings: can: convert tcan4x5x.txt to DT
+ schema
 
-On Thu, Aug 08, 2024 at 06:28:02PM +0300, Kirill A. Shutemov wrote:
-> On Thu, Aug 08, 2024 at 11:03:30AM -0400, Michael S. Tsirkin wrote:
-> > On Thu, Aug 08, 2024 at 04:15:25PM +0300, Kirill A. Shutemov wrote:
-> > > On Thu, Aug 08, 2024 at 08:10:34AM -0400, Michael S. Tsirkin wrote:
-> > > > On Thu, Aug 08, 2024 at 10:51:41AM +0300, Kirill A. Shutemov wrote:
-> > > > > Hongyu reported a hang on kexec in a VM. QEMU reported invalid memory
-> > > > > accesses during the hang.
-> > > > > 
-> > > > > 	Invalid read at addr 0x102877002, size 2, region '(null)', reason: rejected
-> > > > > 	Invalid write at addr 0x102877A44, size 2, region '(null)', reason: rejected
-> > > > > 	...
-> > > > > 
-> > > > > It was traced down to virtio-console. Kexec works fine if virtio-console
-> > > > > is not in use.
-> > > > 
-> > > > virtio is not doing a lot of 16 bit reads.
-> > > > Are these the reads:
-> > > > 
-> > > >                 virtio_cread(vdev, struct virtio_console_config, cols, &cols);
-> > > >                 virtio_cread(vdev, struct virtio_console_config, rows, &rows);
-> > > > 
-> > > > ?
-> > > > 
-> > > > write is a bit puzzling too. This one?
-> > > > 
-> > > > bool vp_notify(struct virtqueue *vq)
-> > > > {       
-> > > >         /* we write the queue's selector into the notification register to
-> > > >          * signal the other end */
-> > > >         iowrite16(vq->index, (void __iomem *)vq->priv);
-> > > >         return true;
-> > > > }
-> > > 
-> > > Given that we are talking about console issue, any suggestion on how to
-> > > check?
-> > 
-> > 
-> > If you do lspci -v on the device, we'll know where the BARs are,
-> > and can compare to 0x102877002, 0x102877A44.
+
+On Mon, 04 Nov 2024 09:56:15 +0100, Sean Nyekjaer wrote:
+> Convert binding doc tcan4x5x.txt to yaml.
 > 
-> 00:01.0 Ethernet controller: Red Hat, Inc. Virtio 1.0 network device (rev 01)
-> 	Subsystem: Red Hat, Inc. Device 1100
-> 	Flags: bus master, fast devsel, latency 0, IRQ 21
-> 	Memory at 80005000 (32-bit, non-prefetchable) [size=4K]
-> 	Memory at 380000000000 (64-bit, prefetchable) [size=16K]
-> 	Capabilities: [98] MSI-X: Enable+ Count=4 Masked-
-> 	Capabilities: [84] Vendor Specific Information: VirtIO: <unknown>
-> 	Capabilities: [70] Vendor Specific Information: VirtIO: Notify
-> 	Capabilities: [60] Vendor Specific Information: VirtIO: DeviceCfg
-> 	Capabilities: [50] Vendor Specific Information: VirtIO: ISR
-> 	Capabilities: [40] Vendor Specific Information: VirtIO: CommonCfg
-> 	Kernel driver in use: virtio-pci
+> Signed-off-by: Sean Nyekjaer <sean@geanix.com>
+> ---
 > 
-> 00:02.0 Communication controller: Red Hat, Inc. Virtio 1.0 socket (rev 01)
-> 	Subsystem: Red Hat, Inc. Device 1100
-> 	Flags: bus master, fast devsel, latency 0, IRQ 22
-> 	Memory at 80004000 (32-bit, non-prefetchable) [size=4K]
-> 	Memory at 380000004000 (64-bit, prefetchable) [size=16K]
-> 	Capabilities: [98] MSI-X: Enable- Count=3 Masked-
-> 	Capabilities: [84] Vendor Specific Information: VirtIO: <unknown>
-> 	Capabilities: [70] Vendor Specific Information: VirtIO: Notify
-> 	Capabilities: [60] Vendor Specific Information: VirtIO: DeviceCfg
-> 	Capabilities: [50] Vendor Specific Information: VirtIO: ISR
-> 	Capabilities: [40] Vendor Specific Information: VirtIO: CommonCfg
-> 	Kernel driver in use: virtio-pci
+> Can we somehow reference bosch,mram-cfg from the bosch,m_can.yaml?
+> I have searched for yaml files that tries the same, but it's usually
+> includes a whole node.
 > 
-> 00:03.0 Communication controller: Red Hat, Inc. Virtio 1.0 console (rev 01)
-> 	Subsystem: Red Hat, Inc. Device 1100
-> 	Flags: bus master, fast devsel, latency 0, IRQ 23
-> 	Memory at 80003000 (32-bit, non-prefetchable) [size=4K]
-> 	Memory at 380000008000 (64-bit, prefetchable) [size=16K]
-> 	Capabilities: [98] MSI-X: Enable+ Count=2 Masked-
-> 	Capabilities: [84] Vendor Specific Information: VirtIO: <unknown>
-> 	Capabilities: [70] Vendor Specific Information: VirtIO: Notify
-> 	Capabilities: [60] Vendor Specific Information: VirtIO: DeviceCfg
-> 	Capabilities: [50] Vendor Specific Information: VirtIO: ISR
-> 	Capabilities: [40] Vendor Specific Information: VirtIO: CommonCfg
-> 	Kernel driver in use: virtio-pci
+> I have also tried:
+> $ref: /schema/bosch,m_can.yaml#/properties/bosch,mram-cfg
 > 
-> 00:04.0 SCSI storage controller: Red Hat, Inc. Virtio 1.0 block device (rev 01)
-> 	Subsystem: Red Hat, Inc. Device 1100
-> 	Flags: bus master, fast devsel, latency 0, IRQ 20
-> 	Memory at 80002000 (32-bit, non-prefetchable) [size=4K]
-> 	Memory at 38000000c000 (64-bit, prefetchable) [size=16K]
-> 	Capabilities: [98] MSI-X: Enable+ Count=17 Masked-
-> 	Capabilities: [84] Vendor Specific Information: VirtIO: <unknown>
-> 	Capabilities: [70] Vendor Specific Information: VirtIO: Notify
-> 	Capabilities: [60] Vendor Specific Information: VirtIO: DeviceCfg
-> 	Capabilities: [50] Vendor Specific Information: VirtIO: ISR
-> 	Capabilities: [40] Vendor Specific Information: VirtIO: CommonCfg
-> 	Kernel driver in use: virtio-pci
+> Any hints to share a property?
 > 
-> 00:05.0 SCSI storage controller: Red Hat, Inc. Virtio 1.0 block device (rev 01)
-> 	Subsystem: Red Hat, Inc. Device 1100
-> 	Flags: bus master, fast devsel, latency 0, IRQ 21
-> 	Memory at 80001000 (32-bit, non-prefetchable) [size=4K]
-> 	Memory at 380000010000 (64-bit, prefetchable) [size=16K]
-> 	Capabilities: [98] MSI-X: Enable+ Count=17 Masked-
-> 	Capabilities: [84] Vendor Specific Information: VirtIO: <unknown>
-> 	Capabilities: [70] Vendor Specific Information: VirtIO: Notify
-> 	Capabilities: [60] Vendor Specific Information: VirtIO: DeviceCfg
-> 	Capabilities: [50] Vendor Specific Information: VirtIO: ISR
-> 	Capabilities: [40] Vendor Specific Information: VirtIO: CommonCfg
-> 	Kernel driver in use: virtio-pci
-> ....
-> Invalid read at addr 0x100C37904, size 2, region '(null)', reason: rejected
-> Invalid read at addr 0x1036F9002, size 2, region '(null)', reason: rejected
-> Invalid read at addr 0x1036F9002, size 2, region '(null)', reason: rejected
-> Invalid write at addr 0x1036F9A44, size 2, region '(null)', reason: rejected
-> Invalid read at addr 0x1036F7002, size 2, region '(null)', reason: rejected
-> Invalid read at addr 0x1036F7002, size 2, region '(null)', reason: rejected
-> Invalid write at addr 0x1036F7A44, size 2, region '(null)', reason: rejected
-> ....
+>  .../devicetree/bindings/net/can/tcan4x5x.txt  | 48 ---------
+>  .../bindings/net/can/ti,tcan4x5x.yaml         | 97 +++++++++++++++++++
+>  2 files changed, 97 insertions(+), 48 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/net/can/tcan4x5x.txt
+>  create mode 100644 Documentation/devicetree/bindings/net/can/ti,tcan4x5x.yaml
 > 
-> Yeah, looks like it is not BARs.
 
-Michael, can we get back to this?
+My bot found errors running 'make dt_binding_check' on your patch:
 
-So it looks like to be a DMA.
+yamllint warnings/errors:
 
-It is a TDX guest. Some TDX context: it has concept of private and shared
-memory. Private memory in only accessible to the guest. Shared memory is
-accessible by both host and guest. It is used for guest/host communication
-including DMA.
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/can/ti,tcan4x5x.yaml: properties:bosch,mram-cfg: 'anyOf' conditional failed, one must be fixed:
+	'description' is a dependency of '$ref'
+	'bosch,m_can.yaml#' does not match 'types.yaml#/definitions/'
+		hint: A vendor property needs a $ref to types.yaml
+	'bosch,m_can.yaml#' does not match '^#/(definitions|\\$defs)/'
+		hint: A vendor property can have a $ref to a a $defs schema
+	hint: Vendor specific properties must have a type and description unless they have a defined, common suffix.
+	from schema $id: http://devicetree.org/meta-schemas/vendor-props.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/can/ti,tcan4x5x.example.dtb: can@0: bosch,mram-cfg: [0, 0, 0, 16, 0, 0, 1, 1] is not of type 'object'
+	from schema $id: http://devicetree.org/schemas/net/can/ti,tcan4x5x.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/can/ti,tcan4x5x.example.dtb: can@0: bosch,mram-cfg: [0, 0, 0, 16, 0, 0, 1, 1] is not of type 'object'
+	from schema $id: http://devicetree.org/schemas/net/can/ti,tcan4x5x.yaml#
 
-By default all memory is private and guest kernel converts some memory to
-shared. On kexec, we convert all memory back to private, so the next
-kernel can start from a known state. This conversion makes DMA impossible.
+doc reference errors (make refcheckdocs):
 
-I think stopping devices before doing this conversion is a reasonable
-solution.
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20241104085616.469862-1-sean@geanix.com
 
--- 
-  Kiryl Shutsemau / Kirill A. Shutemov
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
+
 
