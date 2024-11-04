@@ -1,186 +1,167 @@
-Return-Path: <linux-kernel+bounces-394378-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394379-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F30939BAE2D
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 09:34:28 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74A159BAE33
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 09:36:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1FCD91C211DE
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 08:34:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2192C1F22F03
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 08:36:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAADD18B48A;
-	Mon,  4 Nov 2024 08:34:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D006618C039;
+	Mon,  4 Nov 2024 08:35:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Tt1DIjZq"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WEwscpW2"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CF8C132111
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 08:34:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8F0B3214;
+	Mon,  4 Nov 2024 08:35:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730709262; cv=none; b=kTb+Zd6iFxBcU0ENQyX74l4uQhaiJFp0Rp9P08L+Mr3hInzAsi7ic9iQfIVD5613OCxPWvqQFC8jxVEbnZ4h8LhM2bYJO2qFdI1pvfzNazuJSf8fhPQTXig/gWlbobqLl4jBJTwVgD1bBJ8xUvaKY0Vmr8AdU4fcDgrYaz2fLtk=
+	t=1730709352; cv=none; b=JwZas6TyljbOEzu+t/hCKRIfmnWwMktVvKsKfmBNTKY/urwhd0BK3Kc9ekFxwywMBYSiqg4MdSUr/63I6/NxOCaFkOhcU/fPyg/xcCrlPDUH0TUohDytqM+tb79XJrK6MoPmEPldU50pS3mVn+31EctwGGQFL286nwbH9vQ2Zuk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730709262; c=relaxed/simple;
-	bh=iPapASz6aSeaJhVnQhr+zJowiyNX6G+1Nt1rrILwx84=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=c3g6jUCz10WXN3NonGTFzaQ5rnrjl7+XNVldbmNtCiGbBTJjKqRbGjTiXPY/yjtUqYqcLAZlkdKVOKo5I/MhQAlCTXmhwDYgD4sRQP6MyU1LbvV2H9AmY9DGoLzQNoRJ1+8YgqQjegnS5eWWQjJWU1f3vBF6+e4NnUz68ehxiPE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Tt1DIjZq; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-37d4b0943c7so2478197f8f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 00:34:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1730709258; x=1731314058; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=0ApKzuM1Dy1yHlR1OnkyQgRDQp0Q55UQ4hWD1IiDoII=;
-        b=Tt1DIjZqxDA8vBHdDmEFlG130xBjAQsldgAjeZRFcsDZqHvvB/A92FrUJnYqxcUZ+a
-         5Fbd8tVxs8a9DGXpgH/8muLWANlK2jHO1bgNnCfms6g7QCqH+CpR/xyzeJHnapBKKaP+
-         CrILoCHo2awlBDgJMnV6GFJvH9o1qw4CyZk8SznOOD+hnwMznNT6RMSJZwh3Pjy/g1IM
-         G7sDuINpwz8AhsBQ7eralTPLCHPXqh4To/Xx3VsRZGKd2epjhZp8SNY01auSwG0CJ3b8
-         JiZeAdW9/cPO9aSDuVfhEZB51Paxm3e96UrqwYQNA0I+5o9QgaHnWg+6LFOlHxO/0Rv3
-         xu9Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730709258; x=1731314058;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=0ApKzuM1Dy1yHlR1OnkyQgRDQp0Q55UQ4hWD1IiDoII=;
-        b=odjWxgnEhtu0lYPcmXB/QrO27QwcrXKVbkXoINrSwuaGph2cwJij6wsb9bv8HtbCyF
-         RQPRVMi0D8elBhMZ62kkU/JkTWt3TLT3py6qbtf0geITBlV9LkalKHkPL/PkAnTv9O/H
-         DN7Gxi5sYEC3nI1CSd4WQwwfTTlzFh1CWKKGSLj7RACk+UpdopLv2V34m3fS51NRcVba
-         bn0RKL8gvOciS657dgQaV4bsMU0NX/IQUySaoCFmgb0U0qlY39bwT+n5cj1jaa503SBS
-         fDfGpiSk5HluVzkmzX30cWeyIAWatE465J+dc8x7xOxpYo6NEcvFBh0gQLPbsrw+Sy1g
-         SqfA==
-X-Forwarded-Encrypted: i=1; AJvYcCXbKixTiHaCvc9TnetyBEBMBQXCGSpOtOI0lCBmjyaGJj1D09JSjKRLvjX6QZUgrF8v5a0QT4lhJSaLffA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YybykBdAILb4OV+fhubg+xyQNWZ6PQfgRB5fhMCoKJG01WFgRtu
-	6GvSCPh2M/2+4bxlJ3q9ayPgd+WF+HVNLBIIOn8C3la0TOhyzNzp2k6Pw/YXBsU=
-X-Google-Smtp-Source: AGHT+IFxmI5A9LHrUN21bEWOHNg1hm+NCdXeoy97NqjdjCzBuK2/l+VfezM4eItvxCTFN1s/k5MfCg==
-X-Received: by 2002:adf:edc2:0:b0:37d:4ebe:164b with SMTP id ffacd0b85a97d-380611e1252mr20361114f8f.44.1730709257844;
-        Mon, 04 Nov 2024 00:34:17 -0800 (PST)
-Received: from ?IPV6:2a01:e0a:982:cbb0:5b00:c640:4c96:8a97? ([2a01:e0a:982:cbb0:5b00:c640:4c96:8a97])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381c113dd95sm12652484f8f.83.2024.11.04.00.34.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 04 Nov 2024 00:34:17 -0800 (PST)
-Message-ID: <e4bf88e3-e77f-49dd-84b8-e3fa3d8ee95e@linaro.org>
-Date: Mon, 4 Nov 2024 09:34:15 +0100
+	s=arc-20240116; t=1730709352; c=relaxed/simple;
+	bh=wbnG3byYpMqq7suN0oey1RV3b6DeAMAFl852jccRA8M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ErcfV6We/jGCVuMdJfQQHHCTCCLushe32wj0P0ivheSM595IXQm9xfyG3ACH+LHhAA6roFvolYZEQx8hpJxke9l3rdjVdILZQPRyBMehsg51RQHbSQTCVTKvnrrN1IuFVJeTzRJmlDaNpkIbXo9iMBwVYaaFulSF01eJ/eMg0KU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WEwscpW2; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730709351; x=1762245351;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=wbnG3byYpMqq7suN0oey1RV3b6DeAMAFl852jccRA8M=;
+  b=WEwscpW2ObfQqM5tdKT6yTqMVNld8/kzXXaPquHXH4qwa6mR3IB4TJ6j
+   IOqatU+8jcRwNhG/9+n3aKGVKVD/sWJpx0U+v1+VG2OnUX4zTonwkoYWX
+   Az6RJIsKvgAdDRvYB39U5f76bhKrY8IRxMgylFqk1MtKPUaOkXw/I8fD7
+   7SgARxO9ZGjAcfzMEFcGbjz8Mq9aXFgb440Z78Nzg/Z8DBXp/h+yNoiwL
+   GjUN1PkO5oItlnxHLl0+6zYuCkb+oPyGYBiEc6o0nNQL+mzDeYOfDW/yY
+   HIHaRIvOyYzaztGhg9KgvKE7Tl9zPdFjbq9Rgoi/IUlgV0MOFxIcArP2I
+   w==;
+X-CSE-ConnectionGUID: iCq12IiHQ5qFXpNvk13t5g==
+X-CSE-MsgGUID: s/yRKkWjQkWuC6oy87j3kg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="41501572"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="41501572"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2024 00:35:51 -0800
+X-CSE-ConnectionGUID: vsYC28+jRu676hKNhfTnag==
+X-CSE-MsgGUID: E9Ezl5rPTHGFjB7sqcjLtg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,256,1725346800"; 
+   d="scan'208";a="88165220"
+Received: from smile.fi.intel.com ([10.237.72.154])
+  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2024 00:35:46 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1t7sYo-0000000Az2S-3O3j;
+	Mon, 04 Nov 2024 10:35:42 +0200
+Date: Mon, 4 Nov 2024 10:35:42 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Aren Moynihan <aren@peacevolution.org>
+Cc: Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>,
+	Kaustabh Chakraborty <kauschluss@disroot.org>,
+	=?iso-8859-1?B?QmFybmFi4XMgQ3rpbeFu?= <trabarni@gmail.com>,
+	Ondrej Jirman <megi@xff.cz>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-sunxi@lists.linux.dev, Dragan Simic <dsimic@manjaro.org>,
+	phone-devel@vger.kernel.org
+Subject: Re: [PATCH v4 3/6] iio: light: stk3310: Implement vdd and leda
+ supplies
+Message-ID: <ZyiHXl0mRIvM4Qa0@smile.fi.intel.com>
+References: <20241102195037.3013934-3-aren@peacevolution.org>
+ <20241102195037.3013934-9-aren@peacevolution.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH] drm/bridge: it6505: Fix inverted reset polarity
-To: Chen-Yu Tsai <wenst@chromium.org>, Andrzej Hajda
- <andrzej.hajda@intel.com>, Robert Foss <rfoss@kernel.org>,
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- stable@vger.kernel.org
-References: <20241029095411.657616-1-wenst@chromium.org>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <20241029095411.657616-1-wenst@chromium.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241102195037.3013934-9-aren@peacevolution.org>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On 29/10/2024 10:54, Chen-Yu Tsai wrote:
-> The IT6505 bridge chip has a active low reset line. Since it is a
-> "reset" and not an "enable" line, the GPIO should be asserted to
-> put it in reset and deasserted to bring it out of reset during
-> the power on sequence.
+On Sat, Nov 02, 2024 at 03:50:39PM -0400, Aren Moynihan wrote:
+> The vdd and leda supplies must be powered on for the chip to function
+> and can be powered off during system suspend.
 > 
-> The polarity was inverted when the driver was first introduced, likely
-> because the device family that was targeted had an inverting level
-> shifter on the reset line.
+> This was originally based on a patch by Ondrej Jirman[1], but has been
+> rewritten since.
 > 
-> The MT8186 Corsola devices already have the IT6505 in their device tree,
-> but the whole display pipeline is actually disabled and won't be enabled
-> until some remaining issues are sorted out. The other known user is
-> the MT8183 Kukui / Jacuzzi family; their device trees currently do not
-> have the IT6505 included.
-> 
-> Fix the polarity in the driver while there are no actual users.
-> 
-> Fixes: b5c84a9edcd4 ("drm/bridge: add it6505 driver")
-> Cc: <stable@vger.kernel.org>
-> Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
-> ---
->   drivers/gpu/drm/bridge/ite-it6505.c | 8 ++++----
->   1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/bridge/ite-it6505.c b/drivers/gpu/drm/bridge/ite-it6505.c
-> index 7502a5f81557..df7ecdf0f422 100644
-> --- a/drivers/gpu/drm/bridge/ite-it6505.c
-> +++ b/drivers/gpu/drm/bridge/ite-it6505.c
-> @@ -2618,9 +2618,9 @@ static int it6505_poweron(struct it6505 *it6505)
->   	/* time interval between OVDD and SYSRSTN at least be 10ms */
->   	if (pdata->gpiod_reset) {
->   		usleep_range(10000, 20000);
-> -		gpiod_set_value_cansleep(pdata->gpiod_reset, 0);
-> -		usleep_range(1000, 2000);
->   		gpiod_set_value_cansleep(pdata->gpiod_reset, 1);
-> +		usleep_range(1000, 2000);
-> +		gpiod_set_value_cansleep(pdata->gpiod_reset, 0);
->   		usleep_range(25000, 35000);
->   	}
->   
-> @@ -2651,7 +2651,7 @@ static int it6505_poweroff(struct it6505 *it6505)
->   	disable_irq_nosync(it6505->irq);
->   
->   	if (pdata->gpiod_reset)
-> -		gpiod_set_value_cansleep(pdata->gpiod_reset, 0);
-> +		gpiod_set_value_cansleep(pdata->gpiod_reset, 1);
->   
->   	if (pdata->pwr18) {
->   		err = regulator_disable(pdata->pwr18);
-> @@ -3205,7 +3205,7 @@ static int it6505_init_pdata(struct it6505 *it6505)
->   		return PTR_ERR(pdata->ovdd);
->   	}
->   
-> -	pdata->gpiod_reset = devm_gpiod_get(dev, "reset", GPIOD_OUT_LOW);
-> +	pdata->gpiod_reset = devm_gpiod_get(dev, "reset", GPIOD_OUT_HIGH);
->   	if (IS_ERR(pdata->gpiod_reset)) {
->   		dev_err(dev, "gpiod_reset gpio not found");
->   		return PTR_ERR(pdata->gpiod_reset);
+> 1: https://codeberg.org/megi/linux/commit/a933aff8b7a0e6e3c9cf1d832dcba07022bbfa82
 
-Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
+Make it a Link tag...
+
+> 
+
+...here
+
+Link: https://codeberg.org/megi/linux/commit/a933aff8b7a0e6e3c9cf1d832dcba07022bbfa82 [1]
+> Signed-off-by: Aren Moynihan <aren@peacevolution.org>
+
+...
+
+> +	ret = devm_regulator_bulk_get(&client->dev, ARRAY_SIZE(data->supplies),
+> +				      data->supplies);
+> +	if (ret)
+> +		return dev_err_probe(&client->dev, ret, "get regulators failed\n");
+
+With previously introduced temporary 'dev' variable these become:
+
+	ret = devm_regulator_bulk_get(dev, ARRAY_SIZE(data->supplies), data->supplies);
+	if (ret)
+		return dev_err_probe(dev, ret, "get regulators failed\n");
+
+...
+
+> +	ret = stk3310_regulators_enable(data);
+> +	if (ret)
+> +		return dev_err_probe(&client->dev, ret,
+> +				     "regulator enable failed\n");
+> +
+> +	ret = devm_add_action_or_reset(&client->dev, stk3310_regulators_disable, data);
+> +	if (ret)
+> +		return dev_err_probe(&client->dev, ret,
+> +				     "failed to register regulator cleanup\n");
+
+So do these...
+
+...
+
+> +	ret = regulator_bulk_disable(ARRAY_SIZE(data->supplies), data->supplies);
+
+Is array_size.h included?
+
+> +	if (ret) {
+> +		dev_err(dev, "failed to disable regulators: %d\n", ret);
+> +		return ret;
+> +	}
+
+...
+
+> -	u8 state = 0;
+> +	int ret;
+>  	struct stk3310_data *data;
+> +	u8 state = 0;
+
+Can we try to make it RCT ordered?
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
