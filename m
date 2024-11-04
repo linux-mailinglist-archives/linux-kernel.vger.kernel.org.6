@@ -1,164 +1,124 @@
-Return-Path: <linux-kernel+bounces-395080-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395081-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4F449BB82D
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 15:44:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D5E39BB830
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 15:44:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D4F251C221C2
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 14:44:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AF4441C21537
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 14:44:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88E311B6D03;
-	Mon,  4 Nov 2024 14:44:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E545A1B6D12;
+	Mon,  4 Nov 2024 14:44:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ptr1337.dev header.i=@ptr1337.dev header.b="JTqRjBC1"
-Received: from mail.ptr1337.dev (mail.ptr1337.dev [202.61.224.105])
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="lfPu/w+8"
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A48731369B6;
-	Mon,  4 Nov 2024 14:44:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.61.224.105
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B92A70839;
+	Mon,  4 Nov 2024 14:44:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730731457; cv=none; b=m6MmKpCfjFIk9oOlqzYbD3PmWgNSeyeAtFjILrINgE61fbpGlM7zGWLvTA2xk/EoS9CPWsOnnr8V+TltsXBGQ4V+ZWpcwSTy0x39IiavXyisf3YfgFCN7YE/nlJfo/s8EpOUe/1xBH/8NFhA1mII1N+AdX/QK6NQahpfsbOq1PU=
+	t=1730731476; cv=none; b=VBKacGox5sQscS+RqwxTiU2FfGpioDtZMZk42aKL5WB/9MqE4xbckSfIWhNh2cbDE/S0rYodDBch3P4dS5aKa1w8MAnduonZSDaSEM7wKkMi5WH77qP/GXPJPQTOlBDk5FenE5c9Co8chKVxO12/MumuLw4u38ja7PX16sEPplE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730731457; c=relaxed/simple;
-	bh=1dB37Cc49m8JjFGCFvSOY5+g5lvy/roy/zoGscLJP3w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Zt4HWNK4fM9PuC41KI6RAfUE1edlFpzj/MgXRvvZOr+QRhqHelKyF20kAAHHnCO9nv3q1ctKmYqfjnfOk0NmypK+BpCyjBYVL3H5ffgsZWTUtBCzw1k+BLUOTeXnPtCBNemmnsdc3ihlufAbgLxFCDvt6ryDwX2q9ptx2ZmBcwI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ptr1337.dev; spf=pass smtp.mailfrom=ptr1337.dev; dkim=pass (2048-bit key) header.d=ptr1337.dev header.i=@ptr1337.dev header.b=JTqRjBC1; arc=none smtp.client-ip=202.61.224.105
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ptr1337.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ptr1337.dev
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 7429F2805A2;
-	Mon,  4 Nov 2024 15:44:05 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ptr1337.dev; s=dkim;
-	t=1730731447; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:content-language:in-reply-to:references:autocrypt;
-	bh=2lEoLjVmg2x1tyqnCSNq6wpXarqIH33FEICWMKbfM3E=;
-	b=JTqRjBC16vhOyZkQxUA6j6P67qF3d29SAcp8bISeSSnIl1wGbzEoVqGHJlxnYYxl4ItfV6
-	VKhYd3chIFsJQDUmj/5r3H98j668GR7LJILcBhxnFGs7Ag3T9BTU2CMSW5qRDi2BFdWWw2
-	hverlXdzUyqCAsKalgcES+x0rhDbZ6wxHa5GYUpwEusePhYJYnB4oj43kDUAuWBtagK9Y/
-	WunxAQNZ4y4Hv8uw9GtYJoaZ8lyC+dyJRUCWf2sMgkWqBFlIAr6eD9sripXpYDwlNOlmJ/
-	H7O3v/6GnlxLuaWtRF0Mjbl08Yu/heoTtdPsw4gvwSZMCTkDjvyQBXcjA/Bl1A==
-Message-ID: <b5c2bf57-c051-40e3-a4a6-ccd38b728752@ptr1337.dev>
-Date: Mon, 4 Nov 2024 15:44:04 +0100
+	s=arc-20240116; t=1730731476; c=relaxed/simple;
+	bh=O0q310ZXS/8hd5zK7hGv/wooSKysaSdt6OHMte7aao0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qcotsFACGgTrRw7m2INp5B/RpLWB+7vyD7iL5LpaLR1PEQsyb7Bq6lsBgDLiP+6bksGfvUfyXxNE5RV4V+fH77+wdcGYnLxYF1uZgEh3s0ecwLD9j6y8d4x23UXfdfi2ZYlFEAjsI4wfJyIbHwGfUarOxgrQ9RQfRO0trHwfeuQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=lfPu/w+8; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
+	:Subject; bh=tHknOMDBUHnACywOrqNmGl+/VByrwWQHN9oBTWQhGhA=; b=lfPu/w+8QvvNKN8m
+	3lpiDU38rsV0O3DSdh6xEdFQ3ASuMJTQad9ZwLQYgRGnOR0j1QRKUGAaJ9laBM5pF4fnIXoGBHR8l
+	2yynSjwYnCLIs3JxppmZYRvdTufpFO6+bMeVwxyQ/cm8w10YjMIBsv/iuk9TNO6ArptYIs5wkQeO2
+	u7GqTHVB7X46MwcMozt9W99UxPFDH04TkD6Ht7nATtg76YyiKydosuxS0ux/5PILYUJoTFu1gfbLZ
+	j6vb5xK4HJPRK+U79G1wOKLrtzVJMkWFM9VmQPCiB7CNMDt+IUFRzyUgKh72N73Eo0M2nt5ILOyvh
+	a+75EMooi030A78LrQ==;
+Received: from dg by mx.treblig.org with local (Exim 4.96)
+	(envelope-from <dg@treblig.org>)
+	id 1t7yJg-00FLns-3C;
+	Mon, 04 Nov 2024 14:44:28 +0000
+Date: Mon, 4 Nov 2024 14:44:28 +0000
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
+To: Kalle Valo <kvalo@kernel.org>
+Cc: pkshih@realtek.com, linux-wireless@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] rtlwifi: Remove more unused functions
+Message-ID: <ZyjdzJujaHJekv8Q@gallifrey>
+References: <20241103153857.255450-1-linux@treblig.org>
+ <20241103153857.255450-3-linux@treblig.org>
+ <87y11zxwlr.fsf@kernel.org>
+ <ZyjDn0R7gzDQ4jnT@gallifrey>
+ <87msif6q4q.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] kbuild: add resolve_btfids to pacman PKGBUILD
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: jose.fernandez@linux.dev, =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?=
- <linux@weissschuh.net>, Christian Heusel <christian@heusel.eu>,
- Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>,
- linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
- bpf@vger.kernel.org
-References: <20241102120533.1592277-1-admin@ptr1337.dev>
- <CAK7LNAQ=sCsTXB_O58W=AH=k8Vqzoi+hh6-BKhEjZYh-+xCvBQ@mail.gmail.com>
-Content-Language: en-US
-From: Peter Jung <admin@ptr1337.dev>
-Autocrypt: addr=admin@ptr1337.dev; keydata=
- xsDNBGDN584BDADLkW+X7spr0m4+EPYY/kClnljbrH0W6zTQ8R51p8cKrQcvJbuQmKs6FCLy
- 4bHjJqhoRJGGLz+k1oexjIyjm+ydhC/tK/5IxbibqWjwToFEJiJP4Ezp5/FJOgAD0Y72ZrTg
- 60EaKv3VG7d9ERd7TByHZ+2B9xM5aRD2k6zwDr02tjCG0O2BBm/tGnypU/EqlU9hw/edw8/w
- RyR2o2IGlw9OgBdzfTI3aTbOPe0swrveUBb0LOx9Onn+AvVC9/mZBk/clzbcheQiYrOGlsC0
- xOGeEuQB74rTnBZn2S/YSjBlCgDhckdfz5l7uTQzTIKdE5BN9iZZl3yhpg6+5UsGPlidfDvX
- oD5GBcMm+825P4QKHaSDpyAlTt3E+6Jg6IgnBsE6dCOe7s8Z1l/ncIsf4/pIpKkaLMGPUnEA
- xtTurYi//lkF9YKDCIaxFvlpwsvUdr8oOqTM13oq7iUWc2cUrqG5snRNInqcB1kzL2nOx1Ck
- YQ/WkXsO7WGBwc/F819L9K8AEQEAAc0eUGV0ZXIgSnVuZyA8YWRtaW5AcHRyMTMzNy5kZXY+
- wsEUBBMBCAA+AhsDBQsJCAcCBhUKCQgLAgQWAgMBAh4BAheAFiEE6LmqOfBU4w6CkNSSw8SC
- CFf2VP4FAmYJosEFCQj+IfMACgkQw8SCCFf2VP5wOgwAjbOSBJhMyazARWF1cTe8Nuzr4e9t
- xJYTuFhAcQLyX1HleA54/TQwzVOl8kvjDaRH3DEkMSlOqVy5Rwy5hs53XQa/lL8QCHkpnLYC
- d7kZkrYriMTlbanzwGfV5rar0F86XIHkeuCFFpDA0G3MKEfnPe5+JinPt9o0zl47PvMrxds5
- SJQsDit0WjIhoGq8s2O6g4lqTVXEfMnGUfli+JL4uFBhXrR8UYywOTOFcCINonY6HkTpDY66
- c+lXH3ynt5aiFyqiPukOp/E3ws2ZF6CCtSCHgGZhbpQ1pcFs8fP1c/b/N8BkN5EBphAEzH8Z
- dtPj0LXxGOcp64PsdjUPrTOgjTyhV46EbwjGh7QqEpj9k+sMi7JMrbH32biublo271Dm5j/N
- sN8j+oGk4lci+Dxz4igCJR7KMJtX5GpwGbkxoFkHHIfAzgGdTZNBU6dABzVESf2YJV5tirBh
- 4FaInGV9LnziKwV52ukgdZngjTNFEipMmMoLJ8ha3Wpr8YK0lB93zsDNBGDN584BDAC0x+mf
- yy9LgySrfMEwtl1B1T5KJQ7tVS7f7OQJSRzLVl+EcdJ9FpxjRmEnjUkIu90qXOzxC+TFoKME
- ZBtYQSSyL/MXrve4e3SpzNRdYZKQKY9AAZDBjt63Z6aCgLMEiZaVpozJnz+d/WPCtwlOiDNd
- VS1V4+OuF81x/gLvaut5gh8g3IoRx9lDNOBOMfdhJahX5Yq4KWq+pHoNuKWM6NjLM4aclKOj
- GUx4sSLJEp39OafrgAnaGGlZlXIB26pRqS4rypZg+VozDHUYvpJuFZDLjM1PrEVfiIl1Q5lD
- 2TvbHwnxrPPlEfvlS8dhOQ49tmX3J7zpn0n/UIr4odaUWOuVfm5oTJ25AZoz1kR/6KNhdtlx
- oLsHSq5RdD8EYOtNil5Wsaa5awdlEHqZLBqsihB99sxYgJ85vIX5kGAWAhzJ0wwSKEIVHDrY
- q4+pCJMLF6itEboqiLMdOQ7ozpQXxpfne3z11ZNyE1vC+uHpmIfPxjEgK0DoBR4djNQl9A1y
- 3QcAEQEAAcLA/AQYAQgAJhYhBOi5qjnwVOMOgpDUksPEgghX9lT+BQJm41UOAhsMBQkJ1pIS
- AAoJEMPEgghX9lT+ciAL/2zvVnIrsRdKwc5yJ1P35xdPPMUMaVqh2NTBwiWby3Ijlas1OR/5
- YdFvYKbyJ4WfDbBkxbFWGuxs0ndkKCgU0p72y8yEKkRzM923m2iZlaqXzejhv7mL0enW6Not
- dCBaGYx+nhacAMumBHKVXEM0KQx8nmxlnRnQEI62HibZUz0NEY4r/uzp0EnL7aqJxEtBBCLS
- 6uZd0fBakdrN6RJbmJX0Bwb1oQjItSg4MrIw49iXEmTSQ9xq4it+pJXbpaSxmuv3kxBB9oI3
- nedJybUgTfZtn96Z+ReW+tf11ozSBZcQBKq+0mG6SnmA0CXL8S+CKSgIQQqmhdXyKwb3F0wH
- 2FSvXiKmwpnBQwCfcQDVLRYOTaWMb19Z9/EOpxDzkMKo/FjLwjBI+cOpmqJutfevzq6A1SSu
- rkdg7iVCaChLL83EszKdWPZK2OHAZVK9s5Zyhp2YaxH+W0db+IVfs6TCKOKCUlc/4hD9RdWL
- gOKqiuxfQT4ByeLKUXhQY5ciKpjPTg==
-In-Reply-To: <CAK7LNAQ=sCsTXB_O58W=AH=k8Vqzoi+hh6-BKhEjZYh-+xCvBQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+In-Reply-To: <87msif6q4q.fsf@kernel.org>
+X-Chocolate: 70 percent or better cocoa solids preferably
+X-Operating-System: Linux/6.1.0-21-amd64 (x86_64)
+X-Uptime: 14:43:51 up 180 days,  1:57,  1 user,  load average: 0.10, 0.05,
+ 0.01
+User-Agent: Mutt/2.2.12 (2023-09-09)
 
+* Kalle Valo (kvalo@kernel.org) wrote:
+> "Dr. David Alan Gilbert" <linux@treblig.org> writes:
+> 
+> > * Kalle Valo (kvalo@kernel.org) wrote:
+> >> linux@treblig.org writes:
+> >> 
+> >> > From: "Dr. David Alan Gilbert" <linux@treblig.org>
+> >> >
+> >> > exhalbtc_dbg_control(), exhalbtc_stack_update_profile_info(),
+> >> > exhalbtc_set_hci_version(), and exhalbtc_set_bt_patch_version() are
+> >> > unused since their addition in 2014 by
+> >> > commit aa45a673b291 ("rtlwifi: btcoexist: Add new mini driver")
+> >> >
+> >> > Remove them.
+> >> >
+> >> > Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+> >> 
+> >> 'wifi:' missing.
+> >
+> > Oops, can add that.
+> >
+> >> Also in both patches the subject could be more unique.
+> >
+> > Do you have suggestions? I don't know the code to give good titles.
+> > They're both 'btcoexist'; I could merge them into one
+> >
+> > wifi: wtlwifi: Remove btcoexist deadcode
+> 
+> No good suggestions really. Usually I add what I'm removing to the
+> subject but as this patch is removing several functions the subject
+> would be too long. Maybe something like 'wifi: rtlwifi: remove several
+> unused exhalbtc_*() functions?' just to throw out some ideas, I'm sure
+> you can come with better ones.
 
-On 03.11.24 10:47, Masahiro Yamada wrote:
-> On Sat, Nov 2, 2024 at 9:06 PM Peter Jung<admin@ptr1337.dev> wrote:
->> If the config is using DEBUG_INFO_BTF, it is required to,
->> package resolve_btfids with.
->> Compiling dkms modules will fail otherwise.
->>
->> Add a check, if resolve_btfids is present and then package it, if required.
->>
->> Signed-off-by: Peter Jung<admin@ptr1337.dev>
->> ---
->>   scripts/package/PKGBUILD | 5 +++++
->>   1 file changed, 5 insertions(+)
->>
->> diff --git a/scripts/package/PKGBUILD b/scripts/package/PKGBUILD
->> index f83493838cf9..4010899652b8 100644
->> --- a/scripts/package/PKGBUILD
->> +++ b/scripts/package/PKGBUILD
->> @@ -91,6 +91,11 @@ _package-headers() {
->>                  "${srctree}/scripts/package/install-extmod-build" "${builddir}"
->>          fi
->>
->> +       # required when DEBUG_INFO_BTF_MODULES is enabled
->> +       if [ -f tools/bpf/resolve_btfids/resolve_btfids ]; then
->> +               install -Dt "$builddir/tools/bpf/resolve_btfids" tools/bpf/resolve_btfids/resolve_btfids
->> +       fi
->> +
-> This is not the right place.
->
-> scripts/package/install-extmod-build is a script to set up
-> the build environment to build external modules.
-> It is shared by rpm-pkg, deb-pkg, and pacman-pkg.
->
->
-> https://github.com/torvalds/linux/blob/v6.12-rc5/scripts/package/install-extmod-build#L34
->
-> You will see how objtool is copied.
->
->
->
->
-> (Anyway, it depends on your urgency.
-> My hope is to support objtool and resolve_btfids in more generic ways.)
->
+OK, I've just merged the two together, and sent it out as a single patch
 
-Thanks Masahiro for the suggestion. I will look into and likely bring a v2.
-I did not know about other distribution/package managers, if this is 
-also a problem at them.
+[PATCH v2] wifi: rtlwifi: Remove some exhalbtc deadcod
+message-id: 20241104144331.29262-1-linux@treblig.org
 
-At archlinux we have included this since a while already in the 
-PKGBUILD, see here:
-https://gitlab.archlinux.org/archlinux/packaging/packages/linux/-/blob/main/PKGBUILD?ref_type=heads#L151-152
+Dave
 
-I will also make the change to grep for DEBUG_INFO_BTF in the config 
-with the is_enabled function, instead of checking the path
-
-
-Regards,
-
-Peter
-
+> 
+> -- 
+> https://patchwork.kernel.org/project/linux-wireless/list/
+> 
+> https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+> 
+-- 
+ -----Open up your eyes, open up your mind, open up your code -------   
+/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
+\        dave @ treblig.org |                               | In Hex /
+ \ _________________________|_____ http://www.treblig.org   |_______/
 
