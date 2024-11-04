@@ -1,318 +1,110 @@
-Return-Path: <linux-kernel+bounces-395589-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395590-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 985BB9BC032
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 22:38:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4307E9BC036
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 22:38:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5690228296C
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 21:38:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07E752828DF
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 21:38:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62C451FCC72;
-	Mon,  4 Nov 2024 21:38:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD9821FCF57;
+	Mon,  4 Nov 2024 21:38:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=intelfx.name header.i=@intelfx.name header.b="jM543o6L"
-Received: from mail-lj1-f194.google.com (mail-lj1-f194.google.com [209.85.208.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Co2uEtQt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB1E81FA278
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 21:38:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8F3A1CDFBE;
+	Mon,  4 Nov 2024 21:38:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730756296; cv=none; b=VMAReOozDdJ8xmxw5/mt0TAQlI9Z/6qJaMETxRdzITdexo4M0xdPkrxYA8n9GEBcxbnqZtkYY3bd4XsqPubqNpdLkDePrngX43eYVa4X6ftMifYa/fSm2Pcd+7iJ8EMha2nrVHQFab2JlMcTkQWsgNYp+mLVWVAVHuxr7F9mDrA=
+	t=1730756316; cv=none; b=FQXYbKuW6btAWukxhiU1QjWoelnQr1crrdyN55jc5iCso5RXjRbf31TgVsA7wRcZLSJ+cVoqo9RzYAaaTMaDW10dY6jhpW6gGnPxUKhfiWb4uuh1c/McFcPKOJPhrW7w7UpZK9u+J1PE4atlzaDrLVIg9FfryosV45Mei7N3XSw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730756296; c=relaxed/simple;
-	bh=obcFu27KQCZjTjPuY5L7sCMbgAjqr2KJwucsh+50tpU=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=RsP0QrPfESm5MJzaAaNKe/smU/CFSpCdjx24KI9Vho3IgpB2dWRO3E72aFxauGTiJmu50CR0Zyvs5ZHiKCYiN3SC4+4IgWmI+f8Mg39FW4cowtWmLY5Lumot03RX+wRqs5XUNILuSorFRHYQqMz4BY7MyIYrqfHInvzah+0gQko=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=intelfx.name; spf=pass smtp.mailfrom=intelfx.name; dkim=pass (1024-bit key) header.d=intelfx.name header.i=@intelfx.name header.b=jM543o6L; arc=none smtp.client-ip=209.85.208.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=intelfx.name
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intelfx.name
-Received: by mail-lj1-f194.google.com with SMTP id 38308e7fff4ca-2fb5638dd57so43535351fa.0
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 13:38:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intelfx.name; s=google; t=1730756292; x=1731361092; darn=vger.kernel.org;
-        h=mime-version:user-agent:references:in-reply-to:date:cc:to:from
-         :subject:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=vh1n/y4BqSxL61trxk9F4cMNSFBXDYeq2HQnvqXSzYs=;
-        b=jM543o6Lc7jCTAS8LzoJxtYcmZPBNgrTTqW56ph04pXLgTyl9S9zlM5W4zsc5vbqcM
-         1Awh2j7jdx5jLx+S4JJvJkf4PVx1Q9R/oTAAvAHNj8OKnfZa20WAgnokgh4zZSqbsZ99
-         cdP2/7NLqysY4OAC+N24eJi7U7s79qYVM/87M=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730756292; x=1731361092;
-        h=mime-version:user-agent:references:in-reply-to:date:cc:to:from
-         :subject:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vh1n/y4BqSxL61trxk9F4cMNSFBXDYeq2HQnvqXSzYs=;
-        b=wtzUE4BDSNoS0LxxPNCZtzZLvnFw0Za1mJ5rCfnXUzE0kpXqyVMlKVic5CAXwfG7jX
-         iWNU2nsAsxR4EpMTEUcXUuAUrIN8ZMuMcuIUkbBL+nBin8oxwg2uum9GVUW0ZkRbOnEU
-         Kfsk25ONtigu4pu1xwSdBh8u9P1Gpfi05Ea9qtqYcWrr46Y21PMw700ic3adSw5rj+uu
-         f8KQiEqV8VAGaJ70DO4V0m+ea/oHTxqC/Ha6ExOGTn5Lik3VGktGEMNC0KidYI53bq9K
-         yFUooCTJsdc7Av65cjA3wDX5SZGa1VOVF//0B5OvWLOxBC5nANn8jpIfhWBxuGpmmFHi
-         cJDQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV7AjSM6gKA66jeGk2nl0Svxqj7K+sAS1h7c9EuhHCSqm6XAAnAc6oOlw/d3rFuwcSMLcdXMLSH5LGKz/U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwEd0QI+4xFgsoSUN3UwtATQT2aeL3ePDBvxcmIvfc0syjABCyL
-	MRF25nq2VDRPY/lMsVvzjMrG9fFhDpSVQsuQzcFV9LibRgb3kJWg2HaSQyD37ac=
-X-Google-Smtp-Source: AGHT+IEPwRwaCa+0wyq2Ttk58W9tNOdor2K6tXZmSyjZqjuf4o56Nm6ohzH0YHSYghl5u5PoQ9WhVg==
-X-Received: by 2002:a05:651c:221e:b0:2fb:65c8:b4ca with SMTP id 38308e7fff4ca-2fcbe09865amr150417351fa.40.1730756291637;
-        Mon, 04 Nov 2024 13:38:11 -0800 (PST)
-Received: from [192.168.100.4] ([176.221.221.77])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53c7bc9582esm1893755e87.59.2024.11.04.13.38.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Nov 2024 13:38:08 -0800 (PST)
-Message-ID: <25d7112c4ca6d84e6a1289663cbf172bf7709fee.camel@intelfx.name>
-Subject: Re: [PATCH v3] ACPI: processor: Move arch_init_invariance_cppc()
- call later
-From: Ivan Shapovalov <intelfx@intelfx.name>
-To: Mario Limonciello <superm1@kernel.org>, "Rafael J. Wysocki"
-	 <rafael@kernel.org>
-Cc: Borislav Petkov <bp@alien8.de>, Thomas Gleixner <tglx@linutronix.de>, 
- Ingo Molnar <mingo@redhat.com>, Dave Hansen <dave.hansen@linux.intel.com>,
- "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)"	 <x86@kernel.org>, "H .
- Peter Anvin" <hpa@zytor.com>, Len Brown <lenb@kernel.org>,  Peter Zijlstra
- <peterz@infradead.org>, Mario Limonciello <mario.limonciello@amd.com>,
- "Gautham R . Shenoy"	 <gautham.shenoy@amd.com>, "open list:X86 ARCHITECTURE
- (32-BIT AND 64-BIT)"	 <linux-kernel@vger.kernel.org>, "open list:ACPI"
- <linux-acpi@vger.kernel.org>,  Oleksandr Natalenko
- <oleksandr@natalenko.name>
-Date: Tue, 05 Nov 2024 01:38:03 +0400
-In-Reply-To: <814adf82-99ec-44f8-83d0-6540f2cccbcb@kernel.org>
-References: <20241104205446.3874509-1-superm1@kernel.org>
-	 <CAJZ5v0jGTzRNgA7HM-r=TuhHyy0gvMuNEgz5wZ2hPkqwyFa6og@mail.gmail.com>
-	 <814adf82-99ec-44f8-83d0-6540f2cccbcb@kernel.org>
-Content-Type: multipart/signed; micalg="pgp-sha512";
-	protocol="application/pgp-signature"; boundary="=-/h+3FMQAWskMVIpDn/wq"
-User-Agent: Evolution 3.54.1 
+	s=arc-20240116; t=1730756316; c=relaxed/simple;
+	bh=WwBZK0JB5bJHyGasmcj/L8/Envcc8v3532gInv1sJ/I=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=pwDzTdWbcC1d5iXanz8NpdgCWp0D/+75Lnt3HxI4dtXpMf//MxKg7ZODlguMMOt0fz3ePIlEE2m2O5kXOrRYg/c1yIhrgURL5wPQ64Mi1jhZY0R3LbvQjnpn7A84KPQ6Kr7kAwsUsF0yV+7XrrFuVV5XoPoH/340aUDmJEAigKM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Co2uEtQt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10236C4CECE;
+	Mon,  4 Nov 2024 21:38:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1730756315;
+	bh=WwBZK0JB5bJHyGasmcj/L8/Envcc8v3532gInv1sJ/I=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Co2uEtQt0SYWN/uVQ8wieRC7EHb2o4A0t5p5W8viVE7GGxZJMu4laOwivRh0DqQnk
+	 gewQq4bFlkQa/k+pWap14rQjNpT3cK2mzTskebMAZswHXL5zsbOTylRg7rDJO9DoSu
+	 ve1ju0QIq0U2PPofuCoqgwp5qdylE8rnkPFuEewY=
+Date: Mon, 4 Nov 2024 13:38:34 -0800
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Yu Zhao <yuzhao@google.com>
+Cc: Shakeel Butt <shakeel.butt@linux.dev>, Johannes Weiner
+ <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>, Roman Gushchin
+ <roman.gushchin@linux.dev>, Muchun Song <muchun.song@linux.dev>, Hugh
+ Dickins <hughd@google.com>, Yosry Ahmed <yosryahmed@google.com>,
+ linux-mm@kvack.org, cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org, Meta kernel team
+ <kernel-team@meta.com>
+Subject: Re: [PATCH v1 5/6] memcg-v1: no need for memcg locking for MGLRU
+Message-Id: <20241104133834.e0e138038a111c2b0d20bdde@linux-foundation.org>
+In-Reply-To: <ZykEtcHrQRq-KrBC@google.com>
+References: <20241025012304.2473312-1-shakeel.butt@linux.dev>
+	<20241025012304.2473312-6-shakeel.butt@linux.dev>
+	<iwmabnye3nl4merealrawt3bdvfii2pwavwrddrqpraoveet7h@ezrsdhjwwej7>
+	<CAOUHufZexpg-m5rqJXUvkCh5nS6RqJYcaS9b=xra--pVnHctPA@mail.gmail.com>
+	<ZykEtcHrQRq-KrBC@google.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
+On Mon, 4 Nov 2024 10:30:29 -0700 Yu Zhao <yuzhao@google.com> wrote:
 
---=-/h+3FMQAWskMVIpDn/wq
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+> On Sat, Oct 26, 2024 at 09:26:04AM -0600, Yu Zhao wrote:
+> > On Sat, Oct 26, 2024 at 12:34 AM Shakeel Butt <shakeel.butt@linux.dev> wrote:
+> > >
+> > > On Thu, Oct 24, 2024 at 06:23:02PM GMT, Shakeel Butt wrote:
+> > > > While updating the generation of the folios, MGLRU requires that the
+> > > > folio's memcg association remains stable. With the charge migration
+> > > > deprecated, there is no need for MGLRU to acquire locks to keep the
+> > > > folio and memcg association stable.
+> > > >
+> > > > Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
+> > >
+> > > Andrew, can you please apply the following fix to this patch after your
+> > > unused fixup?
+> > 
+> > Thanks!
+> 
+> syzbot caught the following:
+> 
+>   WARNING: CPU: 0 PID: 85 at mm/vmscan.c:3140 folio_update_gen+0x23d/0x250 mm/vmscan.c:3140
+>   ...
+> 
+> Andrew, can you please fix this in place?
 
-On 2024-11-04 at 15:14 -0600, Mario Limonciello wrote:
-> On 11/4/2024 15:10, Rafael J. Wysocki wrote:
-> > On Mon, Nov 4, 2024 at 9:54=E2=80=AFPM Mario Limonciello <superm1@kerne=
-l.org> wrote:
-> > >=20
-> > > From: Mario Limonciello <mario.limonciello@amd.com>
-> > >=20
-> > > arch_init_invariance_cppc() is called at the end of
-> > > acpi_cppc_processor_probe() in order to configure frequency invarianc=
-e
-> > > based upon the values from _CPC.
-> > >=20
-> > > This however doesn't work on AMD CPPC shared memory designs that have
-> > > AMD preferred cores enabled because _CPC needs to be analyzed from al=
-l
-> > > cores to judge if preferred cores are enabled.
-> > >=20
-> > > This issue manifests to users as a warning since commit 21fb59ab4b97
-> > > ("ACPI: CPPC: Adjust debug messages in amd_set_max_freq_ratio() to wa=
-rn"):
-> > > ```
-> > > Could not retrieve highest performance (-19)
-> > > ```
-> > >=20
-> > > However the warning isn't the cause of this, it was actually
-> > > commit 279f838a61f9 ("x86/amd: Detect preferred cores in
-> > > amd_get_boost_ratio_numerator()") which exposed the issue.
-> > >=20
-> > > To fix this problem, change arch_init_invariance_cppc() into a new we=
-ak
-> > > symbol that is called at the end of acpi_processor_driver_init().
-> > > Each architecture that supports it can declare the symbol to override
-> > > the weak one.
-> > >=20
-> > > Fixes: 279f838a61f9 ("x86/amd: Detect preferred cores in amd_get_boos=
-t_ratio_numerator()")
-> > > Reported-by: Ivan Shapovalov <intelfx@intelfx.name>
-> > > Closes: https://bugzilla.kernel.org/show_bug.cgi?id=3D219431
-> > > Tested-by: Oleksandr Natalenko <oleksandr@natalenko.name>
-> > > Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
-> > > ---
-> > > v3:
-> > >   * Weak symbol instead of macro to help riscv build failure
-> > >   * Update commit message
-> > >   * Add comment
-> > > ---
-> > >   arch/arm64/include/asm/topology.h | 2 +-
-> > >   arch/x86/include/asm/topology.h   | 2 +-
-> > >   drivers/acpi/cppc_acpi.c          | 6 ------
-> > >   drivers/acpi/processor_driver.c   | 9 +++++++++
-> > >   include/acpi/processor.h          | 2 ++
-> > >   5 files changed, 13 insertions(+), 8 deletions(-)
-> > >=20
-> > > diff --git a/arch/arm64/include/asm/topology.h b/arch/arm64/include/a=
-sm/topology.h
-> > > index 5fc3af9f8f29b..8a1860877967e 100644
-> > > --- a/arch/arm64/include/asm/topology.h
-> > > +++ b/arch/arm64/include/asm/topology.h
-> > > @@ -27,7 +27,7 @@ void update_freq_counters_refs(void);
-> > >   #define arch_scale_freq_ref topology_get_freq_ref
-> > >=20
-> > >   #ifdef CONFIG_ACPI_CPPC_LIB
-> > > -#define arch_init_invariance_cppc topology_init_cpu_capacity_cppc
-> > > +#define acpi_processor_init_invariance_cppc topology_init_cpu_capaci=
-ty_cppc
-> > >   #endif
-> > >=20
-> > >   /* Replace task scheduler's default cpu-invariant accounting */
-> > > diff --git a/arch/x86/include/asm/topology.h b/arch/x86/include/asm/t=
-opology.h
-> > > index aef70336d6247..0fb705524aeaa 100644
-> > > --- a/arch/x86/include/asm/topology.h
-> > > +++ b/arch/x86/include/asm/topology.h
-> > > @@ -307,7 +307,7 @@ extern void arch_scale_freq_tick(void);
-> > >=20
-> > >   #ifdef CONFIG_ACPI_CPPC_LIB
-> > >   void init_freq_invariance_cppc(void);
-> > > -#define arch_init_invariance_cppc init_freq_invariance_cppc
-> > > +#define acpi_processor_init_invariance_cppc init_freq_invariance_cpp=
-c
-> > >   #endif
-> > >=20
-> > >   #endif /* _ASM_X86_TOPOLOGY_H */
-> > > diff --git a/drivers/acpi/cppc_acpi.c b/drivers/acpi/cppc_acpi.c
-> > > index 1a40f0514eaa3..5c0cc7aae8726 100644
-> > > --- a/drivers/acpi/cppc_acpi.c
-> > > +++ b/drivers/acpi/cppc_acpi.c
-> > > @@ -671,10 +671,6 @@ static int pcc_data_alloc(int pcc_ss_id)
-> > >    *  )
-> > >    */
-> > >=20
-> > > -#ifndef arch_init_invariance_cppc
-> > > -static inline void arch_init_invariance_cppc(void) { }
-> > > -#endif
-> > > -
-> > >   /**
-> > >    * acpi_cppc_processor_probe - Search for per CPU _CPC objects.
-> > >    * @pr: Ptr to acpi_processor containing this CPU's logical ID.
-> > > @@ -905,8 +901,6 @@ int acpi_cppc_processor_probe(struct acpi_process=
-or *pr)
-> > >                  goto out_free;
-> > >          }
-> > >=20
-> > > -       arch_init_invariance_cppc();
-> > > -
-> > >          kfree(output.pointer);
-> > >          return 0;
-> > >=20
-> > > diff --git a/drivers/acpi/processor_driver.c b/drivers/acpi/processor=
-_driver.c
-> > > index cb52dd000b958..3b281bc1e73c3 100644
-> > > --- a/drivers/acpi/processor_driver.c
-> > > +++ b/drivers/acpi/processor_driver.c
-> > > @@ -237,6 +237,9 @@ static struct notifier_block acpi_processor_notif=
-ier_block =3D {
-> > >          .notifier_call =3D acpi_processor_notifier,
-> > >   };
-> > >=20
-> > > +void __weak acpi_processor_init_invariance_cppc(void)
-> > > +{ }
-> >=20
-> > Does this actually work if acpi_processor_init_invariance_cppc is a
-> > macro?  How does the compiler know that it needs to use
-> > init_freq_invariance_cppc() instead of this?
-> >=20
-> > It would work if a __weak definition of init_freq_invariance_cppc() was=
- present.
->=20
-> I also wasn't sure, so I explicitly added some tracing in=20
-> init_freq_invariance_cppc() to make sure it got called and checked it=20
-> (GCC 13.2.0).
+OK, but...
 
-Aren't C macros substituted strictly lexically, i.e. if the #define is
-present by the time the function definition is parsed, it's just
+> --- a/mm/vmscan.c
+> +++ b/mm/vmscan.c
+> @@ -3138,7 +3138,6 @@ static int folio_update_gen(struct folio *folio, int gen)
+>  	unsigned long new_flags, old_flags = READ_ONCE(folio->flags);
+>  
+>  	VM_WARN_ON_ONCE(gen >= MAX_NR_GENS);
+> -	VM_WARN_ON_ONCE(!rcu_read_lock_held());
+>  
+>  	do {
+>  		/* lru_gen_del_folio() has isolated this page? */
 
-void __weak acpi_processor_init_invariance_cppc(void) {}
--> void __weak init_freq_invariance_cppc(void) {}
+it would be good to know why this assertion is considered incorrect? 
+And a link to the sysbot report?
 
-? So it _is_ a weak definition of init_freq_invariance_cppc().
-
->=20
-> But I'll admit it's a confusing behavior.  If you think it's too=20
-> confusing I'll swap it around to just axe the macros.
-
-...That said, it does look kinda confusing. Seems to be norm for that
-arch/ header file though.
-
-Anyway,
-
-  Tested-by: Ivan Shapovalov <intelfx@intelfx.name>
-
-
->=20
-> >=20
-> > > +
-> > >   /*
-> > >    * We keep the driver loaded even when ACPI is not running.
-> > >    * This is needed for the powernow-k8 driver, that works even witho=
-ut
-> > > @@ -270,6 +273,12 @@ static int __init acpi_processor_driver_init(voi=
-d)
-> > >                                    NULL, acpi_soft_cpu_dead);
-> > >=20
-> > >          acpi_processor_throttling_init();
-> > > +
-> > > +       /*
-> > > +        * Frequency invariance calculations on AMD platforms can't b=
-e run until
-> > > +        * after acpi_cppc_processor_probe() has been called for all =
-online CPUs.
-> > > +        */
-> > > +       acpi_processor_init_invariance_cppc();
-> > >          return 0;
-> > >   err:
-> > >          driver_unregister(&acpi_processor_driver);
-> > > diff --git a/include/acpi/processor.h b/include/acpi/processor.h
-> > > index e6f6074eadbf3..a17e97e634a68 100644
-> > > --- a/include/acpi/processor.h
-> > > +++ b/include/acpi/processor.h
-> > > @@ -465,4 +465,6 @@ extern int acpi_processor_ffh_lpi_probe(unsigned =
-int cpu);
-> > >   extern int acpi_processor_ffh_lpi_enter(struct acpi_lpi_state *lpi)=
-;
-> > >   #endif
-> > >=20
-> > > +void acpi_processor_init_invariance_cppc(void);
-> > > +
-> > >   #endif
-> > >=20
-> > > base-commit: 6db936d4ac0fe281af48b4d1ebf69b1523bbac31
-> > > --
-> > > 2.43.0
-> > >=20
->=20
-
---=-/h+3FMQAWskMVIpDn/wq
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-
------BEGIN PGP SIGNATURE-----
-
-iQJJBAABCgAzFiEE5N8nvImcx2nJlFGce94XyOTjDp0FAmcpPrsVHGludGVsZnhA
-aW50ZWxmeC5uYW1lAAoJEHveF8jk4w6dsy0P/3EI4lHiwlZWLjBbs3efEmtyXF4V
-Hhf5Qw1LibvDfdFCkSYyNux2oFYoDThhCVVYIKTpAHvOzgAE5tYs2qb7oQuv7IDK
-HcXcZTRq2esbA0ax0jCDcblRjav1xB015reUSD7XrRWeY2RmRqbHhz/yUNc/2sJl
-HasfPTQH6NRy4W+4uG+rbSw//+QZbJO4FXRgX89joA4Sfr4iDpyLcqrEL6ZaCVC8
-I6CCoqqcf08+CNHj2L9zpbFAihx4z25ADv1hTWVq4ainLawTUnyxon+u40Gl5y0K
-XtIFvvMvlZ5DnkhZ16DIcs4lxMXaJkwUbra4PjPvTZOZbkewweIuzmO68uL25uso
-BhzjgXFD/EBbhLFmmz0KQYoI5lP+vUSz+oJI1kuQ3XmCFnakJS0uGc+CWMG3PFv1
-vnqSQ+ttp22A3kLNENjvfSWAzFI/KxTGBf2alJDcEAzaAHaBUIw3tAVCb1KLYTSu
-YhrEsmbj69T3hsw6r1Pgnq+IJasMkewn/CSpSOLsRcjlaOTqVn5OQz4/cJiqOlag
-kZE10Yc48s1/3nYTkHHqSY9y7jVbG+dXgrKNHS8JKy0mrhjIUFdgJXfi3iuvXKcI
-QEpRWCuI0lP/nMwqw+8ERptMq8XikeQZeFpsJoFNj6fVNbOETd1wN+e0C7C7ma61
-YZQWpoMqQfMlb0v5
-=2UY9
------END PGP SIGNATURE-----
-
---=-/h+3FMQAWskMVIpDn/wq--
+Thanks.
 
