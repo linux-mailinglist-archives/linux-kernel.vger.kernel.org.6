@@ -1,106 +1,119 @@
-Return-Path: <linux-kernel+bounces-394349-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394350-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA9269BADBB
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 09:09:36 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BEA789BADBE
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 09:10:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 96F101F226EC
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 08:09:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 47143B20E62
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 08:09:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35F851A76A4;
-	Mon,  4 Nov 2024 08:09:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C6B51AA7A2;
+	Mon,  4 Nov 2024 08:09:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zONYRsfk"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="EMDhNSOa"
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFABF1A4AAA
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 08:09:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20EB019993E
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 08:09:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730707772; cv=none; b=hDICKca8RDKblFmlEEoCEonned8lfpfSQeOlQJiS9oYQdO4OBVvKXoibt3fXcQR/wtpj5LAwiFngKPjzxOYHlOb6+D4jumHgqHblcWjWvjHfmT5s+i/8QB1fqnZosWT1RA151OloOV1UAFmUVMbjwt0I2vnO4HZR6DhDdsgN2sI=
+	t=1730707790; cv=none; b=Y7b413SX163y10Fa+GhA+45ST8Bec9YwOUEqj8yZok/xDcnHGBMC4ORxLgMFfYJXMoFY91zjbn+hJ3O69rlceEewN3S/fB1ldOIlpoVWojvMU9B/nCMChvUiO5s42hzxO08Xv6kV3Xlm/h6B0LL0G0i41WwW/r7qEDl4ySQIW2U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730707772; c=relaxed/simple;
-	bh=+smaqJgqRUBeteC0zyieDxigAF1aK6M9oaRBbBEo8h0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PHyVjIq2f8ur96tyocsMKgMqgoHy7La5fHFpc2IrS5d6oZTzqLvRJTZGWkIwG6W5uZoO4s0vO23MawTrcR4ztNwNWu6IIzIvCFIGsP1wHTREEHZjppYTYx+ECaaBA2/WgjoUJlWq2PQpasjMkRDiYkupCjEkzsMFiintoaHEAS8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zONYRsfk; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4315baa51d8so34316155e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 00:09:30 -0800 (PST)
+	s=arc-20240116; t=1730707790; c=relaxed/simple;
+	bh=Yz31SLbOPrOYc3soJoY0aJGiMShQP5qyX8fLZnLuJzk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Xg0J0L3Jm0nKUoGVjbh5YEV8bjBWtJ4VUqM2xgtycwnR3xGmijyjW14AjjZPLKxamw5/DKnQ3k05hd0kHwhWWyz/pOmq3aKoexYIGxBkvY30YJYF8sjRjS1tp3Kihx7oVLpWyZpC74XmK0N+SsaatY4+gJ/tcH6Pe4KLPMu6c4Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=EMDhNSOa; arc=none smtp.client-ip=209.85.167.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-539f4d8ef66so4967528e87.1
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 00:09:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1730707769; x=1731312569; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=M2TfwqW3q2rlubXI3HLqbss+F3yh9GI0LJK66jFfoE4=;
-        b=zONYRsfk5yqVZJ9UOww48+ZidMmMpRk0UadJ+pATrkyPdS1/GFO35+Gj/LsGI3pFhz
-         YqHPqR/0rQwIqZYcUG/3mKz9sSElt6th9G2491ZAHGYPz5MVkuIuDjGlu+1ZbrTboIhn
-         kJ8qj5nlLXhhdMxAjC97pvN8WjntEVKmROS4JtHhS0orY4cI2sARFFjCFSw2lfCH6onz
-         9c//5mNR+pyLrzC99xNn3+uZ+Lj1N+MqJdgT3e1SagFFYSFduyrIwDd2rAX1W57Bvbq4
-         T5CqtIFYaRSZ+rGE5SFJPIi6Gdd7/Vspq+6/2nBVe1XtXg+NH1RYhuidzM1afJFuf58M
-         M/LQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730707769; x=1731312569;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1730707787; x=1731312587; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=M2TfwqW3q2rlubXI3HLqbss+F3yh9GI0LJK66jFfoE4=;
-        b=EicOs0YqUhiibI79TC3ojLygZQ3Ze/8kWfikY6z9zFBxKJooRnrqiP5f/x44Jehu7+
-         xvk6kY3GCZDix2yNTCwrsvE88qRYP8y0MKDw8eH/KLCXN88Tk/KQk1PN0GYTpBJvX/ay
-         IO1cOxDOw7c6YP6IDVHUCXSx/OlcFduZ80qz3OZsa9uu2ngYxnVvf8dfGXxskligcerv
-         PL1MtZfEwW2s8YUMHk3gOt4w18pMVq2TzZTRcAhRxozpAaZEZei6fEsH1wkXvRBx0mTO
-         tC+kZDOD85gnTfP0CtHoFoM40HW1L4FEv1VEYg/uaTIkzngJN3YKGL7I2LKC64YxedB3
-         k7aA==
-X-Forwarded-Encrypted: i=1; AJvYcCWcqZ906/+5x2jmXylE5k1TCCf53LkSpt432snVsul8N8zUx4ISFOdTM7PlJAUKbH8bJfXuWsqF+pP7FxY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy8e65Ai4WMrYd/12gX77Ez1liTyOKGQlobNzdNXGwe7WF23382
-	LRXIBxm8r6MmFGG54QmRqp8iRAT4XEuqNqIi6tDq0kmvS3nWkU7OFJVAzCiCvxg=
-X-Google-Smtp-Source: AGHT+IHbLx5OFNtfL02/dK6BVDvg7JZVLBymgPvgLcRyabVsXd/ovAsKFfxvs/h3o0nrWgK5+Sys9w==
-X-Received: by 2002:a05:600c:358f:b0:42c:a574:6360 with SMTP id 5b1f17b1804b1-4327b820b9fmr130822355e9.29.1730707769154;
-        Mon, 04 Nov 2024 00:09:29 -0800 (PST)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4327d6984e3sm149599395e9.48.2024.11.04.00.09.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Nov 2024 00:09:28 -0800 (PST)
-Date: Mon, 4 Nov 2024 11:09:25 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Dave Penkler <dpenkler@gmail.com>
-Cc: gregkh@linuxfoundation.org, linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org, skhan@linuxfoundation.org,
-	arnd@arndb.de
-Subject: Re: [PATCH 11/11] staging: gpib: Correct check for max secondary
- address
-Message-ID: <d399795c-8a8d-4fbb-a645-4115cebe2619@stanley.mountain>
-References: <20241103212617.13076-1-dpenkler@gmail.com>
- <20241103212617.13076-12-dpenkler@gmail.com>
+        bh=3jdxm002ELEzRqrM4SMC60ngOqNzEBgO5QnfMayxWmU=;
+        b=EMDhNSOaGB/qxmmG/559oHtWN1vmHR2wBDBXhXkic0Fimxc72zshMXQBpc6WElphSH
+         I7hGl9WESNGTzBMxq4DoHDTJ+IfaGmHjNxnT9kTRfHGpRxeZeZSTP1+4IpyLFiy2WWmX
+         /Hp7SNq76zvsJagc+yeWR8T+8Np3P4U9ouCnDwouyOJscpZ6BaV2KfoCZiYoUpgcD/Xe
+         03EeQ4/AKwjcPDEyJ2cUxrSR6iTJuGUM+fI0LpNxeHRmNsH0qLp9M0RRecD3MGolnG13
+         GWblNGanreCD+IO/8rqzjuubxM3AyDjttLfweWWXswaaZpXez7Xy2r4LfjcmtRfKZKZx
+         1Isw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730707787; x=1731312587;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3jdxm002ELEzRqrM4SMC60ngOqNzEBgO5QnfMayxWmU=;
+        b=oeaEVp+fFmD4qoBAlbamY3chcRCnbBs2EItibw36I9lcvRvb+a69XPwkupB2VUzHuO
+         P+v85aCPjHyJwT46tXj0vo2lsUkFPjCDYXSXp/bNFdlHnBAPI83oDFIRh5GEPaMLghy+
+         K5+KTeYLKqcaMaxCfquEpbjULqci7Pw1VY4ABI9Obpcwf1IiJpZlIHkAy37s3fMprK+m
+         PCIldoIW8rCPRYydYq++syj2nFKHKFquVtl6AGf8m57NR8bST9/gENHInUIlL2QZrAIa
+         NAZSvGP+C0tEPWx010QA5isyawBOKfXNoXOY15xdy/MnzGICyHBi5AWyd8PFMYH4l5S+
+         FTxg==
+X-Forwarded-Encrypted: i=1; AJvYcCVHljdBMAc4QwVC+csd6L+vhPlPthzwOMgiFjTlP7dwo77qK01xsbVUr8tMW1Gaqc3WZqhZ/idFECxtzFg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwnmDHL7WfFN/LTkJ+RPpvneHxeInWAY0PdR0rhIhnh0KviK0eA
+	UBCfANvIAJd9XU/JYgH1QYPfzYRwum6bJL13fm7cp2o7bHYXcKyFNRsBF/2NqqvDakc3/g3+oJp
+	EfJVGZjxmbgSFfZlM5Nmyd12e3IWYZJa73zAZlw==
+X-Google-Smtp-Source: AGHT+IEUJqYCSOK9mvoxQ0z9hQN77cUr9bmHztXbsHJLHPrlaXp8WRMBeNzUjFWI1hIuKtg4LUVOrCEwJe9ptMvknC4=
+X-Received: by 2002:a2e:a98e:0:b0:2fa:ddb5:77f4 with SMTP id
+ 38308e7fff4ca-2fcbe096105mr139956391fa.38.1730707787042; Mon, 04 Nov 2024
+ 00:09:47 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241103212617.13076-12-dpenkler@gmail.com>
+References: <20241014130303.123394-1-brgl@bgdev.pl>
+In-Reply-To: <20241014130303.123394-1-brgl@bgdev.pl>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Mon, 4 Nov 2024 09:09:35 +0100
+Message-ID: <CAMRc=Mfv5MnVAtwCSFwghEH67hbxDgw+Jg9W4dTGq2+Pj0ppTA@mail.gmail.com>
+Subject: Re: [PATCH 1/2] soc: qcom: rmtfs: allow building the module with COMPILE_TEST=y
+To: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, Nov 03, 2024 at 10:26:17PM +0100, Dave Penkler wrote:
-> GPIB secondary addresses can be between 0 and 31 inclusive
-> unlike primary addresses where address 31 is not a valid device
-> address.  When 31 is used as a primary talk address it
-> forms the UNT (Untalk) command and when used as a listener address it
-> forms the UNL (Unlisten) commmand.
-> The library was incorrectly not allowing a secondary address
-> with a value of 31 to be used.
-> 
+On Mon, Oct 14, 2024 at 3:03=E2=80=AFPM Bartosz Golaszewski <brgl@bgdev.pl>=
+ wrote:
+>
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+>
+> Make it possible to build the module when COMPILE_TEST is enabled for
+> better build coverage.
+>
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> ---
+>  drivers/soc/qcom/Kconfig | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/soc/qcom/Kconfig b/drivers/soc/qcom/Kconfig
+> index 74b9121240f8..58e63cf0036b 100644
+> --- a/drivers/soc/qcom/Kconfig
+> +++ b/drivers/soc/qcom/Kconfig
+> @@ -139,7 +139,7 @@ config QCOM_RAMP_CTRL
+>
+>  config QCOM_RMTFS_MEM
+>         tristate "Qualcomm Remote Filesystem memory driver"
+> -       depends on ARCH_QCOM
+> +       depends on ARCH_QCOM || COMPILE_TEST
+>         select QCOM_SCM
+>         help
+>           The Qualcomm remote filesystem memory driver is used for alloca=
+ting
+> --
+> 2.43.0
+>
 
-This needs a Fixes tag.
+Gentle ping.
 
-> Signed-off-by: Dave Penkler <dpenkler@gmail.com>
-
-regards,
-dan carpenter
-
+Bart
 
