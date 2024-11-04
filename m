@@ -1,91 +1,145 @@
-Return-Path: <linux-kernel+bounces-394585-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394586-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB4889BB178
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 11:46:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AE409BB17D
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 11:47:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6348B1F22BA1
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 10:46:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 42A041F22894
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 10:47:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD399199FD3;
-	Mon,  4 Nov 2024 10:46:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="1ovJRJ/T";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ZfPAEvmB"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E5AD1B0F2C;
+	Mon,  4 Nov 2024 10:47:24 +0000 (UTC)
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF7864C6C
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 10:46:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53FD0290F;
+	Mon,  4 Nov 2024 10:47:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730717203; cv=none; b=jmFnouoLRCPw4ZXj4HfwFP+MgERvssgM4VRrn18D/xKfjLfKc84QASVkRf3P5uT+ZwHbpTNCGZ/QdCStBqQNBf+unD1VRcBJolUZwJ3V79+h+dYiGC2MQjwGTpqvRQI7za12PopciJNHxWIANDbqkVGaaJmco+u3mr0X49og8xo=
+	t=1730717244; cv=none; b=homyDOZcd3efwyMxJu3+PPbsRlIAHMtC5JTd7DiKIQVF2i46UVUvTsjYMUihFrMrMyBS13cHSsB31SEyNDbuMb5pPdP0NNvoBQTW/S3L8uy65FnkEjanC6anZQUX8ilt7JGRLy8lTlScyLrKDTpfs99ycI01h4YbdnJEIFQFVHc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730717203; c=relaxed/simple;
-	bh=2g+BpJSnA23h+nF/OUwvVUZ6TsRw1CAPZJyoEyUGDXs=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=NVw3nIZoYx4SiSgdB2FdmXW1PDoPMoC1vr/ltQui5Q+/qbqsXVGEtiPiN/no0ZM7Fi2qa8b3KHSWkzejqYOV3hAINnayHExRNeltWi4B8K/6dF8A5pSDkEvG1/S1slY4dMq1w3HFCS0tmtcNGqXUSRVVnTlPdjJjiBcDm3vJvvs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=1ovJRJ/T; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ZfPAEvmB; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: John Ogness <john.ogness@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1730717194;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=lUMq9d/Y/ah4RgFgHvJiQ6t1sVUNjgH2DIyO/HDYra0=;
-	b=1ovJRJ/TBkp7r3/PUwP9+odLJ39BlWZTIS/0NdCR92N2FTvB5jtyF2CI07zGwxK5Er8dFf
-	lVl58oqFRdTuTa/xkQqhktnzG4tilhVUsY/IqY3Q3neCIyNfPDjbKOrqCp6laEPleyjUC0
-	ykjdVCyJB492DT+wzPIqAIyaOdYIeC6hehXmzMvefhSyfWvo6gPq/Sdyv8iTf/4me4RcKI
-	ZBqIHczL2eevHojSZWJIAYqX3Vmc99TVkyP0/T9i/qwIgn68rEmW5kRS4gubS6GFufda+T
-	RMMqvKzi2uYzT2P+ejTDQwckQtwA/9xB3883JypMV+QyFepN5JQUkigtxUlx2w==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1730717194;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=lUMq9d/Y/ah4RgFgHvJiQ6t1sVUNjgH2DIyO/HDYra0=;
-	b=ZfPAEvmBmdqXqhY0/Fy+yfJ4atEMo8/7475YTV5JyDS79wAY3X11OGPqy6XBZeEDFG3B4S
-	mBaDtegd+X1UDhBA==
-To: Jocelyn Falempe <jfalempe@redhat.com>, Petr Mladek <pmladek@suse.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
- <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David
- Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, Javier
- Martinez Canillas <javierm@redhat.com>, "Guilherme G . Piccoli"
- <gpiccoli@igalia.com>, bluescreen_avenger@verizon.net, Caleb Connolly
- <caleb.connolly@linaro.org>, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 5/6] drm/log: Implement suspend/resume
-In-Reply-To: <d5c8ea70-8596-42a1-8688-0f6131187b73@redhat.com>
-References: <20241023121145.1321921-1-jfalempe@redhat.com>
- <20241023121145.1321921-6-jfalempe@redhat.com>
- <Zxpa2zt1P9Avy4Pm@pathway.suse.cz>
- <27c1a6bf-d1e4-469f-a0d4-3e74ab0d0a07@redhat.com>
- <a6c00956-3733-43a1-9538-aa2758d2b4a3@redhat.com>
- <ZyT7MScAsHxkACfD@pathway.suse.cz>
- <d5c8ea70-8596-42a1-8688-0f6131187b73@redhat.com>
-Date: Mon, 04 Nov 2024 11:52:33 +0106
-Message-ID: <84o72vcm46.fsf@jogness.linutronix.de>
+	s=arc-20240116; t=1730717244; c=relaxed/simple;
+	bh=fF/BJOYudXv+MdqZ0BpwPkVcSD5wC31ZfqhPishC4pM=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=nDF2Cpf+jK2+VRezfV1iu0o9vZloUbKrmnwOGShfx/eboB0q3MNWuYYPhTAf5bQ2qadC/wbwlnaSTOMuaK41JsQ/ii642SnozTUTz7zekT1LKb9rdqxcV6DGASfZEnmWJBbXa1Z6c4hYE6MeHs7mr3JxZLVBLiOVL2dEaQnJtsU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a99ebb390a5so927714566b.1;
+        Mon, 04 Nov 2024 02:47:22 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730717241; x=1731322041;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=GQQEfUO1UteUr9ACef70Th0pKJE+Tg+KwybXseX/MFE=;
+        b=SZDLl+TPQHMRUjE9JpCotzO8JiUYJoV0Z8eCgSMAdkeCUduiKd5tX7cCO6EOPipd1V
+         z9ZTLvAGjPEszXZ74JjnPrXfiTJ0siIDtfWvIk64Sdyb5QyyyQuVhCJ30iHbhu22jZAO
+         720XLEYPxe6fD1lAMo2s3Cj3uCf88oFeQyrDhERTDqnu20dCRjCrut1XAy3Fzoq82YoS
+         GJ41beEi6pUCCYiqbkF45EUIghwjKwF5rXQ1errlEcWT9QQkiyynugvGTkVFLlWS2RCW
+         2xpotnG48PaMnL+RttakLiKiC2FzALO73/cEIExoeRyBaDWa0kP+9on1N2c7Ay8XZGTC
+         gpUg==
+X-Forwarded-Encrypted: i=1; AJvYcCV8iYIIf8mTf+W0Oq30UMUmgyPEj2wElmmAS5bcn4YGuhdMyG6cqt9u/6PuKWDGSlK3kos5tA4q/yqpYrjb@vger.kernel.org, AJvYcCVGHq/TAj1hGWkiH5kZqNk8Orkv6J4q/pm9MJkZQDVLU9Q51EM2IVW44lDj7BiXjJARs69jKLdZg7VpqqVwTI/BSRG3qDs4@vger.kernel.org, AJvYcCWeAONJ8g428gpzU/9B5LlsVfls4zLex+nLj3HVTIdvbblCpv/Hdq3gC2QkoV0LHlU9TGBI5qYkWgXbUrnkEiw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx+qpy8Kli1QQZVGLwH3M4vnuEuLC/Z7OvtqW8t1Z1lDnzxU406
+	ibTntYtJHzCaIX1/SxoOQMFbMy41Z7jpCEdEmDjIVNm28rXK4iy1F3zSRw==
+X-Google-Smtp-Source: AGHT+IGJczchdEfg7PAI7b5vVk9OlDmJnRR0O1DDPuiuIWnFdZNY3LbItDcPyZsYPciUomWmnx1jMw==
+X-Received: by 2002:a17:907:7205:b0:a99:facf:cfc with SMTP id a640c23a62f3a-a9e55a87862mr1278049966b.17.1730717240215;
+        Mon, 04 Nov 2024 02:47:20 -0800 (PST)
+Received: from localhost (fwdproxy-lla-004.fbsv.net. [2a03:2880:30ff:4::face:b00c])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9e5663cd43sm544106866b.143.2024.11.04.02.47.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 04 Nov 2024 02:47:19 -0800 (PST)
+From: Breno Leitao <leitao@debian.org>
+Date: Mon, 04 Nov 2024 02:47:16 -0800
+Subject: [PATCH] ima: kexec: Add RCU read lock protection for
+ ima_measurements list traversal
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241104-ima_rcu-v1-1-5157460c5907@debian.org>
+X-B4-Tracking: v=1; b=H4sIADOmKGcC/x3MWwqAIBAF0K0M9ztBy0jcSkRITjUfPVCKINx70
+ FnAeZE5CWd4epH4lizHDk+mIkxr2BdWEuEJta6tMdoq2cKYpksxuyYG10XdalSEM/Eszz/1Qyk
+ f4oMEhFkAAAA=
+X-Change-ID: 20241104-ima_rcu-ee83da87d050
+To: Mimi Zohar <zohar@linux.ibm.com>, 
+ Roberto Sassu <roberto.sassu@huawei.com>, 
+ Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, 
+ Eric Snowberg <eric.snowberg@oracle.com>, Paul Moore <paul@paul-moore.com>, 
+ James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
+ "Eric W. Biederman" <ebiederm@xmission.com>, 
+ Andrew Morton <akpm@linux-foundation.org>, 
+ Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>
+Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>, linux-integrity@vger.kernel.org, 
+ linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ noodles@earth.li, Breno Leitao <leitao@debian.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1553; i=leitao@debian.org;
+ h=from:subject:message-id; bh=fF/BJOYudXv+MdqZ0BpwPkVcSD5wC31ZfqhPishC4pM=;
+ b=owEBbQKS/ZANAwAIATWjk5/8eHdtAcsmYgBnKKY2QG3u+OgeyzQ7/nyKXGqN7uUqwCWc8KKBw
+ mJZtFtrgoqJAjMEAAEIAB0WIQSshTmm6PRnAspKQ5s1o5Of/Hh3bQUCZyimNgAKCRA1o5Of/Hh3
+ bWm5D/9G8GgbraopxFjvSPKhpNSrDcdPCB6JtFhbwfB66HfjNAzUjHTniPUsdVoa5k48TAGDLOT
+ KC/yclvHcV6QMeCO/gy2wzY08zJKbVOnQFrnpZCSu24asHu5wh6+pCpp8cqzh7MpubsX/8a7n8m
+ OGNxbzwsEOjuMUbX5rzYS28rYzA31buPYNtxNM9uThJxuAu98h56SHMqphZVKjkztI5Dmo1qaZa
+ rvacn92tx64qGEggNHnnomdQSKTqprXD6T8heGGAojWPyzTb3O3JfdwOwbgDa2N59MTUjUwvST3
+ BfcC1CNi7kUWIFl3rP2eS1vr2UoMvxDaV40FN5UQLGotapuhC1mRm7XjInIcZlSzB8NUJvZ3K4l
+ ZIZ6dwUIpuZnoSzAhvE4Ajw8elOoUoZbs5kaKxBFcbtum3Ws4kVuR1EoTyNS/NJc+OdUiqWw4eC
+ SmxOjrBBMq32t7RCsmumWDFa9F2QUZz77wYRdTxKFqt1s3wXbMiPtQDt2z/F6O39bWuLXwoOrvk
+ ZaA/fLrfccODWB4p0gwiCKFq7+PGThcsX1TyfFhDZ2Sl3YYiOSIb9LOrc6E/IYM0OBa9kdXPuEq
+ 3rRS+8lsoWaMDVtDsIVxzgdNfLsg8hBychDn7AcSAM+XhwRe4jq6/Xsb4PYkhnIC1Vo3ofm96ep
+ SkADklTj+UUWUMg==
+X-Developer-Key: i=leitao@debian.org; a=openpgp;
+ fpr=AC8539A6E8F46702CA4A439B35A3939FFC78776D
 
-On 2024-11-04, Jocelyn Falempe <jfalempe@redhat.com> wrote:
-> I looked at what serial drivers are doing, because they can also have 
-> their clock gated in suspend.
->
-> Would calling console_stop() in the suspend and console_start() in 
-> resume work ?
+Fix a potential RCU issue where ima_measurements list is traversed using
+list_for_each_entry_rcu() without proper RCU read lock protection. This
+caused warnings when CONFIG_PROVE_RCU was enabled:
 
-Yes. That is what it is for.
+  security/integrity/ima/ima_kexec.c:40 RCU-list traversed in non-reader section!!
 
-John Ogness
+Add rcu_read_lock() before iterating over ima_measurements list to ensure
+proper RCU synchronization, consistent with other RCU list traversals in
+the codebase.
+
+Signed-off-by: Breno Leitao <leitao@debian.org>
+Fixes: 7b8589cc29e7 ("ima: on soft reboot, save the measurement list")
+---
+ security/integrity/ima/ima_kexec.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/security/integrity/ima/ima_kexec.c b/security/integrity/ima/ima_kexec.c
+index 52e00332defed39774c9e23e045f1377cfa30d0c..3b17ddb91d35ac806aedd2ee970ff365675dac0b 100644
+--- a/security/integrity/ima/ima_kexec.c
++++ b/security/integrity/ima/ima_kexec.c
+@@ -37,6 +37,7 @@ static int ima_dump_measurement_list(unsigned long *buffer_size, void **buffer,
+ 
+ 	memset(&khdr, 0, sizeof(khdr));
+ 	khdr.version = 1;
++	rcu_read_lock();
+ 	list_for_each_entry_rcu(qe, &ima_measurements, later) {
+ 		if (file.count < file.size) {
+ 			khdr.count++;
+@@ -46,6 +47,7 @@ static int ima_dump_measurement_list(unsigned long *buffer_size, void **buffer,
+ 			break;
+ 		}
+ 	}
++	rcu_read_unlock();
+ 
+ 	if (ret < 0)
+ 		goto out;
+
+---
+base-commit: f488649e40f8900d23b86afeab7d4b78c063d5d1
+change-id: 20241104-ima_rcu-ee83da87d050
+
+Best regards,
+-- 
+Breno Leitao <leitao@debian.org>
+
 
