@@ -1,155 +1,237 @@
-Return-Path: <linux-kernel+bounces-395196-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395151-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E6739BBA31
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 17:21:06 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E913A9BB947
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 16:45:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22DD1282DEA
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 16:21:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6DE681F215D6
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 15:45:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAB2D1C232B;
-	Mon,  4 Nov 2024 16:19:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB1ED1C07CA;
+	Mon,  4 Nov 2024 15:45:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="c9klFaVi"
-Received: from mail-wr1-f74.google.com (mail-wr1-f74.google.com [209.85.221.74])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="N+zZ1j05"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A76E1C9B68
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 16:19:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5EB41BF804
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 15:45:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730737180; cv=none; b=sP2Z00ui/tQt7AmNdco2DvIFKRmqKfNr7Ys3O307J7QSGxWYkF3Z44M8BWI23DlTo3SrtvSnsttdLxTe2FwAdvX0Qzr7JOlKnRXC6c77pbN7q1HO3ZVD9PwEiZ+1TalVjJTppQ/9yoCE+QGkkFEem2gX3MYBqjhsMoaOKYOIeVg=
+	t=1730735104; cv=none; b=PrDdRwYqbo3PTcY2alSXHfrH3oiEfZp44BXwk95K63+lFuiklksAMrqTjyQldtwzUxLw7rY8kjBJe2Po9VotmQIS3vtNpDkP3sK/Al7ebP2DyLmb1jWCaTxY4u//cQuYCiqs4XpitXeeidQHVXHxFX4cOnXAt7u4gxg05ygYooU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730737180; c=relaxed/simple;
-	bh=5Xt4Fkz1MQW5w8UbS0tu5hc+USWbleuAt8BZVlSI+ks=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=K2W10/rnW2T14TbhM5yRB9gXmTlZ4kFr6R677GcO7uuY8KTo0hRUjYHusuKXRTpRrydNDD3SUiIyPQcXUCuY/i+M1EngF/iTg1JOtGeWZjto9JeOVEZD2a+OphIuoaAVp+ojJbxu6p7MiMYBEZo7SyJHsnH4FEi+qQLhdwhXDDM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--elver.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=c9klFaVi; arc=none smtp.client-ip=209.85.221.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--elver.bounces.google.com
-Received: by mail-wr1-f74.google.com with SMTP id ffacd0b85a97d-37d531a19a9so2366763f8f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 08:19:38 -0800 (PST)
+	s=arc-20240116; t=1730735104; c=relaxed/simple;
+	bh=ZImVIlkdahA1BEn/O7w5yhYnv0OQtgKBmXJEhQFwCgs=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=VEFk4BG5ZKSzERvoXhGwzgBg1UGIK7X9hkcCcFtqJOLGQXIXkwu8Bx+NxslDyOZsaWymrrQaoT1mQJ2bK1hUonA/WxX+LxtBZAp3FksDnz9Hz0yavKQbyc0wOYPIngU/zIcCWvSut6NNpsiX9E3oGtgLhRp6EbGqR2J6J8trZts=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=N+zZ1j05; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4316e9f4a40so35912435e9.2
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 07:45:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1730737177; x=1731341977; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=OKj0s9xjK+saMHMRM1ZIudsUlk4SnRJVysUql1YTd+A=;
-        b=c9klFaViDRvVoW2eYQ0LJD/cjOOBknFad0ba2xjUurXry0KimKtNitoVlo3d49iyfl
-         7XDxXrX7p3gAi1DoDSmmVuttxfqvld+7VklKqLuo90ZEqI16Drqo2FwWmPaTnLUcWt0M
-         uBS5Su7uKMKXwt9xBUkPfE4AHEkW/feXHRfKkHWpIJSHvQcZMkU8Q5HGbkgNG2vhGaCf
-         MtwZYQIdr0lkrb1DOazWjV/LmnhDJd3tfn5YuZR/ANGuejJ7S+tFrIrXQHLiDS53LQyC
-         zXV7fNvHp6tdIbu2Utu0cYwJ5mbNdewc2TYUdjvxHHFZuHI+arZI1TA3++nCVkyP1Se7
-         BA9g==
+        d=linaro.org; s=google; t=1730735100; x=1731339900; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ftipUFfbQyrbYTtkBKFzCTCmVmhbNpyQ5+49w8VdR7M=;
+        b=N+zZ1j05mJfgzs4ALMsQePW6aocYibv0ErBsoDiWek4tBlkLK/JNV8Utb09bRzsLiF
+         O9hF7javQEluU5lfujBeSKe9USF2kV416Avgz/gfEg9d2o654oel0SPy8z9+AyJCAmWK
+         pAMr8kjEBO0KFY8/vUtMlRnQvQupOabHfWCMjug5gplvyA8gC6VYx1FU/pnAgjRwlr5l
+         5DO6aYClpqYqJ4dctJYXXDfutw8DWs4E1wc87qRXkYaVsJzaplFjaV5XCquEYw9lU2Vv
+         TAe3S9u4/v6owi1zvkvRZLni1rh0WPpJRZGr9OW0tbidO949+3PatTlTlq3zY9kZrFKD
+         JMOQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730737177; x=1731341977;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=OKj0s9xjK+saMHMRM1ZIudsUlk4SnRJVysUql1YTd+A=;
-        b=lESbIVyJodZihd98YkT7ioBe7AawcYDSstLbxgrtFgk3qpzOgeVhfOM88NwK3UHtZ9
-         anI0qO+gjizdNxWqvttgIR9QU8JEn7JgvAcNI/UgQiyzQbOKlKSgPd7mlMo3iVT7pzPN
-         OPR1iORHfOPvmGpkOp3H5QCWnBKnv+PJxTD72FtW6GHHg291axmsGBOVg0ehkOSKDDDk
-         u8Qr+K+CQYcZusCVvF0e7Zv16ZHAihVGH4lEUA+xMjrUG3JRKFViMfF9iW0Uy1TFnsxT
-         l6H6BJIbRJ5xPXdYcva8h6vlSDouJHr8ArN5ZPH5ioDs5yS+NiOZ68yxz+ThhsD1akZe
-         cObg==
-X-Forwarded-Encrypted: i=1; AJvYcCWUbYOwioaBaW+xgWiwOs6xDEPMZBzgLclMYtnsYMGFBSk75nIjoEfrv2Dd8dTC4w36nRYnB3qpZ7UVFms=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzowYo1inMPnptJSoRWWUNYPaxXj6L0OoH50hpG8g4XsarADvLW
-	PYB9S2PwG6grXm/eSROXFm2y8miSWit5Pk44cv7/ANJMRPGgmjMKdb5zlwI1MFxLC3aXF1acxw=
-	=
-X-Google-Smtp-Source: AGHT+IFYYQcvbot0gcoCP5b6QfEJHJaRpAbBNrY7qSGTa/FrddCLO5titnk6bblSV7Xeur6I4XZZDbNdVQ==
-X-Received: from elver.muc.corp.google.com ([2a00:79e0:9c:201:dc4d:3b27:d746:73ee])
- (user=elver job=sendgmr) by 2002:a5d:44d0:0:b0:37e:d5a2:b104 with SMTP id
- ffacd0b85a97d-381be7cf9ecmr7016f8f.6.1730737176936; Mon, 04 Nov 2024 08:19:36
- -0800 (PST)
-Date: Mon,  4 Nov 2024 16:43:09 +0100
-In-Reply-To: <20241104161910.780003-1-elver@google.com>
+        d=1e100.net; s=20230601; t=1730735100; x=1731339900;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=ftipUFfbQyrbYTtkBKFzCTCmVmhbNpyQ5+49w8VdR7M=;
+        b=Y0NkxFNP623FrRviAbxEK6LSh3KdXEyTz/bmSZTAb6Tp4w+E8mPLEBqfPD0ee87rfh
+         jQmAu6lqI7SsDiM1yqQgY4iBwMf9/4fPrt8HqANsWjIXdNBxI7SxdmfomFDGfmxgqcbq
+         WXdre65vO4APT2vw37Du15PGFJydAifaW0KUAUY++u7J0A5sp5/bmgU+FetBIL3mbzVy
+         He4yHPhQJiavqtIJRp57RdB1W+83gSYl0yEkNAGswaCMjSLhVDwwBBeVqH7Fk7K9Bx8q
+         cdnaf6iPJkYcKLIGGxeWAmtQi74oozhwBKYUFp2aOqobBQ6AMQSQevCVwQiDnciz/hIQ
+         DxQg==
+X-Forwarded-Encrypted: i=1; AJvYcCXmWOn2MZmeVgSX8FRMVu4Ev/pNfHqU4Iko1WUcMsVpmBk22xNGYAmPm46sJFYCW3Y4VfE9qOyXJdNYEpo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw3Q/SEHEUqXzwwNrJuDcaG3UXKLpe6NCVXlhzkYkqaKIud5AwV
+	1WYVpYrZR7CZL5vgNdMvtHtNGdyfXcRV9fNpbiAZOGXUBjlK4BMZTy2/vslAThE=
+X-Google-Smtp-Source: AGHT+IEt227mWEkJ2KUldJ6cNcu5CXzPjyiwcrBv4UbMZfjjnIxrvAGFeU/8XnhL8EXXaevw1ExOPw==
+X-Received: by 2002:a05:600c:3c8c:b0:431:4fa0:2e0b with SMTP id 5b1f17b1804b1-4319ad146b1mr263095595e9.28.1730735100145;
+        Mon, 04 Nov 2024 07:45:00 -0800 (PST)
+Received: from ?IPV6:2a01:e0a:982:cbb0:5b00:c640:4c96:8a97? ([2a01:e0a:982:cbb0:5b00:c640:4c96:8a97])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4327d6852c3sm157054515e9.38.2024.11.04.07.44.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 04 Nov 2024 07:44:59 -0800 (PST)
+Message-ID: <4aeec9f1-720b-400c-9582-d02847db2ac7@linaro.org>
+Date: Mon, 4 Nov 2024 16:44:56 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20241104161910.780003-1-elver@google.com>
-X-Mailer: git-send-email 2.47.0.163.g1226f6d8fa-goog
-Message-ID: <20241104161910.780003-6-elver@google.com>
-Subject: [PATCH v2 5/5] kcsan, seqlock: Fix incorrect assumption in read_seqbegin()
-From: Marco Elver <elver@google.com>
-To: elver@google.com, Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>
-Cc: "Paul E. McKenney" <paulmck@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
-	Mark Rutland <mark.rutland@arm.com>, Dmitry Vyukov <dvyukov@google.com>, kasan-dev@googlegroups.com, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+From: neil.armstrong@linaro.org
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH RFC 1/3] drm/msm/adreno: Add support for ACD
+To: Akhil P Oommen <quic_akhilpo@quicinc.com>, Rob Clark
+ <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+ Konrad Dybcio <konradybcio@kernel.org>,
+ Abhinav Kumar <quic_abhinavk@quicinc.com>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Marijn Suijten <marijn.suijten@somainline.org>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ linux-pm@vger.kernel.org, devicetree@vger.kernel.org
+References: <20241012-gpu-acd-v1-0-1e5e91aa95b6@quicinc.com>
+ <20241012-gpu-acd-v1-1-1e5e91aa95b6@quicinc.com>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <20241012-gpu-acd-v1-1-1e5e91aa95b6@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-During testing of the preceding changes, I noticed that in some cases,
-current->kcsan_ctx.in_flat_atomic remained true until task exit. This is
-obviously wrong, because _all_ accesses for the given task will be
-treated as atomic, resulting in false negatives i.e. missed data races.
+On 11/10/2024 22:29, Akhil P Oommen wrote:
+> ACD a.k.a Adaptive Clock Distribution is a feature which helps to reduce
+> the power consumption. In some chipsets, it is also a requirement to
+> support higher GPU frequencies. This patch adds support for GPU ACD by
+> sending necessary data to GMU and AOSS. The feature support for the
+> chipset is detected based on devicetree data.
+> 
+> Signed-off-by: Akhil P Oommen <quic_akhilpo@quicinc.com>
+> ---
+>   drivers/gpu/drm/msm/adreno/a6xx_gmu.c | 81 ++++++++++++++++++++++++++++-------
+>   drivers/gpu/drm/msm/adreno/a6xx_gmu.h |  1 +
+>   drivers/gpu/drm/msm/adreno/a6xx_hfi.c | 36 ++++++++++++++++
+>   drivers/gpu/drm/msm/adreno/a6xx_hfi.h | 21 +++++++++
+>   4 files changed, 124 insertions(+), 15 deletions(-)
+> 
 
-Debugging led to fs/dcache.c, where we can see this usage of seqlock:
+<snip>
 
-	struct dentry *d_lookup(const struct dentry *parent, const struct qstr *name)
-	{
-		struct dentry *dentry;
-		unsigned seq;
+> +
+> +static int a6xx_hfi_enable_acd(struct a6xx_gmu *gmu)
+> +{
+> +	struct a6xx_hfi_acd_table *acd_table = &gmu->acd_table;
+> +	struct a6xx_hfi_msg_feature_ctrl msg = {
+> +		.feature = HFI_FEATURE_ACD,
+> +		.enable = 1,
+> +		.data = 0,
+> +	};
+> +	int ret;
+> +
+> +	if (!acd_table->enable_by_level)
+> +		return 0;
+> +
+> +	/* Enable ACD feature at GMU */
+> +	ret = a6xx_hfi_send_msg(gmu, HFI_H2F_FEATURE_CTRL, &msg, sizeof(msg), NULL, 0);
+> +	if (ret) {
+> +		DRM_DEV_ERROR(gmu->dev, "Unable to enable ACD (%d)\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	/* Send ACD table to GMU */
+> +	ret = a6xx_hfi_send_msg(gmu, HFI_H2F_MSG_ACD, &msg, sizeof(msg), NULL, 0);
 
-		do {
-			seq = read_seqbegin(&rename_lock);
-			dentry = __d_lookup(parent, name);
-			if (dentry)
-				break;
-		} while (read_seqretry(&rename_lock, seq));
-	[...]
+This looks wrong, in this exact code, you never use the acd_table... perhaps it should be acd_table here
 
-As can be seen, read_seqretry() is never called if dentry != NULL;
-consequently, current->kcsan_ctx.in_flat_atomic will never be reset to
-false by read_seqretry().
+> +	if (ret) {
+> +		DRM_DEV_ERROR(gmu->dev, "Unable to ACD table (%d)\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+>   static int a6xx_hfi_send_test(struct a6xx_gmu *gmu)
+>   {
+>   	struct a6xx_hfi_msg_test msg = { 0 };
+> @@ -756,6 +788,10 @@ int a6xx_hfi_start(struct a6xx_gmu *gmu, int boot_state)
+>   	if (ret)
+>   		return ret;
+>   
+> +	ret = a6xx_hfi_enable_acd(gmu);
+> +	if (ret)
+> +		return ret;
+> +
+>   	ret = a6xx_hfi_send_core_fw_start(gmu);
+>   	if (ret)
+>   		return ret;
+> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_hfi.h b/drivers/gpu/drm/msm/adreno/a6xx_hfi.h
+> index 528110169398..51864c8ad0e6 100644
+> --- a/drivers/gpu/drm/msm/adreno/a6xx_hfi.h
+> +++ b/drivers/gpu/drm/msm/adreno/a6xx_hfi.h
+> @@ -151,12 +151,33 @@ struct a6xx_hfi_msg_test {
+>   	u32 header;
+>   };
+>   
+> +#define HFI_H2F_MSG_ACD 7
+> +#define MAX_ACD_STRIDE 2
+> +
+> +struct a6xx_hfi_acd_table {
+> +	u32 header;
+> +	u32 version;
+> +	u32 enable_by_level;
+> +	u32 stride;
+> +	u32 num_levels;
+> +	u32 data[16 * MAX_ACD_STRIDE];
+> +};
+> +
+>   #define HFI_H2F_MSG_START 10
+>   
+>   struct a6xx_hfi_msg_start {
+>   	u32 header;
+>   };
+>   
+> +#define HFI_H2F_FEATURE_CTRL 11
+> +
+> +struct a6xx_hfi_msg_feature_ctrl {
+> +	u32 header;
+> +	u32 feature;
+> +	u32 enable;
+> +	u32 data;
+> +};
+> +
+>   #define HFI_H2F_MSG_CORE_FW_START 14
+>   
+>   struct a6xx_hfi_msg_core_fw_start {
+> 
 
-Give up on the wrong assumption of "assume closing read_seqretry()", and
-rely on the already-present annotations in read_seqcount_begin/retry().
-
-Fixes: 88ecd153be95 ("seqlock, kcsan: Add annotations for KCSAN")
-Signed-off-by: Marco Elver <elver@google.com>
----
-v2:
-* New patch.
----
- include/linux/seqlock.h | 12 +-----------
- 1 file changed, 1 insertion(+), 11 deletions(-)
-
-diff --git a/include/linux/seqlock.h b/include/linux/seqlock.h
-index 45eee0e5dca0..5298765d6ca4 100644
---- a/include/linux/seqlock.h
-+++ b/include/linux/seqlock.h
-@@ -810,11 +810,7 @@ static __always_inline void write_seqcount_latch_end(seqcount_latch_t *s)
-  */
- static inline unsigned read_seqbegin(const seqlock_t *sl)
- {
--	unsigned ret = read_seqcount_begin(&sl->seqcount);
--
--	kcsan_atomic_next(0);  /* non-raw usage, assume closing read_seqretry() */
--	kcsan_flat_atomic_begin();
--	return ret;
-+	return read_seqcount_begin(&sl->seqcount);
- }
- 
- /**
-@@ -830,12 +826,6 @@ static inline unsigned read_seqbegin(const seqlock_t *sl)
-  */
- static inline unsigned read_seqretry(const seqlock_t *sl, unsigned start)
- {
--	/*
--	 * Assume not nested: read_seqretry() may be called multiple times when
--	 * completing read critical section.
--	 */
--	kcsan_flat_atomic_end();
--
- 	return read_seqcount_retry(&sl->seqcount, start);
- }
- 
--- 
-2.47.0.163.g1226f6d8fa-goog
-
+Thanks,
+Neil
 
