@@ -1,156 +1,169 @@
-Return-Path: <linux-kernel+bounces-394339-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394340-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BFC19BAD93
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 09:01:41 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AA649BAD97
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 09:04:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 380421F22456
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 08:01:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F1D6281EE4
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 08:04:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A1E719D07C;
-	Mon,  4 Nov 2024 08:01:34 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E09817C234;
-	Mon,  4 Nov 2024 08:01:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0760A19D07C;
+	Mon,  4 Nov 2024 08:04:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OJ0D8lLF"
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02D3417C234;
+	Mon,  4 Nov 2024 08:03:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730707294; cv=none; b=UTD4Zdy+P/EAED+jHBtdEIROdcSwGTUgUHUyZNSORBgmaJ01bCcof3lbO4JzRp4cHp3ifKFD0ks3rrof9e431xjquatmuQlT1SL2sl6MKB8aKSnA4L/FL5PybjqFscctgTJx/xolj9AexdAXPc4QayMs0attA1crk7jR22eFgxM=
+	t=1730707439; cv=none; b=ioEImQf7qHAObWEnHDdbE5SJq6ZCRF1x5TEzZ73wA6pL0gYly+G/uEsZ60pnY8nedrdrodbFjc23qHI962LLsFSgThK+cme/RtWTNaERPLGF1KHLrROk962TZq3cK+aqFvKvzYnOjPjJdLHb0uPqv1+MgvMiYGRkeoWjBAthOZo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730707294; c=relaxed/simple;
-	bh=q4lZw1U3tgn8WEXKRIWSlw4UsGcOdwEXjlX1STdpofg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VITJs85VK4zaJfGd5/SbMFx7jI4uaiH0PZ6oHcn6MHY6oEcdQGZuTP5U0CacSlIVWbBMtfWIcB4utSy2FO1b3/12mWWj5VC7J69+unG233eeNVMFuDzV9WPcyQig07bDoVRHDxddgjfKIG9amG9b6Fyh6iE0s0qH0Z+g9va5+Ic=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7AA39FEC;
-	Mon,  4 Nov 2024 00:02:01 -0800 (PST)
-Received: from arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7ED613F6A8;
-	Mon,  4 Nov 2024 00:01:28 -0800 (PST)
-Date: Mon, 4 Nov 2024 09:01:00 +0100
-From: Beata Michalska <beata.michalska@arm.com>
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
-	ionela.voinescu@arm.com, sudeep.holla@arm.com, will@kernel.org,
-	catalin.marinas@arm.com, sumitg@nvidia.com,
-	yang@os.amperecomputing.com, vanshikonda@os.amperecomputing.com,
-	lihuisong@huawei.com, zhanjie9@hisilicon.com
-Subject: Re: [PATCH v7 1/4] cpufreq: Introduce an optional cpuinfo_avg_freq
- sysfs entry
-Message-ID: <Zyh_PG1lAEC4Q3Hr@arm.com>
-References: <20240913132944.1880703-1-beata.michalska@arm.com>
- <20240913132944.1880703-2-beata.michalska@arm.com>
- <20241029070429.m7q5dkumitoyqxq2@vireshk-i7>
- <CAJZ5v0i2KUPXfeAKhkimetOMpx+5opgt26URJF8cstnZsaeZwA@mail.gmail.com>
+	s=arc-20240116; t=1730707439; c=relaxed/simple;
+	bh=vD21bi/xfbh8YrBZS4dOxLbp4afjXJg/K6cly/jSHoU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ahKhaPokgGyIy6UCZus3do4ys/E4SuWasj3S1DvK2zQpoqGQDQ8Qg0FHVtgCGweDVQ5OYs49V/iHZrfWjQBcXwqoJQBLQ7B1ji7O/Ep6w8Xtn8zf/REgWerEDjBKtsInhpfBbkNwtSYEtK73mhiZY6XV9y1hTTAuEi3Z+/7Vb6w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OJ0D8lLF; arc=none smtp.client-ip=209.85.210.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-7205b6f51f3so3244906b3a.1;
+        Mon, 04 Nov 2024 00:03:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730707437; x=1731312237; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=/vushZJLcOuGjhMYpOcLq2M2TFM8m4uAMKdzTip87p4=;
+        b=OJ0D8lLFRHSVdvmXi8K68v4kI+dLw5Yx8eRpEN38XNFhlCvM1sAWmngXD09WR+AZGK
+         RMaie12fhtbar0rxL/mWKz0GodJyGSf5j8axOsWg7EgQAOOLQcsgerMBQWmgBeBvSeYZ
+         Eo6jcv6Wpi4BjskBk/uRml04S1aVP+TTGbzx38HK1Z/7PWmGb68CtXIrN+VD2z2woTmF
+         BSHpsIHtAmvvU6hvc+nK46XGEXrhaKcHfLz4nMA7+ZDsWUE7qrm8kQziq4bdfofldDPs
+         KS7RGkEA8P+h/tNu+/p6d11knQe7xIXkVxowG6cdfW/LaPHoB1r0hIkRuM5Lnk53MvM0
+         G3JQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730707437; x=1731312237;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/vushZJLcOuGjhMYpOcLq2M2TFM8m4uAMKdzTip87p4=;
+        b=jybQTdj7/9S1IkZ4l6kQi/kEnTirmHIdHJwGGuZdFdFdtTwbxRCtK2ry9JkXtvI/ol
+         mWlY3X3X0LOTWGvEU/k0POY2uFMZVAsdY0UbpmKfmicj6Q2JSfzPWhMMckXiZOdYfqu1
+         g8W7dgiBJH6JcS6xk1maQMbd/pvshTDlLz0q5wXlQfo/XDhvQSGqab/o42zNt7nXcdBT
+         cAbFnDGHNOQy5zwlIfp8vqySoxkF9lWRoH9jfnXU+QZDTVFCAAUfijXUVfnyVQu5POYV
+         nNFaYZzDQmPhGbzG7bJ+vzhpXS3C1HIjNPveICLt2DIzL2ZNoaS1Y1YakGXMPKjGBSh3
+         iRKQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVIqRaPhisoYxgDcl6XpMcPwGE1Jlo3u7QF5Tvt1vDXWRP96A0mE7z+571TNyFUyHFGsxmRW/A1hvS8DPk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz74yZjXlEqoAO2vK2WcxXbSBSdoRCxaifyVxBMHZ8R6b3H6ZYp
+	1NRrAkdUNvRZkH49hVPsDTanqs1HGTYmImSIYmaWVROKqkYd4yMm
+X-Google-Smtp-Source: AGHT+IEHeH8bDXvZVqQDbrwAgIcwCBgNYGJqeFJndUwb04C4KX3GwftHgud+P/XiE9UE/9XC3vw73g==
+X-Received: by 2002:a05:6a00:8c9:b0:71e:410:4764 with SMTP id d2e1a72fcca58-720c98a3d19mr18936309b3a.8.1730707437156;
+        Mon, 04 Nov 2024 00:03:57 -0800 (PST)
+Received: from localhost.localdomain ([27.7.141.222])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-720bc2c498esm7037041b3a.97.2024.11.04.00.03.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 04 Nov 2024 00:03:56 -0800 (PST)
+From: Shivam Chaudhary <cvam0000@gmail.com>
+To: skhan@linuxfoundation.org
+Cc: linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Shivam Chaudhary <cvam0000@gmail.com>
+Subject: [PATCH v4 1/2] selftests:tmpfs: Add Skip test if not run as root
+Date: Mon,  4 Nov 2024 13:33:50 +0530
+Message-ID: <20241104080350.163100-1-cvam0000@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJZ5v0i2KUPXfeAKhkimetOMpx+5opgt26URJF8cstnZsaeZwA@mail.gmail.com>
 
-On Tue, Oct 29, 2024 at 12:31:11PM +0100, Rafael J. Wysocki wrote:
-> On Tue, Oct 29, 2024 at 8:04 AM Viresh Kumar <viresh.kumar@linaro.org> wrote:
-> >
-> > Apologies for the delay from my side. September was mostly holidays
-> > for me and then I was stuck with other stuff plus email backlog and
-> > this series was always a painful point to return to :(
-> >
-> > On 13-09-24, 14:29, Beata Michalska wrote:
-> > > Currently the CPUFreq core exposes two sysfs attributes that can be used
-> > > to query current frequency of a given CPU(s): namely cpuinfo_cur_freq
-> > > and scaling_cur_freq. Both provide slightly different view on the
-> > > subject and they do come with their own drawbacks.
-> > >
-> > > cpuinfo_cur_freq provides higher precision though at a cost of being
-> > > rather expensive. Moreover, the information retrieved via this attribute
-> > > is somewhat short lived as frequency can change at any point of time
-> > > making it difficult to reason from.
-> > >
-> > > scaling_cur_freq, on the other hand, tends to be less accurate but then
-> > > the actual level of precision (and source of information) varies between
-> > > architectures making it a bit ambiguous.
-> > >
-> > > The new attribute, cpuinfo_avg_freq, is intended to provide more stable,
-> > > distinct interface, exposing an average frequency of a given CPU(s), as
-> > > reported by the hardware, over a time frame spanning no more than a few
-> > > milliseconds. As it requires appropriate hardware support, this
-> > > interface is optional.
-> >
-> > From what I recall, the plan is to:
-> > - keep cpuinfo_cur_freq as it is, not expose for x86 and call ->get()
-> >   for ARM.
-> 
-> Yes.
-That one indeed remains unchanged.
-> 
-> > - introduce cpuinfo_avg_freq() and make it return frequency from hw
-> >   counters for both ARM and Intel and others who provide the API.
-> 
-> Yes.
-Will add changes for Intel as well.
-> 
-> > - update scaling_cur_freq() to only return the requested frequency or
-> >   error in case of X86
-> 
-> Yes.
-> 
-> Preferably, -ENOTSUPP for "setpolicy" drivers without the .get() callback.
-Right, my impression was that we want to leave that one as is.
-Will add appropriate changes.
-> 
-> >   and update documentation to reflect the same.
-> >   Right now or after some time ? How much time ?
-> 
-> After some time, I think at least two cycles, so people have the time
-> to switch over, but much more may be necessary if someone is stuck
-> with RHEL or similar user space.
-> 
-> Anyway, x86 will be the only one affected and there may be a Kconfig
-> option even to allow it to be changed at the kernel build time.
-> 
-So just for my clarification we want a config switch to control what
-scaling_cur_freq is to actually provide. It will keep the current behaviour as
-default until we are ready to flip it and ultimately drop that temporary config
-option ?
-> The documentation for cpuinfo_avg_freq() needs to be added along with it.
-That one is already provided unless you have smth else on mind ?
-Like updating scaling_cur_freq to reference the new sysfs attribute ?
+- Add skip test if  not run as root, with an
+  appropriate Warning.
 
+- Add 'ksft_print_header()' and 'ksft_set_plan()'
+ to structure test outputs more effectively.
+
+Test logs :
+
+Before change:
+
+- Without root
+ error: unshare, errno 1
+
+- With root
+ No, output
+
+After change:
+
+- Without root
+TAP version 13
+1..1
+
+- With root
+TAP version 13
+1..1
+
+Signed-off-by: Shivam Chaudhary <cvam0000@gmail.com>
 ---
-Best Regards
-Beata
-> 
-> > > diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
-> > > index 04fc786dd2c0..3493e5a9500d 100644
-> > > --- a/drivers/cpufreq/cpufreq.c
-> > > +++ b/drivers/cpufreq/cpufreq.c
-> > > @@ -752,6 +752,16 @@ __weak unsigned int arch_freq_get_on_cpu(int cpu)
-> > >       return 0;
-> > >  }
-> > >
-> > > +__weak int arch_freq_avg_get_on_cpu(int cpu)
-> > > +{
-> > > +     return -EOPNOTSUPP;
-> > > +}
-> > > +
-> > > +static inline bool cpufreq_avg_freq_supported(struct cpufreq_policy *policy)
-> > > +{
-> > > +     return arch_freq_avg_get_on_cpu(policy->cpu) >= 0;
-> > > +}
-> >
-> > And why aren't we simply reusing arch_freq_get_on_cpu() here ?
-> >
-> > --
-> > viresh
+
+Notes:
+
+		Changes in v4 1/2: 
+				- Start a patchset
+				- Split patch into smaller pathes to make it easy to review.
+		
+		link to v3: https://lore.kernel.org/all/20241028185756.111832-1-cvam0000@gmail.com/
+
+		Changes in v3:
+				- Remove extra ksft_set_plan()
+				- Remove function for unshare()
+				- Fix the comment style
+
+		link to v2: https://lore.kernel.org/all/20241026191621.2860376-1-cvam0000@gmail.com/
+
+		Changes in v2:
+				- Make the commit message more clear.
+
+		link to v1: https://lore.kernel.org/all/20241024200228.1075840-1-cvam0000@gmail.com/T/#u
+
+
+
+ tools/testing/selftests/tmpfs/bug-link-o-tmpfile.c | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
+
+diff --git a/tools/testing/selftests/tmpfs/bug-link-o-tmpfile.c b/tools/testing/selftests/tmpfs/bug-link-o-tmpfile.c
+index b5c3ddb90942..cdab1e8c0392 100644
+--- a/tools/testing/selftests/tmpfs/bug-link-o-tmpfile.c
++++ b/tools/testing/selftests/tmpfs/bug-link-o-tmpfile.c
+@@ -23,10 +23,23 @@
+ #include <sys/mount.h>
+ #include <unistd.h>
+ 
++#include "../kselftest.h"
++
+ int main(void)
+ {
+ 	int fd;
+ 
++	/* Setting up kselftest framework */
++	ksft_print_header();
++	ksft_set_plan(1);
++
++	/* Check if test is run as root */
++	if (geteuid()) {
++		ksft_print_msg("Skip : Need to run as root");
++		exit(KSFT_SKIP);
++
++	}
++
+ 	if (unshare(CLONE_NEWNS) == -1) {
+ 		if (errno == ENOSYS || errno == EPERM) {
+ 			fprintf(stderr, "error: unshare, errno %d\n", errno);
+-- 
+2.45.2
+
 
