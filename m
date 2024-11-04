@@ -1,336 +1,143 @@
-Return-Path: <linux-kernel+bounces-395610-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395602-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C6E99BC07E
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 22:58:56 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A8BE9BC066
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 22:56:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D8A0282D1A
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 21:58:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B6E2D1F22965
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 21:56:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3DEF1FDF9B;
-	Mon,  4 Nov 2024 21:57:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFD351FCF45;
+	Mon,  4 Nov 2024 21:56:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="fO7a/9QG"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="r33WZZ1/"
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE0251FF045
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 21:57:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8F6714B94F;
+	Mon,  4 Nov 2024 21:56:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730757425; cv=none; b=qmQXOyP6lmDh5Gd8v6IONYG0feHqiEO0n8aBJlxJk04ZKCLMO9oZeSstG6roFG6DpwlI2UDACt7iHKFlEnkoXn9tx9AlOeBXS6Iq56JfIt5QgiPljq4UmBPcJ2+YNm6h2dV76ResXzZF6pQYxltiZJoNAL+ASPiElk56f8J68gc=
+	t=1730757365; cv=none; b=VzpsdbKBOWEnBERZz5swtyt+7J/RwgiuoZgocFIY+nILvtAhcFIfPBh3EhjrrrZxGqhnwqWvEZiLwAMATtoHlCk5d+DxHfDBKQQauGpqyTObGF5jUZlXkUgf5m5F0V5n+QdAJc8cw9eZoby5RdZq+ZCY2iDG4j/NebOHTvHq5KE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730757425; c=relaxed/simple;
-	bh=4VUXFm/kvd93KLqzI5KURIHMvOTIEu3eZQUfzYmG6DM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=uNBK3+qik3acodudNnft/K6dprGlFwdhdWKATQJ8PqzeC7mC3dbVvwH19dn+stuGgAKSn2SQkka4SOWtPd6V7/Hoxx30QkEk5zj6ICK8vqDzVD+BhM7JuDF5qc0E2wIi6go8RkScpMn94f4rTkOTFc1j+dxVvPwQRM+mes3DPXc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=fO7a/9QG; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-20cdb889222so45193775ad.3
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 13:57:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fastly.com; s=google; t=1730757423; x=1731362223; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=obYwzBA2ZzrFmKvUd4jcwbLGj4ZUNP67iBRFL9vyCvU=;
-        b=fO7a/9QGpth28+4dIy9TB9lidkN3glEiWva+JmNSj0sg+ghm0tvZrQyW+dJQEP7q8V
-         1AEss1AHaR0x306rGKcMR1eenEhVQiZq0HGw6flV9IKbjV58Vt/9ngueClvmSeYFyH8T
-         3TPw0LyJ0sXn990aNjWJMmJKR5iNxK9A+xfxE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730757423; x=1731362223;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=obYwzBA2ZzrFmKvUd4jcwbLGj4ZUNP67iBRFL9vyCvU=;
-        b=UoNVr7+nJ1SjF5RrHPZfV0PdLeX9idsJv4ikI7YsjUUMKqG2mcwQzr1dIVaKu3AmyC
-         4qzY7gWsQRfNGjAHLuE21Ccke1x8agh0PZG4TyxoayRUBTGRQHQfBWCOqzoYzEGIbXMF
-         AnAprlu/aVRuzvsxYhlW0WUb5R49tkr78B4Do5d5LBuPlvd1XaYaKEwuf2BRC4WM/Alq
-         5AZL9UJ8yUEhkJOS5IG9ZTboB2NLHuj7hKE3ElzFCWpfIteubucDK7hf9JXZz0CbPwGM
-         EUqFEB5Tm8O8GvXXqHjXFUqej1Qfc4DVySIPDae5xp8pmYDSN/jMHoVBm5DCE/adIyVa
-         /Mjw==
-X-Forwarded-Encrypted: i=1; AJvYcCV4ZOsTQ0PA2cd6kJPrr2tuZkoqiQBTe6WLh5RpnNZ63R85bOauHZ4Ktpg6WWDl5J9vZcd87hBW5EQmudE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzxtWa9auuFAGPTiy5AK7aXsQ2MKu42DHX5pCF1ay2j/tmoNWAp
-	Xycd0/fSf30PLwmnyhDgHNI5k2+7gpNNqO5CoUjNnIcbAkvYcJKdZLn7e2Zpj7I=
-X-Google-Smtp-Source: AGHT+IHwYAZt7rczwZRAVC7htOR+1eGpwP/XVq1C1p0By9AfCbsBEapyd/nRwQS+zUUU/PgsPJ++Sg==
-X-Received: by 2002:a17:903:2302:b0:207:6fb:b04f with SMTP id d9443c01a7336-21103acdcbcmr256423365ad.17.1730757423070;
-        Mon, 04 Nov 2024 13:57:03 -0800 (PST)
-Received: from localhost.localdomain ([2620:11a:c019:0:65e:3115:2f58:c5fd])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211057062b8sm65860255ad.63.2024.11.04.13.57.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Nov 2024 13:57:02 -0800 (PST)
-From: Joe Damato <jdamato@fastly.com>
-To: netdev@vger.kernel.org
-Cc: corbet@lwn.net,
-	hdanton@sina.com,
-	bagasdotme@gmail.com,
-	pabeni@redhat.com,
-	namangulati@google.com,
-	edumazet@google.com,
-	amritha.nambiar@intel.com,
-	sridhar.samudrala@intel.com,
-	sdf@fomichev.me,
-	peter@typeblog.net,
-	m2shafiei@uwaterloo.ca,
-	bjorn@rivosinc.com,
-	hch@infradead.org,
-	willy@infradead.org,
-	willemdebruijn.kernel@gmail.com,
-	skhawaja@google.com,
-	kuba@kernel.org,
-	Joe Damato <jdamato@fastly.com>,
-	Martin Karsten <mkarsten@uwaterloo.ca>,
-	"David S. Miller" <davem@davemloft.net>,
-	Simon Horman <horms@kernel.org>,
-	linux-doc@vger.kernel.org (open list:DOCUMENTATION),
-	linux-kernel@vger.kernel.org (open list),
-	bpf@vger.kernel.org (open list:BPF [MISC]:Keyword:(?:\b|_)bpf(?:\b|_))
-Subject: [PATCH net-next v6 7/7] docs: networking: Describe irq suspension
-Date: Mon,  4 Nov 2024 21:55:31 +0000
-Message-Id: <20241104215542.215919-8-jdamato@fastly.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20241104215542.215919-1-jdamato@fastly.com>
-References: <20241104215542.215919-1-jdamato@fastly.com>
+	s=arc-20240116; t=1730757365; c=relaxed/simple;
+	bh=U31h+o74RVjMXL7/loS81By7bbydzhZWLyFk/1QFKGg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nSh8JUNzpaJnxEFeiaM/AS9iSAwLyloKtrZLbBpoQGhUmb+k2VdqMruRoWFVL2wHwAMrVfzmdtcqF9MXzvucTaU07PnHwNPOsr0o1rSngw9jfkSszoq6GuRwo3oTUL1pq9k1MPt2JIEWgqlN4mf/UT6g7y9ycYrFuOyiMVMb8jc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=r33WZZ1/; arc=none smtp.client-ip=178.60.130.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=GG1B6eb+FZfFk5uIGi3OTAWvgN8hYpzXzP7mahtmAJE=; b=r33WZZ1/ujRr8X41uraQfDTcBo
+	v9fonMz2yopmUovf2zaAVNFfsNe6g+AfAL/mJdzmTMWqZwp1RgEQ0yWT2ezd+yPguHYCS3sUoK+EZ
+	m1LySWRNNOliJCJE9/q0jVjozomlOLBVRwGxxXqcNSFSXZjjn4WE45qP4AKnyzWJufgDiQznXtr6P
+	/d4pxc31tk5sceVQB4KkDy0gXs8VgDMXJIITpDGegoOgWAuCmr95hjSWqFYcEwntR1FCe+OmHLGR/
+	Wz5dfdli4by5QGO1bEu6Gvmru+5626anNu4rbDQBXiDG361GHfX16pnDztHDtP/L32aE1oww6qUmb
+	Pw0kgpqQ==;
+Received: from [177.172.124.78] (helo=[192.168.15.100])
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+	id 1t8538-001qw9-VN; Mon, 04 Nov 2024 22:55:51 +0100
+Message-ID: <8373eb11-d61c-40c4-9289-1047ec35c4d6@igalia.com>
+Date: Mon, 4 Nov 2024 18:55:45 -0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/3] futex: Create set_robust_list2
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Darren Hart <dvhart@infradead.org>, Davidlohr Bueso <dave@stgolabs.net>,
+ Arnd Bergmann <arnd@arndb.de>, sonicadvance1@gmail.com,
+ linux-kernel@vger.kernel.org, kernel-dev@igalia.com,
+ linux-api@vger.kernel.org, Nathan Chancellor <nathan@kernel.org>
+References: <20241101162147.284993-1-andrealmeid@igalia.com>
+ <20241101162147.284993-3-andrealmeid@igalia.com>
+ <20241104112240.GA24862@noisy.programming.kicks-ass.net>
+Content-Language: en-US
+From: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
+In-Reply-To: <20241104112240.GA24862@noisy.programming.kicks-ass.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Describe irq suspension, the epoll ioctls, and the tradeoffs of using
-different gro_flush_timeout values.
+Hi Peter,
 
-Signed-off-by: Joe Damato <jdamato@fastly.com>
-Co-developed-by: Martin Karsten <mkarsten@uwaterloo.ca>
-Signed-off-by: Martin Karsten <mkarsten@uwaterloo.ca>
-Reviewed-by: Sridhar Samudrala <sridhar.samudrala@intel.com>
----
- v6:
-   - Fixed packet processing loop description based on feedback from
-     Bagas Sanjaya so that it renders properly when generated as html
+Em 04/11/2024 08:22, Peter Zijlstra escreveu:
+> On Fri, Nov 01, 2024 at 01:21:46PM -0300, André Almeida wrote:
+>> @@ -1046,24 +1095,44 @@ static inline void exit_pi_state_list(struct task_struct *curr) { }
+>>   
+>>   static void futex_cleanup(struct task_struct *tsk)
+>>   {
+>> +	struct robust_list2_entry *curr, *n;
+>> +	struct list_head *list2 = &tsk->robust_list2;
+>> +
+>>   #ifdef CONFIG_64BIT
+>>   	if (unlikely(tsk->robust_list)) {
+>> -		exit_robust_list64(tsk);
+>> +		exit_robust_list64(tsk, tsk->robust_list);
+>>   		tsk->robust_list = NULL;
+>>   	}
+>>   #else
+>>   	if (unlikely(tsk->robust_list)) {
+>> -		exit_robust_list32(tsk);
+>> +		exit_robust_list32(tsk, (struct robust_list_head32 *) tsk->robust_list);
+>>   		tsk->robust_list = NULL;
+>>   	}
+>>   #endif
+>>   
+>>   #ifdef CONFIG_COMPAT
+>>   	if (unlikely(tsk->compat_robust_list)) {
+>> -		exit_robust_list32(tsk);
+>> +		exit_robust_list32(tsk, tsk->compat_robust_list);
+>>   		tsk->compat_robust_list = NULL;
+>>   	}
+>>   #endif
+>> +	/*
+>> +	 * Walk through the linked list, parsing robust lists and freeing the
+>> +	 * allocated lists
+>> +	 */
+>> +	if (unlikely(!list_empty(list2))) {
+>> +		list_for_each_entry_safe(curr, n, list2, list) {
+>> +			if (curr->head != NULL) {
+>> +				if (curr->list_type == ROBUST_LIST_64BIT)
+>> +					exit_robust_list64(tsk, curr->head);
+>> +				else if (curr->list_type == ROBUST_LIST_32BIT)
+>> +					exit_robust_list32(tsk, curr->head);
+>> +				curr->head = NULL;
+>> +			}
+>> +			list_del_init(&curr->list);
+>> +			kfree(curr);
+>> +		}
+>> +	}
+>>   
+>>   	if (unlikely(!list_empty(&tsk->pi_state_list)))
+>>   		exit_pi_state_list(tsk);
+> 
+> I'm still digesting this, but the above seems particularly silly.
+> 
+> Should not the legacy lists also be on the list of lists? I mean, it
+> makes no sense to have two completely separate means of tracking lists.
+> 
 
- v5:
-   - Fixed a minor typo in the epoll-based busy polling section
-   - Removed short paragraph referring to experimental data as that data
-     is not included in the documentation
+You are asking if, whenever someone calls set_robust_list() or 
+compat_set_robust_list() to be inserted into &current->robust_list2 
+instead of using tsk->robust_list and tsk->compat_robust_list?
 
- v4:
-   - Updated documentation to further explain irq suspension
-   - Dropped Stanislav's Acked-by tag because of the doc changes
-   - Dropped Bagas' Reviewed-by tag because of the doc changes
-
- v1 -> v2:
-   - Updated documentation to describe the per-NAPI configuration
-     parameters.
- Documentation/networking/napi.rst | 170 +++++++++++++++++++++++++++++-
- 1 file changed, 168 insertions(+), 2 deletions(-)
-
-diff --git a/Documentation/networking/napi.rst b/Documentation/networking/napi.rst
-index dfa5d549be9c..02720dd71a76 100644
---- a/Documentation/networking/napi.rst
-+++ b/Documentation/networking/napi.rst
-@@ -192,6 +192,33 @@ is reused to control the delay of the timer, while
- ``napi_defer_hard_irqs`` controls the number of consecutive empty polls
- before NAPI gives up and goes back to using hardware IRQs.
- 
-+The above parameters can also be set on a per-NAPI basis using netlink via
-+netdev-genl. When used with netlink and configured on a per-NAPI basis, the
-+parameters mentioned above use hyphens instead of underscores:
-+``gro-flush-timeout`` and ``napi-defer-hard-irqs``.
-+
-+Per-NAPI configuration can be done programmatically in a user application
-+or by using a script included in the kernel source tree:
-+``tools/net/ynl/cli.py``.
-+
-+For example, using the script:
-+
-+.. code-block:: bash
-+
-+  $ kernel-source/tools/net/ynl/cli.py \
-+            --spec Documentation/netlink/specs/netdev.yaml \
-+            --do napi-set \
-+            --json='{"id": 345,
-+                     "defer-hard-irqs": 111,
-+                     "gro-flush-timeout": 11111}'
-+
-+Similarly, the parameter ``irq-suspend-timeout`` can be set using netlink
-+via netdev-genl. There is no global sysfs parameter for this value.
-+
-+``irq-suspend-timeout`` is used to determine how long an application can
-+completely suspend IRQs. It is used in combination with SO_PREFER_BUSY_POLL,
-+which can be set on a per-epoll context basis with ``EPIOCSPARAMS`` ioctl.
-+
- .. _poll:
- 
- Busy polling
-@@ -207,6 +234,46 @@ selected sockets or using the global ``net.core.busy_poll`` and
- ``net.core.busy_read`` sysctls. An io_uring API for NAPI busy polling
- also exists.
- 
-+epoll-based busy polling
-+------------------------
-+
-+It is possible to trigger packet processing directly from calls to
-+``epoll_wait``. In order to use this feature, a user application must ensure
-+all file descriptors which are added to an epoll context have the same NAPI ID.
-+
-+If the application uses a dedicated acceptor thread, the application can obtain
-+the NAPI ID of the incoming connection using SO_INCOMING_NAPI_ID and then
-+distribute that file descriptor to a worker thread. The worker thread would add
-+the file descriptor to its epoll context. This would ensure each worker thread
-+has an epoll context with FDs that have the same NAPI ID.
-+
-+Alternatively, if the application uses SO_REUSEPORT, a bpf or ebpf program can
-+be inserted to distribute incoming connections to threads such that each thread
-+is only given incoming connections with the same NAPI ID. Care must be taken to
-+carefully handle cases where a system may have multiple NICs.
-+
-+In order to enable busy polling, there are two choices:
-+
-+1. ``/proc/sys/net/core/busy_poll`` can be set with a time in useconds to busy
-+   loop waiting for events. This is a system-wide setting and will cause all
-+   epoll-based applications to busy poll when they call epoll_wait. This may
-+   not be desirable as many applications may not have the need to busy poll.
-+
-+2. Applications using recent kernels can issue an ioctl on the epoll context
-+   file descriptor to set (``EPIOCSPARAMS``) or get (``EPIOCGPARAMS``) ``struct
-+   epoll_params``:, which user programs can define as follows:
-+
-+.. code-block:: c
-+
-+  struct epoll_params {
-+      uint32_t busy_poll_usecs;
-+      uint16_t busy_poll_budget;
-+      uint8_t prefer_busy_poll;
-+
-+      /* pad the struct to a multiple of 64bits */
-+      uint8_t __pad;
-+  };
-+
- IRQ mitigation
- ---------------
- 
-@@ -222,12 +289,111 @@ Such applications can pledge to the kernel that they will perform a busy
- polling operation periodically, and the driver should keep the device IRQs
- permanently masked. This mode is enabled by using the ``SO_PREFER_BUSY_POLL``
- socket option. To avoid system misbehavior the pledge is revoked
--if ``gro_flush_timeout`` passes without any busy poll call.
-+if ``gro_flush_timeout`` passes without any busy poll call. For epoll-based
-+busy polling applications, the ``prefer_busy_poll`` field of ``struct
-+epoll_params`` can be set to 1 and the ``EPIOCSPARAMS`` ioctl can be issued to
-+enable this mode. See the above section for more details.
- 
- The NAPI budget for busy polling is lower than the default (which makes
- sense given the low latency intention of normal busy polling). This is
- not the case with IRQ mitigation, however, so the budget can be adjusted
--with the ``SO_BUSY_POLL_BUDGET`` socket option.
-+with the ``SO_BUSY_POLL_BUDGET`` socket option. For epoll-based busy polling
-+applications, the ``busy_poll_budget`` field can be adjusted to the desired value
-+in ``struct epoll_params`` and set on a specific epoll context using the ``EPIOCSPARAMS``
-+ioctl. See the above section for more details.
-+
-+It is important to note that choosing a large value for ``gro_flush_timeout``
-+will defer IRQs to allow for better batch processing, but will induce latency
-+when the system is not fully loaded. Choosing a small value for
-+``gro_flush_timeout`` can cause interference of the user application which is
-+attempting to busy poll by device IRQs and softirq processing. This value
-+should be chosen carefully with these tradeoffs in mind. epoll-based busy
-+polling applications may be able to mitigate how much user processing happens
-+by choosing an appropriate value for ``maxevents``.
-+
-+Users may want to consider an alternate approach, IRQ suspension, to help deal
-+with these tradeoffs.
-+
-+IRQ suspension
-+--------------
-+
-+IRQ suspension is a mechanism wherein device IRQs are masked while epoll
-+triggers NAPI packet processing.
-+
-+While application calls to epoll_wait successfully retrieve events, the kernel will
-+defer the IRQ suspension timer. If the kernel does not retrieve any events
-+while busy polling (for example, because network traffic levels subsided), IRQ
-+suspension is disabled and the IRQ mitigation strategies described above are
-+engaged.
-+
-+This allows users to balance CPU consumption with network processing
-+efficiency.
-+
-+To use this mechanism:
-+
-+  1. The per-NAPI config parameter ``irq-suspend-timeout`` should be set to the
-+     maximum time (in nanoseconds) the application can have its IRQs
-+     suspended. This is done using netlink, as described above. This timeout
-+     serves as a safety mechanism to restart IRQ driver interrupt processing if
-+     the application has stalled. This value should be chosen so that it covers
-+     the amount of time the user application needs to process data from its
-+     call to epoll_wait, noting that applications can control how much data
-+     they retrieve by setting ``max_events`` when calling epoll_wait.
-+
-+  2. The sysfs parameter or per-NAPI config parameters ``gro_flush_timeout``
-+     and ``napi_defer_hard_irqs`` can be set to low values. They will be used
-+     to defer IRQs after busy poll has found no data.
-+
-+  3. The ``prefer_busy_poll`` flag must be set to true. This can be done using
-+     the ``EPIOCSPARAMS`` ioctl as described above.
-+
-+  4. The application uses epoll as described above to trigger NAPI packet
-+     processing.
-+
-+As mentioned above, as long as subsequent calls to epoll_wait return events to
-+userland, the ``irq-suspend-timeout`` is deferred and IRQs are disabled. This
-+allows the application to process data without interference.
-+
-+Once a call to epoll_wait results in no events being found, IRQ suspension is
-+automatically disabled and the ``gro_flush_timeout`` and
-+``napi_defer_hard_irqs`` mitigation mechanisms take over.
-+
-+It is expected that ``irq-suspend-timeout`` will be set to a value much larger
-+than ``gro_flush_timeout`` as ``irq-suspend-timeout`` should suspend IRQs for
-+the duration of one userland processing cycle.
-+
-+While it is not stricly necessary to use ``napi_defer_hard_irqs`` and
-+``gro_flush_timeout`` to use IRQ suspension, their use is strongly
-+recommended.
-+
-+IRQ suspension causes the system to alternate between polling mode and
-+irq-driven packet delivery. During busy periods, ``irq-suspend-timeout``
-+overrides ``gro_flush_timeout`` and keeps the system busy polling, but when
-+epoll finds no events, the setting of ``gro_flush_timeout`` and
-+``napi_defer_hard_irqs`` determine the next step.
-+
-+There are essentially three possible loops for network processing and
-+packet delivery:
-+
-+1) hardirq -> softirq -> napi poll; basic interrupt delivery
-+2) timer -> softirq -> napi poll; deferred irq processing
-+3) epoll -> busy-poll -> napi poll; busy looping
-+
-+Loop 2 can take control from Loop 1, if ``gro_flush_timeout`` and
-+``napi_defer_hard_irqs`` are set.
-+
-+If ``gro_flush_timeout`` and ``napi_defer_hard_irqs`` are set, Loops 2
-+and 3 "wrestle" with each other for control.
-+
-+During busy periods, ``irq-suspend-timeout`` is used as timer in Loop 2,
-+which essentially tilts network processing in favour of Loop 3.
-+
-+If ``gro_flush_timeout`` and ``napi_defer_hard_irqs`` are not set, Loop 3
-+cannot take control from Loop 1.
-+
-+Therefore, setting ``gro_flush_timeout`` and ``napi_defer_hard_irqs`` is
-+the recommended usage, because otherwise setting ``irq-suspend-timeout``
-+might not have any discernible effect.
- 
- .. _threaded:
- 
--- 
-2.25.1
+I was thinking of doing that, but my current implementation has a 
+kmalloc() call for every insertion, and I wasn't sure if I could add 
+this new latency to the old set_robust_list() syscall. Assuming it is 
+usually called just once during the thread initialization perhaps it 
+shouldn't cause much harm I guess.
 
 
