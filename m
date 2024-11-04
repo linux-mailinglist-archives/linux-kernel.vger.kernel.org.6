@@ -1,92 +1,352 @@
-Return-Path: <linux-kernel+bounces-394869-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394870-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44AE19BB51F
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 13:53:31 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77C219BB524
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 13:54:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 75A541C20B51
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 12:53:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6360228284D
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 12:54:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F41EB1BBBD6;
-	Mon,  4 Nov 2024 12:53:10 +0000 (UTC)
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C90CD1B85E4;
+	Mon,  4 Nov 2024 12:53:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b="Gyq7+p9O"
+Received: from www530.your-server.de (www530.your-server.de [188.40.30.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69FE61B6CFE;
-	Mon,  4 Nov 2024 12:53:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28444188700;
+	Mon,  4 Nov 2024 12:53:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.40.30.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730724790; cv=none; b=HOgOno/aW5CWwM/BAE++lrkckLWkqhV9grMwgiJWLAXc8LFQmwcVaAtKPTUXog4Mtj2W6z2TkrbYV2In51QMsRctfRTtNDGvkEevhCnKwUNQ1Nb1BbvfuqbWjO+UakumaRAhZii6H1EawnZGgKe1Pr37cPR6yW7JmysLQzeNF9I=
+	t=1730724838; cv=none; b=qRkopaEyVBMFFz4ZspqYrV+z2iwGAWb4iiMOrxIcg4Ah8ZFSUNnnqzHEVFDYVXy87EaGJkiT630pZf8wvZFSD9m+hJ3W75TgqZChEE5FOrxUf3/ip8Gu5QtVThLAfxU4GoOItMt81hG4fEs5u/Z+OxIPBPLh8B/Bq4VD3rblEws=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730724790; c=relaxed/simple;
-	bh=gilSNoWQMNdGklRFQgFhfjvxiTNJuGwF0N1Xv7U5/Pk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SVAD3oY3o9ipAH3rJQBtTVcfId0cXaA/jPjkxudLZOXFYCdVgUgMOjC1dZs0E0+DymwTN0TzkhV13Wl8UgFqHRpoj6tJDZvnC2gx3FyVS1gek+v3GxM5uyN2VFl4hufUSBfjeyrfBxywiFj+tHiSDxMfp6lhJo/u5ImFJUhNzv8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id D6983227AAF; Mon,  4 Nov 2024 13:53:02 +0100 (CET)
-Date: Mon, 4 Nov 2024 13:53:02 +0100
-From: Christoph Hellwig <hch@lst.de>
-To: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: Christoph Hellwig <hch@lst.de>, Robin Murphy <robin.murphy@arm.com>,
-	Leon Romanovsky <leon@kernel.org>, Jens Axboe <axboe@kernel.dk>,
-	Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
-	Sagi Grimberg <sagi@grimberg.me>,
-	Leon Romanovsky <leonro@nvidia.com>,
-	Keith Busch <kbusch@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Logan Gunthorpe <logang@deltatee.com>,
-	Yishai Hadas <yishaih@nvidia.com>,
-	Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
-	Kevin Tian <kevin.tian@intel.com>,
-	Alex Williamson <alex.williamson@redhat.com>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	=?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
-	linux-rdma@vger.kernel.org, iommu@lists.linux.dev,
-	linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org,
-	kvm@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH v1 07/17] dma-mapping: Implement link/unlink ranges API
-Message-ID: <20241104125302.GA11168@lst.de>
-References: <cover.1730298502.git.leon@kernel.org> <f8c7f160c9ae97fef4ccd355f9979727552c7374.1730298502.git.leon@kernel.org> <51c5a5d5-6f90-4c42-b0ef-b87791e00f20@arm.com> <20241104091048.GA25041@lst.de> <20241104121924.GC35848@ziepe.ca>
+	s=arc-20240116; t=1730724838; c=relaxed/simple;
+	bh=QsB96WLlxyBkpPCDkrGTOdZUuEGM40LRH8fdJ8ClFp4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UD7DitAwOWjJXbj7o17lG2Hk5aPJwPZQ0b2+zXogPemfUKrMVu0FxX+k6SAE4Y5u6iE8HBTCL4oxO0ntfqrN6MY1Jdf7tN24wHQ9MV/WTFzEtARGNwzcuS/t+cI7snDB8GRh90czmZEM32YvUjgaRCdE3J7MaKrc9yGMFDJ1EFs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com; spf=pass smtp.mailfrom=geanix.com; dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b=Gyq7+p9O; arc=none smtp.client-ip=188.40.30.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=geanix.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=geanix.com;
+	s=default2211; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:
+	Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References;
+	bh=MmlxgEqKziTj1q+YPuL8kTTJi9CETcM/dQgzPCIXOxw=; b=Gyq7+p9OGNS0B9EWxJwutI9NrA
+	QynE3nAus4PUmrU6t1pvIpEsXRKk+6GmCprvpmeswKfcQnq8xpujZ0cmt6O9DRhcjCUw46YTCl0Yt
+	MgwzRvsp80qNYOOfMgKkFg/AMybIMykfav3rWzWoxzX0D+cbwIpWbcCe/mfCWPW1kmPPvzCJ9Vd9S
+	nfPWFpFjEGpDnJvaQGlgrlqu9/Ue9lJY62MoHNe4lrwcgWT2qvHR0/KVb+eGjogMGlaaY9Lq/8SDF
+	qmz9XyZ6AONlGAvnrOFDKuN/ysBXN7g9z5FvtPmHESLruZdux2h0HxP0RBWXVL8gNEMZukb8Mrr0b
+	psVpp58g==;
+Received: from sslproxy01.your-server.de ([78.46.139.224])
+	by www530.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <sean@geanix.com>)
+	id 1t7wad-000P8L-Mo; Mon, 04 Nov 2024 13:53:51 +0100
+Received: from [185.17.218.86] (helo=zen..)
+	by sslproxy01.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <sean@geanix.com>)
+	id 1t7wac-000OtJ-33;
+	Mon, 04 Nov 2024 13:53:50 +0100
+From: Sean Nyekjaer <sean@geanix.com>
+To: Marc Kleine-Budde <mkl@pengutronix.de>,
+	Vincent Mailhol <mailhol.vincent@wanadoo.fr>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: Sean Nyekjaer <sean@geanix.com>,
+	linux-can@vger.kernel.org,
+	netdev@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] dt-bindings: can: convert tcan4x5x.txt to DT schema
+Date: Mon,  4 Nov 2024 13:53:40 +0100
+Message-ID: <20241104125342.1691516-1-sean@geanix.com>
+X-Mailer: git-send-email 2.46.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241104121924.GC35848@ziepe.ca>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Content-Transfer-Encoding: 8bit
+X-Authenticated-Sender: sean@geanix.com
+X-Virus-Scanned: Clear (ClamAV 0.103.10/27448/Mon Nov  4 10:33:38 2024)
 
-On Mon, Nov 04, 2024 at 08:19:24AM -0400, Jason Gunthorpe wrote:
-> > That's a good point.  Only mapped through host bridge P2P can even
-> > end up here, so the address is a perfectly valid physical address
-> > in the host.  But I'm not sure if all arch_sync_dma_for_device
-> > implementations handle IOMMU memory fine.
-> 
-> I was told on x86 if you do a cache flush operation on MMIO there is a
-> chance it will MCE. Recently had some similar discussions about ARM
-> where it was asserted some platforms may have similar.
+Convert binding doc tcan4x5x.txt to yaml.
 
-On x86 we never flush caches for DMA operations anyway, so x86 isn't
-really the concern here, but architectures that do cache incoherent DMA
-to PCIe devices.  Which isn't a whole lot as most SOCs try to avoid that
-for PCIe even if they lack DMA coherent for lesser peripherals, but I bet
-there are some on arm/arm64 and maybe riscv or mips.
+Signed-off-by: Sean Nyekjaer <sean@geanix.com>
+---
+Changes since rfc:
+  - Tried to re-add ti,tcan4x5x wildcard
+  - Removed xceiver and vdd supplies (copy paste error)
+  - Corrected max SPI frequency
+  - Copy pasted bosch,mram-cfg from bosch,m_can.yaml
+  - device-state-gpios and device-wake-gpios only available for tcan4x5x
 
-> It would be safest to only call arch flushing calls on memory that is
-> mapped cachable. We can assume that a P2P target is never CPU
-> mapped cachable, regardless of how the DMA is routed.
+ .../devicetree/bindings/net/can/tcan4x5x.txt  |  48 -----
+ .../bindings/net/can/ti,tcan4x5x.yaml         | 189 ++++++++++++++++++
+ 2 files changed, 189 insertions(+), 48 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/net/can/tcan4x5x.txt
+ create mode 100644 Documentation/devicetree/bindings/net/can/ti,tcan4x5x.yaml
 
-Yes.  I.e. force DMA_ATTR_SKIP_CPU_SYNC for P2P.
+diff --git a/Documentation/devicetree/bindings/net/can/tcan4x5x.txt b/Documentation/devicetree/bindings/net/can/tcan4x5x.txt
+deleted file mode 100644
+index 20c0572c9853..000000000000
+--- a/Documentation/devicetree/bindings/net/can/tcan4x5x.txt
++++ /dev/null
+@@ -1,48 +0,0 @@
+-Texas Instruments TCAN4x5x CAN Controller
+-================================================
+-
+-This file provides device node information for the TCAN4x5x interface contains.
+-
+-Required properties:
+-	- compatible:
+-		"ti,tcan4552", "ti,tcan4x5x"
+-		"ti,tcan4553", "ti,tcan4x5x" or
+-		"ti,tcan4x5x"
+-	- reg: 0
+-	- #address-cells: 1
+-	- #size-cells: 0
+-	- spi-max-frequency: Maximum frequency of the SPI bus the chip can
+-			     operate at should be less than or equal to 18 MHz.
+-	- interrupt-parent: the phandle to the interrupt controller which provides
+-                    the interrupt.
+-	- interrupts: interrupt specification for data-ready.
+-
+-See Documentation/devicetree/bindings/net/can/bosch,m_can.yaml for additional
+-required property details.
+-
+-Optional properties:
+-	- reset-gpios: Hardwired output GPIO. If not defined then software
+-		       reset.
+-	- device-state-gpios: Input GPIO that indicates if the device is in
+-			      a sleep state or if the device is active. Not
+-			      available with tcan4552/4553.
+-	- device-wake-gpios: Wake up GPIO to wake up the TCAN device. Not
+-			     available with tcan4552/4553.
+-	- wakeup-source: Leave the chip running when suspended, and configure
+-			 the RX interrupt to wake up the device.
+-
+-Example:
+-tcan4x5x: tcan4x5x@0 {
+-		compatible = "ti,tcan4x5x";
+-		reg = <0>;
+-		#address-cells = <1>;
+-		#size-cells = <1>;
+-		spi-max-frequency = <10000000>;
+-		bosch,mram-cfg = <0x0 0 0 16 0 0 1 1>;
+-		interrupt-parent = <&gpio1>;
+-		interrupts = <14 IRQ_TYPE_LEVEL_LOW>;
+-		device-state-gpios = <&gpio3 21 GPIO_ACTIVE_HIGH>;
+-		device-wake-gpios = <&gpio1 15 GPIO_ACTIVE_HIGH>;
+-		reset-gpios = <&gpio1 27 GPIO_ACTIVE_HIGH>;
+-		wakeup-source;
+-};
+diff --git a/Documentation/devicetree/bindings/net/can/ti,tcan4x5x.yaml b/Documentation/devicetree/bindings/net/can/ti,tcan4x5x.yaml
+new file mode 100644
+index 000000000000..0351e5c04230
+--- /dev/null
++++ b/Documentation/devicetree/bindings/net/can/ti,tcan4x5x.yaml
+@@ -0,0 +1,189 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/net/can/ti,tcan4x5x.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Texas Instruments TCAN4x5x CAN Controller
++
++maintainers:
++  - Marc Kleine-Budde <mkl@pengutronix.de>
++
++properties:
++  compatible:
++    oneOf:
++      - items:
++          - enum:
++              - ti,tcan4552
++          - const: ti,tcan4x5x
++      - items:
++          - enum:
++              - ti,tcan4553
++          - const: ti,tcan4x5x
++      - items:
++          - enum:
++              - ti,tcan4x5x
++
++  reg:
++    maxItems: 1
++
++  interrupts:
++    maxItems: 1
++    description: The GPIO parent interrupt.
++
++  clocks:
++    maxItems: 1
++
++  reset-gpios:
++    description: Hardwired output GPIO. If not defined then software reset.
++    maxItems: 1
++
++  device-state-gpios:
++    description: |
++      Input GPIO that indicates if the device is in a sleep state or if the
++      device is active. Not available with tcan4552/4553.
++    maxItems: 1
++
++  device-wake-gpios:
++    description: |
++      Wake up GPIO to wake up the TCAN device.
++      Not available with tcan4552/4553.
++    maxItems: 1
++
++  bosch,mram-cfg:
++    description: |
++      Message RAM configuration data.
++      Multiple M_CAN instances can share the same Message RAM
++      and each element(e.g Rx FIFO or Tx Buffer and etc) number
++      in Message RAM is also configurable, so this property is
++      telling driver how the shared or private Message RAM are
++      used by this M_CAN controller.
++
++      The format should be as follows:
++      <offset sidf_elems xidf_elems rxf0_elems rxf1_elems rxb_elems txe_elems txb_elems>
++      The 'offset' is an address offset of the Message RAM where
++      the following elements start from. This is usually set to
++      0x0 if you're using a private Message RAM. The remain cells
++      are used to specify how many elements are used for each FIFO/Buffer.
++
++      M_CAN includes the following elements according to user manual:
++      11-bit Filter	0-128 elements / 0-128 words
++      29-bit Filter	0-64 elements / 0-128 words
++      Rx FIFO 0		0-64 elements / 0-1152 words
++      Rx FIFO 1		0-64 elements / 0-1152 words
++      Rx Buffers	0-64 elements / 0-1152 words
++      Tx Event FIFO	0-32 elements / 0-64 words
++      Tx Buffers	0-32 elements / 0-576 words
++
++      Please refer to 2.4.1 Message RAM Configuration in Bosch
++      M_CAN user manual for details.
++    $ref: /schemas/types.yaml#/definitions/int32-array
++    items:
++      - description: The 'offset' is an address offset of the Message RAM where
++          the following elements start from. This is usually set to 0x0 if
++          you're using a private Message RAM.
++        default: 0
++      - description: 11-bit Filter 0-128 elements / 0-128 words
++        minimum: 0
++        maximum: 128
++      - description: 29-bit Filter 0-64 elements / 0-128 words
++        minimum: 0
++        maximum: 64
++      - description: Rx FIFO 0 0-64 elements / 0-1152 words
++        minimum: 0
++        maximum: 64
++      - description: Rx FIFO 1 0-64 elements / 0-1152 words
++        minimum: 0
++        maximum: 64
++      - description: Rx Buffers 0-64 elements / 0-1152 words
++        minimum: 0
++        maximum: 64
++      - description: Tx Event FIFO 0-32 elements / 0-64 words
++        minimum: 0
++        maximum: 32
++      - description: Tx Buffers 0-32 elements / 0-576 words
++        minimum: 0
++        maximum: 32
++    minItems: 1
++
++  spi-max-frequency:
++    description:
++      Must be half or less of "clocks" frequency.
++    maximum: 18000000
++
++  wakeup-source:
++    $ref: /schemas/types.yaml#/definitions/flag
++    description: |
++      Enable CAN remote wakeup.
++
++allOf:
++  - $ref: can-controller.yaml#
++  - $ref: /schemas/spi/spi-peripheral-props.yaml#
++  - if:
++      properties:
++        compatible:
++          contains:
++            enum:
++              - ti,tcan4552
++              - ti,tcan4553
++    then:
++      properties:
++        device-state-gpios: false
++        device-wake-gpios: false
++
++required:
++  - compatible
++  - reg
++  - interrupts
++  - clocks
++  - bosch,mram-cfg
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/gpio/gpio.h>
++    #include <dt-bindings/interrupt-controller/irq.h>
++
++    spi {
++        #address-cells = <1>;
++        #size-cells = <0>;
++
++        can@0 {
++            compatible = "ti,tcan4x5x";
++            reg = <0>;
++            clocks = <&can0_osc>;
++            pinctrl-names = "default";
++            pinctrl-0 = <&can0_pins>;
++            spi-max-frequency = <10000000>;
++            bosch,mram-cfg = <0x0 0 0 16 0 0 1 1>;
++            interrupt-parent = <&gpio1>;
++            interrupts = <14 IRQ_TYPE_LEVEL_LOW>;
++            device-state-gpios = <&gpio3 21 GPIO_ACTIVE_HIGH>;
++            device-wake-gpios = <&gpio1 15 GPIO_ACTIVE_HIGH>;
++            reset-gpios = <&gpio1 27 GPIO_ACTIVE_HIGH>;
++            wakeup-source;
++        };
++    };
++  - |
++    #include <dt-bindings/gpio/gpio.h>
++    #include <dt-bindings/interrupt-controller/irq.h>
++
++    spi {
++        #address-cells = <1>;
++        #size-cells = <0>;
++
++        can@0 {
++            compatible = "ti,tcan4552","ti,tcan4x5x";
++            reg = <0>;
++            clocks = <&can0_osc>;
++            pinctrl-names = "default";
++            pinctrl-0 = <&can0_pins>;
++            spi-max-frequency = <10000000>;
++            bosch,mram-cfg = <0x0 0 0 16 0 0 1 1>;
++            interrupt-parent = <&gpio1>;
++            interrupts = <14 IRQ_TYPE_LEVEL_LOW>;
++            reset-gpios = <&gpio1 27 GPIO_ACTIVE_HIGH>;
++            wakeup-source;
++        };
++    };
+-- 
+2.46.2
 
 
