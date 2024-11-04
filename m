@@ -1,121 +1,119 @@
-Return-Path: <linux-kernel+bounces-394331-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394333-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C3999BAD7E
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 08:56:40 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B9A09BAD84
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 08:58:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 13C7C1F21E93
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 07:56:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ACC1E1C21240
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 07:58:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3278199FD0;
-	Mon,  4 Nov 2024 07:56:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B4C819CC02;
+	Mon,  4 Nov 2024 07:58:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="uFNkm4eu"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dd6Nlr8R"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B63EE189F45
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 07:56:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97DC018C320
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 07:58:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730706993; cv=none; b=IzhfyPYObQPJdXTwRvxHtEZfCTESk6EGINWqdyZeywjPgtKOTGyvtWxNfhmC8+i1r+MpcfVM8hK2Wc5MqU/SfsxfFsvsQPQNP2orbprOWJEbBO2xNs37hRrZmXC/DN0yUR8Qh39go1ETXS9r06EAUW1ZJpSzlQV/0NB+rT4VGbE=
+	t=1730707101; cv=none; b=RSGlGLGKWKFIiQNS/z0DIj3OhNxTYYl9FWfi/aS/axZOtOT8KmXK2Z3uFnb+SfVzeQUGrIH/q6xM/qabFjiYQS5+9f2xawCrRjqkv2/ix4jb9evw4noD5/FXwx8ICfZUl7IKp6XIM5XYtSEL0stkGHIaebhNqINshZng0aRfsMs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730706993; c=relaxed/simple;
-	bh=Y4FhluNAOh92dTJN3S7J3D8D1JgFksfWaMdnx6puF2E=;
+	s=arc-20240116; t=1730707101; c=relaxed/simple;
+	bh=GDFehj+2Q5QgjBvLeZg1uWgjvHdjMU2PvgA3F+vFyZs=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=V2I1KaBspna5enYZHew4oYwpAT8YrWvaKdfRBBQfzHxKjd9/8gSyqwnoPg39JeySBI/Fuyvaebtygr2r2XUdxh+55O17vbbRnk7hc/1t/vMj/rqZbJF2QpJJ8mZvzpXakCoSJFh3j/0HHgnQMpyRZwSBWTyFw4jtSAjUFW23ZKg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=uFNkm4eu; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-431548bd1b4so31464355e9.3
-        for <linux-kernel@vger.kernel.org>; Sun, 03 Nov 2024 23:56:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1730706990; x=1731311790; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EkuJ1rDzuYOHt5sI+K9j0dAnU8DW0XrtneA96wzoUFU=;
-        b=uFNkm4euwuNF3lhfNr+lfcykGYs8MW4/XvWW1fWwVNkk59u20AoEL/XePTJOOCbnFC
-         bfrFIMDmpS5lxaaeMrtQvpSglJwGuhwF0TEMvTxW/cG8DM2AxD7T07mdqIwkXBUIX821
-         YYXDzyaeJj1qw3V3kaOdELUtrsHC9K3Xy7htALE+NNmAQMLQWwe0LB4voHhuaLLi0eqn
-         fg8WrcVNrbe+IbW8dpE0G3i/WdasMA8grMgnIvCw4v/yuo6tVDCElkC0Otfii6d2L7z0
-         QOPIyQ24ZCpxNyLUYvZPIGKydo3E2q8ro+qQ41CzIQomI4TeACelNKy5sgd1PsNHS6p9
-         GzbQ==
+	 MIME-Version:Content-Type; b=sxx/4BRyPK8idgK+zrbVctKV/FtStN/P3W7xTUGrR50EmUTw/spgcAdyvRCz8DqQFuMmGK+JTxKWpsBTl1LjwgbI4qArZFZvGn+SO3SRxNcMCxJbuEiVP/gj7uTLA5KGF/5OkYMXxx/yf13bnY/aVzloBYKva74mGTs3vAOXnTU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dd6Nlr8R; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1730707098;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GcyFQ9rHsVsrsTfHR/B5NzPP3h2da5K+JoorZkF8Nik=;
+	b=dd6Nlr8RXTBjuV56XRIBfwQufbE0yche/nx59PB41KL4ivjjZPybM0KUg+WqXivg/Z106i
+	j/24GA4K1xsnhZ9/XyoZefz3Zq8pHPm1BM41vmOltXDV7S4vMbSUbmNRkwRyEbMqDu5jOL
+	WlX1XW2WlfInKKJyyufsJaI49H2aImw=
+Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
+ [209.85.218.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-524-0VC7VpOTM2a2Ecry9IMwIg-1; Mon, 04 Nov 2024 02:58:17 -0500
+X-MC-Unique: 0VC7VpOTM2a2Ecry9IMwIg-1
+Received: by mail-ej1-f70.google.com with SMTP id a640c23a62f3a-a9adb271de7so310843666b.0
+        for <linux-kernel@vger.kernel.org>; Sun, 03 Nov 2024 23:58:16 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730706990; x=1731311790;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=EkuJ1rDzuYOHt5sI+K9j0dAnU8DW0XrtneA96wzoUFU=;
-        b=Ug2OYnQ0nS0+s17ZnrGmIgu+QYH31uzrUn+nAg51cm43Yusq7sz/Gxn503PaMIDSb3
-         dgOjOpckKPLs8F+fE365k7Z0BCXRbzzvJ+l1wW9bZ1EvXTCm8f43wGFEzdkuQIol8yVy
-         F8UetroLSYpZRx5i307VBrvuvKaQxSmAPisbs8ds7Qz6Iz8MgktU5Ccm1/Fhsg5Z/vM6
-         Q2SJKE6+kyfnSCikOQ1aCy4lSEZCDvsy91xCLlnlg6hPhBILLG8TzCqahBDIugGgImvJ
-         1MQnAhFfANeThsmtlZ29DoxDCDB1tHEmmdZrth+iZVn1G3MSytMybZiVViMBc1Arpunw
-         EIFQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVW9yOHigX1Wx2i1DR2OMReWdQ9/UwhivpTasWWN/Z21GuVxwvQjluOzJ/NFEvmf0bTZf9ZIdkhOK9Jx7M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzrNKxQqDcmOoyoBOhGOB+k1zDqAr32Fwp10ueoTJZjOeMTzir2
-	VLjEDkqoZacmHbKfAv5MZLqjIWPZaDjCHci7Skim7SMxoZEBOhy142WfpYYq8SA=
-X-Google-Smtp-Source: AGHT+IFQmaNCX8yT8LrmK45qdtHMxgMS9uqWwiYHCSKV2cfmEXHAKCq4rRV5e1II1vsfcQH/EGwjbg==
-X-Received: by 2002:a05:600c:4f06:b0:431:5f1b:a7c6 with SMTP id 5b1f17b1804b1-432832965d2mr93678725e9.30.1730706989956;
-        Sun, 03 Nov 2024 23:56:29 -0800 (PST)
-Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:2603:7936:7734:a187])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-431bd947c26sm177517195e9.26.2024.11.03.23.56.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 03 Nov 2024 23:56:29 -0800 (PST)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Linus Walleij <linus.walleij@linaro.org>,
-	Kent Gibson <warthog618@gmail.com>,
-	Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 0/5] gpio: sysfs: send character device notifications for sysfs class events
-Date: Mon,  4 Nov 2024 08:56:28 +0100
-Message-ID: <173070698546.9713.14647587307010241141.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241031-gpio-notify-sysfs-v4-0-142021c2195c@linaro.org>
-References: <20241031-gpio-notify-sysfs-v4-0-142021c2195c@linaro.org>
+        d=1e100.net; s=20230601; t=1730707096; x=1731311896;
+        h=mime-version:references:in-reply-to:message-id:date:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=GcyFQ9rHsVsrsTfHR/B5NzPP3h2da5K+JoorZkF8Nik=;
+        b=fzV7E5l7TVAX87/8WoGesETDwBwHT6O3jladI486Kk7OMoeQmP2F/Qrffrb6niuDb+
+         z42J31X3E/x4UUFlI3R4vIeFRV8V7Bvs8vZuap/HGUG19motWlqE/wC0WRLr9F9/B7Ys
+         Vlju3Pduq+MWtu2KL6/yYd5SBt5PmuFTNArKCoCvVBgfgo9S7/M/cQzzYl2+rOkekabS
+         llDYceG0V9An0U2v/hABwdhB3FIRzmFsH0Z9DJ8klq63qehkmihMAUhg9h4ny7hebQf9
+         00jG3HcA53Ozgbl5WcoKw1YUaHi3GMkkYmrxwuSAQejPlVoeGFyVJIpRHfedDTHHMwRh
+         9wEQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWjgcxR3kjfOFOI0Jv+7jiiDok1fPcUVnjZzzG4qBTtS3QnJoUd8RLbyOW9cHCOSpp3jlpZkZqwuTHvDrE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyPFqXSa3k35wwnZNLJzKVrrh1VVt+319u3IVfnY93GHIC1lJxf
+	BzvZcTts4zsE9OQxNMd145JQsuDTIvHReLUwXU0chpT8lMYV6n1LIoCHrugbNKUh1HbvFRoarvq
+	Ibg14s5WEOPNzbvW6HRTuyhdfs5cMxArxm1nnFrMRvmxfGunXBbgrXNL0/8QyDQ==
+X-Received: by 2002:a17:907:1b93:b0:a9e:380b:8ce with SMTP id a640c23a62f3a-a9e380b0dfbmr1218137366b.35.1730707095905;
+        Sun, 03 Nov 2024 23:58:15 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEP0751gl8VphAgLQBVElCDxBCGzv/BGgumIqFmFlbuVGfyRKgj1T5etuLQrKxBtrjeJIXMzg==
+X-Received: by 2002:a17:907:1b93:b0:a9e:380b:8ce with SMTP id a640c23a62f3a-a9e380b0dfbmr1218135766b.35.1730707095507;
+        Sun, 03 Nov 2024 23:58:15 -0800 (PST)
+Received: from [172.16.2.75] (5920ab7b.static.cust.trined.nl. [89.32.171.123])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9e564940d5sm519757366b.26.2024.11.03.23.58.14
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 03 Nov 2024 23:58:15 -0800 (PST)
+From: Eelco Chaudron <echaudro@redhat.com>
+To: Aaron Conole <aconole@redhat.com>
+Cc: netdev@vger.kernel.org, Pravin B Shelar <pshelar@ovn.org>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Simon Horman <horms@kernel.org>, dev@openvswitch.org,
+ linux-kernel@vger.kernel.org,
+ Steffen Klassert <steffen.klassert@secunet.com>,
+ Herbert Xu <herbert@gondor.apana.org.au>, Hangbin Liu <liuhangbin@gmail.com>
+Subject: Re: [PATCH net-next] openvswitch: Pass on secpath details for
+ internal port rx.
+Date: Mon, 04 Nov 2024 08:58:14 +0100
+X-Mailer: MailMate (1.14r6065)
+Message-ID: <D4FB09BF-FF61-427F-A2E1-545F7F9052F4@redhat.com>
+In-Reply-To: <20241101204732.183840-1-aconole@redhat.com>
+References: <20241101204732.183840-1-aconole@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Content-Type: text/plain
 
 
-On Thu, 31 Oct 2024 21:01:50 +0100, Bartosz Golaszewski wrote:
-> This may be a total corner-case but for consistency and completeness I
-> think it makes sense to also send out line state change events on actions
-> triggered from the GPIO sysfs class.
-> 
-> The first two patches use cleanup helpers in sysfs code. The next three
-> change the code to emit notifications on line export (unexport is
-> already handled) and active_low & edge changes.
-> 
-> [...]
 
-Applied, thanks!
+On 1 Nov 2024, at 21:47, Aaron Conole wrote:
 
-[1/5] gpio: sysfs: use cleanup guards for gpiod_data::mutex
-      commit: d99c980cfe9423cd1ac719a73ae52437da29a45e
-[2/5] gpio: sysfs: use cleanup guards for the sysfs_lock mutex
-      commit: f4af1671c28854bb0a400740a9c6ebacb8b9aa6b
-[3/5] gpio: sysfs: emit chardev line-state events on GPIO export
-      commit: 285678c947197b0a071328f9344b0312e5545e92
-[4/5] gpio: sysfs: emit chardev line-state events on active-low changes
-      commit: 5a7119e0d951fdf7ebcc25a77565ac184798639a
-[5/5] gpio: sysfs: emit chardev line-state events on edge store
-      commit: 7b925098c937599c8ad1bc757db80743a990f57e
+> Clearing the secpath for internal ports will cause packet drops when
+> ipsec offload or early SW ipsec decrypt are used.  Systems that rely
+> on these will not be able to actually pass traffic via openvswitch.
+>
+> There is still an open issue for a flow miss packet - this is because
+> we drop the extensions during upcall and there is no facility to
+> restore such data (and it is non-trivial to add such functionality
+> to the upcall interface).  That means that when a flow miss occurs,
+> there will still be packet drops.  With this patch, when a flow is
+> found then traffic which has an associated xfrm extension will
+> properly flow.
+>
+> Signed-off-by: Aaron Conole <aconole@redhat.com>
 
-Best regards,
--- 
-Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Thanks for debugging and fixing this. The change looks good to me.
+
+Acked-by: Eelco Chaudron <echaudro@redhat.com>
+
 
