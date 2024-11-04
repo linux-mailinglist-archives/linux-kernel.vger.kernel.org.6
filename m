@@ -1,172 +1,161 @@
-Return-Path: <linux-kernel+bounces-395137-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395139-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A2859BB902
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 16:31:24 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AA319BB908
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 16:31:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB04E1F22DA4
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 15:31:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 22D2C1F225EB
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 15:31:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13B781BE86E;
-	Mon,  4 Nov 2024 15:31:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9A0D1BD4E1;
+	Mon,  4 Nov 2024 15:31:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kacN7HFe"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=asahilina.net header.i=@asahilina.net header.b="ZWWgIc7N"
+Received: from mail.marcansoft.com (marcansoft.com [212.63.210.85])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EF8229CE6;
-	Mon,  4 Nov 2024 15:31:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 511B51C07C1;
+	Mon,  4 Nov 2024 15:31:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.63.210.85
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730734275; cv=none; b=UHiHmPznwkfDFa2M0PaimSsC+jbMopuVNdXmh0IBYgByb1M8Oc4bozqSXYbfC6YEIq0B/tlDZjU1VdTWM5EwPO/SAgL+wIEHOd493rq9/9Vd3Q1q09qpHeeDNtMlZXUxZQfCMmcAbzowe46gGl0V662xCe5hyUcLmFJYYQEED9M=
+	t=1730734298; cv=none; b=fOIwqBebIXu3CQ9i4LjWrFXMMsFrot26wOSzNDfY27sf2jmS3WSyt1oeK3nUPsVQ7I07+hHw44jR+ArnkN3yqpk+53sSdm40H3K8nEZab8MAOVEt5cBNBJdRKA0w6DSyQCtJJEnNppS4nCT+Au27G2lK37eXnbefzPA9+U+Sbe4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730734275; c=relaxed/simple;
-	bh=3Fy1jOsQOnUvBVYuqqqVwd9tb0/m9bzjV5s/aymLShs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=meCIQcZN9zy4RtgSMdBvBW6zMh5ARbqrGKSJxK39k0cSD/O0G5IogRD/FHhLdv6xDjeMY8T8fSdwxfRKEyof9UulyX960XXRN/qGsEtGnv57SQG6ga/5pvdu7vi/eDTxZwZlzmae+Fd5qXQoTPL9cYy6JBAubmuwiKl2V2v/YTA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kacN7HFe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB60CC4CECE;
-	Mon,  4 Nov 2024 15:31:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730734275;
-	bh=3Fy1jOsQOnUvBVYuqqqVwd9tb0/m9bzjV5s/aymLShs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kacN7HFey8Z9quF31vtpdKNqCWiQEPm2so2YOGa87PVujVygueSqvAyOSA/3jlJcj
-	 qrQLwuOMb8lpDvHKU08OSFiCNmCF8MiRwqoZckD1QY1Fvuv0mhaKSFDw0TivYfe8L/
-	 E0+YAoD1lM5YrMYeViXrHz5S/ZYblKc+2E/q8OoWKStrjivH8H/GXqvPBR1bLqxSfs
-	 cPEuLAZdYZbnRi0EZcCVd3ErfIGKlo5H5BAS2mi7Q4ZPAAQwWJvk3gAywxvrZVWkwY
-	 7oAUms39P3WCDVujJSWoLv4tCFNuIYCTF5x93rI2mDM9jjXkTT6fU4JVt7u6FmviZe
-	 6qP6OVQOL+1YA==
-Date: Mon, 4 Nov 2024 09:31:13 -0600
-From: Rob Herring <robh@kernel.org>
-To: Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>
-Cc: Frank Li <Frank.li@nxp.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, linux-rtc@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	NXP S32 Linux Team <s32@nxp.com>,
-	Christophe Lizzi <clizzi@redhat.com>,
-	Alberto Ruiz <aruizrui@redhat.com>,
-	Enric Balletbo <eballetb@redhat.com>,
-	Bogdan-Gabriel Roman <bogdan-gabriel.roman@nxp.com>,
-	Ghennadi Procopciuc <ghennadi.procopciuc@nxp.com>,
-	IMX Review List <imx@lists.linux.dev>
-Subject: Re: [PATCH v3 1/4] dt-bindings: rtc: add schema for NXP S32G2/S32G3
- SoCs
-Message-ID: <20241104153113.GA111159-robh@kernel.org>
-References: <20241031083557.2156751-1-ciprianmarian.costea@oss.nxp.com>
- <20241031083557.2156751-2-ciprianmarian.costea@oss.nxp.com>
- <ZyOyvgw0qZ4YKwTi@lizhi-Precision-Tower-5810>
- <4b82e393-093f-4477-bf0f-ee559a3b97c1@oss.nxp.com>
- <ZyUWhLdODsNk7KTe@lizhi-Precision-Tower-5810>
- <0e3edc61-02c0-40cf-883f-9b8cd6019c49@oss.nxp.com>
+	s=arc-20240116; t=1730734298; c=relaxed/simple;
+	bh=KvWORfAAduulvHOi0GqFEH2kCQ/zjWYELxtQcI9MPq8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DmV+JF/Bd8bCCHxcZVCstDOaoVW/1xgvtY61kQDvtcIHwT27MTkcfVPW8espKKf7AWwK+IlYViNVmUoHVWSTJtIAzCuEHUmREpOTAgfS9JezTrRGK3sz5lYQl5VpAtut4WPN/IloCG/ZxBF2MrwK2ljpiAD0u1CyAfInUQ5oeDQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=asahilina.net; spf=pass smtp.mailfrom=asahilina.net; dkim=pass (2048-bit key) header.d=asahilina.net header.i=@asahilina.net header.b=ZWWgIc7N; arc=none smtp.client-ip=212.63.210.85
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=asahilina.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=asahilina.net
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: lina@asahilina.net)
+	by mail.marcansoft.com (Postfix) with ESMTPSA id 4BB8C43584;
+	Mon,  4 Nov 2024 15:31:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=asahilina.net;
+	s=default; t=1730734285;
+	bh=KvWORfAAduulvHOi0GqFEH2kCQ/zjWYELxtQcI9MPq8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=ZWWgIc7NB3PXUSzkvEcsJ4jGgKT0AFCzpWryG2zkSBS7gQPM2u8jhB2YdGSGm6GnP
+	 Q9F2klvCzvMU9a9qX6sLNEGmCD8FF8U3nAhRdSdP/LMlecZivQVE09F04jCrrZhWpy
+	 v+k/a2m3s5vEHoNheVAPDjJ9snTkOJ71RmBRC1LMHnKA1oNu/1X5Q0y7SWhHNKwOL3
+	 CbDehLERPeIpFcaIQxMYtVgUMVieRBHPioNWuS8Al/Sq/0bFGyUj+5g66kL46xPiwU
+	 NR26KsoEST5ZfGLeq7uGFuWtrlPpYIVt8bD0lGtGHyGj9+4nc+fG63rbVwYCvQDGjS
+	 sl2Y3wrS5nFmA==
+Message-ID: <7f0c0a15-8847-4266-974e-c3567df1c25a@asahilina.net>
+Date: Tue, 5 Nov 2024 00:31:22 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0e3edc61-02c0-40cf-883f-9b8cd6019c49@oss.nxp.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] dax: Allow block size > PAGE_SIZE
+To: Jan Kara <jack@suse.cz>
+Cc: Dan Williams <dan.j.williams@intel.com>,
+ Matthew Wilcox <willy@infradead.org>,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Sergio Lopez Pascual
+ <slp@redhat.com>, linux-fsdevel@vger.kernel.org, nvdimm@lists.linux.dev,
+ linux-kernel@vger.kernel.org, asahi@lists.linux.dev
+References: <20241101-dax-page-size-v1-1-eedbd0c6b08f@asahilina.net>
+ <20241104105711.mqk4of6frmsllarn@quack3>
+Content-Language: en-US
+From: Asahi Lina <lina@asahilina.net>
+In-Reply-To: <20241104105711.mqk4of6frmsllarn@quack3>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Nov 04, 2024 at 10:22:05AM +0200, Ciprian Marian Costea wrote:
-> On 11/1/2024 7:57 PM, Frank Li wrote:
-> > On Fri, Nov 01, 2024 at 11:29:24AM +0200, Ciprian Marian Costea wrote:
-> > > On 10/31/2024 6:39 PM, Frank Li wrote:
-> > > 
-> > > Hello Frank,
-> > > 
-> > > Thank you for your review!
-> > > 
-> > > > On Thu, Oct 31, 2024 at 10:35:54AM +0200, Ciprian Costea wrote:
-> > > > > From: Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>
-> > > > > 
-> > > > > This patch adds the dt-bindings for NXP S32G2/S32G3 SoCs RTC driver.
-> > > > > 
-> > > > > Co-developed-by: Bogdan-Gabriel Roman <bogdan-gabriel.roman@nxp.com>
-> > > > > Signed-off-by: Bogdan-Gabriel Roman <bogdan-gabriel.roman@nxp.com>
-> > > > > Co-developed-by: Ghennadi Procopciuc <ghennadi.procopciuc@nxp.com>
-> > > > > Signed-off-by: Ghennadi Procopciuc <ghennadi.procopciuc@nxp.com>
-> > > > > Signed-off-by: Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>
-> > > > > ---
-> > > > 
-> > > > next time you can cc imx@lists.linux.dev
-> > > 
-> > > Thanks for your suggestion, I will start adding this list.
-> > > 
-> > > > 
-> > > > >    .../devicetree/bindings/rtc/nxp,s32g-rtc.yaml | 99 +++++++++++++++++++
-> > > > >    1 file changed, 99 insertions(+)
-> > > > >    create mode 100644 Documentation/devicetree/bindings/rtc/nxp,s32g-rtc.yaml
-> > > > > 
-> > > > > diff --git a/Documentation/devicetree/bindings/rtc/nxp,s32g-rtc.yaml b/Documentation/devicetree/bindings/rtc/nxp,s32g-rtc.yaml
-> > > > > new file mode 100644
-> > > > > index 000000000000..3694af883dc7
-> > > > > --- /dev/null
-> > > > > +++ b/Documentation/devicetree/bindings/rtc/nxp,s32g-rtc.yaml
-> > > > > @@ -0,0 +1,99 @@
-> > > > > +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> > > > > +%YAML 1.2
-> > > > > +---
-> > > > > +$id: http://devicetree.org/schemas/rtc/nxp,s32g-rtc.yaml#
-> > > > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > > > > +
-> > > > > +title: NXP S32G2/S32G3 Real Time Clock (RTC)
-> > > > > +
-> > > > > +maintainers:
-> > > > > +  - Bogdan Hamciuc <bogdan.hamciuc@nxp.com>
-> > > > > +  - Ciprian Marian Costea <ciprianmarian.costea@nxp.com>
-> > > > > +
-> > > > > +properties:
-> > > > > +  compatible:
-> > > > > +    oneOf:
-> > > > > +      - enum:
-> > > > > +          - nxp,s32g2-rtc
-> > > > > +      - items:
-> > > > > +          - const: nxp,s32g3-rtc
-> > > > > +          - const: nxp,s32g2-rtc
-> > > > > +
-> > > > > +  reg:
-> > > > > +    maxItems: 1
-> > > > > +
-> > > > > +  interrupts:
-> > > > > +    maxItems: 1
-> > > > > +
-> > > > > +  "#clock-cells":
-> > > > > +    const: 1
-> > > > 
-> > > > Does your RTC is clock provider? why need #clock-cells
-> > > > 
-> > > 
-> > > RTC clocking on S32G2/S32G3 has a clock mux for selecting between up to 4
-> > > different clock sources (parents).
-> > > Now, as suggested in previous reviews, I've switched to using the CCF in
-> > > order to implement this hardware particularity. In the end I've resorted to
-> > > implementing 'assigned-*' approach which while not mandatory as per proposed
-> > > bindings I find it quite scalable in selecting clock sources for the RTC
-> > > module compared to the first iteration (V1) of this patchset.
-> > 
-> > Any link of previous review?
-> > 
-> > Frank
-> > 
+
+
+On 11/4/24 7:57 PM, Jan Kara wrote:
+> On Fri 01-11-24 21:22:31, Asahi Lina wrote:
+>> For virtio-dax, the file/FS blocksize is irrelevant. FUSE always uses
+>> large DAX blocks (2MiB), which will work with all host page sizes. Since
+>> we are mapping files into the DAX window on the host, the underlying
+>> block size of the filesystem and its block device (if any) are
+>> meaningless.
+>>
+>> For real devices with DAX, the only requirement should be that the FS
+>> block size is *at least* as large as PAGE_SIZE, to ensure that at least
+>> whole pages can be mapped out of the device contiguously.
+>>
+>> Fixes warning when using virtio-dax on a 4K guest with a 16K host,
+>> backed by tmpfs (which sets blksz == PAGE_SIZE on the host).
+>>
+>> Signed-off-by: Asahi Lina <lina@asahilina.net>
+>> ---
+>>  fs/dax.c | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> Please consider the following related reviews:
+> Well, I don't quite understand how just relaxing the check is enough. I
+> guess it may work with virtiofs (I don't know enough about virtiofs to
+> really tell either way) but for ordinary DAX filesystem it would be
+> seriously wrong if DAX was used with blocksize > pagesize as multiple
+> mapping entries could be pointing to the same PFN which is going to have
+> weird results.
+
+Isn't that generally possible by just mapping the same file multiple
+times? Why would that be an issue?
+
+Of course having a block size smaller than the page size is never going
+to work because you would not be able to map single blocks out of files
+directly. But I don't see why a larger block size would cause any
+issues. You'd just use several pages to map a single filesystem block.
+For example, if the block size is 16K and the page size is 4K, then a
+single file block would be DAX mapped as four contiguous 4K pages in
+both physical and virtual memory.
+
+> If virtiofs can actually map 4k subpages out of 16k page on
+> host (and generally perform 4k granular tracking etc.), it would seem more
+> appropriate if virtiofs actually exposed the filesystem 4k block size instead
+> of 16k blocksize? Or am I missing something?
+
+virtiofs itself on the guest does 2MiB mappings into the SHM region, and
+then the guest is free to map blocks out of those mappings. So as long
+as the guest page size is less than 2MiB, it doesn't matter, since all
+files will be aligned in physical memory to that block size. It behaves
+as if the filesystem block size is 2MiB from the point of view of the
+guest regardless of the actual block size. For example, if the host page
+size is 16K, the guest will request a 2MiB mapping of a file, which the
+VMM will satisfy by mmapping 128 16K pages from its page cache (at
+arbitrary physical memory addresses) into guest "physical" memory as one
+contiguous block. Then the guest will see the whole 2MiB mapping as
+contiguous, even though it isn't in physical RAM, and it can use any
+page granularity it wants (that is supported by the architecture) to map
+it to a userland process.
+
 > 
-> [1] https://lore.kernel.org/all/202409121403232ab1295b@mail.local/
-> [2]
-> https://lore.kernel.org/all/6659aa90-53c5-4a91-a9f9-01120c88f107@oss.nxp.com/
-> [3] https://lore.kernel.org/all/20241016160823c22ccb22@mail.local/
+> 								Honza
+> 
+>> diff --git a/fs/dax.c b/fs/dax.c
+>> index c62acd2812f8d4981aaba82acfeaf972f555362a..406fb75bdbe9d17a6e4bf3d4cb92683e90f05910 100644
+>> --- a/fs/dax.c
+>> +++ b/fs/dax.c
+>> @@ -1032,7 +1032,7 @@ int dax_writeback_mapping_range(struct address_space *mapping,
+>>  	int ret = 0;
+>>  	unsigned int scanned = 0;
+>>  
+>> -	if (WARN_ON_ONCE(inode->i_blkbits != PAGE_SHIFT))
+>> +	if (WARN_ON_ONCE(inode->i_blkbits < PAGE_SHIFT))
+>>  		return -EIO;
+>>  
+>>  	if (mapping_empty(mapping) || wbc->sync_mode != WB_SYNC_ALL)
+>>
+>> ---
+>> base-commit: 81983758430957d9a5cb3333fe324fd70cf63e7e
+>> change-id: 20241101-dax-page-size-83a1073b4e1b
+>>
+>> Cheers,
+>> ~~ Lina
+>>
 
-I've replied on the prior version.
+~~ Lina
 
-Rob
 
