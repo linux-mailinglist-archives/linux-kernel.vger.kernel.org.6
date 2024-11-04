@@ -1,230 +1,177 @@
-Return-Path: <linux-kernel+bounces-394476-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394477-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69F469BAFAF
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 10:32:31 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 073229BAFB2
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 10:32:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9AE65B228D2
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 09:32:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 37BDB1C215F0
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 09:32:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 730291AD3E1;
-	Mon,  4 Nov 2024 09:32:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AB7D1AD9F9;
+	Mon,  4 Nov 2024 09:32:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="LmAnGfsA"
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="mq7F6wDI"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C022019CC32
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 09:32:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C18851AA7A2;
+	Mon,  4 Nov 2024 09:32:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730712732; cv=none; b=jN/250sRD2cZb/bDMza2aEbtiS+BkhrR3EDMa94oYd2QVZfP1RHJR098Rh2Fzo4fWMLsgPhmGg0QdPa2V1wpOIVfJVsWCF82jLZTDhfzMck75tGgB32NDPew7f/Bh+9+FIJyhtfwtXR5/ZhxIVGacMN//bWvUYcxVrJ6dWDXTbw=
+	t=1730712755; cv=none; b=Kdze7URo/IdqE2izEmg3rr7Awo1xBW6YwEAwZmDDnnC24fgC/qgNFk4jC8l7pPZWedA196qE8KhSjDlw9sfXkt+29lpTGfVxuofs7kJ7erwnTd0WyLC4CvvVKRf3RYMqk2c5iYU9mQNfTojqwVkuxK3f+bIsY3wIyufgW+z2qIU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730712732; c=relaxed/simple;
-	bh=TEkDXrS8YIglkAk6IOTynHBlviIaMox5IezVFdA6KO8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AUNNxs/7lIWgd4LEGkqSuH7mjTv6WUQ+xHjVr35pMbgAzTa1Gq/h5FxHx9PYqftTxrzxIHoLB9PYDJ4f3AVR6C6yOMCp7bm8Ocaa+29iSNDUvpPsHMmHf2KgON9UMGrQasmc91HUpIbI+HSclaq1GJAfXn0cn6IbPkRROtnEHBA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=LmAnGfsA; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a99e3b3a411so771771266b.0
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 01:32:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1730712728; x=1731317528; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=gBT4omu7lVco4BMm5XUNG7vIgR1mZZtpzsVwZM90Y7U=;
-        b=LmAnGfsAbFLPvy20FN7ubJ8Cjl9BaH7TqBYYtj7EIOrhVzRS9bAQIhuQJxbQHpeeQZ
-         W99U5yF1FRD/NNo5Jxyezfh6TSrHE/qsTkXIsyURT7WR66YEWLNypPM9EGzgtlOhBWwT
-         iALgR1HikB21AYOWXm+jV47U/IEnHm9B+TjG+pjMjtjnqNNnnHZ8RNorNnKmML4ksAx+
-         kTYsi2wpXpVYpCKJsW8+6CT1JbdGCOlgKWxe91vQoOf7Yw2yPbJdwmFSOFdvwfaDnDB+
-         3Wh1o6WKXS8+r/3jP5lN+/fLa7sCHbEARuSHyXiDDZ3uxT4DiH719LsetluZW/oUZrjy
-         h4xA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730712728; x=1731317528;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gBT4omu7lVco4BMm5XUNG7vIgR1mZZtpzsVwZM90Y7U=;
-        b=bx2VGXY8luNYQvbyW72aiI7ez3tez8gG0VwqiFKrFrWacmeVdlWQ5ycm8nyFAGry8u
-         LPvgh4pMyXGwiGnmkCnCfuX2+soUdegsQD4nylRqMVZFoAYCdYPJYnXRPktK8s8JmA4D
-         Yu1n7qGG5G+eTYKQFIBraW6Z5PLTT9QeyHQsxE9oFaD4oRpNjCh7jMKcv3F4vHuRV7F9
-         LPE7fw50LsvBDu7UgeU4/AmQJYy6FAyeRK58rUzAUEHDmZI5tspkwjJPPW+MPAdGm1wl
-         2BYZm+rbz0DH78JJ/1V2Va+r57wSeF1xtvSacSTfMrZVD8y6T85761GCri/JETuVejl3
-         khYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU9HyigN4iEzpS+GZbF7kVUQuk8KfxWdxSOuUJurbnHpbf+tZBfgB2kSyGcYUcaOyhft4Xj5KeaZ5r6feM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzi41IEuTDmddiIowlks4brb+pkGn2G6fMs7wL8Zvftmuscep5G
-	DopvM4ZVOjOIBmBhaOvX319phkRjGkD97V20v70Zfudbd0cmfHq8f8ZmBydtmFI=
-X-Google-Smtp-Source: AGHT+IFP7uDPMOtcJPWpn+z+rM3OxxIslWfpFco2yog0FSQmlxVhhiL3Isz0ruKyu2Q9v3QrVvfTVw==
-X-Received: by 2002:a17:907:86a6:b0:a9a:bbd1:aa5 with SMTP id a640c23a62f3a-a9e65499cdfmr911473866b.31.1730712728095;
-        Mon, 04 Nov 2024 01:32:08 -0800 (PST)
-Received: from localhost (p50915d2d.dip0.t-ipconnect.de. [80.145.93.45])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9e564c53d6sm530652866b.68.2024.11.04.01.32.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Nov 2024 01:32:07 -0800 (PST)
-Date: Mon, 4 Nov 2024 10:32:06 +0100
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: George Stark <gnstark@salutedevices.com>
-Cc: neil.armstrong@linaro.org, khilman@baylibre.com, jbrunet@baylibre.com, 
-	martin.blumenstingl@googlemail.com, linux-pwm@vger.kernel.org, linux-amlogic@lists.infradead.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kernel@salutedevices.com
-Subject: Re: [PATCH v2 2/4] pwm: meson: Support constant and polarity bits
-Message-ID: <w3igi2jmva6mfa7anlieyp3iiwfzhsvi3t37wwcqqtzdy42fqn@btmdsfsmpw7r>
-References: <20241016152553.2321992-1-gnstark@salutedevices.com>
- <20241016152553.2321992-3-gnstark@salutedevices.com>
+	s=arc-20240116; t=1730712755; c=relaxed/simple;
+	bh=9UKvbO8z2ei27RoRSE2xCVBA6zreiwZoCehINCC+0V4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LLwoLgn6rGHzpLVPW0YGD+t00tpqQO3CDycjtA0eGwSHsri+5/Z60q8YmhRV435PddseWjaf8hpiGWjoAl6cEnTXdn3d391f/a/CylFHZMVYZs9VY1ALcUSd5F2xcoWlBb9ReRhPTK6TP3PQPS2o3+gNAEP3bLrwA3Y8kkyY8CA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=mq7F6wDI; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A49A2u0028329;
+	Mon, 4 Nov 2024 09:32:18 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=vq7XpO
+	rAhxZrEh8MsbbnnyWtsYCcs6v2Cq/ffdk6E8s=; b=mq7F6wDIPY2fCWIvAWYB/V
+	H8B8dzsTafxhoxYMISXjmlWk+GrlI2OILwkEMYrzpFThbXGFAic9+uLbCKLZsoW6
+	bDXL7C7+uI5bCSXimbhepAeYsaYIUUl+nZH/fnQM61YALdfAgXcflhiXG9+HBePp
+	5XINDetkGTGZv1YZk2Fqo1rpXuj7GsnDkS9rTcJ+4vq39EWpxJGWAn08+G13BG/5
+	6Icbv61a2smRmLVRqMbLDBvJAFYm03Z0QRTjApQUWG+z3zrnVPrz2KTWJ8+2GLNk
+	fMOgvbN8Br08Dm68Fpn7PpfF9w5w9pQrx70qiGqgN5OAWqIpzHCEQuLVzOPs3p9g
+	==
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42pud7r2hf-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 04 Nov 2024 09:32:17 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4A47SfrH008439;
+	Mon, 4 Nov 2024 09:32:17 GMT
+Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 42nywk3br7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 04 Nov 2024 09:32:17 +0000
+Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
+	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4A49WFTi58327538
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 4 Nov 2024 09:32:15 GMT
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 29E0A2004F;
+	Mon,  4 Nov 2024 09:32:15 +0000 (GMT)
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 6B60A2004B;
+	Mon,  4 Nov 2024 09:32:13 +0000 (GMT)
+Received: from [9.203.115.143] (unknown [9.203.115.143])
+	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Mon,  4 Nov 2024 09:32:13 +0000 (GMT)
+Message-ID: <d10f4a96-944f-42c4-9886-05dfe831e8fd@linux.ibm.com>
+Date: Mon, 4 Nov 2024 15:02:12 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="3rn6i6zl2o5dcpxg"
-Content-Disposition: inline
-In-Reply-To: <20241016152553.2321992-3-gnstark@salutedevices.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] selftests/ftrace: update kprobe syntax error test for
+ ppc64le
+To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+Cc: Shuah Khan <shuah@kernel.org>, linux-kselftest@vger.kernel.org,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Madhavan Srinivasan <maddy@linux.ibm.com>,
+        "Naveen N. Rao"
+ <naveen@kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        linux-trace-kernel@vger.kernel.org,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
+References: <20241101191925.1550493-1-hbathini@linux.ibm.com>
+ <20241103135758.5a5f8f0870a139ab1a5bc7b8@kernel.org>
+Content-Language: en-US
+From: Hari Bathini <hbathini@linux.ibm.com>
+In-Reply-To: <20241103135758.5a5f8f0870a139ab1a5bc7b8@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: aEoJL43cIgdoMF8wJRPvpWSTbRrdj9xw
+X-Proofpoint-ORIG-GUID: aEoJL43cIgdoMF8wJRPvpWSTbRrdj9xw
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 clxscore=1015
+ phishscore=0 priorityscore=1501 impostorscore=0 bulkscore=0 adultscore=0
+ mlxscore=0 lowpriorityscore=0 mlxlogscore=999 malwarescore=0 spamscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
+ definitions=main-2411040081
 
 
---3rn6i6zl2o5dcpxg
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2 2/4] pwm: meson: Support constant and polarity bits
-MIME-Version: 1.0
 
-Hello George,
+On 03/11/24 10:27 am, Masami Hiramatsu (Google) wrote:
+> On Sat,  2 Nov 2024 00:49:25 +0530
+> Hari Bathini <hbathini@linux.ibm.com> wrote:
+> 
+>> For ppc64le, depending on the kernel configuration used, offset 16
+>> from function start address can also be considered function entry.
+>> Update the test case to accommodate such configurations.
+>>
+> 
+> Hi Hari, so have you met any error on this test case?
 
-there are two minor things I dislike in this patch/driver. But I'm not
-sure the alternatives are objectively considerably better. See below and
-judge yourself.
+Hi Masami,
 
-On Wed, Oct 16, 2024 at 06:25:51PM +0300, George Stark wrote:
-> Newer meson PWM IPs support constant and polarity bits. Support them to
-> correctly implement constant and inverted output levels.
->=20
-> Using constant bit allows to have truly stable low or high output level.
-> Since hi and low regs internally increment its values by 1 just writing
-> zero to any of them gives 1 clock count impulse. If constant bit is set
-> zero value in hi and low regs is not incremented.
->=20
-> Using polarity bit instead of swapping hi and low reg values allows to
-> correctly identify inversion in .get_state().
->=20
-> Signed-off-by: George Stark <gnstark@salutedevices.com>
-> ---
->  drivers/pwm/pwm-meson.c | 63 ++++++++++++++++++++++++++++++++++++-----
->  1 file changed, 56 insertions(+), 7 deletions(-)
->=20
-> diff --git a/drivers/pwm/pwm-meson.c b/drivers/pwm/pwm-meson.c
-> index 2ef632caebcc..974c3c74768c 100644
-> --- a/drivers/pwm/pwm-meson.c
-> +++ b/drivers/pwm/pwm-meson.c
-> @@ -6,7 +6,7 @@
->   * PWM output is achieved by calculating a clock that permits calculating
->   * two periods (low and high). The counter then has to be set to switch =
-after
->   * N cycles for the first half period.
-> - * The hardware has no "polarity" setting. This driver reverses the peri=
-od
-> + * Partly the hardware has no "polarity" setting. This driver reverses t=
-he period
->   * cycles (the low length is inverted with the high length) for
->   * PWM_POLARITY_INVERSED. This means that .get_state cannot read the pol=
-arity
->   * from the hardware.
-> @@ -56,6 +56,10 @@
->  #define MISC_B_CLK_SEL_SHIFT	6
->  #define MISC_A_CLK_SEL_SHIFT	4
->  #define MISC_CLK_SEL_MASK	0x3
-> +#define MISC_B_CONSTANT_EN	BIT(29)
-> +#define MISC_A_CONSTANT_EN	BIT(28)
-> +#define MISC_B_INVERT_EN	BIT(27)
-> +#define MISC_A_INVERT_EN	BIT(26)
->  #define MISC_B_EN		BIT(1)
->  #define MISC_A_EN		BIT(0)
-> =20
-> @@ -68,6 +72,8 @@ static struct meson_pwm_channel_data {
->  	u8		clk_div_shift;
->  	u8		clk_en_shift;
->  	u32		pwm_en_mask;
-> +	u32		const_en_mask;
-> +	u32		inv_en_mask;
->  } meson_pwm_per_channel_data[MESON_NUM_PWMS] =3D {
->  	{
->  		.reg_offset	=3D REG_PWM_A,
-> @@ -75,6 +81,8 @@ static struct meson_pwm_channel_data {
->  		.clk_div_shift	=3D MISC_A_CLK_DIV_SHIFT,
->  		.clk_en_shift	=3D MISC_A_CLK_EN_SHIFT,
->  		.pwm_en_mask	=3D MISC_A_EN,
-> +		.const_en_mask	=3D MISC_A_CONSTANT_EN,
-> +		.inv_en_mask	=3D MISC_A_INVERT_EN,
->  	},
->  	{
->  		.reg_offset	=3D REG_PWM_B,
-> @@ -82,6 +90,8 @@ static struct meson_pwm_channel_data {
->  		.clk_div_shift	=3D MISC_B_CLK_DIV_SHIFT,
->  		.clk_en_shift	=3D MISC_B_CLK_EN_SHIFT,
->  		.pwm_en_mask	=3D MISC_B_EN,
-> +		.const_en_mask	=3D MISC_B_CONSTANT_EN,
-> +		.inv_en_mask	=3D MISC_B_INVERT_EN,
->  	}
->  };
+vfs_read+8 is function entry on powerpc. So, the test case bails out at:
+   "check_error 'p vfs_read+8 ^$arg*'		# NOFENTRY_ARGS"
 
-So the generic register description describes the const and invert bits,
-but it doesn't apply to all IPs. Thinking about that, I wonder why this
-struct exists at all. I would have done this as follows:
+as it allows setting kprobe "vfs_read+8 $arg*"
 
-	#define MESON_PWM_REG_PWM(chan)		(0 + 4 * (chan))
+> Can you share the error result too?
 
-	#define MESON_PWM_REG_MISC		(8)
-	#define MESON_PWM_REG_MISC_EN(chan)		BIT(chan)
-	#define MESON_PWM_REG_MISC_CLK_SEL(chan)	GENMASK(5 + 2 * (chan), 4 + 2 * (=
-chan))
-	....
 
-and then use these constants directly (with pwm->hwpwm as parameter if
-needed) in the code. I would expect this to result in more efficient and
-smaller code.
+End of the log file for reference:
 
-> @@ -227,6 +252,15 @@ static void meson_pwm_enable(struct pwm_chip *chip, =
-struct pwm_device *pwm)
-> =20
->  	value =3D readl(meson->base + REG_MISC_AB);
->  	value |=3D channel_data->pwm_en_mask;
-> +
-> +	if (meson->data->has_constant)
-> +		meson_pwm_assign_bit(&value, channel_data->const_en_mask,
-> +				     channel->constant);
+"
+Test command: p vfs_read $arg* $arg*
+[2661828.483436] trace_kprobe: error: $arg* can be used only once in the 
+parameters
+   Command: p vfs_read $arg* $arg*
+                             ^
+Test command: p vfs_read+8 $arg*
+"
 
-Personally I'd prefer:
+Thanks
+Hari
 
-	value &=3D ~MESON_PWM_REG_MISC_CONST_EN(pwm->hwpwm);
-	if (meson->data->has_constant && channel->constant)
-		value |=3D MESON_PWM_REG_MISC_CONST_EN(pwm->hwpwm);
+> 
+> Thank you,
+> 
+>> Signed-off-by: Hari Bathini <hbathini@linux.ibm.com>
+>> ---
+>>   .../selftests/ftrace/test.d/kprobe/kprobe_syntax_errors.tc    | 4 ++++
+>>   1 file changed, 4 insertions(+)
+>>
+>> diff --git a/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_syntax_errors.tc b/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_syntax_errors.tc
+>> index a16c6a6f6055..c03b94cc5784 100644
+>> --- a/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_syntax_errors.tc
+>> +++ b/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_syntax_errors.tc
+>> @@ -111,7 +111,11 @@ check_error 'p vfs_read $arg* ^$arg*'		# DOUBLE_ARGS
+>>   if !grep -q 'kernel return probes support:' README; then
+>>   check_error 'r vfs_read ^$arg*'			# NOFENTRY_ARGS
+>>   fi
+>> +if [ "$(uname -m)" = "ppc64le" ]; then
+>> +check_error 'p vfs_read+20 ^$arg*'		# NOFENTRY_ARGS
+>> +else
+>>   check_error 'p vfs_read+8 ^$arg*'		# NOFENTRY_ARGS
+>> +fi
+>>   check_error 'p vfs_read ^hoge'			# NO_BTFARG
+>>   check_error 'p kfree ^$arg10'			# NO_BTFARG (exceed the number of parameters)
+>>   check_error 'r kfree ^$retval'			# NO_RETVAL
+>> -- 
+>> 2.47.0
+>>
+> 
+> 
 
-even though your variant only mentions the mask once. While it has this
-repetition, it's clear what happens without having to know what
-meson_pwm_assign_bit() does. Maybe that's subjective?
-
-Best regards
-Uwe
-
---3rn6i6zl2o5dcpxg
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmcolJMACgkQj4D7WH0S
-/k5SmQf5AVHb+2560do8K6cpJeSamFxUb+0mKHgotG6R/mQStG7hRiLWlR3PAVOF
-iYSCZjorNJU44x/PBKG/mxlUJB5WiIy00ONqhivhr7Gh6n+KtyJBWMCcVZHiVktp
-6NcUGOCN/j7e1VjzGgL3oVaMk+eir+so5qsQ5Ptg7bD20YGkv1zQAAAF/Z/MkVBP
-CtV24+C5MHYn2a2BLcKcJ6+d6t+JAK6t4LQszmhYSaCq+cutcQ58rfXtx2zGLa10
-jBmyA3FYtcsQsv5gVLQxi5RxZSCuF+BwyMt0tdVubF3PF0Ba+3Mi5LgRIE2MdLW1
-r5YAWOH6z+iQA7gJhobnVcBh0QSpsQ==
-=217M
------END PGP SIGNATURE-----
-
---3rn6i6zl2o5dcpxg--
 
