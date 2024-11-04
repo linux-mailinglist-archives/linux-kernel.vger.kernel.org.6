@@ -1,112 +1,130 @@
-Return-Path: <linux-kernel+bounces-395558-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395560-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA56B9BBFDE
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 22:16:04 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 512689BBFE3
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 22:19:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4A9F6B214B7
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 21:16:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1A7E51C2198D
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 21:19:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CB561FCC75;
-	Mon,  4 Nov 2024 21:15:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 825821FCC63;
+	Mon,  4 Nov 2024 21:19:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Fxm6eUqC"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="R7Ijie7k"
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DE681FCC4B;
-	Mon,  4 Nov 2024 21:15:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 680941F7553
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 21:19:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730754955; cv=none; b=l8caEn5sOHZhczt87eM6Lcb0qcog0+wjQPw22PS0gke60Nufw+bb8vG8PEP+xSoJZPkq71T5LcuNbbFmIsXknXLwp8M++syZDN2sv5NlAiZ6TlIOXRGW1DTNuKGZFhAqZHUdWut8W1o2V2UcI7sQ2bxZQPjOwiSF7OfeB+E/tvI=
+	t=1730755166; cv=none; b=fCNy0e+CQCytN8egogaFGQ4Z4QFpe7Siea6erCz9QISknH6Pzt5InetCbBFK4yMucEIkc5fh5KyN8f17pGpq6MXRDbmILDU74EVX2sx8OCsD169o08lhRxaGc408LJdgnknpeAChGdn49vaNcYnwEufLoeU4kXcBLZJK+VsuSm4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730754955; c=relaxed/simple;
-	bh=G724cTYSxP4miHIIyEFDyCy7z3lHBjLNE65y3n6EGR0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=n9gW3IFKysHemVrRm4xjSCNW8fiNGhOzBMQn9iR9ymZn7El/g9lQhVVu6oBQBlNHxc0+fpGVteroL0VyetEou9F1aCpCiq6NzsK2jXoiRAn5iV8zw74+1V/Whvr8vnSRzQLqS1JqflwXdVjS1547WmGJY1WAwvG0v5FluI2CY2E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Fxm6eUqC; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-43169902057so36518355e9.0;
-        Mon, 04 Nov 2024 13:15:53 -0800 (PST)
+	s=arc-20240116; t=1730755166; c=relaxed/simple;
+	bh=ckz2b09PADmewB6PWKzCnnP2d1FGRyLX6Oab2Bw7LRc=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=XGjd51gbygqasko5tuKN/juyLOpYJTaHjnB9qrKJdSGLaIJhNMZLRVlATGvgsVZhBpU1E10ymms3DecqTk8tu8Ra2tB/536dHuIQfwMQOGE70iOuryVw7cmNwVbDDhxnfee1mbHLDfJIOxTtYSK9zVM5itpi54cgFylavv1crLY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=R7Ijie7k; arc=none smtp.client-ip=209.85.210.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-71e70c32cd7so4236330b3a.1
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 13:19:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730754952; x=1731359752; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=DXDa4pJRXXSF53bW6sg5r+RrA4H/A0V2XZTYAKAhegw=;
-        b=Fxm6eUqCmMQfpDbbCGcy+LeyfyZ8QLj4b9MeEFxkGgbNJdYw7Rcp8B8DRmXgK91XbT
-         /aEYv9/5e6fTUFOVlqVMzzDqdmU5UoRvv+1UpbM1d3aVd3ueC7dHv6Fm4bQlgICsuFCn
-         Nbx6JyOWrxC41g4ufm1j75WxbPM2mHXRUcxHJAVaxO7g1jkbGC2VvkanT4OsXc8O4DWW
-         3yjUPl7E4o+Gwpxtl5clE+ixGY1xHAmYTBmKbMAvVij5AYjIO+Awy64BtwFrFlcdufx1
-         wyEVZL6CN7PC3BhBvRNUGe1hh1X5c+NsWRZjQTCTH7y3o6mWv+gKLKMDAWLFLmrRnrE1
-         Xucg==
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1730755164; x=1731359964; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=B7VFZJDeshaBgjeWIFYPhisTVO49atYEdsiOoKJAJfU=;
+        b=R7Ijie7kXJ8wsjT/1pYW8Ej/7SP9EUPXbJmPf55xHJjY24BK5/aBwywefTSSryZgix
+         uQb0v/Szql9jyAhFGv3Oh+IkheILL6qV4UJSyyqnbp78lTSCtrAEuNljUH+r3ExlnaVa
+         1qSkS2sObX7KyXnVzd6EaSAb8AUnGNwtPNuLjaUXih0m+APvnQX5bYjRD+cLa6sftzx3
+         Ot/nVU1zZxwo7ou3NWzVez16nHssRn3iXeqdBhYTwum5CZBowe2v8DxbWaHYx7DIAK1S
+         tPG6ixLxKQYCgPziSKl4WOQem45JsWga1Nv509CGl1aZun5iyeUJZS5j4vjA//PZ/IDl
+         66RA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730754952; x=1731359752;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=DXDa4pJRXXSF53bW6sg5r+RrA4H/A0V2XZTYAKAhegw=;
-        b=XAnfsF/MmI/vaOZxc8oGkG/Y42z8TgLPKqH7yrMTsXmtJQK+LrUIygHkejph8LSg/w
-         FVyh3ET7yoEheD9+5rcvoK5mkB2iQ3UiOFO1keT32YsUqu1/sBLsY4Q/RzF/lpMTkbay
-         b45D2CdLKOn8MfevXhjqiwG5XxjzeeVdB+wSiBZwxfogFMnz/RqBrG/iGzxjqbFmpfP7
-         bBfNoPuNSPrssDkGcbKStChzjoP31ArHAI62/dwX30kbLUAB5aMqVUuFXnP4s3ZHdqig
-         8fhhMgSUSeABjJ7fT4ZEum8c+vxjD2pXw+Ecesx0cX9MvOPW/jbho1bPPUTc/1cIOLm0
-         N5Vw==
-X-Forwarded-Encrypted: i=1; AJvYcCVRUrqWydTW4z9VaLauZcDAaSE2f+LZi3S0xb2VZ+k30g+wAOxmv/VRQetxVbBkGXRQEvP5GS3d@vger.kernel.org, AJvYcCWMdolbBLQwrJKIM36t4CM6Jp0em3wlFi7Z16UCi0GIw9zxhYV5XrN5ttnFL58G1UdiQ03dzZZKVJU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyGF0aPPbbosaqlzpKvaNGPI+m3YuMZ6+NDS/McUQQ+5h1nz5Sl
-	AFxHabShdr+2TePRSqn8ytNzVLzAwCA405f9CK7hSdVEZ30PWwQU
-X-Google-Smtp-Source: AGHT+IEFhX8r7t2wnhakUur8cbvnOFOryn45oEMeOTW1QXqNNbQOndMdabsi1v2egkHAs2YMkWfzwQ==
-X-Received: by 2002:a05:600c:1c29:b0:431:588a:4498 with SMTP id 5b1f17b1804b1-431bb985df9mr186940475e9.14.1730754952179;
-        Mon, 04 Nov 2024 13:15:52 -0800 (PST)
-Received: from [192.168.0.2] ([69.6.8.124])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4327d5e7c9asm169928695e9.21.2024.11.04.13.15.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 04 Nov 2024 13:15:50 -0800 (PST)
-Message-ID: <8d7b1c5b-346f-4d81-a06a-809690dd4c87@gmail.com>
-Date: Mon, 4 Nov 2024 23:16:17 +0200
+        d=1e100.net; s=20230601; t=1730755164; x=1731359964;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=B7VFZJDeshaBgjeWIFYPhisTVO49atYEdsiOoKJAJfU=;
+        b=o74N/U69muk7fo6ciT5aHnNAKN5UxOnjoy4XxMi83iCja51ui0bGtpyirqMGwFaxRH
+         BMh5+B9YWdm3IPgzkO7NfzRrbBMfqE+H4tp5jp9j3I7w3MQEGvCotQYBrK22xVx6UtBd
+         l1oHaTAxfaGACqCsh8XdHu6ExTvOl2M0ImoIaVTpH+gu3VnejO113gmOyYIz/KsfPoal
+         J0ILPxrvbW/p8wn6NHauRZ103UuhdX+13SZji7Xsk1e7M48n5ZnP4NI2ivCHDZyFXG0X
+         0JhN65l6BdNW/gO6kiYgkArod+VAC8+hdkvMT1nTsv+Jw25K4G2SeEZpo/YJagJbtN6A
+         F1jQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV0nyq8tkCvauYoEnUm8aoYrRFCR3ucxWWoy5g1nsznY/wT9qVHduEYiji92asFQmNpPXHzBoiIlQaH2S4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyuxkGJOuH+jkz4qrF0eou7aSu4a82CcckK2SPGPMbpBLpZzteC
+	aFqGBS5g3edf1/M3i/Gkam31ozCpe+mwBtGo2vEgCONV+H2Xi0CNidueUTTuy14=
+X-Google-Smtp-Source: AGHT+IGxdnQJocTNFzEN9oyHKVuXZJvNTwlFkn8XBlUG6umm69XvTTuY4E2zmsa/aNVVZeehrny4Vw==
+X-Received: by 2002:a05:6a20:7f93:b0:1db:f0af:2277 with SMTP id adf61e73a8af0-1dbf0af227fmr639531637.38.1730755163757;
+        Mon, 04 Nov 2024 13:19:23 -0800 (PST)
+Received: from charlie.ba.rivosinc.com ([64.71.180.162])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7f3e0efa90csm1270988a12.2.2024.11.04.13.19.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 04 Nov 2024 13:19:23 -0800 (PST)
+From: Charlie Jenkins <charlie@rivosinc.com>
+Date: Mon, 04 Nov 2024 13:19:15 -0800
+Subject: [PATCH] perf: Add all shellcheck_log to gitignore
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [net-next v8 0/3] net: wwan: t7xx: Add t7xx debug ports
-To: Jinjian Song <jinjian.song@fibocom.com>,
- chandrashekar.devegowda@intel.com, chiranjeevi.rapolu@linux.intel.com,
- haijun.liu@mediatek.com, m.chetan.kumar@linux.intel.com,
- ricardo.martinez@linux.intel.com, loic.poulain@linaro.org,
- johannes@sipsolutions.net, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com
-Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
- linux-doc@vger.kernel.org, angelogioacchino.delregno@collabora.com,
- linux-arm-kernel@lists.infradead.org, matthias.bgg@gmail.com,
- corbet@lwn.net, linux-mediatek@lists.infradead.org, helgaas@kernel.org,
- danielwinkler@google.com, korneld@google.com, andrew+netdev@lunn.ch,
- horms@kernel.org
-References: <20241104094436.466861-1-jinjian.song@fibocom.com>
-Content-Language: en-US
-From: Sergey Ryazanov <ryazanov.s.a@gmail.com>
-In-Reply-To: <20241104094436.466861-1-jinjian.song@fibocom.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20241104-shellcheck_gitignore-v1-1-ffc179f57dc9@rivosinc.com>
+X-B4-Tracking: v=1; b=H4sIAFI6KWcC/x3MQQqAIBBA0avIrBMcE4KuEhFpkw6FhkYE0d2Tl
+ m/x/wOFMlOBXjyQ6eLCKVZgI8CFOXqSvFSDVtogKiNLoH13gdw2eT7Zx5RJalQOW7Rtpy3U9Mi
+ 08v1vh/F9P3EJMlFmAAAA
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+ Arnaldo Carvalho de Melo <acme@kernel.org>, 
+ Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
+ Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>, 
+ Adrian Hunter <adrian.hunter@intel.com>
+Cc: linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Charlie Jenkins <charlie@rivosinc.com>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=853; i=charlie@rivosinc.com;
+ h=from:subject:message-id; bh=ckz2b09PADmewB6PWKzCnnP2d1FGRyLX6Oab2Bw7LRc=;
+ b=owGbwMvMwCHWx5hUnlvL8Y3xtFoSQ7qmVQivWdGPzzMWVzaeetaT0DZ94/mJvy+d+/BFJyPhj
+ 4qpTtGnjlIWBjEOBlkxRRaeaw3MrXf0y46Klk2AmcPKBDKEgYtTACZiuIvhf/kymWdLeYv3BR6+
+ tiPwrIaL3ZT2N4uXn4xJa9ySJqG9egojw8f/lw6Hl0Y/TPJeft5go35n3kW1QMalr6fnLZzp8EB
+ wMy8A
+X-Developer-Key: i=charlie@rivosinc.com; a=openpgp;
+ fpr=7D834FF11B1D8387E61C776FFB10D1F27D6B1354
 
-On 04.11.2024 11:44, Jinjian Song wrote:
-> Add support for t7xx WWAN device to debug by ADB (Android Debug Bridge)
-> port and MTK MIPCi (Modem Information Process Center) port.
-> 
-> Application can use ADB (Android Debug Bridge) port to implement
-> functions (shell, pull, push ...) by ADB protocol commands.
-> 
-> Application can use MIPC (Modem Information Process Center) port
-> to debug antenna tuner or noise profiling through this MTK modem
-> diagnostic interface.
+Instead of adding specific shellcheck_log files to the gitignore, add
+all of them to prevent these files from cluttering the git status.
 
-Well done, Jinjian! For the whole series:
+Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
+---
+ tools/perf/.gitignore | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-Reviewed-by: Sergey Ryazanov <ryazanov.s.a@gmail.com>
+diff --git a/tools/perf/.gitignore b/tools/perf/.gitignore
+index f5b81d439387..19ce1cd56f8c 100644
+--- a/tools/perf/.gitignore
++++ b/tools/perf/.gitignore
+@@ -39,9 +39,7 @@ trace/beauty/generated/
+ pmu-events/pmu-events.c
+ pmu-events/jevents
+ pmu-events/metric_test.log
+-tests/shell/*.shellcheck_log
+-tests/shell/coresight/*.shellcheck_log
+-tests/shell/lib/*.shellcheck_log
++*.shellcheck_log
+ feature/
+ libapi/
+ libbpf/
+
+---
+base-commit: 59b723cd2adbac2a34fc8e12c74ae26ae45bf230
+change-id: 20241104-shellcheck_gitignore-210c131b372b
+-- 
+- Charlie
+
 
