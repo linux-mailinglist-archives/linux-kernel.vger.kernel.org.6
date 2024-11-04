@@ -1,126 +1,185 @@
-Return-Path: <linux-kernel+bounces-395630-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395634-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95F789BC0CD
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 23:23:37 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B5D79BC0DA
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 23:25:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D2AB1F229E8
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 22:23:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39F5F282E23
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 22:25:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4AE51FCF71;
-	Mon,  4 Nov 2024 22:23:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9165B1FE0FB;
+	Mon,  4 Nov 2024 22:25:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gUThltp6"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CQsSAVr+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8730C1D5CE7
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 22:23:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C47C91FCC6B;
+	Mon,  4 Nov 2024 22:25:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730759008; cv=none; b=ABuTelru9bv+qOPUQgYANTlsK1b82bGJ8AMmD3V30DlT3qHMTS8kV0R3XJbBCefLxf2Cx50pWtEZzR0KrDVCz5ooHQ++wbUP+61+NhhxfcWcqK5i2dWKuNMljptpjcUVTmDPcABvwqwrAw6jMEbnxJYspgGYeJ7VKSJbwvkTB0k=
+	t=1730759116; cv=none; b=l3DJgCgbE/nxrafHKFTnmOYrRfpTXegXK7ypRlewMdl9x34UE2MvyFiiaq/Vt8BTPTtIBRpujBv3wmnP1NspOKhTzRuItwVRDOjnySEHfp/mBt7C21hkbhQ5B87j0M2xNjZBPWE1Prl54qZTAXdZj7o8sV4dlP9kkAvfp9HnL3w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730759008; c=relaxed/simple;
-	bh=5aZ4rN+V3tZIqwKEGyMkKz8Q872/oU+WDr8s/OyAhT8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tROAxBLpd9Dut+xMtAzaa0slr4U5pJUJNMmzVE2QuSdmpivNxuyt5O/JLEsQpuZshHI24Xp3T2JCIzVqX71WS84dpcR1p2fFIY0P8ocUxJH4XYqxZ5h4gvNNYoVaazOQcCB6T18CkgDlsx++EbM5NHRR1moznKR/PU+u14Uk52c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gUThltp6; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4314c452180so36026535e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 14:23:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1730759005; x=1731363805; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=GHNu8odpsTM4XqBAMuGgYmLrbmeSY9TiYv7pcBRrj7w=;
-        b=gUThltp6e5rBNK7K8eUQFWkiyd2JO00/Xf2HakIdiyzwo+4NBKjKx4oPn69Y9XokyT
-         JkZO9qo6H8JeZA4ujWDYdeRrpt624b0rvEeJg85iadkhWbFznup7FJzBAzhmiNvqis+M
-         7G1GAuM9yQXWGy5gabhMLSLy79EqMg2lvwHU2WC+EYdRV7LZ7Us8v3p40WhMgojAqBBE
-         fypvd0gptpFLBo3fw0g9CEdAHUN8HA9pS8b1YScKbUEgoTAORHHvcdpR8ovgkE3d79Qt
-         oxf3RaJrO0/Nppzh3HQta8/gUwXDbPuO1FHweLRbdgF6M52wF8C20vBHMXdLbmp0IWqv
-         Ottg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730759005; x=1731363805;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=GHNu8odpsTM4XqBAMuGgYmLrbmeSY9TiYv7pcBRrj7w=;
-        b=fphSV1Tjhdq4yPifAOe9ERyQNaamq+97N2K2RSKvEmh7gsuuXUfUtBsfxablJrCOPn
-         MB1C73BiTpG+7hkZ+vxCA/k90SIwshdmIrrGsBycRyWMww0TC84JVP7pmXMzywakeEAx
-         3WOqugavZAeJP5oz90IUjJWvJOvB4pyESXO6T6lLeFkTd86sWlubImLC/dqyWfVPybU9
-         Bxz1STTHM5FMs3HAc5N87yT/WTYusgrLtXt+p5PzgYgAbPvHxGYdpdckXjYCP2pahX3m
-         QoKscal29COysC1JZgD1ZZQBNg/+O04Ue9PSFPQsZi8r5BuYKo++rCwCEW1tX8C2BEIO
-         /UcQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWXzVT7fBv5CtFFLF0GNB8sdSsrotF0L2nnq9++i1FD5dl6+9L3NHoDI79nbtohUgIshf6fZ8ovMTyC4/o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyWh/9wmZX4jxoHt8x9NIbNrSEECdTN3dcEGR5NTzK4+GIvjG31
-	wsXFMzmWhxSEvp3YWA+wHgnjoXmw1qy/B1v0xccxngjdJEf7KDa2tk24GCIWj5s=
-X-Google-Smtp-Source: AGHT+IEST4pFb7N6NqT24LHT0qD9HpQC+scjfouwyiscDUX7D18ufBHRphhTDbRNmFAOLCKZvA8/gg==
-X-Received: by 2002:a05:600c:354e:b0:431:4fbd:f571 with SMTP id 5b1f17b1804b1-4327dac6ab4mr141238035e9.13.1730759004756;
-        Mon, 04 Nov 2024 14:23:24 -0800 (PST)
-Received: from [192.168.0.40] ([176.61.106.227])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381c10b7f80sm14343743f8f.20.2024.11.04.14.23.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 04 Nov 2024 14:23:24 -0800 (PST)
-Message-ID: <78405309-b28d-4a7f-8cca-5410a9c05cb1@linaro.org>
-Date: Mon, 4 Nov 2024 22:23:22 +0000
+	s=arc-20240116; t=1730759116; c=relaxed/simple;
+	bh=IQDWNN9AzscOd/onsKj9XQgejdQOpQ2hRjYTq++U6Ys=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=MjWKbv+fbhuutBfLuSO1iU4pmSDx9OBHG8VRoluY+odXPA9NnB6J/PSJKx3/yg38KnOYklVXjmTsAIBlbSEroDaxdVyPGhNWCk1hYgMy9AnXFrWw1ulJQZu54PzKe7VPxL6sDqNfqxnpVSn44fx77yxe3hctTrkc7pVmbshQ0O0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CQsSAVr+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A7E0C4CED1;
+	Mon,  4 Nov 2024 22:25:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730759116;
+	bh=IQDWNN9AzscOd/onsKj9XQgejdQOpQ2hRjYTq++U6Ys=;
+	h=From:To:Cc:Subject:Date:From;
+	b=CQsSAVr+eRCjiKaz3rfTz/05RVTgOf4KlVnvd/7UQ4jSuCqB5p/I5HW7BaRqk/Lo0
+	 Y/K7zsW07n3Rlgu88P/hqWufPVhhy9D47N/WbvBSI/Ytuh2jxeOzg9mtRcY5ErxgCw
+	 i6hXNLQ1Rle/Lj8b9mOTQ6ilmbZo1IcpA9rzoAGoi02te5Fm6NNooC4mVyl85WUU+Z
+	 w1+SyglKXb5tRgjyjINkWCKpvxl4rx1KMihjgyOkp/W4E2s089QRhn64zD2NMLHBfT
+	 ZIQqYgSmXCHGAo0hiGgmOGm7DGVKmuUwkmisxkn4ZkRVv0H5wPqCeQFcblfBS1HuJQ
+	 DgAFKjpXBzSxw==
+From: Kees Cook <kees@kernel.org>
+To: Jakub Kicinski <kuba@kernel.org>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>
+Cc: Kees Cook <kees@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: [PATCH RFC 0/5] sockaddr usage removal
+Date: Mon,  4 Nov 2024 14:25:02 -0800
+Message-Id: <20241104221450.work.053-kees@kernel.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] wifi: wcn36xx: fix channel survey memory allocation size
-To: =?UTF-8?B?QmFybmFiw6FzIEN6w6ltw6Fu?= <barnabas.czeman@mainlining.org>,
- Loic Poulain <loic.poulain@linaro.org>, Kalle Valo <kvalo@kernel.org>
-Cc: Kalle Valo <quic_kvalo@quicinc.com>, wcn36xx@lists.infradead.org,
- linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241104-wcn36xx-memory-allocation-v1-1-5ec901cf37b6@mainlining.org>
-Content-Language: en-US
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <20241104-wcn36xx-memory-allocation-v1-1-5ec901cf37b6@mainlining.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5838; i=kees@kernel.org; h=from:subject:message-id; bh=IQDWNN9AzscOd/onsKj9XQgejdQOpQ2hRjYTq++U6Ys=; b=owGbwMvMwCVmps19z/KJym7G02pJDOmange5zdILLoUGrcm8n3iV7e6vgFsrrHtSnt5fWjch3 13g0d5dHaUsDGJcDLJiiixBdu5xLh5v28Pd5yrCzGFlAhnCwMUpABOx/cXw3/nflfA9t42una3l rXqjxzTn1B7jdEEjy80rXn65oSTpeoOR4W/MU7lv1440ta+zyL6fPW3V/M8yCSqFoROjHude+Th jMgcA
+X-Developer-Key: i=kees@kernel.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
 Content-Transfer-Encoding: 8bit
 
-On 04/11/2024 20:00, Barnabás Czémán wrote:
-> KASAN reported a memory allocation issue in wcn->chan_survey
-> due to incorrect size calculation.
-> This commit uses kcalloc to allocate memory for wcn->chan_survey,
-> ensuring proper initialization and preventing the use of uninitialized
-> values when there are no frames on the channel.
-> 
-> Fixes: 29696e0aa413 ("wcn36xx: Track SNR and RSSI for each RX frame")
-> Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
-> ---
->   drivers/net/wireless/ath/wcn36xx/main.c | 5 ++++-
->   1 file changed, 4 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/net/wireless/ath/wcn36xx/main.c b/drivers/net/wireless/ath/wcn36xx/main.c
-> index 408776562a7e56da3017aa074396bcd241d62f8c..cd36cab6db75d300f4f6617a6a9e1550f62921c7 100644
-> --- a/drivers/net/wireless/ath/wcn36xx/main.c
-> +++ b/drivers/net/wireless/ath/wcn36xx/main.c
-> @@ -1590,7 +1590,10 @@ static int wcn36xx_probe(struct platform_device *pdev)
->   	}
->   
->   	n_channels = wcn_band_2ghz.n_channels + wcn_band_5ghz.n_channels;
-> -	wcn->chan_survey = devm_kmalloc(wcn->dev, n_channels, GFP_KERNEL);
-> +	wcn->chan_survey = devm_kcalloc(wcn->dev,
-> +					n_channels,
-> +					sizeof(struct wcn36xx_chan_survey),
-> +					GFP_KERNEL);
->   	if (!wcn->chan_survey) {
->   		ret = -ENOMEM;
->   		goto out_wq;
-> 
-> ---
-> base-commit: 1ffec08567f426a1c593e038cadc61bdc38cb467
-> change-id: 20241104-wcn36xx-memory-allocation-803e4e3de9a6
-> 
-> Best regards,
-Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+(I removed the explicit CC list because it was huge...)
+
+Hi,
+
+This is strictly an RFC -- it's not a complete removal of sockaddr at
+all, but it explores what's involved. Some things are easy (e.g. the
+first 3 patches), and some is very involved (last patch).
+
+For the most part, the proto_ops::getname() switching from sockaddr
+to sockaddr_storage is mostly mechanical (and mostly just removes
+sockaddr casts). There are, however, cases where we still end up lying
+to the compiler about object sizes (in the case where the backing
+object is smaller than sockaddr_storage, but large enough to hold the
+protocol-specific address). These remain just as safe as they used to
+be. :)
+
+I think for getname() (and similar interfaces) we *do* want to use
+sockaddr_storage, but there is kind of an argument to instead use
+a struct with a flexible array, e.g.:
+
+struct sockaddr_unspec {
+        sa_family_t	sa_family;
+	char		sa_data[];
+};
+
+If this was done, then all these APIs would switch their casts from
+"(struct sockaddr *)" to "(struct sockaddr_unspec *)", even though in
+most cases the object is actully a struct sockaddr_storage.
+
+What do folks think?
+
+-Kees
+
+
+Kees Cook (5):
+  Revert "net: dev: Convert sa_data to flexible array in struct
+    sockaddr"
+  net: core: dev.c confirmed to use classic sockaddr
+  rtnetlink: do_setlink: Use sockaddr_storage
+  net: core: Convert inet_addr_is_any() to sockaddr_storage
+  net: Convert proto_ops::getname to sockaddr_storage
+
+ drivers/infiniband/hw/erdma/erdma_cm.h        |  4 +-
+ drivers/infiniband/hw/usnic/usnic_transport.c | 16 +++---
+ drivers/infiniband/sw/siw/siw_cm.h            |  4 +-
+ drivers/isdn/mISDN/socket.c                   |  2 +-
+ drivers/net/ppp/pppoe.c                       |  2 +-
+ drivers/net/ppp/pptp.c                        |  2 +-
+ drivers/nvme/host/tcp.c                       |  2 +-
+ drivers/nvme/target/rdma.c                    |  2 +-
+ drivers/nvme/target/tcp.c                     |  8 ++-
+ drivers/scsi/iscsi_tcp.c                      | 18 +++----
+ drivers/soc/qcom/qmi_interface.c              |  2 +-
+ drivers/target/iscsi/iscsi_target.c           |  2 +-
+ drivers/target/iscsi/iscsi_target_login.c     | 51 +++++++++----------
+ fs/dlm/lowcomms.c                             |  2 +-
+ fs/nfs/nfs4client.c                           |  4 +-
+ fs/ocfs2/cluster/tcp.c                        | 25 +++++----
+ fs/smb/server/connection.h                    |  2 +-
+ fs/smb/server/mgmt/tree_connect.c             |  2 +-
+ fs/smb/server/transport_ipc.c                 |  4 +-
+ fs/smb/server/transport_ipc.h                 |  4 +-
+ fs/smb/server/transport_tcp.c                 |  6 +--
+ include/linux/inet.h                          |  2 +-
+ include/linux/net.h                           |  6 +--
+ include/linux/socket.h                        |  5 +-
+ include/linux/sunrpc/clnt.h                   |  2 +-
+ include/net/inet_common.h                     |  2 +-
+ include/net/ipv6.h                            |  2 +-
+ include/net/sock.h                            |  2 +-
+ net/appletalk/ddp.c                           |  2 +-
+ net/atm/pvc.c                                 |  2 +-
+ net/atm/svc.c                                 |  2 +-
+ net/ax25/af_ax25.c                            |  2 +-
+ net/bluetooth/hci_sock.c                      |  2 +-
+ net/bluetooth/iso.c                           |  6 +--
+ net/bluetooth/l2cap_sock.c                    |  6 +--
+ net/bluetooth/rfcomm/sock.c                   |  3 +-
+ net/bluetooth/sco.c                           |  6 +--
+ net/can/isotp.c                               |  3 +-
+ net/can/j1939/socket.c                        |  2 +-
+ net/can/raw.c                                 |  2 +-
+ net/core/dev.c                                |  7 ++-
+ net/core/dev_ioctl.c                          |  2 +-
+ net/core/rtnetlink.c                          | 12 ++---
+ net/core/sock.c                               |  4 +-
+ net/core/utils.c                              |  8 +--
+ net/ipv4/af_inet.c                            |  2 +-
+ net/ipv4/arp.c                                |  2 +-
+ net/ipv6/af_inet6.c                           |  2 +-
+ net/iucv/af_iucv.c                            |  6 +--
+ net/l2tp/l2tp_ip.c                            |  2 +-
+ net/l2tp/l2tp_ip6.c                           |  2 +-
+ net/l2tp/l2tp_ppp.c                           |  2 +-
+ net/llc/af_llc.c                              |  2 +-
+ net/netlink/af_netlink.c                      |  4 +-
+ net/netrom/af_netrom.c                        |  2 +-
+ net/nfc/llcp_sock.c                           |  4 +-
+ net/packet/af_packet.c                        | 21 ++++----
+ net/phonet/socket.c                           | 10 ++--
+ net/qrtr/af_qrtr.c                            |  2 +-
+ net/qrtr/ns.c                                 |  2 +-
+ net/rds/af_rds.c                              |  2 +-
+ net/rose/af_rose.c                            |  2 +-
+ net/sctp/ipv6.c                               |  2 +-
+ net/smc/af_smc.c                              |  2 +-
+ net/smc/smc.h                                 |  2 +-
+ net/smc/smc_clc.c                             |  2 +-
+ net/socket.c                                  | 10 ++--
+ net/sunrpc/clnt.c                             |  9 ++--
+ net/sunrpc/svcsock.c                          |  8 +--
+ net/sunrpc/xprtsock.c                         |  4 +-
+ net/tipc/socket.c                             |  2 +-
+ net/unix/af_unix.c                            |  9 ++--
+ net/vmw_vsock/af_vsock.c                      |  2 +-
+ net/x25/af_x25.c                              |  2 +-
+ security/tomoyo/network.c                     |  3 +-
+ 75 files changed, 189 insertions(+), 193 deletions(-)
+
+-- 
+2.34.1
+
 
