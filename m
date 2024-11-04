@@ -1,152 +1,157 @@
-Return-Path: <linux-kernel+bounces-395180-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395181-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80F5F9BB9FD
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 17:16:59 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0372B9BBA02
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 17:17:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 34F231F229F3
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 16:16:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 348F11C215FD
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 16:17:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C615E1C1753;
-	Mon,  4 Nov 2024 16:16:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1CAE1C1753;
+	Mon,  4 Nov 2024 16:17:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="iY1nblVu"
-Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t0uS4WQx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41DE120326;
-	Mon,  4 Nov 2024 16:16:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19DFE20326;
+	Mon,  4 Nov 2024 16:17:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730737011; cv=none; b=jCKMD2D4/vuJ6bXb/7XQqoXcgahnsYniwVosiODq1N09Pa0hhCdnPpmXnL5HrMz9mgldMiwnMpsl4r7urq7LkRmE1vN7azN+jVtWoax5/Mgk2dcwUYnxzTYWj4lxOTh1De4l7r1Ltjs+9tdeGtzF/snayl56bkkD5r6+enZcwD8=
+	t=1730737033; cv=none; b=uwR5KnK9N8WrIl5e6vSrkgv0k+JUKyTUMPodiZQWzT3aWIjZ5lZX0LZ45KFV7IRYwp2l5Ycg0SSFN36rlGtVmTeYRHpHI9T7XJorgr41cYopPI+jO6+efg6r5qEALXluHFsCqin8oj6DUDMv9aWLvSphv/RG+tuaip/VVbPE8Zo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730737011; c=relaxed/simple;
-	bh=dvq4WdAmFMn0vLZ9JnYGSSdyWumIrzJUc3NB73OMPOg=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:To:From:Subject:
-	 References:In-Reply-To; b=MjbEqF8goa7ZBCz8G+oOwxPknYGD1ynK34NwJ9s4+OieMfr/tcuPySLR5pmGFtdG/RVl0MFMHnqCPGPme18EIvgvbWdahf4m1xsGyx59hB/D3Tntb6LTu+2uAQOnCqsc3yx+azwWga/Ju/10HrR/Ycp+GBa+9clks4UFrnh6dQ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=iY1nblVu; arc=none smtp.client-ip=217.70.183.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id E858860007;
-	Mon,  4 Nov 2024 16:16:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1730737006;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6rqr0N+cqbVGEIJ9JWQr1pdzzt48RW1+Mdy+DMTESZ0=;
-	b=iY1nblVuCVjnM+iTFMao7fUaBwok5qhuYyl5TtzZscEOZvgXF2YrpkzOxUKzv5XoY74lQK
-	oppy49hTbZU/PhquKOHASxNSEXIXlOHpxwISjN/laalnrg63rwBUgbWOw6wQA3B4EcwuIY
-	QL767l7li094Yudwrx/DmBYTP+1vITi4aKVfTg09PKocToLFGPI/Sp44U3LnOEnX0mfyJG
-	RJ+JuQEPRGN2itJPlbTEUs5t4AwJIK0ViWJjR/FjeJWLI3EErU9IzDYBwrezYGV3eYrJwm
-	kbNJY1QqR5BbjWKi9k19PXUtzFNciVn2Du5JABW+OSBJq16y89cFLqZSr1Gulg==
+	s=arc-20240116; t=1730737033; c=relaxed/simple;
+	bh=Eh76YaHtmLt5DW3EPTo7cV6nWRKcIFXr4w4I1ezGAIc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=tpAfUNfg4cSXej1pSckQdoSfXS/Chu/mxoSd5sC5X11oo7oesEwsrXvlI/OSzwNJcJJk/3PzThNGd8fbZGryLakfMgn9JE2D6vtSiJVFuE+H5lZpBE1womy+6wkZBI2QX7PgErGaDbbgBJXRwCDMvWBe01Q9hjbVXKDXPrN6bZ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t0uS4WQx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 070BEC4CECE;
+	Mon,  4 Nov 2024 16:17:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730737032;
+	bh=Eh76YaHtmLt5DW3EPTo7cV6nWRKcIFXr4w4I1ezGAIc=;
+	h=From:To:Cc:Subject:Date:From;
+	b=t0uS4WQxZyWfsHKzntL/JOsbLcoUgwK7IxXNLpuJmgGCCbkdKffN6scYYHbUBRJ8b
+	 0NwgxsZS4YAH+JiDqNa602sqAWP/bj1ToC3a0OR5E76efZYcB9/kBl4tepGj6+odMf
+	 kb+VcqObQHls9mNwAvlyeDVJq1Ag3qN/hhguLelqk/VYPNF4V9Pe7at4c+Tbqfzrpe
+	 +HbOjJz5yWimTRk14BuaLyPBm3Tu2Ra4R2UA760kL2gCMCJhEQTJvxfVcisICUet05
+	 W9VRdRKfmaPk5FJzTbENorl+gp2DgQZ9fxlT2aFlW97nWIX84fOqtltbDR1xtDhHhL
+	 ePBZeQbaYdofA==
+From: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Dima Kogan <dima@secretsauce.net>,
+	Alexander Lobakin <aleksander.lobakin@intel.com>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 0/4] perf-probe: Improbe non-C language support
+Date: Tue,  5 Nov 2024 01:17:08 +0900
+Message-ID:  <173073702882.2098439.13342508872190995896.stgit@mhiramat.roam.corp.google.com>
+X-Mailer: git-send-email 2.47.0.163.g1226f6d8fa-goog
+User-Agent: StGit/0.19
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Mon, 04 Nov 2024 17:16:45 +0100
-Message-Id: <D5DJ2C103MJL.2DBH24E85MPYP@bootlin.com>
-Cc: "Vladimir Kondratiev" <vladimir.kondratiev@mobileye.com>,
- =?utf-8?q?Gr=C3=A9gory_Clement?= <gregory.clement@bootlin.com>, "Rob
- Herring" <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
- "Conor Dooley" <conor+dt@kernel.org>, "Michael Turquette"
- <mturquette@baylibre.com>, "Stephen Boyd" <sboyd@kernel.org>, "Thomas
- Bogendoerfer" <tsbogend@alpha.franken.de>, <linux-mips@vger.kernel.org>,
- <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <linux-clk@vger.kernel.org>, "Thomas Petazzoni"
- <thomas.petazzoni@bootlin.com>, "Tawfik Bayouk"
- <tawfik.bayouk@mobileye.com>
-To: "Krzysztof Kozlowski" <krzk@kernel.org>
-From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
-Subject: Re: [PATCH 04/13] dt-bindings: clock: eyeq: add Mobileye EyeQ6H
- central clocks
-X-Mailer: aerc 0.18.2-0-ge037c095a049
-References: <20241031-mbly-clk-v1-0-89d8b28e3006@bootlin.com>
- <20241031-mbly-clk-v1-4-89d8b28e3006@bootlin.com>
- <7ebcdarioght4u2bai4l42pckitcw5iz4rky4ncgp7aqmtrlen@zl7k7pgijloq>
-In-Reply-To: <7ebcdarioght4u2bai4l42pckitcw5iz4rky4ncgp7aqmtrlen@zl7k7pgijloq>
-X-GND-Sasl: theo.lebrun@bootlin.com
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Fri Nov 1, 2024 at 8:48 AM CET, Krzysztof Kozlowski wrote:
-> On Thu, Oct 31, 2024 at 04:52:54PM +0100, Th=C3=A9o Lebrun wrote:
-> > Add clock indexes for EyeQ6H central OLB.
-> >=20
-> > Signed-off-by: Th=C3=A9o Lebrun <theo.lebrun@bootlin.com>
-> > ---
-> >  include/dt-bindings/clock/mobileye,eyeq5-clk.h | 3 +++
-> >  1 file changed, 3 insertions(+)
-> >=20
-> > diff --git a/include/dt-bindings/clock/mobileye,eyeq5-clk.h b/include/d=
-t-bindings/clock/mobileye,eyeq5-clk.h
-> > index 7d9e700b5e59573c45919865d9c68a9e8cf6a9eb..2356bc52646df9cfeb93df8=
-120eb8f0bf80d97e9 100644
-> > --- a/include/dt-bindings/clock/mobileye,eyeq5-clk.h
-> > +++ b/include/dt-bindings/clock/mobileye,eyeq5-clk.h
-> > @@ -34,6 +34,9 @@
-> >  #define EQ6LC_PLL_PER		2
-> >  #define EQ6LC_PLL_VDI		3
-> > =20
-> > +#define EQ6HC_CENTRAL_PLL_CPU	0
-> > +#define EQ6HC_CENTRAL_CPU_OCC	1
-> > +
->
-> Don't add define after define in separate patches. Logical change is to
-> add all defines at once, so multiple patches here should be squashed.
+Hi,
 
-Sure, I was not sure so I leaned in the safe bet direction. Squashing is
-much easier than splitting. Also improved the commit message, which
-will look like this for next revision (incoming soon):
+Here is a series of patches for perf probe to improve non-C language
+(e.g. Rust, Go) support.
 
---
+The non-C symbols are demangled style in debuginfo, e.g. golang stores
 
-dt-bindings: clock: eyeq: add more Mobileye EyeQ5/EyeQ6H clocks
+----
+$ ./perf probe -x /work/go/example/outyet/main -F main*
+main.(*Server).ServeHTTP
+main.(*Server).ServeHTTP.Print.func1
+main.(*Server).poll
+...
+-----
 
-Add #defines for Mobileye clock controller:
+And Rust stores
+-----
+$ ./perf probe -x /work/cro3/target/x86_64-unknown-linux-gnu/debug/cro3 -F cro3::cmd::servo*
+cro3::cmd::servo::run
+cro3::cmd::servo::run::CALLSITE
+cro3::cmd::servo::run::CALLSITE::META
+cro3::cmd::servo::run_control
+-----
 
- - EyeQ5 core 0 thru 3 clocks. Internally:
+These symbols are not parsed correctly because it looks like a file name or
+including line numbers (`:` caused it.) So, I decided to introduce the changes
 
-      EQ5C_PLL_CPU:           already exposed
-      =E2=94=94=E2=94=80=E2=94=80 EQ5C_CPU_OCC:       unexposed, no reason =
-to do so
-          =E2=94=9C=E2=94=80=E2=94=80 EQ5C_CPU_CORE0: new!
-          =E2=94=9C=E2=94=80=E2=94=80 EQ5C_CPU_CORE1: new!
-          =E2=94=9C=E2=94=80=E2=94=80 EQ5C_CPU_CORE2: new!
-          =E2=94=94=E2=94=80=E2=94=80 EQ5C_CPU_CORE3: new!
+ - filename MUST start from '@'. (so it is able to distinguish the filename
+   and the function name)
+ - Fix to allow backslash to escape to --lines option.
+ - Introduce quotation mark support.
+ - Replace non-alnum character to '_' for event name (for non-C symbols).
 
- - EyeQ5 peripheral clocks. Internally:
+With these changes, we can run -L (--lines) on golang;
 
-      EQ5C_PLL_PER:          already exposed
-      =E2=94=94=E2=94=80=E2=94=80 EQ5C_PER_OCC:      new!
-          =E2=94=94=E2=94=80=E2=94=80 EQ5C_PER_UART: new!
+------
+$ perf probe -x goexample/hello/hello -L \"main.main\"
+<main.main@/work/goexample/hello/hello.go:0>
+      0  func main() {
+                // Configure logging for a command-line program.
+      2         log.SetFlags(0)
+      3         log.SetPrefix("hello: ")
 
- - EyeQ6H central OLB. Internally:
+                // Parse flags.
+      6         flag.Usage = usage
+      7         flag.Parse()
+------
 
-      EQ6HC_CENTRAL_PLL_CPU:     new!
-      =E2=94=94=E2=94=80=E2=94=80 EQ6HC_CENTRAL_CPU_OCC: new!
+And Rust
+------
+$ perf probe -x cro3 -L \"cro3::cmd::servo::run_show\"
+<run_show@/work/cro3/src/cmd/servo.rs:0>
+      0  fn run_show(args: &ArgsShow) -> Result<()> {
+      1      let list = ServoList::discover()?;
+      2      let s = list.find_by_serial(&args.servo)?;
+      3      if args.json {
+      4          println!("{s}");
+------
 
- - EyeQ6H west OLB. Internally:
+And event name are created automatically like below;
 
-      EQ6HC_WEST_PLL_PER:          new!
-      =E2=94=94=E2=94=80=E2=94=80 EQ6HC_WEST_PER_OCC:      new!
-          =E2=94=94=E2=94=80=E2=94=80 EQ6HC_WEST_PER_UART: new!
+$ ./perf probe -x /work/go/example/outyet/main -D 'main.(*Server).poll'
+p:probe_main/main_Server_poll /work/go/example/outyet/main:0x353040
 
-Signed-off-by: Th=C3=A9o Lebrun <theo.lebrun@bootlin.com>
+$ ./perf probe -x cro3 -D \"cro3::cmd::servo::run_show\"
+p:probe_cro3/cro3_cmd_servo_run_show /work/cro3/target/x86_64-unknown-linux-gnu/debug/cro3:0x197530
 
---
+We still need some more work, but these shows how perf-probe can work
+with other languages.
 
-Thanks Krzysztof,
+Thank you,
+
+---
+
+Masami Hiramatsu (Google) (4):
+      perf-probe: Fix to ignore escaped characters in --lines option
+      perf-probe: Require '@' prefix for filename always
+      perf-probe: Introduce quotation marks support
+      perf-probe: Replace unacceptable characters when generating event name
+
+
+ tools/perf/util/probe-event.c  |  136 ++++++++++++++++++++++------------------
+ tools/perf/util/probe-finder.c |    3 +
+ tools/perf/util/string.c       |  100 +++++++++++++++++++++++++++++
+ tools/perf/util/string2.h      |    2 +
+ 4 files changed, 180 insertions(+), 61 deletions(-)
 
 --
-Th=C3=A9o Lebrun, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
