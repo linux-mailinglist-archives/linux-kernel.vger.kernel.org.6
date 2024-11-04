@@ -1,144 +1,177 @@
-Return-Path: <linux-kernel+bounces-394804-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394805-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BDD09BB424
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 13:04:48 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D0179BB427
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 13:06:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF6E5281159
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 12:04:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C0201C2191D
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 12:06:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FFAB1B4F1C;
-	Mon,  4 Nov 2024 12:04:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A40E1B4F3A;
+	Mon,  4 Nov 2024 12:06:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SmQkt9HR"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="DPzCxpt6";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="0rumSxfG";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="DPzCxpt6";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="0rumSxfG"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFAF6188700
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 12:04:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A0EA7C0BE;
+	Mon,  4 Nov 2024 12:06:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730721880; cv=none; b=Raa+/8bg4WedYTNvlzm0siZ1pLqnvFXiY6WhCUCnaOjORUfBHEZ87Cyw37ojNgNiMahndX9KKVH8VZ6Vt0ODFJjnFbG6b97suC1Qykd9+x9VFunv7GyVZh4zip+sbynB5NlyvgN1EcTa+ZWaoqE8pL23rrQyMbRX4qL3v282FMw=
+	t=1730721979; cv=none; b=b2JJnuGg7PnwJCe0DVn7TkE2DI7Fuo30FUBEuklSou13Som2qnrzW+IvzhOTTeFTlvnz248Sk4h4YLVvT98qlsxETS7OFNuTzdNiHxMwSQN2ULT02WDAowlEbunPvU9WezFrudaAzeqtm8xggtMBD62st0b+M5u3ZHM5aMiyFC0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730721880; c=relaxed/simple;
-	bh=bKsxPbLJOjhXS5dwvRb7gDQwbg3TLOfgDt0fz6KwnIg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Zs7hUMLTy/hmLAfRxIbQLMHvDA4akc+7tWIb8G34jOL5Ip8uthCLiOly/Va117u0XakDyho+5n2eI3t+2PY8BY01JVPPpL0469kXBA25oOu8ZwqdL0cO6PiXRRhq4UkmGWZNArOTu1Q7ZbUIMJ1jGISBrS8soSHOr5gqT39eK8A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SmQkt9HR; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1730721878;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
+	s=arc-20240116; t=1730721979; c=relaxed/simple;
+	bh=OCrSyLf9iXe0GZqTjsaGD1M8IGiZ8HqKoGI9OnH/vEA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BCUDKq5JL7tbG1J3vPNSklGe6+YZrFybrWP1rylukXOiOyrbyIkptdcatYJgzFatXzl+rsR8M20ViLlvetiE7RjnOWccxUcTHBrUwFHCCN0RjqDkYuque6u0evDb0iKLUNa9l+WObgVTDkpelXGGu2TH5aroE/ugUHQLtjHXgow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=DPzCxpt6; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=0rumSxfG; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=DPzCxpt6; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=0rumSxfG; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 3A8FA21F47;
+	Mon,  4 Nov 2024 12:06:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1730721976; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=uRhG8emybav1jveE3I6lnpbMlJJQ1NkRHJ/vqZ/lKwM=;
-	b=SmQkt9HRWRmAberA/0yCSY2iTfJvjyAeJhjcC3VAuBgsb0IcKEj8gHpdwTJJDXIfSWlyLj
-	L8N9297LKrDIqw8Txt507TKqc1k3QifeMWDGznNOEWKH3Ib+g7Xv+jAUz2jVsCVAEkHmGP
-	GZ0ApdhrBWY6WyYT6r5wk9Vvnl4977U=
-Received: from mail-ed1-f70.google.com (mail-ed1-f70.google.com
- [209.85.208.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-377-tCqyMiv8OVeXfOo9UCCM6w-1; Mon, 04 Nov 2024 07:04:36 -0500
-X-MC-Unique: tCqyMiv8OVeXfOo9UCCM6w-1
-Received: by mail-ed1-f70.google.com with SMTP id 4fb4d7f45d1cf-5c9338a16cdso5479584a12.0
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 04:04:36 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730721876; x=1731326676;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=uRhG8emybav1jveE3I6lnpbMlJJQ1NkRHJ/vqZ/lKwM=;
-        b=aBVMG4hO6pqRdfcE91AKQQ1MY/KR35XyGiL279+Ly8ZBWIvpr7VPsW0xOcyPKqiZQh
-         ICHP2vOICCvcyFkOf8Mj40N1ETre9DQzZ64Aiff/3lCB3KaQ/b4PW79KAsaHmqquZQbt
-         jds4sJF5f5QILtH2xWKqCv62StH9Amg6JKMpaANl6vQvBB9Xg7hd5zBNmh6C9eHHtEKV
-         KfEU6EM+pZP5RpKe1GGNbnynw+eSE0DasQaUYU1weCKi91EeEOCWLaSrlgAqYKN7Gwj3
-         qjSDayQUx3fLwmjKzr7KxDtSMk+R1jbdnn8g9ETVUaJY3hVKM87Td4+wi07yQ31M7BNc
-         SFKA==
-X-Forwarded-Encrypted: i=1; AJvYcCUclfwMzWfwvzQDW4JepybIfyNfUAJ1cRqHS0Az1OTOWwaCceY/Xh3jkxW8tEAUj35l3wVxoimzBRezLaU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzKh8pKFDaoXRdmvM1rLe8I/AIoDoHga9gcdhNgFZCiv7dguopq
-	h6vXJQamNCXq9fHp3jOml94dBMgRVFSvzg4rylcBpBP2wtZQxWC3ezl1jIOEytMSKpwb2ULxQHl
-	LumbT7i6lThP7iDBjG+DptmzV62uzL+0BNyfNlgi5wE7Xk0mO714BWSd0pUIFpg==
-X-Received: by 2002:aa7:d490:0:b0:5c5:c2a7:d535 with SMTP id 4fb4d7f45d1cf-5ceabf49e20mr12028246a12.16.1730721875622;
-        Mon, 04 Nov 2024 04:04:35 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGm/rpK0+UAygyYv+wvXZBfqWjdissJMQdbMV9lkyNEypi5FgacHmiCaOjPUnh7ECYxzDnZTA==
-X-Received: by 2002:aa7:d490:0:b0:5c5:c2a7:d535 with SMTP id 4fb4d7f45d1cf-5ceabf49e20mr12028221a12.16.1730721875230;
-        Mon, 04 Nov 2024 04:04:35 -0800 (PST)
-Received: from [10.40.98.157] ([78.108.130.194])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5ceac77051csm4161402a12.32.2024.11.04.04.04.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 04 Nov 2024 04:04:34 -0800 (PST)
-Message-ID: <24dadaaf-54ec-4f3a-9c6a-9aea755d0150@redhat.com>
-Date: Mon, 4 Nov 2024 13:04:34 +0100
+	bh=9fndFLhjzKyaOYEc14yr2sB6eNr80QRQIjaNtzCLkw0=;
+	b=DPzCxpt6Xihrcls88xqVfgiNLWqvYrIQHPa9O1oyRWD5ZdDCVrl1/wr8/DrFs61hPJ7rbX
+	BAs9bqQ/HONfnG9QbRtoW2+037M0sma8rLi4uy1e4tjT0a9CekpvexMUIKfn2z4gZZInBQ
+	j06JmxYQt19kH00QfWnz3bnB6+BV+Bw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1730721976;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9fndFLhjzKyaOYEc14yr2sB6eNr80QRQIjaNtzCLkw0=;
+	b=0rumSxfGBDr2wbRmh/Ixr+RBMun02tPVqWFSCVBDtHoV0re88ppXAKiXmptBw0hworyL5S
+	YAuE6NdRwcP5HsAQ==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1730721976; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9fndFLhjzKyaOYEc14yr2sB6eNr80QRQIjaNtzCLkw0=;
+	b=DPzCxpt6Xihrcls88xqVfgiNLWqvYrIQHPa9O1oyRWD5ZdDCVrl1/wr8/DrFs61hPJ7rbX
+	BAs9bqQ/HONfnG9QbRtoW2+037M0sma8rLi4uy1e4tjT0a9CekpvexMUIKfn2z4gZZInBQ
+	j06JmxYQt19kH00QfWnz3bnB6+BV+Bw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1730721976;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9fndFLhjzKyaOYEc14yr2sB6eNr80QRQIjaNtzCLkw0=;
+	b=0rumSxfGBDr2wbRmh/Ixr+RBMun02tPVqWFSCVBDtHoV0re88ppXAKiXmptBw0hworyL5S
+	YAuE6NdRwcP5HsAQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 2E7D51373E;
+	Mon,  4 Nov 2024 12:06:16 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id lOhSC7i4KGewUAAAD6G6ig
+	(envelope-from <jack@suse.cz>); Mon, 04 Nov 2024 12:06:16 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id CDB4FA0AFB; Mon,  4 Nov 2024 13:06:15 +0100 (CET)
+Date: Mon, 4 Nov 2024 13:06:15 +0100
+From: Jan Kara <jack@suse.cz>
+To: Daniel Yang <danielyangkang@gmail.com>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	"open list:FILESYSTEMS (VFS and infrastructure)" <linux-fsdevel@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	syzbot+d2125fcb6aa8c4276fd2@syzkaller.appspotmail.com
+Subject: Re: [PATCH] fix: general protection fault in iter_file_splice_write
+Message-ID: <20241104120615.ggsn7g2gblw73c5l@quack3>
+References: <20241104084240.301877-1-danielyangkang@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] media: atomisp: Add check for rgby_data memory
- allocation failure
-To: Li Huafei <lihuafei1@huawei.com>, mchehab@kernel.org, alan@linux.intel.com
-Cc: andy@kernel.org, sakari.ailus@linux.intel.com,
- gregkh@linuxfoundation.org, linux-media@vger.kernel.org,
- linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
-References: <20241104145051.3088231-1-lihuafei1@huawei.com>
-Content-Language: en-US
-From: Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <20241104145051.3088231-1-lihuafei1@huawei.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241104084240.301877-1-danielyangkang@gmail.com>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-2.30 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_RCPT(0.00)[d2125fcb6aa8c4276fd2];
+	MISSING_XM_UA(0.00)[];
+	FREEMAIL_TO(0.00)[gmail.com];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_TLS_LAST(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Score: -2.30
+X-Spam-Flag: NO
 
-Hi,
-
-On 4-Nov-24 3:50 PM, Li Huafei wrote:
-> In ia_css_3a_statistics_allocate(), there is no check on the allocation
-> result of the rgby_data memory. If rgby_data is not successfully
-> allocated, it may trigger the assert(host_stats->rgby_data) assertion in
-> ia_css_s3a_hmem_decode(). Adding a check to fix this potential issue.
+On Mon 04-11-24 00:42:39, Daniel Yang wrote:
+> The function iter_file_splice_write() calls pipe_buf_release() which has
+> a nullptr dereference in ops->release. Add check for buf->ops not null
+> before calling pipe_buf_release().
 > 
-> Fixes: a49d25364dfb ("staging/atomisp: Add support for the Intel IPU v2")
-> Signed-off-by: Li Huafei <lihuafei1@huawei.com>
-
-Thank you for your patch(es).
-
-I have merged this/these in my media-atomisp branch:
-https://git.kernel.org/pub/scm/linux/kernel/git/hansg/linux.git/log/?h=media-atomisp
-
-And this/these will be included in my next pull-request to
-Mauro (to media subsystem maintainer)
-
-Regards,
-
-Hans
-
-
-
-
+> Signed-off-by: Daniel Yang <danielyangkang@gmail.com>
+> Reported-by: syzbot+d2125fcb6aa8c4276fd2@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=d2125fcb6aa8c4276fd2
+> Fixes: 2df86547b23d ("netfs: Cut over to using new writeback code")
 > ---
-> Changes in v2:
->  - Corrects the "Fixes" tag.
-> ---
->  drivers/staging/media/atomisp/pci/sh_css_params.c | 2 ++
->  1 file changed, 2 insertions(+)
+>  fs/splice.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
 > 
-> diff --git a/drivers/staging/media/atomisp/pci/sh_css_params.c b/drivers/staging/media/atomisp/pci/sh_css_params.c
-> index 232744973ab8..b1feb6f6ebe8 100644
-> --- a/drivers/staging/media/atomisp/pci/sh_css_params.c
-> +++ b/drivers/staging/media/atomisp/pci/sh_css_params.c
-> @@ -4181,6 +4181,8 @@ ia_css_3a_statistics_allocate(const struct ia_css_3a_grid_info *grid)
->  		goto err;
->  	/* No weighted histogram, no structure, treat the histogram data as a byte dump in a byte array */
->  	me->rgby_data = kvmalloc(sizeof_hmem(HMEM0_ID), GFP_KERNEL);
-> +	if (!me->rgby_data)
-> +		goto err;
->  
->  	IA_CSS_LEAVE("return=%p", me);
->  	return me;
+> diff --git a/fs/splice.c b/fs/splice.c
+> index 06232d7e5..b8c503e47 100644
+> --- a/fs/splice.c
+> +++ b/fs/splice.c
+> @@ -756,7 +756,8 @@ iter_file_splice_write(struct pipe_inode_info *pipe, struct file *out,
+>  			if (ret >= buf->len) {
+>  				ret -= buf->len;
+>  				buf->len = 0;
+> -				pipe_buf_release(pipe, buf);
+> +				if (buf->ops)
+> +					pipe_buf_release(pipe, buf);
 
+Umm, already released pipe buf? How would it get here? We have filled the
+buffers shortly before so IMHO it indicates some deeper problem. Can you
+please explain a bit more?
+
+								Honza
+
+
+>  				tail++;
+>  				pipe->tail = tail;
+>  				if (pipe->files)
+> -- 
+> 2.39.2
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
