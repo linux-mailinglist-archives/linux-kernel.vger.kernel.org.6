@@ -1,57 +1,52 @@
-Return-Path: <linux-kernel+bounces-395426-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395427-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 152389BBDBD
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 20:08:25 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 875809BBDC0
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 20:08:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 470E21C2246A
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 19:08:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4BFC3283555
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 19:08:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAF4D1CCECA;
-	Mon,  4 Nov 2024 19:07:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 015D41CDA3B;
+	Mon,  4 Nov 2024 19:08:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Db5+VECP"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b3BonnUb"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0696B1CC893;
-	Mon,  4 Nov 2024 19:07:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 582171CC899;
+	Mon,  4 Nov 2024 19:08:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730747269; cv=none; b=ulkNbRWHQlOQryR8/GRWJFuJ2tgbxukQdt9QbdpHRsoXvc8fxtmOcyrXWjam7VnIFNxbYGZKh4POHdGz9avhSYs2WBgN/+wN1tdNNTm9iEDoUDQVlAnOKHe6tNA3ZP8QV4hQjWXcntDoh+B1fbh3wIxxV42tTjlZWmz9/ZmVVQo=
+	t=1730747297; cv=none; b=Y1cFqWyszYXU2i0mXXbuB8mSdLMLHGdt42NyzwzlOyy0fUx5EVGUqqVEobHfF0yaL3IcNftZRwVRFyIzUsCdTm2DhHWLiN6oy7BKrQTymvQnX9yCHtnf/7bIo2pCRq85ZmY6cKpZnBwUoFKvo5t8bfXwGc5ww2hhUMeMVnjNoxA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730747269; c=relaxed/simple;
-	bh=gYLDAt04WnrT85oSS6ETp+kMVsstlk0+hVvLhCGiug4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sO8gLx/RAV3w/8jzL73dsDBcB91MdSg9rSKaQvX7dPVrNf9edLtTNX5rVlLwJP9HeoZiEcZmeY1nlGZB/YQEpuKeAL3l3DMMW9RDNt4o4wlvbnClsduE7ERT0paUE9c//YrVJWhsiGLQsYAbl9gHH132qkH1P4nXKlnRSMbsR18=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Db5+VECP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ADDBFC4CECE;
-	Mon,  4 Nov 2024 19:07:48 +0000 (UTC)
+	s=arc-20240116; t=1730747297; c=relaxed/simple;
+	bh=byWXfqOzyItB0XDO7CHWIRppOPCIsx9LfjgTgf+kgto=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Ssj1AKMDkqR2quEILZWGaPRjL8UfdfbeOa3cwJa2j5Dli7XYl13huwlpHUgd0b2SI59YaIxQoZXj0NyKbSHySRFyg7TPUElTP41JBmjtjvuNu/wl2ejrYx5pBHUZa5Z984gE/mBTyTgQg7WH0Ac64Vy8VFh6ATzJyu+JwFxEXN8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b3BonnUb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AEC7BC4CECE;
+	Mon,  4 Nov 2024 19:08:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730747268;
-	bh=gYLDAt04WnrT85oSS6ETp+kMVsstlk0+hVvLhCGiug4=;
+	s=k20201202; t=1730747296;
+	bh=byWXfqOzyItB0XDO7CHWIRppOPCIsx9LfjgTgf+kgto=;
 	h=From:To:Cc:Subject:Date:From;
-	b=Db5+VECPLXzzuwMFVO6vSzqRUlsWwzVEcLT+CeNlyse6u/6ByY6/jSwCq5vp10bGg
-	 GT5R05uZMIjqYp3DAmeKJGsQxmTHjZrk8Ok+S6EiLwQ8H7XxjimtILhGk9PlKSHble
-	 o6hKAA1ul3X9DCsQYfOA/hbhwBUCC6tgZV+D37IF/kmPdEIbR8UjytxRBGQCOR8+Qn
-	 tUHY1wQ45XiTvLATyNUwrMbNf5zfn2aSoQpmgUZqBwYgZzGL4WsWkq/iB/ABQVgqYb
-	 AyyuiVi5wAX/HSqrY0ZSnSHZszMZVThQCWA27zKddwC4Tc3zVnKW/UCGl26nboKisH
-	 2n3ObSUtqwx5g==
+	b=b3BonnUb9sj9IUI87wtN77U2CJGSMrpe/uz8eFNe4DvXdHHkFbAlx5XYiQ5R8icqj
+	 gEckYtu4VM+LzGW/lM0itT5A0q2y63XUp4LhQN/FE9loQN24XAof35GPW5lUBUaec5
+	 otQlZyWhhAWDPhZ54CdIaBIxS3DR+lbiEH52t9IlKfcNnl/yOgy3PhCmCJsj7LuX4M
+	 +tNkag5bZ4PGZHKsYOjsAzk0fl8FgigKf5Keyqq8oOG9iYEntt3/s1M/b3yzxitl5t
+	 A+UdbfLESU6trdqiA4qTfynzsa6FeOoBsNVLLoTYqyUTCH/GLam48suB0pR7GKzlg2
+	 mi3dvf2rk5Isg==
 From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Ulf Hansson <ulf.hansson@linaro.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>
-Cc: linux-pm@vger.kernel.org,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
+To: Mark Brown <broonie@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org,
+	linux-spi@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH] pmdomain: imx: Use of_property_present() for non-boolean properties
-Date: Mon,  4 Nov 2024 13:07:42 -0600
-Message-ID: <20241104190742.276710-1-robh@kernel.org>
+Subject: [PATCH] spi: Use of_property_present() for non-boolean properties
+Date: Mon,  4 Nov 2024 13:07:59 -0600
+Message-ID: <20241104190759.277184-2-robh@kernel.org>
 X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -67,31 +62,50 @@ presence.
 
 Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
 ---
- drivers/pmdomain/imx/gpc.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/spi/spi-qcom-qspi.c | 2 +-
+ drivers/spi/spi-ti-qspi.c   | 2 +-
+ drivers/spi/spi.c           | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/pmdomain/imx/gpc.c b/drivers/pmdomain/imx/gpc.c
-index 80a4dcc77199..fbb4c90b72c4 100644
---- a/drivers/pmdomain/imx/gpc.c
-+++ b/drivers/pmdomain/imx/gpc.c
-@@ -411,7 +411,7 @@ static int imx_gpc_probe(struct platform_device *pdev)
- 	pgc_node = of_get_child_by_name(pdev->dev.of_node, "pgc");
+diff --git a/drivers/spi/spi-qcom-qspi.c b/drivers/spi/spi-qcom-qspi.c
+index 49b775134485..2b5cd9fee1a2 100644
+--- a/drivers/spi/spi-qcom-qspi.c
++++ b/drivers/spi/spi-qcom-qspi.c
+@@ -771,7 +771,7 @@ static int qcom_qspi_probe(struct platform_device *pdev)
+ 	host->prepare_message = qcom_qspi_prepare_message;
+ 	host->transfer_one = qcom_qspi_transfer_one;
+ 	host->handle_err = qcom_qspi_handle_err;
+-	if (of_property_read_bool(pdev->dev.of_node, "iommus"))
++	if (of_property_present(pdev->dev.of_node, "iommus"))
+ 		host->can_dma = qcom_qspi_can_dma;
+ 	host->auto_runtime_pm = true;
+ 	host->mem_ops = &qcom_qspi_mem_ops;
+diff --git a/drivers/spi/spi-ti-qspi.c b/drivers/spi/spi-ti-qspi.c
+index 0fe6899e78dd..c615ad56c676 100644
+--- a/drivers/spi/spi-ti-qspi.c
++++ b/drivers/spi/spi-ti-qspi.c
+@@ -824,7 +824,7 @@ static int ti_qspi_probe(struct platform_device *pdev)
+ 	}
  
- 	/* bail out if DT too old and doesn't provide the necessary info */
--	if (!of_property_read_bool(pdev->dev.of_node, "#power-domain-cells") &&
-+	if (!of_property_present(pdev->dev.of_node, "#power-domain-cells") &&
- 	    !pgc_node)
- 		return 0;
  
-@@ -511,7 +511,7 @@ static void imx_gpc_remove(struct platform_device *pdev)
- 	pgc_node = of_get_child_by_name(pdev->dev.of_node, "pgc");
- 
- 	/* bail out if DT too old and doesn't provide the necessary info */
--	if (!of_property_read_bool(pdev->dev.of_node, "#power-domain-cells") &&
-+	if (!of_property_present(pdev->dev.of_node, "#power-domain-cells") &&
- 	    !pgc_node)
- 		return;
- 
+-	if (of_property_read_bool(np, "syscon-chipselects")) {
++	if (of_property_present(np, "syscon-chipselects")) {
+ 		qspi->ctrl_base =
+ 		syscon_regmap_lookup_by_phandle(np,
+ 						"syscon-chipselects");
+diff --git a/drivers/spi/spi.c b/drivers/spi/spi.c
+index c1dad30a4528..e6063e536298 100644
+--- a/drivers/spi/spi.c
++++ b/drivers/spi/spi.c
+@@ -2454,7 +2454,7 @@ static int of_spi_parse_dt(struct spi_controller *ctlr, struct spi_device *spi,
+ 			nc, rc);
+ 		return rc;
+ 	}
+-	if ((of_property_read_bool(nc, "parallel-memories")) &&
++	if ((of_property_present(nc, "parallel-memories")) &&
+ 	    (!(ctlr->flags & SPI_CONTROLLER_MULTI_CS))) {
+ 		dev_err(&ctlr->dev, "SPI controller doesn't support multi CS\n");
+ 		return -EINVAL;
 -- 
 2.45.2
 
