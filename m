@@ -1,124 +1,92 @@
-Return-Path: <linux-kernel+bounces-395225-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395228-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8549B9BBA89
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 17:46:23 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C0FE9BBA92
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 17:49:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B714F1C21742
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 16:46:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 309812827AF
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 16:49:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFD781C2DA1;
-	Mon,  4 Nov 2024 16:46:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 245251C233E;
+	Mon,  4 Nov 2024 16:49:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="JOk2/8JC"
-Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="VFCeAjLs"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FC7942056;
-	Mon,  4 Nov 2024 16:46:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1380F1C07F1;
+	Mon,  4 Nov 2024 16:49:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730738776; cv=none; b=BqjnYqe+6SDzG/g8GWE3MZueshi+blsW/7X/u5iq1xpQMPFUoPzlUpUJsQmv5ZX2UganNvjxM0L0j2xHMEBzcpNlHWCV/wtsLsPb0VBRiakOMMlYQUXhCAJ0PA13fPrKk8GYdgKtJa6eFP0Hd62WnV9uYnnSUdv5m90c3Lk0XqE=
+	t=1730738949; cv=none; b=Z2Au8ClgzSDYkdUYVOkvlFHR235/bUe0BbAVttjKVu0roPrX1a6K5ZPUd8wbgnwzLrEaBqG2vp7PfitXhSC8BeDtJONUTwQYGOXhWhy4mzi2EIOj9sW34zaxmsOG6YGuj3GOjjdGpg/E0StetffGQnWPFo1QhjozTUPTc58f+0M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730738776; c=relaxed/simple;
-	bh=DGrRE7TUEKaaDw37a+FHzO+nzWDrspEHgHtffr+CQGI=;
-	h=Mime-Version:Content-Type:Date:Message-Id:From:Subject:Cc:To:
-	 References:In-Reply-To; b=bpErXFlOIvo4oKq6erRnBzMl9h+myHoOzldg1KTUu8TZQo37Zw+0H/YXP9kAtmGTnwvKbMgNQLNfAxv0/e/RpI1Qn0jjTsS9WDa2FtbRjEnzkMxV20lFeB0jPOtKw4vTujlm1kPr97e+0Z1BkJ+yFhPjkRGP+h52YN/c1AO86bg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=JOk2/8JC; arc=none smtp.client-ip=217.70.183.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id C8C3E2000D;
-	Mon,  4 Nov 2024 16:46:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1730738771;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=TK/3OnrOZfeWPKLNUkcYsUToqQO4kgM2GP8iJaKUbjY=;
-	b=JOk2/8JCqilJlJUfCvY4uRlTxlIp9ji8Qy1ngcdkwnygCzCyejzCgVMiRSaTFs9FFJDn8L
-	zV1x+ih0Gkk/qUZCv5sdT61fI1vEU+O/BjB73mPc8uoRCyM9KgaYdurfjD9fOSxMTWO90C
-	celi03gusvUFIczQAXKPUpoHig5vrFrnmhHY0OZVffXsEEsSrjJrxzoUUqvBSOdaYebHxF
-	vA3a1Fyno2B1Jd+fU6PRBwiydlj8yI4eAk6TdghaZfng6k3eDH/odGft/I/7lBgEQnAZgV
-	psQ0M2X/GNgV6qIjy3UOBxDnghEGd39eq45MFbMKvfkweDnJCvYd6olMILoDPw==
+	s=arc-20240116; t=1730738949; c=relaxed/simple;
+	bh=7Pn8Oi0n7WRC7x0SqsrwXg9RE680+0oqFcWaW1t/kC8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ou8NDMuFG0+u8KdbMNXC2+Grz0yTQLODjh0C1xvlqw8RSLEW/a5rWJ7QJYHMQxLQVTiBp1ClmRn1CWZ/AHLYXF63GoUAAFYRYCtxPdf8UVEkTf+Qk5jhnW0ZAeXJfMWD8x8y9HN3THoOAaly0ymMrwK8JA5NtK2Zn0Hh9UXHDyo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=VFCeAjLs; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id BDCEA40E0220;
+	Mon,  4 Nov 2024 16:49:02 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id zKoHjBiZQc7Y; Mon,  4 Nov 2024 16:48:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1730738938; bh=BCYoC9IrOjIFECP/0oh9vzrE4nH5oG2SejugrTWJKKg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VFCeAjLsOo6yNluwXI8/C9pyCQMKfBCJaAZrq4SFcA5X1Lgz17htG3v5GHOFeYcI7
+	 p+vGHW9ueYucylAOtRCnxMokHjGGfhAxwM9JS30ubh9h/tejJp8YLA+aX2evngNRJu
+	 /WUTcIjYH0X+GgldsDTHA7aWmcNqitw312OZ1CwY+Btq3DFDFLI4uvif4492VT2Tsl
+	 s9ez03OlYTjt5H3m/9yU35G5zhNsHfGt4dgaTEJSUifYxC7nx/CZWdtUBquCh4mWqP
+	 KTt1XQjIRRnbmJnY6+4rdtbhAfD4cfc6cYGZ/Ru4RYsRFXbjRFiY1cdHBmiVmVyFuB
+	 O+3BIkEcU6Jq9QteCquogOOQ0v0PQyamiS5VpRSNk/k3Vjr10WT8mjXCBFNgtp/Oh+
+	 sUSOI6zJBGgBGvFpBuwqUBkmnWFbvPL4AzlRPqmtrWtXZQ1BLlO1cfCmF2E0XQxulQ
+	 0vvOgMYoHiKDuHcMtSnQorCEBzIpQZmzQcnW6L9yuXahfS9TBJbeLAZ6TzYh8ug3Dg
+	 6R16xuE632Zk1cC/pSEjEEiwdZ4nXXw0ODoxRjalESMJVPDQpjn2FtOsL3+TaLBco8
+	 +/6Dq42DKeklm9wRhCTSNPo66SyFhwV8x1mk8CEdlhaLZ0nO7ZLNTRS8z6pt7Pw6ML
+	 6BAn+pSPx1CCm7hcqmoRp2uw=
+Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 41D2540E0263;
+	Mon,  4 Nov 2024 16:48:54 +0000 (UTC)
+Date: Mon, 4 Nov 2024 17:48:47 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Jason Baron <jbaron@akamai.com>
+Cc: James Ye <jye836@gmail.com>, linux-edac@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] EDAC/ie31200: Add Kaby Lake-S dual-core host bridge ID
+Message-ID: <20241104164847.GFZyj670ngFSLWm6u9@fat_crate.local>
+References: <20240824120622.46226-1-jye836@gmail.com>
+ <20241104160425.GEZyjwiRx74PEqiZRl@fat_crate.local>
+ <b990a1a9-97e5-469a-8469-0ea5bdc0fc03@akamai.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Mon, 04 Nov 2024 17:46:10 +0100
-Message-Id: <D5DJOUV9NPY4.22MIOBKLAYGA3@bootlin.com>
-From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
-Subject: Re: [PATCH 01/13] dt-bindings: soc: mobileye: set `#clock-cells =
- <1>` for all compatibles
-Cc: "Vladimir Kondratiev" <vladimir.kondratiev@mobileye.com>,
- =?utf-8?q?Gr=C3=A9gory_Clement?= <gregory.clement@bootlin.com>, "Krzysztof
- Kozlowski" <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>,
- "Michael Turquette" <mturquette@baylibre.com>, "Stephen Boyd"
- <sboyd@kernel.org>, "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>,
- <linux-mips@vger.kernel.org>, <devicetree@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>, "Thomas
- Petazzoni" <thomas.petazzoni@bootlin.com>, "Tawfik Bayouk"
- <tawfik.bayouk@mobileye.com>
-To: "Rob Herring" <robh@kernel.org>
-X-Mailer: aerc 0.18.2-0-ge037c095a049
-References: <20241031-mbly-clk-v1-0-89d8b28e3006@bootlin.com>
- <20241031-mbly-clk-v1-1-89d8b28e3006@bootlin.com>
- <20241104153727.GA192461-robh@kernel.org>
-In-Reply-To: <20241104153727.GA192461-robh@kernel.org>
-X-GND-Sasl: theo.lebrun@bootlin.com
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <b990a1a9-97e5-469a-8469-0ea5bdc0fc03@akamai.com>
 
-On Mon Nov 4, 2024 at 4:37 PM CET, Rob Herring wrote:
-> On Thu, Oct 31, 2024 at 04:52:51PM +0100, Th=C3=A9o Lebrun wrote:
-> > Some compatibles expose a single clock. For those, we used to let them
-> > using `#clock-cells =3D <0>` (ie <&olb> reference rather than <&olb 0>)=
-.
-> >=20
-> > Switch away from that: enforce a cell for all compatibles. This is more
-> > straight forward, and avoids devicetree changes whenever a compatible
-> > goes from exposing a single clock to multiple ones.
->
-> Your reasoning is flawed. Changing #clock-cells is an ABI break. So you=
-=20
-> should only be changing this if it was just wrong. And if it's not wrong=
-=20
-> in some cases, you shouldn't be changing those. The h/w either has 1=20
-> clock or multiple and #clocks-cells should match.
+On Mon, Nov 04, 2024 at 11:15:49AM -0500, Jason Baron wrote:
+> Sorry, seems fine...
+> 
+> Acked-by: Jason Baron <jbaron@akamai.com>
 
-I see your reasoning, and I agree that changing #clock-cells is an ABI
-break. However, there are two things to take into account:
+Queued, thanks.
 
- - We do not (yet?) have an omniscient view of the hardware. We do not
-   know what every single register in those memory regions do.
+-- 
+Regards/Gruss,
+    Boris.
 
-   Some clocks might be lurking in the shadows, especially as we don't
-   support many HW capabilities yet.
-
- - The earlier the better. If we discover later down the road that,
-   indeed, some more clocks were hiding, we'll have to do an ABI break.
-
-   At that point, some people might actually be using the platform.
-   Seeing what we currently have supported upstream versus the amount
-   of HW blocks available in the SoC, I cannot imagine anyone using the
-   platform with an upstream kernel.
-
-So the choice is:
- - potential ABI break in the future, once people use the platform, or,
- - guaranteed ABI break now, when no one is using it.
-
-I pick option two! Do you agree with the thought process?
-
-Thanks Rob,
-
---
-Th=C3=A9o Lebrun, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
+https://people.kernel.org/tglx/notes-about-netiquette
 
