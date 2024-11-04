@@ -1,47 +1,64 @@
-Return-Path: <linux-kernel+bounces-395132-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395115-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D61CF9BB8EF
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 16:26:17 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9A439BB8C2
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 16:18:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 60501B24C27
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 15:26:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D6AD2823EE
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 15:18:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F7F01C4A3B;
-	Mon,  4 Nov 2024 15:24:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D15951BF81B;
+	Mon,  4 Nov 2024 15:18:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ysoft.com header.i=@ysoft.com header.b="XUyZoYcb"
-Received: from uho.ysoft.cz (uho.ysoft.cz [81.19.3.130])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mzx66vva"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1E361BF80C;
-	Mon,  4 Nov 2024 15:24:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.19.3.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 877431531EA;
+	Mon,  4 Nov 2024 15:18:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730733879; cv=none; b=rfgHukrHL/SiyOMYJJRLxPeFXhCJh96LQYjzI6NU0MSnsNHHuQrtIjBnNmGkyQUDvQMIx1qeP4oO0O1WGAxupX4gFcUrhppH5QSjL7MsHURtbvAwntCVIDTYx4/keDjzvfrB+EPgwUTFeIW3QZf8YUVnHTtBaBkfkoiL0LVKkoA=
+	t=1730733507; cv=none; b=cF+A9d23N37uEPdG6kU6OX4K/i6yiiD7Bi3gWqoeRjM8nk4e0OQl8E/5uVr3691UtEvnn9I01fk1FgC1uMmdU2qjx4qvQNJExSTMXoXZRbSffGDqgkrb0Cs7O5+in/4maLDB7r/XDJkUQkqZGK71kgdzilOHtdiWjs+VLO4XIuU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730733879; c=relaxed/simple;
-	bh=jCDBlylsOzrgQaNlej+sW6wCxbQqqoCN8j/G9BzxwkE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
-	 In-Reply-To:Content-Type; b=TPyn8Eg+KBJi5mFO69zrNwNQ6RBh8xOim6qkFwcadAzErpyw9F4UYSd9aiFvzZmvt8fYnR1hpZwbPiJdRSmCAfWQQh0dDu9F5Yg26RYu7lB6I5xOPwLAHMoKzxI4Obec1Lx/fk3uSOL7z0zdzSjYalgjZ64Kx2VJqVdJEEmGtU0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ysoft.com; spf=pass smtp.mailfrom=ysoft.com; dkim=pass (1024-bit key) header.d=ysoft.com header.i=@ysoft.com header.b=XUyZoYcb; arc=none smtp.client-ip=81.19.3.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ysoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ysoft.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ysoft.com;
-	s=20160406-ysoft-com; t=1730733402;
-	bh=Q6WriQMGrsUgGeqFJrLVcxtByXDFPjJNGKQK3ku9RWk=;
-	h=Date:Subject:To:References:Cc:From:In-Reply-To:From;
-	b=XUyZoYcbQ7a2pcnxqoLn8RulRO0I/cnoX/Isca+voXKfnX+2q9MX9XcqB1xwR1Q6C
-	 uKZ6fYxybH1o6NWaAgzLzZIxeT7H2hVYVEEIdHSO+uEkP5KJrktSTK0pr5GjfVOlIE
-	 emjKYk1EFu3adYt5H5GnQp1Vkl1KFcTS1x4EawmY=
-Received: from [10.1.8.111] (unknown [10.1.8.111])
-	by uho.ysoft.cz (Postfix) with ESMTP id 79D9DA03E9;
-	Mon,  4 Nov 2024 16:16:42 +0100 (CET)
-Message-ID: <01b7029f-ecac-4b45-a28d-04081b326024@ysoft.com>
-Date: Mon, 4 Nov 2024 16:16:42 +0100
+	s=arc-20240116; t=1730733507; c=relaxed/simple;
+	bh=qWlIxJlDQefOcYZezqv3pTjAXZOrS/1t8kQimOUSHg4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bo8Peo7R7yTznSoZtVQ+erhK59u2sSTPcahmj6gW2MFqMP2HZCr71/d8aL+wY23IyRPhyBYPdAdB2Zyq5Fqat0F/AhWKfZTAXGtJO3AKZtSzheC00ITkUdq6Whw7DbMtcauAmN2isJbIbuYg5HdVSM8eCwmbo9wKIJxOws+XYOI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mzx66vva; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730733505; x=1762269505;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=qWlIxJlDQefOcYZezqv3pTjAXZOrS/1t8kQimOUSHg4=;
+  b=mzx66vvalcmFgtJ3bg86UBp3dbiLZ+JjkJ79Q+P/4xyrmAamm6wAwXw5
+   UACgEQiCNjgbNTxtkyVglAnS9SDgG9B2QR6eTe4eFfJ4svabqzljt2Wot
+   u+qiuJlksHAL+gUtf6fILcTdejbK6iDkyuAvBFUeZYiRDNU8ZT2E9HnwL
+   zj8gggPFVRuaVN+XIaLh8qQXoHJ0wxiUMab5eS7oBAeRabqYyYOTY/5Tc
+   kcFfjfm99wYftfEtBhrq442R4LzUFM1x8zP6VPbBtdhCHoubm/MEK7DgC
+   29JyYfHqnsd0bvSDZ+OmXOMI8kG+iio5RoX6YLYg5r54QM7LI1UfpIuej
+   A==;
+X-CSE-ConnectionGUID: geQ4wmbnRA2zqsv1PS0Cog==
+X-CSE-MsgGUID: viWa4IRCT1+ouGUx/+XwbA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11246"; a="33272953"
+X-IronPort-AV: E=Sophos;i="6.11,257,1725346800"; 
+   d="scan'208";a="33272953"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2024 07:18:24 -0800
+X-CSE-ConnectionGUID: RAGfsD2fR8qeKt25UpePUA==
+X-CSE-MsgGUID: LMK8OXWhRiK4et3Y7Cqkhw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,257,1725346800"; 
+   d="scan'208";a="83797907"
+Received: from lstrano-mobl6.amr.corp.intel.com (HELO [10.125.109.168]) ([10.125.109.168])
+  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2024 07:18:25 -0800
+Message-ID: <a9d10969-0b74-4fa1-8f3d-6fc2c7a475a7@intel.com>
+Date: Mon, 4 Nov 2024 08:18:23 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,108 +66,68 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/3] leds: Add LED1202 I2C driver
-To: Vicentiu Galanopulo <vicentiu.galanopulo@remote-tech.co.uk>
-References: <Zx0A8ywBb9J65Rxl@admins-Air>
- <20241101170658.GA1807686@google.com> <ZyYKCMbviprVnoDK@admins-Air>
+Subject: Re: [PATCH] dmaengine: idxd: Remove a useless mutex
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+ Fenghua Yu <fenghua.yu@intel.com>, Vinod Koul <vkoul@kernel.org>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ dmaengine@vger.kernel.org
+References: <e08df764e7046178ada4ec066852c0ce65410373.1730547933.git.christophe.jaillet@wanadoo.fr>
 Content-Language: en-US
-Cc: pavel@ucw.cz, lee@kernel.org, linux-kernel@vger.kernel.org,
- linux-leds@vger.kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>
-From: =?UTF-8?B?TWljaGFsIFZva8OhxI0=?= <michal.vokac@ysoft.com>
-In-Reply-To: <ZyYKCMbviprVnoDK@admins-Air>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+From: Dave Jiang <dave.jiang@intel.com>
+In-Reply-To: <e08df764e7046178ada4ec066852c0ce65410373.1730547933.git.christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 02. 11. 24 12:16, Vicentiu Galanopulo wrote:
+
+
+On 11/2/24 4:46 AM, Christophe JAILLET wrote:
+> ida_alloc()/ida_free() don't need any mutex, so remove this one.
 > 
->>
->> Alphabetical.
-> Done
->>> +#define ST1202_BUF_SIZE                    16
->>
->> This appears to be unused.
-> Done
->> Please make sure all of these defines are used or removed.
->>
->>
->> I'm usually all for defines, but this one is a bit over the top.
-> Removed
->>
->>
->> Why have you broken the line here and not 2 lines down?
-> Checkpatch was complaining
->   
->>
->> Do this during declaration.
-> Moved it inside for_each_available_child_of_node_scoped
+> It was introduced by commit e6fd6d7e5f0f ("dmaengine: idxd: add a device to
+> represent the file opened").
 > 
->> Lee Jones [李琼斯]
-> Thank you for the review. I think corrected everything.
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Hi Vicentiu,
-
-Once a while I browse through the patches in various mailing lists to keep myself informed.
-So I came across your patch set pretty randomly.
-
-I have few tips for you to make your life easier before you get to some serious troubles
-with the maintainers ;)
-
-1. Always send all the patches in the series to the same recipients list.
-
-That is, do not send dt-bindings to just Rob, Krzysztof etc. and LED driver
-patches to Lee et al. We all need to see the whole thing.
-
-If you run the scripts/get_maintainer.pl script on the series, you get a complete list.
-This is what Krzysztof requested you to do in his comments to v3.
-
-2. Use git format-patch and git send-email tools to submit patches.
-
-If you use these tools you will avoid issues with wrong threading of the messages.
-
-3. The following text should not be here.
-
-You are supposed to just reply in-place to the review messages to acknowledge
-that you read the comments and you understand what the reviewers want to
-change. Then you send a next version of the series as a new message to all
-the recipients. Definitely not as a in-reply-to to the previous version.
-
-> [PATCH v5 2/3] leds: Add LED1202 I2C driver
-> 
-> The output current can be adjusted separately for each channel by 8-bit
-> analog (current sink input) and 12-bit digital (PWM) dimming control. The
-> LED1202 implements 12 low-side current generators with independent dimming
-> control. Internal volatile memory allows the user to store up to 8 different
-> patterns, each pattern is a particular output configuration in terms of PWM
-> duty-cycle (on 4096 steps). Analog dimming (on 256 steps) is per channel but
-> common to all patterns. Each device tree LED node will have a corresponding
-> entry in /sys/class/leds with the label name. The brightness property
-> corresponds to the per channel analog dimming, while the patterns[1-8] to the
-> PWM dimming control.
-> 
-> Signed-off-by: Vicentiu Galanopulo <vicentiu.galanopulo@remote-tech.co.uk>
+Reviewed-by: Dave Jiang <dave.jiang@intel.com>
 > ---
-> Changes in v5:
->    - remove unused macros
->    - switch to using devm_led_classdev_register_ext (struct st1202_led update)
->    - add prescalar_to_milliseconds (convert [22..5660]ms to [0..255] reg value)
->    - remove register range check in dt_init (range protected by yaml)
->    - address all review comments in v4
-> Changes in v4:
->    - Remove attributes/extended attributes implementation
->    - Use /sys/class/leds/<led>/hw_pattern (Pavel suggestion)
->    - Implement review findings of Christophe JAILLET
-> Changes in v3:
->    - Rename all ll1202 to st1202, including driver file name
->    - Convert all magic numbers to defines
->    - Refactor the show/store callbacks as per Lee's and Thomas's review
->    - Remove ll1202_get_channel and use dev_ext_attributes instead
->    - Log all error values for all the functions
->    - Use sysfs_emit for show callbacks
-> Changes in v2:
->    - Fix build error for device_attribute modes
+> See:
+> https://elixir.bootlin.com/linux/v6.11.2/source/lib/idr.c#L375
+> https://elixir.bootlin.com/linux/v6.11.2/source/lib/idr.c#L484
+> ---
+>  drivers/dma/idxd/cdev.c | 5 -----
+>  1 file changed, 5 deletions(-)
+> 
+> diff --git a/drivers/dma/idxd/cdev.c b/drivers/dma/idxd/cdev.c
+> index 57f1bf2ab20b..ff94ee892339 100644
+> --- a/drivers/dma/idxd/cdev.c
+> +++ b/drivers/dma/idxd/cdev.c
+> @@ -28,7 +28,6 @@ struct idxd_cdev_context {
+>   * global to avoid conflict file names.
+>   */
+>  static DEFINE_IDA(file_ida);
+> -static DEFINE_MUTEX(ida_lock);
+>  
+>  /*
+>   * ictx is an array based off of accelerator types. enum idxd_type
+> @@ -123,9 +122,7 @@ static void idxd_file_dev_release(struct device *dev)
+>  	struct idxd_device *idxd = wq->idxd;
+>  	int rc;
+>  
+> -	mutex_lock(&ida_lock);
+>  	ida_free(&file_ida, ctx->id);
+> -	mutex_unlock(&ida_lock);
+>  
+>  	/* Wait for in-flight operations to complete. */
+>  	if (wq_shared(wq)) {
+> @@ -284,9 +281,7 @@ static int idxd_cdev_open(struct inode *inode, struct file *filp)
+>  	}
+>  
+>  	idxd_cdev = wq->idxd_cdev;
+> -	mutex_lock(&ida_lock);
+>  	ctx->id = ida_alloc(&file_ida, GFP_KERNEL);
+> -	mutex_unlock(&ida_lock);
+>  	if (ctx->id < 0) {
+>  		dev_warn(dev, "ida alloc failure\n");
+>  		goto failed_ida;
 
-I hope you will get this sorted, I know the beginnings are difficult.
-
-Best regards,
-Michal
 
