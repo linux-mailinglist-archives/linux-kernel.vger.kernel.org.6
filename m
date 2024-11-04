@@ -1,132 +1,106 @@
-Return-Path: <linux-kernel+bounces-394675-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394676-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AA469BB29C
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 12:13:18 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C9CD9BB29F
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 12:13:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F51528287C
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 11:13:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D9C63B279EF
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 11:13:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9DB11F80C5;
-	Mon,  4 Nov 2024 10:55:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D2C41F818B;
+	Mon,  4 Nov 2024 10:55:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TEFMfQ0J"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iDKKxYOT"
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBEF31F80AD;
-	Mon,  4 Nov 2024 10:55:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C67231F80AB
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 10:55:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730717751; cv=none; b=uwxdLL3zAHZOiY85QMxVjPdvZxzbQDntUfb6yXK6MJFT4clBU3apcHJA3FhpFTOg0VyovMpRPBfVXAybAIqOZDKKBVSJlh7oxsykbnpKfkX/Y9dLg+AKgd/oQhGwV9ATcfJ3GA2nptFkJXDrIQozo9iGu+OpyLolqwVtGe25M6Q=
+	t=1730717752; cv=none; b=HMA/iQQGAVLutFF6l6x0niyAWOAZ8IXpC1t85TNgySDhYj4Oo1nSPObBNa08+weq5LTwt99WedCyWTSGVKdfj8LyZCChDGjieEUiR+qz30++sE5YgqlVKupQdNdq8oV29OnQI9EUZSfzIPLITpxxrlcHilnFyRrhyWZfYAZP6y4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730717751; c=relaxed/simple;
-	bh=XqKUWGODd1BS1i/68lrWqZSmXb6XqGiYNwan4uKrTNg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=X1gXGdquNqMQdclYZ/YNbZICdQs7NX38hRTWvy0u6RQZmNS3ZX+/XV6u+LCQFJJ1A/9wWGOOXBGABRh6ATjUQeuxV7RFkBEy6v4EYHinXecAgPj22yS6p2gFjff8bGepgUvrpZ89Hnp/jsj4ZZgxfyT2fXHDthKrNtptJC9i3hA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TEFMfQ0J; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55BC9C4CED1;
-	Mon,  4 Nov 2024 10:55:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730717750;
-	bh=XqKUWGODd1BS1i/68lrWqZSmXb6XqGiYNwan4uKrTNg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=TEFMfQ0Ji/9MGVKO04vk+iiTAAB1F2RBbGF3/teiB2vc9+umru0KwEIWwNTnaERoT
-	 up1324Yspf7LRzw2t56YOGkDBl932TCJpUcxFcz2w6wNaQiG6HuaU8u217VXWvAj3q
-	 PCTjz0bi8THmRNtc9jCzo0SfR0qsFJf7VbYkJKTv57Ij3rpsKjP7glIx/RwxWIZGjU
-	 9b3Z1ThJ3Nm8W/IxzOoVRLzRspmb6TxScs1l8yUa/DSTmJ0WtU5u+XlZAAksUSzLj7
-	 EqllID7UzUuS3E/BjSjv4cuCWE1GhSIU65FUxjboEdruhNuC9kLFnU3Z7Y2VS0198F
-	 SFWWbAWdLZJrw==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: =?UTF-8?q?Beno=C3=AEt=20Monin?= <benoit.monin@gmx.fr>,
-	Simon Horman <horms@kernel.org>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Sasha Levin <sashal@kernel.org>,
-	bjorn@mork.no,
-	andrew+netdev@lunn.ch,
-	davem@davemloft.net,
-	edumazet@google.com,
-	pabeni@redhat.com,
-	netdev@vger.kernel.org,
-	linux-usb@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 5/5] net: usb: qmi_wwan: add Quectel RG650V
-Date: Mon,  4 Nov 2024 05:55:34 -0500
-Message-ID: <20241104105539.98219-5-sashal@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241104105539.98219-1-sashal@kernel.org>
-References: <20241104105539.98219-1-sashal@kernel.org>
+	s=arc-20240116; t=1730717752; c=relaxed/simple;
+	bh=c8wGjkPlYVNRPfGqZMa6pSmboLrkZFgSexB+/+qfnkY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Lh+Gp1QFmETD5mjq/h2A+KAxOUwPTnDEYPBV81L51xIDGn7+DrNzOK7a3djXLkb7Q4DjCLCOXAnqvdL7ajANxZfi+BJ2kCXmfUIDvpB7CcuLtAnpjmyXKYtyaFTb5+5mqCzRB0RTYF+arRG0xfCs0IQpV1fDQtJ2cBKW86qfb4o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=iDKKxYOT; arc=none smtp.client-ip=209.85.208.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2fb3debdc09so28200271fa.3
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 02:55:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1730717749; x=1731322549; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=waBTGTBlHfd2MNV2pSDkGRfLXdLzKoYk2Pq0OYzBkOU=;
+        b=iDKKxYOTav3FlKlyvCIY9PRTCGFxKIM8oKRD4scy+A4gwAo3AwXDGcf6AQV2+kKSTO
+         O6c787h44MtAcNmgIjxibirN+4iT07SYswIJXN08I6F3XhY2owDrgAiUSTAInFhlmCec
+         Eobu8WCPM+jBTx+R2tIM3D9M9HzJYCO/j/a1aKx9rgFPQDm5lc56499g99bRq9W2Hi/x
+         cxnSijgQ/fncTOUoDIKFKJV0eHyUBz+8Jn6fB8z+xQr9czjluCpvc46HzW3WHGVKJR31
+         zp4G0LeloJpgy3rE9DzgKTCyic78TDu5l/SK45flm4pxaYs9yQGhWZFI9xPh5Zet2332
+         VOaA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730717749; x=1731322549;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=waBTGTBlHfd2MNV2pSDkGRfLXdLzKoYk2Pq0OYzBkOU=;
+        b=IAHx0oyG0Ht3RcZvej31TM1hAHzdDf8U5YMMnyP7bZAEEOHcjoJ2WD8Wk5xfTPr0Yx
+         Nkhvd2+Ksd92ZnOilBft8fsAWIG4B3IZRmO/G1Dm4v6SjwyaAH8ypBef4VsQrNU+lGeU
+         4b5Mvg2tJ3pAAZj/99HIrAeDtpGWrAPnFlXPhYiWh0nfaovIMPlaLl4vF1U2MgdW/PDo
+         Il0MY75NlL2/Bn9RQ7uuaBrtkEfWkx6BwG2WBarxHIAMeNazMRaYVskF4lhDG+moCiws
+         +mQ9ZiDsF/jiTmL7NMTBPdKsZ6BKWVO6sWrYlOa7M4av0g0cJkNzrrPrskaQv3zJAC1T
+         gWKA==
+X-Forwarded-Encrypted: i=1; AJvYcCUBHHUO9OeTDTDU5NlbhdMu8Tq0b/2qa1yiltp3vT8AEENXAjQQ/IhVyD/NFoIGmnVb7AbEg8qbVY8c3R8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzu0npcgAkjUEJgYB+CTSJ2hvpgrqBUS9U5MDYGMdz+FCG/QbhT
+	cL3qpLL1dPKK2tGU+yMupALcWn1eVWeDQdbwUQLwegqyK9vnY/EkzwPFd73kKEK69KEeFC2XVAS
+	gWKg=
+X-Google-Smtp-Source: AGHT+IFIdshEtjyMvc0qsRzAdG4WZnPMu9TjKvznb5pP5VfP0Yu1NA7g4L56eiwhpWFlir9ooEF7gg==
+X-Received: by 2002:a2e:4c12:0:b0:2f6:6074:db71 with SMTP id 38308e7fff4ca-2fdec5f831amr53140821fa.17.1730717748783;
+        Mon, 04 Nov 2024 02:55:48 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2fdef8a6404sm15870731fa.84.2024.11.04.02.55.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 04 Nov 2024 02:55:47 -0800 (PST)
+Date: Mon, 4 Nov 2024 12:55:46 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: Re: [PATCH 1/2] soc: qcom: rmtfs: allow building the module with
+ COMPILE_TEST=y
+Message-ID: <eac2ese3gmzkdxhmgoj7qfs35izrgb3oze5es5kr6wn64t5guy@bpbolwqttdui>
+References: <20241014130303.123394-1-brgl@bgdev.pl>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 4.19.322
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241014130303.123394-1-brgl@bgdev.pl>
 
-From: Benoît Monin <benoit.monin@gmx.fr>
+On Mon, Oct 14, 2024 at 03:03:02PM +0200, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> 
+> Make it possible to build the module when COMPILE_TEST is enabled for
+> better build coverage.
+> 
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> ---
+>  drivers/soc/qcom/Kconfig | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
 
-[ Upstream commit 6b3f18a76be6bbd237c7594cf0bf2912b68084fe ]
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
-Add support for Quectel RG650V which is based on Qualcomm SDX65 chip.
-The composition is DIAG / NMEA / AT / AT / QMI.
-
-T: Bus=02 Lev=01 Prnt=01 Port=03 Cnt=01 Dev#=  4 Spd=5000 MxCh= 0
-D: Ver= 3.20 Cls=00(>ifc ) Sub=00 Prot=00 MxPS= 9 #Cfgs=  1
-P: Vendor=2c7c ProdID=0122 Rev=05.15
-S: Manufacturer=Quectel
-S: Product=RG650V-EU
-S: SerialNumber=xxxxxxx
-C: #Ifs= 5 Cfg#= 1 Atr=a0 MxPwr=896mA
-I: If#= 0 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=ff Prot=30 Driver=option
-E: Ad=01(O) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-E: Ad=81(I) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-I: If#= 1 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
-E: Ad=02(O) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-E: Ad=82(I) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-I: If#= 2 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
-E: Ad=03(O) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-E: Ad=83(I) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-E: Ad=84(I) Atr=03(Int.) MxPS=  10 Ivl=9ms
-I: If#= 3 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
-E: Ad=04(O) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-E: Ad=85(I) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-E: Ad=86(I) Atr=03(Int.) MxPS=  10 Ivl=9ms
-I: If#= 4 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=ff Prot=ff Driver=qmi_wwan
-E: Ad=05(O) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-E: Ad=87(I) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-E: Ad=88(I) Atr=03(Int.) MxPS=   8 Ivl=9ms
-
-Signed-off-by: Benoît Monin <benoit.monin@gmx.fr>
-Reviewed-by: Simon Horman <horms@kernel.org>
-Link: https://patch.msgid.link/20241024151113.53203-1-benoit.monin@gmx.fr
-Signed-off-by: Jakub Kicinski <kuba@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/net/usb/qmi_wwan.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/net/usb/qmi_wwan.c b/drivers/net/usb/qmi_wwan.c
-index bbd5183e5e635..d297352ab3d81 100644
---- a/drivers/net/usb/qmi_wwan.c
-+++ b/drivers/net/usb/qmi_wwan.c
-@@ -1045,6 +1045,7 @@ static const struct usb_device_id products[] = {
- 		USB_DEVICE_AND_INTERFACE_INFO(0x03f0, 0x581d, USB_CLASS_VENDOR_SPEC, 1, 7),
- 		.driver_info = (unsigned long)&qmi_wwan_info,
- 	},
-+	{QMI_MATCH_FF_FF_FF(0x2c7c, 0x0122)},	/* Quectel RG650V */
- 	{QMI_MATCH_FF_FF_FF(0x2c7c, 0x0125)},	/* Quectel EC25, EC20 R2.0  Mini PCIe */
- 	{QMI_MATCH_FF_FF_FF(0x2c7c, 0x0306)},	/* Quectel EP06/EG06/EM06 */
- 	{QMI_MATCH_FF_FF_FF(0x2c7c, 0x0512)},	/* Quectel EG12/EM12 */
 -- 
-2.43.0
-
+With best wishes
+Dmitry
 
