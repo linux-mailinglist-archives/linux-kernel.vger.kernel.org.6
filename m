@@ -1,137 +1,98 @@
-Return-Path: <linux-kernel+bounces-395638-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395639-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D34C29BC0E1
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 23:27:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 130A49BC0E3
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 23:28:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 35F2FB21F5B
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 22:27:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8730CB21BB6
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 22:28:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A02A1FE0F3;
-	Mon,  4 Nov 2024 22:26:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 104A51D5CE7;
+	Mon,  4 Nov 2024 22:27:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="a3L4AYUQ"
-Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="kpMl9DZ0"
+Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9950F1D319B
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 22:26:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECF371D319B
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 22:27:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730759217; cv=none; b=irw6MwRIoohzTfrLNcXE726disIVdvIkyuE88P4lsR4K5x6buXorNB9ng/f4oiXy/omMPTjoqPPVMsD7rVonml3WEH6K9KQklmR7RyMVg9XEjpGoalfl4IA/UGXJm8RcQ8qlfZ3pS1OcbRh8gy0x4jUnYkQm9lfIQfzxAw+3Wnk=
+	t=1730759278; cv=none; b=e/1z4O/1SOp6GsRg2Iedrleqwi9LV/GQmhrdFHgdiCmCcI7Inyc9w8IVZHJFRiBGkp0cKtsbMCweZtf3k9WL4GHSABpjgMtYjwrbsNrIdQmgbjbeP+5Gnsuqalw2QK5LhyYBDkVC1LNxkf7nOtwCfizFiIZr2LjnYbkhNh7k/bo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730759217; c=relaxed/simple;
-	bh=3/oE7cchq8TcJbmV8bGO499XK8EO6VL6xOMoh5PoLP8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=inxydecik6cmAenrxyHMBXoWVTZ6laKdO+2QzzCc8ygt5y09Bdau4mYZsxSKLA/kZMcV6OCGtf7S1Zgx7ygkf72YZQbcrbkbFCkttjAGfaM8uD4ztt0UxCLsuq4LIxk9G6bWGMtiaLqIn+x4jm7I4Xmw6cFqAC28d9z40/vmUa0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=a3L4AYUQ; arc=none smtp.client-ip=209.85.128.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-6ea5003deccso48944117b3.0
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 14:26:55 -0800 (PST)
+	s=arc-20240116; t=1730759278; c=relaxed/simple;
+	bh=TvzIPlQ5D61Fv05UDW0gkeINVQdDASr4ry+iQ28HvLo=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=pkWPiIWo7+EYAWG23v0DoeYJB5BYuMCkBpxdQSysR8KalnT8P12PYQdQyDbKzqKIAYLf99X4Fg0qw/q6EE5C6jKR7Vr6pyfaZX8OAufyv3NQ3nyN4AqvC7uT9RADfNr3qEyjmQfGIZ2NdGFWRMye8obSmCpw5lbIssjOTVK+X8c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--kerensun.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=kpMl9DZ0; arc=none smtp.client-ip=209.85.128.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--kerensun.bounces.google.com
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6e59dc7df64so60988737b3.1
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 14:27:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1730759214; x=1731364014; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=YFYUjoN6JtKhvygNd1Wg+iTralXiZl7teJmBFz5nr6g=;
-        b=a3L4AYUQCQjewyPDAAdoPqMdkBbSgU1t5fzHY3P3XpdtaPpHy0/jCB81tA7wg0nHoF
-         xDjVw0DKytAxMdUX4Or7wJBTn4XJiNnvoS/MhwShLrApImXChcAkjrAyCeEj+PQbdfe/
-         /OgPYD16WSqZPMdZ3pl5G6kq7qWjhI3CnkXW4=
+        d=google.com; s=20230601; t=1730759276; x=1731364076; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=eLnYMXR0eJ0WVOXHu5ohmzLISM/yif+XEsN4c7cAuuw=;
+        b=kpMl9DZ0UbCoxaOwgiYVtpYbyQKBnzNVs14AIggjGskr+hXM+iFbrQ/xJfv2mVWcOQ
+         qBznlE5kye0fasx91ydlggIYREzeikW+aooAu3v4EOLQESuitwpjrrhjbTuxqOuFTBsy
+         OM5r6AFAasHa5pu+Um+pjvLaCCwZb62Pr7QBq/mIBsmDQGhVEOaAMLMK91OI0grcCvQn
+         sysvyynGCWQ9jsbo3q8PNqsrHV2fcukRhd1YRuaAWS7JXc0eVTKV6mYxyBK/HAFXY1qt
+         3Lee4YJvwGSYNwDstptc1KhD93nmhp+LF07aieDDkLgUj0IlSUNl1GaXiIYDTkhC4VMZ
+         2cHw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730759214; x=1731364014;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YFYUjoN6JtKhvygNd1Wg+iTralXiZl7teJmBFz5nr6g=;
-        b=M4q7U2f8Qs1ybTsrdTmW3RLjjKRWzuYar4sORpLeAPI51gdqwn7425Ecqz4oVoDuzj
-         uQuozeq9603g1cj5COt7obrqsjCLF6ZKlEEm2QDryB8OvwRt9urzLSuxvkeM1dNQ6Z6+
-         CUI0yj2DV7CM9Y6r9bMVb76pi0PLbB1xmmdR1jdFROLP4yNCge48GPjVuanXgP6jdAhT
-         WCXb6t4FMCn5Huymyl62BdkB/OI18CnU9pA0gBCsSJ7BUVbhMiWeDw3TCtCzPCMbLS5j
-         mgE6Y4mEG9bSOt/PWnM2oS2d97heGFtPUBYH/MMspjx/YsaVBdX/Pd4L9QnqeH1od2Uo
-         XnTA==
-X-Forwarded-Encrypted: i=1; AJvYcCU1VS7SPvhN0ukWRgvQo7ied1g2CiPqfK0LEqEqhH18Hww7Bit3N1dvKCzVn1t7HczzNNiInqOkXqdTPOw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxAN5KrSLQBBUg3SU5WYH56yeb8p8ydLqzvTNyLEFSpSvDvmcdt
-	eMAuFefmRBB1ZMe3TKNP5dTbHUxSNDpe+xVUk7QiCuFGCnCYea3txtENWAHSIw==
-X-Google-Smtp-Source: AGHT+IGL+1PTvdwiAjsth7FgszCPVtfD+o0hINDgPQq5G3MEke8FP7m/4zuieuakdx7HW5vJdx/cUw==
-X-Received: by 2002:a05:690c:380a:b0:6e2:ac0a:8926 with SMTP id 00721157ae682-6ea64aa6f72mr144338077b3.9.1730759214556;
-        Mon, 04 Nov 2024 14:26:54 -0800 (PST)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d353f9e7f7sm52820996d6.29.2024.11.04.14.26.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 04 Nov 2024 14:26:53 -0800 (PST)
-Message-ID: <e5dd07ba-b9a4-4a38-a207-5c33f04ea24e@broadcom.com>
-Date: Mon, 4 Nov 2024 14:26:50 -0800
+        d=1e100.net; s=20230601; t=1730759276; x=1731364076;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=eLnYMXR0eJ0WVOXHu5ohmzLISM/yif+XEsN4c7cAuuw=;
+        b=fD3gRMtfUGf2Uob6NxqbfjBw0k/Q2Qo66DYNIkSyq0dE28aqzF4rGPFofShMHjRYTR
+         5aALw0qYeRh6g9CdHKUDF+EtWMBp1l1WhRNq/nubt8IvfWOezboOnC4z8SxOqHzbZjd9
+         FQK5kfv2YbKvgHHuVdDGvYVAyyzGJboHCjAla/0sKPvcRw3+t91QbYOqM/W21HONpmTd
+         a6QNbyyXGt7kqVPgf6C26OOhaZ9APV22uWZlpD6/Yc/26Xa3udoIlcgIgO6fjNvuZxoV
+         9D4Fd7czu+SxpVzl4oFMZeqQAnZ5wo0FYVnnDKDJAbOivMn/rWswoKjKRhhMKclr9FOe
+         VRow==
+X-Forwarded-Encrypted: i=1; AJvYcCXmKgycBRylXELkkqnS9UWYFkeTmYY1nQVgGqnSib8fgqKVwapEhIU4efgxpdxv+XQyb6xUdaeAg5wHHOM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx8SvrxdqCXyoRZKN95cc9rQHdPTasXNdkAh+H0pzk666cOGflj
+	xOs8yR34OPnbDcMQ7KprkN7Q3gmkyyo2ajZl2NIB+jPQZBaWyq57XM0I0/rdu17kCa9/6A8kPGK
+	F6j8oQegNjw==
+X-Google-Smtp-Source: AGHT+IH47mWu7tl+7jg9xhI8qwcAtywVoHaauR6iyeePJxOJs2WneI4NavVt60+ZcgqgGKJ9n9EcOYgF7JbeEg==
+X-Received: from kerensun.svl.corp.google.com ([2620:15c:2c5:11:2520:b863:90ba:85bc])
+ (user=kerensun job=sendgmr) by 2002:a05:690c:7004:b0:620:32ea:e1d4 with SMTP
+ id 00721157ae682-6ea554802ffmr2326227b3.0.1730759276104; Mon, 04 Nov 2024
+ 14:27:56 -0800 (PST)
+Date: Mon,  4 Nov 2024 14:27:33 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCHv2 net-next] net: broadcom: use ethtool string helpers
-To: Rosen Penev <rosenp@gmail.com>, netdev@vger.kernel.org
-Cc: Justin Chen <justin.chen@broadcom.com>,
- Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?=
- <rafal@milecki.pl>, Doug Berger <opendmb@gmail.com>,
- Heiner Kallweit <hkallweit1@gmail.com>, Russell King
- <linux@armlinux.org.uk>, open list <linux-kernel@vger.kernel.org>
-References: <20241104205317.306140-1-rosenp@gmail.com>
-Content-Language: en-US
-From: Florian Fainelli <florian.fainelli@broadcom.com>
-Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
- xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
- M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
- JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
- PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
- KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
- AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
- IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
- ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
- bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
- Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
- tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
- TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
- zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
- WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
- IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
- U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
- 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
- pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
- MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
- IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
- gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
- obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
- N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
- CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
- C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
- wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
- EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
- fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
- MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
- 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
- 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
-In-Reply-To: <20241104205317.306140-1-rosenp@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.47.0.199.ga7371fff76-goog
+Message-ID: <20241104222737.298130-1-kerensun@google.com>
+Subject: [PATCH 0/4] mm: fix checkpatch.pl warnings in memcg v1 code
+From: Keren Sun <kerensun@google.com>
+To: akpm@linux-foundation.org
+Cc: roman.gushchin@linux.dev, hannes@cmpxchg.org, mhocko@kernel.org, 
+	shakeel.butt@linux.dev, muchun.song@linux.dev, cgroups@vger.kernel.org, 
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	Keren Sun <kerensun@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On 11/4/24 12:53, Rosen Penev wrote:
-> The latter is the preferred way to copy ethtool strings.
-> 
-> Avoids manually incrementing the pointer. Cleans up the code quite well.
-> 
-> Signed-off-by: Rosen Penev <rosenp@gmail.com>
+The patch series fixes 1 error and 27 warnings found by checkpatch.pl in the
+memcg1 code.
 
-Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
-Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
+Keren Sun (4):
+  mm: fix quoted strings spliting across lines
+  mm: Fix minor formatting issues for mm control
+  mm: Prefer 'unsigned int' to bare use of 'unsigned'
+  mm: Replace simple_strtoul() with kstrtoul()
+
+ mm/memcontrol-v1.c | 63 +++++++++++++++++-----------------------------
+ 1 file changed, 23 insertions(+), 40 deletions(-)
+
 -- 
-Florian
+2.47.0.163.g1226f6d8fa-goog
+
 
