@@ -1,83 +1,52 @@
-Return-Path: <linux-kernel+bounces-394290-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394282-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B8609BACEC
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 08:01:08 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B27559BACD7
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 07:50:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6AF8F1C20D4F
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 07:01:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B5E68B20E8A
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 06:50:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 418B518E056;
-	Mon,  4 Nov 2024 07:01:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ivs5iepd"
-Received: from mail-pf1-f194.google.com (mail-pf1-f194.google.com [209.85.210.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13E1F18D64D;
+	Mon,  4 Nov 2024 06:50:08 +0000 (UTC)
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CA3A17583;
-	Mon,  4 Nov 2024 07:00:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 697FE158D80;
+	Mon,  4 Nov 2024 06:50:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730703660; cv=none; b=cOUw1Gev2rXGBy7P7JmU/46n1k1HdEK8bTsRsfQ5Y4qRoCu3olPHbdsksv9LhF/hz3oTJORwA9G7N2p3JtMZiV634kxhxikwftM/tqEOVXD5GC2eUkL4NW05AZL4lLrl1tMgNp0a+Ep4g7EMl80JgXEpIIJ9jPqjGgbDNTKZeHc=
+	t=1730703007; cv=none; b=kKHXDumpNFPGT1DP3FfIVwYCorCMmLIAsyIie8SNvfXPOmPaU9a8twFPbY4EjSPwIToJHOq85F3Z9JMx2Zp2U82ajyrrkERbmTWiORMPpvauwfmLrN0TZAOtjLG/LWhp9KIcIEnM8pB0Ge6EgJYwXLsoj0MG0SEGxs9nZViptoc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730703660; c=relaxed/simple;
-	bh=hC7F0fhiZg5D6UVPTp6KiStqCbFkcOa1WMSV28jaa5g=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=RGCrNRey6i7y+yrp1x+NMiWHGnJM+1kXsBpKSQ5/lakpd2UWaGAWeTWQ+kIvATmjnJYaN9m1MwO//DciqGGTKNoR+vwip4slhnPdYHsGOJBo77rS21XBzq8g9BRrLl+jE1k+h4PyOU+ALrQUA4ZjJRMRqECyKL8KIB6TnZM81f4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ivs5iepd; arc=none smtp.client-ip=209.85.210.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f194.google.com with SMTP id d2e1a72fcca58-720b2d8bcd3so2992935b3a.2;
-        Sun, 03 Nov 2024 23:00:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730703658; x=1731308458; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=WcRCa9PXpWbvCBL1vMLSzhAlsPl+CqOyZHOppQGsiRU=;
-        b=Ivs5iepdkiMeNJnxGD/qVtaN743TIwXzleREBDcEcm8fqV8LZGZKaoXHFgeRxX49X9
-         kZVSDYcgU0spzXUTQ0KtyQs7EU6MuuCS+78X/t3xvb7dh1EASMi3As1QOBGadcyhguPL
-         KdjaorhC5ljDd8EmRHm0fD+CKQmTok2b1ed10BVp+OwfYrygnLlBW9+LzxweTvrCht2r
-         Z7KRKhAgn/IYxilWc9Bh0Cf2GW6zgIdjjFNQiJt+D84MAKR9tZDZTHimI5cx8YFnO0ge
-         xx+9jF0XOl1cs/TX9BftEqtmrAg0ZUyhCkRQoIVOxBnkFllxuTEPZazL+OYzzwasv9xt
-         64kA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730703658; x=1731308458;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=WcRCa9PXpWbvCBL1vMLSzhAlsPl+CqOyZHOppQGsiRU=;
-        b=tmGPMGAnOEmNVxPNHxlu6kwB1ghYnLyXdDa4vFxxrAn20Uhl3x0y4Mj7ppDVVKdKu2
-         APHpZCfkfokk6sSA5r7bT2BbEne85NpFkMvJHPUUEOtGPdqtLTtoPMmbWjTLYbRgKA1k
-         RhYY+b3xiraqrXeZqYJm2kgcvNZz71gGVIzdUhl9lkodi+lwD15i1hvKgYFRdTUssu6A
-         hhBnQv7ZVraVp9IRDWc+6rGfnnqPyjckV6PWRram5+hOPFR/FnWBXPP0sZYlfBSIzWKT
-         ebEx5gwfW4pce71J6XRoW5TluhMykhheV0FFzawFtPISt1JE07AUIQL3HJ0woq62/O8i
-         grmg==
-X-Forwarded-Encrypted: i=1; AJvYcCVLZkzgvwSlTCMTxzGsQGZuvDiDWmsW9u2IOuUCKJ47+PZ3mxUWWt1z/CN6m8OCdaRHBZJ32c8l@vger.kernel.org, AJvYcCWcTWvsnJjtN6e9bm9vBvMhqzM7+c7Ggc7iWN6OWH3WqdQfsxSses9fXOChNAJoelTTLWc+nAd92ldbB5I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwrpCo6ritLSa7vkKfonaZhW5ZgArpfn+tiFibKzALFQSCqN+os
-	D7M/GoaJeMjrrot71wxtOeTSvjiotaecX+vBYjRLMCcclLP2VM17
-X-Google-Smtp-Source: AGHT+IEjd6UWDvOMdaHanOHmjg+kShRprAl6051TkHSUXWe/Bi1CRP8VegFLo5qBzHP+xouXzWf02g==
-X-Received: by 2002:a05:6a21:398e:b0:1db:915b:ab11 with SMTP id adf61e73a8af0-1db915bab14mr22782056637.24.1730703658457;
-        Sun, 03 Nov 2024 23:00:58 -0800 (PST)
-Received: from localhost.localdomain ([43.129.25.208])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7ee45a0eda2sm6481582a12.86.2024.11.03.23.00.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 03 Nov 2024 23:00:58 -0800 (PST)
-From: Menglong Dong <menglong8.dong@gmail.com>
-X-Google-Original-From: Menglong Dong <dongml2@chinatelecom.cn>
-To: kuba@kernel.org
-Cc: edumazet@google.com,
-	dsahern@kernel.org,
-	lixiaoyan@google.com,
-	weiwan@google.com,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Menglong Dong <dongml2@chinatelecom.cn>
-Subject: [PATCH net-next v2] net: tcp: replace the document for "lsndtime" in tcp_sock
-Date: Mon,  4 Nov 2024 15:00:41 +0800
-Message-Id: <20241104070041.64302-1-dongml2@chinatelecom.cn>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1730703007; c=relaxed/simple;
+	bh=CSMlutpBpwaIYCs2IDEquG2do+CIX7HDvp/bSm2fivs=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=YtoaSk9ymZhpeaUEpRd6Py5mllLVUaZQqlMhZPxkCWXEmHkz2x5tdpPbYpKiijWhdOVvgml3Zk8MarfmefEFmapMg3sTgyyOmGPZpHz8v6S9af9/vqkUat1/7VxhhKlBi9BYQ4PtYpUfYJKZdKIdGj5gqVXaalzb1tA+TVUUhE8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.48])
+	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4Xhhrf5Q6NzQsXr;
+	Mon,  4 Nov 2024 14:48:50 +0800 (CST)
+Received: from kwepemf500004.china.huawei.com (unknown [7.202.181.242])
+	by mail.maildlp.com (Postfix) with ESMTPS id 8AD2818007C;
+	Mon,  4 Nov 2024 14:49:55 +0800 (CST)
+Received: from lihuafei.huawei.com (10.90.53.74) by
+ kwepemf500004.china.huawei.com (7.202.181.242) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Mon, 4 Nov 2024 14:49:54 +0800
+From: Li Huafei <lihuafei1@huawei.com>
+To: <mchehab@kernel.org>, <alan@linux.intel.com>
+CC: <andy@kernel.org>, <hdegoede@redhat.com>, <sakari.ailus@linux.intel.com>,
+	<gregkh@linuxfoundation.org>, <linux-media@vger.kernel.org>,
+	<linux-staging@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+	<lihuafei1@huawei.com>
+Subject: [PATCH v2] media: atomisp: Add check for rgby_data memory allocation failure
+Date: Mon, 4 Nov 2024 22:50:51 +0800
+Message-ID: <20241104145051.3088231-1-lihuafei1@huawei.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,41 +54,38 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ kwepemf500004.china.huawei.com (7.202.181.242)
 
-Commit d5fed5addb2b ("tcp: reorganize tcp_sock fast path variables")
-moved the fields around and misplaced the documentation for "lsndtime".
-So, let's replace it in the proper place.
+In ia_css_3a_statistics_allocate(), there is no check on the allocation
+result of the rgby_data memory. If rgby_data is not successfully
+allocated, it may trigger the assert(host_stats->rgby_data) assertion in
+ia_css_s3a_hmem_decode(). Adding a check to fix this potential issue.
 
-Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
+Fixes: a49d25364dfb ("staging/atomisp: Add support for the Intel IPU v2")
+Signed-off-by: Li Huafei <lihuafei1@huawei.com>
 ---
-v2:
-- remove the "Fixes" tag in the commit log
+Changes in v2:
+ - Corrects the "Fixes" tag.
 ---
- include/linux/tcp.h | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/staging/media/atomisp/pci/sh_css_params.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/include/linux/tcp.h b/include/linux/tcp.h
-index 6a5e08b937b3..f88daaa76d83 100644
---- a/include/linux/tcp.h
-+++ b/include/linux/tcp.h
-@@ -200,7 +200,6 @@ struct tcp_sock {
+diff --git a/drivers/staging/media/atomisp/pci/sh_css_params.c b/drivers/staging/media/atomisp/pci/sh_css_params.c
+index 232744973ab8..b1feb6f6ebe8 100644
+--- a/drivers/staging/media/atomisp/pci/sh_css_params.c
++++ b/drivers/staging/media/atomisp/pci/sh_css_params.c
+@@ -4181,6 +4181,8 @@ ia_css_3a_statistics_allocate(const struct ia_css_3a_grid_info *grid)
+ 		goto err;
+ 	/* No weighted histogram, no structure, treat the histogram data as a byte dump in a byte array */
+ 	me->rgby_data = kvmalloc(sizeof_hmem(HMEM0_ID), GFP_KERNEL);
++	if (!me->rgby_data)
++		goto err;
  
- 	/* TX read-mostly hotpath cache lines */
- 	__cacheline_group_begin(tcp_sock_read_tx);
--	/* timestamp of last sent data packet (for restart window) */
- 	u32	max_window;	/* Maximal window ever seen from peer	*/
- 	u32	rcv_ssthresh;	/* Current window clamp			*/
- 	u32	reordering;	/* Packet reordering metric.		*/
-@@ -263,7 +262,7 @@ struct tcp_sock {
- 	u32	chrono_stat[3];	/* Time in jiffies for chrono_stat stats */
- 	u32	write_seq;	/* Tail(+1) of data held in tcp send buffer */
- 	u32	pushed_seq;	/* Last pushed seq, required to talk to windows */
--	u32	lsndtime;
-+	u32	lsndtime;	/* timestamp of last sent data packet (for restart window) */
- 	u32	mdev_us;	/* medium deviation			*/
- 	u32	rtt_seq;	/* sequence number to update rttvar	*/
- 	u64	tcp_wstamp_ns;	/* departure time for next sent data packet */
+ 	IA_CSS_LEAVE("return=%p", me);
+ 	return me;
 -- 
-2.39.5
+2.25.1
 
 
