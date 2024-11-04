@@ -1,271 +1,311 @@
-Return-Path: <linux-kernel+bounces-394560-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394563-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0B269BB128
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 11:32:27 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2217D9BB133
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 11:34:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F3DED1C218CA
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 10:32:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8FE99B20E97
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 10:34:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD9E01B0F0B;
-	Mon,  4 Nov 2024 10:32:20 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D9D41AB505;
-	Mon,  4 Nov 2024 10:32:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E403C1B218D;
+	Mon,  4 Nov 2024 10:34:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="EowmVmWd"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45B641B0F3F
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 10:34:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730716340; cv=none; b=Zc7/0DwGbeIHhpFuUb09R81ElHw+GfsLCroxO2vWXZio27QuytDq0x/Z1FDdjWjB9Z5zCcHgs3h59JckWhYpIUAe9Id6TmaL1q7EkqNGLL8DVuE9tL3DB2stwecICafexZYf+zRi0e6+n9UBqpL5mdHBvRmE6DJC1H1zaF8RJSw=
+	t=1730716449; cv=none; b=uuz9UwU2Q78ddL28iR1BOCF44BgONp3+KlN2Ix7hlZgUeKb1sNL1Xzf2cKNR7K8Z9vewZ/Z3tgneWR/RMOwVofOgddIzxf/WyAtva78bAogobIO8J6X75y9Ma/sIRLqJWB1i6EhNNU/qxYu4eqiE5F0ZQZCQU4Hxi8oiAWDGvxc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730716340; c=relaxed/simple;
-	bh=0g6fsbrfbKoeB1+lLzNSUUJqImvH5HnzCsnnVU3FqHY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iWaI8QntkZ2xupu4k139hN+X4DHET8npsXKV/71iGSwxrlcx9h1MAcZ/hWHPe8DzguE7mqQmaQP+/2aX+ke3EBk/bvB//RW4bBXI9QzuvRblRz1Kh2dNXWKGVrGHrX2/R5jSNdKd4kLAcaLg9QM3gx/W0WXIil1KG3iRYyOIpH0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 583E4FEC;
-	Mon,  4 Nov 2024 02:32:47 -0800 (PST)
-Received: from [10.57.88.110] (unknown [10.57.88.110])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7FB933F66E;
-	Mon,  4 Nov 2024 02:32:12 -0800 (PST)
-Message-ID: <6b5b4f25-0f42-4f83-b6b5-82c1adbefe83@arm.com>
-Date: Mon, 4 Nov 2024 10:32:10 +0000
+	s=arc-20240116; t=1730716449; c=relaxed/simple;
+	bh=ds7VaLV3CLZCOlxw1/dW8bJgf4WdFZ5SQff89MnWOjo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sfOfiSdfPvDJ8aavFHgetu6a4RogqqxyVlR4WBhEbb6kECKGJ53AmT2CmvR1WleIiWmaFySU0OGTux62rdmW1/oC7iO8ST714xVh+1Ek9o21IcLvi7PXLeIAjHh97PVkT4h6JitF0y5Ha1rR+iJLHK6oJfFId8M3Wgp2fwNqQbU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=EowmVmWd; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-37d4821e6b4so2451432f8f.3
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 02:34:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1730716445; x=1731321245; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=LdBQL0+iSYtrAl5XR5Wfl7qDSVbeEuoT364HYKrX1Lo=;
+        b=EowmVmWdOH3r4VWDbxzf1PIBmI90z70S11vVfh/14UF3/ALzNhkslKpvkQb6boMLPh
+         KANMqRh+3aTEUh6tGmhPows7iP3G7saXLIJkTQGtAq9TACUXIrIKL+QVGKixEzucRxd6
+         hqgkZ1MhEtvZQJUfvsFP/7Y9IBoL6ZkrThVrilb6JRMDBBiUrqCENRech78u/kcPi4x3
+         U8uQbHgcuvNY41wGZ7Fn2MEwss44Np/mi8Ig76W2yIeknrpwnrPYiiOavdQUc801yDi8
+         FLtK1nja8Iptb5L8gg3WcW/eXZljD6bcFn9Ea9KeXRl8WyiAI0tzYJbkIT/4dn8Y9zkI
+         NzHQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730716445; x=1731321245;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=LdBQL0+iSYtrAl5XR5Wfl7qDSVbeEuoT364HYKrX1Lo=;
+        b=Kbvihl2YExmVRHTUgemRTjnHxlftNSjYiydHItuU3Rlyzp5lAm6AOm6XpnFKwTPqxd
+         vVxx08o59Zb2HUO/FTw8/FECoJnhgNCT/o1dYqSw2YqT5y/sPXwvEmkdYwEWU9nTyFJb
+         RDIFNArhvS7wHCswxE/cd+rwGo7ZqehQmqI7VC34WeHierRcn4B+zBkY79Sd7u1uj0Au
+         vRZeHG95+UOdf1cMW8kMHRlYRi5+juazzZ65/MSZjOMonCN1nWqAXYS5sGRpr/qMI3fr
+         PLWhHOuCnCNYzR/D6b0RZrfKIF0lzQgOn73ddkqxBmQKagF/wzuRN6gUp/oFjOmXUbA8
+         lgBQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV2oY8NNb3Fbv5UX/ayQSGm+e3Dx1KNx++ABc7dqbLPQ/7aTAK5IEqTAA3TVVmPgA2us6jq+QMJ5Oxwibg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzBFz+wAxsJFRX8t8hyq6HVRry2xFRzzYwvOfMqxESUp8gNcOl3
+	sUCqSs/kvzmyzyOhaJzlXluxn9DRwfeoiGwqbFj5VBktbV8xuM3UqQG18oRNGis=
+X-Google-Smtp-Source: AGHT+IEK9tiSaY4RconKrWdvz2GbFXC+yQ8DXTi0bk2m3Zq2OMyXLJFrFD2Li7cJZ4WlD95pGsAKbQ==
+X-Received: by 2002:a5d:6083:0:b0:37d:2db5:b50c with SMTP id ffacd0b85a97d-380610f2d67mr20536901f8f.8.1730716444621;
+        Mon, 04 Nov 2024 02:34:04 -0800 (PST)
+Received: from dfj (host-95-245-34-85.retail.telecomitalia.it. [95.245.34.85])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381c10d4bc8sm12865130f8f.39.2024.11.04.02.34.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 04 Nov 2024 02:34:03 -0800 (PST)
+Date: Mon, 4 Nov 2024 11:32:45 +0100
+From: Angelo Dureghello <adureghello@baylibre.com>
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: Nuno =?utf-8?B?U8Oh?= <noname.nuno@gmail.com>, 
+	Angelo Dureghello <angelo@kernel-space.org>, Lars-Peter Clausen <lars@metafoo.de>, 
+	Michael Hennerich <Michael.Hennerich@analog.com>, Nuno =?utf-8?B?U8Oh?= <nuno.sa@analog.com>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Olivier Moysan <olivier.moysan@foss.st.com>, 
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	dlechner@baylibre.com, Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH v9 4/8] iio: dac: adi-axi-dac: extend features
+Message-ID: <npdnblj3cygmb5oxulebnifnqk5y6hgeldfykvzcdz6peoq6wx@vd4dnl744ktq>
+References: <20241028-wip-bl-ad3552r-axi-v0-iio-testing-v9-0-f6960b4f9719@kernel-space.org>
+ <20241028-wip-bl-ad3552r-axi-v0-iio-testing-v9-4-f6960b4f9719@kernel-space.org>
+ <51afb385d291d27ea4e5d8b1f5f3389573b119d5.camel@gmail.com>
+ <20241029211737.6486e0d6@jic23-huawei>
+ <2e343f2da60b8ad4da9f24d0d42a961abf2dc30f.camel@gmail.com>
+ <20241031212209.3d94c18c@jic23-huawei>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] iommu: Switch back to struct platform_driver::remove()
-To: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
- Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>
-Cc: Hector Martin <marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>,
- Alyssa Rosenzweig <alyssa@rosenzweig.io>, Rob Clark <robdclark@gmail.com>,
- Yong Wu <yong.wu@mediatek.com>, Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Tomasz Jeznach <tjeznach@rivosinc.com>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Orson Zhai <orsonzhai@gmail.com>, Baolin Wang
- <baolin.wang@linux.alibaba.com>, Chunyan Zhang <zhang.lyra@gmail.com>,
- Jason Gunthorpe <jgg@ziepe.ca>, Nicolin Chen <nicolinc@nvidia.com>,
- Michael Shavit <mshavit@google.com>, Mostafa Saleh <smostafa@google.com>,
- Lu Baolu <baolu.lu@linux.intel.com>,
- Georgi Djakov <quic_c_gdjako@quicinc.com>,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, asahi@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
- linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- linux-mediatek@lists.infradead.org, linux-riscv@lists.infradead.org
-References: <20241104064650.799122-2-u.kleine-koenig@baylibre.com>
-From: Robin Murphy <robin.murphy@arm.com>
-Content-Language: en-GB
-In-Reply-To: <20241104064650.799122-2-u.kleine-koenig@baylibre.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241031212209.3d94c18c@jic23-huawei>
 
-On 2024-11-04 6:46 am, Uwe Kleine-KÃ¶nig wrote:
-> After commit 0edb555a65d1 ("platform: Make platform_driver::remove()
-> return void") .remove() is (again) the right callback to implement for
-> platform drivers.
+On 31.10.2024 21:22, Jonathan Cameron wrote:
+> On Thu, 31 Oct 2024 07:35:41 +0100
+> Nuno Sá <noname.nuno@gmail.com> wrote:
 > 
-> Convert all platform drivers below drivers/iommu to use .remove(), with
-> the eventual goal to drop struct platform_driver::remove_new(). As
-> .remove() and .remove_new() have the same prototypes, conversion is done
-> by just changing the structure member name in the driver initializer.
+> > On Tue, 2024-10-29 at 21:17 +0000, Jonathan Cameron wrote:
+> > > On Tue, 29 Oct 2024 09:13:42 +0100
+> > > Nuno Sá <noname.nuno@gmail.com> wrote:
+> > >   
+> > > > On Mon, 2024-10-28 at 22:45 +0100, Angelo Dureghello wrote:  
+> > > > > From: Angelo Dureghello <adureghello@baylibre.com>
+> > > > > 
+> > > > > Extend AXI-DAC backend with new features required to interface
+> > > > > to the ad3552r DAC. Mainly, a new compatible string is added to
+> > > > > support the ad3552r-axi DAC IP, very similar to the generic DAC
+> > > > > IP but with some customizations to work with the ad3552r.
+> > > > > 
+> > > > > Then, a series of generic functions has been added to match with
+> > > > > ad3552r needs. Function names has been kept generic as much as
+> > > > > possible, to allow re-utilization from other frontend drivers.
+> > > > > 
+> > > > > Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
+> > > > > ---    
+> > > > 
+> > > > Hi Angelo,
+> > > > 
+> > > > Small stuff that Jonathan might be able to change while applying... With that:
+> > > > 
+> > > > Reviewed-by: Nuno Sa <nuno.sa@analog.com>
+> > > >   
+> > > > >  drivers/iio/dac/adi-axi-dac.c | 256 +++++++++++++++++++++++++++++++++++++++--
+> > > > > -
+> > > > >  1 file changed, 242 insertions(+), 14 deletions(-)
+> > > > > 
+> > > > > diff --git a/drivers/iio/dac/adi-axi-dac.c b/drivers/iio/dac/adi-axi-dac.c
+> > > > > index 04193a98616e..155d04ca2315 100644
+> > > > > --- a/drivers/iio/dac/adi-axi-dac.c
+> > > > > +++ b/drivers/iio/dac/adi-axi-dac.c
+> > > > > @@ -46,9 +46,28 @@
+> > > > >  #define AXI_DAC_CNTRL_1_REG			0x0044
+> > > > >  #define   AXI_DAC_CNTRL_1_SYNC			BIT(0)
+> > > > >  #define AXI_DAC_CNTRL_2_REG			0x0048
+> > > > > +#define   AXI_DAC_CNTRL_2_SDR_DDR_N		BIT(16)
+> > > > > +#define   AXI_DAC_CNTRL_2_SYMB_8B		BIT(14)
+> > > > >  #define   ADI_DAC_CNTRL_2_R1_MODE		BIT(5)
+> > > > > +#define   AXI_DAC_CNTRL_2_UNSIGNED_DATA		BIT(4)
+> > > > > +#define AXI_DAC_STATUS_1_REG			0x0054
+> > > > > +#define AXI_DAC_STATUS_2_REG			0x0058
+> > > > >  #define AXI_DAC_DRP_STATUS_REG			0x0074
+> > > > >  #define   AXI_DAC_DRP_STATUS_DRP_LOCKED		BIT(17)
+> > > > > +#define AXI_DAC_CUSTOM_RD_REG			0x0080
+> > > > > +#define AXI_DAC_CUSTOM_WR_REG			0x0084
+> > > > > +#define   AXI_DAC_CUSTOM_WR_DATA_8		GENMASK(23, 16)
+> > > > > +#define   AXI_DAC_CUSTOM_WR_DATA_16		GENMASK(23, 8)
+> > > > > +#define AXI_DAC_UI_STATUS_REG			0x0088
+> > > > > +#define   AXI_DAC_UI_STATUS_IF_BUSY		BIT(4)
+> > > > > +#define AXI_DAC_CUSTOM_CTRL_REG			0x008C
+> > > > > +#define   AXI_DAC_CUSTOM_CTRL_ADDRESS		GENMASK(31, 24)
+> > > > > +#define   AXI_DAC_CUSTOM_CTRL_SYNCED_TRANSFER	BIT(2)
+> > > > > +#define   AXI_DAC_CUSTOM_CTRL_STREAM		BIT(1)
+> > > > > +#define   AXI_DAC_CUSTOM_CTRL_TRANSFER_DATA	BIT(0)
+> > > > > +
+> > > > > +#define
+> > > > > AXI_DAC_CUSTOM_CTRL_STREAM_ENABLE	(AXI_DAC_CUSTOM_CTRL_TRANSFER_DATA | \
+> > > > > +						 AXI_DAC_CUSTOM_CTRL_STREAM)
+> > > > >  
+> > > > >  /* DAC Channel controls */
+> > > > >  #define AXI_DAC_CHAN_CNTRL_1_REG(c)		(0x0400 + (c) * 0x40)
+> > > > > @@ -63,12 +82,21 @@
+> > > > >  #define AXI_DAC_CHAN_CNTRL_7_REG(c)		(0x0418 + (c) * 0x40)
+> > > > >  #define   AXI_DAC_CHAN_CNTRL_7_DATA_SEL		GENMASK(3, 0)
+> > > > >  
+> > > > > +#define AXI_DAC_RD_ADDR(x)			(BIT(7) | (x))
+> > > > > +
+> > > > >  /* 360 degrees in rad */
+> > > > >  #define AXI_DAC_2_PI_MEGA			6283190
+> > > > >  
+> > > > >  enum {
+> > > > >  	AXI_DAC_DATA_INTERNAL_TONE,
+> > > > >  	AXI_DAC_DATA_DMA = 2,
+> > > > > +	AXI_DAC_DATA_INTERNAL_RAMP_16BIT = 11,
+> > > > > +};
+> > > > > +
+> > > > > +struct axi_dac_info {
+> > > > > +	unsigned int version;
+> > > > > +	const struct iio_backend_info *backend_info;
+> > > > > +	bool has_dac_clk;
+> > > > >  };
+> > > > >  
+> > > > >  struct axi_dac_state {
+> > > > > @@ -79,9 +107,11 @@ struct axi_dac_state {
+> > > > >  	 * data/variables.
+> > > > >  	 */
+> > > > >  	struct mutex lock;
+> > > > > +	const struct axi_dac_info *info;
+> > > > >  	u64 dac_clk;
+> > > > >  	u32 reg_config;
+> > > > >  	bool int_tone;
+> > > > > +	int dac_clk_rate;
+> > > > >  };
+> > > > >  
+> > > > >  static int axi_dac_enable(struct iio_backend *back)
+> > > > > @@ -471,6 +501,11 @@ static int axi_dac_data_source_set(struct iio_backend
+> > > > > *back, unsigned int chan,
+> > > > >  					  AXI_DAC_CHAN_CNTRL_7_REG(chan),
+> > > > >  					  AXI_DAC_CHAN_CNTRL_7_DATA_SEL,
+> > > > >  					  AXI_DAC_DATA_DMA);
+> > > > > +	case IIO_BACKEND_INTERNAL_RAMP_16BIT:
+> > > > > +		return regmap_update_bits(st->regmap,
+> > > > > +					  AXI_DAC_CHAN_CNTRL_7_REG(chan),
+> > > > > +					  AXI_DAC_CHAN_CNTRL_7_DATA_SEL,
+> > > > > +					  AXI_DAC_DATA_INTERNAL_RAMP_16BIT);
+> > > > >  	default:
+> > > > >  		return -EINVAL;
+> > > > >  	}
+> > > > > @@ -528,6 +563,154 @@ static int axi_dac_reg_access(struct iio_backend *back,
+> > > > > unsigned int reg,
+> > > > >  	return regmap_write(st->regmap, reg, writeval);
+> > > > >  }
+> > > > >  
+> > > > > +static int axi_dac_ddr_enable(struct iio_backend *back)
+> > > > > +{
+> > > > > +	struct axi_dac_state *st = iio_backend_get_priv(back);
+> > > > > +
+> > > > > +	return regmap_clear_bits(st->regmap, AXI_DAC_CNTRL_2_REG,
+> > > > > +				 AXI_DAC_CNTRL_2_SDR_DDR_N);
+> > > > > +}
+> > > > > +
+> > > > > +static int axi_dac_ddr_disable(struct iio_backend *back)
+> > > > > +{
+> > > > > +	struct axi_dac_state *st = iio_backend_get_priv(back);
+> > > > > +
+> > > > > +	return regmap_set_bits(st->regmap, AXI_DAC_CNTRL_2_REG,
+> > > > > +			       AXI_DAC_CNTRL_2_SDR_DDR_N);
+> > > > > +}
+> > > > > +
+> > > > > +static int axi_dac_data_stream_enable(struct iio_backend *back)
+> > > > > +{
+> > > > > +	struct axi_dac_state *st = iio_backend_get_priv(back);
+> > > > > +
+> > > > > +	return regmap_set_bits(st->regmap, AXI_DAC_CUSTOM_CTRL_REG,
+> > > > > +			       AXI_DAC_CUSTOM_CTRL_STREAM_ENABLE);
+> > > > > +}
+> > > > > +
+> > > > > +static int axi_dac_data_stream_disable(struct iio_backend *back)
+> > > > > +{
+> > > > > +	struct axi_dac_state *st = iio_backend_get_priv(back);
+> > > > > +
+> > > > > +	return regmap_clear_bits(st->regmap, AXI_DAC_CUSTOM_CTRL_REG,
+> > > > > +				 AXI_DAC_CUSTOM_CTRL_STREAM_ENABLE);
+> > > > > +}
+> > > > > +
+> > > > > +static int axi_dac_data_transfer_addr(struct iio_backend *back, u32 address)
+> > > > > +{
+> > > > > +	struct axi_dac_state *st = iio_backend_get_priv(back);
+> > > > > +
+> > > > > +	if (address > FIELD_MAX(AXI_DAC_CUSTOM_CTRL_ADDRESS))
+> > > > > +		return -EINVAL;
+> > > > > +
+> > > > > +	/*
+> > > > > +	 * Sample register address, when the DAC is configured, or stream
+> > > > > +	 * start address when the FSM is in stream state.
+> > > > > +	 */
+> > > > > +	return regmap_update_bits(st->regmap, AXI_DAC_CUSTOM_CTRL_REG,
+> > > > > +				  AXI_DAC_CUSTOM_CTRL_ADDRESS,
+> > > > > +				  FIELD_PREP(AXI_DAC_CUSTOM_CTRL_ADDRESS,
+> > > > > +				  address));
+> > > > > +}
+> > > > > +
+> > > > > +static int axi_dac_data_format_set(struct iio_backend *back, unsigned int ch,
+> > > > > +				   const struct iio_backend_data_fmt *data)
+> > > > > +{
+> > > > > +	struct axi_dac_state *st = iio_backend_get_priv(back);
+> > > > > +
+> > > > > +	switch (data->type) {
+> > > > > +	case IIO_BACKEND_DATA_UNSIGNED:
+> > > > > +		return regmap_clear_bits(st->regmap, AXI_DAC_CNTRL_2_REG,
+> > > > > +					 AXI_DAC_CNTRL_2_UNSIGNED_DATA);
+> > > > > +	default:
+> > > > > +		return -EINVAL;
+> > > > > +	}
+> > > > > +}
+> > > > > +
+> > > > > +static int axi_dac_bus_reg_write_locked(struct iio_backend *back, u32 reg,
+> > > > > +					u32 val, size_t data_size)    
+> > > > 
+> > > > nit: this is actually unlocked and needs to be locked from the outside. So,
+> > > > unlocked could be a better suffix. But more importantly is the extra call to
+> > > > iio_backend_get_priv(). We can just pass *st directly from the outer function.  
+> > > 
+> > > This naming always gets confusing. Are we naming the state, or what happens?
+> > > 
+> > > A lockdep marking just inside the function can be used to make it obvious
+> > > or the old __ prefix to say 'special, check the rules'.
+> > >   
+> > 
+> > 
+> > Yeah, personally I would prefer the __ prefix...
+> I've tweaked it to __axi_dac_bus_reg_write() whilst applying.
+> 
 
-I dont see any major concern with doing it this way. FWIW,
+so really happy, thanks a lot everybody for the support,
+following if there's anything to fix.
 
-Acked-by: Robin Murphy <robin.murphy@arm.com>
+> 
+> > 
+> > - Nuno Sá
+> > 
+> > 
+> > 
+> 
 
-> Signed-off-by: Uwe Kleine-KÃ¶nig <u.kleine-koenig@baylibre.com>
-> ---
-> Hello,
-> 
-> I did a single patch for all of drivers/iommu. While I usually prefer to
-> do one logical change per patch, this seems to be overengineering here
-> as the individual changes are really trivial and shouldn't be much in
-> the way for stable backports. But I'll happily split the patch if you
-> prefer it split.
-> 
-> This is based on today's next, if conflicts arise when you apply it at
-> some later time and don't want to resolve them, feel free to just drop
-> the changes to the conflicting files. I'll notice and followup at a
-> later time then. Or ask me for a fixed resend. (Having said that, I
-> recommend b4 am -3 + git am -3 which should resolve most conflicts just
-> fine.)
-> 
-> Best regards
-> Uwe
-> 
->   drivers/iommu/apple-dart.c                  | 2 +-
->   drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c | 2 +-
->   drivers/iommu/arm/arm-smmu/arm-smmu.c       | 2 +-
->   drivers/iommu/arm/arm-smmu/qcom_iommu.c     | 4 ++--
->   drivers/iommu/ipmmu-vmsa.c                  | 2 +-
->   drivers/iommu/msm_iommu.c                   | 2 +-
->   drivers/iommu/mtk_iommu.c                   | 2 +-
->   drivers/iommu/mtk_iommu_v1.c                | 2 +-
->   drivers/iommu/omap-iommu.c                  | 2 +-
->   drivers/iommu/riscv/iommu-platform.c        | 2 +-
->   drivers/iommu/sprd-iommu.c                  | 2 +-
->   11 files changed, 12 insertions(+), 12 deletions(-)
-> 
-> diff --git a/drivers/iommu/apple-dart.c b/drivers/iommu/apple-dart.c
-> index eb1e62cd499a..c5bde50d1c42 100644
-> --- a/drivers/iommu/apple-dart.c
-> +++ b/drivers/iommu/apple-dart.c
-> @@ -1352,7 +1352,7 @@ static struct platform_driver apple_dart_driver = {
->   		.pm			= pm_sleep_ptr(&apple_dart_pm_ops),
->   	},
->   	.probe	= apple_dart_probe,
-> -	.remove_new = apple_dart_remove,
-> +	.remove	= apple_dart_remove,
->   };
->   
->   module_platform_driver(apple_dart_driver);
-> diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-> index 826db8894fb7..efbc78bffd33 100644
-> --- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-> +++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-> @@ -4679,7 +4679,7 @@ static struct platform_driver arm_smmu_driver = {
->   		.suppress_bind_attrs	= true,
->   	},
->   	.probe	= arm_smmu_device_probe,
-> -	.remove_new = arm_smmu_device_remove,
-> +	.remove	= arm_smmu_device_remove,
->   	.shutdown = arm_smmu_device_shutdown,
->   };
->   module_driver(arm_smmu_driver, platform_driver_register,
-> diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu.c b/drivers/iommu/arm/arm-smmu/arm-smmu.c
-> index 8321962b3714..4e9bb9f4c4bd 100644
-> --- a/drivers/iommu/arm/arm-smmu/arm-smmu.c
-> +++ b/drivers/iommu/arm/arm-smmu/arm-smmu.c
-> @@ -2372,7 +2372,7 @@ static struct platform_driver arm_smmu_driver = {
->   		.suppress_bind_attrs    = true,
->   	},
->   	.probe	= arm_smmu_device_probe,
-> -	.remove_new = arm_smmu_device_remove,
-> +	.remove = arm_smmu_device_remove,
->   	.shutdown = arm_smmu_device_shutdown,
->   };
->   module_platform_driver(arm_smmu_driver);
-> diff --git a/drivers/iommu/arm/arm-smmu/qcom_iommu.c b/drivers/iommu/arm/arm-smmu/qcom_iommu.c
-> index b98a7a598b89..9ce2fe50b22c 100644
-> --- a/drivers/iommu/arm/arm-smmu/qcom_iommu.c
-> +++ b/drivers/iommu/arm/arm-smmu/qcom_iommu.c
-> @@ -759,7 +759,7 @@ static struct platform_driver qcom_iommu_ctx_driver = {
->   		.of_match_table	= ctx_of_match,
->   	},
->   	.probe	= qcom_iommu_ctx_probe,
-> -	.remove_new = qcom_iommu_ctx_remove,
-> +	.remove	= qcom_iommu_ctx_remove,
->   };
->   
->   static bool qcom_iommu_has_secure_context(struct qcom_iommu_dev *qcom_iommu)
-> @@ -931,7 +931,7 @@ static struct platform_driver qcom_iommu_driver = {
->   		.pm		= &qcom_iommu_pm_ops,
->   	},
->   	.probe	= qcom_iommu_device_probe,
-> -	.remove_new = qcom_iommu_device_remove,
-> +	.remove	= qcom_iommu_device_remove,
->   };
->   
->   static int __init qcom_iommu_init(void)
-> diff --git a/drivers/iommu/ipmmu-vmsa.c b/drivers/iommu/ipmmu-vmsa.c
-> index ff55b8c30712..074daf1aac4e 100644
-> --- a/drivers/iommu/ipmmu-vmsa.c
-> +++ b/drivers/iommu/ipmmu-vmsa.c
-> @@ -1159,6 +1159,6 @@ static struct platform_driver ipmmu_driver = {
->   		.pm = pm_sleep_ptr(&ipmmu_pm),
->   	},
->   	.probe = ipmmu_probe,
-> -	.remove_new = ipmmu_remove,
-> +	.remove = ipmmu_remove,
->   };
->   builtin_platform_driver(ipmmu_driver);
-> diff --git a/drivers/iommu/msm_iommu.c b/drivers/iommu/msm_iommu.c
-> index 989e0869d805..ce40f0a419ea 100644
-> --- a/drivers/iommu/msm_iommu.c
-> +++ b/drivers/iommu/msm_iommu.c
-> @@ -838,6 +838,6 @@ static struct platform_driver msm_iommu_driver = {
->   		.of_match_table = msm_iommu_dt_match,
->   	},
->   	.probe		= msm_iommu_probe,
-> -	.remove_new	= msm_iommu_remove,
-> +	.remove		= msm_iommu_remove,
->   };
->   builtin_platform_driver(msm_iommu_driver);
-> diff --git a/drivers/iommu/mtk_iommu.c b/drivers/iommu/mtk_iommu.c
-> index c45313c43b9e..72b68d037b95 100644
-> --- a/drivers/iommu/mtk_iommu.c
-> +++ b/drivers/iommu/mtk_iommu.c
-> @@ -1794,7 +1794,7 @@ MODULE_DEVICE_TABLE(of, mtk_iommu_of_ids);
->   
->   static struct platform_driver mtk_iommu_driver = {
->   	.probe	= mtk_iommu_probe,
-> -	.remove_new = mtk_iommu_remove,
-> +	.remove	= mtk_iommu_remove,
->   	.driver	= {
->   		.name = "mtk-iommu",
->   		.of_match_table = mtk_iommu_of_ids,
-> diff --git a/drivers/iommu/mtk_iommu_v1.c b/drivers/iommu/mtk_iommu_v1.c
-> index ee4e55b6b190..480e57ea6635 100644
-> --- a/drivers/iommu/mtk_iommu_v1.c
-> +++ b/drivers/iommu/mtk_iommu_v1.c
-> @@ -745,7 +745,7 @@ static const struct dev_pm_ops mtk_iommu_v1_pm_ops = {
->   
->   static struct platform_driver mtk_iommu_v1_driver = {
->   	.probe	= mtk_iommu_v1_probe,
-> -	.remove_new = mtk_iommu_v1_remove,
-> +	.remove	= mtk_iommu_v1_remove,
->   	.driver	= {
->   		.name = "mtk-iommu-v1",
->   		.of_match_table = mtk_iommu_v1_of_ids,
-> diff --git a/drivers/iommu/omap-iommu.c b/drivers/iommu/omap-iommu.c
-> index 3f72aef8bd5b..b8ced5d0581c 100644
-> --- a/drivers/iommu/omap-iommu.c
-> +++ b/drivers/iommu/omap-iommu.c
-> @@ -1285,7 +1285,7 @@ static const struct of_device_id omap_iommu_of_match[] = {
->   
->   static struct platform_driver omap_iommu_driver = {
->   	.probe	= omap_iommu_probe,
-> -	.remove_new = omap_iommu_remove,
-> +	.remove	= omap_iommu_remove,
->   	.driver	= {
->   		.name	= "omap-iommu",
->   		.pm	= &omap_iommu_pm_ops,
-> diff --git a/drivers/iommu/riscv/iommu-platform.c b/drivers/iommu/riscv/iommu-platform.c
-> index da336863f152..382ba2841849 100644
-> --- a/drivers/iommu/riscv/iommu-platform.c
-> +++ b/drivers/iommu/riscv/iommu-platform.c
-> @@ -81,7 +81,7 @@ static const struct of_device_id riscv_iommu_of_match[] = {
->   
->   static struct platform_driver riscv_iommu_platform_driver = {
->   	.probe = riscv_iommu_platform_probe,
-> -	.remove_new = riscv_iommu_platform_remove,
-> +	.remove = riscv_iommu_platform_remove,
->   	.driver = {
->   		.name = "riscv,iommu",
->   		.of_match_table = riscv_iommu_of_match,
-> diff --git a/drivers/iommu/sprd-iommu.c b/drivers/iommu/sprd-iommu.c
-> index a2f4ffe6d949..e84806eee281 100644
-> --- a/drivers/iommu/sprd-iommu.c
-> +++ b/drivers/iommu/sprd-iommu.c
-> @@ -531,7 +531,7 @@ static struct platform_driver sprd_iommu_driver = {
->   		.suppress_bind_attrs = true,
->   	},
->   	.probe	= sprd_iommu_probe,
-> -	.remove_new = sprd_iommu_remove,
-> +	.remove	= sprd_iommu_remove,
->   };
->   module_platform_driver(sprd_iommu_driver);
->   
-> base-commit: c88416ba074a8913cf6d61b789dd834bbca6681c
-
+Regards,
+  angelo
 
