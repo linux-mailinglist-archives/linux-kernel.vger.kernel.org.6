@@ -1,122 +1,186 @@
-Return-Path: <linux-kernel+bounces-394899-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394900-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0667B9BB589
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 14:13:31 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7040C9BB58A
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 14:14:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 37F101C213F8
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 13:13:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 003F51F2238A
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 13:14:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DA491BC9E6;
-	Mon,  4 Nov 2024 13:13:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 222C91BBBD7;
+	Mon,  4 Nov 2024 13:14:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NM8yH0dG"
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ExmoQJdJ";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="n2Y93TZJ";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="WkAlKuKr";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="En2MZTEg"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED0D21B4F02;
-	Mon,  4 Nov 2024 13:13:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8677F1AC42C
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 13:14:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730726000; cv=none; b=uikXFg9EYcnreVCRLusNp/U1JW5vbdC7m16dzzDd5l6QA6rWC6aFmkFADqD0UgZl4yUKifBpGKcaUugxJu92Z8nVgW05xlufxxuRKvsT6oi4OpO9M7Z9GgLUsv+3JPt/x0ITfeCI0IrpFB6cKDHaPehy3Y0raZxooLCHNhtzpIY=
+	t=1730726054; cv=none; b=JHHrbrQjCIyIg5+JEiwDnfav+QqUh7emC4ss3kyPepBgopYmSl6VRbeI51Yf51YiKJd8XqJq+bglnF03nAE4jOR9M0iNMLlvv8XwmNILkat+YjGiSxPfXvOiqXL6ANmRq2Lec/T6se4ptVHrK/t9U+zSOAk5de8kfpRwOSD9jHY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730726000; c=relaxed/simple;
-	bh=4S/nDSwNz4r1OOsRvGLuHNivXoyvioHRcrVAPEQX/Dk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=jSkiSzl45sKuut+tcsSXzDsKk65QzZaqtPRMsLRTl11F67NA7WLpqCCqOxlMU9MRrfKF4acQ5djCq7YpLM1DDXqZcjuyhT3xUyCCBiByd0pGLCkikIcWbgc6aWczsHlbSzgk4j+Bk7wrcB2d0NttA9VmI3ftzoslO6E/08GlccE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NM8yH0dG; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-53a097aa3daso3851152e87.1;
-        Mon, 04 Nov 2024 05:13:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730725997; x=1731330797; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=yMCvtP1NYhEVKqyeGiRcuaYl7HQ6ehAW0WV2WwfufNo=;
-        b=NM8yH0dGtv8r8DqUFMcQcwUhB+fEJzYTkE/oq+38GGf1bDfe+fXgk9xEMVWBu151GV
-         vMljJrxikYiRf+vKP/5m/3YRe1aaR6n+amDXj2b6h1DP3Zrx+AuCW0BCjObR5YLfaynU
-         jaU/9pw5V8fLX9afLETWUZHkSrGhtJKdNx5j65WZO4DOePNRLqWFAMw3FtpbxF6YEss3
-         Uu0GNjD+g8c3S7nC/2gQ9D4vknmDzwthvRKd+qrn3i10LwI1teI0yoWv9ildDwrRSXbL
-         bKEvuSoS5fqyGBLvBh9Oc2c9dbCwp6unJBDYAQvUw9OpHoaRuZ0fw7YWmMRU6rPlkgA8
-         xvhA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730725997; x=1731330797;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=yMCvtP1NYhEVKqyeGiRcuaYl7HQ6ehAW0WV2WwfufNo=;
-        b=vqrLu++9kRNitBLbofVcpxDLluTMr7ps6jwoZvSxGp13e65QqLpjjKDIK1tvGEKB5n
-         bBkJVm0FwDbLAKeOxLP2JA6SYrb+GS2NMVKCPqKsKoXWvhUMWAsjqiiVqnJQu3ftiRxq
-         Ub+YtegWaqXJIT4Ww+J0Yz4Y+X2o/ts6ovH7/RNrvVi/Tl6eWLWU25w75QcmRDbKrFfT
-         sHtXFWot+dZmt69LszEMmEz7uitMnVygZeEtahvkdQhsp9mShgRlFbsFdmjqCrtPGfYe
-         Ep3ZCue4R1itHWmtYqTqY6+4IT1mUVnPAcmM7Rdh5Pu35INhri5edX8Dft9Gd0J8iaK/
-         tjHA==
-X-Forwarded-Encrypted: i=1; AJvYcCUA5+KLlNpRZb78ZmBpuk8DW43p3ki+5cbiBW0NP4u29Zy7ShdqgH+K8PiqmHuT8UQqw+G2SgTSHw==@vger.kernel.org, AJvYcCVyFDXdtjCRs7hBRncGwbSIXjy0QkIIm7XW0sCne7DhCDsveqLTznFW2k8UOvNXdNzhd1EEwjx+TX8dH426@vger.kernel.org, AJvYcCWEWWoiPnoyaeFBZTtvIUMM8OFNjWPrp40FAj1kwQhLP1Q0n/hFCwZpybA0/+zXdaJKXihhudctLBXw@vger.kernel.org
-X-Gm-Message-State: AOJu0YxvvlVW+VRQtnk8N6fMYK8W6W6Q0o+qmrPOe44z13iVzoisefG0
-	0ZUOknuswlaMrLPYcHVRAWEReanXKz9rccHUBvCgRooJEBLsGesO
-X-Google-Smtp-Source: AGHT+IGSbukATV4IJRXSVcWr62/WHLmPU6mosjBIruFuQ+D8QqoaI8P8X8caXtAyklebDmlPKgxsoA==
-X-Received: by 2002:a05:6512:3b8c:b0:539:d22c:37bd with SMTP id 2adb3069b0e04-53d65e02641mr6111495e87.36.1730725996534;
-        Mon, 04 Nov 2024 05:13:16 -0800 (PST)
-Received: from [192.168.42.215] ([163.114.131.193])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5ceac7e97e7sm4216843a12.91.2024.11.04.05.13.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 04 Nov 2024 05:13:16 -0800 (PST)
-Message-ID: <13da163a-d088-4b4d-8ad1-dbf609b03228@gmail.com>
-Date: Mon, 4 Nov 2024 13:13:22 +0000
+	s=arc-20240116; t=1730726054; c=relaxed/simple;
+	bh=Vnfwv3peD4894dmCI61LBI4pB/PrtJmGhY7BR4ZRF5Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=E1AMs6SyjNWveXfvos7B/AGzbmIKQBYAP6VzS3fo7UAK+n7yGKHyIdCg7de7dCLO7KcphSGkcXv757JGVKEB3iq3SZWgIjeFoHcNUSHRgCTo75ePfa19y/t1Rw0zJkAqIy5KGa7hwfVS7othQn3N/4XpZdWzgH0g0o+wbSAxc6A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ExmoQJdJ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=n2Y93TZJ; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=WkAlKuKr; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=En2MZTEg; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 690DB21DB2;
+	Mon,  4 Nov 2024 13:14:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1730726050; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=JrHg7cJ2Ud/6FQ/E7PLJqj1OANRhy5LU90CcoT2e/bA=;
+	b=ExmoQJdJWOJ/Ly7WoTV0odylN7ToOBFytIJQOtpmwNfJO3Eot0SgtI9L3wRSlgqob0cG6N
+	3TLrg55nf8oeMUkwsOPm1JlQhYopAT0q2A+QtKC1o628Nj+IJkqgJssnnC10ZB5NniUZLG
+	fbAsfYODUayvyKRMgiFsLquLnNS8g78=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1730726050;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=JrHg7cJ2Ud/6FQ/E7PLJqj1OANRhy5LU90CcoT2e/bA=;
+	b=n2Y93TZJlWF7rILDmz8ranQppFqFzvsXw67w/Kst85b0GS9Vyy64ptna7zD8Jt/imEVJf5
+	TLRPGLgJ77qP+KBA==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=WkAlKuKr;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=En2MZTEg
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1730726049; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=JrHg7cJ2Ud/6FQ/E7PLJqj1OANRhy5LU90CcoT2e/bA=;
+	b=WkAlKuKrt752Czq3blOy83INdicN4PxXZdaXilhB4I+58aqqkIGZCXn+M35/axpDLbrKmk
+	/NBoySqyMGdehY04V7/oL3/WtVCeAem0hVMjDK5s2gywtI4TMqxmxWRcmMeKSAEdfhugbn
+	I+VVZyzOA95YrHO1SFK6B7v7fz/6P/s=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1730726049;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=JrHg7cJ2Ud/6FQ/E7PLJqj1OANRhy5LU90CcoT2e/bA=;
+	b=En2MZTEgiGet4f1TYSKrahpr/cLBtiRwr7cDSQUrNuzM5NDcqSG7+LSnKi5mwCGyK2pYak
+	vg2ZzHTZ5bXascAg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 2E8AA1373E;
+	Mon,  4 Nov 2024 13:14:09 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id pCtBCaHIKGeLZgAAD6G6ig
+	(envelope-from <jdelvare@suse.de>); Mon, 04 Nov 2024 13:14:09 +0000
+Date: Mon, 4 Nov 2024 14:14:06 +0100
+From: Jean Delvare <jdelvare@suse.de>
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: Sandipan Das <sandipan.das@amd.com>, Peter Zijlstra
+ <peterz@infradead.org>
+Subject: [PATCH] perf/x86/amd/uncore: Avoid a false positive warning about
+ snprintf truncation in amd_uncore_umc_ctx_init
+Message-ID: <20241104141406.3fd11254@endymion.delvare>
+Organization: SUSE Linux
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.34; x86_64-suse-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [syzbot] [io-uring?] [usb?] WARNING in io_get_cqe_overflow (2)
-To: syzbot <syzbot+e333341d3d985e5173b2@syzkaller.appspotmail.com>,
- axboe@kernel.dk, io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-usb@vger.kernel.org, syzkaller-bugs@googlegroups.com
-References: <6728b077.050a0220.35b515.01ba.GAE@google.com>
-Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <6728b077.050a0220.35b515.01ba.GAE@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Rspamd-Queue-Id: 690DB21DB2
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	HAS_ORG_HEADER(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	MIME_TRACE(0.00)[0:+];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_THREE(0.00)[3];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,suse.de:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,endymion.delvare:mid];
+	TO_DN_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -4.51
+X-Spam-Flag: NO
 
-On 11/4/24 11:31, syzbot wrote:
-> syzbot has bisected this issue to:
-> 
-> commit 3f1a546444738b21a8c312a4b49dc168b65c8706
-> Author: Jens Axboe <axboe@kernel.dk>
-> Date:   Sat Oct 26 01:27:39 2024 +0000
-> 
->      io_uring/rsrc: get rid of per-ring io_rsrc_node list
-> 
-> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=15aaa1f7980000
-> start commit:   c88416ba074a Add linux-next specific files for 20241101
-> git tree:       linux-next
-> final oops:     https://syzkaller.appspot.com/x/report.txt?x=17aaa1f7980000
-> console output: https://syzkaller.appspot.com/x/log.txt?x=13aaa1f7980000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=704b6be2ac2f205f
-> dashboard link: https://syzkaller.appspot.com/bug?extid=e333341d3d985e5173b2
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16ec06a7980000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12c04740580000
-> 
-> Reported-by: syzbot+e333341d3d985e5173b2@syzkaller.appspotmail.com
-> Fixes: 3f1a54644473 ("io_uring/rsrc: get rid of per-ring io_rsrc_node list")
-> 
-> For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+Fix the following warning:
+  CC [M]  arch/x86/events/amd/uncore.o
+arch/x86/events/amd/uncore.c: In function =E2=80=98amd_uncore_umc_ctx_init=
+=E2=80=99:
+arch/x86/events/amd/uncore.c:951:52: warning: =E2=80=98%d=E2=80=99 directiv=
+e output may be truncated writing between 1 and 10 bytes into a region of s=
+ize 8 [-Wformat-truncation=3D]
+    snprintf(pmu->name, sizeof(pmu->name), "amd_umc_%d", index);
+                                                    ^~
+arch/x86/events/amd/uncore.c:951:43: note: directive argument in the range =
+[0, 2147483647]
+    snprintf(pmu->name, sizeof(pmu->name), "amd_umc_%d", index);
+                                           ^~~~~~~~~~~~
+arch/x86/events/amd/uncore.c:951:4: note: =E2=80=98snprintf=E2=80=99 output=
+ between 10 and 19 bytes into a destination of size 16
+    snprintf(pmu->name, sizeof(pmu->name), "amd_umc_%d", index);
+    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Previously all puts were done by requests, which in case of an exiting
-ring were fallback'ed to normal tw. Now, the unregister path posts CQEs,
-while the original task is still alive. Should be fine in general because
-at this point there could be no requests posting in parallel and all
-is synchronised, so it's a false positive, but we need to change the assert
-or something else.
+As far as I can see, there can't be more than UNCORE_GROUP_MAX (256)
+groups and each group can't have more than 255 PMU, so the number
+printed by this %d can't exceed 65279, that's only 5 digits and would
+fit into the buffer. So it's a false positive warning. But we can
+make the compiler happy by declaring index as a 16-bit number.
 
--- 
-Pavel Begunkov
+Signed-off-by: Jean Delvare <jdelvare@suse.de>
+---
+An alternative fix would be to extend UNCORE_NAME_LEN to 20, the
+downside being an increased memory consumption. Depends whether we
+expect UNCORE_GROUP_MAX to ever be increased, or groups to ever
+support more than 255 PMU.
+
+ arch/x86/events/amd/uncore.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+--- linux-6.12-rc6.orig/arch/x86/events/amd/uncore.c
++++ linux-6.12-rc6/arch/x86/events/amd/uncore.c
+@@ -916,7 +916,8 @@ int amd_uncore_umc_ctx_init(struct amd_u
+ 	u8 group_num_pmcs[UNCORE_GROUP_MAX] =3D { 0 };
+ 	union amd_uncore_info info;
+ 	struct amd_uncore_pmu *pmu;
+-	int index =3D 0, gid, i;
++	int gid, i;
++	u16 index =3D 0;
+=20
+ 	if (pmu_version < 2)
+ 		return 0;
+
+--=20
+Jean Delvare
+SUSE L3 Support
 
