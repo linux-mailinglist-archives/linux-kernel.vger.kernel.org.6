@@ -1,76 +1,81 @@
-Return-Path: <linux-kernel+bounces-394395-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394390-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62F0B9BAE68
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 09:45:05 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DCB29BAE59
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 09:43:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 94EA41C20F62
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 08:45:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E7B4283362
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 08:43:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBB5C1A08DB;
-	Mon,  4 Nov 2024 08:44:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19A6D1AB6EA;
+	Mon,  4 Nov 2024 08:42:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fjeKMbNh"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XCOlt+NR"
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2C7718BC21;
-	Mon,  4 Nov 2024 08:44:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 257521AAE2E;
+	Mon,  4 Nov 2024 08:42:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730709897; cv=none; b=k04oOyWCor4zgaYWaJs0Qdswsc5XT580nJXCAodHSmNnL2LDikRA1cBkbiDtdx8pjK637YgdEqqH/sDKciV0xoPbI0upcEdX9S9SSPmXJ8UElx2n6LiUgHLbHXl1Flmlroyf03u6zw5t9VqewikyuttGjssL/ZrVJJ8IfftRKmY=
+	t=1730709775; cv=none; b=Bg9yAc2+dpvD2fzTnU/pDVU1yzJqO1wznjwLgrTzTKjF8uAKU4euykWax+gMIsbdKhqOZwMNsr/Vf11vHFV26ZuPRBKHPCu9mWXpxMSvrXfIF6hjq2WPxQRvd4JL/BY0w/wXB2mH/XFYEUa4ax45wWj1UY79zlaNHn+zoErYywQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730709897; c=relaxed/simple;
-	bh=WXe+1g9hJjbnrumUeVMcn94TiAct027Qwd/gvVK+69s=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=luIZ5gyZMUQNXtq7htI8wsIDrSWJqcA3B6pR4DGXS7aG9buZwiKeSxM6GOMdIglvk8LiJs0oQJOhnf8gsQ9hWDfBabOYy0PgNXy9afmwiD3ShtMyrf5Gi1Mki5rEEQ8NttWTlllHqHlcM8RpDTrqqKHGQr1DNeszfnTfhCRyYHQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fjeKMbNh; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730709895; x=1762245895;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=WXe+1g9hJjbnrumUeVMcn94TiAct027Qwd/gvVK+69s=;
-  b=fjeKMbNhd1OcwgEpY9BpbrGOVkKu/Y0RX3kOZiQ7QOUcB3VPXCoQS11a
-   l1o+AG62BAWWU4Rug+v8Pszsb5NFmHBOOtaHa6hgmJed312K+UkmkQ3U4
-   2v6lFSoaTfuEoYh+BoU0hkQ60udhFH9m7yFgveV9Xpz41M0fNN1+ySD25
-   DqcGtVwS676WR8NV36m0qKqVKLYBYpNjOAf9qFBFhel7di3XUgJ7vokNf
-   v+ToqGRKJwXu4oKy3W6UxOedp/6eKvtVlp6942bY/nFAZWRK6SPmuk5nz
-   LmUD7NDfrwGp/c5PCq78SpWCIwg+jPNMskqwY9qVsR7agbdM/AXMWagr+
-   A==;
-X-CSE-ConnectionGUID: 11alLq4ISF+5GryHQe/xwQ==
-X-CSE-MsgGUID: y7d/saQqQ7OZnupx3Ni9XA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="40946474"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="40946474"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2024 00:44:55 -0800
-X-CSE-ConnectionGUID: ygr69nuUQB21KWVr/PJ+Ig==
-X-CSE-MsgGUID: DPVo+WaqQIqCFp5wUyLBBA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,256,1725346800"; 
-   d="scan'208";a="83927932"
-Received: from yzhao56-desk.sh.intel.com ([10.239.159.62])
-  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2024 00:44:53 -0800
-From: Yan Zhao <yan.y.zhao@intel.com>
-To: pbonzini@redhat.com,
-	seanjc@google.com
-Cc: linux-kernel@vger.kernel.org,
-	kvm@vger.kernel.org,
-	Rick Edgecombe <rick.p.edgecombe@intel.com>,
-	kernel test robot <lkp@intel.com>,
-	Yan Zhao <yan.y.zhao@intel.com>
-Subject: [PATCH 1/2] KVM: x86/tdp_mmu: Use rcu_dereference() to protect sptep for dereferencing
-Date: Mon,  4 Nov 2024 16:42:29 +0800
-Message-ID: <20241104084229.29882-1-yan.y.zhao@intel.com>
-X-Mailer: git-send-email 2.43.2
-In-Reply-To: <20241104084137.29855-1-yan.y.zhao@intel.com>
-References: <20241104084137.29855-1-yan.y.zhao@intel.com>
+	s=arc-20240116; t=1730709775; c=relaxed/simple;
+	bh=5NJiUk8bCZ3kcgBohRRzUDb3uTOSFIvGx3ay92B7kOI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=MIy1ymqiBtLXS9BXDyO6YgFOU3+nIo+flyGOk9Bgqfy5SCgEVBRbHfN7inNcZ0cUBClr6KjlOzlFbVcw353rbeOe6Yco5M8iqcgPwt8EidNH0/wqGLhDBeOzTqvoVrTn85+/Vo24WGXJRyV3ljkdlsLTqEppGV0zbm43DzUDy0E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XCOlt+NR; arc=none smtp.client-ip=209.85.210.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-71e49ad46b1so3307097b3a.1;
+        Mon, 04 Nov 2024 00:42:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730709773; x=1731314573; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=/8YHBY/s7hL7LBt+bml67qPtYFLfLzO7wsBOP4nNMQg=;
+        b=XCOlt+NREWknlnJeg/zEmuFXXhTjObcRiMS+xlJQ4IgfMFMXffhZ5EsODgqO83+JXa
+         FWbXK/dabcfewlv6+7lKrWkcaDxYGBkg/7Z/Gy1SAsCuSY10T3axleBPNaXDCAZwM2JB
+         I9GQUz5cOMBh9kH16Jlqd3T7b1K/r+yhO0wPjwyO9hkVdDZkxGsP0VXgyjEsYJv7cbrU
+         uM+oDNkKU1wkJ520IoBqp8OOHz8pbV3NgdeIHwlKC4cYFEaGtxa2DHXsH95T2AtLq/QH
+         c4fj7O/S42laV0bwWjXq6XgHl2JnFYSLD/t2EQfgNWzNwseWXxvK8BAmzRMyeUUDRRu5
+         k2sQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730709773; x=1731314573;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/8YHBY/s7hL7LBt+bml67qPtYFLfLzO7wsBOP4nNMQg=;
+        b=gpuaUx6k4lAFkXGq+ewj+EPTAYAr0NkQPEjWgoT1yT9rUQrKsU1ra0y+sdIaw14RQI
+         +s23wF6dzArMW0LnOvSQb0SxJQ3VPoudu7Ks8g1Txbesd8JRGwX7h17xump5nn8es6en
+         OkmKD07WcmtcWdhiSngeIRU0V+c3ELuLajG+nyEk3Cw8f9LE3u0Jgr0aLAFfMRV9R7hX
+         PLe0Mf1C1MBqCtEYlB1ZzopqvZqrib398sI4ZdytcObQhaaBwiUqz/z9+2jdHHk8FTfV
+         3+E+VgbBm5MP3DwQitrLp4xzNs2hrdVn11cc+A3/zyJkcd6HBY85QQZ33JiBFu168mc9
+         Yv+Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUr8HIUPXZBOWO0HqPqb5bHjS2YmYvH7b5kqOe+NHVdu0gAkCIvQuXvPj3JfMZGw7WK51wQwc1gGLtp4JPg@vger.kernel.org, AJvYcCVCDbzJ/7/W/9p1VYSqzDUFCkzkAAJgtNmWw7dN+aOdoRBGXxvZXkKZskkwg8h56X2pzAw95DTvHWzVQqZo@vger.kernel.org
+X-Gm-Message-State: AOJu0YzOUfPnC27xl46XiRb8miPdfz7iqHFvbEmOgN/p6vGGsu19J1T5
+	XlY58rSuQAmGxsk/LSW9jptvneitLN11ndY69SZgjPDSI5CBf5FB639i4vgUqcs=
+X-Google-Smtp-Source: AGHT+IHh5A/7/W9p56TSopcVQlWHydJS943ePx+Q9RUlvuynsTn6oLoVpFHHRABwmwLVdXzCkbcevQ==
+X-Received: by 2002:a05:6a00:3cc8:b0:71e:780e:9c1 with SMTP id d2e1a72fcca58-7206306ecf4mr45209948b3a.18.1730709773244;
+        Mon, 04 Nov 2024 00:42:53 -0800 (PST)
+Received: from debian.resnet.ucla.edu (s-169-232-97-87.resnet.ucla.edu. [169.232.97.87])
+        by smtp.googlemail.com with ESMTPSA id 41be03b00d2f7-7ee490e08f4sm6244865a12.40.2024.11.04.00.42.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 04 Nov 2024 00:42:52 -0800 (PST)
+From: Daniel Yang <danielyangkang@gmail.com>
+To: Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	linux-fsdevel@vger.kernel.org (open list:FILESYSTEMS (VFS and infrastructure)),
+	linux-kernel@vger.kernel.org (open list)
+Cc: Daniel Yang <danielyangkang@gmail.com>,
+	syzbot+d2125fcb6aa8c4276fd2@syzkaller.appspotmail.com
+Subject: [PATCH] fix: general protection fault in iter_file_splice_write
+Date: Mon,  4 Nov 2024 00:42:39 -0800
+Message-Id: <20241104084240.301877-1-danielyangkang@gmail.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,77 +84,33 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Rick Edgecombe <rick.p.edgecombe@intel.com>
+The function iter_file_splice_write() calls pipe_buf_release() which has
+a nullptr dereference in ops->release. Add check for buf->ops not null
+before calling pipe_buf_release().
 
-Use rcu_dereference() to copy the RCU-protected pointer sptep into a local
-variable for later dereferencing. This also checks that the dereferencing
-occurs within the RCU read-side critical section.
-
-Change is_mirror_sptep()'s input type from "u64 *" to "tdp_ptep_t" (typedef
-as "u64 __rcu *") to centralize the call of rcu_dereference().
-
-Opportunistically, since try_cmpxchg64() is now the only place in
-__tdp_mmu_set_spte_atomic() that dereferences the local variable, move
-the rcu_dereference() call closer to its point of use.
-
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202410121644.Eq7zRGPO-lkp@intel.com
-Co-developed-by: Yan Zhao <yan.y.zhao@intel.com>
-Signed-off-by: Yan Zhao <yan.y.zhao@intel.com>
-Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
+Signed-off-by: Daniel Yang <danielyangkang@gmail.com>
+Reported-by: syzbot+d2125fcb6aa8c4276fd2@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=d2125fcb6aa8c4276fd2
+Fixes: 2df86547b23d ("netfs: Cut over to using new writeback code")
 ---
- arch/x86/kvm/mmu/spte.h    | 4 ++--
- arch/x86/kvm/mmu/tdp_mmu.c | 6 +++---
- 2 files changed, 5 insertions(+), 5 deletions(-)
+ fs/splice.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/kvm/mmu/spte.h b/arch/x86/kvm/mmu/spte.h
-index 8496a2abbde2..ef322f972948 100644
---- a/arch/x86/kvm/mmu/spte.h
-+++ b/arch/x86/kvm/mmu/spte.h
-@@ -267,9 +267,9 @@ static inline struct kvm_mmu_page *root_to_sp(hpa_t root)
- 	return spte_to_child_sp(root);
- }
- 
--static inline bool is_mirror_sptep(u64 *sptep)
-+static inline bool is_mirror_sptep(tdp_ptep_t sptep)
- {
--	return is_mirror_sp(sptep_to_sp(sptep));
-+	return is_mirror_sp(sptep_to_sp(rcu_dereference(sptep)));
- }
- 
- static inline bool is_mmio_spte(struct kvm *kvm, u64 spte)
-diff --git a/arch/x86/kvm/mmu/tdp_mmu.c b/arch/x86/kvm/mmu/tdp_mmu.c
-index b0e1c4cb3004..2741b6587ec9 100644
---- a/arch/x86/kvm/mmu/tdp_mmu.c
-+++ b/arch/x86/kvm/mmu/tdp_mmu.c
-@@ -511,7 +511,7 @@ static int __must_check set_external_spte_present(struct kvm *kvm, tdp_ptep_t sp
- 	 * page table has been modified. Use FROZEN_SPTE similar to
- 	 * the zapping case.
- 	 */
--	if (!try_cmpxchg64(sptep, &old_spte, FROZEN_SPTE))
-+	if (!try_cmpxchg64(rcu_dereference(sptep), &old_spte, FROZEN_SPTE))
- 		return -EBUSY;
- 
- 	/*
-@@ -637,8 +637,6 @@ static inline int __must_check __tdp_mmu_set_spte_atomic(struct kvm *kvm,
- 							 struct tdp_iter *iter,
- 							 u64 new_spte)
- {
--	u64 *sptep = rcu_dereference(iter->sptep);
--
- 	/*
- 	 * The caller is responsible for ensuring the old SPTE is not a FROZEN
- 	 * SPTE.  KVM should never attempt to zap or manipulate a FROZEN SPTE,
-@@ -662,6 +660,8 @@ static inline int __must_check __tdp_mmu_set_spte_atomic(struct kvm *kvm,
- 		if (ret)
- 			return ret;
- 	} else {
-+		u64 *sptep = rcu_dereference(iter->sptep);
-+
- 		/*
- 		 * Note, fast_pf_fix_direct_spte() can also modify TDP MMU SPTEs
- 		 * and does not hold the mmu_lock.  On failure, i.e. if a
+diff --git a/fs/splice.c b/fs/splice.c
+index 06232d7e5..b8c503e47 100644
+--- a/fs/splice.c
++++ b/fs/splice.c
+@@ -756,7 +756,8 @@ iter_file_splice_write(struct pipe_inode_info *pipe, struct file *out,
+ 			if (ret >= buf->len) {
+ 				ret -= buf->len;
+ 				buf->len = 0;
+-				pipe_buf_release(pipe, buf);
++				if (buf->ops)
++					pipe_buf_release(pipe, buf);
+ 				tail++;
+ 				pipe->tail = tail;
+ 				if (pipe->files)
 -- 
-2.43.2
+2.39.2
 
 
