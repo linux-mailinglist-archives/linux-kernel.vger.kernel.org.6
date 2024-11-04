@@ -1,140 +1,77 @@
-Return-Path: <linux-kernel+bounces-395217-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395218-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE73A9BBA65
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 17:35:02 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3688A9BBA67
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 17:35:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0B1531C211CE
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 16:35:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D29911F22672
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 16:35:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BA251C2335;
-	Mon,  4 Nov 2024 16:34:55 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6212C2BB04;
-	Mon,  4 Nov 2024 16:34:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91F0F1C2335;
+	Mon,  4 Nov 2024 16:35:17 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D74020326;
+	Mon,  4 Nov 2024 16:35:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730738094; cv=none; b=J0f+ywshyuXRjtbDyRcJhfo8PMHTziezQsOi6AFZ54pKD39tva4tRcopxt/5czH0H8doqznoge+E+/dbHhsQ5mbp/3iemZKL8hjci9NlZIy2Pfb87f48ZMEtPkGt6XexxK6SKWpjFJXbMGP+vDaRxzMlesm4JsASxxUB2a7dhvc=
+	t=1730738117; cv=none; b=Xncj0tbQdDHPIOe3L4FDEjz4xPxiZE76p72pOM2O/4YV2IbxK3FI5HHnQcJCUOB5e5xJM4IIb8PFReyEMaQsltuk4T2MoyiLQ8jD6b8KVfdBzn0EY7J+Iat9kBBzE6OipG/BzDhwzCkfYjraQ+XhbAic2MqQZsxaCqx4GXG0/Y4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730738094; c=relaxed/simple;
-	bh=25nxMzWGtlbTbJ7CT9GkI9kb4ArWbWqnFz0FDhbVfdg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=j2My0+sTKntTDoxEVcObIu8e59zkQeThmwNrgYCq2aN6rsnZMwa7mOg6b2gS2g7hyV8qzvhh1hLJVWG41p1/so0VktnAAzuSxU3jhzEjmiqbgjAdKHjkX1N1wIgRvdY24XYCFhM7jW6KZhJirbA1vkGEchZLY86W0W5x6RZWYs4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4C7F6FEC;
-	Mon,  4 Nov 2024 08:35:20 -0800 (PST)
-Received: from [10.57.88.110] (unknown [10.57.88.110])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 41B4E3F66E;
-	Mon,  4 Nov 2024 08:34:48 -0800 (PST)
-Message-ID: <29d5918e-cfe2-4b36-b0f1-a1379075dd05@arm.com>
-Date: Mon, 4 Nov 2024 16:34:46 +0000
+	s=arc-20240116; t=1730738117; c=relaxed/simple;
+	bh=v8GPTNdK9xwTaNw72WfjxXu3vHLVXKrJ8w8nWc8DIwI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=E9SiA5doD1qYt54qq115Cd5N0CeQP5Q9HxGgNxG/oOAeUR4bqny3Qs3pCluT3cV4EsbsPGznHr0MQoDLhPfnYJDUqfYLisYmJGkSJ5ySnzcpiIqkUp1GwPLm2o2jNXqk9iVnioELlwKUKf4LoeLmm9XdpLFlrhDwCZcpUsDhQVs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9DF91C4CECE;
+	Mon,  4 Nov 2024 16:35:15 +0000 (UTC)
+Date: Mon, 4 Nov 2024 11:35:14 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Yun Zhou <yun.zhou@windriver.com>
+Cc: <mcgrof@kernel.org>, <kees@kernel.org>, <joel.granados@kernel.org>,
+ <mhiramat@kernel.org>, <mathieu.desnoyers@efficios.com>,
+ <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+ <linux-trace-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] kernel: add pid_max to pid_namespace
+Message-ID: <20241104113514.10625a03@gandalf.local.home>
+In-Reply-To: <20241104005408.1926451-1-yun.zhou@windriver.com>
+References: <20241104005408.1926451-1-yun.zhou@windriver.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] [net-next] net: hns3: add IOMMU_SUPPORT dependency
-To: Salil Mehta <salil.mehta@huawei.com>, Arnd Bergmann <arnd@kernel.org>,
- "shenjian (K)" <shenjian15@huawei.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Will Deacon <will@kernel.org>,
- Joerg Roedel <jroedel@suse.de>, "iommu@lists.linux.dev"
- <iommu@lists.linux.dev>, Andrew Lunn <andrew+netdev@lunn.ch>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- shaojijie <shaojijie@huawei.com>, wangpeiyang <wangpeiyang1@huawei.com>,
- "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20241104082129.3142694-1-arnd@kernel.org>
- <069c9838-b781-4012-934a-d2626fa78212@arm.com>
- <96df804b6d9d467391fda27d90b5227c@huawei.com>
- <a94f95bd661c4978bb843c8a1af73818@huawei.com>
-From: Robin Murphy <robin.murphy@arm.com>
-Content-Language: en-GB
-In-Reply-To: <a94f95bd661c4978bb843c8a1af73818@huawei.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On 2024-11-04 10:50 am, Salil Mehta wrote:
->>   From: Salil Mehta <salil.mehta@huawei.com>
->>   Sent: Monday, November 4, 2024 10:41 AM
->>   To: Robin Murphy <robin.murphy@arm.com>; Arnd Bergmann
->>   <arnd@kernel.org>; shenjian (K) <shenjian15@huawei.com>
->>   
->>   HI Robin,
->>   
->>   >  From: Robin Murphy <robin.murphy@arm.com>
->>   >  Sent: Monday, November 4, 2024 10:29 AM
->>   >  To: Arnd Bergmann <arnd@kernel.org>; shenjian (K)
->>   > <shenjian15@huawei.com>; Salil Mehta <salil.mehta@huawei.com>
->>   >  Cc: Arnd Bergmann <arnd@arndb.de>; Will Deacon <will@kernel.org>;
->>   > Joerg Roedel <jroedel@suse.de>; iommu@lists.linux.dev; Andrew Lunn
->>   > <andrew+netdev@lunn.ch>; David S. Miller <davem@davemloft.net>;
->>   Eric
->>   > Dumazet <edumazet@google.com>; Jakub Kicinski <kuba@kernel.org>;
->>   > Paolo Abeni <pabeni@redhat.com>; shaojijie <shaojijie@huawei.com>;
->>   > wangpeiyang <wangpeiyang1@huawei.com>; netdev@vger.kernel.org;
->>   > linux-kernel@vger.kernel.org
->>   >  Subject: Re: [PATCH] [net-next] net: hns3: add IOMMU_SUPPORT
->>   > dependency
->>   >
->>   >  On 2024-11-04 8:21 am, Arnd Bergmann wrote:
->>   >  > From: Arnd Bergmann <arnd@arndb.de>  >  > The hns3 driver started
->>   > filling iommu_iotlb_gather structures itself,  > which requires
->>   > CONFIG_IOMMU_SUPPORT is enabled:
->>   >  >
->>   >  > drivers/net/ethernet/hisilicon/hns3/hns3_enet.c: In function
->>   >  'hns3_dma_map_sync':
->>   >  > drivers/net/ethernet/hisilicon/hns3/hns3_enet.c:395:14: error:
->>   > 'struct  iommu_iotlb_gather' has no member named 'start'
->>   >  >    395 |  iotlb_gather.start = iova;
->>   >  >        |              ^
->>   >  > drivers/net/ethernet/hisilicon/hns3/hns3_enet.c:396:14: error:
->>   > 'struct  iommu_iotlb_gather' has no member named 'end'
->>   >  >    396 |  iotlb_gather.end = iova + granule - 1;
->>   >  >        |              ^
->>   >  > drivers/net/ethernet/hisilicon/hns3/hns3_enet.c:397:14: error:
->>   > 'struct  iommu_iotlb_gather' has no member named 'pgsize'
->>   >  >    397 |  iotlb_gather.pgsize = granule;
->>   >  >        |              ^
->>   >  >
->>   >  > Add a Kconfig dependency to make it build in random configurations.
->>   >  >
->>   >  > Cc: Will Deacon <will@kernel.org>
->>   >  > Cc: Joerg Roedel <jroedel@suse.de>
->>   >  > Cc: Robin Murphy <robin.murphy@arm.com>  > Cc:
->>   > iommu@lists.linux.dev  > Fixes: f2c14899caba ("net: hns3: add sync
->>   > command to sync io-pgtable")  > Signed-off-by: Arnd Bergmann
->>   > <arnd@arndb.de>  > ---  > I noticed that no other driver does this, so
->>   > it would be good to have  > a confirmation from the iommu maintainers
->>   > that this is how the  > interface and the dependency is intended to be
->>   > used.
->>   >
->>   >  WTF is that patch doing!? No, random device drivers should absolutely
->>   > not  be poking into IOMMU driver internals, this is egregiously wrong
->>   > and the  correct action is to drop it entirely.
->>   
->>   
->>   Absolutely agree with it. Sorry I haven't been in touch for quite some time.
->>   Let me catch the whole story.  Feel free to drop this patch.
-> 
-> 
-> Just to make it clear I meant the culprit patch:
-> https://lore.kernel.org/netdev/20241025092938.2912958-3-shaojijie@huawei.com/
+On Mon, 4 Nov 2024 08:54:08 +0800
+Yun Zhou <yun.zhou@windriver.com> wrote:
 
-Right, if the HIP09 SMMU has a bug which requires an 
-iommu_domain_ops::iotlb_sync_map workaround, then the SMMU driver should 
-detect the HIP09 SMMU and implement that workaround for it. HNS3 trying 
-to reach in to the SMMU driver's data and open-code iotlb_sync_map on 
-its behalf is just as plain illogical as it is unacceptable.
+> It is necessary to have a different pid_max in different containers.
+> For example, multiple containers are running on a host, one of which
+> is Android, and its 32 bit bionic libc only accepts pid <= 65535. So
+> it requires the global pid_max <= 65535. This will cause configuration
+> conflicts with other containers and also limit the maximum number of
+> tasks for the entire system.
+> 
+> Signed-off-by: Yun Zhou <yun.zhou@windriver.com>
 
-Thanks,
-Robin.
+I acked the first patch. You don't mention what's different about this one
+(which is something you should do below the '---' line and above the diffstat.
+
+Like:
+
+Changes since v1: https://lore.kernel.org/all/20241030052933.1041408-1-yun.zhou@windriver.com/
+
+- Describe what is different.
+
+What changed? Is it big enough for me to re-review this one so that my ack
+needs to be reevaluated?
+
+-- Steve
 
