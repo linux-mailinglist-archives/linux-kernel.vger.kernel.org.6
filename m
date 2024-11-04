@@ -1,117 +1,115 @@
-Return-Path: <linux-kernel+bounces-394872-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394875-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B2379BB52A
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 13:56:57 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F2899BB532
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 13:58:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C539BB25E70
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 12:56:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 911F31C21954
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 12:58:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92D511B6D12;
-	Mon,  4 Nov 2024 12:56:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98F0B1B81DC;
+	Mon,  4 Nov 2024 12:58:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="WYe/PbbB"
-Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
+	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="lGAyvPRP";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Z+HAnSzw"
+Received: from fhigh-a6-smtp.messagingengine.com (fhigh-a6-smtp.messagingengine.com [103.168.172.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE420433AB;
-	Mon,  4 Nov 2024 12:56:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C75F1B6D12
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 12:58:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730725008; cv=none; b=EpNLGGVTzlu5zDpKTz2v6dbTeW+ixDwez1MCBpJVEESI9zj79Of9kX7vns2MXuMIdiuX4CwcREXuD/X1MZBcZ0h7FDY3Y8QpZFJmB4RHYRqGto5zsEx5ZMYcfhbCeK/w49n4ha/D4Tal7SCIB+dXXsVsuq8/tg8cECfgve5tVIU=
+	t=1730725092; cv=none; b=VxM1C4cTPo5fGVdD9sj4KvEJXDRo1MFCdgI6WkaXOL2gLXhMmDgCjs56zsQZBITHYEWLwjrO8ksubwBgtFup/SarE4rwyVFMdoPZy7YGGjr785NfCuvYRuC4gFvQ4VHL7MUIdX/wJ/eeplsDXawosY8C532oHweCzj4fkQmcUxQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730725008; c=relaxed/simple;
-	bh=gsAM6xvDAkDsKSf2kB2mFqYvNCWWdupMPv1OLEGLJpw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=QDtLDkL5nXZ4QrfxuHoUtAZ2kBdh2nW8yPSDxvUR2TUbC8V9upYRu4cyJThflUmNyFCHYSyRutlYaQnmO3GKTkvoViIefILzKmHRgGj4Mx6rfqKdS2eP0Ln+DUcUZ/iydqbmRodZOLKk3nJd4pnuYLFUU6Yb9aSbI5IBdP1K0Fg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=WYe/PbbB; arc=none smtp.client-ip=193.68.50.107
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
-Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
-	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id 3BA58A03F3;
-	Mon,  4 Nov 2024 13:56:41 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
-	:content-transfer-encoding:content-type:content-type:date:from
-	:from:in-reply-to:message-id:mime-version:references:reply-to
-	:subject:subject:to:to; s=mail; bh=ZgJ5BTpIJ76vDQhoFyd1Z9xzbY8ER
-	zsZQHOdaJr4nBE=; b=WYe/PbbB4ax4WTjf5h1/XMavmEchdcOLxZLN+8EWnhgUn
-	DueBvAgkhickNU7PF0+4Ia6fY7E4i+Uoj/aNithZYWyMrD3uWzle+WjmiqohWp7v
-	3mdQP7M01Fvv2WfIXbnAbsDUnlKt9vVfnBFFQcVZdPHZymknOxkUlNN75ynMVSIi
-	t0CbUTjwRxZUjUoJeHEM1PFziOAg9yVIrJySx9tBcS/XLv3D7U918I5BJpESyBuU
-	puIfXJY/Iba216Kg+HKtLI6i19fPj6GOypDDCVFRPe0/sGAAxBJP95TBMW9Zvbij
-	1fWopBSIs6QB4MlIlm5cWnuWSlCCIS1gEExzEHQZgEzxGXx07J0kBQFlB28OtMhR
-	uMvA0MKeduvvJMRhPxh1brpu/etGNM0HDZq7PldPj4zi4pRJSGas8Exf8a4u7kWc
-	JUQHXL2K73LeiE+06dJuRkfkXGIKw/3hq/+6dmdU1BVGbVpxROEczfxffqtDy6ry
-	LEU4hNdR2lgum0WDVlFVH3uEyovBewMXq4QmJf0FIS2crhMiEg3OtICIczSRdFev
-	YxxtwWltqpxgl/LGEIWjUr6Rc8sXEEzxPBIKsGDAShdejkO2GE0e599N8cQjcDzh
-	d5jwH0GaI9Rv4YJFDELMecBTOvubUS9+U9UdaUPzN7C0bBhaLOcdU5ZhLuAKzw=
-Message-ID: <ad585127-9e3c-414a-84c2-c4ea3e6d3c7d@prolan.hu>
-Date: Mon, 4 Nov 2024 13:56:40 +0100
+	s=arc-20240116; t=1730725092; c=relaxed/simple;
+	bh=C2xRbI9V5MYjIz5A1aAq/gGsd1LQ3A7YRt5msHdu3Dw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FVA0btZyOlXbgxZGzsEipe358ik5lTqLMgGo8YVD8hbiPufsuqmvs9dsOmTuDSLf0mtJD0AL//eqz8m9W/pojPYg2q/M+xnwhg42TdyThHdHCLnZWi/YHMJAijEd0NqFvA89buLUSK3myhVqj/lprpPzuObpl8aaI0GfaCQS0Qw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=lGAyvPRP; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Z+HAnSzw; arc=none smtp.client-ip=103.168.172.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shutemov.name
+Received: from phl-compute-03.internal (phl-compute-03.phl.internal [10.202.2.43])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 1CC6B114005B;
+	Mon,  4 Nov 2024 07:58:09 -0500 (EST)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-03.internal (MEProxy); Mon, 04 Nov 2024 07:58:09 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
+	 h=cc:cc:content-type:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm1; t=1730725089; x=
+	1730811489; bh=flUlqnY+cqQPccGICvx+n07RoS4HpYpLSSI0Fr9s0BE=; b=l
+	GAyvPRP674npP7skf4FYdAOxDdPcWsfm2YxNdHnw0Ikn3KtpRaNcrp8OPDtoVT7C
+	I7z5aw+4C/Rl3ahGATrG1EiDSGjGbcORsEStVH2zLMzn2XMnV52sQ5rwDwXdjGjJ
+	pkXn/1BaNiP4Cii4wiAhPAGCw/odXKVCzfla4BVFH9rPV+S5f34jKt8jYKi+Wajx
+	9awXYpB/YiYw0HGDlW3iquA01+TLyG8sFmkx8z71H9E+zRYctvYH2f01X16neh+v
+	k9/hUeGUS5jq+eFxnR6shM5MO9ve3O4G2F0tu6jHXKcHisBCK2ewlQkVQ4otKJ7m
+	YvE8hhnaT7i/6R4mP8XCA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
+	1730725089; x=1730811489; bh=flUlqnY+cqQPccGICvx+n07RoS4HpYpLSSI
+	0Fr9s0BE=; b=Z+HAnSzwE89uHYCqI5eAM/jN6Y2OVlW+h+p/sH/noLh0ODsrYfc
+	gvk5f4rpyLCZcyobBIBa8cRNnbe+edv0KKXWeD7TB28I6fKtQ80VQz8VyCJpeqJV
+	rUNUfgZ/1/P7Cu55Z7fXapXufb9b7DjWhkZJ45yPXx9kFVJFnihokzqnysT76KPN
+	Ub5I63O6qoLIhINwfPqnfuNZdG36yOJ5ST9fJB0uJt5HHIA13xYmZlngpGjkgbuM
+	0aV6SEb9zFpif57YeGBgwx0zk4H2jzEJ+MgtF3o8fFBRXjHbIY0AJC9Uqct8eDGM
+	VPpt4iT9WvK4VB4Q17PpYDb1pHi4iRuCodg==
+X-ME-Sender: <xms:4MQoZ-DCu7NA2Kd1HKPxhQ23zmm08TE4grzBDdQrQ2Tuyjx45-_sQA>
+    <xme:4MQoZ4hVfWYReIa_rH0vKLf4qjLHBTbv0bZSHvD7dsSDvqTQJnbmA_TS26uB1jLiH
+    i5ZgfxaP4aEU_PVSBA>
+X-ME-Received: <xmr:4MQoZxnz9f4Lfp-UYLmBIApF4RIze3ieTjuSjpmh30ZTeWqgoCte3Cn7rmGK7OD21RSNxA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdeliedggeehucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucenucfjughrpeffhffvve
+    fukfhfgggtuggjsehttdfstddttddvnecuhfhrohhmpedfmfhirhhilhhlucetrdcuufhh
+    uhhtvghmohhvfdcuoehkihhrihhllhesshhhuhhtvghmohhvrdhnrghmvgeqnecuggftrf
+    grthhtvghrnhepveeifeekheelhfduffekueegtdeuhffgkeegteeihfeltdevgedvveeg
+    fefhheehnecuffhomhgrihhnpehshiiikhgrlhhlvghrrdgrphhpshhpohhtrdgtohhmne
+    cuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepkhhirhhi
+    lhhlsehshhhuthgvmhhovhdrnhgrmhgvpdhnsggprhgtphhtthhopeegpdhmohguvgepsh
+    hmthhpohhuthdprhgtphhtthhopehshiiisghothdolhhishhtkeeirggtiegtkeefgegs
+    rgelvddtvgeljeejrgelsehshiiikhgrlhhlvghrrdgrphhpshhpohhtmhgrihhlrdgtoh
+    hmpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdho
+    rhhgpdhrtghpthhtoheplhhinhhugidqmhhmsehkvhgrtghkrdhorhhgpdhrtghpthhtoh
+    epshihiihkrghllhgvrhdqsghughhssehgohhoghhlvghgrhhouhhpshdrtghomh
+X-ME-Proxy: <xmx:4MQoZ8xjEJXBqjr8d83Qy25mY_2Mgba5sM1M7arLzfdJv9BUznNUcQ>
+    <xmx:4MQoZzSK91UaIjO3rUg3Mo6wRtftK3SqUwfVoaboGumoxJudL9L6JA>
+    <xmx:4MQoZ3YsZwF-qAYJKro6giLKgGgW6YgW1Hiltwf6zvLTtE8QD67B6g>
+    <xmx:4MQoZ8SDRQ5aEiJCQecqGT-ahFVUMX0ji_orqn3mwhssiZJ7J-PHmw>
+    <xmx:4cQoZxNHEiA8bG-POs_np-1EscNTmewByD3rzoC-JnEq8HorkBPioBNo>
+Feedback-ID: ie3994620:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 4 Nov 2024 07:58:06 -0500 (EST)
+Date: Mon, 4 Nov 2024 14:58:01 +0200
+From: "Kirill A. Shutemov" <kirill@shutemov.name>
+To: syzbot <syzbot+list86ac6c834ba920e977a9@syzkaller.appspotmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] Monthly mm report (Nov 2024)
+Message-ID: <nkwl63smriaeqf4vdappijzlhbs7t6c46eyxt3vh7a63h6rtn2@pwjdhhwi6cua>
+References: <6728b185.050a0220.35b515.01bd.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] spi: atmel-quadspi: Create `atmel_qspi_ops` to support
- newer SoC families
-To: Tudor Ambarus <tudor.ambarus@linaro.org>, <linux-spi@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	Varshini Rajendran <varshini.rajendran@microchip.com>, Alexandre Belloni
-	<alexandre.belloni@bootlin.com>, Mark Brown <broonie@kernel.org>, "Claudiu
- Beznea" <claudiu.beznea@tuxon.dev>
-References: <20241030084445.2438750-1-csokas.bence@prolan.hu>
- <7cc95e52-7509-44eb-8e30-d518283e7d87@linaro.org>
- <2b310b54-c215-40fa-b6d4-81faf75a8c9e@prolan.hu>
- <20241104-vanilla-operating-de19b033f0a8@thorsis.com>
-Content-Language: en-US
-From: =?UTF-8?B?Q3PDs2vDoXMgQmVuY2U=?= <csokas.bence@prolan.hu>
-In-Reply-To: <20241104-vanilla-operating-de19b033f0a8@thorsis.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: ATLAS.intranet.prolan.hu (10.254.0.229) To
- ATLAS.intranet.prolan.hu (10.254.0.229)
-X-EsetResult: clean, is OK
-X-EsetId: 37303A2980D94855667267
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6728b185.050a0220.35b515.01bd.GAE@google.com>
 
-Hi!
+On Mon, Nov 04, 2024 at 03:35:33AM -0800, syzbot wrote:
+> <3>  6624    Yes   possible deadlock in lock_mm_and_find_vma (2)
+>                    https://syzkaller.appspot.com/bug?extid=b02bbe0ff80a09a08c1b
 
-On 2024. 11. 04. 13:48, Alexander Dahl wrote:
-> Hi,
-> 
-> Am Wed, Oct 30, 2024 at 01:37:52PM +0100 schrieb Csókás Bence:
->> Hi,
->>
->> On 2024. 10. 30. 12:09, Tudor Ambarus wrote:
->>> I think it's fine to split sama7g5 addition in smaller steps. But please
->>> add the sama7g5 support in the same patch set, otherwise this patch
->>> doesn't make sense on its own.
->>
->> Well, actually, we're using SAMA5D2. My goal was just to somewhat harmonize
->> upstream with the vendor kernel so that we may contribute other patches that
->> we have made on top of the latter, or in the future, take patches from
->> upstream and apply it to our vendor kernel-based tree. This patch was only
->> meant to lay the groundworks for future SAMA7G5 support. I can of course
->> send the "other half" of the original patch if needed, but I wouldn't want
->> it to hold up this refactor.
-> 
-> It would actually be better if vendor would bring their stuff
-> upstream, so there's no need for a vendor kernel.  Did you talk to
-> Microchip about their upstreaming efforts?  What was the answer?
-> 
-> Greets
-> Alex
+This one is fixed by 58a039e679fe ("mm: split critical region in
+remap_file_pages() and invoke LSMs in between")
 
-Agreed. Though in this case, the original patch *was* submitted by 
-Microchip (by Tudor, originally) for upstream inclusion, but it was not 
-merged. Hence this forward-port.
-Link: 
-https://lore.kernel.org/linux-spi/20211214133404.121739-1-tudor.ambarus@microchip.com/
-
-Bence
-
+-- 
+  Kiryl Shutsemau / Kirill A. Shutemov
 
