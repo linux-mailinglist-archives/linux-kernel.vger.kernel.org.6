@@ -1,142 +1,174 @@
-Return-Path: <linux-kernel+bounces-394491-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394492-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23CA99BAFEA
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 10:39:07 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A1139BAFED
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 10:39:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 96738B23C49
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 09:39:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 123F41F235D9
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 09:39:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B8581AE018;
-	Mon,  4 Nov 2024 09:38:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="b1wJhu7o"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A0A81AE861;
+	Mon,  4 Nov 2024 09:39:13 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7220B1AC426
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 09:38:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04FCC1AC426
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 09:39:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730713137; cv=none; b=UDJo/lmmK3ksz2TPKGV+EsnB7eM5R8qECvXut7pHB2r5Wqb9rBmxYnd3q2OAxQoSkGVwLsZt8T+z7QhS4zU26n5rHM9PKu9c2BKx9uUd2fZ87UCukjl6eF0qDXzD/jtxbut/Tpk0/zC+Lf/EKJdqJ9POeuJb7eGCU6MqTQ+CSKE=
+	t=1730713153; cv=none; b=U9GL0+/pPK3xHkEyy9H49Rl02NRbHp4XpN04H4B/FJpX+SkY0GfvWruTcBdYvFOg9FSr4BU2S2PgKQ5FeaAVy53q9j+3fBFnJ3e55IJ4GSGqrY9t23HAajrOgArZxRoAsaRhAKFy8vWJsicRJw/Xp+GMX9XSVROPQZA/uiXoHz8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730713137; c=relaxed/simple;
-	bh=v+5uKrxJPK7NSh5eV2LEWmykHhNXvjyhTaoGacIPfPA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=o2Fm4Jxg49vtsXhSCIlDyxRH9G+728rCPSyHjAiClslUqp3gSmSl/GrA86DQakmHcxZ57x6MUfRxg2BbM1OCiFIOd6h0UxupPgrD+5sHTBEdyzPbYW5MONYlfxayLxjHC9LDCeudlaNvxyo+jiQDZ6SHYJDPSU9+1vHAeTv7OnQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=fail smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=b1wJhu7o; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A3NfPYC016422
-	for <linux-kernel@vger.kernel.org>; Mon, 4 Nov 2024 09:38:55 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	w+0aO+sDRIu53v+/HLYpCyoLln7SKUM52sQdEs3soqE=; b=b1wJhu7oU6NSStN0
-	uG/EbuVHMgxj+z23UhE7gAaztjEymjYFBc78PqigjxKmbRzv5rebESdlpX46ylAJ
-	ekHK6BGPngJWonW1GKs5/VmbBdvBwxYCuHJp9LXDCfJLxebUKpQIXccWJyhwuDEj
-	6BwAQhT2kedyWWDFndA8PepiT1UHdprbDv17PU1wcXJtP0bcKid4qmBYjcQw6Lp3
-	TcYmeeSpazN9X3rknhv0QRh0KNaVwVFZLrCwTBEi2EJP2sm7uCPmZLM+WZDfiRBr
-	QBPhyx5ftXjB4NeefRPqGN5+MLqdLt5fKs1Q3MRB1/K7tkJqqc3JBSv5C4S9OvIN
-	GjyrQA==
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42ncyxupn4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 09:38:55 +0000 (GMT)
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a4d9e7621aso5878005ab.3
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 01:38:55 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730713134; x=1731317934;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=w+0aO+sDRIu53v+/HLYpCyoLln7SKUM52sQdEs3soqE=;
-        b=iFxjHM4ASFmlPeSEw+Wp9qPI4W7gd9fhtN8yWoRn2cVa4LHuo7H7/ZETFUzF2NAbgs
-         NM4jYnPqgifG6iOyjjnTcNFjU2wRw4+ht88mzEivnuNKeQdMJ+Ju74AH67spTe3OWxJY
-         gpYRKJ7W/gUIHz5R+Ky5JoBjuRpLcRJ6qBoWCXWyQDDb6V/tgbXP1Tz9JlX5oYAxIwTe
-         eZXzSCaM7YO2E5o9wVR9mVYbCe1HS1C9QTqs5xFK3rkcM6gcMkk45tl3U61ecg/Cj45S
-         xIxPQNudxZE6r62W8ooRH/DgzhjEbHMPv5PnuzABP5qv3j5bP1rjQ4EmT5QtAAOxhnRs
-         Iarw==
-X-Forwarded-Encrypted: i=1; AJvYcCXGzeL1u5HQW0P7lKKFc7zBoSSuSUVS9DmL2bJ8EB+bcv4opf2aqx3Gjvio4DZbWvGJxpGNhlDhoCnSAao=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyxUWRphkkQlwCWv6/aEwPFYI43pDsuH7lu4FJkCm88Hsfs8FtB
-	Aa6r1wup5z/Ht2zr4fcZrftw/MUiwg0XWRx3mcOEnIRAKFctzaq4TsqGb0R0UKZY3V2eW5fjEla
-	wCW1T6h/ErL2LkAVumU13mVwDli8RmMyDspumb/04wdhJYA7PcNA2uk9awbILlHU=
-X-Received: by 2002:a92:cda2:0:b0:3a6:cb61:768a with SMTP id e9e14a558f8ab-3a6cb617b34mr11932185ab.6.1730713134384;
-        Mon, 04 Nov 2024 01:38:54 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEEbkTRmJu4tXOQzYcWlGet0DpZexFPcRF5ecWMR54BnSeHzrLe4K78glfIVccskz28EpjAcQ==
-X-Received: by 2002:a92:cda2:0:b0:3a6:cb61:768a with SMTP id e9e14a558f8ab-3a6cb617b34mr11932135ab.6.1730713134006;
-        Mon, 04 Nov 2024 01:38:54 -0800 (PST)
-Received: from [192.168.212.120] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9e5664931asm529198766b.182.2024.11.04.01.38.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 04 Nov 2024 01:38:52 -0800 (PST)
-Message-ID: <f6205012-5f5b-4613-bcb5-dea3f904b5a0@oss.qualcomm.com>
-Date: Mon, 4 Nov 2024 10:38:51 +0100
+	s=arc-20240116; t=1730713153; c=relaxed/simple;
+	bh=4lLU8yg8a4RCxzMArT/7z31wwCcdW3fYlKsKjZeWhdc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=c2t3ugUUWUiHPPoDNl8kaQ32Y6Ovt/eBzVtLhl8KfjaCCpcqUYbtcOzYdk056ugz0mRLh6/ziK9jetvqMIIoPygeS75QxYhKjI+S5OcyfvNa4XpyJh0w5VFfcXVBZcUMyllNzrSDl2JC1YXToAPvWXsTV0fmQAD0i9AHozNHrXg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1t7tY6-0000aX-Mp; Mon, 04 Nov 2024 10:39:02 +0100
+Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1t7tY5-001xM7-2T;
+	Mon, 04 Nov 2024 10:39:01 +0100
+Received: from mfe by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1t7tY5-00DP6z-27;
+	Mon, 04 Nov 2024 10:39:01 +0100
+Date: Mon, 4 Nov 2024 10:39:01 +0100
+From: Marco Felsch <m.felsch@pengutronix.de>
+To: Stefan Wahren <wahrenst@gmx.net>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Catalin Popescu <catalin.popescu@leica-geosystems.com>,
+	Mark Brown <broonie@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	linux-arm-kernel@lists.infradead.org, linux-mmc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-next@vger.kernel.org,
+	regressions@lists.linux.dev
+Subject: Re: [PATCH RFC] mmc: pwrseq_simple: Handle !RESET_CONTROLLER properly
+Message-ID: <20241104093901.rb5ozxt7qkdgoatc@pengutronix.de>
+References: <20241102134522.333047-1-wahrenst@gmx.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] firmware: qcom: scm: add modparam to control QSEECOM
- enablement
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241103-rework-qseecom-v1-0-1d75d4eedc1e@linaro.org>
- <20241103-rework-qseecom-v1-1-1d75d4eedc1e@linaro.org>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20241103-rework-qseecom-v1-1-1d75d4eedc1e@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: YzI8JntrJ5ceA1xYTbaSs6IvLe2HiRj_
-X-Proofpoint-GUID: YzI8JntrJ5ceA1xYTbaSs6IvLe2HiRj_
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 suspectscore=0
- malwarescore=0 bulkscore=0 impostorscore=0 priorityscore=1501
- lowpriorityscore=0 mlxscore=0 phishscore=0 adultscore=0 mlxlogscore=999
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411040085
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241102134522.333047-1-wahrenst@gmx.net>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mfe@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On 3.11.2024 4:37 PM, Dmitry Baryshkov wrote:
-> In preparation to enabling QSEECOM for the platforms rather than
-> individual machines provide a mechanism for the user to override default
-> selection. Allow users to use qcom_scm.qseecom modparam. Setting it to
-> 'force' will enable QSEECOM even if it disabled or not handled by the
-> allowlist. Setting it to 'off' will forcebly disable the QSEECOM
-> interface, allowing incompatible machines to function. All other values
-> mean 'auto', trusting the allowlist in the module.
+Hi Stefan,
+
+On 24-11-02, Stefan Wahren wrote:
+> The recent introduction of reset control in pwrseq_simple introduced
+> a regression for platforms without RESET_CONTROLLER support, because
+
+This is what I was afraid of :/
+
+> devm_reset_control_get_optional_shared() would return NULL and make all
+> resets no-ops. Instead of enforcing this dependency rely on this behavior
+> to determine reset support. As a benefit we can get the rid of the
+> use_reset flag.
 > 
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> Fixes: 73bf4b7381f7 ("mmc: pwrseq_simple: add support for one reset control")
+> Signed-off-by: Stefan Wahren <wahrenst@gmx.net>
 > ---
-
-[...]
-
->  
-> -static bool qcom_scm_qseecom_machine_is_allowed(void)
-> +static bool qcom_scm_qseecom_machine_is_allowed(struct device *scm_dev)
+>  drivers/mmc/core/pwrseq_simple.c | 16 +++++++---------
+>  1 file changed, 7 insertions(+), 9 deletions(-)
+> 
+> Hi,
+> will trying to reproduce the Rpi 4 regression from here [1], I found
+> the issue above. I'm pretty sure the Rpi 4 regression is caused by the same
+> commit. Unfortunately I wasn't able to reproduce it.
+> 
+> [1] - https://lore.kernel.org/linux-next/6724d7d5.170a0220.1281e9.910a@mx.google.com/T/#u
+> 
+> diff --git a/drivers/mmc/core/pwrseq_simple.c b/drivers/mmc/core/pwrseq_simple.c
+> index 24e4e63a5dc8..b8782727750e 100644
+> --- a/drivers/mmc/core/pwrseq_simple.c
+> +++ b/drivers/mmc/core/pwrseq_simple.c
+> @@ -32,7 +32,6 @@ struct mmc_pwrseq_simple {
+>  	struct clk *ext_clk;
+>  	struct gpio_descs *reset_gpios;
+>  	struct reset_control *reset_ctrl;
+> -	bool use_reset;
+>  };
+> 
+>  #define to_pwrseq_simple(p) container_of(p, struct mmc_pwrseq_simple, pwrseq)
+> @@ -71,7 +70,7 @@ static void mmc_pwrseq_simple_pre_power_on(struct mmc_host *host)
+>  		pwrseq->clk_enabled = true;
+>  	}
+> 
+> -	if (pwrseq->use_reset) {
+> +	if (pwrseq->reset_ctrl) {
+>  		reset_control_deassert(pwrseq->reset_ctrl);
+>  		reset_control_assert(pwrseq->reset_ctrl);
+>  	} else
+> @@ -82,7 +81,7 @@ static void mmc_pwrseq_simple_post_power_on(struct mmc_host *host)
 >  {
->  	struct device_node *np;
->  	bool match;
->  
-> +	if (!strcmp(qseecom, "off")) {
-> +		dev_info(scm_dev, "qseecom: disabled by modparam\n");
-> +		return false;
-> +	} else if (!strcmp(qseecom, "force")) {
-> +		dev_info(scm_dev, "qseecom: forcebly enabled\n");
+>  	struct mmc_pwrseq_simple *pwrseq = to_pwrseq_simple(host->pwrseq);
+> 
+> -	if (pwrseq->use_reset)
+> +	if (pwrseq->reset_ctrl)
+>  		reset_control_deassert(pwrseq->reset_ctrl);
+>  	else
+>  		mmc_pwrseq_simple_set_gpios_value(pwrseq, 0);
+> @@ -95,7 +94,7 @@ static void mmc_pwrseq_simple_power_off(struct mmc_host *host)
+>  {
+>  	struct mmc_pwrseq_simple *pwrseq = to_pwrseq_simple(host->pwrseq);
+> 
+> -	if (pwrseq->use_reset)
+> +	if (pwrseq->reset_ctrl)
+>  		reset_control_assert(pwrseq->reset_ctrl);
+>  	else
+>  		mmc_pwrseq_simple_set_gpios_value(pwrseq, 1);
+> @@ -137,15 +136,14 @@ static int mmc_pwrseq_simple_probe(struct platform_device *pdev)
+>  		return dev_err_probe(dev, PTR_ERR(pwrseq->ext_clk), "external clock not ready\n");
+> 
+>  	ngpio = of_count_phandle_with_args(dev->of_node, "reset-gpios", "#gpio-cells");
+> -	if (ngpio == 1)
+> -		pwrseq->use_reset = true;
+> -
+> -	if (pwrseq->use_reset) {
+> +	if (ngpio == 1) {
+>  		pwrseq->reset_ctrl = devm_reset_control_get_optional_shared(dev, NULL);
+>  		if (IS_ERR(pwrseq->reset_ctrl))
+>  			return dev_err_probe(dev, PTR_ERR(pwrseq->reset_ctrl),
+>  					     "reset control not ready\n");
+> -	} else {
+> +	}
+> +
 
-forcibly
+Can we add a comment like:
 
-may also be useful to say "by modparam" here as well
+/*
+ * Fallback to gpio based reset control in case of multiple reset lines
+ * are specified or the platform doesn't have support for RESET at all.
+ */
 
-Konrad
+Regards,
+  Marco
+
+> +	if (!pwrseq->reset_ctrl) {
+>  		pwrseq->reset_gpios = devm_gpiod_get_array(dev, "reset", GPIOD_OUT_HIGH);
+>  		if (IS_ERR(pwrseq->reset_gpios) &&
+>  		    PTR_ERR(pwrseq->reset_gpios) != -ENOENT &&
+> --
+> 2.34.1
+> 
+> 
 
