@@ -1,83 +1,200 @@
-Return-Path: <linux-kernel+bounces-394070-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394091-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B2A69BAA66
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 02:41:32 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76A779BAA7C
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 02:45:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C1C38B20C4B
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 01:41:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9AB6D1C21FE5
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 01:45:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC127163A97;
-	Mon,  4 Nov 2024 01:41:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E0411632D2;
+	Mon,  4 Nov 2024 01:44:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="o8uIcoOP"
-Received: from out30-113.freemail.mail.aliyun.com (out30-113.freemail.mail.aliyun.com [115.124.30.113])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TZWjBYzN"
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08F7E6FD5;
-	Mon,  4 Nov 2024 01:41:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.113
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D46716132E;
+	Mon,  4 Nov 2024 01:44:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730684475; cv=none; b=uAncqgk+crZInhKzgVU2QnIHl7U1SnXwdbDE0CwAUy4hMW9Ir98GUuHED/dVgzN/rr8M8dGefcTIFZj7BMhtIVjMoH4vR/Dc6V21bRlK63NhbdrjPPP8p0cmXVh91y6mbyG4rbkPy5L0yd3uXocq2LPBCyvEWetZlpNUP2VMxx0=
+	t=1730684694; cv=none; b=jrNGYJ0Fekh9Jb8zbMQDdSEe7SaCtzDKNJx38bZab5VWq0iF/FxXbiBDygwRFtkg2yt/b2IgGVFZpqoUZZiIjLEzZrxAcABYW0zwR9hmelpw4SGzyuqxazMHdurLcAFsTQoeffX5S7VuLm3Iikh3ZwI7j9EvKmEnDZjGxQoXk2U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730684475; c=relaxed/simple;
-	bh=XBfulSdet2Bot/bH00oIYGqahI6km5MzkxXPLWv/Wqo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hxJrGR366bYorAoH5ZHJ+qNA5A0O9GLZasC1igzaSsujdtlEQlZCpl/+kAMCSuPOCnoqLuDuwCRfjroX7tziab4VGUlQAcRFcQptJNbSgxCHyW5h63JkRonne/eAt2yezTpBG0fdZdVCKbXpG66x+rTUO3Mv29izRG9q0o8JBBU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=o8uIcoOP; arc=none smtp.client-ip=115.124.30.113
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1730684464; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=JmAZLh/wVHGCcxbi8G5jFz5suwrm92Ok3F5NRCm1Gbs=;
-	b=o8uIcoOP7rbhyPH2H9vF2qJvYw3/1VMLpQWqOncpekKH+y0ISbwx3zcAo+vdgNOm9fLkjoxyq6t/GYjU+6PnCp5snu79OCPU7jgdbXR1ykFc5WUfoIWacdzgw11xCeaQd1hlauerXPjFb3N+JRodS7A/Wgkbnw/JkA5RmLt/yDA=
-Received: from 30.32.103.163(mailfrom:alibuda@linux.alibaba.com fp:SMTPD_---0WIZYaUO_1730684462 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Mon, 04 Nov 2024 09:41:03 +0800
-Message-ID: <58333f24-ae0a-4860-a6a8-37fef09165a0@linux.alibaba.com>
-Date: Mon, 4 Nov 2024 09:41:01 +0800
+	s=arc-20240116; t=1730684694; c=relaxed/simple;
+	bh=tC4PqQJJYcdMyZvQ+5LwuLep63laWjsCpdNbGMW0fbE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=YDDvq7oXcyBxBL4PN7LrVv7TMXLJQQGXFlBDn7Sg1x8xZVD6uv8iC+scQD72wSFEma2TFd5es0X2tSUxYE68Cj9USWuvZcDXuhPmH3bZS/0SAP4kFAJnxWL4cN+mX1Za6K1uuY3DcZRbJc2+59xqeMUMdlgMGjANElexp1GApkQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TZWjBYzN; arc=none smtp.client-ip=209.85.210.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-720d5ada03cso2338961b3a.1;
+        Sun, 03 Nov 2024 17:44:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730684692; x=1731289492; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=I6lIXV9swQCB9hiaNbT3cZZ02Y4/nQybP/TZFkA0ruQ=;
+        b=TZWjBYzNHC9nm4xhq59SBEBZzt7Jc4s/EzsiZYa2Y2KD5fCaYg8b6b7ij9daluaTmq
+         9ILA8L62YTeLvmC2dHxZECIn6SjXK2Zl699iOX8Ujr743Aekn5T4a+MSW2eGeBeeQZCC
+         kcauhkouYTFp0K4IHmOXTJxeXL9PHae/gPEolO5V9thKqyXH/5gdLpcAbdm0yAMA74UG
+         zoHRYLBJSodUzzVqH7FIuXax81CND7rF69rkJi1aumA0Fczy4XXBPF7unt8jLLJlGagJ
+         57n36/iurGngR3865ugfNZesxz58E6JMz7QSLOVlz5HkZP2ONzxlVUJnGdT2NjDjPOLl
+         AeAw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730684692; x=1731289492;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=I6lIXV9swQCB9hiaNbT3cZZ02Y4/nQybP/TZFkA0ruQ=;
+        b=bTWLqUh9tRAR21lx5GHG0awPRGTx+X00Hru70rn1wJYEiPuRQ4vWt21ZRLPrZG7IuM
+         B3MT3a6neQ4uxGqCkln+4SIfQs3+95tpfxufivkdC9+J14zOwYFNa3JANoxQGUcoC5Oc
+         aM7HUGwMmqmBzuVWvRDz0y4US5h5Rq1tMBSKSxJtdswOC/kJqbNtKCpw6cx6IX+cznfz
+         KWNzhmm9UVRcIJhbHdjOikhJF7VtQbPCwsuZyhYptoDsq+IB8CHrjTsLGbRYUJKDp6bk
+         0f7L4OMMaI6Ixvk75By9xe+j9TcFFYW1Md8Om60RUtA5lnwH/Sq20Iu+EcTDoc1rMdkT
+         4Exg==
+X-Forwarded-Encrypted: i=1; AJvYcCWCVmzzR1+KMuurajv4NQ2XvYr8jIgOYYjJg0lJO08UIM+8pT4BqXQZjhn6qbF8/PJU8/5Z5gx6xTLOpl0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy8j6Dc9NgYSk0zSHxHweNrOTv9a0lIUFCWqxqNuabum1sBsyiH
+	wJdJfYfaYqhvf3137dfxBvAs/prj/qO//Z5ooJnUoPEtsY0oOmIl
+X-Google-Smtp-Source: AGHT+IHk4SnOh645pBIqDhO3u5LbiG0tUTbR3Tv8H9J272pjfh24DygmWBnY5QVFRDM5MdFcf5e13g==
+X-Received: by 2002:a05:6a21:2d8b:b0:1d9:28f8:f27d with SMTP id adf61e73a8af0-1db91e533camr21755195637.38.1730684692392;
+        Sun, 03 Nov 2024 17:44:52 -0800 (PST)
+Received: from localhost.localdomain ([2607:f130:0:105:216:3cff:fef7:9bc7])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-720bc1eb3a7sm6360030b3a.81.2024.11.03.17.44.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 03 Nov 2024 17:44:52 -0800 (PST)
+From: zhangshida <starzhangzsd@gmail.com>
+X-Google-Original-From: zhangshida <zhangshida@kylinos.cn>
+To: djwong@kernel.org,
+	dchinner@redhat.com,
+	leo.lilong@huawei.com,
+	wozizhi@huawei.com,
+	osandov@fb.com,
+	xiang@kernel.org,
+	zhangjiachen.jaycee@bytedance.com
+Cc: linux-xfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	zhangshida@kylinos.cn,
+	starzhangzsd@gmail.com
+Subject: [PATCH 0/5] *** Introduce new space allocation algorithm ***
+Date: Mon,  4 Nov 2024 09:44:34 +0800
+Message-Id: <20241104014439.3786609-1-zhangshida@kylinos.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] net/smc: Optimize the search method of reused buf_desc
-To: liqiang <liqiang64@huawei.com>, wenjia@linux.ibm.com, jaka@linux.ibm.com,
- tonylu@linux.alibaba.com, guwen@linux.alibaba.com
-Cc: linux-s390@vger.kernel.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, luanjianhai@huawei.com,
- zhangxuzhou4@huawei.com, dengguangxing@huawei.com, gaochao24@huawei.com
-References: <20241029065415.1070-1-liqiang64@huawei.com>
-Content-Language: en-US
-From: "D. Wythe" <alibuda@linux.alibaba.com>
-In-Reply-To: <20241029065415.1070-1-liqiang64@huawei.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+
+From: Shida Zhang <zhangshida@kylinos.cn>
+
+Hi all,
+
+Recently, we've been encounter xfs problems from our two
+major users continuously.
+They are all manifested as the same phonomenon: a xfs 
+filesystem can't touch new file when there are nearly
+half of the available space even with sparse inode enabled.
+
+It turns out that the filesystem is too fragmented to have
+enough continuous free space to create a new file.
+
+Life still has to goes on. 
+But from our users' perspective, worse than the situation
+that xfs is hard to use is that xfs is non-able to use, 
+since even one single file can't be created now. 
+
+So we try to introduce a new space allocation algorithm to
+solve this.
+
+To achieve that, we try to propose a new concept:
+   Allocation Fields, where its name is borrowed from the 
+mathmatical concepts(Groups,Rings,Fields), will be 
+abbrivated as AF in the rest of the article. 
+
+what is a AF?
+An one-pic-to-say-it-all version of explaination:
+
+|<--------+ af 0 +-------->|<--+ af 1 +-->| af 2|
+|------------------------------------------------+
+| ag 0 | ag 1 | ag 2 | ag 3| ag 4 | ag 5 | ag 6 |
++------------------------------------------------+
+
+A text-based definition of AF:
+1.An AF is a incore-only concept comparing with the on-disk
+  AG concept.
+2.An AF is consisted of a continuous series of AGs. 
+3.Lower AFs will NEVER go to higher AFs for allocation if 
+  it can complete it in the current AF.
+
+Rule 3 can serve as a barrier between the AF to slow down
+the over-speed extending of fragmented pieces. 
+
+With these patches applied, the code logic will be exactly
+the same as the original code logic, unless you run with the
+extra mount opiton. For example:
+   mount -o af1=1 $dev $mnt
+
+That will change the default AF layout:
+
+|<--------+ af 0 +--------->| 
+|----------------------------
+| ag 0 | ag 1 | ag 2 | ag 3 |
++----------------------------
+
+to :
+
+|<-----+ af 0 +----->|<af 1>| 
+|----------------------------
+| ag 0 | ag 1 | ag 2 | ag 3 |
++----------------------------
+
+So the 'af1=1' here means the start agno is one ag away from
+the m_sb.agcount.
+
+We did some tests verify it. You can verify it yourself
+by running the following the command:
+
+1. Create an 1g sized img file and formated it as xfs:
+  dd if=/dev/zero of=test.img bs=1M count=1024
+  mkfs.xfs -f test.img
+  sync
+2. Make a mount directory:
+  mkdir mnt
+3. Run the auto_frag.sh script, which will call another scripts
+  frag.sh. These scripts will be attached in the mail. 
+  To enable the AF, run:
+    ./auto_frag.sh 1
+  To disable the AF, run:
+    ./auto_frag.sh 0
+
+Please feel free to communicate with us if you have any thoughts
+about these problems.
+
+Cheers,
+Shida
 
 
+Shida Zhang (5):
+  xfs: add two wrappers for iterating ags in a AF
+  xfs: add two mp member to record the alloction field layout
+  xfs: add mount options as a way to change the AF layout
+  xfs: add infrastructure to support AF allocation algorithm
+  xfs: modify the logic to comply with AF rules
 
-On 10/29/24 2:54 PM, liqiang wrote:
-> We create a lock-less link list for the currently
-> idle reusable smc_buf_desc.
-> 
-> When the 'used' filed mark to 0, it is added to
-> the lock-less linked list.
-> 
-> When a new connection is established, a suitable
-> element is obtained directly, which eliminates the
-> need for traversal and search, and does not require
-> locking resource.
-> 
-> A lock-free linked list is a linked list that uses
-> atomic operations to optimize the producer-consumer model.
+ fs/xfs/libxfs/xfs_ag.h         | 17 ++++++++++++
+ fs/xfs/libxfs/xfs_alloc.c      | 20 ++++++++++++++-
+ fs/xfs/libxfs/xfs_alloc.h      |  2 ++
+ fs/xfs/libxfs/xfs_bmap.c       | 47 ++++++++++++++++++++++++++++++++--
+ fs/xfs/libxfs/xfs_bmap_btree.c |  2 ++
+ fs/xfs/xfs_mount.h             |  3 +++
+ fs/xfs/xfs_super.c             | 12 ++++++++-
+ 7 files changed, 99 insertions(+), 4 deletions(-)
 
+-- 
+2.33.0
 
-
-No objection, but could you provide us with some data before and after the optimization ?
 
