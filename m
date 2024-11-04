@@ -1,457 +1,223 @@
-Return-Path: <linux-kernel+bounces-395495-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395496-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1714C9BBEBC
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 21:23:24 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50B809BBEBE
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 21:23:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D0E91F22464
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 20:23:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 744311C21656
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 20:23:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 784BD1E5005;
-	Mon,  4 Nov 2024 20:23:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CCF11E5712;
+	Mon,  4 Nov 2024 20:23:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lHsPQYDK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PG1TYxxF"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 992061CC178;
-	Mon,  4 Nov 2024 20:23:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E75A11CC178;
+	Mon,  4 Nov 2024 20:23:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730751796; cv=none; b=WehdRsQB3T9WwIETX7eNNjSTVTrm4joBOBlp2KZcAU5FrybMYcG/q6dq9OPIIZpYgd1gu0o4ypDpTweVCtwVpA+T8LQZ3GgCMiuhqQsaNdPMAP7D7z0ayT91LoaiKto1vMzk6Kkdniw9mQlu1+5dl29UkwZRRqZ4wi6Au4PZ8UI=
+	t=1730751811; cv=none; b=FgIczvtGim/jh+lHdM4iaAXgLx2ukasBKJgsKsyIQPV561moVxquyZ4zm78tzdb4OglZauJA9IiJjlQtEuKlMnINaFG7p4InpDKH0HQvN//E9jLh1GPcDsjnoTtMRX6+je3Jej4FA7TdUQWIiUfPRG6kpjJsbg9hxj6FHyikkQg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730751796; c=relaxed/simple;
-	bh=2eOebLyxN0BOvtsVjtwcA15U2WCECWrXd2l44VjFy74=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uUDuL1RUf780g57s1vfcioZT0rcuV7oN6J1I296zwOhzQzt/xecz7g7EYI7cV7YGy5A0Z3Kc3CYv7bXy+lIdjw5sdZVSSbrj7iytfmUvaRedDJWLqwZSCCBd9PuEgwYQ+vllowFVC7BKuMJdkWaaZpZMHPmYjdHt7BgKmiNh7RM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lHsPQYDK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7674FC4CECE;
-	Mon,  4 Nov 2024 20:23:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730751796;
-	bh=2eOebLyxN0BOvtsVjtwcA15U2WCECWrXd2l44VjFy74=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lHsPQYDKm8ncdwwxtr44gsxjtiQL+p/ridxg/FL5dYyUOjNIj0hoIUundIsbwpkE7
-	 ZMy/EUNX2YUQqXMHuHnrLVLs85BNOHMsiokHfNkjHq7qEfXXpeJFzqEDEHrKP+8vsj
-	 a5Sy3MLHqpLynVYfzt0UjpeAnsaGqX60HQSAwrorE7/N7fL9EYGOCAnbbaWcozHGCc
-	 xQT0pp0/XRjuyXQDgx1IxPevNgwwKDOeX2svc38I7myQNUKAxt0hYV+Wlja5W+q6oi
-	 c9U/ftM0kTaPFTkpVOoxPfG7p8YNZ6V0uxYOHxvcnLiANtcDyITWAlBLYIOD4N/xFe
-	 SiRX/8tPwmGfg==
-Date: Mon, 4 Nov 2024 17:23:11 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Ian Rogers <irogers@google.com>,
-	Dima Kogan <dima@secretsauce.net>,
-	Alexander Lobakin <aleksander.lobakin@intel.com>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/4] perf-probe: Introduce quotation marks support
-Message-ID: <ZyktL05NmqRTr213@x1>
-References: <173073702882.2098439.13342508872190995896.stgit@mhiramat.roam.corp.google.com>
- <173073705572.2098439.4076465830484831945.stgit@mhiramat.roam.corp.google.com>
+	s=arc-20240116; t=1730751811; c=relaxed/simple;
+	bh=bVRTVkdVLpt3k2Sz3dR1IgaViZm9u/+auAbXEsHZa5Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EMhz5WuFcW0a+vxCni66RF1Yarx/h9KEwfd/BZTMEaaTS9Blyd5+o3isvZ6s5uHoF/tcN93kqlGg+ou0Eyd+AFzXN93JX0hYwSpwtJektVnKhEl4IH08XykNx5cQQPU67IbdT4JrxtRkPYZMBRfODVgnoEYO6txsk4jjSYtdz/8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PG1TYxxF; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-20c8c50fdd9so37538245ad.0;
+        Mon, 04 Nov 2024 12:23:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730751809; x=1731356609; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=M+5x6kMVU1G6KEqc3nr1gaq6PpBkuKcx3+eLAbZss6k=;
+        b=PG1TYxxF1R3eg7RfTAjHo8JcIa1CkJzDHt9j48SDpzzE923MsFrYW+FoO2Vb6iYzvs
+         6NXvuykDkb89MzGqrdZtLMtPtuOAmgnRywweXvjPc/4OeJXg9843roF5BAA0A73q38R/
+         sSRsxw40/FPk6vZRbBiIzX9cAjkVjPVa5BU1zbKQWphQEBqfOchznQthAzUobVdA7LN+
+         7S71stdmKoNA9SOSot/K6rPyaH4vya4h7KAxxYXuuLBcyafZFhJIJ9gcU0T7fig2qzuD
+         OFxX9LSNiavdFOXS0B4fn47yabRcOv5LJQ4EeakbY8MT3cGo0viOC8wOksGI7B468KCm
+         AjDA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730751809; x=1731356609;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=M+5x6kMVU1G6KEqc3nr1gaq6PpBkuKcx3+eLAbZss6k=;
+        b=D0r0WrrypNscnvdOBQNcdSHPc5ZsnyK7eosdGlp4Pfh9+FAeGuQ5swCdaAbVyy9guw
+         vY7ewPaY46n7gQY7DF26QwtKTrWUvwYF/ozUgPt55BO+lCz9r5b4wPd1pV8mMeUB5peg
+         g0ujQHTeGorfH6bnGyRsmvIRTZ8Day0O8gInAqO6+dtNSEVEhUDynDFT3Qae7SM9/R7p
+         vNp/EV4Cnv5vaiGdeNmq6ISmRyYdQsFT56gD+capkvLtRht/J6yEHdm4CAD5w4i3feba
+         mrIml+1dveoPVm60EBTeEXj7Z7GE6Hq4z/441TkED18T93alsfR7R1hghOYcR3HbrdMy
+         JNig==
+X-Forwarded-Encrypted: i=1; AJvYcCU+1YQYdKWCHXf46b6IQuK7PWkNfvX/7VczUUaoh3s9gFUAWbXlaDs8QrWGA0C4PZfxFFxeNdnAAu6h1YA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwA6DFw90Neqrsi73u10TFheGKL1cxhu6FaZKrT6jDt4YKAHP7O
+	UoieiIoOuQO9U6hQBFNarUdOHADMAyiLM5K0Cemhq5QJDnvYoxjrsrgv+w==
+X-Google-Smtp-Source: AGHT+IFie9ycNzrKoyUya76A8gnuPRJNJn/rr1vkTgiP7mo1hOVSdwoxYiZl+CB9V9WHImDp12W3tQ==
+X-Received: by 2002:a17:90b:4ac7:b0:2e9:20d8:414c with SMTP id 98e67ed59e1d1-2e94bcdcb02mr22005352a91.5.1730751808955;
+        Mon, 04 Nov 2024 12:23:28 -0800 (PST)
+Received: from ryzen.lan ([2601:644:8200:dab8::a86])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e92fa57cc3sm10315054a91.32.2024.11.04.12.23.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 04 Nov 2024 12:23:28 -0800 (PST)
+From: Rosen Penev <rosenp@gmail.com>
+To: netdev@vger.kernel.org
+Cc: Sudarsana Kalluru <skalluru@marvell.com>,
+	Manish Chopra <manishc@marvell.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCHv2 net-next] net: bnx2x: use ethtool string helpers
+Date: Mon,  4 Nov 2024 12:23:26 -0800
+Message-ID: <20241104202326.78418-1-rosenp@gmail.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <173073705572.2098439.4076465830484831945.stgit@mhiramat.roam.corp.google.com>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Nov 05, 2024 at 01:17:35AM +0900, Masami Hiramatsu (Google) wrote:
-> From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-> 
-> In non-C languages, it is possible to have ':' in the function names.
-> It is possible to escape it with backslashes, but if there are too many
-> backslashes, it is annoying.
-> This introduce quotation marks (`"` or `'`) support.
+The latter is the preferred way to copy ethtool strings.
 
-Can you please split the patch so that strpbrk_esq() and strdup_esq()
-are introduced in different patches?
+Avoids manually incrementing the pointer. Cleans up the code quite well.
 
-- Arnaldo
+Signed-off-by: Rosen Penev <rosenp@gmail.com>
+---
+ v2: handle IS_VF
+ v1: split off from main broadcom patch.
+ .../ethernet/broadcom/bnx2x/bnx2x_ethtool.c   | 68 +++++++++----------
+ 1 file changed, 31 insertions(+), 37 deletions(-)
+
+diff --git a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_ethtool.c b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_ethtool.c
+index adf7b6b94941..44199855ebfb 100644
+--- a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_ethtool.c
++++ b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_ethtool.c
+@@ -39,34 +39,34 @@ static const struct {
+ 	int size;
+ 	char string[ETH_GSTRING_LEN];
+ } bnx2x_q_stats_arr[] = {
+-/* 1 */	{ Q_STATS_OFFSET32(total_bytes_received_hi), 8, "[%s]: rx_bytes" },
++/* 1 */	{ Q_STATS_OFFSET32(total_bytes_received_hi), 8, "[%d]: rx_bytes" },
+ 	{ Q_STATS_OFFSET32(total_unicast_packets_received_hi),
+-						8, "[%s]: rx_ucast_packets" },
++						8, "[%d]: rx_ucast_packets" },
+ 	{ Q_STATS_OFFSET32(total_multicast_packets_received_hi),
+-						8, "[%s]: rx_mcast_packets" },
++						8, "[%d]: rx_mcast_packets" },
+ 	{ Q_STATS_OFFSET32(total_broadcast_packets_received_hi),
+-						8, "[%s]: rx_bcast_packets" },
+-	{ Q_STATS_OFFSET32(no_buff_discard_hi),	8, "[%s]: rx_discards" },
++						8, "[%d]: rx_bcast_packets" },
++	{ Q_STATS_OFFSET32(no_buff_discard_hi),	8, "[%d]: rx_discards" },
+ 	{ Q_STATS_OFFSET32(rx_err_discard_pkt),
+-					 4, "[%s]: rx_phy_ip_err_discards"},
++					 4, "[%d]: rx_phy_ip_err_discards"},
+ 	{ Q_STATS_OFFSET32(rx_skb_alloc_failed),
+-					 4, "[%s]: rx_skb_alloc_discard" },
+-	{ Q_STATS_OFFSET32(hw_csum_err), 4, "[%s]: rx_csum_offload_errors" },
+-	{ Q_STATS_OFFSET32(driver_xoff), 4, "[%s]: tx_exhaustion_events" },
+-	{ Q_STATS_OFFSET32(total_bytes_transmitted_hi),	8, "[%s]: tx_bytes" },
++					 4, "[%d]: rx_skb_alloc_discard" },
++	{ Q_STATS_OFFSET32(hw_csum_err), 4, "[%d]: rx_csum_offload_errors" },
++	{ Q_STATS_OFFSET32(driver_xoff), 4, "[%d]: tx_exhaustion_events" },
++	{ Q_STATS_OFFSET32(total_bytes_transmitted_hi),	8, "[%d]: tx_bytes" },
+ /* 10 */{ Q_STATS_OFFSET32(total_unicast_packets_transmitted_hi),
+-						8, "[%s]: tx_ucast_packets" },
++						8, "[%d]: tx_ucast_packets" },
+ 	{ Q_STATS_OFFSET32(total_multicast_packets_transmitted_hi),
+-						8, "[%s]: tx_mcast_packets" },
++						8, "[%d]: tx_mcast_packets" },
+ 	{ Q_STATS_OFFSET32(total_broadcast_packets_transmitted_hi),
+-						8, "[%s]: tx_bcast_packets" },
++						8, "[%d]: tx_bcast_packets" },
+ 	{ Q_STATS_OFFSET32(total_tpa_aggregations_hi),
+-						8, "[%s]: tpa_aggregations" },
++						8, "[%d]: tpa_aggregations" },
+ 	{ Q_STATS_OFFSET32(total_tpa_aggregated_frames_hi),
+-					8, "[%s]: tpa_aggregated_frames"},
+-	{ Q_STATS_OFFSET32(total_tpa_bytes_hi),	8, "[%s]: tpa_bytes"},
++					8, "[%d]: tpa_aggregated_frames"},
++	{ Q_STATS_OFFSET32(total_tpa_bytes_hi),	8, "[%d]: tpa_bytes"},
+ 	{ Q_STATS_OFFSET32(driver_filtered_tx_pkt),
+-					4, "[%s]: driver_filtered_tx_pkt" }
++					4, "[%d]: driver_filtered_tx_pkt" }
+ };
  
-> For example, without quotes, we have to pass it as below
-> 
-> $ perf probe -x cro3 -L "cro3\:\:cmd\:\:servo\:\:run_show"
-> <run_show@/work/cro3/src/cmd/servo.rs:0>
->       0  fn run_show(args: &ArgsShow) -> Result<()> {
->       1      let list = ServoList::discover()?;
->       2      let s = list.find_by_serial(&args.servo)?;
->       3      if args.json {
->       4          println!("{s}");
-> 
-> With quotes, we can more naturally write the function name as below;
-> 
-> $ ./perf probe -x cro3 -L \"cro3::cmd::servo::run_show\"
-> <run_show@/work/cro3/src/cmd/servo.rs:0>
->       0  fn run_show(args: &ArgsShow) -> Result<()> {
->       1      let list = ServoList::discover()?;
->       2      let s = list.find_by_serial(&args.servo)?;
->       3      if args.json {
->       4          println!("{s}");
-> 
-> Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-> ---
->  tools/perf/util/probe-event.c  |   76 ++++++++++++++++--------------
->  tools/perf/util/probe-finder.c |    3 +
->  tools/perf/util/string.c       |  100 ++++++++++++++++++++++++++++++++++++++++
->  tools/perf/util/string2.h      |    2 +
->  4 files changed, 145 insertions(+), 36 deletions(-)
-> 
-> diff --git a/tools/perf/util/probe-event.c b/tools/perf/util/probe-event.c
-> index 913a27cbb5d9..bcba8273204d 100644
-> --- a/tools/perf/util/probe-event.c
-> +++ b/tools/perf/util/probe-event.c
-> @@ -1065,6 +1065,7 @@ static int __show_line_range(struct line_range *lr, const char *module,
->  
->  	ret = debuginfo__find_line_range(dinfo, lr);
->  	if (!ret) {	/* Not found, retry with an alternative */
-> +		pr_debug2("Failed to find line range in debuginfo. Fallback to alternative\n");
->  		ret = get_alternative_line_range(dinfo, lr, module, user);
->  		if (!ret)
->  			ret = debuginfo__find_line_range(dinfo, lr);
-> @@ -1078,7 +1079,7 @@ static int __show_line_range(struct line_range *lr, const char *module,
->  		pr_warning("Specified source line is not found.\n");
->  		return -ENOENT;
->  	} else if (ret < 0) {
-> -		pr_warning("Debuginfo analysis failed.\n");
-> +		pr_warning("Debuginfo analysis failed (%d).\n", ret);
->  		return ret;
->  	}
->  
-> @@ -1187,7 +1188,7 @@ static int show_available_vars_at(struct debuginfo *dinfo,
->  			pr_err("Failed to find the address of %s\n", buf);
->  			ret = -ENOENT;
->  		} else
-> -			pr_warning("Debuginfo analysis failed.\n");
-> +			pr_warning("Debuginfo analysis failed(2).\n");
->  		goto end;
->  	}
->  
-> @@ -1343,30 +1344,39 @@ static bool is_c_func_name(const char *name)
->   *
->   *         @SRC[:SLN[+NUM|-ELN]]
->   *         FNC[@SRC][:SLN[+NUM|-ELN]]
-> + *
-> + * SRC and FUNC can be quoted by double/single quotes.
->   */
->  int parse_line_range_desc(const char *arg, struct line_range *lr)
->  {
-> -	char *range, *file, *name = strdup(arg);
-> +	char *buf = strdup(arg);
-> +	char *p;
->  	int err;
->  
-> -	if (!name)
-> +	if (!buf)
->  		return -ENOMEM;
->  
->  	lr->start = 0;
->  	lr->end = INT_MAX;
->  
-> -	range = strpbrk_esc(name, ":");
-> -	if (range) {
-> -		*range++ = '\0';
-> +	pr_debug2("Input line range: %s\n", buf);
-> +	p = strpbrk_esq(buf, ":");
-> +	if (p) {
-> +		if (p == buf) {
-> +			semantic_error("No file/function name in '%s'.\n", p);
-> +			err = -EINVAL;
-> +			goto err;
-> +		}
-> +		*(p++) = '\0';
->  
-> -		err = parse_line_num(&range, &lr->start, "start line");
-> +		err = parse_line_num(&p, &lr->start, "start line");
->  		if (err)
->  			goto err;
->  
-> -		if (*range == '+' || *range == '-') {
-> -			const char c = *range++;
-> +		if (*p == '+' || *p == '-') {
-> +			const char c = *(p++);
->  
-> -			err = parse_line_num(&range, &lr->end, "end line");
-> +			err = parse_line_num(&p, &lr->end, "end line");
->  			if (err)
->  				goto err;
->  
-> @@ -1390,28 +1400,22 @@ int parse_line_range_desc(const char *arg, struct line_range *lr)
->  				       " than end line.\n");
->  			goto err;
->  		}
-> -		if (*range != '\0') {
-> -			semantic_error("Tailing with invalid str '%s'.\n", range);
-> +		if (*p != '\0') {
-> +			semantic_error("Tailing with invalid str '%s'.\n", p);
->  			goto err;
->  		}
->  	}
->  
-> -	file = strpbrk_esc(name, "@");
-> -	if (file) {
-> -		*file = '\0';
-> -		lr->file = strdup_esc(++file);
-> -		if (lr->file == NULL) {
-> -			err = -ENOMEM;
-> -			goto err;
-> -		}
-> -		if (*name != '\0')
-> -			lr->function = name;
-> -	} else
-> -		lr->function = name;
-> +	p = strpbrk_esq(buf, "@");
-> +	if (p) {
-> +		*(p++) = '\0';
-> +		lr->file = strdup_esq(p);
-> +	}
-> +	lr->function = strdup_esq(buf);
-> +	err = 0;
->  
-> -	return 0;
->  err:
-> -	free(name);
-> +	free(buf);
->  	return err;
->  }
->  
-> @@ -1419,19 +1423,19 @@ static int parse_perf_probe_event_name(char **arg, struct perf_probe_event *pev)
->  {
->  	char *ptr;
->  
-> -	ptr = strpbrk_esc(*arg, ":");
-> +	ptr = strpbrk_esq(*arg, ":");
->  	if (ptr) {
->  		*ptr = '\0';
->  		if (!pev->sdt && !is_c_func_name(*arg))
->  			goto ng_name;
-> -		pev->group = strdup_esc(*arg);
-> +		pev->group = strdup_esq(*arg);
->  		if (!pev->group)
->  			return -ENOMEM;
->  		*arg = ptr + 1;
->  	} else
->  		pev->group = NULL;
->  
-> -	pev->event = strdup_esc(*arg);
-> +	pev->event = strdup_esq(*arg);
->  	if (pev->event == NULL)
->  		return -ENOMEM;
->  
-> @@ -1470,7 +1474,7 @@ static int parse_perf_probe_point(char *arg, struct perf_probe_event *pev)
->  			arg++;
->  	}
->  
-> -	ptr = strpbrk_esc(arg, ";=@+%");
-> +	ptr = strpbrk_esq(arg, ";=@+%");
->  	if (pev->sdt) {
->  		if (ptr) {
->  			if (*ptr != '@') {
-> @@ -1484,7 +1488,7 @@ static int parse_perf_probe_point(char *arg, struct perf_probe_event *pev)
->  				pev->target = build_id_cache__origname(tmp);
->  				free(tmp);
->  			} else
-> -				pev->target = strdup_esc(ptr + 1);
-> +				pev->target = strdup_esq(ptr + 1);
->  			if (!pev->target)
->  				return -ENOMEM;
->  			*ptr = '\0';
-> @@ -1518,7 +1522,7 @@ static int parse_perf_probe_point(char *arg, struct perf_probe_event *pev)
->  		arg++;
->  	}
->  
-> -	ptr = strpbrk_esc(arg, ";:+@%");
-> +	ptr = strpbrk_esq(arg, ";:+@%");
->  	if (ptr) {
->  		nc = *ptr;
->  		*ptr++ = '\0';
-> @@ -1527,7 +1531,7 @@ static int parse_perf_probe_point(char *arg, struct perf_probe_event *pev)
->  	if (arg[0] == '\0')
->  		tmp = NULL;
->  	else {
-> -		tmp = strdup_esc(arg);
-> +		tmp = strdup_esq(arg);
->  		if (tmp == NULL)
->  			return -ENOMEM;
->  	}
-> @@ -1565,7 +1569,7 @@ static int parse_perf_probe_point(char *arg, struct perf_probe_event *pev)
->  				return -ENOMEM;
->  			break;
->  		}
-> -		ptr = strpbrk_esc(arg, ";:+@%");
-> +		ptr = strpbrk_esq(arg, ";:+@%");
->  		if (ptr) {
->  			nc = *ptr;
->  			*ptr++ = '\0';
-> @@ -1592,7 +1596,7 @@ static int parse_perf_probe_point(char *arg, struct perf_probe_event *pev)
->  				semantic_error("SRC@SRC is not allowed.\n");
->  				return -EINVAL;
->  			}
-> -			pp->file = strdup_esc(arg);
-> +			pp->file = strdup_esq(arg);
->  			if (pp->file == NULL)
->  				return -ENOMEM;
->  			break;
-> diff --git a/tools/perf/util/probe-finder.c b/tools/perf/util/probe-finder.c
-> index 630e16c54ed5..5462b5541a6d 100644
-> --- a/tools/perf/util/probe-finder.c
-> +++ b/tools/perf/util/probe-finder.c
-> @@ -1796,6 +1796,7 @@ int debuginfo__find_line_range(struct debuginfo *dbg, struct line_range *lr)
->  		struct dwarf_callback_param line_range_param = {
->  			.data = (void *)&lf, .retval = 0};
->  
-> +		pr_debug2("Start searching function '%s' in getpubname\n", lr->function);
->  		dwarf_getpubnames(dbg->dbg, pubname_search_cb,
->  				  &pubname_param, 0);
->  		if (pubname_param.found) {
-> @@ -1803,8 +1804,10 @@ int debuginfo__find_line_range(struct debuginfo *dbg, struct line_range *lr)
->  			if (lf.found)
->  				goto found;
->  		}
-> +		pr_debug2("Not found, use DIE tree\n");
->  	}
->  
-> +	pr_debug2("Search function '%s' in DIE tree\n", lr->function);
->  	/* Loop on CUs (Compilation Unit) */
->  	while (!lf.found && ret >= 0) {
->  		if (dwarf_nextcu(dbg->dbg, off, &noff, &cuhl,
-> diff --git a/tools/perf/util/string.c b/tools/perf/util/string.c
-> index 116a642ad99d..308fc7ec88cc 100644
-> --- a/tools/perf/util/string.c
-> +++ b/tools/perf/util/string.c
-> @@ -263,6 +263,34 @@ char *strpbrk_esc(char *str, const char *stopset)
->  	return ptr;
->  }
->  
-> +/* Like strpbrk_esc(), but not break if it is quoted with single/double quotes */
-> +char *strpbrk_esq(char *str, const char *stopset)
-> +{
-> +	char *_stopset = NULL;
-> +	char *ptr;
-> +	const char *squote = "'";
-> +	const char *dquote = "\"";
-> +
-> +	if (asprintf(&_stopset, "%s%c%c", stopset, *squote, *dquote) < 0)
-> +		return NULL;
-> +
-> +	do {
-> +		ptr = strpbrk_esc(str, _stopset);
-> +		if (!ptr)
-> +			break;
-> +		if (*ptr == *squote)
-> +			ptr = strpbrk_esc(ptr + 1, squote);
-> +		else if (*ptr == *dquote)
-> +			ptr = strpbrk_esc(ptr + 1, dquote);
-> +		else
-> +			break;
-> +		str = ptr + 1;
-> +	} while (ptr);
-> +
-> +	free(_stopset);
-> +	return ptr;
-> +}
-> +
->  /* Like strdup, but do not copy a single backslash */
->  char *strdup_esc(const char *str)
->  {
-> @@ -293,6 +321,78 @@ char *strdup_esc(const char *str)
->  	return ret;
->  }
->  
-> +/* Remove backslash right before quote and return next quote address. */
-> +static char *remove_consumed_esc(char *str, int len, int quote)
-> +{
-> +	char *ptr = str, *end = str + len;
-> +
-> +	while (*ptr != quote && ptr < end) {
-> +		if (*ptr == '\\' && *(ptr + 1) == quote) {
-> +			memmove(ptr, ptr + 1, end - (ptr + 1));
-> +			/* now *ptr is `quote`. */
-> +			end--;
-> +		}
-> +		ptr++;
-> +	}
-> +
-> +	return *ptr == quote ? ptr : NULL;
-> +}
-> +
-> +/*
-> + * Like strdup_esc, but keep quoted string as it is (and single backslash
-> + * before quote is removed). If there is no closed quote, return NULL.
-> + */
-> +char *strdup_esq(const char *str)
-> +{
-> +	char *d, *ret;
-> +
-> +	/* If there is no quote, return normal strdup_esc() */
-> +	d = strpbrk_esc((char *)str, "\"'");
-> +	if (!d)
-> +		return strdup_esc(str);
-> +
-> +	ret = strdup(str);
-> +	if (!ret)
-> +		return NULL;
-> +
-> +	d = ret;
-> +	do {
-> +		d = strpbrk(d, "\\\"\'");
-> +		if (!d)
-> +			break;
-> +
-> +		if (*d == '"' || *d == '\'') {
-> +			/* This is non-escaped quote */
-> +			int quote = *d;
-> +			int len = strlen(d + 1) + 1;
-> +
-> +			/*
-> +			 * Remove the start quote and remove consumed escape (backslash
-> +			 * before quote) and remove the end quote. If there is no end
-> +			 * quote, it is the input error.
-> +			 */
-> +			memmove(d, d + 1, len);
-> +			d = remove_consumed_esc(d, len, quote);
-> +			if (!d)
-> +				goto error;
-> +			memmove(d, d + 1, strlen(d + 1) + 1);
-> +		}
-> +		if (*d == '\\') {
-> +			memmove(d, d + 1, strlen(d + 1) + 1);
-> +			if (*d == '\\') {
-> +				/* double backslash -- keep the second one. */
-> +				d++;
-> +			}
-> +		}
-> +	} while (*d != '\0');
-> +
-> +	return ret;
-> +
-> +error:
-> +	free(ret);
-> +	return NULL;
-> +}
-> +
->  unsigned int hex(char c)
->  {
->  	if (c >= '0' && c <= '9')
-> diff --git a/tools/perf/util/string2.h b/tools/perf/util/string2.h
-> index 52cb8ba057c7..4c8bff47cfd3 100644
-> --- a/tools/perf/util/string2.h
-> +++ b/tools/perf/util/string2.h
-> @@ -37,6 +37,8 @@ char *asprintf__tp_filter_pids(size_t npids, pid_t *pids);
->  
->  char *strpbrk_esc(char *str, const char *stopset);
->  char *strdup_esc(const char *str);
-> +char *strpbrk_esq(char *str, const char *stopset);
-> +char *strdup_esq(const char *str);
->  
->  unsigned int hex(char c);
->  char *strreplace_chars(char needle, const char *haystack, const char *replace);
+ #define BNX2X_NUM_Q_STATS ARRAY_SIZE(bnx2x_q_stats_arr)
+@@ -3184,49 +3184,43 @@ static u32 bnx2x_get_private_flags(struct net_device *dev)
+ static void bnx2x_get_strings(struct net_device *dev, u32 stringset, u8 *buf)
+ {
+ 	struct bnx2x *bp = netdev_priv(dev);
+-	int i, j, k, start;
+-	char queue_name[MAX_QUEUE_NAME_LEN+1];
++	const char *str;
++	int i, j, start;
+ 
+ 	switch (stringset) {
+ 	case ETH_SS_STATS:
+-		k = 0;
+ 		if (is_multi(bp)) {
+ 			for_each_eth_queue(bp, i) {
+-				memset(queue_name, 0, sizeof(queue_name));
+-				snprintf(queue_name, sizeof(queue_name),
+-					 "%d", i);
+-				for (j = 0; j < BNX2X_NUM_Q_STATS; j++)
+-					snprintf(buf + (k + j)*ETH_GSTRING_LEN,
+-						ETH_GSTRING_LEN,
+-						bnx2x_q_stats_arr[j].string,
+-						queue_name);
+-				k += BNX2X_NUM_Q_STATS;
++				for (j = 0; j < BNX2X_NUM_Q_STATS; j++) {
++					str = bnx2x_q_stats_arr[j].string;
++					ethtool_sprintf(&buf, str, i);
++				}
+ 			}
+ 		}
+ 
+-		for (i = 0, j = 0; i < BNX2X_NUM_STATS; i++) {
++		for (i = 0; i < BNX2X_NUM_STATS; i++) {
+ 			if (HIDE_PORT_STAT(bp) && IS_PORT_STAT(i))
+ 				continue;
+-			strcpy(buf + (k + j)*ETH_GSTRING_LEN,
+-				   bnx2x_stats_arr[i].string);
+-			j++;
++			ethtool_puts(&buf, bnx2x_stats_arr[i].string);
+ 		}
+ 
+ 		break;
+ 
+ 	case ETH_SS_TEST:
++		if (IS_VF(bp))
++			break;
+ 		/* First 4 tests cannot be done in MF mode */
+ 		if (!IS_MF(bp))
+ 			start = 0;
+ 		else
+ 			start = 4;
+-		memcpy(buf, bnx2x_tests_str_arr + start,
+-		       ETH_GSTRING_LEN * BNX2X_NUM_TESTS(bp));
++		for (i = start; i < BNX2X_NUM_TESTS_SF; i++)
++			ethtool_puts(&buf, bnx2x_tests_str_arr[i]);
+ 		break;
+ 
+ 	case ETH_SS_PRIV_FLAGS:
+-		memcpy(buf, bnx2x_private_arr,
+-		       ETH_GSTRING_LEN * BNX2X_PRI_FLAG_LEN);
++		for (i = 0; i < BNX2X_PRI_FLAG_LEN; i++)
++			ethtool_puts(&buf, bnx2x_private_arr[i]);
+ 		break;
+ 	}
+ }
+-- 
+2.47.0
+
 
