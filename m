@@ -1,153 +1,175 @@
-Return-Path: <linux-kernel+bounces-395193-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395149-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 693D59BBA2C
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 17:20:19 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 265A29BB93A
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 16:43:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E03DAB22583
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 16:20:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 49C5D1C20F39
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 15:43:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4EAC1C4A31;
-	Mon,  4 Nov 2024 16:19:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8516C1C07E5;
+	Mon,  4 Nov 2024 15:43:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="diyB5BCR"
-Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="dqSnKWGN"
+Received: from mail-il1-f176.google.com (mail-il1-f176.google.com [209.85.166.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6A0D1C4A01
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 16:19:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 655DB1B6D14
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 15:43:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730737171; cv=none; b=U8G393CfFsXILPrwLcptHeN3CraHJPPwAEcGxUev17UTIB43WWlAY8L/eg1W6ohSNibA6UOqxqEpzhyhd7kVsLibCOLRAA+AToLny0erME/Hw24nYYMBYXmbXMlNNLN+xAClpQscgwVtpxAr/1OoemCR7tt8lEJ3O1ASuvjTRgI=
+	t=1730734992; cv=none; b=eYP2s5QF1/NHzrwNY8cRRZFIAvtx3JPeh9JlFgtfbbiSfLvFpK1AbP0R9i/gM/TIW2h1ZKpLxgF2ar5017QZ+OFsI0QEeI8ZxN7l+mxSrorf8efYGlHC6zLhVpsf6A05UlwGFedkLZWPXfMMC6iiHGM5u5/ZbjfoGto0eDgQ0RI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730737171; c=relaxed/simple;
-	bh=Z+EtvtNAVddb0LGVKPzUJYIz4oWFMbDXlfVxfY+njgY=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=QlNxidg62/bLSZsXQ/JnlfY0cJuUupe8ZFVIJA4wPM1MWrSpK3M3p7IJNVmquwojOSnsP33yTtkQ5EINv80V/8CgTIHSV1Px5gdHLY6css6mZitcbCC/DOLk+qpx52NPpKnR10Jc3qU9cv/RiIyeptJt7nYWj+T1DL0zk/7eKBY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--elver.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=diyB5BCR; arc=none smtp.client-ip=209.85.128.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--elver.bounces.google.com
-Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6ea8a5e862eso19102737b3.0
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 08:19:29 -0800 (PST)
+	s=arc-20240116; t=1730734992; c=relaxed/simple;
+	bh=vq+NtXuVkkXOYKdE79BGYN6SgoBDPEAWM4UASDdmfxI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=oxRnlq0Uo32PggEnZVyp298b7u0N016AQcyT3tDwCOgQMYIgcuKiDyLtaYACVDhp9wrSvTJ54XLHFFAfVZqCf/kelGkGXV90En0Jr+6rXUttKRDP+SR3iEfijsn6l1jy2W/7HEBSmUWD0lGvoAkA9wXeUiplERvSZfuBsrzUOKA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=dqSnKWGN; arc=none smtp.client-ip=209.85.166.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-il1-f176.google.com with SMTP id e9e14a558f8ab-3a3b0247d67so15176625ab.3
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 07:43:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1730737169; x=1731341969; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=F81a+6CGvKtmngjrkoxGzbhKVD48308MotgDbr+zIK4=;
-        b=diyB5BCRikRV80sb7qpnw3Y/dd3LS3Ho4L1SN+NKe0azpjw05jPIop5owEPrr/VKZN
-         aFTaWrBAzmtfNmQ3ZX8GMZ5ekLlEP+WUzrprfrlGwnPfRRNakdrzoYayrahPySMhNVLx
-         VHCMtVgxzB6az8f4b5N1BtKc06EWoSZMZkgXtWt96nZredqocQo9lYngTT127Tjys2GI
-         v1RYptZ4xFrNAbFVVlMnBa7ls5ore5O2U6MS+ASj7IwVbyMKFHoUMvx49JgTz8Zgyf4U
-         UZn1E+4D2xxe9FrXM5H5aFU6nQFUmjtJwiMVTgeDyWRZ1OqqFlI1y4N9VeWpv8U4vIDD
-         wPiw==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1730734988; x=1731339788; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=TP/XhExEdt0zq2yXyp+ChPaIA0iZBpgf73+hywwHyJY=;
+        b=dqSnKWGNY0WTVfEVYPPTKu/a2Q/6g5XMLl6yvkXpPsu7ViUVpRDrik8pYkzyajb1In
+         NNaJqjtU3o2Vn0RD+WG3K0FKaSkOm5ZdkB1ZOH7yE7KpikbBBasgv1NTmAsQU5eNCVUK
+         dc5Q8PsMesjqu+9KFQU4j77sFL7enc7Yv1skL5p5mDyeXofuDIYhRp3f67NcbTmm07Kv
+         GJfnCP9LkXrC/Tfp6TLcs72zZcEAdX5XIhRkh9/xQvyyCpOM+J7pRohuhWyY7Xn20026
+         YbOZhMCXBiAaxgBLoNWLk6iX2nGra8i70FtLrBSGjn/KYubsE8WkRGzZPnXI8w8FfF0x
+         BzMg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730737169; x=1731341969;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=F81a+6CGvKtmngjrkoxGzbhKVD48308MotgDbr+zIK4=;
-        b=vBZr/d6qyaxl4n2fB0Y9ZoTyF5rkdCQkHwGWIprGJacWr2KgYsq5vvFx9UVJiVkPfV
-         uWIBsvcEG63/k5Kac88TCpXtksRvdiNtvvxV6CL0AEeuB6872pAAT9ya1YaxVsZkJk34
-         9G/8ioi88qtF+ngIrYTomEbRuqgWljKvmVD+LGXWlgliXSEg87uO6BnO4ek/6FaJDFR0
-         SuQU0a59XE+urDClUlckkUYQ6vu1r1+aWCHl6Qb3cyIlW4IS30lE6iDHj5LkQPjffOqm
-         +/CyEl0SmRTg8bfs0dtNiuW02WzPmfd9sCvqTkk94useO2parCfM0de/vyD6DM2ligQQ
-         BIYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUiU4iquhmB54JU4dkl0B4xo228p2uEODUwrggmbRC5WrBxyhe8ZNvJdDp1Kd6rL+02ryFrD2igr2RsqjI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz7lOxSg4E9XVQseucKS/L+98wp6xzxa3bOY3XodbopC/SrTJpA
-	bxJgs/Gupc47WhksobyWl9Ulk4YajO9gA88udRZ8B4rSzBSux1qr6zsx4MK0e6daTIfqr9c83Q=
-	=
-X-Google-Smtp-Source: AGHT+IEVgE/MIej8RE4qbEDqP1YW+GMNJ/swOW+IJ2MrFumHiQViz2zIr7y971A6SVkDwhd+PHYo+OVUbQ==
-X-Received: from elver.muc.corp.google.com ([2a00:79e0:9c:201:dc4d:3b27:d746:73ee])
- (user=elver job=sendgmr) by 2002:a0d:c601:0:b0:6dd:bb6e:ec89 with SMTP id
- 00721157ae682-6ea55787f6bmr1375427b3.2.1730737168609; Mon, 04 Nov 2024
- 08:19:28 -0800 (PST)
-Date: Mon,  4 Nov 2024 16:43:06 +0100
-In-Reply-To: <20241104161910.780003-1-elver@google.com>
+        d=1e100.net; s=20230601; t=1730734988; x=1731339788;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=TP/XhExEdt0zq2yXyp+ChPaIA0iZBpgf73+hywwHyJY=;
+        b=Ly/5TlI5/wSbazY1VCJ9E5Vl+/IBtsaX096cHgzy2XRow5nvySyC/F1MPrL8YT8C5g
+         ox3+KDdSZBu7PC6VCJOlQUr+ZfOKWNy8jIkAqRN7fQKpI/jDr+0MpfndKpzOGzuhjwqs
+         942WxAqapJxHJoKlrhl/F7aWIHnoDgd3aRjz0EkxIlQk7y6LnHkkR+hPEPJCrcy5C4mY
+         YvQCe8NjGDiijVQMrm9gkLyYhdPyfn3jMx4Hm35/CL7+7pKH/SnvsJ04j89v/9mpjY2y
+         X95gfn2fpkeom+63al01wevqcPMtID3IJ+ltcTm/3CU/SMmiJAj5iPj7DShkSu6h+klB
+         zVDg==
+X-Forwarded-Encrypted: i=1; AJvYcCUWOLNb+2EB25rWxr60LqtMwD7MCAAlOPYeXn23Q2oFYB856BG2GWcrod7B61SBHrM5AUm5DEdr98bdtaU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwSTWgAHmGLc0RCFh53vg7DRauTREPapfTAKQA6xjoa7hJmBKsB
+	jAshiXvWDY3pFITKqAvxKT6MnMj7ennlpxMp5EaFy3f7hiP+Hs0TkCCa64i1LyBb5MsmvLB3WjU
+	E+A4=
+X-Google-Smtp-Source: AGHT+IHv+cXn9m/laACsPdEgrBDR/LFCDcV4pIEcBEj+OIERN6ak/zjEx44Jlc32BszsT0k2Ab+DDw==
+X-Received: by 2002:a05:6e02:20e6:b0:3a3:67b1:3080 with SMTP id e9e14a558f8ab-3a6b0251396mr127343925ab.7.1730734988445;
+        Mon, 04 Nov 2024 07:43:08 -0800 (PST)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3a6a99cbc09sm23302735ab.41.2024.11.04.07.43.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 04 Nov 2024 07:43:07 -0800 (PST)
+Message-ID: <e003c787-71b5-4373-ac53-c98b6b260e04@kernel.dk>
+Date: Mon, 4 Nov 2024 08:43:06 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20241104161910.780003-1-elver@google.com>
-X-Mailer: git-send-email 2.47.0.163.g1226f6d8fa-goog
-Message-ID: <20241104161910.780003-3-elver@google.com>
-Subject: [PATCH v2 2/5] time/sched_clock: Broaden sched_clock()'s
- instrumentation coverage
-From: Marco Elver <elver@google.com>
-To: elver@google.com, Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>
-Cc: "Paul E. McKenney" <paulmck@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
-	Mark Rutland <mark.rutland@arm.com>, Dmitry Vyukov <dvyukov@google.com>, kasan-dev@googlegroups.com, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [syzbot] [io-uring?] [usb?] WARNING in io_get_cqe_overflow (2)
+To: Pavel Begunkov <asml.silence@gmail.com>,
+ syzbot <syzbot+e333341d3d985e5173b2@syzkaller.appspotmail.com>,
+ io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-usb@vger.kernel.org, syzkaller-bugs@googlegroups.com
+References: <6728b077.050a0220.35b515.01ba.GAE@google.com>
+ <13da163a-d088-4b4d-8ad1-dbf609b03228@gmail.com>
+ <b29d2635-d640-4b8e-ad43-1aa25c20d7c8@kernel.dk>
+ <965a473d-596a-4cf4-8ec2-a8626c4c73f6@gmail.com>
+ <16f43422-91aa-4c6d-b36c-3e9cb52b1ff2@gmail.com>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <16f43422-91aa-4c6d-b36c-3e9cb52b1ff2@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Most of sched_clock()'s implementation is ineligible for instrumentation
-due to relying on sched_clock_noinstr().
+On 11/4/24 8:34 AM, Pavel Begunkov wrote:
+> On 11/4/24 15:27, Pavel Begunkov wrote:
+>> On 11/4/24 15:08, Jens Axboe wrote:
+>>> On 11/4/24 6:13 AM, Pavel Begunkov wrote:
+>>>> On 11/4/24 11:31, syzbot wrote:
+>>>>> syzbot has bisected this issue to:
+>>>>>
+>>>>> commit 3f1a546444738b21a8c312a4b49dc168b65c8706
+>>>>> Author: Jens Axboe <axboe@kernel.dk>
+>>>>> Date:   Sat Oct 26 01:27:39 2024 +0000
+>>>>>
+>>>>>       io_uring/rsrc: get rid of per-ring io_rsrc_node list
+>>>>>
+>>>>> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=15aaa1f7980000
+>>>>> start commit:   c88416ba074a Add linux-next specific files for 20241101
+>>>>> git tree:       linux-next
+>>>>> final oops:     https://syzkaller.appspot.com/x/report.txt?x=17aaa1f7980000
+>>>>> console output: https://syzkaller.appspot.com/x/log.txt?x=13aaa1f7980000
+>>>>> kernel config:  https://syzkaller.appspot.com/x/.config?x=704b6be2ac2f205f
+>>>>> dashboard link: https://syzkaller.appspot.com/bug?extid=e333341d3d985e5173b2
+>>>>> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16ec06a7980000
+>>>>> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12c04740580000
+>>>>>
+>>>>> Reported-by: syzbot+e333341d3d985e5173b2@syzkaller.appspotmail.com
+>>>>> Fixes: 3f1a54644473 ("io_uring/rsrc: get rid of per-ring io_rsrc_node list")
+>>>>>
+>>>>> For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+>>>>
+>>>> Previously all puts were done by requests, which in case of an exiting
+>>>> ring were fallback'ed to normal tw. Now, the unregister path posts CQEs,
+>>>> while the original task is still alive. Should be fine in general because
+>>>> at this point there could be no requests posting in parallel and all
+>>>> is synchronised, so it's a false positive, but we need to change the assert
+>>>> or something else.
+>>>
+>>> Maybe something ala the below? Also changes these triggers to be
+>>> _once(), no point spamming them.
+>>>
+>>> diff --git a/io_uring/io_uring.h b/io_uring/io_uring.h
+>>> index 00409505bf07..7792ed91469b 100644
+>>> --- a/io_uring/io_uring.h
+>>> +++ b/io_uring/io_uring.h
+>>> @@ -137,10 +137,11 @@ static inline void io_lockdep_assert_cq_locked(struct io_ring_ctx *ctx)
+>>>            * Not from an SQE, as those cannot be submitted, but via
+>>>            * updating tagged resources.
+>>>            */
+>>> -        if (ctx->submitter_task->flags & PF_EXITING)
+>>> -            lockdep_assert(current_work());
+>>> +        if (ctx->submitter_task->flags & PF_EXITING ||
+>>> +            percpu_ref_is_dying(&ctx->refs))
+>>
+>> io_move_task_work_from_local() executes requests with a normal
+>> task_work of a possible alive task, which which will the check.
+>>
+>> I was thinking to kill the extra step as it doesn't make sense,
+>> git garbage digging shows the patch below, but I don't remember
+>> if it has ever been tested.
+>>
+>>
+>> commit 65560732da185c85f472e9c94e6b8ff147fc4b96
+>> Author: Pavel Begunkov <asml.silence@gmail.com>
+>> Date:   Fri Jun 7 13:13:06 2024 +0100
+>>
+>>      io_uring: skip normal tw with DEFER_TASKRUN
+>>      DEFER_TASKRUN execution first falls back to normal task_work and only
+>>      then, when the task is dying, to workers. It's cleaner to remove the
+>>      middle step and use workers as the only fallback. It also detaches
+>>      DEFER_TASKRUN and normal task_work handling from each other.
+>>      Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+> 
+> Not sure what spacing got broken here.
+> 
+> Regardless, the rule with sth like that should be simpler,
+> i.e. a ctx is getting killed => everything is run from fallback/kthread.
 
-Split the implementation off into an __always_inline function
-__sched_clock(), which is then used by the noinstr and instrumentable
-version, to allow more of sched_clock() to be covered by various
-instrumentation.
+I like it, and now there's another reason to do it. Can you out the
+patch?
 
-This will allow instrumentation with the various sanitizers (KASAN,
-KCSAN, KMSAN, UBSAN). For KCSAN, we know that raw seqcount_latch usage
-without annotations will result in false positive reports: tell it that
-all of __sched_clock() is "atomic" for the latch writer; later changes
-in this series will take care of the readers.
-
-Link: https://lore.kernel.org/all/20241030204815.GQ14555@noisy.programming.kicks-ass.net/
-Co-developed-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Signed-off-by: Marco Elver <elver@google.com>
----
-v2:
-* New patch.
----
- kernel/time/sched_clock.c | 16 ++++++++++++++--
- 1 file changed, 14 insertions(+), 2 deletions(-)
-
-diff --git a/kernel/time/sched_clock.c b/kernel/time/sched_clock.c
-index 85595fcf6aa2..29bdf309dae8 100644
---- a/kernel/time/sched_clock.c
-+++ b/kernel/time/sched_clock.c
-@@ -80,7 +80,7 @@ notrace int sched_clock_read_retry(unsigned int seq)
- 	return raw_read_seqcount_latch_retry(&cd.seq, seq);
- }
- 
--unsigned long long noinstr sched_clock_noinstr(void)
-+static __always_inline unsigned long long __sched_clock(void)
- {
- 	struct clock_read_data *rd;
- 	unsigned int seq;
-@@ -98,11 +98,23 @@ unsigned long long noinstr sched_clock_noinstr(void)
- 	return res;
- }
- 
-+unsigned long long noinstr sched_clock_noinstr(void)
-+{
-+	return __sched_clock();
-+}
-+
- unsigned long long notrace sched_clock(void)
- {
- 	unsigned long long ns;
- 	preempt_disable_notrace();
--	ns = sched_clock_noinstr();
-+	/*
-+	 * All of __sched_clock() is a seqcount_latch reader critical section,
-+	 * but relies on the raw helpers which are uninstrumented. For KCSAN,
-+	 * mark all accesses in __sched_clock() as atomic.
-+	 */
-+	kcsan_nestable_atomic_begin();
-+	ns = __sched_clock();
-+	kcsan_nestable_atomic_end();
- 	preempt_enable_notrace();
- 	return ns;
- }
 -- 
-2.47.0.163.g1226f6d8fa-goog
-
+Jens Axboe
 
