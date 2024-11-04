@@ -1,111 +1,182 @@
-Return-Path: <linux-kernel+bounces-394284-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394285-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47CA29BACDB
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 07:51:58 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C498F9BACDD
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 07:52:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 795151C21192
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 06:51:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 701521F228BB
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 06:52:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 875F718DF7E;
-	Mon,  4 Nov 2024 06:51:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 545C418F2F7;
+	Mon,  4 Nov 2024 06:52:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZlcoSG20"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e7GdqO0o"
+Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6154814A4F7
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 06:51:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A3B718E359;
+	Mon,  4 Nov 2024 06:52:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730703112; cv=none; b=FGujF8JcBCDEJG6k9qS43BK6eLACmGChsbEVWzRc1E4HdvkvydLgqOtlShLrr4Zv4EAWIE3MEQt2Re/AUC2ervOpGhnHNPcfioW89Gvd0wQkwJwsE5hBs4i6O4+ebKWG4x1j61L5MG1aFo+ugX0kDFVU06z6mGnAZKMPhR3WlgI=
+	t=1730703150; cv=none; b=AFZjduqU4NRvootnU+2272B1b1wqEk9VL2103YXBwFno/SEs2Q1G6M8lynGNks3Chx8dxs5SnOTowWoWNi0X6U0vLOai0Y0l4N3WoakDk3kzmMTOUmezuudNFrE12Y4OM9rPvtxpB4zi/ituNc+fxdI6NdAX0dT/yeofE62TWBs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730703112; c=relaxed/simple;
-	bh=CNImVzsZlJ7xWiG4UC92lMfsLbazMpimQH9GRzbrG7A=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=TwvPF9rcEv4BSdWWISKgmDHYzjKe1xZPtCskZvyC0TaQKCS1WjZLgC7BhoGHSyyPfXR74IgscIFVlWz/cKXsfmRqKa//zmBCg4CpNCc20M3gbb1wxhlIGJOq8RMU/2tmMGWAOM5BMU2tQzkCVlLFncGcbwx/B1zgKD4ISc6KMq8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZlcoSG20; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730703111; x=1762239111;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=CNImVzsZlJ7xWiG4UC92lMfsLbazMpimQH9GRzbrG7A=;
-  b=ZlcoSG20HOftqoUszZ6+YsfSPIB1ljPS6/GH+lY1oJUPcLg/IZzgBABb
-   THMH0c7tuFl1o06/0YsQQiUpQVbQ9hRv5Uqis9o9rPCF+ZdniTSrO3ivy
-   Pb/APsaxg8CFZ+NpRzawXOdcya6OzC/f2lPcQdFfiji5PcQrjrgkD/S4f
-   P/RTNO62z9H6r62K9K40haETwGbtfVw+GHzXE5V2e9v3FIaGlFQdGCyIY
-   8TWeaLSDy8t2eMogN5AnJA8/3udAwOb+P13nP0+mNfszhAIEqsh6YWzkz
-   f7EzbiaSqIT9JxH51+ZSSnqqVAteVdQu/585QQrENjy0Q4YbhcPKCEqFd
-   w==;
-X-CSE-ConnectionGUID: tDDuZuiKQPqmjwEG+oA0mg==
-X-CSE-MsgGUID: I4A/hT4jRvWO2ruHiDYoCQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11245"; a="40967700"
-X-IronPort-AV: E=Sophos;i="6.11,256,1725346800"; 
-   d="scan'208";a="40967700"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2024 22:51:50 -0800
-X-CSE-ConnectionGUID: qR+/SgJNQ62A1DbHEInMig==
-X-CSE-MsgGUID: CdSTMi/CR8+cOkr03SOiog==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,256,1725346800"; 
-   d="scan'208";a="87496271"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by fmviesa003.fm.intel.com with ESMTP; 03 Nov 2024 22:51:48 -0800
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1t7qwE-000kZ3-1P;
-	Mon, 04 Nov 2024 06:51:46 +0000
-Date: Mon, 4 Nov 2024 14:50:51 +0800
-From: kernel test robot <lkp@intel.com>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	s=arc-20240116; t=1730703150; c=relaxed/simple;
+	bh=N9tbKly5zWUOAzeiQ1Wxfd8kcw035wi4bUXqYm/ne4M=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=pwSSV/2/R7skVnEbhVvK4xzK7+pqTsefmsnP4Y5YtvMV7nhxs9KLxuP3tyPPPN+izNI+0JrpmKH6E98QQ6TGQRGUZ+RXvVreqhqTDBZrQcF4PQqCGwUOdvO3vzBSy0n5Zz67C7KNPZO+p7s829IGHAGwGNJGbFmg3PZqmk+Qg3A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=e7GdqO0o; arc=none smtp.client-ip=209.85.215.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-7ee6edc47abso1134454a12.3;
+        Sun, 03 Nov 2024 22:52:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730703148; x=1731307948; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uLCR8Gw/jIPv8Z4kr33wovyxqJ+uVehxMy/GMieinYU=;
+        b=e7GdqO0oTlXQ4OpcIpaI6Yfi3X6V1MS1rng+yI/1AtuH3S625bqknZUGnqidcpKFRg
+         qHJoJ9cH1PtnbF0qBCQROcybpJzDZuDTtuXK9mFu7YUlz0RPOws40yhnHLMnjzBU35YZ
+         tEfJx2+PnhqIX9Z2TMM5mNlYgl+ERoSfi0Lj7RFJggjCEWjWsO2CmMdnf7zZDgTnvY/7
+         hdnJf9SZoYj08lUSrd/TIL+Z9doko8IdJBDhxk6GzjX5bufqEDKVFehwlqOUasRZZQ+f
+         EXa5U8yO7OBlxobBjbHvW9xVqRzDw9bboxVNOy3Y8YBkgojGvYKZ/WVmQzCgV478B92D
+         A/hA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730703148; x=1731307948;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=uLCR8Gw/jIPv8Z4kr33wovyxqJ+uVehxMy/GMieinYU=;
+        b=viKWcyL6GcxiNadkmz8edOPCoaBwuRjCcBxKMkW3RCxZKf63VbKDGNFXHi8/SEdn4N
+         krZ0BoYkOHfC0s9qAy2S7TCT0ZwTAaPHoSe61jWowENoHK+oW94vspFygd8CppQrMk6V
+         WnVsh5OhirpNN/ombkGs+ZXctvU4vjOGEvvfAeilJOukS0zVkMd4Pxta9FIT41Wj9zrI
+         MU9AMopz004oYrQRrQqPq2iAHXeNf9f56EK6asyi5TcgPq7PssPLR15vWexNwy2T1ePo
+         P0TirLPwHuSAYb7DcRVetD8ERMnx2wUZne2dYWyN9+vz3X7IoYRFwzbhu5f8VqtM245j
+         3pgw==
+X-Forwarded-Encrypted: i=1; AJvYcCUeipMvRhp5YfwkmA/qVvPgw+8XpXLJjvSXj+GhmL+GwZEZRq9TdZXsxeZPS+vYLtbcVYCWDOvnINEs@vger.kernel.org, AJvYcCXpvwWlt19yHfH/OyCRVPWfoxf5V4K/o5w+Sspx0AOKOzMknmTUuZUSGrIMYNAzoghv0voSTvwJFlfje4Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyT6YnyPUAoQWxLc+2uZIU/l/Gs1Ns4bOUJwGLS2GOVZ3EU9/Jm
+	JfcbLimffSvJOkX8pWBSK7+cVPGGKp2SaaNPYCzTbsZjPdcmftB8
+X-Google-Smtp-Source: AGHT+IH7bgUABKv5BkXAi3QrGJrF4AoC/JL30KM0cLhoBHUX1jva3S39frSHGcTv7FKMFhz0u+/Jew==
+X-Received: by 2002:a05:6a20:431f:b0:1db:e1b0:b673 with SMTP id adf61e73a8af0-1dbe1b0b8f8mr1905936637.9.1730703148274;
+        Sun, 03 Nov 2024 22:52:28 -0800 (PST)
+Received: from localhost.localdomain ([2607:f130:0:105:216:3cff:fef7:9bc7])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e93db183d8sm6749278a91.37.2024.11.03.22.52.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 03 Nov 2024 22:52:27 -0800 (PST)
+From: zhangshida <starzhangzsd@gmail.com>
+X-Google-Original-From: zhangshida <zhangshida@kylinos.cn>
+To: starzhangzsd@gmail.com
+Cc: dchinner@redhat.com,
+	djwong@kernel.org,
+	leo.lilong@huawei.com,
 	linux-kernel@vger.kernel.org,
-	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>,
-	Sami Tolvanen <samitolvanen@google.com>
-Subject: ld.lld: error: undefined symbol: __kcfi_typeid_cpu_v7_smc_switch_mm
-Message-ID: <202411041456.ZsoEiD7T-lkp@intel.com>
+	linux-xfs@vger.kernel.org,
+	osandov@fb.com,
+	wozizhi@huawei.com,
+	xiang@kernel.org,
+	zhangjiachen.jaycee@bytedance.com,
+	zhangshida@kylinos.cn
+Subject: frag.sh 
+Date: Mon,  4 Nov 2024 14:52:14 +0800
+Message-Id: <20241104065214.3831364-1-zhangshida@kylinos.cn>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20241104014046.3783425-1-zhangshida@kylinos.cn>
+References: <20241104014046.3783425-1-zhangshida@kylinos.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
-Hi Linus,
+From: Shida Zhang <zhangshida@kylinos.cn>
 
-FYI, the error/warning still remains.
+#usage: ./frag.sh $dev $dir $size_k $filename 
+#!/bin/bash
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   59b723cd2adbac2a34fc8e12c74ae26ae45bf230
-commit: 1a4fec49efe5273eb2fcf575175a117745f76f97 ARM: 9392/2: Support CLANG CFI
-date:   6 months ago
-config: arm-randconfig-001-20241104 (https://download.01.org/0day-ci/archive/20241104/202411041456.ZsoEiD7T-lkp@intel.com/config)
-compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 639a7ac648f1e50ccd2556e17d401c04f9cce625)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241104/202411041456.ZsoEiD7T-lkp@intel.com/reproduce)
+cleanup() {
+	echo "Ctrl+C detected. Killing child processes..." >&2
+	pkill -P $$ # Kill all child processes
+	echo "exit...umount ${test_dev}" >&2
+	umount ${test_dev}
+	exit 1
+}
+trap cleanup SIGINT SIGTERM
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202411041456.ZsoEiD7T-lkp@intel.com/
+test_dev=$1
+if [ -z $test_dev ]; then
+	echo "test_dev cant be null"
+	echo "usage: ./create_file.sh [test_dev] [test_dir] [file_size_k]"
+	exit 1
+fi
+test_mnt=$2
+if [ -z $test_mnt ]; then
+	echo "test_mnt cant be null"
+	echo "usage: ./create_file.sh [test_dev] [test_dir] [file_size_k]"
+	exit 1
+fi
+file_size_k=$3
+if [ -z ${file_size_k} ]; then
+	echo "file_size_k cant be null"
+	echo "usage: ./create_file.sh [test_dev] [test_dir] [file_size_k]"
+	exit 1
+fi
+echo "test_dev:${test_dev} test_mnt:${test_mnt} fize_size:${file_size_k}KB"
 
-All errors (new ones prefixed by >>):
+#mkfs.xfs -f ${test_dev}
 
->> ld.lld: error: undefined symbol: __kcfi_typeid_cpu_v7_smc_switch_mm
-   >>> referenced by proc-v7.S:94 (arch/arm/mm/proc-v7.S:94)
-   >>>               arch/arm/mm/proc-v7.o:(.text+0x108) in archive vmlinux.a
---
->> ld.lld: error: undefined symbol: __kcfi_typeid_cpu_v7_hvc_switch_mm
-   >>> referenced by proc-v7.S:105 (arch/arm/mm/proc-v7.S:105)
-   >>>               arch/arm/mm/proc-v7.o:(.text+0x124) in archive vmlinux.a
+if [ $5 -eq 0 ]; then
+	echo "mount ${test_dev} ${test_mnt}"
+	mount $test_dev $test_mnt
+else
+	echo "mount -o af1=1 ${test_dev} ${test_mnt}"
+	mount -o af1=1 $test_dev $test_mnt
+fi
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+
+
+# Parameters
+
+FILE=${test_mnt}/"$4"   # File name
+echo "$FILE"
+if [ -z ${FILE} ]; then
+	FILE=${test_mnt}/"fragmented_file"   # File name
+fi
+TOTAL_SIZE=${file_size_k}	# Total size in KB
+CHUNK_SIZE=4             # Size of each punch operation in KB
+
+
+# Create a big file with allocated space
+xfs_io -f -c "falloc 0 $((TOTAL_SIZE))k" $FILE
+
+# Calculate total number of punches needed
+NUM_PUNCHES=$(( TOTAL_SIZE / (CHUNK_SIZE * 2) ))
+
+last_percentage=-1
+# Punch holes alternately to create fragmentation
+for ((i=0; i<NUM_PUNCHES; i++)); do
+    OFFSET=$(( i * CHUNK_SIZE * 2 * 1024 ))
+    xfs_io -c "fpunch $OFFSET ${CHUNK_SIZE}k" $FILE
+    
+    # Calculate current percentage and print if changed
+    PERCENTAGE=$(( (i + 1) * 100 / NUM_PUNCHES ))
+    if [ "$PERCENTAGE" -ne "$last_percentage" ]; then
+        #echo "Processing...${PERCENTAGE}%"
+        last_percentage=$PERCENTAGE
+    fi
+done
+
+# Verify the extent list (to see fragmentation)
+# echo "Extent list for the file:"
+# xfs_bmap -v $FILE
+df -Th ${test_mnt}
+
+echo "umount ${test_dev}"
+umount $test_dev
+
+xfs_db -c 'freesp' $test_dev
 
