@@ -1,106 +1,102 @@
-Return-Path: <linux-kernel+bounces-394916-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394917-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0548C9BB5E5
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 14:25:20 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 067CF9BB5E7
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 14:25:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE6FF2831AF
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 13:25:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 75382B24891
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 13:25:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2300822066;
-	Mon,  4 Nov 2024 13:25:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JxiNDfJi"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE89F1805E;
+	Mon,  4 Nov 2024 13:25:16 +0000 (UTC)
+Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B63222339;
-	Mon,  4 Nov 2024 13:25:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3960342A91;
+	Mon,  4 Nov 2024 13:25:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730726702; cv=none; b=eTVdrWVNNXpntcoHOYKAlWgt1jEiBCc0L1E0LwMepCy6izuBXaeYumGC5gcl0fbqAkn71ZourgWOYmENywoyJxKOAqsuVpa5sJN5CbaEAEr+p90SxvkwLBM+vAKPnKfI0jjTDd08MigbRclgA51aFghJYCCudKh+2+7AaeUT7b4=
+	t=1730726716; cv=none; b=ee+ktT3myF+WFr3C2DI5eMBYNyvwwsYlVgyZMZ4p3Lthd/5chsxQfBrG6S4tiA/Xx2KI6wnBjmUXgstNfntRaFe3ooj78vT7nyC6iIiiySSIZUs2FJ9zaOEmQ+8lkHhLkZbWHqxBioZuPlUzZ8yd80VlTjeHNC6HU0c6nETkTzE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730726702; c=relaxed/simple;
-	bh=Doo9m3wIIEWg5JXjG0Xv9k7ZyZpGgwIIe+URnSMqyQo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JbF7x5JJwQLv/8rx1DxsFo2ltDgfpFDJW2WaLNe0r18OeNz5ryoBSqa3tybD6EBqjPXAQkAGV+l/L+Y+D6AZfxk5Cp5Tl+EXXBrb/lrGaoJQYVqiUYcvOW9svdDq4CEIbLx88RqsfeXNspfC3uh62YSlC8zCR1IgAahLf7H6nCU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JxiNDfJi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D0FCC4CED1;
-	Mon,  4 Nov 2024 13:25:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730726702;
-	bh=Doo9m3wIIEWg5JXjG0Xv9k7ZyZpGgwIIe+URnSMqyQo=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=JxiNDfJiSa8dfcOdfPG0HHovIxGuUgLAAno0QrHlR+zmLKPUfBbsMK0UjEiZvaTHX
-	 YPzYJm/jHpZDY0FjzTYvvpn5adJF0fc5ZuLrjUvSApzNF6v/GO56Uy/7ZTzKzDifJ/
-	 RTAo/AtzQVM7d4jsN2assliYHV9sE3dK4qWZGyNee3pOSG2dpgzCJMG+1+LmLyJBOV
-	 GoZZ3G7eYpYl+3kfdDjS8XfmtWoRfevO38wFlo4gbzXcd9G2SN2lAY24OJD+AibfRx
-	 nr9SpSJAVIZWO2Lji9V0vdg0+jhZs8RMzIOzKE+/1MnzGPQQIsZFMP91i4mr1bkcER
-	 BEKGTYX6q0I9w==
-Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-6e3c3da5bcdso38402097b3.2;
-        Mon, 04 Nov 2024 05:25:02 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVZRufqQCSh3GyWe4I5eRcl3JwLA5+YK8PviErFWtL38myKC/jPCW0UHGPpVaLxpWkXR34DlqjookRjxSyJ@vger.kernel.org, AJvYcCWKYXzrkh3LTQDrzjAczf3rhd+/mWxpEIg1andVXJveNrl4pxGjN88YOLS+5TL/LP94uSDHeydssGWL@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz3F7AaXmlAF0itIdq3LmfQAVyarb8e30AuHuFfITLnomk1jLqK
-	jmqPd0QXaakA0b52sObcJlnTAGvtJdmecPTH5OYuIWhz2v/YtdeiS2bQF6JAfyAeOh9ayiP7Yik
-	fldMWPEH0vuGulaRMCS/Hi46t1g==
-X-Google-Smtp-Source: AGHT+IHqhOLaFSEhC7cXDIrTPrOUvp3w8WrjGzCLWXFyxkMPyvR6fmuxJjHNxXEZ1kqfJwMzHIU7K2dw1YakhAPFgWo=
-X-Received: by 2002:a05:690c:304:b0:6ea:98d8:a55 with SMTP id
- 00721157ae682-6ea98d80b01mr28133297b3.14.1730726701300; Mon, 04 Nov 2024
- 05:25:01 -0800 (PST)
+	s=arc-20240116; t=1730726716; c=relaxed/simple;
+	bh=knMCDx/yzXtOgURCBEpaUlIYJ4+xSLkmDKxAPvCkc3M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UOgUvXRpFsXDRcqb8jNdti3F32LVpQXSlhuh3OB9ZiwSROhPQbm9lyOPPYKYCjvdowymSxzjG86tE2yVKQIkFo3xFkpHMco77uqAutUNhYGl+ta7hs7+Qm01af2cYpyRtjL9k6ZpcMG1mNDrkXPZ4iKUQ1DoKT6gkRa6AvmUMew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.215.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-7ede6803585so3716703a12.0;
+        Mon, 04 Nov 2024 05:25:14 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730726714; x=1731331514;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ogMhvqORaTIS8b73g96qmwe2RrdnQeAUHycFc2Jb3Ok=;
+        b=lFmUJYm8iBP/PtpcxIg9eUBnt49X2/FlJZUwAHbaKApAP6UPg462a4EWTHvKfNPNEr
+         RMtAgPI+I7SD5FnAkKBwbGhJUjMsJVUH8PDIJrFLBQUI8FuOINUl/fXoU6qUHHbUH8pZ
+         85AHszzjpscMzCcNM/6MQEPWRNeRSBUh/Qi05DcO30hEeeeGdQkMfDyUpXeFYuZpiPQs
+         8iebwfyCvwFej7wZ/9QdcZ5vFQxCwNyXiFylFJC0tZ9UJJT7dZPyhsbpFm7uh9FEa0Bh
+         AoDbesvmzKeP/hkcSZZKf5XmqvJU2gp4wgSin5/aaJTVahbWbjIOCtK0OI+alfVyMb1f
+         rLkg==
+X-Forwarded-Encrypted: i=1; AJvYcCUl9s6Y8cjtMQq08Sd6mSf9np+VZ8TPbHcI5epNpWnkLuVj3/HHYHHoFmSe2i2RCpEsxf1Q/Eo2fx/R5BQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwtRihLhybfOnmXL0oyFkKAf4VhgNhHPmfwbD9Ly6bHkM4ScMAZ
+	XC0MAbAdjY2ys5wIY6LE+azY0BtPXEf1Nuj1wHTMgViY3nTukdj1
+X-Google-Smtp-Source: AGHT+IEqHvQAsYUPGy9siYTWfU1O6jle+f0vsrJdgHDRINQIgi6G1CiPymMKxPiB4GdjdkvcxWZqCQ==
+X-Received: by 2002:a17:90b:278c:b0:2e3:bc3e:feef with SMTP id 98e67ed59e1d1-2e93e0589dcmr22435187a91.3.1730726714356;
+        Mon, 04 Nov 2024 05:25:14 -0800 (PST)
+Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e92fa2576dsm9473273a91.16.2024.11.04.05.25.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 04 Nov 2024 05:25:14 -0800 (PST)
+Date: Mon, 4 Nov 2024 22:25:12 +0900
+From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: linux-pci@vger.kernel.org, ryder.lee@mediatek.com,
+	jianjun.wang@mediatek.com, lpieralisi@kernel.org, robh@kernel.org,
+	bhelgaas@google.com, matthias.bgg@gmail.com,
+	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, kernel@collabora.com,
+	fshao@chromium.org,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: Re: [PATCH v4 1/2] PCI: mediatek-gen3: Add support for setting
+ max-link-speed limit
+Message-ID: <20241104132512.GC2504924@rocinante>
+References: <20241104114935.172908-1-angelogioacchino.delregno@collabora.com>
+ <20241104114935.172908-2-angelogioacchino.delregno@collabora.com>
+ <D5DF0QIO2UZQ.29U999LYCC05M@rocinante>
+ <f8ca0f82-2851-40d9-983b-2a143b44263a@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240910215914.823546-1-robh@kernel.org>
-In-Reply-To: <20240910215914.823546-1-robh@kernel.org>
-From: Rob Herring <robh@kernel.org>
-Date: Mon, 4 Nov 2024 07:24:50 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqLLRSEaDv=Zm_LQH9cpgH2prh21+cmovgSR=pzQTuRtZQ@mail.gmail.com>
-Message-ID: <CAL_JsqLLRSEaDv=Zm_LQH9cpgH2prh21+cmovgSR=pzQTuRtZQ@mail.gmail.com>
-Subject: Re: [PATCH] ARM: dts: marvell: kirkwood: Fix at24 EEPROM node name
-To: Andrew Lunn <andrew@lunn.ch>, Gregory Clement <gregory.clement@bootlin.com>, 
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f8ca0f82-2851-40d9-983b-2a143b44263a@collabora.com>
 
-On Tue, Sep 10, 2024 at 4:59=E2=80=AFPM Rob Herring (Arm) <robh@kernel.org>=
- wrote:
->
-> at24.yaml defines the node name for at24 EEPROMs as 'eeprom'.
->
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
-> ---
->  arch/arm/boot/dts/marvell/kirkwood-openblocks_a7.dts | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+Hello,
 
-Ping!
+> > I wonder if this debug message would be better served as a warning to let
+> > the user know that the speed has been overridden due to the platform
+> > limitation.  Thoughts?
+> > 
+> > Also, there is no need to sent a new series if you fine with the
+> > suggestions.  I will mend the code on the branch when applying.
+> > 
+> 
+> A warning seems to be a bit too much and would appear like something to worry
+> about (or something unintended)...
+> 
+> Perhaps a dev_info() would work better here?
 
-Are Marvell platforms still maintained?
+Sounds good!  Thank you!
 
->
-> diff --git a/arch/arm/boot/dts/marvell/kirkwood-openblocks_a7.dts b/arch/=
-arm/boot/dts/marvell/kirkwood-openblocks_a7.dts
-> index 9c438f10f737..2bc4b68bd723 100644
-> --- a/arch/arm/boot/dts/marvell/kirkwood-openblocks_a7.dts
-> +++ b/arch/arm/boot/dts/marvell/kirkwood-openblocks_a7.dts
-> @@ -44,7 +44,7 @@ sata@80000 {
->                 i2c@11100 {
->                         status =3D "okay";
->
-> -                       s24c02: s24c02@50 {
-> +                       s24c02: eeprom@50 {
->                                 compatible =3D "atmel,24c02";
->                                 reg =3D <0x50>;
->                         };
-> --
-> 2.45.2
->
+Will handle the necessary changes while applying the series.
+
+	Krzysztof
 
