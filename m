@@ -1,55 +1,80 @@
-Return-Path: <linux-kernel+bounces-394188-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394191-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCA399BAB96
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 04:47:04 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93B8F9BAB9B
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 04:51:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E3F7281AC2
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 03:47:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D39E1F21DA1
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 03:51:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D497186287;
-	Mon,  4 Nov 2024 03:46:34 +0000 (UTC)
-Received: from SHSQR01.spreadtrum.com (unknown [222.66.158.135])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FBB316BE0D;
+	Mon,  4 Nov 2024 03:51:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m01F4iGo"
+Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 828C718C012
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 03:46:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=222.66.158.135
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43C191FC3;
+	Mon,  4 Nov 2024 03:51:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730691994; cv=none; b=MeDGMMAQmqP58IRKuhzRbaFguFz10MDy4YeRp2Tqekl0c+5m/qMAEa+2OZowzmk8YDUffy1kkI7QxcuZu14l3/AqkDPLeguMWG2l2eV30qPy3785eDDEb3jL1brDKbWWUdgQOAiIfpd8jgtlNx13hgCRpqfywy9np++Z0aabnkg=
+	t=1730692306; cv=none; b=DbLYGlsmh5p2ZC8aKVKzKQuaXE9Z5j86ju8NszT+pAvMpiqahilFWjmL3pmrI26mxDMYcoTEaSf7Axsfwi2Zs+QlJKR4ABb61fP/GAnjGWVT1bDICEW2OP81b2IIUNK5l/X5hgT1dxEh+G/YBrCihKvnZrNSmQ2SfEEb/dKB9t0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730691994; c=relaxed/simple;
-	bh=cWGXzL0NXb/DNdzjiGCXPzYB5RtK7fS2NaQOtetd3JM=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=bcEsb8UqYhcAbD8OWRJc0q8jNUWMC5AUyNnYlC03XXnspzuZUhSbLOuBx2oqYvAIHIUyfDzZj3KPqqod+rlaE6jId6y3BLZ80k+49LC3xA9wOKfMHIQC8c430PY+l+14Hk/rypHkjJ3sYb5vzzdFyTicsoyNFKWgo8uJyTVAv6w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com; spf=pass smtp.mailfrom=unisoc.com; arc=none smtp.client-ip=222.66.158.135
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=unisoc.com
-Received: from dlp.unisoc.com ([10.29.3.86])
-	by SHSQR01.spreadtrum.com with ESMTP id 4A43jrfH085790;
-	Mon, 4 Nov 2024 11:45:53 +0800 (+08)
-	(envelope-from Yi.Sun@unisoc.com)
-Received: from SHDLP.spreadtrum.com (bjmbx02.spreadtrum.com [10.0.64.8])
-	by dlp.unisoc.com (SkyGuard) with ESMTPS id 4Xhcmf5HtDz2KgRlB;
-	Mon,  4 Nov 2024 11:45:06 +0800 (CST)
-Received: from tj10379pcu1.spreadtrum.com (10.5.32.15) by
- BJMBX02.spreadtrum.com (10.0.64.8) with Microsoft SMTP Server (TLS) id
- 15.0.1497.23; Mon, 4 Nov 2024 11:45:51 +0800
-From: Yi Sun <yi.sun@unisoc.com>
-To: <chao@kernel.org>, <jaegeuk@kernel.org>
-CC: <yi.sun@unisoc.com>, <sunyibuaa@gmail.com>,
-        <linux-f2fs-devel@lists.sourceforge.net>,
-        <linux-kernel@vger.kernel.org>, <niuzhiguo84@gmail.com>,
-        <Hao_hao.Wang@unisoc.com>, <ke.wang@unisoc.com>
-Subject: [PATCH v3 5/5] f2fs: Optimize f2fs_truncate_data_blocks_range()
-Date: Mon, 4 Nov 2024 11:45:45 +0800
-Message-ID: <20241104034545.497907-6-yi.sun@unisoc.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20241104034545.497907-1-yi.sun@unisoc.com>
-References: <20241104034545.497907-1-yi.sun@unisoc.com>
+	s=arc-20240116; t=1730692306; c=relaxed/simple;
+	bh=2YBDf4aEcUdG4ikl8c4N2RvASg1cVtOLQxa9wUre+0o=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=miGbyoi8eaw2FO2+sh8qUWC1Cn7niAzWS83GbfY3MDn8m7HuubA1mz0+L/6w8UXrsy4WC6pQcaVCvyovvUt21CdSTrHjG5bHOvvp+xKqquKjqLOI3wdgDgeTM4L8M4/QJmKiMESQmAQua8s9PHfQVrJg/JFybUfw3C92oi4WB1M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m01F4iGo; arc=none smtp.client-ip=209.85.215.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-7ee4c57b037so2253951a12.0;
+        Sun, 03 Nov 2024 19:51:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730692304; x=1731297104; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=dLWepLDfhSxujVfPCMpMu7koV/FkQnXnALy5OmAOzEo=;
+        b=m01F4iGoG2UwXjJWeB/JVRT2IIT1h+qg1nLg6/XU27KnEJx5ya8CJp5D6qb2IqOOYe
+         AYlG+M0ZCBliV47HWpvuT/QKT7NlPQnqnP1X2qGlpbGgeYHBmI/6ZKXPB4uhScYgKbYz
+         PtCpnU1ZsARBLzctLp5u+yQ3Rhmbb67AnZM5473Ai/HB0YbPXajKYPCipSbT65UtAsMR
+         EhFdY54/zq2vNq6sLV7cSxlDnGBOfPZsvlHOKqmj0OKJsVFvkC/vr8IE+ubliAEZ/bHu
+         71LWcWY9J/2AhMk10baAu601nknJ3SQmjnK5UMqWv2cIMzzTnuwgVNIy/No9S6KS+xSi
+         bfVw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730692304; x=1731297104;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=dLWepLDfhSxujVfPCMpMu7koV/FkQnXnALy5OmAOzEo=;
+        b=MAG9boKay8hPvuXQql6meqIEwFyOT+hzgr2hQ5VcRnjSXSxyRNv9YoJLvLVQCVbsFP
+         PYbF9jKU3rPrCAzvAnjghsuRDSyDatDNc487z2nR7od1SicDkbAgXD1ypyK5vKQ6QQlR
+         lnkx6etWwREyNxyZOkKH+29CXvMn6NObLJAaJPy5k9ruBP5Uzep6EWYrDGZG4AeevbMT
+         hiRnbVILxCR/jCItHg6qa+t4Cn/JEh2YFjYcPYHmaCN1d4jI9D4tLcjDZRqOn0vw9DMx
+         Np0dKRZWKH8jKWdbLJyVLbCj0cQWXIZjedPA+xfzygQ6N8C+DwSwENcHlJQV29DPnP/e
+         l+QA==
+X-Forwarded-Encrypted: i=1; AJvYcCV2Hn8ngTB1VlESFpAZhUeYu8g9mIFmCAJJZlpe3SBLT+pTB+w4+h66ivFVVxSfyY+wv+oCxGHH1Aqd3TTJ@vger.kernel.org, AJvYcCWNP2AluMYGwSZOdZldywvB0C2DARehZ6UJRQZcnKftM+S45e5PEM5ehF9+NaZzqOLewoIxU1EVqA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwxTD6y0hK1/zg4zcirFeOAzm4Vo7bgYQtd0GgT6kZiHEH2JID7
+	x8GW71ClkqjO8qEYeJWBuH7uz8/NsBIGkv/0pjPE4KOt+z+/hibn9L69pphH1Dc=
+X-Google-Smtp-Source: AGHT+IEBnd00DQKAS+SaXwLwS8P7IYwoC74518MzZvkVPMAs89AByd0Ty8TZAHXG+KwxyW72y8ZHWQ==
+X-Received: by 2002:a05:6a20:7284:b0:1db:b808:af25 with SMTP id adf61e73a8af0-1dbb809085amr11841146637.9.1730692304355;
+        Sun, 03 Nov 2024 19:51:44 -0800 (PST)
+Received: from debian.resnet.ucla.edu (s-169-232-97-87.resnet.ucla.edu. [169.232.97.87])
+        by smtp.googlemail.com with ESMTPSA id 41be03b00d2f7-7ee452ae3a0sm6054991a12.37.2024.11.03.19.51.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 03 Nov 2024 19:51:43 -0800 (PST)
+From: Daniel Yang <danielyangkang@gmail.com>
+To: Jens Axboe <axboe@kernel.dk>,
+	Pavel Begunkov <asml.silence@gmail.com>,
+	io-uring@vger.kernel.org (open list:IO_URING),
+	linux-kernel@vger.kernel.org (open list)
+Cc: Daniel Yang <danielyangkang@gmail.com>,
+	syzbot+05c0f12a4d43d656817e@syzkaller.appspotmail.com
+Subject: [PATCH] io_uring/rsrc: fix null ptr dereference in io_sqe_buffer_register
+Date: Sun,  3 Nov 2024 19:51:05 -0800
+Message-Id: <20241104035105.192960-1-danielyangkang@gmail.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,135 +82,34 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SHCAS03.spreadtrum.com (10.0.1.207) To
- BJMBX02.spreadtrum.com (10.0.64.8)
-X-MAIL:SHSQR01.spreadtrum.com 4A43jrfH085790
 
-Function f2fs_invalidate_blocks() can process continuous
-blocks at a time, so f2fs_truncate_data_blocks_range() is
-optimized to use the new functionality of
-f2fs_invalidate_blocks().
+The call stack io_sqe_buffer_register -> io_buffer_account_pin ->
+headpage_already_acct results in a null ptr dereference in the for loop.
+There is no guarantee that ctx->buf_table.nodes[i] is an allocated node
+so add a check if null before dereferencing.
 
-Signed-off-by: Yi Sun <yi.sun@unisoc.com>
+Signed-off-by: Daniel Yang <danielyangkang@gmail.com>
+Reported-by: syzbot+05c0f12a4d43d656817e@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=05c0f12a4d43d656817e
+Fixes: 661768085e99 ("io_uring/rsrc: get rid of the empty node and dummy_ubuf")
 ---
- fs/f2fs/file.c | 72 +++++++++++++++++++++++++++++++++++++++++++++++---
- 1 file changed, 68 insertions(+), 4 deletions(-)
+ io_uring/rsrc.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 9366e7fc7c39..d20cc5f36d4c 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -612,6 +612,15 @@ static int f2fs_file_open(struct inode *inode, struct file *filp)
- 	return finish_preallocate_blocks(inode);
- }
+diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
+index af60d9f59..e2edb752a 100644
+--- a/io_uring/rsrc.c
++++ b/io_uring/rsrc.c
+@@ -581,6 +581,8 @@ static bool headpage_already_acct(struct io_ring_ctx *ctx, struct page **pages,
+ 	/* check previously registered pages */
+ 	for (i = 0; i < ctx->buf_table.nr; i++) {
+ 		struct io_rsrc_node *node = ctx->buf_table.nodes[i];
++		if (!node)
++			continue;
+ 		struct io_mapped_ubuf *imu = node->buf;
  
-+static bool check_curr_block_is_consecutive(struct f2fs_sb_info *sbi,
-+					block_t curr, block_t end)
-+{
-+	if (curr - end == 1 || curr == end)
-+		return true;
-+	else
-+		return false;
-+}
-+
- void f2fs_truncate_data_blocks_range(struct dnode_of_data *dn, int count)
- {
- 	struct f2fs_sb_info *sbi = F2FS_I_SB(dn->inode);
-@@ -621,8 +630,27 @@ void f2fs_truncate_data_blocks_range(struct dnode_of_data *dn, int count)
- 	int cluster_index = 0, valid_blocks = 0;
- 	int cluster_size = F2FS_I(dn->inode)->i_cluster_size;
- 	bool released = !atomic_read(&F2FS_I(dn->inode)->i_compr_blocks);
-+	/*
-+	 * Temporary record location.
-+	 * When the current  @blkaddr and @blkaddr_end can be processed
-+	 * together, update the value of @blkaddr_end.
-+	 * When it is detected that current @blkaddr is not continues with
-+	 * @blkaddr_end, it is necessary to process continues blocks
-+	 * range [blkaddr_start, blkaddr_end].
-+	 */
-+	block_t blkaddr_start, blkaddr_end;
-+	/*.
-+	 * To avoid processing various invalid data blocks.
-+	 * Because @blkaddr_start and @blkaddr_end may be assigned
-+	 * NULL_ADDR or invalid data blocks, @last_valid is used to
-+	 * record this situation.
-+	 */
-+	bool last_valid = false;
-+	/* Process the last @blkaddr separately? */
-+	bool last_one = true;
- 
- 	addr = get_dnode_addr(dn->inode, dn->node_page) + ofs;
-+	blkaddr_start = blkaddr_end = le32_to_cpu(*addr);
- 
- 	/* Assumption: truncation starts with cluster */
- 	for (; count > 0; count--, addr++, dn->ofs_in_node++, cluster_index++) {
-@@ -638,24 +666,60 @@ void f2fs_truncate_data_blocks_range(struct dnode_of_data *dn, int count)
- 		}
- 
- 		if (blkaddr == NULL_ADDR)
--			continue;
-+			goto next;
- 
- 		f2fs_set_data_blkaddr(dn, NULL_ADDR);
- 
- 		if (__is_valid_data_blkaddr(blkaddr)) {
- 			if (time_to_inject(sbi, FAULT_BLKADDR_CONSISTENCE))
--				continue;
-+				goto next;
- 			if (!f2fs_is_valid_blkaddr_raw(sbi, blkaddr,
- 						DATA_GENERIC_ENHANCE))
--				continue;
-+				goto next;
- 			if (compressed_cluster)
- 				valid_blocks++;
- 		}
- 
--		f2fs_invalidate_blocks(sbi, blkaddr, 1);
-+
-+		if (check_curr_block_is_consecutive(sbi, blkaddr, blkaddr_end)) {
-+			/*
-+			 * The current block @blkaddr is continuous with
-+			 * @blkaddr_end, so @blkaddr_end is updated.
-+			 * And the f2fs_invalidate_blocks() is skipped
-+			 * until @blkaddr that cannot be processed
-+			 * together is encountered.
-+			 */
-+			blkaddr_end = blkaddr;
-+			if (count == 1)
-+				last_one = false;
-+			else
-+				goto skip_invalid;
-+		}
-+
-+		f2fs_invalidate_blocks(sbi, blkaddr_start,
-+					blkaddr_end - blkaddr_start + 1);
-+		blkaddr_start = blkaddr_end = blkaddr;
-+
-+		if (count == 1 && last_one)
-+			f2fs_invalidate_blocks(sbi, blkaddr, 1);
-+
-+skip_invalid:
-+		last_valid = true;
- 
- 		if (!released || blkaddr != COMPRESS_ADDR)
- 			nr_free++;
-+
-+		continue;
-+
-+next:
-+		/* If consecutive blocks have been recorded, we need to process them. */
-+		if (last_valid == true)
-+			f2fs_invalidate_blocks(sbi, blkaddr_start,
-+					blkaddr_end - blkaddr_start + 1);
-+
-+		blkaddr_start = blkaddr_end = le32_to_cpu(*(addr + 1));
-+		last_valid = false;
-+
- 	}
- 
- 	if (compressed_cluster)
+ 		for (j = 0; j < imu->nr_bvecs; j++) {
 -- 
-2.25.1
+2.39.2
 
 
