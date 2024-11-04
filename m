@@ -1,233 +1,184 @@
-Return-Path: <linux-kernel+bounces-394176-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394190-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6D1D9BAB7D
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 04:32:31 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 686689BAB9A
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 04:48:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 03B46280C34
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 03:32:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2CD8528236F
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 03:48:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1FA719D8B2;
-	Mon,  4 Nov 2024 03:30:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="Yu5wrLuJ"
-Received: from EUR03-DBA-obe.outbound.protection.outlook.com (mail-dbaeur03on2081.outbound.protection.outlook.com [40.107.104.81])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E4B51632D7;
-	Mon,  4 Nov 2024 03:30:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.104.81
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730691047; cv=fail; b=MjB4HuBP096IufyT9DLaJQBNKhLkvf2JLA6al0KOZ9akIIVKrOd3P0voMt8J0hFT47C4vPp2je+3GuqrCx3SLXB3dsy3MJLoBNEICBpknBI+p2/spCEFc8Mk/FgsZGvk/4MaN91eHCS7NrZBR7lbSmnf+5bIc6n0bi8UpxFjPE4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730691047; c=relaxed/simple;
-	bh=Is4ogdSiy1iKTraIRNwA95mKXPSWAloOPSJ2ZGG49NY=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=NoaNSFXtLi0MoYWTTyrsLhx1nIOnlZIHucGVtAG89vYYu4lVVAMtJ5s+4df0Q0XEPNtwKu/N/mD8aJf6HeMCYrVXtO4zf3ictR+9mXuULqZFudwpFI3mdahbQxeqQGACBu7cA4LWr4x+eTBm/0LSLva82jJsUWio9D3WuJWX8dI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=Yu5wrLuJ; arc=fail smtp.client-ip=40.107.104.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=F0/3Of2G+4EInXA2Nt0Uog2BcuTHuAIoGR7c1uP+hSlgJxhW+bsVG9hUZI4Wc8hz7hESkpjGme4m43GETtU7gN3amTMfPhJAyVhKZZ2xYHo65u5mxU2/xkxQocVInmjF+Z1Dtu8kq5VLUpt6nRzoTxgwpxaUlgrOKHxSxjP+drVOnJC7XVDW9jCAPPvhYlQumiVD1BJ5IV9OuICnTYFEr0W8gDpHkGXbcZOpS3LO29ZRDvsuEgGKww/9oZ51ImTfkhj0AEQSZfBbQbfOLyxV4Knz7TnTPxUWQ77X2fPPjPurDCetiS/BlkVQt/R9RoPImumJEubUPmDkpZnr3TS+UQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=pMf3jixDKljFvNe09UwCShlLP4xcduUdFvy9xIa7FHw=;
- b=oLQevIZGC5Jk6S85QUcoh8GS7jkeDrEi++yz5joY8y4V/fgux0ApeNRrqdWafuTPga0EM6Pdtf74idYGgX1n/uyxEBHkcUTsqPl/3sKaKiq8mVuQ7pr0o56+h4PyRogZ+2Nxrhzy48OydheW1LsbMb5dWmeEOnEPeBiSIlHsBL7pIdFayCRSkbCaC5mXCJATWYoBH3oHW6S0/0UjT7uu9EliMbx63ujbMdtmUllOas0p/Htb4g4ybN/06BnOhu2ZpvXuQYA/x+jNzmcw0xI6Jw4ROwu4t7Re1n1ccV1BDwI6wHx1Oj/umEfQ6qe4nf1n4pwOiOYGU2uRP+SIZ4Zflg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=pMf3jixDKljFvNe09UwCShlLP4xcduUdFvy9xIa7FHw=;
- b=Yu5wrLuJxROEwYZWhMZLBnkvLpemX83uyivvn0BbNft2Ofit+XcuAofhTkXUQ5TTSY0Wh16ARbl4sRyVKD0xFRzDVxKz3MK5PbcIQSJbocyN0uxJfFBFN0QBkzosF2y00iTJG5J0Du3FXwnQWQQ9SxRrYdRcHCFy2d6lb4eRyZoS05QlT/8QKf8v/j5vgp6hvxgV5MbleLTLAvX0HvEPDm6pBU1TzcpvuR4YngNvZ9IteOZnsXB4ls1dNjrzvSk/NMXWaRDn4PESkZefXVN42A28vzAnDcOhvfx6sYVkpPV43vbhND4NgRlyaDnH/+fqjxT7HMTmTGCgPwp7ihSyaA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from AM7PR04MB7046.eurprd04.prod.outlook.com (2603:10a6:20b:113::22)
- by PA1PR04MB10602.eurprd04.prod.outlook.com (2603:10a6:102:490::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8114.30; Mon, 4 Nov
- 2024 03:30:43 +0000
-Received: from AM7PR04MB7046.eurprd04.prod.outlook.com
- ([fe80::d1ce:ea15:6648:6f90]) by AM7PR04MB7046.eurprd04.prod.outlook.com
- ([fe80::d1ce:ea15:6648:6f90%4]) with mapi id 15.20.8114.028; Mon, 4 Nov 2024
- 03:30:43 +0000
-From: Liu Ying <victor.liu@nxp.com>
-To: dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-media@vger.kernel.org,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org
-Cc: andrzej.hajda@intel.com,
-	neil.armstrong@linaro.org,
-	rfoss@kernel.org,
-	Laurent.pinchart@ideasonboard.com,
-	jonas@kwiboo.se,
-	jernej.skrabec@gmail.com,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	airlied@gmail.com,
-	simona@ffwll.ch,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	quic_jesszhan@quicinc.com,
-	mchehab@kernel.org,
-	shawnguo@kernel.org,
-	s.hauer@pengutronix.de,
-	kernel@pengutronix.de,
-	festevam@gmail.com,
-	catalin.marinas@arm.com,
-	will@kernel.org,
-	sakari.ailus@linux.intel.com,
-	hverkuil@xs4all.nl,
-	tomi.valkeinen@ideasonboard.com,
-	quic_bjorande@quicinc.com,
-	geert+renesas@glider.be,
-	dmitry.baryshkov@linaro.org,
-	arnd@arndb.de,
-	nfraprado@collabora.com,
-	thierry.reding@gmail.com,
-	prabhakar.mahadev-lad.rj@bp.renesas.com,
-	sam@ravnborg.org,
-	marex@denx.de,
-	biju.das.jz@bp.renesas.com
-Subject: [PATCH v5 13/13] MAINTAINERS: Add maintainer for ITE IT6263 driver
-Date: Mon,  4 Nov 2024 11:28:06 +0800
-Message-Id: <20241104032806.611890-14-victor.liu@nxp.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241104032806.611890-1-victor.liu@nxp.com>
-References: <20241104032806.611890-1-victor.liu@nxp.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SGXP274CA0016.SGPP274.PROD.OUTLOOK.COM (2603:1096:4:b8::28)
- To AM7PR04MB7046.eurprd04.prod.outlook.com (2603:10a6:20b:113::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 214D4165F04;
+	Mon,  4 Nov 2024 03:48:27 +0000 (UTC)
+Received: from mail.quantum.ru (mail.quantum.ru [213.170.105.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CE8420326
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 03:48:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.170.105.182
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730692106; cv=none; b=Kls671DDF1sK6qg3v8//HE/wWq0ZCX6Y11UJOKduZ5zDgaXYVBQWHp7V2tAh7z61T0r/nheQDyVKrXXM4Z/78Az5uMBs0M24aZB0mP9AGewpzVndfjeklrMj+m8fA19sLQZ1QvsrtDw2yXnONiuF8Vi2nqbIoJeR5xQ7WomNaeg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730692106; c=relaxed/simple;
+	bh=IulaKoYCP3mDFSYzMq1xWggszc3Qfod5RC01fXTRN5I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=pd61I+tQny0j5mwhGoJN6+6JOsFy3WKrX5fJtZ8sATYXQ173ayhJk3+b3YL3uwvumnDbl1Tq/7tXA75IDQ2c6kK5oJjnSX6EEgIK2xw619YyKlQEZXaB2AI1QwGjKVk++LY6boDtvTqyX29UWj6gFRYXOMAeLt7rGNzM9k8F0EU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=quantum.ru; spf=fail smtp.mailfrom=quantum.ru; arc=none smtp.client-ip=213.170.105.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=quantum.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=quantum.ru
+Received: from [10.8.0.4] (mama.quantum.ru [213.170.105.102])
+	by mail.quantum.ru (Postfix) with ESMTP id 82797E6169;
+	Mon,  4 Nov 2024 06:29:01 +0300 (MSK)
+Message-ID: <e94595f1-5c70-446b-8574-5be7c4fe3751@quantum.ru>
+Date: Mon, 4 Nov 2024 06:29:01 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM7PR04MB7046:EE_|PA1PR04MB10602:EE_
-X-MS-Office365-Filtering-Correlation-Id: 59cd2c0f-dd53-4b86-0bfd-08dcfc811033
-X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
- BCL:0;ARA:13230040|7416014|376014|52116014|1800799024|366016|38350700014;
-X-Microsoft-Antispam-Message-Info:
- =?us-ascii?Q?PWCbGwpDiSEFJB1w90yTAGE39vV4zUFOM0cT2cueSDD9/ReJUzvhCMNp/Tjk?=
- =?us-ascii?Q?XC8J36K6CpvStUJU+YAv2CPbRA8dbIRyPy8vl0g5bemmkWggsGC8Wi2E6ijM?=
- =?us-ascii?Q?cekTvP2hN9y5iFVd5UX/bIIRijBhYbaQqr1tlVhhob60WpdJYm8ZnthyFv/H?=
- =?us-ascii?Q?ksAd8gNxG2BQ4O87BmRiULIEhRUdVFAEzy2Oop/WL89/CuZLNPF4CSSVnqH/?=
- =?us-ascii?Q?e+HwEnjZrM/lG4GiqJMqZwLRe1Ir1Jn2BIk8xcrGXahlompGygiS5CsU2bLX?=
- =?us-ascii?Q?Lxz7SYY1ihQQ6aqVd/aLa/fQu/ym5dl/whrgvy4Jr8v39ldMQs+GTNRQt62m?=
- =?us-ascii?Q?EYthbX1OfG6xYwOrq0BzU1llDZ978vGHo8wJJ5tChlTVDAx5NB6dgQeL0du7?=
- =?us-ascii?Q?520EjpAtTsFYYbCMpA+aPrjbRvK6m37Ugv65itP8lcInV1dLGmTssP6A/g6/?=
- =?us-ascii?Q?82AmI8EWtgMbrNVQbmAVBK8f17xRVx1BjTEJa+otmR5B7bum6pmjW6utYxey?=
- =?us-ascii?Q?huZi4c/sqoRiv2osRiVjhI5xCsOSHDKfWagic0ZAAU9adDfjzvkn+jjJQYCM?=
- =?us-ascii?Q?x9d0NS3Xn28H6/qF9vQxOSi36tZrHgI6aGVO9iF42lJKrAXCo1k0yoYBVUvh?=
- =?us-ascii?Q?L5BUhN1wn1v0SNABfhtzzHFJ6EzI9JnKXQ7qe+Y1Xbz3KPvOgpoN2c9ALapU?=
- =?us-ascii?Q?wGePR1Yv8/za9wM/Ofp9K27jJWWPFuQy7Go8P5hkWe+3ijePWO25OXpun4Dy?=
- =?us-ascii?Q?sdbn7+9c5bmfS2rO5vpnUwfJkFHFY/mjRxUzYedhf/Ko+mT+Fbix/NY14Zih?=
- =?us-ascii?Q?IbgnmczEG6HZiAmZEZHWjEmIGnLqXFAVZdCABoMVLiR7uYMUvY4JHqBLY3ca?=
- =?us-ascii?Q?39aSzJ+0EFcNMzj7re9Ejua91HTFKSfthaTao3CJT1y+kCTKlP8UEgrsDo+9?=
- =?us-ascii?Q?P5v+ejeaxsRpimohxu9IW52YA8v9JFx1nAnRXZM9YITrkjYz83Hla14cwD/T?=
- =?us-ascii?Q?Ot6IwTcCfjjoE4dcZeiwi96mokSDxdWjtvr9saKtWaaX0UbgpHQyDSDzZwzL?=
- =?us-ascii?Q?mJ5xgH+ahwWY/Xf2u3rcRw9pra3+x6HxsssLxoIANJZ0FRqfIRynCU5GcxTo?=
- =?us-ascii?Q?ZThqGlffQ40VN0qaDMcf3oloTXJYM49TD4eUMTyLQpD2pOX7mn2NcM2cQRcU?=
- =?us-ascii?Q?aGyPPJ7gmOSfVj/a8yPDFY1lb3C0abPzQ1ZeUoZCmfAB+6Zk/6M5Nr1BFqsj?=
- =?us-ascii?Q?Ek4t52ladcinwBmtqyohflJx9Xzes6sWBr811wnS8/pkCofnm+iESHp69jK+?=
- =?us-ascii?Q?+CEQahXvDqudMdSLfDHlvFt8?=
-X-Forefront-Antispam-Report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM7PR04MB7046.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(52116014)(1800799024)(366016)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
- =?us-ascii?Q?jJ4R+Mb7gWyMMTLMZ90yRhevTy7eEf/Wx/lXLbcv5B6hOQyfJYGXASrn6TkF?=
- =?us-ascii?Q?wOhECBq/cF9t9eq4BPItJJ7kuw2iBBDV8XTYFmLoiPpV+iM1VZbxtqQr6t3y?=
- =?us-ascii?Q?AJRzOmS/zrskYQFac9O9iouH1vH/r8NwmKoXY41/yAgzb1Zs1kwuQi35srEZ?=
- =?us-ascii?Q?1xUG4MKVpeO/BB7TJySnldNPP2Tq71xNG/iLLEteLFwEVKOn5hxWKmcl+P1Z?=
- =?us-ascii?Q?c4FSW3qDgTGBFBDxL2mmLlltm/BYmHQr46vdsYC4x1zwZM5f+gsZWKYPcPmJ?=
- =?us-ascii?Q?9Xw1UpNLh1ErniMWGGLGeMHDBUXwM25Vh280KTvyKHlhmbUbAj8jLbcfEVIC?=
- =?us-ascii?Q?vE2W+8IjjGv79pwIKCVcALiiN9GuzgB5YVuaa8MT3i1Hnb4dyeW1xsKayFyD?=
- =?us-ascii?Q?eDG2R5dP5NYlXaP/xluEJnYD0iTWCzX9EfRHN0Vj/Ip3Zf0hN1yvby29jdyX?=
- =?us-ascii?Q?fPPaJfUyD6zPK3hltbM8LgEaWAAIckB42F5hfL4AJocbnCgrdcjy5pITIUIc?=
- =?us-ascii?Q?daCwm0S91VbA4eV7DGYP6xLq/HWy4s2JTYM7jLVpi8ksz//WZ6ZZxC/WFKoN?=
- =?us-ascii?Q?JSzt3DtvaY+nxboAnsAroIN7jCqzeKPnovSBN8AFML/D4W9gtsouMwwKt2Vf?=
- =?us-ascii?Q?YRoZMUkUOprI4xY+OtPn1/ng+LmFEjv77LKXfeApejwXvDE4Fj/n+IQUf3mr?=
- =?us-ascii?Q?v9HuhKzQDszzw+rHwXRe1FKxnLZDh4xuErDdueuI3zEnG+kKHz3MV9ypc3nS?=
- =?us-ascii?Q?9V+PEpD/rjefDKsDHcU8TGDKnIoYGqJNmmYfKTLvIoyvAxQuiYlLFyH6m+pz?=
- =?us-ascii?Q?9G0ISD0KaBqu5ucY8ycpEFgNqFkUvFxJmmVIqiuqM7iXNRQPF7GA4kn2CsQC?=
- =?us-ascii?Q?uIgVo+TNPEjXSjJOHzaPocXuLnfjhLovwQAh2ggeDJ0eugwD9g6wWxDbWwsZ?=
- =?us-ascii?Q?AM1sZAk3AW0eZmbDViTz3h2yZFHfk/NXV2bbq0abyclRDb4sebGrWb9Gf/02?=
- =?us-ascii?Q?TQRs2NZE8yb/TDb/KnWQ316V7eV+kyw3omq4EG+v0Rt9He51HqZ67T5YyYjt?=
- =?us-ascii?Q?Wg08hB6KdFl/25/2p2y3kpbvGQwBAnz7Zyvrj6lp14bIPeRhdWlRdLSZTpCN?=
- =?us-ascii?Q?USHTD0BeS2bExSWX1FUwDz1zIkgKlxYWELCAFHB7RL1qRuZ6apFw+gk1QYMu?=
- =?us-ascii?Q?A2AndAEwrn2gLZ/utt5Gq5z2piYAGQNYI1p8noM0rm9/jyVf1wOtmoVV+QeT?=
- =?us-ascii?Q?gDnXAzPpW6tmVPOFgZKcqYbRq7fqD71nv7C4CqlBh5MWFweYATKtyEa+ADC7?=
- =?us-ascii?Q?2WP29fKM2Kd3osmsbzAG3RH4p/Z9Ooh2kHRMXoACBlifYG3+PFKjk0sknFsI?=
- =?us-ascii?Q?u5Ce8z3AagfDJw6Rfm7JG4qcy5UmCI3S/hsMXG6wNcNo9IR0Xm94J+22mKDI?=
- =?us-ascii?Q?BiaTilB/E+plmZPdHA1pOlOyOcS6kQNRY7cPNoO+y7wbXvzHYmB0x9fwYazX?=
- =?us-ascii?Q?4VjoDgE0bqw1hHIkQ1CPIgFe608ubDZltcHzc4Jn2UfPkzwFFJLfd5A6O35V?=
- =?us-ascii?Q?11+1MbLJ7cgNVflPiZuKymIfGqAzbRIHU/8vxru8?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 59cd2c0f-dd53-4b86-0bfd-08dcfc811033
-X-MS-Exchange-CrossTenant-AuthSource: AM7PR04MB7046.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Nov 2024 03:30:43.5160
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: eSH9KIv0FYKS5q5H4lECaKxhMlpSbP4I3AsOnpkiDyqcWPvxRyWNhX2fHVeWyNxW85tRfH/suht/uzNOPLE1rA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA1PR04MB10602
+User-Agent: Mozilla Thunderbird
+Subject: Re: Politware vs Free Software [WAS [PATCH] Remove Huawei]
+To: metux <metux@gmx.de>, Theodore Ts'o <tytso@mit.edu>,
+ quake <quake.wang@gmail.com>, redaktion@golem.de, phoronix@phoronix.com,
+ linux-kernel@vger.kernel.org
+References: <70148bf0-389c-4942-a34f-7ceb5449aebb@gmx.de>
+Content-Language: en-US, ru, ru-RU
+From: Morozov <morozov@quantum.ru>
+In-Reply-To: <70148bf0-389c-4942-a34f-7ceb5449aebb@gmx.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-KLMS-Rule-ID: 1
+X-KLMS-Message-Action: clean
+X-KLMS-AntiSpam-Lua-Profiles: 188956 [Nov 03 2024]
+X-KLMS-AntiSpam-Version: 6.1.1.7
+X-KLMS-AntiSpam-Envelope-From: morozov@quantum.ru
+X-KLMS-AntiSpam-Rate: 0
+X-KLMS-AntiSpam-Status: not_detected
+X-KLMS-AntiSpam-Method: none
+X-KLMS-AntiSpam-Auth: dmarc=none header.from=quantum.ru;spf=none smtp.mailfrom=quantum.ru;dkim=none
+X-KLMS-AntiSpam-Info: LuaCore: 41 0.3.41 623e98d5198769c015c72f45fabbb9f77bdb702b, {rep_avail}, {Tracking_from_domain_doesnt_match_to}, d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;quantum.ru:7.1.1;127.0.0.199:7.1.2;213.170.105.102:7.1.2,7.5.0, FromAlignment: s, ApMailHostAddress: 213.170.105.102
+X-MS-Exchange-Organization-SCL: -1
+X-KLMS-AntiSpam-Interceptor-Info: scan successful
+X-KLMS-AntiPhishing: not scanned, disabled by settings
+X-KLMS-AntiVirus: Kaspersky Security for Linux Mail Server, version 8.0.3.30, not scanned, disabled by settings
 
-Add myself as the maintainer of ITE IT6263 LVDS TO HDMI BRIDGE DRIVER.
+I don’t understand either
+Why would someone in such a prominent position act this way?
+It’s hard to believe
+Linus Torvalds has set a dangerous precedent, turning Linux into a 
+political organization
 
-Signed-off-by: Liu Ying <victor.liu@nxp.com>
-Acked-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
----
-v5:
-* Add Dmitry's A-b tag.
+While everyone talks about peace, Linus is adding fuel to the conflict 
+with these exclusionary decisions
 
-v4:
-* No change.
+I’ve been a Linux user since 2001, and open-source principles should 
+stand above politics
 
-v3:
-* No change.
+If they don’t—then why even use open source?
+Take Microsoft, for example—they’re focused on profit, and that’s fine
 
-v2:
-* New patch.  (Maxime)
+But we’ve put up with Linux for decades, believing in its principles. 
+And now, this?
 
- MAINTAINERS | 8 ++++++++
- 1 file changed, 8 insertions(+)
+It just goes against the spirit of open source
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 5f34d168b041..63200174ee65 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -12223,6 +12223,14 @@ W:	https://linuxtv.org
- Q:	http://patchwork.linuxtv.org/project/linux-media/list/
- F:	drivers/media/tuners/it913x*
- 
-+ITE IT6263 LVDS TO HDMI BRIDGE DRIVER
-+M:	Liu Ying <victor.liu@nxp.com>
-+L:	dri-devel@lists.freedesktop.org
-+S:	Maintained
-+T:	git https://gitlab.freedesktop.org/drm/misc/kernel.git
-+F:	Documentation/devicetree/bindings/display/bridge/ite,it6263.yaml
-+F:	drivers/gpu/drm/bridge/ite-it6263.c
-+
- ITE IT66121 HDMI BRIDGE DRIVER
- M:	Phong LE <ple@baylibre.com>
- M:	Neil Armstrong <neil.armstrong@linaro.org>
--- 
-2.34.1
+What’s next?
+Are we going to see support for the Russian language removed from 
+projects? Or all contributions from Russian developers disregarded?
 
+This direction feels wrong to me and goes against the very principles 
+that built the open-source community.
+
+I think Linus is just being ignorant or short-sighted here. But he has a 
+lot of influence.
+
+Don't even try to fork linux.
+Russian contributors is not a problem, it just exist.
+Linus is a problem. His vision is the issue
+Not a faulty software or hardware or Ukraine or etc.
+LinuS
+
+-- ME
+
+On 10/30/24 16:17, metux wrote:
+> On 24.10.24 18:49, Theodore Ts'o wrote:
+> 
+>> These exemptions may not apply in different countries, and for
+> 
+> The *may* - so you aren't exactly sure ?
+> 
+> We're still waiting to the exact legislation that's prohibiting
+> Russians from taking part in international scientific discourse
+> or even just mentioning them in the CREDITS file (that part is
+> probably the worst).
+> 
+> And if so, how can Linux still call itself "free software" ?
+> Or shall we better call it politware ?
+> 
+>> different sanctioned entities.  I will note that China is not
+>> currently attacking Taiwan militarily at the moment, while Russian
+>> misiles and drones, some of which might be using embedded Linux
+>> controllers, *
+> 
+> *might* be using it.
+> 
+> Do you have any actual evidence ?
+> 
+> And if so, does banning those Russian maintainers has any practical
+> impact on the SW running on that drones ?
+> 
+> What's coming next ? Geoblocking on kernel.org ?
+> 
+>> are* actively attacking another country even as we speak.
+> 
+> Sure. Did we ban maintainers from US/NATO when they attacked
+> other countries ?
+> 
+>> Finally, please remember that kernel developers don't make the rules.
+> 
+> Unless we're seeing actual evidence of the corresponding legislation
+> and how exactly it forbids Russians being maintainers, we all have to
+> assume that the LF clique is making these rules.
+> 
+> OTOH, if we have that evidence, then at least every US citizen who
+> values free software and free speechs now knows whom to vote against
+> in a few days.
+> 
+> In chess that's called a fork:
+> 
+> a) the Linux leadership takes the guilt and is responsible for all of
+> this - and thus a danger for Linux community and FOSS as such
+> 
+> or
+> 
+> b) it's pointing fingers directly to the US govt., and so accepting that
+> we're dealing with a rogue govt. that's an existential thread to FOSS
+> as such and thus needs to be removed on election day.
+> 
+> choose your poison :P
+> 
+>> P.S.  This has always been the case, even before one country invaded
+>> another;
+> 
+> Linux didn't exist *before* that. The US is built on genocide and wars
+> of aggression.
+> 
+> Just one of many interesting examples: the attack on the spy ship
+> USS liberty - coordinated between US WH and Isreal - that was a set up
+> to blame Egypt and bring the US into war against Egypt - there even were
+> plans for using nuclear bombs (!!!). Other examples are several wars of
+> aggression against Iraq, Serbia, etc with using weapons of mass
+> destruction. (yes, by UN definition DU munition *is* a WoMD).
+> 
+> Let's be realistic: Russia isn't the only bad actor in the world.
+> And "the West" isn't the good guys.
+> 
+> 
+> Turning the once greatest FOSS project of known history into politware
+> doesn't help making peace and stop the dying. It just errects an iron
+> curtain and so making things even worse, for the whole world.
+> 
+> 
+> --mtx
 
