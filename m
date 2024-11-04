@@ -1,88 +1,101 @@
-Return-Path: <linux-kernel+bounces-394818-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394819-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13DF49BB46B
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 13:15:39 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF69E9BB46F
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 13:15:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 455A31C21C90
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 12:15:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D6881C21A29
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 12:15:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 612FC1B652C;
-	Mon,  4 Nov 2024 12:14:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F5D21B4F3E;
+	Mon,  4 Nov 2024 12:15:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="oqBMt3eE"
-Received: from out30-132.freemail.mail.aliyun.com (out30-132.freemail.mail.aliyun.com [115.124.30.132])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GTa2rsvq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29A4A1B3939
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 12:14:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.132
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0236D1B219A;
+	Mon,  4 Nov 2024 12:15:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730722491; cv=none; b=bVJCJoE2XXCA8G0/uIx5oY/R7ejR35rYekLZm0CCh0gRC5q2t8icwkZ9s1l9Z87uS9kL5xWRNN7oQPZDkQxtNfPxq6YtmU1u33+kWOjZA5XhAX7HjBkCmH0Ca/yUh3XQMEt9PWMdmG5jEZfHLi5G456ux3IU2TCJTn2oYVGztlc=
+	t=1730722545; cv=none; b=F4jf1VaSOFfavJlHLQ12A5j1krtJNXp19l4iiRUtvflEHVOWjGV/2psY+UFV7EY8ms7UupavoKz9EFNT7hNzwp8WBEnCiQXg7c29jv3XTAKAq3vV6PI90jBkOQhC+AB3N41P0/EJAqY+Sje9tShrvotEqCKmp970F5TZzIO/YCI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730722491; c=relaxed/simple;
-	bh=zXobr+wLjITccdiMJwRpLysNcXSms37c/CwXW2IswxM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=AtzwQqPRDvi5ruFwsOHk9wVpd2MIcrM30DLxry74jjaK1jztL0LEQh5YzL/BRsl77m/Hdjy0QE9b7DKf96ENVWIzuVoL5RAjQAWYejvF5rSqtpUez96cIRCAM1apOxwaNr5AWdDJrkLj+lCXli8k+za4N5Hp0cMB5Wty1YsJzAo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=oqBMt3eE; arc=none smtp.client-ip=115.124.30.132
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1730722487; h=From:To:Subject:Date:Message-ID:MIME-Version;
-	bh=VkKNIW90OY3KSksPsL1rZn4kF/ZEyKigIUPGYiOqaZM=;
-	b=oqBMt3eE+dAJZQX4lpBcCvVB3OILC83NP8+R+3fA9qoUXMy59imwrPSlR+fUsifB8ML9WOUQwI6KCnyvOawkTbhUsLg+7RNgA+VFEV+xdP5ZzmzePoYd2CWgL5mVjNUma7y1tlzlhHcCTRqAXL6zm6X2p1+wmLguzQ2mrDzh/74=
-Received: from localhost.localdomain(mailfrom:yaoma@linux.alibaba.com fp:SMTPD_---0WIgnIWp_1730722485 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Mon, 04 Nov 2024 20:14:46 +0800
-From: Bitao Hu <yaoma@linux.alibaba.com>
-To: mingo@redhat.com,
-	peterz@infradead.org,
-	juri.lelli@redhat.com,
-	vincent.guittot@linaro.org
-Cc: linux-kernel@vger.kernel.org,
-	yaoma@linux.alibaba.com
-Subject: [PATCH] sched: Remove unnecessary initialization in init_cfs_bandwidth() function
-Date: Mon,  4 Nov 2024 20:14:43 +0800
-Message-ID: <20241104121443.86468-1-yaoma@linux.alibaba.com>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1730722545; c=relaxed/simple;
+	bh=0/3/77k9Ef5Ak6iuPGM688m8GhlJiR98MSLrIIecHw8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=c+LpkHXVZVZblIDdhH81qnWYV5lrqe+xMN6CsCAX66K/dUHSWS1PBNx8TdsNtHIbdw01Yvq0Uq9qfI1IyCCTjkakv0N49UwVBZ3f7Bf9at6Mgp7OdJZZh/1WW+MUdhohC/+Z1AT0YudJdnColgQ/PM1xvUFgz+5ShHhNTP7ACaY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GTa2rsvq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D694C4CECE;
+	Mon,  4 Nov 2024 12:15:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730722544;
+	bh=0/3/77k9Ef5Ak6iuPGM688m8GhlJiR98MSLrIIecHw8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=GTa2rsvqJIpATsLMvpym945fVMi8w5kVzUMAdCsn7m2/Y6nIrd9DpiSDeT27p7WUy
+	 YtUrB/QKPiR2ZBFmr40VoAfOjod2rtYuzWKyPHQhF3qcHHLvPWnfAXlXV8OqrAXItH
+	 C9GUckxNM2+hH8rb38sVjFGMqSvYCOt/rr1NVwz8f8nBe9E36Wq0ykDArP7yDg5vbP
+	 mjONDPMfGSziTGNYaNER50Vj2myvfGywHAMMbPYKXEqxFQ2+wlC+zvBQpt6boVV4jD
+	 adoPrtUarANuzDjp/QZ4vkyieSDQ9xEDkpCK+qQN08TicQYxRUIjSUZGjxP1QYuE/u
+	 ZTC6J6hhhkIuw==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1t7vzh-000000005Gm-3jOg;
+	Mon, 04 Nov 2024 13:15:41 +0100
+Date: Mon, 4 Nov 2024 13:15:41 +0100
+From: Johan Hovold <johan@kernel.org>
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] firmware: qcom: scm: rework QSEECOM allowlist
+Message-ID: <Zyi67e5Os0RhXNjn@hovoldconsulting.com>
+References: <20241103-rework-qseecom-v1-0-1d75d4eedc1e@linaro.org>
+ <20241103-rework-qseecom-v1-2-1d75d4eedc1e@linaro.org>
+ <02171841-acd3-4f26-987d-1376caf11481@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <02171841-acd3-4f26-987d-1376caf11481@oss.qualcomm.com>
 
-The root task group is statically defined, and non-root task groups
-are allocated memory using kmem_cache_alloc() with the __GFP_ZERO
-flag. In both cases, the corresponding 'struct cfs_bandwidth' is a
-block of all-zero memory. Therefore, it is unnecessary to explicitly
-set zeros in the init_cfs_bandwidth() function.
+On Mon, Nov 04, 2024 at 12:23:57PM +0100, Konrad Dybcio wrote:
+> On 3.11.2024 4:37 PM, Dmitry Baryshkov wrote:
 
-Signed-off-by: Bitao Hu <yaoma@linux.alibaba.com>
----
- kernel/sched/fair.c | 2 --
- 1 file changed, 2 deletions(-)
+> >  static const struct of_device_id qcom_scm_qseecom_allowlist[] __maybe_unused = {
+> > -	{ .compatible = "dell,xps13-9345" },
+> > -	{ .compatible = "lenovo,flex-5g" },
+> > -	{ .compatible = "lenovo,thinkpad-t14s" },
+> > -	{ .compatible = "lenovo,thinkpad-x13s", },
+> > -	{ .compatible = "lenovo,yoga-slim7x" },
+> > -	{ .compatible = "microsoft,arcata", },
+> > -	{ .compatible = "microsoft,romulus13", },
+> > -	{ .compatible = "microsoft,romulus15", },
+> > -	{ .compatible = "qcom,sc8180x-primus" },
+> > -	{ .compatible = "qcom,x1e80100-crd" },
+> > -	{ .compatible = "qcom,x1e80100-qcp" },
+> > +	{ .compatible = "qcom,sc8180x", .data = (void *)true },
+> > +	{ .compatible = "qcom,sc8280xp", .data = (void *)true },
+> > +	{ .compatible = "qcom,x1e80100", .data = (void *)true },
+> >  	{ }
+> >  };
+> 
+> + Steev I think you had some unhappy machine
+> 
+> And maybe 8180 Primus?
 
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 2d16c8545c71..2fd96641164f 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -6573,10 +6573,8 @@ static enum hrtimer_restart sched_cfs_period_timer(struct hrtimer *timer)
- void init_cfs_bandwidth(struct cfs_bandwidth *cfs_b, struct cfs_bandwidth *parent)
- {
- 	raw_spin_lock_init(&cfs_b->lock);
--	cfs_b->runtime = 0;
- 	cfs_b->quota = RUNTIME_INF;
- 	cfs_b->period = ns_to_ktime(default_cfs_period());
--	cfs_b->burst = 0;
- 	cfs_b->hierarchical_quota = parent ? parent->hierarchical_quota : RUNTIME_INF;
- 
- 	INIT_LIST_HEAD(&cfs_b->throttled_cfs_rq);
--- 
-2.46.0
+I have a sc8280xp crd here where variables can only be read, not stored
+(e.g. similar to the Lenovo Yoga C630). In it's current configuration
+the machine boots from UFS and this could possibly be related to how it
+has been provisioned, but this is the reason why "qcom,sc8280xp-crd" is
+not already in the above list.
 
+Johan
 
