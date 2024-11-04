@@ -1,139 +1,111 @@
-Return-Path: <linux-kernel+bounces-394283-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394284-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EC2B9BACDA
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 07:50:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 47CA29BACDB
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 07:51:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7148A1C2203A
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 06:50:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 795151C21192
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 06:51:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94E9A18E356;
-	Mon,  4 Nov 2024 06:50:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 875F718DF7E;
+	Mon,  4 Nov 2024 06:51:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JJjI7FT8"
-Received: from mail-ot1-f51.google.com (mail-ot1-f51.google.com [209.85.210.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZlcoSG20"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38E8C18DF7E;
-	Mon,  4 Nov 2024 06:50:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6154814A4F7
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 06:51:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730703041; cv=none; b=bDxn600p1gclgBmyIBU0kRvdvopGQYe4s/JyBjD/ucve9wukYUnu6h1lIh6hkmUDAegZfzMP4USgaaGWg4VxyntxaaZNGViS9MSf1VvraZ2LLj/KTpMTN3pqp3cxDuSksZrRkYYqf6OIFAaIOd8OXwsyIPfVSazFZaLzFUTZbBk=
+	t=1730703112; cv=none; b=FGujF8JcBCDEJG6k9qS43BK6eLACmGChsbEVWzRc1E4HdvkvydLgqOtlShLrr4Zv4EAWIE3MEQt2Re/AUC2ervOpGhnHNPcfioW89Gvd0wQkwJwsE5hBs4i6O4+ebKWG4x1j61L5MG1aFo+ugX0kDFVU06z6mGnAZKMPhR3WlgI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730703041; c=relaxed/simple;
-	bh=GvEFOykCUUnBWwQaqLSzTcN/d8nL19cSF46RKYsgBbE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=g+jC0LtJ1pu4CdfNQQGd4LrOc812XkSDey5ivt+m/Lt80VizBTHMbbni8QGt0tQlJkgxdRN9w4ij0LxTvSzkAXkwLZpfX37hGZG4sZ3rW42qYtFnXDQ9PQnb+KPhd3xLLSsfGWXMXJGJIGLNbbaNV5oBD+weBN/ZTVJdPWN5PNA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JJjI7FT8; arc=none smtp.client-ip=209.85.210.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f51.google.com with SMTP id 46e09a7af769-7187e0041d5so2046630a34.2;
-        Sun, 03 Nov 2024 22:50:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730703037; x=1731307837; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=eO3/RubZ0jvIJ9YF1B3nhCqzkrpj+4q2V+B4q96o+PI=;
-        b=JJjI7FT8oai315/sGnBxYIDpRCNzLoFtsJWX6VLHJyccsTEpEugqXZ8uNX8QegGdnQ
-         ajoYj3SEfWBXAXTljQ/Csk4Z86NKx6r4KwOoOMT09wed6lZyYBVI4WShN1MBAb9fdy0c
-         wVdnorAC5wIfomRCIwcAoLw7akWh4PxM0EgCTaVMa21n7ES4TUv8cXaZqIxJam5UKXUm
-         BHFBKvG40d2dz8/zy0iIjO/807pHPWSgeTZSmfdBwlTMsAyk+IHiwngba9K89IKuPUPS
-         OL6w4Mg61QkPEllBacB5ScES4GNRZebBO0MCuQ10oJTOsepv+/2SwKYAvQD5YG9PCo5r
-         XtDQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730703037; x=1731307837;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=eO3/RubZ0jvIJ9YF1B3nhCqzkrpj+4q2V+B4q96o+PI=;
-        b=M4Gxh+HAT0T+epVMasQT2RUBh7GX8PJKXhBPBsIr0VyWmlg7zXYWSYHtX3CBdiwWc2
-         GfD6WKTxf3zQ225gODwlcNQFOgzbG9dq489Lw7SMKsUWrWq8DQpM4ohAr0S6VDHFgWPz
-         BbAoO6YtP6WXs5JcGyVsncBTl4hXmrySbj3eIv4ysD3bBrsDewt4wx3W1I7e7OG1JK3W
-         bCgNPvcimsEli9KmiysqOgcHmoKqR5nUQGU+QNKCtB/DwJlb0qYB9pAu/6URzdMbKQ2D
-         KpsPWSIjuZChY96XE3kxvmRHIesT/GKBDBHi7x4o4sFc1bxx984vik5ei+nRPtsnEq+H
-         pE3A==
-X-Forwarded-Encrypted: i=1; AJvYcCU81aankFhR2/M8lvsF27lgL8hEaXg22xJhg48SlD/Pn7WLySPTUfzrjQmvEYGbJUDD1YEesOakbE2LzQIl@vger.kernel.org, AJvYcCXok8oNTTyBvfWnmYRM0KefuIVuiXwguteaTmFI/bDSBpP68bvq9ksB9L5vJt1ViMBu4kE5kkD6lj45@vger.kernel.org
-X-Gm-Message-State: AOJu0YweHVy433Rk9BOroUuMEYEoo23n2ai3YKKxyYHjtVJWNiomYca+
-	S5KfvnTbWkQhEqGX5Dq/Qk2O6GPQ8yoF306BwPA398o1oJFrv+QL
-X-Google-Smtp-Source: AGHT+IGj3EDzkOoCrJz0dmX4kqse+9CNiQyin/NFZIWwMPzUauctYOZ6Hp5Aq1NIk+M25ydKOBNfqA==
-X-Received: by 2002:a05:6830:410d:b0:718:b18:2319 with SMTP id 46e09a7af769-7189b542f06mr10266085a34.26.1730703037290;
-        Sun, 03 Nov 2024 22:50:37 -0800 (PST)
-Received: from debian.resnet.ucla.edu (s-169-232-97-87.resnet.ucla.edu. [169.232.97.87])
-        by smtp.googlemail.com with ESMTPSA id 41be03b00d2f7-7ee459f92e6sm6373233a12.71.2024.11.03.22.50.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 03 Nov 2024 22:50:36 -0800 (PST)
-From: Daniel Yang <danielyangkang@gmail.com>
-To: "Theodore Ts'o" <tytso@mit.edu>,
-	Andreas Dilger <adilger.kernel@dilger.ca>,
-	linux-ext4@vger.kernel.org (open list:EXT4 FILE SYSTEM),
-	linux-kernel@vger.kernel.org (open list)
-Cc: Daniel Yang <danielyangkang@gmail.com>,
-	syzbot+a388a53633c9a4e9b22e@syzkaller.appspotmail.com
-Subject: [PATCH] fix: KCSAN data-race in ext4_buffered_write_iter() 
-Date: Sun,  3 Nov 2024 22:48:57 -0800
-Message-Id: <20241104064857.295818-1-danielyangkang@gmail.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1730703112; c=relaxed/simple;
+	bh=CNImVzsZlJ7xWiG4UC92lMfsLbazMpimQH9GRzbrG7A=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=TwvPF9rcEv4BSdWWISKgmDHYzjKe1xZPtCskZvyC0TaQKCS1WjZLgC7BhoGHSyyPfXR74IgscIFVlWz/cKXsfmRqKa//zmBCg4CpNCc20M3gbb1wxhlIGJOq8RMU/2tmMGWAOM5BMU2tQzkCVlLFncGcbwx/B1zgKD4ISc6KMq8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZlcoSG20; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730703111; x=1762239111;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=CNImVzsZlJ7xWiG4UC92lMfsLbazMpimQH9GRzbrG7A=;
+  b=ZlcoSG20HOftqoUszZ6+YsfSPIB1ljPS6/GH+lY1oJUPcLg/IZzgBABb
+   THMH0c7tuFl1o06/0YsQQiUpQVbQ9hRv5Uqis9o9rPCF+ZdniTSrO3ivy
+   Pb/APsaxg8CFZ+NpRzawXOdcya6OzC/f2lPcQdFfiji5PcQrjrgkD/S4f
+   P/RTNO62z9H6r62K9K40haETwGbtfVw+GHzXE5V2e9v3FIaGlFQdGCyIY
+   8TWeaLSDy8t2eMogN5AnJA8/3udAwOb+P13nP0+mNfszhAIEqsh6YWzkz
+   f7EzbiaSqIT9JxH51+ZSSnqqVAteVdQu/585QQrENjy0Q4YbhcPKCEqFd
+   w==;
+X-CSE-ConnectionGUID: tDDuZuiKQPqmjwEG+oA0mg==
+X-CSE-MsgGUID: I4A/hT4jRvWO2ruHiDYoCQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11245"; a="40967700"
+X-IronPort-AV: E=Sophos;i="6.11,256,1725346800"; 
+   d="scan'208";a="40967700"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2024 22:51:50 -0800
+X-CSE-ConnectionGUID: qR+/SgJNQ62A1DbHEInMig==
+X-CSE-MsgGUID: CdSTMi/CR8+cOkr03SOiog==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,256,1725346800"; 
+   d="scan'208";a="87496271"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by fmviesa003.fm.intel.com with ESMTP; 03 Nov 2024 22:51:48 -0800
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t7qwE-000kZ3-1P;
+	Mon, 04 Nov 2024 06:51:46 +0000
+Date: Mon, 4 Nov 2024 14:50:51 +0800
+From: kernel test robot <lkp@intel.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>,
+	Sami Tolvanen <samitolvanen@google.com>
+Subject: ld.lld: error: undefined symbol: __kcfi_typeid_cpu_v7_smc_switch_mm
+Message-ID: <202411041456.ZsoEiD7T-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-In ext4_buffered_write_iter(), generic_write_sync() is being called at
-the same time by two different CPUs. This causes a data-race for
-inode->i_state. To prevent this, make generic_write_sync() a critical
-section in ext4_buffered_write_iter(). Use mutex to allow preemption so
-other CPU is not blocked while waiting.
+Hi Linus,
 
-Signed-off-by: Daniel Yang <danielyangkang@gmail.com>
-Reported-by: syzbot+a388a53633c9a4e9b22e@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=a388a53633c9a4e9b22e
----
- fs/ext4/file.c | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
+FYI, the error/warning still remains.
 
-diff --git a/fs/ext4/file.c b/fs/ext4/file.c
-index f14aed14b..ce1251d3b 100644
---- a/fs/ext4/file.c
-+++ b/fs/ext4/file.c
-@@ -19,6 +19,7 @@
-  *	(jj@sunsite.ms.mff.cuni.cz)
-  */
- 
-+#include "linux/mutex.h"
- #include <linux/time.h>
- #include <linux/fs.h>
- #include <linux/iomap.h>
-@@ -282,6 +283,9 @@ static ssize_t ext4_write_checks(struct kiocb *iocb, struct iov_iter *from)
- 	return count;
- }
- 
-+/* lock for critical section of generic_write_sync */
-+static DEFINE_MUTEX(write_sync_lock);
-+
- static ssize_t ext4_buffered_write_iter(struct kiocb *iocb,
- 					struct iov_iter *from)
- {
-@@ -302,7 +306,13 @@ static ssize_t ext4_buffered_write_iter(struct kiocb *iocb,
- 	inode_unlock(inode);
- 	if (unlikely(ret <= 0))
- 		return ret;
--	return generic_write_sync(iocb, ret);
-+
-+	/* prevent read-write data race */
-+	mutex_lock(&write_sync_lock);
-+	ret = generic_write_sync(iocb, ret);
-+	mutex_unlock(&write_sync_lock);
-+
-+	return ret;
- }
- 
- static ssize_t ext4_handle_inode_extension(struct inode *inode, loff_t offset,
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   59b723cd2adbac2a34fc8e12c74ae26ae45bf230
+commit: 1a4fec49efe5273eb2fcf575175a117745f76f97 ARM: 9392/2: Support CLANG CFI
+date:   6 months ago
+config: arm-randconfig-001-20241104 (https://download.01.org/0day-ci/archive/20241104/202411041456.ZsoEiD7T-lkp@intel.com/config)
+compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 639a7ac648f1e50ccd2556e17d401c04f9cce625)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241104/202411041456.ZsoEiD7T-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202411041456.ZsoEiD7T-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+>> ld.lld: error: undefined symbol: __kcfi_typeid_cpu_v7_smc_switch_mm
+   >>> referenced by proc-v7.S:94 (arch/arm/mm/proc-v7.S:94)
+   >>>               arch/arm/mm/proc-v7.o:(.text+0x108) in archive vmlinux.a
+--
+>> ld.lld: error: undefined symbol: __kcfi_typeid_cpu_v7_hvc_switch_mm
+   >>> referenced by proc-v7.S:105 (arch/arm/mm/proc-v7.S:105)
+   >>>               arch/arm/mm/proc-v7.o:(.text+0x124) in archive vmlinux.a
+
 -- 
-2.39.2
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
