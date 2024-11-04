@@ -1,99 +1,101 @@
-Return-Path: <linux-kernel+bounces-395419-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395418-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A0D19BBDAD
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 20:06:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D7849BBDAC
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 20:06:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BBD6C1C21CED
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 19:06:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C9D561F22931
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 19:06:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61DB41CDA3B;
-	Mon,  4 Nov 2024 19:06:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8356D1CCB3A;
+	Mon,  4 Nov 2024 19:06:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jRtnWmSy"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G9VXQBg0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06AA01CC893;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D53A01CC177;
 	Mon,  4 Nov 2024 19:06:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730747195; cv=none; b=jish6Uon2tGw+XIfrMvnqK9iMiyIkQR8xPUtnyg63l2QHMBZ90KQjYga27gnB0qoWmLp2J3bKlVEvWxhP5ypNIQE25AujAms1HYXrw5khM9akhhFsmlYHledBfmCuGnF/uVO73zmgfYmTAOS7X1zF6F8CWPgxzxrEQFfcRgyF1E=
+	t=1730747193; cv=none; b=hg627kQqVOlBICOjzLGfVaWRDvCdegHp3jty9Sa/bB7tgnO8MMv3QxfYqcvYH+pPn+yGskHYGvnbTRGu1gBKl+8tY/1Rz9IVEwwUetFgthN9xi43N/zEOAt50Fz0qXk7NZiO6OziUSjhh9wqVW/jXReq1idXKqxeALt2WG+efgA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730747195; c=relaxed/simple;
-	bh=Mq6fY7BoRhA0N/3Lw6alJV11PuUSGJNdDgHSu7cCIQY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TDUFaRBOtpIcb5m6wWHcdkpc0w8cauzJYvekzeHvyIzwLHDNxbOnJ82q17nXtcKXgMj4ERhPRvndq+LQIEH2j3zNb3KGCVjt4fbVkD1i7aMimdOuncDyfCUkpSksxnkjda+cEPxcrL9PZSe9K4JhRAnituVarC6VnpxYOo/Y+vA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jRtnWmSy; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730747195; x=1762283195;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Mq6fY7BoRhA0N/3Lw6alJV11PuUSGJNdDgHSu7cCIQY=;
-  b=jRtnWmSyzlCyi0CUYWe1CHVwue6mjMXD15UkZKR9OrsmUQ7flHXjwJPf
-   cJmhij/bkN8IGHxfObmbLW6p9FK5Vq7A5Waiy1X0PA4Z3wEh5+SjSjVwW
-   Ua2CUU7rSiGp/LRu+KRarQbhfFM1F3b3SrdKBajO+/rwNqt2w8cobDhqn
-   QbNkXFNhzYfLyHDKXhBzj2Hpf2ubDd59ZJRMJxQFsOu3hoemtrOlwtqba
-   +HewVGFRu1HQSsp/nrOPOMNyPFKUbSFqdexKX0EGOh1MAIiZi+VsMqX7T
-   yiaCN4CBi/JvPTqwA+pT+2bmWp07mW79I3paESdsLHdpZQEl/2uWwXUHT
-   A==;
-X-CSE-ConnectionGUID: MTSIpE7/QYCDpOYaQCwK+Q==
-X-CSE-MsgGUID: zwxhHAJfTFmfn2Yo9tMgEg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="30626878"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="30626878"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2024 11:06:34 -0800
-X-CSE-ConnectionGUID: 0p2G7MeuSNaC+hVQwVNKOg==
-X-CSE-MsgGUID: d1XN3jwVSXGF/j5BIDN27A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,257,1725346800"; 
-   d="scan'208";a="84179430"
-Received: from smile.fi.intel.com ([10.237.72.154])
-  by orviesa007.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2024 11:06:30 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1t82PD-0000000BA62-0ml4;
-	Mon, 04 Nov 2024 21:06:27 +0200
-Date: Mon, 4 Nov 2024 21:06:26 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Mark Brown <broonie@kernel.org>, Nicolas Belin <nbelin@baylibre.com>,
-	linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
+	s=arc-20240116; t=1730747193; c=relaxed/simple;
+	bh=Lu1Fi0IEy8M6BgnItjbqpPrJ7Hppzar99nXYlc6ZBCo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jbAS5fGYva8qhGl/WPpeicKDNfO6AmSgXS5FIfGRyBkHrm+KZxst0ESPlorEk18Hev3AnJXPg7o8EMr2JmwqIGgBys1AVDvN8Ee2z9NrN453j02X81AXOPUeonKhDER+WYGgMW7EQ+Tev2JmrViwHWkWpJniz3Ui8g4WCrsi5/g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G9VXQBg0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E9CDC4CECE;
+	Mon,  4 Nov 2024 19:06:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730747193;
+	bh=Lu1Fi0IEy8M6BgnItjbqpPrJ7Hppzar99nXYlc6ZBCo=;
+	h=From:To:Cc:Subject:Date:From;
+	b=G9VXQBg0OJr9ruK9K4Te4NS+RvBhpRlD4WWJHJs3yIccyl3pRBkCfGWgMIYEIKzmw
+	 rSTI1vpqCWAEaCVUnRfcPfmms/elbyEu3t9TBzjUBesAEXavjGErPlxcZmfy7PX9AQ
+	 hUT8bvNn5S5o3YO4inhpE3WV53tj4MY2OBS8rCzlkuJlL1q52+GUtxZybenNVrDEeJ
+	 H9OWVcFNMUU4JZk+6OVCq7VROHwDHURpj+XvwFN3bOf5eBG1dRfsn1wwx0tQbFVEM1
+	 0HU40fbhcQbo2vXvhy2E35buIOujmsJHWjU16F9IxXF3TtMrhRyeG29tUODrrpUyfq
+	 Oj0NfitO9kYEg==
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Heiko Stuebner <heiko@sntech.de>
+Cc: linux-gpio@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Subject: Re: [PATCH v1 1/1] ASoc: mediatek: mt8365: Don't use "proxy" headers
-Message-ID: <ZykbMlshvlwCaeGJ@smile.fi.intel.com>
-References: <20241031102725.2447711-1-andriy.shevchenko@linux.intel.com>
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] gpio: Use of_property_present() for non-boolean properties
+Date: Mon,  4 Nov 2024 13:06:27 -0600
+Message-ID: <20241104190628.274717-1-robh@kernel.org>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241031102725.2447711-1-andriy.shevchenko@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
 
-On Thu, Oct 31, 2024 at 12:27:25PM +0200, Andy Shevchenko wrote:
-> Update header inclusions to follow IWYU (Include What You Use)
-> principle.
+The use of of_property_read_bool() for non-boolean properties is
+deprecated in favor of of_property_present() when testing for property
+presence.
 
-Hmm... I think we are waiting for somebody to Ack / review this change?
+Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+---
+ drivers/gpio/gpio-rockchip.c | 2 +-
+ drivers/gpio/gpiolib-of.c    | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
+diff --git a/drivers/gpio/gpio-rockchip.c b/drivers/gpio/gpio-rockchip.c
+index 365ab947983c..64924bc01591 100644
+--- a/drivers/gpio/gpio-rockchip.c
++++ b/drivers/gpio/gpio-rockchip.c
+@@ -602,7 +602,7 @@ static int rockchip_gpiolib_register(struct rockchip_pin_bank *bank)
+ 	 * files which don't set the "gpio-ranges" property or systems that
+ 	 * utilize ACPI the driver has to call gpiochip_add_pin_range().
+ 	 */
+-	if (!of_property_read_bool(bank->of_node, "gpio-ranges")) {
++	if (!of_property_present(bank->of_node, "gpio-ranges")) {
+ 		struct device_node *pctlnp = of_get_parent(bank->of_node);
+ 		struct pinctrl_dev *pctldev = NULL;
+ 
+diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
+index 880f1efcaca5..2e537ee979f3 100644
+--- a/drivers/gpio/gpiolib-of.c
++++ b/drivers/gpio/gpiolib-of.c
+@@ -337,7 +337,7 @@ static void of_gpio_flags_quirks(const struct device_node *np,
+ 	 * to determine if the flags should have inverted semantics.
+ 	 */
+ 	if (IS_ENABLED(CONFIG_SPI_MASTER) && !strcmp(propname, "cs-gpios") &&
+-	    of_property_read_bool(np, "cs-gpios")) {
++	    of_property_present(np, "cs-gpios")) {
+ 		u32 cs;
+ 		int ret;
+ 
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.45.2
 
 
