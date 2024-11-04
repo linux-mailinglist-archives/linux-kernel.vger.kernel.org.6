@@ -1,153 +1,158 @@
-Return-Path: <linux-kernel+bounces-395206-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395207-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35F669BBA45
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 17:23:37 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1F269BBA48
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 17:24:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF70A1F216D9
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 16:23:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B5FDE285412
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 16:24:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D7F61C4622;
-	Mon,  4 Nov 2024 16:22:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F8641C1753;
+	Mon,  4 Nov 2024 16:24:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BLgy17U9"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Soyizfe2"
+Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4F211C07EF
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 16:22:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B62942AA6
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 16:24:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730737348; cv=none; b=gh/8y8TvZA3UQVFRVekvxgRIbweE9UfWJVak+PtDHjxTFx3TTWEmOEBXMca9vZwiYw8ovWaBmeFc9c5b/OzQcywU73sj222FBNNf3bz7OF938VaWtSUtAWR33sJq2cFWrMI/U86OigjTGy0m0scItNTm/HgwYst4vy4ttgFUkjo=
+	t=1730737453; cv=none; b=LDa3R+WpgB1DxuaXgz+9LDI2hy0EJhGt8L7gYoFCRS2K0Uc3IKc3kLhBdTstxVSKc0iLPTc0Wb21rGUGbyx9DrPp0xGG42QEE494KdXX8idcGErjulrEbAPuP+feOJjEtWegDA3aCIVJiZK51ZaIes795N7e+T4yJddT6ePEtUs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730737348; c=relaxed/simple;
-	bh=IQeGnFrlKcJMyxCdPHDpA8uwABSsBIQVxA+KFfNERGI=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=EwCE7Z701i4+zCKKRk5Cgyep7hCY8ZfQp8rHUau4FsCpE2TA0nWch1gW9BeLHOZEhofCAf7S6NfNyUhS2xU7mdwIuQsGHI9RAxrkHFrrecCYh1cBTKHy8cmZ1eWE4/GFK1wd/CY/baF2DG7xuA6hGBFMXHQOqkTpBZmwMkjMvsI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BLgy17U9; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1730737345;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DDAuBted5dLeURKBGQFzMNRty5vbrd8/225x2WxUwFs=;
-	b=BLgy17U9Mz5TrlC8rzJN3pxrQZYLuOVkN3GJ4eYRqNSB8uXPJpeENeuUDll61JJFigKKfe
-	DdiQeElsdDU95mjM6HpCuZWyfBti1vkTSH1Znq/OSfz02a5aTNb7ac3284afmwI2k8uC+o
-	lrjOSjv6PQqgZpWZJmwwVwWA9IVnKkQ=
-Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
- [209.85.218.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-201-nmpvpLDROYeODdbhUJvr9Q-1; Mon, 04 Nov 2024 11:22:24 -0500
-X-MC-Unique: nmpvpLDROYeODdbhUJvr9Q-1
-Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-a9a1e429a8fso363947166b.0
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 08:22:24 -0800 (PST)
+	s=arc-20240116; t=1730737453; c=relaxed/simple;
+	bh=e7pNJpaZwa1h/gknfRxU8USeyEHQJgwWN4IkafBeL/Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=deJ3AstIX5iDvwVqn6+ufyt/pWlNgAnTBZHRGzZaadS1EyGFzrADI1SfpO7yi90ywc19XB3WQySngpsFPqa4EjIPZbn5MUtorMTw65Dy/UHhd9E73XTzZKI4xbvscMv+D9qWFbPJct0aJefBa8+k8O5rXEJwiB2Jp4B5r5Am5pc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Soyizfe2; arc=none smtp.client-ip=209.85.128.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-6e5b7cd1ef5so37473227b3.1
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 08:24:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730737451; x=1731342251; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gDG3pXtVip+KfodA4/0kQzuYn7NY3gOyTP352pqCET0=;
+        b=Soyizfe2e9UB6S4OJYKyy9tkIM2LhMRo98IYlN3TvCgWhJwHLfndxQASxbTbJ4MZLA
+         DakSL7kICWglsPZDbCgiuP9UX6vBtseAp+7j31wWJHGf2nitKQxNh9pShBB3Me9GCkkd
+         kQpiXS4LKSKi8bOwjPkTBuYHHOL955lQNU5RRjch7BGVzFa3xWbYJq4AnRAcb31ysKyh
+         nJyXDfPZ3IMMOy7GJk/G2n3y4xYr+k+/ej3k0FwCQFUBuaSFcfwXthnAoTGLqhzZ2W1Y
+         CUU2kQ4+7hJhjrAgG7wDsagjoNdrOCP2S378tPQZpKNcJuHMKQN2WoWxHeeUtlF+xvM+
+         p/6g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730737343; x=1731342143;
-        h=content-transfer-encoding:mime-version:message-id:date:references
-         :in-reply-to:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1730737451; x=1731342251;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=DDAuBted5dLeURKBGQFzMNRty5vbrd8/225x2WxUwFs=;
-        b=BKbGHAPm9ioaf4coLV0Zga2qPXjbqeajEOIyRzDItC+of288/zdIH3O7U3Q1tO9sRD
-         UYbXIo7r0m4wwnb8LtpaBZxBiYZ2g1QPs+lD19Q26SnpBD84MYNlDBPa7NY+yr/P3ovt
-         CPh5pt34vHSxa0aq/zCN7Y5v0ugqw4qh/9rE20u3WbAYOoNj+m/UtGE+fKvkAWIrbyqK
-         aywCYy5s75neMCKauF7uY4ddTNDS97fZ8PIXthIUfErnDxghhL3DyjiTGVEa/1Q2BvUD
-         ZcmksMhDZeZ3oSM8Z/rSnhDLv2qu1gP5ZvZ89kNBI9b/H1cGAJgCDw9is52QpCHBDaAe
-         Z/aA==
-X-Forwarded-Encrypted: i=1; AJvYcCURj/U565+FVoUl2YYbm4NrenFF3xdRRU+nds7MZOW3tw1HU+eo3lIg68qIPRQFkYPD/BCler9EURqVWcw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwIAG67YvDid8QIuoe6NHeuLaPzuxYp9kKzLr6xmTVrAu0Upvch
-	/4aokSC7DpTSWP6bewVIbli9AWmpf0ionajZuxl4TqZKXr/p+4qM83XMNS8BGn4uHbHeD2w2c4N
-	LWpor3nJU8ozy3K2BRR5P7dZh1Ri3+AmxWSNw5i2HaD6gHNVyJJX6g+WfrurjrA==
-X-Received: by 2002:a17:907:1c85:b0:a9a:1f38:e736 with SMTP id a640c23a62f3a-a9e654fb423mr1309267266b.31.1730737343245;
-        Mon, 04 Nov 2024 08:22:23 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHOiR6QMYgQdW4+mshnrfOWBlpQZoTzVQuyXvd/zEM+yk9iclHiooZDENzVV+mOV9mrs3qrAQ==
-X-Received: by 2002:a17:907:1c85:b0:a9a:1f38:e736 with SMTP id a640c23a62f3a-a9e654fb423mr1309263966b.31.1730737342768;
-        Mon, 04 Nov 2024 08:22:22 -0800 (PST)
-Received: from alrua-x1.borgediget.toke.dk ([45.145.92.2])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9eb16d9ef8sm1803866b.70.2024.11.04.08.22.22
+        bh=gDG3pXtVip+KfodA4/0kQzuYn7NY3gOyTP352pqCET0=;
+        b=vHE8OlAaX1praIvwmGZfwUucCfT1WTVqhcaQD37PknqL12kAijVwXnw1XSt5egeQnX
+         yKzNeBabGeHOx6eSRLT5W6+BQFCQ9X6YIDn4bBG4CyLJmprrZCSGH/5R49v10IbRu2lP
+         LBBQvfBB27PSpj+Ef6xHiW4VdCE3w4DO0PmO9x9Y8WZJiR4E5O/aGVf4lHW3J/uVQ2wE
+         ooiBZUajMME1FU9YkEjBVaNL5WsYYf9SqKuYCZEWtv6t5dz/ibH3FgydU8fFHo2PIRSm
+         rNN95puWPCl/ZFOyYWQxZ/fikBA4pPa7+wCyOmCasFfbaj54O8kvH4iFAmThk04BZGJF
+         /57w==
+X-Forwarded-Encrypted: i=1; AJvYcCV5ESGgIRIEXavVGmM0jJfcMGctkMqa2mYRUIUdIFhWpY78ACWFy8oFM/lpDhJCkGZ0zjkJTfpsEsxcWTE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxaifixdZs/TY8knH+bq1ndfpJh1ApKyJm+NqFFXhkE4xEz12At
+	fz/BjiLPGvd/lJtosccH7d9bjme3axLbHHi9RtFjaErOBss1JMIv
+X-Google-Smtp-Source: AGHT+IF8Et8+CgvYS0NUpJMFFTR142xgrloNK0418EFcQi3KHe4p7OMOSNlYAypZO3thIC+YMTpJoQ==
+X-Received: by 2002:a05:690c:318:b0:6ea:8a23:76a7 with SMTP id 00721157ae682-6ea8a2380e0mr49198477b3.3.1730737450980;
+        Mon, 04 Nov 2024 08:24:10 -0800 (PST)
+Received: from localhost (fwdproxy-frc-011.fbsv.net. [2a03:2880:21ff:b::face:b00c])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6ea7beaae0dsm11050907b3.48.2024.11.04.08.24.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Nov 2024 08:22:22 -0800 (PST)
-Received: by alrua-x1.borgediget.toke.dk (Postfix, from userid 1000)
-	id 4EE44164C05D; Mon, 04 Nov 2024 17:22:21 +0100 (CET)
-From: Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>
-To: Alexander Lobakin <aleksander.lobakin@intel.com>
-Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
- <pabeni@redhat.com>, Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann
- <daniel@iogearbox.net>, John Fastabend <john.fastabend@gmail.com>, Andrii
- Nakryiko <andrii@kernel.org>, Maciej Fijalkowski
- <maciej.fijalkowski@intel.com>, Stanislav Fomichev <sdf@fomichev.me>,
- Magnus Karlsson <magnus.karlsson@intel.com>,
- nex.sw.ncis.osdt.itp.upstreaming@intel.com, bpf@vger.kernel.org,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v3 09/18] page_pool: allow mixing PPs within
- one bulk
-In-Reply-To: <1c32ebcd-ae94-42fb-9b18-726da532161f@intel.com>
-References: <20241030165201.442301-1-aleksander.lobakin@intel.com>
- <20241030165201.442301-10-aleksander.lobakin@intel.com>
- <87ldy39k2g.fsf@toke.dk> <1c32ebcd-ae94-42fb-9b18-726da532161f@intel.com>
-X-Clacks-Overhead: GNU Terry Pratchett
-Date: Mon, 04 Nov 2024 17:22:21 +0100
-Message-ID: <87y11z7yv6.fsf@toke.dk>
+        Mon, 04 Nov 2024 08:24:10 -0800 (PST)
+From: Joshua Hahn <joshua.hahnjy@gmail.com>
+To: usamaarif642@gmail.com
+Cc: 21cnbao@gmail.com,
+	ak@linux.intel.com,
+	akpm@linux-foundation.org,
+	baolin.wang@linux.alibaba.com,
+	chengming.zhou@linux.dev,
+	chrisl@kernel.org,
+	david@redhat.com,
+	hannes@cmpxchg.org,
+	hughd@google.com,
+	kasong@tencent.com,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	nphamcs@gmail.com,
+	ryan.roberts@arm.com,
+	shakeel.butt@linux.dev,
+	v-songbaohua@oppo.com,
+	willy@infradead.org,
+	ying.huang@intel.com,
+	yosryahmed@google.com
+Subject: Re: [PATCH v2] mm: count zeromap read and set for swapout and swapin
+Date: Mon,  4 Nov 2024 08:24:09 -0800
+Message-ID: <20241104162409.2750133-1-joshua.hahnjy@gmail.com>
+X-Mailer: git-send-email 2.43.5
+In-Reply-To: <2d73b4cc-47a1-44a2-b50a-0f67d25b3e22@gmail.com>
+References: <2d73b4cc-47a1-44a2-b50a-0f67d25b3e22@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Alexander Lobakin <aleksander.lobakin@intel.com> writes:
+On 02/11/2024 14:43:07, Usama Arif <usamaarif642@gmail.com> wrote:
 
-> From: Toke H=C3=B8iland-J=C3=B8rgensen <toke@redhat.com>
-> Date: Fri, 01 Nov 2024 14:09:59 +0100
->
->> Alexander Lobakin <aleksander.lobakin@intel.com> writes:
->>=20
->>> The main reason for this change was to allow mixing pages from different
->>> &page_pools within one &xdp_buff/&xdp_frame. Why not?
->>> Adjust xdp_return_frame_bulk() and page_pool_put_page_bulk(), so that
->>> they won't be tied to a particular pool. Let the latter create a
->>> separate bulk of pages which's PP is different and flush it recursively.
->>> This greatly optimizes xdp_return_frame_bulk(): no more hashtable
->>> lookups. Also make xdp_flush_frame_bulk() inline, as it's just one if +
->>> function call + one u32 read, not worth extending the call ladder.
+> On 02/11/2024 12:59, Barry Song wrote:
+>> On Sat, Nov 2, 2024 at 8:32 PM Usama Arif <usamaarif642@gmail.com> wrote:
 >>>
->>> Signed-off-by: Alexander Lobakin <aleksander.lobakin@intel.com>
->>=20
->> Neat idea, but one comment, see below:
+>>> On 02/11/2024 10:12, Barry Song wrote:
+>>>> From: Barry Song <v-songbaohua@oppo.com>
+>>>>
+>>>> When the proportion of folios from the zero map is small, missing their
+>>>> accounting may not significantly impact profiling. However, it’s easy
+>>>> to construct a scenario where this becomes an issue—for example,
+>>>> allocating 1 GB of memory, writing zeros from userspace, followed by
+>>>> MADV_PAGEOUT, and then swapping it back in. In this case, the swap-out
+>>>> and swap-in counts seem to vanish into a black hole, potentially
+>>>> causing semantic ambiguity.
+>>>>
+>>>> This patch adopts option 1 as pswpin/pswpout counters are that they
+>>>> only apply to IO done directly to the backend device (as noted by
+>>>> Nhat Pham).
+>>>>
+>>>> Fixes: 0ca0c24e3211 ("mm: store zero pages to be swapped out in a bitmap")
+>>> I don't think its a hotfix (or even a fix). It was discussed in the initial
+>>> series to add these as a follow up and Joshua was going to do this soon.
+>>> Its not fixing any bug in the initial series.
+>>
+>> I didn't realize Joshua was handling it. Is he still planning to? If
+>> so, I can leave it
+>> with Joshua if that was the plan :-)
+>>
 >
-> [...]
->
->>> +	if (sub.count)
->>> +		page_pool_put_page_bulk(sub.q, sub.count, true);
->>> +
->>=20
->> In the worst case here, this function can recursively call itself
->> XDP_BULK_QUEUE_SIZE (=3D16) times. Which will blow ~2.5k of stack size,
->> and lots of function call overhead. I'm not saying this level of
->> recursion is likely to happen today, but who knows about future uses? So
->> why not make it iterative instead of recursive (same basic idea, but
->> some kind of 'goto begin', or loop, instead of the recursive call)?
->
-> Oh, great idea!
-> I was also unsure about the recursion here. Initially, I wanted header
-> split frames, which usually have linear/header part from one PP and
-> frag/payload part from second PP, to be efficiently recycled in bulks.
-> Currently, it's not possible, as a bulk will look like [1, 2, 1, 2, ...]
-> IOW will be flush every frame.
-> But I realize the recursion is not really optimal here, just the first
-> that came to my mind. I'll give you Suggested-by here (or
-> Co-developed-by?), really liked your approach :>
+> Please do continue with this patch, I think he was going to look at the
+> swapped_zero version that we discussed earlier anyways. Will let Joshua
+> comment on it.
 
-Sure, co-developed-by SGTM :)
+Hi Usama and Barry,
 
--Toke
+First of all, I am sorry for not participating in the previous conversation
+about this, it is my fault for the lack of communication on my end on the
+status of zero_swapped (name pending). Sorry for the confusion!
+
+I am hoping to pick this up in a few days (I have been working on a few
+patches in different subsystems, but I will  wrap up the work on these
+very soon).
+
+As far as I can tell, zero_swapped and swp{in,out}zero seem to be
+orthogonal, and as Nhat pointed out [1] I think there is need for both.
+
+Thank you for this patch Barry, and thank you Usama for keeping me in
+the loop! Have a great day!
+Joshua
+
+[1] https://lore.kernel.org/linux-mm/882008b6-13e0-41d8-91fa-f26c585120d8@gmail.com/T/#m7c5017bc97d56843242d3e006cd7e1f0fd0f1a38
 
 
