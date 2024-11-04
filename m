@@ -1,124 +1,179 @@
-Return-Path: <linux-kernel+bounces-394587-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394609-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C12159BB180
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 11:50:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id AE06C9BB1CE
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 11:56:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EF1171C21439
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 10:50:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D069F1C221E4
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 10:56:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12EC51B21A4;
-	Mon,  4 Nov 2024 10:50:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74AD813049E;
+	Mon,  4 Nov 2024 10:51:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="AU5V7fnL"
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oSBiVNid"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC61418C009
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 10:49:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1D6A1B0F26;
+	Mon,  4 Nov 2024 10:51:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730717401; cv=none; b=dKkVegPhXe635UzTGOfoX0jfvw6UNrDEGXWWoJ8YFeG85NZefRfb6K7tXF/nqegZk3X8PCXY1LETu88efqLvXaHbGRDk6QB0zxDwhg2UeeFHPUM+DLeTW0I/Rh1imsi9K8kwXIBaTQwm65GMNTqUGpmdEatbqSPWcWYckwPkBZo=
+	t=1730717517; cv=none; b=pYZXF1u9RoWcb5yIa6xs1K2ZLEc2veNu+x+Z2XDIfyLKF/bGXSTMZ1utysPDOXzg5w/idGgoIlEzKa5HyLhX4zHqjMvycpjeMgN2KT+bDBu78+XDjERsDp6btQGz6xgF8DaI9xUeYh/yLJNRMPrMGQeScdmLEZ1amvmsXZINhho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730717401; c=relaxed/simple;
-	bh=HjiluiYYU8ct9uzPa/9+3mrpL1aTF+xLCA8ImAoVnW8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ctmqbHOwkGMpyFxYAYel+QzvskVAY+E6Nemp5xwGzxelFFFeOojseE7hmmyYdKn5BCSgpwD6V/f6fJxqcJ+3OAQgbWG+0N4LJh/gXldsU9JYNV30QjRnAXQ1kAe2VcMdyzRS8jspoziDsmKpSOKuzDdxzXFh5+3wondYpRR8/eo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=AU5V7fnL; arc=none smtp.client-ip=209.85.208.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2fb5740a03bso37060521fa.1
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 02:49:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1730717398; x=1731322198; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=XeXQFy9Pj3a/4ODUXYJdySuoRgQr+QO7RlBYiaBrsZk=;
-        b=AU5V7fnLPInUAccZmsYThZC/FIOOhHmW3PGKooWGVc9ogmaLvR0mCiFk64r6C9nLPh
-         Fj0qV/ce132viVbNlqCheppIVYzRvsUTbLXzqoRxF4ISNpudn9vMefX9sNWoN8zSHakA
-         gHzkfG5N8dR6JweS6kUqa+Y6Pksb/YkY4BPiQytYtUFEvtNNvCANe5pqoWoLw47H6YXJ
-         /MJkWyRBxgaFp291ARQ62hRJxspi8XT2IAfIAmfmNMzr5JW+cdKltHBGK07vkB4uOKqm
-         jlobwEJiLmCifTwuyXvRzDFgZ7kluOZWRefQIYkIBEB5NJt1uqljnKZQDaCXAmgrmLMo
-         pS9g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730717398; x=1731322198;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XeXQFy9Pj3a/4ODUXYJdySuoRgQr+QO7RlBYiaBrsZk=;
-        b=tb7+Ay9srfNKms8shb4WvbGtPwmy49yWZt9T2zCWuMBASmkRxiHEX83DCrZToTzNh2
-         vxR3M+JiEsTq+P3wlEZDqM3T7gm61R9Do0a7D1osdst9i6V8VxkIPqDNVNev/ZpEpukc
-         ZNVqNW4zbGOKHt3R462mvRMhW/DNW1ZVXurDo7HoOQbCA7nQAnqpcTUY5LnziUc50PgC
-         swYaarP7zZRto0igdxnYDAuzPqbUv1nzehmEelueLIAU7N4Qi7qhkb0RHojQJwiQmSF0
-         CCb40kjON3XFylJ2jmeDnUXdvIzV89HQkqjF9PW2HpX1hNrF/Cn7HP/kRnUGzsAjn5v8
-         BVTw==
-X-Forwarded-Encrypted: i=1; AJvYcCX9Qjl5AKfNz7TPU39iD9G825hmFBWSqIiEuQHFbdObYkxILrNMGZVIy/+s0sC68F1If7VfQnzPWlqKrak=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzqv7qEWuF6l+0FK9n26duIZP15bFNVV0ibU3qr4ElSCFN1vK0H
-	B0akZcMoX2cuNSQoi7AH/LS6D8p/3HevxP1ooceUtzDvxEXySFvc7eBJVp7oVu0=
-X-Google-Smtp-Source: AGHT+IFkB+YOxqygY78jfvdT7ykV+NKLizBcQos+MO01VyMRIJ9LTRYILzClrQ7HWeqYmtT14mH4Sw==
-X-Received: by 2002:a2e:1302:0:b0:2fb:5723:c9ea with SMTP id 38308e7fff4ca-2fd059d336amr70161111fa.30.1730717397626;
-        Mon, 04 Nov 2024 02:49:57 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2fdef3b732bsm16206121fa.4.2024.11.04.02.49.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Nov 2024 02:49:56 -0800 (PST)
-Date: Mon, 4 Nov 2024 12:49:54 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Sarthak Garg <quic_sartgarg@quicinc.com>
-Cc: Adrian Hunter <adrian.hunter@intel.com>, 
-	Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, quic_cang@quicinc.com, quic_nguyenb@quicinc.com, 
-	quic_rampraka@quicinc.com, quic_pragalla@quicinc.com, quic_sayalil@quicinc.com, 
-	quic_nitirawa@quicinc.com, quic_sachgupt@quicinc.com, quic_bhaskarv@quicinc.com, 
-	quic_narepall@quicinc.com, kernel@quicinc.com
-Subject: Re: [PATCH V1] mmc: sdhci-msm: Enable MMC_CAP_AGGRESSIVE_PM for
- qualcomm controllers
-Message-ID: <konkbi4hvd7qc4rhokwrymzqntroy7gijk3ndwv5rluswdrykp@xsafrtrjzmuq>
-References: <20241104060722.10642-1-quic_sartgarg@quicinc.com>
+	s=arc-20240116; t=1730717517; c=relaxed/simple;
+	bh=ccA9hhIWbNWL0PykeM6304+ud5NEmhGoD1jTaLRZ3iQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=YOTDs9kSwHj1If2YUr8xOMH8YFeM1/0gWf1o1MXeZGPP76M1C9LXPg79EGPpvTropo0lUzF04vVO+8oyyxCkWFlnIVvmx1gCq1k6Dx/m3OKOVYHtt1tBx5xjWu1BysuN/JmPyPs/bnB08resP/9ctszGcMwxJY0viBKbJ12Rrf0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oSBiVNid; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE86BC4CECE;
+	Mon,  4 Nov 2024 10:51:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730717517;
+	bh=ccA9hhIWbNWL0PykeM6304+ud5NEmhGoD1jTaLRZ3iQ=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=oSBiVNidlOgF/+D6WJHNzmwx/10kgxrDvSPVyYRV9pmSldUxwlQh4ngbAB3+iukqg
+	 7N6jtwsjRHMMSo+gFCgl9TYJHrKppRxXui6LVePuN0wl7C30SO4HOC0Ei2YuqTCfjC
+	 mrVCtU0nV+Q1eY3PV3tvwKUQ2JWxinTFudha3QJqR+6DrK62E8OYJrZTi6VdXmWOSF
+	 e6gt8VVZo8tUGYoqD+eYF2KECsPhobNuLND8EiIEhi4PG5Fpskc0RVJpohCByWTwuj
+	 wEwXyY2PlnXRokSVlnA9JO0OfyOGu71zyUbgceCGbJnY2F73rHMw0o7YQcRDDuQ/0c
+	 W7EecOFuvgBgw==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: Alexey Klimov <alexey.klimov@linaro.org>,
+	Adam Skladowski <a39.skl@gmail.com>,
+	Mohammad Rafi Shaik <quic_mohs@quicinc.com>,
+	Prasad Kumpatla <quic_pkumpatl@quicinc.com>,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	Mark Brown <broonie@kernel.org>,
+	Sasha Levin <sashal@kernel.org>,
+	lgirdwood@gmail.com,
+	perex@perex.cz,
+	tiwai@suse.com,
+	krzysztof.kozlowski@linaro.org,
+	u.kleine-koenig@baylibre.com,
+	dmitry.baryshkov@linaro.org,
+	linux-sound@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.11 18/21] ASoC: codecs: wcd937x: relax the AUX PDM watchdog
+Date: Mon,  4 Nov 2024 05:49:54 -0500
+Message-ID: <20241104105048.96444-18-sashal@kernel.org>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20241104105048.96444-1-sashal@kernel.org>
+References: <20241104105048.96444-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241104060722.10642-1-quic_sartgarg@quicinc.com>
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.11.6
+Content-Transfer-Encoding: 8bit
 
-On Mon, Nov 04, 2024 at 11:37:22AM +0530, Sarthak Garg wrote:
-> Enable MMC_CAP_AGGRESSIVE_PM for qualcomm controllers.
-> This enables runtime PM for eMMC/SD card.
+From: Alexey Klimov <alexey.klimov@linaro.org>
 
-Could you please mention, which platforms were tested with this patch?
-Note, upstream kernel supports a lot of platforms, including MSM8974, I
-think the oldest one, which uses SDHCI.
+[ Upstream commit 107a5c853eef5336a9846e7dd2f9184b6e3c07c7 ]
 
-> 
-> Signed-off-by: Sarthak Garg <quic_sartgarg@quicinc.com>
-> ---
->  drivers/mmc/host/sdhci-msm.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/mmc/host/sdhci-msm.c b/drivers/mmc/host/sdhci-msm.c
-> index e00208535bd1..6657f7db1b8e 100644
-> --- a/drivers/mmc/host/sdhci-msm.c
-> +++ b/drivers/mmc/host/sdhci-msm.c
-> @@ -2626,6 +2626,7 @@ static int sdhci_msm_probe(struct platform_device *pdev)
->  		goto clk_disable;
->  	}
->  
-> +	msm_host->mmc->caps |= MMC_CAP_AGGRESSIVE_PM;
->  	msm_host->mmc->caps |= MMC_CAP_WAIT_WHILE_BUSY | MMC_CAP_NEED_RSP_BUSY;
->  
->  	/* Set the timeout value to max possible */
-> -- 
-> 2.17.1
-> 
+On a system with wcd937x, rxmacro and Qualcomm audio DSP, which is pretty
+common set of devices on Qualcomm platforms, and due to the order of how
+DAPM widgets are powered on (they are sorted), there is a small time window
+when wcd937x chip is online and expects the flow of incoming data but
+rxmacro is not yet online. When wcd937x is programmed to receive data
+via AUX port then its AUX PDM watchdog is enabled in
+wcd937x_codec_enable_aux_pa(). If due to some reasons the rxmacro and
+soundwire machinery are delayed to start streaming data, then there is
+a chance for this AUX PDM watchdog to reset the wcd937x codec. Such event
+is not logged as a message and only wcd937x IRQ counter is increased
+however there could be a lot of other reasons for that IRQ.
+There is a similar opportunity for such delay during DAPM widgets power
+down sequence.
 
+If wcd937x codec reset happens on the start of the playback, then there
+will be no sound and if such reset happens at the end of a playback then
+it may generate additional clicks and pops noises.
+
+On qrb4210 RB2 board without any debugging bits the wcd937x resets are
+sometimes observed at the end of a playback though not always.
+With some debugging messages or with some tracing enabled the AUX PDM
+watchdog resets the wcd937x codec at the start of a playback and there
+is no sound output at all.
+
+In this patch:
+ - TIMEOUT_SEL bit in PDM_WD_CTL2 register is set to increase the watchdog
+reset delay to 100ms which eliminates the AUX PDM watchdog IRQs on
+qrb4210 RB2 board completely and decreases the number of unwanted clicks
+noises;
+
+ - HOLD_OFF bit postpones triggering such watchdog IRQ till wcd937x codec
+reset which usually happens at the end of a playback. This allows to
+actually output some sound in case of debugging.
+
+Cc: Adam Skladowski <a39.skl@gmail.com>
+Cc: Mohammad Rafi Shaik <quic_mohs@quicinc.com>
+Cc: Prasad Kumpatla <quic_pkumpatl@quicinc.com>
+Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
+Link: https://patch.msgid.link/20241022033132.787416-3-alexey.klimov@linaro.org
+Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ sound/soc/codecs/wcd937x.c | 10 ++++++++--
+ sound/soc/codecs/wcd937x.h |  4 ++++
+ 2 files changed, 12 insertions(+), 2 deletions(-)
+
+diff --git a/sound/soc/codecs/wcd937x.c b/sound/soc/codecs/wcd937x.c
+index 63b25c321a03d..3c1224d8f2dff 100644
+--- a/sound/soc/codecs/wcd937x.c
++++ b/sound/soc/codecs/wcd937x.c
+@@ -715,12 +715,17 @@ static int wcd937x_codec_enable_aux_pa(struct snd_soc_dapm_widget *w,
+ 	struct snd_soc_component *component = snd_soc_dapm_to_component(w->dapm);
+ 	struct wcd937x_priv *wcd937x = snd_soc_component_get_drvdata(component);
+ 	int hph_mode = wcd937x->hph_mode;
++	u8 val;
+ 
+ 	switch (event) {
+ 	case SND_SOC_DAPM_PRE_PMU:
++		val = WCD937X_DIGITAL_PDM_WD_CTL2_EN |
++		      WCD937X_DIGITAL_PDM_WD_CTL2_TIMEOUT_SEL |
++		      WCD937X_DIGITAL_PDM_WD_CTL2_HOLD_OFF;
+ 		snd_soc_component_update_bits(component,
+ 					      WCD937X_DIGITAL_PDM_WD_CTL2,
+-					      BIT(0), BIT(0));
++					      WCD937X_DIGITAL_PDM_WD_CTL2_MASK,
++					      val);
+ 		break;
+ 	case SND_SOC_DAPM_POST_PMU:
+ 		usleep_range(1000, 1010);
+@@ -741,7 +746,8 @@ static int wcd937x_codec_enable_aux_pa(struct snd_soc_dapm_widget *w,
+ 					hph_mode);
+ 		snd_soc_component_update_bits(component,
+ 					      WCD937X_DIGITAL_PDM_WD_CTL2,
+-					      BIT(0), 0x00);
++					      WCD937X_DIGITAL_PDM_WD_CTL2_MASK,
++					      0x00);
+ 		break;
+ 	}
+ 
+diff --git a/sound/soc/codecs/wcd937x.h b/sound/soc/codecs/wcd937x.h
+index 37bff16e88ddd..a2bd47a93e507 100644
+--- a/sound/soc/codecs/wcd937x.h
++++ b/sound/soc/codecs/wcd937x.h
+@@ -391,6 +391,10 @@
+ #define WCD937X_DIGITAL_PDM_WD_CTL0		0x3465
+ #define WCD937X_DIGITAL_PDM_WD_CTL1		0x3466
+ #define WCD937X_DIGITAL_PDM_WD_CTL2		0x3467
++#define WCD937X_DIGITAL_PDM_WD_CTL2_HOLD_OFF	BIT(2)
++#define WCD937X_DIGITAL_PDM_WD_CTL2_TIMEOUT_SEL	BIT(1)
++#define WCD937X_DIGITAL_PDM_WD_CTL2_EN		BIT(0)
++#define WCD937X_DIGITAL_PDM_WD_CTL2_MASK	GENMASK(2, 0)
+ #define WCD937X_DIGITAL_INTR_MODE		0x346A
+ #define WCD937X_DIGITAL_INTR_MASK_0		0x346B
+ #define WCD937X_DIGITAL_INTR_MASK_1		0x346C
 -- 
-With best wishes
-Dmitry
+2.43.0
+
 
