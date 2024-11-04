@@ -1,151 +1,130 @@
-Return-Path: <linux-kernel+bounces-395002-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395003-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 370109BB6F9
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 15:01:11 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id ABDA29BB6FD
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 15:01:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E9623280579
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 14:01:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 480C6B20E1C
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 14:01:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D7BA18595F;
-	Mon,  4 Nov 2024 14:00:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5387B13A3F7;
+	Mon,  4 Nov 2024 14:01:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UX5LDSX4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="c98vcCDI"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA3721CF8B;
-	Mon,  4 Nov 2024 14:00:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5741A8BEE;
+	Mon,  4 Nov 2024 14:01:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730728820; cv=none; b=EoCTmEP7QH8bbayLzgieOeyfyaxDUPQ9bWBimax/UUDzTIOC/dywB1vG28zWjrsmOrcUWzUGIDLDu1FD0YvZE6dLnVgacp1vNSqw9cKAqiWk0TVMknd837GPQubSYlTc6yD16NuU+REtrBL9o5UnaIiSp1W0sGiqZvztmQL2uRY=
+	t=1730728874; cv=none; b=tQvEfM0xGBm9vsEKK3hsAarsr8M92+2UcA9I5QTnvn5C6TvPWySMFcs6VoAOI1uze8BCWcZyJB4CbsHw2vqBmNzNJwb2pqZYSzEV4Gd4BZ8osJSXLdqJkD5gk8IdZ+JTlzo8FlCXzZan6y3EUsCvbxFgP0rZy2bqeeGCn1P6UGk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730728820; c=relaxed/simple;
-	bh=P1k0MUVMq1QqUtbiW9xLpMKx1OZ1yhgJFMtdzOL+cGQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=IHfc65LNhJ5oF533hYGUoKeyP1W62qJUvSuehxXEnOCBgsDn9Dy8JL7Xr9eKh1NuJb2qCW59FHmWXlllcaqQ2SeSIHo8TvbyYTDBHOHRlqaYm37nKNtI9z8+tM8F/pNO3gLQqlLbkY6WQQBuZLDrEhNLA/pb8IbYxVHgrFGnhCY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UX5LDSX4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 42486C4CECE;
-	Mon,  4 Nov 2024 14:00:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730728820;
-	bh=P1k0MUVMq1QqUtbiW9xLpMKx1OZ1yhgJFMtdzOL+cGQ=;
-	h=From:Date:Subject:To:Cc:From;
-	b=UX5LDSX416ittxWJFLtIK3h56f2siL7MxHeSChZXP9Qgwq9nbSSSu7sZr22zxDe46
-	 tbb6L7Kfk3hOGu/V7w07bldevkpsUSCi1MOHyEUFAjUpM6Ml2/SS2Q4lg4SGJBXgE2
-	 gR0KLTDOW0OgbOA8kCRuGYn65ANrCO0im8qLV3uxxwc8NS55yGUdScn7ColA0oBmWo
-	 kYyGPVzWqgDTb9eXFDMprWOKfGFsIE8xg7KP/LGRfmoqhATCvNkPYvkqbFO8cf8k79
-	 d8wqtiwsxLhDC9X+/7wszbV+j+Ox+S4aoFeN64Ukoulmd6emJrZanEk0ysdObm8nYQ
-	 df6g80HzIErPw==
-From: Roger Quadros <rogerq@kernel.org>
-Date: Mon, 04 Nov 2024 16:00:11 +0200
-Subject: [PATCH] usb: dwc3: fix fault at system suspend if device was
- already runtime suspended
+	s=arc-20240116; t=1730728874; c=relaxed/simple;
+	bh=hYwWE6NSgcNV54B1JYLg3MC+AgkpywJBzoMNETV4gyQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZXSukgcYABOQPpaWwrxhS4N4OzJEIQRKihDQDO3CU3ipZUcKyR2fDwCYj6UUe+EvCUds6mvXiQBbhMMuVY5ACGB23+FociLlrwZkFNkNe9Znnv/K5gfcab57CSvBkKqJCD0ArvdKcYgb1AAoUXNp5XjPQZGrTNHVeJCXMYsaIrw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=c98vcCDI; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=/9WKCT0vx39Ceviq8KsWhLeea2L5rBVepa8c56heqKo=; b=c98vcCDIrWnXOfKLZO0yXX66AJ
+	yVyjghqAnlZKmkWjAC6ruTsEfVlkBhuN8dcgk3DQ77wMlvu2DrlsivAN+m7VaCOdn2QTfLUvqeUPo
+	jHDZu4NmjLEcKKwFd1bOzbs2TwVzv4nkhWcnYp/Q6uB7kTdT8kN8N+AyqRfxwxt5JBHDuXx8Ci7N8
+	b/ha1C0ttMvCMCGMDtbrpay4gt3eoGL6pDW+gobvM86CmUtVEOvzOVJqnR94TJaO3Vhkk86Q18MKB
+	Et5RcE3YOJoHzhuJ+Er3YFRq8C8+cGVxdnNG4L7kcT6j2k42F931LK6hGOOI6N+XuCm91c8sY88h3
+	Jla4Knig==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1t7xdi-0000000BLB4-34O0;
+	Mon, 04 Nov 2024 14:01:07 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 6121030042E; Mon,  4 Nov 2024 15:01:06 +0100 (CET)
+Date: Mon, 4 Nov 2024 15:01:06 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Przemek Kitszel <przemyslaw.kitszel@intel.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>, megi@xff.cz,
+	jic23@kernel.org, lars@metafoo.de, linux-iio@vger.kernel.org
+Subject: Re: linux-next: build failure after merge of the tip tree
+Message-ID: <20241104140106.GF24862@noisy.programming.kicks-ass.net>
+References: <20241028165336.7b46ce25@canb.auug.org.au>
+ <20241101141952.4990f238@canb.auug.org.au>
+ <dd740dda-a03e-4f3a-bb46-e551f0799c50@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241104-am62-lpm-usb-fix-v1-1-e93df73a4f0d@kernel.org>
-X-B4-Tracking: v=1; b=H4sIAGrTKGcC/x2MSQqAMAwAvyI5G2hqXfAr4qHaqAE3WhSh+HeLx
- xmYiRDYCwdoswiebwly7Akoz2Bc7D4ziksMWmlDpDTardK4nhteYcBJHixM7VxTUVGOBCk7PSf
- 9L7v+fT+6wuvMYgAAAA==
-To: Thinh Nguyen <Thinh.Nguyen@synopsys.com>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Dhruva Gole <d-gole@ti.com>, sashal@kernel.org, 
- William McVicker <willmcvicker@google.com>, 
- Chris Morgan <macroalpha82@gmail.com>
-Cc: Vishal Mahaveer <vishalm@ti.com>, msp@baylibre.com, srk@ti.com, 
- linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, 
- stable@vger.kernel.org, Roger Quadros <rogerq@kernel.org>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2168; i=rogerq@kernel.org;
- h=from:subject:message-id; bh=P1k0MUVMq1QqUtbiW9xLpMKx1OZ1yhgJFMtdzOL+cGQ=;
- b=owEBbQKS/ZANAwAIAdJaa9O+djCTAcsmYgBnKNNwkMQZtv8N51Zpfl0t+0+S1Q/Vqsv7isk4/
- LM0GMkE07CJAjMEAAEIAB0WIQRBIWXUTJ9SeA+rEFjSWmvTvnYwkwUCZyjTcAAKCRDSWmvTvnYw
- kwTFEACsBb0SZTJAsj7DWP3Ea2zc5LO6JpvWSA8jicrLPdp1JEYQUwf9yhvKod2c8Db/HhHwnva
- fXGwGJrDFHL/v7Z51nNqd+pwWRWanFJux7e1LvClsgG/8URpA24qnHDZsWaV+3/gDmgw+NeUHmJ
- 02G/id7VO1StoYkZGyQmUZVxcJEZaKRP2iAzGXpv+iyaV3TA4fn1P10rchq3TzililZr2oH2VCG
- GOdKSf2bF/Ni1h35GptC//EkE0OQ/N6ykCMeABj1gEjUGJW1C6okJB+XYTx4HhPQGGrGGLzdIJw
- kLEE5QpEvzHmTgh/E4rsCuFSPBNIQJLRfhZ9kz/s+BmF9+n09+ZrMl0rU+bdFcVAMhXtUK0uoQn
- 8a64bstTlTNdu5FFxsVwNlruwUsxRIdKdr8AKh9Kd7DMpquJUNnEp9bxVtWUWqpCDFtjN/dE3mR
- xcqvFfUS0g32OTROKX1lyvglvNrJya2DhwdHneNGIl1UwtaXF4ql0Yt976TqTM/esaCn1b86grS
- 0L8/OoVGcdTxapmvmm9n0GjzrxwEKD6Exj2MvenXDo87QYxLJ5R3tmQsuqvQvurLRzn7uP/2QGx
- k85c82RPh/hvRG7UOL5KDlPqXl4IVV7z1Qf1rXU0RbqgoxT+B3za1OEg3Owr6OsGNca1Ijm9jeZ
- YIQHRfY6BMXB+fg==
-X-Developer-Key: i=rogerq@kernel.org; a=openpgp;
- fpr=412165D44C9F52780FAB1058D25A6BD3BE763093
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <dd740dda-a03e-4f3a-bb46-e551f0799c50@intel.com>
 
-If the device was already runtime suspended then during system suspend
-we cannot access the device registers else it will crash.
 
-Also we cannot access any registers after dwc3_core_exit() on some
-platforms so move the dwc3_enable_susphy() call to the top.
+It might help if we put the relevant maintainers on Cc?
 
-Cc: stable@vger.kernel.org # v5.15+
-Reported-by: William McVicker <willmcvicker@google.com>
-Closes: https://lore.kernel.org/all/ZyVfcUuPq56R2m1Y@google.com
-Fixes: 705e3ce37bcc ("usb: dwc3: core: Fix system suspend on TI AM62 platforms")
-Signed-off-by: Roger Quadros <rogerq@kernel.org>
----
- drivers/usb/dwc3/core.c | 25 ++++++++++++-------------
- 1 file changed, 12 insertions(+), 13 deletions(-)
-
-diff --git a/drivers/usb/dwc3/core.c b/drivers/usb/dwc3/core.c
-index 427e5660f87c..98114c2827c0 100644
---- a/drivers/usb/dwc3/core.c
-+++ b/drivers/usb/dwc3/core.c
-@@ -2342,10 +2342,18 @@ static int dwc3_suspend_common(struct dwc3 *dwc, pm_message_t msg)
- 	u32 reg;
- 	int i;
- 
--	dwc->susphy_state = (dwc3_readl(dwc->regs, DWC3_GUSB2PHYCFG(0)) &
--			    DWC3_GUSB2PHYCFG_SUSPHY) ||
--			    (dwc3_readl(dwc->regs, DWC3_GUSB3PIPECTL(0)) &
--			    DWC3_GUSB3PIPECTL_SUSPHY);
-+	if (!pm_runtime_suspended(dwc->dev) && !PMSG_IS_AUTO(msg)) {
-+		dwc->susphy_state = (dwc3_readl(dwc->regs, DWC3_GUSB2PHYCFG(0)) &
-+				    DWC3_GUSB2PHYCFG_SUSPHY) ||
-+				    (dwc3_readl(dwc->regs, DWC3_GUSB3PIPECTL(0)) &
-+				    DWC3_GUSB3PIPECTL_SUSPHY);
-+		/*
-+		 * TI AM62 platform requires SUSPHY to be
-+		 * enabled for system suspend to work.
-+		 */
-+		if (!dwc->susphy_state)
-+			dwc3_enable_susphy(dwc, true);
-+	}
- 
- 	switch (dwc->current_dr_role) {
- 	case DWC3_GCTL_PRTCAP_DEVICE:
-@@ -2398,15 +2406,6 @@ static int dwc3_suspend_common(struct dwc3 *dwc, pm_message_t msg)
- 		break;
- 	}
- 
--	if (!PMSG_IS_AUTO(msg)) {
--		/*
--		 * TI AM62 platform requires SUSPHY to be
--		 * enabled for system suspend to work.
--		 */
--		if (!dwc->susphy_state)
--			dwc3_enable_susphy(dwc, true);
--	}
--
- 	return 0;
- }
- 
-
----
-base-commit: 42f7652d3eb527d03665b09edac47f85fb600924
-change-id: 20241102-am62-lpm-usb-fix-347dd86135c1
-
-Best regards,
--- 
-Roger Quadros <rogerq@kernel.org>
-
+On Mon, Nov 04, 2024 at 02:37:57PM +0100, Przemek Kitszel wrote:
+> On 11/1/24 04:19, Stephen Rothwell wrote:
+> > Hi all,
+> > 
+> > On Mon, 28 Oct 2024 16:53:36 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> > > 
+> > > After merging the tip tree, today's linux-next build (x86_64 allmodconfig)
+> > > failed like this:
+> > > 
+> > > drivers/iio/magnetometer/af8133j.c: In function 'af8133j_set_scale':
+> > > drivers/iio/magnetometer/af8133j.c:315:12: error: suggest explicit braces to avoid ambiguous 'else' [-Werror=dangling-else]
+> > >    315 |         if (!pm_runtime_status_suspended(dev))
+> > >        |            ^
+> > > cc1: all warnings being treated as errors
+> > > 
+> > > Probably caused by commit
+> > > 
+> > >    fcc22ac5baf0 ("cleanup: Adjust scoped_guard() macros to avoid potential warning")
+> > > 
+> > > I have applied the following for today but I wonder if there may be
+> > > others.
+> > > 
+> > > From: Stephen Rothwell <sfr@canb.auug.org.au>
+> > > Date: Mon, 28 Oct 2024 16:01:15 +1100
+> > > Subject: [PATCH] fix up for "cleanup: Adjust scoped_guard() macros to avoid
+> > >   potential warning"
+> > > 
+> > > Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> > > ---
+> > >   drivers/iio/magnetometer/af8133j.c | 3 ++-
+> > >   1 file changed, 2 insertions(+), 1 deletion(-)
+> > > 
+> > > diff --git a/drivers/iio/magnetometer/af8133j.c b/drivers/iio/magnetometer/af8133j.c
+> > > index d81d89af6283..acd291f3e792 100644
+> > > --- a/drivers/iio/magnetometer/af8133j.c
+> > > +++ b/drivers/iio/magnetometer/af8133j.c
+> > > @@ -312,10 +312,11 @@ static int af8133j_set_scale(struct af8133j_data *data,
+> > >   	 * When suspended, just store the new range to data->range to be
+> > >   	 * applied later during power up.
+> > >   	 */
+> > > -	if (!pm_runtime_status_suspended(dev))
+> > > +	if (!pm_runtime_status_suspended(dev)) {
+> > >   		scoped_guard(mutex, &data->mutex)
+> > >   			ret = regmap_write(data->regmap,
+> > >   					   AF8133J_REG_RANGE, range);
+> > > +	}
+> > >   	pm_runtime_enable(dev);
+> > 
+> > I am still applying this patch.
+> > 
+> 
+> This patch of yours is necessary, could you make it permanent?
+> 
+> Reviewed-by: Przemek Kitszel <przemyslaw.kitszel@intel.com>
 
