@@ -1,108 +1,92 @@
-Return-Path: <linux-kernel+bounces-395350-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395351-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C45E69BBCB8
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 19:00:57 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 351789BBCBA
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 19:01:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 328AEB2281E
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 18:00:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 669E91C21DAF
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 18:01:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4B871CACDE;
-	Mon,  4 Nov 2024 18:00:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BAAC1CB9F3;
+	Mon,  4 Nov 2024 18:00:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="kqmmFoFZ"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="OCVcJhXU"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 586A418EB1;
-	Mon,  4 Nov 2024 18:00:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74BE81C9DDF;
+	Mon,  4 Nov 2024 18:00:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730743237; cv=none; b=k58yCBmQUurnTBF9sdpuX5gkJI9nC5ZG1kR+aXMkgymY9ocuYaULKTpmqfJfslZBX0jiLMF0rqDH/aUikSCw3azkhGVsn/EbQ09J1i0S7y+w18T4W+kdErmpTea/cIDrMeDAPYk3XCP0tiuPy81JCiNX3fTr1hNS2xInwNTNttI=
+	t=1730743248; cv=none; b=SGvcTnLEGLal5EP0ryIN3ffc1joFHlhZWN0LaytBH2PVQlTYO75VvsgdhL9A0jJaR4z3RNeUsFZQa2RbABL8gOCtHjLiwHA+IToGcs2bJL+A6ZqLeAu48x41R50XqHhj0C0+hbimL1wq+p6ZkSRCSPxDwutmU1Be//Wl10rX9zM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730743237; c=relaxed/simple;
-	bh=l4ClbwKLAAUCIKk+H9sLcRUgk+8DLPI9VAyS+KjeJy4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bEZrEQsKbdpcyQknsv3oBYpPPIvJgTk0lEk0pfhBFrtDCSTns6M9aGbnKn4TRt39bRsu67XhPCoP5UnYtoEYsctlIghoany0d9vsaWRxd1ILMGWZ/GcOcGdaD5n5JiB1jm1+CZ1xtkuzn4g/o5atKp0OMaUyHmGoHuIoF1QN3EM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=kqmmFoFZ; arc=none smtp.client-ip=90.155.92.199
+	s=arc-20240116; t=1730743248; c=relaxed/simple;
+	bh=B9jWPczjZgAONNpThKHexUQW24Xju40V9hSbN7FE1dw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PJlVRcz0xG7JdUbbBhbVepvBQWfCfxZuKP8SAD4mYts1WF91c0nLejOSjQlab0dLKi5n3U5xFIetB+Zlje6obece/eKak9lONwrNnN3Ed0GV8IGiZf1fhR0xL7WXNfPtZDuJtaXOEc/uaGKbCe26qClsQ+t0LyBYNX/65tbxhk8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=OCVcJhXU; arc=none smtp.client-ip=90.155.50.34
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=Content-Transfer-Encoding:Content-Type
-	:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=E1fQfudbR4NO1VNaKqotSsHuPMFHOb9T1HzqpLDUDRk=; b=kqmmFoFZlMBxlNL7guu+uAEGuL
-	CjAyvw2Y3uIngSJsfQMhpP9DlavupameoKxseM32OJwZ0E5vc2BYSj5MwMWbbb+XV7bzXeb1tPGeb
-	S9LlE+t0jLMEeH/2ctqWtCGHdcIwti/YvYNXvJ2m3nsYYquI5vZ1XX0nqU1EK7qmT2n0XKm8S8xA+
-	co72pHyJ3NW4idW/a02gi65wk7NG4Tt2J/NOuwOmQ3u1iA39NT+PmW2wahcejC+goy5xTh6cHoQhp
-	mnWDOwacTaSKc/46mL+gdcWNFJ8u3cjkg9rFN9ziwcBQ+7Un+0iPK8oshD0JU4rh5VTdf4wbxXM7F
-	TQYkdxAw==;
-Received: from [50.53.2.24] (helo=[192.168.254.17])
-	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1t81NL-0000000BOXx-36QD;
-	Mon, 04 Nov 2024 18:00:28 +0000
-Message-ID: <123bd610-03d7-4c08-9314-616c0d3349d2@infradead.org>
-Date: Mon, 4 Nov 2024 10:00:21 -0800
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=0KEUojX769cFGFmjiOJu9LFcNjv63c+8Mtn9KKoSfvQ=; b=OCVcJhXUUUxPqDlx3lGFnhCT0L
+	M5kJrwySKofGEFCLf8XdvyIbdHMy8vHdTTPP/gMM2LrzKhKR65E8zYdeYo5bCY+WjlV4Nf+66G/pD
+	hQD/cYTgGWXIFgt550GAATKhBmAXmYpN1b2WIjj3E8BWbAnc2Vbx415/UTg2URtFKpRFag12RuaHx
+	TcggLzHKnbQK5vjnfxxD5GTDmpA+rkcVoXhpsV542JItdJIL3deXSCmQNDEkRtAacNGhhn6WudeAJ
+	Fq1x8N6IXpomeov0dISYwozNLAL9s60AvFqqwqT13JZQ3QLJ5rQHsOTIFuQTV/EyWRlcUWCcJKBCv
+	nWFVznRQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1t81NV-00000001Qps-0up4;
+	Mon, 04 Nov 2024 18:00:37 +0000
+Date: Mon, 4 Nov 2024 18:00:36 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: Koichiro Den <koichiro.den@gmail.com>
+Cc: vbabka@suse.cz, cl@linux.com, penberg@kernel.org, rientjes@google.com,
+	iamjoonsoo.kim@lge.com, akpm@linux-foundation.org,
+	roman.gushchin@linux.dev, 42.hyeyoo@gmail.com, kees@kernel.org,
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] mm/slab: fix warning caused by duplicate kmem_cache
+ creation in kmem_buckets_create
+Message-ID: <ZykLxG5Tyet5HcwL@casper.infradead.org>
+References: <20241104150837.2756047-1-koichiro.den@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 04/12] platform/x86: hfi: Introduce AMD Hardware
- Feedback Interface Driver
-To: Mario Limonciello <mario.limonciello@amd.com>,
- Borislav Petkov <bp@alien8.de>, Hans de Goede <hdegoede@redhat.com>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: x86@kernel.org, "Gautham R . Shenoy" <gautham.shenoy@amd.com>,
- Perry Yuan <perry.yuan@amd.com>, linux-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-pm@vger.kernel.org,
- platform-driver-x86@vger.kernel.org,
- Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
-References: <20241104175407.19546-1-mario.limonciello@amd.com>
- <20241104175407.19546-5-mario.limonciello@amd.com>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20241104175407.19546-5-mario.limonciello@amd.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241104150837.2756047-1-koichiro.den@gmail.com>
 
+On Tue, Nov 05, 2024 at 12:08:37AM +0900, Koichiro Den wrote:
+> Commit b035f5a6d852 ("mm: slab: reduce the kmalloc() minimum alignment
+> if DMA bouncing possible") reduced ARCH_KMALLOC_MINALIGN to 8 on arm64.
+> However, with KASAN_HW_TAGS enabled, arch_slab_minalign() becomes 16.
+> This causes kmalloc_caches[*][8] to be aliased to kmalloc_caches[*][16],
+> resulting in kmem_buckets_create() attempting to create a kmem_cache for
+> size 16 twice. This duplication triggers warnings on boot:
 
+Wouldn't this be easier?
 
-On 11/4/24 9:53 AM, Mario Limonciello wrote:
-> diff --git a/drivers/platform/x86/amd/hfi/Kconfig b/drivers/platform/x86/amd/hfi/Kconfig
-> new file mode 100644
-> index 0000000000000..79e3b0073275c
-> --- /dev/null
-> +++ b/drivers/platform/x86/amd/hfi/Kconfig
-> @@ -0,0 +1,18 @@
-> +# SPDX-License-Identifier: GPL-2.0-only
-> +#
-> +# AMD Hardware Feedback Interface Driver
-> +#
-> +
-> +config AMD_HFI
-> +	bool "AMD Hetero Core Hardware Feedback Driver"
-> +	depends on ACPI
-> +	depends on CPU_SUP_AMD
-> +	help
-> +	 Select this option to enable the AMD Heterogeneous Core Hardware Feedback Interface. If
-> +	 selected, hardware provides runtime thread classification guidance to the operating system
-> +	 on the performance and energy efficiency capabilities of each heterogeneous CPU core.
-> +	 These capabilities may vary due to the inherent differences in the core types and can
-> +	 also change as a result of variations in the operating conditions of the system such
-> +	 as power and thermal limits. If selected, the kernel relays updates in heterogeneous
-> +	 CPUs' capabilities to userspace, allowing for more optimal task scheduling and
-> +	 resource allocation, leveraging the diverse set of cores available.
++++ b/arch/arm64/include/asm/cache.h
+@@ -33,7 +33,11 @@
+  * the CPU.
+  */
+ #define ARCH_DMA_MINALIGN      (128)
++#ifdef CONFIG_KASAN_HW_TAGS
++#define ARCH_KMALLOC_MINALIGN  (16)
++#else
+ #define ARCH_KMALLOC_MINALIGN  (8)
++#endif
 
-Please adjust the help text to fit in 80 columns.
-Thanks.
+ #ifndef __ASSEMBLY__
 
--- 
-~Randy
 
 
