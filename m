@@ -1,201 +1,161 @@
-Return-Path: <linux-kernel+bounces-394626-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394631-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EE9E9BB205
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 12:00:43 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7BB29BB215
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 12:02:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 62C901C222C5
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 11:00:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CB1D21C2237B
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 11:02:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 158E61D31B6;
-	Mon,  4 Nov 2024 10:53:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 019E41BBBE3;
+	Mon,  4 Nov 2024 10:53:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XcMGu3Za"
-Received: from mail-ot1-f50.google.com (mail-ot1-f50.google.com [209.85.210.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lMgsSlZB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B899E1D2F5C;
-	Mon,  4 Nov 2024 10:52:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4636C1BC9FE;
+	Mon,  4 Nov 2024 10:53:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730717581; cv=none; b=HAAhAx7QZFveKE9S0k98xxylFLodhskZbEW8bnWKXw1SImak9LjWOa6ZALtEbqHr49ZtNuhHpHfFAX/nzW2cFiU7aHYhDuykuaVOEFEo61g+eWiMtY0lBTjdUwMezePGP0D2bNkNkgb2BhCjuMjXucY18Sr/5JX6yKu5b9wmUzk=
+	t=1730717609; cv=none; b=EnawI4K+16FRamSYnT0GD4SCwdVrLU7W0de4F75+ACX0gOh/bROrG6gqUKohCDI5OzMCaR+xwZ0+soPIZWU7EQdnxhJ9J7dzNtQEknO2COs6yr7qORST3rE85MTzV964NmOwrNbqAOJmR6nvz+hvXJ5kpRUgFRV+YEP7QVVXEy8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730717581; c=relaxed/simple;
-	bh=lHRDj1nuYu4GZzqn0i5vZMzqyCtpSIcWjY9t6tVmdr0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pjZAg8oIB74i7HLI8CEnGN6sIffAJfJseH1jbbbi48dew4stTJJ47svp9YI8k+m+cvoAuwC80wpxNm9tlGVVayHh0ufD1ysYWBqiqkyyBiR9VUZchaEymyJkcTiCGICXWRpSN0R8IFwFCTHg8+8yT3hFYnoH9sa0GKoLsENWUuU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XcMGu3Za; arc=none smtp.client-ip=209.85.210.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f50.google.com with SMTP id 46e09a7af769-7180c7a4e02so1895729a34.0;
-        Mon, 04 Nov 2024 02:52:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730717579; x=1731322379; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=DgxWGDLB6WxMe8+gbg4dTFROdUbgcSI/rTCvMQUjZ94=;
-        b=XcMGu3Zaqc51ciVywijgC6NpR92QH4jGgsL5so/ABOhw5wPGJdRBPzl9+Zq2/b2/OS
-         ZjJNHHA45MHKnioE9WW1qA9PyV4DUA4V6dUig7KyJS7GrEern0M+o917j+CEi5RrRDAq
-         T1qNEU+Uhuqluvut9xkpgRrfJNS8q2onp6rpiqShJOR34J8WN1NNoCX6XX7QZ0XDL9Of
-         lxpwYldd+lLSAY78dNnyDKI8fdXaXpvkHsao/DNZBDg5Azr7HvdSq6ncTxzJJFYBaij1
-         YURR+lCvnLQVPZbSBuH5u8s6lcK+qscMijbA8VzFjd6dX5km/fDWpHbxPeLf652iHsBR
-         YWnw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730717579; x=1731322379;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DgxWGDLB6WxMe8+gbg4dTFROdUbgcSI/rTCvMQUjZ94=;
-        b=I0DIRq9IGU4R221gI2/DXPpCuDeUfVXWGXrsJxQdkrSBoTjx9FceT/ZxYUB4uYUYrH
-         Y+hsABOymsmqVTQdN3CjC6maL2fVesiDCIApfRPXzuOBDKm+uR0NNfBJUeTB5QUUrao7
-         sOPkjbYw1hgemZXJ3BPqCTXcvWkcyKQRP3UHfVjbKUDEKRI943lY2KMJtcBNHGEjy69e
-         FC72uPRSvQ02lc3xQabydLsetDbFzRNDf8JsY7gTywyQIZERRLXQmRPnDHVPPiJLO/fH
-         YP/tbizYfXZO1cMj03SuhCvf6BBIa40GFpYKFEcNKHgluxITl4cVmH7QM4Ij7T8PQHXp
-         gvSA==
-X-Forwarded-Encrypted: i=1; AJvYcCUyaki59qLvjX08t/mxxrGedkh7oF+cXvJgRrBPUThs+NlUKxYDTtU7+Clls8lwSeFzcvQn09B2Smi1WJ1A@vger.kernel.org, AJvYcCWMYvIiGWnV2RmDlDxDg8DCmohrFuo72hIs9SsembkI7tFJtUhwoQrvSHOZw57hKqKDy0JgGKWe@vger.kernel.org, AJvYcCWi6zklkvvFmnBETYH7QFtIuCl+WeN3NVrdl1i1JI7alj32RVnnoTl1Fj+MWXH0QKo57sI=@vger.kernel.org, AJvYcCXhIWliqoJfikAZYIgSQP/FAp8SW5tpljfq6yRJZiNqGoBzO46hLPCxRi0eAIntZ7t9hgDVCPA5pYy3@vger.kernel.org
-X-Gm-Message-State: AOJu0YxQ14XBjBHeZi8e7ZgUXl78+9vWUA7+Z2IYXDtZgLcxQC5RfgZc
-	1D2fYPovjiHEcbo6XIdlOCjeDk1hJzYTbhTHFRFD3L486pZX/9Eh
-X-Google-Smtp-Source: AGHT+IEFrTmRt5MF02HRjrjN5v5W9Wx5TsujIt/V1xbOVd6bkPvSYe0yVcuZIf7JdbxvWbzwrvJNFA==
-X-Received: by 2002:a05:6870:b022:b0:260:e713:ae8b with SMTP id 586e51a60fabf-29051b56a9amr24502201fac.20.1730717578690;
-        Mon, 04 Nov 2024 02:52:58 -0800 (PST)
-Received: from archie.me ([103.124.138.155])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-720bc1e780fsm7162875b3a.46.2024.11.04.02.52.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Nov 2024 02:52:57 -0800 (PST)
-Received: by archie.me (Postfix, from userid 1000)
-	id 3E9AD41AD6F2; Mon, 04 Nov 2024 17:52:53 +0700 (WIB)
-Date: Mon, 4 Nov 2024 17:52:52 +0700
-From: Bagas Sanjaya <bagasdotme@gmail.com>
-To: Joe Damato <jdamato@fastly.com>, netdev@vger.kernel.org
-Cc: hdanton@sina.com, pabeni@redhat.com, namangulati@google.com,
-	edumazet@google.com, amritha.nambiar@intel.com,
-	sridhar.samudrala@intel.com, sdf@fomichev.me, peter@typeblog.net,
-	m2shafiei@uwaterloo.ca, bjorn@rivosinc.com, hch@infradead.org,
-	willy@infradead.org, willemdebruijn.kernel@gmail.com,
-	skhawaja@google.com, kuba@kernel.org,
-	Martin Karsten <mkarsten@uwaterloo.ca>,
-	"David S. Miller" <davem@davemloft.net>,
-	Simon Horman <horms@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-	Linux Documentation <linux-doc@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux BPF <bpf@vger.kernel.org>
-Subject: Re: [PATCH net-next v5 7/7] docs: networking: Describe irq suspension
-Message-ID: <ZyinhIlMIrK58ABF@archie.me>
-References: <20241103052421.518856-1-jdamato@fastly.com>
- <20241103052421.518856-8-jdamato@fastly.com>
+	s=arc-20240116; t=1730717609; c=relaxed/simple;
+	bh=God9650+vBM2+0hWukpmY/djha/CUK0fx3SutwpjJS4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=KD9ZP3NTe8v3sBXUOoOKNX7UH1Mnw9o4VU8t+NZBa2jwCfDQPYDS6FUHnxsZNVD4KUjjlL6vvbLr1tGKDjGBeK42lgMT4Mq1ZoNQmgLiFmqUQH44Jm9iFwNYMI48VPC/fKU1RNlD1wq1QM6Ve5WclyuCDb/61VgJSN1jK8bkqqo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lMgsSlZB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D14C6C4CECE;
+	Mon,  4 Nov 2024 10:53:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730717607;
+	bh=God9650+vBM2+0hWukpmY/djha/CUK0fx3SutwpjJS4=;
+	h=From:To:Cc:Subject:Date:From;
+	b=lMgsSlZBm8+iAkbQbLkQNlYcc381oFVPuyouRGfHgcLc91crh0ajGB3WiArm1qF4k
+	 cYwX+hWHUrayemKSu1uPAFlXZixwkJxMMvMrf/f2cu+HT8pfBS/t2eDCKhRZCXqnRK
+	 Ib2XAtXW+3g0yjCD1iMIN4oUsmvQJBpCdBtztbS0+DbvkAcv7TEKzPmbSyw8UMYx55
+	 DckIX3ragu4qy5Q2yiUt9kyxQpWNuDYOwIRX3kJiQhhTMH/qcoFlcwNSgJMDhIWW7/
+	 U/U0qJmdtergh5jnw96kN86boEWDS5b5YSbSwfKOWG/xkIRG4ZvhcHpZ9+Pq20XVW3
+	 S30JVpbZnmjqw==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: Hans de Goede <hdegoede@redhat.com>,
+	Mark Brown <broonie@kernel.org>,
+	Sasha Levin <sashal@kernel.org>,
+	cezary.rojewski@intel.com,
+	liam.r.girdwood@linux.intel.com,
+	peter.ujfalusi@linux.intel.com,
+	yung-chuan.liao@linux.intel.com,
+	ranjani.sridharan@linux.intel.com,
+	kai.vehmanen@linux.intel.com,
+	perex@perex.cz,
+	tiwai@suse.com,
+	pierre-louis.bossart@linux.dev,
+	u.kleine-koenig@baylibre.com,
+	alban.boye@protonmail.com,
+	tomlohave@gmail.com,
+	linux-sound@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.1 01/11] ASoC: Intel: bytcr_rt5640: Add support for non ACPI instantiated codec
+Date: Mon,  4 Nov 2024 05:52:59 -0500
+Message-ID: <20241104105324.97393-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="iuKxU6a4r/CNFDfj"
-Content-Disposition: inline
-In-Reply-To: <20241103052421.518856-8-jdamato@fastly.com>
+Content-Type: text/plain; charset=UTF-8
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.1.115
+Content-Transfer-Encoding: 8bit
 
+From: Hans de Goede <hdegoede@redhat.com>
 
---iuKxU6a4r/CNFDfj
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+[ Upstream commit d48696b915527b5bcdd207a299aec03fb037eb17 ]
 
-On Sun, Nov 03, 2024 at 05:24:09AM +0000, Joe Damato wrote:
-> +It is important to note that choosing a large value for ``gro_flush_time=
-out``
-> +will defer IRQs to allow for better batch processing, but will induce la=
-tency
-> +when the system is not fully loaded. Choosing a small value for
-> +``gro_flush_timeout`` can cause interference of the user application whi=
-ch is
-> +attempting to busy poll by device IRQs and softirq processing. This value
-> +should be chosen carefully with these tradeoffs in mind. epoll-based busy
-> +polling applications may be able to mitigate how much user processing ha=
-ppens
-> +by choosing an appropriate value for ``maxevents``.
-> +
-> +Users may want to consider an alternate approach, IRQ suspension, to hel=
-p deal
-                                                                     to hel=
-p dealing
-> +with these tradeoffs.
-> +
-> <snipped>...
-> +There are essentially three possible loops for network processing and
-> +packet delivery:
-> +
-> +1) hardirq -> softirq=C2=A0=C2=A0 -> napi poll; basic interrupt delivery
-> +
-> +2)=C2=A0=C2=A0 timer -> softirq=C2=A0=C2=A0 -> napi poll; deferred irq p=
-rocessing
-> +
-> +3)=C2=A0=C2=A0 epoll -> busy-poll -> napi poll; busy looping
+On some x86 Bay Trail tablets which shipped with Android as factory OS,
+the DSDT is so broken that the codec needs to be manually instantatiated
+by the special x86-android-tablets.ko "fixup" driver for cases like this.
 
-The loops list are parsed inconsistently due to tabs between the
-enumerators and list items. I have to expand them into single space
-(along with number reference fix to follow the output):
+This means that the codec-dev cannot be retrieved through its ACPI fwnode,
+add support to the bytcr_rt5640 machine driver for such manually
+instantiated rt5640 i2c_clients.
 
----- >8 ----
-diff --git a/Documentation/networking/napi.rst b/Documentation/networking/n=
-api.rst
-index bbd58bcc430fab..848cb19f0becc1 100644
---- a/Documentation/networking/napi.rst
-+++ b/Documentation/networking/napi.rst
-@@ -375,23 +375,21 @@ epoll finds no events, the setting of ``gro_flush_tim=
-eout`` and
- There are essentially three possible loops for network processing and
- packet delivery:
-=20
--1) hardirq -> softirq=C2=A0=C2=A0 -> napi poll; basic interrupt delivery
-+1) hardirq -> softirq=C2=A0-> napi poll; basic interrupt delivery
-+2) timer -> softirq=C2=A0-> napi poll; deferred irq processing
-+3) epoll -> busy-poll -> napi poll; busy looping
-=20
--2)=C2=A0=C2=A0 timer -> softirq=C2=A0=C2=A0 -> napi poll; deferred irq pro=
-cessing
--
--3)=C2=A0=C2=A0 epoll -> busy-poll -> napi poll; busy looping
--
--Loop 2) can take control from Loop 1), if ``gro_flush_timeout`` and
-+Loop 2 can take control from Loop 1, if ``gro_flush_timeout`` and
- ``napi_defer_hard_irqs`` are set.
-=20
--If ``gro_flush_timeout`` and ``napi_defer_hard_irqs`` are set, Loops 2)
--and 3) "wrestle" with each other for control.
-+If ``gro_flush_timeout`` and ``napi_defer_hard_irqs`` are set, Loops 2
-+and 3 "wrestle" with each other for control.
-=20
--During busy periods, ``irq-suspend-timeout`` is used as timer in Loop 2),
--which essentially tilts network processing in favour of Loop 3).
-+During busy periods, ``irq-suspend-timeout`` is used as timer in Loop 2,
-+which essentially tilts network processing in favour of Loop 3.
-=20
--If ``gro_flush_timeout`` and ``napi_defer_hard_irqs`` are not set, Loop 3)
--cannot take control from Loop 1).
-+If ``gro_flush_timeout`` and ``napi_defer_hard_irqs`` are not set, Loop 3
-+cannot take control from Loop 1.
-=20
- Therefore, setting ``gro_flush_timeout`` and ``napi_defer_hard_irqs`` is
- the recommended usage, because otherwise setting ``irq-suspend-timeout``
+An example of a tablet which needs this is the Vexia EDU ATLA 10 tablet,
+which has been distributed to schools in the Spanish Andalucía region.
 
-Thanks.
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Link: https://patch.msgid.link/20241024211615.79518-1-hdegoede@redhat.com
+Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ sound/soc/intel/boards/bytcr_rt5640.c | 33 ++++++++++++++++++++++++---
+ 1 file changed, 30 insertions(+), 3 deletions(-)
 
---=20
-An old man doll... just what I always wanted! - Clara
+diff --git a/sound/soc/intel/boards/bytcr_rt5640.c b/sound/soc/intel/boards/bytcr_rt5640.c
+index ff879e173d51d..7a57d7abd3803 100644
+--- a/sound/soc/intel/boards/bytcr_rt5640.c
++++ b/sound/soc/intel/boards/bytcr_rt5640.c
+@@ -17,6 +17,7 @@
+ #include <linux/acpi.h>
+ #include <linux/clk.h>
+ #include <linux/device.h>
++#include <linux/device/bus.h>
+ #include <linux/dmi.h>
+ #include <linux/gpio/consumer.h>
+ #include <linux/gpio/machine.h>
+@@ -32,6 +33,8 @@
+ #include "../atom/sst-atom-controls.h"
+ #include "../common/soc-intel-quirks.h"
+ 
++#define BYT_RT5640_FALLBACK_CODEC_DEV_NAME	"i2c-rt5640"
++
+ enum {
+ 	BYT_RT5640_DMIC1_MAP,
+ 	BYT_RT5640_DMIC2_MAP,
+@@ -1687,9 +1690,33 @@ static int snd_byt_rt5640_mc_probe(struct platform_device *pdev)
+ 
+ 	codec_dev = acpi_get_first_physical_node(adev);
+ 	acpi_dev_put(adev);
+-	if (!codec_dev)
+-		return -EPROBE_DEFER;
+-	priv->codec_dev = get_device(codec_dev);
++
++	if (codec_dev) {
++		priv->codec_dev = get_device(codec_dev);
++	} else {
++		/*
++		 * Special case for Android tablets where the codec i2c_client
++		 * has been manually instantiated by x86_android_tablets.ko due
++		 * to a broken DSDT.
++		 */
++		codec_dev = bus_find_device_by_name(&i2c_bus_type, NULL,
++					BYT_RT5640_FALLBACK_CODEC_DEV_NAME);
++		if (!codec_dev)
++			return -EPROBE_DEFER;
++
++		if (!i2c_verify_client(codec_dev)) {
++			dev_err(dev, "Error '%s' is not an i2c_client\n",
++				BYT_RT5640_FALLBACK_CODEC_DEV_NAME);
++			put_device(codec_dev);
++		}
++
++		/* fixup codec name */
++		strscpy(byt_rt5640_codec_name, BYT_RT5640_FALLBACK_CODEC_DEV_NAME,
++			sizeof(byt_rt5640_codec_name));
++
++		/* bus_find_device() returns a reference no need to get() */
++		priv->codec_dev = codec_dev;
++	}
+ 
+ 	/*
+ 	 * swap SSP0 if bytcr is detected
+-- 
+2.43.0
 
---iuKxU6a4r/CNFDfj
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCZyingAAKCRD2uYlJVVFO
-o64ZAQDP3pxfWFFyMjIfi4ZGG1Nsp73evLSwCaWAqmtJ/cVfGwEA43yY1qi4t1Lq
-wpWy5WDij+Lu6fAu5J2LfoivRdtH+wA=
-=G0Aj
------END PGP SIGNATURE-----
-
---iuKxU6a4r/CNFDfj--
 
