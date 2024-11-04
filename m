@@ -1,157 +1,88 @@
-Return-Path: <linux-kernel+bounces-395181-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395187-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0372B9BBA02
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 17:17:20 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A72F9BBA0F
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 17:18:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 348F11C215FD
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 16:17:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C0F31C22B49
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 16:18:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1CAE1C1753;
-	Mon,  4 Nov 2024 16:17:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 530DD1C232D;
+	Mon,  4 Nov 2024 16:18:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t0uS4WQx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="B0Gfw9hb"
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19DFE20326;
-	Mon,  4 Nov 2024 16:17:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42EC11C233E
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 16:18:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730737033; cv=none; b=uwR5KnK9N8WrIl5e6vSrkgv0k+JUKyTUMPodiZQWzT3aWIjZ5lZX0LZ45KFV7IRYwp2l5Ycg0SSFN36rlGtVmTeYRHpHI9T7XJorgr41cYopPI+jO6+efg6r5qEALXluHFsCqin8oj6DUDMv9aWLvSphv/RG+tuaip/VVbPE8Zo=
+	t=1730737096; cv=none; b=Llzz8sXNyA2mhn9Xad+/K/ghVY0+lstulFsBz+Q4h+rGlHyRb17iQ4t6IjvfnoEHllqIqaf7kQ7dJiG9Vu7f37QU6Bb6GBIvUt/NHD8rno9uKE/lJkanSmYsXV9G//NXZIuWaQrXn0pFlaieClvILEXfSFzZCRFwju84mRLUoRI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730737033; c=relaxed/simple;
-	bh=Eh76YaHtmLt5DW3EPTo7cV6nWRKcIFXr4w4I1ezGAIc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=tpAfUNfg4cSXej1pSckQdoSfXS/Chu/mxoSd5sC5X11oo7oesEwsrXvlI/OSzwNJcJJk/3PzThNGd8fbZGryLakfMgn9JE2D6vtSiJVFuE+H5lZpBE1womy+6wkZBI2QX7PgErGaDbbgBJXRwCDMvWBe01Q9hjbVXKDXPrN6bZ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t0uS4WQx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 070BEC4CECE;
-	Mon,  4 Nov 2024 16:17:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730737032;
-	bh=Eh76YaHtmLt5DW3EPTo7cV6nWRKcIFXr4w4I1ezGAIc=;
-	h=From:To:Cc:Subject:Date:From;
-	b=t0uS4WQxZyWfsHKzntL/JOsbLcoUgwK7IxXNLpuJmgGCCbkdKffN6scYYHbUBRJ8b
-	 0NwgxsZS4YAH+JiDqNa602sqAWP/bj1ToC3a0OR5E76efZYcB9/kBl4tepGj6+odMf
-	 kb+VcqObQHls9mNwAvlyeDVJq1Ag3qN/hhguLelqk/VYPNF4V9Pe7at4c+Tbqfzrpe
-	 +HbOjJz5yWimTRk14BuaLyPBm3Tu2Ra4R2UA760kL2gCMCJhEQTJvxfVcisICUet05
-	 W9VRdRKfmaPk5FJzTbENorl+gp2DgQZ9fxlT2aFlW97nWIX84fOqtltbDR1xtDhHhL
-	 ePBZeQbaYdofA==
-From: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Dima Kogan <dima@secretsauce.net>,
-	Alexander Lobakin <aleksander.lobakin@intel.com>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 0/4] perf-probe: Improbe non-C language support
-Date: Tue,  5 Nov 2024 01:17:08 +0900
-Message-ID:  <173073702882.2098439.13342508872190995896.stgit@mhiramat.roam.corp.google.com>
-X-Mailer: git-send-email 2.47.0.163.g1226f6d8fa-goog
-User-Agent: StGit/0.19
+	s=arc-20240116; t=1730737096; c=relaxed/simple;
+	bh=sk6U4/K3R+jeus2MgsDXnr8zNq7ciOtwdtktA7ckUVg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FmXmVMps91cWN73eLK/rOyxpnvnOea8wBsRCFuVMifFACQBsWdD/ocHMQdnlkWKDpsrGfa6IEeCvGIF42DRRJOauFjJpqcNtd5M4MwgZsbh9Twusr4JIJ0ClxfhZqyNKNqPOLaJGbOuIXFw/w2UMn9iAKBmXvMOn9YcgqCBefsA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=B0Gfw9hb; arc=none smtp.client-ip=18.9.28.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
+Received: from cwcc.thunk.org (pool-173-48-115-131.bstnma.fios.verizon.net [173.48.115.131])
+	(authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 4A4GHDZq005094
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 4 Nov 2024 11:17:14 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
+	t=1730737037; bh=MfBLldae6HpVT/J0uH6IxgYAl1BDd58WeCFp8bpuhVM=;
+	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
+	b=B0Gfw9hby54Mawf3nVtoZfShOFAGukbl6ZTbcBRlBYtaOGsQCDtF0qrCRjYcyueMN
+	 kV3YMqvlfKnXp0p4fCWynaSg163bApSkqyhJqyYAnlJGmGsBqD0LP+xC7Ub8B3AkMW
+	 fCaW+bTFL4V+NDN7Mwtj3eK4pBVhp1exceawLgFrmz6mC17UMOrLmM35q5gxC4WiPa
+	 dU/am5SfTEXUCGkYocIUCIDjggZimNzSIcTYzrac8AXMHympLwlrhdp6OGCVFYpanm
+	 7zZxGz70mRgKnWKu+qePBhSgO7AcPnfmUhE92pXrgqBwyRWdRGP2hoQHMO6YFDD2gt
+	 W9K47pAC0MkrA==
+Received: by cwcc.thunk.org (Postfix, from userid 15806)
+	id 8C6D915C02FA; Mon, 04 Nov 2024 11:17:13 -0500 (EST)
+Date: Mon, 4 Nov 2024 11:17:13 -0500
+From: "Theodore Ts'o" <tytso@mit.edu>
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+        linux-mips@vger.kernel.org, linux-riscv@lists.infradead.org,
+        linux-s390@vger.kernel.org, linux-scsi@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, loongarch@lists.linux.dev,
+        sparclinux@vger.kernel.org, x86@kernel.org,
+        Ard Biesheuvel <ardb@kernel.org>
+Subject: Re: [PATCH v3 15/18] ext4: switch to using the crc32c library
+Message-ID: <20241104161713.GA43869@mit.edu>
+References: <20241103223154.136127-1-ebiggers@kernel.org>
+ <20241103223154.136127-16-ebiggers@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241103223154.136127-16-ebiggers@kernel.org>
 
-Hi,
+On Sun, Nov 03, 2024 at 02:31:51PM -0800, Eric Biggers wrote:
+> Now that the crc32c() library function directly takes advantage of
+> architecture-specific optimizations, it is unnecessary to go through the
+> crypto API.  Just use crc32c().  This is much simpler, and it improves
+> performance due to eliminating the crypto API overhead.
+> 
+> Reviewed-by: Ard Biesheuvel <ardb@kernel.org>
+> Signed-off-by: Eric Biggers <ebiggers@google.com>
 
-Here is a series of patches for perf probe to improve non-C language
-(e.g. Rust, Go) support.
+Acked-by: Theodore Ts'o <tytso@mit.edu>
 
-The non-C symbols are demangled style in debuginfo, e.g. golang stores
+Thanks for the cleanup!
 
-----
-$ ./perf probe -x /work/go/example/outyet/main -F main*
-main.(*Server).ServeHTTP
-main.(*Server).ServeHTTP.Print.func1
-main.(*Server).poll
-...
------
-
-And Rust stores
------
-$ ./perf probe -x /work/cro3/target/x86_64-unknown-linux-gnu/debug/cro3 -F cro3::cmd::servo*
-cro3::cmd::servo::run
-cro3::cmd::servo::run::CALLSITE
-cro3::cmd::servo::run::CALLSITE::META
-cro3::cmd::servo::run_control
------
-
-These symbols are not parsed correctly because it looks like a file name or
-including line numbers (`:` caused it.) So, I decided to introduce the changes
-
- - filename MUST start from '@'. (so it is able to distinguish the filename
-   and the function name)
- - Fix to allow backslash to escape to --lines option.
- - Introduce quotation mark support.
- - Replace non-alnum character to '_' for event name (for non-C symbols).
-
-With these changes, we can run -L (--lines) on golang;
-
-------
-$ perf probe -x goexample/hello/hello -L \"main.main\"
-<main.main@/work/goexample/hello/hello.go:0>
-      0  func main() {
-                // Configure logging for a command-line program.
-      2         log.SetFlags(0)
-      3         log.SetPrefix("hello: ")
-
-                // Parse flags.
-      6         flag.Usage = usage
-      7         flag.Parse()
-------
-
-And Rust
-------
-$ perf probe -x cro3 -L \"cro3::cmd::servo::run_show\"
-<run_show@/work/cro3/src/cmd/servo.rs:0>
-      0  fn run_show(args: &ArgsShow) -> Result<()> {
-      1      let list = ServoList::discover()?;
-      2      let s = list.find_by_serial(&args.servo)?;
-      3      if args.json {
-      4          println!("{s}");
-------
-
-And event name are created automatically like below;
-
-$ ./perf probe -x /work/go/example/outyet/main -D 'main.(*Server).poll'
-p:probe_main/main_Server_poll /work/go/example/outyet/main:0x353040
-
-$ ./perf probe -x cro3 -D \"cro3::cmd::servo::run_show\"
-p:probe_cro3/cro3_cmd_servo_run_show /work/cro3/target/x86_64-unknown-linux-gnu/debug/cro3:0x197530
-
-We still need some more work, but these shows how perf-probe can work
-with other languages.
-
-Thank you,
-
----
-
-Masami Hiramatsu (Google) (4):
-      perf-probe: Fix to ignore escaped characters in --lines option
-      perf-probe: Require '@' prefix for filename always
-      perf-probe: Introduce quotation marks support
-      perf-probe: Replace unacceptable characters when generating event name
-
-
- tools/perf/util/probe-event.c  |  136 ++++++++++++++++++++++------------------
- tools/perf/util/probe-finder.c |    3 +
- tools/perf/util/string.c       |  100 +++++++++++++++++++++++++++++
- tools/perf/util/string2.h      |    2 +
- 4 files changed, 180 insertions(+), 61 deletions(-)
-
---
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
