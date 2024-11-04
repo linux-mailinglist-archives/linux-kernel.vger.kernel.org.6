@@ -1,115 +1,118 @@
-Return-Path: <linux-kernel+bounces-394228-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394238-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAC069BAC25
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 06:44:51 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F1209BAC46
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 07:00:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 286DF1C20B08
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 05:44:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 100141F21745
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 06:00:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9B3F18B464;
-	Mon,  4 Nov 2024 05:44:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEE1218C039;
+	Mon,  4 Nov 2024 06:00:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TIwwqojN"
-Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MgVArSxw"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F59F16C687
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 05:44:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC1521791EB;
+	Mon,  4 Nov 2024 06:00:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730699086; cv=none; b=OpYPZKItqyup54LPtjsm/cqPrdWzd4dV2KRPKHpjnFluy1FUpiM9XoDse4TSwDQzH5+wcvJnprMJSkQbj55wH8BXItC1ejPCg4qJyvgdN2pApPAHLA/BC8BTSeOKJqTHTDKVTuVjm8VTiquG7zP6fVPCqm4MjNJa798y51hq03g=
+	t=1730700003; cv=none; b=TFHgjEf9fm5U1T97Y2PSEr/r336hgMccGyC9P+w80IoCpfbk6r66dm6s0j2G7Q/z0uzzTed2T11oQWfX4CZVm5vO4ymSNucEZKTWZjYIb9bnmXhUdDTWDQziHz/636bkSzCeZsYhHpnrjWOGRkFWkcICZ8eA7LLJEFt4fRCVlpk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730699086; c=relaxed/simple;
-	bh=U4dJt/854Lo371XlvYWyyrvEVZ/WthGp69JP1THJPyg=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=VBpH3vSpvLQYXu7luEmc9KeWjozPIR6LqsHUQFt65V9R3k3yjD67979w2l7FuAy/K7e/S1Atiae5fzxLfTbI8vNuanRT1uB/O8SuGdoh7FanMRdIqFEat11wqJewzCe1RgQaiNiWkzn3OhHlxIZfEMLnBSc9hs2bXJJ+DHHfNos=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TIwwqojN; arc=none smtp.client-ip=209.85.216.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-2e56750bb0dso2618154a91.0
-        for <linux-kernel@vger.kernel.org>; Sun, 03 Nov 2024 21:44:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730699084; x=1731303884; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=v8JEGZNGEHHKnWUjnAm6483hn7psRurtTNGsAmTYM24=;
-        b=TIwwqojNM8ofRYwMqKngT61Iyl/NM+89lFByJylXkI5OMstVJJgf79qePrT0ZNwAt2
-         X8AeG/PUqChh5QcTvH9RUbnzm7frlY75n9Ph5KsxjvTrw9dvOzbI12peUFX/5fkkbwBh
-         1TjW4sNaBa74spdzzOXw9noGubjeiU1QPA0sQ8niG+3rngex8q2ybzE3MTNmhb6SwH2Z
-         9PcfFsP6sznrXzF1TBsMv122uozO5LgvviLi0tSpFtYx+l9NzGSRV39TGTRW5jk7x+X2
-         TCBPhtOm2XJc3Dz7uSS7ea5Q12BZ+Q0KjaVZz3keRMKFN71MyHcFrQyhOFJIhLet9Ydw
-         teJA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730699084; x=1731303884;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=v8JEGZNGEHHKnWUjnAm6483hn7psRurtTNGsAmTYM24=;
-        b=MOKkanhZ2zoXAUxxbu4TGyunUYReWWgqos9+SkBl4b84uyMKIjomM3LFIO2/0HO8bJ
-         BaV5eGh3pciKN3drpqOWWxz1D7E1RlCPHJztSOY+75enzwevSaFe1CMAS2lI2iUoNXt1
-         ZNHwBh87K9iFvDcw0k0PNR+jkUnEse3RXAF1mj2SwPp+9FsJeFT7OrBOM77ZFE1u0D+y
-         9aYjt2VZ93kxrKUxGsPRWPW9vpN0appXtK1JRCa14HOxaNH2l6HDo+6FDbFgr0Pwa6r+
-         6KsCUdOPj7py/DrohW2bfmN1kWQTkN/0GNSpo3ytEV4LrfT6TVzYOZiOiCQNCOq5phc6
-         tsQw==
-X-Forwarded-Encrypted: i=1; AJvYcCVNB87zZbab1+j6wVfB+/yR4r3V/NHRkk4uyDu2Pcj3z06XrFQfOiwBEdh0qF8ZijfFIK3dAn6y3DUtQwo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzRNdvIq0qGZSsogYs/ry4/hqPeayG3BBHHA6RWmo0S3tARXt3h
-	5IDSAZBZus8h7P9F23UQBCtGFGo+ujWnxD8lAduY9ciq1kCk69qE
-X-Google-Smtp-Source: AGHT+IGtQdWkAPmNGq6pIivYbN8gqfKg0JQNyfzn9BHSgmNlUjDLjurKpkDels2h5nhhr4fmzCLAZA==
-X-Received: by 2002:a17:90b:380f:b0:2e2:8bce:3d02 with SMTP id 98e67ed59e1d1-2e94c50d452mr16313819a91.30.1730699084272;
-        Sun, 03 Nov 2024 21:44:44 -0800 (PST)
-Received: from debian.resnet.ucla.edu (s-169-232-97-87.resnet.ucla.edu. [169.232.97.87])
-        by smtp.googlemail.com with ESMTPSA id 98e67ed59e1d1-2e93db430acsm6576634a91.55.2024.11.03.21.44.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 03 Nov 2024 21:44:43 -0800 (PST)
-From: Daniel Yang <danielyangkang@gmail.com>
-To: "GitAuthor: Daniel Yang" <danielyangkang@gmail.com>,
-	linux-kernel@vger.kernel.org (open list)
-Cc: syzbot+6a0633f11d3fb88860bf@syzkaller.appspotmail.com
-Subject: [PATCH] fix: divide error in qnx6_mmi_fill_super
-Date: Sun,  3 Nov 2024 21:44:34 -0800
-Message-Id: <20241104054435.291037-1-danielyangkang@gmail.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1730700003; c=relaxed/simple;
+	bh=GnOR+QIlvIUOGyN4B3bwPEAZxoCH8LR8YQQ6JHrlIsk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=F010xW8UHerPT8RmMZoVjwqcN0mmF2+oSSWUFpiAWkeeFUqNvOlqv6JImkqMSRht2GGchJDHiXqEsIDrlT5b+TzTT+K+lkM80Cl6F9zP4RkOGPKtGdwYi3OefmP+muzwWQBdyCB2pl3cvSo6DUTP8yI91XiCtDjr3UMobSs9f1I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MgVArSxw; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730700002; x=1762236002;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=GnOR+QIlvIUOGyN4B3bwPEAZxoCH8LR8YQQ6JHrlIsk=;
+  b=MgVArSxwDzIx2vYSN3Y6LWg+hHOHdS389KIDCoPDeHd//JH7daszXGdn
+   Xjo+FjfMK/2UcE+kPq0/td+FOzF//n/ec9l9lAfFBgY6mczIr+hS4YU0T
+   8KbUbgIE4ZquxdfOchl9GI2NtGl/WnOi2AEORhNYtl2rHhT1xYYkpU1lv
+   Y8j0oQs50lU3FIJeTUVPcYHUtLeWtp6wA7fOt8OzVa0ka8BE8uJhXehwB
+   dxjBVGUuo3V7C47AuB2z/vYmxTh1HD9WDFJ22N2vo8eYCgI8jduq+/rQB
+   x1jyhwaNB9FUOcwkD3pabRIvpNXbise29S95ZSIjtFEFOCAqJwTlom25E
+   w==;
+X-CSE-ConnectionGUID: c6RAx8/HQJiHhQfcgKuM9g==
+X-CSE-MsgGUID: G86FLe05RO6i8F5hf7hCTw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11245"; a="41773870"
+X-IronPort-AV: E=Sophos;i="6.11,256,1725346800"; 
+   d="scan'208";a="41773870"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2024 22:00:01 -0800
+X-CSE-ConnectionGUID: zPx4GTzCTJKwRB2+ps4bog==
+X-CSE-MsgGUID: YxicuX4ZQAuh2BhYLe4bdQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,256,1725346800"; 
+   d="scan'208";a="83657335"
+Received: from jkrzyszt-mobl2.ger.corp.intel.com (HELO localhost) ([10.245.246.13])
+  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2024 21:59:56 -0800
+Date: Mon, 4 Nov 2024 07:59:51 +0200
+From: Tony Lindgren <tony.lindgren@linux.intel.com>
+To: Chao Gao <chao.gao@intel.com>
+Cc: Rick Edgecombe <rick.p.edgecombe@intel.com>, pbonzini@redhat.com,
+	seanjc@google.com, yan.y.zhao@intel.com, isaku.yamahata@gmail.com,
+	kai.huang@intel.com, kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, xiaoyao.li@intel.com,
+	reinette.chatre@intel.com,
+	Isaku Yamahata <isaku.yamahata@intel.com>,
+	Sean Christopherson <sean.j.christopherson@intel.com>
+Subject: Re: [PATCH v2 17/25] KVM: TDX: create/destroy VM structure
+Message-ID: <Zyhi1xzJpaA6yEnB@tlindgre-MOBL1>
+References: <20241030190039.77971-1-rick.p.edgecombe@intel.com>
+ <20241030190039.77971-18-rick.p.edgecombe@intel.com>
+ <ZygrjxCKM4y3+Z4M@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZygrjxCKM4y3+Z4M@intel.com>
 
-Add a check for sb_blocksize before dividing.
+On Mon, Nov 04, 2024 at 10:03:59AM +0800, Chao Gao wrote:
+> >+static int __tdx_td_init(struct kvm *kvm)
+> >+{
+> >+	struct kvm_tdx *kvm_tdx = to_kvm_tdx(kvm);
+> >+	cpumask_var_t packages;
+> >+	unsigned long *tdcs_pa = NULL;
+> >+	unsigned long tdr_pa = 0;
+> >+	unsigned long va;
+> >+	int ret, i;
+> >+	u64 err;
+> >+
+> >+	ret = tdx_guest_keyid_alloc();
+> >+	if (ret < 0)
+> >+		return ret;
+> >+	kvm_tdx->hkid = ret;
+> >+
+> >+	va = __get_free_page(GFP_KERNEL_ACCOUNT);
+> >+	if (!va)
+> >+		goto free_hkid;
+> 
+> @ret should be set to -ENOMEM before goto. otherwise, the error code would be
+> the guest HKID.
 
-Signed-off-by: Daniel Yang <danielyangkang@gmail.com>
-Reported-by: syzbot+6a0633f11d3fb88860bf@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=6a0633f11d3fb88860bf
----
- fs/qnx6/super_mmi.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+Good catch.
 
-diff --git a/fs/qnx6/super_mmi.c b/fs/qnx6/super_mmi.c
-index d282c2c73..57f34320b 100644
---- a/fs/qnx6/super_mmi.c
-+++ b/fs/qnx6/super_mmi.c
-@@ -65,8 +65,13 @@ struct qnx6_super_block *qnx6_mmi_fill_super(struct super_block *s, int silent)
- 	}
- 
- 	/* calculate second superblock blocknumber */
-+	__u32 sb1_blocksize = fs32_to_cpu(sbi, sb1->sb_blocksize);
-+
-+	if (!sb1_blocksize) {
-+		pr_err("superblock #1 blocksize 0\n");
-+		goto out;
-+	}
- 	offset = fs32_to_cpu(sbi, sb1->sb_num_blocks) + QNX6_SUPERBLOCK_AREA /
--					fs32_to_cpu(sbi, sb1->sb_blocksize);
-+								sb1_blocksize;
- 
- 	/* set new blocksize */
- 	if (!sb_set_blocksize(s, fs32_to_cpu(sbi, sb1->sb_blocksize))) {
--- 
-2.39.2
+> >+	if (!zalloc_cpumask_var(&packages, GFP_KERNEL)) {
+> >+		ret = -ENOMEM;
+> 
+> maybe just hoist this line before allocating tdr.
 
+Yeah it should be initialized earlier.
+
+Tony
 
