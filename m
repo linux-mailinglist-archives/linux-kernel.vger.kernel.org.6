@@ -1,176 +1,134 @@
-Return-Path: <linux-kernel+bounces-394382-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394383-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96A049BAE40
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 09:37:04 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE9F09BAE43
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 09:38:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5788E2831A8
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 08:37:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B22A1F2308E
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 08:38:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0FEA18B498;
-	Mon,  4 Nov 2024 08:36:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FB6019340B;
+	Mon,  4 Nov 2024 08:38:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jMaLcGfQ"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JNzuLcPE"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 820DA18B48A
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 08:36:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F71318A947;
+	Mon,  4 Nov 2024 08:37:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730709413; cv=none; b=fMr9tze8CWyXagvsyft8TYYl6Xdb0UkB5NmXEN8QofWeup7uYFugqfpfa/ovVWLJeR8J1AEU9gU0PoTJaLuCnpl5RYK2a1NAzqGm2gFL7Znv4UT935FwXtEQamIQ7ri4NkLXyrs0i/WR+mS/OoGM+lG2o8o7EDnlqlo/lqK1fls=
+	t=1730709479; cv=none; b=q5ReBr9JEH0JUSr03BbWeOutuBDBVWdjLWlWpJEUPUnQi0yU+6uPj0QI4e7x1dCWYFrO6LSmUOicN8nUrhpFeiI2mSSj8HVA7gdihG3bMsaMHtwZsPmK1dYWv/VKmozHUAJ7Swx2mGlKQnzK7WWtJ7Z/bLZMrFWX/6ZHBHb9kIk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730709413; c=relaxed/simple;
-	bh=8/FZMXIbfOaPkIGO7KqjyX886ZnwrqD7QAw4b3y66Ys=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YX/otoKh2WrVRq3hI8R+BXfh8Ksv6IFv3T/FO71IqcsGyEIDFuUELBvhBieUGWkw0k7vTmWMAZl+Eqgp1ibXO8eS/DF8tljWaUVdqvaB+/LbHMJmiyx6A9za52+tATHPnC2Yk7ZbZL4wG2/t4VM3ZBpLkzSnlKMkARNiAHvVuMg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jMaLcGfQ; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-37d43a34a0cso375668f8f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 00:36:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1730709410; x=1731314210; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=2BJ9N+6Y09zH0rsuoWY3PT3Lw99cvEyGl0F2//n2sek=;
-        b=jMaLcGfQ/IYhWyQVXCLJ13GjzArmTBBXOZxmR3AvI8ztd2evTztJEgvC9kAmWpNBvU
-         LniixKdvS8EqIdhoyH/03Mam1ISSDU3IjVDR0Vs96gmfmVxAM/PeKyBS1+BbQND4mQUF
-         V2RZjeTU3MHB8MCDAobxW0hGG24AdeKVbilou+ZWU8HYUSl61hPZjj9OOZ6aqyeMRF5Z
-         FFthyc+ajm1EEVifibXdTm4JspYRsz+I/hcrqofFwb9DEpXq+yVYdD5h3kJYExGH3UHy
-         HRfxqIl/6v0SFdYyuF44Be2QQ/aOHPrXaxoXl6QTnfi8lfCgUnMECnlomsgq5YvQZ5Ef
-         80+g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730709410; x=1731314210;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=2BJ9N+6Y09zH0rsuoWY3PT3Lw99cvEyGl0F2//n2sek=;
-        b=nTutqI+eTVUgRM977d9oIa88aoHQD28k6Pg4dV/vBhygVI1y/A+21qjYoHqPaGo0vj
-         QNO3hYGL459zhikAOiEBD5wBt5kKABYzCAw8NlI8x0DCaVHzUPpQH4lycvG5wHuJHypL
-         hYU+1oQ4TGNTZEzQ8NljSeY5fMW+VCRa7ijlamtSemr1stWMX+Ov8+PWMyE+hXz1Ncin
-         BaGdXGZ+kBdTMljPvDebcwSCYUgpYew9ie45zmD3n4hp5XsyWD7CXH8yBjP7at15OUxj
-         VIbOs+IaajP89f7tm0CPGtaueRcZUrV7HtJSZfGOka0ke5txzA6FrerjsEFFrFa32Cej
-         pWnQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUL1iIalY1EFi6GryY+86ZHbc0//uw9bHAF4cHGx4nVNY95qFq/k7jldKY7e0haLLO+mAgGwUMjzaQthwc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx3nbwJxdpOzoHibTzDUnGF1fg82vP6ZDwQ//m94qmGCQZhhHhK
-	0hcZWkV5ZVnEzxbkX4Wf3wGGRXDlC5TKUqNq81fR4lO6qqYxC6LqTkckJmbLKtA=
-X-Google-Smtp-Source: AGHT+IFfh5KyuqVW9z0nbbhiWu1FWVG1lOA8We1zz4p/P1Q93wWJDqAVTvp7srg+cRzPEm47ahgQ8A==
-X-Received: by 2002:a5d:5f94:0:b0:374:bde8:3b46 with SMTP id ffacd0b85a97d-380611a7665mr11841208f8f.2.1730709409926;
-        Mon, 04 Nov 2024 00:36:49 -0800 (PST)
-Received: from [192.168.1.20] ([178.197.211.167])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381c10b7e1bsm12628672f8f.1.2024.11.04.00.36.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 04 Nov 2024 00:36:49 -0800 (PST)
-Message-ID: <649f43d5-2d75-45eb-b13c-31fe88d99c8f@linaro.org>
-Date: Mon, 4 Nov 2024 09:36:46 +0100
+	s=arc-20240116; t=1730709479; c=relaxed/simple;
+	bh=ML6JuLR5aGTGkpWrKYsMlJoQ/UheugXHDbe7zvn2E4g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZxpAprvZwl23uhO+IOc0wA6B7Ve0nqN3zEMKr6Q4nl6+eVHPS4u4KJTpPmN1yhauMAdGsOWfVOS0F/1SC+JZKsXzbbJFgmPqaUlDHuIss52oFuYN0cvXTkAtoK2yBtg2K5LpHbg2uvxwdQaU3Gi/pqYx1EuVm2ZEe5DeWrmQD3s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JNzuLcPE; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730709479; x=1762245479;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=ML6JuLR5aGTGkpWrKYsMlJoQ/UheugXHDbe7zvn2E4g=;
+  b=JNzuLcPEtsgvhr7hlCAwN6UugFErwvoEccLoCPsGNWbeCl48VBU7SqZK
+   uL0CKIqvQyDze4KayxCG5TUIj3Mc0fAqg/b6UZoK6Hv8CFFMEJ60xOG8N
+   HbcwLpu8HnlKz6ru3WP3AXKiwLDiSP9Op0WuKTjEWZZ8qBx+s+Ni1kGOR
+   z0hruqZIRxGCm/zH0A09HpOjOtxB6zEOZcc5B4vnzGl9fEef0huztsNV8
+   YBW7uFOjsznNe28RraiiDzr3iZKgXBbIMFDTo5DCuX9RA2NMs9BHUOPBN
+   1noLar4ChcnoGEGi1h1oBJKaxBlIFl9CU9C5LtWxN+RGhN0Eio0VrQ4s3
+   g==;
+X-CSE-ConnectionGUID: bMfzltfsQbWPwhRsYMNq9g==
+X-CSE-MsgGUID: rzKvuV0fS3C8rYXYTXB09A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="41502023"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="41502023"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2024 00:37:58 -0800
+X-CSE-ConnectionGUID: VctOKoJRQM2VqqPSh3Rvkg==
+X-CSE-MsgGUID: +3dMFlo4Q2icgewC0wY8Ag==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,256,1725346800"; 
+   d="scan'208";a="88166032"
+Received: from smile.fi.intel.com ([10.237.72.154])
+  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2024 00:37:53 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1t7sas-0000000Az4Q-200R;
+	Mon, 04 Nov 2024 10:37:50 +0200
+Date: Mon, 4 Nov 2024 10:37:50 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Aren <aren@peacevolution.org>
+Cc: Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>,
+	Kaustabh Chakraborty <kauschluss@disroot.org>,
+	=?iso-8859-1?B?QmFybmFi4XMgQ3rpbeFu?= <trabarni@gmail.com>,
+	Ondrej Jirman <megi@xff.cz>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-sunxi@lists.linux.dev, Dragan Simic <dsimic@manjaro.org>,
+	phone-devel@vger.kernel.org
+Subject: Re: [PATCH v4 3/6] iio: light: stk3310: Implement vdd and leda
+ supplies
+Message-ID: <ZyiH3lkMZoAS-toj@smile.fi.intel.com>
+References: <20241102195037.3013934-3-aren@peacevolution.org>
+ <20241102195037.3013934-9-aren@peacevolution.org>
+ <20241103112933.60f96f97@jic23-huawei>
+ <cx5bvcqfabsptn37uzscooh73j73dsoqadmfaibzxrzjk3byx4@ofwu7qa6ht4f>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/4] arm64: dts: qcom: sm8750: Add IPCC, SMP2P, AOSS and
- ADSP
-To: Melody Olvera <quic_molvera@quicinc.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- Satya Durga Srinivasu Prabhala <quic_satyap@quicinc.com>,
- Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-References: <20241101-sm8750-audio-v1-0-730aec176459@linaro.org>
- <20241101-sm8750-audio-v1-1-730aec176459@linaro.org>
- <0782c956-361b-4109-a8a1-58b8ad396e0b@quicinc.com>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <0782c956-361b-4109-a8a1-58b8ad396e0b@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cx5bvcqfabsptn37uzscooh73j73dsoqadmfaibzxrzjk3byx4@ofwu7qa6ht4f>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On 01/11/2024 19:14, Melody Olvera wrote:
-> 
-> 
-> On 11/1/2024 10:19 AM, Krzysztof Kozlowski wrote:
->> Add nodes for IPCC mailbox, SMP2P for ADSP, AOSS and the ADSP remoteproc
->> PAS loader (compatible with SM8550).
->>
->> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->> ---
->>   arch/arm64/boot/dts/qcom/sm8750.dtsi | 140 +++++++++++++++++++++++++++++++++++
->>   1 file changed, 140 insertions(+)
->>
->> diff --git a/arch/arm64/boot/dts/qcom/sm8750.dtsi b/arch/arm64/boot/dts/qcom/sm8750.dtsi
->> index 98ab82caa007ee63c395a3ce0f517e2bbeb0aecb..eb826b154dcb2d8165426ba2225548efd7547da8 100644
->> --- a/arch/arm64/boot/dts/qcom/sm8750.dtsi
->> +++ b/arch/arm64/boot/dts/qcom/sm8750.dtsi
-> [...]
->>   
->> @@ -538,6 +566,17 @@ gcc: clock-controller@100000 {
->>   			#power-domain-cells = <1>;
->>   		};
->>   
->> +		ipcc: mailbox@406000 {
->> +			compatible = "qcom,sm8750-ipcc", "qcom,ipcc";
->> +			reg = <0 0x00406000 0 0x1000>;
-> 
-> nit: unsure, but should thse be 0x0?
+On Sun, Nov 03, 2024 at 11:11:13AM -0500, Aren wrote:
+> On Sun, Nov 03, 2024 at 11:31:03AM +0000, Jonathan Cameron wrote:
+> > On Sat,  2 Nov 2024 15:50:39 -0400
+> > Aren Moynihan <aren@peacevolution.org> wrote:
 
-No, all recent upstream DTSI files nodes use simplified 0, because it is
-shorter. Maybe except few cases, but then these could be corrected instead.
+...
 
-Best regards,
-Krzysztof
+> > For this Andy was asking for consistency.  Generally we don't insist on a
+> > particular ordering in IIO drivers, but we do prefer them to be the same.
+> > Your new ordering is inconsistent between resume and suspend.  Whilst
+> > existing code may be inconsistent, you can still pick most common ordering
+> > and use that for your new code.
+> > 
+> > If the existing driver is inconsistent then feel free to tidy that up but
+> > do it in a precursor patch so there is a consistent style for you to then
+> > carry on.
+> 
+> Oh right, the order of declarations in stk3310_suspend also needs to be
+> flipped. Is that simple enough that you can fix it when applying this?
+> 
+> Apparently I was being dense, I checked the rest of the driver to see
+> what it did (it's consistent about putting shorter lines & ones without
+> an assignment first), and fixed the case Andy pointed out to match that,
+> but failed to check the rest of the patch.
+
+Thanks!
+
+You may ignore my comment about RCT order if it's not that one that being
+commonly used in the driver.
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
 
 
