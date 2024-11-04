@@ -1,123 +1,86 @@
-Return-Path: <linux-kernel+bounces-395628-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395629-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A4979BC0C8
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 23:22:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 67E129BC0CA
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 23:22:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C1961C21DE8
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 22:22:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9937A1C21EEC
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 22:22:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29F0C1FCF5F;
-	Mon,  4 Nov 2024 22:22:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="lF/FjBoC";
-	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="lF/FjBoC"
-Received: from bedivere.hansenpartnership.com (bedivere.hansenpartnership.com [96.44.175.130])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7E201FCF78;
+	Mon,  4 Nov 2024 22:22:42 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DB751D5CE7
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 22:22:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.44.175.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 752901FCC69;
+	Mon,  4 Nov 2024 22:22:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730758938; cv=none; b=Ecbk5NE50zmsiePWfNR6lVZjRZtravPwgLAksgQaD+FnWgvMAtGX6PzPQ7LGns9sGz/y3kMILgkv8vX1OW5SlrEAmIuwN35LllD9yEuXGvsTS8E0sipGKbwmjlkzJS/S6kBzjrV5rIvNr+dx8YzObgBmZ+9ScE5ip28hvjZFecc=
+	t=1730758962; cv=none; b=r1VgpINLAwIw1WaEpmLndCg6P8Fbvfk1At3D3peq/o0Z9B8CFBNLjPlg7XycmAXOXNXZDq4kE3KZRsa2zlC0LsV9ByIB5kk0fDj57fRrwaZ8dkojW9AcJMVGznaimwDWR0lZKb4z4iQCGE3w/S/Yfnq6a1UgsAG0ry9b+Ecatb8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730758938; c=relaxed/simple;
-	bh=MspEb8yUhlhawdk+jUiRAsb+NCtZYhx+SBu+mc1dAkc=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=WawBJpbVpyv7r2fhl2L9F53VFA/lI58dI0nrHp79ugwj8C9jfpgEZUwkJGJ7EPXg5ZujlLIrTccPt5vZo0ynCi13PXE0+x/i5T7TTzzycXtrKFuLZbB/7U37c0hqtF39iT1j+rLFMryH0SqAAr1kUloVVnjZKuOZBGaYyUxDBYY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=lF/FjBoC; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=lF/FjBoC; arc=none smtp.client-ip=96.44.175.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=hansenpartnership.com; s=20151216; t=1730758935;
-	bh=MspEb8yUhlhawdk+jUiRAsb+NCtZYhx+SBu+mc1dAkc=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-	b=lF/FjBoCO6MDYKzvmWdz7DVm2epfQM3Sv/at08PJQAmo3YVgOaLeNCXvkCwbmCY9q
-	 nHrJ8O5b3uisbIsbBUHriFMG055jM9Vf2fQxyd/FmQlCfcwzXaoMeQw+HwxQHf/47n
-	 wa8eV2pVJ31hQP8s52hO9kpMaxBQELOJcmIh9BVc=
-Received: from localhost (localhost [127.0.0.1])
-	by bedivere.hansenpartnership.com (Postfix) with ESMTP id A203F128182B;
-	Mon, 04 Nov 2024 17:22:15 -0500 (EST)
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
- by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavis, port 10024)
- with ESMTP id gj5JWA26JGbW; Mon,  4 Nov 2024 17:22:15 -0500 (EST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=hansenpartnership.com; s=20151216; t=1730758935;
-	bh=MspEb8yUhlhawdk+jUiRAsb+NCtZYhx+SBu+mc1dAkc=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-	b=lF/FjBoCO6MDYKzvmWdz7DVm2epfQM3Sv/at08PJQAmo3YVgOaLeNCXvkCwbmCY9q
-	 nHrJ8O5b3uisbIsbBUHriFMG055jM9Vf2fQxyd/FmQlCfcwzXaoMeQw+HwxQHf/47n
-	 wa8eV2pVJ31hQP8s52hO9kpMaxBQELOJcmIh9BVc=
-Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::a774])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 7AC1312810F2;
-	Mon, 04 Nov 2024 17:22:14 -0500 (EST)
-Message-ID: <b4ab9f3584a83418053122303226490b910ab65b.camel@HansenPartnership.com>
-Subject: Re: [PATCH RFC v2 1/2] tsm: Add TVM Measurement Register Support
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-To: "Xing, Cedric" <cedric.xing@intel.com>, Alexey Kardashevskiy
- <aik@amd.com>,  Dan Williams <dan.j.williams@intel.com>, Samuel Ortiz
- <sameo@rivosinc.com>, Lukas Wunner <lukas@wunner.de>,  Dionna Amalie Glaze
- <dionnaglaze@google.com>, Qinkun Bao <qinkun@google.com>, Mikko Ylinen
- <mikko.ylinen@linux.intel.com>,  Kuppuswamy Sathyanarayanan
- <sathyanarayanan.kuppuswamy@linux.intel.com>
-Cc: linux-kernel@vger.kernel.org, linux-coco@lists.linux.dev
-Date: Mon, 04 Nov 2024 17:22:12 -0500
-In-Reply-To: <f51ce51e-cf78-499f-b03a-cb45d5364b13@intel.com>
-References: <20241031-tsm-rtmr-v2-0-1a6762795911@intel.com>
-	 <20241031-tsm-rtmr-v2-1-1a6762795911@intel.com>
-	 <46609f9a-8451-4961-b307-a13512bbd92d@amd.com>
-	 <f51ce51e-cf78-499f-b03a-cb45d5364b13@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.42.4 
+	s=arc-20240116; t=1730758962; c=relaxed/simple;
+	bh=fQDuHF64QCcKGHlSWkxvwvE/0DUo+g/TMJYzEtZ3hKg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tPEQU89UdZqgLMCfVRy7sjS0AUMf+d08C3osAUHWjLsl4V3CqOpiPP5/8YdqfBENpfU2HMiVIxciB/H+BbyKC2qF6/XVqeECNR8Z4ZZXbQVh/5qkQ4g5Figo9Y2blVbOgJwtxTERhy8UDciXUKnZRfx/NZYTlwFSECyeum6muKo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B7ECC4CECE;
+	Mon,  4 Nov 2024 22:22:39 +0000 (UTC)
+Date: Mon, 4 Nov 2024 22:22:37 +0000
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: Matthew Wilcox <willy@infradead.org>,
+	Koichiro Den <koichiro.den@gmail.com>,
+	Peter Collingbourne <pcc@google.com>, cl@linux.com,
+	penberg@kernel.org, rientjes@google.com, iamjoonsoo.kim@lge.com,
+	akpm@linux-foundation.org, roman.gushchin@linux.dev,
+	42.hyeyoo@gmail.com, kees@kernel.org, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH] mm/slab: fix warning caused by duplicate kmem_cache
+ creation in kmem_buckets_create
+Message-ID: <ZylJLXSTAY8TLijb@arm.com>
+References: <20241104150837.2756047-1-koichiro.den@gmail.com>
+ <ZykLxG5Tyet5HcwL@casper.infradead.org>
+ <8202821f-05bc-41f8-9de3-bf78899a7c7b@suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8202821f-05bc-41f8-9de3-bf78899a7c7b@suse.cz>
 
-On Mon, 2024-11-04 at 16:14 -0600, Xing, Cedric wrote:
-> On 11/3/2024 9:51 PM, Alexey Kardashevskiy wrote:
-> > On 1/11/24 03:50, Cedric Xing wrote:
-> > > diff --git a/drivers/virt/coco/tsm.c b/drivers/virt/coco/tsm-
-> > > core.c
-> > > similarity index 95%
-> > > rename from drivers/virt/coco/tsm.c
-> > > rename to drivers/virt/coco/tsm-core.c
-> > > index 9432d4e303f1..92e961f21507 100644
-> > > --- a/drivers/virt/coco/tsm.c
-> > > +++ b/drivers/virt/coco/tsm-core.c
-> > > @@ -1,8 +1,6 @@
-> > >   // SPDX-License-Identifier: GPL-2.0-only
-> > >   /* Copyright(c) 2023 Intel Corporation. All rights reserved. */
-> > > -#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
-> > > -
+On Mon, Nov 04, 2024 at 07:16:20PM +0100, Vlastimil Babka wrote:
+> On 11/4/24 19:00, Matthew Wilcox wrote:
+> > On Tue, Nov 05, 2024 at 12:08:37AM +0900, Koichiro Den wrote:
+> >> Commit b035f5a6d852 ("mm: slab: reduce the kmalloc() minimum alignment
+> >> if DMA bouncing possible") reduced ARCH_KMALLOC_MINALIGN to 8 on arm64.
+> >> However, with KASAN_HW_TAGS enabled, arch_slab_minalign() becomes 16.
+> >> This causes kmalloc_caches[*][8] to be aliased to kmalloc_caches[*][16],
+> >> resulting in kmem_buckets_create() attempting to create a kmem_cache for
+> >> size 16 twice. This duplication triggers warnings on boot:
 > > 
-> > Why remove it?
-> > 
-> It's not used anywhere...
+> > Wouldn't this be easier?
+> 
+> They wanted it to depend on actual HW capability / kernel parameter, see
+> d949a8155d13 ("mm: make minimum slab alignment a runtime property")
+> 
+> Also Catalin's commit referenced above was part of the series that made the
+> alignment more dynamic for other cases IIRC. So I doubt we can simply reduce
+> it back to a build-time constant.
 
-Yes, it is; it's used in this line, which the patch doesn't appear to
-remove:
+I principle, I wouldn't reduce it back to constant though the 8 vs 16
+difference is not significant. It matter if one enables KASAN_HW_TAGS
+and wants to run it on hardware without MTE, getting the *-8 caches
+back.
 
-int tsm_register(const struct tsm_ops *ops, void *priv)
-{
-	const struct tsm_ops *conflict;
+That said, I haven't managed to trigger this warning yet. Do I need
+other config options than KASAN_HW_TAGS and DEBUG_VM?
 
-	guard(rwsem_write)(&tsm_rwsem);
-	conflict = provider.ops;
-	if (conflict) {
-		pr_err("\"%s\" ops already registered\n", conflict->name);
-                ^^^^^^^
-
-James
-
-                
+-- 
+Catalin
 
