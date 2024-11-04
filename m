@@ -1,213 +1,88 @@
-Return-Path: <linux-kernel+bounces-394426-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394427-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1148C9BAEF1
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 10:03:52 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19FA49BAEF6
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 10:04:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 16451B21B18
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 09:03:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4B4061C21AB4
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 09:04:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF1691A7240;
-	Mon,  4 Nov 2024 09:03:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mUbNrMjF"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA1A81A7240;
+	Mon,  4 Nov 2024 09:04:23 +0000 (UTC)
+Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6851823AB;
-	Mon,  4 Nov 2024 09:03:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C64123AB;
+	Mon,  4 Nov 2024 09:04:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730711021; cv=none; b=IlnY1nc5QEuBZ8SQ8VryRQu67PhLniU4Kp1yewp0s/BBwMnkQoR9T85tbMx9BVh6nU0nKstdFR97xLy4DJxt8L/Mlvm57FT/OcDh9QF1kOIxt1ajJDJu8k6Il1ERdEmplvtQX2FTxi4uU+MQ4ceGxifqmUql7GqnHoG9I0KSzPY=
+	t=1730711063; cv=none; b=F8g8eR60K401iuvFDS3RYSp4AIWodQfJyfbjarX19zUc7ZBR7y35KsyOoyGRu+XzGl2Y4SBmt2907w08D3SGW2RvqxVpMozVPyrEyil1lQiuN6jVQbv9kxVlMyos2uI/pL2WJTrrI/tWS1Wj+WzsITK8PiFhn98VyJnRmlJabg0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730711021; c=relaxed/simple;
-	bh=SGs6EJdQiqCeGX+vRL8+3qNu/fQ7GSWYyT6HHC957zA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=J2fCxh0mUV3oNP6aQtXLsn6IktMHFIlen2jEIVERTwI33Tg7DQgZe2WVv5IqDH4jgRzyWRkh6m18q9OTTWV2i1UrUeqeRQMkAdFCxVRmn02XtClAac30gTnkhaeht/BHBV1RY/nWOLoDJ5Z0R91AtbNAbgETl42Jw2SmFQMAITg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mUbNrMjF; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730711019; x=1762247019;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=SGs6EJdQiqCeGX+vRL8+3qNu/fQ7GSWYyT6HHC957zA=;
-  b=mUbNrMjFQArQe3wrr6+jlnDIiE+lJD5Rmlg6DeR7+yYAZQbYO8cY+L4U
-   dUJfeMNs3yKQAYPRZ6orcbReIwvu1tR2JKndT7GVRmUEFnHvzREhiYw9N
-   qFoyXQDKx6cb/hSxXhUV8GIq/1M1oj585uepHnI8PlE/2FzDIBSkfKu2Y
-   2oO7sU5PbWNOUKjAIR6/y41N5sbjRemBvxdqB++NQIeNH/3k4hNLf0a8x
-   5p6Nu087SA94rGLlpZPL9M0EH9GSaXmx5eqCXbUjv1kFITtpXdtCQBSBN
-   x2sADpgrorf+VfZ+3fIWf7+z/5iYxaKvNCrlJS3QJPjbJw33Q/63SD2j7
-   g==;
-X-CSE-ConnectionGUID: Wz/dR2ZCRn+yK2Y0OJjXZQ==
-X-CSE-MsgGUID: rSWXovONTl+DjWNnD0/0pg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11245"; a="47904494"
-X-IronPort-AV: E=Sophos;i="6.11,256,1725346800"; 
-   d="scan'208";a="47904494"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2024 01:03:38 -0800
-X-CSE-ConnectionGUID: R09q12jrR7CsMnCLZrWDIw==
-X-CSE-MsgGUID: BfT10bsdSj65dhe1kAT8gQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,256,1725346800"; 
-   d="scan'208";a="84038475"
-Received: from unknown (HELO [10.238.12.149]) ([10.238.12.149])
-  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2024 01:03:36 -0800
-Message-ID: <a441733d-1885-42f0-a046-2c8871c46d6b@linux.intel.com>
-Date: Mon, 4 Nov 2024 17:03:34 +0800
+	s=arc-20240116; t=1730711063; c=relaxed/simple;
+	bh=4uDxmULew50QrCLK89YOYVuo5mwOSNHUfkVwMVVIdfI=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=KCfrp1trF/4AMzMyUGvXl98osyMzjN5lShp6x6Pn2L6IY3CUp9VHw4BJiFzD9pRpIoQn+Bd61fadecP55ZlKGTtgnremnz3GtfPCqq+XHg+eClXIQJleEPrVMWeTuhyPexOSZWXuruoUNgXS2GUu6szARNbauUKvIKbNcZ5lTUg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4XhlpG2TJDz1T7vs;
+	Mon,  4 Nov 2024 17:01:58 +0800 (CST)
+Received: from kwepemg200008.china.huawei.com (unknown [7.202.181.35])
+	by mail.maildlp.com (Postfix) with ESMTPS id 97BF61800A7;
+	Mon,  4 Nov 2024 17:04:15 +0800 (CST)
+Received: from huawei.com (10.90.53.73) by kwepemg200008.china.huawei.com
+ (7.202.181.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 4 Nov
+ 2024 17:04:15 +0800
+From: Jinjie Ruan <ruanjinjie@huawei.com>
+To: <rafael@kernel.org>, <pavel@ucw.cz>, <len.brown@intel.com>,
+	<daniel.lezcano@linaro.org>, <qperret@google.com>, <lukasz.luba@arm.com>,
+	<linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: <ruanjinjie@huawei.com>
+Subject: [PATCH] PM: EM: Fix uninitialized power in em_create_perf_table
+Date: Mon, 4 Nov 2024 17:03:51 +0800
+Message-ID: <20241104090351.1352997-1-ruanjinjie@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/2] KVM: x86: Check hypercall's exit to userspace
- generically
-To: "Huang, Kai" <kai.huang@intel.com>, "seanjc@google.com"
- <seanjc@google.com>
-Cc: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
- "Li, Xiaoyao" <xiaoyao.li@intel.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
- "pbonzini@redhat.com" <pbonzini@redhat.com>,
- "Yamahata, Isaku" <isaku.yamahata@intel.com>,
- "yuan.yao@linux.intel.com" <yuan.yao@linux.intel.com>
-References: <20240826022255.361406-1-binbin.wu@linux.intel.com>
- <20240826022255.361406-2-binbin.wu@linux.intel.com>
- <ZyKbxTWBZUdqRvca@google.com>
- <3f158732a66829faaeb527a94b8df78d6173befa.camel@intel.com>
- <ZyLWMGcgj76YizSw@google.com>
- <1cace497215b025ed8b5f7815bdeb23382ecad32.camel@intel.com>
- <ZyUEMLoy6U3L4E8v@google.com>
- <ca1eab63d443c2c92c367cee418ae969ba90d6cd.camel@intel.com>
-Content-Language: en-US
-From: Binbin Wu <binbin.wu@linux.intel.com>
-In-Reply-To: <ca1eab63d443c2c92c367cee418ae969ba90d6cd.camel@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ kwepemg200008.china.huawei.com (7.202.181.35)
 
+In em_create_perf_table(), power is uninitialized and passed the pointer
+to active_power() hook, but the hook function may not assign it and
+return 0, such as mtk_cpufreq_get_cpu_power(), so the later zero check for
+power is not invalid, initialize power to zero to fix it.
 
+Cc: stable@vger.kernel.org
+Fixes: 7d9895c7fbfc ("PM / EM: introduce em_dev_register_perf_domain function")
+Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+---
+ kernel/power/energy_model.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-
-On 11/2/2024 5:13 AM, Huang, Kai wrote:
-> On Fri, 2024-11-01 at 09:39 -0700, Sean Christopherson wrote:
->> On Fri, Nov 01, 2024, Kai Huang wrote:
->>> On Thu, 2024-10-31 at 07:54 -0700, Sean Christopherson wrote:
->>>> On Thu, Oct 31, 2024, Kai Huang wrote:
->>>> -	ret = __kvm_emulate_hypercall(vcpu, nr, a0, a1, a2, a3, op_64_bit, cpl);
->>>> -	if (nr == KVM_HC_MAP_GPA_RANGE && !ret)
->>>> -		/* MAP_GPA tosses the request to the user space. */
->>>> -		return 0;
->>>> +	r = __kvm_emulate_hypercall(vcpu, nr, a0, a1, a2, a3, op_64_bit, cpl, &ret);
->>>> +	if (r <= r)
->>>> +		return r;
->>> ... should be:
->>>
->>> 	if (r <= 0)
->>> 		return r;
->>>
->>> ?
->>>
->>> Another option might be we move "set hypercall return value" code inside
->>> __kvm_emulate_hypercall().  So IIUC the reason to split
->>> __kvm_emulate_hypercall() out is for TDX, and while non-TDX uses RAX to carry
->>> the hypercall return value, TDX uses R10.
->>>
->>> We can additionally pass a "kvm_hypercall_set_ret_func" function pointer to
->>> __kvm_emulate_hypercall(), and invoke it inside.  Then we can change
->>> __kvm_emulate_hypercall() to return:
->>>      < 0 error,
->>>      ==0 return to userspace,
->>>      > 0 go back to guest.
->> Hmm, and the caller can still handle kvm_skip_emulated_instruction(), because the
->> return value is KVM's normal pattern.
->>
->> I like it!
->>
->> But, there's no need to pass a function pointer, KVM can write (and read) arbitrary
->> GPRs, it's just avoided in most cases so that the sanity checks and available/dirty
->> updates are elided.  For this code though, it's easy enough to keep kvm_rxx_read()
->> for getting values, and eating the overhead of a single GPR write is a perfectly
->> fine tradeoff for eliminating the return multiplexing.
->>
->> Lightly tested.  Assuming this works for TDX and passes testing, I'll post a
->> mini-series next week.
->>
->> --
->> From: Sean Christopherson <seanjc@google.com>
->> Date: Fri, 1 Nov 2024 09:04:00 -0700
->> Subject: [PATCH] KVM: x86: Refactor __kvm_emulate_hypercall() to accept reg
->>   names, not values
->>
->> Rework __kvm_emulate_hypercall() to take the names of input and output
->> (guest return value) registers, as opposed to taking the input values and
->> returning the output value.  As part of the refactor, change the actual
->> return value from __kvm_emulate_hypercall() to be KVM's de facto standard
->> of '0' == exit to userspace, '1' == resume guest, and -errno == failure.
->>
->> Using the return value for KVM's control flow eliminates the multiplexed
->> return value, where '0' for KVM_HC_MAP_GPA_RANGE (and only that hypercall)
->> means "exit to userspace".
->>
->> Use the direct GPR accessors to read values to avoid the pointless marking
->> of the registers as available, but use kvm_register_write_raw() for the
->> guest return value so that the innermost helper doesn't need to multiplex
->> its return value.  Using the generic kvm_register_write_raw() adds very
->> minimal overhead, so as a one-off in a relatively slow path it's well
->> worth the code simplification.
-> Ah right :-)
->
->> Suggested-by: Kai Huang <kai.huang@intel.com>
->> Signed-off-by: Sean Christopherson <seanjc@google.com>
->> ---
-> I think Binbin can help to test on TDX, and assuming it works,
-I tried to add a selftest case to do memory conversion via kvm hypercall
-directly for TDX.  And found TDX code didn't handle the return value for
-the hypercall properly.
-
-I tried to add a parameter to pass the cui callback as mentioned in
-https://lore.kernel.org/lkml/f95cd8c6-af5c-4d8f-99a8-16d0ec56d9a4@linux.intel.com/
-And then, made the following change in TDX code to make it work.
-
-diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
-index cd27ebd3d7d1..efa434c6547d 100644
---- a/arch/x86/kvm/vmx/tdx.c
-+++ b/arch/x86/kvm/vmx/tdx.c
-@@ -1072,6 +1072,15 @@ static int tdx_handle_triple_fault(struct kvm_vcpu *vcpu)
-         return 0;
-  }
-
-+static int complete_hypercall_exit(struct kvm_vcpu *vcpu)
-+{
-+       u64 ret = vcpu->run->hypercall.ret;
-+
-+       kvm_r10_write(vcpu, ret);
-+       ++vcpu->stat.hypercalls;
-+
-+       return 1;
-+}
-+
-  static int tdx_emulate_vmcall(struct kvm_vcpu *vcpu)
-  {
-         int r;
-@@ -1087,7 +1096,7 @@ static int tdx_emulate_vmcall(struct kvm_vcpu *vcpu)
-          * R10: KVM hypercall number
-          * arguments: R11, R12, R13, R14.
-          */
--       r = __kvm_emulate_hypercall(vcpu, r10, r11, r12, r13, r14, true, 0, R10);
-+       r = __kvm_emulate_hypercall(vcpu, r10, r11, r12, r13, r14, true, 0, R10, complete_hypercall_exit);
-
-         return r > 0;
-  }
-
-
->
-> Reviewed-by: Kai Huang <kai.huang@intel.com>
->
+diff --git a/kernel/power/energy_model.c b/kernel/power/energy_model.c
+index 927cc55ba0b3..866a3e9c05b2 100644
+--- a/kernel/power/energy_model.c
++++ b/kernel/power/energy_model.c
+@@ -344,7 +344,7 @@ static int em_create_perf_table(struct device *dev, struct em_perf_domain *pd,
+ 				struct em_data_callback *cb,
+ 				unsigned long flags)
+ {
+-	unsigned long power, freq, prev_freq = 0;
++	unsigned long power = 0, freq, prev_freq = 0;
+ 	int nr_states = pd->nr_perf_states;
+ 	int i, ret;
+ 
+-- 
+2.34.1
 
 
