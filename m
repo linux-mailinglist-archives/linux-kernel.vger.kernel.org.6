@@ -1,205 +1,121 @@
-Return-Path: <linux-kernel+bounces-394396-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394392-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A95C89BAE6C
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 09:45:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 092BA9BAE61
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 09:43:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3297A1F224DC
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 08:45:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF8181F234A1
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 08:43:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 127801AB50B;
-	Mon,  4 Nov 2024 08:45:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAD4F1AB6EA;
+	Mon,  4 Nov 2024 08:43:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="U3mXCPQN"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ussFzAc1"
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB76C1422D4;
-	Mon,  4 Nov 2024 08:45:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AEB619D8B2
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 08:43:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730709930; cv=none; b=Xo4JrVVyG6oUpQnRusOsc82WZzlgOh3TRnIxFCWcqgcDkQMuRNoAc/kuBKLvwQEKjYfi0/G8NP3U5YE2sLZ1xtZuL011hEFO4htQKzcVj311RmpTcDfI767chhkdztWXTDKVBS4s5CE0i1N9DG6BVxBI4eWZaF0WlDMkWC26lVI=
+	t=1730709820; cv=none; b=atoQvG8qYBunXw0V3Y7L7sWtvLQLQYSCQhxnYQthMqgmOKPMjW1IUSlTVCzPHgz2BcRwIZ5STbt1ntbnWMuyWMAbIWCErnG87uC6go+e81gzRIsuZ8VtBVvczg3i0/O1Fl9FonPVAdr2xOhBuzNV4Vr6354DgILSyYOhtCwWx9w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730709930; c=relaxed/simple;
-	bh=2/5Ky+jC5gjVZXuR/smrXJRvzH5WRkbXn2obO6nTz5w=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=IjFK+5GYy9BMmsFKWKXjsI9RE5mUEz7kQVmy4zD6iBdadwdGkEUEEf6PeBYNeHca6gomragCywbcNaV2aGH/QkiiRacn8TPZsAfzdkKtuHj/yXbkRYgA/lrCBRq8oYdW8wql/+isL3D9bIU3Xpyvs+4ozkeRPoR9X5UO1wHPix0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=U3mXCPQN; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730709929; x=1762245929;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=2/5Ky+jC5gjVZXuR/smrXJRvzH5WRkbXn2obO6nTz5w=;
-  b=U3mXCPQNyScr4NgdPruGnBK7MiDMwzhcgMDkLjcAy23cTO+OHvb16Q49
-   hIqRrfdQSd6Hg4XExhoObmTj0nlLxE4wg2d3l69DDi619bnmFTyFXMxDi
-   iL5uMmAp4JxUZB0F84RDkVho4X+e0yrNd0pvXgf6z2bH6/aD1e2bcgBcw
-   /xziyXCbiG5x1gN7u9CDfRQ6GX/+tT07nf878kZTajtZw+5rYjE8sP44g
-   DJd5Bl8Pzrv1fd/gPAUJs3Qlt3x/TBUT6u1ZIKicDN23s/4bkKxbrMZRQ
-   +3vtQjjzJeFUHRbqT/SnjHNlBMC4DeVMQyrdEpiYtYcA1lvNanzqE3vh4
-   g==;
-X-CSE-ConnectionGUID: csutf2fCQEqPxAm1m7ZISw==
-X-CSE-MsgGUID: dBsrUo0PR0agPPOiijgY+A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11245"; a="29824335"
-X-IronPort-AV: E=Sophos;i="6.11,256,1725346800"; 
-   d="scan'208";a="29824335"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2024 00:45:28 -0800
-X-CSE-ConnectionGUID: 5QDdrfw8QH+l0ctJyqaGrA==
-X-CSE-MsgGUID: fq6N5rDITgCTh03ASNidTQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,256,1725346800"; 
-   d="scan'208";a="83473311"
-Received: from yzhao56-desk.sh.intel.com ([10.239.159.62])
-  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2024 00:45:26 -0800
-From: Yan Zhao <yan.y.zhao@intel.com>
-To: pbonzini@redhat.com,
-	seanjc@google.com
-Cc: linux-kernel@vger.kernel.org,
-	kvm@vger.kernel.org,
-	Yan Zhao <yan.y.zhao@intel.com>
-Subject: [PATCH 2/2] KVM: guest_memfd: Remove RCU-protected attribute from slot->gmem.file
-Date: Mon,  4 Nov 2024 16:43:03 +0800
-Message-ID: <20241104084303.29909-1-yan.y.zhao@intel.com>
-X-Mailer: git-send-email 2.43.2
-In-Reply-To: <20241104084137.29855-1-yan.y.zhao@intel.com>
-References: <20241104084137.29855-1-yan.y.zhao@intel.com>
+	s=arc-20240116; t=1730709820; c=relaxed/simple;
+	bh=H6+7n6GItmZK1OTaix+oW7p6zjCT1F+cbCg+29+lQaM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=f5TvUM7Paz3zQbYvJk0iQ96dPfFxnx+R2eZSO29lqOWUWMUfEsf+T40OWYICaKpFVtEtJ3VoCG7HsM+1ahbCZ3mEvqE3tM4u5nkAO8SSXbfvzZdonGirQh2QNpbGGNHLs7Ny+AecagpczMM8PCvKKywS6yGuT9T8okkwrDnU0+0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ussFzAc1; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-37d473c4bb6so3635570f8f.3
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 00:43:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1730709817; x=1731314617; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=6mzcZ40JgGm44C7M2p4ensyZcq29vuN3HSXmBxErva0=;
+        b=ussFzAc1M3k70XdCjhHKLV7EeujOj2GmsByeMv+XQnWXpo35Be9nZ/oR1nJFHfgIgA
+         tO7kDf3DsSj7Cd45v7j+o14bs7ZyoXWudnIIK0+1PJ8FWusOGxevhXR1/EkOAji/iFtG
+         Id5Djbfgc/4UHULZElbL9SqYPzV/H6hPOIX7f8Cix+GqZ1NTTqSiHGwdQKopP0tw6KIz
+         3huKS/fyrrHS/WIBqK4Yuv8QOYP3x3YudAQ2CsRk84a/2dmMn5l+/PT+THhWCLQ6hAAl
+         hi+oi4P9oUA/MxHqrXN7tReALMgw9Tw05kD6396iyFySm83NpeAnvbPtRtE5r5T267Vm
+         iNng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730709817; x=1731314617;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6mzcZ40JgGm44C7M2p4ensyZcq29vuN3HSXmBxErva0=;
+        b=fvHJsFRVcT/CQRwiNg+xWbzhCdShXiGQhiGDMimsiic6eRC6WhQtfwwtz4eBfkAK3A
+         SeoBsvlFK9A7Ayiq+dtiPysxvkPJIuRCtB4Ldm6+YGYR81ktojIpsOzKHHupZbu5aFNa
+         +ugzhBkGiEZ+1kO+ykJkgq8WEBw+3b8JiaiQJpxc2hTkyjfJrnAHB9qkOUzjo4XwYdto
+         ICFRF955VU8mntBfnW5Y9QMwszw1oREwmrqxztcs6jl6irEhQHqOBqjCws0KHWLYwF/A
+         Olr/qDA5lDM9kWwwJK/RtA2GJ6PCrzEoDKB+EI+IqJtE2ML7WgCThS2hQJLjGxJ+Pas5
+         KZdA==
+X-Forwarded-Encrypted: i=1; AJvYcCX70k57BtJqAU4OHu5OV+IYcmtMkClabaQbEDCEjDQNccf1ErocIEvHqVw5IQ4g1qeg4ZGhqo8A/L19aL4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YytL9Ttk5uRvDQpaohmy5vm6dUWlMtRKJSI4TOJdMxseuCj4TG/
+	3nvD8As61CxQhVUjegQd7PyaVkXLGLdUbUJjIvHO5CX3fiTopQKNb6VcqfxriODIJAWBC6MJ1U5
+	5
+X-Google-Smtp-Source: AGHT+IH4gn7Kr6XDNOtojQ9jzVG+iu2feJjnJyfKdYBnr/oKuNjDRwhQLv/fQ/43mkl4gpiiDrmIoA==
+X-Received: by 2002:a5d:5a13:0:b0:37c:fbf8:fc4 with SMTP id ffacd0b85a97d-381c7af3be3mr13124947f8f.59.1730709816810;
+        Mon, 04 Nov 2024 00:43:36 -0800 (PST)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381c113de0esm12595552f8f.85.2024.11.04.00.43.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 04 Nov 2024 00:43:36 -0800 (PST)
+Date: Mon, 4 Nov 2024 11:43:32 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Dave Penkler <dpenkler@gmail.com>
+Cc: gregkh@linuxfoundation.org, linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org, skhan@linuxfoundation.org,
+	arnd@arndb.de
+Subject: Re: [PATCH 05/11] staging: gpib: Remove GPIB_DEBUG reference and
+ update messaging
+Message-ID: <4c4aba7e-c873-4a93-9311-bd2e2bbcd8e8@stanley.mountain>
+References: <20241103212617.13076-1-dpenkler@gmail.com>
+ <20241103212617.13076-6-dpenkler@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241103212617.13076-6-dpenkler@gmail.com>
 
-Remove the RCU-protected attribute from slot->gmem.file. No need to use RCU
-primitives rcu_assign_pointer()/synchronize_rcu() to update this pointer.
+On Sun, Nov 03, 2024 at 10:26:11PM +0100, Dave Penkler wrote:
+> Change pr_alert to dev_alert
+> 
+> Signed-off-by: Dave Penkler <dpenkler@gmail.com>
+> ---
+>  .../gpib/lpvo_usb_gpib/lpvo_usb_gpib.c        | 69 +++++++++----------
+>  1 file changed, 34 insertions(+), 35 deletions(-)
+> 
+> diff --git a/drivers/staging/gpib/lpvo_usb_gpib/lpvo_usb_gpib.c b/drivers/staging/gpib/lpvo_usb_gpib/lpvo_usb_gpib.c
+> index 4c580137043f..796c3a5be545 100644
+> --- a/drivers/staging/gpib/lpvo_usb_gpib/lpvo_usb_gpib.c
+> +++ b/drivers/staging/gpib/lpvo_usb_gpib/lpvo_usb_gpib.c
+> @@ -68,11 +68,8 @@ MODULE_DEVICE_TABLE(usb, skel_table);
+>   *	      At module loading:  modprobe lpvo_usb_gpib debug={0,1,2}
+>   *	      On the fly: echo {0,1,2} > /sys/modules/lpvo_usb_gpib/parameters/debug
+>   */
+> -#ifdef GPIB_DEBUG
+> -static int debug = 1;
+> -#else
+> +
+>  static int debug;
+> -#endif
+>  module_param(debug, int, 0644);
+>  
 
-- slot->gmem.file is updated in 3 places:
-  kvm_gmem_bind(), kvm_gmem_unbind(), kvm_gmem_release().
-  All of them are protected by kvm->slots_lock.
+Put this in patch #2 instead.
 
-- slot->gmem.file is read in 2 paths:
-  (1) kvm_gmem_populate
-        kvm_gmem_get_file
-        __kvm_gmem_get_pfn
+regards,
+dan carpenter
 
-  (2) kvm_gmem_get_pfn
-         kvm_gmem_get_file
-         __kvm_gmem_get_pfn
-
-  Path (1) kvm_gmem_populate() requires holding kvm->slots_lock, so
-  slot->gmem.file is protected by the kvm->slots_lock in this path.
-
-  Path (2) kvm_gmem_get_pfn() does not require holding kvm->slots_lock.
-  However, it's also not guarded by rcu_read_lock() and rcu_read_unlock().
-  So synchronize_rcu() in kvm_gmem_unbind()/kvm_gmem_release() actually
-  will not wait for the readers in kvm_gmem_get_pfn() due to lack of RCU
-  read-side critical section.
-
-  The path (2) kvm_gmem_get_pfn() is safe without RCU protection because:
-  a) kvm_gmem_bind() is called on a new memslot, before the memslot is
-     visible to kvm_gmem_get_pfn().
-  b) kvm->srcu ensures that kvm_gmem_unbind() and freeing of a memslot
-     occur after the memslot is no longer visible to kvm_gmem_get_pfn().
-  c) get_file_active() ensures that kvm_gmem_get_pfn() will not access the
-     stale file if kvm_gmem_release() sets it to NULL.  This is because if
-     kvm_gmem_release() occurs before kvm_gmem_get_pfn(), get_file_active()
-     will return NULL; if get_file_active() does not return NULL,
-     kvm_gmem_release() should not occur until after kvm_gmem_get_pfn()
-     releases the file reference.
-
-Signed-off-by: Yan Zhao <yan.y.zhao@intel.com>
----
- include/linux/kvm_host.h |  2 +-
- virt/kvm/guest_memfd.c   | 23 ++++++++++-------------
- 2 files changed, 11 insertions(+), 14 deletions(-)
-
-diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
-index c7e4f8be3e17..3c3088a9e336 100644
---- a/include/linux/kvm_host.h
-+++ b/include/linux/kvm_host.h
-@@ -600,7 +600,7 @@ struct kvm_memory_slot {
- 
- #ifdef CONFIG_KVM_PRIVATE_MEM
- 	struct {
--		struct file __rcu *file;
-+		struct file *file;
- 		pgoff_t pgoff;
- 	} gmem;
- #endif
-diff --git a/virt/kvm/guest_memfd.c b/virt/kvm/guest_memfd.c
-index 651c2f08df62..9d9bf3d033bd 100644
---- a/virt/kvm/guest_memfd.c
-+++ b/virt/kvm/guest_memfd.c
-@@ -267,9 +267,7 @@ static int kvm_gmem_release(struct inode *inode, struct file *file)
- 	filemap_invalidate_lock(inode->i_mapping);
- 
- 	xa_for_each(&gmem->bindings, index, slot)
--		rcu_assign_pointer(slot->gmem.file, NULL);
--
--	synchronize_rcu();
-+		WRITE_ONCE(slot->gmem.file, NULL);
- 
- 	/*
- 	 * All in-flight operations are gone and new bindings can be created.
-@@ -298,8 +296,7 @@ static inline struct file *kvm_gmem_get_file(struct kvm_memory_slot *slot)
- 	/*
- 	 * Do not return slot->gmem.file if it has already been closed;
- 	 * there might be some time between the last fput() and when
--	 * kvm_gmem_release() clears slot->gmem.file, and you do not
--	 * want to spin in the meanwhile.
-+	 * kvm_gmem_release() clears slot->gmem.file.
- 	 */
- 	return get_file_active(&slot->gmem.file);
- }
-@@ -510,11 +507,11 @@ int kvm_gmem_bind(struct kvm *kvm, struct kvm_memory_slot *slot,
- 	}
- 
- 	/*
--	 * No synchronize_rcu() needed, any in-flight readers are guaranteed to
--	 * be see either a NULL file or this new file, no need for them to go
--	 * away.
-+	 * memslots of flag KVM_MEM_GUEST_MEMFD are immutable to change, so
-+	 * kvm_gmem_bind() must occur on a new memslot.
-+	 * Readers are guaranteed to see this new file.
- 	 */
--	rcu_assign_pointer(slot->gmem.file, file);
-+	WRITE_ONCE(slot->gmem.file, file);
- 	slot->gmem.pgoff = start;
- 
- 	xa_store_range(&gmem->bindings, start, end - 1, slot, GFP_KERNEL);
-@@ -550,8 +547,7 @@ void kvm_gmem_unbind(struct kvm_memory_slot *slot)
- 
- 	filemap_invalidate_lock(file->f_mapping);
- 	xa_store_range(&gmem->bindings, start, end - 1, NULL, GFP_KERNEL);
--	rcu_assign_pointer(slot->gmem.file, NULL);
--	synchronize_rcu();
-+	WRITE_ONCE(slot->gmem.file, NULL);
- 	filemap_invalidate_unlock(file->f_mapping);
- 
- 	fput(file);
-@@ -563,11 +559,12 @@ static struct folio *__kvm_gmem_get_pfn(struct file *file,
- 					pgoff_t index, kvm_pfn_t *pfn,
- 					bool *is_prepared, int *max_order)
- {
-+	struct file *gmem_file = READ_ONCE(slot->gmem.file);
- 	struct kvm_gmem *gmem = file->private_data;
- 	struct folio *folio;
- 
--	if (file != slot->gmem.file) {
--		WARN_ON_ONCE(slot->gmem.file);
-+	if (file != gmem_file) {
-+		WARN_ON_ONCE(gmem_file);
- 		return ERR_PTR(-EFAULT);
- 	}
- 
--- 
-2.43.2
 
 
