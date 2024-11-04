@@ -1,156 +1,127 @@
-Return-Path: <linux-kernel+bounces-394542-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394543-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E2589BB0C4
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 11:16:52 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57B229BB0D8
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 11:19:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3FD191C203C0
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 10:16:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 705A61C21264
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 10:19:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 423BA1B0F03;
-	Mon,  4 Nov 2024 10:16:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65CEB1B0F07;
+	Mon,  4 Nov 2024 10:18:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kEc+KOto"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="CzWRbvj8"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2EBF18BBB6
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 10:16:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECA581494B1;
+	Mon,  4 Nov 2024 10:18:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730715403; cv=none; b=Lw0UKEhqPPT1bNXdrsA80eCfm0RMCyS2idr67jtWKd7DvN+HArVPGvU7pPxiyh3AayAHe9kG2K/xo2MvVVnNEeitwdV7K+CjNGHfUCm6Sv6hGZpciePPQ+V37DiQ3Ubb5Vv1fqIGGUi+HM/KIxRQGXniRs1wVMPfHfpbdmE9pzM=
+	t=1730715533; cv=none; b=H+MTlAKwR/W+b5cmoUeptRvrSrfKcWaVivXgO9QMnBveFqf011v/ySLzTU87UYor92triorPSHF4y8cbcWKE/ta8Yg6HTOCnN78wyBtw/j5LaPM1NvEXIOHZH0t/jwluDjqatW+ZCrZmMEbhdiaruEAYnFF8NUMARMG3+DW67j0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730715403; c=relaxed/simple;
-	bh=MFYm2GRmaUQp2/58mK5nGraJsS/gP/S9kgUwW7wae7o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ad4L2on0LPiPrBVcs/G3m4In8Dz2pgzAY+++NkQbYwNYvKk6qFevvO+u7/al8tRAo7AmVK6xGDt0gBRvUJ1KIH5hmCYQZ8SwZf8+d6PGyeLtcxZTEzNPF5bP9M8gEjPBlvP+oHE6Ds+qhIjieLKo/b1M8UYHaMdW+FxSEYgs6qM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kEc+KOto; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4314b316495so34003865e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 02:16:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1730715400; x=1731320200; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=qWd3s2txJjKIcGqSsEzcZhgewqAr7nI1yjXYF52OaVo=;
-        b=kEc+KOtofhsAInMhOEU+F/FD2EwL+vAyt/fZQCSdfZpBQ1RmDTuBDDuiTopS1eLP0n
-         2qLgKF5AclTtYzqOc/CiTUz2Yx/Yo8m+KM6ZhWevCBuF7Yc0HDn1u8KaGMMAKWNsP3n0
-         qWV+hT+vW5h3m7wouAyUTTeKgP8XOMhb0qkieTqNU1BgDvvkwHg5+RNmYz6iNGKVuXZ5
-         6vFGHLhp5N/58bBjphvLXqkpe2ecWXDakyxK8+Og0+2cE9XftPUOZhEy0gJ2Zd35DdD/
-         SXElWXeIrkds9eOG6+fnpgNgvC+opf8DXvb4eROVVxxZmY0iO1sXR+10vK4NCMEBqm3v
-         t3aw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730715400; x=1731320200;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qWd3s2txJjKIcGqSsEzcZhgewqAr7nI1yjXYF52OaVo=;
-        b=sPEB3sT8MiK59hENMyyTMKtHAJT5IRaI5BIfClDjuMWj4AOTYRq8ZptIz+fIrzGVIQ
-         6zqhDrZnqEQhpI+VV5RV1QpJsH2N0K8Ll659SNwe/wDuAClH5MGhGOtw2fcui08hSprg
-         DdLCUPARLW5xdrHxa3w7K6DgQBayI6LsDcZcEB+zsOeatpvdZtHIGN5ka6neBJN3ldxf
-         vdiNl3JBA1vaBojy9Zk+bHsKv4DsEeUJufaA4drl4urSRbanN8HgGBrYAXSr7nuYaw04
-         ksu9fJ9fN4YsmsAHCGGLpHhDw9194pSvlMOjQKcrZNNHiAizgka/vs9HKcwB3a8ayNpm
-         ysKg==
-X-Forwarded-Encrypted: i=1; AJvYcCXYOfh7DCg/Gt3jpKkFv6nD84mm9Sq14m1Br0B28zXALmpIr/XD32usMwbHWHYxytJUNVt1OwoF82ArKPQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwECRMwjPaOwJejxXSBxk8sa0uuTSMIJKpLISfIwj3eiNGafnl5
-	dQjm8627TGroef3rdCaEAw270qC51+flYTwHiH3sPmAVPBYwP2jhZvZkx8TN+ak=
-X-Google-Smtp-Source: AGHT+IFDt2BrLBERph12kJZnQ8qLb/mhirfwAnqIBiRvvP7cAKfzV040B2ULebp4Q7UF7nG800Bryw==
-X-Received: by 2002:a05:600c:4688:b0:431:5957:27e8 with SMTP id 5b1f17b1804b1-4327b7ea52dmr117711305e9.28.1730715399974;
-        Mon, 04 Nov 2024 02:16:39 -0800 (PST)
-Received: from linaro.org ([82.76.168.176])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4327d6983f6sm152688085e9.45.2024.11.04.02.16.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Nov 2024 02:16:39 -0800 (PST)
-Date: Mon, 4 Nov 2024 12:16:37 +0200
-From: Abel Vesa <abel.vesa@linaro.org>
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Rajendra Nayak <quic_rjendra@quicinc.com>,
-	Sibi Sankar <quic_sibis@quicinc.com>,
-	Johan Hovold <johan@kernel.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Trilok Soni <quic_tsoni@quicinc.com>, linux-kernel@vger.kernel.org,
-	linux-usb@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v4 2/4] usb: typec: Add support for Parade PS8830 Type-C
- Retimer
-Message-ID: <ZyifBejZtb7x0Vyc@linaro.org>
-References: <20241101-x1e80100-ps8830-v4-0-f0f7518b263e@linaro.org>
- <20241101-x1e80100-ps8830-v4-2-f0f7518b263e@linaro.org>
- <ed0c77bd-770c-406d-851f-8589e53cde8b@oss.qualcomm.com>
+	s=arc-20240116; t=1730715533; c=relaxed/simple;
+	bh=/BqvSMpzIqUrh5h8PydNqYZk+71Ku8Hj2PODCROFwpI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MQOoPrpWSXc0CVpqa5skP4OmiWSisIZAeeEsSP+Hng6bzClx8uZsMYCfojwqtRZcdxwN8FVJvhmsHEe4wstrAuuHa2B+7M3sK1tbsKggddKyrxe6YAfE8RRC+CXvgygXpX6EoRKcUQ74MS0+wAmfbiW5WI1J8NXjqR4MzJvGuKk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=CzWRbvj8; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1730715530;
+	bh=/BqvSMpzIqUrh5h8PydNqYZk+71Ku8Hj2PODCROFwpI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=CzWRbvj8/pyD1ZMGCxhxWd7tLZTkAJdm6ZqhdISZcqc3Of8hl7ClnfCJ9uNK29czu
+	 8qjJMjbf5L1ZAhAoNZhFfL4kdMsaSg9XYJfqUABwQgaFVEG+buPWl+uSMrhcDucnC6
+	 40Pwfvei/3WemTpOZRCRDi5GAo797qNEvZbbmNK2z1plwGdxckWhjdGvKeCL2/NrbR
+	 npqhZAEk5SIfyr4ksowGlfrFu9YBIvHaQnNNdjM81FCfLBf/QIg9GZBoLxaH29gpdg
+	 Yf8V060wqDVEK0istqFXnnYmQmJbF6pncJ9H/QfhC+m0LrITeVLX/LiYYc35E3RNFt
+	 drkQCwiPEF9KQ==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 4C1D017E1541;
+	Mon,  4 Nov 2024 11:18:49 +0100 (CET)
+Message-ID: <9a1ce320-e1ce-4d2f-a8d1-7680155ef71f@collabora.com>
+Date: Mon, 4 Nov 2024 11:18:48 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ed0c77bd-770c-406d-851f-8589e53cde8b@oss.qualcomm.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/4] net: stmmac: dwmac-mediatek: Fix inverted logic for
+ mediatek,mac-wol
+To: =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
+ <matthias.bgg@gmail.com>, Biao Huang <biao.huang@mediatek.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Jose Abreu <joabreu@synopsys.com>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>
+Cc: kernel@collabora.com, netdev@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org, linux-stm32@st-md-mailman.stormreply.com
+References: <20241101-mediatek-mac-wol-noninverted-v1-0-75b81808717a@collabora.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20241101-mediatek-mac-wol-noninverted-v1-0-75b81808717a@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 24-11-02 10:17:56, Konrad Dybcio wrote:
-> On 1.11.2024 5:29 PM, Abel Vesa wrote:
-> > The Parade PS8830 is a USB4, DisplayPort and Thunderbolt 4 retimer,
-> > controlled over I2C. It usually sits between a USB/DisplayPort PHY
-> > and the Type-C connector, and provides orientation and altmode handling.
-> > 
-> > The boards that use this retimer are the ones featuring the Qualcomm
-> > Snapdragon X Elite SoCs.
-> > 
-> > Add a driver with support for the following modes:
-> >  - DisplayPort 4-lanes
-> >  - DisplayPort 2-lanes + USB3
-> >  - USB3
-> > 
-> > There is another variant of this retimer which is called PS8833. It seems
-> > to be really similar to the PS8830, so future-proof this driver by
-> > naming it ps883x.
-> > 
-> > Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
-> > ---
+Il 01/11/24 16:20, Nícolas F. R. A. Prado ha scritto:
+> This series fixes the inverted handling of the mediatek,mac-wol DT
+> property while keeping backward compatibility. It does so by introducing
+> a new property on patch 1 and updating the driver to handle it on patch
+> 2. Patch 3 adds this property on the Genio 700 EVK DT, where this issue
+> was noticed, to get WOL working on that platform. Patch 4 adds the new
+> property on all DTs with the MediaTek DWMAC ethernet node enabled
+> and inverts the presence of mediatek,mac-wol to maintain the
+> current behavior and have it match the description in the binding.
 > 
-> [...]
+
+Actually, I'm sure that all of these boards *do* need MAC WOL and *not* PHY WOL.
+
+The only one I'm unsure about is MT2712, but that's an evaluation board and not
+a retail product with "that kind of diffusion".
+
+I think you can just fix the bug in the driver without getting new properties
+and such. One commit, two lines.
+
+Cheers,
+Angelo
+
+> Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
+> ---
+> Nícolas F. R. A. Prado (4):
+>        net: dt-bindings: dwmac: Introduce mediatek,mac-wol-noninverted
+>        net: stmmac: dwmac-mediatek: Handle non-inverted mediatek,mac-wol
+>        arm64: dts: mediatek: mt8390-genio-700-evk: Enable ethernet MAC WOL
+>        arm64: dts: mediatek: Add mediatek,mac-wol-noninverted to ethernet nodes
 > 
-> > +static void ps883x_configure(struct ps883x_retimer *retimer, int cfg0, int cfg1, int cfg2)
-> > +{
-> > +	regmap_write(retimer->regmap, 0x0, cfg0);
-> > +	regmap_write(retimer->regmap, 0x1, cfg1);
-> > +	regmap_write(retimer->regmap, 0x2, cfg2);
-> > +}
+>   Documentation/devicetree/bindings/net/mediatek-dwmac.yaml     | 11 +++++++++++
+>   arch/arm64/boot/dts/mediatek/mt2712-evb.dts                   |  2 ++
+>   arch/arm64/boot/dts/mediatek/mt8195-demo.dts                  |  2 ++
+>   arch/arm64/boot/dts/mediatek/mt8390-genio-700-evk.dts         |  1 +
+>   arch/arm64/boot/dts/mediatek/mt8395-genio-1200-evk.dts        |  2 +-
+>   arch/arm64/boot/dts/mediatek/mt8395-kontron-3-5-sbc-i1200.dts |  2 ++
+>   arch/arm64/boot/dts/mediatek/mt8395-radxa-nio-12l.dts         |  2 +-
+>   drivers/net/ethernet/stmicro/stmmac/dwmac-mediatek.c          |  9 ++++++---
+>   8 files changed, 26 insertions(+), 5 deletions(-)
+> ---
+> base-commit: c88416ba074a8913cf6d61b789dd834bbca6681c
+> change-id: 20241101-mediatek-mac-wol-noninverted-198c6c404536
 > 
-> Somewhere between introducing regcache and dropping it, you removed
-> muxing to a safe mode during _configure()
+> Best regards,
 
-Oh, yeah, I forgot to mention that in the change log, it seems.
 
-Configuring to safe mode is not needed since we always do that on 
-unplug anyway.
-
-> 
-> [...]
-> 
-> > +	/* skip resetting if already configured */
-> > +	if (regmap_test_bits(retimer->regmap, 0x00, BIT(0)))
-> > +		return 0;
-> 
-> What is that register and what does BIT(0) mean?
-
-Looking at the documentation, the first register is
-REG_USB_PORT_CONN_STATUS and spans over the first 4 bytes.
-
-But it doesn't really help here.
-
-BIT(0) doesn't really have a name, it just says "Connection present".
-
-> 
-> Konrad
 
