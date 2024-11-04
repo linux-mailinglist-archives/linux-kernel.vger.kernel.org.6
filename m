@@ -1,126 +1,90 @@
-Return-Path: <linux-kernel+bounces-395458-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395459-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D5A89BBE27
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 20:41:13 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 063859BBE29
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 20:41:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6406B2823A7
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 19:41:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8D8E4B216DC
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 19:41:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B3C11CC893;
-	Mon,  4 Nov 2024 19:41:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E40E1CC893;
+	Mon,  4 Nov 2024 19:41:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RntU3pAB"
-Received: from mail-ot1-f46.google.com (mail-ot1-f46.google.com [209.85.210.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="n8PZ+lvd"
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21DBB192D7D;
-	Mon,  4 Nov 2024 19:41:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BF9A1CBA1A;
+	Mon,  4 Nov 2024 19:41:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730749264; cv=none; b=sEd1ijgQvS5ujHHI3VKJii9GYI4sa+cBh8D0Z0oYJessHynLUJ3WTq2dMOdT4IZJlq+4a66Pa8ugkQRx7COwtc5o/r9jbx8eemNP5NoFZqiTQWuyW5FWNROjfIQqgSNsIESwG1K71mILnyknlo0haNbNQj714smLE0A0q01p7ao=
+	t=1730749288; cv=none; b=Vt61ZEXV2mqJ0e53wQLknnKjA5b6GEFazVdJGfww0dXlbz6gY8j2wttdXNSHPozQoZ+AZdvhnKeEF9vqzVb/34nMadozlX7ZZKV4yyDXgvhekhPQSFwJpnrx/CG88ajeTuS38GpVZrQY86LKNi6+2zHqXQA2RBYx2g4vN9NKerg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730749264; c=relaxed/simple;
-	bh=Y3jD3q5koG14pfycXy+7MQg4wF8GRHXqfwbn5TH/VYo=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=M5/46oIUfi9268aG90o1wO9HpmzYMhAFCjHJyqWd3ljnN/NhbtBMjEN5kNBUPnzzEHwQKImxApTlGDZprJXv9s2fNNhIJRJo5EbbkUVUtpsu2sIFCsRsmoEJyXoT0ev/HDAnPg7eU2VXgQtq1lGkpPJOUmvsDvDxmzL9bhRTno8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RntU3pAB; arc=none smtp.client-ip=209.85.210.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f46.google.com with SMTP id 46e09a7af769-7180f2f5fb0so2286611a34.1;
-        Mon, 04 Nov 2024 11:41:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730749262; x=1731354062; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=RJT5krB5XufQGhH3Tox2znwMJFwXIdl0irZoryzwyQM=;
-        b=RntU3pABgvyE72+O2Wv+hmWVvu03D0apTKu//YcH4FjHErM/UUNwIaElQGwc2alyZu
-         CX/nR7iJlNDmlTW1cwhE+KjWM/i4RcG2FUb3gKMkkVQT58cmvatLCyxi9qrZCVhgw4SX
-         H9rgLiSFfca3k3LMmwUqHTbhmzws26/FX4f23MnxXvkywHK/r/auY3TRg5L7K1DGhOdF
-         hUDf/p2jjrUsyKFHy9QAfxhQJc/vvJVxBo/lmxMScywDUK0V9G6Ol52kh4Ykndov/CAN
-         vbMiVqYZkatepsYhNTrDc3yaDp9BGZ/mV043h4WS3OXO7oiTneUBIrTGHaQ/lWnVfNeK
-         /2wQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730749262; x=1731354062;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=RJT5krB5XufQGhH3Tox2znwMJFwXIdl0irZoryzwyQM=;
-        b=L7+aNxKl4C7vfk3jqxUDnpuaHRlfqdM9t8D5Pyp/fw/7Xy3UJSc5Kgqe03NSP4PuFE
-         l4n5sWEk2idtOom/H6lPeouUZr0d0oxqEPfSsFBLycqyupvR1O4Sy1FbGPLB8IJsrwEb
-         W4aHQ+s4W9LrQ06bq3EgEnsT2NBmw4p/GW6LxpZfJViOinyeaGvN6pktApaOQ1Vmuysw
-         KGZzn71DZQKz7raruCbNAXbeNqkYSvXG47Fio3HksKwuB4KgIAPnuEa32P64/oA4GNoo
-         LkrlfFK0/oqDMBjwl33M69jn8esswdKXlD/22SVH5I8JS6ADPeVu6bw2QE5wHovX8FuZ
-         jHvw==
-X-Forwarded-Encrypted: i=1; AJvYcCUAt4gXUEuSo7lrPS2XniDaMJnnW3Gee4wtwvsy1hCCJEGs4Kht6nh78tGHxOBLvaDiqO3J/Mklywi05Q==@vger.kernel.org, AJvYcCWCVbEHEvJiEaXzgqNFj1EocQLEXwopbeBReFU47j1umtRwNvojx286Jk2xzZeYVe7GxIlu58Y2FTl1Llg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YymLULc2lzCBOPUsZKUqOlX9vNzyUaAea/8TIYzjRSHcC4Kp/s6
-	EmLM2aJ7hp9nlzY7+JP/xfAiTgtDBMZ4ZrhXlgz1a5IF8yFo+lvQ
-X-Google-Smtp-Source: AGHT+IGO7H0j2BHm469+taAk9ltYjhMSzb9FLmmlZZadSeYWFTq85X8wDz3MI9lCHoSRvdvWNMbckQ==
-X-Received: by 2002:a05:6358:7249:b0:1c3:7b8e:c35b with SMTP id e5c5f4694b2df-1c5ee9b88e1mr760796855d.19.1730749262114;
-        Mon, 04 Nov 2024 11:41:02 -0800 (PST)
-Received: from newman.cs.purdue.edu ([128.10.127.250])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d353fc4a33sm51649656d6.33.2024.11.04.11.41.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Nov 2024 11:41:01 -0800 (PST)
-From: Jiasheng Jiang <jiashengjiangcool@gmail.com>
-To: wbg@kernel.org,
-	vigneshr@ti.com,
-	jpanis@baylibre.com,
-	gregkh@linuxfoundation.org
-Cc: linux-iio@vger.kernel.org,
-	linux-omap@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Jiasheng Jiang <jiashengjiangcool@gmail.com>
-Subject: [PATCH v2] counter: ti-ecap-capture: Add check for clk_enable()
-Date: Mon,  4 Nov 2024 19:40:59 +0000
-Message-Id: <20241104194059.47924-1-jiashengjiangcool@gmail.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1730749288; c=relaxed/simple;
+	bh=TlfnKi73QV/9wCkfGcRyEygU9J9eNazH15v8tXAdF3o=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=ng+g82yYvyri0RFi4arkDKQuoBB8YNxkDIo5j+PVPPDciwgQ6ryFNJyTZl9PtbNXZdx9hr16WGWcvD7Dj+bdyM5dWZWVilE2/rrP5gVaD8w6MhUu6LQNdg8kMAC8OvBhEv8VTBaUl2LmTSL2lyYqW85KP+UKzLZGT1dNtmVPFjE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=n8PZ+lvd; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 479A142C30
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1730749286; bh=/IFed8QuxmGzZBbHkfBNbEfyJ1RoaIBovaPG1f0VPG8=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=n8PZ+lvdV9S8DRrV5uughGMOtaA9H3oWENpGvlYt/sC2JQoufU1tcxY54Ptc9v2tC
+	 GZtZM7inLdMb3Yg6hJr21LWAY5u/TYR1V1M6N1BZY2JeX9pA5Rh22sWTTP11xVydlV
+	 L7aqqZFthR/iVCvg+akLG1EMYJDr6AW0o1X4BsrOEOZkeVwA3GsWdm8ywJvgXzrxTr
+	 8KUmLUeJrUFWIT5li55End9O/KFWWamMROt8jQEW913d5F3fFqJ4B0dhJS6qa0namB
+	 gziO8YJDsdCDAuzVKp0LxwQQMp79ykXyEG6y1/rg0UiUVae33IF2xZ8VT1JDZUuraP
+	 XHhzFLoqK0O/A==
+Received: from localhost (unknown [IPv6:2601:280:5e00:625::1fe])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ms.lwn.net (Postfix) with ESMTPSA id 479A142C30;
+	Mon,  4 Nov 2024 19:41:26 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: Dongliang Mu <dzm91@hust.edu.cn>, si.yanteng@linux.dev, Alex Shi
+ <alexs@kernel.org>, Yanteng Si <siyanteng@loongson.cn>, Paul Walmsley
+ <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou
+ <aou@eecs.berkeley.edu>, Nathan Chancellor <nathan@kernel.org>, Nick
+ Desaulniers <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>,
+ Justin Stitt <justinstitt@google.com>, Dongliang Mu <dzm91@hust.edu.cn>
+Cc: hust-os-kernel-patches@googlegroups.com, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+ llvm@lists.linux.dev
+Subject: Re: [PATCH] docs/zh_CN: add the translation of kbuild/llvm.rst
+In-Reply-To: <20241023153235.1291567-1-dzm91@hust.edu.cn>
+References: <20241023153235.1291567-1-dzm91@hust.edu.cn>
+Date: Mon, 04 Nov 2024 12:41:25 -0700
+Message-ID: <87wmhi7pne.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-Add check for the return value of clk_enable() in order to catch the
-potential exception.
+Dongliang Mu <dzm91@hust.edu.cn> writes:
 
-Fixes: 4e2f42aa00b6 ("counter: ti-ecap-capture: capture driver support for ECAP")
-Reviewed-by: Julien Panis <jpanis@baylibre.com>
-Signed-off-by: Jiasheng Jiang <jiashengjiangcool@gmail.com>
----
-Changelog:
+> Finish the translation of kbuild/llvm.rst and move llvm from TODO
+> to the main body.
+>
+> Update to commit 145082ebfcf0 ("Documentation/llvm: turn make command
+> for ccache into code block")
+>
+> Signed-off-by: Dongliang Mu <dzm91@hust.edu.cn>
+> ---
+>  .../translations/zh_CN/kbuild/index.rst       |   3 +-
+>  .../translations/zh_CN/kbuild/llvm.rst        | 203 ++++++++++++++++++
+>  2 files changed, 205 insertions(+), 1 deletion(-)
+>  create mode 100644 Documentation/translations/zh_CN/kbuild/llvm.rst
 
-v1 -> v2:
+Applied, thanks.
 
-1. Add dev_err() to indicate the reason for the error code.
----
- drivers/counter/ti-ecap-capture.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/counter/ti-ecap-capture.c b/drivers/counter/ti-ecap-capture.c
-index 675447315caf..b119aeede693 100644
---- a/drivers/counter/ti-ecap-capture.c
-+++ b/drivers/counter/ti-ecap-capture.c
-@@ -574,8 +574,13 @@ static int ecap_cnt_resume(struct device *dev)
- {
- 	struct counter_device *counter_dev = dev_get_drvdata(dev);
- 	struct ecap_cnt_dev *ecap_dev = counter_priv(counter_dev);
-+	int ret;
- 
--	clk_enable(ecap_dev->clk);
-+	ret = clk_enable(ecap_dev->clk);
-+	if (ret) {
-+		dev_err(dev, "Cannot enable clock %d\n", ret);
-+		return ret;
-+	}
- 
- 	ecap_cnt_capture_set_evmode(counter_dev, ecap_dev->pm_ctx.ev_mode);
- 
--- 
-2.25.1
-
+jon
 
