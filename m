@@ -1,70 +1,51 @@
-Return-Path: <linux-kernel+bounces-395420-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395422-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA1379BBDB1
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 20:07:03 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B32299BBDB5
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 20:07:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9CCCB283317
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 19:07:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 71181280FC7
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 19:07:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E7D51CCB4E;
-	Mon,  4 Nov 2024 19:06:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 542281CF2AD;
+	Mon,  4 Nov 2024 19:06:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L1rzpenq"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l5O9sU7O"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 998A41CBE85;
-	Mon,  4 Nov 2024 19:06:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB0C61CC177;
+	Mon,  4 Nov 2024 19:06:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730747206; cv=none; b=NJ3SK+qPs0Rhd/nd+zMiCOt3ZIN2+a6VqGzCHLye7+2zkLBxNNpq5fCPz1VmAQI/XMVpSCw0a7aMMMJZYvCX5brcHlgPt5dZRsKljD8af29rkRrba9mJh+wmfApkaKduhLUf/KUSVNlIy65uolRyqt2twz/KnxM3+wzhcwMBRlA=
+	t=1730747217; cv=none; b=q/M4140XvlCVJYyo1W3cm0t23X0ymelcLOY9PDxrlCU/vu7QgfVADkuiPgord/gdXHiTznSnFMMc3dIazJry6qVMjSMblY1K6Ix2CnGWgt2EE6mpVVXN4eOKlR7s5bnK5U5+VMcKM1ARBJtZorFOsp8+zGf6I38vWUko6DRRsfc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730747206; c=relaxed/simple;
-	bh=RLzepUvEzi8jZ2gEcW80zZHNRl/o1f2BUC9/lRQBcsQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=B7bjZX8w83KgezFbDBRmNB/b2wmhqZ3Bkoz1ZKArM6VooRlHoiqyLTmVFZzrbJEiPR7pHxnKpMRMKufbxELi919qhA7lmNb9+jL2fkP8EMb2jxEOD1+5gFN4/ejv7VMAdC9xgN/NmshmvW/xY6UlkxjOJd6ChCXmS4wXX8Hl/MY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L1rzpenq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0DB8DC4CECE;
-	Mon,  4 Nov 2024 19:06:45 +0000 (UTC)
+	s=arc-20240116; t=1730747217; c=relaxed/simple;
+	bh=8G3u0cAu8IlDEnmYeBDz9tZXjFHgHJuzJSxWPMhwjjg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=O9S/zc8ITHPSSe5fHSc5Uo/v04H++68bwxp6iI7OxeqkcL4NsWWIeo0gCim+n1pDTyJNNYfWENJXIPm8V1hFDB4J1c3cEqIRDtAi+CZRwTSR855oR2jrLNNssKqE+9Prx52vuN5oCoMPuIuogz1kPWExnsUEDW74cInbYlkg2lU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l5O9sU7O; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E7C3C4CED0;
+	Mon,  4 Nov 2024 19:06:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730747206;
-	bh=RLzepUvEzi8jZ2gEcW80zZHNRl/o1f2BUC9/lRQBcsQ=;
+	s=k20201202; t=1730747217;
+	bh=8G3u0cAu8IlDEnmYeBDz9tZXjFHgHJuzJSxWPMhwjjg=;
 	h=From:To:Cc:Subject:Date:From;
-	b=L1rzpenqUzfXsjKliMp3NKFrjpC1eJfEx7bkxuYDVJPLtcz1JnjY2FP8cKO22jX4t
-	 3Vq3JECDbLiRwdy/UndJxh0e3QAYAJAPhMZizem1ucLER9hLLhQoiXAgd6ytPPccO2
-	 zZzM5L5WwVKyxT61cgkfJzI3YvilPV3vSUPaRv5MMuXnc3RPfpC9U5xkrbR2IJ80cb
-	 T3Zm/IWe3iV89yiqSnrH27Ucdudb6nzOFMv7Q1v9b8kaW2jkoOe9t/XLtgLxXMf5up
-	 Sj/WLE1DzNXbjWwLH/BZiLwe73BGXgo/qzFBNjX6YY2MDxyZkbDWbGui+HGDeZhz0s
-	 StyDRVGh2rNfA==
+	b=l5O9sU7Otg3dNc3llfwWI6u76HxrMQktav2Et0rstTigHvr9333Ogfve2Wnrm78n8
+	 kT5O0nDEZ51ausRHvMQIkCLHa/XTUJOynIYhE3yaQzR+QS4B/TpUNRg1heZsE6vDDH
+	 CUrkqpfxQjrJywfsBQ1ubRLKHCDTXZ9LhjZ+oakxZV1Aa7Rr9gee07VX3RvJeHLTvv
+	 q79ECJUryYypcF8zLgbXmTtMLrz+Z2WJtqKyjAJaAK0SdiYh/u1/UK/qqOeIbsZ3UO
+	 WgqM0/lRx9lhmgnqtBHOuZx48GjpD1yyR+2Uvg5uHrzxXjuHtalqZKFrA2Tnb4g1Gb
+	 UtP7oDrlt+qCw==
 From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Phong LE <ple@baylibre.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Robert Foss <rfoss@kernel.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Jessica Zhang <quic_jesszhan@quicinc.com>,
-	Rob Clark <robdclark@gmail.com>,
-	Abhinav Kumar <quic_abhinavk@quicinc.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Sean Paul <sean@poorly.run>,
-	Marijn Suijten <marijn.suijten@somainline.org>
-Cc: dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	freedreno@lists.freedesktop.org
-Subject: [PATCH] drm: Use of_property_present() for non-boolean properties
-Date: Mon,  4 Nov 2024 13:06:35 -0600
-Message-ID: <20241104190636.274926-1-robh@kernel.org>
+To: Georgi Djakov <djakov@kernel.org>
+Cc: linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] interconnect: Use of_property_present() for non-boolean properties
+Date: Mon,  4 Nov 2024 13:06:49 -0600
+Message-ID: <20241104190650.275278-1-robh@kernel.org>
 X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -80,64 +61,22 @@ presence.
 
 Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
 ---
- drivers/gpu/drm/bridge/ite-it66121.c | 2 +-
- drivers/gpu/drm/bridge/sii902x.c     | 2 +-
- drivers/gpu/drm/drm_panel.c          | 2 +-
- drivers/gpu/drm/msm/dsi/dsi_host.c   | 2 +-
- 4 files changed, 4 insertions(+), 4 deletions(-)
+ drivers/interconnect/core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/bridge/ite-it66121.c b/drivers/gpu/drm/bridge/ite-it66121.c
-index 925e42f46cd8..0eae7c01b975 100644
---- a/drivers/gpu/drm/bridge/ite-it66121.c
-+++ b/drivers/gpu/drm/bridge/ite-it66121.c
-@@ -1480,7 +1480,7 @@ static int it66121_audio_codec_init(struct it66121_ctx *ctx, struct device *dev)
+diff --git a/drivers/interconnect/core.c b/drivers/interconnect/core.c
+index 7e9b996b47c8..bd5b18d1ca10 100644
+--- a/drivers/interconnect/core.c
++++ b/drivers/interconnect/core.c
+@@ -1081,7 +1081,7 @@ static int of_count_icc_providers(struct device_node *np)
+ 	int count = 0;
  
- 	dev_dbg(dev, "%s\n", __func__);
- 
--	if (!of_property_read_bool(dev->of_node, "#sound-dai-cells")) {
-+	if (!of_property_present(dev->of_node, "#sound-dai-cells")) {
- 		dev_info(dev, "No \"#sound-dai-cells\", no audio\n");
- 		return 0;
- 	}
-diff --git a/drivers/gpu/drm/bridge/sii902x.c b/drivers/gpu/drm/bridge/sii902x.c
-index 7f91b0db161e..f73e1174a5ad 100644
---- a/drivers/gpu/drm/bridge/sii902x.c
-+++ b/drivers/gpu/drm/bridge/sii902x.c
-@@ -850,7 +850,7 @@ static int sii902x_audio_codec_init(struct sii902x *sii902x,
- 	u8 lanes[4];
- 	int num_lanes, i;
- 
--	if (!of_property_read_bool(dev->of_node, "#sound-dai-cells")) {
-+	if (!of_property_present(dev->of_node, "#sound-dai-cells")) {
- 		dev_dbg(dev, "%s: No \"#sound-dai-cells\", no audio\n",
- 			__func__);
- 		return 0;
-diff --git a/drivers/gpu/drm/drm_panel.c b/drivers/gpu/drm/drm_panel.c
-index 19ab0a794add..46d61cc871ca 100644
---- a/drivers/gpu/drm/drm_panel.c
-+++ b/drivers/gpu/drm/drm_panel.c
-@@ -413,7 +413,7 @@ bool drm_is_panel_follower(struct device *dev)
- 	 * don't bother trying to parse it here. We just need to know if the
- 	 * property is there.
- 	 */
--	return of_property_read_bool(dev->of_node, "panel");
-+	return of_property_present(dev->of_node, "panel");
- }
- EXPORT_SYMBOL(drm_is_panel_follower);
- 
-diff --git a/drivers/gpu/drm/msm/dsi/dsi_host.c b/drivers/gpu/drm/msm/dsi/dsi_host.c
-index 185d7de0bf37..78cac4ecc58f 100644
---- a/drivers/gpu/drm/msm/dsi/dsi_host.c
-+++ b/drivers/gpu/drm/msm/dsi/dsi_host.c
-@@ -1831,7 +1831,7 @@ static int dsi_host_parse_dt(struct msm_dsi_host *msm_host)
- 		msm_dsi->te_source = devm_kstrdup(dev, te_source, GFP_KERNEL);
- 	ret = 0;
- 
--	if (of_property_read_bool(np, "syscon-sfpb")) {
-+	if (of_property_present(np, "syscon-sfpb")) {
- 		msm_host->sfpb = syscon_regmap_lookup_by_phandle(np,
- 					"syscon-sfpb");
- 		if (IS_ERR(msm_host->sfpb)) {
+ 	for_each_available_child_of_node(np, child) {
+-		if (of_property_read_bool(child, "#interconnect-cells") &&
++		if (of_property_present(child, "#interconnect-cells") &&
+ 		    likely(!of_match_node(ignore_list, child)))
+ 			count++;
+ 		count += of_count_icc_providers(child);
 -- 
 2.45.2
 
