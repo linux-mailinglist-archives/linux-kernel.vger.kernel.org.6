@@ -1,245 +1,257 @@
-Return-Path: <linux-kernel+bounces-394770-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394771-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F28BB9BB3AF
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 12:43:05 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39BC09BB3B1
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 12:43:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7836E1F21FA1
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 11:43:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB1931F224E2
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 11:43:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFB181B219A;
-	Mon,  4 Nov 2024 11:42:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFF911B392B;
+	Mon,  4 Nov 2024 11:42:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mvbkpayy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="QL/3fVI0"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 245281B1D65
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 11:42:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AE08185B4D;
+	Mon,  4 Nov 2024 11:42:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730720541; cv=none; b=Wtwr+AuYmE7wRlt7EibWtViYZcYN3yc6MsM+f5l4z8d3KO/GS1Yhwcwb0soP8wG62JN0JRAJiKSIhY5X38BMSiLHlRCKwi4vPqDwXQ4wtI7keSOKpALQGIKX0t9tF96l1CCqz8OW6PmYaCYQey0qng9pA4qGpUrfTLiiTmEkurc=
+	t=1730720568; cv=none; b=tfxzNgmuxpW7ep19tK0CSX2c12g4Feht9hAwInLZ3X8hVfItLWuiZ+SX84MdZ43T0HyIFqFELR3WHdb1fNVthQAcLpO7gEUcyADaamJH0DnIDf/pZbMHMLX3QvCF8KR6ewIz1+Q11ENlwHVfiCQ2vshsbQRlcbz7gFnbWPepNzE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730720541; c=relaxed/simple;
-	bh=k7s6V58otnDEuhtjSFw6L4603p3fuSbZMj5LDWuXBO8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O3UExpFtkhi/6wDibUhlJ/PqO50FC7kOQq3NqbkSDp9iBKYkiVl5Wya9DuA3c8jwbXj22J4KNlx7tGjCZyqeZLMXUEGwpODcMakjCUMPS2XxTHc86RUXtP6AI/ItCxsej5N5rKm/b/ZYeDIi3UqnsMFP+23jwKalnx/E9QEZLq4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mvbkpayy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D8BDC4CECE;
-	Mon,  4 Nov 2024 11:42:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730720539;
-	bh=k7s6V58otnDEuhtjSFw6L4603p3fuSbZMj5LDWuXBO8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mvbkpayyYq7LU2I//JKbbzr9JZeFkU+cZq8Jul+vPQrZinyCnCg4f4xOV+ZhCSvBZ
-	 Nmdvs8FSBJYdGMGubw8Xqi2zMvgyvCDcYzprh+kPui0etnC16jnsFFbXsgExeEdxeN
-	 irWj0VfRxsHxsUIVAIDFXIdYdRTmhMd0A7zMdNVk7PZfaCtkUn0dqq6NjrNOLDcgk6
-	 8n/plYKofcJIcLdcUwMajDAtoewOhswLfqnaZn89H8fOt1tmdwoqxIqNdttrvpyUw5
-	 WmWKC90IQaxXU5kU0vZ9Tjgp3Nso3fPsJIkwhzfCGbu5TlOJy6S8Ox1XHvoNqn81C3
-	 yeOw71sWEaoOQ==
-Date: Mon, 4 Nov 2024 12:42:16 +0100
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	Anna-Maria Behnsen <anna-maria@linutronix.de>,
-	John Stultz <jstultz@google.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-	Eric Biederman <ebiederm@xmission.com>,
-	Oleg Nesterov <oleg@redhat.com>
-Subject: Re: [patch v6.1 17/20] signal: Queue ignored posixtimers on ignore
- list
-Message-ID: <ZyizGM4-3FmPDtGj@localhost.localdomain>
-References: <20241031151625.361697424@linutronix.de>
- <20241031154425.624061922@linutronix.de>
- <8734k9qrcr.ffs@tglx>
+	s=arc-20240116; t=1730720568; c=relaxed/simple;
+	bh=IfHGhqvt+TX0g3VwnO2/tu+CWRL4qJkPNdnSO85GnTQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qiHEFlKbgdYfIHSBYULpde0A5+RR+G1vsMkGS4BOOzYwODoCAJ36nVMh4bn/duWDdtK2GthsVMqKIF47c13wx+rAZd0Z9uKmqew6mKvS3eGwBptGcIE2Pw2sIJukJ4t6pMkMeQvtJ+5tbKgnwp/Zyt1Qg907enx9EtPuGw+zSlA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=QL/3fVI0; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1730720564;
+	bh=IfHGhqvt+TX0g3VwnO2/tu+CWRL4qJkPNdnSO85GnTQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=QL/3fVI0EQP4vYoK/Qlxs1yjMe2KxtZdB5fWsgzSV9wD7O8SMcMaG5Ua3ehbaTWSr
+	 Ixb7OpvGeeJcRGsNifTGpV9CAQX1/3z7WtnmDXrJZOEz4gcOWX2iJC2pAyc0R1FpVr
+	 C3MUtTXlghEemTNAQqX3coRfoeIFbmljpR6tmwqFOWpzM+kIaoeStfmZU/HNjjVGeg
+	 hBjoNwsfgDzoDeJPJeBItvULqqwgzP99OZ1pv1X5TIyHMvOywXbwGv8ThsmTNZb18K
+	 DBAmhByUMt/pb4VgYkZiyG+icw+HtYFsAK8TttzO7nI0CTirA4HksdRMygyLTW63rp
+	 Zg5Xx/BgsmIeQ==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 7C9E417E3601;
+	Mon,  4 Nov 2024 12:42:43 +0100 (CET)
+Message-ID: <47154bc7-5e52-4d2c-ba30-730758bf1901@collabora.com>
+Date: Mon, 4 Nov 2024 12:42:43 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/2] PCI: mediatek-gen3: Add support for setting
+ max-link-speed limit
+To: =?UTF-8?B?Smlhbmp1biBXYW5nICjnjovlu7rlhpsp?= <Jianjun.Wang@mediatek.com>,
+ "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
+ "kernel@collabora.com" <kernel@collabora.com>,
+ "robh@kernel.org" <robh@kernel.org>, "kw@linux.com" <kw@linux.com>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
+ "bhelgaas@google.com" <bhelgaas@google.com>,
+ "lpieralisi@kernel.org" <lpieralisi@kernel.org>,
+ Ryder Lee <Ryder.Lee@mediatek.com>, "fshao@chromium.org" <fshao@chromium.org>
+References: <20240918081307.51264-1-angelogioacchino.delregno@collabora.com>
+ <20240918081307.51264-2-angelogioacchino.delregno@collabora.com>
+ <744a8362065b0c75178c3e0d402ea4932cb1fc96.camel@mediatek.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <744a8362065b0c75178c3e0d402ea4932cb1fc96.camel@mediatek.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <8734k9qrcr.ffs@tglx>
 
-Le Sat, Nov 02, 2024 at 10:05:08PM +0100, Thomas Gleixner a �crit :
-> Queue posixtimers which have their signal ignored on the ignored list:
+Il 04/11/24 09:22, Jianjun Wang (王建军) ha scritto:
+> Hi Angelo,
 > 
->    1) When the timer fires and the signal has SIG_IGN set
+> Thanks for your patch.
 > 
->    2) When SIG_IGN is installed via sigaction() and a timer signal
->       is already queued
+> On Wed, 2024-09-18 at 10:13 +0200, AngeloGioacchino Del Regno wrote:
+>> Add support for respecting the max-link-speed devicetree property,
+>> forcing a maximum speed (Gen) for a PCI-Express port.
+>>
+>> Since the MediaTek PCIe Gen3 controllers also expose the maximum
+>> supported link speed in the PCIE_BASE_CFG register, if property
+>> max-link-speed is specified in devicetree, validate it against the
+>> controller capabilities and proceed setting the limitations only
+>> if the wanted Gen is lower than the maximum one that is supported
+>> by the controller itself (otherwise it makes no sense!).
+>>
+>> Signed-off-by: AngeloGioacchino Del Regno <
+>> angelogioacchino.delregno@collabora.com>
+>> ---
+>>   drivers/pci/controller/pcie-mediatek-gen3.c | 55
+>> ++++++++++++++++++++-
+>>   1 file changed, 53 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/pci/controller/pcie-mediatek-gen3.c
+>> b/drivers/pci/controller/pcie-mediatek-gen3.c
+>> index 66ce4b5d309b..8d4b045633da 100644
+>> --- a/drivers/pci/controller/pcie-mediatek-gen3.c
+>> +++ b/drivers/pci/controller/pcie-mediatek-gen3.c
+>> @@ -28,7 +28,11 @@
+>>   
+>>   #include "../pci.h"
+>>   
+>> +#define PCIE_BASE_CFG_REG		0x14
+>> +#define PCIE_BASE_CFG_SPEED		GENMASK(15, 8)
+>> +
+>>   #define PCIE_SETTING_REG		0x80
+>> +#define PCIE_SETTING_GEN_SUPPORT	GENMASK(14, 12)
+>>   #define PCIE_PCI_IDS_1			0x9c
+>>   #define PCI_CLASS(class)		(class << 8)
+>>   #define PCIE_RC_MODE			BIT(0)
+>> @@ -125,6 +129,9 @@
+>>   
+>>   struct mtk_gen3_pcie;
+>>   
+>> +#define PCIE_CONF_LINK2_CTL_STS		0x10b0
 > 
-> This completes the SIG_IGN handling and such timers are not longer self
-> rearmed which avoids pointless wakeups.
+> Maybe it's better to use: (PCIE_CFG_OFFSET_ADDR + 0xb0).
 > 
-> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-> Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> ---
-> V6.1: Handle oneshot timer expiry or transitioning from periodic to
->       oneshot after a rearming correctly. - Frederic
-> ---
->  kernel/signal.c |   70 ++++++++++++++++++++++++++++++++++++++++++++++++++++----
->  1 file changed, 65 insertions(+), 5 deletions(-)
-> ---
+
+Makes sense.
+
+>> +#define PCIE_CONF_LINK2_LCR2_LINK_SPEED	GENMASK(3, 0)
+>> +
+>>   /**
+>>    * struct mtk_gen3_pcie_pdata - differentiate between host
+>> generations
+>>    * @power_up: pcie power_up callback
+>> @@ -160,6 +167,7 @@ struct mtk_msi_set {
+>>    * @phy: PHY controller block
+>>    * @clks: PCIe clocks
+>>    * @num_clks: PCIe clocks count for this port
+>> + * @max_link_speed: Maximum link speed (PCIe Gen) for this port
+>>    * @irq: PCIe controller interrupt number
+>>    * @saved_irq_state: IRQ enable state saved at suspend time
+>>    * @irq_lock: lock protecting IRQ register access
+>> @@ -180,6 +188,7 @@ struct mtk_gen3_pcie {
+>>   	struct phy *phy;
+>>   	struct clk_bulk_data *clks;
+>>   	int num_clks;
+>> +	u8 max_link_speed;
+>>   
+>>   	int irq;
+>>   	u32 saved_irq_state;
+>> @@ -381,11 +390,27 @@ static int mtk_pcie_startup_port(struct
+>> mtk_gen3_pcie *pcie)
+>>   	int err;
+>>   	u32 val;
+>>   
+>> -	/* Set as RC mode */
+>> +	/* Set as RC mode and set controller PCIe Gen speed
+>> restriction, if any */
+>>   	val = readl_relaxed(pcie->base + PCIE_SETTING_REG);
+>>   	val |= PCIE_RC_MODE;
+>> +	if (pcie->max_link_speed) {
+>> +		val &= ~PCIE_SETTING_GEN_SUPPORT;
+>> +
+>> +		/* Can enable link speed support only from Gen2 onwards
+>> */
+>> +		if (pcie->max_link_speed >= 2)
+>> +			val |= FIELD_PREP(PCIE_SETTING_GEN_SUPPORT,
+>> +					  GENMASK(pcie->max_link_speed
+>> - 2, 0));
+>> +	}
+>>   	writel_relaxed(val, pcie->base + PCIE_SETTING_REG);
+>>   
+>> +	/* Set Link Control 2 (LNKCTL2) speed restriction, if any */
+>> +	if (pcie->max_link_speed) {
+>> +		val = readl_relaxed(pcie->base +
+>> PCIE_CONF_LINK2_CTL_STS);
+>> +		val &= ~PCIE_CONF_LINK2_LCR2_LINK_SPEED;
+>> +		val |= FIELD_PREP(PCIE_CONF_LINK2_LCR2_LINK_SPEED,
+>> pcie->max_link_speed);
+>> +		writel_relaxed(val, pcie->base +
+>> PCIE_CONF_LINK2_CTL_STS);
+>> +	}
+>> +
+>>   	/* Set class code */
+>>   	val = readl_relaxed(pcie->base + PCIE_PCI_IDS_1);
+>>   	val &= ~GENMASK(31, 8);
+>> @@ -1004,9 +1029,21 @@ static void mtk_pcie_power_down(struct
+>> mtk_gen3_pcie *pcie)
+>>   	reset_control_bulk_assert(pcie->soc->phy_resets.num_resets,
+>> pcie->phy_resets);
+>>   }
+>>   
+>> +static int mtk_pcie_get_controller_max_link_speed(struct
+>> mtk_gen3_pcie *pcie)
+>> +{
+>> +	u32 val;
+>> +	int ret;
+>> +
+>> +	val = readl_relaxed(pcie->base + PCIE_BASE_CFG_REG);
+>> +	val = FIELD_GET(PCIE_BASE_CFG_SPEED, val);
+>> +	ret = fls(val);
+>> +
+>> +	return ret > 0 ? ret : -EINVAL;
+>> +}
+>> +
+>>   static int mtk_pcie_setup(struct mtk_gen3_pcie *pcie)
+>>   {
+>> -	int err;
+>> +	int err, max_speed;
+>>   
+>>   	err = mtk_pcie_parse_port(pcie);
+>>   	if (err)
+>> @@ -1031,6 +1068,20 @@ static int mtk_pcie_setup(struct mtk_gen3_pcie
+>> *pcie)
+>>   	if (err)
+>>   		return err;
+>>   
+>> +	err = of_pci_get_max_link_speed(pcie->dev->of_node);
+>> +	if (err > 0) {
+>> +		/* Get the maximum speed supported by the controller */
+>> +		max_speed =
+>> mtk_pcie_get_controller_max_link_speed(pcie);
+>> +
+>> +		/* Set max_link_speed only if the controller supports
+>> it */
+>> +		if (max_speed >= 0 && max_speed <= err) {
+>> +			pcie->max_link_speed = err;
 > 
-> --- a/kernel/signal.c
-> +++ b/kernel/signal.c
-> @@ -731,6 +731,16 @@ void signal_wake_up_state(struct task_st
->  		kick_process(t);
->  }
->  
-> +static inline void posixtimer_sig_ignore(struct task_struct *tsk, struct sigqueue *q);
-> +
-> +static void sigqueue_free_ignored(struct task_struct *tsk, struct sigqueue *q)
-> +{
-> +	if (likely(!(q->flags & SIGQUEUE_PREALLOC) || q->info.si_code != SI_TIMER))
-> +		__sigqueue_free(q);
-> +	else
-> +		posixtimer_sig_ignore(tsk, q);
-> +}
-> +
->  /* Remove signals in mask from the pending set and queue. */
->  static void flush_sigqueue_mask(struct task_struct *p, sigset_t *mask, struct sigpending *s)
->  {
-> @@ -747,7 +757,7 @@ static void flush_sigqueue_mask(struct t
->  	list_for_each_entry_safe(q, n, &s->list, list) {
->  		if (sigismember(mask, q->info.si_signo)) {
->  			list_del_init(&q->list);
-> -			__sigqueue_free(q);
-> +			sigqueue_free_ignored(p, q);
->  		}
->  	}
->  }
-> @@ -1964,7 +1974,7 @@ int posixtimer_send_sigqueue(struct k_it
->  	int sig = q->info.si_signo;
->  	struct task_struct *t;
->  	unsigned long flags;
-> -	int ret, result;
-> +	int result;
->  
->  	guard(rcu)();
->  
-> @@ -1981,13 +1991,48 @@ int posixtimer_send_sigqueue(struct k_it
->  	 */
->  	tmr->it_sigqueue_seq = tmr->it_signal_seq;
->  
-> -	ret = 1; /* the signal is ignored */
->  	if (!prepare_signal(sig, t, false)) {
->  		result = TRACE_SIGNAL_IGNORED;
-> +
-> +		/* Paranoia check. Try to survive. */
-> +		if (WARN_ON_ONCE(!list_empty(&q->list)))
-> +			goto out;
-> +
-> +		/* Periodic timers with SIG_IGN are queued on the ignored list */
-> +		if (tmr->it_status == POSIX_TIMER_REQUEUE_PENDING) {
-> +			/*
-> +			 * Already queued means the timer was rearmed after
-> +			 * the previous expiry got it on the ignore list.
-> +			 * Nothing to do for that case.
-> +			 */
-> +			if (hlist_unhashed(&tmr->ignored_list)) {
-> +				/*
-> +				 * Take a signal reference and queue it on
-> +				 * the ignored list.
-> +				 */
-> +				posixtimer_sigqueue_getref(q);
-> +				posixtimer_sig_ignore(t, tmr);
-> +			}
-> +		} else if (!hlist_unhashed(&tmr->ignored_list)) {
-> +			/*
-> +			 * Covers the case where a timer was periodic and
-> +			 * then signal was ignored. Then it was rearmed as
-> +			 * oneshot timer. The previous signal is invalid
-> +			 * now, and the oneshot signal has to be dropped.
-> +			 * Remove it from the ignored list and drop the
-> +			 * reference count as the signal is not longer
-> +			 * queued.
-> +			 */
-> +			hlist_del_init(&tmr->ignored_list);
-> +			posixtimer_putref(tmr);
-> +		}
->  		goto out;
->  	}
->  
-> -	ret = 0;
-> +	/* This should never happen and leaks a reference count */
-> +	if (WARN_ON_ONCE(!hlist_unhashed(&tmr->ignored_list)))
-> +		hlist_del_init(&tmr->ignored_list);
-> +
->  	if (unlikely(!list_empty(&q->list))) {
->  		/* This holds a reference count already */
->  		result = TRACE_SIGNAL_ALREADY_PENDING;
-> @@ -2000,7 +2045,21 @@ int posixtimer_send_sigqueue(struct k_it
->  out:
->  	trace_signal_generate(sig, &q->info, t, tmr->it_pid_type != PIDTYPE_PID, result);
->  	unlock_task_sighand(t, &flags);
-> -	return ret;
-> +	return 0;
-> +}
-> +
-> +static inline void posixtimer_sig_ignore(struct task_struct *tsk, struct sigqueue *q)
-> +{
-> +	struct k_itimer *tmr = container_of(q, struct k_itimer, sigq);
-> +
-> +	/*
-> +	 * Only enqueue periodic timer signals to the ignored list. For
-> +	 * oneshot timers, drop the reference count.
-> +	 */
-> +	if (tmr->it_status == POSIX_TIMER_REQUEUE_PENDING)
+> Do we need to set it to max_speed? Since the hardware only supports
+> speeds lower than max_speed.
+> 
 
-This is read locklessly against timer lock. So it only makes sure that
-the last write to POSIX_TIMER_REQUEUE_PENDING will be visible due to the
-sighand locking. However it may or may not see the other states written after.
-Which looks ok because if the timer is concurrently armed / disarmed / or even
-requeue pending again, then either the signal is dropped and it's fine or the
-signal is moved to the ignored list and the seq will take care of the validity
-upon delivery.
+The controller's default value is already "max speed" (all Gen supported)
+so... no, we take action only if DT says to apply a limit.
 
-Still this may need a WRITE_ONCE() / READ_ONCE().
+Cheers,
+Angelo
 
-But there is something more problematic against the delete() path:
-                                   
-Thread within                  Signal target             Timer target
-signal target group
---------------------           -------------             -------------
-                                                         timr->it_status = POSIX_TIMER_REQUEUE_PENDING
-                                                         posixtimer_send_sigqueue();
-                                                         do_exit();
-timer_delete()
-    posix_cpu_timer_del()
-        // return NULL
-        cpu_timer_task_rcu()
-        // timer->it_status NOT set
-        // to POSIX_TIMER_DISARMED
-    hlist_del(&timer->list);
-    posix_timer_cleanup_ignored()
+> Thanks.
+> 
+>> +			dev_dbg(pcie->dev,
+>> +				"Max controller link speed Gen%d,
+>> override to Gen%u",
+>> +				max_speed, pcie->max_link_speed);
+>> +		}
+>> +	}
+>> +
+>>   	/* Try link up */
+>>   	err = mtk_pcie_startup_port(pcie);
+>>   	if (err)
 
 
-                               do_sigaction(SIG_IGN...)
-                               flush_sigqueue_mask()
-                                  sigqueue_free_ignored()
-                                      posixtimer_sig_ignore()
-                                          // Observe POSIX_TIMER_REQUEUE_PENDING
-                                          hlist_add_head(...ignored_posix_timers)
-                               do_exit()
-                                   exit_itimers()
-                                   if (hlist_empty(&tsk->signal->posix_timers))
-                                       return;
-                                   // leaked timer queued to migrate list
-                                   
-
-
-> +		hlist_add_head(&tmr->ignored_list, &tsk->signal->ignored_posix_timers);
-> +	else
-> +		posixtimer_putref(tmr);
->  }
-
-Thanks.
 
