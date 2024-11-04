@@ -1,82 +1,109 @@
-Return-Path: <linux-kernel+bounces-395197-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395198-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63CDD9BBA34
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 17:21:26 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED8AD9BBA36
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 17:21:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B7961F22ADB
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 16:21:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 99B0A1F228EC
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 16:21:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C20D1C243C;
-	Mon,  4 Nov 2024 16:19:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF2491C4622;
+	Mon,  4 Nov 2024 16:20:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kUfTB2vv"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sHLWJc5W"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00BF142AA6;
-	Mon,  4 Nov 2024 16:19:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 455FD42AA6;
+	Mon,  4 Nov 2024 16:20:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730737193; cv=none; b=GuEjyu3mvzwaPrIsyo7QsgMPXymPabVbrlrlWAwXcuKErdnTN3m0mlR3W0VwNlT6azWEMIG9foRFRHaomu0sNCfJ4wZzljluSkzSPFsZneFWhkqj/P1Ygab4IvPByrehAame+UFq5ScZJzcA14OIl1xS5YZI1w79+yj2O4fVaKI=
+	t=1730737222; cv=none; b=uQabPaiR2m3QXfNjOEQbQeq8dBx2HC9jnkng+kEXsUqhT7MCmS86954SIhcIOry7oc8sGHzxdyMp4aBBB8IcCd5ACP6lZPOfNSQFxVzPn+X4evzybDGaTaQH0rsc1MUI5ZoNeWNq55caPpmFfiUBPaLFcGjx45DpWOt4TrEc9kw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730737193; c=relaxed/simple;
-	bh=DXOrN7Qat5xsjGc+y7PGlfGGMhhuz39fBqnNJVF2MZM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=V6e6wf/b7M2IDuqm0JatAMv0ZQ57WYqocCWatqC6KQXHmadzLxoqKtMhLeUHtax/zAflAb9mF9cs0nQXfRtWsG/UGXBZ7nd0BnhVBAwkFuRoRbp7Y+T/+Xwc6eDhENGt3AT1VH+XQQ2QdXR1m9iVO5yM8QKV+PNMw5Dj7k/nhDM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kUfTB2vv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F70DC4CECE;
-	Mon,  4 Nov 2024 16:19:52 +0000 (UTC)
+	s=arc-20240116; t=1730737222; c=relaxed/simple;
+	bh=DxhaOPfKoLz2uC9aKp0uM0TtGsHNPcDML9iDcAKzt7U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=AE3mHfdM9YiPFdzpVKyv2tXS0eyRhe1kM/QOTtxGo+0lEibpYFOTtqSo0/9PphRFU1aHsH/Ls9NjqwZDTXbb/pB9U/5lp0dPhkwZMF8GwZCX6V7FEvIxWBD7pYymAdUHbKnqDWWzQbuiI3gDZ3B+mleI3pDAZ3Jm3bm0zcwtW3s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sHLWJc5W; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 202E3C4CECE;
+	Mon,  4 Nov 2024 16:20:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730737192;
-	bh=DXOrN7Qat5xsjGc+y7PGlfGGMhhuz39fBqnNJVF2MZM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kUfTB2vvlo6tGQzjTfqVQguVCEEquylrSvGItWBBiWL6xKnwtAlXHzBQS33T7qCr4
-	 pMUAylL2VFtHqrmcH8Jgcn5Bn8Yt75Hl+eL1Rz+7vIR1Hbs5vpCKvzGgGW71jZUVn4
-	 9nrsBe5J0630IHS/ak2YVu+mERe8uz6lBHa6L1UmLpQC0dEnb7wBONuZE2J02A7xPf
-	 VyZuGP568XikffCY7aZS8vwgrpUpr51VrZ4SsvcnfAYZuRtYttGNs8nq5rcaXslPFM
-	 SbuHgK+1LY1g+RQ7A0bKSypkAeFB1ZCEBnNYnSlXXGxNCDzYH8BIvXq5P700Y0J9EJ
-	 UTBFKzQHjcp+g==
-Date: Mon, 4 Nov 2024 10:19:50 -0600
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Varadarajan Narayanan <quic_varada@quicinc.com>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-	conor@kernel.org, linux-kernel@vger.kernel.org,
-	konradybcio@kernel.org, andersson@kernel.org, krzk+dt@kernel.org
-Subject: Re: [PATCH v1 1/3] dt-bindings: cache: qcom,llcc: Add IPQ5424
- compatible
-Message-ID: <173073719041.380640.10202387939372853981.robh@kernel.org>
-References: <20241104073840.3686674-1-quic_varada@quicinc.com>
- <20241104073840.3686674-2-quic_varada@quicinc.com>
+	s=k20201202; t=1730737222;
+	bh=DxhaOPfKoLz2uC9aKp0uM0TtGsHNPcDML9iDcAKzt7U=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=sHLWJc5WE/qeOysHvvZhkAHqYWN4tbWCRdcUWbn9bT/pdUrKlN9y81VPWvDR5SJxV
+	 8tio2fDAwAOxgnc/chsF8ngIjyf5/bdWbpOhXG9eH7l9TREZabOEX0dVo0iZaKGPHl
+	 yycEOwGYBQwXTf8T/7RI8e64nMv/KZCSvs4joPvRztf0CCR+uQ1dmPfJnTwAD/LjeJ
+	 Tze9JtLXDZIAzgO0epHAiD6O99JUBWA+mFKOqvbb+ceakW76dH8d6GY2OcFuBMXDd4
+	 Nt62chfE3EqNzgjEojaVRW/JjI3excIaSEE6JLINPXGcvapFXgjTgJH4/ozbvnBTwV
+	 MqJNbNTm/Laew==
+Received: by mail-oa1-f46.google.com with SMTP id 586e51a60fabf-294ec8e1d8aso643859fac.1;
+        Mon, 04 Nov 2024 08:20:22 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVHdKlSk53Scmg4yXnNSS5o2PYoC1MqgZTUkDYuvXPe7T+TFpry7hSp33D9aKg98iqDfjmYRAAeMo5GL5s=@vger.kernel.org, AJvYcCVxfCC5CpuhAeGuRtjfEysibFgTSWMCv+yKHRk5LOZRwsFHQdAzQStqX8cJUaIpuKP/KDxHMvG5A+U=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx99DAuTkED3RsYbqYJWspHnGcA8hD474QV7s+rNU6lIdhmyjZy
+	Bs+ZmH5AMmTwhfeLEA8i9/vb940vm8otDSPldCtm7xiepIwydsl/C4ZfF718DOuhkt1kbV0sGAZ
+	4I4biAFHKT2J7ovmGKB3fIt80e/k=
+X-Google-Smtp-Source: AGHT+IFf4WD5U1Q607IIFaIyvF/k5k3uxxuk7F9lgmG54W9ALpQZiRlt/Q2lQGza9d878zL0uda1EJ6u9nDexYRXny0=
+X-Received: by 2002:a05:6870:1d10:b0:278:25d:d473 with SMTP id
+ 586e51a60fabf-2948440d44emr12991862fac.1.1730737221463; Mon, 04 Nov 2024
+ 08:20:21 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241104073840.3686674-2-quic_varada@quicinc.com>
+References: <20241101145241.10326-1-av2082000@gmail.com>
+In-Reply-To: <20241101145241.10326-1-av2082000@gmail.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Mon, 4 Nov 2024 17:20:09 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0h_yu6YHcYRPSOg5yrrvWd-Mv4+xYtU+XouP2APoydm+w@mail.gmail.com>
+Message-ID: <CAJZ5v0h_yu6YHcYRPSOg5yrrvWd-Mv4+xYtU+XouP2APoydm+w@mail.gmail.com>
+Subject: Re: [PATCH] pm-graph: Refactor installation script
+To: Amit Vadhavana <av2082000@gmail.com>, todd.e.brandt@linux.intel.com
+Cc: skhan@linuxfoundation.org, ricardo@marliere.net, 
+	linux-kernel-mentees@lists.linux.dev, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-
-On Mon, 04 Nov 2024 13:08:38 +0530, Varadarajan Narayanan wrote:
-> Document the Last Level Cache Controller on IPQ5424. The
-> 'broadcast' register space is present only in chipsets that have
-> multiple instances of LLCC IP. Since IPQ5424 has only one
-> instance, both the LLCC and LLCC_BROADCAST points to the same
-> register space.
-> 
-> Hence, allow only '1' reg & reg-names entry for IPQ5424.
-> 
-> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
+On Fri, Nov 1, 2024 at 3:53=E2=80=AFPM Amit Vadhavana <av2082000@gmail.com>=
+ wrote:
+>
+> Change installation script to ensure that the terminal returns to the
+> original directory after the installation process completes.
+>
+> Signed-off-by: Amit Vadhavana <av2082000@gmail.com>
 > ---
->  .../devicetree/bindings/cache/qcom,llcc.yaml  | 20 +++++++++++++++++--
->  1 file changed, 18 insertions(+), 2 deletions(-)
-> 
+>  tools/power/pm-graph/install_latest_from_github.sh | 6 ++++++
+>  1 file changed, 6 insertions(+)
+>
+> diff --git a/tools/power/pm-graph/install_latest_from_github.sh b/tools/p=
+ower/pm-graph/install_latest_from_github.sh
+> index eaa332399d36..aaf3515400ed 100755
+> --- a/tools/power/pm-graph/install_latest_from_github.sh
+> +++ b/tools/power/pm-graph/install_latest_from_github.sh
+> @@ -4,6 +4,9 @@
+>  # Script which clones and installs the latest pm-graph
+>  # from http://github.com/intel/pm-graph.git
+>
+> +# Save the current directory
+> +CURRENT_DIR=3D$(pwd)
+> +
+>  OUT=3D`mktemp -d 2>/dev/null`
+>  if [ -z "$OUT" -o ! -e $OUT ]; then
+>         echo "ERROR: mktemp failed to create folder"
+> @@ -36,3 +39,6 @@ else
+>         echo "INSTALL FAILED"
+>  fi
+>  cleanup
+> +
+> +# Return to the original directory
+> +cd "$CURRENT_DIR"
+> --
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
-
+Todd, can you please let me know if this is OK?
 
