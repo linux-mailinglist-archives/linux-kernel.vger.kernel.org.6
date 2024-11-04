@@ -1,149 +1,204 @@
-Return-Path: <linux-kernel+bounces-395405-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395406-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B5E49BBD87
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 19:51:28 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A17E29BBD8C
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 19:55:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 51191B21D16
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 18:51:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 27CF81F2287B
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 18:55:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEE6C1CBA1F;
-	Mon,  4 Nov 2024 18:51:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05D9F1CBE85;
+	Mon,  4 Nov 2024 18:55:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="pRrGCkFq"
-Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="D+91PJ0A"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D81381C9EC0
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 18:51:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E3B418622;
+	Mon,  4 Nov 2024 18:55:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730746275; cv=none; b=rysNEdNABEjRxy1TsuJrGFbWGhrdM7aj+UUeAdyUVk18xG3/ZBPTFbfG093CWKZoPa+hZlY4nUnCd6LQB+ww/N6LZlq2gNOI2kbsU4torFSRTvgMJaazfKN2F5r/M9JK6VGVormQU019dkoi6zl8zaS5nPYJLxjGa5pkk+67I3k=
+	t=1730746524; cv=none; b=QVunBhdxCo9m2lUObxwnWisfdGjzxkttPoRNsRVMt2oCKDzZWQRMe+R+MF1fv9MKGwTRvs2RDjPXp9LzsvuDqinRLoiDZY7xSlr/9H+uwvt3QKfaZfah+GSMfXw61yl2uwx2RZKNQltWE5v/640j/cjh3T2LNZ8qJX9XnSwJ/Z4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730746275; c=relaxed/simple;
-	bh=i+JUo1WbG9fBZEzMBxei4ZEoysCHsSLRrRJGVjEMQvk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CwqUIt3kBUTTG3nnuutt56u4xstuCB1s5BYExDyveWlAkPbK+7qla8tig0sZ0Ds6R7TVBRRkxqjr1x3r42dmxEA+bBHode3tqv98LtLW+q1Oc+FgxJ1VHlda8Rl4H2JSdSDsa5kKEV29dq4O+3earl6dvxl+NLBKYWJSphaZh2Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=pRrGCkFq; arc=none smtp.client-ip=209.85.215.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
-Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-7ea68af2f62so3497367a12.3
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 10:51:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fastly.com; s=google; t=1730746273; x=1731351073; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sWJfwtCH7EJrpJfmQrqLh3OrqN5mIv7D0ga+Lf0aVEw=;
-        b=pRrGCkFqAdHpzg8NHknffTNpV2qViVALW5mBF4+6xzYj6yapNvbo8XsJMkp8F5R8Zr
-         3cnNpWu77qX+lElwFvfChOMITdq/tjtzWFqDk5jZGT8OhraXJ6ha2XeAfJLyX5TMMs0j
-         jAOtjK30OCmBaLD1BGsQOLvmss/C60dPMvfeQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730746273; x=1731351073;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=sWJfwtCH7EJrpJfmQrqLh3OrqN5mIv7D0ga+Lf0aVEw=;
-        b=FpKPjRL5bJuNBnB4ZWbN/QSCfVDnQJ+us7kAOJcnZucwYVP+9HCT7y4jiEav3+dVMB
-         YUnhG0yJ0YrSavXbaHK/R9e8frFzR56a9VI7HYLLcifd0Q+t+zKg9enA7MYGYmVS+kH8
-         UMBLSa8jNdssBtVN4OkMZA9Ky/gV3BZekLv8GVtYEHQ5NOtpJza7hK3sK8qyUYMLYoPM
-         jOa13ZC4tiI89yW60GkeOnxpizWIXRNe6vgkL67DL5b6trByTosTxj97zIBfyZGSLi+M
-         BGjRbLwvlmxk1gc+CQTT6ezd0isUq980QHrASxZPfb/WWz0mHEMcqLa00Ib8CHVIaD2H
-         u53g==
-X-Forwarded-Encrypted: i=1; AJvYcCVayb0gnbtZUkiW85YW+gozStWte35tWhvdaMWSLgEzs341NbwXX7NTskf0QTnZGH7+U+jf2pClIMgBaKk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YygEVtR4GUhOHV4CszQp70D/JCQRdCSY1tAjNG7WlfEZag+SPDq
-	QblXcDeh9DQuv3o9D0cgAJDreZ65msCeYBzIKhJofstYjiOMYiyT4B0ynceKIHI=
-X-Google-Smtp-Source: AGHT+IHWOygf8u1N20udthJq/ON31qkCTfTapdoM6eneR+DaWGQ7PM5fmjk8Rm84lqYDYvD8FX9TbA==
-X-Received: by 2002:a17:90b:3d87:b0:2e2:af6c:79b2 with SMTP id 98e67ed59e1d1-2e94c51c61bmr19532397a91.29.1730746273096;
-        Mon, 04 Nov 2024 10:51:13 -0800 (PST)
-Received: from LQ3V64L9R2 (c-24-6-151-244.hsd1.ca.comcast.net. [24.6.151.244])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e92fa0eda6sm10277879a91.4.2024.11.04.10.51.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Nov 2024 10:51:11 -0800 (PST)
-Date: Mon, 4 Nov 2024 10:51:08 -0800
-From: Joe Damato <jdamato@fastly.com>
-To: Jonathan Corbet <corbet@lwn.net>
-Cc: Bagas Sanjaya <bagasdotme@gmail.com>, netdev@vger.kernel.org,
-	hdanton@sina.com, pabeni@redhat.com, namangulati@google.com,
-	edumazet@google.com, amritha.nambiar@intel.com,
-	sridhar.samudrala@intel.com, sdf@fomichev.me, peter@typeblog.net,
-	m2shafiei@uwaterloo.ca, bjorn@rivosinc.com, hch@infradead.org,
-	willy@infradead.org, willemdebruijn.kernel@gmail.com,
-	skhawaja@google.com, kuba@kernel.org,
-	Martin Karsten <mkarsten@uwaterloo.ca>,
-	"David S. Miller" <davem@davemloft.net>,
-	Simon Horman <horms@kernel.org>,
-	Linux Documentation <linux-doc@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux BPF <bpf@vger.kernel.org>
-Subject: Re: [PATCH net-next v5 7/7] docs: networking: Describe irq suspension
-Message-ID: <ZykXnG8M7qXsQcYq@LQ3V64L9R2>
-Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Bagas Sanjaya <bagasdotme@gmail.com>, netdev@vger.kernel.org,
-	hdanton@sina.com, pabeni@redhat.com, namangulati@google.com,
-	edumazet@google.com, amritha.nambiar@intel.com,
-	sridhar.samudrala@intel.com, sdf@fomichev.me, peter@typeblog.net,
-	m2shafiei@uwaterloo.ca, bjorn@rivosinc.com, hch@infradead.org,
-	willy@infradead.org, willemdebruijn.kernel@gmail.com,
-	skhawaja@google.com, kuba@kernel.org,
-	Martin Karsten <mkarsten@uwaterloo.ca>,
-	"David S. Miller" <davem@davemloft.net>,
-	Simon Horman <horms@kernel.org>,
-	Linux Documentation <linux-doc@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux BPF <bpf@vger.kernel.org>
-References: <20241103052421.518856-1-jdamato@fastly.com>
- <20241103052421.518856-8-jdamato@fastly.com>
- <ZyinhIlMIrK58ABF@archie.me>
- <ZykRdK6WgfR_4p5X@LQ3V64L9R2>
- <87v7x296wq.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1730746524; c=relaxed/simple;
+	bh=sAVXfE+viSyvyyb4ZsPNYrVskuTdS5aiXCQOI2NGJf8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=irqZ+XVHBUhnx1XZBfs6F36XrgaXVH19ZijlDYnctzfQOfAqwWQZukay1U5SekrjZjm2bLSt5H+FL1e055u5KPdqpVBiYcUqJisLpkalCBSqDs3Vu1fKNMl5P5KUOEZD4dvCHLEmxTOjCaQjSHeEciFqi7Y15BgqTBNqmII6c4s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=D+91PJ0A; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A4Bj2UP027157;
+	Mon, 4 Nov 2024 18:55:15 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	EnzS8YCHDwGTykF7cqgVjEldgKDqxW3aidPt90wH09U=; b=D+91PJ0AwEv1Tw2P
+	EzvBll3qLGS+D6UmAcOQ4MjGRs/NRYKLxKqpywKd9+sU4hbSMp/qRpIltYy4FK4A
+	V2VehFRREqPKG7Hk7JzqGGLjzxC150xvCNGhY1d+PmHzz5bAN04syd/SZ2fxGWPd
+	kTPdPSu7fJRSTZN1+9M4/EF4MApN7uYe9LAj1Yvbmc4WVKXjFqszXN88giZ8Doi/
+	AcD1kDdsqfwxVsZ4I2zWlbNdIwP3pamSCPnJM+rV4RS8Ca/enNxiEqiBR2exATuD
+	i+RskwNWGEnu//DN/O3mwCg/2CpBtxGr0e6c+sE2Uh5AlFyWIyMrChXpqMB0JmGv
+	zJ0E4g==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42ncyxw630-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 04 Nov 2024 18:55:15 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4A4ItEYB030484
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 4 Nov 2024 18:55:14 GMT
+Received: from [10.216.7.198] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 4 Nov 2024
+ 10:55:09 -0800
+Message-ID: <b8054e94-1ea4-4d39-8050-2f3ddd0a8b3f@quicinc.com>
+Date: Tue, 5 Nov 2024 00:25:06 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87v7x296wq.fsf@trenco.lwn.net>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v2 1/5] dt-bindings: net: wireless: ath12k: describe
+ WSI properties for QCN9274
+To: Jeff Johnson <quic_jjohnson@quicinc.com>, <ath12k@lists.infradead.org>
+CC: <linux-wireless@vger.kernel.org>, Kalle Valo <kvalo@kernel.org>,
+        "Rob
+ Herring" <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        "Conor
+ Dooley" <conor+dt@kernel.org>,
+        Jeff Johnson <jjohnson@kernel.org>,
+        "Bjorn
+ Andersson" <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>
+References: <20241029173050.2188150-1-quic_rajkbhag@quicinc.com>
+ <20241029173050.2188150-2-quic_rajkbhag@quicinc.com>
+ <4d273cac-8955-4850-bd8a-0bad318c1e4f@quicinc.com>
+Content-Language: en-US
+From: Raj Kumar Bhagat <quic_rajkbhag@quicinc.com>
+In-Reply-To: <4d273cac-8955-4850-bd8a-0bad318c1e4f@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: kkVYawqLpV08D4dHjeKgglZUYSoOEZOB
+X-Proofpoint-GUID: kkVYawqLpV08D4dHjeKgglZUYSoOEZOB
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 suspectscore=0
+ malwarescore=0 bulkscore=0 impostorscore=0 priorityscore=1501
+ lowpriorityscore=0 mlxscore=0 phishscore=0 adultscore=0 mlxlogscore=999
+ clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411040155
 
-On Mon, Nov 04, 2024 at 11:43:17AM -0700, Jonathan Corbet wrote:
-> Joe Damato <jdamato@fastly.com> writes:
+On 10/31/2024 12:34 AM, Jeff Johnson wrote:
+> On 10/29/2024 10:30 AM, Raj Kumar Bhagat wrote:
+>> QCN9274 device has WSI support. WSI stands for WLAN Serial Interface.
+>> It is used for the exchange of specific control information across
+>> radios based on the doorbell mechanism. This WSI connection is
+>> essential to exchange control information among these devices
+>>
+>> Hence, describe WSI interface supported in QCN9274 with the following
+>> properties:
+>>
+>>  - qcom,wsi-group-id: It represents the identifier assigned to the WSI
+>>    connection. All the ath12k devices connected to same WSI connection
+>>    have the same wsi-group-id.
+>>
+>>  - qcom,wsi-master: Indicates if this device is the WSI master.
+>>
+>>  - ports: This is a graph ports schema that has two ports: TX (port@0)
+>>    and RX (port@1). This represents the actual WSI connection among
+>>    multiple devices.
+>>
+>> Also, describe the ath12k device property
+>> "qcom,ath12k-calibration-variant". This is a common property among
+>> ath12k devices.
+>>
+>> Signed-off-by: Raj Kumar Bhagat <quic_rajkbhag@quicinc.com>
+>> ---
+>>  .../bindings/net/wireless/qcom,ath12k.yaml    | 241 +++++++++++++++++-
+>>  1 file changed, 232 insertions(+), 9 deletions(-)
+>>
+>> diff --git a/Documentation/devicetree/bindings/net/wireless/qcom,ath12k.yaml b/Documentation/devicetree/bindings/net/wireless/qcom,ath12k.yaml
+>> index 1b5884015b15..42bcd73dd159 100644
+>> --- a/Documentation/devicetree/bindings/net/wireless/qcom,ath12k.yaml
+>> +++ b/Documentation/devicetree/bindings/net/wireless/qcom,ath12k.yaml
+>> @@ -1,5 +1,6 @@
+>>  # SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>>  # Copyright (c) 2024 Linaro Limited
+>> +# Copyright (c) 2024 Qualcomm Innovation Center, Inc. All rights reserved.
+>>  %YAML 1.2
+>>  ---
+>>  $id: http://devicetree.org/schemas/net/wireless/qcom,ath12k.yaml#
+>> @@ -18,10 +19,17 @@ properties:
+>>    compatible:
+>>      enum:
+>>        - pci17cb,1107  # WCN7850
+>> +      - pci17cb,1109  # QCN9274
+>>  
+>>    reg:
+>>      maxItems: 1
+>>  
+>> +  qcom,ath12k-calibration-variant:
+>> +    $ref: /schemas/types.yaml#/definitions/string
+>> +    description: |
+>> +      string to uniquely identify variant of the calibration data for designs
+>> +      with colliding bus and device ids
+>> +
+>>    vddaon-supply:
+>>      description: VDD_AON supply regulator handle
+>>  
+>> @@ -49,21 +57,100 @@ properties:
+>>    vddpcie1p8-supply:
+>>      description: VDD_PCIE_1P8 supply regulator handle
+>>  
+>> +  wsi:
+>> +    type: object
+>> +    description: |
+>> +      The ath12k devices (QCN9274) feature WSI support. WSI stands for
+>> +      WLAN Serial Interface. It is used for the exchange of specific
+>> +      control information across radios based on the doorbell mechanism.
+>> +      This WSI connection is essential to exchange control information
+>> +      among these devices.
+>> +
+>> +      Diagram to represent one WSI connection (one WSI group) among
+>> +      three devices.
+>> +
+>> +               +-------+        +-------+        +-------+
+>> +               | pcie2 |        | pcie3 |        | pcie1 |
+> is there a reason to not have these in some order?
 > 
-> > On Mon, Nov 04, 2024 at 05:52:52PM +0700, Bagas Sanjaya wrote:
-> >> On Sun, Nov 03, 2024 at 05:24:09AM +0000, Joe Damato wrote:
-> >> > +It is important to note that choosing a large value for ``gro_flush_timeout``
-> >> > +will defer IRQs to allow for better batch processing, but will induce latency
-> >> > +when the system is not fully loaded. Choosing a small value for
-> >> > +``gro_flush_timeout`` can cause interference of the user application which is
-> >> > +attempting to busy poll by device IRQs and softirq processing. This value
-> >> > +should be chosen carefully with these tradeoffs in mind. epoll-based busy
-> >> > +polling applications may be able to mitigate how much user processing happens
-> >> > +by choosing an appropriate value for ``maxevents``.
-> >> > +
-> >> > +Users may want to consider an alternate approach, IRQ suspension, to help deal
-> >>                                                                      to help dealing
-> >> > +with these tradeoffs.
-> >> > +
-> >
-> > Thanks for the careful review. I read this sentence a few times and
-> > perhaps my English grammar isn't great, but I think it should be
-> > one of:
-> >
-> > Users may want to consider an alternate approach, IRQ suspension, to
-> > help deal with these tradeoffs.  (the original)
+
+This could be made in same order. In next version will update.
+But in actual hardware the pcie and wsi connection may not be same order.
+
+>> +               |       |        |       |        |       |
+>> +        +----->|  wsi  |------->|  wsi  |------->|  wsi  |-----+
+>> +        |      | grp 0 |        | grp 0 |        | grp 2 |     |
+> s/grp 2/grp 0/???                                          ^ typo?
 > 
-> The original is just fine here.  Bagas, *please* do not bother our
-> contributors with this kind of stuff, it does not help.
 
-Thanks for the feedback. I had been preparing a v6 based on Bagas'
-comments below where you snipped about in the documentation, etc.
+Thanks for pointing out, this is a typo. will update in next version.
+>> +        |      +-------+        +-------+        +-------+     |
+>> +        +------------------------------------------------------+
+>> +
+>> +      Diagram to represent two WSI connections (two separate WSI groups)
+>> +      among four devices.
+>> +
+>> +           +-------+    +-------+          +-------+    +-------+
+>> +           | pcie2 |    | pcie3 |          | pcie1 |    | pcie0 |
+> again seems strange to not have any logical (to me) order
 
-Should I continue to prepare a v6? It would only contain
-documentation changes in this patch; I can't really tell if a v6 is
-necessary or not.
+Will keep this example diagram in pcie order in next version.
 
