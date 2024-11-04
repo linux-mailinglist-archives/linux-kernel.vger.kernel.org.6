@@ -1,45 +1,52 @@
-Return-Path: <linux-kernel+bounces-394127-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394129-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44D629BAAD6
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 03:33:53 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76BD29BAAE3
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 03:36:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6269B1C209B9
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 02:33:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9AC501C20A24
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 02:36:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45EA554723;
-	Mon,  4 Nov 2024 02:33:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D79C414375A;
+	Mon,  4 Nov 2024 02:36:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="nF3ibdzt"
-Received: from out30-118.freemail.mail.aliyun.com (out30-118.freemail.mail.aliyun.com [115.124.30.118])
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="I0gkvfMV"
+Received: from smtpbgjp3.qq.com (smtpbgjp3.qq.com [54.92.39.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82BA323A0;
-	Mon,  4 Nov 2024 02:33:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.118
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 981224C6C
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 02:36:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.92.39.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730687625; cv=none; b=EfzrjCkwFw5pEyrvCnJOMaxaVwpZIXj+3oo2Adk9+nHUI4D7tTpL6UEP87tUk29AmltX8KDUPn08PCaREQbgCRzT0Roi5/549+AcedxsYTga/19SCHcVa8kBoZ1JU/2QrkKplQPegVKjgCbLFyP2eBjv0N82Ie6v4Vba9TqaAt0=
+	t=1730687808; cv=none; b=ugwdkL9Hi/MpK6AuTyeWwuFIHOjjtqG4h/JIJrF6k9somf2zybs8kw8NDDZ4vatTOL9f7gymHFZqy+c0CKuQEEBK4Qxs53TMuFKZFtBRR4+6vgJ1lm1IYePEMz2f9qwtnTPFiEQscuAP3pjnwlnkxQWgJRWz0xiL5rpVSwgAMXI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730687625; c=relaxed/simple;
-	bh=G/oRmBDJcCJLwa+QL1ScenWu4cHaDUeRUWfC5Lm+XI0=;
+	s=arc-20240116; t=1730687808; c=relaxed/simple;
+	bh=LBnwjIu01qb3uMzu5oQLZ1sXef4WJoJ8ZJ5HXkRpTng=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BL3jBG5KYwho2M5y2FcXgP143jWnEfDGlWtXEhp0oM9+r2o7mX5A4Wanlm417yJfF3BB93bWrhYUnNBNSJSfdpZkhyi3VXC1b4vfKdYe/8Kxd4YPlrP1SzTP4WdhM7kAssvCGxhpU0+kHx9hFIFgTVo4jE3lwBnXuMpnpik1g8k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=nF3ibdzt; arc=none smtp.client-ip=115.124.30.118
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1730687614; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=v1/peVX+FsyEZ3e/HuCFZ4YVCmzU5pF7SqzFiNM/ok0=;
-	b=nF3ibdzt8SMIifbblHV5nAEq1IPJGB0e3080baIMIKgofLaEDiXfz9FvbU1GEVVgBOVqPqZBq+zPzpT7RPSPPDF4zo+kzpgHPpwHedzaGGBm0i41ddD4CPZa28CL94YXlobDBzH4e4hq3EYUNYnkt3RjVgXAXs51BHVQIUwz6To=
-Received: from 30.74.144.113(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WIZh3ES_1730687612 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Mon, 04 Nov 2024 10:33:33 +0800
-Message-ID: <ea5546e6-1c80-45fd-b58e-6739a5a6f357@linux.alibaba.com>
-Date: Mon, 4 Nov 2024 10:33:32 +0800
+	 In-Reply-To:Content-Type; b=SzBUVT0f0nfRSyKmD7eetn5SI2A1yP9gUjCVWiSA/XgxaozNEm9iLgUu3d0U62T5WxVbtehf5lwd56bmjR6Xl+ahjCAymVbpFWCSX/Iq0JQP/WiJv7Fzac4MrkvxEbSNbflNuKFDlsXlm4jD82nlEfpgFCJTdOe4FbLZ9n2uFsU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=I0gkvfMV; arc=none smtp.client-ip=54.92.39.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
+	s=onoh2408; t=1730687664;
+	bh=LBnwjIu01qb3uMzu5oQLZ1sXef4WJoJ8ZJ5HXkRpTng=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=I0gkvfMVE/MguKNe6G+/LMNLVFqz7dkh0IDG0vDntK4CNMqCoz50Tqhzb3M0pX6yE
+	 GsMB3HypNccbL/ypubSF6JPJFS7ckgk4c83b82I4kXeEhlwYuJQ9JJSgbhKj4ZgSzt
+	 6AVc0wlL51Wy3m4xPQdNrps/E4wW0CWhuFCKwvFc=
+X-QQ-mid: bizesmtp90t1730687661tfnba8nb
+X-QQ-Originating-IP: zCt886bJnOZxcI98vSCU01cM2iwZOisAeH5BvJ3W5y4=
+Received: from [10.20.6.66] ( [61.183.83.60])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Mon, 04 Nov 2024 10:34:18 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 13360692648225194716
+Message-ID: <E7AED86A89FD886F+263304da-0529-4b4c-9e23-ea2e5e3cef2c@uniontech.com>
+Date: Mon, 4 Nov 2024 10:34:18 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -47,181 +54,149 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 4/5] mm: shmem: override mTHP shmem default with a
- kernel parameter
-To: =?UTF-8?Q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>,
- Jonathan Corbet <corbet@lwn.net>, Andrew Morton <akpm@linux-foundation.org>,
- Hugh Dickins <hughd@google.com>, Barry Song <baohua@kernel.org>,
- David Hildenbrand <david@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
- Lance Yang <ioworker0@gmail.com>
-Cc: linux-mm@kvack.org, dri-devel@lists.freedesktop.org,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- kernel-dev@igalia.com
-References: <20241101165719.1074234-2-mcanal@igalia.com>
- <20241101165719.1074234-6-mcanal@igalia.com>
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-In-Reply-To: <20241101165719.1074234-6-mcanal@igalia.com>
+Subject: Re: [PATCH v2 06/18] loongarch/crc32: expose CRC32 functions through
+ lib
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: ardb@kernel.org, linux-arch@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org,
+ linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org,
+ linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
+ linux-scsi@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+ loongarch@lists.linux.dev, kernel@xen0n.name, chenhuacai@kernel.org,
+ xry111@xry111.site, sparclinux@vger.kernel.org, x86@kernel.org
+References: <20241025191454.72616-7-ebiggers@kernel.org>
+ <DA8BCDFFEACDA1C6+20241103133655.217375-1-wangyuli@uniontech.com>
+ <20241103135730.GA813@quark.localdomain>
+Content-Language: en-US
+From: WangYuli <wangyuli@uniontech.com>
+Autocrypt: addr=wangyuli@uniontech.com; keydata=
+ xjMEZoEsiBYJKwYBBAHaRw8BAQdAyDPzcbPnchbIhweThfNK1tg1imM+5kgDBJSKP+nX39DN
+ IVdhbmdZdWxpIDx3YW5neXVsaUB1bmlvbnRlY2guY29tPsKJBBMWCAAxFiEEa1GMzYeuKPkg
+ qDuvxdofMEb0C+4FAmaBLIgCGwMECwkIBwUVCAkKCwUWAgMBAAAKCRDF2h8wRvQL7g0UAQCH
+ 3mrGM0HzOaARhBeA/Q3AIVfhS010a0MZmPTRGVfPbwD/SrncJwwPAL4GiLPEC4XssV6FPUAY
+ 0rA68eNNI9cJLArOOARmgSyJEgorBgEEAZdVAQUBAQdA88W4CTLDD9fKwW9PB5yurCNdWNS7
+ VTL0dvPDofBTjFYDAQgHwngEGBYIACAWIQRrUYzNh64o+SCoO6/F2h8wRvQL7gUCZoEsiQIb
+ DAAKCRDF2h8wRvQL7sKvAP4mBvm7Zn1OUjFViwkma8IGRGosXAvMUFyOHVcl1RTgFQEAuJkU
+ o9ERi7qS/hbUdUgtitI89efbY0TVetgDsyeQiwU=
+In-Reply-To: <20241103135730.GA813@quark.localdomain>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="------------yPwlqMleUVPPs6iT7orBXJ4O"
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtp:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: MxHu/stL3hVPTyQKEN1I9xOGN+BWMXbxaMOS0j7W+ohxt+jGBkhBGwZ4
+	mKISKoLBEd9DlDyAzvD8Xb+Ak/ELvHSM++rLK6y5TzF3Hf/17WFfm4pm9/k9mLloUcGW+NL
+	8qZ+6cZzrdyjqSgcP1Xp/i5pEffVubQ2dMkyTuu3UHXF84Ui38G5dAI/uAmL5APJ4umWUjs
+	JAlTTcK/ZnDz/dXBv4ZI87pL43bv608+HDpuFePggpjxgGa1kVYzobU5eUZ6LO/uv2RowEK
+	uhKq8QAeAPI+IMf1b6aLSu6P/Fs/km10//7pfxHG6dA+7Km3UUBoxHlM6u2nyaXKFibw80s
+	t4nTGxp0efQ3Pfm9Sz2/C3rkybvwsRFVPfwxyAn/VgcfSodJAMgcZKgqSNpASPGkZXP4lL/
+	k3H1h1FOKBoqUmyu7jUmymrjsrywBPtV49f5MFmBnQwrkwKQHK2oaFRwHbmLcnsoIOHE8Z/
+	deJsmZLHkJlnAaYVaPf54mh8UQNn52S4MGXd5Yk5vLu5eU3kZqeA32eOGldP7Mb0CmmSAS6
+	gtMsyTXIALbDLKcwPkPsXrS6tqgYJTgEau2ZzAxsNWrQjl0sRSIrHUxJSdhmubmgeXccIdZ
+	r1vHGhdkaGTJkGJqM22umnfJNPXVtOLMQ6X5hKtTi5BYe9LhRtqHfXvmVj4p1Vl5eT9hXi2
+	3DIJkAQUebz9E3jx1FLgXjJMHocjcNcEVdhImvslnERXJE1DLgArhO3UEsYiCJtmJYfPDD2
+	aS/b2i0B2kduRaSa48Cb0Of/cdn84PSGqXDObVcHjWZSBNvZ2dpru68Uwhr99TVEG4IGgF1
+	9eOXjq5Z4MrGfy6pZlOmaz4wPAryxd9VvG7ei7E5Aki854L1tCLeSXuBZ3DcVwlhBgs7ZE8
+	TEjRNHBoYPk7hwnmmTNksvuvkSlftSKfeFFGhvbMd9a4Kj8wnwhazWqvsD5X+cHxHbX2zIA
+	QuFp0GZUngV4M0SsIHIumND1dfxBkdyInuyK4vGBQSxCdodYauHuTByUkblV8feBGpEUYBV
+	78cet9pPs1EBpoInNb8RBGGAIOcBBODfCC27xPiQ==
+X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
+X-QQ-RECHKSPAM: 0
+
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--------------yPwlqMleUVPPs6iT7orBXJ4O
+Content-Type: multipart/mixed; boundary="------------cIiC60yt0DtrRFabfn26CCc3";
+ protected-headers="v1"
+From: WangYuli <wangyuli@uniontech.com>
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: ardb@kernel.org, linux-arch@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org,
+ linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org,
+ linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
+ linux-scsi@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+ loongarch@lists.linux.dev, kernel@xen0n.name, chenhuacai@kernel.org,
+ xry111@xry111.site, sparclinux@vger.kernel.org, x86@kernel.org
+Message-ID: <263304da-0529-4b4c-9e23-ea2e5e3cef2c@uniontech.com>
+Subject: Re: [PATCH v2 06/18] loongarch/crc32: expose CRC32 functions through
+ lib
+References: <20241025191454.72616-7-ebiggers@kernel.org>
+ <DA8BCDFFEACDA1C6+20241103133655.217375-1-wangyuli@uniontech.com>
+ <20241103135730.GA813@quark.localdomain>
+In-Reply-To: <20241103135730.GA813@quark.localdomain>
+
+--------------cIiC60yt0DtrRFabfn26CCc3
+Content-Type: multipart/mixed; boundary="------------YiihG54060SCpWIarDHBVU6V"
+
+--------------YiihG54060SCpWIarDHBVU6V
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: base64
 
+DQpPbiAyMDI0LzExLzMgMjE6NTcsIEVyaWMgQmlnZ2VycyB3cm90ZToNCj4gT24gU3VuLCBO
+b3YgMDMsIDIwMjQgYXQgMDk6MzY6NTVQTSArMDgwMCwgV2FuZ1l1bGkgd3JvdGU6DQo+PiBF
+dmVuIHRob3VnaCB0aGUgbmFycm93ZXIgQ1JDIGluc3RydWN0aW9ucyBkb2Vzbid0IHJlcXVp
+cmUgR1JMRU49NjQsIHRoZXkgc3RpbGwgKmFyZW4ndCogcGFydCBvZiBMQTMyIChMb29uZ0Fy
+Y2ggcmVmZXJlbmNlIG1hbnVhbCB2MS4xMCwgVm9sdW1lIDEsIFRhYmxlIDItMSkuDQo+PiBM
+aW5rOiBodHRwczovL2xvcmUua2VybmVsLm9yZy9hbGwvMGE3ZDBhOWUtYzU2ZS00ZWUyLWE4
+M2ItMDAxNjRhNDUwYWJlQHhlbjBuLm5hbWUvDQo+Pg0KPj4gVGhlcmVmb3JlLCB3ZSBjb3Vs
+ZCBub3QgZGlyZWN0bHkgYWRkIEFSQ0hfSEFTX0NSQzMyIHRvIGNvbmZpZyBMT09OR0FSQ0gu
+DQo+Pg0KPiBUaGVyZSdzIHN0aWxsIGEgcnVudGltZSBDUFUgZmVhdHVyZSBjaGVjayBvZiBj
+cHVfaGFzKENQVV9GRUFUVVJFX0NSQzMyKS4NCj4gU2VlIGFyY2gvbG9vbmdhcmNoL2xpYi9j
+cmMzMi1sb29uZ2FyY2guYy4gIFNvIGl0J3MgdGhlIHNhbWUgYXMgYmVmb3JlLg0KPiBBUkNI
+X0hBU19DUkMzMiBqdXN0IG1lYW5zIHRoYXQgdGhlIGZpbGUgd2lsbCBiZSBjb21waWxlZC4N
+Cj4NCj4gSWYgeW91J3JlIHRyeWluZyB0byBzYXkgdGhhdCB5b3UgdGhpbmsgdGhpcyBmaWxl
+IHNob3VsZCBiZSBidWlsdCBvbmx5IHdoZW4NCj4gQ09ORklHXzY0QklUPXksIHRoZW4gdGhh
+dCB3b3VsZCBiZSBhbiBleGlzdGluZyBidWcgc2luY2UgdGhlIGV4aXN0aW5nIGZpbGUNCj4g
+YXJjaC9sb29uZ2FyY2gvY3J5cHRvL2NyYzMyLWxvb25nYXJjaC5jIHdhcyBidWlsdCBmb3Ig
+Ym90aCAzMi1iaXQgYW5kIDY0LWJpdC4NCj4gQnV0IGlmIHlvdSB0aGluayB0aGlzIGlzIGEg
+YnVnLCBJIGNhbiBmaXggdGhpcyB0b28uDQo+DQo+IC0gRXJpYw0KPg0KDQpBY3R1YWxseSwg
+bXkgb3JpZ2luYWxseSBtZWFuIGlzIHRoYXQgZGlyZWN0bHkgZGVjbGFyaW5nIExvb25nQXJj
+aCANCkFSQ0hfSEFTX0NSQzMyIHdpdGhvdXQgZGlzdGluZ3Vpc2hpbmcgYmV0d2VlbiAzMi1i
+aXQgYW5kIDY0LWJpdCBtaWdodCANCm1pc2xlYWQgdGhvc2UgcmVhZGluZyB0aGUgY29kZS4g
+QW5kIGl0J3Mgbm90IHJpZ29yb3VzLg0KSG93ZXZlciwgYWNjb3JkaW5nIHRvIEh1YWNhaSBD
+aGVuJ3MgcmVjZW50IHJlcGx5LCB0aGVyZSBhcmUgbWFueSBzaW1pbGFyIA0KaXNzdWVzIGFu
+ZCB0aGV5IHdvbid0IGNhdXNlIGJ1aWxkIGVycm9ycyBmb3Igbm93Lg0KTGluazogDQpodHRw
+czovL2xvcmUua2VybmVsLm9yZy9hbGwvQ0FBaFYtSDVLYVhCci1UZHBEYkp3Y3JfTDBfbWJT
+dz00SjMwdXdRMnhuMllEcz1IZzJRQG1haWwuZ21haWwuY29tLw0KU28sIHRoaXMgY2hhbmdl
+IHNob3VsZCBiZSBmaW5lIGZvciBub3cuDQoNClJldmlld2VkLWJ5OiBXYW5nWXVsaSA8d2Fu
+Z3l1bGlAdW5pb250ZWNoLmNvbT4NCg0KVGhhbmtzLA0KLS0gDQpXYW5nWXVsaQ0K
+--------------YiihG54060SCpWIarDHBVU6V
+Content-Type: application/pgp-keys; name="OpenPGP_0xC5DA1F3046F40BEE.asc"
+Content-Disposition: attachment; filename="OpenPGP_0xC5DA1F3046F40BEE.asc"
+Content-Description: OpenPGP public key
+Content-Transfer-Encoding: quoted-printable
 
+-----BEGIN PGP PUBLIC KEY BLOCK-----
 
-On 2024/11/2 00:54, Maíra Canal wrote:
-> Add the ``thp_shmem=`` kernel command line to allow specifying the
-> default policy of each supported shmem hugepage size. The kernel parameter
-> accepts the following format:
-> 
-> thp_shmem=<size>[KMG],<size>[KMG]:<policy>;<size>[KMG]-<size>[KMG]:<policy>
-> 
-> For example,
-> 
-> thp_shmem=16K-64K:always;128K,512K:inherit;256K:advise;1M-2M:never;4M-8M:within_size
-> 
-> Some GPUs may benefit from using huge pages. Since DRM GEM uses shmem
-> to allocate anonymous pageable memory, it’s essential to control the huge
-> page allocation policy for the internal shmem mount. This control can be
-> achieved through the ``transparent_hugepage_shmem=`` parameter.
-> 
-> Beyond just setting the allocation policy, it’s crucial to have granular
-> control over the size of huge pages that can be allocated. The GPU may
-> support only specific huge page sizes, and allocating pages larger/smaller
-> than those sizes would be ineffective.
-> 
-> Signed-off-by: Maíra Canal <mcanal@igalia.com>
-> ---
->   .../admin-guide/kernel-parameters.txt         |  10 ++
->   Documentation/admin-guide/mm/transhuge.rst    |  17 +++
->   mm/shmem.c                                    | 105 +++++++++++++++++-
->   3 files changed, 131 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-> index acabb04d0dd4..b48d744d99b0 100644
-> --- a/Documentation/admin-guide/kernel-parameters.txt
-> +++ b/Documentation/admin-guide/kernel-parameters.txt
-> @@ -6700,6 +6700,16 @@
->   			Force threading of all interrupt handlers except those
->   			marked explicitly IRQF_NO_THREAD.
->   
-> +	thp_shmem=	[KNL]
-> +			Format: <size>[KMG],<size>[KMG]:<policy>;<size>[KMG]-<size>[KMG]:<policy>
-> +			Control the default policy of each hugepage size for the
-> +			internal shmem mount. <policy> is one of policies available
-> +			for the shmem mount ("always", "inherit", "never", "within_size",
-> +			and "advise").
-> +			It can be used multiple times for multiple shmem THP sizes.
-> +			See Documentation/admin-guide/mm/transhuge.rst for more
-> +			details.
-> +
->   	topology=	[S390,EARLY]
->   			Format: {off | on}
->   			Specify if the kernel should make use of the cpu
-> diff --git a/Documentation/admin-guide/mm/transhuge.rst b/Documentation/admin-guide/mm/transhuge.rst
-> index 9c6f6da612c4..5034915f4e8e 100644
-> --- a/Documentation/admin-guide/mm/transhuge.rst
-> +++ b/Documentation/admin-guide/mm/transhuge.rst
-> @@ -332,6 +332,23 @@ allocation policy for the internal shmem mount by using the kernel parameter
->   seven valid policies for shmem (``always``, ``within_size``, ``advise``,
->   ``never``, ``deny``, and ``force``).
->   
-> +In the same manner as ``thp_anon`` controls each supported anonymous THP
-> +size, ``thp_shmem`` controls each supported shmem THP size. ``thp_shmem``
-> +has the same format as ``thp_anon``, but also supports the policy
-> +``within_size``.
-> +
-> +``thp_shmem=`` may be specified multiple times to configure all THP sizes
-> +as required. If ``thp_shmem=`` is specified at least once, any shmem THP
-> +sizes not explicitly configured on the command line are implicitly set to
-> +``never``.
-> +
-> +``transparent_hugepage_shmem`` setting only affects the global toggle. If
-> +``thp_shmem`` is not specified, PMD_ORDER hugepage will default to
-> +``inherit``. However, if a valid ``thp_shmem`` setting is provided by the
-> +user, the PMD_ORDER hugepage policy will be overridden. If the policy for
-> +PMD_ORDER is not defined within a valid ``thp_shmem``, its policy will
-> +default to ``never``.
-> +
->   Hugepages in tmpfs/shmem
->   ========================
->   
-> diff --git a/mm/shmem.c b/mm/shmem.c
-> index dfcc88ec6e34..d2bf98aece40 100644
-> --- a/mm/shmem.c
-> +++ b/mm/shmem.c
-> @@ -136,6 +136,7 @@ static unsigned long huge_shmem_orders_always __read_mostly;
->   static unsigned long huge_shmem_orders_madvise __read_mostly;
->   static unsigned long huge_shmem_orders_inherit __read_mostly;
->   static unsigned long huge_shmem_orders_within_size __read_mostly;
-> +static bool shmem_orders_configured __initdata;
->   #endif
->   
->   #ifdef CONFIG_TMPFS
-> @@ -5027,7 +5028,8 @@ void __init shmem_init(void)
->   	 * Default to setting PMD-sized THP to inherit the global setting and
->   	 * disable all other multi-size THPs.
->   	 */
-> -	huge_shmem_orders_inherit = BIT(HPAGE_PMD_ORDER);
-> +	if (!shmem_orders_configured)
-> +		huge_shmem_orders_inherit = BIT(HPAGE_PMD_ORDER);
->   #endif
->   	return;
->   
-> @@ -5195,6 +5197,107 @@ static int __init setup_transparent_hugepage_shmem(char *str)
->   }
->   __setup("transparent_hugepage_shmem=", setup_transparent_hugepage_shmem);
->   
-> +static char str_dup[PAGE_SIZE] __initdata;
-> +static int __init setup_thp_shmem(char *str)
-> +{
-> +	char *token, *range, *policy, *subtoken;
-> +	unsigned long always, inherit, madvise, within_size;
-> +	char *start_size, *end_size;
-> +	int start, end, nr;
-> +	char *p;
-> +
-> +	if (!str || strlen(str) + 1 > PAGE_SIZE)
-> +		goto err;
-> +	strscpy(str_dup, str);
-> +
-> +	always = huge_shmem_orders_always;
-> +	inherit = huge_shmem_orders_inherit;
-> +	madvise = huge_shmem_orders_madvise;
-> +	within_size = huge_shmem_orders_within_size;
-> +	p = str_dup;
-> +	while ((token = strsep(&p, ";")) != NULL) {
-> +		range = strsep(&token, ":");
-> +		policy = token;
-> +
-> +		if (!policy)
-> +			goto err;
-> +
-> +		while ((subtoken = strsep(&range, ",")) != NULL) {
-> +			if (strchr(subtoken, '-')) {
-> +				start_size = strsep(&subtoken, "-");
-> +				end_size = subtoken;
-> +
-> +				start = get_order_from_str(start_size,
-> +							   THP_ORDERS_ALL_FILE_DEFAULT);
-> +				end = get_order_from_str(end_size,
-> +							 THP_ORDERS_ALL_FILE_DEFAULT);
-> +			} else {
-> +				start_size = end_size = subtoken;
-> +				start = end = get_order_from_str(subtoken,
-> +								 THP_ORDERS_ALL_FILE_DEFAULT);
-> +			}
-> +
-> +			if (start == -EINVAL) {
-> +				pr_err("invalid size %s in thp_shmem boot parameter\n",
-> +				       start_size);
-> +				goto err;
-> +			}
-> +
-> +			if (end == -EINVAL) {
-> +				pr_err("invalid size %s in thp_shmem boot parameter\n",
-> +				       end_size);
-> +				goto err;
-> +			}
+xjMEZoEsiBYJKwYBBAHaRw8BAQdAyDPzcbPnchbIhweThfNK1tg1imM+5kgDBJSK
+P+nX39DNIVdhbmdZdWxpIDx3YW5neXVsaUB1bmlvbnRlY2guY29tPsKJBBMWCAAx
+FiEEa1GMzYeuKPkgqDuvxdofMEb0C+4FAmaBLIgCGwMECwkIBwUVCAkKCwUWAgMB
+AAAKCRDF2h8wRvQL7g0UAQCH3mrGM0HzOaARhBeA/Q3AIVfhS010a0MZmPTRGVfP
+bwD/SrncJwwPAL4GiLPEC4XssV6FPUAY0rA68eNNI9cJLArOOARmgSyJEgorBgEE
+AZdVAQUBAQdA88W4CTLDD9fKwW9PB5yurCNdWNS7VTL0dvPDofBTjFYDAQgHwngE
+GBYIACAWIQRrUYzNh64o+SCoO6/F2h8wRvQL7gUCZoEsiQIbDAAKCRDF2h8wRvQL
+7sKvAP4mBvm7Zn1OUjFViwkma8IGRGosXAvMUFyOHVcl1RTgFQEAuJkUo9ERi7qS
+/hbUdUgtitI89efbY0TVetgDsyeQiwU=3D
+=3DBlkq
+-----END PGP PUBLIC KEY BLOCK-----
 
-I have the same feeling that these are redundant checks. Otherwise look 
-good to me.
-Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+--------------YiihG54060SCpWIarDHBVU6V--
+
+--------------cIiC60yt0DtrRFabfn26CCc3--
+
+--------------yPwlqMleUVPPs6iT7orBXJ4O
+Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="OpenPGP_signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+wnsEABYIACMWIQRrUYzNh64o+SCoO6/F2h8wRvQL7gUCZygyqgUDAAAAAAAKCRDF2h8wRvQL7u9/
+AQCzme1hyYUbPe1s4tK4FtfJbQ1qS/eQ5ZNWEjUnEivrLwEA0UMghFUFO/92QNK3/a3a7O8QrCGS
+Ov5jILXFpAVfTgw=
+=fG9N
+-----END PGP SIGNATURE-----
+
+--------------yPwlqMleUVPPs6iT7orBXJ4O--
 
