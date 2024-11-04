@@ -1,165 +1,161 @@
-Return-Path: <linux-kernel+bounces-394322-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-394321-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F8779BAD62
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 08:45:09 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F1889BAD5F
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 08:44:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 643111C20DF2
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 07:45:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 03EE7280FED
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 07:44:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8391719DFB4;
-	Mon,  4 Nov 2024 07:45:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19B9519DF53;
+	Mon,  4 Nov 2024 07:44:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="lmHbUCcj"
-Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="IuFEQVEg"
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6533818C91D;
-	Mon,  4 Nov 2024 07:44:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B94E719993E
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Nov 2024 07:44:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730706300; cv=none; b=FADVhJ8shT2xRV/QQ72Amc7dOi74HCrNosDy0VbXO1hdPYUPLOugvJ7BWjSs4dSHTEJRsb6xoF8EmZyi3aSdT2qvXSJgGoaAFPgOt0/di3VBZ4zjSuoCYGU7fEMNZ4bvvAzaa7gcIbTjX6xIznAxUxqcofn5JiUjGXNIDq0E8Zo=
+	t=1730706277; cv=none; b=K8xR+7/ozT97SgLWZM+rq98rSSjx1eIrFBtYqj/eL5tCob2BXqKwr8s9axHz2EYFVwcqzHzllNdIyUpkkA9yBL+dYXvmW/VxbCd8jr9lzXntET0Ntgy/g6nTcBUCaQMIvuAO3E+xpZcS0lpS+qOzy1tDmsjp5cVCFvdCtVbZWqI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730706300; c=relaxed/simple;
-	bh=sXlF1I6gJMnXOR2kcQblYeKBKy9K5X1HlVpDHibIC8w=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=fkZPQEnN2YWffa8cc6N0ng2ct4LUIfJfhjTviQt1Gi1EMZJgEkxr1zaMlGEd4ii9t/mfVv4L9GNVs+q3Kn3E+/i/pmO1H/QnulPl03Zryp2hYdOLHAJiPb2ZjFi/bNE5KmkkyxGGN9AR7vD/7OIRZaCNHdvDrHwuiTD2IKZX7yA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=lmHbUCcj; arc=none smtp.client-ip=198.47.19.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4A47iPJM075574;
-	Mon, 4 Nov 2024 01:44:25 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1730706265;
-	bh=RBpswuLRxOZxNXlnIrevuU+zJUadRtGK4fTa3G3D7Cs=;
-	h=From:To:CC:Subject:Date;
-	b=lmHbUCcjSgY9hRjxgEpM8GRznC74D1elqB7AoasARInL54BaRHmUY4sGSOZSQwPe/
-	 1bNijh5yvg+YXTmJVH0Zuokrs3Q09Oxp2tzYVhWpPt+ZsJYM8cGesb/0cQ+vUXhYXS
-	 mfLCxPDjDHfA9o9PQVTZ8wJb39n/RcBWDGQmbvF8=
-Received: from DLEE113.ent.ti.com (dlee113.ent.ti.com [157.170.170.24])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4A47iPqx117294
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Mon, 4 Nov 2024 01:44:25 -0600
-Received: from DLEE105.ent.ti.com (157.170.170.35) by DLEE113.ent.ti.com
- (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 4
- Nov 2024 01:44:25 -0600
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE105.ent.ti.com
- (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Mon, 4 Nov 2024 01:44:25 -0600
-Received: from uda0492258.dhcp.ti.com (uda0492258.dhcp.ti.com [10.24.72.81])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4A47iKNV076611;
-	Mon, 4 Nov 2024 01:44:21 -0600
-From: Siddharth Vadapalli <s-vadapalli@ti.com>
-To: <bhelgaas@google.com>, <lpieralisi@kernel.org>, <kw@linux.com>,
-        <robh@kernel.org>, <vigneshr@ti.com>,
-        <manivannan.sadhasivam@linaro.org>, <kishon@kernel.org>,
-        <thomas.richard@bootlin.com>
-CC: <linux-omap@vger.kernel.org>, <linux-pci@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <srk@ti.com>, <s-vadapalli@ti.com>
-Subject: [PATCH v2] PCI: j721e: Deassert PERST# after a delay of PCIE_T_PVPERL_MS ms
-Date: Mon, 4 Nov 2024 13:14:20 +0530
-Message-ID: <20241104074420.1862932-1-s-vadapalli@ti.com>
-X-Mailer: git-send-email 2.40.1
+	s=arc-20240116; t=1730706277; c=relaxed/simple;
+	bh=3KHj8uEqJirMKpCWT5YbQY/pJhcJbQL7gGQaWllcVwg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=uYRpKG2zfNhoeIXseCixH5pYNmPbwEB0ID6nrbojv2WOfJDFb4Mgw8/1wG393RnRTdjmVteVE5WmwcCrwewz/ifmeQFRyVnwerR3BjIBi6RqeLUlRgnWi0JmRnbvLJxxxYuLPZgb8PI/aLk416UPKILWGr5LO34xGunnr7Bd+zE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=IuFEQVEg; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a9a4031f69fso617286266b.0
+        for <linux-kernel@vger.kernel.org>; Sun, 03 Nov 2024 23:44:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google; t=1730706273; x=1731311073; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=C1UzoUW+225YzvqE1f3m2N8UQrWxc0odLIz4t11IfNg=;
+        b=IuFEQVEgTUtMCdc/caf7utELN3o6xuugv9D9LoqelYYb7SdbItupOH4Z2+9XThBimF
+         ejTD6DIELWIzmRJK9+Eg46TaMzYiTZCg5XeteyTTzWZK6pRI/3pTlELFkOmdnzicorOZ
+         ROIxpXSRVDL3SxKF72mtNWhW3ukMFvASJ4gfugZEMVNdOya+kKf/H+rWforoH7NgJXWI
+         c1zErMGoiXPyhYFu38AGjWT6NicIZpTQcADnoUUCgmL6xHhRbUOnqKx4aH6LLOn+AnW8
+         LMyFZGkLidj5M10yFCXf29qzyLkqHbwPrMsqCOG+8lfnFmRVxpNUbbAIsFm/S5gBW4Mn
+         TF6w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730706273; x=1731311073;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=C1UzoUW+225YzvqE1f3m2N8UQrWxc0odLIz4t11IfNg=;
+        b=XdmpTZbsFo9PdSeE1j+Sq0E2UUD7Nk5Cp0+smWpGxShNmNWkdD1wZjA2OYMw11hlmV
+         VqioA74tp0ilw+pVDl91d4difYIMMKc+xqwj5a1rOnSdFWzbWPC6QDwMvBc5BZ9FekbL
+         y10w44NQ3OBdBIaeH82OGC2P7rGzOFCyxRfKud1xv7qAmoofeHaTex672Ge69KU7byTJ
+         3KIfh70WyA7ljmU+uzEyUseE3mQ6EVMkipod4nL6p6RjluGR0BRVJ7FEy5TenfHx7fqg
+         Oi8PRLzg7DUxqgo1GL2NHQwTkhcY6xUI66zaNcxKHDh74vMO+ag6PKBX2uR51Nl7Rk5W
+         i+yw==
+X-Forwarded-Encrypted: i=1; AJvYcCXPXiPvg7vAQSPBU2oYnJvOL9XbqeY54YXEdTotnWdXl8QR1KWkMeRF4EkcOnxvcBV1gvqWDFJve1u6IAQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy6RsUxmBo64LivLq1evK3BqPCRsrh6hs+lUz2yKqW6kf8KJeIE
+	I3F1Uve60Fj1xpimMXIXKR5hobwY6wKRJtSi2uyr0JoUdLrCI+odbaWAHfxOVwCB8m06BHl5IIX
+	HznHaCaU/lBGf+8PGFwB/DKKaKd4ZWsvOvYh5NQ==
+X-Google-Smtp-Source: AGHT+IEksnR3vuhAnQrwH3mab69+1/DkM6JOYCLAfgomVfAxSyJ+/4yRefXDNLq7hexWVnxdTSNFTCh1cLhgy0PD5yI=
+X-Received: by 2002:a17:907:7245:b0:a99:f8e2:edec with SMTP id
+ a640c23a62f3a-a9de5d6f21cmr3120143866b.21.1730706273092; Sun, 03 Nov 2024
+ 23:44:33 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+References: <20240927-dev-maxh-svukte-rebase-2-v2-0-9afe57c33aee@sifive.com>
+ <20240927-dev-maxh-svukte-rebase-2-v2-3-9afe57c33aee@sifive.com> <CAAhSdy0ncLTAjEE1s-GWL95sscxwQFsKn1rXyA1_VVfk1bQBiw@mail.gmail.com>
+In-Reply-To: <CAAhSdy0ncLTAjEE1s-GWL95sscxwQFsKn1rXyA1_VVfk1bQBiw@mail.gmail.com>
+From: Max Hsu <max.hsu@sifive.com>
+Date: Mon, 4 Nov 2024 15:44:21 +0800
+Message-ID: <CAHibDywpKUE7r4UfcudDSBZCM=JAC5s40uf+PwQE+oMvZy4aVA@mail.gmail.com>
+Subject: Re: [PATCH RFC v2 3/3] riscv: KVM: Add Svukte extension support for Guest/VM
+To: Anup Patel <anup@brainfault.org>
+Cc: Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Atish Patra <atishp@atishpatra.org>, Palmer Dabbelt <palmer@sifive.com>, 
+	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
+	kvm-riscv@lists.infradead.org, Samuel Holland <samuel.holland@sifive.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-According to Section 2.2 of the PCI Express Card Electromechanical
-Specification (Revision 5.1), in order to ensure that the power and the
-reference clock are stable, PERST# has to be deasserted after a delay of
-100 milliseconds (TPVPERL). Currently, it is being assumed that the power
-is already stable, which is not necessarily true. Hence, change the delay
-to PCIE_T_PVPERL_MS to guarantee that power and reference clock are stable.
+Hi Anup,
 
-Fixes: f3e25911a430 ("PCI: j721e: Add TI J721E PCIe driver")
-Fixes: f96b69713733 ("PCI: j721e: Use T_PERST_CLK_US macro")
-Signed-off-by: Siddharth Vadapalli <s-vadapalli@ti.com>
----
+Thank you for the suggestion.
 
-Hello,
+I=E2=80=99m not entirely sure if I fully understand it, but I believe the
+hypervisor should be able to disable the Svukte extension.
 
-This patch is based on commit
-59b723cd2adb Linux 6.12-rc6
-of Mainline Linux.
+Inside the switch-case of kvm_riscv_vcpu_isa_disable_allowed(),
+the default case breaks and returns true.
 
-v1:
-https://lore.kernel.org/r/20241022083147.2773123-1-s-vadapalli@ti.com/
-Changes since v1:
-- Rebased patch on Linux 6.12-rc6
-- Based on Krzysztof's feedback at:
-  https://lore.kernel.org/r/20241102141914.GA3440781@rocinante/
-  PCIE_T_PERST_CLK_US has been replaced with PCIE_T_PVPERL_MS in
-  j721e_pcie_probe() as well.
-- Added Fixes tag corresponding to the above change in the commit
-  message.
+So that means when the KVM_RISCV_ISA_EXT_SVUKTE passed into
+kvm_riscv_vcpu_isa_disable_allowed() it will return true.
 
-Regards,
-Siddharth.
+If I've misunderstood, please let me know.
 
- drivers/pci/controller/cadence/pci-j721e.c | 26 ++++++++++------------
- 1 file changed, 12 insertions(+), 14 deletions(-)
+Best regards,
+Max Hsu
 
-diff --git a/drivers/pci/controller/cadence/pci-j721e.c b/drivers/pci/controller/cadence/pci-j721e.c
-index 284f2e0e4d26..e091c3e55b5c 100644
---- a/drivers/pci/controller/cadence/pci-j721e.c
-+++ b/drivers/pci/controller/cadence/pci-j721e.c
-@@ -572,15 +572,14 @@ static int j721e_pcie_probe(struct platform_device *pdev)
- 		pcie->refclk = clk;
- 
- 		/*
--		 * The "Power Sequencing and Reset Signal Timings" table of the
--		 * PCI Express Card Electromechanical Specification, Revision
--		 * 5.1, Section 2.9.2, Symbol "T_PERST-CLK", indicates PERST#
--		 * should be deasserted after minimum of 100us once REFCLK is
--		 * stable. The REFCLK to the connector in RC mode is selected
--		 * while enabling the PHY. So deassert PERST# after 100 us.
-+		 * Section 2.2 of the PCI Express Card Electromechanical
-+		 * Specification (Revision 5.1) mandates that the deassertion
-+		 * of the PERST# signal should be delayed by 100 ms (TPVPERL).
-+		 * This shall ensure that the power and the reference clock
-+		 * are stable.
- 		 */
- 		if (gpiod) {
--			fsleep(PCIE_T_PERST_CLK_US);
-+			msleep(PCIE_T_PVPERL_MS);
- 			gpiod_set_value_cansleep(gpiod, 1);
- 		}
- 
-@@ -671,15 +670,14 @@ static int j721e_pcie_resume_noirq(struct device *dev)
- 			return ret;
- 
- 		/*
--		 * The "Power Sequencing and Reset Signal Timings" table of the
--		 * PCI Express Card Electromechanical Specification, Revision
--		 * 5.1, Section 2.9.2, Symbol "T_PERST-CLK", indicates PERST#
--		 * should be deasserted after minimum of 100us once REFCLK is
--		 * stable. The REFCLK to the connector in RC mode is selected
--		 * while enabling the PHY. So deassert PERST# after 100 us.
-+		 * Section 2.2 of the PCI Express Card Electromechanical
-+		 * Specification (Revision 5.1) mandates that the deassertion
-+		 * of the PERST# signal should be delayed by 100 ms (TPVPERL).
-+		 * This shall ensure that the power and the reference clock
-+		 * are stable.
- 		 */
- 		if (pcie->reset_gpio) {
--			fsleep(PCIE_T_PERST_CLK_US);
-+			msleep(PCIE_T_PVPERL_MS);
- 			gpiod_set_value_cansleep(pcie->reset_gpio, 1);
- 		}
- 
--- 
-2.40.1
-
+On Fri, Oct 25, 2024 at 3:17=E2=80=AFAM Anup Patel <anup@brainfault.org> wr=
+ote:
+>
+> On Fri, Sep 27, 2024 at 7:12=E2=80=AFPM Max Hsu <max.hsu@sifive.com> wrot=
+e:
+> >
+> > Add KVM ISA extension ONE_REG interface to allow VMM tools to
+> > detect and enable Svukte extension for Guest/VM.
+> >
+> > Reviewed-by: Samuel Holland <samuel.holland@sifive.com>
+> > Signed-off-by: Max Hsu <max.hsu@sifive.com>
+> > ---
+> >  arch/riscv/include/uapi/asm/kvm.h | 1 +
+> >  arch/riscv/kvm/vcpu_onereg.c      | 1 +
+> >  2 files changed, 2 insertions(+)
+> >
+> > diff --git a/arch/riscv/include/uapi/asm/kvm.h b/arch/riscv/include/uap=
+i/asm/kvm.h
+> > index e97db3296456e19f79ca02e4c4f70ae1b4abb48b..41b466b7ffaec421e8389d3=
+f5b178580091a2c98 100644
+> > --- a/arch/riscv/include/uapi/asm/kvm.h
+> > +++ b/arch/riscv/include/uapi/asm/kvm.h
+> > @@ -175,6 +175,7 @@ enum KVM_RISCV_ISA_EXT_ID {
+> >         KVM_RISCV_ISA_EXT_ZCF,
+> >         KVM_RISCV_ISA_EXT_ZCMOP,
+> >         KVM_RISCV_ISA_EXT_ZAWRS,
+> > +       KVM_RISCV_ISA_EXT_SVUKTE,
+> >         KVM_RISCV_ISA_EXT_MAX,
+> >  };
+> >
+> > diff --git a/arch/riscv/kvm/vcpu_onereg.c b/arch/riscv/kvm/vcpu_onereg.=
+c
+> > index b319c4c13c54ce22d2a7552f4c9f256a0c50780e..67237d6e53882a9fcd2cf26=
+5aa1704f25cc4a701 100644
+> > --- a/arch/riscv/kvm/vcpu_onereg.c
+> > +++ b/arch/riscv/kvm/vcpu_onereg.c
+> > @@ -41,6 +41,7 @@ static const unsigned long kvm_isa_ext_arr[] =3D {
+> >         KVM_ISA_EXT_ARR(SVINVAL),
+> >         KVM_ISA_EXT_ARR(SVNAPOT),
+> >         KVM_ISA_EXT_ARR(SVPBMT),
+> > +       KVM_ISA_EXT_ARR(SVUKTE),
+> >         KVM_ISA_EXT_ARR(ZACAS),
+> >         KVM_ISA_EXT_ARR(ZAWRS),
+> >         KVM_ISA_EXT_ARR(ZBA),
+>
+> The KVM_RISCV_ISA_EXT_SVUKTE should be added to the
+> switch-case in kvm_riscv_vcpu_isa_disable_allowed() because
+> hypervisor seems to have no way to disable Svukte for the Guest
+> when it's available on the Host.
+>
+> Regards,
+> Anup
 
