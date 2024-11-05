@@ -1,651 +1,274 @@
-Return-Path: <linux-kernel+bounces-396116-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396117-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2E2F9BC807
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 09:30:28 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 236539BC80B
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 09:31:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 73CFC1F23801
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 08:30:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A87721F22459
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 08:31:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C02661925BE;
-	Tue,  5 Nov 2024 08:30:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D32E51C4A2F;
+	Tue,  5 Nov 2024 08:31:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="gXWxeCPv"
-Received: from mail-ed1-f66.google.com (mail-ed1-f66.google.com [209.85.208.66])
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="F8ErgTCT"
+Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com [209.85.219.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1B0318D63C
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 08:30:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD013185952
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 08:31:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730795417; cv=none; b=ae04kaoQbIQTKitJZWlMxN0y9yD3/LH7xT2d+f58xzJpchbtHGKzVsmqdyp2LUULo9yZa2/mykPxrBztmfHtO6Mp5hf/ZN17sNC5FuIUDqxlMUOsCO+bTxhwuEphagx4bUtP8gQie2Xki285OVVrOgyLuxEawDIB64efPtDCRjk=
+	t=1730795501; cv=none; b=loO78xTF/61NyJuiQHs7ozZ2H1beseLMHWoM3rsDHY6IVDVtAvih/usgiZjUMeUb69P1h5bDZ9W7rqvIae/hkHgNNj8rMvu9xQHYIsdY3vhf7V6trtoZVIpFp0SapNNfitCdQEyhV9Jc/hNHpnRW//DX19Syxp9HaAYqDItN6w4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730795417; c=relaxed/simple;
-	bh=FEBIAaA2LrirNuL99GbWEPrHwblsHtQGutZPgiED1Ck=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=h9LfkwCbjjXxSNO4dPVWRkA1gvIfEQjKe/QW0Q9huJPzu0nt2ncOx9C0xXugD0HeqdmnRha0Hj3xj0XZVH4zlzGrYivf75EkyvpWlSGFY1FKfnwvbgl+q6cVW9P9vbHoFFpJg8ntMPtzwBO0wzh/eXjKincgrSgLW5kJnpAEbTA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=gXWxeCPv; arc=none smtp.client-ip=209.85.208.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ed1-f66.google.com with SMTP id 4fb4d7f45d1cf-5ceb03aadb1so5518963a12.0
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 00:30:13 -0800 (PST)
+	s=arc-20240116; t=1730795501; c=relaxed/simple;
+	bh=a+/Z5HCLWAqFe9kJLjCtp3TP8nih4/kqHmqtcCTiBa8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RWXr0Zslg65XnlyAWzWO/8Y2avBqH+PPOtjnATgA6Gm9yREYz4PLnZuoNJUvVA2YdNSMqr0ZlxnffFrhm0lxlBiy2ytsjSaJmWjayoSDVALILEfmEMAcFCF7B/uPEugUrvBxhb/S0SSQGH6b/kXKzNGTeQvWy/25VICBcbKKfwI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=F8ErgTCT; arc=none smtp.client-ip=209.85.219.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-e290554afb4so5185509276.0
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 00:31:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1730795412; x=1731400212; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Kpw01HNU/Sv0xgXPzYBXhrajrBvyrTSpHufBO5hxwkk=;
-        b=gXWxeCPvzx0V+b4004tJQpXsCedVCh8oBzHppdgo9kob3s6NcBgamATPKGKP8MR+00
-         tAqHPpTeJ/8cH/cSe7ZI3Em3Rt2n5+NUhH8pb/WrnKlSAKhXgm7FaQB5DXmjIwc6Fx5c
-         j4vczbgDoeA54+3gQlNe5jbIRb3r50TVsxA/NpXMXZMNcsHn2Sjlxlg4wMQuQVaPaq3w
-         7amZ223kAD9lpfK7OVuvLjPlkI5H5H4xmO6qXE1qhRwi4Hot7XqusET/Ld3aZ5YYZGBK
-         EVxFsWKdMK2HWVaV4Jv5fbYqwmQ/AEVf4tPCA2jsyTbpdQCzw5trS6O+uKTZvrKdfasb
-         gogA==
+        d=szeredi.hu; s=google; t=1730795497; x=1731400297; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=ze9WHQ0beEz8+ocNfaZ5viUgzsEDrj/TAqXIVsGM76k=;
+        b=F8ErgTCThQy4UrOiq4VQHc30DTBwtTe1ztuaOMQc0WBwzWSuWadHh0pPMr7UXhtGeB
+         5yWVpHcKXOaEych2oYu/wcdOCDqBSPg7ik8ZRk5O6klvGwnblPUiBxp81CGzthvMyErx
+         LBOgLNxpkjXwyksSqM4a18v97rjwlqG6o8GNQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730795412; x=1731400212;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Kpw01HNU/Sv0xgXPzYBXhrajrBvyrTSpHufBO5hxwkk=;
-        b=Gphzjeh42RmWLuuXKPYAy8Eh2K5QPOZpRct7V+WtRyeJzOgRscqz4WTdUlA5iRFjrw
-         qSOtNaCQrQZu2uT3w0BYYGijzbKzs7JRnSkmRaDayWfVDlHp8WYgjmdtqwLxjsXSJDMV
-         hPdwGVOlmyCklDcbd0MokZ+lTSgXXj++ZORMpG3c9rl5VLH2vT84HE/zdwO0/SBBMHQ0
-         V5U+lJgkv0KDzL0dt1G2b75jxoY/fkP81FeOKGYZSGvVn5ru0jFivLOG3i/Oqyc/eymL
-         A30F0vC0ut4Jbv0zlFkTrsy5VPcS5qKVQxeJY+zjeoIZrNi3XjwDo+98K57m5LBa7O6h
-         8ADw==
-X-Forwarded-Encrypted: i=1; AJvYcCW1D0Ba2QXAhgZbXM25ltD4KXFHvsr4IhGol0vTNZBP5SrPdIrmIYhuJ0IGV1Xf0wLrm6VRN7PhYrVyaSg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxMNLQLxHgNUYn00Q+4WHwVyROLBEvxAjiP7zWcEe89OBbF6vP6
-	JnwasjHT54+n7zhGLyiXb0CoIHA4qRxo+d7RuUYOUvjX+b68wee/SKPynGMygVw=
-X-Google-Smtp-Source: AGHT+IE4HmcRyyOJrLcIvLVZE/X26LsWeylyyS8o4KlNGwK33ooeQUPKh0OQozoC1twhQBug+FmFNg==
-X-Received: by 2002:a17:907:7e8f:b0:a99:dde6:9f42 with SMTP id a640c23a62f3a-a9e50b935bcmr1654303266b.47.1730795411966;
-        Tue, 05 Nov 2024 00:30:11 -0800 (PST)
-Received: from localhost (host-79-35-211-193.retail.telecomitalia.it. [79.35.211.193])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9eb16da0b6sm98946766b.76.2024.11.05.00.30.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Nov 2024 00:30:11 -0800 (PST)
-From: Andrea della Porta <andrea.porta@suse.com>
-X-Google-Original-From: Andrea della Porta <aporta@suse.de>
-Date: Tue, 5 Nov 2024 09:30:38 +0100
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: Andrea della Porta <andrea.porta@suse.com>,
-	Andrew Lunn <andrew@lunn.ch>, Arnd Bergmann <arnd@arndb.de>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Herve Codina <herve.codina@bootlin.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Krzysztof Wilczynski <kw@linux.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Rob Herring <robh@kernel.org>,
-	Saravana Kannan <saravanak@google.com>,
-	Stefan Wahren <wahrenst@gmx.net>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Will Deacon <will@kernel.org>, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-rpi-kernel@lists.infradead.org
-Subject: Re: [PATCH v3 07/12] clk: rp1: Add support for clocks provided by RP1
-Message-ID: <ZynXrg8OlGvPcmWb@apocalypse>
-References: <cover.1730123575.git.andrea.porta@suse.com>
- <c20e3d6d87c71691b149cdeeafc94009953346b2.1730123575.git.andrea.porta@suse.com>
- <01c2bb3609dcb32191a78293c1666b0a.sboyd@kernel.org>
+        d=1e100.net; s=20230601; t=1730795497; x=1731400297;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ze9WHQ0beEz8+ocNfaZ5viUgzsEDrj/TAqXIVsGM76k=;
+        b=q8Dh0nRzoBh7kr2Rc6S7DKXJ0JQxGh8AzIeQbuWGBiKOxw2EbRjzKp2UpgBF1HvpDQ
+         VLcnZBHOFC41sCavozZD0RbOdJvWGSOkrtnAc792Qh0KCYNfyVpc86r2MNwtRpKYgEk5
+         bcwwnNCGv96rISapuPRk0V47nZe4AGIeTk33RU56DyyhrGj4i9bIEFsPF8Rx6EaisOad
+         ts7j/4kRDWCwp/tca4NlWErKTbliml+1okBeZaeHbKY59gfnbzLILEDFDOgRYjfI/Xgw
+         MslMCD9OJbo77L4ZGkKzc+wMrsXghH0kXafmYkx4O5y1rLgddmh/iVBCUA8Sm4IlTYIM
+         HnCQ==
+X-Gm-Message-State: AOJu0YzMbZgBkV1UPTsGsZ8Pf8W0909of50l79AaoLYr6O5etqV2vGDr
+	QhgWXf9eoCl+oDEvE3sNOhlqs28oDp08YnRoQrP86a7skn0h8KbBVo4WTKXMw+WP7QpZw5XKAjA
+	flZxwPft5bk+Jp9nzPF6SSMlatUbatyeriY54tg==
+X-Google-Smtp-Source: AGHT+IHemnM16Rf3hM25uBaKAMuFL0NVZTdWj5pD/ZJ/9CsWuTjJ2lAXkP9rWfJpmBYmKxlx8VPnjp7sKeqF7CLT0yQ=
+X-Received: by 2002:a05:6902:1081:b0:e25:fc6f:9cbf with SMTP id
+ 3f1490d57ef6-e30e5b3b269mr17448141276.52.1730795497472; Tue, 05 Nov 2024
+ 00:31:37 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <01c2bb3609dcb32191a78293c1666b0a.sboyd@kernel.org>
+References: <20241101193703.3282039-1-stefanb@linux.vnet.ibm.com>
+In-Reply-To: <20241101193703.3282039-1-stefanb@linux.vnet.ibm.com>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Tue, 5 Nov 2024 09:31:26 +0100
+Message-ID: <CAJfpegvGGt+XankFJjuijr6QXVUFXRUWTotLNXLQ4n21ELf=Xg@mail.gmail.com>
+Subject: Re: [PATCH] fs: Simplify getattr interface function checking
+ AT_GETATTR_NOSEC flag
+To: Stefan Berger <stefanb@linux.vnet.ibm.com>
+Cc: linux-kernel@vger.kernel.org, Stefan Berger <stefanb@linux.ibm.com>, 
+	Al Viro <viro@zeniv.linux.org.uk>, Tyler Hicks <code@tyhicks.com>, ecryptfs@vger.kernel.org, 
+	Amir Goldstein <amir73il@gmail.com>, linux-unionfs@vger.kernel.org, 
+	Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org, 
+	LSM <linux-security-module@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Stephen,
+On Fri, 1 Nov 2024 at 20:37, Stefan Berger <stefanb@linux.vnet.ibm.com> wrote:
+>
+> From: Stefan Berger <stefanb@linux.ibm.com>
+>
+> Commit 8a924db2d7b5 ("fs: Pass AT_GETATTR_NOSEC flag to getattr interface
+> function")' introduced the AT_GETATTR_NOSEC flag to ensure that the
+> call paths only call vfs_getattr_nosec if it is set instead of vfs_getattr.
+> Now, simplify the getattr interface functions of filesystems where the flag
+> AT_GETATTR_NOSEC is checked.
+>
+> There is only a single caller of inode_operations getattr function and it
+> is located in fs/stat.c in vfs_getattr_nosec. The caller there is the only
+> one from which the AT_GETATTR_NOSEC flag is passed from.
+>
+> Two filesystems are checking this flag in .getattr and the flag is always
+> passed to them unconditionally from only vfs_getattr_nosec:
+>
+> - ecryptfs:  Simplify by always calling vfs_getattr_nosec in
+>              ecryptfs_getattr. From there the flag is passed to no other
+>              function and this function is not called otherwise.
+>
+> - overlayfs: Simplify by always calling vfs_getattr_nosec in
+>              ovl_getattr. From there the flag is passed to no other
+>              function and this function is not called otherwise.
+>
+> The query_flags in vfs_getattr_nosec will mask-out AT_GETATTR_NOSEC from
+> any caller using AT_STATX_SYNC_TYPE as mask so that the flag is not
+> important inside this function. Also, since no filesystem is checking the
+> flag anymore, remove the flag entirely now, including the BUG_ON check that
+> never triggered.
+>
+> The net change of the changes here combined with the originan commit is
+> that ecryptfs and overlayfs do not call vfs_getattr but only
+> vfs_getattr_nosec.
 
-On 15:20 Mon 28 Oct     , Stephen Boyd wrote:
-> Quoting Andrea della Porta (2024-10-28 07:07:24)
-> > diff --git a/drivers/clk/clk-rp1.c b/drivers/clk/clk-rp1.c
-> > new file mode 100644
-> > index 000000000000..69b9cf037cb2
-> > --- /dev/null
-> [...]
-> > +
-> > +struct rp1_clockman {
-> > +       struct device *dev;
-> > +       void __iomem *regs;
-> 
-> Do you still need this if there's a regmap?
+[Adding LSM list.]
 
-Unfortunately the clk_divider registered in rp1_register_pll_divider()
-mandates the use of a MMIO registeri, and yes, the divider and teh other
-clock shares some registers. AFAICT there were attempts to upstream generic
-regmap support for clk_divider, but right now there are just custom
-implementations (e.g. drivers/clk/qcom/clk-regmap.c).  So, in order to
-use regmap, that clock divider shoulf be first augmented with regmap
-support. Please let me know if you think it's worth the effort.
+The original intention was I think that security_inode_getattr()
+should be called on the backing inode IFF it was called on the backed
+(overlay/ecryptfs) inode.
 
-> 
-> > +       struct regmap *regmap;
-> > +       spinlock_t regs_lock; /* spinlock for all clocks */
-> 
-> Do you need this or is the spinlock in the regmap sufficient?
+The implementation was broken, but the question remains whether this
+is needed or not.
 
-The original code wrapped multiple registers write/read inside the spinlock,
-so I suspect that using the internal regmap spinlock for each single
-transaciton (so to open up for interleaved register access, although I have
-no evidence of that) could have side-effects so I would prefer to stay safe
-and manage the lock from outside. I could easily use regmap_multi_reg_write()
-and friends to synchronize access across multiple registers but then we would
-have the problem above about missing regmap support in clk_divider, since now
-it's solved by passing the same spinlock to it too. I'm open to alternatives
-here...
+Thanks,
+Miklos
 
-> 
-> > +
-> > +       /* Must be last */
-> > +       struct clk_hw_onecell_data onecell;
-> > +};
-> > +
-> > +struct rp1_pll_core_data {
-> > +       const char *name;
-> 
-> These 'name' members can move to clk_init_data?
 
-You've read my mind, I was exactly planning that for the next revision
-
-> 
-> > +       u32 cs_reg;
-> > +       u32 pwr_reg;
-> > +       u32 fbdiv_int_reg;
-> > +       u32 fbdiv_frac_reg;
-> > +       unsigned long flags;
-> 
-> And probably flags as well? It seems like clk_init_data should be
-> declared at the same time as struct rp1_pll_core_data is.
-
-Ditto.
-
-> 
-> > +       u32 fc0_src;
-> > +};
-> > +
-> > +struct rp1_pll_data {
-> > +       const char *name;
-> > +       u32 ctrl_reg;
-> > +       unsigned long flags;
-> > +       u32 fc0_src;
-> > +};
-> > +
-> > +struct rp1_pll_ph_data {
-> > +       const char *name;
-> > +       unsigned int phase;
-> > +       unsigned int fixed_divider;
-> > +       u32 ph_reg;
-> > +       unsigned long flags;
-> > +       u32 fc0_src;
-> > +};
-> > +
-> > +struct rp1_pll_divider_data {
-> > +       const char *name;
-> > +       u32 sec_reg;
-> > +       unsigned long flags;
-> > +       u32 fc0_src;
-> > +};
-> > +
-> > +struct rp1_clock_data {
-> > +       const char *name;
-> > +       int num_std_parents;
-> > +       int num_aux_parents;
-> > +       unsigned long flags;
-> > +       u32 oe_mask;
-> > +       u32 clk_src_mask;
-> > +       u32 ctrl_reg;
-> > +       u32 div_int_reg;
-> > +       u32 div_frac_reg;
-> > +       u32 sel_reg;
-> > +       u32 div_int_max;
-> > +       unsigned long max_freq;
-> > +       u32 fc0_src;
-> > +};
-> > +
-> > +struct rp1_clk_desc {
-> > +       struct clk_hw *(*clk_register)(struct rp1_clockman *clockman,
-> > +                                      struct rp1_clk_desc *desc);
-> > +       const void *data;
-> > +       struct clk_hw hw;
-> > +       struct rp1_clockman *clockman;
-> > +       unsigned long cached_rate;
-> > +       struct clk_divider div;
-> > +};
-> > +
-> > +#define FIELD_SET(_reg, _mask, _val)           \
-> > +do {                                           \
-> > +       u32 mask = (_mask);                     \
-> > +       (_reg) &= ~mask;                        \
-> > +       (_reg) |= FIELD_PREP(mask, (_val));     \
-> 
-> Please just write
-> 
-> 	reg &= ~mask
-> 	reg |= FIELD_PREP(mask, val);
-> 
-> instead of using this macro.
-
-Ack.
-
-> 
-> > +} while (0)
-> > +
-> > +
-> [...]
-> > +
-> > +static struct clk_hw *rp1_register_pll_core(struct rp1_clockman *clockman,
-> > +                                           struct rp1_clk_desc *desc)
-> > +{
-> > +       const struct rp1_pll_core_data *pll_core_data = desc->data;
-> > +       struct clk_init_data init = { };
-> > +       int ret;
-> > +
-> > +       /* All of the PLL cores derive from the external oscillator. */
-> > +       init.parent_data = desc->hw.init->parent_data;
-> > +       init.num_parents = desc->hw.init->num_parents;
-> > +       init.name = pll_core_data->name;
-> > +       init.ops = &rp1_pll_core_ops;
-> > +       init.flags = pll_core_data->flags | CLK_IGNORE_UNUSED | CLK_IS_CRITICAL;
-> > +
-> > +       desc->clockman = clockman;
-> > +       desc->hw.init = &init;
-> > +
-> > +       ret = devm_clk_hw_register(clockman->dev, &desc->hw);
-> > +
-> > +       if (ret)
-> > +               return ERR_PTR(ret);
-> > +
-> > +       return &desc->hw;
-> > +}
-> > +
-> > +static struct clk_hw *rp1_register_pll(struct rp1_clockman *clockman,
-> > +                                      struct rp1_clk_desc *desc)
-> > +{
-> > +       const struct rp1_pll_data *pll_data = desc->data;
-> > +       struct clk_init_data init = { };
-> > +       int ret;
-> > +
-> > +       init.parent_data = desc->hw.init->parent_data;
-> > +       init.num_parents = desc->hw.init->num_parents;
-> > +       init.name = pll_data->name;
-> > +       init.ops = &rp1_pll_ops;
-> > +       init.flags = pll_data->flags | CLK_IGNORE_UNUSED | CLK_IS_CRITICAL;
-> > +
-> > +       desc->clockman = clockman;
-> > +       desc->hw.init = &init;
-> > +
-> > +       ret = devm_clk_hw_register(clockman->dev, &desc->hw);
-> > +
-> > +       if (ret)
-> > +               return ERR_PTR(ret);
-> > +
-> > +       return &desc->hw;
-> > +}
-> > +
-> > +static struct clk_hw *rp1_register_pll_ph(struct rp1_clockman *clockman,
-> > +                                         struct rp1_clk_desc *desc)
-> > +{
-> > +       const struct rp1_pll_ph_data *ph_data = desc->data;
-> > +       struct clk_init_data init = { };
-> > +       int ret;
-> > +
-> > +       init.parent_data = desc->hw.init->parent_data;
-> > +       init.num_parents = desc->hw.init->num_parents;
-> > +       init.name = ph_data->name;
-> > +       init.ops = &rp1_pll_ph_ops;
-> > +       init.flags = ph_data->flags | CLK_IGNORE_UNUSED;
-> > +
-> > +       desc->clockman = clockman;
-> > +       desc->hw.init = &init;
-> > +
-> > +       ret = devm_clk_hw_register(clockman->dev, &desc->hw);
-> > +
-> > +       if (ret)
-> > +               return ERR_PTR(ret);
-> > +
-> > +       return &desc->hw;
-> > +}
-> > +
-> > +static struct clk_hw *rp1_register_pll_divider(struct rp1_clockman *clockman,
-> > +                                              struct rp1_clk_desc *desc)
-> > +{
-> > +       const struct rp1_pll_data *divider_data = desc->data;
-> > +       struct clk_init_data init = { };
-> > +       int ret;
-> > +
-> > +       init.parent_data = desc->hw.init->parent_data;
-> > +       init.num_parents = desc->hw.init->num_parents;
-> > +       init.name = divider_data->name;
-> > +       init.ops = &rp1_pll_divider_ops;
-> > +       init.flags = divider_data->flags | CLK_IGNORE_UNUSED | CLK_IS_CRITICAL;
-> > +
-> > +       desc->div.reg = clockman->regs + divider_data->ctrl_reg;
-> 
-> Why is 'regs' used here? Isn't everything using a regmap now so it's all
-> offsets?
-
-Already explained above.
-
-> 
-> > +       desc->div.shift = PLL_SEC_DIV_SHIFT;
-> > +       desc->div.width = PLL_SEC_DIV_WIDTH;
-> > +       desc->div.flags = CLK_DIVIDER_ROUND_CLOSEST;
-> > +       desc->div.flags |= CLK_IS_CRITICAL;
-> > +       desc->div.lock = &clockman->regs_lock;
-> > +       desc->div.hw.init = &init;
-> > +       desc->div.table = pll_sec_div_table;
-> > +
-> > +       desc->clockman = clockman;
-> > +
-> > +       ret = devm_clk_hw_register(clockman->dev, &desc->div.hw);
-> > +
-> > +       if (ret)
-> > +               return ERR_PTR(ret);
-> > +
-> > +       return &desc->div.hw;
-> > +}
-> > +
-> > +static struct clk_hw *rp1_register_clock(struct rp1_clockman *clockman,
-> > +                                        struct rp1_clk_desc *desc)
-> > +{
-> > +       const struct rp1_clock_data *clock_data = desc->data;
-> > +       struct clk_init_data init = { };
-> > +       int ret;
-> > +
-> > +       if (WARN_ON_ONCE(MAX_CLK_PARENTS <
-> > +              clock_data->num_std_parents + clock_data->num_aux_parents))
-> > +               return NULL;
-> > +
-> > +       /* There must be a gap for the AUX selector */
-> > +       if (WARN_ON_ONCE(clock_data->num_std_parents > AUX_SEL &&
-> > +                        desc->hw.init->parent_data[AUX_SEL].index != -1))
-> > +               return NULL;
-> > +
-> > +       init.parent_data = desc->hw.init->parent_data;
-> > +       init.num_parents = desc->hw.init->num_parents;
-> > +       init.name = clock_data->name;
-> > +       init.flags = clock_data->flags | CLK_IGNORE_UNUSED;
-> > +       init.ops = &rp1_clk_ops;
-> > +
-> > +       desc->clockman = clockman;
-> > +       desc->hw.init = &init;
-> > +
-> > +       ret = devm_clk_hw_register(clockman->dev, &desc->hw);
-> > +
-> > +       if (ret)
-> > +               return ERR_PTR(ret);
-> > +
-> > +       return &desc->hw;
-> > +}
-> > +
-> > +/* Assignment helper macros for different clock types. */
-> > +#define _REGISTER(f, ...)      { .clk_register = f, __VA_ARGS__ }
-> > +
-> > +#define PARENT_CLK(pnum, ...)  .hw.init = &(const struct clk_init_data) { \
-> 
-> Instead of this macro just use CLK_HW_INIT_HW() or
-> CLK_HW_INIT_PARENTS_DATA()?
-
-Ack.
-
-> 
-> > +                               .parent_data = (const struct               \
-> > +                                               clk_parent_data[]) {       \
-> > +                                                       __VA_ARGS__        \
-> > +                                               },                         \
-> > +                               .num_parents = pnum }
-> > +
-> > +#define CLK_DATA(type, ...)    .data = &(struct type) { __VA_ARGS__ }
-> > +
-> > +#define REGISTER_PLL_CORE(...) _REGISTER(&rp1_register_pll_core,       \
-> > +                                         __VA_ARGS__)
-> > +
-> > +#define REGISTER_PLL(...)      _REGISTER(&rp1_register_pll,            \
-> > +                                         __VA_ARGS__)
-> > +
-> > +#define REGISTER_PLL_PH(...)   _REGISTER(&rp1_register_pll_ph,         \
-> > +                                         __VA_ARGS__)
-> > +
-> > +#define REGISTER_PLL_DIV(...)  _REGISTER(&rp1_register_pll_divider,    \
-> > +                                         __VA_ARGS__)
-> > +
-> > +#define REGISTER_CLK(...)      _REGISTER(&rp1_register_clock,          \
-> > +                                         __VA_ARGS__)
-> > +
-> > +static struct rp1_clk_desc clk_desc_array[] = {
-> > +       [RP1_PLL_SYS_CORE] = REGISTER_PLL_CORE(PARENT_CLK(1, { .index = 0 }),
-> > +                               CLK_DATA(rp1_pll_core_data,
-> > +                                        .name = "pll_sys_core",
-> > +                                        .cs_reg = PLL_SYS_CS,
-> > +                                        .pwr_reg = PLL_SYS_PWR,
-> > +                                        .fbdiv_int_reg = PLL_SYS_FBDIV_INT,
-> > +                                        .fbdiv_frac_reg = PLL_SYS_FBDIV_FRAC,
-> > +                               )),
-> > +
-> > +       [RP1_PLL_AUDIO_CORE] = REGISTER_PLL_CORE(PARENT_CLK(1, { .index = 0 }),
-> > +                               CLK_DATA(rp1_pll_core_data,
-> > +                                        .name = "pll_audio_core",
-> > +                                        .cs_reg = PLL_AUDIO_CS,
-> > +                                        .pwr_reg = PLL_AUDIO_PWR,
-> > +                                        .fbdiv_int_reg = PLL_AUDIO_FBDIV_INT,
-> > +                                        .fbdiv_frac_reg = PLL_AUDIO_FBDIV_FRAC,
-> > +                               )),
-> > +
-> > +       [RP1_PLL_VIDEO_CORE] = REGISTER_PLL_CORE(PARENT_CLK(1, { .index = 0 }),
-> > +                               CLK_DATA(rp1_pll_core_data,
-> > +                                        .name = "pll_video_core",
-> > +                                        .cs_reg = PLL_VIDEO_CS,
-> > +                                        .pwr_reg = PLL_VIDEO_PWR,
-> > +                                        .fbdiv_int_reg = PLL_VIDEO_FBDIV_INT,
-> > +                                        .fbdiv_frac_reg = PLL_VIDEO_FBDIV_FRAC,
-> > +                               )),
-> > +
-> > +       [RP1_PLL_SYS] = REGISTER_PLL(PARENT_CLK(1,
-> > +                               { .hw = &clk_desc_array[RP1_PLL_SYS_CORE].hw }
-> > +                               ),
-> > +                               CLK_DATA(rp1_pll_data,
-> > +                                        .name = "pll_sys",
-> > +                                        .ctrl_reg = PLL_SYS_PRIM,
-> > +                                        .fc0_src = FC_NUM(0, 2),
-> > +                               )),
-> > +
-> > +       [RP1_CLK_ETH_TSU] = REGISTER_CLK(PARENT_CLK(1, { .index = 0 }),
-> > +                               CLK_DATA(rp1_clock_data,
-> > +                                        .name = "clk_eth_tsu",
-> > +                                        .num_std_parents = 0,
-> > +                                        .num_aux_parents = 1,
-> > +                                        .ctrl_reg = CLK_ETH_TSU_CTRL,
-> > +                                        .div_int_reg = CLK_ETH_TSU_DIV_INT,
-> > +                                        .sel_reg = CLK_ETH_TSU_SEL,
-> > +                                        .div_int_max = DIV_INT_8BIT_MAX,
-> > +                                        .max_freq = 50 * HZ_PER_MHZ,
-> > +                                        .fc0_src = FC_NUM(5, 7),
-> > +                               )),
-> > +
-> > +       [RP1_CLK_SYS] = REGISTER_CLK(PARENT_CLK(3,
-> > +                               { .index = 0 },
-> > +                               { .index = -1 },
-> > +                               { .hw = &clk_desc_array[RP1_PLL_SYS].hw }
-> > +                               ),
-> > +                               CLK_DATA(rp1_clock_data,
-> > +                                        .name = "clk_sys",
-> > +                                        .num_std_parents = 3,
-> > +                                        .num_aux_parents = 0,
-> > +                                        .ctrl_reg = CLK_SYS_CTRL,
-> > +                                        .div_int_reg = CLK_SYS_DIV_INT,
-> > +                                        .sel_reg = CLK_SYS_SEL,
-> > +                                        .div_int_max = DIV_INT_24BIT_MAX,
-> > +                                        .max_freq = 200 * HZ_PER_MHZ,
-> > +                                        .fc0_src = FC_NUM(0, 4),
-> > +                                        .clk_src_mask = 0x3,
-> > +                               )),
-> > +
-> > +       [RP1_PLL_SYS_PRI_PH] = REGISTER_PLL_PH(PARENT_CLK(1,
-> > +                               { .hw = &clk_desc_array[RP1_PLL_SYS].hw }
-> > +                               ),
-> > +                               CLK_DATA(rp1_pll_ph_data,
-> > +                                        .name = "pll_sys_pri_ph",
-> > +                                        .ph_reg = PLL_SYS_PRIM,
-> > +                                        .fixed_divider = 2,
-> > +                                        .phase = RP1_PLL_PHASE_0,
-> > +                                        .fc0_src = FC_NUM(1, 2),
-> > +                               )),
-> > +
-> > +       [RP1_PLL_SYS_SEC] = REGISTER_PLL_DIV(PARENT_CLK(1,
-> > +                               { .hw = &clk_desc_array[RP1_PLL_SYS_CORE].hw }
-> > +                               ),
-> > +                               CLK_DATA(rp1_pll_data,
-> > +                                        .name = "pll_sys_sec",
-> > +                                        .ctrl_reg = PLL_SYS_SEC,
-> > +                                        .fc0_src = FC_NUM(2, 2),
-> > +                               )),
-> > +};
-> > +
-> > +static const struct regmap_range rp1_reg_ranges[] = {
-> > +       regmap_reg_range(PLL_SYS_CS, PLL_SYS_SEC),
-> > +       regmap_reg_range(PLL_AUDIO_CS, PLL_AUDIO_TERN),
-> > +       regmap_reg_range(PLL_VIDEO_CS, PLL_VIDEO_SEC),
-> > +       regmap_reg_range(GPCLK_OE_CTRL, GPCLK_OE_CTRL),
-> > +       regmap_reg_range(CLK_SYS_CTRL, CLK_SYS_DIV_INT),
-> > +       regmap_reg_range(CLK_SYS_SEL, CLK_SYS_SEL),
-> > +       regmap_reg_range(CLK_SLOW_SYS_CTRL, CLK_SLOW_SYS_DIV_INT),
-> > +       regmap_reg_range(CLK_SLOW_SYS_SEL, CLK_SLOW_SYS_SEL),
-> > +       regmap_reg_range(CLK_DMA_CTRL, CLK_DMA_DIV_INT),
-> > +       regmap_reg_range(CLK_DMA_SEL, CLK_DMA_SEL),
-> > +       regmap_reg_range(CLK_UART_CTRL, CLK_UART_DIV_INT),
-> > +       regmap_reg_range(CLK_UART_SEL, CLK_UART_SEL),
-> > +       regmap_reg_range(CLK_ETH_CTRL, CLK_ETH_DIV_INT),
-> > +       regmap_reg_range(CLK_ETH_SEL, CLK_ETH_SEL),
-> > +       regmap_reg_range(CLK_PWM0_CTRL, CLK_PWM0_SEL),
-> > +       regmap_reg_range(CLK_PWM1_CTRL, CLK_PWM1_SEL),
-> > +       regmap_reg_range(CLK_AUDIO_IN_CTRL, CLK_AUDIO_IN_DIV_INT),
-> > +       regmap_reg_range(CLK_AUDIO_IN_SEL, CLK_AUDIO_IN_SEL),
-> > +       regmap_reg_range(CLK_AUDIO_OUT_CTRL, CLK_AUDIO_OUT_DIV_INT),
-> > +       regmap_reg_range(CLK_AUDIO_OUT_SEL, CLK_AUDIO_OUT_SEL),
-> > +       regmap_reg_range(CLK_I2S_CTRL, CLK_I2S_DIV_INT),
-> > +       regmap_reg_range(CLK_I2S_SEL, CLK_I2S_SEL),
-> > +       regmap_reg_range(CLK_MIPI0_CFG_CTRL, CLK_MIPI0_CFG_DIV_INT),
-> > +       regmap_reg_range(CLK_MIPI0_CFG_SEL, CLK_MIPI0_CFG_SEL),
-> > +       regmap_reg_range(CLK_MIPI1_CFG_CTRL, CLK_MIPI1_CFG_DIV_INT),
-> > +       regmap_reg_range(CLK_MIPI1_CFG_SEL, CLK_MIPI1_CFG_SEL),
-> > +       regmap_reg_range(CLK_PCIE_AUX_CTRL, CLK_PCIE_AUX_DIV_INT),
-> > +       regmap_reg_range(CLK_PCIE_AUX_SEL, CLK_PCIE_AUX_SEL),
-> > +       regmap_reg_range(CLK_USBH0_MICROFRAME_CTRL, CLK_USBH0_MICROFRAME_DIV_INT),
-> > +       regmap_reg_range(CLK_USBH0_MICROFRAME_SEL, CLK_USBH0_MICROFRAME_SEL),
-> > +       regmap_reg_range(CLK_USBH1_MICROFRAME_CTRL, CLK_USBH1_MICROFRAME_DIV_INT),
-> > +       regmap_reg_range(CLK_USBH1_MICROFRAME_SEL, CLK_USBH1_MICROFRAME_SEL),
-> > +       regmap_reg_range(CLK_USBH0_SUSPEND_CTRL, CLK_USBH0_SUSPEND_DIV_INT),
-> > +       regmap_reg_range(CLK_USBH0_SUSPEND_SEL, CLK_USBH0_SUSPEND_SEL),
-> > +       regmap_reg_range(CLK_USBH1_SUSPEND_CTRL, CLK_USBH1_SUSPEND_DIV_INT),
-> > +       regmap_reg_range(CLK_USBH1_SUSPEND_SEL, CLK_USBH1_SUSPEND_SEL),
-> > +       regmap_reg_range(CLK_ETH_TSU_CTRL, CLK_ETH_TSU_DIV_INT),
-> > +       regmap_reg_range(CLK_ETH_TSU_SEL, CLK_ETH_TSU_SEL),
-> > +       regmap_reg_range(CLK_ADC_CTRL, CLK_ADC_DIV_INT),
-> > +       regmap_reg_range(CLK_ADC_SEL, CLK_ADC_SEL),
-> > +       regmap_reg_range(CLK_SDIO_TIMER_CTRL, CLK_SDIO_TIMER_DIV_INT),
-> > +       regmap_reg_range(CLK_SDIO_TIMER_SEL, CLK_SDIO_TIMER_SEL),
-> > +       regmap_reg_range(CLK_SDIO_ALT_SRC_CTRL, CLK_SDIO_ALT_SRC_DIV_INT),
-> > +       regmap_reg_range(CLK_SDIO_ALT_SRC_SEL, CLK_SDIO_ALT_SRC_SEL),
-> > +       regmap_reg_range(CLK_GP0_CTRL, CLK_GP0_SEL),
-> > +       regmap_reg_range(CLK_GP1_CTRL, CLK_GP1_SEL),
-> > +       regmap_reg_range(CLK_GP2_CTRL, CLK_GP2_SEL),
-> > +       regmap_reg_range(CLK_GP3_CTRL, CLK_GP3_SEL),
-> > +       regmap_reg_range(CLK_GP4_CTRL, CLK_GP4_SEL),
-> > +       regmap_reg_range(CLK_GP5_CTRL, CLK_GP5_SEL),
-> > +       regmap_reg_range(CLK_SYS_RESUS_CTRL, CLK_SYS_RESUS_CTRL),
-> > +       regmap_reg_range(CLK_SLOW_SYS_RESUS_CTRL, CLK_SLOW_SYS_RESUS_CTRL),
-> > +       regmap_reg_range(FC0_REF_KHZ, FC0_RESULT),
-> > +       regmap_reg_range(VIDEO_CLK_VEC_CTRL, VIDEO_CLK_VEC_DIV_INT),
-> > +       regmap_reg_range(VIDEO_CLK_VEC_SEL, VIDEO_CLK_DPI_DIV_INT),
-> > +       regmap_reg_range(VIDEO_CLK_DPI_SEL, VIDEO_CLK_MIPI1_DPI_SEL),
-> > +};
-> > +
-> > +static const struct regmap_access_table rp1_reg_table = {
-> > +       .yes_ranges = rp1_reg_ranges,
-> > +       .n_yes_ranges = ARRAY_SIZE(rp1_reg_ranges),
-> > +};
-> > +
-> > +static const struct regmap_config rp1_clk_regmap_cfg = {
-> > +       .reg_bits = 32,
-> > +       .val_bits = 32,
-> > +       .reg_stride = 4,
-> > +       .max_register = PLL_VIDEO_SEC,
-> > +       .name = "rp1-clk",
-> > +       .rd_table = &rp1_reg_table,
-> > +};
-> > +
-> > +static int rp1_clk_probe(struct platform_device *pdev)
-> > +{
-> > +       const size_t asize = ARRAY_SIZE(clk_desc_array);
-> > +       struct rp1_clk_desc *desc;
-> > +       struct device *dev = &pdev->dev;
-> > +       struct rp1_clockman *clockman;
-> > +       struct clk_hw **hws;
-> > +       unsigned int i;
-> > +
-> > +       clockman = devm_kzalloc(dev, struct_size(clockman, onecell.hws, asize),
-> > +                               GFP_KERNEL);
-> > +       if (!clockman)
-> > +               return -ENOMEM;
-> > +
-> > +       spin_lock_init(&clockman->regs_lock);
-> > +       clockman->dev = dev;
-> > +
-> > +       clockman->regs = devm_platform_ioremap_resource(pdev, 0);
-> > +       if (IS_ERR(clockman->regs))
-> > +               return PTR_ERR(clockman->regs);
-> > +
-> > +       clockman->regmap = devm_regmap_init_mmio(dev, clockman->regs,
-> > +                                                &rp1_clk_regmap_cfg);
-> > +       if (IS_ERR(clockman->regmap)) {
-> > +               dev_err(dev, "could not init clock regmap\n");
-> 
-> return dev_err_probe()?
-
-Ack.
-
-Many thanks,
-Andrea
-
-> 
-> > +               return PTR_ERR(clockman->regmap);
-> > +       }
-> > +
-> > +       clockman->onecell.num = asize;
-> > +       hws = clockman->onecell.hws;
-> > +
-> > +       for (i = 0; i < asize; i++) {
-> > +               desc = &clk_desc_array[i];
-> > +               if (desc->clk_register && desc->data) {
-> > +                       hws[i] = desc->clk_register(clockman, desc);
-> > +                       if (IS_ERR_OR_NULL(hws[i]))
-> > +                               dev_err_probe(dev, PTR_ERR(hws[i]),
-> > +                                             "Unable to register clock: %s\n",
-> > +                                             clk_hw_get_name(hws[i]));
-> > +               }
-> > +       }
-> > +
-> > +       platform_set_drvdata(pdev, clockman);
-> > +
-> > +       return devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get,
-> > +                                          &clockman->onecell);
-> > +}
+>
+> Fixes: 8a924db2d7b5 ("fs: Pass AT_GETATTR_NOSEC flag to getattr interface function")
+> Reported-by: Al Viro <viro@zeniv.linux.org.uk>
+> Closes: https://lore.kernel.org/linux-fsdevel/20241101011724.GN1350452@ZenIV/T/#u
+> Cc: Tyler Hicks <code@tyhicks.com>
+> Cc: ecryptfs@vger.kernel.org
+> Cc: Miklos Szeredi <miklos@szeredi.hu>
+> Cc: Amir Goldstein <amir73il@gmail.com>
+> Cc: linux-unionfs@vger.kernel.org
+> Cc: Christian Brauner <brauner@kernel.org>
+> Cc: linux-fsdevel@vger.kernel.org
+> Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
+> ---
+>  fs/ecryptfs/inode.c        | 12 ++----------
+>  fs/overlayfs/inode.c       | 10 +++++-----
+>  fs/overlayfs/overlayfs.h   |  8 --------
+>  fs/stat.c                  |  5 +----
+>  include/uapi/linux/fcntl.h |  4 ----
+>  5 files changed, 8 insertions(+), 31 deletions(-)
+>
+> diff --git a/fs/ecryptfs/inode.c b/fs/ecryptfs/inode.c
+> index cbdf82f0183f..a9819ddb1ab8 100644
+> --- a/fs/ecryptfs/inode.c
+> +++ b/fs/ecryptfs/inode.c
+> @@ -1008,14 +1008,6 @@ static int ecryptfs_getattr_link(struct mnt_idmap *idmap,
+>         return rc;
+>  }
+>
+> -static int ecryptfs_do_getattr(const struct path *path, struct kstat *stat,
+> -                              u32 request_mask, unsigned int flags)
+> -{
+> -       if (flags & AT_GETATTR_NOSEC)
+> -               return vfs_getattr_nosec(path, stat, request_mask, flags);
+> -       return vfs_getattr(path, stat, request_mask, flags);
+> -}
+> -
+>  static int ecryptfs_getattr(struct mnt_idmap *idmap,
+>                             const struct path *path, struct kstat *stat,
+>                             u32 request_mask, unsigned int flags)
+> @@ -1024,8 +1016,8 @@ static int ecryptfs_getattr(struct mnt_idmap *idmap,
+>         struct kstat lower_stat;
+>         int rc;
+>
+> -       rc = ecryptfs_do_getattr(ecryptfs_dentry_to_lower_path(dentry),
+> -                                &lower_stat, request_mask, flags);
+> +       rc = vfs_getattr_nosec(ecryptfs_dentry_to_lower_path(dentry),
+> +                              &lower_stat, request_mask, flags);
+>         if (!rc) {
+>                 fsstack_copy_attr_all(d_inode(dentry),
+>                                       ecryptfs_inode_to_lower(d_inode(dentry)));
+> diff --git a/fs/overlayfs/inode.c b/fs/overlayfs/inode.c
+> index 35fd3e3e1778..8b31f44c12cd 100644
+> --- a/fs/overlayfs/inode.c
+> +++ b/fs/overlayfs/inode.c
+> @@ -170,7 +170,7 @@ int ovl_getattr(struct mnt_idmap *idmap, const struct path *path,
+>
+>         type = ovl_path_real(dentry, &realpath);
+>         old_cred = ovl_override_creds(dentry->d_sb);
+> -       err = ovl_do_getattr(&realpath, stat, request_mask, flags);
+> +       err = vfs_getattr_nosec(&realpath, stat, request_mask, flags);
+>         if (err)
+>                 goto out;
+>
+> @@ -195,8 +195,8 @@ int ovl_getattr(struct mnt_idmap *idmap, const struct path *path,
+>                                         (!is_dir ? STATX_NLINK : 0);
+>
+>                         ovl_path_lower(dentry, &realpath);
+> -                       err = ovl_do_getattr(&realpath, &lowerstat, lowermask,
+> -                                            flags);
+> +                       err = vfs_getattr_nosec(&realpath, &lowerstat, lowermask,
+> +                                               flags);
+>                         if (err)
+>                                 goto out;
+>
+> @@ -248,8 +248,8 @@ int ovl_getattr(struct mnt_idmap *idmap, const struct path *path,
+>
+>                         ovl_path_lowerdata(dentry, &realpath);
+>                         if (realpath.dentry) {
+> -                               err = ovl_do_getattr(&realpath, &lowerdatastat,
+> -                                                    lowermask, flags);
+> +                               err = vfs_getattr_nosec(&realpath, &lowerdatastat,
+> +                                                       lowermask, flags);
+>                                 if (err)
+>                                         goto out;
+>                         } else {
+> diff --git a/fs/overlayfs/overlayfs.h b/fs/overlayfs/overlayfs.h
+> index 0bfe35da4b7b..910dbbb2bb7b 100644
+> --- a/fs/overlayfs/overlayfs.h
+> +++ b/fs/overlayfs/overlayfs.h
+> @@ -412,14 +412,6 @@ static inline bool ovl_open_flags_need_copy_up(int flags)
+>         return ((OPEN_FMODE(flags) & FMODE_WRITE) || (flags & O_TRUNC));
+>  }
+>
+> -static inline int ovl_do_getattr(const struct path *path, struct kstat *stat,
+> -                                u32 request_mask, unsigned int flags)
+> -{
+> -       if (flags & AT_GETATTR_NOSEC)
+> -               return vfs_getattr_nosec(path, stat, request_mask, flags);
+> -       return vfs_getattr(path, stat, request_mask, flags);
+> -}
+> -
+>  /* util.c */
+>  int ovl_get_write_access(struct dentry *dentry);
+>  void ovl_put_write_access(struct dentry *dentry);
+> diff --git a/fs/stat.c b/fs/stat.c
+> index 41e598376d7e..cbc0fcd4fba3 100644
+> --- a/fs/stat.c
+> +++ b/fs/stat.c
+> @@ -165,7 +165,7 @@ int vfs_getattr_nosec(const struct path *path, struct kstat *stat,
+>         if (inode->i_op->getattr)
+>                 return inode->i_op->getattr(idmap, path, stat,
+>                                             request_mask,
+> -                                           query_flags | AT_GETATTR_NOSEC);
+> +                                           query_flags);
+>
+>         generic_fillattr(idmap, request_mask, inode, stat);
+>         return 0;
+> @@ -198,9 +198,6 @@ int vfs_getattr(const struct path *path, struct kstat *stat,
+>  {
+>         int retval;
+>
+> -       if (WARN_ON_ONCE(query_flags & AT_GETATTR_NOSEC))
+> -               return -EPERM;
+> -
+>         retval = security_inode_getattr(path);
+>         if (retval)
+>                 return retval;
+> diff --git a/include/uapi/linux/fcntl.h b/include/uapi/linux/fcntl.h
+> index 87e2dec79fea..a40833bf2855 100644
+> --- a/include/uapi/linux/fcntl.h
+> +++ b/include/uapi/linux/fcntl.h
+> @@ -154,8 +154,4 @@
+>                                            usable with open_by_handle_at(2). */
+>  #define AT_HANDLE_MNT_ID_UNIQUE        0x001   /* Return the u64 unique mount ID. */
+>
+> -#if defined(__KERNEL__)
+> -#define AT_GETATTR_NOSEC       0x80000000
+> -#endif
+> -
+>  #endif /* _UAPI_LINUX_FCNTL_H */
+> --
+> 2.47.0
+>
 
