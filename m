@@ -1,131 +1,127 @@
-Return-Path: <linux-kernel+bounces-396798-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396824-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D197C9BD24A
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 17:27:03 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D196E9BD2B3
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 17:44:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0EE1C1C22704
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 16:27:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 95EE8282F80
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 16:44:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF3981D7E46;
-	Tue,  5 Nov 2024 16:26:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 318481DAC9C;
+	Tue,  5 Nov 2024 16:44:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WvMzAnkH"
-Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="at77DxNn"
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A655417E918;
-	Tue,  5 Nov 2024 16:26:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EA0C166F1A;
+	Tue,  5 Nov 2024 16:44:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730824016; cv=none; b=IDMikczXGl0S52nUrm6kNwvNGDXsLAAEmbB5pd8vsCAUFrUJmAdRv54CuYeyk/5T5h9IlurXFKb2n3uwcT9PaV021wjyJVVHLUk5O4xECi0j6gChz/bQ569tzCHQaJ5jHcmAuzb1ScUSIvOL8u/hitLxpDlTkXOlDu0BgIQxBzQ=
+	t=1730825070; cv=none; b=S4DNuQGYfVuSRzjKvyTeZ3+7wy9bUTKuEcDu2bZMwMwHS3fg3ti0nbaX+2cMUxxlgcmyT+EVM546bs5Dn8gOCvKBDrdYugNZ3yDCaKueIFAIj+j/FeK6RPsNNamvNqI1ab9gRAi7THyuSfxdvYK+oxInsmY/wAMv4QWbnjNhfws=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730824016; c=relaxed/simple;
-	bh=JVCgDCqfemjeWBOqtNlZq89SrwjUpO8HziLAQJv74vc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Y+Ob615ByZqJ25NPp/O7Ql13zwRMrzNPhaATkl4u8T7/sQeoB9s98uqwP8BtJXJy8ZkftOEpr7pXWO/NJd8P7oVP3aGWydZAhrYg+7Rh0Aa23XgztOAvh0PyDK0LEMREwXirzwilb0TFGMz96s9w4x8imYUyJmvm2e+rUVBjbxE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WvMzAnkH; arc=none smtp.client-ip=209.85.160.174
+	s=arc-20240116; t=1730825070; c=relaxed/simple;
+	bh=xoo0q5V8wjvE7q4lC7VQmHKa9nUZeAijOvblSEeRZm4=;
+	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References; b=uwgAl7TaApjTRjjSyGPXEdkTWsUrGSatIHrO8OuCsy77KwuAUAEjP3EdZAifnWbqrHQVAtZBdRaRLDqnsDatGyVgkJcE3IZKYvjkEjTJZCTH9zM5ZftszTLNv4qSNqBdyCMaO7ZXcF5EKQ5O69zFzNaWh/c4Yfcj4si4NhJV2s8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=at77DxNn; arc=none smtp.client-ip=209.85.210.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-460c1ba306bso38306641cf.2;
-        Tue, 05 Nov 2024 08:26:54 -0800 (PST)
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-71e52582cf8so4907458b3a.2;
+        Tue, 05 Nov 2024 08:44:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730824013; x=1731428813; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YDbwmIuBhshERCXYSkPhenLd2Mhjkk5MhETyYNbkb/Q=;
-        b=WvMzAnkH0cxoGll2MidJo6owgzrt4mFLF0vB83BjTx2ZonPE4YJ04hmtAWRQXhFz6y
-         hx5z24PvBquTUtqNwBAtZuwhGeDevqtjmxGXg62iHI0vXaNViFrZNFQnGVWutKLruyEo
-         3y7xtcRZnp2D4C0cG9l5OmXxE0NRRHmWIpPEIGtMgYV2ItU7NIoh0ov/Ga0qRncek1Hg
-         NqzfmB0lB9meJW84AO/wX2hLKEptayTAMCHCBR2JdUofKT+14B7WrV8onfUpgPipDmM/
-         C1F1yl4S4HrY9bNgCGITLiZ11nKRVwAH9cXkJnTlUjtQ70rl/mzKJAhLk5CvJJglir9M
-         Cqlg==
+        d=gmail.com; s=20230601; t=1730825068; x=1731429868; darn=vger.kernel.org;
+        h=references:message-id:date:in-reply-to:subject:cc:to:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=3rhwRI9JuhsZtMEiJ0JD5YM4F04aW09mvO+gxbR/BxI=;
+        b=at77DxNnUCxbQ9cfuKwfPifgxOpb83UMSNzKbDVc5puFqhu5ZWy8GdWuC7ejCIbLyE
+         Ww/baMcPVcHd3WlNNzxKTPNlIoCPLgtGZ9VFj6Sr3S0mTbS3J6cc1uGsxilA7Pq9Hh1Y
+         32Y2iw9bfpvAU5mhXRDzAldxbT1bbeexNkw4NgID4/2+mM4hG0p9La3/IyHG1bhhIiJW
+         CyaeRkWBhijSlP0k2L9cU64FrrPoLFt2hK3mHoEom0rGhisMTNALBEif1nRMyID2rrT4
+         f4+sSlB5UqSLYZI+xxg+rixiCeWVMHihutuqhNP+y6gt7oezBQzL8NziG9JQv8i2Tf5g
+         IEIw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730824013; x=1731428813;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YDbwmIuBhshERCXYSkPhenLd2Mhjkk5MhETyYNbkb/Q=;
-        b=We81cGPGPgKE/uG9/YseBuFHv9FX1M/p0v6e1ScZDCMLeSlg2ir/QMN7af8OfMLcA1
-         3XOr+3lGYCHu3sxopKAu1/kdunCxcPHrusMpNBxesC8+M4arKw3EXnrenf36RLEJLJxn
-         BDJSwHRpk4Ye6K1HHgRx6TQRX+ANGmXkBswmROfYcW6gievScMNcmrkmsoK7D64YHuqQ
-         LrLyEQQax2FlyMQxJiPus+ThiII+lEy4JulAjCa3ZTJMIOfxMMg2ZiOxfbqmbjMElx4n
-         wR43DneMI0MyoOnCOHXRFXlaoa5Yx5iyrJcKDregRzZrPuYrs/yvCMD6AM+V/mgh4Mdx
-         FsBQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW0zJtIwcUchGfn8ULieu4fycBn99utO1hsvLmj0UqZpruFMaw9i7UzR/Ky/4t+q3Yut7+Ke5JeyLt0rSqK@vger.kernel.org, AJvYcCXz1GKnSHwsp74v5mAhaZ7ACQoDLEz+K/fZxn+2APnmyyVmLmIwQ0UWSagzJUFmu0b7Asx0nMuzZbw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywww6j+1PEQtQEEDHQuVyxP6GWclD2Ybcc12a9GMDW6GiFDdszm
-	EIg9FXo8LL5Yq84oaOv+mpzo+dWuuvzJOusVnaJ9JTQ7rTsdFQO4gRjJpuV8Dw1yp+iPo1BaTEy
-	L/Ep9JBj/skFa/OfOnQHzjL+7fg4=
-X-Google-Smtp-Source: AGHT+IGJ7XLtWYJje82bhRsHQKoOCawC7fDCWpQbhUa9IlTL2mavUPQDVtWKBU6r3gqBrgHI32tivQiaz5RCybz5S4k=
-X-Received: by 2002:a05:622a:1446:b0:460:9b2b:e8b5 with SMTP id
- d75a77b69052e-462b86536b2mr197191941cf.4.1730824013485; Tue, 05 Nov 2024
- 08:26:53 -0800 (PST)
+        d=1e100.net; s=20230601; t=1730825068; x=1731429868;
+        h=references:message-id:date:in-reply-to:subject:cc:to:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=3rhwRI9JuhsZtMEiJ0JD5YM4F04aW09mvO+gxbR/BxI=;
+        b=ZIF4qmJKo7X3vef2CMyPcM+Ap3C+NGcI27YK4NucVjBJbzt77JrgEy09FBReUA7Tgo
+         Xk5DKLFi/KqCmQgBdgDOKjCU8RllE8pdGmtpIwwl1pt8sdLzLrYI4PZLkv1zENG7Qtb/
+         3fTv0kPSyJ7OZiwoXQuUZ1hQvhkTNkBzG2rdDn92ZNvF9XV2s5PrdCFKrUqbUxM8084k
+         0VlxFuFKZj0tzudJZN0GnKt9rFuiM1Ifx6X+4oSgVHSuWpSY7cg6ILSODwM9S68i0g32
+         eIdauYEXqZTMRexZfknnWM+5wK5x3Lcy+ceqghCdnF6qRpUsm9PzvondoBC+Bwr9dw4r
+         2fzg==
+X-Forwarded-Encrypted: i=1; AJvYcCV4vbPPcpnBqTayBhFieG1Gqd7SSRY31Iqnzzt/7mgw5L/f+OPc3L1s+pZbtnWi7Kq1wjADFXaU4e5PPv+8DA==@vger.kernel.org, AJvYcCVPiFUi9HO/1dhHwNYupNbGlULRQYuxE5irBO1O7BIs8qdIhdxHTUBwwcFn3CHP9NXd0tLwKtTQ040H/Wmm@vger.kernel.org, AJvYcCWkEdDlAsrst4pZc+bh8L53mdDfbRZuyCy/tOf/EqjMHYcwLEBuFXzFSVHHCgYGTNCm8Si7V/JM7jH3sA==@vger.kernel.org, AJvYcCXVnjlR5hCE2Rvl6JDuFsMjfTsm0vvR7LU1L9/HMyffbyIl6QdfQYTFVXwQ5K7rX0Xy4LewpVUHbMbu@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz2BF4oYAIHyiq0lX2zTF06FHJPFWQQMvdi3Rv0SlSawciZMYfv
+	00vppsddv4DOToFVBvYp8lW1cMbfrQg72EKEETZQMP8zXEQ66gS4bStqHT6q
+X-Google-Smtp-Source: AGHT+IE+msBBk5xTD+37yuN0TqDTIzB8QG+0iDim6ovw09YJxH9+iCpRyCjKlpFHLHdMZJSNAaLlBQ==
+X-Received: by 2002:a05:6a00:2d89:b0:71e:21:d2d8 with SMTP id d2e1a72fcca58-720c98d32c6mr23148208b3a.7.1730825067732;
+        Tue, 05 Nov 2024 08:44:27 -0800 (PST)
+Received: from dw-tp ([49.36.182.29])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-720bc2eb586sm10159932b3a.149.2024.11.05.08.44.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 05 Nov 2024 08:44:27 -0800 (PST)
+From: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+To: "Darrick J. Wong" <djwong@kernel.org>, John Garry <john.g.garry@oracle.com>, brauner@kernel.org, Catherine Hoang <catherine.hoang@oracle.com>
+Cc: linux-ext4@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>, Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@infradead.org>, Ojaswin Mujoo <ojaswin@linux.ibm.com>, linux-block@vger.kernel.org, Dave Chinner <david@fromorbit.com>, linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [ANNOUNCE] work tree for untorn filesystem writes
+In-Reply-To: <20241105004341.GO21836@frogsfrogsfrogs>
+Date: Tue, 05 Nov 2024 21:56:45 +0530
+Message-ID: <87pln9sl2y.fsf@gmail.com>
+References: <20241105004341.GO21836@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20241104214310.6048-1-jiashengjiangcool@gmail.com>
- <20241104214310.6048-2-jiashengjiangcool@gmail.com> <pyutqiut5yascxkwrv5ozrwdbmb4k4n2vu5jiia3fpgkra4up2@u7nvqpdscb4n>
-In-Reply-To: <pyutqiut5yascxkwrv5ozrwdbmb4k4n2vu5jiia3fpgkra4up2@u7nvqpdscb4n>
-From: Jiasheng Jiang <jiashengjiangcool@gmail.com>
-Date: Tue, 5 Nov 2024 11:26:42 -0500
-Message-ID: <CANeGvZXsw-93j7YrHd=aa4bWCLioE-LbT5kakc9gjeHCK6O+qQ@mail.gmail.com>
-Subject: Re: [PATCH 2/3] i2c: pxa: Add check for clk_enable() and clk_prepare_enable()
-To: Andi Shyti <andi.shyti@kernel.org>
-Cc: rmk@dyn-67.arm.linux.org.uk, max.schwarz@online.de, dianders@chromium.org, 
-	david.wu@rock-chips.com, heiko@sntech.de, vz@mleia.com, wsa@kernel.org, 
-	manabian@gmail.com, linux-arm-kernel@lists.infradead.org, 
-	linux-rockchip@lists.infradead.org, linux-i2c@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Hi Andi,
+"Darrick J. Wong" <djwong@kernel.org> writes:
 
-On Tue, Nov 5, 2024 at 9:13=E2=80=AFAM Andi Shyti <andi.shyti@kernel.org> w=
-rote:
-
-> > Add check for the return values of clk_enable() and clk_prepare_enable(=
-)
-> > in order to catch the potential exceptions.
-> >
-> > Fixes: e7d48fa2b5fb ("[I2C] pxa: provide late suspend and early resume =
-hooks")
-> > Fixes: c3cef3f3c07b ("[ARM] pxa: update pxa i2c driver to use clk suppo=
-rt")
+> Hi everyone,
 >
-> I don't think we need the fixes tag here and nowhere else in this
-> series.
+> Nobody else has stepped up to do this, so I've created a work branch for
+> the fs side of untorn writes:
+> https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux.git/log/?h=fs-atomic_2024-11-04
 >
-> > Signed-off-by: Jiasheng Jiang <jiashengjiangcool@gmail.com>
-> > ---
-> >  drivers/i2c/busses/i2c-pxa.c | 14 ++++++++++++--
-> >  1 file changed, 12 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/drivers/i2c/busses/i2c-pxa.c b/drivers/i2c/busses/i2c-pxa.=
-c
-> > index 4d76e71cdd4b..1118a7f5c6bf 100644
-> > --- a/drivers/i2c/busses/i2c-pxa.c
-> > +++ b/drivers/i2c/busses/i2c-pxa.c
-> > @@ -1503,7 +1503,11 @@ static int i2c_pxa_probe(struct platform_device =
-*dev)
-> >                               i2c->adap.name);
-> >       }
-> >
-> > -     clk_prepare_enable(i2c->clk);
-> > +     ret =3D clk_prepare_enable(i2c->clk);
-> > +     if (ret) {
-> > +             dev_err(&dev->dev, "failed to enable clock: %d\n", ret);
+> Can you all check this to make sure that I merged it correctly?
+
+Sorry, I couldn't reply earlier(I am currently on travel). Yes, the ext4
+merge looks correct to me. You have taken the latest v4 of the ext4
+atomic write series [1]. 
+
+[1]: https://lore.kernel.org/linux-ext4/cover.1730437365.git.ritesh.list@gmail.com/
+
+> And maybe go test this on your storage hardware? :)
+
+Due to limited connectivity during my travel, I don't have the access to
+the hardware. But as I mentioned the merge looks correct to me and I had
+tested those patches earlier on Power and x86.
+But I will in general re-test the mentioned fs branch for both XFS and
+ext4 once I reach back but I don't think we need to wait for that as the
+merge looks good to me.
+
+Also, I noticed that we might have missed to add a Tested-by from
+Ojaswin for XFS series here [2]. Although Ojaswin mentioned that he
+might also re-test the mentioned FS atomic write branch for both XFS and
+EXT4.
+
+[2]: https://lore.kernel.org/linux-xfs/Zxnp8bma2KrMDg5m@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com/
+
+
+-ritesh
+
+> If all goes well then I think the next step is to ask brauner very
+> nicely if he'd consider adding this to the vfs trees for 6.13.  If not
+> then I guess we can submit it ourselves, though we probably ought to ask
+> rothwell to add the branch to for-next asap.
 >
-> please use dev_err_probe here.
-
-Thanks, I have submitted a v2 series without the above problems.
-
--Jiasheng
+> PS: We're now past -rc6 so please reply quickly so that this doesn't
+> slip yet another cycle.
+>
+> Catherine: John's on vacation all week, could you please send me the
+> latest versions of the xfs_io pwrite-atomic patch and the fstest for it?
+>
+> --D
 
