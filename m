@@ -1,235 +1,83 @@
-Return-Path: <linux-kernel+bounces-396349-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396357-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 800509BCBFD
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 12:38:30 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C2489BCC1D
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 12:47:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 119261F22FDC
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 11:38:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E8E02282A20
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 11:47:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14FE21D54DA;
-	Tue,  5 Nov 2024 11:37:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A4501D5145;
+	Tue,  5 Nov 2024 11:47:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DY6xL29P"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="VA8RVBja"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E63E1D47BD
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 11:37:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 594281D4607
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 11:47:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730806678; cv=none; b=a/nIYk6uOOlEVCzI7fbnOWRPWSWHzPgDeqlrDFMMSkTIHN+iMwz9MDZFzDYH8G2uRMimmulTl8pzM2k4izP+V/cuins02RDoldvhl66pHiyTsa7CCmyG3PHNXk0G/rq/+F69pek2PmTv7QRzo2UJcTyvvqAdsJlHgIgIsuQkOcA=
+	t=1730807272; cv=none; b=MWjsw2wWaeyR/E+XQ7OKe78ER4Ukx4kOiQr204AIzYwOM43AvgTJ2FGh/WbVyqTcek3pYlnISj7AzZECazpbdXjxqVURuYusK/Q6YtH8fzP/09hEAt1lE3/t445sOSzAL6+r4vcbPHwpHfh4JsS1+82r7jhJCKJoK1q9tNGiYaw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730806678; c=relaxed/simple;
-	bh=snuUtiSL/ybuiG1jJeB441EEojxXeaRAIydWFUMluW0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=cCxcgd2auC0JXY/bYjbMDznDaHpyZl79ivT1cic4GR9Iup0vwx73JYL/WSo5xvr/fj3czR0FqaJpSv2Ui8KKvEVf3dhoxhpbFPBuKyLwTaipLuCogsy5DFbtbZAseepi9pR0Gzyd3n5dOM8BGaAtcea7Tt/gb2jVW6ZlOf1bmx8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DY6xL29P; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-539f0f9ee49so6063253e87.1
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 03:37:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1730806675; x=1731411475; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=rUR4G4+KmGfw2qjWg659n+t+XFqWG6GKx9RaaMjNBVk=;
-        b=DY6xL29PTJn+8wBvqtu3oO8O9JxBJe5ghJQlwjZcqnXI3djLmcmn3r/i+1MM1tIUbk
-         sU/DvRboTD4AGmfYfxvXVF3773sI227UpUAlvZWUucYnajap5bBrHXc72PX+/XOmp7lx
-         EqAdcg0sOUlsWc6e9i/bqBts3BjHnIr/rM1I0YEtZ0ow/2iJ5J5n8e1CeIsLzQUQctGc
-         SOJLxO0CHbx3ThAfKiP0T9esytYnMiRNT3T8rMmtbIa/4Ng591LAAv8+Y0zKIHl7Hh2L
-         d0iOrL8q4jNojjp6BBDETdh3zBUsRrKDUJNpVn+95NNNdqruAuA+BT4B2CG+Pjf66Zbo
-         pJdw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730806675; x=1731411475;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rUR4G4+KmGfw2qjWg659n+t+XFqWG6GKx9RaaMjNBVk=;
-        b=nIok+zOl0JiG/+07iDHBwOOa+HAy8AvuFmgOFRN/lbgQcd/T7vxJb0hfQBJrFqkHi1
-         H4C0Ts7Mp53yfNBerVc0Ze6ZexjswMQph8LeKUxTMjvb2VV4FKm+EjEI5leqEEwxyG88
-         o0V1Kf/FvPtIW1RaCWamar1UcIX5UzMlStM6IawImNzGNuKRx2+FBKVZjLWPcwkuxYYm
-         DiWvL3GgawJZCGifUWjpW/YnpGCxjyjvLEsX49mqtEn1T4y2kzanVbjHi1munQHJpubP
-         FiIAiKCdFczo1CEKz6JmQ0zR6xDEqQHX9gaAm5y8VkGfWCN9ZvUU2r1UXNQz/lDdAGRJ
-         sRxw==
-X-Forwarded-Encrypted: i=1; AJvYcCVZ7GZzM/n9dPeNgXmOPoFLsokZZ3Cq9yFVekgfmuaJCJWeBHSb4jhX3K5czBnhdsl8g9jxXWc/lj+wyPc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwGV7YTOBiLjArmdO3ygsWn2wgiejRI81rRpBEUMTObU4bP1L1y
-	9o6GFNRWobLPDkd62X5nSb7s8xbG0RykMeVMstOtTh7I4obMSZnhDJocL/wpeRk=
-X-Google-Smtp-Source: AGHT+IF2HLn5OuDk/TB8JnDc6PcOsIzoUFHc7eqF2+sIPbthR4zPdoM6HtwREP6/JqDnchoUOQjMrQ==
-X-Received: by 2002:a05:6512:1105:b0:539:e776:71f2 with SMTP id 2adb3069b0e04-53b34a33f15mr18418462e87.52.1730806674538;
-        Tue, 05 Nov 2024 03:37:54 -0800 (PST)
-Received: from [127.0.1.1] ([82.76.168.176])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4327d5bf429sm181816845e9.12.2024.11.05.03.37.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Nov 2024 03:37:54 -0800 (PST)
-From: Abel Vesa <abel.vesa@linaro.org>
-Date: Tue, 05 Nov 2024 13:37:33 +0200
-Subject: [PATCH 2/2] arm64: dts: qcom: x1e78100-qcp: Enable Type-A USB
- ports labeled 3 and 4/6
+	s=arc-20240116; t=1730807272; c=relaxed/simple;
+	bh=aYOVC46Cazrt1Axdw38Y3VFYmwtPX3K4NAC43AXYDAU=;
+	h=Message-Id:Date:From:To:Cc:Subject; b=tLQMufCe8UpRBId9gVQbDYjG/jj7W0+D2EeGVCUR9hQ8Um0KDEI+ZOT96Rj9AJChWaThXjNxxnyaZ3PfV4lZGI1kGZ4YEUsGkyFNUplgfp9wz/NT8E2bgH8TovXSl5RjTUyh/ZkYOueNdfhnP/1wiG720045x2d0A3kn/lRX40U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=VA8RVBja; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=Subject:Cc:To:From:Date:Message-Id:
+	Sender:Reply-To:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:In-Reply-To:References;
+	bh=gEihkgVeEZGLIJKyL++s1jkTY0FxHURxWxJWyyplJG8=; b=VA8RVBja5hxAU0WKygXb8R9uoP
+	BsB0ypLxuLY0pqUg4TfqgKMezkV7XgVz7jCHYcYH4JUMeOhoijgjpwcc0ozUGBmoHKkdXRz3Xmu1s
+	oRxV4wSp1BHlOa3rSD9VDRuorLN/2URZPbE5RbsNyhEvl61wpuHWzBFJwCyotyZHYiDIOlW6seTqR
+	6BVEVRyjfdFUm84wR3pOt8gEZSHNVaSVt8UZnHGydz3o7Mzunzn+SAVps1ooaGSImWomhnU1ZkN5z
+	d1ceQkusLDxmfRD0J/JtGL70iYC1iszbean7ldOLNuMg+WMCcU1H25JJkB4xik57RHkr88YmfhrAJ
+	cGEGGrng==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1t8I2E-0000000Bjjl-0wxQ;
+	Tue, 05 Nov 2024 11:47:46 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 0)
+	id D87BB30068B; Tue,  5 Nov 2024 12:47:45 +0100 (CET)
+Message-Id: <20241105113901.348320374@infradead.org>
+User-Agent: quilt/0.65
+Date: Tue, 05 Nov 2024 12:39:01 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: x86@kernel.org
+Cc: linux-kernel@vger.kernel.org,
+ peterz@infradead.org,
+ alyssa.milburn@intel.com,
+ scott.d.constable@intel.com,
+ joao@overdrivepizza.com,
+ andrew.cooper3@citrix.com,
+ jpoimboe@kernel.org,
+ alexei.starovoitov@gmail.com,
+ ebiggers@kernel.org,
+ samitolvanen@google.com,
+ kees@kernel.org
+Subject: [PATCH 0/8] x86: kCFI and IBT cleanups
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241105-x1e80100-qcp-t14-enable-usb-type-a-ports-v1-2-b4386def91d8@linaro.org>
-References: <20241105-x1e80100-qcp-t14-enable-usb-type-a-ports-v1-0-b4386def91d8@linaro.org>
-In-Reply-To: <20241105-x1e80100-qcp-t14-enable-usb-type-a-ports-v1-0-b4386def91d8@linaro.org>
-To: Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
- Johan Hovold <johan@kernel.org>, linux-arm-msm@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Abel Vesa <abel.vesa@linaro.org>
-X-Mailer: b4 0.15-dev-dedf8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2920; i=abel.vesa@linaro.org;
- h=from:subject:message-id; bh=snuUtiSL/ybuiG1jJeB441EEojxXeaRAIydWFUMluW0=;
- b=owEBbQKS/ZANAwAKARtfRMkAlRVWAcsmYgBnKgON/c3tJ21JZAcD05ny6D5svRT1ag7gP1jYo
- eDbroaNCASJAjMEAAEKAB0WIQRO8+4RTnqPKsqn0bgbX0TJAJUVVgUCZyoDjQAKCRAbX0TJAJUV
- Vgl5EACQmgNQNAVeAr8lf7jB2+lTK2V/okejH7egi+6z5DqD6FcQ8BHCfG5yNCuXi1muVYFNprr
- SGqgU4wzTRnPpq2/CLjeKhy18+c2BsB3z7Xurcoq/at9LorHpXa9+ncDUgYasXgwyXMXEbEahRt
- U9yfxxRxF668as4EZos13CuTgNkP5IGB4Wb8lKPKylohC0S+KShvfoJ20kNRniV/pCjnVIbhLB/
- H4zHuoMXh/mxhh/j5q6eBoAEBnVt9wa1Y6GhhkJhgnpbA4mCNZJCr9kihCYCYnI/jpFmIM8JQ2o
- CdK3kVOK34HTOOzzURd3ZmlkXot58CkXFR8Gk5gvEUDSvNP5FyCvCTEdjmWNfe2lIbsboy/Oebh
- nQSvnsao+LkGPAHd5no7UZGk7pVVGVeA0tKRYXNsASCfOlxFvfkfxf6ZfNyfhk9lI8kYoVPiquL
- j9QRFuhr7AO+Sj0fimVvkHx7kYAn9Zkr6tVu2L47skA8Ag6TyvaGj4UPnKckgflkSP+falKfipE
- By0PNknB9QiVHjAmfd0sZw5PLhBp/Wo+CxyjFaf90SSHsiUswq4sXFRe5I+tys8SCaGWhSS9WNH
- W1bZPHvyAiosJdQUzhnSS5hm+JsR5QJMmq+mcPlmlmyufAg5QbzvfEdcuzsR6uaqmPr+gBfsBzK
- EVxLa8arCijgoLg==
-X-Developer-Key: i=abel.vesa@linaro.org; a=openpgp;
- fpr=6AFF162D57F4223A8770EF5AF7BF214136F41FAE
 
-The X Elite QCP board has 3 USB-A ports. The ones labed as USB3 and
-USB4/6 are both connected to the multiport controller, each one via a
-separate NXP PTN3222 eUSB2-to-USB2 redriver to the eUSB2 PHY for
-High-Speed support, with a dedicated QMP PHY for SuperSpeed support.
+Hi!
 
-Describe these two redrivers and enable each pair of PHYs along with the
-USB controller, all in order to enable support for these 2 USB-A ports.
+This is the 'safe' set of patches that cleans up a lot of the kCFI / IBT
+things.
 
-Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
----
- arch/arm64/boot/dts/qcom/x1e80100-qcp.dts | 86 +++++++++++++++++++++++++++++++
- 1 file changed, 86 insertions(+)
+For now, I've dropped the IBT+ and FineIBT-BHI bits, we'll get back to those
+once the dust settles.
 
-diff --git a/arch/arm64/boot/dts/qcom/x1e80100-qcp.dts b/arch/arm64/boot/dts/qcom/x1e80100-qcp.dts
-index 5ef030c60abe2998d093ee60a6754a90cd5aaf72..f52ead28eb7d16847f5049185ea5ff0d8edb10e7 100644
---- a/arch/arm64/boot/dts/qcom/x1e80100-qcp.dts
-+++ b/arch/arm64/boot/dts/qcom/x1e80100-qcp.dts
-@@ -616,6 +616,40 @@ zap-shader {
- 	};
- };
- 
-+&i2c5 {
-+	clock-frequency = <400000>;
-+
-+	status = "okay";
-+
-+	eusb3_repeater: redriver@47 {
-+		compatible = "nxp,ptn3222";
-+		reg = <0x47>;
-+		#phy-cells = <0>;
-+
-+		vdd3v3-supply = <&vreg_l13b_3p0>;
-+		vdd1v8-supply = <&vreg_l4b_1p8>;
-+
-+		reset-gpios = <&tlmm 6 GPIO_ACTIVE_LOW>;
-+
-+		pinctrl-0 = <&eusb3_reset_n>;
-+		pinctrl-names = "default";
-+	};
-+
-+	eusb6_repeater: redriver@4f {
-+		compatible = "nxp,ptn3222";
-+		reg = <0x4f>;
-+		#phy-cells = <0>;
-+
-+		vdd3v3-supply = <&vreg_l13b_3p0>;
-+		vdd1v8-supply = <&vreg_l4b_1p8>;
-+
-+		reset-gpios = <&tlmm 184 GPIO_ACTIVE_LOW>;
-+
-+		pinctrl-0 = <&eusb6_reset_n>;
-+		pinctrl-names = "default";
-+	};
-+};
-+
- &lpass_tlmm {
- 	spkr_01_sd_n_active: spkr-01-sd-n-active-state {
- 		pins = "gpio12";
-@@ -819,6 +853,22 @@ edp_reg_en: edp-reg-en-state {
- 		bias-disable;
- 	};
- 
-+	eusb3_reset_n: eusb3-reset-n-state {
-+		pins = "gpio6";
-+		function = "gpio";
-+		drive-strength = <2>;
-+		bias-disable;
-+		output-low;
-+	};
-+
-+	eusb6_reset_n: eusb6-reset-n-state {
-+		pins = "gpio184";
-+		function = "gpio";
-+		drive-strength = <2>;
-+		bias-disable;
-+		output-low;
-+	};
-+
- 	nvme_reg_en: nvme-reg-en-state {
- 		pins = "gpio18";
- 		function = "gpio";
-@@ -981,3 +1031,39 @@ &usb_1_ss2_dwc3_hs {
- &usb_1_ss2_qmpphy_out {
- 	remote-endpoint = <&pmic_glink_ss2_ss_in>;
- };
-+
-+&usb_mp {
-+	status = "okay";
-+};
-+
-+&usb_mp_hsphy0 {
-+	vdd-supply = <&vreg_l2e_0p8>;
-+	vdda12-supply = <&vreg_l3e_1p2>;
-+
-+	phys = <&eusb6_repeater>;
-+
-+	status = "okay";
-+};
-+
-+&usb_mp_qmpphy0 {
-+	vdda-phy-supply = <&vreg_l3e_1p2>;
-+	vdda-pll-supply = <&vreg_l3c_0p8>;
-+
-+	status = "okay";
-+};
-+
-+&usb_mp_hsphy1 {
-+	vdd-supply = <&vreg_l2e_0p8>;
-+	vdda12-supply = <&vreg_l3e_1p2>;
-+
-+	phys = <&eusb3_repeater>;
-+
-+	status = "okay";
-+};
-+
-+&usb_mp_qmpphy1 {
-+	vdda-phy-supply = <&vreg_l3e_1p2>;
-+	vdda-pll-supply = <&vreg_l3c_0p8>;
-+
-+	status = "okay";
-+};
+Also available here:
 
--- 
-2.34.1
+  git://git.kernel.org/pub/scm/linux/kernel/git/peterz/queue.git x86/ibt
 
 
