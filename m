@@ -1,54 +1,54 @@
-Return-Path: <linux-kernel+bounces-396088-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396089-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CABE49BC7C6
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 09:15:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 913009BC7C7
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 09:15:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 091C51C2240E
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 08:15:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 56BBD281637
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 08:15:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52767200113;
-	Tue,  5 Nov 2024 08:14:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CBDD20012B;
+	Tue,  5 Nov 2024 08:14:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="xiW0y8jQ";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="mzOSSyVF"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="sAaT5Cmm";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="6/YOKMMb"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2686F1FF7BD
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 08:14:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64F081FF7D0
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 08:14:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730794480; cv=none; b=tG69g/Vp9A4nCgoHb7OV4Hj92+nTDPAlGRiAyOIjJZFiBCa+4kL43HNSCMrM9G+E7wJEH/+/DlU458vVTj5dKohhJSvQNIfAEZamS3prePs+Z7O6iu0+xgFQnXDtYCPF22c8Kz/pYtZW9rmXBpeRqYAg/gbdKlKQvOKHAqlXmJE=
+	t=1730794481; cv=none; b=FMq4tZX9hNlhJOqVKwdo4F3p+Ifri747vDOQUW48/yNx7yhQkusFW0CPHTe4nGV5/ysbtn7fI4hbfOX3KiZbg1497Q7LNq3T4EUb59fhGKQig75dabmzXtVG2C8fYRBnHtIJSDgR3xWbxgelUGFOLe4n1u7IXOPAdOfHe1pxvVc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730794480; c=relaxed/simple;
-	bh=Nemrgu/YkY5r3VRndYM1Ns/N5tWy7kTgo331RhnJT6Q=;
+	s=arc-20240116; t=1730794481; c=relaxed/simple;
+	bh=DJJdtdB7yx6npccgWUxboIsPKdsXHrZ0ZO98PCgvVgA=;
 	h=Message-ID:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Date; b=gDzNJU7tuCh9o4ac0BAOogodcE6/+WUNuG7OOq8ui92w6bWcD9F86LTMr18u1wmRBim+o1X4hoz7wCdRosDL+d5w6ZQUlfEVxzZXPLbxDBdxAcD2vphDHds99wxnsLw62qP48Z6W2ynQK5BMHEgmrFxibamxKhjmHUn7qdiFxyo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=xiW0y8jQ; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=mzOSSyVF; arc=none smtp.client-ip=193.142.43.55
+	 Content-Type:Date; b=kJ6sNIg+/6gtqwJDb0H7bDwueabCR+FUmw0EiknLXeZW2EMmmZOyDVr4GjvjOeqgfKF9iQzs/XLoNh9I0jWwTlDY4MDs+osbX95SCjixQohSPpWqdDPSO4/9W8pNVToagQrT1fDdtyCN4Gkyuf+jGCE+0lSCvh5OY7vFlBW8A9E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=sAaT5Cmm; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=6/YOKMMb; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Message-ID: <20241105064213.304756440@linutronix.de>
+Message-ID: <20241105064213.371410037@linutronix.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1730794477;
+	s=2020; t=1730794479;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 references:references; bh=tEeFEzPNCwUi0JRaFaQ+6R6rL1sCe1K+XB0ECNCbAZY=;
-	b=xiW0y8jQsZougWJrORLnSbyB5lOKDQisMncmB1wJm4B9oA5BL4J1414l/nqGIa+ea3zDvk
-	ei1pwQHk3+zSSSsfKk8Nj/Phv0Yz/HTp+IQf6/BGBO+x8ybMZzj5sVZN3Qft2fECM33mA5
-	ap3EYGzsxhhXZJP7cpmQ5wYgM2VUZ5B/nmxFQWdRnQU+KRpzrwvVGIMja+0FF/x3uqP0F9
-	d+ipVS2fRiXGMw3h6Sptj7sVSdeQId6aGXQEnoXhJ3LGToQeehlVXWHXS+4kHvI512KTia
-	98i9et0bDxyE3WnIr+Vz6b/uNNg3Lc/yXiBo7fkyqnju7xHkZzMz26EDBv3I6w==
+	 references:references; bh=nO1+De1BhqmLhfu0q/o6dCJa04TGyfv46M1zqMkaqy0=;
+	b=sAaT5CmmvFERowMaUszbgoRFwgQbmxhzVHaylJJG6NYnUrYyz4zVDOWicfk6F7t4d41dzc
+	QfyzvDutp069Qyew13+SkTOGNkaYU51yR9qhWRQxzk+612JqpWYGyxc1BI25j2K6axD5/r
+	FqWjmCVT0C2En3w5kJCMo1NLd4uUMqCa/Y0YGX2rvtrcJlLeNQmnID91Bpen4vWIf6Qswn
+	dib+HZW5Do547T97QjLACQVv0zS9LKF0DahbxZmDS1og3aZElIEdyLQENAL5l5knp8Pz5c
+	kZFV0VxanxAat0plKqT/LquoLSSOJhYa1MVyvjQhJo0ZG46O5InQUI3gPFReTQ==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1730794477;
+	s=2020e; t=1730794479;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 references:references; bh=tEeFEzPNCwUi0JRaFaQ+6R6rL1sCe1K+XB0ECNCbAZY=;
-	b=mzOSSyVFi/mrhOXabiybCQpUXh4iIM6tbzsuIVgwVEL5Pp0LfjkiGTK79rHvuxKLlA8SrT
-	XQj37p4HFG2rK9Ag==
+	 references:references; bh=nO1+De1BhqmLhfu0q/o6dCJa04TGyfv46M1zqMkaqy0=;
+	b=6/YOKMMbavOEziBv6K79rfSIBNAdVZXNH2EDk2ma10d0A0aT5U0dfiXhhS5CrezRuqwRiz
+	loUpdBu0eNb12oDQ==
 From: Thomas Gleixner <tglx@linutronix.de>
 To: LKML <linux-kernel@vger.kernel.org>
 Cc: Anna-Maria Behnsen <anna-maria@linutronix.de>,
@@ -59,7 +59,7 @@ Cc: Anna-Maria Behnsen <anna-maria@linutronix.de>,
  Stephen Boyd <sboyd@kernel.org>,
  Eric Biederman <ebiederm@xmission.com>,
  Oleg Nesterov <oleg@redhat.com>
-Subject: [patch V7 06/21] posix-timers: Add a refcount to struct k_itimer
+Subject: [patch V7 07/21] signal: Split up __sigqueue_alloc()
 References: <20241105063544.565410398@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -68,121 +68,98 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Date: Tue,  5 Nov 2024 09:14:36 +0100 (CET)
+Date: Tue,  5 Nov 2024 09:14:38 +0100 (CET)
 
 To cure the SIG_IGN handling for posix interval timers, the preallocated
 sigqueue needs to be embedded into struct k_itimer to prevent life time
 races of all sorts.
 
-To make that work correctly it needs reference counting so that timer
-deletion does not free the timer prematuraly when there is a signal queued
-or delivered concurrently.
+Reorganize __sigqueue_alloc() so the ucounts retrieval and the
+initialization can be used independently.
 
-Add a rcuref to the posix timer part.
+No functional change.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
 Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-
 ---
- include/linux/posix-timers.h |   14 ++++++++++++++
- kernel/time/posix-timers.c   |    7 ++++---
- 2 files changed, 18 insertions(+), 3 deletions(-)
+ kernel/signal.c |   52 +++++++++++++++++++++++++++++++++++-----------------
+ 1 file changed, 35 insertions(+), 17 deletions(-)
 ---
 
---- a/include/linux/posix-timers.h
-+++ b/include/linux/posix-timers.h
-@@ -6,11 +6,13 @@
- #include <linux/list.h>
- #include <linux/mutex.h>
- #include <linux/posix-timers_types.h>
-+#include <linux/rcuref.h>
- #include <linux/spinlock.h>
- #include <linux/timerqueue.h>
- 
- struct kernel_siginfo;
- struct task_struct;
-+struct k_itimer;
- 
- static inline clockid_t make_process_cpuclock(const unsigned int pid,
- 		const clockid_t clock)
-@@ -105,6 +107,7 @@ static inline void posix_cputimers_rt_wa
- 
- void posixtimer_rearm_itimer(struct task_struct *p);
- bool posixtimer_deliver_signal(struct kernel_siginfo *info);
-+void posixtimer_free_timer(struct k_itimer *timer);
- 
- /* Init task static initializer */
- #define INIT_CPU_TIMERBASE(b) {						\
-@@ -129,6 +132,7 @@ static inline void posix_cputimers_group
- 					      u64 cpu_limit) { }
- static inline void posixtimer_rearm_itimer(struct task_struct *p) { }
- static inline bool posixtimer_deliver_signal(struct kernel_siginfo *info) { return false; }
-+static inline void posixtimer_free_timer(struct k_itimer *timer) { }
- #endif
- 
- #ifdef CONFIG_POSIX_CPU_TIMERS_TASK_WORK
-@@ -156,6 +160,7 @@ static inline void posix_cputimers_init_
-  * @it_signal:		Pointer to the creators signal struct
-  * @it_pid:		The pid of the process/task targeted by the signal
-  * @it_process:		The task to wakeup on clock_nanosleep (CPU timers)
-+ * @rcuref:		Reference count for life time management
-  * @sigq:		Pointer to preallocated sigqueue
-  * @it:			Union representing the various posix timer type
-  *			internals.
-@@ -180,6 +185,7 @@ struct k_itimer {
- 		struct task_struct	*it_process;
- 	};
- 	struct sigqueue		*sigq;
-+	rcuref_t		rcuref;
- 	union {
- 		struct {
- 			struct hrtimer	timer;
-@@ -200,4 +206,12 @@ void set_process_cpu_timer(struct task_s
- 
- int update_rlimit_cpu(struct task_struct *task, unsigned long rlim_new);
- 
-+#ifdef CONFIG_POSIX_TIMERS
-+static inline void posixtimer_putref(struct k_itimer *tmr)
-+{
-+	if (rcuref_put(&tmr->rcuref))
-+		posixtimer_free_timer(tmr);
-+}
-+#endif /* !CONFIG_POSIX_TIMERS */
-+
- #endif
---- a/kernel/time/posix-timers.c
-+++ b/kernel/time/posix-timers.c
-@@ -417,10 +417,11 @@ static struct k_itimer * alloc_posix_tim
- 		return NULL;
- 	}
- 	clear_siginfo(&tmr->sigq->info);
-+	rcuref_init(&tmr->rcuref, 1);
- 	return tmr;
+--- a/kernel/signal.c
++++ b/kernel/signal.c
+@@ -396,16 +396,9 @@ void task_join_group_stop(struct task_st
+ 	task_set_jobctl_pending(task, mask | JOBCTL_STOP_PENDING);
  }
  
--static void posix_timer_free(struct k_itimer *tmr)
-+void posixtimer_free_timer(struct k_itimer *tmr)
+-/*
+- * allocate a new signal queue record
+- * - this may be called without locks if and only if t == current, otherwise an
+- *   appropriate lock must be held to stop the target task from exiting
+- */
+-static struct sigqueue *
+-__sigqueue_alloc(int sig, struct task_struct *t, gfp_t gfp_flags,
+-		 int override_rlimit, const unsigned int sigqueue_flags)
++static struct ucounts *sig_get_ucounts(struct task_struct *t, int sig,
++				       int override_rlimit)
  {
- 	put_pid(tmr->it_pid);
- 	sigqueue_free(tmr->sigq);
-@@ -432,7 +433,7 @@ static void posix_timer_unhash_and_free(
- 	spin_lock(&hash_lock);
- 	hlist_del_rcu(&tmr->t_hash);
- 	spin_unlock(&hash_lock);
--	posix_timer_free(tmr);
-+	posixtimer_putref(tmr);
- }
+-	struct sigqueue *q = NULL;
+ 	struct ucounts *ucounts;
+ 	long sigpending;
  
- static int common_timer_create(struct k_itimer *new_timer)
-@@ -467,7 +468,7 @@ static int do_timer_create(clockid_t whi
- 	 */
- 	new_timer_id = posix_timer_add(new_timer);
- 	if (new_timer_id < 0) {
--		posix_timer_free(new_timer);
-+		posixtimer_free_timer(new_timer);
- 		return new_timer_id;
+@@ -424,19 +417,44 @@ static struct sigqueue *
+ 	if (!sigpending)
+ 		return NULL;
+ 
+-	if (override_rlimit || likely(sigpending <= task_rlimit(t, RLIMIT_SIGPENDING))) {
+-		q = kmem_cache_alloc(sigqueue_cachep, gfp_flags);
+-	} else {
++	if (unlikely(!override_rlimit && sigpending > task_rlimit(t, RLIMIT_SIGPENDING))) {
++		dec_rlimit_put_ucounts(ucounts, UCOUNT_RLIMIT_SIGPENDING);
+ 		print_dropped_signal(sig);
++		return NULL;
  	}
+ 
+-	if (unlikely(q == NULL)) {
++	return ucounts;
++}
++
++static void __sigqueue_init(struct sigqueue *q, struct ucounts *ucounts,
++			    const unsigned int sigqueue_flags)
++{
++	INIT_LIST_HEAD(&q->list);
++	q->flags = sigqueue_flags;
++	q->ucounts = ucounts;
++}
++
++/*
++ * allocate a new signal queue record
++ * - this may be called without locks if and only if t == current, otherwise an
++ *   appropriate lock must be held to stop the target task from exiting
++ */
++static struct sigqueue *__sigqueue_alloc(int sig, struct task_struct *t, gfp_t gfp_flags,
++					 int override_rlimit, const unsigned int sigqueue_flags)
++{
++	struct ucounts *ucounts = sig_get_ucounts(t, sig, override_rlimit);
++	struct sigqueue *q;
++
++	if (!ucounts)
++		return NULL;
++
++	q = kmem_cache_alloc(sigqueue_cachep, gfp_flags);
++	if (!q) {
+ 		dec_rlimit_put_ucounts(ucounts, UCOUNT_RLIMIT_SIGPENDING);
+-	} else {
+-		INIT_LIST_HEAD(&q->list);
+-		q->flags = sigqueue_flags;
+-		q->ucounts = ucounts;
++		return NULL;
+ 	}
++
++	__sigqueue_init(q, ucounts, sigqueue_flags);
+ 	return q;
+ }
  
 
 
