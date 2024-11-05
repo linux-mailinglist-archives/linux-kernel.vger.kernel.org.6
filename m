@@ -1,351 +1,333 @@
-Return-Path: <linux-kernel+bounces-396519-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396520-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E2C69BCE49
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 14:52:47 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A89029BCE4A
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 14:52:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3207F1C21581
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 13:52:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6524728364F
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 13:52:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 452521D6DDD;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87D191D799C;
 	Tue,  5 Nov 2024 13:52:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=helen.koike@collabora.com header.b="Wo1dLc2a"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sZ4kn9Bl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CFAF1D45EA
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 13:52:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730814756; cv=pass; b=MuoqJIuBsuVcgQ0parnE0zRrP48RkmgFuGAnFYxMCxLrgEsa2j1G5vXSbJ2tuLwqqWUlPD+pTh7DjK9bTA/bgITExS+IislBGu0F4SOwbvp3Wl+pcxiqjSHmLETHe/+iNouMT4sOfRS7YF9Mm9FS/ZFYrKTBYbHOT/gAj7vj2og=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B17521D63CC;
+	Tue,  5 Nov 2024 13:52:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730814756; cv=none; b=nzAn9YD1N/zpmAUlM26G5kXTI2ppwCVzB5jFWm7n0mAhWebZ4C79Y7iHKocHfyHFX1+3k7B9A6lNd/cor3jhZVCMlnjJceMW9s5luFwA5k6LFItHqdp2+cg60knfQXuGWrKcO0nh2Db4RTZmBmutezT3oihgrgoDD3riWh79Yzc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1730814756; c=relaxed/simple;
-	bh=umcd7S3ZvJi9dlnPqSq5SQboenzwlbv0Z2wNYEW3ovQ=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=F7J9aAG+cFOPx6djZ0qpUl1oT7TA3YTalqeZItEjv50T2sAofo1EesBG3veUmcnXF4MIafwUfmfmITO/R3RZ8ewUNl6LQvSnixpWQ6sJJL0QYX8HYd8RvNY7es3/6wYpYu23Zey9528CgbfVX8EtcnQq4hZ5tQt4JFl2pRpjnp4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=helen.koike@collabora.com header.b=Wo1dLc2a; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1730814746; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=BTpws9Cc8Z6zvQyIreLOySedmtMA/PW/nJ3G5VVM6xkMxCgLVGno5ilsmT7SiNfWKElSK86EiZN0bJZcmJypJerd9hm0qPEzIl4wKi0VH9hdp5c8TR8XMf9geVpBRHj3ojyhX5oMUUnvvPBOFEPmTCMlOlA3cMKURHH9V6+CiLE=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1730814746; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=pidExZlKnV3OV7LOvKDA7sDf/W9lOxoRPhBb9T0W2cc=; 
-	b=UtTqnlXNqnjiEfTaqaNXEyx1ZPmSuv02eM5f2u9E6hF9bV2tAEVkgAcig45OQUxwYpYXU3etIUPlm0qbrlvKrFudmXLpr35pfX5Y/3zRIZcTS77CXPBaiZ3XkrrwHUc+yn4IwkIrsjwccv1ZnNVl6G46/9u8kC6OaAOtDM/bfPw=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=helen.koike@collabora.com;
-	dmarc=pass header.from=<helen.koike@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1730814746;
-	s=zohomail; d=collabora.com; i=helen.koike@collabora.com;
-	h=Date:Date:From:From:To:To:Cc:Cc:Message-ID:In-Reply-To:References:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=pidExZlKnV3OV7LOvKDA7sDf/W9lOxoRPhBb9T0W2cc=;
-	b=Wo1dLc2aGRet3OsAfnG3U4+pC+v7K+qHJQGiFuaHajKzCvwU/SNZZdBf5w7VpMfV
-	a3xvBqBR5WCOv+qoZ5JgJ07Mc3uyq2xST/1VEs7/IJKXQmi1nN4WWab9K0sOxk6o/AW
-	1mjVZazA9RTej/fE+RW3Cs+HRNxe568h9EvDDumk=
-Received: from mail.zoho.com by mx.zohomail.com
-	with SMTP id 1730814744807811.5268898687393; Tue, 5 Nov 2024 05:52:24 -0800 (PST)
-Date: Tue, 05 Nov 2024 10:52:24 -0300
-From: Helen Mae Koike Fornazier <helen.koike@collabora.com>
-To: "WangYuli" <wangyuli@uniontech.com>
-Cc: "Vignesh Raman" <vignesh.raman@collabora.com>,
-	"dri-devel" <dri-devel@lists.freedesktop.org>,
-	"daniels" <daniels@collabora.com>, "airlied" <airlied@gmail.com>,
-	"daniel" <daniel@ffwll.ch>, "robdclark" <robdclark@gmail.com>,
-	"guilherme.gallo" <guilherme.gallo@collabora.com>,
-	"sergi.blanch.torne" <sergi.blanch.torne@collabora.com>,
-	"deborah.brouwer" <deborah.brouwer@collabora.com>,
-	"linux-kernel" <linux-kernel@vger.kernel.org>
-Message-ID: <192fc99189e.1107f6fe127599.7164445195642331691@collabora.com>
-In-Reply-To: <D47ADA30984AA8B6+6b0a7d79-3314-482a-8c0e-fcd1a9190571@uniontech.com>
-References: <20241030091732.665428-1-vignesh.raman@collabora.com> <D47ADA30984AA8B6+6b0a7d79-3314-482a-8c0e-fcd1a9190571@uniontech.com>
-Subject: Re: [PATCH v1] drm/ci: remove update-xfails.py
+	bh=9RmemElWczQmjSbmF+yQD5UD6vSvu+VPFLQ/xqDnlok=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Hjsh/ehSZTXbB8APnjTeN18J52y1M5U/q3hxt4ohl6qzA7k/fzdhlngH07xAIz1lojr7XfJ0PoyA3e3i4tT8VY3c29YVbxDLZWqGdP/i0qMyfR6QxYivtRh4q6RykNy7ypA2NVuRge67u4ei0MMBJ4kPXdl/19Kzz4e8qW2h9M4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sZ4kn9Bl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 137CEC4CED0;
+	Tue,  5 Nov 2024 13:52:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730814756;
+	bh=9RmemElWczQmjSbmF+yQD5UD6vSvu+VPFLQ/xqDnlok=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=sZ4kn9BlsfgtIwNVWgGErbE7ubGbKK+kvIlYvXbEYFIRoofLd14ERw/p6jFF6iXA7
+	 EpZyVlMmlhxHd3R3bO3g//6moUX4gDZFS7Ncr3EDhJQkgMPuZ/k3pR1nyXI6zrPWO4
+	 ecveh4Trj0UyYWbSa5TtUj5za1puos93SA7PZzM5L8IY1SLyXUFQDqumYNw62wUgnE
+	 OSAggZ+ZISz1E5FwsdJCJXvxaYOSP+ZLpI83m9Uu1sNyzi/d+BVlge12An1a5IaGz+
+	 lY2Q4PmeLia3mvQjGJJ/I6LG+gZos+6w6L1Smu2fUk8A2Z9eLxQXX+oHqCbpU+qmwG
+	 Y/S09ir6gbV3A==
+Date: Tue, 5 Nov 2024 07:52:34 -0600
+From: Rob Herring <robh@kernel.org>
+To: Andreas Kemnade <andreas@kemnade.info>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-omap@vger.kernel.org, Tero Kristo <kristo@kernel.org>,
+	Tony Lindgren <tony@atomide.com>,
+	Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: clock: ti: Convert mux.txt to json-schema
+Message-ID: <20241105135234.GA3100411-robh@kernel.org>
+References: <20241104135549.38486-1-andreas@kemnade.info>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Importance: Medium
-User-Agent: Zoho Mail
-X-Mailer: Zoho Mail
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241104135549.38486-1-andreas@kemnade.info>
 
+On Mon, Nov 04, 2024 at 02:55:49PM +0100, Andreas Kemnade wrote:
+> Convert the OMAP mux clock device tree binding to json-schema.
+> Specify the creator of the original binding as a maintainer.
+> Choose GPL-only license because original binding was also GPL.
+> 
+> Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
+> ---
+>  .../bindings/clock/ti/composite.txt           |   2 +-
+>  .../devicetree/bindings/clock/ti/mux.txt      |  78 -----------
+>  .../bindings/clock/ti/ti,mux-clock.yaml       | 123 ++++++++++++++++++
+>  3 files changed, 124 insertions(+), 79 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/clock/ti/mux.txt
+>  create mode 100644 Documentation/devicetree/bindings/clock/ti/ti,mux-clock.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/ti/composite.txt b/Documentation/devicetree/bindings/clock/ti/composite.txt
+> index b02f22490dcb..238e6f7d74f8 100644
+> --- a/Documentation/devicetree/bindings/clock/ti/composite.txt
+> +++ b/Documentation/devicetree/bindings/clock/ti/composite.txt
+> @@ -16,7 +16,7 @@ merged to this clock. The component clocks shall be of one of the
+>  "ti,*composite*-clock" types.
+>  
+>  [1] Documentation/devicetree/bindings/clock/clock-bindings.txt
+> -[2] Documentation/devicetree/bindings/clock/ti/mux.txt
+> +[2] Documentation/devicetree/bindings/clock/ti/ti,mux-clock.yaml
+>  [3] Documentation/devicetree/bindings/clock/ti/ti,divider-clock.yaml
+>  [4] Documentation/devicetree/bindings/clock/ti/gate.txt
+>  
+> diff --git a/Documentation/devicetree/bindings/clock/ti/mux.txt b/Documentation/devicetree/bindings/clock/ti/mux.txt
+> deleted file mode 100644
+> index cd56d3c1c09f..000000000000
+> --- a/Documentation/devicetree/bindings/clock/ti/mux.txt
+> +++ /dev/null
+> @@ -1,78 +0,0 @@
+> -Binding for TI mux clock.
+> -
+> -This binding uses the common clock binding[1].  It assumes a
+> -register-mapped multiplexer with multiple input clock signals or
+> -parents, one of which can be selected as output.  This clock does not
+> -gate or adjust the parent rate via a divider or multiplier.
+> -
+> -By default the "clocks" property lists the parents in the same order
+> -as they are programmed into the register.  E.g:
+> -
+> -	clocks = <&foo_clock>, <&bar_clock>, <&baz_clock>;
+> -
+> -results in programming the register as follows:
+> -
+> -register value		selected parent clock
+> -0			foo_clock
+> -1			bar_clock
+> -2			baz_clock
+> -
+> -Some clock controller IPs do not allow a value of zero to be programmed
+> -into the register, instead indexing begins at 1.  The optional property
+> -"index-starts-at-one" modified the scheme as follows:
+> -
+> -register value		selected clock parent
+> -1			foo_clock
+> -2			bar_clock
+> -3			baz_clock
+> -
+> -The binding must provide the register to control the mux. Optionally
+> -the number of bits to shift the control field in the register can be
+> -supplied. If the shift value is missing it is the same as supplying
+> -a zero shift.
+> -
+> -[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
+> -
+> -Required properties:
+> -- compatible : shall be "ti,mux-clock" or "ti,composite-mux-clock".
+> -- #clock-cells : from common clock binding; shall be set to 0.
+> -- clocks : link phandles of parent clocks
+> -- reg : register offset for register controlling adjustable mux
+> -
+> -Optional properties:
+> -- clock-output-names : from common clock binding.
+> -- ti,bit-shift : number of bits to shift the bit-mask, defaults to
+> -  0 if not present
+> -- ti,index-starts-at-one : valid input select programming starts at 1, not
+> -  zero
+> -- ti,set-rate-parent : clk_set_rate is propagated to parent clock,
+> -  not supported by the composite-mux-clock subtype
+> -- ti,latch-bit : latch the mux value to HW, only needed if the register
+> -  access requires this. As an example, dra7x DPLL_GMAC H14 muxing
+> -  implements such behavior.
+> -
+> -Examples:
+> -
+> -sys_clkin_ck: sys_clkin_ck@4a306110 {
+> -	#clock-cells = <0>;
+> -	compatible = "ti,mux-clock";
+> -	clocks = <&virt_12000000_ck>, <&virt_13000000_ck>, <&virt_16800000_ck>, <&virt_19200000_ck>, <&virt_26000000_ck>, <&virt_27000000_ck>, <&virt_38400000_ck>;
+> -	reg = <0x0110>;
+> -	ti,index-starts-at-one;
+> -};
+> -
+> -abe_dpll_bypass_clk_mux_ck: abe_dpll_bypass_clk_mux_ck@4a306108 {
+> -	#clock-cells = <0>;
+> -	compatible = "ti,mux-clock";
+> -	clocks = <&sys_clkin_ck>, <&sys_32k_ck>;
+> -	ti,bit-shift = <24>;
+> -	reg = <0x0108>;
+> -};
+> -
+> -mcbsp5_mux_fck: mcbsp5_mux_fck {
+> -	#clock-cells = <0>;
+> -	compatible = "ti,composite-mux-clock";
+> -	clocks = <&core_96m_fck>, <&mcbsp_clks>;
+> -	ti,bit-shift = <4>;
+> -	reg = <0x02d8>;
+> -};
+> diff --git a/Documentation/devicetree/bindings/clock/ti/ti,mux-clock.yaml b/Documentation/devicetree/bindings/clock/ti/ti,mux-clock.yaml
+> new file mode 100644
+> index 000000000000..b271ab86dde1
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/ti/ti,mux-clock.yaml
+> @@ -0,0 +1,123 @@
+> +# SPDX-License-Identifier: GPL-2.0-only
 
+Surely TI as the only author of the original binding would agree to
+dual-license this?
 
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/ti/ti,mux-clock.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Texas Instruments mux clock
+> +
+> +maintainers:
+> +  - Tero Kristo <kristo@kernel.org>
+> +
+> +description: |
+> +  This clock assumes a register-mapped multiplexer with multiple inpt clock
+> +  signals or parents, one of which can be selected as output. This clock does
+> +  not gate or adjust the parent rate via a divider or multiplier.
+> +
+> +  By default the "clocks" property lists the parents in the same order
+> +  as they are programmed into the register.  E.g:
+> +
+> +    clocks = <&foo_clock>, <&bar_clock>, <&baz_clock>;
+> +
+> +  results in programming the register as follows:
 
+Results
 
----- On Thu, 31 Oct 2024 02:39:13 -0300 WangYuli  wrote ---
+> +
+> +  register value   selected parent clock
+> +  0                foo_clock
+> +  1                bar_clock
+> +  2                baz_clock
+> +
+> +  Some clock controller IPs do not allow a value of zero to be programmed
+> +  into the register, instead indexing begins at 1.  The optional property
+> +  "index-starts-at-one" modified the scheme as follows:
+> +
+> +  register value   selected clock parent
+> +  1                foo_clock
+> +  2                bar_clock
+> +  3                baz_clock
+> +
+> +  The binding must provide the register to control the mux. Optionally
+> +  the number of bits to shift the control field in the register can be
+> +  supplied. If the shift value is missing it is the same as supplying
+> +  a zero shift.
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - ti,mux-clock
+> +      - ti,composite-mux-clock
+> +
+> +  "#clock-cells":
+> +    const: 0
+> +
+> +  clocks: true
+> +
+> +  clock-output-names:
+> +    maxItems: 1
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  ti,bit-shift:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description:
+> +      number of bits to shift the bit-mask, defaults to 0 if not present
 
- > 
- > On 2024/10/30 17:17, Vignesh Raman wrote: 
- > > We can remove the xfails/update-xfails.py script as it is not 
- > > used in CI jobs. Once ci-collate [1] is tested for drm-ci, 
- > > we can use this tool directly to update fails and flakes. 
- > > 
- > > [1] https://gitlab.freedesktop.org/gfx-ci/ci-collate/ 
- > > 
- > > Signed-off-by: Vignesh Raman vignesh.raman@collabora.com> 
+Number
 
+And on all the other descriptions...
 
-Applied to drm-misc-next
+No need to say in prose what the constraints say. So drop "defaults to 0 
+if not present".
 
-Thanks
-Helen
+> +    maximum: 31
+> +    default: 0
+> +
+> +  ti,index-starts-at-one:
+> +    type: boolean
+> +    description:
+> +      valid input select programming starts at 1, not zero
+> +
+> +  ti,set-rate-parent:
+> +    type: boolean
+> +    description:
+> +      clk_set_rate is propagated to parent clock,
+> +      not supported by the composite-mux-clock subtype.
 
- > > --- 
- > >   drivers/gpu/drm/ci/xfails/requirements.txt |  17 -- 
- > >   drivers/gpu/drm/ci/xfails/update-xfails.py | 204 --------------------- 
- > >   2 files changed, 221 deletions(-) 
- > >   delete mode 100644 drivers/gpu/drm/ci/xfails/requirements.txt 
- > >   delete mode 100755 drivers/gpu/drm/ci/xfails/update-xfails.py 
- > > 
- > > diff --git a/drivers/gpu/drm/ci/xfails/requirements.txt b/drivers/gpu/drm/ci/xfails/requirements.txt 
- > > deleted file mode 100644 
- > > index 5e6d48d98e4e..000000000000 
- > > --- a/drivers/gpu/drm/ci/xfails/requirements.txt 
- > > +++ /dev/null 
- > > @@ -1,17 +0,0 @@ 
- > > -git+https://gitlab.freedesktop.org/gfx-ci/ci-collate@09e7142715c16f54344ddf97013331ba063b162b 
- > > -termcolor==2.3.0 
- > > - 
- > > -# ci-collate dependencies 
- > > -certifi==2023.7.22 
- > > -charset-normalizer==3.2.0 
- > > -idna==3.4 
- > > -pip==23.3 
- > > -python-gitlab==3.15.0 
- > > -requests==2.31.0 
- > > -requests-toolbelt==1.0.0 
- > > -ruamel.yaml==0.17.32 
- > > -ruamel.yaml.clib==0.2.7 
- > > -setuptools==70.0.0 
- > > -tenacity==8.2.3 
- > > -urllib3==2.0.7 
- > > -wheel==0.41.1 
- > > diff --git a/drivers/gpu/drm/ci/xfails/update-xfails.py b/drivers/gpu/drm/ci/xfails/update-xfails.py 
- > > deleted file mode 100755 
- > > index a446e98d72a1..000000000000 
- > > --- a/drivers/gpu/drm/ci/xfails/update-xfails.py 
- > > +++ /dev/null 
- > > @@ -1,204 +0,0 @@ 
- > > -#!/usr/bin/env python3 
- > > - 
- > > -import argparse 
- > > -from collections import defaultdict 
- > > -import difflib 
- > > -import os 
- > > -import re 
- > > -from glcollate import Collate 
- > > -from termcolor import colored 
- > > -from urllib.parse import urlparse 
- > > - 
- > > - 
- > > -def get_canonical_name(job_name): 
- > > -    return re.split(r" \d+/\d+", job_name)[0] 
- > > - 
- > > - 
- > > -def get_xfails_file_path(job_name, suffix): 
- > > -    canonical_name = get_canonical_name(job_name) 
- > > -    name = canonical_name.replace(":", "-") 
- > > -    script_dir = os.path.dirname(os.path.abspath(__file__)) 
- > > -    return os.path.join(script_dir, f"{name}-{suffix}.txt") 
- > > - 
- > > - 
- > > -def get_unit_test_name_and_results(unit_test): 
- > > -    if "Artifact results/failures.csv not found" in unit_test or '' == unit_test: 
- > > -        return None, None 
- > > -    unit_test_name, unit_test_result = unit_test.strip().split(",") 
- > > -    return unit_test_name, unit_test_result 
- > > - 
- > > - 
- > > -def read_file(file_path): 
- > > -    try: 
- > > -        with open(file_path, "r") as file: 
- > > -            f = file.readlines() 
- > > -            if len(f): 
- > > -                f[-1] = f[-1].strip() + "\n" 
- > > -            return f 
- > > -    except FileNotFoundError: 
- > > -        return [] 
- > > - 
- > > - 
- > > -def save_file(content, file_path): 
- > > -    # delete file is content is empty 
- > > -    if not content or not any(content): 
- > > -        if os.path.exists(file_path): 
- > > -            os.remove(file_path) 
- > > -        return 
- > > - 
- > > -    with open(file_path, "w") as file: 
- > > -        file.writelines(content) 
- > > - 
- > > - 
- > > -def is_test_present_on_file(file_content, unit_test_name): 
- > > -    return any(unit_test_name in line for line in file_content) 
- > > - 
- > > - 
- > > -def is_unit_test_present_in_other_jobs(unit_test, job_ids): 
- > > -    return all(unit_test in job_ids[job_id] for job_id in job_ids) 
- > > - 
- > > - 
- > > -def remove_unit_test_if_present(lines, unit_test_name): 
- > > -    if not is_test_present_on_file(lines, unit_test_name): 
- > > -        return 
- > > -    lines[:] = [line for line in lines if unit_test_name not in line] 
- > > - 
- > > - 
- > > -def add_unit_test_if_not_present(lines, unit_test_name, file_name): 
- > > -    # core_getversion is mandatory 
- > > -    if "core_getversion" in unit_test_name: 
- > > -        print("WARNING: core_getversion should pass, not adding it to", os.path.basename(file_name)) 
- > > -    elif all(unit_test_name not in line for line in lines): 
- > > -        lines.append(unit_test_name + "\n") 
- > > - 
- > > - 
- > > -def update_unit_test_result_in_fails_txt(fails_txt, unit_test): 
- > > -    unit_test_name, unit_test_result = get_unit_test_name_and_results(unit_test) 
- > > -    for i, line in enumerate(fails_txt): 
- > > -        if unit_test_name in line: 
- > > -            _, current_result = get_unit_test_name_and_results(line) 
- > > -            fails_txt[i] = unit_test + "\n" 
- > > -            return 
- > > - 
- > > - 
- > > -def add_unit_test_or_update_result_to_fails_if_present(fails_txt, unit_test, fails_txt_path): 
- > > -    unit_test_name, _ = get_unit_test_name_and_results(unit_test) 
- > > -    if not is_test_present_on_file(fails_txt, unit_test_name): 
- > > -        add_unit_test_if_not_present(fails_txt, unit_test, fails_txt_path) 
- > > -    # if it is present but not with the same result 
- > > -    elif not is_test_present_on_file(fails_txt, unit_test): 
- > > -        update_unit_test_result_in_fails_txt(fails_txt, unit_test) 
- > > - 
- > > - 
- > > -def split_unit_test_from_collate(xfails): 
- > > -    for job_name in xfails.keys(): 
- > > -        for job_id in xfails[job_name].copy().keys(): 
- > > -            if "not found" in xfails[job_name][job_id].content_as_str: 
- > > -                del xfails[job_name][job_id] 
- > > -                continue 
- > > -            xfails[job_name][job_id] = xfails[job_name][job_id].content_as_str.splitlines() 
- > > - 
- > > - 
- > > -def get_xfails_from_pipeline_url(pipeline_url): 
- > > -    parsed_url = urlparse(pipeline_url) 
- > > -    path_components = parsed_url.path.strip("/").split("/") 
- > > - 
- > > -    namespace = path_components[0] 
- > > -    project = path_components[1] 
- > > -    pipeline_id = path_components[-1] 
- > > - 
- > > -    print("Collating from:", namespace, project, pipeline_id) 
- > > -    xfails = ( 
- > > -        Collate(namespace=namespace, project=project) 
- > > -        .from_pipeline(pipeline_id) 
- > > -        .get_artifact("results/failures.csv") 
- > > -    ) 
- > > - 
- > > -    split_unit_test_from_collate(xfails) 
- > > -    return xfails 
- > > - 
- > > - 
- > > -def get_xfails_from_pipeline_urls(pipelines_urls): 
- > > -    xfails = defaultdict(dict) 
- > > - 
- > > -    for url in pipelines_urls: 
- > > -        new_xfails = get_xfails_from_pipeline_url(url) 
- > > -        for key in new_xfails: 
- > > -            xfails[key].update(new_xfails[key]) 
- > > - 
- > > -    return xfails 
- > > - 
- > > - 
- > > -def print_diff(old_content, new_content, file_name): 
- > > -    diff = difflib.unified_diff(old_content, new_content, lineterm="", fromfile=file_name, tofile=file_name) 
- > > -    diff = [colored(line, "green") if line.startswith("+") else 
- > > -            colored(line, "red") if line.startswith("-") else line for line in diff] 
- > > -    print("\n".join(diff[:3])) 
- > > -    print("".join(diff[3:])) 
- > > - 
- > > - 
- > > -def main(pipelines_urls, only_flakes): 
- > > -    xfails = get_xfails_from_pipeline_urls(pipelines_urls) 
- > > - 
- > > -    for job_name in xfails.keys(): 
- > > -        fails_txt_path = get_xfails_file_path(job_name, "fails") 
- > > -        flakes_txt_path = get_xfails_file_path(job_name, "flakes") 
- > > - 
- > > -        fails_txt = read_file(fails_txt_path) 
- > > -        flakes_txt = read_file(flakes_txt_path) 
- > > - 
- > > -        fails_txt_original = fails_txt.copy() 
- > > -        flakes_txt_original = flakes_txt.copy() 
- > > - 
- > > -        for job_id in xfails[job_name].keys(): 
- > > -            for unit_test in xfails[job_name][job_id]: 
- > > -                unit_test_name, unit_test_result = get_unit_test_name_and_results(unit_test) 
- > > - 
- > > -                if not unit_test_name: 
- > > -                    continue 
- > > - 
- > > -                if only_flakes: 
- > > -                    remove_unit_test_if_present(fails_txt, unit_test_name) 
- > > -                    add_unit_test_if_not_present(flakes_txt, unit_test_name, flakes_txt_path) 
- > > -                    continue 
- > > - 
- > > -                # drop it from flakes if it is present to analyze it again 
- > > -                remove_unit_test_if_present(flakes_txt, unit_test_name) 
- > > - 
- > > -                if unit_test_result == "UnexpectedPass": 
- > > -                    remove_unit_test_if_present(fails_txt, unit_test_name) 
- > > -                    # flake result 
- > > -                    if not is_unit_test_present_in_other_jobs(unit_test, xfails[job_name]): 
- > > -                        add_unit_test_if_not_present(flakes_txt, unit_test_name, flakes_txt_path) 
- > > -                    continue 
- > > - 
- > > -                # flake result 
- > > -                if not is_unit_test_present_in_other_jobs(unit_test, xfails[job_name]): 
- > > -                    remove_unit_test_if_present(fails_txt, unit_test_name) 
- > > -                    add_unit_test_if_not_present(flakes_txt, unit_test_name, flakes_txt_path) 
- > > -                    continue 
- > > - 
- > > -                # consistent result 
- > > -                add_unit_test_or_update_result_to_fails_if_present(fails_txt, unit_test, 
- > > -                                                                   fails_txt_path) 
- > > - 
- > > -        fails_txt.sort() 
- > > -        flakes_txt.sort() 
- > > - 
- > > -        if fails_txt != fails_txt_original: 
- > > -            save_file(fails_txt, fails_txt_path) 
- > > -            print_diff(fails_txt_original, fails_txt, os.path.basename(fails_txt_path)) 
- > > -        if flakes_txt != flakes_txt_original: 
- > > -            save_file(flakes_txt, flakes_txt_path) 
- > > -            print_diff(flakes_txt_original, flakes_txt, os.path.basename(flakes_txt_path)) 
- > > - 
- > > - 
- > > -if __name__ == "__main__": 
- > > -    parser = argparse.ArgumentParser(description="Update xfails from a given pipeline.") 
- > > -    parser.add_argument("pipeline_urls", nargs="+", type=str, help="URLs to the pipelines to analyze the failures.") 
- > > -    parser.add_argument("--only-flakes", action="store_true", help="Treat every detected failure as a flake, edit *-flakes.txt only.") 
- > > - 
- > > -    args = parser.parse_args() 
- > > - 
- > > -    main(args.pipeline_urls, args.only_flakes) 
- > > -    print("Done.") 
- >  
- > Reviewed-by: WangYuli wangyuli@uniontech.com> 
- >  
- > Cheers, 
- > -- 
- > WangYuli* 
- > * 
- > 
+blank line.
 
+> +  ti,latch-bit:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description:
+> +      latch the mux value to HW, only needed if the register
+> +      access requires this. As an example, dra7x DPLL_GMAC H14 muxing
+> +      implements such behavior.
+
+Constraints?
+
+> +
+> +if:
+> +  properties:
+> +    compatible:
+> +      contains:
+> +        const: ti,composite-mux-clock
+> +then:
+> +  properties:
+> +    ti,set-rate-parent: false
+> +
+> +required:
+> +  - compatible
+> +  - "#clock-cells"
+> +  - clocks
+> +  - reg
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    bus {
+> +      #address-cells = <1>;
+> +      #size-cells = <0>;
+> +
+> +      clock-controller@110 {
+> +        #clock-cells = <0>;
+> +        compatible = "ti,mux-clock";
+> +        clocks = <&virt_12000000_ck>, <&virt_13000000_ck>, <&virt_16800000_ck>;
+> +        reg = <0x0110>;
+> +        ti,index-starts-at-one;
+> +        ti,set-rate-parent;
+> +      };
+> +
+> +      clock-controller@120 {
+
+Wrong unit-address.
+
+> +        #clock-cells = <0>;
+> +        compatible = "ti,composite-mux-clock";
+> +        clocks = <&core_96m_fck>, <&mcbsp_clks>;
+> +        ti,bit-shift = <4>;
+> +        reg = <0x02d8>;
+> +      };
+> +    };
+> -- 
+> 2.39.5
+> 
 
