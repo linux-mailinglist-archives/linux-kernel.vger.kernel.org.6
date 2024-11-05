@@ -1,80 +1,63 @@
-Return-Path: <linux-kernel+bounces-396665-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396666-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 039D29BD042
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 16:20:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 23A5B9BD049
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 16:25:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 820301F21F6A
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 15:20:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B4A21F21417
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 15:25:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65EF11D90B4;
-	Tue,  5 Nov 2024 15:20:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0220A1D9A48;
+	Tue,  5 Nov 2024 15:24:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="btW4Nx8Y"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q3kKuKbH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D1573BB21
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 15:20:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FA263BB21;
+	Tue,  5 Nov 2024 15:24:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730820025; cv=none; b=R9ZLV9tuwnSd9E0uIhpXfXmJuLiA7OqyrGbeGVnFIeDXymZdsEqPxKLjgDG5jRiKay/J/FIKUgst4IbDQRXc/vByPgFSj82g9ydJCLajPg15NO1zafmSLFN85O0doQvDBfXATutPUb9H8vUOo6bps4KcUq+IB//WESOP80X+dkA=
+	t=1730820297; cv=none; b=CZK6ivHTLqqIlr4c4cJ+CpkId9GuoCvSDziRqxrdhUYjgE1GeO/RE7smvY2FdDj7vamWlwdqF3MrRsEgFXaPu6FhPM4WJ6mk9rMUcYS7jkDUn4OTHUFz5td3ZrBpS4X7h1pjZ9o6zcQBo3ZnYvR3/m5jRGSxOrX49EwJFMkMfEM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730820025; c=relaxed/simple;
-	bh=YanKKXkoKhuQbw+Q+AphYa/RjRvIZKnx7zdhP3E98N8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=u3/H5B942UO0OaeBx7yBvkPSFl/oB86w/1sHEpHmE0R9JismXwkvuZuOYS5RGm5A/vzqsL0xQv7NXEN+S+aHdPXpiQ1qmX/pj2ETSunmUZGtYPg8U7z/zSXu0aUcUpB4UFdRnjTENv+90za5XmygIK5/InhkxxxeyClna9kNvtg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=btW4Nx8Y; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1730820023;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BPJAWO0y3Fo1Qrzd7BTp7ngrbG856tbrQ3ZCeLlErTQ=;
-	b=btW4Nx8Y1NDhLp7f4N/QO6Wc9YaMODTz+g60cKv0vw77hDQ/cN+G3DxENsN7S3V9grIVBa
-	1YElWWVR5DRYFUtXOiSvmzRny+D7qFjp6C09lMwGHlP/QnhbTxQP1JB2yBg0NNho/lzLI6
-	jWT9eXsKbRO/AhmpCOcghQ0OvpYe0H8=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-465-lJnmK1AxMSC0Bw-3XCSSkg-1; Tue,
- 05 Nov 2024 10:20:21 -0500
-X-MC-Unique: lJnmK1AxMSC0Bw-3XCSSkg-1
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 62B0D19560A2;
-	Tue,  5 Nov 2024 15:20:18 +0000 (UTC)
-Received: from pauld.westford.csb (unknown [10.22.64.146])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A1AC73000198;
-	Tue,  5 Nov 2024 15:20:13 +0000 (UTC)
-Date: Tue, 5 Nov 2024 10:20:10 -0500
-From: Phil Auld <pauld@redhat.com>
-To: Mike Galbraith <efault@gmx.de>
-Cc: Peter Zijlstra <peterz@infradead.org>, mingo@redhat.com,
-	juri.lelli@redhat.com, vincent.guittot@linaro.org,
-	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
-	mgorman@suse.de, vschneid@redhat.com, linux-kernel@vger.kernel.org,
-	kprateek.nayak@amd.com, wuyun.abel@bytedance.com,
-	youssefesmat@chromium.org, tglx@linutronix.de
-Subject: Re: [PATCH 17/24] sched/fair: Implement delayed dequeue
-Message-ID: <20241105152010.GA33795@pauld.westford.csb>
-References: <20241101124715.GA689589@pauld.westford.csb>
- <20241101125659.GY14555@noisy.programming.kicks-ass.net>
- <20241101133822.GC689589@pauld.westford.csb>
- <20241101142649.GX9767@noisy.programming.kicks-ass.net>
- <20241101144225.GD689589@pauld.westford.csb>
- <a59a1a99b7807d9937e424881c262ba7476d8b6b.camel@gmx.de>
- <20241101200704.GE689589@pauld.westford.csb>
- <59355fae66255a92f2cbc4d7ed38368ff3565140.camel@gmx.de>
- <20241104130515.GB749675@pauld.westford.csb>
- <1bffa5f2ca0fec8a00f84ffab86dc6e8408af31c.camel@gmx.de>
+	s=arc-20240116; t=1730820297; c=relaxed/simple;
+	bh=1iekeL2Za9+ifD3DUVEh/34YJHWRDoMORGZyPsah7qQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=Dfnho9D6+nkfC5nhUl7sjOQha3eLK0HeLz4Z9LwVoi00eg+10gFidQlfG5sd2BbqMvWOssZ0qbAu/U4EkqzZCNNMrCh0WDn5so8kdumiUKTUJsg0kjRxcj+rTBv7k+SZT3zEwIHeH33a5+sNGjGImWoXNNMXwKIH9E0KLcJUs8A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q3kKuKbH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83E41C4CECF;
+	Tue,  5 Nov 2024 15:24:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730820296;
+	bh=1iekeL2Za9+ifD3DUVEh/34YJHWRDoMORGZyPsah7qQ=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=q3kKuKbH7YxY1oQuKykEW6dUwc3kuigmWbpok4ZuDVmWd1t5vS82mD0Z1Tw2388w0
+	 BQrw3cIyS6RQp9OV9eFQBYCSvVAhTrYu1Fp2deahiEAHlKOkQcD1KcOrNJDptBGtVv
+	 Q8Fdv1jEnqv1ogqPFZGfbfybABpxgVipL4eJZvSmDnHb3VZd/PPCwJU7RxwNLRJ4u8
+	 QbaqGTbOrh6AZVKT6uPMGsDs9VlAteni6Eq8tzBzl6uAiBcnrP0KXPYSQXaNwD+x/B
+	 85SjevA+we6kUSjRnejOpqrKqap6UkY7CQgc/IGyQ32MnkjwyMGbYprwgHXwOFfFge
+	 +D5CqF/RHcHhA==
+Date: Tue, 5 Nov 2024 09:24:55 -0600
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Leon Romanovsky <leon@kernel.org>
+Cc: Bjorn Helgaas <bhelgaas@google.com>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	linux-pci@vger.kernel.org, Ariel Almog <ariela@nvidia.com>,
+	Aditya Prabhune <aprabhune@nvidia.com>,
+	Hannes Reinecke <hare@suse.de>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Arun Easi <aeasi@marvell.com>, Jonathan Chocron <jonnyc@amazon.com>,
+	Bert Kenward <bkenward@solarflare.com>,
+	Matt Carlson <mcarlson@broadcom.com>,
+	Kai-Heng Feng <kai.heng.feng@canonical.com>,
+	Jean Delvare <jdelvare@suse.de>,
+	Alex Williamson <alex.williamson@redhat.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] PCI/sysfs: Fix read permissions for VPD attributes
+Message-ID: <20241105152455.GA1472398@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,80 +66,46 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1bffa5f2ca0fec8a00f84ffab86dc6e8408af31c.camel@gmx.de>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+In-Reply-To: <20241105075130.GD311159@unreal>
 
-On Tue, Nov 05, 2024 at 05:05:12AM +0100 Mike Galbraith wrote:
-> On Mon, 2024-11-04 at 08:05 -0500, Phil Auld wrote:
-> > On Sat, Nov 02, 2024 at 05:32:14AM +0100 Mike Galbraith wrote:
-> >
-> > >
-> > > The buddy being preempted certainly won't be wakeup migrated...
-> >
-> > Not the waker who gets preempted but the wakee may be a bit more
-> > sticky on his current cpu and thus stack more since he's still
-> > in that runqueue.
-> 
-> Ah, indeed, if wakees don't get scraped off before being awakened, they
-> can and do miss chances at an idle CPU according to trace_printk().
-> 
-> I'm undecided if overall it's boon, bane or even matters, as there is
-> still an ample supply of wakeup migration, but seems it can indeed
-> inject wakeup latency needlessly, so <sharpens stick>...
-> 
-> My box booted and neither become exceptionally noisy nor inexplicably
-> silent in.. oh, minutes now, so surely yours will be perfectly fine.
-> 
-> After one minute of lightly loaded box browsing, trace_printk() said:
-> 
->   645   - racy peek says there is a room available
->    11   - cool, reserved room is free
->   206   - no vacancy or wakee pinned
-> 38807   - SIS accommodates room seeker
-> 
-> The below should improve the odds, but high return seems unlikely.
->
+On Tue, Nov 05, 2024 at 09:51:30AM +0200, Leon Romanovsky wrote:
+> On Mon, Nov 04, 2024 at 06:10:27PM -0600, Bjorn Helgaas wrote:
+> > On Sun, Nov 03, 2024 at 02:33:44PM +0200, Leon Romanovsky wrote:
+> > > On Fri, Nov 01, 2024 at 11:47:37AM -0500, Bjorn Helgaas wrote:
+> > > > On Fri, Nov 01, 2024 at 04:33:00PM +0200, Leon Romanovsky wrote:
+> > > > > On Thu, Oct 31, 2024 at 06:22:52PM -0500, Bjorn Helgaas wrote:
+> > > > > > On Tue, Oct 29, 2024 at 07:04:50PM -0500, Bjorn Helgaas wrote:
+> > > > > > > On Mon, Oct 28, 2024 at 10:05:33AM +0200, Leon Romanovsky wrote:
+> > > > > > > > From: Leon Romanovsky <leonro@nvidia.com>
+> > > > > > > > 
+> > > > > > > > The Virtual Product Data (VPD) attribute is not
+> > > > > > > > readable by regular user without root permissions.
+> > > > > > > > Such restriction is not really needed, as data
+> > > > > > > > presented in that VPD is not sensitive at all.
+> > > > > > > > 
+> > > > > > > > This change aligns the permissions of the VPD
+> > > > > > > > attribute to be accessible for read by all users,
+> > > > > > > > while write being restricted to root only.
+> ...
 
-Thanks, I'll give it a spin with the nr_cpus_allowed bit.
-
-
-Cheers,
-Phil
-
-
-
-> ---
->  kernel/sched/core.c |    9 ++++++++-
->  1 file changed, 8 insertions(+), 1 deletion(-)
+> > What's the use case?  How does an unprivileged user use the VPD
+> > information?
 > 
-> --- a/kernel/sched/core.c
-> +++ b/kernel/sched/core.c
-> @@ -3790,7 +3790,13 @@ static int ttwu_runnable(struct task_str
->  	rq = __task_rq_lock(p, &rf);
->  	if (task_on_rq_queued(p)) {
->  		update_rq_clock(rq);
-> -		if (p->se.sched_delayed)
-> +		/*
-> +		 * If wakee is mobile and the room it reserved is occupied, let it try to migrate.
-> +		 */
-> +		if (p->se.sched_delayed && rq->nr_running > 1 && cpumask_weight(p->cpus_ptr) > 1) {
-> +			dequeue_task(rq, p, DEQUEUE_SLEEP | DEQUEUE_DELAYED | DEQUEUE_NOCLOCK);
-> +			goto out_unlock;
-> +		} else if (p->se.sched_delayed)
->  			enqueue_task(rq, p, ENQUEUE_NOCLOCK | ENQUEUE_DELAYED);
->  		if (!task_on_cpu(rq, p)) {
->  			/*
-> @@ -3802,6 +3808,7 @@ static int ttwu_runnable(struct task_str
->  		ttwu_do_wakeup(p);
->  		ret = 1;
->  	}
-> +out_unlock:
->  	__task_rq_unlock(rq, &rf);
+> We have to add new field keyword=value in VA section of VPD, which
+> will indicate very specific sub-model for devices used as a bridge.
 > 
->  	return ret;
+> > I can certainly imagine using VPD for bug reporting, but that
+> > would typically involve dmesg, dmidecode, lspci -vv, etc, all of
+> > which already require privilege, so it's not clear to me how
+> > public VPD info would help in that scenario.
 > 
-> 
+> I'm targeting other scenario - monitoring tool, which doesn't need
+> root permissions for reading data. It needs to distinguish between
+> NIC sub-models.
 
--- 
+Maybe the driver could expose something in sysfs?  Maybe the driver
+needs to know the sub-model as well, and reading VPD once in the
+driver would make subsequent userspace sysfs reads trivial and fast.
 
+Bjorn
 
