@@ -1,137 +1,124 @@
-Return-Path: <linux-kernel+bounces-396311-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396312-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8118B9BCB54
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 12:12:28 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88FAB9BCB5E
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 12:13:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 382831F237D2
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 11:12:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 395A11F23D35
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 11:13:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E73EC1D2716;
-	Tue,  5 Nov 2024 11:12:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dQcJF7HR"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A56201D359F;
+	Tue,  5 Nov 2024 11:12:59 +0000 (UTC)
+Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com [209.85.219.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CAE51D3195
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 11:12:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A38141D358B
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 11:12:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730805139; cv=none; b=Pcxkj21n9s9ENMK/ZnGF5bzdJdhIIwy7BztwYjI7VjWpsSW9qpe7fVa5inU2817OKnIWoJCKCVsTA+wZjli5jUPYlbJGHAcLe2+Rd0u4AZpt/1eiV5i5On1MlYOa83aNXx2+Jyzl2UXbt2nScGIIEkBH7FcFomSKOg0pGqRPTts=
+	t=1730805179; cv=none; b=mN9UAhFvVko2hfKBFBlKzbeJPARN1vcE9LRHUbfk8mX1bK9azVdkVw33LyA14jTGxUzXeK1YT8fztcxyF6yNFaNWoxF402myauBaYOKOrQo1DJ0hXEDkDFIpOElqpFNv5Z3wD12xczeIrobAlEUvGd7L3+wsdBvJbo9YVx3qAmo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730805139; c=relaxed/simple;
-	bh=EUjOR/V1/Ff7FCV0KtVJ6a801ILitSsONPj8+8g6O7E=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Qm64+YXhl9lWu2aWVd/CFHD+9EwF6eRXgiw4bBgwudE2kfe6UnNFwZ1VpJ/UMiIKAglRooKYUrVLWcl2+gRO8b0OSYKY3e64QGQIICXJpJb+A06IHU7yZifzdyzXpivG6KY6GM/UqBCxAJMtOx70/iSH0RtikQqRIr5CM6oo6bE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dQcJF7HR; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1730805136;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=yCvdUfc//ZWvKe194x55fTwuIp9lO3BXGQHJFfiBiaE=;
-	b=dQcJF7HRkaQZ90vtbZLpQImlE+I0AGqt/+Zs2ierA92l9+cNmMeG1EELzxL5o4kMPYR6KN
-	/yzBbjtytteqIEMcamVMb2orxWU8inRPuCjVwuqRsKxx+2UQoL6/9y+KlFD0ZbWF1qBKP5
-	9RaUaKip5ta19OxKAccQuy4gP5Fnsr4=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-656-pJV_URfTOuOCrVgpQ98duQ-1; Tue, 05 Nov 2024 06:12:15 -0500
-X-MC-Unique: pJV_URfTOuOCrVgpQ98duQ-1
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-37d52ccc50eso2663421f8f.3
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 03:12:15 -0800 (PST)
+	s=arc-20240116; t=1730805179; c=relaxed/simple;
+	bh=joG4P4jYyblotj9+AuYdZ9+B473TN45NIpAJQxIZkWQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=nleYV7IuOMFzEEyWVo8kzDdrwlH0xZUdf2tJsxrRxZ9PCUWEvJiwqLT8QIjTcxwGlzKCJkcIVaQ0ngB9DQ0tBAvCP/D19n6Y3uxBknujojjTaIK0wrvU2MxARLcrwUiwR7nzxpNPaz9iJyM+mO11u4bF7R8Sch3WGQ5yoizlQ7I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f178.google.com with SMTP id 3f1490d57ef6-e2903a48ef7so4639361276.2
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 03:12:56 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730805134; x=1731409934;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=yCvdUfc//ZWvKe194x55fTwuIp9lO3BXGQHJFfiBiaE=;
-        b=X2b1XEsTKUuEUkC89SuWqBNLfN+IAoHkr5p0rxjq/ViBr/6iOX5gRWFTrg67M2duj0
-         w4YPcUdT6IgTmrxOkSL4AWm5Jv2z+01J9vWUQhhE05kujebFYrQFysJTdMOUB+XnBmy9
-         DsxbYRInzJhoomOowFAK1QY5CXA7zFcaYgqvHJrRDama9tlPlxFDPZMEYHdh6wBrnrj/
-         w6myZ9Qt0lnQy31Yr0enNwURBXPNP2vc4JeNm5df1+1ZZgkE+cUjIiK0W+2avePysjjX
-         pxd3Do+BKUFGOpRxLRL5DISVzTkvBMi2hmfnFCycJJbbgvgWZ2RAf9rjwghNkB0WBSHo
-         WAZw==
-X-Forwarded-Encrypted: i=1; AJvYcCW4ktKCtbT6rxvVy2Qlca/OOv8Z8kQjlHY8jCM1zKZ4Yo3nkvlzdHwDVQtCNElt57nWVBDdamK46x0uuCA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwkMW8CeKwlhM2j8i/FjYaP555mQnpaKqt4LXb4ag9n4r8AxdtH
-	d8qxBu97hH/z8cSWjFNarSvGm9hGJJYlRrsP1VczfExcK/JgAZXaRnK7oQSX7Ia39JveKdbcbTQ
-	sHzoFp0QkzA9rwek3ZUfTYDnEqoHwzTAzzOuRKr+B6VWh9jNa7KxNmElFp3HxAA==
-X-Received: by 2002:a5d:5f41:0:b0:37d:4f1b:35d with SMTP id ffacd0b85a97d-380611ff128mr28662024f8f.48.1730805134147;
-        Tue, 05 Nov 2024 03:12:14 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IESHCOZomXTbsA7mek+NYOSWPjCHtTlyjVpOUcf98wwcSXASlnKPOIrcK6yEt/H8DUdWzsINA==
-X-Received: by 2002:a5d:5f41:0:b0:37d:4f1b:35d with SMTP id ffacd0b85a97d-380611ff128mr28662000f8f.48.1730805133781;
-        Tue, 05 Nov 2024 03:12:13 -0800 (PST)
-Received: from eisenberg.redhat.com (nat-pool-muc-t.redhat.com. [149.14.88.26])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381c10d4392sm15860512f8f.36.2024.11.05.03.12.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Nov 2024 03:12:13 -0800 (PST)
-From: Philipp Stanner <pstanner@redhat.com>
-To: Andreas Noever <andreas.noever@gmail.com>,
-	Michael Jamet <michael.jamet@intel.com>,
-	Mika Westerberg <mika.westerberg@linux.intel.com>,
-	Yehezkel Bernat <YehezkelShB@gmail.com>
-Cc: linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Philipp Stanner <pstanner@redhat.com>
-Subject: [PATCH] thunderbolt: Replace deprecated PCI functions
-Date: Tue,  5 Nov 2024 12:11:33 +0100
-Message-ID: <20241105111132.57339-2-pstanner@redhat.com>
-X-Mailer: git-send-email 2.47.0
+        d=1e100.net; s=20230601; t=1730805175; x=1731409975;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7u7cesrN6fwiNOOUz+RnFnfBh4Cv9POsXdrOPXkwZn8=;
+        b=lE4r3wgnI6h5LupQfjcgDP3DQHLRRqNYv0H8OC0A3KBt2XZqFQQtqxhrlVjrz1HMFu
+         MLFJj14Qp03cMcMGZuspeTIg2f4pxpI8fglTH7k1CTKCHgHNB5jp2OCytJjVM6v3E7OJ
+         DypcNow9LNBjnD30Hg4HBEyvTvE3wf5pD0DAjzU1IPoqJeR3aSxAVdRypilOvV1v8NDm
+         KljwhY7IfbZhF1QISiVRD7K4awvBjPLrMs3mYUwLXOPsWX0xv4XeHhQSu68qyZATkyRN
+         1Q/C0AMofUuIe2U5roj5koWAW+HvPXbs8QO7vfgXHf0ozQw/yvxMAOX9tNxtywLqL+Mg
+         2wow==
+X-Forwarded-Encrypted: i=1; AJvYcCWOKn55fPyHyNmHhVeuy1D7gyTQoZI3ZfUYsKhzDuUExtMCZEw6NnFqVG9ObDJnRs23MYi5ZeT5Lco8txU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzCuCGOYwCEwQBc0slrtu9ZPcezhypLZxQxP0okdJaq/rHGyD9b
+	TynhTWnlWTu2oh3STA6CyaefTFIqIJutu8u5ZBahZ7twsozTf/AttUrk8E9t
+X-Google-Smtp-Source: AGHT+IE7ni60EvUuWoD14SwT84JSqmRz0l9hXABfQCRMLkKr9C2raakWxNwtK/Ghab+TSCUdVdTayg==
+X-Received: by 2002:a81:fa12:0:b0:6ea:47cb:c886 with SMTP id 00721157ae682-6ea52520b99mr150677137b3.31.1730805175159;
+        Tue, 05 Nov 2024 03:12:55 -0800 (PST)
+Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com. [209.85.128.180])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6ea7c26d7dcsm14213877b3.54.2024.11.05.03.12.54
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 05 Nov 2024 03:12:54 -0800 (PST)
+Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-6ea85f7f445so25171047b3.0
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 03:12:54 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVUn2j8GnMEvkcjkupSHSAlN/hG0MGlDRcVR354XfndZkxVvFXq31ud/v41Aa8P1oKDSk2JB1KbmmQpdWo=@vger.kernel.org
+X-Received: by 2002:a05:690c:9a03:b0:6e2:985:f4df with SMTP id
+ 00721157ae682-6ea52546b5cmr206450377b3.44.1730805173824; Tue, 05 Nov 2024
+ 03:12:53 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20241030195638.22542-1-arnd@kernel.org>
+In-Reply-To: <20241030195638.22542-1-arnd@kernel.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 5 Nov 2024 12:12:40 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdXivFLfonRACeQC-VXQDg7Bnj+QYuW+8UH+ht8Bij=g_Q@mail.gmail.com>
+Message-ID: <CAMuHMdXivFLfonRACeQC-VXQDg7Bnj+QYuW+8UH+ht8Bij=g_Q@mail.gmail.com>
+Subject: Re: [PATCH 1/2] [v3] m68k: move sun3 into a top-level platform option
+To: Arnd Bergmann <arnd@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, kernel test robot <lkp@intel.com>, linux-m68k@lists.linux-m68k.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-pcim_iomap_table() and pcim_request_regions() have been deprecated in
-commit e354bb84a4c1 ("PCI: Deprecate pcim_iomap_table(),
-pcim_iomap_regions_request_all()") and commit d140f80f60358 ("PCI:
-Deprecate pcim_iomap_regions() in favor of pcim_iomap_region()").
+On Wed, Oct 30, 2024 at 8:56=E2=80=AFPM Arnd Bergmann <arnd@kernel.org> wro=
+te:
+> From: Arnd Bergmann <arnd@arndb.de>
+>
+> It is possible to select an m68k MMU build but not actually
+> enable any of the three MMU options, which then results in a
+> build failure:
+>
+>  arch/m68k/include/asm/page.h:10:25: error: 'CONFIG_PAGE_SHIFT' undeclare=
+d here (not in a function); did you mean 'CONFIG_LOG_BUF_SHIFT'?
+>
+> Change the Kconfig selection to ensure that exactly one of the
+> three options is always enabled whenever an MMU-enabled kernel
+> is built, but moving CONFIG_SUN3 into a top-level option next
+> to M68KCLASSIC and COLDFIRE.
+>
+> All defconfig files should keep working without changes,
+> but alldefconfig now builds support for the classic MMU.
+>
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202408032138.P7sBvIns-lkp@i=
+ntel.com/
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+> v3:
+>  - fix coldfire+mmu build failure, by taking out the m68020 default
 
-Replace these functions with pcim_iomap_region().
+Reviewed-by: Geert Uytterhoeven <geert@linux-m68k.org>
+i.e. will queue in the m68k tree for v6.13.
 
-Signed-off-by: Philipp Stanner <pstanner@redhat.com>
----
- drivers/thunderbolt/nhi.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+Gr{oetje,eeting}s,
 
-diff --git a/drivers/thunderbolt/nhi.c b/drivers/thunderbolt/nhi.c
-index 7af2642b97cb..1257dd3ce7e6 100644
---- a/drivers/thunderbolt/nhi.c
-+++ b/drivers/thunderbolt/nhi.c
-@@ -1340,18 +1340,18 @@ static int nhi_probe(struct pci_dev *pdev, const struct pci_device_id *id)
- 	if (res)
- 		return dev_err_probe(dev, res, "cannot enable PCI device, aborting\n");
- 
--	res = pcim_iomap_regions(pdev, 1 << 0, "thunderbolt");
--	if (res)
--		return dev_err_probe(dev, res, "cannot obtain PCI resources, aborting\n");
--
- 	nhi = devm_kzalloc(&pdev->dev, sizeof(*nhi), GFP_KERNEL);
- 	if (!nhi)
- 		return -ENOMEM;
- 
- 	nhi->pdev = pdev;
- 	nhi->ops = (const struct tb_nhi_ops *)id->driver_data;
--	/* cannot fail - table is allocated in pcim_iomap_regions */
--	nhi->iobase = pcim_iomap_table(pdev)[0];
-+
-+	nhi->iobase = pcim_iomap_region(pdev, 0, "thunderbolt");
-+	res = PTR_ERR_OR_ZERO(nhi->iobase);
-+	if (res)
-+		return dev_err_probe(dev, res, "cannot obtain PCI resources, aborting\n");
-+
- 	nhi->hop_count = ioread32(nhi->iobase + REG_CAPS) & 0x3ff;
- 	dev_dbg(dev, "total paths: %d\n", nhi->hop_count);
- 
--- 
-2.47.0
+                        Geert
 
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
