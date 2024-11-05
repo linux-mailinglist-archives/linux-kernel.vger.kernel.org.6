@@ -1,204 +1,355 @@
-Return-Path: <linux-kernel+bounces-396608-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396609-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D61EE9BCF67
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 15:32:58 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDC4A9BCF6D
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 15:34:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 06D511C23084
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 14:32:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D6051F231C2
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 14:34:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EC041D935A;
-	Tue,  5 Nov 2024 14:32:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D861E1D9353;
+	Tue,  5 Nov 2024 14:33:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="fbYwe+hs"
-Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=cachyos.org header.i=@cachyos.org header.b="QwlXgt1f"
+Received: from mail.ptr1337.dev (mail.ptr1337.dev [202.61.224.105])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEAD414A91
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 14:32:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C896239FF3;
+	Tue,  5 Nov 2024 14:33:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.61.224.105
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730817165; cv=none; b=ngbeic+DT2Df+IzpxnNILYV/eVfsTXGN4+46hyAGfsJ2EquYGjy5O6bo9rdXWJ4Tv2xxz+UK+UgSzwmTdW61M4VKa3AF5AvM1jHP64x6QeZwFIAEQAjWPQqR0Nuwt6xzMw97oNPyb2T5Svodp8VClfvf7V2rBrXgTwNtWp6sXlw=
+	t=1730817237; cv=none; b=qmJGPF/RZ3GT6bnRLOAXF77O8r1RkfREr9TVmRKTjTMzbHpObPKxWKzUsbl3VmaLeDEggnLgNpgTRidcSxsUt+U2+ImudAhZM0SfaUF21gnS8TM3Kd4FqqlCvPT6tcScJhsGHN92WhVC8gTmJvAIe8FCtae45ZN4XhMcl32LOYE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730817165; c=relaxed/simple;
-	bh=JOtBuRuptx6aynlVjS3XxFiIchWMqa6f2ZGHo9y3vNU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=SCs9nyDRsaZ/KhI2BLtHB2eRVbTsqX3riFjsHRN/HU3+JoMzbE7BAzUUHhUvKBkynT6NBEGpB1jYKp/kP7a4BxdyagOdyDe3y7u7eVSRH2Q2iyZWISG3kuIW+zc3kDadceziPxLeNZypCDOSNpoHdHjnCFCOBuv+f3YASbUQEEk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=fbYwe+hs; arc=none smtp.client-ip=209.85.222.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-qk1-f169.google.com with SMTP id af79cd13be357-7b148919e82so389216285a.0
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 06:32:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1730817162; x=1731421962; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=mh6wcJRaaoFfgA/PI0+gh0VHMIduRtoAQnAU9qQerOg=;
-        b=fbYwe+hswtGW21j6SogQv4crdNKv9VZndmhI43s+Kmlg8Bvq0Qg5lpZ38UmSm6Ke7A
-         C/TqXLjhx+owmNUI4X1Pq6eCZRf6QoMZhF2zu7rn7Q7KuLRCt6WEEYG4drmB2pZMRryE
-         Z4/plorVPn/+VHSY5ZRJX7kkS5O/2YKfR1qII=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730817162; x=1731421962;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=mh6wcJRaaoFfgA/PI0+gh0VHMIduRtoAQnAU9qQerOg=;
-        b=AbNZ1QIRLJ9zVrz+MsJdfgD9dIK8Lx/6fKHbFlKp4d0IQq3tTuZYUUh2iYiXOQndls
-         ajBQ0hjvR3ufohgcEHMC0JBuacBvFHoOyrbieEMpQM3qbXRvUkgijTJCjmnD7Gw2QhGJ
-         Vt3ggKyerPBj7jMLOi/Fh3JZ0LImBbjwgWtvWfHQqn+wnxUW4jGV0jmCkkk9tyY2iW6S
-         dkWaDiiUL/qgiaIuiDIFZzZi9OnzTdugvuRxyKA3Qf1rtczyjDgs6z1L6wIZ4dyosphQ
-         d1cgN1XX75VZ4vcWiWivdPHm1hzcv8S2wcgVKNKTsg4dXcHodiJIa/q47x4iv2Rxokae
-         OMFQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWi6kdeC7rKNlg5UDH5hols6eD/IUEL8WBmCyYTCxc4zK68npdpTnLiUp+GjHSiYPrDyE/auVztUqZc4/A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyJJwP5aVpmk+C3wzJ0J9dolp4lrac8G3YWYyPduwBFqLN+L/V2
-	kNri6H05cuRxG2WuEa6DiQjc3KJWwqBovPHq+5Jkant/0EkEa1e057qpP98HnGBTvriwHTRB1zU
-	=
-X-Google-Smtp-Source: AGHT+IE9JbPrCbrkaKjMlscZUO7hP79GowP6m6qs/o/ZK1p8JuRhg/+RZwPShS5hHydgzc/lyzTubw==
-X-Received: by 2002:a05:620a:294d:b0:79d:69b5:aaf7 with SMTP id af79cd13be357-7b2f24c52f1mr2796640785a.11.1730817161666;
-        Tue, 05 Nov 2024 06:32:41 -0800 (PST)
-Received: from denia.c.googlers.com (189.216.85.34.bc.googleusercontent.com. [34.85.216.189])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b2f39ee118sm526243785a.20.2024.11.05.06.32.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Nov 2024 06:32:41 -0800 (PST)
-From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Tue, 05 Nov 2024 14:32:39 +0000
-Subject: [PATCH] media: uvcvideo: Remove refcounted cleanup
+	s=arc-20240116; t=1730817237; c=relaxed/simple;
+	bh=gsW8mBSI6cY3pRx1Tnd7rSPcm9Ju7jaDrhLeixfTBRU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cUyYsbndX7/fHq5XbUnsBklbco9spRtjyzHYDcR4zDaeeaTw4qNmWF0QgSWusvH8kCBNTWKiwVSqt0LigVLcRM3e7ZIem1wE7tfM3xShOC5EnyLaVGJQI1KEzK3SQv1HCcXucW01V0W2oNffza7vyOlTGTvhyq/ItmfypftXd9I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cachyos.org; spf=pass smtp.mailfrom=cachyos.org; dkim=pass (2048-bit key) header.d=cachyos.org header.i=@cachyos.org header.b=QwlXgt1f; arc=none smtp.client-ip=202.61.224.105
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cachyos.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cachyos.org
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 045952805AD;
+	Tue,  5 Nov 2024 15:33:39 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cachyos.org; s=dkim;
+	t=1730817231; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:content-language:in-reply-to:references;
+	bh=IFyVI7raGwOORp7kXv0MX/2J7dD25+2v6npetzMKfw4=;
+	b=QwlXgt1fNIREa3Bj3xNUJEH6SxJ9atiLd5/fDEk4nap12xPqziY7rGNsBeKDER8yIr/NIQ
+	fqDuL2qvfCvIfKpP+1BS2wRySY2Ka/XQwv4ETerMAow0nQcB2UEP/10nORQs+VkoH3YG93
+	qWDL0wXafzNbD9uRNYNcnHS6XKOn2DwVCw270EP3VDHSwZPD9afyXHlqA4s43wjeyvh8rk
+	vK7R6dxhNfJHGCtR1/ZmpkNkeqVmpqtznhWRsstHEGvkCgx3XIJwDeKr2XKy/Upd4JZjSE
+	TcwVpTyw9AYmND9rasqETLV+CXfEXKd6bIMvCjRNk02LGVGbYrAown6sxi3bjw==
+Message-ID: <449fddd2-342f-48cc-9a11-8a34814f1284@cachyos.org>
+Date: Tue, 5 Nov 2024 15:33:39 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241105-uvc-rmrefcount-v1-1-123f56b01731@chromium.org>
-X-B4-Tracking: v=1; b=H4sIAIYsKmcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIxNDQwNT3dKyZN2i3KLUtOT80rwSXQNDgxRLixQTS7NkUyWgpgKgTGYF2MD
- o2NpaABIqSCFgAAAA
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Ricardo Ribalda <ribalda@chromium.org>
-X-Mailer: b4 0.13.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 1/7] Add AutoFDO support for Clang build
+To: Rong Xu <xur@google.com>, Han Shen <shenhan@google.com>
+Cc: Alice Ryhl <aliceryhl@google.com>,
+ Andrew Morton <akpm@linux-foundation.org>, Arnd Bergmann <arnd@arndb.de>,
+ Bill Wendling <morbo@google.com>, Borislav Petkov <bp@alien8.de>,
+ Breno Leitao <leitao@debian.org>, Brian Gerst <brgerst@gmail.com>,
+ Dave Hansen <dave.hansen@linux.intel.com>, David Li <davidxl@google.com>,
+ Heiko Carstens <hca@linux.ibm.com>, "H. Peter Anvin" <hpa@zytor.com>,
+ Ingo Molnar <mingo@redhat.com>, Jann Horn <jannh@google.com>,
+ Jonathan Corbet <corbet@lwn.net>, Josh Poimboeuf <jpoimboe@kernel.org>,
+ Juergen Gross <jgross@suse.com>, Justin Stitt <justinstitt@google.com>,
+ Kees Cook <kees@kernel.org>, Masahiro Yamada <masahiroy@kernel.org>,
+ "Mike Rapoport (IBM)" <rppt@kernel.org>,
+ Nathan Chancellor <nathan@kernel.org>,
+ Nick Desaulniers <ndesaulniers@google.com>,
+ Nicolas Schier <nicolas@fjasle.eu>, "Paul E. McKenney" <paulmck@kernel.org>,
+ Peter Zijlstra <peterz@infradead.org>,
+ Sami Tolvanen <samitolvanen@google.com>, Thomas Gleixner
+ <tglx@linutronix.de>, Wei Yang <richard.weiyang@gmail.com>,
+ workflows@vger.kernel.org, Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+ Maksim Panchenko <max4bolt@gmail.com>, "David S. Miller"
+ <davem@davemloft.net>, Andreas Larsson <andreas@gaisler.com>,
+ Yonghong Song <yonghong.song@linux.dev>, Yabin Cui <yabinc@google.com>,
+ Krzysztof Pszeniczny <kpszeniczny@google.com>,
+ Sriraman Tallam <tmsriram@google.com>, Stephane Eranian
+ <eranian@google.com>, x86@kernel.org, linux-arch@vger.kernel.org,
+ sparclinux@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+ llvm@lists.linux.dev
+References: <20241102175115.1769468-1-xur@google.com>
+ <20241102175115.1769468-2-xur@google.com>
+ <09349180-027a-4b29-a40c-9dc3425e592c@cachyos.org>
+ <3183ab86-8f1f-4624-9175-31e77d773699@cachyos.org>
+ <CACkGtrgOw8inYCD96ot_w9VwzoFvvgCReAx0P-=Rxxqj2FT4_A@mail.gmail.com>
+ <67c07d2f-fb1f-4b7d-96e2-fb5ceb8fc692@cachyos.org>
+ <CACkGtrgJHtG5pXR1z=6G4XR6ffT5jEi3jZQo=UhYj091naBhsA@mail.gmail.com>
+ <CAF1bQ=SbeR3XhFc7JYGOh69JZfAwQV8nupAQM+ZxpzNEFUFxJw@mail.gmail.com>
+Content-Language: en-US
+From: Peter Jung <ptr1337@cachyos.org>
+Organization: CachyOS
+In-Reply-To: <CAF1bQ=SbeR3XhFc7JYGOh69JZfAwQV8nupAQM+ZxpzNEFUFxJw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-After commit c9ec6f173636 ("media: uvcvideo: Stop stream during unregister")
-we have some guarantee that userspace will not be able to access any of
-our internal structures after disconnect().
+Hi Rong,
 
-This means that we can do the cleanup at the end of disconnect and make
-the code more resilient to races.
+Glad that you were able to reproduce the issue!
+Thanks for finding the root cause as well as the part of the code. This 
+really helps.
 
-This change will also enable the use of devres functions in more parts
-of the code.
+I was able to do a successful packaging with binutils 2.42.
+Lets forward this to the binutils tracker and hope this will be soon 
+solved. :)
 
-Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
----
- drivers/media/usb/uvc/uvc_driver.c | 24 +++++-------------------
- drivers/media/usb/uvc/uvcvideo.h   |  1 -
- 2 files changed, 5 insertions(+), 20 deletions(-)
+I have tested this also on the latest commit 
+(e1e4078ac59740a79cd709d61872abe15aba0087) and the issue is also 
+reproducible there.
 
-diff --git a/drivers/media/usb/uvc/uvc_driver.c b/drivers/media/usb/uvc/uvc_driver.c
-index a96f6ca0889f..2735fccdf454 100644
---- a/drivers/media/usb/uvc/uvc_driver.c
-+++ b/drivers/media/usb/uvc/uvc_driver.c
-@@ -1868,16 +1868,12 @@ static int uvc_scan_device(struct uvc_device *dev)
- /*
-  * Delete the UVC device.
-  *
-- * Called by the kernel when the last reference to the uvc_device structure
-- * is released.
-- *
-- * As this function is called after or during disconnect(), all URBs have
-+ * As this function is called during disconnect(), all URBs have
-  * already been cancelled by the USB core. There is no need to kill the
-  * interrupt URB manually.
-  */
--static void uvc_delete(struct kref *kref)
-+static void uvc_delete(struct uvc_device *dev)
- {
--	struct uvc_device *dev = container_of(kref, struct uvc_device, ref);
- 	struct list_head *p, *n;
- 
- 	uvc_status_cleanup(dev);
-@@ -1919,14 +1915,6 @@ static void uvc_delete(struct kref *kref)
- 	kfree(dev);
- }
- 
--static void uvc_release(struct video_device *vdev)
--{
--	struct uvc_streaming *stream = video_get_drvdata(vdev);
--	struct uvc_device *dev = stream->dev;
--
--	kref_put(&dev->ref, uvc_delete);
--}
--
- /*
-  * Unregister the video devices.
-  */
-@@ -2009,7 +1997,7 @@ int uvc_register_video_device(struct uvc_device *dev,
- 	vdev->v4l2_dev = &dev->vdev;
- 	vdev->fops = fops;
- 	vdev->ioctl_ops = ioctl_ops;
--	vdev->release = uvc_release;
-+	vdev->release = video_device_release_empty;
- 	vdev->prio = &stream->chain->prio;
- 	if (type == V4L2_BUF_TYPE_VIDEO_OUTPUT)
- 		vdev->vfl_dir = VFL_DIR_TX;
-@@ -2045,7 +2033,6 @@ int uvc_register_video_device(struct uvc_device *dev,
- 		return ret;
- 	}
- 
--	kref_get(&dev->ref);
- 	return 0;
- }
- 
-@@ -2160,7 +2147,6 @@ static int uvc_probe(struct usb_interface *intf,
- 	INIT_LIST_HEAD(&dev->entities);
- 	INIT_LIST_HEAD(&dev->chains);
- 	INIT_LIST_HEAD(&dev->streams);
--	kref_init(&dev->ref);
- 	atomic_set(&dev->nmappings, 0);
- 
- 	dev->udev = usb_get_dev(udev);
-@@ -2300,7 +2286,7 @@ static int uvc_probe(struct usb_interface *intf,
- 
- error:
- 	uvc_unregister_video(dev);
--	kref_put(&dev->ref, uvc_delete);
-+	uvc_delete(dev);
- 	return -ENODEV;
- }
- 
-@@ -2319,7 +2305,7 @@ static void uvc_disconnect(struct usb_interface *intf)
- 		return;
- 
- 	uvc_unregister_video(dev);
--	kref_put(&dev->ref, uvc_delete);
-+	uvc_delete(dev);
- }
- 
- static int uvc_suspend(struct usb_interface *intf, pm_message_t message)
-diff --git a/drivers/media/usb/uvc/uvcvideo.h b/drivers/media/usb/uvc/uvcvideo.h
-index 07f9921d83f2..feb8de640a26 100644
---- a/drivers/media/usb/uvc/uvcvideo.h
-+++ b/drivers/media/usb/uvc/uvcvideo.h
-@@ -578,7 +578,6 @@ struct uvc_device {
- 
- 	/* Video Streaming interfaces */
- 	struct list_head streams;
--	struct kref ref;
- 
- 	/* Status Interrupt Endpoint */
- 	struct usb_host_endpoint *int_ep;
-
----
-base-commit: c7ccf3683ac9746b263b0502255f5ce47f64fe0a
-change-id: 20241105-uvc-rmrefcount-010d98d496c5
+Thanks for your time! I dont see this as blocker. :)
+It gets time to get this series merged :P
 
 Best regards,
--- 
-Ricardo Ribalda <ribalda@chromium.org>
+
+Peter
+
+
+
+On 05.11.24 08:25, Rong Xu wrote:
+> We debugged this issue and we found the failure seems to only happen
+> with strip (version 2.43) in binutil.
+> 
+> For a profile-use compilation, either with -fprofile-use (PGO or
+> iFDO), or -fprofile-sample-use (AutoFDO),
+> an ELF section of .llvm.call-graph-profile is created for the object.
+> For some reasons (like to save space?),
+> the relocations in this section are of type "rel', rather the more
+> common "rela" type.
+> 
+> In this case,
+> $ readelf -r kvm.ko |grep llvm.call-graph-profile
+> Relocation section '.rel.llvm.call-graph-profile' at offset 0xf62a00
+> contains 4 entries:
+> 
+> strip (v2.43.0) has difficulty handling the relocations in
+> .rel.llvm.call-graph-profile -- it silently failed with --strip-debug.
+> But strip (v.2.42) has no issue with kvm.ko. The strip in llvm (i.e.
+> llvm-strip) also passes with kvm.ko
+> 
+> I compared binutil/strip source code for version v2.43.0 and v2.42.
+> The different is around here:
+> In v2.42 of bfd/elfcode.h
+>     1618       if ((entsize == sizeof (Elf_External_Rela)
+>     1619            && ebd->elf_info_to_howto != NULL)
+>     1620           || ebd->elf_info_to_howto_rel == NULL)
+>     1621         res = ebd->elf_info_to_howto (abfd, relent, &rela);
+>     1622       else
+>     1623         res = ebd->elf_info_to_howto_rel (abfd, relent, &rela);
+> 
+> In v2.43.0 of bfd/elfcode.h
+>     1618       if (entsize == sizeof (Elf_External_Rela)
+>     1619           && ebd->elf_info_to_howto != NULL)
+>     1620         res = ebd->elf_info_to_howto (abfd, relent, &rela);
+>     1621       else if (ebd->elf_info_to_howto_rel != NULL)
+>     1622         res = ebd->elf_info_to_howto_rel (abfd, relent, &rela);
+> 
+> In the 2.43 strip, line 1618 is false and line 1621 is also false.
+> "res" is returned as false and the program exits with -1.
+> 
+> While in 2.42, line 1620 is true and we get "res" from line 1621 and
+> program functions correctly.
+> 
+> I'm not familiar with binutil code base and don't know the reason for
+> removing line 1620.
+> I can file a bug for binutil for people to further investigate this.
+> 
+> It seems to me that this issue should not be a blocker for our patch.
+> 
+> Regards,
+> 
+> -Rong
+> 
+> 
+> 
+> 
+> 
+> On Mon, Nov 4, 2024 at 12:24 PM Han Shen<shenhan@google.com> wrote:
+>> Hi Peter,
+>> Thanks for providing the detailed reproduce.
+>> Now I can see the error (after I synced to 6.12.0-rc6, I was using rc5).
+>> I'll look into that and report back.
+>>
+>>> I have tested your provided method, but the AutoFDO profile (lld does
+>> not get lto-sample-profile=$pathtoprofile passed)
+>>
+>> I see. You also turned on ThinLTO, which I didn't, so the profile was
+>> only used during compilation, not passed to lld.
+>>
+>> Thanks,
+>> Han
+>>
+>> On Mon, Nov 4, 2024 at 9:31 AM Peter Jung<ptr1337@cachyos.org> wrote:
+>>> Hi Han,
+>>>
+>>> I have tested your provided method, but the AutoFDO profile (lld does
+>>> not get lto-sample-profile=$pathtoprofile passed)  nor Clang as compiler
+>>> gets used.
+>>> Please replace following PKGBUILD and config from linux-mainline with
+>>> the provided one in the gist. The patch is also included there.
+>>>
+>>> https://gist.github.com/ptr1337/c92728bb273f7dbc2817db75eedec9ed
+>>>
+>>> The main change I am doing here, is passing following to the build array
+>>> and replacing "make all":
+>>>
+>>> make LLVM=1 LLVM_IAS=1 CLANG_AUTOFDO_PROFILE=${srcdir}/perf.afdo all
+>>>
+>>> When compiling the kernel with makepkg, this results at the packaging to
+>>> following issue and can be reliable reproduced.
+>>>
+>>> Regards,
+>>>
+>>> Peter
+>>>
+>>>
+>>> On 04.11.24 05:50, Han Shen wrote:
+>>>> Hi Peter, thanks for reporting the issue. I am trying to reproduce it
+>>>> in the up-to-date archlinux environment. Below is what I have:
+>>>>     0. pacman -Syu
+>>>>     1. cloned archlinux build files from
+>>>> https://aur.archlinux.org/linux-mainline.git the newest mainline
+>>>> version is 6.12rc5-1.
+>>>>     2. changed the PKGBUILD file to include the patches series
+>>>>     3. changed the "config" to turn on clang autofdo
+>>>>     4. collected afdo profiles
+>>>>     5. MAKEFLAGS="-j48 V=1 LLVM=1 CLANG_AUTOFDO_PROFILE=$(pwd)/perf.afdo" \
+>>>>           makepkg -s --skipinteg --skippgp
+>>>>     6. install and reboot
+>>>> The above steps succeeded.
+>>>> You mentioned the error happens at "module_install", can you instruct
+>>>> me how to execute the "module_install" step?
+>>>>
+>>>> Thanks,
+>>>> Han
+>>>>
+>>>> On Sat, Nov 2, 2024 at 12:53 PM Peter Jung<ptr1337@cachyos.org> wrote:
+>>>>>
+>>>>> On 02.11.24 20:46, Peter Jung wrote:
+>>>>>> On 02.11.24 18:51, Rong Xu wrote:
+>>>>>>> Add the build support for using Clang's AutoFDO. Building the kernel
+>>>>>>> with AutoFDO does not reduce the optimization level from the
+>>>>>>> compiler. AutoFDO uses hardware sampling to gather information about
+>>>>>>> the frequency of execution of different code paths within a binary.
+>>>>>>> This information is then used to guide the compiler's optimization
+>>>>>>> decisions, resulting in a more efficient binary. Experiments
+>>>>>>> showed that the kernel can improve up to 10% in latency.
+>>>>>>>
+>>>>>>> The support requires a Clang compiler after LLVM 17. This submission
+>>>>>>> is limited to x86 platforms that support PMU features like LBR on
+>>>>>>> Intel machines and AMD Zen3 BRS. Support for SPE on ARM 1,
+>>>>>>>     and BRBE on ARM 1 is part of planned future work.
+>>>>>>>
+>>>>>>> Here is an example workflow for AutoFDO kernel:
+>>>>>>>
+>>>>>>> 1) Build the kernel on the host machine with LLVM enabled, for example,
+>>>>>>>           $ make menuconfig LLVM=1
+>>>>>>>        Turn on AutoFDO build config:
+>>>>>>>          CONFIG_AUTOFDO_CLANG=y
+>>>>>>>        With a configuration that has LLVM enabled, use the following
+>>>>>>>        command:
+>>>>>>>           scripts/config -e AUTOFDO_CLANG
+>>>>>>>        After getting the config, build with
+>>>>>>>          $ make LLVM=1
+>>>>>>>
+>>>>>>> 2) Install the kernel on the test machine.
+>>>>>>>
+>>>>>>> 3) Run the load tests. The '-c' option in perf specifies the sample
+>>>>>>>       event period. We suggest     using a suitable prime number,
+>>>>>>>       like 500009, for this purpose.
+>>>>>>>       For Intel platforms:
+>>>>>>>          $ perf record -e BR_INST_RETIRED.NEAR_TAKEN:k -a -N -b -c
+>>>>>>> <count> \
+>>>>>>>            -o <perf_file> -- <loadtest>
+>>>>>>>       For AMD platforms:
+>>>>>>>          The supported system are: Zen3 with BRS, or Zen4 with amd_lbr_v2
+>>>>>>>         For Zen3:
+>>>>>>>          $ cat proc/cpuinfo | grep " brs"
+>>>>>>>          For Zen4:
+>>>>>>>          $ cat proc/cpuinfo | grep amd_lbr_v2
+>>>>>>>          $ perf record --pfm-events RETIRED_TAKEN_BRANCH_INSTRUCTIONS:k
+>>>>>>> -a \
+>>>>>>>            -N -b -c <count> -o <perf_file> -- <loadtest>
+>>>>>>>
+>>>>>>> 4) (Optional) Download the raw perf file to the host machine.
+>>>>>>>
+>>>>>>> 5) To generate an AutoFDO profile, two offline tools are available:
+>>>>>>>       create_llvm_prof and llvm_profgen. The create_llvm_prof tool is part
+>>>>>>>       of the AutoFDO project and can be found on GitHub
+>>>>>>>       (https://github.com/google/autofdo), version v0.30.1 or later. The
+>>>>>>>       llvm_profgen tool is included in the LLVM compiler itself. It's
+>>>>>>>       important to note that the version of llvm_profgen doesn't need to
+>>>>>>>       match the version of Clang. It needs to be the LLVM 19 release or
+>>>>>>>       later, or from the LLVM trunk.
+>>>>>>>          $ llvm-profgen --kernel --binary=<vmlinux> --
+>>>>>>> perfdata=<perf_file> \
+>>>>>>>            -o <profile_file>
+>>>>>>>       or
+>>>>>>>          $ create_llvm_prof --binary=<vmlinux> --profile=<perf_file> \
+>>>>>>>            --format=extbinary --out=<profile_file>
+>>>>>>>
+>>>>>>>       Note that multiple AutoFDO profile files can be merged into one via:
+>>>>>>>          $ llvm-profdata merge -o <profile_file>  <profile_1> ...
+>>>>>>> <profile_n>
+>>>>>>>
+>>>>>>> 6) Rebuild the kernel using the AutoFDO profile file with the same config
+>>>>>>>       as step 1, (Note CONFIG_AUTOFDO_CLANG needs to be enabled):
+>>>>>>>          $ make LLVM=1 CLANG_AUTOFDO_PROFILE=<profile_file>
+>>>>>>>
+>>>>>>> Co-developed-by: Han Shen<shenhan@google.com>
+>>>>>>> Signed-off-by: Han Shen<shenhan@google.com>
+>>>>>>> Signed-off-by: Rong Xu<xur@google.com>
+>>>>>>> Suggested-by: Sriraman Tallam<tmsriram@google.com>
+>>>>>>> Suggested-by: Krzysztof Pszeniczny<kpszeniczny@google.com>
+>>>>>>> Suggested-by: Nick Desaulniers<ndesaulniers@google.com>
+>>>>>>> Suggested-by: Stephane Eranian<eranian@google.com>
+>>>>>>> Tested-by: Yonghong Song<yonghong.song@linux.dev>
+>>>>>>> Tested-by: Yabin Cui<yabinc@google.com>
+>>>>>>> Tested-by: Nathan Chancellor<nathan@kernel.org>
+>>>>>>> Reviewed-by: Kees Cook<kees@kernel.org>
+>>>>>> Tested-by: Peter Jung<ptr1337@cachyos.org>
+>>>>>>
+>>>>> The compilations and testing with the "make pacman-pkg" function from
+>>>>> the kernel worked fine.
+>>>>>
+>>>>> One problem I do face:
+>>>>> When I apply a AutoFDO profile together with the PKGBUILD [1] from
+>>>>> archlinux im running into issues at "module_install" at the packaging.
+>>>>>
+>>>>> See following log:
+>>>>> ```
+>>>>> make[2]: *** [scripts/Makefile.modinst:125:
+>>>>> /tmp/makepkg/linux-cachyos-rc-autofdo/pkg/linux-cachyos-rc-autofdo/usr/lib/modules/6.12.0-rc5-5-cachyos-rc-autofdo/kernel/arch/x86/kvm/kvm.ko]
+>>>>> Error 1
+>>>>> make[2]: *** Deleting file
+>>>>> '/tmp/makepkg/linux-cachyos-rc-autofdo/pkg/linux-cachyos-rc-autofdo/usr/lib/modules/6.12.0-rc5-5-cachyos-rc-autofdo/kernel/arch/x86/kvm/kvm.ko'
+>>>>>      INSTALL
+>>>>> /tmp/makepkg/linux-cachyos-rc-autofdo/pkg/linux-cachyos-rc-autofdo/usr/lib/modules/6.12.0-rc5-5-cachyos-rc-autofdo/kernel/crypto/cryptd.ko
+>>>>> make[2]: *** Waiting for unfinished jobs....
+>>>>> ```
+>>>>>
+>>>>>
+>>>>> This can be fixed with removed "INSTALL_MOD_STRIP=1" to the passed
+>>>>> parameters of module_install.
+>>>>>
+>>>>> This explicitly only happens, if a profile is passed - otherwise the
+>>>>> packaging works without problems.
+>>>>>
+>>>>> Regards,
+>>>>>
+>>>>> Peter Jung
+>>>>>
 
 
