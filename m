@@ -1,118 +1,119 @@
-Return-Path: <linux-kernel+bounces-395820-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395817-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D44979BC382
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 04:01:07 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3ABC19BC375
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 03:57:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 90B0E282EB4
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 03:01:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C0BF1B21AB6
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 02:57:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAB027DA7F;
-	Tue,  5 Nov 2024 03:00:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A85C556742;
+	Tue,  5 Nov 2024 02:57:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="FF+SJ6vU"
-Received: from out162-62-58-216.mail.qq.com (out162-62-58-216.mail.qq.com [162.62.58.216])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="i+u88lgg"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FFCF44384;
-	Tue,  5 Nov 2024 03:00:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.58.216
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24F3E487BF
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 02:57:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730775652; cv=none; b=mjuaPYaA3x4hl/GaqLVvbdvhfLQXF4TzbadJLes2QHyYdcrIUgg0I/GEW74y/eiUeoEX72wyb7S0bP4USpI+PUxhGuYSYCxNQNdhLqLQ3YZ4tzNXS3VSuAuQQ19uxezCJzia+xrFf+lxyDyMQA5CJPT0WM+Y2tw5xSAKWzpzPto=
+	t=1730775451; cv=none; b=rn8hgaSn4SxrxWDgMAY9Gm3edkIxdFi8Gxqwi4h+OBySGl4y87gXQy4ybKx3fM042SPLam2m/4dmGatWkRxgllzzV+ucpfB2jtPLtCx8Lils4k25KfReSNe/HRxxfnBxwEVREpIhTqhgalfBM01QUclmVdlXvDGwJZz7ne3Aa3A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730775652; c=relaxed/simple;
-	bh=bj3DwCv+0tB7B302FckfwexlfI0lLhQcsfn8PTG60Pw=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=NGLXDNFdiIDvHSEkrh1qHCjwEoVKty1vQ6KJm195tbiY0W1SYY49tZAv3voLjljNA+5kwsT248tVfha9OjYSZqjzsPdpZCly0rOCNnB8jwBpfVGedPJ8n4oai7epJjT0+H1aPfrKRMr2cN4al+87tITw0KAp2KnZoHGXpVp+Y+w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=FF+SJ6vU; arc=none smtp.client-ip=162.62.58.216
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1730775337; bh=SWHjz2Lk6fjSLhOy4bGJ3wF2EBPFw4Pks3JG73diQ68=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=FF+SJ6vUGYowNjs3pxgEctZAK8VJGw9B583x9O+GntFKbTyzJ1PxirazCJAKbcr06
-	 1X01EvfZerUXkiCJxLISnp1A59IhemdHNNUG9vdmsuDvhCWQHJYd5hbZrdhftq1AI0
-	 U79XRgUT2Gdq/neRk9Gykh7pSTVKoEY5BU55s3d0=
-Received: from localhost.localdomain ([111.48.69.246])
-	by newxmesmtplogicsvrszb16-1.qq.com (NewEsmtp) with SMTP
-	id DE307413; Tue, 05 Nov 2024 10:55:35 +0800
-X-QQ-mid: xmsmtpt1730775335tj6c90fe4
-Message-ID: <tencent_F250BEE2A65745A524E2EFE70CF615CA8F06@qq.com>
-X-QQ-XMAILINFO: OUrMHMu9XZHvy3CREPEd+2k3eya50auhHkfTtb4Gbl2TTPC+51ZHGn9Mm4ou6h
-	 Z3YK9RCHJX6YuqkpQZiytCcxpr0tSolhDLDW2BT46uohH1DK40prBT4dFRs12sd8HVkq+yy2WthN
-	 S+B11gzCGO65aR4Mq2NqUN9x7gJ6G8o3vwkntAKQE1LHmUWjbopNxdqtchHSLsYEWAYpOwWNcFMx
-	 C1Syz8g3W8yObre5rb23NCjNzAbbTZ8MedhVbpUfmOQBt8GA3utZSTu6MXYjLnKmYjnIm5QTFA/b
-	 indiVfTdbpZuwTp+8dH4CZyJ+EOKnqWELq0ObpyvnqTXghhfmOwJI2V+iTdheJe7xQo+lUzwXPWl
-	 wwlJ/4g3GqeqfkBgtQTJXklrHiHllHqUMuEdzk+2BErqMp+rE9gvuWB1VD73l+s4Dy6SRN6t8ZcW
-	 09BA6VPAexGVjaDv0c8XUlLGRFznFGaxJleVatMTi/d4/D24xSkyx8F7VD/a2CPq1txHjxOIpdpO
-	 KFgQ6Do1ryj6CWrfCi+4PEqhkqbbmpwOZOJkzlnAs5SKSHBSC6VoQOGtupDqCNZWIDhrdA8sE6Kl
-	 voeWopGkoxiHzXgG1NeMFjV3qCGsGSCaLXpigHxf/cbmemadbN11AagDnY6mVllqfPe4Ncbj+Km3
-	 E4bQp1rmiA9m4RL8Std0k+6irB2XllfY+YdZK9iYqmBMNOFHf3vg3+jXGtreFqisx88Niu+BS+uq
-	 lRqiFTe7kWRqVmJjnRukgHBAKBM3mcN/1PDcv+2hR5B4o7cRPDPGqf1sEsFFLkD5KiaVuIx6nOoc
-	 w9Qx8cLU3T/2hFxbWr/ZA2vGj2650OMOFSFg5/WxEZU7lLxYPSJzpXeC0kZw5J0gxYbPCMY7nq5K
-	 OzeY2QmQIv
-X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
-From: 2564278112@qq.com
-To: manivannan.sadhasivam@linaro.org,
-	kw@linux.com,
-	kishon@kernel.org,
-	bhelgaas@google.com,
-	cassel@kernel.org,
-	Frank.Li@nxp.com,
-	dlemoal@kernel.org
-Cc: jiangwang@kylinos.cn,
-	linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] PCI: endpoint: Remove surplus return statement from pci_epf_test_clean_dma_chan()
-Date: Tue,  5 Nov 2024 10:55:33 +0800
-X-OQ-MSGID: <20241105025533.62199-1-2564278112@qq.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <=20241105004311.GB1614659@rocinante>
-References: <=20241105004311.GB1614659@rocinante>
+	s=arc-20240116; t=1730775451; c=relaxed/simple;
+	bh=sS3CMf4Kq9jd/bpACivyVDfVteTLNEOFDKp07YdmOz4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ezqHpySwsiCy7mLKncpLZga86ekE8dRj0YBzQLA31f88MpVqj/4suGIfuTrUfzXibhOYnpxgu61uS9yiULLfx1L8qDPJyDelwAT8+/6n6Fp/5ilLBxSNqgCLexuFYA/ogt3w8iQyDahjGiiw1GMZRDYdON6rUuR9G+x4ggo+POk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=i+u88lgg; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-43159c9f617so39128385e9.2
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 18:57:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1730775448; x=1731380248; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sS3CMf4Kq9jd/bpACivyVDfVteTLNEOFDKp07YdmOz4=;
+        b=i+u88lggyD0FUx0Aw5YdC6FlMWIwKmjTz0CQAxZC09na69k+FV6jfYDGctcR7pnDOQ
+         ugnh5cidsyOLNlca5iy4TGzmf9Xi1ffqLnpmvXcchggBNiEGWJnUquv3LxyfigdxIpHN
+         t7nx4MEgqDNzKbS4h+d8e1PqAF6yULFgUKdda3AJgWTP3lN8HNsp7BIr9tGveYHXpYaV
+         tBSPqfXcqtY+pmovM9RtUBW/FmEzGg0wtJB8DJYPpy7o6F8cX1b0NiK8/GQ3L9jGoBXI
+         81hICY1uJk2yzz6h4QVyexrXGeP48lSEtxLzkP62geCb8VD/2o/5jE/gAEbxf/9t3YYp
+         M7lA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730775448; x=1731380248;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=sS3CMf4Kq9jd/bpACivyVDfVteTLNEOFDKp07YdmOz4=;
+        b=GepmZD7NFg1vkr1N70wR6Eha7Z7CBK65p41FOUwHGI/HZUGVIgArQKs8jNTUmbB/EE
+         ovfBP9mU7UNm+EiU/7eCcuf6zErXVqRUI/FBzoCfqUVe61uipRGt4OGUWzO8NU2kvM7o
+         VeYb3OtHFivBGFQCcIfFHJU4coj/tzuu4LDQu9GSmqiJcigjHJnqFugMkwtfVv4YHQhz
+         FzC03cDFLJRDmx7Ybfsfk9zSPRBbl3PtZ/Ml5IYiH2oenP+6eyQVtjhOPMlmPg11msb6
+         1bgWLnD0oXXtvx25Kz3uUX3B8lHxhcuvT9JfUukU5L1SpMP+2r+fY8BT0XNDD6036JgN
+         DfCw==
+X-Forwarded-Encrypted: i=1; AJvYcCWoP81wi3noIxNhCu0QGPU7YrucvLt4l4rYJr0mBbEleq4+RUgLNi9x5ZsjvaBI4po766tFx9diufr8ppE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxfZwFYWR5d2oGBTJlFvFSvOpuiDOUQ4Ukt7OYAqHNiK9ri5pNl
+	ZMc4zv9yaPhVa5HzpRR9jNeO8WJaRfFNJfUF2VacG/plAdbTdLFiZF6FfqIoHuqeM4oZ7Kenjxu
+	gjxrEPCMTV2NFobZ1gOZoDUHVKa2Eb9vFyxxDv5Nr3kFjUnkgL4Y=
+X-Google-Smtp-Source: AGHT+IEUgmRA9k4E2NWll724MZRF5057DH3TEbo3DZCREWtQaiV9UgzAwBetdTmsALt49U8N8vIwu8RkJxjhSFYYVzg=
+X-Received: by 2002:a05:600c:4691:b0:431:4e25:fe42 with SMTP id
+ 5b1f17b1804b1-4319ad24a5cmr303575495e9.32.1730775448507; Mon, 04 Nov 2024
+ 18:57:28 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20241101095409.56794-1-songmuchun@bytedance.com> <ZykOfDWLjEB5Sc8G@slm.duckdns.org>
+In-Reply-To: <ZykOfDWLjEB5Sc8G@slm.duckdns.org>
+From: Muchun Song <songmuchun@bytedance.com>
+Date: Tue, 5 Nov 2024 10:56:52 +0800
+Message-ID: <CAMZfGtU3sN5y7DmYz=e5DtUk5ApvUsA9qJh1k__zpMYagZ0JbQ@mail.gmail.com>
+Subject: Re: [External] Re: [PATCH] MAINTAINERS: remove Zefan Li
+To: Tejun Heo <tj@kernel.org>
+Cc: hannes@cmpxchg.org, mkoutny@suse.com, longman@redhat.com, 
+	cgroups@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Zefan Li <lizf.kern@gmail.com>, Zefan Li <lizefan.x@bytedance.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Wang Jiang <jiangwang@kylinos.cn>
+On Tue, Nov 5, 2024 at 2:12=E2=80=AFAM Tejun Heo <tj@kernel.org> wrote:
+>
+> Hello,
+>
+> On Fri, Nov 01, 2024 at 05:54:09PM +0800, Muchun Song wrote:
+> > From: Zefan Li <lizf.kern@gmail.com>
+> >
+> > Not active for a long time, so remove myself from MAINTAINERS.
+> >
+> > Cc: Zefan Li <lizefan.x@bytedance.com>
+> > Signed-off-by: Zefan Li <lizf.kern@gmail.com>
+>
+> As Zefan hasn't been active for a while, removing makes sense. However, t=
+he
+> S-O-B chain above doesn't work - if the original patch is from Zefan and
+> Muchun is forwarding it, it should also have Muchun's S-O-B at the end. C=
+an
+> Zefan send the patch himself?
 
-Remove a surplus return statement from the void function that has been
-added in the commit commit 8353813c88ef ("PCI: endpoint: Enable DMA
-tests for endpoints with DMA capabilities").
+Hi Tejun,
 
-Especially, as an empty return statements at the end of a void functions
-serve little purpose.
+Thanks for your reminder. I'll help Zefan resend this with my own SOB becau=
+se
+of inconvenience of him.
 
-Otherwise, a warning will be issued when building the kernel with W=1:
+Thanks,
+Muchun.
 
-  296: FILE: ./drivers/pci/endpoint/functions/pci-epf-test.c:296:
-  return;
-
-Signed-off-by: Wang Jiang <jiangwang@kylinos.cn>
----
- drivers/pci/endpoint/functions/pci-epf-test.c | 2 --
- 1 file changed, 2 deletions(-)
-
-diff --git a/drivers/pci/endpoint/functions/pci-epf-test.c b/drivers/pci/endpoint/functions/pci-epf-test.c
-index 7c2ed6eae53a..cfdb38cd8cd7 100644
---- a/drivers/pci/endpoint/functions/pci-epf-test.c
-+++ b/drivers/pci/endpoint/functions/pci-epf-test.c
-@@ -291,8 +291,6 @@ static void pci_epf_test_clean_dma_chan(struct pci_epf_test *epf_test)
- 
- 	dma_release_channel(epf_test->dma_chan_rx);
- 	epf_test->dma_chan_rx = NULL;
--
--	return;
- }
- 
- static void pci_epf_test_print_rate(struct pci_epf_test *epf_test,
--- 
-2.25.1
-
+>
+> Thanks.
+>
+> --
+> tejun
 
