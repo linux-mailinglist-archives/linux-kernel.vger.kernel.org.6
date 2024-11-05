@@ -1,106 +1,208 @@
-Return-Path: <linux-kernel+bounces-397035-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397036-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA7E09BD5E3
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 20:31:54 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C7ED9BD5E6
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 20:32:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8BB021F23814
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 19:31:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 584DB1C2198E
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 19:32:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83A7720BB22;
-	Tue,  5 Nov 2024 19:31:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A47120D4FB;
+	Tue,  5 Nov 2024 19:32:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SdsDQ8Bo"
-Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PWlhPsqF"
+Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 893BE20ADD3;
-	Tue,  5 Nov 2024 19:31:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 507021EB9EC;
+	Tue,  5 Nov 2024 19:32:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730835107; cv=none; b=VJvQOFCtbduaNtEhRu5e9gRY5G55Re9jL6fgguPGS7hUrOkQrociY0YZBsHzsJK60MnKXgq9w12fQjA/sEaIFdh5om/2YHj+vwasmU0zq1XTKuKUia78pRjqJ4iGlWR/dunEHLmVH69F5eZRpdwOtb82mKXRbl8FHPu0D/nVv+g=
+	t=1730835143; cv=none; b=XLnmxH9FcfRzR870r/FBu4bj5gVsKTcvNHjHFkhr2x0bYoBA8edz70sVDfnWCk0dNVJNEZoeCYyXJW2ejD11g7ZndiqfsEHBDPBxflIzaC6EbqfKzVaVO755QH2MIu2qXF+PGi3gs14xrtu/k9ONCy9VU9RlGnKdJvr7MC/6Vls=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730835107; c=relaxed/simple;
-	bh=+wo5a89XCfR+vllQwUd68ocwBNi2wyOV4mF7KfCALrI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sRLzzdvYdNZeNJUdqxDU/7vZVHey6ux/4gITKtSa3ZxFcWih/WM5qScxz7VCOO/Iu3Sg8FwLX9a3npYrrC5IuA0cZMGf1n7e/7gx53wh2ww7tP1QMKMfAZMt6VGrjznGTHB0/55MO31/SGHfnI3/TbfOBuUQEP6WRNbvfiW1waY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SdsDQ8Bo; arc=none smtp.client-ip=209.85.128.180
+	s=arc-20240116; t=1730835143; c=relaxed/simple;
+	bh=qLEWU4xRhKVleppQ9yRG49K89MpB2qshrxMMpXqLLkU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=sJUTTmMJXxJHo8LJb9/g3Zz4CU2cXmplPZMMXFSgDkp6CWFHu/Pk+KicWrQ1s8F3UAyYTehItRVmQyRi14Pb3MSfZ/sZdwuKZmtkPj1IWGthaegZ+KzsszA2XN05wouyHANg0SzOLnqumASW+tkgVCuHxULx4V6rkcXp4UXIvcw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PWlhPsqF; arc=none smtp.client-ip=209.85.222.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-6e3c3da5bcdso53897317b3.2;
-        Tue, 05 Nov 2024 11:31:46 -0800 (PST)
+Received: by mail-qk1-f174.google.com with SMTP id af79cd13be357-7b157c9ad12so368964885a.1;
+        Tue, 05 Nov 2024 11:32:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730835105; x=1731439905; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=qx81oG6eFhFtkvLBZexdKBfFzUiItaWVe7s7qCD1UIs=;
-        b=SdsDQ8BofYbJIASHfrZQFTkL8eZbBNyxMSTUwnF1QerX6nIB/xwJZNOu9oqoS6dPRj
-         FW9WQceVU/ojB1X37ygqaLQ+zl5DcKdgXn4UUGRDg7GkdXzr8bvCJTdWqtNsUP5eHKP+
-         YIg7nsq0XMYJ0ptzgVS1WqRfgpUt9BNAK2VWHifLdUS98ICCwIcFI/rwkRy6IYZDBTjD
-         DUXJbd3BD4oU6xjjcfKHn4Pdix4bsNclbXhJX6KrQiqWGGrF+P70TVl/OOFSN4oxH5OR
-         QtJaSWrTyjAcYdZX+crzsZ9dvPFwFYkTOXZEV7AstkHN1lVC+EQqhD2pBwfY/LeTmT3h
-         4YFA==
+        d=gmail.com; s=20230601; t=1730835141; x=1731439941; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=mlpXLUDiuAj4Ax3s/8PaCa808KyyiZFwFmndcMeabmA=;
+        b=PWlhPsqFmUP6ayMAZCJ0b+H1wLRIVpa288Z48AKsx8Td7ylVCigDPVlMRgqsuFN5xF
+         7+GBIDiAB0kUXQBCveA2Qn3kJkoTknzPVs+JJPTbBqyclZZ04NJcSyyeoEWAZYPqRAlV
+         zKkD2o7ADgzpBzUcNqgAx/++LrU9u5FsJY9msLFwkxD/CAKHuYCQ6JSGcYx7JLkvFwlW
+         SdRDyVcOaZFrFZVqTsApHhlfmpY0Ftbgcq/fgm4/7sZKW3ALYne76R/KLWWFhLYNsmig
+         3LXUEut+A6f4g1HvF7QC930ftcY4f6OxJNLpxMyw4E9m+3BeXnMOAJ/mgSzOpPu1th4t
+         2V5g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730835105; x=1731439905;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1730835141; x=1731439941;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=qx81oG6eFhFtkvLBZexdKBfFzUiItaWVe7s7qCD1UIs=;
-        b=mLH+QnQ4vaNd1Ltjpp4ica5eOPmL0ZAO/rrAvM46NJJA8A9QV4Asm3axdDfNRZSgC3
-         mrDcRSFBRx/nIQ1XOIhWK+xdTO2cv/jm3NgcAVRkX5xD/qWzb+O1JQ7YAyWReXmlaJ9R
-         NMNQwSxVpYLFIRSFGNauLk6OUz4vZY9pt4hasN43aQAb3ohPlYhyx9wxfPtwLuzaSXZS
-         ZxPnde/T+xV3cP47CNtkUR58D/91fbk7M989lBRNnW8najjDJNX5zxxbzjKz4KxfSct6
-         w57FbyrfF/ncgJV6Y2GEU9tcYGCgzfKoN9AYjxMLPnOhJxRrZeU32XuxVFsJeVZdyNWv
-         bL8w==
-X-Forwarded-Encrypted: i=1; AJvYcCUFZ2es+7NypLgQ9o3oqTZy7fsAl152lK9t0LjUMjlZPUftloeSqcygb7JhpJRbXc4ukl3W5KTDrFor4Q==@vger.kernel.org, AJvYcCUNdMCasNIiZ2+IGi6Aqi4/s8L6WdlGg784QLA1kHojhgmwd4PvzNwj/bBENqHt2DmOq5qqG2gv@vger.kernel.org, AJvYcCVpPYEywwak+5SaGEYtlNnxmOlf9nqwCVzMCU/gEHPcAO+Iul96YW/HvY0OiKvyLTdpuCwdapK9F6cLJ1A=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz7bSVRvAu80YSo3Vvqgyug22H4H6T8wv6uxkShvdAFqFWesleO
-	w5zvTSoriEQTiB6W1llXEc4FstosU23GdEzWHrbt75VnzcJ0Qz8w1wCNvr0yDc97yVsAJFIBQQP
-	psIJCVKXwISq3TjmBCC7+OOMst4w=
-X-Google-Smtp-Source: AGHT+IHNxvK4el4AFjKkLHz4BPVUM4q40Bp+gu7JB/Ln2PRph4hXov1iTlfbIRpUX91XvZipJoIPoVqLssAXyosYFJI=
-X-Received: by 2002:a05:690c:2fca:b0:6e2:7dd:af66 with SMTP id
- 00721157ae682-6ea3b8afecdmr182459867b3.19.1730835105542; Tue, 05 Nov 2024
- 11:31:45 -0800 (PST)
+        bh=mlpXLUDiuAj4Ax3s/8PaCa808KyyiZFwFmndcMeabmA=;
+        b=nuRzIVBHMqOsgRj7b/nD3MMyqL+jpkaS50HMXU9Qi8/Lo8RYhxVnDbTkqt3uiQN6Uu
+         3PMPkYiJAHLijmDabTQlcYNbCmYdCHLURm4uOlHbSGS8fzbFrI0dZhoPjBeNlELIwy2h
+         2vZVjM/U49vd5vwcypB8frJEopAZQFlTqNV9KsCgqe9k13LH3NtLrBPg73wByzE1KjFD
+         shKfBMEx3RxjbqLzPO1j4pUcWE3uZEW3gG3OxFbWursApjqY3QoBBh0vxZq/YwYlku8F
+         g7424a/hg7XWG4XwnYi9ebLvLHVQZfL0+fcRkRLm3ExUN4daK/oTmfWp5tRLj5K2sMN0
+         ZDdQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUThfin3EwSsuosmXvQBsrF/62J/cp+MPzSFXZjRPoKNXpg5rHh9xE+QdwYH7rpSoaH7D8Y0xKBfw8wO6o=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzre9rj5OlsGyCcVpaBXq8LjZF/G2KBPun3DR2BRaz2ygksdPIU
+	MULJucISvbiKSHBPhm12yXsrTvesily5VQquRreZ9Zo4r1jpJLiM
+X-Google-Smtp-Source: AGHT+IHmPYcPWfZhwOxujigyXrVRSB8kRoNxKABpVBwVCQzAOZBWznyCKjCQL89t1FiTLIwjVZF9zw==
+X-Received: by 2002:a05:620a:14e:b0:7ac:ae32:286a with SMTP id af79cd13be357-7b193f041d5mr4080201485a.34.1730835141086;
+        Tue, 05 Nov 2024 11:32:21 -0800 (PST)
+Received: from newman.cs.purdue.edu ([128.10.127.250])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b2f3a9b991sm553343285a.127.2024.11.05.11.32.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 05 Nov 2024 11:32:20 -0800 (PST)
+From: Jiasheng Jiang <jiashengjiangcool@gmail.com>
+To: jic23@kernel.org,
+	lars@metafoo.de,
+	mcoquelin.stm32@gmail.com,
+	alexandre.torgue@foss.st.com,
+	u.kleine-koenig@baylibre.com,
+	tgamblin@baylibre.com,
+	fabrice.gasnier@st.com,
+	benjamin.gaignard@linaro.org,
+	lee@kernel.org
+Cc: linux-iio@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Jiasheng Jiang <jiashengjiangcool@gmail.com>
+Subject: [PATCH] iio: trigger: stm32-timer-trigger: Add check for clk_enable()
+Date: Tue,  5 Nov 2024 19:32:12 +0000
+Message-Id: <20241105193212.2082-1-jiashengjiangcool@gmail.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241105130902.4603-1-chenqiuji666@gmail.com>
-In-Reply-To: <20241105130902.4603-1-chenqiuji666@gmail.com>
-From: Justin Tee <justintee8345@gmail.com>
-Date: Tue, 5 Nov 2024 11:31:39 -0800
-Message-ID: <CABPRKS_f1LvugQo2Hzs9q-ycAE5NyF6JxH4jS=UbyQqbhwt15A@mail.gmail.com>
-Subject: Re: [PATCH] scsi: lpfc: Fix improper handling of refcount in lpfc_bsg_hba_get_event()
-To: Qiu-ji Chen <chenqiuji666@gmail.com>
-Cc: Justin Tee <justin.tee@broadcom.com>, james.smart@broadcom.com, 
-	dick.kennedy@broadcom.com, James.Bottomley@hansenpartnership.com, 
-	martin.petersen@oracle.com, linux-scsi@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, baijiaju1990@gmail.com, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hi Qiu-ji,
+Add check for the return value of clk_enable() in order to catch the
+potential exception.
 
-Similar to the other suggested patch, this does not look logically
-correct.  if (evt_dat == NULL) evaluates to true, then that means the
-list_for_each_entry_safe(evt, evt_next, &phba->ct_ev_waiters, node)
-loop did not find an evt lpfc_bsg_event object of interest or that the
-phba->ct_ev_waiters list is empty.
+Fixes: 3192ade7b6f6 ("iio: trigger: stm32-timer: enable clock when in master mode")
+Fixes: 90938ca432e6 ("iio: trigger: stm32-timer: add enable attribute")
+Fixes: 93fbe91b5521 ("iio: Add STM32 timer trigger driver")
+Signed-off-by: Jiasheng Jiang <jiashengjiangcool@gmail.com>
+---
+ drivers/iio/trigger/stm32-timer-trigger.c | 40 +++++++++++++++++++----
+ 1 file changed, 33 insertions(+), 7 deletions(-)
 
-Why would this patch want to call lpfc_bsg_event_unref on an evt
-object that is not of specified interest indicated by the bsg
-event_req object?
+diff --git a/drivers/iio/trigger/stm32-timer-trigger.c b/drivers/iio/trigger/stm32-timer-trigger.c
+index 0684329956d9..0d5bb808c61d 100644
+--- a/drivers/iio/trigger/stm32-timer-trigger.c
++++ b/drivers/iio/trigger/stm32-timer-trigger.c
+@@ -119,7 +119,7 @@ static int stm32_timer_start(struct stm32_timer_trigger *priv,
+ 			     unsigned int frequency)
+ {
+ 	unsigned long long prd, div;
+-	int prescaler = 0;
++	int prescaler = 0, ret;
+ 	u32 ccer;
+ 
+ 	/* Period and prescaler values depends of clock rate */
+@@ -153,7 +153,13 @@ static int stm32_timer_start(struct stm32_timer_trigger *priv,
+ 	mutex_lock(&priv->lock);
+ 	if (!priv->enabled) {
+ 		priv->enabled = true;
+-		clk_enable(priv->clk);
++		ret = clk_enable(priv->clk);
++		if (ret) {
++			mutex_unlock(&priv->lock);
++			return dev_err_probe(priv->dev, ret,
++					     "failed to enable clock: %d\n",
++					     ret);
++		}
+ 	}
+ 
+ 	regmap_write(priv->regmap, TIM_PSC, prescaler);
+@@ -307,7 +313,7 @@ static ssize_t stm32_tt_store_master_mode(struct device *dev,
+ 	struct stm32_timer_trigger *priv = dev_get_drvdata(dev);
+ 	struct iio_trigger *trig = to_iio_trigger(dev);
+ 	u32 mask, shift, master_mode_max;
+-	int i;
++	int i, ret;
+ 
+ 	if (stm32_timer_is_trgo2_name(trig->name)) {
+ 		mask = TIM_CR2_MMS2;
+@@ -326,7 +332,13 @@ static ssize_t stm32_tt_store_master_mode(struct device *dev,
+ 			if (!priv->enabled) {
+ 				/* Clock should be enabled first */
+ 				priv->enabled = true;
+-				clk_enable(priv->clk);
++				ret = clk_enable(priv->clk);
++				if (ret) {
++					mutex_unlock(&priv->lock);
++					return dev_err_probe(priv->dev, ret,
++							     "failed to enable clock: %d\n",
++							     ret);
++				}
+ 			}
+ 			regmap_update_bits(priv->regmap, TIM_CR2, mask,
+ 					   i << shift);
+@@ -482,6 +494,7 @@ static int stm32_counter_write_raw(struct iio_dev *indio_dev,
+ 				   int val, int val2, long mask)
+ {
+ 	struct stm32_timer_trigger *priv = iio_priv(indio_dev);
++	int ret;
+ 
+ 	switch (mask) {
+ 	case IIO_CHAN_INFO_RAW:
+@@ -496,7 +509,13 @@ static int stm32_counter_write_raw(struct iio_dev *indio_dev,
+ 		if (val) {
+ 			if (!priv->enabled) {
+ 				priv->enabled = true;
+-				clk_enable(priv->clk);
++				ret = clk_enable(priv->clk);
++				if (ret) {
++					mutex_unlock(&priv->lock);
++					return dev_err_probe(priv->dev, ret,
++							     "failed to enable clock: %d\n",
++							     ret);
++				}
+ 			}
+ 			regmap_set_bits(priv->regmap, TIM_CR1, TIM_CR1_CEN);
+ 		} else {
+@@ -601,7 +620,7 @@ static int stm32_set_enable_mode(struct iio_dev *indio_dev,
+ 				 unsigned int mode)
+ {
+ 	struct stm32_timer_trigger *priv = iio_priv(indio_dev);
+-	int sms = stm32_enable_mode2sms(mode);
++	int sms = stm32_enable_mode2sms(mode), ret;
+ 
+ 	if (sms < 0)
+ 		return sms;
+@@ -611,7 +630,14 @@ static int stm32_set_enable_mode(struct iio_dev *indio_dev,
+ 	 */
+ 	mutex_lock(&priv->lock);
+ 	if (sms == 6 && !priv->enabled) {
+-		clk_enable(priv->clk);
++		ret = clk_enable(priv->clk);
++		if (ret) {
++			mutex_unlock(&priv->lock);
++			return dev_err_probe(priv->dev, ret,
++					     "failed to enable clock: %d\n",
++					     ret);
++		}
++
+ 		priv->enabled = true;
+ 	}
+ 	mutex_unlock(&priv->lock);
+-- 
+2.25.1
 
-Even worse, as mentioned in the other email, this patch could kref_put
-on the phba->ct_ev_waiters head which is not a preallocated
-lpfc_bsg_event object leading to references on an uninitialized memory
-region.
-
-Sorry, but I cannot acknowledge this patch as well.
-
-Regards,
-Justin
 
