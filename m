@@ -1,68 +1,46 @@
-Return-Path: <linux-kernel+bounces-396415-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396416-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86BAC9BCCDB
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 13:39:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 271479BCCDC
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 13:39:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 11DAF1F24042
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 12:39:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D38161F24A19
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 12:39:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B86101D5AA8;
-	Tue,  5 Nov 2024 12:38:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BYtAHjyf"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DE091E485
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 12:38:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AC121D5AA5;
+	Tue,  5 Nov 2024 12:39:14 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6A261D54F7
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 12:39:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730810339; cv=none; b=RTx7ZPGsqk++kxi7md1lv6VM+RVDwZGkieG4Yw4XzZypEHbcK+VXx3SYE2+VWol0wJCmMQzx/w7yoaI/rva4J+VdcuCG6pwrgipszbxMlIkMMkzX/+ivWaG1BY66fTBjOQ7Yr/BgQFysxRw4OUF/gzK4uKfYQbqfnf/6DKzn0bk=
+	t=1730810354; cv=none; b=h70KDq2OTJg8Y96a3vd9nx4266MsXtDHfbaedxcnMyFEp5uMuFnVbGKAn6qLK+81fTFD2mf2Cw+dAPx7vuN3dMEdxwwW0+Q9utlBZYPW7Ij9TUC5QpDEKEgZckfSAcXJOGKDP6UZS5Q7KroceAvmoMqeU/RlY7VcYNdSQ1FLMR4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730810339; c=relaxed/simple;
-	bh=8vpLGRsbdzrgowyBxatraUmVvFAaJH8vb/3SuBlujxQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=B6zmXvYdmZEWj16oD7UneTsJOrBzI2KeHgR1KMnpgV7LmbqcZwHiPl9mPz9Ea0G1dxa67JyE5zgte9ZCo0rmImrmNzN2igwxyCRoCkviUupJRxCJE8obX8peYZGLV1IhN/pKfeudFUkVhWUPnCsjfB1WTJ2TonZzW0tVnnarS0s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BYtAHjyf; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1730810335;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=LoG48yjHOEp53ZdqtnIWg0fqBNZJBlJaQRNwyMDWelo=;
-	b=BYtAHjyfOksHjlhZCZD3RIuNUiB+nzkUzSeW1r1ADmEDGYGvjOHawbPiqDKdVKQsUBuRWT
-	mztT56da8Fyxvc719e4frg+atE8DzqWq1TZmFoWjlU31IwU85QLc8MTowEa/ZmGFn+ce7x
-	iYa8Bry7Q+RZeDGe0b4unmItwp9b9GE=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-586-F26dhSz-Npa44YvTYstkwQ-1; Tue,
- 05 Nov 2024 07:38:52 -0500
-X-MC-Unique: F26dhSz-Npa44YvTYstkwQ-1
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id B46891955F69;
-	Tue,  5 Nov 2024 12:38:51 +0000 (UTC)
-Received: from ws.redhat.com (unknown [10.96.134.147])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 2C75630001A3;
-	Tue,  5 Nov 2024 12:38:48 +0000 (UTC)
-From: Ricardo Robaina <rrobaina@redhat.com>
-To: audit@vger.kernel.org,
+	s=arc-20240116; t=1730810354; c=relaxed/simple;
+	bh=sFqNT7sUzHWlwQ8/M8ZP+Q2MBkvEtN117vvn79XMsXk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KnyQMfTW/hdwoGqypfWw9x1rEqsSx0q3Orvz6t9iWoQzvobE+Z6HOgqI32yZrQPF/IV+qz0OYyLR0xT72sDTTIwpWDEHLsuFLUxcVokHhOoXsbCaONAkYszeSR2yk6kGweQq0n+W1LWot5dS/IzFqtpAPVRaDKMA2Puw5iC8MHU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [113.200.148.30])
+	by gateway (Coremail) with SMTP id _____8BxYa_tESpnf7UxAA--.34496S3;
+	Tue, 05 Nov 2024 20:39:09 +0800 (CST)
+Received: from linux.localdomain (unknown [113.200.148.30])
+	by front1 (Coremail) with SMTP id qMiowMBxrsLsESpnw4lCAA--.26454S2;
+	Tue, 05 Nov 2024 20:39:09 +0800 (CST)
+From: Tiezhu Yang <yangtiezhu@loongson.cn>
+To: Huacai Chen <chenhuacai@kernel.org>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>
+Cc: loongarch@lists.linux.dev,
 	linux-kernel@vger.kernel.org
-Cc: Ricardo Robaina <rrobaina@redhat.com>,
-	paul@paul-moore.com,
-	eparis@redhat.com,
-	rgb@redhat.com
-Subject: [PATCH v1] audit: fix suffixed '/' filename matching in __audit_inode_child()
-Date: Tue,  5 Nov 2024 09:37:39 -0300
-Message-ID: <20241105123807.1257948-1-rrobaina@redhat.com>
+Subject: [PATCH v2 0/5] Add jump table support for objtool on LoongArch
+Date: Tue,  5 Nov 2024 20:39:01 +0800
+Message-ID: <20241105123906.26072-1-yangtiezhu@loongson.cn>
+X-Mailer: git-send-email 2.42.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -70,87 +48,50 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+X-CM-TRANSID:qMiowMBxrsLsESpnw4lCAA--.26454S2
+X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
+X-Coremail-Antispam: 1Uk129KBj9xXoW7Xw1fWF18ZFyfXr4rJr1rXwc_yoWDXFb_W3
+	4xW3s5Gw45WayDta45trnY9ryjkF48Xr4fAFWqvr47Gry5Jrn8GFsF9a4UZr1DKFW5uFs8
+	JrZ2qF1xCr429osvyTuYvTs0mTUanT9S1TB71UUUUUJqnTZGkaVYY2UrUUUUj1kv1TuYvT
+	s0mT0YCTnIWjqI5I8CrVACY4xI64kE6c02F40Ex7xfYxn0WfASr-VFAUDa7-sFnT9fnUUI
+	cSsGvfJTRUUUb3kYFVCjjxCrM7AC8VAFwI0_Jr0_Gr1l1xkIjI8I6I8E6xAIw20EY4v20x
+	vaj40_Wr0E3s1l1IIY67AEw4v_JrI_Jryl8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxS
+	w2x7M28EF7xvwVC0I7IYx2IY67AKxVW8JVW5JwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxV
+	W8JVWxJwA2z4x0Y4vEx4A2jsIE14v26r4UJVWxJr1l84ACjcxK6I8E87Iv6xkF7I0E14v2
+	6r4UJVWxJr1ln4kS14v26r1Y6r17M2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12
+	xvs2x26I8E6xACxx1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r12
+	6r1DMcIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64
+	vIr41l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1l4IxYO2xFxVAFwI0_
+	Jrv_JF1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1V
+	AY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAI
+	cVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42
+	IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIdaVFxhVj
+	vjDU0xZFpf9x07jeQ6JUUUUU=
 
-When the user specifies a directory to delete with the suffix '/',
-the audit record fails to collect the filename, resulting in the
-following logs:
+This series is based on 6.12-rc6, tested with the upstream mainline
+binutils, GCC and Clang, all the changes are under tools/objtool and
+arch/loongarch.
 
- type=PATH msg=audit(10/30/2024 14:11:17.796:6304) : item=2 name=(null)
- type=PATH msg=audit(10/30/2024 14:11:17.796:6304) : item=1 name=(null)
+It is time to remove the compiler option -fno-jump-tables to enable
+jump table for objtool if the compiler is GCC and it has the compiler
+option -mannotate-tablejump, the next work is to add the corresponding
+support with Clang after addressing some corner issues due to different
+compiler behaviors.
 
-It happens because the value of the variables dname, and n->name->name
-in __audit_inode_child() differ only by the suffix '/'. This commit
-treats this corner case by cleaning the input and passing the correct
-filename to audit_compare_dname_path().
+Tiezhu Yang (5):
+  objtool: Handle various symbol types for rodata
+  objtool: Handle special cases of discard.reachable
+  objtool/LoongArch: Add support for switch table
+  objtool/LoongArch: Add support for goto table
+  LoongArch: Enable jump table with GCC for objtool
 
-Steps to reproduce the issue:
+ arch/loongarch/Kconfig                 |  3 +
+ arch/loongarch/Makefile                |  9 +++
+ tools/objtool/arch/loongarch/special.c | 83 +++++++++++++++++++++++++-
+ tools/objtool/check.c                  | 38 ++++++++++--
+ 4 files changed, 128 insertions(+), 5 deletions(-)
 
- # auditctl -w /tmp
- $ mkdir /tmp/foo
- $ rm -r /tmp/foo/ or rmdir /tmp/foo/
- # ausearch -i | grep PATH | tail -3
-
-This patch is based on a GitHub patch/PR by user @hqh2010.
-https://github.com/linux-audit/audit-kernel/pull/148
-
-Signed-off-by: Ricardo Robaina <rrobaina@redhat.com>
----
- kernel/auditsc.c | 18 ++++++++++++++++--
- 1 file changed, 16 insertions(+), 2 deletions(-)
-
-diff --git a/kernel/auditsc.c b/kernel/auditsc.c
-index 6f0d6fb6523f..d4fbac6b71a8 100644
---- a/kernel/auditsc.c
-+++ b/kernel/auditsc.c
-@@ -2419,7 +2419,8 @@ void __audit_inode_child(struct inode *parent,
- 	struct audit_names *n, *found_parent = NULL, *found_child = NULL;
- 	struct audit_entry *e;
- 	struct list_head *list = &audit_filter_list[AUDIT_FILTER_FS];
--	int i;
-+	int i, dlen, nlen;
-+	char *fn = NULL;
- 
- 	if (context->context == AUDIT_CTX_UNUSED)
- 		return;
-@@ -2443,6 +2444,7 @@ void __audit_inode_child(struct inode *parent,
- 	if (inode)
- 		handle_one(inode);
- 
-+	dlen = strlen(dname->name);
- 	/* look for a parent entry first */
- 	list_for_each_entry(n, &context->names_list, list) {
- 		if (!n->name ||
-@@ -2450,15 +2452,27 @@ void __audit_inode_child(struct inode *parent,
- 		     n->type != AUDIT_TYPE_UNKNOWN))
- 			continue;
- 
-+		/* special case, entry name has the sufix "/" */
-+		nlen = strlen(n->name->name);
-+		if (dname->name[dlen - 1] != '/' && n->name->name[nlen - 1] == '/') {
-+			fn = kmalloc(PATH_MAX, GFP_KERNEL);
-+			if (!fn) {
-+				audit_panic("out of memory in __audit_inode_child()");
-+				return;
-+			}
-+			strscpy(fn, n->name->name, nlen);
-+		}
-+
- 		if (n->ino == parent->i_ino && n->dev == parent->i_sb->s_dev &&
- 		    !audit_compare_dname_path(dname,
--					      n->name->name, n->name_len)) {
-+					      fn ? fn : n->name->name, n->name_len)) {
- 			if (n->type == AUDIT_TYPE_UNKNOWN)
- 				n->type = AUDIT_TYPE_PARENT;
- 			found_parent = n;
- 			break;
- 		}
- 	}
-+	kfree(fn);
- 
- 	cond_resched();
- 
 -- 
-2.47.0
+2.42.0
 
 
