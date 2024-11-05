@@ -1,240 +1,375 @@
-Return-Path: <linux-kernel+bounces-396017-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396019-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23CE49BC6C9
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 08:19:35 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9861C9BC6CC
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 08:20:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E6A81F237DE
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 07:19:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0662BB22806
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 07:20:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2952D1F6667;
-	Tue,  5 Nov 2024 07:19:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36D7C1FE0F7;
+	Tue,  5 Nov 2024 07:20:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UaMW485Y"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b="s6ZSepf9"
+Received: from CH4PR04CU002.outbound.protection.outlook.com (mail-northcentralusazon11023106.outbound.protection.outlook.com [40.107.201.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CA731C32E4
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 07:19:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730791165; cv=none; b=GA/r0OxyKWwwzVgWsI3QscLG6w/+aVcvECTPAowDBaMcpt+wFaRuQAA0AMn+/hsDt2a0u9hraKaTdMiHxApfUMUYnQJxl0K6OIZki70BePIvSezRwgK3LQytKWzEN+iktMxQkL60zoKzsmTfBwyGfKRBrEd0J1Svgpt1q//kmy0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730791165; c=relaxed/simple;
-	bh=bhn8OTomeBsmL0L26tpV/x/su4y8blqg0hQmaBVC6ow=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ta9CQ2DeP9faOEQF/DT/fkP45cfCcB09ldSM+v+m+z5pFussZkyN188+LH2T91VYCHnZOQoZ/+Jjc3lNBq18AoMyEqYja3fxHbChC05r03Ys8ax9Jx0J2kRqWXKh5b/o8sObqi/KqCRjNyQl/HlCUt/4Hm74iRStFvRccxbxKcc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UaMW485Y; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1730791162;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6Roq3cOWZ+UaHWIVrLDBoW9cLCBCv3Kx4GzqB1c1O1g=;
-	b=UaMW485YFWBcisNfNWTRnv5cL6Dr5ope7lfxxuCNNQmBwslgeLw4yw0ObJrIenDzcZChli
-	u8IZwcRSpdH0WL+fBY+CgVX7J2JmPx8pPDz/UQlbIvS+HTHXeqn5sIeqPW6GQdHkQdaCx1
-	qy5MXSRYQmv5WvT1oCV5qTV3M28aJYk=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-562-kPLQj2PePw2b4viNBoIVvA-1; Tue,
- 05 Nov 2024 02:19:09 -0500
-X-MC-Unique: kPLQj2PePw2b4viNBoIVvA-1
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 4717A1955DCF;
-	Tue,  5 Nov 2024 07:19:06 +0000 (UTC)
-Received: from fedora (unknown [10.72.116.156])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 30B7019560A2;
-	Tue,  5 Nov 2024 07:18:59 +0000 (UTC)
-Date: Tue, 5 Nov 2024 15:18:54 +0800
-From: Ming Lei <ming.lei@redhat.com>
-To: Yu Kuai <yukuai1@huaweicloud.com>
-Cc: axboe@kernel.dk, linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org, yukuai3@huawei.com,
-	yi.zhang@huawei.com, yangerkun@huawei.com
-Subject: Re: [PATCH -next] block: fix uaf for flush rq while iterating tags
-Message-ID: <ZynG3g8o_iLOjwai@fedora>
-References: <20241104110005.1412161-1-yukuai1@huaweicloud.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2150618132A;
+	Tue,  5 Nov 2024 07:20:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.201.106
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730791226; cv=fail; b=tlwd/ss68TLS4TpB6iIDCYQvaqfUhhcLIlS2NcY71V/ktOvqvFzW+Kb/WSNmSa4VhiBT2gDJh+LMD4Fn1lBMX5PHV5y2IBkt9OWIIeHemwanHmqE1S0AYe3fimkr7Btsqegrbs5AbOljPQTTBBGnfY0lhgMkxdB9GM+2x8ZHgKQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730791226; c=relaxed/simple;
+	bh=wP7RB/ZZbrAxM7dUI4fc4JjgDaMkZb211YLsDyezJfA=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=PR6Lg6GhIDtsOgNXL9c45l5zS7NliZmTSdzApNXlj5mVDMwxd3TZDaCZfMsB5zfOlE1fI3FuHlbKSIao6GHSKG8ziovSxUiRUseMVx++lduKSq1w/PKMb4xY0mVXzgD2BAJkXI9KHizKgKfNki6XRnWl4sivOxFfOuSjL4PtS24=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com; spf=pass smtp.mailfrom=os.amperecomputing.com; dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b=s6ZSepf9; arc=fail smtp.client-ip=40.107.201.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=os.amperecomputing.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=s03Q48QiwoXQdHV27RL2tEB5T5EfieLjl4816/CFJJxkEpxjVQ9I7CwykVTSzuskjhQGgeDhT+lOh5lpQ+d88RymrNmlMsmKgyYYDfdpybCoo7gZcsvtJQCp10FeWUUEdDMXBWvanZcygVtTwmhJwzaEDknSbNdyZ9l1iRQRq5lyo7vGXpvU++I4wgghYKUfQGZngzE56PP1jk/iUrZhKj6NyROmP9n/TcRAr5ZnIGoV34Rl0i4Rt38ybiN63p4IHu/20YUicOPW0pgGxJkw56DvGkjvR7qCnOVMJcz0ZZ5u1IzGaLzQP3r/D0DkRuvrDUXugh//nzN6X8EQgTfPoA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=+8mq9RVForkhwdRG+WdzcXxEIvUUVBFxdPanxWt8X0Q=;
+ b=Joihc4mfzc0xAfAdMkODLglHKJYLPxWUBbBsIYWfECpdS2i0pZToQB531ba07B9xrZama8Nn5VmvEFQayUqwbLiOR+9L/Z6SXxnisEiB70r6U/KD+Rgt+oH1xZjWjRzdS6uIHjO2JYFK66irreHn1o1v+rhN7vzKdgM1dMApCWYV2pT/AXoznmd1x+rlMpp/5ScowC12cxzQZ9FG9nkilO9E3KG4tZxmoJSXRzkhsl0E/B9VAtawZF5DzBB0yjZuCcPTnUF2KbEEt5UaDFW9Z7JVU3qRVIYF1AAb2xS+wW2IXlb0rpIlg9CPW01yFWF/KUAdSW62zWahyKHh5R35SQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=os.amperecomputing.com; dmarc=pass action=none
+ header.from=os.amperecomputing.com; dkim=pass
+ header.d=os.amperecomputing.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=os.amperecomputing.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=+8mq9RVForkhwdRG+WdzcXxEIvUUVBFxdPanxWt8X0Q=;
+ b=s6ZSepf9KFtr2ijWo2m4KrPApyPszCB0qnE8y/BwXNr7VKstYda3dCbizt4OiccuP78hmRerhDoYutEFjHdtwjcz9TxALUlDwq3Y0irQpNhPV5JPdY1GMlW/d1XdBIKzffvfBHYITeCGCZJFIYjLkzpamBKy22TmZ5bW+wEwLXk=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=os.amperecomputing.com;
+Received: from SN4PR01MB7520.prod.exchangelabs.com (2603:10b6:806:207::19) by
+ BN0PR01MB7133.prod.exchangelabs.com (2603:10b6:408:150::15) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8137.15; Tue, 5 Nov 2024 07:20:20 +0000
+Received: from SN4PR01MB7520.prod.exchangelabs.com
+ ([fe80::3ad8:b11:de24:6087]) by SN4PR01MB7520.prod.exchangelabs.com
+ ([fe80::3ad8:b11:de24:6087%4]) with mapi id 15.20.8137.014; Tue, 5 Nov 2024
+ 07:20:20 +0000
+From: Khang Nguyen <khangng@os.amperecomputing.com>
+To: Jeremy Kerr <jk@codeconstruct.com.au>,
+	Matt Johnston <matt@codeconstruct.com.au>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: ampere-linux-kernel@lists.amperecomputing.com,
+	Phong Vo <phong@os.amperecomputing.com>,
+	Thang Nguyen <thang@os.amperecomputing.com>,
+	Khanh Pham <khpham@amperecomputing.com>,
+	Phong Vo <pvo@amperecomputing.com>,
+	Quan Nguyen <quan@os.amperecomputing.com>,
+	Chanh Nguyen <chanh@os.amperecomputing.com>,
+	Thu Nguyen <thu@os.amperecomputing.com>,
+	Hieu Le <hieul@amperecomputing.com>,
+	openbmc@lists.ozlabs.org,
+	patches@amperecomputing.com,
+	Khang Nguyen <khangng@os.amperecomputing.com>
+Subject: [PATCH net-next] net: mctp: Expose transport binding identifier via IFLA attribute
+Date: Tue,  5 Nov 2024 14:19:15 +0700
+Message-ID: <20241105071915.821871-1-khangng@os.amperecomputing.com>
+X-Mailer: git-send-email 2.43.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SI2PR02CA0007.apcprd02.prod.outlook.com
+ (2603:1096:4:194::23) To SN4PR01MB7520.prod.exchangelabs.com
+ (2603:10b6:806:207::19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241104110005.1412161-1-yukuai1@huaweicloud.com>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SN4PR01MB7520:EE_|BN0PR01MB7133:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3f5c98b3-c5af-459f-87d7-08dcfd6a4df4
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|52116014|366016|7416014|376014|1800799024|38350700014|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?RQF311FRQUipGlXBEMo/UWCveB+hpQCGABcQdFQzyHfqGRHDWv6BR3LkL6qE?=
+ =?us-ascii?Q?MGTTeMbooTuvpfP0O7JlHn+O7nQWV+OvsfCdgma1WQkN17vVjuXHDlUCE2ee?=
+ =?us-ascii?Q?VpsWU8hNPjuHZVIuvsoEGQKRURzpr/OMmvHuJGCEGn+VqorJCwvZULxeP9DJ?=
+ =?us-ascii?Q?K3gcirTs8pWJ7rVqVlpDzZmKQ5D75ykdBPJDxXUv5+fC7tWTRlONGnXSmWeA?=
+ =?us-ascii?Q?XCeAI5hCRVYPvC5+Nuj7mVxgoVLwjwDTDhS33Br6nrMI4IruhNxxtHElLmiU?=
+ =?us-ascii?Q?QZOKl07vcdetOiGKnGnFvHD7QfIDO/qutpblIMyih2FXtr1DlX/W2w5Dpcrn?=
+ =?us-ascii?Q?JmZ8dsFinznoMz32BtW8dQCsTdA1DSN6cewqZ1CgR90Mp8tbFJ6lrXr17AdW?=
+ =?us-ascii?Q?XsXRk0ACkCjvtYlyInu4p1OfyjUr08DIV0vavUVpn+IOsQIFa2E8leKDbTH0?=
+ =?us-ascii?Q?myztZ/EMEV9iiv2WsWSbWEPtNyVvxlUux3WphMNLe4uWRPE2kaU/GLQGIIEq?=
+ =?us-ascii?Q?tgQjvLeI4GJTBmrQgZ9JJcpEeaMAjqsqW4cMuw47Nf2NuTyNJ61fTp61PlyQ?=
+ =?us-ascii?Q?rHVhAzuAeSGZYyXXSjemufAJ3WymV/MzgBvUgB1ikNIS3ug6HwRRCUUQaUrq?=
+ =?us-ascii?Q?ub3gaaYOai6pVBtEAcr1jTxCumEx/Kwc3/opKidXrIZ+hdRetc0Y8LOzU6cW?=
+ =?us-ascii?Q?5WnObsOzsY6O/AYNhK3WTOmWumuKZZrQc4+L0gQCsGnzTBlam2jLfRTiV45D?=
+ =?us-ascii?Q?35RJAVCWdX+ipkq6zm7SWLJOHY6/RivzzQJRg14IusTIba4loqEqIvCYynin?=
+ =?us-ascii?Q?BCsgbZXwwSI/wndzV+it24761WENz6Ew+yRl1KPrRcWd5JqxynaA92M9A15V?=
+ =?us-ascii?Q?zkpNBHqTnZ9nxB1r9cpYR3d0/gyPuCdW8l2/thq8GntTyAeOswdGAYCSnEvX?=
+ =?us-ascii?Q?gfB3Vhp25DKUrBAPbxpD3pCcTYQxqgF+CD4jhrFeKJNH1FhgYuCMRayXnFdG?=
+ =?us-ascii?Q?UK24H5Ypj8X0NZJqP+AAQ8qLNG9oNQ/IhNB2yKjHh0smzVaw19rM8gwQL2in?=
+ =?us-ascii?Q?mRrua1MAy6hpIdE41bRKtOZ08vBqvBG0oKp2E/R/lkddlUlRllf5zbfihRdT?=
+ =?us-ascii?Q?Nt96LQxiUt+nmoW5Hvy3ZFKu7PPI1h1d3MFOk6BUY0FhQ5rF2BrBJ8fV73O2?=
+ =?us-ascii?Q?FQjSMa0yQSdEUiSB1IzjJVCl0RFdwulEbEI9jsOzpgS1XupiOI459Fsfm6J8?=
+ =?us-ascii?Q?QVVlH/woeHHS4yt78XGLg+PuYkLBnRBG7vhXJu8FQDNj5vHaCUDtKHjbl5sL?=
+ =?us-ascii?Q?K3pSTmyn+V8XzhkjH6IzhYbtUE9CSvpNwUE+AJNY3lZqvQ=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN4PR01MB7520.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(366016)(7416014)(376014)(1800799024)(38350700014)(921020);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?fzzfKWWfm2SBaa7v54mSzse4giwc+NQBEJgOxGZTvbqLuZx3g57Tq4MWS+oM?=
+ =?us-ascii?Q?vDgd8Q7ViB7xdcJ4fXZKQ2+xcm6EoBSlcOIP3Silu0jyRdDLBPydFqtQagEk?=
+ =?us-ascii?Q?1ls34pBhzkX/ycmwdPtsdGA6L4VERvbK80PunnTt1hNlKT34IeyyjJXvwMp6?=
+ =?us-ascii?Q?sJF3YKzag3L9BYYFV0CUdfe7yRIY1DZkz0A/w2xK2dnvxd6hL+8KhtN96nt9?=
+ =?us-ascii?Q?tVjJEVmnbX3ufqCuKRQhiekOJ8bdWwwxYtOGjKs/AmM1cG+g3BdPRnrwhEKq?=
+ =?us-ascii?Q?REWYdeg1M0tXVvCpGC5l7PJNMw9sj4rk+P2bLB3PSrfWmA6yPVsdiaVXlO8e?=
+ =?us-ascii?Q?0DeBsm6balw5Bt7s5+8PRNnT/G+4+5YDWDKtA+WKRyT/GzReHWlpAIfbQrla?=
+ =?us-ascii?Q?XVoE0VRJ7BpCmB9unboazh67pRG0h1On0g8RqF5hkvK8s3VlI0rq52iq2hgH?=
+ =?us-ascii?Q?IZT2W+1U30L5lOm/yKGd0Y0BWaYPtJCQCwkluziaXdJ84Gf5TA8IqduqknNA?=
+ =?us-ascii?Q?WXsVoD5IfwEADicCq29hiM5nCjsowr/XC7nYlGCB1JYsQKouJ2j151cAsL60?=
+ =?us-ascii?Q?Wlwb+NYG+pVv3Yq0JvN/bQ78pN1EFEs7Xtsk4JJ6yvSMNZ2t6mhGh6j3/6LK?=
+ =?us-ascii?Q?qAFxsrXd+hLcs6S1+HZmW4FOcMVhcTXdOxSn3PifCjtZKbWVoeCq98K9w5M4?=
+ =?us-ascii?Q?Qj8MTOt0iCIonkKTJcWAyawsK3LQwOqdPVaf86wNNiwL9g0/2ZiJGoiW7a3t?=
+ =?us-ascii?Q?1stiO0Y4X0LOb8PqnEIiLfGq93o5+iLpwHd5b47mBEGQ6e2gP5bQn2Ssbxe+?=
+ =?us-ascii?Q?nMG/QaCUHIQK+2fNg8A56hVKqGX+XBDDrg41zXR+Hzb3hY09p/sM3/y0L6tf?=
+ =?us-ascii?Q?GAW+wMjDJgVQbkZWUvcG5ur5MpfxpBUlN81gmf9oZzRmCTGd6s+zZeJZFnXW?=
+ =?us-ascii?Q?w3YSMkWooqCHrmMe1IGitcjvfFzByEezzdlvYByA9TZ3E/KH1jDrC3/N7XHI?=
+ =?us-ascii?Q?7RiZ/GrCjfDeAQts/YpSTGrfmo9hMXBIRQTJ6YMtlQhxfGxFtaDHLKQd47p4?=
+ =?us-ascii?Q?SbmrRABVTDAfeY3Z+gNf2qfM9IjKfH2KT8ZlyTWWs5k97JmBwi0Mzr0kC5xQ?=
+ =?us-ascii?Q?CTY65eDWIHkCaj8FqrWRVJa9OJfBwXyPC5TWPafvctEKbveiuBvO8SehIMVI?=
+ =?us-ascii?Q?qCNUhGSYx31AWFn74yQyyDAZWVfUaEU3Kd9QhGg5RaDQEgF0sJQnq7uWv4tW?=
+ =?us-ascii?Q?q6ZUu1eZXb2wqVvYgRDFQ12JyGmsjfgg7k/zaQLlmpsY17/0T/jw8KEIxRAu?=
+ =?us-ascii?Q?Zo4tb6Od9tpE70WhEjgltFzxe2Iz7vNl2/AXhQPbTRAGWE2JkT0sQRVF6V07?=
+ =?us-ascii?Q?dudDk4rL4zapmdrMTl4wpOASgwExWxCPWSKLa/oXyYoVuhcdwWzbJikPktNC?=
+ =?us-ascii?Q?xuF7c5F/YrYWXcuS9ej3LUPAYdySQJe3hOrZ5iF87P1T+qgc/cl+cmv9HqrU?=
+ =?us-ascii?Q?fNypyBvCDOrI62jQhQZal0ENZJhszIfTl+nLOKpLBDjhXMXSkECkz8yFH9Zj?=
+ =?us-ascii?Q?34HzRLFVr6KKi8318aDSqIa+dXgwloADiwyYXLIgEz7LlBp4wMBSMGazEyZ0?=
+ =?us-ascii?Q?GdA+SRQCXKCzPMygqcmpkJ4=3D?=
+X-OriginatorOrg: os.amperecomputing.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3f5c98b3-c5af-459f-87d7-08dcfd6a4df4
+X-MS-Exchange-CrossTenant-AuthSource: SN4PR01MB7520.prod.exchangelabs.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Nov 2024 07:20:20.0595
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3bc2b170-fd94-476d-b0ce-4229bdc904a7
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 7spihQyNUg9s0QaaaoAwZvT6wZGlpfSTIzWkWtC3TGGh+eDmPThXNMexF/0NLDzX7yIl4po7IF2YStIqmuyu7FDgtrnC6faK/OZgiy/Gv2T5zfxjl9HTj8c7VA124uf9
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN0PR01MB7133
 
-On Mon, Nov 04, 2024 at 07:00:05PM +0800, Yu Kuai wrote:
-> From: Yu Kuai <yukuai3@huawei.com>
-> 
-> blk_mq_clear_flush_rq_mapping() is not called during scsi probe, by
-> checking blk_queue_init_done(). However, QUEUE_FLAG_INIT_DONE is cleared
-> in del_gendisk by commit aec89dc5d421 ("block: keep q_usage_counter in
-> atomic mode after del_gendisk"), hence for disk like scsi, following
-> blk_mq_destroy_queue() will not clear flush rq from tags->rqs[] as well,
-> cause following uaf that is found by our syzkaller for v6.6:
-> 
-> ==================================================================
-> BUG: KASAN: slab-use-after-free in blk_mq_find_and_get_req+0x16e/0x1a0 block/blk-mq-tag.c:261
-> Read of size 4 at addr ffff88811c969c20 by task kworker/1:2H/224909
-> 
-> CPU: 1 PID: 224909 Comm: kworker/1:2H Not tainted 6.6.0-ga836a5060850 #32
-> Workqueue: kblockd blk_mq_timeout_work
-> Call Trace:
-> 
-> __dump_stack lib/dump_stack.c:88 [inline]
-> dump_stack_lvl+0x91/0xf0 lib/dump_stack.c:106
-> print_address_description.constprop.0+0x66/0x300 mm/kasan/report.c:364
-> print_report+0x3e/0x70 mm/kasan/report.c:475
-> kasan_report+0xb8/0xf0 mm/kasan/report.c:588
-> blk_mq_find_and_get_req+0x16e/0x1a0 block/blk-mq-tag.c:261
-> bt_iter block/blk-mq-tag.c:288 [inline]
-> __sbitmap_for_each_set include/linux/sbitmap.h:295 [inline]
-> sbitmap_for_each_set include/linux/sbitmap.h:316 [inline]
-> bt_for_each+0x455/0x790 block/blk-mq-tag.c:325
-> blk_mq_queue_tag_busy_iter+0x320/0x740 block/blk-mq-tag.c:534
-> blk_mq_timeout_work+0x1a3/0x7b0 block/blk-mq.c:1673
-> process_one_work+0x7c4/0x1450 kernel/workqueue.c:2631
-> process_scheduled_works kernel/workqueue.c:2704 [inline]
-> worker_thread+0x804/0xe40 kernel/workqueue.c:2785
-> kthread+0x346/0x450 kernel/kthread.c:388
-> ret_from_fork+0x4d/0x80 arch/x86/kernel/process.c:147
-> ret_from_fork_asm+0x1b/0x30 arch/x86/entry/entry_64.S:293
-> 
-> Allocated by task 942:
-> kasan_save_stack+0x22/0x50 mm/kasan/common.c:45
-> kasan_set_track+0x25/0x30 mm/kasan/common.c:52
-> ____kasan_kmalloc mm/kasan/common.c:374 [inline]
-> __kasan_kmalloc mm/kasan/common.c:383 [inline]
-> __kasan_kmalloc+0xaa/0xb0 mm/kasan/common.c:380
-> kasan_kmalloc include/linux/kasan.h:198 [inline]
-> __do_kmalloc_node mm/slab_common.c:1007 [inline]
-> __kmalloc_node+0x69/0x170 mm/slab_common.c:1014
-> kmalloc_node include/linux/slab.h:620 [inline]
-> kzalloc_node include/linux/slab.h:732 [inline]
-> blk_alloc_flush_queue+0x144/0x2f0 block/blk-flush.c:499
-> blk_mq_alloc_hctx+0x601/0x940 block/blk-mq.c:3788
-> blk_mq_alloc_and_init_hctx+0x27f/0x330 block/blk-mq.c:4261
-> blk_mq_realloc_hw_ctxs+0x488/0x5e0 block/blk-mq.c:4294
-> blk_mq_init_allocated_queue+0x188/0x860 block/blk-mq.c:4350
-> blk_mq_init_queue_data block/blk-mq.c:4166 [inline]
-> blk_mq_init_queue+0x8d/0x100 block/blk-mq.c:4176
-> scsi_alloc_sdev+0x843/0xd50 drivers/scsi/scsi_scan.c:335
-> scsi_probe_and_add_lun+0x77c/0xde0 drivers/scsi/scsi_scan.c:1189
-> __scsi_scan_target+0x1fc/0x5a0 drivers/scsi/scsi_scan.c:1727
-> scsi_scan_channel drivers/scsi/scsi_scan.c:1815 [inline]
-> scsi_scan_channel+0x14b/0x1e0 drivers/scsi/scsi_scan.c:1791
-> scsi_scan_host_selected+0x2fe/0x400 drivers/scsi/scsi_scan.c:1844
-> scsi_scan+0x3a0/0x3f0 drivers/scsi/scsi_sysfs.c:151
-> store_scan+0x2a/0x60 drivers/scsi/scsi_sysfs.c:191
-> dev_attr_store+0x5c/0x90 drivers/base/core.c:2388
-> sysfs_kf_write+0x11c/0x170 fs/sysfs/file.c:136
-> kernfs_fop_write_iter+0x3fc/0x610 fs/kernfs/file.c:338
-> call_write_iter include/linux/fs.h:2083 [inline]
-> new_sync_write+0x1b4/0x2d0 fs/read_write.c:493
-> vfs_write+0x76c/0xb00 fs/read_write.c:586
-> ksys_write+0x127/0x250 fs/read_write.c:639
-> do_syscall_x64 arch/x86/entry/common.c:51 [inline]
-> do_syscall_64+0x70/0x120 arch/x86/entry/common.c:81
-> entry_SYSCALL_64_after_hwframe+0x78/0xe2
-> 
-> Freed by task 244687:
-> kasan_save_stack+0x22/0x50 mm/kasan/common.c:45
-> kasan_set_track+0x25/0x30 mm/kasan/common.c:52
-> kasan_save_free_info+0x2b/0x50 mm/kasan/generic.c:522
-> ____kasan_slab_free mm/kasan/common.c:236 [inline]
-> __kasan_slab_free+0x12a/0x1b0 mm/kasan/common.c:244
-> kasan_slab_free include/linux/kasan.h:164 [inline]
-> slab_free_hook mm/slub.c:1815 [inline]
-> slab_free_freelist_hook mm/slub.c:1841 [inline]
-> slab_free mm/slub.c:3807 [inline]
-> __kmem_cache_free+0xe4/0x520 mm/slub.c:3820
-> blk_free_flush_queue+0x40/0x60 block/blk-flush.c:520
-> blk_mq_hw_sysfs_release+0x4a/0x170 block/blk-mq-sysfs.c:37
-> kobject_cleanup+0x136/0x410 lib/kobject.c:689
-> kobject_release lib/kobject.c:720 [inline]
-> kref_put include/linux/kref.h:65 [inline]
-> kobject_put+0x119/0x140 lib/kobject.c:737
-> blk_mq_release+0x24f/0x3f0 block/blk-mq.c:4144
-> blk_free_queue block/blk-core.c:298 [inline]
-> blk_put_queue+0xe2/0x180 block/blk-core.c:314
-> blkg_free_workfn+0x376/0x6e0 block/blk-cgroup.c:144
-> process_one_work+0x7c4/0x1450 kernel/workqueue.c:2631
-> process_scheduled_works kernel/workqueue.c:2704 [inline]
-> worker_thread+0x804/0xe40 kernel/workqueue.c:2785
-> kthread+0x346/0x450 kernel/kthread.c:388
-> ret_from_fork+0x4d/0x80 arch/x86/kernel/process.c:147
-> ret_from_fork_asm+0x1b/0x30 arch/x86/entry/entry_64.S:293
-> 
-> Other than blk_mq_clear_flush_rq_mapping(), the flag is only used in
-> blk_register_queue() from initialization path, hence it's safe not to
-> clear the flag in del_gendisk. And since QUEUE_FLAG_REGISTERED already
-> make sure that queue should only be registered once, there is no need
-> to test the flag as well.
+MCTP control protocol implementations are transport binding dependent.
+Endpoint discovery is mandatory based on transport binding.
+Message timing requirements are specified in each respective transport
+binding specification.
 
-But disk can be added again in case of sd rebind, so the check should be
-kept.
+However, we currently have no means to get this information from MCTP
+links.
 
-> 
-> Fixes: 6cfeadbff3f8 ("blk-mq: don't clear flush_rq from tags->rqs[]")
-> Depends-on: commit aec89dc5d421 ("block: keep q_usage_counter in atomic mode after del_gendisk")
-> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
-> ---
->  block/blk-sysfs.c | 6 ++----
->  block/genhd.c     | 9 +++------
->  2 files changed, 5 insertions(+), 10 deletions(-)
-> 
-> diff --git a/block/blk-sysfs.c b/block/blk-sysfs.c
-> index 741b95dfdbf6..a7c540728f3f 100644
-> --- a/block/blk-sysfs.c
-> +++ b/block/blk-sysfs.c
-> @@ -821,10 +821,8 @@ int blk_register_queue(struct gendisk *disk)
->  	 * faster to shut down and is made fully functional here as
->  	 * request_queues for non-existent devices never get registered.
->  	 */
-> -	if (!blk_queue_init_done(q)) {
-> -		blk_queue_flag_set(QUEUE_FLAG_INIT_DONE, q);
-> -		percpu_ref_switch_to_percpu(&q->q_usage_counter);
-> -	}
-> +	blk_queue_flag_set(QUEUE_FLAG_INIT_DONE, q);
-> +	percpu_ref_switch_to_percpu(&q->q_usage_counter);
->  
->  	return ret;
->  
-> diff --git a/block/genhd.c b/block/genhd.c
-> index dfee66146bd1..87f9c2457ca6 100644
-> --- a/block/genhd.c
-> +++ b/block/genhd.c
-> @@ -742,13 +742,10 @@ void del_gendisk(struct gendisk *disk)
->  	 * If the disk does not own the queue, allow using passthrough requests
->  	 * again.  Else leave the queue frozen to fail all I/O.
->  	 */
-> -	if (!test_bit(GD_OWNS_QUEUE, &disk->state)) {
-> -		blk_queue_flag_clear(QUEUE_FLAG_INIT_DONE, q);
-> +	if (!test_bit(GD_OWNS_QUEUE, &disk->state))
->  		__blk_mq_unfreeze_queue(q, true);
-> -	} else {
-> -		if (queue_is_mq(q))
-> -			blk_mq_exit_queue(q);
-> -	}
-> +	else if (queue_is_mq(q))
-> +		blk_mq_exit_queue(q);
+Add a IFLA_MCTP_PHYS_BINDING netlink link attribute, which represents
+the transport type using the DMTF DSP0239-defined type numbers, returned
+as part of RTM_GETLINK data.
 
-Clearing INIT_DONE only may regress sd rebind, and I'd suggest to move
-the clearing into blk_mq_destroy_queue() for fixing this issue.
+We get an IFLA_MCTP_PHYS_BINDING attribute for each MCTP link, for
+example:
 
+- 0x00 (unspec) for loopback interface;
+- 0x01 (SMBus/I2C) for mctpi2c%d interfaces; and
+- 0x05 (serial) for mctpserial%d interfaces.
 
-Thanks,
-Ming
+Signed-off-by: Khang Nguyen <khangng@os.amperecomputing.com>
+---
+ drivers/net/mctp/mctp-i2c.c    |  3 ++-
+ drivers/net/mctp/mctp-i3c.c    |  2 +-
+ drivers/net/mctp/mctp-serial.c |  5 +++--
+ include/net/mctp.h             | 18 ++++++++++++++++++
+ include/net/mctpdevice.h       |  4 +++-
+ include/uapi/linux/if_link.h   |  1 +
+ net/mctp/device.c              | 12 +++++++++---
+ 7 files changed, 37 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/net/mctp/mctp-i2c.c b/drivers/net/mctp/mctp-i2c.c
+index 4dc057c121f5..86151a03570e 100644
+--- a/drivers/net/mctp/mctp-i2c.c
++++ b/drivers/net/mctp/mctp-i2c.c
+@@ -877,7 +877,8 @@ static int mctp_i2c_add_netdev(struct mctp_i2c_client *mcli,
+ 		goto err;
+ 	}
+ 
+-	rc = mctp_register_netdev(ndev, &mctp_i2c_mctp_ops);
++	rc = mctp_register_netdev(ndev, &mctp_i2c_mctp_ops,
++				  MCTP_PHYS_BINDING_SMBUS);
+ 	if (rc < 0) {
+ 		dev_err(&mcli->client->dev,
+ 			"register netdev \"%s\" failed %d\n",
+diff --git a/drivers/net/mctp/mctp-i3c.c b/drivers/net/mctp/mctp-i3c.c
+index 1bc87a062686..9adad59b8676 100644
+--- a/drivers/net/mctp/mctp-i3c.c
++++ b/drivers/net/mctp/mctp-i3c.c
+@@ -607,7 +607,7 @@ __must_hold(&busdevs_lock)
+ 		goto err_free_uninit;
+ 	}
+ 
+-	rc = mctp_register_netdev(ndev, NULL);
++	rc = mctp_register_netdev(ndev, NULL, MCTP_PHYS_BINDING_I3C);
+ 	if (rc < 0) {
+ 		dev_warn(&ndev->dev, "netdev register failed: %d\n", rc);
+ 		goto err_free_netdev;
+diff --git a/drivers/net/mctp/mctp-serial.c b/drivers/net/mctp/mctp-serial.c
+index e63720ec3238..26c9a33fd636 100644
+--- a/drivers/net/mctp/mctp-serial.c
++++ b/drivers/net/mctp/mctp-serial.c
+@@ -23,6 +23,7 @@
+ 
+ #include <linux/mctp.h>
+ #include <net/mctp.h>
++#include <net/mctpdevice.h>
+ #include <net/pkt_sched.h>
+ 
+ #define MCTP_SERIAL_MTU		68 /* base mtu (64) + mctp header */
+@@ -470,7 +471,7 @@ static int mctp_serial_open(struct tty_struct *tty)
+ 	spin_lock_init(&dev->lock);
+ 	INIT_WORK(&dev->tx_work, mctp_serial_tx_work);
+ 
+-	rc = register_netdev(ndev);
++	rc = mctp_register_netdev(ndev, NULL, MCTP_PHYS_BINDING_SERIAL);
+ 	if (rc)
+ 		goto free_netdev;
+ 
+@@ -492,7 +493,7 @@ static void mctp_serial_close(struct tty_struct *tty)
+ 	struct mctp_serial *dev = tty->disc_data;
+ 	int idx = dev->idx;
+ 
+-	unregister_netdev(dev->netdev);
++	mctp_unregister_netdev(dev->netdev);
+ 	ida_free(&mctp_serial_ida, idx);
+ }
+ 
+diff --git a/include/net/mctp.h b/include/net/mctp.h
+index 28d59ae94ca3..1ecbff7116f6 100644
+--- a/include/net/mctp.h
++++ b/include/net/mctp.h
+@@ -298,4 +298,22 @@ void mctp_routes_exit(void);
+ int mctp_device_init(void);
+ void mctp_device_exit(void);
+ 
++/* MCTP IDs and Codes from DMTF specification
++ * "DSP0239 Management Component Transport Protocol (MCTP) IDs and Codes"
++ * https://www.dmtf.org/sites/default/files/standards/documents/DSP0239_1.11.1.pdf
++ */
++enum mctp_phys_binding {
++	MCTP_PHYS_BINDING_UNSPEC	= 0x00,
++	MCTP_PHYS_BINDING_SMBUS		= 0x01,
++	MCTP_PHYS_BINDING_PCIE_VDM	= 0x02,
++	MCTP_PHYS_BINDING_USB		= 0x03,
++	MCTP_PHYS_BINDING_KCS		= 0x04,
++	MCTP_PHYS_BINDING_SERIAL	= 0x05,
++	MCTP_PHYS_BINDING_I3C		= 0x06,
++	MCTP_PHYS_BINDING_MMBI		= 0x07,
++	MCTP_PHYS_BINDING_PCC		= 0x08,
++	MCTP_PHYS_BINDING_UCIE		= 0x09,
++	MCTP_PHYS_BINDING_VENDOR	= 0xFF,
++};
++
+ #endif /* __NET_MCTP_H */
+diff --git a/include/net/mctpdevice.h b/include/net/mctpdevice.h
+index 5c0d04b5c12c..957d9ef924c5 100644
+--- a/include/net/mctpdevice.h
++++ b/include/net/mctpdevice.h
+@@ -22,6 +22,7 @@ struct mctp_dev {
+ 	refcount_t		refs;
+ 
+ 	unsigned int		net;
++	enum mctp_phys_binding	binding;
+ 
+ 	const struct mctp_netdev_ops *ops;
+ 
+@@ -44,7 +45,8 @@ struct mctp_dev *mctp_dev_get_rtnl(const struct net_device *dev);
+ struct mctp_dev *__mctp_dev_get(const struct net_device *dev);
+ 
+ int mctp_register_netdev(struct net_device *dev,
+-			 const struct mctp_netdev_ops *ops);
++			 const struct mctp_netdev_ops *ops,
++			 enum mctp_phys_binding binding);
+ void mctp_unregister_netdev(struct net_device *dev);
+ 
+ void mctp_dev_hold(struct mctp_dev *mdev);
+diff --git a/include/uapi/linux/if_link.h b/include/uapi/linux/if_link.h
+index 8516c1ccd57a..2575e0cd9b48 100644
+--- a/include/uapi/linux/if_link.h
++++ b/include/uapi/linux/if_link.h
+@@ -1958,6 +1958,7 @@ struct ifla_rmnet_flags {
+ enum {
+ 	IFLA_MCTP_UNSPEC,
+ 	IFLA_MCTP_NET,
++	IFLA_MCTP_PHYS_BINDING,
+ 	__IFLA_MCTP_MAX,
+ };
+ 
+diff --git a/net/mctp/device.c b/net/mctp/device.c
+index 3d75b919995d..26ce34b7e88e 100644
+--- a/net/mctp/device.c
++++ b/net/mctp/device.c
+@@ -371,6 +371,8 @@ static int mctp_fill_link_af(struct sk_buff *skb,
+ 		return -ENODATA;
+ 	if (nla_put_u32(skb, IFLA_MCTP_NET, mdev->net))
+ 		return -EMSGSIZE;
++	if (nla_put_u8(skb, IFLA_MCTP_PHYS_BINDING, mdev->binding))
++		return -EMSGSIZE;
+ 	return 0;
+ }
+ 
+@@ -385,6 +387,7 @@ static size_t mctp_get_link_af_size(const struct net_device *dev,
+ 	if (!mdev)
+ 		return 0;
+ 	ret = nla_total_size(4); /* IFLA_MCTP_NET */
++	ret += nla_total_size(1); /* IFLA_MCTP_PHYS_BINDING */
+ 	mctp_dev_put(mdev);
+ 	return ret;
+ }
+@@ -480,7 +483,8 @@ static int mctp_dev_notify(struct notifier_block *this, unsigned long event,
+ }
+ 
+ static int mctp_register_netdevice(struct net_device *dev,
+-				   const struct mctp_netdev_ops *ops)
++				   const struct mctp_netdev_ops *ops,
++				   enum mctp_phys_binding binding)
+ {
+ 	struct mctp_dev *mdev;
+ 
+@@ -489,17 +493,19 @@ static int mctp_register_netdevice(struct net_device *dev,
+ 		return PTR_ERR(mdev);
+ 
+ 	mdev->ops = ops;
++	mdev->binding = binding;
+ 
+ 	return register_netdevice(dev);
+ }
+ 
+ int mctp_register_netdev(struct net_device *dev,
+-			 const struct mctp_netdev_ops *ops)
++			 const struct mctp_netdev_ops *ops,
++			 enum mctp_phys_binding binding)
+ {
+ 	int rc;
+ 
+ 	rtnl_lock();
+-	rc = mctp_register_netdevice(dev, ops);
++	rc = mctp_register_netdevice(dev, ops, binding);
+ 	rtnl_unlock();
+ 
+ 	return rc;
+-- 
+2.43.0
 
 
