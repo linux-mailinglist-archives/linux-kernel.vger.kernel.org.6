@@ -1,122 +1,195 @@
-Return-Path: <linux-kernel+bounces-397007-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397006-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5927E9BD580
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 19:57:02 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7F129BD57F
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 19:56:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 10C951F238E8
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 18:57:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3AA591F238B8
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 18:56:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03FF51EABA6;
-	Tue,  5 Nov 2024 18:56:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48BCE1EABB3;
+	Tue,  5 Nov 2024 18:56:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="fGWFDT5F"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qV3al8eh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73ADC17BEB7;
-	Tue,  5 Nov 2024 18:56:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93ED817BEB7;
+	Tue,  5 Nov 2024 18:56:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730833007; cv=none; b=kt6Cw6G8Jnbx9C8fOmF62hLgeiuUWQebaKDnbouxR1430UwLmjhaKGVWugwLIxCj10lBPF70TsTT2ctjWr7SJWMu1fjur8F4DOqDibStP5mwOjuv2+kyxP8I3O0zrOGske6Iqkc24WLRRPCr1CerpTW5XNT5ncc6wIkBx59Cb2M=
+	t=1730832994; cv=none; b=ee62gao2ofDK3+k9Zf2qY1KHpLwMtdTcB/6F5j055GeXtQsN41rYrLzglTBDVxPdMppQq/k1BSNWvWS1BgN1WFvOX+rjOdG1ZL5UmqGHvhW1SnqvvgrpZaqR9cDklXb9SkVJvhPq4C8XZaZAHVZ0dn89zFhWsspP5o2llpo795w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730833007; c=relaxed/simple;
-	bh=fDC+DC04AfobfCKsqsE3Ncv8lSY4rjtZpnZG07u3rTw=;
+	s=arc-20240116; t=1730832994; c=relaxed/simple;
+	bh=c/J5SfUIJ9hQst/+9a2BMM/+0T0QUgD6O198Li/u3mo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Tu3armQg0Ore4bV4bDT7B/VAX2+eVaYr37IfP7WXlGjwN4+0+IVCmNEjpu8Baq2CF3uOkxmDgIncbwCFGKv4DT5zcKoMSisQbmB0ZYUfLpzreykLwo+z/LBW0sXeOJJ1R0Phn7n4/gA0mpqFFoNO7a3o8Np2peQ6NJungApsHeU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=fGWFDT5F; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 2433B40E0163;
-	Tue,  5 Nov 2024 18:56:42 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id aiURuSV21_uG; Tue,  5 Nov 2024 18:56:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1730832996; bh=I8aW/VbKaY+7owU4pno9TABnD0uUjvFF1k94INRxs74=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=pDzcFQjvgO3gn2LCu+fH6eKxygDgg4yQv7hDs1EqIim9RUkndsaeVIGVSeLLSILatf4v7GqMy/1t8uUJUb42O8vQ04BVl0aLQylWFv2qki3E3jAVp0cT+30AtlyzBsgfmyb9axAsw/ptnp5JEj93cPbx06uLbGNFh2Q4Jj3pzmY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qV3al8eh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D8A9C4CECF;
+	Tue,  5 Nov 2024 18:56:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730832994;
+	bh=c/J5SfUIJ9hQst/+9a2BMM/+0T0QUgD6O198Li/u3mo=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fGWFDT5FA71o6hWu8Nm7s9Eu72+jEPTyjYS4pkiGEsEef+gdMZcUvz3rl3jVVqLkL
-	 R7JAaJKCxKsJLqvwMbSLj7q8b1bFrrPdan0mrBcqkDPbsxf2LxsGFihccvVatjV1St
-	 V5i6UTSpo8YOWg/NcEucuCWUE6CY/mr3bS0OVOSuxO+MSoQPtspB8AV7DqHxH6DBeD
-	 hTB3HLKUhF4Z4Z2W6YSjE32RDPNjacopPkF06CrjSWA1m4QlA4XlMVKHxz8dBusA5d
-	 DXlLx+Gng29Y195nvDN0Px9M52QxrkV2r6Xr59th3lLLYuU4HIaugnydl6CxIwbknN
-	 hnWH9Y6bn0me32aiXvuisb3ICuTYOoh97OAjqArp9gSswDs9EjUUpm/sK5G0gntuni
-	 Y0jBJZP2ftC3QI9h6mwndzuaHWT281UCn4ySrBcaP1oaQorJXoi+vcEu1j/7GgTyec
-	 v/CnAm0sh0BeLG2Er4FVwYSCdfEIag6MDX8/NBZ+cLNZ1bvDnRYZRMpbj/Vnz5Qq4h
-	 c4McqlAK60+ZTEWOcIBbHO2TRT4oD2IWdlwSy5Ts6AsZc8x6ZhvL8ouo+cNs69QNdA
-	 3X6Sv1MaKfZvn8ioCKsUVPbJTznDD+uuiPpOBVwTNG+x8NVVipJCu4kciBHoUBoBdl
-	 Vdg3UdE6zwZ64RhR/R4cu1cA=
-Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 1C0A140E0028;
-	Tue,  5 Nov 2024 18:56:29 +0000 (UTC)
-Date: Tue, 5 Nov 2024 19:56:22 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Borislav Petkov <bp@kernel.org>, X86 ML <x86@kernel.org>,
-	Josh Poimboeuf <jpoimboe@redhat.com>,
-	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
-	kvm@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] x86/bugs: Adjust SRSO mitigation to new features
-Message-ID: <20241105185622.GEZypqVul2vRh6yDys@fat_crate.local>
-References: <20241104101543.31885-1-bp@kernel.org>
- <ZyltcHfyCiIXTsHu@google.com>
- <20241105123416.GBZyoQyAoUmZi9eMkk@fat_crate.local>
- <ZypfjFjk5XVL-Grv@google.com>
+	b=qV3al8eh5yGBIlvCge0rhsVraqUXO27A+aqiSVDZA5tCLYlWKWOGLDWFSgGOgNTOI
+	 Qn8OtFnHkRoQYja3H6tOBkwfekfawfjTrTb6F6H8Y+4edPtaRGEFIVHeQJjx08X2Ir
+	 xhFjsiY1wnGeOFfcSYgT1ifE9JSch6vBOiiSy9ra3xO3171ANU33EbGatSuJmpmGzP
+	 b12JaYiD9ZIQeavoZfoWbaDpOZ7Cc38rfDrOkoMP3UCmH7/hGj+1J0BZuLemgfERjL
+	 CNlimFcs6Hfgo9mRCKxQk0N5bmI2k9YBeL6ds57lLI6iaPd35BIjN3GO9qaAjuinHC
+	 AB1DoBGjv6nQA==
+Date: Tue, 5 Nov 2024 10:56:32 -0800
+From: Saeed Mahameed <saeed@kernel.org>
+To: Caleb Sander Mateos <csander@purestorage.com>
+Cc: Saeed Mahameed <saeedm@nvidia.com>, Leon Romanovsky <leon@kernel.org>,
+	Tariq Toukan <tariqt@nvidia.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Parav Pandit <parav@nvidia.com>, netdev@vger.kernel.org,
+	linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v3] mlx5/core: Schedule EQ comp tasklet only if
+ necessary
+Message-ID: <ZypqYHaRbBCGo3FD@x130>
+References: <CY8PR12MB7195C97EB164CD3A0E9A99F9DC552@CY8PR12MB7195.namprd12.prod.outlook.com>
+ <20241031163436.3732948-1-csander@purestorage.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-In-Reply-To: <ZypfjFjk5XVL-Grv@google.com>
+In-Reply-To: <20241031163436.3732948-1-csander@purestorage.com>
 
-On Tue, Nov 05, 2024 at 10:10:20AM -0800, Sean Christopherson wrote:
-> All of the actual maintainers.
+On 31 Oct 10:34, Caleb Sander Mateos wrote:
+>Currently, the mlx5_eq_comp_int() interrupt handler schedules a tasklet
+>to call mlx5_cq_tasklet_cb() if it processes any completions. For CQs
+>whose completions don't need to be processed in tasklet context, this
+>adds unnecessary overhead. In a heavy TCP workload, we see 4% of CPU
+>time spent on the tasklet_trylock() in tasklet_action_common(), with a
+>smaller amount spent on the atomic operations in tasklet_schedule(),
+>tasklet_clear_sched(), and locking the spinlock in mlx5_cq_tasklet_cb().
+>TCP completions are handled by mlx5e_completion_event(), which schedules
+>NAPI to poll the queue, so they don't need tasklet processing.
+>
+>Schedule the tasklet in mlx5_add_cq_to_tasklet() instead to avoid this
+>overhead. mlx5_add_cq_to_tasklet() is responsible for enqueuing the CQs
+>to be processed in tasklet context, so it can schedule the tasklet. CQs
+>that need tasklet processing have their interrupt comp handler set to
+>mlx5_add_cq_to_tasklet(), so they will schedule the tasklet. CQs that
+>don't need tasklet processing won't schedule the tasklet. To avoid
+>scheduling the tasklet multiple times during the same interrupt, only
+>schedule the tasklet in mlx5_add_cq_to_tasklet() if the tasklet work
+>queue was empty before the new CQ was pushed to it.
+>
+>The additional branch in mlx5_add_cq_to_tasklet(), called for each EQE,
+>may add a small cost for the userspace Infiniband CQs whose completions
+>are processed in tasklet context. But this seems worth it to avoid the
+>tasklet overhead for CQs that don't need it.
+>
+>Note that the mlx4 driver works the same way: it schedules the tasklet
+>in mlx4_add_cq_to_tasklet() and only if the work queue was empty before.
+>
+>Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
+>Reviewed-by: Parav Pandit <parav@nvidia.com>
+>---
+>v3: revise commit message
+>v2: reorder variable declarations, describe CPU profile results
+>
+> drivers/net/ethernet/mellanox/mlx5/core/cq.c | 5 +++++
+> drivers/net/ethernet/mellanox/mlx5/core/eq.c | 5 +----
+> 2 files changed, 6 insertions(+), 4 deletions(-)
+>
+>diff --git a/drivers/net/ethernet/mellanox/mlx5/core/cq.c b/drivers/net/ethernet/mellanox/mlx5/core/cq.c
+>index 4caa1b6f40ba..25f3b26db729 100644
+>--- a/drivers/net/ethernet/mellanox/mlx5/core/cq.c
+>+++ b/drivers/net/ethernet/mellanox/mlx5/core/cq.c
+>@@ -69,22 +69,27 @@ void mlx5_cq_tasklet_cb(struct tasklet_struct *t)
+> static void mlx5_add_cq_to_tasklet(struct mlx5_core_cq *cq,
+> 				   struct mlx5_eqe *eqe)
+> {
+> 	unsigned long flags;
+> 	struct mlx5_eq_tasklet *tasklet_ctx = cq->tasklet_ctx.priv;
+>+	bool schedule_tasklet = false;
+>
+> 	spin_lock_irqsave(&tasklet_ctx->lock, flags);
+> 	/* When migrating CQs between EQs will be implemented, please note
+> 	 * that you need to sync this point. It is possible that
+> 	 * while migrating a CQ, completions on the old EQs could
+> 	 * still arrive.
+> 	 */
+> 	if (list_empty_careful(&cq->tasklet_ctx.list)) {
+> 		mlx5_cq_hold(cq);
 
-Which maintainers do you mean? tip ones? If so, they're all shorted to
-x86@kernel.org.
+The condition here is counter intuitive, please add a comment that relates
+to the tasklet routine mlx5_cq_tasklet_cb, something like.
+/* If this list isn't empty, the tasklet is already scheduled, and not yet
+  * executing the list, the spinlock here guarantees the addition of this CQ
+  * will be seen by the next execution, so rescheduling the tasklet is not
+  * required */ 
 
-> AFAIK, Paolo doesn't subscribe to kvm@.
+One other way to do this, is to flag tasklet_ctx.sched_flag = true, inside
+mlx5_add_cq_to_tasklet, and then schedule once at the end of eq irq processing 
+if (tasklet_ctx.sched_flag == true). to avoid "too" early scheduling, but
+since the tasklet can't run until the irq handler returns, I think your
+solution shouldn't suffer from "too" early scheduling .. 
 
-Oh boy, srsly?! I thought I'd reach the proper crowd with
-kvm@vger.kernel.org...
-
-> > Meh, I can split them if you really want me to.
-> 
-> I do.
-
-Sure, next revision.
-
-> What does the bit actually do?  I can't find any useful documentation, and the
-> changelog is equally useless.
+Acked-by: Saeed Mahameed <saeedm@nvidia.com>
 
 
-"Processors which set SRSO_MSR_FIX=1 support an MSR bit which mitigates SRSO
-across guest/host boundaries. Software may enable this by setting bit
-4 (BpSpecReduce) of MSR C001_102E. This bit can be set once during boot and
-should be set identically across all processors in the system."
-
-From: https://www.amd.com/content/dam/amd/en/documents/corporate/cr/speculative-return-stack-overflow-whitepaper.pdf
-
-I think that's the only public info we have on that bit.
-
-Thx.
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+>+		schedule_tasklet = list_empty(&tasklet_ctx->list);
+> 		list_add_tail(&cq->tasklet_ctx.list, &tasklet_ctx->list);
+> 	}
+> 	spin_unlock_irqrestore(&tasklet_ctx->lock, flags);
+>+
+>+	if (schedule_tasklet)
+>+		tasklet_schedule(&tasklet_ctx->task);
+> }
+>
+> /* Callers must verify outbox status in case of err */
+> int mlx5_create_cq(struct mlx5_core_dev *dev, struct mlx5_core_cq *cq,
+> 		   u32 *in, int inlen, u32 *out, int outlen)
+>diff --git a/drivers/net/ethernet/mellanox/mlx5/core/eq.c b/drivers/net/ethernet/mellanox/mlx5/core/eq.c
+>index 859dcf09b770..3fd2091c11c8 100644
+>--- a/drivers/net/ethernet/mellanox/mlx5/core/eq.c
+>+++ b/drivers/net/ethernet/mellanox/mlx5/core/eq.c
+>@@ -112,14 +112,14 @@ static int mlx5_eq_comp_int(struct notifier_block *nb,
+> 	struct mlx5_eq_comp *eq_comp =
+> 		container_of(nb, struct mlx5_eq_comp, irq_nb);
+> 	struct mlx5_eq *eq = &eq_comp->core;
+> 	struct mlx5_eqe *eqe;
+> 	int num_eqes = 0;
+>-	u32 cqn = -1;
+>
+> 	while ((eqe = next_eqe_sw(eq))) {
+> 		struct mlx5_core_cq *cq;
+>+		u32 cqn;
+>
+> 		/* Make sure we read EQ entry contents after we've
+> 		 * checked the ownership bit.
+> 		 */
+> 		dma_rmb();
+>@@ -142,13 +142,10 @@ static int mlx5_eq_comp_int(struct notifier_block *nb,
+> 			break;
+> 	}
+>
+> 	eq_update_ci(eq, 1);
+>
+>-	if (cqn != -1)
+>-		tasklet_schedule(&eq_comp->tasklet_ctx.task);
+>-
+> 	return 0;
+> }
+>
+> /* Some architectures don't latch interrupts when they are disabled, so using
+>  * mlx5_eq_poll_irq_disabled could end up losing interrupts while trying to
+>-- 
+>2.45.2
+>
+>
 
