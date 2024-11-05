@@ -1,56 +1,80 @@
-Return-Path: <linux-kernel+bounces-396508-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396510-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EEE2F9BCE12
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 14:38:28 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86D039BCE16
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 14:39:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A699A1F228E2
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 13:38:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E2DC1F222D3
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 13:39:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 520F51E2007;
-	Tue,  5 Nov 2024 13:36:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B3971D6DB1;
+	Tue,  5 Nov 2024 13:38:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Aq8RmetU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="VTtEbvlT"
+Received: from mail-oa1-f48.google.com (mail-oa1-f48.google.com [209.85.160.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A14861D9A49;
-	Tue,  5 Nov 2024 13:36:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 282FC1D5143
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 13:38:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730813769; cv=none; b=LzftmKCHMi8rHs2Xo+WVxFxbgH8baWXeIn1Jqjt+i1Ece5kS+MAsTfyBx+bqZ7od/gdvV+yeaR2v27DyDb2bU0fA6EcdkjahZKd6jAt84YZGYhubqSjf/Ps6pTsyEkv0v/dXuI4VLLYsjj5SmXlhhA0gyC7WZMVli3TDeuJ1Rlo=
+	t=1730813930; cv=none; b=WkW6+cl1+7+RvItioE1eY8uuWAomHwZaKH+3nqOTKALtlQJCxzWgh5ZkbOg4ykOfNa1FxhPb1fyzCIe0sx7E7TGzA5PTL8SbH4AvsNu+yjKIiQTSxbGp4OsRStdBM51y2Mpl6F1BYduCvT/QAtGcDKaYslJWDoH8r3pD5nKCS1c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730813769; c=relaxed/simple;
-	bh=YykurtqbGlWC9tC8MPh6nSJFQYNjqf+WGkBn+I5mJYQ=;
+	s=arc-20240116; t=1730813930; c=relaxed/simple;
+	bh=yh1p+AhkWM4xFMAtZ7oOEO9mnv3l6TsekjZBUbWKZHA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hs4DthfZVwYNHbDfy++1aOr+Ywg2XKhRfF0Z1bDGfp0NNKe4VG+iTLgJbZz38tbrPUSuab8UmcC+Txvvuj+ZmLXGCcXaGXHKZvq0/AQy6zSScXdx+tEuVAxPCt55Q0x1W4ZsBjkGVxAmOro7lhO75PwRnTdiuowPkAgOoeV4bbY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Aq8RmetU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F3784C4CED0;
-	Tue,  5 Nov 2024 13:36:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730813769;
-	bh=YykurtqbGlWC9tC8MPh6nSJFQYNjqf+WGkBn+I5mJYQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Aq8RmetUQet0Oe/6LcyzzN3BxazNTjdvaGJIMl5uqsxjhtrCwkJWYZTjAE/T+UKGB
-	 shHnhJmSM/NnmNs6yAxLy0jTYVPTFwDZcAlWV3nRtWkLIFvbMeVSYGjSwGTeu+UvRn
-	 ZVm9vZhnU9kI4rQsCUlx6qM3XXp7B/K9l68J5vNtuNtaAUH3iR83r1Aykl31wsCRDs
-	 1vVcj9Lf9p2PKAtYcPqo/Y9MVgGINk4czg/X4sNJWosdTq0rAXaGltCvLfaqY0ISwa
-	 ex4AtMNv145cmsfwiMgYmtPJzznN477DWGnW0NKSG72MH5yQfkWFKMYUc3zwkOIKic
-	 GOe1BBLrJ35tg==
-Date: Tue, 5 Nov 2024 14:36:04 +0100
-From: Niklas Cassel <cassel@kernel.org>
-To: Zhongqiu Han <quic_zhonhan@quicinc.com>
-Cc: manivannan.sadhasivam@linaro.org, kw@linux.com, kishon@kernel.org,
-	bhelgaas@google.com, lpieralisi@kernel.org, dlemoal@kernel.org,
-	mhi@lists.linux.dev, linux-arm-msm@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] PCI: epf-mhi: Fix potential NULL dereference in
- pci_epf_mhi_bind()
-Message-ID: <ZyofRAZoAE5IgCVi@ryzen>
-References: <20241105120735.1240728-1-quic_zhonhan@quicinc.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=byEh7xhDleqMHJcdJ7ACILqTlcgJVLdqQI5J1y3nE+UIfYeAnXnTBKBh6Qd9tSKH8ynDd+rXmZ+b/1nBjvzJ1HCB7gd8wQzbWEOHg4JPX/sfS1PPA/Ubed65cMI9y+WIUmy6Do9UsaHyfnRVKxPcA9GS7X3/v/TTWnM2PcKB7X4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=VTtEbvlT; arc=none smtp.client-ip=209.85.160.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-oa1-f48.google.com with SMTP id 586e51a60fabf-2891055c448so2125989fac.0
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 05:38:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1730813928; x=1731418728; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=cV5o3WhWVOPFdJQoEMG+jv0FEl4oyGKv0FBzhxP78ik=;
+        b=VTtEbvlT2XLlxplgw9McgVJ4jcXtTiL8IOv+w+evNmSibXY/ZgvlRWiaMpM7Mpcs1h
+         c4kPlGICap9KfQ5bG5DRiqVFCPz0/5thJlae8DoYE4/hHB35JT8YBRlmK2AORtwudmeb
+         Y9gc967QWu6v/h4zCuk+oIDbvHcX2F6OHhlKE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730813928; x=1731418728;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cV5o3WhWVOPFdJQoEMG+jv0FEl4oyGKv0FBzhxP78ik=;
+        b=bmM55x07i+73THbEG0f6+rS/77TpgVDnsB99c04XRVF67Av6nHfyFB/e9GiBCzWVRq
+         bTm0IyskPuhYa0e66hFH45IiEZ8a8epQgzaKwWICW+UNE16a6JgOGs/tIZAgAzrz6WAB
+         miDOEdaXPir8GwgusOmIBjQd0aXFUdUJCP5+nmfqBrrQ3Pn8QA2TFyfsVJIokztbw2zS
+         FlrtS8WMIoRxitgQezVP0ZO1+Ym0z2t5XXJxRp/NOCiFBCZuJwpIHbPj7qlYwdeXlCpk
+         LU9lLalCGmt0fovi1oIdmqw/yU4MsLooot9fHv7a/0ZwC6FkbxaSQ5lTqQVMGV6AI5bs
+         ePzA==
+X-Forwarded-Encrypted: i=1; AJvYcCWvBOoDyb/zWS8DXuDIDqe3KDLUI9wuv8htASWejfwuJq2f4RTrPYwKxo+Fl5s2ABAx0+urvIkNnbmj9rg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzNMdvQHtJ18Q60YNA5hE2Plk0HIbbzJJItU42txs+qiRs1LoD9
+	f3laY51iZzm+lHxjbL5LOv4MSAYXf8KVBgdqo5u11B0u4mWQZS0azV0PmwxM1Q==
+X-Google-Smtp-Source: AGHT+IGsgQ/6CuL0YqnGrmyzIOA69jiw5u+Wid5BjBzfkM3Z31ADKK+7Jq4rj6syR0JyqOptl5hmlQ==
+X-Received: by 2002:a05:6870:8dcf:b0:277:a43a:dac2 with SMTP id 586e51a60fabf-2949ed9b4abmr13867576fac.17.1730813927824;
+        Tue, 05 Nov 2024 05:38:47 -0800 (PST)
+Received: from google.com ([2401:fa00:8f:203:2c73:a2d8:c3cb:500c])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7ee459f8ee9sm9044983a12.72.2024.11.05.05.38.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 05 Nov 2024 05:38:47 -0800 (PST)
+Date: Tue, 5 Nov 2024 22:38:43 +0900
+From: Sergey Senozhatsky <senozhatsky@chromium.org>
+To: Stanimir Varbanov <svarbanov@suse.de>
+Cc: Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
+	Vikash Garodia <quic_vgarodia@quicinc.com>,
+	Dikshita Agarwal <quic_dikshita@quicinc.com>,
+	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCHv6 0/3] media: venus: close() fixes
+Message-ID: <20241105133843.GA13546@google.com>
+References: <20241025165656.778282-1-senozhatsky@chromium.org>
+ <37a906eb-4cd1-4034-9bf6-2f9f4560b9e3@suse.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,50 +83,34 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241105120735.1240728-1-quic_zhonhan@quicinc.com>
+In-Reply-To: <37a906eb-4cd1-4034-9bf6-2f9f4560b9e3@suse.de>
 
-On Tue, Nov 05, 2024 at 08:07:35PM +0800, Zhongqiu Han wrote:
-> If platform_get_resource_byname() fails and returns NULL, dereferencing
-> res->start will cause a NULL pointer access. Add a check to prevent it.
+Hi Stanimir,
+
+On (24/11/05 14:04), Stanimir Varbanov wrote:
+> On 10/25/24 19:56, Sergey Senozhatsky wrote:
+> > A couple of fixes for venus driver close() handling
+> > (both enc and dec).
+> > 
+> > v5->v6:
+> > -- added kfree() backtrace to 0002
+> > 
+> > Sergey Senozhatsky (3):
+> >   media: venus: fix enc/dec destruction order
+> >   media: venus: sync with threaded IRQ during inst destruction
+> >   media: venus: factor out inst destruction routine
 > 
-> Fixes: 1bf5f25324f7 ("PCI: endpoint: Add PCI Endpoint function driver for MHI bus")
-> Signed-off-by: Zhongqiu Han <quic_zhonhan@quicinc.com>
-> ---
->  drivers/pci/endpoint/functions/pci-epf-mhi.c | 5 +++++
->  1 file changed, 5 insertions(+)
-> 
-> diff --git a/drivers/pci/endpoint/functions/pci-epf-mhi.c b/drivers/pci/endpoint/functions/pci-epf-mhi.c
-> index 7d070b1def11..2712026733ab 100644
-> --- a/drivers/pci/endpoint/functions/pci-epf-mhi.c
-> +++ b/drivers/pci/endpoint/functions/pci-epf-mhi.c
-> @@ -873,6 +873,11 @@ static int pci_epf_mhi_bind(struct pci_epf *epf)
->  
->  	/* Get MMIO base address from Endpoint controller */
->  	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "mmio");
-> +	if (!res) {
-> +		dev_err(&pdev->dev, "Failed to get MMIO base address\n");
+> Could you please combine 1/3 and 2/3 commit bodies into 3/3 body and
+> resend the new 3/3 only. I do not see a reason to apply 1/3 and 2/3.
 
-dev_err(&epf->dev, "Failed to get mmio resource\n");
-or
-dev_err(&epf->dev, "Failed to get \"mmio\" resource\n");
+So the reason being is that 1/3 fixes a race condition (stale data
+in ->fh) and a lockdep splat (wrong destruction order).  2/3 fixes a
+completely different race (IRQ vs close) condition and UAF.  And 3/3
+is just a refactoring that doesn't fix anything.  Are you sure you
+want to squash all 3 of them?  Because they look slightly independent
+to me.
 
-Note: &epf->dev instead of &pdev->dev in order to be consistent with other
-EPF ->bind() functions.
+> Also, on what platform this was tested?
 
-With that, feel free to add:
-Reviewed-by: Niklas Cassel <cassel@kernel.org>
-
-
-Kind regards,
-Niklas
-
-> +		return -ENODEV;
-> +	}
-> +
->  	epf_mhi->mmio_phys = res->start;
->  	epf_mhi->mmio_size = resource_size(res);
->  
-> -- 
-> 2.25.1
-> 
+I ran CTS on one of the strongbad devices.
 
