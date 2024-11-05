@@ -1,617 +1,233 @@
-Return-Path: <linux-kernel+bounces-396650-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396651-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 338DA9BD019
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 16:09:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 02A199BD01B
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 16:09:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C2AC2B21E3E
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 15:09:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4A983B225FB
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 15:09:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 301941D9A79;
-	Tue,  5 Nov 2024 15:09:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 424291D9A79;
+	Tue,  5 Nov 2024 15:09:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DtiZywEQ"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="Q26IqfjS"
+Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2080.outbound.protection.outlook.com [40.107.21.80])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E17FD1D9697
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 15:08:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730819340; cv=none; b=pQDUk0hTL6zwn6ARQh2PaIlbMID5greMgdhZJvgxVN7F1zJGiM2M4gPRI8oVQe1Z8BCbtGxxhyDRNEuO5+/L5n6SfbbQaehd/uRDY3MfEpPkdXLmGRWvg0QieLW7gV4rVzvYOSbv7UUdRv6Pae4CjuhtNj5AKURk1NnjpJmmjoI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730819340; c=relaxed/simple;
-	bh=0wi4WpdYdbj5R1nCeRg1V21GUvDaw6Qivcvrcz1sUZI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NBf4F3Yscz9ghI1CUYXkXL1EiTOC/+vqx6cnGeLbmDq+qEebqBNr5zNHbxY1Mqr3N09EYECWXz0X3GD8o0zfGgGBjdADmDbnTxLfIc2Y1aRgnyackZ2sysTlHCMxDWu7MyPpc+dljrFFF/t7CtllLrKFZ723MJz/srytsTc8U9A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DtiZywEQ; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730819338; x=1762355338;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=0wi4WpdYdbj5R1nCeRg1V21GUvDaw6Qivcvrcz1sUZI=;
-  b=DtiZywEQoWvD/J5VkKPmZRkpIs9mL1d76zzN1Ma87EyKQ5KgdUw6GR7X
-   xAZUb2y9ShTOtD5+JF1NohSsMRFN2aPgfQ0I+yN3XxgqDCBvylWuWQh2t
-   e4xHvAlpKPJ20UaInGwVEgl080+DxgYL+5rt4xqnYC7aTLLBe9mCgINm2
-   rNB5lYY1e6MPyZZ9jDFTHwKaFRj+4cfv3NWBbT8rUr3GdMnPCGQcDcH0j
-   CYDJUCckDkN9jzTCxgPuFntm5Pte1VMvbB1aLc8lxeGJ3eRJ4ZCYTcQ3L
-   YyJbstYvoOj0Z2HdwV4Q/Iij5sKLlTkO5YxizJMMuGxy7lVA9sWrTu6QJ
-   w==;
-X-CSE-ConnectionGUID: wL7PYFuNSOSWuxIhA6CkcA==
-X-CSE-MsgGUID: Rq7yGrHkSHmY+O5P2NV6lg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="41119788"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="41119788"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2024 07:08:57 -0800
-X-CSE-ConnectionGUID: WrtT+TEgTsGBzULbEBjLTA==
-X-CSE-MsgGUID: edK0i5hfRAegXrIGx8/J/A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,260,1725346800"; 
-   d="scan'208";a="84874356"
-Received: from linux.intel.com ([10.54.29.200])
-  by orviesa008.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2024 07:08:57 -0800
-Received: from [10.212.68.38] (kliang2-mobl1.ccr.corp.intel.com [10.212.68.38])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by linux.intel.com (Postfix) with ESMTPS id C1A1A20B5703;
-	Tue,  5 Nov 2024 07:08:55 -0800 (PST)
-Message-ID: <98e43590-6e9f-4d7d-8ae5-184262dae434@linux.intel.com>
-Date: Tue, 5 Nov 2024 10:08:54 -0500
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 758891D90B1;
+	Tue,  5 Nov 2024 15:09:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.21.80
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730819366; cv=fail; b=M+YUcw1VzJkw6VkqFUbr0BxFRZOyR/TbliwBwKBJnOtEgafNp5Hopr7MBUQuO+f/8yPbTeSLwTeFNdnm/iEEoW10rPnTXc/FWuLDgql8itdGRgE+K8yhAMcJYQk9pqSBv0pYKEWqwK/hU5GFeAPu2g64ttVfUud97pArQuGbxB4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730819366; c=relaxed/simple;
+	bh=xxGq4ji4y112ReXSMoelNu3G42yJsoOOFKpy5MIWu98=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=ZzVCI/2iZMAe3owORW2z5n/JjUcCZQiy7G+aYeATCy4+jxja188B1NyjO1j7QFV2gp8dJikq6Eztfknxr29oADnSY3wf0hO/bY3xqHwrMGprgIFWUd0UCI+yi6iLBjul/p7N2zmvf/+K67kKLzV/Zs32fr+shkCORCOkUIZORKg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=Q26IqfjS; arc=fail smtp.client-ip=40.107.21.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=twI+VlxVnOHwq8iqa2QwP2mx5zjDQvTfTlJCruGoB93+hY2oZRQKh2imRJKL3ARY0bbvq4HfpEKh5ilVqY8k+z3TgUmXt3du0W2FNY/qhW6/ISevd0dfAwC/LK/l2mpB4aJCxQaxW5YMguaLmT+mzhNmB1uIZPC/8HkVJAyM+0h9YTsGEm73LoG2KSDvr+AXVIT44XVbKxEAwTqGcHrdni0gR8t8J6zNjP3VI36hHM6CQpEQh4cCCSJq4okF/jPtgQaBIOtCmGYUIpjWpa5BMYyNdxxq+2QFRuSbn1qduhlyiBUR4ukBnd8qQAn+4/V3C9QG5yofGEhHa/keBNrQtg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=mfFLJOEPOZY5jXFco/+iTVmzt9NdSTP0ulrQ59HtY6g=;
+ b=eUXfvWNW9SwwhUksSKmJxBzTVY/rycL44x0I4KuOa41JFPEyla5+D2zCkWk00iBD8C6hFXgSfAoMUgozqrrvP+H9no1+eX30zx3cAVs1SY2afSYYkejFWG6OBO2prWbw1Z7MxWgBfEAplSeIvNpb6iePS/swTpQaUi92WzM6LgOYZm4AqwARd+eQEUST9P0pkH3s/tKYI0D9zaoHAbELOMXu2LTgQhB1pmoW5v9t/4ym2UInCzspvtFYPLe66z8dutlOnoU12Dx19E34XDai6GMIkPKcRQIB4FyWwZ8BeXRJe5bDg48gQ26clj/pFgzN/Re36SRhwlcoIErcVh0BaA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=mfFLJOEPOZY5jXFco/+iTVmzt9NdSTP0ulrQ59HtY6g=;
+ b=Q26IqfjSf5td9WQqx3UnTcKWpR91cnDuomxBxM7RZaQ1s99JD5ikkzwGZlFlnkIqImVjz8rzSRjob2Uwhh8WUQ5Dd0fg7dQRV0N2q1Q4Fr4Eago2KpiZrQbxwflvRaP95GpSO73HBL2kMDXQ0HHyn3FqogqbEjRLXdHBTqdIK1Q+VJi1twkcjpUHhIk/X/sfCKlgRn40ZGA0yLa3nCeX7+R0k3sllXBGBkYoyGlQHVY7YmSE7amSIGfMJXTtId6FtE9vpTiYupSGRtaKnuDOgNT6vfOo6Kp+4aa/sWB2q952i71HsaADwr9GhdgZF0/FfAz5YVPwNUPwO8IUdKBfmw==
+Received: from PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
+ by AS4PR04MB9691.eurprd04.prod.outlook.com (2603:10a6:20b:4f4::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8114.29; Tue, 5 Nov
+ 2024 15:09:19 +0000
+Received: from PAXPR04MB8459.eurprd04.prod.outlook.com
+ ([fe80::165a:30a2:5835:9630]) by PAXPR04MB8459.eurprd04.prod.outlook.com
+ ([fe80::165a:30a2:5835:9630%5]) with mapi id 15.20.8114.028; Tue, 5 Nov 2024
+ 15:09:19 +0000
+From: Peng Fan <peng.fan@nxp.com>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>, "Peng Fan (OSS)"
+	<peng.fan@oss.nxp.com>
+CC: Frank Li <frank.li@nxp.com>, Jacky Bai <ping.bai@nxp.com>, Jason Liu
+	<jason.hui.liu@nxp.com>, "open list:INPUT (KEYBOARD, MOUSE, JOYSTICK,
+ TOUCHSCREEN)..." <linux-input@vger.kernel.org>, open list
+	<linux-kernel@vger.kernel.org>, Christophe JAILLET
+	<christophe.jaillet@wanadoo.fr>
+Subject: RE: [PATCH V2] Input: bbnsm_pwrkey - add remove hook
+Thread-Topic: [PATCH V2] Input: bbnsm_pwrkey - add remove hook
+Thread-Index: AQHbLmZ1ye+/8kslIkW8UVLp77bdE7KoL/IAgACai9A=
+Date: Tue, 5 Nov 2024 15:09:19 +0000
+Message-ID:
+ <PAXPR04MB84590937ECEC0F60701BC5B088522@PAXPR04MB8459.eurprd04.prod.outlook.com>
+References: <20241104031552.3475108-1-peng.fan@oss.nxp.com>
+ <ZymxvLMkkktRoCXZ@google.com>
+In-Reply-To: <ZymxvLMkkktRoCXZ@google.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PAXPR04MB8459:EE_|AS4PR04MB9691:EE_
+x-ms-office365-filtering-correlation-id: cb1bf777-75b3-4299-2d40-08dcfdabd294
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|376014|366016|1800799024|38070700018;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?9yfnZtDDMPrBmibHh8oonm+Npyl+80FBTYG1TSHoMTcO9KpcRteMVN5qp92z?=
+ =?us-ascii?Q?r99nwJ3d0cJaWwuxt6DFBiBKVCzKrSxLojM74dZv2OPvIkpkvqYgrgbAXTZL?=
+ =?us-ascii?Q?mzlJ8XyHPvP0ztufeD0eAM6G9G6fDuPJ6KIGyrx9eLCxFqGnE76Va0rbFCu4?=
+ =?us-ascii?Q?9SCHpLAZLPYZfCW+NYiZe5GA3uyvOKPfN4EnIpd9e+v2iYhQiLmnFxnCE8BW?=
+ =?us-ascii?Q?2GF1M/Ul+viE3211u9XeZBdozxsfFlsqzkSfQeFh0P3HH+vxb9OkwZXY/mQH?=
+ =?us-ascii?Q?XOmzojL6tHGGRLzgAHa3t0HgOLYFccRFmK3UNSxTqGSWb6iPqhy42lsuGePL?=
+ =?us-ascii?Q?fMjnAew7T0wq6Lg3yqJ3znluJl+GJ9g1iSNirjiYstIDDS+gFqT3gT/RDjys?=
+ =?us-ascii?Q?fjPTsgWpR5qTIcu3ryggdLG08H52Ym2BgD01CI+Xpoo/Kn1+Hx+gAh1x7Gb1?=
+ =?us-ascii?Q?uinVdaopjP/m0D9+mfjU8/61Hxn6xZVUMhNJ/KUFHLQGCAhVc6XXDQlB3b6j?=
+ =?us-ascii?Q?IA3eb9/2qYPPvKzpDFrFfGMUD2g//bdYtk8B879w7+dqjbRiN0Y0fKGcQ813?=
+ =?us-ascii?Q?BrzZYwtkKkNfmz8a/K4dfx7YXERaLRL0vK1k3ZPREwkEevV7bc5b90/ZwhP/?=
+ =?us-ascii?Q?CxfOwodxqF5F2GCBozM9LzvLDd2IYioM60lxD8KKqBVe21JpMdl0No07hR85?=
+ =?us-ascii?Q?NrJbaIihJlz9Q01U1NBpxWoa0bFj2BvrVQbCcAK8vZLMSKPN4Q5g5wuX6LMk?=
+ =?us-ascii?Q?hblV/3ssEcntUUfmcdc4pVsL6Uc4t351R3urbs125vk7l2cbsAHSVyJcEFVt?=
+ =?us-ascii?Q?W3ZFCSJhAaFIXNvZ9PgtnbauT8pdmM0MpKTZYtVTwQ0fEZEpqwUNEabPJ+4T?=
+ =?us-ascii?Q?xdktHLXQBb/aJHErUxhQHyec0McNxQrkMIEgOpr3hIYNdAtcNjVz8dmu3LaD?=
+ =?us-ascii?Q?9NgprNGBo4ktPw0U6cUCkG5mwdn7QcoeZWHaKQpMu2jldrPy/xmprpYdb4+d?=
+ =?us-ascii?Q?+yfZ2G7x/2lg0nR2gN3lTeCFN5NI15J9nDxALI9r/nei2krgJoDRMD8IOpgr?=
+ =?us-ascii?Q?0pCIN97L5D26st6P+ZDjMeFcpvoxguVySh8h/tqUbds3OIeJsPvYdD8f0/rU?=
+ =?us-ascii?Q?fVypizY+ja+tQm1qfQ5bePFqtLJD/ghMrUdieWoYRJ2kzQ65iJ6B4zG0cW2d?=
+ =?us-ascii?Q?qFJQhxfCCz2qv2XZe8Xzv3h/emhe74y0xfeqoiM43QYGN4gsKDu2F14AeKju?=
+ =?us-ascii?Q?PtuspsGG3eIls2a1yKSPCDx03c3g9WyxkJpv+7GkSHINXCacDfdeyXMo9YkB?=
+ =?us-ascii?Q?wNMnz7MVtizUi1XR0XIQI02VUNSN2gzkKExSzQbotOGQ719f5pS14NBFxtW/?=
+ =?us-ascii?Q?rY6UNxA=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8459.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?o3L+2jkKgbPILSWqrx3psftMUD7h6M08vtD0ZlPJ66ukrACvYi31J/J0GZN0?=
+ =?us-ascii?Q?EioLkkM2Y4yP2wOYAWA9ZAuI9GGIzYaU/FrMLAPkasinEF9FTSiTKWH/ulj3?=
+ =?us-ascii?Q?UAcJdwFU4YdtFPDqehlQp4x2fYvUCpj0yaZWIQhurJh35+b6fLYzG2I2Wt0C?=
+ =?us-ascii?Q?EPHomItLybSxQxj/c0/Re29nGiSfFk1m5QIZ+6nVdn+zTg5a9FvaanHPgeXd?=
+ =?us-ascii?Q?/gMUQ9JERWx9gKIp/PyMQeb6zlWP30+mwSYsuzGZMWMPulQ/bbsd/JLfpAnf?=
+ =?us-ascii?Q?V1ZsaFk83axZzFBqLUcLEgVpQnB+z3dCBbkrRyRgyNJd6/Q+n+85k/mlWGIg?=
+ =?us-ascii?Q?hMhhQZUAiJG8ZFTWYA9/KcxO2h7RUfOqay7Sc1vyz5VDb2KuDdCCQbP4BJrI?=
+ =?us-ascii?Q?Cn0nj4lrRlaIDME3Wm6NHi3mkmO02oKWCPXiV/DXt3Cm7xons2MQRks3xCy8?=
+ =?us-ascii?Q?yl8TO4IbasJ8s0ocZ79JfcXciHTlG+XVj502XaEQU/LI/wo1+wBuCNxgr/3K?=
+ =?us-ascii?Q?UU1oLlh9TM/U56WULX6oBDS+obY4uNvbIcA5MzxQHJeSMJzvuAE5C2ZmPiLD?=
+ =?us-ascii?Q?Jt2bCeNpRUu+ymaeATGcHHbmtSKp5pK+7VIR+HRwpKj/d/RRydc12uZ0XSpv?=
+ =?us-ascii?Q?6EhrDQ6ZCkTOztn610xKPVvGqytQfwOmOSPT37+iyxTrxP8xhY5hQJodvhn3?=
+ =?us-ascii?Q?W8MeyXiNi1QBWf7eNtUnvxxzynXUCMn1MFFw7xRHhOp4ahZCL1rknXG9acKX?=
+ =?us-ascii?Q?1cY/vG3YhmXDRSzOUFgyittivHJtpnhVyw2dAwEuDFlhmSS3IKPbUBgDU4WT?=
+ =?us-ascii?Q?NWgsHiYg2HLU2V4XJrVxy8YL0wkRri9CrIy8VX58Cv5Vlix+GwAlXwc65Jv6?=
+ =?us-ascii?Q?Pgyuiio1PQtKfY0coPiG5kE7OyIrNmKjkop8cznIVDwz0cuGCGrvGq5wu4ra?=
+ =?us-ascii?Q?C1WQ10z/YJFUDIqXhbgmUvqQapMsnvLk9dyckJAf4IGYCP3iTQMr7lE8K0ge?=
+ =?us-ascii?Q?DYBdIwYVuOlKQ06GfkdXitrETZJpvLgycd9lhBA6fnPE3XiKoTpI4gD/zD+M?=
+ =?us-ascii?Q?Dm3bdk8TTGG3gylzH5gQrRgaLYppd4tl32IQfq20QT8r5Iid3BLu7yZSxNQU?=
+ =?us-ascii?Q?c7f5pv55UKdNIFVyoXSsIKVonHXbhvptIcfjgvSikmgGgOmneOHFkVnpiIhW?=
+ =?us-ascii?Q?v6H5RlAFqAxvaPL9d2p05d2/fAF34pC4UGPoxIxzew8dsqqQ7OnqZZ6/HfMo?=
+ =?us-ascii?Q?goxpbb/AHOdCxlu4yvi+1zwHnCVB9bJWrD2IBTuEFfM6ZvdkVZsX++u+gkEh?=
+ =?us-ascii?Q?xEWxnbSi5+ESU094QVFlJW87D3BwVxPFYXqFM1bcj29ET1YjZpHlKlIaO9Jg?=
+ =?us-ascii?Q?tdjyzCA36gfTIAoSMyasUajMcXvBltPYpYOgolXY5BInmUcIHvV0Y1S4XcEQ?=
+ =?us-ascii?Q?XmuONu5QLkoX16KSYeVkwOHgcVU4nI3QPzVZ1iz1dalbLY1voUwcgv70grq3?=
+ =?us-ascii?Q?jtjOe2OPCirS9X/zjArgOGtBkaeSJvUnK17dNuCSZm6TwksXwlAVwsHv08YL?=
+ =?us-ascii?Q?qV+g5b5Hca8Xv5X84YM=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 19/19] perf: Make perf_pmu_unregister() useable
-To: Peter Zijlstra <peterz@infradead.org>, mingo@kernel.org,
- lucas.demarchi@intel.com
-Cc: linux-kernel@vger.kernel.org, willy@infradead.org, acme@kernel.org,
- namhyung@kernel.org, mark.rutland@arm.com,
- alexander.shishkin@linux.intel.com, jolsa@kernel.org, irogers@google.com,
- adrian.hunter@intel.com
-References: <20241104133909.669111662@infradead.org>
- <20241104135519.715883982@infradead.org>
-Content-Language: en-US
-From: "Liang, Kan" <kan.liang@linux.intel.com>
-In-Reply-To: <20241104135519.715883982@infradead.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8459.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: cb1bf777-75b3-4299-2d40-08dcfdabd294
+X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Nov 2024 15:09:19.3399
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 2fLF0NLlAgBqwEOKmHrheTvC5sx/u7CwatX38LUt7avdD/FLdc4MsuxzVmnYv9exJRAgvySDbvQNg0aiPPBecA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS4PR04MB9691
 
+Hi Dmitry,
 
+> Subject: Re: [PATCH V2] Input: bbnsm_pwrkey - add remove hook
+>=20
+> Hi Peng,
+>=20
+> On Mon, Nov 04, 2024 at 11:15:51AM +0800, Peng Fan (OSS) wrote:
+> > From: Peng Fan <peng.fan@nxp.com>
+> >
+> > Without remove hook to clear wake irq, there will be kernel dump
+> when
+> > doing module test.
+> > "bbnsm_pwrkey 44440000.bbnsm:pwrkey: wake irq already
+> initialized"
+> >
+> > Add remove hook to clear wake irq and set wakeup to false.
+> >
+> > Fixes: 40e40fdfec3f ("Input: bbnsm_pwrkey - add bbnsm power key
+> > support")
+> > Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> > Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> > ---
+> >
+> > V2:
+> >  Per Christophe JAILLET
+> >   Use remove, not remove_new
+> >   Drop checking bbnsm pointer in remove
+> >
+> >  drivers/input/misc/nxp-bbnsm-pwrkey.c | 12 ++++++++++++
+> >  1 file changed, 12 insertions(+)
+> >
+> > diff --git a/drivers/input/misc/nxp-bbnsm-pwrkey.c
+> > b/drivers/input/misc/nxp-bbnsm-pwrkey.c
+> > index eb4173f9c820..f0bf119309dd 100644
+> > --- a/drivers/input/misc/nxp-bbnsm-pwrkey.c
+> > +++ b/drivers/input/misc/nxp-bbnsm-pwrkey.c
+> > @@ -187,6 +187,16 @@ static int bbnsm_pwrkey_probe(struct
+> platform_device *pdev)
+> >  	return 0;
+> >  }
+> >
+> > +static void bbnsm_pwrkey_remove(struct platform_device *pdev) {
+> > +	struct bbnsm_pwrkey *bbnsm =3D platform_get_drvdata(pdev);
+> > +
+> > +	dev_pm_clear_wake_irq(&pdev->dev);
+>=20
+> I wonder, could we have this done in the driver core instead of
+> individual drivers?
 
-On 2024-11-04 8:39 a.m., Peter Zijlstra wrote:
-> Previously it was only safe to call perf_pmu_unregister() if there
-> were no active events of that pmu around -- which was impossible to
-> guarantee since it races all sorts against perf_init_event().
-> 
-> Rework the whole thing by:
-> 
->  - keeping track of all events for a given pmu
-> 
->  - 'hiding' the pmu from perf_init_event()
-> 
->  - waiting for the appropriate (s)rcu grace periods such that all
->    prior references to the PMU will be completed
-> 
->  - detaching all still existing events of that pmu (see first point)
->    and moving them to a new REVOKED state.
-> 
->  - actually freeing the pmu data.
-> 
-> Where notably the new REVOKED state must inhibit all event actions
-> from reaching code that wants to use event->pmu.
-> 
-> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> ---
->  include/linux/perf_event.h |   13 +-
->  kernel/events/core.c       |  222 ++++++++++++++++++++++++++++++++++++++++-----
->  2 files changed, 210 insertions(+), 25 deletions(-)
-> 
-> --- a/include/linux/perf_event.h
-> +++ b/include/linux/perf_event.h
-> @@ -318,6 +318,9 @@ struct perf_output_handle;
->  struct pmu {
->  	struct list_head		entry;
->  
-> +	spinlock_t			events_lock;
-> +	struct list_head		events;
-> +
->  	struct module			*module;
->  	struct device			*dev;
->  	struct device			*parent;
-> @@ -611,9 +614,10 @@ struct perf_addr_filter_range {
->   * enum perf_event_state - the states of an event:
->   */
->  enum perf_event_state {
-> -	PERF_EVENT_STATE_DEAD		= -4,
-> -	PERF_EVENT_STATE_EXIT		= -3,
-> -	PERF_EVENT_STATE_ERROR		= -2,
-> +	PERF_EVENT_STATE_DEAD		= -5,
-> +	PERF_EVENT_STATE_REVOKED	= -4, /* pmu gone, must not touch */
-> +	PERF_EVENT_STATE_EXIT		= -3, /* task died, still inherit */
-> +	PERF_EVENT_STATE_ERROR		= -2, /* scheduling error, can enable */
->  	PERF_EVENT_STATE_OFF		= -1,
->  	PERF_EVENT_STATE_INACTIVE	=  0,
->  	PERF_EVENT_STATE_ACTIVE		=  1,
-> @@ -854,6 +858,7 @@ struct perf_event {
->  	void *security;
->  #endif
->  	struct list_head		sb_list;
-> +	struct list_head		pmu_list;
->  
->  	/*
->  	 * Certain events gets forwarded to another pmu internally by over-
-> @@ -1105,7 +1110,7 @@ extern void perf_aux_output_flag(struct
->  extern void perf_event_itrace_started(struct perf_event *event);
->  
->  extern int perf_pmu_register(struct pmu *pmu, const char *name, int type);
-> -extern void perf_pmu_unregister(struct pmu *pmu);
-> +extern int perf_pmu_unregister(struct pmu *pmu);
->  
->  extern void __perf_event_task_sched_in(struct task_struct *prev,
->  				       struct task_struct *task);
-> --- a/kernel/events/core.c
-> +++ b/kernel/events/core.c
-> @@ -2412,7 +2412,9 @@ ctx_time_update_event(struct perf_event_
->  
->  #define DETACH_GROUP	0x01UL
->  #define DETACH_CHILD	0x02UL
-> -#define DETACH_DEAD	0x04UL
-> +#define DETACH_EXIT	0x04UL
-> +#define DETACH_REVOKE	0x08UL
-> +#define DETACH_DEAD	0x10UL
->  
->  /*
->   * Cross CPU call to remove a performance event
-> @@ -2427,6 +2429,7 @@ __perf_remove_from_context(struct perf_e
->  			   void *info)
->  {
->  	struct perf_event_pmu_context *pmu_ctx = event->pmu_ctx;
-> +	enum perf_event_state state = PERF_EVENT_STATE_OFF;
+I will give a look to see whether possible to make it in
+device_unbind_cleanup. But as a bug fix, I still need
+to do this in remove. In future, if clear wake irq
+could be in driver core, it could be remove in the=20
+individual driver remove path. How do you think?
 
-Set the PERF_EVENT_STATE_OFF as default seems dangerous.
-If the event was in an error state, the state will be overwritten to the
-PERF_EVENT_STATE_OFF later.
+>=20
+> > +	device_init_wakeup(&pdev->dev, false);
+> > +
+> > +	input_unregister_device(bbnsm->input);
+>=20
+> No need to call unregister here, it should happen automatically.
 
-One example may be the perf_pmu_migrate_context(). After the migration,
-it looks like all the error state will be cleared.
+sure. I will remove this line.
 
 Thanks,
-Kan
+Peng.
 
->  	unsigned long flags = (unsigned long)info;
->  
->  	ctx_time_update(cpuctx, ctx);
-> @@ -2435,16 +2438,22 @@ __perf_remove_from_context(struct perf_e
->  	 * Ensure event_sched_out() switches to OFF, at the very least
->  	 * this avoids raising perf_pending_task() at this time.
->  	 */
-> -	if (flags & DETACH_DEAD)
-> +	if (flags & DETACH_EXIT)
-> +		state = PERF_EVENT_STATE_EXIT;
-> +	if (flags & DETACH_REVOKE)
-> +		state = PERF_EVENT_STATE_REVOKED;
-> +	if (flags & DETACH_DEAD) {
->  		event->pending_disable = 1;
-> +		state = PERF_EVENT_STATE_DEAD;
-> +	}
->  	event_sched_out(event, ctx);
->  	if (flags & DETACH_GROUP)
->  		perf_group_detach(event);
->  	if (flags & DETACH_CHILD)
->  		perf_child_detach(event);
->  	list_del_event(event, ctx);
-> -	if (flags & DETACH_DEAD)
-> -		event->state = PERF_EVENT_STATE_DEAD;
-> +
-> +	event->state = state;
->  
->  	if (!pmu_ctx->nr_events) {
->  		pmu_ctx->rotate_necessary = 0;
-> @@ -4511,7 +4520,8 @@ static void perf_event_enable_on_exec(st
->  
->  static void perf_remove_from_owner(struct perf_event *event);
->  static void perf_event_exit_event(struct perf_event *event,
-> -				  struct perf_event_context *ctx);
-> +				  struct perf_event_context *ctx,
-> +				  bool revoke);
->  
->  /*
->   * Removes all events from the current task that have been marked
-> @@ -4538,7 +4548,7 @@ static void perf_event_remove_on_exec(st
->  
->  		modified = true;
->  
-> -		perf_event_exit_event(event, ctx);
-> +		perf_event_exit_event(event, ctx, false);
->  	}
->  
->  	raw_spin_lock_irqsave(&ctx->lock, flags);
-> @@ -5138,6 +5148,7 @@ static bool is_sb_event(struct perf_even
->  	    attr->context_switch || attr->text_poke ||
->  	    attr->bpf_event)
->  		return true;
-> +
->  	return false;
->  }
->  
-> @@ -5339,6 +5350,8 @@ static void perf_pending_task_sync(struc
->  /* vs perf_event_alloc() error */
->  static void __free_event(struct perf_event *event)
->  {
-> +	struct pmu *pmu = event->pmu;
-> +
->  	if (event->attach_state & PERF_ATTACH_CALLCHAIN)
->  		put_callchain_buffers();
->  
-> @@ -5365,6 +5378,7 @@ static void __free_event(struct perf_eve
->  		 * put_pmu_ctx() needs an event->ctx reference, because of
->  		 * epc->ctx.
->  		 */
-> +		WARN_ON_ONCE(!pmu);
->  		WARN_ON_ONCE(!event->ctx);
->  		WARN_ON_ONCE(event->pmu_ctx->ctx != event->ctx);
->  		put_pmu_ctx(event->pmu_ctx);
-> @@ -5377,8 +5391,13 @@ static void __free_event(struct perf_eve
->  	if (event->ctx)
->  		put_ctx(event->ctx);
->  
-> -	if (event->pmu)
-> -		module_put(event->pmu->module);
-> +	if (pmu) {
-> +		module_put(pmu->module);
-> +		scoped_guard (spinlock, &pmu->events_lock) {
-> +			list_del(&event->pmu_list);
-> +			wake_up_var(pmu);
-> +		}
-> +	}
->  
->  	call_rcu(&event->rcu_head, free_event_rcu);
->  }
-> @@ -5397,6 +5416,7 @@ static void _free_event(struct perf_even
->  	security_perf_event_free(event);
->  
->  	if (event->rb) {
-> +		WARN_ON_ONCE(!event->pmu);
->  		/*
->  		 * Can happen when we close an event with re-directed output.
->  		 *
-> @@ -5527,7 +5547,11 @@ int perf_event_release_kernel(struct per
->  	 * Thus this guarantees that we will in fact observe and kill _ALL_
->  	 * child events.
->  	 */
-> -	perf_remove_from_context(event, DETACH_GROUP|DETACH_DEAD);
-> +	if (event->state > PERF_EVENT_STATE_REVOKED) {
-> +		perf_remove_from_context(event, DETACH_GROUP|DETACH_DEAD);
-> +	} else {
-> +		event->state = PERF_EVENT_STATE_DEAD;
-> +	}
->  
->  	perf_event_ctx_unlock(event, ctx);
->  
-> @@ -5838,7 +5862,7 @@ __perf_read(struct perf_event *event, ch
->  	 * error state (i.e. because it was pinned but it couldn't be
->  	 * scheduled on to the CPU at some point).
->  	 */
-> -	if (event->state == PERF_EVENT_STATE_ERROR)
-> +	if (event->state <= PERF_EVENT_STATE_ERROR)
->  		return 0;
->  
->  	if (count < event->read_size)
-> @@ -5877,8 +5901,14 @@ static __poll_t perf_poll(struct file *f
->  	struct perf_buffer *rb;
->  	__poll_t events = EPOLLHUP;
->  
-> +	if (event->state <= PERF_EVENT_STATE_REVOKED)
-> +		return EPOLLERR;
-> +
->  	poll_wait(file, &event->waitq, wait);
->  
-> +	if (event->state <= PERF_EVENT_STATE_REVOKED)
-> +		return EPOLLERR;
-> +
->  	if (is_event_hup(event))
->  		return events;
->  
-> @@ -6058,6 +6088,9 @@ static long _perf_ioctl(struct perf_even
->  	void (*func)(struct perf_event *);
->  	u32 flags = arg;
->  
-> +	if (event->state <= PERF_EVENT_STATE_REVOKED)
-> +		return -ENODEV;
-> +
->  	switch (cmd) {
->  	case PERF_EVENT_IOC_ENABLE:
->  		func = _perf_event_enable;
-> @@ -6507,6 +6540,7 @@ static void perf_mmap_close(struct vm_ar
->  	unsigned long size = perf_data_size(rb);
->  	bool detach_rest = false;
->  
-> +	/* FIXIES vs perf_pmu_unregister() */
->  	if (event->pmu->event_unmapped)
->  		event->pmu->event_unmapped(event, vma->vm_mm);
->  
-> @@ -6657,6 +6691,16 @@ static int perf_mmap(struct file *file,
->  	mutex_lock(&event->mmap_mutex);
->  	ret = -EINVAL;
->  
-> +	/*
-> +	 * This relies on __pmu_detach_event() taking mmap_mutex after marking
-> +	 * the event REVOKED. Either we observe the state, or __pmu_detach_event()
-> +	 * will detach the rb created here.
-> +	 */
-> +	if (event->state <= PERF_EVENT_STATE_REVOKED) {
-> +		ret = -ENODEV;
-> +		goto unlock;
-> +	}
-> +
->  	if (vma->vm_pgoff == 0) {
->  		nr_pages -= 1;
->  
-> @@ -6840,6 +6884,9 @@ static int perf_fasync(int fd, struct fi
->  	struct perf_event *event = filp->private_data;
->  	int retval;
->  
-> +	if (event->state <= PERF_EVENT_STATE_REVOKED)
-> +		return -ENODEV;
-> +
->  	inode_lock(inode);
->  	retval = fasync_helper(fd, filp, on, &event->fasync);
->  	inode_unlock(inode);
-> @@ -11892,6 +11939,9 @@ int perf_pmu_register(struct pmu *_pmu,
->  	if (!pmu->event_idx)
->  		pmu->event_idx = perf_event_idx_default;
->  
-> +	INIT_LIST_HEAD(&pmu->events);
-> +	spin_lock_init(&pmu->events_lock);
-> +
->  	/*
->  	 * Now that the PMU is complete, make it visible to perf_try_init_event().
->  	 */
-> @@ -11905,11 +11955,100 @@ int perf_pmu_register(struct pmu *_pmu,
->  }
->  EXPORT_SYMBOL_GPL(perf_pmu_register);
->  
-> -void perf_pmu_unregister(struct pmu *pmu)
-> +static void __pmu_detach_event(struct pmu *pmu, struct perf_event *event,
-> +			       struct perf_event_context *ctx)
-> +{
-> +	/*
-> +	 * De-schedule the event and mark it REVOKED.
-> +	 */
-> +	perf_event_exit_event(event, ctx, true);
-> +
-> +	/*
-> +	 * All _free_event() bits that rely on event->pmu:
-> +	 *
-> +	 * Notably, perf_mmap() relies on the ordering here.
-> +	 */
-> +	scoped_guard (mutex, &event->mmap_mutex) {
-> +		WARN_ON_ONCE(pmu->event_unmapped);
-> +		ring_buffer_attach(event, NULL);
-> +	}
-> +
-> +	perf_event_free_bpf_prog(event);
-> +	perf_free_addr_filters(event);
-> +
-> +	if (event->destroy) {
-> +		event->destroy(event);
-> +		event->destroy = NULL;
-> +	}
-> +
-> +	if (event->pmu_ctx) {
-> +		put_pmu_ctx(event->pmu_ctx);
-> +		event->pmu_ctx = NULL;
-> +	}
-> +
-> +	exclusive_event_destroy(event);
-> +	module_put(pmu->module);
-> +
-> +	event->pmu = NULL; /* force fault instead of UAF */
-> +}
-> +
-> +static void pmu_detach_event(struct pmu *pmu, struct perf_event *event)
-> +{
-> +	struct perf_event_context *ctx;
-> +
-> +	ctx = perf_event_ctx_lock(event);
-> +	__pmu_detach_event(pmu, event, ctx);
-> +	perf_event_ctx_unlock(event, ctx);
-> +
-> +	scoped_guard (spinlock, &pmu->events_lock)
-> +		list_del(&event->pmu_list);
-> +}
-> +
-> +static struct perf_event *pmu_get_event(struct pmu *pmu)
-> +{
-> +	struct perf_event *event;
-> +
-> +	guard(spinlock)(&pmu->events_lock);
-> +	list_for_each_entry(event, &pmu->events, pmu_list) {
-> +		if (atomic_long_inc_not_zero(&event->refcount))
-> +			return event;
-> +	}
-> +
-> +	return NULL;
-> +}
-> +
-> +static bool pmu_empty(struct pmu *pmu)
-> +{
-> +	guard(spinlock)(&pmu->events_lock);
-> +	return list_empty(&pmu->events);
-> +}
-> +
-> +static void pmu_detach_events(struct pmu *pmu)
-> +{
-> +	struct perf_event *event;
-> +
-> +	for (;;) {
-> +		event = pmu_get_event(pmu);
-> +		if (!event)
-> +			break;
-> +
-> +		pmu_detach_event(pmu, event);
-> +		put_event(event);
-> +	}
-> +
-> +	/*
-> +	 * wait for pending _free_event()s
-> +	 */
-> +	wait_var_event(pmu, pmu_empty(pmu));
-> +}
-> +
-> +int perf_pmu_unregister(struct pmu *pmu)
->  {
->  	scoped_guard (mutex, &pmus_lock) {
-> +		if (!idr_cmpxchg(&pmu_idr, pmu->type, pmu, NULL))
-> +			return -EINVAL;
-> +
->  		list_del_rcu(&pmu->entry);
-> -		idr_remove(&pmu_idr, pmu->type);
->  	}
->  
->  	/*
-> @@ -11919,7 +12058,31 @@ void perf_pmu_unregister(struct pmu *pmu
->  	synchronize_srcu(&pmus_srcu);
->  	synchronize_rcu();
->  
-> +	if (pmu->event_unmapped && !pmu_empty(pmu)) {
-> +		/*
-> +		 * Can't force remove events when pmu::event_unmapped()
-> +		 * is used in perf_mmap_close().
-> +		 */
-> +		guard(mutex)(&pmus_lock);
-> +		idr_cmpxchg(&pmu_idr, pmu->type, NULL, pmu);
-> +		list_add_rcu(&pmu->entry, &pmus);
-> +		return -EBUSY;
-> +	}
-> +
-> +	scoped_guard (mutex, &pmus_lock)
-> +		idr_remove(&pmu_idr, pmu->type);
-> +
-> +	/*
-> +	 * PMU is removed from the pmus list, so no new events will
-> +	 * be created, now take care of the existing ones.
-> +	 */
-> +	pmu_detach_events(pmu);
-> +
-> +	/*
-> +	 * PMU is unused, make it go away.
-> +	 */
->  	perf_pmu_free(pmu);
-> +	return 0;
->  }
->  EXPORT_SYMBOL_GPL(perf_pmu_unregister);
->  
-> @@ -12226,6 +12389,7 @@ perf_event_alloc(struct perf_event_attr
->  	INIT_LIST_HEAD(&event->active_entry);
->  	INIT_LIST_HEAD(&event->addr_filters.list);
->  	INIT_HLIST_NODE(&event->hlist_entry);
-> +	INIT_LIST_HEAD(&event->pmu_list);
->  
->  
->  	init_waitqueue_head(&event->waitq);
-> @@ -12294,6 +12458,13 @@ perf_event_alloc(struct perf_event_attr
->  
->  	perf_event__state_init(event);
->  
-> +	/*
-> +	 * Hold SRCU critical section around perf_init_event(), until returning
-> +	 * the fully formed event put on pmu->events_list. This ensures that
-> +	 * perf_pmu_unregister() will see any in-progress event creation that
-> +	 * races.
-> +	 */
-> +	guard(srcu)(&pmus_srcu);
->  	pmu = NULL;
->  
->  	hwc = &event->hw;
-> @@ -12383,6 +12554,9 @@ perf_event_alloc(struct perf_event_attr
->  	/* symmetric to unaccount_event() in _free_event() */
->  	account_event(event);
->  
-> +	scoped_guard (spinlock, &pmu->events_lock)
-> +		list_add(&event->pmu_list, &pmu->events);
-> +
->  	return_ptr(event);
->  }
->  
-> @@ -12769,6 +12943,10 @@ SYSCALL_DEFINE5(perf_event_open,
->  		if (err)
->  			goto err_fd;
->  		group_leader = fd_file(group)->private_data;
-> +		if (group_leader->state <= PERF_EVENT_STATE_REVOKED) {
-> +			err = -ENODEV;
-> +			goto err_group_fd;
-> +		}
->  		if (flags & PERF_FLAG_FD_OUTPUT)
->  			output_event = group_leader;
->  		if (flags & PERF_FLAG_FD_NO_GROUP)
-> @@ -13316,10 +13494,11 @@ static void sync_child_event(struct perf
->  }
->  
->  static void
-> -perf_event_exit_event(struct perf_event *event, struct perf_event_context *ctx)
-> +perf_event_exit_event(struct perf_event *event,
-> +		      struct perf_event_context *ctx, bool revoke)
->  {
->  	struct perf_event *parent_event = event->parent;
-> -	unsigned long detach_flags = 0;
-> +	unsigned long detach_flags = DETACH_EXIT;
->  
->  	if (parent_event) {
->  		/*
-> @@ -13334,16 +13513,14 @@ perf_event_exit_event(struct perf_event
->  		 * Do destroy all inherited groups, we don't care about those
->  		 * and being thorough is better.
->  		 */
-> -		detach_flags = DETACH_GROUP | DETACH_CHILD;
-> +		detach_flags |= DETACH_GROUP | DETACH_CHILD;
->  		mutex_lock(&parent_event->child_mutex);
->  	}
->  
-> -	perf_remove_from_context(event, detach_flags);
-> +	if (revoke)
-> +		detach_flags |= DETACH_GROUP | DETACH_REVOKE;
->  
-> -	raw_spin_lock_irq(&ctx->lock);
-> -	if (event->state > PERF_EVENT_STATE_EXIT)
-> -		perf_event_set_state(event, PERF_EVENT_STATE_EXIT);
-> -	raw_spin_unlock_irq(&ctx->lock);
-> +	perf_remove_from_context(event, detach_flags);
->  
->  	/*
->  	 * Child events can be freed.
-> @@ -13419,7 +13596,7 @@ static void perf_event_exit_task_context
->  	perf_event_task(child, child_ctx, 0);
->  
->  	list_for_each_entry_safe(child_event, next, &child_ctx->event_list, event_entry)
-> -		perf_event_exit_event(child_event, child_ctx);
-> +		perf_event_exit_event(child_event, child_ctx, false);
->  
->  	mutex_unlock(&child_ctx->mutex);
->  
-> @@ -13609,6 +13786,9 @@ inherit_event(struct perf_event *parent_
->  	if (parent_event->parent)
->  		parent_event = parent_event->parent;
->  
-> +	if (parent_event->state <= PERF_EVENT_STATE_REVOKED)
-> +		return NULL;
-> +
->  	child_event = perf_event_alloc(&parent_event->attr,
->  					   parent_event->cpu,
->  					   child,
-> 
-> 
-> 
-
+>=20
+> Thanks.
+>=20
+> --
+> Dmitry
 
