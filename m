@@ -1,118 +1,97 @@
-Return-Path: <linux-kernel+bounces-396779-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396778-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 474D09BD1D8
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 17:12:10 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9528C9BD1D4
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 17:11:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F37C61F232A3
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 16:12:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5995D2842E5
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 16:11:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 050B4178383;
-	Tue,  5 Nov 2024 16:11:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 742B0170A1B;
+	Tue,  5 Nov 2024 16:11:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="P/tXaSv9"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="NuxcjcWx"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A27D415EFB9;
-	Tue,  5 Nov 2024 16:11:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F381172BD0
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 16:11:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730823081; cv=none; b=fWxfGBRYGS4U/BRedhTrG3Az0HXPH8pM2dh/73e9cWUZ1sUbeVg8z9CmCQ1XJ+POgDicdERqF8TcbdkoUmYdN9ZZytGce+1n5cciZQnfYZLT4k/45DeRtW9RULYb4PnYGS1CSb0DxefGZt79k3c72QTXfqTDV/D+28Zhta4WMBI=
+	t=1730823070; cv=none; b=oH3TGBHQ+stC0hptu101JWhaVXvkvbQQgN7a6kwX6RL1LDEmKvSFco3PA7Ha0gyGw9KZsfS0urqRk21SkqEQtGcGtez3weWALLDjALfN+2Hl+5DnPXZ4y4NFJ4Df6rIuPxPtSPZ+AM9lBrWfriEqNMWi1asoi91pGP93if7ULyk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730823081; c=relaxed/simple;
-	bh=eqfLL2rUrbBIr1kNrvJeMhwEExJR4u5NnJbj0jMKA/A=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=CtDCmLzuhbJmt6ZzALTTD97NdsaLmzWXlF+0R6bkR035yGuroSG79NpqcRwYlExN/pNM9Nn18EDMfTjBfRO2HqMXLS05DamI9KHLoymv+20DoZjBrB2QDHUWYRTJqcGSzuRojcn+ylz6cr/fOZ37uDYYBGOevXQ2MrZbZlauMyQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=P/tXaSv9; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=UUlPSBaOC9d+zd+83UAmHf4D5WXCkU2ZNOnKm544xr0=; b=P/tXaSv90nk6bdipbMTMj/vRGt
-	IDM6BNLW6i0VuzErzDEVBN9hV9vpg1mk49x1B86HjXEMDYd2KbpWOJCbfKSBC+0MqwPhZ+Re1MFVl
-	DLX3kutygIT+jIff8xJl1amvNNYrdugI58Avp4IfEuUjO5HHY7jTIFKMChmpCI8itX27ZSTxSS8JK
-	dHIlxB3WJt5DNgkyGFnjqn8ZcprfNgqQ095Dn78bln92O8zW5Q1w3lf5Il+GKH1TkQ58iUgrDv1xw
-	gFBTILN0O/GdxXUTjJ7uEYb0HlOdbVaaLnm3CRHpeNACeL0NUksu9xJ29unzDHxm2MSobs4bduzNi
-	IvQLbzKg==;
-Received: from i53875b28.versanet.de ([83.135.91.40] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1t8M92-0000mH-59; Tue, 05 Nov 2024 17:11:04 +0100
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: Linus Walleij <linus.walleij@linaro.org>,
- Bartosz Golaszewski <brgl@bgdev.pl>, "Rob Herring (Arm)" <robh@kernel.org>
-Cc: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject:
- Re: [PATCH] gpio: Use of_property_present() for non-boolean properties
-Date: Tue, 05 Nov 2024 17:11:03 +0100
-Message-ID: <7731755.EvYhyI6sBW@diego>
-In-Reply-To: <20241104190628.274717-1-robh@kernel.org>
-References: <20241104190628.274717-1-robh@kernel.org>
+	s=arc-20240116; t=1730823070; c=relaxed/simple;
+	bh=vaXaAysTRVD61jj3ukyb6Ay0rkgusoJQCJ6pnYnRVos=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IYbsrAaKKBT3Ckc6mP6g8fYugfHzRAVr0tsEmTcdcqVmNcyVgRwlrjdLIjUwEIcJBA19aYt9LApe26/tri1TqEVgL+X0+vsbq3ZG/KHVVL6J0RmYdBxhkUIS9qdlVk0J7VHYRvPnS32CLHbD/mrS5ybHRDfRPiajhj+tBPpHfQE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=NuxcjcWx; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=hfeZon3DfsDojIxOuuhlaDkntp0Fa5yyHrg6RvTtp1Y=; b=NuxcjcWxjUCGkgUROW1FYJK8Fw
+	jj7+2PuLhtX1M20PzTY2e2rQ5eCgTkXq5frZJcxp71+bhSCmtyAPJivGQfoHlYr0wIBIGDwxym2NA
+	64EQN2soeBUYKNvGubp45JrTIbDMR3gXv1oU1tGYre0lrPGteHrAD+gWVDFccvj91zvjnBUDNsJCv
+	YS6vfdnxFgcFO+IOGugoIU7T8FI7775EtBIDCFT3xH9QPVyokQqa9isrz5jbPaNQe+IaeGET9ymCl
+	GAd2zWZtlsOovvIGB/SZ5hQemrZgECNJljynx8KoGQLt58bNw7VQs9Vgr+E9WMOoRkK6eEUSX3hMD
+	PzLjtAQA==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1t8M92-00000003ICr-1Tpn;
+	Tue, 05 Nov 2024 16:11:05 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 97BBF30042E; Tue,  5 Nov 2024 17:11:04 +0100 (CET)
+Date: Tue, 5 Nov 2024 17:11:04 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Christoph Hellwig <hch@infradead.org>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org, alyssa.milburn@intel.com,
+	scott.d.constable@intel.com, joao@overdrivepizza.com,
+	andrew.cooper3@citrix.com, jpoimboe@kernel.org,
+	alexei.starovoitov@gmail.com, ebiggers@kernel.org,
+	samitolvanen@google.com, kees@kernel.org
+Subject: Re: [PATCH 1/8] x86,kcfi: Fix EXPORT_SYMBOL vs kCFI
+Message-ID: <20241105161104.GK10375@noisy.programming.kicks-ass.net>
+References: <20241105113901.348320374@infradead.org>
+ <20241105114521.852053765@infradead.org>
+ <Zyoood0ooSbpultV@infradead.org>
+ <20241105142720.GG10375@noisy.programming.kicks-ass.net>
+ <ZyosbEMNzMU6fOe_@infradead.org>
+ <20241105145842.GH10375@noisy.programming.kicks-ass.net>
+ <Zyo8mdoQOXa9kiBv@infradead.org>
+ <20241105154740.GJ10375@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241105154740.GJ10375@noisy.programming.kicks-ass.net>
 
-Am Montag, 4. November 2024, 20:06:27 CET schrieb Rob Herring (Arm):
-> The use of of_property_read_bool() for non-boolean properties is
-> deprecated in favor of of_property_present() when testing for property
-> presence.
+On Tue, Nov 05, 2024 at 04:47:40PM +0100, Peter Zijlstra wrote:
+> On Tue, Nov 05, 2024 at 07:41:13AM -0800, Christoph Hellwig wrote:
+> > On Tue, Nov 05, 2024 at 03:58:42PM +0100, Peter Zijlstra wrote:
+> > > > bounded number of functions that are used as either default methods
+> > > > or as ready made callbacks.  Everything else has no business being
+> > > > called indirectly.  While disallowing this might be a bit of work,
+> > > > I think it would be a great security improvement.
+> > > 
+> > > Well, we don't disagree. But since most of the EXPORT'ed functions are
+> > > done in C, we need something that works there too.
+> > 
+> > Yes, absolutely.  In fact I doubt there are more than a handful of
+> > assembly exports that are valid targets for indirect calls.
 > 
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+> Yeah, I went overboard here. Let me tone it down a little.
 
-With of_property_present essentially just mapping to of_property_read_bool,
-this change looks correct and should not introduce any functional differences
-
-Reviewed-by: Heiko Stuebner <heiko@sntech.de>
-
-> ---
->  drivers/gpio/gpio-rockchip.c | 2 +-
->  drivers/gpio/gpiolib-of.c    | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/gpio/gpio-rockchip.c b/drivers/gpio/gpio-rockchip.c
-> index 365ab947983c..64924bc01591 100644
-> --- a/drivers/gpio/gpio-rockchip.c
-> +++ b/drivers/gpio/gpio-rockchip.c
-> @@ -602,7 +602,7 @@ static int rockchip_gpiolib_register(struct rockchip_pin_bank *bank)
->  	 * files which don't set the "gpio-ranges" property or systems that
->  	 * utilize ACPI the driver has to call gpiochip_add_pin_range().
->  	 */
-> -	if (!of_property_read_bool(bank->of_node, "gpio-ranges")) {
-> +	if (!of_property_present(bank->of_node, "gpio-ranges")) {
->  		struct device_node *pctlnp = of_get_parent(bank->of_node);
->  		struct pinctrl_dev *pctldev = NULL;
->  
-> diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
-> index 880f1efcaca5..2e537ee979f3 100644
-> --- a/drivers/gpio/gpiolib-of.c
-> +++ b/drivers/gpio/gpiolib-of.c
-> @@ -337,7 +337,7 @@ static void of_gpio_flags_quirks(const struct device_node *np,
->  	 * to determine if the flags should have inverted semantics.
->  	 */
->  	if (IS_ENABLED(CONFIG_SPI_MASTER) && !strcmp(propname, "cs-gpios") &&
-> -	    of_property_read_bool(np, "cs-gpios")) {
-> +	    of_property_present(np, "cs-gpios")) {
->  		u32 cs;
->  		int ret;
->  
-> 
-
-
+OK, I removed a ton of them and fixed the build fallout. I've pushed it
+out to the git tree mentioned somewhere, and will re-post in a few days.
 
 
 
