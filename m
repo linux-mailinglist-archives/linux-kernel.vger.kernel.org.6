@@ -1,435 +1,278 @@
-Return-Path: <linux-kernel+bounces-396628-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396630-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 876909BCFC0
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 15:54:09 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB65B9BCFC8
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 15:54:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 463322837F1
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 14:54:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE5771C23A22
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 14:54:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 783C71D86CE;
-	Tue,  5 Nov 2024 14:54:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 882631D9A69;
+	Tue,  5 Nov 2024 14:54:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b="arTxF/M2"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="DoLK9FeV"
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DD1BEAD2;
-	Tue,  5 Nov 2024 14:53:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730818441; cv=pass; b=lGZIhzO719duY3sYOlFvzLY0msBkq/wB2Z61cnDIbK4rEvIMTZCIDnrhMHVcwAu4Y7eb5Pzu5mAJpxjl70Ba3HHr2lLmXVw/QJSz6w+Q2Huo7V1NiNT9brWVUE255A6XnpMGmFZFtccKF7NY0e8EsZuFOPeSXPbgyz8mruQiICY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730818441; c=relaxed/simple;
-	bh=CLcGmCMNSBsbZK9TCBoAitB5hTQKQvqtUIlGVVU6yRY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YgXNE3MlKTVSmWQD5qECWjgH4iqm/bzkptJqtO+X2/GG8H5FQJSHjVMjf2/GZDoUBe81CbZxbUECWM5e39DH+qr+hye6+sAC7F+SKymjVdrFW8stc8YuPmyF2soc66WsYwPekUyuROMG0GxWP7aJBTgX6zK0fkbn/FPSxD0uImI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b=arTxF/M2; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1730818427; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=jxi2GQmxwbDRHoAb/jV/nhdQX7emwZgYCiM1D7UWm/jb0SghLxNUkj9Ickp6rB73yWEqWFlvITJIGIXOC7hmcD2qxvjPMXtGeWYMCCdijaPrfIbyIkiKsee5xDyRS0M4yPijxYbEmk2daNQb4z/sMUFnPop3LNXa7q3wuD75dV0=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1730818427; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=Ee32TdMulUx3I73v+H9UKmfuOkSjV3xf62bP7n6clmg=; 
-	b=M9mfj52Qug8z93qsGiDGcSjsT0Yy9Zn2lGkBB0gboQqQ4XnuHmw0HiZ9d0lQrZ8O2WstyvIp+SV7ZO0wt2p9RLk3z74827eKc9eRb7S1FSnX09eJbsWxjhyYl8FHNkzfO8C1a2CI3/hijQLBAhqCVRNL2t5JJon9OcuPGiRh2AE=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=sebastian.reichel@collabora.com;
-	dmarc=pass header.from=<sebastian.reichel@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1730818427;
-	s=zohomail; d=collabora.com; i=sebastian.reichel@collabora.com;
-	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Message-Id:Reply-To;
-	bh=Ee32TdMulUx3I73v+H9UKmfuOkSjV3xf62bP7n6clmg=;
-	b=arTxF/M2IohZlL4d+0q9FMY/vZrAbFVQQ1Gff5Mx38cL5CKqDx8zuxiECbxZUMSI
-	J3F+mhj7lY7P3g6QZ9yXz3j4twt3ltOhEF4PGnqlSkyT7dOfXyMv0W35WwSV5U2HPjm
-	KY6tlGpJ6atorq0rsmcebvn2OFAXozf5fA7WS6NA=
-Received: by mx.zohomail.com with SMTPS id 1730818425742722.1607904366261;
-	Tue, 5 Nov 2024 06:53:45 -0800 (PST)
-Received: by mercury (Postfix, from userid 1000)
-	id A289A10604C3; Tue, 05 Nov 2024 15:53:40 +0100 (CET)
-Date: Tue, 5 Nov 2024 15:53:40 +0100
-From: Sebastian Reichel <sebastian.reichel@collabora.com>
-To: Heiko Stuebner <heiko@sntech.de>
-Cc: vkoul@kernel.org, kishon@kernel.org, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, quentin.schulz@cherry.de, 
-	linux-phy@lists.infradead.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	Heiko Stuebner <heiko.stuebner@cherry.de>
-Subject: Re: [PATCH v2 2/2] phy: rockchip: Add Samsung CSI/DSI Combo DCPHY
- driver
-Message-ID: <fynyo2amqillioxwfyydvztakba5ecwa2qrtdtuoaffyvwc62c@3vizyubfqvsf>
-References: <20241104111121.99274-1-heiko@sntech.de>
- <20241104111121.99274-3-heiko@sntech.de>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 853AE1D8DE0
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 14:54:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730818468; cv=none; b=eppH+L3dnz4kSb6wBj/XUU1mmKY4z5VCKU50G4lskGUzDic3MClxSRuEPYJUGserjUU/40KFDucMFUvN/CPRoU3mQJ8d68g8Z02RtZJuYuyBuFYxSLlSNhR0bFq41U3O7gQOFknTWOaZIzPuxAkeDtWYKNDLd9BY7Oy4W7vJhRs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730818468; c=relaxed/simple;
+	bh=Vhywt+l5PYyYBUWugqF8aTPyUhcL7dT24faLo4C9gw8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fcbQxQWz/016d9wBEQnyF6RzQjmsRkhDy4Cpo4E50490cy1fFSUbUHKifx2Vb/LNdfrg0z7rd0neMhEBB+K00rGqJWoaQYNhgHmSGdWYju1AHDomdYevBUAAO49mhWK7MKixQIADQVqEi5h138VRrR132Fj4Y+ba1hZKl7anIkQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=DoLK9FeV; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5cb615671acso3303939a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 06:54:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1730818464; x=1731423264; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Bl8Jr9logEH1j60OH8uy/4D263LtrFLGZLsdHX5u56M=;
+        b=DoLK9FeVFgkMGhUOwP5GGTT5NQsEN+p+QAjy13sTp8UVOASnIscBuZ5Kq5shsT+lzZ
+         DbB9+rxqrDH5iaXgfVptco/net3GSR6oRdcXULtjSMeSn91Jv0vZCbAzVQoiW386TfCf
+         WP9ofD6lxNZOq4d8KBwWWE0jrpdXpbqZMv+j2mar56KrUFEKSdsyqa+afNfObqbX2iox
+         RnX60J9UBMM+R9F1Y988oGqKjyxjwrtdcTMwaEGuaaz+EyD7x9WP9uiuTkE14TVUAqyI
+         sKktxYAGGHZwd1kmmZhJvsBdYa6lDYsMSsZnMhVMB8NYZbLNwDH1GlshPCy1es//O4yK
+         RaKg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730818464; x=1731423264;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Bl8Jr9logEH1j60OH8uy/4D263LtrFLGZLsdHX5u56M=;
+        b=rxRXCpI8Xh89TnMXsV2QuLXK50V/iSnReuYhy06LbztOHfbqUFpOzC9HPRLQSONDyD
+         uBfTi7QItZ0Ap+Nw+CS9K1aRapHchYHRhTWKesDv22npKRPewCp9He4QJjJG4N6+WJZD
+         QP2UuAftM7BqBQMZYdz2XKWC6+LCLrRORw4b5Tt7PjXH+r1mui16T2CWpaas/cZShX4i
+         9OqwN+fGB2PD6yw9Wfl4d8dDMGZH5wYpxC5WtuY34QSr5FsprUooBVew8UzguN6twuVQ
+         KE3kEKIzd4H73tYEZ89MgY1rCZ2djfVVvbnWHrhzsxU1jF63fmMSaqX43oytaMMTJIl5
+         XWtg==
+X-Forwarded-Encrypted: i=1; AJvYcCW6d+ibz05+7PutY8ddT8QmLX4ewbCLwYk4AVxhf/MUg2GYzXxwe9s3rFbuKFZd0RsyRKAPuPNjlHWo/r8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzN9K2QN7Soc8xX/4JRohQWVif+FU6TTaN+zLtBQbjJTm6jCNBR
+	uJaBxBm82gZtwtJFBTBLXnUEZGfVIACMqXLju2HmWCjcoGapelTFFJJZfD1sjw4=
+X-Google-Smtp-Source: AGHT+IHv4vQNgFpXsC2P1RQ+e/mvAiNkR6Gf57hy1HRa3vWTFq/NpkLWKWeVr7V3kwvQ6gmoMXqSZA==
+X-Received: by 2002:a05:6402:27c6:b0:5ce:dfcf:7029 with SMTP id 4fb4d7f45d1cf-5cedfcf70cdmr4740472a12.7.1730818463595;
+        Tue, 05 Nov 2024 06:54:23 -0800 (PST)
+Received: from localhost.localdomain ([188.27.128.50])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cee6afe40fsm1382398a12.62.2024.11.05.06.54.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 05 Nov 2024 06:54:22 -0800 (PST)
+From: Alexandru Ardelean <aardelean@baylibre.com>
+To: linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: jic23@kernel.org,
+	bartosz.golaszewski@linaro.org,
+	gregkh@linuxfoundation.org,
+	akpm@linux-foundation.org,
+	Alexandru Ardelean <aardelean@baylibre.com>
+Subject: [PATCH v2 1/2] util_macros.h: fix/rework find_closest() macros
+Date: Tue,  5 Nov 2024 16:54:05 +0200
+Message-ID: <20241105145406.554365-1-aardelean@baylibre.com>
+X-Mailer: git-send-email 2.46.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="i6mir4f2i4nre6yc"
-Content-Disposition: inline
-In-Reply-To: <20241104111121.99274-3-heiko@sntech.de>
-X-Zoho-Virus-Status: 1
-X-Zoho-AV-Stamp: zmail-av-1.3.1/230.797.52
-X-ZohoMailClient: External
+Content-Transfer-Encoding: 8bit
 
+A bug was found in the find_closest() (find_closest_descending() is also
+affected after some testing), where for certain values with small
+progressions, the rounding (done by averaging 2 values) causes an incorrect
+index to be returned.
+The rounding issues occur for progressions of 1, 2 and 3. It goes away when
+the progression/interval between two values is 4 or larger.
 
---i6mir4f2i4nre6yc
-Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2 2/2] phy: rockchip: Add Samsung CSI/DSI Combo DCPHY
- driver
-MIME-Version: 1.0
+It's particularly bad for progressions of 1. For example if there's an
+array of 'a = { 1, 2, 3 }', using 'find_closest(2, a ...)' would return 0
+(the index of '1'), rather than returning 1 (the index of '2').
+This means that for exact values (with a progression of 1), find_closest()
+will misbehave and return the index of the value smaller than the one we're
+searching for.
+For progressions of 2 and 3, the exact values are obtained correctly; but
+values aren't approximated correctly (as one would expect). Starting with
+progressions of 4, all seems to be good (one gets what one would expect).
 
-Hi,
+While one could argue that 'find_closest()' should not be used for arrays
+with progressions of 1 (i.e. '{1, 2, 3, ...}', the macro should still
+behave correctly.
 
-On Mon, Nov 04, 2024 at 12:11:16PM +0100, Heiko Stuebner wrote:
-> From: Heiko Stuebner <heiko.stuebner@cherry.de>
->=20
-> Add phy driver needed to drive either a MIPI DSI output to a DSI display
-> or MIPI CSI input from a camera on rk3588.
->=20
-> Right now only the DSI portion is implemented as the whole camera part
-> needs more work in general.
->=20
-> Signed-off-by: Heiko Stuebner <heiko.stuebner@cherry.de>
-> ---
+The bug was found while testing the 'drivers/iio/adc/ad7606.c',
+specifically the oversampling feature.
+For reference, the oversampling values are listed as:
+   static const unsigned int ad7606_oversampling_avail[7] = {
+          1, 2, 4, 8, 16, 32, 64,
+   };
 
-Do you have a git branch with the DSI controller driver, so that
-this can actually be tested? :)
+When doing:
+  1. $ echo 1 > /sys/bus/iio/devices/iio\:device0/oversampling_ratio
+     $ cat /sys/bus/iio/devices/iio\:device0/oversampling_ratio
+     1  # this is fine
+  2. $ echo 2 > /sys/bus/iio/devices/iio\:device0/oversampling_ratio
+     $ cat /sys/bus/iio/devices/iio\:device0/oversampling_ratio
+     1  # this is wrong; 2 should be returned here
+  3. $ echo 3 > /sys/bus/iio/devices/iio\:device0/oversampling_ratio
+     $ cat /sys/bus/iio/devices/iio\:device0/oversampling_ratio
+     2  # this is fine
+  4. $ echo 4 > /sys/bus/iio/devices/iio\:device0/oversampling_ratio
+     $ cat /sys/bus/iio/devices/iio\:device0/oversampling_ratio
+     4  # this is fine
+And from here-on, the values are as correct (one gets what one would
+expect.)
 
->  drivers/phy/rockchip/Kconfig                  |   12 +
->  drivers/phy/rockchip/Makefile                 |    1 +
->  .../phy/rockchip/phy-rockchip-samsung-dcphy.c | 1654 +++++++++++++++++
->  3 files changed, 1667 insertions(+)
->  create mode 100644 drivers/phy/rockchip/phy-rockchip-samsung-dcphy.c
->=20
-> diff --git a/drivers/phy/rockchip/Kconfig b/drivers/phy/rockchip/Kconfig
-> index 2f7a05f21dc5..2bfb42996503 100644
-> --- a/drivers/phy/rockchip/Kconfig
-> +++ b/drivers/phy/rockchip/Kconfig
-> @@ -83,6 +83,18 @@ config PHY_ROCKCHIP_PCIE
->  	help
->  	  Enable this to support the Rockchip PCIe PHY.
-> =20
-> +config PHY_ROCKCHIP_SAMSUNG_DCPHY
-> +	tristate "Rockchip Samsung MIPI DCPHY driver"
-> +	depends on (ARCH_ROCKCHIP || COMPILE_TEST)
-> +	select GENERIC_PHY
-> +	select GENERIC_PHY_MIPI_DPHY
-> +	help
-> +	  Enable this to support the Rockchip MIPI DCPHY with
-> +	  Samsung IP block.
-> +
-> +	  To compile this driver as a module, choose M here: the module
-> +	  will be called phy-rockchip-samsung-dcphy
-> +
->  config PHY_ROCKCHIP_SAMSUNG_HDPTX
->  	tristate "Rockchip Samsung HDMI/eDP Combo PHY driver"
->  	depends on (ARCH_ROCKCHIP || COMPILE_TEST) && OF
-> diff --git a/drivers/phy/rockchip/Makefile b/drivers/phy/rockchip/Makefile
-> index 010a824e32ce..117aaffd037d 100644
-> --- a/drivers/phy/rockchip/Makefile
-> +++ b/drivers/phy/rockchip/Makefile
-> @@ -8,6 +8,7 @@ obj-$(CONFIG_PHY_ROCKCHIP_INNO_HDMI)	+=3D phy-rockchip-in=
-no-hdmi.o
->  obj-$(CONFIG_PHY_ROCKCHIP_INNO_USB2)	+=3D phy-rockchip-inno-usb2.o
->  obj-$(CONFIG_PHY_ROCKCHIP_NANENG_COMBO_PHY)	+=3D phy-rockchip-naneng-com=
-bphy.o
->  obj-$(CONFIG_PHY_ROCKCHIP_PCIE)		+=3D phy-rockchip-pcie.o
-> +obj-$(CONFIG_PHY_ROCKCHIP_SAMSUNG_DCPHY)	+=3D phy-rockchip-samsung-dcphy=
-=2Eo
->  obj-$(CONFIG_PHY_ROCKCHIP_SAMSUNG_HDPTX)	+=3D phy-rockchip-samsung-hdptx=
-=2Eo
->  obj-$(CONFIG_PHY_ROCKCHIP_SNPS_PCIE3)	+=3D phy-rockchip-snps-pcie3.o
->  obj-$(CONFIG_PHY_ROCKCHIP_TYPEC)	+=3D phy-rockchip-typec.o
-> diff --git a/drivers/phy/rockchip/phy-rockchip-samsung-dcphy.c b/drivers/=
-phy/rockchip/phy-rockchip-samsung-dcphy.c
-> new file mode 100644
-> index 000000000000..a2f897fa5516
-> --- /dev/null
-> +++ b/drivers/phy/rockchip/phy-rockchip-samsung-dcphy.c
-> @@ -0,0 +1,1654 @@
-> +// SPDX-License-Identifier: GPL-2.0+
-> +/*
-> + * Copyright (C) Rockchip Electronics Co.Ltd
-> + * Author:
-> + *      Guochun Huang <hero.huang@rock-chips.com>
-> + */
-> +
-> +#include <linux/clk.h>
-> +#include <linux/init.h>
-> +#include <linux/kernel.h>
-> +#include <linux/mfd/syscon.h>
-> +#include <linux/module.h>
-> +#include <linux/of_device.h>
+While writing a kunit test for this bug, a peculiar issue was found for the
+array in the 'drivers/hwmon/ina2xx.c' & 'drivers/iio/adc/ina2xx-adc.c'
+drivers. While running the kunit test (for 'ina226_avg_tab' from these
+drivers):
+  * idx = find_closest([-1 to 2], ina226_avg_tab, ARRAY_SIZE(ina226_avg_tab));
+    This returns idx == 0, so value.
+  * idx = find_closest(3, ina226_avg_tab, ARRAY_SIZE(ina226_avg_tab));
+    This returns idx == 0, value 1; and now one could argue whether 3 is
+    closer to 4 or to 1. This quirk only appears for value '3' in this
+    array, but it seems to be a another rounding issue.
+  * And from 4 onwards the 'find_closest'() works fine (one gets what one
+    would expect).
 
-I think this should be
+This change reworks the find_closest() macros to also check the difference
+between the left and right elements when 'x'. If the distance to the right
+is smaller (than the distance to the left), the index is incremented by 1.
+This also makes redundant the need for using the DIV_ROUND_CLOSEST() macro.
 
-#include <linux/mod_devicetable.h>
+In order to accommodate for any mix of negative + positive values, the
+internal variables '__fc_x', '__fc_mid_x', '__fc_left' & '__fc_right' are
+forced to 'long' type. This also addresses any potential bugs/issues with
+'x' being of an unsigned type. In those situations any comparison between
+signed & unsigned would be promoted to a comparison between 2 unsigned
+numbers; this is especially annoying when '__fc_left' & '__fc_right'
+underflow.
 
-> +#include <linux/phy/phy.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/pm_runtime.h>
-> +#include <linux/regmap.h>
-> +#include <linux/reset.h>
-> +
+The find_closest_descending() macro was also reworked and duplicated from
+the find_closest(), and it is being iterated in reverse. The main reason
+for this is to get the same indices as 'find_closest()' (but in reverse).
+The comparison for '__fc_right < __fc_left' favors going the array in
+ascending order.
+For example for array '{ 1024, 512, 256, 128, 64, 16, 4, 1 }' and x = 3, we
+get:
+    __fc_mid_x = 2
+    __fc_left = -1
+    __fc_right = -2
+    Then '__fc_right < __fc_left' evaluates to true and '__fc_i++' becomes 7
+    which is not quite incorrect, but 3 is closer to 4 than to 1.
 
-[...]
+This change has been validated with the kunit from the next patch.
 
-> +static void samsung_mipi_dcphy_bias_block_enable(struct samsung_mipi_dcp=
-hy *samsung)
-> +{
-> +	u32 bias_con2 =3D 0x3223;
-> +
-> +	regmap_write(samsung->regmap, BIAS_CON0, 0x0010);
-> +	regmap_write(samsung->regmap, BIAS_CON1, 0x0110);
-> +	regmap_write(samsung->regmap, BIAS_CON2, bias_con2);
-> +
-> +	/* default output voltage select:
-> +	 * dphy: 400mv
-> +	 * cphy: 530mv
-> +	 */
-> +	regmap_update_bits(samsung->regmap, BIAS_CON4,
-> +			   I_MUX_SEL_MASK, I_MUX_SEL_400MV);
-> +}
-> +
-> +static void samsung_mipi_dcphy_bias_block_disable(struct samsung_mipi_dc=
-phy *samsung)
-> +{
-> +}
+Fixes: 95d119528b0b ("util_macros.h: add find_closest() macro")
+Signed-off-by: Alexandru Ardelean <aardelean@baylibre.com>
+---
 
-uhm? :)
+Changelog v1 -> v2:
+* https://lore.kernel.org/linux-iio/20241031063707.795842-1-aardelean@baylibre.com/
+* split the __find_closest() macro into find_closest() & find_closest_descending()
+  * find_closest_descending() is iterating in reverse order
+  * this favors some corner cases with small values
+* forcing types for '__fc_x', '__fc_mid_x', '__fc_left' && '__fc_right' to be long
+  * this resolves several potential issues with combining arrays of signed/unsigned
+    values with 'x' of type signed/unsigned
+* fixed error with previous implementation where __fc_mid_x was used instead of __fc_x
+  when calculating '__fc_left' && '__fc_right'
+* updated commit description with more information (also found on previous
+  thread) + the description for the changed implementation
 
-[...]
+ include/linux/util_macros.h | 56 ++++++++++++++++++++++++++-----------
+ 1 file changed, 40 insertions(+), 16 deletions(-)
 
-> +static const struct samsung_mipi_dphy_timing *
-> +samsung_mipi_dphy_get_timing(struct samsung_mipi_dcphy *samsung)
-> +{
-> +	const struct samsung_mipi_dphy_timing *timings;
-> +	unsigned int num_timings;
-> +	unsigned int lane_mbps =3D div64_ul(samsung->pll.rate, USEC_PER_SEC);
-> +	unsigned int i;
-> +
-> +	timings =3D samsung_mipi_dphy_timing_table;
-> +	num_timings =3D ARRAY_SIZE(samsung_mipi_dphy_timing_table);
-> +
-> +	for (i =3D num_timings; i > 0; i--)
-> +		if (lane_mbps <=3D timings[i - 1].max_lane_mbps)
-> +			break;
-> +
-> +	if (i =3D=3D 0)
-> +		++i;
+diff --git a/include/linux/util_macros.h b/include/linux/util_macros.h
+index 6bb460c3e818..825487fb66fa 100644
+--- a/include/linux/util_macros.h
++++ b/include/linux/util_macros.h
+@@ -4,19 +4,6 @@
+ 
+ #include <linux/math.h>
+ 
+-#define __find_closest(x, a, as, op)					\
+-({									\
+-	typeof(as) __fc_i, __fc_as = (as) - 1;				\
+-	typeof(x) __fc_x = (x);						\
+-	typeof(*a) const *__fc_a = (a);					\
+-	for (__fc_i = 0; __fc_i < __fc_as; __fc_i++) {			\
+-		if (__fc_x op DIV_ROUND_CLOSEST(__fc_a[__fc_i] +	\
+-						__fc_a[__fc_i + 1], 2))	\
+-			break;						\
+-	}								\
+-	(__fc_i);							\
+-})
+-
+ /**
+  * find_closest - locate the closest element in a sorted array
+  * @x: The reference value.
+@@ -25,8 +12,27 @@
+  * @as: Size of 'a'.
+  *
+  * Returns the index of the element closest to 'x'.
++ * Note: If using an array of negative numbers (or mixed positive numbers),
++ *       then be sure that 'x' is of a signed-type to get good results.
+  */
+-#define find_closest(x, a, as) __find_closest(x, a, as, <=)
++#define find_closest(x, a, as)						\
++({									\
++	typeof(as) __fc_i, __fc_as = (as) - 1;				\
++	long __fc_mid_x, __fc_x = (x);					\
++	long __fc_left, __fc_right;					\
++	typeof(*a) const *__fc_a = (a);					\
++	for (__fc_i = 0; __fc_i < __fc_as; __fc_i++) {			\
++		__fc_mid_x = (__fc_a[__fc_i] + __fc_a[__fc_i + 1]) / 2;	\
++		if (__fc_x <= __fc_mid_x) {				\
++			__fc_left = __fc_x - __fc_a[__fc_i];		\
++			__fc_right = __fc_a[__fc_i + 1] - __fc_x;	\
++			if (__fc_right < __fc_left)			\
++				__fc_i++;				\
++			break;						\
++		}							\
++	}								\
++	(__fc_i);							\
++})
+ 
+ /**
+  * find_closest_descending - locate the closest element in a sorted array
+@@ -36,9 +42,27 @@
+  * @as: Size of 'a'.
+  *
+  * Similar to find_closest() but 'a' is expected to be sorted in descending
+- * order.
++ * order. The iteration is done in reverse order, so that the comparison
++ * of '__fc_right' & '__fc_left' also works for unsigned numbers.
+  */
+-#define find_closest_descending(x, a, as) __find_closest(x, a, as, >=)
++#define find_closest_descending(x, a, as)				\
++({									\
++	typeof(as) __fc_i, __fc_as = (as) - 1;				\
++	long __fc_mid_x, __fc_x = (x);					\
++	long __fc_left, __fc_right;					\
++	typeof(*a) const *__fc_a = (a);					\
++	for (__fc_i = __fc_as; __fc_i >= 1; __fc_i--) {			\
++		__fc_mid_x = (__fc_a[__fc_i] + __fc_a[__fc_i - 1]) / 2;	\
++		if (__fc_x <= __fc_mid_x) {				\
++			__fc_left = __fc_x - __fc_a[__fc_i];		\
++			__fc_right = __fc_a[__fc_i - 1] - __fc_x;	\
++			if (__fc_right < __fc_left)			\
++				__fc_i--;				\
++			break;						\
++		}							\
++	}								\
++	(__fc_i);							\
++})
+ 
+ /**
+  * is_insidevar - check if the @ptr points inside the @var memory range.
+-- 
+2.46.1
 
-I guess you can just do 'for (i =3D max; i > 1; i--)' instead of
-counting to 0 and then go back to 1?
-
-> +
-> +	return &timings[i - 1];
-> +}
-
-[...]
-
-> +static int samsung_mipi_dphy_power_on(struct samsung_mipi_dcphy *samsung)
-> +{
-> +	int ret;
-> +
-> +	reset_control_assert(samsung->m_phy_rst);
-> +
-> +	samsung_mipi_dcphy_bias_block_enable(samsung);
-> +	samsung_mipi_dcphy_pll_configure(samsung);
-> +	samsung_mipi_dphy_clk_lane_timing_init(samsung);
-> +	samsung_mipi_dphy_data_lane_timing_init(samsung);
-> +	ret =3D samsung_mipi_dcphy_pll_enable(samsung);
-> +	if (ret < 0) {
-> +		samsung_mipi_dcphy_bias_block_disable(samsung);
-> +		return ret;
-> +	}
-> +
-> +	samsung_mipi_dphy_lane_enable(samsung);
-> +
-> +	reset_control_deassert(samsung->m_phy_rst);
-> +
-> +	/* The TSKEWCAL maximum is 100 =B5sec
-> +	 * at initial calibration.
-> +	 */
-> +	usleep_range(100, 110);
-> +
-> +	return 0;
-> +}
-> +
-> +static int samsung_mipi_dcphy_power_on(struct phy *phy)
-> +{
-> +	struct samsung_mipi_dcphy *samsung =3D phy_get_drvdata(phy);
-> +	enum phy_mode mode =3D phy_get_mode(phy);
-> +
-> +	pm_runtime_get_sync(samsung->dev);
-
-This already happened in samsung_mipi_dcphy_init?
-
-> +	reset_control_assert(samsung->apb_rst);
-> +	udelay(1);
-> +	reset_control_deassert(samsung->apb_rst);
-> +
-> +	switch (mode) {
-> +	case PHY_MODE_MIPI_DPHY:
-> +		return samsung_mipi_dphy_power_on(samsung);
-> +	default:
-> +		/* CSI cphy part to be implemented later */
-> +		return -EOPNOTSUPP;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int samsung_mipi_dcphy_power_off(struct phy *phy)
-> +{
-> +	struct samsung_mipi_dcphy *samsung =3D phy_get_drvdata(phy);
-> +	enum phy_mode mode =3D phy_get_mode(phy);
-> +
-> +	switch (mode) {
-> +	case PHY_MODE_MIPI_DPHY:
-> +		samsung_mipi_dphy_lane_disable(samsung);
-> +		break;
-> +	default:
-> +		/* CSI cphy part to be implemented later */
-> +		return -EOPNOTSUPP;
-> +	}
-> +
-> +	samsung_mipi_dcphy_pll_disable(samsung);
-> +	samsung_mipi_dcphy_bias_block_disable(samsung);
-> +
-> +	pm_runtime_put(samsung->dev);
-> +
-> +	return 0;
-> +}
-> +
-> +static int samsung_mipi_dcphy_set_mode(struct phy *phy, enum phy_mode mo=
-de,
-> +				       int submode)
-> +{
-> +	return 0;
-> +}
-
-You can just remove this. phy_set_mode_ext() will return 0 byself if
-the callback is NULL.
-
-[...]
-
-> +static int samsung_mipi_dcphy_init(struct phy *phy)
-> +{
-> +	struct samsung_mipi_dcphy *samsung =3D phy_get_drvdata(phy);
-> +
-> +	pm_runtime_get_sync(samsung->dev);
-
-return pm_runtime_resume_and_get(samsung->dev);
-
-> +	return 0;
-> +}
-> +
-> +static int samsung_mipi_dcphy_exit(struct phy *phy)
-> +{
-> +	struct samsung_mipi_dcphy *samsung =3D phy_get_drvdata(phy);
-> +
-> +	pm_runtime_put(samsung->dev);
-
-return pm_runtime_put(samsung->dev);
-
-> +
-> +	return 0;
-> +}
-
-[...]
-
-> +static __maybe_unused int samsung_mipi_dcphy_runtime_suspend(struct devi=
-ce *dev)
-> +{
-> +	struct samsung_mipi_dcphy *samsung =3D dev_get_drvdata(dev);
-> +
-> +	clk_disable_unprepare(samsung->pclk);
-> +	clk_disable_unprepare(samsung->ref_clk);
-> +
-> +	return 0;
-> +}
-> +
-> +static __maybe_unused int samsung_mipi_dcphy_runtime_resume(struct devic=
-e *dev)
-> +{
-> +	struct samsung_mipi_dcphy *samsung =3D dev_get_drvdata(dev);
-> +
-> +	clk_prepare_enable(samsung->pclk);
-> +	clk_prepare_enable(samsung->ref_clk);
-> +
-> +	return 0;
-> +}
-
-No error checking for managing the clocks?
-
-[...]
-
-> +static const struct of_device_id samsung_mipi_dcphy_of_match[] =3D {
-> +	{
-> +		.compatible =3D "rockchip,rk3576-mipi-dcphy",
-> +		.data =3D &rk3576_samsung_mipi_dcphy_plat_data,
-> +	}, {
-> +		.compatible =3D "rockchip,rk3588-mipi-dcphy",
-> +		.data =3D &rk3588_samsung_mipi_dcphy_plat_data,
-> +	},
-> +	{ /* sentinel */ }
-> +};
-> +MODULE_DEVICE_TABLE(of, samsung_mipi_dcphy_of_match);
-> +
-> +static struct platform_driver samsung_mipi_dcphy_driver =3D {
-> +	.driver =3D {
-> +		.name =3D "samsung-mipi-dcphy",
-> +		.of_match_table	=3D of_match_ptr(samsung_mipi_dcphy_of_match),
-
-drop of_match_ptr(). The way it is used right now just brings
-a compiler warning for CONFIG_OF=3Dn.
-
-> +		.pm =3D &samsung_mipi_dcphy_pm_ops,
-> +	},
-> +	.probe	=3D samsung_mipi_dcphy_probe,
-> +};
-> +module_platform_driver(samsung_mipi_dcphy_driver);
-> +
-> +MODULE_AUTHOR("Guochun Huang<hero.huang@rock-chips.com>");
-
-space before <
-
-> +MODULE_DESCRIPTION("Samsung MIPI DCPHY Driver");
-> +MODULE_LICENSE("GPL");
-
-Greetings,
-
--- Sebastian
-
---i6mir4f2i4nre6yc
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmcqMWgACgkQ2O7X88g7
-+pqVJg/7BGqrI9xyIPDlozpRxfCLRIU82nO2vXrSxFG+rkgDHEdifsnhLRhYX2k9
-Jf886rm7pohlqTxtViKnn4hOE4yqNW3NuSXuKjZO6TnWHldvUzt4s7/fFQkViQEi
-Pr+/QJ9AUZxGH0hhN9FmUUcjhi0qShlqnsLiO42t9aaxyLktdp8N68xw9ZpX8F9K
-avZ8xSHbKBI37kMyqgU9cjFZ9pkAcf5JpMQusVCT6IqeuDzfvEbM08P7yPxPusPc
-UKxYS/YQGTOniKmpSZHQKtIcf6AFNZS1JoakYgv7tzWtNY7Vgswlg9KrzCEmFvIg
-aXNfFA1IUXngFtzlJL9KDOwqwMEowDjZzLUJCkzWl9DNo/qM2XjVXVwer6uDMdMm
-bIV3AVGamiBlvBghK+Rjd/9CiCFKUz4rl3rjgpFE+odrUvxff9gFYT/xow3YyvNN
-OBwD5VGijFHPq6jbra+nY/v6BroGSStHoY+JB4NVta515BI3ZYALpKxW4HTW5kcV
-5eABPItHa9+3rw23N6y/cGpjwbRBavnI1PJYclo5hLc4mDRW9O6j2C9luRxXVOnF
-Hq/sXX+c6h50U63Kd6msyt8qBIokhm7bxn6YGVvC23XoXhbZfg8yrYHEthkXl6bG
-2NM7FHwRAmylSkstCg9gzYfxdwSP8p3m8RA9ubJ7HVoHPGLML9I=
-=O1X7
------END PGP SIGNATURE-----
-
---i6mir4f2i4nre6yc--
 
