@@ -1,62 +1,56 @@
-Return-Path: <linux-kernel+bounces-395855-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395856-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE3019BC3F6
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 04:40:31 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3C079BC3FC
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 04:42:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1C3E31C20D8F
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 03:40:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9CC161F21DE7
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 03:42:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CB58187325;
-	Tue,  5 Nov 2024 03:40:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4456188006;
+	Tue,  5 Nov 2024 03:42:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="R1b4aJ4N"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="gkjQJoSb"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8EEB3C39
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 03:40:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17F4F24B29;
+	Tue,  5 Nov 2024 03:42:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730778025; cv=none; b=HYD+sV32By4vExdtu66xxTH80MxJ7erlHVOX3GlmQZnhQ1zCGLyPzw+DTwAMEcoBvK6IU4rHVcVw+dMX9GbfERyMYyAEbmd3MbC9J0wrlI+PZiWIrM/skha7VoWFro6aIApmY6PVe7QNBsBFo1vnZbXNCHPjThgeAWYP1ZOckOQ=
+	t=1730778164; cv=none; b=s9NR3y+L8UTYx4FgZMG4Tl7BKx2He/tUurN8lr/+MOCkb/YYuFal726E7GdtDJXQyJcpcId8yarqEu1La7lz0VzYx8cVHyGR+i6Cp7caCXT9g+uBopj+PzlSn+LiovQOnFbCZJfxr+urH8jcMCGGUQt32SxWJsM2WDSAhqQVFmc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730778025; c=relaxed/simple;
-	bh=QxjNHT4TitqMtQmgK+mrt83B6I4xGZlhjxuQha47rTo=;
+	s=arc-20240116; t=1730778164; c=relaxed/simple;
+	bh=SYhBjeL3QQHxvmxgitzHmUvIUuClQD3gXZcevAI8S0Q=;
 	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=oOtc5sF52x41JguzojpTtGxmMMepgzc7Shb8crtDuAAlAbgmzxGwpqpji/jIPaSCj4FMWI3sPm+yZVEfUqDTTXwny5yTE8zlDzhpdx78aWmDPbAmNKrWWNGPuRS9h8BlwhY/bjrf2Fd1iEl3jqNceS+kYQvHJSBgwdJfRYCsn3k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=R1b4aJ4N; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B19A4C4CECF;
-	Tue,  5 Nov 2024 03:40:24 +0000 (UTC)
+	 Mime-Version:Content-Type; b=ejFeNeg+9yWmeOR+Zpta6pOUUgWSDsId+wUUXwZbN4YC2IMJvyyg6QvIv8JZazuBS1XBnFN+C9N/FiXddTRci6l3uneU0fQ2hOKzfERa8VQlp1WyjwFdMWHqJjmeevEzRiiEF3WmlkL3peV3nGu/6p9ZdibynVCCo+YS69ztx08=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=gkjQJoSb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8800EC4CECF;
+	Tue,  5 Nov 2024 03:42:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1730778025;
-	bh=QxjNHT4TitqMtQmgK+mrt83B6I4xGZlhjxuQha47rTo=;
+	s=korg; t=1730778163;
+	bh=SYhBjeL3QQHxvmxgitzHmUvIUuClQD3gXZcevAI8S0Q=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=R1b4aJ4NyjKe6zc2SBzWEdsakiDQzkHlWwJzpqU3Mcn0CexPwa52HVR1q0FZZ0cft
-	 MQPNDvPyHo0tDMPivyrj8CFkeQDF9KyAdH2s8xTgr+epB0b0KgARAtJekPW54dheGy
-	 w+OLM6KzcGbzuXplZllIJzdHpx4IZwHg9BzY3sgs=
-Date: Mon, 4 Nov 2024 19:40:24 -0800
+	b=gkjQJoSb91JArGv5LdZEmRqdilkMx31DpAXHP2CeVq2yWiZ03q1+AK2AMthYjqNKE
+	 j2LsjW7jzDOSKYZrCv5Xl706gkHWloeYbNVd11ZLhmvn3Wx7gth1N55ITTsO6IQUoq
+	 ugAABEH/478N83VcBUelpaXBqGDOAOKE8DNM5M+Y=
+Date: Mon, 4 Nov 2024 19:42:42 -0800
 From: Andrew Morton <akpm@linux-foundation.org>
-To: David Hildenbrand <david@redhat.com>
-Cc: Barry Song <21cnbao@gmail.com>, Usama Arif <usamaarif642@gmail.com>,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org, Barry Song
- <v-songbaohua@oppo.com>, Chengming Zhou <chengming.zhou@linux.dev>, Yosry
- Ahmed <yosryahmed@google.com>, Nhat Pham <nphamcs@gmail.com>, Johannes
- Weiner <hannes@cmpxchg.org>, Hugh Dickins <hughd@google.com>, Matthew
- Wilcox <willy@infradead.org>, Shakeel Butt <shakeel.butt@linux.dev>, Andi
- Kleen <ak@linux.intel.com>, Baolin Wang <baolin.wang@linux.alibaba.com>,
- Chris Li <chrisl@kernel.org>, "Huang, Ying" <ying.huang@intel.com>, Kairui
- Song <kasong@tencent.com>, Ryan Roberts <ryan.roberts@arm.com>
-Subject: Re: [PATCH v2] mm: count zeromap read and set for swapout and
- swapin
-Message-Id: <20241104194024.0284288a28a71a70a3eab9b0@linux-foundation.org>
-In-Reply-To: <3f943f72-59d6-4124-96b2-e0bb8d7a5ebd@redhat.com>
-References: <20241102101240.35072-1-21cnbao@gmail.com>
-	<6c14ab2c-7917-489b-b51e-401d208067f3@gmail.com>
-	<CAGsJ_4wpdf6Fky7jj8O6OuLc0WTBjKXTfEqxE0cXiUjxxuLgZA@mail.gmail.com>
-	<3f943f72-59d6-4124-96b2-e0bb8d7a5ebd@redhat.com>
+To: Asahi Lina <lina@asahilina.net>
+Cc: Sergio Lopez Pascual <slp@redhat.com>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, asahi@lists.linux.dev, Jia He
+ <justin.he@arm.com>, Yibo Cai <Yibo.Cai@arm.com>, "Kirill A. Shutemov"
+ <kirill.shutemov@linux.intel.com>, Catalin Marinas
+ <catalin.marinas@arm.com>
+Subject: Re: [PATCH] mm: Fix __wp_page_copy_user fallback path for remote mm
+Message-Id: <20241104194242.2456fbd25cd027b338c07855@linux-foundation.org>
+In-Reply-To: <251d19c0-f788-4291-a4b3-d6f8a9b3b4f1@asahilina.net>
+References: <20241101-mm-remote-pfn-v1-1-080b609270b7@asahilina.net>
+	<20241101120717.11db30a5abc6378da7910719@linux-foundation.org>
+	<251d19c0-f788-4291-a4b3-d6f8a9b3b4f1@asahilina.net>
 X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -67,27 +61,61 @@ Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On Mon, 4 Nov 2024 13:32:55 +0100 David Hildenbrand <david@redhat.com> wrote:
+On Sat, 2 Nov 2024 06:18:54 +0900 Asahi Lina <lina@asahilina.net> wrote:
 
-> > As mentioned above, this isn't about fixing a bug; it's simply to ensure
-> > that swap-related metrics don't disappear.
 > 
-> Documentation/process/submitting-patches.rst:
 > 
-> "A Fixes: tag indicates that the patch fixes an issue in a previous 
-> commit. It is used to make it easy to determine where a bug originated, 
-> which can help review a bug fix."
+> On 11/2/24 4:07 AM, Andrew Morton wrote:
+> > On Fri, 01 Nov 2024 21:08:02 +0900 Asahi Lina <lina@asahilina.net> wrote:
+> > 
+> >> If the source page is a PFN mapping, we copy back from userspace.
+> >> However, if this fault is a remote access, we cannot use
+> >> __copy_from_user_inatomic. Instead, use access_remote_vm() in this case.
+> >>
+> >> Fixes WARN and incorrect zero-filling when writing to CoW mappings in
+> >> a remote process, such as when using gdb on a binary present on a DAX
+> >> filesystem.
+> >>
+> >> [  143.683782] ------------[ cut here ]------------
+> >> [  143.683784] WARNING: CPU: 1 PID: 350 at mm/memory.c:2904 __wp_page_copy_user+0x120/0x2bc
+> >>
+> >> ...
+> >>
+> > 
+> > Thanks.  I assume we should backport this into earlier kernels?
+> > 
+> > If so, a Fixes: target is desired, to tell people how far back in time
+> > it should be ported.
 > 
-> If there is no BUG, I'm afraid you are abusing that tag.
+> I think so? I'm not sure how back the bug goes though, possibly a long
+> time...
+> 
+> > I think it's
+> > 
+> > 83d116c53058 ("mm: fix double page fault on arm64 if PTE_AF is cleared").
+> 
+> That doesn't sound right. The old code prior to the patch still had the
+> __copy_from_user_inatomic() fallback path so it should still have the
+> same problem. That fallback goes back to:
+> 
+>   6aab341e0a28 ("mm: re-architect the VM_UNPAGED logic")
+> 
+> But the ptrace code back then doesn't seem to be using that codepath at
+> all, so that's meaningless. I think this is the proper tag:
+> 
+>   3565fce3a659 ("mm, x86: get_user_pages() for dax mappings")
+> 
+> That's when GUP started working for DAX mappings at all, and if my
+> reading of the code is correct, at that point do_wp_page() was only
+> grabbing the struct page for normal pages to pass to wp_page_copy()
+> (triggering the fallback path for DAX mappings). The code has moved
+> around a lot today but has the same logic, so I think it's been broken
+> since then.
 
-I think the abuse is reasonable.  We have no Should-be-included-with:.
+Cool, thanks.
 
-0ca0c24e3211 is only in 6.12-rcX so this is the time to make
-userspace-visible tweaks, so the 6.12 interfaces are the same as the
-6.13+ interfaces (which is what I think is happening here?)
+> Should I resend it with the Fixes tag?
 
-And including the Fixes in this patch might be useful to someone who is
-backporting 0ca0c24e3211 into some earlier kernel for their own
-purposes.
+That's OK, I edited the mm.git changelog.
 
 
