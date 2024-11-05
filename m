@@ -1,146 +1,106 @@
-Return-Path: <linux-kernel+bounces-397251-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397252-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B66DA9BD969
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 00:04:04 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 814A79BD96B
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 00:04:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A703283DC4
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 23:04:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B2A3E1C227A3
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 23:04:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01AE721644F;
-	Tue,  5 Nov 2024 23:03:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D18D216458;
+	Tue,  5 Nov 2024 23:04:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nPWk57fV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="er5rEkg6"
+Received: from mail-il1-f171.google.com (mail-il1-f171.google.com [209.85.166.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A99E383;
-	Tue,  5 Nov 2024 23:03:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6010C216200;
+	Tue,  5 Nov 2024 23:04:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730847835; cv=none; b=hebF6R1mADK5rGyVeKRMMn0x1UaBGUohnNdZucJAgKThFLOwOoRY8iNVxC8J06ygKGKmlP0y7qlwFTAMwYg4A0sVskvi1sg7MUZNdDNlzusxRFwR+6G4VKFY2i9o5ZrKaZ+ADcjnEaJDoPo3IOzUQwAZuahUJJiEXNA4KtyjRMk=
+	t=1730847854; cv=none; b=rLto42+OqHyogVoj7HhYVy6VbfXC0HAuRbx39pn7us1MRt2pGCx+MPfWkXSVn39NBL+VjV1xFI3HPSUjq8f5k8fGRXt4woh9KZMxj+c9GGRDDtKYjGtkMeFEh8dtMzTQn2gEGlNpr8i1cjEZKSB7ZfDLvcQJyiSW/6b+cwsJwqk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730847835; c=relaxed/simple;
-	bh=4L9KSUpADr4fMrhh20gwsFIcXLi7CtBT3pd3TAduXWU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=R+scAcGmIHWbLX4DWj+/MdGazFpn0AOezAuusef6K6LqLvlDMyIsuLN43j3msS+sJbzEI6OsKJs6Db8ONCJno2tNjOuHRTsJkzVEAX0bqgvdP80DOq881Jnv6ylc6SszLW6zhEjJgJOS3h8pFIftYZYUv6POscbrYWrz8IHenXw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nPWk57fV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D0415C4CECF;
-	Tue,  5 Nov 2024 23:03:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730847834;
-	bh=4L9KSUpADr4fMrhh20gwsFIcXLi7CtBT3pd3TAduXWU=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=nPWk57fVd5tVuYyLMRN+dISfRUnFLoLRgYr6VCRFdfsx4p7nwe3GGCPYuI4DkHXF9
-	 x2gWR+cpM4yx9QNvKjQX/KL7nGiIPKaGye2BdgAFnRq0WVaxVJiF0SkcA4f/aKTAb4
-	 e8y68crsKFZHp2wV0IHTTGR7eShbN+pC2NHj3FYeFP+VIlESo+7TUDqjyCWluBaKS/
-	 wCYtrFHZUW40mmYrLP1lvwv6xjzy9BlugWp1kStMhUSJ+wiOnymloL6qWM5/Aj9hor
-	 8LJAVSfrznUY54ISf419LY42eUXugTG8dsqXYeag+iZ4h2LWTjune4Nuxe826aQm46
-	 yzWudznv4A5gA==
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-53b13ea6b78so9489926e87.2;
-        Tue, 05 Nov 2024 15:03:54 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCV6T0PiZtU/57ms9fkkKU0nwYod1LFOg0/Oz5KqfG5XoqDAg4vLzHMd7w0eK9qpWaRGSbOhVa6vnCCdLLm+@vger.kernel.org, AJvYcCX0fMaA0kHf4RZ82f2avuxWFdk//6Nrcb2iiDPbPbFC8rK9sUBd+65FVcPq9VTOn4pTvAW9M+j5oNEV0GY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxetbycUIYIjYn+qioYJJrseeVeyaQEJoCfeYNpmS5WBLhWlFPn
-	Gt6FSW9MsP9WvMw79cPMXM4gG3i9lL+Pio1TI8wln4tYwVQm0/tVsPF9MQj5qEPJDL+ESZXpltX
-	lM8jUtXrcODkjZKBwf+kFCKMgt+U=
-X-Google-Smtp-Source: AGHT+IGjzSdAMB0KqmGo0rxZrGOP6NLWVz129nHAVY/Jt2nh/EJQpUQ/fHF7bZAE5Fw3ysBOCHTeTx4tw1ffCYb9UKM=
-X-Received: by 2002:a05:6512:12c7:b0:536:53e3:feae with SMTP id
- 2adb3069b0e04-53d65dca682mr13995972e87.11.1730847833552; Tue, 05 Nov 2024
- 15:03:53 -0800 (PST)
+	s=arc-20240116; t=1730847854; c=relaxed/simple;
+	bh=//V20indKmgf7C9J9/JlcUQ2ooGXHUvhXCVqQV7w4QA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IeH5viZA62kl/tA0RFEL5mXoiyi9bDAIIQRGhIFRD9SeFreI1WYdSEyX64uwmJvhSk8Fpmso9iIZcGXdqruUqeAJxufItdXUQ/uZPxu29rvd7q0f4dkw+KwguxJZGKrGeAieh5ocbEzL0vNheJ6VcSVSpXJziCHRwD2Pk9ZWLm4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=er5rEkg6; arc=none smtp.client-ip=209.85.166.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-il1-f171.google.com with SMTP id e9e14a558f8ab-3a3aeb19ea2so22419935ab.0;
+        Tue, 05 Nov 2024 15:04:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730847852; x=1731452652; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=FQtZxoc/EdMh+UvpSaz0TXXDGMSstjpIMHUo0smfcAs=;
+        b=er5rEkg6dJZoL5dBvqFT19CC2EQc8SFE2cmUh7QLqGfmkvnILyHZL/JFALR8olZdww
+         UyHNMZrHNrecadDcytzlumg/QN+kLHNB+vBvJswg4Add78FRHRaVVL5Fzl64qzPqOhV0
+         MJRtbDJSEcYFTOv0Hp7n33rT01Njc7XeuuxofXj3+e2vlZpPuA8CKslbbWjrIDHPMoMp
+         y17/8S6cwn05c2Zx9V+YuV/abKefH1mYOQEXtex6FiCiAfJpJPZ18k5xieS2tS6vKpEx
+         DK6bCdp/e2Mo7qmrdOpz//Du5nNVfGIL7sUJ9v7ldprlJvaom1dQdVBLdEb7eFK6VY0v
+         QxfA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730847852; x=1731452652;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=FQtZxoc/EdMh+UvpSaz0TXXDGMSstjpIMHUo0smfcAs=;
+        b=potVCqYE3EFu5eMNOPk/5ltBmwJlPK4q660H08e5pzWNAvRg8gEESXe57726L4lb8w
+         TpeQweGRyBLtf1wTWIXD9+pw4Y2pVa86K8PjxRAF3nG8tFHu4OYe18AOiPBV7464hrV5
+         I9vVKZvV2SbBsgSisytI9HpXwMkMPVmbF//seRfrltRZhUSicnxgiFpZplwXU7OljNJ1
+         KOBjzE7lTgK3b2Q/jLcoXly0ni1LHC7KthWW/Z6U69xkh46DufkOgr+gYK4fJdpIDD5T
+         CYijuD9a9aN+NFjQvicm/Z2EY7BWsgOvG+eOn88dQhcnF3EBWbQipm+lSSHnyf+UVE7i
+         w2Fw==
+X-Forwarded-Encrypted: i=1; AJvYcCWQv4mcBQPEWYA+lqMi63IZx6AkXFFYtqBZAh7zfQR382cl+vm8xVAdAvoSc85X2NC8/mbDisR7QVPT3a0=@vger.kernel.org, AJvYcCWf8D6T8eL3FVzaMKomStuZP9gA7Xcj8sX4usXJd9eqr9a068A/fXeNl3as0JL/u6H8oNjr5nWkh613rVM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzQKIEdURVDkIrvtVtp5hYoI6Rjove6jtY0Ml+OLEWkWG5BfRqC
+	nO54qQ2hokd9vnZigYXOMFZ9M5A4eKpC0VrFTWAz+CMYmXQinDLQp9/8aoUhImQ=
+X-Google-Smtp-Source: AGHT+IHtbapkF7BlMFXreX8/zweT9WEH4j4B1oUsWyiIIhq2efChsxKOmyrgklSveigASJUNEqrS2g==
+X-Received: by 2002:a05:6e02:1c28:b0:3a4:eb9b:650 with SMTP id e9e14a558f8ab-3a4ed2de153mr394679005ab.17.1730847852386;
+        Tue, 05 Nov 2024 15:04:12 -0800 (PST)
+Received: from localhost.localdomain (syn-047-227-172-032.res.spectrum.com. [47.227.172.32])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3a6a9a2a298sm30675815ab.56.2024.11.05.15.04.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 05 Nov 2024 15:04:12 -0800 (PST)
+From: Chase Knowlden <haroldknowlden@gmail.com>
+To: laurent.pinchart@ideasonboard.com,
+	mchehab@kernel.org
+Cc: Chase Knowlden <haroldknowlden@gmail.com>,
+	linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] This is a test
+Date: Tue,  5 Nov 2024 18:03:49 -0500
+Message-ID: <20241105230350.74707-1-haroldknowlden@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241105205658.349180-1-matt@readmodwrite.com>
-In-Reply-To: <20241105205658.349180-1-matt@readmodwrite.com>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Wed, 6 Nov 2024 08:03:17 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAT0TaQ+ynuww2VY2NaDN+7mGDsYyxe2TdYV7QBT+QyS6w@mail.gmail.com>
-Message-ID: <CAK7LNAT0TaQ+ynuww2VY2NaDN+7mGDsYyxe2TdYV7QBT+QyS6w@mail.gmail.com>
-Subject: Re: [PATCH v2] kbuild: deb-pkg: Don't fail if modules.order is missing
-To: Matt Fleming <matt@readmodwrite.com>
-Cc: Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, linux-kernel@vger.kernel.org, 
-	kernel-team@cloudflare.com, Matt Fleming <mfleming@cloudflare.com>, 
-	linux-kbuild@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Wed, Nov 6, 2024 at 5:57=E2=80=AFAM Matt Fleming <matt@readmodwrite.com>=
- wrote:
->
-> From: Matt Fleming <mfleming@cloudflare.com>
->
-> Kernels built without CONFIG_MODULES might still want to create -dbg deb
-> packages but install_linux_image_dbg() assumes modules.order always
-> exists. This obviously isn't true if no modules were built, so we should
-> skip reading modules.order in that case.
+Signed-off-by: Chase Knowlden <haroldknowlden@gmail.com>
+---
+ drivers/media/usb/uvc/uvc_driver.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Good catch.
+diff --git a/drivers/media/usb/uvc/uvc_driver.c b/drivers/media/usb/uvc/uvc_driver.c
+index 0fac689c6350..58a32d27e508 100644
+--- a/drivers/media/usb/uvc/uvc_driver.c
++++ b/drivers/media/usb/uvc/uvc_driver.c
+@@ -2106,6 +2106,8 @@ static int uvc_probe(struct usb_interface *intf,
+ 	int function;
+ 	int ret;
+ 
++	pr_info("I changed uvcvideo driver in the Linux Kernel\n");
++
+ 	/* Allocate memory for the device and initialize it. */
+ 	dev = kzalloc(sizeof(*dev), GFP_KERNEL);
+ 	if (dev == NULL)
+-- 
+2.43.0
 
-> Fixes: 16c36f8864e3 ("kbuild: deb-pkg: use build ID instead of debug link=
- for dbg package")
-> Cc: Masahiro Yamada <masahiroy@kernel.org>
-> Cc: linux-kbuild@vger.kernel.org
-> Signed-off-by: Matt Fleming <mfleming@cloudflare.com>
-> ---
->  scripts/package/builddeb | 7 ++++++-
->  1 file changed, 6 insertions(+), 1 deletion(-)
->
-> diff --git a/scripts/package/builddeb b/scripts/package/builddeb
-> index 404587fc71fe..9739b0429337 100755
-> --- a/scripts/package/builddeb
-> +++ b/scripts/package/builddeb
-> @@ -96,6 +96,11 @@ install_linux_image_dbg () {
->
->         # Parse modules.order directly because 'make modules_install' may=
- sign,
->         # compress modules, and then run unneeded depmod.
-> +       modules_file=3Dmodules.order
-> +       if [ ! -s $modules_file ]; then
-> +               modules_file=3D/dev/null
-> +       fi
-
-This leaves a possibility to pick up a stale modules.order
-in incremental builds without 'make clean'.
-
-(1) build with CONFIG_MODULES=3Dy
-(2) disable CONFIG_MODULES
-(3) 'make bindeb-pkg'
-
-
-(3) picks up an unrelated modules.order
-in the previous build (1).
-
-
->         while read -r mod; do
->                 mod=3D"${mod%.o}.ko"
->                 dbg=3D"${pdir}/usr/lib/debug/lib/modules/${KERNELRELEASE}=
-/kernel/${mod}"
-> @@ -105,7 +110,7 @@ install_linux_image_dbg () {
->                 mkdir -p "${dbg%/*}" "${link%/*}"
->                 "${OBJCOPY}" --only-keep-debug "${mod}" "${dbg}"
->                 ln -sf --relative "${dbg}" "${link}"
-> -       done < modules.order
-> +       done < $modules_file
-
-Please enclose this block with CONFIG_MODULES.
-
-if is_enabled CONFIG_MODULES; then
-         while read -r mod; do
-                 ...
-         done < modules.order
-fi
-
-
-
-
-
---=20
-Best Regards
-Masahiro Yamada
 
