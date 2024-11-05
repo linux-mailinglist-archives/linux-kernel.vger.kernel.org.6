@@ -1,100 +1,96 @@
-Return-Path: <linux-kernel+bounces-396530-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396550-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D8949BCE8A
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 15:00:56 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E4319BCECB
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 15:13:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3DA71283764
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 14:00:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 446E21C220FE
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 14:13:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFA211D79BE;
-	Tue,  5 Nov 2024 14:00:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lP7SG5rM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBEF71D90A7;
+	Tue,  5 Nov 2024 14:12:49 +0000 (UTC)
+Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26EC01DA5F;
-	Tue,  5 Nov 2024 14:00:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F06F61D86C7
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 14:12:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730815248; cv=none; b=AMLKnYoPX53qKrsrul1Wvy/fzO2y2Toobpww6BOthTDd3fs/dwlfSXiT8xHv7r5gAA4Z7SjrWWenUpZf7BGG3CaMPkGpU3YPP2TiaU8xMvCwvzLuITmlVctYSAUP9Ef4rcUOTFaOusVgqpZ11aVTW2z2srVoEVCDAGMsBSFdKn8=
+	t=1730815969; cv=none; b=RAqvsx+WaenUsVBcS31IxhzIUwboEkh1LkXFWP5VkoDcAuKORoawoiYQ5XKNeTkc+HqGLHZsZpuTdEWElLFOE1Q2G/iDJ2j36VQeDa3OZ4JfBneAGl6i9GhPULqWZ5oP4Ti5W9eVvtSzFU8JNfsG+UC1XF1BMKAvNH802WMzl1I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730815248; c=relaxed/simple;
-	bh=YCW0XGeSSzzVQLlrqXv/VoQiYY8Ddc0JcOH7fxYi49E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rkZ8yDT7cU6fSk1+Ka95I9qKR+NwfO9vw1tOLWVqsMonR2/H+0X6+RQmMeUFxVRUWQmedy0yuPWFiUpWUgBs8+82z0h+jFoF2bHtjz2kJJzDYc7KOJBdgWYDq3TJiKTXvgYGKsIrmRVX22Eit4cyi23cP2l462OX/lTL9G1owxU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lP7SG5rM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8EEB8C4CECF;
-	Tue,  5 Nov 2024 14:00:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730815247;
-	bh=YCW0XGeSSzzVQLlrqXv/VoQiYY8Ddc0JcOH7fxYi49E=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lP7SG5rMXgGJnNkX17yiqKaryOUIskjfDIuZ5hPwuNKDueqQCa+o+gL7pxZqOK3MM
-	 7GASBJS7IuzqA8TA83KJagYa1Xls0pNNyjaShM47l/zw+q6EFHkZNaMR/q0exi0UCd
-	 AiR3BxaULqXxGj5mU1D9M6JyLbtjeDTeoyROtKFvCbrePzWn3chfMQNcBxCI63kLrs
-	 B4xSDgKFlR4+1UKfNmR5hKrMGlcTJbFXuoGwnREtL0RCFG1wLPlXLZVO4ncnTewkdH
-	 dQ0ue+RTSbYMKDfyiG15cazCLmwCsa7fyZ33XsFsuTjJCOx6CUyT0jxfrxGuJ5gYch
-	 bb5gUvFzuPMOQ==
-Date: Tue, 5 Nov 2024 14:00:43 +0000
-From: Simon Horman <horms@kernel.org>
-To: Rosen Penev <rosenp@gmail.com>
-Cc: netdev@vger.kernel.org, Jian Shen <shenjian15@huawei.com>,
-	Salil Mehta <salil.mehta@huawei.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Jijie Shao <shaojijie@huawei.com>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH net-next] net: hisilicon: hns3: use ethtool string helpers
-Message-ID: <20241105140043.GF4507@kernel.org>
-References: <20241101220023.290926-1-rosenp@gmail.com>
- <20241101220023.290926-2-rosenp@gmail.com>
+	s=arc-20240116; t=1730815969; c=relaxed/simple;
+	bh=BE+ESe3tBxvC7Xu214BQePZUrRg5V2mWVsaXtr4zdsM=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=AqmNlBqMOTykex35jILPC6Fyg3oO1BaV/dWKC2E5i8V9OqMSWFTD73VOXHiyzNPfndhe3bhrmS+N/gCDPwT18svV045KaN1CQDBr9gfDuJs0o32BItsOj5pq/weqVB9/V1jsKR6y1ryLi2WK3OWggaQf86uUO0SIV0TBp4ML8+Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.17])
+	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4XjVfS4Zn5z1ypGd;
+	Tue,  5 Nov 2024 22:12:48 +0800 (CST)
+Received: from kwepemd200012.china.huawei.com (unknown [7.221.188.145])
+	by mail.maildlp.com (Postfix) with ESMTPS id ABACB1A0188;
+	Tue,  5 Nov 2024 22:12:38 +0800 (CST)
+Received: from huawei.com (10.67.175.84) by kwepemd200012.china.huawei.com
+ (7.221.188.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.34; Tue, 5 Nov
+ 2024 22:12:37 +0800
+From: Zicheng Qu <quzicheng@huawei.com>
+To: <harry.wentland@amd.com>, <sunpeng.li@amd.com>,
+	<Rodrigo.Siqueira@amd.com>, <alexander.deucher@amd.com>,
+	<christian.koenig@amd.com>, <Xinhui.Pan@amd.com>, <airlied@gmail.com>,
+	<simona@ffwll.ch>, <Dillon.Varone@amd.com>, <Alvin.Lee2@amd.com>,
+	<nicholas.kazlauskas@amd.com>, <alex.hung@amd.com>,
+	<aurabindo.pillai@amd.com>, <relja.vojvodic@amd.com>,
+	<chiahsuan.chung@amd.com>, <wenjing.liu@amd.com>, <george.shen@amd.com>,
+	<mwen@igalia.com>, <yi-lchen@amd.com>, <martin.leung@amd.com>,
+	<srinivasan.shanmugam@amd.com>, <stylon.wang@amd.com>, <jun.lei@amd.com>,
+	<amd-gfx@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>,
+	<linux-kernel@vger.kernel.org>
+CC: <tanghui20@huawei.com>, <zhangqiao22@huawei.com>,
+	<judy.chenhui@huawei.com>, <quzicheng@huawei.com>
+Subject: [PATCH 0/2] drm/amd/display: Fix Null Pointer Dereference Issues
+Date: Tue, 5 Nov 2024 14:01:35 +0000
+Message-ID: <20241105140137.2465572-1-quzicheng@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241101220023.290926-2-rosenp@gmail.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ kwepemd200012.china.huawei.com (7.221.188.145)
 
-On Fri, Nov 01, 2024 at 03:00:23PM -0700, Rosen Penev wrote:
-> The latter is the preferred way to copy ethtool strings.
-> 
-> Avoids manually incrementing the pointer. Cleans up the code quite well.
-> 
-> Signed-off-by: Rosen Penev <rosenp@gmail.com>
-> Reviewed-by: Jijie Shao <shaojijie@huawei.com>
-> Tested-by: Jijie Shao <shaojijie@huawei.com>
+Hi all,
 
-...
+I am submitting two patches to fix null pointer dereference issues in
+the AMD display driver.
 
-> diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c b/drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c
-> index 97eaeec1952b..b6cc51bfdd33 100644
-> --- a/drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c
-> +++ b/drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c
-> @@ -509,54 +509,38 @@ static int hns3_get_sset_count(struct net_device *netdev, int stringset)
->  	}
->  }
->  
-> -static void *hns3_update_strings(u8 *data, const struct hns3_stats *stats,
-> -		u32 stat_count, u32 num_tqps, const char *prefix)
-> +static void hns3_update_strings(u8 **data, const struct hns3_stats *stats,
-> +				u32 stat_count, u32 num_tqps,
-> +				const char *prefix)
->  {
->  #define MAX_PREFIX_SIZE (6 + 4)
+1. Patch 1/2 (Fixes: 8e4ed3cf1642): Add null checks in
+dcn20_program_pipe() to prevent potential crashes when accessing
+plane_state.
 
-Hi Rosen,
+2. Patch 2/2 (Fixes: 0baae6246307): Ensures pipe_ctx->plane_state is
+checked in hwss_setup_dpp() to improve function stability.
 
-As per Jakub's feedback on v1, can't this #define be removed?
+Thanks for reviewing!
 
-...
+Zicheng Qu (2):
+  drm/amd/display: Fix null check for pipe_ctx->plane_state in
+    dcn20_program_pipe
+  drm/amd/display: Fix null check for pipe_ctx->plane_state in
+    hwss_setup_dpp
+
+ drivers/gpu/drm/amd/display/dc/core/dc_hw_sequencer.c   | 3 +++
+ drivers/gpu/drm/amd/display/dc/hwss/dcn20/dcn20_hwseq.c | 6 +++---
+ 2 files changed, 6 insertions(+), 3 deletions(-)
+
+-- 
+2.34.1
+
 
