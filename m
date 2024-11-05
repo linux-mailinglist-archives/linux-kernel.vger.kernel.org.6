@@ -1,163 +1,235 @@
-Return-Path: <linux-kernel+bounces-395961-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395963-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0572C9BC568
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 07:29:15 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E19D9BC570
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 07:30:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A6B3028319C
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 06:29:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C43C0B2253E
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 06:30:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D3981DB551;
-	Tue,  5 Nov 2024 06:29:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27C731E5731;
+	Tue,  5 Nov 2024 06:30:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b="Obqczcc3"
-Received: from mail-il1-f175.google.com (mail-il1-f175.google.com [209.85.166.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE3121B6D04
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 06:29:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.175
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="NyUW0/Va"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F9BD2A1A4;
+	Tue,  5 Nov 2024 06:30:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730788144; cv=none; b=Zb8F8KJ3jhuI//W1ICSlfqBnJXPoCkU5zN/CAy8TqCCDhKifPp1wMAUmV6gl5V0Ept3ssgc0M7uvNiHYO3nzAYD+Vm8akBJQ89NOOiGKXziHl+hhQh6Rz7IllXhP6Sc2T+7wzlMe61W04PFS8HYLsLRRVj0iIpr9KbLZArI+f9Y=
+	t=1730788232; cv=none; b=nM8pmiGtaPACXrL5VF1RtjGmYJSwXR1RLbfIX11fOvoE4+Ce4c1bD47aqcTWZlLCdhAqXvOnKKnquUXe/AuV49LS+OPVSvCEBeZYsbc2okymQflK91Sbn4RhEG0X3dxgP9YfNToB6TAzn7pLAHtLyQSTfCxAYYBhtJ3xU/7ILGw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730788144; c=relaxed/simple;
-	bh=gphFqUwd5XcEMAtlB2DmqPCpk350pTAPdtC6c4/+uSE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=P0N2VC+xzYrhqwhe4WFk/IB0MdP1O3jNbINaDFhbj0hezCuL3xFRPrsd8qJvv6LDaI/u1TrzA0J5tj3ingmcz+e6ItAxRnCZ41f6e4vWiHHxOMhw7QuqFDbrM5V3D9uI48V48rGlJAe14SJv0S3ZTrbkzYrqUdRBz2n5LYzJcf4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org; spf=none smtp.mailfrom=brainfault.org; dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b=Obqczcc3; arc=none smtp.client-ip=209.85.166.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=brainfault.org
-Received: by mail-il1-f175.google.com with SMTP id e9e14a558f8ab-3a4e5e57678so19761565ab.1
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 22:29:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brainfault-org.20230601.gappssmtp.com; s=20230601; t=1730788142; x=1731392942; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JQtOen+NbViJr+rRV0Q5OmCOzg2wep+9ZhzpypOP/Zc=;
-        b=Obqczcc3obmDzlw0OU759kdMK5+h9ATS3+Ojo00RQQxYlb/qJvQ8ofYMxvZKEhpxpe
-         TKVKkoKmqzA6GqxzLk0u8Z1/Feh+kzInTGw7YThz9QTduTh8phbusWNpqs2AbAWfjJzs
-         Bl8yIBqy9MnWeO3rc/prH3Kz1SpkK1M6UtssCMtc0tajCLk68BtzvUOyTrXg5+KfMZ7F
-         FEWueOfkW+Ihv5yuX5l9Umptm3ZxhZK5qBnoVdEgSXTaWx9Yl/6bafejavKGUnLb1ovC
-         xJUXzXgcjPk1zE+31uKBvLzFawDelIa++q4TDJDHKHVbcXg6TXP7btr3h6FI9n6g2k9A
-         QDSw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730788142; x=1731392942;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JQtOen+NbViJr+rRV0Q5OmCOzg2wep+9ZhzpypOP/Zc=;
-        b=buD1TDckLs+HPnXxqMIymRTRyNWHUx74FQIQhvCY4iH++4Pkq7wtzQYAhSohmhLHVX
-         goKpE1GqRy4M0FE9iDX5tvnuYsKKhu0im9RQMFoQQgYmNWxtoCW4SbECUMzH0XCPsHaA
-         /iYZozeAHo0I6I86+rnU8uNLiLTWd3M7544roRk4GqpD/HantThszpSoqr5YSwXFgpgi
-         mh8N6ps1FMZYS5NJEkelvgri2plIY+0NqN0q2kXRbI5KAQuFFuYOB8K0bpBMOM03SDfr
-         KC3qm5/YZF2vldnK7KKkEAQ2s8RNdrKj9p8Z4uI5fXFMikoBj++GCAdnuFYLUq2PT/yJ
-         EI5A==
-X-Forwarded-Encrypted: i=1; AJvYcCWJBHYXlhFyEJM/U9Bw0C7J9OA5bKgj2OISgnY+ZiOxgu6NpV84zHdgEuEOhaMs6QcE+eMKnNaYWD+CQCY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzNddJ94bvBPDk+MSExdHe6fTyuWkr9NLnsQDA4LHbPULq986G0
-	BCzi39cMwXEWG3ZJyMRu2CvedXuBZY4YcqQw4NEZbltDpzoeL6GKHoAM1MCb8TxrIfCXP+KURF2
-	wTlUv4L+GelxrmqpxiMmCvgMPfa0ZT5QMoWhd/w==
-X-Google-Smtp-Source: AGHT+IHHjcyYFeTdVr47ib7/5t83JULMux12GPFjUaiweiWwMJfEa28WXKusTfsFvdHf6JwmvF7uMFZhMwNn7TEdrTo=
-X-Received: by 2002:a05:6e02:111:b0:3a3:637f:1012 with SMTP id
- e9e14a558f8ab-3a6aff71b31mr120478795ab.12.1730788141919; Mon, 04 Nov 2024
- 22:29:01 -0800 (PST)
+	s=arc-20240116; t=1730788232; c=relaxed/simple;
+	bh=kjbESFFWG4BDe9MOncRwl06BAfbr906Lw3teZlqXl3s=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=qvV4sRZLTnInnTnAYn8CtcgzOM2M4ymzB4ZueQW/dB+4xniIR3o1tF1xuXVaKQiEd5MtxOJl8ip3pNsgecCA+NJRfRavwTkpNcIIBAZN6em/bvf6zhA5WZodJP5M4y5U563UUTh45KKAAB7c5F/aq2goNklc1uN3dbavCF9k4xI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=NyUW0/Va; arc=none smtp.client-ip=117.135.210.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=D9tVf
+	W7C3vZfeOWSUmemUKmWuGxkufuqBcJukZRo+L0=; b=NyUW0/VaMYhK45P6ucsOU
+	Rhynz7Wo9h/vxa+F+/dwarL/AWxvBuRJtpm+M72fSVTjItdgo8n9syfyQBO4/kjE
+	46wux9z56hP9DGfFTjOW5oIBLQoHRzW8B+jOJeWizoxp+Bfkc/sQOVtURPNhOM7l
+	+YCKIxbAT/Tk8ifnNywpmQ=
+Received: from localhost.localdomain (unknown [111.48.69.246])
+	by gzsmtp4 (Coremail) with SMTP id PygvCgDXNVpluylnIOXNCQ--.54265S2;
+	Tue, 05 Nov 2024 14:29:57 +0800 (CST)
+From: zhouyuhang <zhouyuhang1010@163.com>
+To: brauner@kernel.org,
+	shuah@kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	zhouyuhang <zhouyuhang@kylinos.cn>
+Subject: [PATCH v4] selftests: clone3: Use the capget and capset syscall directly
+Date: Tue,  5 Nov 2024 14:29:48 +0800
+Message-Id: <20241105062948.1037011-1-zhouyuhang1010@163.com>
+X-Mailer: git-send-email 2.27.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241104191503.74725-1-bjorn@kernel.org>
-In-Reply-To: <20241104191503.74725-1-bjorn@kernel.org>
-From: Anup Patel <anup@brainfault.org>
-Date: Tue, 5 Nov 2024 11:58:51 +0530
-Message-ID: <CAAhSdy1Z93TyYrFCYw+qOHh05q0FaEPRJ=ZHf4UztUEKXuphYg@mail.gmail.com>
-Subject: Re: [PATCH] riscv: kvm: Fix out-of-bounds array access
-To: =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@kernel.org>
-Cc: Atish Patra <atishp@atishpatra.org>, kvm@vger.kernel.org, 
-	kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org, 
-	=?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@rivosinc.com>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:PygvCgDXNVpluylnIOXNCQ--.54265S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxKw4ftw1fur4DGFWUCF1fXrb_yoWxAry7pa
+	1kZr45Krs0gw1xJFWFywnruF10yFyrZr17Jw1UAw1fCr1akrs7tr4Sk3Wjq3Wj9a9xZwn8
+	XF1jkan7ZF9rAFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07juFALUUUUU=
+X-CM-SenderInfo: 52kr35xxkd0warqriqqrwthudrp/1tbiLxaOJmcpsknGWwAAs5
 
-On Tue, Nov 5, 2024 at 12:45=E2=80=AFAM Bj=C3=B6rn T=C3=B6pel <bjorn@kernel=
-.org> wrote:
->
-> From: Bj=C3=B6rn T=C3=B6pel <bjorn@rivosinc.com>
->
-> In kvm_riscv_vcpu_sbi_init() the entry->ext_idx can contain an
-> out-of-bound index. This is used as a special marker for the base
-> extensions, that cannot be disabled. However, when traversing the
-> extensions, that special marker is not checked prior indexing the
-> array.
->
-> Add an out-of-bounds check to the function.
->
-> Fixes: 56d8a385b605 ("RISC-V: KVM: Allow some SBI extensions to be disabl=
-ed by default")
-> Signed-off-by: Bj=C3=B6rn T=C3=B6pel <bjorn@rivosinc.com>
-> ---
-> Don't know if it matters, but I hit this when trying kvmtool.
+From: zhouyuhang <zhouyuhang@kylinos.cn>
 
-Looks like this went unnoticed. Thanks for catching.
+The libcap commit aca076443591 ("Make cap_t operations thread safe.")
+added a __u8 mutex at the beginning of the struct _cap_struct, it changes
+the offset of the members in the structure that breaks the assumption
+made in the "struct libcap" definition in clone3_cap_checkpoint_restore.c.
+This causes the call to cap_set_proc here to fail with error code EPERM,
+and the output is as follows:
 
-Reviewed-by: Anup Patel <anup@brainfault.org>
+ #  RUN           global.clone3_cap_checkpoint_restore ...
+ # clone3() syscall supported
+ # clone3_cap_checkpoint_restore.c:151:clone3_cap_checkpoint_restore:Child has PID 130508
+ cap_set_proc: Operation not permitted
+ # clone3_cap_checkpoint_restore.c:160:clone3_cap_checkpoint_restore:Expected set_capability() (-1) == 0 (0)
+ # clone3_cap_checkpoint_restore.c:161:clone3_cap_checkpoint_restore:Could not set CAP_CHECKPOINT_RESTORE
+ # clone3_cap_checkpoint_restore: Test terminated by assertion
+ #          FAIL  global.clone3_cap_checkpoint_restore
 
-Queued this patch for Linux-6.13.
+Changing to using capget and capset syscall directly here can fix this error,
+just like what the commit 663af70aabb7 ("bpf: selftests: Add helpers to directly
+use the capget and capset syscall") does.
+The output is as follows:
 
-Thanks,
-Anup
+ #  RUN           global.clone3_cap_checkpoint_restore ...
+ # clone3() syscall supported
+ # clone3_cap_checkpoint_restore.c:160:clone3_cap_checkpoint_restore:Child has PID 23708
+ # clone3_cap_checkpoint_restore.c:91:clone3_cap_checkpoint_restore:[23707] Trying clone3() with CLONE_SET_TID to 23708
+ # clone3_cap_checkpoint_restore.c:58:clone3_cap_checkpoint_restore:Operation not permitted - Failed to create new process
+ # clone3_cap_checkpoint_restore.c:93:clone3_cap_checkpoint_restore:[23707] clone3() with CLONE_SET_TID 23708 says:-1
+ # clone3_cap_checkpoint_restore.c:91:clone3_cap_checkpoint_restore:[23707] Trying clone3() with CLONE_SET_TID to 23708
+ # clone3_cap_checkpoint_restore.c:73:clone3_cap_checkpoint_restore:I am the parent (23707). My child's pid is 23708
+ # clone3_cap_checkpoint_restore.c:66:clone3_cap_checkpoint_restore:I am the child, my PID is 23708 (expected 23708)
+ # clone3_cap_checkpoint_restore.c:93:clone3_cap_checkpoint_restore:[23707] clone3() with CLONE_SET_TID 23708 says:0
+ #            OK  global.clone3_cap_checkpoint_restore
+ ok 1 global.clone3_cap_checkpoint_restore
+ # PASSED: 1 / 1 tests passed.
 
->
->
-> Bj=C3=B6rn
-> ---
-> arch/riscv/kvm/vcpu_sbi.c | 11 +++++++----
->  1 file changed, 7 insertions(+), 4 deletions(-)
->
-> diff --git a/arch/riscv/kvm/vcpu_sbi.c b/arch/riscv/kvm/vcpu_sbi.c
-> index 7de128be8db9..6e704ed86a83 100644
-> --- a/arch/riscv/kvm/vcpu_sbi.c
-> +++ b/arch/riscv/kvm/vcpu_sbi.c
-> @@ -486,19 +486,22 @@ void kvm_riscv_vcpu_sbi_init(struct kvm_vcpu *vcpu)
->         struct kvm_vcpu_sbi_context *scontext =3D &vcpu->arch.sbi_context=
-;
->         const struct kvm_riscv_sbi_extension_entry *entry;
->         const struct kvm_vcpu_sbi_extension *ext;
-> -       int i;
-> +       int idx, i;
->
->         for (i =3D 0; i < ARRAY_SIZE(sbi_ext); i++) {
->                 entry =3D &sbi_ext[i];
->                 ext =3D entry->ext_ptr;
-> +               idx =3D entry->ext_idx;
-> +
-> +               if (idx < 0 || idx >=3D ARRAY_SIZE(scontext->ext_status))
-> +                       continue;
->
->                 if (ext->probe && !ext->probe(vcpu)) {
-> -                       scontext->ext_status[entry->ext_idx] =3D
-> -                               KVM_RISCV_SBI_EXT_STATUS_UNAVAILABLE;
-> +                       scontext->ext_status[idx] =3D KVM_RISCV_SBI_EXT_S=
-TATUS_UNAVAILABLE;
->                         continue;
->                 }
->
-> -               scontext->ext_status[entry->ext_idx] =3D ext->default_dis=
-abled ?
-> +               scontext->ext_status[idx] =3D ext->default_disabled ?
->                                         KVM_RISCV_SBI_EXT_STATUS_DISABLED=
- :
->                                         KVM_RISCV_SBI_EXT_STATUS_ENABLED;
->         }
->
-> base-commit: 59b723cd2adbac2a34fc8e12c74ae26ae45bf230
-> --
-> 2.43.0
->
+Signed-off-by: zhouyuhang <zhouyuhang@kylinos.cn>
+---
+v4:
+	* Add some comments and modify the output and return value when set_capability fails
+v3:
+	* Remove locally declared system calls and retained the - lcap in the Makefile.
+v2:
+	* Move locally declared system calls to header file.
+v1:
+	* Directly using capget and capset and declare them locally.
+---
+ .../clone3/clone3_cap_checkpoint_restore.c    | 77 +++++++++++--------
+ 1 file changed, 43 insertions(+), 34 deletions(-)
+
+diff --git a/tools/testing/selftests/clone3/clone3_cap_checkpoint_restore.c b/tools/testing/selftests/clone3/clone3_cap_checkpoint_restore.c
+index 3c196fa86c99..076f9d4cce60 100644
+--- a/tools/testing/selftests/clone3/clone3_cap_checkpoint_restore.c
++++ b/tools/testing/selftests/clone3/clone3_cap_checkpoint_restore.c
+@@ -27,6 +27,13 @@
+ #include "../kselftest_harness.h"
+ #include "clone3_selftests.h"
+ 
++/*
++ * Prevent not being defined in the header file
++ */
++#ifndef CAP_CHECKPOINT_RESTORE
++#define CAP_CHECKPOINT_RESTORE 40
++#endif
++
+ static void child_exit(int ret)
+ {
+ 	fflush(stdout);
+@@ -87,47 +94,49 @@ static int test_clone3_set_tid(struct __test_metadata *_metadata,
+ 	return ret;
+ }
+ 
+-struct libcap {
+-	struct __user_cap_header_struct hdr;
++static int set_capability(struct __test_metadata *_metadata)
++{
+ 	struct __user_cap_data_struct data[2];
+-};
+ 
+-static int set_capability(void)
+-{
+-	cap_value_t cap_values[] = { CAP_SETUID, CAP_SETGID };
+-	struct libcap *cap;
+-	int ret = -1;
+-	cap_t caps;
+-
+-	caps = cap_get_proc();
+-	if (!caps) {
+-		perror("cap_get_proc");
+-		return -1;
+-	}
++	/*
++	 * Only _LINUX_CAPABILITY_VERSION_3 can be used here.
++	 * _LINUX_CAPABILITY_VERSION_1 represents use 32-bit capabilities,
++	 * using it will cause CAP_CHECKPOINT_RESTORE to not be set.
++	 * _LINUX_CAPABILITY_VERSION_2 has already been deprecated.
++	 */
++	struct __user_cap_header_struct hdr = {
++		.version = _LINUX_CAPABILITY_VERSION_3,
++	};
+ 
+-	/* Drop all capabilities */
+-	if (cap_clear(caps)) {
+-		perror("cap_clear");
+-		goto out;
++	/*
++	 * CAP_CHECKPOINT_RESTORE is greater than 31, so we need two u32.
++	 * cap0 is the lower 32bit and cap1 is the higher 32bit, they will
++	 * be combined into a u64 in mk_kernel_cap.
++	 */
++	__u32 cap0 = 1 << CAP_SETUID | 1 << CAP_SETGID;
++	__u32 cap1 = 1 << (CAP_CHECKPOINT_RESTORE - 32);
++	int ret;
++
++	ret = capget(&hdr, data);
++	if (ret) {
++		TH_LOG("%s - Failed to get capability", strerror(errno));
++		return -errno;
+ 	}
+ 
+-	cap_set_flag(caps, CAP_EFFECTIVE, 2, cap_values, CAP_SET);
+-	cap_set_flag(caps, CAP_PERMITTED, 2, cap_values, CAP_SET);
++	/* Drop all capabilities */
++	memset(&data, 0, sizeof(data));
+ 
+-	cap = (struct libcap *) caps;
++	data[0].effective |= cap0;
++	data[0].permitted |= cap0;
+ 
+-	/* 40 -> CAP_CHECKPOINT_RESTORE */
+-	cap->data[1].effective |= 1 << (40 - 32);
+-	cap->data[1].permitted |= 1 << (40 - 32);
++	data[1].effective |= cap1;
++	data[1].permitted |= cap1;
+ 
+-	if (cap_set_proc(caps)) {
+-		perror("cap_set_proc");
+-		goto out;
++	ret = capset(&hdr, data);
++	if (ret) {
++		TH_LOG("%s - Failed to set capability", strerror(errno));
++		return -errno;
+ 	}
+-	ret = 0;
+-out:
+-	if (cap_free(caps))
+-		perror("cap_free");
+ 	return ret;
+ }
+ 
+@@ -157,7 +166,7 @@ TEST(clone3_cap_checkpoint_restore)
+ 	/* After the child has finished, its PID should be free. */
+ 	set_tid[0] = pid;
+ 
+-	ASSERT_EQ(set_capability(), 0)
++	ASSERT_EQ(set_capability(_metadata), 0)
+ 		TH_LOG("Could not set CAP_CHECKPOINT_RESTORE");
+ 
+ 	ASSERT_EQ(prctl(PR_SET_KEEPCAPS, 1, 0, 0, 0), 0);
+@@ -169,7 +178,7 @@ TEST(clone3_cap_checkpoint_restore)
+ 	set_tid[0] = pid;
+ 	/* This would fail without CAP_CHECKPOINT_RESTORE */
+ 	ASSERT_EQ(test_clone3_set_tid(_metadata, set_tid, 1), -EPERM);
+-	ASSERT_EQ(set_capability(), 0)
++	ASSERT_EQ(set_capability(_metadata), 0)
+ 		TH_LOG("Could not set CAP_CHECKPOINT_RESTORE");
+ 	/* This should work as we have CAP_CHECKPOINT_RESTORE as non-root */
+ 	ASSERT_EQ(test_clone3_set_tid(_metadata, set_tid, 1), 0);
+-- 
+2.27.0
+
 
