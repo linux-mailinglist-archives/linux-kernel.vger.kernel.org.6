@@ -1,121 +1,182 @@
-Return-Path: <linux-kernel+bounces-395730-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395731-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECA749BC22C
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 01:48:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B2459BC22F
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 01:49:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 80BB8B21EB0
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 00:48:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 340B41F2281B
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 00:49:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 139A22AEF1;
-	Tue,  5 Nov 2024 00:48:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88D14179BD;
+	Tue,  5 Nov 2024 00:49:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VZ3vKAAD"
-Received: from mail-oi1-f171.google.com (mail-oi1-f171.google.com [209.85.167.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JAtNlfRE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0945E2868B;
-	Tue,  5 Nov 2024 00:48:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D11FDB667;
+	Tue,  5 Nov 2024 00:49:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730767689; cv=none; b=KOuFpVZxARSMaEBBcLuWySUhjHpXY0qSZNvGSOWcfiV5x0WjxjCv1JSaLbJ+fmRh599Qd6pQdxRWcz2Z1smZL5lhRv85qyrrcFQdZbIMAk+A+yTbeexOnR6x8xr8hPj3AeD1SbD4Atq8A9EwuL/aLcAe3AjHnfeLC0HzINQahf8=
+	t=1730767761; cv=none; b=GGU4f60FodvECfPHNIP+rSdNNYxd21GtykjeEbDf/5f6KyGQBcS2xLiB3bZnUvY+czvWgZn6zeCc8Vv77hha4pVFJRnQynp41qlCekmHSSX1Uj6vwpKtms2VHZmnadt11rGTsml5ganT68vzl216qiH0lzCvV0JYlGesobOUwAY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730767689; c=relaxed/simple;
-	bh=q/I54BCN7FOH7agzrRrVPUjzTgm2RIcPaI9LKCRWP5s=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=oIoexRzJrjcUFQLWbgGyxzZFOA8cCJQXb5FwThc8r7GyuoIZ30zFrYqMbPwPoo1uXcFGCHFv3wz63vvhJgcb6zx3JanxSQyEXvREG3C+vVRE2H7shMs6x4b7Hmn7sBxdb9xVpsU8HZh2mjRwV5+neti1iT6qe8ABaYwmXldgvKk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VZ3vKAAD; arc=none smtp.client-ip=209.85.167.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f171.google.com with SMTP id 5614622812f47-3e6105886dfso2877820b6e.0;
-        Mon, 04 Nov 2024 16:48:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730767687; x=1731372487; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VMFHpngG6qydjgLEjOI9ZIqyN4Q1VIumJ5ShzygmB4U=;
-        b=VZ3vKAAD765AiJ84voIM9I34CoRng2kOuU/a7qA+xdwkoseGa4lQMo5zJH98TpnYRd
-         0YQA1TD4oHjSKCNCM0LWdMy2zPGg+XvMzKcsk6xHM2S0R2aIKhtkkoDrNOabj6Il8Cjw
-         CJ1Qebxt/AHnd3c5V00A++dz/3nKkoHvAHyuED2MtCnhFcILzSS3jRq5Ux+rH7WruDy/
-         4mrBoYC9QzKhLc7chN57doBpUUrb2bBYjaLcbIKLaBsJX1hhqziC6grHXCMGpiiADCGv
-         IEQ5YfFgOVgIS3G4IRd8+6DA3VsHpTCpTuIIqz9PJS/PeJZXaZDhN2B2Gd5two/pNy1C
-         fHEw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730767687; x=1731372487;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VMFHpngG6qydjgLEjOI9ZIqyN4Q1VIumJ5ShzygmB4U=;
-        b=Y0FagJQYd6mLIl1NtR3yNCJ111JkLuOdl1Nn2Q5FqjP7W2IBcpaMflBmKRYS02UyOx
-         wQ7zv8YuVUHB3E1jDBxxtCh2hoI0dcgAL9KOlxiMyAxVhO8PXNKMNUQlbp8OfKvGleKq
-         mYk8AntotNv/n36cqWxfOuXqiMwj8KO4rJUFVZrT7t4ndzNHimBEL/QNC1cNMa5wvCuG
-         Oyaz1Nc1SMa/4HrHH6rHrIoOlnvbV7Bo0Uj7U5ATMai0uyg2p/kFo6WdcqFVMXfv8EDW
-         TEMCQwn9kmwKesTEXEi7UgGRSD/qtDl2okpoLEXI+BiOvHoHFSRieO0YRPAhW0yO/l8A
-         402g==
-X-Forwarded-Encrypted: i=1; AJvYcCU5YQ9G0292M3Y5Php7JvpZ5yTK8/lMCKAUUtsnjvMC9dWH3R+Ysi9sT8oGKz/DCxs7w4N3NAuwvab7cuqC3fLwrQ==@vger.kernel.org, AJvYcCXwAuTM3HQXyZUYSGoIztnTHAhqDDkFwgz81Mz89/yxkseOuzxDG6A0RFt0KZ6d+D1C0xUSlI63d8k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzIEGQM++r3HTaY2BF2Bs+VW8dnHG+bB8bDf+SiIXwavZteTAV9
-	ZIpFhttZxIj19/l9CmdHYX4lENUmof0TFcP0fyNSaU1NItbkeOfT
-X-Google-Smtp-Source: AGHT+IF1k9cPVBQXV2vIuKk4ABDveD4Y3gCJ2K5GjcYjMlhsmx2nEJJBH4u+5VDn0/ag7gkTr223CA==
-X-Received: by 2002:a05:6808:1892:b0:3e6:59b1:8acd with SMTP id 5614622812f47-3e74c3d97f6mr7729940b6e.15.1730767687024;
-        Mon, 04 Nov 2024 16:48:07 -0800 (PST)
-Received: from anishs-Air.attlocal.net ([2600:1700:3bdc:8c10:d414:4f86:7740:65e1])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-3e661190d07sm2317994b6e.11.2024.11.04.16.48.03
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Mon, 04 Nov 2024 16:48:05 -0800 (PST)
-From: anish kumar <yesanishhere@gmail.com>
-To: andersson@kernel.org,
-	mathieu.poirier@linaro.org,
-	corbet@lwn.net
-Cc: linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-remoteproc@vger.kernel.org,
-	anish kumar <yesanishhere@gmail.com>
-Subject: [PATCH 3/3] Documentation: remoteproc: add a note to rproc_add
-Date: Mon,  4 Nov 2024 16:47:49 -0800
-Message-Id: <20241105004749.83424-4-yesanishhere@gmail.com>
-X-Mailer: git-send-email 2.39.3 (Apple Git-146)
-In-Reply-To: <20241105004749.83424-1-yesanishhere@gmail.com>
-References: <20241105004749.83424-1-yesanishhere@gmail.com>
+	s=arc-20240116; t=1730767761; c=relaxed/simple;
+	bh=WIqZTsHOsvR2cFhpx5SuKyMp6tJGa9n+Huix9B8qTm0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=g8fPg0msWUISmTdmlq0ZoToOvwFszC7/lfs4j7r5VFHWKYhZEweaURgs3mHL/8s3O/zxCZAakq+i7RTZ3/9OzmXu/H3lAESoSH+jCtApM1Rhczj35Ti5/Tg3CBKUCXzjQFdHxLo3iNBefD8PPWu0kz2dLBy8LpY2AWSu6MKsXQs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JAtNlfRE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F15FC4CECE;
+	Tue,  5 Nov 2024 00:49:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730767761;
+	bh=WIqZTsHOsvR2cFhpx5SuKyMp6tJGa9n+Huix9B8qTm0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JAtNlfREYYQHlbtaxoOJUWP8Iq2IDfDC22EX7yDKjiMQf2n4lIjBPR3ZlEibVlNaB
+	 GYzNgLSVCk7/gCV1ar8+cIUQtZE6fqr4uU2h3e6XLKPXBXfT1dqWhM9Qv4vLq/bZNB
+	 RbOzzk91S+Ibel9U9LiZD3bbRAZTcVBWrGI8eVt/5DO3zEnNDo0sn1/y2Fa2JplG1G
+	 IEI9N8vHGcoyz+nFGpZSMwixFPy8CoaCAoOwwu/UFa+N04vXZM4qIGsCXpRtaK8y5G
+	 40iy0u7zMTCncyv7ik6mta9XvtWRwewhy+LakW/BCLfqloo3VhBupJfGw8ao+JJTIC
+	 aQRUutQDlbEZQ==
+Date: Tue, 5 Nov 2024 08:49:12 +0800
+From: Peter Chen <peter.chen@kernel.org>
+To: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
+	Chunfeng Yun <chunfeng.yun@mediatek.com>, linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH] usb: Use (of|device)_property_present() for non-boolean
+ properties
+Message-ID: <20241105004912.GA125226@nchen-desktop>
+References: <20241104190820.277702-1-robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241104190820.277702-1-robh@kernel.org>
 
-Added a note to the rproc_add description regarding
-the availability of the resource-managed variant of the API.
+On 24-11-04 13:08:18, Rob Herring (Arm) wrote:
+> The use of (of|device)_property_read_bool() for non-boolean properties
+> is deprecated in favor of of_property_present() when testing for
+> property presence.
+> 
+> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+> ---
+>  drivers/usb/chipidea/core.c        | 2 +-
+>  drivers/usb/dwc3/core.c            | 2 +-
+>  drivers/usb/dwc3/dwc3-omap.c       | 2 +-
+>  drivers/usb/dwc3/dwc3-qcom.c       | 2 +-
+>  drivers/usb/mtu3/mtu3_plat.c       | 2 +-
+>  drivers/usb/phy/phy.c              | 2 +-
+>  drivers/usb/renesas_usbhs/common.c | 2 +-
+>  7 files changed, 7 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/usb/chipidea/core.c b/drivers/usb/chipidea/core.c
+> index 835bf2428dc6..18ecfcc08b97 100644
+> --- a/drivers/usb/chipidea/core.c
+> +++ b/drivers/usb/chipidea/core.c
+> @@ -765,7 +765,7 @@ static int ci_get_platdata(struct device *dev,
+>  
+>  	ext_id = ERR_PTR(-ENODEV);
+>  	ext_vbus = ERR_PTR(-ENODEV);
+> -	if (of_property_read_bool(dev->of_node, "extcon")) {
+> +	if (of_property_present(dev->of_node, "extcon")) {
+>  		/* Each one of them is not mandatory */
+>  		ext_vbus = extcon_get_edev_by_phandle(dev, 0);
+>  		if (IS_ERR(ext_vbus) && PTR_ERR(ext_vbus) != -ENODEV)
+> diff --git a/drivers/usb/dwc3/core.c b/drivers/usb/dwc3/core.c
+> index 9eb085f359ce..e1beb760e913 100644
+> --- a/drivers/usb/dwc3/core.c
+> +++ b/drivers/usb/dwc3/core.c
+> @@ -1935,7 +1935,7 @@ static struct extcon_dev *dwc3_get_extcon(struct dwc3 *dwc)
+>  	struct extcon_dev *edev = NULL;
+>  	const char *name;
+>  
+> -	if (device_property_read_bool(dev, "extcon"))
+> +	if (device_property_present(dev, "extcon"))
+>  		return extcon_get_edev_by_phandle(dev, 0);
+>  
+>  	/*
+> diff --git a/drivers/usb/dwc3/dwc3-omap.c b/drivers/usb/dwc3/dwc3-omap.c
+> index 2a11fc0ee84f..c2d7582c151a 100644
+> --- a/drivers/usb/dwc3/dwc3-omap.c
+> +++ b/drivers/usb/dwc3/dwc3-omap.c
+> @@ -416,7 +416,7 @@ static int dwc3_omap_extcon_register(struct dwc3_omap *omap)
+>  	struct device_node	*node = omap->dev->of_node;
+>  	struct extcon_dev	*edev;
+>  
+> -	if (of_property_read_bool(node, "extcon")) {
+> +	if (of_property_present(node, "extcon")) {
+>  		edev = extcon_get_edev_by_phandle(omap->dev, 0);
+>  		if (IS_ERR(edev)) {
+>  			dev_vdbg(omap->dev, "couldn't get extcon device\n");
+> diff --git a/drivers/usb/dwc3/dwc3-qcom.c b/drivers/usb/dwc3/dwc3-qcom.c
+> index c1d4b52f25b0..649166e2a8b8 100644
+> --- a/drivers/usb/dwc3/dwc3-qcom.c
+> +++ b/drivers/usb/dwc3/dwc3-qcom.c
+> @@ -161,7 +161,7 @@ static int dwc3_qcom_register_extcon(struct dwc3_qcom *qcom)
+>  	struct extcon_dev	*host_edev;
+>  	int			ret;
+>  
+> -	if (!of_property_read_bool(dev->of_node, "extcon"))
+> +	if (!of_property_present(dev->of_node, "extcon"))
+>  		return 0;
+>  
+>  	qcom->edev = extcon_get_edev_by_phandle(dev, 0);
+> diff --git a/drivers/usb/mtu3/mtu3_plat.c b/drivers/usb/mtu3/mtu3_plat.c
+> index 6858ed9fc3b2..2380552025e4 100644
+> --- a/drivers/usb/mtu3/mtu3_plat.c
+> +++ b/drivers/usb/mtu3/mtu3_plat.c
+> @@ -307,7 +307,7 @@ static int get_ssusb_rscs(struct platform_device *pdev, struct ssusb_mtk *ssusb)
+>  	if (otg_sx->role_sw_used || otg_sx->manual_drd_enabled)
+>  		goto out;
+>  
+> -	if (of_property_read_bool(node, "extcon")) {
+> +	if (of_property_present(node, "extcon")) {
+>  		otg_sx->edev = extcon_get_edev_by_phandle(ssusb->dev, 0);
+>  		if (IS_ERR(otg_sx->edev)) {
+>  			return dev_err_probe(dev, PTR_ERR(otg_sx->edev),
+> diff --git a/drivers/usb/phy/phy.c b/drivers/usb/phy/phy.c
+> index 06e0fb23566c..130f86a043ad 100644
+> --- a/drivers/usb/phy/phy.c
+> +++ b/drivers/usb/phy/phy.c
+> @@ -365,7 +365,7 @@ static int usb_add_extcon(struct usb_phy *x)
+>  {
+>  	int ret;
+>  
+> -	if (of_property_read_bool(x->dev->of_node, "extcon")) {
+> +	if (of_property_present(x->dev->of_node, "extcon")) {
+>  		x->edev = extcon_get_edev_by_phandle(x->dev, 0);
+>  		if (IS_ERR(x->edev))
+>  			return PTR_ERR(x->edev);
+> diff --git a/drivers/usb/renesas_usbhs/common.c b/drivers/usb/renesas_usbhs/common.c
+> index edc43f169d49..e4adfe692164 100644
+> --- a/drivers/usb/renesas_usbhs/common.c
+> +++ b/drivers/usb/renesas_usbhs/common.c
+> @@ -632,7 +632,7 @@ static int usbhs_probe(struct platform_device *pdev)
+>  	if (IS_ERR(priv->base))
+>  		return PTR_ERR(priv->base);
+>  
+> -	if (of_property_read_bool(dev_of_node(dev), "extcon")) {
+> +	if (of_property_present(dev_of_node(dev), "extcon")) {
+>  		priv->edev = extcon_get_edev_by_phandle(dev, 0);
+>  		if (IS_ERR(priv->edev))
+>  			return PTR_ERR(priv->edev);
+> -- 
+> 2.45.2
+> 
 
-Signed-off-by: anish kumar <yesanishhere@gmail.com>
----
- Documentation/staging/remoteproc.rst | 8 ++++++++
- 1 file changed, 8 insertions(+)
+For chipidea part:
 
-diff --git a/Documentation/staging/remoteproc.rst b/Documentation/staging/remoteproc.rst
-index e0bf68ceade8..658ef7a28dd2 100644
---- a/Documentation/staging/remoteproc.rst
-+++ b/Documentation/staging/remoteproc.rst
-@@ -223,6 +223,14 @@ If found, those virtio devices will be created and added, so as a result
- of registering this remote processor, additional virtio drivers might get
- probed.
- 
-+.. note::
-+
-+  there is a resource managed version of this api called devm_rproc_add.
-+  Most of the times, you should use that unless you need to explicitly
-+  control the rproc registration with the core. If you are using devm
-+  variant of this api, then rproc_del will automatically get called when
-+  driver is unloaded.
-+
- ::
- 
-   int rproc_del(struct rproc *rproc)
--- 
-2.39.3 (Apple Git-146)
+Acked-by: Peter Chen <peter.chen@kernel.org>
 
+Peter
 
