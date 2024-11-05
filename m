@@ -1,341 +1,211 @@
-Return-Path: <linux-kernel+bounces-396215-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396216-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 816849BC96E
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 10:38:43 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15B2B9BC971
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 10:39:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D069282945
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 09:38:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA3492823B2
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 09:39:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58D351D014E;
-	Tue,  5 Nov 2024 09:38:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66F1D1D0E26;
+	Tue,  5 Nov 2024 09:38:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u08gASRa"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="J5WwjnbI"
+Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11013004.outbound.protection.outlook.com [52.101.67.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F78B1CEAA0;
-	Tue,  5 Nov 2024 09:38:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730799515; cv=none; b=mxN2HI3JytJ8nehIzsRV9QbC9loaKb5W/b07BpVfrr6pQAN7kV38K2V2wDmZ5Z67WkjXB5LzXf7/zWOefsr6JNrrrQUyZY74fFP080lut241/W/sfIuIsK2S1eUZUTHUwCJo4mKzvPaGeFHy4k8c3605W3evQw1xn4hSqcNGp9k=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730799515; c=relaxed/simple;
-	bh=fDEL/N20Y3umuzye8IqIHpB66G3yZ2uEyV6rkwYaOdI=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=Viayqo5SxFaFlkM/o+ZKrRrpFlklPxraA/wNS/vsz9UtkUFlMdoKqYMG4bly7UGwt27TCtIR2CuZMVLSHfldYg+o8peQ6dFBnSzEP6BybuaX+dFjl4gdb+6QtwfHL9cMiYaUAywPoNEYKq2ZQ42RGYF5TZybmHlkXAECJuYC9Qs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u08gASRa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78EBAC4CED0;
-	Tue,  5 Nov 2024 09:38:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730799514;
-	bh=fDEL/N20Y3umuzye8IqIHpB66G3yZ2uEyV6rkwYaOdI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=u08gASRaKMDZlBGs3GDZaXMZIdYw4nE4aLrBzZFvYsvOvLPWuC9Ns2Wx297BGjsOO
-	 W2OZXd6siGHsa/0XZVxcH0jBPET9yUooo6kHtfUKspmGD6Ea7MVRyDKm7xxuJVt5CR
-	 n158z1uTPBPitswnTQtr3IX6jTteQdzrnI+r6MAsVW9n9SyC2Ka2VRyILASu3tWKob
-	 gFFiQuvwtjm+qgbKtutQN0a8livEcaAleE3t5FMgKkIDuzMWNCDFBk58wFzfNkgqWK
-	 Hr6Oa/iYP2qPuDnpfDb309S6lw0dVts6XO5xZRGP47361BTPFcw9kCy17WmklQKBfP
-	 QImXUggSGobCA==
-Date: Tue, 5 Nov 2024 18:38:32 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>, Peter Zijlstra
- <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, Ian Rogers
- <irogers@google.com>, Dima Kogan <dima@secretsauce.net>, Alexander Lobakin
- <aleksander.lobakin@intel.com>, Przemek Kitszel
- <przemyslaw.kitszel@intel.com>, linux-perf-users@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/4] perf-probe: Improbe non-C language support
-Message-Id: <20241105183832.331db8547b5ec8ddeaabdc66@kernel.org>
-In-Reply-To: <ZykppTmCLGqP9nGi@x1>
-References: <173073702882.2098439.13342508872190995896.stgit@mhiramat.roam.corp.google.com>
-	<ZykYwHifTM6niEmG@x1>
-	<ZykppTmCLGqP9nGi@x1>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36F381CEAA0;
+	Tue,  5 Nov 2024 09:38:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.67.4
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730799528; cv=fail; b=RUcxeslT+2hjTU47W6Bxlo6q3FfAOE3VOm8Hls18q7k9XHDxBV73exO4WT2SX+zBBqam5y4LOBynivqnlF3t3VhhEHcVwj6ZlIRPZcflPHW1rHO5IDnM/LqNIy7BY+HTQqmdgHsdhQ6E5R5yKaa7gmD1R90i7xXrx5PedtB1weE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730799528; c=relaxed/simple;
+	bh=jvtPP4ATcPToTNrC0zjuRG/L9dGgLAdyWbOAchNmaDI=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=k6sPvELYFdK1Pi/yu8hH6rCy/Q5199qnMUy2LRJU4mwNAtamLFGz3BwRS+/x70F3ttIvXc6iT2uxtHfoW0E0NDv3PYsIob3OwqQD57NA6OccxHTW3SzOkRlJAxulUtL2ENy8YRk8/GN8VQ8tujccfltHufFyDMxns0DQJcxkeco=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=J5WwjnbI; arc=fail smtp.client-ip=52.101.67.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=A2gQUiHpwkqk9ROz/lhcRsS4MSWureLvaxuU5KLx9YmkyrXVJU2c7xnk7gFMjWfGatCjAzHnqKz/XByJlX98GW7GKsQeNRcwLM3Z43qnRS7ZINLeMg1VaN9b0IexR0BjM+0kjEXAKNyOCoqj/kqQpIJ4fNYdk/sHYHcFY2tDzfWfN+neAa1n10CKZuvE9GsqpOvDIOSF1oFB1yrLjkEhzQWpRMKlwpJH4+Dhqpys0baFCwjvGVsBpQdk1N5Qo6UMoWf4ZKobiOvWiKBXYQFMsE5IIqfyYg2IYrUnLqFBI6C0hefIn1Fa3eUL/mNM0T/pom05aqiLrkTuUU2Ln/gaxg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=jvtPP4ATcPToTNrC0zjuRG/L9dGgLAdyWbOAchNmaDI=;
+ b=HVTKxr7X+5nAkUTFxPIYDCDi2w7nUIlle7shTfWdWW87/vVDFGcQH1d2M4Tc2SodT28/oahub1A6BQ3o0F3H8X2o7r7feMk/Gl7imrugWiJHJ3lbm1/NJ+eZOTx9qfhYlmqI9VAiVUIykNSQOYXWjYHLV3jjaTwVFL7naVJoJ6UL90dIRg96+C4zWgil3YTAWDo6rBi8xQB39gjSk4L7OFsgKbIYvqnveXjF/j77wuuBYCVFc+f88tGbGI6b/dW6rc7VH0mAKw8FuxgaGEjL48gxZi334j0yyb9Mhp01jaqWKubUkuKnXwElMWXTpalih0HTZ+G7eLD279MyUd24Xw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=jvtPP4ATcPToTNrC0zjuRG/L9dGgLAdyWbOAchNmaDI=;
+ b=J5WwjnbIftNG9dsZtz/7ygFQrVINs7+E3iiO+xRO2b5q9JpMnM498fa57n5p4Owhc0AoYx9j40TYVqzPo9uArWwE0mfPXQJIP4QfS4IY6ddWPnv1vHCHZ/pAD9EnqxIc7RanQ5dNju142D09rQCnmCmmztV6ameAkRqGvOHlO70LyPT9NwYErbr6FGoRtr1NZFoD8mU2j1pae510XvwcWsFCEF++4HkhaAYvvY96LOcbDchShsd/CzHMQNp3IT9EAg309fnTTunBC0zIBbem9/T9/6VlICtutwCBKn2LzPHbFh9CyRe453QHk68hOSql5XMkm7r1Lwd6lcNf144zIQ==
+Received: from PAXPR04MB8510.eurprd04.prod.outlook.com (2603:10a6:102:211::7)
+ by GVXPR04MB10408.eurprd04.prod.outlook.com (2603:10a6:150:1db::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8114.30; Tue, 5 Nov
+ 2024 09:38:36 +0000
+Received: from PAXPR04MB8510.eurprd04.prod.outlook.com
+ ([fe80::a7c2:e2fa:8e04:40db]) by PAXPR04MB8510.eurprd04.prod.outlook.com
+ ([fe80::a7c2:e2fa:8e04:40db%7]) with mapi id 15.20.8114.031; Tue, 5 Nov 2024
+ 09:38:36 +0000
+From: Wei Fang <wei.fang@nxp.com>
+To: Colin Ian King <colin.i.king@gmail.com>
+CC: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Claudiu Manoil
+	<claudiu.manoil@nxp.com>, Vladimir Oltean <vladimir.oltean@nxp.com>, Clark
+ Wang <xiaoning.wang@nxp.com>, Andrew Lunn <andrew+netdev@lunn.ch>, "David S .
+ Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub
+ Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	"imx@lists.linux.dev" <imx@lists.linux.dev>, "netdev@vger.kernel.org"
+	<netdev@vger.kernel.org>
+Subject: RE: [PATCH][next] net: enetc: Fix spelling mistake "referencce" ->
+ "reference"
+Thread-Topic: [PATCH][next] net: enetc: Fix spelling mistake "referencce" ->
+ "reference"
+Thread-Index: AQHbL2V+FFTJVzKP+kKig+tBCpz81rKobejA
+Date: Tue, 5 Nov 2024 09:38:36 +0000
+Message-ID:
+ <PAXPR04MB8510A37D42D9C64CB1EF637D88522@PAXPR04MB8510.eurprd04.prod.outlook.com>
+References: <20241105093125.1087202-1-colin.i.king@gmail.com>
+In-Reply-To: <20241105093125.1087202-1-colin.i.king@gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PAXPR04MB8510:EE_|GVXPR04MB10408:EE_
+x-ms-office365-filtering-correlation-id: 451a5623-e51f-48a5-375c-08dcfd7d9f41
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|366016|1800799024|7416014|376014|38070700018;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?S0RsU1RHM2RsM2ZVeURTdytWYVMxc204NFl4cTNIMGZ0VjRlWE9WWkhmekVY?=
+ =?utf-8?B?MDFOV0NkcnJyU0RiSUtHVjlIU1N4dG1uZldXeVVEV1NVMlVXb04vcWVUU2dC?=
+ =?utf-8?B?Mk5pditTMGplbVVsbEs0QzNsQ1hRcXdPNWdiV0RtUTAwRWNkY2dmd25HY2Vv?=
+ =?utf-8?B?N1loZUdiSVVMYk04WW9renVqbTFXK1hYUG9yajBhODZyRWtXem52M2hVYkNZ?=
+ =?utf-8?B?QUlCcG9GbE92Q1lCbkhEK1NxWEFoNkp5dUcyMWErOEZCeitUbjUrVWlHU3Vw?=
+ =?utf-8?B?QzdKa211RjVoZTBiTlovQ09KK0FRRzNYeHAxcCt2TG9pcUY0ejM0LzJiS1F3?=
+ =?utf-8?B?L0JQTjdmNzRha0JWNWJjMmNnWjZTUXY0bWsyUm5tR0poNTV6SjZUVEdXNEhi?=
+ =?utf-8?B?cGZtdkVkYkhKSkF1aEZuQ1owMEJhOGxSMEdMNWVhVy9zQ2ROVWVQem1ERkZW?=
+ =?utf-8?B?ZHJudFdibjUxWFVWTldCL1lnNjgzNXFRREdlSGpkVGZvbjF5bUw5VTJERUVN?=
+ =?utf-8?B?Smx2S2g1RllEOHlnY2QwZm5kajhRbm9QUFdMUDc2c3I0K3ZVaThjTjg1VHNl?=
+ =?utf-8?B?VHFpY1AraWY3T0pUQVA0VWNNYnJncUNUcXQvcVdDZEhxUEFUdWlzdGlsUG9v?=
+ =?utf-8?B?MzB6T3hkdnhHeVB5RThLa3R5OTdlN0UvMHA1bHpxVXM5UWV6bGpYUFFzZDNJ?=
+ =?utf-8?B?NkpSaGM4T2dBaG5YVnZLSEttUHFqOUFDMlh2WDJnaHViL203SGxYUGNqSVhF?=
+ =?utf-8?B?aWF0QWpBU3dDci9BNkppcS9VYXNsVWU3dS9sUTgwczFzcC9odEU3YzZQcTZS?=
+ =?utf-8?B?cmRuMk5jME45TUJTWGQvUENiWUhzc0pPYXVILzBvaGE3TkYraUsyZHFaVmt0?=
+ =?utf-8?B?SEwrUUFzdVV1RzFKWGRIMmlNNkFGWmxRbG5kOGRTVjlaU0lPVS9zOXY3a1g2?=
+ =?utf-8?B?SjBwVGxXME9GYXl6QXpKMFpoZmtkeC9xbUticEpMUU1KYVBicnR6bjMxZHg2?=
+ =?utf-8?B?RVk5ZE9rVW1FMjhvTUpWVHRUZmlFdWpIL2t2R3JyMmJwSUpBcksxcWo3cjV4?=
+ =?utf-8?B?dWt2QzNidTJDWXQ1YW9ScXpqK3ZjTE9RNm8raFJyWThMTWxKc2kxM2dkbWFC?=
+ =?utf-8?B?VG1WT1IrN05ZanZTK2lYNnRwSVdGazFvSVRYb3ZNeVZVUExiYk52NnJMalRz?=
+ =?utf-8?B?b3BYK2ErOGxyUG5qQW42L0JnUGJuNTdlcFhjMEpwZkVWb3VFL0pMM0V5Rk5L?=
+ =?utf-8?B?eFNtMkh5MEhCc2ZoWVR2MkM5TnZsSzJyREJqWVp1MlNHVWVlV0l6VUFBNi84?=
+ =?utf-8?B?cUdiVGRISUpTL3pVajNMVTNsc1VVbnllaUMxazV2WU9IS0M5d2ZJcUtxeC9o?=
+ =?utf-8?B?RDVhTjZsRkdYRjFmUXd1QjlJd0Z2cXA5QWtlbVBTdU54azhPMU5BM3UzOXhh?=
+ =?utf-8?B?a0lvdENmTU1zSGhLY2ZBeFRxMGw5cXRid29jWmxRV2dRbjdGN0VnamNITWNS?=
+ =?utf-8?B?ZlMwYWV4Vms2b1RTakF6UlRQN2hIR1dkV202U0c3L1ZLVWtxalRQeUtUYWMv?=
+ =?utf-8?B?VFViS0t4djdyV0N5bDgySmJBSHlybVFkTjllOTJLVml2QjlNSVVFMDFtNm9I?=
+ =?utf-8?B?dFlCV1dKVzJuaGd0dVBzTk9DRjdZd2JlakZjODRWMTNLWFJLOHluNmgraUlB?=
+ =?utf-8?B?SHhuOWJ0QkpWZFRZQVhyZExDbVZycHpoV0hLTnN1YllLcGNjUW5PeFZHQ3k4?=
+ =?utf-8?B?OGQ4Mzdlckh6dzI3T25UT0IvWHI4OGwwY2pNSzhjTjl1aEVDbWJ6WFVnaHU2?=
+ =?utf-8?Q?DQrDFOyc+Bun2/2KF3hJ6ylPFNFTWXy4C7N34=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8510.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?U3FTS0xza1gxc1V2UFpVZUl1dmtCNjUwRWp2Nk8xU2dVN1RoYWFrL1dwTTNF?=
+ =?utf-8?B?RUFnNDFoZkhqczNyRE93M1poTlJieHUzaFhHN09YOEthc0JJWWxidlY4azIz?=
+ =?utf-8?B?WDFhTGdpY0xDdUhweUVpSHNnUEZ4MTJwRzhHcWlFcW9uV0hIemJpZVlCZHh6?=
+ =?utf-8?B?MDdXUEZTNEpjV3lkMTZqWG55VEROYkpqY2V6bExmQ2o5Wk5GdXpMTGZ5QzlR?=
+ =?utf-8?B?azhXSDUza0lWelhJWm51Wk8yY1FoZ2IrRDBsRWxEcWg5QWZWNTFhZ0VkWHJ6?=
+ =?utf-8?B?MWhJMkpXK2ROSzNsVTBQSGQ2ZnhZSUpOZ1h3VXhQMWdRbmVkVjFZZzZWME9J?=
+ =?utf-8?B?SURQUVpveGd3dU5jcWl5SGJCbFNHVUlSNmE4ZHVQR1U4enhFNTF4Wml1TUVx?=
+ =?utf-8?B?a3RwVnk2eloyaUk4dEVqVVBoeFVuSmpYVWp2Z2VUMjNBNXYwVkNsRFdVUUIy?=
+ =?utf-8?B?eXFKR2o5QkpYNE90NWxtM1VUSWYySE9ySGR2cUxOYVB6RDFuNUpXMTl1VHA4?=
+ =?utf-8?B?aVRBWWFOdnV0QWJTRGlWSEc0dWdXQ2xWR1A1bllrWXRLQTJPbm8xaUJtL29N?=
+ =?utf-8?B?U0dJYm5DQ0FIY3J4YlhGckk3bUkyRTRDUk04dFZ4WUZycWVGdWNZeUphWUpQ?=
+ =?utf-8?B?NHl5dm0vOHN1ZktqbEROWkFldWZWWlRHQlJkakQ1ODZLdndSdFJPSEwxWDZk?=
+ =?utf-8?B?dGNJRnhmaWp5WnlLSzFIZGxONDYxaXBWb3JWWVNNcDJlSTh2N210WmNQOTg4?=
+ =?utf-8?B?U2M2RW9qQUFHbXgwZ0xOeXVmRlF5dTJjNkFudHhOUmxhNWI5R2NCWHpnOEdW?=
+ =?utf-8?B?Y3hpVVpYWWNDVWFvL214MWpzSUt6WGZ4aVN1bTJDN0VyZWkzb2JmMEo1UnRB?=
+ =?utf-8?B?YU1ydkN0T0tXT0FmcG4vU1VhN0p0K295TFE1YWgvZnYrSU52c2FFOXVGRkNF?=
+ =?utf-8?B?VTR0RmZRZC96UGlGczJCbEwwMTlzbWVYcHlTb2YrWitGTU9UeGVvMmJJaHF0?=
+ =?utf-8?B?SjdwNWN3enYwZ3poNTdEUS9PVFRJdzlKTTRVbWpnRkhUR2EyelgvdUVhRTRu?=
+ =?utf-8?B?R1NVY3NPYUVwLytxNExodG5LWFNrNHJUV3FJb3pLQXhWM1dUa3B4djgyNnR1?=
+ =?utf-8?B?OGxTemdmNG14VmphN2YyTVRFYjR1ZEZ6SFdhaFJMby9xTHJnSmJMTzNFZ2Yv?=
+ =?utf-8?B?ZXNFZkdvYkF1RmJ0WTB0dmRHMTQ3aFVsaWFiblZNWDF1dlRlK3dEMUZESVVu?=
+ =?utf-8?B?TFlnVnJkRy8rdiswNEQ0d1BBakR3dHRYTGJLdy9WNkdCYkkrclpjdWllR0dY?=
+ =?utf-8?B?c3RmcnZteFUzbXVPc3pudU10ckoxeWp0cDNkZVFoYnpQUFQ2Z3JhTS80N25z?=
+ =?utf-8?B?MjZEZlBmN3NZb2QxcHljR3FJR0tjVjhtaVpiZGJrbW5EUmtSVmJOTFVUS0VL?=
+ =?utf-8?B?TmVqdmE3UzVrSVRVaTk1MFJ2UTZ1alpPaUxzRVA3M2RlVGVWWE1hZlE0eDA2?=
+ =?utf-8?B?MDBybldUUnZ5dDYrNVFSeFdmcXhUSEM2bkR5Tk5vOEh4Z2J1SmorbDYrZXVu?=
+ =?utf-8?B?VFZzN2pZaERIL09WL1FUWWxkMUt1bEZTS01oUjdKZi9udlZHdEZPcTlhdWJF?=
+ =?utf-8?B?bWNaR3JZNmJOWlhNclY5bGVvWjFucVo4ek1sNEl4UEJnUW81cGFVZFlhVm5l?=
+ =?utf-8?B?U1lmZGl6Sk5XelFhWm1yb2liMy9YekFlVEp3OVlyWEtPZWsvT01qL3hGbTYy?=
+ =?utf-8?B?WWR0RHlKdmtCb3NKQnJjQ21hNGNCVTRVR1hDRElnRDVHalZxUG92MFBRVTk2?=
+ =?utf-8?B?eTJ6aUwyS0dXR1BBdG1wdnVTUWJzTkZjbmxZSTZOZkxjemkwU0FjZUl2SHpw?=
+ =?utf-8?B?UStQRkR4YmtKTDZSVFJ6aHBUTjhyaEpZSWdxMHlibUZHRFZIU1NCUFBPa2lo?=
+ =?utf-8?B?NGhsQXNMeWxEQzB4ZnVkanUrdGkvZXRaR2I0bThpbFV5UllZL0JqVTBQRjRm?=
+ =?utf-8?B?TTc5Z2lsZkg5MFcxQ3RhOEQ1YlhjUTI3Q1pMNVZZWVBLc0xqWVVKL2JsUCty?=
+ =?utf-8?B?RWxhVExWODRFYzlHck8wd05DTlVVcWxRZEdkUndQd21LUXUzWGk4MDdwWnRk?=
+ =?utf-8?Q?KD3c=3D?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8510.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 451a5623-e51f-48a5-375c-08dcfd7d9f41
+X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Nov 2024 09:38:36.4228
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: G3RkbDKjltwiDdg7VsF1qphkdaxRuNMebiM6yxavaBtf5tondmNKxeQdiSHOv4BYU03xRnZ5OBZ2vqpI0PYI9Q==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GVXPR04MB10408
 
-On Mon, 4 Nov 2024 17:08:05 -0300
-Arnaldo Carvalho de Melo <acme@kernel.org> wrote:
-
-> On Mon, Nov 04, 2024 at 03:56:00PM -0300, Arnaldo Carvalho de Melo wrote:
-> > On Tue, Nov 05, 2024 at 01:17:08AM +0900, Masami Hiramatsu (Google) wrote:
-> > > Hi,
-> 
-> I also now noticed that the cover letter subject has a typo, it should
-> be "Improve", not "Improbe" :-)
-
-Lol, good catch! My finger learned that the next character of "pro" is "b".
-
-Thank you,
-
-> 
-> - Arnaldo
->   
-> > > Here is a series of patches for perf probe to improve non-C language
-> > > (e.g. Rust, Go) support.
-> >  
-> > > The non-C symbols are demangled style in debuginfo, e.g. golang stores
-> >  
-> > > ----
-> > > $ ./perf probe -x /work/go/example/outyet/main -F main*
-> > > main.(*Server).ServeHTTP
-> > > main.(*Server).ServeHTTP.Print.func1
-> > > main.(*Server).poll
-> > > ...
-> > > -----
-> > 
-> > I presented about this last year:
-> > 
-> > https://tracingsummit.org/ts/2023/bpf-non-c/
-> > https://tracingsummit.org/ts/2023/files/Trying_to_use_uprobes_and_BPF_on_non-C_userspace.pdf
-> > https://www.youtube.com/watch?v=RDFRy1vWyHg&feature=youtu.be
-> > 
-> > So trying to do some of the things I did while playing with golang, and
-> > with your patches applied, I only had to cope with a minor clash with a
-> > patch by Ian Rogers that is present on perf-tools-next, related to:
-> > 
-> >         char buf[MAX_EVENT_NAME_LEN];
-> > 
-> > That in your patch expects the old 64 hard coded value, which will
-> > appear in the my tests:
-> > 
-> > root@x1:/home/acme/git/libbpf-bootstrap/examples/c/tests/prometheus# perf probe -x main -F github*counter*
-> > github.com/prometheus/client_golang/prometheus.(*counter).Add
-> > github.com/prometheus/client_golang/prometheus.(*counter).AddWithExemplar
-> > github.com/prometheus/client_golang/prometheus.(*counter).Collect
-> > github.com/prometheus/client_golang/prometheus.(*counter).Desc
-> > github.com/prometheus/client_golang/prometheus.(*counter).Describe
-> > github.com/prometheus/client_golang/prometheus.(*counter).Inc
-> > github.com/prometheus/client_golang/prometheus.(*counter).Write
-> > github.com/prometheus/client_golang/prometheus.(*counter).updateExemplar
-> > root@x1:/home/acme/git/libbpf-bootstrap/examples/c/tests/prometheus# perf probe -x main -F github*counter*
-> > 
-> > Then trying to add for all those:
-> > 
-> > root@x1:/home/acme/git/libbpf-bootstrap/examples/c/tests/prometheus# perf probe -d *:*
-> > "*:*" does not hit any event.
-> >   Error: Failed to delete events.
-> > root@x1:/home/acme/git/libbpf-bootstrap/examples/c/tests/prometheus# perf probe -l
-> > root@x1:/home/acme/git/libbpf-bootstrap/examples/c/tests/prometheus#
-> > 
-> > root@x1:/home/acme/git/libbpf-bootstrap/examples/c/tests/prometheus# perf probe -x main github*counter*
-> > A function DIE doesn't have decl_line. Maybe broken DWARF?
-> > A function DIE doesn't have decl_line. Maybe broken DWARF?
-> > A function DIE doesn't have decl_line. Maybe broken DWARF?
-> > A function DIE doesn't have decl_line. Maybe broken DWARF?
-> > A function DIE doesn't have decl_line. Maybe broken DWARF?
-> > snprintf() failed: -7; the event name 'github_com_prometheus_client_golang_prometheus_counter_AddWithExemplar' is too long
-> >   Hint: Set a shorter event with syntax "EVENT=PROBEDEF"
-> >         EVENT: Event name (max length: 64 bytes).
-> >   Error: Failed to add events.
-> > root@x1:/home/acme/git/libbpf-bootstrap/examples/c/tests/prometheus#
-> > 
-> > But:
-> > 
-> > root@x1:/home/acme/git/libbpf-bootstrap/examples/c/tests/prometheus# perf probe -l
-> >   probe_main:github_com_prometheus_client_golang_prometheus_counter_Desc (on github.com/prometheus/client_golang/prometheus.(*counter).Des>
-> > (END)
-> > 
-> > That pager thing looks odd as well, since there is just one line in the
-> > output...
-> > 
-> > So it failed to do all those, added just one, maybe state that some were
-> > added but from the problematic one onwards it stopped? Or try all of
-> > them and just state the ones that couldn't be added?
-> > 
-> > I.e. something like:
-> > 
-> > root@x1:/home/acme/git/libbpf-bootstrap/examples/c/tests/prometheus# perf probe -x main -F github*counter* | while read probename ; do perf probe -x main $probename ; done
-> > A function DIE doesn't have decl_line. Maybe broken DWARF?
-> > A function DIE doesn't have decl_line. Maybe broken DWARF?
-> > Failed to find debug information for address 0x3287e0
-> > Probe point 'github.com/prometheus/client_golang/prometheus.(*counter).Add' not found.
-> >   Error: Failed to add events.
-> > snprintf() failed: -7; the event name 'github_com_prometheus_client_golang_prometheus_counter_AddWithExemplar' is too long
-> >   Hint: Set a shorter event with syntax "EVENT=PROBEDEF"
-> >         EVENT: Event name (max length: 64 bytes).
-> >   Error: Failed to add events.
-> > A function DIE doesn't have decl_line. Maybe broken DWARF?
-> > Failed to find debug information for address 0x33ab40
-> > Probe point 'github.com/prometheus/client_golang/prometheus.(*counter).Collect' not found.
-> >   Error: Failed to add events.
-> > Error: event "github_com_prometheus_client_golang_prometheus_counter_Desc" already exists.
-> >  Hint: Remove existing event by 'perf probe -d'
-> >        or force duplicates by 'perf probe -f'
-> >        or set 'force=yes' in BPF source.
-> >   Error: Failed to add events.
-> > A function DIE doesn't have decl_line. Maybe broken DWARF?
-> > Failed to find debug information for address 0x33aba0
-> > Probe point 'github.com/prometheus/client_golang/prometheus.(*counter).Describe' not found.
-> >   Error: Failed to add events.
-> > Added new event:
-> >   probe_main:github_com_prometheus_client_golang_prometheus_counter_Inc (on github.com/prometheus/client_golang/prometheus.(*counter).Inc in /home/acme/git/libbpf-bootstrap/examples/c/tests/prometheus/main)
-> > 
-> > You can now use it in all perf tools, such as:
-> > 
-> > 	perf record -e probe_main:github_com_prometheus_client_golang_prometheus_counter_Inc -aR sleep 1
-> > 
-> > Added new event:
-> >   probe_main:github_com_prometheus_client_golang_prometheus_counter_Write (on github.com/prometheus/client_golang/prometheus.(*counter).Write in /home/acme/git/libbpf-bootstrap/examples/c/tests/prometheus/main)
-> > 
-> > You can now use it in all perf tools, such as:
-> > 
-> > 	perf record -e probe_main:github_com_prometheus_client_golang_prometheus_counter_Write -aR sleep 1
-> > 
-> > snprintf() failed: -7; the event name 'github_com_prometheus_client_golang_prometheus_counter_updateExemplar' is too long
-> >   Hint: Set a shorter event with syntax "EVENT=PROBEDEF"
-> >         EVENT: Event name (max length: 64 bytes).
-> >   Error: Failed to add events.
-> > root@x1:/home/acme/git/libbpf-bootstrap/examples/c/tests/prometheus#
-> > 
-> > In the end we get:
-> > 
-> > root@x1:/home/acme/git/libbpf-bootstrap/examples/c/tests/prometheus# perf probe -l
-> >   probe_main:github_com_prometheus_client_golang_prometheus_counter_Desc (on github.com/prometheus/client_golang/prometheus.(*counter).Desc@prometheus/counter.go in /home/acme/git/libbpf-bootstrap/examples/c/tests/prometheus/main)
-> >   probe_main:github_com_prometheus_client_golang_prometheus_counter_Inc (on github.com/prometheus/client_golang/prometheus.(*counter).Inc@prometheus/counter.go in /home/acme/git/libbpf-bootstrap/examples/c/tests/prometheus/main)
-> >   probe_main:github_com_prometheus_client_golang_prometheus_counter_Write (on github.com/prometheus/client_golang/prometheus.(*counter).Write@prometheus/counter.go in /home/acme/git/libbpf-bootstrap/examples/c/tests/prometheus/main)
-> > root@x1:/home/acme/git/libbpf-bootstrap/examples/c/tests/prometheus#
-> > 
-> > That also explains the pager kicking in: I had to reduce font size in my
-> > xterm (gnome-terminal really) and then the perf pager wasn't used (no
-> > (END) at the last line waiting for me to press 'q').
-> > 
-> > The ones that got installed are working:
-> > 
-> > root@x1:/home/acme/git/libbpf-bootstrap/examples/c/tests/prometheus# perf trace -e probe_main:*
-> >      0.000 main/616840 probe_main:github_com_prometheus_client_golang_prometheus_counter_Inc(__probe_ip: 7506464)
-> >   1001.043 main/616926 probe_main:github_com_prometheus_client_golang_prometheus_counter_Inc(__probe_ip: 7506464)
-> >   1001.080 main/616926 probe_main:github_com_prometheus_client_golang_prometheus_counter_Inc(__probe_ip: 7506464)
-> >   4000.994 main/616926 probe_main:github_com_prometheus_client_golang_prometheus_counter_Inc(__probe_ip: 7506464)
-> > ^Croot@x1:/home/acme/git/libbpf-bootstrap/examples/c/tests/prometheus# perf trace -e probe_main:*/max-stack=8/
-> >      0.000 main/616926 probe_main:github_com_prometheus_client_golang_prometheus_counter_Inc(__probe_ip: 7506464)
-> >                                        github.com/prometheus/client_golang/prometheus.(*counter).Inc (/home/acme/git/libbpf-bootstrap/examples/c/tests/prometheus/main)
-> >                                        runtime.goexit.abi0 (/home/acme/git/libbpf-bootstrap/examples/c/tests/prometheus/main)
-> >      0.030 main/616926 probe_main:github_com_prometheus_client_golang_prometheus_counter_Inc(__probe_ip: 7506464)
-> >                                        github.com/prometheus/client_golang/prometheus.(*counter).Inc (/home/acme/git/libbpf-bootstrap/examples/c/tests/prometheus/main)
-> >                                        runtime.goexit.abi0 (/home/acme/git/libbpf-bootstrap/examples/c/tests/prometheus/main)
-> >   3000.166 main/616840 probe_main:github_com_prometheus_client_golang_prometheus_counter_Inc(__probe_ip: 7506464)
-> >                                        github.com/prometheus/client_golang/prometheus.(*counter).Inc (/home/acme/git/libbpf-bootstrap/examples/c/tests/prometheus/main)
-> >                                        runtime.goexit.abi0 (/home/acme/git/libbpf-bootstrap/examples/c/tests/prometheus/main)
-> > ^Croot@x1:/home/acme/git/libbpf-bootstrap/examples/c/tests/prometheus#
-> > 
-> > I'll test this some more later/tomorrow, just wanted to give this first
-> > reaction, thanks for working on this!
-> > 
-> > Btw, some more info about the environment (fedora 40):
-> > 
-> > root@x1:/home/acme/git/libbpf-bootstrap/examples/c/tests/prometheus# readelf -wi main | head -20
-> > Contents of the .debug_info section:
-> > 
-> >   Compilation Unit @ offset 0:
-> >    Length:        0x506 (32-bit)
-> >    Version:       4
-> >    Abbrev Offset: 0
-> >    Pointer Size:  8
-> >  <0><b>: Abbrev Number: 1 (DW_TAG_compile_unit)
-> >     <c>   DW_AT_name        : google.golang.org/protobuf/internal/strs
-> >     <35>   DW_AT_language    : 22	(Go)
-> >     <36>   DW_AT_stmt_list   : 0
-> >     <3a>   DW_AT_low_pc      : 0x667c40
-> >     <42>   DW_AT_ranges      : 0
-> >     <46>   DW_AT_comp_dir    : .
-> >     <48>   DW_AT_producer    : Go cmd/compile go1.22.7; regabi
-> >     <68>   Unknown AT value: 2905: strs
-> >  <1><6d>: Abbrev Number: 5 (DW_TAG_subprogram)
-> >     <6e>   DW_AT_name        : google.golang.org/protobuf/internal/strs.isASCIILower
-> >     <a4>   DW_AT_inline      : 1	(inlined)
-> >     <a5>   DW_AT_decl_line   : 188
-> > root@x1:/home/acme/git/libbpf-bootstrap/examples/c/tests/prometheus#
-> > 
-> > - Arnaldo
-> >  
-> > > And Rust stores
-> > > -----
-> > > $ ./perf probe -x /work/cro3/target/x86_64-unknown-linux-gnu/debug/cro3 -F cro3::cmd::servo*
-> > > cro3::cmd::servo::run
-> > > cro3::cmd::servo::run::CALLSITE
-> > > cro3::cmd::servo::run::CALLSITE::META
-> > > cro3::cmd::servo::run_control
-> > > -----
-> > > 
-> > > These symbols are not parsed correctly because it looks like a file name or
-> > > including line numbers (`:` caused it.) So, I decided to introduce the changes
-> > > 
-> > >  - filename MUST start from '@'. (so it is able to distinguish the filename
-> > >    and the function name)
-> > >  - Fix to allow backslash to escape to --lines option.
-> > >  - Introduce quotation mark support.
-> > >  - Replace non-alnum character to '_' for event name (for non-C symbols).
-> > > 
-> > > With these changes, we can run -L (--lines) on golang;
-> > > 
-> > > ------
-> > > $ perf probe -x goexample/hello/hello -L \"main.main\"
-> > > <main.main@/work/goexample/hello/hello.go:0>
-> > >       0  func main() {
-> > >                 // Configure logging for a command-line program.
-> > >       2         log.SetFlags(0)
-> > >       3         log.SetPrefix("hello: ")
-> > > 
-> > >                 // Parse flags.
-> > >       6         flag.Usage = usage
-> > >       7         flag.Parse()
-> > > ------
-> > > 
-> > > And Rust
-> > > ------
-> > > $ perf probe -x cro3 -L \"cro3::cmd::servo::run_show\"
-> > > <run_show@/work/cro3/src/cmd/servo.rs:0>
-> > >       0  fn run_show(args: &ArgsShow) -> Result<()> {
-> > >       1      let list = ServoList::discover()?;
-> > >       2      let s = list.find_by_serial(&args.servo)?;
-> > >       3      if args.json {
-> > >       4          println!("{s}");
-> > > ------
-> > > 
-> > > And event name are created automatically like below;
-> > > 
-> > > $ ./perf probe -x /work/go/example/outyet/main -D 'main.(*Server).poll'
-> > > p:probe_main/main_Server_poll /work/go/example/outyet/main:0x353040
-> > > 
-> > > $ ./perf probe -x cro3 -D \"cro3::cmd::servo::run_show\"
-> > > p:probe_cro3/cro3_cmd_servo_run_show /work/cro3/target/x86_64-unknown-linux-gnu/debug/cro3:0x197530
-> > > 
-> > > We still need some more work, but these shows how perf-probe can work
-> > > with other languages.
-> > > 
-> > > Thank you,
-> > > 
-> > > ---
-> > > 
-> > > Masami Hiramatsu (Google) (4):
-> > >       perf-probe: Fix to ignore escaped characters in --lines option
-> > >       perf-probe: Require '@' prefix for filename always
-> > >       perf-probe: Introduce quotation marks support
-> > >       perf-probe: Replace unacceptable characters when generating event name
-> > > 
-> > > 
-> > >  tools/perf/util/probe-event.c  |  136 ++++++++++++++++++++++------------------
-> > >  tools/perf/util/probe-finder.c |    3 +
-> > >  tools/perf/util/string.c       |  100 +++++++++++++++++++++++++++++
-> > >  tools/perf/util/string2.h      |    2 +
-> > >  4 files changed, 180 insertions(+), 61 deletions(-)
-> > > 
-> > > --
-> > > Masami Hiramatsu (Google) <mhiramat@kernel.org>
-
-
--- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBDb2xpbiBJYW4gS2luZyA8Y29s
+aW4uaS5raW5nQGdtYWlsLmNvbT4NCj4gU2VudDogMjAyNOW5tDEx5pyINeaXpSAxNzozMQ0KPiBU
+bzogQ2xhdWRpdSBNYW5vaWwgPGNsYXVkaXUubWFub2lsQG54cC5jb20+OyBWbGFkaW1pciBPbHRl
+YW4NCj4gPHZsYWRpbWlyLm9sdGVhbkBueHAuY29tPjsgV2VpIEZhbmcgPHdlaS5mYW5nQG54cC5j
+b20+OyBDbGFyayBXYW5nDQo+IDx4aWFvbmluZy53YW5nQG54cC5jb20+OyBBbmRyZXcgTHVubiA8
+YW5kcmV3K25ldGRldkBsdW5uLmNoPjsgRGF2aWQgUyAuDQo+IE1pbGxlciA8ZGF2ZW1AZGF2ZW1s
+b2Z0Lm5ldD47IEVyaWMgRHVtYXpldCA8ZWR1bWF6ZXRAZ29vZ2xlLmNvbT47DQo+IEpha3ViIEtp
+Y2luc2tpIDxrdWJhQGtlcm5lbC5vcmc+OyBQYW9sbyBBYmVuaSA8cGFiZW5pQHJlZGhhdC5jb20+
+Ow0KPiBpbXhAbGlzdHMubGludXguZGV2OyBuZXRkZXZAdmdlci5rZXJuZWwub3JnDQo+IENjOiBr
+ZXJuZWwtamFuaXRvcnNAdmdlci5rZXJuZWwub3JnOyBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwu
+b3JnDQo+IFN1YmplY3Q6IFtQQVRDSF1bbmV4dF0gbmV0OiBlbmV0YzogRml4IHNwZWxsaW5nIG1p
+c3Rha2UgInJlZmVyZW5jY2UiIC0+DQo+ICJyZWZlcmVuY2UiDQo+IA0KPiBUaGVyZSBpcyBhIHNw
+ZWxsaW5nIG1pc3Rha2UgaW4gYSBkZXZfZXJyIG1lc3NhZ2UuIEZpeCBpdC4NCj4gDQo+IFNpZ25l
+ZC1vZmYtYnk6IENvbGluIElhbiBLaW5nIDxjb2xpbi5pLmtpbmdAZ21haWwuY29tPg0KPiAtLS0N
+Cj4gIGRyaXZlcnMvbmV0L2V0aGVybmV0L2ZyZWVzY2FsZS9lbmV0Yy9lbmV0YzRfcGYuYyB8IDIg
+Ky0NCj4gIDEgZmlsZSBjaGFuZ2VkLCAxIGluc2VydGlvbigrKSwgMSBkZWxldGlvbigtKQ0KPiAN
+Cj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvbmV0L2V0aGVybmV0L2ZyZWVzY2FsZS9lbmV0Yy9lbmV0
+YzRfcGYuYw0KPiBiL2RyaXZlcnMvbmV0L2V0aGVybmV0L2ZyZWVzY2FsZS9lbmV0Yy9lbmV0YzRf
+cGYuYw0KPiBpbmRleCAzMWRiZTg5ZGQzYTkuLmZjNDEwNzhjNGY1ZCAxMDA2NDQNCj4gLS0tIGEv
+ZHJpdmVycy9uZXQvZXRoZXJuZXQvZnJlZXNjYWxlL2VuZXRjL2VuZXRjNF9wZi5jDQo+ICsrKyBi
+L2RyaXZlcnMvbmV0L2V0aGVybmV0L2ZyZWVzY2FsZS9lbmV0Yy9lbmV0YzRfcGYuYw0KPiBAQCAt
+NjMyLDcgKzYzMiw3IEBAIHN0YXRpYyBpbnQgZW5ldGM0X3BmX25ldGRldl9jcmVhdGUoc3RydWN0
+IGVuZXRjX3NpICpzaSkNCj4gIAlwcml2ID0gbmV0ZGV2X3ByaXYobmRldik7DQo+ICAJcHJpdi0+
+cmVmX2NsayA9IGRldm1fY2xrX2dldF9vcHRpb25hbChkZXYsICJyZWYiKTsNCj4gIAlpZiAoSVNf
+RVJSKHByaXYtPnJlZl9jbGspKSB7DQo+IC0JCWRldl9lcnIoZGV2LCAiR2V0IHJlZmVyZW5jY2Ug
+Y2xvY2sgZmFpbGVkXG4iKTsNCj4gKwkJZGV2X2VycihkZXYsICJHZXQgcmVmZXJlbmNlIGNsb2Nr
+IGZhaWxlZFxuIik7DQo+ICAJCWVyciA9IFBUUl9FUlIocHJpdi0+cmVmX2Nsayk7DQo+ICAJCWdv
+dG8gZXJyX2Nsa19nZXQ7DQo+ICAJfQ0KPiAtLQ0KPiAyLjM5LjUNCg0KVGhhbmtzIGZvciBmaXhp
+bmcgdGhpcyB0eXBvLg0KDQpSZXZpZXdlZC1ieTogV2VpIEZhbmcgPHdlaS5mYW5nQG54cC5jb20+
+DQoNCg==
 
