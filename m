@@ -1,207 +1,141 @@
-Return-Path: <linux-kernel+bounces-396331-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396339-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66D199BCBC1
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 12:25:58 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 837879BCBDC
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 12:28:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB4DD1F245D2
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 11:25:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 35E9E1F24593
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 11:28:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58C3E1D362B;
-	Tue,  5 Nov 2024 11:25:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 761FD1D414B;
+	Tue,  5 Nov 2024 11:28:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="oyHzSTvW"
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="F0BaiiWd"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C16601D278B
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 11:25:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F3BA1C07D9
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 11:28:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730805923; cv=none; b=RDk+YZHZn6BllZHzQrVJp8zKAtERMoU9jXstP1bg2j69CjImwpnHFAQ5uGS0C4JQ4lyLnuGH2OWMUsOg2W+k6eX3HijuFdpsGfJZPL28rGggEG4b5wh43viDTsZaO1F9XoVckkQgvZQxk+m4/dKXAjqBUbnF/Nv1lYX7d9eMTUk=
+	t=1730806105; cv=none; b=r4DXWy5SY1JLiAKxY1+6ZiNmQ/bt7I3r2Sp0Zj4bS8Q7SL2CeEK96fsayxdn0IUvVAx2bVdzKO681nstJ5RSfT91CHQyb26K7L6IUQHE9/3iOzlJYWwrxuGh55EIPoiqQGpd9iOuZ6EnwkKW8F6jeDeyUpZ1Py2OoW/9wS1Qg2o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730805923; c=relaxed/simple;
-	bh=hWDy9osdQqCeMpsrYOwOniEyenJGEZiDF3vErB45Iik=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SMLWYvOfdmPO1Mfc8VGUWuaxkt1p0QEOTq+7hLDSZyaixLHHclqa1ELrj/u9n9kanonQrYKJ1bZkJxiRPKrXwmnZisTBtxb41SiNBcblNSdJDyR4wrZ+/U6/+19BCy0JTWdzDSc/ONJM6ksKtrAnsBKWDBq30LI7wtiQam3r2Vc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=oyHzSTvW; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a9aa8895facso933463966b.2
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 03:25:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1730805920; x=1731410720; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tEBT2n6DbjlakaN1uzarNpqMC0UR3n3RXvPqLyaSvaE=;
-        b=oyHzSTvWBbEI9fNHguys11LIwGKePrw+vyPAWxx9VeY185UK0plHPut2sFSlf4iy3V
-         qUfabgPhhHpho3G7Rjb4WaASnAsfPkpF5QoES/25AHouF5UBBh8DvjnjdbD2EQ+sbLOA
-         uqF0Um6yPPuRE/BseOMTFsgLf5ocIUMbPuKU/bR/bmhPf7o7mVbpyv/7Cd+g9tEQ5wmu
-         KAmkP21sA9es9AAarBERCwHIhygix9WQLp31xGfiF4r91QUmck0Woshm99E5uu8ESbP3
-         KhYM2jcA1essjJRy2j3M3dxCDgu3owsFPX7D9E/wTv4M7fB9TichS8MVx14hVGMyrrC8
-         gTCA==
+	s=arc-20240116; t=1730806105; c=relaxed/simple;
+	bh=t0ebFl9Qur+HH4lW6ifWESijNaGHWR/cV5VnNhCltKE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=k1Gli/s9tyQv0svmbBtKAWozFK2n1qRsQGYRV87lms14r9NicWfyPnKiuV4HYNTLbfW/y8r15jgs91gPNrO/9KDdgrCXeG0/+lFs0M/NtooKAcex0ERBcQkmQtIWNxXKu3fZvGppp37WtcA1oMxRXA4TTUOgoGObCUy09IkiU84=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=F0BaiiWd; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1730806103;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=M77VfgZS1cdpIcCG2VhSP2ERRVSFmbayjwOHepEQJsU=;
+	b=F0BaiiWdveDfuFEvy6SLNmrCVlOCb861PNcHplC+2ZgC0ClhB4hi0W1wT6HVNmUPZ+VYHa
+	F0Sarc+RGocVbKv/VwqNcBbGvh7sl8Dqi4axp9kjwGPeJ2quDm9FdVjCfFVgCu8KSl4EpD
+	AUrydnBSBOmW/WvknHiU4V543KvEOrk=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-370-WcXZ3ZirOLSC63gP65niGA-1; Tue, 05 Nov 2024 06:28:22 -0500
+X-MC-Unique: WcXZ3ZirOLSC63gP65niGA-1
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-4315d98a873so31395625e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 03:28:21 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730805920; x=1731410720;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tEBT2n6DbjlakaN1uzarNpqMC0UR3n3RXvPqLyaSvaE=;
-        b=cex4LGUHHwE217JYPEVqebCDqkMMChwx5Srd3lO0SFR5VqL0jWR36a5yJb0uL6qpRX
-         G821aQDE4gjMsfaBX0eyOB6I96peEHyqeep+SkhAkesQV6owlw1+qMtWYcew9xxcjGFU
-         pC36/dXJK1f3ZMoOC8palhVygIxieAvcKx9zN2RetdIR8PKn0Ta1uluKdWlrJ9mgaBvv
-         qz6qEQ8STtZkv1sZtmke6aYeJOIkp+NhbHv7cPzVcOCG7phrUjZvqH/RMIloioLVnKJr
-         3nwWitJ+VV0q9lxZ01qJV5C+Wva729DoTShyFSoJIJPbdZEXpIGEwRjDvxYeghe+HhNL
-         3WQg==
-X-Forwarded-Encrypted: i=1; AJvYcCXNccSstEhhzxw3TTLNVS8uVuGo8/yIVNCROaUPNQ/eTYIb8SEhMKFGSdEAXf54F6VZsNaWKdhGjR8ZtXw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw4IM16c9ddCRxZWbr5T8ApSpdvrxXgwSIjwJ80PG10ywIo2WiT
-	mRRz5M79lZfwdIqp9Ln34lEDH3kebI/wJdU19xTZF9X7rGdOSbna8oGButrtX3WOCCBLg3lCTSe
-	FNx2oRpfOx7DuHY6qPaVapma0YL04ocHQBOo/
-X-Google-Smtp-Source: AGHT+IHwQMuVDcrBhbWEyBNztwq/o2rKOCi61HFrY7fbUOoy7f5WZQiZifnABPZt6XxEL/s4zTrxjeGjXMoYvwNTkf8=
-X-Received: by 2002:a17:906:c109:b0:a9a:1094:55de with SMTP id
- a640c23a62f3a-a9de5d6fademr3304920166b.13.1730805919933; Tue, 05 Nov 2024
- 03:25:19 -0800 (PST)
+        d=1e100.net; s=20230601; t=1730806101; x=1731410901;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=M77VfgZS1cdpIcCG2VhSP2ERRVSFmbayjwOHepEQJsU=;
+        b=PLwxobadY4SmTKw40fgB2CXXQ3bGW2uFAdw+MTNL/ux2L/LPpwbeD6wa/zEDnhEj1U
+         0qgIq3xPN0ifi0stdU3K6k9NEMCc/Qbn+9hDQhNOp749G5VWO8uV776JwDgrJ0HMTy4m
+         0aFS5lBRXE9I3Y5ZrvkQdwqLBupJ2N+UosXFrlD3mWzckM5YgFJBxyz4n5nvXBjTWSqW
+         SvUP25UWFB1WtG6zj3AxmmHAGeZ706sBE3XkqmPMTcbEYrli9+cpHg3yzEv+42bNdTCY
+         c9yfo3SFR1eb9h34wjK03mBpkyrtH5XCZ8npdEa8Iy+OCvEe0uGP6mpqM5hOeCDyFGVo
+         GkYQ==
+X-Gm-Message-State: AOJu0Yyq2B6gVGy4DuDVR3zjxIvZ0Ur/vQMDnK5g51Oz0BX4/NCgYzLp
+	as2iE2PhriyqerWrwsdc7Ti/hUbcALIKpLLvfCCBXNk66PcruFdabTL48A7QNJ14/6bCMqjWFP3
+	VV6a2G9Kp+LsMX++26ieC+1CQeZIJHUOBAiEqhQmT6JbZAcu1Jf6ZS2xolmHT1g==
+X-Received: by 2002:a05:600c:3b88:b0:431:5e53:2dc4 with SMTP id 5b1f17b1804b1-431bb976d14mr189868695e9.6.1730806099745;
+        Tue, 05 Nov 2024 03:28:19 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHawKmUXX8F/rNdY2rYv3lZFA9RQ8JlajR/gpDDH3mHry8G7Y1Jk2S6G5jfQ0Rri5nUyM/7FA==
+X-Received: by 2002:a05:600c:3b88:b0:431:5e53:2dc4 with SMTP id 5b1f17b1804b1-431bb976d14mr189868445e9.6.1730806099364;
+        Tue, 05 Nov 2024 03:28:19 -0800 (PST)
+Received: from eisenberg.redhat.com (nat-pool-muc-t.redhat.com. [149.14.88.26])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381c10d40d5sm15785511f8f.25.2024.11.05.03.28.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 05 Nov 2024 03:28:18 -0800 (PST)
+From: Philipp Stanner <pstanner@redhat.com>
+To: Andy Shevchenko <andy@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>
+Cc: linux-kernel@vger.kernel.org,
+	Philipp Stanner <pstanner@redhat.com>
+Subject: [PATCH] x86/platform/intel-mid: Replace deprecated PCI functions
+Date: Tue,  5 Nov 2024 12:25:22 +0100
+Message-ID: <20241105112521.58638-2-pstanner@redhat.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241031142553.3963058-1-peternewman@google.com>
- <20241031142553.3963058-2-peternewman@google.com> <b3a52af9-e298-7baa-19b3-8931d03731d1@intel.com>
-In-Reply-To: <b3a52af9-e298-7baa-19b3-8931d03731d1@intel.com>
-From: Peter Newman <peternewman@google.com>
-Date: Tue, 5 Nov 2024 12:25:09 +0100
-Message-ID: <CALPaoCgc13hS64mSWvn6zYQWwVKzcyF8xueWsaP62ZZJiv+nog@mail.gmail.com>
-Subject: Re: [PATCH 2/2] x86/resctrl: Don't workqueue local event counter reads
-To: Fenghua Yu <fenghua.yu@intel.com>
-Cc: Reinette Chatre <reinette.chatre@intel.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H . Peter Anvin" <hpa@zytor.com>, Tony Luck <tony.luck@intel.com>, Babu Moger <babu.moger@amd.com>, 
-	James Morse <james.morse@arm.com>, Martin Kletzander <nert.pinx@gmail.com>, 
-	Shaopeng Tan <tan.shaopeng@fujitsu.com>, linux-kernel@vger.kernel.org, eranian@google.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hi Fenghua,
+pcim_iomap_table() and pcim_request_regions() have been deprecated in
+commit e354bb84a4c1 ("PCI: Deprecate pcim_iomap_table(),
+pcim_iomap_regions_request_all()") and commit d140f80f60358 ("PCI:
+Deprecate pcim_iomap_regions() in favor of pcim_iomap_region()"),
+respectively.
 
-On Mon, Nov 4, 2024 at 11:36=E2=80=AFPM Fenghua Yu <fenghua.yu@intel.com> w=
-rote:
->
-> Hi, Peter,
->
-> On 10/31/24 07:25, Peter Newman wrote:
+Replace these functions with pcim_iomap_region().
 
-> > diff --git a/arch/x86/kernel/cpu/resctrl/ctrlmondata.c b/arch/x86/kerne=
-l/cpu/resctrl/ctrlmondata.c
-> > index 200d89a640270..daaff1cfd3f24 100644
-> > --- a/arch/x86/kernel/cpu/resctrl/ctrlmondata.c
-> > +++ b/arch/x86/kernel/cpu/resctrl/ctrlmondata.c
-> > @@ -541,6 +541,31 @@ void mon_event_read(struct rmid_read *rr, struct r=
-dt_resource *r,
-> >               return;
-> >       }
-> >
-> > +     /*
-> > +      * If a performance-conscious caller has gone to the trouble of b=
-inding
-> > +      * their thread to the monitoring domain of the event counter, en=
-sure
-> > +      * that the counters are read directly. smp_call_on_cpu()
-> > +      * unconditionally uses a work queue to read the counter, substan=
-tially
-> > +      * increasing the cost of the read.
-> > +      *
-> > +      * Preemption must be disabled to prevent a migration out of the =
-domain
-> > +      * after the CPU is checked, which would result in reading the wr=
-ong
-> > +      * counters. Note that this makes the (slow) remote path a little=
- slower
-> > +      * by requiring preemption to be reenabled when redirecting the r=
-equest
-> > +      * to another domain was in fact necessary.
-> > +      *
-> > +      * In the case where all eligible target CPUs are nohz_full and
-> > +      * smp_call_function_any() is used, keep preemption disabled to a=
-void
-> > +      * the cost of reenabling it twice in the same read.
-> > +      */
-> > +     cpu =3D get_cpu();
-> > +     if (cpumask_test_cpu(cpu, cpumask)) {
-> > +             mon_event_count(rr);
-> > +             resctrl_arch_mon_ctx_free(r, evtid, rr->arch_mon_ctx);
-> > +             put_cpu();
-> > +             return;
-> > +     }
->
-> This fast path code is a duplicate part of smp_call_funcion_any().
->
-> In nohz_full() case, the fast path doesn't gain much and even hurts
-> remote domain performance:
-> 1. On local domain, it may gain a little bit because it has a few lines
-> less than directly calling smp_call_function_any(). But the gain is
-> minor due to a lines less code, not due to heavy weight queued work.
->
-> 2. On remote domain, it degrades performance because get_cpu() and
-> put_cpu() are both called twice: one in the fast path code and one in
-> smp_call_function_any(). As you mentioned earlier, put_cpu() impacts
-> performance. I think get_cpu() has same impact too.
+Additionally, pass the actual driver name to pcim_iomap_region()
+instead of the previous pci_name(), since the 'name' parameter should
+always reflect which driver owns a region.
 
-get_cpu() and put_cpu() nest, so only the put_cpu() that reduces the
-preempt count to 0 will call into the scheduler. See the source
-comment I had added below.
+Signed-off-by: Philipp Stanner <pstanner@redhat.com>
+---
+ arch/x86/platform/intel-mid/pwr.c | 11 ++++-------
+ 1 file changed, 4 insertions(+), 7 deletions(-)
 
-But... note that below smp_call_on_cpu() is now called with preemption
-disabled. (Looks like I only benchmarked and never ran a debug
-build...) I will have to change the patch to make sure put_cpu() is
-called before smp_call_on_cpu().
+diff --git a/arch/x86/platform/intel-mid/pwr.c b/arch/x86/platform/intel-mid/pwr.c
+index 27288d8d3f71..96fe7bf60ca0 100644
+--- a/arch/x86/platform/intel-mid/pwr.c
++++ b/arch/x86/platform/intel-mid/pwr.c
+@@ -358,18 +358,15 @@ static int mid_pwr_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+ 		return ret;
+ 	}
+ 
+-	ret = pcim_iomap_regions(pdev, 1 << 0, pci_name(pdev));
+-	if (ret) {
+-		dev_err(&pdev->dev, "I/O memory remapping failed\n");
+-		return ret;
+-	}
+-
+ 	pwr = devm_kzalloc(dev, sizeof(*pwr), GFP_KERNEL);
+ 	if (!pwr)
+ 		return -ENOMEM;
+ 
++	pwr->regs = pcim_iomap_region(pdev, 0, "intel_mid_pwr");
++	if (IS_ERR(pwr->regs))
++		return PTR_ERR(pwr->regs);
++
+ 	pwr->dev = dev;
+-	pwr->regs = pcim_iomap_table(pdev)[0];
+ 	pwr->irq = pdev->irq;
+ 
+ 	mutex_init(&pwr->lock);
+-- 
+2.47.0
 
-
->
-> The fast path only gains in none nohz_full() case.
->
-> So maybe it's better to move the fast path code into the non nohz_full()
-> case? With this change, you may have the following benefits:
->
-> 1. No performance impact on nohz_full() case (either local or remote
-> domain).
-> 2. Improve performance on non nohz_full() case as you intended in this
-> patch.
-> 3. The fast path focuses on fixing the right performance bottleneck.
-
-The consequence of reusing the current-cpu-in-mask check in
-smp_call_function_any() is that if the check fails, it could cause
-resctrl_arch_rmid_read() to fail by invoking it in an IPI handler when
-it would have succeeded if invoked on a kernel worker, undoing James's
-original work.
-
--Peter
-
-
->
-> > +
-> >       cpu =3D cpumask_any_housekeeping(cpumask, RESCTRL_PICK_ANY_CPU);
-> >
-> >       /*
-> > @@ -554,6 +579,9 @@ void mon_event_read(struct rmid_read *rr, struct rd=
-t_resource *r,
-> >       else
-> >               smp_call_on_cpu(cpu, smp_mon_event_count, rr, false);
-> >
-> > +     /* If smp_call_function_any() was used, preemption is reenabled h=
-ere. */
-> > +     put_cpu();
-> > +
-> >       resctrl_arch_mon_ctx_free(r, evtid, rr->arch_mon_ctx);
-> >   }
-> >
->
-> Thanks.
->
-> -Fenghua
 
