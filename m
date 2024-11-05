@@ -1,220 +1,266 @@
-Return-Path: <linux-kernel+bounces-397133-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397132-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3357A9BD727
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 21:42:10 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CC079BD725
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 21:41:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B61EB1F23BAE
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 20:42:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 739A8B22C60
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 20:41:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC6021FC7DF;
-	Tue,  5 Nov 2024 20:42:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="RNClhGVh"
-Received: from mail-oa1-f100.google.com (mail-oa1-f100.google.com [209.85.160.100])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C434D1F8F1F;
+	Tue,  5 Nov 2024 20:41:06 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 696C017BEB7
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 20:41:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DEEF17BEB7
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 20:41:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730839320; cv=none; b=MgdsukSwTQ+zrEMxVDGY4+HiK6NcvN+9X8QAm76E955Ci7obaeYlsMYH7k5ZWgre2EAi13ttCdK37QiyBfT+vhx5q2SJpklP0+pp6w7IDcqBbxfzG8rx91rmdIf1+gDm3jnUvRiC17TkryQoieHIb4ns3RZFkNtcZ7ORGhvOskk=
+	t=1730839266; cv=none; b=bgxv9rO05A910i35TWb+ygD6tHKkqWOr/TTsn3sCQS6g6165+rIX264Vy079skztZZbOLFAfhwUn/yiQfe1rKs+53xSSjGgZMYFBqInrmsrU5wZOuA0NtsJjNVAoMUSDddr0vnRq8XgrMT5EeIW1FucfeNcgQM5GoCnxvYE4SeE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730839320; c=relaxed/simple;
-	bh=fWkWu0fGnyaGjA6B6hCOd4KCPCNJ21ri/TvOuUXtMk4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=fcFg9pCAxv4zt0IqA/aAoWHYR+9CtaEzKwxnwmjMd6FKpRN1HC8AsC2r91YMo9DjugrSYtuTPLVsQmQYEuUuwQMXukwzuYZITaVSgnYMfWTnhOmXB0t3U2orUM4yWsBrA0HXVDo1wS57Ni975G0JrLynATK7cu/9TaC1t17WOPE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=RNClhGVh; arc=none smtp.client-ip=209.85.160.100
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
-Received: by mail-oa1-f100.google.com with SMTP id 586e51a60fabf-28889dcca4dso387497fac.2
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 12:41:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1730839317; x=1731444117; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3D9gC9tIydtY1uqE/NToJTfUA9D/ImLOp+4hoaGi+fk=;
-        b=RNClhGVhKTkFG284ltAEZ1+0yCKk677iTVW0oxwpqOmV6byluSW6/Idc1z2dPhEM58
-         izIUB5qukkq7rSmjb4Q2URaAO9xqABn9rYX3cXDVzPszANQyAY8esOu+kFMYXE27qX7e
-         APaSGXIzHTkVkK4AhVM094UQ+sCCwpFEPFyJ5EYdSQWOGA3X47bp2QyIU2bWJMMcRTE7
-         20CiFr8DnYQgKsGpCsPIaEC3+YJYvy4T91OGKmSq1DG0XHXNyXOoR18x+3Vj/nyrkm3M
-         k+5WXc8+Be/sFkHJv8dwzV2/m+eK/qN6Y45JND0wRsmSiT5dDVCrEFPHOPxMHxKGj1PK
-         FS0g==
+	s=arc-20240116; t=1730839266; c=relaxed/simple;
+	bh=zAgYBW0As8PcSG4Iww/nt4C+uClRN58Y+1H5hFI4XLk=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=pQKIDlBrfLdMKx4iE1ZwtIAF1FY44VzQhRjrLlgIrYcP9GkJwDX+zFzwilb+ewIptLW+PwaCIfLlvoNhF0/96Gff5SrOBX7PXycy+EEd7NzA1LCOrLhmZ9w++ACTb/vZB/RPwOY+Ay3YMkT4UM8trd5x+oyrKZGMrOLeRra+7K0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a4f32b0007so58421585ab.1
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 12:41:04 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730839317; x=1731444117;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3D9gC9tIydtY1uqE/NToJTfUA9D/ImLOp+4hoaGi+fk=;
-        b=kxzbzTUP8pFc8QxwGJ+CxOzz8TQwlUyrbico2JSM3ZNA4eFWhFgzzW73sJjjgjtvb8
-         FIkuO6Kr4wnAgFSS/KBlpCDGEa5uKtV+ar0lrBOXM12KQXlrFb3awGqtS2Sdh1ATC74q
-         YtlfgsIpgI5ll5M3H0EWtltUJBkeRRdmBvxkxsZrWgTnGAM8JUA5Ga/Wl/tRELmcfoLE
-         CudD5NVrfeaPu6SGBe1RiS8bQ5vefYjAGS3HkOanT2VLNZaHdU1bcxuxT0gcV8CLxJvo
-         t7FxEl/ajMHpGts7n4ZbwjTwf1P7ZT3P6aPW6R6jHKGLcRpZH4H6EWDMP+uNlPd/tpuB
-         082A==
-X-Forwarded-Encrypted: i=1; AJvYcCVjmqSb14FFCScFNhJStU40t5Y0M9reDK5hTPkK1qsIxFaBEHyXOR4ZGLw6V8Nhjcwk6OhArjymNYhJByI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxkijSMOM4uxBVKFmbs4lPkkIGBEpD+oLPYSmlPoPlPtBib1m+a
-	GROm5cwYwQ56gDJY/nH/vtoWRsY7LOP0+tmvQzsKebMAhUvoT/me2d3r3TYB0hyfAegcwbGZeXE
-	fwSTh4iYSa1rMYUsT+zbMnHvC1pINWnfc4cRk5p2Vm6k8W2Rl
-X-Google-Smtp-Source: AGHT+IFFj+NXeyBVIJKuxXoFbm0U0klEMjzpvgGDAfmphm1s5cKOzarMplbtCNgb3hGFDYekjGbsr+xQxXZk
-X-Received: by 2002:a05:6830:600a:b0:710:f408:bd54 with SMTP id 46e09a7af769-71867f1a3b3mr10416111a34.2.1730839317543;
-        Tue, 05 Nov 2024 12:41:57 -0800 (PST)
-Received: from c7-smtp-2023.dev.purestorage.com ([2620:125:9017:12:36:3:5:0])
-        by smtp-relay.gmail.com with ESMTPS id 006d021491bc7-5ec705a2446sm411582eaf.18.2024.11.05.12.41.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Nov 2024 12:41:57 -0800 (PST)
-X-Relaying-Domain: purestorage.com
-Received: from dev-csander.dev.purestorage.com (dev-csander.dev.purestorage.com [10.7.70.37])
-	by c7-smtp-2023.dev.purestorage.com (Postfix) with ESMTP id 67E67340245;
-	Tue,  5 Nov 2024 13:41:56 -0700 (MST)
-Received: by dev-csander.dev.purestorage.com (Postfix, from userid 1557716354)
-	id 5D637E42752; Tue,  5 Nov 2024 13:41:26 -0700 (MST)
-From: Caleb Sander Mateos <csander@purestorage.com>
-To: Saeed Mahameed <saeedm@nvidia.com>,
-	Leon Romanovsky <leon@kernel.org>,
-	Tariq Toukan <tariqt@nvidia.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>
-Cc: Caleb Sander Mateos <csander@purestorage.com>,
-	Parav Pandit <parav@nvidia.com>,
-	netdev@vger.kernel.org,
-	linux-rdma@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH net-next v4] mlx5/core: Schedule EQ comp tasklet only if necessary
-Date: Tue,  5 Nov 2024 13:39:59 -0700
-Message-ID: <20241105204000.1807095-1-csander@purestorage.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <ZypqYHaRbBCGo3FD@x130>
-References: <ZypqYHaRbBCGo3FD@x130>
+        d=1e100.net; s=20230601; t=1730839263; x=1731444063;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Nluk2Nb7uHmJXeXFeWWIhk3cW7pgBwYyymXxMeyn7BQ=;
+        b=FChUpb4npISYxRnghJTav2hpHM3FDrQzY14v1GW39ZCfSI+SXg32UVAknxv5uVkK0n
+         XIOGNclEeK1aqGbSO71Q2DtnhoT+RIm95B9km2F8xSmiK8iOmxlF5DZZn1I9iNz+hcZs
+         8lSCoqnTtXxSl4HHmw5rLnvJeC2NaVdTYkKJpLVyUBLjpNsMUbB9G9qB1YfUDarJT4+t
+         ZS/9LoNWKF+RQ10YWUGtIZ0B902/uSBqMhrGdjTcf4+bJ1lzzgCrNEnr4oGuyaBrHdFo
+         EKXtGhDIlDvGVKQRu7RPFGMnq3jU+paZKs3exZltTAJSubPAoaKtYLtBy4oS/z1mee6m
+         SSuw==
+X-Forwarded-Encrypted: i=1; AJvYcCU84SJLHGf/jN8RPQv6XmLoHm4qG6U88dJp47agFlHtvGBm6vSyCXa6PItpKEfF8dKdEUUgRT2yfN81xQk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxEBD9NZxFboA7Cs8Uji+HHvE0XnMqmRlMEoF7/ihTBc4vr0Jwe
+	mvBDuDb85w6qHLtx587pyc+Dug9bAuO82IOhzohg/StINIdxolesiLiLb7TcpqVxDCSe08cjtSs
+	ZRFO5q5V9MljGo2JKcZ1djONf1+cpJLwDEu1ZVnXhunTekMwjR4DRp2k=
+X-Google-Smtp-Source: AGHT+IHNu60990jbPS4DrBO6v/1ZEzJ8FJwa8QmzzjR0qJbYomrqXQa2mllvWhGiWAD16KCYsGsLUXhBkrKQBgE43VC9bIjftpDs
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:214a:b0:3a6:c24d:c2f2 with SMTP id
+ e9e14a558f8ab-3a6c24dc9b4mr121182875ab.17.1730839263336; Tue, 05 Nov 2024
+ 12:41:03 -0800 (PST)
+Date: Tue, 05 Nov 2024 12:41:03 -0800
+In-Reply-To: <20241105111442.864442-1-aha310510@gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <672a82df.050a0220.2a847.16c2.GAE@google.com>
+Subject: Re: [syzbot] [net?] KASAN: slab-use-after-free Read in taprio_dump
+From: syzbot <syzbot+d4d8c0fd15a0abe39bcf@syzkaller.appspotmail.com>
+To: aha310510@gmail.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Currently, the mlx5_eq_comp_int() interrupt handler schedules a tasklet
-to call mlx5_cq_tasklet_cb() if it processes any completions. For CQs
-whose completions don't need to be processed in tasklet context, this
-adds unnecessary overhead. In a heavy TCP workload, we see 4% of CPU
-time spent on the tasklet_trylock() in tasklet_action_common(), with a
-smaller amount spent on the atomic operations in tasklet_schedule(),
-tasklet_clear_sched(), and locking the spinlock in mlx5_cq_tasklet_cb().
-TCP completions are handled by mlx5e_completion_event(), which schedules
-NAPI to poll the queue, so they don't need tasklet processing.
+Hello,
 
-Schedule the tasklet in mlx5_add_cq_to_tasklet() instead to avoid this
-overhead. mlx5_add_cq_to_tasklet() is responsible for enqueuing the CQs
-to be processed in tasklet context, so it can schedule the tasklet. CQs
-that need tasklet processing have their interrupt comp handler set to
-mlx5_add_cq_to_tasklet(), so they will schedule the tasklet. CQs that
-don't need tasklet processing won't schedule the tasklet. To avoid
-scheduling the tasklet multiple times during the same interrupt, only
-schedule the tasklet in mlx5_add_cq_to_tasklet() if the tasklet work
-queue was empty before the new CQ was pushed to it.
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+KASAN: slab-use-after-free Read in taprio_dump
 
-The additional branch in mlx5_add_cq_to_tasklet(), called for each EQE,
-may add a small cost for the userspace Infiniband CQs whose completions
-are processed in tasklet context. But this seems worth it to avoid the
-tasklet overhead for CQs that don't need it.
+==================================================================
+BUG: KASAN: slab-use-after-free in taprio_dump_tc_entries net/sched/sch_taprio.c:2286 [inline]
+BUG: KASAN: slab-use-after-free in taprio_dump+0x857/0xd50 net/sched/sch_taprio.c:2399
+Read of size 4 at addr ffff8880774444c0 by task syz-executor.0/7739
 
-Note that the mlx4 driver works the same way: it schedules the tasklet
-in mlx4_add_cq_to_tasklet() and only if the work queue was empty before.
+CPU: 0 UID: 0 PID: 7739 Comm: syz-executor.0 Not tainted 6.12.0-rc3-syzkaller-00163-g8a7d12d674ac #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+ print_address_description mm/kasan/report.c:377 [inline]
+ print_report+0x169/0x550 mm/kasan/report.c:488
+ kasan_report+0x143/0x180 mm/kasan/report.c:601
+ taprio_dump_tc_entries net/sched/sch_taprio.c:2286 [inline]
+ taprio_dump+0x857/0xd50 net/sched/sch_taprio.c:2399
+ tc_fill_qdisc+0x6a7/0x11f0 net/sched/sch_api.c:951
+ qdisc_notify+0x2ec/0x4b0 net/sched/sch_api.c:1052
+ tc_modify_qdisc+0x1c58/0x1e40 net/sched/sch_api.c:1754
+ rtnetlink_rcv_msg+0x73f/0xcf0 net/core/rtnetlink.c:6675
+ netlink_rcv_skb+0x1e3/0x430 net/netlink/af_netlink.c:2551
+ netlink_unicast_kernel net/netlink/af_netlink.c:1331 [inline]
+ netlink_unicast+0x7f6/0x990 net/netlink/af_netlink.c:1357
+ netlink_sendmsg+0x8e4/0xcb0 net/netlink/af_netlink.c:1901
+ sock_sendmsg_nosec net/socket.c:729 [inline]
+ __sock_sendmsg+0x221/0x270 net/socket.c:744
+ ____sys_sendmsg+0x52a/0x7e0 net/socket.c:2607
+ ___sys_sendmsg net/socket.c:2661 [inline]
+ __sys_sendmsg+0x292/0x380 net/socket.c:2690
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fb320c7de69
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 e1 20 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fb3219990c8 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
+RAX: ffffffffffffffda RBX: 00007fb320dabf80 RCX: 00007fb320c7de69
+RDX: 0000000000000000 RSI: 00000000200007c0 RDI: 0000000000000003
+RBP: 00007fb320cca47a R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 000000000000000b R14: 00007fb320dabf80 R15: 00007fff29f54758
+ </TASK>
 
-Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
-Reviewed-by: Parav Pandit <parav@nvidia.com>
-Acked-by: Tariq Toukan <tariqt@nvidia.com>
-Acked-by: Saeed Mahameed <saeedm@nvidia.com>
----
-v4: add comment describing tasklet schedule condition
-v3: revise commit message
-v2: reorder variable declarations, describe CPU profile results
+Allocated by task 7731:
+ kasan_save_stack mm/kasan/common.c:47 [inline]
+ kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
+ poison_kmalloc_redzone mm/kasan/common.c:377 [inline]
+ __kasan_kmalloc+0x98/0xb0 mm/kasan/common.c:394
+ kasan_kmalloc include/linux/kasan.h:257 [inline]
+ __kmalloc_cache_noprof+0x19c/0x2c0 mm/slub.c:4295
+ kmalloc_noprof include/linux/slab.h:878 [inline]
+ kzalloc_noprof include/linux/slab.h:1014 [inline]
+ taprio_change+0x1037/0x44c0 net/sched/sch_taprio.c:1859
+ qdisc_change net/sched/sch_api.c:1422 [inline]
+ tc_modify_qdisc+0x190d/0x1e40 net/sched/sch_api.c:1752
+ rtnetlink_rcv_msg+0x73f/0xcf0 net/core/rtnetlink.c:6675
+ netlink_rcv_skb+0x1e3/0x430 net/netlink/af_netlink.c:2551
+ netlink_unicast_kernel net/netlink/af_netlink.c:1331 [inline]
+ netlink_unicast+0x7f6/0x990 net/netlink/af_netlink.c:1357
+ netlink_sendmsg+0x8e4/0xcb0 net/netlink/af_netlink.c:1901
+ sock_sendmsg_nosec net/socket.c:729 [inline]
+ __sock_sendmsg+0x221/0x270 net/socket.c:744
+ ____sys_sendmsg+0x52a/0x7e0 net/socket.c:2607
+ ___sys_sendmsg net/socket.c:2661 [inline]
+ __sys_sendmsg+0x292/0x380 net/socket.c:2690
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
- drivers/net/ethernet/mellanox/mlx5/core/cq.c | 11 +++++++++++
- drivers/net/ethernet/mellanox/mlx5/core/eq.c |  5 +----
- 2 files changed, 12 insertions(+), 4 deletions(-)
+Freed by task 1035:
+ kasan_save_stack mm/kasan/common.c:47 [inline]
+ kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
+ kasan_save_free_info+0x40/0x50 mm/kasan/generic.c:579
+ poison_slab_object mm/kasan/common.c:247 [inline]
+ __kasan_slab_free+0x59/0x70 mm/kasan/common.c:264
+ kasan_slab_free include/linux/kasan.h:230 [inline]
+ slab_free_hook mm/slub.c:2342 [inline]
+ slab_free mm/slub.c:4579 [inline]
+ kfree+0x1a0/0x440 mm/slub.c:4727
+ rcu_do_batch kernel/rcu/tree.c:2567 [inline]
+ rcu_core+0xaaa/0x17a0 kernel/rcu/tree.c:2823
+ handle_softirqs+0x2c5/0x980 kernel/softirq.c:554
+ __do_softirq kernel/softirq.c:588 [inline]
+ invoke_softirq kernel/softirq.c:428 [inline]
+ __irq_exit_rcu+0xf4/0x1c0 kernel/softirq.c:637
+ irq_exit_rcu+0x9/0x30 kernel/softirq.c:649
+ instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1037 [inline]
+ sysvec_apic_timer_interrupt+0xa6/0xc0 arch/x86/kernel/apic/apic.c:1037
+ asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:702
 
-diff --git a/drivers/net/ethernet/mellanox/mlx5/core/cq.c b/drivers/net/ethernet/mellanox/mlx5/core/cq.c
-index 4caa1b6f40ba..1fd403713baf 100644
---- a/drivers/net/ethernet/mellanox/mlx5/core/cq.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/cq.c
-@@ -69,22 +69,33 @@ void mlx5_cq_tasklet_cb(struct tasklet_struct *t)
- static void mlx5_add_cq_to_tasklet(struct mlx5_core_cq *cq,
- 				   struct mlx5_eqe *eqe)
- {
- 	unsigned long flags;
- 	struct mlx5_eq_tasklet *tasklet_ctx = cq->tasklet_ctx.priv;
-+	bool schedule_tasklet = false;
- 
- 	spin_lock_irqsave(&tasklet_ctx->lock, flags);
- 	/* When migrating CQs between EQs will be implemented, please note
- 	 * that you need to sync this point. It is possible that
- 	 * while migrating a CQ, completions on the old EQs could
- 	 * still arrive.
- 	 */
- 	if (list_empty_careful(&cq->tasklet_ctx.list)) {
- 		mlx5_cq_hold(cq);
-+		/* If the tasklet CQ work list isn't empty, mlx5_cq_tasklet_cb()
-+		 * is scheduled/running and hasn't processed the list yet, so it
-+		 * will see this added CQ when it runs. If the list is empty,
-+		 * the tasklet needs to be scheduled to pick up the CQ. The
-+		 * spinlock avoids any race with the tasklet accessing the list.
-+		 */
-+		schedule_tasklet = list_empty(&tasklet_ctx->list);
- 		list_add_tail(&cq->tasklet_ctx.list, &tasklet_ctx->list);
- 	}
- 	spin_unlock_irqrestore(&tasklet_ctx->lock, flags);
-+
-+	if (schedule_tasklet)
-+		tasklet_schedule(&tasklet_ctx->task);
- }
- 
- /* Callers must verify outbox status in case of err */
- int mlx5_create_cq(struct mlx5_core_dev *dev, struct mlx5_core_cq *cq,
- 		   u32 *in, int inlen, u32 *out, int outlen)
-diff --git a/drivers/net/ethernet/mellanox/mlx5/core/eq.c b/drivers/net/ethernet/mellanox/mlx5/core/eq.c
-index 859dcf09b770..3fd2091c11c8 100644
---- a/drivers/net/ethernet/mellanox/mlx5/core/eq.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/eq.c
-@@ -112,14 +112,14 @@ static int mlx5_eq_comp_int(struct notifier_block *nb,
- 	struct mlx5_eq_comp *eq_comp =
- 		container_of(nb, struct mlx5_eq_comp, irq_nb);
- 	struct mlx5_eq *eq = &eq_comp->core;
- 	struct mlx5_eqe *eqe;
- 	int num_eqes = 0;
--	u32 cqn = -1;
- 
- 	while ((eqe = next_eqe_sw(eq))) {
- 		struct mlx5_core_cq *cq;
-+		u32 cqn;
- 
- 		/* Make sure we read EQ entry contents after we've
- 		 * checked the ownership bit.
- 		 */
- 		dma_rmb();
-@@ -142,13 +142,10 @@ static int mlx5_eq_comp_int(struct notifier_block *nb,
- 			break;
- 	}
- 
- 	eq_update_ci(eq, 1);
- 
--	if (cqn != -1)
--		tasklet_schedule(&eq_comp->tasklet_ctx.task);
--
- 	return 0;
- }
- 
- /* Some architectures don't latch interrupts when they are disabled, so using
-  * mlx5_eq_poll_irq_disabled could end up losing interrupts while trying to
--- 
-2.45.2
+Last potentially related work creation:
+ kasan_save_stack+0x3f/0x60 mm/kasan/common.c:47
+ __kasan_record_aux_stack+0xac/0xc0 mm/kasan/generic.c:541
+ __call_rcu_common kernel/rcu/tree.c:3086 [inline]
+ call_rcu+0x167/0xa70 kernel/rcu/tree.c:3190
+ taprio_change+0x265d/0x44c0 net/sched/sch_taprio.c:1970
+ qdisc_change net/sched/sch_api.c:1422 [inline]
+ tc_modify_qdisc+0x190d/0x1e40 net/sched/sch_api.c:1752
+ rtnetlink_rcv_msg+0x73f/0xcf0 net/core/rtnetlink.c:6675
+ netlink_rcv_skb+0x1e3/0x430 net/netlink/af_netlink.c:2551
+ netlink_unicast_kernel net/netlink/af_netlink.c:1331 [inline]
+ netlink_unicast+0x7f6/0x990 net/netlink/af_netlink.c:1357
+ netlink_sendmsg+0x8e4/0xcb0 net/netlink/af_netlink.c:1901
+ sock_sendmsg_nosec net/socket.c:729 [inline]
+ __sock_sendmsg+0x221/0x270 net/socket.c:744
+ ____sys_sendmsg+0x52a/0x7e0 net/socket.c:2607
+ ___sys_sendmsg net/socket.c:2661 [inline]
+ __sys_sendmsg+0x292/0x380 net/socket.c:2690
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
+The buggy address belongs to the object at ffff888077444400
+ which belongs to the cache kmalloc-512 of size 512
+The buggy address is located 192 bytes inside of
+ freed 512-byte region [ffff888077444400, ffff888077444600)
+
+The buggy address belongs to the physical page:
+page: refcount:1 mapcount:0 mapping:0000000000000000 index:0xffff888077447800 pfn:0x77444
+head: order:2 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
+anon flags: 0xfff00000000040(head|node=0|zone=1|lastcpupid=0x7ff)
+page_type: f5(slab)
+raw: 00fff00000000040 ffff888015441c80 0000000000000000 dead000000000001
+raw: ffff888077447800 000000008010000f 00000001f5000000 0000000000000000
+head: 00fff00000000040 ffff888015441c80 0000000000000000 dead000000000001
+head: ffff888077447800 000000008010000f 00000001f5000000 0000000000000000
+head: 00fff00000000002 ffffea0001dd1101 ffffffffffffffff 0000000000000000
+head: 0000000000000004 0000000000000000 00000000ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
+page_owner tracks the page as allocated
+page last allocated via order 2, migratetype Unmovable, gfp_mask 0xd20c0(__GFP_IO|__GFP_FS|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP|__GFP_NOMEMALLOC), pid 4553, tgid 4553 (udevadm), ts 16557674621, free_ts 13771592324
+ set_page_owner include/linux/page_owner.h:32 [inline]
+ post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1537
+ prep_new_page mm/page_alloc.c:1545 [inline]
+ get_page_from_freelist+0x3045/0x3190 mm/page_alloc.c:3457
+ __alloc_pages_noprof+0x292/0x710 mm/page_alloc.c:4733
+ alloc_pages_mpol_noprof+0x3e8/0x680 mm/mempolicy.c:2265
+ alloc_slab_page+0x6a/0x120 mm/slub.c:2412
+ allocate_slab+0x5a/0x2f0 mm/slub.c:2578
+ new_slab mm/slub.c:2631 [inline]
+ ___slab_alloc+0xcd1/0x14b0 mm/slub.c:3818
+ __slab_alloc+0x58/0xa0 mm/slub.c:3908
+ __slab_alloc_node mm/slub.c:3961 [inline]
+ slab_alloc_node mm/slub.c:4122 [inline]
+ __kmalloc_cache_noprof+0x1d5/0x2c0 mm/slub.c:4290
+ kmalloc_noprof include/linux/slab.h:878 [inline]
+ kzalloc_noprof include/linux/slab.h:1014 [inline]
+ kernfs_fop_open+0x3e0/0xd10 fs/kernfs/file.c:623
+ do_dentry_open+0x978/0x1460 fs/open.c:958
+ vfs_open+0x3e/0x330 fs/open.c:1088
+ do_open fs/namei.c:3774 [inline]
+ path_openat+0x2c84/0x3590 fs/namei.c:3933
+ do_filp_open+0x235/0x490 fs/namei.c:3960
+ do_sys_openat2+0x13e/0x1d0 fs/open.c:1415
+ do_sys_open fs/open.c:1430 [inline]
+ __do_sys_openat fs/open.c:1446 [inline]
+ __se_sys_openat fs/open.c:1441 [inline]
+ __x64_sys_openat+0x247/0x2a0 fs/open.c:1441
+page last free pid 1 tgid 1 stack trace:
+ reset_page_owner include/linux/page_owner.h:25 [inline]
+ free_pages_prepare mm/page_alloc.c:1108 [inline]
+ free_unref_page+0xcfb/0xf20 mm/page_alloc.c:2638
+ free_contig_range+0x152/0x550 mm/page_alloc.c:6748
+ destroy_args+0x8a/0x840 mm/debug_vm_pgtable.c:1017
+ debug_vm_pgtable+0x4be/0x550 mm/debug_vm_pgtable.c:1397
+ do_one_initcall+0x248/0x880 init/main.c:1269
+ do_initcall_level+0x157/0x210 init/main.c:1331
+ do_initcalls+0x3f/0x80 init/main.c:1347
+ kernel_init_freeable+0x435/0x5d0 init/main.c:1580
+ kernel_init+0x1d/0x2b0 init/main.c:1469
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+
+Memory state around the buggy address:
+ ffff888077444380: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+ ffff888077444400: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+>ffff888077444480: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                                           ^
+ ffff888077444500: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff888077444580: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+==================================================================
+
+
+Tested on:
+
+commit:         8a7d12d6 net: usb: usbnet: fix name regression
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+console output: https://syzkaller.appspot.com/x/log.txt?x=15bf8e30580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=fd7a8d0218abac59
+dashboard link: https://syzkaller.appspot.com/bug?extid=d4d8c0fd15a0abe39bcf
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+
+Note: no patches were applied.
 
