@@ -1,151 +1,230 @@
-Return-Path: <linux-kernel+bounces-396329-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396330-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3B1E9BCBB8
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 12:25:20 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 306629BCBBE
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 12:25:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 33ADE1F245B7
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 11:25:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E4E6D2849DE
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 11:25:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 649651C231D;
-	Tue,  5 Nov 2024 11:25:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GVhVjUSK"
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A09791D47BD;
+	Tue,  5 Nov 2024 11:25:12 +0000 (UTC)
+Received: from ganesha.gnumonks.org (ganesha.gnumonks.org [213.95.27.120])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 090611D1E75;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 205D71D278B;
 	Tue,  5 Nov 2024 11:25:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.27.120
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730805910; cv=none; b=YoNNce3jsplYGEdWi70E1matTXdSu+hMpJQMSQWIaG2E9TK4oV2ENzN4fK9SwOMIjT1Euvoy4qevXz/yXa1zG2eruYhJpOAw21dsYRQe9gssUWyuiNcmLKLNYRBiFjlOIzywhKS2Cohsh+CT/6VNvD7CmycJTaFTivbUGO9RUfw=
+	t=1730805912; cv=none; b=rl4xDTgLNQ+ghBNKF4SzK/p4b0nGEKkEuRoWA+V5NSPE9yhdNqWnnnu0IgOWtJmdzr3d+gGHnSCXZB2SrxeQ0Uq5tEOjl8w2cODxB/Tx66cXllHBdoKWoNsIJwqVec0gk1Z80HTvcODfM94fYyXMyfdAVbI7L1hyJBFuHJI7GN8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730805910; c=relaxed/simple;
-	bh=Z9Hoi3/pS+fdpoPqlVPXH0IroVleNH2MWlsY2E+JQYI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=J9NJHAVVLc0DGDRy3JB2ntk2goIyX6GeqhL3UPz5czlnr8qnBDMitTTvpo7i/bg7bXWm64FICNNbaWPgEpOw8Otah/4EVoe+uNj4iiWl1SgR89WMbAe0dYtfM1aBEgqKBncUnpeQ5nxQ13NM7GzWvjuZM4tnD0bnnv7D/m8nV18=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GVhVjUSK; arc=none smtp.client-ip=209.85.208.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2fb443746b8so46567891fa.0;
-        Tue, 05 Nov 2024 03:25:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730805907; x=1731410707; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=i1EDWbkXrAT1r8+WJE2J8WjLP3sxPTbNb1cos2b4N0M=;
-        b=GVhVjUSKgCDFDzn/JCVmhSOPcUFp96aAx1iAH1cLXgOw2MBGCYiD9b06X57xXSQOkm
-         DhXMpN7iQ4+Pwygp/AI9FeyJPwECbaX00ThEGHzJU1Q+pXltm3k94sLG8ZayFwvFkn9l
-         Efqo0yaeR0ZVa/79Ed+hOL8r2c7DOddhB/xUKW9cODOaZcqRdzSMzaqHrCOHsVQK3Gko
-         aAzKKJfFAFfJGCuwOwlBA4ncFN01lcsJMBSAWV+9U93NQnyDSzlknj3/pRp7T0jeQkdA
-         vKLoK+7Rm/dVZd3wvHHkGfDtWop1iNSqf3SRqjcOLyGF8cRgMNnfymk3Aeba/IPye6dc
-         oFtg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730805907; x=1731410707;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=i1EDWbkXrAT1r8+WJE2J8WjLP3sxPTbNb1cos2b4N0M=;
-        b=FDQswBbAj6jyuQBM5WPe/o7pydqhDtis4O6hW+tVE3K8qNXTLHsmBhzRVNNYM1LR+B
-         7Sa481tZI2UJ7vGg8uQQw/nMF0c3DhDaJFXuz+hGf4NTpyjS0/3wOOBWTa52Ds9nC/1L
-         dJZAAH5Tcy2EEO/75IQh0/JdhQOxV4oXLhFe15d6G4XEQ50UV97kyZBT//UaPn+EzPIr
-         esVlp6sJp7+PGbJaZQmg1A6R0v2ZpNWD791mNJ+pgjOBzDb8b286Q4D8DzfTfNVtKC6c
-         jk9Wf4WaY2Fa2eujv2fcXws99zBtagpIy2RvSGi4Xh5wQ7LpQ8nsbsHSnbOoJBorxTVt
-         Sbtg==
-X-Forwarded-Encrypted: i=1; AJvYcCUFgkMcUd0e8x/tz0Zexdr6jCcqfEmnVZM173nmS4+oMgfbFgTaadlCZ/laOwJkrFf95a76c1AQ8R5rexN0pd4=@vger.kernel.org, AJvYcCUjzF0ehMx4UcJpsQr5thod/ZdzvgozwizTEbA8FAY+drmBNc1x+Q6Q57xzeUxVSyrIE3sbDmQN0uLw3OM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy/Cp9JvqSYzZl7imeAC4XH/B1UFomRTORiE5wh2xGzy+4FwoO7
-	9DTDlbP2sS2J3lhO8Y7fky6rAvcfC/VOx6gP1UnWU98FGUuDpEjjVAF6IFKWgp9WYZ38Hb2mCo/
-	M8+yaUqTPArSP8Qwey1Fqjq2Lxx8=
-X-Google-Smtp-Source: AGHT+IHWbdLUzOjMypjvojC5BejsuSfjfWBptWucpiuRIWlk3iRlpoiqNDNJ9G9RzY5sF9Hh3P5MEt8BDZ+Rud/0QHI=
-X-Received: by 2002:a05:651c:2209:b0:2ef:17f7:6e1d with SMTP id
- 38308e7fff4ca-2fcbdf689acmr179932591fa.4.1730805906749; Tue, 05 Nov 2024
- 03:25:06 -0800 (PST)
+	s=arc-20240116; t=1730805912; c=relaxed/simple;
+	bh=eVKFimwSrLBVPc0u9ggjPX9a1NYiYheddPFbojKnoCM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OG3BxrHtRc5vRhAbkkSWLxLbaSoJ6gtfIo2/SJa4abzE0A1VKRbL1VSZbNTRRdIUp7m/Rc182znFhed+12+z9an+1ywFYklT7/h5UzLDYJNGa3omor0ynHTVJIAR8VJC+eiR6Jg3wcK5LR3qB8bzfpbkwsZ8Z4bZunfct28boig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org; spf=pass smtp.mailfrom=gnumonks.org; arc=none smtp.client-ip=213.95.27.120
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gnumonks.org
+Received: from [78.30.37.63] (port=54028 helo=gnumonks.org)
+	by ganesha.gnumonks.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <pablo@gnumonks.org>)
+	id 1t8HgD-004Mns-HQ; Tue, 05 Nov 2024 12:25:04 +0100
+Date: Tue, 5 Nov 2024 12:25:00 +0100
+From: Pablo Neira Ayuso <pablo@netfilter.org>
+To: Wenjia Zhang <wenjia@linux.ibm.com>, Jan Karcher <jaka@linux.ibm.com>,
+	"D. Wythe" <alibuda@linux.alibaba.com>,
+	Tony Lu <tonylu@linux.alibaba.com>,
+	Wen Gu <guwen@linux.alibaba.com>, linux-s390@vger.kernel.org
+Cc: syzbot <syzbot+e929093395ec65f969c7@syzkaller.appspotmail.com>,
+	coreteam@netfilter.org, davem@davemloft.net, edumazet@google.com,
+	horms@verge.net.au, ja@ssi.bg, kadlec@netfilter.org,
+	kuba@kernel.org, linux-kernel@vger.kernel.org,
+	lvs-devel@vger.kernel.org, netdev@vger.kernel.org,
+	netfilter-devel@vger.kernel.org, pabeni@redhat.com,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [lvs?] possible deadlock in start_sync_thread
+Message-ID: <ZyoAjPBjtQA6jE-8@calendula>
+References: <000000000000abf2f0061ba46a1a@google.com>
+ <6725704b.050a0220.35b515.0180.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241104-simplify-arc-v1-1-a4ffc290f905@gmail.com> <ZylNvC8enwPG4IQ4@Boquns-Mac-mini.local>
-In-Reply-To: <ZylNvC8enwPG4IQ4@Boquns-Mac-mini.local>
-From: Tamir Duberstein <tamird@gmail.com>
-Date: Tue, 5 Nov 2024 07:24:30 -0400
-Message-ID: <CAJ-ks9=vUn1LKC12R05LZWwtoKC6QzvXCUyyaB4VKqAHEsGczw@mail.gmail.com>
-Subject: Re: [PATCH] rust: arc: remove unused PhantomData
-To: Boqun Feng <boqun.feng@gmail.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <6725704b.050a0220.35b515.0180.GAE@google.com>
+X-Spam-Score: -1.7 (-)
 
-On Mon, Nov 4, 2024 at 6:42=E2=80=AFPM Boqun Feng <boqun.feng@gmail.com> wr=
-ote:
->
-> Hi Tamir,
->
-> On Mon, Nov 04, 2024 at 05:23:44PM -0400, Tamir Duberstein wrote:
-> > There's no need for this. The type had the same form when it was first
->
-> I believe we need this `PhantomData` to inform drop chec [1] that the
-> drop of `Arc` may result into the drop of an `ArcInner<T>`. Rust std
-> `Arc` has the similar definition [2], you can find more information
-> about PhantomData usage on drop checking at [3].
->
-> [1]: https://doc.rust-lang.org/nightly/std/ops/trait.Drop.html#drop-check
-> [2]: https://doc.rust-lang.org/src/alloc/sync.rs.html#245
-> [3]: https://doc.rust-lang.org/nightly/std/marker/struct.PhantomData.html=
-#ownership-and-the-drop-check
->
-> Regards,
-> Boqun
+Hi,
 
-Thanks for explaining! Withdrawn.
+I am Cc'ing SHARED MEMORY COMMUNICATIONS (SMC) SOCKETS maintainers.
 
-> > introduced, so it seems this was never necessary.
-> >
-> > Fixed: 9dc043655003 ("rust: sync: add `Arc` for ref-counted allocations=
-")
-> > Signed-off-by: Tamir Duberstein <tamird@gmail.com>
-> > ---
-> >  rust/kernel/sync/arc.rs | 2 --
-> >  1 file changed, 2 deletions(-)
-> >
-> > diff --git a/rust/kernel/sync/arc.rs b/rust/kernel/sync/arc.rs
-> > index db9da352d588f65348aa7a5204abbb165b70197f..7e54d31538273d410f80fd6=
-5b2070e75e4f69428 100644
-> > --- a/rust/kernel/sync/arc.rs
-> > +++ b/rust/kernel/sync/arc.rs
-> > @@ -127,7 +127,6 @@
-> >  /// ```
-> >  pub struct Arc<T: ?Sized> {
-> >      ptr: NonNull<ArcInner<T>>,
-> > -    _p: PhantomData<ArcInner<T>>,
-> >  }
-> >
-> >  #[pin_data]
-> > @@ -219,7 +218,6 @@ unsafe fn from_inner(inner: NonNull<ArcInner<T>>) -=
-> Self {
-> >          // INVARIANT: By the safety requirements, the invariants hold.
-> >          Arc {
-> >              ptr: inner,
-> > -            _p: PhantomData,
-> >          }
-> >      }
-> >
-> >
-> > ---
-> > base-commit: ae7851c29747fa3765ecb722fe722117a346f988
-> > change-id: 20241104-simplify-arc-70c3574b5fac
-> >
-> > Best regards,
-> > --
-> > Tamir Duberstein <tamird@gmail.com>
-> >
+Similar issue already reported by syzkaller here:
+
+https://lore.kernel.org/netdev/ZyIgRmJUbnZpzXNV@calendula/T/#mf1f03a65108226102d8567c9fb6bab98c072444c
+
+related to smc->clcsock_release_lock.
+
+I think this is a false possible lockdep considers smc->clcsock_release_lock
+is a lock of the same class sk_lock-AF_INET.
+
+Could you please advise?
+
+Thanks.
+
+On Fri, Nov 01, 2024 at 05:20:27PM -0700, syzbot wrote:
+> syzbot has found a reproducer for the following issue on:
+> 
+> HEAD commit:    6c52d4da1c74 Merge tag 'for-linus' of git://git.kernel.org..
+> git tree:       upstream
+> console+strace: https://syzkaller.appspot.com/x/log.txt?x=12889630580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=672325e7ab17fdf7
+> dashboard link: https://syzkaller.appspot.com/bug?extid=e929093395ec65f969c7
+> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1788e187980000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14a4f2a7980000
+> 
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/70526f6a5c28/disk-6c52d4da.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/8ca3cd20d331/vmlinux-6c52d4da.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/9c4393fc9a08/bzImage-6c52d4da.xz
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+e929093395ec65f969c7@syzkaller.appspotmail.com
+> 
+> ======================================================
+> WARNING: possible circular locking dependency detected
+> 6.12.0-rc5-syzkaller-00181-g6c52d4da1c74 #0 Not tainted
+> ------------------------------------------------------
+> syz-executor158/5839 is trying to acquire lock:
+> ffffffff8fcd3448 (rtnl_mutex){+.+.}-{3:3}, at: start_sync_thread+0xdc/0x2dc0 net/netfilter/ipvs/ip_vs_sync.c:1761
+> 
+> but task is already holding lock:
+> ffff888034ac8aa8 (&smc->clcsock_release_lock){+.+.}-{3:3}, at: smc_setsockopt+0x1c3/0xe50 net/smc/af_smc.c:3056
+> 
+> which lock already depends on the new lock.
+> 
+> 
+> the existing dependency chain (in reverse order) is:
+> 
+> -> #2 (&smc->clcsock_release_lock){+.+.}-{3:3}:
+>        lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5825
+>        __mutex_lock_common kernel/locking/mutex.c:608 [inline]
+>        __mutex_lock+0x136/0xd70 kernel/locking/mutex.c:752
+>        smc_switch_to_fallback+0x35/0xdb0 net/smc/af_smc.c:902
+>        smc_sendmsg+0x11f/0x530 net/smc/af_smc.c:2771
+>        sock_sendmsg_nosec net/socket.c:729 [inline]
+>        __sock_sendmsg+0x221/0x270 net/socket.c:744
+>        __sys_sendto+0x39b/0x4f0 net/socket.c:2214
+>        __do_sys_sendto net/socket.c:2226 [inline]
+>        __se_sys_sendto net/socket.c:2222 [inline]
+>        __x64_sys_sendto+0xde/0x100 net/socket.c:2222
+>        do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>        do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+>        entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> 
+> -> #1 (sk_lock-AF_INET){+.+.}-{0:0}:
+>        lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5825
+>        lock_sock_nested+0x48/0x100 net/core/sock.c:3611
+>        do_ip_setsockopt+0x1a2d/0x3cd0 net/ipv4/ip_sockglue.c:1078
+>        ip_setsockopt+0x63/0x100 net/ipv4/ip_sockglue.c:1417
+>        do_sock_setsockopt+0x3af/0x720 net/socket.c:2334
+>        __sys_setsockopt+0x1a2/0x250 net/socket.c:2357
+>        __do_sys_setsockopt net/socket.c:2366 [inline]
+>        __se_sys_setsockopt net/socket.c:2363 [inline]
+>        __x64_sys_setsockopt+0xb5/0xd0 net/socket.c:2363
+>        do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>        do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+>        entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> 
+> -> #0 (rtnl_mutex){+.+.}-{3:3}:
+>        check_prev_add kernel/locking/lockdep.c:3161 [inline]
+>        check_prevs_add kernel/locking/lockdep.c:3280 [inline]
+>        validate_chain+0x18ef/0x5920 kernel/locking/lockdep.c:3904
+>        __lock_acquire+0x1384/0x2050 kernel/locking/lockdep.c:5202
+>        lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5825
+>        __mutex_lock_common kernel/locking/mutex.c:608 [inline]
+>        __mutex_lock+0x136/0xd70 kernel/locking/mutex.c:752
+>        start_sync_thread+0xdc/0x2dc0 net/netfilter/ipvs/ip_vs_sync.c:1761
+>        do_ip_vs_set_ctl+0x442/0x13d0 net/netfilter/ipvs/ip_vs_ctl.c:2732
+>        nf_setsockopt+0x295/0x2c0 net/netfilter/nf_sockopt.c:101
+>        smc_setsockopt+0x275/0xe50 net/smc/af_smc.c:3064
+>        do_sock_setsockopt+0x3af/0x720 net/socket.c:2334
+>        __sys_setsockopt+0x1a2/0x250 net/socket.c:2357
+>        __do_sys_setsockopt net/socket.c:2366 [inline]
+>        __se_sys_setsockopt net/socket.c:2363 [inline]
+>        __x64_sys_setsockopt+0xb5/0xd0 net/socket.c:2363
+>        do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>        do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+>        entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> 
+> other info that might help us debug this:
+> 
+> Chain exists of:
+>   rtnl_mutex --> sk_lock-AF_INET --> &smc->clcsock_release_lock
+> 
+>  Possible unsafe locking scenario:
+> 
+>        CPU0                    CPU1
+>        ----                    ----
+>   lock(&smc->clcsock_release_lock);
+>                                lock(sk_lock-AF_INET);
+>                                lock(&smc->clcsock_release_lock);
+>   lock(rtnl_mutex);
+> 
+>  *** DEADLOCK ***
+> 
+> 1 lock held by syz-executor158/5839:
+>  #0: ffff888034ac8aa8 (&smc->clcsock_release_lock){+.+.}-{3:3}, at: smc_setsockopt+0x1c3/0xe50 net/smc/af_smc.c:3056
+> 
+> stack backtrace:
+> CPU: 0 UID: 0 PID: 5839 Comm: syz-executor158 Not tainted 6.12.0-rc5-syzkaller-00181-g6c52d4da1c74 #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+> Call Trace:
+>  <TASK>
+>  __dump_stack lib/dump_stack.c:94 [inline]
+>  dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+>  print_circular_bug+0x13a/0x1b0 kernel/locking/lockdep.c:2074
+>  check_noncircular+0x36a/0x4a0 kernel/locking/lockdep.c:2206
+>  check_prev_add kernel/locking/lockdep.c:3161 [inline]
+>  check_prevs_add kernel/locking/lockdep.c:3280 [inline]
+>  validate_chain+0x18ef/0x5920 kernel/locking/lockdep.c:3904
+>  __lock_acquire+0x1384/0x2050 kernel/locking/lockdep.c:5202
+>  lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5825
+>  __mutex_lock_common kernel/locking/mutex.c:608 [inline]
+>  __mutex_lock+0x136/0xd70 kernel/locking/mutex.c:752
+>  start_sync_thread+0xdc/0x2dc0 net/netfilter/ipvs/ip_vs_sync.c:1761
+>  do_ip_vs_set_ctl+0x442/0x13d0 net/netfilter/ipvs/ip_vs_ctl.c:2732
+>  nf_setsockopt+0x295/0x2c0 net/netfilter/nf_sockopt.c:101
+>  smc_setsockopt+0x275/0xe50 net/smc/af_smc.c:3064
+>  do_sock_setsockopt+0x3af/0x720 net/socket.c:2334
+>  __sys_setsockopt+0x1a2/0x250 net/socket.c:2357
+>  __do_sys_setsockopt net/socket.c:2366 [inline]
+>  __se_sys_setsockopt net/socket.c:2363 [inline]
+>  __x64_sys_setsockopt+0xb5/0xd0 net/socket.c:2363
+>  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> RIP: 0033:0x7f468bc1c369
+> Code: 48 83 c4 28 c3 e8 37 17 00 00 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+> RSP: 002b:00007ffe79331b18 EFLAGS: 00000246 ORIG_RAX: 0000000000000036
+> RAX: ffffffffffffffda RBX: 00007ffe79331ce8 RCX: 00007f468bc1c369
+> RDX: 000000000000048b RSI: 0000000000000000 RDI: 0000000000000005
+> RBP: 00007f468bc8f610 R08: 0000000000000018 R09: 00007ffe79331ce8
+> R10: 0000000020000000 R11: 0000000000000246 R12: 0000000000000001
+> R13: 00007ffe79331cd8 R14: 0000000000000001 R15: 0000000000000001
+>  </TASK>
+> IPVS: Unkn
+> 
+> 
+> ---
+> If you want syzbot to run the reproducer, reply with:
+> #syz test: git://repo/address.git branch-or-commit-hash
+> If you attach or paste a git patch, syzbot will apply it before testing.
 
