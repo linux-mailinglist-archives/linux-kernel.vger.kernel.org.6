@@ -1,108 +1,148 @@
-Return-Path: <linux-kernel+bounces-396654-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396655-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1F859BD024
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 16:11:50 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 300BA9BD029
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 16:12:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F34FB1C2124C
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 15:11:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B53A81F2214D
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 15:12:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B9BA1D9A6B;
-	Tue,  5 Nov 2024 15:11:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F6CE1D9A72;
+	Tue,  5 Nov 2024 15:11:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sWRy+D0G"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="wZMzeTBp"
+Received: from mail-io1-f49.google.com (mail-io1-f49.google.com [209.85.166.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 711C838DD6;
-	Tue,  5 Nov 2024 15:11:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D01231D6DB9
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 15:11:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730819502; cv=none; b=I1/jHjipOK9XZVjOoO2bsvPa3MY1LCK//tTkyJMDJjzImIfIR12DXGm4R53lZH0jPoP38RI06a2qjbqAtvG9rtb14Z3kyeHsuffw5+PPwg3tyKr9DtbWSihmqnyVSIEAanLrxTZTFhE0izvgHYS49U+dEEPJBNgOVAScYiO+WBc=
+	t=1730819517; cv=none; b=oRp/2B7JPfEH7XgAYYCFtbBKFbCgYULxhiqMKUqdK/B6zRj3q8LtmPRYNH5LSMRADFSEwKbLOfbG+nlKHQNi2/LKKX04DA2JokunM2ogJn40ZA3by3lUScCFIO7jUbvn6HkXGOPvdatbucbYrt0A9O1M/4/vjwddB9Qj93K9Sl0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730819502; c=relaxed/simple;
-	bh=eXvWZ6HZrFe4UlkwLHKP0WMYz43YXwcGYnpHi3jCo44=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Gx5DidsbUHNj1ZLqwDJeXLT/UJ/dbxEMvwx9fWFyDDYeTy0JyYG4j2zm30+RIKjXfwkh7I1iBck0yToCXoKzQFjfAk42zbHWc4lT0Ny3/RmaZmEGVfptH/a165nBMtJMWYSd+uhJM2coWckR7fxnEW3aM3WdpFTqQwhJFTc8E2Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sWRy+D0G; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB52AC4CECF;
-	Tue,  5 Nov 2024 15:11:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730819502;
-	bh=eXvWZ6HZrFe4UlkwLHKP0WMYz43YXwcGYnpHi3jCo44=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=sWRy+D0GZ1lUaCfoiPgwGHFpo/GCf06hOQtcbYVE77bOr4zHwkLPuWQmUbnivy9Vg
-	 x1IzZHJ3mZkkQuXn/ncNqIDGxfe+JQpC9YzzH3riVcbHoiTx0SCCMx3kDIROSptIaD
-	 50x1GN01H3luGmhOT6yp9Jlf42z4TZNd+NLv969m2R3hcMpSEH44t2OuvbgtHHqvr/
-	 rlJNEmgn8mwGS8C4J6SRURmR9q3ckEPFKhdJERAA/MXM7kgPYa9odcN6SP6j9tC5U6
-	 OvoSutVWL/1Y1GAmjca9RXviO63jsDDLg5ZH9riQ5K3JhrhYOWKpOy70fLZPiHdGNQ
-	 JVZhN2zoKntZQ==
-Date: Tue, 5 Nov 2024 16:11:37 +0100
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/1] i2c: busses: Use *-y instead of *-objs in Makefile
-Message-ID: <ow63ccyclvg3zhvaq4lnubvrjvtaw3maf76engq6zdrcvvdwaz@lqj4okf3jt6c>
-References: <20241104103935.195988-1-andriy.shevchenko@linux.intel.com>
- <l75w7qvvw34u3vwvd7ddnka2q3fcrvzpxbfwrh22niggndrp2s@fctmlyvdfiqm>
- <ZyoyJSiWXBNar47_@smile.fi.intel.com>
+	s=arc-20240116; t=1730819517; c=relaxed/simple;
+	bh=eoJshfMY3GJ5a+HHGfGtlgMreRED5NlAGt3XNM1/SBA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=A2QtmegRP3WKFPVr/2AgwCgZRJX1AmniPekDnmgwfmkBtfb2dLQRcXDvUskn8TQeq4C57xIodinhZrIJ+QrFJa3PbdEYywO2k2/jI+ahJkrHX2tZBAQmaZBmr4YfBwBDHK5TUV4OXDrVtHXzS8FcvCuhLF0l6Rle+Uq4Kz7fYJM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=wZMzeTBp; arc=none smtp.client-ip=209.85.166.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-io1-f49.google.com with SMTP id ca18e2360f4ac-83ac05206f6so215290039f.2
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 07:11:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1730819515; x=1731424315; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=SWwAKBYPKBxi+Egnr6GkcZQMq1o5kRfwuupexQV/vk0=;
+        b=wZMzeTBpaFN8AN4gACNFFscUj+hnV3rmk0h/ZOxBJSXkxH39wmNXFq6f4Z4ynE45xI
+         wXsEkTh7+AHFIn1Hqe5MY5Za428sZqSQymx2ow4mcbRlkikQvNhwfvOxm5nS75LbMH9c
+         MKnGyYzR3bjkWGinlqYvq2aMYVSFRyGhkz4negaqkgRP+vc3FWH2N+vESIMswOas4xf0
+         xP8Nfb6wQCldcdc4/v2SvJ+FxgOtfQ5mA+g0t34IT3NXdF4MxJjn3epUlu7ei6DXuBXm
+         JiV6xOdImX72QxVsA2YMO7wAtxKME/N2pQkrauBtFHr+LtPeirDEMPbR3VLUeYuxV5fd
+         n1JQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730819515; x=1731424315;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=SWwAKBYPKBxi+Egnr6GkcZQMq1o5kRfwuupexQV/vk0=;
+        b=hemxFLAQjn1FbwvVxInmXW1nyLWqcYS0jhJABbH2eSDYKJIFi2pKDYRsktf+3PqhYu
+         ClchhSAkWEKWX6St6ZnrtUb3v4VsbUZLb0JW6Vs7C88XCcRYtVP6Iq073fT+vrCqUTKX
+         fjBilETaRG66zOAeXq+86oTk9Yb6J0a7y8i7VgT1cEZS1EuMxzfGidusNnngHSc+5/i0
+         G/6Jcg4v8ahzzP+8x7WkDE8pxGpXk49UurBQrzPm8PJQt6RvPyUu9x4gA2VlXRkb5OmX
+         V5vExqP58Iwg+VTWrbvzxVeuxdEBTYJdnXYxdqnl6ENh058GBDxI8CCS3gNJs279q0dZ
+         6UrA==
+X-Forwarded-Encrypted: i=1; AJvYcCVN9Oj51J4u8XzhhJ7XNFRJ4lhkD9RBVJsjExVboZs5zNs7HRxq0trqvAeyUB55ihyAZ7dldW5e7LTIJjU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxLHSPSyWqtCbV/ee6fyA/irA+9roPMAaxBJY6DNaPgA1xObrO+
+	SKy9rg4xNaoNmePsDW1WvNZbbbZK3pWnI8VHsc0RBpnjMmSTPp7ve0wV0/fw8OU=
+X-Google-Smtp-Source: AGHT+IGDX75ZExNONHJoHGRJ/IqT5vn5gVmGAZ8JGgbv4qy8khE6jtcPyWRkSO7ad0xRLtuL8OZmSQ==
+X-Received: by 2002:a05:6e02:16cb:b0:3a6:b0d0:ee2d with SMTP id e9e14a558f8ab-3a6b0d0f518mr139871665ab.9.1730819514844;
+        Tue, 05 Nov 2024 07:11:54 -0800 (PST)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3a6a97cf520sm29049985ab.25.2024.11.05.07.11.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 05 Nov 2024 07:11:54 -0800 (PST)
+Message-ID: <5557bb8e-0ab8-4346-907e-a6cfea1dabf8@kernel.dk>
+Date: Tue, 5 Nov 2024 08:11:52 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZyoyJSiWXBNar47_@smile.fi.intel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [ANNOUNCE] work tree for untorn filesystem writes
+To: Theodore Ts'o <tytso@mit.edu>
+Cc: Carlos Maiolino <cem@kernel.org>, "Darrick J. Wong" <djwong@kernel.org>,
+ "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>,
+ John Garry <john.g.garry@oracle.com>, brauner@kernel.org,
+ Catherine Hoang <catherine.hoang@oracle.com>, linux-ext4@vger.kernel.org,
+ Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@infradead.org>,
+ Ojaswin Mujoo <ojaswin@linux.ibm.com>, linux-block@vger.kernel.org,
+ Dave Chinner <david@fromorbit.com>, linux-kernel@vger.kernel.org,
+ linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+References: <20241105004341.GO21836@frogsfrogsfrogs>
+ <fegazz7mxxhrpn456xek54vtpc7p4eec3pv37f2qznpeexyrvn@iubpqvjzl36k>
+ <72515c41-4313-4287-97cc-040ec143b3c5@kernel.dk>
+ <20241105150812.GA227621@mit.edu>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20241105150812.GA227621@mit.edu>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Nov 05, 2024 at 04:56:37PM +0200, Andy Shevchenko wrote:
-> On Tue, Nov 05, 2024 at 03:44:34PM +0100, Andi Shyti wrote:
-> > On Mon, Nov 04, 2024 at 12:39:14PM +0200, Andy Shevchenko wrote:
-> > > *-objs suffix is reserved rather for (user-space) host programs while
-> > > usually *-y suffix is used for kernel drivers (although *-objs works
-> > > for that purpose for now).
-> > > 
-> > > Let's correct the old usages of *-objs in Makefiles.
+On 11/5/24 8:08 AM, Theodore Ts'o wrote:
+> On Tue, Nov 05, 2024 at 05:52:05AM -0700, Jens Axboe wrote:
+>>
+>> Why is this so difficult to grasp? It's a pretty common method for
+>> cross subsystem work - it avoids introducing conflicts when later
+>> work goes into each subsystem, and freedom of either side to send a
+>> PR before the other.
+>>
+>> So please don't start committing the patches again, it'll just cause
+>> duplicate (and empty) commits in Linus's tree.
 > 
-> ...
-> 
-> > >  config I2C_AT91_SLAVE_EXPERIMENTAL
-> > > -	tristate "Microchip AT91 I2C experimental slave mode"
-> > > +	bool "Microchip AT91 I2C experimental slave mode"
-> > >  	depends on I2C_AT91
-> > >  	select I2C_SLAVE
-> > >  	help
-> > > @@ -440,7 +440,7 @@ config I2C_AT91_SLAVE_EXPERIMENTAL
-> > >  	  been tested in a heavy way, help wanted.
-> > >  	  There are known bugs:
-> > >  	    - It can hang, on a SAMA5D4, after several transfers.
-> > > -	    - There are some mismtaches with a SAMA5D4 as slave and a SAMA5D2 as
-> > > +	    - There are some mismatches with a SAMA5D4 as slave and a SAMA5D2 as
-> > 
-> > Although these changes are related and I'm OK also with the typo
-> > fix, could you please propose here a couple of lines that I can
-> > add to the commit message?
-> 
-> Would this work?
-> "While at it, fix an obvious typo in help section of the Kconfig."
+> Jens, what's going on is that in order to test untorn (aka "atomic"
+> although that's a bit of a misnomer) writes, changes are needed in the
+> block, vfs, and ext4 or xfs git trees.  So we are aware that you had
+> taken the block-related patches into the block tree.  What Darrick has
+> done is to apply the the vfs patches on top of the block commits, and
+> then applied the ext4 and xfs patches on top of that.
 
-works for me.
+And what I'm saying is that is _wrong_. Darrick should be pulling the
+branch that you cut from my email:
 
-> Of course, feel free to drop that hunk or request for a new version without it
-> (or split into a separate change), I am fine with all options.
-> 
-> Note, bool is essential to for the patch, but can be split as a prerequisite,
-> but without this patch it doesn't really fix match as we never try to build
-> the code when it was =m.
+for-6.13/block-atomic
 
-As you wish, you can keep it in three patches or I can keep it
-as it is. I'm not too religious.
+rather than re-applying patches. At least if the intent is to send that
+branch to Linus. But even if it's just for testing, pretty silly to have
+branches with duplicate commits out there when the originally applied
+patches can just be pulled in.
 
-If I don't see anything coming I will take this patch as it is.
+> I'm willing to allow the ext4 patches to flow to Linus's tree without
+> it personally going through the ext4 tree.  If all Maintainers
+> required that patches which touched their trees had to go through
+> their respective trees, it would require multiple (strictly ordered)
+> pull requests during the merge window, or multiple merge windows, to
 
-Andi
+That is simply not true. There's ZERO ordering required here. Like I
+also mentioned in my reply, and that you also snipped out, is that no
+ordering is implied here - either tree can send their PR at any time.
+
+> land these series.  Since you insisted on the block changes had to go
+> through the block tree, we're trying to accomodate you; and also (a)
+> we don't want to have duplicate commits in Linus's tree; and at the
+> same time, (b) but these patches have been waiting to land for almost
+> two years, and we're also trying to make things land a bit more
+> expeditiously.
+
+Just pull the branch that was created for it... There's zero other
+things in there outside of the 3 commits.
+
+-- 
+Jens Axboe
 
