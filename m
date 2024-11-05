@@ -1,192 +1,139 @@
-Return-Path: <linux-kernel+bounces-396766-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396767-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4008C9BD1B3
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 17:08:01 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 229649BD1B5
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 17:08:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F37882863FF
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 16:07:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4348A1C24071
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 16:08:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20C61185942;
-	Tue,  5 Nov 2024 16:06:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FBB618CBFA;
+	Tue,  5 Nov 2024 16:06:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="OvaeSaCR"
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="z1SQh79Y"
+Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91BCC166F25
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 16:06:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77AEE153803;
+	Tue,  5 Nov 2024 16:06:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730822799; cv=none; b=OWUvBD/ENJp2+uVO9XIC08QiM2orZLUpIxoqJzJXNRJD/pKk7mtuNw4oeuTOS2femLLV1bX8lcW8zmQZpK/nR8BYOMk2d4T+Z7YMA44H63ltv/mj2sq6u2dJWssZg+lDDtPRNwy8KcQYnesLU75EGQLmOSjNlmEv5zO9evyF9ZU=
+	t=1730822818; cv=none; b=i+WhMragegqlk7Y7rrziiw/fenDAkxVm/l/c63oueCnA31MrnMgSSqwWZ/u7T9ipKvMd+0mIMICqKoSW78uoUdSKWk07KPXhY3q4OrAbc81Up8CycKMxdzhvyxymLCpI/FJ8BfjHa3TC8fgFZImrFzH96GhGWXNclhAKga1Ys2o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730822799; c=relaxed/simple;
-	bh=YRiHww1+NhlFVyCrv9IfzoyKUfIeSR3WjAcec84h3z0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GOi0oN1AQZ30RNgFF1drlFPvwD2JDPbRurxSQNbnNlvzpb3V5H5v8NOXSMh9L75G8/0GzJn0x1A4KJDCoFV3HP2J8KxeAwkg8+LFKwAArrhRsPWq4JV+cEyyN0tiWbgNMaaqxxxm/0107gfGrcVPOEEdxVhVuMGqBYyAJ+lX/PI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=OvaeSaCR; arc=none smtp.client-ip=209.85.216.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
-Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-2e2ee0a47fdso866494a91.2
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 08:06:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1730822797; x=1731427597; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Pe6tzS7Jefr2wBTMmepj7J7ch7Fwi7LgaTG2DrXOEMs=;
-        b=OvaeSaCRQACEi+CdUZKNh+b5NywDO9h4uldWJOlonufc4UvO/TT11SJbIE9n24lfH3
-         UltYT2VUgdl5UA17HZjN0T+/ciBzzFtTRHUhg2u+RYw2FDrykZAWSaeBF0KDOOQHHCWj
-         FYb9tnGVCaZB/ocld80GdaD9Usi4jf+0FG7SWz3qmiWnCy3thoFEBVDqsjcIFYlCe228
-         mNdphrY1MB4PKzU2q9mv+8EomkGPT0uNLhvGaRUN4klO3odB//gxn4FQ68iyhfM7VkRr
-         kBcdTQ6ZQCHS031u9wqQNWnIH+G1WjFtNPSeFD36ubvmn1gUDYiHKmM0tGtXfbZIYPK7
-         X5OQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730822797; x=1731427597;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Pe6tzS7Jefr2wBTMmepj7J7ch7Fwi7LgaTG2DrXOEMs=;
-        b=CjiR73oxIol2vS4Z/XdR8OnwS2b9+I4W8yYSbM1NApvm4b0r2e0gbpphhxSIerg5Rw
-         djdYLwE3//rRMS5+nVLFvKN9z6OUDHJAgL3iQWu+7whWcy62oD6IY37l4+419dGVnG2s
-         fVn/AA3IpqPXYGT2o+ZpfcEyuYiCYmGiqiWOkk8TMp/KzxNqPTzl93Xz2h/pIe0mXqE8
-         a37yvF+IS/tTqhGfliVVmu845kx+yAr/ZP9AWl+Cbbox9jMNurgT9KXH/oigIlSsER6r
-         TT3+18KS5awOHw42XYxRh0H7tEyAlvXEZ0N2p83N3kXCcsDbaig5+OlBZSKAFynLZpZi
-         oDZg==
-X-Forwarded-Encrypted: i=1; AJvYcCVyDxwlc2L8uKY+OXmDNuFQOQoInWih4QOgTqAsoMsBF1ZOp756KPtGa29YG7elmSNhCiCnf9MsFJpslNk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwoFst5uj6iJTxpETvbVelXXfYGONzoNSmRIk1BDGBhY1p3hdo2
-	TpQHlsZ4Q0QMQVJzwpVTUCIMLilh2lxEkms5YqPuKgcSqJ6l4AkgQCRKQIs4klqXhTwLb2uAT8K
-	7HG9UJHqHD209bmq3Za1pAjERh8NffjDXuXoqmw==
-X-Google-Smtp-Source: AGHT+IFzsqY6OWMTeowTywyKfQhYAOXP+M/+Yjr6GgpGfWTfSDkoFlv1jXVRkyP3zd7O8FLbk4JHiwux2suOsS1uRP4=
-X-Received: by 2002:a17:90b:1d84:b0:2e2:de92:2d52 with SMTP id
- 98e67ed59e1d1-2e8f11d607amr18357252a91.9.1730822796788; Tue, 05 Nov 2024
- 08:06:36 -0800 (PST)
+	s=arc-20240116; t=1730822818; c=relaxed/simple;
+	bh=4ApIw3HJ3hgEf+fhLQxN1/XllC+Yt4u3fL9wFE1jfE4=;
+	h=Message-ID:Date:MIME-Version:From:Cc:To:Subject:Content-Type; b=lDVc9uLCgXOqjo3anakIs63xmCYgXvN459pIVwkAnPtH6hPSSDMqoj4VFDDnkRrYSlHywJyxkew0TOWTpoKB/BoCEQEkv+JQMmwihnl6OYDXfhybQSzLCABCsfTW5szJv/eYReIjMlDyihd4XInNZloTqZRUuxmdvf4A7aqipw4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=z1SQh79Y; arc=none smtp.client-ip=80.237.130.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
+	Reply-To:Subject:To:Cc:From:MIME-Version:Date:Message-ID:From:Sender:Reply-To
+	:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
+	References; bh=mQc7lWzHCyCjYnIsVOvc+e8k8hrhVFudLaJEfs6UEic=; t=1730822816;
+	x=1731254816; b=z1SQh79YSlk0+7YTkX2D0KqmPzUM/KvAZgXOQ4DZT8jT3pvOaltLMSWzYzhBi
+	9/L6XxrPRIJOvKFSLvA6CZsaCyzsF9+vOAkueTWYtjvzlS12F/58nYYTLbq+zydyfe+IhY6RI2jc8
+	kOA5TVFAdCIkwyismgCPdWYDG+aV8syoVvYDDD+q6b1VXthidlbMiZ/wejGdyb/ggLb/LGD/d1nRD
+	BkK/uAtwfL8Caszx5Zenbp+j2o7jq25eq1Y7g8Dw5NnAMdYqtlY0unxqQ1VNA445cV7haGLW/HcTe
+	9Cruc73Cb33HKjpH1vDbgaAu2RtEA9JeMixR52fW45FGgYGvIg==;
+Received: from [2a02:8108:8980:2478:87e9:6c79:5f84:367d]; authenticated
+	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
+	id 1t8M4z-00036t-3A; Tue, 05 Nov 2024 17:06:53 +0100
+Message-ID: <d5acb485-7377-4139-826d-4df04d21b5ed@leemhuis.info>
+Date: Tue, 5 Nov 2024 17:06:52 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241101034647.51590-1-csander@purestorage.com>
- <20241101034647.51590-2-csander@purestorage.com> <CY8PR12MB71958512F168E2C172D0BE05DC502@CY8PR12MB7195.namprd12.prod.outlook.com>
- <CADUfDZofFwy12oZYTmm3TE314RM79EGsxV6bKEBRMVFv8C3jNg@mail.gmail.com> <CY8PR12MB71953FD36C70ACACEBE3DBA1DC522@CY8PR12MB7195.namprd12.prod.outlook.com>
-In-Reply-To: <CY8PR12MB71953FD36C70ACACEBE3DBA1DC522@CY8PR12MB7195.namprd12.prod.outlook.com>
-From: Caleb Sander <csander@purestorage.com>
-Date: Tue, 5 Nov 2024 08:06:25 -0800
-Message-ID: <CADUfDZqanDo+v_jap7pQire86QkfaDQE4HvhvVBb64YqKNgRHg@mail.gmail.com>
-Subject: Re: [PATCH net-next 2/2] mlx5/core: deduplicate {mlx5_,}eq_update_ci()
-To: Parav Pandit <parav@nvidia.com>
-Cc: Saeed Mahameed <saeedm@nvidia.com>, Leon Romanovsky <leon@kernel.org>, Tariq Toukan <tariqt@nvidia.com>, 
-	Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>, 
-	"linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+From: "Linux regression tracking (Thorsten Leemhuis)"
+ <regressions@leemhuis.info>
+Content-Language: en-MW
+Cc: Michael <auslands-kv@gmx.de>,
+ "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+ Linux kernel regressions list <regressions@lists.linux.dev>,
+ LKML <linux-kernel@vger.kernel.org>
+To: Jarkko Nikula <jarkko.nikula@linux.intel.com>
+Subject: [regression] Bug 219440: Touchscreen stops working after Suspendi:
+ i2c_designware.1: controller timed out
+Reply-To: Linux regressions mailing list <regressions@lists.linux.dev>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1730822816;02c93da8;
+X-HE-SMSGID: 1t8M4z-00036t-3A
 
-On Mon, Nov 4, 2024 at 9:22=E2=80=AFPM Parav Pandit <parav@nvidia.com> wrot=
-e:
+Hi, Thorsten here, the Linux kernel's regression tracker.
+
+Jarkko, I noticed a report about a regression in bugzilla.kernel.org
+that appears to be related to i2c_designware (at least it looks like
+that to my untrained eyes). As many (most?) kernel developers don't keep
+an eye on the bug tracker, I decided to write this mail. To quote from
+https://bugzilla.kernel.org/show_bug.cgi?id=219440 :
+
+>  Michael 2024-10-29 08:43:55 UTC
 >
->
->
-> > From: Caleb Sander <csander@purestorage.com>
-> > Sent: Monday, November 4, 2024 3:49 AM
-> >
-> > On Sat, Nov 2, 2024 at 8:55=E2=80=AFPM Parav Pandit <parav@nvidia.com> =
-wrote:
-> > >
-> > >
-> > >
-> > > > From: Caleb Sander Mateos <csander@purestorage.com>
-> > > > Sent: Friday, November 1, 2024 9:17 AM
-> > > >
-> > > > The logic of eq_update_ci() is duplicated in mlx5_eq_update_ci().
-> > > > The only additional work done by mlx5_eq_update_ci() is to incremen=
-t
-> > > > eq->cons_index. Call eq_update_ci() from mlx5_eq_update_ci() to
-> > > > eq->avoid
-> > > > the duplication.
-> > > >
-> > > > Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
-> > > > ---
-> > > >  drivers/net/ethernet/mellanox/mlx5/core/eq.c | 9 +--------
-> > > >  1 file changed, 1 insertion(+), 8 deletions(-)
-> > > >
-> > > > diff --git a/drivers/net/ethernet/mellanox/mlx5/core/eq.c
-> > > > b/drivers/net/ethernet/mellanox/mlx5/core/eq.c
-> > > > index 859dcf09b770..078029c81935 100644
-> > > > --- a/drivers/net/ethernet/mellanox/mlx5/core/eq.c
-> > > > +++ b/drivers/net/ethernet/mellanox/mlx5/core/eq.c
-> > > > @@ -802,19 +802,12 @@ struct mlx5_eqe *mlx5_eq_get_eqe(struct
-> > > > mlx5_eq *eq, u32 cc)  }  EXPORT_SYMBOL(mlx5_eq_get_eqe);
-> > > >
-> > > >  void mlx5_eq_update_ci(struct mlx5_eq *eq, u32 cc, bool arm)  {
-> > > > -     __be32 __iomem *addr =3D eq->doorbell + (arm ? 0 : 2);
-> > > > -     u32 val;
-> > > > -
-> > > >       eq->cons_index +=3D cc;
-> > > > -     val =3D (eq->cons_index & 0xffffff) | (eq->eqn << 24);
-> > > > -
-> > > > -     __raw_writel((__force u32)cpu_to_be32(val), addr);
-> > > > -     /* We still want ordering, just not swabbing, so add a barrie=
-r */
-> > > > -     wmb();
-> > > > +     eq_update_ci(eq, arm);
-> > > Long ago I had similar rework patches to get rid of __raw_writel(),
-> > > which I never got chance to push,
-> > >
-> > > Eq_update_ci() is using full memory barrier.
-> > > While mlx5_eq_update_ci() is using only write memory barrier.
-> > >
-> > > So it is not 100% deduplication by this patch.
-> > > Please have a pre-patch improving eq_update_ci() to use wmb().
-> > > Followed by this patch.
-> >
-> > Right, patch 1/2 in this series is changing eq_update_ci() to use
-> > writel() instead of __raw_writel() and avoid the memory barrier:
-> > https://lore.kernel.org/lkml/20241101034647.51590-1-
-> > csander@purestorage.com/
-> This patch has two bugs.
-> 1. writel() writes the MMIO space in LE order. EQ updates are in BE order=
-.
-> So this will break on ppc64 BE.
+> Just noticed that the touchscreen on my ASUS vivobook S14 stops
+> working after a suspend-to-idle. As this is something, I clearly
+> didn't have before, I tested every kernel version released in the
+> last six months and found the kernel, where the bug was introduced:
+> 6.10. The last 6.9.12 is still working correctly. Since 6.10 all
+> kernel versions have the problem.
+> 
+> Some more info:
+> 
+> Hardware: ASUS Vivobook S14 (TP3402VA) Kernel working: up to 6.9.12 
+> Kernel defect: from 6.10 OS: nixos
+> 
+> I do not have much knowledge about the input devices. I tested that
+> i2c_hid_acpi seems to be relevant for the touchscreen (and also the
+> touchpad), as, when I remove it, both stop working. Reloading the
+> kernel module restores functionality (but NOT after a suspend-to-
+> idle!!!). Otherwise, I do not see any error messages or so. (Or do
+> not recognize them...)
+> 
+> Any help I can offer to identify the regression bug?
 
-Okay, so this should be writel(cpu_to_le32(val), addr)?
+[...]
 
->
-> 2. writel() issues the barrier BEFORE the raw_writel().
-> As opposed to that eq update needs to have a barrier AFTER the writel().
-> Likely to synchronize with other CQ related pointers update.
+> 6.12-rc4 does not work either. The regression started with 6.10.
 
-I was referencing this prior discussion about the memory barrier:
-https://lore.kernel.org/netdev/CALzJLG8af0SMfA1C8U8r_Fddb_ZQhvEZd6=3D2a97dO=
-oBcgLA0xg@mail.gmail.com/
-From Saeed's message, it sounds like the memory barrier is only used
-to ensure the ordering of writes to the doorbell register, not the
-ordering of the doorbell write relative to any other writes. If some
-other write needs to be ordered after the doorbell write, please
-explain what it is. As Gal Pressman pointed out, a wmb() at the end of
-a function doesn't make much sense, as there are no further writes in
-the function to order. If the doorbell write needs to be ordered
-before some other write in a caller function, the memory barrier
-should probably move to the caller.
+[...]
 
->
-> > Are you suggesting something different? If so, it would be great if you=
- could
-> > clarify what you mean.
-> >
-> So I was suggesting to keep __raw_writel() as is and replace mb() with wm=
-b().
+> i2c_designware i2c_designware.1: controller timed out
+> i2c_designware i2c_designware.1: timeout in disabling adapter
+> i2c_hid_acpi i2c-WDHT1F01:00: failed to change power setting.
+> i2c_hid_acpi i2c-WDHT1F01:00: PM: dpm_run_callback(): acpi_subsys_resume returns -110
+> i2c_hid_acpi i2c-WDHT1F01:00: PM: failed to resume async: error -110
+[...]
 
-wmb() would certainly be cheaper than mb(), but I would like to
-understand the requirement for the barrier in the first place. The
-fence instruction is very expensive.
+See the ticket for more details. The reporter (Michael) is CCed.
 
-Thanks,
-Caleb
+Michael: if this mail is fruitless, you most like need to use git bisect
+to find the change that broke things. For details, see:
+https://docs.kernel.org/admin-guide/verify-bugs-and-bisect-regressions.html
+https://docs.kernel.org/admin-guide/bug-bisect.html
+
+Ciao, Thorsten (wearing his 'the Linux kernel's regression tracker' hat)
+--
+Everything you wanna know about Linux kernel regression tracking:
+https://linux-regtracking.leemhuis.info/about/#tldr
+If I did something stupid, please tell me, as explained on that page.
+
+[1] because bugzilla.kernel.org tells users upon registration their
+"email address will never be displayed to logged out users"
+
+P.S.: let me use this mail to also add the report to the list of tracked
+regressions to ensure it's doesn't fall through the cracks:
+
+#regzbot introduced: v6.9..v6.10
+#regzbot title: i2c: designware: touchscreen stops working after Suspend
+#regzbot from: Michael <auslands-kv@gmx.de>
+#regzbot duplicate: https://bugzilla.kernel.org/show_bug.cgi?id=219440
+#regzbot ignore-activity
 
