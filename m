@@ -1,58 +1,75 @@
-Return-Path: <linux-kernel+bounces-395718-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395719-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1C149BC207
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 01:31:52 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DDFF59BC209
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 01:32:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7A7BCB2148A
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 00:31:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1CD241C21887
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 00:32:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EE17E573;
-	Tue,  5 Nov 2024 00:31:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="JjKPNDOJ"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E6CBE573;
+	Tue,  5 Nov 2024 00:32:20 +0000 (UTC)
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6405B667;
-	Tue,  5 Nov 2024 00:31:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48987B65C;
+	Tue,  5 Nov 2024 00:32:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730766703; cv=none; b=fzKRRCGm0BM9s125OZBSCPrSmG6m9DpqF1c8b7Nt2Vdl5T9A340fQgqDtUFKESe58lyg0hf5sxMQqUYQQJjyAA7/NGjkG/k4j7nTO6lt17hOPRzhfIZkdB9+iPVeATVJD6EzNhWoUL3CDxYZEChqe1il26lrRh0YTA8rQBGleow=
+	t=1730766739; cv=none; b=aUAjZtF0tpcGjoykHawdMlJZgEQCvyiT4Hy2pK2Eo7DW8+ymD6lRElW6OWfyYLIMdalEhwYLbc0PZhrqfIpRKK04asGQA1Q9VWnQjim6aGrsn2kEoE2ecIIQjhQu9iPr+NpqPltXkjPJvfK4YVrGljcghTXBdfaiTgXGvWNb7gE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730766703; c=relaxed/simple;
-	bh=HzAl/JPU25UwzwTupjSxWucniSCa+0gmfS32vUCwSVE=;
+	s=arc-20240116; t=1730766739; c=relaxed/simple;
+	bh=BJoeVM64nHvQI9nb+JQ4yzqQafTXnoxlqLEr+k9ifSw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dM2uI13t1BVQZSqDbCmVZfrCPeP1hitdRtd0I7rSH9PqrdtinV3Smhm8K1daNx+ubL0xhpTeZqa+2rSetIDtslO7JFI6QwxXI4LVheSJBUhsu8/T6ROFtSFQ7EwVZ7Ww4jT0ixSlIHijCEvNDVOeYGw72GBXtJfrOEAsZlCDHQI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=JjKPNDOJ; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=UOyKBCJv4kPFZCEVQ/auD/OQoVNuo1XVVxJkxEPstRY=; b=JjKPNDOJAYX42o6fCiUC1s37st
-	Ivz867pa2fqAYQt/xUGGtOsjcx6Y/MonTopIt9QKRgy5ObVdUPxCvYR4ZkHKHghbsp3ZutbZeKOET
-	6rk0hQkBbZt0Xo+cobz+O8mi3Z7zPJ+zBUmG9bjwyj/TQ4FqCv1oMZstPvboQ1X0POdnWXIfL8com
-	mpLdOrp6fUu/oQXp9pAnMEZPh5S5JoOm4c1qddFzSkd2erQYYdJ+UepC89TCubus6GkyBVPpXAIrl
-	54kpvMbm4eUV6ZRzCqcygZiNQgDkABH36NFWPTkGPtzejpnekKlXhScxkwJpwlQUqIwuRUJ67GBu6
-	jpSMlksQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1t87Tt-00000001jhZ-07St;
-	Tue, 05 Nov 2024 00:31:37 +0000
-Date: Tue, 5 Nov 2024 00:31:36 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: Keren Sun <kerensun@google.com>
-Cc: akpm@linux-foundation.org, roman.gushchin@linux.dev, hannes@cmpxchg.org,
-	mhocko@kernel.org, shakeel.butt@linux.dev, muchun.song@linux.dev,
-	cgroups@vger.kernel.org, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/4] mm: fix checkpatch.pl warnings in memcg v1 code
-Message-ID: <ZylnaFbRZMDYR_Hw@casper.infradead.org>
-References: <20241104222737.298130-1-kerensun@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=QsOJQA+yQD/lD/l+uNZ/O659QZoACuEgJsLmgpV7espN0KHNB9noR456gry04e80oyUUBFdOXRXeDz7PFGer8/pQaO4bEj2N29p+Oe/MSTJx8Xmy/KEVPMPPiZaK7ROfPUmUc3wBd+7Gop88KIe0XManyRpdkdaGXxBKExNQ3cg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-720aa3dbda5so3515757b3a.1;
+        Mon, 04 Nov 2024 16:32:17 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730766736; x=1731371536;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sVFKOV2U1tZu5ariNJuZSEYQCGwrXBb6JURzVqRRFIg=;
+        b=nABZ2wlwsdwMrwLRF2G8IjYhWxPA743vCBuxVFkzr0c1VroTtTcQeF0KIWyhFJcSlU
+         KQOJwKR02I/RY/YOniv4MQe6pLSFdxRFWtp588N97ft3cliKzk1Zfw8bVmobClAbwu0S
+         tWHxXl8/2NV6VORs91TjN699icOQmDYTTwzaJu/4ruNxeFZCcFzmcUg9+SnV7Wdrvc9+
+         nZUtwsfoO4EPukBEb01KSGsE6Sz4L0ZRtMOm4h+OIAsbEJCLzbz5ygXtM1gz0tsL9HYq
+         qhq6VEu79yKAPvlAEBObR2Q+AIjUGu4/u7b3lqHrXvUvkTIz0Z4VX3QFrjkZV6VHah6n
+         xXTQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVR1CXbMAVM8olXQmryldLOOCCtSuWJaWw/tGmXglKtxxZaIgASYXtXhjUqzJM64EsXKbud5mg7ztEa@vger.kernel.org, AJvYcCWQeF3YI63MbYcAp7G+Fn46OP3Tmg5qtat27e5mn/C/f/+W2CAq4N8CeFC/bfE+Mlbv8E422N25RGVYxcg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwXc4oag4YpFrEeUM7v0seVDJ7+5xR+JMvdviDP8RUeJZMBkIiF
+	SZwT3rTzdYYKHdLNN8xmDLF+l2Bk9KGmt5LZoQWjB6zBEVtMaO6FgGgUA0CO
+X-Google-Smtp-Source: AGHT+IFe7Zrh53Gk5JMJVfagTghIwtCaFVjaPXkfpfyJUjZgVj71OYdbph2ie1Xr9Hoazgv2NdD2ow==
+X-Received: by 2002:a05:6a00:2e93:b0:71e:41b3:a56b with SMTP id d2e1a72fcca58-720ab4c5d9bmr28160923b3a.24.1730766736559;
+        Mon, 04 Nov 2024 16:32:16 -0800 (PST)
+Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7ee45a002d4sm7821587a12.70.2024.11.04.16.32.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 04 Nov 2024 16:32:16 -0800 (PST)
+Date: Tue, 5 Nov 2024 09:32:14 +0900
+From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: manivannan.sadhasivam@linaro.org, Bjorn Helgaas <bhelgaas@google.com>,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Johan Hovold <johan+linaro@kernel.org>,
+	Abel Vesa <abel.vesa@linaro.org>,
+	Stephan Gerhold <stephan.gerhold@linaro.org>,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>,
+	stable+noautosel@kernel.org
+Subject: Re: [PATCH 0/5] PCI/pwrctl: Ensure that the pwrctl drivers are
+ probed before PCI client drivers
+Message-ID: <20241105003214.GA1614659@rocinante>
+References: <20241103203107.GA237624@rocinante>
+ <20241105001206.GA1447985@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,13 +78,27 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241104222737.298130-1-kerensun@google.com>
+In-Reply-To: <20241105001206.GA1447985@bhelgaas>
 
-On Mon, Nov 04, 2024 at 02:27:33PM -0800, Keren Sun wrote:
-> The patch series fixes 1 error and 27 warnings found by checkpatch.pl in the
-> memcg1 code.
+Hello,
 
-Please do not do this.  Fixing checkpatch messages in existing code
-is counterproductive.  Only run checkpatch on new code, and even then
-take its suggestions with a grain of salt.
+> > > This series reworks the PCI/pwrctl integration to ensure that the pwrctl drivers
+> > > are always probed before the PCI client drivers. This series addresses a race
+> > > condition when both pwrctl and pwrctl/pwrseq drivers probe parallely (even when
+> > > the later one probes last). One such issue was reported for the Qcom X13s
+> > > platform with WLAN module and fixed with 'commit a9aaf1ff88a8 ("power:
+> > > sequencing: request the WLAN enable GPIO as-is")'.
+> > > 
+> > > Though the issue was fixed with a hack in the pwrseq driver, it was clear that
+> > > the issue is applicable to all pwrctl drivers. Hence, this series tries to
+> > > address the issue in the PCI/pwrctl integration.
+> > 
+> > Applied to bwctrl, thank you!
+> 
+> Should be pci/pwrctl.  bwctrl (bandwidth control) and pwrctl (power
+> control) are quite different despite the confusingly similar names.
+
+Correct.  I moved patches to the correct branch.  Sorry about that!
+
+	Krzysztof
 
