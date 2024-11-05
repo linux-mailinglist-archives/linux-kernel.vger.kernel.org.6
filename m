@@ -1,130 +1,166 @@
-Return-Path: <linux-kernel+bounces-396250-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396252-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9D9E9BCA12
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 11:11:46 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28BA89BCA1A
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 11:15:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 59B241F21A90
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 10:11:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A7207B2126F
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 10:15:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA5871D1F50;
-	Tue,  5 Nov 2024 10:11:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hst0ANOB"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F22411D27AD;
+	Tue,  5 Nov 2024 10:15:18 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C7BD18F2F7;
-	Tue,  5 Nov 2024 10:11:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 032B01D1E92
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 10:15:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730801499; cv=none; b=ow/czIQIwzGztcSfVqhAUY4nwX7lPOeKfQUqOm8+CU+3pCEsjgiFBFPPHTPpdk44DXAR+jmPFCTZr2RytPS5xdERGDOFqkHVWc6AyMqyq7dyUSRMRjfrs+vLacrmgyQvc8BuncZFRCJTNhGxv5XLRCmTmYtPCaL87es7EHgTky0=
+	t=1730801718; cv=none; b=YeVLpJZPO6UCZDwnFm7d2JPVak96qQ9txlC/ySE8Tn60GGXq+hsvkI1TUuRY3I7Sx7atcwUET3p51HLMAovIqPEM0zZ1T91UuzYgKDM5qSvaAhIoxDPqYrDTY9CRtBoC9n3Jh2c/QVNkkUHna40iVQ4LwUu77LL+d1khVZyQrsQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730801499; c=relaxed/simple;
-	bh=e7qvTXiBxF2JlvBmUYXyl7D09eINkYn6FxD4xnH0fsc=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=LGazsGctLUvDimcRs9Jbm4gGJuxhejnsBLWrQMK6ml47M5ycZUkctNv+8T+gBGzt3YSS3bqkhYlcSZtgj9KO7xPD78dSmbH2f8eL5kxkVe+z3LmCFhinh+tBAqOvIY81U5uNMbe1QnrnWU4nTQq+SRAXrKYIwXw3Vv6rYAFUIVA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hst0ANOB; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a9a628b68a7so810975066b.2;
-        Tue, 05 Nov 2024 02:11:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730801495; x=1731406295; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Qso3BNgt6veXyizsNwyMPr4H1EWMOffJ4h1epwKOSNQ=;
-        b=hst0ANOBh6AyxLjVKmZmQzfrZxurBT9Cf8B1Njcfv/QQ7SvsuWHYUESFiPV7HyuPMW
-         UJdnjPHD/oQl7wbyLcjEwcUKOjMqwvHecocgjD5Sje7yBpPUmBxqFb5CqVywWTW/1Y2F
-         jnJgC0/ZWWtZbhAOqL4/jenKu3OiJzWPiX5lg/q2EtXAIGATbXK/0Gt1R1Ta6K5y5TcP
-         W77C5Tm6nZ3au5zvP8oUp627G3dgQXucCek5sntopQVJ9EBpolBa+1ywEsxjrJZlawkd
-         uCVNi+hyNyqWqHsmqeks4v9DEj2puHZnMEYJDlOh+9VUP5Vcx5NaER8El/2EHsWLtDEG
-         wHew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730801495; x=1731406295;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Qso3BNgt6veXyizsNwyMPr4H1EWMOffJ4h1epwKOSNQ=;
-        b=Mw4CNbUHBBr8kurp/lSpKy/ugBydKQGDKNcBuWu7Yc98Phi1xrRhtFRikyAp77nX+W
-         bSQyVLEPnZgIeMFui8O/CJre44loigAKy7Cug8pP5ZCbQ5H23mtWFqojgaZi3hkAP67Z
-         7YxNDJXwE63+ZganmL/RNYJoc3KDBjVq9jofc48cGH5jvprH7q8o3VSNAy5Rii8e/3mZ
-         l629r2V7T2kqRJOQ7JgsM5jKwYpD5g8hRWvUOj4bKA6B9SplNoNW3RcSQa58R1fFFiRo
-         jX55spx0sYF4qS2D/iAlrRcq+SavnNrz8ETNigMFddBATbqvAGl9Z9Knj2NjeIARtfhn
-         w3PA==
-X-Forwarded-Encrypted: i=1; AJvYcCUyojzoJM2fJTxwEzaffbkFotkMHZ7iU1qaSGH1Pu7zuiN1Brkietq7CXfvMOXYvIaqM10q+eCa41ZqCxA=@vger.kernel.org, AJvYcCX+FEvJRrzfuLeQRJuq0CK88CszZQoV0+arr6aTkWtEbvN1TMZu6p8793ORathk5KIyZ8nKEBYrpfDzJepxoAs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzzBXAFcUZfg9kkxlr+rDTt2q6DIP2MRyE+3SE+PtTmSdb+6X/z
-	DCO3yfRBsSolbzEDo66hL9kSmdQ7AvTbSVoJ7kImAHeb9wx45bWE
-X-Google-Smtp-Source: AGHT+IFnWeG5l3Win9wjTzFybRiE4MG/9kCs5ddsSiKv9wYvZpxcQ5x6vD6FqymkY5FYZL7mKz7YcA==
-X-Received: by 2002:a17:906:f5a5:b0:a99:8edf:a367 with SMTP id a640c23a62f3a-a9e657fd779mr1437610966b.57.1730801494703;
-        Tue, 05 Nov 2024 02:11:34 -0800 (PST)
-Received: from C-KP-LP15v.consult.red ([2a01:96e0:10:2:aaca:6c8f:1aec:b83f])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9eb16d6714sm113494266b.64.2024.11.05.02.11.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Nov 2024 02:11:34 -0800 (PST)
-From: Karol Przybylski <karprzy7@gmail.com>
-To: kvalo@kernel.org,
-	jjohnson@kernel.org
-Cc: Karol Przybylski <karprzy7@gmail.com>,
-	linux-wireless@vger.kernel.org,
-	ath12k@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	skhan@linuxfoundation.org
-Subject: [PATCH v3] wifi: ath12k: Fix for out-of bound access error
-Date: Tue,  5 Nov 2024 11:11:31 +0100
-Message-Id: <20241105101132.374372-1-karprzy7@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1730801718; c=relaxed/simple;
+	bh=qaOyvLUdtRoZx5aWGtD3YPw+iGoEYAbw93GqV/vZSAk=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=ZcKczTiqwnPanPtz+yAcGlZ7qtx3sz5BlExLy98H9FvHPeN99fV7Jp5+V+kJmS+Bu8v4ki8JqEIjwBVfPDJGATFicBvwhmpOuARgPwQ6qNdPCEIWMI+lbBYU0OplPFCP0Vp3hD4OHvt5maciy84gAVfhhxTX8NF5hdeyrTOrxCc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1t8GaH-00021Q-OL; Tue, 05 Nov 2024 11:14:49 +0100
+Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1t8GaG-0027zm-0C;
+	Tue, 05 Nov 2024 11:14:48 +0100
+Received: from pza by lupine with local (Exim 4.96)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1t8GaF-0005OF-39;
+	Tue, 05 Nov 2024 11:14:47 +0100
+Message-ID: <8841158ed61b2b92a92ac6d2afcbd7cff12a6680.camel@pengutronix.de>
+Subject: Re: [PATCH v2 03/15] media: stm32: csi: addition of the STM32 CSI
+ driver
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: Alain Volmat <alain.volmat@foss.st.com>, Hugues Fruchet
+ <hugues.fruchet@foss.st.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue
+ <alexandre.torgue@foss.st.com>, Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+ Sakari Ailus <sakari.ailus@linux.intel.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: linux-media@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org
+Date: Tue, 05 Nov 2024 11:14:47 +0100
+In-Reply-To: <20241105-csi_dcmipp_mp25-v2-3-b9fc8a7273c2@foss.st.com>
+References: <20241105-csi_dcmipp_mp25-v2-0-b9fc8a7273c2@foss.st.com>
+	 <20241105-csi_dcmipp_mp25-v2-3-b9fc8a7273c2@foss.st.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Selfgen stats are placed in a buffer using print_array_to_buf_index() function.
-Array length parameter passed to the function is too big, resulting in possible
-out-of bound memory error.
-Decreasing buffer size by one fixes faulty upper bound of passed array.
+On Di, 2024-11-05 at 08:49 +0100, Alain Volmat wrote:
+> The STM32 CSI controller is tightly coupled with the DCMIPP and act as an
+> input stage to receive data coming from the sensor and transferring
+> them into the DCMIPP.
+>=20
+> Signed-off-by: Alain Volmat <alain.volmat@foss.st.com>
+>=20
+> ---
+> v2: correct data-lanes handling, using values 1 & 2
+>     update yaml filename in MAINTAINERS
+> ---
+>  MAINTAINERS                                 |    8 +
+>  drivers/media/platform/st/stm32/Kconfig     |   14 +
+>  drivers/media/platform/st/stm32/Makefile    |    1 +
+>  drivers/media/platform/st/stm32/stm32-csi.c | 1144 +++++++++++++++++++++=
+++++++
+>  4 files changed, 1167 insertions(+)
+>=20
+[...]
+> diff --git a/drivers/media/platform/st/stm32/stm32-csi.c b/drivers/media/=
+platform/st/stm32/stm32-csi.c
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..c7f47472c6b3699e94113ce0f=
+38b280a2e45ce15
+> --- /dev/null
+> +++ b/drivers/media/platform/st/stm32/stm32-csi.c
+> @@ -0,0 +1,1144 @@
+[...]
+> +static int stm32_csi_get_resources(struct stm32_csi_dev *csidev,
+> +				   struct platform_device *pdev)
+> +{
+> +	int irq, ret;
+> +
+> +	csidev->base =3D devm_platform_get_and_ioremap_resource(pdev, 0, NULL);
+> +	if (IS_ERR(csidev->base))
+> +		return dev_err_probe(&pdev->dev, PTR_ERR(csidev->base),
+> +				     "Failed to ioremap resource\n");
+> +
+> +	csidev->pclk =3D devm_clk_get(&pdev->dev, "pclk");
+> +	if (IS_ERR(csidev->pclk))
+> +		return dev_err_probe(&pdev->dev, PTR_ERR(csidev->pclk),
+> +				     "Couldn't get pclk\n");
+> +
+> +	csidev->txesc =3D devm_clk_get(&pdev->dev, "txesc");
+> +	if (IS_ERR(csidev->txesc))
+> +		return dev_err_probe(&pdev->dev, PTR_ERR(csidev->txesc),
+> +				     "Couldn't get txesc\n");
+> +
+> +	csidev->csi2phy =3D devm_clk_get(&pdev->dev, "csi2phy");
+> +	if (IS_ERR(csidev->csi2phy))
+> +		return dev_err_probe(&pdev->dev, PTR_ERR(csidev->csi2phy),
+> +				     "Couldn't get csi2phy\n");
 
-Discovered in coverity scan, CID 1600742 and CID 1600758
+Consider using devm_clk_bulk_get().
 
-Signed-off-by: Karol Przybylski <karprzy7@gmail.com>
----
-Changes in v3:
-- Code style: added spaces before and after '-'
-- Improved commit msg
-- Fixed same error in different function
-- Link to previous discussion: https://lore.kernel.org/all/08767ff7-f764-473d-a44b-c3c3b1695008@quicinc.com/
----
- drivers/net/wireless/ath/ath12k/debugfs_htt_stats.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+> +	csidev->rstc =3D devm_reset_control_get_exclusive(&pdev->dev, NULL);
+> +	if (IS_ERR(csidev->rstc))
+> +		return dev_err_probe(&pdev->dev, PTR_ERR(csidev->rstc),
+> +				     "Couldn't get reset control\n");
 
-diff --git a/drivers/net/wireless/ath/ath12k/debugfs_htt_stats.c b/drivers/net/wireless/ath/ath12k/debugfs_htt_stats.c
-index 799b865b89e5..2d47aca681f4 100644
---- a/drivers/net/wireless/ath/ath12k/debugfs_htt_stats.c
-+++ b/drivers/net/wireless/ath/ath12k/debugfs_htt_stats.c
-@@ -1562,7 +1562,7 @@ ath12k_htt_print_tx_selfgen_ac_stats_tlv(const void *tag_buf, u16 tag_len,
- 			 le32_to_cpu(htt_stats_buf->ac_mu_mimo_ndp));
- 	len += print_array_to_buf_index(buf, len, "ac_mu_mimo_brpollX_tried = ", 1,
- 					htt_stats_buf->ac_mu_mimo_brpoll,
--					ATH12K_HTT_TX_NUM_AC_MUMIMO_USER_STATS, "\n\n");
-+					ATH12K_HTT_TX_NUM_AC_MUMIMO_USER_STATS - 1, "\n\n");
- 
- 	stats_req->buf_len = len;
- }
-@@ -1590,7 +1590,7 @@ ath12k_htt_print_tx_selfgen_ax_stats_tlv(const void *tag_buf, u16 tag_len,
- 			 le32_to_cpu(htt_stats_buf->ax_mu_mimo_ndp));
- 	len += print_array_to_buf_index(buf, len, "ax_mu_mimo_brpollX_tried = ", 1,
- 					htt_stats_buf->ax_mu_mimo_brpoll,
--					ATH12K_HTT_TX_NUM_AX_MUMIMO_USER_STATS, "\n");
-+					ATH12K_HTT_TX_NUM_AX_MUMIMO_USER_STATS - 1, "\n");
- 	len += scnprintf(buf + len, buf_len - len, "ax_basic_trigger = %u\n",
- 			 le32_to_cpu(htt_stats_buf->ax_basic_trigger));
- 	len += scnprintf(buf + len, buf_len - len, "ax_ulmumimo_total_trigger = %u\n",
--- 
-2.34.1
+If this wasn't in a separate function, rstc wouldn't have to be stored
+on csidev as it's only ever used in stm32_csi_probe().
 
+> +
+> +	csidev->supplies[0].supply =3D "vdd";
+> +	csidev->supplies[1].supply =3D "vdda18";
+> +	ret =3D devm_regulator_bulk_get(&pdev->dev, ARRAY_SIZE(csidev->supplies=
+),
+> +				      csidev->supplies);
+> +	if (ret)
+> +		return dev_err_probe(&pdev->dev, ret,
+> +				     "Failed to request regulator vdd\n");
+> +
+> +	irq =3D platform_get_irq(pdev, 0);
+> +	if (irq < 0)
+> +		return irq;
+> +
+> +	ret =3D devm_request_threaded_irq(&pdev->dev, irq, NULL,
+> +					stm32_csi_irq_thread, IRQF_ONESHOT,
+> +					dev_name(&pdev->dev), csidev);
+> +	if (ret)
+> +		return dev_err_probe(&pdev->dev, ret,
+> +				     "Unable to request irq");
+> +
+> +	return 0;
+> +}
+
+regards
+Philipp
 
