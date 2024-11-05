@@ -1,240 +1,159 @@
-Return-Path: <linux-kernel+bounces-395696-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395698-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8ED3B9BC1C2
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 01:01:48 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0C6C9BC1C8
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 01:04:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F6741F21279
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 00:01:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE63C1C209E8
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 00:04:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A6D62F46;
-	Tue,  5 Nov 2024 00:01:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC5603C38;
+	Tue,  5 Nov 2024 00:04:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gu11+GSk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b="VhMC3Fgm"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67CE2163;
-	Tue,  5 Nov 2024 00:01:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 889C2370
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 00:04:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730764899; cv=none; b=r6DW3jdRXeYjx9J5zz0VP/4OOPFkEBbuKTFKJJXTlto5xanD9NfRAJ9fTDaAaPtIQlLKIqmeE21i87ZmZrQPP2WA6pgyrgEMRMxD8litwnVLhmhkh0s41knRaaWN6wi/JXswhxk9VMFga5EG4qQlTaUhhULM87evFWnYMD8/Lh4=
+	t=1730765073; cv=none; b=YNDK7Ub5hnw00MADvB+yF4w4D5G+SLFMQVFALh3l9wgIkY14ZIPQb6VClgr3w3eMCCglJqvYyyY93pqHILqnsxss5AgUwGnl+AIU5uRnBpNZElPDx6cbhbdrOnzXQ2PH0rhjDgOk3LJk4+etrICWLFvGvUciiRj2kSUCETGEfZw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730764899; c=relaxed/simple;
-	bh=72JyDhaXBpsov2fuJm6Viu/J5lE0KyyyUuWbgRPfHII=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CAlbNArQQo0DMQGqTwdIr8g4RwQttfanl/I5bGkL8wU5Yhg6Sb38f/nenrjoCp1hmrjbCwIo3/+4FlvFPtgLRpApsv30O0yWFA8aubbSLX7XmuOR6BOS313q5S6+8MElcSiZjW/8iq5+sNQc0kYV8Dsb/9yzEbvMTVlLFqxqcdc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gu11+GSk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A7A4C4CECE;
-	Tue,  5 Nov 2024 00:01:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730764898;
-	bh=72JyDhaXBpsov2fuJm6Viu/J5lE0KyyyUuWbgRPfHII=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gu11+GSkfkaTcT/lzFu975CTQ5TRYitwFFVGWRpCkcIxCrmLmU80vrTLjk9VLbdZ/
-	 nMDvfomzIXXjMX/+MktlSf96idUHMudtYG196MB4pQC8U+//iHNAQXnmqDPUrLB0ko
-	 xL/ToyyzQsKqAzsrA5DvjgYEiYsJ/0XHEIoofg7tDJBlnQYJb2UWHWrfvz+V9+kotN
-	 diFxkQoKuwm6qjbXeiu5CGEGUon2WRPOSKzD30SzpFUCcd++FXdwq21QlSn5PVrogc
-	 GVl3uykCvLc3APL/UrxVtZSYQqwnuzM/eCDHw8/2u/3vtkTyxiu7zNfvMijpBiFCDo
-	 9waev02uYgUlA==
-Date: Mon, 4 Nov 2024 16:01:36 -0800
-From: Namhyung Kim <namhyung@kernel.org>
-To: Chun-Tse Shao <ctshao@google.com>
-Cc: linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Liang Kan <kan.liang@linux.intel.com>, Ze Gao <zegao2021@gmail.com>,
-	Yang Jihong <yangjihong1@huawei.com>,
-	Weilin Wang <weilin.wang@intel.com>,
-	linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH v2 1/3] perf evsel: Improve the evsel__open_strerror for
- EBUSY
-Message-ID: <ZylgYE2HXzGpAdKQ@google.com>
-References: <20241101211757.824743-1-ctshao@google.com>
+	s=arc-20240116; t=1730765073; c=relaxed/simple;
+	bh=qeUfMege/AiB/je3hBCsy+mid3QVCDsAnhw/lkw6DEo=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=UnzozwiEU3WsyCj8T7Q6+5E7+ls8Zo/92N5l+WrOEH//QXcXHpFNRz1vGGWynh7VGtmnkFs7hnxrIaQKt0hePJYbLZBZjWElXU+YJVq1McWCBffmTsJ07/H4eG+f93jI+2jCCeFCliz1WxUSXy0RGJ2GKxb4SHIyMo2YlI4E/i8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com; spf=pass smtp.mailfrom=cloud.com; dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b=VhMC3Fgm; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloud.com
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4314b316495so41048695e9.2
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 16:04:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=citrix.com; s=google; t=1730765070; x=1731369870; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:subject:references:cc:to:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=sesnMCMP/HStXvO1xZBQzhjE1UZuU9gmGZkAu8bel2Q=;
+        b=VhMC3FgmtSq7gLtZYks6R67leqYjsKp/n/0DXFqTDFUJZn0jdhueVQwB3uTdiTjZPy
+         yvZ0Jy1oNXNzBuvUj6gcKT6GEQaYjcwOXwNOh0wZPJ01aBedK8Y6LLg/BCI2BCaMCeV9
+         GhU+nFSXZXEaU4IMK08pxWT6SKfwuENOLRwlY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730765070; x=1731369870;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:subject:references:cc:to:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sesnMCMP/HStXvO1xZBQzhjE1UZuU9gmGZkAu8bel2Q=;
+        b=EvMA7llzcsDTBvkioLNoAAM23Sja4/xzOfU0FZZNLCW0pf/bsradyzLMSRnUzoiBnh
+         MCUG76rLHzbUsBUgz2BeVFLNQYwDOm/65HMBT5hR6s82qWehYv0j3qRYW2Uv5TYXFmXh
+         jU8yp5hVauZIn6bIaxTgzdiIywbsrFJ0ZdPZ1nspntabodmZVg1R+uX8nOFocPWNG3ai
+         NJyhPOxtLqzvWOUXFk0e6EszF0FpYT8IkLzBpSdpMsonQ1Ya47OEc8Tij1gLJ1KfsS66
+         LyimAtSJDbuk9/QqWt6YjQfnl92TMXJuMxzDqN1UUoU7eusknCGEu8K+t1UQglnHgYtK
+         Vdzw==
+X-Forwarded-Encrypted: i=1; AJvYcCWi5y96a35pjQQf1rRvIiB0q0q0lVJ6lim11qm4BBs6YvVgJvTVLL/3WbytJ8IE5fjkuAaKNCGFKUILhPw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxNQx/QfyncZZ/+a0xYKL5r3W/t2hYPFzLT/ULj1vguOzseorMV
+	KvT7o9DfL0FyMn5+cI9RWbhHvvjPVqmma1CNMZeHeO1uxUtoap11UWG1ZzMOom8=
+X-Google-Smtp-Source: AGHT+IFSNVnW7S8yuwR6GGVHG3ABf/ZPmOmCYAFNEOsMjavp25/AFDw0XQEZg0C9Uwu707CZEs2e/g==
+X-Received: by 2002:a05:600c:4ecc:b0:431:3c67:fb86 with SMTP id 5b1f17b1804b1-4327b801f83mr148395835e9.33.1730765069904;
+        Mon, 04 Nov 2024 16:04:29 -0800 (PST)
+Received: from [192.168.1.10] (host-92-26-98-202.as13285.net. [92.26.98.202])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-431bd74f132sm204043415e9.0.2024.11.04.16.04.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 04 Nov 2024 16:04:29 -0800 (PST)
+Message-ID: <e5463e70-a0a6-4cce-9c2c-4a09c2e622ef@citrix.com>
+Date: Tue, 5 Nov 2024 00:04:28 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241101211757.824743-1-ctshao@google.com>
+User-Agent: Mozilla Thunderbird
+To: dave.hansen@intel.com
+Cc: Amit.Shah@amd.com, Babu.Moger@amd.com, David.Kaplan@amd.com,
+ Sandipan.Das@amd.com, Thomas.Lendacky@amd.com, boris.ostrovsky@oracle.com,
+ bp@alien8.de, corbet@lwn.net, daniel.sneddon@linux.intel.com,
+ dave.hansen@linux.intel.com, hpa@zytor.com, jpoimboe@kernel.org,
+ kai.huang@intel.com, kvm@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, mingo@redhat.com,
+ pawan.kumar.gupta@linux.intel.com, pbonzini@redhat.com,
+ peterz@infradead.org, seanjc@google.com, tglx@linutronix.de, x86@kernel.org
+References: <62063466-69bc-4eca-9f22-492c70b02250@intel.com>
+Subject: Re: [PATCH 1/2] x86: cpu/bugs: add support for AMD ERAPS feature
+Content-Language: en-GB
+From: Andrew Cooper <andrew.cooper3@citrix.com>
+Autocrypt: addr=andrew.cooper3@citrix.com; keydata=
+ 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
+ 6+ahAA==
+In-Reply-To: <62063466-69bc-4eca-9f22-492c70b02250@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hello CT,
+> So, I'll flip this back around.  Today, X86_FEATURE_RSB_CTXSW zaps the
+> RSB whenever RSP is updated to a new task stack.  Please convince me
+> that ERAPS provides superior coverage or is unnecessary in all the
+> possible combinations switching between:
+>
+> 	different thread, same mm
+> 	user=>kernel, same mm
+> 	kernel=>user, same mm
+> 	different mm (we already covered this)
+>
+> Because several of those switches can happen without a CR3 write or INVPCID.
 
-On Fri, Nov 01, 2024 at 09:17:55PM +0000, Chun-Tse Shao wrote:
-> From: Ian Rogers <irogers@google.com>
-> 
-> The existing EBUSY strerror message is:
-> ```
-> The sys_perf_event_open() syscall returned with 16 (Device or resource busy) for event (intel_bts//).
-> "dmesg | grep -i perf" may provide additional information.
-> ```
+user=>kernel=>user, same mm explicitly does not want to flush the RAS,
+because if the system call is shallow enough, some of the userspace RAS
+is still intact on when you get back into user mode.
 
-Just a nitpick.  I'd like to avoid this github markdown style notation
-of triple backticks as it doesn't clearly separate code blocks (IMHO)
-nor protect anything like '#' sign in the beginning of a line.
+The case which I expect will go wrong is user=>kernel=>different kthread
+because this stays on the same mm.
 
-I prefer indenting with 2 spaces before and after a blank line.
+That does need to flush the RAS and won't hit any TLB maintenance
+instructions that I'm aware of.
 
-
-> The dmesg won't be useful. What is more useful is knowing what
-> processes are potentially using the PMU, which some procfs scanning can
-> reveal. When parallel testing tests/shell/stat_all_pmu.sh this yields:
-> ```
-> Testing intel_bts//
-> Error:
-> The PMU intel_bts counters are busy and in use by another process.
-> Possible processes:
-> 2585882 perf list
-> 2585902 perf list -j -o /tmp/__perf_test.list_output.json.KF9MY
-> 2585904 perf list
-> 2585911 perf record -e task-clock --filter period > 1 -o /dev/null --quiet true
-> 2585912 perf list
-> 2585915 perf list
-> 2586042 /tmp/perf/perf record -asdg -e cpu-clock -o /tmp/perftool-testsuite_report.dIF/perf_report/perf.data -- sleep 2
-> 2589078 perf record -g -e task-clock:u -o - perf test -w noploop
-> 2589148 /tmp/perf/perf record --control=fifo:control,ack -e cpu-clock -m 1 sleep 10
-> 2589379 perf --buildid-dir /tmp/perf.debug.Umx record --buildid-all -o /tmp/perf.data.YBm /tmp/perf.ex.MD5.ZQW
-> 2589568 perf record -o /tmp/__perf_test.program.mtcZH/perf.data --branch-filter any,save_type,u -- perf test -w brstack
-> 2589649 perf record --per-thread -o /tmp/__perf_test.perf.data.5d3dc perf test -w thloop
-> 2589898 perf record -o /tmp/perf-test-script.BX2b27Dcnj/pp-perf.data --sample-cpu uname
-> ```
-> Which gets a little closer to finding the issue.
-> 
-> Signed-off-by: Ian Rogers <irogers@google.com>
-> ---
->  tools/perf/util/evsel.c | 79 ++++++++++++++++++++++++++++++++++++++++-
->  1 file changed, 78 insertions(+), 1 deletion(-)
-> 
-> diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
-> index dbf9c8cee3c56..9a5b6a6f8d2e5 100644
-> --- a/tools/perf/util/evsel.c
-> +++ b/tools/perf/util/evsel.c
-> @@ -3286,6 +3286,78 @@ static bool find_process(const char *name)
->  	return ret ? false : true;
->  }
-> 
-> +static int dump_perf_event_processes(char *msg, size_t size)
-> +{
-> +	DIR *proc_dir;
-> +	struct dirent *proc_entry;
-> +	int printed = 0;
-> +
-> +	proc_dir = opendir(procfs__mountpoint());
-> +	if (!proc_dir)
-> +		return 0;
-> +
-> +	/* Walk through the /proc directory. */
-> +	while ((proc_entry = readdir(proc_dir)) != NULL) {
-> +		char path[PATH_MAX];
-
-Can we use a much smaller buffer as it expects PIDs only?
-
-
-> +		DIR *fd_dir;
-> +		struct dirent *fd_entry;
-> +		int fd_dir_fd;
-> +
-> +		if ((proc_entry->d_type != DT_DIR) ||
-> +		     !strcmp(".", proc_entry->d_name) ||
-> +		     !strcmp("..", proc_entry->d_name))
-
-Maybe something like this?
-
-		if (proc_entry->d_type != DT_DIR ||
-		    !isdigit(proc_entry->d_name[0]) ||
-		    strlen(proc_entry->d_name) > sizeof(path) - 4)
-
-Thanks,
-Namhyung
-
-
-> +			continue;
-> +
-> +		scnprintf(path, sizeof(path), "%s/fd", proc_entry->d_name);
-> +		fd_dir_fd = openat(dirfd(proc_dir), path, O_DIRECTORY);
-> +		if (fd_dir_fd == -1)
-> +			continue;
-> +		fd_dir = fdopendir(fd_dir_fd);
-> +		if (!fd_dir) {
-> +			close(fd_dir_fd);
-> +			continue;
-> +		}
-> +		while ((fd_entry = readdir(fd_dir)) != NULL) {
-> +			ssize_t link_size;
-> +
-> +			if (fd_entry->d_type != DT_LNK)
-> +				continue;
-> +			link_size = readlinkat(fd_dir_fd, fd_entry->d_name, path, sizeof(path));
-> +			if (link_size < 0)
-> +				continue;
-> +			/* Take care as readlink doesn't null terminate the string. */
-> +			if (!strncmp(path, "anon_inode:[perf_event]", link_size)) {
-> +				int cmdline_fd;
-> +				ssize_t cmdline_size;
-> +
-> +				scnprintf(path, sizeof(path), "%s/cmdline", proc_entry->d_name);
-> +				cmdline_fd = openat(dirfd(proc_dir), path, O_RDONLY);
-> +				if (cmdline_fd == -1)
-> +					continue;
-> +				cmdline_size = read(cmdline_fd, path, sizeof(path) - 1);
-> +				close(cmdline_fd);
-> +				if (cmdline_size < 0)
-> +					continue;
-> +				path[cmdline_size] = '\0';
-> +				for (ssize_t i = 0; i < cmdline_size; i++) {
-> +					if (path[i] == '\0')
-> +						path[i] = ' ';
-> +				}
-> +
-> +				if (printed == 0)
-> +					printed += scnprintf(msg, size, "Possible processes:\n");
-> +
-> +				printed += scnprintf(msg + printed, size - printed,
-> +						"%s %s\n", proc_entry->d_name, path);
-> +				break;
-> +			}
-> +		}
-> +		closedir(fd_dir);
-> +	}
-> +	closedir(proc_dir);
-> +	return printed;
-> +}
-> +
->  int __weak arch_evsel__open_strerror(struct evsel *evsel __maybe_unused,
->  				     char *msg __maybe_unused,
->  				     size_t size __maybe_unused)
-> @@ -3319,7 +3391,7 @@ int evsel__open_strerror(struct evsel *evsel, struct target *target,
->  			printed += scnprintf(msg, size,
->  				"No permission to enable %s event.\n\n", evsel__name(evsel));
-> 
-> -		return scnprintf(msg + printed, size - printed,
-> +		return printed + scnprintf(msg + printed, size - printed,
->  		 "Consider adjusting /proc/sys/kernel/perf_event_paranoid setting to open\n"
->  		 "access to performance monitoring and observability operations for processes\n"
->  		 "without CAP_PERFMON, CAP_SYS_PTRACE or CAP_SYS_ADMIN Linux capability.\n"
-> @@ -3382,6 +3454,11 @@ int evsel__open_strerror(struct evsel *evsel, struct target *target,
->  			return scnprintf(msg, size,
->  	"The PMU counters are busy/taken by another profiler.\n"
->  	"We found oprofile daemon running, please stop it and try again.");
-> +		printed += scnprintf(
-> +			msg, size,
-> +			"The PMU %s counters are busy and in use by another process.\n",
-> +			evsel->pmu ? evsel->pmu->name : "");
-> +		return printed + dump_perf_event_processes(msg + printed, size - printed);
->  		break;
->  	case EINVAL:
->  		if (evsel->core.attr.sample_type & PERF_SAMPLE_CODE_PAGE_SIZE && perf_missing_features.code_page_size)
-> --
-> 2.47.0.163.g1226f6d8fa-goog
-> 
+~Andrew
 
