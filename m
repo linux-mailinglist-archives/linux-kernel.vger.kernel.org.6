@@ -1,148 +1,244 @@
-Return-Path: <linux-kernel+bounces-396046-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396053-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49CC39BC732
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 08:45:11 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C17349BC74A
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 08:48:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A13281F22206
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 07:45:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8198B282031
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 07:48:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30C2B1FE10E;
-	Tue,  5 Nov 2024 07:45:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7C101FEFAA;
+	Tue,  5 Nov 2024 07:48:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=jannau.net header.i=@jannau.net header.b="QWjcdGJW";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="CYKTbZJa"
-Received: from fout-a6-smtp.messagingengine.com (fout-a6-smtp.messagingengine.com [103.168.172.149])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="a2TrC+Mk"
+Received: from mx08-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 515B02AF0B;
-	Tue,  5 Nov 2024 07:45:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.149
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60E652AF0B;
+	Tue,  5 Nov 2024 07:48:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730792702; cv=none; b=tdSZcTQQ3/TEy6fwl+c2h8CnCY5xRJzFYcatvaLf/UCKmi8u30y8T+PWo1KH5YUfX+9A2hr9D9pExk7QY9I60UrtrzossFWanoPueGLQBrZT9voTvsOLgrGweHx5Vl885HT+asvnVpgwXzwDxuDJ4DKbxoJ1idy6PaXQWI80Z8Q=
+	t=1730792915; cv=none; b=ASJ2N6kF1JhcKnlzogbKu/52s51gW6FSfCuBOXMdpP8g6ptTzh0FuPOnoyiGY30361ptzGZvXQoaswIxq40nV5SsyiRvvdZzGThq1J26+d8ykcAfPb3o/+0vZo3+d2DcwCV5LKtBos9tgmoWzuLGWCmKpGLCEa4nPM6THjAON6M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730792702; c=relaxed/simple;
-	bh=miGbvf+/sqU0lRhQWVytjVytsWBjDMOz4kDCmq/yZCc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=H9J9iR4rUCtfvfei3afGgmxbWh1cUinH04IohCJlkPxbxBDvpYMhi0wjvLpm3Tm9ciI2kun4QerfhSfx04gRpUliJwPCGG0tOUUBNq6SKz/GNvkc0lLBAE0UA8UyzsdBUnHfzdTsgCBnd2tkhLGCaJ2DNrYSlW/CkkjTcxIVXDs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jannau.net; spf=pass smtp.mailfrom=jannau.net; dkim=pass (2048-bit key) header.d=jannau.net header.i=@jannau.net header.b=QWjcdGJW; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=CYKTbZJa; arc=none smtp.client-ip=103.168.172.149
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jannau.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jannau.net
-Received: from phl-compute-04.internal (phl-compute-04.phl.internal [10.202.2.44])
-	by mailfout.phl.internal (Postfix) with ESMTP id 5CD6913802C1;
-	Tue,  5 Nov 2024 02:44:59 -0500 (EST)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-04.internal (MEProxy); Tue, 05 Nov 2024 02:44:59 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jannau.net; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm2; t=1730792699; x=1730879099; bh=Ym7SjV/dcJ
-	IjkJNBKLo9FclTtu+qxw9/1pp0hE1zJ/0=; b=QWjcdGJWR3sw5TQS86oG5vnUDb
-	AbrlWa9Dj1I52K1momGP0qnUnz5QBIp/R7RJMkgXUGqwzrdaWo/KCyAP3gGivOIT
-	7iTVlY1jYBqRQGTTwIDhdo6JgBpyAjSG/kw7H8mKtvxdoH/IxnbS1CafV/51HfQ/
-	wmyye/HV8QJ7Lnnf7GLY+TXaP+6SOyQxFYixmfjob+TZ4HCPAZXiQ9IoMP1OrKJ/
-	ZOPCmFN3C07/ZUGeEdtetimLFzUF7KJbsfmsRkYHDPLyrE/aHX5GfZxuNMnbaFyC
-	6x2xEXdDYKnY6EvGzN0AemYSxCeaygnAfyzvO/p6I1EIVBOHVj/HE2Pj3f7A==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
-	1730792699; x=1730879099; bh=Ym7SjV/dcJIjkJNBKLo9FclTtu+qxw9/1pp
-	0hE1zJ/0=; b=CYKTbZJaYJSl3jIzLRQ2OkGryMyNZEDPXMtJsDxzFjZNrSL2aW1
-	XzAYkGgF2i63sLgBjYYPv0hZCwULacFWB59t415OLzF3cwvnpy+Nrs5T4byuVWv5
-	BnIeGuyWQOLHmMGW3FBCmd1wCX4bPrW4/1vnXU2ExH5hekZsb/sFEsDiGDs88UUt
-	Xy7xDb/xTpKSOWTVsfPLRKR2qEq6E2B57kDZLhti8B3TG7sJafJkYeVFZW8eUcno
-	kggUhiMh+HOPc5jSD9VGjOMh11dhITtEQfwQXQ+ueqK/BGJbcv5/TZo6KDlLg9MA
-	vuBjj6s68atpeiG9unY9rsYdT2VO1V9blxg==
-X-ME-Sender: <xms:-cwpZ3wnCXyyr0lismuD8R6pXFOm3DrdmR4g3mcEsYrXT269jWtbwQ>
-    <xme:-cwpZ_RTpT92to-LTJkXGFG29enfWR4MC8elbgbz0lP82stG_Vk0rR60GxHjcjxuC
-    9sV4fKlPXQWT9RE7Sw>
-X-ME-Received: <xmr:-cwpZxVPIpd0lC2-hIr36Pem1OjmZOxHZZW_-osf83gPsKF4LSp-z3pSJkDSeFu5u-YxziHQucORPECYitCIbSOIV9tdzcAoCpw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdeljedgudduvdcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttdej
-    necuhfhrohhmpeflrghnnhgvucfirhhunhgruhcuoehjsehjrghnnhgruhdrnhgvtheqne
-    cuggftrfgrthhtvghrnhepgfduueffleefkeegueektdehkeejtedtffdtudejhfdvheet
-    gfeigfeltdeufeejnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlhhushhtvg
-    hrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehjsehjrghnnhgruhdrnhgv
-    thdpnhgspghrtghpthhtohepudefpdhmohguvgepshhmthhpohhuthdprhgtphhtthhope
-    hkrhiikheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepmhgrrhgtrghnsehmrghrtggr
-    nhdrshhtpdhrtghpthhtohepshhvvghnsehsvhgvnhhpvghtvghrrdguvghvpdhrtghpth
-    htoheprghlhihsshgrsehrohhsvghniiifvghighdrihhopdhrtghpthhtohepsghrohho
-    nhhivgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprhhosghhsehkvghrnhgvlhdroh
-    hrghdprhgtphhtthhopehkrhiikhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtthho
-    pegtohhnohhrodgutheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghsrghhiheslh
-    hishhtshdrlhhinhhugidruggvvh
-X-ME-Proxy: <xmx:-cwpZxj2545d2OzQOOOUm1nZrHGqKOdUqUx2V-2KvLycigdo2M64bA>
-    <xmx:-cwpZ5AcQSoMG4KKssg82ubxwnXY8srKjgRrqrQIKm1tqODhCmZcBw>
-    <xmx:-cwpZ6IlCTOSJXlUDnBNXoxahGKUggkCuUuNfpX-0UZa7yHAPvzVog>
-    <xmx:-cwpZ4AjqpLsJfHtxa2rItJ0sz2ddGV50LhWJPSeu4HPiq0vaEHBiw>
-    <xmx:-8wpZxyVsuz5RqA6v3Yo3gXt_V7f7Q6Ph83nKqvveNkJq14M50Gq1dU4>
-Feedback-ID: i47b949f6:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 5 Nov 2024 02:44:57 -0500 (EST)
-Date: Tue, 5 Nov 2024 08:44:55 +0100
-From: Janne Grunau <j@jannau.net>
+	s=arc-20240116; t=1730792915; c=relaxed/simple;
+	bh=BRyDByHc1x4h+UTPW8KbOka3OgDty57E7fMzunRfbZQ=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rHazmOWiviz4KE2x1sWrWCgHAlQdLYUWCXw1BI33ikOX+HVwfFgTL9A8eq9DZmPEFgPrGWTq0TAnGQijxRBvLLSb2h6sWHI2OtebPQnGwYJFmOJ2pgIMKYaSRTE29XoCE6eKJp40AcqMkHFweCaq01TVT2pJ+uxgHJTcTVltnfw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=a2TrC+Mk; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0369457.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A5504Ar010867;
+	Tue, 5 Nov 2024 08:48:08 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=selector1; bh=CE1Ann0N54YMVcubl0bdIuho
+	D0dbS3Lrp2O1zrujtXA=; b=a2TrC+MkfgqcIksGa6RUg20sxh1OXUUwRo+zdmMw
+	o1QMeG0MKNbEu3blOmlFzxX40Fzw0f69u+QlaLa3n7W7/iCsvjNFVcDgMQl8j1E6
+	hApY+vKZt1Ud8fO4mN7hIJCC1M3iuYjwdUPHXEohRuL9PBUwYeUxOn58PWhEh7+2
+	gsMMGg1SlNxuU7koI6OTq0Hy6sJt2r5M9sW2f1u+/wsS0J+jfMUO7KIIAH3An5uR
+	tblBbxA4qqZcl3z1Az+EoewQq+vdlI+F1re/nSqMdqbBeL+YFkPO7/xZ2hEPv0fW
+	shza+F96TN+/h+PkAC9V/mXuLh8v/9awt+dTen/lWPa7iw==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 42nywn88cs-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 05 Nov 2024 08:48:08 +0100 (CET)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 6230E40046;
+	Tue,  5 Nov 2024 08:46:53 +0100 (CET)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 21D3124A466;
+	Tue,  5 Nov 2024 08:45:55 +0100 (CET)
+Received: from gnbcxd0016.gnb.st.com (10.129.178.213) by SHFDAG1NODE1.st.com
+ (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Tue, 5 Nov
+ 2024 08:45:54 +0100
+Date: Tue, 5 Nov 2024 08:45:53 +0100
+From: Alain Volmat <alain.volmat@foss.st.com>
 To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Hector Martin <marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>,
-	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-	Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, asahi@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-spi@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 0/3] Apple SPI controller driver
-Message-ID: <20241105074455.GA923511@robin.jannau.net>
-References: <20241101-asahi-spi-v3-0-3b411c5fb8e5@jannau.net>
- <vzulq4ewdbrk7qdurtypxpaoe4jsswddfprtdbudoxipf6d3ya@4gnbmr722pig>
+CC: Hugues Fruchet <hugues.fruchet@foss.st.com>,
+        Mauro Carvalho Chehab
+	<mchehab@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre
+ Torgue <alexandre.torgue@foss.st.com>,
+        Hans Verkuil
+	<hverkuil-cisco@xs4all.nl>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Rob
+ Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor
+ Dooley <conor+dt@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>, <linux-media@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>
+Subject: Re: [PATCH 15/15] arm64: dts: st: enable imx335/csi/dcmipp pipeline
+ on stm32mp257f-ev1
+Message-ID: <20241105074553.GC1413559@gnbcxd0016.gnb.st.com>
+References: <20241008-csi_dcmipp_mp25-v1-0-e3fd0ed54b31@foss.st.com>
+ <20241008-csi_dcmipp_mp25-v1-15-e3fd0ed54b31@foss.st.com>
+ <fgxjk5tikvd5vihlzslovhlpy5xbbgnr3kywkvkd62ppx6ttm7@2rbaqvllyb25>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <vzulq4ewdbrk7qdurtypxpaoe4jsswddfprtdbudoxipf6d3ya@4gnbmr722pig>
+In-Reply-To: <fgxjk5tikvd5vihlzslovhlpy5xbbgnr3kywkvkd62ppx6ttm7@2rbaqvllyb25>
+X-Disclaimer: ce message est personnel / this message is private
+X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
 
-On Sat, Nov 02, 2024 at 02:11:51PM +0100, Krzysztof Kozlowski wrote:
-> On Fri, Nov 01, 2024 at 08:26:11PM +0100, Janne Grunau wrote:
-> > Hi all,
+Hi Krzysztof,
+
+On Tue, Oct 08, 2024 at 03:42:42PM +0200, Krzysztof Kozlowski wrote:
+> On Tue, Oct 08, 2024 at 01:18:17PM +0200, Alain Volmat wrote:
+> > Enable the camera pipeline with a imx335 sensor connected to the
+> > dcmipp via the csi interface.
 > > 
-> > This updated series address the review comments from the original
-> > submission in 2021 [1]. It adds a new SPI controller driver for Apple
-> > SoCs and is based on spi-sifive. It has been tested with the generic
-> > jedec,spi-nor support and with a downstream driver for an Apple specific
-> > HID over SPI transport.
+> > Signed-off-by: Alain Volmat <alain.volmat@foss.st.com>
+> > ---
+> >  arch/arm64/boot/dts/st/stm32mp257f-ev1.dts | 87 ++++++++++++++++++++++++++++++
+> >  1 file changed, 87 insertions(+)
 > > 
-> > As usual, I'm splitting off the MAINTAINERS and DT binding changes.
-> > We would rather merge the MAINTAINERS change through the Asahi-SoC
-> > tree to avoid merge conflicts as things trickle upstream, since
-> > we have other submissions touching that section of the file.
-> > 
-> > The DT binding change can go via the SPI tree or via ours, but it's
-> > easier if we merge it, as then we can make the DT changes to
-> > instantiate it without worrying about DT validation failures depending
-> > on merge order.
-> > 
-> > This is mostly Hector's work with a few minor changes to address review
-> > comments from me.
-> > 
-> > [1] https://lore.kernel.org/linux-spi/20211212034726.26306-1-marcan@marcan.st/
-> > 
-> > v2:
-> > - removed '#address-cells' and '#size-cells' from the bindings and added
-> >   Rob's Rb:
+> > diff --git a/arch/arm64/boot/dts/st/stm32mp257f-ev1.dts b/arch/arm64/boot/dts/st/stm32mp257f-ev1.dts
+> > index 214191a8322b..599af4801d82 100644
+> > --- a/arch/arm64/boot/dts/st/stm32mp257f-ev1.dts
+> > +++ b/arch/arm64/boot/dts/st/stm32mp257f-ev1.dts
+> > @@ -27,6 +27,38 @@ chosen {
+> >  		stdout-path = "serial0:115200n8";
+> >  	};
+> >  
+> > +	clocks {
+> > +		clk_ext_camera: clk-ext-camera {
+> > +			#clock-cells = <0>;
+> > +			compatible = "fixed-clock";
+> > +			clock-frequency = <24000000>;
+> > +		};
+> > +	};
+> > +
+> > +	imx335_2v9: imx335-2v9 {
 > 
-> Where?
+> Please use name for all fixed regulators which matches current format
+> recommendation: 'regulator-[0-9]v[0-9]'
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/devicetree/bindings/regulator/fixed-regulator.yaml?h=v6.11-rc1#n46
 
-Apparently only in my mind. fixed for v4
+Done in v2 for all 3 fixed-regulators.
 
-thanks,
-Janne
+> 
+> > +		compatible = "regulator-fixed";
+> > +		regulator-name = "imx335-avdd";
+> > +		regulator-min-microvolt = <2900000>;
+> > +		regulator-max-microvolt = <2900000>;
+> > +		regulator-always-on;
+> > +	};
+> > +
+> > +	imx335_1v8: imx335-1v8 {
+> > +		compatible = "regulator-fixed";
+> > +		regulator-name = "imx335-ovdd";
+> > +		regulator-min-microvolt = <1800000>;
+> > +		regulator-max-microvolt = <1800000>;
+> > +		regulator-always-on;
+> > +	};
+> > +
+> > +	imx335_1v2: imx335-1v2 {
+> > +		compatible = "regulator-fixed";
+> > +		regulator-name = "imx335-dvdd";
+> > +		regulator-min-microvolt = <1200000>;
+> > +		regulator-max-microvolt = <1200000>;
+> > +		regulator-always-on;
+> > +	};
+> > +
+> >  	memory@80000000 {
+> >  		device_type = "memory";
+> >  		reg = <0x0 0x80000000 0x1 0x0>;
+> > @@ -50,6 +82,40 @@ &arm_wdt {
+> >  	status = "okay";
+> >  };
+> >  
+> > +&csi {
+> > +	vdd-supply =  <&scmi_vddcore>;
+> > +	vdda18-supply = <&scmi_v1v8>;
+> > +	status = "okay";
+> > +	ports {
+> > +		#address-cells = <1>;
+> > +		#size-cells = <0>;
+> > +		port@0 {
+> > +			reg = <0>;
+> > +			csi_sink: endpoint {
+> > +				remote-endpoint = <&imx335_ep>;
+> > +				data-lanes = <0 1>;
+> > +				bus-type = <4>;
+> > +			};
+> > +		};
+> > +		port@1 {
+> > +			reg = <1>;
+> > +			csi_source: endpoint {
+> > +				remote-endpoint = <&dcmipp_0>;
+> > +			};
+> > +		};
+> > +	};
+> > +};
+> > +
+> > +&dcmipp {
+> > +	status = "okay";
+> > +	port {
+> > +		dcmipp_0: endpoint {
+> > +			remote-endpoint = <&csi_source>;
+> > +			bus-type = <4>;
+> > +		};
+> > +	};
+> > +};
+> > +
+> >  &ethernet2 {
+> >  	pinctrl-names = "default", "sleep";
+> >  	pinctrl-0 = <&eth2_rgmii_pins_a>;
+> > @@ -81,6 +147,27 @@ &i2c2 {
+> >  	i2c-scl-falling-time-ns = <13>;
+> >  	clock-frequency = <400000>;
+> >  	status = "okay";
+> > +
+> > +	imx335: imx335@1a {
+> 
+> Node names should be generic. See also an explanation and list of
+> examples (not exhaustive) in DT specification:
+> https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
+
+Changed to camera@1a.
+
+> 
+> > +		compatible = "sony,imx335";
+> > +		reg = <0x1a>;
+> > +		clocks = <&clk_ext_camera>;
+> > +		avdd-supply = <&imx335_2v9>;
+> > +		ovdd-supply = <&imx335_1v8>;
+> > +		dvdd-supply = <&imx335_1v2>;
+> > +		reset-gpios = <&gpioi 7 (GPIO_ACTIVE_HIGH | GPIO_PUSH_PULL)>;
+> > +		powerdown-gpios = <&gpioi 0 (GPIO_ACTIVE_HIGH | GPIO_PUSH_PULL)>;
+> > +		status = "okay";
+> 
+> Why? Didi you disable it anywhere?
+
+status property dropped in v2.  powerdown-gpios property dropped as
+well since not necessary nor described in the sensor yaml.
+reset-gpios polarity is as well corrected in v2, following an change
+within the imx335 sensor.
+
+> 
+> Best regards,
+> Krzysztof
+> 
+
+Regards,
+Alain
 
