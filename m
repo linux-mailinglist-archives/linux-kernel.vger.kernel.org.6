@@ -1,115 +1,160 @@
-Return-Path: <linux-kernel+bounces-396181-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396180-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D37389BC90C
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 10:23:45 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FA449BC908
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 10:23:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD0A4282E96
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 09:23:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B0F721C2363C
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 09:23:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B71A91CFEDB;
-	Tue,  5 Nov 2024 09:23:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E2681D0E26;
+	Tue,  5 Nov 2024 09:23:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="tw2q7T0j"
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="abc102v8"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD0991D096F
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 09:23:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44FAD186284;
+	Tue,  5 Nov 2024 09:22:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730798610; cv=none; b=YOP/hB4FTi+eQdndwtNLJVVQPX7mczIVuUM7cLA+xj7adukYvrS8emo3JxyQ+l42OT9XX/cmCtfkkbr/9+51yaX8zrPGWGD/CMdCNv2FVL2gzfp2/Y9+8mAJUpueB0sfoIXtCnH95NJHPAc/a6FAyG4oGpB4A0gCtSc4/gjyWy8=
+	t=1730798579; cv=none; b=Uqbq0wQZ4Gyb/In50hJN6A0QdKLyZoFL5zMdrkBZkGFYuVATQMeeG2/cXuD8EBYUavp0TnZ3v7cs6ndBhvE8IjESHHsOI3YVeRMuQFV0Dd486J4pM/uPDm2UbPaizsSUCWAqP5tmTnHEZ23bRsTO8Y01sdqJ4ffGyU3dokDKmPI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730798610; c=relaxed/simple;
-	bh=ZdfrPdUPNGoog6Ndxomrc7QnMMuWaqWXqD47+NdPzQw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KIdGSpH1EyH/aZgMN1epjZsCG11M4qKBU5YzsqZ7i2uVzSCMwjXM0rQgfOADTJWrmSJVkfFGOMhm37A2nEERXqPpGdFN5yJqcou9IpUNf4HJzDUxJW03qsI+9K1dgzl9sx/kSHl3DDnpEA1gIdfIGhpQSNqF10hGV6Pcwv5UGEc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=tw2q7T0j; arc=none smtp.client-ip=209.85.210.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-71e70c32cd7so4621616b3a.1
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 01:23:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1730798608; x=1731403408; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZdfrPdUPNGoog6Ndxomrc7QnMMuWaqWXqD47+NdPzQw=;
-        b=tw2q7T0j89IWatiymbxP8oTIosR6HtE215xHDPU4yhM9+wC2MnUdDeFIlTxwwLIrKq
-         JrbFCjjA1cHzJnSRdGqALYhMBvzn3PkCa7XveR3AbOtkUagTnpAQJnMvTYioQmmPVr0W
-         J9cQ3PbAf1g55BTMycXFq1wKLEDdlEWsH6/LI5V2UoH03WIDc4cpDYU6Gafq9A48ziAh
-         lbHLeHOcZhlKuwUHSsA5dJxj2kbWz05jSraQ0VhbnQyEiBkUNYYBt8jfIqVeC59gaQsZ
-         Fm11vC5Pb224AMXAPf/BaYwIj9iBuwazSA8xSJLM0k769t5afAAz93BLhotOgAhBSocY
-         XcSA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730798608; x=1731403408;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ZdfrPdUPNGoog6Ndxomrc7QnMMuWaqWXqD47+NdPzQw=;
-        b=Zt5zSPub/USLOw5kX4/uRiBVGhrFO8Mro53dudKszF/hKbmsSkw+jg/PfgNF2FTkyt
-         6zsGB+uB0h0gSc1HEj6jggnTx5A+JPD/+s5PMSE+rH/9O0fpRRjoQb0zO/SrUSJMso+p
-         Zowd+++EPnhiAuwGHG8raa5BXYtxQrP/C0v+l/arBBATy1ahSbrMuWpXfP2Y9wCd39um
-         gOgA7Ih0EAHjpHrqJNZuU9NFL/hoTLSLPE5ZUbyRB2MSZBksGgKQbYeh8xgt4moGrBlv
-         w7v2HjM2W2s2Od/eI4qoRrs2w8cPLqTZGDeUnKH7RYOXRnM+W+T5BCKanOrKW1eN/JAZ
-         Vf/w==
-X-Forwarded-Encrypted: i=1; AJvYcCXaRwq/axm3Okc7EPoKdDXkvaKd3Ha3XWZjpcmvT2+uT/6BD8ulBBAg6RPGFeHsJ7P1gyzawMgXilbsk5o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxsT1eoKrTi0ZFR4f13kCWmeB1aGXlmKLWQl8kPKD2D5qhZR1Cc
-	J7UeP/ZgYGms/6fyc3OmwVydzKfrQcFxWUCDJwBYIudY8FwjWte+FpQfgeazl01aAaVy0Z6viZf
-	vFWOHgNQ4qx+jCL9hSQsoETmxjavdylv5IBJO
-X-Google-Smtp-Source: AGHT+IFsbOkIRMlIXRYOjSf+YW/ReW1Dnhhy8DxL1p03ybgQfhY/UDIdWGScK8OGMbaTEzKUKZbdnxHkOSmX45MPr+0=
-X-Received: by 2002:a05:6a20:1d98:b0:1d4:e68c:2eb9 with SMTP id
- adf61e73a8af0-1d9a83cfa9amr47833528637.20.1730798607856; Tue, 05 Nov 2024
- 01:23:27 -0800 (PST)
+	s=arc-20240116; t=1730798579; c=relaxed/simple;
+	bh=0DJAaAp/sJ4GJO6GXcKD8xMWKOg86nk2Np9hVptfiZ0=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=mZ5fTc/Tj9RU8ttW4FYi8TnbQ5YSJQPjRiuFTuCIg3kiyxaBBfJFafFcXgSfXc2sGXHzV2ao4ER1D5ZQL+GAK/rZslg/eZLsj7hseYWrsqbpcGjLkC04vaN+Dk5CjWd0LYtgC7tX4IdOzz/bsgqNg48dl9xzswBCPvtRC9Mlzg0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=abc102v8; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
+	s=201909; t=1730798571;
+	bh=xG1HQhXTKL81M9467zhA4KonLLpV3fuL2upt5lJSShY=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=abc102v8sCEc4rZgo2gcKLbXmwgvq4GWFHOVFO2bCqlfFdeKKcRV4prB0lNuFM+1J
+	 +nLMWJEv9C6S0GLYT8NTq4cofEwz+d0GOszV9URcE2cm6ZF5AylDoN/Z59rll0g/Oq
+	 7WsqGbok2W4NpvuKkzkrDPAQmPNPSM6PFvziT+2hwmqDnVmGWCUcte8UycWZO0fqBM
+	 8/j6kLdVKhMd+2mHPE+WS4RXiOWy1ZCSKS371LN4mAvJuEGSKgRrakUz5kUENSDU9q
+	 PGCTVxGOMH7TPanX3MVM/rMyBsqI05mZE6yiJdVSS0qPm3mWfbV8Bv8MQn/EFJHce9
+	 0DvIPNJTjgI8A==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XjNCv5y3Wz4wcl;
+	Tue,  5 Nov 2024 20:22:51 +1100 (AEDT)
+From: Michael Ellerman <mpe@ellerman.id.au>
+To: Eric Biggers <ebiggers@kernel.org>, linux-kernel@vger.kernel.org
+Cc: linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-crypto@vger.kernel.org, linux-ext4@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net, linux-mips@vger.kernel.org,
+ linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
+ linux-scsi@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+ loongarch@lists.linux.dev, sparclinux@vger.kernel.org, x86@kernel.org, Ard
+ Biesheuvel <ardb@kernel.org>
+Subject: Re: [PATCH v3 08/18] powerpc/crc32: expose CRC32 functions through lib
+In-Reply-To: <20241103223154.136127-9-ebiggers@kernel.org>
+References: <20241103223154.136127-1-ebiggers@kernel.org>
+ <20241103223154.136127-9-ebiggers@kernel.org>
+Date: Tue, 05 Nov 2024 20:22:53 +1100
+Message-ID: <87zfme826q.fsf@mpe.ellerman.id.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241104161910.780003-1-elver@google.com> <20241104161910.780003-3-elver@google.com>
-In-Reply-To: <20241104161910.780003-3-elver@google.com>
-From: Marco Elver <elver@google.com>
-Date: Tue, 5 Nov 2024 10:22:51 +0100
-Message-ID: <CANpmjNNBo6SvESFxo6Kk2v4_HOa=CeAVR_unTJvQEP8UZQG6gg@mail.gmail.com>
-Subject: Re: [PATCH v2 2/5] time/sched_clock: Broaden sched_clock()'s
- instrumentation coverage
-To: elver@google.com, Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>
-Cc: "Paul E. McKenney" <paulmck@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
-	Mark Rutland <mark.rutland@arm.com>, Dmitry Vyukov <dvyukov@google.com>, kasan-dev@googlegroups.com, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 
-Oops, typo'd the commit message:
-
-On Mon, 4 Nov 2024 at 17:19, Marco Elver <elver@google.com> wrote:
+Eric Biggers <ebiggers@kernel.org> writes:
+> From: Eric Biggers <ebiggers@google.com>
 >
-> Most of sched_clock()'s implementation is ineligible for instrumentation
-> due to relying on sched_clock_noinstr().
+> Move the powerpc CRC32C assembly code into the lib directory and wire it
+> up to the library interface.  This allows it to be used without going
+> through the crypto API.  It remains usable via the crypto API too via
+> the shash algorithms that use the library interface.  Thus all the
+> arch-specific "shash" code becomes unnecessary and is removed.
 >
-> Split the implementation off into an __always_inline function
-> __sched_clock(), which is then used by the noinstr and instrumentable
-> version, to allow more of sched_clock() to be covered by various
-> instrumentation.
+> Note: to see the diff from arch/powerpc/crypto/crc32c-vpmsum_glue.c to
+> arch/powerpc/lib/crc32-glue.c, view this commit with 'git show -M10'.
 >
-> This will allow instrumentation with the various sanitizers (KASAN,
-> KCSAN, KMSAN, UBSAN). For KCSAN, we know that raw seqcount_latch usage
-> without annotations will result in false positive reports: tell it that
-> all of __sched_clock() is "atomic" for the latch writer; later changes
+> Reviewed-by: Ard Biesheuvel <ardb@kernel.org>
+> Signed-off-by: Eric Biggers <ebiggers@google.com>
+> ---
+>  arch/powerpc/Kconfig                          |   1 +
+>  arch/powerpc/configs/powernv_defconfig        |   1 -
+>  arch/powerpc/configs/ppc64_defconfig          |   1 -
+>  arch/powerpc/crypto/Kconfig                   |  15 +-
+>  arch/powerpc/crypto/Makefile                  |   2 -
+>  arch/powerpc/crypto/crc32c-vpmsum_glue.c      | 173 ------------------
+>  arch/powerpc/crypto/crct10dif-vpmsum_asm.S    |   2 +-
+>  arch/powerpc/lib/Makefile                     |   3 +
+>  arch/powerpc/lib/crc32-glue.c                 |  92 ++++++++++
+>  .../{crypto => lib}/crc32-vpmsum_core.S       |   0
+>  .../{crypto => lib}/crc32c-vpmsum_asm.S       |   0
+>  11 files changed, 98 insertions(+), 192 deletions(-)
+>  delete mode 100644 arch/powerpc/crypto/crc32c-vpmsum_glue.c
+>  create mode 100644 arch/powerpc/lib/crc32-glue.c
+>  rename arch/powerpc/{crypto => lib}/crc32-vpmsum_core.S (100%)
+>  rename arch/powerpc/{crypto => lib}/crc32c-vpmsum_asm.S (100%)
 
-s/writer/reader/
+Acked-by: Michael Ellerman <mpe@ellerman.id.au> (powerpc)
 
-> in this series will take care of the readers.
+...
+> deleted file mode 100644
+> index 63760b7dbb76..000000000000
+> --- a/arch/powerpc/crypto/crc32c-vpmsum_glue.c
+> +++ /dev/null
+> @@ -1,173 +0,0 @@
+> -// SPDX-License-Identifier: GPL-2.0-only
+> -
+...
+> -static int __init crc32c_vpmsum_mod_init(void)
+> -{
+> -	if (!cpu_has_feature(CPU_FTR_ARCH_207S))
+> -		return -ENODEV;
+> -
+> -	return crypto_register_shash(&alg);
+> -}
+> -
+> -static void __exit crc32c_vpmsum_mod_fini(void)
+> -{
+> -	crypto_unregister_shash(&alg);
+> -}
+> -
+> -module_cpu_feature_match(PPC_MODULE_FEATURE_VEC_CRYPTO, crc32c_vpmsum_mod_init);
+> -module_exit(crc32c_vpmsum_mod_fini);
+> -
+> -MODULE_AUTHOR("Anton Blanchard <anton@samba.org>");
+> -MODULE_DESCRIPTION("CRC32C using vector polynomial multiply-sum instructions");
+> -MODULE_LICENSE("GPL");
+> -MODULE_ALIAS_CRYPTO("crc32c");
+> -MODULE_ALIAS_CRYPTO("crc32c-vpmsum");
+...
+> new file mode 100644
+> index 000000000000..e9730f028afb
+> --- /dev/null
+> +++ b/arch/powerpc/lib/crc32-glue.c
+> @@ -0,0 +1,92 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+...
+> +
+> +static int __init crc32_powerpc_init(void)
+> +{
+> +	if (cpu_has_feature(CPU_FTR_ARCH_207S) &&
+> +	    (cur_cpu_spec->cpu_user_features2 & PPC_FEATURE2_VEC_CRYPTO))
+> +		static_branch_enable(&have_vec_crypto);
 
-s/readers/writers/
+For any other reviewers, this looks like a new cpu feature check, but
+it's not. In the old code there was a module feature check:
 
-... might be less confusing. If you apply, kindly fix up the commit
-message, so that future people will be less confused. The code comment
-is correct.
+  module_cpu_feature_match(PPC_MODULE_FEATURE_VEC_CRYPTO, crc32c_vpmsum_mod_init);
 
-Thanks,
--- Marco
+And PPC_MODULE_FEATURE_VEC_CRYPTO maps to PPC_FEATURE2_VEC_CRYPTO, so
+the logic is equivalent.
+
+cheers
 
