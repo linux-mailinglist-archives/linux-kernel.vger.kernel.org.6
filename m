@@ -1,319 +1,190 @@
-Return-Path: <linux-kernel+bounces-396738-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396745-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 612699BD169
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 17:01:35 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC6229BD18C
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 17:03:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 851E31C229C0
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 16:01:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2784EB241E8
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 16:03:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5D9A1E1C26;
-	Tue,  5 Nov 2024 15:58:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 866861E7C0C;
+	Tue,  5 Nov 2024 15:59:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="etRW7Ceo"
-Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=imgtec.com header.i=@imgtec.com header.b="RvOZ5IzM"
+Received: from mx08-00376f01.pphosted.com (mx08-00376f01.pphosted.com [91.207.212.86])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ED191DE2A9
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 15:58:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F51814EC56;
+	Tue,  5 Nov 2024 15:59:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.86
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730822316; cv=none; b=DaH5AHuLiWpUcSJDmjVvS+mJ494qV+A7F/ewmaF5SJoxIgfCYBsqc4sLWhw/ppK65QCpdcE2qHJVJ24Wc/qO/puHxbDUTB1MRWFSuLg1S40nAyjXAMNCUZm5e90TqPRtHSyM7I+zwAlBqomd1HKuheEPQsPu4zlIDU0OtYtTvSw=
+	t=1730822388; cv=none; b=WgmXevfBn/5l39NxcN1EOyeZupL08uz2F2FPDin+Gx4/Z4wuwyQwenEHQ7qyL8Wyf2VQYmDh0qHTq9L2FWLpM8aTqOQXtc4w6GsW5rb95dZkhNOHILRqPebZbKsyZX2LNEZpMwRrQ6h8ukgSI3KSh2E0GvwQazG4NrKEN+5NugM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730822316; c=relaxed/simple;
-	bh=uS7QM2OlO2Fy0ecWbAAO2d+aA/HsKz+/e9K4Qda2RF8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=qWYCYkCF0e44LNtyXvHOfgbwyppdMPAghLaOoFfj/YF1AL1wDLlkSZoBT5H1VeFtX+Ma6bthmFK9CSVdzdfoZVKRG3XECfg79Y48fBzWaKqhnvlPJ3IzvJooG0hHJCB3M885a8sbYImYx/dExrvXADpZt/MG5ddBLzwIqtm4VxI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=etRW7Ceo; arc=none smtp.client-ip=209.85.160.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-460c316fc37so41072721cf.0
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 07:58:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730822313; x=1731427113; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7ixh7vcAwRrq/kjGmH6l0IZgJtKtt8jYOoa3BHfLv64=;
-        b=etRW7Ceo7ceouH4XgCtd43L72QNNX6QCwyTk4Wq90I6VQ32sP9iWjFsnrnPASjUcRO
-         PRkV3doNPHZwIWLOl9XoXJqf/6Ah3M4Qe0GOA07Zrh7rinsVclVw5DBv6LQRSZpPZOVZ
-         uN2PJ7ERFl3Oum/acqu/ekFDYxLYJ0JTOewc22G1RNMw8AxxRd4xPvTeE3Zlymq6VQe2
-         E9//hIFvUrvzGavTcTaIQqx8huHkrz4XaqaDRxWp7J+v1SuXacpXY7ECX0SHSxL0Ji7K
-         czgwQHOGN3DdiS8GX1dn+t8p6a6xxkAcaNppXiksAKt6dZcbdf6JSdwQimXvdTUjvSBR
-         keKg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730822313; x=1731427113;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7ixh7vcAwRrq/kjGmH6l0IZgJtKtt8jYOoa3BHfLv64=;
-        b=FfThJ9hYKp3YIRrejDQDhOMwbS8H8dV9SwJcaCSboLpMYEiQ5MBOqCsoSspY/+7+py
-         VqWcWTcutXCkIGzV18OCYPSW3EICyWD8dyWNTdYvv/7l/rLCIGxVieipMjvfS7YV/7je
-         QdkKJy6GQEDgBQIFKLP1hG/E7ZTZAYhp7+Bhr9kxpOqTFgYzZ6oYK2gWFyzeUEcOq5Nd
-         ZrOUODd43nvWXqtVf+RfB218BKzZCMoUE2BKikhMpqIMO83n68iGg/HfpNbGK3Oy/1fO
-         Lrhc6iCfPFOBDxVQ1ZraTn6LZhDqLeLlrWrYu9Sx/QBOpUi70RRhquo9+5FcufeTAhUY
-         zmEA==
-X-Gm-Message-State: AOJu0YzwRemjfD3z6/5GwivigCUDr/DWiAieBykTT6bKU8kJlZmEbNPJ
-	/vpaOItdR7FmKW0e6xytA2qEutfX+4L3RP1vnik8Yk4bUNzF4trdoDWX
-X-Google-Smtp-Source: AGHT+IHqWlznjinIIbx/AjHipDuqCQmNCVECj1E8S8blpnNnVSIOBbeSXQTUl0++vBtANNxPdVOR7A==
-X-Received: by 2002:a05:6214:4406:b0:6d3:77b8:cb3 with SMTP id 6a1803df08f44-6d377b80d00mr98421416d6.12.1730822312663;
-        Tue, 05 Nov 2024 07:58:32 -0800 (PST)
-Received: from citadel.lan ([2600:6c4a:4d3f:6d5c::1019])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d353fc6d07sm61710586d6.44.2024.11.05.07.58.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Nov 2024 07:58:32 -0800 (PST)
-From: Brian Gerst <brgerst@gmail.com>
-To: linux-kernel@vger.kernel.org,
-	x86@kernel.org
-Cc: Ingo Molnar <mingo@kernel.org>,
-	"H . Peter Anvin" <hpa@zytor.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Borislav Petkov <bp@alien8.de>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Uros Bizjak <ubizjak@gmail.com>,
-	Brian Gerst <brgerst@gmail.com>
-Subject: [PATCH v5 16/16] kallsyms: Remove KALLSYMS_ABSOLUTE_PERCPU
-Date: Tue,  5 Nov 2024 10:58:01 -0500
-Message-ID: <20241105155801.1779119-17-brgerst@gmail.com>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20241105155801.1779119-1-brgerst@gmail.com>
-References: <20241105155801.1779119-1-brgerst@gmail.com>
+	s=arc-20240116; t=1730822388; c=relaxed/simple;
+	bh=UDHyhwvncQQ0+/VdyMOAScTvsSjhCbAR2gGCz0CJwCM=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=HMYV5UMVs5u9ajaMCSsvs3dyo0CqL0xek+9GDQveQFayIp11AdW/BPLL01Xltr45/YxghGdUDxgUtq0XOj+x2zb7804twljvb2FusTeem9X9aS6K5NSko3uROdQjs5LhfH9YiSfJFPLZbIVbYVPh2m2og8hA/HowPYqe3avGsaE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=imgtec.com; spf=pass smtp.mailfrom=imgtec.com; dkim=pass (2048-bit key) header.d=imgtec.com header.i=@imgtec.com header.b=RvOZ5IzM; arc=none smtp.client-ip=91.207.212.86
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=imgtec.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=imgtec.com
+Received: from pps.filterd (m0168888.ppops.net [127.0.0.1])
+	by mx08-00376f01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A5EF3ux003827;
+	Tue, 5 Nov 2024 15:58:25 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=imgtec.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=dk201812; bh=B/abEZOC6tU29ZHO7iY0iyL
+	PlTbvm1PrP9fAvufkChQ=; b=RvOZ5IzMozU1lgsuweUlSSda+F6CiT1eT3D8Rqu
+	lEx5hIAcFgOWBGR9NS5yDda6rNI7twTyq/+PIcneeKb/StUOxcAx8GTbCfhI2jux
+	UWoLD+qLzMXlKBvEb9HK8ncn/DoMyv3LNVMLZJG637pGWhbOZtRNFWq7Am+6EJra
+	9mmA/JJLNlwpA5R2hgpUOEv1XmSN9IcAQHaeUee9zNHfKdC1t/aKrziRRebSFLfM
+	3NtiICRvId7ODKgYkSI70m1oW/rD4V5swhgDKuMYSvPzdn/cFAlpVjsWBtvlTitm
+	Vw+qVQeER2eHrQxa2wUhsXMdw4mRqvdMQeANx6DcEf/Jr5Q==
+Received: from hhmail05.hh.imgtec.org (83-244-153-141.cust-83.exponential-e.net [83.244.153.141])
+	by mx08-00376f01.pphosted.com (PPS) with ESMTPS id 42nb7wta0s-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+	Tue, 05 Nov 2024 15:58:25 +0000 (GMT)
+Received: from
+ 1.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.ip6.arpa
+ (172.25.16.114) by HHMAIL05.hh.imgtec.org (10.100.10.120) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.37; Tue, 5 Nov 2024 15:58:23 +0000
+From: Matt Coster <matt.coster@imgtec.com>
+Subject: [PATCH 00/21] Imagination BXS-4-64 MC1 GPU support
+Date: Tue, 5 Nov 2024 15:58:06 +0000
+Message-ID: <20241105-sets-bxs-4-64-patch-v1-v1-0-4ed30e865892@imgtec.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAI5AKmcC/x3MMQqAMAxA0atIZgO2pIJeRRw0pppFpRERine3O
+ L7h/wwmScWgrzIkudX02AtcXQFv074K6lIMvvHkGu/Q5DKcH0PClvCcLt7wdkjES+yYQwgRSnw
+ mifr842F83w/6iJmbaAAAAA==
+X-Change-ID: 20241021-sets-bxs-4-64-patch-v1-44cdf9cc555f
+To: Frank Binns <frank.binns@imgtec.com>,
+        Matt Coster
+	<matt.coster@imgtec.com>,
+        David Airlie <airlied@gmail.com>, Simona Vetter
+	<simona@ffwll.ch>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, Nishanth Menon <nm@ti.com>,
+        "Vignesh
+ Raghavendra" <vigneshr@ti.com>,
+        Tero Kristo <kristo@kernel.org>
+CC: <dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        Randolph Sapp <rs@ti.com>, Darren Etheridge <detheridge@ti.com>,
+        Sarah Walker
+	<sarah.walker@imgtec.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4626;
+ i=matt.coster@imgtec.com; h=from:subject:message-id;
+ bh=UDHyhwvncQQ0+/VdyMOAScTvsSjhCbAR2gGCz0CJwCM=;
+ b=owGbwMvMwCFWuUfy8817WRsYT6slMaRrOcz5P9Fz+ZqrWhsz5lQcO5N9t0L13dTT9dezH9Y97
+ Op5NzOzvaOUhUGMg0FWTJFlxwrLFWp/1LQkbvwqhpnDygQyhIGLUwAmcu0kwx9e/SYuyf0XHHc5
+ b576QqrZvKb2MOsf36b8rcFWU7oPi7xiZOh0Ly8SFFIXL+AWcDDM/8O97rucxrSs451CJcw7ncJ
+ suQE=
+X-Developer-Key: i=matt.coster@imgtec.com; a=openpgp;
+ fpr=05A40CFCE7269D61D97100A1747F0A9036F90DFA
+X-EXCLAIMER-MD-CONFIG: 15a78312-3e47-46eb-9010-2e54d84a9631
+X-Authority-Analysis: v=2.4 cv=ddzS3mXe c=1 sm=1 tr=0 ts=672a40a1 cx=c_pps a=AKOq//PuzOIrVTIF9yBwbA==:117 a=AKOq//PuzOIrVTIF9yBwbA==:17 a=hzDjp0mCheYA:10 a=IkcTkHD0fZMA:10 a=VlfZXiiP6vEA:10 a=e5mUnYsNAAAA:8 a=NEAV23lmAAAA:8 a=gAcbV61aEvjkjzSdo3MA:9
+ a=QEXdDO2ut3YA:10 a=Vxmtnl_E_bksehYqCbjh:22
+X-Proofpoint-GUID: w_vyz2WEhYYv-zf7zPTWJIEcOasBRElO
+X-Proofpoint-ORIG-GUID: w_vyz2WEhYYv-zf7zPTWJIEcOasBRElO
 
-x86-64 was the only user.
+This GPU is found in the TI AM68 family of SoCs, with initial support
+added to the k3-j721s2 devicetree and tested on a TI SK-AM68 board.
 
-Signed-off-by: Brian Gerst <brgerst@gmail.com>
+A suitable firmware binary can currently be found in the IMG
+linux-firmware repository[1] as powervr/rogue_36.53.104.796_v1.fw. A
+merge request will be sent out for this within the next few weeks.
+
+No new UAPI will be necessary for this platform as it is sufficiently
+similar to the already supported AXE-1-16M.
+
+The firmware successfully boots with basic job submission appearing to
+work correctly, as tested with a few of Sascha Willems' Vulkan demos[2].
+Note these do not necessarily render correctly due to incomplete UMD
+support.
+
+UMD support is still a work in progress. The branch at [3] is nearly
+feature complete from a Vulkan perspective. We're currently undertaking
+a significant rework of the compiler to better accommodate this and
+other Rogue GPUs which means we can't do more comprehensive driver
+testing at this point. However, we expect to send a Mesa merge request
+for the initial version of the compiler (capable of passing some of the
+Vulkan CTS smoke tests) within the next few days, with a fully
+functional version of the compiler in place by the end of the year.
+
+There are several dt-bindings changes at the beginning of this series.
+We expect the result to be versatile enough to handle all Imagination
+Rogue GPUs while being a strong foundation to build bindings for the
+newer Volcanic architecture (for which we're currently developing
+support).
+
+[1]: https://gitlab.freedesktop.org/imagination/linux-firmware/-/tree/powervr
+[2]: https://github.com/SaschaWillems/Vulkan
+[3]: https://gitlab.freedesktop.org/imagination/mesa/-/tree/dev/bxs
+
 ---
- init/Kconfig            |  5 ---
- kernel/kallsyms.c       | 12 ++-----
- scripts/kallsyms.c      | 72 +++++++----------------------------------
- scripts/link-vmlinux.sh |  4 ---
- 4 files changed, 14 insertions(+), 79 deletions(-)
+Matt Coster (20):
+      dt-bindings: gpu: img: More explicit compatible strings
+      dt-bindings: gpu: img: Further constrain clocks
+      dt-bindings: gpu: img: Power domain details
+      dt-bindings: gpu: img: Allow dma-coherent
+      drm/imagination: Use more specific compatible strings
+      drm/imagination: Add power domain control
+      arm64: dts: ti: k3-am62: New GPU binding details
+      dt-bindings: gpu: img: Add BXS-4-64 devicetree bindings
+      drm/imagination: Revert to non-threaded IRQs
+      drm/imagination: Remove firmware enable_reg
+      drm/imagination: Rename event_mask -> status_mask
+      drm/imagination: Make has_fixed_data_addr a value
+      drm/imagination: Use a lookup table for fw defs
+      drm/imagination: Use callbacks for fw irq handling
+      drm/imagination: Add register required for RISC-V firmware
+      drm/imagination: Move ELF fw utils to common file
+      drm/imagination: Add platform overrides infrastructure
+      drm/imagination: Add device_memory_force_cpu_cached override
+      drm/imagination: Add support for TI AM68 GPU
+      arm64: dts: ti: k3-j721s2: Add GPU node
 
-diff --git a/init/Kconfig b/init/Kconfig
-index b374c0de5cfd..32db844d00d1 100644
---- a/init/Kconfig
-+++ b/init/Kconfig
-@@ -1846,11 +1846,6 @@ config KALLSYMS_ALL
- 
- 	  Say N unless you really need all symbols, or kernel live patching.
- 
--config KALLSYMS_ABSOLUTE_PERCPU
--	bool
--	depends on KALLSYMS
--	default n
--
- # end of the "standard kernel features (expert users)" menu
- 
- config ARCH_HAS_MEMBARRIER_CALLBACKS
-diff --git a/kernel/kallsyms.c b/kernel/kallsyms.c
-index a9a0ca605d4a..4198f30aac3c 100644
---- a/kernel/kallsyms.c
-+++ b/kernel/kallsyms.c
-@@ -148,16 +148,8 @@ static unsigned int get_symbol_offset(unsigned long pos)
- 
- unsigned long kallsyms_sym_address(int idx)
- {
--	/* values are unsigned offsets if --absolute-percpu is not in effect */
--	if (!IS_ENABLED(CONFIG_KALLSYMS_ABSOLUTE_PERCPU))
--		return kallsyms_relative_base + (u32)kallsyms_offsets[idx];
--
--	/* ...otherwise, positive offsets are absolute values */
--	if (kallsyms_offsets[idx] >= 0)
--		return kallsyms_offsets[idx];
--
--	/* ...and negative offsets are relative to kallsyms_relative_base - 1 */
--	return kallsyms_relative_base - 1 - kallsyms_offsets[idx];
-+	/* values are unsigned offsets */
-+	return kallsyms_relative_base + (u32)kallsyms_offsets[idx];
- }
- 
- static unsigned int get_symbol_seq(int index)
-diff --git a/scripts/kallsyms.c b/scripts/kallsyms.c
-index 03852da3d249..4b0234e4b12f 100644
---- a/scripts/kallsyms.c
-+++ b/scripts/kallsyms.c
-@@ -5,7 +5,7 @@
-  * This software may be used and distributed according to the terms
-  * of the GNU General Public License, incorporated herein by reference.
-  *
-- * Usage: kallsyms [--all-symbols] [--absolute-percpu]  in.map > out.S
-+ * Usage: kallsyms [--all-symbols] in.map > out.S
-  *
-  *      Table compression uses all the unused char codes on the symbols and
-  *  maps these to the most used substrings (tokens). For instance, it might
-@@ -37,7 +37,6 @@ struct sym_entry {
- 	unsigned long long addr;
- 	unsigned int len;
- 	unsigned int seq;
--	bool percpu_absolute;
- 	unsigned char sym[];
- };
- 
-@@ -55,14 +54,9 @@ static struct addr_range text_ranges[] = {
- #define text_range_text     (&text_ranges[0])
- #define text_range_inittext (&text_ranges[1])
- 
--static struct addr_range percpu_range = {
--	"__per_cpu_start", "__per_cpu_end", -1ULL, 0
--};
--
- static struct sym_entry **table;
- static unsigned int table_size, table_cnt;
- static int all_symbols;
--static int absolute_percpu;
- 
- static int token_profit[0x10000];
- 
-@@ -73,7 +67,7 @@ static unsigned char best_table_len[256];
- 
- static void usage(void)
- {
--	fprintf(stderr, "Usage: kallsyms [--all-symbols] [--absolute-percpu] in.map > out.S\n");
-+	fprintf(stderr, "Usage: kallsyms [--all-symbols] in.map > out.S\n");
- 	exit(1);
- }
- 
-@@ -164,7 +158,6 @@ static struct sym_entry *read_symbol(FILE *in, char **buf, size_t *buf_len)
- 		return NULL;
- 
- 	check_symbol_range(name, addr, text_ranges, ARRAY_SIZE(text_ranges));
--	check_symbol_range(name, addr, &percpu_range, 1);
- 
- 	/* include the type field in the symbol name, so that it gets
- 	 * compressed together */
-@@ -175,7 +168,6 @@ static struct sym_entry *read_symbol(FILE *in, char **buf, size_t *buf_len)
- 	sym->len = len;
- 	sym->sym[0] = type;
- 	strcpy(sym_name(sym), name);
--	sym->percpu_absolute = false;
- 
- 	return sym;
- }
-@@ -319,11 +311,6 @@ static int expand_symbol(const unsigned char *data, int len, char *result)
- 	return total;
- }
- 
--static bool symbol_absolute(const struct sym_entry *s)
--{
--	return s->percpu_absolute;
--}
--
- static int compare_names(const void *a, const void *b)
- {
- 	int ret;
-@@ -455,22 +442,11 @@ static void write_src(void)
- 		 */
- 
- 		long long offset;
--		bool overflow;
--
--		if (!absolute_percpu) {
--			offset = table[i]->addr - relative_base;
--			overflow = offset < 0 || offset > UINT_MAX;
--		} else if (symbol_absolute(table[i])) {
--			offset = table[i]->addr;
--			overflow = offset < 0 || offset > INT_MAX;
--		} else {
--			offset = relative_base - table[i]->addr - 1;
--			overflow = offset < INT_MIN || offset >= 0;
--		}
--		if (overflow) {
-+
-+		offset = table[i]->addr - relative_base;
-+		if (offset < 0 || offset > UINT_MAX) {
- 			fprintf(stderr, "kallsyms failure: "
--				"%s symbol value %#llx out of range in relative mode\n",
--				symbol_absolute(table[i]) ? "absolute" : "relative",
-+				"relative symbol value %#llx out of range\n",
- 				table[i]->addr);
- 			exit(EXIT_FAILURE);
- 		}
-@@ -725,36 +701,15 @@ static void sort_symbols(void)
- 	qsort(table, table_cnt, sizeof(table[0]), compare_symbols);
- }
- 
--static void make_percpus_absolute(void)
--{
--	unsigned int i;
--
--	for (i = 0; i < table_cnt; i++)
--		if (symbol_in_range(table[i], &percpu_range, 1)) {
--			/*
--			 * Keep the 'A' override for percpu symbols to
--			 * ensure consistent behavior compared to older
--			 * versions of this tool.
--			 */
--			table[i]->sym[0] = 'A';
--			table[i]->percpu_absolute = true;
--		}
--}
--
- /* find the minimum non-absolute symbol address */
- static void record_relative_base(void)
- {
--	unsigned int i;
--
--	for (i = 0; i < table_cnt; i++)
--		if (!symbol_absolute(table[i])) {
--			/*
--			 * The table is sorted by address.
--			 * Take the first non-absolute symbol value.
--			 */
--			relative_base = table[i]->addr;
--			return;
--		}
-+	/*
-+	 * The table is sorted by address.
-+	 * Take the first symbol value.
-+	 */
-+	if (table_cnt)
-+		relative_base = table[0]->addr;
- }
- 
- int main(int argc, char **argv)
-@@ -762,7 +717,6 @@ int main(int argc, char **argv)
- 	while (1) {
- 		static const struct option long_options[] = {
- 			{"all-symbols",     no_argument, &all_symbols,     1},
--			{"absolute-percpu", no_argument, &absolute_percpu, 1},
- 			{},
- 		};
- 
-@@ -779,8 +733,6 @@ int main(int argc, char **argv)
- 
- 	read_map(argv[optind]);
- 	shrink_table();
--	if (absolute_percpu)
--		make_percpus_absolute();
- 	sort_symbols();
- 	record_relative_base();
- 	optimize_token_table();
-diff --git a/scripts/link-vmlinux.sh b/scripts/link-vmlinux.sh
-index a9b3f34a78d2..df5f3fbb46f3 100755
---- a/scripts/link-vmlinux.sh
-+++ b/scripts/link-vmlinux.sh
-@@ -140,10 +140,6 @@ kallsyms()
- 		kallsymopt="${kallsymopt} --all-symbols"
- 	fi
- 
--	if is_enabled CONFIG_KALLSYMS_ABSOLUTE_PERCPU; then
--		kallsymopt="${kallsymopt} --absolute-percpu"
--	fi
--
- 	info KSYMS "${2}.S"
- 	scripts/kallsyms ${kallsymopt} "${1}" > "${2}.S"
- 
--- 
-2.47.0
+Sarah Walker (1):
+      drm/imagination: Add RISC-V firmware processor support
+
+ .../devicetree/bindings/gpu/img,powervr-rogue.yaml | 122 +++++++++++++--
+ arch/arm64/boot/dts/ti/k3-am62-main.dtsi           |   3 +-
+ arch/arm64/boot/dts/ti/k3-j721s2-main.dtsi         |  12 ++
+ drivers/gpu/drm/imagination/Makefile               |   2 +
+ drivers/gpu/drm/imagination/pvr_ccb.c              |  25 +++-
+ drivers/gpu/drm/imagination/pvr_device.c           | 130 ++++++++--------
+ drivers/gpu/drm/imagination/pvr_device.h           |  77 +++++++++-
+ drivers/gpu/drm/imagination/pvr_drv.c              |  58 +++++++-
+ drivers/gpu/drm/imagination/pvr_fw.c               |  26 +++-
+ drivers/gpu/drm/imagination/pvr_fw.h               |  85 +++++------
+ drivers/gpu/drm/imagination/pvr_fw_meta.c          |  23 +--
+ drivers/gpu/drm/imagination/pvr_fw_mips.c          |  82 ++---------
+ drivers/gpu/drm/imagination/pvr_fw_riscv.c         | 163 +++++++++++++++++++++
+ drivers/gpu/drm/imagination/pvr_fw_startstop.c     |  21 +++
+ drivers/gpu/drm/imagination/pvr_fw_util.c          |  67 +++++++++
+ drivers/gpu/drm/imagination/pvr_gem.c              |   3 +
+ drivers/gpu/drm/imagination/pvr_gem.h              |   7 +-
+ drivers/gpu/drm/imagination/pvr_mmu.c              |   7 +-
+ drivers/gpu/drm/imagination/pvr_power.c            | 118 ++++++++++++++-
+ drivers/gpu/drm/imagination/pvr_power.h            |   3 +
+ drivers/gpu/drm/imagination/pvr_queue.c            |  23 ++-
+ drivers/gpu/drm/imagination/pvr_rogue_cr_defs.h    |  17 ++-
+ drivers/gpu/drm/imagination/pvr_rogue_riscv.h      |  41 ++++++
+ 23 files changed, 881 insertions(+), 234 deletions(-)
+---
+base-commit: d78f0ee0406803cda8801fd5201746ccf89e5e4a
 
 
