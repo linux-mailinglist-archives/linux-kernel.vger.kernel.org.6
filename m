@@ -1,148 +1,144 @@
-Return-Path: <linux-kernel+bounces-396141-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396136-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 457CA9BC873
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 09:56:58 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C8689BC85F
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 09:55:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CBB8D1F222AB
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 08:56:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5082C282E2D
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 08:55:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A47E71D222F;
-	Tue,  5 Nov 2024 08:55:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 108AF1CF295;
+	Tue,  5 Nov 2024 08:55:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="f9WIva65"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b="P/d6p3ak"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 898D11D1E99;
-	Tue,  5 Nov 2024 08:55:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4D601CCECA
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 08:55:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730796954; cv=none; b=naTQvQMZbiyO2RrsXUckvcgxXaMq7kwA8FXD6R29BSmyrwOtIyraOyEQd6T4ek5qsSoOz4ATUZKYONVeEJZaUQutZYbo1o67EJ1WWyolgRrkhlh/Wqhbx4B32aPfKK23B8Js6keIM0cltnM+xnwMVbN9PuyWwizvEJnyqXQ0y6A=
+	t=1730796923; cv=none; b=JsTLau3a5+H1sYACiMQ1oFCr3LN8NbWcoeqDLMMCr9pIn/P4Fo4XBNkFytLCBIVRwwQ1bMsczYN3S1gBGLwE8Kw8WBgcWwBqYRvy0HR934y0QhxqrhCY1EZNijbV79UiAhRKLWHo07m3SQxGsSreGMgoyD9zPUmhl/6MZrQb45Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730796954; c=relaxed/simple;
-	bh=iGPouEmRZkxRAybaw+1alorRqCjGkzNm0yXj2nsE44M=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=YofQ5F6GTY4jIer72HdU8Xn9jt6P3hWdGb78q0FVPMHKt9ODtZmCyLujc4qsEmoD8xOW0TQ09EKe5tEOpkDLlTCePDJiHKuFppp+pu4dopGD151y3e9dnSMjGYt1SPQ2fRBJ0/fZfrpcCXNwKPnbmcmbmQw5aBRc7CM76ax1aNc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=f9WIva65; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A4LIiad012119;
-	Tue, 5 Nov 2024 08:55:49 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	DIlIQ93Yx7bC1OfENFyyT9yNN8jknFcjVFrhZxojJSs=; b=f9WIva65JBvh9V6+
-	9EsiYyGWDnNCFtzEriDg2bmrViMSOnSxMLlFK7MfPX2NQyAYTB27pXYkNqwKuic4
-	qSMdJGT+H1mVN51N2dZ123iwXElrfRn5zToxK/ScnXE4mFYK/5IEcVW5fOqw+tmt
-	n8DeN7UmDMuoWrGov1bsMReKaVY7hE3jPwrWeDKjmWcwh+7k8zwdky6kDZ3pJx1U
-	QsOQeSxcSKqEjk09aKoK4S2e96WCyycBHwhdycY9mhjsjhGsjV0Miqh9CFoSLRRa
-	ZS/1pMkgK0zb05lb4na2xA5ZAOCXhSwEPlOFnzxkVsPzdSG/C2qp6EDclsSqPZaB
-	vANRyQ==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42nd11y08e-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 05 Nov 2024 08:55:48 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4A58tlU1029707
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 5 Nov 2024 08:55:47 GMT
-Received: from hu-vgarodia-hyd.qualcomm.com (10.80.80.8) by
- nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Tue, 5 Nov 2024 00:55:45 -0800
-From: Vikash Garodia <quic_vgarodia@quicinc.com>
-Date: Tue, 5 Nov 2024 14:24:57 +0530
-Subject: [PATCH 4/4] media: venus: hfi: add a check to handle OOB in sfr
- region
+	s=arc-20240116; t=1730796923; c=relaxed/simple;
+	bh=gBD73+rs58WaA56HUWWB7X/+5TCT6P6jpdbKvrvc8jE=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=rUXLgbqorjCloLbCjUhVV69Ogjbyke67QhRLbk8he6Rw3OR9gSQAtZFQxmVLwV7vb/E8vVeyDYZxjFoyAXC4hu333HixgxdXdbZ9J8pXYLfcVK31SZ+kTQXGXq5cJcsHvCgyvG62FkG/3UrrsDoZwOl8C+93Oji/vZbOetviviU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com; spf=pass smtp.mailfrom=cloud.com; dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b=P/d6p3ak; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloud.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-43167ff0f91so45894885e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 00:55:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=citrix.com; s=google; t=1730796919; x=1731401719; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:subject:references:cc:to:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=p4UvfouWCkHUWP5HGQ2ye9958/aqMmQk6U4iphXEDfA=;
+        b=P/d6p3akYLrtULvaRWslMCNSe1GwXII/mMakMSt3k4YF3QaEHbYeDXWfz9z/MMk1cS
+         UtN9fW0BQ2rP05cYXe6XrU7EQt2PL5rFruJpB7pW64d8Y8bVCtmjowl1OTMQlfScZDj4
+         gDQFsvKmMQxkz6t2Dags+rg44z5iajp9d1UxA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730796919; x=1731401719;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:subject:references:cc:to:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=p4UvfouWCkHUWP5HGQ2ye9958/aqMmQk6U4iphXEDfA=;
+        b=PPtzmr0X13R0c2RhgmYI263Ia5u0hYzWim+UfB9PLkKbjHQB7K3hLW79YTOp7srxdP
+         lVQTJTuwAOIMIiejgipl4Ooibi/YasWwsYTnKrD8cqQCZP7OKycgFHLJubD7JFXLtvpC
+         ibTI3gEh0VAmrkMDZrubJ1QDTlhh3U52wvtQMe4o7fFhFzZwStZOOYerM3gRCAODOpQl
+         zhE+MYhX3ckHB2CpmFCtdImHjOVEyb0X6f28UKlMvD0YcwMe+oPHhVFCgsFkx7YEmySW
+         tLZ7HUxG6Y37TehXP4mov5A1j5Hu9IkRzJ+XGMo3LK08b1sXi2E/MVAvSYX1OtRA9Blk
+         14pw==
+X-Forwarded-Encrypted: i=1; AJvYcCU+pB0/zx8ZpGvL0QfdkmSb4gR4mhXLZvnb9N8+3xKcFaGdqcGnSZNFlAL4ALIfpq+sxOnJV0zlfVPWPTg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwXnwigp3sOf8QM88v3lwXivXnlIxz3vOO/98eyfXLc2mi6GGez
+	1Nza7mxtfxyZjqDNOgRwsbAiW9EFGs8P/cnBI2sBd9s4HNzMjI8Qw0lioKdsfiM=
+X-Google-Smtp-Source: AGHT+IF8VlwGgWqiwroPsxJFw+dSpwTQ2rpVvDGp5lHiW5OEXRUn1/2O4Ya1Ng1nN/UB11UFkDbbAQ==
+X-Received: by 2002:a05:6000:2a1:b0:37d:4e59:549a with SMTP id ffacd0b85a97d-381be7c7350mr16245589f8f.16.1730796918968;
+        Tue, 05 Nov 2024 00:55:18 -0800 (PST)
+Received: from [192.168.1.10] (host-92-26-98-202.as13285.net. [92.26.98.202])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381c116abc0sm15389137f8f.94.2024.11.05.00.55.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 05 Nov 2024 00:55:18 -0800 (PST)
+Message-ID: <df10f269-0494-46d9-be8f-7e5dc9cd3745@citrix.com>
+Date: Tue, 5 Nov 2024 08:55:17 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20241105-venus_oob-v1-4-8d4feedfe2bb@quicinc.com>
-References: <20241105-venus_oob-v1-0-8d4feedfe2bb@quicinc.com>
-In-Reply-To: <20241105-venus_oob-v1-0-8d4feedfe2bb@quicinc.com>
-To: Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
-        Bryan O'Donoghue
-	<bryan.odonoghue@linaro.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>
-CC: <linux-media@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        Vikash Garodia <quic_vgarodia@quicinc.com>, <stable@vger.kernel.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1730796934; l=1440;
- i=quic_vgarodia@quicinc.com; s=20241104; h=from:subject:message-id;
- bh=iGPouEmRZkxRAybaw+1alorRqCjGkzNm0yXj2nsE44M=;
- b=rLbc6Bfe3C74h4smkOpubA7BtYi2kaq5os4+rs0TiJWGM8MMkseIBgcRdyRqXTK/6qns2ab7L
- nWheDsumLi1Dxoo1CMX2n00VGojrfrt0+OTPvnFItm5yMqrnTJD5SLV
-X-Developer-Key: i=quic_vgarodia@quicinc.com; a=ed25519;
- pk=LY9Eqp4KiHWxzGNKGHbwRFEJOfRCSzG/rxQNmvZvaKE=
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 3S6C3G7qV9mkRoP5yUzZ8KFy-QCtXGNX
-X-Proofpoint-ORIG-GUID: 3S6C3G7qV9mkRoP5yUzZ8KFy-QCtXGNX
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 mlxlogscore=760
- mlxscore=0 clxscore=1015 lowpriorityscore=0 phishscore=0
- priorityscore=1501 impostorscore=0 spamscore=0 bulkscore=0 suspectscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411050063
+User-Agent: Mozilla Thunderbird
+To: arkamar@atlas.cz
+Cc: david@redhat.com, gregkh@linuxfoundation.org,
+ linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org, willy@infradead.org
+References: <202411584429-Zyna7RpVesXAiTBM-arkamar@atlas.cz>
+Subject: Re: xfs: Xen/HPT related regression in v6.6
+Content-Language: en-GB
+From: Andrew Cooper <andrew.cooper3@citrix.com>
+Autocrypt: addr=andrew.cooper3@citrix.com; keydata=
+ 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
+ 6+ahAA==
+In-Reply-To: <202411584429-Zyna7RpVesXAiTBM-arkamar@atlas.cz>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-sfr->buf_size is in shared memory and can be modified by malicious user.
-OOB write is possible when the size is made higher than actual sfr data
-buffer.
+>> At least years ago, this feature was not available in XEN PV guests [1]. 
+> Yes, as I understand it, the hugepages are not available in my Xen
+> guest.
 
-Cc: stable@vger.kernel.org
-Fixes: d96d3f30c0f2 ("[media] media: venus: hfi: add Venus HFI files")
-Signed-off-by: Vikash Garodia <quic_vgarodia@quicinc.com>
----
- drivers/media/platform/qcom/venus/hfi_venus.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+Xen PV guests are strictly 4k-only.
 
-diff --git a/drivers/media/platform/qcom/venus/hfi_venus.c b/drivers/media/platform/qcom/venus/hfi_venus.c
-index 50d92214190d88eff273a5ba3f95486f758bcc05..c19d6bf686d0f31c6a2f551de3f7eb08031bde85 100644
---- a/drivers/media/platform/qcom/venus/hfi_venus.c
-+++ b/drivers/media/platform/qcom/venus/hfi_venus.c
-@@ -1041,18 +1041,23 @@ static void venus_sfr_print(struct venus_hfi_device *hdev)
- {
- 	struct device *dev = hdev->core->dev;
- 	struct hfi_sfr *sfr = hdev->sfr.kva;
-+	u32 size;
- 	void *p;
- 
- 	if (!sfr)
- 		return;
- 
--	p = memchr(sfr->data, '\0', sfr->buf_size);
-+	size = sfr->buf_size;
-+	if (size > ALIGNED_SFR_SIZE)
-+		return;
-+
-+	p = memchr(sfr->data, '\0', size);
- 	/*
- 	 * SFR isn't guaranteed to be NULL terminated since SYS_ERROR indicates
- 	 * that Venus is in the process of crashing.
- 	 */
- 	if (!p)
--		sfr->data[sfr->buf_size - 1] = '\0';
-+		sfr->data[size - 1] = '\0';
- 
- 	dev_err_ratelimited(dev, "SFR message from FW: %s\n", sfr->data);
- }
+Xen HVM guests (using normal VT-x/SVM hardware support) have all page
+sizes available.
 
--- 
-2.34.1
+But lucky to find this thread.  We've had several reports and no luck
+isolating what changed.
+
+~Andrew (Xen maintainer)
 
 
