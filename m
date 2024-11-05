@@ -1,93 +1,468 @@
-Return-Path: <linux-kernel+bounces-396927-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396928-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BBE09BD46F
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 19:21:22 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 595639BD470
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 19:21:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C75091F22EEC
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 18:21:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D0E31C2190D
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 18:21:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01A911E7C15;
-	Tue,  5 Nov 2024 18:21:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B3581E885A;
+	Tue,  5 Nov 2024 18:21:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="EatBd6Ny"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cqTtEW+z"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E66013D51E;
-	Tue,  5 Nov 2024 18:21:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43D801E8825
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 18:21:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730830873; cv=none; b=OU8ZYDxLhinmV0TU4/ybiECQgUAOIC0tSyospdMZB8l7qtU4GLRMUp/MzKr83F+uaxla9yCxXJFRqeDMte7f5/n6yqRACoBDOoA+O4tN5sdPOE+ACLpQG60Yjffm2JY3esVBVq9AzYF9/dr4VWENxHmBu5apJ9oEoHBQvpwG230=
+	t=1730830877; cv=none; b=FihMWQETTIf9bNC2JpN+GRtcUPdPVJoeuMl+kyIShUwgvUhJykokQVb85TtiCsCOcvhXxz3ink6mMk/4Xi7mVoLQ+3s0ujWTpitnJmhe9pnrPwPR5+GdoyHL+NFI6+Tw7YcIVczPtQ2rVXvUfTPVUiWC0h5N2E0ZZCUpBlDiLx8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730830873; c=relaxed/simple;
-	bh=PkRypvk37TfUhZojPbI0nNHyosApfuumWE+3MNe36Rw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HM4zIks8GAGp77mpW3Xl80Zzouz5kKEtlyvxwq+hCfQozop6j4nvzZXUesy5V4YsmJtNLrXq4eKWH2I1OzmqoZEUkOcg04rCCzdI9o8J5HTB31vDvnoRG4C7AMPkhJ9xBl4fXUbaVqrldPClfnZGfMTnKaohIBaSnvWKx4LG60I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=EatBd6Ny; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=QxVnYUMdQ9CRpzvJqrj2mvfqMm8FPqPdD/GeqmxgDOY=; b=EatBd6NyxsUO3/2V4PVTkblfG9
-	67yXp7Y2dUgg0df5VUb5K7Iad9ASBFSu2LATosEa7QEoGO/BfuFUaGX2csK7qeoT/f5Tk4ftjTErU
-	SPczmtI66wnHeYWTXJkqQ09WbjjIWvEmV5LiTPPmuLE/xjiwAGxR2eqWyhR8Wj4mIxcE=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1t8OAn-00CEoH-KG; Tue, 05 Nov 2024 19:21:01 +0100
-Date: Tue, 5 Nov 2024 19:21:01 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Vladimir Oltean <olteanv@gmail.com>,
-	Woojung Huh <woojung.huh@microchip.com>,
-	Arun Ramadoss <arun.ramadoss@microchip.com>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Rob Herring <robh+dt@kernel.org>, kernel@pengutronix.de,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	UNGLinuxDriver@microchip.com,
-	"Russell King (Oracle)" <linux@armlinux.org.uk>,
-	devicetree@vger.kernel.org, Marek Vasut <marex@denx.de>
-Subject: Re: [PATCH net-next v3 5/6] net: dsa: microchip: add support for
- side MDIO interface in LAN937x
-Message-ID: <682c0723-f9f6-466c-a33b-b364379403a0@lunn.ch>
-References: <20241105090944.671379-1-o.rempel@pengutronix.de>
- <20241105090944.671379-6-o.rempel@pengutronix.de>
+	s=arc-20240116; t=1730830877; c=relaxed/simple;
+	bh=ZZi3BcgW8dU/FmeUVRlwP7F9yP6S9iLsceuLt7FnGRk=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Hw/t5ezBoA8llZHdDXlKR1F7GpBzKSAzMg0EK228m2tvatjvY+pV4cLqdhHz76EQf4XjzxCiU+BVElXznnVygpftjcg8nPDKrgbyIKTnifucPOZ9Taru+pWkpCZvrBiDloxQfSMTJO+UBIor6r7kHEoJkth6C/BcUDiKeVHlzN0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cqTtEW+z; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1730830874;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=tEbuJjrTaFih7whargvvzvNhhaeDsTSzRPC2gHGEaos=;
+	b=cqTtEW+zTJHglQ/Jktk6mDQ0z9K3NJE3SwGADwnkNJUkq9762r6pVAegHjICClYiB0KlLQ
+	K7pjWKn7OwkUA/okNtlODkja4vnfnyDKSZX/QPn1C1OkLq3NTeAQwAEeW4AVoMYslsYx2R
+	O2sJ6J0fpidJv3jKeOUCscitWepvqYc=
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com
+ [209.85.166.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-183-9tSTJChdOyy6xfjhYTzXOA-1; Tue, 05 Nov 2024 13:21:12 -0500
+X-MC-Unique: 9tSTJChdOyy6xfjhYTzXOA-1
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a6c1e8c9c3so5034145ab.1
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 10:21:11 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730830871; x=1731435671;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=tEbuJjrTaFih7whargvvzvNhhaeDsTSzRPC2gHGEaos=;
+        b=KNka6daeSpNBbGs3bW5p4zu3yQiiP+NSyJ4sPYS9q/WxzT+1jUVsoSKDd+2CXfVO6v
+         IjGpG9L0k8xczbr297FAmxP+jlEnwTXVNwygvmjWJrVeVftGk0lJ5E/+kgH2/lCkcUNG
+         4IwIber/7AcEw6BJUDT1JdhzVvLTZDe4imjq6nMH10aU9NJQgfG4THYWj0WOJzxmzjuZ
+         zN00mfkbUcjFBzOzWv1Fyn59ZtjpzboMoh5iw5CdwDWwFN/Gd+xlwC/GTgw+6J8M2Wch
+         CE8r/nD1SVA3at+x4r8GAcCafdZHF4g9J30ypc6oQg/kclir0ZHAFIYn4Ph9oxhbQc3E
+         kSRw==
+X-Forwarded-Encrypted: i=1; AJvYcCUyYIqeURzirlODUXjzsehB0zn9wqu74Rg9MX5JWOr4IOQ8262fQeA5vug8Hw4Lf40VO6H68djXYtHYShw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw5REAulWzLduBLgTqit+y0PHu3pJHzKVoMs/wUG8cUmzX5SW36
+	SsvdLBu/ePqUkJQID0jdDKIyVRluxQm6qzNoKIdlKE5z9FiO8DYXtPG51e692jg+98mHJnZCOHG
+	Ao+Zn8FB4gNuPWGpSrU0oPippgdO9gCv4O4uVGNRCBJpxAtGzq2JMXzYICYiekg==
+X-Received: by 2002:a05:6602:258c:b0:83a:96ce:342e with SMTP id ca18e2360f4ac-83b1c5d15cfmr819571839f.3.1730830871071;
+        Tue, 05 Nov 2024 10:21:11 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFBPbW7d/AXkUPWEwQLaNHgfje0IBrygT+rEkkO4QMX7PEgzzDLAxuZwgIdrUXOYP5FjL8+6A==
+X-Received: by 2002:a05:6602:258c:b0:83a:96ce:342e with SMTP id ca18e2360f4ac-83b1c5d15cfmr819571539f.3.1730830870691;
+        Tue, 05 Nov 2024 10:21:10 -0800 (PST)
+Received: from redhat.com ([38.15.36.11])
+        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-83b67b2542fsm278088839f.12.2024.11.05.10.21.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 05 Nov 2024 10:21:10 -0800 (PST)
+Date: Tue, 5 Nov 2024 11:21:08 -0700
+From: Alex Williamson <alex.williamson@redhat.com>
+To: Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>
+Cc: liulongfang <liulongfang@huawei.com>, "jgg@nvidia.com" <jgg@nvidia.com>,
+ "Jonathan Cameron" <jonathan.cameron@huawei.com>, "kvm@vger.kernel.org"
+ <kvm@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+ <linux-kernel@vger.kernel.org>, "linuxarm@openeuler.org"
+ <linuxarm@openeuler.org>
+Subject: Re: [PATCH v12 3/4] hisi_acc_vfio_pci: register debugfs for
+ hisilicon migration driver
+Message-ID: <20241105112108.14255a9e.alex.williamson@redhat.com>
+In-Reply-To: <fc776543a1d14531b28b5fa693925518@huawei.com>
+References: <20241105035254.24636-1-liulongfang@huawei.com>
+	<20241105035254.24636-4-liulongfang@huawei.com>
+	<fc776543a1d14531b28b5fa693925518@huawei.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241105090944.671379-6-o.rempel@pengutronix.de>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Tue, Nov 05, 2024 at 10:09:43AM +0100, Oleksij Rempel wrote:
-> Implement side MDIO channel support for LAN937x switches, providing an
-> alternative to SPI for PHY management alongside existing SPI-based
-> switch configuration. This is needed to reduce SPI load, as SPI can be
-> relatively expensive for small packets compared to MDIO support.
+On Tue, 5 Nov 2024 08:55:51 +0000
+Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com> wrote:
+
+> > -----Original Message-----
+> > From: liulongfang <liulongfang@huawei.com>
+> > Sent: Tuesday, November 5, 2024 3:53 AM
+> > To: alex.williamson@redhat.com; jgg@nvidia.com; Shameerali Kolothum
+> > Thodi <shameerali.kolothum.thodi@huawei.com>; Jonathan Cameron
+> > <jonathan.cameron@huawei.com>
+> > Cc: kvm@vger.kernel.org; linux-kernel@vger.kernel.org;
+> > linuxarm@openeuler.org; liulongfang <liulongfang@huawei.com>
+> > Subject: [PATCH v12 3/4] hisi_acc_vfio_pci: register debugfs for hisilicon
+> > migration driver  
 > 
-> Also, implemented static mappings for PHY addresses for various LAN937x
-> models to support different internal PHY configurations. Since the PHY
-> address mappings are not equal to the port indexes, this patch also
-> provides PHY address calculation based on hardware strapping
-> configuration.
+> Hi,
 > 
-> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+> Few minor comments below. Please don't re-spin just for these yet.
+> Please wait for others to review as well.
+> 
+> Thanks,
+> Shameer
+> 
+> > diff --git a/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c
+> > b/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c
+> > index a8c53952d82e..7728c9745b9d 100644
+> > --- a/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c
+> > +++ b/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c
+> > @@ -627,15 +627,30 @@ static void hisi_acc_vf_disable_fd(struct
+> > hisi_acc_vf_migration_file *migf)
+> >  	mutex_unlock(&migf->lock);
+> >  }
+> > 
+> > +static void hisi_acc_debug_migf_copy(struct hisi_acc_vf_core_device
+> > *hisi_acc_vdev,
+> > +	struct hisi_acc_vf_migration_file *src_migf)  
+> 
+> Alignment should match open parenthesis here.
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+I might also shorten the first line to 80 chars by putting "static" or
+"static void" on a line by itself, but we're getting into personal
+preference at that point and this driver already has lines exceeding 80
+columns.
 
-    Andrew
+> > +{
+> > +	struct hisi_acc_vf_migration_file *dst_migf = hisi_acc_vdev-  
+> > >debug_migf;  
+> > +
+> > +	if (!dst_migf)
+> > +		return;
+> > +
+> > +	dst_migf->total_length = src_migf->total_length;
+> > +	memcpy(&dst_migf->vf_data, &src_migf->vf_data,
+> > +		sizeof(struct acc_vf_data));  
+> 
+> Here too, alignment not correct. It is better to run,
+> ./scripts/checkpatch --strict on these patches if you haven't done already.
+
+Yup.  Only those two were missed as far as I see, but checkpatch does
+warn several places where we should use seq_puts() rather than
+seq_printf() for cases of printing a constant format without additional
+arguments.  For example "device not opened!\n" is the first one below
+but there are others.
+
+> > +}
+> > +
+> >  static void hisi_acc_vf_disable_fds(struct hisi_acc_vf_core_device
+> > *hisi_acc_vdev)
+> >  {
+> >  	if (hisi_acc_vdev->resuming_migf) {
+> > +		hisi_acc_debug_migf_copy(hisi_acc_vdev, hisi_acc_vdev-  
+> > >resuming_migf);  
+> >  		hisi_acc_vf_disable_fd(hisi_acc_vdev->resuming_migf);
+> >  		fput(hisi_acc_vdev->resuming_migf->filp);
+> >  		hisi_acc_vdev->resuming_migf = NULL;
+> >  	}
+> > 
+> >  	if (hisi_acc_vdev->saving_migf) {
+> > +		hisi_acc_debug_migf_copy(hisi_acc_vdev, hisi_acc_vdev-  
+> > >saving_migf);  
+> >  		hisi_acc_vf_disable_fd(hisi_acc_vdev->saving_migf);
+> >  		fput(hisi_acc_vdev->saving_migf->filp);
+> >  		hisi_acc_vdev->saving_migf = NULL;
+> > @@ -1294,6 +1309,129 @@ static long hisi_acc_vfio_pci_ioctl(struct
+> > vfio_device *core_vdev, unsigned int
+> >  	return vfio_pci_core_ioctl(core_vdev, cmd, arg);
+> >  }
+> > 
+> > +static int hisi_acc_vf_debug_check(struct seq_file *seq, struct vfio_device
+> > *vdev)
+> > +{
+> > +	struct hisi_acc_vf_core_device *hisi_acc_vdev =
+> > hisi_acc_get_vf_dev(vdev);
+> > +	struct hisi_qm *vf_qm = &hisi_acc_vdev->vf_qm;
+> > +	int ret;
+> > +
+> > +	lockdep_assert_held(&hisi_acc_vdev->open_mutex);
+> > +	/*
+> > +	 * When the device is not opened, the io_base is not mapped.
+> > +	 * The driver cannot perform device read and write operations.
+> > +	 */
+> > +	if (!hisi_acc_vdev->dev_opened) {
+> > +		seq_printf(seq, "device not opened!\n");
+> > +		return -EINVAL;
+> > +	}
+> > +
+> > +	ret = qm_wait_dev_not_ready(vf_qm);
+> > +	if (ret) {
+> > +		seq_printf(seq, "VF device not ready!\n");
+> > +		return -EBUSY;
+> > +	}
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +static int hisi_acc_vf_debug_cmd(struct seq_file *seq, void *data)
+> > +{
+> > +	struct device *vf_dev = seq->private;
+> > +	struct vfio_pci_core_device *core_device =
+> > dev_get_drvdata(vf_dev);
+> > +	struct vfio_device *vdev = &core_device->vdev;
+> > +	struct hisi_acc_vf_core_device *hisi_acc_vdev =
+> > hisi_acc_get_vf_dev(vdev);
+> > +	struct hisi_qm *vf_qm = &hisi_acc_vdev->vf_qm;
+> > +	u64 value;
+> > +	int ret;
+> > +
+> > +	mutex_lock(&hisi_acc_vdev->open_mutex);
+> > +	ret = hisi_acc_vf_debug_check(seq, vdev);
+> > +	if (ret) {
+> > +		mutex_unlock(&hisi_acc_vdev->open_mutex);
+> > +		return ret;
+> > +	}
+> > +
+> > +	value = readl(vf_qm->io_base + QM_MB_CMD_SEND_BASE);
+> > +	if (value == QM_MB_CMD_NOT_READY) {
+> > +		mutex_unlock(&hisi_acc_vdev->open_mutex);
+> > +		seq_printf(seq, "mailbox cmd channel not ready!\n");
+> > +		return -EINVAL;
+> > +	}
+> > +	mutex_unlock(&hisi_acc_vdev->open_mutex);
+> > +	seq_printf(seq, "mailbox cmd channel ready!\n");
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +static int hisi_acc_vf_dev_read(struct seq_file *seq, void *data)
+> > +{
+> > +	struct device *vf_dev = seq->private;
+> > +	struct vfio_pci_core_device *core_device =
+> > dev_get_drvdata(vf_dev);
+> > +	struct vfio_device *vdev = &core_device->vdev;
+> > +	struct hisi_acc_vf_core_device *hisi_acc_vdev =
+> > hisi_acc_get_vf_dev(vdev);
+> > +	size_t vf_data_sz = offsetofend(struct acc_vf_data, padding);
+> > +	struct acc_vf_data *vf_data;
+> > +	int ret;
+> > +
+> > +	mutex_lock(&hisi_acc_vdev->open_mutex);
+> > +	ret = hisi_acc_vf_debug_check(seq, vdev);
+> > +	if (ret) {
+> > +		mutex_unlock(&hisi_acc_vdev->open_mutex);
+> > +		return ret;
+> > +	}
+> > +
+> > +	mutex_lock(&hisi_acc_vdev->state_mutex);
+> > +	vf_data = kzalloc(sizeof(struct acc_vf_data), GFP_KERNEL);
+> > +	if (!vf_data) {
+> > +		ret = -ENOMEM;
+> > +		goto mutex_release;
+> > +	}
+> > +
+> > +	vf_data->vf_qm_state = hisi_acc_vdev->vf_qm_state;
+> > +	ret = vf_qm_read_data(&hisi_acc_vdev->vf_qm, vf_data);
+> > +	if (ret)
+> > +		goto migf_err;
+> > +
+> > +	seq_hex_dump(seq, "Dev Data:", DUMP_PREFIX_OFFSET, 16, 1,
+> > +		     (const void *)vf_data, vf_data_sz, false);
+> > +
+> > +	seq_printf(seq,
+> > +		   "guest driver load: %u\n"
+> > +		   "data size: %lu\n",
+> > +		   hisi_acc_vdev->vf_qm_state,
+> > +		   sizeof(struct acc_vf_data));  
+> 
+> There was a suggestion to add a comment here to describe vf_qm_state better.
+> May be something like,
+> 
+> vf_qm_state here indicates whether the Guest has loaded the driver for the ACC VF
+> device or not.
+
+I think the comment ended up at the declaration of vf_qm_state in the
+header file:
+
+> @@ -107,9 +114,17 @@ struct hisi_acc_vf_core_device {
+>  	struct pci_dev *vf_dev;
+>  	struct hisi_qm *pf_qm;
+>  	struct hisi_qm vf_qm;
+> +	/*
+> +	 * Record whether a driver is added to the acc device in Guest OS.
+> +	 * The value of QM_VF_STATE is set by the acc device driver.
+> +	 * The migration driver queries through the QM_VF_STATE register.
+> +	 */
+>  	u32 vf_qm_state;
+>  	int vf_id;
+>  	struct hisi_acc_vf_migration_file *resuming_migf;
+>  	struct hisi_acc_vf_migration_file *saving_migf;
+> +
+> +	/* An extra buffer for reporting migration data via debugfs */
+> +	struct hisi_acc_vf_migration_file *debug_migf;
+>  };
+>  #endif /* HISI_ACC_VFIO_PCI_H */
+
+Is that satisfactory?
+
+> > +
+> > +migf_err:
+> > +	kfree(vf_data);
+> > +mutex_release:
+> > +	mutex_unlock(&hisi_acc_vdev->state_mutex);
+> > +	mutex_unlock(&hisi_acc_vdev->open_mutex);
+> > +
+> > +	return ret;
+> > +}
+> > +
+> > +static int hisi_acc_vf_migf_read(struct seq_file *seq, void *data)
+> > +{
+> > +	struct device *vf_dev = seq->private;
+> > +	struct vfio_pci_core_device *core_device =
+> > dev_get_drvdata(vf_dev);
+> > +	struct vfio_device *vdev = &core_device->vdev;
+> > +	struct hisi_acc_vf_core_device *hisi_acc_vdev =
+> > hisi_acc_get_vf_dev(vdev);
+> > +	size_t vf_data_sz = offsetofend(struct acc_vf_data, padding);
+> > +	struct hisi_acc_vf_migration_file *debug_migf = hisi_acc_vdev-  
+> > >debug_migf;  
+> > +
+> > +	/* Check whether the live migration operation has been performed
+> > */
+> > +	if (debug_migf->total_length < QM_MATCH_SIZE) {
+> > +		seq_printf(seq, "device not migrated!\n");
+> > +		return -EAGAIN;
+> > +	}
+> > +
+> > +	seq_hex_dump(seq, "Mig Data:", DUMP_PREFIX_OFFSET, 16, 1,
+> > +		     (const void *)&debug_migf->vf_data, vf_data_sz, false);
+> > +	seq_printf(seq, "migrate data length: %lu\n", debug_migf-  
+> > >total_length);  
+> > +
+> > +	return 0;
+> > +}
+> > +
+> >  static int hisi_acc_vfio_pci_open_device(struct vfio_device *core_vdev)
+> >  {
+> >  	struct hisi_acc_vf_core_device *hisi_acc_vdev =
+> > hisi_acc_get_vf_dev(core_vdev);
+> > @@ -1305,12 +1443,16 @@ static int hisi_acc_vfio_pci_open_device(struct
+> > vfio_device *core_vdev)
+> >  		return ret;
+> > 
+> >  	if (core_vdev->mig_ops) {
+> > +		mutex_lock(&hisi_acc_vdev->open_mutex);
+> >  		ret = hisi_acc_vf_qm_init(hisi_acc_vdev);
+> >  		if (ret) {
+> > +			mutex_unlock(&hisi_acc_vdev->open_mutex);
+> >  			vfio_pci_core_disable(vdev);
+> >  			return ret;
+> >  		}
+> >  		hisi_acc_vdev->mig_state = VFIO_DEVICE_STATE_RUNNING;
+> > +		hisi_acc_vdev->dev_opened = true;
+> > +		mutex_unlock(&hisi_acc_vdev->open_mutex);
+> >  	}
+> > 
+> >  	vfio_pci_core_finish_enable(vdev);
+> > @@ -1322,7 +1464,10 @@ static void hisi_acc_vfio_pci_close_device(struct
+> > vfio_device *core_vdev)
+> >  	struct hisi_acc_vf_core_device *hisi_acc_vdev =
+> > hisi_acc_get_vf_dev(core_vdev);
+> >  	struct hisi_qm *vf_qm = &hisi_acc_vdev->vf_qm;
+> > 
+> > +	mutex_lock(&hisi_acc_vdev->open_mutex);
+> > +	hisi_acc_vdev->dev_opened = false;
+> >  	iounmap(vf_qm->io_base);
+> > +	mutex_unlock(&hisi_acc_vdev->open_mutex);
+> >  	vfio_pci_core_close_device(core_vdev);
+> >  }
+> > 
+> > @@ -1342,6 +1487,7 @@ static int hisi_acc_vfio_pci_migrn_init_dev(struct
+> > vfio_device *core_vdev)
+> >  	hisi_acc_vdev->pf_qm = pf_qm;
+> >  	hisi_acc_vdev->vf_dev = pdev;
+> >  	mutex_init(&hisi_acc_vdev->state_mutex);
+> > +	mutex_init(&hisi_acc_vdev->open_mutex);
+> > 
+> >  	core_vdev->migration_flags = VFIO_MIGRATION_STOP_COPY |
+> > VFIO_MIGRATION_PRE_COPY;
+> >  	core_vdev->mig_ops = &hisi_acc_vfio_pci_migrn_state_ops;
+> > @@ -1387,6 +1533,48 @@ static const struct vfio_device_ops
+> > hisi_acc_vfio_pci_ops = {
+> >  	.detach_ioas = vfio_iommufd_physical_detach_ioas,
+> >  };
+> > 
+> > +static void hisi_acc_vfio_debug_init(struct hisi_acc_vf_core_device
+> > *hisi_acc_vdev)
+> > +{
+> > +	struct vfio_device *vdev = &hisi_acc_vdev->core_device.vdev;
+> > +	struct dentry *vfio_dev_migration = NULL;
+> > +	struct dentry *vfio_hisi_acc = NULL;
+> > +	struct device *dev = vdev->dev;
+> > +	void *migf = NULL;
+> > +
+> > +	if (!debugfs_initialized() ||
+> > +	    !IS_ENABLED(CONFIG_VFIO_DEBUGFS))
+> > +		return;
+> > +
+> > +	if (vdev->ops != &hisi_acc_vfio_pci_migrn_ops)
+> > +		return;
+> > +
+> > +	vfio_dev_migration = debugfs_lookup("migration", vdev-  
+> > >debug_root);  
+> > +	if (!vfio_dev_migration) {
+> > +		dev_err(dev, "failed to lookup migration debugfs file!\n");
+> > +		return;
+> > +	}
+> > +
+> > +	migf = kzalloc(sizeof(struct hisi_acc_vf_migration_file),
+> > GFP_KERNEL);
+
+checkpatch --strict also advises this could be written as:
+
+	migf = kzalloc(sizeof(*migf), GFP_KERNEL);
+
+There's another one above with acc_vf_data.  I'd consider these
+optional, but I think it is good practice and is more consistent with
+existing allocations in this file.
+
+> > +	if (!migf)
+> > +		return;
+> > +	hisi_acc_vdev->debug_migf = migf;
+> > +
+> > +	vfio_hisi_acc = debugfs_create_dir("hisi_acc", vfio_dev_migration);
+> > +	debugfs_create_devm_seqfile(dev, "dev_data", vfio_hisi_acc,
+> > +				    hisi_acc_vf_dev_read);
+> > +	debugfs_create_devm_seqfile(dev, "migf_data", vfio_hisi_acc,
+> > +				    hisi_acc_vf_migf_read);
+> > +	debugfs_create_devm_seqfile(dev, "cmd_state", vfio_hisi_acc,
+> > +				    hisi_acc_vf_debug_cmd);
+> > +}
+> > +
+> > +static void hisi_acc_vf_debugfs_exit(struct hisi_acc_vf_core_device
+> > *hisi_acc_vdev)
+> > +{
+> > +	/* If migrn_ops is not used, kfree(NULL) is valid */  
+> 
+> The above comment is not required. Please remove.
+
+I don't have a problem with it, but I'll let the two of you decide as
+co-owners of the file.  Thanks,
+
+Alex
+
+
+> > +	kfree(hisi_acc_vdev->debug_migf);
+> > +	hisi_acc_vdev->debug_migf = NULL;
+> > +}
+> > +  
+> 
+
 
