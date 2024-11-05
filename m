@@ -1,249 +1,141 @@
-Return-Path: <linux-kernel+bounces-396604-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396607-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2931B9BCF5C
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 15:31:24 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1AA19BCF63
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 15:32:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC5C51F2130C
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 14:31:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4B9CBB220B3
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 14:32:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F16841D9580;
-	Tue,  5 Nov 2024 14:31:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="A/L5QOZ3"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15AAD1D8DE4;
+	Tue,  5 Nov 2024 14:32:36 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2D4F33080
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 14:31:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96FD833080
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 14:32:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730817078; cv=none; b=WYqYDD3oM8sUJDd4xMrXbAxyyP2q3MJAC4muZmUzZ5lL3zGccGTsGgFInJsGCe0th6zwRYOubOQ9q1vRjL6Z1TaGRR+llCyZ72vZLJQPnV3gceXpb4TG0rPpHzb4GFkic3rdIpUfvoRw4Dmsw/Z9OePZfMe8mqjdx5+YnmGsdb8=
+	t=1730817155; cv=none; b=LbRfrzJBo4Fa91j9Dnm99EATsJDh3JWecjvKVI1R5FD6GJXSyoH2ckhKSr8HNYQCuhqSX4c4RR394AkbJRXScCYss7vRO007DBq7fhMMcUSrGq6O9GhgHdn3qQmfk25u1oxeV7jmpUB75jz2K9JSzGx6Ooa+gFahLMykqzM5Xn0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730817078; c=relaxed/simple;
-	bh=XN8QvmjRYeFWUTEFIpNV8i5a0X+dKopOVH8Kub55aIU=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nTjyJtt8Yw7GTSR8+IujOOO5yI5+24YlM7frU1MJg2hI+mMem7/9b05jIvS5ArDz1EwQZX09kKkC5cC4NZZuA0cIn0q5YPmKdQ1otyxuMtouTc0ID3RLjWyqq1y7kbTSvQsANS23rmBKA5/9P9KE1XA2ONctsKpdeFWggtPydO4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=A/L5QOZ3; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a9a6acac4c3so892559966b.0
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 06:31:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1730817073; x=1731421873; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=4Ta4J6k5jVAMZKZSpLijGX731ZlTwallmszrkrr+XXw=;
-        b=A/L5QOZ3FSpiHDXbZMSm2ijbcoVoXzXe47BZ9yCDwi8Chh3/inu1cZz4j1apI+mLFf
-         +ldKcFDRxhcM5U1APtwjtvVlQ4MemvkjLV5xwkTjivxpueHC9GQxLKUo+ipmAvaxippx
-         rvef1HLhWwmcpPtrG5w6w65LOLWx+kZebs7Ppg1ladFgfm5My80N3NOPMAqLBkM84fOH
-         0dwiOUeGgEXiW0niK/60jrWWxbjWbztW62yTZWpCsd0k4AZ4J9zeT5457vwJewwIJ2Lp
-         uaf181cqCfERC9Jw5PF1JgCEWEvxXKLIQ1qC2oRV6+3tiPyt5OdjBEcQ6wvUDhXD59BZ
-         MGuA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730817073; x=1731421873;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4Ta4J6k5jVAMZKZSpLijGX731ZlTwallmszrkrr+XXw=;
-        b=TlvY3FdLlhMerdXf06HWsxEy/MFTCjN9c85yjMUiXMjaZlJdlStr46xWanxZic5JDX
-         h+uqIvggxLZWL4LG3baGI2Kf1YNqmWvXbDb90DSNMYi0GLCQKkX+pqALf1vvOgVrYAcp
-         D+ytOcNRwn8/o7gPAb1LdkvnXrDZbr9iintt7SeizbkmcrBYLcLvqlYZmcsP0rUs+G4I
-         fiM0JJPRnTDyPjUlk1uVO9kaxp/bcKEq/OftiY4xBAbXvSVFKdFBKk0OMiH+UkBmpgBP
-         VATfOJpF6dwtrKI9nGosyird9DcpMqbTOXsrytjwUopve+VHQJMOGYyIyoDLIHQUENbG
-         zZOw==
-X-Forwarded-Encrypted: i=1; AJvYcCWi8f/j1dRfSSAXSzvk1VIr9bSDlwBSH2lYayB3dzU6DGW/lbepTIuDzfnPUE1Nrta/Dfo3Ie5FcMT2uFI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwzYlD4wW9zeudRz/6ZmjIc83B3q4a02+xs3lGtWYryzPMO5NjF
-	eoKWrfeKC0H3yP1hiFTbFU150hOV2VIWmFQ4o90T4YrcCYxm15Fp3NJQymWq/fs=
-X-Google-Smtp-Source: AGHT+IGfFIA7pHiw/bQC/D2ASD/c0vYvs4DJcTYAQN6+XwmdDdmF15vw/BW0JRu8bqizSc9PGJFmeA==
-X-Received: by 2002:a17:906:a84a:b0:a9e:8522:19e1 with SMTP id a640c23a62f3a-a9e85221c0cmr968110466b.62.1730817073143;
-        Tue, 05 Nov 2024 06:31:13 -0800 (PST)
-Received: from localhost (host-79-35-211-193.retail.telecomitalia.it. [79.35.211.193])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9eb169fc18sm140394466b.10.2024.11.05.06.31.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Nov 2024 06:31:12 -0800 (PST)
-From: Andrea della Porta <andrea.porta@suse.com>
-X-Google-Original-From: Andrea della Porta <aporta@suse.de>
-Date: Tue, 5 Nov 2024 15:31:38 +0100
-To: Stanimir Varbanov <svarbanov@suse.de>
-Cc: Andrea della Porta <andrea.porta@suse.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	s=arc-20240116; t=1730817155; c=relaxed/simple;
+	bh=frQxkDxOlabdHzuh0NP3qfAHRwCrzOqfjKrCItIFrBM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cPSTiGwyEKLOLpGQlU4kWBuJ4GM5UH1ZMChcKntyWfkU6zAmcxy8RNln/s+yyMy9NSTvDQYhYOTBGFQ14/2QkoBO7vZODhtO153ZJX6vDYBZytr6B9yg8P5HHo7bFJA16CDvDo/wRoFCktlgO0AlHnBsp9xtQB9HL98K7g0BM3A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ore@pengutronix.de>)
+	id 1t8KbK-0007mY-SW; Tue, 05 Nov 2024 15:32:10 +0100
+Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1t8KbJ-0029or-0W;
+	Tue, 05 Nov 2024 15:32:09 +0100
+Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1t8KbJ-00FPHS-07;
+	Tue, 05 Nov 2024 15:32:09 +0100
+Date: Tue, 5 Nov 2024 15:32:09 +0100
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: Maxime Chevallier <maxime.chevallier@bootlin.com>
+Cc: "David S. Miller" <davem@davemloft.net>, Andrew Lunn <andrew@lunn.ch>,
+	Eric Dumazet <edumazet@google.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Vladimir Oltean <olteanv@gmail.com>,
+	Woojung Huh <woojung.huh@microchip.com>,
+	Arun Ramadoss <arun.ramadoss@microchip.com>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof Wilczynski <kw@linux.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Saravana Kannan <saravanak@google.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-gpio@vger.kernel.org,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Stefan Wahren <wahrenst@gmx.net>,
-	Herve Codina <herve.codina@bootlin.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Andrew Lunn <andrew@lunn.ch>
-Subject: Re: [PATCH v3 09/12] arm64: dts: rp1: Add support for RaspberryPi's
- RP1 device
-Message-ID: <ZyosSv4ecKxohSrM@apocalypse>
-References: <cover.1730123575.git.andrea.porta@suse.com>
- <1f4cec50493ec5d3168735c0a005771787e5cd59.1730123575.git.andrea.porta@suse.com>
- <4a474dae-6669-4678-87dd-e0e9692a749b@suse.de>
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>, kernel@pengutronix.de,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	UNGLinuxDriver@microchip.com,
+	"Russell King (Oracle)" <linux@armlinux.org.uk>,
+	devicetree@vger.kernel.org, Marek Vasut <marex@denx.de>
+Subject: Re: [PATCH net-next v3 6/6] net: dsa: microchip: parse PHY config
+ from device tree
+Message-ID: <ZyosafnNkdqt4JMb@pengutronix.de>
+References: <20241105090944.671379-1-o.rempel@pengutronix.de>
+ <20241105090944.671379-7-o.rempel@pengutronix.de>
+ <20241105152805.25f8b065@fedora.home>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <4a474dae-6669-4678-87dd-e0e9692a749b@suse.de>
+In-Reply-To: <20241105152805.25f8b065@fedora.home>
+X-Sent-From: Pengutronix Hildesheim
+X-URL: http://www.pengutronix.de/
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Hi Stan,
+Hi Maxime,
 
-On 15:29 Mon 04 Nov     , Stanimir Varbanov wrote:
-> Hi Andrea,
-> 
-> On 10/28/24 16:07, Andrea della Porta wrote:
-> > RaspberryPi RP1 is a multi function PCI endpoint device that
-> > exposes several subperipherals via PCI BAR.
-> > Add a dtb overlay that will be compiled into a binary blob
-> > and linked in the RP1 driver.
-> > This overlay offers just minimal support to represent the
-> > RP1 device itself, the sub-peripherals will be added by
-> > future patches.
-> > 
-> > Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
-> > ---
-> > NOTE: this patch should be taken by the same maintainer that will take
-> > "[PATCH v3 10/12] misc: rp1: RaspberryPi RP1 misc driver", since they
-> > are closely related in terms of compiling.
-> > 
-> >  MAINTAINERS                           |  1 +
-> >  arch/arm64/boot/dts/broadcom/rp1.dtso | 61 +++++++++++++++++++++++++++
-> >  2 files changed, 62 insertions(+)
-> >  create mode 100644 arch/arm64/boot/dts/broadcom/rp1.dtso
-> > 
-> > diff --git a/MAINTAINERS b/MAINTAINERS
-> > index 06277969a522..510a071ede78 100644
-> > --- a/MAINTAINERS
-> > +++ b/MAINTAINERS
-> > @@ -19383,6 +19383,7 @@ F:	include/uapi/linux/media/raspberrypi/
-> >  RASPBERRY PI RP1 PCI DRIVER
-> >  M:	Andrea della Porta <andrea.porta@suse.com>
-> >  S:	Maintained
-> > +F:	arch/arm64/boot/dts/broadcom/rp1.dtso
-> >  F:	Documentation/devicetree/bindings/clock/raspberrypi,rp1-clocks.yaml
-> >  F:	Documentation/devicetree/bindings/misc/pci1de4,1.yaml
-> >  F:	Documentation/devicetree/bindings/pci/pci-ep-bus.yaml
-> > diff --git a/arch/arm64/boot/dts/broadcom/rp1.dtso b/arch/arm64/boot/dts/broadcom/rp1.dtso
-> > new file mode 100644
-> > index 000000000000..8d1bbf207a30
-> > --- /dev/null
-> > +++ b/arch/arm64/boot/dts/broadcom/rp1.dtso
-> > @@ -0,0 +1,61 @@
-> > +// SPDX-License-Identifier: (GPL-2.0 OR MIT)
+On Tue, Nov 05, 2024 at 03:28:05PM +0100, Maxime Chevallier wrote:
+> > +	dsa_switch_for_each_user_port(dp, dev->ds) {
+> > +		if (!dev->info->internal_phy[dp->index])
+> > +			continue;
 > > +
-> > +#include <dt-bindings/gpio/gpio.h>
-> > +#include <dt-bindings/interrupt-controller/irq.h>
-> > +#include <dt-bindings/clock/raspberrypi,rp1-clocks.h>
+> > +		phy_node = of_parse_phandle(dp->dn, "phy-handle", 0);
+> > +		if (!phy_node) {
+> > +			dev_err(dev->dev, "failed to parse phy-handle for port %d.\n",
+> > +				dp->index);
+> > +			phys_are_valid = false;
+> > +			continue;
+> > +		}
 > > +
-> > +/dts-v1/;
-> > +/plugin/;
-> > +
-> > +/ {
-> > +	fragment@0 {
-> > +		target-path="";
-> > +		__overlay__ {
-> > +			compatible = "pci1de4,1";
-> > +			#address-cells = <3>;
-> > +			#size-cells = <2>;
-> > +			interrupt-controller;
-> > +			#interrupt-cells = <2>;
-> > +
-> > +			pci_ep_bus: pci-ep-bus@1 {
-> > +				compatible = "simple-bus";
-> > +				ranges = <0xc0 0x40000000
-> > +					  0x01 0x00 0x00000000
-> > +					  0x00 0x00400000>;
-> > +				dma-ranges = <0x10 0x00000000
-> > +					      0x43000000 0x10 0x00000000
-> > +					      0x10 0x00000000>;
-> > +				#address-cells = <2>;
-> > +				#size-cells = <2>;
-> > +
-> > +				rp1_clocks: clocks@c040018000 {
-> > +					compatible = "raspberrypi,rp1-clocks";
-> > +					reg = <0xc0 0x40018000 0x0 0x10038>;
+> > +		phy_parent_node = of_get_parent(phy_node);
+> > +		if (!phy_parent_node) {
+> > +			dev_err(dev->dev, "failed to get PHY-parent node for port %d\n",
+> > +				dp->index);
+> > +			phys_are_valid = false;
+> > +		} else if (dev->info->internal_phy[dp->index] &&
+> > +			   phy_parent_node != mdio_np) {
 > 
-> shouldn't this be:
-> 
-> 	rp1_clocks: clocks@18000 {
-> 		reg = <0x00 0x00018000 0x0 0x10038>;
-> 		...
-> 	}
-> 
-> ?
-> 
-> And for other nodes too...
+> There's a check a few lines above that guarantees that at this point
+> dev->info->internal_phy[dp->index] will always evaluate as true,
+> so you could simplify that condition a bit :)
 
-For that to be @18000 instead of @c040018000, you should also change
-the "ranges" entry in pci-ep-bus node, as follows:
+good point :)
 
-ranges = <0x00 0x00018000	//This was: 0xc0 0x40000000
-          0x01 0x00 0x00000000
-          0x00 0x00400000>;
-
-which is of course feasible, but I prefer to use addresses that 
-resemble (at least to some extent) the ones in RP1 docs.
-
-Many thanks,
-Andrea
-
+> > +			dev_err(dev->dev, "PHY-parent node mismatch for port %d, expected %pOF, got %pOF\n",
+> > +				dp->index, mdio_np, phy_parent_node);
+> > +			phys_are_valid = false;
+> > +		} else {
+> > +			ret = of_property_read_u32(phy_node, "reg", &phy_id);
+> > +			if (ret < 0) {
+> > +				dev_err(dev->dev, "failed to read PHY ID for port %d. Error %d\n",
+> > +					dp->index, ret);
+> > +				phys_are_valid = false;
+> > +			} else if (phy_id != dev->phy_addr_map[dp->index]) {
+> > +				dev_err(dev->dev, "PHY ID mismatch for port %d, expected 0x%x, got 0x%x\n",
+> > +					dp->index, dev->phy_addr_map[dp->index],
+> > +					phy_id);
 > 
-> ~Stan
-> 
-> > +					#clock-cells = <1>;
-> > +					clocks = <&clk_rp1_xosc>;
-> > +					clock-names = "xosc";
-> > +					assigned-clocks = <&rp1_clocks RP1_PLL_SYS_CORE>,
-> > +							  <&rp1_clocks RP1_PLL_SYS>,
-> > +							  <&rp1_clocks RP1_CLK_SYS>;
-> > +					assigned-clock-rates = <1000000000>, // RP1_PLL_SYS_CORE
-> > +							       <200000000>,  // RP1_PLL_SYS
-> > +							       <200000000>;  // RP1_CLK_SYS
-> > +				};
-> > +
-> > +				rp1_gpio: pinctrl@c0400d0000 {
-> > +					compatible = "raspberrypi,rp1-gpio";
-> > +					reg = <0xc0 0x400d0000  0x0 0xc000>,
-> > +					      <0xc0 0x400e0000  0x0 0xc000>,
-> > +					      <0xc0 0x400f0000  0x0 0xc000>;
-> > +					gpio-controller;
-> > +					#gpio-cells = <2>;
-> > +					interrupt-controller;
-> > +					#interrupt-cells = <2>;
-> > +					interrupts = <0 IRQ_TYPE_LEVEL_HIGH>,
-> > +						     <1 IRQ_TYPE_LEVEL_HIGH>,
-> > +						     <2 IRQ_TYPE_LEVEL_HIGH>;
-> > +				};
-> > +			};
-> > +		};
-> > +	};
-> > +};
-> 
+> In this context, PHY ID might be a bit misleading, as PHY ID usually
+> refers to the identifier (OUI + model id used at probe to select the
+> driver). May I suggest phy_addr instead ?
+
+ack, will rework it.
+
+-- 
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
