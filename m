@@ -1,56 +1,60 @@
-Return-Path: <linux-kernel+bounces-396812-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396813-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43E149BD28E
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 17:38:43 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98C659BD292
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 17:38:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 089A0281FDF
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 16:38:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA2EE1C221F0
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 16:38:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEA601DD0DF;
-	Tue,  5 Nov 2024 16:38:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5137C1DE3C9;
+	Tue,  5 Nov 2024 16:38:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IcQsoc+Z"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZGJQOmvx"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41AF71DC182;
-	Tue,  5 Nov 2024 16:38:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1F651DD0FC;
+	Tue,  5 Nov 2024 16:38:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730824698; cv=none; b=Xw2hvJyT2HgzEdw/z455U/Q2k6nQ2TEMSX2WhZ4a8732lBQEk1sSR6n4TJsy1L1Vi19wl7atE1HbaD7+/w6VHjQQ9dCqGoK/hMWUH4gdhf4Mfq8z0LmxZXip3CVBsvnHpPyR9wFJg/BFPpApIHlU03kKRSpL6NJJ3wzOxqo31f8=
+	t=1730824700; cv=none; b=smsEDVTmHXUaogQNsWjFn1Y3Wz8qf+l5YF9jOqcBUoJlfjUxXfS6FlAq5jgXLMYWh48l3211FSMe8LFk4mCdI1lowDDs0uR1M4gby9OhZ1bkjKPuV0HB1Iqr4uaXKVfHKBbXq36xCaSGbCWYnJvHTKiW49dftM8Lnb/7HNLknpA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730824698; c=relaxed/simple;
-	bh=ORqsYWN5LTjtakU/Jqc07JENFyXvLrJpzmnmxASVu2s=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=jNgp1QsUP/Nh5+77GHlnQQYYd3EPCwYlvWwQtDKpxbo+YqjSrYuuZAX/Gly85HdH6X26ACD2dMDIM6WI8eZ1GLnqPQTWp/whBmzptOxLKERWi8BVrDoX6y9wEEZ//7iygj2FZvzJ8pcd2D0YWhdDaSiqPs1t3cUxlUl6P6N5bMo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IcQsoc+Z; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08FC7C4CECF;
-	Tue,  5 Nov 2024 16:38:15 +0000 (UTC)
+	s=arc-20240116; t=1730824700; c=relaxed/simple;
+	bh=X8hYb6RBCYK9495zyoYmXa26zE6IO19upKOSziGx0MQ=;
+	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=W5jfb3afsh50WMaBqMQeiWyshNvFe1CWWyuW6xyzdqdljuGfpDwkspteAU9E7H99NkvVPNADbH3IQXCOs0cGFUn0V425iejEuosWqeLmP5K2Y83LL7ydc5+TxwLc59aFY3TjeygMRH/mMzL2jWou8DsLjkN7UmttNxF/usZD348=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZGJQOmvx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 387ECC4CED5;
+	Tue,  5 Nov 2024 16:38:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730824697;
-	bh=ORqsYWN5LTjtakU/Jqc07JENFyXvLrJpzmnmxASVu2s=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=IcQsoc+ZlOob79/Aq4GrbYbKFOPUdjUPE6tvazHlPbhagLe5aA4F/23d/di/cpNmz
-	 2rrrPxUEVR6CSq3+7pZKQxMA5IVuQKZXpc7DE9m1G72rDWlxWw5dCGBgJ26fFvlj2/
-	 oMmt1H3JqxWlIAMkvZbUGg7N4ZjgF9CMgEoZIA6WU4VpRJS4w9KWl8hsH8RLRIVzI5
-	 mSukbLYLeoboLOXbkGgZ+gGFw98ve4gFfgycyPH6ewy030uakhHlscspqWaiB2pkUv
-	 dSsJNwhQI6L/4r8NOGKip0bqbWMw9DCstV3zRktQWujAXSyJuKjfPhkNN0PTDB9ZFi
-	 zwJ5sOi09HxYw==
+	s=k20201202; t=1730824700;
+	bh=X8hYb6RBCYK9495zyoYmXa26zE6IO19upKOSziGx0MQ=;
+	h=From:To:In-Reply-To:References:Subject:Date:From;
+	b=ZGJQOmvxwqXjlOS+rTITdHoA4FGyRD3GXgP+R2tm9jFp1joz3SuvcR0mKF8OPGU04
+	 6ytKxaDVANCp8Q4W074xUyGD/11Q2R6afZZ+pyrBAPsJOpr0l4DzAhChxEe98VeYFZ
+	 rJ34djLZB5DzSGRmlv7H4AJWwG1+95ZcuEUCMudP4zj+pjyNlq7ApNHsbPO0vpocHd
+	 KmWm9Nl3mscCpLrACeWK4/mDy80Dbop2L3QiK9rt2Wvo0QS0hLBck7gDMyW9FKuyWy
+	 rNMdVBBQDTSQEVasDUitXtlH8KSL0HKgMHMoy9h8kHK4GRp471TsQgkjoyhklgbYz9
+	 iYVe6TY8lhSvQ==
 From: Mark Brown <broonie@kernel.org>
-To: support.opensource@diasemi.com, lgirdwood@gmail.com, perex@perex.cz, 
- tiwai@suse.com, Qiu-ji Chen <chenqiuji666@gmail.com>
-Cc: linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org, 
- baijiaju1990@gmail.com, stable@vger.kernel.org
-In-Reply-To: <20240930101216.23723-1-chenqiuji666@gmail.com>
-References: <20240930101216.23723-1-chenqiuji666@gmail.com>
-Subject: Re: [PATCH] ASoC: codecs: Fix atomicity violation in
- snd_soc_component_get_drvdata()
-Message-Id: <173082469577.77847.18367085097740716832.b4-ty@kernel.org>
-Date: Tue, 05 Nov 2024 16:38:15 +0000
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
+ Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Jaroslav Kysela <perex@perex.cz>, 
+ Takashi Iwai <tiwai@suse.com>, linux-sound@vger.kernel.org, 
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20241101165159.370619-1-krzysztof.kozlowski@linaro.org>
+References: <20241101165159.370619-1-krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH 1/2] ASoC: dt-bindings: qcom,sm8250: Add SM8750 sound
+ card
+Message-Id: <173082469795.77847.14820990076674451218.b4-ty@kernel.org>
+Date: Tue, 05 Nov 2024 16:38:17 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,18 +65,11 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.15-dev-9b746
 
-On Mon, 30 Sep 2024 18:12:16 +0800, Qiu-ji Chen wrote:
-> An atomicity violation occurs when the validity of the variables
-> da7219->clk_src and da7219->mclk_rate is being assessed. Since the entire
-> assessment is not protected by a lock, the da7219 variable might still be
-> in flux during the assessment, rendering this check invalid.
+On Fri, 01 Nov 2024 17:51:58 +0100, Krzysztof Kozlowski wrote:
+> Add bindings for SM8750 sound card, compatible with older SM8450
+> variant.
 > 
-> To fix this issue, we recommend adding a lock before the block
-> if ((da7219->clk_src == clk_id) && (da7219->mclk_rate == freq)) so that
-> the legitimacy check for da7219->clk_src and da7219->mclk_rate is
-> protected by the lock, ensuring the validity of the check.
 > 
-> [...]
 
 Applied to
 
@@ -80,8 +77,10 @@ Applied to
 
 Thanks!
 
-[1/1] ASoC: codecs: Fix atomicity violation in snd_soc_component_get_drvdata()
-      commit: 1157733344651ca505e259d6554591ff156922fa
+[1/2] ASoC: dt-bindings: qcom,sm8250: Add SM8750 sound card
+      commit: 393de01870bcf2ea1eadd21ad12f927d78cbb726
+[2/2] ASoC: qcom: sc8280xp Add SM8750 sound card
+      commit: 4b9f02b6c5376b65dac398c4f06804c914cbb7be
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
