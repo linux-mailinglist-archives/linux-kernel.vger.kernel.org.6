@@ -1,204 +1,180 @@
-Return-Path: <linux-kernel+bounces-396373-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396374-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 101C49BCC4B
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 13:03:37 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EFD0B9BCC4E
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 13:04:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F7451F2296C
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 12:03:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 180DD1C20F4F
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 12:04:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 619831D5150;
-	Tue,  5 Nov 2024 12:03:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94D091D5157;
+	Tue,  5 Nov 2024 12:03:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="sU199bvU"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PZlJiItq"
+Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6F801420A8;
-	Tue,  5 Nov 2024 12:03:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 509851D31A2;
+	Tue,  5 Nov 2024 12:03:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730808206; cv=none; b=pVfFhjLXvHCJzfc+KrCo8d9sZujbYy9VeMAJHtX8JuOrzHRclGRSqAYIiYdk5Zj10KhWEXkQXYQbP6N2BFGIJIcYfskl4FpD+jIK8k/Jdj5LH2Vfo36etamlGY8/VgGC2LkJISvJuVGVYT3aF3X+DOtC38l4GbTF99bICj65Jto=
+	t=1730808234; cv=none; b=e6TL5GJSregsXpHkpaQ4z4b6rhRP6cG9vWfavjn8axStd0fwyVWrz/akR0VlXo5XGrLULl+SALwDmnoHrMKxaA2uK5ooxVem21BD/02ssZFzEMtXZresWRBAeda/s2DnmDv5XSUsr4Qm4yc3FIMePUdFci59kecC9yIv73mFCkg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730808206; c=relaxed/simple;
-	bh=f5aR0qCh3iZzX++JCXBR+GL1e5IVYzj03wmplizhTVQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oUee7koRer5UNaKj4pQ8MskLeG2M8pNhhTgJzDbpY3VcwkgyMuDodjv1K5egaxElOpYTtFLmO5k2jtoyZ9o5tJ5NM8SU5WvrdSwSNvHYn3HYCzoAzKL05Hgkf4rLD+KP2/5xkqtJVZBvEgCaQXqr85LkodhFtcUiIhtAi6j/qMc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=sU199bvU; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id A6D824AD;
-	Tue,  5 Nov 2024 13:03:15 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1730808195;
-	bh=f5aR0qCh3iZzX++JCXBR+GL1e5IVYzj03wmplizhTVQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=sU199bvU6qrrJwzMHBcEoUuc4zXvxQGJv/Khs+aw0wgoxsE6xo3yFkeLm+oqK1dNK
-	 lUqMvJz3jm7MT6V4B/9ZXPsOQA8ZC2LT/+6OKBIYzcidJHU5n9wphs49rZ85b/UknI
-	 4ZI/sHt7/Dgp10bJaLBQRrAAqUMODJCEJpSWy/MQ=
-Date: Tue, 5 Nov 2024 14:03:15 +0200
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Ricardo Ribalda <ribalda@chromium.org>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-	Sergey Senozhatsky <senozhatsky@chromium.org>
-Subject: Re: [PATCH v2] media: uvcvideo: Fix crash during unbind if gpio unit
- is in use
-Message-ID: <20241105120315.GP27775@pendragon.ideasonboard.com>
-References: <20241105-uvc-crashrmmod-v2-1-547ce6a6962e@chromium.org>
+	s=arc-20240116; t=1730808234; c=relaxed/simple;
+	bh=2scUw8T/1u0DGMQY0Ee1Um3A775p657KQNRNFv94Y3A=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=mySSuyyUpTcyWiJRd2rziGtXbVLkhKFrpT4EnNO5BTBoP28T6LYsz/aghHl+clH2V5B0bJ32gduCuD44wFUhG6v54+NjhpeVVkHqMKmXZM+cWIxuAWHw6CIn/1Ah24DLgSZ1X25Vdw4vYd3HCoN5k1qf+N4bKCPwlRoy6XkM5LQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PZlJiItq; arc=none smtp.client-ip=209.85.219.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-e30cef4ac5dso4782617276.0;
+        Tue, 05 Nov 2024 04:03:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730808232; x=1731413032; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=4mQe9CPTZg0iYP3rFcpBCYNv2Ed7deu8K6ZCVDXo57I=;
+        b=PZlJiItqbNtj3h5tU9i9F02aZ0AERZT4ovmvX4xKq1Osv02b5kU5A7LPzxf5JkNsWY
+         fBaTUYY9yT1h8kMMXAWEJ8bFMl8/ryeYslkJvdYTJopuSJBwng9+CdxVbWXJmbeZxofB
+         tn0J+sfGGubamu6mfA6wAN2keN6fxf3Mu2WP8vzccf12tsk2Le5Yagb/1EOZT24a+xgR
+         9QySfBv06GTVND8U6MwANNeYO3SOXcWvYlo7FKizR5trqjrhT9XRQ3MqYQuha1w6kqRB
+         c7SafQV5LSxxEa5OsLJwQ4JWOxWKDTj+4+AJcHBtcBAHVCU108+By7Sp3Bex9EBxOVJO
+         uSjg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730808232; x=1731413032;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4mQe9CPTZg0iYP3rFcpBCYNv2Ed7deu8K6ZCVDXo57I=;
+        b=ZuDlaSkgBA+mVWUSn194dsKimX06av/yNCVx2OEl7Tuine0jfgiazz1sq1rk58PPN1
+         jAqfcVMelMAVPgDvetqCSqM11+ptfil7g3OQkHz5KA8D7ruADE5DWFMHXJuB5ZctvbDz
+         p3iY9AL2zTK0yCrrbiLboaA/GsRXgKpkR22mYFzqFlRy8iSVtIlO4OK0bH0yuFy6LTnO
+         5bPaTS4xQv+jOxuLMQmoRvcZAvGG8W0H0tCfAhGR7Y4cOB4gEc4QKN5AvYIJeUp+vTLm
+         +80U3WOL1hCDYjekR9UJrmlaHZU2sw3tUbHc4Cgs+1jXSf99Jo/jZ7p+Ed/++Zr54qbW
+         X+2g==
+X-Forwarded-Encrypted: i=1; AJvYcCURXAUPw42sW4LGcx2AqWLvrYzH5BjW94fEgItgqPSz+hPkGeBrC/r0C3fVyx7j5R21MxznGsVQQOU=@vger.kernel.org, AJvYcCWzgcyM6PUPeRKBb8J1jfvVxccx6mVYK8MQvWwGPfD6X4sVPf02q+YJNqELc+0GqI9FDJq0X0y+J0ng/F1B@vger.kernel.org
+X-Gm-Message-State: AOJu0YwItYmFMtxjhkWj97d/FMB47phYgtt3qSQLCtgu8opHOJqb6DKj
+	6Oz2DYL0h9PlhaHHF7oByIuJl/6SsVqyxIV5Dad6uzrwi3izzdbbSCmqukC1et4=
+X-Google-Smtp-Source: AGHT+IGFzGNU7gdlibESHBuvspL2ArIC4VbdyAKDhERoA2yh98mJEI+YtpvI0J6+dmCG02TAJZyeeA==
+X-Received: by 2002:a05:6902:18c6:b0:e29:6571:e25e with SMTP id 3f1490d57ef6-e30cf4323e8mr24573611276.27.1730808231767;
+        Tue, 05 Nov 2024 04:03:51 -0800 (PST)
+Received: from 1.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.ip6.arpa (186-189-50-43.setardsl.aw. [186.189.50.43])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e30e8a6113csm2466779276.2.2024.11.05.04.03.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 05 Nov 2024 04:03:50 -0800 (PST)
+From: Tamir Duberstein <tamird@gmail.com>
+Date: Tue, 05 Nov 2024 08:03:42 -0400
+Subject: [PATCH RESEND v5] XArray: minor documentation improvements
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241105-uvc-crashrmmod-v2-1-547ce6a6962e@chromium.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241105-xarray-documentation-v5-1-8e1702321b41@gmail.com>
+To: Matthew Wilcox <willy@infradead.org>, Jonathan Corbet <corbet@lwn.net>
+Cc: linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>, 
+ Bagas Sanjaya <bagasdotme@gmail.com>, Tamir Duberstein <tamird@gmail.com>
+X-Mailer: b4 0.15-dev
 
-Hi Ricardo,
+- Replace "they" with "you" where "you" is used in the preceding
+  sentence fragment.
+- Mention `xa_erase` in discussion of multi-index entries.  Split this
+  into a separate sentence.
+- Add "call" parentheses on "xa_store" for consistency and
+  linkification.
+- Add caveat that `xa_store` and `xa_erase` are not equivalent in the
+  presence of `XA_FLAGS_ALLOC`.
 
-Thank you for the patch.
+Acked-by: Randy Dunlap <rdunlap@infradead.org>
+Reviewed-by: Bagas Sanjaya <bagasdotme@gmail.com>
+Signed-off-by: Tamir Duberstein <tamird@gmail.com>
+---
+Changes in v5:
+- Add trailers; otherwise resend of v4. Sent as v5 due to tooling issue.
+- Link to v4: https://lore.kernel.org/r/20241010214150.52895-2-tamird@gmail.com/
 
-On Tue, Nov 05, 2024 at 10:53:59AM +0000, Ricardo Ribalda wrote:
-> We used the wrong device for the device managed functions. We used the
-> usb device, when we should be using the interface device.
-> 
-> If we unbind the driver from the usb interface, the cleanup functions
-> are never called. In our case, the IRQ is never disabled.
-> 
-> If an IRQ is triggered, it will try to access memory sections that are
-> already free, causing an OOPS.
+Changes in v4:
+- Remove latent sentence fragment.
 
-The commit message should explain why you're switching away from
-devm_request_threaded_irq().
+Changes in v3:
+- metion `xa_erase`/`xa_store(NULL)` in multi-index entry discussion.
+- mention non-equivalent of `xa_erase`/`xa_store(NULL)` in the presence
+  of `XA_FLAGS_ALLOC`.
 
-> 
-> Luckily this bug has small impact, as it is only affected by devices
-> with gpio units and the user has to unbind the device, a disconnect will
-> not trigger this error.
-> 
-> Cc: stable@vger.kernel.org
-> Fixes: 2886477ff987 ("media: uvcvideo: Implement UVC_EXT_GPIO_UNIT")
-> Reviewed-by: Sergey Senozhatsky <senozhatsky@chromium.org>
-> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
-> ---
-> Changes in v2: Thanks to Laurent.
-> - The main structure is not allocated with devres so there is a small
->   period of time where we can get an irq with the structure free. Do not
->   use devres for the IRQ.
-> - Link to v1: https://lore.kernel.org/r/20241031-uvc-crashrmmod-v1-1-059fe593b1e6@chromium.org
-> ---
->  drivers/media/usb/uvc/uvc_driver.c | 28 +++++++++++++++++++++-------
->  drivers/media/usb/uvc/uvcvideo.h   |  1 +
->  2 files changed, 22 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/media/usb/uvc/uvc_driver.c b/drivers/media/usb/uvc/uvc_driver.c
-> index a96f6ca0889f..af6aec27083c 100644
-> --- a/drivers/media/usb/uvc/uvc_driver.c
-> +++ b/drivers/media/usb/uvc/uvc_driver.c
-> @@ -1295,14 +1295,14 @@ static int uvc_gpio_parse(struct uvc_device *dev)
->  	struct gpio_desc *gpio_privacy;
->  	int irq;
->  
-> -	gpio_privacy = devm_gpiod_get_optional(&dev->udev->dev, "privacy",
-> +	gpio_privacy = devm_gpiod_get_optional(&dev->intf->dev, "privacy",
->  					       GPIOD_IN);
->  	if (IS_ERR_OR_NULL(gpio_privacy))
->  		return PTR_ERR_OR_ZERO(gpio_privacy);
->  
->  	irq = gpiod_to_irq(gpio_privacy);
->  	if (irq < 0)
-> -		return dev_err_probe(&dev->udev->dev, irq,
-> +		return dev_err_probe(&dev->intf->dev, irq,
->  				     "No IRQ for privacy GPIO\n");
->  
->  	unit = uvc_alloc_new_entity(dev, UVC_EXT_GPIO_UNIT,
-> @@ -1329,15 +1329,28 @@ static int uvc_gpio_parse(struct uvc_device *dev)
->  static int uvc_gpio_init_irq(struct uvc_device *dev)
->  {
->  	struct uvc_entity *unit = dev->gpio_unit;
-> +	int ret;
->  
->  	if (!unit || unit->gpio.irq < 0)
->  		return 0;
->  
-> -	return devm_request_threaded_irq(&dev->udev->dev, unit->gpio.irq, NULL,
-> -					 uvc_gpio_irq,
-> -					 IRQF_ONESHOT | IRQF_TRIGGER_FALLING |
-> -					 IRQF_TRIGGER_RISING,
-> -					 "uvc_privacy_gpio", dev);
-> +	ret = request_threaded_irq(unit->gpio.irq, NULL, uvc_gpio_irq,
-> +				   IRQF_ONESHOT | IRQF_TRIGGER_FALLING |
-> +				   IRQF_TRIGGER_RISING,
-> +				   "uvc_privacy_gpio", dev);
-> +
-> +	if (!ret)
-> +		dev->gpio_unit->gpio.inited = true;
+Changes in v2:
+- s/use/you/ (Darrick J. Wong)
+---
+ Documentation/core-api/xarray.rst | 24 +++++++++++++-----------
+ 1 file changed, 13 insertions(+), 11 deletions(-)
 
-		unit->gpio.inited = true;
+diff --git a/Documentation/core-api/xarray.rst b/Documentation/core-api/xarray.rst
+index 77e0ece2b1d6f8e632e7d28d17fd1c60fcf0b5c4..f6a3eef4fe7f0a84068048175cb857d566f63516 100644
+--- a/Documentation/core-api/xarray.rst
++++ b/Documentation/core-api/xarray.rst
+@@ -42,8 +42,8 @@ call xa_tag_pointer() to create an entry with a tag, xa_untag_pointer()
+ to turn a tagged entry back into an untagged pointer and xa_pointer_tag()
+ to retrieve the tag of an entry.  Tagged pointers use the same bits that
+ are used to distinguish value entries from normal pointers, so you must
+-decide whether they want to store value entries or tagged pointers in
+-any particular XArray.
++decide whether you want to store value entries or tagged pointers in any
++particular XArray.
+ 
+ The XArray does not support storing IS_ERR() pointers as some
+ conflict with value entries or internal entries.
+@@ -52,8 +52,9 @@ An unusual feature of the XArray is the ability to create entries which
+ occupy a range of indices.  Once stored to, looking up any index in
+ the range will return the same entry as looking up any other index in
+ the range.  Storing to any index will store to all of them.  Multi-index
+-entries can be explicitly split into smaller entries, or storing ``NULL``
+-into any entry will cause the XArray to forget about the range.
++entries can be explicitly split into smaller entries. Unsetting (using
++xa_erase() or xa_store() with ``NULL``) any entry will cause the XArray
++to forget about the range.
+ 
+ Normal API
+ ==========
+@@ -63,13 +64,14 @@ for statically allocated XArrays or xa_init() for dynamically
+ allocated ones.  A freshly-initialised XArray contains a ``NULL``
+ pointer at every index.
+ 
+-You can then set entries using xa_store() and get entries
+-using xa_load().  xa_store will overwrite any entry with the
+-new entry and return the previous entry stored at that index.  You can
+-use xa_erase() instead of calling xa_store() with a
+-``NULL`` entry.  There is no difference between an entry that has never
+-been stored to, one that has been erased and one that has most recently
+-had ``NULL`` stored to it.
++You can then set entries using xa_store() and get entries using
++xa_load().  xa_store() will overwrite any entry with the new entry and
++return the previous entry stored at that index.  You can unset entries
++using xa_erase() or by setting the entry to ``NULL`` using xa_store().
++There is no difference between an entry that has never been stored to
++and one that has been erased with xa_erase(); an entry that has most
++recently had ``NULL`` stored to it is also equivalent except if the
++XArray was initialized with ``XA_FLAGS_ALLOC``.
+ 
+ You can conditionally replace an entry at an index by using
+ xa_cmpxchg().  Like cmpxchg(), it will only succeed if
 
-> +
-> +	return ret;
-> +}
-> +
-> +static void uvc_gpio_cleanup(struct uvc_device *dev)
-> +{
-> +	if (!dev->gpio_unit || !dev->gpio_unit->gpio.inited)
-> +		return;
-> +
-> +	free_irq(dev->gpio_unit->gpio.irq, dev);
->  }
->  
->  /* ------------------------------------------------------------------------
-> @@ -1880,6 +1893,7 @@ static void uvc_delete(struct kref *kref)
->  	struct uvc_device *dev = container_of(kref, struct uvc_device, ref);
->  	struct list_head *p, *n;
->  
-> +	uvc_gpio_cleanup(dev);
+---
+base-commit: 850925a8133c73c4a2453c360b2c3beb3bab67c9
+change-id: 20241026-xarray-documentation-86e1f2d047db
 
-This belongs to uvc_unregister_video(), or you'll have a race between
-the release of the GPIO happening after .disconnect() returns, and
-uvc_gpio_event() calling gpiod_get_value_cansleep().
-
-I understand the desire to get such a fix merged quickly, but taking
-time to think about race conditions instead of speeding up to get a
-patch out of the door would be better. The alternative where I have to
-flag race conditions multiple times during review is slower, and is more
-work for everybody.
-
->  	uvc_status_cleanup(dev);
->  	uvc_ctrl_cleanup_device(dev);
->  
-> diff --git a/drivers/media/usb/uvc/uvcvideo.h b/drivers/media/usb/uvc/uvcvideo.h
-> index 07f9921d83f2..376cd670539b 100644
-> --- a/drivers/media/usb/uvc/uvcvideo.h
-> +++ b/drivers/media/usb/uvc/uvcvideo.h
-> @@ -234,6 +234,7 @@ struct uvc_entity {
->  			u8  *bmControls;
->  			struct gpio_desc *gpio_privacy;
->  			int irq;
-> +			bool inited;
-
-As Sakari, I also prefer "initialized". Another option to save a few
-bytes of memory here is to set irq to -1 when request_threaded_irq()
-fails and test that in uvc_gpio_cleanup().
-
->  		} gpio;
->  	};
->  
-> 
-> ---
-> base-commit: c7ccf3683ac9746b263b0502255f5ce47f64fe0a
-> change-id: 20241031-uvc-crashrmmod-666de3fc9141
-
+Best regards,
+-----BEGIN SSH SIGNATURE-----
+U1NIU0lHAAAAAQAAADMAAAALc3NoLWVkMjU1MTkAAAAgtYz36g7iDMSkY5K7Ab51ksGX7h
+JgsMRt+XVZTrIzMVIAAAADZ2l0AAAAAAAAAAZzaGE1MTIAAABTAAAAC3NzaC1lZDI1NTE5
+AAAAQC+xZK2BwwOe02PlxGG7H8RrxZYY51gb8CdxLI3ED8WXT/GVeL/Ya7k+bir1TUuu/A
+pWBj+lROjke/NRDPTiJAQ=
+-----END SSH SIGNATURE-----
 -- 
-Regards,
+Tamir Duberstein <tamird@gmail.com>
 
-Laurent Pinchart
 
