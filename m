@@ -1,133 +1,85 @@
-Return-Path: <linux-kernel+bounces-395724-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395725-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC7979BC217
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 01:41:18 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65EB09BC21C
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 01:43:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A54EE1F2273C
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 00:41:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 98F181C2164A
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 00:43:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FFBF168BD;
-	Tue,  5 Nov 2024 00:41:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED3AF17C8B;
+	Tue,  5 Nov 2024 00:43:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="RbhQPJmK"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TcaGSYNa"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B308B1FC3;
-	Tue,  5 Nov 2024 00:41:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4344E1FC3;
+	Tue,  5 Nov 2024 00:43:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730767270; cv=none; b=YU1BRpWxrFbQcCgk8UCCSqYj0cSWHrJX5qefW6eXJM97jDsQ1k7PYqam//tGpGcCK7dcMROh6EdxruCD9a4gjGpV5MAxX68ctoeagJVy+gpaEppJIYwwVqjD0WO7hje5veyP24n1QrKSLURTU2PPZEW6D/VnIlmK0QfuiqtF7CU=
+	t=1730767422; cv=none; b=KkSthpVUDLEKS57XJXq7G/KT0yPKV+gW72MDUL9T8BP3djD7JUChMrFng2qSbf/9b+rrPOgjRTXYK0mPqjlnUChclGlDe+P4jSQHXKVTAJPiMLOpjb6tP4VLl57eT7OvHkd83XbMbaJNvM4mRHognZIq52GOefop6hWJMOOaN5M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730767270; c=relaxed/simple;
-	bh=mPdDfCpngc6bKRwCJVIyx84h/ef4rxx6rsJCP1SL5TA=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=Byhl6D/c2xskJkc22r5aYHUInzR4rcnW9mrPitg/gjQC/Du+VTYb4JeIulN2jwPme0uYG9or5IAtNMtFlrFzRAoLmnI5JYt/mAvfSXsKq4D7uEvtgKo1x4wyEUR/dm4MHZ8W4CqWLw5q5NHNo67bdFgNsehPepgrHVdJUKz8QAA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=RbhQPJmK; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1730767260;
-	bh=rdYDPfkkpkH+F5nwG52ouQQ84vhjm/eoeUegPcCquPE=;
+	s=arc-20240116; t=1730767422; c=relaxed/simple;
+	bh=rtb+HSUN07Y2JrY1lFnq7qn3Amt27M15GblKcS5xsQc=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=cM8ygy6Njh2ckSjdtPYxKJ+7cwx3PFx2SVhyw283AhuWwoEywqi6+rmULnigID0CABLKxWOnNscAhOFfCOisICf9sK3YP+ikOhoioE13bwCsvF5AxCnYBJX0yer+MqejKGpm28IHwjSFK1YwixINMMpHXXJQpIqqhYoTmYJNqKI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TcaGSYNa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ABB36C4CECE;
+	Tue,  5 Nov 2024 00:43:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730767421;
+	bh=rtb+HSUN07Y2JrY1lFnq7qn3Amt27M15GblKcS5xsQc=;
 	h=Date:From:To:Cc:Subject:From;
-	b=RbhQPJmKQjO5Bz6/K+GDAXr4lCxN9Tq38yKgb8DoeGh6Fk1I2LHrlLQ+IKgVtooBf
-	 YsU+Ft9v4TjzYwPTPKCmRnvNOEXgmUD3RpHOeagi8tGNSNF1Pdh+MApMxU3dWbgxCj
-	 C+AmzTwXvYV341Ve3KGWLoLWta89Rdf6flj4BlnMdenO9bgXIEzaWUxtfnG60q3QaC
-	 W0cGggJu5oeMkDUw4UCFjA8HvBX7ZnqW8ZEhtrByZ+9gvuIlCfDtm8X1Dlvq0HPcQG
-	 QXITr5lFZlqfnrTihjfifyClJH9VWVrLTXtgVIKf2WVh0F5aWJ+DG5sKz9nTaveliA
-	 H/VAUE/w9tyOQ==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Xj8dl52MPz4x04;
-	Tue,  5 Nov 2024 11:40:59 +1100 (AEDT)
-Date: Tue, 5 Nov 2024 11:41:00 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: David Miller <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>
-Cc: Networking <netdev@vger.kernel.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>, Wei Fang <wei.fang@nxp.com>
-Subject: linux-next: manual merge of the net-next tree with the net tree
-Message-ID: <20241105114100.118bd35e@canb.auug.org.au>
+	b=TcaGSYNaVaokvyWdzX4HBihcH5VX+0YgPZ+m+XQOY6xyXjn2+0HfsgtW2rJTg694J
+	 K2/7CHI5AfRHMClCtzXIBEw3w77gyZAHevDZaiL8R7r1s2M6lj7+nTyCxAwdFJDUTh
+	 QZbe1imDVinFKGqRkWzJpkx1/jE5FMyA1Q/1DkzStYSo0vxHCkm0Wk0e+5sxC10p5a
+	 UXvfavSjExi00thJlLa1xbWZUrvLXLsYf2CJVv+HqD/g0QuXrmm45VXTDtQlnDKr3u
+	 9IUrYtC5YjuM2um5hiBXIuC2eJJiZH6moNULByX11iVmcEJ+8Ha5VpkM/1p1B/hZFQ
+	 4nkPS5FtgX3Fw==
+Date: Mon, 4 Nov 2024 16:43:41 -0800
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>,
+	John Garry <john.g.garry@oracle.com>, brauner@kernel.org,
+	Catherine Hoang <catherine.hoang@oracle.com>
+Cc: linux-ext4@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>,
+	Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@infradead.org>,
+	Ojaswin Mujoo <ojaswin@linux.ibm.com>, linux-block@vger.kernel.org,
+	Dave Chinner <david@fromorbit.com>, linux-kernel@vger.kernel.org,
+	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: [ANNOUNCE] work tree for untorn filesystem writes
+Message-ID: <20241105004341.GO21836@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/gDQ=/C39ZeLwnHK+QSskU0+";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
---Sig_/gDQ=/C39ZeLwnHK+QSskU0+
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi everyone,
 
-Hi all,
+Nobody else has stepped up to do this, so I've created a work branch for
+the fs side of untorn writes:
+https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux.git/log/?h=fs-atomic_2024-11-04
 
-Today's linux-next merge of the net-next tree got a conflict in:
+Can you all check this to make sure that I merged it correctly?  And
+maybe go test this on your storage hardware? :)
 
-  drivers/net/ethernet/freescale/enetc/enetc_pf.c
+If all goes well then I think the next step is to ask brauner very
+nicely if he'd consider adding this to the vfs trees for 6.13.  If not
+then I guess we can submit it ourselves, though we probably ought to ask
+rothwell to add the branch to for-next asap.
 
-between commit:
+PS: We're now past -rc6 so please reply quickly so that this doesn't
+slip yet another cycle.
 
-  e15c5506dd39 ("net: enetc: allocate vf_state during PF probes")
+Catherine: John's on vacation all week, could you please send me the
+latest versions of the xfs_io pwrite-atomic patch and the fstest for it?
 
-from the net tree and commit:
-
-  3774409fd4c6 ("net: enetc: build enetc_pf_common.c as a separate module")
-
-from the net-next tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc drivers/net/ethernet/freescale/enetc/enetc_pf.c
-index c95a7c083b0f,a76ce41eb197..000000000000
---- a/drivers/net/ethernet/freescale/enetc/enetc_pf.c
-+++ b/drivers/net/ethernet/freescale/enetc/enetc_pf.c
-@@@ -1277,12 -1024,7 +1015,13 @@@ static int enetc_pf_probe(struct pci_de
-  	pf =3D enetc_si_priv(si);
-  	pf->si =3D si;
-  	pf->total_vfs =3D pci_sriov_get_totalvfs(pdev);
- +	if (pf->total_vfs) {
- +		pf->vf_state =3D kcalloc(pf->total_vfs, sizeof(struct enetc_vf_state),
- +				       GFP_KERNEL);
- +		if (!pf->vf_state)
- +			goto err_alloc_vf_state;
- +	}
-+ 	pf->ops =3D &enetc_pf_ops;
- =20
-  	err =3D enetc_setup_mac_addresses(node, pf);
-  	if (err)
-
---Sig_/gDQ=/C39ZeLwnHK+QSskU0+
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmcpaZwACgkQAVBC80lX
-0GwOFQf+KU6hgL1u0134RRwL59L4v0RtCKHSTOter878kRyu5+Q3eSpNpiU1WWKg
-NTAXmTOHRDeWm4cmtYvRs5o3/vlTNWntKsyxuJylZr0tU/7QWhEaqBY+4swd4QJ/
-iYBjsOuxz/RyKYa5C7lBlGRNfSg3vxRBLmNsbyta5my1MBfbkixm/OFxU2t3JARz
-WBtDZ6BEpyexD0toPkgQqjcPT+/7iAPSDG0Jajg3LLqdxOeiJpIRMmKQknHOBcnF
-lUp9yBQ3IXhJlocn7+X1IU6n86i7JBE5c8nCEY+9xpNgkfKbdrxS2jOGNUcJTNuw
-UG6isrdHEDtcVN6J0ABrB3IN4b76gw==
-=vrAv
------END PGP SIGNATURE-----
-
---Sig_/gDQ=/C39ZeLwnHK+QSskU0+--
+--D
 
