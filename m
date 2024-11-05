@@ -1,137 +1,200 @@
-Return-Path: <linux-kernel+bounces-396799-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396800-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 572DA9BD24D
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 17:27:19 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A09169BD253
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 17:29:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B3AC284858
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 16:27:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6133A1F22CF5
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 16:29:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48F611D63F3;
-	Tue,  5 Nov 2024 16:27:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A53EC1D63F3;
+	Tue,  5 Nov 2024 16:29:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l2GqNkwT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ARvzQqc5"
+Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A55CD17E918;
-	Tue,  5 Nov 2024 16:27:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 617EF17E918;
+	Tue,  5 Nov 2024 16:29:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730824024; cv=none; b=YFqX7W8kYZF798V2VWpFemDmLzQYCZasEjdXIYrUIOA5Lx07JoOp/S497gPkEJIzW6h06nYwFHR3sckvizavgqAT8lB8w3bCMZNIqhDbQ4ifVLyec8nuwZcKzmIu74DEcJiPjsD9sk8++RlY10H7R0YUoml4njfmCA2zkamZtVs=
+	t=1730824149; cv=none; b=JFvGmoTUwKoIYzJHhPg3GQx0JBPY+HdazCD4g837tt7fO1XGXRIHc3v9gx8r4IgqTb7123hYsI7IxBmptSiN5BcdBYluLiAqwru9ZQQC1Kq8gYazHINcQCsoYU5GP41YiTe7MeqRRpj1KaKj135Fb/Y+zmrbg/t9Pg6L2svS3b4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730824024; c=relaxed/simple;
-	bh=zLwVcEjh9yWNXilTeR+g455DWA7UySuShh8IESXwvGY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Kg6VDPHaXLaNMxqSkH6m3dk7eYKhoigQAC0z2NuRykAVMZR9uhKGjmhz5DvJ+tQRfXH2Aug4rqnhQM8hz175HQUO7vnyhrI4Gpy+4xJujWS1GC2Yg/YQW3FN2DN8Wwv90Fd9g7LKsMNJF3eQfU/iUczXOpU1OYx4CZR/MQS+coI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l2GqNkwT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED80DC4CECF;
-	Tue,  5 Nov 2024 16:27:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730824024;
-	bh=zLwVcEjh9yWNXilTeR+g455DWA7UySuShh8IESXwvGY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=l2GqNkwTrMZhZ1ZDZUSs6eFUDXePYn9gzOno71yKgNycLbkXK8TsDEvRwPATmJALs
-	 q0YU9s3xAXUMCDuGIJ1DBak4vL0uKKGqRioqKNMwYRoQghkAGRnAQNlmQReIFNs2oA
-	 xYODkhIej1U8k31XPM1prEcuiuFyOBQZAHqs0J7ajR4N+CyDCpxtZGs9e3SRyaiLOW
-	 9YdvNRK8sgLH1IiQVmB2fpDoTrM8Myfq19GjVSdppzPNIb+QcOQBgZC8+BAjgAtYP1
-	 5DcmSEn7T2VDz9rn1xTK/5ZIBCw0ffjrKnNVGWfI/XrHpC7OKzHShgrSrboAVlq/6B
-	 X6t/zNfDelveg==
-Date: Tue, 5 Nov 2024 18:26:55 +0200
-From: Leon Romanovsky <leon@kernel.org>
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	linux-pci@vger.kernel.org, Ariel Almog <ariela@nvidia.com>,
-	Aditya Prabhune <aprabhune@nvidia.com>,
-	Hannes Reinecke <hare@suse.de>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Arun Easi <aeasi@marvell.com>, Jonathan Chocron <jonnyc@amazon.com>,
-	Bert Kenward <bkenward@solarflare.com>,
-	Matt Carlson <mcarlson@broadcom.com>,
-	Kai-Heng Feng <kai.heng.feng@canonical.com>,
-	Jean Delvare <jdelvare@suse.de>,
-	Alex Williamson <alex.williamson@redhat.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] PCI/sysfs: Fix read permissions for VPD attributes
-Message-ID: <20241105162655.GG311159@unreal>
-References: <20241105075130.GD311159@unreal>
- <20241105152455.GA1472398@bhelgaas>
+	s=arc-20240116; t=1730824149; c=relaxed/simple;
+	bh=dHz9b5sCGgbriiY0hHe2c5ULnhkhg06zPsGoOVDNQL4=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=CSsy12Cru5+aUj5i98VRqrc2Dz0Q9b6TvTx/x54kNCIx0Q8WW/AV37HOl+avIk7cvAimgZ60N1bh3RpDxnH69QRXCHGkCo+cDLg7ZBppnHHA1RBvSAjMei8wTezSt5CQEwwEhh6dDSZKSdeZbHVff0OsbZ2fWypLAkCOEzLE7Zw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ARvzQqc5; arc=none smtp.client-ip=217.70.183.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 5E0EC60005;
+	Tue,  5 Nov 2024 16:28:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1730824138;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=4AN1bWAbi3duehwYx5SBuZr7Xa5uywTWSqhm9jKKAOk=;
+	b=ARvzQqc5HPpCmHdnTV2rAb6bK/xZRs+BEcyWdS4dC/pjfvIUtH41X3QCUmZcFL2BFUml+3
+	hhNxXYZlAJrAN6HCztj7pdW8ApgO+OxeFRkGngR865q/ykH9cCRbMu2lfbDUf6Tr+RQDei
+	io4eHHm15qlQooA8v5SBu1AKl71tPBGHSgtcdexhg3OEXq3kn++qEBfSJRCsBP0R2I/zJ6
+	x8QpGvYpfvgPFXEYm0EplDvjKky8lc3PoGKpgTJtn/6NdKmVj5GfCgk45Tj3fG4BLeO4cD
+	M3SsaLCCrqNSTCyjlKD3BiiwCEloXaqBrdd0rsKR11wWyNORA48NtW6qiB2geQ==
+From: Gregory CLEMENT <gregory.clement@bootlin.com>
+To: "Rob Herring (Arm)" <robh@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
+ Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Russell King <linux@armlinux.org.uk>
+Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Frank Wunderlich <linux@fw-web.de>
+Subject: Re: [PATCH] arm64: dts: marvell: Drop undocumented SATA phy names
+In-Reply-To: <20241014193528.1896905-2-robh@kernel.org>
+References: <20241014193528.1896905-2-robh@kernel.org>
+Date: Tue, 05 Nov 2024 17:28:57 +0100
+Message-ID: <87r07p8x12.fsf@BLaptop.bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241105152455.GA1472398@bhelgaas>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-Sasl: gregory.clement@bootlin.com
 
-On Tue, Nov 05, 2024 at 09:24:55AM -0600, Bjorn Helgaas wrote:
-> On Tue, Nov 05, 2024 at 09:51:30AM +0200, Leon Romanovsky wrote:
-> > On Mon, Nov 04, 2024 at 06:10:27PM -0600, Bjorn Helgaas wrote:
-> > > On Sun, Nov 03, 2024 at 02:33:44PM +0200, Leon Romanovsky wrote:
-> > > > On Fri, Nov 01, 2024 at 11:47:37AM -0500, Bjorn Helgaas wrote:
-> > > > > On Fri, Nov 01, 2024 at 04:33:00PM +0200, Leon Romanovsky wrote:
-> > > > > > On Thu, Oct 31, 2024 at 06:22:52PM -0500, Bjorn Helgaas wrote:
-> > > > > > > On Tue, Oct 29, 2024 at 07:04:50PM -0500, Bjorn Helgaas wrote:
-> > > > > > > > On Mon, Oct 28, 2024 at 10:05:33AM +0200, Leon Romanovsky wrote:
-> > > > > > > > > From: Leon Romanovsky <leonro@nvidia.com>
-> > > > > > > > > 
-> > > > > > > > > The Virtual Product Data (VPD) attribute is not
-> > > > > > > > > readable by regular user without root permissions.
-> > > > > > > > > Such restriction is not really needed, as data
-> > > > > > > > > presented in that VPD is not sensitive at all.
-> > > > > > > > > 
-> > > > > > > > > This change aligns the permissions of the VPD
-> > > > > > > > > attribute to be accessible for read by all users,
-> > > > > > > > > while write being restricted to root only.
-> > ...
-> 
-> > > What's the use case?  How does an unprivileged user use the VPD
-> > > information?
-> > 
-> > We have to add new field keyword=value in VA section of VPD, which
-> > will indicate very specific sub-model for devices used as a bridge.
-> > 
-> > > I can certainly imagine using VPD for bug reporting, but that
-> > > would typically involve dmesg, dmidecode, lspci -vv, etc, all of
-> > > which already require privilege, so it's not clear to me how
-> > > public VPD info would help in that scenario.
-> > 
-> > I'm targeting other scenario - monitoring tool, which doesn't need
-> > root permissions for reading data. It needs to distinguish between
-> > NIC sub-models.
-> 
-> Maybe the driver could expose something in sysfs?  Maybe the driver
-> needs to know the sub-model as well, and reading VPD once in the
-> driver would make subsequent userspace sysfs reads trivial and fast.
+"Rob Herring (Arm)" <robh@kernel.org> writes:
 
-Our PCI driver lays in netdev subsystem and they have long-standing
-position do not allow any custom sysfs files. To be fair, we (RDMA)
-don't allow custom sysfs files too.
+> While "phy-names" is allowed for sata-port nodes, the names used aren't
+> documented and are incorrect ("sata-phy" is what's documented). The name
+> for a single entry is fairly useless, so just drop the property.
+>
+> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
 
-Driver doesn't need to know this information as it is extra key=value in
-existing [VA] field, while driver relies on multiple FW capabilities
-to enable/disable functionality.
+Applied on mvebu/dt64
 
-Current [VA] line:
-"[VA] Vendor specific: MLX:MN=MLNX:CSKU=V2:UUID=V3:PCI=V0:MODL=CX713106A"
-Future [VA] line:
-"[VA] Vendor specific: MLX:MN=MLNX:CSKU=V2:UUID=V3:PCI=V0:MODL=CX713106A,SMDL=SOMETHING"
+Thanks,
 
-Also the idea that we will duplicate existing functionality doesn't
-sound like a good approach to me, and there is no way that it is
-possible to expose as subsystem specific file.
+Gregory
+> ---
+> Cc: Frank Wunderlich <linux@fw-web.de>
+>
+> There's also this 2 year old patch fixing other SATA errors[1] which=20
+> was never picked up. :(
+>
+> [1] https://lore.kernel.org/linux-arm-kernel/20220311210357.222830-3-linu=
+x@fw-web.de/
+>
+>  arch/arm64/boot/dts/marvell/armada-7040-db.dts             | 1 -
+>  arch/arm64/boot/dts/marvell/armada-7040-mochabin.dts       | 2 --
+>  arch/arm64/boot/dts/marvell/armada-8040-clearfog-gt-8k.dts | 1 -
+>  arch/arm64/boot/dts/marvell/armada-8040-db.dts             | 2 --
+>  arch/arm64/boot/dts/marvell/armada-8040-mcbin.dtsi         | 1 -
+>  arch/arm64/boot/dts/marvell/armada-8040-puzzle-m801.dts    | 2 --
+>  6 files changed, 9 deletions(-)
+>
+> diff --git a/arch/arm64/boot/dts/marvell/armada-7040-db.dts b/arch/arm64/=
+boot/dts/marvell/armada-7040-db.dts
+> index 5e5baf6beea4..1e0ab35cc686 100644
+> --- a/arch/arm64/boot/dts/marvell/armada-7040-db.dts
+> +++ b/arch/arm64/boot/dts/marvell/armada-7040-db.dts
+> @@ -214,7 +214,6 @@ &cp0_sata0 {
+>=20=20
+>  	sata-port@1 {
+>  		phys =3D <&cp0_comphy3 1>;
+> -		phy-names =3D "cp0-sata0-1-phy";
+>  	};
+>  };
+>=20=20
+> diff --git a/arch/arm64/boot/dts/marvell/armada-7040-mochabin.dts b/arch/=
+arm64/boot/dts/marvell/armada-7040-mochabin.dts
+> index 40b7ee7ead72..7af949092b91 100644
+> --- a/arch/arm64/boot/dts/marvell/armada-7040-mochabin.dts
+> +++ b/arch/arm64/boot/dts/marvell/armada-7040-mochabin.dts
+> @@ -433,13 +433,11 @@ &cp0_sata0 {
+>  	/* 7 + 12 SATA connector (J24) */
+>  	sata-port@0 {
+>  		phys =3D <&cp0_comphy2 0>;
+> -		phy-names =3D "cp0-sata0-0-phy";
+>  	};
+>=20=20
+>  	/* M.2-2250 B-key (J39) */
+>  	sata-port@1 {
+>  		phys =3D <&cp0_comphy3 1>;
+> -		phy-names =3D "cp0-sata0-1-phy";
+>  	};
+>  };
+>=20=20
+> diff --git a/arch/arm64/boot/dts/marvell/armada-8040-clearfog-gt-8k.dts b=
+/arch/arm64/boot/dts/marvell/armada-8040-clearfog-gt-8k.dts
+> index 67892f0d2863..7005a32a6e1e 100644
+> --- a/arch/arm64/boot/dts/marvell/armada-8040-clearfog-gt-8k.dts
+> +++ b/arch/arm64/boot/dts/marvell/armada-8040-clearfog-gt-8k.dts
+> @@ -475,7 +475,6 @@ &cp1_sata0 {
+>=20=20
+>  	sata-port@1 {
+>  		phys =3D <&cp1_comphy0 1>;
+> -		phy-names =3D "cp1-sata0-1-phy";
+>  	};
+>  };
+>=20=20
+> diff --git a/arch/arm64/boot/dts/marvell/armada-8040-db.dts b/arch/arm64/=
+boot/dts/marvell/armada-8040-db.dts
+> index 92897bd7e6cf..2ec19d364e62 100644
+> --- a/arch/arm64/boot/dts/marvell/armada-8040-db.dts
+> +++ b/arch/arm64/boot/dts/marvell/armada-8040-db.dts
+> @@ -145,11 +145,9 @@ &cp0_sata0 {
+>=20=20
+>  	sata-port@0 {
+>  		phys =3D <&cp0_comphy1 0>;
+> -		phy-names =3D "cp0-sata0-0-phy";
+>  	};
+>  	sata-port@1 {
+>  		phys =3D <&cp0_comphy3 1>;
+> -		phy-names =3D "cp0-sata0-1-phy";
+>  	};
+>  };
+>=20=20
+> diff --git a/arch/arm64/boot/dts/marvell/armada-8040-mcbin.dtsi b/arch/ar=
+m64/boot/dts/marvell/armada-8040-mcbin.dtsi
+> index c864df9ec84d..e88ff5b179c8 100644
+> --- a/arch/arm64/boot/dts/marvell/armada-8040-mcbin.dtsi
+> +++ b/arch/arm64/boot/dts/marvell/armada-8040-mcbin.dtsi
+> @@ -245,7 +245,6 @@ &cp0_sata0 {
+>  	/* CPM Lane 5 - U29 */
+>  	sata-port@1 {
+>  		phys =3D <&cp0_comphy5 1>;
+> -		phy-names =3D "cp0-sata0-1-phy";
+>  	};
+>  };
+>=20=20
+> diff --git a/arch/arm64/boot/dts/marvell/armada-8040-puzzle-m801.dts b/ar=
+ch/arm64/boot/dts/marvell/armada-8040-puzzle-m801.dts
+> index 42a60f3dd5d1..3e5e0651ce68 100644
+> --- a/arch/arm64/boot/dts/marvell/armada-8040-puzzle-m801.dts
+> +++ b/arch/arm64/boot/dts/marvell/armada-8040-puzzle-m801.dts
+> @@ -408,12 +408,10 @@ &cp0_sata0 {
+>=20=20
+>  	sata-port@0 {
+>  		phys =3D <&cp0_comphy2 0>;
+> -		phy-names =3D "cp0-sata0-0-phy";
+>  	};
+>=20=20
+>  	sata-port@1 {
+>  		phys =3D <&cp0_comphy5 1>;
+> -		phy-names =3D "cp0-sata0-1-phy";
+>  	};
+>  };
+>=20=20
+> --=20
+> 2.45.2
+>
 
-What about to allow existing VPD sysfs file to be readable for everyone for our devices?
-And if this allow list grows to much, we will open it for all devices in the world?
-
-Thanks
-
-> 
-> Bjorn
+--=20
+Gr=C3=A9gory CLEMENT, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
