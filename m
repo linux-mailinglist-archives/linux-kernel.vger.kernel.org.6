@@ -1,92 +1,102 @@
-Return-Path: <linux-kernel+bounces-395808-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395809-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73B6F9BC347
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 03:39:23 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A22D29BC34F
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 03:41:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A5BC41C22A4D
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 02:39:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5894F28184D
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 02:41:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BB0F433B5;
-	Tue,  5 Nov 2024 02:39:15 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A8FA43AB0;
+	Tue,  5 Nov 2024 02:41:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MDTvydDf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 736B933987;
-	Tue,  5 Nov 2024 02:39:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F22D4A0A;
+	Tue,  5 Nov 2024 02:41:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730774355; cv=none; b=KHO91ArWbCs49oJ6RLOdp/jd5gok8N9IJ1whe7A6IlqSRKQRgwr9QyxnedL3sGIgIV+r8gGjpDnjb+lQrsuLHEGtBO7bKzeitaMN9IsH/PTMNVNUj+nXGg4yKfDaltp+6Vs3mvWFwP7Zmkya//45UWqMZzZUg1cCNVzv7MkkNPE=
+	t=1730774501; cv=none; b=FN8oViOzmemDVHxPdBtCX2wM7Emn8x6KdLvQ+y5Fs3fNsbvWuAsUIt2CoRrTGuQS69z6tid0AYwsorBOHRgsONah07+Hb/0j3Sca5uM9fyWPG7rW2mIVuz5zyacNQj9BeVnQF0NeMDqUzdfVYyDWhoesvsMEVTsrAQ3hDnJykBk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730774355; c=relaxed/simple;
-	bh=3dlYcn7aZzqdueWTNf/V65Mx0ZwJAYLnxDp1PVl80KE=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=rRYKRp1QnscWmXFOPGv6OqHqSibhWCTtVrxfBZ6h7k2FeA3/DAAc4rTY8t9Y8u5YMQVjDjH7bDqwRqH9XT/qkJi4gxf+AMjXGktlxWNihrB+7B0kob45EbpGNXqFaB2uMsZEZQrQe91TXnpjZtqVcT5XVph5oo7ahwbxpkNc0r4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4XjCFk6wZ1z4f3jXP;
-	Tue,  5 Nov 2024 10:38:50 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.75])
-	by mail.maildlp.com (Postfix) with ESMTP id E07891A07B6;
-	Tue,  5 Nov 2024 10:39:08 +0800 (CST)
-Received: from [10.174.176.117] (unknown [10.174.176.117])
-	by APP2 (Coremail) with SMTP id Syh0CgA35uJMhSlnbsyDAw--.48440S2;
-	Tue, 05 Nov 2024 10:39:08 +0800 (CST)
-Subject: Re: [PATCH bpf] selftests/bpf: Add a copyright notice to
- lpm_trie_map_get_next_key
-To: Byeonguk Jeong <jungbu2855@gmail.com>
-Cc: Ilya Leoshkevich <iii@linux.ibm.com>, andrii@kernel.org,
- daniel@iogearbox.net, martin.lau@linux.dev,
- Alexei Starovoitov <ast@kernel.org>, bpf@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <ZycSXwjH4UTvx-Cn@ub22>
- <925cb852-df24-81b6-318a-ee6a628d43c7@huaweicloud.com>
- <ZygrNkfNVUmc74ZG@byeonguk.jeong>
-From: Hou Tao <houtao@huaweicloud.com>
-Message-ID: <13c99b61-782c-ff4c-b8ee-5e3497cf0e8a@huaweicloud.com>
-Date: Tue, 5 Nov 2024 10:39:08 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.6.0
+	s=arc-20240116; t=1730774501; c=relaxed/simple;
+	bh=0lIcSnVwCAI4Pw+NDcQerVcPmYcpucg0B382cbnO0JQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Rbn5EqXnc/U6qUwSO7iPBbbZfL+jgVog9xMK+bkARxM5VbkarOOwZ/hvvD787np5RIv4DAt27/RUXc/Qza3WHnLqQsGdDiDE3Xtvjw17mw99SNt7lrDXFcz8QUm7vF1wEyViicvb3rFPkRzAQqq2P9kImg/r2Ib+vqZr+5qb79M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MDTvydDf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34C61C4CECE;
+	Tue,  5 Nov 2024 02:41:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730774501;
+	bh=0lIcSnVwCAI4Pw+NDcQerVcPmYcpucg0B382cbnO0JQ=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=MDTvydDfw4yBvleERy0u+BKlBHr9bqcoHSxKTddeg8zMutO21k7xhr/0QAE5HO30n
+	 HQQUPDxQ1oU6up0p6TsuOaUqZ6s/NllktAK8Dw/5q7TjOK1InqcHjR3MJpGoQ3B7zg
+	 7dRA/K2SY73/26hYIhQ2FJ1XWZEc5exDoGo3cb1RVtOMnnIU2mFkdsbGg+vYDhR8ex
+	 0tFWyzmWXW4/ZDE44sPjUTl1NOT+z+3VAOjEut7T/e4MadI3XSDeYr2Xl284zujhV4
+	 kBpPcVIRFMhSxWJpjYzNun9+QKdTCiMAfKD9JhkT42CTCXhueRp0iLOj1GeOh+Z6Qp
+	 3iHMUd7x93cww==
+Date: Mon, 4 Nov 2024 18:41:39 -0800
+From: Jakub Kicinski <kuba@kernel.org>
+To: Li Li <dualli@chromium.org>
+Cc: dualli@google.com, corbet@lwn.net, davem@davemloft.net,
+ edumazet@google.com, pabeni@redhat.com, donald.hunter@gmail.com,
+ gregkh@linuxfoundation.org, arve@android.com, tkjos@android.com,
+ maco@android.com, joel@joelfernandes.org, brauner@kernel.org,
+ cmllamas@google.com, surenb@google.com, arnd@arndb.de,
+ masahiroy@kernel.org, bagasdotme@gmail.com, horms@kernel.org,
+ linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+ netdev@vger.kernel.org, hridya@google.com, smoreland@google.com,
+ kernel-team@android.com
+Subject: Re: [PATCH net-next v7 2/2] binder: report txn errors via generic
+ netlink
+Message-ID: <20241104184139.3eb03c69@kernel.org>
+In-Reply-To: <CANBPYPjo0KKm3JbPk=E8Nuv05i=EeR93PHWjSU8fcH-GVWV94w@mail.gmail.com>
+References: <20241031092504.840708-1-dualli@chromium.org>
+	<20241031092504.840708-3-dualli@chromium.org>
+	<20241103151554.5fc79ce1@kernel.org>
+	<CANBPYPj4VCYuhOTxPSHBGNtpRyG5wRzuMxRB49eSDXXjrxb7TA@mail.gmail.com>
+	<20241104081928.7e383c93@kernel.org>
+	<CANBPYPjo0KKm3JbPk=E8Nuv05i=EeR93PHWjSU8fcH-GVWV94w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <ZygrNkfNVUmc74ZG@byeonguk.jeong>
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-CM-TRANSID:Syh0CgA35uJMhSlnbsyDAw--.48440S2
-X-Coremail-Antispam: 1UD129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
-	VFW2AGmfu7bjvjm3AaLaJ3UjIYCTnIWjp_UUUYs7kC6x804xWl14x267AKxVW8JVW5JwAF
-	c2x0x2IEx4CE42xK8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII
-	0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xv
-	wVC0I7IYx2IY6xkF7I0E14v26r4UJVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4
-	x0Y4vEx4A2jsIEc7CjxVAFwI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG
-	64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r
-	1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwCYjI0SjxkI62AI1cAE67vI
-	Y487MxAIw28IcxkI7VAKI48JMxAqzxv26xkF7I0En4kS14v26r126r1DMxC20s026xCaFV
-	Cjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWl
-	x4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r
-	1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_
-	JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcS
-	sGvfC2KfnxnUUI43ZEXa7IUbPEf5UUUUU==
-X-CM-SenderInfo: xkrx3t3r6k3tpzhluzxrxghudrp/
 
-Hi,
+On Mon, 4 Nov 2024 09:12:37 -0800 Li Li wrote:
+> That's why binder genl uses unicast instead of multicast. The administration
+> process of the OS (Android in this case) always runs before any other user
+> applications, which registers itself to the kernel binder driver and uses it
+> exclusively. With a unified family name, the same userspace admin process
+> has access to all binder contexts. With separate family names, each domain
+> admin process can register itself to the corresponding binder context.
 
-On 11/4/2024 10:02 AM, Byeonguk Jeong wrote:
-> Okay, then do I need to resend this patch or it would be accepted anyway?
->
-> .
-It is decided by the maintainer. In my opinion, the patch is not urgent,
-so I think you can repost the patch later after v6.12 is released and
-change the target tree as bpf-next instead of bpf.
+Side note - it'd be useful for my understanding to know what the binder
+families would be. You register them in binderfs_binder_device_create(), 
+what creates the devices and how many do we expect?
 
+Back to answering - I don't know why the same process would have to bind
+to all domains. You record which portid is bound to the context, the portid
+identifies the socket.
+
+BTW portids can get reused, do you need to do something when the admin
+process dies? To prevent normal user from binding to the same portid?
+
+> So, do you think the current implementation of registering multiple families
+> with different names acceptable? Or is there a better way to do it? Thank
+> you very much!
+
+I don't see what having the separate families buys you.
+The genl family ID is added to the netlink message in nlmsg_type.
+That's it, it doesn't do anything else.
+You can add an attribute to the message to carry context->name
+and you'll be able to demux the messages.
 
