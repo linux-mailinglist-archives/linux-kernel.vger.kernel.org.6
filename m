@@ -1,95 +1,118 @@
-Return-Path: <linux-kernel+bounces-395722-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395723-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33CD39BC212
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 01:37:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 148A39BC213
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 01:39:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E13171F228A5
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 00:37:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BACF21F22B15
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 00:39:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AB4CF9DF;
-	Tue,  5 Nov 2024 00:37:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A0A4125B9;
+	Tue,  5 Nov 2024 00:39:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="4V+7reuY"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GAUmDYxd"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C610718622;
-	Tue,  5 Nov 2024 00:37:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A00F1FC3;
+	Tue,  5 Nov 2024 00:39:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730767045; cv=none; b=QKWX+Jl7B34CGrYZWXUB3P2QQl5hF730zu/K+bjSikRSTNu3pXM0hHDed7/hLMwMhBD4Osl0Dn7jF43//1jDz1drYCxfJn6kVFQU6q8m1WBcK1PZOYHCsCfEZokqbMrQqV6+/pa5TVt2KywDrZ19tKV4HJUyPOYJJhYozafJgzo=
+	t=1730767170; cv=none; b=QxiB/lTBjCTUgGF3Nyl8LuDlNBOep9YI505NmShucG0P+migFNe1IG1rtIvmcAjdsZqWDQXPe2rJ7h7jVmI/SfynlR7aiLeu0NT55JcMKc2cgW2F1DOaAqEPtMuXOPsDGa4LDvfypthxeLQLNZe/iH+X5NUNVmjkgmGaHtHyMOQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730767045; c=relaxed/simple;
-	bh=pdvc4Wr2Sp+fgK5bx9hyGXDQxDTd8pbwOnlLFYC5LVk=;
+	s=arc-20240116; t=1730767170; c=relaxed/simple;
+	bh=xfCaDzMNCkWjtvVW63wVhxSTIXKN+FNrDvQ4Cfad98E=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R6z1saQh8U4b5AtFbPWTwOzxgThIrhGBpTkCoLZQdFLnX/vtpdDPP38V7uUzYfMEcHgu7Vo1zT08Plc0JwgxyNzK7jf369+oSHLrDVVXXcHm97NN4/MNyTyeXjRj+OjEvBKj3h+qHKAMR1OJol2AdwrrmZz/CKwwcMQKsiaGtEY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=4V+7reuY; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Transfer-Encoding:Content-Disposition:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:From:
-	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Content-Disposition:
-	In-Reply-To:References; bh=wsCdaXVxhFLJ/19Yju+KPPKup4KE44LFd4V4VV/rTcM=; b=4V
-	+7reuYm4PlQ6QoNHuBv8joZNNODKeI9dEQt9dmTx7aPcSJzM4VqvrM4FAJGsEg0ZkAORbmDbNZGu8
-	iWzop4FPDk45DVN8C6NYoHGAs5Wh5DS88n6twCfeae873ifaFkp7tbdT/MtH582+3chN5ME1wmTwp
-	Q2qz6E59fJQUBIM=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1t87ZI-00CA8S-WE; Tue, 05 Nov 2024 01:37:13 +0100
-Date: Tue, 5 Nov 2024 01:37:12 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Alistair Francis <alistair23@gmail.com>
-Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	linux@armlinux.org.uk, hkallweit1@gmail.com,
-	Alistair Francis <alistair.francis@wdc.com>
-Subject: Re: [PATCH] include: mdio: Guard inline function with CONFIG_MDIO
-Message-ID: <680bd06f-6a76-4a5c-b5d2-51dd172c8428@lunn.ch>
-References: <20241104070950.502719-1-alistair.francis@wdc.com>
- <9ae6af15-790a-4d34-901d-55fca0be9fd2@lunn.ch>
- <CAKmqyKOX8gcRT2dSOvJY2o4bpoF+VuPmhaygJj7pTb1KesrFOQ@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=I+Jiwdi5WAw6ZujBy4vxr0IIvq3baT4vIICzq7N+NCH0FHezLCd7k1WZFsW8k+YiwjqQ20ToFKwe5K4sToyTbpfyoER/7dPFx5Rw57CVT76Dm32Zno/+tIH3LZbzzVskVJKS+1dCRshQNgIiqZLswMZBm4A0fZOk/C+GY0QQme4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GAUmDYxd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D31CEC4CED1;
+	Tue,  5 Nov 2024 00:39:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730767169;
+	bh=xfCaDzMNCkWjtvVW63wVhxSTIXKN+FNrDvQ4Cfad98E=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=GAUmDYxd0aAvkPOgtywrDqq+i0iIiVdmO3HP0UqS/edVUwZ+E1jTWIS/MdiLi9d/P
+	 VbZNLgyjVgZx+ePOeHkiW2TF9H2YAXkRDSshBJi4e3T17lBybisI9q+mYW8lsURaf7
+	 WuStRV6MYM/+yCf35uzHwBLeiZpALXzl2cZwcxJ7VtnSX/D3/u6br0IsezX0gcBSkz
+	 amTg6vwNHyKHpCt6trcKreUE4Y3nuuGwvRkhnl29/xVTVmV9dGD/7icLtOKdeCmAIl
+	 UAP78UDhbLSwJwMW9LQSjdv8zmhLFqhM02DZLZVx5AHvkYzqVRdimlvhJwfjlZMCA6
+	 g5PJsc2j4jYhg==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 71D04CE093C; Mon,  4 Nov 2024 16:39:29 -0800 (PST)
+Date: Mon, 4 Nov 2024 16:39:29 -0800
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Frederic Weisbecker <frederic@kernel.org>
+Cc: rcu@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-team@meta.com,
+	rostedt@goodmis.org, kernel test robot <oliver.sang@intel.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Kent Overstreet <kent.overstreet@linux.dev>, bpf@vger.kernel.org
+Subject: Re: [PATCH rcu 08/15] srcu: Add srcu_read_lock_lite() and
+ srcu_read_unlock_lite()
+Message-ID: <53397727-66c2-4517-9f95-cae073e80744@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <ddf64299-de71-41a2-b575-56ec173faf75@paulmck-laptop>
+ <20241015161112.442758-8-paulmck@kernel.org>
+ <ZylYbsU7uE7jX5Yd@pavilion.home>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAKmqyKOX8gcRT2dSOvJY2o4bpoF+VuPmhaygJj7pTb1KesrFOQ@mail.gmail.com>
+In-Reply-To: <ZylYbsU7uE7jX5Yd@pavilion.home>
 
-On Tue, Nov 05, 2024 at 10:21:15AM +1000, Alistair Francis wrote:
-> On Mon, Nov 4, 2024 at 11:49â€¯PM Andrew Lunn <andrew@lunn.ch> wrote:
-> >
-> > On Mon, Nov 04, 2024 at 05:09:50PM +1000, Alistair Francis wrote:
-> > > The static inline functions mdio45_ethtool_gset() and
-> > > mdio45_ethtool_ksettings_get() call mdio45_ethtool_gset_npage() and
-> > > mdio45_ethtool_ksettings_get_npage() which are both guarded by
-> > > CONFIG_MDIO. So let's only expose mdio45_ethtool_gset() and
-> > > mdio45_ethtool_ksettings_get() if CONFIG_MDIO is defined.
-> >
-> > Why? Are you fixing a linker error? A compiler error?
+On Tue, Nov 05, 2024 at 12:27:42AM +0100, Frederic Weisbecker wrote:
+> Le Tue, Oct 15, 2024 at 09:11:05AM -0700, Paul E. McKenney a écrit :
+> > This patch adds srcu_read_lock_lite() and srcu_read_unlock_lite(), which
+> > dispense with the read-side smp_mb() but also are restricted to code
+> > regions that RCU is watching.  If a given srcu_struct structure uses
+> > srcu_read_lock_lite() and srcu_read_unlock_lite(), it is not permitted
+> > to use any other SRCU read-side marker, before, during, or after.
+> > 
+> > Another price of light-weight readers is heavier weight grace periods.
+> > Such readers mean that SRCU grace periods on srcu_struct structures
+> > used by light-weight readers will incur at least two calls to
+> > synchronize_rcu().  In addition, normal SRCU grace periods for
+> > light-weight-reader srcu_struct structures never auto-expedite.
+> > Note that expedited SRCU grace periods for light-weight-reader
+> > srcu_struct structures still invoke synchronize_rcu(), not
+> > synchronize_srcu_expedited().  Something about wishing to keep
+> > the IPIs down to a dull roar.
+> > 
+> > The srcu_read_lock_lite() and srcu_read_unlock_lite() functions may not
+> > (repeat, *not*) be used from NMI handlers, but if this is needed, an
+> > additional flavor of SRCU reader can be added by some future commit.
+> > 
+> > [ paulmck: Apply Alexei Starovoitov expediting feedback. ]
+> > [ paulmck: Apply kernel test robot feedback. ]
+> > 
+> > Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+> > Tested-by: kernel test robot <oliver.sang@intel.com>
+> > Cc: Alexei Starovoitov <ast@kernel.org>
+> > Cc: Andrii Nakryiko <andrii@kernel.org>
+> > Cc: Peter Zijlstra <peterz@infradead.org>
+> > Cc: Kent Overstreet <kent.overstreet@linux.dev>
+> > Cc: <bpf@vger.kernel.org>
 > 
-> I'm investigating generating Rust bindings for static inline functions
-> (like mdio45_ethtool_gset() for example). But it fails to build when
-> there are functions defined in header files that call C functions that
-> aren't built due to Kconfig options.
+> This might be a dump question but I have to ask. Could this replace
+> RCU-TASKS-TRACE?
 
-Since this does not appear to be an issue for C, i assume these
-functions are not actually used in that configuration. And this is
-probably not an issue specific to MDIO. It will probably appear all
-over the kernel. Adding lots of #ifdef in header files will probably
-not be liked.
+From a purely functional viewpoint, yes, but even without that smp_mb(),
+there are performance issues due to the index fetch, array accesses, and
+return value.  Maybe with improved hardware over time this will change,
+and if it does, yes, we definitely should remove RCU Tasks Trace in
+favor of SRCU-lite.  We are not there yet.
 
-Does Rust have the concept of inline functions? If it is never used,
-it never gets compiled? Or at least, it gets optimised out before it
-gets linked, which i think is your issue here.
+However, it does mean that we don't need to create a new RCU variant
+for uprobes, and that has to be worth something.  ;-)
 
-	Andrew
+							Thanx, Paul
 
