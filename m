@@ -1,65 +1,150 @@
-Return-Path: <linux-kernel+bounces-397021-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397022-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 466979BD5B2
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 20:14:11 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3326A9BD5B5
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 20:14:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B771DB21A89
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 19:14:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DEFDF1F2316B
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 19:14:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B03161EBA09;
-	Tue,  5 Nov 2024 19:14:01 +0000 (UTC)
-Received: from angie.orcam.me.uk (angie.orcam.me.uk [78.133.224.34])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0DC31E2007;
-	Tue,  5 Nov 2024 19:13:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.133.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A763A1EBA10;
+	Tue,  5 Nov 2024 19:14:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T4017n2G"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D8E11E7C1F;
+	Tue,  5 Nov 2024 19:14:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730834041; cv=none; b=ddtVsXJfsJAbjV6jyS5w1W8YvZFppS8WBvyF9RCgeKWgqDN2caBm15qQqamcnf+DHpzik0BiQOebAnyXBk7LdPxGrBbAGHbUR4ptles8eVVt5lw0c4gl1dWy7fxsMyIU6bwj4RLP/adVg+gYG9ihYJSznAp6lwUIS/N2LWhH8+4=
+	t=1730834078; cv=none; b=AiVMiPD8bMfd1FCCu9dPNmU1gfmU5olS7I+f9nW2/C3o/BWVH07RekJz0kVU0KsJ/F0q6hJ5aoJeY0Kh8lv80wbkawR10vusYgIak3FbK5YsMRIKJSW8cnauPnmXS13+drc3Ij8A8QGgZLBSBCJB00oxpg6M4ABXwLsowM/gbZs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730834041; c=relaxed/simple;
-	bh=GxRkPVNTo/Eo7usfPhaWFX2tMZp/ZaS8VV6kFyVG+m4=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=Jp6hfiyjnE/GoHBGVlwPVJfg1JG3DldMU2zspzbP4mHVHhuU6foAmBi49+7YaoLcIn1gVGXsms7CwXRvytCihCZQxh95Cd1qU6VaZP8uqChjN9TmW/5vXGMU0QvXmet7lIKju8Pz9jo87GKYCW8KJP9SHaBMXDlnNm9ymO2gLAk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk; spf=none smtp.mailfrom=orcam.me.uk; arc=none smtp.client-ip=78.133.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=orcam.me.uk
-Received: by angie.orcam.me.uk (Postfix, from userid 500)
-	id 8165392009D; Tue,  5 Nov 2024 20:13:56 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-	by angie.orcam.me.uk (Postfix) with ESMTP id 7D3EE92009C;
-	Tue,  5 Nov 2024 19:13:56 +0000 (GMT)
-Date: Tue, 5 Nov 2024 19:13:56 +0000 (GMT)
-From: "Maciej W. Rozycki" <macro@orcam.me.uk>
-To: Thorsten Blum <thorsten.blum@linux.dev>
-cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
-    linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] MIPS: kernel: proc: Use str_yes_no() helper
- function
-In-Reply-To: <20241105173837.37756-2-thorsten.blum@linux.dev>
-Message-ID: <alpine.DEB.2.21.2411051911550.9262@angie.orcam.me.uk>
-References: <20241105173837.37756-2-thorsten.blum@linux.dev>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+	s=arc-20240116; t=1730834078; c=relaxed/simple;
+	bh=/YMjs/G3oj4S95f3EdJWESuBy72XqnpyIBFn+ojmm7M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=e9P6PVN0w0iF0PP+Wokf8+oe38GWlhTzP+O0Jw5FpQmystiM/H/AyS16m2pAvHMHYfXSkE2hPcHl7dR7q6YDhLMqkukbFrRZ9HUogjDNgNkos21RECDPnBsUj7M5cFGdjh/0eLAMqPaOJZdxnKudinLKDxSb3+3+wAeZfqUYDXk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=T4017n2G; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-20c693b68f5so63186985ad.1;
+        Tue, 05 Nov 2024 11:14:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730834076; x=1731438876; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=/POYcZsa+Y4sDY8gY0M0D+AyybCKFemXpKCFDMhhk+Q=;
+        b=T4017n2GUCvQbnMkWr2Ci3rKoBuRzHTyY4yDyH0tBjBD3PuCJmf9VegvXHSwaL8kl6
+         lFGaflg1fJ3o8IK0ChUr2nDqmi42yv75Mr8C2aAYpIiUMs/sbXYYuZzKBkwR/cbd9Tj0
+         f9HU3IBnussVt6XG1FWBpvf2hswOmThbGMO457sopdg6KKYlDz95d/3Pww2UE+xrhNAt
+         yYkhr6okRQDEEbTZhpJH6CJqAGYTlg1duHSeWGYKBCAftM08KMrmoIVeyeyOLEaN4I56
+         upAXw+qLZKaQOezYAf/to3tBXtEQGUwOSuNJ5+VqDtnMHKhx3KetraQDNXtcZVnu+wwV
+         mDQg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730834076; x=1731438876;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/POYcZsa+Y4sDY8gY0M0D+AyybCKFemXpKCFDMhhk+Q=;
+        b=A9lo7TgvQm/dsqV3boaZI+bF96idaiWcEEcLbJU2dGZsfVH/1QlK/4gIjcBXlGzb4u
+         JwUvV6F6EUhoaiB9suNvYllZgPOgpLmBKYFgh7mmltvlmR9dxFivMXmMUcbHYukLBPSG
+         q+paz/ezuAOvDETbW6ajBSFvXXdPQdMZRRjbDDbn4V6UounCDQLbK0+Z27mVWyURhZu7
+         Bo9xukdZFDeHMqve7mUtLuQnb0arBv6+50FswuAcnQUZal8CbC13wqOTRlE1TsrdHXvn
+         OfxwiRW45rUre5xfBm8pdJdvvMR3MR6LSIGdozlrEcvu2HPCuUNxrCoZxGOfgstjUcBf
+         dtjQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU1KhJCxLLLvu0gLkQv6chTdiio9TiLMLaR4iW8w54AhwA/IR7CJiPYRAGO+0A+wNK82pt45d1m+T1TCCsh@vger.kernel.org, AJvYcCWYTYbAqeA0F8Gmo/XZoic/K/N/klRY1qczhMv52WDkz52I9Yy8KF7e9USc1YeVpS5v1maHgiHtyKYv@vger.kernel.org, AJvYcCXAZBDSlPQqh+gn8YB0QPSRO924CJ7Ru+De1jL3FUXiJwQ43pea4szncPRIO6BM/lq7v1cza15sKCtxnaM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw2kh76ffmtfgNjzoMfTfg7mPkKoHDhLjWgz57Sofz45AsCjdtb
+	mR6Bbbqi9KxdIEsHrl+6q+CT2MFPaKonmzaz7EAMX1WxR6HcsnsE
+X-Google-Smtp-Source: AGHT+IG0RIwiy5IluRTrH7x/Dm8Zl2S5emkG0OY5PKzt8ddd/HMYfIzoQ7ES3TBKcS3KpzvDNYEWgA==
+X-Received: by 2002:a17:90b:2d8d:b0:2e2:cd79:ec06 with SMTP id 98e67ed59e1d1-2e93c18815cmr29399739a91.10.1730834075684;
+        Tue, 05 Nov 2024 11:14:35 -0800 (PST)
+Received: from google.com ([2620:15c:9d:2:65d0:e6fa:350:5727])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e93da983f9sm10210925a91.5.2024.11.05.11.14.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 05 Nov 2024 11:14:35 -0800 (PST)
+Date: Tue, 5 Nov 2024 11:14:32 -0800
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Conor Dooley <conor@kernel.org>
+Cc: Markus Burri <markus.burri@mt.com>, linux-kernel@vger.kernel.org,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Marek Vasut <marek.vasut@gmail.com>, linux-input@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 4/7] dt-bindings: input: matrix_keypad - add missing
+ property
+Message-ID: <ZypumDqlw2tdllG5@google.com>
+References: <20241031063004.69956-1-markus.burri@mt.com>
+ <20241105130322.213623-1-markus.burri@mt.com>
+ <20241105130322.213623-5-markus.burri@mt.com>
+ <20241105-earpiece-swizzle-a3e36d50b9c6@spud>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241105-earpiece-swizzle-a3e36d50b9c6@spud>
 
-On Tue, 5 Nov 2024, Thorsten Blum wrote:
+Hi Conor,
 
-> Remove hard-coded strings by using the str_yes_no() helper function.
+On Tue, Nov 05, 2024 at 06:22:36PM +0000, Conor Dooley wrote:
+> On Tue, Nov 05, 2024 at 02:03:19PM +0100, Markus Burri wrote:
+> > Add missing property 'gpio-activelow' to DT schema.
 > 
-> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
-> ---
+> What do you mean "missing property"? Why isn't it sufficient to mark the
+> GPIOs as GPIO_ACTIVE_LOW in the various -gpios properties?
 
-Reviewed-by: Maciej W. Rozycki <macro@orcam.me.uk>
+Unfortunately we do have "gpio-activelow" property already used in the
+driver since 2012 when DT support was added to the driver. This patch
+merely acknowledges that it is there.
 
- LGTM, thanks!
+If DT maintainers wish to adjust known DTSes and switch to proper
+polarity annotation through gpio property I am all for it.
 
-  Maciej
+> 
+> > 
+> > Signed-off-by: Markus Burri <markus.burri@mt.com>
+> > ---
+> >  .../devicetree/bindings/input/gpio-matrix-keypad.yaml        | 5 +++++
+> >  1 file changed, 5 insertions(+)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/input/gpio-matrix-keypad.yaml b/Documentation/devicetree/bindings/input/gpio-matrix-keypad.yaml
+> > index 745652b..9ea66b3 100644
+> > --- a/Documentation/devicetree/bindings/input/gpio-matrix-keypad.yaml
+> > +++ b/Documentation/devicetree/bindings/input/gpio-matrix-keypad.yaml
+> > @@ -51,6 +51,11 @@ properties:
+> >        (Legacy property supported: "linux,wakeup")
+> >      default: false
+> >  
+> > +  gpio-activelow:
+> > +    type: boolean
+> > +    description: The GPIOs are low active.
+> > +    default: false
+> 
+> What you want is a flag, not a boolean here btw. Flags you can check for
+> the presence of, booleans you cannot.
+
+The behavior is fixed. If the flag is true GPIO is assumed to be active
+low, otherwise (and in the absence of the flag) GPIO is assumed to be
+active high.
+
+> 
+> > +
+> >    debounce-delay-ms:
+> >      description: Debounce interval in milliseconds.
+> >      default: 0
+> > -- 
+> > 2.39.5
+> > 
+
+Thanks.
+
+-- 
+Dmitry
 
