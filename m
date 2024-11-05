@@ -1,227 +1,192 @@
-Return-Path: <linux-kernel+bounces-396663-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396664-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5183E9BD03F
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 16:19:17 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B75229BD040
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 16:19:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D5B291F22E60
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 15:19:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7583F2835A8
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 15:19:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0383F1DC04C;
-	Tue,  5 Nov 2024 15:19:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 860311D27B1;
+	Tue,  5 Nov 2024 15:19:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="a0ixbyoX"
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2060.outbound.protection.outlook.com [40.107.244.60])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b="OhlMF6/O"
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BC001DAC9C;
-	Tue,  5 Nov 2024 15:18:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.60
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730819939; cv=fail; b=Eh32/6TKahbeLEZN4rBgK20IUfCP2qRM48NShacr1rS6YOAsu9u07X9glKibWUiJDNDUOICDGx7FKmHPw3sdz6vYPdu7psVm1Gaf8MRq055Mp04xChF0J8wpIBoIPkC3LxbUbrqzbbkgo/+Wslt4tCK7VOlQZWGqu8cYzek9Oto=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730819939; c=relaxed/simple;
-	bh=A1izzNvYawryLUJM1KpeF4TSRYwXRCsnXc3DOG9y50A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=Jgj5ENaLYyNqgCVzWMGmZ2k3c9KPwceHGejH2f6C+o5IDsC0xkRez897N33P+cYj0A/71mZW/jdnry0xslBMZ4aowAwiiAVi7iLJkghMRtBOU7yR73FohTUs95SnbpItsEfzVZC+vDFyZ17qehNGWh61gF8SDKB9ClZw+GDbTnU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=a0ixbyoX; arc=fail smtp.client-ip=40.107.244.60
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=H0yK17x6pxyCUnURXhCf+UG6TsoxNX4+ILT41gI1478xUMAvymA1h+uT14TFrIhjyeIFT7L/gmUz+oLk/Zal13F7EzRWPybf7EI2l8kuiyfX1zep3RME1LGIXs9zhJBXw7JNkkXCm4Sb7s4lcd+KPst8mfbpAQwzHbA7zXMiV5bD8qQl5qgvajgzs/nP+FupZAk0XM/7/FakDUdO/5YBkZG5ZUhYrmM6daCpAiVsYGZwMoVZ/u4P7VsMK+73S9M3rU0JLzCun3ixiW2QYtvg91TrP3eQUwOnY1kvOguGgFQLDC/cI1JndczCKM7YWO4Cl2gx1CTCCLSspDQ8B7K3Hw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=zUOF8P6TNAb3T9mciJHB+R+9K9TpzeU3ZcMYIvOJBW4=;
- b=VcL3KpyskVNahYYcKTRcM0Hwak9v3TTREolPPMXQXhReS5c3ShqUSRdC73WTLcnlX1dVp1gh3oaz1eXnA7Wi+Kea/hyi3poAcrb+SAX/RiZAGfDexaRJ9vSZoCJph433zw+k44jAto1oq0fERzp+tmEJNMiWs4WtqtUP2XgkeGy/NoheR4sKKZ2lOyC0tAEPE9TS9EH1eSNzlUMZ4eWpQifxF4W1qUs+Zr9610bQaeOaDXuJYjhCRfj5rPZKZsEgHPi00+KU4TyAvbSBD/oV2xHiUEH15AdbGgoxjtrZ46dBiUmit2fKphOv5OqWvWy0wz8aqXxkrGoKSzdQIqP8ZA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=zUOF8P6TNAb3T9mciJHB+R+9K9TpzeU3ZcMYIvOJBW4=;
- b=a0ixbyoXZ62R9CiS23rtVyzgyngx7pjByc29ggCpQ20anr2gXIpPaY9NEsR0O3e5zB9WeBfFsbyHwK37ZWBATlRE1OAICqvpgYdLyfTq6iXUPdvjiSyy2JACyhP+DuGJwtpW+wsqYi7TTj+QsAyFgedFe5jMDsQSrl/AntQ7k1s=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DM4PR12MB6373.namprd12.prod.outlook.com (2603:10b6:8:a4::7) by
- SA0PR12MB4462.namprd12.prod.outlook.com (2603:10b6:806:95::22) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8114.30; Tue, 5 Nov 2024 15:18:55 +0000
-Received: from DM4PR12MB6373.namprd12.prod.outlook.com
- ([fe80::12f7:eff:380b:589f]) by DM4PR12MB6373.namprd12.prod.outlook.com
- ([fe80::12f7:eff:380b:589f%5]) with mapi id 15.20.8137.018; Tue, 5 Nov 2024
- 15:18:55 +0000
-Date: Tue, 5 Nov 2024 10:18:47 -0500
-From: Yazen Ghannam <yazen.ghannam@amd.com>
-To: Shuai Xue <xueshuai@linux.alibaba.com>
-Cc: mark.rutland@arm.com, catalin.marinas@arm.com, mingo@redhat.com,
-	robin.murphy@arm.com, Jonathan.Cameron@huawei.com, bp@alien8.de,
-	rafael@kernel.org, wangkefeng.wang@huawei.com,
-	tanxiaofei@huawei.com, mawupeng1@huawei.com, tony.luck@intel.com,
-	linmiaohe@huawei.com, naoya.horiguchi@nec.com, james.morse@arm.com,
-	tongtiangen@huawei.com, gregkh@linuxfoundation.org, will@kernel.org,
-	jarkko@kernel.org, linux-acpi@vger.kernel.org, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
-	linux-edac@vger.kernel.org, x86@kernel.org, justin.he@arm.com,
-	ardb@kernel.org, ying.huang@intel.com, ashish.kalra@amd.com,
-	baolin.wang@linux.alibaba.com, tglx@linutronix.de,
-	dave.hansen@linux.intel.com, lenb@kernel.org, hpa@zytor.com,
-	robert.moore@intel.com, lvying6@huawei.com, xiexiuqi@huawei.com,
-	zhuo.song@linux.alibaba.com
-Subject: Re: [PATCH v16 2/3] mm: memory-failure: move return value
- documentation to function declaration
-Message-ID: <20241105151847.GF916505@yaz-khff2.amd.com>
-References: <20221027042445.60108-1-xueshuai@linux.alibaba.com>
- <20241104015430.98599-3-xueshuai@linux.alibaba.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241104015430.98599-3-xueshuai@linux.alibaba.com>
-X-ClientProxiedBy: BL1PR13CA0076.namprd13.prod.outlook.com
- (2603:10b6:208:2b8::21) To DM4PR12MB6373.namprd12.prod.outlook.com
- (2603:10b6:8:a4::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0161C3BB21
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 15:19:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730819968; cv=none; b=ZreeQ26AzTaPweR1Js854fwEu11LvEZSa+gXkMmnXBUnVUNEqtx44K3piA+1jdAmhIIO8tXS69SsDkyg8KJWFqCsfWSx3v3/1I8QxXEu6mkxlZpqf/sfK0NflT5W1ziwzCYFm+KKg/n2CyEChodcXVUR0cOKykBciDYgC/voSqE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730819968; c=relaxed/simple;
+	bh=b2oiIwfG8NP0Yfzt1TlTAIYmJEoTNS8ZQpQCPPVGu4g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JfQtaNm+06q7LHivW4W20geQDegQ1ZQ1A0w6nQrj4LP+LoeB6OPqt/R85Of3Bc2N+NWDCr5H4jcEmEBVY2CtEncJHJvXfE3+7OrVbVlt4sjRZLGWy6M9QsUD8qkGQH1qvfQOruo3mOPo7OkJWhaH9L5Nfr3Go6hGPMu1Tk1Z45k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com; spf=pass smtp.mailfrom=cloud.com; dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b=OhlMF6/O; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloud.com
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5cb615671acso3323518a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 07:19:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=citrix.com; s=google; t=1730819965; x=1731424765; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=SIxEK75x/go35G1NjXNPJ93+dyIRrfy/YekIQ/KzVl8=;
+        b=OhlMF6/OgXgrPlMe0w9ZHiqXr7F+ChjkzUBd2mnjWP5Og7vxR869XmU5O6/PO8sHNX
+         WjMCDI5pccOkv693k8ZpTYdqMG+kGcOvm59puEiLL+uuIWb5S/RHaZ+VT7zFNcHzZNcA
+         4ClXqYOc2iIy4f3BPNnRQT0esrSab6AEPIbpE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730819965; x=1731424765;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SIxEK75x/go35G1NjXNPJ93+dyIRrfy/YekIQ/KzVl8=;
+        b=Wg3QkneaXTlCoIJXxkYgKmhV095w1A+U1kkrY6eWhdDcDsDRwCvHck99RswoFDRE4Q
+         p037dt4Zy3pkpC+ebsx3qbidk6mcbVJqMzU8nd9LomTNjJdXtC1p8iukJ4B2pybTfgss
+         /17fVFAUXmcyvm+EZl5iiNRHTxZg+4XCiWVwvuKVVoepRTtrRv7Y9XAbPC4LXETeNT51
+         D8INrw3jTh/rxBwH/0qa/1H33yA79gm+x9VgmZ9H3qkkHL3n4WuoGwOlCX2cxxRz0ulE
+         H4SWgNdhFoRIgNw6AQEyJfz31uEy/t4g2S1LiPstPObS2lZYMiarGeLqVlw8hyPsGoxY
+         MZBQ==
+X-Gm-Message-State: AOJu0YyFN1lGnO9qGyti2VBxSNPN3B8oxTLt1wLWYM9nvMGUE57PVaP7
+	+20oD6OC7fwxVbtCnZKnVY0rgcBqxuP3JbiJOQZ6XhPts/zIg68GdH6P1LNb0xU=
+X-Google-Smtp-Source: AGHT+IEcF2TIoWYjfUVPIUikHiw7tct5aNYFMeMK0t16cmEB1Pa1/c2tAh5ftTAF/YJTrH50uwHs4A==
+X-Received: by 2002:a05:6402:d0b:b0:5ce:b733:2ac7 with SMTP id 4fb4d7f45d1cf-5ceb937e6dfmr14893489a12.29.1730819965236;
+        Tue, 05 Nov 2024 07:19:25 -0800 (PST)
+Received: from [10.125.226.166] ([185.25.67.249])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cee6b0fc4dsm1427225a12.84.2024.11.05.07.19.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 05 Nov 2024 07:19:24 -0800 (PST)
+Message-ID: <ea88e0d2-2ada-40e6-9bca-06a598dba70d@citrix.com>
+Date: Tue, 5 Nov 2024 15:19:23 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR12MB6373:EE_|SA0PR12MB4462:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4b2f1a90-2cae-4696-1caa-08dcfdad28fc
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?OBnayaz9eSLyGL3RPI1KugH4YVH54FZc4cH9uUuXVA2Sx1dFvTZ7f8MFzs2m?=
- =?us-ascii?Q?tTu1hpJcHPhSS0+h9DzDV3Gs+vkU4ghwgUCWj1QT76PX7iYjergkiHdthDcI?=
- =?us-ascii?Q?N1rzXqv4CfmUO9y5J4LnMGpXaeThx23UaPo0/vm+7dspKlYQZrPgGybWizyS?=
- =?us-ascii?Q?N+Tq9wTPq3iOjWj7hXekyRuenrmB7LGqbUcgjn2vkxE7d5WkJpweWXWNk0I/?=
- =?us-ascii?Q?5VNO9SyLwZpGvkQ1C/BGAioa7hesYQrus2fwnxX4GsrEbrm7fsVKOtjoy1cn?=
- =?us-ascii?Q?YbaiIkmkVE0B+zLlGpY4h3G8sXwCdoqcK6LQu2PdUVQ8lgyylZUEYRcCMThE?=
- =?us-ascii?Q?4nC/MLoFXMGmQpm9bs9uqlZ+PeikgRf4+gSsohvQYBvU8c9v1Wpoyi50K1a0?=
- =?us-ascii?Q?Gn3wPTHfyFGmec1j8L6DIdn5PbPC3GYjorS3c2xaHVte4ifs78lj4jenRfR1?=
- =?us-ascii?Q?xXjwVKYVbr0n7p/yHMQRHoEyTGLhLXfZC2tllkR1VliNcCMh6Ka/yeGC4U3t?=
- =?us-ascii?Q?ePnrk1F7g1UBzW7kM7hNKZHhN3hJwiUhYg9XNvylaT+QXuNi5AbyOHCNFI8M?=
- =?us-ascii?Q?D0fXzZCVnK8PuMOll62glNr9HhrwbF4BmzYAcefXbTLTrWx6vVVdsjNk5Rl3?=
- =?us-ascii?Q?vVlqPw8xv5wynEmJc2LKVOrmJPUDz53advmGdR1dmknLw1+TdvNUIjVtKdDk?=
- =?us-ascii?Q?KCOpOKGa5jbR50/7GgAzPyl2QwK2xQ+ZcmTr1YhkR1cHbOqQrglHqZyDArvl?=
- =?us-ascii?Q?4UPbk4C2rhRVI1HRZgD3BgIwd3UwRchdp/uxLd/dIH2/XiZi4bdbWl08p2Jb?=
- =?us-ascii?Q?s4Jg/cAo/56GU3V5aNF+0QK6zus4zUNTYRK711v+XlVQIsJw6b0ORzvuN7Kr?=
- =?us-ascii?Q?0dSTs+6bwSMJpm7LuzYSboed3RYaGEAuPp8vG7b98uPKBryQq3nI3awJfNYe?=
- =?us-ascii?Q?oOMukyhi3D4/am8DuqN/gTwsxO+HRYOURuao2PpEiAmJSgbC18ZQr53o7wTU?=
- =?us-ascii?Q?iN8gtHSJpMGDRT5E1MvUF7D2DTZEu1IOvRdKrEo8LL3WuEP336YilW0AA3p6?=
- =?us-ascii?Q?To+sNy5ioHiPMyMnVckDomy5OdqwT0Ciq9heTPwJPcy1hjIIanduLukKvDVY?=
- =?us-ascii?Q?AYBHynOVa56kQe6xfXNw4BBAWIarRKq0S6vcVil6Y3dwxL7/6iYSjoX9s8BF?=
- =?us-ascii?Q?KBkgBJcvNdVW4VESaLR9Gveilqn8nb1HMjKbaXx2dVujiNVGdPstQ0IwWgcG?=
- =?us-ascii?Q?5AWxaZa5rvpAi58ZJ6rwglhHOsg2pJEUcVj4cLRtvIcrLCkFdEzsWt410L52?=
- =?us-ascii?Q?tYw=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB6373.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?5WpjQO3GHwGSW45xkQ9k6fjZnyyHg8lh4zHYR3Op7tSukQ83sd6hRb9MHUNJ?=
- =?us-ascii?Q?+BS8Rjfj0TTbu4+5sOXPRMaduvd60XxaY8LrM9xOnYvrPeYKLBreLtJbrcfl?=
- =?us-ascii?Q?bAN99quBC2rOc6GGQXfCzR6Z/gSsqpS5qGZZZjLqaDgNL5NX11AV1iw0BjWC?=
- =?us-ascii?Q?ZASfr8srGwAtMSpbiwbDpqGKYW6HsDHREVXynvOMR1B/CbSVMQX9cAv2Ba5S?=
- =?us-ascii?Q?Yx8i4JKUys4WbkkDOYHm+XoqsptI0oNBVVVOJKaw8seJAABFnmv1dYx8zAzU?=
- =?us-ascii?Q?HasVuQ+EscK71vrJyzc3FnDIIK4cC/yAeeBvq2CblHkbTTtbdOSJ88sks5sO?=
- =?us-ascii?Q?lQ1qvvpPJ1JjYk2yrhe0iWjtEnmxQi9Sw1LvzSOtSUbYyJWYgNV4uvMk5Ap/?=
- =?us-ascii?Q?jqdy1diVXN5uzqlbEBbCkewZf5DFObNQSy9YJf5PH/racBg64y1Vd7YHQ5K6?=
- =?us-ascii?Q?NWIEuUewvlQW76UWyValbspLWoYP6IG3iFbr/FSsDWBZI8lNXQ6pIkP5MfG6?=
- =?us-ascii?Q?E6uQgDljhWS1ow4Z1yq3sorzlRU5YOW31Rg0JF29YIZ1bgEOXD+y5GgrISeb?=
- =?us-ascii?Q?Gl7w9SfXm+mSvjuRAFu1EknozvcG8hSVPU9DKg9ejl00ZVf0i5WNxwGliKbe?=
- =?us-ascii?Q?u4Rbqaa7ulH+J2PJELFAW1EcUJ8pkBu77602hX+kKqgOjuddQwUYUEEAPA4B?=
- =?us-ascii?Q?X3Ov5JvR2eINkRhP6ahbryVDe2/YljL3Wg93TvY8GMUjXogy1Jmw7kps9R0D?=
- =?us-ascii?Q?SIPAkxMA5rjMQuOF5L3wE+32z5w09FSpg6WrFgRFGdNRfRiYjB6+/Bpd5VoG?=
- =?us-ascii?Q?wwm1TO6ukVlc6jA6FPRveL6X61S/rghlmU5nAjAu7QJnNq89wSsQ1cBxlH1/?=
- =?us-ascii?Q?c6L0klmrSybYrxuOOHoS5vuE0CDYoQM1YrF6Q75L0QWfjqpIF65G9gAGPJx1?=
- =?us-ascii?Q?NAqofKn7WkF+CJkb587a6Wb7+hzXBUVzO4TWuZum5z0AOhOYAww2w3O3tTE6?=
- =?us-ascii?Q?iNMjN98UC+wpRlnux2zvLkWLqvV8JP1yzHUAlnTfctbt6SG0TSB5EYvy8Bax?=
- =?us-ascii?Q?Z5jBa7V/G4+5rGqtaNVXYE3SUPcATdpnIbXXGzBBwck1xy5MPtz0qVW/Uw0Y?=
- =?us-ascii?Q?/3gSrzkaBLWnrudvn90Yc64rCogEzDQ1xwu84Oc8IJknGzEPUQqCPqSypINH?=
- =?us-ascii?Q?jnYnrqCe4BaRGpra1uFRQKa3guU/a2dFzr+Lb+GSiSJcatyGZxicbaJdYL+3?=
- =?us-ascii?Q?7mJ9skEBypnQ1X2jXmsztH11UYjpMoarIqeo6RkRjcsf5XlpAiSGqRAUAvup?=
- =?us-ascii?Q?Nodrvnf+Phz5HI51CVnJr3eMpXjpsmm/RhMp9wlPSiuCc4+tdXcBv/usXKJu?=
- =?us-ascii?Q?Tj64wGPD/CKrxpc8hDu0PxVfA98LRZgxNHT01fXZ47J/BWfyQ+/8gh6EUZXZ?=
- =?us-ascii?Q?2f9f0FDYY2aAEDPDaaZj+/7zg1ZDHhG9pPoxSFoh0icRZn6dTfL1EG6d5M8B?=
- =?us-ascii?Q?QquMa3GS+Smpe4ed4M9C3ykr7pTMknao+w2+Ogm+9G1Jwwv4wdvl8qvYzwHy?=
- =?us-ascii?Q?+8yiVNAZdyZhjAzgN6qbx5tj1TGI+900X6uzCQaD?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4b2f1a90-2cae-4696-1caa-08dcfdad28fc
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB6373.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Nov 2024 15:18:54.1576
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: BaONh2hMaHYOyFe9pMFtEWY0m3VK6KdcqGhejci1EpotCxdm/qSAEMD6/3ES9GGLi3rDj1mQFhXc7t4d62D6xQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA0PR12MB4462
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 5/8] x86/traps: Cleanup and robustify decode_bug()
+To: Peter Zijlstra <peterz@infradead.org>, x86@kernel.org
+Cc: linux-kernel@vger.kernel.org, alyssa.milburn@intel.com,
+ scott.d.constable@intel.com, joao@overdrivepizza.com, jpoimboe@kernel.org,
+ alexei.starovoitov@gmail.com, ebiggers@kernel.org, samitolvanen@google.com,
+ kees@kernel.org
+References: <20241105113901.348320374@infradead.org>
+ <20241105114522.285032152@infradead.org>
+Content-Language: en-GB
+From: Andrew Cooper <andrew.cooper3@citrix.com>
+Autocrypt: addr=andrew.cooper3@citrix.com; keydata=
+ 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
+ 6+ahAA==
+In-Reply-To: <20241105114522.285032152@infradead.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Nov 04, 2024 at 09:54:29AM +0800, Shuai Xue wrote:
-> Part of return value comments for memory_failure() were originally
-> documented at the call site. Move those comments to the function
-> declaration to improve code readability and to provide developers with
-> immediate access to function usage and return information.
-> 
-> Signed-off-by: Shuai Xue <xueshuai@linux.alibaba.com>
-> Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
-> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> ---
->  arch/x86/kernel/cpu/mce/core.c | 7 -------
->  mm/memory-failure.c            | 9 ++++++---
->  2 files changed, 6 insertions(+), 10 deletions(-)
-> 
-> diff --git a/arch/x86/kernel/cpu/mce/core.c b/arch/x86/kernel/cpu/mce/core.c
-> index 2a938f429c4d..c90d8fcd246a 100644
-> --- a/arch/x86/kernel/cpu/mce/core.c
-> +++ b/arch/x86/kernel/cpu/mce/core.c
-> @@ -1373,13 +1373,6 @@ static void kill_me_maybe(struct callback_head *cb)
->  		return;
->  	}
+On 05/11/2024 11:39 am, Peter Zijlstra wrote:
+> --- a/arch/x86/kernel/traps.c
+> +++ b/arch/x86/kernel/traps.c
+> @@ -110,24 +117,37 @@ __always_inline int decode_bug(unsigned
+>  		return BUG_NONE;
 >  
-> -	/*
-> -	 * -EHWPOISON from memory_failure() means that it already sent SIGBUS
-> -	 * to the current process with the proper error info,
-> -	 * -EOPNOTSUPP means hwpoison_filter() filtered the error event,
-> -	 *
-> -	 * In both cases, no further processing is required.
-> -	 */
->  	if (ret == -EHWPOISON || ret == -EOPNOTSUPP)
->  		return;
+>  	v = *(u8 *)(addr++);
+> -	if (v == SECOND_BYTE_OPCODE_UD2)
+> +	if (v == SECOND_BYTE_OPCODE_UD2) {
+> +		*len = addr - start;
+>  		return BUG_UD2;
+> +	}
 >  
-> diff --git a/mm/memory-failure.c b/mm/memory-failure.c
-> index 96ce31e5a203..1c5098f32d48 100644
-> --- a/mm/memory-failure.c
-> +++ b/mm/memory-failure.c
-> @@ -2209,9 +2209,12 @@ static void kill_procs_now(struct page *p, unsigned long pfn, int flags,
->   * Must run in process context (e.g. a work queue) with interrupts
->   * enabled and no spinlocks held.
->   *
-> - * Return: 0 for successfully handled the memory error,
-> - *         -EOPNOTSUPP for hwpoison_filter() filtered the error event,
-> - *         < 0(except -EOPNOTSUPP) on failure.
-> + * Return:
-> + *   0             - success,
+> -	if (!IS_ENABLED(CONFIG_UBSAN_TRAP) || v != SECOND_BYTE_OPCODE_UD1)
+> +	if (v != SECOND_BYTE_OPCODE_UD1)
+>  		return BUG_NONE;
+>  
+> -	/* Retrieve the immediate (type value) for the UBSAN UD1 */
+> -	v = *(u8 *)(addr++);
+> -	if (X86_MODRM_RM(v) == 4)
+> -		addr++;
+> -
+>  	*imm = 0;
+> -	if (X86_MODRM_MOD(v) == 1)
+> -		*imm = *(u8 *)addr;
+> -	else if (X86_MODRM_MOD(v) == 2)
+> -		*imm = *(u32 *)addr;
+> -	else
+> -		WARN_ONCE(1, "Unexpected MODRM_MOD: %u\n", X86_MODRM_MOD(v));
+> +	v = *(u8 *)(addr++);		/* ModRM */
+> +
+> +	/* Decode immediate, if present */
+> +	if (X86_MODRM_MOD(v) != 3) {
+> +		if (X86_MODRM_RM(v) == 4)
+> +			addr++;		/* Skip SIB byte */
+> +
+> +		if (X86_MODRM_MOD(v) == 1) {
+> +			*imm = *(s8 *)addr;
+> +			addr += 1;
+> +
+> +		} else if (X86_MODRM_MOD(v) == 2) {
+> +			*imm = *(s32 *)addr;
+> +			addr += 4;
+> +		}
+> +	}
+> +
+> +	/* record instruction length */
+> +	*len = addr - start;
 
-One more obvious one from this function:
+`ud1 0(%rip),%eax` has something to say about this length calculation[1].
 
-	-ENXIO        - memory not managed by the kernel
+You need the Mod = 0, RM = 5 case wired into addr += 4 without filling
+in imm.
 
-> + *   -EOPNOTSUPP   - hwpoison_filter() filtered the error event,
-> + *   -EHWPOISON    - the page was already poisoned, potentially
-> + *                   kill process,
-> + *   other negative values - failure.
->   */
->  int memory_failure(unsigned long pfn, int flags)
->  {
-> -- 
+~Andrew
 
-Reviewed-by: Yazen Ghannam <yazen.ghannam@amd.com>
-
-Thanks,
-Yazen
+[1] or maybe you've got something rude to say about those of us who
+encode instructions like that...[2]
+[2] It's perhaps fortunate that decode_bug() doesn't know what a REX
+prefix is.
 
