@@ -1,145 +1,171 @@
-Return-Path: <linux-kernel+bounces-396917-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396918-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A27309BD440
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 19:13:01 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A09809BD448
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 19:13:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5AE731F23EF0
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 18:13:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 967601C22FB7
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 18:13:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9005B1E6DFE;
-	Tue,  5 Nov 2024 18:12:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8583E1E6DFE;
+	Tue,  5 Nov 2024 18:13:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mCmUESKy"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cuy7307N"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1C094D8D0;
-	Tue,  5 Nov 2024 18:12:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA7301DD0D9;
+	Tue,  5 Nov 2024 18:13:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730830373; cv=none; b=WhEDYA7ntAIxLH7lLvDPcy0lKrEwYflLwfjjCzqyvsBjOpyzuSIJua9ywA50/x6EBlpK5ePyHQbsuhieeUgowwPVQo3KUU45rkyp0C3D3aI6fIqW8I4/RA5kFQ54NuMRIkP1LEB+/hmFDwjemckqCIHuY77hfPQ6rxb6WB1TVaM=
+	t=1730830390; cv=none; b=GK1KOvXfwlyDRHsF9jN2UtQuO0nSR/xQQ7LOYV/NLn21Ni6BiNOUxGSIDQ9cMsv/Bp/T4wiaeMsZ+86suPh/kdRHMZATYcEIdB96h9LJEItEKGKAJhqHpEAt7DzLXhpYXF7bsjRATXPuF+rfxcexu7bn5lXC0OFXVfLCQHk69wc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730830373; c=relaxed/simple;
-	bh=Udk1VMwDN8I7xsfSbF8HU/bL4sGq932n94t1iltYcbU=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=sf9MlMuJLajN+jwJKXMu6zQhn+20RYAaiZSfHX4UEci8DxDROz963bulaRSk5GqWWvp2EMXsM4Tb2THHeM0J3UQ1KjRgnuPujmg/vKavRVmBfgHQBQvfegM/Lbv+DtZMaQbJ/D0WxXe9KW//82LtxQ5X5bPF9xrDzlW14feB62Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mCmUESKy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E645C4CECF;
-	Tue,  5 Nov 2024 18:12:52 +0000 (UTC)
+	s=arc-20240116; t=1730830390; c=relaxed/simple;
+	bh=pxqB7qCPgf6SdrFqZG7JzmVzNL3Eokwf44mDjUQzHfY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Mt4pNGyX0r3utI/7toGYIdrIPMnZOwg73Ep0qf2VrsddEcSPw9fYmpalkAaPLuaez0R4APYpctHRYaH4L36hEMhXvEJlHEBip6mBGmkJuDacyq9OcHtXffUc1I5tDuYYvWtKs1AwermsAFXTEZRxcIfkim81BZ7oLUyjkh7oPog=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cuy7307N; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8D4DC4CECF;
+	Tue,  5 Nov 2024 18:13:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730830372;
-	bh=Udk1VMwDN8I7xsfSbF8HU/bL4sGq932n94t1iltYcbU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=mCmUESKyLTIVvUyIMOlG04zS+PnHc8vwsc0/A1adU//F2uIkB7NH9IIHotDtIp87J
-	 +rWhyazK/ro3FcK1OCspxRwGpwjbsbSAmcWjhGKhaXjyulTMDte378qnKHsd8BqFNG
-	 5a89HSUKJLwizdaCgFCZsZwa63b4My277O6okqvHDz/WYozMVHRe13nhGZGNeI8ZqN
-	 JukXcqTiy1rBhoOk3Bm/xZCllGN+KLznSLwik9UF9d3kVPXgQxb5ShhqEagv8AXTLi
-	 0/+uR0m4uv4vD2qnybmxxDL+LbinLVh9+RQJRhwry58M8tyu15d+E1/cmzbE+12dYZ
-	 M5iq8ruM8cklQ==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1t8O2r-00A5G8-Tj;
-	Tue, 05 Nov 2024 18:12:49 +0000
-Date: Tue, 05 Nov 2024 18:12:49 +0000
-Message-ID: <86ed3p1rdq.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Johan Hovold <johan@kernel.org>
-Cc: Sibi Sankar <quic_sibis@quicinc.com>,
-	sudeep.holla@arm.com,
-	cristian.marussi@arm.com,
-	andersson@kernel.org,
-	konrad.dybcio@linaro.org,
-	robh+dt@kernel.org,
-	krzysztof.kozlowski+dt@linaro.org,
-	dmitry.baryshkov@linaro.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	quic_rgottimu@quicinc.com,
-	quic_kshivnan@quicinc.com,
-	conor+dt@kernel.org,
-	quic_nkela@quicinc.com,
-	quic_psodagud@quicinc.com,
-	abel.vesa@linaro.org
-Subject: Re: [PATCH V7 0/2] qcom: x1e80100: Enable CPUFreq
-In-Reply-To: <ZypOY-NCDN9fdMAR@hovoldconsulting.com>
-References: <20241030130840.2890904-1-quic_sibis@quicinc.com>
-	<ZyTQ9QD1tEkhQ9eu@hovoldconsulting.com>
-	<86plnf11yf.wl-maz@kernel.org>
-	<ZyTjiiGc2ApoID9Y@hovoldconsulting.com>
-	<86o72z10b6.wl-maz@kernel.org>
-	<ZypOY-NCDN9fdMAR@hovoldconsulting.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=k20201202; t=1730830390;
+	bh=pxqB7qCPgf6SdrFqZG7JzmVzNL3Eokwf44mDjUQzHfY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=cuy7307NTZAW7l+Q8xtduxKrBLrSSffzLiuD9yd/Evp64dVBZJ+Yv8depWaLxk8dU
+	 7f7cKZeUP7FO2Sx7nQRC/0esYs/0R9cdKlFSp2PjHiwxBievF4nwZJZ+aRrx5gTWGe
+	 ZhSuvZXPjkrW+fzjwSQO6nVqE2Bzo6qemZSLV2L6gNnwXmREKWZSVvD1HQRP1STjS2
+	 Qp+HGKOTtMpl1H5yC4BoSFZhB1aTrL/IPwIhorI5HadxPaDhVZ1ZvkXVKZDwXdgkDb
+	 uFiJGIeoPns0ZSRFi6IEJa12b6ulyKiaguMvMgy+uiaLFQd2ZcsOtPDVkBzjgZJrjL
+	 oHszmpQmgCyRQ==
+Date: Tue, 5 Nov 2024 18:13:04 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Matt Coster <matt.coster@imgtec.com>
+Cc: Frank Binns <frank.binns@imgtec.com>, David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Nishanth Menon <nm@ti.com>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Tero Kristo <kristo@kernel.org>, dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, Randolph Sapp <rs@ti.com>,
+	Darren Etheridge <detheridge@ti.com>
+Subject: Re: [PATCH 01/21] dt-bindings: gpu: img: More explicit compatible
+ strings
+Message-ID: <20241105-matron-gangway-64e78576ec47@spud>
+References: <20241105-sets-bxs-4-64-patch-v1-v1-0-4ed30e865892@imgtec.com>
+ <20241105-sets-bxs-4-64-patch-v1-v1-1-4ed30e865892@imgtec.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: johan@kernel.org, quic_sibis@quicinc.com, sudeep.holla@arm.com, cristian.marussi@arm.com, andersson@kernel.org, konrad.dybcio@linaro.org, robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, dmitry.baryshkov@linaro.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, quic_rgottimu@quicinc.com, quic_kshivnan@quicinc.com, conor+dt@kernel.org, quic_nkela@quicinc.com, quic_psodagud@quicinc.com, abel.vesa@linaro.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="HC9jzF+yIAdMYD3B"
+Content-Disposition: inline
+In-Reply-To: <20241105-sets-bxs-4-64-patch-v1-v1-1-4ed30e865892@imgtec.com>
 
-On Tue, 05 Nov 2024 16:57:07 +0000,
-Johan Hovold <johan@kernel.org> wrote:
-> 
-> On Fri, Nov 01, 2024 at 02:43:57PM +0000, Marc Zyngier wrote:
-> > On Fri, 01 Nov 2024 14:19:54 +0000,
-> > Johan Hovold <johan@kernel.org> wrote:
-> 
-> > > The side-effects and these remaining warnings are addressed by this
-> > > series:
-> > > 
-> > > 	https://lore.kernel.org/all/20241030125512.2884761-1-quic_sibis@quicinc.com/
-> > > 
-> > > but I think we should try to make the warnings a bit more informative
-> > > (and less scary) by printing something along the lines of:
-> > > 
-> > > 	arm-scmi arm-scmi.0.auto: [Firmware Bug]: Ignoring duplicate OPP 3417600 for NCC
-> > > 
-> > > instead.
-> > 
-> > Indeed. Seeing [Firmware Bug] has a comforting feeling of
-> > familiarity... :)
-> > 
-> > I wonder whether the same sort of reset happen on more "commercial"
-> > systems (such as some of the laptops). You expect that people look at
-> > the cpufreq stuff closely, and don't see things exploding like we are.
-> 
-> I finally got around to getting my Lenovo ThinkPad T14s to boot (it
-> refuses to start the kernel when using GRUB, and it's not due to the
-> known 64 GB memory issue as it only has 32 GB)
 
-<cry>
-I know the feeling. My devkit can't use GRUB either, so I added a
-hook to the GRUB config to generate EFI scripts that directly execute
-the kernel with initrd, dtb, and command line.
+--HC9jzF+yIAdMYD3B
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-This is probably the worse firmware I've seen in a very long while.
-</cry>
+On Tue, Nov 05, 2024 at 03:58:07PM +0000, Matt Coster wrote:
+> The current compatible strings are not specific enough to constrain the
+> hardware in devicetree. For example, the current "img,img-axe" string
+> refers to the entire family of Series AXE GPUs. The more specific
+> "img,img-axe-1-16m" string refers to the AXE-1-16M GPU which, unlike the
+> rest of its family, only uses a single power domain.
 
-> and can confirm that it
-> hard resets when accessing the cpufreq sysfs attributes as well.
+That's not true, you could apply the rules using the ti,am62-gpu
+compatible, no?
 
-Right. So this also happens on non-abandonware machines.
+> Work is currently underway to add support for volcanic-based Imagination
+> GPUs; also add a generic top-level "img,img-rogue" compatible string to
+> allow for simpler differentiation in devicetrees.
 
-> On the bright side, at least I don't see any warnings due to duplicate
-> OPPs on this machine (x1e78100, latest UEFI fw).
+This makes no sense, how does adding another fallback compatible make
+it simpler? I have to assume that this means there will be geothermally
+powered axes in the future and you want to tell the difference between
+them and those pesky rogue axes that chop the heads off of naughty
+children?
 
-One bug fixed...
+>=20
+> Make these changes now before introducing more compatible strings to keep
+> the legacy versions to a minimum.
+>=20
+> Signed-off-by: Matt Coster <matt.coster@imgtec.com>
+> ---
+>  .../devicetree/bindings/gpu/img,powervr-rogue.yaml    | 19 +++++++++++++=
++-----
+>  1 file changed, 14 insertions(+), 5 deletions(-)
+>=20
+> diff --git a/Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml=
+ b/Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml
+> index 256e252f8087fa0d6081f771a01601d34b66fe19..ef7070daf213277d0190fe319=
+e202fdc597337d4 100644
+> --- a/Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml
+> +++ b/Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml
+> @@ -12,10 +12,19 @@ maintainers:
+> =20
+>  properties:
+>    compatible:
+> -    items:
+> -      - enum:
+> -          - ti,am62-gpu
+> -      - const: img,img-axe # IMG AXE GPU model/revision is fully discove=
+rable
+> +    oneOf:
+> +      - items:
+> +          - enum:
+> +              - ti,am62-gpu
+> +          - const: img,img-axe-1-16m
+> +          - const: img,img-rogue
+> +
+> +      # This legacy combination of compatible strings was introduced ear=
+ly on before the more
+> +      # specific GPU identifiers were used. Keep it around here for comp=
+atibility, but never use
+> +      # "img,img-axe" in new devicetrees.
+> +      - items:
+> +          - const: ti,am62-gpu
+> +          - const: img,img-axe
+> =20
+>    reg:
+>      maxItems: 1
+> @@ -64,7 +73,7 @@ examples:
+>      #include <dt-bindings/soc/ti,sci_pm_domain.h>
+> =20
+>      gpu@fd00000 {
+> -        compatible =3D "ti,am62-gpu", "img,img-axe";
+> +        compatible =3D "ti,am62-gpu", "img,img-axe-1-16m", "img,img-rogu=
+e";
+>          reg =3D <0x0fd00000 0x20000>;
+>          clocks =3D <&k3_clks 187 0>;
+>          clock-names =3D "core";
+>=20
+> --=20
+> 2.47.0
+>=20
 
-	M.
+--HC9jzF+yIAdMYD3B
+Content-Type: application/pgp-signature; name="signature.asc"
 
--- 
-Without deviation from the norm, progress is not possible.
+-----BEGIN PGP SIGNATURE-----
+
+iHQEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZypgMAAKCRB4tDGHoIJi
+0nC4AQC4AzHjeKvDrm+ExJzNjJmg5LhdaVii97hh964tmhK59QD4jl8H5QIn/+vE
+4NZXGn3q7P2E/PvGBSyFkSd9XRUHBw==
+=IOI3
+-----END PGP SIGNATURE-----
+
+--HC9jzF+yIAdMYD3B--
 
