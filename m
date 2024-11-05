@@ -1,144 +1,394 @@
-Return-Path: <linux-kernel+bounces-396136-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396142-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C8689BC85F
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 09:55:31 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 607639BC876
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 09:57:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5082C282E2D
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 08:55:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 203A9283394
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 08:57:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 108AF1CF295;
-	Tue,  5 Nov 2024 08:55:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b="P/d6p3ak"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DAB61D2B13;
+	Tue,  5 Nov 2024 08:55:59 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4D601CCECA
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 08:55:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEEC41D26EA;
+	Tue,  5 Nov 2024 08:55:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730796923; cv=none; b=JsTLau3a5+H1sYACiMQ1oFCr3LN8NbWcoeqDLMMCr9pIn/P4Fo4XBNkFytLCBIVRwwQ1bMsczYN3S1gBGLwE8Kw8WBgcWwBqYRvy0HR934y0QhxqrhCY1EZNijbV79UiAhRKLWHo07m3SQxGsSreGMgoyD9zPUmhl/6MZrQb45Y=
+	t=1730796958; cv=none; b=FXKV9atlELIyG2bO7fVBPp/ekgp30k2bwC20G/EN+zW4a57J699ORhw/DbJOHAh5oOlj2hOkgA7ug7PsWbQJwlYh27Nfxg20r6eLBByj67BRGNZ8kpi/V52J1z8JJzAqfK/1IAtzd8DvXX+ETdN4cLppwqoKXUYEBLrWBohbahg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730796923; c=relaxed/simple;
-	bh=gBD73+rs58WaA56HUWWB7X/+5TCT6P6jpdbKvrvc8jE=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=rUXLgbqorjCloLbCjUhVV69Ogjbyke67QhRLbk8he6Rw3OR9gSQAtZFQxmVLwV7vb/E8vVeyDYZxjFoyAXC4hu333HixgxdXdbZ9J8pXYLfcVK31SZ+kTQXGXq5cJcsHvCgyvG62FkG/3UrrsDoZwOl8C+93Oji/vZbOetviviU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com; spf=pass smtp.mailfrom=cloud.com; dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b=P/d6p3ak; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloud.com
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-43167ff0f91so45894885e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 00:55:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=citrix.com; s=google; t=1730796919; x=1731401719; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:subject:references:cc:to:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=p4UvfouWCkHUWP5HGQ2ye9958/aqMmQk6U4iphXEDfA=;
-        b=P/d6p3akYLrtULvaRWslMCNSe1GwXII/mMakMSt3k4YF3QaEHbYeDXWfz9z/MMk1cS
-         UtN9fW0BQ2rP05cYXe6XrU7EQt2PL5rFruJpB7pW64d8Y8bVCtmjowl1OTMQlfScZDj4
-         gDQFsvKmMQxkz6t2Dags+rg44z5iajp9d1UxA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730796919; x=1731401719;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:subject:references:cc:to:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=p4UvfouWCkHUWP5HGQ2ye9958/aqMmQk6U4iphXEDfA=;
-        b=PPtzmr0X13R0c2RhgmYI263Ia5u0hYzWim+UfB9PLkKbjHQB7K3hLW79YTOp7srxdP
-         lVQTJTuwAOIMIiejgipl4Ooibi/YasWwsYTnKrD8cqQCZP7OKycgFHLJubD7JFXLtvpC
-         ibTI3gEh0VAmrkMDZrubJ1QDTlhh3U52wvtQMe4o7fFhFzZwStZOOYerM3gRCAODOpQl
-         zhE+MYhX3ckHB2CpmFCtdImHjOVEyb0X6f28UKlMvD0YcwMe+oPHhVFCgsFkx7YEmySW
-         tLZ7HUxG6Y37TehXP4mov5A1j5Hu9IkRzJ+XGMo3LK08b1sXi2E/MVAvSYX1OtRA9Blk
-         14pw==
-X-Forwarded-Encrypted: i=1; AJvYcCU+pB0/zx8ZpGvL0QfdkmSb4gR4mhXLZvnb9N8+3xKcFaGdqcGnSZNFlAL4ALIfpq+sxOnJV0zlfVPWPTg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwXnwigp3sOf8QM88v3lwXivXnlIxz3vOO/98eyfXLc2mi6GGez
-	1Nza7mxtfxyZjqDNOgRwsbAiW9EFGs8P/cnBI2sBd9s4HNzMjI8Qw0lioKdsfiM=
-X-Google-Smtp-Source: AGHT+IF8VlwGgWqiwroPsxJFw+dSpwTQ2rpVvDGp5lHiW5OEXRUn1/2O4Ya1Ng1nN/UB11UFkDbbAQ==
-X-Received: by 2002:a05:6000:2a1:b0:37d:4e59:549a with SMTP id ffacd0b85a97d-381be7c7350mr16245589f8f.16.1730796918968;
-        Tue, 05 Nov 2024 00:55:18 -0800 (PST)
-Received: from [192.168.1.10] (host-92-26-98-202.as13285.net. [92.26.98.202])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381c116abc0sm15389137f8f.94.2024.11.05.00.55.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 05 Nov 2024 00:55:18 -0800 (PST)
-Message-ID: <df10f269-0494-46d9-be8f-7e5dc9cd3745@citrix.com>
-Date: Tue, 5 Nov 2024 08:55:17 +0000
+	s=arc-20240116; t=1730796958; c=relaxed/simple;
+	bh=tZ2HBCBwJ12WhcIXBC02sjAqyO4cta4FFBr6GDHI5N4=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=Y0AT31rvQ7uCyYLOjakedmuRxRR6RetiULXtqK50ZhnhaBCxiWbBV1TOOgq9GXo1JEQ9gOIlcPrsArqHSXKG8m0lNRu3IJF1W+IuMZiRhCUuQo9cShaq6+kRI0yzOKySBAUSDYfYVHkM6X29d81IIwX+WjYXtCi8GsvfJ82L8rY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XjMck6q8yz6LDfS;
+	Tue,  5 Nov 2024 16:55:50 +0800 (CST)
+Received: from frapeml500005.china.huawei.com (unknown [7.182.85.13])
+	by mail.maildlp.com (Postfix) with ESMTPS id B7A621400CB;
+	Tue,  5 Nov 2024 16:55:51 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (7.182.85.71) by
+ frapeml500005.china.huawei.com (7.182.85.13) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Tue, 5 Nov 2024 09:55:51 +0100
+Received: from frapeml500008.china.huawei.com ([7.182.85.71]) by
+ frapeml500008.china.huawei.com ([7.182.85.71]) with mapi id 15.01.2507.039;
+ Tue, 5 Nov 2024 09:55:51 +0100
+From: Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>
+To: liulongfang <liulongfang@huawei.com>, "alex.williamson@redhat.com"
+	<alex.williamson@redhat.com>, "jgg@nvidia.com" <jgg@nvidia.com>, "Jonathan
+ Cameron" <jonathan.cameron@huawei.com>
+CC: "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linuxarm@openeuler.org" <linuxarm@openeuler.org>
+Subject: RE: [PATCH v12 3/4] hisi_acc_vfio_pci: register debugfs for hisilicon
+ migration driver
+Thread-Topic: [PATCH v12 3/4] hisi_acc_vfio_pci: register debugfs for
+ hisilicon migration driver
+Thread-Index: AQHbLzZ9E+Ip5Nj6eEy59hj6TfvRZ7KoVfVA
+Date: Tue, 5 Nov 2024 08:55:51 +0000
+Message-ID: <fc776543a1d14531b28b5fa693925518@huawei.com>
+References: <20241105035254.24636-1-liulongfang@huawei.com>
+ <20241105035254.24636-4-liulongfang@huawei.com>
+In-Reply-To: <20241105035254.24636-4-liulongfang@huawei.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: arkamar@atlas.cz
-Cc: david@redhat.com, gregkh@linuxfoundation.org,
- linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org, willy@infradead.org
-References: <202411584429-Zyna7RpVesXAiTBM-arkamar@atlas.cz>
-Subject: Re: xfs: Xen/HPT related regression in v6.6
-Content-Language: en-GB
-From: Andrew Cooper <andrew.cooper3@citrix.com>
-Autocrypt: addr=andrew.cooper3@citrix.com; keydata=
- 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
- 6+ahAA==
-In-Reply-To: <202411584429-Zyna7RpVesXAiTBM-arkamar@atlas.cz>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 
->> At least years ago, this feature was not available in XEN PV guests [1]. 
-> Yes, as I understand it, the hugepages are not available in my Xen
-> guest.
 
-Xen PV guests are strictly 4k-only.
 
-Xen HVM guests (using normal VT-x/SVM hardware support) have all page
-sizes available.
+> -----Original Message-----
+> From: liulongfang <liulongfang@huawei.com>
+> Sent: Tuesday, November 5, 2024 3:53 AM
+> To: alex.williamson@redhat.com; jgg@nvidia.com; Shameerali Kolothum
+> Thodi <shameerali.kolothum.thodi@huawei.com>; Jonathan Cameron
+> <jonathan.cameron@huawei.com>
+> Cc: kvm@vger.kernel.org; linux-kernel@vger.kernel.org;
+> linuxarm@openeuler.org; liulongfang <liulongfang@huawei.com>
+> Subject: [PATCH v12 3/4] hisi_acc_vfio_pci: register debugfs for hisilico=
+n
+> migration driver
 
-But lucky to find this thread.  We've had several reports and no luck
-isolating what changed.
+Hi,
 
-~Andrew (Xen maintainer)
+Few minor comments below. Please don't re-spin just for these yet.
+Please wait for others to review as well.
+
+Thanks,
+Shameer
+
+> diff --git a/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c
+> b/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c
+> index a8c53952d82e..7728c9745b9d 100644
+> --- a/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c
+> +++ b/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c
+> @@ -627,15 +627,30 @@ static void hisi_acc_vf_disable_fd(struct
+> hisi_acc_vf_migration_file *migf)
+>  	mutex_unlock(&migf->lock);
+>  }
+>=20
+> +static void hisi_acc_debug_migf_copy(struct hisi_acc_vf_core_device
+> *hisi_acc_vdev,
+> +	struct hisi_acc_vf_migration_file *src_migf)
+
+Alignment should match open parenthesis here.
+
+> +{
+> +	struct hisi_acc_vf_migration_file *dst_migf =3D hisi_acc_vdev-
+> >debug_migf;
+> +
+> +	if (!dst_migf)
+> +		return;
+> +
+> +	dst_migf->total_length =3D src_migf->total_length;
+> +	memcpy(&dst_migf->vf_data, &src_migf->vf_data,
+> +		sizeof(struct acc_vf_data));
+
+Here too, alignment not correct. It is better to run,
+./scripts/checkpatch --strict on these patches if you haven't done already.
+
+> +}
+> +
+>  static void hisi_acc_vf_disable_fds(struct hisi_acc_vf_core_device
+> *hisi_acc_vdev)
+>  {
+>  	if (hisi_acc_vdev->resuming_migf) {
+> +		hisi_acc_debug_migf_copy(hisi_acc_vdev, hisi_acc_vdev-
+> >resuming_migf);
+>  		hisi_acc_vf_disable_fd(hisi_acc_vdev->resuming_migf);
+>  		fput(hisi_acc_vdev->resuming_migf->filp);
+>  		hisi_acc_vdev->resuming_migf =3D NULL;
+>  	}
+>=20
+>  	if (hisi_acc_vdev->saving_migf) {
+> +		hisi_acc_debug_migf_copy(hisi_acc_vdev, hisi_acc_vdev-
+> >saving_migf);
+>  		hisi_acc_vf_disable_fd(hisi_acc_vdev->saving_migf);
+>  		fput(hisi_acc_vdev->saving_migf->filp);
+>  		hisi_acc_vdev->saving_migf =3D NULL;
+> @@ -1294,6 +1309,129 @@ static long hisi_acc_vfio_pci_ioctl(struct
+> vfio_device *core_vdev, unsigned int
+>  	return vfio_pci_core_ioctl(core_vdev, cmd, arg);
+>  }
+>=20
+> +static int hisi_acc_vf_debug_check(struct seq_file *seq, struct vfio_dev=
+ice
+> *vdev)
+> +{
+> +	struct hisi_acc_vf_core_device *hisi_acc_vdev =3D
+> hisi_acc_get_vf_dev(vdev);
+> +	struct hisi_qm *vf_qm =3D &hisi_acc_vdev->vf_qm;
+> +	int ret;
+> +
+> +	lockdep_assert_held(&hisi_acc_vdev->open_mutex);
+> +	/*
+> +	 * When the device is not opened, the io_base is not mapped.
+> +	 * The driver cannot perform device read and write operations.
+> +	 */
+> +	if (!hisi_acc_vdev->dev_opened) {
+> +		seq_printf(seq, "device not opened!\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	ret =3D qm_wait_dev_not_ready(vf_qm);
+> +	if (ret) {
+> +		seq_printf(seq, "VF device not ready!\n");
+> +		return -EBUSY;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int hisi_acc_vf_debug_cmd(struct seq_file *seq, void *data)
+> +{
+> +	struct device *vf_dev =3D seq->private;
+> +	struct vfio_pci_core_device *core_device =3D
+> dev_get_drvdata(vf_dev);
+> +	struct vfio_device *vdev =3D &core_device->vdev;
+> +	struct hisi_acc_vf_core_device *hisi_acc_vdev =3D
+> hisi_acc_get_vf_dev(vdev);
+> +	struct hisi_qm *vf_qm =3D &hisi_acc_vdev->vf_qm;
+> +	u64 value;
+> +	int ret;
+> +
+> +	mutex_lock(&hisi_acc_vdev->open_mutex);
+> +	ret =3D hisi_acc_vf_debug_check(seq, vdev);
+> +	if (ret) {
+> +		mutex_unlock(&hisi_acc_vdev->open_mutex);
+> +		return ret;
+> +	}
+> +
+> +	value =3D readl(vf_qm->io_base + QM_MB_CMD_SEND_BASE);
+> +	if (value =3D=3D QM_MB_CMD_NOT_READY) {
+> +		mutex_unlock(&hisi_acc_vdev->open_mutex);
+> +		seq_printf(seq, "mailbox cmd channel not ready!\n");
+> +		return -EINVAL;
+> +	}
+> +	mutex_unlock(&hisi_acc_vdev->open_mutex);
+> +	seq_printf(seq, "mailbox cmd channel ready!\n");
+> +
+> +	return 0;
+> +}
+> +
+> +static int hisi_acc_vf_dev_read(struct seq_file *seq, void *data)
+> +{
+> +	struct device *vf_dev =3D seq->private;
+> +	struct vfio_pci_core_device *core_device =3D
+> dev_get_drvdata(vf_dev);
+> +	struct vfio_device *vdev =3D &core_device->vdev;
+> +	struct hisi_acc_vf_core_device *hisi_acc_vdev =3D
+> hisi_acc_get_vf_dev(vdev);
+> +	size_t vf_data_sz =3D offsetofend(struct acc_vf_data, padding);
+> +	struct acc_vf_data *vf_data;
+> +	int ret;
+> +
+> +	mutex_lock(&hisi_acc_vdev->open_mutex);
+> +	ret =3D hisi_acc_vf_debug_check(seq, vdev);
+> +	if (ret) {
+> +		mutex_unlock(&hisi_acc_vdev->open_mutex);
+> +		return ret;
+> +	}
+> +
+> +	mutex_lock(&hisi_acc_vdev->state_mutex);
+> +	vf_data =3D kzalloc(sizeof(struct acc_vf_data), GFP_KERNEL);
+> +	if (!vf_data) {
+> +		ret =3D -ENOMEM;
+> +		goto mutex_release;
+> +	}
+> +
+> +	vf_data->vf_qm_state =3D hisi_acc_vdev->vf_qm_state;
+> +	ret =3D vf_qm_read_data(&hisi_acc_vdev->vf_qm, vf_data);
+> +	if (ret)
+> +		goto migf_err;
+> +
+> +	seq_hex_dump(seq, "Dev Data:", DUMP_PREFIX_OFFSET, 16, 1,
+> +		     (const void *)vf_data, vf_data_sz, false);
+> +
+> +	seq_printf(seq,
+> +		   "guest driver load: %u\n"
+> +		   "data size: %lu\n",
+> +		   hisi_acc_vdev->vf_qm_state,
+> +		   sizeof(struct acc_vf_data));
+
+There was a suggestion to add a comment here to describe vf_qm_state better=
+.
+May be something like,
+
+vf_qm_state here indicates whether the Guest has loaded the driver for the =
+ACC VF
+device or not.
+
+> +
+> +migf_err:
+> +	kfree(vf_data);
+> +mutex_release:
+> +	mutex_unlock(&hisi_acc_vdev->state_mutex);
+> +	mutex_unlock(&hisi_acc_vdev->open_mutex);
+> +
+> +	return ret;
+> +}
+> +
+> +static int hisi_acc_vf_migf_read(struct seq_file *seq, void *data)
+> +{
+> +	struct device *vf_dev =3D seq->private;
+> +	struct vfio_pci_core_device *core_device =3D
+> dev_get_drvdata(vf_dev);
+> +	struct vfio_device *vdev =3D &core_device->vdev;
+> +	struct hisi_acc_vf_core_device *hisi_acc_vdev =3D
+> hisi_acc_get_vf_dev(vdev);
+> +	size_t vf_data_sz =3D offsetofend(struct acc_vf_data, padding);
+> +	struct hisi_acc_vf_migration_file *debug_migf =3D hisi_acc_vdev-
+> >debug_migf;
+> +
+> +	/* Check whether the live migration operation has been performed
+> */
+> +	if (debug_migf->total_length < QM_MATCH_SIZE) {
+> +		seq_printf(seq, "device not migrated!\n");
+> +		return -EAGAIN;
+> +	}
+> +
+> +	seq_hex_dump(seq, "Mig Data:", DUMP_PREFIX_OFFSET, 16, 1,
+> +		     (const void *)&debug_migf->vf_data, vf_data_sz, false);
+> +	seq_printf(seq, "migrate data length: %lu\n", debug_migf-
+> >total_length);
+> +
+> +	return 0;
+> +}
+> +
+>  static int hisi_acc_vfio_pci_open_device(struct vfio_device *core_vdev)
+>  {
+>  	struct hisi_acc_vf_core_device *hisi_acc_vdev =3D
+> hisi_acc_get_vf_dev(core_vdev);
+> @@ -1305,12 +1443,16 @@ static int hisi_acc_vfio_pci_open_device(struct
+> vfio_device *core_vdev)
+>  		return ret;
+>=20
+>  	if (core_vdev->mig_ops) {
+> +		mutex_lock(&hisi_acc_vdev->open_mutex);
+>  		ret =3D hisi_acc_vf_qm_init(hisi_acc_vdev);
+>  		if (ret) {
+> +			mutex_unlock(&hisi_acc_vdev->open_mutex);
+>  			vfio_pci_core_disable(vdev);
+>  			return ret;
+>  		}
+>  		hisi_acc_vdev->mig_state =3D VFIO_DEVICE_STATE_RUNNING;
+> +		hisi_acc_vdev->dev_opened =3D true;
+> +		mutex_unlock(&hisi_acc_vdev->open_mutex);
+>  	}
+>=20
+>  	vfio_pci_core_finish_enable(vdev);
+> @@ -1322,7 +1464,10 @@ static void hisi_acc_vfio_pci_close_device(struct
+> vfio_device *core_vdev)
+>  	struct hisi_acc_vf_core_device *hisi_acc_vdev =3D
+> hisi_acc_get_vf_dev(core_vdev);
+>  	struct hisi_qm *vf_qm =3D &hisi_acc_vdev->vf_qm;
+>=20
+> +	mutex_lock(&hisi_acc_vdev->open_mutex);
+> +	hisi_acc_vdev->dev_opened =3D false;
+>  	iounmap(vf_qm->io_base);
+> +	mutex_unlock(&hisi_acc_vdev->open_mutex);
+>  	vfio_pci_core_close_device(core_vdev);
+>  }
+>=20
+> @@ -1342,6 +1487,7 @@ static int hisi_acc_vfio_pci_migrn_init_dev(struct
+> vfio_device *core_vdev)
+>  	hisi_acc_vdev->pf_qm =3D pf_qm;
+>  	hisi_acc_vdev->vf_dev =3D pdev;
+>  	mutex_init(&hisi_acc_vdev->state_mutex);
+> +	mutex_init(&hisi_acc_vdev->open_mutex);
+>=20
+>  	core_vdev->migration_flags =3D VFIO_MIGRATION_STOP_COPY |
+> VFIO_MIGRATION_PRE_COPY;
+>  	core_vdev->mig_ops =3D &hisi_acc_vfio_pci_migrn_state_ops;
+> @@ -1387,6 +1533,48 @@ static const struct vfio_device_ops
+> hisi_acc_vfio_pci_ops =3D {
+>  	.detach_ioas =3D vfio_iommufd_physical_detach_ioas,
+>  };
+>=20
+> +static void hisi_acc_vfio_debug_init(struct hisi_acc_vf_core_device
+> *hisi_acc_vdev)
+> +{
+> +	struct vfio_device *vdev =3D &hisi_acc_vdev->core_device.vdev;
+> +	struct dentry *vfio_dev_migration =3D NULL;
+> +	struct dentry *vfio_hisi_acc =3D NULL;
+> +	struct device *dev =3D vdev->dev;
+> +	void *migf =3D NULL;
+> +
+> +	if (!debugfs_initialized() ||
+> +	    !IS_ENABLED(CONFIG_VFIO_DEBUGFS))
+> +		return;
+> +
+> +	if (vdev->ops !=3D &hisi_acc_vfio_pci_migrn_ops)
+> +		return;
+> +
+> +	vfio_dev_migration =3D debugfs_lookup("migration", vdev-
+> >debug_root);
+> +	if (!vfio_dev_migration) {
+> +		dev_err(dev, "failed to lookup migration debugfs file!\n");
+> +		return;
+> +	}
+> +
+> +	migf =3D kzalloc(sizeof(struct hisi_acc_vf_migration_file),
+> GFP_KERNEL);
+> +	if (!migf)
+> +		return;
+> +	hisi_acc_vdev->debug_migf =3D migf;
+> +
+> +	vfio_hisi_acc =3D debugfs_create_dir("hisi_acc", vfio_dev_migration);
+> +	debugfs_create_devm_seqfile(dev, "dev_data", vfio_hisi_acc,
+> +				    hisi_acc_vf_dev_read);
+> +	debugfs_create_devm_seqfile(dev, "migf_data", vfio_hisi_acc,
+> +				    hisi_acc_vf_migf_read);
+> +	debugfs_create_devm_seqfile(dev, "cmd_state", vfio_hisi_acc,
+> +				    hisi_acc_vf_debug_cmd);
+> +}
+> +
+> +static void hisi_acc_vf_debugfs_exit(struct hisi_acc_vf_core_device
+> *hisi_acc_vdev)
+> +{
+> +	/* If migrn_ops is not used, kfree(NULL) is valid */
+
+The above comment is not required. Please remove.
+
+> +	kfree(hisi_acc_vdev->debug_migf);
+> +	hisi_acc_vdev->debug_migf =3D NULL;
+> +}
+> +
 
 
