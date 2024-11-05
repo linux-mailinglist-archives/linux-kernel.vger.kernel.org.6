@@ -1,155 +1,167 @@
-Return-Path: <linux-kernel+bounces-396006-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395976-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A75BF9BC69A
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 08:06:18 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8253A9BC61A
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 07:56:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 22804B22CCB
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 07:06:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B442B1C219FD
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 06:56:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0A5E209667;
-	Tue,  5 Nov 2024 06:59:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B66EF1DC185;
+	Tue,  5 Nov 2024 06:56:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="OdtA5wB+"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kM9Lk7Dh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D50E8208981;
-	Tue,  5 Nov 2024 06:59:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13DED41A8E
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 06:56:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730789956; cv=none; b=sHnmGt1+sXq8BZHMYrmQXZMteSOqwkB7AKLzafFZru86h40EiXIokAbIeQWtj8tq3XQQrSRPwFnR2GIQ+nWg3ix/ZGeDVGet9/R9qgPa2HW+M70wYc1LZ3k7ovCOxF6d2Jw5FW1e3qu2yQ7XU5DHPaHwYW3NKrlzGER4tzrZHvU=
+	t=1730789771; cv=none; b=k+bKhV0dHxtqa1za/0fDrRXfI3BQ0jXX/LAF7ESShabF0MwPwRb0fo9gBPqGGE6SIbn7w/Woy8djNHjXEoZ5Qy9uGTTl+gXtbPlB3qgdgQceZil6C7doeSFmAbj56LW2o2HLxgSKchEkQ4DcHFg/d0nxwxRPd8xU1le+BXyGLUc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730789956; c=relaxed/simple;
-	bh=ljYka+yEPL7dtoadjp4FCBcNXplDLLPRhCJ9St112Pw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=ANxk9rMFHIHMtZlwz7px69EK5HdNdfho30qwI2cWwWTnzefv/4Y2SHw1UlLT/HA9RlotHsW/j1MCWbasj62Ots9tyMRxwOqYlAhpIBEwb/9scBHDWSGJ1W9+5uRn42wSodEx6j3orMLJGSDg72s4i3U//DZjzRRA+9zviqJB14s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=OdtA5wB+; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A4LIkN6000895;
-	Tue, 5 Nov 2024 06:59:07 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	Oxkw5D/JPs2UYjgb4jIX/CzNiPXlr+l6xOKDFt/4wo8=; b=OdtA5wB+j6UVTQv7
-	lnT6ZJPc+trV+0ma96Ih6+uWn2nv+nMfzaZvCkC7IeclMQ1zsewxZ0rY9WuG7OLF
-	0cW98waUUdOHf0ecrX3b6+VTxsC/5cPIaWHM3N0HwgrYhWjoKHfs8r623q1zBfJd
-	5eBUiI3JwugzlWrbIPoV3OVfDrOD7QdI2ILA5HCVtA6jk9SZp/vqmmRznkB2Vv53
-	nDjjixPX4igLUzdR47t+vBunfyw6yPnAza7lXcqybOnKhJJYBSE03s8Gi589mA+l
-	yg9/7FWWcRrUxP5nN2R9lEZ0eU3MMnsv5pA6RIXQF0zBzeq28+/afJ66/OBCsfBI
-	7AywxQ==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42nd2s6p4n-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 05 Nov 2024 06:59:06 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4A56x5EM030604
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 5 Nov 2024 06:59:05 GMT
-Received: from hu-dikshita-hyd.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Mon, 4 Nov 2024 22:59:00 -0800
-From: Dikshita Agarwal <quic_dikshita@quicinc.com>
-Date: Tue, 5 Nov 2024 12:25:48 +0530
-Subject: [PATCH v5 28/28] media: MAINTAINERS: add Qualcomm iris video
- accelerator driver
+	s=arc-20240116; t=1730789771; c=relaxed/simple;
+	bh=Fo2fibcWfMKMCUazhkZYgaohA7hDQkPM3279WGFliLc=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=ACk7mwFn7J1NRcdU7vft6N6QbkzsddZwjn02eRe/D8SJH9UDLJaL/i0FIYHd5XCyy3PmGhVKas12ZG7EeR2adszCBSA9Us+QQViEnD8T9gcFkb04OVzLiK5SXdYfTQH8PJ+dhxTWH2Ma7kkRdVSQvzqQAH93/aaS76cSgv545L0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kM9Lk7Dh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4D61C4CECF;
+	Tue,  5 Nov 2024 06:56:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730789770;
+	bh=Fo2fibcWfMKMCUazhkZYgaohA7hDQkPM3279WGFliLc=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=kM9Lk7Dhj3ZoWuqoKi1anVPXa2e0He9hAkpFvwOh69eU1ErvxLGilSSedBlKgGgIw
+	 2CrjdyJK/24JV/atfF3CHvYOOBj5st1/rEo7bkFdXadBok1uUSLzDhTWVaHBgl8/w/
+	 tcQR1jlT9pKlu/yKGaFguZrfmYREeWY2S9DC6q0HcXnSswh0R9hV2S91tq2HRbTBe/
+	 25eW2EWDtOLyhl3zmWVJ+HY76SJnLk93V/g8lS8m4xss0ZJaZ9sqoZoiiDI0csmPxD
+	 gI9Xzqx5rUEWAuM7zq5HJ3fdgb26A8A9bdCSBQXfLYRy4ltAKKRQWg+1+66qcFAX9u
+	 aydpS2I3b/bLw==
+Message-ID: <fe8f262c-1b18-47e8-8133-06663835b551@kernel.org>
+Date: Tue, 5 Nov 2024 14:56:06 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20241105-qcom-video-iris-v5-28-a88e7c220f78@quicinc.com>
-References: <20241105-qcom-video-iris-v5-0-a88e7c220f78@quicinc.com>
-In-Reply-To: <20241105-qcom-video-iris-v5-0-a88e7c220f78@quicinc.com>
-To: Vikash Garodia <quic_vgarodia@quicinc.com>,
-        Abhinav Kumar
-	<quic_abhinavk@quicinc.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        "Rob
- Herring" <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        "Conor
- Dooley" <conor+dt@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>
-CC: Hans Verkuil <hverkuil@xs4all.nl>,
-        Sebastian Fricke
-	<sebastian.fricke@collabora.com>,
-        Bryan O'Donoghue
-	<bryan.odonoghue@linaro.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Nicolas Dufresne
-	<nicolas@ndufresne.ca>,
-        =?utf-8?q?Uwe_Kleine-K=C3=B6nig?=
-	<u.kleine-koenig@baylibre.com>,
-        Jianhua Lu <lujianhua000@gmail.com>, <linux-media@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        "Dikshita
- Agarwal" <quic_dikshita@quicinc.com>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1730789780; l=1060;
- i=quic_dikshita@quicinc.com; s=20240917; h=from:subject:message-id;
- bh=ljYka+yEPL7dtoadjp4FCBcNXplDLLPRhCJ9St112Pw=;
- b=7R0/nDVvXC7nJrvUVy+NT9UceG0ysBRn9dSImIpypsVhGFGA2P3QIwWX4yOTxGblZyD0wfFT2
- lLpUfbiYqlOBSpT2dUYIztfFnA7sBYTluQzfACHqI2fRxRB26YFUdlx
-X-Developer-Key: i=quic_dikshita@quicinc.com; a=ed25519;
- pk=EEvKY6Ar1OI5SWf44FJ1Ebo1KuQEVbbf5UNPO+UHVhM=
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: xZxlcmHRAyxuPl8u0FQE-JpTKZEHO3X9
-X-Proofpoint-GUID: xZxlcmHRAyxuPl8u0FQE-JpTKZEHO3X9
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0
- lowpriorityscore=0 mlxlogscore=863 clxscore=1015 suspectscore=0
- adultscore=0 priorityscore=1501 bulkscore=0 mlxscore=0 malwarescore=0
- spamscore=0 impostorscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2409260000 definitions=main-2411050050
+User-Agent: Mozilla Thunderbird
+Cc: Chao Yu <chao@kernel.org>, Zhiguo Niu <zhiguo.niu@unisoc.com>,
+ jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ linux-kernel@vger.kernel.org, ke.wang@unisoc.com, Hao_hao.Wang@unisoc.com
+Subject: Re: [PATCH V2] f2fs: fix to adjust appropriate length for fiemap
+To: Zhiguo Niu <niuzhiguo84@gmail.com>
+References: <1730685372-2995-1-git-send-email-zhiguo.niu@unisoc.com>
+ <888aaf87-1363-4c1f-bd95-d119c72d7b30@kernel.org>
+ <CAHJ8P3J+8xEwNL3S6JoR=E0_RczgwvHAGp8jZs5GZESza6n9LQ@mail.gmail.com>
+Content-Language: en-US
+From: Chao Yu <chao@kernel.org>
+In-Reply-To: <CAHJ8P3J+8xEwNL3S6JoR=E0_RczgwvHAGp8jZs5GZESza6n9LQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Add an entry for iris video decoder accelerator driver.
+On 2024/11/5 12:02, Zhiguo Niu wrote:
+> Chao Yu <chao@kernel.org> 于2024年11月5日周二 11:15写道：
+>>
+>> On 2024/11/4 9:56, Zhiguo Niu wrote:
+>>> If user give a file size as "length" parameter for fiemap
+>>> operations, but if this size is non-block size aligned,
+>>> it will show 2 segments fiemap results even this whole file
+>>> is contiguous on disk, such as the following results:
+>>>
+>>>    ./f2fs_io fiemap 0 19034 ylog/analyzer.py
+>>> Fiemap: offset = 0 len = 19034
+>>>           logical addr.    physical addr.   length           flags
+>>> 0       0000000000000000 0000000020baa000 0000000000004000 00001000
+>>> 1       0000000000004000 0000000020bae000 0000000000001000 00001001
+>>>
+>>> after this patch:
+>>> ./f2fs_io fiemap 0 19034 ylog/analyzer.py
+>>> Fiemap: offset = 0 len = 19034
+>>>       logical addr.    physical addr.   length           flags
+>>> 0    0000000000000000 00000000315f3000 0000000000005000 00001001
+>>
+>> Hi Zhiguo,
+>>
+>> Any testcase to reproduce this bug? w/o this patch, it looks output
+>> from fiemap looks fine?
+>>
+>> f2fs_io fiemap 0 19034 file
+>> Fiemap: offset = 0 len = 19034
+>>          logical addr.    physical addr.   length           flags
+>> 0       0000000000000000 0000000004401000 0000000000005000 00001001
+>>
+> Hi Chao,
+> Sorry I didn't write clearly enough about the test case, and i put the
+> note below the ""Singed-off" tag.
+> let me describe it again， f2fs_io fiemap has been modified by me for
+> testing in my local, and  the length parameter
+> is the real file size of the file, not the block numer. because user
+> also pass the real file size to fiemap ioctl.
+> so with the new f2fs_io fiemap, a contiguous file on disk may be shown
+> 2 segments if the length is not block size alinged.
+> such as:
+> 
+> ums9632_1h10:/data # ls -l ylog/ap/analyzer.py
+> -rw-rw-rw- 1 root system 19006 2008-01-01 00:00 ylog/ap/analyzer.py
+> ums9632_1h10:/data # ./f2fs_io fiemap 0 19006 ylog/ap/analyzer.py
+> Fiemap: offset = 0 len = 19006
+>          logical addr.    physical addr.   length           flags
+> 0       0000000000000000 0000000020baa000 0000000000004000 00001000
+> 1       0000000000004000 0000000020bae000 0000000000001000 00001001
+> 
+> but if we pass a length that is block size alinged, it will show one
+> whole segment in fiemap log.
+> ums9632_1h10:/data # ./f2fs_io fiemap 0 20480 ylog/ap/analyzer.py
+> Fiemap: offset = 0 len = 20480
+>          logical addr.    physical addr.   length           flags
+> 0       0000000000000000 0000000020baa000 0000000000005000 00001001
+> Thanks.
 
-Signed-off-by: Vikash Garodia <quic_vgarodia@quicinc.com>
-Signed-off-by: Dikshita Agarwal <quic_dikshita@quicinc.com>
----
- MAINTAINERS | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+Oh, I can reproduce it w/ xfs_io, thanks for your explanation.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 7a14891a8fa9..d647e59d9912 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -19156,6 +19156,16 @@ S:	Maintained
- F:	Documentation/devicetree/bindings/regulator/vqmmc-ipq4019-regulator.yaml
- F:	drivers/regulator/vqmmc-ipq4019-regulator.c
- 
-+QUALCOMM IRIS VIDEO ACCELERATOR DRIVER
-+M:	Vikash Garodia <quic_vgarodia@quicinc.com>
-+M:	Dikshita Agarwal <quic_dikshita@quicinc.com>
-+R:	Abhinav Kumar <quic_abhinavk@quicinc.com>
-+L:	linux-media@vger.kernel.org
-+L:	linux-arm-msm@vger.kernel.org
-+S:	Maintained
-+F:	Documentation/devicetree/bindings/media/qcom,*-iris.yaml
-+F:	drivers/media/platform/qcom/iris/
-+
- QUALCOMM NAND CONTROLLER DRIVER
- M:	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
- L:	linux-mtd@lists.infradead.org
+xfs_io file -c "fiemap -v 0 19006"
+file:
+  EXT: FILE-OFFSET      BLOCK-RANGE      TOTAL FLAGS
+    0: [0..31]:         139272..139303      32 0x1000
+    1: [32..39]:        139304..139311       8 0x1001
+xfs_io file -c "fiemap -v 0 20480"
+file:
+  EXT: FILE-OFFSET      BLOCK-RANGE      TOTAL FLAGS
+    0: [0..39]:         139272..139311      40 0x1001
 
--- 
-2.34.1
+Thanks,
+
+>> Thanks,
+>>
+>>>
+>>> Signed-off-by: Zhiguo Niu <zhiguo.niu@unisoc.com>
+>>> ---
+>>> V2: correct commit msg according to Chao's questions
+>>> f2fs_io has been modified for testing, the length for fiemap is
+>>> real file size, not block number
+>>> ---
+>>>    fs/f2fs/data.c | 4 ++--
+>>>    1 file changed, 2 insertions(+), 2 deletions(-)
+>>>
+>>> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+>>> index 306b86b0..9fc229d 100644
+>>> --- a/fs/f2fs/data.c
+>>> +++ b/fs/f2fs/data.c
+>>> @@ -1966,8 +1966,8 @@ int f2fs_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
+>>>                        goto out;
+>>>        }
+>>>
+>>> -     if (bytes_to_blks(inode, len) == 0)
+>>> -             len = blks_to_bytes(inode, 1);
+>>> +     if (len & (blks_to_bytes(inode, 1) - 1))
+>>> +             len = round_up(len, blks_to_bytes(inode, 1));
+>>>
+>>>        start_blk = bytes_to_blks(inode, start);
+>>>        last_blk = bytes_to_blks(inode, start + len - 1);
+>>
 
 
