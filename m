@@ -1,105 +1,151 @@
-Return-Path: <linux-kernel+bounces-396282-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396284-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA0A39BCABF
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 11:45:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F9AA9BCAC4
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 11:46:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 64A90B2259F
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 10:45:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B31E0B229AC
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 10:46:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 934931D2B10;
-	Tue,  5 Nov 2024 10:45:21 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 580B91D2B10;
+	Tue,  5 Nov 2024 10:45:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f7ha7Wju"
+Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C24F81D0950
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 10:45:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 555A01D174E;
+	Tue,  5 Nov 2024 10:45:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730803521; cv=none; b=Nq/5xW878ep2HuPCOY5DltKj06w2uO7RNBmRYpYphGSGx00D24JLp3/7js/VgUE/d4JJAiCZtLaqGChQusxavYvtbIh2GOtu0JKeSEPraGYdLMzajiyiyFQbgvTgY0qJYD5oqqfGDKTUqUg7LkSVS84xFNZZ3edyiaxoxp1uvXw=
+	t=1730803558; cv=none; b=s5+8LpXea7/3cB6pvbkWc3a5KLsoKQm85t3hzNpf63lc48IEeWi439vo2kfQPdAndknvBLxNIEC+9+UPZBxI4ddi043w6bG3ifpmRmV3ZvMCQzEJFf+rf/3FNdcptRhdDVropubmah+1ATwdZ7acPexP199T6jYsfEyqC98Kyh4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730803521; c=relaxed/simple;
-	bh=zrTsAV5vLe0uxXcWRVClt59ESYnXvbZWodrvo9fD7k8=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:Cc:
-	 Content-Type; b=nPvhxx3o1dPlGt7jXMd5sBwd9OjRjFZc9l8NeSZ1pMMGt+QBCksaDmlH/G0lHmrkaBFlZUUQHo5iAusVMU+6OMdim6FTEH51O4AWcmA5AFn0TWfJ32JQ/Y2IWHSLeI/8Gu+Eiy+1c9oR3BI4Q02Q3ckC4EVDYKCB6MhEoLjAnzQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a6bf539ceaso24392055ab.1
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 02:45:18 -0800 (PST)
+	s=arc-20240116; t=1730803558; c=relaxed/simple;
+	bh=YAhFFdDBrQJySjuAGSSqaiwvhx73d4kURkImckkyLYw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=lIOtAaZD+wX70kOc7xzg03mlUqYJtUVVbSQ5JCxdpEaH93/4u3vE8CvvMGjXVf8tfG6TgY2kKXKyaag6WpOgGTktOHCG35Fr3Qa84OJ2ii/N83wsXORIVc2Fh6f1wRg4jAMOImtlFqD/hCue4yn21ak7WYYlLI11ird0wNo77TI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f7ha7Wju; arc=none smtp.client-ip=209.85.215.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-7e6d04f74faso3597648a12.1;
+        Tue, 05 Nov 2024 02:45:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730803556; x=1731408356; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=2nqCzdAinTSs6r9LINYA0htJIpUUCl9grAyzKQ3FNXw=;
+        b=f7ha7WjuWSXWzazIHOETpNuuqMc1ouumFx/c544BWjKbnubUSJ1y2WSPvjdoW7Xgh7
+         kXVTr7cHI+qMb3HVu/1Vzys/2FdIyCdzDiVe7nF7OtQ7R0ZYpACTcaYJokJhJ1qNLUYl
+         37Cqwsulpl1Exw1l80Uro1lSG3Rd8ScbfvwLbW3u+8gplL1V6kPMl6j4POSnLOpzESkK
+         nbzWCJ3E9wjDBlOEUaigEhVs4L4rRJYoXIQ/yLKPc5VzZSrCGdeIRoKq0JkAmGjEBIxu
+         NIYIXiaHJ875S1VAeXfRheFLaeqRSPet7IRTWZ1pP+xMUw9JRBbl4PxVi4hi9eKJYE52
+         PzVA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730803518; x=1731408318;
-        h=cc:to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=IZ2ZEmKkEGBah3IP5OP7lq/If4Hy9itJVErTmZIj6i4=;
-        b=iYYfTSKMLG8UvSrzd0q5L74XDQlqONGAKBt6GAyqU2uXOGyEeFpbtm55o0QacSuI6f
-         HzC7J27JvJkfGJz5j5DbcC19BbCKpXSZIbjBKTtEhXOQvGuZBtiWDz++MSHuQ4K+LWmU
-         csXLoftlh2KztjWaXnac2ioH1AqYmb7UswNj0ymf7KHCoh2O+X2mul93b6Oc4i4+TNyY
-         t0wkJrDtcmpBH68CWTkfpwD8IF6CDqDFTNc3iSKipyRXLoUxkqjzfj3Fc4f5c0G1pe3U
-         PvFmgod0lAFKjPxwesxgrWqiQa+GiCdiVq6bfA7ZyZBI0q86q4gOFMFKM4c23noJ64cX
-         cL6w==
-X-Forwarded-Encrypted: i=1; AJvYcCVuxrbAA9GzQrjhpeWG46U41qG3bWTdG0LqDFksmppzzaH3NkCWU4hIqDzdl4sKdEBZdLIXgY2N8/sIrPg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy71pXSD0kETVwTFVJg64yIstozFhDLSuZ4icL57KClyeJHxYNr
-	OMSZSBn6QEkAsY11JVmFMlnN0FEo/CQMfJNLWDyU+nSiQbutaAtnOUEj5NREUws5JCC/KQ3pB79
-	beKT1juTM5D1ndQTSPim7NgOSYq5tTA1fHgFE1ZNqunYdBAVJq5TTeKc=
-X-Google-Smtp-Source: AGHT+IHIyUl8wEuF87GVyfMyb85wK2asPyPlVhLNel0fxdN9Kt82s0JhOnd+4caVjZopihN3r+FwBAEypo6gyTI9neMOrXkADoxn
+        d=1e100.net; s=20230601; t=1730803556; x=1731408356;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=2nqCzdAinTSs6r9LINYA0htJIpUUCl9grAyzKQ3FNXw=;
+        b=bEls3wX1KQ6gIoKK613qhaHjGN2ggEcSRN5JPpVUO60hrFzZH+dbKPQwG0dhHxr7zN
+         itCylmOY81aQeE5iIRBgfUCKgPzPouoDbaA8PkQTpfQd2vry26LmjKTcYvICBk1wZNEH
+         DMDoRt80Akve+rZ5YXxhOgD/Hi0a55DODaXyqgzp6a4EbjXfbsRYg2SC4BFIvI+q8O4w
+         /p5f1TOp1cl2RS97+r8jEcP6MuqiAHVkZoX5/Te7HCLKIOHg0h/oJFNd/pW4pe2GggeD
+         2kk3bjRQQeSUBl9gqWpYJs7uYQfrdNXLhGE5qbqRfaa1rhncdSnJV34tynGpxJHgasDo
+         cnlg==
+X-Forwarded-Encrypted: i=1; AJvYcCU1ZGiXJ9HZQH5qQh0ITqnXWNYGxmduImSwgBUdaSXGeIbPwnKypdQybu68j6TpWALOaum1EDBdeeXK@vger.kernel.org, AJvYcCUz3bcBgB1NoyBPv2BGverDGt3es6TVJNldHFxXLrMPjoGuhYcAekxzbKsbDsVSq96M3+LDqggpqklk9E4=@vger.kernel.org, AJvYcCX08BH4JpV52qiTTeWKeQRBboDu0O+tXCoktwbS4at3bV3QkrUOFPmLNXycAyarY49MSn5kxwz1Z0RA6WW3@vger.kernel.org
+X-Gm-Message-State: AOJu0YwNNT4aBsVeSe9zBaI3VtDU68Y1ME2Wilv7nB6sD9VMBPaKingD
+	Yf0Y1Qbi/40DCF3v/7+xxJIwy0l/LX0GpmoFUmCEkWkAjZoF1kf2
+X-Google-Smtp-Source: AGHT+IFuMzmSrFyNbomcXyCKZcD5Ptda87WpuI1YNIlIu2eTML/Qcm8QIBq7OYbQ0MNRnPuijz8Y+w==
+X-Received: by 2002:a17:902:ec88:b0:20c:6bff:fcb1 with SMTP id d9443c01a7336-21105692ebfmr310242945ad.1.1730803556481;
+        Tue, 05 Nov 2024 02:45:56 -0800 (PST)
+Received: from fabio-Precision-3551.. ([2804:14c:485:4b61:cbc5:8de0:c558:652c])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211057c0ec7sm75358565ad.202.2024.11.05.02.45.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 05 Nov 2024 02:45:55 -0800 (PST)
+From: Fabio Estevam <festevam@gmail.com>
+To: broonie@kernel.org
+Cc: robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	shengjiu.wang@nxp.com,
+	linux-sound@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Fabio Estevam <festevam@denx.de>
+Subject: [PATCH v2 RESEND] ASoC: dt-bindings: fsl_spdif: Document imx6sl/sx compatible fallback
+Date: Tue,  5 Nov 2024 07:45:47 -0300
+Message-Id: <20241105104547.947128-1-festevam@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:3886:b0:3a3:a639:a594 with SMTP id
- e9e14a558f8ab-3a6a94a162dmr133746925ab.4.1730803517848; Tue, 05 Nov 2024
- 02:45:17 -0800 (PST)
-Date: Tue, 05 Nov 2024 02:45:17 -0800
-In-Reply-To: <20241105104500.3206-1-hdanton@sina.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6729f73d.050a0220.2edce.1509.GAE@google.com>
-Subject: Re: [syzbot] [block?] possible deadlock in __submit_bio
-From: syzbot <syzbot+949ae54e95a2fab4cbb4@syzkaller.appspotmail.com>
-To: hdanton@sina.com
-Cc: hdanton@sina.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-> On Sun, 03 Nov 2024 14:19:28 -0800
->> syzbot found the following issue on:
->> 
->> HEAD commit:    f9f24ca362a4 Add linux-next specific files for 20241031
->> git tree:       linux-next
->> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16749340580000
->
-> #syz test linux-nex f9f24ca362a4
+From: Fabio Estevam <festevam@denx.de>
 
-"linux-nex" does not look like a valid git repo address.
+i.MX6SL and i.MX6SX SPDIF blocks are compatible with i.MX35.
 
->
-> --- x/block/blk.h
-> +++ y/block/blk.h
-> @@ -72,8 +72,6 @@ static inline int bio_queue_enter(struct
->  	struct request_queue *q = bdev_get_queue(bio->bi_bdev);
->  
->  	if (blk_try_enter_queue(q, false)) {
-> -		rwsem_acquire_read(&q->io_lockdep_map, 0, 0, _RET_IP_);
-> -		rwsem_release(&q->io_lockdep_map, _RET_IP_);
->  		return 0;
->  	}
->  	return __bio_queue_enter(q, bio);
-> --- x/block/blk-core.c
-> +++ y/block/blk-core.c
-> @@ -358,8 +358,6 @@ int __bio_queue_enter(struct request_que
->  			goto dead;
->  	}
->  
-> -	rwsem_acquire_read(&q->io_lockdep_map, 0, 0, _RET_IP_);
-> -	rwsem_release(&q->io_lockdep_map, _RET_IP_);
->  	return 0;
->  dead:
->  	bio_io_error(bio);
-> --
+Document 'fsl,imx35-spdif' as a fallback compatible for these two
+chip variants.
+
+This fixes the following dt-schema warnings:
+
+compatible: ['fsl,imx6sl-spdif', 'fsl,imx35-spdif'] is too long
+compatible: ['fsl,imx6sx-spdif', 'fsl,imx35-spdif'] is too long
+
+Signed-off-by: Fabio Estevam <festevam@denx.de>
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+---
+Changes since v1:
+- Keep the entries as one enum. (Rob)
+
+ .../devicetree/bindings/sound/fsl,spdif.yaml  | 27 ++++++++++++-------
+ 1 file changed, 17 insertions(+), 10 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/sound/fsl,spdif.yaml b/Documentation/devicetree/bindings/sound/fsl,spdif.yaml
+index 204f361cea27..5654e9f61aba 100644
+--- a/Documentation/devicetree/bindings/sound/fsl,spdif.yaml
++++ b/Documentation/devicetree/bindings/sound/fsl,spdif.yaml
+@@ -16,16 +16,23 @@ description: |
+ 
+ properties:
+   compatible:
+-    enum:
+-      - fsl,imx35-spdif
+-      - fsl,vf610-spdif
+-      - fsl,imx6sx-spdif
+-      - fsl,imx8qm-spdif
+-      - fsl,imx8qxp-spdif
+-      - fsl,imx8mq-spdif
+-      - fsl,imx8mm-spdif
+-      - fsl,imx8mn-spdif
+-      - fsl,imx8ulp-spdif
++    oneOf:
++      - items:
++          - enum:
++              - fsl,imx35-spdif
++              - fsl,imx6sx-spdif
++              - fsl,imx8mm-spdif
++              - fsl,imx8mn-spdif
++              - fsl,imx8mq-spdif
++              - fsl,imx8qm-spdif
++              - fsl,imx8qxp-spdif
++              - fsl,imx8ulp-spdif
++              - fsl,vf610-spdif
++      - items:
++          - enum:
++              - fsl,imx6sl-spdif
++              - fsl,imx6sx-spdif
++          - const: fsl,imx35-spdif
+ 
+   reg:
+     maxItems: 1
+-- 
+2.34.1
+
 
