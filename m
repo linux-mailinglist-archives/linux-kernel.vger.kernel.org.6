@@ -1,406 +1,226 @@
-Return-Path: <linux-kernel+bounces-395902-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395903-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7B519BC4C5
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 06:41:07 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80B3C9BC4C9
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 06:42:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4420B1F225F8
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 05:41:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A989C1C20FAE
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 05:42:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80C8D1BC066;
-	Tue,  5 Nov 2024 05:41:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 097C91C231D;
+	Tue,  5 Nov 2024 05:42:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="Csl69V5D"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E459926AEC;
-	Tue,  5 Nov 2024 05:40:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730785260; cv=none; b=MC0JuQJA4B7hFaYbZNPJ4Fl3Ki34r8nQRNS3drio7Z/0X4uCF3AxTil6Lawmw3l6l3YHVqa3aIDUtqwJJknSvmpM4Y/ARIouDvUBALpOidnPCC3DttNGSvsi6D1lOhVSMFv8CdmfupKWwYZco4NmVSTzS8g6+gRCXHpFrRXEhmU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730785260; c=relaxed/simple;
-	bh=F4KJAkIxNOEvyGRCPeehtU28j2d6jBhighKIcng/28U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TdBDDExEh/PzIsv8hLQqUGJQ98TOEnGMIOAmdcIBI4FUB0OSvRVRWThqt0ifG9cdTob3q/1YLGCq1/cTTIMZwtHFeRJL1lU3X2jZHZgWEVr8BGL+ENvIan4ghkxOnCZP3T6bJMC5Xr6UyCHqgOD8SGumaUapXSqPw97ZD+gBylY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=Csl69V5D; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [192.168.0.102] (unknown [49.205.243.117])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 27DA42126CA5;
-	Mon,  4 Nov 2024 21:40:54 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 27DA42126CA5
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1730785258;
-	bh=OXyd1BsUuFsVYrlgfx/Fk3FA9zC/6KEyFTj+MHyQR/U=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Csl69V5DX0nObUas6XhvbBrK3DiM32dIwmnqQJW+6rXQ9EMIJSTNFRFtUfOxZPFhL
-	 m51EZL92j8cq+PTtkG4cSSXkbsyuk9JrxGjrO4zJMjsb8MLL9V6RzVf+C0qcb0XzQU
-	 F9a6zGZBnNOEz8bcCD2yno7pOOnk9raAA6N43I6Q=
-Message-ID: <33061e3f-d1a8-4240-ad7e-d6ddc089f61c@linux.microsoft.com>
-Date: Tue, 5 Nov 2024 11:10:54 +0530
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="weXxGOIr"
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2050.outbound.protection.outlook.com [40.107.223.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EE5C26AEC;
+	Tue,  5 Nov 2024 05:42:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.50
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730785353; cv=fail; b=HwQGwd70yPwDYTNl5yGiYb77vv9+YQBd2+CYNIufhUZuonyeIwbyULSLRqOi/fay0jkb39O4xeVpRXw2gTLIU5CYXZ6oPnfaMMUCQtwA0P76uin1FhfrNwN/IpnmbugDh9nyWk3Ts3OYlSL7QOI7POc6OYGOZ0FN5G3AhWf8ahE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730785353; c=relaxed/simple;
+	bh=87nypO8zMmKCHAkMp7ejPrtbmNCeens2NEoSpcu8Yas=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=ODx8JXr0WHckrPeFWRPwXnkViqMnc300v90nooA1fauEZSo0lAiJoul+MZ4oAHkkTtmCgzgIqUaQt8cHndJ9mtx7msNU9L11fC2Wtof7cnhfST5nEkSV0hpmWcRBKaHww/ZifU+JJLcfbdEe2gqb4irHJO7q+2q6j6abzdYxro4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=weXxGOIr; arc=fail smtp.client-ip=40.107.223.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=kgpAeoXgc6Lkdr0tyaaS7Fy97/xfAvMQujBUwNMvQZOwgd/A5wm72WZEtO1g17i4P0aOUMFmsAtCTsYg7lWEhm3MXezvZSg6svQE8yeUddELp6R5qxw91tJpcmuSLe35eFEm8KjBI8yuxKiZ0Z9Kiptw7ljufOiVqFT96QRrGfZgp6vEBkzXB3Ryw7HAXnfekBazzwI0R4kwVLojb9P1Qi8DVSLWqC2n/L7anpLPRHo2ZTdtSON1Jdiac6F9uh6oTeM1dkKV6paYwM0xQ/y8B59BhHMw9OakVM/1W64XoaKiCggalxQf1DTXG2HRqFB/bDyILDa9lrH4MU38wEh8LA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=6o7honbdpZ3A7HMKbDB+K4dMCh29pV9lnVuLsa+A5mk=;
+ b=WHfHbhGuDFr0NT4LowpI/MabuAXUQTI0QgP+1SP54Ouyjp7Fjd9u2kcEDyYzdcjFjmOtUQNa9ZcfVYcKYBITMub9EssBqyFm5/oM/ggw4Q4uvfqIGpPdhQdhfpQBIcnlW/c+BwFuv8ZKNKqw1+hEwVA5aYNac4kKAEXxOB6+dtNp0x4j94cXX8PJl9ueZFeXSNS0hQ7JDMSMDd0+lw5xcOF7aF50NTFOjizJ+j86kgFtSWgkgIBDL/5MYjWG6G16IX2+vwLhrLMADYqGXKHfxolktELVLTuFIc06owtEwBtoQDVWXU8APOSSQfewwL9Q3sAfEJf24lUNG/53DHABOA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=6o7honbdpZ3A7HMKbDB+K4dMCh29pV9lnVuLsa+A5mk=;
+ b=weXxGOIrMJnZijVUXHqdP404G+6TSyB9bGwjhKlFMVmGJSrYKAJLIt5zVjGGtrnlYLR8MWsBVUYabcAYWwv+M6B3cVHhIakcBQrjgSCu51ASr0NXc9RfcdR3oYvOtChAkPO60OUhjQ+p89iq7FOgykyIdMEhuvcKnaVQYBWjOns=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DS7PR12MB8252.namprd12.prod.outlook.com (2603:10b6:8:ee::7) by
+ CY8PR12MB7315.namprd12.prod.outlook.com (2603:10b6:930:51::21) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8114.30; Tue, 5 Nov 2024 05:42:28 +0000
+Received: from DS7PR12MB8252.namprd12.prod.outlook.com
+ ([fe80::2d0c:4206:cb3c:96b7]) by DS7PR12MB8252.namprd12.prod.outlook.com
+ ([fe80::2d0c:4206:cb3c:96b7%6]) with mapi id 15.20.8114.031; Tue, 5 Nov 2024
+ 05:42:27 +0000
+Date: Tue, 5 Nov 2024 11:12:16 +0530
+From: "Gautham R. Shenoy" <gautham.shenoy@amd.com>
+To: Mario Limonciello <mario.limonciello@amd.com>
+Cc: Borislav Petkov <bp@alien8.de>, Hans de Goede <hdegoede@redhat.com>,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	x86@kernel.org, Perry Yuan <perry.yuan@amd.com>,
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-pm@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+	Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
+Subject: Re: [PATCH v6 11/12] platform/x86/amd: hfi: Set ITMT priority from
+ ranking data
+Message-ID: <ZymwOJtr1k+6ZJGk@BLRRASHENOY1.amd.com>
+References: <20241104175407.19546-1-mario.limonciello@amd.com>
+ <20241104175407.19546-12-mario.limonciello@amd.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241104175407.19546-12-mario.limonciello@amd.com>
+X-ClientProxiedBy: PN0PR01CA0027.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:c01:4e::16) To DS7PR12MB8252.namprd12.prod.outlook.com
+ (2603:10b6:8:ee::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] Drivers: hv: vmbus: Wait for offers during boot
-To: Michael Kelley <mhklinux@outlook.com>,
- "K . Y . Srinivasan" <kys@microsoft.com>,
- Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>,
- Dexuan Cui <decui@microsoft.com>
-Cc: "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- John Starks <jostarks@microsoft.com>,
- "jacob.pan@linux.microsoft.com" <jacob.pan@linux.microsoft.com>,
- Easwar Hariharan <eahariha@linux.microsoft.com>,
- Saurabh Singh Sengar <ssengar@linux.microsoft.com>
-References: <20241029080147.52749-1-namjain@linux.microsoft.com>
- <20241029080147.52749-2-namjain@linux.microsoft.com>
- <SN6PR02MB4157726CAAFB3F9FC8B682A4D4552@SN6PR02MB4157.namprd02.prod.outlook.com>
-Content-Language: en-US
-From: Naman Jain <namjain@linux.microsoft.com>
-In-Reply-To: <SN6PR02MB4157726CAAFB3F9FC8B682A4D4552@SN6PR02MB4157.namprd02.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS7PR12MB8252:EE_|CY8PR12MB7315:EE_
+X-MS-Office365-Filtering-Correlation-Id: e0ce32e5-c2f5-4d2a-9809-08dcfd5ca1c7
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?J8ktefjR/D9PAtCmOwLgCAfi2SWUWz2YWlTtSIpLiGmPzJMYdBlE0vpVf4HX?=
+ =?us-ascii?Q?eApFu9+VnEgr+DszLv4QFRP94gV8aCdnHPsvEWHcwy0BgTpSIcUT+NkWG6hQ?=
+ =?us-ascii?Q?BqDSKdKa7yvWkGaOsjnhevIMcHuQMzAFmUoHZqdbC2OZH8RJh+EQ9JLDhadb?=
+ =?us-ascii?Q?W0FksKGD4Tmw8mitTAMYqYOrzqwYgeLQ7CM1z6mYsA76m5b3KOPuaNL8gc1S?=
+ =?us-ascii?Q?k5q448mg/oebptkxol3qNT63UwuQMbnAqjgAI1aMgC3yHX0E3q9+so6NFnt3?=
+ =?us-ascii?Q?zKI/JX/mIIeDNDMrXADoTStkrz2Awnpz+sEha7c9oRfI94PUfWeA9smc4zPZ?=
+ =?us-ascii?Q?chrPEWRuRXdtXyvTQ2acU76mlTMIlW9lbAV02DPiTgzKxaJRhuYS+JRRDeDo?=
+ =?us-ascii?Q?2YXAgRYQjmqWz689EgBmHcvKdS9wKZC+d6YW3yYgkYzu0uzCUmSog4TN+gG7?=
+ =?us-ascii?Q?0HHvzAXWOEmeSkPm1tS7HJqh+/pbILlqvUcZDdRiwjRIsAXa9BdL97NzwTB+?=
+ =?us-ascii?Q?ElvEjarVNI+kUmRlx2rIRpGrs/eQjTfPo3FR69nSV1k3H5MgeYogHk2YAOrv?=
+ =?us-ascii?Q?JmfcehmwSdMucufShzBiw2+9HRAaavzB5XI44qAiUtqrsQ4ryVQIBuIdLTft?=
+ =?us-ascii?Q?qxjnmm8ZS+8XTU/kQayohJSVRmcSpENDnVM1IeA0NoT7Tpt2WrQb8BJ7HudN?=
+ =?us-ascii?Q?VJdJXg/SBtDCi3hMiPJV6/RWAp8WPeBGKwUZjegf9EEsBsTFmOZvVrP8eW6Y?=
+ =?us-ascii?Q?2YI/Rr8z+7s/1epw0QZEZRmz1S2NBbANYt2MkUENI8ttxIFU7V2qGi6i0pVI?=
+ =?us-ascii?Q?p1g3vDfYa6BFqvj5bzWS+ln1wvCrlYaPo8Z1t3Jo/cDULu/bXxwrISuzTp0L?=
+ =?us-ascii?Q?xjuC+tXzbUZPQQGip7Q/iHy3vzu3MmWhSQvVpRdN/Uy0x/DbjZ7cfl9Tlj7n?=
+ =?us-ascii?Q?Agpd907NjGaeoSNAerH1KI9U7Cd/pM+PcA0tFsewxVp/7sdgDWX+nbU1R3AD?=
+ =?us-ascii?Q?F9DFMpiaMaMUFzptZxxUm2w1mhQkaXgDjwM+53+WdbuE0PF3C14FaUuC3sGn?=
+ =?us-ascii?Q?OFyhIBOue4BctQ5X1gxRkqKMxcjsDM8Vu9Or/mEU6+teA8etMZ5OksMVrOUD?=
+ =?us-ascii?Q?VmNOF38OM27w+5DDLbIBTPeZQcBhgc4NcSsunnArnt1KcCHpnufaRtTLtOlc?=
+ =?us-ascii?Q?6yfhXZ1vEpph1whfGA04dYeqtNW1ltEZFIcEhah78KwOz1PItT8iWL6HXmPC?=
+ =?us-ascii?Q?cAPcLetD+kneCN9Pn0tmPVG76kjBlwa/yH2nhEH1YPXm0XLw1mKWGLTNfANV?=
+ =?us-ascii?Q?HtD+LAaVeX3qmQ01r2WpKrT+?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB8252.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?creWxezaCeae+XvGQPIe8AwTxnhuKT61Mcp3y6tjzOTK9Azw5eLajFoKCVww?=
+ =?us-ascii?Q?F0BvAuMZsecCoUcGFN+lsEQ6VqRqWtrSPbd8Ld7FRABbnpsFSqCSdih4nyBH?=
+ =?us-ascii?Q?WtxwZibUVeuXa3FZCP4rpUC17KQRMeinUSwNp+44RcA8cXbbYTZ8VxgHzXII?=
+ =?us-ascii?Q?0kRRBbkj6oSCkIFQVUCyXSaaswX742ZNoujUCCEDMM44wwX4VWm1PiqkGm4M?=
+ =?us-ascii?Q?EBGG4Mzu6tj51p47OVpTE2/KTihOEb8eRnRCFlbrOQM88ZoNJ+e8K1BdC7v7?=
+ =?us-ascii?Q?0VojEw/v7/OVIw2HQRqtZIifw8haxtoKIw1GU8lrGkr094AJSUCZS5KtBIWb?=
+ =?us-ascii?Q?78hgTpBy9eSVyVic1jjbAiRvhydz/XbQQkJhLmGucXm5qL/iE2RotTvbjIHY?=
+ =?us-ascii?Q?BV3z8PSdNRkxFaeA3u7ls9hgJyMECkNlMRFYtF8dXByvKYuyoBR0m/HHs2tz?=
+ =?us-ascii?Q?scXtyfL+IVNPN58LmbHzV0PSeHCAIkNUCMyt87ctvsxheS2sGnEwb2wOdKaf?=
+ =?us-ascii?Q?es1SOU0F4RnApD0NbJKPVTJ2yXBUvKXWV74pcVw/UlZHc6qZYKTPAKFgqemA?=
+ =?us-ascii?Q?+q6b5P6iCtkfrBkM+JwFB1K4feh3No8W30KpbQYmuHP2/LkULO95ZCxeABSe?=
+ =?us-ascii?Q?/8dCtEv/IrsXiGXflxvh5WXQQsLZG3hvUIuP9YmlDvgQfkF7Cu2CE+u1CqZZ?=
+ =?us-ascii?Q?IAWOyvE40wHUYr8whJb7fCxGuKXv5ntKjacXbeRVH6cTYNPyRKLRSTkTyYhP?=
+ =?us-ascii?Q?os6Nagv0zesR7kU759Yk+y6TbRxLhgPowgQtLaChO7C4dzqwHRKLMMjeSgdH?=
+ =?us-ascii?Q?E5a1/vKvR5LOwbo1PT4A8FXdh0miUuSWmq1BrEhIfe7bSvRglsLE9Xxi0mfz?=
+ =?us-ascii?Q?MVcyunOXQt9DZqVTNMzVQRKgrW1VPrOKxo4ZfXe15Td/KP7mIwS6qdqDG11l?=
+ =?us-ascii?Q?txrV6pc7epMil/jFDstjFhk+jmxxzTf1hoobQxXjUM6PPmYe1GBcesLm+8Bg?=
+ =?us-ascii?Q?LaqhgLA4c9kRS6AhlE4NxEXsMbYF/ubDIy6tP7T5iAf3tVDXPVEoXtQpPSvd?=
+ =?us-ascii?Q?HMgJCbHWFYXWsuNicyCLmK+GZawPEYlgSOE8hpEGykLoXXqwQARWwwnW3iAe?=
+ =?us-ascii?Q?USKqbAhif9fgNpW/CLTa9TXfmu4KKv97+BLCpjU0w6uMTpWMc5WP9SLyPH8h?=
+ =?us-ascii?Q?pHTPbQv0KI5lkd24uKLLXanohuneh5cC0l688EmBsNzK13RHHXMueRPi7NtV?=
+ =?us-ascii?Q?AoKK3CChfaCEB+dM5yxa9okfIV2nykmvshZ43i908nt0Dt01orARMqaAGRuW?=
+ =?us-ascii?Q?cWunJAc5Ken/652wCM+4tFa5xa0Tt7AC5RxdztBxUMowo0cDtVf9ztVQadla?=
+ =?us-ascii?Q?oE1JQXrXpuag2a4axt/V12Dg362coNN48wn1hdH4hyofnLw/pG1ProBMwjNk?=
+ =?us-ascii?Q?MG6env2RBFRrM4HorN584NAjeTgNqBybtCd24xQMk91Yeb1VyWyMYw/gXj8Y?=
+ =?us-ascii?Q?POprI274LvBdt96b/vMnGNoiCzfqlLlNE0LAbgOLy1hVDDwEi7+WoTVP8jDv?=
+ =?us-ascii?Q?xrkvOALYUhTrQQJUQEXIvcfHyrDmCUpeTnuK/X+t?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e0ce32e5-c2f5-4d2a-9809-08dcfd5ca1c7
+X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB8252.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Nov 2024 05:42:27.4742
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: C6CqdEYCfj+k6GNJyZfad+PsdDg1PS0huNusX51QNdtaEJA56wRkns+HHe5yoJIMurSkMStC735P9SnWrEFOcg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB7315
 
-
-
-On 11/1/2024 12:43 AM, Michael Kelley wrote:
-> From: Naman Jain <namjain@linux.microsoft.com> Sent: Tuesday, October 29, 2024 1:02 AM
->>
->> Channel offers are requested during VMBus initialization and resume
->> from hibernation. Add support to wait for all channel offers to be
+On Mon, Nov 04, 2024 at 11:54:06AM -0600, Mario Limonciello wrote:
+> The static ranking data that is read at module load should be used
+> to set up the priorities for the cores relative to the performance
+> values.
 > 
-> Given the definition of ALLOFFERS_DELIVERED, maybe change to:
-> 
-> " wait for all boot-time channel offers"
+> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
 
-Thanks for reviewing, acked.
+Looks good to me.
 
-> 
->> delivered and processed before returning from vmbus_request_offers.
->>
->> This is in analogy to a PCI bus not returning from probe until it has
->> scanned all devices on the bus.
->>
->> Without this, user mode can race with VMBus initialization and miss
->> channel offers. User mode has no way to work around this other than
->> sleeping for a while, since there is no way to know when VMBus has
->> finished processing offers.
-> 
-> "finished processing boot-time offers."
->
+Reviewed-by: Gautham R. Shenoy <gautham.shenoy@amd.com>
 
-Acked.
+--
+Thanks and Regards
+gautham.
 
-
->>
->> With this added functionality, remove earlier logic which keeps track
->> of count of offered channels post resume from hibernation. Once all
->> offers delivered message is received, no further offers are going to
->> be received.
+> ---
+>  drivers/platform/x86/amd/hfi/Kconfig |  1 +
+>  drivers/platform/x86/amd/hfi/hfi.c   | 10 ++++++++++
+>  2 files changed, 11 insertions(+)
 > 
-> "no further boot-time offers"
-
-Acked.
-
+> diff --git a/drivers/platform/x86/amd/hfi/Kconfig b/drivers/platform/x86/amd/hfi/Kconfig
+> index 79e3b0073275c..5b7c2865f4aa9 100644
+> --- a/drivers/platform/x86/amd/hfi/Kconfig
+> +++ b/drivers/platform/x86/amd/hfi/Kconfig
+> @@ -7,6 +7,7 @@ config AMD_HFI
+>  	bool "AMD Hetero Core Hardware Feedback Driver"
+>  	depends on ACPI
+>  	depends on CPU_SUP_AMD
+> +	depends on SCHED_MC_PRIO
+>  	help
+>  	 Select this option to enable the AMD Heterogeneous Core Hardware Feedback Interface. If
+>  	 selected, hardware provides runtime thread classification guidance to the operating system
+> diff --git a/drivers/platform/x86/amd/hfi/hfi.c b/drivers/platform/x86/amd/hfi/hfi.c
+> index cef6aa84bd85e..09905a354efdd 100644
+> --- a/drivers/platform/x86/amd/hfi/hfi.c
+> +++ b/drivers/platform/x86/amd/hfi/hfi.c
+> @@ -115,6 +115,12 @@ static DEFINE_PER_CPU(struct amd_hfi_cpuinfo, amd_hfi_cpuinfo) = {.class_index =
+>  
+>  static DEFINE_MUTEX(hfi_cpuinfo_lock);
+>  
+> +static void amd_hfi_sched_itmt_work(struct work_struct *work)
+> +{
+> +	sched_set_itmt_support();
+> +}
+> +static DECLARE_WORK(sched_amd_hfi_itmt_work, amd_hfi_sched_itmt_work);
+> +
+>  static int find_cpu_index_by_apicid(unsigned int target_apicid)
+>  {
+>  	int cpu_index;
+> @@ -234,6 +240,8 @@ static int amd_set_hfi_ipcc_score(struct amd_hfi_cpuinfo *hfi_cpuinfo, int cpu)
+>  		WRITE_ONCE(hfi_cpuinfo->ipcc_scores[i],
+>  			   hfi_cpuinfo->amd_hfi_classes[i].perf);
+>  
+> +	sched_set_itmt_core_prio(hfi_cpuinfo->ipcc_scores[0], cpu);
+> +
+>  	return 0;
+>  }
+>  
+> @@ -453,6 +461,8 @@ static int amd_hfi_probe(struct platform_device *pdev)
+>  	if (ret < 0)
+>  		return ret;
+>  
+> +	schedule_work(&sched_amd_hfi_itmt_work);
+> +
+>  	return 0;
+>  }
+>  
+> -- 
+> 2.43.0
 > 
->> Consequently, logic to prevent suspend from happening
->> after previous resume had missing offers, is also removed.
->>
->> Co-developed-by: John Starks <jostarks@microsoft.com>
->> Signed-off-by: John Starks <jostarks@microsoft.com>
->> Signed-off-by: Naman Jain <namjain@linux.microsoft.com>
->> Reviewed-by: Easwar Hariharan <eahariha@linux.microsoft.com>
->> ---
->> Changes since v1:
->> https://lore.kernel.org/all/20241018115811.5530-1-namjain@linux.microsoft.com/
->> * Added Easwar's Reviewed-By tag
->> * Addressed Michael's comments:
->>    * Added explanation of all offers delivered message in comments
->>    * Removed infinite wait for offers logic, and changed it wait once.
->>    * Removed sub channel workqueue flush logic
->>    * Added comments on why MLX device offer is not expected as part of
->>      this essential boot offer list. I refrained from adding too many
-> 
-> You've used slightly different phrasing here ("essential boot offer list").
-> Potential confusion can be avoided if the terminology is super consistent.
-> I'm good with "boot-time offers" (or something else if you prefer). I'm not
-> sure what "essential" means here, unless it refers to offers for VFs from
-> SR-IOV NICs (like Mellanox) being excluded. But it should be fine to
-> use something short like "boot-time offers" and then note the VF
-> exception in the code comments as you've done.
-
-By essential, I meant the ones that the VM is configured with.
-I'll stick with "boot-time offers".
-
-> 
->> details on it as it felt like it is beyond the scope of this patch
->> series and may not be relevant to this. However, please let me know if
->>      something needs to be added.
->> * Addressed Saurabh's comments:
->>    * Changed timeout value to 10000 ms instead of 10*10000
->>    * Changed commit msg as per suggestions
->>    * Added a comment for warning case of wait_for_completion timeout
->> ---
->>   drivers/hv/channel_mgmt.c | 55 ++++++++++++++++++++++++++++-----------
->>   drivers/hv/connection.c   |  4 +--
->>   drivers/hv/hyperv_vmbus.h | 14 +++-------
->>   drivers/hv/vmbus_drv.c    | 16 ------------
->>   4 files changed, 45 insertions(+), 44 deletions(-)
->>
->> diff --git a/drivers/hv/channel_mgmt.c b/drivers/hv/channel_mgmt.c
->> index 3c6011a48dab..a2e9ebe5bf72 100644
->> --- a/drivers/hv/channel_mgmt.c
->> +++ b/drivers/hv/channel_mgmt.c
->> @@ -944,16 +944,6 @@ void vmbus_initiate_unload(bool crash)
->>   		vmbus_wait_for_unload();
->>   }
->>
->> -static void check_ready_for_resume_event(void)
->> -{
->> -	/*
->> -	 * If all the old primary channels have been fixed up, then it's safe
->> -	 * to resume.
->> -	 */
->> -	if (atomic_dec_and_test(&vmbus_connection.nr_chan_fixup_on_resume))
->> -		complete(&vmbus_connection.ready_for_resume_event);
->> -}
->> -
->>   static void vmbus_setup_channel_state(struct vmbus_channel *channel,
->>   				      struct vmbus_channel_offer_channel *offer)
->>   {
->> @@ -1109,8 +1099,6 @@ static void vmbus_onoffer(struct vmbus_channel_message_header *hdr)
->>
->>   		/* Add the channel back to the array of channels. */
->>   		vmbus_channel_map_relid(oldchannel);
->> -		check_ready_for_resume_event();
->> -
->>   		mutex_unlock(&vmbus_connection.channel_mutex);
->>   		return;
->>   	}
->> @@ -1296,13 +1284,22 @@
->> EXPORT_SYMBOL_GPL(vmbus_hvsock_device_unregister);
->>
->>   /*
->>    * vmbus_onoffers_delivered -
->> - * This is invoked when all offers have been delivered.
->> + * CHANNELMSG_ALLOFFERS_DELIVERED message arrives after all the essential
-> 
-> Again, I would drop "essential" here, as its meaning in this context isn't
-> defined anywhere.
-> 
-
-Acked.
-
->> + * boot-time offers are delivered. Other channels can be hot added
->> + * or removed later, even immediately after the all-offers-delivered
->> + * message. A boot-time offer will be any of the virtual hardware the
->> + * VM is configured with at boot.
-> 
-> This is good to have a definition of "boot-time offer".  But I think some
-> additional specification is appropriate.  Let me suggest the following:
-> 
-> The CHANNELMSG_ALLOFFERS_DELIVERED message arrives after all
-> boot-time offers are delivered. A boot-time offer is for the primary channel
-> for any virtual hardware configured in the VM at the time it boots.
-> Boot-time offers include offers for physical devices assigned to the VM
-> via Hyper-V's Discrete Device Assignment (DDA) functionality that are
-> handled as virtual PCI devices in Linux (e.g., NVMe devices and GPUs).
-> Boot-time offers do not include offers for VMBus sub-channels. Because
-> devices can be hot-added to the VM after it is booted, additional channel
-> offers that aren't boot-time offers can be received at any time after the
-> all-offers-delivered message.
-> 
-> SR-IOV NIC Virtual Functions (VFs) assigned to a VM are not considered
-> to be assigned to the VM at boot-time, and offers for VFs may occur after
-> the all-offers-delivered message. VFs are optional accelerators to the
-> synthetic VMBus NIC and are effectively hot-added only after the VMBus
-> NIC channel is opened (once it knows the guest can support it, via the
-> sriov bit in the netvsc protocol).
-> 
-> [Please confirm that my suggested wording is correct!]
-
-This explains really well. I'll rephrase the code comments. Thanks.
-
-> 
->>    */
->>   static void vmbus_onoffers_delivered(
->>   			struct vmbus_channel_message_header *hdr)
->>   {
->> +	complete(&vmbus_connection.all_offers_delivered_event);
->>   }
->>
->>   /*
->> @@ -1578,7 +1575,8 @@ void vmbus_onmessage(struct vmbus_channel_message_header *hdr)
->>   }
->>
->>   /*
->> - * vmbus_request_offers - Send a request to get all our pending offers.
->> + * vmbus_request_offers - Send a request to get all our pending offers
->> + * and wait for all offers to arrive.
->>    */
->>   int vmbus_request_offers(void)
->>   {
->> @@ -1596,6 +1594,10 @@ int vmbus_request_offers(void)
->>
->>   	msg->msgtype = CHANNELMSG_REQUESTOFFERS;
->>
->> +	/*
->> +	 * This REQUESTOFFERS message will result in the host sending an all
->> +	 * offers delivered message.
->> +	 */
->>   	ret = vmbus_post_msg(msg, sizeof(struct vmbus_channel_message_header),
->>   			     true);
->>
->> @@ -1607,6 +1609,29 @@ int vmbus_request_offers(void)
->>   		goto cleanup;
->>   	}
->>
->> +	/*
->> +	 * Wait for the host to send all offers.
->> +	 * Keeping it as a best-effort mechanism, where a warning is
->> +	 * printed if a timeout occurs, and execution is resumed.
->> +	 */
->> +	if (!wait_for_completion_timeout(
->> +		&vmbus_connection.all_offers_delivered_event, msecs_to_jiffies(10000))) {
->> +		pr_warn("timed out waiting for all offers to be delivered...\n");
->> +	}
->> +
->> +	/*
->> +	 * Flush handling of offer messages (which may initiate work on
->> +	 * other work queues).
->> +	 */
->> +	flush_workqueue(vmbus_connection.work_queue);
->> +
->> +	/*
->> +	 * Flush workqueues for processing the incoming offers. Subchannel
-> 
-> s/workqueues/workqueue/
-
-Acked.
-
-> 
->> +	 * offers and processing can happen later, so there is no need to
->> +	 * flush those workqueues here.
-> 
-> s/those workqueues/that workqueue/
-
-Acked.
-
-> 
->> +	 */
->> +	flush_workqueue(vmbus_connection.handle_primary_chan_wq);
->> +
->>   cleanup:
->>   	kfree(msginfo);
->>
->> diff --git a/drivers/hv/connection.c b/drivers/hv/connection.c
->> index f001ae880e1d..8351360bba16 100644
->> --- a/drivers/hv/connection.c
->> +++ b/drivers/hv/connection.c
->> @@ -34,8 +34,8 @@ struct vmbus_connection vmbus_connection = {
->>
->>   	.ready_for_suspend_event = COMPLETION_INITIALIZER(
->>   				  vmbus_connection.ready_for_suspend_event),
->> -	.ready_for_resume_event	= COMPLETION_INITIALIZER(
->> -				  vmbus_connection.ready_for_resume_event),
->> +	.all_offers_delivered_event = COMPLETION_INITIALIZER(
->> +				  vmbus_connection.all_offers_delivered_event),
->>   };
->>   EXPORT_SYMBOL_GPL(vmbus_connection);
->>
->> diff --git a/drivers/hv/hyperv_vmbus.h b/drivers/hv/hyperv_vmbus.h
->> index d2856023d53c..80cc65dac740 100644
->> --- a/drivers/hv/hyperv_vmbus.h
->> +++ b/drivers/hv/hyperv_vmbus.h
->> @@ -287,18 +287,10 @@ struct vmbus_connection {
->>   	struct completion ready_for_suspend_event;
->>
->>   	/*
->> -	 * The number of primary channels that should be "fixed up"
->> -	 * upon resume: these channels are re-offered upon resume, and some
->> -	 * fields of the channel offers (i.e. child_relid and connection_id)
->> -	 * can change, so the old offermsg must be fixed up, before the resume
->> -	 * callbacks of the VSC drivers start to further touch the channels.
->> +	 * Completed once the host has offered all channels. Note that
-> 
-> "all boot-time channels"
-
-Acked.
-
-> 
-> 
->> +	 * some channels may still be being process on a work queue.
->>   	 */
->> -	atomic_t nr_chan_fixup_on_resume;
->> -	/*
->> -	 * vmbus_bus_resume() waits for "nr_chan_fixup_on_resume" to
->> -	 * drop to zero.
->> -	 */
->> -	struct completion ready_for_resume_event;
->> +	struct completion all_offers_delivered_event;
->>   };
->>
->>
->> diff --git a/drivers/hv/vmbus_drv.c b/drivers/hv/vmbus_drv.c
->> index 9b15f7daf505..bd3fc41dc06b 100644
->> --- a/drivers/hv/vmbus_drv.c
->> +++ b/drivers/hv/vmbus_drv.c
->> @@ -2427,11 +2427,6 @@ static int vmbus_bus_suspend(struct device *dev)
->>   	if (atomic_read(&vmbus_connection.nr_chan_close_on_suspend) > 0)
->>   		wait_for_completion(&vmbus_connection.ready_for_suspend_event);
->>
->> -	if (atomic_read(&vmbus_connection.nr_chan_fixup_on_resume) != 0) {
->> -		pr_err("Can not suspend due to a previous failed resuming\n");
->> -		return -EBUSY;
->> -	}
->> -
->>   	mutex_lock(&vmbus_connection.channel_mutex);
->>
->>   	list_for_each_entry(channel, &vmbus_connection.chn_list, listentry) {
->> @@ -2456,17 +2451,12 @@ static int vmbus_bus_suspend(struct device *dev)
->>   			pr_err("Sub-channel not deleted!\n");
->>   			WARN_ON_ONCE(1);
->>   		}
->> -
->> -		atomic_inc(&vmbus_connection.nr_chan_fixup_on_resume);
->>   	}
->>
->>   	mutex_unlock(&vmbus_connection.channel_mutex);
->>
->>   	vmbus_initiate_unload(false);
->>
->> -	/* Reset the event for the next resume. */
->> -	reinit_completion(&vmbus_connection.ready_for_resume_event);
->> -
->>   	return 0;
->>   }
->>
->> @@ -2502,14 +2492,8 @@ static int vmbus_bus_resume(struct device *dev)
->>   	if (ret != 0)
->>   		return ret;
->>
->> -	WARN_ON(atomic_read(&vmbus_connection.nr_chan_fixup_on_resume) == 0);
->> -
->>   	vmbus_request_offers();
->>
->> -	if (wait_for_completion_timeout(
->> -		&vmbus_connection.ready_for_resume_event, 10 * HZ) == 0)
->> -		pr_err("Some vmbus device is missing after suspending?\n");
->> -
->>   	/* Reset the event for the next suspend. */
->>   	reinit_completion(&vmbus_connection.ready_for_suspend_event);
->>
->> --
->> 2.34.1
-
-
-Thanks,
-Naman
 
