@@ -1,88 +1,192 @@
-Return-Path: <linux-kernel+bounces-396765-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396766-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 062BF9BD1AF
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 17:07:46 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4008C9BD1B3
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 17:08:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AEE611F250A8
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 16:07:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F37882863FF
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 16:07:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0424317C9B9;
-	Tue,  5 Nov 2024 16:06:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20C61185942;
+	Tue,  5 Nov 2024 16:06:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="kkJWyW1j"
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="OvaeSaCR"
+Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C42A415380B
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 16:06:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91BCC166F25
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 16:06:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730822788; cv=none; b=eCeFrRGO/XpEpbqyj5YXKa0IHafMEIFqFY1mWaxvyK42kRlS56ngYVEUDyJaBBukqrhHISB+zGXTn3XEB6eG9b1vwJSQxUIuzYzrOK4LB2Jo8VtMXJgmXiVcyp5PNATgrjIBulqpKhi2OxyJndzT0WoR3+B2lmr5p9M6T7gS4mQ=
+	t=1730822799; cv=none; b=OWUvBD/ENJp2+uVO9XIC08QiM2orZLUpIxoqJzJXNRJD/pKk7mtuNw4oeuTOS2femLLV1bX8lcW8zmQZpK/nR8BYOMk2d4T+Z7YMA44H63ltv/mj2sq6u2dJWssZg+lDDtPRNwy8KcQYnesLU75EGQLmOSjNlmEv5zO9evyF9ZU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730822788; c=relaxed/simple;
-	bh=sbgLKZPjJro6OftLylKQYeSBOg3vHCE89pxzGK3ijEE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CKg5mxUWBtBASNT/KENE6budY4SHm9c81vmO6Gn0mImFIlPVB0osvbNj4qtG5d+NsH+H1TWt0zSiG5c8SMzNRVwXFjCv+y1sSOJDqQAihdEOf1y5R4P/Kgr/YhdNcD81grB1UE9nt68wzDzcfPc1Oa5ETHvh7td0F3/5VvkaVOI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=kkJWyW1j; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=wNK4+WQ/AdJS8pNeUvM3UkTOhpJsFz8Q28pGPXZtp80=; b=kkJWyW1jzNujk9b5spEbNsseQz
-	MgMqxxjGKCVuMc93lQg+0Q40GLAPqw6snxWi8PYMmLyTMvifD5kBn6T9dqNVt0tNwOBrIBZ3OlKmJ
-	ezCRmTDBGj/6e6CiWCILjg1jjXOORomA3WBZzewL5Hq+WRGcNNUtOV2ugBk7HowjLikgYnoe4e2QV
-	+ARIh0RDBmQ72GME2OoYKCJiAUh8wKATHjLGgbxdkfFIuIjFuznQfKjrRUi46ZuKgD3jg+iwWBkee
-	qqyhrXXcDl375ydI7UwQbXUJZnEYzI82E+cA1lDciJc+ZEA7R/1+0ihGNbKGaEmhdUaiC2UC9Lbpl
-	mTo1r0gA==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1t8M4U-0000000BMZu-28Y1;
-	Tue, 05 Nov 2024 16:06:22 +0000
-Date: Tue, 5 Nov 2024 16:06:22 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Dylan <falaichte@mailfence.com>
-Cc: linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org,
-	torvalds@linux-foundation.org
-Subject: Re: Russians in the Kernel
-Message-ID: <20241105160622.GV1350452@ZenIV>
-References: <1116521637.127547.1730818127738@fidget.co-bxl>
- <1552791356.130304.1730819601359@fidget.co-bxl>
- <237077017.130501.1730819723674@fidget.co-bxl>
+	s=arc-20240116; t=1730822799; c=relaxed/simple;
+	bh=YRiHww1+NhlFVyCrv9IfzoyKUfIeSR3WjAcec84h3z0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GOi0oN1AQZ30RNgFF1drlFPvwD2JDPbRurxSQNbnNlvzpb3V5H5v8NOXSMh9L75G8/0GzJn0x1A4KJDCoFV3HP2J8KxeAwkg8+LFKwAArrhRsPWq4JV+cEyyN0tiWbgNMaaqxxxm/0107gfGrcVPOEEdxVhVuMGqBYyAJ+lX/PI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=OvaeSaCR; arc=none smtp.client-ip=209.85.216.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
+Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-2e2ee0a47fdso866494a91.2
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 08:06:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=purestorage.com; s=google2022; t=1730822797; x=1731427597; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Pe6tzS7Jefr2wBTMmepj7J7ch7Fwi7LgaTG2DrXOEMs=;
+        b=OvaeSaCRQACEi+CdUZKNh+b5NywDO9h4uldWJOlonufc4UvO/TT11SJbIE9n24lfH3
+         UltYT2VUgdl5UA17HZjN0T+/ciBzzFtTRHUhg2u+RYw2FDrykZAWSaeBF0KDOOQHHCWj
+         FYb9tnGVCaZB/ocld80GdaD9Usi4jf+0FG7SWz3qmiWnCy3thoFEBVDqsjcIFYlCe228
+         mNdphrY1MB4PKzU2q9mv+8EomkGPT0uNLhvGaRUN4klO3odB//gxn4FQ68iyhfM7VkRr
+         kBcdTQ6ZQCHS031u9wqQNWnIH+G1WjFtNPSeFD36ubvmn1gUDYiHKmM0tGtXfbZIYPK7
+         X5OQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730822797; x=1731427597;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Pe6tzS7Jefr2wBTMmepj7J7ch7Fwi7LgaTG2DrXOEMs=;
+        b=CjiR73oxIol2vS4Z/XdR8OnwS2b9+I4W8yYSbM1NApvm4b0r2e0gbpphhxSIerg5Rw
+         djdYLwE3//rRMS5+nVLFvKN9z6OUDHJAgL3iQWu+7whWcy62oD6IY37l4+419dGVnG2s
+         fVn/AA3IpqPXYGT2o+ZpfcEyuYiCYmGiqiWOkk8TMp/KzxNqPTzl93Xz2h/pIe0mXqE8
+         a37yvF+IS/tTqhGfliVVmu845kx+yAr/ZP9AWl+Cbbox9jMNurgT9KXH/oigIlSsER6r
+         TT3+18KS5awOHw42XYxRh0H7tEyAlvXEZ0N2p83N3kXCcsDbaig5+OlBZSKAFynLZpZi
+         oDZg==
+X-Forwarded-Encrypted: i=1; AJvYcCVyDxwlc2L8uKY+OXmDNuFQOQoInWih4QOgTqAsoMsBF1ZOp756KPtGa29YG7elmSNhCiCnf9MsFJpslNk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwoFst5uj6iJTxpETvbVelXXfYGONzoNSmRIk1BDGBhY1p3hdo2
+	TpQHlsZ4Q0QMQVJzwpVTUCIMLilh2lxEkms5YqPuKgcSqJ6l4AkgQCRKQIs4klqXhTwLb2uAT8K
+	7HG9UJHqHD209bmq3Za1pAjERh8NffjDXuXoqmw==
+X-Google-Smtp-Source: AGHT+IFzsqY6OWMTeowTywyKfQhYAOXP+M/+Yjr6GgpGfWTfSDkoFlv1jXVRkyP3zd7O8FLbk4JHiwux2suOsS1uRP4=
+X-Received: by 2002:a17:90b:1d84:b0:2e2:de92:2d52 with SMTP id
+ 98e67ed59e1d1-2e8f11d607amr18357252a91.9.1730822796788; Tue, 05 Nov 2024
+ 08:06:36 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <237077017.130501.1730819723674@fidget.co-bxl>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+References: <20241101034647.51590-1-csander@purestorage.com>
+ <20241101034647.51590-2-csander@purestorage.com> <CY8PR12MB71958512F168E2C172D0BE05DC502@CY8PR12MB7195.namprd12.prod.outlook.com>
+ <CADUfDZofFwy12oZYTmm3TE314RM79EGsxV6bKEBRMVFv8C3jNg@mail.gmail.com> <CY8PR12MB71953FD36C70ACACEBE3DBA1DC522@CY8PR12MB7195.namprd12.prod.outlook.com>
+In-Reply-To: <CY8PR12MB71953FD36C70ACACEBE3DBA1DC522@CY8PR12MB7195.namprd12.prod.outlook.com>
+From: Caleb Sander <csander@purestorage.com>
+Date: Tue, 5 Nov 2024 08:06:25 -0800
+Message-ID: <CADUfDZqanDo+v_jap7pQire86QkfaDQE4HvhvVBb64YqKNgRHg@mail.gmail.com>
+Subject: Re: [PATCH net-next 2/2] mlx5/core: deduplicate {mlx5_,}eq_update_ci()
+To: Parav Pandit <parav@nvidia.com>
+Cc: Saeed Mahameed <saeedm@nvidia.com>, Leon Romanovsky <leon@kernel.org>, Tariq Toukan <tariqt@nvidia.com>, 
+	Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>, 
+	"linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Nov 05, 2024 at 04:15:23PM +0100, Dylan   wrote:
-> Hello everyone,
-> 
-> The recent stir about the removal of prominent contributors from the Linux kernel for nothing more than being Russian has prompted me, someone who has absolutely no business being in and around the kernel mailing list to compose a message and hopefully provide the prospective of an end-user of the Linux kernel. Some people feel blanket banning an entire group of people for the wrongdoing of a handful is rather unfair and not in keeping with the spirit of free and open source software. Rather than complain about the change and governmental overreach in community projects, I'd like to offer a technical solution that could ensure things continue as they have while adhering to sanctions.
+On Mon, Nov 4, 2024 at 9:22=E2=80=AFPM Parav Pandit <parav@nvidia.com> wrot=
+e:
+>
+>
+>
+> > From: Caleb Sander <csander@purestorage.com>
+> > Sent: Monday, November 4, 2024 3:49 AM
+> >
+> > On Sat, Nov 2, 2024 at 8:55=E2=80=AFPM Parav Pandit <parav@nvidia.com> =
+wrote:
+> > >
+> > >
+> > >
+> > > > From: Caleb Sander Mateos <csander@purestorage.com>
+> > > > Sent: Friday, November 1, 2024 9:17 AM
+> > > >
+> > > > The logic of eq_update_ci() is duplicated in mlx5_eq_update_ci().
+> > > > The only additional work done by mlx5_eq_update_ci() is to incremen=
+t
+> > > > eq->cons_index. Call eq_update_ci() from mlx5_eq_update_ci() to
+> > > > eq->avoid
+> > > > the duplication.
+> > > >
+> > > > Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
+> > > > ---
+> > > >  drivers/net/ethernet/mellanox/mlx5/core/eq.c | 9 +--------
+> > > >  1 file changed, 1 insertion(+), 8 deletions(-)
+> > > >
+> > > > diff --git a/drivers/net/ethernet/mellanox/mlx5/core/eq.c
+> > > > b/drivers/net/ethernet/mellanox/mlx5/core/eq.c
+> > > > index 859dcf09b770..078029c81935 100644
+> > > > --- a/drivers/net/ethernet/mellanox/mlx5/core/eq.c
+> > > > +++ b/drivers/net/ethernet/mellanox/mlx5/core/eq.c
+> > > > @@ -802,19 +802,12 @@ struct mlx5_eqe *mlx5_eq_get_eqe(struct
+> > > > mlx5_eq *eq, u32 cc)  }  EXPORT_SYMBOL(mlx5_eq_get_eqe);
+> > > >
+> > > >  void mlx5_eq_update_ci(struct mlx5_eq *eq, u32 cc, bool arm)  {
+> > > > -     __be32 __iomem *addr =3D eq->doorbell + (arm ? 0 : 2);
+> > > > -     u32 val;
+> > > > -
+> > > >       eq->cons_index +=3D cc;
+> > > > -     val =3D (eq->cons_index & 0xffffff) | (eq->eqn << 24);
+> > > > -
+> > > > -     __raw_writel((__force u32)cpu_to_be32(val), addr);
+> > > > -     /* We still want ordering, just not swabbing, so add a barrie=
+r */
+> > > > -     wmb();
+> > > > +     eq_update_ci(eq, arm);
+> > > Long ago I had similar rework patches to get rid of __raw_writel(),
+> > > which I never got chance to push,
+> > >
+> > > Eq_update_ci() is using full memory barrier.
+> > > While mlx5_eq_update_ci() is using only write memory barrier.
+> > >
+> > > So it is not 100% deduplication by this patch.
+> > > Please have a pre-patch improving eq_update_ci() to use wmb().
+> > > Followed by this patch.
+> >
+> > Right, patch 1/2 in this series is changing eq_update_ci() to use
+> > writel() instead of __raw_writel() and avoid the memory barrier:
+> > https://lore.kernel.org/lkml/20241101034647.51590-1-
+> > csander@purestorage.com/
+> This patch has two bugs.
+> 1. writel() writes the MMIO space in LE order. EQ updates are in BE order=
+.
+> So this will break on ppc64 BE.
 
-WTF is "being Russian" and what does that have to do with anything?
+Okay, so this should be writel(cpu_to_le32(val), addr)?
 
-> Would it not be possible for the Russian kernel development community to pull together and continue working on the Linux kernel in their own tree and then have any patches sent back upstream by someone that is not a Russian citizen? I feel the solution would definitely help with making things right to the veteran contributors that have been working on the kernel for decades and allow patchsets to be more closely monitored for possible sabotage by having all patch submissions be sent through an intermediary that is easily identified as handling Russian code.
+>
+> 2. writel() issues the barrier BEFORE the raw_writel().
+> As opposed to that eq update needs to have a barrier AFTER the writel().
+> Likely to synchronize with other CQ related pointers update.
 
-*snort*
+I was referencing this prior discussion about the memory barrier:
+https://lore.kernel.org/netdev/CALzJLG8af0SMfA1C8U8r_Fddb_ZQhvEZd6=3D2a97dO=
+oBcgLA0xg@mail.gmail.com/
+From Saeed's message, it sounds like the memory barrier is only used
+to ensure the ordering of writes to the doorbell register, not the
+ordering of the doorbell write relative to any other writes. If some
+other write needs to be ordered after the doorbell write, please
+explain what it is. As Gal Pressman pointed out, a wmb() at the end of
+a function doesn't make much sense, as there are no further writes in
+the function to order. If the doorbell write needs to be ordered
+before some other write in a caller function, the memory barrier
+should probably move to the caller.
 
-For one thing, sanctions are not tied to citizenship.  For another,
-any proxy set up to bypass the sanctions that really exist (i.e.
-based on employment by sanctioned companies) would fall under the
-same sanctions.
+>
+> > Are you suggesting something different? If so, it would be great if you=
+ could
+> > clarify what you mean.
+> >
+> So I was suggesting to keep __raw_writel() as is and replace mb() with wm=
+b().
 
-For another, you _really_ don't want to set anything with even
-the slightest whiff of "that's how to hide patch origin and/or
-evade review" - that's an open invitation to any organization
-that wants to feed something underhanded into the kernel.
-Won't be a healthy place to hang around, to put it very mildly.
+wmb() would certainly be cheaper than mb(), but I would like to
+understand the requirement for the barrier in the first place. The
+fence instruction is very expensive.
+
+Thanks,
+Caleb
 
