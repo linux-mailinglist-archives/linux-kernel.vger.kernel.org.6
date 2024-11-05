@@ -1,148 +1,175 @@
-Return-Path: <linux-kernel+bounces-396655-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396657-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 300BA9BD029
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 16:12:10 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4916A9BD02E
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 16:15:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B53A81F2214D
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 15:12:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07D31283672
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 15:15:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F6CE1D9A72;
-	Tue,  5 Nov 2024 15:11:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDE591DA602;
+	Tue,  5 Nov 2024 15:15:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="wZMzeTBp"
-Received: from mail-io1-f49.google.com (mail-io1-f49.google.com [209.85.166.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VM5THYbI"
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D01231D6DB9
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 15:11:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89ADD4EB50
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 15:15:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730819517; cv=none; b=oRp/2B7JPfEH7XgAYYCFtbBKFbCgYULxhiqMKUqdK/B6zRj3q8LtmPRYNH5LSMRADFSEwKbLOfbG+nlKHQNi2/LKKX04DA2JokunM2ogJn40ZA3by3lUScCFIO7jUbvn6HkXGOPvdatbucbYrt0A9O1M/4/vjwddB9Qj93K9Sl0=
+	t=1730819732; cv=none; b=VdrNtlBPnejOC93yDwTRmxyrBMiEuFRToGcPQjqqZ5x2WdAVh+yzFJTTaCDmPUOo5AV2I9llhp6wTDcCwQbIdLzkEwpHMVVCsfX77hP+0h3Zh1poFgmmN31OYS4npTJDsyzkjkS9sdBhds9+GlhB9GijU9qjRqnst24lK5zeLX0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730819517; c=relaxed/simple;
-	bh=eoJshfMY3GJ5a+HHGfGtlgMreRED5NlAGt3XNM1/SBA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=A2QtmegRP3WKFPVr/2AgwCgZRJX1AmniPekDnmgwfmkBtfb2dLQRcXDvUskn8TQeq4C57xIodinhZrIJ+QrFJa3PbdEYywO2k2/jI+ahJkrHX2tZBAQmaZBmr4YfBwBDHK5TUV4OXDrVtHXzS8FcvCuhLF0l6Rle+Uq4Kz7fYJM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=wZMzeTBp; arc=none smtp.client-ip=209.85.166.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f49.google.com with SMTP id ca18e2360f4ac-83ac05206f6so215290039f.2
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 07:11:55 -0800 (PST)
+	s=arc-20240116; t=1730819732; c=relaxed/simple;
+	bh=D3758a++ou0Eh7/dplQav3UhcopkGDoY0Pl4xDn0AQE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LLwdP2puVVRr6Ec7I7e9IFVNhuKP6Xg17F8zu2GfjfSrOz3JK6xbismOJY2+s/Jl8i3dSzF6Eh/dNk2OGkyVHPy9301Alb2Y6OuGdX1tW2Yt0xLm4EPPNV4/VbOUqoB73WE/4AzZy/bkXRPvQp/dkyeA313WqG9qbh+/7IRDBpw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VM5THYbI; arc=none smtp.client-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5cacb76e924so7524191a12.0
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 07:15:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1730819515; x=1731424315; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=SWwAKBYPKBxi+Egnr6GkcZQMq1o5kRfwuupexQV/vk0=;
-        b=wZMzeTBpaFN8AN4gACNFFscUj+hnV3rmk0h/ZOxBJSXkxH39wmNXFq6f4Z4ynE45xI
-         wXsEkTh7+AHFIn1Hqe5MY5Za428sZqSQymx2ow4mcbRlkikQvNhwfvOxm5nS75LbMH9c
-         MKnGyYzR3bjkWGinlqYvq2aMYVSFRyGhkz4negaqkgRP+vc3FWH2N+vESIMswOas4xf0
-         xP8Nfb6wQCldcdc4/v2SvJ+FxgOtfQ5mA+g0t34IT3NXdF4MxJjn3epUlu7ei6DXuBXm
-         JiV6xOdImX72QxVsA2YMO7wAtxKME/N2pQkrauBtFHr+LtPeirDEMPbR3VLUeYuxV5fd
-         n1JQ==
+        d=gmail.com; s=20230601; t=1730819729; x=1731424529; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=I5rVHNS+v3hPDM+SOcagtjAwRadQS3w7TlqdUetnBxM=;
+        b=VM5THYbISh0T3livRzG7mKme3qKY0cj0FNxCyFUwWTXkoza+IrpXPlSjjO7fTOkUC2
+         EF7XE88nv3Pj+jIOYxOOPnvCukiJJVfYnlAuoj/ZLYGMNfUQnJ+lX4oOv7ri3EBzrp+H
+         JMzfGWqhmHBONw6qaf2D6UjghTB2TY3pO7OskJJg/GAHpbQWkwX62VBqlx/fLYqLCuJ1
+         6Fs3fFRxso9QhYKV5rCClzy4PZnoFLcY+l9Lvtkk76yWJ2fP5N5VkWM7yTFG5gKoknUc
+         dzcC3arNL8+dNIq4f/AuRU+PbX+ms5eV06mvkz/S2FeF8l3YrCNeYqjCKy6lm4bHn637
+         I5Hg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730819515; x=1731424315;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=SWwAKBYPKBxi+Egnr6GkcZQMq1o5kRfwuupexQV/vk0=;
-        b=hemxFLAQjn1FbwvVxInmXW1nyLWqcYS0jhJABbH2eSDYKJIFi2pKDYRsktf+3PqhYu
-         ClchhSAkWEKWX6St6ZnrtUb3v4VsbUZLb0JW6Vs7C88XCcRYtVP6Iq073fT+vrCqUTKX
-         fjBilETaRG66zOAeXq+86oTk9Yb6J0a7y8i7VgT1cEZS1EuMxzfGidusNnngHSc+5/i0
-         G/6Jcg4v8ahzzP+8x7WkDE8pxGpXk49UurBQrzPm8PJQt6RvPyUu9x4gA2VlXRkb5OmX
-         V5vExqP58Iwg+VTWrbvzxVeuxdEBTYJdnXYxdqnl6ENh058GBDxI8CCS3gNJs279q0dZ
-         6UrA==
-X-Forwarded-Encrypted: i=1; AJvYcCVN9Oj51J4u8XzhhJ7XNFRJ4lhkD9RBVJsjExVboZs5zNs7HRxq0trqvAeyUB55ihyAZ7dldW5e7LTIJjU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxLHSPSyWqtCbV/ee6fyA/irA+9roPMAaxBJY6DNaPgA1xObrO+
-	SKy9rg4xNaoNmePsDW1WvNZbbbZK3pWnI8VHsc0RBpnjMmSTPp7ve0wV0/fw8OU=
-X-Google-Smtp-Source: AGHT+IGDX75ZExNONHJoHGRJ/IqT5vn5gVmGAZ8JGgbv4qy8khE6jtcPyWRkSO7ad0xRLtuL8OZmSQ==
-X-Received: by 2002:a05:6e02:16cb:b0:3a6:b0d0:ee2d with SMTP id e9e14a558f8ab-3a6b0d0f518mr139871665ab.9.1730819514844;
-        Tue, 05 Nov 2024 07:11:54 -0800 (PST)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3a6a97cf520sm29049985ab.25.2024.11.05.07.11.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 05 Nov 2024 07:11:54 -0800 (PST)
-Message-ID: <5557bb8e-0ab8-4346-907e-a6cfea1dabf8@kernel.dk>
-Date: Tue, 5 Nov 2024 08:11:52 -0700
+        d=1e100.net; s=20230601; t=1730819729; x=1731424529;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=I5rVHNS+v3hPDM+SOcagtjAwRadQS3w7TlqdUetnBxM=;
+        b=e1ek6VO/Hf5TzlNI5nSu+oOnVEe8T7JYzjRiyIs5r2NKEX5J8YkOY/IntyujxBeIvi
+         eTcFIVnMs+n9u2yzyTjSN4bVMQ0+HWsIrpP9IkKuyhCNEj8Fmkqf/65HJVthCF5hSCF2
+         ZlHSYykGy3ilNETX6HjeGpiSSeud00XX+MbF7UIixE1OGmLW+Us6oS8g0JA2H57d1c5t
+         zZ+0+GYrFtj5VQRL6X8l0EY63Cg9NlPRNkGxBSGtCaSZ1SKL50oDx4G7HcAzrcFzSn5S
+         R+c+PcCEkvg8R0o9mmuE16AHeu+NwDwgkn5dKTkUzH74gq5KcKmdTfSQHNYypDGbVd5Y
+         mYyg==
+X-Forwarded-Encrypted: i=1; AJvYcCVMbatUFu7B4A3tmYsHystEiTBonFPFBpa6VlIQWDpdzoMygjtm8DuGTMkuz4T5pG2hbq2QOgxlfCGTIbg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzPcDLXC5SYE8Z56ddj8c4dIog1aigHhVtSObroA/qXZ++8pg3b
+	GZes5wRCvC4oUTCvNGr65lt3V9s81de6Cg5z0wu7s4MaG5OItUiX
+X-Google-Smtp-Source: AGHT+IFpfT+pQ9yQI8bqfkWsrf7FaiZUkGgH0GH2EJwAHN7PKEUeke8tthYvAG8fxB0zG+d5dFCuiw==
+X-Received: by 2002:a17:907:9720:b0:a99:742c:5b5 with SMTP id a640c23a62f3a-a9e6553bcb4mr1605046966b.13.1730819728614;
+        Tue, 05 Nov 2024 07:15:28 -0800 (PST)
+Received: from localhost.localdomain ([46.248.82.114])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9eb16a3b6esm145523466b.18.2024.11.05.07.15.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 05 Nov 2024 07:15:28 -0800 (PST)
+From: Uros Bizjak <ubizjak@gmail.com>
+To: x86@kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Uros Bizjak <ubizjak@gmail.com>,
+	Will Deacon <will@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Jan Beulich <JBeulich@suse.com>
+Subject: [PATCH] x86/percpu: Use ALT_OUTPUT_SP() for percpu_{,try_}cmpxchg{64,128}_op()
+Date: Tue,  5 Nov 2024 16:15:08 +0100
+Message-ID: <20241105151520.2632-1-ubizjak@gmail.com>
+X-Mailer: git-send-email 2.42.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [ANNOUNCE] work tree for untorn filesystem writes
-To: Theodore Ts'o <tytso@mit.edu>
-Cc: Carlos Maiolino <cem@kernel.org>, "Darrick J. Wong" <djwong@kernel.org>,
- "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>,
- John Garry <john.g.garry@oracle.com>, brauner@kernel.org,
- Catherine Hoang <catherine.hoang@oracle.com>, linux-ext4@vger.kernel.org,
- Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@infradead.org>,
- Ojaswin Mujoo <ojaswin@linux.ibm.com>, linux-block@vger.kernel.org,
- Dave Chinner <david@fromorbit.com>, linux-kernel@vger.kernel.org,
- linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-References: <20241105004341.GO21836@frogsfrogsfrogs>
- <fegazz7mxxhrpn456xek54vtpc7p4eec3pv37f2qznpeexyrvn@iubpqvjzl36k>
- <72515c41-4313-4287-97cc-040ec143b3c5@kernel.dk>
- <20241105150812.GA227621@mit.edu>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20241105150812.GA227621@mit.edu>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 11/5/24 8:08 AM, Theodore Ts'o wrote:
-> On Tue, Nov 05, 2024 at 05:52:05AM -0700, Jens Axboe wrote:
->>
->> Why is this so difficult to grasp? It's a pretty common method for
->> cross subsystem work - it avoids introducing conflicts when later
->> work goes into each subsystem, and freedom of either side to send a
->> PR before the other.
->>
->> So please don't start committing the patches again, it'll just cause
->> duplicate (and empty) commits in Linus's tree.
-> 
-> Jens, what's going on is that in order to test untorn (aka "atomic"
-> although that's a bit of a misnomer) writes, changes are needed in the
-> block, vfs, and ext4 or xfs git trees.  So we are aware that you had
-> taken the block-related patches into the block tree.  What Darrick has
-> done is to apply the the vfs patches on top of the block commits, and
-> then applied the ext4 and xfs patches on top of that.
+percpu_{,try_}cmpxchg{64,128}() macros use CALL instruction inside
+asm statement in one of their alternatives. Use ALT_OUTPUT_SP()
+macro to add required dependence on %esp register.
 
-And what I'm saying is that is _wrong_. Darrick should be pulling the
-branch that you cut from my email:
+Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
+Cc: Will Deacon <will@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Boqun Feng <boqun.feng@gmail.com>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Jan Beulich <JBeulich@suse.com>
+---
+ arch/x86/include/asm/percpu.h | 28 ++++++++++++++--------------
+ 1 file changed, 14 insertions(+), 14 deletions(-)
 
-for-6.13/block-atomic
-
-rather than re-applying patches. At least if the intent is to send that
-branch to Linus. But even if it's just for testing, pretty silly to have
-branches with duplicate commits out there when the originally applied
-patches can just be pulled in.
-
-> I'm willing to allow the ext4 patches to flow to Linus's tree without
-> it personally going through the ext4 tree.  If all Maintainers
-> required that patches which touched their trees had to go through
-> their respective trees, it would require multiple (strictly ordered)
-> pull requests during the merge window, or multiple merge windows, to
-
-That is simply not true. There's ZERO ordering required here. Like I
-also mentioned in my reply, and that you also snipped out, is that no
-ordering is implied here - either tree can send their PR at any time.
-
-> land these series.  Since you insisted on the block changes had to go
-> through the block tree, we're trying to accomodate you; and also (a)
-> we don't want to have duplicate commits in Linus's tree; and at the
-> same time, (b) but these patches have been waiting to land for almost
-> two years, and we're also trying to make things land a bit more
-> expeditiously.
-
-Just pull the branch that was created for it... There's zero other
-things in there outside of the 3 commits.
-
+diff --git a/arch/x86/include/asm/percpu.h b/arch/x86/include/asm/percpu.h
+index c55a79d5feae..b131d1bb9445 100644
+--- a/arch/x86/include/asm/percpu.h
++++ b/arch/x86/include/asm/percpu.h
+@@ -349,9 +349,9 @@ do {									\
+ 									\
+ 	asm qual (ALTERNATIVE("call this_cpu_cmpxchg8b_emu",		\
+ 			      "cmpxchg8b " __percpu_arg([var]), X86_FEATURE_CX8) \
+-		  : [var] "+m" (__my_cpu_var(_var)),			\
+-		    "+a" (old__.low),					\
+-		    "+d" (old__.high)					\
++		  : ALT_OUTPUT_SP([var] "+m" (__my_cpu_var(_var)),	\
++				  "+a" (old__.low),			\
++				  "+d" (old__.high))			\
+ 		  : "b" (new__.low),					\
+ 		    "c" (new__.high),					\
+ 		    "S" (&(_var))					\
+@@ -380,10 +380,10 @@ do {									\
+ 	asm qual (ALTERNATIVE("call this_cpu_cmpxchg8b_emu",		\
+ 			      "cmpxchg8b " __percpu_arg([var]), X86_FEATURE_CX8) \
+ 		  CC_SET(z)						\
+-		  : CC_OUT(z) (success),				\
+-		    [var] "+m" (__my_cpu_var(_var)),			\
+-		    "+a" (old__.low),					\
+-		    "+d" (old__.high)					\
++		  : ALT_OUTPUT_SP (CC_OUT(z) (success),			\
++				   [var] "+m" (__my_cpu_var(_var)),	\
++				   "+a" (old__.low),			\
++				   "+d" (old__.high))			\
+ 		  : "b" (new__.low),					\
+ 		    "c" (new__.high),					\
+ 		    "S" (&(_var))					\
+@@ -420,9 +420,9 @@ do {									\
+ 									\
+ 	asm qual (ALTERNATIVE("call this_cpu_cmpxchg16b_emu",		\
+ 			      "cmpxchg16b " __percpu_arg([var]), X86_FEATURE_CX16) \
+-		  : [var] "+m" (__my_cpu_var(_var)),			\
+-		    "+a" (old__.low),					\
+-		    "+d" (old__.high)					\
++		  : ALT_OUTPUT_SP ([var] "+m" (__my_cpu_var(_var)),	\
++				   "+a" (old__.low),			\
++				   "+d" (old__.high))			\
+ 		  : "b" (new__.low),					\
+ 		    "c" (new__.high),					\
+ 		    "S" (&(_var))					\
+@@ -451,10 +451,10 @@ do {									\
+ 	asm qual (ALTERNATIVE("call this_cpu_cmpxchg16b_emu",		\
+ 			      "cmpxchg16b " __percpu_arg([var]), X86_FEATURE_CX16) \
+ 		  CC_SET(z)						\
+-		  : CC_OUT(z) (success),				\
+-		    [var] "+m" (__my_cpu_var(_var)),			\
+-		    "+a" (old__.low),					\
+-		    "+d" (old__.high)					\
++		  : ALT_OUTPUT_SP (CC_OUT(z) (success),			\
++				   [var] "+m" (__my_cpu_var(_var)),	\
++				   "+a" (old__.low),			\
++				   "+d" (old__.high))			\
+ 		  : "b" (new__.low),					\
+ 		    "c" (new__.high),					\
+ 		    "S" (&(_var))					\
 -- 
-Jens Axboe
+2.42.0
+
 
