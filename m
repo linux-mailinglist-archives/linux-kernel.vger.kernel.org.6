@@ -1,81 +1,133 @@
-Return-Path: <linux-kernel+bounces-396456-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396457-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16F379BCD65
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 14:08:33 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D65929BCD6A
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 14:08:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C239C1F22533
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 13:08:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D2141F22308
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 13:08:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AB3D1D5CC1;
-	Tue,  5 Nov 2024 13:08:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B54431D5CD7;
+	Tue,  5 Nov 2024 13:08:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k0oRKS6V"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SE8aNa8E"
+Received: from mail-pf1-f194.google.com (mail-pf1-f194.google.com [209.85.210.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8E011AA785
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 13:08:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAE601D5CC1;
+	Tue,  5 Nov 2024 13:08:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730812106; cv=none; b=RW/XK7uTjpVW0rm6TxSAZ+9Nz4iEnMyLEoc9XEAa2hYrNkfBOPbRZXtK+qixAr+mNh+Zs7wCZ1z8EPC3ospD9OkM1K6vCtQmrwvmluRSfILFfiov1393iqoO1Nxpe4IR0dIJkJZ4tZ/psUIpU0PVZw8EYjOKV/kbtszhhnjICFY=
+	t=1730812127; cv=none; b=Z2QPZSuOsTsEGaif4Md1YavQFXwiVMyyafjEdh6dlGIy1+Xkbv7LaSRGgn8VkyaTvh5gXNGWnBDcC/zuWBOwTIhE9QRtbCekkAAu187E6esBS1ZqOLJbtz9x1GvV7WvRORNxK8Pp7ehwqvrxyX2uahajSPksBdgLNdSJHSXQSNs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730812106; c=relaxed/simple;
-	bh=6DQNL9Igneci2ccudveuJvUdMY4QZ/wM2qNZstQSdmE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cpn7Cu/Im/CVkJFfafP0kvV5m0oFpmQ/wHrHlYZ8emi9bNiwWkMaPMiJWA+QwGawfwLA9VRS2hpAZhPTpk6CaE9VXxgh86YkTRZXDKtKD2G0s0HdowaD46j32v4NfQJcWf2kx4wcahtzYfLKzJ6HRo5ewyMls1Cwum1ZNiZpixY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k0oRKS6V; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E591BC4CED5;
-	Tue,  5 Nov 2024 13:08:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730812106;
-	bh=6DQNL9Igneci2ccudveuJvUdMY4QZ/wM2qNZstQSdmE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=k0oRKS6VBaF2ZoKNfIaTxEwZxhDRY9/bT4JMCxqyycoOo2jt8lrJJhj2J+tAEI3Sa
-	 RZ8dkOjBu6vOhR6+s2KwGcgojDK7J/izM5yPVlK/+5KbQXAM0dYRGBduiQw4lAhRo3
-	 4gpobj1dtWyWT/+MI8e9QQ9mvkJjtLw85EOKcXDJTfQZHK5AM7WeD/dCXIPcnx8dt8
-	 SXdMkIvVRVbUDOte0Y/qiY+rrX/zGd2JBomtJoDJW1u6BUlCP6RDSQ83iK5fEAFIcV
-	 WTwYZuKpYVAtoP1f4zIyk34Y4pDpqr9wANn+/dtxjQdPKbkiCuAx33GTCJ5CeF4vYQ
-	 e5ujq/2cxTeng==
-Date: Tue, 5 Nov 2024 14:08:22 +0100
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	Anna-Maria Behnsen <anna-maria@linutronix.de>,
-	John Stultz <jstultz@google.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-	Eric Biederman <ebiederm@xmission.com>,
-	Oleg Nesterov <oleg@redhat.com>
-Subject: Re: [patch V7 16/21] posix-timers: Handle ignored list on delete and
- exit
-Message-ID: <ZyoYxvDAi14Z7VJJ@2a01cb09803abb1ce3ad97aed0fef98f.ipv6.abo.wanadoo.fr>
-References: <20241105063544.565410398@linutronix.de>
- <20241105064213.987530588@linutronix.de>
+	s=arc-20240116; t=1730812127; c=relaxed/simple;
+	bh=6LHO+837xjndsP4UGLKUUF8gg1xB0/7CJewvnYkqhGk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=YVYQHjOnRujs561np8MltgmqatyGKtA9TRJ47WPgytpnw3P5Vcj4ePyuL7d47NtN8tzKqWYQEcdd7GA60PGGbydGspn8bu/nCLVwYWZ0OCAfxP9lT3+51YkCYRBCp7iz4onZKBIqqUovBB6Tm3aSWS1QNxDdM2xXIjr9MRyRh2M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SE8aNa8E; arc=none smtp.client-ip=209.85.210.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f194.google.com with SMTP id d2e1a72fcca58-720be27db74so3632121b3a.1;
+        Tue, 05 Nov 2024 05:08:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730812125; x=1731416925; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=hCLSIGJHLP62LF77LpMB59zHKu9S2DYvdZVP+cXHd8I=;
+        b=SE8aNa8El3/Fl7TXal6VTCPiAXIvcAKNifeSUbbOYNc1HIy67OviyCbmo5JcFgMbOH
+         rlvo/4q4k3V0pRSTN/yk8Qs+zxTzfzd6GjsO6To2rUceGEitLr3iwnLzPwNYDBwXveyR
+         tjOxMRai7g6u7txqWlXIxNDHD/HK/fMJ9Iog9MroRFWVXUD3oDeBU4/1kbi6AD2z2kqi
+         O1BhDta/q5gV/kTfZhSdBHNH/TAtA3w89QSQRajg7sOLH2u9Zt5Drz9uWm/AQ6HtoY/x
+         wP5OyuOqinhniOsicJdg2RRmCwIHnZDC5RMGkIwWQ41ogTfraAbEeHW7DZuFa5Cw2bBh
+         Oy8A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730812125; x=1731416925;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=hCLSIGJHLP62LF77LpMB59zHKu9S2DYvdZVP+cXHd8I=;
+        b=G9ffZakYF61NRz68SPcI9R+ps3xXV3WjN+1Wy262WqVmZr8etOojH94RV836IPircp
+         aaKS+LEzYIEZXghrD6QGrHOvV0H9sXYFGNeze1WGBEMJjMr0Bin7/6vQshZ1NUB6TRvw
+         81l+fzpHTl1VDf03ompUPapu8joY6CskjO2UjTYEzTwF05zzEbIqXcglUrOl12Je4Dhy
+         hAUcC3ggFz3WGUrnuKWe+kc8JlQhNNqIpyHfKTPTbtupV8y5q+V+Zg3iQNAKKq7fIo49
+         fVM/LwLhB/vnrM4pqid4ZbY5Yh6s+CUF8unArrMqAPXJwrRO5lLuTn3K7a7mFxP5xPXg
+         hBKA==
+X-Forwarded-Encrypted: i=1; AJvYcCXdIkFKVdXJXQ1jXCQLKeel/d55/kR3DQuC5BHZZNpckoeNHysokmiQHmZJf2FU31eEXgl7zjJF6yF2REQ=@vger.kernel.org, AJvYcCXndJ2zZpF9STtcoql/sg4kRusPeooH1rktiZzWG1qzRvZQBzu++DbXWD9B3qrmvZLNJUFzjk8Q@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz5PYkTHlV+Ko6BxHJNolYWEwSg6BzZkt72aYc4reDDm+Vp3gg1
+	8DYCC3379UfSyjHHhYah+8Aq8Z9zXYlB7cY/pc2U8WeGqTQYork0
+X-Google-Smtp-Source: AGHT+IFlQxCtqXO9063mjfqJQHWWf4u0598lodb03wzVhBBgA3v3zf1o8q2K1owL6eNNSkbh6oDF4A==
+X-Received: by 2002:a05:6a00:4b12:b0:71e:4dc5:259a with SMTP id d2e1a72fcca58-720bcd50aabmr28200763b3a.7.1730812124865;
+        Tue, 05 Nov 2024 05:08:44 -0800 (PST)
+Received: from tom-QiTianM540-A739.. ([106.39.42.118])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-720bc1e6afasm9542773b3a.48.2024.11.05.05.08.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 05 Nov 2024 05:08:44 -0800 (PST)
+From: Qiu-ji Chen <chenqiuji666@gmail.com>
+To: james.smart@broadcom.com,
+	dick.kennedy@broadcom.com,
+	James.Bottomley@HansenPartnership.com,
+	martin.petersen@oracle.com
+Cc: linux-scsi@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	baijiaju1990@gmail.com,
+	Qiu-ji Chen <chenqiuji666@gmail.com>,
+	stable@vger.kernel.org
+Subject: [PATCH] scsi: lpfc: Fix improper handling of refcount in lpfc_bsg_hba_set_event()
+Date: Tue,  5 Nov 2024 21:08:35 +0800
+Message-Id: <20241105130835.4447-1-chenqiuji666@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241105064213.987530588@linutronix.de>
 
-Le Tue, Nov 05, 2024 at 09:14:51AM +0100, Thomas Gleixner a écrit :
-> From: Thomas Gleixner <tglx@linutronix.de>
-> 
-> To handle posix timer signals on sigaction(SIG_IGN) properly, the timers
-> will be queued on a separate ignored list.
-> 
-> Add the necessary cleanup code for timer_delete() and exit_itimers().
-> 
-> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-> Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+This patch fixes a reference count handling issue in the function 
+lpfc_bsg_hba_set_event(). In the branch 
+if (evt->reg_id == event_req->ev_reg_id), the function calls 
+lpfc_bsg_event_ref(), which increments the reference count of the 
+associated resource. However, in the subsequent branch 
+if (&evt->node == &phba->ct_ev_waiters), a new evt is allocated, but the 
+old evt should be released at this point. Failing to do so could lead to 
+issues.
 
-Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
+To resolve this issue, we added a release instruction at the beginning of 
+the next branch if (&evt->node == &phba->ct_ev_waiters), ensuring that the 
+resources allocated in the previous branch are properly released, thereby 
+preventing a reference count leak.
+
+This bug was identified by an experimental static analysis tool developed
+by our team. The tool specializes in analyzing reference count operations
+and detecting potential issues where resources are not properly managed.
+In this case, the tool flagged the missing release operation as a
+potential problem, which led to the development of this patch.
+
+Fixes: 4cc0e56e977f ("[SCSI] lpfc 8.3.8: (BSG3) Modify BSG commands to operate asynchronously")
+Cc: stable@vger.kernel.org
+Signed-off-by: Qiu-ji Chen <chenqiuji666@gmail.com>
+---
+ drivers/scsi/lpfc/lpfc_bsg.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/drivers/scsi/lpfc/lpfc_bsg.c b/drivers/scsi/lpfc/lpfc_bsg.c
+index 85059b83ea6b..3a65270c5584 100644
+--- a/drivers/scsi/lpfc/lpfc_bsg.c
++++ b/drivers/scsi/lpfc/lpfc_bsg.c
+@@ -1200,6 +1200,9 @@ lpfc_bsg_hba_set_event(struct bsg_job *job)
+ 	spin_unlock_irqrestore(&phba->ct_ev_lock, flags);
+ 
+ 	if (&evt->node == &phba->ct_ev_waiters) {
++		spin_lock_irqsave(&phba->ct_ev_lock, flags);
++		lpfc_bsg_event_unref(evt);
++		spin_unlock_irqrestore(&phba->ct_ev_lock, flags);
+ 		/* no event waiting struct yet - first call */
+ 		dd_data = kmalloc(sizeof(struct bsg_job_data), GFP_KERNEL);
+ 		if (dd_data == NULL) {
+-- 
+2.34.1
+
 
