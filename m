@@ -1,87 +1,152 @@
-Return-Path: <linux-kernel+bounces-397263-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397264-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF6089BD98C
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 00:16:47 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E9E19BD98E
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 00:17:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2FF8DB228C9
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 23:16:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9F7881C22860
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 23:17:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 824A7216214;
-	Tue,  5 Nov 2024 23:16:05 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AE8A216204;
+	Tue,  5 Nov 2024 23:17:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="K2BX/N6x"
+Received: from fout-a7-smtp.messagingengine.com (fout-a7-smtp.messagingengine.com [103.168.172.150])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C1B7215F4C
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 23:16:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B95F1D2B34
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 23:17:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.150
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730848565; cv=none; b=IUX/f1yt2DSkqH7+EdYUGgnGaTTS9SQzga7DgHltPE4wkcESM9Qi6shQpFnAzFmV+w8Mh95sJK8ZGKVxRCtv5JA+jeC7aQG6NeDmjVNffPtbp+c0laj6zOmJyoJfBrrTfyYuKtZDOo5o21Tp4WSIobscX6dx0cdzbpTl+R7S9k8=
+	t=1730848632; cv=none; b=WWRUEnTWnAsEjIoxrDO1tcODuFghvq7R2IFqIac9SYsPI+u8JOWiazZTltU4CJGaHyb4L7leRwKgr5o5CGFheGeR1lo4WlW6JBW3uZTTNB+WvTph4sFybxonfWDT/QKEWINL8vCz1TjxZWuIj8rS6VRo/KvksXrwdaYAKQLWSZc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730848565; c=relaxed/simple;
-	bh=dmQxO8OfdvP4S5/++MWziDEqqBDg7ePp8fhrgJWkz7o=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=SP4L16IuZEKLY5F4TICLc/iYS0MBGe3G2BZBPn4ohLpevr31xDK53/DUmMU5fzC8EiQkLkHMuiFFK8nYBjlX8jIKpGTYiCOwEDNPMHhWPEWDRJbzITQTeeDzllmjMO8AJBRsTq1pwyybfqvogMRKmQTNn4vZn3Xcc2BvNWqXjVo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a3c3ecaaabso75326785ab.0
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 15:16:03 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730848563; x=1731453363;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Hp0NY24zUAY5UpSOJOg6xZiRX3DT8TdC+BNptJw8AmU=;
-        b=mrNLvZosh6Ke9RsigeEeJoqeycvXa3LFRMCT2g2+v9OtDxhSbtPnq1HMZG0/vADVAO
-         0FQazKym0kcAHCQHHE1Oo7vgxglll2UzXa6kSpmPajno03DJ9siUpd1ASe51HkFWIU+Z
-         ItCeKBGle7KRwvkfFN1cdwzPkYuV4YmYEtP53rYpv0vIyiaVT7tz9AApMBjEW4+RCmzg
-         cn86JUAMLYSpG+Eg0uB2/qZVgm93ZoINKcOG/voHPjGOLJT6hPeDvOkGV4g2o00gky08
-         tnY265giZFzXnrvEEdWGeZHxQUSf3pH/HW9VCf3kY/5jeWuickR4/9ZZ1SfW656e6K+W
-         8QGw==
-X-Forwarded-Encrypted: i=1; AJvYcCUXU/UT5UQ2Xv7SIkrQC4MBuuWu/gwMUEF9Pw8lQ8rdWfU1Be6bEcrxnZzh6v3AJ2XMYounS5Fp1V3fppU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyjCQfmZztqEsMQJ090WXCnW/mAQwsqvwOLoc5kckl51o8EnShY
-	MbThY1mvV6647OiDHPwrLLDloZkIvKcKe+2Wy2CD3CP29zqFHjPbCMi0WYnTPuD1iyjvDuf5s1s
-	AeprnbWJBcuGWyzX8chWnfMJ87YCaGChysZTcnrDdX0PneF7gmH+VvQQ=
-X-Google-Smtp-Source: AGHT+IHUC4h1dx6/7A108sGTumZqI+RaqGH+Ti6SoVeG1AKe6c5rZnvsxrJj1jmYkS+E3ssIUC3Ozs/9tpOzJr6lVMpa/HyDWwPi
+	s=arc-20240116; t=1730848632; c=relaxed/simple;
+	bh=5qt7Ibi85FEWHC/bfzY0vxU9v8/ancpuXt9yo6HPuAg=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=WMWuP3IBvHU4hwz2aq5b4NqDdithE0X/ZKOg3pnZW0axkOK/N6+VijrBFYFMSuIBc6JRWocXRrsEG2+PziXYdUucVbd/f8d/FGaVBtkKLYGdFmmdhmOquVeyHw/t1o+5QDMQn/aekSymiy97PWl4+r6ZLApH/agd7CluoRN4Gvo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=none smtp.mailfrom=linux-m68k.org; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=K2BX/N6x; arc=none smtp.client-ip=103.168.172.150
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
+Received: from phl-compute-09.internal (phl-compute-09.phl.internal [10.202.2.49])
+	by mailfout.phl.internal (Postfix) with ESMTP id C19E61380459;
+	Tue,  5 Nov 2024 18:17:09 -0500 (EST)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-09.internal (MEProxy); Tue, 05 Nov 2024 18:17:09 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
+	1730848629; x=1730935029; bh=A1QeUDH290eQC9bcrM//999oKdePIO7D6OZ
+	jqggZPbw=; b=K2BX/N6xrboJwgxrRjmIiQieOBmaGLpnryrCKIXAQo7KEM4D/go
+	KWjCXJrnVJrnySK8u9/WhlfJRnFrVT0ifOBT1lrwuU15N3Aja8+GSyhjs3yfUeoO
+	xgQ0EcYjKzSNao2zp6v3o1jBbHfnp3bVA8qXlsmwsRbmV4CU9W1YNTPB+PXBPXly
+	h4t4uMaqyuPyvYsySYtDUK+DWImOk/X2QfqLpnANytfaA5uLzWrcjmDrpq0qrC44
+	uw+7xiSZ7p9n4NVRcSgJ7ns6onZoxp10jWwteDpyZkadq0PDjdwngh6Bt/ysPh9/
+	K8d/QQRgcLUvnIuxSAMmEt55YT0BqT9JzVg==
+X-ME-Sender: <xms:dKcqZzpv5gIM52Akqvm808Flsn_wxnhJSfkKHDfo5qoZjU09ghRVMA>
+    <xme:dKcqZ9qTeWHP5vF_xVHBC6pFqZRo73i1AKBurHhCZzW8lmtr7aq0zlCTHkmhrCOMq
+    H1VH7YDhf01pDpxs4E>
+X-ME-Received: <xmr:dKcqZwMo8gueqdSB9SSExcIej_Dh-4-1c4dusdv32856b20fAuDhki6d34HsV8y1sPotAyB8MpXw2s7cKAKHOc2i3YbK1_y-q3I>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrtddugddtlecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
+    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
+    hsucdlqddutddtmdenucfjughrpeffhffvvefujgfkfhggtgesthdtredttddtvdenucfh
+    rhhomhephfhinhhnucfvhhgrihhnuceofhhthhgrihhnsehlihhnuhigqdhmieekkhdroh
+    hrgheqnecuggftrfgrthhtvghrnhepleeuheelheekgfeuvedtveetjeekhfffkeefffff
+    tdfgjeevkeegfedvueehueelnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
+    hmrghilhhfrhhomhepfhhthhgrihhnsehlihhnuhigqdhmieekkhdrohhrghdpnhgspghr
+    tghpthhtohephedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepghgvvghrtheslh
+    hinhhugidqmheikehkrdhorhhgpdhrtghpthhtohepuggrnhhivghlsedtgidtfhdrtgho
+    mhdprhgtphhtthhopehsthgrsghlvgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplh
+    hinhhugidqmheikehksehlihhsthhsrdhlihhnuhigqdhmieekkhdrohhrghdprhgtphht
+    thhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:dKcqZ24ntWdYysEgplidJS7Md_ie22q6wUY9wTDSafa3LXJalmqR1g>
+    <xmx:dKcqZy5iOuP9XkLpgKotSPCktkB6pwXKA5phUyzoAZ-2xk1blDIOOQ>
+    <xmx:dKcqZ-i9Xxvt7NFq3jiT5KEaRvGnFzAQXfBFBbbA44iKqcbiNm-cWg>
+    <xmx:dKcqZ07d32B7k7d4YqLTJv-sBJFxzqOUHhYyeHY4OCmTTvfKveVFTA>
+    <xmx:dacqZ92Hhkp5ZBmk0yB5PSX-xrqtpcmaRH7tO8EoWjT-M31JTquWDeWu>
+Feedback-ID: i58a146ae:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 5 Nov 2024 18:17:06 -0500 (EST)
+Date: Wed, 6 Nov 2024 10:17:17 +1100 (AEDT)
+From: Finn Thain <fthain@linux-m68k.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+cc: Daniel Palmer <daniel@0x0f.com>, stable@kernel.org, 
+    linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] m68k: mvme147: Reinstate early console
+In-Reply-To: <CAMuHMdXR6gN44MiE3Nc-bU6u92_RA2PWx37ndBKA7AD+gKErTQ@mail.gmail.com>
+Message-ID: <d321d30f-df85-f6d8-69d4-4dfb68cb9b93@linux-m68k.org>
+References: <b6112556472c657762f064ec5328f153e3ed03cd.1727926187.git.fthain@linux-m68k.org> <CAMuHMdXR6gN44MiE3Nc-bU6u92_RA2PWx37ndBKA7AD+gKErTQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:180f:b0:3a0:480c:6ac4 with SMTP id
- e9e14a558f8ab-3a5e262eaeamr309952905ab.22.1730848562795; Tue, 05 Nov 2024
- 15:16:02 -0800 (PST)
-Date: Tue, 05 Nov 2024 15:16:02 -0800
-In-Reply-To: <20241105224648.3310-1-hdanton@sina.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <672aa732.050a0220.2edce.1513.GAE@google.com>
-Subject: Re: [syzbot] [block?] [trace?] possible deadlock in blk_trace_ioctl
-From: syzbot <syzbot+a3c16289c8c99b02cac1@syzkaller.appspotmail.com>
-To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 
-Hello,
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+On Tue, 5 Nov 2024, Geert Uytterhoeven wrote:
 
-Reported-by: syzbot+a3c16289c8c99b02cac1@syzkaller.appspotmail.com
-Tested-by: syzbot+a3c16289c8c99b02cac1@syzkaller.appspotmail.com
+> > Cc: Daniel Palmer <daniel@0x0f.com>
+> > Cc: stable@kernel.org
+> > Fixes: a38eaa07a0ce ("m68k/mvme147: config.c - Remove unused functions")
+> > Signed-off-by: Daniel Palmer <daniel@0x0f.com>
+> > Reviewed-by: Finn Thain <fthain@linux-m68k.org>
+> 
+> As this patch differs from Daniel's original, I guess you want
+> 
+>     Co-deloped-by: Daniel Palmer <daniel@0x0f.com>
+>     Signed-off-by: Daniel Palmer <daniel@0x0f.com>
+>     Co-deloped-by: Finn Thain <fthain@linux-m68k.org>
+>     Signed-off-by: Finn Thain <fthain@linux-m68k.org>
+> 
+> instead?
+> 
 
-Tested on:
+No problem.
 
-commit:         f9f24ca3 Add linux-next specific files for 20241031
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-console output: https://syzkaller.appspot.com/x/log.txt?x=13f49d5f980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=bd0e833c188d474c
-dashboard link: https://syzkaller.appspot.com/bug?extid=a3c16289c8c99b02cac1
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=15957587980000
+> > --- a/arch/m68k/mvme147/config.c
+> > +++ b/arch/m68k/mvme147/config.c
+> > @@ -33,6 +33,7 @@
+> >  #include <asm/mvme147hw.h>
+> >  #include <asm/config.h>
+> >
+> > +#include "mvme147.h"
+> >
+> >  static void mvme147_get_model(char *model);
+> >  extern void mvme147_sched_init(void);
+> > @@ -177,3 +178,29 @@ static u64 mvme147_read_clk(struct clocksource *cs)
+> >
+> >         return ticks;
+> >  }
+> > +
+> > +#define SCC_DELAY do { __asm__ __volatile__ ("nop; nop;"); } while (0)
+> 
+> Please keep on using a static (inline) function instead of a macro.
+> 
 
-Note: testing is done by a robot and is best-effort only.
+Will do.
+
+> > +
+> > +static void scc_write(char ch)
+> > +{
+> > +       do {
+> > +               SCC_DELAY;
+> > +       } while (!(in_8(M147_SCC_A_ADDR) & BIT(2)));
+> > +       SCC_DELAY;
+> > +       out_8(M147_SCC_A_ADDR, 8);
+> > +       SCC_DELAY;
+> > +       out_8(M147_SCC_A_ADDR, ch);
+> > +}
+> 
+> The rest LGTM, so
+> Reviewed-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> 
+
+Thanks.
 
