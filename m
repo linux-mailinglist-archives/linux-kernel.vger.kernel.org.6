@@ -1,99 +1,117 @@
-Return-Path: <linux-kernel+bounces-396378-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396379-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D43B29BCC58
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 13:07:32 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BE2A9BCC5B
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 13:08:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 101301C212A4
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 12:07:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 51519283672
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 12:08:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E4411D5151;
-	Tue,  5 Nov 2024 12:07:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5D5C1D5159;
+	Tue,  5 Nov 2024 12:08:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="j51gBfj+"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="D7ilBz1H"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 758C91420A8;
-	Tue,  5 Nov 2024 12:07:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CEE91420A8;
+	Tue,  5 Nov 2024 12:08:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730808444; cv=none; b=pNVRtop0dCqx2xOhUrlWugIM0Fpe00eObbmI3u5+vedMWqPFnwtvlj+m+UgHHZKCZI5QEH39hll1DKUTsod+Lpfp0MlDOE47QfS5PYwux6LmEGGA/FS/dHo9/Zg7tJHoWh9er13Fz6wE2uo3C1BDLwlPwQlB5JZrobtOhaOUs5w=
+	t=1730808487; cv=none; b=thfmonRT3/juZffcETjXsOQnKYxaGmRTz1Z4UcwBAbqZROzo7CzfdUHB2vS9Rga6ymMC7tKxlshusnagbFt4eq+iUJCBALX4DduzydEdtnEQNsaFEo/2z55acI/saFtHJxCEk7olgp+xsEfSphE6cTnatA5aUEsmEi6iuGSdn90=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730808444; c=relaxed/simple;
-	bh=on3mcO94tt7KilM9d2YbIAEw+E9ZgvnJ6HbM8d0j6x0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HleYdMZNn/WDQTumKJBdvq29XzMnk+P0YUOJfPigQTJX7M/nkm6OiBqrpKM7A+qoDBsNvzjAWrXbb7VMGJt3eCFmlRe8Al0txm1XXBo3zhdQCfeNZwreZyNmBATXLzyUQ2BxILD4K+Zja8/ua3gvG/sXh4xlOrgYXg3DuOFrSj8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=j51gBfj+; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730808443; x=1762344443;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=on3mcO94tt7KilM9d2YbIAEw+E9ZgvnJ6HbM8d0j6x0=;
-  b=j51gBfj+uFDxsHZe/Yw8paQi5eHDple5mrQHG/S0vCdF/auAVb6tievJ
-   E9ntXjDnRqlei/gpVQ2s9Nvr64ZII0ZDOpBySTfHYts9WpDaydfKfyHF5
-   DDWFbMLBi/m6tnwjh735A6CdTWsQ118sE+JBSykmH530eBYdeDcjfscqi
-   4R1tq8bdBYJ1nYMQXOR1WXcOtZZBx226RPZFSBcYrfhz0qHLIUVVu0CtJ
-   7qpKV86qF/rLPlBxqTm5qdqjLN9ZSSxWfd6iSCtWRzeAkLQf8b9tLBh4v
-   sFmwWtUYAh1qGBh9wMZOnZTM0Nu5jqlqsxmfBgJg+seZAI8iSDkVB+6cq
-   w==;
-X-CSE-ConnectionGUID: EFZCiLkfSaC44NxDaMsE+w==
-X-CSE-MsgGUID: ok+wK4EkS2qGzHF755MKxw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11246"; a="30773613"
-X-IronPort-AV: E=Sophos;i="6.11,260,1725346800"; 
-   d="scan'208";a="30773613"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2024 04:07:22 -0800
-X-CSE-ConnectionGUID: izD8ZC3LRC+jy9k7Ch1Tsw==
-X-CSE-MsgGUID: kme8k7LyQwy7LStBLSdT+w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,260,1725346800"; 
-   d="scan'208";a="89130796"
-Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
-  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2024 04:07:19 -0800
-Received: from kekkonen.localdomain (localhost [127.0.0.1])
-	by kekkonen.fi.intel.com (Postfix) with SMTP id 1EC6D11F9C3;
-	Tue,  5 Nov 2024 14:07:16 +0200 (EET)
-Date: Tue, 5 Nov 2024 12:07:16 +0000
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: Re: [PATCH v3 08/10] media: i2c: ov5645: Report streams using frame
- descriptors
-Message-ID: <ZyoKdCFLo2yeK9S4@kekkonen.localdomain>
-References: <20241018153230.235647-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20241018153230.235647-9-prabhakar.mahadev-lad.rj@bp.renesas.com>
+	s=arc-20240116; t=1730808487; c=relaxed/simple;
+	bh=/kqVLKSAToLpMYlZF7SwfQXhYepUQVt59Dvr/vkRwfg=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=QJAvNvrI8Jbf6E9WfA1l9cJSlvwRSMOaiki7SEYVAr0B/nobs23FjOwkuhU1QzlkfEkvlDV+i1M4XGPcOMxxAubk+/xugE4mhszPuV9onOPaU6Ayj9cH0jF4kqzmrU+HyPCqQrTqXoZO1e1mfUEUSlKPBqVTmwfKlfxCiofwZfc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=D7ilBz1H; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A59rhN8015691;
+	Tue, 5 Nov 2024 12:07:54 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=oz0kIhBlG3QiX4+nJ8CPHc
+	g2oCy+qLzPNL05ndtC0Yk=; b=D7ilBz1Hf/Te+k/4vrK6vi7b1oHbgvz8UwFSoC
+	Fm/33Bl7E5wL8l8cVbMt8b9A8TibTCA3Em9HcFjlYqtHIxKvNL539X3cHDjUyaJB
+	46x6BmQSUjiQKQBuMCEymkjWwp5Hle4kGD64ZU3rMr4rvV/YX59QjvtQE0ppCkBC
+	CxBtIi+kkUHMU+ckTkkJaZzkYNseFylNADRPWzrsYgZt9i9bkfepiTVeRYI1Hg46
+	wDS+RcD+RGib4BRZdkUuym5QQl/mELrBxn7TK9DNvDODAJ7AGzOqM8VjE0TEgVl5
+	hd7gz5mEBKxiL51k2+yp+AL24O//K07XYFMFGL/3PTIaj/9g==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42nd4yqecx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 05 Nov 2024 12:07:54 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4A5C7ruV012660
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 5 Nov 2024 12:07:53 GMT
+Received: from zhonhan-gv.qualcomm.com (10.80.80.8) by
+ nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Tue, 5 Nov 2024 04:07:51 -0800
+From: Zhongqiu Han <quic_zhonhan@quicinc.com>
+To: <manivannan.sadhasivam@linaro.org>, <kw@linux.com>, <kishon@kernel.org>,
+        <bhelgaas@google.com>, <lpieralisi@kernel.org>, <dlemoal@kernel.org>
+CC: <quic_zhonhan@quicinc.com>, <mhi@lists.linux.dev>,
+        <linux-arm-msm@vger.kernel.org>, <linux-pci@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH] PCI: epf-mhi: Fix potential NULL dereference in pci_epf_mhi_bind()
+Date: Tue, 5 Nov 2024 20:07:35 +0800
+Message-ID: <20241105120735.1240728-1-quic_zhonhan@quicinc.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241018153230.235647-9-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: pbjjv8jdCXNqXKAHFywCM8kyacJ0uTRB
+X-Proofpoint-ORIG-GUID: pbjjv8jdCXNqXKAHFywCM8kyacJ0uTRB
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=801
+ malwarescore=0 bulkscore=0 impostorscore=0 priorityscore=1501
+ lowpriorityscore=0 mlxscore=0 phishscore=0 clxscore=1011 adultscore=0
+ spamscore=0 suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411050093
 
-Hi Prabhakar,
+If platform_get_resource_byname() fails and returns NULL, dereferencing
+res->start will cause a NULL pointer access. Add a check to prevent it.
 
-On Fri, Oct 18, 2024 at 04:32:28PM +0100, Prabhakar wrote:
-> +	code = v4l2_subdev_state_get_format(state, OV5645_PAD_SOURCE, 0)->code;
+Fixes: 1bf5f25324f7 ("PCI: endpoint: Add PCI Endpoint function driver for MHI bus")
+Signed-off-by: Zhongqiu Han <quic_zhonhan@quicinc.com>
+---
+ drivers/pci/endpoint/functions/pci-epf-mhi.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-This doesn't compile. I've dropped the patch for now.
-
+diff --git a/drivers/pci/endpoint/functions/pci-epf-mhi.c b/drivers/pci/endpoint/functions/pci-epf-mhi.c
+index 7d070b1def11..2712026733ab 100644
+--- a/drivers/pci/endpoint/functions/pci-epf-mhi.c
++++ b/drivers/pci/endpoint/functions/pci-epf-mhi.c
+@@ -873,6 +873,11 @@ static int pci_epf_mhi_bind(struct pci_epf *epf)
+ 
+ 	/* Get MMIO base address from Endpoint controller */
+ 	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "mmio");
++	if (!res) {
++		dev_err(&pdev->dev, "Failed to get MMIO base address\n");
++		return -ENODEV;
++	}
++
+ 	epf_mhi->mmio_phys = res->start;
+ 	epf_mhi->mmio_size = resource_size(res);
+ 
 -- 
-Sakari Ailus
+2.25.1
+
 
