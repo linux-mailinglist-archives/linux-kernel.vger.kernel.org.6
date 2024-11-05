@@ -1,96 +1,130 @@
-Return-Path: <linux-kernel+bounces-396559-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396536-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E95C9BCEDF
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 15:15:17 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F2339BCE9D
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 15:04:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D08BA1C2292D
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 14:15:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7C4E283792
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 14:04:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92AE61D9353;
-	Tue,  5 Nov 2024 14:15:05 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBB4B1D86F6;
+	Tue,  5 Nov 2024 14:04:42 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 574A71D8DE2;
-	Tue,  5 Nov 2024 14:15:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD3D618C034;
+	Tue,  5 Nov 2024 14:04:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730816105; cv=none; b=ZV2nM0NHtXdI5nX73ONSQVPRpOOKeI5H8g0/BmnuBVGXybpXyKwaFULX5mnghOM3q/K10dlXCBLyHQ5v/9NVxYr99dXVMrvigFLIcjF3iyn+S7nU2HCDoyJdEjpIZpH2/ohpzUmtRDOsXmmTb947XzDaTyjcGXfONNpTBzRxfV0=
+	t=1730815482; cv=none; b=uXy586Ki5eLQvwi4v3KAjcYw2E8S/f7bEN7VFx/JToCKkvsiccj5wL06D2qng2ZtqW8Ego+/y400kWFHjjN9IVKeWeYnJvmPWJ+ZkoEgdrSL71SL9uhqXXYm0q3V8CJal1vF0Sq88WyOz6pXSujInS7itbQkjgn6ddWKLA+jbY4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730816105; c=relaxed/simple;
-	bh=lwWLSDm0IpzRpsFlwC6lgHfCTy0GnBpOaMrLvpvPsIU=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=UkYlUJyLWN2d8xMpXpF5xzoGmr/JI9l9Z9cXDnw92+B7eez4z6TNsm8ANyK+wIVlR2vf+BlyDLSj3lWuA2zJ0ry3a2PL9BAF5lfpTbz9xaHlNn2oAx+62zbDIRMTutbtIW7kSdB+jousquaAu3wci/E+NTR3P75W+d3lKt5YoTw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.214])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4XjVg53Jd8z1jwZ1;
-	Tue,  5 Nov 2024 22:13:21 +0800 (CST)
-Received: from kwepemd200012.china.huawei.com (unknown [7.221.188.145])
-	by mail.maildlp.com (Postfix) with ESMTPS id 3F7201A016C;
-	Tue,  5 Nov 2024 22:15:01 +0800 (CST)
-Received: from huawei.com (10.67.175.84) by kwepemd200012.china.huawei.com
- (7.221.188.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.34; Tue, 5 Nov
- 2024 22:15:00 +0800
-From: Zicheng Qu <quzicheng@huawei.com>
-To: <lars@metafoo.de>, <Michael.Hennerich@analog.com>, <jic23@kernel.org>,
-	<gregkh@linuxfoundation.org>, <cristina.opriceana@gmail.com>,
-	<daniel.baluta@intel.com>, <linux-iio@vger.kernel.org>,
-	<linux-staging@lists.linux.dev>, <linux-kernel@vger.kernel.org>
-CC: <tanghui20@huawei.com>, <zhangqiao22@huawei.com>,
-	<judy.chenhui@huawei.com>, <quzicheng@huawei.com>
-Subject: [PATCH 2/2] staging: iio: ad9832: Correct phase range check
-Date: Tue, 5 Nov 2024 14:03:59 +0000
-Message-ID: <20241105140359.2465656-3-quzicheng@huawei.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241105140359.2465656-1-quzicheng@huawei.com>
-References: <20241105140359.2465656-1-quzicheng@huawei.com>
+	s=arc-20240116; t=1730815482; c=relaxed/simple;
+	bh=wX4RhkffqqyHBWYHxMHCAnNlIesTtbQYCSJ6R15iazA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NsPzgUGVByGtQqIit6wrGQovc2uxyTrnI04iNwyMsCowN1BAqaZbcFdwOnyO1uIH2x3qKwq6+ceuDLTYTVqLYb91MPbcAzwPpuhiGdOVpvbigCuBFIZKOwqLrfvTPZOkdLQptwWc86/JWoW0e/qrsbRfege7WTiXW0O40GDJEOI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4XjVT20D0Vz9sRr;
+	Tue,  5 Nov 2024 15:04:38 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id LoXpUD9JBUwx; Tue,  5 Nov 2024 15:04:37 +0100 (CET)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4XjVSw68fmz9rvV;
+	Tue,  5 Nov 2024 15:04:32 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id BC0698B763;
+	Tue,  5 Nov 2024 15:04:32 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id DUJhllzpqdGg; Tue,  5 Nov 2024 15:04:32 +0100 (CET)
+Received: from [192.168.232.44] (unknown [192.168.232.44])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 228F48B770;
+	Tue,  5 Nov 2024 15:04:32 +0100 (CET)
+Message-ID: <e33569c8-1591-462c-9388-4a514e156bfa@csgroup.eu>
+Date: Tue, 5 Nov 2024 15:04:31 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 00/28] vdso: Preparations for generic data storage
+To: Thomas Gleixner <tglx@linutronix.de>,
+ =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
+ Guo Ren <guoren@kernel.org>, Heiko Carstens <hca@linux.ibm.com>,
+ Vasily Gorbik <gor@linux.ibm.com>, Alexander Gordeev
+ <agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>,
+ Sven Schnelle <svens@linux.ibm.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Russell King <linux@armlinux.org.uk>, Huacai Chen <chenhuacai@kernel.org>,
+ WANG Xuerui <kernel@xen0n.name>, Theodore Ts'o <tytso@mit.edu>,
+ "Jason A. Donenfeld" <Jason@zx2c4.com>,
+ Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+ Dave Hansen <dave.hansen@linux.intel.com>, Andy Lutomirski
+ <luto@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+ Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+ x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
+ Naveen N Rao <naveen@kernel.org>, Madhavan Srinivasan <maddy@linux.ibm.com>,
+ Vincenzo Frascino <vincenzo.frascino@arm.com>
+Cc: linux-csky@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-s390@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-riscv@lists.infradead.org, loongarch@lists.linux.dev,
+ linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+ Nam Cao <namcao@linutronix.de>
+References: <20241010-vdso-generic-base-v1-0-b64f0842d512@linutronix.de>
+ <871pzxzuny.ffs@tglx>
+Content-Language: fr-FR
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+In-Reply-To: <871pzxzuny.ffs@tglx>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- kwepemd200012.china.huawei.com (7.221.188.145)
 
-The phase register for the AD9832 is 12 bits, which means the valid
-phase values range from 0 to 4095 (2^12 - 1). The current check uses a
-greater-than condition with BIT(12), which equals 4096. This allows an
-invalid phase value of 4096 to pass.
 
-This patch corrects the check to use greater-than-or-equal-to, ensuring
-that only phase values within the valid range are accepted.
 
-Fixes: f1d05b5f68cb ("Staging: iio: Prefer using the BIT macro")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Zicheng Qu <quzicheng@huawei.com>
----
- drivers/staging/iio/frequency/ad9832.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Le 30/10/2024 à 12:39, Thomas Gleixner a écrit :
+> Folks!
+> 
+> On Thu, Oct 10 2024 at 09:01, Thomas Weißschuh wrote:
+>> Historically each architecture defined their own datapage to store the
+>> VDSO data. This stands in contrast to the generic nature of the VDSO
+>> code itself.
+>> We plan to introduce a generic framework for the management of the VDSO
+>> data storage that can be used by all architectures and which works
+>> together with the existing generic VDSO code.
+>>
+>> Before that is possible align the different architectures by
+>> standardizing on the existing generic infrastructure and moving things
+>> out of the VDSO data page which does not belong there.
+>>
+>> Patches	 1- 2:	csky
+>> Patch	    3:	s390
+>> Patches	 4- 5:	arm64
+>> Patch	    6:	riscv
+>> Patch	    7:	arm
+>> Patch	    8:	LoongArch
+>> Patch	    9:	MIPS
+>> Patches 10-20:	x86
+>> Patches 21-27:	powerpc
+>> Patch      28: 	Renamings to avoid a name clash with the new code.
+> 
+> As this has been sitting for two weeks now without major comments, I'm
+> planning to merge that through the tip tree tomorrow.
 
-diff --git a/drivers/staging/iio/frequency/ad9832.c b/drivers/staging/iio/frequency/ad9832.c
-index 492612e8f8ba..140ee4f9c137 100644
---- a/drivers/staging/iio/frequency/ad9832.c
-+++ b/drivers/staging/iio/frequency/ad9832.c
-@@ -158,7 +158,7 @@ static int ad9832_write_frequency(struct ad9832_state *st,
- static int ad9832_write_phase(struct ad9832_state *st,
- 			      unsigned long addr, unsigned long phase)
- {
--	if (phase > BIT(AD9832_PHASE_BITS))
-+	if (phase >= BIT(AD9832_PHASE_BITS))
- 		return -EINVAL;
- 
- 	st->phase_data[0] = cpu_to_be16((AD9832_CMD_PHA8BITSW << CMD_SHIFT) |
--- 
-2.34.1
+To avoid any future conflicts with powerpc tree, I suggest you merge 
+https://git.kernel.org/pub/scm/linux/kernel/git/powerpc/linux.git 
+topic/vdso into your tree before applying this series.
 
+Christophe
 
