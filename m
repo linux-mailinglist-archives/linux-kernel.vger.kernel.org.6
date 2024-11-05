@@ -1,147 +1,197 @@
-Return-Path: <linux-kernel+bounces-395789-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395790-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 563849BC2FB
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 03:10:45 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A0E49BC308
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 03:13:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B55D0B21898
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 02:10:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 167721C217E5
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 02:13:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AE9D44C76;
-	Tue,  5 Nov 2024 02:10:23 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A2893B784;
+	Tue,  5 Nov 2024 02:13:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CFa3V/7u"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B0AF3C30
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 02:10:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A67B1CD0C
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 02:13:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730772622; cv=none; b=EmPAqw3hOExBbwcEAl2qPOULQTZ4aOlvwdPPSEXm6uli0YEJWfdBUyQ+pIPdNgQ16vejXqWb9QQiim9PaeZbGFz8lDBl8Wy6kDS+Wozx6C7hs7f0ixfPkoAUiL9tmmUKJorf5HOtlY/5Bm1bQHarxdhsNYyDfT0cLZnl8ouH1CM=
+	t=1730772787; cv=none; b=TiRt1ziAE7EwP89qOijAXm7MIA2ziv6Cx1lqNW+BVL4Al9sJmP4Amed6eSHiE9REEne9lr70jsMSJtagplj3/AmUN0/jLMfBcdt/EKD360F74UmGbCWFHalujeMXalx3Y0dGCG3RqWK+apHuXML+n0JwDd1toevYlx+a4lOK6mY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730772622; c=relaxed/simple;
-	bh=WOG2w6ROnRZSeXpBfdm1M5ozrfMG8hm2/mR6/2ljo78=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=S64jbHUzisJRFN2joRxgcaxBdIIhwu7rSYWT2mRIxMplFdUI40wFh4Sl4qhRuGNO/Rk9axwvadawA1Lp6AWGWSEgZJM0ksvW2iUECZe5226Vb1pmKfqTT9FQ9c/zyWt9MDnaksTMim9Rp4z7O178HWm5bSx/GBw0uDtEJDQp5iw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-83abf68e7ffso537881339f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 18:10:20 -0800 (PST)
+	s=arc-20240116; t=1730772787; c=relaxed/simple;
+	bh=N9PPYC0zoyQN5L7nheU0SNbV/+LtCnKYYYX0LJ3VkF4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=N6RSwHkvMlejjWWvKdq1zq+fAeowC8tl9IwTvttup+Oe5AUxkJKiVpUKPAk5hdFE4ql/Gk2KxhRKUPxE1e1PD112na5DOhXAlL28G1OrpDhLv7EIdFJAbXTSd3m30tlOUsJlo++MsWFcu41UKbZtMdOamKT5KgibNhCyELZhdgU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CFa3V/7u; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-210e5369b7dso49034455ad.3
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 18:13:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730772785; x=1731377585; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=BbonWoEkQjUXoeGhS5FNHSGOgCb+0Y1PGWMA7bjkDco=;
+        b=CFa3V/7uKlSC4LXwFw1v3j0XzI0WqawQf8iWOC5ooyqrYHBeMYusYpQ3DxrwZxK0zz
+         faT7o8/Uzw/URZdYG1SNI5oI0mwm0rDyX4Cwh7s9y93g2QwovpGAHAoL+IbZah1Xlj6b
+         hyUICMDJzSCTk8krIeblYSerBV0eQbseihp5n2r7rzuUW+UQEX2+VJ9cX7BLhC7jPo2w
+         U33CL7a7JgTQl/kgYUKDE/+3epxZdk4yOeigINzwBjCEZm+mENvXosRu/RXJtmor7mVc
+         kY/Bk/4DKbfXlMzMeG9sb7+ELnbsO71lUNOFGs3tlAoBv618UKe+Lb/0Nn/4lVT+Bnv7
+         csJg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730772620; x=1731377420;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=pOwK7LgCTCkhpBtnCmrshYoV78C7UhrxMFbq+MY09GY=;
-        b=I49OyOcHdxgfHngUs0zI0rFRcHJiolxWbfh+kdPirhvSPZJM4MDw7INqahtPjvF1BL
-         XYQuJgthdyXv3Wgxm/MoJamcVLGs0cis2/ObspVrG3eAMhHavZmm4JyDryN0mM/JUyjL
-         TYZ8HC3vzgbXwq63vwbO2YYEstWjyNHmz+BPN3Ge6YS/ygdN8Khm3caWPzuDcZGSOF5F
-         TFVIQLoth6pdCAw7cWuKKKBvMcJuamLRgzt66zPnNJR7RyC6AIbQcQN6FtbpVhPzbpCF
-         C7mIgE4CHgkO88fQFWnmL6d3nJinaWSi/7y1lL6aRMOlUWFsibTOLASftrK3ComNIdRk
-         UnXw==
-X-Forwarded-Encrypted: i=1; AJvYcCUF0P5vTsU71d7TwKcyPmrBINxomWg9SKisdfW/Ikz0FN/5XCzsv7m8sq0pjEFKKH8sAhcu2MQBmOJhOaw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxaJ8MecG6iMRRpAITpyQQWnBzaLXzvEPDgPH6GG38HO+Oiw+Po
-	IdECtnSOFMWN6FncwZtu8UD7LzAn3EBdrTutHkn6Cs9rgXMjP7a7K6bNTS7fXusRLzHTM/KZuyJ
-	V4Z9TiPUl9nNqWgP8LNlSWIWSsN0dvt0xN9RM3oTvF981PdGJvePngFE=
-X-Google-Smtp-Source: AGHT+IFmFAjJO8uzUsuCAVpvck1Ngr6POR2cxcKVMv7earv4Zm+aMtsG/f0rRxn1JsuyuBFlvcE+i4tJFgztvHW4mdoNEuXhCN4e
+        d=1e100.net; s=20230601; t=1730772785; x=1731377585;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BbonWoEkQjUXoeGhS5FNHSGOgCb+0Y1PGWMA7bjkDco=;
+        b=RXZa+3Cf1KHm0KroqMycRoBNPDZ9C4b1KiDSTTPsg9xItWgRZ+WcoKfnhjRcXjUvrN
+         2qA7wNgx/LsloPJyhqYsVqHtk9gPRhkFRTwp7sc15TfRJfm7NOJsgeKcZ7iXUiO1sOgZ
+         CzKIJVkxi6aSjcBKOT6p+1XMbJ+VQCvMzwTpqNUuzZb717sKPZ8Jf12njdpuTmHl2gmW
+         UPf/hHZMZQZy2pSmOdp+3N/S9/uLkbyOgBWk2LEZ+p6JWhTeUQtIC16+998FVtSdkxX5
+         cDwwgVbv90HJQp9QpPyl1n66e0aO8ZtrBZkC5J5kv6zuyUL5JhPXgdkGRgWEDxLCK5YL
+         0t7w==
+X-Forwarded-Encrypted: i=1; AJvYcCUqoa++C08pAxd1VyMiMXkK8JRdI8Hu/JKiGvUjBiX+7Kqq3s8LboP4Rj5hX9RWM0O5GOBAJvWXgrzyKHg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw1B2/tmehFQJ0yTjZKRfJ0h1bkt0MqAAOV6NnsoTf6Yyov8I7I
+	HzmTNNemwhOr7ga/WnfD9YxRH+3iGZ4gMUKCx53cWJqxH7vpEzVZ
+X-Google-Smtp-Source: AGHT+IF7/LGADLtt0xNUhHFZnoBiiDBZukIxqLtPrSpxBH/qGwD1pj0Dt/AcM8Ofd1m1im4WtWPTYA==
+X-Received: by 2002:a17:902:e741:b0:20b:9c8c:e9f3 with SMTP id d9443c01a7336-2111af2ec06mr202034095ad.14.1730772785405;
+        Mon, 04 Nov 2024 18:13:05 -0800 (PST)
+Received: from z790sl ([240f:74:7be:1:54ee:9253:695b:4125])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211056ee3d8sm67800515ad.20.2024.11.04.18.13.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 04 Nov 2024 18:13:04 -0800 (PST)
+Date: Tue, 5 Nov 2024 11:13:00 +0900
+From: Koichiro Den <koichiro.den@gmail.com>
+To: Vlastimil Babka <vbabka@suse.cz>, Kees Cook <kees@kernel.org>
+Cc: cl@linux.com, penberg@kernel.org, rientjes@google.com, 
+	iamjoonsoo.kim@lge.com, akpm@linux-foundation.org, roman.gushchin@linux.dev, 
+	42.hyeyoo@gmail.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mm/slab: fix warning caused by duplicate kmem_cache
+ creation in kmem_buckets_create
+Message-ID: <6hnhjpvy5ctblzdikw4njmawf5zdtt4ipxdshzqssv7mp55ypn@spekzsjorj4w>
+References: <20241104150837.2756047-1-koichiro.den@gmail.com>
+ <9e6fd342-ef7f-4648-afa3-bf704c87bf8f@suse.cz>
+ <202411041330.7A0F716E5@keescook>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a4b:b0:39f:5e12:1dde with SMTP id
- e9e14a558f8ab-3a4ed2f2830mr327954935ab.21.1730772620239; Mon, 04 Nov 2024
- 18:10:20 -0800 (PST)
-Date: Mon, 04 Nov 2024 18:10:20 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67297e8c.050a0220.2edce.14fe.GAE@google.com>
-Subject: [syzbot] [rdma?] WARNING in ib_uverbs_release_dev (2)
-From: syzbot <syzbot+a617d4c5ff27f35f8255@syzkaller.appspotmail.com>
-To: jgg@ziepe.ca, leon@kernel.org, linux-kernel@vger.kernel.org, 
-	linux-rdma@vger.kernel.org, netdev@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <202411041330.7A0F716E5@keescook>
 
-Hello,
+On Mon, Nov 04, 2024 at 01:32:25PM -0800, Kees Cook wrote:
+> On Mon, Nov 04, 2024 at 04:40:12PM +0100, Vlastimil Babka wrote:
+> > On 11/4/24 16:08, Koichiro Den wrote:
+> > > Commit b035f5a6d852 ("mm: slab: reduce the kmalloc() minimum alignment
+> > > if DMA bouncing possible") reduced ARCH_KMALLOC_MINALIGN to 8 on arm64.
+> > > However, with KASAN_HW_TAGS enabled, arch_slab_minalign() becomes 16.
+> > > This causes kmalloc_caches[*][8] to be aliased to kmalloc_caches[*][16],
+> > > resulting in kmem_buckets_create() attempting to create a kmem_cache for
+> > > size 16 twice. This duplication triggers warnings on boot:
+> > > 
+> > > [    2.325108] ------------[ cut here ]------------
+> > > [    2.325135] kmem_cache of name 'memdup_user-16' already exists
+> > > [    2.325783] WARNING: CPU: 0 PID: 1 at mm/slab_common.c:107 __kmem_cache_create_args+0xb8/0x3b0
+> > > [    2.327957] Modules linked in:
+> > > [    2.328550] CPU: 0 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.12.0-rc5mm-unstable-arm64+ #12
+> > > [    2.328683] Hardware name: QEMU QEMU Virtual Machine, BIOS 2024.02-2 03/11/2024
+> > > [    2.328790] pstate: 61000009 (nZCv daif -PAN -UAO -TCO +DIT -SSBS BTYPE=--)
+> > > [    2.328911] pc : __kmem_cache_create_args+0xb8/0x3b0
+> > > [    2.328930] lr : __kmem_cache_create_args+0xb8/0x3b0
+> > > [    2.328942] sp : ffff800083d6fc50
+> > > [    2.328961] x29: ffff800083d6fc50 x28: f2ff0000c1674410 x27: ffff8000820b0598
+> > > [    2.329061] x26: 000000007fffffff x25: 0000000000000010 x24: 0000000000002000
+> > > [    2.329101] x23: ffff800083d6fce8 x22: ffff8000832222e8 x21: ffff800083222388
+> > > [    2.329118] x20: f2ff0000c1674410 x19: f5ff0000c16364c0 x18: ffff800083d80030
+> > > [    2.329135] x17: 0000000000000000 x16: 0000000000000000 x15: 0000000000000000
+> > > [    2.329152] x14: 0000000000000000 x13: 0a73747369786520 x12: 79646165726c6120
+> > > [    2.329169] x11: 656820747563205b x10: 2d2d2d2d2d2d2d2d x9 : 0000000000000000
+> > > [    2.329194] x8 : 0000000000000000 x7 : 0000000000000000 x6 : 0000000000000000
+> > > [    2.329210] x5 : 0000000000000000 x4 : 0000000000000000 x3 : 0000000000000000
+> > > [    2.329226] x2 : 0000000000000000 x1 : 0000000000000000 x0 : 0000000000000000
+> > > [    2.329291] Call trace:
+> > > [    2.329407]  __kmem_cache_create_args+0xb8/0x3b0
+> > > [    2.329499]  kmem_buckets_create+0xfc/0x320
+> > > [    2.329526]  init_user_buckets+0x34/0x78
+> > > [    2.329540]  do_one_initcall+0x64/0x3c8
+> > > [    2.329550]  kernel_init_freeable+0x26c/0x578
+> > > [    2.329562]  kernel_init+0x3c/0x258
+> > > [    2.329574]  ret_from_fork+0x10/0x20
+> > > [    2.329698] ---[ end trace 0000000000000000 ]---
+> > > 
+> > > [    2.403704] ------------[ cut here ]------------
+> > > [    2.404716] kmem_cache of name 'msg_msg-16' already exists
+> > > [    2.404801] WARNING: CPU: 2 PID: 1 at mm/slab_common.c:107 __kmem_cache_create_args+0xb8/0x3b0
+> > > [    2.404842] Modules linked in:
+> > > [    2.404971] CPU: 2 UID: 0 PID: 1 Comm: swapper/0 Tainted: G        W          6.12.0-rc5mm-unstable-arm64+ #12
+> > > [    2.405026] Tainted: [W]=WARN
+> > > [    2.405043] Hardware name: QEMU QEMU Virtual Machine, BIOS 2024.02-2 03/11/2024
+> > > [    2.405057] pstate: 60400009 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+> > > [    2.405079] pc : __kmem_cache_create_args+0xb8/0x3b0
+> > > [    2.405100] lr : __kmem_cache_create_args+0xb8/0x3b0
+> > > [    2.405111] sp : ffff800083d6fc50
+> > > [    2.405115] x29: ffff800083d6fc50 x28: fbff0000c1674410 x27: ffff8000820b0598
+> > > [    2.405135] x26: 000000000000ffd0 x25: 0000000000000010 x24: 0000000000006000
+> > > [    2.405153] x23: ffff800083d6fce8 x22: ffff8000832222e8 x21: ffff800083222388
+> > > [    2.405169] x20: fbff0000c1674410 x19: fdff0000c163d6c0 x18: ffff800083d80030
+> > > [    2.405185] x17: 0000000000000000 x16: 0000000000000000 x15: 0000000000000000
+> > > [    2.405201] x14: 0000000000000000 x13: 0a73747369786520 x12: 79646165726c6120
+> > > [    2.405217] x11: 656820747563205b x10: 2d2d2d2d2d2d2d2d x9 : 0000000000000000
+> > > [    2.405233] x8 : 0000000000000000 x7 : 0000000000000000 x6 : 0000000000000000
+> > > [    2.405248] x5 : 0000000000000000 x4 : 0000000000000000 x3 : 0000000000000000
+> > > [    2.405271] x2 : 0000000000000000 x1 : 0000000000000000 x0 : 0000000000000000
+> > > [    2.405287] Call trace:
+> > > [    2.405293]  __kmem_cache_create_args+0xb8/0x3b0
+> > > [    2.405305]  kmem_buckets_create+0xfc/0x320
+> > > [    2.405315]  init_msg_buckets+0x34/0x78
+> > > [    2.405326]  do_one_initcall+0x64/0x3c8
+> > > [    2.405337]  kernel_init_freeable+0x26c/0x578
+> > > [    2.405348]  kernel_init+0x3c/0x258
+> > > [    2.405360]  ret_from_fork+0x10/0x20
+> > > [    2.405370] ---[ end trace 0000000000000000 ]---
+> > > 
+> > > To address this, alias kmem_cache for sizes smaller than min alignment
+> > > to the aligned sized kmem_cache, as done with the default system kmalloc
+> > > bucket.
+> > > 
+> > > Cc: <stable@vger.kernel.org> # 6.11.x
+> > > Fixes: b32801d1255b ("mm/slab: Introduce kmem_buckets_create() and family")
+> > > Signed-off-by: Koichiro Den <koichiro.den@gmail.com>
+> > > ---
+> > 
+> > Thanks for catching this.
+> > Wonder if we could make this a lot simpler in kmem_buckets_create() by
+> > starting with the current:
+> > 
+> > size = kmalloc_caches[KMALLOC_NORMAL][idx]->object_size;
+> > 
+> > and adding:
+> > 
+> > aligned_idx = __kmalloc_index(size, false);
+> > 
+> > now the rest of the loop iteration would work with aligned_idx and if it
+> > differs from idx, we assign the cache pointer also to idx, etc.
+> > 
+> > This should avoid duplicating the alignment calculation as we just extract
+> > from kmalloc_caches[] the result of what new_kmalloc_cache() already did?
+> 
+> Yeah, I was thinking similar stuff -- the aligned stuff is the alias for
+> the actual stuff.
+> 
+> I like the bitmask for tracking the aliases. :)
 
-syzbot found the following issue on:
+Thanks for reviewing, Vlastimil and Kees. It sounds reasonable, I'll
+send v2 soon.
 
-HEAD commit:    0fc810ae3ae1 x86/uaccess: Avoid barrier_nospec() in 64-bit..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=15ac9340580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=4aec7739e14231a7
-dashboard link: https://syzkaller.appspot.com/bug?extid=a617d4c5ff27f35f8255
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/d7ec34ee152e/disk-0fc810ae.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/ba87040ccb6c/vmlinux-0fc810ae.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/0e189a9b5a22/bzImage-0fc810ae.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+a617d4c5ff27f35f8255@syzkaller.appspotmail.com
-
-------------[ cut here ]------------
-WARNING: CPU: 1 PID: 8645 at kernel/rcu/srcutree.c:656 cleanup_srcu_struct+0x404/0x4d0 kernel/rcu/srcutree.c:656
-Modules linked in:
-CPU: 1 UID: 0 PID: 8645 Comm: kworker/u8:11 Not tainted 6.12.0-rc5-syzkaller-00063-g0fc810ae3ae1 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-Workqueue: ib-unreg-wq ib_unregister_work
-RIP: 0010:cleanup_srcu_struct+0x404/0x4d0 kernel/rcu/srcutree.c:656
-Code: 4d 84 00 48 c7 03 00 00 00 00 48 83 c4 48 5b 41 5c 41 5d 41 5e 41 5f 5d e9 84 f4 75 0a 90 0f 0b 90 eb e7 90 0f 0b 90 eb e1 90 <0f> 0b 90 eb db 90 0f 0b 90 eb 0a 90 0f 0b 90 eb 04 90 0f 0b 90 48
-RSP: 0018:ffffc90003f07930 EFLAGS: 00010202
-RAX: 0000000000000001 RBX: ffff888079789980 RCX: 0000000000000002
-RDX: 0000000000000000 RSI: 0000000000000008 RDI: ffffe8ffffd59658
-RBP: 0000000000000001 R08: ffffe8ffffd5965f R09: 1ffffd1ffffab2cb
-R10: dffffc0000000000 R11: fffff91ffffab2cc R12: dffffc0000000000
-R13: ffff88805bab05e8 R14: ffff88805bab0000 R15: ffff888079789800
-FS:  0000000000000000(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f7b86306d58 CR3: 0000000060ea6000 CR4: 0000000000350ef0
-Call Trace:
- <TASK>
- ib_uverbs_release_dev+0x4e/0x80 drivers/infiniband/core/uverbs_main.c:136
- device_release+0x9b/0x1c0
- kobject_cleanup lib/kobject.c:689 [inline]
- kobject_release lib/kobject.c:720 [inline]
- kref_put include/linux/kref.h:65 [inline]
- kobject_put+0x231/0x480 lib/kobject.c:737
- remove_client_context+0xb9/0x1e0 drivers/infiniband/core/device.c:782
- disable_device+0x13b/0x360 drivers/infiniband/core/device.c:1288
- __ib_unregister_device+0x2ac/0x3d0 drivers/infiniband/core/device.c:1518
- ib_unregister_work+0x19/0x30 drivers/infiniband/core/device.c:1630
- process_one_work kernel/workqueue.c:3229 [inline]
- process_scheduled_works+0xa65/0x1850 kernel/workqueue.c:3310
- worker_thread+0x870/0xd30 kernel/workqueue.c:3391
- kthread+0x2f2/0x390 kernel/kthread.c:389
- ret_from_fork+0x4d/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+> 
+> -- 
+> Kees Cook
 
