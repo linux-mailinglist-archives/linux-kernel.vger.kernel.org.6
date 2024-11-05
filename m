@@ -1,118 +1,80 @@
-Return-Path: <linux-kernel+bounces-395723-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395732-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 148A39BC213
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 01:39:40 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0306E9BC231
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 01:51:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BACF21F22B15
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 00:39:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 90AC4B216D8
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 00:51:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A0A4125B9;
-	Tue,  5 Nov 2024 00:39:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51C5CF9CF;
+	Tue,  5 Nov 2024 00:51:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GAUmDYxd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="vRQB9j4l"
+Received: from out-183.mta1.migadu.com (out-183.mta1.migadu.com [95.215.58.183])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A00F1FC3;
-	Tue,  5 Nov 2024 00:39:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D78F1FC3
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 00:51:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730767170; cv=none; b=QxiB/lTBjCTUgGF3Nyl8LuDlNBOep9YI505NmShucG0P+migFNe1IG1rtIvmcAjdsZqWDQXPe2rJ7h7jVmI/SfynlR7aiLeu0NT55JcMKc2cgW2F1DOaAqEPtMuXOPsDGa4LDvfypthxeLQLNZe/iH+X5NUNVmjkgmGaHtHyMOQ=
+	t=1730767878; cv=none; b=GeFVS2pHT91+A+sRkoJz/vxwvevFtQiI+2bBdSassBf6/8bQzIXpg/qU1BRS04rSSAB2s3ytDzQHZmPXZtsuDRbYQjNfBnbSA42J1pB11vRsXkiWbukHLjGlZvS21tgsWNkGY81rBiGYpusLKWcLFfA1p3BW7vB4XKzLb/OO2Fg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730767170; c=relaxed/simple;
-	bh=xfCaDzMNCkWjtvVW63wVhxSTIXKN+FNrDvQ4Cfad98E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=I+Jiwdi5WAw6ZujBy4vxr0IIvq3baT4vIICzq7N+NCH0FHezLCd7k1WZFsW8k+YiwjqQ20ToFKwe5K4sToyTbpfyoER/7dPFx5Rw57CVT76Dm32Zno/+tIH3LZbzzVskVJKS+1dCRshQNgIiqZLswMZBm4A0fZOk/C+GY0QQme4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GAUmDYxd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D31CEC4CED1;
-	Tue,  5 Nov 2024 00:39:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730767169;
-	bh=xfCaDzMNCkWjtvVW63wVhxSTIXKN+FNrDvQ4Cfad98E=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=GAUmDYxd0aAvkPOgtywrDqq+i0iIiVdmO3HP0UqS/edVUwZ+E1jTWIS/MdiLi9d/P
-	 VbZNLgyjVgZx+ePOeHkiW2TF9H2YAXkRDSshBJi4e3T17lBybisI9q+mYW8lsURaf7
-	 WuStRV6MYM/+yCf35uzHwBLeiZpALXzl2cZwcxJ7VtnSX/D3/u6br0IsezX0gcBSkz
-	 amTg6vwNHyKHpCt6trcKreUE4Y3nuuGwvRkhnl29/xVTVmV9dGD/7icLtOKdeCmAIl
-	 UAP78UDhbLSwJwMW9LQSjdv8zmhLFqhM02DZLZVx5AHvkYzqVRdimlvhJwfjlZMCA6
-	 g5PJsc2j4jYhg==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 71D04CE093C; Mon,  4 Nov 2024 16:39:29 -0800 (PST)
-Date: Mon, 4 Nov 2024 16:39:29 -0800
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Frederic Weisbecker <frederic@kernel.org>
-Cc: rcu@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-team@meta.com,
-	rostedt@goodmis.org, kernel test robot <oliver.sang@intel.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Kent Overstreet <kent.overstreet@linux.dev>, bpf@vger.kernel.org
-Subject: Re: [PATCH rcu 08/15] srcu: Add srcu_read_lock_lite() and
- srcu_read_unlock_lite()
-Message-ID: <53397727-66c2-4517-9f95-cae073e80744@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <ddf64299-de71-41a2-b575-56ec173faf75@paulmck-laptop>
- <20241015161112.442758-8-paulmck@kernel.org>
- <ZylYbsU7uE7jX5Yd@pavilion.home>
+	s=arc-20240116; t=1730767878; c=relaxed/simple;
+	bh=qsRaukKKrdtSkAST308wPBqvq9LNUvMluUMqKWn1pmA=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=KolB05xnJ7U+JVfvcOgUCQXyIpRpoW9TCRna9NwWpNBCwWQvVWQrH50/FaAgP/DnNlK/ID6i+/kffWCEpKzYaBA+r95cVGooiB8Ptui5pzLGf0NtcWz0jQMNPnHgpTHlCGPMn/RjlejZydT7Xhvq+UKn7mgEcq7sMAMYaTyDE4s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=vRQB9j4l; arc=none smtp.client-ip=95.215.58.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Content-Type: text/plain;
+	charset=us-ascii
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1730767870;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+UKCB4fnJE7P2wptGFsMdugCrAOnpjE5RGivFbdLh6Y=;
+	b=vRQB9j4lYkersYex6ROrwaK1BDBfdQLkdbg4CFvcvXQjiwoSSnI+HqtJcXsXBlGo1sO6QG
+	iB2wcbhUu/qcwNPj8LPpv2HOtMojMNaSjwT5F4+SLHub10Rah6rGroJ1S28JVgM7RBI0r0
+	rYl64wpdLRUuXv3bQTOLNHZ1F+C+hvg=
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZylYbsU7uE7jX5Yd@pavilion.home>
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51.11.1\))
+Subject: Re: [PATCH] MIPS: kernel: proc: Use str_yes_no() helper function
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Thorsten Blum <thorsten.blum@linux.dev>
+In-Reply-To: <alpine.DEB.2.21.2411042349440.9262@angie.orcam.me.uk>
+Date: Tue, 5 Nov 2024 01:40:00 +0100
+Cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+ linux-mips@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+Message-Id: <D3FF9278-BF88-4B9F-AA8C-4EAB6B353829@linux.dev>
+References: <20241102220437.22480-2-thorsten.blum@linux.dev>
+ <alpine.DEB.2.21.2411031921020.9262@angie.orcam.me.uk>
+ <F2FC5695-440E-4A29-B683-4335452F6FAB@linux.dev>
+ <alpine.DEB.2.21.2411042349440.9262@angie.orcam.me.uk>
+To: "Maciej W. Rozycki" <macro@orcam.me.uk>
+X-Migadu-Flow: FLOW_OUT
 
-On Tue, Nov 05, 2024 at 12:27:42AM +0100, Frederic Weisbecker wrote:
-> Le Tue, Oct 15, 2024 at 09:11:05AM -0700, Paul E. McKenney a écrit :
-> > This patch adds srcu_read_lock_lite() and srcu_read_unlock_lite(), which
-> > dispense with the read-side smp_mb() but also are restricted to code
-> > regions that RCU is watching.  If a given srcu_struct structure uses
-> > srcu_read_lock_lite() and srcu_read_unlock_lite(), it is not permitted
-> > to use any other SRCU read-side marker, before, during, or after.
-> > 
-> > Another price of light-weight readers is heavier weight grace periods.
-> > Such readers mean that SRCU grace periods on srcu_struct structures
-> > used by light-weight readers will incur at least two calls to
-> > synchronize_rcu().  In addition, normal SRCU grace periods for
-> > light-weight-reader srcu_struct structures never auto-expedite.
-> > Note that expedited SRCU grace periods for light-weight-reader
-> > srcu_struct structures still invoke synchronize_rcu(), not
-> > synchronize_srcu_expedited().  Something about wishing to keep
-> > the IPIs down to a dull roar.
-> > 
-> > The srcu_read_lock_lite() and srcu_read_unlock_lite() functions may not
-> > (repeat, *not*) be used from NMI handlers, but if this is needed, an
-> > additional flavor of SRCU reader can be added by some future commit.
-> > 
-> > [ paulmck: Apply Alexei Starovoitov expediting feedback. ]
-> > [ paulmck: Apply kernel test robot feedback. ]
-> > 
-> > Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-> > Tested-by: kernel test robot <oliver.sang@intel.com>
-> > Cc: Alexei Starovoitov <ast@kernel.org>
-> > Cc: Andrii Nakryiko <andrii@kernel.org>
-> > Cc: Peter Zijlstra <peterz@infradead.org>
-> > Cc: Kent Overstreet <kent.overstreet@linux.dev>
-> > Cc: <bpf@vger.kernel.org>
+On 5. Nov 2024, at 00:51, Maciej W. Rozycki wrote:
+> On Tue, 5 Nov 2024, Thorsten Blum wrote:
+>> 
+>> What about the comma and newline? Using str_yes_no() would remove them.
 > 
-> This might be a dump question but I have to ask. Could this replace
-> RCU-TASKS-TRACE?
+> This is why a minor code restructuring is needed so that the comma and 
+> the new line are produced elsewhere (arguably a cleaner structure anyway).
 
-From a purely functional viewpoint, yes, but even without that smp_mb(),
-there are performance issues due to the index fetch, array accesses, and
-return value.  Maybe with improved hardware over time this will change,
-and if it does, yes, we definitely should remove RCU Tasks Trace in
-favor of SRCU-lite.  We are not there yet.
+Ok, I'll submit a v2.
 
-However, it does mean that we don't need to create a new RCU variant
-for uprobes, and that has to be worth something.  ;-)
-
-							Thanx, Paul
+Thanks,
+Thorsten
 
