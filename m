@@ -1,164 +1,107 @@
-Return-Path: <linux-kernel+bounces-395889-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395890-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D734D9BC48D
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 06:08:13 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BD2B9BC491
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 06:11:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D4071F2213C
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 05:08:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F17D8282D53
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 05:11:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 561061B4F1E;
-	Tue,  5 Nov 2024 05:08:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC3651B4F0F;
+	Tue,  5 Nov 2024 05:10:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AK6VuxFZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XCPJzLSX"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E08A3987D;
-	Tue,  5 Nov 2024 05:08:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C96843D9E;
+	Tue,  5 Nov 2024 05:10:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730783285; cv=none; b=qGDeLWvr0+fMEzOE3MoT0Dfk/Oq5PuAfuqxYK8You6FftIIueC/tXrmkl7LEHE5YY0Z0kumRHSF7Qw1BJVcynna3T/cW/NaT+dIRi7Z7/zb0Kno3lIZOIUQvWZdHkek3qITPpLX5JAa1JCSjnxvbJoSvvUzQfPpySVYujA6XyQc=
+	t=1730783456; cv=none; b=PeZ0/QFUoMwZO0qfcbFVx5KoGKXx22u49sSbZiMdfpop/ndmPpAm5CLjfTRDD5iN9AMcTUqfLF4vXA7r9qbWe/iw4Iw4gHe+zfdhD1qAVgkke2tLmMA+8hmKZGWbC8i4gi9Oj+FRAje8ooZc1bsq3ODB4j1kC9e6bFjIMhmxRw0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730783285; c=relaxed/simple;
-	bh=Woa5l/TBzfjnbejfeJNuhIdCkk1UOKkNCSAnyW42mrA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=M1grtJj0b3kRBueslMfacPkJGTah5y1XaeeiIFqSXQ5vCwu7wM/8dlhEuERtMkf4yz107/zbbkHvYCBA5MeWm6OIpbznlr5Nphx2lbHGvkmUl5Eq11y+OiVyk5yqrPbJXFJE2cPgrtk+a851XG/t/Zu3Fd3/3V4NFA/kC+P3VWY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AK6VuxFZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14238C4CECF;
-	Tue,  5 Nov 2024 05:08:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730783285;
-	bh=Woa5l/TBzfjnbejfeJNuhIdCkk1UOKkNCSAnyW42mrA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=AK6VuxFZ1qdb1ASJhFnrWnZ+gjqjzhn5itjDiDIbY6oA5hQ/MVC4po0h7T9x4iP+d
-	 ZTy31PQzwIe/YAjF9RT1WtQqVMAeK6En6Glkchdb81Q2pbUuJg/JQPr97aGEp218Rd
-	 S1h0+VwuCtaRmMAUzkWkQ0B5XtN6QSU30D9wOE+Mlj14S59wGMPw64CVqiAl07TwQh
-	 FQoCXxXydhukNne/RoKvirXXRse1ke8F4PM9ckEZDPOmVR31KvQ27NSPYDZFjIblNi
-	 /0KQcuc36UIzD9Joar7eKBo5yMAgB0+hohgNAoFwnjzsACSGwdL9QNvYwvnelBb6eE
-	 /Amp0A3yUXSnA==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1t8BnO-000000005Bi-3WGR;
-	Tue, 05 Nov 2024 06:08:03 +0100
-Date: Tue, 5 Nov 2024 06:08:02 +0100
-From: Johan Hovold <johan@kernel.org>
-To: Chris Lew <quic_clew@quicinc.com>
-Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>,
-	Qiang Yu <quic_qianyu@quicinc.com>,
-	Jeffrey Hugo <quic_jhugo@quicinc.com>,
-	Krishna chaitanya chundru <quic_krichai@quicinc.com>,
-	Konrad Dybcio <konradybcio@kernel.org>, mhi@lists.linux.dev,
-	linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: qrtr/mhi: NULL-deref with in-kernel pd-mapper
-Message-ID: <ZymoMlSCQQScpRIZ@hovoldconsulting.com>
-References: <ZyTtVdkCCES0lkl4@hovoldconsulting.com>
- <da2bc665-5010-4d92-b9ac-7c442859cd10@quicinc.com>
+	s=arc-20240116; t=1730783456; c=relaxed/simple;
+	bh=ZZ8M1K74AfBAeZw1KBbrNK2iUoUdzDaeh7JVH/wIDsg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ubtTo3rkqE4nFaxOvUqK7R8Rn/oNq1uyE05RVfWySLUNqBqIsxwelpy073nw2P2DEZgR6xeBZAsZu5B8pmXlUI4Y88NILIP3HqsCWB9xO2pFdgJtneYJcQ9YNlrqC0EnKfktMa3Hp5OvS77J1zfwnAJz+e9eKMXZGqWfM+QyR50=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XCPJzLSX; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-20c7ee8fe6bso46972525ad.2;
+        Mon, 04 Nov 2024 21:10:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730783454; x=1731388254; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=pYRQYYR+JdhQ0qAqYIjxsBozFzPNS0M2HhdVgVTXBhI=;
+        b=XCPJzLSXDGEas9a4vjkGHKjmvD0JfpFnBjKa8bvxgFKjjNXJrwcOr6Ddh6mRVPNwLM
+         nU2PLHf6XS7ti8R6VshOIbiRq1NBvL9zVX2rsuwDsN0u7WscUyPrev3GFi8ppgfa4ew4
+         FBzI2qbRtLELINePDZdJwA4DS03kxfrazPjZB8b5waWS3zymj9TM6+UP24X4ILQtx0ml
+         +e8e11yZ7dX48ZPsr3UJl1TrGIXhT4LxF4tKqbCUnJyJ9ZB4Osu/BqMDL821l21mHalg
+         SSCHCr9OpNa5g7XIouN1kuOPocDRDaPeQje/ZbJ/WgLs6HW5hx/plB1W51JHyKkDiIFo
+         FAVA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730783454; x=1731388254;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=pYRQYYR+JdhQ0qAqYIjxsBozFzPNS0M2HhdVgVTXBhI=;
+        b=LcO1yN3ZLYD31/FZ8ivh28uJcG+U+SGncndAdW7YDqW6HyfxnUAJc1i7GmfDSxYBMC
+         92Wrb0FqgnrUgmTjsxcDXrFrWjp1bYtOVO+ZeaUtiJeeWdYADoAUvjBo/6ECnj0qEO5l
+         XaLAIU+DlNjTSJSnWYGeoxHfXXPWFwVh7gAkj/El0AcGOXljyqSo5zeybEKNrO1cMgp8
+         cUVsAjETbBCB1REGEwvvRF09R6q5Pp20GDlt+DBMJSBRDzVwt6amQAmNgcKPSwarFqBu
+         g2Hukhe/Cezme5t9fRwYx2d9HALTLgnd64iKukT3wy9YIi4SxG3joIxlNe1Poke5l5eW
+         5dWg==
+X-Forwarded-Encrypted: i=1; AJvYcCV0lGVvHpfF76rDw2A/xcrCHfYOHjIwK6MJ8VvFNftj35RELKYgJMpj5jOTH5Fctz8YAAZN54YZmDL5Z+g=@vger.kernel.org, AJvYcCVSeMEhTvSiWtoqQuSOvAmsAhm+iamUEFmDOsafYsLp6P/h1WMW60/0SAtSlnjmURpT3Dw/UWZr@vger.kernel.org
+X-Gm-Message-State: AOJu0YystKfddADhuWTfv3sUd1tyzf+BMxDsudiIxPBg9dBQGL7mE3Ri
+	5Q86LxQsFwwas8kEtW480q0O0e5BqHErj5cmzryxh2+yZZjLOtGx
+X-Google-Smtp-Source: AGHT+IE9YYi8i70c55z4uY1QrudbCshWUkBwISsO/eIU0cxOwovu3C2tOO5yobsD+fNZsNuiWwPB6w==
+X-Received: by 2002:a17:903:1108:b0:20c:e262:2580 with SMTP id d9443c01a7336-210c6c3ffb6mr415459855ad.44.1730783453867;
+        Mon, 04 Nov 2024 21:10:53 -0800 (PST)
+Received: from ?IPV6:2409:4040:d8e:59e0:9ed7:e897:20d8:410e? ([2409:4040:d8e:59e0:9ed7:e897:20d8:410e])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21105729894sm69538205ad.119.2024.11.04.21.10.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 04 Nov 2024 21:10:53 -0800 (PST)
+Message-ID: <4f4b747a-a7e9-45ea-ba3d-fa6144320119@gmail.com>
+Date: Tue, 5 Nov 2024 10:40:46 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <da2bc665-5010-4d92-b9ac-7c442859cd10@quicinc.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] net: ipv6: fix inconsistent indentation in
+ ipv6_gro_receive
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: davem@davemloft.net, dsahern@kernel.org, edumazet@google.com,
+ pabeni@redhat.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241031065124.4834-1-surajsonawane0215@gmail.com>
+ <20241103152213.2911b601@kernel.org>
+Content-Language: en-US
+From: Suraj Sonawane <surajsonawane0215@gmail.com>
+In-Reply-To: <20241103152213.2911b601@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Nov 04, 2024 at 04:26:15PM -0800, Chris Lew wrote:
-> On 11/1/2024 8:01 AM, Johan Hovold wrote:
-
-> > [    8.825593] Unable to handle kernel NULL pointer dereference at virtual
-> > address 0000000000000034
-> > .
-
-> > [    9.002030] CPU: 10 UID: 0 PID: 11 Comm: kworker/u48:0 Not tainted 6.12.0-rc5 #4
-> > [    9.029550] Hardware name: Qualcomm CRD, BIOS 6.0.231221.BOOT.MXF.2.4-00348.1-HAMOA-1 12/21/2023
-> > [    9.029552] Workqueue: qrtr_ns_handler qrtr_ns_worker [qrtr]
-> > [    9.061350] pstate: a1400005 (NzCv daif +PAN -UAO -TCO +DIT -SSBS BTYPE=--)
-> > [    9.061353] pc : mhi_gen_tre+0x44/0x224 [mhi]
-> > [    9.106931] lr : mhi_gen_tre+0x40/0x224 [mhi]
-> > [    9.106934] sp : ffff8000800fb7d0
-> > [    9.106935] x29: ffff8000800fb7d0 x28: ffff6db7852bd000 x27: ffff800082490188
-> > [    9.120382] dwc3 a000000.usb: Adding to iommu group 5
-> > [    9.133750]
-> > [    9.133752] x26: 0000000000000000 x25: ffff6db783e65080 x24: ffff80008248ff88
-> > [    9.133754] x23: 0000000000000000 x22: ffff80008248ff80 x21: ffff8000800fb890
-> > [    9.133756] x20: 0000000000000000 x19: 0000000000000002 x18: 000000000005cf20
-> > [    9.133758] x17: 0000000000000028 x16: 0000000000000000
-> > [    9.172738]  x15: ffffa5834131fbd0
-> > [    9.172741] x14: ffffa5834137caf0 x13: 000000000000ce30 x12: ffff6db7808bc028
-> > [    9.172743] x11: ffffa58341993000 x10: 0000000000000000 x9 : 00000000cf3f2b90
-> > [    9.172745] x8 : 0000000094e5072b x7 : 00000000000404ce x6 : ffffa5834162cfb0
-> > [    9.172747] x5 : 000000000000008b x4 : ffffa583419cddf0 x3 : 0000000000000007
-> > [    9.172750] x2 : 0000000000000000
-> > [    9.192697]  x1 : 000000000000000a x0 : ffff6db7808bb700
-> > [    9.192700] Call trace:
-> > [    9.192701]  mhi_gen_tre+0x44/0x224 [mhi]
-> > [    9.192704]  mhi_queue+0x74/0x194 [mhi]
-> > [    9.192706]  mhi_queue_skb+0x5c/0x8c [mhi]
-> > [    9.210985]  qcom_mhi_qrtr_send+0x6c/0x160 [qrtr_mhi]
-> > [    9.210989]  qrtr_node_enqueue+0xd0/0x4a0 [qrtr]
-> > [    9.210992]  qrtr_bcast_enqueue+0x78/0xe8 [qrtr]
-> > [    9.225530]  qrtr_sendmsg+0x15c/0x33c [qrtr]
-> > [    9.225532]  sock_sendmsg+0xc0/0xec
-> > [    9.240436]  kernel_sendmsg+0x30/0x40
-> > [    9.240438]  service_announce_new+0xbc/0x1c4 [qrtr]
-> > [    9.240440]  qrtr_ns_worker+0x714/0x794 [qrtr]
-> > [    9.240441]  process_one_work+0x210/0x614
-> > [    9.254527]  worker_thread+0x23c/0x378
-> > [    9.254529]  kthread+0x124/0x128
-> > [    9.254531]  ret_from_fork+0x10/0x20
-> > [    9.254534] Code: aa0003f9 aa1b03e0 94001a4d f9401b14 (3940d280)
-> > [    9.267369] ---[ end trace 0000000000000000 ]---
-> > [    9.267371] Kernel panic - not syncing: Oops: Fatal exception in interrupt
+On 04/11/24 04:52, Jakub Kicinski wrote:
+> On Thu, 31 Oct 2024 12:21:24 +0530 Suraj Sonawane wrote:
+>> Fix the indentation to ensure consistent code style and improve
+>> readability, and to fix this warning:
+>>
+>> net/ipv6/ip6_offload.c:280 ipv6_gro_receive() warn: inconsistent indenting
 > 
-> Thanks for reporting this.
-
-Thanks for taking a look, Chris.
-
-> I'm not sure the in-kernel pd-mapper should be affecting this path. I 
-> think this is for WLAN since it is the mhi qrtr and I'm not aware of 
-> WLAN needing to listen to the pd-mapper framework.
-
-This function is called for both the WWAN and WLAN on this machine, and
-it seems like the modem is typically probed first and around the time
-when I saw the NULL-deref.
-
-[    8.802728] mhi-pci-generic 0005:01:00.0: mhi_gen_tre - buf_info = ffff800080d75000, offsetof(buf_info->used) = 0x34
-...
-[    9.980638] ath12k_pci 0004:01:00.0: mhi_gen_tre - buf_info = ffff800081d35000, offsetof(buf_info->used) = 0x34
- 
-> The offset seems to be mapped back to 
-> linux/drivers/bus/mhi/host/main.c:1220, I had some extra debug configs 
-> enabled so not sure the offset is still valid.
+> Warning from what tool?
 > 
-> 	WARN_ON(buf_info->used);
-> 	buf_info->pre_mapped = info->pre_mapped;
-> 
-> This looks like the null pointer would happen if qrtr tried to send 
-> before mhi_channel_prepare() is called.
+> Unless it's gcc or clang let's leave the code be, it's fine.
+Thank you for the feedback and your time.
 
-I didn't look closely at the code, but I can confirm that the offset of
-buf_info->used is indeed 0x34, which could indicate that it's the
+The warning was flagged by smatch, a static analysis tool.
 
-	buf_info = buf_ring->wp;
-
-pointer that was NULL.
-
-> I think we have a patch that might fix this, let me dig it up and send 
-> it out.
-
-Would that patch still help?
-
-	https://lore.kernel.org/lkml/20241104-qrtr_mhi-v1-1-79adf7e3bba5@quicinc.com/
-
-I naively tried adding a sleep after registering the endpoint, but that
-is at least not sufficient to trigger the NULL-deref.
-
-Johan
+Best regards,
+Suraj Sonawane
 
