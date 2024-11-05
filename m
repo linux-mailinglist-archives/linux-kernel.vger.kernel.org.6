@@ -1,163 +1,117 @@
-Return-Path: <linux-kernel+bounces-396173-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396176-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6E319BC8EB
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 10:18:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8F0C9BC8F4
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 10:19:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1A9481C220D7
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 09:18:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EBBBE2820C8
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 09:19:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 424024317C;
-	Tue,  5 Nov 2024 09:17:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 206CF1D0E26;
+	Tue,  5 Nov 2024 09:19:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hfi6RspQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Pg1tl8xo"
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9237E1CCB2D;
-	Tue,  5 Nov 2024 09:17:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20B411CF28B
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 09:19:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730798275; cv=none; b=KX0yq17uuyEHQBkEYUcOEqlfl2thwy4Drg5pTVz+ohemrrYqOn/vfzKkXjefctoFptzcwxeOiZIlI+98jnH2+4U0GfdfeLKRSCQypw+yxVGBt5oor6z6p3bQgvlP5Odkt01IschS/NLw7v+5JTLkN/K8cvIW1Awmi6v+HPWzXX4=
+	t=1730798364; cv=none; b=N44VG5ECG0lvI/MDgQdgwhm5oxsU9Lrx+azZKUyLFZ7vsn75yRcHxkX8IgENZEO+Lm/TKYpMdthPjldmBrwcdzqFxBj80R6JFjUxVqvI85CPkAmWJ2Ck1sGBbcyJro4EJDv6s/teiQjarEI/KXfN6OfckquXEgc1j7+qQ6C7Nu0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730798275; c=relaxed/simple;
-	bh=PppMPuX1IoJiZXzC2Ga3sdmBITXwwbZAdf5ssbDPqgA=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=NAsA9IvVglqUsEHHQZkutsrrXKjqy0QUr+GBWzdc+v8c+DERBRvPCYNQQu4+hbuhIYeEM5vUJe/0kLj5aJcTcdAvsUf/aqUsaBQUuYAt8S1urfdF58psbuuFlgL7vsuHDDNu7Zc3rVW3Im1GdXy28792koMaorgvdaJp40UdrMM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hfi6RspQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5951EC4CECF;
-	Tue,  5 Nov 2024 09:17:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730798275;
-	bh=PppMPuX1IoJiZXzC2Ga3sdmBITXwwbZAdf5ssbDPqgA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=hfi6RspQ9yzPHxU4Z8SstdLhGN/rnX6LAJkaiieADqbpMl6HVGczLaaHYh2XBp0ds
-	 tu/4r3fnI7rhU1tmk0uxR5mJsIIHka1X/K75aHrbtdonRXnK1Isad4xsKyh2EJAVEI
-	 Xl4Y6crMBZ4iHL7OvaDuEOeJU/PoLMOpeHHlVQcRzjrkd9oMhUlL0f+WOLDd2iAEaK
-	 hBhglLxLlklDAgShVUy+l6B9308mTp/dT7nN99BOdDeavHnHYlq6UOAK+dNM41nTok
-	 L7JiDXnkvSt6UiIFg/D6FbPW/WVSa+hzSJk16dh7ZRdumhjdSs8cPsseIWBDyFKVIN
-	 IFyBATBHX2IpA==
-Date: Tue, 5 Nov 2024 18:17:51 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Segher Boessenkool <segher@kernel.crashing.org>
-Cc: Hari Bathini <hbathini@linux.ibm.com>, Shuah Khan <shuah@kernel.org>,
- linux-kselftest@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>,
- Masami Hiramatsu <mhiramat@kernel.org>, Michael Ellerman
- <mpe@ellerman.id.au>, Madhavan Srinivasan <maddy@linux.ibm.com>,
- "Naveen N. Rao" <naveen@kernel.org>, lkml <linux-kernel@vger.kernel.org>,
- linux-trace-kernel@vger.kernel.org, linuxppc-dev
- <linuxppc-dev@lists.ozlabs.org>
-Subject: Re: [PATCH] selftests/ftrace: update kprobe syntax error test for
- ppc64le
-Message-Id: <20241105181752.74a3d6fa2f06d0adfdf85322@kernel.org>
-In-Reply-To: <20241105082018.GA29862@gate.crashing.org>
-References: <20241101191925.1550493-1-hbathini@linux.ibm.com>
-	<20241101205948.GW29862@gate.crashing.org>
-	<1916cb5c-cb3d-427c-bcf0-2c1b905fd6d1@linux.ibm.com>
-	<20241104094431.GY29862@gate.crashing.org>
-	<245fed6f-5fb4-4925-ba0a-fb2f32e650d0@linux.ibm.com>
-	<20241104103615.GZ29862@gate.crashing.org>
-	<f7e8243a-a4c8-44ce-ad03-7d232df461ed@linux.ibm.com>
-	<20241105082018.GA29862@gate.crashing.org>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1730798364; c=relaxed/simple;
+	bh=T4lfPA8S9ixb3LEM2QOxvR7XTTqcM7Y8IyvOeRDKLNI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dcBl5yBTY0BvarWcHO6G5NTm7g581UDwYWmTs0ViE7Uz4nvObUt8G3/1005tqR74Q/6StyVvS1Me3IYD7lQ8UORren3y60qWjJENSeFeHWBAFzCIWE9Wr+jJBaeGBTrgnhucj0z+Fv6w8+AfZRS744WevDSx5u1BUhyiulkvDZ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Pg1tl8xo; arc=none smtp.client-ip=209.85.210.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-720c2db824eso4769108b3a.0
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 01:19:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1730798362; x=1731403162; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=LW99LC0Kexi86oGAcb2ljvk1jhRq1I2JS+rEVFAlaw8=;
+        b=Pg1tl8xo9t2aKiuSC/Iv0U8IZ+eCGe01RiKmydINKypkzVA/TXhfg8TbTUWSojNsWA
+         rPqEgpuJw9afTkiE6QC90FEB1cQ5BhyKdYnXa7hezPo9Z8SLomvSUosRzk+ang4SgzAY
+         aVYEiHiSNzZ+eOu+DGf6DeljFxnV3P9MJnTZw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730798362; x=1731403162;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=LW99LC0Kexi86oGAcb2ljvk1jhRq1I2JS+rEVFAlaw8=;
+        b=gx07njGd66pUeOlK060DIu90joTkY20st28sX8BkWD0i8e+Z9GMFQ/ZjXv+POMX6ZU
+         vlfnrFnQBn+NJJugZ91tJDqU3LuDXp+pSGiJK/Vxf7LKUcjpBPGSjTtn+HQ7VOr1vmch
+         KNgGIliZT0jxuLGnTU/r57PBr5V/uKHyd2Uah3uXsS/kjgsFdNag/i/2ApFKa+KOfeIM
+         +0G4Jm8K15nzkMVjf6aG4fhUhELQ58wOEyLxcaAvF8HYu4vPv0NDS2Y8k30drxk6edqI
+         q8EL0MYj2CF4yaj2Dr8tzOmL1nfiaAwmefEBXXvUlgxRVjrOKoWTeF/0B5r7Jf1A6bay
+         0Ong==
+X-Forwarded-Encrypted: i=1; AJvYcCWGB/6WAn/Eg6H/9HfvUClafenIjYF/lACe4HzCIBudfqFq2UTScrOO3Wlp5hqm/u6jZsn6xk5lqeQHviQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxhIdBBRpERH+n3ogy3IZfqm0g7gBOhIPWTHl4ri/3x1HwA4KcB
+	sQVN0CkEO9yDxwy4xgdGIz7dpnOro2OOJFjrKX7KpUv7JWypr60xOxbO0AfQug==
+X-Google-Smtp-Source: AGHT+IE+RQFeVzw8zbEzlCI6PqWB5TBlBgH4MxGi/9juWqisHT1+H2kFPqs8VV8Xihz0bbOqadeYvw==
+X-Received: by 2002:a05:6a00:8cf:b0:71e:587d:f276 with SMTP id d2e1a72fcca58-72063093364mr47257026b3a.25.1730798362339;
+        Tue, 05 Nov 2024 01:19:22 -0800 (PST)
+Received: from fshao-p620.tpe.corp.google.com ([2401:fa00:1:10:20ee:3712:ce0b:1ed7])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-720bc2c58f7sm9337566b3a.140.2024.11.05.01.19.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 05 Nov 2024 01:19:22 -0800 (PST)
+From: Fei Shao <fshao@chromium.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: Fei Shao <fshao@chromium.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	David Yang <yangxiaohua@everest-semi.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-sound@vger.kernel.org
+Subject: [PATCH] ASoC: dt-bindings: everest,es8326: Document interrupt property
+Date: Tue,  5 Nov 2024 17:18:11 +0800
+Message-ID: <20241105091910.3984381-1-fshao@chromium.org>
+X-Mailer: git-send-email 2.47.0.277.g8800431eea-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-Hi,
+The ES8326 audio codec has one interrupt pin for headset detection
+according to the datasheet. Document that in the binding.
 
-On Tue, 5 Nov 2024 02:20:18 -0600
-Segher Boessenkool <segher@kernel.crashing.org> wrote:
+This fixes dtbs_check error:
+  'interrupts-extended' does not match any of the regexes:
+  'pinctrl-[0-9]+'
 
-> Hi!
-> 
-> On Mon, Nov 04, 2024 at 11:06:23PM +0530, Hari Bathini wrote:
-> > Seems like a bit of misunderstanding there. Function entry here intends
-> > to mean the actual start of function code (function prologue) - after
-> > GEP and function profiling sequence (mflr r0; bl mcount).
-> 
-> What you call "function entry" here simply does not exist.  The compiler
-> can -- and ***WILL***, ***DOES*** -- mix up all of that.
+Signed-off-by: Fei Shao <fshao@chromium.org>
+---
 
-Here is the "function entry" means the function address.
-Not the prologue. On some architecture, we are sure fixed sequences
-right after the function address for ftrace/security. For example,
-x86 has an `ENDBR` for security. Thus, even if we tend to put a
-probe on the "function entry", kprobes shifts the probe point
-forcibly skipping the `ENDBR`. So from the probe callback, the
-probed address does not look like the function address (shift
-the sizeof(ENDBR)).
+ Documentation/devicetree/bindings/sound/everest,es8326.yaml | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-However, the ENDBR does nothing from the program point of view, we
-can still think of that address as the address of the function.
-That is the reason why I introduced arch_kprobe_on_func_entry().
-
-For the other architecture, it might be misunderstood and
-could be miss-implemented. In that case, we should fix that.
-
->  In particular,
-> "function prologue" does not exist at all (on any architecture worth
-> its salt, including PowerPC), and all instructions you consider part of
-> a function prologue might end up anywhere.  The "profiling sequence" is
-> part of that btw, and that typically ends up *not* the first thing in
-> the function, not the first thing after the LEP (register saves are
-> earlier often, they are generated in that order in the first place,
-> but they can (and will) be moved if that schedules better).
-> 
-> > Function arguments can be accessed with kprobe only while setting a
-> > probe at an address the kernel treats as function start address.
-> 
-> That is a silly assumption to make.  There is no guarantee you can
-> access function arguments *at all*, we're not in 1975 anymore.  You
-> *need* to look at debug information if you want to deal with anything
-> about your high-level language program.  Looking at the machine code
-> can only tell you about the machine state, whatever is in registers
-> etc.
-
-Yeah, understood. So the `$arg*` here does not guarantee to access
-arguments, but the best effort to do that. And it fully depends on
-regs_get_kernel_argument(). Thus `$arg*` works only where the
-regs_get_kernel_argument() can return most likely function argument
-value from `pt_regs`. That is where we call "function entry" in
-this context.
-
-And since it checks the function entry by arch_kprobe_on_func_entry()
-this test fails on powerpc because it returns true if the offset from
-the kallsyms symbol address is less than 8/16 bytes.
-
-
-> 
-> > Note that the test case pass criteria here is setting probe to fail by
-> > providing an address (sym+offset) beyond the function start address.
-> > 
-> > And in this specific test case (with "vfs_read+8", where vfs_read is
-> > the symbol and '8' is the offset), the test case was failing on powerpc
-> > because setting the probe at 'sym+8' was succeeding, as anywhere between
-> > 'sym' to 'sym+16' is treated as function start address on powerpc:
-> 
-> Yeah, fragile tests sometimes break.  Changing a randomly chosen number
-> to some other randomly chosen number will not fix the problem (but you
-> can postpone having to deal with it, sure!)
-
-Yeah, sorry about the test case. Actually `+8` is also not a good number
-for x86 too since we are not sure whether the address is an instruction
-boundary or not. In that case it may report another error and failed.
-
-Thank you,
-
-> 
-> 
-> Segher
-
-
+diff --git a/Documentation/devicetree/bindings/sound/everest,es8326.yaml b/Documentation/devicetree/bindings/sound/everest,es8326.yaml
+index d51431df7acf..b5594a9d508e 100644
+--- a/Documentation/devicetree/bindings/sound/everest,es8326.yaml
++++ b/Documentation/devicetree/bindings/sound/everest,es8326.yaml
+@@ -24,6 +24,10 @@ properties:
+     items:
+       - const: mclk
+ 
++  interrupts:
++    maxItems: 1
++    description: interrupt output for headset detection
++
+   "#sound-dai-cells":
+     const: 0
+ 
 -- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+2.47.0.277.g8800431eea-goog
+
 
