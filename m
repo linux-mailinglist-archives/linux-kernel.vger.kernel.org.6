@@ -1,78 +1,117 @@
-Return-Path: <linux-kernel+bounces-395726-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395727-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C8989BC21F
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 01:44:52 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C80709BC223
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 01:48:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E2661C21AB2
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 00:44:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3C25DB2192A
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 00:48:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4843E125B9;
-	Tue,  5 Nov 2024 00:44:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19120F9DF;
+	Tue,  5 Nov 2024 00:47:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="qioACxOC"
-Received: from out-183.mta0.migadu.com (out-183.mta0.migadu.com [91.218.175.183])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TTgTCZQ7"
+Received: from mail-oi1-f178.google.com (mail-oi1-f178.google.com [209.85.167.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22ED9BA53
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 00:44:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D05B1FC3;
+	Tue,  5 Nov 2024 00:47:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730767484; cv=none; b=BAwTmym+2GDk003Y/P8gazhAYM6Eex4PivSQdIWE3ehYUGiPrRCGJeQfAYHae0/8ndoSHEgIHFdcC9e5uekzrALcUNui0Q6FYG7NTrMsnZbMw2hhB9Nbsw1OtUIg7whTVmrf73YNely5eToV9umrMvVNOsoiBODH1P5Mj+Gfej0=
+	t=1730767677; cv=none; b=YeSF20CwW4Jd4fizcGOizDWmM9EbqU1o7LWQwrr0GSydTBZIj8GrKNq40bzhBrm/MNeoG1SEmJxop2nEg0LXt1qqqjrrc9psHBg7RF7UvICCYfwyzFnLeQF8rgokdunAK1hRNiig70a5q3XyPBIhmWaXCF9ZX5L2oEs4aNE9f48=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730767484; c=relaxed/simple;
-	bh=qI4U8UHlxuJ0ygiNz2oCZ4pANli9Ae9HqU6UmwdB83Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PpHU5o/RrIAKl7JmRZtDkkvi0GBRbfcnD5qbE7+mQXXNLC3wG48Xu+83Jn3ibCyf70r2P0t6sdvEsmYeTKoPNM2qpI55wunAyMKyL+Jz+6MlxMhQ0T617JkzlSVoytcqqufdA4YOLpyCWWIMuTGY3pNl6/1q2BhOIbt8gfTgS8w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=qioACxOC; arc=none smtp.client-ip=91.218.175.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Tue, 5 Nov 2024 00:44:32 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1730767479;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=AEmM3g8sIXghcPr8TOIqNkDpB8IugLU270wgo1SRLLo=;
-	b=qioACxOCGjN7SHmWYQ7+Cxp3M1WITO3BM64vMpdiVyUJNvZ2+SkP8tOC/rFW5bVcMLe2J0
-	7KUYane+fiGHuUsYmEwJRd4RS4M6maq1Lj44tZuGz5TrOFa6HZxY0y3XtcaEr9UndKPKSm
-	nuM5sDlFcgQfVjFiJc62TV7WJTKif44=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Roman Gushchin <roman.gushchin@linux.dev>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Keren Sun <kerensun@google.com>, akpm@linux-foundation.org,
-	hannes@cmpxchg.org, mhocko@kernel.org, shakeel.butt@linux.dev,
-	muchun.song@linux.dev, cgroups@vger.kernel.org, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/4] mm: fix checkpatch.pl warnings in memcg v1 code
-Message-ID: <ZylqcBXieSti46xr@google.com>
-References: <20241104222737.298130-1-kerensun@google.com>
- <ZylnaFbRZMDYR_Hw@casper.infradead.org>
+	s=arc-20240116; t=1730767677; c=relaxed/simple;
+	bh=4dganhI8aKL/WLYNHxCNqDeC8khXLNgB+BsnB6sBxHc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=OVsHdZmghA/F4XiwUZWC4y6AFC3ZIVe3Ek8WkNjdw7dAiFXRIayPfcb1RiEnf8WjBgjZJqfM5kYXtTO89ofTSDZxSvHc097JRhP8jAuvoP9MTHn9s3bP3qhnyT3r5D9Hdn5spi2lFcigoj6ehbiyj8Jt3bWKINDBvJBSwWL3wbk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TTgTCZQ7; arc=none smtp.client-ip=209.85.167.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oi1-f178.google.com with SMTP id 5614622812f47-3e612437c09so2893548b6e.2;
+        Mon, 04 Nov 2024 16:47:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730767675; x=1731372475; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=4dganhI8aKL/WLYNHxCNqDeC8khXLNgB+BsnB6sBxHc=;
+        b=TTgTCZQ7P+GFvpqU3VtC32yu6/F/Kpmddf3D2ojnxktjma82o7W5QFkgjH+UWJe5rk
+         LUHgOtjNCedQqfCzlLf1XcnoSD6pbjRjO/fN4zd+FmPLm0hkRsCcg2AcYgS9zCK5ZzyX
+         RoHEPfVarwwxcx3QNcoyip4deyShYwFQUeFutjbCqN6e1TSbrRhskd/jUqr5xfK1wdMC
+         2wWsl2/2gJfSuRL5q86D9cAC4Gq0y4vGBiAWXvxF6Q+ShexcBQpf8AyqQ41x8Fuq6Z52
+         xbJo6MYmTQCSVABeFXLLw7Nlp9xuzF/SCkbFgZZOJsz1hzo0i5kgUPvl6JTH6lVZwz6S
+         r56g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730767675; x=1731372475;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4dganhI8aKL/WLYNHxCNqDeC8khXLNgB+BsnB6sBxHc=;
+        b=N7pOHELS0t72qe8eTkkvHg+93LEsD+Z/PrusMRsMsWPrp4ZrSuvLYoFHA9JZ7E1cNr
+         /rqmvNvqTHYOSVwdS6VCZYRa1Gd5BenLDd7tlswbjuDm4TejaYar73q6k9qLixReUsGt
+         7j56/BgdGG7TFBLcqLjLJyNURlYvqUL0T6zpl6pHPCJVVsWiJqxCtpe/rZqzfljIpnUJ
+         8vuWDpgLdZA7Umd174yo/0HLkCVGstp+nzSwaxiNUwSXtkzDtZmtatmNeotuBvTW9Gsq
+         HLFjqZ2R2s8GdkzQzfmqIU7w8474eFl9CVe8QaS+JxpPKFEJuPkXDosZCpkguTZvMqTN
+         MTkA==
+X-Forwarded-Encrypted: i=1; AJvYcCU+CcuCeWGg/d0nuBEkdLr0igxTxpERM8NIdGiDr5t5ikoqdZzz59sUFqpbkVKGrCeczApc0Iibxt38nm8iiBsdMw==@vger.kernel.org, AJvYcCXXRNowrsYhiab67W5kfRxjXaY6xsNpzMgCCg8AQsL7z72O4Q9X0PRGFwWmcw9NOnq2Vi3FuZW4mdE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwB/Qv8t5Wo0JIHyL7vBs/zYKM9Cs604QnkZNeI7uow7jki5FYf
+	wKgqmKBcP0NaFkLrSkfvs1BnTQ5wDvsSEYMfBABUk6OdPJVjuM5L
+X-Google-Smtp-Source: AGHT+IGyZo9TmRQEI0XfgJ2FBNrT/1OHvFB3HFtCD9nV6uDsjfO67ZAjSE1DvmbZU86OtDIiPfWF0g==
+X-Received: by 2002:a05:6808:3c4c:b0:3e6:5a7f:e102 with SMTP id 5614622812f47-3e65a7fe27bmr17478693b6e.9.1730767675051;
+        Mon, 04 Nov 2024 16:47:55 -0800 (PST)
+Received: from anishs-Air.attlocal.net ([2600:1700:3bdc:8c10:d414:4f86:7740:65e1])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-3e661190d07sm2317994b6e.11.2024.11.04.16.47.51
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Mon, 04 Nov 2024 16:47:53 -0800 (PST)
+From: anish kumar <yesanishhere@gmail.com>
+To: andersson@kernel.org,
+	mathieu.poirier@linaro.org,
+	corbet@lwn.net
+Cc: linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-remoteproc@vger.kernel.org,
+	kernel test robot <lkp@intel.com>
+Subject: [PATCH 0/3] Documentation: remoteproc: update various sections 
+Date: Mon,  4 Nov 2024 16:47:46 -0800
+Message-Id: <20241105004749.83424-1-yesanishhere@gmail.com>
+X-Mailer: git-send-email 2.39.3 (Apple Git-146)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZylnaFbRZMDYR_Hw@casper.infradead.org>
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
 
-On Tue, Nov 05, 2024 at 12:31:36AM +0000, Matthew Wilcox wrote:
-> On Mon, Nov 04, 2024 at 02:27:33PM -0800, Keren Sun wrote:
-> > The patch series fixes 1 error and 27 warnings found by checkpatch.pl in the
-> > memcg1 code.
-> 
-> Please do not do this.  Fixing checkpatch messages in existing code
-> is counterproductive.  Only run checkpatch on new code, and even then
-> take its suggestions with a grain of salt.
+V6:
+divided the patches for each section as suggested by mathieu.
+First patch is updating introduction section
+second patch is for new overview section as suggested
+third patch is for devm version of rprod_add
 
-I do agree in general, but not in this case. These are nice cleanups
-no matter what checkpatch.pl thinks of it :)
+V5:
+based on comment from mathieu poirier, remove all files
+and combined that in the original file and as he adviced
+nothing with respect to old documentation was changed.
 
-Thanks!
+V4:
+Fixed compilation errors and moved documentation to
+driver-api directory.
+
+V3:
+Seperated out the patches further to make the intention
+clear for each patch.
+
+V2:
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202410161444.jOKMsoGS-lkp@intel.com/
+
+Hi Mathieu,
+
+Hopefully this time around, I have not messed up
+patches. I have created three patches.
+
+Thanks,
+anish
 
