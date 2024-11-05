@@ -1,158 +1,130 @@
-Return-Path: <linux-kernel+bounces-396249-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396250-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F15F9BCA10
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 11:09:57 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9D9E9BCA12
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 11:11:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 70B6F1C225FA
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 10:09:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 59B241F21A90
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 10:11:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 086201D1F50;
-	Tue,  5 Nov 2024 10:09:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA5871D1F50;
+	Tue,  5 Nov 2024 10:11:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="FFTf6o0n"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hst0ANOB"
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9F421CF7C9
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 10:09:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C7BD18F2F7;
+	Tue,  5 Nov 2024 10:11:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730801391; cv=none; b=OlDgVIYy1ytFHqq/wFBucTwThE+toJqljUPc3a2rgYrRAuq2fiUZI4aBpegolEUMAU9/IteslXsU4Kotu/YH1/tjht4/6k5UWVkmPJDStbncIArWoh/8pkoTb2A+7wrcPY0hKM35i3AfjOXDHWFhg0nCKOL/NqcoTsaYCGhj4Ac=
+	t=1730801499; cv=none; b=ow/czIQIwzGztcSfVqhAUY4nwX7lPOeKfQUqOm8+CU+3pCEsjgiFBFPPHTPpdk44DXAR+jmPFCTZr2RytPS5xdERGDOFqkHVWc6AyMqyq7dyUSRMRjfrs+vLacrmgyQvc8BuncZFRCJTNhGxv5XLRCmTmYtPCaL87es7EHgTky0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730801391; c=relaxed/simple;
-	bh=RHeVziAoN8CGsuY1ZAh7sRIuK3iFRADOSuijtUbubnY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mG7hS5rJVtVrK7dUz2CS+pkIdM+xVNQ08ea8GHq+km/1L5+ah1ZAgBGAM03RilVRtoLdF99YMNa3ZRPRse67bSSzqjRrahaIApN5yq8XH3jYJQ9tQy0hupoGw3fFuEKeqT6Lnf7nxDhWRswZFJI0hNI09GoiOenusEJO8HmCc6M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=FFTf6o0n; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3807dd08cfcso4444184f8f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 02:09:49 -0800 (PST)
+	s=arc-20240116; t=1730801499; c=relaxed/simple;
+	bh=e7qvTXiBxF2JlvBmUYXyl7D09eINkYn6FxD4xnH0fsc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=LGazsGctLUvDimcRs9Jbm4gGJuxhejnsBLWrQMK6ml47M5ycZUkctNv+8T+gBGzt3YSS3bqkhYlcSZtgj9KO7xPD78dSmbH2f8eL5kxkVe+z3LmCFhinh+tBAqOvIY81U5uNMbe1QnrnWU4nTQq+SRAXrKYIwXw3Vv6rYAFUIVA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hst0ANOB; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a9a628b68a7so810975066b.2;
+        Tue, 05 Nov 2024 02:11:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1730801388; x=1731406188; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6bWo52DOYiB3ZcRQB3C1o4jMfb9oGGlF3xYVSdDQ1Ec=;
-        b=FFTf6o0n54o4i2v0X7XHEgglxvp927x04fIe2eFg+3T1YkmE+GxHbDtoKKcLVV4Tqy
-         897y6oHDoNRyh0CA4oBB2CVp221GGLa1olj6Vny4czYWlaQ3f8FGhIQluQVroFgjWTjy
-         s3tMBCBOXSqrETaFcWzoHuhpwihHQLc5AfrNzWKCCr5mEwidIgNij4nTVcjTj3YJ+fAl
-         lI2E6JVl6Nb2EVSybIyjfy9P+UPXkLT0JIBZxUdQGqALPftKo+XFTz5QIvKjDKcMKopU
-         ws4wVIb9ieQcD0ZNHdTItxl96lR2drwNzfrReBSt+UMHTiEHSiT/XKJ0Jz/18syof8S8
-         pbKw==
+        d=gmail.com; s=20230601; t=1730801495; x=1731406295; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Qso3BNgt6veXyizsNwyMPr4H1EWMOffJ4h1epwKOSNQ=;
+        b=hst0ANOBh6AyxLjVKmZmQzfrZxurBT9Cf8B1Njcfv/QQ7SvsuWHYUESFiPV7HyuPMW
+         UJdnjPHD/oQl7wbyLcjEwcUKOjMqwvHecocgjD5Sje7yBpPUmBxqFb5CqVywWTW/1Y2F
+         jnJgC0/ZWWtZbhAOqL4/jenKu3OiJzWPiX5lg/q2EtXAIGATbXK/0Gt1R1Ta6K5y5TcP
+         W77C5Tm6nZ3au5zvP8oUp627G3dgQXucCek5sntopQVJ9EBpolBa+1ywEsxjrJZlawkd
+         uCVNi+hyNyqWqHsmqeks4v9DEj2puHZnMEYJDlOh+9VUP5Vcx5NaER8El/2EHsWLtDEG
+         wHew==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730801388; x=1731406188;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6bWo52DOYiB3ZcRQB3C1o4jMfb9oGGlF3xYVSdDQ1Ec=;
-        b=BV7OA8gKqIAESgn/3poJKc7gywTwSitcQzm4S80AvG3Tz7xe6KFZC8oqBbFs/t0u8C
-         kRLhU3ZyjHfGJQoMxFd0aygxtH4cor6dM97qakLJdmP2Ghxj2B3glbknBYME/lvXW/Zb
-         DlYXOb73AP2GCrQnp8/EuTFO/HxWjoYk4qgLE7Li2MGma2nkPpme3b6MO+6GDnW9XXAl
-         CNN2SRz2VgA828tvFQlm4HbiYESImcDZZfnSGIQXT/4iybll/8nEwBlQLlpHYFJwdUpA
-         QV39pniXAAnbrIg3vwIWmIOLB7wRBa/Mlqkl7T4NH9fFZzwKpByAxorvEszcofAGMBmb
-         VK9Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXX6H9h0i2SqRLncZhyLTRqfdfQfD3phimoKzfC4UMIv9hmW+N/ls8NHrgPljXeYbLYc6Fq1df/LwNKXGk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yya6mNzWMqlto+xNwb0ZPEld6ElFPq50wGWq9YlQM8fWDZvyRn+
-	I5P8Znn7tbQhZ60Yw4Y+79MdCx+3auYy0Wp4117ShHe3f1TEvb1bxRIWl+gQ6chsv7kqu2/cKbQ
-	9VtMPQje77o7SXVQVr1ECho3j0h2CdEWzFBVv
-X-Google-Smtp-Source: AGHT+IGXYx42z9SXdXlET0RfHWNg/+rG8WhSiYHUJbNJqzBz9Ox0kXsvFU1ogU1d5wdLYDMTLQVLF1Y95kbBYBuSXJM=
-X-Received: by 2002:a05:6000:2706:b0:381:d88b:2bb9 with SMTP id
- ffacd0b85a97d-381d88b2bf4mr5164411f8f.51.1730801388247; Tue, 05 Nov 2024
- 02:09:48 -0800 (PST)
+        d=1e100.net; s=20230601; t=1730801495; x=1731406295;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Qso3BNgt6veXyizsNwyMPr4H1EWMOffJ4h1epwKOSNQ=;
+        b=Mw4CNbUHBBr8kurp/lSpKy/ugBydKQGDKNcBuWu7Yc98Phi1xrRhtFRikyAp77nX+W
+         bSQyVLEPnZgIeMFui8O/CJre44loigAKy7Cug8pP5ZCbQ5H23mtWFqojgaZi3hkAP67Z
+         7YxNDJXwE63+ZganmL/RNYJoc3KDBjVq9jofc48cGH5jvprH7q8o3VSNAy5Rii8e/3mZ
+         l629r2V7T2kqRJOQ7JgsM5jKwYpD5g8hRWvUOj4bKA6B9SplNoNW3RcSQa58R1fFFiRo
+         jX55spx0sYF4qS2D/iAlrRcq+SavnNrz8ETNigMFddBATbqvAGl9Z9Knj2NjeIARtfhn
+         w3PA==
+X-Forwarded-Encrypted: i=1; AJvYcCUyojzoJM2fJTxwEzaffbkFotkMHZ7iU1qaSGH1Pu7zuiN1Brkietq7CXfvMOXYvIaqM10q+eCa41ZqCxA=@vger.kernel.org, AJvYcCX+FEvJRrzfuLeQRJuq0CK88CszZQoV0+arr6aTkWtEbvN1TMZu6p8793ORathk5KIyZ8nKEBYrpfDzJepxoAs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzzBXAFcUZfg9kkxlr+rDTt2q6DIP2MRyE+3SE+PtTmSdb+6X/z
+	DCO3yfRBsSolbzEDo66hL9kSmdQ7AvTbSVoJ7kImAHeb9wx45bWE
+X-Google-Smtp-Source: AGHT+IFnWeG5l3Win9wjTzFybRiE4MG/9kCs5ddsSiKv9wYvZpxcQ5x6vD6FqymkY5FYZL7mKz7YcA==
+X-Received: by 2002:a17:906:f5a5:b0:a99:8edf:a367 with SMTP id a640c23a62f3a-a9e657fd779mr1437610966b.57.1730801494703;
+        Tue, 05 Nov 2024 02:11:34 -0800 (PST)
+Received: from C-KP-LP15v.consult.red ([2a01:96e0:10:2:aaca:6c8f:1aec:b83f])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9eb16d6714sm113494266b.64.2024.11.05.02.11.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 05 Nov 2024 02:11:34 -0800 (PST)
+From: Karol Przybylski <karprzy7@gmail.com>
+To: kvalo@kernel.org,
+	jjohnson@kernel.org
+Cc: Karol Przybylski <karprzy7@gmail.com>,
+	linux-wireless@vger.kernel.org,
+	ath12k@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	skhan@linuxfoundation.org
+Subject: [PATCH v3] wifi: ath12k: Fix for out-of bound access error
+Date: Tue,  5 Nov 2024 11:11:31 +0100
+Message-Id: <20241105101132.374372-1-karprzy7@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241024-topic-panthor-rs-platform_io_support-v1-1-3d1addd96e30@collabora.com>
- <CAH5fLgjdDm3nNvR8g-a6Z8UsSnEDygLJ8i3u63aCrpG5ambQ3A@mail.gmail.com>
- <BC47085B-4160-4D9B-89F4-06EDE706CD5A@collabora.com> <CAH5fLghv3cBGO0HEH-5GXiDZZWyKSJYxQu8s0fi8D=eneS-OXw@mail.gmail.com>
- <935A78FF-0851-4A72-BCCB-C33E3F4BF61C@collabora.com>
-In-Reply-To: <935A78FF-0851-4A72-BCCB-C33E3F4BF61C@collabora.com>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Tue, 5 Nov 2024 11:09:36 +0100
-Message-ID: <CAH5fLgiirkt-JOF3XWNAyEFWZ=nGBPumqVVBOc_-PvfqriD-fw@mail.gmail.com>
-Subject: Re: [PATCH] rust: platform: add Io support
-To: Daniel Almeida <daniel.almeida@collabora.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Mon, Nov 4, 2024 at 10:28=E2=80=AFPM Daniel Almeida
-<daniel.almeida@collabora.com> wrote:
->
-> Hi Alice!
->
-> > On 29 Oct 2024, at 10:46, Alice Ryhl <aliceryhl@google.com> wrote:
-> >
-> > On Mon, Oct 28, 2024 at 7:23=E2=80=AFPM Daniel Almeida
-> > <daniel.almeida@collabora.com> wrote:
-> >>
-> >> Hi Alice,
-> >>
-> >>> On 28 Oct 2024, at 12:37, Alice Ryhl <aliceryhl@google.com> wrote:
-> >>>
-> >>> On Thu, Oct 24, 2024 at 4:20=E2=80=AFPM Daniel Almeida
-> >>> <daniel.almeida@collabora.com> wrote:
-> >>>> +    /// Returns the resource len for `resource`, if it exists.
-> >>>> +    pub fn resource_len(&self, resource: u32) -> Result<bindings::r=
-esource_size_t> {
-> >>>
-> >>> Should this just return usize? Should we have a type alias for this s=
-ize type?
-> >>
-> >>
-> >> I guess usize would indeed be a better fit, if we consider the code be=
-low:
-> >>
-> >> ```
-> >> #ifdef CONFIG_PHYS_ADDR_T_64BIT
-> >> typedef u64 phys_addr_t;
-> >> #else
-> >> typedef u32 phys_addr_t;
-> >> #endif
-> >>
-> >> typedef phys_addr_t resource_size_t;
-> >
-> > Hmm. I guess they probably do that because phys_addr_t could differ
-> > from size_t? Sounds like we may want a typedef called phys_addr_t
-> > somewhere on the Rust side?
->
->
-> By the way, I wonder if that connects with Gary=E2=80=99s work on unifyin=
-g the bindgen
-> primitives somehow.
->
->
-> I think that having a #ifdef for `phys_addr_t` is pretty self-explanatory=
-, but I have no
-> idea why this is not simply `size_t`. My understanding is that `size_t` a=
-nd `phys_addr_t`
-> should be basically interchangeable, in the sense that, for example, a 32=
-bit machine can
-> only address up to 0xffffffff, and, by extension, can only have objects t=
-hat are 0xffffffff in size
-> at maximum.
->
-> This behavior is identical to usize, unless I missed something.
->
-> Maybe more knowledgeable people than me can chime in here?
+Selfgen stats are placed in a buffer using print_array_to_buf_index() function.
+Array length parameter passed to the function is too big, resulting in possible
+out-of bound memory error.
+Decreasing buffer size by one fixes faulty upper bound of passed array.
 
-It seems PHYS_ADDR_T_64BIT can be set even on some 32-bit machines.
-See config HIGHMEM64G for 32-bit processors with more than 4 GB of
-physical ram.
+Discovered in coverity scan, CID 1600742 and CID 1600758
 
-Alice
+Signed-off-by: Karol Przybylski <karprzy7@gmail.com>
+---
+Changes in v3:
+- Code style: added spaces before and after '-'
+- Improved commit msg
+- Fixed same error in different function
+- Link to previous discussion: https://lore.kernel.org/all/08767ff7-f764-473d-a44b-c3c3b1695008@quicinc.com/
+---
+ drivers/net/wireless/ath/ath12k/debugfs_htt_stats.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/net/wireless/ath/ath12k/debugfs_htt_stats.c b/drivers/net/wireless/ath/ath12k/debugfs_htt_stats.c
+index 799b865b89e5..2d47aca681f4 100644
+--- a/drivers/net/wireless/ath/ath12k/debugfs_htt_stats.c
++++ b/drivers/net/wireless/ath/ath12k/debugfs_htt_stats.c
+@@ -1562,7 +1562,7 @@ ath12k_htt_print_tx_selfgen_ac_stats_tlv(const void *tag_buf, u16 tag_len,
+ 			 le32_to_cpu(htt_stats_buf->ac_mu_mimo_ndp));
+ 	len += print_array_to_buf_index(buf, len, "ac_mu_mimo_brpollX_tried = ", 1,
+ 					htt_stats_buf->ac_mu_mimo_brpoll,
+-					ATH12K_HTT_TX_NUM_AC_MUMIMO_USER_STATS, "\n\n");
++					ATH12K_HTT_TX_NUM_AC_MUMIMO_USER_STATS - 1, "\n\n");
+ 
+ 	stats_req->buf_len = len;
+ }
+@@ -1590,7 +1590,7 @@ ath12k_htt_print_tx_selfgen_ax_stats_tlv(const void *tag_buf, u16 tag_len,
+ 			 le32_to_cpu(htt_stats_buf->ax_mu_mimo_ndp));
+ 	len += print_array_to_buf_index(buf, len, "ax_mu_mimo_brpollX_tried = ", 1,
+ 					htt_stats_buf->ax_mu_mimo_brpoll,
+-					ATH12K_HTT_TX_NUM_AX_MUMIMO_USER_STATS, "\n");
++					ATH12K_HTT_TX_NUM_AX_MUMIMO_USER_STATS - 1, "\n");
+ 	len += scnprintf(buf + len, buf_len - len, "ax_basic_trigger = %u\n",
+ 			 le32_to_cpu(htt_stats_buf->ax_basic_trigger));
+ 	len += scnprintf(buf + len, buf_len - len, "ax_ulmumimo_total_trigger = %u\n",
+-- 
+2.34.1
+
 
