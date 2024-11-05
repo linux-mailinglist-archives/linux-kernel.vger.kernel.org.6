@@ -1,97 +1,103 @@
-Return-Path: <linux-kernel+bounces-397282-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397283-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CDDA9BD9DE
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 00:46:28 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DA039BD9DF
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 00:47:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 02FB5281AB8
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 23:46:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A907AB21C70
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 23:47:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E2F8216A02;
-	Tue,  5 Nov 2024 23:46:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FB32216A08;
+	Tue,  5 Nov 2024 23:46:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T+jjt5gQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bYFYfG1K"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BBD9149C53;
-	Tue,  5 Nov 2024 23:46:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 812B41D1748
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 23:46:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730850381; cv=none; b=mKEJE74s3QHe3aAJMVKXd0eOxvR67tKx9S6W0obx1ZgZOEf6cIxEv+Wz7bvlxI5zaZlcE73HRPAJINzP6eRrbgSnQRoZ8GusAycLGAryju8Hqp3JBGMtoWn25vkih8GZIJ0lNpeuIQw8AVRm7lkon0lsSQkN5mps/qwZosBLDKM=
+	t=1730850416; cv=none; b=EbSTZRzT7tuKmEqn9SgRvnHXglS2uwwoFLtmM/NQ5rifJJRrJ+YSszzzuDaMjwOlDInGC3D7A6MHqbRz6osUGsg06+XPJjoIpjSz7qsuImL1LzhyyyYPDhhUmqKgUFaTkgXqy1GYgTQTeOK87GFAdtSL2nCEH2KbCrmo1KiuEWw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730850381; c=relaxed/simple;
-	bh=QEcMKih8y1DGDj0wUlohLxE9TFKUXnq1wsTk7LdmzcI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Vsq7HX8PxHo8PLPnKtIxUqntns6s+lE/XxdK3G/6dYn3j3IjDKBp7gNoqxy9wIBYACwoteLfmEwIkVMhF8zfHPHgQ2eszwkNgxKwlPWEHb78Zdk8ARUC5JxjiWgUZb+nBmxI93SofE/o2NJP/ZZcAFFqpCUJPPCjAGjggA1B270=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T+jjt5gQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0BCF8C4CED0;
-	Tue,  5 Nov 2024 23:46:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730850381;
-	bh=QEcMKih8y1DGDj0wUlohLxE9TFKUXnq1wsTk7LdmzcI=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=T+jjt5gQoAnJ7vMyWAKPzkzFxlWfe4GuIFGThlCmZBQGpxpxf9kSxksSFe8iGV65w
-	 ba0G4wfwaM9BrDb7/REesvD+ZpcfbNCeMJMJgAQTA2k8QNx+WfM9dR+eHHD3D/6mIi
-	 2DePB6devu1oU3UKrmIAIo9/69QQI/sRF+mv9E3olucGt/RHyehw9IV4hx69P12Gj8
-	 4IAvKbaSNCfxLu7SzG2mxcAI7l7FHijVsq7RGCo/ze38qspU2gcMh0r1lX4p/oYtPm
-	 XB8YKueXEabjl+4J/d29MhqrqBFpCy1kl3YtyokTkY8FTezR20X/3if/YZRDTc9k9r
-	 Z7eCU4csA2psQ==
-Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2fb3ce15172so3177901fa.0;
-        Tue, 05 Nov 2024 15:46:20 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCWQhWhw3hRf58lkcX5jHNGHqSARejYed5VfI6T7/xgZp4x5l6dmy5ErHpBqF1hHbgWiHGRaRoyZtBw7g04=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwI1izVzUSTdF02j2wIemyIMTBgZ7t0OvZ7Cda6kJ3XP+TPEowj
-	THZ77KwEQpsvzL4wNJK9+f6+etw5sRzSKIRt8AF+y+l6O53tYOfF7c1rJ42UbuKzlxCTWiCO+S+
-	lQ5Qw2YAJ7ySI83bgCi2CplsBKd4=
-X-Google-Smtp-Source: AGHT+IF6vhckm1sWNoM+t51Vxb++S0i+toSwboUpiFopgY8v4SiFlFqiM+HDQbydNxObdyUdxe3tsEIDhxBgzivZ+mA=
-X-Received: by 2002:a05:651c:1613:b0:2fe:e45a:4f6c with SMTP id
- 38308e7fff4ca-2ff0cb513b1mr1747221fa.6.1730850379767; Tue, 05 Nov 2024
- 15:46:19 -0800 (PST)
+	s=arc-20240116; t=1730850416; c=relaxed/simple;
+	bh=RiWBHEfrgM51BbChyMF3AhTN4dXXQKkZTpzLUcsdi48=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=qz4Q6LIMwhXgLhHrbG8rElyGlx1Cr+UWrMTRSIRNIRWXFbRd0N6HjdZN/GhbV7gL2sT2IX8c/Ch2EdGI6WKp8kylXIjlCbDFEtLLHhI78OaPDWbMgWJMrr38qu+CVDuQJ8qI4JQU+Mmg5LY3858M//WCL30sgH3rFGECdguWgZQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bYFYfG1K; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730850415; x=1762386415;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=RiWBHEfrgM51BbChyMF3AhTN4dXXQKkZTpzLUcsdi48=;
+  b=bYFYfG1K2SZIAA6OkdJLl0Db/Th+kji9/kNODuvEYw/teHa22TghEnvT
+   lZv31VsZHDlYSZEv/WpWiBRFsI9UlI/FfrRNom43i//8M+1F1TO2Uv8c3
+   V2fGHBaRdVS1VUrE73Pt0uw8olXYViCZPgw53WTkHewagawoWVLHsV49W
+   5RcyR9LIY3dAr5cRtl1rwYx1bF4/x/ySxPwCalG1GTHYWrXjhgfVmJ5V0
+   BCDpyXfwAkQ3uWcerMFzc171D6EoSvNiV+f6p/mMuyheQ/6eB1Y/4KuhI
+   X53L9HGSJgR5wyzB9BkBBnybETlR1rwm6sIdUcmiQuLT5cj6huBqlrpxC
+   Q==;
+X-CSE-ConnectionGUID: S5oqG+FuRrSaM+kJjEbIaQ==
+X-CSE-MsgGUID: 43l3mmdCTBCPzjFJf/2j/A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11247"; a="30036987"
+X-IronPort-AV: E=Sophos;i="6.11,261,1725346800"; 
+   d="scan'208";a="30036987"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2024 15:46:55 -0800
+X-CSE-ConnectionGUID: xOHTqc2BQpyJJelOFQUh9Q==
+X-CSE-MsgGUID: kipk/S0cTkGdmai7TCe27w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,261,1725346800"; 
+   d="scan'208";a="88724730"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by fmviesa005.fm.intel.com with ESMTP; 05 Nov 2024 15:46:53 -0800
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t8TG7-000mcZ-05;
+	Tue, 05 Nov 2024 23:46:51 +0000
+Date: Wed, 6 Nov 2024 07:46:14 +0800
+From: kernel test robot <lkp@intel.com>
+To: KP Singh <kpsingh@kernel.org>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-kernel@vger.kernel.org, Paul Moore <paul@paul-moore.com>,
+	Casey Schaufler <casey@schaufler-ca.com>,
+	Kees Cook <keescook@chromium.org>
+Subject: ld.lld: error: address (0xffff8000815b0000) of section '.init.data'
+ does not converge
+Message-ID: <202411060736.acyzNp9T-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241014141345.5680-1-david.hunter.linux@gmail.com> <20241014141345.5680-8-david.hunter.linux@gmail.com>
-In-Reply-To: <20241014141345.5680-8-david.hunter.linux@gmail.com>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Wed, 6 Nov 2024 08:45:42 +0900
-X-Gmail-Original-Message-ID: <CAK7LNASqqbNX652UdyO_MeLmcxsno-zHykeO1ff0rES=_PAOqw@mail.gmail.com>
-Message-ID: <CAK7LNASqqbNX652UdyO_MeLmcxsno-zHykeO1ff0rES=_PAOqw@mail.gmail.com>
-Subject: Re: [PATCH v2 7/7] streamline_config.pl: check prompt for bool options
-To: David Hunter <david.hunter.linux@gmail.com>
-Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	shuah@kernel.org, javier.carrasco.cruz@gmail.com, 
-	Steven Rostedt <rostedt@goodmis.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Mon, Oct 14, 2024 at 11:14=E2=80=AFPM David Hunter
-<david.hunter.linux@gmail.com> wrote:
->
-> Select configs that do not have a prompt. Config options can be bool or
-> tristate. Ensure that bool options are also selected.
->
-> Signed-off-by: David Hunter <david.hunter.linux@gmail.com>
-> ---
-> V1 https://lore.kernel.org/all/20240913171205.22126-2-david.hunter.linux@=
-gmail.com/
->
-> V2
->         - changed patch subject
->         - changed the order of this patch in the series patch
-> ---
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   2e1b3cc9d7f790145a80cb705b168f05dab65df2
+commit: 417c5643cd67a55f424b203b492082035d0236c3 lsm: replace indirect LSM hook calls with static calls
+date:   3 months ago
+config: arm64-randconfig-003-20241106 (https://download.01.org/0day-ci/archive/20241106/202411060736.acyzNp9T-lkp@intel.com/config)
+compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 639a7ac648f1e50ccd2556e17d401c04f9cce625)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241106/202411060736.acyzNp9T-lkp@intel.com/reproduce)
 
-As I reviewed in v1, this patch depends on 6/7.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202411060736.acyzNp9T-lkp@intel.com/
 
+All errors (new ones prefixed by >>):
 
+>> ld.lld: error: address (0xffff8000815b0000) of section '.init.data' does not converge
+   ld.lld: error: assignment to symbol __init_end does not converge
 
-
---=20
-Best Regards
-Masahiro Yamada
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
