@@ -1,63 +1,61 @@
-Return-Path: <linux-kernel+bounces-395705-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395704-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC71F9BC1DF
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F2199BC1DE
 	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 01:12:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A7361C2109B
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 41FEC1F2212D
 	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 00:12:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4B278F6B;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0DFD4C97;
 	Tue,  5 Nov 2024 00:12:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qcOM/gr+"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TCjxpZ7c"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2ACABB667;
-	Tue,  5 Nov 2024 00:12:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2378FB65C;
+	Tue,  5 Nov 2024 00:12:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730765528; cv=none; b=UuHVgkehMOJEKplKrWKRTuw/fh6dQGtesu9kkWGI/gctVlBG+nNJ71TnLSml8dJpHBzpzVDLbLDPu9PSj1lYkQSFiDOhHqoGOhrI1doOGEMW8f14XIOrX2SwAih13vcdoh10WYY3yvYcAhr8NAMcqcAAKlecqm/yN+G6etM3yvs=
+	t=1730765528; cv=none; b=IC4cudCZ7ZN0LP+LLQMTl94PKKp4TsJyPMY0klHLbe7NxX1qb/lXC+x2uHBFIsq+XWRFvGcnsxx7vdnzcwmEBpJyju+MGrcbPLHq1Ggx7hE3dBnz/cF+CnxqRjnX5gX/bYGxUZmb4+ZbEGyutU7grbTrHQLcZZfKxt72hDdCHcc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1730765528; c=relaxed/simple;
-	bh=w7D1Hj3ipxcnW2gjAuaYHySmVpmD4euqpzkiW/spD5Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=I6kvuB/IszKNgtZGjjl5bgkQT9XVqk3ogD6V36RdK/7kdZ/nUgKfhwQVPTg6dAkLnu3e8H1r83yg0bBFuc4egTw4+8FLESDej9006K8uqNyZzzCv4oZbJYKTNY2k70dnzjWugiwfa5TwTRGw18seJvButy1tI7+hSsJ5Rh0PBvg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qcOM/gr+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F41CFC4CECE;
-	Tue,  5 Nov 2024 00:12:06 +0000 (UTC)
+	bh=8s123z+scoMed9PWx1Biv+IXZ2kOI4lB+0FzIru1EPM=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=Om4sLyonC8pCkJ2M1ZwSp6DUbcVYJXPFWEj/K/4mtxFL02TBW7ldoS+emDf79drrKyMf1XQMArNpuNTsEA1ykHVZGSuR7jNCL235DnnCVnSJea5/w4Gh+8QmB+R3x750oAyPHOaSbLTyMYHfR/R+0mA6WKr0C053DbMW3KC7tIM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TCjxpZ7c; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF328C4CED4;
+	Tue,  5 Nov 2024 00:12:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730765527;
-	bh=w7D1Hj3ipxcnW2gjAuaYHySmVpmD4euqpzkiW/spD5Q=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qcOM/gr+EwjXicV1S9H4Wjli8ALlc9StWLjoHjMzcjuDS+FPMf5wjmZno2Qpa8pnX
-	 FnA5yWS7UiHQYuv0JwCckghrwx0MwZzGKnThuex3yl+eN3HTdEpWCzrgE5Xx6hMGaq
-	 0qb7D8MIZ4wyG1g7YCZdLY0x1YrT0HevP6K+c5g6ifR9IscdkOTcgyksWBZjMdOs+m
-	 Y0nplmIw7uIO5Tz5ELKKM0aw1CPgu+/nZwRcAjt0HfMohq2Clc2uycjF0U2WeX+HZ5
-	 ETPCqbk6fdPOoIDtlCXRrAAHY8BW3lZaWtCamCi+dPOvodf3Vucxps85ABSmSZNoh5
-	 yQ4vbzS5HdYAw==
-Date: Mon, 4 Nov 2024 16:12:05 -0800
-From: Namhyung Kim <namhyung@kernel.org>
-To: Chun-Tse Shao <ctshao@google.com>
-Cc: linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Liang Kan <kan.liang@linux.intel.com>, Ze Gao <zegao2021@gmail.com>,
-	Yang Jihong <yangjihong1@huawei.com>,
-	Weilin Wang <weilin.wang@intel.com>,
-	linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH v2 2/3] perf: Reveal PMU type in fdinfo
-Message-ID: <Zyli1TWn8ZaNWSxm@google.com>
-References: <20241101211757.824743-1-ctshao@google.com>
- <20241101211757.824743-2-ctshao@google.com>
+	s=k20201202; t=1730765528;
+	bh=8s123z+scoMed9PWx1Biv+IXZ2kOI4lB+0FzIru1EPM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=TCjxpZ7cwLyzHAZT25UzA5zCfJJ6O5QeWw8H/8+ocXqmqPm4ySVHyQM0C3sJMtfNw
+	 KRqKrWsU0YoZ+m6Ob+MR19yxLPfgrpPEhOV72rIlt764kUVQ5SQEmc5ROI71wZyTIp
+	 sK2C5RWvyEFV38o5dLKV1oxl0uOfPwjhTO3K8wuW4+D5ZQ8s9/vkLf/Ug0FTxzUFtt
+	 yugV1IZmpUeGzupeERQ+d7UazIo8JD7TMRaor4K25ArXkTFUTjaOGBuOPROE8zB5Os
+	 A8yMiRkA2ZTp0LEPQAsnOECw4OEZE+vd9woW8uPgqEXM9eqomXF7xyztjg77dKeXiw
+	 KxcAFqY9r7xDA==
+Date: Mon, 4 Nov 2024 18:12:06 -0600
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
+Cc: manivannan.sadhasivam@linaro.org, Bjorn Helgaas <bhelgaas@google.com>,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Johan Hovold <johan+linaro@kernel.org>,
+	Abel Vesa <abel.vesa@linaro.org>,
+	Stephan Gerhold <stephan.gerhold@linaro.org>,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>,
+	stable+noautosel@kernel.org
+Subject: Re: [PATCH 0/5] PCI/pwrctl: Ensure that the pwrctl drivers are
+ probed before PCI client drivers
+Message-ID: <20241105001206.GA1447985@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,104 +64,42 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241101211757.824743-2-ctshao@google.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241103203107.GA237624@rocinante>
 
-On Fri, Nov 01, 2024 at 09:17:56PM +0000, Chun-Tse Shao wrote:
-> It gives useful info on knowing which PMUs are reserved by this process.
-> Also add extra attributes which would be useful.
+On Mon, Nov 04, 2024 at 05:31:07AM +0900, Krzysztof Wilczyński wrote:
+> Hello,
 > 
-> ```
-> Testing cycles
-> $ ./perf stat -e cycles &
-> $ cat /proc/`pidof perf`/fdinfo/3
-> pos:    0
-> flags:  02000002
-> mnt_id: 16
-> ino:    3081
-> perf_event-attr.type:   0
-
-Maybe 'perf_event_attr' would be appropriate as it's the name of the
-struct.
-
-> perf_event-attr.config: 0
-> perf_event-attr.config1:        0
-> perf_event-attr.config2:        0
-> perf_event-attr.config3:        0
-
-It's hard to pick which fields to show here but I'd say that those
-config[123] are not used frequently at least for regular events.
-Maybe just showing type and config is fine.
-
+> > This series reworks the PCI/pwrctl integration to ensure that the pwrctl drivers
+> > are always probed before the PCI client drivers. This series addresses a race
+> > condition when both pwrctl and pwrctl/pwrseq drivers probe parallely (even when
+> > the later one probes last). One such issue was reported for the Qcom X13s
+> > platform with WLAN module and fixed with 'commit a9aaf1ff88a8 ("power:
+> > sequencing: request the WLAN enable GPIO as-is")'.
+> > 
+> > Though the issue was fixed with a hack in the pwrseq driver, it was clear that
+> > the issue is applicable to all pwrctl drivers. Hence, this series tries to
+> > address the issue in the PCI/pwrctl integration.
 > 
-> Testing L1-dcache-load-misses//
-> $ ./perf stat -e L1-dcache-load-misses &
-> $ cat /proc/`pidof perf`/fdinfo/3
-> pos:    0
-> flags:  02000002
-> mnt_id: 16
-> ino:    1072
-> perf_event-attr.type:   3
-> perf_event-attr.config: 65536
-> perf_event-attr.config1:        0
-> perf_event-attr.config2:        0
-> perf_event-attr.config3:        0
-> ```
-> 
-> Signed-off-by: Chun-Tse Shao <ctshao@google.com>
-> ---
->  kernel/events/core.c | 13 +++++++++++++
->  1 file changed, 13 insertions(+)
+> Applied to bwctrl, thank you!
 
-FYI usually the kernel changes are applied to a different tree than the
-tools.
+Should be pci/pwrctl.  bwctrl (bandwidth control) and pwrctl (power
+control) are quite different despite the confusingly similar names.
 
+> [01/05] PCI/pwrctl: Use of_platform_device_create() to create pwrctl devices
+>         https://git.kernel.org/pci/pci/c/d2b6619e7419
 > 
-> diff --git a/kernel/events/core.c b/kernel/events/core.c
-> index cdd09769e6c56..c950b6fc92cda 100644
-> --- a/kernel/events/core.c
-> +++ b/kernel/events/core.c
-> @@ -55,6 +55,7 @@
->  #include <linux/pgtable.h>
->  #include <linux/buildid.h>
->  #include <linux/task_work.h>
-> +#include <linux/seq_file.h>
+> [02/05] PCI/pwrctl: Create pwrctl devices only if at least one power supply is present
+>         https://git.kernel.org/pci/pci/c/5f2710a4c275
 > 
->  #include "internal.h"
+> [03/05] PCI/pwrctl: Ensure that the pwrctl drivers are probed before the PCI client drivers
+>         https://git.kernel.org/pci/pci/c/4c963d4c13b9
 > 
-> @@ -6820,6 +6821,17 @@ static int perf_fasync(int fd, struct file *filp, int on)
->  	return 0;
->  }
+> [04/05] PCI/pwrctl: Move pwrctl device creation to its own helper function
+>         https://git.kernel.org/pci/pci/c/73ae23a6af78
 > 
-> +static void perf_show_fdinfo(struct seq_file *m, struct file *f)
-> +{
-> +	struct perf_event *event = f->private_data;
-> +
-> +	seq_printf(m, "perf_event-attr.type:\t%u\n", event->orig_type);
-> +	seq_printf(m, "perf_event-attr.config:\t%llu\n", event->attr.config);
-
-I'm not sure if all archs are happy with treating it as %llu.
-
-Thanks,
-Namhyung
-
-
-> +	seq_printf(m, "perf_event-attr.config1:\t%llu\n", event->attr.config1);
-> +	seq_printf(m, "perf_event-attr.config2:\t%llu\n", event->attr.config2);
-> +	seq_printf(m, "perf_event-attr.config3:\t%llu\n", event->attr.config3);
-> +}
-> +
->  static const struct file_operations perf_fops = {
->  	.release		= perf_release,
->  	.read			= perf_read,
-> @@ -6828,6 +6840,7 @@ static const struct file_operations perf_fops = {
->  	.compat_ioctl		= perf_compat_ioctl,
->  	.mmap			= perf_mmap,
->  	.fasync			= perf_fasync,
-> +	.show_fdinfo		= perf_show_fdinfo,
->  };
+> [05/05] PCI/pwrctl: Remove pwrctl device without iterating over all children of pwrctl parent
+>         https://git.kernel.org/pci/pci/c/5ccc52fd1e5a
 > 
->  /*
-> --
-> 2.47.0.163.g1226f6d8fa-goog
-> 
+> 	Krzysztof
 
