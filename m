@@ -1,110 +1,208 @@
-Return-Path: <linux-kernel+bounces-396018-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396020-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E19969BC6CA
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 08:20:25 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61C909BC6CF
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 08:21:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 87378B225F4
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 07:20:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 85419B222D1
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 07:21:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 414AD1DC185;
-	Tue,  5 Nov 2024 07:20:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 253E61FDFA0;
+	Tue,  5 Nov 2024 07:21:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cl+mHPqs"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="s3iolotg";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="vuY4kWF1";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="v5lsIJGa";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="mV1Ng9ZE"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CB2F18132A;
-	Tue,  5 Nov 2024 07:20:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 811D61CDA25;
+	Tue,  5 Nov 2024 07:21:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730791216; cv=none; b=LwJ+/M3PAOJk31lQP5mPafJX7kaCvmcLyivJB2f/2ckg9nj4Z4Krnd341duKijTMBlGOmTDzUTl7m125+to5xBUOaMVQpNqyz1Oh62UhxElHkB68fL14wO97UNvVbMWs49j4f7S/x1Z6Z2ObNVyYiFJLWj+fhKPA/V/byMWHVQg=
+	t=1730791294; cv=none; b=QvV50gR5raJICcAe04QnpDBJOFlC+/ul6vj+ixEH4e2wCwWCYJzXPTWPSufBmr7VwCYb85W7nShub8Pjf3tW8hE7kKOt+MrzXOh7Ca2lIaaBoYbF942Xt9Y0dWlY/wHAEXGz1Y0JDyqukU0CYK/dKLd0R5Q4mK+8DJNUPDP94ME=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730791216; c=relaxed/simple;
-	bh=GSUZY5wJ3MLnz3npdEq/2cld67mJl9yhHojFqBMiELw=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ZIUTyrThZ38UEtmk0ZjpuL467cc/XE2jF4OAEM2zFMx3/VH2MlTTAUzYs9PCO5j6kkYCgFU5/IvyglNumwH2RM7+Wubz5cudFSJx+Vfpj7glFT7KvUb/r7ahBoapixlyMAXb9DeuSxhEkDnfzacESDdyPqTtQavDlssEUPSARmM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cl+mHPqs; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-20cdb889222so48608675ad.3;
-        Mon, 04 Nov 2024 23:20:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730791214; x=1731396014; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=XKAHJzWLr2y1XDNxG2SQATXhIhZvmlarF7yids5u93g=;
-        b=cl+mHPqsb5t9yEzj61wCet3CrIIwEyFtx6gZQiOUb9xrU4vniWmPWtnA0l2S+zd55e
-         noy/3dBqf9GYNiuN1SM/oqGu7wVYdfBQIGp2Tq27XkOhACwEqFsx3/jpYZJopIu/XXOP
-         7GATfN9fbbpN/QvfR3wDpfKAjpnUYFpaXyxLEe6qZy3fWMxkpFLvHPPZeubUQ2NC+/LI
-         dMbXTH+YNbHckhXq3wvFbAP31U4D9BdGqCVd7K2s7kXICzypygirWhxseBxUbAcmLfQ8
-         wSrP55PAEK9YSFjIGYSvor4kxTu8sZX6cDgcTy/45zXWEjT3SPUDWW5EzhzEYNB6WFEf
-         XaAw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730791214; x=1731396014;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=XKAHJzWLr2y1XDNxG2SQATXhIhZvmlarF7yids5u93g=;
-        b=SNszhn8dpdeJ5xg4ALhy4DuhNN/JjP5uGUep64QZeqw/vQnUWzMYtj9GpbCkuklIxC
-         3ziX/b9ZhcKc5aZDHF30gqZNHOspssJ10cd4qvGwCXn4J3b4QD6OxCrYez/Q3pOEpFoW
-         jk+/LW3s89cA4sQGnZFv+fo69fZXqWM/5nOBdQk5dfIUDq48sqMH8d/1Q4k7VoL3pJuU
-         YkNAB1+EdmkkaY9wLwDJCqrLKI8lSvYc2qrdGYiM/hObvFbaYPfEN22VlsW09aQi6yyf
-         LrMVboLv3EJZoLvevv01KApQKf68dI7hrtSIsW8vqC2TmMOFdQBUbzYO7GMpAeJKWHWB
-         7sng==
-X-Forwarded-Encrypted: i=1; AJvYcCVbi/hXMevIGhF+gSTWYF6OK4PpKfr6CDnKW7XqPopr8IhOXSm7+Fx+Bmo/yHE6jfmV8CdPyOyPx8YCTSFoFQWHwwpI@vger.kernel.org, AJvYcCXbxo8ki8TDRcKZiEMnt56/jYe8jYctZek9jI9/hkInvGYJmPin7vD30GP+2ktC9sSNGlOXD9LcZZH+x8g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzDTUspfNXpANynZp6PtPH4njFZhsz8af98q9vqfnMlEcvCp/Ip
-	22pbFDOZXSYvx5/vF2bUOF0uBO630RDZ/e69FbL8I17Fz6mlEuTmYjpO6zMvRIs=
-X-Google-Smtp-Source: AGHT+IGTyGQ6mhQVLXMHzHVEiazlptO3WM8T1w8o1cVcjbmhxQ1C3vsJUHmwA1HY2BlM5Hk+UpXn1g==
-X-Received: by 2002:a17:902:d48b:b0:20e:5777:1b8d with SMTP id d9443c01a7336-21103ca7671mr275956815ad.57.1730791214547;
-        Mon, 04 Nov 2024 23:20:14 -0800 (PST)
-Received: from debian.resnet.ucla.edu (s-169-232-97-87.resnet.ucla.edu. [169.232.97.87])
-        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-211057d3b18sm72468125ad.243.2024.11.04.23.20.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Nov 2024 23:20:14 -0800 (PST)
-From: Daniel Yang <danielyangkang@gmail.com>
-To: Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	linux-kernel@vger.kernel.org (open list:TRACING),
-	linux-trace-kernel@vger.kernel.org (open list:TRACING)
-Cc: Daniel Yang <danielyangkang@gmail.com>
-Subject: [PATCH] set_cmdline: replace fragile/deprecated strncpy with strscpy
-Date: Mon,  4 Nov 2024 23:20:07 -0800
-Message-Id: <20241105072007.426782-1-danielyangkang@gmail.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1730791294; c=relaxed/simple;
+	bh=qnc0tlVadcGLDbLU1ZUvqHKhBdDJMQ5csGxylZPaEEE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iDxXJksiU23rUjMLmuiaS/UCZnsEaNDJ8gq5VHpCu5f7/XpzSDl2CRA5hmt4+hfBMtagJK8wscLTya6mZKZYYnNySHTDxeIjoHMhlYrndP7lTFzdqg5hl+fmv588Fc56I9pQfr0QsYKviQeK6jolzWllI4N1wVq+pFJktfpmNts=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=s3iolotg; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=vuY4kWF1; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=v5lsIJGa; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=mV1Ng9ZE; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 6F1B31FBAF;
+	Tue,  5 Nov 2024 07:21:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1730791290; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Cv5X+dJo+qYbCmGxX1UUGabGePe6AL3CemLdnsLnX3Y=;
+	b=s3iolotg/x7CIuw300Rpt0qXFpuaeSzZnlhceovpaLUAqIbIp68KhzixxlTgoxx1394c1o
+	RFk8EWNB/uUiQ8eSXj61OCE6al/24HOztRbY8C2mBmussgqwDDoo82QhBbNPON6DUHN98G
+	oJ1txrnGFxzNrxftj4sxtHm8Jbc1HLs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1730791290;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Cv5X+dJo+qYbCmGxX1UUGabGePe6AL3CemLdnsLnX3Y=;
+	b=vuY4kWF1Kvr6WnvevEy7WwAmay5iRbEeyPYTU+WMf7xCNVAzp5eAZ6fbHWtNGPlgzoA713
+	6w9G8ocfmNPYt/DQ==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1730791289; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Cv5X+dJo+qYbCmGxX1UUGabGePe6AL3CemLdnsLnX3Y=;
+	b=v5lsIJGapgpdpAex/5OWu97Go+rI9WLQ/+nLoAtGvM7s4ZDJP4bxfj79A3Vn56gQfLa9uZ
+	8kzTn5rvWP6yRcRG/LA4TNpSrpoEYpe9PXlr7zODYZhVPDVekvNegr76ac2dcF67Z9CfWI
+	psT70iCfwl7g/cKQrBvoe2PaVS1fhGs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1730791289;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Cv5X+dJo+qYbCmGxX1UUGabGePe6AL3CemLdnsLnX3Y=;
+	b=mV1Ng9ZEUXgYYLaUHekwv2pC9RUNZ6sZxl01LcOUbp6omnsvG9l3DLBZT5pK4OlLy7LaDr
+	FYrQEMMTdAdDCTDg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id F10931394A;
+	Tue,  5 Nov 2024 07:21:28 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 4borOHjHKWdQFwAAD6G6ig
+	(envelope-from <hare@suse.de>); Tue, 05 Nov 2024 07:21:28 +0000
+Message-ID: <c3102f97-df59-4859-9af1-d241a357d02f@suse.de>
+Date: Tue, 5 Nov 2024 08:21:28 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/6] block: Rework bio_split() return value
+To: John Garry <john.g.garry@oracle.com>, axboe@kernel.dk, song@kernel.org,
+ yukuai3@huawei.com, hch@lst.de
+Cc: martin.petersen@oracle.com, linux-block@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-raid@vger.kernel.org,
+ Johannes.Thumshirn@wdc.com
+References: <20241031095918.99964-1-john.g.garry@oracle.com>
+ <20241031095918.99964-2-john.g.garry@oracle.com>
+Content-Language: en-US
+From: Hannes Reinecke <hare@suse.de>
+In-Reply-To: <20241031095918.99964-2-john.g.garry@oracle.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,suse.de:mid,oracle.com:email,lst.de:email,imap1.dmz-prg2.suse.org:helo,wdc.com:email]
+X-Spam-Score: -4.30
+X-Spam-Flag: NO
 
-Kernel docs identify strncpy as being fragile and ambiguous. Replaced
-strncpy with strscpy so dest str is null terminated and not padded.
+On 10/31/24 10:59, John Garry wrote:
+> Instead of returning an inconclusive value of NULL for an error in calling
+> bio_split(), return a ERR_PTR() always.
+> 
+> Also remove the BUG_ON() calls, and WARN_ON_ONCE() instead. Indeed, since
+> almost all callers don't check the return code from bio_split(), we'll
+> crash anyway (for those failures).
+> 
+> Fix up the only user which checks bio_split() return code today (directly
+> or indirectly), blk_crypto_fallback_split_bio_if_needed(). The md/bcache
+> code does check the return code in cached_dev_cache_miss() ->
+> bio_next_split() -> bio_split(), but only to see if there was a split, so
+> there would be no change in behaviour here (when returning a ERR_PTR()).
+> 
+> Reviewed-by: Christoph Hellwig <hch@lst.de>
+> Reviewed-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
+> Signed-off-by: John Garry <john.g.garry@oracle.com>
+> ---
+>   block/bio.c                 | 10 ++++++----
+>   block/blk-crypto-fallback.c |  2 +-
+>   2 files changed, 7 insertions(+), 5 deletions(-)
+> 
+> diff --git a/block/bio.c b/block/bio.c
+> index 95e2ee14cea2..7a93724e4a49 100644
+> --- a/block/bio.c
+> +++ b/block/bio.c
+> @@ -1740,16 +1740,18 @@ struct bio *bio_split(struct bio *bio, int sectors,
+>   {
+>   	struct bio *split;
+>   
+> -	BUG_ON(sectors <= 0);
+> -	BUG_ON(sectors >= bio_sectors(bio));
+> +	if (WARN_ON_ONCE(sectors <= 0))
+> +		return ERR_PTR(-EINVAL);
+> +	if (WARN_ON_ONCE(sectors >= bio_sectors(bio)))
+> +		return ERR_PTR(-EINVAL);
+>   
+>   	/* Zone append commands cannot be split */
+>   	if (WARN_ON_ONCE(bio_op(bio) == REQ_OP_ZONE_APPEND))
+> -		return NULL;
+> +		return ERR_PTR(-EINVAL);
+>   
+>   	split = bio_alloc_clone(bio->bi_bdev, bio, gfp, bs);
+>   	if (!split)
+> -		return NULL;
+> +		return ERR_PTR(-ENOMEM);
+>   
+>   	split->bi_iter.bi_size = sectors << 9;
+>   
+> diff --git a/block/blk-crypto-fallback.c b/block/blk-crypto-fallback.c
+> index b1e7415f8439..29a205482617 100644
+> --- a/block/blk-crypto-fallback.c
+> +++ b/block/blk-crypto-fallback.c
+> @@ -226,7 +226,7 @@ static bool blk_crypto_fallback_split_bio_if_needed(struct bio **bio_ptr)
+>   
+>   		split_bio = bio_split(bio, num_sectors, GFP_NOIO,
+>   				      &crypto_bio_split);
+> -		if (!split_bio) {
+> +		if (IS_ERR(split_bio)) {
+>   			bio->bi_status = BLK_STS_RESOURCE;
+>   			return false;
+>   		}
 
-Signed-off-by: Daniel Yang <danielyangkang@gmail.com>
----
- kernel/trace/trace_sched_switch.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Don't you need to modify block/bounce.c, too?
 
-diff --git a/kernel/trace/trace_sched_switch.c b/kernel/trace/trace_sched_switch.c
-index 8a407adb0..573b5d8e8 100644
---- a/kernel/trace/trace_sched_switch.c
-+++ b/kernel/trace/trace_sched_switch.c
-@@ -187,7 +187,7 @@ static inline char *get_saved_cmdlines(int idx)
- 
- static inline void set_cmdline(int idx, const char *cmdline)
- {
--	strncpy(get_saved_cmdlines(idx), cmdline, TASK_COMM_LEN);
-+	strscpy(get_saved_cmdlines(idx), cmdline, TASK_COMM_LEN);
- }
- 
- static void free_saved_cmdlines_buffer(struct saved_cmdlines_buffer *s)
+Cheers,
+
+Hannes
 -- 
-2.39.2
-
+Dr. Hannes Reinecke                  Kernel Storage Architect
+hare@suse.de                                +49 911 74053 688
+SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
+HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
 
