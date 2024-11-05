@@ -1,238 +1,232 @@
-Return-Path: <linux-kernel+bounces-396234-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396236-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F8809BC9C0
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 10:57:09 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 910289BC9CA
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 10:58:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C45F21F2319D
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 09:57:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 50C5D282AF7
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 09:58:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF1D21D1F67;
-	Tue,  5 Nov 2024 09:56:52 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43CA71CDA3E
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 09:56:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DE8A1D172E;
+	Tue,  5 Nov 2024 09:58:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="safyjPiD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 658E418BC37;
+	Tue,  5 Nov 2024 09:58:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730800612; cv=none; b=RywwAxdKTRefegSslVlIi5i2mtYq0CzQnD874E07L328PnG11FdAANlQLwoqa3TxlzysaRF07IgmMCxMXQ9UrFGwkKAyeffo5DjML644YKINfjSppFwCwDUVfVDRNwZWkFEyj0GZIwpSaIdnQ05BZSVEfV7d0yC/Pz3a0gUvk9k=
+	t=1730800686; cv=none; b=AnQhAi5xfQuufK1mODPaF8fgHw6WchskV6Xk3U7MzU4MFIf738guFhRPctga/W6zKSfjY94GtXRnYK62Md7lT6V/JFSNIO43Dr6n0JbYytESKAxLO6aob/cCm4e52mqth8edK+SkhyLRmFYw9MaUstgDOuCPbITdgAxrhOehvak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730800612; c=relaxed/simple;
-	bh=DGzkJ9bxSDJAbftRPwpx0qNYcNwe6wGyzNFvTATs/BY=;
+	s=arc-20240116; t=1730800686; c=relaxed/simple;
+	bh=+Pfv4OvZxCbNoCRHQ2hN7BLIiGnXEX0iiM+k2iVisqw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tPMaTB28ygbnhYWrh7LmNigBFxRghZH58qxxqW2wC2CNyLnKVfzeUTtaVIoYrsNe2hZfZcl8akv/DjkAGnET0ufG/WwHSQDvjZCWFYkxB15z82cL25EVCcAlS3FojzY7iR09GTSnVuKSshGCdJ1MZ9zQDXu3b47Xg80tBT5Rakw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 139331063
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 01:57:19 -0800 (PST)
-Received: from e110455-lin.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 0D0C73F66E
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 01:56:48 -0800 (PST)
-Date: Tue, 5 Nov 2024 09:56:44 +0000
-From: Liviu Dudau <liviu.dudau@arm.com>
-To: Jann Horn <jannh@google.com>
-Cc: Boris Brezillon <boris.brezillon@collabora.com>,
-	Steven Price <steven.price@arm.com>,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH] drm/panthor: Be stricter about IO mapping flags
-Message-ID: <Zynr3DIY8u2c7wrB@e110455-lin.cambridge.arm.com>
-References: <20241105-panthor-flush-page-fixes-v1-1-829aaf37db93@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ce1/+1GXVkAA1PUyohon4bqxUJ2XTOLvAx8V0k9OSFZB2k2KcVl239ulWTwWfybtvVQsoj/v10LJqlAOThfFbGfh/JImQAxvM0y7tEl53zXCOyQmGDe7+uy02cWM26E3ZkvxQBKRT0qo63WxQU7EVXNorvDteyGt2sKGOydkB3o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=safyjPiD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 745F5C4CECF;
+	Tue,  5 Nov 2024 09:58:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730800685;
+	bh=+Pfv4OvZxCbNoCRHQ2hN7BLIiGnXEX0iiM+k2iVisqw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=safyjPiDS4oE00HQJaU8DZ2LoY0Ds7BRc7TIrsCl5qNXmax8+nc6kCcZpRfeHRI5N
+	 F750gz0MBzFz5LrpEO5pRtaVNt22kCQVuw+2q2rEiz89HiggDoqXvKvB6MvNr2OiSU
+	 3kuTqoEV6szkP6+7R1Jpbuoo4hzc1s+xZuX3s/i5ifwMjfcZUxSkwXOaP0aoW5dYST
+	 YVlhki4VpZjlRtOZiv6P1e8tyU5qby9XcD3kSCVoev3nQhcNLrHqa+sdA+ZlOQ+lyZ
+	 XD7I2dCgOR8epDIaNT2YdLVqvFEYTzBurhpd1sTVPwXTpNpfP+YDyqAG1q4L0ZZ8bl
+	 vPilsiKseC9Zg==
+Date: Tue, 5 Nov 2024 10:58:02 +0100
+From: Maxime Ripard <mripard@kernel.org>
+To: Herve Codina <herve.codina@bootlin.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+	Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Robert Foss <rfoss@kernel.org>, Jonas Karlman <jonas@kwiboo.se>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Marek Vasut <marex@denx.de>, 
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Luca Ceresoli <luca.ceresoli@bootlin.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH 2/2] drm: bridge: ti-sn65dsi83: Add error recovery
+ mechanism
+Message-ID: <20241105-juicy-cooperative-squid-76deee@houat>
+References: <20241024095539.1637280-1-herve.codina@bootlin.com>
+ <20241024095539.1637280-3-herve.codina@bootlin.com>
+ <20241027162350.GA15853@pendragon.ideasonboard.com>
+ <20241028091331.6f67e29e@bootlin.com>
+ <20241028112857.GF24052@pendragon.ideasonboard.com>
+ <20241028-nebulous-yellow-dragon-2cfb5f@houat>
+ <20241028132858.GE6081@pendragon.ideasonboard.com>
+ <20241028-great-charming-flounder-23fc9b@houat>
+ <20241028140913.GG6081@pendragon.ideasonboard.com>
+ <20241105091503.48f69586@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="vfdw7visqqzoxdex"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241105-panthor-flush-page-fixes-v1-1-829aaf37db93@google.com>
-
-On Tue, Nov 05, 2024 at 12:17:13AM +0100, Jann Horn wrote:
-> The current panthor_device_mmap_io() implementation has two issues:
-> 
-> 1. For mapping DRM_PANTHOR_USER_FLUSH_ID_MMIO_OFFSET,
->    panthor_device_mmap_io() bails if VM_WRITE is set, but does not clear
->    VM_MAYWRITE. That means userspace can use mprotect() to make the mapping
->    writable later on. This is a classic Linux driver gotcha.
->    I don't think this actually has any impact in practice:
->    When the GPU is powered, writes to the FLUSH_ID seem to be ignored; and
->    when the GPU is not powered, the dummy_latest_flush page provided by the
->    driver is deliberately designed to not do any flushes, so the only thing
->    writing to the dummy_latest_flush could achieve would be to make *more*
->    flushes happen.
-> 
-> 2. panthor_device_mmap_io() does not block MAP_PRIVATE mappings (which are
->    mappings without the VM_SHARED flag).
->    MAP_PRIVATE in combination with VM_MAYWRITE indicates that the VMA has
->    copy-on-write semantics, which for VM_PFNMAP are semi-supported but
->    fairly cursed.
->    In particular, in such a mapping, the driver can only install PTEs
->    during mmap() by calling remap_pfn_range() (because remap_pfn_range()
->    wants to **store the physical address of the mapped physical memory into
->    the vm_pgoff of the VMA**); installing PTEs later on with a fault
->    handler (as panthor does) is not supported in private mappings, and so
->    if you try to fault in such a mapping, vmf_insert_pfn_prot() splats when
->    it hits a BUG() check.
-> 
-> Fix it by clearing the VM_MAYWRITE flag (userspace writing to the FLUSH_ID
-> doesn't make sense) and requiring VM_SHARED (copy-on-write semantics for
-> the FLUSH_ID don't make sense).
-> 
-> Reproducers for both scenarios are in the notes of my patch on the mailing
-> list; I tested that these bugs exist on a Rock 5B machine.
-> 
-> Note that I only compile-tested the patch, I haven't tested it; I don't
-> have a working kernel build setup for the test machine yet. Please test it
-> before applying it.
-> 
-> Cc: stable@vger.kernel.org
-> Fixes: 5fe909cae118 ("drm/panthor: Add the device logical block")
-> Signed-off-by: Jann Horn <jannh@google.com>
-> ---
-> First testcase (can write to the FLUSH_ID):
-> 
-> ```
->
-
-There is a missing line here, I guess is something like
-
-#define SYSCHK(x) ({  \
+In-Reply-To: <20241105091503.48f69586@bootlin.com>
 
 
-Reviewed-by: Liviu Dudau <liviu.dudau@arm.com>
+--vfdw7visqqzoxdex
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH 2/2] drm: bridge: ti-sn65dsi83: Add error recovery
+ mechanism
+MIME-Version: 1.0
 
-Best regards,
-Liviu
+On Tue, Nov 05, 2024 at 09:15:03AM +0100, Herve Codina wrote:
+> Hi Maxime, Laurent,
+>=20
+> On Mon, 28 Oct 2024 16:09:13 +0200
+> Laurent Pinchart <laurent.pinchart@ideasonboard.com> wrote:
+>=20
+> > On Mon, Oct 28, 2024 at 02:55:47PM +0100, Maxime Ripard wrote:
+> > > On Mon, Oct 28, 2024 at 03:28:58PM +0200, Laurent Pinchart wrote: =20
+> > > > On Mon, Oct 28, 2024 at 01:21:45PM +0100, Maxime Ripard wrote: =20
+> > > > > On Mon, Oct 28, 2024 at 01:28:57PM +0200, Laurent Pinchart wrote:=
+ =20
+> > > > > > On Mon, Oct 28, 2024 at 09:13:31AM +0100, Herve Codina wrote: =
+=20
+> > > > > > > On Sun, 27 Oct 2024 18:23:50 +0200 Laurent Pinchart wrote:
+> > > > > > >=20
+> > > > > > > [...] =20
+> > > > > > > > > +static int sn65dsi83_reset_pipeline(struct sn65dsi83 *sn=
+65dsi83)
+> > > > > > > > > +{
+> > > > > > > > > +	struct drm_device *dev =3D sn65dsi83->bridge.dev;
+> > > > > > > > > +	struct drm_modeset_acquire_ctx ctx;
+> > > > > > > > > +	struct drm_atomic_state *state;
+> > > > > > > > > +	int err;
+> > > > > > > > > +
+> > > > > > > > > +	/* Use operation done in drm_atomic_helper_suspend() fo=
+llowed by
+> > > > > > > > > +	 * operation done in drm_atomic_helper_resume() but wit=
+hout releasing
+> > > > > > > > > +	 * the lock between suspend()/resume()
+> > > > > > > > > +	 */
+> > > > > > > > > +
+> > > > > > > > > +	DRM_MODESET_LOCK_ALL_BEGIN(dev, ctx, 0, err);
+> > > > > > > > > +
+> > > > > > > > > +	state =3D drm_atomic_helper_duplicate_state(dev, &ctx);
+> > > > > > > > > +	if (IS_ERR(state)) {
+> > > > > > > > > +		err =3D PTR_ERR(state);
+> > > > > > > > > +		goto unlock;
+> > > > > > > > > +	}
+> > > > > > > > > +
+> > > > > > > > > +	err =3D drm_atomic_helper_disable_all(dev, &ctx);
+> > > > > > > > > +	if (err < 0)
+> > > > > > > > > +		goto unlock;
+> > > > > > > > > +
+> > > > > > > > > +	drm_mode_config_reset(dev);
+> > > > > > > > > +
+> > > > > > > > > +	err =3D drm_atomic_helper_commit_duplicated_state(state=
+, &ctx);   =20
+> > > > > > > >=20
+> > > > > > > > Committing a full atomic state from a bridge driver in an a=
+synchronous
+> > > > > > > > way seems quite uncharted territory, and it worries me. It'=
+s also a very
+> > > > > > > > heavyweight, you disable all outputs here, instead of focus=
+sing on the
+> > > > > > > > output connected to the bridge. Can you either implement so=
+mething more
+> > > > > > > > local, resetting the bridge only, or create a core helper t=
+o handle this
+> > > > > > > > kind of situation, on a per-output basis ? =20
+> > > > > > >=20
+> > > > > > > A full restart of the bridge (power off/on) is needed and so =
+we need to
+> > > > > > > redo the initialization sequence. This initialization sequenc=
+e has to be
+> > > > > > > done with the DSI data lanes (bridge inputs) driven in LP11 s=
+tate and so
+> > > > > > > without any video stream. Only focussing on bridge outputs wi=
+ll not be
+> > > > > > > sufficient. That's why I brought the pipeline down and restar=
+ted it. =20
+> > > > > >=20
+> > > > > > Fair point.
+> > > > > >  =20
+> > > > > > > Of course, I can copy/paste sn65dsi83_reset_pipeline() to a c=
+ore helper
+> > > > > > > function. Is drm_atomic_helper_reset_all() could be a good ca=
+ndidate? =20
+> > > > > >=20
+> > > > > > The helper should operate on a single output, unrelated outputs=
+ should
+> > > > > > not be affected. =20
+> > > > >=20
+> > > > > Also, you don't want to reset anything, you just want the last co=
+mmit to
+> > > > > be replayed. =20
+> > > >=20
+> > > > I'm not sure about that. If the last commit is just a page flip, th=
+at
+> > > > won't help, will it ? =20
+> > >=20
+> > > The alternative would be that you start anew with a blank state, which
+> > > effectively drops every configuration that has been done by userspace.
+> > > This is terrible.
+> > >=20
+> > > And a page flip wouldn't have affected the connector and
+> > > connector->state would still be to the last state that affected it, so
+> > > it would work. =20
+> >=20
+> > Ah right, you didn't mean replaying the last commit then, but first
+> > disabling the output and then restoring the current state ? That should
+> > work.
+> >=20
+>=20
+> Thanks for the feedback.
+>=20
+> If I understand correctly, I should try to disable the output.
+> What is the 'output' exactly, the connector?
 
+At the very least, the encoder, connector and everything in between. And
+maybe the CRTC.
 
->   typeof(x) __res = (x);      \
->   if (__res == (typeof(x))-1) \
->     err(1, "SYSCHK(" #x ")"); \
->   __res;                      \
-> })
-> 
-> int main(void) {
->   int fd = SYSCHK(open(GPU_PATH, O_RDWR));
-> 
->   // sanity-check that PROT_WRITE+MAP_SHARED fails
->   void *mmap_write_res = mmap(NULL, 0x1000, PROT_READ|PROT_WRITE,
->       MAP_SHARED, fd, DRM_PANTHOR_USER_FLUSH_ID_MMIO_OFFSET);
->   if (mmap_write_res == MAP_FAILED) {
->     perror("mmap() with PROT_WRITE+MAP_SHARED failed as expected");
->   } else {
->     errx(1, "mmap() with PROT_WRITE+MAP_SHARED worked???");
->   }
-> 
->   // make a PROT_READ+MAP_SHARED mapping, and upgrade it to writable
->   void *mmio_page = SYSCHK(mmap(NULL, 0x1000, PROT_READ, MAP_SHARED,
->       fd, DRM_PANTHOR_USER_FLUSH_ID_MMIO_OFFSET));
->   SYSCHK(mprotect(mmio_page, 0x1000, PROT_READ|PROT_WRITE));
-> 
->   volatile uint32_t *flush_counter = (volatile uint32_t*)mmio_page;
-> 
->   uint32_t last_old = -1;
->   while (1) {
->     uint32_t old_val = *flush_counter;
->     *flush_counter = 1111;
->     uint32_t new_val = *flush_counter;
->     if (old_val != last_old)
->       printf("flush counter: old=%u, new=%u\n", old_val, new_val);
->     last_old = old_val;
->   }
-> }
-> ```
-> 
-> Second testcase (triggers BUG() splat):
-> ```
-> 
->   typeof(x) __res = (x);      \
->   if (__res == (typeof(x))-1) \
->     err(1, "SYSCHK(" #x ")"); \
->   __res;                      \
-> })
-> 
-> int main(void) {
->   int fd = SYSCHK(open(GPU_PATH, O_RDWR));
-> 
->   // make a PROT_READ+**MAP_PRIVATE** mapping
->   void *ptr = SYSCHK(mmap(NULL, 0x1000, PROT_READ, MAP_PRIVATE,
->       fd, DRM_PANTHOR_USER_FLUSH_ID_MMIO_OFFSET));
-> 
->   // trigger a read fault
->   *(volatile char *)ptr;
-> }
-> ```
-> 
-> The second testcase splats like this:
-> ```
-> [ 2918.411814] ------------[ cut here ]------------
-> [ 2918.411857] kernel BUG at mm/memory.c:2220!
-> [ 2918.411955] Internal error: Oops - BUG: 00000000f2000800 [#1] SMP
-> [...]
-> [ 2918.416147] CPU: 3 PID: 2934 Comm: private_user_fl Tainted: G           O       6.1.43-19-rk2312 #428a0a5e6
-> [ 2918.417043] Hardware name: Radxa ROCK 5B (DT)
-> [ 2918.417464] pstate: 60400009 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-> [ 2918.418119] pc : vmf_insert_pfn_prot+0x40/0xe4
-> [ 2918.418567] lr : panthor_mmio_vm_fault+0xb0/0x12c [panthor]
-> [...]
-> [ 2918.425746] Call trace:
-> [ 2918.425972]  vmf_insert_pfn_prot+0x40/0xe4
-> [ 2918.426342]  __do_fault+0x38/0x7c
-> [ 2918.426648]  __handle_mm_fault+0x404/0x6dc
-> [ 2918.427018]  handle_mm_fault+0x13c/0x18c
-> [ 2918.427374]  do_page_fault+0x194/0x33c
-> [ 2918.427716]  do_translation_fault+0x60/0x7c
-> [ 2918.428095]  do_mem_abort+0x44/0x90
-> [ 2918.428410]  el0_da+0x40/0x68
-> [ 2918.428685]  el0t_64_sync_handler+0x9c/0xf8
-> [ 2918.429067]  el0t_64_sync+0x174/0x178
-> ```
-> ---
->  drivers/gpu/drm/panthor/panthor_device.c | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/panthor/panthor_device.c b/drivers/gpu/drm/panthor/panthor_device.c
-> index 4082c8f2951dfdace7f73a24d6fe34e9e7f920eb..6fbff516c1c1f047fcb4dee17b87d8263616dc0c 100644
-> --- a/drivers/gpu/drm/panthor/panthor_device.c
-> +++ b/drivers/gpu/drm/panthor/panthor_device.c
-> @@ -390,11 +390,15 @@ int panthor_device_mmap_io(struct panthor_device *ptdev, struct vm_area_struct *
->  {
->  	u64 offset = (u64)vma->vm_pgoff << PAGE_SHIFT;
->  
-> +	if ((vma->vm_flags & VM_SHARED) == 0)
-> +		return -EINVAL;
-> +
->  	switch (offset) {
->  	case DRM_PANTHOR_USER_FLUSH_ID_MMIO_OFFSET:
->  		if (vma->vm_end - vma->vm_start != PAGE_SIZE ||
->  		    (vma->vm_flags & (VM_WRITE | VM_EXEC)))
->  			return -EINVAL;
-> +		vm_flags_clear(vma, VM_MAYWRITE);
->  
->  		break;
->  
-> 
-> ---
-> base-commit: d78f0ee0406803cda8801fd5201746ccf89e5e4a
-> change-id: 20241104-panthor-flush-page-fixes-fe4202bb18c0
-> 
-> -- 
-> Jann Horn <jannh@google.com>
-> 
+> How can I disable it? Can you give me some pointers?
 
--- 
-====================
-| I would like to |
-| fix the world,  |
-| but they're not |
-| giving me the   |
- \ source code!  /
-  ---------------
-    ¯\_(ツ)_/¯
+See my mail here:
+https://lore.kernel.org/all/20241028-thankful-boar-of-camouflage-3de96c@hou=
+at/
+
+> Further more, is disabling the "output" disable the whole path where the
+> bridge is located?
+
+Not the whole path, but most of it, yeah.
+
+> I mean, I need to power off/on the bridge and re-init it with its input D=
+SI
+> lines in LP11.
+
+Right, and that might work with that bridge in particular, but it's
+definitely not generic.
+
+Maxime
+
+--vfdw7visqqzoxdex
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZynsJQAKCRAnX84Zoj2+
+dhLOAYDt01kViqQ/zoJQY4o0IdYFzdJuwgmOYrpuf5x2TcRmVkT0Re5bBwgxejlW
+ClZ3LW0BgKNrr0V98uXOvIW+2fZArO84dQzPE8DkZTbpFqWUhqqZbad/t2sy+Hrc
+4F68LJop3g==
+=eiWl
+-----END PGP SIGNATURE-----
+
+--vfdw7visqqzoxdex--
 
