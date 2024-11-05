@@ -1,135 +1,165 @@
-Return-Path: <linux-kernel+bounces-395754-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395756-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 504E09BC26C
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 02:20:26 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89DBA9BC277
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 02:21:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 10EBC282800
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 01:20:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 18DA81F22CCD
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 01:21:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DAC01CABA;
-	Tue,  5 Nov 2024 01:20:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E3001CD02;
+	Tue,  5 Nov 2024 01:21:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S7imEkVB"
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZENJDM4z"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6467518643;
-	Tue,  5 Nov 2024 01:20:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C263210FB;
+	Tue,  5 Nov 2024 01:21:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730769616; cv=none; b=ZE5MsqVBPU7GjU3RTxyrZxRvVyQRC97DEaZm7/leMRa/vs4Mp+/nonFKQB00DX6uawqaLa2o/qjvfnQKICdHCdVJVRxA/E+bkr8jKpG0m2aD0jdI/uqbUlOH2ceIG+kCD9XwYQAqjxS+9495mN7ORlK9P4ikFh7TqbdYbtZuhEw=
+	t=1730769668; cv=none; b=NOnpWLEnF3igDojYOfV6f86uKvfvgY+SJ1qLZpbrAbdwk6obqsMz9hAbqKlLMUXsv94A5aIP7mhilnCNUyYBapeZYJkNz2D1NcgdY6TGJF2znRbWBLp0f4HzAhIFiAlHVlLuMBTDW0HiHkJGkVRn9ZzbePTegOn3EfTA1UmhJKk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730769616; c=relaxed/simple;
-	bh=4ZeODM8skcep6J2m+GGX7dhWp6HeU31CoF2rqvPJ0z0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=tgUZVGlVIIXHytBPq5CucxF441PKSlQ110sb0mvSxjuV+sqtNXOlMhfCfgoN5rZ9JTcdppN6wW0zMh56F2Dl3QQhc3LsgGcm7ufaZzmzK2eRXCVBAWNNPj+AS6YJfZm4JVuB9qDYo4L6Vo4e2Ccid3vEH6QT0VQHBmca6CRDrJQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=S7imEkVB; arc=none smtp.client-ip=209.85.218.47
+	s=arc-20240116; t=1730769668; c=relaxed/simple;
+	bh=VZ8ZU0WsepzEPLxSHPS93xbgg2Gq28vQVhTZXl+F0Yo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ArL6WvogBYdZnmkZrYk0cgUEWXynQKcOIwRb8DgS1UK7paicYf1buVl5Q3dPAB/kpkCbc4AVimowVn5a7WPNbROdzecCzm3eP8Ef4NDt4U1oJa2ofOOS+pjkr/rm2fMcaJEJl+I/mfdmwNkTLnBeqrQUQ71nDAZq4qKYeSu4WTE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZENJDM4z; arc=none smtp.client-ip=209.85.214.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a9a6b4ca29bso632486666b.3;
-        Mon, 04 Nov 2024 17:20:14 -0800 (PST)
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-20cdbe608b3so48104185ad.1;
+        Mon, 04 Nov 2024 17:21:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730769613; x=1731374413; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=8zDOYGOJYzIB3JQdGMKFXo1DFLDaK4hziGkm1F7ZkF0=;
-        b=S7imEkVB9qIaAAAcwTt++TJ0UgOGlQNg4u54UnAT210F2bCD7xqshAsQu4/+uQJJ0h
-         uFZl+1vdgqmAbcS/kZ+/rGfvVYLnMwWkFctsrHVmW/5mP0Epqrffv2HQejb8ddhY9NeZ
-         bTa64e5LurUNqkdANybyjzLptCtkpKhATFS9A8+Mq/x+FA3lQiwahzd/VTBqKdYnnAbc
-         gSqaYwCnM66WSinWRtGnthkNibuCWCCcmIWZz7P4mPE6Eszi+J015zt5cfcMv+Smgeqj
-         ugzBl5DLc0e74P0ko0riBk4/4HJfQ+gD6KNOG1qkHzWpnZI5Rdmm8l92Olf0/pzayO+Z
-         /VmQ==
+        d=gmail.com; s=20230601; t=1730769666; x=1731374466; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=I+LMkYkWlRPsmB3Ncg3sqZVlDRsn5em99yS0jQuNnWc=;
+        b=ZENJDM4zRhgKeZwL+h1sA9GPziEE2m0+idLovxm4qAK5wM847p9JtmRv/Q8ZEtBCkU
+         4X5kdcF7vcKhoZg/kV+GSYzk0vy4Jx2vkWmnPiT16DPAfc7fsheiNVmWGpxLodCZWaIF
+         g/dDJW+bEAIFM7x/pjNnk/H5LiBQYaHaGOHlImMXEwFZndtq+N2zPZ693cgUvFINMeyO
+         tkEt4i5WNz2XSrI1zTj3OjMz5DU6Tia7lrP4g+BlxZiPbTGGe0QBrIfmcWX63Kw9i+e7
+         8IVyq0gqNgr53ThNIUUh4sup1rargI6tyiPmw82mGR6YZGGPS8ss3hVoGEBmvWJEr634
+         RbrQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730769613; x=1731374413;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8zDOYGOJYzIB3JQdGMKFXo1DFLDaK4hziGkm1F7ZkF0=;
-        b=mbDCUGxkp1loi1irZ0v17g29+8qxForlHw5ZWd0KmCfX3zA3wl7tMvmOutlRMuU1bp
-         dmpA0Bp78zs27na0srjCPebJpxxkBtxGm/0eu24cctaeJnm8nG9DDQha06COnu24SQcz
-         yqBZTPCYggAOa5W5eNztV1bSVPvXYDYkCQ/vqemBYZrWXBdJKWBUEBPVKyYcPInjr4+j
-         9ffbi1lv1AinPBub7ovzz1JuzqmuwhNjj1Pa9zcDwGnib5OSVtR3MT/x/pn1W0zQKhpg
-         2rx3/Ds2CHi8O4VJg+k7TFveRf3J4R2KguHBg3Wt+LGsJ8QX1U8Udyvy/30ykH+KBHnl
-         r45A==
-X-Forwarded-Encrypted: i=1; AJvYcCWDL9uQU+JBGaLNJM2SQiHbtz2jvHY7jSENUITIQvP1qNLgpKAYQhAstQ8St7mVdhXUS8VtFyiUXDpo+CvF@vger.kernel.org, AJvYcCWluF9v3q4PXFjkyMdEto/eKo8chyaVpm3T9Ba0iF4spfMwbtdoyaV1PsDNzFLCGeUyj0NkyRAUtw==@vger.kernel.org, AJvYcCXWezvpnqYKc/4dvPeo1sJvRvZcXJHamDRAAKBfifd/8+APR6a2M/78esdPQx2An6KqOlvT4I2d/HFK@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy95+EkFeEEszbhPlCUKckSBpaGKxLm85+7XnTL0hq6X2SVjIPx
-	9v1T/GOoc6XYCseLO3NXeXVsIFuOcotV2IhCQQbDAwoe1bbppj2ZWZ++sw==
-X-Google-Smtp-Source: AGHT+IHT2qm2S6k5VB5g9yg+m4lEHMLIGG99uLnk4+glboo+zNf/MBRl0/XDlh55wrA8zQGBLAeEAw==
-X-Received: by 2002:a17:907:97c9:b0:a9a:eca:f7c4 with SMTP id a640c23a62f3a-a9e50b9e2a8mr1643037566b.54.1730769612361;
-        Mon, 04 Nov 2024 17:20:12 -0800 (PST)
-Received: from [192.168.42.95] ([148.252.145.116])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9eb16f8e2csm54116366b.91.2024.11.04.17.20.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 04 Nov 2024 17:20:11 -0800 (PST)
-Message-ID: <768a51d0-8c63-4d9f-a636-c9cb52a0c4f4@gmail.com>
-Date: Tue, 5 Nov 2024 01:20:15 +0000
+        d=1e100.net; s=20230601; t=1730769666; x=1731374466;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=I+LMkYkWlRPsmB3Ncg3sqZVlDRsn5em99yS0jQuNnWc=;
+        b=wuZwDTZEwMxVgN+FiBRvHUYxDbgIZf0T+ZkUUqHzuska5TAFtRZP6DpOSVp+SHdPcV
+         fidwcE/UxMiQLSPnsDYfWjTjKDL1Qurhlj/8xBvc164GVtFzb8xNB3u/03KG/OtBf4rO
+         kg7QEUsdFbzCiXyd88l1dr9I2zDIFMEcOgMRZLIOzD6vd9b9A83KwuIHZ/sBW8IePwCM
+         q0ibImxefwzVQ0Z3LLkGW96E6TbQNAJADHCAPjVCkSm/VDKqD2h8AfsKbv/G+jqkUsAF
+         uSadTyQq22dkuuIrSn/sWD18DT4xzXh8HhKBZow534soel1TVXxzUnwvtdq75Qw6utUl
+         35HA==
+X-Forwarded-Encrypted: i=1; AJvYcCUb/CQLAIAMPECgBbm7eJPTOLDY0T36/HQh36qiWF2qc2t5QrjIOzMiE7WFqjG9bDvNYDk=@vger.kernel.org, AJvYcCVyEp5SpTe6HidmtF5o5flGcVquLGUZlQ/Ve0CE7Hd1exV8c2DEuPzPrpylzdrWljQvOfYiRYiJ0hfY0Zcb@vger.kernel.org, AJvYcCWhlvMeGBPwN7/ZVhM+uiqlDG14Srr813vFOdax9FUzobXzz/20nxHMSrE6OhRKrmrvyN5VGCJHv+94@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw2gt9BU3boD4fwWLhT3NSg8yBT1h4cV8kEW4UWb5m1ynOsYsAv
+	UFKWbPBP3iQcZTlLVXcgTsuDhp0LmpuP67zb9oY17df0yA7EtBMw
+X-Google-Smtp-Source: AGHT+IF64o8gpNOqMASVWYWFpE0R0w/dtjr62OjqjEwkG32O/Wkht74v20ETki9XH2sWXZ+AYqg5+A==
+X-Received: by 2002:a17:902:eccd:b0:20b:6e74:b712 with SMTP id d9443c01a7336-210f76d66cemr342551005ad.45.1730769666343;
+        Mon, 04 Nov 2024 17:21:06 -0800 (PST)
+Received: from archie.me ([103.124.138.155])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21105705fa2sm67297965ad.64.2024.11.04.17.21.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 04 Nov 2024 17:21:05 -0800 (PST)
+Received: by archie.me (Postfix, from userid 1000)
+	id DBCEA420B6E5; Tue, 05 Nov 2024 08:21:00 +0700 (WIB)
+Date: Tue, 5 Nov 2024 08:21:00 +0700
+From: Bagas Sanjaya <bagasdotme@gmail.com>
+To: Jonathan Corbet <corbet@lwn.net>, Joe Damato <jdamato@fastly.com>
+Cc: netdev@vger.kernel.org, hdanton@sina.com, pabeni@redhat.com,
+	namangulati@google.com, edumazet@google.com,
+	amritha.nambiar@intel.com, sridhar.samudrala@intel.com,
+	sdf@fomichev.me, peter@typeblog.net, m2shafiei@uwaterloo.ca,
+	bjorn@rivosinc.com, hch@infradead.org, willy@infradead.org,
+	willemdebruijn.kernel@gmail.com, skhawaja@google.com,
+	kuba@kernel.org, Martin Karsten <mkarsten@uwaterloo.ca>,
+	"David S. Miller" <davem@davemloft.net>,
+	Simon Horman <horms@kernel.org>,
+	Linux Documentation <linux-doc@vger.kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux BPF <bpf@vger.kernel.org>
+Subject: Re: [PATCH net-next v5 7/7] docs: networking: Describe irq suspension
+Message-ID: <Zyly_D2DMcsf3bx9@archie.me>
+References: <20241103052421.518856-1-jdamato@fastly.com>
+ <20241103052421.518856-8-jdamato@fastly.com>
+ <ZyinhIlMIrK58ABF@archie.me>
+ <ZykRdK6WgfR_4p5X@LQ3V64L9R2>
+ <87v7x296wq.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [syzbot] [io-uring?] [usb?] WARNING in io_get_cqe_overflow (2)
-To: Jens Axboe <axboe@kernel.dk>,
- syzbot <syzbot+e333341d3d985e5173b2@syzkaller.appspotmail.com>,
- io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-usb@vger.kernel.org, syzkaller-bugs@googlegroups.com
-References: <6728b077.050a0220.35b515.01ba.GAE@google.com>
- <13da163a-d088-4b4d-8ad1-dbf609b03228@gmail.com>
- <b29d2635-d640-4b8e-ad43-1aa25c20d7c8@kernel.dk>
- <965a473d-596a-4cf4-8ec2-a8626c4c73f6@gmail.com>
- <16f43422-91aa-4c6d-b36c-3e9cb52b1ff2@gmail.com>
- <e003c787-71b5-4373-ac53-c98b6b260e04@kernel.dk>
- <09b7008b-b8c1-4368-9d04-a3bdb96ab26d@gmail.com>
- <0daae856-a3c6-4eff-95cc-e39674f24d41@kernel.dk>
- <74004a91-2753-45fc-88b4-8b2103f9a155@kernel.dk>
-Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <74004a91-2753-45fc-88b4-8b2103f9a155@kernel.dk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="nq/PazSObm4LFAxl"
+Content-Disposition: inline
+In-Reply-To: <87v7x296wq.fsf@trenco.lwn.net>
 
-On 11/4/24 17:05, Jens Axboe wrote:
-> On 11/4/24 10:03 AM, Jens Axboe wrote:
->> On 11/4/24 9:54 AM, Pavel Begunkov wrote:
->>> On 11/4/24 15:43, Jens Axboe wrote:
->>>> On 11/4/24 8:34 AM, Pavel Begunkov wrote:
->>>>> On 11/4/24 15:27, Pavel Begunkov wrote:
->>> ...
->>>>> Regardless, the rule with sth like that should be simpler,
->>>>> i.e. a ctx is getting killed => everything is run from fallback/kthread.
->>>>
->>>> I like it, and now there's another reason to do it. Can you out the
->>>> patch?
->>>
->>> Let's see if it works, hopefully will try today.
->>
->> I already tried it here fwiw, does fix the issue (as expected) and it
->> passes the full testing too.
-> 
-> Forgot to include the basic reproducer I wrote for this report, it's
-> below.
 
-Thanks for testing.
+--nq/PazSObm4LFAxl
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I was just looking at the patch, and the fun part is that it depends on
-failing tw off PF_KTHREAD tasks... Otherwise when the fallback executes
-a request the original task could still be alive =>
-(req->task->flags & PF_EXITING) check passes and the request continues
-doing stuff from the kthread (with no mm and so).
+On Mon, Nov 04, 2024 at 11:43:17AM -0700, Jonathan Corbet wrote:
+> Joe Damato <jdamato@fastly.com> writes:
+>=20
+> > On Mon, Nov 04, 2024 at 05:52:52PM +0700, Bagas Sanjaya wrote:
+> >> On Sun, Nov 03, 2024 at 05:24:09AM +0000, Joe Damato wrote:
+> >> > +It is important to note that choosing a large value for ``gro_flush=
+_timeout``
+> >> > +will defer IRQs to allow for better batch processing, but will indu=
+ce latency
+> >> > +when the system is not fully loaded. Choosing a small value for
+> >> > +``gro_flush_timeout`` can cause interference of the user applicatio=
+n which is
+> >> > +attempting to busy poll by device IRQs and softirq processing. This=
+ value
+> >> > +should be chosen carefully with these tradeoffs in mind. epoll-base=
+d busy
+> >> > +polling applications may be able to mitigate how much user processi=
+ng happens
+> >> > +by choosing an appropriate value for ``maxevents``.
+> >> > +
+> >> > +Users may want to consider an alternate approach, IRQ suspension, t=
+o help deal
+> >>                                                                      t=
+o help dealing
+> >> > +with these tradeoffs.
+> >> > +
+> >
+> > Thanks for the careful review. I read this sentence a few times and
+> > perhaps my English grammar isn't great, but I think it should be
+> > one of:
+> >
+> > Users may want to consider an alternate approach, IRQ suspension, to
+> > help deal with these tradeoffs.  (the original)
+>=20
+> The original is just fine here.  Bagas, *please* do not bother our
+> contributors with this kind of stuff, it does not help.
 
-A side note that it should be marginally better than before on the
-cancellation front because we're killing task_work more eagerly
-for a dying ctx but alive tasks.
+I should have hinted the fixes instead of pasting them...
 
-I'll send the patch properly.
+Thanks.
 
--- 
-Pavel Begunkov
+--=20
+An old man doll... just what I always wanted! - Clara
+
+--nq/PazSObm4LFAxl
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCZyly/AAKCRD2uYlJVVFO
+o+tTAQCWkcadSmX3wxsEpjQjj8WxLObwpWps8IxxktOqM9Ta8wEAmImsEuWA7xfI
+yvzVNIeGeybV8MQeKugYfMWyxL/YSA4=
+=C4ow
+-----END PGP SIGNATURE-----
+
+--nq/PazSObm4LFAxl--
 
