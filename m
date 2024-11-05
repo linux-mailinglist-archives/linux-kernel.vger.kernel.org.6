@@ -1,54 +1,53 @@
-Return-Path: <linux-kernel+bounces-396123-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396124-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60E7A9BC82D
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 09:39:53 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6111C9BC831
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 09:42:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 19A1D1F242EE
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 08:39:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0931A1F24649
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 08:42:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 920611D223A;
-	Tue,  5 Nov 2024 08:38:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B3061CEAB0;
+	Tue,  5 Nov 2024 08:41:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="GSnyT20u"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DBAB1D1E60;
-	Tue,  5 Nov 2024 08:38:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="izHqV7Rd"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87E931C233C;
+	Tue,  5 Nov 2024 08:41:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730795917; cv=none; b=s0NCu5HbkvTOr3NJp6nGxZde+yMECioLHiqtLKvQcQea28RQfQnStjN0SSY48RUk1lD5wleZjMMB5TOvj2fcXr96e55QI/PDfYhez5teTa0kEd1tHOHiqMixmglfUOx9IJPt0kdNmKGpUskVLNX67rHqE3Vtj61uM0abDAw+tfc=
+	t=1730796113; cv=none; b=XXwNiVgEz5ve7HcnoYiuiio4HWktdoGDlN00pdF6EkignYo+XonRkTAXQqAqoexEkv9GXCTpxXiOQQZvlVwaA10D8D1xqf96fPFcfw1OTyQsVbVftpatx7v86r1lgNtpMXKfhR14bWX21LUBR4dQ56bYd8mSDcR8mLZFVX3G45U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730795917; c=relaxed/simple;
-	bh=pwqKeV0X9ptiMKf8+eBBie8UYfUYm+D5ovV/9aj1tHU=;
+	s=arc-20240116; t=1730796113; c=relaxed/simple;
+	bh=lcjUZiRno1Ml7Eu7/D4qbMfW+RtMrSIyM4fBtwM/V5k=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bp8qCxZiJQc8zVR075xUYRDnhdxZgAgGl+1wKknMNef9QQSKPOroVWb3CU9eYiiFT2+h8BrIH3/dXbvbco8fDw7wPApxWfJiIOb/mLt5kSEvF5hJvz+8G7nR+Mg71rkcRe3qjvCq0HuT8G0CCTYHw7GoejktJ4DPnJvZoIlEOH8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=GSnyT20u; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: by linux.microsoft.com (Postfix, from userid 1127)
-	id BC7CB2126CA7; Tue,  5 Nov 2024 00:38:34 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com BC7CB2126CA7
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1730795914;
-	bh=DE0o8dmbPLaELVhiexJqjr6kR6LP/5pJljv1r2xc0Ms=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=m5YEyE2wcmz9Q+zMgrbjrMHWwXNW1oQgaKqhY7zK7U4x5Nt/ll+7KXU6jFQGhLpBh3QHYpRjQLE7aklp/1UPkF3OZsk1NjfMLy5g4XL4g2+k8WRCKYc+scEpRE5pWbu72TclDAuDS0Bd3txOCKrn2Hz+8W2Sm1meIJu+nowY9dc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=izHqV7Rd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A480CC4CECF;
+	Tue,  5 Nov 2024 08:41:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1730796113;
+	bh=lcjUZiRno1Ml7Eu7/D4qbMfW+RtMrSIyM4fBtwM/V5k=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GSnyT20uN29oWUvU0nxM3pM1Ul2sdRnEchHTlhEcel9azrcsJQzif1PgOJVvmZmMf
-	 YakRGk6yBBT4vFljJJSMZSobhFxyAR0AfRj4ON2GOJjdCi5oXYmXo+uabVYDt1Qh+K
-	 fCRDPCOUbO5EpwX/6k/iF/Qadf3qEtcaykyb7Xeg=
-Date: Tue, 5 Nov 2024 00:38:34 -0800
-From: Saurabh Singh Sengar <ssengar@linux.microsoft.com>
-To: Olaf Hering <olaf@aepfle.de>
-Cc: linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
-	"K. Y. Srinivasan" <kys@microsoft.com>,
-	Haiyang Zhang <haiyangz@microsoft.com>,
-	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>
-Subject: Re: [PATCH v2] tools/hv: terminate fcopy daemon if read from uio
- fails
-Message-ID: <20241105083834.GA8168@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
-References: <20241105081437.15689-1-olaf@aepfle.de>
+	b=izHqV7RdRft0K8i6MdXxnu9z1rs+gBkcvH/vO/rAOV8A+N905pP/iTkhGfgnYmjYp
+	 EhT5KRvfR8lhtWKzLnrCYVTjncgNhQAHpNw8BAiqY2uBdVlLAxp0ZY4rTTYaTsIsDW
+	 Q5tg42pDJt9NaZBI57nB5e0u3iSYMc5DE23o9km8=
+Date: Tue, 5 Nov 2024 09:41:35 +0100
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: "Haowei Cheng(Harvey)" <harvey.cheng@fibocom.com>
+Cc: "chunfeng.yun@mediatek.com" <chunfeng.yun@mediatek.com>,
+	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: 0001-usb-mtu3-fix-panic-in-mtu3_gadget_wakeup.patch
+Message-ID: <2024110512-popcorn-germless-01be@gregkh>
+References: <SEZPR02MB54953820B2A9EEBD807D0ED18E512@SEZPR02MB5495.apcprd02.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,51 +56,16 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241105081437.15689-1-olaf@aepfle.de>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <SEZPR02MB54953820B2A9EEBD807D0ED18E512@SEZPR02MB5495.apcprd02.prod.outlook.com>
 
-On Tue, Nov 05, 2024 at 09:14:04AM +0100, Olaf Hering wrote:
-> Terminate endless loop in reading fails, to avoid flooding syslog.
+On Mon, Nov 04, 2024 at 05:54:43PM +0000, Haowei Cheng(Harvey) wrote:
 > 
-> This happens if the state of "Guest services" integration service
-> is changed from "enabled" to "disabled" at runtime in the VM
-> settings. In this case pread returns EIO.
 
-My comment on V1 was meant to log this information in the syslog, so the
-user can look for the Guest Service status incase of EIO. Capturing these
-details in the commit will require additional effort from user.
 
-Nevertheless, thanks for fixing this:
+For some reason you only attached a patch, please send it properly so we
+can actually review and apply it if needed.
 
-Reviewed-by: Saurabh Sengar <ssengar@linux.microsoft.com>
+thanks,
 
-> 
-> Also handle an interrupted system call, and continue in this case.
-> 
-> Signed-off-by: Olaf Hering <olaf@aepfle.de>
-> ---
-> v2: update commit message
-> 
-> A more complete fix is to handle this properly in the kernel,
-> by making the file descriptor unavailable for further operations.
-> 
->  tools/hv/hv_fcopy_uio_daemon.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/tools/hv/hv_fcopy_uio_daemon.c b/tools/hv/hv_fcopy_uio_daemon.c
-> index 7a00f3066a98..281fd95dc0d8 100644
-> --- a/tools/hv/hv_fcopy_uio_daemon.c
-> +++ b/tools/hv/hv_fcopy_uio_daemon.c
-> @@ -468,8 +468,10 @@ int main(int argc, char *argv[])
->  		 */
->  		ret = pread(fcopy_fd, &tmp, sizeof(int), 0);
->  		if (ret < 0) {
-> +			if (errno == EINTR || errno == EAGAIN)
-> +				continue;
->  			syslog(LOG_ERR, "pread failed: %s", strerror(errno));
-> -			continue;
-> +			goto close;
->  		}
->  
->  		len = HV_RING_SIZE;
+greg k-h
 
