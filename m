@@ -1,149 +1,111 @@
-Return-Path: <linux-kernel+bounces-395891-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395893-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 123D09BC492
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 06:12:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20AE09BC49C
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 06:20:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC049282A21
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 05:11:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D3F28282FDF
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 05:20:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C9201B4F02;
-	Tue,  5 Nov 2024 05:11:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D31FE1B5EA4;
+	Tue,  5 Nov 2024 05:20:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b="u1kntvzQ"
-Received: from mail-il1-f170.google.com (mail-il1-f170.google.com [209.85.166.170])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EXH0m6o/"
+Received: from mail-oi1-f193.google.com (mail-oi1-f193.google.com [209.85.167.193])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C4BB3D9E
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 05:11:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEE0A383;
+	Tue,  5 Nov 2024 05:20:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730783515; cv=none; b=GDe+0w2JZ37iTPcMfGoltAXnf+DJPQ/r6AeCZ5YIfy+5aUUQBFme1tfGacXf7wa5Z+CK4qWCsf03R8cvVC3ZJfxc0xKVAOSm8w/aNJUD+3o8MWR1kFM48GpcZs9JRVAM5k+UL2AsUQZ+rCbRrjSLkPzTmw4mCryahTDpSJXerVs=
+	t=1730784022; cv=none; b=WyuH0FZak9WECxOWFN5g/8Z8hf/1wY1tQxqh2vVqLzhQj2X6GwrEaktBwcU4ktUftyrunvbQhPkMUnGHbHFDF/MnwglgVeJzGSaJus6fJJ5a3iHH1wsWPQCiiRYQSEOHhwxrUImJlaN87hQKSfJJfPlQFmnjW9vHg43V8ArRBsU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730783515; c=relaxed/simple;
-	bh=g3X43PZZfzcStSl1Yx3BdP8/SjXgxrtAXnFZ6F/ppEo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Lc9i3R5BOaMfEbp6OFNobMqCkp2ftY3vfBvHIqdHWb8d6yl2qEUl5XTm6v5vE004ZRsF4LqcZ8gstz6dsBkMC1ir0Ycu211HWw28HjKWJhP2BiJX49uuWYc+cvCZGXN5yja3MpJ3JsetMV99qWRZwYoN4ePKNQIgVvZaoXOMuoQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org; spf=none smtp.mailfrom=brainfault.org; dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b=u1kntvzQ; arc=none smtp.client-ip=209.85.166.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=brainfault.org
-Received: by mail-il1-f170.google.com with SMTP id e9e14a558f8ab-3a6bcbd23c9so10972765ab.3
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 21:11:53 -0800 (PST)
+	s=arc-20240116; t=1730784022; c=relaxed/simple;
+	bh=DcCXBVV7pog0hH2FiRHTOFsdbNvQVoTARwYL/sPJMog=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=uSXUfgOFII21NmoBSKwFRjCr5wsU2N6JI8SRkElhwHB3e29HqMsi8j2IPuxPWoDmmYX9RoxgzqlZoAGdzsXx0K//tmJd8Va+XOGoutcFvC21HYayKTIYmpQrrgC9aCPwuDNSx2U9xsSa1HHnqDu9XLdlv48Hah63R82J68S8QUw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EXH0m6o/; arc=none smtp.client-ip=209.85.167.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oi1-f193.google.com with SMTP id 5614622812f47-3e606cba08eso2846888b6e.0;
+        Mon, 04 Nov 2024 21:20:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brainfault-org.20230601.gappssmtp.com; s=20230601; t=1730783512; x=1731388312; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8l5esNem8PBBNIAd06UP9heND5ENpGUkBH0v3nolocY=;
-        b=u1kntvzQwSkUi5h5nF0L5+UjpFBGP4A+wqJ7vEkBpr7uc8UU5tLkRL8oGv29VNdjC2
-         apWdvF2FHWssiu/yS6/Jxab8BZNjhOWf4forxPjNcNg16Omx50p89D3PI6qiD4VaErBg
-         TrQ+MaHegDobTkesK4JTlvvfqzV1yvMEL9nIGdGXibSr2bX8hDd1y+q6Bdo9F7UxznoM
-         ARUuKChYNqzvU/pk3+/JF2ba/GE/lTQzWE/PbzmJOBaxw7CcN+DXObb6Cp2X2dbDS6Gb
-         3FcCYSYvo4C1LM+b2Ivz4wjt0OxgY8NiGvyEaSEvIwZMRm6GEtmML8wmORx+OkKPuMVN
-         MV1g==
+        d=gmail.com; s=20230601; t=1730784020; x=1731388820; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:cc:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=OVIDqyMFPmN4cUigm8mgpzwe7aTulhrXs9SX4YLqJfs=;
+        b=EXH0m6o/WGCb8lAGK7jc1VipKzQ+qPuhyNDdVExwLaBPvtV2f1/mgz1ZJAHCf6fJHj
+         lXTa1qNeV2Z5rssmaj3qMrH2cA8LvFrxrDD+/CEW7Pu8Ei/TDbjg5i5T8tbQQb1PgK+t
+         xbqk5IytS574k11LK64/HkVgDIneXKLfV6BqMVh+GHvs6keVAmDVArstjMlhFoEr2E+S
+         VI7eS3tLQONK0CJ/9D+z77sgsLJwpANBUNwf5tR6ws1f9zR/nRx2mcSeC6LLJY8ZNCHO
+         qK0T35Wiiqd3xXRrt2YVBTemMZORb3Y8hoWsi8kPb2pAm2hCzut4xfz/OKEVkSafWIKr
+         0huQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730783512; x=1731388312;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8l5esNem8PBBNIAd06UP9heND5ENpGUkBH0v3nolocY=;
-        b=fmbpAGp6lP+BB6smJ2dUY5bghp9zizFTwBH/2+9xcs7RMug7aMqubmMkzbtimZ6PUy
-         2iZA0oLwd70IFYOwWZs8OdorQPB0dGnKbIIoaUz8tPEdW76zU1HWD65dxkowPl8Klwf7
-         GDmJ9Rsk4R50e7Uck/8/s9dj04dJVv7XcyiB0K4wmXnmtIMUG+jhM+39GJy4Un4OG4NK
-         fdi3MrjHf538tIwJV4S2BIBgikaPZc0/FfQjoqAdklETM4XpD//L5BU0r1Xmy0MbZLO3
-         pxA8GSVp7Ulz/jmGySKCO5kMl89ZNTEWeRvbvBFymHfjnCbZg2i4z6w0ZRlnexlAPsBC
-         ejbQ==
-X-Gm-Message-State: AOJu0Yzl/ARGYTRyr29JXOnRcgt8L0zTCOZC5YmNOv02q+uKq+Zgv4A3
-	Q9/GVmD3nU3r8JWYa7EV8pqMmhHdoa9JUTiQnmpkOudZGutO4BNjQhOboDcGGOGxsIyAQ0lamaJ
-	KSyw0cnvzYTK3NY1UnbjGAU5sWU6UtW8d/JdJxA==
-X-Google-Smtp-Source: AGHT+IGEudYnCi3xjKq3yQuyp0LPEhZYmxUddO6fuja49PgBoSWrtEJM9MPf9ivcp3qpb4s6OoJ/iT+dNNtaTMkeEdw=
-X-Received: by 2002:a05:6e02:3f83:b0:3a6:c320:7ed with SMTP id
- e9e14a558f8ab-3a6c3200a55mr86555625ab.10.1730783512341; Mon, 04 Nov 2024
- 21:11:52 -0800 (PST)
+        d=1e100.net; s=20230601; t=1730784020; x=1731388820;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:cc:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=OVIDqyMFPmN4cUigm8mgpzwe7aTulhrXs9SX4YLqJfs=;
+        b=EFwNCraCExMWuW1MSRljgS/WhzEJso5+HQM0Cue+bMUOohUzXL/4mToY7AodY92NC7
+         jVnwrZ+zkaHV7P2oDurKcDWleVgK7cgnpohq5QvcQ60zmINsG/F/kXt3lnN0XV1VoJXB
+         3u22cbyGy64of5AMwUD5qF5TVNVpfv8bRi2AsumsW/OLqZ5IoCiM8t3xtLUEzTunqSMP
+         7NOkz/KMAhbMkxGJCkYUrxcfGqHBSKtPWgz6vShJjC+ozkNMvNR3TsQd/Nyiis/pOlo2
+         Q+V3cBftNohcoXYjSmG5XHjWXw9blHntnYaerxzVeOBxvpPNX0H0xFF3VeP/UdCoyU4R
+         1F1Q==
+X-Forwarded-Encrypted: i=1; AJvYcCU2kUTHjNwkBqI+2aq0MSQQf/7M+FdpXcREYS3jA0LpgxO7s3dooDVTsS+pZ175ukufLncjPLP70V0l@vger.kernel.org, AJvYcCUqyZtsEmWeJYaif+2zIY5YkpmFHkYllsfkr46ZDIq50frBjXRaM/nLyV/yn3cXjR6p5pUSAV5Ggkzi@vger.kernel.org, AJvYcCXGzOt0FD2LDi2/o1T/PTfFaG3OHKp6o3MgfcXm0ifVxUZ0q5JTo3DXsw7DCVVs6V4L2up+UHohhB0F4SRj@vger.kernel.org
+X-Gm-Message-State: AOJu0YxUeK1Giq6ffYBK0ZKxbPwGvQEIONeCf+SnGcMpYNlFqQrNrri+
+	eJX9gY8E+UndC/hoeQE47BF25pYZAcJtSdOFOqkSWja57D1tjirS
+X-Google-Smtp-Source: AGHT+IHoumst3uPdf4NL+OrVtBSVt4fmNllaSCy38++T/BPGlXiWWEGwidCLdjrRMdlBJygYmO+0AA==
+X-Received: by 2002:a05:6808:3a06:b0:3e6:5b8c:d95a with SMTP id 5614622812f47-3e65b8cd9cbmr17613629b6e.20.1730784019859;
+        Mon, 04 Nov 2024 21:20:19 -0800 (PST)
+Received: from [127.0.0.1] ([2602:f919:106::1b8])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7ee459feaadsm7899842a12.69.2024.11.04.21.20.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 04 Nov 2024 21:20:19 -0800 (PST)
+Message-ID: <190e9d7b-daaa-4c7d-9954-ca143925a08d@gmail.com>
+Date: Tue, 5 Nov 2024 13:20:12 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241029085542.30541-1-yongxuan.wang@sifive.com>
-In-Reply-To: <20241029085542.30541-1-yongxuan.wang@sifive.com>
-From: Anup Patel <anup@brainfault.org>
-Date: Tue, 5 Nov 2024 10:41:41 +0530
-Message-ID: <CAAhSdy022PTmMZ90OxRxSOiR9nKept+tKVj8XrqbekkM209eYQ@mail.gmail.com>
-Subject: Re: [PATCH v2 1/1] RISC-V: KVM: Fix APLIC in_clrip and clripnum write emulation
-To: Yong-Xuan Wang <yongxuan.wang@sifive.com>
-Cc: linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
-	kvm-riscv@lists.infradead.org, kvm@vger.kernel.org, greentime.hu@sifive.com, 
-	vincent.chen@sifive.com, Atish Patra <atishp@atishpatra.org>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Cc: troymitchell988@gmail.com, andi.shyti@kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, linux-i2c@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-riscv@lists.infradead.org, Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v2 1/2] dt-bindings: i2c: spacemit: add support for K1 SoC
+To: Samuel Holland <samuel.holland@sifive.com>
+References: <20241028053220.346283-1-TroyMitchell988@gmail.com>
+ <20241028053220.346283-2-TroyMitchell988@gmail.com>
+ <6zx3tqdc5bma2vutexwigzlir6nr6adp7arg4qwl5ieyd3avbu@5yyhv57ttwcl>
+ <dbeea869-54cd-43fe-9021-783d641f1278@gmail.com>
+ <ariqiukhztgziwwgaauqy6q3pghflnoeuwtag4izwkfmtvi2kh@gnlq4d7jsaw4>
+ <6cce463e-25cc-4a07-971f-6260347cb581@gmail.com>
+ <502b0b14-0e1f-4a59-85ad-7edeb9d3033d@kernel.org>
+ <a08384bf-6747-4975-b025-f8fd3685fc30@gmail.com>
+ <8a04f84b-453b-44e5-9053-204a08d38e19@sifive.com>
+Content-Language: en-US
+From: Troy Mitchell <troymitchell988@gmail.com>
+In-Reply-To: <8a04f84b-453b-44e5-9053-204a08d38e19@sifive.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Oct 29, 2024 at 2:25=E2=80=AFPM Yong-Xuan Wang <yongxuan.wang@sifiv=
-e.com> wrote:
->
-> In the section "4.7 Precise effects on interrupt-pending bits"
-> of the RISC-V AIA specification defines that:
->
-> "If the source mode is Level1 or Level0 and the interrupt domain
-> is configured in MSI delivery mode (domaincfg.DM =3D 1):
-> The pending bit is cleared whenever the rectified input value is
-> low, when the interrupt is forwarded by MSI, or by a relevant
-> write to an in_clrip register or to clripnum."
->
-> Update the aplic_write_pending() to match the spec.
->
-> Fixes: d8dd9f113e16 ("RISC-V: KVM: Fix APLIC setipnum_le/be write emulati=
-on")
-> Signed-off-by: Yong-Xuan Wang <yongxuan.wang@sifive.com>
-> Reviewed-by: Vincent Chen <vincent.chen@sifive.com>
 
-Looks good to me.
+On 2024/11/5 10:50, Samuel Holland wrote:
+> One "<address size>" element is just one item. maxItems > 1 would be for
+> hardware with multiple discontiguous register ranges: <address1 size1>,
+> <address2 size2>.
+got it.I will fix it in next version.
+> 
+> Regards,
+> Samuel
 
-Reviewed-by: Anup Patel <anup@brainfault.org>
-
-Queued this patch for Linux-6.13.
-
-Thanks,
-Anup
-
-> ---
-> v2;
-> - add fixes tag (Anup)
-> - follow the suggestion from Anup
-> ---
->  arch/riscv/kvm/aia_aplic.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/arch/riscv/kvm/aia_aplic.c b/arch/riscv/kvm/aia_aplic.c
-> index da6ff1bade0d..f59d1c0c8c43 100644
-> --- a/arch/riscv/kvm/aia_aplic.c
-> +++ b/arch/riscv/kvm/aia_aplic.c
-> @@ -143,7 +143,7 @@ static void aplic_write_pending(struct aplic *aplic, =
-u32 irq, bool pending)
->         if (sm =3D=3D APLIC_SOURCECFG_SM_LEVEL_HIGH ||
->             sm =3D=3D APLIC_SOURCECFG_SM_LEVEL_LOW) {
->                 if (!pending)
-> -                       goto skip_write_pending;
-> +                       goto noskip_write_pending;
->                 if ((irqd->state & APLIC_IRQ_STATE_INPUT) &&
->                     sm =3D=3D APLIC_SOURCECFG_SM_LEVEL_LOW)
->                         goto skip_write_pending;
-> @@ -152,6 +152,7 @@ static void aplic_write_pending(struct aplic *aplic, =
-u32 irq, bool pending)
->                         goto skip_write_pending;
->         }
->
-> +noskip_write_pending:
->         if (pending)
->                 irqd->state |=3D APLIC_IRQ_STATE_PENDING;
->         else
-> --
-> 2.17.1
->
+-- 
+Troy Mitchell
 
