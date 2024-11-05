@@ -1,98 +1,134 @@
-Return-Path: <linux-kernel+bounces-396557-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396534-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2E4A9BCED7
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 15:14:24 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 532AC9BCE95
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 15:03:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0070D1C22646
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 14:14:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DED9AB21991
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 14:03:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0D741D89E2;
-	Tue,  5 Nov 2024 14:14:04 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC7EB1D8DEE;
+	Tue,  5 Nov 2024 14:03:36 +0000 (UTC)
+Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com [209.85.219.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A9911D47B4
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 14:14:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDEE21D5ABF
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 14:03:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730816044; cv=none; b=TjhcbOyFPLBEa7oeYHozTDAetQg5JCxPmB8HJeR1Fka3XZT+RG8/yHnYWsdR7tnneJVR2birPVZl+k4/ORZv1tupDYJ/UC6vLZGt8V5z0BnHL4Cuc4Odxh4jZ10RRlrJW/roTcZwI9nrpl0JOcPI3u901hr72Hkx4x+cfK9jbP4=
+	t=1730815416; cv=none; b=hf/+k/TyIuC+afUsGQ5szTZcOGBQhC1hDAaTCR6EdQ1Q1naFT8+9X3E5RI1dMGNMKpilKFi95zSsFsBVpNjrK6feNi5XftcL7BQ89yclOvsYzyKalfqC7JORAYmpBZnsrVYghAQHMVxgZFA2q5/uGGvCwOT41stN6lIZWPTVsjE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730816044; c=relaxed/simple;
-	bh=HE8vRuBCo5xd2lYT7uDjw2wR7SGFV++W8f1tPdlfhqY=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=MkXSb19GY/Wu1cW/aFqa0y+4p8jQrj6oWs6Ga3zqeUwwgFQ8EoeHW1N+ihZ1riicBAAupaGN2pb7GNUif0C9066CgysfvN8T4h5ExKy72bJRTKxFrv2FXTHP/RiToblD1QBrEltnIfttcQwrg8DkgMg80M7bdFV8N7TG9XirlFI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.234])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4XjVdv6nMqz2Fbrp;
-	Tue,  5 Nov 2024 22:12:19 +0800 (CST)
-Received: from kwepemd200012.china.huawei.com (unknown [7.221.188.145])
-	by mail.maildlp.com (Postfix) with ESMTPS id E1AC014011F;
-	Tue,  5 Nov 2024 22:13:59 +0800 (CST)
-Received: from huawei.com (10.67.175.84) by kwepemd200012.china.huawei.com
- (7.221.188.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.34; Tue, 5 Nov
- 2024 22:13:58 +0800
-From: Zicheng Qu <quzicheng@huawei.com>
-To: <harry.wentland@amd.com>, <sunpeng.li@amd.com>,
-	<Rodrigo.Siqueira@amd.com>, <alexander.deucher@amd.com>,
-	<christian.koenig@amd.com>, <Xinhui.Pan@amd.com>, <airlied@gmail.com>,
-	<simona@ffwll.ch>, <Alvin.Lee2@amd.com>, <chiahsuan.chung@amd.com>,
-	<alex.hung@amd.com>, <wenjing.liu@amd.com>, <Dillon.Varone@amd.com>,
-	<george.shen@amd.com>, <mwen@igalia.com>, <yi-lchen@amd.com>,
-	<martin.leung@amd.com>, <yongqiang.sun@amd.com>, <tony.cheng@amd.com>,
-	<amd-gfx@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>,
-	<linux-kernel@vger.kernel.org>
-CC: <tanghui20@huawei.com>, <zhangqiao22@huawei.com>,
-	<judy.chenhui@huawei.com>, <quzicheng@huawei.com>
-Subject: [PATCH 2/2] drm/amd/display: Fix incorrect power gating configuration for DOMAIN11
-Date: Tue, 5 Nov 2024 14:02:56 +0000
-Message-ID: <20241105140256.2465614-3-quzicheng@huawei.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241105140256.2465614-1-quzicheng@huawei.com>
-References: <20241105140256.2465614-1-quzicheng@huawei.com>
+	s=arc-20240116; t=1730815416; c=relaxed/simple;
+	bh=sFwrPmsss5hpN9ZFw1O/B/a548zydPbn3UKb6dMBOZI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YtKpKy9PuEFpBVBvNSNGQZO8OqU4dF0lH0eNM7o1cIJaJ/qMf4/UmzTJDW/Tu3FrJdWR3ktYV4XYUBGAXMIdjuaRUA1inZCoOWeLLLOscEi/DedSfo4Yw6KRk4LAlCY05rkVJ9ZGTRgk1Z5kHBCblpILVvxbtjktQeKswNcYe9w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f178.google.com with SMTP id 3f1490d57ef6-e290e857d56so4921039276.1
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 06:03:32 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730815411; x=1731420211;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Lngjfys+B2JzssED4s3MaYSB3SB4j6D4iWEuTRe5Sew=;
+        b=NYxBwH7WMRGKcaMt2TVe1/EBjxNYWK43LQTYA2mc/fordPc0A/mdmkWou2C1n6uwRB
+         /cAvI2wRkygeS+/ZVn+PXJSuazEuLO4dMDKa9R/zXUpsBMOkWbkCBa+gXSfxXCIwHYbr
+         FSyozeABsD1brBl8Pt1keYkLmsJzqMVBhRn/MQiJ4ta4lV7MqaYj4dFfFlbWnuI4maVj
+         KH9aWMmS0eqzUMY2d6Xmv07HRtprBX4IF/jz7/GagMqHO2NvqdcVg5L880L6lcLhAoKp
+         qRIRBpYSt7hPIpXF3m+EXUZPAtQp6f5AkF+LREnyKn4RgNdWZanphD8w/L0qzSw94gzG
+         SFNw==
+X-Forwarded-Encrypted: i=1; AJvYcCWJlYnjNwNo+OsvCj69BOy+z8vWA/TT7abdFF6BSMHoQfmB20HVnWLCCvzBSQ7Tp71bzDt0BtvUx5vVwNE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwqcD6dYoKmZ708EF7z7KFRyTdk44QiRs4xX8xYFsaO65n9yzni
+	yY/8ABrdKoQfjEf6aVBw6mW2SJwU0Sfqv5EtX9KGVOExwQV3HzQXaWbrk6Q7
+X-Google-Smtp-Source: AGHT+IFDqzw7WBRXHI8oK+uVWdezliP3y3DwmNzRgb4lzVcw56S8GHk86IuzYdQRby2SN5uFmwZaYA==
+X-Received: by 2002:a05:6902:1242:b0:e30:cd90:b62f with SMTP id 3f1490d57ef6-e30cd90b6c7mr23440815276.26.1730815411236;
+        Tue, 05 Nov 2024 06:03:31 -0800 (PST)
+Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com. [209.85.219.173])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e30e8a7fe72sm2512275276.24.2024.11.05.06.03.30
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 05 Nov 2024 06:03:30 -0800 (PST)
+Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-e30eca40c44so4884770276.2
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 06:03:30 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCWePsHOvtiRk8YHan0MXLiazUOAWK16DvVZEaF0E6BkdDCI8Oca11P7KUJp+6tjoo1ThCzgbomAfK8agw0=@vger.kernel.org
+X-Received: by 2002:a05:690c:5:b0:6de:c0e:20ef with SMTP id
+ 00721157ae682-6e9d88ecdc1mr349956627b3.7.1730815410638; Tue, 05 Nov 2024
+ 06:03:30 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- kwepemd200012.china.huawei.com (7.221.188.145)
+References: <20241016-fix-jump-label-v1-1-eb74c5f68405@yoseli.org>
+In-Reply-To: <20241016-fix-jump-label-v1-1-eb74c5f68405@yoseli.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 5 Nov 2024 15:03:18 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdULfk-_VGXBsnD+Gc7h4c5PRAYDdgx1zEeW=4+1fA0N_Q@mail.gmail.com>
+Message-ID: <CAMuHMdULfk-_VGXBsnD+Gc7h4c5PRAYDdgx1zEeW=4+1fA0N_Q@mail.gmail.com>
+Subject: Re: [PATCH] m68k: Initialize jump labels early during setup_arch()
+To: Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>
+Cc: linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The current implementation incorrectly updates DOMAIN11_PG_CONFIG with
-DOMAIN9_POWER_FORCEON, which is not the intended behavior. This patch
-corrects the power gating configuration by updating DOMAIN11_PG_CONFIG
-with DOMAIN11_POWER_FORCEON, preventing potential issues related to
-power management.
+Hi Jean-Michel,
 
-Fixes: 46825fcfbe16 ("drm/amd/display: avoid power gate domains that doesn't exist")
-Signed-off-by: Zicheng Qu <quzicheng@huawei.com>
----
- drivers/gpu/drm/amd/display/dc/hwss/dcn20/dcn20_hwseq.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Wed, Oct 16, 2024 at 6:18=E2=80=AFPM Jean-Michel Hautbois
+<jeanmichel.hautbois@yoseli.org> wrote:
+> The jump_label_init() should be called from setup_arch() very
+> early for proper functioning of jump label support.
+>
+> Signed-off-by: Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>
 
-diff --git a/drivers/gpu/drm/amd/display/dc/hwss/dcn20/dcn20_hwseq.c b/drivers/gpu/drm/amd/display/dc/hwss/dcn20/dcn20_hwseq.c
-index 67a77274d813..bc21eb0b2760 100644
---- a/drivers/gpu/drm/amd/display/dc/hwss/dcn20/dcn20_hwseq.c
-+++ b/drivers/gpu/drm/amd/display/dc/hwss/dcn20/dcn20_hwseq.c
-@@ -327,7 +327,7 @@ void dcn20_enable_power_gating_plane(
- 	if (REG(DOMAIN9_PG_CONFIG))
- 		REG_UPDATE(DOMAIN9_PG_CONFIG, DOMAIN9_POWER_FORCEON, force_on);
- 	if (REG(DOMAIN11_PG_CONFIG))
--		REG_UPDATE(DOMAIN11_PG_CONFIG, DOMAIN9_POWER_FORCEON, force_on);
-+		REG_UPDATE(DOMAIN11_PG_CONFIG, DOMAIN11_POWER_FORCEON, force_on);
- 
- 	/* DCS0/1/2/3/4/5 */
- 	REG_UPDATE(DOMAIN16_PG_CONFIG, DOMAIN16_POWER_FORCEON, force_on);
--- 
-2.34.1
+Thanks for your patch!
 
+> --- a/arch/m68k/kernel/setup_mm.c
+> +++ b/arch/m68k/kernel/setup_mm.c
+> @@ -249,7 +249,11 @@ void __init setup_arch(char **cmdline_p)
+>         process_uboot_commandline(&m68k_command_line[0], CL_SIZE);
+>         *cmdline_p =3D m68k_command_line;
+>         memcpy(boot_command_line, *cmdline_p, CL_SIZE);
+> -
+> +       /*
+> +        * Initialise the static keys early as they may be enabled by the
+> +        * cpufeature code and early parameters.
+> +        */
+> +       jump_label_init();
+>         parse_early_param();
+>
+>         switch (m68k_machtype) {
+
+This is indeed what some (but not all) other architectures are doing, so
+Reviewed-by: Geert Uytterhoeven <geert@linux-m68k.org>
+
+I assume you saw some "static key used before call to jump_label_init()"
+warning[1]? Since I never saw such a message, can you please elaborate
+and explain your use case, so I can add that to the patch description
+when applying?
+
+Thanks!
+
+[1] https://elixir.bootlin.com/linux/v6.11.6/source/include/linux/jump_labe=
+l.h#L81
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
