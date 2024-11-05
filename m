@@ -1,232 +1,180 @@
-Return-Path: <linux-kernel+bounces-396526-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396535-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90A949BCE67
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 14:57:06 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92EA89BCE98
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 15:04:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 22E981F22D58
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 13:57:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B64551C218BE
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 14:04:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E56521D6DDD;
-	Tue,  5 Nov 2024 13:56:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 401E01D86C4;
+	Tue,  5 Nov 2024 14:03:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="yPfSZpV9"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=savoirfairelinux.com header.i=@savoirfairelinux.com header.b="vvEjIjNZ"
+Received: from mail.savoirfairelinux.com (mail.savoirfairelinux.com [208.88.110.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E79E1D45FD
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 13:56:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CA341D5160
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 14:03:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=208.88.110.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730815019; cv=none; b=NzyBPsZfGJxeahurfcoIJIBywroCUOOfHhpy/AF/OUB2ndXRqQfwps11iBHulkAKY/VYk3TCkr6+hzpKY0JBuyQbLZxl4Qst0a8xyeS0lbMUHgk4fA9u3oj/EvvbE/TNkre5c9pJsuVHq5NvwLdrHnyutnt+gpIttIVoGula4yw=
+	t=1730815438; cv=none; b=ph3KHY82ufdc2oX0WaD7Spqo5Ny73aCF59w5Sy6zGMTpzUNpz+LM4dZUXm/aqeVkOeC/DZvyDon7CD37oTOhnJDe8j4ZleMAip2wm6tZWzxIUuNgv0G5eMorvD5ahYpm0RoslUqrZwImJLNa66k2NqckL7EQ5QC6KTNy/G5Q0HE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730815019; c=relaxed/simple;
-	bh=DJkjA7NJvQi23HKgxrx3OCRxRVzocnpwy7YwAOlhaho=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rEXfKnycV6MLQsoS3tr3b8H4X3rY/kDHwVEuy32KLY6fCUM/Y4eJHPTRDjr1E7w+XX4m2RWRHsiX+8RwyfJRP8R8to1dl8B7DZ9j+N6J8XpkNErHzILdycx5OfZUVrwPawcihxLQUb0z58QsRZzR0nwDUser4zUPh8TrBV0PZto=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=yPfSZpV9; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-43193678216so47192955e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 05:56:57 -0800 (PST)
+	s=arc-20240116; t=1730815438; c=relaxed/simple;
+	bh=bTWTSNiAotUnHnllbcY0LdMXkwpE2P3sBMcLOhKkx5I=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=CJfUDbrGgrPDi/rejdng5mXfVBqwa2gdy65/0NA1gI59gjCPIlY+tup/G9SPGLKCDs0W6SUvdxIO1PcbEPRizsZp5j132wNcJNs0/Qw2NlbMXU+G9cgOrNh9tPKmnUyn0dLg+0HZxGdKfV+v/JxSyXf8hGPz+FmrYHN++zbsq8c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=savoirfairelinux.com; spf=pass smtp.mailfrom=savoirfairelinux.com; dkim=pass (2048-bit key) header.d=savoirfairelinux.com header.i=@savoirfairelinux.com header.b=vvEjIjNZ; arc=none smtp.client-ip=208.88.110.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=savoirfairelinux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=savoirfairelinux.com
+Received: from localhost (localhost [127.0.0.1])
+	by mail.savoirfairelinux.com (Postfix) with ESMTP id 74F009C5794;
+	Tue,  5 Nov 2024 08:58:19 -0500 (EST)
+Received: from mail.savoirfairelinux.com ([127.0.0.1])
+ by localhost (mail.savoirfairelinux.com [127.0.0.1]) (amavis, port 10032)
+ with ESMTP id VBzwaD1mWAko; Tue,  5 Nov 2024 08:58:18 -0500 (EST)
+Received: from localhost (localhost [127.0.0.1])
+	by mail.savoirfairelinux.com (Postfix) with ESMTP id AF3679C63E4;
+	Tue,  5 Nov 2024 08:58:18 -0500 (EST)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.savoirfairelinux.com AF3679C63E4
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1730815016; x=1731419816; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DzlpItDjbomglGLyYv6ZYQR5XIRTbsFKXOc4xD6qxj0=;
-        b=yPfSZpV9xIyHTVRjNBftb8cG+k8txZYDNGVhJaggxxTuwDRx7u7vJrGlKXiwE8wB24
-         xCBDZuH4wnFZAAPMP+lOXjz0Qfzk7Z2V91POoxRw4q9uBCSjTUpuQKb/nMhD0k5tdwNl
-         pcjczIzpd8cOHLuYpVhgZ/pM4WCJU5KCy/7wxx7f7LXKRC4Ly2HUZ3ifYdnUYcSc7EOM
-         AQWA9ZBjDULh/zkkRtvydggWLZgj1N8GB8ywkVP79bSRIBmSQ1sSm6M+gL9CQ9DZ1ET5
-         FoYlxgoz1TfTBNHRSV7xWZ5jrEWITM2v8vpjEyH0lnKaj4u46v6GoHJL2wE0UD9v+pSf
-         jpSQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730815016; x=1731419816;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=DzlpItDjbomglGLyYv6ZYQR5XIRTbsFKXOc4xD6qxj0=;
-        b=jH08f92V2GFarMlAPJdgU1PtC7BbRiqxTAj8rgKywm8fJdKZUC6thkNGnvYu0NO1PW
-         vMo1v/XKL0pFzcdS62DnOX5iggmsJsa7sgGIzsypKlf3lgf68xKqKzmodp86a/IXdZ4s
-         ERZo7LLWFw9ZB1cxair5j4jnK6y9rBLDKYQqMTUaFPpd924PGXbzmFStYv6vJLhdqNQN
-         4TwfiiY+gsE5edc0mZQddfg+JYn3dnAPvgIAvCa0WKB/ldUBDuFMZCKFoo+3rvTKXFZy
-         DmI8fZ8WScsUOT6dJKmb5HMt9gaN23I4Zz/1YpwzmXYMbozZkdvmiiAXiEKiZT/R1nzq
-         9G9w==
-X-Forwarded-Encrypted: i=1; AJvYcCW/eqA7GaO+XxFU5lO2a+KJFR4IIpKRc+n5EVgHml5pyR2FImmKlKZErAnDiTAOUskHkVmr6TadmCXW9fw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxS6INxEb/8iQetNHsCdLq7OD1I9mYsvv6a8pg4itxrchayRHMW
-	GzjqOsaFJzYSEukuGQ7B5+nDNAnY1Ua23L3PO4RVSWaDAEgVFEI/MLS/qEFaZyx9rsRH273jT2D
-	3tKRJacIId3QKNyV1kpfvOLJGWKGz4FFdqiu7
-X-Google-Smtp-Source: AGHT+IGfGtcBSbUN4qfO7S8deLzFzsXT/Kon05UIs3myi6cEll38dO8bx64onPiGM+Aa+P5MdR7PO/Cmb45AkaZsNCM=
-X-Received: by 2002:a05:6000:11cb:b0:37d:3f81:153e with SMTP id
- ffacd0b85a97d-380611282d9mr23992523f8f.14.1730815015642; Tue, 05 Nov 2024
- 05:56:55 -0800 (PST)
+	d=savoirfairelinux.com; s=DFC430D2-D198-11EC-948E-34200CB392D2;
+	t=1730815098; bh=SBKGTrlLTDQIGERPKwoCpnmjiyE6/uKRwA3Oxcr3bRg=;
+	h=Date:From:To:Message-ID:MIME-Version;
+	b=vvEjIjNZBE+9/GzVkprdX13JfbvyhVjnJCzZZHS3fU3uJQu1pU0KybGYrg2m6z6co
+	 uMwJY9KT7NrXacgCmFv1V6myU7JtG4Y/TMiNRX6bB7wobei8Cvy88/0nCGTg3qhiZC
+	 sR2j3RsfVHtUwlkM5Qi+GPyvHez+nIllMlBgM3BlLcv1Gnot+M8G2jSmZJZ2+Nr5gw
+	 cgbRtOyqTUJ3CT6Xq8waGPGWX5MOCz6UwOrP1KekXYe2YTsY9a4mmeQEQOORUcoqmH
+	 qptzEcWOlWAqpYzeMJ9+mFcPYryr/HqZaF/ADF783b2T5GUJ6lkxNsWliGA6RX6Rwe
+	 JS/0pT5GRBwfA==
+X-Virus-Scanned: amavis at mail.savoirfairelinux.com
+Received: from mail.savoirfairelinux.com ([127.0.0.1])
+ by localhost (mail.savoirfairelinux.com [127.0.0.1]) (amavis, port 10026)
+ with ESMTP id xvHjvFmXB96q; Tue,  5 Nov 2024 08:58:18 -0500 (EST)
+Received: from mail.savoirfairelinux.com (mail.savoirfairelinux.com [192.168.48.237])
+	by mail.savoirfairelinux.com (Postfix) with ESMTP id 762169C5794;
+	Tue,  5 Nov 2024 08:58:18 -0500 (EST)
+Date: Tue, 5 Nov 2024 08:58:18 -0500 (EST)
+From: Elinor Montmasson <elinor.montmasson@savoirfairelinux.com>
+To: Stefan Eichenberger <eichest@gmail.com>
+Cc: Stefan Wahren <wahrenst@gmx.net>, Shawn Guo <shawnguo2@yeah.net>, 
+	Russell King <linux@armlinux.org.uk>, 
+	Shawn Guo <shawnguo@kernel.org>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	Fabio Estevam <festevam@gmail.com>, 
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, 
+	imx <imx@lists.linux.dev>, 
+	linux-kernel <linux-kernel@vger.kernel.org>, 
+	Stefan Eichenberger <stefan.eichenberger@toradex.com>
+Message-ID: <1044800423.57572.1730815098440.JavaMail.zimbra@savoirfairelinux.com>
+In-Reply-To: <Zyj0VsTJ2qDHiss2@eichest-laptop>
+References: <20241030122128.115000-1-eichest@gmail.com> <ZyXTFhEm9UCBii2c@dragon> <ZyY41nJY9ghwe-Y4@eichest-laptop> <065268d6-84eb-4247-b834-40a9ff32c1f4@gmx.net> <ZyiAMpjmXuVMi5FX@eichest-laptop> <787b45a1-9f8d-493d-8930-e1c8d396c818@gmx.net> <Zyj0VsTJ2qDHiss2@eichest-laptop>
+Subject: Re: [PATCH v1] ARM: imx_v6_v7_defconfig: enable SND_SOC_SPDIF
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241101185033.131880-1-lorenzo.stoakes@oracle.com>
- <CAH5fLggUZJpmSd7F_k5bVKs0-ErK_74-zpWgMyWHX4vcSM-8Lg@mail.gmail.com> <e41dcb48-b59e-4d70-98f7-da18fafba31b@lucifer.local>
-In-Reply-To: <e41dcb48-b59e-4d70-98f7-da18fafba31b@lucifer.local>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Tue, 5 Nov 2024 14:56:43 +0100
-Message-ID: <CAH5fLggpEezhR_o+8RPmYix-JLZ47HwQLQM2OUzKQg3i7UYu5Q@mail.gmail.com>
-Subject: Re: [RFC PATCH] docs/mm: add VMA locks documentation
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Jonathan Corbet <corbet@lwn.net>, Andrew Morton <akpm@linux-foundation.org>, 
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Matthew Wilcox <willy@infradead.org>, 
-	Mike Rapoport <rppt@kernel.org>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	Suren Baghdasaryan <surenb@google.com>, linux-doc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Mailer: Zimbra 8.8.15_GA_4581 (ZimbraWebClient - GC112 (Linux)/8.8.15_GA_4581)
+Thread-Topic: imx_v6_v7_defconfig: enable SND_SOC_SPDIF
+Thread-Index: du0Xtk0rWav2/sd22e8hfQbQ+0Eh0A==
 
-On Mon, Nov 4, 2024 at 5:52=E2=80=AFPM Lorenzo Stoakes
-<lorenzo.stoakes@oracle.com> wrote:
->
-> +cc Suren, linux-doc who I mistakenly didn't cc in first email!
->
-> On Mon, Nov 04, 2024 at 03:47:56PM +0100, Alice Ryhl wrote:
-> > On Fri, Nov 1, 2024 at 7:50=E2=80=AFPM Lorenzo Stoakes
-> > <lorenzo.stoakes@oracle.com> wrote:
-> > >
-> > > Locking around VMAs is complicated and confusing. While we have a num=
-ber of
-> > > disparate comments scattered around the place, we seem to be reaching=
- a
-> > > level of complexity that justifies a serious effort at clearly docume=
-nting
-> > > how locks are expected to be interacted with when it comes to interac=
-ting
-> > > with mm_struct and vm_area_struct objects.
-> > >
-> > > This is especially pertinent as regards efforts to find sensible
-> > > abstractions for these fundamental objects within the kernel rust
-> > > abstraction whose compiler strictly requires some means of expressing=
- these
-> > > rules (and through this expression can help self-document these
-> > > requirements as well as enforce them which is an exciting concept).
-> > >
-> > > The document limits scope to mmap and VMA locks and those that are
-> > > immediately adjacent and relevant to them - so additionally covers pa=
-ge
-> > > table locking as this is so very closely tied to VMA operations (and =
-relies
-> > > upon us handling these correctly).
-> > >
-> > > The document tries to cover some of the nastier and more confusing ed=
-ge
-> > > cases and concerns especially around lock ordering and page table tea=
-rdown.
-> > >
-> > > The document also provides some VMA lock internals, which are up to d=
-ate
-> > > and inclusive of recent changes to recent sequence number changes.
-> > >
-> > > Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> >
-> > [...]
-> >
-> > > +Page table locks
-> > > +----------------
-> > > +
-> > > +When allocating a P4D, PUD or PMD and setting the relevant entry in =
-the above
-> > > +PGD, P4D or PUD, the `mm->page_table_lock` is acquired to do so. Thi=
-s is
-> > > +acquired in `__p4d_alloc()`, `__pud_alloc()` and `__pmd_alloc()` res=
-pectively.
-> > > +
-> > > +.. note::
-> > > +   `__pmd_alloc()` actually invokes `pud_lock()` and `pud_lockptr()`=
- in turn,
-> > > +   however at the time of writing it ultimately references the
-> > > +   `mm->page_table_lock`.
-> > > +
-> > > +Allocating a PTE will either use the `mm->page_table_lock` or, if
-> > > +`USE_SPLIT_PMD_PTLOCKS` is defined, used a lock embedded in the PMD =
-physical
-> > > +page metadata in the form of a `struct ptdesc`, acquired by `pmd_ptd=
-esc()`
-> > > +called from `pmd_lock()` and ultimately `__pte_alloc()`.
-> > > +
-> > > +Finally, modifying the contents of the PTE has special treatment, as=
- this is a
-> > > +lock that we must acquire whenever we want stable and exclusive acce=
-ss to
-> > > +entries pointing to data pages within a PTE, especially when we wish=
- to modify
-> > > +them.
-> > > +
-> > > +This is performed via `pte_offset_map_lock()` which carefully checks=
- to ensure
-> > > +that the PTE hasn't changed from under us, ultimately invoking `pte_=
-lockptr()`
-> > > +to obtain a spin lock at PTE granularity contained within the `struc=
-t ptdesc`
-> > > +associated with the physical PTE page. The lock must be released via
-> > > +`pte_unmap_unlock()`.
-> > > +
-> > > +.. note::
-> > > +   There are some variants on this, such as `pte_offset_map_rw_noloc=
-k()` when we
-> > > +   know we hold the PTE stable but for brevity we do not explore thi=
-s.
-> > > +   See the comment for `__pte_offset_map_lock()` for more details.
-> > > +
-> > > +When modifying data in ranges we typically only wish to allocate hig=
-her page
-> > > +tables as necessary, using these locks to avoid races or overwriting=
- anything,
-> > > +and set/clear data at the PTE level as required (for instance when p=
-age faulting
-> > > +or zapping).
-> >
-> > Speaking as someone who doesn't know the internals at all ... this
-> > section doesn't really answer any questions I have about the page
-> > table. It looks like this could use an initial section about basic
-> > usage, and the detailed information could come after? Concretely, if I
-> > wish to call vm_insert_page or zap some pages, what are the locking
-> > requirements? What if I'm writing a page fault handler?
->
-> Ack totally agree, I think we need this document to serve two purposes -
-> one is to go over, in detail, the locking requirements from an mm dev's
-> point of view with internals focus, and secondly to give those outside mm
-> this kind of information.
->
-> It's good to get insight from an outside perspective as inevitably we mm
-> devs lose sight of the wood for the trees when it comes to internals
-> vs. practical needs of those who make use of mm in one respect or another=
-.
->
-> So this kind of feedback is very helpful and welcome :) TL;DR - yes I wil=
-l
-> explicitly state what is required for various operations on the respin.
->
-> >
-> > Alice
->
-> As a wordy aside, a large part of the motivation of this document, or
-> certainly my prioritisation of it, is explicitly to help the rust team
-> correctly abstract this aspect of mm.
->
-> The other part is to help the mm team, that is especailly myself, correct=
-ly
-> understand and _remember_ the numerous painful ins and outs of this stuff=
-,
-> much of which has been pertinent of late for not wonderfully positive
-> reasons.
->
-> Hopefully we accomplish both! :>)
+Hi Stefan,
 
-I do think this has revealed one issue with my Rust patch, which is
-that VmAreaMut currently requires the mmap lock, but it should also
-require the vma lock, since you need both for writing.
+On Monday, 4 November, 2024 17:20:38, Stefan Eichenberger wrote:
+> Hi Stefan,
+> 
+> On Mon, Nov 04, 2024 at 12:39:40PM +0100, Stefan Wahren wrote:
+>> Hi Stefan,
+>> 
+>> Am 04.11.24 um 09:05 schrieb Stefan Eichenberger:
+>> > Hi Stefan,
+>> > 
+>> > On Sat, Nov 02, 2024 at 04:35:19PM +0100, Stefan Wahren wrote:
+>> > > Hi Stefan,
+>> > > 
+>> > > Am 02.11.24 um 15:36 schrieb Stefan Eichenberger:
+>> > > > Hi Shawn,
+>> > > > 
+>> > > > On Sat, Nov 02, 2024 at 03:21:58PM +0800, Shawn Guo wrote:
+>> > > > > On Wed, Oct 30, 2024 at 01:21:12PM +0100, Stefan Eichenberger wrote:
+>> > > > > > From: Stefan Eichenberger <stefan.eichenberger@toradex.com>
+>> > > > > > 
+>> > > > > > Enable SND_SOC_SPDIF in imx_v6_v7_defconfig to support SPDIF audio. This
+>> > > > > > change will fix commit d469b771afe1 ("ARM: dts: imx6: update spdif sound
+>> > > > > > card node properties") which moves away from the old "spdif-controller"
+>> > > > > > property to the new "audio-codec" property.
+>> > > > > > 
+>> > > > > > Fixes: d469b771afe1 ("ARM: dts: imx6: update spdif sound card node properties")
+>> > > > > It doesn't look a fix to me.
+>> > > > I agree somehow, it was just that before the referenced commit our test
+>> > > > succeeds with the imx_v6_v7_defconfig and after that we get the
+>> > > > following error:
+>> > > > [   24.165534] platform sound-spdif: deferred probe pending: fsl-asoc-card:
+>> > > > snd_soc_register_card failed
+>> > > this error should have been in the commit message including the
+>> > > information which platform/board is affected.
+>> > Okay, I will add this information to the next version. We see this error
+>> > on an Apalis iMX6 which has in my variant an NXP i.MX6Q SoC.
+>> > 
+>> > > > So maybe it is not a fix in the sense of a bug, but it fixes the error
+>> > > > message. However, I'm also fine with removing the Fixes tag.
+>> > > But this patch doesn't look like the real approach.
+>> > > 
+>> > > Could you please clarify the impact of the regression?
+>> > So the problem is that before commit d469b771afe1 ("ARM: dts: imx6:
+>> > update spdif sound card node properties") the audio driver was
+>> > using an implementation of linux,spdif-dit and linux,spdif-dir which was
+>> > directly inside the fsl,imx-audio-spdif compatible driver. Now with the
+>> > referenced commit the idea is to use the more generic linux,spdif-dir
+>> > and linux,spdif-dit compatible drivers. That's why this driver must be
+>> > enabled in the kernel configuration.
+>> > 
+>> > > Is it just this error message and audio works fine or is audio also broken?
+>> > It is not just the error message, audio is not working because the
+>> > driver deferes and because it is not enabled it will never succeed to
+>> > load. I don't know if this is called a regression, because the driver is
+>> > there it is just not enabled in the imx6_v7_defconfig. I thought because
+>> > a lot of the i.MX6 based board use the generic driver, it makes sense to
+>> > enable it in the imx_v6_v7_defconfig.
+>> okay, thanks for the clarification. From my understanding
+>> imx6_v7_defconfig is just an example config for testing. All possible
+>> users of these boards might have their own configs and stumble across
+>> the same issue. So I thought it would be better to add the dependency in
+>> the Kconfig of the FSL audio driver.
+>> 
+>> I'm not that audio driver expert and don't know how the dependency
+>> handling between the FSL audio driver and the required codecs like
+>> SND_SOC_SPDIF. So it's possible that I'm completely wrong here and your
+>> approach is the best we can do.
+> 
+> That might be a good point. I don't know how this is usually handled.
+> @Shawn and @Elinor, do you think this could be an approach to make
+> SND_SOC_FSL_ASOC_CARD select SND_SOC_SPDIF? It already seems to do this
+> for SND_SOC_WM8994 and SND_SOC_FSL_SPDIF.
 
-Alice
+SND_SOC_FSL_ASOC_CARD will compile the machine driver fsl-asoc-card,
+SND_SOC_FSL_SPDIF the CPU DAI driver fsl_spdif for the SPDIF
+and SND_SOC_SPDIF the codec drivers spdif-rx and spdif-tx.
+
+In my commit series I made SND_SOC_FSL_ASOC_CARD select SND_SOC_FSL_SPDIF
+because the old machine driver previously compiled with SND_SOC_IMX_SPDIF
+selected SND_SOC_FSL_SPDIF.
+But because fsl-asoc-card is a generic driver, it could be used on a system
+that doesn't have an SPDIF device, and therefore should not require
+SND_SOC_SPDIF nor SND_SOC_FSL_SPDIF.
+So maybe it is not a good idea to automatically select SND_SOC_FSL_SPDIF or SND_SOC_SPDIF.
+
+On the other hand, if every imx6 or imx7 boards have an SPDIF device, then
+I suppose SND_SOC_SPDIF can be put in imx_v6_v7_defconfig.
+
+Regards,
+Elinor
 
