@@ -1,57 +1,63 @@
-Return-Path: <linux-kernel+bounces-396814-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396815-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2E169BD295
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 17:39:10 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C79C09BD296
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 17:39:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 88118282015
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 16:39:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 046751C2222E
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 16:39:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0BB51E0DC7;
-	Tue,  5 Nov 2024 16:38:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD46F1DAC97;
+	Tue,  5 Nov 2024 16:38:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t0ug9P1x"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DvaRf/uh"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 230291DF965;
-	Tue,  5 Nov 2024 16:38:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14C2F1E1A18;
+	Tue,  5 Nov 2024 16:38:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730824703; cv=none; b=qO2gvuO5WfXI1ql3ja5HJ+LQ0Tg4yoKkRv9/5C202/oUpN+gLukPvKw1M8gbnLjqomohc/XKZAw25uzDIqAOxpCamXN2a019dYknQCl3srEJ/TdPwhV5HSoQoks9kdzivR5OfNGPNHQAOOqmaNQG0CwyE76IHyq3BDOF2xpqsEQ=
+	t=1730824706; cv=none; b=WIVP8ZZz/4SCrR7RzIOqb4kcpjidvZH87/vpGQCW7JwYs6sIzYgymycwMBhYu04XjTt6DWtvUw9EH/XdAX57btj7mWJkuUiErqlZYGT/c0lk3KdbKgWQcxB1i7GDTU2dxBLqV0epbaWMBnYZ4jJUb2HCspdLXs+lIABKlYLxu5M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730824703; c=relaxed/simple;
-	bh=Fma6XFgCqfjYGnYfDtMUvnzfc/WI0JtMlx9ImAuLeyc=;
-	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=AjH2L1xiRfKXgfqvZ5vcZonZC2IqiwLqMel72Tvb4jHE1v3+fbfQad/boC7glXnAy5VPKXUUQN+b6bRy/Ofsu+3wpNmAmLEfhbBCWng2Qubd0GnuuDSLx43ZhUz7zKHvXUebZN4x8PD8LbEu8fa4f+vFuNxG+yhoz5i3iYNm2yo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t0ug9P1x; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2DF8C4CED3;
-	Tue,  5 Nov 2024 16:38:20 +0000 (UTC)
+	s=arc-20240116; t=1730824706; c=relaxed/simple;
+	bh=omxC84VGn/+YQr7YbyZx+jQOt5oTJWK99g8fh9uYgT4=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=JbXHhATKuYlyiIMYYDhArp7trwafEiop1+0mBfgBbBZmkhiTV9LQaeyhC2Z4CUU6j84BKSIUfd65GFRueJhDD69FnVeSu6qpmv9xARtxX2ALKL37QEwqOPQr8Txg5kebN1pfCwZm5HmikNPkV+Mj3bE4JBg2HmmZIm8mTOiQBdE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DvaRf/uh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2500DC4CED4;
+	Tue,  5 Nov 2024 16:38:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730824702;
-	bh=Fma6XFgCqfjYGnYfDtMUvnzfc/WI0JtMlx9ImAuLeyc=;
-	h=From:To:In-Reply-To:References:Subject:Date:From;
-	b=t0ug9P1xSRFfLjOY8qw7KoTG8Fpae8qE/dbeKDyC1DjIKlLX3htFFn3SMh58rk7eG
-	 PhGvNEVy0DMnZu6UB7LchNEfudNim7MlKhR4eiUn80BDyimNE1Qz061uHHaT32bU5t
-	 caTdOvSuNmkrqtlMUJBenL06t6BrqWL5uH2XqzB+z6rZWmpBzKFJxesshaAqJar9f8
-	 S4InGPH3r3c5DsMgchCD/go/h1cTnXMB8rQXKlSWS4Gl2lXaMciVicEuvVci+VknNU
-	 YJrdrQpmUY44Susjv6Ovt0QK+U+qPYpZt1NavRmjUAsprQnDiPEwXgMv5H6R5XsrSk
-	 2eVp9TMAororw==
+	s=k20201202; t=1730824705;
+	bh=omxC84VGn/+YQr7YbyZx+jQOt5oTJWK99g8fh9uYgT4=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=DvaRf/uhp2xk2i+id0MOV/XKBXEpoPGF27r9aIiU8ES8BhUS5q77LiwNV32tTkqWp
+	 n+RCTU3Pn2wPlAOHxpxykq8dChEwd4WqOCpaQSeIToC/kBgRDGDU/kEg0xIERNSssh
+	 jkJ1caVmGpeZBZK5a2G9l4JJ6ycq+hZ1y6oEPjwFnMRfQcGPyNPgp0xF6J18oJR1LV
+	 /XyL/or9i5/T/ssqty5KadvXy9rKQJDxuCRqFz/BbpiwXLoqAQg4qaFUyqW7zqc5qk
+	 JfzwqDuHJ/D0+i1cDyWM2UIDW4oJOxMKeKJ3O4DkSEi+rwAes9whSKQGJUEZ+cOdUY
+	 D38kuNRb/TSkw==
 From: Mark Brown <broonie@kernel.org>
-To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
+To: alsa-devel@alsa-project.org, 
+ Venkata Prasad Potturu <venkataprasad.potturu@amd.com>
+Cc: mario.limonciello@amd.com, Vijendar.Mukunda@amd.com, 
+ Basavaraj.Hiregoudar@amd.com, Sunil-kumar.Dommati@amd.com, ssabakar@amd.com, 
  Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, 
- Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org, 
- linux-arm-msm@vger.kernel.org, linux-sound@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20241023124152.130706-1-krzysztof.kozlowski@linaro.org>
-References: <20241023124152.130706-1-krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH] ASoC: qcom: x1e80100: Support boards with two speakers
-Message-Id: <173082470066.77847.3145634719799599408.b4-ty@kernel.org>
-Date: Tue, 05 Nov 2024 16:38:20 +0000
+ Takashi Iwai <tiwai@suse.com>, 
+ Cristian Ciocaltea <cristian.ciocaltea@collabora.com>, 
+ Emil Velikov <emil.velikov@collabora.com>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+ "open list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." <linux-sound@vger.kernel.org>, 
+ open list <linux-kernel@vger.kernel.org>
+In-Reply-To: <20241104091312.1108299-1-venkataprasad.potturu@amd.com>
+References: <20241104091312.1108299-1-venkataprasad.potturu@amd.com>
+Subject: Re: [PATCH] ASoC: amd: acp: Fix for ACP SOF dmic tplg component
+ load failure
+Message-Id: <173082470287.77847.14499487480313142859.b4-ty@kernel.org>
+Date: Tue, 05 Nov 2024 16:38:22 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,14 +68,22 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.15-dev-9b746
 
-On Wed, 23 Oct 2024 14:41:52 +0200, Krzysztof Kozlowski wrote:
-> Some Qualcomm X1E laptops have only two speakers.  Regardless whether
-> this sound card driver is suitable for them (we could re-use one for
-> some older SoC), we should set reasonable channel map depending on the
-> number of channels, not always 4-speaker setup.
+On Mon, 04 Nov 2024 14:43:10 +0530, Venkata Prasad Potturu wrote:
+> Stream name mismatch with topology file causes tplg load failure.
 > 
-> This change is necessary for bringing audio support on Lenovo Thinkpad
-> T14s with Qualcomm X1E78100 and only two speakers.
+> As SOF framework assigns dailink->stream name, overriding stream name
+> other than link name causes SOF dmic component load failure.
+> 
+> [   35.474995] snd_sof_amd_acp70 0000:c4:00.5: error: can't connect DAI ACPDMIC0.IN stream acp-dmic-codec
+> [   35.475001] snd_sof_amd_acp70 0000:c4:00.5: failed to add widget type 28 name : ACPDMIC0.IN stream acp-dmic-codec
+> [   35.475013] sof_mach acp70-dsp: ASoC: failed to load widget ACPDMIC0.IN
+> [   35.475018] sof_mach acp70-dsp: ASoC: topology: could not load header: -22
+> [   35.475072] snd_sof_amd_acp70 0000:c4:00.5: error: tplg component load failed -22
+> [   35.475083] snd_sof_amd_acp70 0000:c4:00.5: error: failed to load DSP topology -22
+> [   35.475090] snd_sof_amd_acp70 0000:c4:00.5: ASoC: error at snd_soc_component_probe on 0000:c4:00.5: -22
+> [   35.475117] sof_mach acp70-dsp: ASoC: failed to instantiate card -22
+> [   35.475254] sof_mach acp70-dsp: error -EINVAL: Failed to register card(sof-acp70-dsp)
+> [   35.475261] sof_mach acp70-dsp: probe with driver sof_mach failed with error -22
 > 
 > [...]
 
@@ -79,8 +93,8 @@ Applied to
 
 Thanks!
 
-[1/1] ASoC: qcom: x1e80100: Support boards with two speakers
-      commit: 159098859bf6d46b34a1e1f7d44d28987b875878
+[1/1] ASoC: amd: acp: Fix for ACP SOF dmic tplg component load failure
+      commit: 224b898f7c5ff575b02911e21383f271761bdeb6
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
