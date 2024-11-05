@@ -1,305 +1,498 @@
-Return-Path: <linux-kernel+bounces-396828-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396829-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1C619BD2C8
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 17:49:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EF549BD2CB
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 17:49:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5CD661F23420
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 16:49:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9527D1F2335A
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 16:49:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF8D11DBB36;
-	Tue,  5 Nov 2024 16:49:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="NYRuPq++";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="DGcF5vDa";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="QIqfceDT";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="JMNuDVt1"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 507DE10F2;
+	Tue,  5 Nov 2024 16:49:36 +0000 (UTC)
+Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B42471DAC97;
-	Tue,  5 Nov 2024 16:49:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F51D1D47B4
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 16:49:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730825344; cv=none; b=tj6d9w3lE1yugQhnwsMUVFj7+HCVXKKbF7ctWPfOj2gWbUsFpolF5f7QL+Tc7hqqzF8v6sVoY21sqW1a+kuV+fe2dSK/OAJNHQY9PNXnF8RgBlW4Gfob9s0NASoBa50A1XBngvw88v54zqSdJ9TlQEUqv69Yexkvlvqt5WwOk+g=
+	t=1730825375; cv=none; b=r6Biv1AAs44TLuJSRayRV4zcpehoQJ2Gof5NYM6wXpEAnGnO1rt75hWOV/rCKi8GmXiaskfEmc87rplvezBIIPcC28o7yJM2EWmIO17eTO48kQ5ZnGHumKg+ow5v9yztGRvfKgASmQTQNztUOrqBnNFZbgSF6h1f9olJ78mOE38=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730825344; c=relaxed/simple;
-	bh=n1M8eYvcy4vxaYE3aT/vYOheUF89T8PxeiDu4aXuYrw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NMfrMEdzga63529VEktbbNcSMNAd8vt2ZM6VwZIIN6WLqZ7KWz6nGUrkaLZXsZZvS1I6X5+jQvD1vnkJmIUTrpbPyGBiC1bqky+xAplC0t8mwF4aWePlKPPPthcUz9DWNxDCkcQhs73QtCqTLRczcTbHA32wEPT5x0gls47lAc8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=NYRuPq++; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=DGcF5vDa; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=QIqfceDT; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=JMNuDVt1; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id F0D5A21A59;
-	Tue,  5 Nov 2024 16:48:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1730825337; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=Y8W9ITZ5CUh56ymy7dmK9dmRxQpo2pX2hbTgzLCk+ms=;
-	b=NYRuPq++xd6m/mtCgAyZo3PSvIgKq+2jyN21E98rf3HBEe6nOTSSyPULnrGG7CB+GAzg+c
-	T413kIQYwSKBcb6WpS0ysljYULMKdhgZQR8q8GLbGIY7kygpVf56HXQXxIYJJEbMopeRH4
-	Vmjnk4dHZ7jAk8nbQUd+sxXEwIBY1eg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1730825337;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=Y8W9ITZ5CUh56ymy7dmK9dmRxQpo2pX2hbTgzLCk+ms=;
-	b=DGcF5vDaukPT1PbNedp149RPizSd0JiXm4jiLMrFjGcp/paJ+t3fCLfc6CVOChdtP6BxdW
-	O9zks+3SV/LUTvDg==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1730825336; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=Y8W9ITZ5CUh56ymy7dmK9dmRxQpo2pX2hbTgzLCk+ms=;
-	b=QIqfceDTRuQrQRkwis0I5B9MSJbLZ7Xb1UC1Xkg6kducn2rGMjZ2GayduIcJZ+A/NN8+sa
-	7/Qm0Hz+HTZ7b5TJeZ7KJR18NLteGu3oZ+4ySzlZW+CBl4c6TbuUWnEs4puoxLxfzS3YFc
-	ovAGzgWJOvq37Vt1NGAiOLzrCASxpC0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1730825336;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=Y8W9ITZ5CUh56ymy7dmK9dmRxQpo2pX2hbTgzLCk+ms=;
-	b=JMNuDVt1O/nnonqFDO2eVc7yA3jiThGJcpDQXqzsO8C9jeO+bfyk/OrjTqm9u3cE8nM7bP
-	t/mddX4mxEw4InDw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D2DF713964;
-	Tue,  5 Nov 2024 16:48:56 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id h5XvMnhMKmceUAAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Tue, 05 Nov 2024 16:48:56 +0000
-Message-ID: <6125f047-7326-49f7-a568-9cabf80f51c7@suse.cz>
-Date: Tue, 5 Nov 2024 17:48:56 +0100
+	s=arc-20240116; t=1730825375; c=relaxed/simple;
+	bh=DHKKCAIUWZd43CgTM7I24nEBCrR5JIn78pWnPe0zl6k=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=lcOUbZl2hZdwdXHLOvOfjBJy/0p9kZo1InYPlOuhK+Wp20nYq1ELzV5RS3VfZSRXRXIT5d6n2fRT+UUSFsq/I9jPARQqzOm9VxY5L4eU/bZF15/VMOztvOlFHwhOnWP5mO6v5cN0Y+1wFm+NtvItd7plGT7GqgkefYjcVcLpgIk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.186.29])
+	by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4XjYgN3P9Wz9v7JC
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 00:28:48 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.47])
+	by mail.maildlp.com (Postfix) with ESMTP id 48AC21408F9
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 00:49:16 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.206.133.88])
+	by APP1 (Coremail) with SMTP id LxC2BwBHBTaATCpnVFAUAQ--.15649S2;
+	Tue, 05 Nov 2024 17:49:15 +0100 (CET)
+From: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>
+To: paulmck@kernel.org
+Cc: stern@rowland.harvard.edu,
+	parri.andrea@gmail.com,
+	will@kernel.org,
+	peterz@infradead.org,
+	boqun.feng@gmail.com,
+	npiggin@gmail.com,
+	dhowells@redhat.com,
+	j.alglave@ucl.ac.uk,
+	luc.maranget@inria.fr,
+	akiyks@gmail.com,
+	dlustig@nvidia.com,
+	joel@joelfernandes.org,
+	urezki@gmail.com,
+	quic_neeraju@quicinc.com,
+	frederic@kernel.org,
+	linux-kernel@vger.kernel.org,
+	lkmm@lists.linux.dev,
+	hernan.poncedeleon@huaweicloud.com,
+	Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>
+Subject: [PATCH v5] tools/memory-model: Distinguish between syntactic and semantic tags
+Date: Tue,  5 Nov 2024 17:48:58 +0100
+Message-Id: <20241105164858.218336-1-jonas.oberhauser@huaweicloud.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] mm/slab: fix warning caused by duplicate kmem_cache
- creation in kmem_buckets_create
-Content-Language: en-US
-To: Koichiro Den <koichiro.den@gmail.com>,
- Catalin Marinas <Catalin.Marinas@arm.com>
-Cc: cl@linux.com, penberg@kernel.org, rientjes@google.com,
- iamjoonsoo.kim@lge.com, akpm@linux-foundation.org, roman.gushchin@linux.dev,
- 42.hyeyoo@gmail.com, kees@kernel.org, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, stable@vger.kernel.org
-References: <20241105022747.2819151-1-koichiro.den@gmail.com>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- EP+ylKVEKb0Q2A==
-In-Reply-To: <20241105022747.2819151-1-koichiro.den@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Score: -2.80
-X-Spamd-Result: default: False [-2.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RCVD_TLS_ALL(0.00)[];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	TAGGED_RCPT(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[13];
-	FREEMAIL_TO(0.00)[gmail.com,arm.com];
-	MID_RHS_MATCH_FROM(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[linux.com,kernel.org,google.com,lge.com,linux-foundation.org,linux.dev,gmail.com,kvack.org,vger.kernel.org];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:mid]
-X-Spam-Flag: NO
-X-Spam-Level: 
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:LxC2BwBHBTaATCpnVFAUAQ--.15649S2
+X-Coremail-Antispam: 1UD129KBjvAXoWfGr1fCrW7Jw18Jr1xur43Awb_yoW8ZrW8Xo
+	WrZr1Syw18XryDWFs8Kw1xJrWDWw4Iq3Z8Xry8Gw1j9Fy7ZayrXrnrGw1UK34fJF15Kwn8
+	WrZ7Z3sxXa17Jr18n29KB7ZKAUJUUUUr529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
+	AaLaJ3UjIYCTnIWjp_UUUYL7AC8VAFwI0_Xr0_Wr1l1xkIjI8I6I8E6xAIw20EY4v20xva
+	j40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxSw2
+	x7M28EF7xvwVC0I7IYx2IY67AKxVWUJVWUCwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxVW8
+	JVWxJwA2z4x0Y4vEx4A2jsIE14v26r4j6F4UM28EF7xvwVC2z280aVCY1x0267AKxVW8JV
+	W8Jr1ln4kS14v26r1Y6r17M2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE
+	6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1Y6r17McIj6I8E87Iv67AKxVWUJVW8JwAm72
+	CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7
+	M4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS14v26r4a6rW5MxAIw28IcxkI7VAKI4
+	8JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xv
+	wVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI42IY6xIIjx
+	v20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20E
+	Y4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267
+	AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7sRi1vVtUUUUU==
+X-CM-SenderInfo: 5mrqt2oorev25kdx2v3u6k3tpzhluzxrxghudrp/
 
-On 11/5/24 03:27, Koichiro Den wrote:
-> Commit b035f5a6d852 ("mm: slab: reduce the kmalloc() minimum alignment
-> if DMA bouncing possible") reduced ARCH_KMALLOC_MINALIGN to 8 on arm64.
-> However, with KASAN_HW_TAGS enabled, arch_slab_minalign() becomes 16.
-> This causes kmalloc_caches[*][8] to be aliased to kmalloc_caches[*][16],
-> resulting in kmem_buckets_create() attempting to create a kmem_cache for
-> size 16 twice. This duplication triggers warnings on boot:
-> 
-> [    2.325108] ------------[ cut here ]------------
-> [    2.325135] kmem_cache of name 'memdup_user-16' already exists
-> [    2.325783] WARNING: CPU: 0 PID: 1 at mm/slab_common.c:107 __kmem_cache_create_args+0xb8/0x3b0
-> [    2.327957] Modules linked in:
-> [    2.328550] CPU: 0 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.12.0-rc5mm-unstable-arm64+ #12
-> [    2.328683] Hardware name: QEMU QEMU Virtual Machine, BIOS 2024.02-2 03/11/2024
-> [    2.328790] pstate: 61000009 (nZCv daif -PAN -UAO -TCO +DIT -SSBS BTYPE=--)
-> [    2.328911] pc : __kmem_cache_create_args+0xb8/0x3b0
-> [    2.328930] lr : __kmem_cache_create_args+0xb8/0x3b0
-> [    2.328942] sp : ffff800083d6fc50
-> [    2.328961] x29: ffff800083d6fc50 x28: f2ff0000c1674410 x27: ffff8000820b0598
-> [    2.329061] x26: 000000007fffffff x25: 0000000000000010 x24: 0000000000002000
-> [    2.329101] x23: ffff800083d6fce8 x22: ffff8000832222e8 x21: ffff800083222388
-> [    2.329118] x20: f2ff0000c1674410 x19: f5ff0000c16364c0 x18: ffff800083d80030
-> [    2.329135] x17: 0000000000000000 x16: 0000000000000000 x15: 0000000000000000
-> [    2.329152] x14: 0000000000000000 x13: 0a73747369786520 x12: 79646165726c6120
-> [    2.329169] x11: 656820747563205b x10: 2d2d2d2d2d2d2d2d x9 : 0000000000000000
-> [    2.329194] x8 : 0000000000000000 x7 : 0000000000000000 x6 : 0000000000000000
-> [    2.329210] x5 : 0000000000000000 x4 : 0000000000000000 x3 : 0000000000000000
-> [    2.329226] x2 : 0000000000000000 x1 : 0000000000000000 x0 : 0000000000000000
-> [    2.329291] Call trace:
-> [    2.329407]  __kmem_cache_create_args+0xb8/0x3b0
-> [    2.329499]  kmem_buckets_create+0xfc/0x320
-> [    2.329526]  init_user_buckets+0x34/0x78
-> [    2.329540]  do_one_initcall+0x64/0x3c8
-> [    2.329550]  kernel_init_freeable+0x26c/0x578
-> [    2.329562]  kernel_init+0x3c/0x258
-> [    2.329574]  ret_from_fork+0x10/0x20
-> [    2.329698] ---[ end trace 0000000000000000 ]---
-> 
-> [    2.403704] ------------[ cut here ]------------
-> [    2.404716] kmem_cache of name 'msg_msg-16' already exists
-> [    2.404801] WARNING: CPU: 2 PID: 1 at mm/slab_common.c:107 __kmem_cache_create_args+0xb8/0x3b0
-> [    2.404842] Modules linked in:
-> [    2.404971] CPU: 2 UID: 0 PID: 1 Comm: swapper/0 Tainted: G        W          6.12.0-rc5mm-unstable-arm64+ #12
-> [    2.405026] Tainted: [W]=WARN
-> [    2.405043] Hardware name: QEMU QEMU Virtual Machine, BIOS 2024.02-2 03/11/2024
-> [    2.405057] pstate: 60400009 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-> [    2.405079] pc : __kmem_cache_create_args+0xb8/0x3b0
-> [    2.405100] lr : __kmem_cache_create_args+0xb8/0x3b0
-> [    2.405111] sp : ffff800083d6fc50
-> [    2.405115] x29: ffff800083d6fc50 x28: fbff0000c1674410 x27: ffff8000820b0598
-> [    2.405135] x26: 000000000000ffd0 x25: 0000000000000010 x24: 0000000000006000
-> [    2.405153] x23: ffff800083d6fce8 x22: ffff8000832222e8 x21: ffff800083222388
-> [    2.405169] x20: fbff0000c1674410 x19: fdff0000c163d6c0 x18: ffff800083d80030
-> [    2.405185] x17: 0000000000000000 x16: 0000000000000000 x15: 0000000000000000
-> [    2.405201] x14: 0000000000000000 x13: 0a73747369786520 x12: 79646165726c6120
-> [    2.405217] x11: 656820747563205b x10: 2d2d2d2d2d2d2d2d x9 : 0000000000000000
-> [    2.405233] x8 : 0000000000000000 x7 : 0000000000000000 x6 : 0000000000000000
-> [    2.405248] x5 : 0000000000000000 x4 : 0000000000000000 x3 : 0000000000000000
-> [    2.405271] x2 : 0000000000000000 x1 : 0000000000000000 x0 : 0000000000000000
-> [    2.405287] Call trace:
-> [    2.405293]  __kmem_cache_create_args+0xb8/0x3b0
-> [    2.405305]  kmem_buckets_create+0xfc/0x320
-> [    2.405315]  init_msg_buckets+0x34/0x78
-> [    2.405326]  do_one_initcall+0x64/0x3c8
-> [    2.405337]  kernel_init_freeable+0x26c/0x578
-> [    2.405348]  kernel_init+0x3c/0x258
-> [    2.405360]  ret_from_fork+0x10/0x20
-> [    2.405370] ---[ end trace 0000000000000000 ]---
-> 
-> To address this, alias kmem_cache for sizes smaller than min alignment
-> to the aligned sized kmem_cache, as done with the default system kmalloc
-> bucket.
-> 
-> Cc: <stable@vger.kernel.org> # 6.11.x
-> Fixes: b32801d1255b ("mm/slab: Introduce kmem_buckets_create() and family")
-> Signed-off-by: Koichiro Den <koichiro.den@gmail.com>
+Not all annotated accesses provide the semantics their syntactic tags
+would imply. For example, an 'acquire tag on a write does not imply that
+the write is finally in the Acquire set and provides acquire ordering.
 
-Thanks. Given this warning was introduced in 6.12, I'm adding it to the
-slab/for-6.12-rc7/fixes branch so we fix it before 6.12 is final.
+To distinguish in those cases between the syntactic tags and actual
+sets, we capitalize the former, so 'ACQUIRE tags may be present on both
+reads and writes, but only reads will appear in the Acquire set.
 
-> @@ -427,18 +426,29 @@ kmem_buckets *kmem_buckets_create(const char *name, slab_flags_t flags,
->  			cache_useroffset = useroffset;
->  			cache_usersize = min(size - cache_useroffset, usersize);
->  		}
-> -		(*b)[idx] = kmem_cache_create_usercopy(cache_name, size,
-> -					0, flags, cache_useroffset,
-> -					cache_usersize, ctor);
-> -		kfree(cache_name);
-> -		if (WARN_ON(!(*b)[idx]))
-> -			goto fail;
-> +
-> +		aligned_idx = __kmalloc_index(size, false);
-> +		if (!(*b)[aligned_idx]) {
-> +			cache_name = kasprintf(GFP_KERNEL, "%s-%s", name, short_size + 1);
-> +			if (WARN_ON(!cache_name))
-> +				goto fail;
-> +			(*b)[aligned_idx] = kmem_cache_create_usercopy(cache_name, size,
-> +						0, flags, cache_useroffset,
-> +						cache_usersize, ctor);
-> +			if (WARN_ON(!(*b)[aligned_idx])) {
-> +				kfree(cache_name);
+For tags where the two concepts are the same we do not use specific
+capitalization to make this distinction.
 
-Note we need to free cache_name always, because kmem_cache_create() does a
-kstrdup_const(), so your change would be creating a memory leak. I've fixed
-it up locally.
+Reported-by: Boqun Feng <boqun.feng@gmail.com>
+Signed-off-by: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>
+---
+ .../Documentation/herd-representation.txt     |  44 ++--
+ tools/memory-model/linux-kernel.bell          |  22 +-
+ tools/memory-model/linux-kernel.def           | 198 +++++++++---------
+ 3 files changed, 132 insertions(+), 132 deletions(-)
 
-Vlastimil
-
-> +				goto fail;
-> +			}
-> +			set_bit(aligned_idx, &mask);
-> +		}
-> +		if (idx != aligned_idx)
-> +			(*b)[idx] = (*b)[aligned_idx];
->  	}
->  
->  	return b;
->  
->  fail:
-> -	for (idx = 0; idx < ARRAY_SIZE(kmalloc_caches[KMALLOC_NORMAL]); idx++)
-> +	for_each_set_bit(idx, &mask, ARRAY_SIZE(kmalloc_caches[KMALLOC_NORMAL]))
->  		kmem_cache_destroy((*b)[idx]);
->  	kmem_cache_free(kmem_buckets_cache, b);
->  
+diff --git a/tools/memory-model/Documentation/herd-representation.txt b/tools/memory-model/Documentation/herd-representation.txt
+index 7ae1ff3d3769..4e19b4f2a476 100644
+--- a/tools/memory-model/Documentation/herd-representation.txt
++++ b/tools/memory-model/Documentation/herd-representation.txt
+@@ -21,7 +21,7 @@
+ # Note that the syntactic representation does not always match the sets and
+ # relations in linux-kernel.cat, due to redefinitions in linux-kernel.bell and
+ # lock.cat. For example, the po link between LKR and LKW is upgraded to an rmw
+-# link, and W[acquire] are not included in the Acquire set.
++# link, and W[ACQUIRE] are not included in the Acquire set.
+ #
+ # Disclaimer.  The table includes representations of "add" and "and" operations;
+ # corresponding/identical representations of "sub", "inc", "dec" and "or", "xor",
+@@ -32,16 +32,16 @@
+     ------------------------------------------------------------------------------
+     |                    Non-RMW ops |                                           |
+     ------------------------------------------------------------------------------
+-    |                      READ_ONCE | R[once]                                   |
++    |                      READ_ONCE | R[ONCE]                                   |
+     |                    atomic_read |                                           |
+-    |                     WRITE_ONCE | W[once]                                   |
++    |                     WRITE_ONCE | W[ONCE]                                   |
+     |                     atomic_set |                                           |
+-    |               smp_load_acquire | R[acquire]                                |
++    |               smp_load_acquire | R[ACQUIRE]                                |
+     |            atomic_read_acquire |                                           |
+-    |              smp_store_release | W[release]                                |
++    |              smp_store_release | W[RELEASE]                                |
+     |             atomic_set_release |                                           |
+-    |                   smp_store_mb | W[once] ->po F[mb]                        |
+-    |                         smp_mb | F[mb]                                     |
++    |                   smp_store_mb | W[ONCE] ->po F[MB]                        |
++    |                         smp_mb | F[MB]                                     |
+     |                        smp_rmb | F[rmb]                                    |
+     |                        smp_wmb | F[wmb]                                    |
+     |          smp_mb__before_atomic | F[before-atomic]                          |
+@@ -54,8 +54,8 @@
+     |                  rcu_read_lock | F[rcu-lock]                               |
+     |                rcu_read_unlock | F[rcu-unlock]                             |
+     |                synchronize_rcu | F[sync-rcu]                               |
+-    |                rcu_dereference | R[once]                                   |
+-    |             rcu_assign_pointer | W[release]                                |
++    |                rcu_dereference | R[ONCE]                                   |
++    |             rcu_assign_pointer | W[RELEASE]                                |
+     |                 srcu_read_lock | R[srcu-lock]                              |
+     |                 srcu_down_read |                                           |
+     |               srcu_read_unlock | W[srcu-unlock]                            |
+@@ -65,31 +65,31 @@
+     ------------------------------------------------------------------------------
+     |       RMW ops w/o return value |                                           |
+     ------------------------------------------------------------------------------
+-    |                     atomic_add | R*[noreturn] ->rmw W*[noreturn]           |
++    |                     atomic_add | R*[NORETURN] ->rmw W*[NORETURN]           |
+     |                     atomic_and |                                           |
+     |                      spin_lock | LKR ->po LKW                              |
+     ------------------------------------------------------------------------------
+     |        RMW ops w/ return value |                                           |
+     ------------------------------------------------------------------------------
+-    |              atomic_add_return | R*[mb] ->rmw W*[mb]                       |
++    |              atomic_add_return | R*[MB] ->rmw W*[MB]                       |
+     |               atomic_fetch_add |                                           |
+     |               atomic_fetch_and |                                           |
+     |                    atomic_xchg |                                           |
+     |                           xchg |                                           |
+     |            atomic_add_negative |                                           |
+-    |      atomic_add_return_relaxed | R*[once] ->rmw W*[once]                   |
++    |      atomic_add_return_relaxed | R*[ONCE] ->rmw W*[ONCE]                   |
+     |       atomic_fetch_add_relaxed |                                           |
+     |       atomic_fetch_and_relaxed |                                           |
+     |            atomic_xchg_relaxed |                                           |
+     |                   xchg_relaxed |                                           |
+     |    atomic_add_negative_relaxed |                                           |
+-    |      atomic_add_return_acquire | R*[acquire] ->rmw W*[acquire]             |
++    |      atomic_add_return_acquire | R*[ACQUIRE] ->rmw W*[ACQUIRE]             |
+     |       atomic_fetch_add_acquire |                                           |
+     |       atomic_fetch_and_acquire |                                           |
+     |            atomic_xchg_acquire |                                           |
+     |                   xchg_acquire |                                           |
+     |    atomic_add_negative_acquire |                                           |
+-    |      atomic_add_return_release | R*[release] ->rmw W*[release]             |
++    |      atomic_add_return_release | R*[RELEASE] ->rmw W*[RELEASE]             |
+     |       atomic_fetch_add_release |                                           |
+     |       atomic_fetch_and_release |                                           |
+     |            atomic_xchg_release |                                           |
+@@ -98,16 +98,16 @@
+     ------------------------------------------------------------------------------
+     |            Conditional RMW ops |                                           |
+     ------------------------------------------------------------------------------
+-    |                 atomic_cmpxchg | On success: R*[mb] ->rmw W*[mb]           |
+-    |                                | On failure: R*[mb]                        |
++    |                 atomic_cmpxchg | On success: R*[MB] ->rmw W*[MB]           |
++    |                                | On failure: R*[MB]                        |
+     |                        cmpxchg |                                           |
+     |              atomic_add_unless |                                           |
+-    |         atomic_cmpxchg_relaxed | On success: R*[once] ->rmw W*[once]       |
+-    |                                | On failure: R*[once]                      |
+-    |         atomic_cmpxchg_acquire | On success: R*[acquire] ->rmw W*[acquire] |
+-    |                                | On failure: R*[acquire]                   |
+-    |         atomic_cmpxchg_release | On success: R*[release] ->rmw W*[release] |
+-    |                                | On failure: R*[release]                   |
++    |         atomic_cmpxchg_relaxed | On success: R*[ONCE] ->rmw W*[ONCE]       |
++    |                                | On failure: R*[ONCE]                      |
++    |         atomic_cmpxchg_acquire | On success: R*[ACQUIRE] ->rmw W*[ACQUIRE] |
++    |                                | On failure: R*[ACQUIRE]                   |
++    |         atomic_cmpxchg_release | On success: R*[RELEASE] ->rmw W*[RELEASE] |
++    |                                | On failure: R*[RELEASE]                   |
+     |                   spin_trylock | On success: LKR ->po LKW                  |
+     |                                | On failure: LF                            |
+     ------------------------------------------------------------------------------
+diff --git a/tools/memory-model/linux-kernel.bell b/tools/memory-model/linux-kernel.bell
+index 8ae47545df97..fe65998002b9 100644
+--- a/tools/memory-model/linux-kernel.bell
++++ b/tools/memory-model/linux-kernel.bell
+@@ -13,18 +13,18 @@
+ 
+ "Linux-kernel memory consistency model"
+ 
+-enum Accesses = 'once (*READ_ONCE,WRITE_ONCE*) ||
+-		'release (*smp_store_release*) ||
+-		'acquire (*smp_load_acquire*) ||
+-		'noreturn (* R of non-return RMW *) ||
+-		'mb (*xchg(),cmpxchg(),...*)
++enum Accesses = 'ONCE (*READ_ONCE,WRITE_ONCE*) ||
++		'RELEASE (*smp_store_release*) ||
++		'ACQUIRE (*smp_load_acquire*) ||
++		'NORETURN (* R of non-return RMW *) ||
++		'MB (*xchg(),cmpxchg(),...*)
+ instructions R[Accesses]
+ instructions W[Accesses]
+ instructions RMW[Accesses]
+ 
+ enum Barriers = 'wmb (*smp_wmb*) ||
+ 		'rmb (*smp_rmb*) ||
+-		'mb (*smp_mb*) ||
++		'MB (*smp_mb*) ||
+ 		'barrier (*barrier*) ||
+ 		'rcu-lock (*rcu_read_lock*)  ||
+ 		'rcu-unlock (*rcu_read_unlock*) ||
+@@ -42,10 +42,10 @@ instructions F[Barriers]
+  * semantic ordering, such as Acquire on a store or Mb on a failed RMW.
+  *)
+ let FailedRMW = RMW \ (domain(rmw) | range(rmw))
+-let Acquire = Acquire \ W \ FailedRMW
+-let Release = Release \ R \ FailedRMW
+-let Mb = Mb \ FailedRMW
+-let Noreturn = Noreturn \ W
++let Acquire = ACQUIRE \ W \ FailedRMW
++let Release = RELEASE \ R \ FailedRMW
++let Mb = MB \ FailedRMW
++let Noreturn = NORETURN \ W
+ 
+ (* SRCU *)
+ enum SRCU = 'srcu-lock || 'srcu-unlock || 'sync-srcu
+@@ -85,7 +85,7 @@ flag ~empty rcu-rscs & (po ; [Sync-srcu] ; po) as invalid-sleep
+ flag ~empty different-values(srcu-rscs) as srcu-bad-value-match
+ 
+ (* Compute marked and plain memory accesses *)
+-let Marked = (~M) | IW | Once | Release | Acquire | domain(rmw) | range(rmw) |
++let Marked = (~M) | IW | ONCE | RELEASE | ACQUIRE | MB | RMW |
+ 		LKR | LKW | UL | LF | RL | RU | Srcu-lock | Srcu-unlock
+ let Plain = M \ Marked
+ 
+diff --git a/tools/memory-model/linux-kernel.def b/tools/memory-model/linux-kernel.def
+index d7279a357cba..49e402782e49 100644
+--- a/tools/memory-model/linux-kernel.def
++++ b/tools/memory-model/linux-kernel.def
+@@ -6,18 +6,18 @@
+ // which appeared in ASPLOS 2018.
+ 
+ // ONCE
+-READ_ONCE(X) __load{once}(X)
+-WRITE_ONCE(X,V) { __store{once}(X,V); }
++READ_ONCE(X) __load{ONCE}(X)
++WRITE_ONCE(X,V) { __store{ONCE}(X,V); }
+ 
+ // Release Acquire and friends
+-smp_store_release(X,V) { __store{release}(*X,V); }
+-smp_load_acquire(X) __load{acquire}(*X)
+-rcu_assign_pointer(X,V) { __store{release}(X,V); }
+-rcu_dereference(X) __load{once}(X)
+-smp_store_mb(X,V) { __store{once}(X,V); __fence{mb}; }
++smp_store_release(X,V) { __store{RELEASE}(*X,V); }
++smp_load_acquire(X) __load{ACQUIRE}(*X)
++rcu_assign_pointer(X,V) { __store{RELEASE}(X,V); }
++rcu_dereference(X) __load{ONCE}(X)
++smp_store_mb(X,V) { __store{ONCE}(X,V); __fence{MB}; }
+ 
+ // Fences
+-smp_mb() { __fence{mb}; }
++smp_mb() { __fence{MB}; }
+ smp_rmb() { __fence{rmb}; }
+ smp_wmb() { __fence{wmb}; }
+ smp_mb__before_atomic() { __fence{before-atomic}; }
+@@ -28,14 +28,14 @@ smp_mb__after_srcu_read_unlock() { __fence{after-srcu-read-unlock}; }
+ barrier() { __fence{barrier}; }
+ 
+ // Exchange
+-xchg(X,V)  __xchg{mb}(X,V)
+-xchg_relaxed(X,V) __xchg{once}(X,V)
+-xchg_release(X,V) __xchg{release}(X,V)
+-xchg_acquire(X,V) __xchg{acquire}(X,V)
+-cmpxchg(X,V,W) __cmpxchg{mb}(X,V,W)
+-cmpxchg_relaxed(X,V,W) __cmpxchg{once}(X,V,W)
+-cmpxchg_acquire(X,V,W) __cmpxchg{acquire}(X,V,W)
+-cmpxchg_release(X,V,W) __cmpxchg{release}(X,V,W)
++xchg(X,V)  __xchg{MB}(X,V)
++xchg_relaxed(X,V) __xchg{ONCE}(X,V)
++xchg_release(X,V) __xchg{RELEASE}(X,V)
++xchg_acquire(X,V) __xchg{ACQUIRE}(X,V)
++cmpxchg(X,V,W) __cmpxchg{MB}(X,V,W)
++cmpxchg_relaxed(X,V,W) __cmpxchg{ONCE}(X,V,W)
++cmpxchg_acquire(X,V,W) __cmpxchg{ACQUIRE}(X,V,W)
++cmpxchg_release(X,V,W) __cmpxchg{RELEASE}(X,V,W)
+ 
+ // Spinlocks
+ spin_lock(X) { __lock(X); }
+@@ -63,86 +63,86 @@ atomic_set(X,V) { WRITE_ONCE(*X,V); }
+ atomic_read_acquire(X) smp_load_acquire(X)
+ atomic_set_release(X,V) { smp_store_release(X,V); }
+ 
+-atomic_add(V,X) { __atomic_op{noreturn}(X,+,V); }
+-atomic_sub(V,X) { __atomic_op{noreturn}(X,-,V); }
+-atomic_and(V,X) { __atomic_op{noreturn}(X,&,V); }
+-atomic_or(V,X)  { __atomic_op{noreturn}(X,|,V); }
+-atomic_xor(V,X) { __atomic_op{noreturn}(X,^,V); }
+-atomic_inc(X)   { __atomic_op{noreturn}(X,+,1); }
+-atomic_dec(X)   { __atomic_op{noreturn}(X,-,1); }
+-atomic_andnot(V,X) { __atomic_op{noreturn}(X,&~,V); }
+-
+-atomic_add_return(V,X) __atomic_op_return{mb}(X,+,V)
+-atomic_add_return_relaxed(V,X) __atomic_op_return{once}(X,+,V)
+-atomic_add_return_acquire(V,X) __atomic_op_return{acquire}(X,+,V)
+-atomic_add_return_release(V,X) __atomic_op_return{release}(X,+,V)
+-atomic_fetch_add(V,X) __atomic_fetch_op{mb}(X,+,V)
+-atomic_fetch_add_relaxed(V,X) __atomic_fetch_op{once}(X,+,V)
+-atomic_fetch_add_acquire(V,X) __atomic_fetch_op{acquire}(X,+,V)
+-atomic_fetch_add_release(V,X) __atomic_fetch_op{release}(X,+,V)
+-
+-atomic_fetch_and(V,X) __atomic_fetch_op{mb}(X,&,V)
+-atomic_fetch_and_relaxed(V,X) __atomic_fetch_op{once}(X,&,V)
+-atomic_fetch_and_acquire(V,X) __atomic_fetch_op{acquire}(X,&,V)
+-atomic_fetch_and_release(V,X) __atomic_fetch_op{release}(X,&,V)
+-
+-atomic_fetch_or(V,X) __atomic_fetch_op{mb}(X,|,V)
+-atomic_fetch_or_relaxed(V,X) __atomic_fetch_op{once}(X,|,V)
+-atomic_fetch_or_acquire(V,X) __atomic_fetch_op{acquire}(X,|,V)
+-atomic_fetch_or_release(V,X) __atomic_fetch_op{release}(X,|,V)
+-
+-atomic_fetch_xor(V,X) __atomic_fetch_op{mb}(X,^,V)
+-atomic_fetch_xor_relaxed(V,X) __atomic_fetch_op{once}(X,^,V)
+-atomic_fetch_xor_acquire(V,X) __atomic_fetch_op{acquire}(X,^,V)
+-atomic_fetch_xor_release(V,X) __atomic_fetch_op{release}(X,^,V)
+-
+-atomic_inc_return(X) __atomic_op_return{mb}(X,+,1)
+-atomic_inc_return_relaxed(X) __atomic_op_return{once}(X,+,1)
+-atomic_inc_return_acquire(X) __atomic_op_return{acquire}(X,+,1)
+-atomic_inc_return_release(X) __atomic_op_return{release}(X,+,1)
+-atomic_fetch_inc(X) __atomic_fetch_op{mb}(X,+,1)
+-atomic_fetch_inc_relaxed(X) __atomic_fetch_op{once}(X,+,1)
+-atomic_fetch_inc_acquire(X) __atomic_fetch_op{acquire}(X,+,1)
+-atomic_fetch_inc_release(X) __atomic_fetch_op{release}(X,+,1)
+-
+-atomic_sub_return(V,X) __atomic_op_return{mb}(X,-,V)
+-atomic_sub_return_relaxed(V,X) __atomic_op_return{once}(X,-,V)
+-atomic_sub_return_acquire(V,X) __atomic_op_return{acquire}(X,-,V)
+-atomic_sub_return_release(V,X) __atomic_op_return{release}(X,-,V)
+-atomic_fetch_sub(V,X) __atomic_fetch_op{mb}(X,-,V)
+-atomic_fetch_sub_relaxed(V,X) __atomic_fetch_op{once}(X,-,V)
+-atomic_fetch_sub_acquire(V,X) __atomic_fetch_op{acquire}(X,-,V)
+-atomic_fetch_sub_release(V,X) __atomic_fetch_op{release}(X,-,V)
+-
+-atomic_dec_return(X) __atomic_op_return{mb}(X,-,1)
+-atomic_dec_return_relaxed(X) __atomic_op_return{once}(X,-,1)
+-atomic_dec_return_acquire(X) __atomic_op_return{acquire}(X,-,1)
+-atomic_dec_return_release(X) __atomic_op_return{release}(X,-,1)
+-atomic_fetch_dec(X) __atomic_fetch_op{mb}(X,-,1)
+-atomic_fetch_dec_relaxed(X) __atomic_fetch_op{once}(X,-,1)
+-atomic_fetch_dec_acquire(X) __atomic_fetch_op{acquire}(X,-,1)
+-atomic_fetch_dec_release(X) __atomic_fetch_op{release}(X,-,1)
+-
+-atomic_xchg(X,V) __xchg{mb}(X,V)
+-atomic_xchg_relaxed(X,V) __xchg{once}(X,V)
+-atomic_xchg_release(X,V) __xchg{release}(X,V)
+-atomic_xchg_acquire(X,V) __xchg{acquire}(X,V)
+-atomic_cmpxchg(X,V,W) __cmpxchg{mb}(X,V,W)
+-atomic_cmpxchg_relaxed(X,V,W) __cmpxchg{once}(X,V,W)
+-atomic_cmpxchg_acquire(X,V,W) __cmpxchg{acquire}(X,V,W)
+-atomic_cmpxchg_release(X,V,W) __cmpxchg{release}(X,V,W)
+-
+-atomic_sub_and_test(V,X) __atomic_op_return{mb}(X,-,V) == 0
+-atomic_dec_and_test(X)  __atomic_op_return{mb}(X,-,1) == 0
+-atomic_inc_and_test(X)  __atomic_op_return{mb}(X,+,1) == 0
+-atomic_add_negative(V,X) __atomic_op_return{mb}(X,+,V) < 0
+-atomic_add_negative_relaxed(V,X) __atomic_op_return{once}(X,+,V) < 0
+-atomic_add_negative_acquire(V,X) __atomic_op_return{acquire}(X,+,V) < 0
+-atomic_add_negative_release(V,X) __atomic_op_return{release}(X,+,V) < 0
+-
+-atomic_fetch_andnot(V,X) __atomic_fetch_op{mb}(X,&~,V)
+-atomic_fetch_andnot_acquire(V,X) __atomic_fetch_op{acquire}(X,&~,V)
+-atomic_fetch_andnot_release(V,X) __atomic_fetch_op{release}(X,&~,V)
+-atomic_fetch_andnot_relaxed(V,X) __atomic_fetch_op{once}(X,&~,V)
+-
+-atomic_add_unless(X,V,W) __atomic_add_unless{mb}(X,V,W)
++atomic_add(V,X) { __atomic_op{NORETURN}(X,+,V); }
++atomic_sub(V,X) { __atomic_op{NORETURN}(X,-,V); }
++atomic_and(V,X) { __atomic_op{NORETURN}(X,&,V); }
++atomic_or(V,X)  { __atomic_op{NORETURN}(X,|,V); }
++atomic_xor(V,X) { __atomic_op{NORETURN}(X,^,V); }
++atomic_inc(X)   { __atomic_op{NORETURN}(X,+,1); }
++atomic_dec(X)   { __atomic_op{NORETURN}(X,-,1); }
++atomic_andnot(V,X) { __atomic_op{NORETURN}(X,&~,V); }
++
++atomic_add_return(V,X) __atomic_op_return{MB}(X,+,V)
++atomic_add_return_relaxed(V,X) __atomic_op_return{ONCE}(X,+,V)
++atomic_add_return_acquire(V,X) __atomic_op_return{ACQUIRE}(X,+,V)
++atomic_add_return_release(V,X) __atomic_op_return{RELEASE}(X,+,V)
++atomic_fetch_add(V,X) __atomic_fetch_op{MB}(X,+,V)
++atomic_fetch_add_relaxed(V,X) __atomic_fetch_op{ONCE}(X,+,V)
++atomic_fetch_add_acquire(V,X) __atomic_fetch_op{ACQUIRE}(X,+,V)
++atomic_fetch_add_release(V,X) __atomic_fetch_op{RELEASE}(X,+,V)
++
++atomic_fetch_and(V,X) __atomic_fetch_op{MB}(X,&,V)
++atomic_fetch_and_relaxed(V,X) __atomic_fetch_op{ONCE}(X,&,V)
++atomic_fetch_and_acquire(V,X) __atomic_fetch_op{ACQUIRE}(X,&,V)
++atomic_fetch_and_release(V,X) __atomic_fetch_op{RELEASE}(X,&,V)
++
++atomic_fetch_or(V,X) __atomic_fetch_op{MB}(X,|,V)
++atomic_fetch_or_relaxed(V,X) __atomic_fetch_op{ONCE}(X,|,V)
++atomic_fetch_or_acquire(V,X) __atomic_fetch_op{ACQUIRE}(X,|,V)
++atomic_fetch_or_release(V,X) __atomic_fetch_op{RELEASE}(X,|,V)
++
++atomic_fetch_xor(V,X) __atomic_fetch_op{MB}(X,^,V)
++atomic_fetch_xor_relaxed(V,X) __atomic_fetch_op{ONCE}(X,^,V)
++atomic_fetch_xor_acquire(V,X) __atomic_fetch_op{ACQUIRE}(X,^,V)
++atomic_fetch_xor_release(V,X) __atomic_fetch_op{RELEASE}(X,^,V)
++
++atomic_inc_return(X) __atomic_op_return{MB}(X,+,1)
++atomic_inc_return_relaxed(X) __atomic_op_return{ONCE}(X,+,1)
++atomic_inc_return_acquire(X) __atomic_op_return{ACQUIRE}(X,+,1)
++atomic_inc_return_release(X) __atomic_op_return{RELEASE}(X,+,1)
++atomic_fetch_inc(X) __atomic_fetch_op{MB}(X,+,1)
++atomic_fetch_inc_relaxed(X) __atomic_fetch_op{ONCE}(X,+,1)
++atomic_fetch_inc_acquire(X) __atomic_fetch_op{ACQUIRE}(X,+,1)
++atomic_fetch_inc_release(X) __atomic_fetch_op{RELEASE}(X,+,1)
++
++atomic_sub_return(V,X) __atomic_op_return{MB}(X,-,V)
++atomic_sub_return_relaxed(V,X) __atomic_op_return{ONCE}(X,-,V)
++atomic_sub_return_acquire(V,X) __atomic_op_return{ACQUIRE}(X,-,V)
++atomic_sub_return_release(V,X) __atomic_op_return{RELEASE}(X,-,V)
++atomic_fetch_sub(V,X) __atomic_fetch_op{MB}(X,-,V)
++atomic_fetch_sub_relaxed(V,X) __atomic_fetch_op{ONCE}(X,-,V)
++atomic_fetch_sub_acquire(V,X) __atomic_fetch_op{ACQUIRE}(X,-,V)
++atomic_fetch_sub_release(V,X) __atomic_fetch_op{RELEASE}(X,-,V)
++
++atomic_dec_return(X) __atomic_op_return{MB}(X,-,1)
++atomic_dec_return_relaxed(X) __atomic_op_return{ONCE}(X,-,1)
++atomic_dec_return_acquire(X) __atomic_op_return{ACQUIRE}(X,-,1)
++atomic_dec_return_release(X) __atomic_op_return{RELEASE}(X,-,1)
++atomic_fetch_dec(X) __atomic_fetch_op{MB}(X,-,1)
++atomic_fetch_dec_relaxed(X) __atomic_fetch_op{ONCE}(X,-,1)
++atomic_fetch_dec_acquire(X) __atomic_fetch_op{ACQUIRE}(X,-,1)
++atomic_fetch_dec_release(X) __atomic_fetch_op{RELEASE}(X,-,1)
++
++atomic_xchg(X,V) __xchg{MB}(X,V)
++atomic_xchg_relaxed(X,V) __xchg{ONCE}(X,V)
++atomic_xchg_release(X,V) __xchg{RELEASE}(X,V)
++atomic_xchg_acquire(X,V) __xchg{ACQUIRE}(X,V)
++atomic_cmpxchg(X,V,W) __cmpxchg{MB}(X,V,W)
++atomic_cmpxchg_relaxed(X,V,W) __cmpxchg{ONCE}(X,V,W)
++atomic_cmpxchg_acquire(X,V,W) __cmpxchg{ACQUIRE}(X,V,W)
++atomic_cmpxchg_release(X,V,W) __cmpxchg{RELEASE}(X,V,W)
++
++atomic_sub_and_test(V,X) __atomic_op_return{MB}(X,-,V) == 0
++atomic_dec_and_test(X)  __atomic_op_return{MB}(X,-,1) == 0
++atomic_inc_and_test(X)  __atomic_op_return{MB}(X,+,1) == 0
++atomic_add_negative(V,X) __atomic_op_return{MB}(X,+,V) < 0
++atomic_add_negative_relaxed(V,X) __atomic_op_return{ONCE}(X,+,V) < 0
++atomic_add_negative_acquire(V,X) __atomic_op_return{ACQUIRE}(X,+,V) < 0
++atomic_add_negative_release(V,X) __atomic_op_return{RELEASE}(X,+,V) < 0
++
++atomic_fetch_andnot(V,X) __atomic_fetch_op{MB}(X,&~,V)
++atomic_fetch_andnot_acquire(V,X) __atomic_fetch_op{ACQUIRE}(X,&~,V)
++atomic_fetch_andnot_release(V,X) __atomic_fetch_op{RELEASE}(X,&~,V)
++atomic_fetch_andnot_relaxed(V,X) __atomic_fetch_op{ONCE}(X,&~,V)
++
++atomic_add_unless(X,V,W) __atomic_add_unless{MB}(X,V,W)
+-- 
+2.34.1
 
 
