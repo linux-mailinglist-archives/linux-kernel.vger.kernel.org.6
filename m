@@ -1,342 +1,280 @@
-Return-Path: <linux-kernel+bounces-395830-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395821-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45E6B9BC3A0
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 04:09:53 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD06D9BC387
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 04:02:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 690D71C21F94
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 03:09:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6ED0C1F22D5C
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 03:02:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3A1315885E;
-	Tue,  5 Nov 2024 03:08:34 +0000 (UTC)
-Received: from hust.edu.cn (unknown [202.114.0.240])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46CD314F104;
-	Tue,  5 Nov 2024 03:08:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.114.0.240
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730776114; cv=none; b=PQrCiuJHjkPEVJw9e+jA5K0Nj8sk4Uh6ev07LHVq/eXyr2G7thWBE2WUUhc1jTXkTlsAXsxc8DGmd6tEoLzkoMQDb1M5NahoJBBsIgeX0RAgHJDobvMyoL9/MB+kGKBa5fzoVEd14RZkJQiKCRI1InUBtw2+FzK4YD0A/diq5hE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730776114; c=relaxed/simple;
-	bh=9MexuOLJdjNx+M6TrmvbtoZScHLX2/pVon2MDOh/f2I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aB44RlgVhsJdPIIOh8EnjdvDrumLDmWEIzHcc/eEIrkWgyPvvCkL9Qyz/iY7kWx/jlgtgsKugj1lwFFDxGrSOoWkTOkZ7z9bnmj5faqJNWtCEbVnqYYwMv5C3ND32WxHzuALb0nrdYdnismYYGZDmnEz/9rNx5KOrW2oJWsfIbw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hust.edu.cn; spf=pass smtp.mailfrom=hust.edu.cn; arc=none smtp.client-ip=202.114.0.240
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hust.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hust.edu.cn
-Received: from hust.edu.cn (unknown [172.16.0.50])
-	by app1 (Coremail) with SMTP id HgEQrADHzn6biilnLPVnCQ--.12977S2;
-	Tue, 05 Nov 2024 11:01:47 +0800 (CST)
-Received: from [10.12.170.8] (unknown [10.12.170.8])
-	by gateway (Coremail) with SMTP id _____wCHJvCZiilnY2YFAQ--.12665S2;
-	Tue, 05 Nov 2024 11:01:46 +0800 (CST)
-Message-ID: <fbd3db23-f89b-4868-b657-c36fcfe9f8b2@hust.edu.cn>
-Date: Tue, 5 Nov 2024 11:01:45 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42D94757F3;
+	Tue,  5 Nov 2024 03:02:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="a7Hi5zvN";
+	dkim=pass (1024-bit key) header.d=mediateko365.onmicrosoft.com header.i=@mediateko365.onmicrosoft.com header.b="oge3HDN7"
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C54D225A8;
+	Tue,  5 Nov 2024 03:02:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=60.244.123.138
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730775738; cv=fail; b=p8ghT+r6sETuOvAERhUihTY36PKfMCBJL5C927umg31gtHv/zR5qyZirQTFmKyMfJUjmP2OUvq1ORbUROhA3QkQxYA+IKv+uAQc4sfnZY9sMKpgetqRkmck7Z4qDqlNkPQfjcMqaPdEGiAwPJ3B1al2GA1u7Ecs+EFgEHFiZlo4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730775738; c=relaxed/simple;
+	bh=EVFqfaAusD1qUN0Ynz8ihty0cVesxpzys2/pIiiqZRs=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=Pwa2iTDhRjMRiI7MPJ4BQItuJ+ly2SYQKW/PqZncjt56J3VK9poUFclkOHV5LRTeyJnIBw7T2fnwQMJ019HOb34GkQXOWNC0lNFgRzM6BqOGShwrkInzdk5/SETyN8dDt1M1K2f6W0mwNfz19lZw5nJ+fvdBNR1AA7EhoAG9T/w=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=a7Hi5zvN; dkim=pass (1024-bit key) header.d=mediateko365.onmicrosoft.com header.i=@mediateko365.onmicrosoft.com header.b=oge3HDN7; arc=fail smtp.client-ip=60.244.123.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: 54b92aaa9b2211efb88477ffae1fc7a5-20241105
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=MIME-Version:Content-Transfer-Encoding:Content-ID:Content-Type:In-Reply-To:References:Message-ID:Date:Subject:CC:To:From; bh=EVFqfaAusD1qUN0Ynz8ihty0cVesxpzys2/pIiiqZRs=;
+	b=a7Hi5zvNb3qOKsQdunVLXYXyyId5ZTeb86GJnOxqopd7gjrkh1vyGf5aqBcEnppYoBMcqP5qiVRePLc8MiMGOWNNYdV86YTHiIdJTeUBaIjj5FmSYByXNpTrGpkgS3EeYm91mPSt4zqs+uTg8mfGsGVE+s8Stc0e7YrIt4YfQ/A=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.42,REQID:01c3388b-a624-4d65-b93b-c5739b495978,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:b0fcdc3,CLOUDID:bcbdb148-ca13-40ea-8070-fa012edab362,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
+	RL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,
+	SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: 54b92aaa9b2211efb88477ffae1fc7a5-20241105
+Received: from mtkmbs14n2.mediatek.inc [(172.21.101.76)] by mailgw01.mediatek.com
+	(envelope-from <ck.hu@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 1229760174; Tue, 05 Nov 2024 11:02:02 +0800
+Received: from mtkmbs10n2.mediatek.inc (172.21.101.183) by
+ MTKMBS09N2.mediatek.inc (172.21.101.94) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Mon, 4 Nov 2024 19:02:01 -0800
+Received: from HK3PR03CU002.outbound.protection.outlook.com (172.21.101.237)
+ by mtkmbs10n2.mediatek.inc (172.21.101.183) with Microsoft SMTP Server id
+ 15.2.1118.26 via Frontend Transport; Tue, 5 Nov 2024 11:02:01 +0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=pCdf0Hhh303X70UDTEanCSY5O0GqO2GsNQiTyfTZ5jnW8Pero/7oQoYgu6+DwLR4a22x51ivIGWWaOdrQ0t4Yij5j9e++LTZrNuksapLD21p/bKpVvSRnFfugZvzoadngrfO7zWRllW0ojXvEH8WwT350lEvtyCwemAZkDBRI9sD0iLSqhDvk8vNaOcZjlTi56W0YhvoRlgWw6OeDME6G8cts0rCw9SbkiKcoWkCgdl2aLwjjyzc/nuQzpHx+ZQ9EM3W+bMbmUHW6J2cEwjcmeNzgby+jW51lcKboPaJtqAFGE2T6I0nT2lAN48PHHuLxQsln1lyahJSXSJQlaESuA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=EVFqfaAusD1qUN0Ynz8ihty0cVesxpzys2/pIiiqZRs=;
+ b=fsdDl9uR5Z2UJwBl2dSuMYEeLn0SfQML6zv7JpAcKqWgWfIDFTe3CGZz4yTnQ8UZjXZaM2YP0lrS4/lack5Ce34ObbXAGfOThPkEh/Nh0FgIuhn5FtPg7jDpmoE+A3e5M1Bb0McLE4xlz1seSPTtQ2a7uQcng8xeADJOOWb2wxTY6yJZyKK883h2G+gS612J/gdyoOZo2b1J0YC52/4XHYHxcP0OVh9i6I5QBtnpIxbv7vYbidCPrPPvsceukVGiFbgnjOERZTgBXR1fFLP6QXXsnW6PF6jxj4V3dmuOwvPcClkieUrRFPUSmu6kZH4haJEUVaS2affzlwlIuHFfgQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=mediatek.com; dmarc=pass action=none header.from=mediatek.com;
+ dkim=pass header.d=mediatek.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=mediateko365.onmicrosoft.com; s=selector2-mediateko365-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=EVFqfaAusD1qUN0Ynz8ihty0cVesxpzys2/pIiiqZRs=;
+ b=oge3HDN7jE32A+YrEEt1uQkWO7yuT/Nvq/D4J9faHDo0+p7OlVOyP8lthDKhjDx8uNDf+CrtXnZoW4ttYeDMNQAx8LRKEiUFu2wuAVMpZP2RaGKHYgM1ebHtyFLckNDf6YbDGqqYqlUYft59r3mpzDqy8rnA6OwOTl5ss296WOk=
+Received: from TYZPR03MB6624.apcprd03.prod.outlook.com (2603:1096:400:1f4::13)
+ by SEYPR03MB7890.apcprd03.prod.outlook.com (2603:1096:101:178::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8114.30; Tue, 5 Nov
+ 2024 03:01:58 +0000
+Received: from TYZPR03MB6624.apcprd03.prod.outlook.com
+ ([fe80::9ce6:1e85:c4a7:2a54]) by TYZPR03MB6624.apcprd03.prod.outlook.com
+ ([fe80::9ce6:1e85:c4a7:2a54%7]) with mapi id 15.20.8114.028; Tue, 5 Nov 2024
+ 03:01:58 +0000
+From: =?utf-8?B?Q0sgSHUgKOiDoeS/iuWFiSk=?= <ck.hu@mediatek.com>
+To: "sumit.semwal@linaro.org" <sumit.semwal@linaro.org>,
+	"christian.koenig@amd.com" <christian.koenig@amd.com>, "mchehab@kernel.org"
+	<mchehab@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
+	"robh@kernel.org" <robh@kernel.org>, "matthias.bgg@gmail.com"
+	<matthias.bgg@gmail.com>, "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	=?utf-8?B?U2h1LWhzaWFuZyBZYW5nICjmpYroiJLnv5Qp?=
+	<Shu-hsiang.Yang@mediatek.com>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
+	"yunkec@chromium.org" <yunkec@chromium.org>, "linaro-mm-sig@lists.linaro.org"
+	<linaro-mm-sig@lists.linaro.org>, "linux-media@vger.kernel.org"
+	<linux-media@vger.kernel.org>, "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>, =?utf-8?B?WWF5YSBDaGFuZyAo5by16ZuF5riFKQ==?=
+	<Yaya.Chang@mediatek.com>, Project_Global_Chrome_Upstream_Group
+	<Project_Global_Chrome_Upstream_Group@mediatek.com>,
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+	=?utf-8?B?VGVkZHkgQ2hlbiAo6Zmz5Lm+5YWDKQ==?= <Teddy.Chen@mediatek.com>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "hidenorik@chromium.org"
+	<hidenorik@chromium.org>, =?utf-8?B?U2h1bi1ZaSBXYW5nICjnjovpoIblhIQp?=
+	<Shun-Yi.Wang@mediatek.com>
+Subject: Re: [PATCH v1 04/10] media: platform: mediatek: add isp_7x cam-raw
+ unit
+Thread-Topic: [PATCH v1 04/10] media: platform: mediatek: add isp_7x cam-raw
+ unit
+Thread-Index: AQHbGj2G8utVn4Ab5UaBggOzyqwWS7KoKauA
+Date: Tue, 5 Nov 2024 03:01:58 +0000
+Message-ID: <570ed4780c37bc456cf3d4509207335738b52c08.camel@mediatek.com>
+References: <20241009111551.27052-1-Shu-hsiang.Yang@mediatek.com>
+	 <20241009111551.27052-5-Shu-hsiang.Yang@mediatek.com>
+In-Reply-To: <20241009111551.27052-5-Shu-hsiang.Yang@mediatek.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=mediatek.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: TYZPR03MB6624:EE_|SEYPR03MB7890:EE_
+x-ms-office365-filtering-correlation-id: 0c6f6822-d01b-45b6-1976-08dcfd463674
+x-ld-processed: a7687ede-7a6b-4ef6-bace-642f677fbe31,ExtAddr
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|7416014|376014|366016|38070700018;
+x-microsoft-antispam-message-info: =?utf-8?B?WGw4M1AvRUczVHVuc2ZOcHpPaHAxTkVtU3pidHNSQWJUN0x3cklLL09EbU1J?=
+ =?utf-8?B?VGhNd1FiZFpwWXM0bWptNGRNTTdiZElDZEpZTWNJSHVqQk5xV2VEaUVsdHdJ?=
+ =?utf-8?B?Skk2OWZ1QVpXWWxMekxpa0NBT0lQVkFZM1kxNHVROHY2SE9VSHBqNFNjVUNE?=
+ =?utf-8?B?NXBoZi9EazVORGttT3UrSWVzTEZvMExMWHNFSUU4RWJPV1JNUjBtdGhMcFkr?=
+ =?utf-8?B?QkhrdllHSFNjUVVqZ2M5QUJhWGhwTGVzT3NST3pmR3dtM0djUUVLMHJPOGpB?=
+ =?utf-8?B?eStxQlhTWWhTVFNkbzM4OVQrQ3FmTjZCNFU1ZXUzenB3aVhWa3pzVnpabTkv?=
+ =?utf-8?B?ZGxjckw2MmU0L0VjTDByVm14ckw4QzdHNXU3YzdPSUhKREpOQkJnZCt3V3Ur?=
+ =?utf-8?B?ejlod3BTb29UMmZNSVEwalJjcXZEUXRhVFBFSUdnY2JtRTJaOFNuWSswYkFB?=
+ =?utf-8?B?empETncvS3dSdDNNOWhSMGlUd1hDbFJBZWsvZ0VjWmg5bFVRUXdEVHdFMWR2?=
+ =?utf-8?B?b0Nvb3V5SXZ0S0l1TFBHSHFTUFN5VDNlQitMWGt0NHFzUkFxeDcvcE5KcFla?=
+ =?utf-8?B?c2w5dmZXNzRkQzJjQzFzdHhvMjg4T1ArMmxMdG1FRmtMamx1cXh2UXViMWRt?=
+ =?utf-8?B?ekNZZFcrTlljQkNBZytCeG5NWEh4azRDTE4vZlBmakx5SExQNXZBQXZqMkRU?=
+ =?utf-8?B?M3VjciswL3Q2ZlhMV2c4S3NIb2RRTmdMVkJhSEhWUXoxK3NrcnBsWFZ3WGFH?=
+ =?utf-8?B?V1RNa1hOaDU4Y1FZTCtjRUtGRjlFTXNwL0lpMzUyUDNuWEdoaWhZbVlucE5i?=
+ =?utf-8?B?NVhFTXZqT3hIQitpZTh4YlZ3OCtEMi9Kc2s4a3JOWkFNQUNIMUZCd29ySXRR?=
+ =?utf-8?B?bEVPY25QWWJ6UVFVNkdyN2V3VmhhdytKYkRPbHNvYVB4SHpVSjZKK1ZxamYx?=
+ =?utf-8?B?MDhMU0JuaStWOHZPNFNLSXJMZDNqc2hxRmxsSENYU0ltdDgrd2hXZ29pTUpn?=
+ =?utf-8?B?M1Ric2ZhanhsaGxPSWpGWGRMU3Q3bXF4Wk9kMEY1ZHVBY1Y3UmwvM080cGJh?=
+ =?utf-8?B?U1ZwVGgvdmk3dERUZ0ZkL0N4UHlEUWcvOVAwd09ZdzYzTHF3cW9kdnJZdVhw?=
+ =?utf-8?B?dVI5R3RncUcrbC8rZmVSNjdWSlVHbzVUUjhpZ2xQMkRBQXZIQXpselo1NG80?=
+ =?utf-8?B?VGIwbU4rYiszVlFqM085RUtramFyam9sY1NCQnJuSDRqV3ozNy8zdkZNOUNm?=
+ =?utf-8?B?NkdDeC84SlFMUDh0bE9icEJqaUIxMmF6R1FGOFFKQno5K3VLWjRsN0ZkcHdq?=
+ =?utf-8?B?Nm1nSEhOWlBQbXF2Z2Z6YU40VzlVMXBBZ3loVEVRMEpMbldNK0JzQUN0YVdO?=
+ =?utf-8?B?SVorSkRoaitES3NCSWxXU2U0WVNSWnRKMUhhdlo3eENHUFYxOHFaVlFwQzRS?=
+ =?utf-8?B?OWhUcEZmcjZucCtVSnZ6YTgvUlRuL1B6Q2lQM0N0aVI1MzV5T3Job3NBcWp5?=
+ =?utf-8?B?cEF2ek5NaSt5T1pVaTlqOEUweG8xZ1B2V3BtNzFQNURIWkZtQXc0bVZaR1BP?=
+ =?utf-8?B?VCtqK3ZsOEFkS3hBbnN6NkYrY24zTmdTN0RtWEFrcWRwT0t5TnM1Sm9TMmhh?=
+ =?utf-8?B?RFN3ZGVWYkNQK1NaL1U4M3g0UEZvUUxtN0QwYXRxRHpHUm1FMmVYS2haeUdF?=
+ =?utf-8?B?dDBGZzU5WXZsMndXYWZ3Y2kyUDA2cWdpS3hib1c3S1hPYnUvV0xzM0tDSkda?=
+ =?utf-8?B?N0xpNERSZzFWQ01wUjNEV0xvanVBUGxHR1BFVStvaVdZOE9RWTlxdSs2UklF?=
+ =?utf-8?Q?to0g//Zj+1d1GY7pI6Hr/Ec52m6m+f425azZQ=3D?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYZPR03MB6624.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?dDAvcnpraGkydmgwbnA2d2JQTXl0b0dtNTYyVFZ4Y2prTnkza1FVd0FXS3Vj?=
+ =?utf-8?B?cm1SQ2lMV0QvcTRueW12bUdMcUl4ZDhjd2wwblhDN3NRT2tBdTZ5eEVQK2pU?=
+ =?utf-8?B?TUQ5SjFIcHgyR29kSHBxWSs1YkdWNFhiS1N4K290UHVrR2UyYlpVMHJRb05x?=
+ =?utf-8?B?ek5RemV1aUQwZWpNUVJOMlc5Lzk0akFTbkN0UjI5ZW0vTXR0QW1zRjQ4VXdr?=
+ =?utf-8?B?OEZNWHRweHYySzRKaHZtY1dSK2ZSKzI3R0VVRFo4bTNMaERXTG9JSFhQaHg5?=
+ =?utf-8?B?RlluSWxtMGIvd29yRmFzQ2hkRE9FdFRuanB4UmxXSzF0dXBWUXRFUTg0TlVu?=
+ =?utf-8?B?a09jalB4SlBVSzljUWdzNXluN3BJc2F3MmVzUVVhb3FFeUhKa25wWTU1RGlT?=
+ =?utf-8?B?aUlDbUFJc1Z1dGFwRWRtQXNBNUozdTNQOHk3bGZaUWx2TUZDQ3Z0WWxnZVZD?=
+ =?utf-8?B?Qis5WXA2cHpManVBR0RrV0pEUUxsV2F5ZldpSWU5a2JXOFZyL0dtK1hWTGxO?=
+ =?utf-8?B?czZNaE5wVlYzeXJIeXJ6b29udndlUGRKNUJEZjEyVTdBN3o5WUpSU3dnRWxH?=
+ =?utf-8?B?WGZQSy92L1l2T2VCZmJPanZDT2dqSWU5VTJ0M0J4TTF2T1F3WkpIRWM3S0VY?=
+ =?utf-8?B?bmorM0M1UnNNbjN6ckFWQ2JPVy85elZyQm5saGV1UXZKNXJYdXROV29tYkRL?=
+ =?utf-8?B?dnlxTEFKYWpuYm1pb3Z3SWVtWURRbkZqN0FLdTJad2lJZDRQSXlPQWdMRmk5?=
+ =?utf-8?B?ZElucGc5RDZLYXM3SFNUYVFjL09BdHFUOFF6ZVFTRGswZGxKSmloY1BMMzRM?=
+ =?utf-8?B?dm9IOGxOVE10UDBPcS9la0pmV0JIYjJiN3dhOHI3SEJld3hIbkhUdTMyNENY?=
+ =?utf-8?B?ZFViOXd3K1hCS3kwaWY5SUgzMVpwSHUrZm9iVWFEbzlvaUtvaWxWZmFsNGdj?=
+ =?utf-8?B?UEZOUVFVdjBkOHNJNTdCWXBxTHFVMGZrZGpHalFHa2g4TjdndVJKbG1BYTVk?=
+ =?utf-8?B?WkRMVEhGWlpCRkFNaldVZ0QxM01FOTY4NjVuT0FHZFI2TkNwcVBQRjJPUklt?=
+ =?utf-8?B?eUo3eUtHSVorMkhlZFlVclhZRTVmVXA5S2ZkWTMyMW9xSWVPTW14QkNrVnNk?=
+ =?utf-8?B?c2I3RGVrMTk2NXA2MjVSTkpoeHBCZ0VkdVJ4SURoNDMwcnRPbXhBZVQ0eG1i?=
+ =?utf-8?B?VlZCQ2lCd0t6VFhYUDIxWWpHUUxWRlpick5tQVd3TWN3WkxFa2RQVGVhVGJ0?=
+ =?utf-8?B?R3lqOWt4K3dxS2JFRytwendGZk91eGFpRTJCMmJRZzVKbWo0akIzOVRFNE80?=
+ =?utf-8?B?T1p1WUxCTlo2WFV4Z1RSUEhGelR2SjBGSmljaUpNZitJRFRJYkcwb0hVbURY?=
+ =?utf-8?B?MVY3ODM0SXB3a1BCK1NRV2ZtKzIxWXV1UjkyZS9UZFlsYStLd2lUYkVPQmhr?=
+ =?utf-8?B?czVxcktBRU56eFVCQlI3cENLRTVWWmVGQVUvN2htbnNpaitUZVhsVVE5WFIx?=
+ =?utf-8?B?aUw0Y3hZcDVqbnZkVmdzTzI4S2Q3aFBubGhOaW9Ib013a0ZYVE5IVzZ0amJ6?=
+ =?utf-8?B?MHgzcm1qRUZuYmgxVSsxTDhVdlZyUWFzL0dBTDhqYVpZNVpCU3BlZ1NHbjZR?=
+ =?utf-8?B?bGlRL2JaYi91TXhzV3JicE1jYkpVZlVXT2dPZ1hDbVRvbXI1ZWVjSjVnT1ZT?=
+ =?utf-8?B?NlJkVDRQNy80SWtBMElHbk1KbHN5V29MMzFSVjAyNW5xQldWMjdRdFZWUHhQ?=
+ =?utf-8?B?UXQ3MkcyazhmUEJhYUdkSjM0Y3UrVjVtN0Jkb0N5aTVGSGVSU0psNkRnaGVk?=
+ =?utf-8?B?SGR6eFRmYU1Tbng2cWlYa3JYRHVWcGh1MnNnUnI3VEJKeGVBaHVBbHg0bWdO?=
+ =?utf-8?B?eGNsZ0p2bys4OWhPeVlsUEk2WW1ZdFlENENiaUt6aTlURzlKajk0bWx2VGp4?=
+ =?utf-8?B?Z29TOW5CcWp4WkQxM08yTEFjN2hjcXZJMnBYQTY1WFJ4MDA1blNjUkJacGR6?=
+ =?utf-8?B?K2FTcmREc2E0MG8wdU9pSFFVdFZXaE9qOVBBcGtwc1kya1hJbTFLT3JTaXpt?=
+ =?utf-8?B?c3B1c1YycUlpR1VOTytZdDM5R1dmUENoMGJuTmV1L0lTd2xick5yZ3dKWnZq?=
+ =?utf-8?Q?fyxcMbCRIHj3hDq+zi/otYlwX?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <E5DC1D5F8A89EC4CAAD6C6230FEED1DE@apcprd03.prod.outlook.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] docs/zh_CN: add the translation of kbuild/llvm.rst
-To: Jinjie Ruan <ruanjinjie@huawei.com>, si.yanteng@linux.dev,
- Alex Shi <alexs@kernel.org>, Yanteng Si <siyanteng@loongson.cn>,
- Jonathan Corbet <corbet@lwn.net>, Paul Walmsley <paul.walmsley@sifive.com>,
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Nathan Chancellor <nathan@kernel.org>,
- Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling
- <morbo@google.com>, Justin Stitt <justinstitt@google.com>
-Cc: hust-os-kernel-patches@googlegroups.com, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
- llvm@lists.linux.dev
-References: <20241023153235.1291567-1-dzm91@hust.edu.cn>
- <d987b09d-985b-8d85-36e6-97ab4e8e222f@huawei.com>
-From: Dongliang Mu <dzm91@hust.edu.cn>
-In-Reply-To: <d987b09d-985b-8d85-36e6-97ab4e8e222f@huawei.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:HgEQrADHzn6biilnLPVnCQ--.12977S2
-Authentication-Results: app1; spf=neutral smtp.mail=dzm91@hust.edu.cn;
-X-Coremail-Antispam: 1UD129KBjvJXoW3Cr43XFyfGrW8ArWUAF1rCrg_yoWDZFyfpa
-	97CFZ3Ka1qqry0yryI9F45uwnayr4vka48X3Z8ta40vrn2vFyDtw1UKr4rWasru3yxCryU
-	Aw1fCF12yF17ArDanT9S1TB71UUUU1UqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUd0b7Iv0xC_Zr1lb4IE77IF4wAFc2x0x2IEx4CE42xK8VAvwI8I
-	cIk0rVWrJVCq3wA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjx
-	v20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4UJVWxJr1l84ACjcxK
-	6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_GcCE3s1ln4kS14v26r
-	1q6r43M2vYz4IE04k24VAvwVAKI4IrM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI
-	12xvs2x26I8E6xACxx1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj64x0Y40En7xvr7AKxV
-	W8Jr0_Cr1UMcIj6x8ErcxFaVAv8VW8uFyUJr1UMcIj6xkF7I0En7xvr7AKxVW8Jr0_Cr1U
-	McvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwCY1x0262kKe7AKxVWUtVW8ZwCF04
-	k20xvY0x0EwIxGrwCF04k20xvE74AGY7Cv6cx26r4fZr1UJr1l4I8I3I0E4IkC6x0Yz7v_
-	Jr0_Gr1l4IxYO2xFxVAFwI0_GFv_Wrylx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8Gjc
-	xK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5MIIYY7kG6xAYrwCIccxYrVCIc48F
-	wI0_Xr0_Ar1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVW8JVW5JwCI42IY6xIIjx
-	v20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2
-	jsIE14v26r4j6F4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0x
-	ZFpf9x07b99akUUUUU=
-X-CM-SenderInfo: asqsiiirqrkko6kx23oohg3hdfq/
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TYZPR03MB6624.apcprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0c6f6822-d01b-45b6-1976-08dcfd463674
+X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Nov 2024 03:01:58.2804
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: a7687ede-7a6b-4ef6-bace-642f677fbe31
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: RCQ6mBC1l1Icuuqgjfbaqk3NC+o7kgtn44x7mOf9ipxfSNGyZvLhZY4iLOuTKKIEzu+ipBetiQ3U85D+8dK8AA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEYPR03MB7890
 
-
-On 2024/11/5 10:54, 'Jinjie Ruan' via HUST OS Kernel Contribution wrote:
->
-> On 2024/10/23 23:32, Dongliang Mu wrote:
->> Finish the translation of kbuild/llvm.rst and move llvm from TODO
->> to the main body.
->>
->> Update to commit 145082ebfcf0 ("Documentation/llvm: turn make command
->> for ccache into code block")
->>
->> Signed-off-by: Dongliang Mu <dzm91@hust.edu.cn>
->> ---
->>   .../translations/zh_CN/kbuild/index.rst       |   3 +-
->>   .../translations/zh_CN/kbuild/llvm.rst        | 203 ++++++++++++++++++
->>   2 files changed, 205 insertions(+), 1 deletion(-)
->>   create mode 100644 Documentation/translations/zh_CN/kbuild/llvm.rst
->>
->> diff --git a/Documentation/translations/zh_CN/kbuild/index.rst b/Documentation/translations/zh_CN/kbuild/index.rst
->> index 0ba96aecb13a..3f9ab52fa5bb 100644
->> --- a/Documentation/translations/zh_CN/kbuild/index.rst
->> +++ b/Documentation/translations/zh_CN/kbuild/index.rst
->> @@ -17,6 +17,7 @@
->>       gcc-plugins
->>       kbuild
->>       reproducible-builds
->> +    llvm
->>   
->>   TODO:
->>   
->> @@ -25,7 +26,7 @@ TODO:
->>   - makefiles
->>   - modules
->>   - issues
->> -- llvm
->> +
->>   
->>   .. only::  subproject and html
->>   
->> diff --git a/Documentation/translations/zh_CN/kbuild/llvm.rst b/Documentation/translations/zh_CN/kbuild/llvm.rst
->> new file mode 100644
->> index 000000000000..f71092144a26
->> --- /dev/null
->> +++ b/Documentation/translations/zh_CN/kbuild/llvm.rst
->> @@ -0,0 +1,203 @@
->> +.. SPDX-License-Identifier: GPL-2.0
->> +
->> +.. include:: ../disclaimer-zh_CN.rst
->> +
->> +:Original: Documentation/kbuild/llvm.rst
->> +:Translator: 慕冬亮 Dongliang Mu <dzm91@hust.edu.cn>
->> +
->> +==========================
->> +使用 Clang/LLVM 构建 Linux
->> +==========================
->> +
->> +本文档介绍如何使用 Clang 和 LLVM 工具构建 Linux 内核。
->> +
->> +关于
->> +----
->> +
->> +Linux 内核传统上一直使用 GNU 工具链（如 GCC 和 binutils）进行编译。持续的工作使得
->> +`Clang <https://clang.llvm.org/>`_ 和 `LLVM <https://llvm.org/>`_ 工具可
->> +作为可行的替代品。一些发行版，如 `Android <https://www.android.com/>`_、
->> +`ChromeOS <https://www.chromium.org/chromium-os>`_、`OpenMandriva
->> +<https://www.openmandriva.org/>`_ 和 `Chimera Linux
->> +<https://chimera-linux.org/>`_ 使用 Clang 编译的内核。谷歌和 Meta 的数据中心
->> +集群也运行由 Clang 编译的内核。
->> +
->> +`LLVM 是由 C++ 对象实现的工具链组件集合 <https://www.aosabook.org/en/llvm.html>`_。
->> +Clang 是 LLVM 的前端，支持 C 语言和内核所需的 GNU C 扩展，其发音为 "klang"，而非
->> +"see-lang"。
->> +
->> +使用 LLVM 构建
->> +--------------
->> +
->> +通过以下命令调用 ``make``::
->> +
->> +	make LLVM=1
->> +
->> +为主机目标进行编译。对于交叉编译::
->> +
->> +	make LLVM=1 ARCH=arm64
->> +
->> +LLVM= 参数
->> +----------
->> +
->> +LLVM 有 GNU binutils 工具的替代品。这些工具可以单独启用。以下是支持的 make 变量
->> +完整列表::
->> +
->> +	make CC=clang LD=ld.lld AR=llvm-ar NM=llvm-nm STRIP=llvm-strip \
->> +	  OBJCOPY=llvm-objcopy OBJDUMP=llvm-objdump READELF=llvm-readelf \
->> +	  HOSTCC=clang HOSTCXX=clang++ HOSTAR=llvm-ar HOSTLD=ld.lld
->> +
->> +``LLVM=1`` 扩展为上述命令。
->> +
->> +如果你的 LLVM 工具不在 PATH 中，你可以使用以斜杠结尾的 LLVM 变量提供它们的位置::
->> +
->> +	make LLVM=/path/to/llvm/
->> +
->> +这将使用 ``/path/to/llvm/clang``、``/path/to/llvm/ld.lld`` 等工具。也可以
->> +使用以下命令::
->> +
->> +	PATH=/path/to/llvm:$PATH make LLVM=1
->> +
->> +如果你的 LLVM 工具带有版本后缀，并且你希望测试该特定版本而非无后缀的可执行文件，
->> +类似于 ``LLVM=1``，你可以使用 ``LLVM`` 变量传递该后缀::
->> +
->> +	make LLVM=-14
->> +
->> +这将使用 ``clang-14``、``ld.lld-14`` 等工具。为了支持带有版本后缀的树外路径组合，
->> +我们建议::
->> +
->> +	PATH=/path/to/llvm/:$PATH make LLVM=-14
->> +
->> +``LLVM=0`` 与省略 ``LLVM`` 完全不同，它将表现得像 ``LLVM=1``。如果你只希望使用
->> +某些 LLVM 工具，请使用它们各自的 make 变量。
->> +
->> +在通过不同命令配置和构建时，应为每次调用 ``make`` 设置相同的 ``LLVM=`` 值。如果
->> +运行的脚本最终会调用 ``make``，则还应将 ``LLVM=`` 设置为环境变量。
->> +
->> +交叉编译
->> +--------
->> +
->> +单个 Clang 编译器二进制文件（及其对应的 LLVM 工具）通常会包含所有支持的后端，这可以
->> +简化交叉编译，尤其是使用 ``LLVM=1`` 时。如果仅使用 LLVM 工具，``CROSS_COMPILE``
->> +或目标三元组前缀就变得不必要。示例::
->> +
->> +	make LLVM=1 ARCH=arm64
->> +
->> +作为混合 LLVM 和 GNU 工具的示例，对于像 ``ARCH=s390`` 这样目前尚不支持
->> +``ld.lld`` 或 ``llvm-objcopy`` 的目标，你可以通过以下方式调用 ``make``::
->> +
->> +	make LLVM=1 ARCH=s390 LD=s390x-linux-gnu-ld.bfd \
->> +	  OBJCOPY=s390x-linux-gnu-objcopy
->> +
->> +此示例将调用 ``s390x-linux-gnu-ld.bfd`` 作为链接器和
->> +``s390x-linux-gnu-objcopy``，因此请确保它们在你的 ``$PATH`` 中。
->> +
->> +当 ``LLVM=1`` 未设置时，``CROSS_COMPILE`` 不会用于给 Clang 编译器二进制文件
->> +（或相应的 LLVM 工具）添加前缀，而 GNU 工具则需要这样做。
->> +
->> +LLVM_IAS= 参数
->> +--------------
->> +
->> +Clang 可以编译汇编代码。你可以传递 ``LLVM_IAS=0`` 禁用此行为，使 Clang 调用
->> +相应的非集成汇编器。示例::
->> +
->> +	make LLVM=1 LLVM_IAS=0
->> +
->> +在交叉编译时，你需要使用 ``CROSS_COMPILE`` 与 ``LLVM_IAS=0``，从而设置
->> +``--prefix=`` 使得编译器可以对应的非集成汇编器（通常，在面向另一种架构时，
->> +你不想使用系统汇编器）。例如::
->> +
->> +	make LLVM=1 ARCH=arm LLVM_IAS=0 CROSS_COMPILE=arm-linux-gnueabi-
->> +
->> +Ccache
->> +------
->> +
->> +``ccache`` 可以与 ``clang`` 一起使用，以改善后续构建（尽管在不同构建之间
->> +KBUILD_BUILD_TIMESTAMP_ 应设置为同一确定值，以避免 100% 的缓存未命中，
->> +详见 Reproducible_builds_ 获取更多信息）::
->> +
->> +	KBUILD_BUILD_TIMESTAMP='' make LLVM=1 CC="ccache clang"
->> +
->> +.. _KBUILD_BUILD_TIMESTAMP: kbuild.html#kbuild-build-timestamp
->> +.. _Reproducible_builds: reproducible-builds.html#timestamps
->> +
->> +支持的架构
->> +----------
->> +
->> +LLVM 并不支持 Linux 内核所有可支持的架构，同样，即使 LLVM 支持某一架构，也并不意味着在
->> +该架构下内核可以正常构建或工作。以下是当前 ``CC=clang`` 或 ``LLVM=1`` 支持的架构总结。
->> +支持级别对应于 MAINTAINERS 文件中的 "S" 值。如果某个架构未列出，则表示 LLVM 不支持它
->> +或存在已知问题。使用最新的稳定版 LLVM 或甚至开发版本通常会得到最佳结果。一个架构的
->> +``defconfig`` 通常预期能够良好工作，但某些配置可能存在尚未发现的问题。欢迎在以下
->> +问题跟踪器中提交错误报告！
->> +
->> +.. list-table::
->> +   :widths: 10 10 10
->> +   :header-rows: 1
->> +
->> +   * - 架构
->> +     - 支持级别
->> +     - ``make`` 命令
->> +   * - arm
->> +     - 支持
->> +     - ``LLVM=1``
->> +   * - arm64
->> +     - 支持
->> +     - ``LLVM=1``
->> +   * - hexagon
->> +     - 维护
->> +     - ``LLVM=1``
->> +   * - loongarch
->> +     - 维护
->> +     - ``LLVM=1``
->> +   * - mips
->> +     - 维护
->> +     - ``LLVM=1``
->> +   * - powerpc
->> +     - 维护
->> +     - ``LLVM=1``
->> +   * - riscv
->> +     - 支持
->> +     - ``LLVM=1``
->> +   * - s390
->> +     - 维护
->> +     - ``LLVM=1`` （LLVM >= 18.1.0），``CC=clang`` （LLVM < 18.1.0）
->> +   * - um (用户模式)
->> +     - 维护
->> +     - ``LLVM=1``
->> +   * - x86
->> +     - 支持
->> +     - ``LLVM=1``
->> +
->> +获取帮助
->> +--------
->> +
->> +- `网站 <https://clangbuiltlinux.github.io/>`_
->> +- `邮件列表 <https://lore.kernel.org/llvm/>`_: <llvm@lists.linux.dev>
->> +- `旧邮件列表档案 <https://groups.google.com/g/clang-built-linux>`_
->> +- `问题跟踪器 <https://github.com/ClangBuiltLinux/linux/issues>`_
->> +- IRC: #clangbuiltlinux 在 irc.libera.chat
->> +- `Telegram <https://t.me/ClangBuiltLinux>`_: @ClangBuiltLinux
->> +- `维基 <https://github.com/ClangBuiltLinux/linux/wiki>`_
->> +- `初学者问题 <https://github.com/ClangBuiltLinux/linux/issues?q=is%3Aopen+is%3Aissue+label%3A%22good+first+issue%22>`_
->> +
->> +.. _zh_cn_getting_llvm:
->> +
->> +获取 LLVM
->> +---------
->> +
->> +我们在 `kernel.org <https://kernel.org/pub/tools/llvm/>`_ 提供预编译的稳定版 LLVM。
->> +这些版本已经针对 Linux 内核构建，使用配置文件数据进行优化。相较于其他发行版中的 LLVM，它们应该
->> +能提高内核构建时间。
-> ^^^^^^^^^^^^^^^^^^^^^^
->
-> It doesn't match the meaning of the original text.
->
-> may be "减少/改进内核构建时间" or "提高内核构建效率".
-
-确实，个人倾向于使用意译，改成 “提高内核构建效率”。
-
-我尽快提交一个 patch 来修改。
-
->
->> +
->> +以下是一些有助于从源代码构建 LLVM 或通过发行版的包管理器获取 LLVM 的链接。
->> +
->> +- https://releases.llvm.org/download.html
->> +- https://github.com/llvm/llvm-project
->> +- https://llvm.org/docs/GettingStarted.html
->> +- https://llvm.org/docs/CMake.html
->> +- https://apt.llvm.org/
->> +- https://www.archlinux.org/packages/extra/x86_64/llvm/
->> +- https://github.com/ClangBuiltLinux/tc-build
->> +- https://github.com/ClangBuiltLinux/linux/wiki/Building-Clang-from-source
->> +- https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/
-
+SGksIFNodS1oc2lhbmc6DQoNCk9uIFdlZCwgMjAyNC0xMC0wOSBhdCAxOToxNSArMDgwMCwgU2h1
+LWhzaWFuZyBZYW5nIHdyb3RlOg0KPiBJbnRyb2R1Y2VzIHRoZSBJU1AgcGlwZWxpbmUgZHJpdmVy
+IGZvciB0aGUgTWVkaWFUZWsgSVNQIHJhdyBhbmQgeXV2DQo+IG1vZHVsZXMuIEtleSBmdW5jdGlv
+bmFsaXRpZXMgaW5jbHVkZSBkYXRhIHByb2Nlc3NpbmcsIFY0TDIgaW50ZWdyYXRpb24sDQo+IHJl
+c291cmNlIG1hbmFnZW1lbnQsIGRlYnVnIHN1cHBvcnQsIGFuZCB2YXJpb3VzIGNvbnRyb2wgb3Bl
+cmF0aW9ucy4NCj4gQWRkaXRpb25hbGx5LCBJUlEgaGFuZGxpbmcsIHBsYXRmb3JtIGRldmljZSBt
+YW5hZ2VtZW50LCBhbmQgTWVkaWFUZWsNCj4gSVNQIERNQSBmb3JtYXQgc3VwcG9ydCBhcmUgYWxz
+byBpbmNsdWRlZC4NCj4gDQo+IFNpZ25lZC1vZmYtYnk6IFNodS1oc2lhbmcgWWFuZyA8U2h1LWhz
+aWFuZy5ZYW5nQG1lZGlhdGVrLmNvbT4NCj4gLS0tDQoNCltzbmlwXQ0KDQo+ICtzdGF0aWMgaW50
+IG10a19yYXdfb2ZfcHJvYmUoc3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRldiwNCj4gKwkJCSAg
+ICBzdHJ1Y3QgbXRrX3Jhd19kZXZpY2UgKnJhdykNCj4gK3sNCj4gKwlzdHJ1Y3QgZGV2aWNlICpk
+ZXYgPSAmcGRldi0+ZGV2Ow0KPiArCXN0cnVjdCByZXNvdXJjZSAqcmVzOw0KPiArCWludCByZXQ7
+DQo+ICsJaW50IG5fY2xrczsNCj4gKw0KPiArCXJldCA9IG9mX3Byb3BlcnR5X3JlYWRfdTMyKGRl
+di0+b2Zfbm9kZSwgIm1lZGlhdGVrLGNhbS1pZCIsICZyYXctPmlkKTsNCg0KWW91IGRvbid0IG5l
+ZWQgcmF3LT5pZC4NCkkgdGhpbmsgZWFjaCByYXcgY291bGQgd29yayBpbmRlcGVuZGVudGx5Lg0K
+RWFjaCByYXcgaGFzIGl0cyBvd24gJ3N0cnVjdCBtdGtfcmF3X2RldmljZScgY29udGV4dCBkYXRh
+Lg0KSXQncyBub3QgbmVjZXNzYXJ5IHRvIGtub3cgd2hpY2ggb25lIGl0IGlzLg0KV2hlbiB5b3Ug
+dXNlIGRldl9kYmcoKSBvciBkZXZfZXJyKCksIGl0IHdvdWxkIHNob3cgcmVnaXN0ZXIgYmFzZSBz
+byB5b3UgY291bGQgaWRlbnRpZnkgd2hpY2ggcmF3IHByaW50IHRoaXMgbWVzc2FnZS4NCg0KUmVn
+YXJkcywNCkNLDQoNCj4gKwlpZiAocmV0KSB7DQo+ICsJCWRldl9kYmcoZGV2LCAibWlzc2luZyBj
+YW1pZCBwcm9wZXJ0eVxuIik7DQo+ICsJCXJldHVybiByZXQ7DQo+ICsJfQ0KPiArDQo+ICsJaWYg
+KGRtYV9zZXRfbWFza19hbmRfY29oZXJlbnQoZGV2LCBETUFfQklUX01BU0soMzQpKSkgew0KPiAr
+CQlkZXZfZXJyKGRldiwgIiVzOiBObyBzdWl0YWJsZSBETUEgYXZhaWxhYmxlXG4iLCBfX2Z1bmNf
+Xyk7DQo+ICsJCXJldHVybiAtRUlPOw0KPiArCX0NCj4gKw0KPiArCWlmICghZGV2LT5kbWFfcGFy
+bXMpIHsNCj4gKwkJZGV2LT5kbWFfcGFybXMgPQ0KPiArCQkJZGV2bV9remFsbG9jKGRldiwgc2l6
+ZW9mKCpkZXYtPmRtYV9wYXJtcyksIEdGUF9LRVJORUwpOw0KPiArCQlpZiAoIWRldi0+ZG1hX3Bh
+cm1zKQ0KPiArCQkJcmV0dXJuIC1FTk9NRU07DQo+ICsJfQ0KPiArDQo+ICsJZG1hX3NldF9tYXhf
+c2VnX3NpemUoZGV2LCBVSU5UX01BWCk7DQo+ICsNCj4gKwkvKiBiYXNlIG91dGVyIHJlZ2lzdGVy
+ICovDQo+ICsJcmVzID0gcGxhdGZvcm1fZ2V0X3Jlc291cmNlX2J5bmFtZShwZGV2LCBJT1JFU09V
+UkNFX01FTSwgImJhc2UiKTsNCj4gKwlpZiAoIXJlcykgew0KPiArCQlkZXZfZXJyKGRldiwgImZh
+aWxlZCB0byBnZXQgbWVtXG4iKTsNCj4gKwkJcmV0dXJuIC1FTk9ERVY7DQo+ICsJfQ0KPiArDQo+
+ICsJcmF3LT5iYXNlID0gZGV2bV9pb3JlbWFwX3Jlc291cmNlKGRldiwgcmVzKTsNCj4gKwlpZiAo
+SVNfRVJSKHJhdy0+YmFzZSkpIHsNCj4gKwkJZGV2X2VycihkZXYsICJmYWlsZWQgdG8gbWFwIHJl
+Z2lzdGVyIGJhc2VcbiIpOw0KPiArCQlyZXR1cm4gUFRSX0VSUihyYXctPmJhc2UpOw0KPiArCX0N
+Cj4gKw0KPiArCS8qIGJhc2UgaW5uZXIgcmVnaXN0ZXIgKi8NCj4gKwlyZXMgPSBwbGF0Zm9ybV9n
+ZXRfcmVzb3VyY2VfYnluYW1lKHBkZXYsIElPUkVTT1VSQ0VfTUVNLCAiaW5uZXJfYmFzZSIpOw0K
+PiArCWlmICghcmVzKSB7DQo+ICsJCWRldl9lcnIoZGV2LCAiZmFpbGVkIHRvIGdldCBtZW1cbiIp
+Ow0KPiArCQlyZXR1cm4gLUVOT0RFVjsNCj4gKwl9DQo+ICsNCj4gKwlyYXctPmJhc2VfaW5uZXIg
+PSBkZXZtX2lvcmVtYXBfcmVzb3VyY2UoZGV2LCByZXMpOw0KPiArCWlmIChJU19FUlIocmF3LT5i
+YXNlX2lubmVyKSkgew0KPiArCQlkZXZfZXJyKGRldiwgImZhaWxlZCB0byBtYXAgcmVnaXN0ZXIg
+aW5uZXIgYmFzZVxuIik7DQo+ICsJCXJldHVybiBQVFJfRVJSKHJhdy0+YmFzZV9pbm5lcik7DQo+
+ICsJfQ0KPiArDQo+ICsJLyogd2lsbCBiZSBhc3NpZ25lZCBsYXRlciAqLw0KPiArCXJhdy0+eXV2
+X2Jhc2UgPSBOVUxMOw0KPiArDQo+ICsJcmF3LT5pcnEgPSBwbGF0Zm9ybV9nZXRfaXJxKHBkZXYs
+IDApOw0KPiArCWlmIChyYXctPmlycSA8IDApIHsNCj4gKwkJZGV2X2VycihkZXYsICJmYWlsZWQg
+dG8gZ2V0IGlycVxuIik7DQo+ICsJCXJldHVybiAtRU5PREVWOw0KPiArCX0NCj4gKw0KPiArCXJl
+dCA9IGRldm1fcmVxdWVzdF90aHJlYWRlZF9pcnEoZGV2LCByYXctPmlycSwNCj4gKwkJCQkJbXRr
+X2lycV9yYXcsIG10a190aHJlYWRfaXJxX3JhdywNCj4gKwkJCQkJMCwgZGV2X25hbWUoZGV2KSwg
+cmF3KTsNCj4gKwlpZiAocmV0KSB7DQo+ICsJCWRldl9lcnIoZGV2LCAiZmFpbGVkIHRvIHJlcXVl
+c3QgaXJxPSVkXG4iLCByYXctPmlycSk7DQo+ICsJCXJldHVybiByZXQ7DQo+ICsJfQ0KPiArCWRl
+dl9kYmcoZGV2LCAicmVnaXN0ZXJlZCBpcnE9JWRcbiIsIHJhdy0+aXJxKTsNCj4gKw0KPiArCWRp
+c2FibGVfaXJxKHJhdy0+aXJxKTsNCj4gKw0KPiArCW5fY2xrcyA9IGRldm1fY2xrX2J1bGtfZ2V0
+X2FsbChkZXYsICZyYXctPmNsa19iKTsNCj4gKwlpZiAobl9jbGtzIDwgMCkgew0KPiArCQlkZXZf
+ZXJyKGRldiwgImZhaWxlZCB0byBkZXZtX2Nsa19idWxrX2dldF9hbGw9JWRcbiIsIG5fY2xrcyk7
+DQo+ICsJCXJldHVybiBuX2Nsa3M7DQo+ICsJfQ0KPiArDQo+ICsJcmF3LT5udW1fY2xrcyA9IG5f
+Y2xrczsNCj4gKwlkZXZfaW5mbyhkZXYsICJjbGtfbnVtOiVkXG4iLCByYXctPm51bV9jbGtzKTsN
+Cj4gKw0KPiArI2lmZGVmIENPTkZJR19QTV9TTEVFUA0KPiArCXJhdy0+cG1fbm90aWZpZXIubm90
+aWZpZXJfY2FsbCA9IHJhd19wbV9ub3RpZmllcjsNCj4gKwlyZXQgPSByZWdpc3Rlcl9wbV9ub3Rp
+ZmllcigmcmF3LT5wbV9ub3RpZmllcik7DQo+ICsJaWYgKHJldCkgew0KPiArCQlkZXZfaW5mbyhk
+ZXYsICJmYWlsZWQgdG8gcmVnaXN0ZXIgbm90aWZpZXIgYmxvY2suXG4iKTsNCj4gKwkJcmV0dXJu
+IHJldDsNCj4gKwl9DQo+ICsjZW5kaWYNCj4gKwlyZXR1cm4gMDsNCj4gK30NCj4gKw0KDQo=
 
