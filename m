@@ -1,82 +1,93 @@
-Return-Path: <linux-kernel+bounces-396254-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396255-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 898229BCA27
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 11:17:21 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E7CC9BCA29
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 11:17:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D3D828408B
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 10:17:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D2E891F23322
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 10:17:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A6A31D1F79;
-	Tue,  5 Nov 2024 10:17:12 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 548EE1D2211;
+	Tue,  5 Nov 2024 10:17:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="odoFa2jR"
+Received: from out-187.mta0.migadu.com (out-187.mta0.migadu.com [91.218.175.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC9E51D1747
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 10:17:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F0ED1D0942
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 10:17:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730801831; cv=none; b=bQ9GlGAkTI2n1E3mKfgBRdn+D29RDLEhsFzVBjIA9mZUxzlO0eAXkmpQNP2mW8sCzt5XDX7P5RuPaTIGISoPWfyXF8V6gdton1Gvx5dfmOwlUrfB525HovRI/a9qbGa7wOAcWOU609fqgcDhCyZwav5vooR3i5yNlCkT1DkRP4k=
+	t=1730801863; cv=none; b=ae6MdLoBr1LKDEy0cJwkyahWog35cqwhPJ2b0fil9OtzuGBYw4V6NVnwvuVfdCzqQX871I6KIpL6h1v68QKStjv8k67Rz5g5ncQmRYJ+Jj91eL3oYNKI0KzSqDyxRxQ8mXsf8wrtnE5gGhdJC4r83YEqv46nQkmYkqzzpSOXndE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730801831; c=relaxed/simple;
-	bh=uYFu5hk9RPg1nhk2wUqnvBIEwCZTXT9exQ8u7c3OuBA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=B95C2c06XuG+VZKS2TXb3zBrkYFnAVXKP05GS/RSBhMxzmE0WMhYkDwJ1b4too32EppQ9+VqpRFaVdSr+rJF5W3XbaWvL2hbhXTobBzSwsb/E3FOjlX2I4q2UcF32+HaFUHNqKqLvVPLgoF/yfF5S7XNocOTpUof2oWNxWMugPE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from dude02.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::28])
-	by metis.whiteo.stw.pengutronix.de with esmtp (Exim 4.92)
-	(envelope-from <m.felsch@pengutronix.de>)
-	id 1t8GcS-0002D7-FX; Tue, 05 Nov 2024 11:17:04 +0100
-From: Marco Felsch <m.felsch@pengutronix.de>
-To: "robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, shawnguo@kernel.org, Sascha Hauer" <s.hauer@pengutronix.de>
-Cc: kernel@pengutronix.de,
-	devicetree@vger.kernel.org,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] arm64: dts: imx8mp: add interconnect for lcdif-hdmi
-Date: Tue,  5 Nov 2024 11:16:44 +0100
-Message-Id: <20241105101645.231608-1-m.felsch@pengutronix.de>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1730801863; c=relaxed/simple;
+	bh=Pfxp3UgmocCduvz74SEU8A/Gr1NiH79Ak9TQv8JebjI=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=qsg6cq+7DFkj3SbiVgN+OtcSA7vyarleAH0CBU/Ug4J+hhJXY0yNX/g5SUW2wQ+4N6enMAPo+sK62IWIpotnksbB+etSHbijatTHL6H0lQvGk1qSCuzyXkeJFxlKh7ol8rCkriV+HyHxKZ96Ugx3EdaTk5u4yoE5yrIA6UHt11s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=odoFa2jR; arc=none smtp.client-ip=91.218.175.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Content-Type: text/plain;
+	charset=us-ascii
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1730801858;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/8X+2xCjEs0rBr3R/4kav9LiDnlmN+TNDD9ICLlYSxM=;
+	b=odoFa2jRg/7/75GQpXFacn7upyeh3uTIb2m3Y+ooiT3sQBf6+ou2BK9NSJIHM+MRumSZAG
+	r0SqmZWiPjEI2drWlZKjaynUYAc6cGoKmzNfRvBefK3OdcgJc6CgoFM+rikgR+MqEe+xvj
+	bG9UJTxpvZbOGBXO/4tJLqp5vqH0cRA=
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:1101:1d::28
-X-SA-Exim-Mail-From: m.felsch@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51.11.1\))
+Subject: Re: [RESEND PATCH] ext4: Annotate struct fname with __counted_by()
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Thorsten Blum <thorsten.blum@linux.dev>
+In-Reply-To: <2024110530-ashen-deforest-9f71@gregkh>
+Date: Tue, 5 Nov 2024 11:17:24 +0100
+Cc: Theodore Ts'o <tytso@mit.edu>,
+ Andreas Dilger <adilger.kernel@dilger.ca>,
+ Kees Cook <kees@kernel.org>,
+ "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+ Jan Kara <jack@suse.cz>,
+ linux-ext4@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ linux-hardening@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+Message-Id: <0323DE8F-A0F4-4396-A755-41CE1DCC6A48@linux.dev>
+References: <20241104234214.8094-2-thorsten.blum@linux.dev>
+ <2024110530-ashen-deforest-9f71@gregkh>
+To: Greg KH <gregkh@linuxfoundation.org>
+X-Migadu-Flow: FLOW_OUT
 
-Add the missing interconnect for the lcdif-hdmi.
+On 5. Nov 2024, at 10:52, Greg KH wrote:
+> On Tue, Nov 05, 2024 at 12:42:14AM +0100, Thorsten Blum wrote:
+>> Add the __counted_by compiler attribute to the flexible array member
+>> name to improve access bounds-checking via CONFIG_UBSAN_BOUNDS and
+>> CONFIG_FORTIFY_SOURCE.
+>> 
+>> Inline and use struct_size() to calculate the number of bytes to
+>> allocate for new_fn and remove the local variable len.
+> 
+> This is two different things, why not do this in two different patches?
+> 
+> thanks,
+> 
+> greg k-h
 
-Signed-off-by: Marco Felsch <m.felsch@pengutronix.de>
----
- arch/arm64/boot/dts/freescale/imx8mp.dtsi | 4 ++++
- 1 file changed, 4 insertions(+)
+No particular reason. I'll submit a v2 for the __counted_by() annotation
+and a separate patch for struct_size().
 
-diff --git a/arch/arm64/boot/dts/freescale/imx8mp.dtsi b/arch/arm64/boot/dts/freescale/imx8mp.dtsi
-index f3531cfb0d79..09b0b63a7b88 100644
---- a/arch/arm64/boot/dts/freescale/imx8mp.dtsi
-+++ b/arch/arm64/boot/dts/freescale/imx8mp.dtsi
-@@ -2023,6 +2023,10 @@ hdmi_blk_ctrl: blk-ctrl@32fc0000 {
- 						     "pai", "pvi", "trng",
- 						     "hdmi-tx", "hdmi-tx-phy",
- 						     "hdcp", "hrv";
-+				interconnects = <&noc IMX8MP_ICM_LCDIF_HDMI &noc IMX8MP_ICN_HDMI>,
-+						<&noc IMX8MP_ICM_HRV &noc IMX8MP_ICN_HDMI>,
-+						<&noc IMX8MP_ICM_HDCP &noc IMX8MP_ICN_HDMI>;
-+				interconnect-names = "lcdif-hdmi", "hrv", "hdcp";
- 				#power-domain-cells = <1>;
- 			};
- 
--- 
-2.39.5
+I'll keep Jan's Reviewed-by: tag for both.
 
+Thanks,
+Thorsten
 
