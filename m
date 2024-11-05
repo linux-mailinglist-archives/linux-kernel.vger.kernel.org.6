@@ -1,95 +1,155 @@
-Return-Path: <linux-kernel+bounces-395964-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395965-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04B929BC573
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 07:33:44 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7537B9BC575
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 07:34:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A62511F211FB
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 06:33:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D9741F21A1D
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 06:34:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 100831D88DB;
-	Tue,  5 Nov 2024 06:33:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 951931F6667;
+	Tue,  5 Nov 2024 06:33:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZweH6fom"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="DS1U727c"
+Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A94FE2A1A4
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 06:33:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 593352A1A4;
+	Tue,  5 Nov 2024 06:33:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730788417; cv=none; b=DBKLbIZJ1zAF0Y4z9lfeD2KbjqXRul1IMeif7D36jqyg1wQA6IS+Af2eMB+zo1qZYT4ap6bVxU7MkDRLlLEHVRQfpkrUrgbmdam2IzPVWM1hbZyGlxBpDQbB65N71Bg0WTMUC+b57A5qPhMwU4cYfS1NR3j/Hk+0YawBpFA2ijM=
+	t=1730788438; cv=none; b=FeWAqpd87D5EtPIgjsCEfvcJJSbb6HfZmPbSV1VBUnTAYdirK1Kf8czhhKtGs+12MO/zR1KkFBf7AWuIYkRP4GEldyfMOqe6F1yD1zLDy+fz/mwuSwMehXF6E5vfPTbNHwiQpg3smC0ZJcPdzCS5r/Ep5ixO3s1qr7eAYCR8bCs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730788417; c=relaxed/simple;
-	bh=t3bvFmNuQGNs9UGiiISlH2teCewegtta8jaIxh8ONf0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O1ChtVEWPxQYOJA1ZPBjV83wv1BclsG6V+dPOvSPDpkqH4wEgOartgOYXagnTg2N/GYe+GZ0kdHAcgqPRaLQyyfaptz7zytrr3fpq+xFivtHBZY5qMZYj4nw4cYUHpDMv1eTOOPfFkZaoMzNmLLRGZ3cpY6eV8hOTh7VwsWCiRc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ZweH6fom; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a9a6b4ca29bso653965466b.3
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 22:33:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1730788414; x=1731393214; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=t3bvFmNuQGNs9UGiiISlH2teCewegtta8jaIxh8ONf0=;
-        b=ZweH6fomU23lZ2durwOq0G7Cg69+b9rRpuQyLD6fZ/rYb3S5SIDgVcjPvmRC0sa5Lk
-         Mo1jLsc45AbV8hmjEvXZ6qC1WedS5CvgwU9JIAQEe4v8F/UCwjqf+oE6CMIIXFMrKNlq
-         sH7Msm2/KxDrZgUxQ8Qi3wgu0F2ko3w0l1PyWQ0pwMRYj2rI81u6tinHPWHniDstj0Rh
-         vv2xNfyHwVYGCbO7W0vT5tEjmY0nUUzEDVkO7ycFrKXN2DBjSUAu51eXSdwQ5vmsBUEN
-         Bz90ZZIXFxKy/9URJjaYgM9wens6z3cbbqlcs0jaRKscjSg1R1ayCTUj9bRlAn4f7kX6
-         yXtg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730788414; x=1731393214;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=t3bvFmNuQGNs9UGiiISlH2teCewegtta8jaIxh8ONf0=;
-        b=wDE8cfCo2aWTDEU0lK2xrDua9ZDgTjJKoBI1/Zgo/na9l9a7OXrKfMqEs3ZlSo6HXe
-         Rf6laaFtt/Czo30YHuHLrGEQpPM18ifF9McW1wlH+OFqSQ+6d+9vXEUxv60m0r0X2Bit
-         VNKVZfSLxCzE/rfjQBm0pYqQAh4oxQ2r4d5j0McCUShKr5HaX4wQKxq6ybMF9D15N4KR
-         V2c+LC4b3d4nj5VOtS2o0ZZTjfKA1hq7C+UamhTfQjysjY5aZFGj+PowE9uJvc/GQqwJ
-         95Ljup082y1xfu6ALFw6iOFA95gGJZoyOByvLa26svDtEk3rTKqBacEu9bEF9EIS/Xyk
-         IiAw==
-X-Forwarded-Encrypted: i=1; AJvYcCW71CRhx1vMrOJNn/i/S19sCceYmfcjHDpPrZmUAg5vv40BmR8m9FaLzKQYIKyBGAtcm+TyfdaYeFy/eoQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzQg2wjNSOrOH8G6yAVwWiBJrvIjuQ8yrYWOyMtnm56+gUpnTXz
-	QcYHunMPXXKPHIa6bInHKY3cIYM3ie+GXg4/+jw0UlIbUmsjvEMb1IoBOEVFMTM=
-X-Google-Smtp-Source: AGHT+IF9V9Q8NkCfVRclh7Q3mDq8C0xfRD+iZKCJWd9iql6JL8dFIMsWd/abfpHvPCmisIhYNnTz1g==
-X-Received: by 2002:a17:906:dc94:b0:a9a:12c9:41d1 with SMTP id a640c23a62f3a-a9e5092b1c4mr1812239566b.28.1730788413729;
-        Mon, 04 Nov 2024 22:33:33 -0800 (PST)
-Received: from localhost ([77.241.232.19])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9eb17f9b3csm83341766b.172.2024.11.04.22.33.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Nov 2024 22:33:33 -0800 (PST)
-Date: Tue, 5 Nov 2024 09:33:32 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Dave Penkler <dpenkler@gmail.com>
-Cc: gregkh@linuxfoundation.org, linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org, skhan@linuxfoundation.org,
-	arnd@arndb.de
-Subject: Re: [PATCH v3 00/12] staging: gpib: Patch set for gpib staging
- drivers
-Message-ID: <d0c4c59f-dbaa-403f-ae39-4ee0476ed9e7@suswa.mountain>
-References: <20241104175014.12317-1-dpenkler@gmail.com>
+	s=arc-20240116; t=1730788438; c=relaxed/simple;
+	bh=R1utXRDZTq1k1v/1QRoa/HB0u8Grz0KqdusrKSnhVaI=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=R6pfZ27rz0yqVw1Wzn3jzOHZh8o5JWyBXrJssawx4JzJn9c5meYAp81Mms1fOQrJvYcIm1sMh+0CNg04oryJztlGm32STsKo/UX2UggBhrAf8s7AGBX32HYVBfes8WPjYiYdimAs3eRUo0vd96BQ152wCRH6QRBhw3lfYmc+Tgw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=DS1U727c; arc=none smtp.client-ip=116.203.91.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241104175014.12317-1-dpenkler@gmail.com>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
+	t=1730788434;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=aTAKhxSFE8FvW11nxBit6CA7OkWpY8iwgm9r8H8Xrpg=;
+	b=DS1U727cQQMKiGKjgi2ySybSh4sSk1DLW74/mB4SFQndpIqZSVN9n2j3+nXkmTPOuBRegb
+	aA5s0UDKAOW3aMIUF2+0upqJriMxm2OMYgf4bfFIIe/IPGnUJlG7nJlsJHkzxI/rWNpVDU
+	EfN5SJha5Nr6CjWfQIjbQYpVToL8XtrOAT6bIrMeKjRy4wBXxi8+uETESOSHISskujzuLC
+	f1NWpEGJe3wnaTf6M9QZ9ZIurGL82YDS9nEj25ywbtKmQWwvVg91CtFjgtZ/lWovt0YqKM
+	Heqy5jDSjKvF/hrql62SqOniX0/mTOU4GuHVWnlSxmMkVd1w9CGi6HClfE2OAQ==
+Date: Tue, 05 Nov 2024 07:33:53 +0100
+From: Dragan Simic <dsimic@manjaro.org>
+To: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Phong LE <ple@baylibre.com>, Neil Armstrong <neil.armstrong@linaro.org>,
+ Andrzej Hajda <andrzej.hajda@intel.com>, Robert Foss <rfoss@kernel.org>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman
+ <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten
+ Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+ <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
+ <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Jessica Zhang
+ <quic_jesszhan@quicinc.com>, Rob Clark <robdclark@gmail.com>, Abhinav Kumar
+ <quic_abhinavk@quicinc.com>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org
+Subject: Re: [PATCH] drm: Use of_property_present() for non-boolean properties
+In-Reply-To: <20241104190636.274926-1-robh@kernel.org>
+References: <20241104190636.274926-1-robh@kernel.org>
+Message-ID: <16acf71de2a7d23f979ce286b2d8f606@manjaro.org>
+X-Sender: dsimic@manjaro.org
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Authentication-Results: ORIGINATING;
+	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
 
-Thank you!
+Hello Rob,
 
-Reviewed-by: Dan Carpenter <dan.carpenter@linaro.org>
+On 2024-11-04 20:06, Rob Herring (Arm) wrote:
+> The use of of_property_read_bool() for non-boolean properties is
+> deprecated in favor of of_property_present() when testing for property
+> presence.
+> 
+> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
 
-regards,
-dan carpenter
+Looking good to me, thanks for the patch!
 
+Reviewed-by: Dragan Simic <dsimic@manjaro.org>
+
+> ---
+>  drivers/gpu/drm/bridge/ite-it66121.c | 2 +-
+>  drivers/gpu/drm/bridge/sii902x.c     | 2 +-
+>  drivers/gpu/drm/drm_panel.c          | 2 +-
+>  drivers/gpu/drm/msm/dsi/dsi_host.c   | 2 +-
+>  4 files changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/bridge/ite-it66121.c
+> b/drivers/gpu/drm/bridge/ite-it66121.c
+> index 925e42f46cd8..0eae7c01b975 100644
+> --- a/drivers/gpu/drm/bridge/ite-it66121.c
+> +++ b/drivers/gpu/drm/bridge/ite-it66121.c
+> @@ -1480,7 +1480,7 @@ static int it66121_audio_codec_init(struct
+> it66121_ctx *ctx, struct device *dev)
+> 
+>  	dev_dbg(dev, "%s\n", __func__);
+> 
+> -	if (!of_property_read_bool(dev->of_node, "#sound-dai-cells")) {
+> +	if (!of_property_present(dev->of_node, "#sound-dai-cells")) {
+>  		dev_info(dev, "No \"#sound-dai-cells\", no audio\n");
+>  		return 0;
+>  	}
+> diff --git a/drivers/gpu/drm/bridge/sii902x.c 
+> b/drivers/gpu/drm/bridge/sii902x.c
+> index 7f91b0db161e..f73e1174a5ad 100644
+> --- a/drivers/gpu/drm/bridge/sii902x.c
+> +++ b/drivers/gpu/drm/bridge/sii902x.c
+> @@ -850,7 +850,7 @@ static int sii902x_audio_codec_init(struct sii902x 
+> *sii902x,
+>  	u8 lanes[4];
+>  	int num_lanes, i;
+> 
+> -	if (!of_property_read_bool(dev->of_node, "#sound-dai-cells")) {
+> +	if (!of_property_present(dev->of_node, "#sound-dai-cells")) {
+>  		dev_dbg(dev, "%s: No \"#sound-dai-cells\", no audio\n",
+>  			__func__);
+>  		return 0;
+> diff --git a/drivers/gpu/drm/drm_panel.c b/drivers/gpu/drm/drm_panel.c
+> index 19ab0a794add..46d61cc871ca 100644
+> --- a/drivers/gpu/drm/drm_panel.c
+> +++ b/drivers/gpu/drm/drm_panel.c
+> @@ -413,7 +413,7 @@ bool drm_is_panel_follower(struct device *dev)
+>  	 * don't bother trying to parse it here. We just need to know if the
+>  	 * property is there.
+>  	 */
+> -	return of_property_read_bool(dev->of_node, "panel");
+> +	return of_property_present(dev->of_node, "panel");
+>  }
+>  EXPORT_SYMBOL(drm_is_panel_follower);
+> 
+> diff --git a/drivers/gpu/drm/msm/dsi/dsi_host.c
+> b/drivers/gpu/drm/msm/dsi/dsi_host.c
+> index 185d7de0bf37..78cac4ecc58f 100644
+> --- a/drivers/gpu/drm/msm/dsi/dsi_host.c
+> +++ b/drivers/gpu/drm/msm/dsi/dsi_host.c
+> @@ -1831,7 +1831,7 @@ static int dsi_host_parse_dt(struct msm_dsi_host
+> *msm_host)
+>  		msm_dsi->te_source = devm_kstrdup(dev, te_source, GFP_KERNEL);
+>  	ret = 0;
+> 
+> -	if (of_property_read_bool(np, "syscon-sfpb")) {
+> +	if (of_property_present(np, "syscon-sfpb")) {
+>  		msm_host->sfpb = syscon_regmap_lookup_by_phandle(np,
+>  					"syscon-sfpb");
+>  		if (IS_ERR(msm_host->sfpb)) {
 
