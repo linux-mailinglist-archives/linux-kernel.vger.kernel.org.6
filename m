@@ -1,91 +1,172 @@
-Return-Path: <linux-kernel+bounces-396598-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396599-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C41B9BCF40
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 15:27:47 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16D6E9BCF44
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 15:28:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 29D5B282DF8
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 14:27:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 46D141C22CE0
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 14:28:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 092E81D935A;
-	Tue,  5 Nov 2024 14:27:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 294631D90DD;
+	Tue,  5 Nov 2024 14:28:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="L0llNO9u"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="X519f1N7"
+Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E93E1D9350
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 14:27:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 928691D2716;
+	Tue,  5 Nov 2024 14:28:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730816846; cv=none; b=qqO0kpxxqTWDvbTD53+2AeSxotOjXnpur1D6mIcIgB0LYViPqn7abHyg6xewjnuUJjZv+pNJXEEAro2Ep/K4asFbUpQtMmxuuQxuhoi726Gm5yz3QQnllUp/I9xK6vidVpnpZHURPfsTqG0E1QhY2u3u1a8z7/A35pNoExxENNY=
+	t=1730816892; cv=none; b=MoW6hv8R1S1+YgOmrJQSEEolel+6rCNhelyTtl85QPTpN8YQiGklb8Sr2JZ5wOXH3WtKHipn1QvNT9ZQVNm3oJkRy4bxj4+J8PtI8dyUL82g+8Okb1P1A2Bp3rS156wUcSwvJ1Rq79galpm9Xw8os9sCERuPXlUuFsXDEFEXHFk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730816846; c=relaxed/simple;
-	bh=AqTyyEj5q/WsI/Z/CsS3/vfL5vnd7obKAqa+fUJXtzA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BL+XOxeEhaTzd/kBpQw0otwLf7e8mWfpCD+78ubnQf2aXrj7dimtzetY1WCorHXH+DADkFMWOyXI0R6R8ol6Z7qA0goj/zi4buUjYD3IJgPkYGgUaRp4Oig3glxd6+Lrhb+Jsmil4xj3pHExB7aghK5bmFDo+wylcFU2slTYHEc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=L0llNO9u; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=smtsh+FIqN3PTU0YakwvqjwTSi2sK2slZdgx/LTpBu4=; b=L0llNO9uoEDeZRyWaitj8MeWlg
-	/2pZNiTvaR1dQynEbTLPP1SCy3i6B3sV5mZGqJfRTVxpoaZz5v/JE86VexwA9IMJalDCLhxhyyT1v
-	0ClvI0m85tEpkZRFwsKq43tCFTTERZlH+LgBfTS59gXew4mm6xRLTPPjvI3bWp26l+sOf/Fhainuh
-	nuDzFsPjDaY8u4x2hyx0C7RXBfRPjYZdJlP1CfG9+QA81hV/8WiMBj5/GcVlJZjjAf7NHAdXh1SMS
-	5y0ciLe36jvldrzoXnrD1w5jpqlsmouCzGyy57DmrjneTQrgqGzjBfD6a678EAAttWqCSUPteaFCc
-	mfwpQIvg==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1t8KWe-000000035PL-0C4n;
-	Tue, 05 Nov 2024 14:27:20 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 0AE2D30042E; Tue,  5 Nov 2024 15:27:20 +0100 (CET)
-Date: Tue, 5 Nov 2024 15:27:20 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org, alyssa.milburn@intel.com,
-	scott.d.constable@intel.com, joao@overdrivepizza.com,
-	andrew.cooper3@citrix.com, jpoimboe@kernel.org,
-	alexei.starovoitov@gmail.com, ebiggers@kernel.org,
-	samitolvanen@google.com, kees@kernel.org
-Subject: Re: [PATCH 1/8] x86,kcfi: Fix EXPORT_SYMBOL vs kCFI
-Message-ID: <20241105142720.GG10375@noisy.programming.kicks-ass.net>
-References: <20241105113901.348320374@infradead.org>
- <20241105114521.852053765@infradead.org>
- <Zyoood0ooSbpultV@infradead.org>
+	s=arc-20240116; t=1730816892; c=relaxed/simple;
+	bh=sRu/2hY6/f6nJz3PWfsGf63AKy+vCNF5Yc9bNL1zAPo=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=AQJ0rn7K0hB5casyCAOKesxRUJM11xMU8vmXV7eUilMZiaqFwuPAS4WnJclgyONdsmr2UUxdRvWOboPOV9+Dr3v/2NWiJjnvJDLukul2I69MtPtdb61YicDzzOLekwN/AlUT7zpQli0B/ggzw3UKCKw5eYoMYxgHgkPpXgDz0Pg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=X519f1N7; arc=none smtp.client-ip=217.70.183.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 442BA2000D;
+	Tue,  5 Nov 2024 14:28:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1730816887;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5EuwCKemNntiFUl0h9MOekWv295Bny26C7jMlRkpaQI=;
+	b=X519f1N7bg31nSp6vgbfL/qtutO+2z4BDU9JI6mEWjcb5+aI2aNBzVCuVhpXWlSop3hJSh
+	/41uUCZ7inbMSgUHQyUUwPNThJ2FjqMcWa1+UMZwTEoXgxFQ36UOK87TOcoORA6zk2YP2L
+	IrXsLCygpnZ7F2UjQA+4ZMSrz7g+n9YoIDFEXa3sjHMGVlqXMH/M6WBNPSVp4x0Z6qDSHu
+	qEUfb1JCh/kGZFUafyFdHxIQLKnFhBuokuaKqad72bNS6wi9JFIOEJTCGX5OdDqGEKpOXx
+	5T7H88qWb0udNGDYIvbygyoDx2rqPGIeutBbFkpVKvNnQ/G86uTuENc2zMElIQ==
+Date: Tue, 5 Nov 2024 15:28:05 +0100
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: "David S. Miller" <davem@davemloft.net>, Andrew Lunn <andrew@lunn.ch>,
+ Eric Dumazet <edumazet@google.com>, Florian Fainelli
+ <f.fainelli@gmail.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+ <pabeni@redhat.com>, Vladimir Oltean <olteanv@gmail.com>, Woojung Huh
+ <woojung.huh@microchip.com>, Arun Ramadoss <arun.ramadoss@microchip.com>,
+ Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+ kernel@pengutronix.de, linux-kernel@vger.kernel.org,
+ netdev@vger.kernel.org, UNGLinuxDriver@microchip.com, "Russell King
+ (Oracle)" <linux@armlinux.org.uk>, devicetree@vger.kernel.org, Marek Vasut
+ <marex@denx.de>
+Subject: Re: [PATCH net-next v3 6/6] net: dsa: microchip: parse PHY config
+ from device tree
+Message-ID: <20241105152805.25f8b065@fedora.home>
+In-Reply-To: <20241105090944.671379-7-o.rempel@pengutronix.de>
+References: <20241105090944.671379-1-o.rempel@pengutronix.de>
+	<20241105090944.671379-7-o.rempel@pengutronix.de>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zyoood0ooSbpultV@infradead.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-GND-Sasl: maxime.chevallier@bootlin.com
 
-On Tue, Nov 05, 2024 at 06:16:01AM -0800, Christoph Hellwig wrote:
-> On Tue, Nov 05, 2024 at 12:39:02PM +0100, Peter Zijlstra wrote:
-> > The expectation is that all EXPORT'ed symbols are free to have their
-> > address taken and called indirectly.
+Hello Oleksij,
+
+On Tue,  5 Nov 2024 10:09:44 +0100
+Oleksij Rempel <o.rempel@pengutronix.de> wrote:
+
+> Introduce ksz_parse_dt_phy_config() to validate and parse PHY
+> configuration from the device tree for KSZ switches. This function
+> ensures proper setup of internal PHYs by checking `phy-handle`
+> properties, verifying expected PHY IDs, and handling parent node
+> mismatches. Sets the PHY mask on the MII bus if validation is
+> successful. Returns -EINVAL on configuration errors.
 > 
-> I don't think that is the case at all.  The is a relatively small number
-> of exported symbols that are called indirectly.  I'd much rather mark
-> those explicitly.
+> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+> ---
+>  drivers/net/dsa/microchip/ksz_common.c | 80 ++++++++++++++++++++++++--
+>  1 file changed, 74 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/net/dsa/microchip/ksz_common.c b/drivers/net/dsa/microchip/ksz_common.c
+> index 3909b55857430..cd1a466504180 100644
+> --- a/drivers/net/dsa/microchip/ksz_common.c
+> +++ b/drivers/net/dsa/microchip/ksz_common.c
+> @@ -2373,6 +2373,77 @@ static void ksz_irq_phy_free(struct ksz_device *dev)
+>  			irq_dispose_mapping(ds->user_mii_bus->irq[phy]);
+>  }
+> 
+> +/**
+> + * ksz_parse_dt_phy_config - Parse and validate PHY configuration from DT
+> + * @dev: pointer to the KSZ device structure
+> + * @bus: pointer to the MII bus structure
+> + * @mdio_np: pointer to the MDIO node in the device tree
+> + *
+> + * This function parses and validates PHY configurations for each user port
+> + * defined in the device tree for a KSZ switch device. It verifies that the
+> + * `phy-handle` properties are correctly set and that the internal PHYs match
+> + * expected IDs and parent nodes. Sets up the PHY mask in the MII bus if all
+> + * validations pass. Logs error messages for any mismatches or missing data.
+> + *
+> + * Return: 0 on success, or a negative error code on failure.
+> + */
+> +static int ksz_parse_dt_phy_config(struct ksz_device *dev, struct mii_bus *bus,
+> +				   struct device_node *mdio_np)
+> +{
+> +	struct device_node *phy_node, *phy_parent_node;
+> +	bool phys_are_valid = true;
+> +	struct dsa_port *dp;
+> +	u32 phy_id;
+> +	int ret;
+> +
+> +	dsa_switch_for_each_user_port(dp, dev->ds) {
+> +		if (!dev->info->internal_phy[dp->index])
+> +			continue;
+> +
+> +		phy_node = of_parse_phandle(dp->dn, "phy-handle", 0);
+> +		if (!phy_node) {
+> +			dev_err(dev->dev, "failed to parse phy-handle for port %d.\n",
+> +				dp->index);
+> +			phys_are_valid = false;
+> +			continue;
+> +		}
+> +
+> +		phy_parent_node = of_get_parent(phy_node);
+> +		if (!phy_parent_node) {
+> +			dev_err(dev->dev, "failed to get PHY-parent node for port %d\n",
+> +				dp->index);
+> +			phys_are_valid = false;
+> +		} else if (dev->info->internal_phy[dp->index] &&
+> +			   phy_parent_node != mdio_np) {
 
-I'm not claiming they have their address taken -- just saying that
-traditionally this has always been a valid thing to do.
+There's a check a few lines above that guarantees that at this point
+dev->info->internal_phy[dp->index] will always evaluate as true,
+so you could simplify that condition a bit :)
 
-Anyway, I raised this point last time, and I think back then the
-consensus was to explicitly mark those you should not be able to call.
+> +			dev_err(dev->dev, "PHY-parent node mismatch for port %d, expected %pOF, got %pOF\n",
+> +				dp->index, mdio_np, phy_parent_node);
+> +			phys_are_valid = false;
+> +		} else {
+> +			ret = of_property_read_u32(phy_node, "reg", &phy_id);
+> +			if (ret < 0) {
+> +				dev_err(dev->dev, "failed to read PHY ID for port %d. Error %d\n",
+> +					dp->index, ret);
+> +				phys_are_valid = false;
+> +			} else if (phy_id != dev->phy_addr_map[dp->index]) {
+> +				dev_err(dev->dev, "PHY ID mismatch for port %d, expected 0x%x, got 0x%x\n",
+> +					dp->index, dev->phy_addr_map[dp->index],
+> +					phy_id);
 
-But irrespective of all that, this just makes sure all the .S functions
-are on equal footing with the C functions as generated by the compiler.
+In this context, PHY ID might be a bit misleading, as PHY ID usually
+refers to the identifier (OUI + model id used at probe to select the
+driver). May I suggest phy_addr instead ?
 
-Once that's done, we can look at adding to the EXPORT family.
+Thanks,
+
+Maxime
 
