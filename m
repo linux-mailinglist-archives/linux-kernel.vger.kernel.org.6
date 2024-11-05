@@ -1,210 +1,116 @@
-Return-Path: <linux-kernel+bounces-395783-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395784-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 185159BC2E0
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 03:04:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 386BF9BC2E1
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 03:04:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9278428299E
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 02:04:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC82E28278B
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 02:04:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00149364AE;
-	Tue,  5 Nov 2024 02:04:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 563DB3987D;
+	Tue,  5 Nov 2024 02:04:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XH/UGJkC"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ibPVgMBK"
+Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C794A17583
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 02:04:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52FD02BD1D
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 02:04:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730772280; cv=none; b=iTTYadtaJphgSHjKYu3G2JcyPLdRUOy05i5TEN07eQ5hgco2TLu00Koa7rcWtloIa0eUUII9UJYFbCIxU+uQtg1Es3OObck2W3JNh+FTNri6wKCX1EnCer4c98+kbBO8dVNsTn/ZofHw1fL39GXEOblLeUL4KU7tAeaw3lMk80c=
+	t=1730772280; cv=none; b=sooSaGufn+1NtnYGHg6mkCcYwPj4P4+lLOYdCoR20X87tszvpGvBgqTJgRyGxcaSzIz2oqVpbpaaUMUTH7v7qap18vJcCuqok2kPXrP3tQbSESuxDI4DcixRGzAauCwON8y1D8koQ3u8xdO8+KA9UzFBXbZpjVrkSPqdRUZX9CM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1730772280; c=relaxed/simple;
-	bh=SLSWkE6E9RKAffLI8PA1u4xqrbbvNTV8e2Req3pDfwg=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=H/lsF1FA/hepr3CJ+d50ChtGzBR61bjSxVa0gwJdbH2s60UQjxiAIFAoDRK93Jk1onJ6W7PCmYKd7yQ3RT8BhO3oX3hDXWtV8Ue6uUgySrO5GXnawWzbhR+XWnfFb/WxrR0Xw1zzO4hYpSajQu26VPLfREj0Ys/9wnroc19qbgg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XH/UGJkC; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730772274; x=1762308274;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=SLSWkE6E9RKAffLI8PA1u4xqrbbvNTV8e2Req3pDfwg=;
-  b=XH/UGJkCl/xbPc1Hl8JJ77JsI7b7e8ahmZpXJExycy0+1IMBfuqtesAt
-   XXr8dOuQ5PuEk+jumptWhl6gIb0N+TaNBjtroYzuX8n3My1L+/WLFmx5/
-   z83iuLBQBmCCvuDZM3UFznty+5hH2Fy4OCtbZrFErgLaaVLINwqn9zDgV
-   kzjBbxEGkkt7s05IFQteW24GR/mxay1XOnasdooEw6+697fthvbFceInl
-   xLZMQGyR4N7244NNLY+fQbL6JGz3WhQUk2SK0Szpwpsi2SGG5s2/fGhYg
-   hFQ7OB1zrX9LHkAT4acXIH2iUjna8vyGFZnVJXxKE64T7PfkYpVhbRLaS
-   Q==;
-X-CSE-ConnectionGUID: 0nVovKDTRp2Dtf5Okl5Uzg==
-X-CSE-MsgGUID: H4hP3o0JRa225X6G7rb13A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11246"; a="34283261"
-X-IronPort-AV: E=Sophos;i="6.11,258,1725346800"; 
-   d="scan'208";a="34283261"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2024 18:04:34 -0800
-X-CSE-ConnectionGUID: 5cvHDuQyTxiit0v8Iyf+uw==
-X-CSE-MsgGUID: iA7d+4/wSz2O1+rRwHFaSw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,258,1725346800"; 
-   d="scan'208";a="83725654"
-Received: from yhuang6-desk2.sh.intel.com (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
-  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2024 18:04:32 -0800
-From: "Huang, Ying" <ying.huang@intel.com>
-To: Gregory Price <gourry@gourry.net>
-Cc: linux-mm@kvack.org,  linux-kernel@vger.kernel.org,
-  akpm@linux-foundation.org,  david@redhat.com,  nphamcs@gmail.com,
-  nehagholkar@meta.com,  abhishekd@meta.com,  Johannes Weiner
- <hannes@cmpxchg.org>,  Feng Tang <feng.tang@intel.com>
-Subject: Re: [PATCH 0/3] mm,TPP: Enable promotion of unmapped pagecache
-In-Reply-To: <ZykOqYJpgL4lw7mw@PC2K9PVX.TheFacebook.com> (Gregory Price's
-	message of "Mon, 4 Nov 2024 13:12:57 -0500")
-References: <20240803094715.23900-1-gourry@gourry.net>
-	<875xrxhs5j.fsf@yhuang6-desk2.ccr.corp.intel.com>
-	<ZsNhgU-TiTz2WKg5@PC2K9PVX.TheFacebook.com>
-	<87ikvefswp.fsf@yhuang6-desk2.ccr.corp.intel.com>
-	<ZykOqYJpgL4lw7mw@PC2K9PVX.TheFacebook.com>
-Date: Tue, 05 Nov 2024 10:00:59 +0800
-Message-ID: <87jzdi782s.fsf@yhuang6-desk2.ccr.corp.intel.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	bh=Px2UrD1WtJLQV1y1MdFkWdL7/El5A+OOpqGEl+V2UeA=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=NzxllmU0yvXS+a0FEA/Dto24ntUTH3M869lvhyVilYrz05oHSeYQGGlGU2Set5G/uw7k0Lm+Ahrpx9IDC+XyfpfHJv08lrxI9+StixtK4LI4hj68pyi2SxvJNH7PzBG8Rr9LlosUkJKk90fVoTA9wG8oV2cl7zF+EWHMau5ea4E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ibPVgMBK; arc=none smtp.client-ip=209.85.128.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6e36cfed818so75811387b3.3
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 18:04:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1730772278; x=1731377078; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=r5L5dnfdAE7fJifprAddIOXBk2Ev32fRpfJ2vkUD2T0=;
+        b=ibPVgMBKrDO8niUJxnLccMzDCdnQEwzs/vnlsIM2BVRaN5TytE0WlHYi+++PzACKua
+         ApHfRQjOL7FdrBCwUeLoNDjZZ1EdIcUcFpMG86s1wdHbHOzSDG19CRhCATR/luQKCOzY
+         zHhDBTOiJ76tDmxnsi1lh6lg3c6ohfgx+e2wgMo3TWh49Qv8X8poO7JvuCseNpD4XJaA
+         fFXqyREdZiAZEWnK7fG6eO7MaPpwdgq7SuVyv+zw9in7uKbTX4+Ig+NMPQlV0rAXxWvr
+         a5VG7IZWvNOBeMk/xzND/lHbH9CWRQdRRZPqWQBvUXtD0fGfpE1qVPilKm2GAXpqTtay
+         EtwA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730772278; x=1731377078;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=r5L5dnfdAE7fJifprAddIOXBk2Ev32fRpfJ2vkUD2T0=;
+        b=lAOy213v6zslKpBruOBKcURngxhi6jY1Yf8gLBGmGcvgj0AICEwfuGDOGaYC14VmNI
+         FLwQDx0wV0B3kuGuLNGTKD9UXVJZ1Jk2Y9jFMz+ht06VKy6Vcz2Vpi1ezx9i2ANWJIux
+         ODv3hG3Co2Y8bXRNoaDY2w8aKBpYtc0ekrjreUkujuqM31c/Ya/OaEe2IOkf5nDnO2Yn
+         LzSi3mlwdHVkfY8zXK6XPb5+ZOF0ZYd54XMwkoO7zoLiEcCC2Q3qNBhAabVf4If/1Kti
+         uBdviZd1VyUD+8AX8PmpiXzlLvkzmtqVSVoAw56qlBpx5SNkHmZVTEGyEJb7+R55ul07
+         XhIw==
+X-Forwarded-Encrypted: i=1; AJvYcCVCNFFeHWinc4hxpuvF5rmIp2et8dXZOswU+/4Q6iVJgkRSmF5zsBB2Two4HinKC278JWUmn+3Zan64K9Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzDNsmkgGrtj1HD8NAKOZG6NhGxBw7zBP2wprXu8nh56kR2Pgqc
+	ON396vPEudr2MzjiBM3nRVVXfgrjc1wcxEV43T5Mikjnm8MzDMq7gvjzgSPF8vu58oxZbKKs3zc
+	umQ==
+X-Google-Smtp-Source: AGHT+IHMK9sBy0o5WCz5f+or3wRkmvFO25qKpPtZy1jdIlY82mUCq5KF2m3Gp5QTi1w79cs4YUwitHY9nRQ=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
+ (user=seanjc job=sendgmr) by 2002:a05:690c:7448:b0:6e3:f12:1ad3 with SMTP id
+ 00721157ae682-6ea64be01cdmr1460447b3.6.1730772277617; Mon, 04 Nov 2024
+ 18:04:37 -0800 (PST)
+Date: Mon, 4 Nov 2024 18:04:36 -0800
+In-Reply-To: <ZyiDJhTkPclSQYIk@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=ascii
+Mime-Version: 1.0
+References: <20241101192114.1810198-1-seanjc@google.com> <20241101192114.1810198-3-seanjc@google.com>
+ <ZyiDJhTkPclSQYIk@intel.com>
+Message-ID: <Zyl9NABhmVTDvnQT@google.com>
+Subject: Re: [PATCH 2/2] KVM: nVMX: Defer SVI update to vmcs01 on EOI when L2
+ is active w/o VID
+From: Sean Christopherson <seanjc@google.com>
+To: Chao Gao <chao.gao@intel.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	"Markku =?utf-8?Q?Ahvenj=C3=A4rvi?=" <mankku@gmail.com>, Janne Karhunen <janne.karhunen@gmail.com>
+Content-Type: text/plain; charset="us-ascii"
 
-Hi, Gregory,
+On Mon, Nov 04, 2024, Chao Gao wrote:
+> >@@ -6873,6 +6873,23 @@ void vmx_hwapic_isr_update(struct kvm_vcpu *vcpu, int max_isr)
+> > 	u16 status;
+> > 	u8 old;
+> > 
+> >+	/*
+> >+	 * If L2 is active, defer the SVI update until vmcs01 is loaded, as SVI
+> >+	 * is only relevant for if and only if Virtual Interrupt Delivery is
+> >+	 * enabled in vmcs12, and if VID is enabled then L2 EOIs affect L2's
+> >+	 * vAPIC, not L1's vAPIC.  KVM must update vmcs01 on the next nested
+> >+	 * VM-Exit, otherwise L1 with run with a stale SVI.
+> >+	 */
+> >+	if (is_guest_mode(vcpu)) {
+> >+		/*
+> >+		 * KVM is supposed to forward intercepted L2 EOIs to L1 if VID
+> >+		 * is enabled in vmcs12; as above, the EOIs affect L2's vAPIC.
+> >+		 */
+> >+		WARN_ON_ONCE(nested_cpu_has_vid(get_vmcs12(vcpu)));
+> 
+> This function can be called in other scenarios, e.g., from
+> kvm_apic_set_state(). Is it possible for the userspace VMM to set the APIC
+> state while L2 is running and VID is enabled for L2? If so, this warning could
+> be triggered by the userspace VMM.
 
-Gregory Price <gourry@gourry.net> writes:
+Ugh, yeah, that's reachable.  Bummer.  Ooh!  I think we can use the recently
+added "wants_to_run" to filter out state stuffing.  I.e. this
 
-> On Mon, Sep 02, 2024 at 02:53:26PM +0800, Huang, Ying wrote:
->> Gregory Price <gourry@gourry.net> writes:
->> 
->> > On Mon, Aug 19, 2024 at 03:46:00PM +0800, Huang, Ying wrote:
->> >> Gregory Price <gourry@gourry.net> writes:
->> >> 
->> >> > Unmapped pagecache pages can be demoted to low-tier memory, but 
->> >> > they can only be promoted if a process maps the pages into the
->> >> > memory space (so that NUMA hint faults can be caught).  This can
->> >> > cause significant performance degradation as the pagecache ages
->> >> > and unmapped, cached files are accessed.
->> >> >
->> >> > This patch series enables the pagecache to request a promotion of
->> >> > a folio when it is accessed via the pagecache.
->> >> >
->> >> > We add a new `numa_hint_page_cache` counter in vmstat to capture
->> >> > information on when these migrations occur.
->> >> 
->> >> It appears that you will promote page cache page on the second access.
->> >> Do you have some better way to identify hot pages from the not-so-hot
->> >> pages?  How to balance between unmapped and mapped pages?  We have hot
->> >> page selection for hot pages.
->> >> 
->> >> [snip]
->> >> 
->> >
->> > I've since explored moving this down under a (referenced && active) check.
->> >
->> > This would be more like promotion on third access within an LRU shrink
->> > round (the LRU should, in theory, hack off the active bits on some decent
->> > time interval when the system is pressured).
->> >
->> > Barring adding new counters to folios to track hits, I don't see a clear
->> > and obvious way way to track hotness.  The primary observation here is 
->> > that pagecache is un-mapped, and so cannot use numa-fault hints.
->> >
->> > This is more complicated with MGLRU, but I'm saving that for after I
->> > figure out the plan for plain old LRU.
->> 
->> Several years ago, we have tried to use the access time tracking
->> mechanism of NUMA balancing to track the access time latency of unmapped
->> file cache folios.  The original implementation is as follows,
->> 
->> https://git.kernel.org/pub/scm/linux/kernel/git/vishal/tiering.git/commit/?h=tiering-0.8&id=5f2e64ce75c0322602c2ec8c70b64bb69b1f1329
->> 
->> What do you think about this?
->> 
->
-> Coming back around to explore this topic a bit more, dug into this old
-> patch and the LRU patch by Keith - I'm struggling find a good option
-> that doesn't over-complicate or propose something contentious.
->
->
-> I did a browse through lore and did not see any discussion on this patch
-> or on Keith's LRU patch, so i presume discussion on this happened largely
-> off-list.  So if you have any context as to why this wasn't RFC'd officially
-> I would like more information.
+		WARN_ON_ONCE(vcpu->wants_to_run &&
+			     nested_cpu_has_vid(get_vmcs12(vcpu)));
 
-Thanks for doing this.  There's no much discussion offline.  We just
-don't have enough time to work on the solution.
-
-> My observations between these 3 proposals:
->
-> - The page-lock state is complex while trying interpose in mark_folio_accessed,
->   meaning inline promotion inside that interface is a non-starter.
->
->   We found one deadlock during task exit due to the PTL being held. 
->
->   This worries me more generally, but we did find some success changing certain
->   calls to mark_folio_accessed to mark_folio_accessed_and_promote - rather than
->   modifying mark_folio_accessed. This ends up changing code in similar places
->   to your hook - but catches a more conditions that mark a page accessed.
->
-> - For Keith's proposal, promotions via LRU requires memory pressure on the lower
->   tier to cause a shrink and therefore promotions. I'm not well versed in LRU
->   LRU sematics, but it seems we could try proactive reclaim here.
->   
->   Doing promote-reclaim and demote/swap/evict reclaim on the same triggers
->   seems counter-intuitive.
-
-IIUC, in TPP paper (https://arxiv.org/abs/2206.02878), a similar method
-is proposed for page promoting.  I guess that it works together with
-proactive reclaiming.
-
-> - Doing promotions inline with access creates overhead.  I've seen some research
->   suggesting 60us+ per migration - so aggressiveness could harm performance.
->
->   Doing it async would alleviate inline access overheads - but it could also make
->   promotion pointless if time-to-promote is to far from liveliness of the pages.
-
-Async promotion needs to deal with the resource (CPU/memory) charging
-too.  You do some work for a task, so you need to charge the consumed
-resource for the task.
-
-> - Doing async-promotion may also require something like PG_PROMOTABLE (as proposed
->   by Keith's patch), which will obviously be a very contentious topic.
-
-Some additional data structure can be used to record pages.
-
-> tl;dr: I'm learning towards a solution like you have here, but we may need to
-> make a sysfs switch similar to demotion_enabled in case of poor performance due
-> to heuristically degenerate access patterns, and we may need to expose some
-> form of adjustable aggressiveness value to make it tunable.
-
-Yes.  We may need that, because the performance benefit may be lower
-than the overhead introduced.
-
-> Reading more into the code surrounding this and other migration logic, I also
-> think we should explore an optimization to mempolicy that tries to aggressively
-> keep certain classes of memory on the local node (RX memory and stack
-> for example).
->
-> Other areas of reclaim try to actively prevent demoting this type of memory, so we
-> should try not to allocate it there in the first place.
-
-We have already used DRAM first allocation policy.  So, we need to
-measure its effect firstly.
-
---
-Best Regards,
-Huang, Ying
+plus an updated comment.
 
