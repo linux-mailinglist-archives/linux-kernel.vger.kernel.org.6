@@ -1,179 +1,139 @@
-Return-Path: <linux-kernel+bounces-396924-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396925-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14E1E9BD466
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 19:16:48 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C7B09BD46A
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 19:19:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4782D1C2363A
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 18:16:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ADDC41C222AC
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 18:19:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22EAB1E7664;
-	Tue,  5 Nov 2024 18:16:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A0481E7661;
+	Tue,  5 Nov 2024 18:19:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WHgQ8Ljq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fyf52Bv5"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7729613D51E;
-	Tue,  5 Nov 2024 18:16:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2009213D51E
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 18:19:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730830602; cv=none; b=Vj5XUCt+6R46EY0eVuR0M8c735XQEZjMfjbGEqJhOTMpn45P3/H3QcBfesRZg+ooX3oUcnZ5c/rc8/sCkLEgpEjtaLBnJ0kYRcdYmdJnjJzDL0uB3xKUggB2aCguEFQScn5wxZZgPTabHwqHv3+ABsWlWUsQT5w8NAM3sn4yeA8=
+	t=1730830742; cv=none; b=HJXooZmyo3CxgVn4gQ50dPPBt6eUu+O1mxSc6e9EbQ8P1VkECv2G7wexoEyK+0aVfx84BwGBRHLSjVrXq2noOHUpmagt/IX4ziwJWUmNEZZ2P4pwPuUGndlK/GASKuGS6gAcVep3bqiYOO6iGr6Dnng4+2Ve4vF5+NAiP7eUCck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730830602; c=relaxed/simple;
-	bh=gxbmixww9e8I54+a85Lk0u6Qwx29iopkn1bwWVNFU5k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Hv8fvxX20WytRbx4OnUTdFLHyhaXJX4bmgFMf/w/xxgczTHH7itjFPFwsMb4pSeQnkcryc1AoI2p5fvA9bUHehO7prbE0yQH82NCKsqEa+MBMsfQ9HDafBCTLzMiaIARKmaTS6M7KZoNojat0IiWm9+71EHcsTJbK/D2qfKY4ZY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WHgQ8Ljq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85BA4C4CECF;
-	Tue,  5 Nov 2024 18:16:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730830602;
-	bh=gxbmixww9e8I54+a85Lk0u6Qwx29iopkn1bwWVNFU5k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WHgQ8LjqxMiYEcG4CIthiY+qyb8BJdbl9bqOF8Vdv1Giz2jL4Qm+VprGqVquRtP11
-	 csBm24NGhMOP9JX4x7Dm7bLaabuorAtEVqVAXySPJ2TTvMAtgvgaodmQA82oUpllaB
-	 wuIZbJuGQcYZoEXft7YQ2osOP+9l9i4gK49e+YHxH+iYuBvEBNSYIhaAbKGLuF47Ti
-	 SwkXgjjDYM64f5w1DsnZjNE/5Z5QAZ5kQRpPDinJ5HglGx9bPZgv/WZPR0ggoAPAJe
-	 2Na7tgqYoQRtHFwnL1zdfmLBedKBXJi//RPvNNJNkbej5IWHuxpgZeXlfITLKBf1Ow
-	 UgehZeMzcKlkw==
-Date: Tue, 5 Nov 2024 18:16:36 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Matt Coster <matt.coster@imgtec.com>
-Cc: Frank Binns <frank.binns@imgtec.com>, David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Nishanth Menon <nm@ti.com>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Tero Kristo <kristo@kernel.org>, dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, Randolph Sapp <rs@ti.com>,
-	Darren Etheridge <detheridge@ti.com>
-Subject: Re: [PATCH 02/21] dt-bindings: gpu: img: Further constrain clocks
-Message-ID: <20241105-blooper-unflawed-6181022944d9@spud>
-References: <20241105-sets-bxs-4-64-patch-v1-v1-0-4ed30e865892@imgtec.com>
- <20241105-sets-bxs-4-64-patch-v1-v1-2-4ed30e865892@imgtec.com>
+	s=arc-20240116; t=1730830742; c=relaxed/simple;
+	bh=wvRSAYs3rsDyEyx2uErygYM6LqQrDkxqRE+1X+C/K8A=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=c+xgqQtDxn5fvn8J6+2uoD/omuBiXQSmz4s5Ay1E6CgIXIY/Yab0DWihOvVN3Vspj31D6/X4YZ0y425DVneCE8aPHn/LKIAc0v9IC63oZnyZSF378KyoQ9TIGRccvzHf5Yj0RRGB5pkze4V/Dt4F4CyT8ZScc6rYpg0BsE3OlR8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fyf52Bv5; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-20c9978a221so59377525ad.1
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 10:19:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730830740; x=1731435540; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=gFcn89fIoB6eD8igdjIgNFL2KkUGAKDd0Xov8oHjAXc=;
+        b=fyf52Bv52SNQYKC2si2T2AMNA+rh+Q83gu5URDoa9JrjyDK14p6pMr+HUzzoXfC0J1
+         vmPMJDFB8SeoxQZB64bdJAtR5LOK6Px9R8JBGIIeY2oDFY62XVIzl7nk7u4MF60unxkU
+         hTaUd2rQ+okrC0GENcmcL8JneKlw0Oz+hBC2dLfD/9cyPfv50DZbfnGfysKwIkdZgrsL
+         Chs8dtTFTUJVyzv0wb4NacOFQtPo0nYvBIkT4lZhTCFBppx/Lz1uvsJImJHeqO0NI1aJ
+         8mem99fGSGwhL7Y7qru5IB838GEYRogeKGCnmK64gANtZJPoQnZ+iZKXC6lbG+y4iND/
+         lAAA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730830740; x=1731435540;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=gFcn89fIoB6eD8igdjIgNFL2KkUGAKDd0Xov8oHjAXc=;
+        b=fbptLSCacfLRuzMG2tXyACQqAwxB1z9ufpRT3NPSfbp5cQfo5JjdzoVfsN7w/lNqGE
+         a1vRx+d1LIW4qY9nj/o4vjhJ4C9wwd/KgjoS+kQQs0KSQEepdL7foKN1hKbN33rj1kU5
+         mihEBRJ6TV1cUakaE0oWy8XVxjZvj/EW0CHtMWapg1WFy9UXgAnzk/z/rkkSkZsY0AMH
+         RpFelt8mbY6zhO1vheCjMWNMnZSrRBaDUpgAHNzpr/zMuXx8iv8lts0miYHrAljCOPWV
+         OL1aS/EqilrEMbTW4pYZTzZS5Swi51XQ0NGEKlLKVUl7UT8JsPC/4MCryVr1uXGMba2S
+         +SuQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUwwhHexZYvM1HTBcmWpil09ggFvfblciqzO5yq7oFyCEINqEKIKxKiPizEiS0frgY9ywqtC0wUvaLC+Vg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxWsFCmaA1Y4aT3PFw2ygFrIRnb1NpwQ+7sUUYhX4xT9X+isUuX
+	/cLh4v0u5eJGrnMHv76aKWGPmWMLmvN/HSP+MhtCfEadTC0CrYj4
+X-Google-Smtp-Source: AGHT+IEdjJFisK8cPYnddVc07XFagAr0tosxVTWcS5kPRCLoXBKMcfxPfCn7QDkgIIIcEpVfjlfxlA==
+X-Received: by 2002:a17:903:1c2:b0:20c:a175:1943 with SMTP id d9443c01a7336-210c6c6d9a5mr505410645ad.40.1730830740228;
+        Tue, 05 Nov 2024 10:19:00 -0800 (PST)
+Received: from Emma ([2401:4900:1c97:5a7:5054:ff:fe53:2787])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211057a2eaasm81208945ad.159.2024.11.05.10.18.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 05 Nov 2024 10:18:59 -0800 (PST)
+From: Karan Sanghavi <karansanghvi98@gmail.com>
+Date: Tue, 05 Nov 2024 18:18:42 +0000
+Subject: [PATCH] drm:sprd: Correct left shift operator evaluating constant
+ expression
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="TeFaw0Jl+M7/bDvg"
-Content-Disposition: inline
-In-Reply-To: <20241105-sets-bxs-4-64-patch-v1-v1-2-4ed30e865892@imgtec.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241105-coverity1511468wrongoperator-v1-1-06c7513c3efc@gmail.com>
+X-B4-Tracking: v=1; b=H4sIAIFhKmcC/x3MPQ6DMAxA4asgz41kpwEhroI6pMGlXmLkIH6Eu
+ Hujjt/w3gWFTbjA0FxgvEkRzRX0aCB9Y57ZyVQNHn0gwtYl3WqxntQSha7fTfOsC1tc1ZxHeuI
+ 7TcEHhLpYjD9y/Pfj675/980BHW4AAAA=
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Orson Zhai <orsonzhai@gmail.com>, 
+ Baolin Wang <baolin.wang@linux.alibaba.com>, 
+ Chunyan Zhang <zhang.lyra@gmail.com>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+ Shuah Khan <skhan@linuxfoundation.org>, 
+ Karan Sanghavi <karansanghvi98@gmail.com>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1730830736; l=1441;
+ i=karansanghvi98@gmail.com; s=20241017; h=from:subject:message-id;
+ bh=wvRSAYs3rsDyEyx2uErygYM6LqQrDkxqRE+1X+C/K8A=;
+ b=CgjOZ0VtIDWUoRD0Yf5FbUnA+DHoIVLNVlo427a5rDs+icdBvp3hgYaZkHdPJhljSvJ4rbQVc
+ f3sn+bRSmulBmqq40nd9nHxjZxNGqTJ+DM2dz1H46kWlCI69d0HdsoT
+X-Developer-Key: i=karansanghvi98@gmail.com; a=ed25519;
+ pk=UAcbefT1C06npNVDJHdgpPqTm4WE9IhaA1fmJb3A37Y=
 
+The left shift operation followed by a mask with 0xf will
+always result in 0. To correctly evaluate the expression for
+the bitwise OR operation, use a right shift instead.
 
---TeFaw0Jl+M7/bDvg
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Reported by Coverity Scan CID: 1511468
 
-On Tue, Nov 05, 2024 at 03:58:08PM +0000, Matt Coster wrote:
-> All Imagination GPUs use three clocks: core, mem and sys. All reasonably
-> modern Imagination GPUs also support a single-clock mode where the SoC
-> only hooks up core and the other two are derived internally. On GPUs which
-> support this mode, it is the default and most commonly used integration.
->=20
-> Codify this "1 or 3" constraint in our bindings and hang the specifics off
-> the vendor compatible string to mirror the integration-time choice.
->=20
-> Signed-off-by: Matt Coster <matt.coster@imgtec.com>
-> ---
->  .../devicetree/bindings/gpu/img,powervr-rogue.yaml | 27 +++++++++++++++-=
-------
->  1 file changed, 19 insertions(+), 8 deletions(-)
->=20
-> diff --git a/Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml=
- b/Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml
-> index ef7070daf213277d0190fe319e202fdc597337d4..6924831d3e9dd9b2b052ca8f9=
-d7228ff25526532 100644
-> --- a/Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml
-> +++ b/Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml
-> @@ -30,15 +30,20 @@ properties:
->      maxItems: 1
-> =20
->    clocks:
-> -    minItems: 1
-> -    maxItems: 3
-> +    oneOf:
-> +      - minItems: 1
-> +        maxItems: 1
-> +      - minItems: 3
-> +        maxItems: 3
+Signed-off-by: Karan Sanghavi <karansanghvi98@gmail.com>
+---
+Coverity Scan Message:
+CID 1511468: (#1 of 1): Wrong operator used (CONSTANT_EXPRESSION_RESULT)
+operator_confusion: (pll->kint << 4) & 15 is always 0 regardless of the 
+values of its operands. This occurs as the bitwise second operand of "|"
+---
+ drivers/gpu/drm/sprd/megacores_pll.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Just put the outer constraints here and...
+diff --git a/drivers/gpu/drm/sprd/megacores_pll.c b/drivers/gpu/drm/sprd/megacores_pll.c
+index 3091dfdc11e3..43c10a5fc441 100644
+--- a/drivers/gpu/drm/sprd/megacores_pll.c
++++ b/drivers/gpu/drm/sprd/megacores_pll.c
+@@ -94,7 +94,7 @@ static void dphy_set_pll_reg(struct dphy_pll *pll, struct regmap *regmap)
+ 	reg_val[3] = pll->vco_band | (pll->sdm_en << 1) | (pll->refin << 2);
+ 	reg_val[4] = pll->kint >> 12;
+ 	reg_val[5] = pll->kint >> 4;
+-	reg_val[6] = pll->out_sel | ((pll->kint << 4) & 0xf);
++	reg_val[6] = pll->out_sel | ((pll->kint >> 4) & 0xf);
+ 	reg_val[7] = 1 << 4;
+ 	reg_val[8] = pll->det_delay;
+ 
 
->    clock-names:
-> -    items:
-> -      - const: core
-> -      - const: mem
-> -      - const: sys
-> -    minItems: 1
-> +    oneOf:
-> +      - items:
-> +          - const: core
-> +      - items:
-> +          - const: core
-> +          - const: mem
-> +          - const: sys
-> =20
->    interrupts:
->      maxItems: 1
-> @@ -56,15 +61,21 @@ required:
->  additionalProperties: false
-> =20
->  allOf:
-> +  # Vendor integrations using a single clock domain
->    - if:
->        properties:
->          compatible:
->            contains:
-> -            const: ti,am62-gpu
-> +            anyOf:
-> +              - const: ti,am62-gpu
->      then:
->        properties:
->          clocks:
-> +          minItems: 1
->            maxItems: 1
+---
+base-commit: 81983758430957d9a5cb3333fe324fd70cf63e7e
+change-id: 20241105-coverity1511468wrongoperator-20130bcd4240
 
-=2E..adjust the constraints in conditional bits. Setting minItems to 1
-should be a nop too. Pretty sure what you already had here was actually
-already sufficient.
+Best regards,
+-- 
+Karan Sanghavi <karansanghvi98@gmail.com>
 
-Cheers,
-Conor.
-
-> +        clock-names:
-> +          items:
-> +            - const: core
-> =20
->  examples:
->    - |
->=20
-> --=20
-> 2.47.0
->=20
-
---TeFaw0Jl+M7/bDvg
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZyphBAAKCRB4tDGHoIJi
-0mt+AQCX5TGxUHLmqloLO4UQ2/Z5nICBf/HCL/Q8rZcVfo8ebAEAlFYu7OnzNesz
-ZWwQOmVqab0lEHWZg2h1BTjxEg+tFwA=
-=fITo
------END PGP SIGNATURE-----
-
---TeFaw0Jl+M7/bDvg--
 
