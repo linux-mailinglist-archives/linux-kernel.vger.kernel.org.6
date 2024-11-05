@@ -1,161 +1,123 @@
-Return-Path: <linux-kernel+bounces-396492-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396489-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 087E19BCDE6
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 14:34:02 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 795F59BCDE2
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 14:33:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 39A811C217F4
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 13:34:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E19842834CA
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 13:33:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DCC71D8A12;
-	Tue,  5 Nov 2024 13:33:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AA9D1D6DB5;
+	Tue,  5 Nov 2024 13:33:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="CzZ1FOmf";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Z51+AR1D"
-Received: from fhigh-b1-smtp.messagingengine.com (fhigh-b1-smtp.messagingengine.com [202.12.124.152])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u1tv1TyE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACEA01D63D4
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 13:33:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69F4E1D63E9;
+	Tue,  5 Nov 2024 13:33:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730813607; cv=none; b=KScr6bAc3k3ZMK0UJb0vGTPK7BI40wdMQt8CpgGdD/PI6Rnh1Wcl1UfZgGrTfbOLI9RIrpopTZAWY/nk8kAyErEf/QilL5xTEdXWqyisDuMHJDyus8mNG8HVjf+TqOulxNnftQbRngupv/77GBMMlTNA8JuAFuHA9/5r8POJzAg=
+	t=1730813605; cv=none; b=aGKflPTnQL56e2tLzltg0b8Z51r3tWNshSGJrEG00HwOUDIHe9iDPw5AvKbWsDTvQtbEshKGFJZUBKKcXKuc3KM7FnR/nNvEVMccARQgjZ2yNuyob/nG2v/mQnQnV3l0wCuCL905+y5duB2ffcSopa9U2/LfMLzBqNUxi3Z8vE4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730813607; c=relaxed/simple;
-	bh=XwfmOZIy08nckcVke8MkEpepgThfDK7UYTFsWDhfm/o=;
+	s=arc-20240116; t=1730813605; c=relaxed/simple;
+	bh=KT5zF8H18NGC/TLWrYKsVRBqgBnqV8X9qCR3wlC7Y0M=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Io3l8V668DtwlG76/eDoUondaiSm8nseWiM0Edm5/rn0hfzSUGV00Epv+EDJSHPQMawp770pCI5/9ITE7mSXDE0ncy1vBpNkfx7g+F21A931+ik0vZBwWWIlweFeb2X9baw2m77AbqpbxSXpPUjI3AGENf0pbrpX1FxlB4L1Y08=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=CzZ1FOmf; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Z51+AR1D; arc=none smtp.client-ip=202.12.124.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shutemov.name
-Received: from phl-compute-04.internal (phl-compute-04.phl.internal [10.202.2.44])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id 89EC2254010A;
-	Tue,  5 Nov 2024 08:33:23 -0500 (EST)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-04.internal (MEProxy); Tue, 05 Nov 2024 08:33:23 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
-	 h=cc:cc:content-type:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm1; t=1730813603; x=
-	1730900003; bh=yG23YdcZfpaqVlw+HXapkVu6cxVlnWa2fc6M1+j92/c=; b=C
-	zZ1FOmf76uxyhQeH/OXpqSm5cSfbW/shWJkzMuyY5Iohjxm+z63X0AlwdsBURoFK
-	TwTMd8CK66/aUAIu/vf2tL/wlmN40Tm7G9pnhu10Tc2mEVW0rSxh8ZYNDVF26Jxm
-	8QxVEp+ySjwchpt2Tt6TGUB1tADp2jbBAs3Oz3GibtJ6C1oPQ29uHA1TTqg+5jiW
-	G+HRiI7ZEFhoJzuqho6j3bxzakP7GLX46+gCvk9Bl7W8h3gc3Y2NcgkVWEAD2RJG
-	ZTgD0HWD0Xiv4miTc1G9z/z1fd6fDnL996jaH+mlQRyShuXPptHpkqjvAfrZhTuO
-	JKbym+D1E06qlHx+cVe3Q==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
-	1730813603; x=1730900003; bh=yG23YdcZfpaqVlw+HXapkVu6cxVlnWa2fc6
-	M1+j92/c=; b=Z51+AR1DcRBK2xDEh6UmH4ipXksqSmSTA8yMaVp6tKzhWUFvPv7
-	ln9dGVh8mtefSjHwfIiubbFYb4CNRgK0+3tFzUE15wsgL2fLnzxTZ1VKjjH7aoKU
-	3ZLhewKqFDWb6T/IrnaaTd/eaU/dJhj3z89tx+ht3zSXpbma0bglmWtH80hRPpV1
-	qBFeKA6II9a8lH9rcBbVJgviJWz4kTdVNC7sp65n9ozpUJOgUSlOuz/I58s7m2C6
-	ZkqQa1kNf69BGYBFRikdGx5ewCvPtOfmj8M+D3O7mIXAT5Ux23NAcEmJjhfXyfjA
-	G2xyae4+4V666t9wmRWCEZlE0tGHDyecYGA==
-X-ME-Sender: <xms:ox4qZ6XVYD713hqd8MnuswQ5A7Lf7QLXfPMPMy4ju5uOLEc3GFRJdg>
-    <xme:ox4qZ2lRP-HbKajECyNbz_GT3EUkNLR2XxTjdMrtYrZUvN7Ao6KFQsosMW1Y03LLL
-    imJWEtnecRDeV1TQT0>
-X-ME-Received: <xmr:ox4qZ-ZXRt0MVd8TN7WbyU4nbzUTBTQBqEi0590UzRYshc2juYuVS3QC3eSbdU0iY2KG2g>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrtddtgddvhecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
-    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecunecujfgurhepfffhvfevuf
-    fkfhggtggujgesthdtsfdttddtvdenucfhrhhomhepfdfmihhrihhllhcutedrucfuhhhu
-    thgvmhhovhdfuceokhhirhhilhhlsehshhhuthgvmhhovhdrnhgrmhgvqeenucggtffrrg
-    htthgvrhhnpeeltedugedtgfehudduhfetleeiuedvtdehieejjedufeejfeegteetuddt
-    gefgudenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivg
-    eptdenucfrrghrrghmpehmrghilhhfrhhomhepkhhirhhilhhlsehshhhuthgvmhhovhdr
-    nhgrmhgvpdhnsggprhgtphhtthhopeefpdhmohguvgepshhmthhpohhuthdprhgtphhtth
-    hopehshiiisghothdotdefvgdurghfhegtfeefvdhfjegvtdgvsgekgegssehshiiikhgr
-    lhhlvghrrdgrphhpshhpohhtmhgrihhlrdgtohhmpdhrtghpthhtoheplhhinhhugidqkh
-    gvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepshihiihkrghl
-    lhgvrhdqsghughhssehgohhoghhlvghgrhhouhhpshdrtghomh
-X-ME-Proxy: <xmx:ox4qZxV91yoQsTpI_9g8XTlx4h8KUI0FPJP8b172xM9EmUb4odVGyA>
-    <xmx:ox4qZ0nkwJnGNj8y0m7bQ3l37sNISuXfSMojVpt1kPNcy8UEv8DR-w>
-    <xmx:ox4qZ2dlbQb9Urb7BdRyv9oxjJhUu_0kGxR9ltXowCCzVh3ITLNsug>
-    <xmx:ox4qZ2FIQEUt0SVnt2XUjkJDumseMAIB3iQUyyOXPQdDuueWKWanMw>
-    <xmx:ox4qZ-hwoEzQSaVcA-DAStLk9nXsyO9zCUDsfIT5daIpIZ9iqLvqIE3r>
-Feedback-ID: ie3994620:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 5 Nov 2024 08:33:21 -0500 (EST)
-Date: Tue, 5 Nov 2024 15:33:16 +0200
-From: "Kirill A. Shutemov" <kirill@shutemov.name>
-To: syzbot <syzbot+03e1af5c332f7e0eb84b@syzkaller.appspotmail.com>
-Cc: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] Re: kernel BUG in free_bprm()
-Message-ID: <ne4dsdjh7tcp7ndgqa7qx2ouhkioowr52wunfnikykq5v2z2zs@tfshc7af2eql>
-References: <6729d8d1.050a0220.701a.0017.GAE@google.com>
- <6729fedf.050a0220.701a.001b.GAE@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=d2foJr+t2w9EmWyMPi8lmfCeDRCShzYRx9OGpD3yHfmdYxafP0F7518/NGCCqqAzGCuwaYbR43WGfck8IgU6Q0VxuXsjbpwrVzmaNtKQIbVPPVNn5XkwFQ/4DYEG1Xb/pfx4mKGFzuEFySXyQ3hwa+U3eY7aL4sIYuqm+vX/AfA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u1tv1TyE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A906FC4CED0;
+	Tue,  5 Nov 2024 13:33:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730813605;
+	bh=KT5zF8H18NGC/TLWrYKsVRBqgBnqV8X9qCR3wlC7Y0M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=u1tv1TyEwKjibGh1x0gjsbRD/lt8MpK0gB2VmVMfRZLB5Dg/ynIzXBqgNeH+cc4qJ
+	 uNAv3tGFmIsAOBk4ApEq+f03TEU34E81SpatHnnxAAHCPn3ftPKsMaHLY6FVrrs1Qd
+	 9b8QSn86aAgOqtzLWst37UrPAvQQ/JFRSnI+644HCn8Qs30J+3bj/ZJiiFwV7J9RZo
+	 GNyfwSQfZtrXkyjh3ndm+AbxUaT6A1fZjM3wT5HZqS9PGM8CqewldJoJO07g9AqJle
+	 eCTEW2MADNVoORRCYkBPxUAT+fSVHmOaPjPwwd3AOsW7GUMziavXcnw1eEXg+kOwnE
+	 rEMJYfoqyAoPg==
+Date: Tue, 5 Nov 2024 07:33:23 -0600
+From: Rob Herring <robh@kernel.org>
+To: =?iso-8859-1?Q?Th=E9o?= Lebrun <theo.lebrun@bootlin.com>
+Cc: Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>,
+	=?iso-8859-1?Q?Gr=E9gory?= Clement <gregory.clement@bootlin.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	linux-mips@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Tawfik Bayouk <tawfik.bayouk@mobileye.com>
+Subject: Re: [PATCH 01/13] dt-bindings: soc: mobileye: set `#clock-cells =
+ <1>` for all compatibles
+Message-ID: <20241105133323.GA3064907-robh@kernel.org>
+References: <20241031-mbly-clk-v1-0-89d8b28e3006@bootlin.com>
+ <20241031-mbly-clk-v1-1-89d8b28e3006@bootlin.com>
+ <20241104153727.GA192461-robh@kernel.org>
+ <D5DJOUV9NPY4.22MIOBKLAYGA3@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <6729fedf.050a0220.701a.001b.GAE@google.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <D5DJOUV9NPY4.22MIOBKLAYGA3@bootlin.com>
 
-On Tue, Nov 05, 2024 at 03:17:51AM -0800, syzbot wrote:
-> For archival purposes, forwarding an incoming command email to
-> linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+On Mon, Nov 04, 2024 at 05:46:10PM +0100, Théo Lebrun wrote:
+> On Mon Nov 4, 2024 at 4:37 PM CET, Rob Herring wrote:
+> > On Thu, Oct 31, 2024 at 04:52:51PM +0100, Théo Lebrun wrote:
+> > > Some compatibles expose a single clock. For those, we used to let them
+> > > using `#clock-cells = <0>` (ie <&olb> reference rather than <&olb 0>).
+> > > 
+> > > Switch away from that: enforce a cell for all compatibles. This is more
+> > > straight forward, and avoids devicetree changes whenever a compatible
+> > > goes from exposing a single clock to multiple ones.
+> >
+> > Your reasoning is flawed. Changing #clock-cells is an ABI break. So you 
+> > should only be changing this if it was just wrong. And if it's not wrong 
+> > in some cases, you shouldn't be changing those. The h/w either has 1 
+> > clock or multiple and #clocks-cells should match.
 > 
-> ***
+> I see your reasoning, and I agree that changing #clock-cells is an ABI
+> break. However, there are two things to take into account:
 > 
-> Subject: Re: kernel BUG in free_bprm()
-> Author: dmantipov@yandex.ru
+>  - We do not (yet?) have an omniscient view of the hardware. We do not
+>    know what every single register in those memory regions do.
 > 
-> #syz test https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next 850f22c42f4b0a14a015aecc26f46f9948ded6dd
+>    Some clocks might be lurking in the shadows, especially as we don't
+>    support many HW capabilities yet.
 > 
-> diff --git a/fs/exec.c b/fs/exec.c
-> index ef18eb0ea5b4..df70ed8e36fe 100644
-> --- a/fs/exec.c
-> +++ b/fs/exec.c
-> @@ -1496,7 +1496,8 @@ static void free_bprm(struct linux_binprm *bprm)
->  	if (bprm->interp != bprm->filename)
->  		kfree(bprm->interp);
->  	kfree(bprm->fdpath);
-> -	kfree(bprm->argv0);
-> +	if (!IS_ERR(bprm->argv0))
-> +		kfree(bprm->argv0);
->  	kfree(bprm);
->  }
+>  - The earlier the better. If we discover later down the road that,
+>    indeed, some more clocks were hiding, we'll have to do an ABI break.
+> 
+>    At that point, some people might actually be using the platform.
+>    Seeing what we currently have supported upstream versus the amount
+>    of HW blocks available in the SoC, I cannot imagine anyone using the
+>    platform with an upstream kernel.
+> 
+> So the choice is:
+>  - potential ABI break in the future, once people use the platform, or,
+>  - guaranteed ABI break now, when no one is using it.
+> 
+> I pick option two! Do you agree with the thought process?
 
-It's better to avoid setting bprm->argv0 if strndup_user() fails.
+Ultimately, it is up to you and the maintainers for the platform to 
+decide. I only ask that ABI breaks are called out as ABI breaks with 
+reasoning given for the ABI break.
 
-diff --git a/fs/exec.c b/fs/exec.c
-index ef18eb0ea5b4..9380e166eff5 100644
---- a/fs/exec.c
-+++ b/fs/exec.c
-@@ -1504,6 +1504,7 @@ static int bprm_add_fixup_comm(struct linux_binprm *bprm,
- 			       struct user_arg_ptr argv)
- {
- 	const char __user *p = get_user_arg_ptr(argv, 0);
-+	char *argv0;
- 
- 	/*
- 	 * If p == NULL, let's just fall back to fdpath.
-@@ -1511,10 +1512,11 @@ static int bprm_add_fixup_comm(struct linux_binprm *bprm,
- 	if (!p)
- 		return 0;
- 
--	bprm->argv0 = strndup_user(p, MAX_ARG_STRLEN);
--	if (IS_ERR(bprm->argv0))
--		return PTR_ERR(bprm->argv0);
-+	argv0 = strndup_user(p, MAX_ARG_STRLEN);
-+	if (IS_ERR(argv0))
-+		return PTR_ERR(argv0);
- 
-+	bprm->argv0 = argv0;
- 	return 0;
- }
- 
--- 
-  Kiryl Shutsemau / Kirill A. Shutemov
+I had no clue whether you have access to RTL or are reverse engineering 
+this or something in between.
+
+Please summarize the above explanation for the commit msg.
+
+Rob
 
