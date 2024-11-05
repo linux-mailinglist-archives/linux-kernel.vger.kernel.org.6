@@ -1,84 +1,110 @@
-Return-Path: <linux-kernel+bounces-395768-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395769-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C3539BC2AA
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 02:34:52 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 598BC9BC2AE
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 02:35:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 449B91F232C0
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 01:34:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 06ABF282A0C
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 01:35:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB9FF3BB21;
-	Tue,  5 Nov 2024 01:34:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1CD222098;
+	Tue,  5 Nov 2024 01:35:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cilUS0qQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RbGa0iId"
+Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0866518641;
-	Tue,  5 Nov 2024 01:34:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D008E11CA9;
+	Tue,  5 Nov 2024 01:35:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730770470; cv=none; b=JdWjAMnznIv6Wfb9HDcLf3q5cfAqpVOwpO8rhAgM8gFZpUAE34N7eKgUIUeB3bn4kM1pKQ8pp/LTJA7JRNPlDtsUuRbot8k181h9D0ttnadbZFOU8mw544lC5KBo+YuBOvrE7nb8XRPunXElJdBmX/jYxoQEftiMc/R9aUj7Fzg=
+	t=1730770522; cv=none; b=JSNGB1BReeMXHkgG/J1OQ91zEh6nlCpQ71kc4DD9bQZlJQJ/kN336FujyhXxZBPeW018rvD5QzhqeRJJTCN2/pqRax+PgTSIsoXKk4NDPUTb9Q3wpx+RWxwu36FLn79u03DdJPUmtyb87EIG1w4MNDRXHmJS4mUjweCoXIjUgF8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730770470; c=relaxed/simple;
-	bh=pZqyeDU4Z0xb82ka1rqo9zPh5E+ZbwXvL5ApzcS2al4=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=BnS/eclFVmp4wRVyRxbcMa1U60UqDxS4JL6LqV1fIx5ckxUZdVtlcgITSy+0n9HhWyNhtgzkr9EaS0po4GNuyebFzVvnn/SqonjSYJtyd0bn/c0VG8005cCi2Opr2gfqJj+QMHgl7gFyv9zsyuNGkiH8H09SR1fRYT/M307uPtc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cilUS0qQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D0B7C4CECE;
-	Tue,  5 Nov 2024 01:34:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730770469;
-	bh=pZqyeDU4Z0xb82ka1rqo9zPh5E+ZbwXvL5ApzcS2al4=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=cilUS0qQCFaxNF3zH63qgUIqVpBsK5ZAO2+Mc4CrXmk6QZIa3ZA/1eyWd894pH2td
-	 p6DeOBI4b44PBAllxDSwZ+pvc/5OEkcYzKgLtcgnvluIpjNagN96SxdO1hq1RTBHL4
-	 IsHQ3dUtDassq5aGIJOJqxs+MkAOhLYww1/sRgfew7akFKeqGOT8zYLFCTpqAtJETh
-	 hetvPOAoOKDF42PLByagmL9JEdRSFvR3DT2TRaUD4mTfYhVrokbWecXm5y2cdsb4O7
-	 uykYoTN0CALyatfk7dtT2vPJ/mDxiOvw5DHvt59QcW4RICZcRPoNv9l/f+5h04HOGk
-	 wE3h4ii4bPJsw==
-Message-ID: <43d8b52e-5e5b-4a37-9a18-6ac392048d92@kernel.org>
-Date: Tue, 5 Nov 2024 09:34:23 +0800
+	s=arc-20240116; t=1730770522; c=relaxed/simple;
+	bh=ingfrncuikx6qWtZpzFjp3opkDa65j5kzqOYQ6LoTlk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kzxq1riunehXs/7ERE7yYsghK5/Zas+hwjZwrdtmFk53tN4NYcYoRMNJxuiICn3mfZIVT8mNXU96IekOahpunRaXztLw/Ehysoe80kSxz/phbcHO3sbor7HET/oNzF4YMibDtmZBkfR2hzIvSFcZqSv4CBMu9rw0L6fQ1VOAr0k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RbGa0iId; arc=none smtp.client-ip=209.85.128.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-6e5cec98cceso39009947b3.2;
+        Mon, 04 Nov 2024 17:35:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730770519; x=1731375319; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1olVdcYdpbzAU58yRsPEPtreJytP/ErwpPoWbC/4Weo=;
+        b=RbGa0iIdwmWET/R6U548KIJHPbPitgXrLssTqjWw1JBDwgJIDCZDBEsNSNMCI1unWJ
+         IXYfSgPUhflW6+GmLDN0AxGls0oDlGnz+RMbsoVb6QOxKwQhJHXdub/VQ7bDPAofVRmJ
+         EJ0R99qnqPkx0/MbhaoeZnAvDYMSKN69B0xkeTpcxn2eouI1zai6cDKdUdvis6vh32oT
+         6V4r502rnsuRhYfusSp1ATaDupvfg0kW1gqvuYy0EGW0Q3R358VwZMG0LgFaQ/j2oOnl
+         3LUJGNWeJk4eUOxajn16DBH0LullYyHId3KrSi3awXbUijZyH2J85ZekzXD2D5vezf5B
+         zLaQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730770519; x=1731375319;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1olVdcYdpbzAU58yRsPEPtreJytP/ErwpPoWbC/4Weo=;
+        b=uHrQr+5btkMRY5XH+cSMTPTjPJpl+4NZTk/AkC/aPdPOQ5lJfDCJREGQauT5Q4W4as
+         pBlWbU+kDk0iKHKRMGGgANhYs/9e0EN/wLSE/8W/UUoAXb2uiZQZ1tyO8w2Bo0R5aE6m
+         pGBZYBC5nsSnOggXfkMuDykRk5spB7ytSOOjnjlbLrPBlGdEVW/UC96hoNtAv+dBJGiu
+         vPCmhx/o1pNWLZKvsKCPJo5a+51vRmouiY6Yy656nxbsIMXPCGZNBiM2Bfxh1n5Qn4sa
+         3A2hfGEv40qs2eChQq/Wm3+A2tCl424fh9B3zht2jWPoCKNGGJvsq6CdGsIzOb+Xv4PX
+         mXoQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVAhjLNpdKpC+FfCWY/fxtt71omfeBH8c9nq6vr2jIuQGX0Bf06fAp9p3UDBZXel7Mxq7yariOr/9+SUPk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzkc84mMtx2QxupOD1FZ2naXBl/UxdIotWyen5xBB3mwao0SWYV
+	iP9yX2Sq0FUKdqX827nvxEdDCCRkgKgD0udV7NJxkvtSJ/VXZ8hFTQF3xq9mvSug1rHLoOu+3O0
+	uKyxh+O9f7fJiK92fefTrDtGuaRX5ljnwr5w=
+X-Google-Smtp-Source: AGHT+IHumg29ZCvANUFmdwzLHDkWQb+pLrpZmept1M1Rh2XLyhWlPjqmDFclS/BZdxG49yfm/f+VICBmuMl/EwbpAlM=
+X-Received: by 2002:a05:690c:64c6:b0:6e2:1a56:bff8 with SMTP id
+ 00721157ae682-6ea52525bb1mr153943557b3.36.1730770519634; Mon, 04 Nov 2024
+ 17:35:19 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: Chao Yu <chao@kernel.org>, linux-arch@vger.kernel.org,
- linux-s390@vger.kernel.org, linux-scsi@vger.kernel.org, x86@kernel.org,
- linux-mips@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- linux-crypto@vger.kernel.org, loongarch@lists.linux.dev,
- sparclinux@vger.kernel.org, linux-riscv@lists.infradead.org,
- linux-ext4@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
- Ard Biesheuvel <ardb@kernel.org>, linux-arm-kernel@lists.infradead.org
-Subject: Re: [f2fs-dev] [PATCH v3 17/18] f2fs: switch to using the crc32
- library
-To: Eric Biggers <ebiggers@kernel.org>, linux-kernel@vger.kernel.org
-References: <20241103223154.136127-1-ebiggers@kernel.org>
- <20241103223154.136127-18-ebiggers@kernel.org>
-Content-Language: en-US
-From: Chao Yu <chao@kernel.org>
-In-Reply-To: <20241103223154.136127-18-ebiggers@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20241104210127.307420-1-rosenp@gmail.com>
+In-Reply-To: <20241104210127.307420-1-rosenp@gmail.com>
+From: Rosen Penev <rosenp@gmail.com>
+Date: Mon, 4 Nov 2024 17:35:08 -0800
+Message-ID: <CAKxU2N_wxh+31VkZAAczVUUVt5duLv=yBj9zyLMDfoYGPq=G5Q@mail.gmail.com>
+Subject: Re: [PATCH net-next 0/4] net: ucc_geth: devm cleanups
+To: netdev@vger.kernel.org
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>, maxime.chevallier@bootlin.com, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	"open list:FREESCALE QUICC ENGINE UCC ETHERNET DRIVER" <linuxppc-dev@lists.ozlabs.org>, open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2024/11/4 6:31, Eric Biggers via Linux-f2fs-devel wrote:
-> From: Eric Biggers <ebiggers@google.com>
-> 
-> Now that the crc32() library function takes advantage of
-> architecture-specific optimizations, it is unnecessary to go through the
-> crypto API.  Just use crc32().  This is much simpler, and it improves
-> performance due to eliminating the crypto API overhead.
-> 
-> Reviewed-by: Ard Biesheuvel <ardb@kernel.org>
-> Signed-off-by: Eric Biggers <ebiggers@google.com>
+On Mon, Nov 4, 2024 at 1:01=E2=80=AFPM Rosen Penev <rosenp@gmail.com> wrote=
+:
+>
+> Also added a small fix for NVMEM mac addresses.
+>
+> This was tested as working on a Watchguard T10 device.
+>
+> Rosen Penev (4):
+>   net: ucc_geth: use devm for kmemdup
+>   net: ucc_geth: use devm for alloc_etherdev
+>   net: ucc_geth: use devm for register_netdev
+>   net: ucc_geth: fix usage with NVMEM MAC address
+oh this is interesting
 
-Acked-by: Chao Yu <chao@kernel.org>
-
-Thanks,
+_remove calls platform_get_drvdata but platform_set_drvdata never gets
+called. I believe that means _remove is operating on a NULL pointer.
+>
+>  drivers/net/ethernet/freescale/ucc_geth.c | 34 ++++++++++-------------
+>  1 file changed, 14 insertions(+), 20 deletions(-)
+>
+> --
+> 2.47.0
+>
 
