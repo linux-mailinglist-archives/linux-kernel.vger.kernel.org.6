@@ -1,285 +1,407 @@
-Return-Path: <linux-kernel+bounces-396041-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396042-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 952E59BC716
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 08:31:43 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A56879BC71F
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 08:36:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DFC75B23649
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 07:31:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C9ECF1C22247
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 07:36:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7362D1FCC7F;
-	Tue,  5 Nov 2024 07:31:07 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEF681FDFA0;
+	Tue,  5 Nov 2024 07:36:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="kv0QYgNt"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEFAC1C57B2
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 07:31:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48EF63B784;
+	Tue,  5 Nov 2024 07:36:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730791866; cv=none; b=da7deMSVwpBwBbZpsq372y+c+UAoO1Atk7hrJ5Ul/Oaxe0N0Dh6uHgLO882xneqLjFaQHcTmSyB6PWaUuu+zqF6eRl6paekXsnECaNrczOgY5+EtXp/3x5IsB5bocD1gsh5av20gVoCKoE9n1Tu85Yml34201MFujkGMDjk7S0Q=
+	t=1730792184; cv=none; b=AvzCMWVWV5DkMt2QcnCOygBofOZ1DHcev2BPmnuqfWpLJHliSRHIMFGIkuovYpoibw6H0qqqAhwloziolt9JM4MP/vDTCVUWaqy5ViYAW+IKjNotacsvGSgraPE854c50z6Gr3PP4vp6sHLMvuGR03OgZr4cj2YlMKqX27rTBmE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730791866; c=relaxed/simple;
-	bh=yfdPJTKEmhtiMeN9yOUX9Hd8GaUqNl23qgtpMpPweQE=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=Q1ZjFZ8y6HMf0VRaVRmEJDeM7Dk/ftGm1BOX1IcSb1jgUG4pz4aTrkeFzFJEouQuuffZlZD8CXL2kExhHoW6hhrHc5l9qHuQeyTKxcLNUwAq1ETy5PzWyZ+P3IU3t8GFiXXaEYMxc528/b3gOpKM6AIInGFXlmTSHBhGRKy7V40=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a4f2698c76so55767455ab.2
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 23:31:04 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730791864; x=1731396664;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=fQhpNs8yZrI2cPu0RIL+gZTGN8otKy7I9VYIvCwTXJQ=;
-        b=OgR/nJpBmmk90ANqSEOvJdZUo+d4ppGSygV1PaEW985vIGSg3zj3gEvMcf0T0XpvqV
-         sy38Q9gECM3/9VDuAQmY+0ESU0ss+ZD3N4o4gL1WBzD1kgyevRF975Jc/WJZN72M6WJJ
-         9/fv3LBdwhzoV7RKLS3i7s/TnNXmjgxlJNXZHZcVVgFSyF/ZsZL/1fimQF1BK07tof0y
-         SsMiOQBemh2Y6WSPX/lOG9rxJwVF9uzmFmxsFqlJ0Ly3/lnm0mi65cXlcY/hEV8EdQBM
-         bTbreXKnD4AgXuIooRz6acy12O1yKXKueuVuvd4w70OR8b/WQRHKLo6yF+pZPFxxWWsv
-         MFVg==
-X-Forwarded-Encrypted: i=1; AJvYcCX+je1wkk4n5meYzKRv3/HSlxvIwg60CENUmaB/IQMOWuNJdJn8HyqVGGo8aVE8pzdUn2B5i2YM35lHK/A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwDx+kJj9DEEPdOdAlJliJBysHGFmO6CClTXO5+9FlD9IzvP0sn
-	jDcpzvxMbCWgd7jkdadY9bPJ0E3Qdk+tLbHhVQlV+T/smW/KZz2uJdkcO70nD+CcPRbs9K6M/wS
-	cmpnWulV6UCAgxJqsoCvjU8498EFVOkpSs84+7x3AZRWUxASTvdEQbRc=
-X-Google-Smtp-Source: AGHT+IEIWp9flXGhhXhgak0B2xwMhDuvGbJEeEgooMA3ulZkQrEd7T2opRMQWMD/SiqFGUxx4YyX4ZVbrztloyW8hLlVSjOA1qSg
+	s=arc-20240116; t=1730792184; c=relaxed/simple;
+	bh=6xQJBL2WzwjRXwcRVRayx451AuYGG0sFOP3XBOuCO5o=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=kv7ikPoZ/JmxLrellTJQLCcCEcM7mrUQnnC5eraL+2TkUeBQK3hxy6lKGpBOvNc+Z2TLuMfkdVnWZIX7v9FeokPofngepFC/ZeZorTqcVPTi3qrWoSVf1LepZb1vcJwcOsx3KEZorJyk4lykDx1b+M8/CSRpMtpj3qWkqHVoEAs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=kv0QYgNt; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A4LJ97t021578;
+	Tue, 5 Nov 2024 07:36:18 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=WKe7xo3+9qSIq3Sj7gyk52yUF9NGZ/dIN3N
+	sY5wWCGs=; b=kv0QYgNtkKnI3sr9MMFxn9U/gsWBmqdHI0DW/YT//98yONdlKYv
+	+ZtoRYRa9prRzgccjOejX6fTAmYF64EFsf1Ia+QUL/c0iyahXrgqMgADtxMoinBp
+	gQmbVRQX6djILK+GPdpwTwivPYpyK+u2fav1Za0li0dcw9o8wkihkKhvEa1BIGNv
+	+GCzqxNxcl+3iRBJBAjqy0PuZjG1ethjk9SaHfcQM7bzKeZz9j3cm4XpMxz5Q7a1
+	YrYFW4WIUPpMJdBZk+N4HZcELGhp1iuc2EsYW0NdZ+FLEkj0KSVhA9JxQA7Ykl1M
+	HSfhwVBCW2fx/HVQL7BxiVJr7/KRyCv+6jw==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42nd5cpr59-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 05 Nov 2024 07:36:18 +0000 (GMT)
+Received: from pps.filterd (NALASPPMTA01.qualcomm.com [127.0.0.1])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 4A57QCx4027354;
+	Tue, 5 Nov 2024 07:36:17 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by NALASPPMTA01.qualcomm.com (PPS) with ESMTPS id 42nd5mh7bg-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 05 Nov 2024 07:36:17 +0000
+Received: from NALASPPMTA01.qualcomm.com (NALASPPMTA01.qualcomm.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 4A57YdVh008937;
+	Tue, 5 Nov 2024 07:36:17 GMT
+Received: from hu-devc-lv-u22-c.qualcomm.com (hu-qianyu-lv.qualcomm.com [10.81.25.114])
+	by NALASPPMTA01.qualcomm.com (PPS) with ESMTPS id 4A57aGih011243
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 05 Nov 2024 07:36:17 +0000
+Received: by hu-devc-lv-u22-c.qualcomm.com (Postfix, from userid 4098150)
+	id AA87966C; Mon,  4 Nov 2024 23:36:16 -0800 (PST)
+From: Qiang Yu <quic_qianyu@quicinc.com>
+To: andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org,
+        krzk+dt@kernel.org, conor+dt@kernel.org
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, quic_cang@quicinc.com,
+        quic_mrana@quicinc.com, quic_qianyu@quicinc.com,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        Johan Hovold <johan+linaro@kernel.org>
+Subject: [PATCH v9 1/1] arm64: dts: qcom: x1e80100: Add support for PCIe3 on x1e80100
+Date: Mon,  4 Nov 2024 23:36:14 -0800
+Message-Id: <20241105073615.3076979-1-quic_qianyu@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:17cb:b0:3a6:ae3d:920e with SMTP id
- e9e14a558f8ab-3a6b02cf8famr170485575ab.13.1730791863922; Mon, 04 Nov 2024
- 23:31:03 -0800 (PST)
-Date: Mon, 04 Nov 2024 23:31:03 -0800
-In-Reply-To: <tencent_EE9DA7FFC6DD52DFC65889ABEEEC6EC64C06@qq.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6729c9b7.050a0220.2edce.1504.GAE@google.com>
-Subject: Re: [syzbot] [sound?] INFO: task hung in snd_card_free
-From: syzbot <syzbot+73582d08864d8268b6fd@syzkaller.appspotmail.com>
-To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: qJWkVX0M_vvPxrsDANXHcEsLMZdknXN8
+X-Proofpoint-GUID: qJWkVX0M_vvPxrsDANXHcEsLMZdknXN8
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ spamscore=0 mlxscore=0 impostorscore=0 lowpriorityscore=0 bulkscore=0
+ suspectscore=0 adultscore=0 clxscore=1015 phishscore=0 malwarescore=0
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411050055
 
-Hello,
+Describe PCIe3 controller and PHY. Also add required system resources like
+regulators, clocks, interrupts and registers configuration for PCIe3.
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-KASAN: slab-use-after-free Read in snd_ctl_release
+Signed-off-by: Qiang Yu <quic_qianyu@quicinc.com>
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Reviewed-by: Johan Hovold <johan+linaro@kernel.org>
+---
+v8->v9:
+1. Use pcie_north_anoc for PCIe3
+2. Remove [PATCH v8 1/5], [PATCH v8 2/5], [PATCH v8 3/5] and [PATCH v8 4/5] as they were applied.
+3. Link to v8: https://lore.kernel.org/all/20241101030902.579789-1-quic_qianyu@quicinc.com/
 
-==================================================================
-BUG: KASAN: slab-use-after-free in __lock_acquire+0x2dfe/0x3ce0 kernel/locking/lockdep.c:5065
-Read of size 8 at addr ffff888024ae6270 by task syz.0.15/6671
+v7->v8:
+1. Add Reviewed-by tags
+2. Rephrase commit message and remove Fix tags
+3. Add Synopsis IP revision and put ops_1_21_0 after ops_1_9_0.
+4. Remove  [PATCH v7 1/7] and [PATCH v7 4/7] as they were applied
+5. Link to v7: https://lore.kernel.org/all/20241017030412.265000-1-quic_qianyu@quicinc.com/
 
-CPU: 1 UID: 0 PID: 6671 Comm: syz.0.15 Not tainted 6.12.0-rc6-syzkaller-g2e1b3cc9d7f7-dirty #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
- print_address_description mm/kasan/report.c:377 [inline]
- print_report+0xc3/0x620 mm/kasan/report.c:488
- kasan_report+0xd9/0x110 mm/kasan/report.c:601
- __lock_acquire+0x2dfe/0x3ce0 kernel/locking/lockdep.c:5065
- lock_acquire.part.0+0x11b/0x380 kernel/locking/lockdep.c:5825
- __raw_write_lock_irqsave include/linux/rwlock_api_smp.h:186 [inline]
- _raw_write_lock_irqsave+0x3a/0x60 kernel/locking/spinlock.c:318
- class_write_lock_irqsave_constructor include/linux/spinlock.h:601 [inline]
- snd_ctl_release+0x86/0x450 sound/core/control.c:120
- __fput+0x3f6/0xb60 fs/file_table.c:431
- task_work_run+0x14e/0x250 kernel/task_work.c:239
- resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
- exit_to_user_mode_loop kernel/entry/common.c:114 [inline]
- exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
- __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
- syscall_exit_to_user_mode+0x27b/0x2a0 kernel/entry/common.c:218
- do_syscall_64+0xda/0x250 arch/x86/entry/common.c:89
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f6cdf97e719
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffe6b8df9c8 EFLAGS: 00000246 ORIG_RAX: 00000000000001b4
-RAX: 0000000000000000 RBX: 0000000000017f6a RCX: 00007f6cdf97e719
-RDX: 0000000000000000 RSI: 000000000000001e RDI: 0000000000000003
-RBP: 00007f6cdfb37a80 R08: 0000000000000001 R09: 00007ffe6b8dfcbf
-R10: 00007f6cdf800000 R11: 0000000000000246 R12: 0000000000018360
-R13: 00007ffe6b8dfad0 R14: 0000000000000032 R15: ffffffffffffffff
- </TASK>
+v6->v7:
+1. Add Acked-by and Reviewed-by tags
+2. Use 70574511f3f ("PCI: qcom: Add support for SC8280XP") in Fixes tag
+3. Keep minItem of interrupt as 8 in buindings
+4. Reword commit msg 
+5. Remove [PATCH v6 5/8] clk: qcom: gcc-x1e80100: Fix halt_check for
+   pipediv2 clocks as it was applied
+6. Link to v6: https://lore.kernel.org/linux-pci/20241011104142.1181773-1-quic_qianyu@quicinc.com/
 
-Allocated by task 965:
- kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
- kasan_save_track+0x14/0x30 mm/kasan/common.c:68
- poison_kmalloc_redzone mm/kasan/common.c:377 [inline]
- __kasan_kmalloc+0xaa/0xb0 mm/kasan/common.c:394
- kasan_kmalloc include/linux/kasan.h:257 [inline]
- __do_kmalloc_node mm/slub.c:4264 [inline]
- __kmalloc_noprof+0x1e8/0x400 mm/slub.c:4276
- kmalloc_noprof include/linux/slab.h:882 [inline]
- kzalloc_noprof include/linux/slab.h:1014 [inline]
- snd_card_new+0x74/0x120 sound/core/init.c:184
- usx2y_create_card sound/usb/usx2y/usbusx2y.c:369 [inline]
- snd_usx2y_probe+0x387/0x9c0 sound/usb/usx2y/usbusx2y.c:450
- usb_probe_interface+0x309/0x9d0 drivers/usb/core/driver.c:399
- call_driver_probe drivers/base/dd.c:579 [inline]
- really_probe+0x23e/0xa90 drivers/base/dd.c:658
- __driver_probe_device+0x1de/0x440 drivers/base/dd.c:800
- driver_probe_device+0x4c/0x1b0 drivers/base/dd.c:830
- __device_attach_driver+0x1df/0x310 drivers/base/dd.c:958
- bus_for_each_drv+0x157/0x1e0 drivers/base/bus.c:459
- __device_attach+0x1e8/0x4b0 drivers/base/dd.c:1030
- bus_probe_device+0x17f/0x1c0 drivers/base/bus.c:534
- device_add+0x114b/0x1a70 drivers/base/core.c:3672
- usb_set_configuration+0x10cb/0x1c50 drivers/usb/core/message.c:2210
- usb_generic_driver_probe+0xb1/0x110 drivers/usb/core/generic.c:254
- usb_probe_device+0xec/0x3e0 drivers/usb/core/driver.c:294
- call_driver_probe drivers/base/dd.c:579 [inline]
- really_probe+0x23e/0xa90 drivers/base/dd.c:658
- __driver_probe_device+0x1de/0x440 drivers/base/dd.c:800
- driver_probe_device+0x4c/0x1b0 drivers/base/dd.c:830
- __device_attach_driver+0x1df/0x310 drivers/base/dd.c:958
- bus_for_each_drv+0x157/0x1e0 drivers/base/bus.c:459
- __device_attach+0x1e8/0x4b0 drivers/base/dd.c:1030
- bus_probe_device+0x17f/0x1c0 drivers/base/bus.c:534
- device_add+0x114b/0x1a70 drivers/base/core.c:3672
- usb_new_device+0xd90/0x1a10 drivers/usb/core/hub.c:2651
- hub_port_connect drivers/usb/core/hub.c:5521 [inline]
- hub_port_connect_change drivers/usb/core/hub.c:5661 [inline]
- port_event drivers/usb/core/hub.c:5821 [inline]
- hub_event+0x2d9a/0x4e10 drivers/usb/core/hub.c:5903
- process_one_work+0x9c5/0x1ba0 kernel/workqueue.c:3229
- process_scheduled_works kernel/workqueue.c:3310 [inline]
- worker_thread+0x6c8/0xf00 kernel/workqueue.c:3391
- kthread+0x2c1/0x3a0 kernel/kthread.c:389
- ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+v5->v6:
+1. Add Fixes tag
+2. Split [PATCH v5 6/7] into two patches
+3. Reword commit msg
+4. Link to v5: https://lore.kernel.org/linux-pci/20241009091540.1446-1-quic_qianyu@quicinc.com/
 
-Freed by task 25:
- kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
- kasan_save_track+0x14/0x30 mm/kasan/common.c:68
- kasan_save_free_info+0x3b/0x60 mm/kasan/generic.c:579
- poison_slab_object mm/kasan/common.c:247 [inline]
- __kasan_slab_free+0x51/0x70 mm/kasan/common.c:264
- kasan_slab_free include/linux/kasan.h:230 [inline]
- slab_free_hook mm/slub.c:2342 [inline]
- slab_free mm/slub.c:4579 [inline]
- kfree+0x14f/0x4b0 mm/slub.c:4727
- snd_card_do_free sound/core/init.c:603 [inline]
- release_card_device+0x17f/0x1f0 sound/core/init.c:153
- device_release+0xa1/0x240 drivers/base/core.c:2574
- kobject_cleanup lib/kobject.c:689 [inline]
- kobject_release lib/kobject.c:720 [inline]
- kref_put include/linux/kref.h:65 [inline]
- kobject_put+0x1e4/0x5a0 lib/kobject.c:737
- put_device+0x1f/0x30 drivers/base/core.c:3780
- snd_card_free_when_closed sound/core/init.c:625 [inline]
- snd_card_free_when_closed sound/core/init.c:618 [inline]
- snd_card_free+0x1bf/0x250 sound/core/init.c:658
- snd_usx2y_disconnect+0x1aa/0x230 sound/usb/usx2y/usbusx2y.c:430
- usb_unbind_interface+0x1e8/0x970 drivers/usb/core/driver.c:461
- device_remove drivers/base/dd.c:569 [inline]
- device_remove+0x122/0x170 drivers/base/dd.c:561
- __device_release_driver drivers/base/dd.c:1273 [inline]
- device_release_driver_internal+0x44a/0x610 drivers/base/dd.c:1296
- bus_remove_device+0x22f/0x420 drivers/base/bus.c:576
- device_del+0x396/0x9f0 drivers/base/core.c:3861
- usb_disable_device+0x36c/0x7f0 drivers/usb/core/message.c:1418
- usb_disconnect+0x2e1/0x920 drivers/usb/core/hub.c:2304
- hub_port_connect drivers/usb/core/hub.c:5361 [inline]
- hub_port_connect_change drivers/usb/core/hub.c:5661 [inline]
- port_event drivers/usb/core/hub.c:5821 [inline]
- hub_event+0x1da5/0x4e10 drivers/usb/core/hub.c:5903
- process_one_work+0x9c5/0x1ba0 kernel/workqueue.c:3229
- process_scheduled_works kernel/workqueue.c:3310 [inline]
- worker_thread+0x6c8/0xf00 kernel/workqueue.c:3391
- kthread+0x2c1/0x3a0 kernel/kthread.c:389
- ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+v4->v5:
+1. Add Reviewed-by tag
+2. Expand and clarify usage of txz/rxz in commit message
+3. Add comments that txz/rxz must be programmed before tx/rx
+4. Change the sort order for phy register tbls
+5. Use the order defined in struct qmp_phy_cfg_tbls for phy register tbls
+   presented in x1e80100_qmp_gen4x8_pciephy_cfg
+6. Add Fixes and CC stable tag
+7. Fix ops for SC8280X and X1E80100
+8. Document global interrupt in bindings
+9. Link to v4: https://lore.kernel.org/all/20240924101444.3933828-1-quic_qianyu@quicinc.com/
 
-The buggy address belongs to the object at ffff888024ae6000
- which belongs to the cache kmalloc-4k of size 4096
-The buggy address is located 624 bytes inside of
- freed 4096-byte region [ffff888024ae6000, ffff888024ae7000)
+v3->v4:
+1. Reword commit msg of [PATCH v3 5/6]
+2. Drop opp-table property from qcom,pcie-sm8450.yaml
+3. Add Reviewed-by tag
+4. Link to v3: https://lore.kernel.org/all/20240923125713.3411487-1-quic_qianyu@quicinc.com/
 
-The buggy address belongs to the physical page:
-page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x24ae0
-head: order:3 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
-anon flags: 0xfff00000000040(head|node=0|zone=1|lastcpupid=0x7ff)
-page_type: f5(slab)
-raw: 00fff00000000040 ffff88801b042140 0000000000000000 dead000000000001
-raw: 0000000000000000 0000000000040004 00000001f5000000 0000000000000000
-head: 00fff00000000040 ffff88801b042140 0000000000000000 dead000000000001
-head: 0000000000000000 0000000000040004 00000001f5000000 0000000000000000
-head: 00fff00000000003 ffffea000092b801 ffffffffffffffff 0000000000000000
-head: 0000000000000008 0000000000000000 00000000ffffffff 0000000000000000
-page dumped because: kasan: bad access detected
-page_owner tracks the page as allocated
-page last allocated via order 3, migratetype Unmovable, gfp_mask 0xd2040(__GFP_IO|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP|__GFP_NOMEMALLOC), pid 5202, tgid 5202 (udevd), ts 19805789419, free_ts 19472323126
- set_page_owner include/linux/page_owner.h:32 [inline]
- post_alloc_hook+0x2d1/0x350 mm/page_alloc.c:1537
- prep_new_page mm/page_alloc.c:1545 [inline]
- get_page_from_freelist+0xf7d/0x2d10 mm/page_alloc.c:3457
- __alloc_pages_noprof+0x223/0x25a0 mm/page_alloc.c:4733
- alloc_pages_mpol_noprof+0x2c9/0x610 mm/mempolicy.c:2265
- alloc_slab_page mm/slub.c:2412 [inline]
- allocate_slab mm/slub.c:2578 [inline]
- new_slab+0x2c9/0x410 mm/slub.c:2631
- ___slab_alloc+0xdac/0x1880 mm/slub.c:3818
- __slab_alloc.constprop.0+0x56/0xb0 mm/slub.c:3908
- __slab_alloc_node mm/slub.c:3961 [inline]
- slab_alloc_node mm/slub.c:4122 [inline]
- __do_kmalloc_node mm/slub.c:4263 [inline]
- __kmalloc_noprof+0x367/0x400 mm/slub.c:4276
- kmalloc_noprof include/linux/slab.h:882 [inline]
- tomoyo_realpath_from_path+0xb9/0x720 security/tomoyo/realpath.c:251
- tomoyo_get_realpath security/tomoyo/file.c:151 [inline]
- tomoyo_path_perm+0x273/0x450 security/tomoyo/file.c:822
- security_inode_getattr+0x116/0x290 security/security.c:2373
- vfs_getattr+0x36/0xb0 fs/stat.c:204
- vfs_statx_path+0x36/0x390 fs/stat.c:251
- vfs_statx+0x145/0x1e0 fs/stat.c:315
- vfs_fstatat+0x9f/0x160 fs/stat.c:341
- __do_sys_newfstatat+0xa2/0x130 fs/stat.c:505
-page last free pid 5224 tgid 5224 stack trace:
- reset_page_owner include/linux/page_owner.h:25 [inline]
- free_pages_prepare mm/page_alloc.c:1108 [inline]
- free_unref_page+0x5f4/0xdc0 mm/page_alloc.c:2638
- qlink_free mm/kasan/quarantine.c:163 [inline]
- qlist_free_all+0x4e/0x120 mm/kasan/quarantine.c:179
- kasan_quarantine_reduce+0x192/0x1e0 mm/kasan/quarantine.c:286
- __kasan_slab_alloc+0x69/0x90 mm/kasan/common.c:329
- kasan_slab_alloc include/linux/kasan.h:247 [inline]
- slab_post_alloc_hook mm/slub.c:4085 [inline]
- slab_alloc_node mm/slub.c:4134 [inline]
- kmem_cache_alloc_noprof+0x121/0x2f0 mm/slub.c:4141
- getname_flags.part.0+0x4c/0x550 fs/namei.c:139
- getname_flags+0x93/0xf0 include/linux/audit.h:322
- vfs_fstatat+0x86/0x160 fs/stat.c:340
- __do_sys_newfstatat+0xa2/0x130 fs/stat.c:505
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
+v2->v3:
+1. Use 'Gen 4 x8' in commit msg
+2. Move opp-table property to qcom,pcie-common.yaml
+3. Add Reviewed-by tag
+4. Add global interrupt and use GIC_SPI for the parent interrupt specifier
+5. Use 0x0 in reg property and use pcie@ for pcie3 device node
+6. Show different IP version v6.30 in commit msg
+7. Add logic in controller driver to have new ops for x1e80100
+8. Link to v2: https://lore.kernel.org/all/20240913083724.1217691-1-quic_qianyu@quicinc.com/
 
-Memory state around the buggy address:
- ffff888024ae6100: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
- ffff888024ae6180: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->ffff888024ae6200: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                                                             ^
- ffff888024ae6280: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
- ffff888024ae6300: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-==================================================================
+v2->v1:
+1. Squash [PATCH 1/8], [PATCH 2/8],[PATCH 3/8] into one patch and make the
+   indentation consistent.
+2. Put dts patch at the end of the patchset.
+3. Put dt-binding patch at the first of the patchset.
+4. Add a new patch where opp-table is added in dt-binding to avoid dtbs
+   checking error.
+5. Remove GCC_PCIE_3_AUX_CLK, RPMH_CXO_CLK, put in TCSR_PCIE_8L_CLKREF_EN
+   as ref.
+6. Remove lane_broadcasting.
+7. Add 64 bit bar, Remove GCC_PCIE_3_PIPE_CLK_SRC, 
+   GCC_CFG_NOC_PCIE_ANOC_SOUTH_AHB_CLK is changed to
+   GCC_CFG_NOC_PCIE_ANOC_NORTH_AHB_CLK.
+8. Add Reviewed-by tag.
+9. Remove [PATCH 7/8], [PATCH 8/8].
+10. Link to v1: https://lore.kernel.org/all/20240827063631.3932971-1-quic_qianyu@quicinc.com/
 
+ arch/arm64/boot/dts/qcom/x1e80100.dtsi | 204 ++++++++++++++++++++++++-
+ 1 file changed, 203 insertions(+), 1 deletion(-)
 
-Tested on:
-
-commit:         2e1b3cc9 Merge tag 'arm-fixes-6.12-2' of git://git.ker..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=10f8ed5f980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=2effb62852f5a821
-dashboard link: https://syzkaller.appspot.com/bug?extid=73582d08864d8268b6fd
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=1630ed5f980000
+diff --git a/arch/arm64/boot/dts/qcom/x1e80100.dtsi b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
+index f70a7e00ed50..f044921457d0 100644
+--- a/arch/arm64/boot/dts/qcom/x1e80100.dtsi
++++ b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
+@@ -743,7 +743,7 @@ gcc: clock-controller@100000 {
+ 
+ 			clocks = <&bi_tcxo_div2>,
+ 				 <&sleep_clk>,
+-				 <0>,
++				 <&pcie3_phy>,
+ 				 <&pcie4_phy>,
+ 				 <&pcie5_phy>,
+ 				 <&pcie6a_phy>,
+@@ -2906,6 +2906,208 @@ mmss_noc: interconnect@1780000 {
+ 			#interconnect-cells = <2>;
+ 		};
+ 
++		pcie3: pcie@1bd0000 {
++			device_type = "pci";
++			compatible = "qcom,pcie-x1e80100";
++			reg = <0x0 0x01bd0000 0x0 0x3000>,
++			      <0x0 0x78000000 0x0 0xf1d>,
++			      <0x0 0x78000f40 0x0 0xa8>,
++			      <0x0 0x78001000 0x0 0x1000>,
++			      <0x0 0x78100000 0x0 0x100000>,
++			      <0x0 0x01bd3000 0x0 0x1000>;
++			reg-names = "parf",
++				    "dbi",
++				    "elbi",
++				    "atu",
++				    "config",
++				    "mhi";
++			#address-cells = <3>;
++			#size-cells = <2>;
++			ranges = <0x01000000 0x0 0x00000000 0x0 0x78200000 0x0 0x100000>,
++				 <0x02000000 0x0 0x78300000 0x0 0x78300000 0x0 0x3d00000>,
++				 <0x03000000 0x7 0x40000000 0x7 0x40000000 0x0 0x40000000>;
++			bus-range = <0x00 0xff>;
++
++			dma-coherent;
++
++			linux,pci-domain = <3>;
++			num-lanes = <8>;
++
++			interrupts = <GIC_SPI 158 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 166 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 769 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 836 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 671 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 200 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 218 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 219 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 121 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "msi0",
++					  "msi1",
++					  "msi2",
++					  "msi3",
++					  "msi4",
++					  "msi5",
++					  "msi6",
++					  "msi7",
++					  "global";
++
++			#interrupt-cells = <1>;
++			interrupt-map-mask = <0 0 0 0x7>;
++			interrupt-map = <0 0 0 1 &intc 0 0 GIC_SPI 220 IRQ_TYPE_LEVEL_HIGH>,
++					<0 0 0 2 &intc 0 0 GIC_SPI 221 IRQ_TYPE_LEVEL_HIGH>,
++					<0 0 0 3 &intc 0 0 GIC_SPI 237 IRQ_TYPE_LEVEL_HIGH>,
++					<0 0 0 4 &intc 0 0 GIC_SPI 238 IRQ_TYPE_LEVEL_HIGH>;
++
++			clocks = <&gcc GCC_PCIE_3_AUX_CLK>,
++				 <&gcc GCC_PCIE_3_CFG_AHB_CLK>,
++				 <&gcc GCC_PCIE_3_MSTR_AXI_CLK>,
++				 <&gcc GCC_PCIE_3_SLV_AXI_CLK>,
++				 <&gcc GCC_PCIE_3_SLV_Q2A_AXI_CLK>,
++				 <&gcc GCC_CFG_NOC_PCIE_ANOC_NORTH_AHB_CLK>,
++				 <&gcc GCC_CNOC_PCIE_NORTH_SF_AXI_CLK>;
++			clock-names = "aux",
++				      "cfg",
++				      "bus_master",
++				      "bus_slave",
++				      "slave_q2a",
++				      "noc_aggr",
++				      "cnoc_sf_axi";
++
++			assigned-clocks = <&gcc GCC_PCIE_3_AUX_CLK>;
++			assigned-clock-rates = <19200000>;
++
++			interconnects = <&pcie_north_anoc MASTER_PCIE_3 QCOM_ICC_TAG_ALWAYS
++					 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>,
++					<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
++					 &cnoc_main SLAVE_PCIE_3 QCOM_ICC_TAG_ALWAYS>;
++			interconnect-names = "pcie-mem",
++					     "cpu-pcie";
++
++			resets = <&gcc GCC_PCIE_3_BCR>,
++				 <&gcc GCC_PCIE_3_LINK_DOWN_BCR>;
++			reset-names = "pci",
++				      "link_down";
++
++			power-domains = <&gcc GCC_PCIE_3_GDSC>;
++
++			phys = <&pcie3_phy>;
++			phy-names = "pciephy";
++
++			operating-points-v2 = <&pcie3_opp_table>;
++
++			status = "disabled";
++
++			pcie3_opp_table: opp-table {
++				compatible = "operating-points-v2";
++
++				/* GEN 1 x1 */
++				opp-2500000 {
++					opp-hz = /bits/ 64 <2500000>;
++					required-opps = <&rpmhpd_opp_low_svs>;
++					opp-peak-kBps = <250000 1>;
++				};
++
++				/* GEN 1 x2 and GEN 2 x1 */
++				opp-5000000 {
++					opp-hz = /bits/ 64 <5000000>;
++					required-opps = <&rpmhpd_opp_low_svs>;
++					opp-peak-kBps = <500000 1>;
++				};
++
++				/* GEN 1 x4 and GEN 2 x2 */
++				opp-10000000 {
++					opp-hz = /bits/ 64 <10000000>;
++					required-opps = <&rpmhpd_opp_low_svs>;
++					opp-peak-kBps = <1000000 1>;
++				};
++
++				/* GEN 1 x8 and GEN 2 x4 */
++				opp-20000000 {
++					opp-hz = /bits/ 64 <20000000>;
++					required-opps = <&rpmhpd_opp_low_svs>;
++					opp-peak-kBps = <2000000 1>;
++				};
++
++				/* GEN 2 x8 */
++				opp-40000000 {
++					opp-hz = /bits/ 64 <40000000>;
++					required-opps = <&rpmhpd_opp_low_svs>;
++					opp-peak-kBps = <4000000 1>;
++				};
++
++				/* GEN 3 x1 */
++				opp-8000000 {
++					opp-hz = /bits/ 64 <8000000>;
++					required-opps = <&rpmhpd_opp_svs>;
++					opp-peak-kBps = <984500 1>;
++				};
++
++				/* GEN 3 x2 and GEN 4 x1 */
++				opp-16000000 {
++					opp-hz = /bits/ 64 <16000000>;
++					required-opps = <&rpmhpd_opp_svs>;
++					opp-peak-kBps = <1969000 1>;
++				};
++
++				/* GEN 3 x4 and GEN 4 x2 */
++				opp-32000000 {
++					opp-hz = /bits/ 64 <32000000>;
++					required-opps = <&rpmhpd_opp_svs>;
++					opp-peak-kBps = <3938000 1>;
++				};
++
++				/* GEN 3 x8 and GEN 4 x4 */
++				opp-64000000 {
++					opp-hz = /bits/ 64 <64000000>;
++					required-opps = <&rpmhpd_opp_svs>;
++					opp-peak-kBps = <7876000 1>;
++				};
++
++				/* GEN 4 x8 */
++				opp-128000000 {
++					opp-hz = /bits/ 64 <128000000>;
++					required-opps = <&rpmhpd_opp_svs>;
++					opp-peak-kBps = <15753000 1>;
++				};
++			};
++		};
++
++		pcie3_phy: phy@1be0000 {
++			compatible = "qcom,x1e80100-qmp-gen4x8-pcie-phy";
++			reg = <0 0x01be0000 0 0x10000>;
++
++			clocks = <&gcc GCC_PCIE_3_PHY_AUX_CLK>,
++				 <&gcc GCC_PCIE_3_CFG_AHB_CLK>,
++				 <&tcsr TCSR_PCIE_8L_CLKREF_EN>,
++				 <&gcc GCC_PCIE_3_PHY_RCHNG_CLK>,
++				 <&gcc GCC_PCIE_3_PIPE_CLK>,
++				 <&gcc GCC_PCIE_3_PIPEDIV2_CLK>;
++			clock-names = "aux",
++				      "cfg_ahb",
++				      "ref",
++				      "rchng",
++				      "pipe",
++				      "pipediv2";
++
++			resets = <&gcc GCC_PCIE_3_PHY_BCR>,
++				 <&gcc GCC_PCIE_3_NOCSR_COM_PHY_BCR>;
++			reset-names = "phy",
++				      "phy_nocsr";
++
++			assigned-clocks = <&gcc GCC_PCIE_3_PHY_RCHNG_CLK>;
++			assigned-clock-rates = <100000000>;
++
++			power-domains = <&gcc GCC_PCIE_3_PHY_GDSC>;
++
++			#clock-cells = <0>;
++			clock-output-names = "pcie3_pipe_clk";
++
++			#phy-cells = <0>;
++
++			status = "disabled";
++		};
++
+ 		pcie6a: pci@1bf8000 {
+ 			device_type = "pci";
+ 			compatible = "qcom,pcie-x1e80100";
+-- 
+2.34.1
 
 
