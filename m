@@ -1,69 +1,143 @@
-Return-Path: <linux-kernel+bounces-397280-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397281-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB0279BD9D8
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 00:44:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 51A649BD9DA
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 00:45:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E747284429
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 23:44:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 92284281A10
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 23:45:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8573216A1A;
-	Tue,  5 Nov 2024 23:44:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15E3A216A35;
+	Tue,  5 Nov 2024 23:44:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pVrWEyZW"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NNc8LT5h"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11DD021018F
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 23:44:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74C7321018F;
+	Tue,  5 Nov 2024 23:44:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730850251; cv=none; b=gPJNIxYhPhPt0IxSzPhDs4H+mSF6jJPrBtUz9N+K/+C+e0KAFxwgv4AuuL7ip69yKOY7MOAxklbONaHLZ5mDkX3ijYdyHLW7kSr+rF4VsaELXzp9EqhJy409s1h8oTQiAT9ZtnDy0HBuqL9tGgwckamNhudgTQRPZOaiZB3U1bY=
+	t=1730850296; cv=none; b=SVtAeEnxE5eOepkjz9JGisFtU6xYGzHV2CpxqYv4JcJxYbAneEtPsf7ApJVisqWk1YtnEi0lETaRkptX8uB2fsIy6slKZjYS31Ko3gECbrP2V2dZUzqPmr6sSIsFS9zdmwfPIlsy2ojPHIBDs0xFrBOCUviJiUKAa2DtuPM5drw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730850251; c=relaxed/simple;
-	bh=eOLAW9Eh6GBII0G3MdTF3Wddd7AKrXW/KrBVPzeok5s=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=BZ4BEdlu5NHob3rL+Hra6LpgJvhM8FliYVuv7hxoiY4BtkpVRTBoozFw2VxKhLeKohRMpBTHXA8P5MSgB+Hv4NJPE09C9WgyaYZ7Haiyj4J6fWLFYyZJ6apfSQD0QDZ+ryxdZdbTsAjTY6JvA7uybDBsfWv1NVldGAVamiB29Dg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pVrWEyZW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C37BC4CECF;
-	Tue,  5 Nov 2024 23:44:10 +0000 (UTC)
+	s=arc-20240116; t=1730850296; c=relaxed/simple;
+	bh=tnKHcdKPMnpM0B8QAkRdoB68/zbIcA3YHlIatwfta4s=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=nW1Ac5+uxeA4HGY4EfRfkp+WXocFfKyB8xG8oRu2g5OAvCFtYbtBPtiyY2U8WTqAvaV0hw8zTaT8VmzE7q/F000aGyu5Ikmlsw9mitKTAI9o5oGH+OOolAXpUNRgXZYKP/Yo4tZysvsHjDaLKvPRu8SNDgzjdTn3SVBmqAlYu9o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NNc8LT5h; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F00F1C4CED5;
+	Tue,  5 Nov 2024 23:44:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730850250;
-	bh=eOLAW9Eh6GBII0G3MdTF3Wddd7AKrXW/KrBVPzeok5s=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=pVrWEyZWNbzF8bOmCcWgg+9iIJJcee7LDiN3SrITYFBV2RWLh/OHUdfLheBpadLdF
-	 ML+PFMvA24wVIws+92N1tX8zZ5HDT7KeHoh0Id2C/XUbDNITX04sJzGhijZLekw1PD
-	 PKt+4GdudGDLg+T0nkrEswi/Qj3SN03Jp18vWYrLetVFy2yNIsfUOrH0wYeQ3Cejv6
-	 1uDVF9ZC49Rg8Ap4i+DEN50SgFxPRvuctukJG9sc9y43pjwie+E77dL7f8BEVSBQhA
-	 Ade10BRL8l6FLnXqB2y4m+amAR57Asg6t+j9FPpgWubDjPwiq4gSwyYCYuRjcZTlWR
-	 3kQSXwzuI6nag==
-Date: Tue, 5 Nov 2024 15:44:09 -0800
-From: Jakub Kicinski <kuba@kernel.org>
-To: Wentao Liang <Wentao_liang_g@163.com>
-Cc: shannon.nelson@amd.com, brett.creeley@amd.com, davem@davemloft.net,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ionic: fix memory leak in ionic_probe
-Message-ID: <20241105154409.62e5afd2@kernel.org>
-In-Reply-To: <20241105053433.1614-1-Wentao_liang_g@163.com>
-References: <20241105053433.1614-1-Wentao_liang_g@163.com>
+	s=k20201202; t=1730850296;
+	bh=tnKHcdKPMnpM0B8QAkRdoB68/zbIcA3YHlIatwfta4s=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=NNc8LT5hXsJ/2xrOE9DA408q02nhXBtRYBMzGeLo4bLHd9CUE83xoz5WyKxEUTDQf
+	 tot0l6LhfyL28QwvOFg3zvaBASzU+4VQ1YUv/9vsQlFYYt/q4qsSvr9uOjA/fRHR5K
+	 cO1b+Vp0Kn2EX66mIDUiaBvn8DCGtIbdKFULK3jC9bn8Vr5sIi9kGVkL99NtSbJeV/
+	 uPDEGMhyawxRuYGqba7eeP5D180rFY0+c6WIny1GJ37knagx4snuPLyVthR18bMUhE
+	 gdqWKMlQLD//l1OSS+a+7vRcSNhk8me6TblUCAaDGp4Wx/T5DWJqbXFs79wQlxA4+4
+	 iNqsb+0eaF/HA==
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-539e6c754bdso6114507e87.2;
+        Tue, 05 Nov 2024 15:44:55 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVng4MeIQ9wxlgIYZgBVfRfGRB6KqIgnK2Uquf+LXHhGtRcopyWnsM2VBpWf3wNA+SHUsE2fqr9yUHqB6c=@vger.kernel.org, AJvYcCXTq6dlVji96VOnOzFZ0AjV6IqvfrqbKSOnI+G8tvOPMgyaHRectTzB7+AsAfjNW2mjYWWRhnVETAhejZnq@vger.kernel.org
+X-Gm-Message-State: AOJu0YxH+qQi06LZNcQgbwEzSVEtmygULyVrUYcbRnwNebrZ8eBV927q
+	6DxAxvUlnCUqOwO8ialQgloRXMClG7o+gvr10nC32aRSFsR5/e77D9RcaWoXWkqoQxnAAFX0Ho0
+	gAIm0ZoECmfpbSrWhExMS2kA90sA=
+X-Google-Smtp-Source: AGHT+IEj1gKPJ0hGZfQFbmLAvHg7tpeqM1REiHvuxkfl0DvEtJsWY4ATMOcRlwUHzlaOxV6MWvLTqhpsmz6GygXcaHE=
+X-Received: by 2002:ac2:4c4b:0:b0:53a:bb9:b54a with SMTP id
+ 2adb3069b0e04-53c79e8ed05mr9480800e87.48.1730850294595; Tue, 05 Nov 2024
+ 15:44:54 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20241014141345.5680-1-david.hunter.linux@gmail.com>
+ <20241014141345.5680-7-david.hunter.linux@gmail.com> <20241015192017.173d316e@gandalf.local.home>
+In-Reply-To: <20241015192017.173d316e@gandalf.local.home>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Wed, 6 Nov 2024 08:44:18 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAQ_rzz=iEVGOq-GOWrwBMoVEMtswXKPj3WA2==+0_evdg@mail.gmail.com>
+Message-ID: <CAK7LNAQ_rzz=iEVGOq-GOWrwBMoVEMtswXKPj3WA2==+0_evdg@mail.gmail.com>
+Subject: Re: [PATCH v2 6/7] streamline_config.pl: process config options set
+ to "y"
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: David Hunter <david.hunter.linux@gmail.com>, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, shuah@kernel.org, 
+	javier.carrasco.cruz@gmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue,  5 Nov 2024 13:34:33 +0800 Wentao Liang wrote:
-> In line 334, the ionic_setup_one() creates a debugfs entry for
-> ionic upon successful execution. However, the ionic_probe() does
-> not release the dentry before returning, resulting in a memory
-> leak. To fix this bug, we add the ionic_debugfs_del_dev() before
-> line 397 to release the resources before the function returns.
+On Wed, Oct 16, 2024 at 8:19=E2=80=AFAM Steven Rostedt <rostedt@goodmis.org=
+> wrote:
+>
+> On Mon, 14 Oct 2024 10:13:36 -0400
+> David Hunter <david.hunter.linux@gmail.com> wrote:
+>
+> > An assumption made in this script is that the config options do not nee=
+d
+> > to be processed because they will simply be in the new config file. Thi=
+s
+> > assumption is incorrect.
+> >
+> > Process the config entries set to "y" because those config entries migh=
+t
+> > have dependencies set to "m". If a config entry is set to "m" and is no=
+t
+> > loaded directly into the machine, the script will currently turn off
+> > that config entry; however, if that turned off config entry is a
+> > dependency for a "y" option. that means the config entry set to "y"
+> > will also be turned off later when the conf executive file is called.
+> >
+> > Here is a model of the problem (arrows show dependency):
+> >
+> > Original config file
+> > Config_1 (m) <-- Config_2 (y)
+> >
+> > Config_1 is not loaded in this example, so it is turned off.
+> > After scripts/kconfig/streamline_config.pl, but before scripts/kconfig/=
+conf
+> > Config_1 (n) <-- Config_2 (y)
+> >
+> > After  scripts/kconfig/conf
+> > Config_1 (n) <-- Config_2 (n)
+>
+> Hmm, can you show the example of this. My worry here is that there are a
+> lot of cases that have:
+>
+>  Config_1 (m) <-- Config_2 (y)
+>
+> Where Config_2 is just some binary option to modify the module set by
+> Config_1. If we keep Config_1 because there's some 'y' that selects it, w=
+e
+> are going to keep a lot of unused modules around.
 
-If you haven't reposed yet please make sure you CC netdev@ on v2
+Basically, there is no good way to distinguish
+in-module option (just CONFIG_BCACHEFS_SIX_OPTIMISTIC_SPIN=3Dy,
+which is a property for CONFIG_BCACHEFS=3Dm) from real dependency.
+
+
+
+
+> >
+> > It should also be noted that any module in the dependency chain will
+> > also be turned off, even if that module is loaded directly onto the
+> > computer. Here is an example:
+> >
+> > Original config file
+> > Config_1 (m) <-- Config_2 (y) <-- Config_3 (m)
+>
+> If Config_3 is used, then it should add Config_2 as a dependency. I guess
+> that's what this patch does.
+
+Agree, but I am not sure how to pick up only this case.
+
+
+--=20
+Best Regards
+Masahiro Yamada
 
