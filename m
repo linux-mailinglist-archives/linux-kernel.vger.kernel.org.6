@@ -1,139 +1,300 @@
-Return-Path: <linux-kernel+bounces-396474-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396473-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 379B99BCD9A
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 14:14:09 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 444C69BCD97
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 14:13:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B62FC1F225AA
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 13:14:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 674A71C21FCC
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 13:13:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29C501D63D9;
-	Tue,  5 Nov 2024 13:13:58 +0000 (UTC)
-Received: from us-smtp-delivery-44.mimecast.com (us-smtp-delivery-44.mimecast.com [205.139.111.44])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E7E81D6190;
+	Tue,  5 Nov 2024 13:13:24 +0000 (UTC)
+Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B94E01D5CD7
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 13:13:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.139.111.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76F1B1D5ADD
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 13:13:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730812437; cv=none; b=hdldJ8QHXBbEsdCagwGMinswiFUy8lnUeLgxDydHc7rT21ObZXn38ffOYal3zN+xLKemvaTfzIi6N2h9D/mhEkroI84m8RNSWfXBAfYIJEmEnr5vgYMw5xeAfMn1JcbcyHDc9ITqA/cnqb24p/HN2+PmMSUJq5wjb39s6OiOuo0=
+	t=1730812404; cv=none; b=ObHictjWVxAeOEeWnx84SLtd+s1AI0RyjJVamOAlsXfL85eP3BagiPRvjqGXG3+N8Vfueq22/7ZvDN8m9QgxMl6q0xDEnTKu/wWx8WiFAtPzGm4ynJoTUm93c5xE9KXz1Zadyme4A0uXTQKHV8jdnBlLOscxJ0bMslW0N5AYfUE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730812437; c=relaxed/simple;
-	bh=cTKw4bucyHaUEfDvFtmmDk1lZHQhrQj0jGdKtcdjaqU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rY18dvQOfDMCjI9Rfg0SrWsgxOoJQQduZ/ftQ5Pgixk5ZR4BwsFas3p4bhiHgI2jCOYJJj4h7gFzBhbHQ5Y9CTG70CFNthQaiVYdUa37zOvCr6UpNpRnilzxcBTQrjn/2s3ZiBEP72bpa8QPVHi0vyI5Ee7N+EBnTRDJOlT6EUo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net; spf=fail smtp.mailfrom=queasysnail.net; arc=none smtp.client-ip=205.139.111.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=queasysnail.net
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-370-faJWNgejM8q20QJChVO3XQ-1; Tue,
- 05 Nov 2024 08:12:41 -0500
-X-MC-Unique: faJWNgejM8q20QJChVO3XQ-1
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 91DA51955F56;
-	Tue,  5 Nov 2024 13:12:39 +0000 (UTC)
-Received: from hog (unknown [10.39.192.7])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 29E92300018D;
-	Tue,  5 Nov 2024 13:12:34 +0000 (UTC)
-Date: Tue, 5 Nov 2024 14:12:32 +0100
-From: Sabrina Dubroca <sd@queasysnail.net>
-To: Antonio Quartulli <antonio@openvpn.net>
-Cc: Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Donald Hunter <donald.hunter@gmail.com>,
-	Shuah Khan <shuah@kernel.org>, ryazanov.s.a@gmail.com,
-	Andrew Lunn <andrew@lunn.ch>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH net-next v11 06/23] ovpn: introduce the ovpn_peer object
-Message-ID: <ZyoZwIOno_U_yMPF@hog>
-References: <20241029-b4-ovpn-v11-0-de4698c73a25@openvpn.net>
- <20241029-b4-ovpn-v11-6-de4698c73a25@openvpn.net>
- <ZyJgs6Vrvzji8qvS@hog>
- <4df15a91-4bcb-49d8-be78-28c71036ba8a@openvpn.net>
+	s=arc-20240116; t=1730812404; c=relaxed/simple;
+	bh=tSLKGSs81G3FilAWaxD6jAgMYzlMXKr1GqTtalZeqVQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PZJvPY/jZtAKHq2Z64iIzNFixwMa+5oqHxsTDO/uPq1TSPDW8IbUrclvXapzq5gsQHFHx020VSFq81wNvPebQyQ3M/r+vqzv2pR8jO0/x0SXzNVN0tQPpQdaroMzt4V/C+p7+qiN8g/aW4NGat4Yz7Wmdou2KKzBLq/NwrxhzO4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
+Received: by mail.gandi.net (Postfix) with ESMTPSA id CB8D320004;
+	Tue,  5 Nov 2024 13:13:17 +0000 (UTC)
+Message-ID: <97898777-8129-4ce9-8ae4-9d4bbc2a5a26@ghiti.fr>
+Date: Tue, 5 Nov 2024 14:13:17 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <4df15a91-4bcb-49d8-be78-28c71036ba8a@openvpn.net>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RESEND PATCH V4 2/3] riscv: mm: Add soft-dirty page tracking
+ support
+Content-Language: en-US
+To: Chunyan Zhang <zhangchunyan@iscas.ac.cn>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Chunyan Zhang <zhang.lyra@gmail.com>
+References: <20240830011101.3189522-1-zhangchunyan@iscas.ac.cn>
+ <20240830011101.3189522-3-zhangchunyan@iscas.ac.cn>
+From: Alexandre Ghiti <alex@ghiti.fr>
+In-Reply-To: <20240830011101.3189522-3-zhangchunyan@iscas.ac.cn>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-GND-Sasl: alex@ghiti.fr
 
-2024-10-30, 21:47:58 +0100, Antonio Quartulli wrote:
-> On 30/10/2024 17:37, Sabrina Dubroca wrote:
-> > 2024-10-29, 11:47:19 +0100, Antonio Quartulli wrote:
-> > > +static void ovpn_peer_release(struct ovpn_peer *peer)
-> > > +{
-> > > +	ovpn_bind_reset(peer, NULL);
-> > > +
-> > > +	dst_cache_destroy(&peer->dst_cache);
-> > 
-> > Is it safe to destroy the cache at this time? In the same function, we
-> > use rcu to free the peer, but AFAICT the dst_cache will be freed
-> > immediately:
-> > 
-> > void dst_cache_destroy(struct dst_cache *dst_cache)
-> > {
-> > [...]
-> > 	free_percpu(dst_cache->cache);
-> > }
-> > 
-> > (probably no real issue because ovpn_udp_send_skb gets called while we
-> > hold a reference to the peer?)
-> 
-> Right.
-> That was my assumption: release happens on refcnt = 0 only, therefore no
-> field should be in use anymore.
-> Anything that may still be in use will have its own refcounter.
+On 30/08/2024 03:11, Chunyan Zhang wrote:
+> The PTE bit(9) is reserved for software, now used by DEVMAP,
+> this patch reuse bit(9) for soft-dirty which is enabled only
 
-My worry is that code changes over time, assumptions are forgotten,
-and we end up with code that was a bit odd but safe not being safe
-anymore.
 
-> > 
-> > > +	netdev_put(peer->ovpn->dev, &peer->ovpn->dev_tracker);
-> > > +	kfree_rcu(peer, rcu);
-> > > +}
-> > 
-> > 
-> > [...]
-> > > +static int ovpn_peer_del_p2p(struct ovpn_peer *peer,
-> > > +			     enum ovpn_del_peer_reason reason)
-> > > +	__must_hold(&peer->ovpn->lock)
-> > > +{
-> > > +	struct ovpn_peer *tmp;
-> > > +
-> > > +	tmp = rcu_dereference_protected(peer->ovpn->peer,
-> > > +					lockdep_is_held(&peer->ovpn->lock));
-> > > +	if (tmp != peer) {
-> > > +		DEBUG_NET_WARN_ON_ONCE(1);
-> > > +		if (tmp)
-> > > +			ovpn_peer_put(tmp);
-> > 
-> > Does peer->ovpn->peer need to be set to NULL here as well? Or is it
-> > going to survive this _put?
-> 
-> First of all consider that this is truly something that we don't expect to
-> happen (hence the WARN_ON).
-> If this is happening it's because we are trying to delete a peer that is not
-> the one we are connected to (unexplainable scenario in p2p mode).
+s/reuse/reuses
+
+
+> if !CONFIG_ARCH_HAS_PTE_DEVMAP, in other words, soft-dirty
+> and devmap will be mutually exclusive on RISC-V.
 >
-> Still, should we hit this case (I truly can't see how), I'd say "leave
-> everything as is - maybe this call was just a mistake".
+> To add swap PTE soft-dirty tracking, we borrow bit (4) which is
+> available for swap PTEs on RISC-V systems.
+>
+> Signed-off-by: Chunyan Zhang <zhangchunyan@iscas.ac.cn>
+> ---
+>   arch/riscv/Kconfig                    | 27 ++++++++++-
+>   arch/riscv/include/asm/pgtable-bits.h | 12 +++++
+>   arch/riscv/include/asm/pgtable.h      | 69 ++++++++++++++++++++++++++-
+>   3 files changed, 106 insertions(+), 2 deletions(-)
+>
+> diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
+> index 0f3cd7c3a436..f1460fc01cd4 100644
+> --- a/arch/riscv/Kconfig
+> +++ b/arch/riscv/Kconfig
+> @@ -39,7 +39,6 @@ config RISCV
+>   	select ARCH_HAS_NON_OVERLAPPING_ADDRESS_SPACE
+>   	select ARCH_HAS_PMEM_API
+>   	select ARCH_HAS_PREPARE_SYNC_CORE_CMD
+> -	select ARCH_HAS_PTE_DEVMAP if 64BIT && MMU
+>   	select ARCH_HAS_PTE_SPECIAL
+>   	select ARCH_HAS_SET_DIRECT_MAP if MMU
+>   	select ARCH_HAS_SET_MEMORY if MMU
+> @@ -948,6 +947,32 @@ config RANDOMIZE_BASE
+>   
+>             If unsure, say N.
+>   
+> +choice
+> +	prompt "PET RSW Bit(9) used for"
 
-Yeah, true, let's leave it. Thanks.
 
--- 
-Sabrina
+I would say: "PTE RSW bit(9) usage"
+
+
+> +	default RISCV_HAS_PTE_DEVMEP
+
+
+s/DEVMEP/DEVMAP
+
+
+> +	depends on MMU && 64BIT
+> +	help
+> +	  RISC-V PTE bit(9) is reserved for software, and used by more than
+> +	  one kernel features which cannot be supported at the same time.
+
+
+s/features/feature
+
+
+> +	  So we have to select one for it.
+> +
+> +config RISCV_HAS_PTE_DEVMEP
+> +	bool "DEVMAP mark"
+
+
+I would say simply "devmap"
+
+
+> +	select ARCH_HAS_PTE_DEVMAP
+> +	help
+> +	  The PTE bit(9) is used for DEVMAP mark. ZONE_DEVICE pages need DEVMAP
+
+
+"is used for devmap...pages need devmap"
+
+
+> +	  PTEs support to function.
+> +
+> +	  So if you want to use ZONE_DEVICE, select this.
+> +
+> +config RISCV_HAS_SOFT_DIRTY
+> +	bool "soft dirty"
+
+
+s/soft dirty/soft-dirty
+
+
+> +	select HAVE_ARCH_SOFT_DIRTY
+> +	help
+> +	  The PTE bit(9) is used for soft-dirty tracking.
+> +
+> +endchoice
+> +
+>   endmenu # "Kernel features"
+>   
+>   menu "Boot options"
+> diff --git a/arch/riscv/include/asm/pgtable-bits.h b/arch/riscv/include/asm/pgtable-bits.h
+> index 5bcc73430829..c6d51fe9fc6f 100644
+> --- a/arch/riscv/include/asm/pgtable-bits.h
+> +++ b/arch/riscv/include/asm/pgtable-bits.h
+> @@ -26,6 +26,18 @@
+>   #define _PAGE_DEVMAP	0
+>   #endif /* CONFIG_ARCH_HAS_PTE_DEVMAP */
+>   
+> +#ifdef CONFIG_MEM_SOFT_DIRTY
+
+
+For consistency with CONFIG_ARCH_HAS_PTE_DEVMAP, I would use 
+CONFIG_HAVE_ARCH_SOFT_DIRTY
+
+
+> +#define _PAGE_SOFT_DIRTY	(1 << 9)    /* RSW: 0x2 for software dirty tracking */
+> +/*
+> + * BIT 4 is not involved into swap entry computation, so we
+> + * can borrow it for swap page soft-dirty tracking.
+> + */
+> +#define _PAGE_SWP_SOFT_DIRTY	_PAGE_USER
+> +#else
+> +#define _PAGE_SOFT_DIRTY	0
+> +#define _PAGE_SWP_SOFT_DIRTY	0
+> +#endif /* CONFIG_MEM_SOFT_DIRTY */
+
+
+Same here.
+
+
+> +
+>   #define _PAGE_TABLE     _PAGE_PRESENT
+>   
+>   /*
+> diff --git a/arch/riscv/include/asm/pgtable.h b/arch/riscv/include/asm/pgtable.h
+> index 089f3c9f56a3..d41507919ef2 100644
+> --- a/arch/riscv/include/asm/pgtable.h
+> +++ b/arch/riscv/include/asm/pgtable.h
+> @@ -428,7 +428,7 @@ static inline pte_t pte_mkwrite_novma(pte_t pte)
+>   
+>   static inline pte_t pte_mkdirty(pte_t pte)
+>   {
+> -	return __pte(pte_val(pte) | _PAGE_DIRTY);
+> +	return __pte(pte_val(pte) | _PAGE_DIRTY | _PAGE_SOFT_DIRTY);
+>   }
+>   
+>   static inline pte_t pte_mkclean(pte_t pte)
+> @@ -461,6 +461,38 @@ static inline pte_t pte_mkhuge(pte_t pte)
+>   	return pte;
+>   }
+>   
+> +#ifdef CONFIG_HAVE_ARCH_SOFT_DIRTY
+> +static inline int pte_soft_dirty(pte_t pte)
+> +{
+> +	return pte_val(pte) & _PAGE_SOFT_DIRTY;
+> +}
+> +
+> +static inline pte_t pte_mksoft_dirty(pte_t pte)
+> +{
+> +	return __pte(pte_val(pte) | _PAGE_SOFT_DIRTY);
+> +}
+> +
+> +static inline pte_t pte_clear_soft_dirty(pte_t pte)
+> +{
+> +	return __pte(pte_val(pte) & ~(_PAGE_SOFT_DIRTY));
+> +}
+> +
+> +static inline int pte_swp_soft_dirty(pte_t pte)
+> +{
+> +	return pte_val(pte) & _PAGE_SWP_SOFT_DIRTY;
+> +}
+> +
+> +static inline pte_t pte_swp_mksoft_dirty(pte_t pte)
+> +{
+> +	return __pte(pte_val(pte) | _PAGE_SWP_SOFT_DIRTY);
+> +}
+> +
+> +static inline pte_t pte_swp_clear_soft_dirty(pte_t pte)
+> +{
+> +	return __pte(pte_val(pte) & ~(_PAGE_SWP_SOFT_DIRTY));
+> +}
+> +#endif /* CONFIG_HAVE_ARCH_SOFT_DIRTY */
+> +
+>   #ifdef CONFIG_RISCV_ISA_SVNAPOT
+>   #define pte_leaf_size(pte)	(pte_napot(pte) ?				\
+>   					napot_cont_size(napot_cont_order(pte)) :\
+> @@ -751,6 +783,40 @@ static inline pmd_t pmd_mkdevmap(pmd_t pmd)
+>   	return pte_pmd(pte_mkdevmap(pmd_pte(pmd)));
+>   }
+>   
+> +#ifdef CONFIG_HAVE_ARCH_SOFT_DIRTY
+> +static inline int pmd_soft_dirty(pmd_t pmd)
+> +{
+> +	return pte_soft_dirty(pmd_pte(pmd));
+> +}
+> +
+> +static inline pmd_t pmd_mksoft_dirty(pmd_t pmd)
+> +{
+> +	return pte_pmd(pte_mksoft_dirty(pmd_pte(pmd)));
+> +}
+> +
+> +static inline pmd_t pmd_clear_soft_dirty(pmd_t pmd)
+> +{
+> +	return pte_pmd(pte_clear_soft_dirty(pmd_pte(pmd)));
+> +}
+> +
+> +#ifdef CONFIG_ARCH_ENABLE_THP_MIGRATION
+> +static inline int pmd_swp_soft_dirty(pmd_t pmd)
+> +{
+> +	return pte_swp_soft_dirty(pmd_pte(pmd));
+> +}
+> +
+> +static inline pmd_t pmd_swp_mksoft_dirty(pmd_t pmd)
+> +{
+> +	return pte_pmd(pte_swp_mksoft_dirty(pmd_pte(pmd)));
+> +}
+> +
+> +static inline pmd_t pmd_swp_clear_soft_dirty(pmd_t pmd)
+> +{
+> +	return pte_pmd(pte_swp_clear_soft_dirty(pmd_pte(pmd)));
+> +}
+> +#endif /* CONFIG_ARCH_ENABLE_THP_MIGRATION */
+> +#endif /* CONFIG_HAVE_ARCH_SOFT_DIRTY */
+> +
+>   static inline void set_pmd_at(struct mm_struct *mm, unsigned long addr,
+>   				pmd_t *pmdp, pmd_t pmd)
+>   {
+> @@ -841,6 +907,7 @@ extern pmd_t pmdp_collapse_flush(struct vm_area_struct *vma,
+>    * Format of swap PTE:
+>    *	bit            0:	_PAGE_PRESENT (zero)
+>    *	bit       1 to 3:       _PAGE_LEAF (zero)
+> + *	bit	       4:	_PAGE_SWP_SOFT_DIRTY
+>    *	bit            5:	_PAGE_PROT_NONE (zero)
+>    *	bit            6:	exclusive marker
+>    *	bits      7 to 11:	swap type
+
+
+Apart from the minor things above, the rest looks good so you can add:
+
+Reviewed-by: Alexandre Ghiti <alexghiti@rivosinc.com>
+
+Thanks,
+
+Alex
 
 
