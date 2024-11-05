@@ -1,118 +1,193 @@
-Return-Path: <linux-kernel+bounces-396007-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396009-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D23BF9BC69B
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 08:06:29 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39FE29BC6A9
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 08:07:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 86F36284966
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 07:06:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 935DAB22573
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 07:07:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 333BD1FCC77;
-	Tue,  5 Nov 2024 07:01:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F41F41FF038;
+	Tue,  5 Nov 2024 07:02:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H54RyW2U"
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i3dpbmwH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F46318A6BA;
-	Tue,  5 Nov 2024 07:01:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10E3C1FEFD4;
+	Tue,  5 Nov 2024 07:02:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730790063; cv=none; b=SAXmrAx1AdXldmXhIRa1jMGBpjoi4k19EYNGZlqjAjW2ZCbDr/KcdU4BGx8VpMtuBelVf2S/vv5gemF7KzikYlrF9IshghMLDCmy4WW+FjyvPFw7vKSoIP8znjFVAPHWK49vIEjmqfvTZMDTkrCaV6O7OLZ7PF0ixgpWLb8PveU=
+	t=1730790175; cv=none; b=RcJeWZ6v52G06I3IJ7catWvPxRXIlj3AmNTX2upEKe1gL281mlAVS6gvBS/Dnx3uI01DCsNpKqn9u0c9oSZV5qwNVN7DlCoeW/sTgLbBL3Eh/eN1R+gPA887izB1NONSr5EHSJL9AFi5oQBp4jyT6f++7QML7iywRBOBvn02JEU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730790063; c=relaxed/simple;
-	bh=AjHIxzPnsgu63d3WwfazvL//43FMvdhRD4E1kZEA2aY=;
-	h=From:To:Subject:Date:Message-Id:MIME-Version; b=ujRKweh39dnu5dSeOfTyF4ugmiyXQlNYn4dBVWXP1Q7KmMNbpJdH80SKXIjAT4mr7RWI2WhKBy7BBG2dvXqs6b/JlRt/7zHiDhaoYpg1xFbPhtt5AcBaf98seD0PnBPcBEzAS6K7v4WD4kfV72O3Hc7uxz4DkfU9TymM89aG5NQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H54RyW2U; arc=none smtp.client-ip=209.85.216.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2e2ed59a35eso4056224a91.0;
-        Mon, 04 Nov 2024 23:01:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730790061; x=1731394861; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=9KqI7oKzto9F3nY+3finUxtWgNSK50Vh5Z8hrICoANw=;
-        b=H54RyW2UjZALDUeROUYDrITECR8fn+dip/u6SYM610+JJ5EIRCocdQaiVZCGEWpJoR
-         0++hdHuCnkmk/+B0W2c6W9K3nRKv8NYf/3p8mL9MGM0+tO5FhYUZtYu2v0s4ZMPsvOSq
-         c7AHS376eNuDBb9AWyyejSIpKboY7gX2mTRAZfmOpnuviCOXrUjbf077ZomFb+WuSSDZ
-         ntlwXoWD43Ww+qC42UmmjI6z2ACwdv/0gwpiXdgPN+WEBB/yNDvH6pHlgiCNJmgp0Kig
-         drK5mhMZ/JN/H0NUgQDzIq81xye7J3TwW3O3E8umlKkb59wK61LDQqI+FDhhBUFYnIj7
-         7D0A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730790061; x=1731394861;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9KqI7oKzto9F3nY+3finUxtWgNSK50Vh5Z8hrICoANw=;
-        b=H57W5Mc1DsuICKJYBg+jd25kLURj6hHTShxPui/+lqOrfXU8kcRaw5+PXL6y+UKDTW
-         PuxK1DK0kXnFkVAenjTbR5EbDEDxV07EXAwZmcYF5gFwKr+pGNctMHjvHtRz5eT90eiv
-         L27XMnY/5nUkA7JUYEcjZpnUlgyq6eX2y2pHjMzyHMTqUdEFGaIQbFlevjJYUn8HwILC
-         HEhK63m6mpflXW6iuWJKgMEtJe8/4BrNSVQw9hT5KILNL9wpf8A4ukatsmIBc+F76N8D
-         j+rEibFsVHbxwChiOGztSChvy0Nr1n8v9IXcfdM5/PDRHz5ftHW3Dj5S46k13gESCk0X
-         bnkw==
-X-Forwarded-Encrypted: i=1; AJvYcCUEWPeGXQQCbv+OHxmpHYyNB6hHOTF6WjaIXtH73wc3RZ/fcNap65BcXUWkEyDFfi1QJ++uujaceFAsWpA=@vger.kernel.org, AJvYcCXiatKvXQRkx5tr1cJlLW5JYnD5+wOq9AZH53sAd4WwxI341nHudZOir14y7O+C+C5l4oNGISjMVt6L33MKOgs6Mg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwwPHiBBzQLHc138U34oURDKC+4CdFdi6o5ArtiF5IAr7MHUNuG
-	cIIq4VfHwt2aw8z9iACdLV4wV+uvpLqcMhtQiCuw/roebn8XoxQ2
-X-Google-Smtp-Source: AGHT+IEkKDcyTwV7/whPZGiRDuDsfmqbjrfDE0QyNSX037grkn8J08+K24f7OamDsQSTsyy3BLP4FA==
-X-Received: by 2002:a17:90a:b706:b0:2e2:a097:bb02 with SMTP id 98e67ed59e1d1-2e8f105e828mr40420185a91.11.1730790061392;
-        Mon, 04 Nov 2024 23:01:01 -0800 (PST)
-Received: from debian.resnet.ucla.edu (s-169-232-97-87.resnet.ucla.edu. [169.232.97.87])
-        by smtp.googlemail.com with ESMTPSA id 98e67ed59e1d1-2e93db18480sm8819376a91.41.2024.11.04.23.01.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Nov 2024 23:01:00 -0800 (PST)
-From: Daniel Yang <danielyangkang@gmail.com>
-To: Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
+	s=arc-20240116; t=1730790175; c=relaxed/simple;
+	bh=vfcX72EWl1PlKyFBzjhHz5V71yaLAfzK3VjVgomZL4Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Uj/7jDTU/QqpD9FFIjKjnCvPfRZF9vJoxPylVeB5cmvjdCmI+cxnpcr9kIWY/H6xMRd+aj/A/5iI9dPeHF4wvcqSAQifexW70in+eKc3yObppkL/p9VI6ZIRoQCk7d1C1zWjQqppaNwnaOEV960KLEQc7l9IaQq/cGWTUHwoh24=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i3dpbmwH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4B12C4CECF;
+	Tue,  5 Nov 2024 07:02:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730790174;
+	bh=vfcX72EWl1PlKyFBzjhHz5V71yaLAfzK3VjVgomZL4Y=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=i3dpbmwHLfd+qUmJoaWeTGPHb10DC+M0kf+DMEykGWoYpGOuSUDviaUCAAx4zIAfi
+	 my4z1l/oyVoPrY5WEhvGAqrSv0MLPuXbzVIKUoMd0jh8oEVUCEONnRV4s7PDepCIp9
+	 ZD54y4ohFGVDY1Cs7nPdmpyfCNtvqUqW5KJ/Ch+xipF5ZFMCAivKT3JR6Xd9V1a/4G
+	 LvZ1wHQ1rlIUNyplCl+fPkOtsT/XeAFLJAPXe+EdvajpWUHCrgFIHiD89oCp0/Bkx4
+	 xYtH7/sknC5+POJtdvm/YMmFy0WRYObll2kMIURKDi3pF/30ytxQP7HSq81EZrmTXO
+	 namiYtOl86+Aw==
+Date: Tue, 5 Nov 2024 09:02:26 +0200
+From: Mike Rapoport <rppt@kernel.org>
+To: Nathan Chancellor <nathan@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	Andreas Larsson <andreas@gaisler.com>,
+	Andy Lutomirski <luto@kernel.org>, Ard Biesheuvel <ardb@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
+	Brian Cain <bcain@quicinc.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Christoph Hellwig <hch@infradead.org>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Dinh Nguyen <dinguyen@kernel.org>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Guo Ren <guoren@kernel.org>, Helge Deller <deller@gmx.de>,
+	Huacai Chen <chenhuacai@kernel.org>, Ingo Molnar <mingo@redhat.com>,
+	Johannes Berg <johannes@sipsolutions.net>,
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+	Kent Overstreet <kent.overstreet@linux.dev>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
 	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	"GitAuthor: Daniel Yang" <danielyangkang@gmail.com>,
-	linux-perf-users@vger.kernel.org (open list:PERFORMANCE EVENTS SUBSYSTEM),
-	linux-kernel@vger.kernel.org (open list:PERFORMANCE EVENTS SUBSYSTEM)
-Subject: [PATCH] Use strscpy() instead of the deprecated strlcpy()
-Date: Mon,  4 Nov 2024 23:00:46 -0800
-Message-Id: <20241105070046.424750-1-danielyangkang@gmail.com>
-X-Mailer: git-send-email 2.39.2
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Matt Turner <mattst88@gmail.com>, Max Filippov <jcmvbkbc@gmail.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Michal Simek <monstr@monstr.eu>, Oleg Nesterov <oleg@redhat.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Richard Weinberger <richard@nod.at>,
+	Russell King <linux@armlinux.org.uk>, Song Liu <song@kernel.org>,
+	Stafford Horne <shorne@gmail.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Vineet Gupta <vgupta@kernel.org>, Will Deacon <will@kernel.org>,
+	bpf@vger.kernel.org, linux-alpha@vger.kernel.org,
+	linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-csky@vger.kernel.org, linux-hexagon@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
+	linux-mips@vger.kernel.org, linux-mm@kvack.org,
+	linux-modules@vger.kernel.org, linux-openrisc@vger.kernel.org,
+	linux-parisc@vger.kernel.org, linux-riscv@lists.infradead.org,
+	linux-sh@vger.kernel.org, linux-snps-arc@lists.infradead.org,
+	linux-trace-kernel@vger.kernel.org, linux-um@lists.infradead.org,
+	linuxppc-dev@lists.ozlabs.org, loongarch@lists.linux.dev,
+	sparclinux@vger.kernel.org, x86@kernel.org
+Subject: Re: [PATCH v7 6/8] x86/module: prepare module loading for ROX
+ allocations of text
+Message-ID: <ZynDAhW0lKCfOqZl@kernel.org>
+References: <20241023162711.2579610-1-rppt@kernel.org>
+ <20241023162711.2579610-7-rppt@kernel.org>
+ <20241104232741.GA3843610@thelio-3990X>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241104232741.GA3843610@thelio-3990X>
 
-The latest kernel doc:
-https://www.kernel.org/doc/html/latest/process/deprecated.html
-recommends replacing strlcpy with strscpy. Since the return value of
-strlcpy is not used, replacing with strscpy should be safe.
+Hi Nathan,
 
-Signed-off-by: Daniel Yang <danielyangkang@gmail.com>
----
- tools/perf/util/symbol.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Mon, Nov 04, 2024 at 04:27:41PM -0700, Nathan Chancellor wrote:
+> Hi Mike,
+> 
+> On Wed, Oct 23, 2024 at 07:27:09PM +0300, Mike Rapoport wrote:
+> > From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
+> > 
+> > When module text memory will be allocated with ROX permissions, the
+> > memory at the actual address where the module will live will contain
+> > invalid instructions and there will be a writable copy that contains the
+> > actual module code.
+> > 
+> > Update relocations and alternatives patching to deal with it.
+> > 
+> > Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+> > Tested-by: kdevops <kdevops@lists.linux.dev>
+> 
+> Hopefully the last time you have to hear from me, as I am only
+> experiencing issues with only one of my test machines at this point and
+> it is my only machine that supports IBT, so it seems to point to
+> something specific with the IBT part of the FineIBT support. I notice
+> either a boot hang or an almost immediate reboot (triple fault?). I
+> guess this is how I missed reporting this earlier, as my machine was
+> falling back to the default distribution kernel after the restart and I
+> did not notice I was not actually testing a -next kernel.
+> 
+> Checking out the version of this change that is in next-20241104, commit
+> 7ca6ed09db62 ("x86/module: prepare module loading for ROX allocations of
+> text"), it boots with either 'cfi=off' or 'cfi=kcfi' but it exhibits the
+> issues noted above with 'cfi=fineibt'. At the immediate parent, commit
+> b575d981092f ("arch: introduce set_direct_map_valid_noflush()"), all
+> three combinations boot fine.
+> 
+>   $ uname -r; tr ' ' '\n' </proc/cmdline | grep cfi=
+> 
+>   6.12.0-rc5-debug-00214-g7ca6ed09db62
+>   cfi=kcfi
+> 
+>   6.12.0-rc5-debug-00214-g7ca6ed09db62
+>   cfi=off
+> 
+>   6.12.0-rc5-debug-00213-gb575d981092f
+>   cfi=fineibt
+> 
+>   6.12.0-rc5-debug-00213-gb575d981092f
+>   cfi=kcfi
+> 
+>   6.12.0-rc5-debug-00213-gb575d981092f
+>   cfi=off
+> 
+> I do not think this machine has an accessible serial port and I do not
+> think IBT virtualization is supported via either KVM or TCG in QEMU, so
+> I am not sure how to get more information about what is going on here. I
+> wanted to try reverting these changes on top of next-20241104 but there
+> was a non-trivial conflict in mm/execmem.c due to some changes on top,
+> so I just tested in the mm history.
+> 
+> If there is any other information I can provide or patches I can test, I
+> am more than happy to do so.
 
-diff --git a/tools/perf/util/symbol.c b/tools/perf/util/symbol.c
-index 3bbf173ad..660ed5626 100644
---- a/tools/perf/util/symbol.c
-+++ b/tools/perf/util/symbol.c
-@@ -1893,7 +1893,7 @@ int dso__load(struct dso *dso, struct map *map)
- 			char *new_name = dso__filename_with_chroot(dso, name);
- 			if (new_name) {
- 				is_reg = is_regular_file(new_name);
--				strlcpy(name, new_name, PATH_MAX);
-+				strscpy(name, new_name, PATH_MAX);
- 				free(new_name);
- 			}
- 		}
+Yes, please :)
+
+There's a silly mistake in cfi_rewrite_endbr() in that commit, the patch
+below should fix it. Can you please test?
+
+diff --git a/arch/x86/kernel/alternative.c b/arch/x86/kernel/alternative.c
+index 3407efc26528..243843e44e89 100644
+--- a/arch/x86/kernel/alternative.c
++++ b/arch/x86/kernel/alternative.c
+@@ -1241,7 +1241,7 @@ static void cfi_rewrite_endbr(s32 *start, s32 *end, struct module *mod)
+ 		void *addr = (void *)s + *s;
+ 		void *wr_addr = module_writable_address(mod, addr);
+ 
+-		poison_endbr(addr+16, wr_addr, false);
++		poison_endbr(addr + 16, wr_addr + 16, false);
+ 	}
+ }
+ 
+ 
+> Cheers,
+> Nathan
+
 -- 
-2.39.2
-
+Sincerely yours,
+Mike.
 
