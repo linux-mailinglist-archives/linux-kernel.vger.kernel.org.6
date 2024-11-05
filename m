@@ -1,430 +1,183 @@
-Return-Path: <linux-kernel+bounces-396631-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396629-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8564A9BCFCA
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 15:54:52 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15DB19BCFC6
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 15:54:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 452BC2837E7
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 14:54:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 85D4D1F2349D
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 14:54:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DABFF1DAC96;
-	Tue,  5 Nov 2024 14:54:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD5B01D9A50;
+	Tue,  5 Nov 2024 14:54:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="aMH1TnJA"
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="XJlEu3i8"
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2063.outbound.protection.outlook.com [40.107.223.63])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAA191D95A2
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 14:54:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730818470; cv=none; b=RHmJxT1xgJ3kUuM5hZAmP9dRTO+8ZM3s7T2GmH0xKlJijzr/ZSsVxFbMGuBA+qsLEWlcQ77IlErkqE7bHkdA+4dL6ePvXdYic2nxF3/0twm4t22VhXIk15ZWV5sQ7H7sS0Oo+yJ6EnCOCozqc9OsBp4vEdvjy/ZzpmpkjVEq3GQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730818470; c=relaxed/simple;
-	bh=eoVVbbAJom3xNVNHGYnviNx+dap4dvCgxW7u+rmkj14=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=T4G/IXMYDPK1p0JcK3+NnJHm7Ltb+DIkP7hxXsqBCotPIQX2iaWAIxOg+FyNajPJ6GNf5zOC7qVPAbDSSQL3KNRHGeM+bjyNpzHTxRsHi2l/tt9E0l01C7pghlGIpcQOKk43DNqy0FDHp4J7UjZnyO7BgUkVTDxT40Mx4r1JBRk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=aMH1TnJA; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5c9c28c1ecbso6755847a12.0
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 06:54:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1730818466; x=1731423266; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3kVoXgEHpJFKwcbBP/BPItkYZtO4aiIuCs/hlKNiqkQ=;
-        b=aMH1TnJAZBbc0H9Pj1G7rm9dYxGNusW7NJZnuHldFzfEROUAGOprYuGmLvB36yb+k6
-         Zbyly2xH5cPTJYZRYKO0HdKJ6hEmit8CIdGlpKR4GXu1PQ9bdCytOfvWETR5KSUB7k0N
-         NZkTSDP+TU7GvzN7qpEp3NNHEVdDLNuBHrLkFKAe1MHR6GZtaUWz1V0dLVk/1rjh+kRB
-         aEbIC/b2tKGf6YwdKEIoGUYG93zhYGEOXEdlC+mhiAE3jHj4iPqIAk07nLqGDFVvz6Cl
-         sM0OOe5tq4NfU+FfQuO4PhXWBMLDAzgdCe9Uzw+Jdeoj1bWA08Hfsz2aBqc/1jJpBBX1
-         6vSw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730818466; x=1731423266;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3kVoXgEHpJFKwcbBP/BPItkYZtO4aiIuCs/hlKNiqkQ=;
-        b=sp5W6lTdEj54S3LnrcR5pVw2h5Kos1NX5nIruXyZy9KIhSLw1Dje1MysrHLczZVEvr
-         prhyGbhc/kOCy4+qLbSWLJu9wLypdF6rFLH+d/ALdIJeL+UeJhtfMuyxk3LbM9J7HdB3
-         6QJMC0LugkCqShmVMRehp6+unkexaJrGNdh75nOw+NaURcV56Zofvu3A8Ydb5yQfoWYI
-         nPI+Ffa3tLBAVJnnJ5felWoZaw4V+O01reMXl/OEJswydPt1YDgRvKhaXiw+ER7CPUmP
-         Et1c0yhoejY0S7fLP972RStAKxvAcVMBdWKQ/XeHVeaQVw9V6bBcCi8zDvopny0G1A/d
-         xbqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUffrurrKCOSulXQqMrzXtJndnbFX1848zRKl+UUhv94BIwS6x4TS0/JQw+FhTBMZPskSilJ5tQZ7M5wSI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyuiPwv31ZBKGdSjZdmnFKK+x1mH/1Q3wPM7te0QwBb5hssAHn8
-	U/bcNCPA9thR2ijdmH4LuhKOy0qAvipDJcBnwSfbhEvJyRk2znb4SPQxT4TXJhs=
-X-Google-Smtp-Source: AGHT+IEPsvKZSAHOlvPpJS9NQDJPqs63JCuJvFpa3qIMr7rcwJWxKw4VuvojkzR2JuUnujI6NthsDA==
-X-Received: by 2002:a05:6402:3508:b0:5ce:ce43:32f with SMTP id 4fb4d7f45d1cf-5cece4305a3mr9122648a12.35.1730818466101;
-        Tue, 05 Nov 2024 06:54:26 -0800 (PST)
-Received: from localhost.localdomain ([188.27.128.50])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cee6afe40fsm1382398a12.62.2024.11.05.06.54.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Nov 2024 06:54:25 -0800 (PST)
-From: Alexandru Ardelean <aardelean@baylibre.com>
-To: linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: jic23@kernel.org,
-	bartosz.golaszewski@linaro.org,
-	gregkh@linuxfoundation.org,
-	akpm@linux-foundation.org,
-	Alexandru Ardelean <aardelean@baylibre.com>
-Subject: [PATCH v2 2/2] lib: util_macros_kunit: add kunit test for util_macros.h
-Date: Tue,  5 Nov 2024 16:54:06 +0200
-Message-ID: <20241105145406.554365-2-aardelean@baylibre.com>
-X-Mailer: git-send-email 2.46.1
-In-Reply-To: <20241105145406.554365-1-aardelean@baylibre.com>
-References: <20241105145406.554365-1-aardelean@baylibre.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D9631D86CE;
+	Tue,  5 Nov 2024 14:54:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.63
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730818459; cv=fail; b=O22Pfg7Uj+RnNUMk9T7LEviAMPQLFNnqBib9naUORTmu9jDwhGvIUJsgxRHaUBL5J1dIj8jqO2UQfI2EEsRStzE+dKHdh8EXa9OEWwnIrEsoE0fTYDXkhaQyCIb7ocxJ1a4llZYH/1uIuw+pMz0M7vXVEN/cdvR6Qe4HcxIaHsI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730818459; c=relaxed/simple;
+	bh=d7PnnAl6NTlVxC0jGtQXNzcDi7FVxOgMvSKlxyHKUtE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=bPc+2DOdMS6YFFwG+Qc23njWy8kEa6BzCUBiAgQFse5CTq7Tn3vpMV+z/JwAo0rN1+RsqpxrpBSIkCgkPe/ahGPRtYpGkEGvLISaejiOU6FbIl9Ht9OmBgYSd1bAcXS3inCiPZlGshyq/HG9KLbWUnD7GR/ZsoU3bwlvPCmE7us=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=XJlEu3i8; arc=fail smtp.client-ip=40.107.223.63
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=SuX5LiJq0um/lyjxF4nL+gNtkOU5S1RWcfy/AwAmBLYsJBM+d5KHeAn9yu7iCia89yJR+DbTu8XkWmY+sA1QlIrkDBv/Dj/RRNWZkxaB0QXjH/XY3C+fpfGbBrgd72GhuBzBXmapd9OsmX4AmaNdQ/I4Jo7P7gg+WlkSVcCMbIibHjCU0EaxddlDYfrFLafeu8dkeQv6YukZBLYJr0BcYugwevfzlJA5PV8KN1AUIlWIzi9sq5rjqS6HrsC1ob+2SwkYlQIS/inO0sdsNLRqQYu5Gx8y8AWqGAkGws7XL8YcPmE3rlghbHyA1mWfzwpsAi2724GuvF9rjIH2CvmThg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ug7z6l4J4oiIOE+LqhsZyXuuXr7C103KqxNAlrEhprg=;
+ b=UQYXyQLX38AWuqCsXcnU01GAmTPsf05LR1IP8D5BXGSlWQaUmTuoeAAJWcpjdSw8Zs8+gqnmcMdZSTFuj7Lo8871w6xhKMYgjDIVkE9sUgN3oZpkivdVFh6eKchg4cHdhNl9nSwB+7KhkEk/21bB8I6f0uoAUWw7SPVgILSPqMdxGp0+XMg4vFw69zZ2K32eaaW4jab5y3qYQbFlHZV8nR10D3ngVdaosDE1/jSjdIlD0IanzDfpEmBy4lNIz0VUQGtSYMSUfBMY5DbmQHOJ+He82mPS5oZoeQ5NwboVFTF57xNk6HBi4zw9LcE/5Uh8xYg3i49zzqAsS7YmaWvMyA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ug7z6l4J4oiIOE+LqhsZyXuuXr7C103KqxNAlrEhprg=;
+ b=XJlEu3i8F06lrZ0GIbrxZkJblPRibW1Cyl3M+Q+f3ivO/yWS5V+HaxhHU+cZl9DkT+vuQFS4nUGT7M+3ahyrPTmrAhw2kBNwVKkBvE+0d33+lFPyGYOTlVKaSFou+ZP//Q4qF5/JQBcuHrwi8x2Z4/6AV18ayiuy1HphVQ4+m6A=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DM4PR12MB6373.namprd12.prod.outlook.com (2603:10b6:8:a4::7) by
+ DM3PR12MB9351.namprd12.prod.outlook.com (2603:10b6:8:1ac::9) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8114.30; Tue, 5 Nov 2024 14:54:14 +0000
+Received: from DM4PR12MB6373.namprd12.prod.outlook.com
+ ([fe80::12f7:eff:380b:589f]) by DM4PR12MB6373.namprd12.prod.outlook.com
+ ([fe80::12f7:eff:380b:589f%5]) with mapi id 15.20.8137.018; Tue, 5 Nov 2024
+ 14:54:14 +0000
+Date: Tue, 5 Nov 2024 09:54:09 -0500
+From: Yazen Ghannam <yazen.ghannam@amd.com>
+To: Borislav Petkov <bp@alien8.de>
+Cc: linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org,
+	tony.luck@intel.com, x86@kernel.org, avadhut.naik@amd.com,
+	john.allen@amd.com, mario.limonciello@amd.com, bhelgaas@google.com,
+	Shyam-sundar.S-k@amd.com, richard.gong@amd.com, jdelvare@suse.com,
+	linux@roeck-us.net, clemens@ladisch.de, hdegoede@redhat.com,
+	ilpo.jarvinen@linux.intel.com, linux-pci@vger.kernel.org,
+	linux-hwmon@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+	naveenkrishna.chatradhi@amd.com, carlos.bilbao.osdev@gmail.com
+Subject: Re: [PATCH 09/16] x86/amd_nb, x86/amd_node: Simplify
+ amd_pci_dev_to_node_id()
+Message-ID: <20241105145409.GB916505@yaz-khff2.amd.com>
+References: <20241023172150.659002-1-yazen.ghannam@amd.com>
+ <20241023172150.659002-10-yazen.ghannam@amd.com>
+ <20241104142329.GUZyjY4Zwb6WyB2JYv@fat_crate.local>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241104142329.GUZyjY4Zwb6WyB2JYv@fat_crate.local>
+X-ClientProxiedBy: BN0PR02CA0034.namprd02.prod.outlook.com
+ (2603:10b6:408:e5::9) To DM4PR12MB6373.namprd12.prod.outlook.com
+ (2603:10b6:8:a4::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR12MB6373:EE_|DM3PR12MB9351:EE_
+X-MS-Office365-Filtering-Correlation-Id: f1529b84-1d38-4770-2482-08dcfda9b723
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|366016|376014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?fS125CHwkce6fN22dtpkMrr+Q+y7ZTZCHxjhjL1V2Mr3aAvKvBsi76v6279f?=
+ =?us-ascii?Q?4l88PBHMASuZDgl4GQ4wHGK3eF7QstP83XG5foCjbxV3FnPiCrT0tEVuj8eM?=
+ =?us-ascii?Q?ia0kLQ2nG/cbBlN9eEKFW5qjXlAPdFe9aCXlUW6CUJFBpQSvzyxHB3dnxwwG?=
+ =?us-ascii?Q?NIT8n3g63XNeiDvmyu5uSR1ZyZWYvGdT1Jez5kn5IhM0mJx75gYNtBlXUuv1?=
+ =?us-ascii?Q?S44sehQBc2UKe8s4VjoDaz0C+jQxhCbuB3POJAzLJGJ26hQ5X0PziOQfgNOy?=
+ =?us-ascii?Q?cqcfBy2a3ayeV0pAvdu2N6ed8TxmdSQGeD8RyWM8A1/uerMR7OWT8Qj5jAQP?=
+ =?us-ascii?Q?+QgqI/uKBePvPSnVMHulBOwS04eQ+D4hOrRZcj/to4CoPeI8l2+Wff4A/4p+?=
+ =?us-ascii?Q?4et6JdYjEczd4gq5TV7a9L1wrM9z79jkXl1ojSCYuxil2X7YEC83eHSO9Tbt?=
+ =?us-ascii?Q?aFUgpQOLgNH3C25FdmcB4+aKlJERckXozsIF9++TCI8phiTJG5/3TeX7f4+A?=
+ =?us-ascii?Q?NUbglMCek46AfIrLLukxrtxleND3ZLADB4iX6gO/RYG7eKTqAssLOUdPVmoM?=
+ =?us-ascii?Q?lTuFoR6iFiSN5l/vrSx8lpm4QiyA7TVTQUDZ6O5tuOMLJHew9/LxiCNudpiF?=
+ =?us-ascii?Q?4IaKPNr7YVvwJXlGVne4qh6GjyfPXAeRWWT7PBqKYJiNT8grosuJWOJlsbh/?=
+ =?us-ascii?Q?2LAEGOztp3+lJXPhM8877Dmhn0zFJgeBQNwSDMfJzzERqTTw4cJfFbj60t7l?=
+ =?us-ascii?Q?nuiG11iIN1ac293W56cpnhVFcMXApztaSG39J2D70LDI3nScUcrpphEBpZdn?=
+ =?us-ascii?Q?7DS8y4VgLwQ+Qq90UrCPA9AOYWFI8GSBqRLxktELntGin6W9qiIxoz5UQKMN?=
+ =?us-ascii?Q?SIvSK27R8PC2teGkdnWDDg/nQ9viZj991MR1MPEcQw+7uIQM+wsKHIlcHnJg?=
+ =?us-ascii?Q?8NaPwXOKSgwVwwCJL9zP1bkEd98qxgGgXc4+PmZ8e1gVq82qdu5Bpgck3H0E?=
+ =?us-ascii?Q?7PsQv9TwvWZlPbV9PiPGZvyoPQdmLUEbj6l/wMcmpMiqzBMw4BWUFllqkkeG?=
+ =?us-ascii?Q?L1JENAFG4O/KALbHToCVMNWZeOBe6xyyBR223xZHcKgXhZpjFYSTIRaoCaSy?=
+ =?us-ascii?Q?vc5dnjU3D+JFk1TxSBuReX7Pd6l90I95tnLCfRfEXMtobLPlbL3AswtmVr1y?=
+ =?us-ascii?Q?ZCUgbT7zbvEkJMZq3EQ8IKU1Tfk4lTqOxKs7lYHkgCRhtqSumi/UvdYndg9E?=
+ =?us-ascii?Q?jbh9xU6EvfABnwmgHhfxU9XxO81p74dglKllZpd0L0tEwznHcBjKNSj24bKO?=
+ =?us-ascii?Q?IgsbQ83SRcrgLITM2qXMzr3b?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB6373.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?jGwboCMmHxu3wsa2NjfWJPREgDaU91qPWCHj8j9A7oqHv1pYYsIN2oOfqJ6u?=
+ =?us-ascii?Q?OXdpcVSQKRfZ8F+AmSHq2hZOEADmKFxJeEBjWZq2CqoVDAIK+srU6UV9EO2p?=
+ =?us-ascii?Q?RPBVy+xIijsslX04YwXuCezw1YpevKaz5r/yPhmd5PJ7QB4a5R7kglQZOXgG?=
+ =?us-ascii?Q?AscWN2ND7Pw6SFLLxHwEl+db7ihCmoxiGnWvrod7nCbznak9tX0RUR3xeouC?=
+ =?us-ascii?Q?+YwmTL8HZcpq4mh7diP3DYJzzUbxeD4i8oQnUbWkWZgl835dUwY6no3B8Q88?=
+ =?us-ascii?Q?oOAGxtoqbyFHGph+UdriUKLE/1BBEwqN/2bAoUx9BUa0pYPSzwPzImEqlKjN?=
+ =?us-ascii?Q?Q4tAbhB6mzgEEs0Hne3rxAHR427ueeS/QugZN8qxhDSD8/Ur4/daNPdruKAQ?=
+ =?us-ascii?Q?98GNgnhwADBZy0PS0rdkDwjXBwv2Bs5X2FabO0cNdxQNwO0S41KYxRhoHAnp?=
+ =?us-ascii?Q?4jhi6YJgR3Q1A78S02PGebTbbZgNC+nyDHS68GwCxZV1Fb9VDc/U+T+WtJHi?=
+ =?us-ascii?Q?BRhrf6/P46Mns8Bhdi0WyIfSfML1DIp846idnzr9R73M0GdWDqUHfMd1/vnd?=
+ =?us-ascii?Q?Y6Mhc4bwVNGn2ktQYlwWRTIMmVXqCV6+2/S7lahdf+P5gSQmQnvMFsOpth3C?=
+ =?us-ascii?Q?24d1QdhfAnE9kBYm4twZmC3VPPceD+xDNvkqHEqWQKpBWqugZ0kFMXL6WjvP?=
+ =?us-ascii?Q?egUerd03tu50VH44io4pxJSvZA3uMDjrlx4Fsjvnm6VnlUNXBZNF6YVewucv?=
+ =?us-ascii?Q?uozBUjpPm8WgUjcViVUwnDjRBOOZfzFB7tn8jzt8xaRVS8iYQyAv1XDXtzJJ?=
+ =?us-ascii?Q?iL+YZ+lumpeg9KmWsTKd8LkXGrZmsuqXmKjmHWXWTXjDnjfadtytAyVgoBOA?=
+ =?us-ascii?Q?Lb35rgZyzP2k8/wzgo39n3wdcbz7tagxUJkX61wqja8F9yifOcCZ2bGXILmP?=
+ =?us-ascii?Q?Ms7PpD3c2NRg+TbJj3pUej19Gk66uxJSdhmp2CdGf+YpqjOHOg7jTGVSdb8w?=
+ =?us-ascii?Q?87ncRhToDbHIL9QXCTzrD5e5+2LeF4v9jYqxrXo4ZcxIPPKnuTdRZOuIoC0/?=
+ =?us-ascii?Q?fNyxBhnnxiqvbRVdxEMG82mK+Hpo/ryqmRSb4hsYOGH3A2vNPVc48IkhFGMM?=
+ =?us-ascii?Q?4Yqk2xG8vS9AXqwQGFbO+TDMQz8MUfGVcLw+mK509zWetD8iuAkcy3LfVUd1?=
+ =?us-ascii?Q?7w9zIZk7oRpA748Ays7VcFK6e6WkbMk3fxxDv0/3JdJz93ZQqjdyuDtouW4x?=
+ =?us-ascii?Q?80YYlKOgvMAKStdZ5ZwLHgAHdrB+Q50L/6lZcHxipwXxouHqMOfzcnfRpCrT?=
+ =?us-ascii?Q?3nal9W2kFLF7ugmA8qUTrPvnwCnrHJenzRf2lfAxV1PTwKFvBM7hqbo8B3F9?=
+ =?us-ascii?Q?K/tIlxKjU49rvEgVJLbVRWPhr9KbaoTnzR+2chpobtb0EahlIQZNbKOrjMYd?=
+ =?us-ascii?Q?NS3pwmNSbg8UDF4PnD3O9fp5EGRgcmHW8MhZOYAq2KI5LND5lpY7zTMqVS3C?=
+ =?us-ascii?Q?60SHG1y9vxIMmF/M3bPaUMdPndAIDfEGjGOkSwuZTQuNK+RdzZrItm6RoGei?=
+ =?us-ascii?Q?dglWkv99HpjlcYZrBFzBEDEa8aBT4kxVCTL8hyix?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f1529b84-1d38-4770-2482-08dcfda9b723
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB6373.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Nov 2024 14:54:14.5283
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 2VUUMqzFpAaVlY89iRjP8JjFWrTaOsxAb9yNpp4ol5pxsFGlcAi9yifkD8vktWJwZQc67+gp+eMAAYKQpd3rzQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM3PR12MB9351
 
-A bug was found in the find_closest() (find_closest_descending() is also
-affected after some testing), where for certain values with small
-progressions of 1, 2 & 3, the rounding (done by averaging 2 values) causes
-an incorrect index to be returned.
+On Mon, Nov 04, 2024 at 03:23:29PM +0100, Borislav Petkov wrote:
+> On Wed, Oct 23, 2024 at 05:21:43PM +0000, Yazen Ghannam wrote:
+> > diff --git a/arch/x86/include/asm/amd_node.h b/arch/x86/include/asm/amd_node.h
+> > index 419a0ad13ef2..8e473a293706 100644
+> > --- a/arch/x86/include/asm/amd_node.h
+> > +++ b/arch/x86/include/asm/amd_node.h
+> > @@ -30,4 +30,10 @@ static inline u16 amd_num_nodes(void)
+> >  	return topology_amd_nodes_per_pkg() * topology_max_packages();
+> >  }
+> >  
+> > +/* Caller must ensure the input is an AMD node device. */
+> 
+> You can ensure that yourself by checking the PCI vendor in the PCI device,
+> right?
+> 
+> IOW, pdev->vendor...
+>
 
-The bug is described in more detail in the commit which fixes the bug.
-This commit adds a kunit test to validate that the fix works correctly.
+Yes, there can be a vendor and/or bus,device check.
 
-This kunit test adds some of the arrays (from the driver-sphere) that seem
-to produce issues with the 'find_closest()' macro. Specifically the one
-from ad7606 driver (with which the bug was found) and from the ina2xx
-drivers, which shows the quirk with 'find_closest()' with elements in a
-array that have an interval of 3.
+I'll add them.
 
-For the find_closest_descending() tests, the same arrays are used as for
-the find_closest(), but in reverse; the idea is that
-'find_closest_descending()' should return the sames indices as
-'find_closest()' but in reverse.
-
-For testing both macros, there are 4 special arrays created, one for
-testing find_closest{_descending}() for arrays of progressions 1, 2, 3 and
-4. The idea is to show that (for progressions of 1, 2 & 3) the fix works as
-expected. When removing the fix, the issues should start to show up.
-
-Then an extra array of negative and positive values is added. There are
-currently no such arrays within drivers, but one could expect that these
-macros behave correctly even for such arrays.
-
-To run this kunit:
-  ./tools/testing/kunit/kunit.py run "*util_macros*"
-
-Signed-off-by: Alexandru Ardelean <aardelean@baylibre.com>
----
-Changelog v1 -> v2:
-* https://lore.kernel.org/linux-iio/20241031063707.795842-2-aardelean@baylibre.com/
-* updated commit description with more info about this kunit
-* added extra tests to show fix for arrays of progressions 1, 2, 3 and 4
-  (i.e. { 1, 2, 3, 4 }, { 1, 3, 5, 7 }, { 1, 4, 7, 10 } &
-  { 1, 5, 9, 13 } )
-  - the arrays are also tested in reverse order
-  - the arrays also use 'int' & 'u32' types (for the array & and search
-    value) to see that the search works correctly).
-* added test for array with mix of negative + positive numbers
-
- lib/Kconfig.debug       |  17 +++
- lib/Makefile            |   1 +
- lib/util_macros_kunit.c | 240 ++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 258 insertions(+)
- create mode 100644 lib/util_macros_kunit.c
-
-diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-index 7312ae7c3cc5..caf10cf2084c 100644
---- a/lib/Kconfig.debug
-+++ b/lib/Kconfig.debug
-@@ -2629,6 +2629,23 @@ config CHECKSUM_KUNIT
- 
- 	  If unsure, say N.
- 
-+config UTIL_MACROS_KUNIT
-+	tristate "KUnit test util_macros.h functions at runtime" if !KUNIT_ALL_TESTS
-+	depends on KUNIT
-+	default KUNIT_ALL_TESTS
-+	help
-+	  Enable this option to test the util_macros.h function at boot.
-+
-+	  KUnit tests run during boot and output the results to the debug log
-+	  in TAP format (http://testanything.org/). Only useful for kernel devs
-+	  running the KUnit test harness, and not intended for inclusion into a
-+	  production build.
-+
-+	  For more information on KUnit and unit tests in general please refer
-+	  to the KUnit documentation in Documentation/dev-tools/kunit/.
-+
-+	  If unsure, say N.
-+
- config HASH_KUNIT_TEST
- 	tristate "KUnit Test for integer hash functions" if !KUNIT_ALL_TESTS
- 	depends on KUNIT
-diff --git a/lib/Makefile b/lib/Makefile
-index 773adf88af41..444fe05caed9 100644
---- a/lib/Makefile
-+++ b/lib/Makefile
-@@ -370,6 +370,7 @@ obj-$(CONFIG_PLDMFW) += pldmfw/
- CFLAGS_bitfield_kunit.o := $(DISABLE_STRUCTLEAK_PLUGIN)
- obj-$(CONFIG_BITFIELD_KUNIT) += bitfield_kunit.o
- obj-$(CONFIG_CHECKSUM_KUNIT) += checksum_kunit.o
-+obj-$(CONFIG_UTIL_MACROS_KUNIT) += util_macros_kunit.o
- obj-$(CONFIG_LIST_KUNIT_TEST) += list-test.o
- obj-$(CONFIG_HASHTABLE_KUNIT_TEST) += hashtable_test.o
- obj-$(CONFIG_LINEAR_RANGES_TEST) += test_linear_ranges.o
-diff --git a/lib/util_macros_kunit.c b/lib/util_macros_kunit.c
-new file mode 100644
-index 000000000000..94cc9f0de50a
---- /dev/null
-+++ b/lib/util_macros_kunit.c
-@@ -0,0 +1,240 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+/*
-+ * Test cases for bitfield helpers.
-+ */
-+
-+#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
-+
-+#include <kunit/test.h>
-+#include <linux/util_macros.h>
-+
-+#define FIND_CLOSEST_RANGE_CHECK(from, to, array, exp_idx)		\
-+{									\
-+	int i;								\
-+	for (i = from; i <= to; i++) {					\
-+		int found = find_closest(i, array, ARRAY_SIZE(array));	\
-+		KUNIT_ASSERT_EQ(ctx, exp_idx, found);			\
-+	}								\
-+}
-+
-+static void test_find_closest(struct kunit *ctx)
-+{
-+	/* This will test a few arrays that are found in drivers */
-+	static const int ina226_avg_tab[] = { 1, 4, 16, 64, 128, 256, 512, 1024 };
-+	static const unsigned int ad7616_oversampling_avail[] = {
-+		1, 2, 4, 8, 16, 32, 64, 128,
-+	};
-+	static u32 wd_timeout_table[] = { 2, 4, 6, 8, 16, 32, 48, 64 };
-+	static int array_prog1a[] = { 1, 2, 3, 4, 5 };
-+	static u32 array_prog1b[] = { 2, 3, 4, 5, 6 };
-+	static int array_prog1mix[] = { -2, -1, 0, 1, 2 };
-+	static int array_prog2a[] = { 1, 3, 5, 7 };
-+	static u32 array_prog2b[] = { 2, 4, 6, 8 };
-+	static int array_prog3a[] = { 1, 4, 7, 10 };
-+	static u32 array_prog3b[] = { 2, 5, 8, 11 };
-+	static int array_prog4a[] = { 1, 5, 9, 13 };
-+	static u32 array_prog4b[] = { 2, 6, 10, 14 };
-+
-+	FIND_CLOSEST_RANGE_CHECK(-3, 2, ina226_avg_tab, 0);
-+	FIND_CLOSEST_RANGE_CHECK(3, 10, ina226_avg_tab, 1);
-+	FIND_CLOSEST_RANGE_CHECK(11, 40, ina226_avg_tab, 2);
-+	FIND_CLOSEST_RANGE_CHECK(41, 96, ina226_avg_tab, 3);
-+	FIND_CLOSEST_RANGE_CHECK(97, 192, ina226_avg_tab, 4);
-+	FIND_CLOSEST_RANGE_CHECK(193, 384, ina226_avg_tab, 5);
-+	FIND_CLOSEST_RANGE_CHECK(385, 768, ina226_avg_tab, 6);
-+	FIND_CLOSEST_RANGE_CHECK(769, 2048, ina226_avg_tab, 7);
-+
-+	/* The array that found the bug that caused this kunit to exist */
-+	FIND_CLOSEST_RANGE_CHECK(-3, 1, ad7616_oversampling_avail, 0);
-+	FIND_CLOSEST_RANGE_CHECK(2, 3, ad7616_oversampling_avail, 1);
-+	FIND_CLOSEST_RANGE_CHECK(4, 6, ad7616_oversampling_avail, 2);
-+	FIND_CLOSEST_RANGE_CHECK(7, 12, ad7616_oversampling_avail, 3);
-+	FIND_CLOSEST_RANGE_CHECK(13, 24, ad7616_oversampling_avail, 4);
-+	FIND_CLOSEST_RANGE_CHECK(25, 48, ad7616_oversampling_avail, 5);
-+	FIND_CLOSEST_RANGE_CHECK(49, 96, ad7616_oversampling_avail, 6);
-+	FIND_CLOSEST_RANGE_CHECK(97, 256, ad7616_oversampling_avail, 7);
-+
-+	FIND_CLOSEST_RANGE_CHECK(-3, 3, wd_timeout_table, 0);
-+	FIND_CLOSEST_RANGE_CHECK(4, 5, wd_timeout_table, 1);
-+	FIND_CLOSEST_RANGE_CHECK(6, 7, wd_timeout_table, 2);
-+	FIND_CLOSEST_RANGE_CHECK(8, 12, wd_timeout_table, 3);
-+	FIND_CLOSEST_RANGE_CHECK(13, 24, wd_timeout_table, 4);
-+	FIND_CLOSEST_RANGE_CHECK(25, 40, wd_timeout_table, 5);
-+	FIND_CLOSEST_RANGE_CHECK(41, 56, wd_timeout_table, 6);
-+	FIND_CLOSEST_RANGE_CHECK(57, 128, wd_timeout_table, 7);
-+
-+	/* One could argue that find_closest() should not be used for monotonic
-+	 * arrays (like 1,2,3,4,5), but even so, it should work as long as the
-+	 * array is sorted ascending. */
-+	FIND_CLOSEST_RANGE_CHECK(-3, 1, array_prog1a, 0);
-+	FIND_CLOSEST_RANGE_CHECK(2, 2, array_prog1a, 1);
-+	FIND_CLOSEST_RANGE_CHECK(3, 3, array_prog1a, 2);
-+	FIND_CLOSEST_RANGE_CHECK(4, 4, array_prog1a, 3);
-+	FIND_CLOSEST_RANGE_CHECK(5, 8, array_prog1a, 4);
-+
-+	FIND_CLOSEST_RANGE_CHECK(-3, 2, array_prog1b, 0);
-+	FIND_CLOSEST_RANGE_CHECK(3, 3, array_prog1b, 1);
-+	FIND_CLOSEST_RANGE_CHECK(4, 4, array_prog1b, 2);
-+	FIND_CLOSEST_RANGE_CHECK(5, 5, array_prog1b, 3);
-+	FIND_CLOSEST_RANGE_CHECK(6, 8, array_prog1b, 4);
-+
-+	FIND_CLOSEST_RANGE_CHECK(-4, -2, array_prog1mix, 0);
-+	FIND_CLOSEST_RANGE_CHECK(-1, -1, array_prog1mix, 1);
-+	FIND_CLOSEST_RANGE_CHECK(0, 0, array_prog1mix, 2);
-+	FIND_CLOSEST_RANGE_CHECK(1, 1, array_prog1mix, 3);
-+	FIND_CLOSEST_RANGE_CHECK(2, 5, array_prog1mix, 4);
-+
-+	FIND_CLOSEST_RANGE_CHECK(-3, 2, array_prog2a, 0);
-+	FIND_CLOSEST_RANGE_CHECK(3, 4, array_prog2a, 1);
-+	FIND_CLOSEST_RANGE_CHECK(5, 6, array_prog2a, 2);
-+	FIND_CLOSEST_RANGE_CHECK(7, 10, array_prog2a, 3);
-+
-+	FIND_CLOSEST_RANGE_CHECK(-3, 3, array_prog2b, 0);
-+	FIND_CLOSEST_RANGE_CHECK(4, 5, array_prog2b, 1);
-+	FIND_CLOSEST_RANGE_CHECK(6, 7, array_prog2b, 2);
-+	FIND_CLOSEST_RANGE_CHECK(8, 10, array_prog2b, 3);
-+
-+	FIND_CLOSEST_RANGE_CHECK(-3, 2, array_prog3a, 0);
-+	FIND_CLOSEST_RANGE_CHECK(3, 5, array_prog3a, 1);
-+	FIND_CLOSEST_RANGE_CHECK(6, 8, array_prog3a, 2);
-+	FIND_CLOSEST_RANGE_CHECK(9, 20, array_prog3a, 3);
-+
-+	FIND_CLOSEST_RANGE_CHECK(-3, 3, array_prog3b, 0);
-+	FIND_CLOSEST_RANGE_CHECK(4, 6, array_prog3b, 1);
-+	FIND_CLOSEST_RANGE_CHECK(7, 9, array_prog3b, 2);
-+	FIND_CLOSEST_RANGE_CHECK(10, 20, array_prog3b, 3);
-+
-+	FIND_CLOSEST_RANGE_CHECK(-3, 3, array_prog4a, 0);
-+	FIND_CLOSEST_RANGE_CHECK(4, 7, array_prog4a, 1);
-+	FIND_CLOSEST_RANGE_CHECK(8, 11, array_prog4a, 2);
-+	FIND_CLOSEST_RANGE_CHECK(12, 20, array_prog4a, 3);
-+
-+	FIND_CLOSEST_RANGE_CHECK(-3, 4, array_prog4b, 0);
-+	FIND_CLOSEST_RANGE_CHECK(5, 8, array_prog4b, 1);
-+	FIND_CLOSEST_RANGE_CHECK(9, 12, array_prog4b, 2);
-+	FIND_CLOSEST_RANGE_CHECK(13, 20, array_prog4b, 3);
-+}
-+
-+#define FIND_CLOSEST_DESC_RANGE_CHECK(from, to, array, exp_idx)	\
-+{									\
-+	int i;								\
-+	for (i = from; i <= to; i++) {					\
-+		int found = find_closest_descending(i, array,		\
-+						ARRAY_SIZE(array));	\
-+		KUNIT_ASSERT_EQ(ctx, exp_idx, found);			\
-+	}								\
-+}
-+
-+static void test_find_closest_descending(struct kunit *ctx)
-+{
-+	/* Same arrays as 'test_find_closest' but reversed */
-+	static const int ina226_avg_tab[] = { 1024, 512, 256, 128, 64, 16, 4, 1 };
-+	static const unsigned int ad7616_oversampling_avail[] = {
-+		128, 64, 32, 16, 8, 4, 2, 1
-+	};
-+	static u32 wd_timeout_table[] = { 64, 48, 32, 16, 8, 6, 4, 2 };
-+	static int array_prog1a[] = { 5, 4, 3, 2, 1 };
-+	static u32 array_prog1b[] = { 6, 5, 4, 3, 2 };
-+	static int array_prog1mix[] = { 2, 1, 0, -1, -2 };
-+	static int array_prog2a[] = { 7, 5, 3, 1 };
-+	static u32 array_prog2b[] = { 8, 6, 4, 2 };
-+	static int array_prog3a[] = { 10, 7, 4, 1 };
-+	static u32 array_prog3b[] = { 11, 8, 5, 2 };
-+	static int array_prog4a[] = { 13, 9, 5, 1 };
-+	static u32 array_prog4b[] = { 14, 10, 6, 2 };
-+
-+	FIND_CLOSEST_DESC_RANGE_CHECK(-3, 2, ina226_avg_tab, 7);
-+	FIND_CLOSEST_DESC_RANGE_CHECK(3, 10, ina226_avg_tab, 6);
-+	FIND_CLOSEST_DESC_RANGE_CHECK(11, 40, ina226_avg_tab, 5);
-+	FIND_CLOSEST_DESC_RANGE_CHECK(41, 96, ina226_avg_tab, 4);
-+	FIND_CLOSEST_DESC_RANGE_CHECK(97, 192, ina226_avg_tab, 3);
-+	FIND_CLOSEST_DESC_RANGE_CHECK(193, 384, ina226_avg_tab, 2);
-+	FIND_CLOSEST_DESC_RANGE_CHECK(385, 768, ina226_avg_tab, 1);
-+	FIND_CLOSEST_DESC_RANGE_CHECK(769, 2048, ina226_avg_tab, 0);
-+
-+	FIND_CLOSEST_DESC_RANGE_CHECK(-3, 1, ad7616_oversampling_avail, 7);
-+	FIND_CLOSEST_DESC_RANGE_CHECK(2, 3, ad7616_oversampling_avail, 6);
-+	FIND_CLOSEST_DESC_RANGE_CHECK(4, 6, ad7616_oversampling_avail, 5);
-+	FIND_CLOSEST_DESC_RANGE_CHECK(7, 12, ad7616_oversampling_avail, 4);
-+	FIND_CLOSEST_DESC_RANGE_CHECK(13, 24, ad7616_oversampling_avail, 3);
-+	FIND_CLOSEST_DESC_RANGE_CHECK(25, 48, ad7616_oversampling_avail, 2);
-+	FIND_CLOSEST_DESC_RANGE_CHECK(49, 96, ad7616_oversampling_avail, 1);
-+	FIND_CLOSEST_DESC_RANGE_CHECK(97, 256, ad7616_oversampling_avail, 0);
-+
-+	FIND_CLOSEST_DESC_RANGE_CHECK(-3, 3, wd_timeout_table, 7);
-+	FIND_CLOSEST_DESC_RANGE_CHECK(4, 5, wd_timeout_table, 6);
-+	FIND_CLOSEST_DESC_RANGE_CHECK(6, 7, wd_timeout_table, 5);
-+	FIND_CLOSEST_DESC_RANGE_CHECK(8, 12, wd_timeout_table, 4);
-+	FIND_CLOSEST_DESC_RANGE_CHECK(13, 24, wd_timeout_table, 3);
-+	FIND_CLOSEST_DESC_RANGE_CHECK(25, 40, wd_timeout_table, 2);
-+	FIND_CLOSEST_DESC_RANGE_CHECK(41, 56, wd_timeout_table, 1);
-+	FIND_CLOSEST_DESC_RANGE_CHECK(57, 128, wd_timeout_table, 0);
-+
-+	/* One could argue that find_closest_descending() should not be used
-+	 * for monotonic arrays (like 5,4,3,2,1), but even so, it should still
-+	 * it should work as long as the array is sorted descending. */
-+	FIND_CLOSEST_DESC_RANGE_CHECK(-3, 1, array_prog1a, 4);
-+	FIND_CLOSEST_DESC_RANGE_CHECK(2, 2, array_prog1a, 3);
-+	FIND_CLOSEST_DESC_RANGE_CHECK(3, 3, array_prog1a, 2);
-+	FIND_CLOSEST_DESC_RANGE_CHECK(4, 4, array_prog1a, 1);
-+	FIND_CLOSEST_DESC_RANGE_CHECK(5, 8, array_prog1a, 0);
-+
-+	FIND_CLOSEST_DESC_RANGE_CHECK(-3, 2, array_prog1b, 4);
-+	FIND_CLOSEST_DESC_RANGE_CHECK(3, 3, array_prog1b, 3);
-+	FIND_CLOSEST_DESC_RANGE_CHECK(4, 4, array_prog1b, 2);
-+	FIND_CLOSEST_DESC_RANGE_CHECK(5, 5, array_prog1b, 1);
-+	FIND_CLOSEST_DESC_RANGE_CHECK(6, 8, array_prog1b, 0);
-+
-+	FIND_CLOSEST_DESC_RANGE_CHECK(-4, -2, array_prog1mix, 4);
-+	FIND_CLOSEST_DESC_RANGE_CHECK(-1, -1, array_prog1mix, 3);
-+	FIND_CLOSEST_DESC_RANGE_CHECK(0, 0, array_prog1mix, 2);
-+	FIND_CLOSEST_DESC_RANGE_CHECK(1, 1, array_prog1mix, 1);
-+	FIND_CLOSEST_DESC_RANGE_CHECK(2, 5, array_prog1mix, 0);
-+
-+	FIND_CLOSEST_DESC_RANGE_CHECK(-3, 2, array_prog2a, 3);
-+	FIND_CLOSEST_DESC_RANGE_CHECK(3, 4, array_prog2a, 2);
-+	FIND_CLOSEST_DESC_RANGE_CHECK(5, 6, array_prog2a, 1);
-+	FIND_CLOSEST_DESC_RANGE_CHECK(7, 10, array_prog2a, 0);
-+
-+	FIND_CLOSEST_DESC_RANGE_CHECK(-3, 3, array_prog2b, 3);
-+	FIND_CLOSEST_DESC_RANGE_CHECK(4, 5, array_prog2b, 2);
-+	FIND_CLOSEST_DESC_RANGE_CHECK(6, 7, array_prog2b, 1);
-+	FIND_CLOSEST_DESC_RANGE_CHECK(8, 10, array_prog2b, 0);
-+
-+	FIND_CLOSEST_DESC_RANGE_CHECK(-3, 2, array_prog3a, 3);
-+	FIND_CLOSEST_DESC_RANGE_CHECK(3, 5, array_prog3a, 2);
-+	FIND_CLOSEST_DESC_RANGE_CHECK(6, 8, array_prog3a, 1);
-+	FIND_CLOSEST_DESC_RANGE_CHECK(9, 20, array_prog3a, 0);
-+
-+	FIND_CLOSEST_DESC_RANGE_CHECK(-3, 3, array_prog3b, 3);
-+	FIND_CLOSEST_DESC_RANGE_CHECK(4, 6, array_prog3b, 2);
-+	FIND_CLOSEST_DESC_RANGE_CHECK(7, 9, array_prog3b, 1);
-+	FIND_CLOSEST_DESC_RANGE_CHECK(10, 20, array_prog3b, 0);
-+
-+	FIND_CLOSEST_DESC_RANGE_CHECK(-3, 3, array_prog4a, 3);
-+	FIND_CLOSEST_DESC_RANGE_CHECK(4, 7, array_prog4a, 2);
-+	FIND_CLOSEST_DESC_RANGE_CHECK(8, 11, array_prog4a, 1);
-+	FIND_CLOSEST_DESC_RANGE_CHECK(12, 20, array_prog4a, 0);
-+
-+	FIND_CLOSEST_DESC_RANGE_CHECK(-3, 4, array_prog4b, 3);
-+	FIND_CLOSEST_DESC_RANGE_CHECK(5, 8, array_prog4b, 2);
-+	FIND_CLOSEST_DESC_RANGE_CHECK(9, 12, array_prog4b, 1);
-+	FIND_CLOSEST_DESC_RANGE_CHECK(13, 20, array_prog4b, 0);
-+}
-+
-+static struct kunit_case __refdata util_macros_test_cases[] = {
-+	KUNIT_CASE(test_find_closest),
-+	KUNIT_CASE(test_find_closest_descending),
-+	{}
-+};
-+
-+static struct kunit_suite util_macros_test_suite = {
-+	.name = "util_macros.h",
-+	.test_cases = util_macros_test_cases,
-+};
-+
-+kunit_test_suites(&util_macros_test_suite);
-+
-+MODULE_AUTHOR("Alexandru Ardelean <aardelean@baylibre.com>");
-+MODULE_DESCRIPTION("Test cases for util_macros.h helpers");
-+MODULE_LICENSE("GPL");
--- 
-2.46.1
-
+Thanks,
+Yazen
 
