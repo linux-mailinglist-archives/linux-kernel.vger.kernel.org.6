@@ -1,130 +1,95 @@
-Return-Path: <linux-kernel+bounces-396596-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396597-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F6D59BCF3D
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 15:27:24 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 506419BCF3F
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 15:27:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 539F52824EF
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 14:27:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 814301C22DC8
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 14:27:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7421A1D9A6D;
-	Tue,  5 Nov 2024 14:26:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D5B41D9588;
+	Tue,  5 Nov 2024 14:27:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P5Bfbdzm"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ogheu//N"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0BD41D2716;
-	Tue,  5 Nov 2024 14:26:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 687D51D8E05;
+	Tue,  5 Nov 2024 14:27:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730816818; cv=none; b=rYI5Lhx4o7fjn07d5e9TY+YzzutARW8aC/dk5IyzSQ9z5uEyg0IbQ82wy7kHvnG/ve6RBH937zKkD2RKbKgEuG/DSuCSOGXV0pKPHc/4jnVHRX0tjo2psXIl76IszjuF750iCZYRg8cUsiGwhXnEuqcCPflfkBdPFJb1tVHNEug=
+	t=1730816831; cv=none; b=XF/1GgDkyDLImBtXEb4EhWozbl/i8NzTlW13HbcDVkR79v3dCCpEkOfLt1Eh9nNW4mwjb9MJuaGYh+YCFTAZG2VPADgVBfOsw/JYvijqtSwC86nQ0qKIAgY8J9RV2luVWJg8LJLqF7zmGnl9C3QKLKVzvb+WKrARPx0FABkoHNk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730816818; c=relaxed/simple;
-	bh=yHQaz97JADPxJTedTrQRaGlex8yfX/PiBJY+uGEeX6s=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=roGpSIzN/QUMOeoDAALW5WHHl18YvgMbs/fseetpv7J0jF9ULeowKjyDbs70YPj3c8orO++N20nSJEMwz6qFi8uSRmS3vqVOVhiebzc0bzK6tcG2putNkttzBQg0vtftSgtcmiNFJaI7mSdnxT51ShzWNQsG2TAO4EXrR2c/u+E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P5Bfbdzm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC572C4CED3;
-	Tue,  5 Nov 2024 14:26:51 +0000 (UTC)
+	s=arc-20240116; t=1730816831; c=relaxed/simple;
+	bh=H9lnLtemQ/eUrm6ZowUvs0U4ycXB0QN6ws8h/hIo9/c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nKh88bdAqH9HFY3w/SaMgo0k6Du9vqGxyXkm4BuqzWzRK94O9d4TDqJ+vbmb1JXxG1Rk5xbI5JGV+H0DUO935KOSDhOLYJbxMitGZGIG5zkDX1ESBJASsKOECBXsmV64eBXyEilthHdvw8Sg3Di/9a6gNmYxp9ymCeHtyZVOXKE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ogheu//N; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6D3CC4CED0;
+	Tue,  5 Nov 2024 14:27:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730816818;
-	bh=yHQaz97JADPxJTedTrQRaGlex8yfX/PiBJY+uGEeX6s=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=P5BfbdzmvwYmwRtSR2ZASX5lLt+yQXWta33tCNL22UCiWKxP1DKJoxUy8GiqHcHbI
-	 R4/jHNO6MQiACaKXTiax19b7QYDfbcmYi4GsVfLYxtay1x/1ArYcqAOPXnfsaCLSQi
-	 Xq5RSjdPdA2xFHu925ShsCNEsxvL/TUCkPvHVhQ2LRcA8LA692pQVm0Kojsx/uXjma
-	 pSQWIj/d9qC/0FKb7mMqKHjFuO+H6xY59f9U65aDUGZjSxLlS7HIReU85s1I9BcNSO
-	 gPwD/D4IgTV44n+oAeC4pxDnh3wO9pNoThkbS/KSEhVntIRDLQTS6noNdODMfHgJVg
-	 18RliGXHa+PBQ==
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Ingo Molnar <mingo@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Clark Williams <williams@redhat.com>,
-	linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org,
-	Arnaldo Carvalho de Melo <acme@redhat.com>,
-	Athira Rajeev <atrajeev@linux.vnet.ibm.com>,
-	Howard Chu <howardchu95@gmail.com>,
-	James Clark <james.clark@linaro.org>,
-	Leo Yan <leo.yan@linux.dev>,
-	Thomas Richter <tmricht@linux.ibm.com>,
-	Veronika Molnarova <vmolnaro@redhat.com>
-Subject: [PATCH v2 4/4] perf build: Emit a warning when libtraceevent is explicitely disabled
-Date: Tue,  5 Nov 2024 11:26:16 -0300
-Message-ID: <20241105142616.761042-5-acme@kernel.org>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20241105142616.761042-1-acme@kernel.org>
-References: <20241105142616.761042-1-acme@kernel.org>
+	s=k20201202; t=1730816831;
+	bh=H9lnLtemQ/eUrm6ZowUvs0U4ycXB0QN6ws8h/hIo9/c=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Ogheu//NIDOF8rIG04kMJnc8LFupeuSjfNXm5VShLhda4WRd4NVbJXKt4bczFS3mj
+	 FupDNUsOy7m41/xyyPuPM+vkL6JTwzVUmImMQWikHeQZaB0KRKZfEYuBJ4XicDAwAX
+	 AsMigEk1+Q728CPS52aYB6Oc3b10XMSFg57tWEYwbpKq1PA1K5xdveK45YZ9C9O6FW
+	 2owv2l+weBf2rBtzNawO1P737eFBC7v250BWjA1jaqbVThDaGiLsgGcT9FTNK6HMQp
+	 TmyBka1xWcHVWrC72ot5uxqJYbB2xB+Y6GOiohoj5aM7IWH4/RHENfyLQ0/hcuU4AW
+	 NAzSFvX/q1pvQ==
+Date: Tue, 5 Nov 2024 08:27:08 -0600
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Fei Shao <fshao@chromium.org>
+Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	Chun-Kuang Hu <chunkuang.hu@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v2] dt-bindings: display: mediatek: dp: Reference common
+ DAI properties
+Message-ID: <173081682847.3210195.439507232582613661.robh@kernel.org>
+References: <20241105090207.3892242-1-fshao@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241105090207.3892242-1-fshao@chromium.org>
 
-From: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-Since not having the libtraceevent devel package installed prevents the
-build from proceeding unless NO_LIBTRACEEVENT=1 is passed:
+On Tue, 05 Nov 2024 17:00:28 +0800, Fei Shao wrote:
+> The MediaTek DP hardware supports audio and exposes a DAI, so the
+> '#sound-dai-cells' property is needed for describing the DAI links.
+> 
+> Reference the dai-common.yaml schema to allow '#sound-dai-cells' to be
+> used, and filter out non-DP compatibles as MediaTek eDP in the same
+> binding doesn't support audio.
+> 
+> This fixes dtbs_check error:
+>   '#sound-dai-cells' does not match any of the regexes: 'pinctrl-[0-9]+'
+> 
+> Signed-off-by: Fei Shao <fshao@chromium.org>
+> ---
+> 
+> Changes in v2:
+> - reference to dai-common.yaml since the hardware exposes DAI
+>   and update to `unevaluatedProperties: false`
+> - update commit message
+> 
+>  .../display/mediatek/mediatek,dp.yaml         | 19 ++++++++++++++++++-
+>  1 file changed, 18 insertions(+), 1 deletion(-)
+> 
 
-  $ make O=/tmp/build/perf-tools-next/ -C tools/perf install-bin
-  Makefile.config:1195: *** ERROR: libtraceevent is missing. Please install libtraceevent-dev/libtraceevent-devel and/or set LIBTRACEEVENT_DIR or build with NO_LIBTRACEEVENT=1.  Stop.
-  make[1]: *** [Makefile.perf:292: sub-make] Error 2
-  make: *** [Makefile:119: install-bin] Error 2
-  make: Leaving directory '/home/acme/git/perf-tools-next/tools/perf'
-  $
-
-Behave just like with the NO_LIBPYTHON case:
-
-  $ make NO_LIBPYTHON=1 NO_LIBTRACEEVENT=1 O=/tmp/build/perf-tools-next/ -C tools/perf install-bin
-  Makefile.config:874: Python support disabled by user
-  Makefile.config:1180: libtraceevent support disabled by user
-
-  Auto-detecting system features:
-<SNIP>
-
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
-Cc: Howard Chu <howardchu95@gmail.com>
-Cc: Ian Rogers <irogers@google.com>
-Cc: James Clark <james.clark@linaro.org>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Kan Liang <kan.liang@linux.intel.com>
-Cc: Leo Yan <leo.yan@linux.dev>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Thomas Richter <tmricht@linux.ibm.com>
-Cc: Veronika Molnarova <vmolnaro@redhat.com>
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/Makefile.config | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
-index 80bf06e828f0ebc8..3ae3449ccf684b42 100644
---- a/tools/perf/Makefile.config
-+++ b/tools/perf/Makefile.config
-@@ -1180,7 +1180,9 @@ ifndef NO_LIBPFM4
- endif
- 
- # libtraceevent is a recommended dependency picked up from the system.
--ifneq ($(NO_LIBTRACEEVENT),1)
-+ifeq ($(NO_LIBTRACEEVENT),1)
-+  msg := $(warning libtraceevent support disabled by user);
-+else
-   $(call feature_check,libtraceevent)
-   ifeq ($(feature-libtraceevent), 1)
-     CFLAGS += -DHAVE_LIBTRACEEVENT $(shell $(PKG_CONFIG) --cflags libtraceevent)
--- 
-2.47.0
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
 
