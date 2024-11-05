@@ -1,112 +1,179 @@
-Return-Path: <linux-kernel+bounces-397019-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397020-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 027269BD5AE
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 20:12:19 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B325C9BD5B0
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 20:13:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 727CD1F232C9
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 19:12:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0A8A0B21BF8
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 19:13:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E9321EBA04;
-	Tue,  5 Nov 2024 19:12:06 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35FF71E2007
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 19:12:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D72DC1EBA09;
+	Tue,  5 Nov 2024 19:13:11 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 075B71E2007;
+	Tue,  5 Nov 2024 19:13:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730833925; cv=none; b=AgUT6bTTyGNX26G4xzoWIwBwQuUjkdE0Lo1XrgnVYUGu7Ev14CodOc2L2PfS/fMXpkIdx2e22olFm8nc9d3hJkNqsQyn2cH+yAxyTQI0Uw7Ln5/CFYILAUjOXWYMSNChrYwSWUFOP67uaGreh2lo/LPwu+swzvANt9ni8hhiwps=
+	t=1730833991; cv=none; b=St/RWQsiQxZ3G/5oGxqFK2x7D5WVVVRpLQ8Sh8elQ4QQET53HjIvHiTE4dQzUQR7bYxMyugD12WAAFmx853PAVk9nYDDStmaIlVR/iGbbq8SoPCIky1uRbwjtllLRf4KbwWSIOBO0VPEyK94TcmNhRlJ+SGYEtk+uJskD5EBRXU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730833925; c=relaxed/simple;
-	bh=rhZld6Mh3x6nslIO5nVr2zkPeOxN4sKoCX5nfTRPjY4=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:Cc:
-	 Content-Type; b=LDOr7mQDRnBNO2jvLjrowRdc3keQ5elNsijDeAuAGnDY8Isn+/rrQJ4JeV6IGtBCgLMPJCsW9rWYrvLSAItHJOTcqHjBmUQcbYR2RWkG8nGqTDFQBm2VSLO9gF80Gic9y4AeHVdGb47vGK1XvAAIH+YCN4I6NpLpS8/yOH481Hw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a3da2d46b9so63840205ab.0
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 11:12:04 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730833923; x=1731438723;
-        h=cc:to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=bhX9qykCs7O0Td+0duSHWZ/6DCGnaMr+ZVBNhlnkAeU=;
-        b=r7sd9oYn2xcqRP6M7J7HU8aRdXKJ5lJ0DvTkijmVZENfi13fE1pNUaOnMvuVBUeWXS
-         n0608bQXNtmSntL30IaTvx7VXCZqUQCpbYovSCUU3Lhe3B6JORXz5/CpGFfmUkLEaofp
-         H9c9jujOHU6uPodDOt9vjtDB2VDchl+uaG4AA9yKClewABkqrHgq8AzX0u/1rBRiw9Yb
-         idog3C40eKoykShp3p+Jw0KRq1+q3mnDVSV3MXtlP763sKj5vix6ltexIcJADnsUBFM2
-         DuMQywGKVnhi4dBbaG7tv92mrx8IWNCdIWKQzr/7EeJBl7Svb99oLZxg2KKk1h/pYdYj
-         rMng==
-X-Forwarded-Encrypted: i=1; AJvYcCUT+a+CXMgeVwf9YilGMnGrPE/36s7/MrC6HLON1b0s2S3znDGtp/kdDRi8AazQOdUgxBPd9SNGDTbvXGY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YypxUIHm/qSKIQk5uAaqU4J4AJyQBM2qopn436c50tTpw6te3K7
-	Lm995unFT9hA0D4kWYQHdR7ZCCFDLHcoVcAdbNkFOFlJj809OO4sikl+ARTSwipPMla6fbhgdbG
-	ZdAPhSaEOSmzVelkktlTxYXT1ACysnf5422cSwlfnAOSxJspfqDkRzmg=
-X-Google-Smtp-Source: AGHT+IG2Ewtq37y0D6eeenbNTOad+Nva2dLGt09354SlhmYY6DBel2RtfK7wRugzZ5sfJ7IYDw+A+dka5tyCB9Ghif3a5lc6t3GE
+	s=arc-20240116; t=1730833991; c=relaxed/simple;
+	bh=rl3Vm+n9p/rsVev3vkvR4xc1wfklDcCqP/0PnSiJQow=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ys6yiO+G4Elg6u/BKojW7SxxmfdLYS0jWaHhuQG621P668mFCTgXzMRDG77ySI19NMcqVJiC9wNGERRsL/EgzKFngOJ/1b5BBBxFwasrITSbjIWFWa3OGw2026sdPaHl+MzfZxWvHBGwahEKPBChhcwK59y7qANDOU8xdTgAYhM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C8EAA1063;
+	Tue,  5 Nov 2024 11:13:37 -0800 (PST)
+Received: from J2N7QTR9R3.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B989B3F528;
+	Tue,  5 Nov 2024 11:13:06 -0800 (PST)
+Date: Tue, 5 Nov 2024 19:13:04 +0000
+From: Mark Rutland <mark.rutland@arm.com>
+To: Mark Brown <broonie@kernel.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH 1/2] arm64/sve: Flush foreign register state in
+ sve_init_regs()
+Message-ID: <ZypuQNhWHKut8mLl@J2N7QTR9R3.cambridge.arm.com>
+References: <20241030-arm64-fpsimd-foreign-flush-v1-0-bd7bd66905a2@kernel.org>
+ <20241030-arm64-fpsimd-foreign-flush-v1-1-bd7bd66905a2@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1c28:b0:3a0:a80a:997c with SMTP id
- e9e14a558f8ab-3a4ed2de690mr388935165ab.19.1730833923430; Tue, 05 Nov 2024
- 11:12:03 -0800 (PST)
-Date: Tue, 05 Nov 2024 11:12:03 -0800
-In-Reply-To: <20241105191156.99327-1-zoo868e@gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <672a6e03.050a0220.2a847.154d.GAE@google.com>
-Subject: Re: [PATCH] rxrpc: Initialize sockaddr_rxrpc directly
-From: syzbot <syzbot+14c04e62ca58315571d1@syzkaller.appspotmail.com>
-To: zoo868e@gmail.com
-Cc: zoo868e@gmail.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241030-arm64-fpsimd-foreign-flush-v1-1-bd7bd66905a2@kernel.org>
 
-> In rxrpc_lookup_peer_local_rcu(), removed the redundant memset call
-> that zeros out the sockaddr_rxrpc structure before setting its fields.
-> Instead, initialize the sockaddr_rxrpc structure directly in
-> rxrpc_input_error().
->
-> This change simplifies the code and ensures that the sockaddr_rxrpc
-> structure is properly zero-initialized.
->
-> #syz test
+On Wed, Oct 30, 2024 at 08:23:50PM +0000, Mark Brown wrote:
+> When we update the in memory register state in sve_init_regs() we neglect
+> to flush the task's CPU binding, meaning if the task is rescheduled to
+> the last CPU it ran on it is possible for the check for current state in
+> fpsimd_thread_switch() to falsely determine that up to date register
+> state is present on the CPU.  This results in it incorrectly clearing
+> TIF_FOREIGN_FPSTATE and suppress reloading.
+> 
+> This will also suppress the sve_user_enable() done in
+> fpsimd_bind_task_to_cpu() as part of return to userspace, causing
+> spurious SVE access traps.
+> 
+> Call fpsimd_flush_task_state() to invalidate the last loaded CPU
+> recorded in the task.
+> 
+> Fixes: cccb78ce89c4 ("arm64/sve: Rework SVE access trap to convert state in registers")
+> Reported-by: Mark Rutlamd <mark.rutland@arm.com>
+> Signed-off-by: Mark Brown <broonie@kernel.org>
+> Cc: stable@vger.kernel.org
 
-This crash does not have a reproducer. I cannot test it.
+How about the following:
 
->
-> Signed-off-by: Matt Jan <zoo868e@gmail.com>
+| arm64/sve: Discard stale CPU state when handling SVE traps
+| 
+| The logic for handling SVE traps manipulates saved FPSIMD/SVE state
+| incorrectly, and a race with preemption can result in a task having
+| TIF_SVE set and TIF_FOREIGN_FPSTATE clear even though the live CPU state
+| is stale (e.g. with SVE traps enabled). This has been observed to result
+| in warnings from do_sve_acc() where SVE traps are not expected while
+| TIF_SVE is set:
+| 
+| |         if (test_and_set_thread_flag(TIF_SVE))
+| |                 WARN_ON(1); /* SVE access shouldn't have trapped */
+| 
+| Warnings of this form have been reported intermittently, e.g.
+| 
+|   https://lore.kernel.org/linux-arm-kernel/CA+G9fYtEGe_DhY2Ms7+L7NKsLYUomGsgqpdBj+QwDLeSg=JhGg@mail.gmail.com/
+|   https://lore.kernel.org/linux-arm-kernel/000000000000511e9a060ce5a45c@google.com/
+| 
+| The race can occur when the SVE trap handler is preempted before and
+| after manipulating the saved FPSIMD/SVE state, starting and ending on
+| the same CPU, e.g.
+| 
+| | void do_sve_acc(unsigned long esr, struct pt_regs *regs)
+| | {
+| |         // Trap on CPU 0 with TIF_SVE clear, SVE traps enabled
+| |         // task->fpsimd_cpu is 0.
+| |         // per_cpu_ptr(&fpsimd_last_state, 0) is task.
+| | 
+| |         ...
+| | 
+| |         // Preempted; migrated from CPU 0 to CPU 1.
+| |         // TIF_FOREIGN_FPSTATE is set.
+| | 
+| |         get_cpu_fpsimd_context();
+| | 
+| |         if (test_and_set_thread_flag(TIF_SVE))
+| |                 WARN_ON(1); /* SVE access shouldn't have trapped */
+| | 
+| |         sve_init_regs() {
+| |                 if (!test_thread_flag(TIF_FOREIGN_FPSTATE)) {
+| |                         ...
+| |                         fpsimd_bind_task_to_cpu();
+| |                 } else {
+| |                         fpsimd_to_sve(current);
+| |                         current->thread.fp_type = FP_STATE_SVE;
+| |                 }
+| |         }
+| | 
+| |         put_cpu_fpsimd_context();
+| | 
+| |         // Preempted; migrated from CPU 1 to CPU 0.
+| |         // task->fpsimd_cpu is still 0
+| |         // If per_cpu_ptr(&fpsimd_last_state, 0) is still task then:
+| |         // - Stale HW state is reused (with SVE traps enabled)
+| |         // - TIF_FOREIGN_FPSTATE is cleared
+| |         // - A return to userspace skips HW state restore
+| | }
+| 
+| In the case where sve_init_regs() is called while the state is live and
+| TIF_FOREIGN_FPSTATE is clear, the state is correctly modified and the
+| call to fpsimd_bind_task_to_cpu() disables the SVE trap.
+| 
+| Fix the case where the state is not live and TIF_FOREIGN_FPSTATE is set
+| by calling fpsimd_flush_task_state() to detach from the saved CPU
+| state. This ensures that a subsequent context switch will not reuse the
+| stale CPU state, and will instead set TIF_FOREIGN_FPSTATE, forcing the
+| new state to be reloaded from memory prior to a return to userspace.
+| 
+| Fixes: cccb78ce89c4 ("arm64/sve: Rework SVE access trap to convert state in registers")
+| Reported-by: Mark Rutland <mark.rutland@arm.com>
+| Signed-off-by: Mark Brown <broonie@kernel.org>
+| Cc: stable@vger.kernel.org
+
+Note: I fixed the typo (s/Rutlamd/Rutland)
+
+With that:
+
+Reviewed-by: Mark Rutland <mark.rutland@arm.com>
+
+Mark.
+
 > ---
->  net/rxrpc/peer_event.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
->
-> diff --git a/net/rxrpc/peer_event.c b/net/rxrpc/peer_event.c
-> index 552ba84a255c..c86b432201fd 100644
-> --- a/net/rxrpc/peer_event.c
-> +++ b/net/rxrpc/peer_event.c
-> @@ -33,7 +33,6 @@ static struct rxrpc_peer *rxrpc_lookup_peer_local_rcu(struct rxrpc_local *local,
+>  arch/arm64/kernel/fpsimd.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/arch/arm64/kernel/fpsimd.c b/arch/arm64/kernel/fpsimd.c
+> index 77006df20a75aee7c991cf116b6d06bfe953d1a4..6d21971ae5594f32947480cfa168db400a69a283 100644
+> --- a/arch/arm64/kernel/fpsimd.c
+> +++ b/arch/arm64/kernel/fpsimd.c
+> @@ -1367,6 +1367,7 @@ static void sve_init_regs(void)
+>  	} else {
+>  		fpsimd_to_sve(current);
+>  		current->thread.fp_type = FP_STATE_SVE;
+> +		fpsimd_flush_task_state(current);
+>  	}
+>  }
 >  
->  	_enter("");
->  
-> -	memset(srx, 0, sizeof(*srx));
->  	srx->transport_type = local->srx.transport_type;
->  	srx->transport_len = local->srx.transport_len;
->  	srx->transport.family = local->srx.transport.family;
-> @@ -134,7 +133,7 @@ static void rxrpc_adjust_mtu(struct rxrpc_peer *peer, unsigned int mtu)
->  void rxrpc_input_error(struct rxrpc_local *local, struct sk_buff *skb)
->  {
->  	struct sock_exterr_skb *serr = SKB_EXT_ERR(skb);
-> -	struct sockaddr_rxrpc srx;
-> +	struct sockaddr_rxrpc srx = {};
->  	struct rxrpc_peer *peer = NULL;
->  
->  	_enter("L=%x", local->debug_id);
+> 
 > -- 
-> 2.25.1
->
+> 2.39.2
+> 
+> 
 
