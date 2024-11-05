@@ -1,106 +1,220 @@
-Return-Path: <linux-kernel+bounces-397252-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397253-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 814A79BD96B
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 00:04:20 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 778599BD96F
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 00:05:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B2A3E1C227A3
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 23:04:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DAC69B2139D
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 23:05:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D18D216458;
-	Tue,  5 Nov 2024 23:04:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D72921645E;
+	Tue,  5 Nov 2024 23:04:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="er5rEkg6"
-Received: from mail-il1-f171.google.com (mail-il1-f171.google.com [209.85.166.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FGuzT5Bh"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6010C216200;
-	Tue,  5 Nov 2024 23:04:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBDA6216218
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 23:04:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730847854; cv=none; b=rLto42+OqHyogVoj7HhYVy6VbfXC0HAuRbx39pn7us1MRt2pGCx+MPfWkXSVn39NBL+VjV1xFI3HPSUjq8f5k8fGRXt4woh9KZMxj+c9GGRDDtKYjGtkMeFEh8dtMzTQn2gEGlNpr8i1cjEZKSB7ZfDLvcQJyiSW/6b+cwsJwqk=
+	t=1730847896; cv=none; b=nF67EJ2xhUxmvJqNe5V5CzdbFqNom5ENYeDhPmX2YVGnq984K1bDtMA6kO5lMYBXV4gu4GHIyY8Oopuf4swkzOyZ2KwLLOZ/7SIeMOfXWvm8UjZWHvHFEjG0TbP7/sXMQ8gMc5PKTQcbPdX6ALUqSckTB/4AvzwCpQhZnw01oMw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730847854; c=relaxed/simple;
-	bh=//V20indKmgf7C9J9/JlcUQ2ooGXHUvhXCVqQV7w4QA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IeH5viZA62kl/tA0RFEL5mXoiyi9bDAIIQRGhIFRD9SeFreI1WYdSEyX64uwmJvhSk8Fpmso9iIZcGXdqruUqeAJxufItdXUQ/uZPxu29rvd7q0f4dkw+KwguxJZGKrGeAieh5ocbEzL0vNheJ6VcSVSpXJziCHRwD2Pk9ZWLm4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=er5rEkg6; arc=none smtp.client-ip=209.85.166.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-il1-f171.google.com with SMTP id e9e14a558f8ab-3a3aeb19ea2so22419935ab.0;
-        Tue, 05 Nov 2024 15:04:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730847852; x=1731452652; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=FQtZxoc/EdMh+UvpSaz0TXXDGMSstjpIMHUo0smfcAs=;
-        b=er5rEkg6dJZoL5dBvqFT19CC2EQc8SFE2cmUh7QLqGfmkvnILyHZL/JFALR8olZdww
-         UyHNMZrHNrecadDcytzlumg/QN+kLHNB+vBvJswg4Add78FRHRaVVL5Fzl64qzPqOhV0
-         MJRtbDJSEcYFTOv0Hp7n33rT01Njc7XeuuxofXj3+e2vlZpPuA8CKslbbWjrIDHPMoMp
-         y17/8S6cwn05c2Zx9V+YuV/abKefH1mYOQEXtex6FiCiAfJpJPZ18k5xieS2tS6vKpEx
-         DK6bCdp/e2Mo7qmrdOpz//Du5nNVfGIL7sUJ9v7ldprlJvaom1dQdVBLdEb7eFK6VY0v
-         QxfA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730847852; x=1731452652;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=FQtZxoc/EdMh+UvpSaz0TXXDGMSstjpIMHUo0smfcAs=;
-        b=potVCqYE3EFu5eMNOPk/5ltBmwJlPK4q660H08e5pzWNAvRg8gEESXe57726L4lb8w
-         TpeQweGRyBLtf1wTWIXD9+pw4Y2pVa86K8PjxRAF3nG8tFHu4OYe18AOiPBV7464hrV5
-         I9vVKZvV2SbBsgSisytI9HpXwMkMPVmbF//seRfrltRZhUSicnxgiFpZplwXU7OljNJ1
-         KOBjzE7lTgK3b2Q/jLcoXly0ni1LHC7KthWW/Z6U69xkh46DufkOgr+gYK4fJdpIDD5T
-         CYijuD9a9aN+NFjQvicm/Z2EY7BWsgOvG+eOn88dQhcnF3EBWbQipm+lSSHnyf+UVE7i
-         w2Fw==
-X-Forwarded-Encrypted: i=1; AJvYcCWQv4mcBQPEWYA+lqMi63IZx6AkXFFYtqBZAh7zfQR382cl+vm8xVAdAvoSc85X2NC8/mbDisR7QVPT3a0=@vger.kernel.org, AJvYcCWf8D6T8eL3FVzaMKomStuZP9gA7Xcj8sX4usXJd9eqr9a068A/fXeNl3as0JL/u6H8oNjr5nWkh613rVM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzQKIEdURVDkIrvtVtp5hYoI6Rjove6jtY0Ml+OLEWkWG5BfRqC
-	nO54qQ2hokd9vnZigYXOMFZ9M5A4eKpC0VrFTWAz+CMYmXQinDLQp9/8aoUhImQ=
-X-Google-Smtp-Source: AGHT+IHtbapkF7BlMFXreX8/zweT9WEH4j4B1oUsWyiIIhq2efChsxKOmyrgklSveigASJUNEqrS2g==
-X-Received: by 2002:a05:6e02:1c28:b0:3a4:eb9b:650 with SMTP id e9e14a558f8ab-3a4ed2de153mr394679005ab.17.1730847852386;
-        Tue, 05 Nov 2024 15:04:12 -0800 (PST)
-Received: from localhost.localdomain (syn-047-227-172-032.res.spectrum.com. [47.227.172.32])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3a6a9a2a298sm30675815ab.56.2024.11.05.15.04.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Nov 2024 15:04:12 -0800 (PST)
-From: Chase Knowlden <haroldknowlden@gmail.com>
-To: laurent.pinchart@ideasonboard.com,
-	mchehab@kernel.org
-Cc: Chase Knowlden <haroldknowlden@gmail.com>,
-	linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] This is a test
-Date: Tue,  5 Nov 2024 18:03:49 -0500
-Message-ID: <20241105230350.74707-1-haroldknowlden@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1730847896; c=relaxed/simple;
+	bh=bDsqOE0h7DpVvro3xuFH5p1z7Y90lSI+b3Bzpdb+oqc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZOUs4TrD8gKSTWKG9TmnjtKGts9vptc/qNJdJlOmvrCLQb6ZpR0JEyZ0pWPeQhs9pAeg+FHuteNbhotqMxkGXh4OXDmjVQzWgc9fAkEpA644nyn/bLl+1CMlK9agmgc/O8u7js0m/3biZK6MmYbKK+dLqIfEmnOduuoBLhiTq/Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FGuzT5Bh; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730847894; x=1762383894;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=bDsqOE0h7DpVvro3xuFH5p1z7Y90lSI+b3Bzpdb+oqc=;
+  b=FGuzT5BhBR57OrNcTfAEZckAJAnoXu6/VRgcoBMrn2UTk1q7pcXTnK4y
+   u4eGhZUuFRX30Z7YfO8syyf2gCLIt7p0+6QtEL1zXwtdlkVuN6kJ6yftW
+   RyrqqkLTHAj6lryBQnP/Cq7Rac18uxNxSrZrFQN6Y58fLc7TPFmOWUSka
+   b4Npus0lvqPh37gMTVH+dqlvhofYFFULy4LZO2bX6SufmjYHluOgn0qcB
+   BSmG5iio5LwzkoAxKevHzphw5F3t/deaTU8+z/PPphuUbC83BfY8X/vqz
+   PKcKPD0U4a7lb/3xM/heCyRvdSSG2a/OC9calzqmDvcuDquMy8n6JrBrP
+   g==;
+X-CSE-ConnectionGUID: VtkUN+jkQc+/CFeobf5G+Q==
+X-CSE-MsgGUID: YgUVrgxHQrGiqO4psGA95Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11247"; a="42002975"
+X-IronPort-AV: E=Sophos;i="6.11,261,1725346800"; 
+   d="scan'208";a="42002975"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2024 15:04:54 -0800
+X-CSE-ConnectionGUID: 50ad3gzBR7OGb0pCBSFlmA==
+X-CSE-MsgGUID: vIfxekcdRq2AHLl+2kICEA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,261,1725346800"; 
+   d="scan'208";a="107531475"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by fmviesa002.fm.intel.com with ESMTP; 05 Nov 2024 15:04:51 -0800
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t8SbR-000mYd-0L;
+	Tue, 05 Nov 2024 23:04:49 +0000
+Date: Wed, 6 Nov 2024 07:04:22 +0800
+From: kernel test robot <lkp@intel.com>
+To: LECOINTRE Philippe <philippe.lecointre@thalesgroup.com>,
+	Lucas Stach <l.stach@pengutronix.de>,
+	Russell King <linux+etnaviv@armlinux.org.uk>,
+	Christian Gmeiner <christian.gmeiner@gmail.com>
+Cc: oe-kbuild-all@lists.linux.dev, David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	"etnaviv@lists.freedesktop.org" <etnaviv@lists.freedesktop.org>,
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	LENAIN Simon <simon.lenain@thalesgroup.com>,
+	BARBEAU Etienne <etienne.barbeau@thalesgroup.com>,
+	LEJEUNE Sebastien <sebastien.lejeune@thalesgroup.com>
+Subject: Re: [PATCH] drm/etnaviv: add optional reset support
+Message-ID: <202411060610.iIIdHXHP-lkp@intel.com>
+References: <0825fa6ad3954cda970b42c25b45fb0d@thalesgroup.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0825fa6ad3954cda970b42c25b45fb0d@thalesgroup.com>
 
-Signed-off-by: Chase Knowlden <haroldknowlden@gmail.com>
----
- drivers/media/usb/uvc/uvc_driver.c | 2 ++
- 1 file changed, 2 insertions(+)
+Hi LECOINTRE,
 
-diff --git a/drivers/media/usb/uvc/uvc_driver.c b/drivers/media/usb/uvc/uvc_driver.c
-index 0fac689c6350..58a32d27e508 100644
---- a/drivers/media/usb/uvc/uvc_driver.c
-+++ b/drivers/media/usb/uvc/uvc_driver.c
-@@ -2106,6 +2106,8 @@ static int uvc_probe(struct usb_interface *intf,
- 	int function;
- 	int ret;
- 
-+	pr_info("I changed uvcvideo driver in the Linux Kernel\n");
-+
- 	/* Allocate memory for the device and initialize it. */
- 	dev = kzalloc(sizeof(*dev), GFP_KERNEL);
- 	if (dev == NULL)
+kernel test robot noticed the following build errors:
+
+[auto build test ERROR on drm/drm-next]
+[also build test ERROR on drm-exynos/exynos-drm-next drm-misc/drm-misc-next linus/master drm-intel/for-linux-next drm-intel/for-linux-next-fixes drm-tip/drm-tip v6.12-rc6]
+[cannot apply to next-20241105]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/LECOINTRE-Philippe/drm-etnaviv-add-optional-reset-support/20241105-224118
+base:   git://anongit.freedesktop.org/drm/drm drm-next
+patch link:    https://lore.kernel.org/r/0825fa6ad3954cda970b42c25b45fb0d%40thalesgroup.com
+patch subject: [PATCH] drm/etnaviv: add optional reset support
+config: i386-buildonly-randconfig-003-20241106 (https://download.01.org/0day-ci/archive/20241106/202411060610.iIIdHXHP-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241106/202411060610.iIIdHXHP-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202411060610.iIIdHXHP-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   drivers/gpu/drm/etnaviv/etnaviv_gpu.c: In function 'etnaviv_gpu_platform_probe':
+>> drivers/gpu/drm/etnaviv/etnaviv_gpu.c:1900:9: error: implicit declaration of function 'irq_set_status_flags' [-Werror=implicit-function-declaration]
+    1900 |         irq_set_status_flags(gpu->irq, IRQ_NOAUTOEN);
+         |         ^~~~~~~~~~~~~~~~~~~~
+>> drivers/gpu/drm/etnaviv/etnaviv_gpu.c:1900:40: error: 'IRQ_NOAUTOEN' undeclared (first use in this function); did you mean 'IRQF_NO_AUTOEN'?
+    1900 |         irq_set_status_flags(gpu->irq, IRQ_NOAUTOEN);
+         |                                        ^~~~~~~~~~~~
+         |                                        IRQF_NO_AUTOEN
+   drivers/gpu/drm/etnaviv/etnaviv_gpu.c:1900:40: note: each undeclared identifier is reported only once for each function it appears in
+   cc1: all warnings being treated as errors
+
+
+vim +/irq_set_status_flags +1900 drivers/gpu/drm/etnaviv/etnaviv_gpu.c
+
+  1874	
+  1875	static int etnaviv_gpu_platform_probe(struct platform_device *pdev)
+  1876	{
+  1877		struct device *dev = &pdev->dev;
+  1878		struct etnaviv_gpu *gpu;
+  1879		int err;
+  1880	
+  1881		gpu = devm_kzalloc(dev, sizeof(*gpu), GFP_KERNEL);
+  1882		if (!gpu)
+  1883			return -ENOMEM;
+  1884	
+  1885		gpu->dev = &pdev->dev;
+  1886		mutex_init(&gpu->lock);
+  1887		mutex_init(&gpu->sched_lock);
+  1888	
+  1889		/* Map registers: */
+  1890		gpu->mmio = devm_platform_ioremap_resource(pdev, 0);
+  1891		if (IS_ERR(gpu->mmio))
+  1892			return PTR_ERR(gpu->mmio);
+  1893	
+  1894		/* Get Interrupt: */
+  1895		gpu->irq = platform_get_irq(pdev, 0);
+  1896		if (gpu->irq < 0)
+  1897			return gpu->irq;
+  1898	
+  1899		/* Avoid enabling the interrupt until everything is ready */
+> 1900		irq_set_status_flags(gpu->irq, IRQ_NOAUTOEN);
+  1901	
+  1902		err = devm_request_irq(&pdev->dev, gpu->irq, irq_handler, 0,
+  1903				       dev_name(gpu->dev), gpu);
+  1904		if (err) {
+  1905			dev_err(dev, "failed to request IRQ%u: %d\n", gpu->irq, err);
+  1906			return err;
+  1907		}
+  1908	
+  1909		/* Get Reset: */
+  1910		gpu->rst = devm_reset_control_get_optional(&pdev->dev, NULL);
+  1911		if (IS_ERR(gpu->rst))
+  1912			return dev_err_probe(dev, PTR_ERR(gpu->rst),
+  1913					     "failed to get reset\n");
+  1914	
+  1915		/* Get Clocks: */
+  1916		gpu->clk_reg = devm_clk_get_optional(&pdev->dev, "reg");
+  1917		DBG("clk_reg: %p", gpu->clk_reg);
+  1918		if (IS_ERR(gpu->clk_reg))
+  1919			return PTR_ERR(gpu->clk_reg);
+  1920	
+  1921		gpu->clk_bus = devm_clk_get_optional(&pdev->dev, "bus");
+  1922		DBG("clk_bus: %p", gpu->clk_bus);
+  1923		if (IS_ERR(gpu->clk_bus))
+  1924			return PTR_ERR(gpu->clk_bus);
+  1925	
+  1926		gpu->clk_core = devm_clk_get(&pdev->dev, "core");
+  1927		DBG("clk_core: %p", gpu->clk_core);
+  1928		if (IS_ERR(gpu->clk_core))
+  1929			return PTR_ERR(gpu->clk_core);
+  1930		gpu->base_rate_core = clk_get_rate(gpu->clk_core);
+  1931	
+  1932		gpu->clk_shader = devm_clk_get_optional(&pdev->dev, "shader");
+  1933		DBG("clk_shader: %p", gpu->clk_shader);
+  1934		if (IS_ERR(gpu->clk_shader))
+  1935			return PTR_ERR(gpu->clk_shader);
+  1936		gpu->base_rate_shader = clk_get_rate(gpu->clk_shader);
+  1937	
+  1938		/* TODO: figure out max mapped size */
+  1939		dev_set_drvdata(dev, gpu);
+  1940	
+  1941		/*
+  1942		 * We treat the device as initially suspended.  The runtime PM
+  1943		 * autosuspend delay is rather arbitary: no measurements have
+  1944		 * yet been performed to determine an appropriate value.
+  1945		 */
+  1946		pm_runtime_use_autosuspend(gpu->dev);
+  1947		pm_runtime_set_autosuspend_delay(gpu->dev, 200);
+  1948		pm_runtime_enable(gpu->dev);
+  1949	
+  1950		err = component_add(&pdev->dev, &gpu_ops);
+  1951		if (err < 0) {
+  1952			dev_err(&pdev->dev, "failed to register component: %d\n", err);
+  1953			return err;
+  1954		}
+  1955	
+  1956		return 0;
+  1957	}
+  1958	
+
 -- 
-2.43.0
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
