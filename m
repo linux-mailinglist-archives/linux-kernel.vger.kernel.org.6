@@ -1,124 +1,120 @@
-Return-Path: <linux-kernel+bounces-395836-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395835-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEDA59BC3B6
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 04:16:38 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA5659BC3B3
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 04:15:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 240BC282EE2
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 03:16:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 72656B215FA
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 03:15:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 464AD1836D9;
-	Tue,  5 Nov 2024 03:16:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30DB918132A;
+	Tue,  5 Nov 2024 03:15:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="huUzIyHY"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UE/R62T5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA20017E8E2;
-	Tue,  5 Nov 2024 03:16:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 858C336AEC
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 03:15:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730776589; cv=none; b=nFbLCpa0eg6N2AUyM0PH96jadzKUVzZOrm8N0jucBZMQgz4LxJEo739mlncbhRmGBcyMiFIdWJ2fhI/aSjuu0rjcA1Sw1a74Koz0otTGBo3w8rm3TZRRjx/l30Gd2pQFTf84LFOr0agrEWJk0SIKsMYgP/jhytvbOUnkXJ7denQ=
+	t=1730776550; cv=none; b=dS7EcP9N+6G73U2PuDVRSj3CMbKvLimstDje53TCvVjfI/zv0cTxCUSBxtE+TUyaP6ZV4lto/CL/72cpjUG4awfzatoDoCgCJLS12EA1Kg0GCsKKd5Ao1msQP8wPNR5aCAaSn3tKEawyoPmezIwTfxrwjZQ8A/Nkx4DjM9DoFK4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730776589; c=relaxed/simple;
-	bh=Gkdgtap+WGrNmIFh9egmYoxQOXi8kqEUmbNQbpOoSu0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AmDqvwu7nTdlscRhOjSRZutEE5xVE2xZPT6FwATfnZ7Q7nOBPIMSlxO5XzJCSV3iO5kFVd9Xdv5ICtZ1DKStV8XG85XKwYLNZRXdaj/CE/cRjl/4lMLO5avghnYT7OWa0XwZhMp+H8jtNfXd3PX6pmEELcKhVtnnaz/WF8mL8N0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=huUzIyHY; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730776588; x=1762312588;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Gkdgtap+WGrNmIFh9egmYoxQOXi8kqEUmbNQbpOoSu0=;
-  b=huUzIyHY9NX131kzwAeLZOtKHQYMrUBUV4GStGWE9fsXViBkM2EKSbna
-   DIZxE7QgRUZMuhpzewgvRZKkoKOtIy0Ji2V7er99kKIap3PHuk9ZJPYJU
-   nIoMD8pL4yYokZ4fwzj1AjvWc7XqhYOb27R57zo7H0rh5oNJ7qDH41+g+
-   7bZviQqIGP5qofVYQd8QTdgyQtOr9GkR/CpN3q8Y2ze2J2qGhcCLDYGLk
-   lt4+xeOhy+KA85B6JQdwUV0ewf1dk8uwAXAKXORXOPFxbJtfYV/6/gFuH
-   pPEBLrhxRyHjRtVHEfhdcemZVABJmXGOZckzvinephhYRaX2k/W13ciPb
-   Q==;
-X-CSE-ConnectionGUID: 7f3zyXRKSUunhI6qOxt+9g==
-X-CSE-MsgGUID: LqzWA6dURpytdP4z3urqwQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11246"; a="41133448"
-X-IronPort-AV: E=Sophos;i="6.11,258,1725346800"; 
-   d="scan'208";a="41133448"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2024 19:16:25 -0800
-X-CSE-ConnectionGUID: A3LxpHfLTxyyynGz22ImkA==
-X-CSE-MsgGUID: QFhkJ7DYRYOoFrnNfPHvvw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,258,1725346800"; 
-   d="scan'208";a="84187739"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by fmviesa010.fm.intel.com with ESMTP; 04 Nov 2024 19:15:02 -0800
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1t8A1y-000lXn-1m;
-	Tue, 05 Nov 2024 03:14:58 +0000
-Date: Tue, 5 Nov 2024 11:14:57 +0800
-From: kernel test robot <lkp@intel.com>
-To: Divya Koppera <divya.koppera@microchip.com>, andrew@lunn.ch,
-	arun.ramadoss@microchip.com, UNGLinuxDriver@microchip.com,
-	hkallweit1@gmail.com, linux@armlinux.org.uk, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	richardcochran@gmail.com
-Cc: oe-kbuild-all@lists.linux.dev
-Subject: Re: [PATCH net-next 5/5] net: phy: microchip_t1 : Add initialization
- of ptp for lan887x
-Message-ID: <202411051039.Yz1kJCOl-lkp@intel.com>
-References: <20241104090750.12942-6-divya.koppera@microchip.com>
+	s=arc-20240116; t=1730776550; c=relaxed/simple;
+	bh=DYXSN1MfpgZ26ekPgjplaJVj/lw8x307aYQ/0XgHtU4=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=puj26NjJIuRckMatk5/8MoUEwBuOxNOrz87pg5S9jEwCNO9OI2jrkVpM3/FLAQB3UHrqm2CZRKT3HR8mVBcNKp++IqOJlkLLRFIeREHHXuMXD8x1qTuzYATA985au23TLgDhbtkfo1EE45Y3rJgcO3Bb0Lh4c9kctYNhH8eCVxo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UE/R62T5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B3A1C4CECE;
+	Tue,  5 Nov 2024 03:15:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730776550;
+	bh=DYXSN1MfpgZ26ekPgjplaJVj/lw8x307aYQ/0XgHtU4=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=UE/R62T5BX+eGYvqU2C3kKQxv23yQeGzxoXHNj0A5co4FYMlLgbBAKJpLhhoimG0k
+	 848q6aHGWddZrz6PeXNmQxOK8ljcSi/kpNFuZQrzoZpFv/Icp7/+SmyUpDlIusAnA0
+	 NXkQXxvtGalBM8PiVpxmf+OOusB3fghfvEmeWd5ULKwP45k15+xIGJwlvzk57EwNyQ
+	 eq1S8L6mQn594GSEXddbhDWH+LUA7oMEqTPKVcZ3bOijwB62HNJZYRyVmD/AN7DTzt
+	 rLh1lq5prVqYZ/spSYxLcdJImlt0TGDMPQJ1xaIKNGWmMC1lAwKVzli8R11qlCEpCe
+	 L7EhCtYRVsoew==
+Message-ID: <888aaf87-1363-4c1f-bd95-d119c72d7b30@kernel.org>
+Date: Tue, 5 Nov 2024 11:15:45 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241104090750.12942-6-divya.koppera@microchip.com>
+User-Agent: Mozilla Thunderbird
+Cc: Chao Yu <chao@kernel.org>, linux-f2fs-devel@lists.sourceforge.net,
+ linux-kernel@vger.kernel.org, niuzhiguo84@gmail.com, ke.wang@unisoc.com,
+ Hao_hao.Wang@unisoc.com
+Subject: Re: [PATCH V2] f2fs: fix to adjust appropriate length for fiemap
+To: Zhiguo Niu <zhiguo.niu@unisoc.com>, jaegeuk@kernel.org
+References: <1730685372-2995-1-git-send-email-zhiguo.niu@unisoc.com>
+Content-Language: en-US
+From: Chao Yu <chao@kernel.org>
+In-Reply-To: <1730685372-2995-1-git-send-email-zhiguo.niu@unisoc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Divya,
+On 2024/11/4 9:56, Zhiguo Niu wrote:
+> If user give a file size as "length" parameter for fiemap
+> operations, but if this size is non-block size aligned,
+> it will show 2 segments fiemap results even this whole file
+> is contiguous on disk, such as the following results:
+> 
+>   ./f2fs_io fiemap 0 19034 ylog/analyzer.py
+> Fiemap: offset = 0 len = 19034
+>          logical addr.    physical addr.   length           flags
+> 0       0000000000000000 0000000020baa000 0000000000004000 00001000
+> 1       0000000000004000 0000000020bae000 0000000000001000 00001001
+> 
+> after this patch:
+> ./f2fs_io fiemap 0 19034 ylog/analyzer.py
+> Fiemap: offset = 0 len = 19034
+>      logical addr.    physical addr.   length           flags
+> 0    0000000000000000 00000000315f3000 0000000000005000 00001001
 
-kernel test robot noticed the following build warnings:
+Hi Zhiguo,
 
-[auto build test WARNING on net-next/main]
+Any testcase to reproduce this bug? w/o this patch, it looks output
+from fiemap looks fine?
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Divya-Koppera/net-phy-microchip_ptp-Add-header-file-for-Microchip-ptp-library/20241104-171132
-base:   net-next/main
-patch link:    https://lore.kernel.org/r/20241104090750.12942-6-divya.koppera%40microchip.com
-patch subject: [PATCH net-next 5/5] net: phy: microchip_t1 : Add initialization of ptp for lan887x
-config: x86_64-randconfig-121-20241105 (https://download.01.org/0day-ci/archive/20241105/202411051039.Yz1kJCOl-lkp@intel.com/config)
-compiler: clang version 19.1.3 (https://github.com/llvm/llvm-project ab51eccf88f5321e7c60591c5546b254b6afab99)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241105/202411051039.Yz1kJCOl-lkp@intel.com/reproduce)
+f2fs_io fiemap 0 19034 file
+Fiemap: offset = 0 len = 19034
+	logical addr.    physical addr.   length           flags
+0	0000000000000000 0000000004401000 0000000000005000 00001001
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202411051039.Yz1kJCOl-lkp@intel.com/
+Thanks,
 
-sparse warnings: (new ones prefixed by >>)
-   drivers/net/phy/microchip_t1.c: note: in included file:
->> drivers/net/phy/microchip_ptp.h:201:16: sparse: sparse: Using plain integer as NULL pointer
+> 
+> Signed-off-by: Zhiguo Niu <zhiguo.niu@unisoc.com>
+> ---
+> V2: correct commit msg according to Chao's questions
+> f2fs_io has been modified for testing, the length for fiemap is
+> real file size, not block number
+> ---
+>   fs/f2fs/data.c | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+> index 306b86b0..9fc229d 100644
+> --- a/fs/f2fs/data.c
+> +++ b/fs/f2fs/data.c
+> @@ -1966,8 +1966,8 @@ int f2fs_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
+>   			goto out;
+>   	}
+>   
+> -	if (bytes_to_blks(inode, len) == 0)
+> -		len = blks_to_bytes(inode, 1);
+> +	if (len & (blks_to_bytes(inode, 1) - 1))
+> +		len = round_up(len, blks_to_bytes(inode, 1));
+>   
+>   	start_blk = bytes_to_blks(inode, start);
+>   	last_blk = bytes_to_blks(inode, start + len - 1);
 
-vim +201 drivers/net/phy/microchip_ptp.h
-
-ca38715fe9dd46 Divya Koppera 2024-11-04  196  
-ca38715fe9dd46 Divya Koppera 2024-11-04  197  static inline struct mchp_ptp_clock *mchp_ptp_probe(struct phy_device *phydev,
-ca38715fe9dd46 Divya Koppera 2024-11-04  198  						    u8 mmd, u16 clk_base,
-ca38715fe9dd46 Divya Koppera 2024-11-04  199  						    u16 port_base)
-ca38715fe9dd46 Divya Koppera 2024-11-04  200  {
-ca38715fe9dd46 Divya Koppera 2024-11-04 @201  	return 0;
-ca38715fe9dd46 Divya Koppera 2024-11-04  202  }
-ca38715fe9dd46 Divya Koppera 2024-11-04  203  
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
