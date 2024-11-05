@@ -1,245 +1,293 @@
-Return-Path: <linux-kernel+bounces-395831-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395833-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6C149BC3A9
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 04:10:25 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F8429BC3AE
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 04:11:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0FC5A1C22029
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 03:10:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4EE0B2823F5
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 03:11:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1C3B15CD78;
-	Tue,  5 Nov 2024 03:10:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="itvJaTGM"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 018CC1714B6;
+	Tue,  5 Nov 2024 03:10:37 +0000 (UTC)
+Received: from mx0b-0064b401.pphosted.com (mx0b-0064b401.pphosted.com [205.220.178.238])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45B5F15C138
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 03:09:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DBA76A33B;
+	Tue,  5 Nov 2024 03:10:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.178.238
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730776199; cv=none; b=Gw9+cpvplXoN7Cr5fMDyyKJCkcQFvBHRN5yXwk5uE9+jHoHAX44HQM5Ot3Rtxf/seCZHnM52UTr5ZvAgKKFDDXg9HpawnMS+yp6e1Eig8bSopQ5VVYKI9Y3nrVOr7SmNUkqOZvsN6N049x+cH425b//ZfPsZwJ2UAylr5eZFxes=
+	t=1730776236; cv=none; b=FTkHijGbVn2BZj3p8x6Kqxqt/cW0a8TAmu9/LxdwqpO/mMSoRCbMvQr/loJdHrP4qfu8DrZrK21tcJGWqCwlKyQpsGq9M0OccsZVv5odliiyhVE8L4na8oD2eaR4CJYwDKZE7spHkcCM19YEt2jILVqmF8xihc3pni7qtJW4g6w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730776199; c=relaxed/simple;
-	bh=iJiqEI4jeiISFUYA5z9mrx3IXzLlVPZzv4h1oYlPJgI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SOvu9kqClGurNN/mZ+URWXrgpNdHxVQsAfMHe/UNIRLeWSSy5WkBJHNsLxNB8xbtMcvtiL1ASqvJUEeumvrhL8XqAx/WXmdlqsZfwBOUyRCkdfWpon6u0DyAJoPFlYhptTryzBu1SQsUZIlUiV3haViwJ1L5YsUXl8Ag7YYlbEo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=itvJaTGM; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1730776196;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=e798jqlARNKREu5f9NYLA+kZVVjz8QYT2h6TT0fZ7qY=;
-	b=itvJaTGMvq3pnNwJwXHX235F7FA/TuQiXyXlSYWmuaoHSJVjSrlQnOhXNma497nf6/IavG
-	eqYzJU2UH+BY6fAMGkIVsc1wGQb4kizJBQCSx9DmjuJY5DwS8COUMEMUKPSuI5UsKx9xGV
-	iy+4YvLROVopYnNDFOCFlCCThCLmmzs=
-Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com
- [209.85.216.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-500-kQrd7KR6OFGilbyia4rAog-1; Mon, 04 Nov 2024 22:09:55 -0500
-X-MC-Unique: kQrd7KR6OFGilbyia4rAog-1
-Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-2e2fc2b1ce1so5100628a91.0
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 19:09:54 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730776194; x=1731380994;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=e798jqlARNKREu5f9NYLA+kZVVjz8QYT2h6TT0fZ7qY=;
-        b=LpgVJGy1UCNc/2XefyiMMkNsRWGFRcj1PvVnRFEjgXJHy2VGLNN2q+lW2FNYhx7PC/
-         uhYwYJgUXtKJcV+IyKjKSe3QcKzvMouaPfIZTDIvfDKqTBSUy6Z8LYHiR2ewd/5Qg3wB
-         lrMhbbPnlRozu3P1IG0DXnp8lQc5bnPP0P1kLWJANgCgThZ93KXpfDRImxsj3deeGHt6
-         snWELU8j5MSaYnrvzZRxzfGkOQsZJYzj8nEvCdkrC3RQjqpQlHXjY/6yOEjCZFrLcDqY
-         9d9CJtY1/hYmXYYKdYClsmpBDRd/f+2Koy4d/sF2L3cp6M/JU3yduuU4h0gPus05D5n7
-         dIWw==
-X-Forwarded-Encrypted: i=1; AJvYcCWxxsOohSYgE3XhQcaZ7zSB0ze7yc9ksJYWoHuDAbedIdhxtyYsW0e9IO/bZVZmg9UPd19s7sJYyaNTBpI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YynXGDqvEsjb/ks85WRg5PfkzA7iXfbUwM6PFfqogcFRpRFhczq
-	bXujmlGYuTYt41iU7OgiAcmtRSsZh321sEkiuO6t5Xpj5RtHbCndkeczlqzhGxdw8t74sYQSGI4
-	KM2AvB6mEacWIHKK7ZWl8UCFCkCfzMC6SKgxRB+CaYSzsu3+gpHM0dcaNmw79vC7CDiQOeOhgLq
-	12RVmAh3GjTQXucSGH2d1Z0Iqvsne+24f5NhJ0
-X-Received: by 2002:a17:90a:bc87:b0:2d3:da6d:8330 with SMTP id 98e67ed59e1d1-2e92ce32e36mr24812065a91.4.1730776193977;
-        Mon, 04 Nov 2024 19:09:53 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGYJVUVsmrlOV42/z3JLwA/lW5WLQWpnOFROwOF4DJyTXxU3SnSQkWNTS+6YVqbPJsVSZBiin0tuQPsU4ebyy8=
-X-Received: by 2002:a17:90a:bc87:b0:2d3:da6d:8330 with SMTP id
- 98e67ed59e1d1-2e92ce32e36mr24812003a91.4.1730776193416; Mon, 04 Nov 2024
- 19:09:53 -0800 (PST)
+	s=arc-20240116; t=1730776236; c=relaxed/simple;
+	bh=25oeWFuoIWocaEkkD3V0Ha8+s29QJfJBFCSghi/3QTc=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=UlKVhYQpxG33cFix4sSH9oLDvRAWVylx/hXpuFwXWDwolbYebICrgYJstq9dzCBK2CBWOp+SH33mGWQPpqVkNLMDMCBwGi8SIE5qA61wlI3nJkMcifM70nn00nz4o32lS7hLuc+45v7qAKrBtQBVwIru3rI1LpWtV9clNOFix7o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=none smtp.client-ip=205.220.178.238
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
+Received: from pps.filterd (m0250812.ppops.net [127.0.0.1])
+	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A52WpUm029056;
+	Tue, 5 Nov 2024 03:10:29 GMT
+Received: from ala-exchng01.corp.ad.wrs.com (ala-exchng01.wrs.com [147.11.82.252])
+	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 42nb28afnk-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+	Tue, 05 Nov 2024 03:10:28 +0000 (GMT)
+Received: from ala-exchng01.corp.ad.wrs.com (147.11.82.252) by
+ ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Mon, 4 Nov 2024 19:10:27 -0800
+Received: from pek-lpd-ccm5.wrs.com (147.11.136.210) by
+ ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server id
+ 15.1.2507.39 via Frontend Transport; Mon, 4 Nov 2024 19:10:25 -0800
+From: Yun Zhou <yun.zhou@windriver.com>
+To: <mcgrof@kernel.org>, <kees@kernel.org>, <joel.granados@kernel.org>,
+        <mhiramat@kernel.org>, <mathieu.desnoyers@efficios.com>,
+        <yun.zhou@windriver.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+        <linux-trace-kernel@vger.kernel.org>
+Subject: [PATCH v2] kernel: add pid_max to pid_namespace
+Date: Tue, 5 Nov 2024 11:10:24 +0800
+Message-ID: <20241105031024.3866383-1-yun.zhou@windriver.com>
+X-Mailer: git-send-email 2.27.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241031030847.3253873-1-qiang4.zhang@linux.intel.com>
- <20241101015101.98111-1-qiang4.zhang@linux.intel.com> <CACGkMEtvrBRd8BaeUiR6bm1xVX4KUGa83s03tPWPHB2U0mYfLA@mail.gmail.com>
- <ZyRlC-5V_NTKgzXh@dev-qz>
-In-Reply-To: <ZyRlC-5V_NTKgzXh@dev-qz>
-From: Jason Wang <jasowang@redhat.com>
-Date: Tue, 5 Nov 2024 11:09:41 +0800
-Message-ID: <CACGkMEvc+eA7KdJJAtjNPwqve8CwLZYzAmMhf0RWwQ-GwonaUw@mail.gmail.com>
-Subject: Re: [PATCH v2] virtio: only reset device and restore status if needed
- in device resume
-To: Qiang Zhang <qiang4.zhang@linux.intel.com>
-Cc: "Michael S. Tsirkin" <mst@redhat.com>, Paolo Bonzini <pbonzini@redhat.com>, 
-	Stefan Hajnoczi <stefanha@redhat.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, Jens Axboe <axboe@kernel.dk>, 
-	Olivia Mackall <olivia@selenic.com>, Herbert Xu <herbert@gondor.apana.org.au>, 
-	Amit Shah <amit@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Gonglei <arei.gonglei@huawei.com>, 
-	"David S. Miller" <davem@davemloft.net>, Viresh Kumar <viresh.kumar@linaro.org>, 
-	"Chen, Jian Jun" <jian.jun.chen@intel.com>, Andi Shyti <andi.shyti@kernel.org>, 
-	Andrew Lunn <andrew+netdev@lunn.ch>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, 
-	"Martin K. Petersen" <martin.petersen@oracle.com>, David Hildenbrand <david@redhat.com>, 
-	Gerd Hoffmann <kraxel@redhat.com>, Anton Yakovlev <anton.yakovlev@opensynergy.com>, 
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Qiang Zhang <qiang4.zhang@intel.com>, 
-	virtualization@lists.linux.dev, linux-block@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org, 
-	linux-i2c@vger.kernel.org, netdev@vger.kernel.org, linux-scsi@vger.kernel.org, 
-	linux-sound@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Authority-Analysis: v=2.4 cv=CfNa56rl c=1 sm=1 tr=0 ts=67298ca4 cx=c_pps a=/ZJR302f846pc/tyiSlYyQ==:117 a=/ZJR302f846pc/tyiSlYyQ==:17 a=VlfZXiiP6vEA:10 a=t7CeM3EgAAAA:8 a=VwQbUJbxAAAA:8 a=Q_y-cLcJQs12tt3JvBMA:9 a=FdTzh2GWekK77mhwV6Dw:22
+X-Proofpoint-ORIG-GUID: uI7GLaIKgy391YtmvlckW-ZROhEnIAaK
+X-Proofpoint-GUID: uI7GLaIKgy391YtmvlckW-ZROhEnIAaK
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-11-04_22,2024-11-04_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 mlxlogscore=999
+ spamscore=0 bulkscore=0 lowpriorityscore=0 priorityscore=1501
+ malwarescore=0 adultscore=0 suspectscore=0 clxscore=1015 impostorscore=0
+ phishscore=0 classifier=spam authscore=0 adjust=0 reason=mlx scancount=1
+ engine=8.21.0-2409260000 definitions=main-2411050023
 
-On Fri, Nov 1, 2024 at 1:23=E2=80=AFPM Qiang Zhang <qiang4.zhang@linux.inte=
-l.com> wrote:
->
-> On Fri, Nov 01, 2024 at 10:11:11AM +0800, Jason Wang wrote:
-> > On Fri, Nov 1, 2024 at 9:54=E2=80=AFAM <qiang4.zhang@linux.intel.com> w=
-rote:
-> > >
-> > > From: Qiang Zhang <qiang4.zhang@intel.com>
-> > >
-> > > Virtio core unconditionally reset and restore status for all virtio
-> > > devices before calling restore method. This breaks some virtio driver=
-s
-> > > which don't need to do anything in suspend and resume because they
-> > > just want to keep device state retained.
-> >
-> > The challenge is how can driver know device doesn't need rest.
->
-> Hi,
->
-> Per my understanding to PM, in the suspend flow, device drivers need to
-> 1. First manage/stop accesses from upper level software and
-> 2. Store the volatile context into in-memory data structures.
-> 3. Put devices into some low power (suspended) state.
-> The resume process does the reverse.
-> If a device context won't loose after entering some low power state
-> (optional), it's OK to skip step 2.
->
-> For virtio devices, spec doesn't define whether their states will lost
-> after platform entering suspended state.
+It is necessary to have a different pid_max in different containers.
+For example, multiple containers are running on a host, one of which
+is Android, and its 32 bit bionic libc only accepts pid <= 65535. So
+it requires the global pid_max <= 65535. This will cause configuration
+conflicts with other containers and also limit the maximum number of
+tasks for the entire system.
 
-This is exactly what suspend patch tries to define.
+Signed-off-by: Yun Zhou <yun.zhou@windriver.com>
+---
+ - Remove sentinels from ctl_table arrays.
+v1 - https://lore.kernel.org/all/20241030052933.1041408-1-yun.zhou@windriver.com/
+---
+ include/linux/pid_namespace.h     |  1 +
+ kernel/pid.c                      | 12 +++++------
+ kernel/pid_namespace.c            | 34 ++++++++++++++++++++++++++-----
+ kernel/sysctl.c                   |  9 --------
+ kernel/trace/pid_list.c           |  2 +-
+ kernel/trace/trace.h              |  2 --
+ kernel/trace/trace_sched_switch.c |  2 +-
+ 7 files changed, 38 insertions(+), 24 deletions(-)
 
-> So to work with different
-> hypervisors, virtio drivers typically trigger a reset in suspend/resume
-> flow. This works fine for virtio devices if following conditions are met:
-> - Device state can be totally recoverable.
-> - There isn't any working behaviour expected in suspended state, i.e. the
->   suspended state should be sub-state of reset.
-> However, the first point may be hard to implement from driver side for so=
-me
-> devices. The second point may be unacceptable for some kind of devices.
->
-> For your question, for devices whose suspended state is alike reset state=
-,
-> the hypervisor have the flexibility to retain its state or not, kernel
-> driver can unconditionally reset it with proper re-initialization to
-> accomplish better compatibility. For others, hypervisor *must* retain
-> device state and driver just keeps using it.
-
-Right, so my question is how did the driver know the behaviour of a
-device? We usually do that via a feature bit.
-
-Note that the thing that matters here is the migration compatibility.
-
->
-> >
-> > For example, PCI has no_soft_reset which has been done in the commit
-> > "virtio: Add support for no-reset virtio PCI PM".
-> >
-> > And there's a ongoing long discussion of adding suspend support in the
-> > virtio spec, then driver know it's safe to suspend/resume without
-> > reset.
->
-> That's great! Hopefully it can fill the gap.
-> Currently, I think we can safely move the reset to drivers' freeze method=
-s,
-> virtio core has no reason to take it as a common action required by all
-> devices. And the reset operation can be optional skipped if driver have
-> hints from device that it can retain state.
-
-The problem here is whether the device can be resumed without "soft
-reset" seems a general feature which could be either the knowledge of
-
-1) virtio core (a feature bit or not)
-
-or
-
-2) transport layer (like PCI)
-
->
-> >
-> > >
-> > > Virtio GPIO is a typical example. GPIO states should be kept unchange=
-d
-> > > after suspend and resume (e.g. output pins keep driving the output) a=
-nd
-> > > Virtio GPIO driver does nothing in freeze and restore methods. But th=
-e
-> > > reset operation in virtio_device_restore breaks this.
-> >
-> > Is this mandated by GPIO or virtio spec? If yes, let's quote the revela=
-nt part.
->
-> No. But in actual hardware design (e.g. Intel PCH GPIO), or from the
-> requirement perspective, GPIO pin state can be (should support) retained
-> in suspended state.
-> If Virtio GPIO is used to let VM operate such physical GPIO chip indirect=
-ly,
-> it can't be reset in suspend and resume. Meanwhile the hypervisor will
-> retain pin states after suspension.
->
-> >
-> > >
-> > > Since some devices need reset in suspend and resume while some needn'=
-t,
-> > > create a new helper function for the original reset and status restor=
-e
-> > > logic so that virtio drivers can invoke it in their restore method
-> > > if necessary.
-> >
-> > How are those drivers classified?
->
-> I think this depends whether hypervisor will keep devices state in platfo=
-rm
-> suspend process.
-
-So the problem is that the actual implementation (hypervisor, physical
-device or mediation) is transparent to the driver. Driver needs a
-general way to know whether it's safe (or not) to reset during the
-suspend/resume.
-
-> I think hypervisor should because suspend and reset are
-> conceptually two different things.
-
-Probably, but rest is and doing software state load/save is common
-practice for devices that will lose their state during PM.
-
-Thanks
-
->
->
-> Thanks
-> Qiang
->
+diff --git a/include/linux/pid_namespace.h b/include/linux/pid_namespace.h
+index f9f9931e02d6..064cfe2542fc 100644
+--- a/include/linux/pid_namespace.h
++++ b/include/linux/pid_namespace.h
+@@ -38,6 +38,7 @@ struct pid_namespace {
+ 	struct ucounts *ucounts;
+ 	int reboot;	/* group exit code if this pidns was rebooted */
+ 	struct ns_common ns;
++	int pid_max;
+ #if defined(CONFIG_SYSCTL) && defined(CONFIG_MEMFD_CREATE)
+ 	int memfd_noexec_scope;
+ #endif
+diff --git a/kernel/pid.c b/kernel/pid.c
+index 2715afb77eab..f8026a61436b 100644
+--- a/kernel/pid.c
++++ b/kernel/pid.c
+@@ -60,8 +60,6 @@ struct pid init_struct_pid = {
+ 	}, }
+ };
+ 
+-int pid_max = PID_MAX_DEFAULT;
+-
+ int pid_max_min = RESERVED_PIDS + 1;
+ int pid_max_max = PID_MAX_LIMIT;
+ /*
+@@ -78,6 +76,7 @@ static u64 pidfs_ino = RESERVED_PIDS;
+  */
+ struct pid_namespace init_pid_ns = {
+ 	.ns.count = REFCOUNT_INIT(2),
++	.pid_max = PID_MAX_DEFAULT,
+ 	.idr = IDR_INIT(init_pid_ns.idr),
+ 	.pid_allocated = PIDNS_ADDING,
+ 	.level = 0,
+@@ -198,7 +197,7 @@ struct pid *alloc_pid(struct pid_namespace *ns, pid_t *set_tid,
+ 			tid = set_tid[ns->level - i];
+ 
+ 			retval = -EINVAL;
+-			if (tid < 1 || tid >= pid_max)
++			if (tid < 1 || tid >= tmp->pid_max)
+ 				goto out_free;
+ 			/*
+ 			 * Also fail if a PID != 1 is requested and
+@@ -238,7 +237,7 @@ struct pid *alloc_pid(struct pid_namespace *ns, pid_t *set_tid,
+ 			 * a partially initialized PID (see below).
+ 			 */
+ 			nr = idr_alloc_cyclic(&tmp->idr, NULL, pid_min,
+-					      pid_max, GFP_ATOMIC);
++					      tmp->pid_max, GFP_ATOMIC);
+ 		}
+ 		spin_unlock_irq(&pidmap_lock);
+ 		idr_preload_end();
+@@ -653,11 +652,12 @@ void __init pid_idr_init(void)
+ 	BUILD_BUG_ON(PID_MAX_LIMIT >= PIDNS_ADDING);
+ 
+ 	/* bump default and minimum pid_max based on number of cpus */
+-	pid_max = min(pid_max_max, max_t(int, pid_max,
++	init_pid_ns.pid_max = min(pid_max_max, max_t(int, init_pid_ns.pid_max,
+ 				PIDS_PER_CPU_DEFAULT * num_possible_cpus()));
+ 	pid_max_min = max_t(int, pid_max_min,
+ 				PIDS_PER_CPU_MIN * num_possible_cpus());
+-	pr_info("pid_max: default: %u minimum: %u\n", pid_max, pid_max_min);
++	pr_info("pid_max: default: %u minimum: %u\n", init_pid_ns.pid_max,
++			pid_max_min);
+ 
+ 	idr_init(&init_pid_ns.idr);
+ 
+diff --git a/kernel/pid_namespace.c b/kernel/pid_namespace.c
+index d70ab49d5b4a..a5a8254825d5 100644
+--- a/kernel/pid_namespace.c
++++ b/kernel/pid_namespace.c
+@@ -111,6 +111,7 @@ static struct pid_namespace *create_pid_namespace(struct user_namespace *user_ns
+ 	ns->user_ns = get_user_ns(user_ns);
+ 	ns->ucounts = ucounts;
+ 	ns->pid_allocated = PIDNS_ADDING;
++	ns->pid_max = parent_pid_ns->pid_max;
+ #if defined(CONFIG_SYSCTL) && defined(CONFIG_MEMFD_CREATE)
+ 	ns->memfd_noexec_scope = pidns_memfd_noexec_scope(parent_pid_ns);
+ #endif
+@@ -280,19 +281,44 @@ static int pid_ns_ctl_handler(const struct ctl_table *table, int write,
+ 
+ 	return ret;
+ }
++#endif	/* CONFIG_CHECKPOINT_RESTORE */
++
++static int pid_max_ns_ctl_handler(const struct ctl_table *table, int write,
++		void *buffer, size_t *lenp, loff_t *ppos)
++{
++	struct pid_namespace *pid_ns = task_active_pid_ns(current);
++	struct ctl_table tmp = *table;
++
++	if (write && !checkpoint_restore_ns_capable(pid_ns->user_ns))
++		return -EPERM;
++
++	tmp.data = &pid_ns->pid_max;
++	if (pid_ns->parent)
++		tmp.extra2 = &pid_ns->parent->pid_max;
++
++	return proc_dointvec_minmax(&tmp, write, buffer, lenp, ppos);
++}
+ 
+-extern int pid_max;
+ static struct ctl_table pid_ns_ctl_table[] = {
++#ifdef CONFIG_CHECKPOINT_RESTORE
+ 	{
+ 		.procname = "ns_last_pid",
+ 		.maxlen = sizeof(int),
+ 		.mode = 0666, /* permissions are checked in the handler */
+ 		.proc_handler = pid_ns_ctl_handler,
+ 		.extra1 = SYSCTL_ZERO,
+-		.extra2 = &pid_max,
++		.extra2 = &init_pid_ns.pid_max,
+ 	},
+-};
+ #endif	/* CONFIG_CHECKPOINT_RESTORE */
++	{
++		.procname = "pid_max",
++		.maxlen = sizeof(int),
++		.mode = 0644,
++		.proc_handler = pid_max_ns_ctl_handler,
++		.extra1 = &pid_max_min,
++		.extra2 = &pid_max_max,
++	},
++};
+ 
+ int reboot_pid_ns(struct pid_namespace *pid_ns, int cmd)
+ {
+@@ -449,9 +475,7 @@ static __init int pid_namespaces_init(void)
+ {
+ 	pid_ns_cachep = KMEM_CACHE(pid_namespace, SLAB_PANIC | SLAB_ACCOUNT);
+ 
+-#ifdef CONFIG_CHECKPOINT_RESTORE
+ 	register_sysctl_init("kernel", pid_ns_ctl_table);
+-#endif
+ 
+ 	register_pid_ns_sysctl_table_vm();
+ 	return 0;
+diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+index 79e6cb1d5c48..676a0d675e7f 100644
+--- a/kernel/sysctl.c
++++ b/kernel/sysctl.c
+@@ -1804,15 +1804,6 @@ static struct ctl_table kern_table[] = {
+ 		.proc_handler	= proc_dointvec,
+ 	},
+ #endif
+-	{
+-		.procname	= "pid_max",
+-		.data		= &pid_max,
+-		.maxlen		= sizeof (int),
+-		.mode		= 0644,
+-		.proc_handler	= proc_dointvec_minmax,
+-		.extra1		= &pid_max_min,
+-		.extra2		= &pid_max_max,
+-	},
+ 	{
+ 		.procname	= "panic_on_oops",
+ 		.data		= &panic_on_oops,
+diff --git a/kernel/trace/pid_list.c b/kernel/trace/pid_list.c
+index 4966e6bbdf6f..c62b9b3cfb3d 100644
+--- a/kernel/trace/pid_list.c
++++ b/kernel/trace/pid_list.c
+@@ -414,7 +414,7 @@ struct trace_pid_list *trace_pid_list_alloc(void)
+ 	int i;
+ 
+ 	/* According to linux/thread.h, pids can be no bigger that 30 bits */
+-	WARN_ON_ONCE(pid_max > (1 << 30));
++	WARN_ON_ONCE(init_pid_ns.pid_max > (1 << 30));
+ 
+ 	pid_list = kzalloc(sizeof(*pid_list), GFP_KERNEL);
+ 	if (!pid_list)
+diff --git a/kernel/trace/trace.h b/kernel/trace/trace.h
+index c866991b9c78..e51851d64e4d 100644
+--- a/kernel/trace/trace.h
++++ b/kernel/trace/trace.h
+@@ -715,8 +715,6 @@ extern unsigned long tracing_thresh;
+ 
+ /* PID filtering */
+ 
+-extern int pid_max;
+-
+ bool trace_find_filtered_pid(struct trace_pid_list *filtered_pids,
+ 			     pid_t search_pid);
+ bool trace_ignore_this_task(struct trace_pid_list *filtered_pids,
+diff --git a/kernel/trace/trace_sched_switch.c b/kernel/trace/trace_sched_switch.c
+index 8a407adb0e1c..c20c80abe065 100644
+--- a/kernel/trace/trace_sched_switch.c
++++ b/kernel/trace/trace_sched_switch.c
+@@ -442,7 +442,7 @@ int trace_alloc_tgid_map(void)
+ 	if (tgid_map)
+ 		return 0;
+ 
+-	tgid_map_max = pid_max;
++	tgid_map_max = init_pid_ns.pid_max;
+ 	map = kvcalloc(tgid_map_max + 1, sizeof(*tgid_map),
+ 		       GFP_KERNEL);
+ 	if (!map)
+-- 
+2.27.0
 
 
