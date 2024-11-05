@@ -1,54 +1,57 @@
-Return-Path: <linux-kernel+bounces-397187-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397188-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B722C9BD7CB
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 22:48:18 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CACE9BD7CC
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 22:49:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AA1381C22B8A
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 21:48:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DFFA6284015
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 21:49:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBDDA215F4C;
-	Tue,  5 Nov 2024 21:48:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00A3C215F4C;
+	Tue,  5 Nov 2024 21:49:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V2B6GeWq"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L4qwKwd2"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 428181802AB
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 21:48:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 545F11802AB
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 21:49:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730843293; cv=none; b=SC/5HcZHGiqdtrc5SeahSjZeubUygEm5xzpi1MWPg2YRliYCut+fZry/2QviTLC8mUx2TzXGvuPi0/YpNinJ+slWy1vUCOpAaBl1Ng2ZzNwPIBLCuP2eleQl7gUH4ai5xqTzcKCM+VCUb4p6VZ7s7uGWQgAmnBlOqxlBT4QMxJE=
+	t=1730843346; cv=none; b=kfdYeCd9HlHLc+CqlW+MDjJjd5/8rF0JlSI695GuZd9jYRoX2HSmtDde7L/buYRXJxcZUCMMDNQbqvVT9X2cfGYFl5Cthe7Rfv3X4LcquAe3fED7zePaASpwNqzsssVL0H3AW2wMwdhs9vM2lofFON7xcnUK5wNIRFFRksP0Q9Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730843293; c=relaxed/simple;
-	bh=vNp358KKfXPLnOBHtwMo5lXXGz7NwzAexBHZziciLv8=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=oAH00DwUdY/8F3qkpWzPcmaI28VxOomb/DG9NmF7KbDYr5dmfLfSlbQvYehSoI93gZNaOQIwP4LSarj6K6D69F49GQz825wAo07iAjwvAcDVdHKopVjlmOEk4qEvhGvwCZABXNSw/zxxDc0uZ2aRBRPdrGcW4eR+9X8ZWSSJW2k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V2B6GeWq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6E07C4CECF;
-	Tue,  5 Nov 2024 21:48:12 +0000 (UTC)
+	s=arc-20240116; t=1730843346; c=relaxed/simple;
+	bh=gqleNOsl+VNeYX3SpJsFnUI/2zaqR394U+8Yf7uik6M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=j71jrXnC6oNXWN+qWGtf2BKi1zcc+eGv40d10tpKTJcxgHePvbSu+rzDKgNc46CBq3DSvuFuccC3a5yDVHIrFkGsxq0HBEUzehCYQn6Is9X+mgpWOuy4XCsWgp6+x8svYktB/NHYdjjFPft3W0eYEdNRS8Zv97uxSl6U0vPQSzo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L4qwKwd2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C16BCC4CED3;
+	Tue,  5 Nov 2024 21:49:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730843292;
-	bh=vNp358KKfXPLnOBHtwMo5lXXGz7NwzAexBHZziciLv8=;
-	h=Date:From:To:Cc:Subject:From;
-	b=V2B6GeWqyDoYxdXHVflQ3TC9X4JJeSh3PloVrMoli1TzQ1/WaUm2F/WSTPKEZonTs
-	 lQSuP5mbR+VxEiEeRYY6h7ywoXgJj6uHmV3vYOsIrop2I/yBMzCLfLr4RcIOUuQTQH
-	 1w/tCMsmY1A7vBph6gzLdRLyg8yE3++EgLP3AHvgEqCWWOPTadH+ADaWwENgrlw/xe
-	 /tQ1z9WyvD2wXktWkpGO920iIo5OggyxFtuLnXH2Xy39AS4BnaJGWXWMP2DlhUsUVI
-	 e9Hs9Y3xFb8/D6PEsQdp+no4Gknj4cFmoguGeFwMa6JnR94Ojy78ANw3b36hBH6RQp
-	 qgExXgpHfyO3g==
-Date: Tue, 5 Nov 2024 11:48:11 -1000
+	s=k20201202; t=1730843345;
+	bh=gqleNOsl+VNeYX3SpJsFnUI/2zaqR394U+8Yf7uik6M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=L4qwKwd2Xqna7JiI7Ni+aVsT89CTis1YuthIXZd1SW30b8xIA/3GINNdIjekZTvev
+	 dPjAGBhgJ0zzNsLOm54i8odQmcsGowi9AhNMWPLn7A3jdWIyr90LGJLVJ320Uxzaow
+	 9zCDFzIvjEYuGTa2GVCIhCfSNGdW4xBu2X6oqDBG82mxHckyKIM2VmwePdcDfQKycw
+	 feoALJMYuLJw4rXcPZWi/vnBnd8WOQIUBZ8126O9bvzeqE9ehXFkPtWvIstn/4UVxT
+	 B3iC2WhqENDVXAsGslJ7oqnoHYS0+tf2OsWz9ePX8MvcQqzygCD89Ae6sOcpjRou/x
+	 pIyp7O04beY4A==
+Date: Tue, 5 Nov 2024 11:49:04 -1000
 From: Tejun Heo <tj@kernel.org>
 To: David Vernet <void@manifault.com>
 Cc: linux-kernel@vger.kernel.org, kernel-team@meta.com, sched-ext@meta.com,
 	Andrea Righi <arighi@nvidia.com>,
-	Changwoo Min <multics69@gmail.com>
-Subject: [PATCH sched_ext/for-6.13 1/2] sched_ext: Avoid live-locking bypass
- mode switching
-Message-ID: <ZyqSm4B4NuzuHEbp@slm.duckdns.org>
+	Changwoo Min <multics69@gmail.com>,
+	Douglas Anderson <dianders@chromium.org>,
+	Andrew Morton <akpm@linux-foundation.org>
+Subject: [PATCH sched_ext/for-6.13 2/2] sched_ext: Enable the ops breather
+ and eject BPF scheduler on softlockup
+Message-ID: <ZyqS0GP9h2hG2lvC@slm.duckdns.org>
+References: <ZyqSm4B4NuzuHEbp@slm.duckdns.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,136 +60,144 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <ZyqSm4B4NuzuHEbp@slm.duckdns.org>
 
-A poorly behaving BPF scheduler can live-lock the system by e.g. incessantly
-banging on the same DSQ on a large NUMA system to the point where switching
-to the bypass mode can take a long time. Turning on the bypass mode requires
-dequeueing and re-enqueueing currently runnable tasks, if the DSQs that they
-are on are live-locked, this can take tens of seconds cascading into other
-failures. This was observed on 2 x Intel Sapphire Rapids machines with 224
-logical CPUs.
+On 2 x Intel Sapphire Rapids machines with 224 logical CPUs, a poorly
+behaving BPF scheduler can live-lock the system by making multiple CPUs bang
+on the same DSQ to the point where soft-lockup detection triggers before
+SCX's own watchdog can take action. It also seems possible that the machine
+can be live-locked enough to prevent scx_ops_helper, which is an RT task,
+from running in a timely manner.
 
-Inject artifical delays while the bypass mode is switching to guarantee
-timely completion.
+Implement scx_softlockup() which is called when three quarters of
+soft-lockup threshold has passed. The function immediately enables the ops
+breather and triggers an ops error to initiate ejection of the BPF
+scheduler.
 
-While at it, move __scx_ops_bypass_lock into scx_ops_bypass() and rename it
-to bypass_lock.
+The previous and this patch combined enable the kernel to reliably recover
+the system from live-lock conditions that can be triggered by a poorly
+behaving BPF scheduler on Intel dual socket systems.
 
 Signed-off-by: Tejun Heo <tj@kernel.org>
-Reported-by: Valentin Andrei <vandrei@meta.com>
-Reported-by: Patrick Lu <patlu@meta.com>
+Cc: Douglas Anderson <dianders@chromium.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>
 ---
- kernel/sched/ext.c |   55 ++++++++++++++++++++++++++++++++++++++++++++++++++---
- 1 file changed, 52 insertions(+), 3 deletions(-)
+ include/linux/sched/ext.h         |    2 +
+ kernel/sched/ext.c                |   45 ++++++++++++++++++++++++++++++++++++++
+ kernel/watchdog.c                 |    8 ++++++
+ tools/sched_ext/scx_show_state.py |    2 +
+ 4 files changed, 57 insertions(+)
 
+--- a/include/linux/sched/ext.h
++++ b/include/linux/sched/ext.h
+@@ -205,11 +205,13 @@ struct sched_ext_entity {
+ 
+ void sched_ext_free(struct task_struct *p);
+ void print_scx_info(const char *log_lvl, struct task_struct *p);
++void scx_softlockup(u32 dur_s);
+ 
+ #else	/* !CONFIG_SCHED_CLASS_EXT */
+ 
+ static inline void sched_ext_free(struct task_struct *p) {}
+ static inline void print_scx_info(const char *log_lvl, struct task_struct *p) {}
++static inline void scx_softlockup(u32 dur_s) {}
+ 
+ #endif	/* CONFIG_SCHED_CLASS_EXT */
+ #endif	/* _LINUX_SCHED_EXT_H */
 --- a/kernel/sched/ext.c
 +++ b/kernel/sched/ext.c
-@@ -867,8 +867,8 @@ static DEFINE_MUTEX(scx_ops_enable_mutex
+@@ -867,6 +867,7 @@ static DEFINE_MUTEX(scx_ops_enable_mutex
  DEFINE_STATIC_KEY_FALSE(__scx_ops_enabled);
  DEFINE_STATIC_PERCPU_RWSEM(scx_fork_rwsem);
  static atomic_t scx_ops_enable_state_var = ATOMIC_INIT(SCX_OPS_DISABLED);
-+static atomic_t scx_ops_breather_depth = ATOMIC_INIT(0);
++static unsigned long scx_in_softlockup;
+ static atomic_t scx_ops_breather_depth = ATOMIC_INIT(0);
  static int scx_ops_bypass_depth;
--static DEFINE_RAW_SPINLOCK(__scx_ops_bypass_lock);
  static bool scx_ops_init_task_enabled;
- static bool scx_switching_all;
- DEFINE_STATIC_KEY_FALSE(__scx_switched_all);
-@@ -2474,11 +2474,48 @@ static struct rq *move_task_between_dsqs
- 	return dst_rq;
+@@ -4556,6 +4557,49 @@ bool task_should_scx(struct task_struct
  }
  
-+/*
-+ * A poorly behaving BPF scheduler can live-lock the system by e.g. incessantly
-+ * banging on the same DSQ on a large NUMA system to the point where switching
-+ * to the bypass mode can take a long time. Inject artifical delays while the
-+ * bypass mode is switching to guarantee timely completion.
+ /**
++ * scx_softlockup - sched_ext softlockup handler
++ *
++ * On some multi-socket setups (e.g. 2x Intel 8480c), the BPF scheduler can
++ * live-lock the system by making many CPUs target the same DSQ to the point
++ * where soft-lockup detection triggers. This function is called from
++ * soft-lockup watchdog when the triggering point is close and tries to unjam
++ * the system by enabling the breather and aborting the BPF scheduler.
 + */
-+static void scx_ops_breather(struct rq *rq)
++void scx_softlockup(u32 dur_s)
 +{
-+	u64 until;
++	switch (scx_ops_enable_state()) {
++	case SCX_OPS_ENABLING:
++	case SCX_OPS_ENABLED:
++		break;
++	default:
++		return;
++	}
 +
-+	lockdep_assert_rq_held(rq);
-+
-+	if (likely(!atomic_read(&scx_ops_breather_depth)))
++	/* allow only one instance, cleared at the end of scx_ops_bypass() */
++	if (test_and_set_bit(0, &scx_in_softlockup))
 +		return;
 +
-+	raw_spin_rq_unlock(rq);
-+
-+	until = ktime_get_ns() + NSEC_PER_MSEC;
-+
-+	do {
-+		int cnt = 1024;
-+		while (atomic_read(&scx_ops_breather_depth) && --cnt)
-+			cpu_relax();
-+	} while (atomic_read(&scx_ops_breather_depth) &&
-+		 time_before64(ktime_get_ns(), until));
-+
-+	raw_spin_rq_lock(rq);
-+}
-+
- static bool consume_dispatch_q(struct rq *rq, struct scx_dispatch_q *dsq)
- {
- 	struct task_struct *p;
- retry:
- 	/*
-+	 * This retry loop can repeatedly race against scx_ops_bypass()
-+	 * dequeueing tasks from @dsq trying to put the system into the bypass
-+	 * mode. On some multi-socket machines (e.g. 2x Intel 8480c), this can
-+	 * live-lock the machine into soft lockups. Give a breather.
-+	 */
-+	scx_ops_breather(rq);
++	printk_deferred(KERN_ERR "sched_ext: Soft lockup - CPU%d stuck for %us, disabling \"%s\"\n",
++			smp_processor_id(), dur_s, scx_ops.name);
 +
 +	/*
- 	 * The caller can't expect to successfully consume a task if the task's
- 	 * addition to @dsq isn't guaranteed to be visible somehow. Test
- 	 * @dsq->list without locking and skip if it seems empty.
-@@ -4550,10 +4587,11 @@ bool task_should_scx(struct task_struct
-  */
- static void scx_ops_bypass(bool bypass)
- {
-+	static DEFINE_RAW_SPINLOCK(bypass_lock);
- 	int cpu;
- 	unsigned long flags;
- 
--	raw_spin_lock_irqsave(&__scx_ops_bypass_lock, flags);
-+	raw_spin_lock_irqsave(&bypass_lock, flags);
- 	if (bypass) {
- 		scx_ops_bypass_depth++;
- 		WARN_ON_ONCE(scx_ops_bypass_depth <= 0);
-@@ -4566,6 +4604,8 @@ static void scx_ops_bypass(bool bypass)
- 			goto unlock;
- 	}
- 
++	 * Some CPUs may be trapped in the dispatch paths. Enable breather
++	 * immediately; otherwise, we might even be able to get to
++	 * scx_ops_bypass().
++	 */
 +	atomic_inc(&scx_ops_breather_depth);
 +
- 	/*
- 	 * No task property is changing. We just need to make sure all currently
- 	 * queued tasks are re-queued according to the new scx_rq_bypassing()
-@@ -4621,8 +4661,10 @@ static void scx_ops_bypass(bool bypass)
- 		/* resched to restore ticks and idle state */
- 		resched_cpu(cpu);
- 	}
++	scx_ops_error("soft lockup - CPU#%d stuck for %us",
++		      smp_processor_id(), dur_s);
++}
 +
-+	atomic_dec(&scx_ops_breather_depth);
++static void scx_clear_softlockup(void)
++{
++	if (test_and_clear_bit(0, &scx_in_softlockup))
++		atomic_dec(&scx_ops_breather_depth);
++}
++
++/**
+  * scx_ops_bypass - [Un]bypass scx_ops and guarantee forward progress
+  *
+  * Bypassing guarantees that all runnable tasks make forward progress without
+@@ -4665,6 +4709,7 @@ static void scx_ops_bypass(bool bypass)
+ 	atomic_dec(&scx_ops_breather_depth);
  unlock:
--	raw_spin_unlock_irqrestore(&__scx_ops_bypass_lock, flags);
-+	raw_spin_unlock_irqrestore(&bypass_lock, flags);
+ 	raw_spin_unlock_irqrestore(&bypass_lock, flags);
++	scx_clear_softlockup();
  }
  
  static void free_exit_info(struct scx_exit_info *ei)
-@@ -6275,6 +6317,13 @@ static bool scx_dispatch_from_dsq(struct
- 		raw_spin_rq_lock(src_rq);
- 	}
+--- a/kernel/watchdog.c
++++ b/kernel/watchdog.c
+@@ -644,6 +644,14 @@ static int is_softlockup(unsigned long t
+ 		    need_counting_irqs())
+ 			start_counting_irqs();
  
-+	/*
-+	 * If the BPF scheduler keeps calling this function repeatedly, it can
-+	 * cause similar live-lock conditions as consume_dispatch_q(). Insert a
-+	 * breather if necessary.
-+	 */
-+	scx_ops_breather(src_rq);
++		/*
++		 * A poorly behaving BPF scheduler can live-lock the system into
++		 * soft lockups. Tell sched_ext to try ejecting the BPF
++		 * scheduler when close to a soft lockup.
++		 */
++		if (time_after_eq(now, period_ts + get_softlockup_thresh() * 3 / 4))
++			scx_softlockup(now - touch_ts);
 +
- 	locked_rq = src_rq;
- 	raw_spin_lock(&src_dsq->lock);
- 
-
+ 		/* Warn about unreasonable delays. */
+ 		if (time_after(now, period_ts + get_softlockup_thresh()))
+ 			return now - touch_ts;
+--- a/tools/sched_ext/scx_show_state.py
++++ b/tools/sched_ext/scx_show_state.py
+@@ -35,6 +35,8 @@ print(f'enabled       : {read_static_key
+ print(f'switching_all : {read_int("scx_switching_all")}')
+ print(f'switched_all  : {read_static_key("__scx_switched_all")}')
+ print(f'enable_state  : {ops_state_str(enable_state)} ({enable_state})')
++print(f'in_softlockup : {prog["scx_in_softlockup"].value_()}')
++print(f'breather_depth: {read_atomic("scx_ops_breather_depth")}')
+ print(f'bypass_depth  : {prog["scx_ops_bypass_depth"].value_()}')
+ print(f'nr_rejected   : {read_atomic("scx_nr_rejected")}')
+ print(f'enable_seq    : {read_atomic("scx_enable_seq")}')
 
