@@ -1,192 +1,162 @@
-Return-Path: <linux-kernel+bounces-396664-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396665-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B75229BD040
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 16:19:36 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 039D29BD042
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 16:20:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7583F2835A8
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 15:19:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 820301F21F6A
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 15:20:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 860311D27B1;
-	Tue,  5 Nov 2024 15:19:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65EF11D90B4;
+	Tue,  5 Nov 2024 15:20:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b="OhlMF6/O"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="btW4Nx8Y"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0161C3BB21
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 15:19:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D1573BB21
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 15:20:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730819968; cv=none; b=ZreeQ26AzTaPweR1Js854fwEu11LvEZSa+gXkMmnXBUnVUNEqtx44K3piA+1jdAmhIIO8tXS69SsDkyg8KJWFqCsfWSx3v3/1I8QxXEu6mkxlZpqf/sfK0NflT5W1ziwzCYFm+KKg/n2CyEChodcXVUR0cOKykBciDYgC/voSqE=
+	t=1730820025; cv=none; b=R9ZLV9tuwnSd9E0uIhpXfXmJuLiA7OqyrGbeGVnFIeDXymZdsEqPxKLjgDG5jRiKay/J/FIKUgst4IbDQRXc/vByPgFSj82g9ydJCLajPg15NO1zafmSLFN85O0doQvDBfXATutPUb9H8vUOo6bps4KcUq+IB//WESOP80X+dkA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730819968; c=relaxed/simple;
-	bh=b2oiIwfG8NP0Yfzt1TlTAIYmJEoTNS8ZQpQCPPVGu4g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JfQtaNm+06q7LHivW4W20geQDegQ1ZQ1A0w6nQrj4LP+LoeB6OPqt/R85Of3Bc2N+NWDCr5H4jcEmEBVY2CtEncJHJvXfE3+7OrVbVlt4sjRZLGWy6M9QsUD8qkGQH1qvfQOruo3mOPo7OkJWhaH9L5Nfr3Go6hGPMu1Tk1Z45k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com; spf=pass smtp.mailfrom=cloud.com; dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b=OhlMF6/O; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloud.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5cb615671acso3323518a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 07:19:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=citrix.com; s=google; t=1730819965; x=1731424765; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=SIxEK75x/go35G1NjXNPJ93+dyIRrfy/YekIQ/KzVl8=;
-        b=OhlMF6/OgXgrPlMe0w9ZHiqXr7F+ChjkzUBd2mnjWP5Og7vxR869XmU5O6/PO8sHNX
-         WjMCDI5pccOkv693k8ZpTYdqMG+kGcOvm59puEiLL+uuIWb5S/RHaZ+VT7zFNcHzZNcA
-         4ClXqYOc2iIy4f3BPNnRQT0esrSab6AEPIbpE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730819965; x=1731424765;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SIxEK75x/go35G1NjXNPJ93+dyIRrfy/YekIQ/KzVl8=;
-        b=Wg3QkneaXTlCoIJXxkYgKmhV095w1A+U1kkrY6eWhdDcDsDRwCvHck99RswoFDRE4Q
-         p037dt4Zy3pkpC+ebsx3qbidk6mcbVJqMzU8nd9LomTNjJdXtC1p8iukJ4B2pybTfgss
-         /17fVFAUXmcyvm+EZl5iiNRHTxZg+4XCiWVwvuKVVoepRTtrRv7Y9XAbPC4LXETeNT51
-         D8INrw3jTh/rxBwH/0qa/1H33yA79gm+x9VgmZ9H3qkkHL3n4WuoGwOlCX2cxxRz0ulE
-         H4SWgNdhFoRIgNw6AQEyJfz31uEy/t4g2S1LiPstPObS2lZYMiarGeLqVlw8hyPsGoxY
-         MZBQ==
-X-Gm-Message-State: AOJu0YyFN1lGnO9qGyti2VBxSNPN3B8oxTLt1wLWYM9nvMGUE57PVaP7
-	+20oD6OC7fwxVbtCnZKnVY0rgcBqxuP3JbiJOQZ6XhPts/zIg68GdH6P1LNb0xU=
-X-Google-Smtp-Source: AGHT+IEcF2TIoWYjfUVPIUikHiw7tct5aNYFMeMK0t16cmEB1Pa1/c2tAh5ftTAF/YJTrH50uwHs4A==
-X-Received: by 2002:a05:6402:d0b:b0:5ce:b733:2ac7 with SMTP id 4fb4d7f45d1cf-5ceb937e6dfmr14893489a12.29.1730819965236;
-        Tue, 05 Nov 2024 07:19:25 -0800 (PST)
-Received: from [10.125.226.166] ([185.25.67.249])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cee6b0fc4dsm1427225a12.84.2024.11.05.07.19.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 05 Nov 2024 07:19:24 -0800 (PST)
-Message-ID: <ea88e0d2-2ada-40e6-9bca-06a598dba70d@citrix.com>
-Date: Tue, 5 Nov 2024 15:19:23 +0000
+	s=arc-20240116; t=1730820025; c=relaxed/simple;
+	bh=YanKKXkoKhuQbw+Q+AphYa/RjRvIZKnx7zdhP3E98N8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=u3/H5B942UO0OaeBx7yBvkPSFl/oB86w/1sHEpHmE0R9JismXwkvuZuOYS5RGm5A/vzqsL0xQv7NXEN+S+aHdPXpiQ1qmX/pj2ETSunmUZGtYPg8U7z/zSXu0aUcUpB4UFdRnjTENv+90za5XmygIK5/InhkxxxeyClna9kNvtg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=btW4Nx8Y; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1730820023;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BPJAWO0y3Fo1Qrzd7BTp7ngrbG856tbrQ3ZCeLlErTQ=;
+	b=btW4Nx8Y1NDhLp7f4N/QO6Wc9YaMODTz+g60cKv0vw77hDQ/cN+G3DxENsN7S3V9grIVBa
+	1YElWWVR5DRYFUtXOiSvmzRny+D7qFjp6C09lMwGHlP/QnhbTxQP1JB2yBg0NNho/lzLI6
+	jWT9eXsKbRO/AhmpCOcghQ0OvpYe0H8=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-465-lJnmK1AxMSC0Bw-3XCSSkg-1; Tue,
+ 05 Nov 2024 10:20:21 -0500
+X-MC-Unique: lJnmK1AxMSC0Bw-3XCSSkg-1
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 62B0D19560A2;
+	Tue,  5 Nov 2024 15:20:18 +0000 (UTC)
+Received: from pauld.westford.csb (unknown [10.22.64.146])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A1AC73000198;
+	Tue,  5 Nov 2024 15:20:13 +0000 (UTC)
+Date: Tue, 5 Nov 2024 10:20:10 -0500
+From: Phil Auld <pauld@redhat.com>
+To: Mike Galbraith <efault@gmx.de>
+Cc: Peter Zijlstra <peterz@infradead.org>, mingo@redhat.com,
+	juri.lelli@redhat.com, vincent.guittot@linaro.org,
+	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+	mgorman@suse.de, vschneid@redhat.com, linux-kernel@vger.kernel.org,
+	kprateek.nayak@amd.com, wuyun.abel@bytedance.com,
+	youssefesmat@chromium.org, tglx@linutronix.de
+Subject: Re: [PATCH 17/24] sched/fair: Implement delayed dequeue
+Message-ID: <20241105152010.GA33795@pauld.westford.csb>
+References: <20241101124715.GA689589@pauld.westford.csb>
+ <20241101125659.GY14555@noisy.programming.kicks-ass.net>
+ <20241101133822.GC689589@pauld.westford.csb>
+ <20241101142649.GX9767@noisy.programming.kicks-ass.net>
+ <20241101144225.GD689589@pauld.westford.csb>
+ <a59a1a99b7807d9937e424881c262ba7476d8b6b.camel@gmx.de>
+ <20241101200704.GE689589@pauld.westford.csb>
+ <59355fae66255a92f2cbc4d7ed38368ff3565140.camel@gmx.de>
+ <20241104130515.GB749675@pauld.westford.csb>
+ <1bffa5f2ca0fec8a00f84ffab86dc6e8408af31c.camel@gmx.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5/8] x86/traps: Cleanup and robustify decode_bug()
-To: Peter Zijlstra <peterz@infradead.org>, x86@kernel.org
-Cc: linux-kernel@vger.kernel.org, alyssa.milburn@intel.com,
- scott.d.constable@intel.com, joao@overdrivepizza.com, jpoimboe@kernel.org,
- alexei.starovoitov@gmail.com, ebiggers@kernel.org, samitolvanen@google.com,
- kees@kernel.org
-References: <20241105113901.348320374@infradead.org>
- <20241105114522.285032152@infradead.org>
-Content-Language: en-GB
-From: Andrew Cooper <andrew.cooper3@citrix.com>
-Autocrypt: addr=andrew.cooper3@citrix.com; keydata=
- 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
- 6+ahAA==
-In-Reply-To: <20241105114522.285032152@infradead.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1bffa5f2ca0fec8a00f84ffab86dc6e8408af31c.camel@gmx.de>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-On 05/11/2024 11:39 am, Peter Zijlstra wrote:
-> --- a/arch/x86/kernel/traps.c
-> +++ b/arch/x86/kernel/traps.c
-> @@ -110,24 +117,37 @@ __always_inline int decode_bug(unsigned
->  		return BUG_NONE;
->  
->  	v = *(u8 *)(addr++);
-> -	if (v == SECOND_BYTE_OPCODE_UD2)
-> +	if (v == SECOND_BYTE_OPCODE_UD2) {
-> +		*len = addr - start;
->  		return BUG_UD2;
-> +	}
->  
-> -	if (!IS_ENABLED(CONFIG_UBSAN_TRAP) || v != SECOND_BYTE_OPCODE_UD1)
-> +	if (v != SECOND_BYTE_OPCODE_UD1)
->  		return BUG_NONE;
->  
-> -	/* Retrieve the immediate (type value) for the UBSAN UD1 */
-> -	v = *(u8 *)(addr++);
-> -	if (X86_MODRM_RM(v) == 4)
-> -		addr++;
-> -
->  	*imm = 0;
-> -	if (X86_MODRM_MOD(v) == 1)
-> -		*imm = *(u8 *)addr;
-> -	else if (X86_MODRM_MOD(v) == 2)
-> -		*imm = *(u32 *)addr;
-> -	else
-> -		WARN_ONCE(1, "Unexpected MODRM_MOD: %u\n", X86_MODRM_MOD(v));
-> +	v = *(u8 *)(addr++);		/* ModRM */
-> +
-> +	/* Decode immediate, if present */
-> +	if (X86_MODRM_MOD(v) != 3) {
-> +		if (X86_MODRM_RM(v) == 4)
-> +			addr++;		/* Skip SIB byte */
-> +
-> +		if (X86_MODRM_MOD(v) == 1) {
-> +			*imm = *(s8 *)addr;
-> +			addr += 1;
-> +
-> +		} else if (X86_MODRM_MOD(v) == 2) {
-> +			*imm = *(s32 *)addr;
-> +			addr += 4;
-> +		}
-> +	}
-> +
-> +	/* record instruction length */
-> +	*len = addr - start;
+On Tue, Nov 05, 2024 at 05:05:12AM +0100 Mike Galbraith wrote:
+> On Mon, 2024-11-04 at 08:05 -0500, Phil Auld wrote:
+> > On Sat, Nov 02, 2024 at 05:32:14AM +0100 Mike Galbraith wrote:
+> >
+> > >
+> > > The buddy being preempted certainly won't be wakeup migrated...
+> >
+> > Not the waker who gets preempted but the wakee may be a bit more
+> > sticky on his current cpu and thus stack more since he's still
+> > in that runqueue.
+> 
+> Ah, indeed, if wakees don't get scraped off before being awakened, they
+> can and do miss chances at an idle CPU according to trace_printk().
+> 
+> I'm undecided if overall it's boon, bane or even matters, as there is
+> still an ample supply of wakeup migration, but seems it can indeed
+> inject wakeup latency needlessly, so <sharpens stick>...
+> 
+> My box booted and neither become exceptionally noisy nor inexplicably
+> silent in.. oh, minutes now, so surely yours will be perfectly fine.
+> 
+> After one minute of lightly loaded box browsing, trace_printk() said:
+> 
+>   645   - racy peek says there is a room available
+>    11   - cool, reserved room is free
+>   206   - no vacancy or wakee pinned
+> 38807   - SIS accommodates room seeker
+> 
+> The below should improve the odds, but high return seems unlikely.
+>
 
-`ud1 0(%rip),%eax` has something to say about this length calculation[1].
+Thanks, I'll give it a spin with the nr_cpus_allowed bit.
 
-You need the Mod = 0, RM = 5 case wired into addr += 4 without filling
-in imm.
 
-~Andrew
+Cheers,
+Phil
 
-[1] or maybe you've got something rude to say about those of us who
-encode instructions like that...[2]
-[2] It's perhaps fortunate that decode_bug() doesn't know what a REX
-prefix is.
+
+
+> ---
+>  kernel/sched/core.c |    9 ++++++++-
+>  1 file changed, 8 insertions(+), 1 deletion(-)
+> 
+> --- a/kernel/sched/core.c
+> +++ b/kernel/sched/core.c
+> @@ -3790,7 +3790,13 @@ static int ttwu_runnable(struct task_str
+>  	rq = __task_rq_lock(p, &rf);
+>  	if (task_on_rq_queued(p)) {
+>  		update_rq_clock(rq);
+> -		if (p->se.sched_delayed)
+> +		/*
+> +		 * If wakee is mobile and the room it reserved is occupied, let it try to migrate.
+> +		 */
+> +		if (p->se.sched_delayed && rq->nr_running > 1 && cpumask_weight(p->cpus_ptr) > 1) {
+> +			dequeue_task(rq, p, DEQUEUE_SLEEP | DEQUEUE_DELAYED | DEQUEUE_NOCLOCK);
+> +			goto out_unlock;
+> +		} else if (p->se.sched_delayed)
+>  			enqueue_task(rq, p, ENQUEUE_NOCLOCK | ENQUEUE_DELAYED);
+>  		if (!task_on_cpu(rq, p)) {
+>  			/*
+> @@ -3802,6 +3808,7 @@ static int ttwu_runnable(struct task_str
+>  		ttwu_do_wakeup(p);
+>  		ret = 1;
+>  	}
+> +out_unlock:
+>  	__task_rq_unlock(rq, &rf);
+> 
+>  	return ret;
+> 
+> 
+
+-- 
+
 
