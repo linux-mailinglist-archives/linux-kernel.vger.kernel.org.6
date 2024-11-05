@@ -1,103 +1,85 @@
-Return-Path: <linux-kernel+bounces-397283-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397284-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DA039BD9DF
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 00:47:06 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DCCBE9BD9E9
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 00:51:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A907AB21C70
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 23:47:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 850D01F21EC9
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 23:51:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FB32216A08;
-	Tue,  5 Nov 2024 23:46:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08331216A25;
+	Tue,  5 Nov 2024 23:51:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bYFYfG1K"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="og/KMys6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 812B41D1748
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 23:46:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62F5F1D1748;
+	Tue,  5 Nov 2024 23:51:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730850416; cv=none; b=EbSTZRzT7tuKmEqn9SgRvnHXglS2uwwoFLtmM/NQ5rifJJRrJ+YSszzzuDaMjwOlDInGC3D7A6MHqbRz6osUGsg06+XPJjoIpjSz7qsuImL1LzhyyyYPDhhUmqKgUFaTkgXqy1GYgTQTeOK87GFAdtSL2nCEH2KbCrmo1KiuEWw=
+	t=1730850661; cv=none; b=T4gQGRdUlivJVe3DkSh8aBj3JdZNgYUhpTjqXevALqDa9Xfte42yxtJY2v0ReyEU0cMmvpv436YCDk2jk/qk9nIK21CNzV1+2w0WKMLqWgNR/nZ0xL/cStVj6AEcWokkTLBqT8YbgoJs7yMiC0mui+Ebj/O3vxLWHDmHH2AZv8A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730850416; c=relaxed/simple;
-	bh=RiWBHEfrgM51BbChyMF3AhTN4dXXQKkZTpzLUcsdi48=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=qz4Q6LIMwhXgLhHrbG8rElyGlx1Cr+UWrMTRSIRNIRWXFbRd0N6HjdZN/GhbV7gL2sT2IX8c/Ch2EdGI6WKp8kylXIjlCbDFEtLLHhI78OaPDWbMgWJMrr38qu+CVDuQJ8qI4JQU+Mmg5LY3858M//WCL30sgH3rFGECdguWgZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bYFYfG1K; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730850415; x=1762386415;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=RiWBHEfrgM51BbChyMF3AhTN4dXXQKkZTpzLUcsdi48=;
-  b=bYFYfG1K2SZIAA6OkdJLl0Db/Th+kji9/kNODuvEYw/teHa22TghEnvT
-   lZv31VsZHDlYSZEv/WpWiBRFsI9UlI/FfrRNom43i//8M+1F1TO2Uv8c3
-   V2fGHBaRdVS1VUrE73Pt0uw8olXYViCZPgw53WTkHewagawoWVLHsV49W
-   5RcyR9LIY3dAr5cRtl1rwYx1bF4/x/ySxPwCalG1GTHYWrXjhgfVmJ5V0
-   BCDpyXfwAkQ3uWcerMFzc171D6EoSvNiV+f6p/mMuyheQ/6eB1Y/4KuhI
-   X53L9HGSJgR5wyzB9BkBBnybETlR1rwm6sIdUcmiQuLT5cj6huBqlrpxC
-   Q==;
-X-CSE-ConnectionGUID: S5oqG+FuRrSaM+kJjEbIaQ==
-X-CSE-MsgGUID: 43l3mmdCTBCPzjFJf/2j/A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11247"; a="30036987"
-X-IronPort-AV: E=Sophos;i="6.11,261,1725346800"; 
-   d="scan'208";a="30036987"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2024 15:46:55 -0800
-X-CSE-ConnectionGUID: xOHTqc2BQpyJJelOFQUh9Q==
-X-CSE-MsgGUID: kipk/S0cTkGdmai7TCe27w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,261,1725346800"; 
-   d="scan'208";a="88724730"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by fmviesa005.fm.intel.com with ESMTP; 05 Nov 2024 15:46:53 -0800
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1t8TG7-000mcZ-05;
-	Tue, 05 Nov 2024 23:46:51 +0000
-Date: Wed, 6 Nov 2024 07:46:14 +0800
-From: kernel test robot <lkp@intel.com>
-To: KP Singh <kpsingh@kernel.org>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-kernel@vger.kernel.org, Paul Moore <paul@paul-moore.com>,
-	Casey Schaufler <casey@schaufler-ca.com>,
-	Kees Cook <keescook@chromium.org>
-Subject: ld.lld: error: address (0xffff8000815b0000) of section '.init.data'
- does not converge
-Message-ID: <202411060736.acyzNp9T-lkp@intel.com>
+	s=arc-20240116; t=1730850661; c=relaxed/simple;
+	bh=OPO1yTXECQWsGZggWo9SfTv9ya4ac6dTnocqFqdbdfI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WCqJfNTgsDbR9ybFE3n0e8aXFRjMvE18PZUvA0Vaz7A9ZnADiq1z3wpFX5Ahot5beCqodjb0sqSfEk0re1eLUPWzYvYtFIj27767Pc9E6bmGIqfQMkeKemmN0IwUgIBU2DC9kiLpJHXQI9GRt5/dyfxx5nftdhoVfPptKz9CoNM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=og/KMys6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3ECA9C4CED1;
+	Tue,  5 Nov 2024 23:51:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730850661;
+	bh=OPO1yTXECQWsGZggWo9SfTv9ya4ac6dTnocqFqdbdfI=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=og/KMys6CfnPuXiPtZHnkMUi3TcYRwT67ys1DvXc/7p72kvxEuRRi+qhb1OFzug59
+	 84Nde4GaNq7cDsDNrDDPstl68WTnn79xNUF7irV6SvHFkoxmnnU4v6HmbdNS2F0mvr
+	 y7AGGUmmaJVfTo7paRLBg9gMW9vUYbZRz53NWYrR3gmVJfWA9GXxlsbLKpTkzcb8zF
+	 rXb+CQE5RAl8aJHxVik08o4XrykMLa9iJUumrCz2yVWZ4PY9Gg72uyqF5n1J9cwVUB
+	 ZKr/imwfRsFU0IW5hw4amJKL1Yl3p4N5gUH0BkfeKYywfq9vW9paFO8iOzRcyX08M5
+	 6JV7qkzrDCUQQ==
+Received: by mail-il1-f182.google.com with SMTP id e9e14a558f8ab-3a3aeb19ea2so22545085ab.0;
+        Tue, 05 Nov 2024 15:51:01 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVTUlh7rucl6XH9f/B7lBuAvv2b4tM+JiiWeOBq5o8GDNw9BDUSxJHEGA5QnzAmet+3sr8rHGCR2WEjluo=@vger.kernel.org, AJvYcCVhH2spA3Cd1SUoXMC2DfVsW6NtgQpq+8M6q0zOwmWWtK20XOoZc+y/bbuIwHEOLRAEgxSVgkLHb7ezHQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzCErgVhht0lT0Q+eHweREKk50noud3dakbERiF1dzb5DWfW2rD
+	08P69uYAako/hTu+a4KJt7SMFHyPyc1H2fQG5MFAhuEiqLXwzSAmDRrBdUeVMFsCJU8sqt7Vjd5
+	BO1rXOZDqPw6vnyuEsi203EXX+ck=
+X-Google-Smtp-Source: AGHT+IFLXgpj+Wnq5NKz2FkJgxIWuKfKb4zYsCWA+wM5btLp0AW/So+5GmGSZyH+PGdVQmwwF7qtlERqKoAzXTpLxjU=
+X-Received: by 2002:a05:6e02:1a25:b0:3a6:c023:7e35 with SMTP id
+ e9e14a558f8ab-3a6c0237f0amr112682925ab.8.1730850660678; Tue, 05 Nov 2024
+ 15:51:00 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20241031033114.3845582-1-yukuai1@huaweicloud.com>
+In-Reply-To: <20241031033114.3845582-1-yukuai1@huaweicloud.com>
+From: Song Liu <song@kernel.org>
+Date: Tue, 5 Nov 2024 15:50:49 -0800
+X-Gmail-Original-Message-ID: <CAPhsuW5jEycXAxad5xLWEpT7-+nAqE_pZWM60ewESiHTPqb7VA@mail.gmail.com>
+Message-ID: <CAPhsuW5jEycXAxad5xLWEpT7-+nAqE_pZWM60ewESiHTPqb7VA@mail.gmail.com>
+Subject: Re: [PATCH RESEND 0/7] md: enhance faulty checking for blocked handling
+To: Yu Kuai <yukuai1@huaweicloud.com>
+Cc: mariusz.tkaczyk@intel.com, linux-raid@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, yukuai3@huawei.com, yi.zhang@huawei.com, 
+	yangerkun@huawei.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   2e1b3cc9d7f790145a80cb705b168f05dab65df2
-commit: 417c5643cd67a55f424b203b492082035d0236c3 lsm: replace indirect LSM hook calls with static calls
-date:   3 months ago
-config: arm64-randconfig-003-20241106 (https://download.01.org/0day-ci/archive/20241106/202411060736.acyzNp9T-lkp@intel.com/config)
-compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 639a7ac648f1e50ccd2556e17d401c04f9cce625)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241106/202411060736.acyzNp9T-lkp@intel.com/reproduce)
+On Wed, Oct 30, 2024 at 8:34=E2=80=AFPM Yu Kuai <yukuai1@huaweicloud.com> w=
+rote:
+>
+> From: Yu Kuai <yukuai3@huawei.com>
+>
+> Why resend?
+>  - fix a wrong condition in patch 2;
+>  - the md-6.13 branch will have to update;
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202411060736.acyzNp9T-lkp@intel.com/
+Applied to md-6.13. Thanks!
 
-All errors (new ones prefixed by >>):
-
->> ld.lld: error: address (0xffff8000815b0000) of section '.init.data' does not converge
-   ld.lld: error: assignment to symbol __init_end does not converge
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Song
 
