@@ -1,82 +1,81 @@
-Return-Path: <linux-kernel+bounces-396601-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396602-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 286D19BCF48
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 15:29:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 13D529BCF52
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 15:30:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E1FBA283B01
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 14:29:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD188283212
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 14:30:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 662151D9A42;
-	Tue,  5 Nov 2024 14:29:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CD1A1D90B1;
+	Tue,  5 Nov 2024 14:30:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WZumpCcL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="cck1OR2O"
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C877C1D8E05
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 14:29:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA6DB1D63C9;
+	Tue,  5 Nov 2024 14:30:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730816977; cv=none; b=pWkhU7nojA8ka+99yySuAgnXZEvv5dd18eHkdPgC47NnMWUfFybHrgSedd1gh+lEelDphEWsSbSwI2ZfeVvBDQhMHtgfSoBZz/Mqggovrhjc7KNyVnNxdP+vR2h6fskMoIY/Hi3Hib2dTPli0+a42zcoScKmAxLIYiuHrW+s3pM=
+	t=1730817041; cv=none; b=esx0Kv4Xauo/y4jX2BPD8SjUjRC1gwA4dkk5jQHi0crS9OkRwu5hXFfHqPRZb+oyFis2cbHYO/g9EKXEQ3ZnVO0twTCjArsKImkXiObvbGH6sLL72J5fm1WYCpJvPzeVD9Qged743y6sjUsZbJp92L5mKSch4Yw9bOgy5G34DQg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730816977; c=relaxed/simple;
-	bh=5HG0O3i3jJ+7ACrk1vsMhIIIYXyuF/rravbA/KQ+20A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dzGyRHv9fSkFGjKFlP0cntzTFKEDjn7FiHBKq8mUiJezELyg9aInejNqUp6OD8kzsvLpbgx+5cCfFQ4QmZNTQmyJoywcfoCQbaNC7aXDUM7eaFk8+KlZDd/NvkvwFu7e1zXXeKCN39e+reIamKzgmru7gG0Pbj4aEoDsO7QI1L4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WZumpCcL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5CFAC4CECF;
-	Tue,  5 Nov 2024 14:29:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730816977;
-	bh=5HG0O3i3jJ+7ACrk1vsMhIIIYXyuF/rravbA/KQ+20A=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WZumpCcL5Dtt8A9EuvhOEXqdoLdz7adMZlPpH1XuGQ8fmu/fcOcQ4Kb7TJQDdebf/
-	 zcGi12vNG3WGAop6VcUNTOi8I1CpwbDTE0ypId9o+PhYuWIXN/f8ht1F3EYpdXrl79
-	 U+fJB6myGPfyd/aHiIUA4HRC42ehvoSyIiENaJf5lR+tkl6RdCz3T3b0CruaZu2SA3
-	 eIXgD93P/S7MhAredao6fTQqan1FanLn4ey3GQ1d0AghihYdLDM/IvuywQ4B0HxccD
-	 PZznxyfQmPgYZtr1BG5G6VAjsnyjo+6BRGHYBywdt4j9OYwPehVZPKjMkg6p415cCG
-	 Tsn973poWWePA==
-Date: Tue, 5 Nov 2024 15:29:33 +0100
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	Anna-Maria Behnsen <anna-maria@linutronix.de>,
-	John Stultz <jstultz@google.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-	Eric Biederman <ebiederm@xmission.com>,
-	Oleg Nesterov <oleg@redhat.com>
-Subject: Re: [patch V7 20/21] alarmtimers: Remove the throttle mechanism from
- alarm_forward_now()
-Message-ID: <ZyorzSqvanKmFEy2@2a01cb09803abb1ce3ad97aed0fef98f.ipv6.abo.wanadoo.fr>
-References: <20241105063544.565410398@linutronix.de>
- <20241105064214.252443020@linutronix.de>
+	s=arc-20240116; t=1730817041; c=relaxed/simple;
+	bh=CBRfOK5MVuu1VOeCfFE21ByiY5axrelCzOMYMXG1WHQ=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Hr1qZNSouTqazy1yp6N6ihqUQ/bzNgOkgOYrBJ3AB7FQevOiluP7cacqQbmKShO32ILXJBX+g0fXtRPlF9mPjnm9lHBn5c5GWI2E3xjKn6n9x6AfkSc2huoV2Tm2qcGuXCcCLdQKZ+cgS7KT0tWoryhYIWeLIqh0d8OX8KPOiLI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=cck1OR2O; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net C7AE942C0D
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1730817039; bh=CBRfOK5MVuu1VOeCfFE21ByiY5axrelCzOMYMXG1WHQ=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=cck1OR2OepfgIySTEiT28NrTd3gazM/zlYi63Db0Xg1yq49nHWenxj2XjY5Rl4g6U
+	 scg8CDx2jJ1qfUbHYAHABXc8/HIJUjkjwASISkuIzQ97BJ6DyoKL+xEsAm3LwxNyRs
+	 CQQX5U6t3n0oz9mDGNVqamgcb1EIcNwdIkoAkmG/sxGro7znYnRJknVmsFLGxX6PZt
+	 NAaelrtQmom6gkSbi5lDV1sWf8LeWEV0ju5GYFNSO5MvjQCx0A/SKtSbHpfECx3EpZ
+	 LCNgA7g0aArHZQkHBO7a2JtTo5zZUVjiNFUcsr1TDOeMKrQgDdpmzSaCdb62d3ie0W
+	 vFfGyA+Vdkv7w==
+Received: from localhost (unknown [IPv6:2601:280:5e00:625::1fe])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ms.lwn.net (Postfix) with ESMTPSA id C7AE942C0D;
+	Tue,  5 Nov 2024 14:30:38 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: Mathieu Poirier <mathieu.poirier@linaro.org>, anish kumar
+ <yesanishhere@gmail.com>
+Cc: andersson@kernel.org, linux-kernel@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-remoteproc@vger.kernel.org, kernel test
+ robot <lkp@intel.com>
+Subject: Re: [PATCH 0/3] Documentation: remoteproc: update various sections
+In-Reply-To: <CANLsYkxKteXHMvG3GfPOKz1G_NfQV8D0D4JxYeF0ZmiYv=Mviw@mail.gmail.com>
+References: <20241105004749.83424-1-yesanishhere@gmail.com>
+ <CANLsYkxKteXHMvG3GfPOKz1G_NfQV8D0D4JxYeF0ZmiYv=Mviw@mail.gmail.com>
+Date: Tue, 05 Nov 2024 07:30:38 -0700
+Message-ID: <875xp17nxt.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241105064214.252443020@linutronix.de>
+Content-Type: text/plain
 
-Le Tue, Nov 05, 2024 at 09:14:56AM +0100, Thomas Gleixner a écrit :
-> From: Thomas Gleixner <tglx@linutronix.de>
-> 
-> Now that ignored posix timer signals are requeued and the timers are
-> rearmed on signal delivery the workaround to keep such timers alive and
-> self rearm them is not longer required.
-> 
-> Remove the unused alarm timer parts.
-> 
-> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-> Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Mathieu Poirier <mathieu.poirier@linaro.org> writes:
 
-Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
+> On Mon, 4 Nov 2024 at 17:47, anish kumar <yesanishhere@gmail.com> wrote:
+
+>> Hopefully this time around, I have not messed up
+>> patches. I have created three patches.
+>
+> And the patchset version?
+
+Also, please include the cover-letter text with each posting.
+
+jon
 
