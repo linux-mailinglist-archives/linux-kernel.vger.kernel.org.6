@@ -1,80 +1,107 @@
-Return-Path: <linux-kernel+bounces-397014-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397015-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52AFC9BD5A4
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 20:06:00 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5AA19BD5A5
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 20:07:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B73B3B2192C
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 19:05:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 67CE02844AF
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 19:07:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FE7E1EABD6;
-	Tue,  5 Nov 2024 19:05:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 561B61EBA09;
+	Tue,  5 Nov 2024 19:07:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LUQCkz3M"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=tycho.pizza header.i=@tycho.pizza header.b="XjUd9H0H";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="hutAm7G1"
+Received: from fhigh-a8-smtp.messagingengine.com (fhigh-a8-smtp.messagingengine.com [103.168.172.159])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3DBA1E2007
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 19:05:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24FDB1E3796;
+	Tue,  5 Nov 2024 19:07:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.159
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730833549; cv=none; b=Yb5pv/035JuZ9/Q9Dhwh7Bd7VufVije7LmYWTsKueq/KQmT706eSnxXQHpVteucoyN4moTzsZY6ejSixXtvp3sGFzjBJRHMnMr2PIaUsHEzlSW2ezj/k+wntJQJA034ZktS+m/0ceKTEOdwTUPaBYsTu+0mCL9RhlKyhAfTBneY=
+	t=1730833632; cv=none; b=G55ClKvf17GIrV6G0x/Wi3KCudNH3q9T162ZSJvhDYdd+gjrvzOQ1sqfdCFTGQAa7qcH5WA4/utWKkmVStzz0oYCeuOTc7nZVlgZefNSIa0FQO5jmmLHth+chK+wosrhLBr11JN7fp5sLLU+r6g19TFMves6J0p03rpbSExfbRA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730833549; c=relaxed/simple;
-	bh=wZUfq6Isw1kQ4UQM8damyjp8YjoQX8goQDRVh2CtLiQ=;
+	s=arc-20240116; t=1730833632; c=relaxed/simple;
+	bh=aiffeFvMny/3ip24X8IqMiW6IyxDHkiaOjg2GvouxGs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=K/Lw43P91BvT5z8Lzk4SYFes4AZVOYqv6Ez5NESzhBEibMfHt+PDoKHICfez0iyFFEk12IEwCAfKAHZiBP6k2w3tniG1T0g1FR8HeeXKxkEDK2ikvL600XyWgcm0R9eo19h2nEKugu/lCIv6dpbugbbzeWf6hdbW5qnQqll45Q0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LUQCkz3M; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1730833546;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4a5GVWXVnUQexXTW5/cfLETYhB7DnaKWLGrc8iNNqRw=;
-	b=LUQCkz3MNsDuYMwzi4gw9y9ECVNkxY3xAMeLeJ9IpZoiNgc9bDeHT/oz+mJ8K/rS6jgaEG
-	MrQeOrNprUdY4fognkCRxrUXBP7jLEn/4ksTaXr4pPD77hPTz7yvNwHESaxPsjPtrxhEB1
-	OfdOK1oC21APN1k0tvRhBiLJpVyR3iU=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-393-yfi62ov0Mb-Yvl7Kd9H2Ow-1; Tue,
- 05 Nov 2024 14:05:43 -0500
-X-MC-Unique: yfi62ov0Mb-Yvl7Kd9H2Ow-1
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 08A2819560BD;
-	Tue,  5 Nov 2024 19:05:41 +0000 (UTC)
-Received: from pauld.westford.csb (unknown [10.22.64.146])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 2DDF719560AD;
-	Tue,  5 Nov 2024 19:05:37 +0000 (UTC)
-Date: Tue, 5 Nov 2024 14:05:34 -0500
-From: Phil Auld <pauld@redhat.com>
-To: Mike Galbraith <efault@gmx.de>
-Cc: Peter Zijlstra <peterz@infradead.org>, mingo@redhat.com,
-	juri.lelli@redhat.com, vincent.guittot@linaro.org,
-	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
-	mgorman@suse.de, vschneid@redhat.com, linux-kernel@vger.kernel.org,
-	kprateek.nayak@amd.com, wuyun.abel@bytedance.com,
-	youssefesmat@chromium.org, tglx@linutronix.de
-Subject: Re: [PATCH 17/24] sched/fair: Implement delayed dequeue
-Message-ID: <20241105190534.GC33795@pauld.westford.csb>
-References: <20241101125659.GY14555@noisy.programming.kicks-ass.net>
- <20241101133822.GC689589@pauld.westford.csb>
- <20241101142649.GX9767@noisy.programming.kicks-ass.net>
- <20241101144225.GD689589@pauld.westford.csb>
- <a59a1a99b7807d9937e424881c262ba7476d8b6b.camel@gmx.de>
- <20241101200704.GE689589@pauld.westford.csb>
- <59355fae66255a92f2cbc4d7ed38368ff3565140.camel@gmx.de>
- <20241104130515.GB749675@pauld.westford.csb>
- <1bffa5f2ca0fec8a00f84ffab86dc6e8408af31c.camel@gmx.de>
- <20241105152010.GA33795@pauld.westford.csb>
+	 Content-Type:Content-Disposition:In-Reply-To; b=lELc5c+xjJARyWwLLOkgeCmVTMiHa+/sOjz6dJlSzDPJsLM5YlIkEFSW03/RvR3jJZaoSt+X1dNhVSOF8bwZ4dho7DAbz+bNur+QD9qeX6ENshcaupCpmfobs/OubUCt0vRw1e60Q/xpUkgOwV2Ylrgk/Ue/UjFSiznb2K9yz3E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tycho.pizza; spf=pass smtp.mailfrom=tycho.pizza; dkim=pass (2048-bit key) header.d=tycho.pizza header.i=@tycho.pizza header.b=XjUd9H0H; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=hutAm7G1; arc=none smtp.client-ip=103.168.172.159
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tycho.pizza
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tycho.pizza
+Received: from phl-compute-04.internal (phl-compute-04.phl.internal [10.202.2.44])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 2F811114016F;
+	Tue,  5 Nov 2024 14:07:09 -0500 (EST)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-04.internal (MEProxy); Tue, 05 Nov 2024 14:07:09 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tycho.pizza; h=
+	cc:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm2; t=1730833629; x=1730920029; bh=Q9TQIfEYCu
+	OxbtDhygMHBbUHqm0TEXM3xROT8eAMRoI=; b=XjUd9H0Hjyx3bxW0VQOY0EjHUX
+	NeYQy4WK+v6uMfTssEpxNlYur2iT12vAWeDBDvOyI4cscfX1WLRWSf/woYBIS+bt
+	AX75JrQwZhjSeiO7rysjv1RX//aKU2PVpIcEZkCrZXzKA1Hntz3mPuUDwDE6uwfr
+	bkLtM89Gul1rZ6DvyCpzh7ElJ2TRh0uhIA3if0lYbXxT8eHUgvjkgp2BxcvmEWQT
+	qgZpvvhh/B6eff7+WTJFb+tVxe8blWJuxgb+YicjsvTsJjhsIF+N4VaJHHJvNrxE
+	7KApXO1RHhCFK3X6WEL3q7hxZrDmbh8VZPSPDNHJS+IRkTZYQJLrK71YtTOA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
+	1730833629; x=1730920029; bh=Q9TQIfEYCuOxbtDhygMHBbUHqm0TEXM3xRO
+	T8eAMRoI=; b=hutAm7G1P9CXmRmKK8aCmzFigdJ+MMn/u0E/EnMaSvaISC6tMWe
+	y8PGLb4eWZ66bKigepNC4cdlDJoVTQjcujhIlut9gUSmBZAPSR9xhe1r1GsDMJjk
+	JsBxIB0hULRGlcAHbLpmjWdC0025RNIuk8Zy9N1XuizXXCpv66AxfbntBshPG1L3
+	iFvpfaELpRrzMoxrovYm2W/rr/tVpmlFMlJLL0HEf/efDaQt+6kMBoIyVRqHJqEA
+	RTKx/snqbGy2nQqFd14eWTjN0HgRPaxLul0cg8PnycngBJ6+/T9Y8C6pO0pcJ8xN
+	LmKh2pYnZg6bYiFxpIpIjDxNnNqwAIsMcqw==
+X-ME-Sender: <xms:3GwqZ3fzQpjkT88lZeMQn9mZ2ZY7iq1ftwwtylalRIS0iNeGN5SqMA>
+    <xme:3GwqZ9Ov6OYqtODa-QmQn6_pviUuQ0HZWuc8_cbAtl32zO-xSnEUo1FW7Ss-LqPuz
+    n3yFwYfn6v7_ClHAy8>
+X-ME-Received: <xmr:3GwqZwjH7mZjYuHwZgXqDgncYU5dGnMkScY7p8kInDZUrNNw64ADNGhj0Q4>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrtddtgdelvdcutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
+    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
+    hsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecu
+    hfhrohhmpefvhigthhhoucetnhguvghrshgvnhcuoehthigthhhosehthigthhhordhpih
+    iiiigrqeenucggtffrrghtthgvrhhnpeelveduteeghfehkeeukefhudfftefhheetfedt
+    hfevgfetleevvdduveetueefheenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuve
+    hluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepthihtghhohes
+    thihtghhohdrphhiiiiirgdpnhgspghrtghpthhtohepuddvpdhmohguvgepshhmthhpoh
+    huthdprhgtphhtthhopehkvggvsheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepvhhi
+    rhhoseiivghnihhvrdhlihhnuhigrdhorhhgrdhukhdprhgtphhtthhopehshiiisghoth
+    dotdefvgdurghfhegtfeefvdhfjegvtdgvsgekgegssehshiiikhgrlhhlvghrrdgrphhp
+    shhpohhtmhgrihhlrdgtohhmpdhrtghpthhtohepsghrrghunhgvrheskhgvrhhnvghlrd
+    horhhgpdhrtghpthhtohepjhgrtghksehsuhhsvgdrtgiipdhrtghpthhtohepvggsihgv
+    uggvrhhmseigmhhishhsihhonhdrtghomhdprhgtphhtthhopehlihhnuhigqdhfshguvg
+    hvvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqmhhm
+    sehkvhgrtghkrdhorhhgpdhrtghpthhtohepthgrnhguvghrshgvnhesnhgvthhflhhigi
+    drtghomh
+X-ME-Proxy: <xmx:3GwqZ49avwo1W3Rgj3aZxfRMQu7aqhrh-TFombce81ArUtINLs24mA>
+    <xmx:3GwqZzvN7TjGHw-Tl77RdC9Jg5BJO-6yBugpmO__gf6HdU5yUhfaiw>
+    <xmx:3GwqZ3EA7sB_dmqphjPZbOGFiY_JZCU2rGQ_VLtEoCfliM4vGCxkTw>
+    <xmx:3GwqZ6NHhdIlugi5hKfaAQfJUckgNKM9oC3R3hlZ-2D_z7UkEng1WA>
+    <xmx:3WwqZ8F27rqeEnSJxKXesKnj6KlbwYz6ygD6jOLUEIicqTF_7doad4Gy>
+Feedback-ID: i21f147d5:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 5 Nov 2024 14:07:06 -0500 (EST)
+Date: Tue, 5 Nov 2024 12:07:03 -0700
+From: Tycho Andersen <tycho@tycho.pizza>
+To: Kees Cook <kees@kernel.org>
+Cc: Al Viro <viro@zeniv.linux.org.uk>,
+	syzbot+03e1af5c332f7e0eb84b@syzkaller.appspotmail.com,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Eric Biederman <ebiederm@xmission.com>,
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+	Tycho Andersen <tandersen@netflix.com>,
+	Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>,
+	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH] exec: NULL out bprm->argv0 when it is an ERR_PTR
+Message-ID: <Zyps12C3+qvunTYp@tycho.pizza>
+References: <20241105181905.work.462-kees@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,105 +110,23 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241105152010.GA33795@pauld.westford.csb>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+In-Reply-To: <20241105181905.work.462-kees@kernel.org>
 
-On Tue, Nov 05, 2024 at 10:20:10AM -0500 Phil Auld wrote:
-> On Tue, Nov 05, 2024 at 05:05:12AM +0100 Mike Galbraith wrote:
-> > On Mon, 2024-11-04 at 08:05 -0500, Phil Auld wrote:
-> > > On Sat, Nov 02, 2024 at 05:32:14AM +0100 Mike Galbraith wrote:
-> > >
-> > > >
-> > > > The buddy being preempted certainly won't be wakeup migrated...
-> > >
-> > > Not the waker who gets preempted but the wakee may be a bit more
-> > > sticky on his current cpu and thus stack more since he's still
-> > > in that runqueue.
-> > 
-> > Ah, indeed, if wakees don't get scraped off before being awakened, they
-> > can and do miss chances at an idle CPU according to trace_printk().
-> > 
-> > I'm undecided if overall it's boon, bane or even matters, as there is
-> > still an ample supply of wakeup migration, but seems it can indeed
-> > inject wakeup latency needlessly, so <sharpens stick>...
-> > 
-> > My box booted and neither become exceptionally noisy nor inexplicably
-> > silent in.. oh, minutes now, so surely yours will be perfectly fine.
-> > 
-> > After one minute of lightly loaded box browsing, trace_printk() said:
-> > 
-> >   645   - racy peek says there is a room available
-> >    11   - cool, reserved room is free
-> >   206   - no vacancy or wakee pinned
-> > 38807   - SIS accommodates room seeker
-> > 
-> > The below should improve the odds, but high return seems unlikely.
-> >
+On Tue, Nov 05, 2024 at 10:19:11AM -0800, Kees Cook wrote:
+> Attempting to free an ERR_PTR will not work. ;)
 > 
-> Thanks, I'll give it a spin with the nr_cpus_allowed bit.
->
-
-Well that worked pretty well. It actually makes DELAY_DEQUEUE a litte better
-than NO_DELAY_DEQUEUE
-
-DELAY_DEQUEUE     ~595MB/s
-NO_DELAY_DEQUEUE  ~581MB/s
-
-I left the cpumask_weight becaude vim isn't happy with my terminal to that machine
-for some reason I have not found yet. So I couldn't actually edit the darn thing.
-This is not my normal build setup. But I'll spin up a real build with this patch
-and throw it over the wall to the perf team to have them do their full battery
-of tests on it.
-
-Probably "Paul" will be cranky now. 
-
-
-Thanks,
-Phil
-
-
+>     process 'syz-executor210' launched '/dev/fd/3' with NULL argv: empty string added
+>     kernel BUG at arch/x86/mm/physaddr.c:23!
 > 
-> Cheers,
-> Phil
+> Set bprm->argv0 to NULL if it fails to get a string from userspace so
+> that bprm_free() will not try to free an invalid pointer when cleaning up.
 > 
-> 
-> 
-> > ---
-> >  kernel/sched/core.c |    9 ++++++++-
-> >  1 file changed, 8 insertions(+), 1 deletion(-)
-> > 
-> > --- a/kernel/sched/core.c
-> > +++ b/kernel/sched/core.c
-> > @@ -3790,7 +3790,13 @@ static int ttwu_runnable(struct task_str
-> >  	rq = __task_rq_lock(p, &rf);
-> >  	if (task_on_rq_queued(p)) {
-> >  		update_rq_clock(rq);
-> > -		if (p->se.sched_delayed)
-> > +		/*
-> > +		 * If wakee is mobile and the room it reserved is occupied, let it try to migrate.
-> > +		 */
-> > +		if (p->se.sched_delayed && rq->nr_running > 1 && cpumask_weight(p->cpus_ptr) > 1) {
-> > +			dequeue_task(rq, p, DEQUEUE_SLEEP | DEQUEUE_DELAYED | DEQUEUE_NOCLOCK);
-> > +			goto out_unlock;
-> > +		} else if (p->se.sched_delayed)
-> >  			enqueue_task(rq, p, ENQUEUE_NOCLOCK | ENQUEUE_DELAYED);
-> >  		if (!task_on_cpu(rq, p)) {
-> >  			/*
-> > @@ -3802,6 +3808,7 @@ static int ttwu_runnable(struct task_str
-> >  		ttwu_do_wakeup(p);
-> >  		ret = 1;
-> >  	}
-> > +out_unlock:
-> >  	__task_rq_unlock(rq, &rf);
-> > 
-> >  	return ret;
-> > 
-> > 
-> 
-> -- 
-> 
-> 
+> Reported-by: syzbot+03e1af5c332f7e0eb84b@syzkaller.appspotmail.com
+> Closes: https://lore.kernel.org/all/6729d8d1.050a0220.701a.0017.GAE@google.com
+> Fixes: 7bdc6fc85c9a ("exec: fix up /proc/pid/comm in the execveat(AT_EMPTY_PATH) case")
+> Signed-off-by: Kees Cook <kees@kernel.org>
 
--- 
+Reviewed-by: Tycho Andersen <tycho@tycho.pizza.
 
+Thanks.
 
