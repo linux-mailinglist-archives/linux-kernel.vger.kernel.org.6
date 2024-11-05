@@ -1,125 +1,132 @@
-Return-Path: <linux-kernel+bounces-396513-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396514-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 584649BCE34
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 14:42:24 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6118B9BCE37
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 14:43:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A4DD1C2190A
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 13:42:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D8CFA1F22D83
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 13:43:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D71781D79A9;
-	Tue,  5 Nov 2024 13:42:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14A631D63F7;
+	Tue,  5 Nov 2024 13:42:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bWpB+y9G"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BzgTSedb"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C4F31D1738;
-	Tue,  5 Nov 2024 13:42:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB09B1D1738
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 13:42:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730814135; cv=none; b=Ot9BM7m4H0PpuVSxkIGe4UwCOyBAWbCV/3fjrwFrXJ+U0gn6PP5VqnbRPjPMX4Wgz0LUKunAEhE1269Hcijp6Cva8lzyKc1IP0jki9g92AHSWNQeE4tWCxvUFZS9Nw5VeXItBxHRkhAsuihKVhXFaZCPy+irbkQ801feEWi4MtY=
+	t=1730814174; cv=none; b=l0kvjMYZUqK2rcceKWDfk6oc38Fgc/iT9asC2zo9nwSfldiIN3CYn0BBpxHzKgOcVsIaxoaNBMZ27mcNMKxAeJV/rk55tH1PSrDNzbz0wlBvXOlbo+iJYJ0q7BGvrJSJcOSiRzkemMtVXVbJmOXTIaFaQ0BnZSHOf9cXnCxpVT4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730814135; c=relaxed/simple;
-	bh=uBjQq4vty/Kv54JBAzOzZbTnfWxAOZe08zjGZl2RRng=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qGTdcgecMqb4CgSLihzCyQbL4SQOWH8hk5LD3fxusIgqmrFHe6qMtTe6kyzschKFFkB82P7t5wRbDQYlsajdPb5jjMV4tGsekzYLXG2Zy3kYC2xlNwJTbs5yOWjG7bbjCuZYyUpkHa/00LM9pzvHX9LtiNvC1vpwYM0YTF+02fc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bWpB+y9G; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 388F7C4CED0;
-	Tue,  5 Nov 2024 13:42:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730814134;
-	bh=uBjQq4vty/Kv54JBAzOzZbTnfWxAOZe08zjGZl2RRng=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bWpB+y9GcHXvT6oCWVyQ/KVxxHgXagZzJhtB/rfYNtMNty1iyCdFcWBawsmHe2GHs
-	 /oTty3u03wYvChtzTrj7ABQRgGmKSeSEsg6PKeVxsM63iUvWYSVjrSRx7oPzvLWrE4
-	 3R2OTW65d/wL7l3BXcIsIbnD4Ct6ssJICt7sm86tunxRKeLQeDP5WBxMpuvOGSwm1k
-	 IhdX4TOeybsLfPve1laLWr9W7bkOTJQOtdVBiQZSdidZtjMdUySDM4TmnGtJumra6/
-	 pMWHB1C7E4ZJCpuCmZKBJ3X8UvXUyG1o7TgGQxrl5n0halO9aMvptdfoXz9azqoEx0
-	 H7ztw+sM68i3Q==
-Date: Tue, 5 Nov 2024 13:42:06 +0000
-From: Simon Horman <horms@kernel.org>
-To: jan.petrous@oss.nxp.com
-Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Jose Abreu <joabreu@synopsys.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Vinod Koul <vkoul@kernel.org>,
-	Richard Cochran <richardcochran@gmail.com>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Emil Renner Berthing <kernel@esmil.dk>,
-	Minda Chen <minda.chen@starfivetech.com>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Iyappan Subramanian <iyappan@os.amperecomputing.com>,
-	Keyur Chudgar <keyur@os.amperecomputing.com>,
-	Quan Nguyen <quan@os.amperecomputing.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	imx@lists.linux.dev, devicetree@vger.kernel.org,
-	NXP S32 Linux Team <s32@nxp.com>
-Subject: Re: [PATCH v4 05/16] net: dwmac-dwc-qos-eth: Use helper rgmii_clock
-Message-ID: <20241105134206.GE4507@kernel.org>
-References: <20241028-upstream_s32cc_gmac-v4-0-03618f10e3e2@oss.nxp.com>
- <20241028-upstream_s32cc_gmac-v4-5-03618f10e3e2@oss.nxp.com>
+	s=arc-20240116; t=1730814174; c=relaxed/simple;
+	bh=VNsFk/VY+IEN3C4HvFRdJUsc670ff/88rJ0xlPEEtXg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bwHLPejBbcno5Ti8+zXLN57vIU6zdbUvSg+qjIXlBC00GGpEux4MulVqfxEoCzAoj3cynrnsGDP79FrgP3vMtQqxwxM6m+c/ebNhJf0jPPGAecrzpWEFsNny35HBtH3/GwY5NdOH/0gA9ZdzwWfFEGrUmroztbFBkwkia2sC0Eo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BzgTSedb; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-43155abaf0bso48531855e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 05:42:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730814171; x=1731418971; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=X0LbOpMZOfJ1mTtJjscfxvbSnIthvppCCAm3mmuCY90=;
+        b=BzgTSedbUKSXIKvK/IiEKCRk3FrId2xeFmacqWPMX+vEpNfbFvr7RRzouVbe+bqMbs
+         +HBQ/1xThxfYd2mBXIEUi2b+OlslgojkR2IQzk9sERD2YCH1CKvyTxCaOQTnqMgHyka3
+         /nB3ejn4XwDJbx7kqAabKBaUPf9Jh2FkFOOFVV1ARZiTRAsYXoQWq9AxZ71gzHkpHXjM
+         03Cq3sdREd3gUneYwVOqbqFYNVq7QtQArxw6iFhfhrXaKVECqfyXQ03aqDey492porT8
+         JjRL0U4h6noHtbw5xQ5uFPdDK4Cry1vsUPBTc4bmsixcj7ydeXENqii7c/msv7Uo+9e1
+         xl2w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730814171; x=1731418971;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=X0LbOpMZOfJ1mTtJjscfxvbSnIthvppCCAm3mmuCY90=;
+        b=BdY/89dIfowc0IFaa5iKKSklRnLsJgJKsl83dnSyOiaMNPwVBIF10Wf3Dx0gfGqo01
+         e+3PUNUWAvb1qC/uITn56gRadNuPCbfKh1OgdAuMxC03HWFjHaIYdC17VfV8tbM8RmZ6
+         DcGFwkT73Xu3eGUjCHnc8MOjc/AN7NTBAUi3qahGuKmO8ehry12QEUhvMcZGUhhLBael
+         snowTgJUwKmD/pdFN1Eid+91A5PwBX+dpMjv1TKlPAxkVgFhYzlXFjiok4mzFR1Mabh+
+         wiEyEfR6s3yQzU4oi5/pjjHrNrtiORueFjuxuBbAXwlKzoZyD/L0eSgblo5qJGlqw8bX
+         jCqw==
+X-Forwarded-Encrypted: i=1; AJvYcCWL6f+TwCSAQPpVcLY3/GmdqxFlgzIFaRLA5AJSrgTtn9qFsaF3QfJsLlzF/suGmzhofiOviNE9WG37DS4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzbuZOgUXQsFRme6YvrJsUDkvuXvQHuM26GV8+su2+L+jFmdERO
+	HcGfoh8U+rpPzfj4mlCCfCXvjV8yfwpFlNfpi1l2RV+vtEyUkNCrdG1T5qYa
+X-Google-Smtp-Source: AGHT+IGSRpiVtLmnl2SvsyIOgr8V4SogtNxBWIzlwsHXFZC77En47v/x605qfDqc+TKFF3urgB6Drw==
+X-Received: by 2002:a05:6000:21c8:b0:381:c7b7:706d with SMTP id ffacd0b85a97d-381c7b770a1mr10846876f8f.27.1730814170864;
+        Tue, 05 Nov 2024 05:42:50 -0800 (PST)
+Received: from [10.254.108.83] (munvpn.amd.com. [165.204.72.6])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381c10e725dsm16275267f8f.56.2024.11.05.05.42.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 05 Nov 2024 05:42:50 -0800 (PST)
+Message-ID: <e6dd8f17-2322-4fd7-bdcd-861e77fcfc8a@gmail.com>
+Date: Tue, 5 Nov 2024 14:42:47 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241028-upstream_s32cc_gmac-v4-5-03618f10e3e2@oss.nxp.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] drm/amdgpu: Bypass resizing bars for PVH dom0
+To: Jiqian Chen <Jiqian.Chen@amd.com>,
+ Alex Deucher <alexander.deucher@amd.com>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ Xinhui Pan <Xinhui.Pan@amd.com>
+Cc: amd-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ Pierre-Eric Pelloux-Prayer <pierre-eric.pelloux-prayer@amd.com>,
+ Huang Rui <Ray.Huang@amd.com>
+References: <20241105060531.3503788-1-Jiqian.Chen@amd.com>
+ <20241105060531.3503788-3-Jiqian.Chen@amd.com>
+Content-Language: en-US
+From: =?UTF-8?Q?Christian_K=C3=B6nig?= <ckoenig.leichtzumerken@gmail.com>
+In-Reply-To: <20241105060531.3503788-3-Jiqian.Chen@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Oct 28, 2024 at 09:24:47PM +0100, Jan Petrous via B4 Relay wrote:
-> From: "Jan Petrous (OSS)" <jan.petrous@oss.nxp.com>
-> 
-> Utilize a new helper function rgmii_clock().
-> 
-> Signed-off-by: Jan Petrous (OSS) <jan.petrous@oss.nxp.com>
+Am 05.11.24 um 07:05 schrieb Jiqian Chen:
+> VPCI of Xen doesn't support resizable bar. When discrete GPU is used on
+> PVH dom0 which using the VPCI, amdgpu fails to probe, so we need to
+> disable this capability for PVH dom0.
+
+What do you mean VPCI doesn't support resizeable BAR?
+
+This is mandatory to be supported or otherwise general PCI resource 
+assignment won't work either.
+
+In other words you can't hotplug something if that here doesn't work either.
+
+Regards,
+Christian.
+
+>
+> Signed-off-by: Jiqian Chen <Jiqian.Chen@amd.com>
+> Reviewed-by: Huang Rui <Ray.Huang@amd.com>
 > ---
->  drivers/net/ethernet/stmicro/stmmac/dwmac-dwc-qos-eth.c | 11 +++--------
->  1 file changed, 3 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-dwc-qos-eth.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-dwc-qos-eth.c
-> index ec924c6c76c6..5080891c33e0 100644
-> --- a/drivers/net/ethernet/stmicro/stmmac/dwmac-dwc-qos-eth.c
-> +++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-dwc-qos-eth.c
-> @@ -181,24 +181,19 @@ static void dwc_qos_remove(struct platform_device *pdev)
->  static void tegra_eqos_fix_speed(void *priv, unsigned int speed, unsigned int mode)
->  {
->  	struct tegra_eqos *eqos = priv;
-> -	unsigned long rate = 125000000;
-> +	long rate = 125000000;
->  	bool needs_calibration = false;
->  	u32 value;
->  	int err;
+>   drivers/gpu/drm/amd/amdgpu/amdgpu_device.c | 4 ++++
+>   1 file changed, 4 insertions(+)
+>
+> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
+> index b3fb92bbd9e2..012feb3790dd 100644
+> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
+> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
+> @@ -1619,6 +1619,10 @@ int amdgpu_device_resize_fb_bar(struct amdgpu_device *adev)
+>   	if (!IS_ENABLED(CONFIG_PHYS_ADDR_T_64BIT))
+>   		return 0;
+>   
+> +	/* Bypass for PVH dom0 which doesn't support resizable bar */
+> +	if (xen_initial_domain() && xen_pvh_domain())
+> +		return 0;
+> +
+>   	/* Bypass for VF */
+>   	if (amdgpu_sriov_vf(adev))
+>   		return 0;
 
-Hi Jan,
-
-As it seems that there will be another revision anyway,
-please update the above so that the local variable declarations
-are in reverse xmas tree order - longest line to shortest.
-
-Likewise in s32_dwmac_probe() in the patch
-"net: stmmac: dwmac-s32: add basic NXP S32G/S32R glue driver".
-
-...
 
