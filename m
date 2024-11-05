@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-395794-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395795-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 372B29BC31C
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 03:21:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E89FC9BC31F
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 03:21:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E4737282C27
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 02:21:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A9D71282E05
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 02:21:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B2692C859;
-	Tue,  5 Nov 2024 02:20:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92EAA13AA27;
+	Tue,  5 Nov 2024 02:20:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BpFh/7Eh"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WNHsfwka"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7467D51C4A;
-	Tue,  5 Nov 2024 02:20:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF0A41339A4;
+	Tue,  5 Nov 2024 02:20:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730773226; cv=none; b=ZDsF1PZiHp2ynsOhMjNpjh3crEvcJ7LReK0xRuVZC+ad296gx5TsYY2qb1rwyeT5aqcoH6ZxPLhc7rFnIJXz+LqEYBU2uVMTuZYN9zIVBmRwho3OG8eW82bgyZVPnaTslTq4CbH6n93gPr7S2g6kJ3BWkGCrpLDVluuprG9It0E=
+	t=1730773229; cv=none; b=Qv1wky166dGoCGqxxADlzIGaqpZIc/Z0n3Q0xz1A/ASUWnK/9vSoGfNtePw2qd46Dp/vrl/lijmZOVG8xEs7dglXCXyKAF8H2JRoVPnK9TtUMAavgf+riDY+S2NINptVn27NV+HQzasJ8nRDrH3riTDaWiO5t7OqJWWu2ozo2Lg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730773226; c=relaxed/simple;
-	bh=H7DITtRwtsNLWdS6hpi1Dq1VgEaFbuMZ06KvxC6YoWs=;
+	s=arc-20240116; t=1730773229; c=relaxed/simple;
+	bh=8Z6YC6/gad8Z6uPzOYdCzmq8GJLLc4rArpcGZT6FKdc=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=SZizjX8uGeAfhaUR5RSFwRMomXAxCS5EUgpzcma/MOacr+bz1tQqJi/4XnRxydmkAgcK5mG2IyVjWGIH+rJrJe2BVAV3vmQJ6xvygUNXRV4OgYpe67hh6Crz+HEXQwdWZvCOuGoI06JR5nEAwU0bf881SpD2yGYlFCMVtM3qvxY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BpFh/7Eh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49996C4CECE;
-	Tue,  5 Nov 2024 02:20:26 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=ZxwZtrjlc1YfyFhbRrN+6k8RF8pS+eBf5G9H2O4H5otp8zldEr03SldPCK0a4w0BJ6RoYanLWYkXzg/JdmGz92eSEyulMhb3j3bM26oquY7uSPm6uBGKRcCj5SjupznJFbOSKnQuB4Vnx/x0bsW71SWFd5J64LLRo17Wew7NrS0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WNHsfwka; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE4FCC4CED2;
+	Tue,  5 Nov 2024 02:20:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730773226;
-	bh=H7DITtRwtsNLWdS6hpi1Dq1VgEaFbuMZ06KvxC6YoWs=;
+	s=k20201202; t=1730773228;
+	bh=8Z6YC6/gad8Z6uPzOYdCzmq8GJLLc4rArpcGZT6FKdc=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=BpFh/7Ehgn9ARUYp1fdOf8SxLiBRY2aBW0N7E1q9IzeEZIOt7K4hEJdyp+pe6US8Z
-	 uIyNHtDk4FANEE6YLIIWaqyy2WSAMBucrhSdie4jQJqi5CI6+gvS2RTiEw6/2F3m5H
-	 MaUIe+x0XFTN/YfVkfHLg84xg6XCqVop8eUycfERc2fJrF05xDsfxslKnSMQoMkbYF
-	 Uxa4eZ+hJuELXSKtHaX2Jf2azkq+aC0FP8IlyixSRgqtudHMwDHXit5qi0fTWlCMpL
-	 jZo34LnPV8ZdXr1T7q8TSW1kBpNOw9XkK4noVxRP/qylQMnK1+j0r0+hO9nM1oe1LS
-	 cGZU2YX9017Fg==
+	b=WNHsfwkaEldwRtWnIvemZXjl8G5MIMA7TkgKWAZJCSMj25eMaGXUeWu2mSDaNDSIS
+	 lsnaDTeNCQGJtrHwnl3xXJ7GSwwmlh6hrl1B8n6OC1+Zssqo8fPSi6ft5brdfFRAhW
+	 KbH67hZ6P84eh683W6g4xW4S3voM3TVMsP0uuQp/EV27D5lO/RKFqfimH4nZV2V/Tt
+	 JwDIK45x4XCBUIifs3dBqhLc1g0jbkINUMpSViXcBt5nBRSrvyYiFWGgPGYbaredBn
+	 ueX/r643mi3yhEF93I7Kc8mlxnvJGSn3TIe17mcLoWdxcfue4EqiRT6lAc+2SEHEUy
+	 SGZ41+qHbmEHA==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33F203809A80;
-	Tue,  5 Nov 2024 02:20:36 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADD1B3809A80;
+	Tue,  5 Nov 2024 02:20:38 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,43 +51,39 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next] ptp: Remove 'default y' for VMCLOCK PTP device
+Subject: Re: [PATCH net-next v2] net: tcp: replace the document for "lsndtime" in
+ tcp_sock
 From: patchwork-bot+netdevbpf@kernel.org
 Message-Id: 
- <173077323501.89867.2401311053737596737.git-patchwork-notify@kernel.org>
-Date: Tue, 05 Nov 2024 02:20:35 +0000
-References: <89955b74d225129d6e3d79b53aa8d81d1b50560f.camel@infradead.org>
-In-Reply-To: <89955b74d225129d6e3d79b53aa8d81d1b50560f.camel@infradead.org>
-To: David Woodhouse <dwmw2@infradead.org>
-Cc: kuba@kernel.org, richardcochran@gmail.com, peter.hilber@opensynergy.com,
- linux-kernel@vger.kernel.org, virtualization@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, linux-rtc@vger.kernel.org,
- ridouxj@amazon.com, virtio-dev@lists.linux.dev, rluu@amazon.com,
- chashper@amazon.com, abuehaze@amazon.com, pabeni@redhat.com,
- christopher.s.hall@intel.com, jasowang@redhat.com, jstultz@google.com,
- mst@redhat.com, netdev@vger.kernel.org, sboyd@kernel.org, tglx@linutronix.de,
- xuanzhuo@linux.alibaba.com, maz@kernel.org, mark.rutland@arm.com,
- daniel.lezcano@linaro.org, a.zummo@towertech.it,
- alexandre.belloni@bootlin.com, qemu-devel@nongnu.org, horms@kernel.org
+ <173077323749.89867.14034672284365562278.git-patchwork-notify@kernel.org>
+Date: Tue, 05 Nov 2024 02:20:37 +0000
+References: <20241104070041.64302-1-dongml2@chinatelecom.cn>
+In-Reply-To: <20241104070041.64302-1-dongml2@chinatelecom.cn>
+To: Menglong Dong <menglong8.dong@gmail.com>
+Cc: kuba@kernel.org, edumazet@google.com, dsahern@kernel.org,
+ lixiaoyan@google.com, weiwan@google.com, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, dongml2@chinatelecom.cn
 
 Hello:
 
 This patch was applied to netdev/net-next.git (main)
 by Jakub Kicinski <kuba@kernel.org>:
 
-On Sat, 02 Nov 2024 16:52:17 -0500 you wrote:
-> From: David Woodhouse <dwmw@amazon.co.uk>
+On Mon,  4 Nov 2024 15:00:41 +0800 you wrote:
+> Commit d5fed5addb2b ("tcp: reorganize tcp_sock fast path variables")
+> moved the fields around and misplaced the documentation for "lsndtime".
+> So, let's replace it in the proper place.
 > 
-> The VMCLOCK device gives support for accurate timekeeping even across
-> live migration, unlike the KVM PTP clock. To help ensure that users can
-> always use ptp_vmclock where it's available in preference to ptp_kvm,
-> set it to 'default PTP_1588_CLOCK_VMCLOCK' instead of 'default y'.
+> Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
+> ---
+> v2:
+> - remove the "Fixes" tag in the commit log
 > 
 > [...]
 
 Here is the summary with links:
-  - [net-next] ptp: Remove 'default y' for VMCLOCK PTP device
-    https://git.kernel.org/netdev/net-next/c/18ec5491a495
+  - [net-next,v2] net: tcp: replace the document for "lsndtime" in tcp_sock
+    https://git.kernel.org/netdev/net-next/c/0a2cdeeae9dd
 
 You are awesome, thank you!
 -- 
