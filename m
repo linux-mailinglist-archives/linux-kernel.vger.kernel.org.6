@@ -1,59 +1,59 @@
-Return-Path: <linux-kernel+bounces-396820-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396821-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3F629BD2A5
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 17:41:50 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27A759BD2A7
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 17:41:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 61DDCB20F0F
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 16:41:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E076B283078
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 16:41:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFA811D9A62;
-	Tue,  5 Nov 2024 16:41:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB9C61DC182;
+	Tue,  5 Nov 2024 16:41:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LC601RKq"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EVDlh7K2"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29AF5166F1A;
-	Tue,  5 Nov 2024 16:41:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45DF01DAC9C;
+	Tue,  5 Nov 2024 16:41:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730824900; cv=none; b=X2MEK8qw7S7GUDf2vDjJtnO8VvonWV1KdJniLeVGeq/kFzAVwXRFOMxr89Oaw7qgiL1ks83Y7XSA4vOlQFhteuuAgh36ofvsLXrN7UgtxCfftd9iBTIcLDLMhFNfTRadWS/JZVakjkk7B0X5/uIbr+pSYrebz4xAdELuuiUpw1M=
+	t=1730824901; cv=none; b=cmdM4/1Xl2dNzjL+0fhoHsX0tw/d3OhIHFyN60D4kxuxdOENVgL2CiFdxIrWkxwNlxD5gPvwPmbBO20U4cDmgUFAjOtKbkaNHlJXMGeTNYQMd5a1wxaNPnQLf41Vh+y2iDoxrSGPxJxhLpdcSPFOelGy/pPRLCL755obUWT7hn0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730824900; c=relaxed/simple;
-	bh=i1MV6yXqnpQf1LWUHeE9WK3SA3UiEMTLBIekvA0MA0Q=;
-	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=TsOAiffRlaL0TyWytZ3cJzbttQStazgg6/ypl5FlkOX9DQ2Ec/INFQLvKRsOaUSY5uOYHfklkZLxuMQTTRsDut7qaxa9K3CP+NkmJbifnBmdDifNCXFe3VAvsDRk5clhFjSs6k0Mb8ESNOYr6P8PErjKYgOntNtzaFxOJ9yBOHs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LC601RKq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A39EC4CECF;
-	Tue,  5 Nov 2024 16:41:39 +0000 (UTC)
+	s=arc-20240116; t=1730824901; c=relaxed/simple;
+	bh=huzjT5JLAbdXJL39b8UFkSas8RwAXCriFRg4uuS1oQY=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=BRwnID9Pq9OjjByA0ru2h7Qzeh1ortMTBp8zyVjwiKkjkwfGj/71XJ2iKI+m1dB4vbzqKHIhftRrvMcRfW5f6xQgedzFOBRFWlKEpkOQsGoQQxReuUor0OZeNyaThkvg3+ITiWjx0ZfWE8Vt5h7hQcAZpRWdDRjVJMEeF8SMBAs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EVDlh7K2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7BCDC4CED7;
+	Tue,  5 Nov 2024 16:41:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730824899;
-	bh=i1MV6yXqnpQf1LWUHeE9WK3SA3UiEMTLBIekvA0MA0Q=;
-	h=From:To:In-Reply-To:References:Subject:Date:From;
-	b=LC601RKqeOnG5Ok6rV1hZmsYdFGBUu41Jd2c1bZ18S9mWhzl/X+YkUWri5e4x25+n
-	 LlXSiW5i+3ERFSwNE/DmtmLA0KQYSuPCBUMzMZfh4kWhpepOxPG8FdwHKIPNM+F/aM
-	 bTrpC6YIgGLcC/5xNvgZOi/LJAXdPFvTAwtwNWZiFBI9cKyYfzZx3PsbjYrppwQL5l
-	 ipFhiAHXDyBTsHJtH/6kJVM0BZ2JogqTclygltzCY4h+dcRgNvoc12Y0gu5h+MRpgB
-	 Bby6Vya2PW9DNoMnbaHlHFzeiWw0xddEsUPkilY0HvHdbfbu2h2Dl8ehpbJ180wjqX
-	 vLc4/xP8s5JTQ==
+	s=k20201202; t=1730824901;
+	bh=huzjT5JLAbdXJL39b8UFkSas8RwAXCriFRg4uuS1oQY=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=EVDlh7K2Bb9mlboDjyCCsLgGjdwRi6DsRyZNEozHIir6PN90CwaERe9JEsDCFBoHZ
+	 84POk98VNrkRMxZvzVGao+DejphvhKT1bFodm/EQ+87fDpCBEuSYt1sjmpJerOAHoy
+	 mM3fuIp5D7mIlgnmL5MAGSZSIeuFfXI/Bq5rLqxJKF0Qy/yMLAUm5oVMoeRz7/QVPZ
+	 qGiMutcY4CrZyYlV2ISOnfihd6b6ko+l6t+1/SL2AHVeK8W4wwGoqB5hwSkskq2vio
+	 Cg382KwU3ybmWlJdfJDOYZLGgurETUAbHV4lUcd82DQDpr0DlbASmP7ekDsV3GUIqT
+	 /FfveTjlCEotA==
 From: Namhyung Kim <namhyung@kernel.org>
 To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
  Arnaldo Carvalho de Melo <acme@kernel.org>, 
  Mark Rutland <mark.rutland@arm.com>, 
  Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
- Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, 
- Kan Liang <kan.liang@linux.intel.com>, linux-perf-users@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Ian Rogers <irogers@google.com>
-In-Reply-To: <20241028193619.247727-1-irogers@google.com>
-References: <20241028193619.247727-1-irogers@google.com>
-Subject: Re: [PATCH v2] perf build: Make libunwind opt-in rather than
- opt-out
-Message-Id: <173082489932.149345.16688202672767622276.b4-ty@kernel.org>
-Date: Tue, 05 Nov 2024 08:41:39 -0800
+ Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>, 
+ Adrian Hunter <adrian.hunter@intel.com>, 
+ Charlie Jenkins <charlie@rivosinc.com>
+Cc: linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20241104-shellcheck_gitignore-v1-1-ffc179f57dc9@rivosinc.com>
+References: <20241104-shellcheck_gitignore-v1-1-ffc179f57dc9@rivosinc.com>
+Subject: Re: [PATCH] perf: Add all shellcheck_log to gitignore
+Message-Id: <173082490077.149345.18139380841551734980.b4-ty@kernel.org>
+Date: Tue, 05 Nov 2024 08:41:40 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,18 +64,12 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.15-dev-c04d2
 
-On Mon, 28 Oct 2024 12:36:19 -0700, Ian Rogers wrote:
+On Mon, 04 Nov 2024 13:19:15 -0800, Charlie Jenkins wrote:
 
-> Having multiple unwinding libraries makes the perf code harder to
-> understand and we have unused/untested code paths.
+> Instead of adding specific shellcheck_log files to the gitignore, add
+> all of them to prevent these files from cluttering the git status.
 > 
-> Perf made BPF support an opt-out rather than opt-in feature. As libbpf
-> has a libelf dependency, elfutils that provides libelf will also
-> provide libdw. When libdw is present perf will use libdw unwinding
-> rather than libunwind unwinding even if libunwind support is compiled
-> in.
 > 
-> [...]
 
 Applied to perf-tools-next, thanks!
 
