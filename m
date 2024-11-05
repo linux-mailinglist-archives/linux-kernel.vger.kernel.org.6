@@ -1,154 +1,150 @@
-Return-Path: <linux-kernel+bounces-396428-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396434-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B45B9BCCF5
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 13:42:15 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 961759BCD05
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 13:51:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F3F7283D3B
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 12:42:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C83DE1C2156B
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 12:51:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10F7E1D5ADC;
-	Tue,  5 Nov 2024 12:41:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94D401D5AAC;
+	Tue,  5 Nov 2024 12:51:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ELEds7pU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ho6hO4I+"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 391821D5AA2;
-	Tue,  5 Nov 2024 12:41:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0B5F1D0B82
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 12:51:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730810494; cv=none; b=eU9evunaV9SGC4MJzGIQQ9Odcq17+Qboc4RViZiF2sQY4hNkyqS0k+wVMbS3dV8LwP10DB2xPAbRUr+dvf2SOQW1/lrm5Y5ckAMKcRmnw4ByKMVDGpGtXpaXoPDGM3/XuSGbZOlzukXT6NNkVF3YofzaSLp7q5V6xkHdglgYVWQ=
+	t=1730811091; cv=none; b=L71BZnhMeaMbwIsL6lOwCV4XAOkjKhVFz9N4unsW8lNU9nYk39/WHC5N87MpXPkMSgCSFMW1M89Ogd59/owAbkesNsIS6FCRrRd9KEG41+fi9qGj++7A1TDq09VjD/x1DayM8tZUc4W1RMpAwQ0EHUN5L+69OMvgWgxMTkAP5rw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730810494; c=relaxed/simple;
-	bh=K3uoOG6s+M7EJcFy3uI2j8alVqcmrDXg3oYGlFnTGYo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LN8XRbIJacpdiwqirzwjMKRTimdX5NBQYCOi7T26HC41fPrt+lnYJX7v1ZX3norqXq64ShWXA2yl+PvusaRj2N1HZUS4pMvHd8MOoFM9DLLgkFMpAuTh0eRezE4NZRziOju9GqoFNb4eR6DkoAjrlaU7f5pf4ZwSb1ZHLxzT4/8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ELEds7pU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B13BEC4CECF;
-	Tue,  5 Nov 2024 12:41:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730810493;
-	bh=K3uoOG6s+M7EJcFy3uI2j8alVqcmrDXg3oYGlFnTGYo=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ELEds7pUxqctg7tDdle2r8Pu1KhGdwvfqY9YhS1pnuwsfgy2W7bJ4LxtPWDC9KKWw
-	 0TF4zouVhTs7jGIRLE03kUl/Sz2AU/DCswD5uETaJSiSKiulfC3bjKOog6srvtiAcC
-	 rOwtQs3eT/C8LZ5R8yolLEC+75Js1A0IJXUc/N/u/kBuvA+Cg+uQQFeI5T5Yff+wTG
-	 wZVhqJ7+PcRyCkBSicREJYM/wm6I/WKb6xeDmI4vyVVXzCkw1zUkw7EfC0zQ52SIOe
-	 Z9S5DKkFUkyhqinG270VOYfosmFrb9sbPI+/g3LiZQHHsRY0ILy8lHPrRlPDw4sl4h
-	 6KfJEEwFQPhOA==
-Message-ID: <f5a28e36-ef80-4ccf-b615-03fb10eb661e@kernel.org>
-Date: Tue, 5 Nov 2024 13:41:26 +0100
+	s=arc-20240116; t=1730811091; c=relaxed/simple;
+	bh=nWcXxC0AotC7OQiHqMCTtFbx4bJnZGRULMdMW446AUc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YwCr+DBy5O95DcQADG0LFOyLYYkg9hjULuQXIwLD6mUUyFLEviu+aDxzMw7fMeZPR1O6aShZHTnKvATJ55EK/Desm+tb3b1zAn9mQRxWAJWHapfuKA254XXTb4R9269tkOyYqfjIFe9qmI509PxCSBM9cHcUpoM5WURdKhrm09Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ho6hO4I+; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1730811087;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=4qZIiHm0ama7KMOdEhG12GBEN3YN2U7MriBJ2ZH+vvU=;
+	b=Ho6hO4I+3Cja85qRxTdNXT/v9VhRcYYXR4IXUDAot35KuTTHsCDV9dErQ2a6VsJNIo+4Tp
+	/uSzKHd8H0ljLPszLTXDEx8h6JPUZRr6p/hq2tFEV9ewm739Xx3IO5BcywXslNIg0fd8KN
+	/6xybyoWUHWdUH7y+bdcQXaxc9/cFgw=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-677-V7OqT96nOWq-E28owUraBg-1; Tue,
+ 05 Nov 2024 07:51:26 -0500
+X-MC-Unique: V7OqT96nOWq-E28owUraBg-1
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C922A1977029;
+	Tue,  5 Nov 2024 12:51:23 +0000 (UTC)
+Received: from hydra.redhat.com (unknown [10.39.193.51])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 9198719560AD;
+	Tue,  5 Nov 2024 12:51:19 +0000 (UTC)
+From: Jocelyn Falempe <jfalempe@redhat.com>
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	John Ogness <john.ogness@linutronix.de>,
+	Javier Martinez Canillas <javierm@redhat.com>,
+	"Guilherme G . Piccoli" <gpiccoli@igalia.com>,
+	bluescreen_avenger@verizon.net,
+	Caleb Connolly <caleb.connolly@linaro.org>,
+	Petr Mladek <pmladek@suse.com>,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Cc: Jocelyn Falempe <jfalempe@redhat.com>
+Subject: [PATCH v6 0/6] drm/log: Introduce a new boot logger to draw the kmsg on the screen
+Date: Tue,  5 Nov 2024 13:42:20 +0100
+Message-ID: <20241105125109.226866-1-jfalempe@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dt-bindings: can: convert tcan4x5x.txt to DT schema
-To: Sean Nyekjaer <sean@geanix.com>
-Cc: Marc Kleine-Budde <mkl@pengutronix.de>,
- Vincent Mailhol <mailhol.vincent@wanadoo.fr>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, linux-can@vger.kernel.org,
- netdev@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20241104125342.1691516-1-sean@geanix.com>
- <dq36jlwfm7hz7dstrp3bkwd6r6jzcxqo57enta3n2kibu3e7jw@krwn5nsu6a4d>
- <wdn2rtfahf3iu6rsgxm6ctfgft7bawtp6vzhgn7dffd54i72lu@r4v5lizhae57>
- <60901c39-b649-4a20-a06a-7faa7ddc9346@kernel.org>
- <mtuev7pve5ltr6vvknp2bwtwg2m7mzxduzshzbr7y3i7mwbzy6@qjbdjyb56nrv>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <mtuev7pve5ltr6vvknp2bwtwg2m7mzxduzshzbr7y3i7mwbzy6@qjbdjyb56nrv>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-On 05/11/2024 13:24, Sean Nyekjaer wrote:
->>>
->>> If you use fallback for a 4552 then it would enable the use of the
->>> optional pins device-state-gpios and device-wake-gpios. But the chip
->>> doesn't have those so the hw guys would connect them and they won't
->>> be in the DT.
->>>
->>> Honestly I'm confused :/
->>
->> What stops anyone to use tcan4x5x ALONE for 4552? Nothing. And that's
->> the problem here.
->>
->>
-> 
-> Schema check will fail, but driver wize it will work just fine.
+drm_log is a simple logger that uses the drm_client API to print the kmsg boot log on the screen.
+This is not a full replacement to fbcon, as it will only print the kmsg.
+It will never handle user input, or a terminal because this is better done in userspace.
 
-Schema will not fail. That's the problem - no errors will be ever
-reported. The entire point of the schema, in contrast to TXT, is to
-detect errors and that ridiculous wildcard used as front compatible
-affects/reduces detection.
+If you're curious on how it looks like, I've put a small demo here:
+https://people.redhat.com/jfalempe/drm_log/drm_log_draft_boot_v2.mp4
 
-> Agree that is kinda broken.
-> If I have time I can try to fix that later.
+Design decisions:
+  * It uses the drm_client API, so it should work on all drm drivers from the start.
+  * It doesn't scroll the message, that way it doesn't need to redraw the whole screen for each new message.
+    It also means it doesn't have to keep drawn messages in memory, to redraw them when scrolling.
+  * It uses the new non-blocking console API, so it should work well with PREEMPT_RT
+ 
+v2:
+ * Use vmap_local() api, with that change, I've tested it successfully on simpledrm, virtio-gpu, amdgpu, and nouveau.
+ * Stop drawing when the drm_master is taken. This avoid wasting CPU cycle if the buffer is not visible.
+ * Use deferred probe. Only do the probe the first time there is a log to draw. With this, if you boot with quiet, drm_log won't do any modeset.
+ * Add color support for the timestamp prefix, like what dmesg does.
+ * Add build dependency on  disabling the fbdev emulation, as they are both drm_client, and there is no way to choose which one gets the focus.
 
-No, the fix is to drop the wildcard alone, as I said in your RFC.
+v3:
+ * Remove the work thread and circular buffer, and use the new write_thread() console API.
+ * Register a console for each drm driver.
 
-> 
-> Please explain one more time for me. Is this a comment on the if
-> sentence or the broken behavior of the driver?
+v4:
+ * Can be built as a module, even if that's not really useful.
+ * Rebased on top of "drm: Introduce DRM client library" series from Thomas Zimmermann.
+ * Add a Kconfig menu to choose between drm client.
+ * Add suspend/resume callbacks.
+ * Add integer scaling support.
+ 
+v5:
+ * Build drm_log in drm_client_lib module, to avoid circular dependency.
+ * Export drm_draw symbols, so they can be used if drm_client_lib is built as module.
+ * Change scale parameter to unsigned int (Jani Nikula)
 
-This is just generic comment, nothing to change here because you decided
-not to fix that wildcard from old binding.
+v6:
+ * Use console_stop() and console_start() in the suspend/resume callback (Petr Mladek).
+ * rebase and solve conflict with "drm/panic: Add ABGR2101010 support"
+
+Jocelyn Falempe (6):
+  drm/panic: Move drawing functions to drm_draw
+  drm/log: Introduce a new boot logger to draw the kmsg on the screen
+  drm/log: Do not draw if drm_master is taken
+  drm/log: Color the timestamp, to improve readability
+  drm/log: Implement suspend/resume
+  drm/log: Add integer scaling support
+
+ drivers/gpu/drm/Kconfig            |  51 ++++
+ drivers/gpu/drm/Makefile           |   2 +
+ drivers/gpu/drm/drm_client_setup.c |  18 +-
+ drivers/gpu/drm/drm_draw.c         | 233 ++++++++++++++++
+ drivers/gpu/drm/drm_draw.h         |  56 ++++
+ drivers/gpu/drm/drm_log.c          | 420 +++++++++++++++++++++++++++++
+ drivers/gpu/drm/drm_log.h          |  11 +
+ drivers/gpu/drm/drm_panic.c        | 257 ++----------------
+ 8 files changed, 811 insertions(+), 237 deletions(-)
+ create mode 100644 drivers/gpu/drm/drm_draw.c
+ create mode 100644 drivers/gpu/drm/drm_draw.h
+ create mode 100644 drivers/gpu/drm/drm_log.c
+ create mode 100644 drivers/gpu/drm/drm_log.h
 
 
-
-Best regards,
-Krzysztof
+base-commit: d78f0ee0406803cda8801fd5201746ccf89e5e4a
+-- 
+2.47.0
 
 
