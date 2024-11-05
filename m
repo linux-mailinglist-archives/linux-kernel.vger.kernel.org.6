@@ -1,147 +1,118 @@
-Return-Path: <linux-kernel+bounces-395991-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396007-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28A809BC659
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 08:01:18 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D23BF9BC69B
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 08:06:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 593CE1C21B09
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 07:01:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 86F36284966
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 07:06:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE6E8200CAA;
-	Tue,  5 Nov 2024 06:57:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 333BD1FCC77;
+	Tue,  5 Nov 2024 07:01:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="OL2Jl9NH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H54RyW2U"
+Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C50A200BBA;
-	Tue,  5 Nov 2024 06:57:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F46318A6BA;
+	Tue,  5 Nov 2024 07:01:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730789874; cv=none; b=I19P8Ho0GquiH76Qop151tNY3tJcU7tRMeV6YTTM2ZGmYcPntD4iFuTZ9y0Z6NkCyCwIw4dYMDmL18mVVmjfpSW9jP8Ng1BwtQD8NAGqg3FXbE4eOkQJFz1H3jcvfLvQZHA9MrbGRrX64O9UnHba6AxCDqKmQKhpWyQWLGEBqeQ=
+	t=1730790063; cv=none; b=SAXmrAx1AdXldmXhIRa1jMGBpjoi4k19EYNGZlqjAjW2ZCbDr/KcdU4BGx8VpMtuBelVf2S/vv5gemF7KzikYlrF9IshghMLDCmy4WW+FjyvPFw7vKSoIP8znjFVAPHWK49vIEjmqfvTZMDTkrCaV6O7OLZ7PF0ixgpWLb8PveU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730789874; c=relaxed/simple;
-	bh=ZicFVzCAyAFd8O++kgwqNs2srV+tu6OcfDWzbCh+PLY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MANZmg5XKLxzUwXd/Hy6L8FZqsPExEsVJhD6nyNmxC4tAeNz5M9gXR/JzC5vfnwI7q/NwOjCvzAuJDUsMjiNVSnW6LbKzQiXAINAvt5VpNhPJkTcEYkQiDbNrVkuPy0Km/n61I+JgxhCcNbjABotxablRngjmdODUmI1pW5s8Bc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=OL2Jl9NH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED70DC4CECF;
-	Tue,  5 Nov 2024 06:57:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1730789873;
-	bh=ZicFVzCAyAFd8O++kgwqNs2srV+tu6OcfDWzbCh+PLY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OL2Jl9NHeOaYSKo1ZmaacuRsI9yF04ia7wa/ohx7HyUN+Ec88CaVktvCHoeDHbDeu
-	 prCV59YJ4XI3UnDrLwkNXL8go1+GNEXc/J+yrfS4tfM0BC82NStS6G/b3KS0j94we4
-	 TY+VJJ0647OkPJXidt/oVYe0wJTQoMtamZ38SWT8=
-Date: Tue, 5 Nov 2024 07:57:36 +0100
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Fedor Pchelkin <pchelkin@ispras.ru>
-Cc: Sasha Levin <sashal@kernel.org>, stable@vger.kernel.org,
-	Alex Deucher <alexander.deucher@amd.com>,
-	Harry Wentland <harry.wentland@amd.com>,
-	Leo Li <sunpeng.li@amd.com>,
-	Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>,
-	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-	"Pan, Xinhui" <Xinhui.Pan@amd.com>,
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-	Fangzhi Zuo <Jerry.Zuo@amd.com>, Wayne Lin <wayne.lin@amd.com>,
-	amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org, lvc-project@linuxtesting.org,
-	Alexey Khoroshilov <khoroshilov@ispras.ru>,
-	Mario Limonciello <mario.limonciello@amd.com>,
-	Jonathan Gray <jsg@jsg.id.au>
-Subject: Re: [PATCH 0/1] On DRM -> stable process
-Message-ID: <2024110521-mummify-unloved-4f5d@gregkh>
-References: <20241029133141.45335-1-pchelkin@ispras.ru>
- <ZyDvOdEuxYh7jK5l@sashalap>
- <20241029-3ca95c1f41e96c39faf2e49a-pchelkin@ispras.ru>
- <20241104-61da90a19c561bb5ed63141b-pchelkin@ispras.ru>
+	s=arc-20240116; t=1730790063; c=relaxed/simple;
+	bh=AjHIxzPnsgu63d3WwfazvL//43FMvdhRD4E1kZEA2aY=;
+	h=From:To:Subject:Date:Message-Id:MIME-Version; b=ujRKweh39dnu5dSeOfTyF4ugmiyXQlNYn4dBVWXP1Q7KmMNbpJdH80SKXIjAT4mr7RWI2WhKBy7BBG2dvXqs6b/JlRt/7zHiDhaoYpg1xFbPhtt5AcBaf98seD0PnBPcBEzAS6K7v4WD4kfV72O3Hc7uxz4DkfU9TymM89aG5NQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H54RyW2U; arc=none smtp.client-ip=209.85.216.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2e2ed59a35eso4056224a91.0;
+        Mon, 04 Nov 2024 23:01:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730790061; x=1731394861; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=9KqI7oKzto9F3nY+3finUxtWgNSK50Vh5Z8hrICoANw=;
+        b=H54RyW2UjZALDUeROUYDrITECR8fn+dip/u6SYM610+JJ5EIRCocdQaiVZCGEWpJoR
+         0++hdHuCnkmk/+B0W2c6W9K3nRKv8NYf/3p8mL9MGM0+tO5FhYUZtYu2v0s4ZMPsvOSq
+         c7AHS376eNuDBb9AWyyejSIpKboY7gX2mTRAZfmOpnuviCOXrUjbf077ZomFb+WuSSDZ
+         ntlwXoWD43Ww+qC42UmmjI6z2ACwdv/0gwpiXdgPN+WEBB/yNDvH6pHlgiCNJmgp0Kig
+         drK5mhMZ/JN/H0NUgQDzIq81xye7J3TwW3O3E8umlKkb59wK61LDQqI+FDhhBUFYnIj7
+         7D0A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730790061; x=1731394861;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=9KqI7oKzto9F3nY+3finUxtWgNSK50Vh5Z8hrICoANw=;
+        b=H57W5Mc1DsuICKJYBg+jd25kLURj6hHTShxPui/+lqOrfXU8kcRaw5+PXL6y+UKDTW
+         PuxK1DK0kXnFkVAenjTbR5EbDEDxV07EXAwZmcYF5gFwKr+pGNctMHjvHtRz5eT90eiv
+         L27XMnY/5nUkA7JUYEcjZpnUlgyq6eX2y2pHjMzyHMTqUdEFGaIQbFlevjJYUn8HwILC
+         HEhK63m6mpflXW6iuWJKgMEtJe8/4BrNSVQw9hT5KILNL9wpf8A4ukatsmIBc+F76N8D
+         j+rEibFsVHbxwChiOGztSChvy0Nr1n8v9IXcfdM5/PDRHz5ftHW3Dj5S46k13gESCk0X
+         bnkw==
+X-Forwarded-Encrypted: i=1; AJvYcCUEWPeGXQQCbv+OHxmpHYyNB6hHOTF6WjaIXtH73wc3RZ/fcNap65BcXUWkEyDFfi1QJ++uujaceFAsWpA=@vger.kernel.org, AJvYcCXiatKvXQRkx5tr1cJlLW5JYnD5+wOq9AZH53sAd4WwxI341nHudZOir14y7O+C+C5l4oNGISjMVt6L33MKOgs6Mg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwwPHiBBzQLHc138U34oURDKC+4CdFdi6o5ArtiF5IAr7MHUNuG
+	cIIq4VfHwt2aw8z9iACdLV4wV+uvpLqcMhtQiCuw/roebn8XoxQ2
+X-Google-Smtp-Source: AGHT+IEkKDcyTwV7/whPZGiRDuDsfmqbjrfDE0QyNSX037grkn8J08+K24f7OamDsQSTsyy3BLP4FA==
+X-Received: by 2002:a17:90a:b706:b0:2e2:a097:bb02 with SMTP id 98e67ed59e1d1-2e8f105e828mr40420185a91.11.1730790061392;
+        Mon, 04 Nov 2024 23:01:01 -0800 (PST)
+Received: from debian.resnet.ucla.edu (s-169-232-97-87.resnet.ucla.edu. [169.232.97.87])
+        by smtp.googlemail.com with ESMTPSA id 98e67ed59e1d1-2e93db18480sm8819376a91.41.2024.11.04.23.01.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 04 Nov 2024 23:01:00 -0800 (PST)
+From: Daniel Yang <danielyangkang@gmail.com>
+To: Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	"GitAuthor: Daniel Yang" <danielyangkang@gmail.com>,
+	linux-perf-users@vger.kernel.org (open list:PERFORMANCE EVENTS SUBSYSTEM),
+	linux-kernel@vger.kernel.org (open list:PERFORMANCE EVENTS SUBSYSTEM)
+Subject: [PATCH] Use strscpy() instead of the deprecated strlcpy()
+Date: Mon,  4 Nov 2024 23:00:46 -0800
+Message-Id: <20241105070046.424750-1-danielyangkang@gmail.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241104-61da90a19c561bb5ed63141b-pchelkin@ispras.ru>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Nov 04, 2024 at 05:55:28PM +0300, Fedor Pchelkin wrote:
-> On Tue, 29. Oct 18:12, Fedor Pchelkin wrote:
-> > On Tue, 29. Oct 10:20, Sasha Levin wrote:
-> > > On Tue, Oct 29, 2024 at 04:31:40PM +0300, Fedor Pchelkin wrote:
-> > > > BTW, a question to the stable-team: what Git magic (3-way-merge?) let the
-> > > > duplicate patch be applied successfully? The patch context in stable trees
-> > > > was different to that moment so should the duplicate have been expected to
-> > > > fail to be applied?
-> > > 
-> > > Just plain git... Try it yourself :)
-> > > 
-> > > $ git checkout 282f0a482ee6
-> > > HEAD is now at 282f0a482ee61 drm/amd/display: Skip Recompute DSC Params if no Stream on Link
-> > > 
-> > > $ git cherry-pick 7c887efda1
-> > 
-> > 7c887efda1 is the commit backported to linux-6.1.y. Of course it will apply
-> > there.
-> > 
-> > What I mean is that the upstream commit for 7c887efda1 is 8151a6c13111b465dbabe07c19f572f7cbd16fef.
-> > 
-> > And cherry-picking 8151a6c13111b465dbabe07c19f572f7cbd16fef to linux-6.1.y
-> > on top of 282f0a482ee6 will not result in duplicating the change, at least
-> > with my git configuration.
-> > 
-> > I just don't understand how a duplicating if-statement could be produced in
-> > result of those cherry-pick'ings and how the content of 7c887efda1 was
-> > generated.
-> > 
-> > $ git checkout 282f0a482ee6
-> > HEAD is now at 282f0a482ee6 drm/amd/display: Skip Recompute DSC Params if no Stream on Link
-> > 
-> > $ git cherry-pick 8151a6c13111b465dbabe07c19f572f7cbd16fef
-> > Auto-merging drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c
-> > HEAD detached at 282f0a482ee6
-> > You are currently cherry-picking commit 8151a6c13111.
-> >   (all conflicts fixed: run "git cherry-pick --continue")
-> >   (use "git cherry-pick --skip" to skip this patch)
-> >   (use "git cherry-pick --abort" to cancel the cherry-pick operation)
-> > The previous cherry-pick is now empty, possibly due to conflict resolution.
-> > If you wish to commit it anyway, use:
-> > 
-> >     git commit --allow-empty
-> > 
-> > Otherwise, please use 'git cherry-pick --skip'
-> 
-> Sasha,
-> 
-> my concern is that maybe there is some issue with the scripts used for the
-> preparation of backport patches.
-> 
-> There are two different upstream commits performing the exact same change:
-> - 50e376f1fe3bf571d0645ddf48ad37eb58323919
-> - 8151a6c13111b465dbabe07c19f572f7cbd16fef
-> 
-> 50e376f1fe3bf571d0645ddf48ad37eb58323919 was backported to stable kernels
-> at first. After that, attempts to backport 8151a6c13111b465dbabe07c19f572f7cbd16fef
-> to those stables should be expected to fail, no? Git would have complained
-> about this - the patch was already applied.
-> 
-> It is just strange that the (exact same) change made by the commits is
-> duplicated by backporting tools. As it is not the first case where DRM
-> patches are involved per Greg's statement [1], I wonder if something can be
-> done on stable-team's side to avoid such odd behavior in future.
+The latest kernel doc:
+https://www.kernel.org/doc/html/latest/process/deprecated.html
+recommends replacing strlcpy with strscpy. Since the return value of
+strlcpy is not used, replacing with strscpy should be safe.
 
-No, all of this mess needs to be fixed up on the drm developer's side,
-they are the ones doing this type of crazy "let's commit the same patch
-to multiple branches and then reference a commit that will show up at an
-unknown time in the future and hope for the best!" workflow.
+Signed-off-by: Daniel Yang <danielyangkang@gmail.com>
+---
+ tools/perf/util/symbol.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I'm amazed it works at all, they get to keep fixing up this mess as this
-is entirely self-inflicted.
+diff --git a/tools/perf/util/symbol.c b/tools/perf/util/symbol.c
+index 3bbf173ad..660ed5626 100644
+--- a/tools/perf/util/symbol.c
++++ b/tools/perf/util/symbol.c
+@@ -1893,7 +1893,7 @@ int dso__load(struct dso *dso, struct map *map)
+ 			char *new_name = dso__filename_with_chroot(dso, name);
+ 			if (new_name) {
+ 				is_reg = is_regular_file(new_name);
+-				strlcpy(name, new_name, PATH_MAX);
++				strscpy(name, new_name, PATH_MAX);
+ 				free(new_name);
+ 			}
+ 		}
+-- 
+2.39.2
 
-greg k-h
 
