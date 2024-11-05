@@ -1,94 +1,67 @@
-Return-Path: <linux-kernel+bounces-396586-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396588-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D95AC9BCF25
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 15:23:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E6B59BCF2B
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 15:24:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8AFF61F22E3A
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 14:23:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C32BF283B0B
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 14:24:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E3D61DD88D;
-	Tue,  5 Nov 2024 14:22:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3B971D9A6D;
+	Tue,  5 Nov 2024 14:23:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m2GW47Uc"
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="hE5SMa9j"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B87D1DD0C1;
-	Tue,  5 Nov 2024 14:22:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC7E01D9698;
+	Tue,  5 Nov 2024 14:23:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730816537; cv=none; b=aZfPDRcrHlz1y9gdQgadYLBEA883PPKa95bmIU0EBOC3x/gSBAEP7L5O8yA6dp7Yi3zI+m+h1H6bgtjjxLFRjdwT8Cj5CG4mvPEjkvyGe5/+36X6iImiXRvg4S+97XxAn0VnA0iMJa/S7aajlAwFYZWlFyp2lew1c71rur+pUoo=
+	t=1730816617; cv=none; b=mhnlfDfjZt5xMt1E8qdELdZA66roFma2i9OitSbq4aUgiUFjdCIowceLts3N3Za3oZbWQw8j8Th1icRm0cexD4iq0hiZEBVWsA/gVv5mg4IHXfoqwBhwOK1lLbnQQahKsfvQ8SZEXduLVwhkUDWI14crmUFZEmhHTZWt3xK6uqU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730816537; c=relaxed/simple;
-	bh=sP5RMY8hxe6DXxClXbSAAF5UnVZF/3YYdW1ecNvnqvs=;
+	s=arc-20240116; t=1730816617; c=relaxed/simple;
+	bh=zLytG1YfSkTOzqHClOfI+HzwbqnLK1RfiSzGudw3e8U=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GBQ2oGUqB/nSZHf/NkB9IB+vUr0rtpkKP5zcvQxokWRCx/zcTtQwitNO52ieZE5MD0HUMKiZQG7TxyRQRWbj7gsqH9VqHpfx4ywn8yVhurl8DhA+FFH3I2QOVQM6taNZXJznPxAQj9lYen3q3SuPZjphQbzj2xtEuvAg1ZXXwzI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m2GW47Uc; arc=none smtp.client-ip=209.85.216.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2e2e050b1c3so4817298a91.0;
-        Tue, 05 Nov 2024 06:22:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730816536; x=1731421336; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=u9W36PJD1WQmA4X2SxmQGflBy5FWr2N7Wbdhri0Rtxk=;
-        b=m2GW47Uct+7plhpksxcFwsXPRlEqXUfBx5thBG1BW8PH5CgEZ7vKqSDJkyYOz8cJkA
-         CIsatIcQVAGHJcHBSxuu/eSghnbRRcQcnbbMhtrlmVScJLOw9MZtmk3MyqlFuX0myOUr
-         pEDtjA/4rjLxApMBX0pNmSa1sR23td/stfXQmS8jvSWuleYCqSSGco2W2ZGLkEuvWu/a
-         Crct6OWugt/ZkrIt551QZ2pVnuzEoov3Z5zSxV5dLZ/UvqdL7eG4m4Bsn4YSxfFcly03
-         qW+RszgQSHIy/qR1JxyqjdkvS1BfyqP1Cdw4YcFsBHiXeRPzB6InrFUmHgqSMhIb6/1H
-         7uiw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730816536; x=1731421336;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=u9W36PJD1WQmA4X2SxmQGflBy5FWr2N7Wbdhri0Rtxk=;
-        b=q1buMBjVW3p1VFgiy+bUb7HHseB0iowYXfVZ+HfYP8mNT8f7svZTXsOxkaf8NnGEQW
-         tmCzMo2OdW7Db39+Syfh+HXOhQHmGKj+SfC0YX99P6W/vNnpOB49fqIc26IXUEalKMow
-         BBW/h9QMX/5w7i2DNP/yH0wTH/dOVx8wSPLqQbxB8tnHNIakGMmS/f6rLrYf9ypX45do
-         uXMulT6SuZp0B9CdoWqhpTnAPP86M8nV22P2pRArisbWpPeGlEB98fYlzSbfkeUBvd5u
-         +9cgpEZo2Jc3pKAQnzsYcwkJqx60An2nORtubzSOf1hdStsVtTjwX6UwdaMb+hYqviYD
-         a1sQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUAP3rNa/hmaXQlbx43Cj+T3spEqjFM2Jvh1OeGpwcSjYRNlj4+HrLRm4vzFACwFAVD/Ueci5kqyfoYBwQO7g==@vger.kernel.org, AJvYcCVNWXscCvOwOTLmWQTEUg5QTQ1bNSn1sbnYtmLFT3J7pZHHevfOaY3X+TJ3mZBXmT3SeDoOyH3qF9StN64=@vger.kernel.org, AJvYcCWoBFeJxzmHL2SD2YbVgPMfdKlAawwnG6Ma1fbR9MYJnxCfyCCGPKpggr6DhmlU0zv8GtBqr0VPOGZP@vger.kernel.org, AJvYcCXsIA/y3yyy/+lRWZmYzZevO/UvGLCumwhy9o+WE7+BbP06FqUHqEHACHj/eWVUnH4TCyssL5gmruIiKIo6@vger.kernel.org
-X-Gm-Message-State: AOJu0YwhZMDQJhd+G1EVgaMayiS53lbWExg/41uBh92M3hPvEm70QB8A
-	bE13YtoDXxAKbARVDm4SiNDmSD/IQdqgIpMpbXCf5rpKgkv2Kt19
-X-Google-Smtp-Source: AGHT+IG0S61a2XP28pDo7uNGhJL5Hq4TKSAS4dmj/2FNbmAX8sRwFnS/wYTX7SQYzyioWWZyUUpcDQ==
-X-Received: by 2002:a17:90b:3147:b0:2e2:b94a:b6a9 with SMTP id 98e67ed59e1d1-2e94b7c6439mr26354314a91.0.1730816535597;
-        Tue, 05 Nov 2024 06:22:15 -0800 (PST)
-Received: from localhost.localdomain ([103.149.249.231])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211057d45cfsm78606595ad.260.2024.11.05.06.22.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Nov 2024 06:22:15 -0800 (PST)
-Date: Tue, 5 Nov 2024 22:22:17 +0800
-From: Jianhua Lu <lujianhua000@gmail.com>
-To: Dikshita Agarwal <quic_dikshita@quicinc.com>
-Cc: Vikash Garodia <quic_vgarodia@quicinc.com>,
-	Abhinav Kumar <quic_abhinavk@quicinc.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Hans Verkuil <hverkuil@xs4all.nl>,
-	Sebastian Fricke <sebastian.fricke@collabora.com>,
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Nicolas Dufresne <nicolas@ndufresne.ca>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>,
-	linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 27/28] media: iris: enable video driver probe of
- SM8250 SoC
-Message-ID: <ZyoqGaSMc2z9xsr1@localhost.localdomain>
-References: <20241105-qcom-video-iris-v5-0-a88e7c220f78@quicinc.com>
- <20241105-qcom-video-iris-v5-27-a88e7c220f78@quicinc.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=hxcs+9PBw1gEWC1/02Gp7R5KCWevbRAWnbo6mI/8lFc9e00nWoG9pFNSHXttDQbLDCsPoYsKyvep14HUYiDQ1Cd/y3nNKDLeWLVRQg3EADTpoty5cd1Oy8kMBvW9V6WPEmFsfKj+xigy4TMSv72L+z5hbsSpGy2kIjaP453qJro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=hE5SMa9j; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=SOAGP58wCd2LK1x1wfdrBzdm/43jUDWJm6SoFRYCB5E=; b=hE5SMa9ja6bM9MX3KD8srWKF/7
+	uN9q/WjHUJUzbNLDi2OMp6FBBS+7MECqEozBGOJBvqzLZ4w2SNDJYJGz9N3OI1EzFoLEnXLtx8+Ap
+	KcYNPAVUwR4BhNwEV8OpFqyjxBd7ooa37zOqHi7BFak3e9tr3Ct4TWXrSLSz+9SJEUHllSteeuyox
+	D+H3Tv89fDm217KCRlEkrQtyV7cxLTCdo5z0S02d9wJCPqq/h6CzD6kNtd5fVbcR3T21yBqwJ4t18
+	Yt1XhMRX5XNXbKbm56e7NpouAh8zZX+c3ULbqHrE2/CUgievJsbEk3TTwZN3pFbYRV3r6N7cY/OA9
+	3kMx3+QQ==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1t8KSt-0000000BlgF-2kwM;
+	Tue, 05 Nov 2024 14:23:27 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 4DA2830042E; Tue,  5 Nov 2024 15:23:27 +0100 (CET)
+Date: Tue, 5 Nov 2024 15:23:27 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Jiri Olsa <jolsa@kernel.org>
+Cc: Oleg Nesterov <oleg@redhat.com>, Andrii Nakryiko <andrii@kernel.org>,
+	bpf@vger.kernel.org, Song Liu <songliubraving@fb.com>,
+	Yonghong Song <yhs@fb.com>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Hao Luo <haoluo@google.com>, Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Alan Maguire <alan.maguire@oracle.com>,
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
+Subject: Re: [RFC perf/core 05/11] uprobes: Add mapping for optimized uprobe
+ trampolines
+Message-ID: <20241105142327.GF10375@noisy.programming.kicks-ass.net>
+References: <20241105133405.2703607-1-jolsa@kernel.org>
+ <20241105133405.2703607-6-jolsa@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -97,49 +70,22 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241105-qcom-video-iris-v5-27-a88e7c220f78@quicinc.com>
+In-Reply-To: <20241105133405.2703607-6-jolsa@kernel.org>
 
-On Tue, Nov 05, 2024 at 12:25:47PM +0530, Dikshita Agarwal wrote:
-> Initialize the platform data and enable video driver probe of SM8250
-> SoC. Add a kernel param to select between venus and iris drivers for
-> platforms supported by both drivers, for ex: SM8250.
+On Tue, Nov 05, 2024 at 02:33:59PM +0100, Jiri Olsa wrote:
+> Adding interface to add special mapping for user space page that will be
+> used as place holder for uprobe trampoline in following changes.
 > 
-> Signed-off-by: Dikshita Agarwal <quic_dikshita@quicinc.com>
-> ---
-[..]
-> --- a/drivers/media/platform/qcom/iris/iris_platform_common.h
-> +++ b/drivers/media/platform/qcom/iris/iris_platform_common.h
-[..]
-> +struct iris_platform_data sm8250_data = {
-
-You should qualitfy it with static too.
-
-> +	.get_instance = iris_hfi_gen1_get_instance,
-> +	.init_hfi_command_ops = &iris_hfi_gen1_command_ops_init,
-> +	.init_hfi_response_ops = iris_hfi_gen1_response_ops_init,
-[..]
-> diff --git a/drivers/media/platform/qcom/iris/iris_probe.c b/drivers/media/platform/qcom/iris/iris_probe.c
-> index 7b7378b7abb3..4cbaa889322e 100644
-> --- a/drivers/media/platform/qcom/iris/iris_probe.c
-> +++ b/drivers/media/platform/qcom/iris/iris_probe.c
-[..]
-> +static bool video_drv_should_bind(struct device *dev, bool iris_driver)
-
-Variable name iris_driver isn't good enough, rename it to
-is_iris_driver please.
-
-> +{
-> +	if (of_device_compatible_match(dev->of_node, iris_only_platforms))
-> +		return iris_driver;
-> +
-> +	/* If it is not in the migration list, use venus */
-> +	if (!of_device_compatible_match(dev->of_node, venus_to_iris_migration))
-> +		return !iris_driver;
-> +
-> +	return prefer_venus ? !iris_driver : iris_driver;
-> +}
-> +
-> -- 
-> 2.34.1
+> The get_tramp_area(vaddr) function either finds 'callable' page or create
+> new one.  The 'callable' means it's reachable by call instruction (from
+> vaddr argument) and is decided by each arch via new arch_uprobe_is_callable
+> function.
 > 
+> The put_tramp_area function either drops refcount or destroys the special
+> mapping and all the maps are clean up when the process goes down.
+
+In another thread somewhere, Andrii mentioned that Meta has executables
+with more than 4G of .text. This isn't going to work for them, is it?
+
+
 
