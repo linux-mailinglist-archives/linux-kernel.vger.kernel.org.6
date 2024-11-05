@@ -1,210 +1,131 @@
-Return-Path: <linux-kernel+bounces-397008-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397009-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4DE79BD586
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 19:59:10 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 258D99BD58D
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 20:00:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E898E1C22D4B
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 18:59:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B2B13B20FB6
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 19:00:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C77C1EABB9;
-	Tue,  5 Nov 2024 18:59:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCDD01E3796;
+	Tue,  5 Nov 2024 19:00:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jr0bXlD+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="fnk2HaZq"
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 759E61E47B6;
-	Tue,  5 Nov 2024 18:59:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 932041714B3;
+	Tue,  5 Nov 2024 19:00:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730833143; cv=none; b=XjLPeEo2Oy904wH3xi75uOaqYIr2AMWBQVNhKtgtRCBX7aNjcCKYlKUklurRWOw3GugMV75jVs444waM1UoeUunpeaAVH82zVOsBX7Rx85AOrCFusYuvDRJhhWySwdLKhh9qdka7DKTthylByPKnaua7gy8baZcVTWFQnkDtcwk=
+	t=1730833240; cv=none; b=Xd+DErcZG06NSVcC70qdcp3K+ltkT3N7zw2KmOcexIv3HvbIRxVzJHvY/A5/1DFiGLuK0AJuc+Q2BvjqbIXgo7t04w1oOwdFJepkID1Q8wB/ZsDCIYqkbnno353NXoJPIXtloJVM8IBPrKd7Flxi4E3eomAIUknCxmBRe6Fk62I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730833143; c=relaxed/simple;
-	bh=3zdgXCPPKSD1xfYxWDmC/EUuKY/QlMHd4XNXizG5HRI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=H+GEmQzBgPyDsthBbfvLbG8NHALqstYKQyQr8x9P7SGgY5dWOhiZIrHG/5aF7xYwKQu1A20YRf077Zyt+9irbvkxMoXxEtMrJObxwtKb0xeMepNuIBwg/Tn+5CeYhhNJlFZQDi49LP0KIqKL6YR41as0sNsiPtjwqc0WrWrEMM0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jr0bXlD+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23D7DC4CED3;
-	Tue,  5 Nov 2024 18:59:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730833143;
-	bh=3zdgXCPPKSD1xfYxWDmC/EUuKY/QlMHd4XNXizG5HRI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=jr0bXlD+Y7HkfD1pk02WZCFcYoAvd8GiC4vkRusK24T0PRzsD9KtF4hLRr5dZO9IS
-	 bZ/PrWY8eNQO8dhzBPBmrX7B2+720xztPGp0PAN2fcSeGaeoJ4cmFse9ffXMcQyuQT
-	 LUyC9h64eAWM1D4/uuhY5lhIK4WmDegV9FCVjBhZ+FBZxZEcffibZWdudJqwO7wYIE
-	 fLcqtO4IUQNZhsQXQRX9US6uT7ZRxD7LVQEdjtpipSJFLtchuwTMojzr7UFWhHoQ/y
-	 M2ESLiYty9uLngtbi49nBOXsywBwIYGtepxOoGuG7rQEbubfbKELjJEaC5elt1CHIO
-	 NlTFRHAzxjVkw==
-Date: Tue, 5 Nov 2024 12:59:01 -0600
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Herve Codina <herve.codina@bootlin.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Saravana Kannan <saravanak@google.com>,
-	Bjorn Helgaas <bhelgaas@google.com>, Lizhi Hou <lizhi.hou@amd.com>,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-pci@vger.kernel.org,
-	Allan Nielsen <allan.nielsen@microchip.com>,
-	Horatiu Vultur <horatiu.vultur@microchip.com>,
-	Steen Hegelund <steen.hegelund@microchip.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH 6/6] PCI: of: Create device-tree root bus node
-Message-ID: <20241105185901.GA1479626@bhelgaas>
+	s=arc-20240116; t=1730833240; c=relaxed/simple;
+	bh=lRcjhnYU4YtEFKEyalImfyomLqsDnHLCiCMCDVcQex4=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=g93S+U9DpUsifsUqCFTQ8VzP8cI7ph55XpK8/XFe4RHvUC3SAbDLC3Tt9Hq/k0/qpaJMSnM4Pr7Eaj6rNqour4E0VuGXM2q/FbsaSI3CGEOMsHypDy4NJa205V5B0Nc5sSajXv3tb3vIZGRLqAMZtBeqfFhfrpcnRpZyAU6IHgo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=fnk2HaZq; arc=none smtp.client-ip=198.47.23.248
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4A5J06Cq076197;
+	Tue, 5 Nov 2024 13:00:06 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1730833206;
+	bh=VugAso+wRQMnLwx/ZTUVnwYUxWEmtG4O0Ip8hks9/tw=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=fnk2HaZqvoUIwqXCNLmCWVx0vs6mdcx8EP9xqkeSy3K6KUQA3GQ9ZCRMDEOssvkrx
+	 lsUHqGMKUyS3QvUoNEFkTIT7Z4JcjGlvlU0xXCvN1TI7+mwwKVn8GcMbYGSfbkBFAm
+	 QZrQnXuwsjwDCg7OjW6qYxRswuGml9m0j/bRqZVs=
+Received: from DLEE102.ent.ti.com (dlee102.ent.ti.com [157.170.170.32])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4A5J06v1062945
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Tue, 5 Nov 2024 13:00:06 -0600
+Received: from DLEE111.ent.ti.com (157.170.170.22) by DLEE102.ent.ti.com
+ (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 5
+ Nov 2024 13:00:06 -0600
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE111.ent.ti.com
+ (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Tue, 5 Nov 2024 13:00:06 -0600
+Received: from localhost (ula0271908.dhcp.ti.com [128.247.77.198])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4A5J05Ib023244;
+	Tue, 5 Nov 2024 13:00:05 -0600
+Date: Tue, 5 Nov 2024 13:00:05 -0600
+From: Bin Liu <b-liu@ti.com>
+To: Judith Mendez <jm@ti.com>
+CC: Kevin Hilman <khilman@kernel.org>,
+        Santosh Shilimkar
+	<ssantosh@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz
+ Golaszewski <brgl@bgdev.pl>, <linux-omap@vger.kernel.org>,
+        <linux-gpio@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH RESEND v2] gpio: omap: Add omap_gpio_disable/enable_irq
+ calls
+Message-ID: <20241105190005.cg6dpeedbirgflqm@iaqt7>
+Mail-Followup-To: Bin Liu <b-liu@ti.com>, Judith Mendez <jm@ti.com>,
+	Kevin Hilman <khilman@kernel.org>,
+	Santosh Shilimkar <ssantosh@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>, linux-omap@vger.kernel.org,
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241031145652.342696-1-jm@ti.com>
+ <7h5xp7owmy.fsf@baylibre.com>
+ <520c7e6b-f9c0-441f-8810-8e5ede668f6a@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <20241104172001.165640-7-herve.codina@bootlin.com>
+In-Reply-To: <520c7e6b-f9c0-441f-8810-8e5ede668f6a@ti.com>
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Mon, Nov 04, 2024 at 06:20:00PM +0100, Herve Codina wrote:
-> PCI devices device-tree nodes can be already created. This was
-> introduced by commit 407d1a51921e ("PCI: Create device tree node for
-> bridge").
+On Tue, Nov 05, 2024 at 12:47:58PM -0600, Judith Mendez wrote:
+> Hi Kevin,
+> 
+> On 11/1/24 9:29 AM, Kevin Hilman wrote:
+> > Hi Judith,
+> > 
+> > Judith Mendez <jm@ti.com> writes:
+> > 
+> > > From: Bin Liu <b-liu@ti.com>
+> > > 
+> > > Add omap_gpio_disable_irq and omap_gpio_enable_irq
+> > > calls in gpio-omap.
+> > > 
+> > > Currently, kernel cannot disable gpio interrupts in
+> > > case of a irq storm, so add omap_gpio_disable/enable_irq
+> > > so that interrupts can be disabled/enabled.
+> > > 
+> > > Signed-off-by: Bin Liu <b-liu@ti.com>
+> > > [Judith: Add commit message]
+> > > Signed-off-by: Judith Mendez <jm@ti.com>
+> > 
+> > Thanks for this patch.  Can you give a bit more context on the
+> > problem(s) this solves and on which SoCs/platforms it was
+> > developed/validated?
+> 
+> Sorry for the late response. Patch was tested/developed on am335x
+> device BBB, If you feed a PWM signal at 200KHz frequency to
+> GPIO, and execute gpiomon 0 12 &, Linux will be unresponsive
+> even after CTRL+C without these 2 functions in this patch. Once
+> this patch is applied, you can get console back after hitting
+> CTRL+C and then proceed to kill gpiomon.
 
-I guess 407d1a51921e creates device tree nodes for bridges, including
-Root Ports, which are enumerated as PCI-to-PCI bridges, right?
+In addtion to Judith's explanation, when the PWM is applied to a GPIO
+pin, kernel detects the interrupt storm and disables the irq, however,
+without these callbacks, this gpio platform driver doesn't really
+disable the interrupt in the gpio controller, so the interrupt storm is
+still happening and handled by this gpio controller driver then causes
+Linux unresponsive.
 
-> In order to have device-tree nodes related to PCI devices attached on
-> their PCI root bus, a root bus device-tree node is needed. This root bus
-> node will be used as the parent node of the first level devices scanned
-> on the bus.
->
-> On non device-tree based system (such as ACPI), a device-tree node for
-> the PCI root bus does not exist.  ...
-
-I'm wondering if "root bus" is the right description for this patch
-and whether "PCI host bridge" might be more accurate.  The bus itself
-doesn't really have a physical counterpart other than being the
-secondary side of a PCI host bridge where the primary side is some
-kind of CPU bus.
-
-An ACPI namespace doesn't include a "root bus" object, but it *does*
-include a PCI host bridge (PNP0A03) object, which is where any address
-translation between the CPU bus and the PCI hierarchy is described.
-
-I suspect this patch is adding a DT node that corresponds to the
-PNP0A03 host bridge object, and the "ranges" property of the new node
-will describe the mapping from the CPU address space to the PCI
-address space.
-
-> Indeed, this component is not described
-> in a device-tree used at boot.
-
-But maybe I'm on the wrong track, because obviously PCI host
-controllers *are* described in DTs used at boot.
-
-> The device-tree PCI root bus node creation needs to be done at runtime.
-> This is done in the same way as for the creation of the PCI device
-> nodes. I.e. node and properties are created based on computed
-> information done by the PCI core.
-
-See address translation question below.
-
-> +void of_pci_make_root_bus_node(struct pci_bus *bus)
-> +{
-> +	struct device_node *np = NULL;
-> +	struct of_changeset *cset;
-> +	const char *name;
-> +	int ret;
-> +
-> +	/*
-> +	 * If there is already a device tree node linked to this device,
-> +	 * return immediately.
-> +	 */
-> +	if (pci_bus_to_OF_node(bus))
-> +		return;
-> +
-> +	/* Check if there is a DT root node to attach this created node */
-> +	if (!of_root) {
-> +		pr_err("of_root node is NULL, cannot create PCI root bus node");
-> +		return;
-> +	}
-> +
-> +	name = kasprintf(GFP_KERNEL, "pci-root@%x,%x", pci_domain_nr(bus),
-> +			 bus->number);
-
-Should this be "pci%d@%x,%x" to match the typical descriptions of PCI
-host bridges in DT?
-
-> +static int of_pci_root_bus_prop_ranges(struct pci_bus *bus,
-> +				       struct of_changeset *ocs,
-> +				       struct device_node *np)
-> +{
-> +	struct pci_host_bridge *bridge = to_pci_host_bridge(bus->bridge);
-> +	struct resource_entry *window;
-> +	unsigned int ranges_sz = 0;
-> +	unsigned int n_range = 0;
-> +	struct resource *res;
-> +	int n_addr_cells;
-> +	u32 *ranges;
-> +	u64 val64;
-> +	u32 flags;
-> +	int ret;
-> +
-> +	n_addr_cells = of_n_addr_cells(np);
-> +	if (n_addr_cells <= 0 || n_addr_cells > 2)
-> +		return -EINVAL;
-> +
-> +	resource_list_for_each_entry(window, &bridge->windows) {
-> +		res = window->res;
-> +		if (!of_pci_is_range_resource(res, &flags))
-> +			continue;
-> +		n_range++;
-> +	}
-> +
-> +	if (!n_range)
-> +		return 0;
-> +
-> +	ranges = kcalloc(n_range,
-> +			 (OF_PCI_ADDRESS_CELLS + OF_PCI_SIZE_CELLS +
-> +			  n_addr_cells) * sizeof(*ranges),
-> +			 GFP_KERNEL);
-> +	if (!ranges)
-> +		return -ENOMEM;
-> +
-> +	resource_list_for_each_entry(window, &bridge->windows) {
-> +		res = window->res;
-> +		if (!of_pci_is_range_resource(res, &flags))
-> +			continue;
-> +
-> +		/* PCI bus address */
-> +		val64 = res->start;
-> +		of_pci_set_address(NULL, &ranges[ranges_sz], val64, 0, flags, false);
-> +		ranges_sz += OF_PCI_ADDRESS_CELLS;
-> +
-> +		/* Host bus address */
-> +		if (n_addr_cells == 2)
-> +			ranges[ranges_sz++] = upper_32_bits(val64);
-> +		ranges[ranges_sz++] = lower_32_bits(val64);
-
-IIUC this sets both the parent address (the host bus (CPU) physical
-address) and the child address (PCI bus address) to the same value.
-
-I think that's wrong because these addresses need not be identical.
-
-I think the parent address should be the res->start value, and the
-child address should be "res->start - window->offset", similar to
-what's done by pcibios_resource_to_bus().
-
-> +		/* Size */
-> +		val64 = resource_size(res);
-> +		ranges[ranges_sz] = upper_32_bits(val64);
-> +		ranges[ranges_sz + 1] = lower_32_bits(val64);
-> +		ranges_sz += OF_PCI_SIZE_CELLS;
-> +	}
-> +
-> +	ret = of_changeset_add_prop_u32_array(ocs, np, "ranges", ranges, ranges_sz);
-> +	kfree(ranges);
-> +	return ret;
-> +}
+-Bin.
 
