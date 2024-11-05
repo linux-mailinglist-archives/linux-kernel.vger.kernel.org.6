@@ -1,54 +1,54 @@
-Return-Path: <linux-kernel+bounces-396092-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396093-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAFB29BC7CB
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 09:16:35 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4A829BC7CC
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 09:16:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 443C6B22C20
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 08:16:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 756CA1F21263
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 08:16:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E812E200B94;
-	Tue,  5 Nov 2024 08:14:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBF93200B9C;
+	Tue,  5 Nov 2024 08:14:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Flkp5Pyv";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="iayGKVtz"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="D9g8mE00";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="+Ly1Ikj1"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F9C22003CA
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 08:14:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 720262003DC
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 08:14:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730794487; cv=none; b=GOwjyiDm51rda9LXfvcrTNrpOe+TUW8HZasYNkmXeQxraMBAzyGM2ny/tAUFNNvrkjHNC2AsaZRi8e1WfIj3H0r4OdmW3fHfMdV9I5q+6sg+XoDSrjZZemvvIVfF4hVJGyiYYXnZ7jV6uUC2VQUILWGqyT3rh8w05X19MMZ1sdk=
+	t=1730794488; cv=none; b=L/EYJR18RqywmMCl7PR/CLotxmOs6lqkMvFPhDZ5PAzIVfXNgFgLM/NmeY9W5AFaK6VpYSTXQmqVRa8OVDQzyVd4B7XEVR1Tgib3afRZggXSusbcKGSr4HYE++DhmJ1r8qPgPGUWBL4BmkqujE7JOznWPjQu1RZneK/NXXBFXOU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730794487; c=relaxed/simple;
-	bh=CexgufO+1Osh5TMOL66HRJxKyFDyiRssUXwnxU9QZ7A=;
+	s=arc-20240116; t=1730794488; c=relaxed/simple;
+	bh=W9vkcg3goHw3toa/NPatBgcGiFKl03A2/EGpx0AvsdE=;
 	h=Message-ID:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Date; b=cy67tp0N2bJL9lvLFqbpCD2KZUhhuhDgZChADgyIdwtAUgVWn2mHpCKW5yMNLFHtXIC7e0utTrvD/Uh/LKPg3CQPinEcSIS1ruzUmnS+lOgIpEASmYDWB40GIeS/fr2MqiiID8l56tFFmehOgQhlsZfYPJ7jd6UVZ8dFPwBE54k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Flkp5Pyv; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=iayGKVtz; arc=none smtp.client-ip=193.142.43.55
+	 Content-Type:Date; b=krFyo3m61jTvlOPyuvidhFS/zG5t0tH84BiPVpZla+CxkySmIYWgLfi2dM1BLZAiTIay5HU4w00700gtmcAp6PCIiiIAKVQ6nSYG8IzDoFTbIcyGRN34iFjocyImrXKGEQ6rBeAOh+/7+eI0tTPTRKPGl7Jd1Tk66t4y2B57hJU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=D9g8mE00; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=+Ly1Ikj1; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Message-ID: <20241105064213.586453412@linutronix.de>
+Message-ID: <20241105064213.652658158@linutronix.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1730794483;
+	s=2020; t=1730794484;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 references:references; bh=ChIynh12PYnBXnJ3TWILE4o90Tsj+76TEesTqrWpYsU=;
-	b=Flkp5PyvFs/SqapSYPc178sEKk5A2uDeoHJvTbPd4o8mFtHZSAGk3vcc6ovoobyq5Mj2fI
-	2M7qYGzCE41gOech+7vWe+sKD800wzywcDdkOKN11quX6TCvO+42wg1dpZh0ANfHhKNSq2
-	vhhMtban96fTNfGN4DoVPlCJuJRtgySAK9jDgI9LgpgsRUGt1YuLb/0RrDPEbbl1crj7Rv
-	JShaJnSVj6kHUuvUYE+1B2VevuhrWR4YbPeRNVWns3bzpg/bb5Yu5b2ozFDvSLRdZhQ2pY
-	/1UOemqrjyZOFtGdmwiiln4RslytVgpqMscfd63YOmRXwsUTzD4VOH5tIpEPWQ==
+	 references:references; bh=I2JKYlpS9EROm2PXQHeSksdbFrfFm6VApPBBZM9ycE4=;
+	b=D9g8mE00hq26Gz/Ix2eQUm9ieDQ177DY/V1MSUdw8x7/T4hZzYzyflWPKseMAQXlBQLKb6
+	CFXojET9TbjYpKmXcMaFvyDOVXvM8gmaKOHUh5ZaZ7LSqfp5BlrWA4ULl3Cf4cSaUpeTqT
+	elCEV9zSvN58WVwASzuwWXB7qNnALWZODcy3lv38hFPqdnJ7NhGW33R+MQrwN+m3/CA9bM
+	/c3TxYIdEhTaeK1DebEt5SbXwATHD+pEG6yo0/UvUMa/IVFoUqW4pdqcgN+5268KsL2Apx
+	LUZHbrbfvlvVZAboTE1bhqjhnfLZr91rQBt1M2jz5OFykel/Ff6T93qPHvEQkQ==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1730794483;
+	s=2020e; t=1730794484;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 references:references; bh=ChIynh12PYnBXnJ3TWILE4o90Tsj+76TEesTqrWpYsU=;
-	b=iayGKVtzrpMG5qo4pmtInGECnrdmokfWvo/CmojdJynSj/wDJ8uZPTA/39GMbkw81gnScR
-	gE6nhdDPCuWvCvCw==
+	 references:references; bh=I2JKYlpS9EROm2PXQHeSksdbFrfFm6VApPBBZM9ycE4=;
+	b=+Ly1Ikj1SrYLgWA2CD2GBMuTY85qDbmHH7/99KsOazi8tJMrx9CSNPg1bdu2dGRjIv3BIk
+	vBUOuc2kcF9QzTBA==
 From: Thomas Gleixner <tglx@linutronix.de>
 To: LKML <linux-kernel@vger.kernel.org>
 Cc: Anna-Maria Behnsen <anna-maria@linutronix.de>,
@@ -59,7 +59,7 @@ Cc: Anna-Maria Behnsen <anna-maria@linutronix.de>,
  Stephen Boyd <sboyd@kernel.org>,
  Eric Biederman <ebiederm@xmission.com>,
  Oleg Nesterov <oleg@redhat.com>
-Subject: [patch V7 10/21] signal: Refactor send_sigqueue()
+Subject: [patch V7 11/21] signal: Replace resched_timer logic
 References: <20241105063544.565410398@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -68,178 +68,142 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Date: Tue,  5 Nov 2024 09:14:42 +0100 (CET)
+Date: Tue,  5 Nov 2024 09:14:43 +0100 (CET)
 
-To handle posix timers which have their signal ignored via SIG_IGN properly
-it is required to requeue a ignored signal for delivery when SIG_IGN is
-lifted so the timer gets rearmed.
+From: Thomas Gleixner <tglx@linutronix.de>
 
-Split the required code out of send_sigqueue() so it can be reused in
-context of sigaction().
+In preparation for handling ignored posix timer signals correctly and
+embedding the sigqueue struct into struct k_itimer, hand down a pointer to
+the sigqueue struct into posix_timer_deliver_signal() instead of just
+having a boolean flag.
 
-While at it rename send_sigqueue() to posixtimer_send_sigqueue() so its
-clear what this is about.
+No functional change.
 
+Suggested-by: Eric W. Biederman <ebiederm@xmission.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Acked-by: "Eric W. Biederman" <ebiederm@xmission.com>
 ---
- include/linux/posix-timers.h |    1 
- include/linux/sched/signal.h |    1 
- kernel/signal.c              |   82 +++++++++++++++++++++++--------------------
- kernel/time/posix-timers.c   |    2 -
- 4 files changed, 47 insertions(+), 39 deletions(-)
+V6: NULLify timer_sigq after again: in dequeue_signal() - Frederic
+V5: New patch
 ---
+ include/linux/posix-timers.h |    5 +++--
+ kernel/signal.c              |   32 ++++++++++++++++++++------------
+ kernel/time/posix-timers.c   |    2 +-
+ 3 files changed, 24 insertions(+), 15 deletions(-)
 
 --- a/include/linux/posix-timers.h
 +++ b/include/linux/posix-timers.h
-@@ -109,6 +109,7 @@ static inline void posix_cputimers_rt_wa
- 
+@@ -110,7 +110,7 @@ static inline void posix_cputimers_rt_wa
  void posixtimer_rearm_itimer(struct task_struct *p);
  bool posixtimer_init_sigqueue(struct sigqueue *q);
-+int posixtimer_send_sigqueue(struct k_itimer *tmr);
- bool posixtimer_deliver_signal(struct kernel_siginfo *info);
+ int posixtimer_send_sigqueue(struct k_itimer *tmr);
+-bool posixtimer_deliver_signal(struct kernel_siginfo *info);
++bool posixtimer_deliver_signal(struct kernel_siginfo *info, struct sigqueue *timer_sigq);
  void posixtimer_free_timer(struct k_itimer *timer);
  
---- a/include/linux/sched/signal.h
-+++ b/include/linux/sched/signal.h
-@@ -340,7 +340,6 @@ extern int send_sig(int, struct task_str
- extern int zap_other_threads(struct task_struct *p);
- extern struct sigqueue *sigqueue_alloc(void);
- extern void sigqueue_free(struct sigqueue *);
--extern int send_sigqueue(struct sigqueue *, struct pid *, enum pid_type, int si_private);
- extern int do_sigaction(int, struct k_sigaction *, struct k_sigaction *);
+ /* Init task static initializer */
+@@ -135,7 +135,8 @@ static inline void posix_cputimers_init(
+ static inline void posix_cputimers_group_init(struct posix_cputimers *pct,
+ 					      u64 cpu_limit) { }
+ static inline void posixtimer_rearm_itimer(struct task_struct *p) { }
+-static inline bool posixtimer_deliver_signal(struct kernel_siginfo *info) { return false; }
++static inline bool posixtimer_deliver_signal(struct kernel_siginfo *info,
++					     struct sigqueue *timer_sigq) { return false; }
+ static inline void posixtimer_free_timer(struct k_itimer *timer) { }
+ #endif
  
- static inline void clear_notify_signal(void)
 --- a/kernel/signal.c
 +++ b/kernel/signal.c
-@@ -1947,40 +1947,54 @@ void sigqueue_free(struct sigqueue *q)
- 		__sigqueue_free(q);
+@@ -545,7 +545,7 @@ bool unhandled_signal(struct task_struct
  }
  
--int send_sigqueue(struct sigqueue *q, struct pid *pid, enum pid_type type, int si_private)
-+static void posixtimer_queue_sigqueue(struct sigqueue *q, struct task_struct *t, enum pid_type type)
+ static void collect_signal(int sig, struct sigpending *list, kernel_siginfo_t *info,
+-			   bool *resched_timer)
++			   struct sigqueue **timer_sigq)
  {
--	int sig = q->info.si_signo;
- 	struct sigpending *pending;
-+	int sig = q->info.si_signo;
-+
-+	signalfd_notify(t, sig);
-+	pending = (type != PIDTYPE_PID) ? &t->signal->shared_pending : &t->pending;
-+	list_add_tail(&q->list, &pending->list);
-+	sigaddset(&pending->signal, sig);
-+	complete_signal(sig, t, type);
-+}
-+
-+/*
-+ * This function is used by POSIX timers to deliver a timer signal.
-+ * Where type is PIDTYPE_PID (such as for timers with SIGEV_THREAD_ID
-+ * set), the signal must be delivered to the specific thread (queues
-+ * into t->pending).
-+ *
-+ * Where type is not PIDTYPE_PID, signals must be delivered to the
-+ * process. In this case, prefer to deliver to current if it is in
-+ * the same thread group as the target process, which avoids
-+ * unnecessarily waking up a potentially idle task.
-+ */
-+static inline struct task_struct *posixtimer_get_target(struct k_itimer *tmr)
-+{
-+	struct task_struct *t = pid_task(tmr->it_pid, tmr->it_pid_type);
-+
-+	if (t && tmr->it_pid_type != PIDTYPE_PID && same_thread_group(t, current))
-+		t = current;
-+	return t;
-+}
-+
-+int posixtimer_send_sigqueue(struct k_itimer *tmr)
-+{
-+	struct sigqueue *q = tmr->sigq;
-+	int sig = q->info.si_signo;
- 	struct task_struct *t;
- 	unsigned long flags;
- 	int ret, result;
+ 	struct sigqueue *q, *first = NULL;
  
--	if (WARN_ON_ONCE(!(q->flags & SIGQUEUE_PREALLOC)))
--		return 0;
--	if (WARN_ON_ONCE(q->info.si_code != SI_TIMER))
--		return 0;
-+	guard(rcu)();
+@@ -568,10 +568,17 @@ static void collect_signal(int sig, stru
+ 		list_del_init(&first->list);
+ 		copy_siginfo(info, &first->info);
  
--	ret = -1;
--	rcu_read_lock();
+-		*resched_timer = (first->flags & SIGQUEUE_PREALLOC) &&
+-				 (info->si_code == SI_TIMER);
 -
--	/*
--	 * This function is used by POSIX timers to deliver a timer signal.
--	 * Where type is PIDTYPE_PID (such as for timers with SIGEV_THREAD_ID
--	 * set), the signal must be delivered to the specific thread (queues
--	 * into t->pending).
--	 *
--	 * Where type is not PIDTYPE_PID, signals must be delivered to the
--	 * process. In this case, prefer to deliver to current if it is in
--	 * the same thread group as the target process, which avoids
--	 * unnecessarily waking up a potentially idle task.
--	 */
--	t = pid_task(pid, type);
-+	t = posixtimer_get_target(tmr);
- 	if (!t)
--		goto ret;
--	if (type != PIDTYPE_PID && same_thread_group(t, current))
--		t = current;
-+		return -1;
-+
- 	if (!likely(lock_task_sighand(t, &flags)))
--		goto ret;
-+		return -1;
- 
- 	/*
- 	 * Update @q::info::si_sys_private for posix timer signals with
-@@ -1988,30 +2002,24 @@ int send_sigqueue(struct sigqueue *q, st
- 	 * decides based on si_sys_private whether to invoke
- 	 * posixtimer_rearm() or not.
- 	 */
--	q->info.si_sys_private = si_private;
-+	q->info.si_sys_private = tmr->it_signal_seq;
- 
- 	ret = 1; /* the signal is ignored */
--	result = TRACE_SIGNAL_IGNORED;
--	if (!prepare_signal(sig, t, false))
-+	if (!prepare_signal(sig, t, false)) {
-+		result = TRACE_SIGNAL_IGNORED;
- 		goto out;
-+	}
- 
- 	ret = 0;
- 	if (unlikely(!list_empty(&q->list))) {
- 		result = TRACE_SIGNAL_ALREADY_PENDING;
- 		goto out;
- 	}
--
--	signalfd_notify(t, sig);
--	pending = (type != PIDTYPE_PID) ? &t->signal->shared_pending : &t->pending;
--	list_add_tail(&q->list, &pending->list);
--	sigaddset(&pending->signal, sig);
--	complete_signal(sig, t, type);
-+	posixtimer_queue_sigqueue(q, t, tmr->it_pid_type);
- 	result = TRACE_SIGNAL_DELIVERED;
- out:
--	trace_signal_generate(sig, &q->info, t, type != PIDTYPE_PID, result);
-+	trace_signal_generate(sig, &q->info, t, tmr->it_pid_type != PIDTYPE_PID, result);
- 	unlock_task_sighand(t, &flags);
--ret:
--	rcu_read_unlock();
- 	return ret;
+-		__sigqueue_free(first);
++		/*
++		 * posix-timer signals are preallocated and freed when the
++		 * timer goes away. Either directly or by clearing
++		 * SIGQUEUE_PREALLOC so that the next delivery will free
++		 * them. Spare the extra round through __sigqueue_free()
++		 * which is ignoring preallocated signals.
++		 */
++		if (unlikely((first->flags & SIGQUEUE_PREALLOC) && (info->si_code == SI_TIMER)))
++			*timer_sigq = first;
++		else
++			__sigqueue_free(first);
+ 	} else {
+ 		/*
+ 		 * Ok, it wasn't in the queue.  This must be
+@@ -588,12 +595,12 @@ static void collect_signal(int sig, stru
  }
- #endif /* CONFIG_POSIX_TIMERS */
+ 
+ static int __dequeue_signal(struct sigpending *pending, sigset_t *mask,
+-			kernel_siginfo_t *info, bool *resched_timer)
++			    kernel_siginfo_t *info, struct sigqueue **timer_sigq)
+ {
+ 	int sig = next_signal(pending, mask);
+ 
+ 	if (sig)
+-		collect_signal(sig, pending, info, resched_timer);
++		collect_signal(sig, pending, info, timer_sigq);
+ 	return sig;
+ }
+ 
+@@ -605,18 +612,19 @@ static int __dequeue_signal(struct sigpe
+ int dequeue_signal(sigset_t *mask, kernel_siginfo_t *info, enum pid_type *type)
+ {
+ 	struct task_struct *tsk = current;
+-	bool resched_timer = false;
++	struct sigqueue *timer_sigq;
+ 	int signr;
+ 
+ 	lockdep_assert_held(&tsk->sighand->siglock);
+ 
+ again:
+ 	*type = PIDTYPE_PID;
+-	signr = __dequeue_signal(&tsk->pending, mask, info, &resched_timer);
++	timer_sigq = NULL;
++	signr = __dequeue_signal(&tsk->pending, mask, info, &timer_sigq);
+ 	if (!signr) {
+ 		*type = PIDTYPE_TGID;
+ 		signr = __dequeue_signal(&tsk->signal->shared_pending,
+-					 mask, info, &resched_timer);
++					 mask, info, &timer_sigq);
+ 
+ 		if (unlikely(signr == SIGALRM))
+ 			posixtimer_rearm_itimer(tsk);
+@@ -642,8 +650,8 @@ int dequeue_signal(sigset_t *mask, kerne
+ 		current->jobctl |= JOBCTL_STOP_DEQUEUED;
+ 	}
+ 
+-	if (IS_ENABLED(CONFIG_POSIX_TIMERS) && unlikely(resched_timer)) {
+-		if (!posixtimer_deliver_signal(info))
++	if (IS_ENABLED(CONFIG_POSIX_TIMERS) && unlikely(timer_sigq)) {
++		if (!posixtimer_deliver_signal(info, timer_sigq))
+ 			goto again;
+ 	}
+ 
 --- a/kernel/time/posix-timers.c
 +++ b/kernel/time/posix-timers.c
-@@ -307,7 +307,7 @@ int posix_timer_queue_signal(struct k_it
- 
- 	timr->it_status = state;
- 
--	ret = send_sigqueue(timr->sigq, timr->it_pid, timr->it_pid_type, timr->it_signal_seq);
-+	ret = posixtimer_send_sigqueue(timr);
- 	/* If we failed to send the signal the timer stops. */
- 	return ret > 0;
- }
+@@ -254,7 +254,7 @@ static void common_hrtimer_rearm(struct
+  * This function is called from the signal delivery code. It decides
+  * whether the signal should be dropped and rearms interval timers.
+  */
+-bool posixtimer_deliver_signal(struct kernel_siginfo *info)
++bool posixtimer_deliver_signal(struct kernel_siginfo *info, struct sigqueue *timer_sigq)
+ {
+ 	struct k_itimer *timr;
+ 	unsigned long flags;
 
 
