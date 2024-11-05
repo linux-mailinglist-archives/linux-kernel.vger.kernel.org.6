@@ -1,310 +1,187 @@
-Return-Path: <linux-kernel+bounces-395739-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395740-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E28D9BC242
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 02:01:53 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91B4D9BC246
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 02:06:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 962111C224BF
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 01:01:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 46FB5282807
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 01:06:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2C6C17578;
-	Tue,  5 Nov 2024 01:01:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41496179BD;
+	Tue,  5 Nov 2024 01:06:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g0xk4+5d"
-Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com [209.85.222.181])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rdY48/gW"
+Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8D5F225D7
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 01:01:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E743EB65C
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 01:06:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730768507; cv=none; b=kV3aiwHpOO3d5xfXGVword05mnK6RbYFZNiHDovge+48DxCeLhoHcIhjKMiFwbIzbxp/NgzMoVZzP58zLle+AEWZq+AhAs2A58kxfKECkgZk3igHYvQiOGl8Hc4RoqwAsJI8s2vpAPvtuNXlV+yC35HeNceJCVk2PdhHeoujBds=
+	t=1730768773; cv=none; b=dv/b+OF00YONBVmmCm/xP+TlFIppeqFAMtb7AiWHYYxmVgraL637SSqOZRAkHIkSxtaFLS4SI4/k54S26QbofocfNpNrsapaamtbnxLguUpWahqR1a5f1usGSI8Tk9fvipovcBiAtpGad8LEgqap8XTdJ0tHSObywa/ldizl7QI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730768507; c=relaxed/simple;
-	bh=z5YGSDgvGB6bpjwsvQKMjvGcOCAtkEUyrxCrVB3VJZs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fq69mh1SyCNy/mfvlgcsol1xKlXgZkbJd4nBNUOHXlLM3vRwImoEq+PB0V9eax7XH186VwK3OrveMOSQMPZG0rG5g+sfu1mTwNtJbozhlO4qRE9UjDWsk+yd1QmET2uUN8xP2zKLHb0S5He+RotAZI4FZUv8nsl0+H33WMKwFc4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g0xk4+5d; arc=none smtp.client-ip=209.85.222.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f181.google.com with SMTP id af79cd13be357-7b15467f383so351288785a.3
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 17:01:44 -0800 (PST)
+	s=arc-20240116; t=1730768773; c=relaxed/simple;
+	bh=fFY/aMr29idY8liczq6D69o9RB1tTz0jsGGFgwfFP2s=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=kQ4iPIwBBrTlOsxoKRQMuldpXLWawbxjT5FWJRUD8rNAVQKcDf4dUPemZ8eDrJ1plNnFzH/ad08mo9W2poRbvOyM+uFjyJ6VTjnlp6ghaLfyMrlccJC78XDehk7d7XSQe3FMSXafb7L/lO2RlZlxvmLHIv5c3C/gJmLSow4dCks=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--dionnaglaze.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=rdY48/gW; arc=none smtp.client-ip=209.85.128.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--dionnaglaze.bounces.google.com
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6e3c638cc27so93558787b3.0
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 17:06:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730768503; x=1731373303; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Or9PsYziaZUPWqGCBJkZi+Ijw9yEk7z687OLKIoWH48=;
-        b=g0xk4+5dF/9rBDVVkrRK4E3XNnf9wiI8Aw+TOKdfHKnAhkE2Xe25Vh0oI7VcggMzBn
-         0c471/dyQ8Asd/CIMWNM3d1YeFhCUGi9gDILQVVzzxFzXBWMuwEZG7YognrIX9J7IiBQ
-         0CkSF27P4RmYglaftGz/Cwv9k8k3pmOsMQ2qs6pbDJ8LPv41NZBpnhSFPospCUUTxam7
-         iXKgdW8T/Lb3cnnhIWYmwpmNs1xko0eSjpLZCGwGiR2o21hUDQGfA5u9hef81XTZGJm6
-         eSmSQDvymU7oauEzaERrFBH4uNV3l3Evh/7DciZpF4/00c8PwcVr6jX1vY8J2X8Ozk+t
-         mssQ==
+        d=google.com; s=20230601; t=1730768771; x=1731373571; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=rchq2VcNLG3Lq85wTwbHMPK9ra4cT/z/iAEej7V/re4=;
+        b=rdY48/gWIzyqIZ6siuph7ZA8ii0ucAx9+QUIb6SVCO3XpuyAWDc33Yyu9IGTmgGdP4
+         LqnSH1sdHlvnXnIBpuatJqdJ/e4rF8VZL4BFFGTu5Kz1uh1IA5cVZNvI8I6XlsPd+wo6
+         Em66P3ZMwnbf5dxjVypZiX4UVVvryyZnRTAyojsVo93G7PYel8PZWwA56nXEXHSlTS8P
+         7egjvsGExbTrRVndsrsRaA34oC0SdWSLRX2OiY6XTsjVxRpxyTyCcHEDu3GEoXPE9GuS
+         gomDQqe5655cSiDl95lxzX8Z4p56VMIEbutF7Pn+VMpnRArJeuvQYMZ7pN8fETCjh330
+         50Tg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730768503; x=1731373303;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Or9PsYziaZUPWqGCBJkZi+Ijw9yEk7z687OLKIoWH48=;
-        b=YbkzPkxNUA/yjxx6vmPC5GVZ3jRJGCFdWAkrPJuKCQIvMn9vuNzbiCad+fbgqfF8cz
-         7Rc1cb5ZZGAQAatlQ89EEBJMnAKp052/fw/LyR+sVD1TtpwRFmKBA03p2SQHw6hpq+UK
-         qPDOzfBcWJ8/iCcOsnPORIz5XFxWtXdztIIV/C+dLUilvrG3q5YmreLNS5QCxSLRx2XE
-         eFhB55FG/L0xzPV0tlwHoI4xXlGcGzGEPYqyt/Q4rpJ+uYTTl9psbBWhOByHcnNs6hKB
-         oCK6mbKx/qE/WO38DHpa/TkBN90SUVRmyp6Z9a2lqe02aVBfoT7N9znFfzvK3IXkejur
-         n6zA==
-X-Forwarded-Encrypted: i=1; AJvYcCU2GbaVIrMp43iULcrHLVG2Jo0S+4UXmwRr2M8iH900FQlOCKqvlXqbfvvI0KcDaza0ZNtWb+gYNMktiq4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz7UcjPr0l7Cj09aX0L6hJpf5C9LjBjgwxeGXdv4+IDZuCoaphO
-	zAk61Ru9j3owJ8+0hMP5/bSoFuvnA160L6TRFMJUwqSyM1J+DKql
-X-Google-Smtp-Source: AGHT+IHUQLFQhGnW6z5+2fS8VC3gI8vNmXoG9HSaPHonVhDHsgyMTXfrKv8FpWKgWCNNgdeDonnt6g==
-X-Received: by 2002:a05:620a:28c4:b0:7b1:5346:e72d with SMTP id af79cd13be357-7b2f24dd7c6mr2557316485a.23.1730768503394;
-        Mon, 04 Nov 2024 17:01:43 -0800 (PST)
-Received: from fauth-a1-smtp.messagingengine.com (fauth-a1-smtp.messagingengine.com. [103.168.172.200])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b2f3a868dasm472211985a.121.2024.11.04.17.01.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Nov 2024 17:01:42 -0800 (PST)
-Received: from phl-compute-02.internal (phl-compute-02.phl.internal [10.202.2.42])
-	by mailfauth.phl.internal (Postfix) with ESMTP id 2229B1200043;
-	Mon,  4 Nov 2024 20:01:42 -0500 (EST)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-02.internal (MEProxy); Mon, 04 Nov 2024 20:01:42 -0500
-X-ME-Sender: <xms:dm4pZ-XEOH2HKjiFpRQQLfcREpxc9fysqdObu-4bc7J7dcvWZWzNrA>
-    <xme:dm4pZ6mvI7Pj8-wZMvczPvCl8PAGOoQ8RBpxQPnT8Um-UqBKOQRcHG4tCZye530-b
-    4kNc90prQjKXhbSKg>
-X-ME-Received: <xmr:dm4pZyb5L8srqyBwwIfvOxjI_JH2Z0OCZskiCKM_X-rqfL-JdA015t6CRlys_Q>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdeljedgfedtucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvden
-    ucfhrhhomhepuehoqhhunhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrd
-    gtohhmqeenucggtffrrghtthgvrhhnpefhtedvgfdtueekvdekieetieetjeeihedvteeh
-    uddujedvkedtkeefgedvvdehtdenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuve
-    hluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsghoqhhunhdo
-    mhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthidqieelvdeghedtieegqddujeejke
-    ehheehvddqsghoqhhunhdrfhgvnhhgpeepghhmrghilhdrtghomhesfhhigihmvgdrnhgr
-    mhgvpdhnsggprhgtphhtthhopedujedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoh
-    epsghighgvrghshieslhhinhhuthhrohhnihigrdguvgdprhgtphhtthhopehprghulhhm
-    tghksehkvghrnhgvlhdrohhrghdprhgtphhtthhopehvsggrsghkrgesshhushgvrdgtii
-    dprhgtphhtthhopegvlhhvvghrsehgohhoghhlvgdrtghomhdprhgtphhtthhopehlihhn
-    uhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehkrg
-    hsrghnqdguvghvsehgohhoghhlvghgrhhouhhpshdrtghomhdprhgtphhtthhopehlihhn
-    uhigqdhmmheskhhvrggtkhdrohhrghdprhgtphhtthhopehsfhhrsegtrghnsgdrrghuuh
-    hgrdhorhhgrdgruhdprhgtphhtthhopehlohhnghhmrghnsehrvgguhhgrthdrtghomh
-X-ME-Proxy: <xmx:dm4pZ1WlMIWEVGiCuOYM-VF9oO2USd01U_CU4bS_U_nsi_ALnUfuhw>
-    <xmx:dm4pZ4mH4MZS8TscmbX-MB4OJn-3Dv9z9iqVxwg69aWNskoeDvv56Q>
-    <xmx:dm4pZ6dnkahyC-Ypo8e9-3Os6595Oij9nZJMoi8vVySIaJu6xMORUA>
-    <xmx:dm4pZ6G9mjup8-HInUX6L3FVJeBoQUfVQtgBS_KlGYFh9Ci8yOSd3A>
-    <xmx:dm4pZ2kwXt4AIdKLZretNzMT_-5Ry-GWhSp3eVK4c---SOLCIKrG5lH6>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 4 Nov 2024 20:01:41 -0500 (EST)
-Date: Mon, 4 Nov 2024 17:00:19 -0800
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: "Paul E. McKenney" <paulmck@kernel.org>,
-	Vlastimil Babka <vbabka@suse.cz>, Marco Elver <elver@google.com>,
-	linux-kernel@vger.kernel.org, kasan-dev@googlegroups.com,
-	linux-mm@kvack.org, sfr@canb.auug.org.au, longman@redhat.com,
-	cl@linux.com, penberg@kernel.org, rientjes@google.com,
-	iamjoonsoo.kim@lge.com, akpm@linux-foundation.org,
-	Tomas Gleixner <tglx@linutronix.de>,
-	Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [PATCH 2/2] scftorture: Use a lock-less list to free memory.
-Message-ID: <ZyluI0A-LSvvbBb9@boqun-archlinux>
-References: <88694240-1eea-4f4c-bb7b-80de25f252e7@paulmck-laptop>
- <20241104105053.2182833-1-bigeasy@linutronix.de>
- <20241104105053.2182833-2-bigeasy@linutronix.de>
+        d=1e100.net; s=20230601; t=1730768771; x=1731373571;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=rchq2VcNLG3Lq85wTwbHMPK9ra4cT/z/iAEej7V/re4=;
+        b=ml6nnaQ30NFAh/UWbCQK8HPYtZMU+AeoabaPDQWJT2NLkC9euO6vBsN60EghDRSrAk
+         o0fXzQ7mmkTA2RhctSJMJnVtGTGWwhKkfp4IreSsk9ggF9E3jjPUowxTmW4gG73jQ+XQ
+         Pp3oaqb4pcnFZQd0wwy/ZFoy0mXIXujoF+75QXJRx1IqNngcJ6Vws+XjXGFfcj4NMKEf
+         CSd8To1t3P0O7q1q2RdKR6GsgLOGTNa85lrWVMaum/oiCDQst2DxpM0R3rii3z9Mkjom
+         9Qb+7g3DxJPWZEbK1E26uWUIhnFBpSrUZ8rtLmrQCNTS3DCQvoNguiNBVP2tbz+mLyji
+         M1uA==
+X-Forwarded-Encrypted: i=1; AJvYcCUIOApIzq9fWvnY8jgR0yY8BhRIJFuK9S3dZnbpAhMBTESXu9IRPDw0qcVU7OQRLokKuT17mp1G0RNqQtc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz9iujjnSDTyDh07uphuklMcthh1wg5Ur0PmYy1SXqi27YiFZ78
+	E5OkO67tlAxMyJpwZ9SIADeg7g6L/3kZkHw8pU1DiEmiA2gGnyK8R9xUysWkM1m/0lQ5t1QSH10
+	7h87aMyzQ4M/mF7WzRlv7eg==
+X-Google-Smtp-Source: AGHT+IE55leW11JTUmZRMGJnRLHkdfDXVL2IoTyzPGJ9KBCJpTaaQz3fL4fxrds3ylxyY4qiMW4wEr/jNpYd9BHTsg==
+X-Received: from dionnaglaze.c.googlers.com ([fda3:e722:ac3:cc00:36:e7b8:ac13:c9e8])
+ (user=dionnaglaze job=sendgmr) by 2002:a05:690c:6a03:b0:6e3:1023:3645 with
+ SMTP id 00721157ae682-6e9d8c3651fmr9023937b3.8.1730768771006; Mon, 04 Nov
+ 2024 17:06:11 -0800 (PST)
+Date: Tue,  5 Nov 2024 01:05:47 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241104105053.2182833-2-bigeasy@linutronix.de>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.47.0.199.ga7371fff76-goog
+Message-ID: <20241105010558.1266699-1-dionnaglaze@google.com>
+Subject: [PATCH v4 0/6] Support SEV firmware hotloading
+From: Dionna Glaze <dionnaglaze@google.com>
+To: x86@kernel.org, linux-kernel@vger.kernel.org
+Cc: Dionna Glaze <dionnaglaze@google.com>, Sean Christopherson <seanjc@google.com>, 
+	Paolo Bonzini <pbonzini@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
+	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
+	Ashish Kalra <ashish.kalra@amd.com>, Tom Lendacky <thomas.lendacky@amd.com>, 
+	John Allen <john.allen@amd.com>, Herbert Xu <herbert@gondor.apana.org.au>, 
+	"David S. Miller" <davem@davemloft.net>, Michael Roth <michael.roth@amd.com>, 
+	Luis Chamberlain <mcgrof@kernel.org>, Russ Weight <russ.weight@linux.dev>, 
+	Danilo Krummrich <dakr@redhat.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Tianfei zhang <tianfei.zhang@intel.com>, 
+	Alexey Kardashevskiy <aik@amd.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Sebastian,
+The SEV-SNP API specifies a command for hotloading the SEV firmware.
+when no SEV or SEV-ES guests are running. The firmware hotloading
+support is dependent on the firmware_upload API for better ease-of-use,
+and to not necessarily require SEV firmware hotloading support when
+building the ccp driver.
 
-I love this approach, I think it's better than my workqueue work around,
-a few comments below:
+For safety, there are steps the kernel should take before allowing a
+firmware to be committed:
 
-On Mon, Nov 04, 2024 at 11:50:53AM +0100, Sebastian Andrzej Siewior wrote:
-> scf_handler() is used as a SMP function call. This function is always
-> invoked in IRQ-context even with forced-threading enabled. This function
-> frees memory which not allowed on PREEMPT_RT because the locking
-> underneath is using sleeping locks.
-> 
-> Add a per-CPU scf_free_pool where each SMP functions adds its memory to
-> be freed. This memory is then freed by scftorture_invoker() on each
-> iteration. On the majority of invocations the number of items is less
-> than five. If the thread sleeps/ gets delayed the number exceed 350 but
-> did not reach 400 in testing. These were the spikes during testing.
-> The bulk free of 64 pointers at once should improve the give-back if the
-> list grows. The list size is ~1.3 items per invocations.
-> 
-> Having one global scf_free_pool with one cleaning thread let the list
-> grow to over 10.000 items with 32 CPUs (again, spikes not the average)
-> especially if the CPU went to sleep. The per-CPU part looks like a good
-> compromise.
-> 
-> Reported-by: "Paul E. McKenney" <paulmck@kernel.org>
-> Closes: https://lore.kernel.org/lkml/41619255-cdc2-4573-a360-7794fc3614f7@paulmck-laptop/
-> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-> ---
->  kernel/scftorture.c | 47 +++++++++++++++++++++++++++++++++++++++++----
->  1 file changed, 43 insertions(+), 4 deletions(-)
-> 
-> diff --git a/kernel/scftorture.c b/kernel/scftorture.c
-> index e5546fe256329..ba9f1125821b8 100644
-> --- a/kernel/scftorture.c
-> +++ b/kernel/scftorture.c
-> @@ -97,6 +97,7 @@ struct scf_statistics {
->  static struct scf_statistics *scf_stats_p;
->  static struct task_struct *scf_torture_stats_task;
->  static DEFINE_PER_CPU(long long, scf_invoked_count);
-> +static DEFINE_PER_CPU(struct llist_head, scf_free_pool);
->  
->  // Data for random primitive selection
->  #define SCF_PRIM_RESCHED	0
-> @@ -133,6 +134,7 @@ struct scf_check {
->  	bool scfc_wait;
->  	bool scfc_rpc;
->  	struct completion scfc_completion;
-> +	struct llist_node scf_node;
->  };
->  
->  // Use to wait for all threads to start.
-> @@ -148,6 +150,40 @@ static DEFINE_TORTURE_RANDOM_PERCPU(scf_torture_rand);
->  
->  extern void resched_cpu(int cpu); // An alternative IPI vector.
->  
-> +static void scf_add_to_free_list(struct scf_check *scfcp)
-> +{
-> +	struct llist_head *pool;
-> +	unsigned int cpu;
-> +
-> +	cpu = raw_smp_processor_id() % nthreads;
-> +	pool = &per_cpu(scf_free_pool, cpu);
-> +	llist_add(&scfcp->scf_node, pool);
-> +}
-> +
-> +static void scf_cleanup_free_list(unsigned int cpu)
-> +{
-> +	struct llist_head *pool;
-> +	struct llist_node *node;
-> +	struct scf_check *scfcp;
-> +	unsigned int slot = 0;
-> +	void *free_pool[64];
-> +
-> +	pool = &per_cpu(scf_free_pool, cpu);
-> +	node = llist_del_all(pool);
-> +	while (node) {
-> +		scfcp = llist_entry(node, struct scf_check, scf_node);
-> +		node = node->next;
-> +		free_pool[slot] = scfcp;
-> +		slot++;
-> +		if (slot == ARRAY_SIZE(free_pool)) {
-> +			kfree_bulk(slot, free_pool);
-> +			slot = 0;
-> +		}
-> +	}
-> +	if (slot)
-> +		kfree_bulk(slot, free_pool);
-> +}
-> +
->  // Print torture statistics.  Caller must ensure serialization.
->  static void scf_torture_stats_print(void)
->  {
-> @@ -296,7 +332,7 @@ static void scf_handler(void *scfc_in)
->  		if (scfcp->scfc_rpc)
->  			complete(&scfcp->scfc_completion);
->  	} else {
-> -		kfree(scfcp);
-> +		scf_add_to_free_list(scfcp);
->  	}
->  }
->  
-> @@ -363,7 +399,7 @@ static void scftorture_invoke_one(struct scf_statistics *scfp, struct torture_ra
->  				scfp->n_single_wait_ofl++;
->  			else
->  				scfp->n_single_ofl++;
-> -			kfree(scfcp);
-> +			scf_add_to_free_list(scfcp);
->  			scfcp = NULL;
->  		}
->  		break;
-> @@ -391,7 +427,7 @@ static void scftorture_invoke_one(struct scf_statistics *scfp, struct torture_ra
->  				preempt_disable();
->  		} else {
->  			scfp->n_single_rpc_ofl++;
-> -			kfree(scfcp);
-> +			scf_add_to_free_list(scfcp);
->  			scfcp = NULL;
->  		}
->  		break;
-> @@ -428,7 +464,7 @@ static void scftorture_invoke_one(struct scf_statistics *scfp, struct torture_ra
->  			pr_warn("%s: Memory-ordering failure, scfs_prim: %d.\n", __func__, scfsp->scfs_prim);
->  			atomic_inc(&n_mb_out_errs); // Leak rather than trash!
->  		} else {
-> -			kfree(scfcp);
-> +			scf_add_to_free_list(scfcp);
->  		}
->  		barrier(); // Prevent race-reduction compiler optimizations.
->  	}
-> @@ -442,6 +478,7 @@ static void scftorture_invoke_one(struct scf_statistics *scfp, struct torture_ra
->  		schedule_timeout_uninterruptible(1);
->  }
->  
-> +
->  // SCF test kthread.  Repeatedly does calls to members of the
->  // smp_call_function() family of functions.
->  static int scftorture_invoker(void *arg)
-> @@ -479,6 +516,8 @@ static int scftorture_invoker(void *arg)
->  	VERBOSE_SCFTORTOUT("scftorture_invoker %d started", scfp->cpu);
->  
->  	do {
-> +		scf_cleanup_free_list(scfp->cpu);
-> +
+1. Writeback invalidate all.
+2. Data fabric flush.
+3. All GCTX pages must be updated successfully with SNP_GUEST_STATUS
 
-I think this needs to be:
+The snp_context_create function had the possibility to leak GCTX pages,
+so the first patch fixes that bug in KVM.
 
-		scf_cleanup_free_list(cpu);
+The ccp driver must continue to be unloadable, so the second patch in
+this series fixes a cyclic refcount bug in firmware_loader.
 
-or
+The third patch tracks GCTX pages created and bound to ASIDs at the end
+of __sev_do_cmd_locked. These pages are necessary to know at firmware
+update time since any running VM must have their context pages updated
+before the firmware can be committed.
 
-		scf_cleanup_free_list(curcpu);
+The fourth patch adds SEV_CMD_DOWNLOAD_FIRMWARE_EX support with its
+required cache invalidation steps, but without a means of calling it
+from user space.
 
-because scfp->cpu is actually the thread number, and I got a NULL
-dereference:
+The fifth patch uses the added command from an instantiation of the
+firmware_upload API. When the firmware successfully updates, the GCTX
+pages are all refreshed. If any single page's update fails, the driver
+treats itself as if the firmware were in a bad state and needs an
+immediate restore. All commands that are not DOWNLOAD_FIRMWARE_EX will
+fail with RESTORE_REQUIRED, similar to SEV FW on older PSP bootloaders.
 
-[   14.219225] BUG: unable to handle page fault for address: ffffffffb2ff7210
+The sixth patch avoids platform initialization for KVM VM guests when
+vm_type is not legacy SEV/SEV-ES.
 
-while running Paul's reproduce command:
+The KVM_EXIT for requesting certificates on extended guest request is
+not part of this patch series. Any such support must be designed with
+races between SNP_COMMIT and servicing extended guest requests such that
+the REPORTED_TCB in an attestation_report always correctly corresponds
+to the certificates returned by the extended guest request handler.
 
-tools/testing/selftests/rcutorture/bin/kvm.sh --torture scf --allcpus --duration 2 --configs PREEMPT --kconfig CONFIG_NR_CPUS=64 --memory 7G --trust-make --kasan --bootargs "scftorture.nthreads=64 torture.disable_onoff_at_boot csdlock_debug=1"
+Changes from v3:
+  - Removed added init_args field since it was duplicative of probe.
+  - Split ccp change into three changes.
+Changes from v2:
+  - Fix download_firmware_ex struct definition to be the proper size,
+    and clear to 0 before using. Thanks to Alexey Kardashevskiy.
+Changes from v1:
+  - Fix double-free with incorrect goto label on error.
+  - checkpatch cleanup.
+  - firmware_loader comment cleanup and one-use local variable inlining.
 
-on my 48 cores VM (I think 48 core may be key to reproduce the NULL
-dereference).
+CC: Sean Christopherson <seanjc@google.com>
+CC: Paolo Bonzini <pbonzini@redhat.com>
+CC: Thomas Gleixner <tglx@linutronix.de>
+CC: Ingo Molnar <mingo@redhat.com>
+CC: Borislav Petkov <bp@alien8.de>
+CC: Dave Hansen <dave.hansen@linux.intel.com>
+CC: Ashish Kalra <ashish.kalra@amd.com>
+CC: Tom Lendacky <thomas.lendacky@amd.com>
+CC: John Allen <john.allen@amd.com>
+CC: Herbert Xu <herbert@gondor.apana.org.au>
+CC: "David S. Miller" <davem@davemloft.net>
+CC: Michael Roth <michael.roth@amd.com>
+CC: Luis Chamberlain <mcgrof@kernel.org>
+CC: Russ Weight <russ.weight@linux.dev>
+CC: Danilo Krummrich <dakr@redhat.com>
+CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC: "Rafael J. Wysocki" <rafael@kernel.org>
+CC: Tianfei zhang <tianfei.zhang@intel.com>
+CC: Alexey Kardashevskiy <aik@amd.com>
 
+Dionna Glaze (6):
+  kvm: svm: Fix gctx page leak on invalid inputs
+  firmware_loader: Move module refcounts to allow unloading
+  crypto: ccp: Track GCTX through sev commands
+  crypto: ccp: Add DOWNLOAD_FIRMWARE_EX support
+  crypto: ccp: Use firmware_upload API for SNP firmware
+  KVM: SVM: Delay legacy platform initialization on SNP
 
-Another thing is, how do we guarantee that we don't exit the loop
-eariler (i.e. while there are still callbacks on the list)? After the
-following scftorture_invoke_one(), there could an IPI pending somewhere,
-and we may exit this loop if torture_must_stop() is true. And that IPI
-might add its scf_check to the list but no scf_cleanup_free_list() is
-going to handle that, right?
+ arch/x86/kvm/svm/sev.c                      |  10 +-
+ drivers/base/firmware_loader/sysfs_upload.c |  16 +-
+ drivers/crypto/ccp/Kconfig                  |   2 +
+ drivers/crypto/ccp/Makefile                 |   1 +
+ drivers/crypto/ccp/sev-dev.c                |  83 ++++-
+ drivers/crypto/ccp/sev-dev.h                |  31 ++
+ drivers/crypto/ccp/sev-fw.c                 | 330 ++++++++++++++++++++
+ include/linux/psp-sev.h                     |  26 ++
+ include/uapi/linux/psp-sev.h                |   5 +
+ 9 files changed, 480 insertions(+), 24 deletions(-)
+ create mode 100644 drivers/crypto/ccp/sev-fw.c
 
-Regards,
-Boqun
+-- 
+2.47.0.199.ga7371fff76-goog
 
->  		scftorture_invoke_one(scfp, &rand);
->  		while (cpu_is_offline(cpu) && !torture_must_stop()) {
->  			schedule_timeout_interruptible(HZ / 5);
-> -- 
-> 2.45.2
-> 
 
