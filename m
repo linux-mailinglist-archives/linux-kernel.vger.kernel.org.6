@@ -1,179 +1,72 @@
-Return-Path: <linux-kernel+bounces-396802-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396804-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7B909BD25B
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 17:31:18 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D8A09BD260
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 17:31:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 04A7D1C21AC8
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 16:31:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 33FDC1F226B4
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 16:31:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C404E17ADE8;
-	Tue,  5 Nov 2024 16:31:12 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2CF91D9593;
+	Tue,  5 Nov 2024 16:31:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="DmtdViMw"
+Received: from out-176.mta0.migadu.com (out-176.mta0.migadu.com [91.218.175.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64AAC2C190;
-	Tue,  5 Nov 2024 16:31:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51E5E1D9A7A
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 16:31:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730824272; cv=none; b=dYYQe9lhSmV/HoyN5DMZ8YG3LoBRNUNCvCAT128I/tZ7HTYtFadk0p8mLNGxscS6wK9Jx3HKYLTMuF7t04/eO3dRIyIdbXjMQqo9IzJB4zAGZ01PST3HxKUP3pI4nsPe8B+IfgCj4Ch3MSDYI3rKUBBIx+Dertqw376X3cTAXeE=
+	t=1730824284; cv=none; b=ZBpJpgp4wLc8I0RX147Jkte4k9rTVi9VZNIBcFV1voD4wnqJnoClUUSn4dbbgiAEtlTgLs1KZ9t1H2Vf5MiJzFNNlZ89iqEITuVe/ezRhZlMdsCKwJzocvOM2Er5frbxnhIq3BDUDSbmLOimej6DSRjsG7rUkR+Ji41Ih6ZrW1w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730824272; c=relaxed/simple;
-	bh=7MOh4GwiFOvb9bVlArzUPENHDHkefPz5N7SZii2P0Hc=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=CX/LTbQDbpi/WQ5sUpV1ixJyxPJCJT48LLDweQpkThVzuXWT1ixmtc0k1+N3U+nfv+9KNj8tcCZOg6aoqDhRGVjuW/55DkQoXPBhma1d3hLi+9z4UWRh54F7yG303CegkaukEX/cyyKEs+kdFbkskTcbtX+BX59hhPEb/+BLtNc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 910B2C4CECF;
-	Tue,  5 Nov 2024 16:31:10 +0000 (UTC)
-Date: Tue, 5 Nov 2024 11:31:11 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Marco Elver <elver@google.com>
-Cc: Kees Cook <keescook@chromium.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Andrew Morton <akpm@linux-foundation.org>, Oleg Nesterov <oleg@redhat.com>,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, Dmitry
- Vyukov <dvyukov@google.com>, kasan-dev@googlegroups.com
-Subject: Re: [PATCH] tracing: Add task_prctl_unknown tracepoint
-Message-ID: <20241105113111.76c46806@gandalf.local.home>
-In-Reply-To: <20241105133610.1937089-1-elver@google.com>
-References: <20241105133610.1937089-1-elver@google.com>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1730824284; c=relaxed/simple;
+	bh=3Aq81BGjAKM0O6d0Gyd5MyzSSWRAUVtjkZubHS8NG64=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RqY34jpv79PHDEPIDQMFb11sw8WkqCPkRiyJCjNCXloPlF9YYRd7u4qvakG1fBCkx3bBbBeJmI0oru/6H0rPis9efCN/FZWLZ7Zp1zvI1cfNN5/ioxK1SBnSuLF73pJ+Yjdj2ZCYMFM4G+lkwsd1hnQTIZF58F/Ae86MABjyI3c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=DmtdViMw; arc=none smtp.client-ip=91.218.175.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Tue, 5 Nov 2024 08:31:14 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1730824280;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=YT4Vkhd4MYFNflyQXSSGKBC52D3M45mNRvZMziNf1mk=;
+	b=DmtdViMwYVIFfbOEACooJvk0lnqSbOhw0HMQrBslTOTE96+71fyDU/1hsdrOpJwkdF1QaR
+	0wrZEZborVz8w32bz/Fjy4ExkSrFwtyidSxDE9fLGFk7pFQuu/uhXBmHIQcvq6ymr/nEoX
+	X0+lpk3jEA4zOuJlA3A0m9+A1uRavig=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Shakeel Butt <shakeel.butt@linux.dev>
+To: Keren Sun <kerensun@google.com>
+Cc: akpm@linux-foundation.org, roman.gushchin@linux.dev, 
+	hannes@cmpxchg.org, mhocko@kernel.org, muchun.song@linux.dev, 
+	cgroups@vger.kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/4] mm: Prefer 'unsigned int' to bare use of 'unsigned'
+Message-ID: <pxt5robvbb5vf2b5xbvqmjkzzlzybtw7d5lcs4bhcmauqfzlhi@wgmbdy4bknvj>
+References: <20241104222737.298130-1-kerensun@google.com>
+ <20241104222737.298130-4-kerensun@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241104222737.298130-4-kerensun@google.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Tue,  5 Nov 2024 14:34:05 +0100
-Marco Elver <elver@google.com> wrote:
-
-> prctl() is a complex syscall which multiplexes its functionality based
-> on a large set of PR_* options. Currently we count 64 such options. The
-> return value of unknown options is -EINVAL, and doesn't distinguish from
-> known options that were passed invalid args that also return -EINVAL.
+On Mon, Nov 04, 2024 at 02:27:36PM -0800, Keren Sun wrote:
+> Change the param 'mode' from type 'unsigned' to 'unsigned int' in
+> memcg_event_wake() and memcg_oom_wake_function(), and for the param
+> 'nid' in VM_BUG_ON().
 > 
-> To understand if programs are attempting to use prctl() options not yet
-> available on the running kernel, provide the task_prctl_unknown
-> tracepoint.
-> 
-> Note, this tracepoint is in an unlikely cold path, and would therefore
-> be suitable for continuous monitoring (e.g. via perf_event_open).
-> 
-> While the above is likely the simplest usecase, additionally this
-> tracepoint can help unlock some testing scenarios (where probing
-> sys_enter or sys_exit causes undesirable performance overheads):
-> 
->   a. unprivileged triggering of a test module: test modules may register a
->      probe to be called back on task_prctl_unknown, and pick a very large
->      unknown prctl() option upon which they perform a test function for an
->      unprivileged user;
-> 
->   b. unprivileged triggering of an eBPF program function: similar
->      as idea (a).
-> 
-> Example trace_pipe output:
-> 
->   <...>-366     [004] .....   146.439400: task_prctl_unknown: pid=366 comm=a.out option=1234 arg2=101 arg3=102 arg4=103 arg5=104
+> Signed-off-by: Keren Sun <kerensun@google.com>
 
-          ^^^                                                       ^^^
-
-> 
-> Signed-off-by: Marco Elver <elver@google.com>
-> ---
->  include/trace/events/task.h | 43 +++++++++++++++++++++++++++++++++++++
->  kernel/sys.c                |  3 +++
->  2 files changed, 46 insertions(+)
-> 
-> diff --git a/include/trace/events/task.h b/include/trace/events/task.h
-> index 47b527464d1a..ab711e581094 100644
-> --- a/include/trace/events/task.h
-> +++ b/include/trace/events/task.h
-> @@ -56,6 +56,49 @@ TRACE_EVENT(task_rename,
->  		__entry->newcomm, __entry->oom_score_adj)
->  );
->  
-> +/**
-> + * task_prctl_unknown - called on unknown prctl() option
-> + * @task:	pointer to the current task
-> + * @option:	option passed
-> + * @arg2:	arg2 passed
-> + * @arg3:	arg3 passed
-> + * @arg4:	arg4 passed
-> + * @arg5:	arg5 passed
-> + *
-> + * Called on an unknown prctl() option.
-> + */
-> +TRACE_EVENT(task_prctl_unknown,
-> +
-> +	TP_PROTO(struct task_struct *task, int option, unsigned long arg2, unsigned long arg3,
-> +		 unsigned long arg4, unsigned long arg5),
-> +
-> +	TP_ARGS(task, option, arg2, arg3, arg4, arg5),
-> +
-> +	TP_STRUCT__entry(
-> +		__field(	pid_t,		pid		)
-
-Why record the pid that is already recorded by the event header?
-
-> +		__string(	comm,		task->comm	)
-
-I'm also surprised that the comm didn't show in the trace_pipe. I've
-updated the code so that it should usually find it. But saving it here may
-not be a big deal.
-
--- Steve
-
-> +		__field(	int,		option)
-> +		__field(	unsigned long,	arg2)
-> +		__field(	unsigned long,	arg3)
-> +		__field(	unsigned long,	arg4)
-> +		__field(	unsigned long,	arg5)
-> +	),
-> +
-> +	TP_fast_assign(
-> +		__entry->pid = task->pid;
-> +		__assign_str(comm);
-> +		__entry->option = option;
-> +		__entry->arg2 = arg2;
-> +		__entry->arg3 = arg3;
-> +		__entry->arg4 = arg4;
-> +		__entry->arg5 = arg5;
-> +	),
-> +
-> +	TP_printk("pid=%d comm=%s option=%d arg2=%ld arg3=%ld arg4=%ld arg5=%ld",
-> +		  __entry->pid, __get_str(comm), __entry->option,
-> +		  __entry->arg2, __entry->arg3, __entry->arg4, __entry->arg5)
-> +);
-> +
->  #endif
->  
->  /* This part must be outside protection */
-> diff --git a/kernel/sys.c b/kernel/sys.c
-> index 4da31f28fda8..dd0a71b68558 100644
-> --- a/kernel/sys.c
-> +++ b/kernel/sys.c
-> @@ -75,6 +75,8 @@
->  #include <asm/io.h>
->  #include <asm/unistd.h>
->  
-> +#include <trace/events/task.h>
-> +
->  #include "uid16.h"
->  
->  #ifndef SET_UNALIGN_CTL
-> @@ -2785,6 +2787,7 @@ SYSCALL_DEFINE5(prctl, int, option, unsigned long, arg2, unsigned long, arg3,
->  		error = RISCV_SET_ICACHE_FLUSH_CTX(arg2, arg3);
->  		break;
->  	default:
-> +		trace_task_prctl_unknown(me, option, arg2, arg3, arg4, arg5);
->  		error = -EINVAL;
->  		break;
->  	}
-
+Acked-by: Shakeel Butt <shakeel.butt@linux.dev>
 
