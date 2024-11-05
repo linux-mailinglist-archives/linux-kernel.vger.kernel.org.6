@@ -1,168 +1,227 @@
-Return-Path: <linux-kernel+bounces-396662-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396663-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A98BC9BD03C
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 16:19:02 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5183E9BD03F
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 16:19:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DABD41C21A13
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 15:19:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D5B291F22E60
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 15:19:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DBB81D9A42;
-	Tue,  5 Nov 2024 15:18:55 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E49463BB21;
-	Tue,  5 Nov 2024 15:18:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730819934; cv=none; b=eeHVC65pk07lyyYeVxN00Ybrb8HOhcZXpegrHi9HVy0U0cpX7YguvtaYBqutBDvwSCsvlzWDl5SPdJNrQagX1BDHsoQFzz690ucRQzfjO7RLkybarWawlg0ROzKO0FDJi67UAau+ZbxqbXdACz0h4sweYoXawSBXxU4D8BN4+20=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730819934; c=relaxed/simple;
-	bh=oKUTKz7h6GjGrIClatLhORghr5XcUQQAikgrXqWv0o4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=s94ReKYrhgm/H+22Iq2ehMAHPJRs5P9Oe5HYNnheYuHEQkPDZUURxwnk1yAHjuQRth01n/Psx8D4ftpv5tVDu1Jp2+qfNaF8KCDheNrI+bRggaf4RjNqi1UGX5EBqyXFI1lklJTjC64P/F876w5/pJLGQbmQ4EascfLRUIxfUD0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 77145FEC;
-	Tue,  5 Nov 2024 07:19:15 -0800 (PST)
-Received: from J2N7QTR9R3.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 89A823F528;
-	Tue,  5 Nov 2024 07:18:44 -0800 (PST)
-Date: Tue, 5 Nov 2024 15:18:33 +0000
-From: Mark Rutland <mark.rutland@arm.com>
-To: Mark Brown <broonie@kernel.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH v2] arm64/signal: Avoid corruption of SME state when
- entering signal handler
-Message-ID: <Zyo3QU8aBGmtbTRo@J2N7QTR9R3.cambridge.arm.com>
-References: <20241030-arm64-fp-sme-sigentry-v2-1-43ce805d1b20@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0383F1DC04C;
+	Tue,  5 Nov 2024 15:19:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="a0ixbyoX"
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2060.outbound.protection.outlook.com [40.107.244.60])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BC001DAC9C;
+	Tue,  5 Nov 2024 15:18:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.60
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730819939; cv=fail; b=Eh32/6TKahbeLEZN4rBgK20IUfCP2qRM48NShacr1rS6YOAsu9u07X9glKibWUiJDNDUOICDGx7FKmHPw3sdz6vYPdu7psVm1Gaf8MRq055Mp04xChF0J8wpIBoIPkC3LxbUbrqzbbkgo/+Wslt4tCK7VOlQZWGqu8cYzek9Oto=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730819939; c=relaxed/simple;
+	bh=A1izzNvYawryLUJM1KpeF4TSRYwXRCsnXc3DOG9y50A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=Jgj5ENaLYyNqgCVzWMGmZ2k3c9KPwceHGejH2f6C+o5IDsC0xkRez897N33P+cYj0A/71mZW/jdnry0xslBMZ4aowAwiiAVi7iLJkghMRtBOU7yR73FohTUs95SnbpItsEfzVZC+vDFyZ17qehNGWh61gF8SDKB9ClZw+GDbTnU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=a0ixbyoX; arc=fail smtp.client-ip=40.107.244.60
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=H0yK17x6pxyCUnURXhCf+UG6TsoxNX4+ILT41gI1478xUMAvymA1h+uT14TFrIhjyeIFT7L/gmUz+oLk/Zal13F7EzRWPybf7EI2l8kuiyfX1zep3RME1LGIXs9zhJBXw7JNkkXCm4Sb7s4lcd+KPst8mfbpAQwzHbA7zXMiV5bD8qQl5qgvajgzs/nP+FupZAk0XM/7/FakDUdO/5YBkZG5ZUhYrmM6daCpAiVsYGZwMoVZ/u4P7VsMK+73S9M3rU0JLzCun3ixiW2QYtvg91TrP3eQUwOnY1kvOguGgFQLDC/cI1JndczCKM7YWO4Cl2gx1CTCCLSspDQ8B7K3Hw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=zUOF8P6TNAb3T9mciJHB+R+9K9TpzeU3ZcMYIvOJBW4=;
+ b=VcL3KpyskVNahYYcKTRcM0Hwak9v3TTREolPPMXQXhReS5c3ShqUSRdC73WTLcnlX1dVp1gh3oaz1eXnA7Wi+Kea/hyi3poAcrb+SAX/RiZAGfDexaRJ9vSZoCJph433zw+k44jAto1oq0fERzp+tmEJNMiWs4WtqtUP2XgkeGy/NoheR4sKKZ2lOyC0tAEPE9TS9EH1eSNzlUMZ4eWpQifxF4W1qUs+Zr9610bQaeOaDXuJYjhCRfj5rPZKZsEgHPi00+KU4TyAvbSBD/oV2xHiUEH15AdbGgoxjtrZ46dBiUmit2fKphOv5OqWvWy0wz8aqXxkrGoKSzdQIqP8ZA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=zUOF8P6TNAb3T9mciJHB+R+9K9TpzeU3ZcMYIvOJBW4=;
+ b=a0ixbyoXZ62R9CiS23rtVyzgyngx7pjByc29ggCpQ20anr2gXIpPaY9NEsR0O3e5zB9WeBfFsbyHwK37ZWBATlRE1OAICqvpgYdLyfTq6iXUPdvjiSyy2JACyhP+DuGJwtpW+wsqYi7TTj+QsAyFgedFe5jMDsQSrl/AntQ7k1s=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DM4PR12MB6373.namprd12.prod.outlook.com (2603:10b6:8:a4::7) by
+ SA0PR12MB4462.namprd12.prod.outlook.com (2603:10b6:806:95::22) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8114.30; Tue, 5 Nov 2024 15:18:55 +0000
+Received: from DM4PR12MB6373.namprd12.prod.outlook.com
+ ([fe80::12f7:eff:380b:589f]) by DM4PR12MB6373.namprd12.prod.outlook.com
+ ([fe80::12f7:eff:380b:589f%5]) with mapi id 15.20.8137.018; Tue, 5 Nov 2024
+ 15:18:55 +0000
+Date: Tue, 5 Nov 2024 10:18:47 -0500
+From: Yazen Ghannam <yazen.ghannam@amd.com>
+To: Shuai Xue <xueshuai@linux.alibaba.com>
+Cc: mark.rutland@arm.com, catalin.marinas@arm.com, mingo@redhat.com,
+	robin.murphy@arm.com, Jonathan.Cameron@huawei.com, bp@alien8.de,
+	rafael@kernel.org, wangkefeng.wang@huawei.com,
+	tanxiaofei@huawei.com, mawupeng1@huawei.com, tony.luck@intel.com,
+	linmiaohe@huawei.com, naoya.horiguchi@nec.com, james.morse@arm.com,
+	tongtiangen@huawei.com, gregkh@linuxfoundation.org, will@kernel.org,
+	jarkko@kernel.org, linux-acpi@vger.kernel.org, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
+	linux-edac@vger.kernel.org, x86@kernel.org, justin.he@arm.com,
+	ardb@kernel.org, ying.huang@intel.com, ashish.kalra@amd.com,
+	baolin.wang@linux.alibaba.com, tglx@linutronix.de,
+	dave.hansen@linux.intel.com, lenb@kernel.org, hpa@zytor.com,
+	robert.moore@intel.com, lvying6@huawei.com, xiexiuqi@huawei.com,
+	zhuo.song@linux.alibaba.com
+Subject: Re: [PATCH v16 2/3] mm: memory-failure: move return value
+ documentation to function declaration
+Message-ID: <20241105151847.GF916505@yaz-khff2.amd.com>
+References: <20221027042445.60108-1-xueshuai@linux.alibaba.com>
+ <20241104015430.98599-3-xueshuai@linux.alibaba.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241104015430.98599-3-xueshuai@linux.alibaba.com>
+X-ClientProxiedBy: BL1PR13CA0076.namprd13.prod.outlook.com
+ (2603:10b6:208:2b8::21) To DM4PR12MB6373.namprd12.prod.outlook.com
+ (2603:10b6:8:a4::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241030-arm64-fp-sme-sigentry-v2-1-43ce805d1b20@kernel.org>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR12MB6373:EE_|SA0PR12MB4462:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4b2f1a90-2cae-4696-1caa-08dcfdad28fc
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016|7416014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?OBnayaz9eSLyGL3RPI1KugH4YVH54FZc4cH9uUuXVA2Sx1dFvTZ7f8MFzs2m?=
+ =?us-ascii?Q?tTu1hpJcHPhSS0+h9DzDV3Gs+vkU4ghwgUCWj1QT76PX7iYjergkiHdthDcI?=
+ =?us-ascii?Q?N1rzXqv4CfmUO9y5J4LnMGpXaeThx23UaPo0/vm+7dspKlYQZrPgGybWizyS?=
+ =?us-ascii?Q?N+Tq9wTPq3iOjWj7hXekyRuenrmB7LGqbUcgjn2vkxE7d5WkJpweWXWNk0I/?=
+ =?us-ascii?Q?5VNO9SyLwZpGvkQ1C/BGAioa7hesYQrus2fwnxX4GsrEbrm7fsVKOtjoy1cn?=
+ =?us-ascii?Q?YbaiIkmkVE0B+zLlGpY4h3G8sXwCdoqcK6LQu2PdUVQ8lgyylZUEYRcCMThE?=
+ =?us-ascii?Q?4nC/MLoFXMGmQpm9bs9uqlZ+PeikgRf4+gSsohvQYBvU8c9v1Wpoyi50K1a0?=
+ =?us-ascii?Q?Gn3wPTHfyFGmec1j8L6DIdn5PbPC3GYjorS3c2xaHVte4ifs78lj4jenRfR1?=
+ =?us-ascii?Q?xXjwVKYVbr0n7p/yHMQRHoEyTGLhLXfZC2tllkR1VliNcCMh6Ka/yeGC4U3t?=
+ =?us-ascii?Q?ePnrk1F7g1UBzW7kM7hNKZHhN3hJwiUhYg9XNvylaT+QXuNi5AbyOHCNFI8M?=
+ =?us-ascii?Q?D0fXzZCVnK8PuMOll62glNr9HhrwbF4BmzYAcefXbTLTrWx6vVVdsjNk5Rl3?=
+ =?us-ascii?Q?vVlqPw8xv5wynEmJc2LKVOrmJPUDz53advmGdR1dmknLw1+TdvNUIjVtKdDk?=
+ =?us-ascii?Q?KCOpOKGa5jbR50/7GgAzPyl2QwK2xQ+ZcmTr1YhkR1cHbOqQrglHqZyDArvl?=
+ =?us-ascii?Q?4UPbk4C2rhRVI1HRZgD3BgIwd3UwRchdp/uxLd/dIH2/XiZi4bdbWl08p2Jb?=
+ =?us-ascii?Q?s4Jg/cAo/56GU3V5aNF+0QK6zus4zUNTYRK711v+XlVQIsJw6b0ORzvuN7Kr?=
+ =?us-ascii?Q?0dSTs+6bwSMJpm7LuzYSboed3RYaGEAuPp8vG7b98uPKBryQq3nI3awJfNYe?=
+ =?us-ascii?Q?oOMukyhi3D4/am8DuqN/gTwsxO+HRYOURuao2PpEiAmJSgbC18ZQr53o7wTU?=
+ =?us-ascii?Q?iN8gtHSJpMGDRT5E1MvUF7D2DTZEu1IOvRdKrEo8LL3WuEP336YilW0AA3p6?=
+ =?us-ascii?Q?To+sNy5ioHiPMyMnVckDomy5OdqwT0Ciq9heTPwJPcy1hjIIanduLukKvDVY?=
+ =?us-ascii?Q?AYBHynOVa56kQe6xfXNw4BBAWIarRKq0S6vcVil6Y3dwxL7/6iYSjoX9s8BF?=
+ =?us-ascii?Q?KBkgBJcvNdVW4VESaLR9Gveilqn8nb1HMjKbaXx2dVujiNVGdPstQ0IwWgcG?=
+ =?us-ascii?Q?5AWxaZa5rvpAi58ZJ6rwglhHOsg2pJEUcVj4cLRtvIcrLCkFdEzsWt410L52?=
+ =?us-ascii?Q?tYw=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB6373.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?5WpjQO3GHwGSW45xkQ9k6fjZnyyHg8lh4zHYR3Op7tSukQ83sd6hRb9MHUNJ?=
+ =?us-ascii?Q?+BS8Rjfj0TTbu4+5sOXPRMaduvd60XxaY8LrM9xOnYvrPeYKLBreLtJbrcfl?=
+ =?us-ascii?Q?bAN99quBC2rOc6GGQXfCzR6Z/gSsqpS5qGZZZjLqaDgNL5NX11AV1iw0BjWC?=
+ =?us-ascii?Q?ZASfr8srGwAtMSpbiwbDpqGKYW6HsDHREVXynvOMR1B/CbSVMQX9cAv2Ba5S?=
+ =?us-ascii?Q?Yx8i4JKUys4WbkkDOYHm+XoqsptI0oNBVVVOJKaw8seJAABFnmv1dYx8zAzU?=
+ =?us-ascii?Q?HasVuQ+EscK71vrJyzc3FnDIIK4cC/yAeeBvq2CblHkbTTtbdOSJ88sks5sO?=
+ =?us-ascii?Q?lQ1qvvpPJ1JjYk2yrhe0iWjtEnmxQi9Sw1LvzSOtSUbYyJWYgNV4uvMk5Ap/?=
+ =?us-ascii?Q?jqdy1diVXN5uzqlbEBbCkewZf5DFObNQSy9YJf5PH/racBg64y1Vd7YHQ5K6?=
+ =?us-ascii?Q?NWIEuUewvlQW76UWyValbspLWoYP6IG3iFbr/FSsDWBZI8lNXQ6pIkP5MfG6?=
+ =?us-ascii?Q?E6uQgDljhWS1ow4Z1yq3sorzlRU5YOW31Rg0JF29YIZ1bgEOXD+y5GgrISeb?=
+ =?us-ascii?Q?Gl7w9SfXm+mSvjuRAFu1EknozvcG8hSVPU9DKg9ejl00ZVf0i5WNxwGliKbe?=
+ =?us-ascii?Q?u4Rbqaa7ulH+J2PJELFAW1EcUJ8pkBu77602hX+kKqgOjuddQwUYUEEAPA4B?=
+ =?us-ascii?Q?X3Ov5JvR2eINkRhP6ahbryVDe2/YljL3Wg93TvY8GMUjXogy1Jmw7kps9R0D?=
+ =?us-ascii?Q?SIPAkxMA5rjMQuOF5L3wE+32z5w09FSpg6WrFgRFGdNRfRiYjB6+/Bpd5VoG?=
+ =?us-ascii?Q?wwm1TO6ukVlc6jA6FPRveL6X61S/rghlmU5nAjAu7QJnNq89wSsQ1cBxlH1/?=
+ =?us-ascii?Q?c6L0klmrSybYrxuOOHoS5vuE0CDYoQM1YrF6Q75L0QWfjqpIF65G9gAGPJx1?=
+ =?us-ascii?Q?NAqofKn7WkF+CJkb587a6Wb7+hzXBUVzO4TWuZum5z0AOhOYAww2w3O3tTE6?=
+ =?us-ascii?Q?iNMjN98UC+wpRlnux2zvLkWLqvV8JP1yzHUAlnTfctbt6SG0TSB5EYvy8Bax?=
+ =?us-ascii?Q?Z5jBa7V/G4+5rGqtaNVXYE3SUPcATdpnIbXXGzBBwck1xy5MPtz0qVW/Uw0Y?=
+ =?us-ascii?Q?/3gSrzkaBLWnrudvn90Yc64rCogEzDQ1xwu84Oc8IJknGzEPUQqCPqSypINH?=
+ =?us-ascii?Q?jnYnrqCe4BaRGpra1uFRQKa3guU/a2dFzr+Lb+GSiSJcatyGZxicbaJdYL+3?=
+ =?us-ascii?Q?7mJ9skEBypnQ1X2jXmsztH11UYjpMoarIqeo6RkRjcsf5XlpAiSGqRAUAvup?=
+ =?us-ascii?Q?Nodrvnf+Phz5HI51CVnJr3eMpXjpsmm/RhMp9wlPSiuCc4+tdXcBv/usXKJu?=
+ =?us-ascii?Q?Tj64wGPD/CKrxpc8hDu0PxVfA98LRZgxNHT01fXZ47J/BWfyQ+/8gh6EUZXZ?=
+ =?us-ascii?Q?2f9f0FDYY2aAEDPDaaZj+/7zg1ZDHhG9pPoxSFoh0icRZn6dTfL1EG6d5M8B?=
+ =?us-ascii?Q?QquMa3GS+Smpe4ed4M9C3ykr7pTMknao+w2+Ogm+9G1Jwwv4wdvl8qvYzwHy?=
+ =?us-ascii?Q?+8yiVNAZdyZhjAzgN6qbx5tj1TGI+900X6uzCQaD?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4b2f1a90-2cae-4696-1caa-08dcfdad28fc
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB6373.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Nov 2024 15:18:54.1576
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: BaONh2hMaHYOyFe9pMFtEWY0m3VK6KdcqGhejci1EpotCxdm/qSAEMD6/3ES9GGLi3rDj1mQFhXc7t4d62D6xQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA0PR12MB4462
 
-On Wed, Oct 30, 2024 at 07:58:36PM +0000, Mark Brown wrote:
-> We intend that signal handlers are entered with PSTATE.{SM,ZA}={0,0}.
-> The logic for this in setup_return() manipulates the saved state and
-> live CPU state in an unsafe manner, and consequently, when a task enters
-> a signal handler:
+On Mon, Nov 04, 2024 at 09:54:29AM +0800, Shuai Xue wrote:
+> Part of return value comments for memory_failure() were originally
+> documented at the call site. Move those comments to the function
+> declaration to improve code readability and to provide developers with
+> immediate access to function usage and return information.
+> 
+> Signed-off-by: Shuai Xue <xueshuai@linux.alibaba.com>
+> Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> ---
+>  arch/x86/kernel/cpu/mce/core.c | 7 -------
+>  mm/memory-failure.c            | 9 ++++++---
+>  2 files changed, 6 insertions(+), 10 deletions(-)
+> 
+> diff --git a/arch/x86/kernel/cpu/mce/core.c b/arch/x86/kernel/cpu/mce/core.c
+> index 2a938f429c4d..c90d8fcd246a 100644
+> --- a/arch/x86/kernel/cpu/mce/core.c
+> +++ b/arch/x86/kernel/cpu/mce/core.c
+> @@ -1373,13 +1373,6 @@ static void kill_me_maybe(struct callback_head *cb)
+>  		return;
+>  	}
+>  
+> -	/*
+> -	 * -EHWPOISON from memory_failure() means that it already sent SIGBUS
+> -	 * to the current process with the proper error info,
+> -	 * -EOPNOTSUPP means hwpoison_filter() filtered the error event,
+> -	 *
+> -	 * In both cases, no further processing is required.
+> -	 */
+>  	if (ret == -EHWPOISON || ret == -EOPNOTSUPP)
+>  		return;
+>  
+> diff --git a/mm/memory-failure.c b/mm/memory-failure.c
+> index 96ce31e5a203..1c5098f32d48 100644
+> --- a/mm/memory-failure.c
+> +++ b/mm/memory-failure.c
+> @@ -2209,9 +2209,12 @@ static void kill_procs_now(struct page *p, unsigned long pfn, int flags,
+>   * Must run in process context (e.g. a work queue) with interrupts
+>   * enabled and no spinlocks held.
+>   *
+> - * Return: 0 for successfully handled the memory error,
+> - *         -EOPNOTSUPP for hwpoison_filter() filtered the error event,
+> - *         < 0(except -EOPNOTSUPP) on failure.
+> + * Return:
+> + *   0             - success,
 
-Looking at this, I think there's a bigger question as to what we
-actually intend here; explanation below, with two possible answers at
-the end.
+One more obvious one from this function:
 
-[...] 
+	-ENXIO        - memory not managed by the kernel
 
-> +/*
-> + * Called by the signal handling code when preparing current to enter
-> + * a signal handler. Currently this only needs to take care of exiting
-> + * streaming mode and clearing ZA on SME systems.
-> + */
-> +void fpsimd_enter_sighandler(void)
-> +{
-> +	if (!system_supports_sme())
-> +		return;
-> +
-> +	get_cpu_fpsimd_context();
-> +
-> +	if (test_thread_flag(TIF_FOREIGN_FPSTATE)) {
-> +		/* Exiting streaming mode zeros the FPSIMD state */
-> +		if (current->thread.svcr & SVCR_SM_MASK) {
-> +			memset(&current->thread.uw.fpsimd_state, 0,
-> +			       sizeof(current->thread.uw.fpsimd_state));
-> +			current->thread.fp_type = FP_STATE_FPSIMD;
-> +		}
-> +
-> +		current->thread.svcr &= ~(SVCR_ZA_MASK |
-> +					  SVCR_SM_MASK);
-> +
-> +		/* Ensure any copies on other CPUs aren't reused */
-> +		fpsimd_flush_task_state(current);
-> +	} else {
-> +		/* The register state is current, just update it. */
-> +		sme_smstop();
-> +	}
+> + *   -EOPNOTSUPP   - hwpoison_filter() filtered the error event,
+> + *   -EHWPOISON    - the page was already poisoned, potentially
+> + *                   kill process,
+> + *   other negative values - failure.
+>   */
+>  int memory_failure(unsigned long pfn, int flags)
+>  {
+> -- 
 
-I don't think that the foreign / non-foreign cases are equivalent. In
-the foreign case we clear the entire fpsimd_state structure, i.e. all
-of:
+Reviewed-by: Yazen Ghannam <yazen.ghannam@amd.com>
 
-	struct user_fpsimd_state {
-		__uint128_t     vregs[32];
-		__u32           fpsr;
-		__u32           fpcr;
-		__u32           __reserved[2];
-	};
-
-Looking at the latest ARM ARM (ARM DDI 0487K.a):
-
-  https://developer.arm.com/documentation/ddi0487/ka/
-
-... the descriptions for FPSR and FPCR say nothing about exiting
-streaming mode, and rule RKFRQZ says:
-
-| When the Effective value of PSTATE.SM is changed by any method from 1
-| to 0, an exit from Streaming SVE mode is performed, and in the
-| newly-entered mode, all implemented bits of the SVE scalable vector
-| registers, SVE predicate registers, and FFR, are set to zero.	
-
-... which doesn't say anything about FPSR or FPCR, so from the ARM ARM
-it doesn't look like SMSTOP will clobber those.
-
-Looking at the latest "Arm A-profile Architecture Registers" document
-(ARM DDI 061 2024-09):
-
-  https://developer.arm.com/documentation/ddi0601/2024-09/
-
-... the description of FPCR says nothing about exiting streaming mode,
-so it appears to be preserved.
-
-... the description of FPMR (which is not in the latest ARM ARM) says:
-
-| On entry to or exit from Streaming SVE mode, FPMR is set to 0.
-
-... so we'd need code to clobber that.
-
-... and the description of FPSR says:
-
-| On entry to or exit from Streaming SVE mode, FPSR.{IOC, DZC, OFC, UFC,
-| IXC, IDC, QC} are set to 1 and the remaining bits are set to 0.
-
-... so we'd need something more elaborate.
-
-AFAICT either:
-
-(a) Our intended ABI is that signal handlers are entered as-if an SMSTOP
-    is executed to exit streaming mode and disable ZA storage.
-
-    In this case we'll need a more elaborate sequence here to simulate
-    that effect.
-
-(b) Our intended ABI is that signal handlers are entered with
-    PSTATE.{SM,ZA} cleared, FPSR cleared, FPCR cleared, and FPMR
-    preserved.
-
-    In this case we cannot use SMSTOP in the non-foreign case, and it
-    would be simplest to always save the value back to memory and
-    manipulate it there.
-
-Our documentation in Documentation/arch/arm64/sme.rst says:
-
-| Signal handlers are invoked with streaming mode and ZA disabled.
-
-... and doesn't mention FPCR/FPMR/FPSR, so we could go either way,
-though I suspect we intended case (a) ?
-
-Mark.
+Thanks,
+Yazen
 
