@@ -1,164 +1,159 @@
-Return-Path: <linux-kernel+bounces-396143-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396144-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF5689BC879
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 09:57:46 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 051BC9BC87B
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 09:58:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D08F1C211ED
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 08:57:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 89AFB1F2107E
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 08:58:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 162211CF7DB;
-	Tue,  5 Nov 2024 08:56:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BD541CF7DD;
+	Tue,  5 Nov 2024 08:57:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JvyHSUjw"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="VEmjrGCg";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="E20Ax+ra"
+Received: from fhigh-b6-smtp.messagingengine.com (fhigh-b6-smtp.messagingengine.com [202.12.124.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E06341C4A18
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 08:56:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 038EC1CEEB8;
+	Tue,  5 Nov 2024 08:57:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730797014; cv=none; b=BpYUREjtCIh1cR1/gV3wUOOejWsOQVLyqemzwPKD+74ZeDJ8gdc3J/n/+YkRBTOmiSEbbacOUuMoFWYs/A6VrO3vPz+30Q3u9bjBfOig1YL1Py8eqwnQ/VvSGbHYZbcUYKMJzLJpPV2i2Js5lbQUEwaqXBOdbIXiWqf2VOvKp9k=
+	t=1730797068; cv=none; b=jWVSROrRFq/B94sGN+9VL040h5HgSqwCrxqk4Le+MpGS7AEmXQq+flNugTVZTMdn9uSn4zPkHc4YZ1z0Spu4ICN/bElqRCzrbOAy298bAXuLNXnk5HHYg5Oi+tZA3p9W22/SddZCCqGL88dEOzdl7XK0yxhG04rztQ/2Wj1/OEw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730797014; c=relaxed/simple;
-	bh=whM9GHfph6mVAmx3sUCUNxmfxly4iAyY5a7saMaZIU0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PAmkXFm466DP7SQINlXkyRvh51VyxzAWURjtBd3S1Ej6M5/VotUp3nMnzqMTOo877hhxLgAF6yLzxmJEjtYCSnMeRvKwc/yHjscnfs9ZwZhn7EkqUXqRsAsv7ABg/rP69IKEM22CpmSni58klRs5IdpYyXJFcd1UazkVe4wPKnY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JvyHSUjw; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1730797011;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=oI/RD+qbJilGmZQ0OyHECrO1kP9vrPDTW6pPLpVgj7Y=;
-	b=JvyHSUjwDhwxN7F+RAJZeaTtRWqoD7m0XItQ/k6jvKmr4xsMUIUESWQfrDaQwV76KuXv/e
-	UJgJUTgfPDRgRI59wVo5aDYAaj0FBf4broQJCzrdRTyfmTggNd/5Jq3foyV+H10xAgB6On
-	xpEpfromo13TY9y+NSmk/Dk8pTNT0pM=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-543-_0k8kIe8MkKPB7iUaLndDw-1; Tue, 05 Nov 2024 03:56:50 -0500
-X-MC-Unique: _0k8kIe8MkKPB7iUaLndDw-1
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-43152cd2843so30546555e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 00:56:50 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730797009; x=1731401809;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=oI/RD+qbJilGmZQ0OyHECrO1kP9vrPDTW6pPLpVgj7Y=;
-        b=gDbNTLs+PfPr5cEN4oLkQTL3wGUJWgXfrjONTFzO1dQvZr75tzq6kCeosRPk1P+Pki
-         KyP+j95eQrwcawoYCDBOEP1Hf9CSHdfhVF/az6wENpaIEwHnynVKjWvJUniOvcVGfm8J
-         lhBuz4aqjJbyjygfceaGqs1xWgbM2FSiKkeVt7e6iueSXq+xUW032OdlSneu9KB6PBCi
-         DkxjG/IP595+U6uDWQc3dK6NLpf0Z7qPFZ/nlyexGVgQdnNH23nZhwmSA2Vi1YjmJG5I
-         EoeZtSgYxtolkD2F0zsQO9VgrmYAOaZv0BjcQE+JVZDZGJ/OAWq6ak29FF+8IkV8C591
-         DpbA==
-X-Forwarded-Encrypted: i=1; AJvYcCVUoFRkAC1UDL7HKcTXiuOwNF9+j2WgfLURqefZaadD6x2aIg6PWL0JGYvYGDI4oziZfgMcEYdgofNOtlM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyMN9OrYfLtk75jeQ03NtSu698B/q/0r9fAkMSEa0ePUCzcJm/l
-	RzXjedSN0DayI61ZioQ/zuHyTpykLUUhEof1cQm17jPrxazP4sAwjS5ffAp7ateYGAd38IizGjQ
-	FzEsTIiihdn7lMRnO+df5I5KEEjeWIsHIhirZWKzNzwZ+pEBLpgr/h+Eb17SoNjLcEgfl5g==
-X-Received: by 2002:a5d:554f:0:b0:37c:cf3a:42dc with SMTP id ffacd0b85a97d-381b70f080dmr15436451f8f.37.1730797009532;
-        Tue, 05 Nov 2024 00:56:49 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHvDfDJcUJ5KLl/0KyWaHgjAevnISRf625sgDSVlbIQ8suHJxyyUaA0BdTBGgc5oIQsg5TQwQ==
-X-Received: by 2002:a5d:554f:0:b0:37c:cf3a:42dc with SMTP id ffacd0b85a97d-381b70f080dmr15436441f8f.37.1730797009141;
-        Tue, 05 Nov 2024 00:56:49 -0800 (PST)
-Received: from ?IPV6:2003:cb:c73b:db00:b0d7:66ca:e3e9:6528? (p200300cbc73bdb00b0d766cae3e96528.dip0.t-ipconnect.de. [2003:cb:c73b:db00:b0d7:66ca:e3e9:6528])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381c10e7280sm15443596f8f.59.2024.11.05.00.56.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 05 Nov 2024 00:56:48 -0800 (PST)
-Message-ID: <ba06e9e2-c0d4-45be-99bd-17a3eb3c15d5@redhat.com>
-Date: Tue, 5 Nov 2024 09:56:46 +0100
+	s=arc-20240116; t=1730797068; c=relaxed/simple;
+	bh=eVo19skSYM4/FeVkjG5DKP8xeomPVwkanJ4elVVAfUs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=R1NJ+WnG+nO/3mhgTU3otwmgFnj7GfJ/uuvUFWCl/ufR6qBCBPmr0ij+SkuqxxpMdEH0lbmExg7qTQ1lj8Aojwk4kEKHUbidkCGaSqZl8MC8m4ThyZUsY2S2a3ozm1jkrJVwwNNjXObWNAqOcDG/g8IqXniENxbO2npSfekkPqU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com; spf=pass smtp.mailfrom=kroah.com; dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b=VEmjrGCg; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=E20Ax+ra; arc=none smtp.client-ip=202.12.124.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kroah.com
+Received: from phl-compute-06.internal (phl-compute-06.phl.internal [10.202.2.46])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id C3CDF2540071;
+	Tue,  5 Nov 2024 03:57:43 -0500 (EST)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-06.internal (MEProxy); Tue, 05 Nov 2024 03:57:44 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm3; t=1730797063; x=1730883463; bh=4Fi+CuwsiG
+	kg8J5rFZ2VTi5CGPReWqS7KJyZGURo+Xo=; b=VEmjrGCglp6pXmAKodM3rwCVSo
+	YZKll7YXW1fGclpLzZpyloDcWrADXochnuRBB2bGBwGF87cCmLZe7NQ3TrYcOSP9
+	ruVfDGjUCL92d4caR4rkdf6n3C6f0nIYlAIpRr8bZCBKpUnF7WfVveb1Cm1l9Ozn
+	2uxaV6grYItuatxV71hjtB/c0T3lcWmdC3TjTcpG154VlUf8xC+lwbSEl+D+l/Ou
+	vM8K1bR0RDM8rmm+hFg2toIdAAP2j/GII8p+SAsa+WV2+1XcpHboTWI3optsvokE
+	Us2aT79Z5cKQNaYkUGDrRM0XFDrUu3VweTC7+ERWhVx6sFxSNOd0LwQ0FrFg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
+	1730797063; x=1730883463; bh=4Fi+CuwsiGkg8J5rFZ2VTi5CGPReWqS7KJy
+	ZGURo+Xo=; b=E20Ax+raw+uWgb7TK+Gv1sJ7v4BWlrRl4HpzqXp6Oestp+4xPdx
+	wK6YzCHssKiCpVn9hzNT0MTLpXczbywYOhDkwKNaApeTtF6eNKb402+G1RUErtaw
+	+1MfXaO1Azr1QD2kF4Zq6GZppvEeCsK+VIoo7zyYBtvpT4G86nBn4Pdz/G8kSvjO
+	m//7zYyS84s1txfsLzntWMRbz9iPymYaBzORU5PMw/s7gbCGDC/zS5OwsU9fmIPA
+	kcqOYu+TPCWXEegPXwqi+2pJLGFU3Alw66LCqMdzXVckHsMe8Znym2vgors81ZB0
+	X43BriVtst+h1AST3WrRBrceg5rddHuoN5w==
+X-ME-Sender: <xms:B94pZwLEcE985G7t6vOQoYifTuI4QSn6Qq4yJ2zSSXpT6irDQX0A9Q>
+    <xme:B94pZwJd69hkoXyEOzXh61-q7NPiQrROllosPZzBvpOh5OuJyVj7MsRdt3zYIX7R4
+    2bIKM30SJLxxw>
+X-ME-Received: <xmr:B94pZwu-_kKEYnIhTJNhR8pKikEvxE1lglAp4rVeXUW7snyIHG551GLnEvAzzh3XjCLxiy6257GQe3No65UB_ZHEHYo4TQPl7Wq4Ig>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdeljedguddvjecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttddv
+    necuhfhrohhmpefirhgvghcumffjuceoghhrvghgsehkrhhorghhrdgtohhmqeenucggtf
+    frrghtthgvrhhnpeehgedvvedvleejuefgtdduudfhkeeltdeihfevjeekjeeuhfdtueef
+    hffgheekteenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
+    hmpehgrhgvgheskhhrohgrhhdrtghomhdpnhgspghrtghpthhtohepkedpmhhouggvpehs
+    mhhtphhouhhtpdhrtghpthhtohepshhfrhestggrnhgsrdgruhhughdrohhrghdrrghupd
+    hrtghpthhtoheprghmihhtshgusehgohhoghhlvgdrtghomhdprhgtphhtthhopehlihhn
+    uhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlih
+    hnuhigqdhnvgigthesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:B94pZ9Y4PGbhG4KWS_6PDBGrCPUO1UkP-3QJo6sxBNjyVECDZO3j-w>
+    <xmx:B94pZ3Y7QNgN8sHGlz3NNsEVL47nVuXwgVPTHdn9t57C8LAMBB9KKg>
+    <xmx:B94pZ5Dxc24_FmMVz1Gu4yH17gWkqDrMuI11iMT7SkWTd0AWsVjUQQ>
+    <xmx:B94pZ9bLwjXNdW6-JC9qRBOp4-0SfEOfYbolZKaVflPeXfic1-nCCg>
+    <xmx:B94pZ1M_1XQftOHydNNgflMDvtNqhY44hkG5LWZpNrvSGm4rF2ysMOkp>
+Feedback-ID: i787e41f1:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 5 Nov 2024 03:57:42 -0500 (EST)
+Date: Tue, 5 Nov 2024 09:57:26 +0100
+From: Greg KH <greg@kroah.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Amit Sunil Dhamne <amitsd@google.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: manual merge of the usb tree with the usb.current
+ tree
+Message-ID: <2024110513-molecule-diabolic-3bc7@gregkh>
+References: <20241101150730.090dc30f@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: xfs: Xen/HPT related regression in v6.6
-To: Andrew Cooper <andrew.cooper3@citrix.com>, arkamar@atlas.cz
-Cc: gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
- linux-xfs@vger.kernel.org, willy@infradead.org
-References: <202411584429-Zyna7RpVesXAiTBM-arkamar@atlas.cz>
- <df10f269-0494-46d9-be8f-7e5dc9cd3745@citrix.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <df10f269-0494-46d9-be8f-7e5dc9cd3745@citrix.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241101150730.090dc30f@canb.auug.org.au>
 
-On 05.11.24 09:55, Andrew Cooper wrote:
->>> At least years ago, this feature was not available in XEN PV guests [1].
->> Yes, as I understand it, the hugepages are not available in my Xen
->> guest.
+On Fri, Nov 01, 2024 at 03:07:30PM +1100, Stephen Rothwell wrote:
+> Hi all,
 > 
-> Xen PV guests are strictly 4k-only.
+> Today's linux-next merge of the usb tree got a conflict in:
 > 
-> Xen HVM guests (using normal VT-x/SVM hardware support) have all page
-> sizes available.
+>   drivers/usb/typec/tcpm/tcpm.c
 > 
-> But lucky to find this thread.  We've had several reports and no luck
-> isolating what changed.
+> between commit:
 > 
-> ~Andrew (Xen maintainer)
+>   afb92ad8733e ("usb: typec: tcpm: restrict SNK_WAIT_CAPABILITIES_TIMEOUT transitions to non self-powered devices")
+> 
+> from the usb.current tree and commit:
+> 
+>   33a0302455d6 ("usb: typec: tcpm: Add support for parsing time dt properties")
+> 
+> from the usb tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+> 
+> -- 
+> Cheers,
+> Stephen Rothwell
+> 
+> diff --cc drivers/usb/typec/tcpm/tcpm.c
+> index 7ae341a40342,a8fcca029e78..000000000000
+> --- a/drivers/usb/typec/tcpm/tcpm.c
+> +++ b/drivers/usb/typec/tcpm/tcpm.c
+> @@@ -5042,13 -5055,10 +5056,14 @@@ static void run_state_machine(struct tc
+>   		if (port->vbus_never_low) {
+>   			port->vbus_never_low = false;
+>   			tcpm_set_state(port, SNK_SOFT_RESET,
+> - 				       PD_T_SINK_WAIT_CAP);
+> + 				       port->timings.sink_wait_cap_time);
+>   		} else {
+>  -			tcpm_set_state(port, SNK_WAIT_CAPABILITIES_TIMEOUT,
+>  +			if (!port->self_powered)
+>  +				upcoming_state = SNK_WAIT_CAPABILITIES_TIMEOUT;
+>  +			else
+>  +				upcoming_state = hard_reset_state(port);
+> - 			tcpm_set_state(port, upcoming_state, PD_T_SINK_WAIT_CAP);
+> ++			tcpm_set_state(port, upcoming_state,
+> + 				       port->timings.sink_wait_cap_time);
+>   		}
+>   		break;
+>   	case SNK_WAIT_CAPABILITIES_TIMEOUT:
 
-Thanks for that information, Andrew!
+Looks good, I've now resolved this in my branches.
 
--- 
-Cheers,
-
-David / dhildenb
-
+greg k-h
 
