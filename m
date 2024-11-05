@@ -1,302 +1,284 @@
-Return-Path: <linux-kernel+bounces-395888-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395887-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E81749BC482
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 06:01:29 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93CAD9BC480
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 06:01:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A1E0B282C20
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 05:01:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B36081C213B4
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 05:01:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFEBF18732A;
-	Tue,  5 Nov 2024 05:01:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0E4E18E750;
+	Tue,  5 Nov 2024 05:01:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cfjY4M4p"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jjyfbwIr"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7AD51B5EA4;
-	Tue,  5 Nov 2024 05:01:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730782874; cv=none; b=hn0AwFVN2mctqJEevs6tsDF04nO5hadIE73q0/tuVnMKZL0lgPwd/BmLGpalW1JWMichyUNZkthURyZ8FhMOarDqB4Jm54mFujHUZQM3hwuTH1jy/TM5NSLLib8FBeXp61KFmqIUQwPVhj/sVGY+rK0A5iLOqJ3ESV+LCWW6Go8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730782874; c=relaxed/simple;
-	bh=u6bRqQE/rACICogM0u4/js7LHshRVSLExADHVgfgOx4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DOk3k7TjCN86HmkMFcmsgxuD68bIK7g4C9DQYADlZxARwBGx/tdWkil9B3TRGfQoh0v3IHpBrKTUh6/yHCUmYsF5T72CJ4dTNKn69UAQ8wtvLNQ7f99G1vNbNWR/kgDjP27hlZB0plGRq8Tva7bDEU4vmfrYGJyoVsP6kJsh4kQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cfjY4M4p; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9F3629D05
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 05:01:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.21
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730782867; cv=fail; b=aMotKFg4Al59VbNF9138P7ms77/D/hP773CNNR5ZuDL0RlUf+mdC8i1GDIBPL5GSvqJwK1SdZd+TXJujwXZQuEGUsuvFCqVfRC+iyXy1t7xkYC0GYGGOr4o7Rk8KaAnM+ilQYiOjQcRJ/x7RZ6PboYKntINSCSz6s63NJNzu2rU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730782867; c=relaxed/simple;
+	bh=aRSf275jCytXc+6pcKp0Y0o73LdqwZlaraGCBphpN4Y=;
+	h=Date:From:To:CC:Subject:Message-ID:Content-Type:
+	 Content-Disposition:MIME-Version; b=jMlwcMLyf9XU08lqGv8l6Oh+6HtfzOcNA7+oyJNc3SMQ7TzwilNlmui/xhK4q+rtjMtNMhzmML58S34Z3mnMYGYipX/4z4xL0YHoOs5t357BRygsGAjknp7Lx6rDxmsuqw/sOizs7pl7HQF1uAxzE44MGgM9HKCKZUwNxsJ/IVE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jjyfbwIr; arc=fail smtp.client-ip=198.175.65.21
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730782872; x=1762318872;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=u6bRqQE/rACICogM0u4/js7LHshRVSLExADHVgfgOx4=;
-  b=cfjY4M4pmWfPgLRpMz2nDs0dopduYgZ+oHpIoCrq26mHYfP5qXVW6rwO
-   1C39IwnD7F86VVCMuquO/CUzc0apFMUONvzn6lf3j0tRMJZdQVXCsg/3U
-   1zyAnNEK5Y+lPEI78S09YpyoaZ2ArfhoS/GpL+ETFEipJhSx2VLXffudg
-   O1Rd8IvDIGb78z5xKYMfyWwgp7/q/TCcDQfrCf8lwIEvFtqqfZ2rTXxha
-   uj3cO3V7APMYejikmMg5WXMCgbDrA91whVUjdfXwWcJPM3lmJ2+uG+a5E
-   4SBjTSfNwdgJbVQXN4PyYtiSWkdckp1oSd8Kfx1bzL7Lb3Oe6dvH/4+mA
+  t=1730782866; x=1762318866;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=aRSf275jCytXc+6pcKp0Y0o73LdqwZlaraGCBphpN4Y=;
+  b=jjyfbwIrF2ywUG9GyfwwMFzWrCBx8f69JlLUpY+gH0JgASJfYMbqkuMx
+   OtG8jNzFkSZp5PwqELCtBMRNVmPFTds1K5F8SwFaALJO4ZYmPHkA2rlh9
+   tBYhMvlLmb8adBYQwgUOisVXhD3MUmwtulAgBp+gQOtS82QBEnRal/Ilj
+   86WL35vQeyzUfGzlpldsCP+pZJluA7AjOur8Ksze3yLKbh76k2vOv7MpO
+   OVNcDesSwgWOgBoB8YSLF7Sz6DHz23L+94w/rCWN7C9+2kANyT/OVCqCm
+   0qcw3zdKxcPWhZEjH7WWHFF4Px3+nU45+m5pCOehkwPezi22DNt/UknsS
    Q==;
-X-CSE-ConnectionGUID: HP2DuI3FQ8+TPOT/3KLEig==
-X-CSE-MsgGUID: rIH9bsGOQHWhdm3MklwXJQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11246"; a="33347599"
-X-IronPort-AV: E=Sophos;i="6.11,259,1725346800"; 
-   d="scan'208";a="33347599"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2024 21:01:11 -0800
-X-CSE-ConnectionGUID: O2lx8TIdTeu6hNByHNJPYA==
-X-CSE-MsgGUID: Fp+vrJckSvqSTOSJWCnivA==
+X-CSE-ConnectionGUID: uTD45O34SPGNJZirTK3rgQ==
+X-CSE-MsgGUID: m75I54bYQnywiRgBbjGRaw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="30464615"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="30464615"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2024 21:01:06 -0800
+X-CSE-ConnectionGUID: s31Mj8S8Q+ixtyAMAB7stA==
+X-CSE-MsgGUID: UO+6J+o/TZ2sONv1KRvrug==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,259,1725346800"; 
-   d="scan'208";a="84688056"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by orviesa008.jf.intel.com with ESMTP; 04 Nov 2024 21:01:08 -0800
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1t8Bge-000ldx-1z;
-	Tue, 05 Nov 2024 05:01:04 +0000
-Date: Tue, 5 Nov 2024 13:00:32 +0800
-From: kernel test robot <lkp@intel.com>
-To: Keren Sun <kerensun@google.com>, akpm@linux-foundation.org
-Cc: oe-kbuild-all@lists.linux.dev, roman.gushchin@linux.dev,
-	hannes@cmpxchg.org, mhocko@kernel.org, shakeel.butt@linux.dev,
-	muchun.song@linux.dev, cgroups@vger.kernel.org, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, Keren Sun <kerensun@google.com>
-Subject: Re: [PATCH 4/4] mm: Replace simple_strtoul() with kstrtoul()
-Message-ID: <202411051248.C33eJ43V-lkp@intel.com>
-References: <20241104222737.298130-5-kerensun@google.com>
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="88626775"
+Received: from fmsmsx603.amr.corp.intel.com ([10.18.126.83])
+  by orviesa003.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 04 Nov 2024 21:01:06 -0800
+Received: from fmsmsx601.amr.corp.intel.com (10.18.126.81) by
+ fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Mon, 4 Nov 2024 21:01:05 -0800
+Received: from fmsedg602.ED.cps.intel.com (10.1.192.136) by
+ fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Mon, 4 Nov 2024 21:01:05 -0800
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (104.47.58.175)
+ by edgegateway.intel.com (192.55.55.71) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Mon, 4 Nov 2024 21:01:04 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=BnVcWTG0tKx6riIP0BlUrtY1F5or1SSvicLmNEiJny12zJGmeIb8R+jntf6QdYGcdH29Uj8OTobGemEXDPvOn3p4x0CQR79Xv0VaHWvZyYN0oS5EhxELu5XOXvMCZfveMsbAOb9kf+nOFJFfFvekUDoyI0o9jxq+xEvPlDoKnQv9gPXOeiV7qwpd/j3tcYsIBJ6ygnjReqpJVv3DWZPdZJEbBJ5rvpxKk2N9ahcQ1leUOiBZwwmHV5nTQFkjfmvZ/KhIEZDJ5Jo1QVt3yzNKMcOv0ArhvK2SSq7hW8n3mhyeQPgGRvBP6CyLgtw7xDWMnlVLlgA8IPM+EYaxGHxt4g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=9nXYC3ZcKm98WjJDaU7NbV7WPPDXlHZCL922561ZYpE=;
+ b=Iqvr4xhk5TFKQsxjbEtBzZ3HsjO8GRi6L13Ll3fLqrZHcJvhsSrK/taVwRp4Nr84hAgQwGANcuxvu1MMslw5ZnZ8zBQpdZjNLY1yV48SqyzIZs4Z1M61azjOQNVEtFfOLn5Gfo3SiabOzrvHodKAgtA/lKr72BX0OFlpHlUf2Ls0pV3YzvQWum2qsXLb580VUre2NhTNvg2CIyBF+iCo0xtRs5zA6JkbB2RsNNnhpDZ6TNUnDN5ln6cvnOrp0Ui/JsP8pTaNz6OoV6nVt8dPEa0qFQ97Qx4Da/kRN2d29p6iHOW32n3DBaOcyy7zmm+BgNSYKmt4J65rpGI10qbOSQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from LV3PR11MB8603.namprd11.prod.outlook.com (2603:10b6:408:1b6::9)
+ by PH8PR11MB6657.namprd11.prod.outlook.com (2603:10b6:510:1c0::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8114.30; Tue, 5 Nov
+ 2024 05:01:01 +0000
+Received: from LV3PR11MB8603.namprd11.prod.outlook.com
+ ([fe80::4622:29cf:32b:7e5c]) by LV3PR11MB8603.namprd11.prod.outlook.com
+ ([fe80::4622:29cf:32b:7e5c%4]) with mapi id 15.20.8114.028; Tue, 5 Nov 2024
+ 05:01:01 +0000
+Date: Tue, 5 Nov 2024 13:00:53 +0800
+From: kernel test robot <oliver.sang@intel.com>
+To: "Paul E. McKenney" <paulmck@kernel.org>
+CC: <oe-lkp@lists.linux.dev>, <lkp@intel.com>, Frederic Weisbecker
+	<frederic@kernel.org>, <linux-kernel@vger.kernel.org>,
+	<oliver.sang@intel.com>
+Subject: [paulmckrcu:dev.2024.11.01a] [rcutorture] 622baf5d79:
+ WARNING:at_kernel/rcu/rcutorture.c:#rcutorture_one_extend_check[rcutorture]
+Message-ID: <202411051012.f9224879-lkp@intel.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+X-ClientProxiedBy: SG2PR03CA0117.apcprd03.prod.outlook.com
+ (2603:1096:4:91::21) To LV3PR11MB8603.namprd11.prod.outlook.com
+ (2603:10b6:408:1b6::9)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241104222737.298130-5-kerensun@google.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: LV3PR11MB8603:EE_|PH8PR11MB6657:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8446ab1c-6f23-4e61-2d6c-08dcfd56d83b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?jP5jsOmVZ9LrvSgDEX4hNsf1ytrq+DgCclOJ7PtCs1dTUDULnj5B7c5Pdm7c?=
+ =?us-ascii?Q?YYAYZUYgYQEjHOdcsBQlPEWhYQOhThWpevNn2TMReXk//EwKa2g+q55ZDhTr?=
+ =?us-ascii?Q?dldRk2eZaYjkYBrEYR7hJ39z5gdKi+utlQbwxA1UqDhhgakfhjbBtjpuAycU?=
+ =?us-ascii?Q?3ys5YLb2UTKQhg8ZzRrGEsHywxvf/ZtYW3vHcnVrN49s3IDg6rZsO5mC7Az0?=
+ =?us-ascii?Q?riFOYIlUTYyWTwvAWO/bkUjasXvM4lm6q09ssGWPve1YqlSQk6DkhdXlZAj+?=
+ =?us-ascii?Q?DLhC2ZiW/++pNNE0TmPf2gtbR8OoOPC2qX6vINfixxd5UCDVgTLuiSpfXKx9?=
+ =?us-ascii?Q?eIGGtHOng70cekZXGdPp92K6MGb24zNJZ2LbKzrAXscHjx8RcFxLRo6GEhHm?=
+ =?us-ascii?Q?A0x+yfGUqLRr9AkN/kLmJwiSyNqlVCogfbZCtitksRu+lN/pcY5/HWt//xEX?=
+ =?us-ascii?Q?84LE4DZYtU9bO80M+EZLH59ILBnFaipWyBjBzvNb8OusCkImpLi3bNgI9y0T?=
+ =?us-ascii?Q?7gp1NAjvOBSWFu5gP7obqB3Lczxc5RQ369xcEagMEF4tJialiVbyKJiNWzs5?=
+ =?us-ascii?Q?fOB4zyAwVRBfVGpDyVRIMG+7g5kmSX1qzVs946sBCuN2VmBHBtLOCdWVdEc2?=
+ =?us-ascii?Q?O5mra60o67fQMx/gAJ/4Sg1yf4Pr/0l6Z/ZkmPva6nbUmJd23kPnC1WZPwNv?=
+ =?us-ascii?Q?upj7gkD0PTSBiBICtqc+xck0x9W7sQI3NBurjMg53CG1KfpsRrwQrpgnUTip?=
+ =?us-ascii?Q?1DDxCohtjIievaK9atpoNB8LtvnT334VG6ud4LxEke61074ZD4F9TnT6txNr?=
+ =?us-ascii?Q?rv8fovgyAozWUhBJ9rKgFRxKdfDKu7f5esI2X2j51IvWDefjzrHTacLgLmM7?=
+ =?us-ascii?Q?z0U/FSCTOhrC7X0a9lTH5/7iyBTKTD85spe9UJcNonkHpAc1IiOHZ8s3QM7i?=
+ =?us-ascii?Q?XEPG/aBjzHDJRtcL84C0o0AA9F4GIpvLVVxrESluOKhCNYyHZOq82j4RovH0?=
+ =?us-ascii?Q?N9C7TDFGwc566qE/G72/yG7mgJUQCfWNnVpaO0IwQ8gychmf4Zn2yfTkRvqF?=
+ =?us-ascii?Q?HTexShadscWRGeuQqHKFqlA6ynzGTNHpXcysCl+QwrcVGV9mtp9RIXS66Ari?=
+ =?us-ascii?Q?B8rahowHZB6NUzTusAszA0jr6zq7ouwK5wVxyExlkvfes2zUxTTZbDWwE9uk?=
+ =?us-ascii?Q?F2YZDBOnpH5eJXRyImhjrOnIagdzDLakL5VJ6/6HQ8iEkcKTU7VYhuqkhK7s?=
+ =?us-ascii?Q?B9I3x76Y4O9EK+85jsZcHSdzEFsML0g21csfVCbHKw=3D=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV3PR11MB8603.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?miBylH/+QqLDSJ93TLcUE3GfLkJ4x/9axUL2/iLxfYx09XDxouw9HgOPtCFn?=
+ =?us-ascii?Q?vEG3ef0lAN5rHSpXi7SJpXhmbmzOYYgj6DaUwIzPlbeZ/J0jsN4CQQPOz9To?=
+ =?us-ascii?Q?d/x54iZaGeY+XL2vdZSmJt78DjpqUJUlOZQ6Tf6fRMB3cJ6zI91gRj0L6JWw?=
+ =?us-ascii?Q?WjFY8qqxeGrSnVUWUpOGj8aT2S9fuXueOmM/rNenxAcIpUVNodpYZBdB+rSP?=
+ =?us-ascii?Q?/R+UzYo73mjSLuaZY2lm/OYI9TCqQ417/e4ddqkIdZN/Gc+XfTekeZMxqHXK?=
+ =?us-ascii?Q?mPnf4KBpUfmEZ3qJ1z2d9dIjjPoFUuFHaorg3iBT1hDwxkoNQTKhRiL54EGi?=
+ =?us-ascii?Q?I2yeLnawvlMAe2vKoNBOXPI4qHMWdq1Qkcs7D9E2lkfWn6nW6QhCqRDb1v8f?=
+ =?us-ascii?Q?k41iBf1c6AAhLgyEf7EkLiAK5wqhmVYbG++uxXfzm6+DKJW69OpOB39SALl1?=
+ =?us-ascii?Q?/PZIzSrQmsKPswK0IuG6pAQmQNuBkqUj9SROh9+9yWSpmyCZ9xpYpM8PtlvE?=
+ =?us-ascii?Q?HAyhOk3hWeWMLnFrOZ8jMMU0gSSe5sgJ8jmf0caip8NOgtZ9PCi/mwSAMDrj?=
+ =?us-ascii?Q?cJ/GMTFUxWMWH2NMEeZ1oFX1UzH7LYNqqyLP6YtAWk/yBHJF3ZdnJUJh8whk?=
+ =?us-ascii?Q?UF2i97V1TDRFX4aPfNfFVB4wOfGv7BCX7r81G/w6X/NH/CEejVC+XIYzm74n?=
+ =?us-ascii?Q?AkLhytjGr0RJYKB9Gmv9XL4BtpB1OJV7kM10ixL2DWMxZ3snVFLPDzaeOPr7?=
+ =?us-ascii?Q?raneaqtvUh5o+N15DxsGIdZ3nrnA4ZgKPBhAYnDVnuM4UXayePbMtpKGr5w5?=
+ =?us-ascii?Q?CxE6g9y8Di/qwE+z7yPRovPIaaOjLFhhyVReH4qHjP4JHxIyehDieewRD8XE?=
+ =?us-ascii?Q?5BKaUsLBeJzRaxv0ftVbpn2F3GFUTJeyNrCwZSH7/5GBOyS2IPp6L6Q2wVl8?=
+ =?us-ascii?Q?99QYyIpER4cESUc3a/Uug8tLoNHowWPFRXmiedPUtRMba+f1hLUkGC0afhMk?=
+ =?us-ascii?Q?tVdGC6soqdSjUoEtEljp1RwMWAeEyOEUmgIaVa3+wlGUfRNpxr8J5IymAddA?=
+ =?us-ascii?Q?dAPPqytL8C88oWQPziyCn2iHf1N/Csy8jj4KGjjk3m/jftMUZEhSCs6PnVo6?=
+ =?us-ascii?Q?yckXhFmB7NfPuXIEE9fJ9Z02wwBsd9jj2HQ7x+n5aad5RE7rcSkvBsMI7EiO?=
+ =?us-ascii?Q?vE2+0dcSLQL/l59fG+HM921I/sQ1wCleFaHtdarD/TFMH0ee9vyZtuXgG/mp?=
+ =?us-ascii?Q?jDwZ+sG9JcfI1DnuXRiDzEqqPIUo7r1D5Zs9OjfH6ojufWtFSCWtPDtyQxGy?=
+ =?us-ascii?Q?9nOarWqgGdWZxWfCu4dpbhqSsL5K6tQVz+BLdGtgY3N/k8O2PblrjFC2gvGE?=
+ =?us-ascii?Q?rjFRZTJSHibymGLNQxPpttE9eQeP8F9sDcSTebq0BV6SfYQzNMynU8pEHJdH?=
+ =?us-ascii?Q?PC36HKkSnQjPaNaCiUd6ACq5NkoPiQ8wyBPOe5YY6aHyUMVAO5i5LerPrSOE?=
+ =?us-ascii?Q?qD94OW8eJDVKI/drtvn/j34Jo4e68T9tgksrY+Gk3iW4qN40sWoPitaeWE3x?=
+ =?us-ascii?Q?5KnyiWqnrAF9LTOm4qKQjRV0CHjMHQ/dxi1CXLl8vXNwvGhcBEReNmqF5JYs?=
+ =?us-ascii?Q?dw=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8446ab1c-6f23-4e61-2d6c-08dcfd56d83b
+X-MS-Exchange-CrossTenant-AuthSource: LV3PR11MB8603.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Nov 2024 05:01:01.8504
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: SGFRWK/SkS+Hb9NamOIs93XDqkCOyZ6HXfXj7E+L96X4EOUAD1Xb909zKRRSjGSA7Z8SeDqucjAxf8Ku9xz1SA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR11MB6657
+X-OriginatorOrg: intel.com
 
-Hi Keren,
 
-kernel test robot noticed the following build errors:
 
-[auto build test ERROR on v6.12-rc6]
-[also build test ERROR on linus/master]
-[cannot apply to akpm-mm/mm-everything next-20241104]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Hello,
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Keren-Sun/mm-fix-quoted-strings-spliting-across-lines/20241105-063007
-base:   v6.12-rc6
-patch link:    https://lore.kernel.org/r/20241104222737.298130-5-kerensun%40google.com
-patch subject: [PATCH 4/4] mm: Replace simple_strtoul() with kstrtoul()
-config: m68k-allmodconfig (https://download.01.org/0day-ci/archive/20241105/202411051248.C33eJ43V-lkp@intel.com/config)
-compiler: m68k-linux-gcc (GCC) 14.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241105/202411051248.C33eJ43V-lkp@intel.com/reproduce)
+kernel test robot noticed "WARNING:at_kernel/rcu/rcutorture.c:#rcutorture_one_extend_check[rcutorture]" on:
+
+commit: 622baf5d79169496973d50fc43636469e6af02b7 ("rcutorture: Make rcutorture_one_extend() check reader state")
+https://github.com/paulmckrcu/linux dev.2024.11.01a
+
+in testcase: rcutorture
+version: 
+with following parameters:
+
+	runtime: 300s
+	test: default
+	torture_type: srcu
+
+
+
+config: i386-randconfig-061-20241103
+compiler: gcc-12
+test machine: qemu-system-i386 -enable-kvm -cpu SandyBridge -smp 2 -m 4G
+
+(please refer to attached dmesg/kmsg for entire log/backtrace)
+
+
 
 If you fix the issue in a separate patch/commit (i.e. not just a new version of
 the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202411051248.C33eJ43V-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   mm/memcontrol-v1.c: In function 'memcg_write_event_control':
->> mm/memcontrol-v1.c:1926:27: error: passing argument 3 of 'kstrtoul' makes pointer from integer without a cast [-Wint-conversion]
-    1926 |         kstrtoul(buf, 10, efd);
-         |                           ^~~
-         |                           |
-         |                           unsigned int
-   In file included from mm/memcontrol-v1.c:3:
-   include/linux/kstrtox.h:30:90: note: expected 'long unsigned int *' but argument is of type 'unsigned int'
-      30 | static inline int __must_check kstrtoul(const char *s, unsigned int base, unsigned long *res)
-         |                                                                           ~~~~~~~~~~~~~~~^~~
-   mm/memcontrol-v1.c:1931:27: error: passing argument 3 of 'kstrtoul' makes pointer from integer without a cast [-Wint-conversion]
-    1931 |         kstrtoul(buf, 10, cfd);
-         |                           ^~~
-         |                           |
-         |                           unsigned int
-   include/linux/kstrtox.h:30:90: note: expected 'long unsigned int *' but argument is of type 'unsigned int'
-      30 | static inline int __must_check kstrtoul(const char *s, unsigned int base, unsigned long *res)
-         |                                                                           ~~~~~~~~~~~~~~~^~~
-   mm/memcontrol-v1.c:1918:15: warning: unused variable 'endp' [-Wunused-variable]
-    1918 |         char *endp;
-         |               ^~~~
-   mm/memcontrol-v1.c:1926:9: warning: ignoring return value of 'kstrtoul' declared with attribute 'warn_unused_result' [-Wunused-result]
-    1926 |         kstrtoul(buf, 10, efd);
-         |         ^~~~~~~~~~~~~~~~~~~~~~
-   mm/memcontrol-v1.c:1931:9: warning: ignoring return value of 'kstrtoul' declared with attribute 'warn_unused_result' [-Wunused-result]
-    1931 |         kstrtoul(buf, 10, cfd);
-         |         ^~~~~~~~~~~~~~~~~~~~~~
+| Reported-by: kernel test robot <oliver.sang@intel.com>
+| Closes: https://lore.kernel.org/oe-lkp/202411051012.f9224879-lkp@intel.com
 
 
-vim +/kstrtoul +1926 mm/memcontrol-v1.c
 
-  1897	
-  1898	/*
-  1899	 * DO NOT USE IN NEW FILES.
-  1900	 *
-  1901	 * Parse input and register new cgroup event handler.
-  1902	 *
-  1903	 * Input must be in format '<event_fd> <control_fd> <args>'.
-  1904	 * Interpretation of args is defined by control file implementation.
-  1905	 */
-  1906	static ssize_t memcg_write_event_control(struct kernfs_open_file *of,
-  1907						 char *buf, size_t nbytes, loff_t off)
-  1908	{
-  1909		struct cgroup_subsys_state *css = of_css(of);
-  1910		struct mem_cgroup *memcg = mem_cgroup_from_css(css);
-  1911		struct mem_cgroup_event *event;
-  1912		struct cgroup_subsys_state *cfile_css;
-  1913		unsigned int efd, cfd;
-  1914		struct fd efile;
-  1915		struct fd cfile;
-  1916		struct dentry *cdentry;
-  1917		const char *name;
-  1918		char *endp;
-  1919		int ret;
-  1920	
-  1921		if (IS_ENABLED(CONFIG_PREEMPT_RT))
-  1922			return -EOPNOTSUPP;
-  1923	
-  1924		buf = strstrip(buf);
-  1925	
-> 1926		kstrtoul(buf, 10, efd);
-  1927		if (*buf != ' ')
-  1928			return -EINVAL;
-  1929		buf++;
-  1930	
-  1931		kstrtoul(buf, 10, cfd);
-  1932		if (*buf == ' ')
-  1933			buf++;
-  1934		else if (*buf != '\0')
-  1935			return -EINVAL;
-  1936	
-  1937		event = kzalloc(sizeof(*event), GFP_KERNEL);
-  1938		if (!event)
-  1939			return -ENOMEM;
-  1940	
-  1941		event->memcg = memcg;
-  1942		INIT_LIST_HEAD(&event->list);
-  1943		init_poll_funcptr(&event->pt, memcg_event_ptable_queue_proc);
-  1944		init_waitqueue_func_entry(&event->wait, memcg_event_wake);
-  1945		INIT_WORK(&event->remove, memcg_event_remove);
-  1946	
-  1947		efile = fdget(efd);
-  1948		if (!fd_file(efile)) {
-  1949			ret = -EBADF;
-  1950			goto out_kfree;
-  1951		}
-  1952	
-  1953		event->eventfd = eventfd_ctx_fileget(fd_file(efile));
-  1954		if (IS_ERR(event->eventfd)) {
-  1955			ret = PTR_ERR(event->eventfd);
-  1956			goto out_put_efile;
-  1957		}
-  1958	
-  1959		cfile = fdget(cfd);
-  1960		if (!fd_file(cfile)) {
-  1961			ret = -EBADF;
-  1962			goto out_put_eventfd;
-  1963		}
-  1964	
-  1965		/* the process need read permission on control file */
-  1966		/* AV: shouldn't we check that it's been opened for read instead? */
-  1967		ret = file_permission(fd_file(cfile), MAY_READ);
-  1968		if (ret < 0)
-  1969			goto out_put_cfile;
-  1970	
-  1971		/*
-  1972		 * The control file must be a regular cgroup1 file. As a regular cgroup
-  1973		 * file can't be renamed, it's safe to access its name afterwards.
-  1974		 */
-  1975		cdentry = fd_file(cfile)->f_path.dentry;
-  1976		if (cdentry->d_sb->s_type != &cgroup_fs_type || !d_is_reg(cdentry)) {
-  1977			ret = -EINVAL;
-  1978			goto out_put_cfile;
-  1979		}
-  1980	
-  1981		/*
-  1982		 * Determine the event callbacks and set them in @event.  This used
-  1983		 * to be done via struct cftype but cgroup core no longer knows
-  1984		 * about these events.  The following is crude but the whole thing
-  1985		 * is for compatibility anyway.
-  1986		 *
-  1987		 * DO NOT ADD NEW FILES.
-  1988		 */
-  1989		name = cdentry->d_name.name;
-  1990	
-  1991		if (!strcmp(name, "memory.usage_in_bytes")) {
-  1992			event->register_event = mem_cgroup_usage_register_event;
-  1993			event->unregister_event = mem_cgroup_usage_unregister_event;
-  1994		} else if (!strcmp(name, "memory.oom_control")) {
-  1995			pr_warn_once("oom_control is deprecated and will be removed. Please report your usecase to linux-mm-@kvack.org if you depend on this functionality.\n");
-  1996			event->register_event = mem_cgroup_oom_register_event;
-  1997			event->unregister_event = mem_cgroup_oom_unregister_event;
-  1998		} else if (!strcmp(name, "memory.pressure_level")) {
-  1999			pr_warn_once("pressure_level is deprecated and will be removed. Please report your usecase to linux-mm-@kvack.org if you depend on this functionality.\n");
-  2000			event->register_event = vmpressure_register_event;
-  2001			event->unregister_event = vmpressure_unregister_event;
-  2002		} else if (!strcmp(name, "memory.memsw.usage_in_bytes")) {
-  2003			event->register_event = memsw_cgroup_usage_register_event;
-  2004			event->unregister_event = memsw_cgroup_usage_unregister_event;
-  2005		} else {
-  2006			ret = -EINVAL;
-  2007			goto out_put_cfile;
-  2008		}
-  2009	
-  2010		/*
-  2011		 * Verify @cfile should belong to @css.  Also, remaining events are
-  2012		 * automatically removed on cgroup destruction but the removal is
-  2013		 * asynchronous, so take an extra ref on @css.
-  2014		 */
-  2015		cfile_css = css_tryget_online_from_dir(cdentry->d_parent,
-  2016						       &memory_cgrp_subsys);
-  2017		ret = -EINVAL;
-  2018		if (IS_ERR(cfile_css))
-  2019			goto out_put_cfile;
-  2020		if (cfile_css != css) {
-  2021			css_put(cfile_css);
-  2022			goto out_put_cfile;
-  2023		}
-  2024	
-  2025		ret = event->register_event(memcg, event->eventfd, buf);
-  2026		if (ret)
-  2027			goto out_put_css;
-  2028	
-  2029		vfs_poll(fd_file(efile), &event->pt);
-  2030	
-  2031		spin_lock_irq(&memcg->event_list_lock);
-  2032		list_add(&event->list, &memcg->event_list);
-  2033		spin_unlock_irq(&memcg->event_list_lock);
-  2034	
-  2035		fdput(cfile);
-  2036		fdput(efile);
-  2037	
-  2038		return nbytes;
-  2039	
-  2040	out_put_css:
-  2041		css_put(css);
-  2042	out_put_cfile:
-  2043		fdput(cfile);
-  2044	out_put_eventfd:
-  2045		eventfd_ctx_put(event->eventfd);
-  2046	out_put_efile:
-  2047		fdput(efile);
-  2048	out_kfree:
-  2049		kfree(event);
-  2050	
-  2051		return ret;
-  2052	}
-  2053	
+The kernel config and materials to reproduce are available at:
+https://download.01.org/0day-ci/archive/20241105/202411051012.f9224879-lkp@intel.com
+
+
+
+[   94.499370][  T628] ------------[ cut here ]------------
+[   94.504179][  T628] rcutorture_one_extend_check before change: Current 0x20  To add 0x20  To remove 0x0
+[   94.505405][  T628] WARNING: CPU: 0 PID: 628 at kernel/rcu/rcutorture.c:1876 rcutorture_one_extend_check+0x1ff/0x2ba [rcutorture]
+[   94.507176][  T628] Modules linked in: rcutorture(+) torture ata_generic ata_piix mousedev sg intel_agp libata serio_raw intel_gtt agpgart i2c_piix4 rtc_cmos fuse autofs4
+[   94.508995][  T628] CPU: 0 UID: 0 PID: 628 Comm: rcu_torture_rea Not tainted 6.12.0-rc2-00086-g622baf5d7916 #1
+[   94.510118][  T628] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
+[   94.521987][  T628] EIP: rcutorture_one_extend_check+0x1ff/0x2ba [rcutorture]
+[   94.522990][  T628] Code: 00 00 00 80 3d 9c 84 2c f0 00 75 bd c6 05 9c 84 2c f0 01 57 56 53 68 9b 00 2d f0 68 40 1e 2d f0 68 a9 00 2d f0 e8 82 22 db d0 <0f> 0b 83 c4 18 eb 98 31 c0 89 45 f0 80 3d 9b 84 2c f0 00 75 23 c6
+[   94.525121][  T628] EAX: 00000053 EBX: 00000020 ECX: 00000002 EDX: 00000002
+[   94.525898][  T628] ESI: 00000020 EDI: 00000000 EBP: c77c3dc0 ESP: c77c3d8c
+[   94.526758][  T628] DS: 007b ES: 007b FS: 00d8 GS: 0000 SS: 0068 EFLAGS: 00010246
+[   94.527733][  T628] CR0: 80050033 CR2: b7248000 CR3: 07bc8000 CR4: 000406d0
+[   94.528515][  T628] Call Trace:
+[   94.528885][  T628]  ? show_regs+0x61/0x67
+[   94.529424][  T628]  ? rcutorture_one_extend_check+0x1ff/0x2ba [rcutorture]
+[   94.530342][  T628]  ? __warn+0x9e/0x151
+[   94.530852][  T628]  ? report_bug+0x120/0x19d
+[   94.531398][  T628]  ? rcutorture_one_extend_check+0x1ff/0x2ba [rcutorture]
+[   94.536465][  T628]  ? exc_overflow+0x37/0x37
+[   94.537098][  T628]  ? handle_bug+0x3d/0x58
+[   94.537683][  T628]  ? exc_invalid_op+0x24/0x60
+[   94.538224][  T628]  ? handle_exception+0x133/0x133
+[   94.538880][  T628]  ? exc_overflow+0x37/0x37
+[   94.539408][  T628]  ? rcutorture_one_extend_check+0x1ff/0x2ba [rcutorture]
+[   94.540399][  T628]  ? exc_overflow+0x37/0x37
+[   94.540940][  T628]  ? rcutorture_one_extend_check+0x1ff/0x2ba [rcutorture]
+[   94.541903][  T628]  rcutorture_one_extend+0x39e/0x3a7 [rcutorture]
+[   94.542657][  T628]  rcu_torture_one_read+0x7e/0x4d3 [rcutorture]
+[   94.543218][  T614] srcu-torture: Creating torture_shuffle task
+[   94.543494][  T628]  ? __lock_acquire+0x684/0x72e
+[   94.544510][  T630] srcu-torture: rcu_torture_stats task started
+[   94.545082][  T628]  rcu_torture_reader+0xb7/0x16a [rcutorture]
+[   94.559381][  T614] srcu-torture: Creating torture_stutter task
+[   94.559414][  T640] srcu-torture: torture_shuffle task started
+[   94.567377][  T614] srcu-torture: Creating rcu_torture_fwd_prog task
+[   94.567413][  T641] srcu-torture: torture_stutter task started
+[   94.567748][  T614] srcu-torture: Creating rcu_torture_read_exit task
+[   94.567772][  T646] srcu-torture: rcu_torture_fwd_progress task started
+[   94.568324][  T647] srcu-torture: rcu_torture_read_exit: Start of test
+[   94.568329][  T647] srcu-torture: rcu_torture_read_exit: Start of episode
+[   94.587605][  T628]  ? rcu_torture_one_read+0x4d3/0x4d3 [rcutorture]
+[   94.588336][  T628]  kthread+0xe9/0xee
+[   94.588796][  T628]  ? rcu_torture_cleanup+0x750/0x750 [rcutorture]
+[   94.589492][  T628]  ? list_del_init+0x21/0x21
+[   94.590015][  T628]  ret_from_fork+0x19/0x2c
+[   94.590524][  T628]  ? list_del_init+0x21/0x21
+[   94.591142][  T628]  ret_from_fork_asm+0x12/0x18
+[   94.598922][  T221] 2024-11-04 17:44:01 sleep 300
+[   94.598941][  T221] 
+[   94.601820][  T628]  entry_INT80_32+0x125/0x125
+[   94.602363][  T628] irq event stamp: 621
+[   94.602906][  T628] hardirqs last  enabled at (639): [<c10c43dc>] __up_console_sem+0x59/0x69
+[   94.603896][  T628] hardirqs last disabled at (646): [<c10c43c3>] __up_console_sem+0x40/0x69
+[   94.604836][  T628] softirqs last  enabled at (636): [<c1067d80>] handle_softirqs+0x2fb/0x326
+[   94.605797][  T628] softirqs last disabled at (629): [<c1b1071a>] __do_softirq+0xa/0xc
+[   94.613261][  T628] ---[ end trace 0000000000000000 ]---
+
+
 
 -- 
 0-DAY CI Kernel Test Service
 https://github.com/intel/lkp-tests/wiki
+
 
