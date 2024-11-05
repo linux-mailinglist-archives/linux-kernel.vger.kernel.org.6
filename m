@@ -1,107 +1,114 @@
-Return-Path: <linux-kernel+bounces-396839-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396840-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 787609BD2FD
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 17:57:38 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2E459BD303
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 17:59:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A995A1C21225
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 16:57:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 684782829EC
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 16:59:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F2DD1DF731;
-	Tue,  5 Nov 2024 16:57:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B1471DD0D9;
+	Tue,  5 Nov 2024 16:59:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MBVuQi2H"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="jPHZviIt"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52DD71DD0DF;
-	Tue,  5 Nov 2024 16:57:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA9B410F2;
+	Tue,  5 Nov 2024 16:59:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730825829; cv=none; b=G6/iX7o89thotEHhr57Dlwe7nm21xcbdB7Sd0B7x0fU1Gc7r9COOvlrI1vNS+rQcR7D2DothoCLoBR350WwcoJNtpxSnJUgiuPfaxti8JZYcJuBIjniMuv4oc5NAZkllj4ZYrBGKLQar1ek9Se9j7rID+NEvsCXrACrnE1z1Oio=
+	t=1730825978; cv=none; b=VQE1mJz1jO7KnR3iARoZizZoDfiUnSQPEDdfVv7Anzh+SyrJwZWad1lwzjPrCyZBBmRcHDUZEWSkjYmh40/fMt9BhPZpTlGB4W6sPNwj8ESDmPz89/Hl4BH5SID+gBPqidP9KQrM00cc9euy3Nwdbond79YKGBX9jpbod7w79fA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730825829; c=relaxed/simple;
-	bh=FUgEHS0v2wn2GNPwRwbc73yZWp4clR8jRdjvPNbU9fo=;
+	s=arc-20240116; t=1730825978; c=relaxed/simple;
+	bh=ydILT59GR8AEnvXxgxP0u5JaNtkOLQNmxYiS5gzdAA8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fSZK1VwnrHM76FeIjwILrOslKl0I5UXdxFvv+7LeK+is3Q4gMdQFvW7U35M2xVMKxazgCNtXMxSqlrBLMzmA12zHGdsINeAnIMkHLoaWiLh4Ot5cO3RoI1UOEowPCCKCyyUKfWhOudaikzvs6pbfg4AX6s46JU861tmx8gVPuBk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MBVuQi2H; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2DE5C4CECF;
-	Tue,  5 Nov 2024 16:57:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730825828;
-	bh=FUgEHS0v2wn2GNPwRwbc73yZWp4clR8jRdjvPNbU9fo=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=ka+yGlg0m9wIQHrwAOZrB7Zl3fN03avskXuB8fjzSjVuGFVAx4+3fMW6equPJBV/lSwdgbkikZ1zeW7PkRBcb9vTCg/XOtRnZe0FStUYgPjWXdLqQUexVi3WJdzIG9NnRQWrU5RodskrmS21C9rM8Ryk4fTAEhBj/MBVYnk4J90=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=jPHZviIt; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id F08F73E;
+	Tue,  5 Nov 2024 17:59:26 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1730825967;
+	bh=ydILT59GR8AEnvXxgxP0u5JaNtkOLQNmxYiS5gzdAA8=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MBVuQi2HWmeXFd3u7bdz6E0MqpD32LJJHxSIBveYZtNVzA7RKdrX8La2YsMCAsNms
-	 2np1ZL0nKRvdQ8Qg+cvq7xFz47nNRoP/8tz0m/5M1RKZVBF8kNP8U6PktrlyHc/m/p
-	 3fjSrcnPaj7HkPxLqJMXqneOx6AzoHMtbP+BcEgZOniAgOz2GEhNgekkG161hUm7sY
-	 5fx7LxxJwbyg5s5vpg/vfisNlR8s+ePND0IP2fH9B0bOXOJdBLqoLurcOD+U7O6bmw
-	 R9TIm9Ys78vZEdnPySVziuXnFWGHvq7Bkh32oQo2qXodrm0FQHUQ9g/6/IgdUEolOA
-	 Tr7zYRODtxUIw==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1t8Mrb-000000007xR-3oQa;
-	Tue, 05 Nov 2024 17:57:08 +0100
-Date: Tue, 5 Nov 2024 17:57:07 +0100
-From: Johan Hovold <johan@kernel.org>
-To: Marc Zyngier <maz@kernel.org>, Sibi Sankar <quic_sibis@quicinc.com>
-Cc: sudeep.holla@arm.com, cristian.marussi@arm.com, andersson@kernel.org,
-	konrad.dybcio@linaro.org, robh+dt@kernel.org,
-	krzysztof.kozlowski+dt@linaro.org, dmitry.baryshkov@linaro.org,
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org, quic_rgottimu@quicinc.com,
-	quic_kshivnan@quicinc.com, conor+dt@kernel.org,
-	quic_nkela@quicinc.com, quic_psodagud@quicinc.com,
-	abel.vesa@linaro.org
-Subject: Re: [PATCH V7 0/2] qcom: x1e80100: Enable CPUFreq
-Message-ID: <ZypOY-NCDN9fdMAR@hovoldconsulting.com>
-References: <20241030130840.2890904-1-quic_sibis@quicinc.com>
- <ZyTQ9QD1tEkhQ9eu@hovoldconsulting.com>
- <86plnf11yf.wl-maz@kernel.org>
- <ZyTjiiGc2ApoID9Y@hovoldconsulting.com>
- <86o72z10b6.wl-maz@kernel.org>
+	b=jPHZviItmxp0MX6rGq+j/1nW53lOV34Hr2i2bSDsQ0xDT+W7L1Cn1RbqrHaHByBgb
+	 R3hOioTR0i9iPhHwVNTOi5gXy8qRQzEWO0LSfa+puUUioFjBfNuXLcPGq+ibrM7c6r
+	 qEtjWyQuEwpmwvXH8KLzaU2rBSMbzzmPfIcCFqVM=
+Date: Tue, 5 Nov 2024 18:59:28 +0200
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Michal Simek <michal.simek@amd.com>,
+	"Rob Herring (Arm)" <robh@kernel.org>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>,
+	linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH next] media: xilinx-tpg: fix double put in xtpg_parse_of()
+Message-ID: <20241105165928.GJ14276@pendragon.ideasonboard.com>
+References: <f41dfe97-6e6c-47b4-91bf-199c5938c6d0@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <86o72z10b6.wl-maz@kernel.org>
+In-Reply-To: <f41dfe97-6e6c-47b4-91bf-199c5938c6d0@stanley.mountain>
 
-On Fri, Nov 01, 2024 at 02:43:57PM +0000, Marc Zyngier wrote:
-> On Fri, 01 Nov 2024 14:19:54 +0000,
-> Johan Hovold <johan@kernel.org> wrote:
+Hi Dan,
 
-> > The side-effects and these remaining warnings are addressed by this
-> > series:
-> > 
-> > 	https://lore.kernel.org/all/20241030125512.2884761-1-quic_sibis@quicinc.com/
-> > 
-> > but I think we should try to make the warnings a bit more informative
-> > (and less scary) by printing something along the lines of:
-> > 
-> > 	arm-scmi arm-scmi.0.auto: [Firmware Bug]: Ignoring duplicate OPP 3417600 for NCC
-> > 
-> > instead.
+Thank you for the patch.
+
+On Mon, Nov 04, 2024 at 08:16:19PM +0300, Dan Carpenter wrote:
+> This loop was recently converted to use for_each_of_graph_port() which
+> automatically does __cleanup__ on the "port" iterator variable.  Delete
+> the calls to of_node_put(port) to avoid a double put bug.
 > 
-> Indeed. Seeing [Firmware Bug] has a comforting feeling of
-> familiarity... :)
+> Fixes: 393194cdf11e ("media: xilinx-tpg: use new of_graph functions")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+
+Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+
+The offending commit wasn't merged through the media tree, so we can't
+easily merge the fix there either. I'm fine merging this fix through
+Rob's tree.
+
+> ---
+>  drivers/media/platform/xilinx/xilinx-tpg.c | 2 --
+>  1 file changed, 2 deletions(-)
 > 
-> I wonder whether the same sort of reset happen on more "commercial"
-> systems (such as some of the laptops). You expect that people look at
-> the cpufreq stuff closely, and don't see things exploding like we are.
+> diff --git a/drivers/media/platform/xilinx/xilinx-tpg.c b/drivers/media/platform/xilinx/xilinx-tpg.c
+> index cb93711ea3e3..7deec6e37edc 100644
+> --- a/drivers/media/platform/xilinx/xilinx-tpg.c
+> +++ b/drivers/media/platform/xilinx/xilinx-tpg.c
+> @@ -722,7 +722,6 @@ static int xtpg_parse_of(struct xtpg_device *xtpg)
+>  		format = xvip_of_get_format(port);
+>  		if (IS_ERR(format)) {
+>  			dev_err(dev, "invalid format in DT");
+> -			of_node_put(port);
+>  			return PTR_ERR(format);
+>  		}
+>  
+> @@ -731,7 +730,6 @@ static int xtpg_parse_of(struct xtpg_device *xtpg)
+>  			xtpg->vip_format = format;
+>  		} else if (xtpg->vip_format != format) {
+>  			dev_err(dev, "in/out format mismatch in DT");
+> -			of_node_put(port);
+>  			return -EINVAL;
+>  		}
+>  
 
-I finally got around to getting my Lenovo ThinkPad T14s to boot (it
-refuses to start the kernel when using GRUB, and it's not due to the
-known 64 GB memory issue as it only has 32 GB) and can confirm that it
-hard resets when accessing the cpufreq sysfs attributes as well.
+-- 
+Regards,
 
-On the bright side, at least I don't see any warnings due to duplicate
-OPPs on this machine (x1e78100, latest UEFI fw).
-
-Johan
+Laurent Pinchart
 
