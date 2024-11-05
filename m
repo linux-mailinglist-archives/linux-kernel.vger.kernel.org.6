@@ -1,130 +1,298 @@
-Return-Path: <linux-kernel+bounces-395752-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395753-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54FB59BC264
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 02:15:10 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 380BD9BC269
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 02:19:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D5051F22BAA
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 01:15:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4629282F7B
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 01:19:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BCA51C68F;
-	Tue,  5 Nov 2024 01:15:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XG0Wh4ag"
-Received: from mail-pl1-f196.google.com (mail-pl1-f196.google.com [209.85.214.196])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 179051CF96;
+	Tue,  5 Nov 2024 01:19:28 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EF4A1862A;
-	Tue,  5 Nov 2024 01:15:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A66C18EAB
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 01:19:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730769302; cv=none; b=c19e2fYzLldm2qGHr+QB2PpHvXqDkJyDm3FApQydF7+aL1g2veyWj2ZCZ6r5sqh0eTb+/R31c79eVp77luHBg+fVlIkEE/ELuWSUJpwD71w5K0f19+E/FYW+TciP1E/4ke/PTUUTP95v7mw4J20K8xtZQK4b7m/3YDUyB7xwMSA=
+	t=1730769567; cv=none; b=CI7O3CAb/Z4Hoz2LGDX7SYEGY+cvQLd3SQoeuPRxke4ZhrPdyjyaye25Mz960JbqqCqYMg06wRGCUAmY9EbeTjtQI/eGAGh7P6Db3C0wClBDficadodfH5RDsTEWf0GBy8FbUsG3L6+dciw/rKVwcka+V7LrVSBJPKzVJLDmWOE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730769302; c=relaxed/simple;
-	bh=55po1Ly185ptJHFwAG7rk+MNxrM1YSdwN105ijD9dKg=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=MozENl3VuhZAXRmVrSxKdNcfSsjjYM8uYRmx1nwm6xTQNtKQ6klSHx9VPWT6jdsgNq/JWg/P91LLB2oBN6KPbMgNP+8fVUqBSPbVXiKQ3aNWdlmLQrtxfHeCNXLC6hEg2BYTZLPl4SJYOs1gWdITZ6qonCL7AzqWmhOzgKFRXLw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XG0Wh4ag; arc=none smtp.client-ip=209.85.214.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f196.google.com with SMTP id d9443c01a7336-20c805a0753so45341975ad.0;
-        Mon, 04 Nov 2024 17:15:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730769300; x=1731374100; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:cc:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=DmSZDJ+VfbjL+FInE4jqatZi0P6NlfcMiliJP8Vq75k=;
-        b=XG0Wh4agfdzbTo61wpM3rUsvFH3uK912k2ESQLxsi86aU57qhnTvvo13qQx6pePX9Z
-         XEvfuOyGdtWYBn91sEc2/iSdCbifYGKy3LBrOSLrZU64PMObxlHJxJZMNJPKCTJbIvNd
-         f5cFVrTLZFzDR1njH5iVphe/BcNiMUlMcm5aJ9Iia5/crDNABGcxg9jhq0UiYJ1olRGl
-         mOTBKM1L+dTDSezO0iuzhnaoLAiGAJbwSYohyYYOxkWCS8pxFPiHoIBIMJE9JzFSOgBb
-         HQ1z1f5k5yqu/PsN1FACGbkZYDaTEqvHFoo6ugMdYn/ksv/kyAqk4UNbC7EZt2whkyPd
-         5Lmg==
+	s=arc-20240116; t=1730769567; c=relaxed/simple;
+	bh=5cDGxqb5PL2dnXfhthFkjbB0NA18TlNyE/JRzzme2zg=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=LWnyRQ2IDKYPqESumYR/iMFBG6wfsYmsGMkwkBbcsDdoBcG4jAN36mjgXxDDTn85LP3ASkaJ9ed44s3Sm9EL9YYXBAWi1ltpxQBooqtS0y8kf5HOlqPIp2EqBo/dHHP9Ott+OEgmv5q7JJk7SO2GT0z5Jmns4v/ViTHSvUhzlx8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a6b963ca02so34236005ab.2
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 17:19:25 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730769300; x=1731374100;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:cc:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1730769565; x=1731374365;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=DmSZDJ+VfbjL+FInE4jqatZi0P6NlfcMiliJP8Vq75k=;
-        b=FfWOE8WjnM4QHgMJrrG2+0yJmYIJdzUxfl6+Sf5+UmZ8WDdU4CEsr4HrgN6tkpf0XH
-         iQ8UDwYMKfa/gVhUbVw8EgCcIkT0aEfpNFZRi+v9oJnX+Ynk1LGo8UkxCrHGCncZVWqW
-         OMFpa08RZJU8mhpjn3iI2DWF2laNeFiBWOwa6XB37AApqP1eCzePPeiIYFKysMvNuTNA
-         G7cUvG6ufVAdNMCpc6RPIf7E/7rmWr+wps8lv2/ftw3LAjM+WjX2w1BmQaZXcWSjkXic
-         jjKdeXcUtFGWgB/rwm2H2OFDkRNyFTErVjqOFWkDXeKOoyQWTD4/I/P1RujoCRN4zy+X
-         HLlQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWCXGoOp7R7/dyN6BgXNgxOFvF0Yv0vCvGIo742kwOjMH7eDb7SlVL7mXjo2B2/6b9wNE/Pcx+BHhCI@vger.kernel.org, AJvYcCWORlXVSj1WO9/+PxLQFjvO6QBsjvW3j71lSJ6BgBYkx1aKpGSAwRcoUiY8LtGVnL9H8iPvBcguTfuU@vger.kernel.org, AJvYcCWr0H1bFIJagVMsTQfK5XY8q1dXt1D7CYKr+gkKnjS9IuoJDyPUucaBI/WejdMrZ1tZXvlnwC6YxIXmioYN@vger.kernel.org
-X-Gm-Message-State: AOJu0YxJKN97SORFcUv0t1OIv8VLgoht/xYarBBnQZbPX2g2eYftnVwZ
-	boBeyleeJrUkcY+KI+dpL1UdBmPYR4K/kGTRR4bOinONN7pNDZjF
-X-Google-Smtp-Source: AGHT+IFPlCW/2yJN4y81zz/dY+QI1q450fTiiDbolhkdNOOfXKhGNXtiKw133Yda+TQppPatOPznFA==
-X-Received: by 2002:a17:903:1108:b0:20c:e262:2580 with SMTP id d9443c01a7336-210c6c3ffb6mr408256265ad.44.1730769300267;
-        Mon, 04 Nov 2024 17:15:00 -0800 (PST)
-Received: from [127.0.0.1] ([2602:f919:106::1b8])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211057a2c23sm67083465ad.143.2024.11.04.17.14.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 04 Nov 2024 17:14:59 -0800 (PST)
-Message-ID: <a08384bf-6747-4975-b025-f8fd3685fc30@gmail.com>
-Date: Tue, 5 Nov 2024 09:14:51 +0800
+        bh=hM4FdiCO1/FkeuPlUpxbqHon8yx/aa1NcneBzFYuH6g=;
+        b=e/Rym4/hmSpkjfiRUO5T5NB0Wkm8BMl4hMmRe9NO/g6s/GHtZi5FLwylPLCe4VRBeA
+         eyQMTegIssq0b6dJLPVmYjZxROCNHeVfr5tnnry7XUBlavG/vMbb9fOlmrqd5YNDg1m1
+         ux0JGDt0ChYTTDxXYts3bCRJl7F4+3/qYW0npM1OI13gIPgNSVTwGttBc7PLZsxmXYQs
+         FJrjuIAcvf5KDtb9WYlW6s3YADJMuFKRLDsOsmsXAxdPxrIu3U41lSO1kHE+BuF2ozq9
+         GmpTz7MRF5zALe8IYQGbWd3odzXiVRdV9VW/pvWhQ4r4UlJN8qK+YiFXg0As3/OvFoxo
+         8k5Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWX85MaHn/YENA1kA+zY0sjPa7iqOE6JEqNhnFG2Oyif7C3oWrKQ3XxuHnphnziz1nhe3eLvuDH/wWAS+g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzfpXnLtQRzBdbd2mMBR1RH/y+bfXWSP8uBiZTxc9OxzFwa0DBO
+	DeEPldClqIWvNcnBwCmrDw14ckpldwldE9wqq8Y7g5SqP7+r6YlMfJr0V3L9OqWe+U/BH3CUjLE
+	w2zviP0TK0jZQ9y9ZDHfu7ZDFqc1W5YSKXMmvDvCtACUyblUb0r0KiNY=
+X-Google-Smtp-Source: AGHT+IGTchSHQS+dhxI+dsdTyQ58bL2OulPkVjhT/qAzyAbHdPEYA7BpswuV+A2bCbdY6BWjgATbxYRp+6o5xgFqX08H+LKQWjGD
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: troymitchell988@gmail.com, andi.shyti@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, linux-i2c@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v2 1/2] dt-bindings: i2c: spacemit: add support for K1 SoC
-To: Krzysztof Kozlowski <krzk@kernel.org>
-References: <20241028053220.346283-1-TroyMitchell988@gmail.com>
- <20241028053220.346283-2-TroyMitchell988@gmail.com>
- <6zx3tqdc5bma2vutexwigzlir6nr6adp7arg4qwl5ieyd3avbu@5yyhv57ttwcl>
- <dbeea869-54cd-43fe-9021-783d641f1278@gmail.com>
- <ariqiukhztgziwwgaauqy6q3pghflnoeuwtag4izwkfmtvi2kh@gnlq4d7jsaw4>
- <6cce463e-25cc-4a07-971f-6260347cb581@gmail.com>
- <502b0b14-0e1f-4a59-85ad-7edeb9d3033d@kernel.org>
-Content-Language: en-US
-From: Troy Mitchell <troymitchell988@gmail.com>
-In-Reply-To: <502b0b14-0e1f-4a59-85ad-7edeb9d3033d@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:1e09:b0:3a4:eccc:aa5c with SMTP id
+ e9e14a558f8ab-3a609a2afbfmr180266535ab.5.1730769564742; Mon, 04 Nov 2024
+ 17:19:24 -0800 (PST)
+Date: Mon, 04 Nov 2024 17:19:24 -0800
+In-Reply-To: <6706d42c.050a0220.1139e6.000b.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6729729c.050a0220.701a.0012.GAE@google.com>
+Subject: Re: [syzbot] [nfs?] INFO: task hung in nfsd_nl_threads_set_doit
+From: syzbot <syzbot+e7baeb70aa00c22ed45e@syzkaller.appspotmail.com>
+To: Dai.Ngo@oracle.com, anna@kernel.org, chuck.lever@oracle.com, 
+	dai.ngo@oracle.com, davem@davemloft.net, edumazet@google.com, 
+	jlayton@kernel.org, kuba@kernel.org, linux-kernel@vger.kernel.org, 
+	linux-nfs@vger.kernel.org, neilb@suse.de, netdev@vger.kernel.org, 
+	okorniev@redhat.com, pabeni@redhat.com, syzkaller-bugs@googlegroups.com, 
+	tom@talpey.com, trondmy@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+
+syzbot has found a reproducer for the following issue on:
+
+HEAD commit:    5ccdcdf186ae net: xilinx: axienet: Enqueue Tx packets in d..
+git tree:       net
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=10bd6587980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=672325e7ab17fdf7
+dashboard link: https://syzkaller.appspot.com/bug?extid=e7baeb70aa00c22ed45e
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13526d5f980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1654a740580000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/61afb2d2686a/disk-5ccdcdf1.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/4d4a40c7af1b/vmlinux-5ccdcdf1.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/178187e5e136/bzImage-5ccdcdf1.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+e7baeb70aa00c22ed45e@syzkaller.appspotmail.com
+
+INFO: task syz-executor112:5858 blocked for more than 143 seconds.
+      Not tainted 6.12.0-rc5-syzkaller-00184-g5ccdcdf186ae #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz-executor112 state:D stack:24432 pid:5858  tgid:5858  ppid:5856   flags:0x00004006
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5328 [inline]
+ __schedule+0x18af/0x4bd0 kernel/sched/core.c:6690
+ __schedule_loop kernel/sched/core.c:6767 [inline]
+ schedule+0x14b/0x320 kernel/sched/core.c:6782
+ schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6839
+ __mutex_lock_common kernel/locking/mutex.c:684 [inline]
+ __mutex_lock+0x6a7/0xd70 kernel/locking/mutex.c:752
+ nfsd_nl_threads_set_doit+0x2bb/0x980 fs/nfsd/nfsctl.c:1671
+ genl_family_rcv_msg_doit net/netlink/genetlink.c:1115 [inline]
+ genl_family_rcv_msg net/netlink/genetlink.c:1195 [inline]
+ genl_rcv_msg+0xb14/0xec0 net/netlink/genetlink.c:1210
+ netlink_rcv_skb+0x1e3/0x430 net/netlink/af_netlink.c:2551
+ genl_rcv+0x28/0x40 net/netlink/genetlink.c:1219
+ netlink_unicast_kernel net/netlink/af_netlink.c:1331 [inline]
+ netlink_unicast+0x7f6/0x990 net/netlink/af_netlink.c:1357
+ netlink_sendmsg+0x8e4/0xcb0 net/netlink/af_netlink.c:1901
+ sock_sendmsg_nosec net/socket.c:729 [inline]
+ __sock_sendmsg+0x221/0x270 net/socket.c:744
+ ____sys_sendmsg+0x52a/0x7e0 net/socket.c:2607
+ ___sys_sendmsg net/socket.c:2661 [inline]
+ __sys_sendmsg+0x292/0x380 net/socket.c:2690
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f7003248da9
+RSP: 002b:00007fff732a9b58 EFLAGS: 00000206 ORIG_RAX: 000000000000002e
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f7003248da9
+RDX: 0000000000000000 RSI: 0000000020000000 RDI: 0000000000000005
+RBP: 00000000000f4240 R08: 00000000000000a0 R09: 00000000000000a0
+R10: 00000000000000a0 R11: 0000000000000206 R12: 0000000000000001
+R13: 00007fff732a9d78 R14: 00007fff732a9b80 R15: 00007fff732a9b70
+ </TASK>
+INFO: task syz-executor112:5860 blocked for more than 143 seconds.
+      Not tainted 6.12.0-rc5-syzkaller-00184-g5ccdcdf186ae #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz-executor112 state:D stack:26528 pid:5860  tgid:5860  ppid:5857   flags:0x00004006
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5328 [inline]
+ __schedule+0x18af/0x4bd0 kernel/sched/core.c:6690
+ __schedule_loop kernel/sched/core.c:6767 [inline]
+ schedule+0x14b/0x320 kernel/sched/core.c:6782
+ schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6839
+ __mutex_lock_common kernel/locking/mutex.c:684 [inline]
+ __mutex_lock+0x6a7/0xd70 kernel/locking/mutex.c:752
+ nfsd_nl_threads_set_doit+0x2bb/0x980 fs/nfsd/nfsctl.c:1671
+ genl_family_rcv_msg_doit net/netlink/genetlink.c:1115 [inline]
+ genl_family_rcv_msg net/netlink/genetlink.c:1195 [inline]
+ genl_rcv_msg+0xb14/0xec0 net/netlink/genetlink.c:1210
+ netlink_rcv_skb+0x1e3/0x430 net/netlink/af_netlink.c:2551
+ genl_rcv+0x28/0x40 net/netlink/genetlink.c:1219
+ netlink_unicast_kernel net/netlink/af_netlink.c:1331 [inline]
+ netlink_unicast+0x7f6/0x990 net/netlink/af_netlink.c:1357
+ netlink_sendmsg+0x8e4/0xcb0 net/netlink/af_netlink.c:1901
+ sock_sendmsg_nosec net/socket.c:729 [inline]
+ __sock_sendmsg+0x221/0x270 net/socket.c:744
+ ____sys_sendmsg+0x52a/0x7e0 net/socket.c:2607
+ ___sys_sendmsg net/socket.c:2661 [inline]
+ __sys_sendmsg+0x292/0x380 net/socket.c:2690
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f7003248da9
+RSP: 002b:00007fff732a9b58 EFLAGS: 00000206 ORIG_RAX: 000000000000002e
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f7003248da9
+RDX: 0000000000000000 RSI: 0000000020000000 RDI: 0000000000000005
+RBP: 00000000000f4240 R08: 00000000000000a0 R09: 00000000000000a0
+R10: 00000000000000a0 R11: 0000000000000206 R12: 0000000000000001
+R13: 00007fff732a9d78 R14: 00007fff732a9b80 R15: 00007fff732a9b70
+ </TASK>
+INFO: task syz-executor112:5862 blocked for more than 144 seconds.
+      Not tainted 6.12.0-rc5-syzkaller-00184-g5ccdcdf186ae #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz-executor112 state:D stack:26776 pid:5862  tgid:5862  ppid:5859   flags:0x00004006
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5328 [inline]
+ __schedule+0x18af/0x4bd0 kernel/sched/core.c:6690
+ __schedule_loop kernel/sched/core.c:6767 [inline]
+ schedule+0x14b/0x320 kernel/sched/core.c:6782
+ schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6839
+ __mutex_lock_common kernel/locking/mutex.c:684 [inline]
+ __mutex_lock+0x6a7/0xd70 kernel/locking/mutex.c:752
+ nfsd_nl_threads_set_doit+0x2bb/0x980 fs/nfsd/nfsctl.c:1671
+ genl_family_rcv_msg_doit net/netlink/genetlink.c:1115 [inline]
+ genl_family_rcv_msg net/netlink/genetlink.c:1195 [inline]
+ genl_rcv_msg+0xb14/0xec0 net/netlink/genetlink.c:1210
+ netlink_rcv_skb+0x1e3/0x430 net/netlink/af_netlink.c:2551
+ genl_rcv+0x28/0x40 net/netlink/genetlink.c:1219
+ netlink_unicast_kernel net/netlink/af_netlink.c:1331 [inline]
+ netlink_unicast+0x7f6/0x990 net/netlink/af_netlink.c:1357
+ netlink_sendmsg+0x8e4/0xcb0 net/netlink/af_netlink.c:1901
+ sock_sendmsg_nosec net/socket.c:729 [inline]
+ __sock_sendmsg+0x221/0x270 net/socket.c:744
+ ____sys_sendmsg+0x52a/0x7e0 net/socket.c:2607
+ ___sys_sendmsg net/socket.c:2661 [inline]
+ __sys_sendmsg+0x292/0x380 net/socket.c:2690
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f7003248da9
+RSP: 002b:00007fff732a9b58 EFLAGS: 00000206 ORIG_RAX: 000000000000002e
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f7003248da9
+RDX: 0000000000000000 RSI: 0000000020000000 RDI: 0000000000000005
+RBP: 00000000000f4240 R08: 00000000000000a0 R09: 00000000000000a0
+R10: 00000000000000a0 R11: 0000000000000206 R12: 0000000000000001
+R13: 00007fff732a9d78 R14: 00007fff732a9b80 R15: 00007fff732a9b70
+ </TASK>
+INFO: task syz-executor112:5865 blocked for more than 144 seconds.
+      Not tainted 6.12.0-rc5-syzkaller-00184-g5ccdcdf186ae #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz-executor112 state:D stack:26776 pid:5865  tgid:5865  ppid:5863   flags:0x00004006
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5328 [inline]
+ __schedule+0x18af/0x4bd0 kernel/sched/core.c:6690
+ __schedule_loop kernel/sched/core.c:6767 [inline]
+ schedule+0x14b/0x320 kernel/sched/core.c:6782
+ schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6839
+ __mutex_lock_common kernel/locking/mutex.c:684 [inline]
+ __mutex_lock+0x6a7/0xd70 kernel/locking/mutex.c:752
+ nfsd_nl_threads_set_doit+0x2bb/0x980 fs/nfsd/nfsctl.c:1671
+ genl_family_rcv_msg_doit net/netlink/genetlink.c:1115 [inline]
+ genl_family_rcv_msg net/netlink/genetlink.c:1195 [inline]
+ genl_rcv_msg+0xb14/0xec0 net/netlink/genetlink.c:1210
+ netlink_rcv_skb+0x1e3/0x430 net/netlink/af_netlink.c:2551
+ genl_rcv+0x28/0x40 net/netlink/genetlink.c:1219
+ netlink_unicast_kernel net/netlink/af_netlink.c:1331 [inline]
+ netlink_unicast+0x7f6/0x990 net/netlink/af_netlink.c:1357
+ netlink_sendmsg+0x8e4/0xcb0 net/netlink/af_netlink.c:1901
+ sock_sendmsg_nosec net/socket.c:729 [inline]
+ __sock_sendmsg+0x221/0x270 net/socket.c:744
+ ____sys_sendmsg+0x52a/0x7e0 net/socket.c:2607
+ ___sys_sendmsg net/socket.c:2661 [inline]
+ __sys_sendmsg+0x292/0x380 net/socket.c:2690
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f7003248da9
+RSP: 002b:00007fff732a9b58 EFLAGS: 00000206 ORIG_RAX: 000000000000002e
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f7003248da9
+RDX: 0000000000000000 RSI: 0000000020000000 RDI: 0000000000000005
+RBP: 00000000000f4240 R08: 00000000000000a0 R09: 00000000000000a0
+R10: 00000000000000a0 R11: 0000000000000206 R12: 0000000000000001
+R13: 00007fff732a9d78 R14: 00007fff732a9b80 R15: 00007fff732a9b70
+ </TASK>
+
+Showing all locks held in the system:
+6 locks held by kworker/u8:0/11:
+1 lock held by khungtaskd/30:
+ #0: ffffffff8e937da0 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire include/linux/rcupdate.h:337 [inline]
+ #0: ffffffff8e937da0 (rcu_read_lock){....}-{1:2}, at: rcu_read_lock include/linux/rcupdate.h:849 [inline]
+ #0: ffffffff8e937da0 (rcu_read_lock){....}-{1:2}, at: debug_show_all_locks+0x55/0x2a0 kernel/locking/lockdep.c:6720
+2 locks held by getty/5593:
+ #0: ffff88814d8630a0 (&tty->ldisc_sem){++++}-{0:0}, at: tty_ldisc_ref_wait+0x25/0x70 drivers/tty/tty_ldisc.c:243
+ #1: ffffc90002f062f0 (&ldata->atomic_read_lock){+.+.}-{3:3}, at: n_tty_read+0x6a6/0x1e00 drivers/tty/n_tty.c:2211
+2 locks held by syz-executor112/5858:
+ #0: ffffffff8fd39210 (cb_lock){++++}-{3:3}, at: genl_rcv+0x19/0x40 net/netlink/genetlink.c:1218
+ #1: ffffffff8ec19288 (nfsd_mutex){+.+.}-{3:3}, at: nfsd_nl_threads_set_doit+0x2bb/0x980 fs/nfsd/nfsctl.c:1671
+2 locks held by syz-executor112/5860:
+ #0: ffffffff8fd39210 (cb_lock){++++}-{3:3}, at: genl_rcv+0x19/0x40 net/netlink/genetlink.c:1218
+ #1: ffffffff8ec19288 (nfsd_mutex){+.+.}-{3:3}, at: nfsd_nl_threads_set_doit+0x2bb/0x980 fs/nfsd/nfsctl.c:1671
+2 locks held by syz-executor112/5862:
+ #0: ffffffff8fd39210 (cb_lock){++++}-{3:3}, at: genl_rcv+0x19/0x40 net/netlink/genetlink.c:1218
+ #1: ffffffff8ec19288 (nfsd_mutex){+.+.}-{3:3}, at: nfsd_nl_threads_set_doit+0x2bb/0x980 fs/nfsd/nfsctl.c:1671
+2 locks held by syz-executor112/5864:
+ #0: ffffffff8fd39210 (cb_lock){++++}-{3:3}, at: genl_rcv+0x19/0x40 net/netlink/genetlink.c:1218
+ #1: ffffffff8ec19288 (nfsd_mutex){+.+.}-{3:3}, at: nfsd_nl_threads_set_doit+0x2bb/0x980 fs/nfsd/nfsctl.c:1671
+2 locks held by syz-executor112/5865:
+ #0: ffffffff8fd39210 (cb_lock){++++}-{3:3}, at: genl_rcv+0x19/0x40 net/netlink/genetlink.c:1218
+ #1: ffffffff8ec19288 (nfsd_mutex){+.+.}-{3:3}, at: nfsd_nl_threads_set_doit+0x2bb/0x980 fs/nfsd/nfsctl.c:1671
+
+=============================================
+
+NMI backtrace for cpu 1
+CPU: 1 UID: 0 PID: 30 Comm: khungtaskd Not tainted 6.12.0-rc5-syzkaller-00184-g5ccdcdf186ae #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+ nmi_cpu_backtrace+0x49c/0x4d0 lib/nmi_backtrace.c:113
+ nmi_trigger_cpumask_backtrace+0x198/0x320 lib/nmi_backtrace.c:62
+ trigger_all_cpu_backtrace include/linux/nmi.h:162 [inline]
+ check_hung_uninterruptible_tasks kernel/hung_task.c:223 [inline]
+ watchdog+0xff4/0x1040 kernel/hung_task.c:379
+ kthread+0x2f0/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+Sending NMI from CPU 1 to CPUs 0:
+NMI backtrace for cpu 0 skipped: idling at native_safe_halt arch/x86/include/asm/irqflags.h:48 [inline]
+NMI backtrace for cpu 0 skipped: idling at arch_safe_halt arch/x86/include/asm/irqflags.h:106 [inline]
+NMI backtrace for cpu 0 skipped: idling at acpi_safe_halt+0x21/0x30 drivers/acpi/processor_idle.c:111
 
 
-On 2024/11/4 22:48, Krzysztof Kozlowski wrote:
-> On 04/11/2024 14:01, Troy Mitchell wrote:
->>
->> On 2024/10/31 16:00, Krzysztof Kozlowski wrote:
->>> On Tue, Oct 29, 2024 at 04:36:00PM +0800, Troy Mitchell wrote:
->>>> On 2024/10/28 15:38, Krzysztof Kozlowski wrote:
->>>>> On Mon, Oct 28, 2024 at 01:32:19PM +0800, Troy Mitchell wrote:
->>>>>> The I2C of K1 supports fast-speed-mode and high-speed-mode,
->>>>>> and supports FIFO transmission.
->>>>>>
->>>>>> Signed-off-by: Troy Mitchell <TroyMitchell988@gmail.com>
->>>>>> ---
->> Change in v2:
->>  - Change the maxItems of reg from 1 to 2 in properties
-> 
-> Why?
-I need the address and size. In v1, I wrote it as 1, and I got the make
-dt_binding_check error.
-> 
->>  - Change 'i2c' to 'I2C' in the commit message.
->>  - Drop fifo-disable property
->>  - Drop alias in dts example
->>  - Move `unevaluatedProperties` after `required:` block
-> 
-> Rest look ok.
-> 
-> Best regards,
-> Krzysztof
-> 
-
--- 
-Troy Mitchell
+---
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
