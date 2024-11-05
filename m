@@ -1,130 +1,206 @@
-Return-Path: <linux-kernel+bounces-396880-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396882-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7B799BD39A
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 18:39:52 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 597CA9BD39D
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 18:41:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 04E571C229C0
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 17:39:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 19959286480
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 17:41:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 664321E3799;
-	Tue,  5 Nov 2024 17:39:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g9lKUavl"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 444C91E3788;
+	Tue,  5 Nov 2024 17:40:56 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2B0B1E282C;
-	Tue,  5 Nov 2024 17:39:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA7EFEAD2;
+	Tue,  5 Nov 2024 17:40:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730828383; cv=none; b=rlK7FZ3xJt9Dwyj8pjGMZLOg0ozwA55ArDIbf8HrA1/koAowNLDRkdGqyzrd+aK8WEKNTwMHueGIbuf+5UiFT7EHPC0Aaij1qfYCRQCiUbauMpjhdgSosF9Lvaz/7X409EVtnhtXF5O0ye6pzIPmi71lCFA3O3XnxLDmPb5RVxM=
+	t=1730828455; cv=none; b=q1lk44mShoFigL9M6VFTjV4l+gJlUsmbGNU4LY9AlJ5NXfkww0mzDYertvNn7rr0BSIK/zXoc2MzPqUotd3xw2/v7vK66+IgnVh9Uo+/tyc5N1EfKVyqG0dG0QR9laxTRKLMLlSrfn7PelGfo2URl138ViSqTuUn3FEegUlBUUE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730828383; c=relaxed/simple;
-	bh=QZbld1TF8KsohUr4pPq9BpKFDSwxyE2URVgltsDBIDk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CY3KgCDZ1jSFafIzXD6iO5jJ17f/Op+THTiufh3Sc4Dj80yLHqCT1bN2Tdfm2mQRb1bhURKNMRBMbWaU6muuFIQfi46lR40yx0cKppZd/hCKq8y6VMIl3zbAhbpGrvcfkQjUES4mu8e9uzx7CnzabJ2kHQEakPBY8RaitIEitXA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g9lKUavl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9800EC4CED1;
-	Tue,  5 Nov 2024 17:39:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730828383;
-	bh=QZbld1TF8KsohUr4pPq9BpKFDSwxyE2URVgltsDBIDk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=g9lKUavltsMy/YgW1mRbOREkoLHT6SzFY/ltRciRGIXWeU02o3fUYrVXpC4THnNEU
-	 j7CRaD86REpFzqxNAdJng+OPBJlIFv8GWy2JPT0v6DIfnAmoRsnFcBMbjtwBfxcjsA
-	 8h3IycPpR6OxDQfSm4/f7HNDy8qdVZvDw7AAS+zb6IfbfVwpTN3qO0x6ms25HfbaOq
-	 jUrNreINqb4mmREz3gmVLvFYPMp1qJIYKQnjwiqr6FWRYKHBpPY5ebPa3FEQiiQWPy
-	 bdfRmnZWJYR2Cmu8Yg4Xm1t447d6k8aQYaGzrabZsPey/BMbtvePXCilClscDGKPU0
-	 KYmhjE1Um9yZw==
-Date: Tue, 5 Nov 2024 18:39:40 +0100
-From: Maxime Ripard <mripard@kernel.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, Liu Ying <victor.liu@nxp.com>, andrzej.hajda@intel.com, 
-	neil.armstrong@linaro.org, rfoss@kernel.org, Laurent.pinchart@ideasonboard.com, 
-	jonas@kwiboo.se, jernej.skrabec@gmail.com, maarten.lankhorst@linux.intel.com, 
-	tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, quic_jesszhan@quicinc.com, 
-	mchehab@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de, 
-	kernel@pengutronix.de, festevam@gmail.com, catalin.marinas@arm.com, will@kernel.org, 
-	sakari.ailus@linux.intel.com, hverkuil@xs4all.nl, tomi.valkeinen@ideasonboard.com, 
-	quic_bjorande@quicinc.com, geert+renesas@glider.be, arnd@arndb.de, nfraprado@collabora.com, 
-	thierry.reding@gmail.com, prabhakar.mahadev-lad.rj@bp.renesas.com, sam@ravnborg.org, 
-	marex@denx.de, biju.das.jz@bp.renesas.com
-Subject: Re: (subset) [PATCH v5 00/13] Add ITE IT6263 LVDS to HDMI converter
- support
-Message-ID: <20241105-succinct-pygmy-dingo-4db79c@houat>
-References: <20241104032806.611890-1-victor.liu@nxp.com>
- <173080602214.231309.12977765173766280536.b4-ty@linaro.org>
- <20241105-secret-seriema-of-anger-7acfdf@houat>
- <CD810D31-F9C5-499D-86CF-B94BEF82449A@linaro.org>
+	s=arc-20240116; t=1730828455; c=relaxed/simple;
+	bh=tp38WzGOIsaq/18EaZQ+5yUjmXbzC6Iy1G/ZJK35JoQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=mt9xdvIKdCURlQjLQNaTzqDffNCwwF+Z3kCMijyn3K8kYQxw4GJezwiSXXpQgwCmpZaDANyuIQFrjyRZ4qm55189wd01sL5eWkUg8c48UtS6JMV7VRITN/84ZT1jUodc/hrRnb8CUcTVXbKxGpJxo3Z0L1f0fieyT/jcqdT8u+Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9F9FC4CECF;
+	Tue,  5 Nov 2024 17:40:52 +0000 (UTC)
+Date: Tue, 5 Nov 2024 12:40:53 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Josh Poimboeuf <jpoimboe@kernel.org>
+Cc: x86@kernel.org, Peter Zijlstra <peterz@infradead.org>, Ingo Molnar
+ <mingo@kernel.org>, Arnaldo Carvalho de Melo <acme@kernel.org>,
+ linux-kernel@vger.kernel.org, Indu Bhagat <indu.bhagat@oracle.com>, Mark
+ Rutland <mark.rutland@arm.com>, Alexander Shishkin
+ <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>, Adrian
+ Hunter <adrian.hunter@intel.com>, linux-perf-users@vger.kernel.org, Mark
+ Brown <broonie@kernel.org>, linux-toolchains@vger.kernel.org, Jordan Rome
+ <jordalgo@meta.com>, Sam James <sam@gentoo.org>,
+ linux-trace-kernel@vger.kerne.org, Andrii Nakryiko
+ <andrii.nakryiko@gmail.com>, Jens Remus <jremus@linux.ibm.com>, Mathieu
+ Desnoyers <mathieu.desnoyers@efficios.com>, Florian Weimer
+ <fweimer@redhat.com>, Andy Lutomirski <luto@kernel.org>
+Subject: Re: [PATCH v3 09/19] unwind: Introduce sframe user space unwinding
+Message-ID: <20241105124053.523e93dd@gandalf.local.home>
+In-Reply-To: <42c0a99236af65c09c8182e260af7bcf5aa1e158.1730150953.git.jpoimboe@kernel.org>
+References: <cover.1730150953.git.jpoimboe@kernel.org>
+	<42c0a99236af65c09c8182e260af7bcf5aa1e158.1730150953.git.jpoimboe@kernel.org>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="lpikbxgr4ajy2ceg"
-Content-Disposition: inline
-In-Reply-To: <CD810D31-F9C5-499D-86CF-B94BEF82449A@linaro.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
+On Mon, 28 Oct 2024 14:47:56 -0700
+Josh Poimboeuf <jpoimboe@kernel.org> wrote:
 
---lpikbxgr4ajy2ceg
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: (subset) [PATCH v5 00/13] Add ITE IT6263 LVDS to HDMI converter
- support
-MIME-Version: 1.0
+> diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
+> index 06dc4a57ba78..434c548f0837 100644
+> --- a/fs/binfmt_elf.c
+> +++ b/fs/binfmt_elf.c
+> @@ -47,6 +47,7 @@
+>  #include <linux/dax.h>
+>  #include <linux/uaccess.h>
+>  #include <linux/rseq.h>
+> +#include <linux/sframe.h>
+>  #include <asm/param.h>
+>  #include <asm/page.h>
+>  
+> @@ -633,11 +634,13 @@ static unsigned long load_elf_interp(struct elfhdr *interp_elf_ex,
+>  		unsigned long no_base, struct elf_phdr *interp_elf_phdata,
+>  		struct arch_elf_state *arch_state)
+>  {
+> -	struct elf_phdr *eppnt;
+> +	struct elf_phdr *eppnt, *sframe_phdr = NULL;
+>  	unsigned long load_addr = 0;
+>  	int load_addr_set = 0;
+>  	unsigned long error = ~0UL;
+>  	unsigned long total_size;
+> +	unsigned long start_code = ~0UL;
+> +	unsigned long end_code = 0;
+>  	int i;
+>  
+>  	/* First of all, some simple consistency checks */
+> @@ -659,7 +662,8 @@ static unsigned long load_elf_interp(struct elfhdr *interp_elf_ex,
+>  
+>  	eppnt = interp_elf_phdata;
+>  	for (i = 0; i < interp_elf_ex->e_phnum; i++, eppnt++) {
+> -		if (eppnt->p_type == PT_LOAD) {
+> +		switch (eppnt->p_type) {
+> +		case PT_LOAD: {
+>  			int elf_type = MAP_PRIVATE;
+>  			int elf_prot = make_prot(eppnt->p_flags, arch_state,
+>  						 true, true);
+> @@ -688,7 +692,7 @@ static unsigned long load_elf_interp(struct elfhdr *interp_elf_ex,
+>  			/*
+>  			 * Check to see if the section's size will overflow the
+>  			 * allowed task size. Note that p_filesz must always be
+> -			 * <= p_memsize so it's only necessary to check p_memsz.
+> +			 * <= p_memsz so it's only necessary to check p_memsz.
+>  			 */
+>  			k = load_addr + eppnt->p_vaddr;
+>  			if (BAD_ADDR(k) ||
+> @@ -698,9 +702,24 @@ static unsigned long load_elf_interp(struct elfhdr *interp_elf_ex,
+>  				error = -ENOMEM;
+>  				goto out;
+>  			}
+> +
+> +			if ((eppnt->p_flags & PF_X) && k < start_code)
+> +				start_code = k;
+> +
+> +			if ((eppnt->p_flags & PF_X) && k + eppnt->p_filesz > end_code)
+> +				end_code = k + eppnt->p_filesz;
+> +			break;
+> +		}
+> +		case PT_GNU_SFRAME:
+> +			sframe_phdr = eppnt;
+> +			break;
+>  		}
+>  	}
+>  
+> +	if (sframe_phdr)
+> +		sframe_add_section(load_addr + sframe_phdr->p_vaddr,
+> +				   start_code, end_code);
+> +
+>  	error = load_addr;
+>  out:
+>  	return error;
+> @@ -823,7 +842,7 @@ static int load_elf_binary(struct linux_binprm *bprm)
+>  	int first_pt_load = 1;
+>  	unsigned long error;
+>  	struct elf_phdr *elf_ppnt, *elf_phdata, *interp_elf_phdata = NULL;
+> -	struct elf_phdr *elf_property_phdata = NULL;
+> +	struct elf_phdr *elf_property_phdata = NULL, *sframe_phdr = NULL;
+>  	unsigned long elf_brk;
+>  	int retval, i;
+>  	unsigned long elf_entry;
+> @@ -931,6 +950,10 @@ static int load_elf_binary(struct linux_binprm *bprm)
+>  				executable_stack = EXSTACK_DISABLE_X;
+>  			break;
+>  
+> +		case PT_GNU_SFRAME:
+> +			sframe_phdr = elf_ppnt;
 
-On Tue, Nov 05, 2024 at 05:33:21PM +0000, Dmitry Baryshkov wrote:
-> On 5 November 2024 16:13:26 GMT, Maxime Ripard <mripard@kernel.org> wrote:
-> >On Tue, Nov 05, 2024 at 01:28:48PM +0200, Dmitry Baryshkov wrote:
-> >> On Mon, 04 Nov 2024 11:27:53 +0800, Liu Ying wrote:
-> >> > This patch series aims to add ITE IT6263 LVDS to HDMI converter on
-> >> > i.MX8MP EVK.  Combined with LVDS receiver and HDMI 1.4a transmitter,
-> >> > the IT6263 supports LVDS input and HDMI 1.4 output by conversion
-> >> > function.  IT6263 product link can be found at [1].
-> >> >=20
-> >> > Patch 1 is a preparation patch to allow display mode of an existing
-> >> > panel to pass the added mode validation logic in patch 3.
-> >> >=20
-> >> > [...]
-> >>=20
-> >> Applied to drm-misc-next, thanks!
-> >>=20
-> >> [04/13] media: uapi: Add MEDIA_BUS_FMT_RGB101010_1X7X5_{SPWG, JEIDA}
-> >>         commit: 5205b63099507a84458075c3ca7e648407e6c8cc
-> >
-> >Where's the immutable branch Laurent asked for?
->=20
-> The patch set has been picked up after getting an Ack from Sakari,
-> before Laurent's email. I am sorry if I rushed it in.
+You need to save the p_vaddr here and not the pointer.
 
-I mean, this was less than a day after you've asked that question
-yourself. Waiting less than a day for a mail to be answered seems a bit
-short, especially when there's no rush to merge these patches in the
-first place.
+> +			break;
+> +
+>  		case PT_LOPROC ... PT_HIPROC:
+>  			retval = arch_elf_pt_proc(elf_ex, elf_ppnt,
+>  						  bprm->file, false,
+> @@ -1321,6 +1344,10 @@ static int load_elf_binary(struct linux_binprm *bprm)
+>  					    task_pid_nr(current), retval);
+>  	}
 
-Maxime
+Before this code we have:
 
---lpikbxgr4ajy2ceg
-Content-Type: application/pgp-signature; name="signature.asc"
+	kfree(elf_phdata);
 
------BEGIN PGP SIGNATURE-----
+And I added:
 
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZypYWAAKCRAnX84Zoj2+
-dqB2AX9GZdjTPnmcByvgBSDmocLc9jx/UxPVwoxcockjnXv6ZTkFXoDJPi/fdgYU
-ZVhEdvwBgMatI1KVXAWu/endQAK5PMRNxHeFsbekB5ouNQnFLuCJ1Hnf5FHt+whO
-wHHi4EMLFA==
-=rM90
------END PGP SIGNATURE-----
+	if (sframe_phdr)
+		trace_printk("after sframe vaddr=%x\n", sframe_phdr->p_vaddr);
+	kfree(elf_phdata);
+	if (sframe_phdr)
+		trace_printk("after sframe vaddr=%x\n", sframe_phdr->p_vaddr);
 
---lpikbxgr4ajy2ceg--
+Which produced:
+
+         scan-fs-940   [007] .....    16.091081: bprint:               load_elf_binary: after sframe vaddr=2298
+         scan-fs-940   [007] .....    16.091083: bprint:               load_elf_binary: after sframe vaddr=0
+
+I was wondering why it wasn't working.
+
+-- Steve
+
+>  
+> +	if (sframe_phdr)
+> +		sframe_add_section(load_bias + sframe_phdr->p_vaddr,
+> +				   start_code, end_code);
+> +
+>  	regs = current_pt_regs();
+>  #ifdef ELF_PLAT_INIT
+>  	/*
+> diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
+> index 381d22eba088..6e7561c1a5fc 100644
+> --- a/include/linux/mm_types.h
+> +++ b/include/linux/mm_types.h
+> @@ -1052,6 +1052,9 @@ struct mm_struct {
+>  #endif
+>  		} lru_gen;
+>  #endif /* CONFIG_LRU_GEN_WALKS_MMU */
+> +#ifdef CONFIG_HAVE_UNWIND_USER_SFRAME
+> +		struct maple_tree sframe_mt;
+> +#endif
+>  	} __randomize_layout;
+>  
+>  	/*
 
