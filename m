@@ -1,102 +1,104 @@
-Return-Path: <linux-kernel+bounces-396884-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396885-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D70419BD3AB
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 18:44:58 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EB9A9BD3AF
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 18:45:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F49F1F235A4
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 17:44:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 33467284725
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 17:45:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24FF41E5712;
-	Tue,  5 Nov 2024 17:44:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="k24AvR5o"
-Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEBBA1E1311;
+	Tue,  5 Nov 2024 17:45:13 +0000 (UTC)
+Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com [209.85.219.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E4781DD0CB;
-	Tue,  5 Nov 2024 17:44:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E8061DD0D1
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 17:45:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730828680; cv=none; b=DqaHViXEpvOitWmW+xZLb5+6H6bFfDEbBsb3JUU+ziLshTVxeuTFt9nH1Bcq29aqxnl+YFa8Pd6q21e1nFYIWrq2ydSoZEX86XBf3nb/PDvtXiAnDLVmeLv989uNtQbowcKT+X+S3t6DjN9n3hv8SnYxjHuA45jQ0BvY35pbcDk=
+	t=1730828713; cv=none; b=ZxIu1h5rdchMyQtNjeaIthkmwtIHdj6zFWnpMK9UEKn47H2/imy7gh5c4bdPatp+PFQA9LkQ9JguZQUnCcnwjQNlMwQpZ7nOhjcSjJq5ubzkew5x9d77xcNIXRcCDqgF4wv5SJb0wIszFcZ0jInZVoPJSjgPCCHRJfuC/M2Xhl0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730828680; c=relaxed/simple;
-	bh=llA+9A1gl8QsLp3YRm0QnpwmV8v5h7ScdeMLoZBWCdc=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=pphmcg+m+gfPZ9goHfw3KZlLbcOXB65RGbHCdEOzA4gK7WfuUj+agos8ItSASsKsXO4Lq+svANydmYfXa2FExPRB6nin9XUwFfC5/8nw2xcSYMjRO670PlqoJM6a5ivw0OsGtI8zEju0dpCZ1ZnlnGPYNTOABHCHSYrtsHAPS1E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=k24AvR5o; arc=none smtp.client-ip=217.70.183.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 9DBF220003;
-	Tue,  5 Nov 2024 17:44:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1730828676;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9Qhl7sCE20XQrZDR2W9BC9svI9gvOmt7VBMnt9ZYunY=;
-	b=k24AvR5oTKNdMLhPSg/xgaiY9RqcLmBXVldHKvWfTRrnwRDt8bBRt0/QMGD6vTl0ERLQyF
-	0/XIBN/71IjnJKEHdnnigQniikUm3fdq3oE3My6MV5INRIcyqwY28RkP+t+oF6gevA+Sel
-	y7kfofyqRaOrOVfZrf5HOGHOtjmYqYrgEhS6svTadiLSAdGWkNQE1ZP+0I+TS4dgHnrm/n
-	+UszIyPvO0FM8FkTvdbGizsLzqTFz+c5Ht4LZiwa4cYAs2Plsq+yWR101O6Bl3ggf8Tunh
-	bwjmtzIaNmYiANuifngRIezuoa+RDKiXpwSTognVV1DwMLcDLSGtZKc25U9XYA==
-Date: Tue, 5 Nov 2024 18:44:33 +0100
-From: Herve Codina <herve.codina@bootlin.com>
-To: Rob Herring <robh@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki"
- <rafael@kernel.org>, Saravana Kannan <saravanak@google.com>, Bjorn Helgaas
- <bhelgaas@google.com>, Lizhi Hou <lizhi.hou@amd.com>,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- linux-pci@vger.kernel.org, Allan Nielsen <allan.nielsen@microchip.com>,
- Horatiu Vultur <horatiu.vultur@microchip.com>, Steen Hegelund
- <steen.hegelund@microchip.com>, Thomas Petazzoni
- <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH 0/6] Add support for the root PCI bus device-tree node
- creation.
-Message-ID: <20241105184433.1798fe55@bootlin.com>
-In-Reply-To: <20241104201507.GA361448-robh@kernel.org>
-References: <20241104172001.165640-1-herve.codina@bootlin.com>
-	<20241104201507.GA361448-robh@kernel.org>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1730828713; c=relaxed/simple;
+	bh=ecjxMWdhVaLLUuMcptw4/tjpiyom5/R0aaKpCuOg+uE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=E6qaNAKMldwVQ5jR9HfcZrnAc+DMbMA4LCg5GZZDOMsjLeS7kLGwKV+7cPGjxV/78ADyPGMWnX6HApBP3JRu5mk7sadOHu0kU/IgnPGPf3kcELPomCupUneW1nVKHmBZ1VlLqzcF6hf7XdFPcsd4W1x7k6C70ZnQU5YNBo9VQ4Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-e2918664a3fso44652276.0
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 09:45:11 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730828710; x=1731433510;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=u+3xEu/L4gA3mcrTWrHcuue6i3EHWLMLRjsPz9s2Jcs=;
+        b=v5rw0MwmLblTNSPWw2ZlbxVQfesAYz5qusILFJBL+CCS5mQM2lAb6AnyVH0bJPmQA3
+         Zp2azcZnsBScG8c+PLzPo1+gEdT3ibaKRRGPvrRRv45Qm6Y5tOA6cug0nH2S/OvotBBv
+         5N7y7Tq9LFGErVkF04SrBogHVcjebXEEs+vCl8HZBi2uBFjefj3DOf+4IsUcNxT6CtOx
+         q49dhFkAjvpCeruIMbC/iHQMYz6lRpDrn0Lz52Ob/ccBZM65I4tLWb+22kSKUNoXsZKv
+         8L2ISa4o+49pCK2qkTrBdTIM3Jk4zqsRQNw6UCfWmvAFZlMLmXIafpKLl/DHDp/d/ic+
+         eoWw==
+X-Forwarded-Encrypted: i=1; AJvYcCU+5fa/R1vKUzrEMQhp70C8T+unANu3TfxveMlqetMEvHaUT2pZLtmT54xWDrVjmC/oD8fAk/cE09rA5tg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxglN7QPBxby6vJK0XA8o5rRb4WXaPb8MFDe088kNpq3NrYSbIo
+	DvBDvhO/tAKZd7Wb+dLvmjR/ELcGRfArZWY58r7Bc8qCZdCnAP91CQfS7jQf
+X-Google-Smtp-Source: AGHT+IGZ5npo4PdJLOpBbyVRdvj/KJva27aKqiz2taSs8MtG3RqGV1c2Ul+iVBOIFK7OWD2Ln2UDxg==
+X-Received: by 2002:a05:6902:188e:b0:e28:e700:2821 with SMTP id 3f1490d57ef6-e30e8d3c827mr16272777276.25.1730828710025;
+        Tue, 05 Nov 2024 09:45:10 -0800 (PST)
+Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com. [209.85.128.174])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e30e8a92044sm2645282276.30.2024.11.05.09.45.09
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 05 Nov 2024 09:45:09 -0800 (PST)
+Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-6ea11b32ab4so329347b3.0
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 09:45:09 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUFGHJSvzHUGfxFcDQ2M3zTB9TpjHvtTI/Gzl29nVOQvirr1HocnZYAQszFyKGq48jDIgmfDH3O5rYDE9Q=@vger.kernel.org
+X-Received: by 2002:a05:690c:740a:b0:6db:da0e:d166 with SMTP id
+ 00721157ae682-6ea55893852mr166474847b3.12.1730828709297; Tue, 05 Nov 2024
+ 09:45:09 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-GND-Sasl: herve.codina@bootlin.com
+References: <20240929025506.1212237-1-daniel@0x0f.com>
+In-Reply-To: <20240929025506.1212237-1-daniel@0x0f.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 5 Nov 2024 18:44:56 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdWz9euGczd0pdEH8=yvK48-TfiQjqDO_RaGsbuuEDHDww@mail.gmail.com>
+Message-ID: <CAMuHMdWz9euGczd0pdEH8=yvK48-TfiQjqDO_RaGsbuuEDHDww@mail.gmail.com>
+Subject: Re: [PATCH] m68k: mvme147: Make mvme147_sched_init() __init
+To: Daniel Palmer <daniel@0x0f.com>
+Cc: gerg@linux-m68k.org, linux-m68k@lists.linux-m68k.org, 
+	linux-kernel@vger.kernel.org, fthain@linux-m68k.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Rob,
+On Sun, Sep 29, 2024 at 4:55=E2=80=AFAM Daniel Palmer <daniel@0x0f.com> wro=
+te:
+> mvme147_sched_init() is only used once at init time
+> so it can be made __init and save a few bytes of memory.
+>
+> Signed-off-by: Daniel Palmer <daniel@0x0f.com>
 
-On Mon, 4 Nov 2024 14:15:07 -0600
-Rob Herring <robh@kernel.org> wrote:
+Reviewed-by: Geert Uytterhoeven <geert@linux-m68k.org>
+i.e. will queue in the m68k tree for v6.13.
 
-...
-> > With those modifications, the LAN966x PCI device is working on x86 systems.  
-> 
-> That's nice, but I don't have a LAN966x device nor do I want one. We 
-> already have the QEMU PCI test device working with the existing PCI 
-> support. Please ensure this series works with it as well.
-> 
+Gr{oetje,eeting}s,
 
-I will check.
+                        Geert
 
-Can you confirm that you are talking about this test:
-  https://elixir.bootlin.com/linux/v6.12-rc6/source/drivers/of/unittest.c#L4188
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
 
-The test needs QEMU with a specific setup and I found this entry point:
-  https://lore.kernel.org/all/fa208013-7bf8-80fc-2732-814f380cebf9@amd.com/
-
-Do you have an "official" QEMU setup on your side to run the test or any
-other pointers related to the QEMU command/setup you use?
-
-Best regards,
-Hervé
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
