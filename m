@@ -1,109 +1,160 @@
-Return-Path: <linux-kernel+bounces-396612-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396613-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBAC19BCF87
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 15:35:15 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F08319BCF8A
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 15:35:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 734CE1F21EF3
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 14:35:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E3FB1C24CFF
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 14:35:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5C871D95A2;
-	Tue,  5 Nov 2024 14:35:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 625D21D968B;
+	Tue,  5 Nov 2024 14:35:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DNS80Tvv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UaUncbeK"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37BA51D8DE2;
-	Tue,  5 Nov 2024 14:35:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20E141D9359
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 14:35:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730817308; cv=none; b=RAaiYHHGQhqEezlLMxsACehWl8ZvvEfos7bQO1lB81AnlI8xkLQd4584uqPNd0jmbJ+mp94nyzDyBiq630xYyng4T06T3oz+b+gUFYrFhHfGXxjuYdbLlxLWorhBB05m9xX6tAn1+276+5LCHf74z9SwCexj92cJkJT3X5kE9/8=
+	t=1730817325; cv=none; b=DH9gGQBHMDNT7ji0gtkqfXsd8GfAec6gwLmFB0AK6HPd3+5zxAPJKQntY+j9THSQ9Xhgs0LTW9OUEEiSr+K67dxyYbDKtdA6+aCnY24dP2W9OENwUQJUSqAZUyveELIMkbdZUpgpgS5XdKtesN5Fdxl+YqBLLY/ejRX1CTaCq54=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730817308; c=relaxed/simple;
-	bh=GzXTzvTNdEFEvbs3vOmKlQenO+9sg1FizpOvjE0B7tI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uTQ6+1sTl76BojRzNGEyZrfKIlv/j87mbouV2YQ6UW/sX+VCOegDQ0qZSNaoGprmSTJcRvYAhNNfwhyHiIw2IOZ4KQUl02eBTSiOwK/h+yVjv8/iTHwOmTkXzhs9z06d6ife+99z99Oq/FtCQMmIlrDKyw/1RgrKXm76IKM4+p4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DNS80Tvv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F6DDC4CED0;
-	Tue,  5 Nov 2024 14:35:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730817307;
-	bh=GzXTzvTNdEFEvbs3vOmKlQenO+9sg1FizpOvjE0B7tI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DNS80Tvv78J/0XiKXz32MCfQ1gMlSIb4S2IrPsli6ERQEw8owhylWB2jDKFcKN3LS
-	 XMv9bqdLMqAfwzsf26akE4PrHlmIVr+XI3+a6+uS6+fwG+VnPBWjokm/aChor3mdfi
-	 BLj0+mE2gPFjaszrFSNOxbZz3Q3WTgIkvxgVq11fGqzZp/6rRz2vJJvBh8t5hZNYcO
-	 +PqHkZNHGkqhFrAlEZbP9h1drCTn2F6WUDK+fkj+vUtGUzxg0PiJwHLxQzRBbvwN8p
-	 4NYfGo934fPMjs+M17YS30Nz/zRFz8AZmWuvqslJDRfeuNvmIt2PX6YTy1eBOcW0dv
-	 gYS5tqJguxQVw==
-Date: Tue, 5 Nov 2024 08:35:05 -0600
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Fei Shao <fshao@chromium.org>
-Cc: Mark Brown <broonie@kernel.org>, linux-sound@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Conor Dooley <conor+dt@kernel.org>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	Trevor Wu <trevor.wu@mediatek.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH v2] ASoC: dt-bindings: mediatek,mt8188-mt6359: Add
- mediatek,adsp property
-Message-ID: <173081730525.3220913.16778335543851389759.robh@kernel.org>
-References: <20241105091246.3944946-1-fshao@chromium.org>
+	s=arc-20240116; t=1730817325; c=relaxed/simple;
+	bh=BwFe6Qgs1eGPR0J5xRfgTuAtKj98PLfxOLUK8c3Ajlo=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=MVWCmcJytu5CqfAeGEluQaMHu19ANAfSUsVFnsEix+LME2F/lRQ3PUd+usRAgcBO+a92ayGnSfnm/rr9d+dm80a9L30elhTz4/tqLVnWTdizBVLMXsbM/MXwbqVGG0aPFnYbCUsa+uNbXjR5OfaeDJz5jJOJWyzpcDzYIJ6Wpfs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UaUncbeK; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1730817323;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BwFe6Qgs1eGPR0J5xRfgTuAtKj98PLfxOLUK8c3Ajlo=;
+	b=UaUncbeKg0N9eyrHxV9zxXj8Esk2l2svue2VmAJIVtF+++AwmDTjSADYfkGtTOCReUPylF
+	JoV13iMeh3Q2OwmkCMbMLqHSy2fjEiJLIoGZa4jGLI7tk5vDgfgiPZQHkQVgXjW5QkLHmv
+	VyDocSTELgemfaIH705dtodtHG11Uyk=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-290-YXZaJWvFPkCBI3_VJCT9SA-1; Tue, 05 Nov 2024 09:35:21 -0500
+X-MC-Unique: YXZaJWvFPkCBI3_VJCT9SA-1
+Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-37d5016d21eso2543551f8f.3
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 06:35:21 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730817320; x=1731422120;
+        h=content-transfer-encoding:mime-version:message-id:date:references
+         :in-reply-to:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=BwFe6Qgs1eGPR0J5xRfgTuAtKj98PLfxOLUK8c3Ajlo=;
+        b=j16onbI/9RzWwn8bhmrGCCTKi55EWPMsWDt88mF8txtqZ2aHyk+10nZOVrtEWQe+D5
+         /yFKddWE8MGeWU8XiPxPjzd+Qfn4+C/clh7yspjBaURVXhE1AjkeNZyloh+7pQp0U+jW
+         cvCHHJNgMBTTBzKTKEc/LHqkirzZ2ciHC7FlbuSZmXqLvjU67QgW4tBgv4zg/UgEDlvU
+         LkxrYXYJ0NPVHf735i/PXC3reqAXSsaEc0ynrj2owFXXrxMj+L6dQi4OVPd1x9pfGzkZ
+         fmQVdY3QAnrDE5qssUhZ/HdyMxg6lik7Sk2cuECEgfLyeV9Jpxq42rINPuJx5syiN98t
+         jUCg==
+X-Forwarded-Encrypted: i=1; AJvYcCXzaysrXhYmx/7vtiVROQ/KZUR+9G9hV+jFoQvRjyrpXSoSzMAYXRut0yePnY+lV8mrrhKF82kRm69uwl8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yza8kpHxhBa2kdCIv4MVkUtyZCnSbvFYZtlBwf039WB6Rzkqaza
+	ZHS3W6JmQ1OUZBxQ5SZdWWbrajt3Z5v4ONXzQjYkh9A4+JhJSXEIFH3BLzHFEkPl4O9ztB+e2ki
+	Ky/gukxf554Kr8LU4U6udtsYfDoswuGV5oLeQTe4zvibeQOZjJjkF4pOAffVHww==
+X-Received: by 2002:adf:9793:0:b0:367:9881:7d66 with SMTP id ffacd0b85a97d-380612008e6mr26169841f8f.41.1730817320320;
+        Tue, 05 Nov 2024 06:35:20 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IG2oZ/wH7ZiBKTE5K8fTDbHsfsL4Jv8pl7bu57PIoWul1kpD6bhk/AsEHETjT5Vs7lX+3pXKg==
+X-Received: by 2002:adf:9793:0:b0:367:9881:7d66 with SMTP id ffacd0b85a97d-380612008e6mr26169823f8f.41.1730817319957;
+        Tue, 05 Nov 2024 06:35:19 -0800 (PST)
+Received: from alrua-x1.borgediget.toke.dk ([45.145.92.2])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381c10e7387sm16276544f8f.51.2024.11.05.06.35.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 05 Nov 2024 06:35:19 -0800 (PST)
+Received: by alrua-x1.borgediget.toke.dk (Postfix, from userid 1000)
+	id 4F73E164C253; Tue, 05 Nov 2024 15:35:18 +0100 (CET)
+From: Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>
+To: Qingfang Deng <dqfext@gmail.com>
+Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+ <pabeni@redhat.com>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-ppp@vger.kernel.org
+Subject: Re: [RFC PATCH net-next] net: ppp: convert to IFF_NO_QUEUE
+In-Reply-To: <CALW65jbz=3JNTx-SWk21DT4yc+oD3Dsz49z__zgDXF7TjUV7Lw@mail.gmail.com>
+References: <20241029103656.2151-1-dqfext@gmail.com>
+ <87msid98dc.fsf@toke.dk>
+ <CALW65jbz=3JNTx-SWk21DT4yc+oD3Dsz49z__zgDXF7TjUV7Lw@mail.gmail.com>
+X-Clacks-Overhead: GNU Terry Pratchett
+Date: Tue, 05 Nov 2024 15:35:18 +0100
+Message-ID: <87a5ed92ah.fsf@toke.dk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241105091246.3944946-1-fshao@chromium.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
+Qingfang Deng <dqfext@gmail.com> writes:
 
-On Tue, 05 Nov 2024 17:11:36 +0800, Fei Shao wrote:
-> On some MediaTek SoCs, an Audio DSP (ADSP) is integrated as a separate
-> hardware block that leverages Sound Open Firmware (SOF) and provides
-> additional audio functionalities. This hardware is optional, and the
-> audio subsystem will still function normally when it's not present.
-> 
-> To enable ADSP support, a 'mediatek,adsp' property is required in the
-> sound card node to pass the ADSP phandle. This allows AFE to link to
-> ADSP when the sound card is probed.
-> 
-> MT8188 has ADSP integrated, so add the 'mediatek,adsp' property to
-> allow using it in the audio subsystem.
-> 
-> This fixes dtbs_check error:
->   Unevaluated properties are not allowed ('mediatek,adsp' was
->   unexpected)
-> 
-> Signed-off-by: Fei Shao <fshao@chromium.org>
-> ---
-> This patch is based on a previous [v1] series.
-> This is sent as an individual patch in v2 because the other patches in
-> the [v1] series are either invalid or for different purpose in different
-> binding, so I think it'd be better to send them separately.
-> 
-> [v1]:
-> https://lore.kernel.org/all/20241025104548.1220076-2-fshao@chromium.org/
-> 
-> Changes in v2:
-> - drop `mediatek,dai-link` vendor property because its goal can be
->   achieved by using the existing `audio-routing`
-> - update property description
-> - update commit message
-> 
->  .../devicetree/bindings/sound/mediatek,mt8188-mt6359.yaml  | 7 +++++++
->  1 file changed, 7 insertions(+)
-> 
+> Hi Toke,
+>
+> On Tue, Nov 5, 2024 at 8:24=E2=80=AFPM Toke H=C3=B8iland-J=C3=B8rgensen <=
+toke@redhat.com> wrote:
+>>
+>> Qingfang Deng <dqfext@gmail.com> writes:
+>>
+>> > When testing the parallel TX performance of a single PPPoE interface
+>> > over a 2.5GbE link with multiple hardware queues, the throughput could
+>> > not exceed 1.9Gbps, even with low CPU usage.
+>> >
+>> > This issue arises because the PPP interface is registered with a single
+>> > queue and a tx_queue_len of 3. This default behavior dates back to Lin=
+ux
+>> > 2.3.13, which was suitable for slower serial ports. However, in modern
+>> > devices with multiple processors and hardware queues, this configurati=
+on
+>> > can lead to congestion.
+>> >
+>> > For PPPoE/PPTP, the lower interface should handle qdisc, so we need to
+>> > set IFF_NO_QUEUE.
+>>
+>> This bit makes sense - the PPPoE and PPTP channel types call through to
+>> the underlying network stack, and their start_xmit() ops never return
+>> anything other than 1 (so there's no pushback against the upper PPP
+>> device anyway). The same goes for the L2TP PPP channel driver.
+>>
+>> > For PPP over a serial port, we don't benefit from a qdisc with such a
+>> > short TX queue, so handling TX queueing in the driver and setting
+>> > IFF_NO_QUEUE is more effective.
+>>
+>> However, this bit is certainly not true. For the channel drivers that
+>> do push back (which is everything apart from the three mentioned above,
+>> AFAICT), we absolutely do want a qdisc to store the packets, instead of
+>> this arbitrary 32-packet FIFO inside the driver. Your comment about the
+>> short TX queue only holds for the pfifo_fast qdisc (that's the only one
+>> that uses the tx_queue_len for anything), anything else will do its own
+>> thing.
+>>
+>> (Side note: don't use pfifo_fast!)
+>>
+>> I suppose one option here could be to set the IFF_NO_QUEUE flag
+>> conditionally depending on whether the underlying channel driver does
+>> pushback against the PPP device or not (add a channel flag to indicate
+>> this, or something), and then call the netif_{wake,stop}_queue()
+>> functions conditionally depending on this. But setting the noqueue flag
+>> unconditionally like this patch does, is definitely not a good idea!
+>
+> I agree. Then the problem becomes how to test if a PPP device is a PPPoE.
+> It seems like PPPoE is the only one that implements
+> ops->fill_forward_path, should I use that? Or is there a better way?
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+Just add a new field to struct ppp_channel and have the PPoE channel
+driver set that? Could be a flags field, or even just a 'bool
+direct_xmit' field...
+
+-Toke
 
 
