@@ -1,239 +1,190 @@
-Return-Path: <linux-kernel+bounces-397000-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397001-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B33E99BD56C
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 19:53:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 75C2A9BD56E
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 19:53:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6912F28423C
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 18:53:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 35E22284116
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 18:53:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95E6F1EBA1D;
-	Tue,  5 Nov 2024 18:52:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0158E1EC01C;
+	Tue,  5 Nov 2024 18:52:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SpEusYYP"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="A7rTmj5P"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFBA21EBA09;
-	Tue,  5 Nov 2024 18:52:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BB431DC04C;
+	Tue,  5 Nov 2024 18:52:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730832760; cv=none; b=DDMUMnngw3rUkKi0i+B9wOw1y5RDyXeyz/g7E6Sika44wfp2YQCDrWNZgD3JZ86SyvZVu4izcRBO0N3GmLKkt1ryM9TVIEljti/qE6JS3QJKbF8i6H989JGxr/dIWU3PlL3I33EyvLSjKNjd+usUwFxnDZKaOC0QUs0VhpjuRps=
+	t=1730832770; cv=none; b=o7yM2IKFhtpIcPzjIPT1A5t2my6zYVgAV4ZY+xgKncgnNwYi3nO71glDAWiDauk2fPBGWGZlsSu9CVTunTg9pSw1mr+bm9W7hlmssKYktli96JsOSZCrHYa0rXvlS5oE/Gu5pL5Vzi6o2yZgzl+3XD4j/jtkYnZvt+r48k93Xp8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730832760; c=relaxed/simple;
-	bh=PbzA6tBA7tp24gQ9EyUAG0z7pRLYge4MVlUArydjwn8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kjEZloEYm/glqQCgAdABvHJIdIqPHo39VX07R3YdYmqg1ARPdmoURN1TNOmN2hrXbKE/vz1TmUa5dTfVAmVp86azSFLv+CsjFoiOaKGpKZ+hQigQNbT9I4lQhUF78l2waRabgLl0B8bHaIIUd5cEYNqdT42StVnMF3XeE2B+3sc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SpEusYYP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2469C4CECF;
-	Tue,  5 Nov 2024 18:52:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730832760;
-	bh=PbzA6tBA7tp24gQ9EyUAG0z7pRLYge4MVlUArydjwn8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=SpEusYYPfaNYutFnpxzsg6U0n//pbeMUX0FiPey9Efl2luYRPp+BGrJvP26TQXkRI
-	 JurSs4FzJMbnewZH2Hk3oBDmhk3g2JwoL7dPIt56uCaBVA+yco0OS122XVvlH/HG37
-	 lfcrVsYNelW1hJGbo3uQ9KBVo6ntVbM/3QCFnAjS9wAPkyRyW4PNlQoG8IweeCUCkt
-	 tGyPxVSMOO2YW8OA+EmlXv5gtZWSmXFeEO8mEzAaaSsPbJuBwlVhe6vDKRklLsxYIv
-	 NvSF7DT/tIINuy2cieL5ihcWGCJMX9txWdfUFO8GH4Z6eZXx/qoNBMHqYFQrBttRnW
-	 hrtndSaVbQ4kA==
-Date: Tue, 5 Nov 2024 15:52:34 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Benjamin Peterson <benjamin@engflow.com>
-Cc: adrian.hunter@intel.com, alexander.shishkin@linux.intel.com,
-	howardchu95@gmail.com, irogers@google.com, jolsa@kernel.org,
-	kan.liang@linux.intel.com, linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org, mark.rutland@arm.com,
-	mingo@redhat.com, namhyung@kernel.org, peterz@infradead.org
-Subject: Re: [PATCH v3] perf trace: avoid garbage when not printing a trace
- event's arguments
-Message-ID: <Zyppchn73qy-t7bc@x1>
-References: <ZyV0a6e_46R9pmQw@x1>
- <20241103204816.7834-1-benjamin@engflow.com>
+	s=arc-20240116; t=1730832770; c=relaxed/simple;
+	bh=XyMYyo3Oig+FDBovBjyMUZ1jHCb4RkEVdx7pQNxMmBk=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=jWCYrfArkokoTUvkRfTjA2aF44Dq9ssEP2103xGJF9nKsx97saaPbq8vD+AiJJ2ccMnad+6zMN0HmGOhsoWhyme/Lp/xPN9r4jwDQhX5t8tD8AeVLqxmZtGpu4XQ1hwdGC4sT4aNcLJudvo5cRQ4Q4Gb1WS0QMggT2/jhCFXg84=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=A7rTmj5P; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F617C4CECF;
+	Tue,  5 Nov 2024 18:52:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1730832769;
+	bh=XyMYyo3Oig+FDBovBjyMUZ1jHCb4RkEVdx7pQNxMmBk=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=A7rTmj5PoDZ+NsN9ezFu87Z3DJaWy5yhmBDNis1cK/YjWCbSvzf/Gf4xgXWj8seUS
+	 7duUs+45K6kf2QKCT5iubuiZSUaA0i5BqYLhjzJW88Jw/mITmeBZ5D1L8l4eXWtdm/
+	 cHuzGjDjQuueUGGSmzjtIu5w0UBrbYC0gnn0FFBE=
+Date: Tue, 5 Nov 2024 10:52:48 -0800
+From: Andrew Morton <akpm@linux-foundation.org>
+To: syzbot <syzbot+e985d3026c4fd041578e@syzkaller.appspotmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ syzkaller-bugs@googlegroups.com, kvm@vger.kernel.org
+Subject: Re: [syzbot] [mm?] BUG: Bad page state in kvm_coalesced_mmio_init
+Message-Id: <20241105105248.812dc586921df56e5bf78a5e@linux-foundation.org>
+In-Reply-To: <6729f475.050a0220.701a.0019.GAE@google.com>
+References: <6729f475.050a0220.701a.0019.GAE@google.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241103204816.7834-1-benjamin@engflow.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Sun, Nov 03, 2024 at 08:48:16PM +0000, Benjamin Peterson wrote:
-> trace__fprintf_tp_fields may not print any tracepoint arguments. E.g., if the
-> argument values are all zero. Previously, this would result in a totally
-> uninitialized buffer being passed to fprintf, which could lead to garbage on the
-> console. Fix the problem by passing the number of initialized bytes fprintf.
+(cc kvm list)
+
+On Tue, 05 Nov 2024 02:33:25 -0800 syzbot <syzbot+e985d3026c4fd041578e@syzkaller.appspotmail.com> wrote:
+
+> Hello,
 > 
-> Fixes: f11b2803bb88 ("perf trace: Allow choosing how to augment the tracepoint arguments")
-> Signed-off-by: Benjamin Peterson <benjamin@engflow.com>
-> Tested-by: Howard Chu <howardchu95@gmail.com>
-
-How did you guys tested this? Was this found by visual inspection alone?
-It clearly is correct, but I had to use:
-
-diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
-index e663be6f04e70640..a32eafd000fa99e6 100644
---- a/tools/perf/builtin-trace.c
-+++ b/tools/perf/builtin-trace.c
-@@ -3033,7 +3033,7 @@ static void bpf_output__fprintf(struct trace *trace,
- static size_t trace__fprintf_tp_fields(struct trace *trace, struct evsel *evsel, struct perf_sample *sample,
- 				       struct thread *thread, void *augmented_args, int augmented_args_size)
- {
--	char bf[2048];
-+	char bf[2048] = "garbage";
- 	size_t size = sizeof(bf);
- 	const struct tep_event *tp_format = evsel__tp_format(evsel);
- 	struct tep_format_field *field = tp_format ? tp_format->format.fields : NULL;
-@@ -3053,7 +3053,7 @@ static size_t trace__fprintf_tp_fields(struct trace *trace, struct evsel *evsel,
- 		.show_string_prefix = trace->show_string_prefix,
- 	};
- 
--	for (; field && arg; field = field->next, ++syscall_arg.idx, bit <<= 1, ++arg) {
-+	for (field = field->next; field && arg; field = field->next, ++syscall_arg.idx, bit <<= 1, ++arg) {
- 		if (syscall_arg.mask & bit)
- 			continue;
- 
-@@ -3097,7 +3097,7 @@ static size_t trace__fprintf_tp_fields(struct trace *trace, struct evsel *evsel,
- 		printed += syscall_arg_fmt__scnprintf_val(arg, bf + printed, size - printed, &syscall_arg, val);
- 	}
- 
--	return printed + fprintf(trace->output, "%s", bf);
-+	return printed + fprintf(trace->output, "printed=%zd, %s", printed, bf);
- }
- 
- static int trace__event_handler(struct trace *trace, struct evsel *evsel,
-
-To skip the first arg as a perf probe would still have one argument (the
-probe addr), i.e.  what tracepoint did you use to test this that has all
-its args as zeroes? If we really can generate something like that we
-could use it in a 'perf test' entry.
-
-And then come up with:
-
-root@x1:/home/acme/c# cat loop.c 
-#include <unistd.h>
-
-static int function(int i, int j, int k, int l, int m)
-{
-	sleep(1);
-	return i + j + k + l + m;
-}
-
-int main(void)
-{
-	unsigned long long total = 0;
-
-	for (int i = 0; i < 3; i++)
-		total += function(0, 0, 0, 0, 0);
-
-	return total;
-}
-root@x1:/home/acme/c# cc -g -o loop loop.c
-root@x1:/home/acme/c# perf probe -x ./loop function i j k l m
-Target program is compiled without optimization. Skipping prologue.
-Probe on address 0x401126 to force probing at the function entry.
-
-Added new event:
-  probe_loop:function  (on function in /home/acme/c/loop with i j k l m)
-
-You can now use it in all perf tools, such as:
-
-	perf record -e probe_loop:function -aR sleep 1
-
-root@x1:/home/acme/c# perf trace -e clock_nanosleep,probe_loop:function ./loop
-     0.000 (         ): loop/846057 probe_loop:function(printed=0, garbage)
-     0.037 (1000.154 ms): loop/846057 clock_nanosleep(rqtp: { .tv_sec: 1, .tv_nsec: 0 }, rmtp: 0x7ffd43aaa290) = 0
-  1000.232 (         ): loop/846057 probe_loop:function(printed=0, garbage)
-  1000.253 (1000.123 ms): loop/846057 clock_nanosleep(rqtp: { .tv_sec: 1, .tv_nsec: 0 }, rmtp: 0x7ffd43aaa290) = 0
-  2000.416 (         ): loop/846057 probe_loop:function(printed=0, garbage)
-^Croot@x1:/home/acme/c#
-
-Anyway, with your patch and this one on top:
-
-⬢ [acme@toolbox perf-tools-next]$ git diff
-diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
-index de191ef425fe574a..5c9f3fdb9e5732f4 100644
---- a/tools/perf/builtin-trace.c
-+++ b/tools/perf/builtin-trace.c
-@@ -3033,7 +3033,7 @@ static void bpf_output__fprintf(struct trace *trace,
- static size_t trace__fprintf_tp_fields(struct trace *trace, struct evsel *evsel, struct perf_sample *sample,
-                                       struct thread *thread, void *augmented_args, int augmented_args_size)
- {
--       char bf[2048];
-+       char bf[2048] = "garbage";
-        size_t size = sizeof(bf);
-        const struct tep_event *tp_format = evsel__tp_format(evsel);
-        struct tep_format_field *field = tp_format ? tp_format->format.fields : NULL;
-@@ -3053,7 +3053,7 @@ static size_t trace__fprintf_tp_fields(struct trace *trace, struct evsel *evsel,
-                .show_string_prefix = trace->show_string_prefix,
-        };
- 
--       for (; field && arg; field = field->next, ++syscall_arg.idx, bit <<= 1, ++arg) {
-+       for (field = field->next; field && arg; field = field->next, ++syscall_arg.idx, bit <<= 1, ++arg) {
-                if (syscall_arg.mask & bit)
-                        continue;
- 
-⬢ [acme@toolbox perf-tools-next]$
-
-root@x1:/home/acme/c# perf probe -x ./loop function i j k l m
-Target program is compiled without optimization. Skipping prologue.
-Probe on address 0x401126 to force probing at the function entry.
-
-Added new event:
-  probe_loop:function  (on function in /home/acme/c/loop with i j k l m)
-
-You can now use it in all perf tools, such as:
-
-	perf record -e probe_loop:function -aR sleep 1
-
-root@x1:/home/acme/c# perf trace -e clock_nanosleep,probe_loop:function ./loop
-     0.000 (         ): loop/849218 probe_loop:function()
-     0.033 (1000.109 ms): loop/849218 clock_nanosleep(rqtp: { .tv_sec: 1, .tv_nsec: 0 }, rmtp: 0x7fffe6dc38e0) = 0
-  1000.182 (         ): loop/849218 probe_loop:function()
-  1000.200 (1000.142 ms): loop/849218 clock_nanosleep(rqtp: { .tv_sec: 1, .tv_nsec: 0 }, rmtp: 0x7fffe6dc38e0) = 0
-  2000.387 (         ): loop/849218 probe_loop:function()
-  2000.413 (1000.151 ms): loop/849218 clock_nanosleep(rqtp: { .tv_sec: 1, .tv_nsec: 0 }, rmtp: 0x7fffe6dc38e0) = 0
-root@x1:/home/acme/c#
-
-To see the zeroes:
-
-root@x1:/home/acme/c# perf config trace.show_zeros=1
-root@x1:/home/acme/c# perf trace -e probe_loop:function ./loop
-     0.000 loop/849542 probe_loop:function(i: 0, j: 0, k: 0, l: 0, m: 0)
-  1000.338 loop/849542 probe_loop:function(i: 0, j: 0, k: 0, l: 0, m: 0)
-  2000.542 loop/849542 probe_loop:function(i: 0, j: 0, k: 0, l: 0, m: 0)
-root@x1:/home/acme/c#
-
-So,
-
-Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-
-- Arnaldo
-
+> syzbot found the following issue on:
+> 
+> HEAD commit:    59b723cd2adb Linux 6.12-rc6
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=17996587980000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=11254d3590b16717
+> dashboard link: https://syzkaller.appspot.com/bug?extid=e985d3026c4fd041578e
+> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> userspace arch: i386
+> 
+> Unfortunately, I don't have any reproducer for this issue yet.
+> 
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/202d791be971/disk-59b723cd.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/9bfa02908d87/vmlinux-59b723cd.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/93c8c8740b4d/bzImage-59b723cd.xz
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+e985d3026c4fd041578e@syzkaller.appspotmail.com
+> 
+> BUG: Bad page state in process syz.5.504  pfn:61f45
+> page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x61f45
+> flags: 0xfff00000080204(referenced|workingset|mlocked|node=0|zone=1|lastcpupid=0x7ff)
+> raw: 00fff00000080204 0000000000000000 dead000000000122 0000000000000000
+> raw: 0000000000000000 0000000000000000 00000000ffffffff 0000000000000000
+> page dumped because: PAGE_FLAGS_CHECK_AT_FREE flag(s) set
+> page_owner tracks the page as allocated
+> page last allocated via order 0, migratetype Unmovable, gfp_mask 0x400dc0(GFP_KERNEL_ACCOUNT|__GFP_ZERO), pid 8443, tgid 8442 (syz.5.504), ts 201884660643, free_ts 201499827394
+>  set_page_owner include/linux/page_owner.h:32 [inline]
+>  post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1537
+>  prep_new_page mm/page_alloc.c:1545 [inline]
+>  get_page_from_freelist+0x303f/0x3190 mm/page_alloc.c:3457
+>  __alloc_pages_noprof+0x292/0x710 mm/page_alloc.c:4733
+>  alloc_pages_mpol_noprof+0x3e8/0x680 mm/mempolicy.c:2265
+>  kvm_coalesced_mmio_init+0x1f/0xf0 virt/kvm/coalesced_mmio.c:99
+>  kvm_create_vm virt/kvm/kvm_main.c:1235 [inline]
+>  kvm_dev_ioctl_create_vm virt/kvm/kvm_main.c:5488 [inline]
+>  kvm_dev_ioctl+0x12dc/0x2240 virt/kvm/kvm_main.c:5530
+>  __do_compat_sys_ioctl fs/ioctl.c:1007 [inline]
+>  __se_compat_sys_ioctl+0x510/0xc90 fs/ioctl.c:950
+>  do_syscall_32_irqs_on arch/x86/entry/common.c:165 [inline]
+>  __do_fast_syscall_32+0xb4/0x110 arch/x86/entry/common.c:386
+>  do_fast_syscall_32+0x34/0x80 arch/x86/entry/common.c:411
+>  entry_SYSENTER_compat_after_hwframe+0x84/0x8e
+> page last free pid 8399 tgid 8399 stack trace:
+>  reset_page_owner include/linux/page_owner.h:25 [inline]
+>  free_pages_prepare mm/page_alloc.c:1108 [inline]
+>  free_unref_folios+0xf12/0x18d0 mm/page_alloc.c:2686
+>  folios_put_refs+0x76c/0x860 mm/swap.c:1007
+>  free_pages_and_swap_cache+0x5c8/0x690 mm/swap_state.c:335
+>  __tlb_batch_free_encoded_pages mm/mmu_gather.c:136 [inline]
+>  tlb_batch_pages_flush mm/mmu_gather.c:149 [inline]
+>  tlb_flush_mmu_free mm/mmu_gather.c:366 [inline]
+>  tlb_flush_mmu+0x3a3/0x680 mm/mmu_gather.c:373
+>  tlb_finish_mmu+0xd4/0x200 mm/mmu_gather.c:465
+>  exit_mmap+0x496/0xc40 mm/mmap.c:1926
+>  __mmput+0x115/0x390 kernel/fork.c:1348
+>  exit_mm+0x220/0x310 kernel/exit.c:571
+>  do_exit+0x9b2/0x28e0 kernel/exit.c:926
+>  do_group_exit+0x207/0x2c0 kernel/exit.c:1088
+>  __do_sys_exit_group kernel/exit.c:1099 [inline]
+>  __se_sys_exit_group kernel/exit.c:1097 [inline]
+>  __x64_sys_exit_group+0x3f/0x40 kernel/exit.c:1097
+>  x64_sys_call+0x2634/0x2640 arch/x86/include/generated/asm/syscalls_64.h:232
+>  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> Modules linked in:
+> CPU: 0 UID: 0 PID: 8442 Comm: syz.5.504 Not tainted 6.12.0-rc6-syzkaller #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+> Call Trace:
+>  <TASK>
+>  __dump_stack lib/dump_stack.c:94 [inline]
+>  dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+>  bad_page+0x176/0x1d0 mm/page_alloc.c:501
+>  free_page_is_bad mm/page_alloc.c:918 [inline]
+>  free_pages_prepare mm/page_alloc.c:1100 [inline]
+>  free_unref_page+0xed0/0xf20 mm/page_alloc.c:2638
+>  kvm_destroy_vm virt/kvm/kvm_main.c:1327 [inline]
+>  kvm_put_kvm+0xc75/0x1350 virt/kvm/kvm_main.c:1386
+>  kvm_vcpu_release+0x54/0x60 virt/kvm/kvm_main.c:4143
+>  __fput+0x23f/0x880 fs/file_table.c:431
+>  task_work_run+0x24f/0x310 kernel/task_work.c:239
+>  exit_task_work include/linux/task_work.h:43 [inline]
+>  do_exit+0xa2f/0x28e0 kernel/exit.c:939
+>  do_group_exit+0x207/0x2c0 kernel/exit.c:1088
+>  __do_sys_exit_group kernel/exit.c:1099 [inline]
+>  __se_sys_exit_group kernel/exit.c:1097 [inline]
+>  __ia32_sys_exit_group+0x3f/0x40 kernel/exit.c:1097
+>  ia32_sys_call+0x2624/0x2630 arch/x86/include/generated/asm/syscalls_32.h:253
+>  do_syscall_32_irqs_on arch/x86/entry/common.c:165 [inline]
+>  __do_fast_syscall_32+0xb4/0x110 arch/x86/entry/common.c:386
+>  do_fast_syscall_32+0x34/0x80 arch/x86/entry/common.c:411
+>  entry_SYSENTER_compat_after_hwframe+0x84/0x8e
+> RIP: 0023:0xf745d579
+> Code: Unable to access opcode bytes at 0xf745d54f.
+> RSP: 002b:00000000f75afd6c EFLAGS: 00000206 ORIG_RAX: 00000000000000fc
+> RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 0000000000000000
+> RDX: 0000000000000000 RSI: 00000000ffffff9c RDI: 00000000f744cff4
+> RBP: 00000000f717ae61 R08: 0000000000000000 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000206 R12: 0000000000000000
+> R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+>  </TASK>
+> 
+> 
 > ---
->  tools/perf/builtin-trace.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> This report is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
 > 
-> diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
-> index d3f11b90d025..5af55f4192b5 100644
-> --- a/tools/perf/builtin-trace.c
-> +++ b/tools/perf/builtin-trace.c
-> @@ -3087,7 +3087,7 @@ static size_t trace__fprintf_tp_fields(struct trace *trace, struct evsel *evsel,
->  		printed += syscall_arg_fmt__scnprintf_val(arg, bf + printed, size - printed, &syscall_arg, val);
->  	}
->  
-> -	return printed + fprintf(trace->output, "%s", bf);
-> +	return printed + fprintf(trace->output, "%.*s", (int)printed, bf);
->  }
->  
->  static int trace__event_handler(struct trace *trace, struct evsel *evsel,
-> -- 
-> 2.39.5
+> syzbot will keep track of this issue. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 > 
+> If the report is already addressed, let syzbot know by replying with:
+> #syz fix: exact-commit-title
+> 
+> If you want to overwrite report's subsystems, reply with:
+> #syz set subsystems: new-subsystem
+> (See the list of subsystem names on the web dashboard)
+> 
+> If the report is a duplicate of another one, reply with:
+> #syz dup: exact-subject-of-another-report
+> 
+> If you want to undo deduplication, reply with:
+> #syz undup
 
