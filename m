@@ -1,238 +1,208 @@
-Return-Path: <linux-kernel+bounces-396931-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396932-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE1CF9BD47E
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 19:25:39 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB8C19BD484
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 19:26:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5ACD5B22D73
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 18:25:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D4351F234FA
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 18:26:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE6731E7C2A;
-	Tue,  5 Nov 2024 18:25:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E9FE1E7C2D;
+	Tue,  5 Nov 2024 18:26:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="drGzZw5a"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Nx5SRhkF"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C719213D52E;
-	Tue,  5 Nov 2024 18:25:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.10
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730831126; cv=fail; b=DUp1c/Cb3/G5MF5B4BQUGBfYxgr9taHwe19k0890F9V2mCgzMEvyCBLIYkJwH4hoMw0M1pNI9D4rwMXChkZJF8C2zfd9ghAX2SzCs9ORAIz3qu9kieq6OUXsOJTrbqeluCsASvr95qkge2d3LrNqrVGn79UX6r+4/J2Qd4uFD3U=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730831126; c=relaxed/simple;
-	bh=0SJdL4oeEJh4ZG4mZKjGW29jURuZVYEj5rx/tb90PVw=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=K0O9MUnWXvbtBuqwS2p0fjrRwkCfq8jOpCtdzFeeXERNqmUQkOZPQaRgKJi6y/wLq8Oik7uxWgn+2VkLSksGIXrVChs0FYdu7iw867ucue9JEOch0yh4mPmr+aGkiw/L8MGnXcQ3lHXa/M82fk225DtURuQaQQ5VNmFNClpPBtc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=drGzZw5a; arc=fail smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730831125; x=1762367125;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-id:content-transfer-encoding:
-   mime-version;
-  bh=0SJdL4oeEJh4ZG4mZKjGW29jURuZVYEj5rx/tb90PVw=;
-  b=drGzZw5aUHXlIdbICOokEafXYSQePYE8sPfXK9y357kKfRZp1f0xh6u/
-   GFhT2EDf6nZrAvQuBadBBtCbv/ZRGnuxLTj9Q1eTAI7/CInLJMuDXs+z1
-   GLYD9qq5wwwf457f+5kyjMh+l6g5OqwwVzwmCuGXp+2r4BfRulGUyujug
-   poorv1PSalTaZ9clpFaCNJYouR44V0vqkxaahTy028iQWoB1P8ndZFV4X
-   2pJZJsm85LGtJRJjejgBBRelGqZHD0DkQwWBSXf19sQyTDNEP1DCLb3rR
-   Izf57z1uaTHvBL/mg+RNlliTA1+KI2fJoqrHoZqNFrHT0mArtdubsSN4G
-   g==;
-X-CSE-ConnectionGUID: Zc2g4ZDBSua7R/4dR/K1PA==
-X-CSE-MsgGUID: jtM2i/G4TUyJ97KRqa44Pg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="48058942"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="48058942"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2024 10:25:24 -0800
-X-CSE-ConnectionGUID: tPzh3RtWSJieQXQ5WAMX+w==
-X-CSE-MsgGUID: 2L6XaMzZSbinWrgeXHC4Ng==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,260,1725346800"; 
-   d="scan'208";a="84025454"
-Received: from fmsmsx603.amr.corp.intel.com ([10.18.126.83])
-  by orviesa009.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 05 Nov 2024 10:25:23 -0800
-Received: from fmsmsx603.amr.corp.intel.com (10.18.126.83) by
- fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Tue, 5 Nov 2024 10:25:22 -0800
-Received: from fmsedg602.ED.cps.intel.com (10.1.192.136) by
- fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Tue, 5 Nov 2024 10:25:22 -0800
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (104.47.55.173)
- by edgegateway.intel.com (192.55.55.71) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Tue, 5 Nov 2024 10:25:22 -0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=V1fKd6W9CaS1pecOqQ+P18Nn+5b6gKhxCdTghH0yci17qpu612PwC7a0eAbvCOmb3uaZ2NkzFvJ5GCPiLTc7lyvbbS/l5Vj/14/gpWbHbYbX2VTXlU08IK/doc80O9xii+IQhMAlaee8MhDLs6ubpFXBWkDsLqgPZH0aeYKzleE8HFH1SkvA+vVretXeIy4fLikBlnfptKCFLrSBP10w75itHxCoae8Jk7Ciu2IrNNVMwDyoO86oJC7HnNPAzWLjuaBaHAMrhQvOaM6gftnzStIhb+91GFBGuQX/hYtSMDoNDbezckfkQDvxLhG5gkmx4pZt8pFA7pMj55NyrDfe+g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=0SJdL4oeEJh4ZG4mZKjGW29jURuZVYEj5rx/tb90PVw=;
- b=jwWxwP+APsGDPiUnzuHTJieH9T2OwqKFEnJCU9ohZDGDlHSNfK49pBwSbC+Ick9gfxYhdMqKWgkDwSd3TGVBZJBIbhrFozPFl1f7NMT9epTDDpmgYeIIpCLiI2JzvveYBBQMQ+yhqEtD8EdC8GM2zOmJV0P3pP6MAVZr1E1biv+5zpSgnNoXmCu+3oMz/6DV3fpJjFtLctPsnvmZCNxNuZEZiiGmVAFvk2PwL8gLr8tmkxqKUKTN9GIAdNk/zliOuRdCKq5YxyVzNWAlvP+UYcMS7hD/PFbKW+nczOkLUJRTAH0PjRIPbUNwoVRoaCIZnWk5EkPWZyYZRbDLNKqwIg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from MN0PR11MB5963.namprd11.prod.outlook.com (2603:10b6:208:372::10)
- by PH0PR11MB4886.namprd11.prod.outlook.com (2603:10b6:510:33::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8114.29; Tue, 5 Nov
- 2024 18:25:18 +0000
-Received: from MN0PR11MB5963.namprd11.prod.outlook.com
- ([fe80::edb2:a242:e0b8:5ac9]) by MN0PR11MB5963.namprd11.prod.outlook.com
- ([fe80::edb2:a242:e0b8:5ac9%5]) with mapi id 15.20.8114.028; Tue, 5 Nov 2024
- 18:25:18 +0000
-From: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
-To: "Yang, Weijiang" <weijiang.yang@intel.com>, "seanjc@google.com"
-	<seanjc@google.com>
-CC: "Gao, Chao" <chao.gao@intel.com>, "Hansen, Dave" <dave.hansen@intel.com>,
-	"x86@kernel.org" <x86@kernel.org>, "peterz@infradead.org"
-	<peterz@infradead.org>, "john.allen@amd.com" <john.allen@amd.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"mlevitsk@redhat.com" <mlevitsk@redhat.com>, "kvm@vger.kernel.org"
-	<kvm@vger.kernel.org>, "pbonzini@redhat.com" <pbonzini@redhat.com>
-Subject: Re: [PATCH v10 00/27] Enable CET Virtualization
-Thread-Topic: [PATCH v10 00/27] Enable CET Virtualization
-Thread-Index: AQHaYwfwUq77Vfr47kSTqCeNyaqv3bGDeEgAgAbx4wCBIC/lgA==
-Date: Tue, 5 Nov 2024 18:25:18 +0000
-Message-ID: <838cbb8b21fddf14665376360df4b858ec0e6eaf.camel@intel.com>
-References: <20240219074733.122080-1-weijiang.yang@intel.com>
-	 <ZjLP8jLWGOWnNnau@google.com>
-	 <0d8141b7-804c-40e4-b9f8-ac0ebc0a84cb@intel.com>
-In-Reply-To: <0d8141b7-804c-40e4-b9f8-ac0ebc0a84cb@intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-user-agent: Evolution 3.44.4-0ubuntu2 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: MN0PR11MB5963:EE_|PH0PR11MB4886:EE_
-x-ms-office365-filtering-correlation-id: 1e83e2e1-1e0d-4848-e69f-08dcfdc733a5
-x-ld-processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|366016|1800799024|376014|38070700018;
-x-microsoft-antispam-message-info: =?utf-8?B?bDRBWVFtRG5wNkh4Z0dWczRadmhDL3VUaVg1bHJESSt2MVZ6SGRDNGUreFZS?=
- =?utf-8?B?NElMVG9jaTA5SHhFUVJjczlYVFdaazEvZ2RVNG5Na2lHRWxCZDZCL1FaVFpU?=
- =?utf-8?B?VTczNDJEMmlyS3NSY1QyU0QvcVBlaDNBT2ZEdzJEcTBBNmVnc2phaGxGZEZQ?=
- =?utf-8?B?U0c5MkM4Q05nU0FnMHd1R3ppU1MrTmhOU2luNFB2SzFyVlF2bms5cWdrcHNw?=
- =?utf-8?B?M1NsaTJPc3VFazZqYnl0UDMrb0FjRlpibnFMYmVoMkVwOThmZ1lGU25qcUZh?=
- =?utf-8?B?KzZNQTVpZ1RpNVg1MVdDMDBlYkgyWHFFSVpScnJlNUN1Z3NodDE5NE5JUm42?=
- =?utf-8?B?QytsUkdBaVFPVkcvOEd4MWJ1WXFFQ1JmZGx5RW4wZlJraUJrNkg4Zjc0Ulha?=
- =?utf-8?B?NlRrSEgyYms2M3AydWV6b1AxcG4wK3pIUTl5MU5mYVpDck5DK2VyQXZKWGsv?=
- =?utf-8?B?SmVCSHAzNzRKTDFwYXM0WTlKaEFrYlNVS3VJeWI0Mk9CRE9ndVJtM3VneDhO?=
- =?utf-8?B?NjRic3NpdzU0bVd0NFUxWEhwUVJERTZkZVNhMjltK1R3SlRGczVLTzU1MVB4?=
- =?utf-8?B?U3RiOWpFblZRY1BTS0Ztcm5FdVRqdS9TZS81blQ4TC9YUEQwUVdabVNtSGtU?=
- =?utf-8?B?UmdJVGpoZ3VMQXdlK2lSZ2FUM051WDZZcm1QNndnUWl3WHJXeFNqV1BaVzhM?=
- =?utf-8?B?SXhuQ0ZYWFJ4clpUTWEyQzBqaGNidEhkL3Zid0JZNXdLTHc3R1cybDNWRlFV?=
- =?utf-8?B?c0lxOWVUWlhpTFpMT21nRlJBYUQzY2NZWnc2QXExTE15d0xYSnNselYyTUpI?=
- =?utf-8?B?b2htMHptbDg3V3R2TXhzcncyY1ptdDR4cTZIZlh2TUcrWjJtVktLVjhlZXcy?=
- =?utf-8?B?TXZFMzZpeUpVaUpMQmEybUU1NjFsSm0xVWs2UE5xbnlsalNabFRlcjFFbnFq?=
- =?utf-8?B?Mzh5SFFEb2FQWTZqQ0tlK0ZUZVRId2h1K0tydWRrSXBGY1BTTm9ZQzh2cjJy?=
- =?utf-8?B?OHQxa0J2MzJhanN0c21QOURobC9ZNXZjdkNTckRuRGwvTEZ2WHIvS3lSV2hQ?=
- =?utf-8?B?cU1DVVhWV2htSlV0dFY4WFpRb3hESmdSU2Q5RVhscjQvUTQzTHlkdXRRQzNN?=
- =?utf-8?B?anB2ZEdTeFlldFRHaDNVeVpoVTVpQWFINHp1QTBsLzRUZTc4NFlhOEduNG05?=
- =?utf-8?B?T2pYdzZBQUtxcDBEVmR5M1RaZUlBU2JmVGt6UUNqMXJHckhndGd5TDcwa1Jm?=
- =?utf-8?B?dUhxV1RQYjRJdkdaT3JNTEJlRTRMa013TWQzMGZMN29UM0w3YVEzWkplMkJP?=
- =?utf-8?B?NXd1RTd0bmN3Mk4vbzdqZ1VFdmJKc0ZGWDE4TkFWVS9JWXUwTUxxY0hmaEht?=
- =?utf-8?B?VzdKbEpnd2JUTHhTU0hqVmk3eHNaVGNLZzEwd0U0M3RUN2NyRnpsd3JyZkZu?=
- =?utf-8?B?dEQ2ZXY0Ni8rWUFxc3dRZi9rWkJwRnVjMTNvbHF1MTNIT1ZuMjk4L3VEN1VL?=
- =?utf-8?B?L2xKeUlWRE45Ukh2cTIrV000dm9yaWUvZDZaY2Y5eDd0ZmpBYzBjYVVlYVRx?=
- =?utf-8?B?VEJWcmpOakw4cVdUS1l2YS9ua0NaeDRleUo0dk4vR1BqQ0pWaXY0UTdIb3B0?=
- =?utf-8?B?ZmpEanJQdCs3TXNHYTVZT3JFcHRMb2FYc0M2TmtYUjJsQWEvK290QTkxZkVt?=
- =?utf-8?B?YjgyVElDcndoakdhVnhZZ0hjV2RMWUVFaVdLVHBtNmV6NEM5VFJvZEhaa1I2?=
- =?utf-8?B?SEtLQlRLT090RUZTeUdIYXd1NHZxZmMvMGZoS21iRjJvV2REcFZ5dFFOd2tM?=
- =?utf-8?B?dHFpOTArTkxjSGNxbUx0a21xOU5KcG4zR0IxRzB5S2hMaEFTWEg1eWRXbEdl?=
- =?utf-8?Q?3sgx5FROJszot?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR11MB5963.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?aWJycG5vbEpTaEgxSWIwK0ZSenVvQWhobnFpSlRtWUxnTVZXNExNYlBTSjEr?=
- =?utf-8?B?T3lUTWo2WFNOemdJQ1NyeENLQXd1WExTN05xNk1qazg2TlkxT3UzRGxwa3F4?=
- =?utf-8?B?VGZnOGxIRVpzNGg1T1gwU2NrS1dPK0kwalNIMks3UEs4ZkZSWUlNM0Q0MjN0?=
- =?utf-8?B?bzZCUitUUXlsbE8rZWJYNENUN280OVJXaldnMkFhT0U2cFRtK2RhS0hmTG04?=
- =?utf-8?B?UVdxckdZb3lsVzYrV2ZFK0VzR0d0STJudHlSQ005OE1QanROeE1qVXowTFda?=
- =?utf-8?B?VTJURElHdWRuNHRYeG0rWVhabmowWHhxQ0NzUUdUZFk0Vk1qUWFITW9uY3Ny?=
- =?utf-8?B?YjN4djVXbitxSVhscVFsTWFjYjloMGpCbGNoU0tjUnh0b2NhTmNSaWNWR2k5?=
- =?utf-8?B?TXduVm9MOUtVWFE2VGRkWjhwTkVrVzJpdG9jaUx1UTJOYzlRUnU1VUNESHE3?=
- =?utf-8?B?Ly83SVRpVG5SK2M5OERoQW94T1JRZ2xpYXhjcnZ5VzV1UnBucERabTNYVDFY?=
- =?utf-8?B?MFVOUG1EL1V4UEFoTTlWTmphN29BTkhvb2U3WG9RNG44ZkJmVWtBTVBzbGJ0?=
- =?utf-8?B?NEI1bnFhRS9WOVVWQ0lZemY5RWhWZWdsUkQreVNuYTFGelRvOU8reTBQMGh6?=
- =?utf-8?B?dDVMTkpndDA3Z3A1MjNLaDEvR1VXNnVhVE4vT2d0U0lqUXJKSTFMN0pLSVky?=
- =?utf-8?B?ajJEaDRXMUFzcGNWend4amVLWmJZMHBlYmxKR1R5Q0FJTW1jZndobEFhRG4v?=
- =?utf-8?B?aXAvUWRZT296bDIzTTBORkdkM0lBbndmV2h2VzFWRG1iaG54dGxxSW1uRFZa?=
- =?utf-8?B?dG02enZ0TklvY2xVK0xmUXdveWNIQXdBVnlvQlNaY29Rb0orajQ0dGlqOC9w?=
- =?utf-8?B?cGlPTit4aXZQY3lqSU1wOUVydXBJYTk4NGduWkhpRkhqb1FCalpCWFhVaUVs?=
- =?utf-8?B?SnlkZi9yUHJXbHJaZi9XYnNRZWFqZ3hpRUs5bVpheXFpWExrNXkwc3doT3pt?=
- =?utf-8?B?dGRyV0RqRmlpMFNjWm9jQ2hYTERBTVh0UWswc0pBekhIL0l4YnJySGN4WUVa?=
- =?utf-8?B?VUxXbHhKaTg3andhQnRScU1ZZ0dlNkVnaVFmOGFmZ1Y5ZEtGWDkxQ0VGOUU1?=
- =?utf-8?B?L1FBMFZ4cWN5ZzR4QjJoYks5aUZzSE1JQzdod2NRVFdJbjl0bUxRMm1IREx1?=
- =?utf-8?B?R1F3UndpL3AyNk9ldUdtS1g1UEgwUTQxSEpCenJrODdiWTFWM3Q4dytPTVQ1?=
- =?utf-8?B?bURtYWUxMUN0Z3ZmallUTmdUUEdQc0gySmxGV0x1NmZaK0lEeXVseDJEOWhN?=
- =?utf-8?B?dDBSci9BZm1sOWd6ekhYY2dHTDlzQWIxa2FaMWVEM0YrcHEvYmRDZU9PUzN5?=
- =?utf-8?B?b3pXMnVhZjdzaFRWSVFnNVRKdFdOTk5za3RMWStzeTk1MzNnaE5rRDdRaDNw?=
- =?utf-8?B?cjdXbTVRSWNlOGl1ZWl0MGx6dDhXcWh0RnJhZElkc0xKVWMyTjhzR00zdXZw?=
- =?utf-8?B?N0U4cWFIQlhsNEpzbVppbnhEUUIvL0c4cXBrYkVtUENjNXg4ZjF4MmQ5OWR3?=
- =?utf-8?B?N1NUVlZBd1hGaVNJelJOZVl4WGJQOGxWZnFRc0pMZktiaVF5ZWhHWGFSQkNa?=
- =?utf-8?B?a3UwY0ljWmRIZThKWU9WdkU1NUkrUVA5N0RsRVVjRXFKMThiWlJWeW5KSEpa?=
- =?utf-8?B?OFdLTXoxeW1IYm1jb0ltK2NMWk9udjBNeWRadU92ZW5FNGdCQ2JyTDZQQ09U?=
- =?utf-8?B?di9YR1liTTJIczJiZjQyOTBuTFBDMC9hTThlZERJZFBiNUhYRkpYMk5uV3NH?=
- =?utf-8?B?MWQ2RkgxLzRqN0VoUVRvMUhGOEh1RkVjZ2lURVJPNHFBS3BmTjJjRTRWZmda?=
- =?utf-8?B?QXV1SHpzYmQxWVRMUG5NdHYxZyt4SzFKSHozK2YwckdJTEJNUWJ0WXlCRUdp?=
- =?utf-8?B?Y1ZhNTcvcjRoakMvR3VMUjNKUk5PYnpab2loZ1Z3am9kYkdaL1RXM2dqb2ZK?=
- =?utf-8?B?RVdIWDhYUFpZN1lnREV4ZUNLV243VFBkY2d4UGZSRjFXcThtUDRkNUY0U1Z4?=
- =?utf-8?B?Z2hVTXVyWWlOMkVBc1QwYmtxMDZWYlAzV3ZieW5MZnVWczhTNTZyalFDWDJG?=
- =?utf-8?B?M3BWbzlJem5pRllBU3RaZVVyU0ZTR3h4U0I2VGlvdGg5MEtOalV0OS9wYkpi?=
- =?utf-8?B?dkE9PQ==?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <67E8BEDBAC107244970D52ED42003C1C@namprd11.prod.outlook.com>
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 518B913D52E;
+	Tue,  5 Nov 2024 18:26:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730831208; cv=none; b=mz0jpZYvRpK5qhq+JlmSFt8d//YEFbhzlNZtFMyTDEjho4QAnMZ4cfdnnP/RpBOaRmJ9fUm1arqmQCNEyLjvdmQ1cQrGQVHt1qAhvDt04HrmHXLZkRC3qry1FLwpfoqwkme+kUgqDG7kh8+aeYhBr1zt4yUArhXvm5+O0H+8EuI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730831208; c=relaxed/simple;
+	bh=s/ok7RlS+mJErotsBPLDnqKuqlF7QgE2zIdrVnxWRRw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=SDdGzlWLhbxAhASJUAH2r6J0pGjkt+UiZfcuX2Ehq5Ok1ZsDd2Y3IMvF2p699Pt/893Tr+GVEY8C2GX5iKFCMpuVXi8MWeGn4/4GmzG9p1xZT0VWDa+h+mGNcBMl9G2O2ld8enk+PYaJEnLgFGxdlA0lZusoeB8ZhXT5b+7EJc4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Nx5SRhkF; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A5A8wTc003865;
+	Tue, 5 Nov 2024 18:26:43 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	5xefulTTXNRavMjEchFOC6totxRXlXOU4zZbuthZpiA=; b=Nx5SRhkFqznu/ODy
+	K3zO/7+/p67J3fP659JcvD8sOIScx3KhSXUevFIUhXy1Fm880ndARvy1/wLnvWeJ
+	8EqA1ZVSd2eAZHD9p14H1cPfWqUedN1/Q+PstsNS7GEKgnq9xVjxUCnYaDKWVHG4
+	2A7Gq5mwKOmTjCRudLHQiLODnqat6GIrhaZRMh3dNTVg1sWqh8Z0hfrDvS/oi36d
+	XFDEK7WQLNoGER2YcsFkJAWqzR7FAqUlr7HYLH2yyTyOBQfRLPdjniaLccoqgqg0
+	RjLfnY8F5ikkSU6tQYJJhrFRVKkgh6Ax3cqiUm/4sthMo76juxaIp/4prxXiefO4
+	SExhjg==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42qhbu9e4b-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 05 Nov 2024 18:26:42 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4A5IQfiM013834
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 5 Nov 2024 18:26:41 GMT
+Received: from [10.71.76.230] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 5 Nov 2024
+ 10:26:41 -0800
+Message-ID: <730a6e17-04f5-41b5-a0d8-7220b8c59b58@quicinc.com>
+Date: Tue, 5 Nov 2024 10:26:40 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: MN0PR11MB5963.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1e83e2e1-1e0d-4848-e69f-08dcfdc733a5
-X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Nov 2024 18:25:18.5978
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: W5myd8sk4bL3WBljmzeJEQDmeYSxqWsUDi/KzeQuiT46uHHF+vnkGUu4uATGBarx7y+e5JokF/Wwajp+jxUnNVVMUKLaqqcqXMmQoHLAxRs=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR11MB4886
-X-OriginatorOrg: intel.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: qrtr/mhi: NULL-deref with in-kernel pd-mapper
+To: Johan Hovold <johan@kernel.org>
+CC: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        Bjorn Andersson
+	<bjorn.andersson@oss.qualcomm.com>,
+        Qiang Yu <quic_qianyu@quicinc.com>,
+        Jeffrey Hugo <quic_jhugo@quicinc.com>,
+        Krishna chaitanya chundru
+	<quic_krichai@quicinc.com>,
+        Konrad Dybcio <konradybcio@kernel.org>, <mhi@lists.linux.dev>,
+        <linux-arm-msm@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <ZyTtVdkCCES0lkl4@hovoldconsulting.com>
+ <da2bc665-5010-4d92-b9ac-7c442859cd10@quicinc.com>
+ <ZymoMlSCQQScpRIZ@hovoldconsulting.com>
+Content-Language: en-US
+From: Chris Lew <quic_clew@quicinc.com>
+In-Reply-To: <ZymoMlSCQQScpRIZ@hovoldconsulting.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: I8u5i-N1nqLVPWuf85eRaaSfDqTqU5P6
+X-Proofpoint-GUID: I8u5i-N1nqLVPWuf85eRaaSfDqTqU5P6
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ mlxlogscore=874 clxscore=1015 priorityscore=1501 adultscore=0 bulkscore=0
+ suspectscore=0 phishscore=0 lowpriorityscore=0 spamscore=0 malwarescore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411050142
 
-T24gTW9uLCAyMDI0LTA1LTA2IGF0IDE3OjMxICswODAwLCBZYW5nLCBXZWlqaWFuZyB3cm90ZToN
-Cj4gPiBBIGRlY2VudCBudW1iZXIgb2YgY29tbWVudHMsIGJ1dCBhbG1vc3QgYWxsIG9mIHRoZW0g
-YXJlIHF1aXRlIG1pbm9yLsKgIFRoZQ0KPiA+IGJpZw0KPiA+IG9wZW4gaXMgaG93IHRvIGhhbmRs
-ZSBzYXZlL3Jlc3RvcmUgb2YgU1NQIGZyb20gdXNlcnNwYWNlLg0KPiA+IA0KPiA+IEluc3RlYWQg
-b2Ygc3Bpbm5pbmcgYSBmdWxsIHYxMCwgbWF5YmUgc2VuZCBhbiBSRkMgZm9yIEtWTV97RyxTfUVU
-X09ORV9SRUcNCj4gPiBpZGVhPw0KPiANCj4gT0ssIEknbGwgc2VuZCBhbiBSRkMgcGF0Y2ggYWZ0
-ZXIgcmVsZXZhbnQgZGlzY3Vzc2lvbiBpcyBzZXR0bGVkLg0KPiANCj4gPiBUaGF0IHdpbGwgbWFr
-ZSBpdCBlYXNpZXIgdG8gcmV2aWV3LCBhbmQgaWYgeW91IGRlbGF5IHYxMSBhIGJpdCwgSSBzaG91
-bGQgYmUNCj4gPiBhYmxlDQo+ID4gdG8gZ2V0IHZhcmlvdXMgc2VyaWVzIGFwcGxpZWQgdGhhdCBo
-YXZlIG1pbm9yIGNvbmZsaWN0cy9kZXBlbmRlbmNpZXMsIGUuZy4NCj4gPiB0aGUNCj4gPiBNU1Ig
-YWNjZXNzIGFuZCB0aGUga3ZtX2hvc3Qgc2VyaWVzLg0KPiBJIGNhbiB3YWl0IHVudGlsIHRoZSBz
-ZXJpZXMgbGFuZGVkIGluIHg4Ni1rdm0gdHJlZS4NCj4gQXBwcmVjaWF0ZWQgZm9yIHlvdXIgcmV2
-aWV3IGFuZCBjb21tZW50cyENCg0KSXQgbG9va3MgbGlrZSB0aGlzIHNlcmllcyBpcyB2ZXJ5IGNs
-b3NlLiBTaW5jZSB0aGlzIHYxMCwgdGhlcmUgd2FzIHNvbWUNCmRpc2N1c3Npb24gb24gdGhlIEZQ
-VSBwYXJ0IHRoYXQgc2VlbWVkIHNldHRsZWQ6DQpodHRwczovL2xvcmUua2VybmVsLm9yZy9sa21s
-LzFjMmZkMDZlLTJlOTctNDcyNC04MGFiLTg2OTVhYTQzMzRlN0BpbnRlbC5jb20vDQoNClRoZW4g
-dGhlcmUgd2FzIGFsc28gc29tZSBkaXNjdXNzaW9uIG9uIHRoZSBzeW50aGV0aWMgTVNSIHNvbHV0
-aW9uLCB3aGljaCBzZWVtZWQNCnByZXNjcmlwdGl2ZSBlbm91Z2g6DQpodHRwczovL2xvcmUua2Vy
-bmVsLm9yZy9rdm0vMjAyNDA1MDkwNzU0MjMuMTU2ODU4LTEtd2VpamlhbmcueWFuZ0BpbnRlbC5j
-b20vDQoNCldlaWppYW5nLCBoYWQgeW91IHN0YXJ0ZWQgYSB2MiBvbiB0aGUgc3ludGhldGljIE1T
-UiBzZXJpZXM/IFdoZXJlIGRpZCB5b3UgZ2V0IHRvDQpvbiBpbmNvcnBvcmF0aW5nIHRoZSBvdGhl
-ciBzbWFsbCB2MTAgZmVlZGJhY2s/DQo=
+
+
+On 11/4/2024 9:08 PM, Johan Hovold wrote:
+> On Mon, Nov 04, 2024 at 04:26:15PM -0800, Chris Lew wrote:
+>> On 11/1/2024 8:01 AM, Johan Hovold wrote:
+> 
+>>> [    8.825593] Unable to handle kernel NULL pointer dereference at virtual
+>>> address 0000000000000034
+>>> .
+> 
+>>> [    9.002030] CPU: 10 UID: 0 PID: 11 Comm: kworker/u48:0 Not tainted 6.12.0-rc5 #4
+>>> [    9.029550] Hardware name: Qualcomm CRD, BIOS 6.0.231221.BOOT.MXF.2.4-00348.1-HAMOA-1 12/21/2023
+>>> [    9.029552] Workqueue: qrtr_ns_handler qrtr_ns_worker [qrtr]
+>>> [    9.061350] pstate: a1400005 (NzCv daif +PAN -UAO -TCO +DIT -SSBS BTYPE=--)
+>>> [    9.061353] pc : mhi_gen_tre+0x44/0x224 [mhi]
+>>> [    9.106931] lr : mhi_gen_tre+0x40/0x224 [mhi]
+>>> [    9.106934] sp : ffff8000800fb7d0
+>>> [    9.106935] x29: ffff8000800fb7d0 x28: ffff6db7852bd000 x27: ffff800082490188
+>>> [    9.120382] dwc3 a000000.usb: Adding to iommu group 5
+>>> [    9.133750]
+>>> [    9.133752] x26: 0000000000000000 x25: ffff6db783e65080 x24: ffff80008248ff88
+>>> [    9.133754] x23: 0000000000000000 x22: ffff80008248ff80 x21: ffff8000800fb890
+>>> [    9.133756] x20: 0000000000000000 x19: 0000000000000002 x18: 000000000005cf20
+>>> [    9.133758] x17: 0000000000000028 x16: 0000000000000000
+>>> [    9.172738]  x15: ffffa5834131fbd0
+>>> [    9.172741] x14: ffffa5834137caf0 x13: 000000000000ce30 x12: ffff6db7808bc028
+>>> [    9.172743] x11: ffffa58341993000 x10: 0000000000000000 x9 : 00000000cf3f2b90
+>>> [    9.172745] x8 : 0000000094e5072b x7 : 00000000000404ce x6 : ffffa5834162cfb0
+>>> [    9.172747] x5 : 000000000000008b x4 : ffffa583419cddf0 x3 : 0000000000000007
+>>> [    9.172750] x2 : 0000000000000000
+>>> [    9.192697]  x1 : 000000000000000a x0 : ffff6db7808bb700
+>>> [    9.192700] Call trace:
+>>> [    9.192701]  mhi_gen_tre+0x44/0x224 [mhi]
+>>> [    9.192704]  mhi_queue+0x74/0x194 [mhi]
+>>> [    9.192706]  mhi_queue_skb+0x5c/0x8c [mhi]
+>>> [    9.210985]  qcom_mhi_qrtr_send+0x6c/0x160 [qrtr_mhi]
+>>> [    9.210989]  qrtr_node_enqueue+0xd0/0x4a0 [qrtr]
+>>> [    9.210992]  qrtr_bcast_enqueue+0x78/0xe8 [qrtr]
+>>> [    9.225530]  qrtr_sendmsg+0x15c/0x33c [qrtr]
+>>> [    9.225532]  sock_sendmsg+0xc0/0xec
+>>> [    9.240436]  kernel_sendmsg+0x30/0x40
+>>> [    9.240438]  service_announce_new+0xbc/0x1c4 [qrtr]
+>>> [    9.240440]  qrtr_ns_worker+0x714/0x794 [qrtr]
+>>> [    9.240441]  process_one_work+0x210/0x614
+>>> [    9.254527]  worker_thread+0x23c/0x378
+>>> [    9.254529]  kthread+0x124/0x128
+>>> [    9.254531]  ret_from_fork+0x10/0x20
+>>> [    9.254534] Code: aa0003f9 aa1b03e0 94001a4d f9401b14 (3940d280)
+>>> [    9.267369] ---[ end trace 0000000000000000 ]---
+>>> [    9.267371] Kernel panic - not syncing: Oops: Fatal exception in interrupt
+>>
+>> Thanks for reporting this.
+> 
+> Thanks for taking a look, Chris.
+> 
+>> I'm not sure the in-kernel pd-mapper should be affecting this path. I
+>> think this is for WLAN since it is the mhi qrtr and I'm not aware of
+>> WLAN needing to listen to the pd-mapper framework.
+> 
+> This function is called for both the WWAN and WLAN on this machine, and
+> it seems like the modem is typically probed first and around the time
+> when I saw the NULL-deref.
+> 
+> [    8.802728] mhi-pci-generic 0005:01:00.0: mhi_gen_tre - buf_info = ffff800080d75000, offsetof(buf_info->used) = 0x34
+> ...
+> [    9.980638] ath12k_pci 0004:01:00.0: mhi_gen_tre - buf_info = ffff800081d35000, offsetof(buf_info->used) = 0x34
+>   
+>> The offset seems to be mapped back to
+>> linux/drivers/bus/mhi/host/main.c:1220, I had some extra debug configs
+>> enabled so not sure the offset is still valid.
+>>
+>> 	WARN_ON(buf_info->used);
+>> 	buf_info->pre_mapped = info->pre_mapped;
+>>
+>> This looks like the null pointer would happen if qrtr tried to send
+>> before mhi_channel_prepare() is called.
+> 
+> I didn't look closely at the code, but I can confirm that the offset of
+> buf_info->used is indeed 0x34, which could indicate that it's the
+> 
+> 	buf_info = buf_ring->wp;
+> 
+> pointer that was NULL.
+> 
+>> I think we have a patch that might fix this, let me dig it up and send
+>> it out.
+> 
+> Would that patch still help?
+> 
+> 	https://lore.kernel.org/lkml/20241104-qrtr_mhi-v1-1-79adf7e3bba5@quicinc.com/
+>
+
+Yea this is the exact patch I had in mind, didnt realize the patch was 
+already sent a while back.
+
+> I naively tried adding a sleep after registering the endpoint, but that
+> is at least not sufficient to trigger the NULL-deref.
+> 
+
+Looking at the callstack, this is broadcasting a NEW_SERVER notification 
+from qrtr_ns. I think you can force this by starting and stopping some 
+qmi service with the added sleep. Do you have tqftpserv or diag-router 
+in your environment? Those will open qmi services, so starting and 
+stopping those will cause the new_server broadcast in qrtr_ns.
+
+> Johan
 
