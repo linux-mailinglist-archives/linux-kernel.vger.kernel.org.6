@@ -1,87 +1,156 @@
-Return-Path: <linux-kernel+bounces-396313-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396315-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91A079BCB60
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 12:14:54 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BBA19BCB67
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 12:15:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8EF7C1C21630
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 11:14:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3128B281147
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 11:15:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 786E41D358D;
-	Tue,  5 Nov 2024 11:14:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3C411C2324;
+	Tue,  5 Nov 2024 11:15:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="StoAN0Jo"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Fma2B8rF"
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A05B21CB53F
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 11:14:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD8491CB53A;
+	Tue,  5 Nov 2024 11:15:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730805288; cv=none; b=j7cwylOUZxUjjvh2GByIzW6ewAFaGUnKSPGEg5M3f7F0vz1XjqfDbtRWik+03xFzPZ6HlxMWnTakvIXRtSNMfCEFpSC+/h6/98wwkveDW7SHDcTFOFwq9YZHjgoBIcZRWN3BrNHaISueCNnVl3WY240fq+X/dVO1/bUtBOuDke8=
+	t=1730805317; cv=none; b=LQJdk3/Z68V3kPYr8OADQoQ5cgw2wwOHUwTGTMUYoSLmOjeGbNqApEspZtGRPrd/Eq0PDpnFdr+dXrVRn1WsNx680VsPXK5kDnXR1jZ0Sb8SgWVvKvrEI/SzOiuSbz5Fx147QMBgYiTbo8FG/4gv5UJQDGMCfVd3u4qlShjkRkM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730805288; c=relaxed/simple;
-	bh=0JOw5uEvPR6a8QkhgQzDXycqZ5MmRpajBRDuZBG/wFA=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=bye41wlVm5aGhLEzuhk6lKQNj9ilYoghgK1T38emyltOCihFwzzNBkgcXxUX5GaRGFA2HxUQ+RnJw9tTWPKr9rmSHKcVEPYfzFbPNS3uSAGGJ+ysV8a5u2+N/3kzwfYNAU8fF3WiRZa/cns6pPPUVxr32lVmlizDVXIOky0+uro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=StoAN0Jo; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-20c714cd9c8so53832015ad.0
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 03:14:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730805287; x=1731410087; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0JOw5uEvPR6a8QkhgQzDXycqZ5MmRpajBRDuZBG/wFA=;
-        b=StoAN0Jor61V6IANyA2RhzVoInAucELW4ZmNSzbIgKymXMlOUJ0n9wjr1mEEQ5JIz4
-         ctuWc2LVnptpivUSu0Cl8wq7RM4hLmHQCcRN2niSAdA8AsUZll0vh8QqXuEDBvlXWvJo
-         9CnSqM5NzKCxGJeAHzkgVkE2/2gxq+f7/jDSLsxxmPCNaxSy18P2aCwrwHyWM8wxpeso
-         5xx3UGYC2KSmElEEkId2hAhcZTKHqvJ42ozxWsV0R0dG75VGaNA/JCcBIn+NvGvk8Nk9
-         Ovr+SXbLtGV3MsU6sUSej8J89TCCC5jnlmSN8b6z/5HT0IE31JRAuo2x7gQ4jHkpyztf
-         i1Og==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730805287; x=1731410087;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0JOw5uEvPR6a8QkhgQzDXycqZ5MmRpajBRDuZBG/wFA=;
-        b=viLaKrEeq8kQ00dGAmUKTjlGS3dRRve8EhFPRr1MZFinoBWk+ad3GQcV59ZxShqCp0
-         aDlyqEbEKKV3ouESq0WdNEJJDGjsrwm34BBf7ITObKfUR5Hnq/TMESPWX1p6OJdCV6FD
-         pFJZ4SguvZyWbL6bPF4ZSmkDRWaQv9P4zJgUvgh8mHSU06G+qerpU0KN55UBidRqc0NB
-         3mt6zg4QboRWwLiSWr13GlgTqIhJddozEn0u53Y/K7Ll2543MwTi1QXRhE9GM+YpONOH
-         u5YNHmuPIty8ycucF0gssCHjUdsLiQWJlnpGuDP/3z0gbmTFRDXA7h5kYV/7m66dvPs2
-         fbMw==
-X-Gm-Message-State: AOJu0Yx6JOOrI27R1UuK7Jj/OZKU/YDUgueJ99uQbPkzsj5YRW1It9v8
-	1O7cBWdsgTfWI9h8/FPVEWJY/jpDiF1VFaAqin2EGVFFU3q1daOVKqRBfuyS
-X-Google-Smtp-Source: AGHT+IEy2443MDdlCWLegjXmp7neEaZjgKTMsMv3CtHhWbTprCQBGFXPUMrdMwLIFRI3Jz7SgN/98Q==
-X-Received: by 2002:a17:902:da91:b0:20c:89b1:e76c with SMTP id d9443c01a7336-2111af6c539mr197032845ad.30.1730805286729;
-        Tue, 05 Nov 2024 03:14:46 -0800 (PST)
-Received: from kernelexploit-virtual-machine.localdomain ([121.185.186.233])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211057d3c3esm75928845ad.245.2024.11.05.03.14.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Nov 2024 03:14:46 -0800 (PST)
-From: Jeongjun Park <aha310510@gmail.com>
-To: syzbot+d4d8c0fd15a0abe39bcf@syzkaller.appspotmail.com
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [net?] KASAN: slab-use-after-free Read in taprio_dump
-Date: Tue,  5 Nov 2024 20:14:42 +0900
-Message-Id: <20241105111442.864442-1-aha310510@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <0000000000000467ea060cc9a24b@google.com>
-References: <0000000000000467ea060cc9a24b@google.com>
+	s=arc-20240116; t=1730805317; c=relaxed/simple;
+	bh=EblLCXndhY7BlXo9nQxU03D0v5JKO7gEA6yL291a3+c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=R/qZbtVoSRAQVfNzt1zsZOOBxJ6xwfyc5gomSHwMplPb9VDYvBzGcifLOGgPiatzBtSbVfinyre/mf0pDDUF5uSAX+6WGE3hobU7M+K81wGgfW1O/DB2fGRehYjpsqudUr/R6xBsGhRHUf/CJhHKQ5jbUeGop7qd8DymbPKaJoQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Fma2B8rF; arc=none smtp.client-ip=198.47.19.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4A5BEoLO077893;
+	Tue, 5 Nov 2024 05:14:50 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1730805290;
+	bh=IDVspZ71dq5KAcHVIgTOcoCEUMJxMrE5sWF08fN2h6M=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=Fma2B8rFAMihl8HSEt6dH/hwvCAhjtKL0pZxJ6P6Sd/SiSnxOMvQ4lwG3q8vaz188
+	 cUNIcr3/59gJcDG263VwRYIO5DeI79gi6YWqz8GFe0gxXlCaV7hJKULF3dmrC0l7Vo
+	 6YOKf5LjSguE/EPmarxXMH0JW/nuUBbdx9LkotI0=
+Received: from DLEE114.ent.ti.com (dlee114.ent.ti.com [157.170.170.25])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4A5BEoHX052462
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Tue, 5 Nov 2024 05:14:50 -0600
+Received: from DLEE107.ent.ti.com (157.170.170.37) by DLEE114.ent.ti.com
+ (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 5
+ Nov 2024 05:14:50 -0600
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE107.ent.ti.com
+ (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Tue, 5 Nov 2024 05:14:50 -0600
+Received: from [10.24.69.25] (danish-tpc.dhcp.ti.com [10.24.69.25])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4A5BEhKc094758;
+	Tue, 5 Nov 2024 05:14:44 -0600
+Message-ID: <9dbaae62-fc18-4f87-a6a9-8226e7266473@ti.com>
+Date: Tue, 5 Nov 2024 16:44:43 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v2 4/4] selftests: hsr: Add test for VLAN
+To: Paolo Abeni <pabeni@redhat.com>, <geliang@kernel.org>,
+        <liuhangbin@gmail.com>, <dan.carpenter@linaro.org>, <jiri@resnulli.us>,
+        <n.zhandarovich@fintech.ru>, <aleksander.lobakin@intel.com>,
+        <lukma@denx.de>, <horms@kernel.org>, <jan.kiszka@siemens.com>,
+        <diogo.ivo@siemens.com>, <shuah@kernel.org>, <kuba@kernel.org>,
+        <edumazet@google.com>, <davem@davemloft.net>, <andrew+netdev@lunn.ch>
+CC: <linux-kselftest@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <netdev@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <srk@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
+        Roger Quadros
+	<rogerq@kernel.org>, <m-malladi@ti.com>
+References: <20241024103056.3201071-1-danishanwar@ti.com>
+ <20241024103056.3201071-5-danishanwar@ti.com>
+ <3e443eb4-d15f-45ff-8b41-a8215fb4032b@redhat.com>
+Content-Language: en-US
+From: MD Danish Anwar <danishanwar@ti.com>
+In-Reply-To: <3e443eb4-d15f-45ff-8b41-a8215fb4032b@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-#syz test git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git 8a7d12d674ac6f2147c18f36d1e15f1a48060edf
+
+
+On 31/10/24 8:11 pm, Paolo Abeni wrote:
+> On 10/24/24 12:30, MD Danish Anwar wrote:
+>> @@ -183,9 +232,21 @@ trap cleanup_all_ns EXIT
+>>  setup_hsr_interfaces 0
+>>  do_complete_ping_test
+>>  
+>> +# Run VLAN Test
+>> +if $vlan; then
+>> +	setup_vlan_interfaces
+>> +	hsr_vlan_ping
+>> +fi
+>> +
+>>  setup_ns ns1 ns2 ns3
+>>  
+>>  setup_hsr_interfaces 1
+>>  do_complete_ping_test
+>>  
+>> +# Run VLAN Test
+>> +if $vlan; then
+>> +	setup_vlan_interfaces
+>> +	hsr_vlan_ping
+>> +fi
+> 
+> The new tests should be enabled by default. Indeed ideally the test
+> script should be able to run successfully on kernel not supporting such
+> feature; you could cope with that looking for the hsr exposed feature
+> and skipping the vlan test when the relevant feature is not present.
+> 
+
+Sure Paolo, I will make the new tests enabled by default. During the
+test I will check the exposed feature `ethtool -k hsr1 | grep
+"vlan-challenged"` and if vlan is not supported, skip the vlan test.
+
+Below will be my API to run VLAN tests,
+
+run_vlan_tests() {
+	vlan_challenged_hsr1=$(ip net exec "$ns1" ethtool -k hsr1 | grep
+"vlan-challenged" | awk '{print $2}')
+	vlan_challenged_hsr2=$(ip net exec "$ns1" ethtool -k hsr2 | grep
+"vlan-challenged" | awk '{print $2}')
+	vlan_challenged_hsr3=$(ip net exec "$ns1" ethtool -k hsr3 | grep
+"vlan-challenged" | awk '{print $2}')
+
+	if [[ "$vlan_challenged_hsr1" = "off" || "$vlan_challenged_hsr2" =
+"off" || "$vlan_challenged_hsr3" = "off" ]]; then
+		setup_vlan_interfaces
+		hsr_vlan_ping
+	else
+		echo "INFO: Not Running VLAN tests as the device does not support VLAN"
+	fi
+}
+
+I will call this function after the ping test.
+Let me know if this looks okay to you.
+
+Thanks for the review.
+
+> Cheers,
+> 
+> Paolo
+> 
+
+-- 
+Thanks and Regards,
+Danish
 
