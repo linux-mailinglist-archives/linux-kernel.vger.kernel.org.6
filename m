@@ -1,82 +1,204 @@
-Return-Path: <linux-kernel+bounces-396372-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396373-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4EB939BCC48
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 13:02:21 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 101C49BCC4B
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 13:03:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 050CB1F21F89
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 12:02:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F7451F2296C
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 12:03:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D38DA1D5143;
-	Tue,  5 Nov 2024 12:02:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 619831D5150;
+	Tue,  5 Nov 2024 12:03:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S5eA6r5t"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="sU199bvU"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C18E1D415C
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 12:02:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6F801420A8;
+	Tue,  5 Nov 2024 12:03:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730808136; cv=none; b=d/Qj7w2xjYz6v2i7iwJ7/88M/LEZISfNAL+Rmzvg+5sIP/T1vops/4fp6T2RC+Hx4OzPAxh15qb7BPVMczBKvKHTG1ODzUTaP3NM/4ovOeSW46tumUqoZkqFgSnPUrs7QbteK8jq34vnrNWWWwddgyFOHUs9p1hfLrM2Ilv9vtU=
+	t=1730808206; cv=none; b=pVfFhjLXvHCJzfc+KrCo8d9sZujbYy9VeMAJHtX8JuOrzHRclGRSqAYIiYdk5Zj10KhWEXkQXYQbP6N2BFGIJIcYfskl4FpD+jIK8k/Jdj5LH2Vfo36etamlGY8/VgGC2LkJISvJuVGVYT3aF3X+DOtC38l4GbTF99bICj65Jto=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730808136; c=relaxed/simple;
-	bh=dUFMlZr7b8qV2tKhZC0tbctZ451Ikp8eBaa7S6BQ3So=;
+	s=arc-20240116; t=1730808206; c=relaxed/simple;
+	bh=f5aR0qCh3iZzX++JCXBR+GL1e5IVYzj03wmplizhTVQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HjQZxe4ckyjEHBzPVpyr15h/wGFVyZ7EjPQ4M3qnLY1J6NKF6SaBh9CyKOlNd5VUjCO3avtMGQcQBiFPCGKa2H4zYKAUUB0qh3BZVo02w6U+1iBYh44ble36ats4qYnYTPmXAT/ZbDDvMoLNH6vLqRWyCjTREMDm1tHPjsozy7Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S5eA6r5t; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56268C4CED0;
-	Tue,  5 Nov 2024 12:02:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730808135;
-	bh=dUFMlZr7b8qV2tKhZC0tbctZ451Ikp8eBaa7S6BQ3So=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=oUee7koRer5UNaKj4pQ8MskLeG2M8pNhhTgJzDbpY3VcwkgyMuDodjv1K5egaxElOpYTtFLmO5k2jtoyZ9o5tJ5NM8SU5WvrdSwSNvHYn3HYCzoAzKL05Hgkf4rLD+KP2/5xkqtJVZBvEgCaQXqr85LkodhFtcUiIhtAi6j/qMc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=sU199bvU; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id A6D824AD;
+	Tue,  5 Nov 2024 13:03:15 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1730808195;
+	bh=f5aR0qCh3iZzX++JCXBR+GL1e5IVYzj03wmplizhTVQ=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=S5eA6r5tDVAfTMUKqun8HB2JXQETiSFeDbHxtfLQTGpmxRTgq/079SUPbqEbz4gOD
-	 fOEANwYT11m81IFgctpvCB5whaK1gXqS8mFCq/Rl5KL+YZSx8ska/60I7o5Q6Tb7cn
-	 gi0CGUIO8C2C/IFPmrofbEc3l1sW/qfin32NlY0S258zpm34Hmu9z+gurZYOYZUqcf
-	 40/2cfShkzZF+/ee9RbtvLF0mOkg9t2pI0dgnFHuRVjhzD4Xeh3bCLahxG+fvGgU4r
-	 liUxDbK7lZoRKnugiejQLjbi3j8w1BO4tmMVAVybaMNbM0fHk3MFjdrhrrqwP9CwYf
-	 8u8lB4MCF2qRA==
-Date: Tue, 5 Nov 2024 13:02:11 +0100
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	Anna-Maria Behnsen <anna-maria@linutronix.de>,
-	John Stultz <jstultz@google.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-	Eric Biederman <ebiederm@xmission.com>,
-	Oleg Nesterov <oleg@redhat.com>
-Subject: Re: [patch V7 01/21] posix-cpu-timers: Correctly update timer status
- in posix_cpu_timer_del()
-Message-ID: <ZyoJQx4e33VtMSFS@2a01cb09803abb1ce3ad97aed0fef98f.ipv6.abo.wanadoo.fr>
-References: <20241105063544.565410398@linutronix.de>
- <20241105064212.974053438@linutronix.de>
+	b=sU199bvU6qrrJwzMHBcEoUuc4zXvxQGJv/Khs+aw0wgoxsE6xo3yFkeLm+oqK1dNK
+	 lUqMvJz3jm7MT6V4B/9ZXPsOQA8ZC2LT/+6OKBIYzcidJHU5n9wphs49rZ85b/UknI
+	 4ZI/sHt7/Dgp10bJaLBQRrAAqUMODJCEJpSWy/MQ=
+Date: Tue, 5 Nov 2024 14:03:15 +0200
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Ricardo Ribalda <ribalda@chromium.org>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+	Sergey Senozhatsky <senozhatsky@chromium.org>
+Subject: Re: [PATCH v2] media: uvcvideo: Fix crash during unbind if gpio unit
+ is in use
+Message-ID: <20241105120315.GP27775@pendragon.ideasonboard.com>
+References: <20241105-uvc-crashrmmod-v2-1-547ce6a6962e@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241105064212.974053438@linutronix.de>
+In-Reply-To: <20241105-uvc-crashrmmod-v2-1-547ce6a6962e@chromium.org>
 
-Le Tue, Nov 05, 2024 at 09:14:29AM +0100, Thomas Gleixner a écrit :
-> If posix_cpu_timer_del() exits early due to task not found or sighand
-> invalid, it fails to clear the state of the timer. That's harmless but
-> inconsistent.
-> 
-> These early exits are accounted as successful delete. Move the update of
-> the timer state into the success return path, so all "successful" deletions
-> are handled.
-> 
-> Reported-by: Frederic Weisbecker <frederic@kernel.org>
-> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Hi Ricardo,
 
-Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
+Thank you for the patch.
+
+On Tue, Nov 05, 2024 at 10:53:59AM +0000, Ricardo Ribalda wrote:
+> We used the wrong device for the device managed functions. We used the
+> usb device, when we should be using the interface device.
+> 
+> If we unbind the driver from the usb interface, the cleanup functions
+> are never called. In our case, the IRQ is never disabled.
+> 
+> If an IRQ is triggered, it will try to access memory sections that are
+> already free, causing an OOPS.
+
+The commit message should explain why you're switching away from
+devm_request_threaded_irq().
+
+> 
+> Luckily this bug has small impact, as it is only affected by devices
+> with gpio units and the user has to unbind the device, a disconnect will
+> not trigger this error.
+> 
+> Cc: stable@vger.kernel.org
+> Fixes: 2886477ff987 ("media: uvcvideo: Implement UVC_EXT_GPIO_UNIT")
+> Reviewed-by: Sergey Senozhatsky <senozhatsky@chromium.org>
+> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+> ---
+> Changes in v2: Thanks to Laurent.
+> - The main structure is not allocated with devres so there is a small
+>   period of time where we can get an irq with the structure free. Do not
+>   use devres for the IRQ.
+> - Link to v1: https://lore.kernel.org/r/20241031-uvc-crashrmmod-v1-1-059fe593b1e6@chromium.org
+> ---
+>  drivers/media/usb/uvc/uvc_driver.c | 28 +++++++++++++++++++++-------
+>  drivers/media/usb/uvc/uvcvideo.h   |  1 +
+>  2 files changed, 22 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/media/usb/uvc/uvc_driver.c b/drivers/media/usb/uvc/uvc_driver.c
+> index a96f6ca0889f..af6aec27083c 100644
+> --- a/drivers/media/usb/uvc/uvc_driver.c
+> +++ b/drivers/media/usb/uvc/uvc_driver.c
+> @@ -1295,14 +1295,14 @@ static int uvc_gpio_parse(struct uvc_device *dev)
+>  	struct gpio_desc *gpio_privacy;
+>  	int irq;
+>  
+> -	gpio_privacy = devm_gpiod_get_optional(&dev->udev->dev, "privacy",
+> +	gpio_privacy = devm_gpiod_get_optional(&dev->intf->dev, "privacy",
+>  					       GPIOD_IN);
+>  	if (IS_ERR_OR_NULL(gpio_privacy))
+>  		return PTR_ERR_OR_ZERO(gpio_privacy);
+>  
+>  	irq = gpiod_to_irq(gpio_privacy);
+>  	if (irq < 0)
+> -		return dev_err_probe(&dev->udev->dev, irq,
+> +		return dev_err_probe(&dev->intf->dev, irq,
+>  				     "No IRQ for privacy GPIO\n");
+>  
+>  	unit = uvc_alloc_new_entity(dev, UVC_EXT_GPIO_UNIT,
+> @@ -1329,15 +1329,28 @@ static int uvc_gpio_parse(struct uvc_device *dev)
+>  static int uvc_gpio_init_irq(struct uvc_device *dev)
+>  {
+>  	struct uvc_entity *unit = dev->gpio_unit;
+> +	int ret;
+>  
+>  	if (!unit || unit->gpio.irq < 0)
+>  		return 0;
+>  
+> -	return devm_request_threaded_irq(&dev->udev->dev, unit->gpio.irq, NULL,
+> -					 uvc_gpio_irq,
+> -					 IRQF_ONESHOT | IRQF_TRIGGER_FALLING |
+> -					 IRQF_TRIGGER_RISING,
+> -					 "uvc_privacy_gpio", dev);
+> +	ret = request_threaded_irq(unit->gpio.irq, NULL, uvc_gpio_irq,
+> +				   IRQF_ONESHOT | IRQF_TRIGGER_FALLING |
+> +				   IRQF_TRIGGER_RISING,
+> +				   "uvc_privacy_gpio", dev);
+> +
+> +	if (!ret)
+> +		dev->gpio_unit->gpio.inited = true;
+
+		unit->gpio.inited = true;
+
+> +
+> +	return ret;
+> +}
+> +
+> +static void uvc_gpio_cleanup(struct uvc_device *dev)
+> +{
+> +	if (!dev->gpio_unit || !dev->gpio_unit->gpio.inited)
+> +		return;
+> +
+> +	free_irq(dev->gpio_unit->gpio.irq, dev);
+>  }
+>  
+>  /* ------------------------------------------------------------------------
+> @@ -1880,6 +1893,7 @@ static void uvc_delete(struct kref *kref)
+>  	struct uvc_device *dev = container_of(kref, struct uvc_device, ref);
+>  	struct list_head *p, *n;
+>  
+> +	uvc_gpio_cleanup(dev);
+
+This belongs to uvc_unregister_video(), or you'll have a race between
+the release of the GPIO happening after .disconnect() returns, and
+uvc_gpio_event() calling gpiod_get_value_cansleep().
+
+I understand the desire to get such a fix merged quickly, but taking
+time to think about race conditions instead of speeding up to get a
+patch out of the door would be better. The alternative where I have to
+flag race conditions multiple times during review is slower, and is more
+work for everybody.
+
+>  	uvc_status_cleanup(dev);
+>  	uvc_ctrl_cleanup_device(dev);
+>  
+> diff --git a/drivers/media/usb/uvc/uvcvideo.h b/drivers/media/usb/uvc/uvcvideo.h
+> index 07f9921d83f2..376cd670539b 100644
+> --- a/drivers/media/usb/uvc/uvcvideo.h
+> +++ b/drivers/media/usb/uvc/uvcvideo.h
+> @@ -234,6 +234,7 @@ struct uvc_entity {
+>  			u8  *bmControls;
+>  			struct gpio_desc *gpio_privacy;
+>  			int irq;
+> +			bool inited;
+
+As Sakari, I also prefer "initialized". Another option to save a few
+bytes of memory here is to set irq to -1 when request_threaded_irq()
+fails and test that in uvc_gpio_cleanup().
+
+>  		} gpio;
+>  	};
+>  
+> 
+> ---
+> base-commit: c7ccf3683ac9746b263b0502255f5ce47f64fe0a
+> change-id: 20241031-uvc-crashrmmod-666de3fc9141
+
+-- 
+Regards,
+
+Laurent Pinchart
 
