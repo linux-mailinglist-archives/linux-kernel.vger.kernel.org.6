@@ -1,267 +1,174 @@
-Return-Path: <linux-kernel+bounces-395738-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395737-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 719F99BC240
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 02:01:25 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6783B9BC23E
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 01:58:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D48A1C22644
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 01:01:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E7BD61F2296C
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 00:58:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C8B717583;
-	Tue,  5 Nov 2024 01:01:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3125C17C8B;
+	Tue,  5 Nov 2024 00:58:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="E16od+dL"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="RxYvmMZO"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D25954C97
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 01:01:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3D4CDF5C;
+	Tue,  5 Nov 2024 00:58:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730768479; cv=none; b=MJalGuhrvqNAijURqPejZf9srGzcRr20EuajZuFG5Mew2RqS6kXKDGTC6BRG+VXCoONxMQFqA3h3ZBkCWVRMPt3Vzi8W9BSDM04sH6WfuIDgZSe6OIfPYb/Ww00rhZS1mj0QxIICOM+3fyOBjzr4AQimhLp22LXUAwGxgO5bhL8=
+	t=1730768308; cv=none; b=Og0lOrrCDxSagWxgMsy6MxgHV3EIBUn2rhh94FWsbPSQCx6oZ7Hqd/c3FGVGPtpz6laifsRho2WkeK/3qPGS+jD5EfhK1TwtSXwVYJN5SGZZpX2xwiQx3zx1C9EO/s6zcgCGCKYTOoavl0u8NcbkwLj/MTtSevI5C7EjohB7zPs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730768479; c=relaxed/simple;
-	bh=6Smu2+pVyEdVlPhPaVJ8lO8x4GnQZiyiM07wNVergK8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Ql3/xd4Zb4WGc6WKfZaehkUApnOqbmE7ClgksqxYMv9h6QHHhWNLpLfMsoFi2psgfSsEw5aaZwgwEp7nfh9lc+Gygmc21Y2N7J9aCveSBLuxrxiIlpXmQTEmB2JKNkNPt6s188+4ZkvPJpUy0HmDWqZhPGcFq2zBNPW2rLkfVVk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=E16od+dL; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730768478; x=1762304478;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version:content-transfer-encoding;
-  bh=6Smu2+pVyEdVlPhPaVJ8lO8x4GnQZiyiM07wNVergK8=;
-  b=E16od+dLrJuaJSazUGP5mSnoTYl7sqYmqe2R+KLPmyzIJCUEM51SjYc0
-   VsO7QAGTX3km+GXrwUOSKYaksM/XG8ZEIdqPbfI07LSJtUtQE819rE0NV
-   bcRs2aMsur4Mj3mZCra0/N/m4Ihxqmr0+iRkXfp0Zqo60qBkKSpjMR/sc
-   /MKZZT8Ua1mYi21e37XntLT7w9/4d3z3JftB+f/UeE64GCGIwu02r579J
-   QJCncCciZUmrJwzSA4IHhG80/NooYctI+H4YbTT3Uqfrru7TJ0iukm+PW
-   WUsSAV43qqpOkMjbb1pVXuE1xa2AC627bJWRiH5NgqAB3zClvBnKmQaOt
-   A==;
-X-CSE-ConnectionGUID: ioZBJYGKTNin70SfS6BGuA==
-X-CSE-MsgGUID: DO4iF+yYTFemuqNieJou2A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="30442044"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="30442044"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2024 17:01:17 -0800
-X-CSE-ConnectionGUID: f3PogGT+TbOvp2DAvmUk/Q==
-X-CSE-MsgGUID: BEiD0mGXTNyRCFv3B3Pkng==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,258,1725346800"; 
-   d="scan'208";a="87754317"
-Received: from yhuang6-desk2.sh.intel.com (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
-  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2024 17:01:13 -0800
-From: "Huang, Ying" <ying.huang@intel.com>
-To: Usama Arif <usamaarif642@gmail.com>
-Cc: Johannes Weiner <hannes@cmpxchg.org>,  Barry Song <21cnbao@gmail.com>,
-  Yosry Ahmed <yosryahmed@google.com>,  akpm@linux-foundation.org,
-  linux-mm@kvack.org,  linux-kernel@vger.kernel.org,  Barry Song
- <v-songbaohua@oppo.com>,  Kanchana P Sridhar
- <kanchana.p.sridhar@intel.com>,  David Hildenbrand <david@redhat.com>,
-  Baolin Wang <baolin.wang@linux.alibaba.com>,  Chris Li
- <chrisl@kernel.org>,  Kairui Song <kasong@tencent.com>,  Ryan Roberts
- <ryan.roberts@arm.com>,  Michal Hocko <mhocko@kernel.org>,  Roman Gushchin
- <roman.gushchin@linux.dev>,  Shakeel Butt <shakeel.butt@linux.dev>,
-  Muchun Song <muchun.song@linux.dev>
-Subject: Re: [PATCH RFC] mm: mitigate large folios usage and swap thrashing
- for nearly full memcg
-In-Reply-To: <3f684183-c6df-4f2f-9e33-91ce43c791eb@gmail.com> (Usama Arif's
-	message of "Mon, 4 Nov 2024 12:13:22 +0000")
-References: <20241027001444.3233-1-21cnbao@gmail.com>
-	<33c5d5ca-7bc4-49dc-b1c7-39f814962ae0@gmail.com>
-	<CAGsJ_4wdgptMK0dDTC5g66OE9WDxFDt7ixDQaFCjuHdTyTEGiA@mail.gmail.com>
-	<e8c6d46c-b8cf-4369-aa61-9e1b36b83fe3@gmail.com>
-	<CAJD7tkZ60ROeHek92jgO0z7LsEfgPbfXN9naUC5j7QjRQxpoKw@mail.gmail.com>
-	<852211c6-0b55-4bdd-8799-90e1f0c002c1@gmail.com>
-	<CAJD7tkaXL_vMsgYET9yjYQW5pM2c60fD_7r_z4vkMPcqferS8A@mail.gmail.com>
-	<c76635d7-f382-433a-8900-72bca644cdaa@gmail.com>
-	<CAJD7tkYSRCjtEwP=o_n_ZhdfO8nga-z-a=RirvcKL7AYO76XJw@mail.gmail.com>
-	<20241031153830.GA799903@cmpxchg.org>
-	<87a5ef8ppq.fsf@yhuang6-desk2.ccr.corp.intel.com>
-	<3f684183-c6df-4f2f-9e33-91ce43c791eb@gmail.com>
-Date: Tue, 05 Nov 2024 08:57:40 +0800
-Message-ID: <87ses67b0b.fsf@yhuang6-desk2.ccr.corp.intel.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1730768308; c=relaxed/simple;
+	bh=8HpIzpr8QQrsiK3rCz7mOPHzonGBwf+dtMEHHOXHVJo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=S1Dk2lkXNCZQBdTtvetPVtWwSBCE+bZTRqf1f7tlnaw1B7BtxkiAFnlnivDxBOVt32cp45pvrSsT7LjVB0i4WeAlwm1KM5LoPq6DB6ZC1YGzPaH9k2lb91s4YTpcpngmzj3oMpxolEpVWXuxt6pOzwn0vqnHslQ26qymvWR9fuY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=RxYvmMZO; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A4LIxSM001479;
+	Tue, 5 Nov 2024 00:58:19 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	thFT9R4zawQwXZDNXsi0vhiGW8TpNWoJBJ1cYQq1QF0=; b=RxYvmMZObB4ufg8q
+	P3WOfZA46hsW6Hv0zDtq9v69t8iGbkXbvebFPGTgtvGZaI+9SEA1IAtXEYRC1JDJ
+	D3EyS1JF3lzVAFafXmG7d25DgzDTOv90N5t8Q/KAZQuqOz1U2yy+YJfNhYiBGAk6
+	DcSWKPBaTAFdYzkb1AxX2Rd08EhYWCDUjre/A4DqQUMLeOo44nqyXZZJXWGUetrF
+	3r1uDejHM5c2IZqGTUvQk7eqQDoJiSiATzoTreyn5/MOo7atGcuCXnjvusWfZgFR
+	RiyQtKoIN1DbsEB0CCyZYT/CTeCNe0FHVmyeGgPMOyQ93YsC0l/Bb80m0P0T08oS
+	awaM0A==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42nd2s5w3n-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 05 Nov 2024 00:58:18 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4A50wHqn028893
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 5 Nov 2024 00:58:17 GMT
+Received: from [10.64.68.153] (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 4 Nov 2024
+ 16:58:13 -0800
+Message-ID: <9591930f-6ead-46d1-9dbb-114f2310f5f4@quicinc.com>
+Date: Tue, 5 Nov 2024 08:58:10 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm64: dts: qcom: Add coresight nodes for QCS615
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        Tingwei Zhang <quic_tingweiz@quicinc.com>,
+        Jinlong Mao
+	<quic_jinlmao@quicinc.com>,
+        Tao Zhang <quic_taozha@quicinc.com>
+References: <20241017030005.893203-1-quic_jiegan@quicinc.com>
+ <69be09ec-e9a5-4fb6-890e-74a65f3ce404@oss.qualcomm.com>
+ <3f90b3d6-9637-47b7-ad8a-ff43cb28ad32@quicinc.com>
+ <e263d461-9e2b-4ffe-8221-cd9ecdd142c9@quicinc.com>
+ <a41e3aeb-43b9-49c0-8243-29a78a3b1602@oss.qualcomm.com>
+Content-Language: en-US
+From: Jie Gan <quic_jiegan@quicinc.com>
+In-Reply-To: <a41e3aeb-43b9-49c0-8243-29a78a3b1602@oss.qualcomm.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 8XpJwqKuY7iMpw8mz6MBWuYrp6i_-Pvz
+X-Proofpoint-GUID: 8XpJwqKuY7iMpw8mz6MBWuYrp6i_-Pvz
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0
+ lowpriorityscore=0 mlxlogscore=999 clxscore=1015 suspectscore=0
+ adultscore=0 priorityscore=1501 bulkscore=0 mlxscore=0 malwarescore=0
+ spamscore=0 impostorscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2409260000 definitions=main-2411050005
 
-Usama Arif <usamaarif642@gmail.com> writes:
 
-> On 04/11/2024 06:42, Huang, Ying wrote:
->> Johannes Weiner <hannes@cmpxchg.org> writes:
->>=20
->>> On Wed, Oct 30, 2024 at 02:18:09PM -0700, Yosry Ahmed wrote:
->>>> On Wed, Oct 30, 2024 at 2:13=E2=80=AFPM Usama Arif <usamaarif642@gmail=
-.com> wrote:
->>>>> On 30/10/2024 21:01, Yosry Ahmed wrote:
->>>>>> On Wed, Oct 30, 2024 at 1:25=E2=80=AFPM Usama Arif <usamaarif642@gma=
-il.com> wrote:
->>>>>>>>> I am not sure that the approach we are trying in this patch is th=
-e right way:
->>>>>>>>> - This patch makes it a memcg issue, but you could have memcg dis=
-abled and
->>>>>>>>> then the mitigation being tried here wont apply.
->>>>>>>>
->>>>>>>> Is the problem reproducible without memcg? I imagine only if the
->>>>>>>> entire system is under memory pressure. I guess we would want the =
-same
->>>>>>>> "mitigation" either way.
->>>>>>>>
->>>>>>> What would be a good open source benchmark/workload to test without=
- limiting memory
->>>>>>> in memcg?
->>>>>>> For the kernel build test, I can only get zswap activity to happen =
-if I build
->>>>>>> in cgroup and limit memory.max.
->>>>>>
->>>>>> You mean a benchmark that puts the entire system under memory
->>>>>> pressure? I am not sure, it ultimately depends on the size of memory
->>>>>> you have, among other factors.
->>>>>>
->>>>>> What if you run the kernel build test in a VM? Then you can limit is
->>>>>> size like a memcg, although you'd probably need to leave more room
->>>>>> because the entire guest OS will also subject to the same limit.
->>>>>>
+
+On 11/4/2024 10:11 PM, Konrad Dybcio wrote:
+> On 28.10.2024 3:53 AM, Jie Gan wrote:
+>>
+>>
+>> On 10/28/2024 8:54 AM, Jie Gan wrote:
+>>>
+>>>
+>>> On 10/26/2024 2:47 AM, Konrad Dybcio wrote:
+>>>> On 17.10.2024 5:00 AM, Jie Gan wrote:
+>>>>> Add following coresight components on QCS615, EUD, TMC/ETF, TPDM, dynamic
+>>>>> Funnel, TPDA, Replicator and ETM.
 >>>>>
->>>>> I had tried this, but the variance in time/zswap numbers was very hig=
-h.
->>>>> Much higher than the AMD numbers I posted in reply to Barry. So found
->>>>> it very difficult to make comparison.
+>>>>> Signed-off-by: Jie Gan <quic_jiegan@quicinc.com>
+>>>>> ---
+>>>>> Already checked by command:dtbs_check W=1.
+>>>>>
+>>>>> Dependencies:
+>>>>> 1. Depends on qcs615 base dtsi change:
+>>>>> https://lore.kernel.org/all/20240926-add_initial_support_for_qcs615- v3-5-e37617e91c62@quicinc.com/
+>>>>> 2. Depends on qcs615 AOSS_QMP change:
+>>>>> https://lore.kernel.org/linux-arm-msm/20241017025313.2028120-4- quic_chunkaid@quicinc.com/
+>>>>> ---
+>>>>>    arch/arm64/boot/dts/qcom/qcs615.dtsi | 1632 ++++++++++++++++++++++++++
+>>>>>    1 file changed, 1632 insertions(+)
+>>>>>
+>>>>> diff --git a/arch/arm64/boot/dts/qcom/qcs615.dtsi b/arch/arm64/boot/ dts/qcom/qcs615.dtsi
+>>>>> index 856b40e20cf3..87cca5de018e 100644
+>>>>> --- a/arch/arm64/boot/dts/qcom/qcs615.dtsi
+>>>>> +++ b/arch/arm64/boot/dts/qcom/qcs615.dtsi
+>>>>> @@ -202,6 +202,18 @@ l3_0: l3-cache {
+>>>>>            };
+>>>>>        };
+>>>>> +    dummy_eud: dummy_sink {
 >>>>
->>>> Hmm yeah maybe more factors come into play with global memory
->>>> pressure. I am honestly not sure how to test this scenario, and I
->>>> suspect variance will be high anyway.
+>>>> Node names (after the ':' and before the '{' signs) can't contain
+>>>> underscores, use '-' instead.
+>>> Sure, will fix it.
+>>>
 >>>>
->>>> We can just try to use whatever technique we use for the memcg limit
->>>> though, if possible, right?
+>>>> [...]
+>>>>
+>>>>> +        stm@6002000 {
+>>>>> +            compatible = "arm,coresight-stm", "arm,primecell";
+>>>>> +            reg = <0x0 0x6002000 0x0 0x1000>,
+>>>>
+>>>> Please pad the non-zero address part to 8 hex digits with leading
+>>>> zeroes, across the board
+>>> Will fix it.
 >>>
->>> You can boot a physical machine with mem=3D1G on the commandline, which
->>> restricts the physical range of memory that will be initialized.
->>> Double check /proc/meminfo after boot, because part of that physical
->>> range might not be usable RAM.
->>>
->>> I do this quite often to test physical memory pressure with workloads
->>> that don't scale up easily, like kernel builds.
->>>
->>>>>>>>> - Instead of this being a large folio swapin issue, is it more of=
- a readahead
->>>>>>>>> issue? If we zswap (without the large folio swapin series) and ch=
-ange the window
->>>>>>>>> to 1 in swap_vma_readahead, we might see an improvement in linux =
-kernel build time
->>>>>>>>> when cgroup memory is limited as readahead would probably cause s=
-wap thrashing as
->>>>>>>>> well.
->>>
->>> +1
->>>
->>> I also think there is too much focus on cgroup alone. The bigger issue
->>> seems to be how much optimistic volume we swap in when we're under
->>> pressure already. This applies to large folios and readahead; global
->>> memory availability and cgroup limits.
->>=20
->> The current swap readahead logic is something like,
->>=20
->> 1. try readahead some pages for sequential access pattern, mark them as
->>    readahead
->>=20
->> 2. if these readahead pages get accessed before swapped out again,
->>    increase 'hits' counter
->>=20
->> 3. for next swap in, try readahead 'hits' pages and clear 'hits'.
->>=20
->> So, if there's heavy memory pressure, the readaheaded pages will not be
->> accessed before being swapped out again (in 2 above), the readahead
->> pages will be minimal.
->>=20
->> IMHO, mTHP swap-in is kind of swap readahead in effect.  That is, in
->> addition to the pages accessed are swapped in, the adjacent pages are
->> swapped in (swap readahead) too.  If these readahead pages are not
->> accessed before swapped out again, system runs into more severe
->> thrashing.  This is because we lack the swap readahead window scaling
->> mechanism as above.  And, this is why I suggested to combine the swap
->> readahead mechanism and mTHP swap-in by default before.  That is, when
->> kernel swaps in a page, it checks current swap readahead window, and
->> decides mTHP order according to window size.  So, if there are heavy
->> memory pressure, so that the nearby pages will not be accessed before
->> being swapped out again, the mTHP swap-in order can be adjusted
->> automatically.
->
-> This is a good idea to do, but I think the issue is that readahead
-> is a folio flag and not a page flag, so only works when folio size is 1.
->
-> In the swapin_readahead swapcache path, the current implementation decides
-> the ra_window based on hits, which is incremented in swap_cache_get_folio
-> if it has not been gotten from swapcache before.
-> The problem would be that we need information on how many distinct pages =
-in
-> a large folio that has been swapped in have been accessed to decide the
-> hits/window size, which I don't think is possible. As once the entire lar=
-ge
-> folio has been swapped in, we won't get a fault.
->
+>>>>
+>>>> This looks like a lot of nodes, all enabled by default. Will this run
+>>>> on a production-fused device?
+>>> Yes, usually Coresight nodes are enabled by default. Those nodes can run on the commercial devices.
+>> Sorry, my last clarification is not clearly. The Coresight nodes are enabled by default for commercial devices(fused), but only part of functions can run with commercial devices because it needs check fuse data before running.
+>>
+>> If we want enable all debug functions related to coresight nodes on commercial devices, we need APDP override(APPS debug policy override) procedure first. The APDP override procedure will override some fuse data to allow debug sessions.
+> 
+> In other words, will a production fused device boot with this patch
+> applied?
+> 
+Yes, a fused device can boot with this patch.
 
-To do that, we need to move readahead flag to per-page from per-folio.
-And we need to map only the accessed page of the folio in page fault
-handler.  This may impact performance.  So, we may only do that for
-sampled folios only, for example, every 100 folios.
+Thanks,
+Jie
 
->>=20
->>> It happens to manifest with THP in cgroups because that's what you
->>> guys are testing. But IMO, any solution to this problem should
->>> consider the wider scope.
->>>
->>>>>>>> I think large folio swapin would make the problem worse anyway. I =
-am
->>>>>>>> also not sure if the readahead window adjusts on memory pressure or
->>>>>>>> not.
->>>>>>>>
->>>>>>> readahead window doesnt look at memory pressure. So maybe the same =
-thing is being
->>>>>>> seen here as there would be in swapin_readahead?
->>>>>>
->>>>>> Maybe readahead is not as aggressive in general as large folio
->>>>>> swapins? Looking at swap_vma_ra_win(), it seems like the maximum ord=
-er
->>>>>> of the window is the smaller of page_cluster (2 or 3) and
->>>>>> SWAP_RA_ORDER_CEILING (5).
->>>>> Yes, I was seeing 8 pages swapin (order 3) when testing. So might
->>>>> be similar to enabling 32K mTHP?
->>>>
->>>> Not quite.
->>>
->>> Actually, I would expect it to be...
->>=20
->> Me too.
->>=20
->>>>>> Also readahead will swapin 4k folios AFAICT, so we don't need a
->>>>>> contiguous allocation like large folio swapin. So that could be
->>>>>> another factor why readahead may not reproduce the problem.
->>>>
->>>> Because of this ^.
->>>
->>> ...this matters for the physical allocation, which might require more
->>> reclaim and compaction to produce the 32k. But an earlier version of
->>> Barry's patch did the cgroup margin fallback after the THP was already
->>> physically allocated, and it still helped.
->>>
->>> So the issue in this test scenario seems to be mostly about cgroup
->>> volume. And then 8 4k charges should be equivalent to a singular 32k
->>> charge when it comes to cgroup pressure.
-
---
-Best Regards,
-Huang, Ying
 
