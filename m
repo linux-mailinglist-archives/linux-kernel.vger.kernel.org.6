@@ -1,117 +1,88 @@
-Return-Path: <linux-kernel+bounces-396190-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396191-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75C4F9BC92A
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 10:31:40 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFFAA9BC92D
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 10:32:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2867D1F2183B
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 09:31:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F08C11C21230
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 09:32:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D84D41D041D;
-	Tue,  5 Nov 2024 09:31:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB1DF1D096F;
+	Tue,  5 Nov 2024 09:31:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="apAa7dD7"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Zm6ldfxw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B44C118132A;
-	Tue,  5 Nov 2024 09:31:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E62C1CEAA0;
+	Tue,  5 Nov 2024 09:31:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730799089; cv=none; b=k1QnV0EzDIaHgo715l9Co1/LS8eXCU9+e2sjwy5CRcaRsyEjvOP6AP8/t7sIJnVsAhy1nRlt3dJbhMOw8bmx9p0HyUSI7+eXHvDmCGDP/Nf8+kKIlCDL/jmOQxiBFEomM8ty0lgASGxIisQNy1cpOs7p5ZopZe2hgtmUOoJWLvg=
+	t=1730799118; cv=none; b=WL5jFjv0qWXvnmHNQYKrdtdQBn757iPgd6tO5RLS6KDp1aFiAi0k0voeS06c9E0dVO7Iq2kgfaeSI6y+qO2xaYJke33aMwH9V1aXzVt3dDrNda0Ny0MLJZiswPrk7hT+xW9GugwM+YmHfQLA0HR+9h3NjCdd7KgUUdWFfZqOYVk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730799089; c=relaxed/simple;
-	bh=E8Wrg5ayvZa1X7I9VwxQLW/VIUYRWfbletUtBdxrlJU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=QaIWKeSFDFUkESsbEdMi1mUxfKQhdDH9zATP+1Lwyl+IRxA9MNjA6WX2Q6puLLoQs2KKj6w+mnoaQ3MAsG+77o304GMSyG0AQ0avayLPETJiiXrK9+g++mr8zejdbYeG/6oxPVf0p7teYc7KAgcqvTyf1VSXzdyHjRrRVR1pd10=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=apAa7dD7; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3807dd08cfcso4411275f8f.1;
-        Tue, 05 Nov 2024 01:31:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730799086; x=1731403886; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=yFdwTboQaaHQXvZmov57W+9Fn/ofMcP+vE6kpCz8Qe8=;
-        b=apAa7dD7NtcBluk5pWK70Zwo42ZM0JnxuZOZvgpx4nZnhJ/g8WBxr+mTyx4p6iK9UZ
-         DoDZo7gGyO96+f7RQ5HvCIlVoEOZ5ucoJAAm3WLyrDvGXJktqo6JRs0QeoWP+I+rg+CW
-         +H+TGKvNz4wuqFLxee1h+20xVHm+k+kv+DsceAjjCQ41Fc6OqeqcH0L64CYCTFoPe7zZ
-         psUeCzh7PN0oz+1Ah9kVOwdxxlcj4FgnfJK8ZfvpmpmW7inVO1/b1a3rZwXUfbjCfsIh
-         P7srsK3wd6HBgqETnliz4UYUGDK/gdSoyQFivnzMAtKhakCpiZGC/dKRv4THiF9TI2Cf
-         P7Rg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730799086; x=1731403886;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=yFdwTboQaaHQXvZmov57W+9Fn/ofMcP+vE6kpCz8Qe8=;
-        b=HGFnkFf3NtpUAQpW3owqli2OtC1/c7nRRshHSlyBfyPlBmNDONZMivQUYcFe6+Vkwm
-         4GAiTL6L7z2VS4SQTLJ8tss6d3gzQiNFcfMTMshm0hRMsRTlMbdSvbeOShtWRJuuIKiz
-         D9v7Cbwn4bFsgBpdr37LimTOH6xBLiWPSVqdBIpM4b4kSVoLTKB0yQ+K5+ZBz4gaCAyS
-         t1RsBFQDXhJ2xaOJNmBAxCUbtrqdBSgci4FKt6AGgpkZ610+J+XCI1ykOzwQ4Ae5nFzW
-         tBufmFLv2wShgz04cTYJCiJh4Ndmx0Bg2wldTGFMxm1SzT8VNUuIf3z6f6jdztyF3GcD
-         VPOQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUP6UBiLpyJNcnRzhVX1Qli4XpUzWDjtLFAqv28h4WyBr+OQbB+7JLgizK68HhF/9i84h7P88yfNroGrtI=@vger.kernel.org, AJvYcCXYe15NW96xvmFpQumPNsU928QMzGAUuaQSeAoIeUlUtiVo+xss7FpVwjHy0UEavobOzZdthxip@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy6A/FZ8N93MTHVfVAHs39eL6HPP9nMVJZ2HKlOAivpErD7p6tk
-	vBhiVEDSmpI9FY7Reb7Zt1f5o96QkBE5eu2QvCLPeR/feADLo7wD
-X-Google-Smtp-Source: AGHT+IH6je/LDrue/yuovRF9FeVPclDA2R/0NSV0hMzJV0D9BP4i35BRYIEX4yarF0FD4RamSioAGw==
-X-Received: by 2002:a5d:6c69:0:b0:37d:7e71:67a0 with SMTP id ffacd0b85a97d-381c7a46788mr17773422f8f.9.1730799085944;
-        Tue, 05 Nov 2024 01:31:25 -0800 (PST)
-Received: from localhost ([194.120.133.65])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381c10d42adsm15458080f8f.40.2024.11.05.01.31.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Nov 2024 01:31:25 -0800 (PST)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Claudiu Manoil <claudiu.manoil@nxp.com>,
-	Vladimir Oltean <vladimir.oltean@nxp.com>,
-	Wei Fang <wei.fang@nxp.com>,
-	Clark Wang <xiaoning.wang@nxp.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	imx@lists.linux.dev,
-	netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] net: enetc: Fix spelling mistake "referencce" -> "reference"
-Date: Tue,  5 Nov 2024 09:31:25 +0000
-Message-Id: <20241105093125.1087202-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1730799118; c=relaxed/simple;
+	bh=wPIGb8hV6N56iKxEiA9YRRsc4R1JZzDisefhuwIws1M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WA1X+j8q16CWIADBVnhXSlfTUJmtDMRncwW9H01Gl87/6tww9RRU334X+a3qGGm222GVwaKsyoUEbNpZyuezH+LpAFvLkAxYMlNNp1LT2ZwhkE11kr6YZOCmuZ2pEF8b7gRx1LT1BIfSX3B1Xwwxxfr37Q6p9tqab+98qVNQb88=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Zm6ldfxw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 685E4C4CED0;
+	Tue,  5 Nov 2024 09:31:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1730799117;
+	bh=wPIGb8hV6N56iKxEiA9YRRsc4R1JZzDisefhuwIws1M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Zm6ldfxwzvWdA9DaRFByGCE5HxEOdTjyVqD/s5bzYtAbw2MTb7z8DIthTVrdSg+CM
+	 QCge7X6VxjzgXzGtyBG7h0T/rSFYNDC6TQOJGhX3dGNlGIQYCmLPeD/ZEwVSOtnNWK
+	 j1v2sd0+zsYl+pp6TAhMmeKPhUUGk19QMeoNQjnc=
+Date: Tue, 5 Nov 2024 10:31:40 +0100
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Raju Rangoju <Raju.Rangoju@amd.com>
+Cc: linux-usb@vger.kernel.org, mathias.nyman@intel.com,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH] usb: xhci: quirk for data loss in ISOC transfers
+Message-ID: <2024110521-thwarting-imagines-567e@gregkh>
+References: <20241105091850.3094-1-Raju.Rangoju@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241105091850.3094-1-Raju.Rangoju@amd.com>
 
-There is a spelling mistake in a dev_err message. Fix it.
+On Tue, Nov 05, 2024 at 02:48:50PM +0530, Raju Rangoju wrote:
+> During the High-Speed Isochronous Audio transfers, xHCI
+> controller on certain AMD platforms experiences momentary data
+> loss. This results in Missed Service Errors (MSE) being
+> generated by the xHCI.
+> 
+> The root cause of the MSE is attributed to the ISOC OUT endpoint
+> being omitted from scheduling. This can happen either when an IN
+> endpoint with a 64ms service interval is pre-scheduled prior to
+> the ISOC OUT endpoint or when the interval of the ISOC OUT
+> endpoint is shorter than that of the IN endpoint. Consequently,
+> the OUT service is neglected when an IN endpoint with a service
+> interval exceeding 32ms is scheduled concurrently (every 64ms in
+> this scenario).
+> 
+> This issue is particularly seen on certain older AMD platforms.
+> To mitigate this problem, it is recommended to adjust the service
+> interval of the IN endpoint to exceed 32ms (interval 8). This
+> adjustment ensures that the OUT endpoint will not be bypassed,
+> even if a smaller interval value is utilized.
+> 
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Raju Rangoju <Raju.Rangoju@amd.com>
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/net/ethernet/freescale/enetc/enetc4_pf.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+What commit id does this fix?  Should it go to stable kernels, and if
+so, how far back?
 
-diff --git a/drivers/net/ethernet/freescale/enetc/enetc4_pf.c b/drivers/net/ethernet/freescale/enetc/enetc4_pf.c
-index 31dbe89dd3a9..fc41078c4f5d 100644
---- a/drivers/net/ethernet/freescale/enetc/enetc4_pf.c
-+++ b/drivers/net/ethernet/freescale/enetc/enetc4_pf.c
-@@ -632,7 +632,7 @@ static int enetc4_pf_netdev_create(struct enetc_si *si)
- 	priv = netdev_priv(ndev);
- 	priv->ref_clk = devm_clk_get_optional(dev, "ref");
- 	if (IS_ERR(priv->ref_clk)) {
--		dev_err(dev, "Get referencce clock failed\n");
-+		dev_err(dev, "Get reference clock failed\n");
- 		err = PTR_ERR(priv->ref_clk);
- 		goto err_clk_get;
- 	}
--- 
-2.39.5
+thanks,
 
+greg k-h
 
