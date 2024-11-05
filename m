@@ -1,194 +1,362 @@
-Return-Path: <linux-kernel+bounces-396271-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396272-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 315DE9BCA7F
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 11:33:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F5089BCA83
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 11:34:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E55D4283C4A
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 10:33:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DD8BE283CA2
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 10:34:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1A5E1D26F6;
-	Tue,  5 Nov 2024 10:33:29 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1B671D2B26;
+	Tue,  5 Nov 2024 10:33:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b="tuft6Ufj"
+Received: from www530.your-server.de (www530.your-server.de [188.40.30.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 993B41632DD
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 10:33:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFE4C1CDA3E;
+	Tue,  5 Nov 2024 10:33:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.40.30.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730802809; cv=none; b=YcHe1PN2zikD/Bb9eswWWWzTIuO5ttxTkLASrCGLWnSUoDFEi9KfEqhCLMi4Cy6EkDUNDIUC58e9Zzw46xXudvYkP0RjvgUXhb7RUaiI6aWDo239AJOKXTmThIU8vDdVmweoTmfK4ypwf8XaYpuq2nhdGAulqYeysACulSB4uXQ=
+	t=1730802827; cv=none; b=BFwjFZxxHmXFSSMa0OATYQEweRz5RNq2yr/tz7UCMBpr3xaVYUu7cRh65CfWIKL+Pm5AIHPy1NQL5jXTU7h7SNFBwuXa51lkgrn6rqvAulo5ikmEp28Zg8uMRJhxKVdpf6it4mJl75VzJkDKIPKgei69SFkSxiToNsas2JU18Vs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730802809; c=relaxed/simple;
-	bh=vcd+8MKaNjr617nFfMj/CbuJ6Hv611apvau7lKEKT8A=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=bwxYrgMHgvqjL0f9y9V0SwwdGabP87yNw39qnwrnf1kdPqjdk9T6QHKXC/MsEKl1XFjpyEA8afBCe4lkx9Xx+8o/5+n4oAi+N4Jib8oXrKeRvWUsGo9uACni155Eg2RoXQJO3TBUYWJFJAv+mDdHRz7UgCaHlgBh2rxZ6KzO0Tg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a4e80ccd1bso44632015ab.2
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 02:33:26 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730802805; x=1731407605;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ps4accwK8MFyZS7r31HFFEbLnDLlSD2Hu+txT1zlB+U=;
-        b=EWd4m8JFZc4hSQ+SjcS1JpKt0T4oY0TaSr3aWkzB5XWDxUDMDC8yqw8zm5W4gIxSzY
-         xZtMFqICpqsiRYjTmS+DpqG1kKR2g9R5hGJ4gR6ZQTZzGwW7NsVCwiX/m5gHiyeWo9Sf
-         GV6t4R8wGh4Aibl8/NZZjCxb22I2cidLJ+D3qn6j9HLmVFXYvvdG6zmo9Y9BBjaFVVR9
-         Bwrhj8R0FvVI5hz5HA3xODis0tzSJktgbcN9UMKmqbhqVQVfCzklnS0QrEYrWrFiqEdg
-         Ixt/DyilzWmRgzdymo8twlMUGNDV19kOWg8rSFx0voItnGWD6Px2BsnJXRnJcN5NrkzT
-         Jzpg==
-X-Forwarded-Encrypted: i=1; AJvYcCWZermyZu0LmkBQbloIyUXP22i7fpJr0vFHX7mFk4jJRjda+EYM+O0hfWKQCtyhMvCPRmTnh2ZuGfpnp0I=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywi8rMtv1r2Tw+uD27knzGzfgF+rwz15uuRvffhkh1DzZr1oMxq
-	H9jVMiA901YKEWBzexZ3Cc5icIJ/rHvIevPBtqsAS6ZjSXj+GeHrHl1JUCdnoGSILYM8HLZhsR+
-	MZHd9ZC634ZlnQI3T5lg4nn6jY525ptElW2/R6+wlYnLB8UCsc55hFsQ=
-X-Google-Smtp-Source: AGHT+IHW1uJPuhL0bulrnJa0+OmryR5+l4xo8SvYAX5TKiDHcUk+kZekmVk8dShkvTIbWeT5WfrOCmsxpZk91o73QgxMZAyVWFlB
+	s=arc-20240116; t=1730802827; c=relaxed/simple;
+	bh=/9OwNXT4wDtjPkJ6nX5NfwP0Hb8sxFz4gy3jIhzwrLg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mprJOKgTMkWcBxon7Luwi7SQ71cRZ3jTnkHdKauuRUbG+BAsZx/gTjYh2+H9uhOxmAnB5ZlkIRtejDsRPaDQPTVp8m0maSC/lMTWq1iN4/PlsWJaNZIP+QmaD5XTxe1BpbQMqYD+pL65vibFRfZPZVSy2tC5XBFTAw4HkpO2VAI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com; spf=pass smtp.mailfrom=geanix.com; dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b=tuft6Ufj; arc=none smtp.client-ip=188.40.30.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=geanix.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=geanix.com;
+	s=default2211; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID; bh=hLqN6GBp0XtIX0OeaoOad30FnloMkED96JI+4XREvMc=; b=tuft6U
+	fjAfVfhulwwaoLYFKNBfLxs546+5iYfk0TMkb0Wta/KeIypynbmDI1nnzPOQ46F1nBl1PsALurCWI
+	gbKdrTlzUSVjx8Dad/5ZRF4THx1JpVS0FNY9O1f3dg92sEBaT2FJ9y6LqZ2hgwdaZmBWHKocH0PHc
+	+7Lt9hpQbMKQ1d1H3gpaUb+DR/FhiK8+eXm4cpmCL6y4D2oihd2mcvyLeYRNwRXplDCjXVqr1Nh9F
+	DjCSuE7dnrMt2IEaKGc2LutmWLi+LLD39aadIL/9e5EWgB24cWg2HcjLrkQ7gt4ShnpxNCM1o3ExO
+	CuRTzZOFNHpAPpj2glE0kaAvuRKg==;
+Received: from sslproxy05.your-server.de ([78.46.172.2])
+	by www530.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <sean@geanix.com>)
+	id 1t8GsQ-000Mkc-JR; Tue, 05 Nov 2024 11:33:34 +0100
+Received: from [185.17.218.86] (helo=Seans-MacBook-Pro.local)
+	by sslproxy05.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <sean@geanix.com>)
+	id 1t8GsP-0005BF-2i;
+	Tue, 05 Nov 2024 11:33:33 +0100
+Date: Tue, 5 Nov 2024 11:33:33 +0100
+From: Sean Nyekjaer <sean@geanix.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Marc Kleine-Budde <mkl@pengutronix.de>, 
+	Vincent Mailhol <mailhol.vincent@wanadoo.fr>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+	Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-can@vger.kernel.org, 
+	netdev@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: can: convert tcan4x5x.txt to DT schema
+Message-ID: <wdn2rtfahf3iu6rsgxm6ctfgft7bawtp6vzhgn7dffd54i72lu@r4v5lizhae57>
+References: <20241104125342.1691516-1-sean@geanix.com>
+ <dq36jlwfm7hz7dstrp3bkwd6r6jzcxqo57enta3n2kibu3e7jw@krwn5nsu6a4d>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:c009:0:b0:3a6:ca09:6d3c with SMTP id
- e9e14a558f8ab-3a6ca0970e1mr58918205ab.23.1730802805428; Tue, 05 Nov 2024
- 02:33:25 -0800 (PST)
-Date: Tue, 05 Nov 2024 02:33:25 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6729f475.050a0220.701a.0019.GAE@google.com>
-Subject: [syzbot] [mm?] BUG: Bad page state in kvm_coalesced_mmio_init
-From: syzbot <syzbot+e985d3026c4fd041578e@syzkaller.appspotmail.com>
-To: akpm@linux-foundation.org, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <dq36jlwfm7hz7dstrp3bkwd6r6jzcxqo57enta3n2kibu3e7jw@krwn5nsu6a4d>
+X-Authenticated-Sender: sean@geanix.com
+X-Virus-Scanned: Clear (ClamAV 0.103.10/27448/Mon Nov  4 10:33:38 2024)
 
-Hello,
+On Tue, Nov 05, 2024 at 10:16:30AM +0100, Krzysztof Kozlowski wrote:
+> On Mon, Nov 04, 2024 at 01:53:40PM +0100, Sean Nyekjaer wrote:
+> > Convert binding doc tcan4x5x.txt to yaml.
+> > 
+> > Signed-off-by: Sean Nyekjaer <sean@geanix.com>
+> > ---
+> > Changes since rfc:
+> 
+> That's a v2. RFC was v1. *ALWAYS*.
+> Try by yourself:
+> b4 diff 20241104125342.1691516-1-sean@geanix.com
+> 
+> Works? No. Should work? Yes.
+> 
+> 
 
-syzbot found the following issue on:
+Ok. Good to know RFC cannot be used...
+Next version would need to be? In order to fix this?
 
-HEAD commit:    59b723cd2adb Linux 6.12-rc6
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=17996587980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=11254d3590b16717
-dashboard link: https://syzkaller.appspot.com/bug?extid=e985d3026c4fd041578e
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-userspace arch: i386
+I have enrolled my patch into b4, next verison will be v2 ;)
 
-Unfortunately, I don't have any reproducer for this issue yet.
+> >   - Tried to re-add ti,tcan4x5x wildcard
+> >   - Removed xceiver and vdd supplies (copy paste error)
+> >   - Corrected max SPI frequency
+> >   - Copy pasted bosch,mram-cfg from bosch,m_can.yaml
+> >   - device-state-gpios and device-wake-gpios only available for tcan4x5x
+> 
+> ...
+> 
+> > +properties:
+> > +  compatible:
+> > +    oneOf:
+> > +      - items:
+> > +          - enum:
+> > +              - ti,tcan4552
+> > +          - const: ti,tcan4x5x
+> > +      - items:
+> > +          - enum:
+> > +              - ti,tcan4553
+> 
+> Odd syntax. Combine these two into one enum.
+> 
+> > +          - const: ti,tcan4x5x
+> > +      - items:
+> 
+> Drop items.
+> 
+> > +          - enum:
+> 
+> ... and drop enum. That's just const or do you already plan to add here
+> entries?
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/202d791be971/disk-59b723cd.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/9bfa02908d87/vmlinux-59b723cd.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/93c8c8740b4d/bzImage-59b723cd.xz
+Honestly I'm struggling a bit with the syntax and I feel the feedback is containing
+a lot of implicit terms :)
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+e985d3026c4fd041578e@syzkaller.appspotmail.com
+Something like:
+properties:
+  compatible:
+    oneOf:
+      - items:
+          - enum:
+              - ti,tcan4552
+              - ti,tcan4x5x
+      - items:
+          - enum:
+              - ti,tcan4553
+              - ti,tcan4x5x
+      - const: ti,tcan4x5x
 
-BUG: Bad page state in process syz.5.504  pfn:61f45
-page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x61f45
-flags: 0xfff00000080204(referenced|workingset|mlocked|node=0|zone=1|lastcpupid=0x7ff)
-raw: 00fff00000080204 0000000000000000 dead000000000122 0000000000000000
-raw: 0000000000000000 0000000000000000 00000000ffffffff 0000000000000000
-page dumped because: PAGE_FLAGS_CHECK_AT_FREE flag(s) set
-page_owner tracks the page as allocated
-page last allocated via order 0, migratetype Unmovable, gfp_mask 0x400dc0(GFP_KERNEL_ACCOUNT|__GFP_ZERO), pid 8443, tgid 8442 (syz.5.504), ts 201884660643, free_ts 201499827394
- set_page_owner include/linux/page_owner.h:32 [inline]
- post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1537
- prep_new_page mm/page_alloc.c:1545 [inline]
- get_page_from_freelist+0x303f/0x3190 mm/page_alloc.c:3457
- __alloc_pages_noprof+0x292/0x710 mm/page_alloc.c:4733
- alloc_pages_mpol_noprof+0x3e8/0x680 mm/mempolicy.c:2265
- kvm_coalesced_mmio_init+0x1f/0xf0 virt/kvm/coalesced_mmio.c:99
- kvm_create_vm virt/kvm/kvm_main.c:1235 [inline]
- kvm_dev_ioctl_create_vm virt/kvm/kvm_main.c:5488 [inline]
- kvm_dev_ioctl+0x12dc/0x2240 virt/kvm/kvm_main.c:5530
- __do_compat_sys_ioctl fs/ioctl.c:1007 [inline]
- __se_compat_sys_ioctl+0x510/0xc90 fs/ioctl.c:950
- do_syscall_32_irqs_on arch/x86/entry/common.c:165 [inline]
- __do_fast_syscall_32+0xb4/0x110 arch/x86/entry/common.c:386
- do_fast_syscall_32+0x34/0x80 arch/x86/entry/common.c:411
- entry_SYSENTER_compat_after_hwframe+0x84/0x8e
-page last free pid 8399 tgid 8399 stack trace:
- reset_page_owner include/linux/page_owner.h:25 [inline]
- free_pages_prepare mm/page_alloc.c:1108 [inline]
- free_unref_folios+0xf12/0x18d0 mm/page_alloc.c:2686
- folios_put_refs+0x76c/0x860 mm/swap.c:1007
- free_pages_and_swap_cache+0x5c8/0x690 mm/swap_state.c:335
- __tlb_batch_free_encoded_pages mm/mmu_gather.c:136 [inline]
- tlb_batch_pages_flush mm/mmu_gather.c:149 [inline]
- tlb_flush_mmu_free mm/mmu_gather.c:366 [inline]
- tlb_flush_mmu+0x3a3/0x680 mm/mmu_gather.c:373
- tlb_finish_mmu+0xd4/0x200 mm/mmu_gather.c:465
- exit_mmap+0x496/0xc40 mm/mmap.c:1926
- __mmput+0x115/0x390 kernel/fork.c:1348
- exit_mm+0x220/0x310 kernel/exit.c:571
- do_exit+0x9b2/0x28e0 kernel/exit.c:926
- do_group_exit+0x207/0x2c0 kernel/exit.c:1088
- __do_sys_exit_group kernel/exit.c:1099 [inline]
- __se_sys_exit_group kernel/exit.c:1097 [inline]
- __x64_sys_exit_group+0x3f/0x40 kernel/exit.c:1097
- x64_sys_call+0x2634/0x2640 arch/x86/include/generated/asm/syscalls_64.h:232
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-Modules linked in:
-CPU: 0 UID: 0 PID: 8442 Comm: syz.5.504 Not tainted 6.12.0-rc6-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
- bad_page+0x176/0x1d0 mm/page_alloc.c:501
- free_page_is_bad mm/page_alloc.c:918 [inline]
- free_pages_prepare mm/page_alloc.c:1100 [inline]
- free_unref_page+0xed0/0xf20 mm/page_alloc.c:2638
- kvm_destroy_vm virt/kvm/kvm_main.c:1327 [inline]
- kvm_put_kvm+0xc75/0x1350 virt/kvm/kvm_main.c:1386
- kvm_vcpu_release+0x54/0x60 virt/kvm/kvm_main.c:4143
- __fput+0x23f/0x880 fs/file_table.c:431
- task_work_run+0x24f/0x310 kernel/task_work.c:239
- exit_task_work include/linux/task_work.h:43 [inline]
- do_exit+0xa2f/0x28e0 kernel/exit.c:939
- do_group_exit+0x207/0x2c0 kernel/exit.c:1088
- __do_sys_exit_group kernel/exit.c:1099 [inline]
- __se_sys_exit_group kernel/exit.c:1097 [inline]
- __ia32_sys_exit_group+0x3f/0x40 kernel/exit.c:1097
- ia32_sys_call+0x2624/0x2630 arch/x86/include/generated/asm/syscalls_32.h:253
- do_syscall_32_irqs_on arch/x86/entry/common.c:165 [inline]
- __do_fast_syscall_32+0xb4/0x110 arch/x86/entry/common.c:386
- do_fast_syscall_32+0x34/0x80 arch/x86/entry/common.c:411
- entry_SYSENTER_compat_after_hwframe+0x84/0x8e
-RIP: 0023:0xf745d579
-Code: Unable to access opcode bytes at 0xf745d54f.
-RSP: 002b:00000000f75afd6c EFLAGS: 00000206 ORIG_RAX: 00000000000000fc
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 0000000000000000
-RDX: 0000000000000000 RSI: 00000000ffffff9c RDI: 00000000f744cff4
-RBP: 00000000f717ae61 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000206 R12: 0000000000000000
-R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
- </TASK>
+Gives:
+/linux/Documentation/devicetree/bindings/net/can/ti,tcan4x5x.example.dtb: can@0: compatible: ['ti,tcan4x5x'] is valid under each of {'items': [{'enum': ['ti,tcan4553', 'ti,tcan4x5x']}], 'type': 'array', 'minItems': 1, 'maxItems': 1}, {'items': [{'const': 'ti,tcan4x5x'}], 'type': 'array', 'minItems': 1, 'maxItems': 1}, {'items': [{'enum': ['ti,tcan4552', 'ti,tcan4x5x']}], 'type': 'array', 'minItems': 1, 'maxItems': 1}
+        from schema $id: http://devicetree.org/schemas/net/can/ti,tcan4x5x.yaml#
+/linux/Documentation/devicetree/bindings/net/can/ti,tcan4x5x.example.dtb: can@0: compatible: 'oneOf' conditional failed, one must be fixed:
+        ['ti,tcan4552', 'ti,tcan4x5x'] is too long
+        'ti,tcan4552' is not one of ['ti,tcan4553', 'ti,tcan4x5x']
+        'ti,tcan4x5x' was expected
+        from schema $id: http://devicetree.org/schemas/net/can/ti,tcan4x5x.yaml#
 
+I can understand the original binding is broken.
+I kinda agree with Marc that we cannot break things for users of this.
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+> 
+> > +              - ti,tcan4x5x
+> > +
+> > +  reg:
+> > +    maxItems: 1
+> > +
+> > +  interrupts:
+> > +    maxItems: 1
+> > +    description: The GPIO parent interrupt.
+> > +
+> > +  clocks:
+> > +    maxItems: 1
+> > +
+> > +  reset-gpios:
+> > +    description: Hardwired output GPIO. If not defined then software reset.
+> > +    maxItems: 1
+> > +
+> > +  device-state-gpios:
+> > +    description: |
+> 
+> Do not need '|' unless you need to preserve formatting.
+> 
+> Didn't you get this comment alerady?
+> 
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+No, but I have removed the '|'
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+> > +      Input GPIO that indicates if the device is in a sleep state or if the
+> > +      device is active. Not available with tcan4552/4553.
+> > +    maxItems: 1
+> > +
+> > +  device-wake-gpios:
+> > +    description: |
+> > +      Wake up GPIO to wake up the TCAN device.
+> > +      Not available with tcan4552/4553.
+> > +    maxItems: 1
+> > +
+> > +  bosch,mram-cfg:
+> > +    description: |
+> > +      Message RAM configuration data.
+> > +      Multiple M_CAN instances can share the same Message RAM
+> > +      and each element(e.g Rx FIFO or Tx Buffer and etc) number
+> > +      in Message RAM is also configurable, so this property is
+> > +      telling driver how the shared or private Message RAM are
+> > +      used by this M_CAN controller.
+> > +
+> > +      The format should be as follows:
+> > +      <offset sidf_elems xidf_elems rxf0_elems rxf1_elems rxb_elems txe_elems txb_elems>
+> > +      The 'offset' is an address offset of the Message RAM where
+> > +      the following elements start from. This is usually set to
+> > +      0x0 if you're using a private Message RAM. The remain cells
+> > +      are used to specify how many elements are used for each FIFO/Buffer.
+> > +
+> > +      M_CAN includes the following elements according to user manual:
+> > +      11-bit Filter	0-128 elements / 0-128 words
+> > +      29-bit Filter	0-64 elements / 0-128 words
+> > +      Rx FIFO 0		0-64 elements / 0-1152 words
+> > +      Rx FIFO 1		0-64 elements / 0-1152 words
+> > +      Rx Buffers	0-64 elements / 0-1152 words
+> > +      Tx Event FIFO	0-32 elements / 0-64 words
+> > +      Tx Buffers	0-32 elements / 0-576 words
+> > +
+> > +      Please refer to 2.4.1 Message RAM Configuration in Bosch
+> > +      M_CAN user manual for details.
+> > +    $ref: /schemas/types.yaml#/definitions/int32-array
+> > +    items:
+> > +      - description: The 'offset' is an address offset of the Message RAM where
+> > +          the following elements start from. This is usually set to 0x0 if
+> > +          you're using a private Message RAM.
+> > +        default: 0
+> > +      - description: 11-bit Filter 0-128 elements / 0-128 words
+> > +        minimum: 0
+> > +        maximum: 128
+> > +      - description: 29-bit Filter 0-64 elements / 0-128 words
+> > +        minimum: 0
+> > +        maximum: 64
+> > +      - description: Rx FIFO 0 0-64 elements / 0-1152 words
+> > +        minimum: 0
+> > +        maximum: 64
+> > +      - description: Rx FIFO 1 0-64 elements / 0-1152 words
+> > +        minimum: 0
+> > +        maximum: 64
+> > +      - description: Rx Buffers 0-64 elements / 0-1152 words
+> > +        minimum: 0
+> > +        maximum: 64
+> > +      - description: Tx Event FIFO 0-32 elements / 0-64 words
+> > +        minimum: 0
+> > +        maximum: 32
+> > +      - description: Tx Buffers 0-32 elements / 0-576 words
+> > +        minimum: 0
+> > +        maximum: 32
+> > +    minItems: 1
+> > +
+> > +  spi-max-frequency:
+> > +    description:
+> > +      Must be half or less of "clocks" frequency.
+> > +    maximum: 18000000
+> > +
+> > +  wakeup-source:
+> > +    $ref: /schemas/types.yaml#/definitions/flag
+> > +    description: |
+> 
+> Do not need '|' unless you need to preserve formatting.
+> 
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+OK
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
+> > +      Enable CAN remote wakeup.
+> > +
+> > +allOf:
+> > +  - $ref: can-controller.yaml#
+> > +  - $ref: /schemas/spi/spi-peripheral-props.yaml#
+> > +  - if:
+> > +      properties:
+> > +        compatible:
+> > +          contains:
+> > +            enum:
+> > +              - ti,tcan4552
+> > +              - ti,tcan4553
+> > +    then:
+> > +      properties:
+> > +        device-state-gpios: false
+> > +        device-wake-gpios: false
+> 
+> Heh, this is a weird binding. It should have specific compatibles for
+> all other variants because above does not make sense. For 4552 one could
+> skip front compatible and use only fallback, right? And then add these
+> properties bypassing schema check. I commented on this already that
+> original binding is flawed and should be fixed, but no one cares then I
+> also don't care.
 
-If you want to undo deduplication, reply with:
-#syz undup
+To me it looks like the example you linked:
+https://elixir.bootlin.com/linux/v5.19/source/Documentation/devicetree/bindings/example-schema.yaml#L223
+
+If you use fallback for a 4552 then it would enable the use of the
+optional pins device-state-gpios and device-wake-gpios. But the chip
+doesn't have those so the hw guys would connect them and they won't
+be in the DT.
+
+Honestly I'm confused :/
+
+> 
+> > +
+> > +required:
+> > +  - compatible
+> > +  - reg
+> > +  - interrupts
+> > +  - clocks
+> > +  - bosch,mram-cfg
+> > +
+> > +additionalProperties: false
+> 
+> Implement feedback. Nothing changed here.
+> 
+
+Uh? feedback?
+
+> > +
+> > +examples:
+> > +  - |
+> > +    #include <dt-bindings/gpio/gpio.h>
+> > +    #include <dt-bindings/interrupt-controller/irq.h>
+> > +
+> > +    spi {
+> > +        #address-cells = <1>;
+> > +        #size-cells = <0>;
+> > +
+> > +        can@0 {
+> > +            compatible = "ti,tcan4x5x";
+> > +            reg = <0>;
+> > +            clocks = <&can0_osc>;
+> > +            pinctrl-names = "default";
+> > +            pinctrl-0 = <&can0_pins>;
+> > +            spi-max-frequency = <10000000>;
+> > +            bosch,mram-cfg = <0x0 0 0 16 0 0 1 1>;
+> > +            interrupt-parent = <&gpio1>;
+> > +            interrupts = <14 IRQ_TYPE_LEVEL_LOW>;
+> > +            device-state-gpios = <&gpio3 21 GPIO_ACTIVE_HIGH>;
+> > +            device-wake-gpios = <&gpio1 15 GPIO_ACTIVE_HIGH>;
+> > +            reset-gpios = <&gpio1 27 GPIO_ACTIVE_HIGH>;
+> > +            wakeup-source;
+> > +        };
+> > +    };
+> > +  - |
+> > +    #include <dt-bindings/gpio/gpio.h>
+> > +    #include <dt-bindings/interrupt-controller/irq.h>
+> > +
+> > +    spi {
+> > +        #address-cells = <1>;
+> > +        #size-cells = <0>;
+> > +
+> > +        can@0 {
+> > +            compatible = "ti,tcan4552","ti,tcan4x5x";
+> 
+> Missing space after ,.
+> 
+
+Added
+
+Thanks for the review.
+
+/Sean
 
