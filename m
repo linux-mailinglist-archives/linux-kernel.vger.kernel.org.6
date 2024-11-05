@@ -1,125 +1,245 @@
-Return-Path: <linux-kernel+bounces-395828-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395831-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5EAA9BC39C
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 04:09:26 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6C149BC3A9
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 04:10:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B3441F22BCB
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 03:09:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0FC5A1C22029
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 03:10:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2615E14D719;
-	Tue,  5 Nov 2024 03:08:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1C3B15CD78;
+	Tue,  5 Nov 2024 03:10:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ONmqnyOe"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="itvJaTGM"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A5EE1420A8
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 03:08:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45B5F15C138
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 03:09:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730776110; cv=none; b=ZUaDB1XuOcW6u+Ixj5NOsebqfmYmhuSyx7mHxM++z+95TtfZNXG/NqOCERMirApgPmXmldchXHIhh6wAny1DBBOy51ETOldxLnTiYUntj38rJyqhVun0Cebz0g7nca+fI/IubtUAiZ40e3I3K5ReWe9EsZtMwvd94ERpzlWj5XA=
+	t=1730776199; cv=none; b=Gw9+cpvplXoN7Cr5fMDyyKJCkcQFvBHRN5yXwk5uE9+jHoHAX44HQM5Ot3Rtxf/seCZHnM52UTr5ZvAgKKFDDXg9HpawnMS+yp6e1Eig8bSopQ5VVYKI9Y3nrVOr7SmNUkqOZvsN6N049x+cH425b//ZfPsZwJ2UAylr5eZFxes=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730776110; c=relaxed/simple;
-	bh=LegS2qPNA21GD4AcjtZ5CBXXSgyiE2Fv9FQCHVrVb8Q=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=fMDMcdd9G+YCmW2tepE2mWO5sXaspmOyI/IsxSjBfFy+lUPJy2/sdkNCiu6MI6I7KU+iVZoBLkPFALBJrs5Gb8E+R7Ws2JYMYdaMzhKRd7fsgrsPMXDtSlgxSw7Q/6h9OtvvoKExgCevQmf4qVaTU0ktANII7sbf+yCvkZrASKo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=ONmqnyOe; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-20c7ee8fe6bso46253455ad.2
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 19:08:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1730776107; x=1731380907; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=euPhqg7viIx2XTAkn9Q5AvVF/uGDGrDQK80Z56OHLio=;
-        b=ONmqnyOepE9VT9V9t4RhQprAYGSYJpRj5DXKs16NQglORyzPxc87N0SAEnGjWI8eIp
-         jNHVHEbfSpWXH2Z0i+toeOIbmzsX5zDaMbRBJJ2tJQU9d0HcGKrz6yZOymZxULySN9ZB
-         g9YJLprudjZyNEqyh/zqtyKtKJynxbz/1h8Mo=
+	s=arc-20240116; t=1730776199; c=relaxed/simple;
+	bh=iJiqEI4jeiISFUYA5z9mrx3IXzLlVPZzv4h1oYlPJgI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SOvu9kqClGurNN/mZ+URWXrgpNdHxVQsAfMHe/UNIRLeWSSy5WkBJHNsLxNB8xbtMcvtiL1ASqvJUEeumvrhL8XqAx/WXmdlqsZfwBOUyRCkdfWpon6u0DyAJoPFlYhptTryzBu1SQsUZIlUiV3haViwJ1L5YsUXl8Ag7YYlbEo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=itvJaTGM; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1730776196;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=e798jqlARNKREu5f9NYLA+kZVVjz8QYT2h6TT0fZ7qY=;
+	b=itvJaTGMvq3pnNwJwXHX235F7FA/TuQiXyXlSYWmuaoHSJVjSrlQnOhXNma497nf6/IavG
+	eqYzJU2UH+BY6fAMGkIVsc1wGQb4kizJBQCSx9DmjuJY5DwS8COUMEMUKPSuI5UsKx9xGV
+	iy+4YvLROVopYnNDFOCFlCCThCLmmzs=
+Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com
+ [209.85.216.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-500-kQrd7KR6OFGilbyia4rAog-1; Mon, 04 Nov 2024 22:09:55 -0500
+X-MC-Unique: kQrd7KR6OFGilbyia4rAog-1
+Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-2e2fc2b1ce1so5100628a91.0
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 19:09:54 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730776107; x=1731380907;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1730776194; x=1731380994;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=euPhqg7viIx2XTAkn9Q5AvVF/uGDGrDQK80Z56OHLio=;
-        b=LAnGSWZAG7EgBBXR6EDcOSK72PqfHXBooaAtS6LBr5HMFH9uRhIUjNw20vCDlUcTN7
-         v8tZL6w2M7QaA3ID/3wO4YWautkt8X3g8E8t2xAMCCppCbvlvOl+ixaHYQvGsn/t6olY
-         RjoauArsOdMLNWQPr+XGjd/T1PMKrlTYLPv81GoQmmHkxh4DFKQLpSHYSatWSCjNnpgj
-         MExzogNoSJanewByvzpmNws5VMyqVtLlEUN9ZrvCGKLoo8tSz9ZLvQZ9KKmeGlJW6NDG
-         QcvEsDHwMD5uUS6FCKGHEJNpWlLC1kM2XSOqYYh5/C/vo2PlH+1s2v6QK60INWyTClIW
-         OuDw==
-X-Forwarded-Encrypted: i=1; AJvYcCWQrm6aSGle4wzuCqgilPndciYUh+kZax4OF0+KBLcFAWLob6/2UqnUN3y1llLywHXGHHnLaHujI0V7cbI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzVFO1LcjsxmdSlwKUG1JhturyK0nBcCbayUsurPK1MhmnZSe7v
-	xSxIHb2euEprmo70rrSozzb3znTz9nlT2ZCAnd06Y7oIKTL9XZvdROddxYkkBA==
-X-Google-Smtp-Source: AGHT+IGBp3c1Lhzc3e6+qTBBRkT4mBZaYjen82U0w7kAh09SHgIN3F5lnKg4nHiKKOQv7zPeWuvL8A==
-X-Received: by 2002:a17:902:cec4:b0:20c:c834:b107 with SMTP id d9443c01a7336-210c68cc81bmr425323355ad.22.1730776107551;
-        Mon, 04 Nov 2024 19:08:27 -0800 (PST)
-Received: from yuanhsinte.c.googlers.com (176.220.194.35.bc.googleusercontent.com. [35.194.220.176])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211057d8d4dsm67497885ad.270.2024.11.04.19.08.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Nov 2024 19:08:27 -0800 (PST)
-From: Hsin-Te Yuan <yuanhsinte@chromium.org>
-Date: Tue, 05 Nov 2024 03:08:14 +0000
-Subject: [PATCH RESEND v2 4/4] arm64: dts: mediatek: mt8183: willow:
- Support second source touchscreen
+        bh=e798jqlARNKREu5f9NYLA+kZVVjz8QYT2h6TT0fZ7qY=;
+        b=LpgVJGy1UCNc/2XefyiMMkNsRWGFRcj1PvVnRFEjgXJHy2VGLNN2q+lW2FNYhx7PC/
+         uhYwYJgUXtKJcV+IyKjKSe3QcKzvMouaPfIZTDIvfDKqTBSUy6Z8LYHiR2ewd/5Qg3wB
+         lrMhbbPnlRozu3P1IG0DXnp8lQc5bnPP0P1kLWJANgCgThZ93KXpfDRImxsj3deeGHt6
+         snWELU8j5MSaYnrvzZRxzfGkOQsZJYzj8nEvCdkrC3RQjqpQlHXjY/6yOEjCZFrLcDqY
+         9d9CJtY1/hYmXYYKdYClsmpBDRd/f+2Koy4d/sF2L3cp6M/JU3yduuU4h0gPus05D5n7
+         dIWw==
+X-Forwarded-Encrypted: i=1; AJvYcCWxxsOohSYgE3XhQcaZ7zSB0ze7yc9ksJYWoHuDAbedIdhxtyYsW0e9IO/bZVZmg9UPd19s7sJYyaNTBpI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YynXGDqvEsjb/ks85WRg5PfkzA7iXfbUwM6PFfqogcFRpRFhczq
+	bXujmlGYuTYt41iU7OgiAcmtRSsZh321sEkiuO6t5Xpj5RtHbCndkeczlqzhGxdw8t74sYQSGI4
+	KM2AvB6mEacWIHKK7ZWl8UCFCkCfzMC6SKgxRB+CaYSzsu3+gpHM0dcaNmw79vC7CDiQOeOhgLq
+	12RVmAh3GjTQXucSGH2d1Z0Iqvsne+24f5NhJ0
+X-Received: by 2002:a17:90a:bc87:b0:2d3:da6d:8330 with SMTP id 98e67ed59e1d1-2e92ce32e36mr24812065a91.4.1730776193977;
+        Mon, 04 Nov 2024 19:09:53 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGYJVUVsmrlOV42/z3JLwA/lW5WLQWpnOFROwOF4DJyTXxU3SnSQkWNTS+6YVqbPJsVSZBiin0tuQPsU4ebyy8=
+X-Received: by 2002:a17:90a:bc87:b0:2d3:da6d:8330 with SMTP id
+ 98e67ed59e1d1-2e92ce32e36mr24812003a91.4.1730776193416; Mon, 04 Nov 2024
+ 19:09:53 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241105-post-reset-v2-4-c1dc94b65017@chromium.org>
-References: <20241105-post-reset-v2-0-c1dc94b65017@chromium.org>
-In-Reply-To: <20241105-post-reset-v2-0-c1dc94b65017@chromium.org>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- Enric Balletbo i Serra <eballetbo@kernel.org>, 
- Hsin-Yi Wang <hsinyi@chromium.org>, Benjamin Tissoires <bentiss@kernel.org>, 
- Hans de Goede <hdegoede@redhat.com>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
- Hsin-Te Yuan <yuanhsinte@chromium.org>
-X-Mailer: b4 0.15-dev-7be4f
+References: <20241031030847.3253873-1-qiang4.zhang@linux.intel.com>
+ <20241101015101.98111-1-qiang4.zhang@linux.intel.com> <CACGkMEtvrBRd8BaeUiR6bm1xVX4KUGa83s03tPWPHB2U0mYfLA@mail.gmail.com>
+ <ZyRlC-5V_NTKgzXh@dev-qz>
+In-Reply-To: <ZyRlC-5V_NTKgzXh@dev-qz>
+From: Jason Wang <jasowang@redhat.com>
+Date: Tue, 5 Nov 2024 11:09:41 +0800
+Message-ID: <CACGkMEvc+eA7KdJJAtjNPwqve8CwLZYzAmMhf0RWwQ-GwonaUw@mail.gmail.com>
+Subject: Re: [PATCH v2] virtio: only reset device and restore status if needed
+ in device resume
+To: Qiang Zhang <qiang4.zhang@linux.intel.com>
+Cc: "Michael S. Tsirkin" <mst@redhat.com>, Paolo Bonzini <pbonzini@redhat.com>, 
+	Stefan Hajnoczi <stefanha@redhat.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, Jens Axboe <axboe@kernel.dk>, 
+	Olivia Mackall <olivia@selenic.com>, Herbert Xu <herbert@gondor.apana.org.au>, 
+	Amit Shah <amit@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Gonglei <arei.gonglei@huawei.com>, 
+	"David S. Miller" <davem@davemloft.net>, Viresh Kumar <viresh.kumar@linaro.org>, 
+	"Chen, Jian Jun" <jian.jun.chen@intel.com>, Andi Shyti <andi.shyti@kernel.org>, 
+	Andrew Lunn <andrew+netdev@lunn.ch>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, 
+	"Martin K. Petersen" <martin.petersen@oracle.com>, David Hildenbrand <david@redhat.com>, 
+	Gerd Hoffmann <kraxel@redhat.com>, Anton Yakovlev <anton.yakovlev@opensynergy.com>, 
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Qiang Zhang <qiang4.zhang@intel.com>, 
+	virtualization@lists.linux.dev, linux-block@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org, 
+	linux-i2c@vger.kernel.org, netdev@vger.kernel.org, linux-scsi@vger.kernel.org, 
+	linux-sound@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Some willow devices use second source touchscreen.
+On Fri, Nov 1, 2024 at 1:23=E2=80=AFPM Qiang Zhang <qiang4.zhang@linux.inte=
+l.com> wrote:
+>
+> On Fri, Nov 01, 2024 at 10:11:11AM +0800, Jason Wang wrote:
+> > On Fri, Nov 1, 2024 at 9:54=E2=80=AFAM <qiang4.zhang@linux.intel.com> w=
+rote:
+> > >
+> > > From: Qiang Zhang <qiang4.zhang@intel.com>
+> > >
+> > > Virtio core unconditionally reset and restore status for all virtio
+> > > devices before calling restore method. This breaks some virtio driver=
+s
+> > > which don't need to do anything in suspend and resume because they
+> > > just want to keep device state retained.
+> >
+> > The challenge is how can driver know device doesn't need rest.
+>
+> Hi,
+>
+> Per my understanding to PM, in the suspend flow, device drivers need to
+> 1. First manage/stop accesses from upper level software and
+> 2. Store the volatile context into in-memory data structures.
+> 3. Put devices into some low power (suspended) state.
+> The resume process does the reverse.
+> If a device context won't loose after entering some low power state
+> (optional), it's OK to skip step 2.
+>
+> For virtio devices, spec doesn't define whether their states will lost
+> after platform entering suspended state.
 
-Fixes: f006bcf1c972 ("arm64: dts: mt8183: Add kukui-jacuzzi-willow board")
-Signed-off-by: Hsin-Te Yuan <yuanhsinte@chromium.org>
----
- arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-kenzo.dts | 12 ------------
- 1 file changed, 12 deletions(-)
+This is exactly what suspend patch tries to define.
 
-diff --git a/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-kenzo.dts b/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-kenzo.dts
-index 813e6bf65b62ee6742e52133f9adf7e83a6078c5..e8241587949b2bc238ffa85f8fa6b6ca78b1d6f5 100644
---- a/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-kenzo.dts
-+++ b/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-kenzo.dts
-@@ -12,15 +12,3 @@ / {
- 	chassis-type = "laptop";
- 	compatible = "google,juniper-sku17", "google,juniper", "mediatek,mt8183";
- };
--
--&i2c0 {
--	touchscreen@40 {
--		compatible = "hid-over-i2c";
--		reg = <0x40>;
--
--		interrupts-extended = <&pio 155 IRQ_TYPE_LEVEL_LOW>;
--
--		post-power-on-delay-ms = <70>;
--		hid-descr-addr = <0x0001>;
--	};
--};
+> So to work with different
+> hypervisors, virtio drivers typically trigger a reset in suspend/resume
+> flow. This works fine for virtio devices if following conditions are met:
+> - Device state can be totally recoverable.
+> - There isn't any working behaviour expected in suspended state, i.e. the
+>   suspended state should be sub-state of reset.
+> However, the first point may be hard to implement from driver side for so=
+me
+> devices. The second point may be unacceptable for some kind of devices.
+>
+> For your question, for devices whose suspended state is alike reset state=
+,
+> the hypervisor have the flexibility to retain its state or not, kernel
+> driver can unconditionally reset it with proper re-initialization to
+> accomplish better compatibility. For others, hypervisor *must* retain
+> device state and driver just keeps using it.
 
--- 
-2.47.0.199.ga7371fff76-goog
+Right, so my question is how did the driver know the behaviour of a
+device? We usually do that via a feature bit.
+
+Note that the thing that matters here is the migration compatibility.
+
+>
+> >
+> > For example, PCI has no_soft_reset which has been done in the commit
+> > "virtio: Add support for no-reset virtio PCI PM".
+> >
+> > And there's a ongoing long discussion of adding suspend support in the
+> > virtio spec, then driver know it's safe to suspend/resume without
+> > reset.
+>
+> That's great! Hopefully it can fill the gap.
+> Currently, I think we can safely move the reset to drivers' freeze method=
+s,
+> virtio core has no reason to take it as a common action required by all
+> devices. And the reset operation can be optional skipped if driver have
+> hints from device that it can retain state.
+
+The problem here is whether the device can be resumed without "soft
+reset" seems a general feature which could be either the knowledge of
+
+1) virtio core (a feature bit or not)
+
+or
+
+2) transport layer (like PCI)
+
+>
+> >
+> > >
+> > > Virtio GPIO is a typical example. GPIO states should be kept unchange=
+d
+> > > after suspend and resume (e.g. output pins keep driving the output) a=
+nd
+> > > Virtio GPIO driver does nothing in freeze and restore methods. But th=
+e
+> > > reset operation in virtio_device_restore breaks this.
+> >
+> > Is this mandated by GPIO or virtio spec? If yes, let's quote the revela=
+nt part.
+>
+> No. But in actual hardware design (e.g. Intel PCH GPIO), or from the
+> requirement perspective, GPIO pin state can be (should support) retained
+> in suspended state.
+> If Virtio GPIO is used to let VM operate such physical GPIO chip indirect=
+ly,
+> it can't be reset in suspend and resume. Meanwhile the hypervisor will
+> retain pin states after suspension.
+>
+> >
+> > >
+> > > Since some devices need reset in suspend and resume while some needn'=
+t,
+> > > create a new helper function for the original reset and status restor=
+e
+> > > logic so that virtio drivers can invoke it in their restore method
+> > > if necessary.
+> >
+> > How are those drivers classified?
+>
+> I think this depends whether hypervisor will keep devices state in platfo=
+rm
+> suspend process.
+
+So the problem is that the actual implementation (hypervisor, physical
+device or mediation) is transparent to the driver. Driver needs a
+general way to know whether it's safe (or not) to reset during the
+suspend/resume.
+
+> I think hypervisor should because suspend and reset are
+> conceptually two different things.
+
+Probably, but rest is and doing software state load/save is common
+practice for devices that will lose their state during PM.
+
+Thanks
+
+>
+>
+> Thanks
+> Qiang
+>
 
 
