@@ -1,213 +1,169 @@
-Return-Path: <linux-kernel+bounces-396076-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396077-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 630D59BC7A8
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 09:06:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 38F959BC7B6
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 09:09:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 873F71C2163A
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 08:06:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B1B71C21A89
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 08:09:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B696D1FF023;
-	Tue,  5 Nov 2024 08:06:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 973E11FF5E7;
+	Tue,  5 Nov 2024 08:08:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="v4dXqGl2"
-Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GeR9jp0D"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D0851FEFA2
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 08:05:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE0DB1C57B2;
+	Tue,  5 Nov 2024 08:08:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730793960; cv=none; b=u03Ea7E1w5NL+TZzLvbv0Ypv8OLOqL1O8djdBG4i0jJjMdnVUw62VadYrbt4wTCxeTrNd0gdvJA8MbJyOpYWkujvDOCRu8h5RJixsm37Vo86BB7tRe0T7jh55j+HEZXJLKQ7kGLMbLru2i33vu+8weL3crdx/oTFC+06STPX+7k=
+	t=1730794124; cv=none; b=OaSF2cQPNRhwXYA5IoCtu/D0mgY/roxv56GYkmIVZr4kqcBOi6cfv6uxVrEVRpqSn5P+tnZrpFOHcj00t0x+pDgbw45NUG+DZbfpWUiGLlQOvloGdLQaCwoIUyUrRA9CA6EnLKAojzeQ4kNJiojuFxIDyX4Q425i3Bp3oX5ZFtk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730793960; c=relaxed/simple;
-	bh=YPaHXVAA/YI+D7uTy+xljhnWRnN8Gd/dLo79RfZ+upo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NY3H5N1oOJsLuO5qs4d7rnLhKGNLnnaL140xX6kQMYLvqQmYRGeZabokmjYk2WexM4SC9fN+wph3Fiw+sb2G7akjiWUEinz1+tkOm6m8/4hPxJlqvYJkr+HxjffbQVf33aXPRW9HvRE9MvHnoQT1BbYF2WBE7jaxnDlZD/OdfCk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=v4dXqGl2; arc=none smtp.client-ip=185.125.188.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com [209.85.221.70])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 144873F2A9
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 08:05:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1730793955;
-	bh=ZOwmbvypNY7SJx9qJfB/HL5HYlEP7KynRr9HfRBtRvU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type;
-	b=v4dXqGl2mHKuufvIYUoIw9WiiPrEgTQYcoC1Xk64569BVYZnOxrMNH7cMYNCbgspB
-	 pdRnJNZCbbJQ+XOwBUd3zHb5DqrkHmKSXJVlqZo10KpbM+ByHkTolYbiP7izfP8DLu
-	 zs75yF3aEwCR4OmKziCvrdqJgRbPhiise7abyDDiY+25X67jyN7r6Rg2hnvXRORT4H
-	 EDWu8STBtsxbBupkTUPINL0PhpawQxeXNaAeOlWuwsa/YgepCIhp03xOrk1/nabb8p
-	 MYoN/hOApdYWPlGCKL2lGw9n5VuOYvLfWNyOUxH3ppSoTpcmgw2sNhnEquUNpWsq0F
-	 KTng4uKNzMCEQ==
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-37d67fe93c6so2874219f8f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 00:05:55 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730793952; x=1731398752;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ZOwmbvypNY7SJx9qJfB/HL5HYlEP7KynRr9HfRBtRvU=;
-        b=dbDhZI1+xh9wqbsy+msyZ9jAFCa+23U/lUf8dtulsVnOl7/pyz84/Vex+klKkK2Y/e
-         JNiOYFqvMuj+QVbY7wK/hwUBXOaUy5rMaWo9+VPAgpzDv4ixJ73XM9Tgi3OjpvpVjIdH
-         Em4yw/NSiIc21wgkkaCBwIoEi5kgcxGw3E6M/B35KWtf9ft92l4w20rQtBKvR3YJNgWO
-         JQWzSqLNJHsWjQKEnGNhAdBzH5bDqUpocn7TK+YJssVZnkzJ7M9GGgnOU+fFp1+seHEk
-         ktbVoEdnpbRCcXPlRulY/VpL3qjvVCK+UejCO7KAIGjadAX2K3EDCadeZtVXRt9mxLNq
-         DSzw==
-X-Forwarded-Encrypted: i=1; AJvYcCXbq4p32L2Cr1Sp8TbjkmU5FPqekEhHX7J2OWDcAa3IksCRk//flq/KS4M4LXudmuwR9KMOIEDt5Dly6K8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxY8cEQByBDvY4Vyif+ld7JJRRem3LXL84jZJvdBkMPpZVgpmtU
-	OqE5GnEEDzA69i9y170uEVb3/qyveYI9Wzrs0y3EDWh6ww4rCxlvrsCROrxglP5GrAbfJvLorIe
-	dMrDJZTeDIk9ItuSfm2di+Ux4+z9ceUuwfYIi56cqrDapuTeFcMmXuPcdsKoFPDV/kn33fc9U5i
-	Jrd5Xve97tB8YQ+nNWgMA9fmyzIzcY+0e9yHYtA2yPNb190RgFgOn1
-X-Received: by 2002:a5d:6c68:0:b0:381:b68f:d14b with SMTP id ffacd0b85a97d-381bea1bfc4mr15826498f8f.45.1730793951682;
-        Tue, 05 Nov 2024 00:05:51 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHX/dSSZILHuK3uVDEXge5/gJUupfGp22dMkdum7U3ygcz4rT9yxy5cRYzjNB2z/aX/ElvjbgmclkkYIl4wslQ=
-X-Received: by 2002:a5d:6c68:0:b0:381:b68f:d14b with SMTP id
- ffacd0b85a97d-381bea1bfc4mr15826465f8f.45.1730793951234; Tue, 05 Nov 2024
- 00:05:51 -0800 (PST)
+	s=arc-20240116; t=1730794124; c=relaxed/simple;
+	bh=dVybQkWmSxoyj1MofMAfodogbPNIcs6eTPaaE0ShWnY=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=hI9ug16a8Ds+gkzN+sewIQhOaNU0SCdlf75DYFUJJu2HIIvDAWIl1hNmMULGXHcJaWYtaTXmABe93GeANfpYYowxcQAHOmwYS/5WCgxR5Q1U3e/nXfi2GYEjc7NZp+HnobIB3FxFywtiLwru5u/E7egMmTMFk1g924zdmnfi4Fk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GeR9jp0D; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 5994FC4CED3;
+	Tue,  5 Nov 2024 08:08:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730794124;
+	bh=dVybQkWmSxoyj1MofMAfodogbPNIcs6eTPaaE0ShWnY=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=GeR9jp0DvXAik3U57DiJEkoWf6UurPcas8la40H39wzxvMSwrstClx0I4YIO7Aew2
+	 nx8ZYnWInFFnHhQELxRB8vQ4SqM2NBJ8RGocQEhrqVJDlVF1yqSJm/BCDB8fQb5YHk
+	 /A3Om1fQLCM08HTh3jMH9F36tA87+S/H4zfQKLmVJQ5TLZiKHKYxAxThf1CmHClu4M
+	 HSsYmABU4w7rCPtSrcEfj/UgJwAuoQYqjVJ9R1G8c8dJURr9cflHNV+Lp2aMv8QcR+
+	 8fyt7i3UYYm3JBaJnxAPArkaUf+OkO/oWOxRfxs3n6VN4K4loVVzX4w7eePQqO1LtC
+	 rdgwjH0UrtuRw==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46FA9D12664;
+	Tue,  5 Nov 2024 08:08:44 +0000 (UTC)
+From: Janne Grunau via B4 Relay <devnull+j.jannau.net@kernel.org>
+Subject: [PATCH v4 0/3] Apple SPI controller driver
+Date: Tue, 05 Nov 2024 09:08:28 +0100
+Message-Id: <20241105-asahi-spi-v4-0-d9734f089fc9@jannau.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240912071702.221128-1-en-wei.wu@canonical.com>
- <20240912113518.5941b0cf@gmx.net> <CANn89iK31kn7QRcFydsH79Pm_FNUkJXdft=x81jvKD90Z5Y0xg@mail.gmail.com>
- <CAMqyJG1W1ER0Q_poS7HQhsogxr1cBo2inRmyz_y5zxPoMtRhrA@mail.gmail.com>
- <CANn89iJ+ijDsTebhKeviXYyB=NQxP2=srpZ99Jf677+xTe7wqg@mail.gmail.com>
- <CAMqyJG1aPBsRFz1XK2JvqY+QUg2HhxugVXG1ZaF8yKYg=KoP3Q@mail.gmail.com>
- <CANn89i+4c0iLXXjFpD1OWV7OBHr5w4S975MKRVB9VU2L-htm4w@mail.gmail.com>
- <CAMqyJG2MqU46jRC1NzYCUeJ45fiP5Z5nS78Mi0FLFjbKbLVrFg@mail.gmail.com> <CAMqyJG0DYVaTXHxjSH8G8ZPRc=2aDB0SZVhoPf2MXpiNT1OXxA@mail.gmail.com>
-In-Reply-To: <CAMqyJG0DYVaTXHxjSH8G8ZPRc=2aDB0SZVhoPf2MXpiNT1OXxA@mail.gmail.com>
-From: En-Wei WU <en-wei.wu@canonical.com>
-Date: Tue, 5 Nov 2024 16:05:40 +0800
-Message-ID: <CAMqyJG2UKG_P5Dbp6t=K98HAhBVHu-iuCrTjUx+NqzUJHTDA0w@mail.gmail.com>
-Subject: Re: [PATCH ipsec v2] xfrm: check MAC header is shown with both
- skb->mac_len and skb_mac_header_was_set()
-To: Eric Dumazet <edumazet@google.com>
-Cc: Peter Seiderer <ps.report@gmx.net>, steffen.klassert@secunet.com, 
-	herbert@gondor.apana.org.au, davem@davemloft.net, kuba@kernel.org, 
-	pabeni@redhat.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	kai.heng.feng@canonical.com, chia-lin.kao@canonical.com, 
-	anthony.wong@canonical.com, kuan-ying.lee@canonical.com, 
-	chris.chiu@canonical.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAHzSKWcC/3WMOw7CMBAFrxJtjZF/wYaKeyCKTbIhS2EiO1igK
+ HfHSQUF5Ty9mRkSRaYEp2qGSJkTP0IBu6ugHTDcSHBXGLTUVnqlBCYcWKSRRe+dlQ26o+sclP8
+ YqefX1rpcCw+cpkd8b+ms13WrKCW/K1kLKdzBoEdvO2/s+Y4h4HMfaII1k81f1RTVNGVu677xV
+ P+oy7J8AP4MY8XeAAAA
+X-Change-ID: 20240811-asahi-spi-f8740ba797d7
+To: Hector Martin <marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>, 
+ Alyssa Rosenzweig <alyssa@rosenzweig.io>, Mark Brown <broonie@kernel.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+ linux-spi@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Janne Grunau <j@jannau.net>, 
+ Nick Chan <towinchenmi@gmail.com>, 
+ Conor Dooley <conor.dooley@microchip.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3311; i=j@jannau.net;
+ s=yk2024; h=from:subject:message-id;
+ bh=dVybQkWmSxoyj1MofMAfodogbPNIcs6eTPaaE0ShWnY=;
+ b=owGbwMvMwCW2UNrmdq9+ahrjabUkhnTNS10XevU7NxYuDXF4oD1r3aXWQzJfnvfrV3A4PHJg+
+ Wt5kmNHRykLgxgXg6yYIkuS9ssOhtU1ijG1D8Jg5rAygQxh4OIUgIm838nIsGpS31nzvbOvrSxo
+ z+2fcMReKujW881Py+wbF82XuvBP4THDH56D2bWr5joo7ps+8dDuBI7i7wxO8y0Xnnqz9Kjbbga
+ fLE4A
+X-Developer-Key: i=j@jannau.net; a=openpgp;
+ fpr=8B336A6BE4E5695E89B8532B81E806F586338419
+X-Endpoint-Received: by B4 Relay for j@jannau.net/yk2024 with auth_id=264
+X-Original-From: Janne Grunau <j@jannau.net>
+Reply-To: j@jannau.net
 
-Hi,
+Hi all,
 
-Can I kindly ask if there is any progress?
+This updated series address the review comments from the original
+submission in 2021 [1]. It adds a new SPI controller driver for Apple
+SoCs and is based on spi-sifive. It has been tested with the generic
+jedec,spi-nor support and with a downstream driver for an Apple specific
+HID over SPI transport.
 
-Thanks,
-Regards.
+As usual, I'm splitting off the MAINTAINERS and DT binding changes.
+We would rather merge the MAINTAINERS change through the Asahi-SoC
+tree to avoid merge conflicts as things trickle upstream, since
+we have other submissions touching that section of the file.
 
-On Fri, 18 Oct 2024 at 21:21, En-Wei WU <en-wei.wu@canonical.com> wrote:
->
-> > Seems like the __netif_receive_skb_core() and dev_gro_receive() are
-> > the places where it calls skb_reset_mac_len() with skb->mac_header =3D
-> > ~0U.
-> I believe it's the root cause.
->
-> My concern is that if we put something like:
-> +       if (!skb_mac_header_was_set(skb)) {
-> +               DEBUG_NET_WARN_ON_ONCE(1);
-> +               skb->mac_len =3D 0;
-> in skb_reset_mac_len(), it may degrade the RX path a bit.
->
-> Catching the bug in xfrm4_remove_tunnel_encap() and
-> xfrm6_remove_tunnel_encap() (the original patch) is nice because it
-> won't affect the systems which are not using the xfrm.
->
-> Kind Regards,
-> En-Wei.
->
-> On Mon, 14 Oct 2024 at 22:06, En-Wei WU <en-wei.wu@canonical.com> wrote:
-> >
-> > Hi, sorry for the late reply.
-> >
-> > I've tested this debug patch (with CONFIG_DEBUG_NET=3Dy) on my machine,
-> > and the DEBUG_NET_WARN_ON_ONCE never got triggered.
-> >
-> > Thanks.
-> >
-> > On Wed, 2 Oct 2024 at 14:59, Eric Dumazet <edumazet@google.com> wrote:
-> > >
-> > > On Wed, Oct 2, 2024 at 12:40=E2=80=AFPM En-Wei WU <en-wei.wu@canonica=
-l.com> wrote:
-> > > >
-> > > > Hi,
-> > > >
-> > > > I would kindly ask if there is any progress :)
-> > >
-> > > Can you now try this debug patch (with CONFIG_DEBUG_NET=3Dy ) :
-> > >
-> > > diff --git a/include/linux/skbuff.h b/include/linux/skbuff.h
-> > > index 39f1d16f362887821caa022464695c4045461493..e0e4154cbeb90474d9263=
-4d505869526c566f132
-> > > 100644
-> > > --- a/include/linux/skbuff.h
-> > > +++ b/include/linux/skbuff.h
-> > > @@ -2909,9 +2909,19 @@ static inline void
-> > > skb_reset_inner_headers(struct sk_buff *skb)
-> > >         skb->inner_transport_header =3D skb->transport_header;
-> > >  }
-> > >
-> > > +static inline int skb_mac_header_was_set(const struct sk_buff *skb)
-> > > +{
-> > > +       return skb->mac_header !=3D (typeof(skb->mac_header))~0U;
-> > > +}
-> > > +
-> > >  static inline void skb_reset_mac_len(struct sk_buff *skb)
-> > >  {
-> > > -       skb->mac_len =3D skb->network_header - skb->mac_header;
-> > > +       if (!skb_mac_header_was_set(skb)) {
-> > > +               DEBUG_NET_WARN_ON_ONCE(1);
-> > > +               skb->mac_len =3D 0;
-> > > +       } else {
-> > > +               skb->mac_len =3D skb->network_header - skb->mac_heade=
-r;
-> > > +       }
-> > >  }
-> > >
-> > >  static inline unsigned char *skb_inner_transport_header(const struct=
- sk_buff
-> > > @@ -3014,11 +3024,6 @@ static inline void
-> > > skb_set_network_header(struct sk_buff *skb, const int offset)
-> > >         skb->network_header +=3D offset;
-> > >  }
-> > >
-> > > -static inline int skb_mac_header_was_set(const struct sk_buff *skb)
-> > > -{
-> > > -       return skb->mac_header !=3D (typeof(skb->mac_header))~0U;
-> > > -}
-> > > -
-> > >  static inline unsigned char *skb_mac_header(const struct sk_buff *sk=
-b)
-> > >  {
-> > >         DEBUG_NET_WARN_ON_ONCE(!skb_mac_header_was_set(skb));
-> > > @@ -3043,6 +3048,7 @@ static inline void skb_unset_mac_header(struct
-> > > sk_buff *skb)
-> > >
-> > >  static inline void skb_reset_mac_header(struct sk_buff *skb)
-> > >  {
-> > > +       DEBUG_NET_WARN_ON_ONCE(skb->data < skb->head);
-> > >         skb->mac_header =3D skb->data - skb->head;
-> > >  }
-> > >
-> > > @@ -3050,6 +3056,7 @@ static inline void skb_set_mac_header(struct
-> > > sk_buff *skb, const int offset)
-> > >  {
-> > >         skb_reset_mac_header(skb);
-> > >         skb->mac_header +=3D offset;
-> > > +       DEBUG_NET_WARN_ON_ONCE(skb_mac_header(skb) < skb->head);
-> > >  }
-> > >
-> > >  static inline void skb_pop_mac_header(struct sk_buff *skb)
+The DT binding change can go via the SPI tree or via ours, but it's
+easier if we merge it, as then we can make the DT changes to
+instantiate it without worrying about DT validation failures depending
+on merge order.
+
+This is mostly Hector's work with a few minor changes to address review
+comments from me.
+
+[1] https://lore.kernel.org/linux-spi/20211212034726.26306-1-marcan@marcan.st/
+
+v2:
+- removed '#address-cells' and '#size-cells' from the bindings and added
+  Rob's Rb:
+- fixed (new) checkpatch warnings
+- added t8112 (M2) SoC
+- shorted long and complex source code lines
+- switch to devm_clk_prepare_enable() and devm_pm_runtime_enable()
+- switch to dev_err_probe() in probe function
+- removed "pdev->dev.dma_mask = NULL;"
+- got rid of apple_spi_remove()
+
+Signed-off-by: Janne Grunau <j@jannau.net>
+---
+Changes in v4:
+- removed the label from example in the bindings
+- really added Rob's Rb: for the bindings added Reviewed/Acked-by: for v3
+- alphabetically sorted #includes
+- removed leftover platform_set_drvdata
+- Link to v3: https://lore.kernel.org/r/20241101-asahi-spi-v3-0-3b411c5fb8e5@jannau.net
+
+Changes in v3:
+- fixed bindings_check warning
+- converted top file comment to C++ style comments
+- dropped verbose dev_err_probe after failed devm_* function
+- stopped setting field in zero initialized struct to 0
+- added error handling for devm_pm_runtime_enable()
+- Link to v2: https://lore.kernel.org/r/20241101-asahi-spi-v2-0-763a8a84d834@jannau.net
+
+Changes in v2:
+- removed '#address-cells' and '#size-cells' from the bindings and added
+  Rob's Rb:
+- fixed (new) checkpatch warnings
+- added t8112 (M2) SoC
+- shorted long and complex source code lines
+- switch to devm_clk_prepare_enable() and devm_pm_runtime_enable()
+- switch to dev_err_probe() in probe function
+- removed "pdev->dev.dma_mask = NULL;"
+- got rid of apple_spi_remove()
+- Link to v1: https://lore.kernel.org/linux-spi/20211212034726.26306-1-marcan@marcan.st/
+
+---
+Hector Martin (3):
+      dt-bindings: spi: apple,spi: Add binding for Apple SPI controllers
+      spi: apple: Add driver for Apple SPI controller
+      MAINTAINERS: Add apple-spi driver & binding files
+
+ .../devicetree/bindings/spi/apple,spi.yaml         |  62 +++
+ MAINTAINERS                                        |   2 +
+ drivers/spi/Kconfig                                |  11 +
+ drivers/spi/Makefile                               |   1 +
+ drivers/spi/spi-apple.c                            | 530 +++++++++++++++++++++
+ 5 files changed, 606 insertions(+)
+---
+base-commit: 98f7e32f20d28ec452afb208f9cffc08448a2652
+change-id: 20240811-asahi-spi-f8740ba797d7
+
+Best regards,
+-- 
+Janne Grunau <j@jannau.net>
+
+
 
