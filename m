@@ -1,73 +1,73 @@
-Return-Path: <linux-kernel+bounces-396433-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396441-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4695D9BCD01
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 13:48:46 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72D179BCD19
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 13:53:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 78BF81C21225
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 12:48:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 32774282A7A
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 12:53:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 616FA1D5AB7;
-	Tue,  5 Nov 2024 12:48:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 238661D8DEA;
+	Tue,  5 Nov 2024 12:52:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="0fiqg2Y1"
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="i/3V9+s3"
+Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 846991D0B82
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 12:48:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98CA81D63C6
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 12:52:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730810920; cv=none; b=eSbS3hvnpZbyNiiJGT268RRexYD8Qa/7aMdWsA/oUC4Su7cYf7/TnXlUKTLWTyr0be5hfGC04gWG/JZ9CM0c9a0END97E9gCsS8YqvAe2cxDzUBvy1vn6opn61gP4hiYJbUsq5lNMVixvF7VlSfvXWkBDgbknzG+VaolkL+zuc8=
+	t=1730811132; cv=none; b=h00MjmYGvjDlpNV8DOb1EQQLztc49U7t4YKdciNjgB8oBXIFIFph2aJpsgPgznM0rxAVL2VRKyVPGbe3f9ECiCyfpsEJcjk9tS2yrv9n0tJxB4p+b98jJAmKqmD3tE3FLVIcLvz/a1UwzcUR7AjOgt8jdcyBsbPzjCNHvjADIPc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730810920; c=relaxed/simple;
-	bh=z7vCOrw9FM+fwYTqvgedO7AEMII+CDcl3pW1kqpz+Yw=;
+	s=arc-20240116; t=1730811132; c=relaxed/simple;
+	bh=5AavB2k8eTzT+b9vnQylCFfBcymntVGRSHXHCEWFvuU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gvq6eI8f3mSPU+ArywTOAjJkIG7LwcsgGbEKYolbRLklzmr+k0fMF9gG9/I5tzX77WWDi5NNXqw99QZ9MJhGnGZ4UE9lJaMh36qiRZmWfQsYiWyQ1v6IloODZdPTgsuoO7qGYtolGsONvx0kHjlU/46+7PtpLZCyeiNh2pOwq4c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=0fiqg2Y1; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-37d5689eea8so3143446f8f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 04:48:38 -0800 (PST)
+	 In-Reply-To:Content-Type; b=mtxU2agrZ/DijUKERNYdcZG09zI6XHvg2kI8NT4bwgjKqNNaNEia+/wWr4uklx5oZlYytF10SpNwh/CWfg7C6OK/rWgUXT1ctajpiDbxEmrYHo8QmI87Z3nD52PYV/uDBOvWZ1g7tBxX/6qmgDuG2j6lHPTTEKQe28ZLGn8uiiE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=i/3V9+s3; arc=none smtp.client-ip=209.85.216.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-2e2e2d09decso4690811a91.1
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 04:52:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1730810917; x=1731415717; darn=vger.kernel.org;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1730811128; x=1731415928; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=JPzUqJyq9Agfg2xFr5+F7YykIu7Y2oVke0GmFsSA2w0=;
-        b=0fiqg2Y17wvSTnAQi4rSopClFWyVoRPnY64mgcIM0l9sVmBaM4W515hoKruniI3Bfg
-         1JYr91szZCDg8NxaD++AXyYRNOaUbxp6QCFae5xFmhEH3qS1MAgRrZ+JNbYos1752q7Y
-         FN5mlgge7JjZXnFRjJpYaFb/DfGdbkOl/0I59foD89F/WXekkWswAi/Eo9fL3ykYRBhY
-         FDdR73LXwtBJf1+NSAXiqLYpxSxVy86R/cFLvDzQToAWWq636bpLIsclWzNn2ndRXrkq
-         KWf6hK4KSbX7cU/ZciyWgSF8Xwpq7tAC2BdkYxjCB8lPz6el6QdY1ZfsfslduQ2viFW+
-         Bg7w==
+        bh=At2805czTihicDRdY+YJdDpwWq0X5S/HDbS43yOjnkM=;
+        b=i/3V9+s3/JNEFfHOcuRpBzd5G7491DomHO3MF90MHZr8nK8fiYJ+KudnQUZquDj8b6
+         q45RrF536g5AH9//3l+BOQjbAHt58ppvReuxu5e3yaqb7r9oEZMX3lmp+3tcyFHTSHzy
+         8GCycCWQlYOpKejYxa4qUFhVBlgQaIKYyPHncdAnpi31kmHc72bcE3+saecPfyG7O4A5
+         7auenblDUBKF4Yjpe5RZ3yGBgcHjIq/ZD79uzbAtuiUNbCQC9JvGE57DFYLpep7tdnmi
+         r1ogtFk78mBsXAhjUM1xCDvzqm80jvNF1b3OFJ/g2YRpTzrwawYA4S2HFhXrIIrJrK6s
+         kh/w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730810917; x=1731415717;
+        d=1e100.net; s=20230601; t=1730811128; x=1731415928;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=JPzUqJyq9Agfg2xFr5+F7YykIu7Y2oVke0GmFsSA2w0=;
-        b=WXlNj2ZgtZJnlYKzhedN98gJdYXHGhZzE8fQPJMt+FQdgvRbF7T5T9/IJE94L2Zc1J
-         p4imEKxLBxy3soBASLGJMdkhhtv767AVF0S5iUdiad7jbxnEZThhT9sutCaOTUXDC+vP
-         hnTut0P9eQmGuPdAFFCxlxCJGGnyYr8FJZgQyK/ireramAO/s1BuCh6SXzlawpcZY0U2
-         9/r7K5a1Zk5KhIk9clELG1++vOq1XoZZAB9Eb0OyJi9NzliDPwXMTaCO1O8Ca4zmIi2m
-         62ZmY7nEF+MPfNc5sPt9rj/JagkY/O4kBgFowKn1ypzbIjJ5BE5oHHO8xvuMx+1/IK4c
-         ODYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVzOYHyfyEfXy4ZfOH8vlFxR/uxaAuedFoVYqRX7veeo2/pZncsCIxZZxKyXMNz0jRqQrW0Lzh4ad7CoLk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzEgFJ3JUZ3L1STEv4NN+mTz2VJN/H70vh6eq+l/d4EaptctQ9p
-	jA3Tl/cJNHv5W/abJaHakw3gIoQxBEp+ujoZwpJrgygFvt6u07LsPnN4GaMAb1o=
-X-Google-Smtp-Source: AGHT+IECQtI2afC9/nV4FjpvSFo3iL4mQ4d8sginqnfT6Xw/THWJSQbtpkRmjpc+xPfmHoSY5sr+jw==
-X-Received: by 2002:a5d:48ce:0:b0:37c:d001:856f with SMTP id ffacd0b85a97d-38061220ac3mr24022035f8f.56.1730810916741;
-        Tue, 05 Nov 2024 04:48:36 -0800 (PST)
-Received: from ?IPV6:2001:861:3380:2e20:6214:6f9b:8e4c:f723? ([2001:861:3380:2e20:6214:6f9b:8e4c:f723])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381c113e687sm16242693f8f.84.2024.11.05.04.48.35
+        bh=At2805czTihicDRdY+YJdDpwWq0X5S/HDbS43yOjnkM=;
+        b=eR5mCW8re1NOZWTDWP8jOtOX+BSutGy5pT8wv4LSObFvzJWu7RztcjctdxBSu9Cxu9
+         Lw+8XC6ZchE2BV30NDR4O+WMAgqqE9o7OKo1kt/OmmScUQAX6bePEw0FI2ywmKDI3SFl
+         k+tmsz4hKaJkL/YI7q3p3ghetfgYarex6Lbg9Vl/aSTV6JTAPH7Lc2jQNTdC86S1S9Mz
+         g/3PcT578O8jenWWVfJ6o9AdiTPB6+OwCuRvqvBq2gU1eG7wvu+8iiYfRMwrC5H7Qfbc
+         25kypYJspyxmHY3CwpuoJFU5N9BLYr02gZYdnzW+xdUNeeMQ4h1XGpJysu402o+/IL/S
+         ujRg==
+X-Forwarded-Encrypted: i=1; AJvYcCWC0hhjSEFnRWHE8dTmnJk2x2aG3tBDtvhXlHkHf5nNzpg8HMbkJBxIWU0Rck0Oafs++NiERzKqMXtw+Cw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyoT80fqh1VPXt9qfNJMziR2UfD1Al4ejeedZOByzl/evsMFpPt
+	z0z91xBYH+YKZlgex3rFJzfTKvM4Ze3dpdKVB3wag+0SuIHzsz0SGFkFuyV6gYI=
+X-Google-Smtp-Source: AGHT+IFZ2rqlU9xmlbidWBPBOCsO4c5ZoLFE3W7KH4q7MLqnYLyStlgN4LLR9uK8B2J9oi1JSXBZXQ==
+X-Received: by 2002:a17:90b:540c:b0:2e2:b94c:d6a2 with SMTP id 98e67ed59e1d1-2e93ddf4d4fmr29684686a91.0.1730811128404;
+        Tue, 05 Nov 2024 04:52:08 -0800 (PST)
+Received: from [192.168.1.150] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e92fbe0252sm11939317a91.45.2024.11.05.04.52.06
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 05 Nov 2024 04:48:36 -0800 (PST)
-Message-ID: <78cdcdc4-8087-449d-b771-e41e6295137f@rivosinc.com>
-Date: Tue, 5 Nov 2024 13:48:35 +0100
+        Tue, 05 Nov 2024 04:52:07 -0800 (PST)
+Message-ID: <72515c41-4313-4287-97cc-040ec143b3c5@kernel.dk>
+Date: Tue, 5 Nov 2024 05:52:05 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,72 +75,73 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] riscv: cacheinfo: Use of_property_present() for
- non-boolean properties
-To: "Rob Herring (Arm)" <robh@kernel.org>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>
-Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20241104190314.270095-1-robh@kernel.org>
+Subject: Re: [ANNOUNCE] work tree for untorn filesystem writes
+To: Carlos Maiolino <cem@kernel.org>, "Darrick J. Wong" <djwong@kernel.org>
+Cc: "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>,
+ John Garry <john.g.garry@oracle.com>, brauner@kernel.org,
+ Catherine Hoang <catherine.hoang@oracle.com>, linux-ext4@vger.kernel.org,
+ Theodore Ts'o <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
+ Christoph Hellwig <hch@infradead.org>, Ojaswin Mujoo
+ <ojaswin@linux.ibm.com>, linux-block@vger.kernel.org,
+ Dave Chinner <david@fromorbit.com>, linux-kernel@vger.kernel.org,
+ linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+References: <20241105004341.GO21836@frogsfrogsfrogs>
+ <fegazz7mxxhrpn456xek54vtpc7p4eec3pv37f2qznpeexyrvn@iubpqvjzl36k>
 Content-Language: en-US
-From: =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@rivosinc.com>
-In-Reply-To: <20241104190314.270095-1-robh@kernel.org>
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <fegazz7mxxhrpn456xek54vtpc7p4eec3pv37f2qznpeexyrvn@iubpqvjzl36k>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-
-
-On 04/11/2024 20:03, Rob Herring (Arm) wrote:
-> The use of of_property_read_bool() for non-boolean properties is
-> deprecated in favor of of_property_present() when testing for property
-> presence.
+On 11/5/24 4:19 AM, Carlos Maiolino wrote:
+> On Mon, Nov 04, 2024 at 04:43:41PM -0800, Darrick J. Wong wrote:
+>> Hi everyone,
+>>
+>> Nobody else has stepped up to do this, so I've created a work branch for
+>> the fs side of untorn writes:
+>> https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux.git/log/?h=fs-atomic_2024-11-04
+>>
+>> Can you all check this to make sure that I merged it correctly?  And
+>> maybe go test this on your storage hardware? :)
+>>
+>> If all goes well then I think the next step is to ask brauner very
+>> nicely if he'd consider adding this to the vfs trees for 6.13.  If not
+>> then I guess we can submit it ourselves, though we probably ought to ask
+>> rothwell to add the branch to for-next asap.
+>>
+>> PS: We're now past -rc6 so please reply quickly so that this doesn't
+>> slip yet another cycle.
+>>
+>> Catherine: John's on vacation all week, could you please send me the
+>> latest versions of the xfs_io pwrite-atomic patch and the fstest for it?
 > 
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
-> ---
->  arch/riscv/kernel/cacheinfo.c | 12 ++++++------
->  1 file changed, 6 insertions(+), 6 deletions(-)
+> I am kind confused here now. IIRC Jens pulled the first three patches
+> from John's series into his tree, and John asked me to pull the other
+> ones. I'm much happier to see a single person pulling the whole series
+> instead of splitting it into different maintainers though.
 > 
-> diff --git a/arch/riscv/kernel/cacheinfo.c b/arch/riscv/kernel/cacheinfo.c
-> index b320b1d9aa01..0115051fa1e1 100644
-> --- a/arch/riscv/kernel/cacheinfo.c
-> +++ b/arch/riscv/kernel/cacheinfo.c
-> @@ -105,11 +105,11 @@ int populate_cache_leaves(unsigned int cpu)
->  		return 0;
->  	}
->  
-> -	if (of_property_read_bool(np, "cache-size"))
-> +	if (of_property_present(np, "cache-size"))
->  		ci_leaf_init(this_leaf++, CACHE_TYPE_UNIFIED, level);
-> -	if (of_property_read_bool(np, "i-cache-size"))
-> +	if (of_property_present(np, "i-cache-size"))
->  		ci_leaf_init(this_leaf++, CACHE_TYPE_INST, level);
-> -	if (of_property_read_bool(np, "d-cache-size"))
-> +	if (of_property_present(np, "d-cache-size"))
->  		ci_leaf_init(this_leaf++, CACHE_TYPE_DATA, level);
->  
->  	prev = np;
-> @@ -122,11 +122,11 @@ int populate_cache_leaves(unsigned int cpu)
->  			break;
->  		if (level <= levels)
->  			break;
-> -		if (of_property_read_bool(np, "cache-size"))
-> +		if (of_property_present(np, "cache-size"))
->  			ci_leaf_init(this_leaf++, CACHE_TYPE_UNIFIED, level);
-> -		if (of_property_read_bool(np, "i-cache-size"))
-> +		if (of_property_present(np, "i-cache-size"))
->  			ci_leaf_init(this_leaf++, CACHE_TYPE_INST, level);
-> -		if (of_property_read_bool(np, "d-cache-size"))
-> +		if (of_property_present(np, "d-cache-size"))
->  			ci_leaf_init(this_leaf++, CACHE_TYPE_DATA, level);
->  		levels = level;
->  	}
+> Giving how spread the series is, I'd say going through vfs tree would
+> be the best place, but I'm not opposed to pull them myself.
 
+Guys, not sure why this is so difficult to grasp. I already pulled the
+initial bits weeks ago, into an immutable branch:
 
-Looks good to me,
+https://git.kernel.dk/cgit/linux/log/?h=for-6.13/block-atomic
 
-Reviewed-by: Clément Léger <cleger@rivosinc.com>
+which was subsequently also pulled into for-6.13/block. Whoever wants
+to stage the xfs bits must simply:
 
-Thanks,
+1) Pull the above for-6.13/block-atomic branch
+2) Apply XFS bits on top
 
-Clément
+Why is this so difficult to grasp? It's a pretty common method for cross
+subsystem work - it avoids introducing conflicts when later work goes
+into each subsystem, and freedom of either side to send a PR before the
+other.
+
+So please don't start committing the patches again, it'll just cause
+duplicate (and empty) commits in Linus's tree.
+
+-- 
+Jens Axboe
 
