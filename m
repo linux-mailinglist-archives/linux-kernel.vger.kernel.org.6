@@ -1,105 +1,102 @@
-Return-Path: <linux-kernel+bounces-395918-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395913-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 902C59BC501
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 06:55:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DE469BC4EE
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 06:53:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0D31AB2158D
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 05:55:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BEEA7282E21
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 05:53:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DB9E1FEFA7;
-	Tue,  5 Nov 2024 05:54:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 392651D2B2C;
+	Tue,  5 Nov 2024 05:53:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="L90x+AqS"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WxQJwWW0"
+Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD99A1FE109
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 05:54:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A259286A1
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 05:53:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730786051; cv=none; b=TCQau6qnvsNoWYZfA/N6XIWD+bZkXn2AyJXNOCixJhlY1ReK+CAaHDfMQq/cyIUEQbVOaIvgnYb9UxYZkwEnBZnBil3S4CdISKYS6ci/3ZwRC/r/Gf14Go3OrCzvHGiFB3JBCTD1XaRPC3mngCHumcNuXomcOD80QWawYnoiwjE=
+	t=1730786026; cv=none; b=eTuHGtrd5UVHitTw4ANsEBxpzsgdwNLyEW+5Z47jCtr6+5fKvDdwEdI2z6d1DtzFeiPCjkmDHvJ9u16SsCEUPG1+PCci2DK0L8J5/+awFk1by3S46li33BOIjIbxxxvFAM+fcKaG2qcdKEwd4p7UxvKgCitAM0PSB4zGNt1J9vE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730786051; c=relaxed/simple;
-	bh=I0XnaG5jsuQL2BpI0MPILpl2yLJShP2IrU/2d9ATkww=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=GQkMylHxStPjFx61i6uYuslKtzK2VgWSer0cSAcioSJgsFmVJTt8Fi17xaeAzmJjfL5UucJnb/gomD/751f/vQfnuNAiYiuHOhv6fCu7d/0+WB8vu3MH3toe7plLwSUxWgB5rDCaxg90JGZOMl4YGwyxPmBKogg470y5NbUCyNs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=L90x+AqS; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730786050; x=1762322050;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=I0XnaG5jsuQL2BpI0MPILpl2yLJShP2IrU/2d9ATkww=;
-  b=L90x+AqStEvehrvaTbR99zu4W2Ufl//5ur0zkHyCubiK/3/gMW6I6EbH
-   mpMHTM9MXyB89953ieRcnUCF50DvoNYfOSFoDsbigqd8v3kJhNbGCcf3G
-   5EaTN+BDd2+6HQoUwJrJ1R4ij4JvVYysbOBseCtPOTyDF6kliKFaIXAUz
-   8P4QkkBtU4CVbfPeaXVpFldwze4fYDwFm09dsHP/hTrh/piZIzIsuHVwE
-   V6Fe087eXry+ka+xg+BzAzHB4aqxO7LfM/eMAQ/kkbWUNSbLpRwGljklE
-   Z5c9Ec7uOLiIeF5kWLnV0xf+Z6G+U+jAj4b22KPxlJCUbhytJAkKQ3+gn
-   A==;
-X-CSE-ConnectionGUID: vbT+RFFZRgeeilnSWK+xkA==
-X-CSE-MsgGUID: J3nQX9ECQSGLelKNK8A6cw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11246"; a="33351591"
-X-IronPort-AV: E=Sophos;i="6.11,259,1725346800"; 
-   d="scan'208";a="33351591"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2024 21:54:09 -0800
-X-CSE-ConnectionGUID: kVm36FkaQpSm0KPHhaXoiA==
-X-CSE-MsgGUID: vG4ZDL9dS3CMMC2zw+i/lw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,259,1725346800"; 
-   d="scan'208";a="87816223"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by fmviesa003.fm.intel.com with ESMTP; 04 Nov 2024 21:54:08 -0800
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1t8CVy-000lgh-0s;
-	Tue, 05 Nov 2024 05:54:06 +0000
-Date: Tue, 5 Nov 2024 13:53:23 +0800
-From: kernel test robot <lkp@intel.com>
-To: Shrikanth Hegde <sshegde@linux.ibm.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Michael Ellerman <mpe@ellerman.id.au>
-Subject: arch/powerpc/platforms/pseries/lparcfg.c:189:15: sparse: sparse:
- symbol 'boot_pool_idle_time' was not declared. Should it be static?
-Message-ID: <202411051330.xDtEUGBZ-lkp@intel.com>
+	s=arc-20240116; t=1730786026; c=relaxed/simple;
+	bh=eFIgYsyVXpLfwNZ0WDZ01Ek7Ywd6Wo8hby6mzO9UQ28=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=FnFSyXjKEszifD+JaKCsBEWyjFjMsHc2xoPso2UWOMDcjMQXZq4VZrvQtTgi3oeoT6EUyF/aA/K0fALSersMzILieV8glQ8mZnuEQWsojqUlZxZqHy2G/P6oaY4YLrcdyofa01is7d2Dwt8cniMOQGeqPiLwoDvrec1Od8Xvvjg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=WxQJwWW0; arc=none smtp.client-ip=209.85.215.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-7ee4e642954so3939527a12.0
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 21:53:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1730786024; x=1731390824; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=CATQgkxqet+kiiFl27IyAPicUnMOKGQVJB4zHUMIsJU=;
+        b=WxQJwWW0bBorU/RgtNaMe/adMlP+7npWNLuq4eubpBdbJE0XBldq+PudesMj1/17MM
+         FFU9uKodsG4EPHCPn5NjZackp2T2ltuinh40BUYacp0sQuU2yzD2gYR4n59TDucxGnWV
+         0xMB9XYH7mDY9Ee7f2jUIC/wz7jBNqzWnK5HmfCzaiLF+FPwWjV2OiG3hKPZR6z39JX+
+         i2YehwmsULwsfbyN6ehX5pyLx6Gcm3aagbCl2L9PgWFgIs8Vo2F1nUcJeFwnycf8We63
+         ImPEadZ5hG99y6KtG94zt941YT+/awVjM3uK7rEuVBb7gpMGSy09KxUAFqYJvuk96B/S
+         vPxw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730786024; x=1731390824;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=CATQgkxqet+kiiFl27IyAPicUnMOKGQVJB4zHUMIsJU=;
+        b=wmgHcaTyARY0RX/tLeAbiS1i9dcdzVr8Csn067fxtPhF5JkvKKE5Otgnxu2ekVmBIB
+         Gh6VVNeLUIGPCJHqEShzYAdbfC8ig+Ef/rrlHId2QeBwlEOFTmgodxyB6vhWqPnPGL2+
+         qU32gFF7yV8lM+Yxc4ygZm9RSPKTo8J08UjsJgmyESroFVLmnm0MosYEpXokmDzA9fV5
+         j+xQH255n94l/xXGBDQpE5cC9gNG1U7K6AdEDuG7xLd9leAxRH4y+FnnimKXToGKcFXS
+         drf6FCJkihx7T/bsH9B8Y7+B+4sKhoDNkRqLXXP4IZcpsKpZjkXrB+SDyRMPaIxvVq5Y
+         HCbQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV97MDxH7WXiSDCDu059VxaOEWqDSSvwKVJd0BcJtmaNer9CTSU8t+FWPrY7au3ZDrzMxI9yl3FBwsFFUE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YymVtuUcroqWEeDmwmvIzaYdZWgFGX8bn/Hu7TKTzLmAeuOIYNO
+	Kb0EUmaUBX65NzyITEP1i3GDe5dpkk6EiWqJ89PMcPnQ96MQNtOAUtebxcXKlAKf4QQBJH5dCqP
+	1/g==
+X-Google-Smtp-Source: AGHT+IE6j+o01T6Bqwps+9UMPoL+PueNwC77slv8kXJ3ii1dNkE6QY41DyYsvleelHQM84FbAugxCqQ87JE=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
+ (user=seanjc job=sendgmr) by 2002:a65:4389:0:b0:7ea:618:32b8 with SMTP id
+ 41be03b00d2f7-7edd7c9109bmr51755a12.10.1730786023765; Mon, 04 Nov 2024
+ 21:53:43 -0800 (PST)
+Date: Mon, 4 Nov 2024 21:53:42 -0800
+In-Reply-To: <173039504313.1508539.4634909288183844362.b4-ty@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Mime-Version: 1.0
+References: <20241024095956.3668818-1-roypat@amazon.co.uk> <173039504313.1508539.4634909288183844362.b4-ty@google.com>
+Message-ID: <Zymy5hjgMSMT64uI@google.com>
+Subject: Re: [PATCH] kvm: selftest: fix noop test in guest_memfd_test.c
+From: Sean Christopherson <seanjc@google.com>
+To: pbonzini@redhat.com, shuah@kernel.org, kvm@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Patrick Roy <roypat@amazon.co.uk>
+Cc: chao.p.peng@linux.intel.com, ackerleytng@google.com, graf@amazon.com, 
+	jgowans@amazon.com
+Content-Type: text/plain; charset="us-ascii"
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   2e1b3cc9d7f790145a80cb705b168f05dab65df2
-commit: 9c74ecfd0fc46e2eaf92c1b6169cc0c8a87f1dc2 powerpc/pseries: Add pool idle time at LPAR boot
-date:   6 months ago
-config: powerpc64-randconfig-r132-20241104 (https://download.01.org/0day-ci/archive/20241105/202411051330.xDtEUGBZ-lkp@intel.com/config)
-compiler: powerpc64-linux-gcc (GCC) 14.1.0
-reproduce: (https://download.01.org/0day-ci/archive/20241105/202411051330.xDtEUGBZ-lkp@intel.com/reproduce)
+On Thu, Oct 31, 2024, Sean Christopherson wrote:
+> On Thu, 24 Oct 2024 10:59:53 +0100, Patrick Roy wrote:
+> > The loop in test_create_guest_memfd_invalid that is supposed to test
+> > that nothing is accepted as a valid flag to KVM_CREATE_GUEST_MEMFD was
+> > initializing `flag` as 0 instead of BIT(0). This caused the loop to
+> > immediately exit instead of iterating over BIT(0), BIT(1), ... .
+> 
+> Applied to kvm-x86 fixes, thanks!
+> 
+> [1/1] kvm: selftest: fix noop test in guest_memfd_test.c
+>       https://github.com/kvm-x86/linux/commit/fd5b88cc7fbf
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202411051330.xDtEUGBZ-lkp@intel.com/
+FYI, I rebased "fixes" onto 6.12-rc5 to avoid several pointless conflicts in
+other patches.  New hash:
 
-sparse warnings: (new ones prefixed by >>)
->> arch/powerpc/platforms/pseries/lparcfg.c:189:15: sparse: sparse: symbol 'boot_pool_idle_time' was not declared. Should it be static?
-
-vim +/boot_pool_idle_time +189 arch/powerpc/platforms/pseries/lparcfg.c
-
-   188	
- > 189	unsigned long boot_pool_idle_time;
-   190	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+[1/1] KVM: selftests: fix unintentional noop test in guest_memfd_test.c
+      https://github.com/kvm-x86/linux/commit/945bdae20be5
 
