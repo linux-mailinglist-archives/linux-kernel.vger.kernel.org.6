@@ -1,199 +1,266 @@
-Return-Path: <linux-kernel+bounces-397172-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397173-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D4799BD7A5
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 22:30:09 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22DD79BD7A6
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 22:30:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A06F81C22915
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 21:30:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D5B31283495
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 21:30:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D39821621D;
-	Tue,  5 Nov 2024 21:30:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38C6621217A;
+	Tue,  5 Nov 2024 21:30:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="EunV2Yw+"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Y5zYjPv5"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A90892161EF
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 21:30:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E008216204
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 21:30:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730842204; cv=none; b=tljax/mUJKAeScZHnCctCzSP1qsr63a6Hbw2rX5QmSl/MtLlePYVfhdGI+/aoAna1h5wn7VGOGY/IHnZpb/kGHNazdeF8o0N6/AUfcaxFF1AOwOGDOQyC3ppSv/5kZnmYCok1PTqNL/8RYcs6jEFV0KXdyNzioTcUT+iqA54lNE=
+	t=1730842210; cv=none; b=otg9cp8gg9QXA/kWEfRBG50sMNo/Yb6F2DU0uXgLVNTtklBmuFm4bstzZkLONg7K1fMMhUY0kMfGdtjpviL6E+Gwfhrlr1oHWnkSfEtiXX2lHc5Mf46FXOKSvN+vhatEJ7kdIeQZH0iA5wOcFxRqj0ww5IBns6/nCHjEn4R4rU8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730842204; c=relaxed/simple;
-	bh=h7AwGN4io3/uPTbQx+qrX5kizmH08R1HDFUD/HNRelQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iQsE4t+7E+9KPaxt2+7YXByJjQ9XPrqVW4G6Z3qv9eLYlytfrWE7WIMLU3rcToxiD76G1QocIIuOI/0F3HeGlwzjc276bcR9QKUr2X4juMbex17lZiaLlXirzeKKrf3tSJTsEt0Vbk6PyGk7GSMpTfAmck0bLyFk6VdUr21SKw0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=EunV2Yw+; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-539fe76e802so6938680e87.1
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 13:30:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1730842198; x=1731446998; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2Tfp+kt6EeLErLEVv0I8PpE8RVWyGWlaG6f1mvrWPCE=;
-        b=EunV2Yw+iHAzERIxYmyRCHjRAJjXIR4xU01NfAtho+Vr3cXDsqsD8TbVuqzk/Jdp2P
-         4qSc+lqrJ86ajlvyF/RlzKWbgFJ/+3lTlL5keWWkKMsT14jFOMZ5To6XRNLl0bdg05Xo
-         EzoGyMOVl9IoLMg8quYH13egi1Vsvd88JoQF4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730842198; x=1731446998;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2Tfp+kt6EeLErLEVv0I8PpE8RVWyGWlaG6f1mvrWPCE=;
-        b=A9cLPW2mHbHcbbdQ6KcittzfEkw2AgqItUPFhPEhbFiO7pZdVY/dRLb8wzvOk7oqZr
-         HSmwAK4fy930oT4Pl0iVg5QcRW3IA3lQvuRSzdEHBBdAH82uZmPU5R4L4mddPIwFY0Gz
-         EogmZit25VJ8Y/RTLkyLiLRy8J6lv+0grKoOa7tQSaRhDwuf05WvoJNYfjPBI+VXRLml
-         Gak3CC7cFjfLRtUn4XxdP2EUGytY0PB8qv1Zoe6aDO6FkWLzZK2z+sl2jQF1GuckfRyY
-         2yhkp98PUcI7+s3xgrFwnM2J4vDMtq/F973MK+P9qjVlqkeDOoenvemJUB6VodkBwk/e
-         JtTQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX0K/kpjF2FbWExIGhZmTRr6h5IY010g0C9ffrMrg84nmZKgsswrUC1tFPPVVc6apU0l6nStEgtsC6sNDQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyiKFCBgRaZ6O22q20hgfRjAE4R3/W4DtkYpIEM44p3IsQrDjNm
-	LDzbKstnbwP2qRUjcM3ITHe5VUo26IxVS20boUMSewDqHsxQ/bOV+qcpXtJ7LXqLu+TQlf5dRBA
-	rWQ==
-X-Google-Smtp-Source: AGHT+IEsiSPme8MbnfI3be2W0Eg+b/vW6hi+3HDId9r4eYB8mWgpk04wS/inqRlZXfOvnK7JpbH5Rg==
-X-Received: by 2002:a05:6512:3ba4:b0:52c:9468:c991 with SMTP id 2adb3069b0e04-53d65de495bmr8366961e87.14.1730842197856;
-        Tue, 05 Nov 2024 13:29:57 -0800 (PST)
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com. [209.85.208.169])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53c7bcce4c2sm2261179e87.174.2024.11.05.13.29.55
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 05 Nov 2024 13:29:56 -0800 (PST)
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2fb5014e2daso55284721fa.0
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 13:29:55 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUUssnMrUd1Ba2sN04Y4usYzwWSkTfsNLerD4IJFc1I9RfzjI0cZlXwE8AdorbbggYGYNZBNuRTVAu4ZhU=@vger.kernel.org
-X-Received: by 2002:a2e:bd08:0:b0:2fa:cf5b:1e8e with SMTP id
- 38308e7fff4ca-2fedb758b32mr81564941fa.2.1730842195431; Tue, 05 Nov 2024
- 13:29:55 -0800 (PST)
+	s=arc-20240116; t=1730842210; c=relaxed/simple;
+	bh=IXfAZklQgf+n4ouo/wCEuL/sqk+Bc4lWLScP7Pawbpw=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=N2FJiAA7NHfzixZykbu3xmALTfMlpPInJcW9Pp1pVXVSLjhINNVDItp7F2BJoulKmGnE0IUSRM6jvNXf6iD7THPGcapaZK0ADcaZ+DoIbNebbgPVvYlmEg7UMbzdOld8IHyLvlCce+63rueLDjkTEufB/jHEwIfj01iOm4scoLw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=casper.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Y5zYjPv5; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=casper.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=MIME-Version:Content-Type:References:
+	In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=IXfAZklQgf+n4ouo/wCEuL/sqk+Bc4lWLScP7Pawbpw=; b=Y5zYjPv5Cy+9FEvP7+wZw805zr
+	oHfyV+EnhNJulwEKm+dmHiT8H3tqBkCN712FiF/FX9y66t8batg3/t1zmWornaegBGUwnZK1ir4uK
+	aBppwVQIwdhuIVjd0DAfazMIT42K+jXnQ15SmrC7utVVa4t3jwfXt54Q/yQ0s3XJx4eocznwYEWia
+	nOSF6TEzNhIndCBvfJP89gITLnziATzoXXLtShrLRamPNz2ZcuYezR7lcw3rDCtN5JlD9LgDg2L4u
+	CbEsrFt0cN0EACkf7ZStSP4dcqrq4Clr9p9+KS/PoSARWx983eIq3NhXMWdQEX35YWktvMJHtXazu
+	6kNwVgAQ==;
+Received: from [205.251.233.52] (helo=u3832b3a9db3152.ant.amazon.com)
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1t8R7d-00000003fVc-3gpE;
+	Tue, 05 Nov 2024 21:29:59 +0000
+Message-ID: <07117fe234cb1396a59bdb815ada26a90e02b394.camel@infradead.org>
+Subject: Re:  [RFC PATCH 6/7] x86/kexec: Debugging support: Dump registers
+ on exception
+From: David Woodhouse <dwmw2@infradead.org>
+To: "H. Peter Anvin" <hpa@zytor.com>, "peterz@infradead.org"
+ <peterz@infradead.org>, "kexec@lists.infradead.org"
+ <kexec@lists.infradead.org>,  "jpoimboe@kernel.org" <jpoimboe@kernel.org>
+Cc: "horms@kernel.org" <horms@kernel.org>, "x86@kernel.org"
+ <x86@kernel.org>,  "bp@alien8.de" <bp@alien8.de>, "mingo@redhat.com"
+ <mingo@redhat.com>, "tglx@linutronix.de" <tglx@linutronix.de>,
+ "kai.huang@intel.com" <kai.huang@intel.com>, 
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>,
+ "nik.borisov@suse.com" <nik.borisov@suse.com>, 
+ "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>
+Date: Tue, 05 Nov 2024 13:29:54 -0800
+In-Reply-To: <66DC35BB-A9E5-45E4-AAAD-051C22943F51@zytor.com>
+References: <20241103054019.3795299-1-dwmw2@infradead.org>
+	 <20241103054019.3795299-7-dwmw2@infradead.org>
+	 <230aacb0ca0d57581f9350f96390933646f203e4.camel@amazon.co.uk>
+	 <66DC35BB-A9E5-45E4-AAAD-051C22943F51@zytor.com>
+Content-Type: multipart/signed; micalg="sha-256"; protocol="application/pkcs7-signature";
+	boundary="=-olQpAiz5VaKuXeudmmkp"
+User-Agent: Evolution 3.44.4-0ubuntu2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241105161820.32512-1-jiashengjiangcool@gmail.com> <20241105161820.32512-3-jiashengjiangcool@gmail.com>
-In-Reply-To: <20241105161820.32512-3-jiashengjiangcool@gmail.com>
-From: Doug Anderson <dianders@chromium.org>
-Date: Tue, 5 Nov 2024 13:29:40 -0800
-X-Gmail-Original-Message-ID: <CAD=FV=VzqKa=fo4KRw4FSpPcH4mVnt8jBMo=FMzsGkdGrXCfxg@mail.gmail.com>
-Message-ID: <CAD=FV=VzqKa=fo4KRw4FSpPcH4mVnt8jBMo=FMzsGkdGrXCfxg@mail.gmail.com>
-Subject: Re: [PATCH v2 3/3] i2c: rk3x: Add check for clk_enable()
-To: Jiasheng Jiang <jiashengjiangcool@gmail.com>
-Cc: andi.shyti@kernel.org, rmk@dyn-67.arm.linux.org.uk, max.schwarz@online.de, 
-	david.wu@rock-chips.com, heiko@sntech.de, vz@mleia.com, wsa@kernel.org, 
-	manabian@gmail.com, linux-arm-kernel@lists.infradead.org, 
-	linux-rockchip@lists.infradead.org, linux-i2c@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
+
+
+--=-olQpAiz5VaKuXeudmmkp
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On Tue, 2024-11-05 at 12:50 -0800, H. Peter Anvin wrote:
+> On November 5, 2024 12:38:10 PM PST, "Woodhouse, David" <dwmw@amazon.co.u=
+k> wrote:
+> > On Sun, 2024-11-03 at 05:35 +0000, David Woodhouse wrote:
+> > >=20
+> > > +
+> > > +/* Print the byte in %bl, clobber %rax */
+> > > +SYM_CODE_START_LOCAL_NOALIGN(pr_byte)
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 movb=C2=A0=C2=A0=C2=A0 %bl, %al
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 nop
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 andb=C2=A0=C2=A0=C2=A0 $0x0f, %=
+al
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 addb=C2=A0=C2=A0=C2=A0 $0x30, %=
+al
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 cmpb=C2=A0=C2=A0=C2=A0 $0x3a, %=
+al
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 jb=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0 1f
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 addb=C2=A0=C2=A0=C2=A0 $('a' - =
+'0' - 10), %al
+> > > +1:=C2=A0=C2=A0=C2=A0=C2=A0 pr_char
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ANNOTATE_UNRET_SAFE
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ret
+> > > +SYM_CODE_END(pr_byte)
+> > > +
+> >=20
+> > Obviously that function name (and comment) are wrong; fixed in my tree.
+> > at
+> > https://git.infradead.org/users/dwmw2/linux.git/shortlog/refs/heads/kex=
+ec-debug
+> >=20
+> > This function (and also pr_qword) are also what objtool is complaining
+> > about:
+> >=20
+> > vmlinux.o: warning: objtool: relocate_range+0x2f6: unreachable instruct=
+ion
+> > vmlinux.o: warning: objtool: relocate_range+0x305: unreachable instruct=
+ion
+> >=20
+> > I don't quite see why, because pr_qword() quite blatantly calls
+> > pr_nyblle(), as it's now named. And exc_handler() repeatedly calls
+> > pr_qword().
+> >=20
+> > But most of the objtool annotations I've added here were just to make
+> > it shut up and build, without much though. Peter, Josh, any chance you
+> > can help me fix it up please?
+> >=20
+> > It would also be really useful if objtool would let me have data inside
+> > a "code" segment, without complaining that it can't decode it as
+> > instructions =E2=80=94 and without also failing to decode the first ins=
+truction
+> > of the *subsequent* function. I've put the GDT at the end to work
+> > around that, but it's a bit nasty.
+>=20
+> code in the data *section* or *segment*? Either is nasty, though. That's =
+what .rodata is for.
 
-On Tue, Nov 5, 2024 at 8:18=E2=80=AFAM Jiasheng Jiang
-<jiashengjiangcool@gmail.com> wrote:
->
-> Add check for the return value of clk_enable() in order to catch the
-> potential exception. Moreover, convert the return type of
-> rk3x_i2c_adapt_div() into int and add the check.
->
-> Signed-off-by: Jiasheng Jiang <jiashengjiangcool@gmail.com>
-> ---
-> Changelog:
->
-> v1 -> v2:
->
-> 1. Remove the Fixes tag.
-> 2. Use dev_err_probe to simplify error handling.
-> ---
->  drivers/i2c/busses/i2c-rk3x.c | 51 +++++++++++++++++++++++++----------
->  1 file changed, 37 insertions(+), 14 deletions(-)
+This is the relocate_kernel() function in
+arch/x86/kernel/relocate_kernel_64.S
 
-Wow, this is a whole lot of code to add to check for an error that
-can't really happen as far as I'm aware. Turning on a clock is just
-some MMIO writes and can't fail, right? Is this really worth it? Maybe
-just wrap clk_enable() and spam an error to the logs if it fails? If
-we ever see that error we can figure out what's going on and if
-there's a sensible reason it could fail we could add the more complex
-code.
+It's copied into a separate page, called (in its original location) as
+a simple function from the kernel, changes %cr3 to set of identity-
+mapped page tables and jumps to its *identity-mapped* address, then
+copies all the right pages for kexec and jumps into the new kernel.
+
+So it's all in a single page, and currently it plays nasty tricks to
+store data after the code. Perhaps it *should* have its own code and
+data sections and a linker script to keep them together...
+
+--=-olQpAiz5VaKuXeudmmkp
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Transfer-Encoding: base64
+
+MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCCEkQw
+ggYQMIID+KADAgECAhBNlCwQ1DvglAnFgS06KwZPMA0GCSqGSIb3DQEBDAUAMIGIMQswCQYDVQQG
+EwJVUzETMBEGA1UECBMKTmV3IEplcnNleTEUMBIGA1UEBxMLSmVyc2V5IENpdHkxHjAcBgNVBAoT
+FVRoZSBVU0VSVFJVU1QgTmV0d29yazEuMCwGA1UEAxMlVVNFUlRydXN0IFJTQSBDZXJ0aWZpY2F0
+aW9uIEF1dGhvcml0eTAeFw0xODExMDIwMDAwMDBaFw0zMDEyMzEyMzU5NTlaMIGWMQswCQYDVQQG
+EwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRgwFgYD
+VQQKEw9TZWN0aWdvIExpbWl0ZWQxPjA8BgNVBAMTNVNlY3RpZ28gUlNBIENsaWVudCBBdXRoZW50
+aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWlsIENBMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKC
+AQEAyjztlApB/975Rrno1jvm2pK/KxBOqhq8gr2+JhwpKirSzZxQgT9tlC7zl6hn1fXjSo5MqXUf
+ItMltrMaXqcESJuK8dtK56NCSrq4iDKaKq9NxOXFmqXX2zN8HHGjQ2b2Xv0v1L5Nk1MQPKA19xeW
+QcpGEGFUUd0kN+oHox+L9aV1rjfNiCj3bJk6kJaOPabPi2503nn/ITX5e8WfPnGw4VuZ79Khj1YB
+rf24k5Ee1sLTHsLtpiK9OjG4iQRBdq6Z/TlVx/hGAez5h36bBJMxqdHLpdwIUkTqT8se3ed0PewD
+ch/8kHPo5fZl5u1B0ecpq/sDN/5sCG52Ds+QU5O5EwIDAQABo4IBZDCCAWAwHwYDVR0jBBgwFoAU
+U3m/WqorSs9UgOHYm8Cd8rIDZsswHQYDVR0OBBYEFAnA8vwL2pTbX/4r36iZQs/J4K0AMA4GA1Ud
+DwEB/wQEAwIBhjASBgNVHRMBAf8ECDAGAQH/AgEAMB0GA1UdJQQWMBQGCCsGAQUFBwMCBggrBgEF
+BQcDBDARBgNVHSAECjAIMAYGBFUdIAAwUAYDVR0fBEkwRzBFoEOgQYY/aHR0cDovL2NybC51c2Vy
+dHJ1c3QuY29tL1VTRVJUcnVzdFJTQUNlcnRpZmljYXRpb25BdXRob3JpdHkuY3JsMHYGCCsGAQUF
+BwEBBGowaDA/BggrBgEFBQcwAoYzaHR0cDovL2NydC51c2VydHJ1c3QuY29tL1VTRVJUcnVzdFJT
+QUFkZFRydXN0Q0EuY3J0MCUGCCsGAQUFBzABhhlodHRwOi8vb2NzcC51c2VydHJ1c3QuY29tMA0G
+CSqGSIb3DQEBDAUAA4ICAQBBRHUAqznCFfXejpVtMnFojADdF9d6HBA4kMjjsb0XMZHztuOCtKF+
+xswhh2GqkW5JQrM8zVlU+A2VP72Ky2nlRA1GwmIPgou74TZ/XTarHG8zdMSgaDrkVYzz1g3nIVO9
+IHk96VwsacIvBF8JfqIs+8aWH2PfSUrNxP6Ys7U0sZYx4rXD6+cqFq/ZW5BUfClN/rhk2ddQXyn7
+kkmka2RQb9d90nmNHdgKrwfQ49mQ2hWQNDkJJIXwKjYA6VUR/fZUFeCUisdDe/0ABLTI+jheXUV1
+eoYV7lNwNBKpeHdNuO6Aacb533JlfeUHxvBz9OfYWUiXu09sMAviM11Q0DuMZ5760CdO2VnpsXP4
+KxaYIhvqPqUMWqRdWyn7crItNkZeroXaecG03i3mM7dkiPaCkgocBg0EBYsbZDZ8bsG3a08LwEsL
+1Ygz3SBsyECa0waq4hOf/Z85F2w2ZpXfP+w8q4ifwO90SGZZV+HR/Jh6rEaVPDRF/CEGVqR1hiuQ
+OZ1YL5ezMTX0ZSLwrymUE0pwi/KDaiYB15uswgeIAcA6JzPFf9pLkAFFWs1QNyN++niFhsM47qod
+x/PL+5jR87myx5uYdBEQkkDc+lKB1Wct6ucXqm2EmsaQ0M95QjTmy+rDWjkDYdw3Ms6mSWE3Bn7i
+5ZgtwCLXgAIe5W8mybM2JzCCBhQwggT8oAMCAQICEQDGvhmWZ0DEAx0oURL6O6l+MA0GCSqGSIb3
+DQEBCwUAMIGWMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYD
+VQQHEwdTYWxmb3JkMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0ZWQxPjA8BgNVBAMTNVNlY3RpZ28g
+UlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWlsIENBMB4XDTIyMDEwNzAw
+MDAwMFoXDTI1MDEwNjIzNTk1OVowJDEiMCAGCSqGSIb3DQEJARYTZHdtdzJAaW5mcmFkZWFkLm9y
+ZzCCAiIwDQYJKoZIhvcNAQEBBQADggIPADCCAgoCggIBALQ3GpC2bomUqk+91wLYBzDMcCj5C9m6
+oZaHwvmIdXftOgTbCJXADo6G9T7BBAebw2JV38EINgKpy/ZHh7htyAkWYVoFsFPrwHounto8xTsy
+SSePMiPlmIdQ10BcVSXMUJ3Juu16GlWOnAMJY2oYfEzmE7uT9YgcBqKCo65pTFmOnR/VVbjJk4K2
+xE34GC2nAdUQkPFuyaFisicc6HRMOYXPuF0DuwITEKnjxgNjP+qDrh0db7PAjO1D4d5ftfrsf+kd
+RR4gKVGSk8Tz2WwvtLAroJM4nXjNPIBJNT4w/FWWc/5qPHJy2U+eITZ5LLE5s45mX2oPFknWqxBo
+bQZ8a9dsZ3dSPZBvE9ZrmtFLrVrN4eo1jsXgAp1+p7bkfqd3BgBEmfsYWlBXO8rVXfvPgLs32VdV
+NZxb/CDWPqBsiYv0Hv3HPsz07j5b+/cVoWqyHDKzkaVbxfq/7auNVRmPB3v5SWEsH8xi4Bez2V9U
+KxfYCnqsjp8RaC2/khxKt0A552Eaxnz/4ly/2C7wkwTQnBmdlFYhAflWKQ03Ufiu8t3iBE3VJbc2
+5oMrglj7TRZrmKq3CkbFnX0fyulB+kHimrt6PIWn7kgyl9aelIl6vtbhMA+l0nfrsORMa4kobqQ5
+C5rveVgmcIad67EDa+UqEKy/GltUwlSh6xy+TrK1tzDvAgMBAAGjggHMMIIByDAfBgNVHSMEGDAW
+gBQJwPL8C9qU21/+K9+omULPyeCtADAdBgNVHQ4EFgQUzMeDMcimo0oz8o1R1Nver3ZVpSkwDgYD
+VR0PAQH/BAQDAgWgMAwGA1UdEwEB/wQCMAAwHQYDVR0lBBYwFAYIKwYBBQUHAwQGCCsGAQUFBwMC
+MEAGA1UdIAQ5MDcwNQYMKwYBBAGyMQECAQEBMCUwIwYIKwYBBQUHAgEWF2h0dHBzOi8vc2VjdGln
+by5jb20vQ1BTMFoGA1UdHwRTMFEwT6BNoEuGSWh0dHA6Ly9jcmwuc2VjdGlnby5jb20vU2VjdGln
+b1JTQUNsaWVudEF1dGhlbnRpY2F0aW9uYW5kU2VjdXJlRW1haWxDQS5jcmwwgYoGCCsGAQUFBwEB
+BH4wfDBVBggrBgEFBQcwAoZJaHR0cDovL2NydC5zZWN0aWdvLmNvbS9TZWN0aWdvUlNBQ2xpZW50
+QXV0aGVudGljYXRpb25hbmRTZWN1cmVFbWFpbENBLmNydDAjBggrBgEFBQcwAYYXaHR0cDovL29j
+c3Auc2VjdGlnby5jb20wHgYDVR0RBBcwFYETZHdtdzJAaW5mcmFkZWFkLm9yZzANBgkqhkiG9w0B
+AQsFAAOCAQEAyW6MUir5dm495teKqAQjDJwuFCi35h4xgnQvQ/fzPXmtR9t54rpmI2TfyvcKgOXp
+qa7BGXNFfh1JsqexVkIqZP9uWB2J+uVMD+XZEs/KYNNX2PvIlSPrzIB4Z2wyIGQpaPLlYflrrVFK
+v9CjT2zdqvy2maK7HKOQRt3BiJbVG5lRiwbbygldcALEV9ChWFfgSXvrWDZspnU3Gjw/rMHrGnql
+Htlyebp3pf3fSS9kzQ1FVtVIDrL6eqhTwJxe+pXSMMqFiN0whpBtXdyDjzBtQTaZJ7zTT/vlehc/
+tDuqZwGHm/YJy883Ll+GP3NvOkgaRGWEuYWJJ6hFCkXYjyR9IzCCBhQwggT8oAMCAQICEQDGvhmW
+Z0DEAx0oURL6O6l+MA0GCSqGSIb3DQEBCwUAMIGWMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3Jl
+YXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0
+ZWQxPjA8BgNVBAMTNVNlY3RpZ28gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJl
+IEVtYWlsIENBMB4XDTIyMDEwNzAwMDAwMFoXDTI1MDEwNjIzNTk1OVowJDEiMCAGCSqGSIb3DQEJ
+ARYTZHdtdzJAaW5mcmFkZWFkLm9yZzCCAiIwDQYJKoZIhvcNAQEBBQADggIPADCCAgoCggIBALQ3
+GpC2bomUqk+91wLYBzDMcCj5C9m6oZaHwvmIdXftOgTbCJXADo6G9T7BBAebw2JV38EINgKpy/ZH
+h7htyAkWYVoFsFPrwHounto8xTsySSePMiPlmIdQ10BcVSXMUJ3Juu16GlWOnAMJY2oYfEzmE7uT
+9YgcBqKCo65pTFmOnR/VVbjJk4K2xE34GC2nAdUQkPFuyaFisicc6HRMOYXPuF0DuwITEKnjxgNj
+P+qDrh0db7PAjO1D4d5ftfrsf+kdRR4gKVGSk8Tz2WwvtLAroJM4nXjNPIBJNT4w/FWWc/5qPHJy
+2U+eITZ5LLE5s45mX2oPFknWqxBobQZ8a9dsZ3dSPZBvE9ZrmtFLrVrN4eo1jsXgAp1+p7bkfqd3
+BgBEmfsYWlBXO8rVXfvPgLs32VdVNZxb/CDWPqBsiYv0Hv3HPsz07j5b+/cVoWqyHDKzkaVbxfq/
+7auNVRmPB3v5SWEsH8xi4Bez2V9UKxfYCnqsjp8RaC2/khxKt0A552Eaxnz/4ly/2C7wkwTQnBmd
+lFYhAflWKQ03Ufiu8t3iBE3VJbc25oMrglj7TRZrmKq3CkbFnX0fyulB+kHimrt6PIWn7kgyl9ae
+lIl6vtbhMA+l0nfrsORMa4kobqQ5C5rveVgmcIad67EDa+UqEKy/GltUwlSh6xy+TrK1tzDvAgMB
+AAGjggHMMIIByDAfBgNVHSMEGDAWgBQJwPL8C9qU21/+K9+omULPyeCtADAdBgNVHQ4EFgQUzMeD
+Mcimo0oz8o1R1Nver3ZVpSkwDgYDVR0PAQH/BAQDAgWgMAwGA1UdEwEB/wQCMAAwHQYDVR0lBBYw
+FAYIKwYBBQUHAwQGCCsGAQUFBwMCMEAGA1UdIAQ5MDcwNQYMKwYBBAGyMQECAQEBMCUwIwYIKwYB
+BQUHAgEWF2h0dHBzOi8vc2VjdGlnby5jb20vQ1BTMFoGA1UdHwRTMFEwT6BNoEuGSWh0dHA6Ly9j
+cmwuc2VjdGlnby5jb20vU2VjdGlnb1JTQUNsaWVudEF1dGhlbnRpY2F0aW9uYW5kU2VjdXJlRW1h
+aWxDQS5jcmwwgYoGCCsGAQUFBwEBBH4wfDBVBggrBgEFBQcwAoZJaHR0cDovL2NydC5zZWN0aWdv
+LmNvbS9TZWN0aWdvUlNBQ2xpZW50QXV0aGVudGljYXRpb25hbmRTZWN1cmVFbWFpbENBLmNydDAj
+BggrBgEFBQcwAYYXaHR0cDovL29jc3Auc2VjdGlnby5jb20wHgYDVR0RBBcwFYETZHdtdzJAaW5m
+cmFkZWFkLm9yZzANBgkqhkiG9w0BAQsFAAOCAQEAyW6MUir5dm495teKqAQjDJwuFCi35h4xgnQv
+Q/fzPXmtR9t54rpmI2TfyvcKgOXpqa7BGXNFfh1JsqexVkIqZP9uWB2J+uVMD+XZEs/KYNNX2PvI
+lSPrzIB4Z2wyIGQpaPLlYflrrVFKv9CjT2zdqvy2maK7HKOQRt3BiJbVG5lRiwbbygldcALEV9Ch
+WFfgSXvrWDZspnU3Gjw/rMHrGnqlHtlyebp3pf3fSS9kzQ1FVtVIDrL6eqhTwJxe+pXSMMqFiN0w
+hpBtXdyDjzBtQTaZJ7zTT/vlehc/tDuqZwGHm/YJy883Ll+GP3NvOkgaRGWEuYWJJ6hFCkXYjyR9
+IzGCBMcwggTDAgEBMIGsMIGWMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVz
+dGVyMRAwDgYDVQQHEwdTYWxmb3JkMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0ZWQxPjA8BgNVBAMT
+NVNlY3RpZ28gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWlsIENBAhEA
+xr4ZlmdAxAMdKFES+jupfjANBglghkgBZQMEAgEFAKCCAeswGAYJKoZIhvcNAQkDMQsGCSqGSIb3
+DQEHATAcBgkqhkiG9w0BCQUxDxcNMjQxMTA1MjEyOTU0WjAvBgkqhkiG9w0BCQQxIgQgNjVL2GcH
+u2vjpMWQV1ZSV6W7lqSsUcNCyHT8RHqdL8owgb0GCSsGAQQBgjcQBDGBrzCBrDCBljELMAkGA1UE
+BhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQMA4GA1UEBxMHU2FsZm9yZDEYMBYG
+A1UEChMPU2VjdGlnbyBMaW1pdGVkMT4wPAYDVQQDEzVTZWN0aWdvIFJTQSBDbGllbnQgQXV0aGVu
+dGljYXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQQIRAMa+GZZnQMQDHShREvo7qX4wgb8GCyqGSIb3
+DQEJEAILMYGvoIGsMIGWMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVy
+MRAwDgYDVQQHEwdTYWxmb3JkMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0ZWQxPjA8BgNVBAMTNVNl
+Y3RpZ28gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWlsIENBAhEAxr4Z
+lmdAxAMdKFES+jupfjANBgkqhkiG9w0BAQEFAASCAgCJmJIb6IaPMVy1daGyWVNqQEskxm05y7L2
+eBvCWo6A5uKH5utSVP4sLU70yFZrjtfENHY5vTPDQudezx4ztMhMWZMTbKjnK7KXNsZYYucyuAlO
+d30uL/ArWAFD/4ZcAVle6kq2uIjZfM5GpFIFH76xlqG9MAViUc4YdBK8cqgH6AoLvEC/S7Hsg6cp
+F5zz8vfO/zwHmlVdnTsnyDYR6ZMIQYoHe3o9i4kg6/RWbwCO1hje1adWjgY8dacIJ4oygTzYNAf/
+c8m07dw+LA3O3JDLnmNmQNI2wOJ0Wrk/ZUwsqjMtCCZu9r4AqCMhNzm9N/lVT+h1FrdCxxawCk4q
+HeOTbFRCxe6i35IinmG/QPuHpnZpKJ8+S0Elq33+/VPmmTXXBsqs8B09kCzI36q2eNTiBl6Rj4c/
+sMLYij+u8HwR9VXGhS0ItjtNfhuqNhMLddyr5AQqCV3BqXhzyP3VK1eySrAy4TXOkIHTxHWsBz1q
+T16eLqs3hZKaD5tkW3qTFjtRi28Xltu7bZ0KTLFMh4Zx4BUNi6AUR81tMgrDnvjVttMhmuCIzNwO
+zwEEoGVVPE/HvdlqEAL7i/jLWH05S4774cj2TDmrc9k457f4TssUWegQ44fDI22IwHQWqnxrz5l1
+fPQ6FtkPUYQD6LcjxEyX595ejG2pU5/wvhLgANm9FQAAAAAAAA==
 
 
-> @@ -883,7 +883,9 @@ static void rk3x_i2c_adapt_div(struct rk3x_i2c *i2c, =
-unsigned long clk_rate)
->         ret =3D i2c->soc_data->calc_timings(clk_rate, t, &calc);
->         WARN_ONCE(ret !=3D 0, "Could not reach SCL freq %u", t->bus_freq_=
-hz);
->
-> -       clk_enable(i2c->pclk);
-> +       ret =3D clk_enable(i2c->pclk);
-> +       if (ret)
-> +               return dev_err_probe(i2c->dev, ret, "Can't enable bus clk=
- for rk3399: %d\n", ret);
-
-Officially you're only supposed to use "dev_err_probe()" from probe or
-calls indirectly called from probe. You're now using it in a whole lot
-of other places.
-
-...also note that dev_err_probe() already prints the error so you
-don't need to include it in your error message.
-
-
-> @@ -942,19 +946,27 @@ static int rk3x_i2c_clk_notifier_cb(struct notifier=
-_block *nb, unsigned long
->                         return NOTIFY_STOP;
->
->                 /* scale up */
-> -               if (ndata->new_rate > ndata->old_rate)
-> -                       rk3x_i2c_adapt_div(i2c, ndata->new_rate);
-> +               if (ndata->new_rate > ndata->old_rate) {
-> +                       if (rk3x_i2c_adapt_div(i2c, ndata->new_rate))
-> +                               return NOTIFY_STOP;
-> +               }
->
->                 return NOTIFY_OK;
->         case POST_RATE_CHANGE:
->                 /* scale down */
-> -               if (ndata->new_rate < ndata->old_rate)
-> -                       rk3x_i2c_adapt_div(i2c, ndata->new_rate);
-> +               if (ndata->new_rate < ndata->old_rate) {
-> +                       if (rk3x_i2c_adapt_div(i2c, ndata->new_rate))
-> +                               return NOTIFY_STOP;
-> +               }
-> +
->                 return NOTIFY_OK;
->         case ABORT_RATE_CHANGE:
->                 /* scale up */
-> -               if (ndata->new_rate > ndata->old_rate)
-> -                       rk3x_i2c_adapt_div(i2c, ndata->old_rate);
-> +               if (ndata->new_rate > ndata->old_rate) {
-> +                       if (rk3x_i2c_adapt_div(i2c, ndata->old_rate))
-> +                               return NOTIFY_STOP;
-
-I'm not convinced you can actually return NODIFY_STOP from the
-POST_RATE_CHANGE or ABORT_RATE_CHANGE. Have you confirmed that is
-actually sensible?
-
-
-> @@ -1365,9 +1385,12 @@ static int rk3x_i2c_probe(struct platform_device *=
-pdev)
->         }
->
->         clk_rate =3D clk_get_rate(i2c->clk);
-> -       rk3x_i2c_adapt_div(i2c, clk_rate);
-> +       ret =3D rk3x_i2c_adapt_div(i2c, clk_rate);
->         clk_disable(i2c->clk);
->
-> +       if (ret)
-> +               goto err_clk_notifier;
-
-This one seems especially comical to add since the only way
-rk3x_i2c_adapt_div() could fail would be if a nested clk_enable()
-failed. ...and I'm 99% sure that's not possible.
-
--Doug
+--=-olQpAiz5VaKuXeudmmkp--
 
