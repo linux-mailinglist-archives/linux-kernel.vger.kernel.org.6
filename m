@@ -1,187 +1,346 @@
-Return-Path: <linux-kernel+bounces-396223-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396224-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E8199BC985
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 10:47:29 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 660999BC987
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 10:48:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C41B81F22479
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 09:47:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8892B1C225F4
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 09:48:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80D3E1D097C;
-	Tue,  5 Nov 2024 09:47:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 585501D0E0F;
+	Tue,  5 Nov 2024 09:48:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="KuUvxrCs"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lrsf4vFt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A292D163;
-	Tue,  5 Nov 2024 09:47:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C3CB163;
+	Tue,  5 Nov 2024 09:48:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730800040; cv=none; b=X2/rea48IUAZBeFnsOVdsS+OyeaR78bnm0CFBufyG1VLjeh/mvdpOvEL5bbT7jWzSy/CjmbMZvf8xhz2r9scj833vaJKBQwdjS3nf/WoES4QQ3z+o4qwQGyqA4OME9tKfoTGtQpTXTpBV98uXFxn/nlePnBRndngxF9oXQmiCSI=
+	t=1730800096; cv=none; b=PDJngvAHb/dhdVE2ng3cOqiYFQYLyQkVsNqrRVJkhBRHEC4p9cwcAPivV49cpPBaDnvcpbVWHca+NJ92benrpjco5LOiWi4jkhVvyyQqnJPOLjuF6rQHWIctH8Jcr6k/30t3WAPMmZvlr+BFu8+pYftXKRQBY2dEei8JRuscY8E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730800040; c=relaxed/simple;
-	bh=M0Ut8meL8KY2e62RU+oXfUnPjesd+j3sK9bZgAHcSnY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=m83VMKOfEL6f4+Z8TgGKayPCC4fQ20FDsVyTrSwCSQVYkkk1jY53U5PSPzcda+uoi+5bh+DgpmRboAcVHsYboGM+fGEfA8iRqePbQ6e+l1ZJB1x6rH9xcsVwsnTolJvIvXfGMlIr/r/dMIZnQFD88VDK/yFh9yYWAeX0jcieiRQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=KuUvxrCs; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id CB00421C;
-	Tue,  5 Nov 2024 10:47:08 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1730800029;
-	bh=M0Ut8meL8KY2e62RU+oXfUnPjesd+j3sK9bZgAHcSnY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KuUvxrCsOWLFOWrpuYLTa6ONwajPti3MPpaqogjxRB28dmnc/lEu2WFkSg6pzty52
-	 e5uyjWS5qTNVoHlFudoM9Fmz4vgVh4P9ue1K5FqHuGtJNRqUYjLjvpsQy7lc8fX9KN
-	 u0EDNXsfRZGr6PxrpvBGQ9m/N/qFow+c9cSo3IsE=
-Date: Tue, 5 Nov 2024 11:47:08 +0200
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Herve Codina <herve.codina@bootlin.com>
-Cc: Maxime Ripard <mripard@kernel.org>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>, Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Marek Vasut <marex@denx.de>,
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH 2/2] drm: bridge: ti-sn65dsi83: Add error recovery
- mechanism
-Message-ID: <20241105094708.GK27775@pendragon.ideasonboard.com>
-References: <20241024095539.1637280-1-herve.codina@bootlin.com>
- <20241024095539.1637280-3-herve.codina@bootlin.com>
- <20241027162350.GA15853@pendragon.ideasonboard.com>
- <20241028091331.6f67e29e@bootlin.com>
- <20241028112857.GF24052@pendragon.ideasonboard.com>
- <20241028-nebulous-yellow-dragon-2cfb5f@houat>
- <20241028132858.GE6081@pendragon.ideasonboard.com>
- <20241028-great-charming-flounder-23fc9b@houat>
- <20241028140913.GG6081@pendragon.ideasonboard.com>
- <20241105091503.48f69586@bootlin.com>
+	s=arc-20240116; t=1730800096; c=relaxed/simple;
+	bh=k7XKiw9IwqHy40KHuQPepYxcJBNl5vEHlPrYP3X0Hdk=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=ax1nJsOmZfKYIDrBgN8kGk9jZTuq9hg1nTfSzBI1T4TY3y4HWTkGcbNjAgC8zQsUbMqN0YequsIb5GdXfmiTIcV3ycwvmhdV96P7yhWqefJ0TiduVZ0koQ18V5pvwoKtTXfsy6dLB2rq3NMHuT0ny3gDueu5DOiu+N6AkQy4SeM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lrsf4vFt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79086C4CECF;
+	Tue,  5 Nov 2024 09:48:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730800095;
+	bh=k7XKiw9IwqHy40KHuQPepYxcJBNl5vEHlPrYP3X0Hdk=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=lrsf4vFty2CX93eITvtfE02J86QeNNwTeE1dhjVkflj1u/giY/PTek/oTaRzDKPw+
+	 o56EmqeNbGhStzlIQYJPT4Ijf4DGB4y3eHCmO1YteeLvib99ILc9vYLhZqO7/YYhLQ
+	 jd3+bPxEiPv6/WthAEAGtYz1L3o2yljlAod5IRHfphsPxAYi5Aq4OxZk6lrYAQgPbc
+	 T1DdwRryxb2kVUcnBt6glqCNd0NeQT3Go4LySkuY34X37pq2WGf//IWXqZr5MOAA0Q
+	 t9LA8ttVVTq7n30C+N05ixPucnqv9PIC8Z38YXOBvyE9TCHXCFU9Zhck4aizW7Jl7m
+	 jVS6inbQXWfwg==
+Date: Tue, 5 Nov 2024 18:48:12 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>, Peter Zijlstra
+ <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, Ian Rogers
+ <irogers@google.com>, Dima Kogan <dima@secretsauce.net>, Alexander Lobakin
+ <aleksander.lobakin@intel.com>, Przemek Kitszel
+ <przemyslaw.kitszel@intel.com>, linux-perf-users@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/4] perf-probe: Improbe non-C language support
+Message-Id: <20241105184812.e8256c3078505b63b83a6cf6@kernel.org>
+In-Reply-To: <ZykYwHifTM6niEmG@x1>
+References: <173073702882.2098439.13342508872190995896.stgit@mhiramat.roam.corp.google.com>
+	<ZykYwHifTM6niEmG@x1>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241105091503.48f69586@bootlin.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Tue, Nov 05, 2024 at 09:15:03AM +0100, Herve Codina wrote:
-> On Mon, 28 Oct 2024 16:09:13 +0200 Laurent Pinchart wrote:
-> > On Mon, Oct 28, 2024 at 02:55:47PM +0100, Maxime Ripard wrote:
-> > > On Mon, Oct 28, 2024 at 03:28:58PM +0200, Laurent Pinchart wrote:  
-> > > > On Mon, Oct 28, 2024 at 01:21:45PM +0100, Maxime Ripard wrote:  
-> > > > > On Mon, Oct 28, 2024 at 01:28:57PM +0200, Laurent Pinchart wrote:  
-> > > > > > On Mon, Oct 28, 2024 at 09:13:31AM +0100, Herve Codina wrote:  
-> > > > > > > On Sun, 27 Oct 2024 18:23:50 +0200 Laurent Pinchart wrote:
-> > > > > > > 
-> > > > > > > [...]  
-> > > > > > > > > +static int sn65dsi83_reset_pipeline(struct sn65dsi83 *sn65dsi83)
-> > > > > > > > > +{
-> > > > > > > > > +	struct drm_device *dev = sn65dsi83->bridge.dev;
-> > > > > > > > > +	struct drm_modeset_acquire_ctx ctx;
-> > > > > > > > > +	struct drm_atomic_state *state;
-> > > > > > > > > +	int err;
-> > > > > > > > > +
-> > > > > > > > > +	/* Use operation done in drm_atomic_helper_suspend() followed by
-> > > > > > > > > +	 * operation done in drm_atomic_helper_resume() but without releasing
-> > > > > > > > > +	 * the lock between suspend()/resume()
-> > > > > > > > > +	 */
-> > > > > > > > > +
-> > > > > > > > > +	DRM_MODESET_LOCK_ALL_BEGIN(dev, ctx, 0, err);
-> > > > > > > > > +
-> > > > > > > > > +	state = drm_atomic_helper_duplicate_state(dev, &ctx);
-> > > > > > > > > +	if (IS_ERR(state)) {
-> > > > > > > > > +		err = PTR_ERR(state);
-> > > > > > > > > +		goto unlock;
-> > > > > > > > > +	}
-> > > > > > > > > +
-> > > > > > > > > +	err = drm_atomic_helper_disable_all(dev, &ctx);
-> > > > > > > > > +	if (err < 0)
-> > > > > > > > > +		goto unlock;
-> > > > > > > > > +
-> > > > > > > > > +	drm_mode_config_reset(dev);
-> > > > > > > > > +
-> > > > > > > > > +	err = drm_atomic_helper_commit_duplicated_state(state, &ctx);    
-> > > > > > > > 
-> > > > > > > > Committing a full atomic state from a bridge driver in an asynchronous
-> > > > > > > > way seems quite uncharted territory, and it worries me. It's also a very
-> > > > > > > > heavyweight, you disable all outputs here, instead of focussing on the
-> > > > > > > > output connected to the bridge. Can you either implement something more
-> > > > > > > > local, resetting the bridge only, or create a core helper to handle this
-> > > > > > > > kind of situation, on a per-output basis ?  
-> > > > > > > 
-> > > > > > > A full restart of the bridge (power off/on) is needed and so we need to
-> > > > > > > redo the initialization sequence. This initialization sequence has to be
-> > > > > > > done with the DSI data lanes (bridge inputs) driven in LP11 state and so
-> > > > > > > without any video stream. Only focussing on bridge outputs will not be
-> > > > > > > sufficient. That's why I brought the pipeline down and restarted it.  
-> > > > > > 
-> > > > > > Fair point.
-> > > > > >   
-> > > > > > > Of course, I can copy/paste sn65dsi83_reset_pipeline() to a core helper
-> > > > > > > function. Is drm_atomic_helper_reset_all() could be a good candidate?  
-> > > > > > 
-> > > > > > The helper should operate on a single output, unrelated outputs should
-> > > > > > not be affected.  
-> > > > > 
-> > > > > Also, you don't want to reset anything, you just want the last commit to
-> > > > > be replayed.  
-> > > > 
-> > > > I'm not sure about that. If the last commit is just a page flip, that
-> > > > won't help, will it ?  
-> > > 
-> > > The alternative would be that you start anew with a blank state, which
-> > > effectively drops every configuration that has been done by userspace.
-> > > This is terrible.
-> > > 
-> > > And a page flip wouldn't have affected the connector and
-> > > connector->state would still be to the last state that affected it, so
-> > > it would work.  
+On Mon, 4 Nov 2024 15:56:00 -0300
+Arnaldo Carvalho de Melo <acme@kernel.org> wrote:
+
+> On Tue, Nov 05, 2024 at 01:17:08AM +0900, Masami Hiramatsu (Google) wrote:
+> > Hi,
+>  
+> > Here is a series of patches for perf probe to improve non-C language
+> > (e.g. Rust, Go) support.
+>  
+> > The non-C symbols are demangled style in debuginfo, e.g. golang stores
+>  
+> > ----
+> > $ ./perf probe -x /work/go/example/outyet/main -F main*
+> > main.(*Server).ServeHTTP
+> > main.(*Server).ServeHTTP.Print.func1
+> > main.(*Server).poll
+> > ...
+> > -----
+> 
+> I presented about this last year:
+> 
+> https://tracingsummit.org/ts/2023/bpf-non-c/
+> https://tracingsummit.org/ts/2023/files/Trying_to_use_uprobes_and_BPF_on_non-C_userspace.pdf
+> https://www.youtube.com/watch?v=RDFRy1vWyHg&feature=youtu.be
+
+Nice!
+
+> 
+> So trying to do some of the things I did while playing with golang, and
+> with your patches applied, I only had to cope with a minor clash with a
+> patch by Ian Rogers that is present on perf-tools-next, related to:
+> 
+>         char buf[MAX_EVENT_NAME_LEN];
+> 
+> That in your patch expects the old 64 hard coded value, which will
+> appear in the my tests:
+
+Ah, OK let me rebase on it.
+
+> 
+> root@x1:/home/acme/git/libbpf-bootstrap/examples/c/tests/prometheus# perf probe -x main -F github*counter*
+> github.com/prometheus/client_golang/prometheus.(*counter).Add
+> github.com/prometheus/client_golang/prometheus.(*counter).AddWithExemplar
+> github.com/prometheus/client_golang/prometheus.(*counter).Collect
+> github.com/prometheus/client_golang/prometheus.(*counter).Desc
+> github.com/prometheus/client_golang/prometheus.(*counter).Describe
+> github.com/prometheus/client_golang/prometheus.(*counter).Inc
+> github.com/prometheus/client_golang/prometheus.(*counter).Write
+> github.com/prometheus/client_golang/prometheus.(*counter).updateExemplar
+> root@x1:/home/acme/git/libbpf-bootstrap/examples/c/tests/prometheus# perf probe -x main -F github*counter*
+> 
+> Then trying to add for all those:
+> 
+> root@x1:/home/acme/git/libbpf-bootstrap/examples/c/tests/prometheus# perf probe -d *:*
+> "*:*" does not hit any event.
+>   Error: Failed to delete events.
+> root@x1:/home/acme/git/libbpf-bootstrap/examples/c/tests/prometheus# perf probe -l
+> root@x1:/home/acme/git/libbpf-bootstrap/examples/c/tests/prometheus#
+> 
+> root@x1:/home/acme/git/libbpf-bootstrap/examples/c/tests/prometheus# perf probe -x main github*counter*
+> A function DIE doesn't have decl_line. Maybe broken DWARF?
+> A function DIE doesn't have decl_line. Maybe broken DWARF?
+> A function DIE doesn't have decl_line. Maybe broken DWARF?
+> A function DIE doesn't have decl_line. Maybe broken DWARF?
+> A function DIE doesn't have decl_line. Maybe broken DWARF?
+> snprintf() failed: -7; the event name 'github_com_prometheus_client_golang_prometheus_counter_AddWithExemplar' is too long
+>   Hint: Set a shorter event with syntax "EVENT=PROBEDEF"
+>         EVENT: Event name (max length: 64 bytes).
+>   Error: Failed to add events.
+> root@x1:/home/acme/git/libbpf-bootstrap/examples/c/tests/prometheus#
+> 
+> But:
+> 
+> root@x1:/home/acme/git/libbpf-bootstrap/examples/c/tests/prometheus# perf probe -l
+>   probe_main:github_com_prometheus_client_golang_prometheus_counter_Desc (on github.com/prometheus/client_golang/prometheus.(*counter).Des>
+> (END)
+> 
+> That pager thing looks odd as well, since there is just one line in the
+> output...
+> 
+> So it failed to do all those, added just one, maybe state that some were
+> added but from the problematic one onwards it stopped? Or try all of
+> them and just state the ones that couldn't be added?
+
+OK, yes, it should show what events are actually added.
+
+> 
+> I.e. something like:
+> 
+> root@x1:/home/acme/git/libbpf-bootstrap/examples/c/tests/prometheus# perf probe -x main -F github*counter* | while read probename ; do perf probe -x main $probename ; done
+> A function DIE doesn't have decl_line. Maybe broken DWARF?
+> A function DIE doesn't have decl_line. Maybe broken DWARF?
+> Failed to find debug information for address 0x3287e0
+> Probe point 'github.com/prometheus/client_golang/prometheus.(*counter).Add' not found.
+>   Error: Failed to add events.
+> snprintf() failed: -7; the event name 'github_com_prometheus_client_golang_prometheus_counter_AddWithExemplar' is too long
+>   Hint: Set a shorter event with syntax "EVENT=PROBEDEF"
+>         EVENT: Event name (max length: 64 bytes).
+>   Error: Failed to add events.
+> A function DIE doesn't have decl_line. Maybe broken DWARF?
+> Failed to find debug information for address 0x33ab40
+> Probe point 'github.com/prometheus/client_golang/prometheus.(*counter).Collect' not found.
+>   Error: Failed to add events.
+> Error: event "github_com_prometheus_client_golang_prometheus_counter_Desc" already exists.
+>  Hint: Remove existing event by 'perf probe -d'
+>        or force duplicates by 'perf probe -f'
+>        or set 'force=yes' in BPF source.
+>   Error: Failed to add events.
+> A function DIE doesn't have decl_line. Maybe broken DWARF?
+> Failed to find debug information for address 0x33aba0
+> Probe point 'github.com/prometheus/client_golang/prometheus.(*counter).Describe' not found.
+>   Error: Failed to add events.
+> Added new event:
+>   probe_main:github_com_prometheus_client_golang_prometheus_counter_Inc (on github.com/prometheus/client_golang/prometheus.(*counter).Inc in /home/acme/git/libbpf-bootstrap/examples/c/tests/prometheus/main)
+> 
+> You can now use it in all perf tools, such as:
+> 
+> 	perf record -e probe_main:github_com_prometheus_client_golang_prometheus_counter_Inc -aR sleep 1
+> 
+> Added new event:
+>   probe_main:github_com_prometheus_client_golang_prometheus_counter_Write (on github.com/prometheus/client_golang/prometheus.(*counter).Write in /home/acme/git/libbpf-bootstrap/examples/c/tests/prometheus/main)
+> 
+> You can now use it in all perf tools, such as:
+> 
+> 	perf record -e probe_main:github_com_prometheus_client_golang_prometheus_counter_Write -aR sleep 1
+> 
+> snprintf() failed: -7; the event name 'github_com_prometheus_client_golang_prometheus_counter_updateExemplar' is too long
+>   Hint: Set a shorter event with syntax "EVENT=PROBEDEF"
+>         EVENT: Event name (max length: 64 bytes).
+>   Error: Failed to add events.
+> root@x1:/home/acme/git/libbpf-bootstrap/examples/c/tests/prometheus#
+> 
+> In the end we get:
+> 
+> root@x1:/home/acme/git/libbpf-bootstrap/examples/c/tests/prometheus# perf probe -l
+>   probe_main:github_com_prometheus_client_golang_prometheus_counter_Desc (on github.com/prometheus/client_golang/prometheus.(*counter).Desc@prometheus/counter.go in /home/acme/git/libbpf-bootstrap/examples/c/tests/prometheus/main)
+>   probe_main:github_com_prometheus_client_golang_prometheus_counter_Inc (on github.com/prometheus/client_golang/prometheus.(*counter).Inc@prometheus/counter.go in /home/acme/git/libbpf-bootstrap/examples/c/tests/prometheus/main)
+>   probe_main:github_com_prometheus_client_golang_prometheus_counter_Write (on github.com/prometheus/client_golang/prometheus.(*counter).Write@prometheus/counter.go in /home/acme/git/libbpf-bootstrap/examples/c/tests/prometheus/main)
+> root@x1:/home/acme/git/libbpf-bootstrap/examples/c/tests/prometheus#
+> 
+> That also explains the pager kicking in: I had to reduce font size in my
+> xterm (gnome-terminal really) and then the perf pager wasn't used (no
+> (END) at the last line waiting for me to press 'q').
+> 
+> The ones that got installed are working:
+> 
+> root@x1:/home/acme/git/libbpf-bootstrap/examples/c/tests/prometheus# perf trace -e probe_main:*
+>      0.000 main/616840 probe_main:github_com_prometheus_client_golang_prometheus_counter_Inc(__probe_ip: 7506464)
+>   1001.043 main/616926 probe_main:github_com_prometheus_client_golang_prometheus_counter_Inc(__probe_ip: 7506464)
+>   1001.080 main/616926 probe_main:github_com_prometheus_client_golang_prometheus_counter_Inc(__probe_ip: 7506464)
+>   4000.994 main/616926 probe_main:github_com_prometheus_client_golang_prometheus_counter_Inc(__probe_ip: 7506464)
+> ^Croot@x1:/home/acme/git/libbpf-bootstrap/examples/c/tests/prometheus# perf trace -e probe_main:*/max-stack=8/
+>      0.000 main/616926 probe_main:github_com_prometheus_client_golang_prometheus_counter_Inc(__probe_ip: 7506464)
+>                                        github.com/prometheus/client_golang/prometheus.(*counter).Inc (/home/acme/git/libbpf-bootstrap/examples/c/tests/prometheus/main)
+>                                        runtime.goexit.abi0 (/home/acme/git/libbpf-bootstrap/examples/c/tests/prometheus/main)
+>      0.030 main/616926 probe_main:github_com_prometheus_client_golang_prometheus_counter_Inc(__probe_ip: 7506464)
+>                                        github.com/prometheus/client_golang/prometheus.(*counter).Inc (/home/acme/git/libbpf-bootstrap/examples/c/tests/prometheus/main)
+>                                        runtime.goexit.abi0 (/home/acme/git/libbpf-bootstrap/examples/c/tests/prometheus/main)
+>   3000.166 main/616840 probe_main:github_com_prometheus_client_golang_prometheus_counter_Inc(__probe_ip: 7506464)
+>                                        github.com/prometheus/client_golang/prometheus.(*counter).Inc (/home/acme/git/libbpf-bootstrap/examples/c/tests/prometheus/main)
+>                                        runtime.goexit.abi0 (/home/acme/git/libbpf-bootstrap/examples/c/tests/prometheus/main)
+> ^Croot@x1:/home/acme/git/libbpf-bootstrap/examples/c/tests/prometheus#
+> 
+> I'll test this some more later/tomorrow, just wanted to give this first
+> reaction, thanks for working on this!
+
+Thanks for testing and the information!
+
+Since the event name limitation is in the kernel too, user should specify
+abbreviated event name in this case (or use only the last few words).
+
+Thank you,
+
+> 
+> Btw, some more info about the environment (fedora 40):
+> 
+> root@x1:/home/acme/git/libbpf-bootstrap/examples/c/tests/prometheus# readelf -wi main | head -20
+> Contents of the .debug_info section:
+> 
+>   Compilation Unit @ offset 0:
+>    Length:        0x506 (32-bit)
+>    Version:       4
+>    Abbrev Offset: 0
+>    Pointer Size:  8
+>  <0><b>: Abbrev Number: 1 (DW_TAG_compile_unit)
+>     <c>   DW_AT_name        : google.golang.org/protobuf/internal/strs
+>     <35>   DW_AT_language    : 22	(Go)
+>     <36>   DW_AT_stmt_list   : 0
+>     <3a>   DW_AT_low_pc      : 0x667c40
+>     <42>   DW_AT_ranges      : 0
+>     <46>   DW_AT_comp_dir    : .
+>     <48>   DW_AT_producer    : Go cmd/compile go1.22.7; regabi
+>     <68>   Unknown AT value: 2905: strs
+>  <1><6d>: Abbrev Number: 5 (DW_TAG_subprogram)
+>     <6e>   DW_AT_name        : google.golang.org/protobuf/internal/strs.isASCIILower
+>     <a4>   DW_AT_inline      : 1	(inlined)
+>     <a5>   DW_AT_decl_line   : 188
+> root@x1:/home/acme/git/libbpf-bootstrap/examples/c/tests/prometheus#
+> 
+> - Arnaldo
+>  
+> > And Rust stores
+> > -----
+> > $ ./perf probe -x /work/cro3/target/x86_64-unknown-linux-gnu/debug/cro3 -F cro3::cmd::servo*
+> > cro3::cmd::servo::run
+> > cro3::cmd::servo::run::CALLSITE
+> > cro3::cmd::servo::run::CALLSITE::META
+> > cro3::cmd::servo::run_control
+> > -----
 > > 
-> > Ah right, you didn't mean replaying the last commit then, but first
-> > disabling the output and then restoring the current state ? That should
-> > work.
-> 
-> Thanks for the feedback.
-> 
-> If I understand correctly, I should try to disable the output.
-> What is the 'output' exactly, the connector?
+> > These symbols are not parsed correctly because it looks like a file name or
+> > including line numbers (`:` caused it.) So, I decided to introduce the changes
+> > 
+> >  - filename MUST start from '@'. (so it is able to distinguish the filename
+> >    and the function name)
+> >  - Fix to allow backslash to escape to --lines option.
+> >  - Introduce quotation mark support.
+> >  - Replace non-alnum character to '_' for event name (for non-C symbols).
+> > 
+> > With these changes, we can run -L (--lines) on golang;
+> > 
+> > ------
+> > $ perf probe -x goexample/hello/hello -L \"main.main\"
+> > <main.main@/work/goexample/hello/hello.go:0>
+> >       0  func main() {
+> >                 // Configure logging for a command-line program.
+> >       2         log.SetFlags(0)
+> >       3         log.SetPrefix("hello: ")
+> > 
+> >                 // Parse flags.
+> >       6         flag.Usage = usage
+> >       7         flag.Parse()
+> > ------
+> > 
+> > And Rust
+> > ------
+> > $ perf probe -x cro3 -L \"cro3::cmd::servo::run_show\"
+> > <run_show@/work/cro3/src/cmd/servo.rs:0>
+> >       0  fn run_show(args: &ArgsShow) -> Result<()> {
+> >       1      let list = ServoList::discover()?;
+> >       2      let s = list.find_by_serial(&args.servo)?;
+> >       3      if args.json {
+> >       4          println!("{s}");
+> > ------
+> > 
+> > And event name are created automatically like below;
+> > 
+> > $ ./perf probe -x /work/go/example/outyet/main -D 'main.(*Server).poll'
+> > p:probe_main/main_Server_poll /work/go/example/outyet/main:0x353040
+> > 
+> > $ ./perf probe -x cro3 -D \"cro3::cmd::servo::run_show\"
+> > p:probe_cro3/cro3_cmd_servo_run_show /work/cro3/target/x86_64-unknown-linux-gnu/debug/cro3:0x197530
+> > 
+> > We still need some more work, but these shows how perf-probe can work
+> > with other languages.
+> > 
+> > Thank you,
+> > 
+> > ---
+> > 
+> > Masami Hiramatsu (Google) (4):
+> >       perf-probe: Fix to ignore escaped characters in --lines option
+> >       perf-probe: Require '@' prefix for filename always
+> >       perf-probe: Introduce quotation marks support
+> >       perf-probe: Replace unacceptable characters when generating event name
+> > 
+> > 
+> >  tools/perf/util/probe-event.c  |  136 ++++++++++++++++++++++------------------
+> >  tools/perf/util/probe-finder.c |    3 +
+> >  tools/perf/util/string.c       |  100 +++++++++++++++++++++++++++++
+> >  tools/perf/util/string2.h      |    2 +
+> >  4 files changed, 180 insertions(+), 61 deletions(-)
+> > 
+> > --
+> > Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
-Yes, the output maps to the connector.
-
-> How can I disable it? Can you give me some pointers?
-
-By creating a commit that disables it :-) Conceptually that's about
-setting the same properties you would from userspace. Maybe look at
-drm_atomic_helper_disable_all() to see if you can make a version that
-operates on a single output.
-
-> Further more, is disabling the "output" disable the whole path where the
-> bridge is located?
-
-It should yes.
-
-> I mean, I need to power off/on the bridge and re-init it with its input DSI
-> lines in LP11.
 
 -- 
-Regards,
-
-Laurent Pinchart
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
