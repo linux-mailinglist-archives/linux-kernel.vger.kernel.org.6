@@ -1,144 +1,120 @@
-Return-Path: <linux-kernel+bounces-396169-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396165-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1D8C9BC8E1
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 10:16:17 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C30559BC8D4
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 10:15:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 86B4228063A
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 09:16:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 000721C230C9
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 09:15:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3653D1D0784;
-	Tue,  5 Nov 2024 09:15:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1D611D0438;
+	Tue,  5 Nov 2024 09:15:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="bcRwHDx7"
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="GkakHc+k"
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49F941CDA19
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 09:15:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0198E1CF28B;
+	Tue,  5 Nov 2024 09:15:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730798139; cv=none; b=sHlXrHuF0ef4ZnvRWX4QWDybTrd0kDf+WOdUM0OnZT4cyZ0uYTN46GbrU+UdM6q1TbQ9sKbpieqYZeGY1p4evkSVx25CIf9gF3QWf2TT8P7Bj7tVntHdB6T6TJCCZWVlEUHtrIdAZOGjv0VoJPc8qVWp33iBmGOWEltCsn/aMxQ=
+	t=1730798109; cv=none; b=kY/qftW7GZnTgli35JHQHAl/YJ8EjlgFyAGscNlSRo+XZDHPmDaLEn6CrukjWdFGrLpP/G0yl+y3h2Pmi9jyJ2cIlwThzPmSTclomx3VarAFqZ8jIE6Utnv4n6xK8l0GJCojKefMW6c0e4hbVXf/PQWvW17bFW7ELRDXHZltFsM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730798139; c=relaxed/simple;
-	bh=NoJ4ZGaZx7AkDYtA5g7KbWAi5e6RM2XncfGQkpsnNAw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=D0dmkjFMijqeir6Ji/8O7q0Xj9vdRLHfbDhcrpTrYFuFoxyoMB7lpuXUzrqShmz6RMGzHyE8gCwJiCoHh0CVzNtbhK4b86GIdik6R2lBD1HjQh51GN4BvPaRXoweDgEQnx7/OwDhhbm78y4UlIv/ApYAvOyE7J4791WME9RPb3w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=bcRwHDx7; arc=none smtp.client-ip=209.85.210.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-720d14c8dbfso4079391b3a.0
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 01:15:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1730798137; x=1731402937; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=bp5SzzDrkWzFz+KkFH2AjLFNmdPoRX4+H3HpHMfQq2k=;
-        b=bcRwHDx7domjvFWQCpaq8ih8PLMPJ76H6WR3ocqINJyc9knP/GhsOcBaRbPm33J7aH
-         E2a7Z2C0XiEaCoINUtw9W9oe9SNLrM2w+jcMZ0Ke62o96MvZSYBqPLqEg4/o2fQMBjUq
-         AVxeGYtzw0RfNWm+Fey44MJN7/opG88VhKtvY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730798137; x=1731402937;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=bp5SzzDrkWzFz+KkFH2AjLFNmdPoRX4+H3HpHMfQq2k=;
-        b=YfsHLeJGAzYtOrlYQQWx9xMWWB5g0AxH+X3fUaN0QFekvGkK8YtjYFsSLK7uh3ZfNN
-         clPXy53is/RILu984o3W9EaAbHD2rqanGRGH/IZAtkG+wvlwblD5tctcaw+RQ2HB9zRw
-         kVa38vcb+qou5QG23PPAfPEkS+NEe50u+JrmA0uxwTG5cImjYd/Co/7I4QFq0/MXCXDB
-         TsmqBWSaO70QcVmkO8dCPmiYLw727uT9IaDlRRTm76ha2GmAy7SkBpJ5BPXMpHeT9OMd
-         spHyD3+XtjUip2ansboY4ZLdItVfuXiUSKehYXzrb5biYMErLNBJsb70O4HMIsBvj4NF
-         Vwyg==
-X-Forwarded-Encrypted: i=1; AJvYcCUHgsjDJAl7AxUngZyehkXqtGIRKn4u8JSeY9/r93R36J+EpwrKOVfXoQ6T1rSOG+GqDVs6Vp+3d9i5poY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzsWPbzzF2MhhVO2SDxHyPLyQncnllU1yhcggD+X2YiTX1g3L51
-	7Plxkctr10wQdUPGNhYvd2BeJcjZbjg/20vBsty+LuVLCJty+xbY2Rbqp3bBXg==
-X-Google-Smtp-Source: AGHT+IGHX0L4HfW1RQzdQL8LuZUiHavKnr2hG99pMYDCnlf3de5sLsOYbFCY7gSPwFvuixT4u6i6bA==
-X-Received: by 2002:a05:6a21:2d8b:b0:1d9:28f8:f27d with SMTP id adf61e73a8af0-1db91e533camr28597387637.38.1730798137580;
-        Tue, 05 Nov 2024 01:15:37 -0800 (PST)
-Received: from fshao-p620.tpe.corp.google.com ([2401:fa00:1:10:20ee:3712:ce0b:1ed7])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-720bc313502sm9137251b3a.182.2024.11.05.01.15.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Nov 2024 01:15:37 -0800 (PST)
-From: Fei Shao <fshao@chromium.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: Fei Shao <fshao@chromium.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-sound@vger.kernel.org
-Subject: [PATCH v2] ASoC: dt-bindings: maxim,max98390: Reference common DAI properties
-Date: Tue,  5 Nov 2024 17:14:31 +0800
-Message-ID: <20241105091513.3963102-1-fshao@chromium.org>
-X-Mailer: git-send-email 2.47.0.277.g8800431eea-goog
+	s=arc-20240116; t=1730798109; c=relaxed/simple;
+	bh=3P46o0j1boPq47979gi5/Zs5Hid9KuIAHBkIlRk8teQ=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=TGYxHGTTd67eaWmLLo8/Etp+HnLn2kbbQHnOWv8uVtGluw5KHhWLFveMH3CX7NpJaOTdTft4sUcepGTRN8CXhV1nOJciaT+NlQEalkIBxvOYtLhvja4KjV+tDbtaHrXvEDawAvnKFksY+U4TlhA/UPR850bpMGd4ZnIkTxDPZEs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=GkakHc+k; arc=none smtp.client-ip=198.47.19.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4A59EvOe054097;
+	Tue, 5 Nov 2024 03:14:57 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1730798097;
+	bh=GsBEnIeM0ClFMrKKZeG8lCafRcbNksm47uQYOf90CDk=;
+	h=From:To:CC:Subject:Date:In-Reply-To:References;
+	b=GkakHc+kTyeQ3+hYO5WlLi45e9rczsQ3a1/vU/gtWJWX2DHEEoJjVWUUKjW5jmE1f
+	 /Er9nwM2AVdj+SuDcJ92mly2XMUOIZMcJCmmvUCXwxbPUX59ornVtdB59kwZ1alsw0
+	 ZhFqhdpHBGicXQglAEdCt6kYBA7deMHMThj/NTdA=
+Received: from DFLE115.ent.ti.com (dfle115.ent.ti.com [10.64.6.36])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4A59EvRV002378
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Tue, 5 Nov 2024 03:14:57 -0600
+Received: from DFLE113.ent.ti.com (10.64.6.34) by DFLE115.ent.ti.com
+ (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 5
+ Nov 2024 03:14:56 -0600
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE113.ent.ti.com
+ (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Tue, 5 Nov 2024 03:14:56 -0600
+Received: from uda0132425.dhcp.ti.com (uda0132425.dhcp.ti.com [172.24.227.94])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4A59Er9K091006;
+	Tue, 5 Nov 2024 03:14:54 -0600
+From: Vignesh Raghavendra <vigneshr@ti.com>
+To: Nishanth Menon <nm@ti.com>, Dhruva Gole <d-gole@ti.com>
+CC: Vignesh Raghavendra <vigneshr@ti.com>, <linux-pm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>, Bryan Brattlof <bb@ti.com>,
+        Wadim
+ Egorov <w.egorov@phytec.de>
+Subject: Re: [PATCH V3] arm64: dts: ti: k3-am62: use opp_efuse_table for opp-table syscon
+Date: Tue, 5 Nov 2024 14:44:47 +0530
+Message-ID: <173079800515.66204.10332098378075075871.b4-ty@ti.com>
+X-Mailer: git-send-email 2.47.0
+In-Reply-To: <20241104063707.3604302-1-d-gole@ti.com>
+References: <20241104063707.3604302-1-d-gole@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-MAX98390 is a smart amplifier and exposes one DAI, so '#sound-dai-cells'
-property is needed for describing the DAI links.
+Hi Dhruva Gole,
 
-Reference the dai-common.yaml schema to allow '#sound-dai-cells' to be
-used.
+On Mon, 04 Nov 2024 12:07:08 +0530, Dhruva Gole wrote:
+> Add another entry in the wkup_conf for the syscon node, and then use
+> that for the syscon in opp-table.
+> 
+> Marking entire wkup_conf as "syscon", "simple-mfd" is wrong and needs to
+> be addressed similar to how other child-nodes in wkup_conf are implemented
+> in the same file.
+> 
+> [...]
 
-This fixes dtbs_check error:
-  '#sound-dai-cells' does not match any of the regexes: 'pinctrl-[0-9]+'
+I have applied the following to branch ti-k3-dts-next on [1].
+Thank you!
 
-Signed-off-by: Fei Shao <fshao@chromium.org>
----
-This patch is based on a previous [v1] series.
-This is sent as an individual patch in v2 because the other patches in
-the [v1] series are either invalid or for different purpose in different
-binding, so I think it'd be better to send them separately.
+[1/1] arm64: dts: ti: k3-am62: use opp_efuse_table for opp-table syscon
+      commit: 767b6a0d0900c951e8b42306bd636268481a97ae
 
-[v1]:
-https://lore.kernel.org/all/20241025104548.1220076-4-fshao@chromium.org/
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent up the chain during
+the next merge window (or sooner if it is a relevant bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
 
-Changes in v2:
-- specify '#sound-dai-cells' with const value
-- update commit message
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
- .../devicetree/bindings/sound/maxim,max98390.yaml         | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
-diff --git a/Documentation/devicetree/bindings/sound/maxim,max98390.yaml b/Documentation/devicetree/bindings/sound/maxim,max98390.yaml
-index deaa6886c42f..d35dd8408c61 100644
---- a/Documentation/devicetree/bindings/sound/maxim,max98390.yaml
-+++ b/Documentation/devicetree/bindings/sound/maxim,max98390.yaml
-@@ -9,6 +9,9 @@ title: Maxim Integrated MAX98390 Speaker Amplifier with Integrated Dynamic Speak
- maintainers:
-   - Steve Lee <steves.lee@maximintegrated.com>
- 
-+allOf:
-+  - $ref: dai-common.yaml#
-+
- properties:
-   compatible:
-     const: maxim,max98390
-@@ -32,11 +35,14 @@ properties:
-   reset-gpios:
-     maxItems: 1
- 
-+  '#sound-dai-cells':
-+    const: 0
-+
- required:
-   - compatible
-   - reg
- 
--additionalProperties: false
-+unevaluatedProperties: false
- 
- examples:
-   - |
--- 
-2.47.0.277.g8800431eea-goog
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/ti/linux.git
+--
+Vignesh
 
 
