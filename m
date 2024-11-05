@@ -1,107 +1,127 @@
-Return-Path: <linux-kernel+bounces-396260-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396261-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9CD29BCA4D
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 11:21:38 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D15B19BCA58
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 11:22:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A09491F236B7
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 10:21:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E6961C22363
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 10:22:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7204F1D1F57;
-	Tue,  5 Nov 2024 10:21:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF69B1D27A4;
+	Tue,  5 Nov 2024 10:22:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OUInRfQ/"
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="PiOONlz6"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80A1E1CF7C9
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 10:21:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBA841CC881;
+	Tue,  5 Nov 2024 10:22:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730802085; cv=none; b=FDzZqU4x3B6WoaOg9lDVlKtnpeQ25QJksRCamMPt0EUcY+3DQqNMVpsmOVehGV7ZZCKkacS1mIbndP036avgV8QlJc34D2XWYHVvsr65H+OXZRh3GTXOZCMOyu7nbJARfQNR0kVCx/4G3wiHgBnVguTob7IQJsxH0NI2JeRsTrk=
+	t=1730802168; cv=none; b=DItJRIiWdH+d39pZzeXhiu9pNe3iyQeKSAK5J+gvpidVSdobHRsem4DIZCNiBLjPA7BjDKWFwqtF5uLPCF2ls9WwuYVXoNE47SNW2ldXZuI5IDMYmIop4B3Z3LpVMNYdxNvTJ+R/KTl+7+coPNCgUxtZ81O9q0q3GD5HXC+ff9Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730802085; c=relaxed/simple;
-	bh=7johmFIxlLMPLSJqq5TydQDo3koGyzHVL0vN4smmk5U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oCiS6LiI8n7y7uvnpgMZy2UuvO0I137D1EbTCZTliIt0a6C6KA+YKSEKe3Rn9fQpvflti+VbvUzLadmnNU7mwy3tlkwExTaba5POQobbueCG/ADHb0R2e5jVZEGTqmgTv0KlvtJWe2ORMWPDa51vBDOITZ3jgYMhiu20xeu2g7s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OUInRfQ/; arc=none smtp.client-ip=209.85.210.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-72061bfec2dso4856956b3a.2
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 02:21:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730802084; x=1731406884; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=7johmFIxlLMPLSJqq5TydQDo3koGyzHVL0vN4smmk5U=;
-        b=OUInRfQ/cA+Qt/XQ6y+dZZCbmsugNYoOURpi0El0yL14ABUXnz2WiyZvEZqGlu/9Nw
-         em7ww9BQNczzGWRsibzT6mWPHMYZQi0DzQtRM4ltf5kZlA1cv4EaThFfAEwql41P+yH0
-         Ki8iKpUZ0Kmzer6R8fZwKk5v7nCLaJN0NBemGqZofiGRemCUdo30T4+ABRz9GSfxReK1
-         Hs6TCzpSFbHgXqEbDsCSpl/1mH5Trxs2EE3bTAdoTkDS+I33d4pZ/8aL0A/pBs84pB/F
-         7UvkE4WEpdjQTUwY49xLc6EUed/3MfTc6WjEBhQEgQPFjuFNXpAI3kQzgJr9ZWMR3O7w
-         CoBw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730802084; x=1731406884;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=7johmFIxlLMPLSJqq5TydQDo3koGyzHVL0vN4smmk5U=;
-        b=hQpCGpcKBFZ1kA/BIxLNB7dX5/nwNjoDiUM/FqGeMMV1I3DeF3pY3UdVdUGUL7oXLK
-         T/OjKpnr22FwS4dfX6OMbrT1sfzTWwUaOh8mpsIOn3uoj00JbE6G6xihtL33YWg3puqv
-         jKbT2//ASzjsPZqOQ9pC4aL2uuTShjRx5dS4nf2jftoKPHb/T5E8fLEFqUYVN9BS5sRr
-         6Z8qE1oQmtrZD0Vq9K6vIj7KgjAUeyfaf8B0iF1N91zpJniLNfKjsqhR+SBAqpSEQUCB
-         uQenOJH0ICiksO8tgyIxsndl+aaxnnX5hJRZtPoRlzRCeVWd4u4lcxSMmPX+yrItQwmp
-         IiYw==
-X-Forwarded-Encrypted: i=1; AJvYcCXRZ0tGORhHE4jqJ03tbl1aceea+GjrsR8CIXV36LyVVSMiudZFGiwHBQ9Nx8gh4d6gUP6v84IjjFw/b0U=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywx3wk3WNvWYK16AZLtxsFVD/Syw0SF1iEbLTolEtx9/m2VMPVM
-	VXxB1aG3LJ+fLsPLAvqFad+bpprnAHUV/AndArZWdKK9fDxyJPwC89HJuamfRws5t1ZNQXN+4v/
-	9PplP6AhL5KjEDFJwcqBlzLOlLYd97l4B
-X-Google-Smtp-Source: AGHT+IGbd1N33EFPPngiyV0kWvChfD3xYpzmCqXRcDRgBnf1Ooc0ARy5UKUi+cbzUnCCAiKwcTZRwKSDCVwbJyRn6tM=
-X-Received: by 2002:a05:6a21:6d8d:b0:1db:eb50:abb0 with SMTP id
- adf61e73a8af0-1dbeb50ac23mr5158105637.3.1730802083687; Tue, 05 Nov 2024
- 02:21:23 -0800 (PST)
+	s=arc-20240116; t=1730802168; c=relaxed/simple;
+	bh=PdeXOAunfb5v59d7LGgF+JdvETH1pIsFovNBsf565kY=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=IOmEb2UP+npxWxTYjcPj06VpLR1hHQecIYGvh8VybDGowhhG7+cnW/RoRIqebdavm8ho5v/DvGqDvyCktDGEPqyPKmrx1068e6Z30CDhsLvUsprITsaes/Za5Yi04ZFvPVJlhCLtc9AXVq/xko3SRI2H8/sa62dkUrsEhLLYqhk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=PiOONlz6; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A57vDfQ004743;
+	Tue, 5 Nov 2024 10:22:43 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=5kWhuYcNaaXuoJhUi1wBrW
+	YMY1+c3qKie7gOlm7FvBI=; b=PiOONlz67flRAaQLVTNky9yRb+1RF2Es43txP4
+	qNGuw+EObt5jq3coym64X025rSmCtLYzXau6UPO1kTF5hSDFoe2h1vqrgnGr/Dwu
+	ikiom5krlnx/ml8J9b4364iF+Me9BC9ksoEiSBHhgoPW+M+uKKtxZsgXkPS6jITm
+	UX1l445HjtUUzKxkuGuWEB8GnP9vKYS7mxpjqXrJrt7dQzuSbokHBnIUkStKl2sJ
+	/cKmVxCKEn7oXkhQHdNxucNYVwGNz+cFxq//7x5nNumqIDRpoYCmRKG8YHuqI6HJ
+	O2WxYQOgTlsdUi/ztDKXIYXGv5tg3+n13dV9jNI+Q0WqFKLQ==
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42qfdx0d11-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 05 Nov 2024 10:22:43 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4A5AMgrJ016685
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 5 Nov 2024 10:22:42 GMT
+Received: from hu-varada-blr.qualcomm.com (10.80.80.8) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Tue, 5 Nov 2024 02:22:39 -0800
+From: Varadarajan Narayanan <quic_varada@quicinc.com>
+To: <andersson@kernel.org>, <konradybcio@kernel.org>, <conor@kernel.org>,
+        <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC: Varadarajan Narayanan <quic_varada@quicinc.com>
+Subject: [PATCH v2 0/3] qcom: ipq5424: Add LLCC/system-cache-controller
+Date: Tue, 5 Nov 2024 15:52:07 +0530
+Message-ID: <20241105102210.510025-1-quic_varada@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241102022204.155039-1-gye976@gmail.com> <hdffht6z6a6dnap7kpbg6w5hyiftgahpiyhidvgga4qjeiw5xz@wu3ca5tvfj3l>
- <p3vspkvcm7nq3gankpblloudrumenpcuflhu5fpdse75kcyyk6@w7adi7togz4j>
-In-Reply-To: <p3vspkvcm7nq3gankpblloudrumenpcuflhu5fpdse75kcyyk6@w7adi7togz4j>
-From: gyeyoung <gye976@gmail.com>
-Date: Tue, 5 Nov 2024 19:21:12 +0900
-Message-ID: <CAKbEzntS731PtOZ7iSvC8Y5XEBaFqG5TEciXQe2EiqWOv85Vdg@mail.gmail.com>
-Subject: Re: [PATCH v4] drm/xe: Fix build error for XE_IOCTL_DBG macro
-To: Lucas De Marchi <lucas.demarchi@intel.com>
-Cc: =?UTF-8?Q?Thomas_Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>, 
-	Rodrigo Vivi <rodrigo.vivi@intel.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	intel-xe@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: CYszkoH1_bUT2L2YrISxgXvgol56JW4B
+X-Proofpoint-ORIG-GUID: CYszkoH1_bUT2L2YrISxgXvgol56JW4B
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 malwarescore=0
+ lowpriorityscore=0 suspectscore=0 phishscore=0 priorityscore=1501
+ impostorscore=0 mlxscore=0 bulkscore=0 spamscore=0 mlxlogscore=871
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411050078
 
-> there were some checkpatch issues about mixing tabs and spaces. Next
-> time please double check the checkpatch output. I also reworded the
-> commit message a little bit to follow an imperative mood as outlined at
-> https://www.kernel.org/doc/html/v4.10/process/submitting-patches.html#describe-your-changes
+Unlike other Qcom SoCs, IPQ5424 doesn't have multiple instances
+of LLCC IP and hence doesn't have a LLCC_BROADCAST register
+space, and the LLCC & LLCC_BROADCAST point to the same register
+space.
 
-I'm sorry for not being more careful, I'll use a script next time
-instead of doing it manually.
+Alter the driver accordingly and add the relevant entries for
+enabling LLCC/system-cache-controller on the Qcom IPQ5424 SoC.
 
-Thanks,
-Gyeyoung Baek
+Depends On:
+https://lore.kernel.org/linux-arm-msm/20241028060506.246606-1-quic_srichara@quicinc.com/
 
->
-> Applied to drm-xe-next. Thanks.
->
-> Lucas De Marchi
->
-> >
-> >thanks
-> >Lucas De Marchi
+---
+v2:	Add reviewed-by for dt-bindings and dts patches
+	Add 'no_broadcast_register' to identify SoC without LLCC_BROADCAST register space
+
+v1:	https://lore.kernel.org/linux-arm-msm/20241104073840.3686674-1-quic_varada@quicinc.com/
+
+Varadarajan Narayanan (3):
+  dt-bindings: cache: qcom,llcc: Add IPQ5424 compatible
+  soc: qcom: llcc: Update configuration data for IPQ5424
+  arm64: dts: qcom: ipq5424: Add LLCC/system-cache-controller
+
+ .../devicetree/bindings/cache/qcom,llcc.yaml  | 20 ++++++-
+ arch/arm64/boot/dts/qcom/ipq5424.dtsi         |  7 +++
+ drivers/soc/qcom/llcc-qcom.c                  | 58 ++++++++++++++++++-
+ 3 files changed, 81 insertions(+), 4 deletions(-)
+
+
+base-commit: 1ffec08567f426a1c593e038cadc61bdc38cb467
+prerequisite-patch-id: 1090fe9cee19a52dc8595e2fecef659199828246
+prerequisite-patch-id: 491c9f6c32738c4eb4398962c1ae7c625cd43238
+prerequisite-patch-id: 1651c75547b539eb46eb4d02630e364f262860bf
+prerequisite-patch-id: 7ce54f0af6083e897067a7e5cd9561198f3d4d41
+prerequisite-patch-id: 0a04fdee4b5b76cd5b734c666f7c8f5561e3e9d8
+prerequisite-patch-id: 084f6dced27c39b600711dde2f797b43393cde73
+-- 
+2.34.1
+
 
