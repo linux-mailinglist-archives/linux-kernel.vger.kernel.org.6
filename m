@@ -1,337 +1,202 @@
-Return-Path: <linux-kernel+bounces-396237-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396238-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C7FC9BC9CC
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 10:59:04 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6AE89BC9CE
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 10:59:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C0C4283128
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 09:59:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 06288B21A03
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 09:59:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7ED331D1738;
-	Tue,  5 Nov 2024 09:58:57 +0000 (UTC)
-Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5E6E1D1F54;
+	Tue,  5 Nov 2024 09:59:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YQrRJVYW"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12DFC18BC37;
-	Tue,  5 Nov 2024 09:58:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAAD01D1745
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 09:58:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730800737; cv=none; b=TQL4GmJCq5Ijp9jqARKstMsakCzMtD6hoqYUBQNx++35AxQtCwNzK4aO5iqeghEPsfG9hva6Nvi/tC2k5Cyou4irxJjNJKeXci1XUUP8Jz5oQ8d+4YkYrBY0mGdzjeMMrD1LmuN9vaornpr1k0E+YjCs/dCTRi1iWjlfLc75Of8=
+	t=1730800741; cv=none; b=gAdAUqR354PYvf5YWgz9VNbCgPGlcgPfjBCMUEu9TORwax5m91U+ljyT2qp0A7n84TMAkyyUOPH9vYmCkQgPA0ehCG0u1IXlnNEa/C6KjkBVi4+mL9OzIRpz4wxLRXYM6CHbOc8W/kPGZGBR9DKGXEr8wBdMVvYJbuuY5zPrkao=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730800737; c=relaxed/simple;
-	bh=rUo0NBXqrmI8U/Z5LRq7hBMwwk8BGXhCU/9jdvOYPJw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ST4QzerMH66pFi7UOIFEHPgbCbtDZbpNpUP1b04+csMz7cJSvOiV81S+4cfaZiAScVdncGq8efFl106/9PKarpyo2YYlZPv4kCHMdJOvyQC751LXlO9wSPMA0Ooe14A/H/3FJfH9T4lUNK2LhZvG1QcdQVY0goqdnER70l8RIIM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 2F25DC0002;
-	Tue,  5 Nov 2024 09:58:43 +0000 (UTC)
-Message-ID: <6a62e26b-3c55-425c-813f-2f84b56c6951@ghiti.fr>
-Date: Tue, 5 Nov 2024 10:58:43 +0100
+	s=arc-20240116; t=1730800741; c=relaxed/simple;
+	bh=ukceNXo2pywTrMUB3iOKRDJfjIGMJ5DmLc6fZKJlndI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dkYqzK2H53qAcnnQxS6aFcztSi8IKROMp/mbOwn8f/sZoRy/u6iXn80acZvxrVPTIEirGKmRXrfs+ezaO5t+oa5i9HDvci6TfT831U+CBZw8eUrZDRYFVKFnK+ZhdytAjHlQ3v3MWnWXzmbkkvhsPGgNAyY1Pr/w2tBok9Pyr6I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YQrRJVYW; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4316a44d1bbso44765355e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 01:58:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1730800736; x=1731405536; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=J6h/R7lfM4qCrCDmado2Rkx+M46kJFIDRE2I4JWaZEQ=;
+        b=YQrRJVYWhQoHScNLIRWLWoz/Ed/beZkMV/R6MSPdywT5b8+2G3lDIlXl90ZBGy4r0T
+         Vh+4dri15ZqXri1x7sk2+ZJO6JfnC7UmIc5KR9x8H7kozgxXvo9sZoraYCO47ST/pevd
+         xfudI6sjOKEjnAtATLR2wJh66Q2EiaVGpDEagrhVTi8TEmBAw/DH+OK8/qxHljyUxfxF
+         8cmVMsd3PKnBKKY2QAkARj/nmNXqEal8LAUCIZQ9R5I3V4nNMiyyXP7b8tYCj5fruSBZ
+         I//jzlG8gGifUkjse/BO0gvAt3NVc7SnpvhylzeJ0yInFpeD8BGvzaLhd4xCvjJrMFbH
+         Xqvw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730800736; x=1731405536;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=J6h/R7lfM4qCrCDmado2Rkx+M46kJFIDRE2I4JWaZEQ=;
+        b=o5WX1t28v7OZr6C9g7zakT9gTPnoqKr6LcaJqMvB0+7akIn/dax/ga1dPFiU/mAyS/
+         ns4iM2cWTk8+lkBAEFo02zEXEiktLdCOCCbdkIiUu0n0Si2hiSv5wGH5mR4hoT+aE3D7
+         HVD3VflZ/ocIQBrLbzuHD15/oVzdUyfEJMS+EiS75Ulad9EGEo35v4M5tmtOkU+b8sHR
+         4I2L4r4hJlsVoPyA7mh/D0nnz8DHwhKrxDqe16h+cRauyEm9JSghJwfj5x0XdE5Xom1b
+         jsjFj++uQPAiDQOYp719apFnpftyJ7wttxCSS8ZxBUda+141LycEr53Vbn79Mimfgo/c
+         LBog==
+X-Forwarded-Encrypted: i=1; AJvYcCUE95ifaKxQ6rA4Of/0NyuC3Lp5a9S4UDSNGVnK8HL5QPF0hRWT7RnUxdBo99P+X4CGoseLoH0+ZjKOMmM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzZNeOcdiywONsZ0Lrkno7Ros5ICOIYmySUkiLBDQ66XK0iop0a
+	+iwwXqrinhTi2ugSQt9+iYCrQf0PVY8n8HP43rwTCY6gJN9WDqp3D/ahPq04X9Q=
+X-Google-Smtp-Source: AGHT+IENI/tO1m+wxDQs0DVE4GgW4Nt88abEszTQqX11x4d9wmMLAMDwYiShM/iz+S/e697/IpvpqA==
+X-Received: by 2002:a05:600c:3112:b0:431:5d4c:5eff with SMTP id 5b1f17b1804b1-4327b6f46bdmr163702085e9.2.1730800736173;
+        Tue, 05 Nov 2024 01:58:56 -0800 (PST)
+Received: from linaro.org ([82.76.168.176])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381c10d4d1fsm15533035f8f.38.2024.11.05.01.58.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 05 Nov 2024 01:58:55 -0800 (PST)
+Date: Tue, 5 Nov 2024 11:58:54 +0200
+From: Abel Vesa <abel.vesa@linaro.org>
+To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+Cc: Abel Vesa <abelvesa@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Aisheng Dong <aisheng.dong@nxp.com>, linux-clk@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, Peng Fan <peng.fan@nxp.com>
+Subject: Re: [PATCH v3 1/5] clk: imx: lpcg-scu: SW workaround for errata
+ (e10858)
+Message-ID: <ZynsXhzcoyfCzLwq@linaro.org>
+References: <20241027-imx-clk-v1-v3-0-89152574d1d7@nxp.com>
+ <20241027-imx-clk-v1-v3-1-89152574d1d7@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 03/11] riscv: mm: Deduplicate pgtable address conversion
- functions
-Content-Language: en-US
-To: Samuel Holland <samuel.holland@sifive.com>,
- Palmer Dabbelt <palmer@dabbelt.com>, linux-riscv@lists.infradead.org,
- Conor Dooley <conor@kernel.org>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Alexandre Ghiti <alexghiti@rivosinc.com>,
- Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
- Emil Renner Berthing <kernel@esmil.dk>, Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>
-References: <20241102000843.1301099-1-samuel.holland@sifive.com>
- <20241102000843.1301099-4-samuel.holland@sifive.com>
-From: Alexandre Ghiti <alex@ghiti.fr>
-In-Reply-To: <20241102000843.1301099-4-samuel.holland@sifive.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-GND-Sasl: alex@ghiti.fr
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241027-imx-clk-v1-v3-1-89152574d1d7@nxp.com>
 
-Hi Samuel,
+On 24-10-27 20:00:07, Peng Fan (OSS) wrote:
+> From: Peng Fan <peng.fan@nxp.com>
+> 
+> Back-to-back LPCG writes can be ignored by the LPCG register due to
+> a HW bug. The writes need to be separated by at least 4 cycles of
+> the gated clock. See https://www.nxp.com.cn/docs/en/errata/IMX8_1N94W.pdf
+> 
+> The workaround is implemented as follows:
+> 1. For clocks running greater than or equal to 24MHz, a read
+> followed by the write will provide sufficient delay.
+> 2. For clocks running below 24MHz, add a delay of 4 clock cylces
+> after the write to the LPCG register.
+> 
+> Fixes: 2f77296d3df9 ("clk: imx: add lpcg clock support")
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
 
-On 02/11/2024 01:07, Samuel Holland wrote:
-> Some functions were defined equivalently in both pgtable.h and
-> pgtable-64.h. Keep only one definition, and move it to pgtable-64.h
-> unless it is also used for Sv32. Note that while Sv32 uses only two
-> levels of page tables, the kernel is not consistent with how they are
-> folded. THP requires pfn_pmd()/pmd_pfn() and mm/init.c requires
-> pfn_pgd()/pgd_pfn(), so for now both are provided.
->
-> Signed-off-by: Samuel Holland <samuel.holland@sifive.com>
+Reviewed-by: Abel Vesa <abel.vesa@linaro.org>
+
 > ---
->
->   arch/riscv/include/asm/pgtable-32.h |  4 ++++
->   arch/riscv/include/asm/pgtable-64.h | 28 ++++++++++++++--------------
->   arch/riscv/include/asm/pgtable.h    | 23 ++++-------------------
->   arch/riscv/mm/init.c                |  8 ++++----
->   arch/riscv/mm/kasan_init.c          |  8 ++++----
->   5 files changed, 30 insertions(+), 41 deletions(-)
->
-> diff --git a/arch/riscv/include/asm/pgtable-32.h b/arch/riscv/include/asm/pgtable-32.h
-> index 00f3369570a8..23137347dc15 100644
-> --- a/arch/riscv/include/asm/pgtable-32.h
-> +++ b/arch/riscv/include/asm/pgtable-32.h
-> @@ -33,6 +33,10 @@
->   					  _PAGE_WRITE | _PAGE_EXEC |	\
->   					  _PAGE_USER | _PAGE_GLOBAL))
->   
-> +#define pud_pfn(pud)				(pmd_pfn((pmd_t){ pud }))
-> +#define p4d_pfn(p4d)				(pud_pfn((pud_t){ p4d }))
-
-
-pud_pfn() and p4d_pfn() should not be used in 32-bit right? I think you 
-can remove their definitions and simplify pgd_pfn().
-
-
-> +#define pgd_pfn(pgd)				(p4d_pfn((p4d_t){ pgd }))
-> +
->   static const __maybe_unused int pgtable_l4_enabled;
->   static const __maybe_unused int pgtable_l5_enabled;
->   
-> diff --git a/arch/riscv/include/asm/pgtable-64.h b/arch/riscv/include/asm/pgtable-64.h
-> index 0897dd99ab8d..33e7ff049c4a 100644
-> --- a/arch/riscv/include/asm/pgtable-64.h
-> +++ b/arch/riscv/include/asm/pgtable-64.h
-> @@ -213,19 +213,20 @@ static inline pud_t pfn_pud(unsigned long pfn, pgprot_t prot)
->   	return __pud((pfn << _PAGE_PFN_SHIFT) | pgprot_val(prot));
->   }
->   
-> -static inline unsigned long _pud_pfn(pud_t pud)
-> +#define pud_pfn pud_pfn
-> +static inline unsigned long pud_pfn(pud_t pud)
->   {
->   	return __page_val_to_pfn(pud_val(pud));
->   }
->   
->   static inline pmd_t *pud_pgtable(pud_t pud)
->   {
-> -	return (pmd_t *)pfn_to_virt(__page_val_to_pfn(pud_val(pud)));
-> +	return (pmd_t *)pfn_to_virt(pud_pfn(pud));
->   }
->   
->   static inline struct page *pud_page(pud_t pud)
->   {
-> -	return pfn_to_page(__page_val_to_pfn(pud_val(pud)));
-> +	return pfn_to_page(pud_pfn(pud));
->   }
->   
->   #define mm_p4d_folded  mm_p4d_folded
-> @@ -257,11 +258,6 @@ static inline pmd_t pfn_pmd(unsigned long pfn, pgprot_t prot)
->   	return __pmd((pfn << _PAGE_PFN_SHIFT) | prot_val);
->   }
->   
-> -static inline unsigned long _pmd_pfn(pmd_t pmd)
-> -{
-> -	return __page_val_to_pfn(pmd_val(pmd));
-> -}
-> -
->   #define mk_pmd(page, prot)    pfn_pmd(page_to_pfn(page), prot)
->   
->   #define pmd_ERROR(e) \
-> @@ -316,7 +312,7 @@ static inline p4d_t pfn_p4d(unsigned long pfn, pgprot_t prot)
->   	return __p4d((pfn << _PAGE_PFN_SHIFT) | pgprot_val(prot));
->   }
->   
-> -static inline unsigned long _p4d_pfn(p4d_t p4d)
-> +static inline unsigned long p4d_pfn(p4d_t p4d)
->   {
->   	return __page_val_to_pfn(p4d_val(p4d));
->   }
-> @@ -324,7 +320,7 @@ static inline unsigned long _p4d_pfn(p4d_t p4d)
->   static inline pud_t *p4d_pgtable(p4d_t p4d)
->   {
->   	if (pgtable_l4_enabled)
-> -		return (pud_t *)pfn_to_virt(__page_val_to_pfn(p4d_val(p4d)));
-> +		return (pud_t *)pfn_to_virt(p4d_pfn(p4d));
->   
->   	return (pud_t *)pud_pgtable((pud_t) { p4d_val(p4d) });
->   }
-> @@ -332,7 +328,7 @@ static inline pud_t *p4d_pgtable(p4d_t p4d)
->   
->   static inline struct page *p4d_page(p4d_t p4d)
->   {
-> -	return pfn_to_page(__page_val_to_pfn(p4d_val(p4d)));
-> +	return pfn_to_page(p4d_pfn(p4d));
->   }
->   
->   #define pud_index(addr) (((addr) >> PUD_SHIFT) & (PTRS_PER_PUD - 1))
-> @@ -378,10 +374,15 @@ static inline void pgd_clear(pgd_t *pgd)
->   		set_pgd(pgd, __pgd(0));
->   }
->   
-> +static inline unsigned long pgd_pfn(pgd_t pgd)
+>  drivers/clk/imx/clk-lpcg-scu.c | 37 +++++++++++++++++++++++++++++--------
+>  1 file changed, 29 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/clk/imx/clk-lpcg-scu.c b/drivers/clk/imx/clk-lpcg-scu.c
+> index dd5abd09f3e206a5073767561b517d5b3320b28c..620afdf8dc03e9564bb074ca879cf778f7fc6419 100644
+> --- a/drivers/clk/imx/clk-lpcg-scu.c
+> +++ b/drivers/clk/imx/clk-lpcg-scu.c
+> @@ -6,10 +6,12 @@
+>  
+>  #include <linux/bits.h>
+>  #include <linux/clk-provider.h>
+> +#include <linux/delay.h>
+>  #include <linux/err.h>
+>  #include <linux/io.h>
+>  #include <linux/slab.h>
+>  #include <linux/spinlock.h>
+> +#include <linux/units.h>
+>  
+>  #include "clk-scu.h"
+>  
+> @@ -41,6 +43,29 @@ struct clk_lpcg_scu {
+>  
+>  #define to_clk_lpcg_scu(_hw) container_of(_hw, struct clk_lpcg_scu, hw)
+>  
+> +/* e10858 -LPCG clock gating register synchronization errata */
+> +static void lpcg_e10858_writel(unsigned long rate, void __iomem *reg, u32 val)
 > +{
-> +	return __page_val_to_pfn(pgd_val(pgd));
+> +	writel(val, reg);
+> +
+> +	if (rate >= 24 * HZ_PER_MHZ || rate == 0) {
+> +		/*
+> +		 * The time taken to access the LPCG registers from the AP core
+> +		 * through the interconnect is longer than the minimum delay
+> +		 * of 4 clock cycles required by the errata.
+> +		 * Adding a readl will provide sufficient delay to prevent
+> +		 * back-to-back writes.
+> +		 */
+> +		readl(reg);
+> +	} else {
+> +		/*
+> +		 * For clocks running below 24MHz, wait a minimum of
+> +		 * 4 clock cycles.
+> +		 */
+> +		ndelay(4 * (DIV_ROUND_UP(1000 * HZ_PER_MHZ, rate)));
+> +	}
 > +}
 > +
->   static inline p4d_t *pgd_pgtable(pgd_t pgd)
->   {
->   	if (pgtable_l5_enabled)
-> -		return (p4d_t *)pfn_to_virt(__page_val_to_pfn(pgd_val(pgd)));
-> +		return (p4d_t *)pfn_to_virt(pgd_pfn(pgd));
->   
->   	return (p4d_t *)p4d_pgtable((p4d_t) { pgd_val(pgd) });
->   }
-> @@ -389,9 +390,8 @@ static inline p4d_t *pgd_pgtable(pgd_t pgd)
->   
->   static inline struct page *pgd_page(pgd_t pgd)
->   {
-> -	return pfn_to_page(__page_val_to_pfn(pgd_val(pgd)));
-> +	return pfn_to_page(pgd_pfn(pgd));
->   }
-> -#define pgd_page(pgd)	pgd_page(pgd)
->   
->   #define p4d_index(addr) (((addr) >> P4D_SHIFT) & (PTRS_PER_P4D - 1))
->   
-> diff --git a/arch/riscv/include/asm/pgtable.h b/arch/riscv/include/asm/pgtable.h
-> index e79f15293492..3e0e1177107d 100644
-> --- a/arch/riscv/include/asm/pgtable.h
-> +++ b/arch/riscv/include/asm/pgtable.h
-> @@ -258,19 +258,19 @@ static inline pgd_t pfn_pgd(unsigned long pfn, pgprot_t prot)
->   	return __pgd((pfn << _PAGE_PFN_SHIFT) | prot_val);
->   }
->   
-> -static inline unsigned long _pgd_pfn(pgd_t pgd)
-> +static inline unsigned long pmd_pfn(pmd_t pmd)
->   {
-> -	return __page_val_to_pfn(pgd_val(pgd));
-> +	return __page_val_to_pfn(pmd_val(pmd));
->   }
->   
->   static inline struct page *pmd_page(pmd_t pmd)
->   {
-> -	return pfn_to_page(__page_val_to_pfn(pmd_val(pmd)));
-> +	return pfn_to_page(pmd_pfn(pmd));
->   }
->   
->   static inline unsigned long pmd_page_vaddr(pmd_t pmd)
->   {
-> -	return (unsigned long)pfn_to_virt(__page_val_to_pfn(pmd_val(pmd)));
-> +	return (unsigned long)pfn_to_virt(pmd_pfn(pmd));
->   }
->   
->   static inline pte_t pmd_pte(pmd_t pmd)
-> @@ -673,21 +673,6 @@ static inline pmd_t pmd_mkinvalid(pmd_t pmd)
->   	return __pmd(pmd_val(pmd) & ~(_PAGE_PRESENT|_PAGE_PROT_NONE));
->   }
->   
-> -#define __pmd_to_phys(pmd)  (__page_val_to_pfn(pmd_val(pmd)) << PAGE_SHIFT)
+>  static int clk_lpcg_scu_enable(struct clk_hw *hw)
+>  {
+>  	struct clk_lpcg_scu *clk = to_clk_lpcg_scu(hw);
+> @@ -57,7 +82,8 @@ static int clk_lpcg_scu_enable(struct clk_hw *hw)
+>  		val |= CLK_GATE_SCU_LPCG_HW_SEL;
+>  
+>  	reg |= val << clk->bit_idx;
+> -	writel(reg, clk->reg);
+> +
+> +	lpcg_e10858_writel(clk_hw_get_rate(hw), clk->reg, reg);
+>  
+>  	spin_unlock_irqrestore(&imx_lpcg_scu_lock, flags);
+>  
+> @@ -74,7 +100,7 @@ static void clk_lpcg_scu_disable(struct clk_hw *hw)
+>  
+>  	reg = readl_relaxed(clk->reg);
+>  	reg &= ~(CLK_GATE_SCU_LPCG_MASK << clk->bit_idx);
+> -	writel(reg, clk->reg);
+> +	lpcg_e10858_writel(clk_hw_get_rate(hw), clk->reg, reg);
+>  
+>  	spin_unlock_irqrestore(&imx_lpcg_scu_lock, flags);
+>  }
+> @@ -145,13 +171,8 @@ static int __maybe_unused imx_clk_lpcg_scu_resume(struct device *dev)
+>  {
+>  	struct clk_lpcg_scu *clk = dev_get_drvdata(dev);
+>  
+> -	/*
+> -	 * FIXME: Sometimes writes don't work unless the CPU issues
+> -	 * them twice
+> -	 */
 > -
-> -static inline unsigned long pmd_pfn(pmd_t pmd)
-> -{
-> -	return ((__pmd_to_phys(pmd) & PMD_MASK) >> PAGE_SHIFT);
-> -}
-> -
-> -#define __pud_to_phys(pud)  (__page_val_to_pfn(pud_val(pud)) << PAGE_SHIFT)
-> -
-> -#define pud_pfn pud_pfn
-> -static inline unsigned long pud_pfn(pud_t pud)
-> -{
-> -	return ((__pud_to_phys(pud) & PUD_MASK) >> PAGE_SHIFT);
-> -}
-> -
->   static inline pmd_t pmd_modify(pmd_t pmd, pgprot_t newprot)
->   {
->   	return pte_pmd(pte_modify(pmd_pte(pmd), newprot));
-> diff --git a/arch/riscv/mm/init.c b/arch/riscv/mm/init.c
-> index 0e8c20adcd98..7282b62b7e8d 100644
-> --- a/arch/riscv/mm/init.c
-> +++ b/arch/riscv/mm/init.c
-> @@ -497,7 +497,7 @@ static void __meminit create_pmd_mapping(pmd_t *pmdp,
->   		ptep = pt_ops.get_pte_virt(pte_phys);
->   		memset(ptep, 0, PAGE_SIZE);
->   	} else {
-> -		pte_phys = PFN_PHYS(_pmd_pfn(pmdp[pmd_idx]));
-> +		pte_phys = PFN_PHYS(pmd_pfn(pmdp[pmd_idx]));
->   		ptep = pt_ops.get_pte_virt(pte_phys);
->   	}
->   
-> @@ -599,7 +599,7 @@ static void __meminit create_pud_mapping(pud_t *pudp, uintptr_t va, phys_addr_t
->   		nextp = pt_ops.get_pmd_virt(next_phys);
->   		memset(nextp, 0, PAGE_SIZE);
->   	} else {
-> -		next_phys = PFN_PHYS(_pud_pfn(pudp[pud_index]));
-> +		next_phys = PFN_PHYS(pud_pfn(pudp[pud_index]));
->   		nextp = pt_ops.get_pmd_virt(next_phys);
->   	}
->   
-> @@ -625,7 +625,7 @@ static void __meminit create_p4d_mapping(p4d_t *p4dp, uintptr_t va, phys_addr_t
->   		nextp = pt_ops.get_pud_virt(next_phys);
->   		memset(nextp, 0, PAGE_SIZE);
->   	} else {
-> -		next_phys = PFN_PHYS(_p4d_pfn(p4dp[p4d_index]));
-> +		next_phys = PFN_PHYS(p4d_pfn(p4dp[p4d_index]));
->   		nextp = pt_ops.get_pud_virt(next_phys);
->   	}
->   
-> @@ -682,7 +682,7 @@ void __meminit create_pgd_mapping(pgd_t *pgdp, uintptr_t va, phys_addr_t pa, phy
->   		nextp = get_pgd_next_virt(next_phys);
->   		memset(nextp, 0, PAGE_SIZE);
->   	} else {
-> -		next_phys = PFN_PHYS(_pgd_pfn(pgdp[pgd_idx]));
-> +		next_phys = PFN_PHYS(pgd_pfn(pgdp[pgd_idx]));
->   		nextp = get_pgd_next_virt(next_phys);
->   	}
->   
-> diff --git a/arch/riscv/mm/kasan_init.c b/arch/riscv/mm/kasan_init.c
-> index c301c8d291d2..bac65e3268a4 100644
-> --- a/arch/riscv/mm/kasan_init.c
-> +++ b/arch/riscv/mm/kasan_init.c
-> @@ -171,7 +171,7 @@ static void __init kasan_early_clear_pud(p4d_t *p4dp,
->   	if (!pgtable_l4_enabled) {
->   		pudp = (pud_t *)p4dp;
->   	} else {
-> -		base_pud = pt_ops.get_pud_virt(pfn_to_phys(_p4d_pfn(p4dp_get(p4dp))));
-> +		base_pud = pt_ops.get_pud_virt(pfn_to_phys(p4d_pfn(p4dp_get(p4dp))));
->   		pudp = base_pud + pud_index(vaddr);
->   	}
->   
-> @@ -196,7 +196,7 @@ static void __init kasan_early_clear_p4d(pgd_t *pgdp,
->   	if (!pgtable_l5_enabled) {
->   		p4dp = (p4d_t *)pgdp;
->   	} else {
-> -		base_p4d = pt_ops.get_p4d_virt(pfn_to_phys(_pgd_pfn(pgdp_get(pgdp))));
-> +		base_p4d = pt_ops.get_p4d_virt(pfn_to_phys(pgd_pfn(pgdp_get(pgdp))));
->   		p4dp = base_p4d + p4d_index(vaddr);
->   	}
->   
-> @@ -242,7 +242,7 @@ static void __init kasan_early_populate_pud(p4d_t *p4dp,
->   	if (!pgtable_l4_enabled) {
->   		pudp = (pud_t *)p4dp;
->   	} else {
-> -		base_pud = pt_ops.get_pud_virt(pfn_to_phys(_p4d_pfn(p4dp_get(p4dp))));
-> +		base_pud = pt_ops.get_pud_virt(pfn_to_phys(p4d_pfn(p4dp_get(p4dp))));
->   		pudp = base_pud + pud_index(vaddr);
->   	}
->   
-> @@ -280,7 +280,7 @@ static void __init kasan_early_populate_p4d(pgd_t *pgdp,
->   	if (!pgtable_l5_enabled) {
->   		p4dp = (p4d_t *)pgdp;
->   	} else {
-> -		base_p4d = pt_ops.get_p4d_virt(pfn_to_phys(_pgd_pfn(pgdp_get(pgdp))));
-> +		base_p4d = pt_ops.get_p4d_virt(pfn_to_phys(pgd_pfn(pgdp_get(pgdp))));
->   		p4dp = base_p4d + p4d_index(vaddr);
->   	}
->   
-
-
-Otherwise, this is a nice cleanup, you can add:
-
-Reviewed-by: Alexandre Ghiti <alexghiti@rivosinc.com>
-
-Thanks,
-
-Alex
-
+> -	writel(clk->state, clk->reg);
+>  	writel(clk->state, clk->reg);
+> +	lpcg_e10858_writel(0, clk->reg, clk->state);
+>  	dev_dbg(dev, "restore lpcg state 0x%x\n", clk->state);
+>  
+>  	return 0;
+> 
+> -- 
+> 2.37.1
+> 
 
