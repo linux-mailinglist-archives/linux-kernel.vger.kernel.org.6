@@ -1,80 +1,48 @@
-Return-Path: <linux-kernel+bounces-396634-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396637-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 875259BCFD9
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 15:57:02 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D60F29BCFE2
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 15:57:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47FBF28381C
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 14:57:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 67D5A1F23618
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 14:57:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB8A01D9A7B;
-	Tue,  5 Nov 2024 14:56:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D7B51DA619;
+	Tue,  5 Nov 2024 14:57:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="A3KOnnyI"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=cachyos.org header.i=@cachyos.org header.b="YWjP+Q2L"
+Received: from mail.ptr1337.dev (mail.ptr1337.dev [202.61.224.105])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1FFE1D9A69
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 14:56:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FE591D8DE0;
+	Tue,  5 Nov 2024 14:57:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.61.224.105
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730818607; cv=none; b=BgiqxuhDqKcf3tuKAQ5dL6DSX39By6QiVsa90gSxFNIbEAgbazkc5VySfeep1YKqoKQoraR6y5HMI/6ZTei5CzW6Ky/3yPbqcoFayTB0VFy+cX2qIKukK1AnPmeU8SdH9vhGKg7GnosFTiJp3k3sXrNTtGTgSj9jYs7/tz84d7g=
+	t=1730818628; cv=none; b=NUmLkQdUbii+jmjMs4oFoCIvKYdsFI5UJsMBCveml2qK3/fd3a5eJR8dpNAy+HXkkg9kC61q5decY/1ojYBk4Vjz5ew3Lh5F3zsWCjAhc+xwFOaj0+F9zyMtWQW+3yeFbA/uuyB8HfqN3+N+seC3uSfLCZRz57Omfw9JhaKxrF0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730818607; c=relaxed/simple;
-	bh=k25PIn9GGH/JkYnFNXcEmQJZdkjy2v+IgpSNZn7nQIg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kC7WNeI09zVtax+Z/FtiY7pyOw4Bc37hLYZYWUSGr9XYvwAPCtYQ6zeGcyuXdBq46o7KFBkT8H0+b1KCF5ctWMnRNBghnPZfXFe8/lrQSNL5woxaxvA36MlOYYbG96hthkcxDnjHqqWvCnwjJi26p9quv8U6minW9/fN6MiRH0k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=A3KOnnyI; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1730818604;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=ygUCRe387Bfh8yvPrglacJBxF8hIhd+9Xh4KzBMbrFA=;
-	b=A3KOnnyIdeludiaxkipYUgCGPO8XX283EGkAuFqiJ0gTus19E3wiGsfXHfJwYc4x0NnmzW
-	nO1gCPdXTblFT5us5bpiZwdKQ3uqJ/ZsgIa1xqmtJCBZ038kJMpV0hehbaQwNJoVxu5cTG
-	pObYuq5Mb1grmf95WM/Mz/0i04jOpgs=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-687-59PQEo5gMGeHO2AMRxUElw-1; Tue, 05 Nov 2024 09:56:43 -0500
-X-MC-Unique: 59PQEo5gMGeHO2AMRxUElw-1
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-37d5116f0a6so2863048f8f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 06:56:43 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730818602; x=1731423402;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=ygUCRe387Bfh8yvPrglacJBxF8hIhd+9Xh4KzBMbrFA=;
-        b=gaF1MQmCDRj4xlELBJHxQusTMAfEsspIuWhee5xcbGcxgkweNIBEnAnQfwQII8EauX
-         P6XowFWz6HIRRueGk+CnwOWU6pZcZQv3ikxtuHt5Qg/MRBczHDF3hup12oYpymlnDvS0
-         IjOsb11lNL0V1IiYbEwIWU87Xm3pAtrvZ3UJyf1/PbE0UpDRkLAzq5Dgtv1EcRdvUFY1
-         ztaQMxMwT1KUWuHOdh0TK+D8qogFMrOcGzS29/R203bdOFyC/Mbvr3L93+Ws0GnoW8Gt
-         HrQZGR8l1HXZ2XaKo8IeAL4sh7rHnjfCc4dem32xGxf8oL4dxEq6/tf8WfwtEYVL7BC+
-         /9HA==
-X-Forwarded-Encrypted: i=1; AJvYcCUBVdRgMZaHjAnNfwiHbXy7Jjly6xH8nriXdLxvR7SYIbut+aGRWZ2UibSvRREoodyGCd47zKT0Vl/PL/Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzTaQ/31BNo2S5wCyUg9fjTKOi/3yG1AwnRYcMay4ANy0BynKSb
-	0MuAcpAGIpf/YvxzbBbZ7KaAl9EDi+qUp+8HwiY4dSACB3K2VPrMEe3qMsb3wACD23S2KwSfQoF
-	95OkQuEcvHXwGGjhhyryEWX/3hC36J3DQWDJv0fBr63MAmIMxsKvcB8NrnBEi6w==
-X-Received: by 2002:a05:6000:2c8:b0:37c:d1bc:2666 with SMTP id ffacd0b85a97d-381c7a472f7mr15455491f8f.4.1730818601948;
-        Tue, 05 Nov 2024 06:56:41 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IG1TNbjayvy2/PVTYGwIyqMdeNwMREv46iY/ZwHsgl4PK0utmWah382/qwIU06ROze4xAF+eg==
-X-Received: by 2002:a05:6000:2c8:b0:37c:d1bc:2666 with SMTP id ffacd0b85a97d-381c7a472f7mr15455466f8f.4.1730818601445;
-        Tue, 05 Nov 2024 06:56:41 -0800 (PST)
-Received: from ?IPV6:2003:cb:c73b:db00:b0d7:66ca:e3e9:6528? (p200300cbc73bdb00b0d766cae3e96528.dip0.t-ipconnect.de. [2003:cb:c73b:db00:b0d7:66ca:e3e9:6528])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381c113dd7fsm16561984f8f.70.2024.11.05.06.56.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 05 Nov 2024 06:56:40 -0800 (PST)
-Message-ID: <01f91147-c66f-4501-bd55-3ff04088e337@redhat.com>
-Date: Tue, 5 Nov 2024 15:56:38 +0100
+	s=arc-20240116; t=1730818628; c=relaxed/simple;
+	bh=PxqwVVcYGVdItCi+GbxYmGsYLaqI1+qVjoBZ5+jwOPA=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=hRVVpO0tWCkgBdTVqRQy0c/+49ZW/Zj/AwwCFCGS/jdmcUmD/cZYdFQ04vcKDHwiSdG27YmrjLEkSUI+dOYAsCzPSy4UgW9PO/oNSpACsqVRC95+hfzYCNf+uc5TsmZguZYPNuBkJRj/Ohs4R9tuSx1xa9IUlqzJ7Rb0AiutWz0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cachyos.org; spf=pass smtp.mailfrom=cachyos.org; dkim=pass (2048-bit key) header.d=cachyos.org header.i=@cachyos.org header.b=YWjP+Q2L; arc=none smtp.client-ip=202.61.224.105
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cachyos.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cachyos.org
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 3D0112805A2;
+	Tue,  5 Nov 2024 15:56:52 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cachyos.org; s=dkim;
+	t=1730818617; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:content-language:in-reply-to:references;
+	bh=0YTgtBqW+0YW1QX49rj8Vs5Pdkwg9by73TTIC3Ltc3g=;
+	b=YWjP+Q2LUuViWIN9YEFqY6pzzJ+x2KOjIxg8Dq/wzbLcXQOMRfbAdys9z4irK6jTXan8BU
+	+haVU74KkzlGO7AWiMLDHBfAaLMnEGTldr8e9ITY6zFTGBld1svpqVa6QJCboAiMdj0AHB
+	hsGZfq7nKotgssZDNc636aTdo3pzgQbeF5v4fryDaQmpwdqEcaiNCm0GYVqwc7PEi4XcgQ
+	5h7OZdxIN03SNpwDnWMSibgTaLJbm+a41H3fDulJyVuzLOEWCEsPmjMtpe4E2WX+zaitPq
+	l8AqgUqhY9lcZSl2j7C9xBZ6SYX8SzvrWOkxjgyGDnIOvKSAxqoxxiN0F4AzYQ==
+Message-ID: <e4dad58c-e329-4e9a-aa6f-8b08bdf8f350@cachyos.org>
+Date: Tue, 5 Nov 2024 15:56:51 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,356 +50,341 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v3 0/4] Support large folios for tmpfs
-To: Baolin Wang <baolin.wang@linux.alibaba.com>, Daniel Gomez <d@kruces.com>,
- Daniel Gomez <da.gomez@samsung.com>,
- "Kirill A. Shutemov" <kirill@shutemov.name>
-Cc: Matthew Wilcox <willy@infradead.org>, akpm@linux-foundation.org,
- hughd@google.com, wangkefeng.wang@huawei.com, 21cnbao@gmail.com,
- ryan.roberts@arm.com, ioworker0@gmail.com, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org,
- "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
-References: <cover.1728548374.git.baolin.wang@linux.alibaba.com>
- <8e48cf24-83e1-486e-b89c-41edb7eeff3e@linux.alibaba.com>
- <CGME20241021085439eucas1p10a0b6e7c3b0ace3c9a0402427595875a@eucas1p1.samsung.com>
- <ppgciwd7cxmeqssryshe42lxwb4sdzr6gjhwwbotw4gx2l7vi5@7y4hedxpf4nx>
- <D51IU4N746MI.FDS6C7GYO4RP@samsung.com>
- <c59f2881-fbbb-41b1-830d-9d81f36ecc0b@linux.alibaba.com>
- <486a72c6-5877-4a95-a587-2a32faa8785d@redhat.com>
- <7eb412d1-f90e-4363-8c7b-072f1124f8a6@linux.alibaba.com>
- <1b0f9f94-06a6-48ac-a68e-848bce1008e9@redhat.com>
- <D53Z7I8D6MRB.XN14XUEFQFG7@kruces.com>
- <cbadd5fe-69d5-4c21-8eb8-3344ed36c721@redhat.com>
- <7ca333ba-f9bc-4f78-8f5b-1035ca91c2d5@redhat.com>
- <0b7671fd-3fea-4086-8a85-fe063a62fa80@linux.alibaba.com>
- <d758a4f4-e0e6-4a78-beb4-e513de229310@redhat.com>
- <2782890e-09dc-46bd-ab86-1f8974c7eb7a@linux.alibaba.com>
- <99a3cc07-bdc3-48e2-ab5c-6f4de1bd2e7b@redhat.com>
- <8172f4fb-17ce-4df9-a8cf-f2bed0910370@linux.alibaba.com>
-From: David Hildenbrand <david@redhat.com>
+Subject: Re: [PATCH v7 1/7] Add AutoFDO support for Clang build
+From: Peter Jung <ptr1337@cachyos.org>
+To: Rong Xu <xur@google.com>, Han Shen <shenhan@google.com>
+Cc: Alice Ryhl <aliceryhl@google.com>,
+ Andrew Morton <akpm@linux-foundation.org>, Arnd Bergmann <arnd@arndb.de>,
+ Bill Wendling <morbo@google.com>, Borislav Petkov <bp@alien8.de>,
+ Breno Leitao <leitao@debian.org>, Brian Gerst <brgerst@gmail.com>,
+ Dave Hansen <dave.hansen@linux.intel.com>, David Li <davidxl@google.com>,
+ Heiko Carstens <hca@linux.ibm.com>, "H. Peter Anvin" <hpa@zytor.com>,
+ Ingo Molnar <mingo@redhat.com>, Jann Horn <jannh@google.com>,
+ Jonathan Corbet <corbet@lwn.net>, Josh Poimboeuf <jpoimboe@kernel.org>,
+ Juergen Gross <jgross@suse.com>, Justin Stitt <justinstitt@google.com>,
+ Kees Cook <kees@kernel.org>, Masahiro Yamada <masahiroy@kernel.org>,
+ "Mike Rapoport (IBM)" <rppt@kernel.org>,
+ Nathan Chancellor <nathan@kernel.org>,
+ Nick Desaulniers <ndesaulniers@google.com>,
+ Nicolas Schier <nicolas@fjasle.eu>, "Paul E. McKenney" <paulmck@kernel.org>,
+ Peter Zijlstra <peterz@infradead.org>,
+ Sami Tolvanen <samitolvanen@google.com>, Thomas Gleixner
+ <tglx@linutronix.de>, Wei Yang <richard.weiyang@gmail.com>,
+ workflows@vger.kernel.org, Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+ Maksim Panchenko <max4bolt@gmail.com>, "David S. Miller"
+ <davem@davemloft.net>, Andreas Larsson <andreas@gaisler.com>,
+ Yonghong Song <yonghong.song@linux.dev>, Yabin Cui <yabinc@google.com>,
+ Krzysztof Pszeniczny <kpszeniczny@google.com>,
+ Sriraman Tallam <tmsriram@google.com>, Stephane Eranian
+ <eranian@google.com>, x86@kernel.org, linux-arch@vger.kernel.org,
+ sparclinux@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+ llvm@lists.linux.dev
+References: <20241102175115.1769468-1-xur@google.com>
+ <20241102175115.1769468-2-xur@google.com>
+ <09349180-027a-4b29-a40c-9dc3425e592c@cachyos.org>
+ <3183ab86-8f1f-4624-9175-31e77d773699@cachyos.org>
+ <CACkGtrgOw8inYCD96ot_w9VwzoFvvgCReAx0P-=Rxxqj2FT4_A@mail.gmail.com>
+ <67c07d2f-fb1f-4b7d-96e2-fb5ceb8fc692@cachyos.org>
+ <CACkGtrgJHtG5pXR1z=6G4XR6ffT5jEi3jZQo=UhYj091naBhsA@mail.gmail.com>
+ <CAF1bQ=SbeR3XhFc7JYGOh69JZfAwQV8nupAQM+ZxpzNEFUFxJw@mail.gmail.com>
+ <449fddd2-342f-48cc-9a11-8a34814f1284@cachyos.org>
 Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <8172f4fb-17ce-4df9-a8cf-f2bed0910370@linux.alibaba.com>
+Organization: CachyOS
+In-Reply-To: <449fddd2-342f-48cc-9a11-8a34814f1284@cachyos.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-On 05.11.24 13:45, Baolin Wang wrote:
+You were right - reverting commit:
+https://github.com/bminor/binutils-gdb/commit/b20ab53f81db7eefa0db00d14f06c04527ac324c 
+from the 2.43 branch does fix the packaging.
+
+I will forward this to an issue at their bugzilla.
+
+On 05.11.24 15:33, Peter Jung wrote:
+> Hi Rong,
+> 
+> Glad that you were able to reproduce the issue!
+> Thanks for finding the root cause as well as the part of the code. This 
+> really helps.
+> 
+> I was able to do a successful packaging with binutils 2.42.
+> Lets forward this to the binutils tracker and hope this will be soon 
+> solved. 🙂
+> 
+> I have tested this also on the latest commit 
+> (e1e4078ac59740a79cd709d61872abe15aba0087) and the issue is also 
+> reproducible there.
+> 
+> Thanks for your time! I dont see this as blocker. 🙂
+> It gets time to get this series merged :P
+> 
+> Best regards,
+> 
+> Peter
 > 
 > 
-> On 2024/10/31 18:46, David Hildenbrand wrote:
-> [snip]
 > 
->>>> I don't like that:
+> On 05.11.24 08:25, Rong Xu wrote:
+>> We debugged this issue and we found the failure seems to only happen
+>> with strip (version 2.43) in binutil.
+>>
+>> For a profile-use compilation, either with -fprofile-use (PGO or
+>> iFDO), or -fprofile-sample-use (AutoFDO),
+>> an ELF section of .llvm.call-graph-profile is created for the object.
+>> For some reasons (like to save space?),
+>> the relocations in this section are of type "rel', rather the more
+>> common "rela" type.
+>>
+>> In this case,
+>> $ readelf -r kvm.ko |grep llvm.call-graph-profile
+>> Relocation section '.rel.llvm.call-graph-profile' at offset 0xf62a00
+>> contains 4 entries:
+>>
+>> strip (v2.43.0) has difficulty handling the relocations in
+>> .rel.llvm.call-graph-profile -- it silently failed with --strip-debug.
+>> But strip (v.2.42) has no issue with kvm.ko. The strip in llvm (i.e.
+>> llvm-strip) also passes with kvm.ko
+>>
+>> I compared binutil/strip source code for version v2.43.0 and v2.42.
+>> The different is around here:
+>> In v2.42 of bfd/elfcode.h
+>>     1618       if ((entsize == sizeof (Elf_External_Rela)
+>>     1619            && ebd->elf_info_to_howto != NULL)
+>>     1620           || ebd->elf_info_to_howto_rel == NULL)
+>>     1621         res = ebd->elf_info_to_howto (abfd, relent, &rela);
+>>     1622       else
+>>     1623         res = ebd->elf_info_to_howto_rel (abfd, relent, &rela);
+>>
+>> In v2.43.0 of bfd/elfcode.h
+>>     1618       if (entsize == sizeof (Elf_External_Rela)
+>>     1619           && ebd->elf_info_to_howto != NULL)
+>>     1620         res = ebd->elf_info_to_howto (abfd, relent, &rela);
+>>     1621       else if (ebd->elf_info_to_howto_rel != NULL)
+>>     1622         res = ebd->elf_info_to_howto_rel (abfd, relent, &rela);
+>>
+>> In the 2.43 strip, line 1618 is false and line 1621 is also false.
+>> "res" is returned as false and the program exits with -1.
+>>
+>> While in 2.42, line 1620 is true and we get "res" from line 1621 and
+>> program functions correctly.
+>>
+>> I'm not familiar with binutil code base and don't know the reason for
+>> removing line 1620.
+>> I can file a bug for binutil for people to further investigate this.
+>>
+>> It seems to me that this issue should not be a blocker for our patch.
+>>
+>> Regards,
+>>
+>> -Rong
+>>
+>>
+>>
+>>
+>>
+>> On Mon, Nov 4, 2024 at 12:24 PM Han Shen<shenhan@google.com> wrote:
+>>> Hi Peter,
+>>> Thanks for providing the detailed reproduce.
+>>> Now I can see the error (after I synced to 6.12.0-rc6, I was using rc5).
+>>> I'll look into that and report back.
+>>>
+>>>> I have tested your provided method, but the AutoFDO profile (lld does
+>>> not get lto-sample-profile=$pathtoprofile passed)
+>>>
+>>> I see. You also turned on ThinLTO, which I didn't, so the profile was
+>>> only used during compilation, not passed to lld.
+>>>
+>>> Thanks,
+>>> Han
+>>>
+>>> On Mon, Nov 4, 2024 at 9:31 AM Peter Jung<ptr1337@cachyos.org> wrote:
+>>>> Hi Han,
 >>>>
->>>> (a) there is no way to explicitly enable/name that new behavior.
->>>
->>> But this is similar to other file systems that enable large folios
->>> (setting mapping_set_large_folios()), and I haven't seen any other file
->>> systems supporting large folios requiring a new Kconfig. Maybe tmpfs is
->>> a bit special?
->>
->> I'm afraid I don't have the energy to explain once more why I think
->> tmpfs is not just like any other file system in some cases.
->>
->> And distributions are rather careful when it comes to something like
->> this ...
->>
->>>
->>> If we all agree that tmpfs is a bit special when using huge pages, then
->>> fine, a Kconfig option might be needed.
->>>
->>>> (b) "always" etc. are only concerned about PMDs.
->>>
->>> Yes, currently maintain the same semantics as before, in case users
->>> still expect THPs.
->>
->> Again, I don't think that is a reasonable approach to make PMD-sized
->> ones special here. It will all get seriously confusing and inconsistent.
+>>>> I have tested your provided method, but the AutoFDO profile (lld does
+>>>> not get lto-sample-profile=$pathtoprofile passed)  nor Clang as 
+>>>> compiler
+>>>> gets used.
+>>>> Please replace following PKGBUILD and config from linux-mainline with
+>>>> the provided one in the gist. The patch is also included there.
+>>>>
+>>>> https://gist.github.com/ptr1337/c92728bb273f7dbc2817db75eedec9ed
+>>>>
+>>>> The main change I am doing here, is passing following to the build 
+>>>> array
+>>>> and replacing "make all":
+>>>>
+>>>> make LLVM=1 LLVM_IAS=1 CLANG_AUTOFDO_PROFILE=${srcdir}/perf.afdo all
+>>>>
+>>>> When compiling the kernel with makepkg, this results at the 
+>>>> packaging to
+>>>> following issue and can be reliable reproduced.
+>>>>
+>>>> Regards,
+>>>>
+>>>> Peter
+>>>>
+>>>>
+>>>> On 04.11.24 05:50, Han Shen wrote:
+>>>>> Hi Peter, thanks for reporting the issue. I am trying to reproduce it
+>>>>> in the up-to-date archlinux environment. Below is what I have:
+>>>>>     0. pacman -Syu
+>>>>>     1. cloned archlinux build files from
+>>>>> https://aur.archlinux.org/linux-mainline.git the newest mainline
+>>>>> version is 6.12rc5-1.
+>>>>>     2. changed the PKGBUILD file to include the patches series
+>>>>>     3. changed the "config" to turn on clang autofdo
+>>>>>     4. collected afdo profiles
+>>>>>     5. MAKEFLAGS="-j48 V=1 LLVM=1 CLANG_AUTOFDO_PROFILE=$(pwd)/ 
+>>>>> perf.afdo" \
+>>>>>           makepkg -s --skipinteg --skippgp
+>>>>>     6. install and reboot
+>>>>> The above steps succeeded.
+>>>>> You mentioned the error happens at "module_install", can you instruct
+>>>>> me how to execute the "module_install" step?
+>>>>>
+>>>>> Thanks,
+>>>>> Han
+>>>>>
+>>>>> On Sat, Nov 2, 2024 at 12:53 PM Peter Jung<ptr1337@cachyos.org> wrote:
+>>>>>>
+>>>>>> On 02.11.24 20:46, Peter Jung wrote:
+>>>>>>> On 02.11.24 18:51, Rong Xu wrote:
+>>>>>>>> Add the build support for using Clang's AutoFDO. Building the 
+>>>>>>>> kernel
+>>>>>>>> with AutoFDO does not reduce the optimization level from the
+>>>>>>>> compiler. AutoFDO uses hardware sampling to gather information 
+>>>>>>>> about
+>>>>>>>> the frequency of execution of different code paths within a binary.
+>>>>>>>> This information is then used to guide the compiler's optimization
+>>>>>>>> decisions, resulting in a more efficient binary. Experiments
+>>>>>>>> showed that the kernel can improve up to 10% in latency.
+>>>>>>>>
+>>>>>>>> The support requires a Clang compiler after LLVM 17. This 
+>>>>>>>> submission
+>>>>>>>> is limited to x86 platforms that support PMU features like LBR on
+>>>>>>>> Intel machines and AMD Zen3 BRS. Support for SPE on ARM 1,
+>>>>>>>>     and BRBE on ARM 1 is part of planned future work.
+>>>>>>>>
+>>>>>>>> Here is an example workflow for AutoFDO kernel:
+>>>>>>>>
+>>>>>>>> 1) Build the kernel on the host machine with LLVM enabled, for 
+>>>>>>>> example,
+>>>>>>>>           $ make menuconfig LLVM=1
+>>>>>>>>        Turn on AutoFDO build config:
+>>>>>>>>          CONFIG_AUTOFDO_CLANG=y
+>>>>>>>>        With a configuration that has LLVM enabled, use the 
+>>>>>>>> following
+>>>>>>>>        command:
+>>>>>>>>           scripts/config -e AUTOFDO_CLANG
+>>>>>>>>        After getting the config, build with
+>>>>>>>>          $ make LLVM=1
+>>>>>>>>
+>>>>>>>> 2) Install the kernel on the test machine.
+>>>>>>>>
+>>>>>>>> 3) Run the load tests. The '-c' option in perf specifies the sample
+>>>>>>>>       event period. We suggest     using a suitable prime number,
+>>>>>>>>       like 500009, for this purpose.
+>>>>>>>>       For Intel platforms:
+>>>>>>>>          $ perf record -e BR_INST_RETIRED.NEAR_TAKEN:k -a -N -b -c
+>>>>>>>> <count> \
+>>>>>>>>            -o <perf_file> -- <loadtest>
+>>>>>>>>       For AMD platforms:
+>>>>>>>>          The supported system are: Zen3 with BRS, or Zen4 with 
+>>>>>>>> amd_lbr_v2
+>>>>>>>>         For Zen3:
+>>>>>>>>          $ cat proc/cpuinfo | grep " brs"
+>>>>>>>>          For Zen4:
+>>>>>>>>          $ cat proc/cpuinfo | grep amd_lbr_v2
+>>>>>>>>          $ perf record --pfm-events 
+>>>>>>>> RETIRED_TAKEN_BRANCH_INSTRUCTIONS:k
+>>>>>>>> -a \
+>>>>>>>>            -N -b -c <count> -o <perf_file> -- <loadtest>
+>>>>>>>>
+>>>>>>>> 4) (Optional) Download the raw perf file to the host machine.
+>>>>>>>>
+>>>>>>>> 5) To generate an AutoFDO profile, two offline tools are available:
+>>>>>>>>       create_llvm_prof and llvm_profgen. The create_llvm_prof 
+>>>>>>>> tool is part
+>>>>>>>>       of the AutoFDO project and can be found on GitHub
+>>>>>>>>       (https://github.com/google/autofdo), version v0.30.1 or 
+>>>>>>>> later. The
+>>>>>>>>       llvm_profgen tool is included in the LLVM compiler itself. 
+>>>>>>>> It's
+>>>>>>>>       important to note that the version of llvm_profgen doesn't 
+>>>>>>>> need to
+>>>>>>>>       match the version of Clang. It needs to be the LLVM 19 
+>>>>>>>> release or
+>>>>>>>>       later, or from the LLVM trunk.
+>>>>>>>>          $ llvm-profgen --kernel --binary=<vmlinux> --
+>>>>>>>> perfdata=<perf_file> \
+>>>>>>>>            -o <profile_file>
+>>>>>>>>       or
+>>>>>>>>          $ create_llvm_prof --binary=<vmlinux> -- 
+>>>>>>>> profile=<perf_file> \
+>>>>>>>>            --format=extbinary --out=<profile_file>
+>>>>>>>>
+>>>>>>>>       Note that multiple AutoFDO profile files can be merged 
+>>>>>>>> into one via:
+>>>>>>>>          $ llvm-profdata merge -o <profile_file>  <profile_1> ...
+>>>>>>>> <profile_n>
+>>>>>>>>
+>>>>>>>> 6) Rebuild the kernel using the AutoFDO profile file with the 
+>>>>>>>> same config
+>>>>>>>>       as step 1, (Note CONFIG_AUTOFDO_CLANG needs to be enabled):
+>>>>>>>>          $ make LLVM=1 CLANG_AUTOFDO_PROFILE=<profile_file>
+>>>>>>>>
+>>>>>>>> Co-developed-by: Han Shen<shenhan@google.com>
+>>>>>>>> Signed-off-by: Han Shen<shenhan@google.com>
+>>>>>>>> Signed-off-by: Rong Xu<xur@google.com>
+>>>>>>>> Suggested-by: Sriraman Tallam<tmsriram@google.com>
+>>>>>>>> Suggested-by: Krzysztof Pszeniczny<kpszeniczny@google.com>
+>>>>>>>> Suggested-by: Nick Desaulniers<ndesaulniers@google.com>
+>>>>>>>> Suggested-by: Stephane Eranian<eranian@google.com>
+>>>>>>>> Tested-by: Yonghong Song<yonghong.song@linux.dev>
+>>>>>>>> Tested-by: Yabin Cui<yabinc@google.com>
+>>>>>>>> Tested-by: Nathan Chancellor<nathan@kernel.org>
+>>>>>>>> Reviewed-by: Kees Cook<kees@kernel.org>
+>>>>>>> Tested-by: Peter Jung<ptr1337@cachyos.org>
+>>>>>>>
+>>>>>> The compilations and testing with the "make pacman-pkg" function from
+>>>>>> the kernel worked fine.
+>>>>>>
+>>>>>> One problem I do face:
+>>>>>> When I apply a AutoFDO profile together with the PKGBUILD [1] from
+>>>>>> archlinux im running into issues at "module_install" at the 
+>>>>>> packaging.
+>>>>>>
+>>>>>> See following log:
+>>>>>> ```
+>>>>>> make[2]: *** [scripts/Makefile.modinst:125:
+>>>>>> /tmp/makepkg/linux-cachyos-rc-autofdo/pkg/linux-cachyos-rc- 
+>>>>>> autofdo/usr/lib/modules/6.12.0-rc5-5-cachyos-rc-autofdo/kernel/ 
+>>>>>> arch/x86/kvm/kvm.ko]
+>>>>>> Error 1
+>>>>>> make[2]: *** Deleting file
+>>>>>> '/tmp/makepkg/linux-cachyos-rc-autofdo/pkg/linux-cachyos-rc- 
+>>>>>> autofdo/usr/lib/modules/6.12.0-rc5-5-cachyos-rc-autofdo/kernel/ 
+>>>>>> arch/x86/kvm/kvm.ko'
+>>>>>>      INSTALL
+>>>>>> /tmp/makepkg/linux-cachyos-rc-autofdo/pkg/linux-cachyos-rc- 
+>>>>>> autofdo/usr/lib/modules/6.12.0-rc5-5-cachyos-rc-autofdo/kernel/ 
+>>>>>> crypto/cryptd.ko
+>>>>>> make[2]: *** Waiting for unfinished jobs....
+>>>>>> ```
+>>>>>>
+>>>>>>
+>>>>>> This can be fixed with removed "INSTALL_MOD_STRIP=1" to the passed
+>>>>>> parameters of module_install.
+>>>>>>
+>>>>>> This explicitly only happens, if a profile is passed - otherwise the
+>>>>>> packaging works without problems.
+>>>>>>
+>>>>>> Regards,
+>>>>>>
+>>>>>> Peter Jung
+>>>>>>
 > 
-> I agree PMD-sized should not be special. This is all for backward
-> compatibility with the ‘huge=’ mount option, and adding a new kconfig is
-> also for this purpose.
-> 
->> THPs are opportunistic after all, and page fault behavior will remain
->> unchanged (PMD-sized) for now. And even if we support other sizes during
->> page faults, we'd like start with the largest size (PMD-size) first, and
->> it likely might just all work better than before.
->>
->> Happy to learn where this really makes a difference.
->>
->> Of course, if you change the default behavior (which you are planning),
->> it's ... a changed default.
->>
->> If there are reasons to have more tunables regarding the sizes to use,
->> then it should not be limited to PMD-size.
-> 
-> I have tried to modify the code according to your suggestion (not tested
-> yet). These are what you had in mind?
-> 
-> static inline unsigned int
-> shmem_mapping_size_order(struct address_space *mapping, pgoff_t index,
-> loff_t write_end)
-> {
->           unsigned int order;
->           size_t size;
-> 
->           if (!mapping_large_folio_support(mapping) || !write_end)
->                   return 0;
-> 
->           /* Calculate the write size based on the write_end */
->           size = write_end - (index << PAGE_SHIFT);
->           order = filemap_get_order(size);
->           if (!order)
->                   return 0;
-> 
->           /* If we're not aligned, allocate a smaller folio */
->           if (index & ((1UL << order) - 1))
->                   order = __ffs(index);
-> 
->           order = min_t(size_t, order, MAX_PAGECACHE_ORDER);
->           return order > 0 ? BIT(order + 1) - 1 : 0;
-> }
-> 
-> static unsigned int shmem_huge_global_enabled(struct inode *inode,
-> pgoff_t index,
->                                                 loff_t write_end, bool
-> shmem_huge_force,
->                                                 unsigned long vm_flags)
-> {
->           bool is_shmem = inode->i_sb == shm_mnt->mnt_sb;
->           unsigned long within_size_orders;
->           unsigned int order;
->           loff_t i_size;
-> 
->           if (HPAGE_PMD_ORDER > MAX_PAGECACHE_ORDER)
->                   return 0;
->           if (!S_ISREG(inode->i_mode))
->                   return 0;
->           if (shmem_huge == SHMEM_HUGE_DENY)
->                   return 0;
->           if (shmem_huge_force || shmem_huge == SHMEM_HUGE_FORCE)
->                   return BIT(HPAGE_PMD_ORDER);
-> 
->           switch (SHMEM_SB(inode->i_sb)->huge) {
->           case SHMEM_HUGE_NEVER:
->                   return 0;
->           case SHMEM_HUGE_ALWAYS:
->                   if (is_shmem || IS_ENABLED(CONFIG_USE_ONLY_THP_FOR_TMPFS))
->                           return BIT(HPAGE_PMD_ORDER);
-> 
->                   return shmem_mapping_size_order(inode->i_mapping,
-> index, write_end);
->           case SHMEM_HUGE_WITHIN_SIZE:
->                   if (is_shmem || IS_ENABLED(CONFIG_USE_ONLY_THP_FOR_TMPFS))
->                           within_size_orders = BIT(HPAGE_PMD_ORDER);
->                   else
->                           within_size_orders =
-> shmem_mapping_size_order(inode->i_mapping,
->   
-> index, write_end);
-> 
->                   order = highest_order(within_size_orders);
->                   while (within_size_orders) {
->                           index = round_up(index + 1, 1 << order);
->                           i_size = max(write_end, i_size_read(inode));
->                           i_size = round_up(i_size, PAGE_SIZE);
->                           if (i_size >> PAGE_SHIFT >= index)
->                                   return within_size_orders;
-> 
->                           order = next_order(&within_size_orders, order);
->                   }
->                   fallthrough;
->           case SHMEM_HUGE_ADVISE:
->                   if (vm_flags & VM_HUGEPAGE) {
->                           if (is_shmem || IS_ENABLED(USE_ONLY_THP_FOR_TMPFS))
->                                   return BIT(HPAGE_PMD_ORDER);
-> 
->                           return shmem_mapping_size_order(inode->i_mapping,
->                                                           index, write_end);
->                   }
->                   fallthrough;
->           default:
->                   return 0;
->           }
-> }
-> 
-> 1) Add a new 'CONFIG_USE_ONLY_THP_FOR_TMPFS' kconfig to keep ‘huge=’
-> mount option compatibility.
-> 2) For tmpfs write(), if CONFIG_USE_ONLY_THP_FOR_TMPFS is not enabled,
-> then will get the possible huge orders based on the write size.
-> 3) For tmpfs mmap() fault, always use PMD-sized huge order.
-> 4) For shmem, ignore the write size logic and always use PMD-sized THP
-> to check if the global huge is enabled.
-> 
-> However, in case 2), if 'huge=always' and write size is less than 4K, so
-> we will allocate small pages, that will break the 'huge' semantics?
-> Maybe it's not something to worry too much about.
-
-Probably I didn't express clearly what I think we should, because this is
-not quite what I had in mind.
-
-I would use the CONFIG_USE_ONLY_THP_FOR_TMPFS way of doing it only if
-really required. As raised, if someone needs finer control, providing that
-only for a single size is rather limiting.
-
-
-
-This is what I hope we can do (doc update to show what I mean):
-
-diff --git a/Documentation/admin-guide/mm/transhuge.rst b/Documentation/admin-guide/mm/transhuge.rst
-index 5034915f4e8e8..d7d1a9acdbfc5 100644
---- a/Documentation/admin-guide/mm/transhuge.rst
-+++ b/Documentation/admin-guide/mm/transhuge.rst
-@@ -349,11 +349,24 @@ user, the PMD_ORDER hugepage policy will be overridden. If the policy for
-  PMD_ORDER is not defined within a valid ``thp_shmem``, its policy will
-  default to ``never``.
-  
--Hugepages in tmpfs/shmem
--========================
-+tmpfs/shmem
-+===========
-  
--You can control hugepage allocation policy in tmpfs with mount option
--``huge=``. It can have following values:
-+Traditionally, tmpfs only supported a single huge page size ("PMD"). Today,
-+it also supports smaller sizes just like anonymous memory, often referred
-+to as "multi-size THP" (mTHP). Huge pages of any size are commonly
-+represented in the kernel as "large folios".
-+
-+While there is fine control over the huge page sizes to use for the internal
-+shmem mount (see below), ordinary tmpfs mounts will make use of all
-+available huge page sizes without any control over the exact sizes,
-+behaving more like other file systems.
-+
-+tmpfs mounts
-+------------
-+
-+The THP allocation policy for tmpfs mounts can be adjusted using the mount
-+option: ``huge=``. It can have following values:
-  
-  always
-      Attempt to allocate huge pages every time we need a new page;
-@@ -368,19 +381,20 @@ within_size
-  advise
-      Only allocate huge pages if requested with fadvise()/madvise();
-  
--The default policy is ``never``.
-+Remember, that the kernel may use huge pages of all available sizes, and
-+that no fine control as for the internal tmpfs mount is available.
-+
-+The default policy in the past was ``never``, but it can now be adjusted
-+using the CONFIG_TMPFS_TRANSPARENT_HUGEPAGE_ALWAYS,
-+CONFIG_TMPFS_TRANSPARENT_HUGEPAGE_NEVER etc.
-  
-  ``mount -o remount,huge= /mountpoint`` works fine after mount: remounting
-  ``huge=never`` will not attempt to break up huge pages at all, just stop more
-  from being allocated.
-  
--There's also sysfs knob to control hugepage allocation policy for internal
--shmem mount: /sys/kernel/mm/transparent_hugepage/shmem_enabled. The mount
--is used for SysV SHM, memfds, shared anonymous mmaps (of /dev/zero or
--MAP_ANONYMOUS), GPU drivers' DRM objects, Ashmem.
--
--In addition to policies listed above, shmem_enabled allows two further
--values:
-+In addition to policies listed above, the sysfs knob
-+/sys/kernel/mm/transparent_hugepage/shmem_enabled will affect the
-+allocation policy of tmpfs mounts, when set to the following values:
-  
-  deny
-      For use in emergencies, to force the huge option off from
-@@ -388,13 +402,26 @@ deny
-  force
-      Force the huge option on for all - very useful for testing;
-  
--Shmem can also use "multi-size THP" (mTHP) by adding a new sysfs knob to
--control mTHP allocation:
--'/sys/kernel/mm/transparent_hugepage/hugepages-<size>kB/shmem_enabled',
--and its value for each mTHP is essentially consistent with the global
--setting.  An 'inherit' option is added to ensure compatibility with these
--global settings.  Conversely, the options 'force' and 'deny' are dropped,
--which are rather testing artifacts from the old ages.
-+
-+shmem / internal tmpfs
-+----------------------
-+
-+The mount internal tmpfs mount is used for SysV SHM, memfds, shared anonymous
-+mmaps (of /dev/zero or MAP_ANONYMOUS), GPU drivers' DRM  objects, Ashmem.
-+
-+To control the THP allocation policy for this internal tmpfs mount, the
-+sysfs knob /sys/kernel/mm/transparent_hugepage/shmem_enabled and the knobs
-+per THP size in
-+'/sys/kernel/mm/transparent_hugepage/hugepages-<size>kB/shmem_enabled'
-+can be used.
-+
-+The global knob has the same semantics as the ``huge=`` mount options
-+for tmpfs mounts, except that the different huge page sizes can be controlled
-+individually, and will only use the setting of the global knob when the
-+per-size knob is set to 'inherit'.
-+
-+The options 'force' and 'deny' are dropped for the individual sizes, which
-+are rather testing artifacts from the old ages.
-  
-  always
-      Attempt to allocate <size> huge pages every time we need a new page;
-diff --git a/Documentation/filesystems/tmpfs.rst b/Documentation/filesystems/tmpfs.rst
-index 56a26c843dbe9..10de8f706d07b 100644
-
-
-
-There is this question of "do we need the old way of doing it and only
-allocate PMDs". For that, likely a config similar to the one you propose might
-make sense, but I would want to see if there is real demand for that. In particular:
-for whom the smaller sizes are a problem when bigger (PMD) sizes were
-enabled in the past.
-
--- 
-Cheers,
-
-David / dhildenb
 
 
