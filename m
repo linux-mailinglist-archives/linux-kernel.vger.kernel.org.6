@@ -1,173 +1,191 @@
-Return-Path: <linux-kernel+bounces-397054-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397055-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F36C9BD61D
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 20:51:34 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95D369BD61F
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 20:52:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E214FB22314
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 19:51:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 260161F231DB
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 19:52:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8430421314D;
-	Tue,  5 Nov 2024 19:51:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA1602139B2;
+	Tue,  5 Nov 2024 19:52:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l9DTe6+M"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GI1Cm7Xt"
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2076E1CF295
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 19:51:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FE101E25FD;
+	Tue,  5 Nov 2024 19:52:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730836285; cv=none; b=bCbuwmsaIiwtB7EQcld0UjhyA8VjaVGs9PQWaGDRlDcnfZZwFsasoV5ly3Z+qcRQo9NHhAejopAsA/NziQoarzMhkUcg/FmZIttRLMJ3YH6ck8jT5JcxxnRNiaDhcKe5lag2IVy5G8gXndZcdqyeHkThd5ejKoDrOpRjvk1A9yA=
+	t=1730836334; cv=none; b=JRWS94d9wUg/IQ0LSUWA1e1uM6P2hoP6gciKgBk2cilXvyiBXIqf3PH4CG0fUUihtFYWqIcerVbrtgvAo9ncxbEQQmWiDwxrefF3fWbHv45k2JmWw4n4HV0tV8NqYaD+H4cgqiSaBSEnoFdS98kgQgii52Y6HyvjE7SzPuLraNE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730836285; c=relaxed/simple;
-	bh=Wd9YBNoCVXAiGuvNwiEzfeC0VQdvvvQXwrwgZDUZCAo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rrL4L71y9ZJa1CL8gdvrjfdDuD45A60phIYNy7im2VYR+tWp3WLZxRTH0vMCjN4umPdl72Mct+Pfc9e2jMFiFJygD3vewYvxWHCIuvXWIOZ6w7I7iaRR2HUudXCdujGkiVP8aZWcPgGUXcZ6JRkY+Ki1bHVSf/OjF1rz2CPE+cU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l9DTe6+M; arc=none smtp.client-ip=209.85.167.54
+	s=arc-20240116; t=1730836334; c=relaxed/simple;
+	bh=LPKF03atCTCrKcos+7YwqpjNd1ViksquHbsZ60LIIE4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZPq4RwiXABh0R1Xt+BC7gmVvMmxr4/2f2EP05zr60E6gz45/Y9O2JQw6cXOoo6ifdRp1Y+RajmZZiFnoYnJsAHIyj3ot4r4GfX+z2KYQGczA0XKX6m7Z/BmGNOQNWYlJiiTMFtIXaJTjvICSSy9yX9aJg5M9fow0+TN58uOVo9Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GI1Cm7Xt; arc=none smtp.client-ip=209.85.208.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-539e6c754bdso5953129e87.2
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 11:51:22 -0800 (PST)
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2fb58980711so55670501fa.0;
+        Tue, 05 Nov 2024 11:52:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730836281; x=1731441081; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:mail-followup-to:message-id:subject:cc:to
-         :from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=2YLBx9MU/RnKu6hw2T7hL3H8SirYRCnW93a3oWsqcq4=;
-        b=l9DTe6+M8JYtoBBvqGuLGOBoVUOp+wD5sXdBs3tXg5n1SCr+yVFvfMQG3Wg0iUnwvV
-         767YmolseecT9njmhSHmCmOALJRgV2CaBQOmxrkb65Hu72dz2TP7A7bCU/wvRZjEP0/Q
-         WfEcRTd7lFit1WcclfT3zxSGk9+nY0K/Jj5GOBcsiJCGCiGR3MX/BVh5lhnPGkLYNNwe
-         BNOhlQyzjkxHgWe5vKIRXqf1M0psbX0VaiYIrM3dGr4A2Lq2vR+qhdkzy/IkZLG+25+z
-         3rm4EI3NaWJuHNpKQ7ORZldO0K4DgfeP1gH6i3KFBp9dxNsc7tTrct9juixzg4mJN1/n
-         gApA==
+        d=gmail.com; s=20230601; t=1730836331; x=1731441131; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pWoAPKRjNa7zAKKPU5n6zemxViQkVRga91S8P7RCLT8=;
+        b=GI1Cm7XtFZ4ZtPD8ImBcWorSdFvRUMEvyv3D0o9415z7DEGw2IjoDkGkIxBoPcRUiO
+         cHi4y4jSpRW+aBE1LGzdvWp3MXY55GU6UVjgN52nF/oHKdt/YcMoOxNSkjaj2hVcjviP
+         Nhf6Y80MOXT194mlPAE3bl3S1uJQeRjhoQONLgT2ARdtXG6tWWUUu1BTcKvZEG1BmcQa
+         /YsWrj5T8z1qTlMmQxfgCCAtSiO+QOPjV9ZGE8kcGtqXLiPIDamagvRU3FF1v7L6y3B3
+         bXYymoEUSndt16FGiwU8CQaou11B8kJlLwO1aKN55Yz4r9Y0glxZEGxkNN6JgYd2N++J
+         rMgQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730836281; x=1731441081;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:mail-followup-to:message-id:subject:cc:to
-         :from:date:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=2YLBx9MU/RnKu6hw2T7hL3H8SirYRCnW93a3oWsqcq4=;
-        b=QPjWZ/tIDzEfoq6IgibrppVbgwIxCA/KCPNgZ8d+Suvxh4SgI/VdphEYHwDC7b9JCK
-         6X8OpF/7sOUj+GI4lJ4346C7aV+GlwyUn721bOu5GIjmQSmTwcZp+jD0nKpOKy9WQFfp
-         tMVfqaKq95O78qduFo7gy3SzNpuDJjtiKCn9wSoyZQHLoAipefrughNsAq0Y3Ky0Iq1P
-         FsJi+eWdIxX4xkc4c9mR0NlKnmz3cjTzKEQpiEMkIB0itQXp3QvaJS1hfS8YLuRPpqt8
-         okFOOFDiLQefTOqSW6wCcsfyg92UXQlCx+1VBFEbMx2GGxrqXAPKkd860iTmWjOKh3XD
-         fhLw==
-X-Forwarded-Encrypted: i=1; AJvYcCWLquRg1Y0ImfUluju/LnQGDUdZmPodQ9BV7gT8u880tCmpreLrFdzjsv6iayD4d0yyYrHIFlcn7auuN6k=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yya9N4P2EiFLUaZZ1jdVIO7c1hbqkLf1X5ofOG3ElLxkRuXdX/Y
-	uI967tcCR9pqgjkHYSdnV1AB6jKALMVDwfu3x8JIGg5g0aFIDH4q
-X-Google-Smtp-Source: AGHT+IEAvEwNFxRTIOEiFD35riTRwne/MzbdGzBgbKGwTB2zttyozqFADQNfZYmsA8AsuGWxLbzgHA==
-X-Received: by 2002:a05:6512:2398:b0:53c:74a7:43e1 with SMTP id 2adb3069b0e04-53c79e2f714mr10900704e87.13.1730836280887;
-        Tue, 05 Nov 2024 11:51:20 -0800 (PST)
-Received: from localhost ([94.19.228.143])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53c7bc9580bsm2249998e87.34.2024.11.05.11.51.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Nov 2024 11:51:20 -0800 (PST)
-Date: Tue, 5 Nov 2024 22:51:19 +0300
-From: Andrey Skvortsov <andrej.skvortzov@gmail.com>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>,
-	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
-	linux-kernel@vger.kernel.org, Shoji Keita <awaittrot@shjk.jp>,
-	Icenowy Zheng <icenowy@aosc.io>,
-	Andre Przywara <andre.przywara@arm.com>
-Subject: Re: [PATCH 1/2] arm64: dts: sun50i-a64-pinephone: Add AF8133J to
- PinePhone
-Message-ID: <Zyp3N9pGWhLqmtq1@skv.local>
-Mail-Followup-To: Andrey Skvortsov <andrej.skvortzov@gmail.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>,
-	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
-	linux-kernel@vger.kernel.org, Shoji Keita <awaittrot@shjk.jp>,
-	Icenowy Zheng <icenowy@aosc.io>,
-	Andre Przywara <andre.przywara@arm.com>
-References: <20240908214718.36316-1-andrej.skvortzov@gmail.com>
- <20240908214718.36316-2-andrej.skvortzov@gmail.com>
- <CAGb2v65Laka+YaPyAecwxEhMkoodrXnDPn+UTwZUS_wsSBMzyg@mail.gmail.com>
- <ZuazIgLz5PP_Z8Cn@skv.local>
- <CAGb2v66-saec9RcQsCTNOz_Tz4+BSFPdDd6CEA+RrGcF6kCY=A@mail.gmail.com>
+        d=1e100.net; s=20230601; t=1730836331; x=1731441131;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=pWoAPKRjNa7zAKKPU5n6zemxViQkVRga91S8P7RCLT8=;
+        b=IErSrb0vNVv8jVtBGMHg9qVyRzn3M/iJctw2Q7yvJbZj9tPEkUaflExvalzf+FwQZZ
+         vMyEOyot3Q1rd54lXNojuPSiXnj4hQIiGLKiBR4lpUwdoUEwcmQ3diNIcFrhPrs4H/JR
+         5fc5EvSLqIk04syOLF6zSXbs0vaYTC9D/5K9InNLo4Ih+xHQaaPB5eH/W1g/ei/bzVxw
+         jseK3Zr3jj0SV8Dx4buV2kmi3aHj4YI5cXHKZ10jayBjH+WsrdQp+7Mw6MYP6+Op6vVy
+         4b2HYaHn3NI89KOT/bg7GIj5rX83gYVW3CUEAsSNpGD5OUBnfTNlFi5k2W9MoRXd3Fnu
+         ErQA==
+X-Forwarded-Encrypted: i=1; AJvYcCVx5aMTtyjYm0oSb7D7E9xBwW/dMuuZ7ysikh9HcewJlqVgYbgWhYkTZNGL94uqB6pmr6vYM5vlE44k3gOO8kkC@vger.kernel.org, AJvYcCXm2PERu7VbsV55C6tuMtrICQsoBYEBj2H5i6IdMrUVIBzsUaC0Uxqq1VsN/ZXDW5b9uKsSZN+jF86ekEE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyda0t/CE60IWZ9D8NGltryIysPW8eT6e/oaRWCt6pCAjwuXdfG
+	Xr18ElyKOSCvElndZtCUxdqniAFsj0Qf6uONgL8HGtclRAFjsXVvQCLqVHZgBPsvk2WqzPsNI32
+	QQrH+5Kf4aauljoAybFMrFjwO08w=
+X-Google-Smtp-Source: AGHT+IHxl8JlCjTYJJa13IIP2d9eLW8BnMWSthEqSmW9YF14KRL5jSplkOH6i+0ZMmav8L6shUy5jZmEdmwLNlRr5cU=
+X-Received: by 2002:a2e:751:0:b0:2ef:21b3:cdef with SMTP id
+ 38308e7fff4ca-2fcbdfdb091mr143148921fa.25.1730836330262; Tue, 05 Nov 2024
+ 11:52:10 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAGb2v66-saec9RcQsCTNOz_Tz4+BSFPdDd6CEA+RrGcF6kCY=A@mail.gmail.com>
+References: <20241102-kunit-qemu-accel-macos-v2-0-9d4579fddd20@gmail.com>
+ <20241102-kunit-qemu-accel-macos-v2-2-9d4579fddd20@gmail.com> <4e57a6e6-f10c-4a35-88e7-ab4749f7e329@arm.com>
+In-Reply-To: <4e57a6e6-f10c-4a35-88e7-ab4749f7e329@arm.com>
+From: Tamir Duberstein <tamird@gmail.com>
+Date: Tue, 5 Nov 2024 15:51:34 -0400
+Message-ID: <CAJ-ks9kEM2NkS4i9D+R=gsqSRpQSWSPFwFsVuzfQ+6CaX2LJNg@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] kunit: enable hardware acceleration when available
+To: Kristina Martsenko <kristina.martsenko@arm.com>
+Cc: Brendan Higgins <brendan.higgins@linux.dev>, David Gow <davidgow@google.com>, 
+	Rae Moar <rmoar@google.com>, Alyssa Ross <hi@alyssa.is>, =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas@t-8ch.de>, 
+	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Chen-Yu Tsai,
-
-On 24-10-19 10:04, Chen-Yu Tsai wrote:
-> On Sun, Sep 15, 2024 at 6:12 PM Andrey Skvortsov
-> <andrej.skvortzov@gmail.com> wrote:
+On Tue, Nov 5, 2024 at 8:36=E2=80=AFAM Kristina Martsenko
+<kristina.martsenko@arm.com> wrote:
+>
+> On 02/11/2024 12:09, Tamir Duberstein wrote:
+> > Use KVM or HVF if supported by the QEMU binary and available on the
+> > system.
 > >
-> > Hi Chen-Yu Tsai,
+> > This produces a nice improvement on my Apple M3 Pro running macOS 14.7:
 > >
-> > On 24-09-09 16:08, Chen-Yu Tsai wrote:
-> > > On Mon, Sep 9, 2024 at 5:48 AM Andrey Skvortsov
-> > > <andrej.skvortzov@gmail.com> wrote:
-> > > >
-> > > > From: Icenowy Zheng <icenowy@aosc.io>
-> > > >
-> > > > New batches of PinePhones switched the magnetometer to AF8133J from
-> > > > LIS3MDL because lack of ST components.
-> > > >
-> > > > Both chips use the same PB1 pin, but in different modes.
-> > > > LIS3MDL uses it as an gpio input to handle interrupt.
-> > > > AF8133J uses it as an gpio output as a reset signal.
-> > > >
-> > > > It wasn't possible at runtime to enable both device tree nodes and
-> > > > detect supported sensor at probe time, because both drivers try to
-> > > > acquire the same gpio in different modes.
-> > > >
-> > > > Device tree fixup will be done in firmware without introducing new board
-> > > > revision and new dts.
-> > >
-> > > FYI I've been working on an in-kernel prober [1] for such alternative
-> > > components. This does not require firmware support.
-> > >
-> > > [1] https://lore.kernel.org/all/20240904090016.2841572-1-wenst@chromium.org/
+> > Before:
+> > ./tools/testing/kunit/kunit.py exec --arch arm64
+> > [HH:MM:SS] Elapsed time: 10.145s
 > >
-> > Thank you for the information.
+> > After:
+> > ./tools/testing/kunit/kunit.py exec --arch arm64
+> > [HH:MM:SS] Elapsed time: 1.773s
 > >
-> > I've tried to use in-kernel prober from your v7 patchset [1] on top of
-> > -next and it worked without any changes to firmware.
+> > Signed-off-by: Tamir Duberstein <tamird@gmail.com>
+> > ---
+> >  tools/testing/kunit/kunit_kernel.py       | 3 +++
+> >  tools/testing/kunit/qemu_configs/arm64.py | 2 +-
+> >  2 files changed, 4 insertions(+), 1 deletion(-)
 > >
-> > Since there is still on-going review of your patches it looks like
-> > it's to early to submit my changes for review. But I'm ready to test
-> > your new patches.
-> 
-> FYI I'm open to either approach. If the firmware can do it, that is also
-> fine. I don't know if it makes sense to have both disabled by default
-> though? That would break existing users, but so would the in-kernel
-> prober approach, which requires both components be marked as
-> "fail-needs-probe", and also requires that the kernel driver be enabled.
-> In other words, I think the firmware approach is friendlier for existing
-> users that have the original batches.
+> > diff --git a/tools/testing/kunit/kunit_kernel.py b/tools/testing/kunit/=
+kunit_kernel.py
+> > index 61931c4926fd6645f2c62dd13f9842a432ec4167..3146acb884ecf0bcff94d59=
+38535aabd4486fe82 100644
+> > --- a/tools/testing/kunit/kunit_kernel.py
+> > +++ b/tools/testing/kunit/kunit_kernel.py
+> > @@ -123,6 +123,9 @@ class LinuxSourceTreeOperationsQemu(LinuxSourceTree=
+Operations):
+> >                               '-append', ' '.join(params + [self._kerne=
+l_command_line]),
+> >                               '-no-reboot',
+> >                               '-nographic',
+> > +                             '-accel', 'kvm',
+> > +                             '-accel', 'hvf',
+> > +                             '-accel', 'tcg',
+> >                               '-serial', self._serial] + self._extra_qe=
+mu_params
+> >               # Note: shlex.join() does what we want, but requires pyth=
+on 3.8+.
+> >               print('Running tests with:\n$', ' '.join(shlex.quote(arg)=
+ for arg in qemu_command))
+> > diff --git a/tools/testing/kunit/qemu_configs/arm64.py b/tools/testing/=
+kunit/qemu_configs/arm64.py
+> > index d3ff27024755411441f910799be30399295c9541..5c44d3a87e6dd2cd6b08613=
+8186a277a1473585b 100644
+> > --- a/tools/testing/kunit/qemu_configs/arm64.py
+> > +++ b/tools/testing/kunit/qemu_configs/arm64.py
+> > @@ -9,4 +9,4 @@ CONFIG_SERIAL_AMBA_PL011_CONSOLE=3Dy''',
+> >                          qemu_arch=3D'aarch64',
+> >                          kernel_path=3D'arch/arm64/boot/Image.gz',
+> >                          kernel_command_line=3D'console=3DttyAMA0',
+> > -                        extra_qemu_params=3D['-machine', 'virt', '-cpu=
+', 'max,pauth-impdef=3Don'])
+> > +                        extra_qemu_params=3D['-machine', 'virt', '-cpu=
+', 'max'])
+>
+> Would it be possible to keep 'pauth-impdef=3Don' for TCG emulation? Other=
+wise
+> performance regresses by about 20%.
+>
+> Before this patch:
+> ./tools/testing/kunit/kunit.py exec --arch=3Darm64 --cross_compile=3Daarc=
+h64-linux-
+> [11:03:38] Elapsed time: 15.494s
+>
+> After this patch:
+> ./tools/testing/kunit/kunit.py exec --arch=3Darm64 --cross_compile=3Daarc=
+h64-linux-
+> [11:10:47] Elapsed time: 19.099s
+>
+> Thanks,
+> Kristina
 
-Current patches leave original magnetometer enabled as before. So only
-the new alternative magnetometer is disabled. Firmware prober will set
-the correct status. So you are right firmware approach is a bit nicer
-for existing users, nothing will change for them with any combination
-of kernel and firmware. Let's go with a firmware approach with current
-patches then, if nobody 
+Hi Kristina, thanks for pointing that out. I'm able to reproduce the
+regression. I poked around and I can't find a way to enable
+`pauth-impdef` only for TCG, and the problem is that enabling it
+globally produces:
 
-But I like your in-kernel approach as well. 
-JFYI I've applied your v10 patches [1] on top of next-20241105 and retested
-it with patches for magnetometer. It's available here [2]. 
+tools/testing/kunit/kunit.py exec --arch arm64 --make_options LLVM=3D1
+--raw_output=3Dall
+[15:34:05] Starting KUnit Kernel (1/1)...
+Running tests with:
+$ qemu-system-aarch64 -nodefaults -m 1024 -kernel
+.kunit/arch/arm64/boot/Image.gz -append 'kunit.enable=3D1
+console=3DttyAMA0 kunit_shutdown=3Dreboot' -no-reboot -nographic -accel
+kvm -accel hvf -accel tcg -serial stdio -machine virt -cpu
+max,pauth-impdef=3Don
+qemu-system-aarch64: -accel kvm: invalid accelerator kvm
+qemu-system-aarch64: falling back to HVF
+qemu-system-aarch64: can't apply global max-arm-cpu.pauth-impdef=3Don:
+Property 'max-arm-cpu.pauth-impdef' not found
 
-1. https://lore.kernel.org/lkml/20241030072229.1013235-1-wenst@chromium.org/#t
-2. https://github.com/AndreySV/linux-stable/commits/in-kernel-hwprober-magnetometer/
+This behavior is at least somewhat intentional[0]. I have filed a bug
+with qemu[1]. If someone can conceive of a way to achieve this, I'd be
+delighted to send a v3.
 
--- 
-Best regards,
-Andrey Skvortsov
+Link: https://gitlab.com/qemu-project/qemu/-/commit/92d6528dbb20c6aec4022df=
+d63c7ffee44f19f77
+[0]
+Link: https://gitlab.com/qemu-project/qemu/-/issues/2656 [1]
 
