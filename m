@@ -1,288 +1,294 @@
-Return-Path: <linux-kernel+bounces-395716-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395717-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 845549BC200
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 01:26:31 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 863A99BC205
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 01:31:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3DACC282AE4
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 00:26:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43799282BC6
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 00:31:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3A27C2E0;
-	Tue,  5 Nov 2024 00:26:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FCBBF9EC;
+	Tue,  5 Nov 2024 00:31:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="jtbsMO7Q"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dJXv1Y9e"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1E3223BE;
-	Tue,  5 Nov 2024 00:26:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75A0D8F62;
+	Tue,  5 Nov 2024 00:31:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730766384; cv=none; b=I660gmvMYcee/FNkA51le8f6+l15Vp6i6dw7Lv890bUCkzEf5RJ+X4S4/HtU4Hq+HzvMeGn1azbtq4uq7evpWsdcsDS1mo0Scee6+K89pv3opEzQirXIW+gcykFFJoVbInDXh0kAMHlLXeZA8bE6YMOnWhPHURhU8lFiScVLDgA=
+	t=1730766668; cv=none; b=fwwDB9HoPb8p6ioOfnmuXBgvwrhurr/Hd3R10cUbhkd+/3VFYwDXsEB2sJF2T4s+11lizsUrHEoPoBAR5lCIlq7E0dOKAspe9ZwhWVDEot41ShJ5J0DLU4Rc3WZD/kPi66qA55m/imEFfmf1QbzQhu89xp2J5tLE4f4y74kIb3A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730766384; c=relaxed/simple;
-	bh=EdIcR1fMwyzrH8F/FF+qgFhuLFr0NwEScRS317/AAPc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=HwH9GDUmCtZjPsaymqQu4WBLQtJFQSW6/nRNsHzxNVyrji0UpFWccqdIl3XAyv4nkQHTQmU2/+0ZK5Tuxgilctk1Klt69/SEg3mBT4zKJ/TeLWrbJVh2NrosimscSdNG3rx3YbZtrf0X62fjpkoMxrnFX457L4HDtsU2WyjzII4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=jtbsMO7Q; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A4LIe2a015613;
-	Tue, 5 Nov 2024 00:26:17 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	PBN3T4Vgmqp57QrQMRJMBEh0Fc1TKbJGeO9Gl1LpGHY=; b=jtbsMO7QNkK8SaJ3
-	hIrdRSYcKrqeKH28AbjhABP5gXXVt6imPIb8UMBZfYcMeHIsF3Aj1Q9sIq6+Ho+n
-	1KSkVT+YboVPKXLel+7u8Y415c7hTmwZ9Sxg9JOppMrYbMjJwtmoV0aTpZcDG9ms
-	rOHQbzb3Fdwk5mk3uqlKRQPqQVxQdoPikbEsYQsLQvzQt8OGRBZSOd8GyiMUdC1N
-	IMEMdLmRL0W9F9Sz8eqxL0/te1cxTtA2xDXpKcZKbeiUZL8V0XXL1hUmpmtr8+mK
-	7JIoB7jV2qz9jHqRriidrhn8L118GUSP5w5VznOrV86/2zfEwAJZXydJkPGtj90E
-	beu09g==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42q5n8gcb0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 05 Nov 2024 00:26:17 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4A50QGB6016077
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 5 Nov 2024 00:26:16 GMT
-Received: from [10.71.115.177] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 4 Nov 2024
- 16:26:16 -0800
-Message-ID: <da2bc665-5010-4d92-b9ac-7c442859cd10@quicinc.com>
-Date: Mon, 4 Nov 2024 16:26:15 -0800
+	s=arc-20240116; t=1730766668; c=relaxed/simple;
+	bh=h7YD5U2qEal9SqGHORAN5iv996SvPmbob1Se4iR1Cxo=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=HsIwSwBPhjFjz7TrlwEQb9grx2nwxDXVrIBhDUToNah7bmDAOjwu9lVx1UBS2BhtM5AylDi4fKgx+rNzcnIue6Gx11uELF29qhg6kVReOvpJHLeMe+tTBVC2WBSMoJ1LrsayvzXuZU87mqjOtzaozae6QmjyNpevlXNzhQt+tmc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dJXv1Y9e; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a9a2cdc6f0cso734508466b.2;
+        Mon, 04 Nov 2024 16:31:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730766665; x=1731371465; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=h7YD5U2qEal9SqGHORAN5iv996SvPmbob1Se4iR1Cxo=;
+        b=dJXv1Y9euGKB4hd+lcusFDxQYV246vfZfPJ7773LK/v+y9t1dgle7506lkbR2jJO/D
+         R5UPdGjH1IFNlRsdAp0At9f+IlPXfKa2Dkr94R/XHyv8IcBo5be3eDwXU3j3oXAoJO0d
+         9LPHOtPsQN0wsU0vVNiur/FTGGsLvxIQbnBwADWPVEJ+tL3X48EL9Ei1/M0M9YAhL9Cm
+         bY8QVe5YN9HDZXdsnnOX2O8699jTTu3qBgbK3TGiDyQsAcAiQNZthzB3cm2oWEa/ZpNE
+         4V7hdpJ1Z0WNkIfIKtgqahxhyHYVRHI1q4ck39SaHIANE3UdyPTlZbrfHkhzi5slP5s/
+         H2hw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730766665; x=1731371465;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=h7YD5U2qEal9SqGHORAN5iv996SvPmbob1Se4iR1Cxo=;
+        b=hCvSIRCYtODrxye/NxzhTex0jOFrbnVEM8kY1/m+w/7jkfvIWPx2n3evfaFmoo2K0n
+         tkz9Qs/21yGDuq+O1yej/vcJCDlGnhWgdhENFcllVPvKTO7AHZJFptln2zOr+ai6JmRi
+         A/nUGk+ZxPiRlOAl0STuKXoYNt5fJffnSJq5Enl7CSZr/f5pZaeP80Pm+rY46WvJKRYi
+         w5RrWsshOgpIpQAHFUqRfcelwr7nnTPQBQyCrhubiCDF4SmbFsnt6mqSvTMkK9ZaCZT6
+         dK7f7YDJYJNWIuVOxYTGVyFB768EObkYSUsCsT3cDXiEHNUl7pCYPnYhhm89Vz2RmHrR
+         EARA==
+X-Forwarded-Encrypted: i=1; AJvYcCUMD4VNqn0lyR3k9LEi/m10baM4xvKN/gIyEpQRN6cG6sGeiu9O7iENKPhtnrSRJ4rhJ261N5L8KNMsm3KA@vger.kernel.org, AJvYcCWQ30P/vI1QGpBD5axaEYl68Mi2ZylPLj7zumXib3kI+QJ2ruEXMPmF+SMsFkJvA1N9iuyNsWEZwIxt@vger.kernel.org, AJvYcCX3lZaObJTcTSTiihRCnvpue90a+1qBXmIeir2IvUcTONMRFIiQv3wOw+feDTKEk/4ZkmOPTbvzfaEmug==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzZbcp+Hfmfy3fCsgW1BcXKvU2qHmxGYajfGBPNrXLfpSqaof9h
+	dw2h4IE2Bs2rD/x4opPEs6Nymc3HOAfaO/6w7/xrroOD+lz1/jFB3y2I+rXeS8vVYuWgQlAzD6V
+	fuB+wjjpXNVio0Cu835RnYRZllW1LWGZZLOk=
+X-Google-Smtp-Source: AGHT+IG/Nr/DL/U4CcF7eKJtFAYO8hm9nfBMMym1cuQ5ceJB6ypdKsoaBo8hTalWHiP2xYm8+roinGtg/t0CpvmqwP4=
+X-Received: by 2002:a17:906:ca45:b0:a9e:670e:38bc with SMTP id
+ a640c23a62f3a-a9e670e3aedmr973388266b.3.1730766664471; Mon, 04 Nov 2024
+ 16:31:04 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: qrtr/mhi: NULL-deref with in-kernel pd-mapper
-To: Johan Hovold <johan@kernel.org>,
-        Manivannan Sadhasivam
-	<manivannan.sadhasivam@linaro.org>,
-        Bjorn Andersson
-	<bjorn.andersson@oss.qualcomm.com>
-CC: Qiang Yu <quic_qianyu@quicinc.com>, Jeffrey Hugo <quic_jhugo@quicinc.com>,
-        Krishna chaitanya chundru <quic_krichai@quicinc.com>,
-        Konrad Dybcio
-	<konradybcio@kernel.org>, <mhi@lists.linux.dev>,
-        <linux-arm-msm@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <ZyTtVdkCCES0lkl4@hovoldconsulting.com>
-Content-Language: en-US
-From: Chris Lew <quic_clew@quicinc.com>
-In-Reply-To: <ZyTtVdkCCES0lkl4@hovoldconsulting.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: kOFPgUbwC95y-qgApyhP6RF_-v3_KOak
-X-Proofpoint-ORIG-GUID: kOFPgUbwC95y-qgApyhP6RF_-v3_KOak
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 impostorscore=0
- suspectscore=0 lowpriorityscore=0 mlxlogscore=999 mlxscore=0
- priorityscore=1501 bulkscore=0 adultscore=0 malwarescore=0 phishscore=0
- clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411050001
+From: Nolan Nicholson <nolananicholson@gmail.com>
+Date: Mon, 4 Nov 2024 16:30:53 -0800
+Message-ID: <CAL-gK7f5=R0nrrQdPtaZZr1fd-cdAMbDMuZ_NLA8vM0SX+nGSw@mail.gmail.com>
+Subject: hid-pidff.c: null-pointer deref if optional HID reports are not present
+To: stable@vger.kernel.org
+Cc: jikos@kernel.org, bentiss@kernel.org, linux-usb@vger.kernel.org, 
+	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: multipart/mixed; boundary="00000000000039b81d06261f8414"
 
+--00000000000039b81d06261f8414
+Content-Type: multipart/alternative; boundary="00000000000039b81b06261f8412"
 
+--00000000000039b81b06261f8412
+Content-Type: text/plain; charset="UTF-8"
 
-On 11/1/2024 8:01 AM, Johan Hovold wrote:
-> Hi,
-> 
-> I just ran into a NULL-deref in a qrts/mhi path during boot of the
-> x1e80100 CRD for the second time.
-> 
-> First time was with a 6.11 kernel (but I never got around to reporting
-> it) and today it happened again with 6.12-rc5.
-> 
-> Both times I was using the in-kernel pd-mapper, which has exposed a
-> number of bugs elsewhere due to changes in timing, but I'm not sure if
-> the pd-mapper is involved here or not.
-> 
-> See serial console log below.
-> 
-> Last time I think the machine survived so that I could save a cleaner
-> log of the oops. That one is included after the serial log for
-> completeness.
-> 
-> Johan
-> 
-> 
-> [    8.531773] remoteproc remoteproc1: remote processor 32300000.remoteproc is now up
-> 
-> [    8.825593] Unable to handle kernel NULL pointer dereference at virtual
-> address 0000000000000034
-> .
-> [    8.838623] Mem abort info:
-> [    8.838626]   ESR = 0x0000000096000004
-> [    8.838628]   EC = 0x25: DABT (current EL), IL = 32 bits
-> [    8.838630]   SET = 0, FnV = 0
-> [    8.838632]   EA = 0, S1PTW = 0
-> [    8.838633]   FSC = 0x04: level 0 translation fault
-> [    8.838635] Data abort info:
-> [    8.838637]   ISV = 0, ISS = 0x00000004, ISS2 = 0x00000000
-> [    8.838639]   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
-> [    8.838641]   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
-> [    8.838643] user pgtable: 4k pages, 48-bit VAs, pgdp=00000008813bf000
-> [    8.838645] [0000000000000034] pgd=0000000000000000, p4d=0000000000000000
-> [    8.838777] Internal error: Oops: 0000000096000004 [#1] PREEMPT SMP
-> [    8.857297] Modules linked in: mhi_wwan_ctrl(+) wwan qrtr_mhi(+) mhi_net(+) rpmsg_ctrl(+) rpmsg_char pmic_glink_altm
-> ode qcom_pd_mapper ucsi_glink aux_hpd_bridge qcom_battmgr typec_ucsi hci_uart btqca phy_qcom_eusb2_repeater qcom_spmi_t
-> emp_alarm(+) qcom_pon bluetooth sm3_ce ps8830 ath12k(+)
-> [    8.864039]  industrialio sm3 reboot_mode nvmem_qcom_spmi_sdam mac80211 snd_soc_x1e80100 phy_qcom_qmp_combo regmap_i
-> 2c sha3_ce ecdh_generic pci_pwrctl_pwrseq ecc aux_bridge
-> [    8.872648]  snd_soc_qcom_common libarc4 sha512_ce pci_pwrctl_core pwrseq_qcom_wcn sha512_arm64 snd_soc_qcom_sdw typ
-> ec pwrseq_core qcom_q6v5_pas qcom_stats
-> [    8.880892]  snd_soc_wcd938x input_leds mhi_pci_generic snd_soc_wcd_classh qcom_pil_info snd_soc_wcd938x_sdw qcom_co
-> mmon dispcc_x1e80100 snd_soc_lpass_rx_macro led_class qcom_glink_smem
-> [    8.889499]  snd_soc_lpass_tx_macro snd_soc_lpass_va_macro regmap_sdw snd_soc_lpass_wsa_macro mhi phy_qcom_edp pinct
-> rl_sm8550_lpass_lpi snd_soc_wcd_mbhc soundwire_qcom snd_soc_lpass_macro_common
-> [    8.900156]  qcom_glink phy_qcom_qmp_usb phy_qcom_snps_eusb2 pinctrl_lpass_lpi lpasscc_sc8280xp qrtr snd_soc_core qc
-> om_q6v5 cfg80211 gpucc_x1e80100
-> [    8.913754]  qcom_sysmon
-> [    8.933436]  pmic_glink snd_compress rfkill icc_bwmon rpmsg_core snd_pcm pdr_interface qcom_cpucp_mbox snd_timer soc
-> info arm_smccc_trng qcom_pdr_msg qmi_helpers snd rng_core soundcore soundwire_bus fuse dm_mod ip_tables
-> [    8.960019] qcom-snps-eusb2-hsphy fde000.phy: Registered Qcom-eUSB2 phy
-> [    8.972985]  x_tables ipv6 autofs4 msm mdt_loader drm_exec gpu_sched drm_display_helper drm_kms_helper drm_dp_aux_bu
-> s llcc_qcom pcie_qcom crc8
-> [    9.002021]  phy_qcom_qmp_pcie tcsrcc_x1e80100 nvme nvme_core hid_multitouch i2c_qcom_geni i2c_hid_of i2c_hid drm i2
-> c_core
-> [    9.002030] CPU: 10 UID: 0 PID: 11 Comm: kworker/u48:0 Not tainted 6.12.0-rc5 #4
-> [    9.029550] Hardware name: Qualcomm CRD, BIOS 6.0.231221.BOOT.MXF.2.4-00348.1-HAMOA-1 12/21/2023
-> [    9.029552] Workqueue: qrtr_ns_handler qrtr_ns_worker [qrtr]
-> [    9.061350] pstate: a1400005 (NzCv daif +PAN -UAO -TCO +DIT -SSBS BTYPE=--)
-> [    9.061353] pc : mhi_gen_tre+0x44/0x224 [mhi]
-> [    9.090573] qcom_pmic_glink pmic-glink: Failed to create device link (0x180) with 2-0008
-> [    9.106931] lr : mhi_gen_tre+0x40/0x224 [mhi]
-> [    9.106934] sp : ffff8000800fb7d0
-> [    9.106935] x29: ffff8000800fb7d0 x28: ffff6db7852bd000 x27: ffff800082490188
-> [    9.120382] dwc3 a000000.usb: Adding to iommu group 5
-> [    9.133750]
-> [    9.133752] x26: 0000000000000000 x25: ffff6db783e65080 x24: ffff80008248ff88
-> [    9.133754] x23: 0000000000000000 x22: ffff80008248ff80 x21: ffff8000800fb890
-> [    9.133756] x20: 0000000000000000 x19: 0000000000000002 x18: 000000000005cf20
-> [    9.133758] x17: 0000000000000028 x16: 0000000000000000
-> [    9.172738]  x15: ffffa5834131fbd0
-> [    9.172741] x14: ffffa5834137caf0 x13: 000000000000ce30 x12: ffff6db7808bc028
-> [    9.172743] x11: ffffa58341993000 x10: 0000000000000000 x9 : 00000000cf3f2b90
-> [    9.172745] x8 : 0000000094e5072b x7 : 00000000000404ce x6 : ffffa5834162cfb0
-> [    9.172747] x5 : 000000000000008b x4 : ffffa583419cddf0 x3 : 0000000000000007
-> [    9.172750] x2 : 0000000000000000
-> [    9.192697]  x1 : 000000000000000a x0 : ffff6db7808bb700
-> [    9.192700] Call trace:
-> [    9.192701]  mhi_gen_tre+0x44/0x224 [mhi]
-> [    9.192704]  mhi_queue+0x74/0x194 [mhi]
-> [    9.192706]  mhi_queue_skb+0x5c/0x8c [mhi]
-> [    9.210985]  qcom_mhi_qrtr_send+0x6c/0x160 [qrtr_mhi]
-> [    9.210989]  qrtr_node_enqueue+0xd0/0x4a0 [qrtr]
-> [    9.210992]  qrtr_bcast_enqueue+0x78/0xe8 [qrtr]
-> [    9.225530]  qrtr_sendmsg+0x15c/0x33c [qrtr]
-> [    9.225532]  sock_sendmsg+0xc0/0xec
-> [    9.240436]  kernel_sendmsg+0x30/0x40
-> [    9.240438]  service_announce_new+0xbc/0x1c4 [qrtr]
-> [    9.240440]  qrtr_ns_worker+0x714/0x794 [qrtr]
-> [    9.240441]  process_one_work+0x210/0x614
-> [    9.254527]  worker_thread+0x23c/0x378
-> [    9.254529]  kthread+0x124/0x128
-> [    9.254531]  ret_from_fork+0x10/0x20
-> [    9.254534] Code: aa0003f9 aa1b03e0 94001a4d f9401b14 (3940d280)
-> [    9.267369] ---[ end trace 0000000000000000 ]---
-> [    9.267371] Kernel panic - not syncing: Oops: Fatal exception in interrupt
-> 
+Hello,
 
-Thanks for reporting this.
+(This is my first time reporting a Linux bug; please accept my apologies
+for any mistakes in the process.)
 
-I'm not sure the in-kernel pd-mapper should be affecting this path. I 
-think this is for WLAN since it is the mhi qrtr and I'm not aware of 
-WLAN needing to listen to the pd-mapper framework.
+When initializing a HID PID device, hid-pidff.c checks for eight required
+HID reports and five optional reports. If the eight required reports are
+present, the hid_pidff_init() function then attempts to find the necessary
+fields in each required or optional report, using the pidff_find_fields()
+function. However, if any of the five optional reports is not present,
+pidff_find_fields() will trigger a null-pointer dereference.
 
-The offset seems to be mapped back to 
-linux/drivers/bus/mhi/host/main.c:1220, I had some extra debug configs 
-enabled so not sure the offset is still valid.
+I recently implemented the descriptors for a USB HID device with PID
+force-feedback capability. After implementing the required report
+descriptors but not the optional ones, I got an OOPS from the
+pidff_find_fields function. I saved the OOPS from my Ubuntu installation,
+and have attached it here. I later reproduced the issue on 6.11.6.
 
-	WARN_ON(buf_info->used);
-	buf_info->pre_mapped = info->pre_mapped;
+I was able to work around the issue by having my device present all of the
+optional report descriptors as well as all of the required ones.
 
-This looks like the null pointer would happen if qrtr tried to send 
-before mhi_channel_prepare() is called.
+Thank you,
+Nolan Nicholson
 
-I think we have a patch that might fix this, let me dig it up and send 
-it out.
+--00000000000039b81b06261f8412
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> 
-> [    9.408420] Unable to handle kernel NULL pointer dereference at virtual address 0000000000000034
-> [    9.408429] Mem abort info:
-> [    9.408431]   ESR = 0x0000000096000004
-> [    9.408434]   EC = 0x25: DABT (current EL), IL = 32 bits
-> [    9.408437]   SET = 0, FnV = 0
-> [    9.408439]   EA = 0, S1PTW = 0
-> [    9.408441]   FSC = 0x04: level 0 translation fault
-> [    9.408444] Data abort info:
-> [    9.408446]   ISV = 0, ISS = 0x00000004, ISS2 = 0x00000000
-> [    9.408448]   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
-> [    9.408450]   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
-> [    9.408453] user pgtable: 4k pages, 48-bit VAs, pgdp=0000000882f43000
-> [    9.408456] [0000000000000034] pgd=0000000000000000, p4d=0000000000000000
-> [    9.408476] Internal error: Oops: 0000000096000004 [#1] PREEMPT SMP
-> [    9.408479] Modules linked in: mhi_wwan_ctrl(+) wwan qrtr_mhi(+) mhi_net(+) qcom_pd_mapper(+) ucsi_glink pmic_glink_
-> altmode sm3_ce qcom_battmgr(+) aux_hpd_bridge typec_ucsi ath12k(+) sm3 sha3_ce mac80211 snd_soc_x1e80100 sha512_ce liba
-> rc4 phy_qcom_eusb2_repeater nvmem_qcom_spmi_sdam sha512_arm64 ps8830(+) snd_soc_qcom_common qcom_spmi_temp_alarm snd_so
-> c_qcom_sdw qcom_pon qcom_q6v5_pas regmap_i2c phy_qcom_qmp_combo reboot_mode aux_bridge qcom_pil_info industrialio typec
->   cfg80211 phy_qcom_snps_eusb2 qcom_stats phy_qcom_edp dispcc_x1e80100 qcom_common pinctrl_sm8550_lpass_lpi snd_soc_lpas
-> s_va_macro qcom_glink_smem pinctrl_lpass_lpi lpasscc_sc8280xp snd_soc_wcd938x snd_soc_lpass_tx_macro snd_soc_lpass_wsa_
-> macro snd_soc_lpass_rx_macro qcom_glink snd_soc_wcd_classh soundwire_qcom snd_soc_lpass_macro_common snd_soc_wcd938x_sd
-> w qcom_q6v5 regmap_sdw mhi_pci_generic gpucc_x1e80100 snd_soc_wcd_mbhc qcom_sysmon mhi icc_bwmon snd_soc_core rfkill sn
-> d_compress qrtr snd_pcm qcom_cpucp_mbox snd_timer input_leds pmic_glink snd
-> [    9.408524]  led_class arm_smccc_trng rng_core rpmsg_core soundcore pdr_interface soundwire_bus qcom_pdr_msg socinfo
->   qmi_helpers fuse dm_mod ip_tables x_tables ipv6 autofs4 msm mdt_loader drm_exec gpu_sched drm_display_helper drm_kms_h
-> elper drm_dp_aux_bus llcc_qcom pcie_qcom crc8 phy_qcom_qmp_pcie tcsrcc_x1e80100 nvme nvme_core hid_multitouch i2c_qcom_
-> geni i2c_hid_of i2c_hid drm i2c_core
-> [    9.408548] CPU: 4 UID: 0 PID: 94 Comm: kworker/u48:1 Not tainted 6.11.0 #185
-> [    9.408550] Hardware name: Qualcomm CRD, BIOS 6.0.231221.BOOT.MXF.2.4-00348.1-HAMOA-1 12/21/2023
-> [    9.408551] Workqueue: qrtr_ns_handler qrtr_ns_worker [qrtr]
-> [    9.408556] pstate: a1400005 (NzCv daif +PAN -UAO -TCO +DIT -SSBS BTYPE=--)
-> [    9.408558] pc : mhi_gen_tre+0x44/0x224 [mhi]
-> [    9.408563] lr : mhi_gen_tre+0x40/0x224 [mhi]
-> [    9.408566] sp : ffff800080d637d0
-> [    9.408567] x29: ffff800080d637d0 x28: ffff65434505a380 x27: ffff8000827ee188
-> [    9.408570] x26: 0000000000000000 x25: ffff65434ad59080 x24: ffff8000827edf88
-> [    9.408572] x23: 0000000000000000 x22: ffff8000827edf80 x21: ffff800080d63890
-> [    9.408575] x20: 0000000000000000 x19: 0000000000000002 x18: 00000000000506c0
-> [    9.408577] x17: 0000000000000028 x16: 0000000000000000 x15: ffffb0aa21cdac88
-> [    9.408579] x14: ffffb0aa21d2b348 x13: 000000000000a9ac x12: ffff654341700928
-> [    9.408582] x11: ffffb0aa2234ecc8 x10: fffffffffffffd20 x9 : 0000000089ad6b58
-> [    9.408585] x8 : 00000000d944ea76 x7 : 00000000000404a8 x6 : ffffb0aa21fd49a8
-> [    9.408587] x5 : 0000000000000084 x4 : ffffb0aa223883b8 x3 : 000000001fffffff
-> [    9.408589] x2 : 0000000000000000 x1 : 0000000000000004 x0 : ffff654341700000
-> [    9.408592] Call trace:
-> [    9.408593]  mhi_gen_tre+0x44/0x224 [mhi]
-> [    9.408596]  mhi_queue+0x74/0x194 [mhi]
-> [    9.408598]  mhi_queue_skb+0x5c/0x8c [mhi]
-> [    9.408601]  qcom_mhi_qrtr_send+0x6c/0x160 [qrtr_mhi]
-> [    9.408604]  qrtr_node_enqueue+0xd0/0x4a0 [qrtr]
-> [    9.408606]  qrtr_bcast_enqueue+0x78/0xdc [qrtr]
-> [    9.408609]  qrtr_sendmsg+0x15c/0x33c [qrtr]
-> [    9.408612]  sock_sendmsg+0xc0/0xec
-> [    9.408617]  kernel_sendmsg+0x30/0x40
-> [    9.408619]  service_announce_new+0xbc/0x1c4 [qrtr]
-> [    9.408621]  qrtr_ns_worker+0x714/0x794 [qrtr]
-> [    9.408622]  process_one_work+0x210/0x614
-> [    9.408626]  worker_thread+0x23c/0x378
-> [    9.408627]  kthread+0x124/0x128
-> [    9.408628]  ret_from_fork+0x10/0x20
-> [    9.408631] Code: aa0003f9 aa1b03e0 94001a51 f9401b14 (3940d280)
-> [    9.408633] ---[ end trace 0000000000000000 ]---
+<div dir=3D"ltr"><div>Hello,</div><div><br></div><div>(This is my first tim=
+e reporting a Linux bug; please accept my apologies for any mistakes in the=
+ process.)</div><div><br></div><div>When initializing a HID PID device, hid=
+-pidff.c checks for eight required HID reports and five optional reports. I=
+f the eight required reports are present, the hid_pidff_init() function the=
+n attempts to find the necessary fields in each required or optional report=
+, using the pidff_find_fields() function. However, if any of the five optio=
+nal reports is not present, pidff_find_fields() will trigger a null-pointer=
+ dereference.<br></div><div><div></div><div><br></div><div>I recently imple=
+mented the=20
+descriptors for a USB HID device with PID force-feedback capability. After =
+implementing the required report descriptors but not the optional ones, I g=
+ot an OOPS from the pidff_find_fields function. I saved the OOPS from my Ub=
+untu installation, and have attached it here. I later reproduced the issue =
+on 6.11.6.<br></div><div><br></div><div>I was able to work around the issue=
+ by having my device present all of the optional report descriptors as well=
+ as all of the required ones.<br></div></div><div><br></div><div>Thank you,=
+</div><div>Nolan Nicholson<br></div></div>
+
+--00000000000039b81b06261f8412--
+--00000000000039b81d06261f8414
+Content-Type: text/plain; charset="US-ASCII"; name="hid_pidff_oops.txt"
+Content-Disposition: attachment; filename="hid_pidff_oops.txt"
+Content-Transfer-Encoding: base64
+Content-ID: <f_m33pp2jl0>
+X-Attachment-Id: f_m33pp2jl0
+
+WyAgMzgyLjY3NDk5NV0gdXNiIDEtMjogbmV3IGZ1bGwtc3BlZWQgVVNCIGRldmljZSBudW1iZXIg
+NSB1c2luZyB4aGNpX2hjZApbICAzODMuMTgxOTEzXSB1c2IgMS0yOiBOZXcgVVNCIGRldmljZSBm
+b3VuZCwgaWRWZW5kb3I9Y2FmZSwgaWRQcm9kdWN0PTQwMDQsIGJjZERldmljZT0gMS4wMApbICAz
+ODMuMTgxOTMxXSB1c2IgMS0yOiBOZXcgVVNCIGRldmljZSBzdHJpbmdzOiBNZnI9MSwgUHJvZHVj
+dD0yLCBTZXJpYWxOdW1iZXI9MwpbICAzODMuMTgxOTM4XSB1c2IgMS0yOiBQcm9kdWN0OiBQaWNv
+d2luZGVyClsgIDM4My4xODE5NDRdIHVzYiAxLTI6IE1hbnVmYWN0dXJlcjogTm9sYmluc29mdApb
+ICAzODMuMTgxOTQ5XSB1c2IgMS0yOiBTZXJpYWxOdW1iZXI6IEU2NjE2NDA4NDMzQjU4MkIKWyAg
+MzgzLjI2MDUyNV0gdXNiY29yZTogcmVnaXN0ZXJlZCBuZXcgaW50ZXJmYWNlIGRyaXZlciB1c2Jo
+aWQKWyAgMzgzLjI2MDUzNV0gdXNiaGlkOiBVU0IgSElEIGNvcmUgZHJpdmVyClsgIDM4My4yODAx
+MDBdIGlucHV0OiBOb2xiaW5zb2Z0IFBpY293aW5kZXIgYXMgL2RldmljZXMvcGNpMDAwMDowMC8w
+MDAwOjAwOjE0LjAvdXNiMS8xLTIvMS0yOjEuMC8wMDAzOkNBRkU6NDAwNC4wMDAxL2lucHV0L2lu
+cHV0MTgKWyAgMzgzLjI4MDQ5Nl0gQlVHOiBrZXJuZWwgTlVMTCBwb2ludGVyIGRlcmVmZXJlbmNl
+LCBhZGRyZXNzOiAwMDAwMDAwMDAwMDAwODQ4ClsgIDM4My4yODA1MDldICNQRjogc3VwZXJ2aXNv
+ciByZWFkIGFjY2VzcyBpbiBrZXJuZWwgbW9kZQpbICAzODMuMjgwNTE2XSAjUEY6IGVycm9yX2Nv
+ZGUoMHgwMDAwKSAtIG5vdC1wcmVzZW50IHBhZ2UKWyAgMzgzLjI4MDUyNF0gUEdEIDAgUDREIDAg
+ClsgIDM4My4yODA1MzddIE9vcHM6IDAwMDAgWyMxXSBQUkVFTVBUIFNNUCBQVEkKWyAgMzgzLjI4
+MDU0N10gQ1BVOiA0IFBJRDogNjgyNyBDb21tOiAodWRldi13b3JrZXIpIE5vdCB0YWludGVkIDYu
+OC4wLTQ4LWdlbmVyaWMgIzQ4LVVidW50dQpbICAzODMuMjgwNTU4XSBIYXJkd2FyZSBuYW1lOiBM
+RU5PVk8gMjBLRzAwMjJVUy8yMEtHMDAyMlVTLCBCSU9TIE4yM0VUNzFXICgxLjQ2ICkgMDIvMjAv
+MjAyMApbICAzODMuMjgwNTY2XSBSSVA6IDAwMTA6cGlkZmZfZmluZF9maWVsZHMrMHgyYy8weDMy
+MCBbdXNiaGlkXQpbICAzODMuMjgwNTk1XSBDb2RlOiA0NCAwMCAwMCA1NSA0OCA2MyBjMSA0OSA4
+OSBmYSA0OCA4OSBlNSA0MSA1NyA0OSA4OSBmNyA0MSA1NiA0MSA1NSA0OSA4OSBkNSA0MSA1NCA1
+MyA0OCA4MyBlYyAzMCA0NCA4OSA0NSBiNCA0OCA4OSA0NSBjOCAzMSBjMCA8NDE+IDhiIDk1IDQ4
+IDA4IDAwIDAwIDg5IDQ1IGQwIDQ1IDMxIGY2IDQ4IDg5IGMzIDRkIDg5IGQ0IDg1IGQyIDc1Clsg
+IDM4My4yODA2MDJdIFJTUDogMDAxODpmZmZmOWIyZjAwOGRmNzA4IEVGTEFHUzogMDAwMTAyNDYK
+WyAgMzgzLjI4MDYxMV0gUkFYOiAwMDAwMDAwMDAwMDAwMDAwIFJCWDogZmZmZjhlMzE4ODlmNDgw
+MCBSQ1g6IDAwMDAwMDAwMDAwMDAwMDUKWyAgMzgzLjI4MDYxNl0gUkRYOiAwMDAwMDAwMDAwMDAw
+MDAwIFJTSTogZmZmZmZmZmZjMWQ2MDVhOCBSREk6IGZmZmY4ZTMxODg5ZjQ4ZTAKWyAgMzgzLjI4
+MDYyMV0gUkJQOiBmZmZmOWIyZjAwOGRmNzYwIFIwODogMDAwMDAwMDAwMDAwMDAwMSBSMDk6IDAw
+MDAwMDAwMDAwMDAwMDAKWyAgMzgzLjI4MDYyNl0gUjEwOiBmZmZmOGUzMTg4OWY0OGUwIFIxMTog
+MDAwMDAwMDAwMDAwMDAwMCBSMTI6IGZmZmY4ZTMyNDBlMWEwMDAKWyAgMzgzLjI4MDYzMV0gUjEz
+OiAwMDAwMDAwMDAwMDAwMDAwIFIxNDogZmZmZjhlMzI0MGUxYTAwMCBSMTU6IGZmZmZmZmZmYzFk
+NjA1YTgKWyAgMzgzLjI4MDYzNl0gRlM6ICAwMDAwN2ZlMDcwNjZkOGMwKDAwMDApIEdTOmZmZmY4
+ZTM1MTI2MDAwMDAoMDAwMCkga25sR1M6MDAwMDAwMDAwMDAwMDAwMApbICAzODMuMjgwNjQyXSBD
+UzogIDAwMTAgRFM6IDAwMDAgRVM6IDAwMDAgQ1IwOiAwMDAwMDAwMDgwMDUwMDMzClsgIDM4My4y
+ODA2NDhdIENSMjogMDAwMDAwMDAwMDAwMDg0OCBDUjM6IDAwMDAwMDAyNzNjZGEwMDMgQ1I0OiAw
+MDAwMDAwMDAwMzcwNmYwClsgIDM4My4yODA2NTRdIENhbGwgVHJhY2U6ClsgIDM4My4yODA2NTld
+ICA8VEFTSz4KWyAgMzgzLjI4MDY2Nl0gID8gc2hvd19yZWdzKzB4NmQvMHg4MApbICAzODMuMjgw
+Njc4XSAgPyBfX2RpZSsweDI0LzB4ODAKWyAgMzgzLjI4MDY4Nl0gID8gcGFnZV9mYXVsdF9vb3Bz
+KzB4OTkvMHgxYjAKWyAgMzgzLjI4MDY5OF0gID8gZG9fdXNlcl9hZGRyX2ZhdWx0KzB4MmUyLzB4
+NjcwClsgIDM4My4yODA3MDhdICA/IGV4Y19wYWdlX2ZhdWx0KzB4ODMvMHgxYjAKWyAgMzgzLjI4
+MDcyMF0gID8gYXNtX2V4Y19wYWdlX2ZhdWx0KzB4MjcvMHgzMApbICAzODMuMjgwNzM0XSAgPyBw
+aWRmZl9maW5kX2ZpZWxkcysweDJjLzB4MzIwIFt1c2JoaWRdClsgIDM4My4yODA3NTNdICA/IGRl
+dmljZV9jcmVhdGUrMHg1MS8weDgwClsgIDM4My4yODA3NjVdICBwaWRmZl9pbml0X2ZpZWxkcysw
+eGUwLzB4NDYwIFt1c2JoaWRdClsgIDM4My4yODA3ODNdICBoaWRfcGlkZmZfaW5pdCsweDExNy8w
+eDRkMCBbdXNiaGlkXQpbICAzODMuMjgwODA0XSAgaGlkX2Nvbm5lY3QrMHgxODEvMHg0NDAgW2hp
+ZF0KWyAgMzgzLjI4MDg1MF0gIGhpZF9od19zdGFydCsweDRjLzB4NzAgW2hpZF0KWyAgMzgzLjI4
+MDg4Nl0gIGhpZF9nZW5lcmljX3Byb2JlKzB4MmQvMHg0MCBbaGlkX2dlbmVyaWNdClsgIDM4My4y
+ODA5MDVdICBoaWRfZGV2aWNlX3Byb2JlKzB4MTJkLzB4MWIwIFtoaWRdClsgIDM4My4yODA5MzVd
+ICByZWFsbHlfcHJvYmUrMHgxYzQvMHg0MTAKWyAgMzgzLjI4MDk0Nl0gIF9fZHJpdmVyX3Byb2Jl
+X2RldmljZSsweDhjLzB4MTgwClsgIDM4My4yODA5NTddICBkcml2ZXJfcHJvYmVfZGV2aWNlKzB4
+MjQvMHhkMApbICAzODMuMjgwOTY4XSAgX19kcml2ZXJfYXR0YWNoKzB4MTBiLzB4MjEwClsgIDM4
+My4yODA5NzddICA/IF9fcGZ4X19fZHJpdmVyX2F0dGFjaCsweDEwLzB4MTAKWyAgMzgzLjI4MDk4
+N10gIGJ1c19mb3JfZWFjaF9kZXYrMHg4YS8weGYwClsgIDM4My4yODEwMDBdICBkcml2ZXJfYXR0
+YWNoKzB4MWUvMHgzMApbICAzODMuMjgxMDEyXSAgYnVzX2FkZF9kcml2ZXIrMHgxNGUvMHgyOTAK
+WyAgMzgzLjI4MTAyNl0gIGRyaXZlcl9yZWdpc3RlcisweDVlLzB4MTMwClsgIDM4My4yODEwMzZd
+ICA/IF9fcGZ4X2hpZF9nZW5lcmljX2luaXQrMHgxMC8weDEwIFtoaWRfZ2VuZXJpY10KWyAgMzgz
+LjI4MTA1NF0gIF9faGlkX3JlZ2lzdGVyX2RyaXZlcisweDRmLzB4YTAgW2hpZF0KWyAgMzgzLjI4
+MTA4OF0gID8gX19wZnhfaGlkX2dlbmVyaWNfaW5pdCsweDEwLzB4MTAgW2hpZF9nZW5lcmljXQpb
+ICAzODMuMjgxMTA2XSAgaGlkX2dlbmVyaWNfaW5pdCsweDIzLzB4ZmYwIFtoaWRfZ2VuZXJpY10K
+WyAgMzgzLjI4MTEyM10gIGRvX29uZV9pbml0Y2FsbCsweDViLzB4MzQwClsgIDM4My4yODExMzld
+ICBkb19pbml0X21vZHVsZSsweDk3LzB4MjkwClsgIDM4My4yODExNDhdICBsb2FkX21vZHVsZSsw
+eGJhMS8weGNmMApbICAzODMuMjgxMTYyXSAgaW5pdF9tb2R1bGVfZnJvbV9maWxlKzB4OTYvMHgx
+MDAKWyAgMzgzLjI4MTE2OV0gID8gaW5pdF9tb2R1bGVfZnJvbV9maWxlKzB4OTYvMHgxMDAKWyAg
+MzgzLjI4MTE4Ml0gIGlkZW1wb3RlbnRfaW5pdF9tb2R1bGUrMHgxMWMvMHgyYjAKWyAgMzgzLjI4
+MTE5NF0gIF9feDY0X3N5c19maW5pdF9tb2R1bGUrMHg2NC8weGQwClsgIDM4My4yODEyMDJdICB4
+NjRfc3lzX2NhbGwrMHgxZDZlLzB4MjVjMApbICAzODMuMjgxMjA5XSAgZG9fc3lzY2FsbF82NCsw
+eDdmLzB4MTgwClsgIDM4My4yODEyMjBdICA/IHN5c2NhbGxfZXhpdF90b191c2VyX21vZGUrMHg4
+Ni8weDI2MApbICAzODMuMjgxMjMxXSAgPyBkb19zeXNjYWxsXzY0KzB4OGMvMHgxODAKWyAgMzgz
+LjI4MTI0MF0gID8gZG9fc3lzY2FsbF82NCsweDhjLzB4MTgwClsgIDM4My4yODEyNDhdICA/IF9f
+ZnB1dCsweDE1ZS8weDJlMApbICAzODMuMjgxMjU3XSAgPyBfX3NlY2NvbXBfZmlsdGVyKzB4MzY4
+LzB4NTcwClsgIDM4My4yODEyNzBdICA/IGV4dDRfbGxzZWVrKzB4YzMvMHgxMzAKWyAgMzgzLjI4
+MTI3OV0gID8ga3N5c19sc2VlaysweDdkLzB4ZDAKWyAgMzgzLjI4MTI5MF0gID8gc3lzY2FsbF9l
+eGl0X3RvX3VzZXJfbW9kZSsweDg2LzB4MjYwClsgIDM4My4yODEzMDBdICA/IGRvX3N5c2NhbGxf
+NjQrMHg4Yy8weDE4MApbICAzODMuMjgxMzA5XSAgPyBpcnFlbnRyeV9leGl0KzB4NDMvMHg1MApb
+ICAzODMuMjgxMzE1XSAgPyBleGNfcGFnZV9mYXVsdCsweDk0LzB4MWIwClsgIDM4My4yODEzMjVd
+ICBlbnRyeV9TWVNDQUxMXzY0X2FmdGVyX2h3ZnJhbWUrMHg3OC8weDgwClsgIDM4My4yODEzMzJd
+IFJJUDogMDAzMzoweDdmZTA3MDUyNzI1ZApbICAzODMuMjgxMzY4XSBDb2RlOiBmZiBjMyA2NiAy
+ZSAwZiAxZiA4NCAwMCAwMCAwMCAwMCAwMCA5MCBmMyAwZiAxZSBmYSA0OCA4OSBmOCA0OCA4OSBm
+NyA0OCA4OSBkNiA0OCA4OSBjYSA0ZCA4OSBjMiA0ZCA4OSBjOCA0YyA4YiA0YyAyNCAwOCAwZiAw
+NSA8NDg+IDNkIDAxIGYwIGZmIGZmIDczIDAxIGMzIDQ4IDhiIDBkIDhiIGJiIDBkIDAwIGY3IGQ4
+IDY0IDg5IDAxIDQ4ClsgIDM4My4yODEzNzVdIFJTUDogMDAyYjowMDAwN2ZmZWE4MGRjNjc4IEVG
+TEFHUzogMDAwMDAyNDYgT1JJR19SQVg6IDAwMDAwMDAwMDAwMDAxMzkKWyAgMzgzLjI4MTM4NV0g
+UkFYOiBmZmZmZmZmZmZmZmZmZmRhIFJCWDogMDAwMDU2YWU0ZDU4MjNiMCBSQ1g6IDAwMDA3ZmUw
+NzA1MjcyNWQKWyAgMzgzLjI4MTM5M10gUkRYOiAwMDAwMDAwMDAwMDAwMDA0IFJTSTogMDAwMDdm
+ZTA3MDg0YTA3ZCBSREk6IDAwMDAwMDAwMDAwMDAwMTMKWyAgMzgzLjI4MTQwMV0gUkJQOiAwMDAw
+N2ZmZWE4MGRjNzMwIFIwODogMDAwMDAwMDAwMDAwMDA0MCBSMDk6IDAwMDA3ZmZlYTgwZGM2YzAK
+WyAgMzgzLjI4MTQwNl0gUjEwOiAwMDAwN2ZlMDcwNjAzYjIwIFIxMTogMDAwMDAwMDAwMDAwMDI0
+NiBSMTI6IDAwMDA3ZmUwNzA4NGEwN2QKWyAgMzgzLjI4MTQxMV0gUjEzOiAwMDAwMDAwMDAwMDIw
+MDAwIFIxNDogMDAwMDU2YWU0ZDc3YWIwMCBSMTU6IDAwMDA1NmFlNGQ2OTY1ZTAKWyAgMzgzLjI4
+MTQyMl0gIDwvVEFTSz4KWyAgMzgzLjI4MTQyNl0gTW9kdWxlcyBsaW5rZWQgaW46IGhpZF9nZW5l
+cmljKCspIHVzYmhpZCBjY20gcmZjb21tIHNuZF9zZXFfZHVtbXkgc25kX2hydGltZXIgc25kX3Nl
+cV9taWRpIHNuZF9zZXFfbWlkaV9ldmVudCBzbmRfcmF3bWlkaSBzbmRfc2VxIHNuZF9zZXFfZGV2
+aWNlIHNuZF9oZGFfY29kZWNfaGRtaSBxcnRyIGNtYWMgYWxnaWZfaGFzaCBhbGdpZl9za2NpcGhl
+ciBhZl9hbGcgYm5lcCBzbmRfY3RsX2xlZCBzbmRfaGRhX2NvZGVjX3JlYWx0ZWsgcm1pX3NtYnVz
+IHNuZF9oZGFfY29kZWNfZ2VuZXJpYyBybWlfY29yZSBpbnRlbF91bmNvcmVfZnJlcXVlbmN5IGlu
+dGVsX3VuY29yZV9mcmVxdWVuY3lfY29tbW9uIHNuZF9zb2ZfcGNpX2ludGVsX3NrbCBzbmRfc29m
+X2ludGVsX2hkYV9jb21tb24gc291bmR3aXJlX2ludGVsIHNuZF9zb2ZfaW50ZWxfaGRhX21saW5r
+IGludGVsX3RjY19jb29saW5nIHNvdW5kd2lyZV9jYWRlbmNlIHNuZF9zb2ZfaW50ZWxfaGRhIHg4
+Nl9wa2dfdGVtcF90aGVybWFsIGludGVsX3Bvd2VyY2xhbXAgc25kX3NvZl9wY2kgY29yZXRlbXAg
+YmluZm10X21pc2Mgc25kX3NvZl94dGVuc2FfZHNwIHNuZF9zb2Ygc25kX3NvZl91dGlscyBrdm1f
+aW50ZWwgc291bmR3aXJlX2dlbmVyaWNfYWxsb2NhdGlvbiBzb3VuZHdpcmVfYnVzIHNuZF9zb2Nf
+YXZzIHNuZF9zb2NfaGRhX2NvZGVjIGt2bSBubHNfaXNvODg1OV8xIHNuZF9zb2Nfc2tsIHNuZF9z
+b2NfaGRhY19oZGEgc25kX2hkYV9leHRfY29yZSBzbmRfc29jX3NzdF9pcGMgaXJxYnlwYXNzIHNu
+ZF9zb2Nfc3N0X2RzcCBjcmN0MTBkaWZfcGNsbXVsIHNuZF9zb2NfYWNwaV9pbnRlbF9tYXRjaCBw
+b2x5dmFsX2NsbXVsbmkgc25kX3NvY19hY3BpIHBvbHl2YWxfZ2VuZXJpYyBnaGFzaF9jbG11bG5p
+X2ludGVsIHNoYTI1Nl9zc3NlMyBzbmRfc29jX2NvcmUgaXdsbXZtIHNoYTFfc3NzZTMgc25kX2Nv
+bXByZXNzIGFlc25pX2ludGVsIG1laV9oZGNwIGludGVsX3JhcGxfbXNyIG1laV9weHAgaTkxNSBh
+Yzk3X2J1cyBjcnlwdG9fc2ltZApbICAzODMuMjgxNTc1XSAgbWFjODAyMTEgc25kX3BjbV9kbWFl
+bmdpbmUgY3J5cHRkIHV2Y3ZpZGVvIGJ0dXNiIHZpZGVvYnVmMl92bWFsbG9jIHJhcGwgYnRydGwg
+dXZjIGJ0aW50ZWwgdmlkZW9idWYyX21lbW9wcyBidGJjbSB2aWRlb2J1ZjJfdjRsMiBwcm9jZXNz
+b3JfdGhlcm1hbF9kZXZpY2VfcGNpX2xlZ2FjeSBzbmRfaGRhX2ludGVsIGJ0bXRrIHVhcyBsaWJh
+cmM0IGludGVsX2NzdGF0ZSBwcm9jZXNzb3JfdGhlcm1hbF9kZXZpY2UgdmlkZW9kZXYgc25kX2lu
+dGVsX2RzcGNmZyBibHVldG9vdGggcHJvY2Vzc29yX3RoZXJtYWxfd3RfaGludCBpd2x3aWZpIHNu
+ZF9pbnRlbF9zZHdfYWNwaSBwcm9jZXNzb3JfdGhlcm1hbF9yZmltIHZpZGVvYnVmMl9jb21tb24g
+cHJvY2Vzc29yX3RoZXJtYWxfcmFwbCBzbmRfaGRhX2NvZGVjIGludGVsX3JhcGxfY29tbW9uIGRy
+bV9idWRkeSBtYyB1c2Jfc3RvcmFnZSBwcm9jZXNzb3JfdGhlcm1hbF93dF9yZXEgdHRtIHNuZF9o
+ZGFfY29yZSB0aGlua19sbWkgZWNkaF9nZW5lcmljIHdtaV9ibW9mIGludGVsX3dtaV90aHVuZGVy
+Ym9sdCBlY2MgZmlybXdhcmVfYXR0cmlidXRlc19jbGFzcyBkcm1fZGlzcGxheV9oZWxwZXIgc25k
+X2h3ZGVwIGkyY19pODAxIHByb2Nlc3Nvcl90aGVybWFsX3Bvd2VyX2Zsb29yIGNmZzgwMjExIGky
+Y19zbWJ1cyBjZWMgc25kX3BjbSBwcm9jZXNzb3JfdGhlcm1hbF9tYm94IG1laV9tZSByY19jb3Jl
+IGludGVsX3NvY19kdHNfaW9zZiBpMmNfYWxnb19iaXQgc25kX3RpbWVyIGludGVsX3hoY2lfdXNi
+X3JvbGVfc3dpdGNoIG1laSBpbnRlbF9wY2hfdGhlcm1hbCBpbnRlbF9wbWNfY29yZSBpbnQzNDAz
+X3RoZXJtYWwgdGhpbmtwYWRfYWNwaSBpbnQzNDB4X3RoZXJtYWxfem9uZSBudnJhbSBpbnRlbF92
+c2VjIGludDM0MDBfdGhlcm1hbCBwbXRfdGVsZW1ldHJ5IGlucHV0X2xlZHMgam95ZGV2IGFjcGlf
+cGFkIHBtdF9jbGFzcyBhY3BpX3RoZXJtYWxfcmVsIHNlcmlvX3JhdyBtYWNfaGlkIHNjaF9mcV9j
+b2RlbCBtc3IgcGFycG9ydF9wYyBwcGRldiBscApbICAzODMuMjgxNzM4XSAgcGFycG9ydCBlZmlf
+cHN0b3JlIG5mbmV0bGluayBkbWlfc3lzZnMgaXBfdGFibGVzIHhfdGFibGVzIGF1dG9mczQgc25k
+IG52bWUgc291bmRjb3JlIHVjc2lfYWNwaSBjcmMzMl9wY2xtdWwgbnZtZV9jb3JlIHR5cGVjX3Vj
+c2kgdmlkZW8gcHNtb3VzZSB0aHVuZGVyYm9sdCB4aGNpX3BjaSBlMTAwMGUgdHlwZWMgbnZtZV9h
+dXRoIHhoY2lfcGNpX3JlbmVzYXMgaTJjX2hpZF9hY3BpIGkyY19oaWQgbGVkdHJpZ19hdWRpbyBw
+bGF0Zm9ybV9wcm9maWxlIGhpZCB3bWkKWyAgMzgzLjI4MTgwMV0gQ1IyOiAwMDAwMDAwMDAwMDAw
+ODQ4ClsgIDM4My4yODE4MDddIC0tLVsgZW5kIHRyYWNlIDAwMDAwMDAwMDAwMDAwMDAgXS0tLQpb
+ICAzODMuNjI5Mzg1XSBSSVA6IDAwMTA6cGlkZmZfZmluZF9maWVsZHMrMHgyYy8weDMyMCBbdXNi
+aGlkXQpbICAzODMuNjI5NDIwXSBDb2RlOiA0NCAwMCAwMCA1NSA0OCA2MyBjMSA0OSA4OSBmYSA0
+OCA4OSBlNSA0MSA1NyA0OSA4OSBmNyA0MSA1NiA0MSA1NSA0OSA4OSBkNSA0MSA1NCA1MyA0OCA4
+MyBlYyAzMCA0NCA4OSA0NSBiNCA0OCA4OSA0NSBjOCAzMSBjMCA8NDE+IDhiIDk1IDQ4IDA4IDAw
+IDAwIDg5IDQ1IGQwIDQ1IDMxIGY2IDQ4IDg5IGMzIDRkIDg5IGQ0IDg1IGQyIDc1ClsgIDM4My42
+Mjk0MjVdIFJTUDogMDAxODpmZmZmOWIyZjAwOGRmNzA4IEVGTEFHUzogMDAwMTAyNDYKWyAgMzgz
+LjYyOTQzMF0gUkFYOiAwMDAwMDAwMDAwMDAwMDAwIFJCWDogZmZmZjhlMzE4ODlmNDgwMCBSQ1g6
+IDAwMDAwMDAwMDAwMDAwMDUKWyAgMzgzLjYyOTQzNF0gUkRYOiAwMDAwMDAwMDAwMDAwMDAwIFJT
+STogZmZmZmZmZmZjMWQ2MDVhOCBSREk6IGZmZmY4ZTMxODg5ZjQ4ZTAKWyAgMzgzLjYyOTQzN10g
+UkJQOiBmZmZmOWIyZjAwOGRmNzYwIFIwODogMDAwMDAwMDAwMDAwMDAwMSBSMDk6IDAwMDAwMDAw
+MDAwMDAwMDAKWyAgMzgzLjYyOTQ0MF0gUjEwOiBmZmZmOGUzMTg4OWY0OGUwIFIxMTogMDAwMDAw
+MDAwMDAwMDAwMCBSMTI6IGZmZmY4ZTMyNDBlMWEwMDAKWyAgMzgzLjYyOTQ0M10gUjEzOiAwMDAw
+MDAwMDAwMDAwMDAwIFIxNDogZmZmZjhlMzI0MGUxYTAwMCBSMTU6IGZmZmZmZmZmYzFkNjA1YTgK
+WyAgMzgzLjYyOTQ0Nl0gRlM6ICAwMDAwN2ZlMDcwNjZkOGMwKDAwMDApIEdTOmZmZmY4ZTM1MTI2
+MDAwMDAoMDAwMCkga25sR1M6MDAwMDAwMDAwMDAwMDAwMApbICAzODMuNjI5NDUwXSBDUzogIDAw
+MTAgRFM6IDAwMDAgRVM6IDAwMDAgQ1IwOiAwMDAwMDAwMDgwMDUwMDMzClsgIDM4My42Mjk0NTNd
+IENSMjogMDAwMDAwMDAwMDAwMDg0OCBDUjM6IDAwMDAwMDAyNzNjZGEwMDMgQ1I0OiAwMDAwMDAw
+MDAwMzcwNmYwClsgIDM4My42Mjk0NTddIG5vdGU6ICh1ZGV2LXdvcmtlcilbNjgyN10gZXhpdGVk
+IHdpdGggaXJxcyBkaXNhYmxlZApbICA0MDcuNjE1MTc3XSB1c2IgMS0yOiBVU0IgZGlzY29ubmVj
+dCwgZGV2aWNlIG51bWJlciA1Cg==
+--00000000000039b81d06261f8414--
 
