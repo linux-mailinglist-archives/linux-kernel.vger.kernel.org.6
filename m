@@ -1,134 +1,184 @@
-Return-Path: <linux-kernel+bounces-396534-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396533-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 532AC9BCE95
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 15:03:58 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E13159BCE94
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 15:03:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DED9AB21991
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 14:03:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 62E7C1F23001
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 14:03:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC7EB1D8DEE;
-	Tue,  5 Nov 2024 14:03:36 +0000 (UTC)
-Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com [209.85.219.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2159D1D88D4;
+	Tue,  5 Nov 2024 14:03:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t8evfFeV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDEE21D5ABF
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 14:03:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F1981D79A9;
+	Tue,  5 Nov 2024 14:03:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730815416; cv=none; b=hf/+k/TyIuC+afUsGQ5szTZcOGBQhC1hDAaTCR6EdQ1Q1naFT8+9X3E5RI1dMGNMKpilKFi95zSsFsBVpNjrK6feNi5XftcL7BQ89yclOvsYzyKalfqC7JORAYmpBZnsrVYghAQHMVxgZFA2q5/uGGvCwOT41stN6lIZWPTVsjE=
+	t=1730815414; cv=none; b=GsfuN7cNH27hsoVrf1DsvesY33PLDtm5IctJ812zTrutug9YKE8cgaLl74Gmpg3v9YM3cvzqXT4pwDXbP+fIErRgfskQKbNW9GRj8BIoHwN+YWpm1aLTs1++pbGFtOuyGNsH/PmWqhbSqLFHRdepRbrO604EYKAUgKi0ZxLfcmk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730815416; c=relaxed/simple;
-	bh=sFwrPmsss5hpN9ZFw1O/B/a548zydPbn3UKb6dMBOZI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YtKpKy9PuEFpBVBvNSNGQZO8OqU4dF0lH0eNM7o1cIJaJ/qMf4/UmzTJDW/Tu3FrJdWR3ktYV4XYUBGAXMIdjuaRUA1inZCoOWeLLLOscEi/DedSfo4Yw6KRk4LAlCY05rkVJ9ZGTRgk1Z5kHBCblpILVvxbtjktQeKswNcYe9w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f178.google.com with SMTP id 3f1490d57ef6-e290e857d56so4921039276.1
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 06:03:32 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730815411; x=1731420211;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Lngjfys+B2JzssED4s3MaYSB3SB4j6D4iWEuTRe5Sew=;
-        b=NYxBwH7WMRGKcaMt2TVe1/EBjxNYWK43LQTYA2mc/fordPc0A/mdmkWou2C1n6uwRB
-         /cAvI2wRkygeS+/ZVn+PXJSuazEuLO4dMDKa9R/zXUpsBMOkWbkCBa+gXSfxXCIwHYbr
-         FSyozeABsD1brBl8Pt1keYkLmsJzqMVBhRn/MQiJ4ta4lV7MqaYj4dFfFlbWnuI4maVj
-         KH9aWMmS0eqzUMY2d6Xmv07HRtprBX4IF/jz7/GagMqHO2NvqdcVg5L880L6lcLhAoKp
-         qRIRBpYSt7hPIpXF3m+EXUZPAtQp6f5AkF+LREnyKn4RgNdWZanphD8w/L0qzSw94gzG
-         SFNw==
-X-Forwarded-Encrypted: i=1; AJvYcCWJlYnjNwNo+OsvCj69BOy+z8vWA/TT7abdFF6BSMHoQfmB20HVnWLCCvzBSQ7Tp71bzDt0BtvUx5vVwNE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwqcD6dYoKmZ708EF7z7KFRyTdk44QiRs4xX8xYFsaO65n9yzni
-	yY/8ABrdKoQfjEf6aVBw6mW2SJwU0Sfqv5EtX9KGVOExwQV3HzQXaWbrk6Q7
-X-Google-Smtp-Source: AGHT+IFDqzw7WBRXHI8oK+uVWdezliP3y3DwmNzRgb4lzVcw56S8GHk86IuzYdQRby2SN5uFmwZaYA==
-X-Received: by 2002:a05:6902:1242:b0:e30:cd90:b62f with SMTP id 3f1490d57ef6-e30cd90b6c7mr23440815276.26.1730815411236;
-        Tue, 05 Nov 2024 06:03:31 -0800 (PST)
-Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com. [209.85.219.173])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e30e8a7fe72sm2512275276.24.2024.11.05.06.03.30
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 05 Nov 2024 06:03:30 -0800 (PST)
-Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-e30eca40c44so4884770276.2
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 06:03:30 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCWePsHOvtiRk8YHan0MXLiazUOAWK16DvVZEaF0E6BkdDCI8Oca11P7KUJp+6tjoo1ThCzgbomAfK8agw0=@vger.kernel.org
-X-Received: by 2002:a05:690c:5:b0:6de:c0e:20ef with SMTP id
- 00721157ae682-6e9d88ecdc1mr349956627b3.7.1730815410638; Tue, 05 Nov 2024
- 06:03:30 -0800 (PST)
+	s=arc-20240116; t=1730815414; c=relaxed/simple;
+	bh=qWzTJ52uZtUICfzhETc9emz/gMS6nLkohw54WfWP9Sc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Feu9uSlauf5KFgj3Phff2JqgKorwpr9Vf8FEFB/0RB8CagYNJZliORtJtcQdNvr7bLa8wzMvpdoMnehnMAwYnm32h6YS8HH8kgMFQk1ioe+AQxG3V7/sLmipbTG0ewYAbXNJZcLWCVtZm+sgCJ1KXZvXuzB/KtUddyoF6yE3+Tw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t8evfFeV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A0807C4CECF;
+	Tue,  5 Nov 2024 14:03:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730815414;
+	bh=qWzTJ52uZtUICfzhETc9emz/gMS6nLkohw54WfWP9Sc=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=t8evfFeVPfzkc7HMna1FB/JOitNRD10vu2cBr8FaxIKBss1Z675DjU6e8lFDmZsBL
+	 J+t7gDGB98LdBQTpj0igogI4M4d9AXul6fkDxmAbYJVjE681PJX5ppuKjtySpcFke4
+	 z2Bu6jAkdrXSWXqW7EN4RtTOTfURz8i9hKkHVc0fpl7mNluS2exYngvXSoaosXaGz8
+	 A5gwCqWV6DKwkfBJVY+s/61N9/DM4CvYWrZE8dQJ7ZIl/3ueAWTXDSeKrlD+7I9xvS
+	 ad9hPucfXOt+QVTMerVu+iAPedHaGi8wetp724UCKa0EIdEISe5hOvT+vWbdvFZ+cA
+	 4Vx3HDaw6rO+A==
+Message-ID: <afb3ebac-4099-42f3-b323-dd6a1555db7a@kernel.org>
+Date: Tue, 5 Nov 2024 15:03:27 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241016-fix-jump-label-v1-1-eb74c5f68405@yoseli.org>
-In-Reply-To: <20241016-fix-jump-label-v1-1-eb74c5f68405@yoseli.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 5 Nov 2024 15:03:18 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdULfk-_VGXBsnD+Gc7h4c5PRAYDdgx1zEeW=4+1fA0N_Q@mail.gmail.com>
-Message-ID: <CAMuHMdULfk-_VGXBsnD+Gc7h4c5PRAYDdgx1zEeW=4+1fA0N_Q@mail.gmail.com>
-Subject: Re: [PATCH] m68k: Initialize jump labels early during setup_arch()
-To: Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>
-Cc: linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] dt-bindings: can: convert tcan4x5x.txt to DT schema
+To: Sean Nyekjaer <sean@geanix.com>, Marc Kleine-Budde <mkl@pengutronix.de>
+Cc: Vincent Mailhol <mailhol.vincent@wanadoo.fr>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, linux-can@vger.kernel.org,
+ netdev@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20241104125342.1691516-1-sean@geanix.com>
+ <dq36jlwfm7hz7dstrp3bkwd6r6jzcxqo57enta3n2kibu3e7jw@krwn5nsu6a4d>
+ <wdn2rtfahf3iu6rsgxm6ctfgft7bawtp6vzhgn7dffd54i72lu@r4v5lizhae57>
+ <60901c39-b649-4a20-a06a-7faa7ddc9346@kernel.org>
+ <mtuev7pve5ltr6vvknp2bwtwg2m7mzxduzshzbr7y3i7mwbzy6@qjbdjyb56nrv>
+ <f5a28e36-ef80-4ccf-b615-03fb10eb661e@kernel.org>
+ <g2knbmyi7cy4xnkospby7xtp6t4f2ppfdbtdyjteltrlnaihcp@gdjhp4n5w7u3>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <g2knbmyi7cy4xnkospby7xtp6t4f2ppfdbtdyjteltrlnaihcp@gdjhp4n5w7u3>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Jean-Michel,
+On 05/11/2024 13:59, Sean Nyekjaer wrote:
+> On Tue, Nov 05, 2024 at 01:41:26PM +0100, Krzysztof Kozlowski wrote:
+> 
+> NOW I get it :)
+> 
+> diff --git a/Documentation/devicetree/bindings/net/can/ti,tcan4x5x.yaml b/Documentation/devicetree/bindings/net/can/ti,tcan4x5x.yaml
+> index f1d18a5461e0..4fb5e5e80a03 100644
+> --- a/Documentation/devicetree/bindings/net/can/ti,tcan4x5x.yaml
+> +++ b/Documentation/devicetree/bindings/net/can/ti,tcan4x5x.yaml
+> @@ -169,7 +169,7 @@ examples:
+>          #size-cells = <0>;
+> 
+>          can@0 {
+> -            compatible = "ti,tcan4552", "ti,tcan4x5x";
+> +            compatible = "ti,tcan4552";
+>              reg = <0>;
+>              clocks = <&can0_osc>;
+>              pinctrl-names = "default";
+> 
+> Would result in a schema check fail, but the driver will never be probed.
+> 
+>>
 
-On Wed, Oct 16, 2024 at 6:18=E2=80=AFPM Jean-Michel Hautbois
-<jeanmichel.hautbois@yoseli.org> wrote:
-> The jump_label_init() should be called from setup_arch() very
-> early for proper functioning of jump label support.
->
-> Signed-off-by: Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>
-
-Thanks for your patch!
-
-> --- a/arch/m68k/kernel/setup_mm.c
-> +++ b/arch/m68k/kernel/setup_mm.c
-> @@ -249,7 +249,11 @@ void __init setup_arch(char **cmdline_p)
->         process_uboot_commandline(&m68k_command_line[0], CL_SIZE);
->         *cmdline_p =3D m68k_command_line;
->         memcpy(boot_command_line, *cmdline_p, CL_SIZE);
-> -
-> +       /*
-> +        * Initialise the static keys early as they may be enabled by the
-> +        * cpufeature code and early parameters.
-> +        */
-> +       jump_label_init();
->         parse_early_param();
->
->         switch (m68k_machtype) {
-
-This is indeed what some (but not all) other architectures are doing, so
-Reviewed-by: Geert Uytterhoeven <geert@linux-m68k.org>
-
-I assume you saw some "static key used before call to jump_label_init()"
-warning[1]? Since I never saw such a message, can you please elaborate
-and explain your use case, so I can add that to the patch description
-when applying?
-
-Thanks!
-
-[1] https://elixir.bootlin.com/linux/v6.11.6/source/include/linux/jump_labe=
-l.h#L81
-
-Gr{oetje,eeting}s,
-
-                        Geert
+Yeah, but we dont' talk about this case.
 
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
+>>> Agree that is kinda broken.
+>>> If I have time I can try to fix that later.
+>>
+>> No, the fix is to drop the wildcard alone, as I said in your RFC.
+> 
+> @Mark, would you be okay with fixing the wildcard in this series?
+> We have some out-of-tree dtb's that will need fixing, but I get it would be
+> prefered to get this fixed.
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+Out of tree DTB will not need any fixes per-se. They will work 100%
+fine. They will however report dtbs_check warnings, but before there was
+no DT schema validation for them, so you replace one warning into
+another warning.
+
+You can of course improve out of tree users by dropping all warnings,
+but that's kind of optional. The point is that nothing gets worse.
+
+> 
+>>
+>>>
+>>> Please explain one more time for me. Is this a comment on the if
+>>> sentence or the broken behavior of the driver?
+>>
+>> This is just generic comment, nothing to change here because you decided
+>> not to fix that wildcard from old binding.
+> 
+> Thanks for the clarification!
+> 
+> @Mark, @Krzysztof: What to do from here?
+
+I will give Rb tag for next version fixing commented issues regardless
+whether you drop usage of the wildcard-like 4x5x compatible alone. IOW,
+I will be fine with pure conversion and keeping 4x5x, even though I
+would prefer to improve the binding based on arguments before: there
+will be no changes needed for in-kernel users, no out-of-tree users will
+be affected, no breakage and using wildcard compatible alone is
+discouraged. Sometimes strongly discouraged, depending on the case.
+
+Best regards,
+Krzysztof
+
 
