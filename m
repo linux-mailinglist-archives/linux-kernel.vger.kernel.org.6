@@ -1,197 +1,196 @@
-Return-Path: <linux-kernel+bounces-395867-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395868-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 681349BC428
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 04:59:30 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 221CC9BC42B
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 05:00:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B8ED1B2214C
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 03:59:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7635EB221FF
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 04:00:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5360018C35C;
-	Tue,  5 Nov 2024 03:59:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B37CA1AC43E;
+	Tue,  5 Nov 2024 04:00:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="xFKlUrAj"
-Received: from out203-205-221-245.mail.qq.com (out203-205-221-245.mail.qq.com [203.205.221.245])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="IX+eq23J"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B1C2282F1
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 03:59:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.245
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E56211420A8;
+	Tue,  5 Nov 2024 04:00:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730779160; cv=none; b=nk6Fkan5cLN+L+zjptT09wpU7S32bKlUcUGX6dXg8N4YY7+D6QGQmsNYgpE7OYBojNLjew+TLBy4gFsOZ2Stq5BM0qasl+i8pX6VI+QE4+C8Oox1ykUTrEi6DcGtN16VIqqFJO+puEnjQkgFZm67hRQJWIso7jDDwTcE09tG9Qk=
+	t=1730779209; cv=none; b=myvR9a0cvtFz070FtkpfjvAFehRj+PKXGCOT5QKQze8u61Nj9aAZiJLiDXKKuaV2gP9fcmnBpdEPpowOSymtipc+YYd+V5ROPbXSIdz0cslprZdgGTC4p7ts/Zaa+0zSEFrDsaJqpOOp61q+JUMS4UV4p6tKulmqf+cMoiV/X1M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730779160; c=relaxed/simple;
-	bh=9qVRmi4/CzzR42AmnNcJUpOeU+CDfEQ0HC50jaJpTO4=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=ibd+8anN9ayej1mSMI9RirhSWnhE9qelFKjJLh9qrWhQpmEnGPf13WrZlYMeGtc7Er4IyjInUSEdQaKIOaJmwaHoHV4R2nweSECkjiQeiu4Z5lVWDNsgC7uqGtn9eYX/MJuVI9h5YgBXf0CLhK9Q2iRzwAgZqRFpd6ZrlJIOw8Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=xFKlUrAj; arc=none smtp.client-ip=203.205.221.245
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1730779148; bh=rhhEfLktbQ7P0JBQRXR4Th5mxXrysl8lKvklkNP4Aps=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=xFKlUrAjFLpMKnkw793EOjsl0rtfhWAh/7LGmykPj/v+WapwGinanJJdDeb+p66A0
-	 IJgfzzhQmg/HTqH04oz71HwW1jxY++hJnlSmNzdA1slJvOk4bX7OU9zLVEmHYg5Wym
-	 iS4+xqIGGuY1n5UPwur5zh0V7ZU4wKN+R/x0fabE=
-Received: from pek-lxu-l1.wrs.com ([111.198.227.254])
-	by newxmesmtplogicsvrszb20-0.qq.com (NewEsmtp) with SMTP
-	id EC620A35; Tue, 05 Nov 2024 11:59:06 +0800
-X-QQ-mid: xmsmtpt1730779146tb0k6uh1u
-Message-ID: <tencent_31F4971436464B9475FB763166423D473709@qq.com>
-X-QQ-XMAILINFO: M6I+dON63j22SKczlbDSAQIocyizs3fqkfMA6v9IkMrhogXTb2t9fHXxSfMJaa
-	 +PoSnWys22uXaz4UyRfWzalk5JWZfR3uBynLdD/3eF5ChjC+LZRWwYni6IfaEUK0bBP7QIv+npc3
-	 mqMLLDAGklEM7lKluo1YeK9PzJOvK0tcdMWfOuazsYuyNVU0dW8mzemhe8Yex7BFIDIeq7S33efM
-	 Q6pxFEa6/uEnX0UcWl15wlsNoJhqElRItJfB6+0Y9KMi79frdLyO6MZxP2Z0bQN4y92Uae7DYeL/
-	 4XHLwa+U98MBfZgbhd1xMcLtxmRpPvPmk1sDz/hw4mNjkOcxOEcBHt+hOW74MhnrTvkvxyt44t5h
-	 GqYLjPdQDCVM+f1bDC5ovjy1K0uKWxyNzl9Of8AZADFwJIhpKjgsiw8dPwH0rrqllyAcFzY8vweh
-	 CfQV1bfBZbe7kFXN2d2RCwpIGwNHUIkwDUZtxJuCWuoZBFZlQOys5FrxvzcRSEHIbPvZyYONFhf2
-	 Uh1xivF2ahEV/Hq2Y/anxjz+H1ehj35vTpU+evs1jJ0b7n6DaaMFwAGRg+Lz+1igI+HLRSp4YUOS
-	 7ImicyNYbkFV+UQmT0bB0FhtuYctYddPCNoa+RIuW1Of/kopUUuYrBnkvowUH6tU7CqfZd3E5hXa
-	 ONvEs9v0CjMdtLSpmwPokTPxGl9UN5Ugeh4e2J0u66B88S7IrYfi+o2GgktYSMKc+AEMuuoE+kUL
-	 5FyPPZOvqB5Cx0oQlJc5sWTCq0dvz6p0V1uXFZhMjuFTAmireuqhbnF/YM7x9So5wqeSqR6S0Qb3
-	 +Qb9QOThR0GDEJ8/G+DSv9kPzqkAKaVN8befYONFxJ6DbLqAWJ3Lr27/vztFa7oMFEWTWgvNzDNF
-	 ZieuGiLn67xAc5tc0VwlxFNUQ9Zw3tI19xJzrszhC/EI12e2lxpgQ=
-X-QQ-XMRINFO: MPJ6Tf5t3I/ycC2BItcBVIA=
-From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+73582d08864d8268b6fd@syzkaller.appspotmail.com
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [sound?] INFO: task hung in snd_card_free
-Date: Tue,  5 Nov 2024 11:59:07 +0800
-X-OQ-MSGID: <20241105035906.1521324-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <6726bf35.050a0220.35b515.018b.GAE@google.com>
-References: <6726bf35.050a0220.35b515.018b.GAE@google.com>
+	s=arc-20240116; t=1730779209; c=relaxed/simple;
+	bh=v3k8GNUkrgtLNDoXKb8LNB5C+candp04NjeilVRblBM=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=eHH3nwJ9+F0HqBmPcABlwclAzVbCFoHk5Z00GxnauzR40Y4fzlTKCt8/TofudvnOUkgSNtwHGsa6jsCGvRF7755zQFZ/xnro0VwA1lX4MIzavApgewqbjNbTkC5pa94vtZlHRz1w5wYwt65p5SlpuGQFsLSAPECXf64n9d7x0Rk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=IX+eq23J; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 544B5C4CECF;
+	Tue,  5 Nov 2024 04:00:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1730779208;
+	bh=v3k8GNUkrgtLNDoXKb8LNB5C+candp04NjeilVRblBM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=IX+eq23JWkzkCpYZIKE8SDjweZHsmsdetl22cEpuSecy9f3J+iQEpTaCR6n57VeQR
+	 jmFm+OCP+LyQ+8K+/55TVuJQM0Jdp4lkL2PxMokjjbVsHPv55kmyn4ExViLG68N3Oc
+	 jAVpSmaYOBdf3Jrk6vYLuxOXYYSSogUo8SbCRPk0=
+Date: Mon, 4 Nov 2024 20:00:07 -0800
+From: Andrew Morton <akpm@linux-foundation.org>
+To: syzbot <syzbot+ccc0e1cfdb72b664f0d8@syzkaller.appspotmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ pasha.tatashin@soleen.com, syzkaller-bugs@googlegroups.com,
+ linux-usb@vger.kernel.org
+Subject: Re: [syzbot] [mm?] kernel BUG in __page_table_check_zero (2)
+Message-Id: <20241104200007.dc8d0f018cc536a4957a1cd0@linux-foundation.org>
+In-Reply-To: <67230d7e.050a0220.529b6.0005.GAE@google.com>
+References: <67230d7e.050a0220.529b6.0005.GAE@google.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-The sound card of usx2y's probe and disconnect need to be protected under mutex.
-debug: where hung in snd_card_do_free?
+On Wed, 30 Oct 2024 21:54:22 -0700 syzbot <syzbot+ccc0e1cfdb72b664f0d8@syzkaller.appspotmail.com> wrote:
 
-#syz test
+> Hello,
+> 
+> syzbot found the following issue on:
 
-diff --git a/sound/core/info.c b/sound/core/info.c
-index 1f5b8a3d9e3b..e584f3eb742b 100644
---- a/sound/core/info.c
-+++ b/sound/core/info.c
-@@ -566,7 +566,9 @@ int snd_info_card_free(struct snd_card *card)
- {
- 	if (!card)
- 		return 0;
-+	printk("card: %p, %s\n", card, __func__);
- 	snd_info_free_entry(card->proc_root);
-+	printk("2card: %p, %s\n", card, __func__);
- 	card->proc_root = NULL;
- 	return 0;
- }
-diff --git a/sound/core/init.c b/sound/core/init.c
-index 114fb87de990..900ae1e7fc22 100644
---- a/sound/core/init.c
-+++ b/sound/core/init.c
-@@ -186,6 +186,7 @@ int snd_card_new(struct device *parent, int idx, const char *xid,
- 		return -ENOMEM;
- 
- 	err = snd_card_init(card, parent, idx, xid, module, extra_size);
-+	printk("err: %d, card: %p, %s\n", err, card, __func__);
- 	if (err < 0)
- 		return err; /* card is freed by error handler */
- 
-@@ -584,7 +585,9 @@ static int snd_card_do_free(struct snd_card *card)
- 	if (snd_mixer_oss_notify_callback)
- 		snd_mixer_oss_notify_callback(card, SND_MIXER_OSS_NOTIFY_FREE);
- #endif
-+	printk("card: %p, %s\n", card, __func__);
- 	snd_device_free_all(card);
-+	printk("2card: %p, %s\n", card, __func__);
- 	if (card->private_free)
- 		card->private_free(card);
- 	if (snd_info_card_free(card) < 0) {
-diff --git a/sound/usb/usx2y/usbusx2y.c b/sound/usb/usx2y/usbusx2y.c
-index 2f9cede242b3..129210a81545 100644
---- a/sound/usb/usx2y/usbusx2y.c
-+++ b/sound/usb/usx2y/usbusx2y.c
-@@ -150,6 +150,7 @@ static int snd_usx2y_card_used[SNDRV_CARDS];
- 
- static void snd_usx2y_card_private_free(struct snd_card *card);
- static void usx2y_unlinkseq(struct snd_usx2y_async_seq *s);
-+static DEFINE_MUTEX(devices_mutex);
- 
- /*
-  * pipe 4 is used for switching the lamps, setting samplerate, volumes ....
-@@ -392,6 +393,7 @@ static void snd_usx2y_card_private_free(struct snd_card *card)
- {
- 	struct usx2ydev *usx2y = usx2y(card);
- 
-+	printk("card: %p, %s\n", card, __func__);
- 	kfree(usx2y->in04_buf);
- 	usb_free_urb(usx2y->in04_urb);
- 	if (usx2y->us428ctls_sharedmem)
-@@ -407,9 +409,12 @@ static void snd_usx2y_disconnect(struct usb_interface *intf)
- 	struct usx2ydev *usx2y;
- 	struct list_head *p;
- 
-+	mutex_lock(&devices_mutex);
- 	card = usb_get_intfdata(intf);
--	if (!card)
-+	if (!card) {
-+		mutex_unlock(&devices_mutex);
- 		return;
-+	}
- 	usx2y = usx2y(card);
- 	usx2y->chip_status = USX2Y_STAT_CHIP_HUP;
- 	usx2y_unlinkseq(&usx2y->as04);
-@@ -423,6 +428,7 @@ static void snd_usx2y_disconnect(struct usb_interface *intf)
- 	if (usx2y->us428ctls_sharedmem)
- 		wake_up(&usx2y->us428ctls_wait_queue_head);
- 	snd_card_free(card);
-+	mutex_unlock(&devices_mutex);
- }
- 
- static int snd_usx2y_probe(struct usb_interface *intf,
-@@ -432,15 +438,18 @@ static int snd_usx2y_probe(struct usb_interface *intf,
- 	struct snd_card *card;
- 	int err;
- 
-+	mutex_lock(&devices_mutex);
- 	if (le16_to_cpu(device->descriptor.idVendor) != 0x1604 ||
- 	    (le16_to_cpu(device->descriptor.idProduct) != USB_ID_US122 &&
- 	     le16_to_cpu(device->descriptor.idProduct) != USB_ID_US224 &&
--	     le16_to_cpu(device->descriptor.idProduct) != USB_ID_US428))
--		return -EINVAL;
-+	     le16_to_cpu(device->descriptor.idProduct) != USB_ID_US428)) {
-+		err = -EINVAL;
-+		goto out;
-+	}
- 
- 	err = usx2y_create_card(device, intf, &card);
- 	if (err < 0)
--		return err;
-+		goto out;
- 	err = usx2y_hwdep_new(card, device);
- 	if (err < 0)
- 		goto error;
-@@ -449,10 +458,13 @@ static int snd_usx2y_probe(struct usb_interface *intf,
- 		goto error;
- 
- 	dev_set_drvdata(&intf->dev, card);
-+	mutex_unlock(&devices_mutex);
- 	return 0;
- 
-- error:
-+error:
- 	snd_card_free(card);
-+out:
-+	mutex_unlock(&devices_mutex);
- 	return err;
- }
- 
+Thanks.  I'm suspecting some USB issue - fault injection was used to
+trigger a memory allocation failure and dec_usb_memory_use_count() ended
+up freeing an in-use page.  Could USB folks please have a look?
 
+> HEAD commit:    850925a8133c Merge tag '9p-for-6.12-rc5' of https://github..
+> git tree:       upstream
+> console+strace: https://syzkaller.appspot.com/x/log.txt?x=1346c940580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=309bb816d40abc28
+> dashboard link: https://syzkaller.appspot.com/bug?extid=ccc0e1cfdb72b664f0d8
+> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=158ab65f980000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=120e6a87980000
+> 
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/da8019730dec/disk-850925a8.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/b1ee80babbbc/vmlinux-850925a8.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/462580e2ad54/bzImage-850925a8.xz
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+ccc0e1cfdb72b664f0d8@syzkaller.appspotmail.com
+> 
+> Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 a1 1a 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+> RSP: 002b:00007ffede422258 EFLAGS: 00000246 ORIG_RAX: 0000000000000009
+> RAX: ffffffffffffffda RBX: 00007ffede422280 RCX: 00007f69e1b3c569
+> RDX: 0000000002000005 RSI: 0000000000003000 RDI: 000000002001a000
+> RBP: 0000000000000001 R08: 0000000000000003 R09: 0000000080000000
+> R10: 0000000000011012 R11: 0000000000000246 R12: 00007ffede42227c
+> R13: 431bde82d7b634db R14: 0000000000000001 R15: 0000000000000001
+>  </TASK>
+> ------------[ cut here ]------------
+> kernel BUG at mm/page_table_check.c:157!
+> Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN NOPTI
+> CPU: 1 UID: 0 PID: 5850 Comm: syz-executor279 Not tainted 6.12.0-rc4-syzkaller-00261-g850925a8133c #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+> RIP: 0010:__page_table_check_zero+0x274/0x350 mm/page_table_check.c:157
+> Code: c1 0f 8c 39 fe ff ff 48 89 df e8 87 28 f3 ff e9 2c fe ff ff e8 dd 6a 89 ff 90 0f 0b e8 d5 6a 89 ff 90 0f 0b e8 cd 6a 89 ff 90 <0f> 0b f3 0f 1e fa 4c 89 f6 48 81 e6 ff 0f 00 00 31 ff e8 95 6f 89
+> RSP: 0018:ffffc900046bf6d8 EFLAGS: 00010293
+> RAX: ffffffff820b7fa3 RBX: dffffc0000000000 RCX: ffff88802fc13c00
+> RDX: 0000000000000000 RSI: 0000000000000004 RDI: ffff88801e97380c
+> RBP: ffff88801e97380c R08: ffff88801e97380f R09: 1ffff11003d2e701
+> R10: dffffc0000000000 R11: ffffed1003d2e702 R12: ffff88801e9737c0
+> R13: 1ffffffff34887b4 R14: 0000000000000002 R15: 0000000000000000
+> FS:  0000555570714380(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00007f69e1b92385 CR3: 0000000073ae6000 CR4: 0000000000350ef0
+> Call Trace:
+>  <TASK>
+>  page_table_check_free include/linux/page_table_check.h:41 [inline]
+>  free_pages_prepare mm/page_alloc.c:1109 [inline]
+>  free_unref_page+0xd0f/0xf20 mm/page_alloc.c:2638
+>  dec_usb_memory_use_count+0x259/0x350 drivers/usb/core/devio.c:198
+>  mmap_region+0x2180/0x2a30 mm/mmap.c:1574
+>  do_mmap+0x8f0/0x1000 mm/mmap.c:496
+>  vm_mmap_pgoff+0x1dd/0x3d0 mm/util.c:588
+>  ksys_mmap_pgoff+0x4eb/0x720 mm/mmap.c:542
+>  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> RIP: 0033:0x7f69e1b3c569
+> Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 a1 1a 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+> RSP: 002b:00007ffede422258 EFLAGS: 00000246 ORIG_RAX: 0000000000000009
+> RAX: ffffffffffffffda RBX: 00007ffede422280 RCX: 00007f69e1b3c569
+> RDX: 0000000002000005 RSI: 0000000000003000 RDI: 000000002001a000
+> RBP: 0000000000000001 R08: 0000000000000003 R09: 0000000080000000
+> R10: 0000000000011012 R11: 0000000000000246 R12: 00007ffede42227c
+> R13: 431bde82d7b634db R14: 0000000000000001 R15: 0000000000000001
+>  </TASK>
+> Modules linked in:
+> ---[ end trace 0000000000000000 ]---
+> RIP: 0010:__page_table_check_zero+0x274/0x350 mm/page_table_check.c:157
+> Code: c1 0f 8c 39 fe ff ff 48 89 df e8 87 28 f3 ff e9 2c fe ff ff e8 dd 6a 89 ff 90 0f 0b e8 d5 6a 89 ff 90 0f 0b e8 cd 6a 89 ff 90 <0f> 0b f3 0f 1e fa 4c 89 f6 48 81 e6 ff 0f 00 00 31 ff e8 95 6f 89
+> RSP: 0018:ffffc900046bf6d8 EFLAGS: 00010293
+> RAX: ffffffff820b7fa3 RBX: dffffc0000000000 RCX: ffff88802fc13c00
+> RDX: 0000000000000000 RSI: 0000000000000004 RDI: ffff88801e97380c
+> RBP: ffff88801e97380c R08: ffff88801e97380f R09: 1ffff11003d2e701
+> R10: dffffc0000000000 R11: ffffed1003d2e702 R12: ffff88801e9737c0
+> R13: 1ffffffff34887b4 R14: 0000000000000002 R15: 0000000000000000
+> FS:  0000555570714380(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00007f69e1b92385 CR3: 0000000073ae6000 CR4: 0000000000350ef0
+> ----------------
+> Code disassembly (best guess):
+>    0:	28 00                	sub    %al,(%rax)
+>    2:	00 00                	add    %al,(%rax)
+>    4:	75 05                	jne    0xb
+>    6:	48 83 c4 28          	add    $0x28,%rsp
+>    a:	c3                   	ret
+>    b:	e8 a1 1a 00 00       	call   0x1ab1
+>   10:	90                   	nop
+>   11:	48 89 f8             	mov    %rdi,%rax
+>   14:	48 89 f7             	mov    %rsi,%rdi
+>   17:	48 89 d6             	mov    %rdx,%rsi
+>   1a:	48 89 ca             	mov    %rcx,%rdx
+>   1d:	4d 89 c2             	mov    %r8,%r10
+>   20:	4d 89 c8             	mov    %r9,%r8
+>   23:	4c 8b 4c 24 08       	mov    0x8(%rsp),%r9
+>   28:	0f 05                	syscall
+> * 2a:	48 3d 01 f0 ff ff    	cmp    $0xfffffffffffff001,%rax <-- trapping instruction
+>   30:	73 01                	jae    0x33
+>   32:	c3                   	ret
+>   33:	48 c7 c1 b8 ff ff ff 	mov    $0xffffffffffffffb8,%rcx
+>   3a:	f7 d8                	neg    %eax
+>   3c:	64 89 01             	mov    %eax,%fs:(%rcx)
+>   3f:	48                   	rex.W
+> 
+> 
+> ---
+> This report is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+> 
+> syzbot will keep track of this issue. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> 
+> If the report is already addressed, let syzbot know by replying with:
+> #syz fix: exact-commit-title
+> 
+> If you want syzbot to run the reproducer, reply with:
+> #syz test: git://repo/address.git branch-or-commit-hash
+> If you attach or paste a git patch, syzbot will apply it before testing.
+> 
+> If you want to overwrite report's subsystems, reply with:
+> #syz set subsystems: new-subsystem
+> (See the list of subsystem names on the web dashboard)
+> 
+> If the report is a duplicate of another one, reply with:
+> #syz dup: exact-subject-of-another-report
+> 
+> If you want to undo deduplication, reply with:
+> #syz undup
 
