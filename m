@@ -1,109 +1,112 @@
-Return-Path: <linux-kernel+bounces-395712-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395713-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51FE69BC1F0
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 01:22:06 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E216F9BC1F2
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 01:22:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A8001F2286F
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 00:22:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1FD251C204DA
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 00:22:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C54BDDDC;
-	Tue,  5 Nov 2024 00:21:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EEDA168BD;
+	Tue,  5 Nov 2024 00:21:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="Kp5YmqM6"
-Received: from pv50p00im-ztdg10021101.me.com (pv50p00im-ztdg10021101.me.com [17.58.6.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ErrRJR1k"
+Received: from mail-ua1-f52.google.com (mail-ua1-f52.google.com [209.85.222.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 764C91E868
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 00:21:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.6.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5051A2AE99;
+	Tue,  5 Nov 2024 00:21:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730766095; cv=none; b=mtr3Jni+38AztHq9/FVCh/XnkSl/g9hiJtLpK0zx9IcV75saNsywBiXkOLJhnHcFEOMbJhkfHmxiMfWNtTAIT8McpGO5HCGUQUd3RVxK4mNbK0mbZqx1wGua8yD0WXrBQtHbXs5flG/oOe+N8U/Xkwac/7jvtEXRCcC5bNZdQFo=
+	t=1730766103; cv=none; b=bl/eYBHIHR4O/RbpH96x8HheGT7e12/Pfut9pgdtCzcsTVVdxvBXG9odtXMnT5s16MZXnJdPjq7f9saJQRnG6no4FKtVtVnP0xCF8cwl7dPSZD1XFTxQ6Ti0fdPbn0pKOZ78W9R5+u/Z0zEDQAPkP4aBUJN9t8ivOmP6f4/E7ao=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730766095; c=relaxed/simple;
-	bh=T3AQgiqjsuEnMeCbV+0XhVRdlrFrG6GLxSc0iff5QbM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=hnkcM0L1wsP8h8w97a5Hy19eD7ben7IPMewg5p3f485gpf9SHfFWZ9C7ztB2JnuE5659J4mc4T/IHAYzsDb6aloOwvl0xTKUvAOHY05AZnE3dOmQGA7urG6Z0ZHvzA+uY72OGKLoi4PQekmOJI5BHS/O/7MrpnlXMi40Tg90w64=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=Kp5YmqM6; arc=none smtp.client-ip=17.58.6.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
-	s=1a1hai; t=1730766094;
-	bh=5Kts4W3mcfFZfFTKYGxweaNOJFKnlXqAWdud+x19Rso=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:
-	 x-icloud-hme;
-	b=Kp5YmqM6LlQ/+m0nhDUAShTc93ZWWEP81KzDXth+8gqlIk8vuVH6rrXnnFZPrMHkk
-	 WsZKdJZtMOqKiWSCgqtxtfgT+RwTShmzkod6ku9b7+8fH1HgH7xGxeuKDXjsfji5NR
-	 yggm3Aj9UEe+yrL3nBGFuY82Q6tWo8sZswT0Q/au9SljSnO6qhxkhmAXKm8x1ZFSRi
-	 wXsjNh8J0UNThjIBbI5pCf4pLMbO15uA8zsSnVYfrbaAcPZ1kwIb+K6vEeHVA9FmQM
-	 HsKg+PrKm9CDnrGNqBAzoR49byPSHNgwpCkswIWnTpajotBTZzNG5eBqc8anJA36Cd
-	 gdoRgc+Rn8czg==
-Received: from [192.168.1.26] (pv50p00im-dlb-asmtp-mailmevip.me.com [17.56.9.10])
-	by pv50p00im-ztdg10021101.me.com (Postfix) with ESMTPSA id 28C65D0012D;
-	Tue,  5 Nov 2024 00:21:30 +0000 (UTC)
-From: Zijun Hu <zijun_hu@icloud.com>
-Date: Tue, 05 Nov 2024 08:20:24 +0800
-Subject: [PATCH 3/3] driver core: class: Delete a redundant check in APIs
- class_(for_each|find)_device()
+	s=arc-20240116; t=1730766103; c=relaxed/simple;
+	bh=OVd5a06EGZiG7o6pHHfnuZvQApvq91xiIr5lMA05WwU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Mycuj907lxaErcYpX3zjlO82hk3PClQfiUYPW9T1M9jsNkg7AB0EF1Ia1wY3GS+jq/7H7dXnY+KnoP0StHbZ9JTqmySIveY4kLfkB6Icd6ZnHFO4xsajf+tTeHRsxgg6TGR4oCvNOYoHNTqbcBf1twvBoDTLb15WQMvkvbS9Hhw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ErrRJR1k; arc=none smtp.client-ip=209.85.222.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f52.google.com with SMTP id a1e0cc1a2514c-84fb86af725so1465712241.0;
+        Mon, 04 Nov 2024 16:21:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730766101; x=1731370901; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cIvv/7/0QkDr9+Lvtf+98/wsCpQczZvz/7XwQcz2uMA=;
+        b=ErrRJR1kxKrlSEqt5C6CPi0oCOMjUgbZPpc7Xl5WEWLW1R06ecijAXJHylEIV9lXS1
+         okL6+E2ztIhX+66KohYbIm+fp+innDL55eEP/2bQV0ZPnghtwYL8+zVP/0uheKYC8pFZ
+         hVa4T7Z7XkFaznQ861VNHBRBpQMr8SF1vsgoojJOUqrxCZcgiYCN6fILrAMLi9cinEbM
+         MHVXOtfjyUx1TeQ3OhKDrG31xW/AWh2BB789qxjJBuGmE+mnfCQkXw98q14CtiW41o0a
+         u/RNMBmjW3wHZOlmhEQoFBGuvjjqL3E1T4O+/xunT8H0l8YiCVGgnVqNcXnrV7zyIHsP
+         fUCA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730766101; x=1731370901;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=cIvv/7/0QkDr9+Lvtf+98/wsCpQczZvz/7XwQcz2uMA=;
+        b=Iy7+y3r0msSP6vtQA79/+EvuNfdovTvJa1ZiJCUs8cA1GKCsGb0dc+gIVJ6JRSMkxx
+         VkH8SC42d+Yrqe/189iuB8E6ik+iekBmq2kVrUVvU2IfENubzBVI9KXv6n2ha8b7xlPV
+         yrzZbTMoTZi+YcJtWFdUvafdzlFiHeU1IGeyMiMUvXR9ZyejBvB5B7vv75t0a4dJT+fT
+         SIdVjA+1daMH82rteEHJHGNW5GPjenx9kXera3UJdL9f0Wck+3GUp+iflCdWU61d5FxY
+         M41SR5Gt+NHDuvwXVeiDZHj9z+13XN8y0OI70puB51eQkFJZNthQp+CY5XEjzN9r1FXY
+         zBjg==
+X-Forwarded-Encrypted: i=1; AJvYcCWk7sV8tRgnd8RPADXIRnlyqDAvEpBCQ3QumNkDgHr9rFqn+i7rUj4Ildik/nZXYlg9mNbTiCU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyX89+0/8eDgqiJZdIwbvPdpaBKQiSS19ZJJpTHqWZuk1soB1Dr
+	oNBJhEs5K0RfR+9hHfNT3Hzy+ekYaKq3ejR0ZdPQb/QinISHegDx83vQe66BrSycDlR/GLIpkcG
+	ZSWhavJ6gTzVc46Y9eCnc5ld88KQ=
+X-Google-Smtp-Source: AGHT+IE0kTYb0sj7pw21XZ3m2RUlLD0HX0IXzkLml5071iEe/AiO67lEdTv4icKYB5Ov7WJrBHEcIQVkQ2sEovV1yEY=
+X-Received: by 2002:a05:6102:3706:b0:4a3:d9da:16d6 with SMTP id
+ ada2fe7eead31-4a962d737cfmr12464247137.3.1730766101115; Mon, 04 Nov 2024
+ 16:21:41 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241105-class_fix-v1-3-80866f9994a5@quicinc.com>
-References: <20241105-class_fix-v1-0-80866f9994a5@quicinc.com>
-In-Reply-To: <20241105-class_fix-v1-0-80866f9994a5@quicinc.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Zijun Hu <zijun_hu@icloud.com>, linux-kernel@vger.kernel.org, 
- Zijun Hu <quic_zijuhu@quicinc.com>
-X-Mailer: b4 0.14.1
-X-Apple-Remote-Links: v=1;h=KCk=;charset=UTF-8
+References: <20241104070950.502719-1-alistair.francis@wdc.com> <9ae6af15-790a-4d34-901d-55fca0be9fd2@lunn.ch>
+In-Reply-To: <9ae6af15-790a-4d34-901d-55fca0be9fd2@lunn.ch>
+From: Alistair Francis <alistair23@gmail.com>
+Date: Tue, 5 Nov 2024 10:21:15 +1000
+Message-ID: <CAKmqyKOX8gcRT2dSOvJY2o4bpoF+VuPmhaygJj7pTb1KesrFOQ@mail.gmail.com>
+Subject: Re: [PATCH] include: mdio: Guard inline function with CONFIG_MDIO
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+	linux@armlinux.org.uk, hkallweit1@gmail.com, 
+	Alistair Francis <alistair.francis@wdc.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Zijun Hu <quic_zijuhu@quicinc.com>
+On Mon, Nov 4, 2024 at 11:49=E2=80=AFPM Andrew Lunn <andrew@lunn.ch> wrote:
+>
+> On Mon, Nov 04, 2024 at 05:09:50PM +1000, Alistair Francis wrote:
+> > The static inline functions mdio45_ethtool_gset() and
+> > mdio45_ethtool_ksettings_get() call mdio45_ethtool_gset_npage() and
+> > mdio45_ethtool_ksettings_get_npage() which are both guarded by
+> > CONFIG_MDIO. So let's only expose mdio45_ethtool_gset() and
+> > mdio45_ethtool_ksettings_get() if CONFIG_MDIO is defined.
+>
+> Why? Are you fixing a linker error? A compiler error?
 
-Delete redundant check (!@class) in both API class_for_each_device() and
-class_find_device() with below reasons:
+I'm investigating generating Rust bindings for static inline functions
+(like mdio45_ethtool_gset() for example). But it fails to build when
+there are functions defined in header files that call C functions that
+aren't built due to Kconfig options.
 
-- The check is covered by later check (!@sp).
-- Callers are unlikely to call both APIs with NULL class argument.
-- Make parameter check consistent with all of other class APIs.
+This is one of those cases where mdio45_ethtool_gset() is always
+included, but mdio45_ethtool_gset_npage() is conditionally built.
 
-Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
----
- drivers/base/class.c | 4 ----
- 1 file changed, 4 deletions(-)
+Alistair
 
-diff --git a/drivers/base/class.c b/drivers/base/class.c
-index e81da280af74..120d3aeb52fe 100644
---- a/drivers/base/class.c
-+++ b/drivers/base/class.c
-@@ -408,8 +408,6 @@ int class_for_each_device(const struct class *class, const struct device *start,
- 	struct device *dev;
- 	int error = 0;
- 
--	if (!class)
--		return -EINVAL;
- 	if (!sp) {
- 		WARN(1, "%s called for class '%s' before it was registered",
- 		     __func__, class->name);
-@@ -456,8 +454,6 @@ struct device *class_find_device(const struct class *class, const struct device
- 	struct class_dev_iter iter;
- 	struct device *dev;
- 
--	if (!class)
--		return NULL;
- 	if (!sp) {
- 		WARN(1, "%s called for class '%s' before it was registered",
- 		     __func__, class->name);
-
--- 
-2.34.1
-
+>
+> In general, we don't want #ifdef if they are not necessary, because
+> they reduce the effectiveness of build testing.
+>
+>         Andrew
 
