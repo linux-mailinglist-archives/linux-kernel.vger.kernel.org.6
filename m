@@ -1,249 +1,163 @@
-Return-Path: <linux-kernel+bounces-395878-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395879-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5F859BC44D
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 05:24:39 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03F649BC460
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 05:33:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D9BD2826DA
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 04:24:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 820391F21E1A
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 04:33:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E213418E023;
-	Tue,  5 Nov 2024 04:24:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="cu32Sdz4"
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2084.outbound.protection.outlook.com [40.107.92.84])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FD09199E8D;
+	Tue,  5 Nov 2024 04:33:24 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62143376E0
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 04:24:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.84
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730780673; cv=fail; b=ekfsPUzDLfRtUKqNgoMXfW1bZRfah+btNlG1q2Xsd59+fAKsYm0dMRIu42N+2fIjHYUkytT95EuVVwm4jyoBonHCUQxa4fzE/2zs1pP2BETYD/JSNZT92/dY0pJgpmNMV/s/9bRmGAvrDGqfjX1cDBcqczOp6yR8Fhk5/fBajDs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730780673; c=relaxed/simple;
-	bh=mHj+3lTwj2c0SroMQuKDgL+rdi/xULfirhQnz4udVhM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=mUFhjpcxrUxWZgyn1LiT6QNIhnCBPK7A58nx313ZmNmL898Kb/iwaxbikcOP3IzSQs2kug1tijA9o67wEdcwgzl4DaZWy6v80E5TRWxge7Nl2kOBLysS+Fa1rZGaLSNnRY0fYZ3pUXVzcofg5h//EYs9Mfv8sHtSBwbaZILHIvM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=cu32Sdz4; arc=fail smtp.client-ip=40.107.92.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=pfTj4L9pUFwJJ+ofRL7+ncNNNdWotp7NJ9Csn9xi+jAqTvumQRkUW4R2ajog6PdgZhi2SCeYR+r9CQrObmi6uVyWT1k1VahlAK+llUfhh5qwjK8KlL79OHrX6m4n2zy1lkSjEaaQ+FL3m6fAPJugap0mp3UdtDrA7b3IqTDXa2gp4gv8KOSM7Ue6DyxZktlOlRkNCV0bIJwU9f5b8sh3Hh1yy3yTTjPT9S0ZuA7/8KqYggbu/ar/JtgDgYJ5H4yYpeFY01jFOizlNNTtZdt7cCL5wM5XANWKPOnLsAOcOfosl5jG1BVzx2mAHBs3TsuebioksrFL/vyp335apL+w4A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Pw4jyjLeQj/mgdzRx+YNwNwEeMxFRtl7ztVKuDsohDY=;
- b=u0uaeQRCCdgYon1A3vVFrdxlzLQaDCj/MEt6U8NT06fv769H/cWAcvpYoGlxjw457/bQWQNwI0UQFJ+hykECmR4pHmra85bSVigdpGWZQQpTzWJosPKVn/16UiiE7Wpgza6IMtMgOYKfyojaaJNbNMdCkd/uaoUri2xr/MawklCQrnmhbJg6KaIXb9aEAEdVY5eLKxV7N53HSrFwB0yq5TlEMLZ5qJQ3B86gqKvFBNlwYTv9ZiJWphW0/oY1s90oqmdQCqGVBkmhQyM9ybgYiX1ksbo5PXn/qInWGRfauVDq77bH20qvX9/GOuwpsYbpNEASk6DB8JomDnlW97Pj4Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=gmx.de smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Pw4jyjLeQj/mgdzRx+YNwNwEeMxFRtl7ztVKuDsohDY=;
- b=cu32Sdz4gq7Dr4tDNUMmt3dEr5g63dr62JhSfj51fBLzfqQHRoXWbMK7VFm07gehahAuoy08CkVqZqu8KzeW98UnMXV7r0NpjUTtfRycwejs/3XBHX+wpJUJ1vg9pi+49Z/94WI+u30tWZmRBomFZRthwJwRQ+/mHtV5OY5hbEk=
-Received: from BN0PR04CA0086.namprd04.prod.outlook.com (2603:10b6:408:ea::31)
- by MW6PR12MB8897.namprd12.prod.outlook.com (2603:10b6:303:24a::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8114.31; Tue, 5 Nov
- 2024 04:24:24 +0000
-Received: from BL6PEPF0001AB4D.namprd04.prod.outlook.com
- (2603:10b6:408:ea:cafe::fb) by BN0PR04CA0086.outlook.office365.com
- (2603:10b6:408:ea::31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8114.30 via Frontend
- Transport; Tue, 5 Nov 2024 04:24:23 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- BL6PEPF0001AB4D.mail.protection.outlook.com (10.167.242.71) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8137.17 via Frontend Transport; Tue, 5 Nov 2024 04:24:23 +0000
-Received: from [10.136.47.53] (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 4 Nov
- 2024 22:23:25 -0600
-Message-ID: <b8ed9d5d-4186-4b2a-aabf-d027d183c44a@amd.com>
-Date: Tue, 5 Nov 2024 09:52:54 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 528D8433B5
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 04:33:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730781203; cv=none; b=G/7PKMZxRoIn3JqDYCCW6ne7jxMDR+p0/StUshiF683i05BIDlKByDI9oL8KIO4icgQK9fG5I9KX+mKyf0l0xrbB88SArKorrmXegWgO5YapDuoLJlkgyhrdwPG+s2QLQeNKWiccGBSmPl6Tej79wCXC3hRge+KtvzxKR32Yzjg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730781203; c=relaxed/simple;
+	bh=VOcYgorph87rNniZ/urBQKYFW61UsZGc5avEJffLTUk=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=F8vohEl4HU6q9KLhx0SGdL10sjYqVmoF0TNmetkxpN8zjvBZA/Ne7/GEDRDdtN0w2zUSRcbJo+ltnuS8ffMKhUN705TfqX5N5PIqdLQNqaTBokS7pZOxG9QAwE2bEsgLkuvgax5ZRGUmPxPg3FKlzAXSXswGaTwV2TbG23v8QAk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a6b2581364so40193205ab.0
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 20:33:22 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730781201; x=1731386001;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=1Dv5h/ThRRiN4Q9Yjm2/1X9R+DjHG+sT4aBxlPqHf3Q=;
+        b=WcgXrAKfg+H7U1FM/KW7TNiTfi+wEUqNx+AGusRooo8s7O9IU0fm2YVlr8A1Z1Wu9t
+         GxL/TxYXJdMMOy9bJQ9h4pfuRmnU5moWP3tf2LxOmVz8FZxstojoas9odp100EJMDjow
+         8nZQPMx44dwWCOr0MhB66rn6fSFPAlwy7AWey4sNQ1sAkOIb0TlOgPCa6NYgngjm5Ugz
+         /X4sKAzZoUM6R7ql4ziPA+AfOSBj1+R3x/l2w+f/n9uBL6eMeDExBUHiRUfzADCeebKI
+         sZfwajf/3F4pKcapjtoh6LW4T4VBycHfYXeR84v6/+Bo85IqZjHIKyWMxo42Acmftnz5
+         RrhQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVX/+u7ar/A1ygF8fwRExKuS8SrCOt1PXsIRQ2BuvJ0iTqU9Im6PvrCoUDyg64rs21nxys8KXzZQ6d3o3w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzWiUVwc5G9z3vFNwI7tAIWcQmP+YgY58/bm41mTKk7WjfMdilN
+	+tgyFWfmvioKZuLAK86dXvbHL4Htsd/RnExdR69gL3oMFflagkj06RozFXXHXTZAR/F/m3Z3ANL
+	6yYez2gU/S0xc469/BzAgQOnKBRhY8G0WX6afInwovIZFwXlc94/5tIA=
+X-Google-Smtp-Source: AGHT+IGGFyZlL39ODOGwf3LiveBZx19fylBuDdYyIGzcVrM++9hNgfQLjX/UEhF4ljfiM5ajnINdq4/xKq4boJuh5kx6d6zDfKBj
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.6.1
-Subject: Re: [PATCH 17/24] sched/fair: Implement delayed dequeue
-Content-Language: en-US
-To: Mike Galbraith <efault@gmx.de>, Phil Auld <pauld@redhat.com>
-CC: Peter Zijlstra <peterz@infradead.org>, <mingo@redhat.com>,
-	<juri.lelli@redhat.com>, <vincent.guittot@linaro.org>,
-	<dietmar.eggemann@arm.com>, <rostedt@goodmis.org>, <bsegall@google.com>,
-	<mgorman@suse.de>, <vschneid@redhat.com>, <linux-kernel@vger.kernel.org>,
-	<wuyun.abel@bytedance.com>, <youssefesmat@chromium.org>, <tglx@linutronix.de>
-References: <20240727102732.960974693@infradead.org>
- <20240727105030.226163742@infradead.org>
- <20241101124715.GA689589@pauld.westford.csb>
- <20241101125659.GY14555@noisy.programming.kicks-ass.net>
- <20241101133822.GC689589@pauld.westford.csb>
- <20241101142649.GX9767@noisy.programming.kicks-ass.net>
- <20241101144225.GD689589@pauld.westford.csb>
- <a59a1a99b7807d9937e424881c262ba7476d8b6b.camel@gmx.de>
- <20241101200704.GE689589@pauld.westford.csb>
- <59355fae66255a92f2cbc4d7ed38368ff3565140.camel@gmx.de>
- <20241104130515.GB749675@pauld.westford.csb>
- <1bffa5f2ca0fec8a00f84ffab86dc6e8408af31c.camel@gmx.de>
-From: K Prateek Nayak <kprateek.nayak@amd.com>
-In-Reply-To: <1bffa5f2ca0fec8a00f84ffab86dc6e8408af31c.camel@gmx.de>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL6PEPF0001AB4D:EE_|MW6PR12MB8897:EE_
-X-MS-Office365-Filtering-Correlation-Id: 02ad534c-d062-495d-4dbb-08dcfd51ba25
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|1800799024|376014|7416014|82310400026;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?dCs4SXp3clE3WHB1amVvZlRoQnJSdEk5Zk1UL3pFY0dTajdnNmlINDhVZXc5?=
- =?utf-8?B?TXlVN2NyRitKdnJJdkxTTThRV1ZtWGdTNDdBSk5iTE1kVGJzclp5M1E2MjF6?=
- =?utf-8?B?ZE5ZVnFFNTZIdXp6SDBnaTlIWll2elR2QzVHSHRtK3Jwd1pOMHVSTWI1WlU5?=
- =?utf-8?B?S3RjRGM5RG9LeXhKbHNQZjVvbXRURjVlQjA3T0h0RXNCTHJCVW9YVEtTeWVG?=
- =?utf-8?B?L0c1QVRXNSsxajRSWFNYNi9Ha29kZExjWHA1VmtNejczMFFCS1ZsV1AzRjB2?=
- =?utf-8?B?RzBUWk02bW1EajRRUFlGVTFsSUNYRldHVExFWERGSHVqRDRuRmNJUkpYN1Jn?=
- =?utf-8?B?UGRwdUx3ek9DYTgwQ3l0ZXljQ0dhN2NDV2JJY2E2YytObFBzTjEycVQ0K0c5?=
- =?utf-8?B?TEY3WDJ3eXg1TDdBaTVuemlYL3duM0hmSVF3Z1VMK2gyaGpGeHNZb2xEdHVr?=
- =?utf-8?B?Q0tVMUJ1YW4vd3BNU1ZLWDd5VlVQdFR1TXp3dUJ6Yi9JSXpqbVFFblJJWUty?=
- =?utf-8?B?Y0gyQXNrUVBDdFE3dEtPUDhuOUtobU5uaklvOEZQQUF6V2JWdGh2V2VReTNK?=
- =?utf-8?B?dUY4YUZVQ3FKejBUbU0wY2ZORGhHTHpEYlUxL3FtdjgyWGpyZWhhdzVZMjZx?=
- =?utf-8?B?dWI1R0dmbmtXNGVuUFhMQ2NneFQybmRrKzk2ZDVJeEtrSTE1K3pxMXMrY2Ey?=
- =?utf-8?B?c0VUcDcrTXJCOWRxWm1SWndhZlNKek9sOXRlMWtFVm1USGZsVTFLWW5PMGVw?=
- =?utf-8?B?aXZSTGJEVkp2eHVSQVA2d3c1ZjRDS21aTWgyZkptMEI4TEZvZjhGMGlYWUNU?=
- =?utf-8?B?aEFrZElNaTVVMHF5NWsrRncyekFxTDBvdzVnUDdZVEdXS2IyTXAwVE1Ub1NX?=
- =?utf-8?B?NEtQRjNmelhuNDRudCtBdU4wNk4vd0VZZUlsZVJsOEpEdzRPK0ZJempDdTNy?=
- =?utf-8?B?Q3ZnRW52cFpWWWYrM2hTSHJQZkpJK2d4a3U0UUJabXZVR0pMWnNLZG12T0Fm?=
- =?utf-8?B?bXlqRkxkWmhveHk1SEtnWXhFUytTa2FIMk9MWitRVFY0MGJoYjVHRzU1SDV0?=
- =?utf-8?B?WUEyTXFPcVhVNWNOdmhibFBCNm82M0t5bG93VlNGcUs1ZXpZc0d3YldVRmJI?=
- =?utf-8?B?VGk5R21nUVBpWXFndjJqaEhQZ0xpNE1RWFAwYWxTNlVCOTBQdXVPQThIVVg1?=
- =?utf-8?B?OWNxbW9rNUJ6aVNsK01RRjkrZk1Ra0dLaGllaU1RSTg4TDBTWFVETkM5S0Ju?=
- =?utf-8?B?anI0TTdaWlRWR21BVFRPUlVwcVJ2cTVZWnUwN0RraEgwQWNaMi9kaWRJRjdP?=
- =?utf-8?B?cDFzZ01Cbjh6dHIreWhFZ21VVDU4V1c2RStmZHRJSUsvYWlpTkNaMDNjRWs3?=
- =?utf-8?B?M0Z5bktTSHcvSWFxRnVPTDE5bmxuMGl4L3ovZVc3UXZMdHpuMTFPU1VmR05Z?=
- =?utf-8?B?VVlZaTc5SzYwMVdXeGozWFBEcEtDLytDcFRmVlBwa0RpZ21PQkhKZ2VxeVI1?=
- =?utf-8?B?N0RBalJlV0xCakx5aW4vMG80Y0FkeGQvSnNqb2dWbmxwUWIrdVF3bytLNm5H?=
- =?utf-8?B?eEJUL3Z0ZTF1enN5eWd2UitwbU1reDQ4WHVtaUJxekJzSURqTk5wdUFxNEsy?=
- =?utf-8?B?R0RUY3hHbE81UTdmOXppNDY1OXlqYWNmNlBucUFxMzlqUWtuem1UaCtJWTJL?=
- =?utf-8?B?ci9kK2NwcTBrUFM1b2dJVU5aZmZ1Q0YwbkxOQXJiYU90M284K3pDODZYK2Zh?=
- =?utf-8?B?S3hac3E0eEZJcTR2SDFMdWVDMWUzbjRieVJJbHhyOEhqVDRKZ24wZnc4VDRY?=
- =?utf-8?B?RHJVSGpPKzVScUFmaFBXT3RBOUFscHRCWlZsQy85dHdybTQwZTFxOFRTV2lR?=
- =?utf-8?B?cXpQbDRNU1gzTUlpbXNvbXhKeEYxd2RjSllOa0orN3JrZ1E9PQ==?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(376014)(7416014)(82310400026);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Nov 2024 04:24:23.6171
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 02ad534c-d062-495d-4dbb-08dcfd51ba25
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BL6PEPF0001AB4D.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW6PR12MB8897
+X-Received: by 2002:a05:6e02:3281:b0:3a6:c84f:9357 with SMTP id
+ e9e14a558f8ab-3a6c84f97b3mr70739545ab.25.1730781201465; Mon, 04 Nov 2024
+ 20:33:21 -0800 (PST)
+Date: Mon, 04 Nov 2024 20:33:21 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6729a011.050a0220.2edce.1501.GAE@google.com>
+Subject: [syzbot] [net?] WARNING in geneve_udp_encap_recv
+From: syzbot <syzbot+c28dd30bc14158282b3b@syzkaller.appspotmail.com>
+To: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com, 
+	kuba@kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+	pabeni@redhat.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hello Mike,
+Hello,
 
-On 11/5/2024 9:35 AM, Mike Galbraith wrote:
-> On Mon, 2024-11-04 at 08:05 -0500, Phil Auld wrote:
->> On Sat, Nov 02, 2024 at 05:32:14AM +0100 Mike Galbraith wrote:
->>
->>>
->>> The buddy being preempted certainly won't be wakeup migrated...
->>
->> Not the waker who gets preempted but the wakee may be a bit more
->> sticky on his current cpu and thus stack more since he's still
->> in that runqueue.
-> 
-> Ah, indeed, if wakees don't get scraped off before being awakened, they
-> can and do miss chances at an idle CPU according to trace_printk().
-> 
-> I'm undecided if overall it's boon, bane or even matters, as there is
-> still an ample supply of wakeup migration, but seems it can indeed
-> inject wakeup latency needlessly, so <sharpens stick>...
+syzbot found the following issue on:
 
-I had tried this out a while back but I was indiscriminately doing a
-DEQUEUE_DELAYED and letting delayed tasks go through a full ttwu cycle
-which did not yield any improvements on hackbench. Your approach to
-selectively do it might indeed be better (more thoughts below)
+HEAD commit:    90602c251cda Merge tag 'net-6.12-rc6' of git://git.kernel...
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=16519340580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=4340261e4e9f37fc
+dashboard link: https://syzkaller.appspot.com/bug?extid=c28dd30bc14158282b3b
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
 
-> 
-> My box booted and neither become exceptionally noisy nor inexplicably
-> silent in.. oh, minutes now, so surely yours will be perfectly fine.
-> 
-> After one minute of lightly loaded box browsing, trace_printk() said:
-> 
->    645   - racy peek says there is a room available
->     11   - cool, reserved room is free
->    206   - no vacancy or wakee pinned
-> 38807   - SIS accommodates room seeker
-> 
-> The below should improve the odds, but high return seems unlikely.
-> 
-> ---
->   kernel/sched/core.c |    9 ++++++++-
->   1 file changed, 8 insertions(+), 1 deletion(-)
-> 
-> --- a/kernel/sched/core.c
-> +++ b/kernel/sched/core.c
-> @@ -3790,7 +3790,13 @@ static int ttwu_runnable(struct task_str
->   	rq = __task_rq_lock(p, &rf);
->   	if (task_on_rq_queued(p)) {
->   		update_rq_clock(rq);
-> -		if (p->se.sched_delayed)
-> +		/*
-> +		 * If wakee is mobile and the room it reserved is occupied, let it try to migrate.
-> +		 */
-> +		if (p->se.sched_delayed && rq->nr_running > 1 && cpumask_weight(p->cpus_ptr) > 1) {
+Unfortunately, I don't have any reproducer for this issue yet.
 
-Would checking "p->nr_cpus_allowed > 1" be enough instead of doing a
-"cpumask_weight(p->cpus_ptr) > 1"?
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-90602c25.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/6a2daa3dcb25/vmlinux-90602c25.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/4488ee6eec29/bzImage-90602c25.xz
 
-I was thinking, since the task is indeed delayed, there has to be more
-than one task on the runqueue right since a single task by itself cannot
-be ineligible and be marked for delayed dequeue? The only time we
-encounter a delayed task with "rq->nr_running == 1" is if the other
-tasks have been fully dequeued and pick_next_task() is in the process of
-picking off all the delayed task, but since that is done with the rq
-lock held in schedule(), it is even possible for the
-"rq->nr_running > 1" to be false here?
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+c28dd30bc14158282b3b@syzkaller.appspotmail.com
 
-> +			dequeue_task(rq, p, DEQUEUE_SLEEP | DEQUEUE_DELAYED | DEQUEUE_NOCLOCK);
-> +			goto out_unlock;
-> +		} else if (p->se.sched_delayed)
->   			enqueue_task(rq, p, ENQUEUE_NOCLOCK | ENQUEUE_DELAYED);
->   		if (!task_on_cpu(rq, p)) {
->   			/*
-> @@ -3802,6 +3808,7 @@ static int ttwu_runnable(struct task_str
->   		ttwu_do_wakeup(p);
->   		ret = 1;
->   	}
-> +out_unlock:
->   	__task_rq_unlock(rq, &rf);
-> 
->   	return ret;
-> 
-> 
+memcpy: detected field-spanning write (size 4) of single field "_Generic(info, const struct ip_tunnel_info * : ((const void *)((info) + 1)), struct ip_tunnel_info * : ((void *)((info) + 1)) )" at include/net/ip_tunnels.h:653 (size 0)
+WARNING: CPU: 3 PID: 34 at include/net/ip_tunnels.h:653 ip_tunnel_info_opts_set include/net/ip_tunnels.h:653 [inline]
+WARNING: CPU: 3 PID: 34 at include/net/ip_tunnels.h:653 geneve_rx drivers/net/geneve.c:244 [inline]
+WARNING: CPU: 3 PID: 34 at include/net/ip_tunnels.h:653 geneve_udp_encap_recv+0x22cd/0x29a0 drivers/net/geneve.c:401
+Modules linked in:
+CPU: 3 UID: 0 PID: 34 Comm: ksoftirqd/3 Not tainted 6.12.0-rc5-syzkaller-00161-g90602c251cda #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+RIP: 0010:ip_tunnel_info_opts_set include/net/ip_tunnels.h:653 [inline]
+RIP: 0010:geneve_rx drivers/net/geneve.c:244 [inline]
+RIP: 0010:geneve_udp_encap_recv+0x22cd/0x29a0 drivers/net/geneve.c:401
+Code: 9e e9 ff ff e8 24 ca 53 fb c6 05 c4 65 0e 0a 01 90 31 c9 48 c7 c2 e0 3e 14 8c 4c 89 e6 48 c7 c7 c0 3f 14 8c e8 c4 b9 14 fb 90 <0f> 0b 90 90 e9 c7 ed ff ff e8 f5 c9 53 fb e8 80 8c c9 02 31 ff 41
+RSP: 0018:ffffc900008df630 EFLAGS: 00010282
+RAX: 0000000000000000 RBX: ffff888060da0f32 RCX: ffffffff814e6dd9
+RDX: ffff88801e294880 RSI: ffffffff814e6de6 RDI: 0000000000000001
+RBP: ffffc900008df750 R08: 0000000000000001 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000004
+R13: ffff888032d57c00 R14: 0000000000000000 R15: ffff88804583ef00
+FS:  0000000000000000(0000) GS:ffff88806a900000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fd1e8385f98 CR3: 000000004b406000 CR4: 0000000000352ef0
+DR0: 00000000e0002800 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ udp_queue_rcv_one_skb+0xad5/0x18c0 net/ipv4/udp.c:2135
+ udp_queue_rcv_skb+0x198/0xd10 net/ipv4/udp.c:2213
+ udp_unicast_rcv_skb+0x165/0x3b0 net/ipv4/udp.c:2373
+ __udp4_lib_rcv+0x25fd/0x34e0 net/ipv4/udp.c:2449
+ ip_protocol_deliver_rcu+0x2ff/0x4c0 net/ipv4/ip_input.c:205
+ ip_local_deliver_finish+0x316/0x570 net/ipv4/ip_input.c:233
+ NF_HOOK include/linux/netfilter.h:314 [inline]
+ NF_HOOK include/linux/netfilter.h:308 [inline]
+ ip_local_deliver+0x18e/0x1f0 net/ipv4/ip_input.c:254
+ dst_input include/net/dst.h:460 [inline]
+ ip_rcv_finish net/ipv4/ip_input.c:449 [inline]
+ NF_HOOK include/linux/netfilter.h:314 [inline]
+ NF_HOOK include/linux/netfilter.h:308 [inline]
+ ip_rcv+0x2c3/0x5d0 net/ipv4/ip_input.c:569
+ __netif_receive_skb_one_core+0x199/0x1e0 net/core/dev.c:5670
+ __netif_receive_skb+0x1d/0x160 net/core/dev.c:5783
+ process_backlog+0x443/0x15f0 net/core/dev.c:6115
+ __napi_poll.constprop.0+0xb7/0x550 net/core/dev.c:6779
+ napi_poll net/core/dev.c:6848 [inline]
+ net_rx_action+0xa92/0x1010 net/core/dev.c:6970
+ handle_softirqs+0x213/0x8f0 kernel/softirq.c:554
+ run_ksoftirqd kernel/softirq.c:927 [inline]
+ run_ksoftirqd+0x3a/0x60 kernel/softirq.c:919
+ smpboot_thread_fn+0x661/0xa30 kernel/smpboot.c:164
+ kthread+0x2c1/0x3a0 kernel/kthread.c:389
+ ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
 
--- 
-Thanks and Regards,
-Prateek
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
