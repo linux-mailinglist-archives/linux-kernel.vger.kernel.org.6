@@ -1,133 +1,148 @@
-Return-Path: <linux-kernel+bounces-396044-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396046-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1A7A9BC725
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 08:40:30 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49CC39BC732
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 08:45:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F8FB283398
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 07:40:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A13281F22206
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 07:45:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D840C1FE0F0;
-	Tue,  5 Nov 2024 07:40:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30C2B1FE10E;
+	Tue,  5 Nov 2024 07:45:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B1gmpNg3"
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=jannau.net header.i=@jannau.net header.b="QWjcdGJW";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="CYKTbZJa"
+Received: from fout-a6-smtp.messagingengine.com (fout-a6-smtp.messagingengine.com [103.168.172.149])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6A55EEBA;
-	Tue,  5 Nov 2024 07:40:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 515B02AF0B;
+	Tue,  5 Nov 2024 07:45:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.149
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730792423; cv=none; b=b0PwFiTHRuMhpdQrTgRTdnYXZdzsZI7U2HT0NcEIMaCyFrVTV7NLWl4wbrcMzw6peOkXrHKVO+f4XOCGNazFp2GpiYZZRFISIzM3ZrJ0Zh+bih65l1EdNWGsYEWmD4YHZI49RmzBhnsF+XW+saT9vxN9TbGIfV8iQWgJyRqYVdo=
+	t=1730792702; cv=none; b=tdSZcTQQ3/TEy6fwl+c2h8CnCY5xRJzFYcatvaLf/UCKmi8u30y8T+PWo1KH5YUfX+9A2hr9D9pExk7QY9I60UrtrzossFWanoPueGLQBrZT9voTvsOLgrGweHx5Vl885HT+asvnVpgwXzwDxuDJ4DKbxoJ1idy6PaXQWI80Z8Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730792423; c=relaxed/simple;
-	bh=7JYi0gA+D5ifWf/FH5BVdazYgaUP3auRzKD6OC/Vt4U=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Q/DUOUvd5n/AypRDDkogdKAo1SYDo4LGm2ZUFIFNRNEWGcgE6JcBycvZmxcdvTQQFAW0AbaeTmJCXHgLo8pRkAwX2RUpl3Zqkr3o7yE/UhOqFfhiqDJmoX5ZDjXHXLbd7bIFPyuvV++IE25QBQtn4xatJjSbtE9PfzVgFTdJGL0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B1gmpNg3; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-37d47eff9acso3318952f8f.3;
-        Mon, 04 Nov 2024 23:40:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730792420; x=1731397220; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=ocBWIeJyQeYQc+gJdO1SeCnJ/mpbgVz8TuewMujTg4A=;
-        b=B1gmpNg3nVF3sixVXJJji8qXEZhl7+biRel4O7bgeJ2MB/L8PcOdS2J2j4ohdziMpv
-         b8ADB4mbdiszEJ103hzpW8eF5E7L0Tuqpeh0J6bKPSs2tUmDXfDBozkooJSV/XjakTJi
-         ckKDsEj1VSusOtCeBPPCDwgEwHZnXbQDTmjZ7P5DDLL/MMc3MK+56iVloJcdt5oTRAAx
-         e/JRnsJVg+MIEfFRvXZwsY2ZIfgtT/tFeJlQqRj7Lqcodn0DL6tbB00DmOQsPsiUgJn7
-         Uy717WGdZDpGlB/OdEhhc3D+ph0tJMhNqvydb4p5bCI9Gnks/1BvDN4WZ3/+MuPfvpnR
-         dwkQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730792420; x=1731397220;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ocBWIeJyQeYQc+gJdO1SeCnJ/mpbgVz8TuewMujTg4A=;
-        b=q0kcslHbZFRQjhgbL6oUGTxkIQe5SiSUVg6PuJQOyKcsMWMG4fabPnC/X7ApNzZQTV
-         s00hg8m6VT1a4dnz5zwV6aNXwXC0VoMJWiBWN3teIgk0ijzpCMiF3zF0qybtVhmXS7k7
-         n/URsccBMRKLhRJEYs8npU5q4OtwfIH0sL2EIRqD0DvILDuvr9WbKmdPOI/1LJKTW+kY
-         Eiqbkg4X1RkSQZ6OPgZJ/rvHMEBLs99+75i877/a5ucuUVGGAFW9PyCiVOWXnRRDGuWD
-         bE0SjS4TM2OVcb5n23BmCd5e68Ca6rJ3qLZTicL1pu1p1k3fJc5Dx8t8OOTRGRCTS2zN
-         N+mg==
-X-Forwarded-Encrypted: i=1; AJvYcCV3VfqzcwOCwfj+T3QV4rALygmfTsfGrQORyWpeVctcXoIFfD7i/dOxJMuO8Acbr9acXPFBZt74J9A=@vger.kernel.org, AJvYcCXIgZp1wmkFmboyW8eROXzvWFnsRbfhBBSu+SQPjhGSGzBEm74qdrNP8Hstp3h32Dmo2Z1vuMIb5+nu1Zqv@vger.kernel.org
-X-Gm-Message-State: AOJu0YzLGqcwXYXcMwvbAYAgjibL1sYBaliqjJ3/dsxgg0BweHBFaRAe
-	rqana6cJcvknPBu640F4JP3ASH1MuEG7JMFGBctK3f4AYTIBBglz
-X-Google-Smtp-Source: AGHT+IGEdqChJi95E9f7lKq6z6VcnxyyANHegEKVyE8BVGIRMGCLPosT9rIRUsZjHC9h3NIiF9y3vg==
-X-Received: by 2002:a05:6000:4409:b0:381:d890:b503 with SMTP id ffacd0b85a97d-381d890b575mr3486481f8f.57.1730792419597;
-        Mon, 04 Nov 2024 23:40:19 -0800 (PST)
-Received: from ?IPv6:2003:f6:ef15:2100:888:d3c6:a442:4910? (p200300f6ef1521000888d3c6a4424910.dip0.t-ipconnect.de. [2003:f6:ef15:2100:888:d3c6:a442:4910])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-431bd9ca8eesm206041765e9.43.2024.11.04.23.40.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Nov 2024 23:40:19 -0800 (PST)
-Message-ID: <f1aff5adfb369c3926e43b7ecaa95d23e0126343.camel@gmail.com>
-Subject: Re: [PATCH] iio: adc: ad7173: remove unused field
-From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-To: David Lechner <dlechner@baylibre.com>, Jonathan Cameron
- <jic23@kernel.org>
-Cc: Michael Hennerich <Michael.Hennerich@analog.com>, 
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Tue, 05 Nov 2024 08:44:40 +0100
-In-Reply-To: <20241104-iio-adc-ad7173-remove-unused-field-v1-1-da9500a48750@baylibre.com>
-References: 
-	<20241104-iio-adc-ad7173-remove-unused-field-v1-1-da9500a48750@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.1 
+	s=arc-20240116; t=1730792702; c=relaxed/simple;
+	bh=miGbvf+/sqU0lRhQWVytjVytsWBjDMOz4kDCmq/yZCc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=H9J9iR4rUCtfvfei3afGgmxbWh1cUinH04IohCJlkPxbxBDvpYMhi0wjvLpm3Tm9ciI2kun4QerfhSfx04gRpUliJwPCGG0tOUUBNq6SKz/GNvkc0lLBAE0UA8UyzsdBUnHfzdTsgCBnd2tkhLGCaJ2DNrYSlW/CkkjTcxIVXDs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jannau.net; spf=pass smtp.mailfrom=jannau.net; dkim=pass (2048-bit key) header.d=jannau.net header.i=@jannau.net header.b=QWjcdGJW; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=CYKTbZJa; arc=none smtp.client-ip=103.168.172.149
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jannau.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jannau.net
+Received: from phl-compute-04.internal (phl-compute-04.phl.internal [10.202.2.44])
+	by mailfout.phl.internal (Postfix) with ESMTP id 5CD6913802C1;
+	Tue,  5 Nov 2024 02:44:59 -0500 (EST)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-04.internal (MEProxy); Tue, 05 Nov 2024 02:44:59 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jannau.net; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm2; t=1730792699; x=1730879099; bh=Ym7SjV/dcJ
+	IjkJNBKLo9FclTtu+qxw9/1pp0hE1zJ/0=; b=QWjcdGJWR3sw5TQS86oG5vnUDb
+	AbrlWa9Dj1I52K1momGP0qnUnz5QBIp/R7RJMkgXUGqwzrdaWo/KCyAP3gGivOIT
+	7iTVlY1jYBqRQGTTwIDhdo6JgBpyAjSG/kw7H8mKtvxdoH/IxnbS1CafV/51HfQ/
+	wmyye/HV8QJ7Lnnf7GLY+TXaP+6SOyQxFYixmfjob+TZ4HCPAZXiQ9IoMP1OrKJ/
+	ZOPCmFN3C07/ZUGeEdtetimLFzUF7KJbsfmsRkYHDPLyrE/aHX5GfZxuNMnbaFyC
+	6x2xEXdDYKnY6EvGzN0AemYSxCeaygnAfyzvO/p6I1EIVBOHVj/HE2Pj3f7A==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
+	1730792699; x=1730879099; bh=Ym7SjV/dcJIjkJNBKLo9FclTtu+qxw9/1pp
+	0hE1zJ/0=; b=CYKTbZJaYJSl3jIzLRQ2OkGryMyNZEDPXMtJsDxzFjZNrSL2aW1
+	XzAYkGgF2i63sLgBjYYPv0hZCwULacFWB59t415OLzF3cwvnpy+Nrs5T4byuVWv5
+	BnIeGuyWQOLHmMGW3FBCmd1wCX4bPrW4/1vnXU2ExH5hekZsb/sFEsDiGDs88UUt
+	Xy7xDb/xTpKSOWTVsfPLRKR2qEq6E2B57kDZLhti8B3TG7sJafJkYeVFZW8eUcno
+	kggUhiMh+HOPc5jSD9VGjOMh11dhITtEQfwQXQ+ueqK/BGJbcv5/TZo6KDlLg9MA
+	vuBjj6s68atpeiG9unY9rsYdT2VO1V9blxg==
+X-ME-Sender: <xms:-cwpZ3wnCXyyr0lismuD8R6pXFOm3DrdmR4g3mcEsYrXT269jWtbwQ>
+    <xme:-cwpZ_RTpT92to-LTJkXGFG29enfWR4MC8elbgbz0lP82stG_Vk0rR60GxHjcjxuC
+    9sV4fKlPXQWT9RE7Sw>
+X-ME-Received: <xmr:-cwpZxVPIpd0lC2-hIr36Pem1OjmZOxHZZW_-osf83gPsKF4LSp-z3pSJkDSeFu5u-YxziHQucORPECYitCIbSOIV9tdzcAoCpw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdeljedgudduvdcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttdej
+    necuhfhrohhmpeflrghnnhgvucfirhhunhgruhcuoehjsehjrghnnhgruhdrnhgvtheqne
+    cuggftrfgrthhtvghrnhepgfduueffleefkeegueektdehkeejtedtffdtudejhfdvheet
+    gfeigfeltdeufeejnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlhhushhtvg
+    hrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehjsehjrghnnhgruhdrnhgv
+    thdpnhgspghrtghpthhtohepudefpdhmohguvgepshhmthhpohhuthdprhgtphhtthhope
+    hkrhiikheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepmhgrrhgtrghnsehmrghrtggr
+    nhdrshhtpdhrtghpthhtohepshhvvghnsehsvhgvnhhpvghtvghrrdguvghvpdhrtghpth
+    htoheprghlhihsshgrsehrohhsvghniiifvghighdrihhopdhrtghpthhtohepsghrohho
+    nhhivgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprhhosghhsehkvghrnhgvlhdroh
+    hrghdprhgtphhtthhopehkrhiikhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtthho
+    pegtohhnohhrodgutheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghsrghhiheslh
+    hishhtshdrlhhinhhugidruggvvh
+X-ME-Proxy: <xmx:-cwpZxj2545d2OzQOOOUm1nZrHGqKOdUqUx2V-2KvLycigdo2M64bA>
+    <xmx:-cwpZ5AcQSoMG4KKssg82ubxwnXY8srKjgRrqrQIKm1tqODhCmZcBw>
+    <xmx:-cwpZ6IlCTOSJXlUDnBNXoxahGKUggkCuUuNfpX-0UZa7yHAPvzVog>
+    <xmx:-cwpZ4AjqpLsJfHtxa2rItJ0sz2ddGV50LhWJPSeu4HPiq0vaEHBiw>
+    <xmx:-8wpZxyVsuz5RqA6v3Yo3gXt_V7f7Q6Ph83nKqvveNkJq14M50Gq1dU4>
+Feedback-ID: i47b949f6:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 5 Nov 2024 02:44:57 -0500 (EST)
+Date: Tue, 5 Nov 2024 08:44:55 +0100
+From: Janne Grunau <j@jannau.net>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Hector Martin <marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>,
+	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+	Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, asahi@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-spi@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 0/3] Apple SPI controller driver
+Message-ID: <20241105074455.GA923511@robin.jannau.net>
+References: <20241101-asahi-spi-v3-0-3b411c5fb8e5@jannau.net>
+ <vzulq4ewdbrk7qdurtypxpaoe4jsswddfprtdbudoxipf6d3ya@4gnbmr722pig>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <vzulq4ewdbrk7qdurtypxpaoe4jsswddfprtdbudoxipf6d3ya@4gnbmr722pig>
 
-On Mon, 2024-11-04 at 13:42 -0600, David Lechner wrote:
-> Remove the unused chan_reg field from struct ad7173_channel. This was
-> set but never read.
->=20
-> Signed-off-by: David Lechner <dlechner@baylibre.com>
-> ---
+On Sat, Nov 02, 2024 at 02:11:51PM +0100, Krzysztof Kozlowski wrote:
+> On Fri, Nov 01, 2024 at 08:26:11PM +0100, Janne Grunau wrote:
+> > Hi all,
+> > 
+> > This updated series address the review comments from the original
+> > submission in 2021 [1]. It adds a new SPI controller driver for Apple
+> > SoCs and is based on spi-sifive. It has been tested with the generic
+> > jedec,spi-nor support and with a downstream driver for an Apple specific
+> > HID over SPI transport.
+> > 
+> > As usual, I'm splitting off the MAINTAINERS and DT binding changes.
+> > We would rather merge the MAINTAINERS change through the Asahi-SoC
+> > tree to avoid merge conflicts as things trickle upstream, since
+> > we have other submissions touching that section of the file.
+> > 
+> > The DT binding change can go via the SPI tree or via ours, but it's
+> > easier if we merge it, as then we can make the DT changes to
+> > instantiate it without worrying about DT validation failures depending
+> > on merge order.
+> > 
+> > This is mostly Hector's work with a few minor changes to address review
+> > comments from me.
+> > 
+> > [1] https://lore.kernel.org/linux-spi/20211212034726.26306-1-marcan@marcan.st/
+> > 
+> > v2:
+> > - removed '#address-cells' and '#size-cells' from the bindings and added
+> >   Rob's Rb:
+> 
+> Where?
 
-Reviewed-by: Nuno Sa <nuno.sa@analog.com>
+Apparently only in my mind. fixed for v4
 
-> Noticed this while looking over the code.
-> ---
-> =C2=A0drivers/iio/adc/ad7173.c | 2 --
-> =C2=A01 file changed, 2 deletions(-)
->=20
-> diff --git a/drivers/iio/adc/ad7173.c b/drivers/iio/adc/ad7173.c
-> index a0fca16c3be0..29ff9c7036c0 100644
-> --- a/drivers/iio/adc/ad7173.c
-> +++ b/drivers/iio/adc/ad7173.c
-> @@ -193,7 +193,6 @@ struct ad7173_channel_config {
-> =C2=A0};
-> =C2=A0
-> =C2=A0struct ad7173_channel {
-> -	unsigned int chan_reg;
-> =C2=A0	unsigned int ain;
-> =C2=A0	struct ad7173_channel_config cfg;
-> =C2=A0};
-> @@ -1316,7 +1315,6 @@ static int ad7173_fw_parse_channel_config(struct ii=
-o_dev
-> *indio_dev)
-> =C2=A0		chan->address =3D chan_index;
-> =C2=A0		chan->scan_index =3D chan_index;
-> =C2=A0		chan->channel =3D ain[0];
-> -		chan_st_priv->chan_reg =3D chan_index;
-> =C2=A0		chan_st_priv->cfg.input_buf =3D st->info->has_input_buf;
-> =C2=A0		chan_st_priv->cfg.odr =3D 0;
-> =C2=A0
->=20
-> ---
-> base-commit: 56686ac80b859c2049cc372f7837470aa71c98cf
-> change-id: 20241104-iio-adc-ad7173-remove-unused-field-e3d2ca362501
->=20
-> Best regards,
-
+thanks,
+Janne
 
