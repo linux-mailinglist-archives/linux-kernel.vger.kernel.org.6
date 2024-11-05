@@ -1,149 +1,83 @@
-Return-Path: <linux-kernel+bounces-396326-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396325-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15B939BCB9E
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 12:23:29 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 757189BCB9A
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 12:23:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF26F285266
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 11:23:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D53E1F24436
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 11:23:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8E1D1D4612;
-	Tue,  5 Nov 2024 11:23:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A17CB1D4339;
+	Tue,  5 Nov 2024 11:23:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FTAjt54r"
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="gOtyZrwy"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6811F1D4323
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 11:23:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 222671D278B;
+	Tue,  5 Nov 2024 11:23:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730805791; cv=none; b=hRM2JsTQV6yI9uip5pC6LJgBPpXe4aQy29Q2lQZGjV1lWyczwcpcEAhbcq8Pa54yDVBuSXIFhrwPZvV8MHIvaIwWsXNA6qaVvAw/reSBr5V50AA2KwBXn39V2mlb0MeRBHWJ+cZNx6tgex3z3z+KFZdT/SodnONPWoD5xqxrDCY=
+	t=1730805790; cv=none; b=FOaS0pnkkrhXYydY3bBDsmGxD3dOswY+5GmSDhuCKZNbk1GKjoI9gLXXxrq57TcBubImLt61QgbmGRvrlWF/WAAZI5WdkbS4YPNF6gQvYywrRhEnc7+IH9pFTDVWe1vTvJCCjhGd8etmD0sVORctCWwiQD2EMCG69flg34reWfk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730805791; c=relaxed/simple;
-	bh=gu5W4N3YVHoS/XkXUH6wLnC37EF1yQUgzdD/I/kxVHY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gdEK0AFYGkSja7V7oUgTQYspJsHPvUL21krjm83ohXfEMZIplVs6jXKdmiMixbf5Qu1vRciWAgNKndgUNUx18TMrM/3DSHmzzEL8Mt+KrFt9h8LBYMTTtzAws5/18GRsVpyviS4MaRL1HjKgNr7jdPJ05tZ3jsQJuzrP9VBnrGo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FTAjt54r; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-539f84907caso5790049e87.3
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 03:23:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1730805787; x=1731410587; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=kfRKb6qYv530q1n0OeScBq8hVcVdxnrfY7wSThB323A=;
-        b=FTAjt54rdB5e1X0ahTbHWJZSGvcSguumA/K6sRoBow4iT0pIXbpHYzvGPCanEe7CJS
-         oh16mYRnfoP0PiCuBoshV20/HPL24M+1FmUOeXl8Gh/6EzqiFOWERMXtiDCQ1nmXbfoA
-         Jr1jA7lMq1gnMeADUu1EdF4mmwPjtiTeteL4sNRPcXbWGa4N6UlLr/9NqVb5rdrzmg+h
-         ilxqTWALRnxeCODpM9i6EhjFfBqezPIhnN6S6CfV91JdhHc2fyAIPeDpYxsQbPo7IQK6
-         0X2ULYn7MTEC9FPihC0w2ulkXrKXrMVJ8GCAQF0UmzOBcS+a+dSaRZhKgwv2UUMqvxAb
-         DikQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730805787; x=1731410587;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kfRKb6qYv530q1n0OeScBq8hVcVdxnrfY7wSThB323A=;
-        b=mupTnlwRFcaS3+8abNJCVvHTQEyHlQyfHeg7/swHmUjWCtuOWEfkI6oSIirk0ZJ866
-         hkIaIHImM2k2whjEDlT9aBtlFKlffYh705TLcqIQL8d5Rq9XTrmf0sIMcw1bqpgwvtQf
-         HOqi1vx3Vsa4tE5pBIZ8deQJXYoFXSurfVlod9pyYN6UUvQB0qBSEJkNw2e+Z0nT4fFO
-         Ky0weQr+ZfXv/yjyG4d7qj4mwTVZY8FUI4lYoCb93jrjT/3dJ6oyhZwJnqPjO9cYy8xc
-         pfYlM9A+bo5+for8iBSgVdWLwIzFHOYSw0/RmTeqeTjXOwUcJOfngpZOyS3MGtkMwbAS
-         G+ZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWY8rmMj1TYPoTbTV4JokLikaYYQzfwfx6JwZTMokjIaOuB1mClHf+4smzq3/fHarZjbF4kWPXR+YKf/fM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwbKG1hTwUJIg9ZgDPfdkQ59A2czfvYkgw5LZkRRZbsI2NAUZ8V
-	1fTtVSzro9D1hAB10LSxc82gXhBUIVwAWWanI6E+xrXn+uWPz8Vg+MFYIywUBEQ=
-X-Google-Smtp-Source: AGHT+IEu79YGFxZM6Eecn6ewOoMwq28FlO/8LqwRJUbtDaL1h8BGJ+TOp/Y8iTBbhuCNrcvbQJTXBA==
-X-Received: by 2002:a05:651c:505:b0:2f5:abe:b6bd with SMTP id 38308e7fff4ca-2fcbe099636mr164756301fa.42.1730805787245;
-        Tue, 05 Nov 2024 03:23:07 -0800 (PST)
-Received: from [192.168.0.40] ([176.61.106.227])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4327d5ac002sm184409155e9.5.2024.11.05.03.23.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 05 Nov 2024 03:23:06 -0800 (PST)
-Message-ID: <3ae9d07c-173e-4715-8cb5-f3d84de14f39@linaro.org>
-Date: Tue, 5 Nov 2024 11:23:05 +0000
+	s=arc-20240116; t=1730805790; c=relaxed/simple;
+	bh=5ae+p5+Ub1paM3FEnfKdtjlDbD//SfcTuWxbLk6HRog=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jHLFdpaAD4L7JPpV0Yn60rUBLVzfGRrYY3eLw//wmlwlm8naDSJz8Qz8jhJ+3xy4rndTO8Jy3ADF3AmIQEnLpY1yI2kEWeDZWTwpJr+7to35TuE+dr4/Cr66H+JPsskPqy7i9/S3IpEvn0L0D4wwkMav3IoN+XuQ89xTAP9h3wk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=gOtyZrwy; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=9cFr9pH6MNW7EsyB1sOEQ8kmC8hKx31uNi0G3s6RSKw=; b=gOtyZrwyaVqH2m3//nCztQ3N45
+	VBo3sG9gZHD6u2y71NhC5RT42D2lm4lvL6F9c6PgZyvYyv+aqQUoIyuqm1NZv15/WmGlSiLE+kQEF
+	9KKh0djg4mDszpbn7hrSicTsrfJ/mPP2Gfn8m8uyXzZtAfmfC7iDjWtb56M1TqmwfCEQheju1gMuq
+	hByY56R6TZYed42qVxWQaeefeA9eSSdYoQci7Qj1xjrIh4CoEAwi9MC0/RslY9kYHdqmRxKmi2n1E
+	xLacu3UmzsBXHq7uqeFZVJq9hdim3u18Iz08qmWkMCPaSBZ2ORdmYW06a9Y1ab15zCqFfjM2K70t7
+	fQMQ2M8A==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1t8HeM-0000000GqDi-3yXh;
+	Tue, 05 Nov 2024 11:23:06 +0000
+Date: Tue, 5 Nov 2024 03:23:06 -0800
+From: Christoph Hellwig <hch@infradead.org>
+To: Thorsten Blum <thorsten.blum@linux.dev>
+Cc: Christoph Hellwig <hch@infradead.org>, linux-hardening@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH] freevxfs: Replace one-element array with flexible array
+ member
+Message-ID: <ZyoAGsCAdWrGMQoj@infradead.org>
+References: <20241103121707.102838-3-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/4] media: venus: hfi: add check to handle incorrect
- queue size
-To: Vikash Garodia <quic_vgarodia@quicinc.com>,
- Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- linux-kernel@vger.kernel.org, stable@vger.kernel.org
-References: <20241105-venus_oob-v1-0-8d4feedfe2bb@quicinc.com>
- <20241105-venus_oob-v1-3-8d4feedfe2bb@quicinc.com>
-Content-Language: en-US
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <20241105-venus_oob-v1-3-8d4feedfe2bb@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241103121707.102838-3-thorsten.blum@linux.dev>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On 05/11/2024 08:54, Vikash Garodia wrote:
-> qsize represents size of shared queued between driver and video
-> firmware. Firmware can modify this value to an invalid large value. In
-> such situation, empty_space will be bigger than the space actually
-> available. Since new_wr_idx is not checked, so the following code will
-> result in an OOB write.
-> ...
-> qsize = qhdr->q_size
+On Sun, Nov 03, 2024 at 01:17:09PM +0100, Thorsten Blum wrote:
+> Replace the deprecated one-element array with a modern flexible array
+> member in the struct vxfs_dirblk.
 > 
-> if (wr_idx >= rd_idx)
->   empty_space = qsize - (wr_idx - rd_idx)
-> ....
-> if (new_wr_idx < qsize) {
->   memcpy(wr_ptr, packet, dwords << 2) --> OOB write
-> 
-> Add check to ensure qsize is within the allocated size while
-> reading and writing packets into the queue.
-> 
-> Cc: stable@vger.kernel.org
-> Fixes: d96d3f30c0f2 ("[media] media: venus: hfi: add Venus HFI files")
-> Signed-off-by: Vikash Garodia <quic_vgarodia@quicinc.com>
-> ---
->   drivers/media/platform/qcom/venus/hfi_venus.c | 6 ++++++
->   1 file changed, 6 insertions(+)
-> 
-> diff --git a/drivers/media/platform/qcom/venus/hfi_venus.c b/drivers/media/platform/qcom/venus/hfi_venus.c
-> index f9437b6412b91c2483670a2b11f4fd43f3206404..50d92214190d88eff273a5ba3f95486f758bcc05 100644
-> --- a/drivers/media/platform/qcom/venus/hfi_venus.c
-> +++ b/drivers/media/platform/qcom/venus/hfi_venus.c
-> @@ -187,6 +187,9 @@ static int venus_write_queue(struct venus_hfi_device *hdev,
->   	/* ensure rd/wr indices's are read from memory */
->   	rmb();
->   
-> +	if (qsize > IFACEQ_QUEUE_SIZE/4)
-> +		return -EINVAL;
-> +
->   	if (wr_idx >= rd_idx)
->   		empty_space = qsize - (wr_idx - rd_idx);
->   	else
-> @@ -255,6 +258,9 @@ static int venus_read_queue(struct venus_hfi_device *hdev,
->   	wr_idx = qhdr->write_idx;
->   	qsize = qhdr->q_size;
->   
-> +	if (qsize > IFACEQ_QUEUE_SIZE/4)
-> +		return -EINVAL;
-> +
->   	/* make sure data is valid before using it */
->   	rmb();
->   
-> 
+> Link: https://github.com/KSPP/linux/issues/79
+> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
 
-You have this same calculation in venus_set_qhdr_defaults() really needs 
-a macro or something to stop repeating the same code in another patch later.
+Might be worth adding that nothing does a sizeof of the type or
+variables of the type, so just hcanging it is fine.
 
-Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Otherwise looks good:
+
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+
+Andrew, can you pick this up through -mm as there is no freevxfs tree?
+
 
