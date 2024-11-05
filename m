@@ -1,198 +1,355 @@
-Return-Path: <linux-kernel+bounces-395844-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395845-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E48D19BC3D2
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 04:22:40 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CFE09BC3D3
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 04:23:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5CA24B21AB4
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 03:22:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9FC3A1C203BE
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 03:23:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1398183CDD;
-	Tue,  5 Nov 2024 03:21:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7818183CDD;
+	Tue,  5 Nov 2024 03:23:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="OInYfhkT"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KbTtw41F"
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 734651925A0;
-	Tue,  5 Nov 2024 03:21:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E68D38DDB
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 03:23:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730776910; cv=none; b=OJbNtkZbcBG/eklZGIHFf/THyG2j6AdTHA4y/cqZ+DVuj2J3qN0yQvTExVkEeg7l5Q9BGmSYasLPjWKRpzJ/PMSb2EA7j2xk6Cs7Os7V6wUR7fuQJ/Xwt+MbX5qKMozK89c25rzFrscbjs1diF7l679CC7RVlPW8OU2vgQUktPY=
+	t=1730777003; cv=none; b=rnrMxcZ9+hZnZfqfyjwxYfQfiS4Gx8oIGKjb7jTnwFDzo5b8Rk1FKktP25U90o57QMnMYz6kq94kLUmGGwP/F9V4PXIPYg9KPv5QlcOKKaUv56vFFhih4QU8tvqic1rf7t2FNfe1hILUwWoLeDfhsL+XK5MNJnY+jYtrj6fcHm0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730776910; c=relaxed/simple;
-	bh=cYyprO+pTTC1gw9yRcCwPn+pz/JNaWVflaxgZtG2TLc=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ifqCIQHSX3lVcS+7LV0VIpnGq5FTyJVdqei3v/ptLhzk4wHLaqZHuaWcJC6LYWvP65pNs5JOu98eqtYk0NhN+1ZXBNWhW/onwJSGa+wubBvNpMLh8bCmzSG5qvBgW7TpPzZ5NhDz3Xzr8RpMcTUuAcuZsdLWtIkmHGW0UwHZBwg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=OInYfhkT; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A4LImUC023671;
-	Tue, 5 Nov 2024 03:21:41 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=FV5uwRiE/DTS648RIQOfZGbW
-	Uc3Eyg6wIryenZkcXY0=; b=OInYfhkToBbaKCxAA4t8PCJYczw6my4FvIvoLhOg
-	QJZM1Zcf7qCstLfXrZddpZIu+HPr5G2Z9PEueo/ACN+/alXfAzbXBDP1o6OLR0NA
-	JHrM/Yu6ALMD/QfJ+6+vR5RbFkdaPyGU0+1nO4XgtQ7ggVvaM69o+1djaP9fgWSQ
-	vKTZ55YZnLREqzcPu0zTUvS2ggRfufuhBE33U2AIpAj3XsKXLvNgp8TjgDqJVOoA
-	alSrVYPoB+hdPnSST4QgEIAJwZmdVnjbCubvSKt+z7AyjkAFOp8/sKt6AO/w90X4
-	J0th4CYiOa4Gznmlpn1vId0Rrs5sd0MF9diXaUYjyc3Fww==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42nd1fp743-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 05 Nov 2024 03:21:40 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4A53Ldom032399
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 5 Nov 2024 03:21:39 GMT
-Received: from hu-qqzhou-sha.qualcomm.com (10.80.80.8) by
- nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Mon, 4 Nov 2024 19:21:36 -0800
-From: Qingqing Zhou <quic_qqzhou@quicinc.com>
-To: <andersson@kernel.org>, <konradybcio@kernel.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <robimarko@gmail.com>,
-        <will@kernel.org>, <robin.murphy@arm.com>, <joro@8bytes.org>
-CC: <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <iommu@lists.linux.dev>,
-        Qingqing Zhou
-	<quic_qqzhou@quicinc.com>
-Subject: [PATCH v4 3/3] arm64: dts: qcom: qcs615: add the APPS SMMU node
-Date: Tue, 5 Nov 2024 08:51:07 +0530
-Message-ID: <20241105032107.9552-4-quic_qqzhou@quicinc.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20241105032107.9552-1-quic_qqzhou@quicinc.com>
-References: <20241105032107.9552-1-quic_qqzhou@quicinc.com>
+	s=arc-20240116; t=1730777003; c=relaxed/simple;
+	bh=s6t7/lBvk+H4kJvWV1xr5VoU5F2XiLV5lZG0ZhtvGFw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=TyIz52f5Z6Pa02+ntDmFldII67NsndG4XE6cgrucFlDTpFqPcLxfymtKerX3VhDtd7Z+aGteTzY8vMZ+zJm8ZFgfcDJb04PtKGAS1j8/NoCht1pycUj9Txyd7MBb/96c6o/K3RnXWN/boDofP4PAoUeDxMe9CGTHTPbgPMl594Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KbTtw41F; arc=none smtp.client-ip=209.85.210.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-71e681bc315so3513745b3a.0
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 19:23:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730777001; x=1731381801; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=DNbWoFxpwOV0AJRi3ESxHu0MAbUNJpATXb5Z8g07utQ=;
+        b=KbTtw41FT/NBhaZuXrToHtKUCDAeifXno1FmLv4rCehmaDFKG6QI0mDRf9ejSWjy1A
+         v9QG84BZfNP2FLDJsF+BIrcNzxUMB0j7wthW9NKBynJ0gZV1ibWGXDlmByjkowO32v3n
+         f8u8je4lNQJkVXRtiln7IZLSsvKAA60nsZLb0+3cGjz3iYh9NZ/6Ftn8fT3tbNLVMfPk
+         pqcphe70VZWyoQpWBaJtqa/1R+8tE6uYZVHtuwc4/D9sZVHlbUHPDafrhvEs86KlnCKZ
+         iMlx1GNZbk64p92QyJFbelQcLGDGKUaTMNmuqrM/AofVaVawF/YrwYJiZTirLTs9DtJC
+         DSSA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730777001; x=1731381801;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=DNbWoFxpwOV0AJRi3ESxHu0MAbUNJpATXb5Z8g07utQ=;
+        b=v7dbgLyRAQwyUA+tPC9jq5JIrOjoFM/n/L5I2EPxShE+RH+5XGMirOPsJ1BYGpFEqw
+         A0wkT2EnLIARxDkumu01ECniXaQOn0TcKoq20NkZyiKpTZxg6OoLIDvlmjwYDtOm/vJC
+         MSZ0tLMaQMFJx7bgLK/+JLGYeD2iTL6YpqAznZz0wdy9ExWeRYmvzstcdlocQowlUmX0
+         deunIiXmJRiio7ZcY9I67BT+EJG8Kev2IJ42umCG3bzNCOrxARn8JZhz/jdDXoRmm/68
+         upRgUNxyUo/q9hd1L/kcivJl/OlNSBGyhRPC8ofnyhxPlx7fRFc2Ni72ptCbm25tThtu
+         8qXw==
+X-Gm-Message-State: AOJu0YzGa9SnBA1Pkz48VQa1hJD3ktwqEnFFc+SxndTR151QZrYRjMQi
+	Aqf4fb6CytEtilAbFaJC5DmEvIKyQj5uC7VBdy49MEHHzWcTdUWR
+X-Google-Smtp-Source: AGHT+IEoyTlbnyTGnzcr1KQ1k8t6Om11cSSLY3fMneFfYvBYnkupOPuR7yp03nclgXZjA07Su89vKQ==
+X-Received: by 2002:a05:6a00:b93:b0:71e:6a99:4732 with SMTP id d2e1a72fcca58-720bcf82bdcmr26209275b3a.11.1730776999722;
+        Mon, 04 Nov 2024 19:23:19 -0800 (PST)
+Received: from luna.chapman.edu (sac35.chapman.edu. [206.211.154.35])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-720bc209163sm8667330b3a.92.2024.11.04.19.23.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 04 Nov 2024 19:23:19 -0800 (PST)
+From: Nataniel Farzan <natanielfarzan@gmail.com>
+To: akpm@linux-foundation.org
+Cc: linux-kernel@vger.kernel.org,
+	Nataniel Farzan <natanielfarzan@gmail.com>
+Subject: [PATCH] Improve consistency of '#error' directive messages
+Date: Mon,  4 Nov 2024 19:22:32 -0800
+Message-Id: <20241105032231.28833-1-natanielfarzan@gmail.com>
+X-Mailer: git-send-email 2.35.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: QsYDBQM_VVc3X3_Y8CPHaN4KkUGDbJGK
-X-Proofpoint-ORIG-GUID: QsYDBQM_VVc3X3_Y8CPHaN4KkUGDbJGK
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 adultscore=0
- impostorscore=0 bulkscore=0 mlxlogscore=752 spamscore=0 phishscore=0
- malwarescore=0 mlxscore=0 clxscore=1015 lowpriorityscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411050025
+Content-Transfer-Encoding: 8bit
 
-Add the APPS SMMU node for QCS615 platform. Add the dma-ranges
-to limit DMA address range to 36bit width to align with system
-architecture.
+Remove the use of contractions and use proper punctuation in #error
+directive messages that discourage the direct inclusion of header files.
 
-Signed-off-by: Qingqing Zhou <quic_qqzhou@quicinc.com>
+Signed-off-by: Nataniel Farzan <natanielfarzan@gmail.com>
 ---
- arch/arm64/boot/dts/qcom/qcs615.dtsi | 75 ++++++++++++++++++++++++++++
- 1 file changed, 75 insertions(+)
+ arch/alpha/include/asm/spinlock_types.h          | 2 +-
+ arch/arm/include/asm/spinlock_types.h            | 2 +-
+ arch/arm64/include/asm/spinlock_types.h          | 2 +-
+ arch/hexagon/include/asm/spinlock_types.h        | 2 +-
+ arch/powerpc/include/asm/simple_spinlock_types.h | 2 +-
+ arch/powerpc/include/asm/spinlock_types.h        | 2 +-
+ arch/s390/include/asm/spinlock_types.h           | 2 +-
+ arch/sh/include/asm/spinlock_types.h             | 2 +-
+ arch/xtensa/include/asm/spinlock_types.h         | 2 +-
+ include/acpi/platform/aclinux.h                  | 2 +-
+ include/linux/compiler-clang.h                   | 2 +-
+ include/linux/compiler-gcc.h                     | 2 +-
+ include/linux/pm_wakeup.h                        | 2 +-
+ include/linux/rwlock.h                           | 2 +-
+ include/linux/rwlock_api_smp.h                   | 2 +-
+ include/linux/spinlock_api_smp.h                 | 2 +-
+ include/linux/spinlock_types_up.h                | 2 +-
+ include/linux/spinlock_up.h                      | 2 +-
+ tools/include/linux/compiler-gcc.h               | 2 +-
+ 19 files changed, 19 insertions(+), 19 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/qcom/qcs615.dtsi b/arch/arm64/boot/dts/qcom/qcs615.dtsi
-index 027c5125f36b..e35fd4059073 100644
---- a/arch/arm64/boot/dts/qcom/qcs615.dtsi
-+++ b/arch/arm64/boot/dts/qcom/qcs615.dtsi
-@@ -379,6 +379,7 @@
- 	soc: soc@0 {
- 		compatible = "simple-bus";
- 		ranges = <0 0 0 0 0x10 0>;
-+		dma-ranges = <0 0 0 0 0x10 0>;
- 		#address-cells = <2>;
- 		#size-cells = <2>;
+diff --git a/arch/alpha/include/asm/spinlock_types.h b/arch/alpha/include/asm/spinlock_types.h
+index 2526fd3be5fd..05a444d77c53 100644
+--- a/arch/alpha/include/asm/spinlock_types.h
++++ b/arch/alpha/include/asm/spinlock_types.h
+@@ -3,7 +3,7 @@
+ #define _ALPHA_SPINLOCK_TYPES_H
  
-@@ -524,6 +525,80 @@
- 			reg = <0x0 0x0c3f0000 0x0 0x400>;
- 		};
+ #ifndef __LINUX_SPINLOCK_TYPES_RAW_H
+-# error "please don't include this file directly"
++# error "Please do not include this file directly."
+ #endif
  
-+		apps_smmu: iommu@15000000 {
-+			compatible = "qcom,qcs615-smmu-500", "qcom,smmu-500", "arm,mmu-500";
-+			reg = <0x0 0x15000000 0x0 0x80000>;
-+			#iommu-cells = <2>;
-+			#global-interrupts = <1>;
-+			dma-coherent;
-+
-+			interrupts = <GIC_SPI 65 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 94 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 95 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 96 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 97 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 98 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 99 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 100 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 101 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 102 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 103 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 104 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 105 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 106 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 107 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 109 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 110 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 111 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 112 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 113 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 114 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 115 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 116 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 117 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 118 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 181 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 182 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 183 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 184 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 185 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 186 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 187 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 188 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 189 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 190 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 191 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 192 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 315 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 316 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 317 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 318 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 319 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 320 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 321 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 322 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 323 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 324 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 325 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 326 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 327 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 328 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 329 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 330 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 331 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 332 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 333 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 334 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 335 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 336 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 337 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 338 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 339 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 340 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 341 IRQ_TYPE_LEVEL_HIGH>;
-+		};
-+
- 		intc: interrupt-controller@17a00000 {
- 			compatible = "arm,gic-v3";
- 			reg = <0x0 0x17a00000 0x0 0x10000>,     /* GICD */
+ typedef struct {
+diff --git a/arch/arm/include/asm/spinlock_types.h b/arch/arm/include/asm/spinlock_types.h
+index 0c14b36ef101..5404a2a96bf3 100644
+--- a/arch/arm/include/asm/spinlock_types.h
++++ b/arch/arm/include/asm/spinlock_types.h
+@@ -3,7 +3,7 @@
+ #define __ASM_SPINLOCK_TYPES_H
+ 
+ #ifndef __LINUX_SPINLOCK_TYPES_RAW_H
+-# error "please don't include this file directly"
++# error "Please do not include this file directly."
+ #endif
+ 
+ #define TICKET_SHIFT	16
+diff --git a/arch/arm64/include/asm/spinlock_types.h b/arch/arm64/include/asm/spinlock_types.h
+index 11ab1c077697..7cde3d8bd0ad 100644
+--- a/arch/arm64/include/asm/spinlock_types.h
++++ b/arch/arm64/include/asm/spinlock_types.h
+@@ -6,7 +6,7 @@
+ #define __ASM_SPINLOCK_TYPES_H
+ 
+ #if !defined(__LINUX_SPINLOCK_TYPES_RAW_H) && !defined(__ASM_SPINLOCK_H)
+-# error "please don't include this file directly"
++# error "Please do not include this file directly."
+ #endif
+ 
+ #include <asm-generic/qspinlock_types.h>
+diff --git a/arch/hexagon/include/asm/spinlock_types.h b/arch/hexagon/include/asm/spinlock_types.h
+index d5f66495b670..63add2d863e8 100644
+--- a/arch/hexagon/include/asm/spinlock_types.h
++++ b/arch/hexagon/include/asm/spinlock_types.h
+@@ -9,7 +9,7 @@
+ #define _ASM_SPINLOCK_TYPES_H
+ 
+ #ifndef __LINUX_SPINLOCK_TYPES_RAW_H
+-# error "please don't include this file directly"
++# error "Please do not include this file directly."
+ #endif
+ 
+ typedef struct {
+diff --git a/arch/powerpc/include/asm/simple_spinlock_types.h b/arch/powerpc/include/asm/simple_spinlock_types.h
+index 08243338069d..391fc19f7272 100644
+--- a/arch/powerpc/include/asm/simple_spinlock_types.h
++++ b/arch/powerpc/include/asm/simple_spinlock_types.h
+@@ -3,7 +3,7 @@
+ #define _ASM_POWERPC_SIMPLE_SPINLOCK_TYPES_H
+ 
+ #ifndef __LINUX_SPINLOCK_TYPES_RAW_H
+-# error "please don't include this file directly"
++# error "Please do not include this file directly."
+ #endif
+ 
+ typedef struct {
+diff --git a/arch/powerpc/include/asm/spinlock_types.h b/arch/powerpc/include/asm/spinlock_types.h
+index 40b01446cf75..569765fa16bc 100644
+--- a/arch/powerpc/include/asm/spinlock_types.h
++++ b/arch/powerpc/include/asm/spinlock_types.h
+@@ -3,7 +3,7 @@
+ #define _ASM_POWERPC_SPINLOCK_TYPES_H
+ 
+ #ifndef __LINUX_SPINLOCK_TYPES_RAW_H
+-# error "please don't include this file directly"
++# error "Please do not include this file directly."
+ #endif
+ 
+ #ifdef CONFIG_PPC_QUEUED_SPINLOCKS
+diff --git a/arch/s390/include/asm/spinlock_types.h b/arch/s390/include/asm/spinlock_types.h
+index b69695e39957..3653ff57d6d9 100644
+--- a/arch/s390/include/asm/spinlock_types.h
++++ b/arch/s390/include/asm/spinlock_types.h
+@@ -3,7 +3,7 @@
+ #define __ASM_SPINLOCK_TYPES_H
+ 
+ #ifndef __LINUX_SPINLOCK_TYPES_RAW_H
+-# error "please don't include this file directly"
++# error "Please do not include this file directly."
+ #endif
+ 
+ typedef struct {
+diff --git a/arch/sh/include/asm/spinlock_types.h b/arch/sh/include/asm/spinlock_types.h
+index 907bda4b1619..7cb50e68448f 100644
+--- a/arch/sh/include/asm/spinlock_types.h
++++ b/arch/sh/include/asm/spinlock_types.h
+@@ -3,7 +3,7 @@
+ #define __ASM_SH_SPINLOCK_TYPES_H
+ 
+ #ifndef __LINUX_SPINLOCK_TYPES_RAW_H
+-# error "please don't include this file directly"
++# error "Please do not include this file directly."
+ #endif
+ 
+ typedef struct {
+diff --git a/arch/xtensa/include/asm/spinlock_types.h b/arch/xtensa/include/asm/spinlock_types.h
+index 797aed7df3dd..6baaeac6248b 100644
+--- a/arch/xtensa/include/asm/spinlock_types.h
++++ b/arch/xtensa/include/asm/spinlock_types.h
+@@ -3,7 +3,7 @@
+ #define __ASM_SPINLOCK_TYPES_H
+ 
+ #if !defined(__LINUX_SPINLOCK_TYPES_RAW_H) && !defined(__ASM_SPINLOCK_H)
+-# error "please don't include this file directly"
++# error "Please do not include this file directly."
+ #endif
+ 
+ #include <asm-generic/qspinlock_types.h>
+diff --git a/include/acpi/platform/aclinux.h b/include/acpi/platform/aclinux.h
+index 565341c826e3..f3249b7df5cb 100644
+--- a/include/acpi/platform/aclinux.h
++++ b/include/acpi/platform/aclinux.h
+@@ -15,7 +15,7 @@
+ /* ACPICA external files should not include ACPICA headers directly. */
+ 
+ #if !defined(BUILDING_ACPICA) && !defined(_LINUX_ACPI_H)
+-#error "Please don't include <acpi/acpi.h> directly, include <linux/acpi.h> instead."
++#error "Please do not include <acpi/acpi.h> directly, include <linux/acpi.h> instead."
+ #endif
+ 
+ #endif
+diff --git a/include/linux/compiler-clang.h b/include/linux/compiler-clang.h
+index 4c1a39dcb624..2e7c2c282f3a 100644
+--- a/include/linux/compiler-clang.h
++++ b/include/linux/compiler-clang.h
+@@ -1,6 +1,6 @@
+ /* SPDX-License-Identifier: GPL-2.0 */
+ #ifndef __LINUX_COMPILER_TYPES_H
+-#error "Please don't include <linux/compiler-clang.h> directly, include <linux/compiler.h> instead."
++#error "Please do not include <linux/compiler-clang.h> directly, include <linux/compiler.h> instead."
+ #endif
+ 
+ /* Compiler specific definitions for Clang compiler */
+diff --git a/include/linux/compiler-gcc.h b/include/linux/compiler-gcc.h
+index cd6f9aae311f..d0ed9583743f 100644
+--- a/include/linux/compiler-gcc.h
++++ b/include/linux/compiler-gcc.h
+@@ -1,6 +1,6 @@
+ /* SPDX-License-Identifier: GPL-2.0 */
+ #ifndef __LINUX_COMPILER_TYPES_H
+-#error "Please don't include <linux/compiler-gcc.h> directly, include <linux/compiler.h> instead."
++#error "Please do not include <linux/compiler-gcc.h> directly, include <linux/compiler.h> instead."
+ #endif
+ 
+ /*
+diff --git a/include/linux/pm_wakeup.h b/include/linux/pm_wakeup.h
+index 76cd1f9f1365..222f7530806c 100644
+--- a/include/linux/pm_wakeup.h
++++ b/include/linux/pm_wakeup.h
+@@ -10,7 +10,7 @@
+ #define _LINUX_PM_WAKEUP_H
+ 
+ #ifndef _DEVICE_H_
+-# error "please don't include this file directly"
++# error "Please do not include this file directly."
+ #endif
+ 
+ #include <linux/types.h>
+diff --git a/include/linux/rwlock.h b/include/linux/rwlock.h
+index c0ef596f340b..5b87c6f4a243 100644
+--- a/include/linux/rwlock.h
++++ b/include/linux/rwlock.h
+@@ -2,7 +2,7 @@
+ #define __LINUX_RWLOCK_H
+ 
+ #ifndef __LINUX_INSIDE_SPINLOCK_H
+-# error "please don't include this file directly"
++# error "Please do not include this file directly."
+ #endif
+ 
+ /*
+diff --git a/include/linux/rwlock_api_smp.h b/include/linux/rwlock_api_smp.h
+index dceb0a59b692..31d3d1116323 100644
+--- a/include/linux/rwlock_api_smp.h
++++ b/include/linux/rwlock_api_smp.h
+@@ -2,7 +2,7 @@
+ #define __LINUX_RWLOCK_API_SMP_H
+ 
+ #ifndef __LINUX_SPINLOCK_API_SMP_H
+-# error "please don't include this file directly"
++# error "Please do not include this file directly."
+ #endif
+ 
+ /*
+diff --git a/include/linux/spinlock_api_smp.h b/include/linux/spinlock_api_smp.h
+index 89eb6f4c659c..9ecb0ab504e3 100644
+--- a/include/linux/spinlock_api_smp.h
++++ b/include/linux/spinlock_api_smp.h
+@@ -2,7 +2,7 @@
+ #define __LINUX_SPINLOCK_API_SMP_H
+ 
+ #ifndef __LINUX_INSIDE_SPINLOCK_H
+-# error "please don't include this file directly"
++# error "Please do not include this file directly."
+ #endif
+ 
+ /*
+diff --git a/include/linux/spinlock_types_up.h b/include/linux/spinlock_types_up.h
+index 7f86a2016ac5..fc4e2d017c20 100644
+--- a/include/linux/spinlock_types_up.h
++++ b/include/linux/spinlock_types_up.h
+@@ -2,7 +2,7 @@
+ #define __LINUX_SPINLOCK_TYPES_UP_H
+ 
+ #ifndef __LINUX_SPINLOCK_TYPES_RAW_H
+-# error "please don't include this file directly"
++# error "Please do not include this file directly."
+ #endif
+ 
+ /*
+diff --git a/include/linux/spinlock_up.h b/include/linux/spinlock_up.h
+index c87204247592..1e84e71ca495 100644
+--- a/include/linux/spinlock_up.h
++++ b/include/linux/spinlock_up.h
+@@ -2,7 +2,7 @@
+ #define __LINUX_SPINLOCK_UP_H
+ 
+ #ifndef __LINUX_INSIDE_SPINLOCK_H
+-# error "please don't include this file directly"
++# error "Please do not include this file directly."
+ #endif
+ 
+ #include <asm/processor.h>	/* for cpu_relax() */
+diff --git a/tools/include/linux/compiler-gcc.h b/tools/include/linux/compiler-gcc.h
+index 62e7c901ac28..e20f98e14e81 100644
+--- a/tools/include/linux/compiler-gcc.h
++++ b/tools/include/linux/compiler-gcc.h
+@@ -1,6 +1,6 @@
+ /* SPDX-License-Identifier: GPL-2.0 */
+ #ifndef _TOOLS_LINUX_COMPILER_H_
+-#error "Please don't include <linux/compiler-gcc.h> directly, include <linux/compiler.h> instead."
++#error "Please do not include <linux/compiler-gcc.h> directly, include <linux/compiler.h> instead."
+ #endif
+ 
+ /*
 -- 
-2.17.1
+2.35.3
 
 
