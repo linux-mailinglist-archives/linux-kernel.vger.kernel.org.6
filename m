@@ -1,118 +1,107 @@
-Return-Path: <linux-kernel+bounces-396430-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396432-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35F929BCCFB
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 13:45:58 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6CD19BCCFF
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 13:48:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E17DB1F22146
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 12:45:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4F115B218FA
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 12:47:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 509E71D5AA1;
-	Tue,  5 Nov 2024 12:45:52 +0000 (UTC)
-Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D47681D5AB6;
+	Tue,  5 Nov 2024 12:47:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IF7yjyQ0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F9151D0B82
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 12:45:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E9141D0B82
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 12:47:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730810751; cv=none; b=V0h1KR1Dbtet1c2rFL5uCqjKN71A16gDkL2LutF+BTvG/qnzbuvR2PVloznvzBiao2sAyptyQlM8sF4zfUDHWVaK6B0SGe3y4NBlzeBhnSqS+Y0mYWauAU858wuKh0U4/X2OrtIvr7pxp2CzS24bSZ2dFYYQy0+Sctzts9YNmQo=
+	t=1730810871; cv=none; b=lXwJVS1EFbBEvFEMvG9J/qF24qmL1T9MaO3qE9faGKLXhWm+YG1Zer8FO1ZHTrmtaHoDZq92anvKrIWbC54PFrYqsydu/pz2Ibkz1vLxRLRBeMMmSJ0/0aB4fEqgU+RVRf4g0YeW1aK39+FFNatYcWvdyJyeYgnHTlSOuVHhcM8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730810751; c=relaxed/simple;
-	bh=K4M37bx0bCuCvwDIyvewH+1X5UbY++9WoXria3y7kCk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aFxvBQXdyBLJJ0bUboO5Dcwsdude+KzhZCcRS/wF36ddkSxN4HLOKPeKJc2JlbEzJKeObnzSVLy6O4BjsYGCvSIXJFQIHVQNsKzLSO918YJsWXK10R2Vf5a5kEEmVg/qchdiNukNFER9eyxRiAdA5I5AKoHhxmVuf1taGWCozC8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 2BF05E000C;
-	Tue,  5 Nov 2024 12:45:44 +0000 (UTC)
-Message-ID: <bedac8d9-4ba4-427c-9323-edcdbd7876ee@ghiti.fr>
-Date: Tue, 5 Nov 2024 13:45:44 +0100
+	s=arc-20240116; t=1730810871; c=relaxed/simple;
+	bh=lveH6tT8PYd75EaksRx/fIK3ax0m1rOysCm//zZ0jbY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qlEEmjsziIm4dR8SY5CEfPD14NnM+oZ0MZYvINixw9haWiQZwoT8i2Lalach+f2ZcVM7nComINgRmlWTziOfikziPrcMjD74d/6372XqU2zYNXCsZQrLw03oyCMxiH7433rJ+EHWuA5cVSX8UkMf0jHCzroPK5KUhCAUeaE0ASI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IF7yjyQ0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9A96C4CED2
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 12:47:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730810870;
+	bh=lveH6tT8PYd75EaksRx/fIK3ax0m1rOysCm//zZ0jbY=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=IF7yjyQ0JMG4lqmP309bmGa0ewkjehQ2pSMgcaAm/+j5iSFS4sLxWASfhA773qrGt
+	 N9k6W+RDjVBHK0tolLAgAwpBz+RD/BWQIqLwLkIeTC4ex7Kk+QM2sUPdzqpP3uQfne
+	 7kHqt2YJ9leuqgZX970b67wSvUkyg9EeA3Vg6O2MJMOkAyipQbenJY2rtuIffp9Srb
+	 yg2/3ViNI9LxBLnju6HADDVgPdWBt9vz12C3BHobp3Hkiv6ji96Ay4gn9DJA3lCj70
+	 dIc7S+eKlR2YN3daFnOwgvfPYp+DXQI3sy/uG1DfhCC7+/eap54qWU0+gbQpOJgaa2
+	 lZjsSgJBAcjkw==
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a9acafdb745so929657766b.0
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 04:47:50 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCXcESokqNK4BKORkGZ0nVT9H1tp3mLMw0besikbINqhqK/cXXMCUCXoNrlpxhl16bvd1fCnJSkD8HTBEBE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxctXWvBljr1nM5t+wXW+ucTPEnt3tolIzk/qfd5ktxPlPjn1PW
+	u+Wo9akS3L2msJdqZBMNaIb+k1yPuAQGhPZDfv8NK5LZxEin7gh1DXnoYgnjFZ6sflkr4/0Qapw
+	7kNiv2dCQ6lJHEGd9LX3JEGW21/w=
+X-Google-Smtp-Source: AGHT+IFJof42E96idgajIHqchgbc252pqsbEamBR/iwZg6ZGziZCu88uMtfAh0CLeFO7bPYac0zaeGXRXvPRPuhpJDM=
+X-Received: by 2002:a17:907:7205:b0:a99:facf:cfc with SMTP id
+ a640c23a62f3a-a9e55a87862mr1669744566b.17.1730810869475; Tue, 05 Nov 2024
+ 04:47:49 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RESEND PATCH V4 1/3] riscv: mm: Prepare for reusing PTE RSW
- bit(9)
-Content-Language: en-US
-To: Chunyan Zhang <zhangchunyan@iscas.ac.cn>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
- Chunyan Zhang <zhang.lyra@gmail.com>
-References: <20240830011101.3189522-1-zhangchunyan@iscas.ac.cn>
- <20240830011101.3189522-2-zhangchunyan@iscas.ac.cn>
-From: Alexandre Ghiti <alex@ghiti.fr>
-In-Reply-To: <20240830011101.3189522-2-zhangchunyan@iscas.ac.cn>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-GND-Sasl: alex@ghiti.fr
+References: <20241105123906.26072-1-yangtiezhu@loongson.cn>
+In-Reply-To: <20241105123906.26072-1-yangtiezhu@loongson.cn>
+From: Huacai Chen <chenhuacai@kernel.org>
+Date: Tue, 5 Nov 2024 20:47:36 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H7tDvxVeT5nJSVL88_OGzVuE-rJu=YJTjMd6KpenvWbgw@mail.gmail.com>
+Message-ID: <CAAhV-H7tDvxVeT5nJSVL88_OGzVuE-rJu=YJTjMd6KpenvWbgw@mail.gmail.com>
+Subject: Re: [PATCH v2 0/5] Add jump table support for objtool on LoongArch
+To: Tiezhu Yang <yangtiezhu@loongson.cn>, Jinyang He <hejinyang@loongson.cn>
+Cc: Josh Poimboeuf <jpoimboe@kernel.org>, Peter Zijlstra <peterz@infradead.org>, loongarch@lists.linux.dev, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Chunyan,
+Hi, Jinyang,
 
-On 30/08/2024 03:10, Chunyan Zhang wrote:
-> The PTE bit(9) on RISC-V is reserved for software, it is used by DEVMAP
-> now which has to be disabled if we want to use bit(9) for other features,
-> since there's no more free PTE bit on RISC-V now.
+Could you please take some time to review this series?
+
+Huacai
+
+On Tue, Nov 5, 2024 at 8:39=E2=80=AFPM Tiezhu Yang <yangtiezhu@loongson.cn>=
+ wrote:
 >
-> So to make ARCH_HAS_PTE_DEVMAP selectable, this patch uses it as
-> the build condition of devmap definitions.
+> This series is based on 6.12-rc6, tested with the upstream mainline
+> binutils, GCC and Clang, all the changes are under tools/objtool and
+> arch/loongarch.
 >
-> Signed-off-by: Chunyan Zhang <zhangchunyan@iscas.ac.cn>
-> ---
->   arch/riscv/include/asm/pgtable-64.h   | 2 +-
->   arch/riscv/include/asm/pgtable-bits.h | 6 ++++++
->   2 files changed, 7 insertions(+), 1 deletion(-)
+> It is time to remove the compiler option -fno-jump-tables to enable
+> jump table for objtool if the compiler is GCC and it has the compiler
+> option -mannotate-tablejump, the next work is to add the corresponding
+> support with Clang after addressing some corner issues due to different
+> compiler behaviors.
 >
-> diff --git a/arch/riscv/include/asm/pgtable-64.h b/arch/riscv/include/asm/pgtable-64.h
-> index 0897dd99ab8d..babb8d2b0f0b 100644
-> --- a/arch/riscv/include/asm/pgtable-64.h
-> +++ b/arch/riscv/include/asm/pgtable-64.h
-> @@ -398,7 +398,7 @@ static inline struct page *pgd_page(pgd_t pgd)
->   #define p4d_offset p4d_offset
->   p4d_t *p4d_offset(pgd_t *pgd, unsigned long address);
->   
-> -#ifdef CONFIG_TRANSPARENT_HUGEPAGE
-> +#if defined(CONFIG_TRANSPARENT_HUGEPAGE) && defined(CONFIG_ARCH_HAS_PTE_DEVMAP)
->   static inline int pte_devmap(pte_t pte);
->   static inline pte_t pmd_pte(pmd_t pmd);
->   
-> diff --git a/arch/riscv/include/asm/pgtable-bits.h b/arch/riscv/include/asm/pgtable-bits.h
-> index a8f5205cea54..5bcc73430829 100644
-> --- a/arch/riscv/include/asm/pgtable-bits.h
-> +++ b/arch/riscv/include/asm/pgtable-bits.h
-> @@ -19,7 +19,13 @@
->   #define _PAGE_SOFT      (3 << 8)    /* Reserved for software */
->   
->   #define _PAGE_SPECIAL   (1 << 8)    /* RSW: 0x1 */
-> +
-> +#ifdef CONFIG_ARCH_HAS_PTE_DEVMAP
->   #define _PAGE_DEVMAP    (1 << 9)    /* RSW, devmap */
-> +#else
-> +#define _PAGE_DEVMAP	0
-> +#endif /* CONFIG_ARCH_HAS_PTE_DEVMAP */
-> +
->   #define _PAGE_TABLE     _PAGE_PRESENT
->   
->   /*
-
-
-There is a small inconsistency in our code: pte_devmap() is protected by 
-a #ifdef but pte_mkdevmap() is not, I guess that's why you had to define 
-_PAGE_DEVMAP if !CONFIG_ARCH_HAS_PTE_DEVMAP.
-
-I'd be in favor of removing the #ifdef around pte_devmap() too.
-
-Thanks,
-
-Alex
-
+> Tiezhu Yang (5):
+>   objtool: Handle various symbol types for rodata
+>   objtool: Handle special cases of discard.reachable
+>   objtool/LoongArch: Add support for switch table
+>   objtool/LoongArch: Add support for goto table
+>   LoongArch: Enable jump table with GCC for objtool
+>
+>  arch/loongarch/Kconfig                 |  3 +
+>  arch/loongarch/Makefile                |  9 +++
+>  tools/objtool/arch/loongarch/special.c | 83 +++++++++++++++++++++++++-
+>  tools/objtool/check.c                  | 38 ++++++++++--
+>  4 files changed, 128 insertions(+), 5 deletions(-)
+>
+> --
+> 2.42.0
+>
 
