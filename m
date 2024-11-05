@@ -1,67 +1,79 @@
-Return-Path: <linux-kernel+bounces-396103-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396104-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 875739BC7DC
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 09:18:38 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6FA19BC7DE
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 09:19:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47B46284708
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 08:18:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F72F1C22389
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 08:19:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F8D620512E;
-	Tue,  5 Nov 2024 08:15:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCE2B1CCEC9;
+	Tue,  5 Nov 2024 08:15:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="VTwh+zDl";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="OZsioKgP"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="W3XftrgP"
+Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2EDF204932
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 08:15:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 222871CCB44;
+	Tue,  5 Nov 2024 08:15:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730794502; cv=none; b=lnJnAecdwBeSQemfTxJr0uxErFo11EFchmyyMKS4/QVlVYjalkBd7IHSl58o30fk6FDJLvLEXU9QneuD7bUGVBQerdwm2gyvfUBN0BDm8P78EpJ1AHNVnmfP4sIXeysaIYx9VMetFDeqKrZ7X7wQz0EXguFCihwJbFoPCePPT9I=
+	t=1730794511; cv=none; b=UfAqK4ZVkhlq5X5yqUW4q4KvMWGlfBJlYbRQmMOqKmRDD3DHgI9RYha00X58CUzU/kvfhLHD2zeMtJ+aE/FxCm/fKlyQtny0NVtsSSpfucDa7lNRrNSMOhr3Z6PdTdQcbIbstBhTC8zQjOwvjFCOxp1qFQbvoq/V4WG6gFdNw0k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730794502; c=relaxed/simple;
-	bh=pcOy4Ch+2qNU2o58NMhqPNimeFTq5CWfkqW9pKoDuEQ=;
-	h=Message-ID:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Date; b=DeqjyFYUGK1FbuL6MpmwuEDcmGucGnbxVBQkB3kpvzkqXpsQGzs0ANH53mUxaUl12D+kqVkiFKlJQX4wSdwylAPlXzBvQFLSiN9JzWndB986pjEDrrl6s0iymtquydVQ/7hvya+gcwbt0EwJd6LQUyjqDjqEfKcok5jtkRDKofs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=VTwh+zDl; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=OZsioKgP; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Message-ID: <20241105064214.318837272@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1730794499;
+	s=arc-20240116; t=1730794511; c=relaxed/simple;
+	bh=fYWyjnHf/uL70wpODMk6x39rt5fx0lWWLPlSH3nu71E=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=MGZNaeI9RKgV8bl4mof2f5jqlI01i8dAq8jDZBOCLXKQmxnrXvmQHGh669jtc8Mko1Sns6rWQHtDKjDwvua9qxBvoE6NoiHABTq6OdA5YxdWafEz/AbKyjX4EYYVVJkI7vDg6Yo7K8pnCD7+1a+57wIBMuDYQPZvaZTHdx4xBuU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=W3XftrgP; arc=none smtp.client-ip=217.70.183.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 7156C1BF203;
+	Tue,  5 Nov 2024 08:15:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1730794506;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 references:references; bh=CPnchhOLepqueHqgrg5lKLbIFHFsL+lVYOmF9AdWSew=;
-	b=VTwh+zDl2v5GaR36diQGbrHKq7RJ0egy7spPRT8mgbYcAs8SvHgk37nm602RrD1IR89AVm
-	daClBGdABw+I45FGm3o+7Pr5eVPYNUW967n77R3fYzoM5mACQQ9253LnlMkrHOLsjFhJ3l
-	cuUpz6UXrm6phRlKYiBBy5G9kIHECQmg8hiFpyqvyHd4l0lrPdhNihLHFg2Bhqrsf7aQlK
-	QqdpIbu+SZmOnuMWKESERl9DByUxl5W3icbhamsmYH7X/H/sVPcpJw2qWyUG60QssvZL9s
-	KlzKEo5UiXBA1mXih2n6beygUDXYO1yV+rxKZC4g83bmau6xEMm0VxTqd+N46A==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1730794499;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 references:references; bh=CPnchhOLepqueHqgrg5lKLbIFHFsL+lVYOmF9AdWSew=;
-	b=OZsioKgPjyPbFNwNV58tCy2Qt21vbDfGihLxJeNkaLVYVi2ALg/TcR1JoavDM4rIkx3Evz
-	d7bNz9i03fhh4VCQ==
-From: Thomas Gleixner <tglx@linutronix.de>
-To: LKML <linux-kernel@vger.kernel.org>
-Cc: Anna-Maria Behnsen <anna-maria@linutronix.de>,
- Frederic Weisbecker <frederic@kernel.org>,
- John Stultz <jstultz@google.com>,
- Peter Zijlstra <peterz@infradead.org>,
- Ingo Molnar <mingo@kernel.org>,
- Stephen Boyd <sboyd@kernel.org>,
- Eric Biederman <ebiederm@xmission.com>,
- Oleg Nesterov <oleg@redhat.com>
-Subject: [patch V7 21/21] alarmtimers: Remove return value from alarm
- functions
-References: <20241105063544.565410398@linutronix.de>
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ca33zuGwKc/TbJFgjCMVbMBjtlcpXKFtBS6UyUFQZLk=;
+	b=W3XftrgP6+DRXeawkAxWFeub2HOvaBi4/cqGthwJk/k0H7dhRZOxkWzoTt2Tf8U/AejxG7
+	D9HHEp/3Cy3p2gavw77i4D2i+vGhZkRm9NxwFI9kZpseCPI7ZG5ZESBZ+TteCYlGZyOfJ8
+	X0JJwxB5l0qRA2apYixLCQKoPKGSrEdbSM9TeRN8mDMverce6WERW2If7AIwx9Jw+mWwDF
+	mpsiIFA6XqjtJfb9akTcFFlbA5/C5XJxLibt3QnTKZ7oGonVgma2JufoLU0Wc5EvJfjjBR
+	DZW3PUujGAyCrY9shulkPZHBoNfMMeELax/kQme0AZqz/LirUdUVNig+1gm7nA==
+Date: Tue, 5 Nov 2024 09:15:03 +0100
+From: Herve Codina <herve.codina@bootlin.com>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Maxime Ripard <mripard@kernel.org>, Andrzej Hajda
+ <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>,
+ Robert Foss <rfoss@kernel.org>, Jonas Karlman <jonas@kwiboo.se>, Jernej
+ Skrabec <jernej.skrabec@gmail.com>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann
+ <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Marek Vasut
+ <marex@denx.de>, dri-devel@lists.freedesktop.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Luca Ceresoli
+ <luca.ceresoli@bootlin.com>, Thomas Petazzoni
+ <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH 2/2] drm: bridge: ti-sn65dsi83: Add error recovery
+ mechanism
+Message-ID: <20241105091503.48f69586@bootlin.com>
+In-Reply-To: <20241028140913.GG6081@pendragon.ideasonboard.com>
+References: <20241024095539.1637280-1-herve.codina@bootlin.com>
+	<20241024095539.1637280-3-herve.codina@bootlin.com>
+	<20241027162350.GA15853@pendragon.ideasonboard.com>
+	<20241028091331.6f67e29e@bootlin.com>
+	<20241028112857.GF24052@pendragon.ideasonboard.com>
+	<20241028-nebulous-yellow-dragon-2cfb5f@houat>
+	<20241028132858.GE6081@pendragon.ideasonboard.com>
+	<20241028-great-charming-flounder-23fc9b@houat>
+	<20241028140913.GG6081@pendragon.ideasonboard.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -69,169 +81,101 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Date: Tue,  5 Nov 2024 09:14:58 +0100 (CET)
+Content-Transfer-Encoding: 8bit
+X-GND-Sasl: herve.codina@bootlin.com
 
-From: Thomas Gleixner <tglx@linutronix.de>
+Hi Maxime, Laurent,
 
-Now that the SIG_IGN problem is solved in the core code, the alarmtimer
-callbacks do not require a return value anymore.
+On Mon, 28 Oct 2024 16:09:13 +0200
+Laurent Pinchart <laurent.pinchart@ideasonboard.com> wrote:
 
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
----
- drivers/power/supply/charger-manager.c |    3 +--
- fs/timerfd.c                           |    4 +---
- include/linux/alarmtimer.h             |   10 ++--------
- kernel/time/alarmtimer.c               |   16 +++++-----------
- net/netfilter/xt_IDLETIMER.c           |    4 +---
- 5 files changed, 10 insertions(+), 27 deletions(-)
----
+> On Mon, Oct 28, 2024 at 02:55:47PM +0100, Maxime Ripard wrote:
+> > On Mon, Oct 28, 2024 at 03:28:58PM +0200, Laurent Pinchart wrote:  
+> > > On Mon, Oct 28, 2024 at 01:21:45PM +0100, Maxime Ripard wrote:  
+> > > > On Mon, Oct 28, 2024 at 01:28:57PM +0200, Laurent Pinchart wrote:  
+> > > > > On Mon, Oct 28, 2024 at 09:13:31AM +0100, Herve Codina wrote:  
+> > > > > > On Sun, 27 Oct 2024 18:23:50 +0200 Laurent Pinchart wrote:
+> > > > > > 
+> > > > > > [...]  
+> > > > > > > > +static int sn65dsi83_reset_pipeline(struct sn65dsi83 *sn65dsi83)
+> > > > > > > > +{
+> > > > > > > > +	struct drm_device *dev = sn65dsi83->bridge.dev;
+> > > > > > > > +	struct drm_modeset_acquire_ctx ctx;
+> > > > > > > > +	struct drm_atomic_state *state;
+> > > > > > > > +	int err;
+> > > > > > > > +
+> > > > > > > > +	/* Use operation done in drm_atomic_helper_suspend() followed by
+> > > > > > > > +	 * operation done in drm_atomic_helper_resume() but without releasing
+> > > > > > > > +	 * the lock between suspend()/resume()
+> > > > > > > > +	 */
+> > > > > > > > +
+> > > > > > > > +	DRM_MODESET_LOCK_ALL_BEGIN(dev, ctx, 0, err);
+> > > > > > > > +
+> > > > > > > > +	state = drm_atomic_helper_duplicate_state(dev, &ctx);
+> > > > > > > > +	if (IS_ERR(state)) {
+> > > > > > > > +		err = PTR_ERR(state);
+> > > > > > > > +		goto unlock;
+> > > > > > > > +	}
+> > > > > > > > +
+> > > > > > > > +	err = drm_atomic_helper_disable_all(dev, &ctx);
+> > > > > > > > +	if (err < 0)
+> > > > > > > > +		goto unlock;
+> > > > > > > > +
+> > > > > > > > +	drm_mode_config_reset(dev);
+> > > > > > > > +
+> > > > > > > > +	err = drm_atomic_helper_commit_duplicated_state(state, &ctx);    
+> > > > > > > 
+> > > > > > > Committing a full atomic state from a bridge driver in an asynchronous
+> > > > > > > way seems quite uncharted territory, and it worries me. It's also a very
+> > > > > > > heavyweight, you disable all outputs here, instead of focussing on the
+> > > > > > > output connected to the bridge. Can you either implement something more
+> > > > > > > local, resetting the bridge only, or create a core helper to handle this
+> > > > > > > kind of situation, on a per-output basis ?  
+> > > > > > 
+> > > > > > A full restart of the bridge (power off/on) is needed and so we need to
+> > > > > > redo the initialization sequence. This initialization sequence has to be
+> > > > > > done with the DSI data lanes (bridge inputs) driven in LP11 state and so
+> > > > > > without any video stream. Only focussing on bridge outputs will not be
+> > > > > > sufficient. That's why I brought the pipeline down and restarted it.  
+> > > > > 
+> > > > > Fair point.
+> > > > >   
+> > > > > > Of course, I can copy/paste sn65dsi83_reset_pipeline() to a core helper
+> > > > > > function. Is drm_atomic_helper_reset_all() could be a good candidate?  
+> > > > > 
+> > > > > The helper should operate on a single output, unrelated outputs should
+> > > > > not be affected.  
+> > > > 
+> > > > Also, you don't want to reset anything, you just want the last commit to
+> > > > be replayed.  
+> > > 
+> > > I'm not sure about that. If the last commit is just a page flip, that
+> > > won't help, will it ?  
+> > 
+> > The alternative would be that you start anew with a blank state, which
+> > effectively drops every configuration that has been done by userspace.
+> > This is terrible.
+> > 
+> > And a page flip wouldn't have affected the connector and
+> > connector->state would still be to the last state that affected it, so
+> > it would work.  
+> 
+> Ah right, you didn't mean replaying the last commit then, but first
+> disabling the output and then restoring the current state ? That should
+> work.
+> 
 
---- a/drivers/power/supply/charger-manager.c
-+++ b/drivers/power/supply/charger-manager.c
-@@ -1412,10 +1412,9 @@ static inline struct charger_desc *cm_ge
- 	return dev_get_platdata(&pdev->dev);
- }
- 
--static enum alarmtimer_restart cm_timer_func(struct alarm *alarm, ktime_t now)
-+static void cm_timer_func(struct alarm *alarm, ktime_t now)
- {
- 	cm_timer_set = false;
--	return ALARMTIMER_NORESTART;
- }
- 
- static int charger_manager_probe(struct platform_device *pdev)
---- a/fs/timerfd.c
-+++ b/fs/timerfd.c
-@@ -79,13 +79,11 @@ static enum hrtimer_restart timerfd_tmrp
- 	return HRTIMER_NORESTART;
- }
- 
--static enum alarmtimer_restart timerfd_alarmproc(struct alarm *alarm,
--	ktime_t now)
-+static void timerfd_alarmproc(struct alarm *alarm, ktime_t now)
- {
- 	struct timerfd_ctx *ctx = container_of(alarm, struct timerfd_ctx,
- 					       t.alarm);
- 	timerfd_triggered(ctx);
--	return ALARMTIMER_NORESTART;
- }
- 
- /*
---- a/include/linux/alarmtimer.h
-+++ b/include/linux/alarmtimer.h
-@@ -20,12 +20,6 @@ enum alarmtimer_type {
- 	ALARM_BOOTTIME_FREEZER,
- };
- 
--enum alarmtimer_restart {
--	ALARMTIMER_NORESTART,
--	ALARMTIMER_RESTART,
--};
--
--
- #define ALARMTIMER_STATE_INACTIVE	0x00
- #define ALARMTIMER_STATE_ENQUEUED	0x01
- 
-@@ -42,14 +36,14 @@ enum alarmtimer_restart {
- struct alarm {
- 	struct timerqueue_node	node;
- 	struct hrtimer		timer;
--	enum alarmtimer_restart	(*function)(struct alarm *, ktime_t now);
-+	void			(*function)(struct alarm *, ktime_t now);
- 	enum alarmtimer_type	type;
- 	int			state;
- 	void			*data;
- };
- 
- void alarm_init(struct alarm *alarm, enum alarmtimer_type type,
--		enum alarmtimer_restart (*function)(struct alarm *, ktime_t));
-+		void (*function)(struct alarm *, ktime_t));
- void alarm_start(struct alarm *alarm, ktime_t start);
- void alarm_start_relative(struct alarm *alarm, ktime_t start);
- void alarm_restart(struct alarm *alarm);
---- a/kernel/time/alarmtimer.c
-+++ b/kernel/time/alarmtimer.c
-@@ -321,7 +321,7 @@ static int alarmtimer_resume(struct devi
- 
- static void
- __alarm_init(struct alarm *alarm, enum alarmtimer_type type,
--	     enum alarmtimer_restart (*function)(struct alarm *, ktime_t))
-+	     void (*function)(struct alarm *, ktime_t))
- {
- 	timerqueue_init(&alarm->node);
- 	alarm->timer.function = alarmtimer_fired;
-@@ -337,7 +337,7 @@ static void
-  * @function: callback that is run when the alarm fires
-  */
- void alarm_init(struct alarm *alarm, enum alarmtimer_type type,
--		enum alarmtimer_restart (*function)(struct alarm *, ktime_t))
-+		void (*function)(struct alarm *, ktime_t))
- {
- 	hrtimer_init(&alarm->timer, alarm_bases[type].base_clockid,
- 		     HRTIMER_MODE_ABS);
-@@ -530,14 +530,12 @@ static enum alarmtimer_type clock2alarm(
-  *
-  * Return: whether the timer is to be restarted
-  */
--static enum alarmtimer_restart alarm_handle_timer(struct alarm *alarm, ktime_t now)
-+static void alarm_handle_timer(struct alarm *alarm, ktime_t now)
- {
- 	struct k_itimer *ptr = container_of(alarm, struct k_itimer, it.alarm.alarmtimer);
- 
- 	guard(spinlock_irqsave)(&ptr->it_lock);
- 	posix_timer_queue_signal(ptr);
--
--	return ALARMTIMER_NORESTART;
- }
- 
- /**
-@@ -698,18 +696,14 @@ static int alarm_timer_create(struct k_i
-  * @now: time at the timer expiration
-  *
-  * Wakes up the task that set the alarmtimer
-- *
-- * Return: ALARMTIMER_NORESTART
-  */
--static enum alarmtimer_restart alarmtimer_nsleep_wakeup(struct alarm *alarm,
--								ktime_t now)
-+static void alarmtimer_nsleep_wakeup(struct alarm *alarm, ktime_t now)
- {
- 	struct task_struct *task = alarm->data;
- 
- 	alarm->data = NULL;
- 	if (task)
- 		wake_up_process(task);
--	return ALARMTIMER_NORESTART;
- }
- 
- /**
-@@ -761,7 +755,7 @@ static int alarmtimer_do_nsleep(struct a
- 
- static void
- alarm_init_on_stack(struct alarm *alarm, enum alarmtimer_type type,
--		    enum alarmtimer_restart (*function)(struct alarm *, ktime_t))
-+		    void (*function)(struct alarm *, ktime_t))
- {
- 	hrtimer_init_on_stack(&alarm->timer, alarm_bases[type].base_clockid,
- 			      HRTIMER_MODE_ABS);
---- a/net/netfilter/xt_IDLETIMER.c
-+++ b/net/netfilter/xt_IDLETIMER.c
-@@ -107,14 +107,12 @@ static void idletimer_tg_expired(struct
- 	schedule_work(&timer->work);
- }
- 
--static enum alarmtimer_restart idletimer_tg_alarmproc(struct alarm *alarm,
--							  ktime_t now)
-+static void idletimer_tg_alarmproc(struct alarm *alarm, ktime_t now)
- {
- 	struct idletimer_tg *timer = alarm->data;
- 
- 	pr_debug("alarm %s expired\n", timer->attr.attr.name);
- 	schedule_work(&timer->work);
--	return ALARMTIMER_NORESTART;
- }
- 
- static int idletimer_check_sysfs_name(const char *name, unsigned int size)
+Thanks for the feedback.
 
+If I understand correctly, I should try to disable the output.
+What is the 'output' exactly, the connector?
+How can I disable it? Can you give me some pointers?
+
+Further more, is disabling the "output" disable the whole path where the
+bridge is located?
+I mean, I need to power off/on the bridge and re-init it with its input DSI
+lines in LP11.
+
+Best regards,
+Hervé
 
