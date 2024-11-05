@@ -1,114 +1,129 @@
-Return-Path: <linux-kernel+bounces-395858-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395859-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F9A29BC405
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 04:44:55 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 611FD9BC40C
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 04:47:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EBA93B21515
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 03:44:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DED73B2170C
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 03:47:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 583AE1885AA;
-	Tue,  5 Nov 2024 03:44:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A75F318C35C;
+	Tue,  5 Nov 2024 03:47:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="E4slBiCB"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XFesyRkC"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41D9E183CC9;
-	Tue,  5 Nov 2024 03:44:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49D9217C20F;
+	Tue,  5 Nov 2024 03:47:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730778285; cv=none; b=Sivtvlq2N4OHH1tShnxODbhN0vjaux5j9CX/z/FWvFHKuztDaDZHrw/EouQBrZ72JOHBO8EeNL7gGRX9aF89KFGOBaavdLEu4LEUYJBmkVW9gvt5XiTruaIoSvo3nitpcyVY6NOGz0TuDcCQtqxV+1KZ5OhdfsbUfXSdzs46B2U=
+	t=1730778429; cv=none; b=hM67S6HRiX+azKc3qd8oACdwmWw/Dausvzo5O/af3nv8xr0DYQ/V6zz7kyZMa6T4eNZxOgaq5x50fWJvyI7pxkoM/Tp2J1GA4em4SgSysE22A3gIBd+BFIHybLKReiiFSrzPf5i295zIfVVYMfHY0HjRWxRer0B+7xpgj0lmkKA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730778285; c=relaxed/simple;
-	bh=ZMIJ1QMBpMwinYOjDXlgaW4tX7wuHKAf2TSd+YOKoIE=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=Fg0RDPywq0R3O51FJaNNCzVMJk9XHF8tCbtPjrmVJvJ9pM6bdu18ZAccte9fgBsIhufyxLh+LWYIqMYk+rdT2dub+wU+8XiDPDXOkwHFpAfwyigzQEjlV/n5hZDehQ1HnkBtykmzzo+rNtQKsfATmeDjQADZRaDPYEJOmhJUd3I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=E4slBiCB; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1730778274;
-	bh=lUctEdvvWTVpaaLlyCFZ0Y/zWHdHD/DQDozK+5zDi3w=;
-	h=Date:From:To:Cc:Subject:From;
-	b=E4slBiCBIsdqkRDfKRAl7PRGvXUEnWu/lLTyX3jx3GM7QyZFlNpKEPwP2ftgc5KiK
-	 IbdbTmTr6VgWvKnoWidCMXvlO5zi7cxdu8bjHT+SfvbTQ58n8zLl9dQTqcabpBVpl0
-	 6ZYRMWXx0fKfl5cmsfeP3kPVGFYsWXvfEGIl6nWjnC1ivVmaIb20cZPY5YlkSbJQjr
-	 Kp4aY+oMmBrd0Gv2xQguS3vM2xV+bH0hAwLYmAe8W84KQXqqIFnBGWcItvvhiAXXxJ
-	 f+P7p7HGZsRijpMnemb3P1uG2EGfTnRadyp/zy8G7lEevbpv1kdKzo59MGsUWYnAA2
-	 mJjPptjdbZvIw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XjDjZ441mz4wy9;
-	Tue,  5 Nov 2024 14:44:34 +1100 (AEDT)
-Date: Tue, 5 Nov 2024 14:44:35 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Rob Herring <robh@kernel.org>, Andy Gross <agross@kernel.org>
-Cc: Abel Vesa <abel.vesa@linaro.org>, Bjorn Andersson
- <andersson@kernel.org>, Jingyi Wang <quic_jingyw@quicinc.com>, Linux Kernel
- Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: manual merge of the devicetree tree with the qcom tree
-Message-ID: <20241105144435.1d80d910@canb.auug.org.au>
+	s=arc-20240116; t=1730778429; c=relaxed/simple;
+	bh=8TsvSQbE65UhTUrEuiAcFPCLHnlzDnvn34YkdDVwTWo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=F63Qp2ghnCobxh41yp9PPwLEVUmEakySjaUAI8uN5tebL8wqKqHc1HvkUkhzIHwh4ueSdcC9JlHOZMCoF8nTb9nC0eozVgmRv1tLE6yTt8dy049HRdc+xoIf7TY8dO/LdpAJcFo7nBWzfTo/NhPnRSSdjOQAlJkDwvL6FQSuG8g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XFesyRkC; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730778427; x=1762314427;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=8TsvSQbE65UhTUrEuiAcFPCLHnlzDnvn34YkdDVwTWo=;
+  b=XFesyRkCCGBAeaTFBgbC3VJ2WEeE9914Hvc8JX2OaAckVtMWGfAv0WkP
+   O8YVGIivMTLXf0LqeyhlI1+LaMQjefmfqRetfH/KCcSNeM3PAPwWyA+OQ
+   OHnbhN2GBTSeRTDbXTW2rvauTPlwow3i0qyxTfn68uE/8fbs0A9oV/m0a
+   6gpBDBGONfDgy2+hXILE9jm2G5Lc71Sma1S+0BglzftxzTViGYg7msoNc
+   WbcYbH0HfPwUnuDQYE468SNMY9c//elNihqFJ7Pve67LHZXfe6PjtXAZE
+   1CMl0TotytLS4v82gjcBB8JHcBsJheN+JOqaXZsprKki22p61PS6AE07X
+   w==;
+X-CSE-ConnectionGUID: NnE+rOWGToWER9c0vAnlOg==
+X-CSE-MsgGUID: Uwxuq+a8T9elxlzQRnD34w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11246"; a="29925017"
+X-IronPort-AV: E=Sophos;i="6.11,259,1725346800"; 
+   d="scan'208";a="29925017"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2024 19:47:06 -0800
+X-CSE-ConnectionGUID: pBn/4mjpR56YEC47o0gLrQ==
+X-CSE-MsgGUID: A0enPtwYTPWI2zbCLPgtuQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,259,1725346800"; 
+   d="scan'208";a="88366033"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by fmviesa005.fm.intel.com with ESMTP; 04 Nov 2024 19:47:01 -0800
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t8AWx-000lZh-1m;
+	Tue, 05 Nov 2024 03:46:59 +0000
+Date: Tue, 5 Nov 2024 11:46:27 +0800
+From: kernel test robot <lkp@intel.com>
+To: Duje =?utf-8?Q?Mihanovi=C4=87?= via B4 Relay <devnull+duje.mihanovic.skole.hr@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Tony Lindgren <tony@atomide.com>,
+	Haojian Zhuang <haojian.zhuang@linaro.org>,
+	Duje =?utf-8?Q?Mihanovi=C4=87?= <duje.mihanovic@skole.hr>,
+	Lubomir Rintel <lkundrak@v3.sk>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Paul Gazzillo <paul@pgazz.com>,
+	Necip Fazil Yildiran <fazilyildiran@gmail.com>,
+	oe-kbuild-all@lists.linux.dev, phone-devel@vger.kernel.org,
+	~postmarketos/upstreaming@lists.sr.ht,
+	Karel Balej <balejk@matfyz.cz>, David Wronek <david@mainlining.org>,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH RESEND v13 10/12] arm64: Kconfig.platforms: Add config
+ for Marvell PXA1908 platform
+Message-ID: <202411051124.7S823oLf-lkp@intel.com>
+References: <20241104-pxa1908-lkml-v13-10-e050609b8d6c@skole.hr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/W5jOo6ftU15nlkQZAvC3=lu";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241104-pxa1908-lkml-v13-10-e050609b8d6c@skole.hr>
 
---Sig_/W5jOo6ftU15nlkQZAvC3=lu
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi Duje,
 
-Hi all,
+kernel test robot noticed the following build warnings:
 
-Today's linux-next merge of the devicetree tree got a conflict in:
+[auto build test WARNING on 9852d85ec9d492ebef56dc5f229416c925758edc]
 
-  Documentation/devicetree/bindings/cache/qcom,llcc.yaml
+url:    https://github.com/intel-lab-lkp/linux/commits/Duje-Mihanovi-via-B4-Relay/clk-mmp-Switch-to-use-struct-u32_fract-instead-of-custom-one/20241105-010102
+base:   9852d85ec9d492ebef56dc5f229416c925758edc
+patch link:    https://lore.kernel.org/r/20241104-pxa1908-lkml-v13-10-e050609b8d6c%40skole.hr
+patch subject: [PATCH RESEND v13 10/12] arm64: Kconfig.platforms: Add config for Marvell PXA1908 platform
+config: arm64-kismet-CONFIG_I2C_GPIO-CONFIG_VIDEO_MMP_CAMERA-0-0 (https://download.01.org/0day-ci/archive/20241105/202411051124.7S823oLf-lkp@intel.com/config)
+reproduce: (https://download.01.org/0day-ci/archive/20241105/202411051124.7S823oLf-lkp@intel.com/reproduce)
 
-between commit:
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202411051124.7S823oLf-lkp@intel.com/
 
-  a83e18ca8358 ("dt-bindings: cache: qcom,llcc: Document the QCS8300 LLCC")
+kismet warnings: (new ones prefixed by >>)
+>> kismet: WARNING: unmet direct dependencies detected for I2C_GPIO when selected by VIDEO_MMP_CAMERA
+   WARNING: unmet direct dependencies detected for I2C_GPIO
+     Depends on [n]: I2C [=y] && HAS_IOMEM [=y] && (GPIOLIB [=n] || COMPILE_TEST [=n])
+     Selected by [y]:
+     - VIDEO_MMP_CAMERA [=y] && MEDIA_SUPPORT [=y] && MEDIA_PLATFORM_SUPPORT [=y] && MEDIA_PLATFORM_DRIVERS [=y] && V4L_PLATFORM_DRIVERS [=y] && I2C [=y] && VIDEO_DEV [=y] && (ARCH_MMP [=y] || COMPILE_TEST [=n]) && COMMON_CLK [=y]
 
-from the qcom tree and commit:
-
-  f9759e2b5704 ("dt-bindings: cache: qcom,llcc: Fix X1E80100 reg entries")
-
-from the devicetree tree.
-
-I fixed it up (the 3 way diff comes out empty) and can carry the fix as
-necessary. This is now fixed as far as linux-next is concerned, but any
-non trivial conflicts should be mentioned to your upstream maintainer
-when your tree is submitted for merging.  You may also want to consider
-cooperating with the maintainer of the conflicting tree to minimise any
-particularly complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/W5jOo6ftU15nlkQZAvC3=lu
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmcplKMACgkQAVBC80lX
-0GxgiAgApk3vNVeWbBgJXyj6PVTp8WXyPzbfaziKBT8EWvf4gXCZNB1PynuPN870
-TT7Qsk9BEoTYxqSqeqzCO9MGpYYAW7o8YnCvMW/kwgfxKOApFo6EC/10phD+Xk3s
-OR3J1qZqwYamBG/ZO5xIv8NV1qDUF48JsZMUK57SnlmMnAZthpa4Wmue0iENrIK4
-7/SIl1WEqqiUDMmxbr4NDNBuQCQEkxHYay8BGG7U0Zo9jkovuybh13mdTblAduFm
-rdWL4RfMIAlSzoa14y4RnvTysTRAPo9drxbQUqhiAWV5L4VCMDaHgqvdmCJluZSh
-EIO/ZrRBaUBdu2gaIib6FF+YA7fUBA==
-=5ulA
------END PGP SIGNATURE-----
-
---Sig_/W5jOo6ftU15nlkQZAvC3=lu--
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
