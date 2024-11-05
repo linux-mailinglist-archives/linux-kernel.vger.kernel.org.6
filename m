@@ -1,158 +1,120 @@
-Return-Path: <linux-kernel+bounces-396257-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396258-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16BA59BCA3F
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 11:20:46 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 536C99BCA49
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 11:21:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BDDF61F23766
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 10:20:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 857B61C20D62
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 10:21:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCC0C1D2F48;
-	Tue,  5 Nov 2024 10:20:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F7241D27B2;
+	Tue,  5 Nov 2024 10:20:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Yba7nZWr"
-Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hLF5b7gR"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D2B21D2B0F;
-	Tue,  5 Nov 2024 10:20:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDFEE1D1F79
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 10:20:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730802023; cv=none; b=DwWfZfSAuN7nSTo5aIACEOjbbTnOt65AYzTjC+Fe4V4GnTUvBaPAEZzC5fGa/TyetCgCXH9hMpDFyWsUXCdETf71LY66JPqexspfzGV4ZisSyCiZJhIcgcMMoe+oRAy51gWWYNnmggVXabqoe9fkboBZo4um6baVxrzIgfOBrIQ=
+	t=1730802050; cv=none; b=nvXybz3LkFCRK4h8pj6ssid9g23JIX/4AvyvRQUKx+UCXeKNTA6rqzOLdqiCbyzoG+eZq4xkw9RdT7XEq7nV7dMLqnD965s3dQuqO/JqQ+K/9IBJk0XLqkmeSiqQalb7T8vCCj2IHXWzYzXhMw150Mg3OiG3d+CT7kuCPD1E23A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730802023; c=relaxed/simple;
-	bh=v3ndVqHP3JRvh4yNpNPFvc9eMbj704RDjLO3v5uk7+o=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=e26rrBfzB6B6HiQp28RWFiuk03P/dTcHZQmr+Fb+4t/doe1R81lafrOmn/dfEBnkQbHr62Y0o8KXfJ03X3jujXro66/x0hUa5cao8Yqq39AsvaBwW3RCCVbwE4cwrd3EigW6vGN5dlIXIFv/EU677muNfM5nd/uI8mrj41JpX08=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Yba7nZWr; arc=none smtp.client-ip=217.70.183.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 3360540006;
-	Tue,  5 Nov 2024 10:20:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1730802012;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=frgUE9MhZvamkR8/ewj/FH/e6YcRGcG2QNQN+94jcNI=;
-	b=Yba7nZWr2CAkTBIK7Mj2OKyXuhW8Vz19vTFCdmac8rpbineGSAFFAtemZixk7v1lofDUVW
-	luBANgbVN0srjxsnSOZk7Q40+m6qUWTLnzyCTFhG9+TRKyP0isbXXDHCKq+4zN06GyCBK+
-	ukmpXaBubgFe/Gfuuns8mYFAiWNKxzisXVyZI7HbFavAJcVmM+B7/Kw+8tKXNJZEMW1lnP
-	uXZ4O9NKC6LTV64+z3m7H6bBg7NVGUn9WqvOGe5M8lPlqJR1/ii2o9FJLjLETwoydNQXe5
-	icwpNbRbw7nQwZQSQBhp2raay6/zXxorSgG7rlAnLUq0dm/2j5gH+O5jTIrtYw==
-Date: Tue, 5 Nov 2024 11:20:10 +0100
-From: Kory Maincent <kory.maincent@bootlin.com>
-To: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: Andrew Lunn <andrew@lunn.ch>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo
- Abeni <pabeni@redhat.com>, Jonathan Corbet <corbet@lwn.net>, Donald Hunter
- <donald.hunter@gmail.com>, Rob Herring <robh@kernel.org>, Andrew Lunn
- <andrew+netdev@lunn.ch>, Simon Horman <horms@kernel.org>, Heiner Kallweit
- <hkallweit1@gmail.com>, Russell King <linux@armlinux.org.uk>, Liam Girdwood
- <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Thomas Petazzoni
- <thomas.petazzoni@bootlin.com>, linux-kernel@vger.kernel.org,
- netdev@vger.kernel.org, linux-doc@vger.kernel.org, Kyle Swenson
- <kyle.swenson@est.tech>, Dent Project <dentproject@linuxfoundation.org>,
- kernel@pengutronix.de, Maxime Chevallier <maxime.chevallier@bootlin.com>
-Subject: Re: [PATCH RFC net-next v2 15/18] net: pse-pd: Add support for
- getting and setting port priority
-Message-ID: <20241105112010.17d6f40b@kmaincent-XPS-13-7390>
-In-Reply-To: <ZySsCuOvSnVZnIwq@pengutronix.de>
-References: <20241030-feature_poe_port_prio-v2-0-9559622ee47a@bootlin.com>
-	<20241030-feature_poe_port_prio-v2-15-9559622ee47a@bootlin.com>
-	<ZyMpkJRHZWYsszh2@pengutronix.de>
-	<20241031121104.6f7d669c@kmaincent-XPS-13-7390>
-	<ZySR75i3BEzNbjnv@pengutronix.de>
-	<ZySsCuOvSnVZnIwq@pengutronix.de>
-Organization: bootlin
-X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1730802050; c=relaxed/simple;
+	bh=n1xZDNUqhbesFuiMzQ2YOyPMXWGrOPosEm+4pCyIEIg=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=mHcUcHNVfaw3flkeuxi43b+5VNJBUx8qydT43cSAJ/z7CPK6cKEkMpJ0FtoImB+KDf75UufFwbESUtK+CY0OGtrwNOaK5N6wh2RpnQXIxj2+S9pgCr7L/MhVic5+OOoDBy40oUF3URNu04sdA9Us13VDGHq3ornPmW2CfewyHV8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hLF5b7gR; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-43163667f0eso44602965e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 02:20:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1730802047; x=1731406847; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=V6HBjokQWj4T4+WepKSLqPJvgW6DqwGUQ8oY/ZOD6S8=;
+        b=hLF5b7gRcQ7QavqRijTi7lbURPWI0n+yb2oz5qy9rwlwsE+MGPKktZeOfpsYZKkpeO
+         H4p5FJmrp3XFuvNrbVcjyJQyWkzu6x/y530Yvb8eynEbuWIkAChJx+IDKgXbtpqKrTk7
+         fpVN3CnJAEN6F5KhGDWeTheU+jXv6CayR0OB94Cp5G4+abvryxDq2vgj9qk06dkks5RX
+         KDNA3ShuyPrrnLGq8X8RlVLFl6uv4kIdcOYC2SrGCQC1IKRch3o7DE2zHlHsJWbacs2s
+         ewNkfJgiw9w7gw9A/RQztQTvYZERQWVGFnAo2dFTZCDedg8pm4u9UQE0c/UHDhM/bINQ
+         hH/Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730802047; x=1731406847;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=V6HBjokQWj4T4+WepKSLqPJvgW6DqwGUQ8oY/ZOD6S8=;
+        b=xJxYIsUPEXK+qyfiePKwZP2Nlinyt8atMMiE+egeIkPxfQEOC1smPKZok98YN3zFUc
+         urbhQ3HNEltrLrWOHaKsXIkQ807eDP2LXbzlRbbFzQUQCRIbY35XxsN25DU8E2k5r8ck
+         H9bvyoL2MyCtC60rqTxbt8PvCdN5EUSujtIKk/EH85cMmofPGMK3KEdIDJ9Ob41ctD4R
+         7E4ei9G2kCZznvfOLjg4BsgurPNEjHNcM30v8AxH0bIb1JpXFJcrk3+oo4fiVksQ3csY
+         IDpc3Ax4AEQ9CJFd4xB57ZkNf8OVNJRxrDevZpVbpRyFCeIsCibqIhDwJh99EKl6P+Gx
+         yXeg==
+X-Forwarded-Encrypted: i=1; AJvYcCWGqD3qvd8o6G+VanF5MhKKVaREYfnQp4TlzEps8qNGzq6R7OxcgZ/R5XoZ3UaUrqHUJf+n34p+fgaIaek=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwIs1LbeEuBR55EmIWl0KR/0ECYKgbmu7ahUT/o7o0qcHaxNPXO
+	kDG+sZK0ZCZfJADmNdEq09M+8IGNLTHK9ylkrt8V/LMNPRUv6m9tykF2TGtWCkQ=
+X-Google-Smtp-Source: AGHT+IGiCKZMB9E+p4Rzra+IUjFqsLZgXkfliq+gY4mk8e94l3nXR/6qBBzd8yl42Q8JhaJlQ14rrw==
+X-Received: by 2002:a05:600c:6046:b0:431:54f3:11b1 with SMTP id 5b1f17b1804b1-43283297a21mr128723995e9.34.1730802047103;
+        Tue, 05 Nov 2024 02:20:47 -0800 (PST)
+Received: from [127.0.1.1] ([82.76.168.176])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-431bd9ca7ebsm213412005e9.42.2024.11.05.02.20.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 05 Nov 2024 02:20:46 -0800 (PST)
+From: Abel Vesa <abel.vesa@linaro.org>
+To: krzk+dt@kernel.org, robh@kernel.org, abelvesa@kernel.org, 
+ mturquette@baylibre.com, sboyd@kernel.org, conor+dt@kernel.org, 
+ shawnguo@kernel.org, s.hauer@pengutronix.de, ping.bai@nxp.com, 
+ ye.li@nxp.com, peng.fan@nxp.com, aisheng.dong@nxp.com, frank.li@nxp.com, 
+ Pengfei Li <pengfei.li_1@nxp.com>
+Cc: kernel@pengutronix.de, festevam@gmail.com, linux-clk@vger.kernel.org, 
+ imx@lists.linux.dev, devicetree@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20241023184651.381265-1-pengfei.li_1@nxp.com>
+References: <20241023184651.381265-1-pengfei.li_1@nxp.com>
+Subject: Re: [PATCH v6 0/4] Add iMX91 clock driver support
+Message-Id: <173080204542.1890849.11473057431035200273.b4-ty@linaro.org>
+Date: Tue, 05 Nov 2024 12:20:45 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-Sasl: kory.maincent@bootlin.com
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-dedf8
 
-On Fri, 1 Nov 2024 11:23:06 +0100
-Oleksij Rempel <o.rempel@pengutronix.de> wrote:
 
-> On Fri, Nov 01, 2024 at 09:31:43AM +0100, Oleksij Rempel wrote:
-> > On Thu, Oct 31, 2024 at 12:11:04PM +0100, Kory Maincent wrote: =20
-> > > On Thu, 31 Oct 2024 07:54:08 +0100
-> > > Oleksij Rempel <o.rempel@pengutronix.de> wrote:
-> > >  =20
->  [...] =20
->  [...] =20
-> > >=20
-> > > Ack. So we assume PoDL could have the same interruption events.
-> > >  =20
->  [...] =20
-> >=20
-> > After thinking about it more overnight, I wanted to revisit the idea of
-> > having a priority strategy per port. Right now, if one port is set to
-> > static or dynamic mode, all disabled ports seem to have to follow it
-> > somehow too. This makes it feel like we should have a strategy for the
-> > whole power domain, not just for each port.
-> >=20
-> > I'm having trouble imagining how a per-port priority strategy would wor=
-k in
-> > this setup.
+On Wed, 23 Oct 2024 11:46:46 -0700, Pengfei Li wrote:
+> This patch set is to add some new clocks to binding header and driver.
+> 
+> IMX93_CLK_END was previously defined in imx93-clock.h to indicate
+> the number of clocks. However, it is not part of the ABI. For starters
+> it does no really appear in DTS. But what's more important - new clocks
+> are described later, which contradicts this define in binding header.
+> So move this macro to clock driver.
+> 
+> [...]
 
-Indeed you are right. I was first thinking of using the same port priority =
-for
-all the ports of a PSE but it seems indeed better to have it by Power domai=
-n.
+Applied, thanks!
 
-> > Another point that came to mind is that we might have two different
-> > components here, and we need to keep these two parts separate in follow=
--up
-> > discussions:
-> >=20
-> > - **Budget Evaluation Strategy**: The static approach seems
-> > straightforward=E2=80=94if a class requests more than available, approp=
-riate
-> > actions are taken. However, the dynamic approach has more complexity, s=
-uch
-> > as determining the threshold, how long violations can be tolerated, and
-> > whether a safety margin should be maintained before exceeding maximum l=
-oad.
-> >=20
-> > - **Disconnection Policy**: Once a budget violation is detected, this
-> > decides how to react, like which ports should be disconnected and in wh=
-at
-> > order.
-> >=20
-> > Would it make more sense to have a unified strategy for power domains,
-> > where we apply the same budget evaluation mode (static or dynamic) and
-> > disconnection policy to all ports in that domain? This could make the
-> > configuration simpler and the power management more predictable. =20
+[1/4] clk: imx93: Move IMX93_CLK_END macro to clk driver
+      (no commit info)
+[2/4] dt-bindings: clock: imx93: Drop IMX93_CLK_END macro definition
+      (no commit info)
+[3/4] dt-bindings: clock: Add i.MX91 clock support
+      (no commit info)
+[4/4] clk: imx: add i.MX91 clk
+      (no commit info)
 
-Yes, these policies and the port priority mode should be per power domains.=
-=20
+Best regards,
+-- 
+Abel Vesa <abel.vesa@linaro.org>
 
-> Except of user reports, do we have documented confirmation about dynamic
-> Budget Evaluation Strategy in PD692x0 firmware?
->=20
-> Do this configuration bits are what I called Budget Evaluation Strategy?
-> Version 3.55:
-> Bits [3..0]=E2=80=94BT port PM mode
-> 0x0: The port power that is used for power management purposes is
->      dynamic (Iport x Vmain).
-
-Yes it seems so. I can't find any more configurations on the budget evaluat=
-ion
-strategy than the power limit.
-
-Regards,
---=20
-K=C3=B6ry Maincent, Bootlin
-Embedded Linux and kernel engineering
-https://bootlin.com
 
