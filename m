@@ -1,122 +1,238 @@
-Return-Path: <linux-kernel+bounces-396233-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396234-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A2B29BC9BF
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 10:56:56 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F8809BC9C0
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 10:57:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3FE791F22CFE
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 09:56:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C45F21F2319D
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 09:57:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A98C81D174E;
-	Tue,  5 Nov 2024 09:56:47 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 528111CDA3E;
-	Tue,  5 Nov 2024 09:56:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF1D21D1F67;
+	Tue,  5 Nov 2024 09:56:52 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43CA71CDA3E
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 09:56:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730800607; cv=none; b=ZG9ODsI66cgDosozifeBD/ko39Fna9Ar9xnW+7OCyzf3InBGjiAtnpNIHyqM16Bn/BQLca7qKIJvh1VClaKXvy/XiNFubot5uxrqvQ4cGQAjQEgqF1tpNUfbchk82O+7IEG/0MEKD2txfFhBqtXAQh4IGW5y5QlDvoQJiSfot0o=
+	t=1730800612; cv=none; b=RywwAxdKTRefegSslVlIi5i2mtYq0CzQnD874E07L328PnG11FdAANlQLwoqa3TxlzysaRF07IgmMCxMXQ9UrFGwkKAyeffo5DjML644YKINfjSppFwCwDUVfVDRNwZWkFEyj0GZIwpSaIdnQ05BZSVEfV7d0yC/Pz3a0gUvk9k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730800607; c=relaxed/simple;
-	bh=R7fYE1ho6RL0rqvfjF3EYrY/xOTC+OyPnNaWsD9XQcY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KaFpLlaPJaiMvdEp6ODpUs1nM2CUIMJnCwyh9ZAjJh+MUIpdQYTRLiPT5gbA3O3+4OnDyTcHIVlDtVRfHSWTUgoyeJdmUVHpLdqvnRBEeqTB6Ej8jGPHniIztMRIDrKFN6ZAEl+dEv0gSBnrwOoCoc1UZoVhQqBMOWOyPRhwvSk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4XjNyz319Qz9sPd;
-	Tue,  5 Nov 2024 10:56:43 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id CpEO93zW8bQ7; Tue,  5 Nov 2024 10:56:43 +0100 (CET)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4XjNyz27jdz9rvV;
-	Tue,  5 Nov 2024 10:56:43 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 346688B770;
-	Tue,  5 Nov 2024 10:56:43 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id BXNslob-hZDZ; Tue,  5 Nov 2024 10:56:43 +0100 (CET)
-Received: from [192.168.232.44] (unknown [192.168.232.44])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 9E0918B763;
-	Tue,  5 Nov 2024 10:56:42 +0100 (CET)
-Message-ID: <9ee9c21b-179f-49aa-8c65-304c8ef2c9a7@csgroup.eu>
-Date: Tue, 5 Nov 2024 10:56:42 +0100
+	s=arc-20240116; t=1730800612; c=relaxed/simple;
+	bh=DGzkJ9bxSDJAbftRPwpx0qNYcNwe6wGyzNFvTATs/BY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tPMaTB28ygbnhYWrh7LmNigBFxRghZH58qxxqW2wC2CNyLnKVfzeUTtaVIoYrsNe2hZfZcl8akv/DjkAGnET0ufG/WwHSQDvjZCWFYkxB15z82cL25EVCcAlS3FojzY7iR09GTSnVuKSshGCdJ1MZ9zQDXu3b47Xg80tBT5Rakw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 139331063
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 01:57:19 -0800 (PST)
+Received: from e110455-lin.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 0D0C73F66E
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 01:56:48 -0800 (PST)
+Date: Tue, 5 Nov 2024 09:56:44 +0000
+From: Liviu Dudau <liviu.dudau@arm.com>
+To: Jann Horn <jannh@google.com>
+Cc: Boris Brezillon <boris.brezillon@collabora.com>,
+	Steven Price <steven.price@arm.com>,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] drm/panthor: Be stricter about IO mapping flags
+Message-ID: <Zynr3DIY8u2c7wrB@e110455-lin.cambridge.arm.com>
+References: <20241105-panthor-flush-page-fixes-v1-1-829aaf37db93@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] asm-generic: add an optional pfn_valid check to
- page_to_phys
-To: Christoph Hellwig <hch@lst.de>, Arnd Bergmann <arnd@arndb.de>
-Cc: linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-snps-arc@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- linux-csky@vger.kernel.org, linux-hexagon@vger.kernel.org,
- loongarch@lists.linux.dev, linux-m68k@lists.linux-m68k.org,
- linux-mips@vger.kernel.org, linux-openrisc@vger.kernel.org,
- linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
- linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
- linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
- linux-um@lists.infradead.org, linux-arch@vger.kernel.org
-References: <20241023053644.311692-1-hch@lst.de>
- <20241023053644.311692-3-hch@lst.de>
-Content-Language: fr-FR
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-In-Reply-To: <20241023053644.311692-3-hch@lst.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241105-panthor-flush-page-fixes-v1-1-829aaf37db93@google.com>
 
-
-
-Le 23/10/2024 à 07:36, Christoph Hellwig a écrit :
-> page_to_pfn is usually implemented by pointer arithmetics on the memory
-> map, which means that bogus input can lead to even more bogus output.
+On Tue, Nov 05, 2024 at 12:17:13AM +0100, Jann Horn wrote:
+> The current panthor_device_mmap_io() implementation has two issues:
 > 
-> Powerpc had a pfn_valid check on the intermediate pfn in the page_to_phys
-> implementation when CONFIG_DEBUG_VIRTUAL is defined, which seems
-> generally useful, so add that to the generic version.
+> 1. For mapping DRM_PANTHOR_USER_FLUSH_ID_MMIO_OFFSET,
+>    panthor_device_mmap_io() bails if VM_WRITE is set, but does not clear
+>    VM_MAYWRITE. That means userspace can use mprotect() to make the mapping
+>    writable later on. This is a classic Linux driver gotcha.
+>    I don't think this actually has any impact in practice:
+>    When the GPU is powered, writes to the FLUSH_ID seem to be ignored; and
+>    when the GPU is not powered, the dummy_latest_flush page provided by the
+>    driver is deliberately designed to not do any flushes, so the only thing
+>    writing to the dummy_latest_flush could achieve would be to make *more*
+>    flushes happen.
 > 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> 2. panthor_device_mmap_io() does not block MAP_PRIVATE mappings (which are
+>    mappings without the VM_SHARED flag).
+>    MAP_PRIVATE in combination with VM_MAYWRITE indicates that the VMA has
+>    copy-on-write semantics, which for VM_PFNMAP are semi-supported but
+>    fairly cursed.
+>    In particular, in such a mapping, the driver can only install PTEs
+>    during mmap() by calling remap_pfn_range() (because remap_pfn_range()
+>    wants to **store the physical address of the mapped physical memory into
+>    the vm_pgoff of the VMA**); installing PTEs later on with a fault
+>    handler (as panthor does) is not supported in private mappings, and so
+>    if you try to fault in such a mapping, vmf_insert_pfn_prot() splats when
+>    it hits a BUG() check.
+> 
+> Fix it by clearing the VM_MAYWRITE flag (userspace writing to the FLUSH_ID
+> doesn't make sense) and requiring VM_SHARED (copy-on-write semantics for
+> the FLUSH_ID don't make sense).
+> 
+> Reproducers for both scenarios are in the notes of my patch on the mailing
+> list; I tested that these bugs exist on a Rock 5B machine.
+> 
+> Note that I only compile-tested the patch, I haven't tested it; I don't
+> have a working kernel build setup for the test machine yet. Please test it
+> before applying it.
+> 
+> Cc: stable@vger.kernel.org
+> Fixes: 5fe909cae118 ("drm/panthor: Add the device logical block")
+> Signed-off-by: Jann Horn <jannh@google.com>
 > ---
->   include/asm-generic/memory_model.h | 10 ++++++++++
->   1 file changed, 10 insertions(+)
+> First testcase (can write to the FLUSH_ID):
 > 
-> diff --git a/include/asm-generic/memory_model.h b/include/asm-generic/memory_model.h
-> index a73a140cbecd..6d1fb6162ac1 100644
-> --- a/include/asm-generic/memory_model.h
-> +++ b/include/asm-generic/memory_model.h
-> @@ -64,7 +64,17 @@ static inline int pfn_valid(unsigned long pfn)
->   #define page_to_pfn __page_to_pfn
->   #define pfn_to_page __pfn_to_page
->   
-> +#ifdef CONFIG_DEBUG_VIRTUAL
-> +#define page_to_phys(page)						\
-> +({									\
-> +	unsigned long __pfn = page_to_pfn(page);			\
-> +									\
-> +	WARN_ON_ONCE(!pfn_valid(__pfn));				\
+> ```
+>
 
-On powerpc I think it was a WARN_ON().
+There is a missing line here, I guess is something like
 
-Will a WARN_ON_ONCE() be enough ?
+#define SYSCHK(x) ({  \
 
-> +	PFN_PHYS(__pfn);						\
-> +})
-> +#else
->   #define page_to_phys(page)	PFN_PHYS(page_to_pfn(page))
-> +#endif /* CONFIG_DEBUG_VIRTUAL */
->   #define phys_to_page(phys)	pfn_to_page(PHYS_PFN(phys))
->   
->   #endif /* __ASSEMBLY__ */
+
+Reviewed-by: Liviu Dudau <liviu.dudau@arm.com>
+
+Best regards,
+Liviu
+
+
+>   typeof(x) __res = (x);      \
+>   if (__res == (typeof(x))-1) \
+>     err(1, "SYSCHK(" #x ")"); \
+>   __res;                      \
+> })
+> 
+> int main(void) {
+>   int fd = SYSCHK(open(GPU_PATH, O_RDWR));
+> 
+>   // sanity-check that PROT_WRITE+MAP_SHARED fails
+>   void *mmap_write_res = mmap(NULL, 0x1000, PROT_READ|PROT_WRITE,
+>       MAP_SHARED, fd, DRM_PANTHOR_USER_FLUSH_ID_MMIO_OFFSET);
+>   if (mmap_write_res == MAP_FAILED) {
+>     perror("mmap() with PROT_WRITE+MAP_SHARED failed as expected");
+>   } else {
+>     errx(1, "mmap() with PROT_WRITE+MAP_SHARED worked???");
+>   }
+> 
+>   // make a PROT_READ+MAP_SHARED mapping, and upgrade it to writable
+>   void *mmio_page = SYSCHK(mmap(NULL, 0x1000, PROT_READ, MAP_SHARED,
+>       fd, DRM_PANTHOR_USER_FLUSH_ID_MMIO_OFFSET));
+>   SYSCHK(mprotect(mmio_page, 0x1000, PROT_READ|PROT_WRITE));
+> 
+>   volatile uint32_t *flush_counter = (volatile uint32_t*)mmio_page;
+> 
+>   uint32_t last_old = -1;
+>   while (1) {
+>     uint32_t old_val = *flush_counter;
+>     *flush_counter = 1111;
+>     uint32_t new_val = *flush_counter;
+>     if (old_val != last_old)
+>       printf("flush counter: old=%u, new=%u\n", old_val, new_val);
+>     last_old = old_val;
+>   }
+> }
+> ```
+> 
+> Second testcase (triggers BUG() splat):
+> ```
+> 
+>   typeof(x) __res = (x);      \
+>   if (__res == (typeof(x))-1) \
+>     err(1, "SYSCHK(" #x ")"); \
+>   __res;                      \
+> })
+> 
+> int main(void) {
+>   int fd = SYSCHK(open(GPU_PATH, O_RDWR));
+> 
+>   // make a PROT_READ+**MAP_PRIVATE** mapping
+>   void *ptr = SYSCHK(mmap(NULL, 0x1000, PROT_READ, MAP_PRIVATE,
+>       fd, DRM_PANTHOR_USER_FLUSH_ID_MMIO_OFFSET));
+> 
+>   // trigger a read fault
+>   *(volatile char *)ptr;
+> }
+> ```
+> 
+> The second testcase splats like this:
+> ```
+> [ 2918.411814] ------------[ cut here ]------------
+> [ 2918.411857] kernel BUG at mm/memory.c:2220!
+> [ 2918.411955] Internal error: Oops - BUG: 00000000f2000800 [#1] SMP
+> [...]
+> [ 2918.416147] CPU: 3 PID: 2934 Comm: private_user_fl Tainted: G           O       6.1.43-19-rk2312 #428a0a5e6
+> [ 2918.417043] Hardware name: Radxa ROCK 5B (DT)
+> [ 2918.417464] pstate: 60400009 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+> [ 2918.418119] pc : vmf_insert_pfn_prot+0x40/0xe4
+> [ 2918.418567] lr : panthor_mmio_vm_fault+0xb0/0x12c [panthor]
+> [...]
+> [ 2918.425746] Call trace:
+> [ 2918.425972]  vmf_insert_pfn_prot+0x40/0xe4
+> [ 2918.426342]  __do_fault+0x38/0x7c
+> [ 2918.426648]  __handle_mm_fault+0x404/0x6dc
+> [ 2918.427018]  handle_mm_fault+0x13c/0x18c
+> [ 2918.427374]  do_page_fault+0x194/0x33c
+> [ 2918.427716]  do_translation_fault+0x60/0x7c
+> [ 2918.428095]  do_mem_abort+0x44/0x90
+> [ 2918.428410]  el0_da+0x40/0x68
+> [ 2918.428685]  el0t_64_sync_handler+0x9c/0xf8
+> [ 2918.429067]  el0t_64_sync+0x174/0x178
+> ```
+> ---
+>  drivers/gpu/drm/panthor/panthor_device.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/panthor/panthor_device.c b/drivers/gpu/drm/panthor/panthor_device.c
+> index 4082c8f2951dfdace7f73a24d6fe34e9e7f920eb..6fbff516c1c1f047fcb4dee17b87d8263616dc0c 100644
+> --- a/drivers/gpu/drm/panthor/panthor_device.c
+> +++ b/drivers/gpu/drm/panthor/panthor_device.c
+> @@ -390,11 +390,15 @@ int panthor_device_mmap_io(struct panthor_device *ptdev, struct vm_area_struct *
+>  {
+>  	u64 offset = (u64)vma->vm_pgoff << PAGE_SHIFT;
+>  
+> +	if ((vma->vm_flags & VM_SHARED) == 0)
+> +		return -EINVAL;
+> +
+>  	switch (offset) {
+>  	case DRM_PANTHOR_USER_FLUSH_ID_MMIO_OFFSET:
+>  		if (vma->vm_end - vma->vm_start != PAGE_SIZE ||
+>  		    (vma->vm_flags & (VM_WRITE | VM_EXEC)))
+>  			return -EINVAL;
+> +		vm_flags_clear(vma, VM_MAYWRITE);
+>  
+>  		break;
+>  
+> 
+> ---
+> base-commit: d78f0ee0406803cda8801fd5201746ccf89e5e4a
+> change-id: 20241104-panthor-flush-page-fixes-fe4202bb18c0
+> 
+> -- 
+> Jann Horn <jannh@google.com>
+> 
+
+-- 
+====================
+| I would like to |
+| fix the world,  |
+| but they're not |
+| giving me the   |
+ \ source code!  /
+  ---------------
+    ¯\_(ツ)_/¯
 
