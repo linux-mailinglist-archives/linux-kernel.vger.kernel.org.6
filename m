@@ -1,141 +1,109 @@
-Return-Path: <linux-kernel+bounces-397032-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397033-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A25CB9BD5D6
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 20:29:05 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91C399BD5DE
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 20:30:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1C8C8B219EB
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 19:29:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A83B1F23259
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 19:30:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED8891FF7BA;
-	Tue,  5 Nov 2024 19:28:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 620122003D4;
+	Tue,  5 Nov 2024 19:30:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XemYl18E"
-Received: from mail-ua1-f50.google.com (mail-ua1-f50.google.com [209.85.222.50])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NK7tZEGx"
+Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1D241DAC89
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 19:28:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B3B32003AA;
+	Tue,  5 Nov 2024 19:30:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730834935; cv=none; b=TgO7u0YYMLg5HNFnwJnAZ7r9YpBsMtgw1QMTOjq75z+ghlyJbPYV4NzNqISqUX1PTcNhsbnEjBg/TzsTaSJxEfYX88zLY3shgzR6rE9RXPTaHq1kIhukDRSoeiiW07u4JuH7l2jNujqXhdttUV+5VbCeoZmSU+QE7cLP3BlXNXw=
+	t=1730835044; cv=none; b=k1XiPRSyoWnKaQp5TaUPUxewEhkpPJ5ZMco8En3sZVX7DrjpMZ3mXIEKqs78c3TnOE6LtFLPhF79Y5kIKbQf+oQqQR258zxGnCp2BNjU4JCKgOS92Y1AZS/6qAbAaIthiPckZHp4nIvnI1mGQA4X6D9sPweBRpm99C+uK/38sOI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730834935; c=relaxed/simple;
-	bh=aV1GBmfWwECTnh3xy+hQGhDmcKjtbAaLxtRrWStQAok=;
+	s=arc-20240116; t=1730835044; c=relaxed/simple;
+	bh=F77iKaVuO5nNNAk/6vtbbfjGmlEkJUbjj4pE1aNyn0o=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kczCDhiQpGw2kXIHyGu9WC0qj1RtLmzJFkqaRCIleeFhc0oW4PR7KmUU3I7Wp5ROaOn57uQQGtrOEyiwXhMghh6W39lhrXUun5mTsOiyLuiRR38ecEpGCFFeq005fAwB1xnl5bd5lsLj9UG7zUEZuxfXA7QozXRKrsT3HX5vk4s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=XemYl18E; arc=none smtp.client-ip=209.85.222.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ua1-f50.google.com with SMTP id a1e0cc1a2514c-84fe454176bso2249149241.1
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 11:28:53 -0800 (PST)
+	 To:Cc:Content-Type; b=V/aCK2HBHY9KYoEwrhpCut7LQqrqp0GOTHgfpEHjIaXr5xEfMP6x9kozv/RYpVapu2oR//6B2AITcaOOGHgCFcEOVofT5Ycd1on20QiP+mqBygLdcxmMOiB3UN2F/JQCB2TXGQhR9o/LIu6+lLAEXLWWDd+BCnEBZKEwkqL/chI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NK7tZEGx; arc=none smtp.client-ip=209.85.219.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-e30eca40c44so5284086276.2;
+        Tue, 05 Nov 2024 11:30:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1730834933; x=1731439733; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1730835042; x=1731439842; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=aV1GBmfWwECTnh3xy+hQGhDmcKjtbAaLxtRrWStQAok=;
-        b=XemYl18ENZvN3AhGGy3XPGd12REf7WovqpTjFmmZIXTXk+o211g4aJoIPUYwLG9HWp
-         tPGwXdVyf8WtMYtIQDZ0ddu6tNh2h7Yq6bjLBI088sF7j0VCK0eqfWx3wLleQbZUJS2s
-         1raZ4CBlvilr/k8+gsB133lxGAd3Q8vrRnEcGbml/5WMnuFS4qFYZozArZXAFiy4axQF
-         Kqpsicibe5EoSuxlEEj1DcXj1nojPYEWop06rg4dX/7Vv3QY4wJq0IK8nOgZBm5pmx94
-         wu2jQYvfV1UpsVQg/aoN3oz8JwmT9mV/lj0nfTmZeFkEK0FXBQsC4RABN69eLcuxlhMM
-         KUIQ==
+        bh=KJuzFWUnz/k8ziEBqxWrk8940BKVfarTKUWT5e1s4Vs=;
+        b=NK7tZEGxUsU7bv02XZvhNxa7UAbvacb3+HCFlNX6SP9mZLtDmYOLWzaXsrmEbAtBdg
+         puTpUb3j7ND+3sIj3xK/nuRxgbPR+g+glvJGiuzyWvHEjkLXWzu/jJn7ZnBY1HBB5ntg
+         IbhXRITxEUZ86wp8mZ4PyEcjc3E8gNyUbOteofB2begXuxGvaZAS6R46kPIYL5UE5v9X
+         Q9xSlZobya7rDtU81tQIxJGzAHGx1iynQMHiU00edJN48e7RhD1xnQbq12VlUbRAjLuw
+         SiGf7hBFL7nsU7/SnyMUEXg4iw7smNQyznOTl5O6i/BoX3TNp+c9hYNKCMq0RomylPzd
+         OENA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730834933; x=1731439733;
+        d=1e100.net; s=20230601; t=1730835042; x=1731439842;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=aV1GBmfWwECTnh3xy+hQGhDmcKjtbAaLxtRrWStQAok=;
-        b=dQ33smuLfvE0/RZeqFa/gKxeXoq91WuLxWOH4DExD38PrSoAYJAY8b1688wIixbXdZ
-         uOtJ/uXK+YUKMZp16pYMJ5SwZpq/y3LBOM84k3knN5XfQ68xAv5dvfd/mrXSx5hAHhiI
-         Qd4T0Xu3BRJqsip5c1YUn9xyCfJsD6Krp2c1f8WqL01phV6Aq8RpJoTctm9AGm6UA1Xg
-         7PwDmAYtBsbps8sAhWraruBlGxnq/dtMUzPRGqbWCZZfa4Mxk/fsKJbKAEJmFSiRKAvJ
-         7CahF3EuGNPLLDnwdvtgDDOKJWO8pw/WT0SyUEO7W3ETNM8K1FiG8e3nzOEV7wueVqfd
-         18bQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWzsKs596yErtXIzzD2tRgZYpw7CyZc5xVDarKobF4Z3lyBFgRKrpFcQbtQgRfZ5phKQ3JXSsLABK1IhdU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy+JweFc6uT4si68lQM/6ZwoJmUiw0sewcxhPbViglijWfzNIzf
-	l8+0VwFA7q5vMGoFaBrt1l80zbbv4ee3/+Xc6OQwtCQpE4T42lOGiiLDg8LnsbILRrXbPK0Swim
-	rHBO8l0guVXDW0phe46Xp9FLHNoKvTQ+8/ph9
-X-Google-Smtp-Source: AGHT+IFPlCCiewSZ6qz8bcLHkHivbB20ubjuUQ31T2KZYTtpAPhMRahB4La6g3xvfoM46VOamf93kqFuQDDNQFJVMtw=
-X-Received: by 2002:a05:6102:1890:b0:4a9:61c1:4e56 with SMTP id
- ada2fe7eead31-4a961c14ea1mr12336943137.13.1730834932474; Tue, 05 Nov 2024
- 11:28:52 -0800 (PST)
+        bh=KJuzFWUnz/k8ziEBqxWrk8940BKVfarTKUWT5e1s4Vs=;
+        b=dRXUXzwRjG9oDjLzRtnJjG6OeRkJtLvPcYTBrsVbRNbqwEjdds5nHXD9hpkhzzc+wr
+         qFmvoPCns5b8siGYISdVI4GbFj1iZtOZe2uHiSyml9gM/3paFKAf/HTddSLUOuxyIejc
+         ESdqRbgXHA/5qE77l9b4e55yBZRdsRxZFs3gtmPUJMZEQFF+1lJetCqGnXfbyg6cwY/r
+         2/r0aaQPTHrhGpRescFrPicIDChrHTt54Dae9Z4EpgGYxogNVGXWGf9/x99sjvclcAqV
+         HtMbFqSpGM79x0gYGwI+tkiVD91zHvXqYMOcb1vuKsg/74wHgYy3qMwsyTe5K1UVKNV2
+         Od6Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUD9EXgFSOONIC7s7toc0wHMDBv7LQIZXg7rieDAHgQ5JzU3xRe52+/bdFhJZEWvahZXdKjSDqy@vger.kernel.org, AJvYcCWzpkrAY/VjAWUti9TfPcgQHRgV6ZOWyS5UC2oEp2nskJd41OjcMURU9hxiw3B62rgoVWdzg2o88CGphQ==@vger.kernel.org, AJvYcCXlluCoguLIrXIwY9OX3lf4ULKYK0TAZJ7ucg63znmxYP0DeYSnWGICUofJKE/dZm5hURey36NHLrlX0s8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzL4rutCD/fjO7WzjNITjfPkNAa3dHmO66IZ+Csmiu+vvcJwAy7
+	MkppxY8KyEpwaWTsa05U5QpQDbrUO3Zf7txfplDaq8b58smCWMI20rx0uLn4+7v2/dQIlxU7cMY
+	iYEFtgSonEwTyNzTwfX6qZiwg700N8jlbYlw=
+X-Google-Smtp-Source: AGHT+IGRt9PgOs6K9THyHzaclLBzLxdT2/CqUGYDDBGtGkTOFWcuRTzs0pyzEmB42IH2+xVMWGqqG64zERi9yQsOHqQ=
+X-Received: by 2002:a05:690c:7207:b0:6ea:90b6:ab48 with SMTP id
+ 00721157ae682-6ea90b6ae95mr85072517b3.18.1730835042304; Tue, 05 Nov 2024
+ 11:30:42 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241105184333.2305744-1-jthoughton@google.com> <CAOUHufYS0XyLEf_V+q5SCW54Zy2aW5nL8CnSWreM8d1rX5NKYg@mail.gmail.com>
-In-Reply-To: <CAOUHufYS0XyLEf_V+q5SCW54Zy2aW5nL8CnSWreM8d1rX5NKYg@mail.gmail.com>
-From: Yu Zhao <yuzhao@google.com>
-Date: Tue, 5 Nov 2024 12:28:15 -0700
-Message-ID: <CAOUHufadf0kmHTY4=gvMtm4LfFFjijYHWmX5VcYqwDEhw18=+A@mail.gmail.com>
-Subject: Re: [PATCH v8 00/11] KVM: x86/mmu: Age sptes locklessly
-To: James Houghton <jthoughton@google.com>, Jonathan Corbet <corbet@lwn.net>
-Cc: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>, 
-	David Matlack <dmatlack@google.com>, David Rientjes <rientjes@google.com>, Marc Zyngier <maz@kernel.org>, 
-	Oliver Upton <oliver.upton@linux.dev>, Wei Xu <weixugc@google.com>, 
-	Axel Rasmussen <axelrasmussen@google.com>, kvm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+References: <20241105130835.4447-1-chenqiuji666@gmail.com>
+In-Reply-To: <20241105130835.4447-1-chenqiuji666@gmail.com>
+From: Justin Tee <justintee8345@gmail.com>
+Date: Tue, 5 Nov 2024 11:30:36 -0800
+Message-ID: <CABPRKS-UAnhSFB5z-LhrQqgXtenyLqVCByaME12LvMNmjVQ4ig@mail.gmail.com>
+Subject: Re: [PATCH] scsi: lpfc: Fix improper handling of refcount in lpfc_bsg_hba_set_event()
+To: Qiu-ji Chen <chenqiuji666@gmail.com>
+Cc: Justin Tee <justin.tee@broadcom.com>, james.smart@broadcom.com, 
+	dick.kennedy@broadcom.com, James.Bottomley@hansenpartnership.com, 
+	martin.petersen@oracle.com, linux-scsi@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, baijiaju1990@gmail.com, stable@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Nov 5, 2024 at 12:21=E2=80=AFPM Yu Zhao <yuzhao@google.com> wrote:
->
-> On Tue, Nov 5, 2024 at 11:43=E2=80=AFAM James Houghton <jthoughton@google=
-.com> wrote:
-> >
-> > Andrew has queued patches to make MGLRU consult KVM when doing aging[8]=
-.
-> > Now, make aging lockless for the shadow MMU and the TDP MMU. This allow=
-s
-> > us to reduce the time/CPU it takes to do aging and the performance
-> > impact on the vCPUs while we are aging.
-> >
-> > The final patch in this series modifies access_tracking_stress_test to
-> > age using MGLRU. There is a mode (-p) where it will age while the vCPUs
-> > are faulting memory in. Here are some results with that mode:
->
-> Additional background in case I didn't provide it before:
->
-> At Google we keep track of hotness/coldness of VM memory to identify
-> opportunities to demote cold memory into slower tiers of storage. This
-> is done in a controlled manner so that while we benefit from the
-> improved memory efficiency through improved bin-packing, without
-> violating customer SLOs.
->
-> However, the monitoring/tracking introduced two major overheads [1] for u=
-s:
-> 1. the traditional (host) PFN + rmap data structures [2] used to
-> locate host PTEs (containing the accessed bits).
-> 2. the KVM MMU lock required to clear the accessed bits in
-> secondary/shadow PTEs.
->
-> MGLRU provides the infrastructure for us to reach out into page tables
-> directly from a list of mm_struct's, and therefore allows us to bypass
-> the first problem above and reduce the CPU overhead by ~80% for our
-> workloads (90%+ mmaped memory). This series solves the second problem:
-> by supporting locklessly clearing the accessed bits in SPTEs, it would
-> reduce our current KVM MMU lock contention by >80% [3]. All other
-> existing mechanisms, e.g., Idle Page Tracking, DAMON, etc., can also
-> seamlessly benefit from this series when monitoring/tracking VM
-> memory.
->
-> [1] https://lwn.net/Articles/787611/
-> [2] https://docs.kernel.org/admin-guide/mm/idle_page_tracking.html
-> [3] https://research.google/pubs/profiling-a-warehouse-scale-computer/
+Hi Qiu-ji,
 
-And we also ran an A/B experiment on quarter million Chromebooks
-running Android in VMs last year (with an older version of this
-series):
+This patch does not look logically correct.  if (&evt->node =3D=3D
+&phba->ct_ev_waiters) evaluates to true, then it is not possible that
+(evt->reg_id =3D=3D event_req->ev_reg_id) is also true.
 
-It reduced PSI by 10% at the 99th percentile and "janks" by 8% at the
-95th percentile, which resulted in an overall improvement in user
-engagement by 16% at the 75th percentile (all statistically
-significant).
+Because if (evt->reg_id =3D=3D event_req->ev_reg_id) evaluates to true, it
+means we have found an lpfc_bsg_event of event_req specified interest
+and therefore (&evt->node !=3D &phba->ct_ev_waiters) must be true.
+
+Also, following this suggested patch=E2=80=99s logic, if after attempting t=
+o
+go through the phba->ct_ev_waiters list and the evt->node iterator is
+pointing at exactly the phba->ct_ev_waiters head, then this patch=E2=80=99s
+kref_put will be for the phba->ct_ev_waiters head which is not a
+preallocated lpfc_bsg_event object.  So, this patch would be calling
+kref_put on an uninitialized memory region.
+
+Sorry, I cannot acknowledge this patch.
+
+Regards,
+Justin
 
