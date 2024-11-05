@@ -1,170 +1,481 @@
-Return-Path: <linux-kernel+bounces-395953-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395950-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90B789BC543
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 07:07:11 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 685009BC53D
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 07:06:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 235241F22B2B
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 06:07:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 280D928264D
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 06:06:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 589F01DCB20;
-	Tue,  5 Nov 2024 06:06:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="ysWXw07g"
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2082.outbound.protection.outlook.com [40.107.92.82])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0C9A1C07C8;
+	Tue,  5 Nov 2024 06:06:31 +0000 (UTC)
+Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C7931C9EB8
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 06:06:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.82
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730786812; cv=fail; b=kLj0Iu2Vxkah2ObGiujxO/fZJAAATGBYVG/aSxelL5gcJTL2e9T5yzlbtSCEqSZdC1bhF3O/5KHuxdW24E7jjnEDdyOuWB0lUiMS7yIyDjALSGWUmXm9pNn5MwQvb56mUrVy0m9QREG4Bu/zoTKhVElVzpHGfPT/RUdJhyh/Z8s=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730786812; c=relaxed/simple;
-	bh=L9Kj9jMLJwcmSloCHAKxBdETEZvfsIPGc0PHNypSIaI=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Q6yRueKR9tVOtOhVqVYF/NUqF6ivGD+894JjFdsYoB+h3D5JfVgQlmdGTgsq8ZQNrHPyTIqlTgQCLhNNqO7cGvNq4h41icuPQ3IcW4u+Wr9bnGYu2kgnDrUxGrtB6oJ8yuhjjDuKKNjCWHF/diJm04p5UQDDhSd4jEC2uzaSqTo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=ysWXw07g; arc=fail smtp.client-ip=40.107.92.82
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=y0yskjh8GrCURLoNlq5kge75QVn0pDFHGv5oefNfHdeROSpXy6cGGXfeqIYP5dF+ExzYbRtLMzdYc+A0QxWdk0xu4IHc5yXhaLhJ3cipSfx5KclD207t4dNRhx701lkP14t45NED67JYo2LeyR1+LOJxxDXuiQf0TUf7U35Ln7YJ5zFjNwnPpxIyxhCShBTu0s4PWHHd+CvDH6sYBSK2obVjBbhyUUMAj7Xq9tJbE46wSA8RLuYvo/US/aC3AIPLIhHENEQdFUcjGXLY9TVeWjtGWMJeEbh1WUP9gekmIo/gynojIYwfoJhiTurZKTNkRjBilIIy27F9jV1z6c4cIw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=7b4JslHMs6oiBL5XFJcZM0H/8+OnMPztOd2O5O/2ZtQ=;
- b=nnRgXU/TdkUuUKow9THaEpsF0iNF337kDGTh8bPVEEx8OUgKnI8w1i7DdIA8LNNtdjQc6uejmziJExrjSB2tM5QMC+xAkua861p/8k0gi1Psl4g315KIpRz86kJLtsEqBt/4ZnXQIgWHHpsKyojtkRZHBHkwv7b71S2UrZqFF+niA1Y11ebeMlsJ82qOcHqLKVTFrph7y5RYHfoeamhyNoo8ZiJeSXyu6t50rH/HdgWWggDtUaOlD66pW4uuUHoR8hrmRnFqrMOuQ53n+5CYzshhNIaGa+RRDFIPi4NxzGn71mViBFTBTytsqeYIpn+N8wWxcJRBmE83WQIGRoytzg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=lists.freedesktop.org smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=7b4JslHMs6oiBL5XFJcZM0H/8+OnMPztOd2O5O/2ZtQ=;
- b=ysWXw07grBzEYB71CqMvPFs4kUpYkF0nOjgJiI8eIFJf/fnJl6Kwg4UqNAydOCPqbHi2IJj1Xd2FpQOBE5hVqnob+VpAz9LIbqiwc7LvVO/sxMj2tStdozm1Ge+qjTP3RXzbmcbeSs2QpFx3ikm1J1Pg/OHlD0Zw5HLu/M0wnw8=
-Received: from BL1PR13CA0308.namprd13.prod.outlook.com (2603:10b6:208:2c1::13)
- by CH3PR12MB8583.namprd12.prod.outlook.com (2603:10b6:610:15f::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8114.31; Tue, 5 Nov
- 2024 06:06:48 +0000
-Received: from BN2PEPF00004FC1.namprd04.prod.outlook.com
- (2603:10b6:208:2c1:cafe::b) by BL1PR13CA0308.outlook.office365.com
- (2603:10b6:208:2c1::13) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.16 via Frontend
- Transport; Tue, 5 Nov 2024 06:06:48 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- BN2PEPF00004FC1.mail.protection.outlook.com (10.167.243.187) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8137.17 via Frontend Transport; Tue, 5 Nov 2024 06:06:48 +0000
-Received: from cjq-desktop.amd.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 5 Nov
- 2024 00:06:45 -0600
-From: Jiqian Chen <Jiqian.Chen@amd.com>
-To: Alex Deucher <alexander.deucher@amd.com>,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>, Xinhui Pan
-	<Xinhui.Pan@amd.com>
-CC: <amd-gfx@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-	Pierre-Eric Pelloux-Prayer <pierre-eric.pelloux-prayer@amd.com>, Jiqian Chen
-	<Jiqian.Chen@amd.com>, Huang Rui <Ray.Huang@amd.com>
-Subject: [PATCH 2/2] drm/amdgpu: Bypass resizing bars for PVH dom0
-Date: Tue, 5 Nov 2024 14:05:31 +0800
-Message-ID: <20241105060531.3503788-3-Jiqian.Chen@amd.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241105060531.3503788-1-Jiqian.Chen@amd.com>
-References: <20241105060531.3503788-1-Jiqian.Chen@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 862EE383
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 06:06:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730786791; cv=none; b=t79qS+Q3RMd3BovkTKrjHzILXwT76/SJZ/owOGWPmrczW3iBSV39yiq6f5GJ0E3U4SSu5L2nUkfUSrSKTghLuxvvbrP/BCfjdUIk2kON97CL/YqvvsucEnNPMPhL0bi5Z/AfPRom6SfVIZQWJRXoojkqi1Avq63uIyNG86VETOc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730786791; c=relaxed/simple;
+	bh=T2jdy/BgrCeDvzgChf+V4fZjpNRXzhxM8Rg00Y/Poeg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=mJ+KpFI/ffjjgAyI1I1iftQszPJakG5Ukj8nEKOfAihdf1/BDW0wDiV7wz2kwr5NhRikPGGVJ07vC+D0E+foG8L719ljgvsnTvY26G3cAlHJIkFYyXeiFVqVZIfjKAABo6m7lwcr27orxOKdIY0XHDJ4tRVp+j5iGkjw2DXc3Kc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.174])
+	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4XjHpX0R8Pz1T9qT;
+	Tue,  5 Nov 2024 14:04:04 +0800 (CST)
+Received: from kwepemd500013.china.huawei.com (unknown [7.221.188.12])
+	by mail.maildlp.com (Postfix) with ESMTPS id 6ED141402E0;
+	Tue,  5 Nov 2024 14:06:22 +0800 (CST)
+Received: from [10.159.166.136] (10.159.166.136) by
+ kwepemd500013.china.huawei.com (7.221.188.12) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Tue, 5 Nov 2024 14:06:20 +0800
+Message-ID: <35cf8895-fbc5-4ab4-bd52-d322990cefde@huawei.com>
+Date: Tue, 5 Nov 2024 14:06:19 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN2PEPF00004FC1:EE_|CH3PR12MB8583:EE_
-X-MS-Office365-Filtering-Correlation-Id: eda62e0a-e3de-4006-bee0-08dcfd600887
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|376014|82310400026|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?K7vgwY34GIxBhzpss5ZWG/dqFHn7UTWaRizsTN+LqF+kJUAoesmswqx/SWIH?=
- =?us-ascii?Q?ZhOkOwAWPwelP29MT+7WviTFvb1WduTD1aEdF9wY3nEVEpG17EbEZNhMG0hU?=
- =?us-ascii?Q?PKr8TOFdJU762Sj5WPY3RXJB/FTjmupvvjvd6DW518yu7ttcV62zZYx9bd++?=
- =?us-ascii?Q?EWkO0JBeKqv5++y8lfjFHAejjVNYtEOU8LxYsYFfre95HnzhkDmiMMzQrUkx?=
- =?us-ascii?Q?FynZN02aTtgtj7sT4MvL3eOUQBNxxy0zY2bcuv3jLBYCEtP94K/wt/ZbtvM4?=
- =?us-ascii?Q?AWvF66JA1pCtcV+5e4lKwIhVx6CdMeTXbFlVeaxjkX1YhXc2ezwDxN9mfiQm?=
- =?us-ascii?Q?9t0em3RTOgmKbJPytflDJevT5qxyO79+qg0PrmDjvV5Pnj9PjPEQYIAnCIbs?=
- =?us-ascii?Q?rtfnzLswlQskSbSBkLC4Z9jx2XVZcB2BZx0tYClHDG7IvuJmFvmZYgwIV/Lw?=
- =?us-ascii?Q?ZqNI8PRWgjkOOwy9xBP4/iE6h6fTnUaorYx9q5DBQU33bPhFtiDX5CEUt4wS?=
- =?us-ascii?Q?RIs0osT/9tSWU0eKJVOkhn9DWuprsZSMe78hDcd66st/f/lJZFRBq8krXIMG?=
- =?us-ascii?Q?dbjkW72kPRixBnS4or1uU0F6ceubLeKadv20oA6sdt3boxI6//kaD2NutoTL?=
- =?us-ascii?Q?nJarUjVJqYouDw/LwR3ptCl4p0Wwtc6n8Pa2i3MVo7Ylkrmn/QFXaAI0cg8o?=
- =?us-ascii?Q?9yRneKvo3l4UPAbaIiaZVUYlbijU9e/8BpTEDa1NNfHEHMKXzUh0kn3Y/eQu?=
- =?us-ascii?Q?CobImCPamzrciniT1HL4ydp9JbjPPMfPEF8ng/PzjLL/WAeSEGRYNn5gqGON?=
- =?us-ascii?Q?5O92I9KjTQ5SfktM2Rl+hNW7hv8BgHIqc5ScIVVAM+B+LkvyLZBXmbdsId0g?=
- =?us-ascii?Q?pfi1ga1f7L2xdY81c5SrGm4fNEMcabeOR3QDMDUN+WKBuaNUgKlmg1M9qaou?=
- =?us-ascii?Q?yyp6jyT4BsImy+0p0TAwb5KM8OeisGhWpT/M7hLCe10iRJaH+8hKT89kgEMh?=
- =?us-ascii?Q?UdGLb8KhE75p+T1lot66DfZOkTdhgJCf3fWzSQRkcHaRqJUBziFsPwW6PX2p?=
- =?us-ascii?Q?PsUJUxdYy63QZdFIe1X73W3FqlKO8pRymYVmdn0Uw5VA/ThOAEe+20nd/Vsr?=
- =?us-ascii?Q?mqB2gBR4+U1OcKWrhdEr8DGa6MLdQ2n0Ii049cRP4ulVNrCc47WuVlp/cHU7?=
- =?us-ascii?Q?kXxxFfhVB/qKhGb4IO1eBIcofsD4PjMcdHWK+pCT0+H9FlAp6GRLdkcWWOws?=
- =?us-ascii?Q?+97u6sQxih3MjjIiIP8od70XwAO3Ko0LyyEXpI900rgCZhRiyBI6tL5vYU92?=
- =?us-ascii?Q?QFQOXvTBLUxuOhD/GqlwG7Mr8KZst6AqRyq8hHKAPKpuAoCxEdN9gRH6J7Mz?=
- =?us-ascii?Q?771hB7+GpF9r6Tr7HEaMCVk5hlVgpizCqmd08Ro7/yG5IFIPQQ=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(376014)(82310400026)(1800799024);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Nov 2024 06:06:48.0944
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: eda62e0a-e3de-4006-bee0-08dcfd600887
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BN2PEPF00004FC1.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB8583
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V3 drm-dp 3/4] drm/hisilicon/hibmc: add dp hw moduel in
+ hibmc
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: <xinliang.liu@linaro.org>, <tiantao6@hisilicon.com>,
+	<maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
+	<tzimmermann@suse.de>, <airlied@gmail.com>, <daniel@ffwll.ch>,
+	<kong.kongxinwei@hisilicon.com>, <liangjian010@huawei.com>,
+	<chenjianmin@huawei.com>, <lidongming5@huawei.com>, <libaihan@huawei.com>,
+	<shenjian15@huawei.com>, <shaojijie@huawei.com>,
+	<dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+	<shiyongbang@huawei.com>
+References: <20241101105028.2177274-1-shiyongbang@huawei.com>
+ <20241101105028.2177274-4-shiyongbang@huawei.com>
+ <3ke3n6mkxdcllgjohhudv6xi6csnqzpahaocpofmn26l6jdu6c@xpy2z7yeiijq>
+From: Yongbang Shi <shiyongbang@huawei.com>
+In-Reply-To: <3ke3n6mkxdcllgjohhudv6xi6csnqzpahaocpofmn26l6jdu6c@xpy2z7yeiijq>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ kwepemd500013.china.huawei.com (7.221.188.12)
 
-VPCI of Xen doesn't support resizable bar. When discrete GPU is used on
-PVH dom0 which using the VPCI, amdgpu fails to probe, so we need to
-disable this capability for PVH dom0.
+> On Fri, Nov 01, 2024 at 06:50:27PM +0800, Yongbang Shi wrote:
+>> From: baihan li <libaihan@huawei.com>
+>>
+>> Build a dp level that hibmc driver can enable dp by
+>> calling their functions.
+>>
+>> Signed-off-by: baihan li <libaihan@huawei.com>
+>> Signed-off-by: yongbang shi <shiyongbang@huawei.com>
+>> ---
+>> ChangeLog:
+>> v2 -> v3:
+>>    - fix build errors reported by kernel test robot <lkp@intel.com>
+>>      Closes: https://lore.kernel.org/oe-kbuild-all/202410250931.UDQ9s66H-lkp@intel.com/
+>> v1 -> v2:
+>>    - changed some defines and functions to former patch, suggested by Dmitry Baryshkov.
+>>    - sorting the headers including in dp_hw.h and hibmc_drm_drv.c files, suggested by Dmitry Baryshkov.
+>>    - deleting struct dp_mode and dp_mode_cfg function, suggested by Dmitry Baryshkov.
+>>    - fix build errors reported by kernel test robot <lkp@intel.com>
+>>      Closes: https://lore.kernel.org/oe-kbuild-all/202410040328.VeVxM9yB-lkp@intel.com/
+>>    v1:https://lore.kernel.org/all/20240930100610.782363-1-shiyongbang@huawei.com/
+>> ---
+>>   drivers/gpu/drm/hisilicon/hibmc/Makefile    |   2 +-
+>>   drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c  | 237 ++++++++++++++++++++
+>>   drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.h  |  31 +++
+>>   drivers/gpu/drm/hisilicon/hibmc/dp/dp_reg.h |  41 ++++
+>>   4 files changed, 310 insertions(+), 1 deletion(-)
+>>   create mode 100644 drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c
+>>   create mode 100644 drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.h
+>>
+>> diff --git a/drivers/gpu/drm/hisilicon/hibmc/Makefile b/drivers/gpu/drm/hisilicon/hibmc/Makefile
+>> index 94d77da88bbf..214228052ccf 100644
+>> --- a/drivers/gpu/drm/hisilicon/hibmc/Makefile
+>> +++ b/drivers/gpu/drm/hisilicon/hibmc/Makefile
+>> @@ -1,5 +1,5 @@
+>>   # SPDX-License-Identifier: GPL-2.0-only
+>>   hibmc-drm-y := hibmc_drm_drv.o hibmc_drm_de.o hibmc_drm_vdac.o hibmc_drm_i2c.o \
+>> -	       dp/dp_aux.o dp/dp_link.o
+>> +	       dp/dp_aux.o dp/dp_link.o dp/dp_hw.o
+>>   
+>>   obj-$(CONFIG_DRM_HISI_HIBMC) += hibmc-drm.o
+>> diff --git a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c
+>> new file mode 100644
+>> index 000000000000..214897798bdb
+>> --- /dev/null
+>> +++ b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c
+>> @@ -0,0 +1,237 @@
+>> +// SPDX-License-Identifier: GPL-2.0-or-later
+>> +// Copyright (c) 2024 Hisilicon Limited.
+>> +
+>> +#include <linux/io.h>
+>> +#include <linux/delay.h>
+>> +#include "dp_config.h"
+>> +#include "dp_comm.h"
+>> +#include "dp_reg.h"
+>> +#include "dp_hw.h"
+>> +#include "dp_link.h"
+>> +#include "dp_aux.h"
+>> +
+>> +static int hibmc_dp_link_init(struct dp_dev *dp)
+>> +{
+>> +	dp->link.cap.lanes = 2;
+>> +	dp->link.train_set = devm_kzalloc(dp->dev->dev,
+>> +					  dp->link.cap.lanes * sizeof(u8), GFP_KERNEL);
+> Can you replace it just with an array, removing a need for an additional
+> allocation?
+>
+>> +	if (!dp->link.train_set)
+>> +		return -ENOMEM;
+>> +
+>> +	dp->link.cap.link_rate = 1;
+> Ok, this is why I don't link using indices for link rates. Which rate is
+> this? Unlike cap.lanes this is pure magic number. I think it should be
+> handled other way around: store actual link rate and convert to the
+> register value when required.
+>
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static void hibmc_dp_set_tu(struct dp_dev *dp, struct drm_display_mode *mode)
+>> +{
+>> +	u32 tu_symbol_frac_size;
+>> +	u32 tu_symbol_size;
+>> +	u32 rate_ks;
+>> +	u8 lane_num;
+>> +	u32 value;
+>> +	u32 bpp;
+>> +
+>> +	lane_num = dp->link.cap.lanes;
+>> +	if (lane_num == 0) {
+>> +		drm_err(dp->dev, "set tu failed, lane num cannot be 0!\n");
+>> +		return;
+>> +	}
+>> +
+>> +	bpp = DP_BPP;
+> Where is this defined? Is it hibmc-specific or a generic value?
+>
+>> +	rate_ks = hibmc_dp_get_link_rate(dp->link.cap.link_rate) * DP_LINK_RATE_CAL;
+> same question
 
-Signed-off-by: Jiqian Chen <Jiqian.Chen@amd.com>
-Reviewed-by: Huang Rui <Ray.Huang@amd.com>
----
- drivers/gpu/drm/amd/amdgpu/amdgpu_device.c | 4 ++++
- 1 file changed, 4 insertions(+)
+Hi Dmitry,
+Thanks for your detailed suggestions and questions. These two are defined in dp_config.h.
+Thanks,
+Baihan.
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
-index b3fb92bbd9e2..012feb3790dd 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
-@@ -1619,6 +1619,10 @@ int amdgpu_device_resize_fb_bar(struct amdgpu_device *adev)
- 	if (!IS_ENABLED(CONFIG_PHYS_ADDR_T_64BIT))
- 		return 0;
- 
-+	/* Bypass for PVH dom0 which doesn't support resizable bar */
-+	if (xen_initial_domain() && xen_pvh_domain())
-+		return 0;
-+
- 	/* Bypass for VF */
- 	if (amdgpu_sriov_vf(adev))
- 		return 0;
--- 
-2.34.1
 
+>> +	value = (mode->clock * bpp * 5) / (61 * lane_num * rate_ks);
+>> +
+>> +	if (value % 10 == 9) { /* 9 carry */
+>> +		tu_symbol_size = value / 10 + 1;
+>> +		tu_symbol_frac_size = 0;
+>> +	} else {
+>> +		tu_symbol_size = value / 10;
+>> +		tu_symbol_frac_size = value % 10 + 1;
+>> +	}
+>> +
+>> +	drm_info(dp->dev, "tu value: %u.%u value: %u\n",
+>> +		 tu_symbol_size, tu_symbol_frac_size, value);
+>> +
+>> +	dp_reg_write_field(dp->base + DP_VIDEO_PACKET,
+>> +			   DP_CFG_STREAM_TU_SYMBOL_SIZE, tu_symbol_size);
+>> +	dp_reg_write_field(dp->base + DP_VIDEO_PACKET,
+>> +			   DP_CFG_STREAM_TU_SYMBOL_FRAC_SIZE, tu_symbol_frac_size);
+>> +}
+>> +
+>> +static void hibmc_dp_set_sst(struct dp_dev *dp, struct drm_display_mode *mode)
+>> +{
+>> +	u32 hblank_size;
+>> +	u32 htotal_size;
+>> +	u32 htotal_int;
+>> +	u32 hblank_int;
+>> +	u32 fclk; /* flink_clock */
+>> +
+>> +	fclk = hibmc_dp_get_link_rate(dp->link.cap.link_rate) * DP_LINK_RATE_CAL;
+>> +
+>> +	/* ssc: 9947 / 10000 = 0.9947 */
+> This is obvious. More interesting question might be what exactly is
+> 0.9947 (or 0.53 %).
+>
+>> +	htotal_int = mode->htotal * 9947 / 10000;
+>> +	htotal_size = (u32)(htotal_int * fclk / (DP_SYMBOL_PER_FCLK * (mode->clock / 1000)));
+> Drop u32 ?
+>
+>> +
+>> +	/* ssc: max effect bandwidth 53 / 10000 = 0.53% */
+>> +	hblank_int = (mode->htotal - mode->hdisplay) - mode->hdisplay * 53 / 10000;
+>> +	hblank_size = hblank_int * fclk * 9947 /
+>> +		      (mode->clock * 10 * DP_SYMBOL_PER_FCLK);
+>> +
+>> +	drm_info(dp->dev, "h_active %u v_active %u htotal_size %u hblank_size %u",
+>> +		 mode->hdisplay, mode->vdisplay, htotal_size, hblank_size);
+>> +	drm_info(dp->dev, "flink_clock %u pixel_clock %d", fclk, (mode->clock / 1000));
+>> +
+>> +	dp_reg_write_field(dp->base + DP_VIDEO_HORIZONTAL_SIZE,
+>> +			   DP_CFG_STREAM_HTOTAL_SIZE, htotal_size);
+>> +	dp_reg_write_field(dp->base + DP_VIDEO_HORIZONTAL_SIZE,
+>> +			   DP_CFG_STREAM_HBLANK_SIZE, hblank_size);
+>> +}
+>> +
+>> +static void hibmc_dp_link_cfg(struct dp_dev *dp, struct drm_display_mode *mode)
+>> +{
+>> +	u32 timing_delay;
+>> +	u32 vblank;
+>> +	u32 hstart;
+>> +	u32 vstart;
+>> +
+>> +	vblank = mode->vtotal - mode->vdisplay;
+>> +	timing_delay = mode->htotal - mode->hsync_start;
+>> +	hstart = mode->htotal - mode->hsync_start;
+>> +	vstart = mode->vtotal - mode->vsync_start;
+>> +
+>> +	dp_reg_write_field(dp->base + DP_TIMING_GEN_CONFIG0,
+>> +			   DP_CFG_TIMING_GEN0_HBLANK, (mode->htotal - mode->hdisplay));
+>> +	dp_reg_write_field(dp->base + DP_TIMING_GEN_CONFIG0,
+>> +			   DP_CFG_TIMING_GEN0_HACTIVE, mode->hdisplay);
+>> +
+>> +	dp_reg_write_field(dp->base + DP_TIMING_GEN_CONFIG2,
+>> +			   DP_CFG_TIMING_GEN0_VBLANK, vblank);
+>> +	dp_reg_write_field(dp->base + DP_TIMING_GEN_CONFIG2,
+>> +			   DP_CFG_TIMING_GEN0_VACTIVE, mode->vdisplay);
+>> +	dp_reg_write_field(dp->base + DP_TIMING_GEN_CONFIG3,
+>> +			   DP_CFG_TIMING_GEN0_VFRONT_PORCH, (mode->vsync_start - mode->vdisplay));
+>> +
+>> +	dp_reg_write_field(dp->base + DP_VIDEO_CONFIG0,
+>> +			   DP_CFG_STREAM_HACTIVE, mode->hdisplay);
+>> +	dp_reg_write_field(dp->base + DP_VIDEO_CONFIG0,
+>> +			   DP_CFG_STREAM_HBLANK, (mode->htotal - mode->hdisplay));
+>> +	dp_reg_write_field(dp->base + DP_VIDEO_CONFIG2,
+>> +			   DP_CFG_STREAM_HSYNC_WIDTH, (mode->hsync_end - mode->hsync_start));
+>> +
+>> +	dp_reg_write_field(dp->base + DP_VIDEO_CONFIG1,
+>> +			   DP_CFG_STREAM_VACTIVE, mode->vdisplay);
+>> +	dp_reg_write_field(dp->base + DP_VIDEO_CONFIG1,
+>> +			   DP_CFG_STREAM_VBLANK, vblank);
+>> +	dp_reg_write_field(dp->base + DP_VIDEO_CONFIG3,
+>> +			   DP_CFG_STREAM_VFRONT_PORCH, (mode->vsync_start - mode->vdisplay));
+>> +	dp_reg_write_field(dp->base + DP_VIDEO_CONFIG3,
+>> +			   DP_CFG_STREAM_VSYNC_WIDTH, (mode->vsync_end - mode->vsync_start));
+>> +
+>> +	dp_reg_write_field(dp->base + DP_VIDEO_MSA0,
+>> +			   DP_CFG_STREAM_VSTART, vstart);
+>> +	dp_reg_write_field(dp->base + DP_VIDEO_MSA0,
+>> +			   DP_CFG_STREAM_HSTART, hstart);
+>> +
+>> +	dp_reg_write_field(dp->base + DP_VIDEO_CTRL, DP_CFG_STREAM_VSYNC_POLARITY,
+>> +			   mode->flags & DRM_MODE_FLAG_PVSYNC ? 1 : 0);
+>> +	dp_reg_write_field(dp->base + DP_VIDEO_CTRL, DP_CFG_STREAM_HSYNC_POLARITY,
+>> +			   mode->flags & DRM_MODE_FLAG_PHSYNC ? 1 : 0);
+>> +
+>> +	/* MSA mic 0 and 1 */
+>> +	writel(DP_MSA1, dp->base + DP_VIDEO_MSA1);
+>> +	writel(DP_MSA2, dp->base + DP_VIDEO_MSA2);
+>> +
+>> +	hibmc_dp_set_tu(dp, mode);
+>> +
+>> +	dp_reg_write_field(dp->base + DP_VIDEO_CTRL, DP_CFG_STREAM_RGB_ENABLE, 0x1);
+>> +	dp_reg_write_field(dp->base + DP_VIDEO_CTRL, DP_CFG_STREAM_VIDEO_MAPPING, 0);
+>> +
+>> +	/* divide 2: up even */
+>> +	if (timing_delay % 2)
+>> +		timing_delay++;
+>> +
+>> +	dp_reg_write_field(dp->base + DP_TIMING_MODEL_CTRL,
+>> +			   DP_CFG_PIXEL_NUM_TIMING_MODE_SEL1, timing_delay);
+>> +
+>> +	hibmc_dp_set_sst(dp, mode);
+>> +}
+>> +
+>> +int hibmc_dp_hw_init(struct hibmc_dp *dp)
+>> +{
+>> +	struct drm_device *drm_dev = dp->drm_dev;
+>> +	struct dp_dev *dp_dev;
+>> +	int ret;
+>> +
+>> +	dp_dev = devm_kzalloc(drm_dev->dev, sizeof(struct dp_dev), GFP_KERNEL);
+>> +	if (!dp_dev)
+>> +		return -ENOMEM;
+>> +
+>> +	dp->dp_dev = dp_dev;
+>> +
+>> +	dp_dev->dev = drm_dev;
+>> +	dp_dev->base = dp->mmio + DP_OFFSET;
+>> +
+>> +	hibmc_dp_aux_init(dp_dev);
+>> +
+>> +	ret = hibmc_dp_link_init(dp_dev);
+>> +	if (ret) {
+>> +		drm_err(drm_dev, "dp link init failed\n");
+>> +		return ret;
+>> +	}
+>> +
+>> +	/* hdcp data */
+>> +	writel(DP_HDCP, dp_dev->base + DP_HDCP_CFG);
+>> +	/* int init */
+>> +	writel(0, dp_dev->base + DP_INTR_ENABLE);
+>> +	writel(DP_INT_RST, dp_dev->base + DP_INTR_ORIGINAL_STATUS);
+>> +	/* rst */
+>> +	writel(DP_DPTX_RST, dp_dev->base + DP_DPTX_RST_CTRL);
+>> +	/* clock enable */
+>> +	writel(DP_CLK_EN, dp_dev->base + DP_DPTX_CLK_CTRL);
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +void hibmc_dp_hw_uninit(struct hibmc_dp *dp)
+>> +{
+>> +	// keep this uninit interface in the future use
+> no reason to, introduce it when required, not the other way around
+>
+>> +}
+>> +
+>> +void hibmc_dp_display_en(struct hibmc_dp *dp, bool enable)
+>> +{
+>> +	struct dp_dev *dp_dev = dp->dp_dev;
+>> +
+>> +	if (enable) {
+>> +		dp_reg_write_field(dp_dev->base + DP_VIDEO_CTRL, BIT(0), 0x1);
+>> +		writel(DP_SYNC_EN_MASK, dp_dev->base + DP_TIMING_SYNC_CTRL);
+>> +		dp_reg_write_field(dp_dev->base + DP_DPTX_GCTL0, BIT(10), 0x1);
+>> +		writel(DP_SYNC_EN_MASK, dp_dev->base + DP_TIMING_SYNC_CTRL);
+>> +	} else {
+>> +		dp_reg_write_field(dp_dev->base + DP_DPTX_GCTL0, BIT(10), 0);
+>> +		writel(DP_SYNC_EN_MASK, dp_dev->base + DP_TIMING_SYNC_CTRL);
+>> +		dp_reg_write_field(dp_dev->base + DP_VIDEO_CTRL, BIT(0), 0);
+>> +		writel(DP_SYNC_EN_MASK, dp_dev->base + DP_TIMING_SYNC_CTRL);
+>> +	}
+>> +
+>> +	msleep(50);
+>> +}
+>> +
+>> +int hibmc_dp_mode_set(struct hibmc_dp *dp, struct drm_display_mode *mode)
+>> +{
+>> +	struct dp_dev *dp_dev = dp->dp_dev;
+>> +	int ret;
+>> +
+>> +	if (!dp_dev->link.status.channel_equalized) {
+>> +		ret = hibmc_dp_link_training(dp_dev);
+>> +		if (ret) {
+>> +			drm_err(dp->drm_dev, "dp link training failed, ret: %d\n", ret);
+>> +			return ret;
+>> +		}
+>> +	}
+>> +
+>> +	hibmc_dp_display_en(dp, false);
+>> +	hibmc_dp_link_cfg(dp_dev, mode);
+>> +
+>> +	return 0;
+>> +}
+>> diff --git a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.h b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.h
+>> new file mode 100644
+>> index 000000000000..de802aaa8b4a
+>> --- /dev/null
+>> +++ b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.h
+>> @@ -0,0 +1,31 @@
+>> +/* SPDX-License-Identifier: GPL-2.0-or-later */
+>> +/* Copyright (c) 2024 Hisilicon Limited. */
+>> +
+>> +#ifndef DP_KAPI_H
+>> +#define DP_KAPI_H
+>> +
+>> +#include <linux/types.h>
+>> +#include <linux/delay.h>
+>> +
+>> +#include <drm/drm_device.h>
+>> +#include <drm/drm_encoder.h>
+>> +#include <drm/drm_connector.h>
+>> +#include <drm/drm_print.h>
+>> +#include <video/videomode.h>
+>> +
+>> +struct dp_dev;
+> hibmc_dp_dev
+>
+>> +
+>> +struct hibmc_dp {
+>> +	struct dp_dev *dp_dev;
+>> +	struct drm_device *drm_dev;
+>> +	struct drm_encoder encoder;
+>> +	struct drm_connector connector;
+>> +	void __iomem *mmio;
+>> +};
+>> +
+>> +int hibmc_dp_hw_init(struct hibmc_dp *dp);
+>> +void hibmc_dp_hw_uninit(struct hibmc_dp *dp);
+>> +int hibmc_dp_mode_set(struct hibmc_dp *dp, struct drm_display_mode *mode);
+>> +void hibmc_dp_display_en(struct hibmc_dp *dp, bool enable);
+>> +
+>> +#endif
+>> diff --git a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_reg.h b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_reg.h
+>> index 1032f6cde761..3dcb847057a4 100644
+>> --- a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_reg.h
+>> +++ b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_reg.h
+>> @@ -14,8 +14,26 @@
+>>   #define DP_AUX_STATUS			0x78
+>>   #define DP_PHYIF_CTRL0			0xa0
+>>   #define DP_VIDEO_CTRL			0x100
+>> +#define DP_VIDEO_CONFIG0		0x104
+>> +#define DP_VIDEO_CONFIG1		0x108
+>> +#define DP_VIDEO_CONFIG2		0x10c
+>> +#define DP_VIDEO_CONFIG3		0x110
+>> +#define DP_VIDEO_PACKET			0x114
+>> +#define DP_VIDEO_MSA0			0x118
+>> +#define DP_VIDEO_MSA1			0x11c
+>> +#define DP_VIDEO_MSA2			0x120
+>> +#define DP_VIDEO_HORIZONTAL_SIZE	0X124
+>> +#define DP_TIMING_GEN_CONFIG0		0x26c
+>> +#define DP_TIMING_GEN_CONFIG2		0x274
+>> +#define DP_TIMING_GEN_CONFIG3		0x278
+>> +#define DP_HDCP_CFG			0x600
+>> +#define DP_INTR_ENABLE			0x720
+>> +#define DP_INTR_ORIGINAL_STATUS		0x728
+>>   #define DP_DPTX_RST_CTRL		0x700
+>> +#define DP_DPTX_CLK_CTRL		0x704
+>>   #define DP_DPTX_GCTL0			0x708
+>> +#define DP_TIMING_MODEL_CTRL		0x884
+>> +#define DP_TIMING_SYNC_CTRL		0xFF0
+>>   
+>>   #define DP_CFG_AUX_SYNC_LEN_SEL			BIT(1)
+>>   #define DP_CFG_AUX_TIMER_TIMEOUT		BIT(2)
+>> @@ -31,5 +49,28 @@
+>>   #define DP_CFG_AUX_STATUS			GENMASK(11, 4)
+>>   #define DP_CFG_SCRAMBLE_EN			BIT(0)
+>>   #define DP_CFG_PAT_SEL				GENMASK(7, 4)
+>> +#define DP_CFG_TIMING_GEN0_HACTIVE		GENMASK(31, 16)
+>> +#define DP_CFG_TIMING_GEN0_HBLANK		GENMASK(15, 0)
+>> +#define DP_CFG_TIMING_GEN0_VACTIVE		GENMASK(31, 16)
+>> +#define DP_CFG_TIMING_GEN0_VBLANK		GENMASK(15, 0)
+>> +#define DP_CFG_TIMING_GEN0_VFRONT_PORCH		GENMASK(31, 16)
+>> +#define DP_CFG_STREAM_HACTIVE			GENMASK(31, 16)
+>> +#define DP_CFG_STREAM_HBLANK			GENMASK(15, 0)
+>> +#define DP_CFG_STREAM_HSYNC_WIDTH		GENMASK(15, 0)
+>> +#define DP_CFG_STREAM_VACTIVE			GENMASK(31, 16)
+>> +#define DP_CFG_STREAM_VBLANK			GENMASK(15, 0)
+>> +#define DP_CFG_STREAM_VFRONT_PORCH		GENMASK(31, 16)
+>> +#define DP_CFG_STREAM_VSYNC_WIDTH		GENMASK(15, 0)
+>> +#define DP_CFG_STREAM_VSTART			GENMASK(31, 16)
+>> +#define DP_CFG_STREAM_HSTART			GENMASK(15, 0)
+>> +#define DP_CFG_STREAM_VSYNC_POLARITY		BIT(8)
+>> +#define DP_CFG_STREAM_HSYNC_POLARITY		BIT(7)
+>> +#define DP_CFG_STREAM_RGB_ENABLE		BIT(1)
+>> +#define DP_CFG_STREAM_VIDEO_MAPPING		GENMASK(5, 2)
+>> +#define DP_CFG_PIXEL_NUM_TIMING_MODE_SEL1	GENMASK(31, 16)
+>> +#define DP_CFG_STREAM_TU_SYMBOL_SIZE		GENMASK(5, 0)
+>> +#define DP_CFG_STREAM_TU_SYMBOL_FRAC_SIZE	GENMASK(9, 6)
+>> +#define DP_CFG_STREAM_HTOTAL_SIZE		GENMASK(31, 16)
+>> +#define DP_CFG_STREAM_HBLANK_SIZE		GENMASK(15, 0)
+>>   
+>>   #endif
+>> -- 
+>> 2.33.0
+>>
 
