@@ -1,104 +1,150 @@
-Return-Path: <linux-kernel+bounces-397258-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397259-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7B179BD979
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 00:08:35 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8A899BD983
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 00:14:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7CBE71F23659
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 23:08:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6182B284567
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 23:14:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DDA71D270A;
-	Tue,  5 Nov 2024 23:08:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60E6F216A00;
+	Tue,  5 Nov 2024 23:14:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="uQjHrY1x"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QFQ+fvVO"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F9C321644F;
-	Tue,  5 Nov 2024 23:08:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8DD21D270A;
+	Tue,  5 Nov 2024 23:14:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730848108; cv=none; b=YS9ojeflJwzUBJ0QMiiligG7inW/Aa+dkmUQyGjEKjxwRiBVEYgWOUVNWd4gxLMHfySUyWFtcJR3lOH8TQGUvM4srieX5v9k7ePphoBW4jjuqofv6t86w2dEzPGbAFG/ivir0CR389nyNhpeHu4h5rYkWUNzz0QAGUqdlbzks7s=
+	t=1730848473; cv=none; b=XqMFvo+Rx2q0NRJu1nWaijvMFhZCzVVRseLvhoAzdJG80HM/zSFdvCvcuErjsWukdDMnLTLOyxKsOvJqyt10A192BwfNXhXdrkHa7NuRr9HB9wSajbZLErF4AbeRfclIEiEYT28DYypO6UTmTPOqzQlf37RrZlDEoYh8x5NJ9Qw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730848108; c=relaxed/simple;
-	bh=8hyQC3wg/dy6ArnmFuKqZoU88ZMlDCQzqexyu2kyvcw=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=Gwr1ve1GmMW4QQKD/HWo2+Y3GceeK/V0AKed5Ny6NJzdRcl3X2dTzeJAlOK8licreBp71HA+uirJaYGV8AfdOysROXBpLVkhjRyhuRwabQU5xUoGAIfcFBOozYCSQ10nvoZ+Sy0J1h4StCGJ5KNGXt8fTdoXQsjvnB80kJF6t9I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=uQjHrY1x; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8DBBC4CECF;
-	Tue,  5 Nov 2024 23:08:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1730848107;
-	bh=8hyQC3wg/dy6ArnmFuKqZoU88ZMlDCQzqexyu2kyvcw=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=uQjHrY1xg1V3tQr+kJYpMo75KeIXwZLKw/cSwj3DD5Z/xTO0ArpHNyQruoNpyXfD/
-	 UVsY0RFdJq4MOZ1DU6ZJ2kp1+VcZRBKF85yRkPJBml5NywCYLSoCSwn3mygimr2Sj4
-	 a9E2AWhubqRWILR0Xp0xtZPasD/19t490eTPl8JA=
-Date: Tue, 5 Nov 2024 15:08:26 -0800
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Alexandru Ardelean <aardelean@baylibre.com>
-Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
- jic23@kernel.org, bartosz.golaszewski@linaro.org,
- gregkh@linuxfoundation.org
-Subject: Re: [PATCH v2 1/2] util_macros.h: fix/rework find_closest() macros
-Message-Id: <20241105150826.86b0a8f2c0df2a4822b07757@linux-foundation.org>
-In-Reply-To: <20241105145406.554365-1-aardelean@baylibre.com>
-References: <20241105145406.554365-1-aardelean@baylibre.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1730848473; c=relaxed/simple;
+	bh=+voRVJsqASUWCnvpnWD63XH3qZJXH/vo7y1dIWBip1k=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QWi+u65euCtjaEo3KR3GvdQe1tvHN6Zon5pgNeiPouswmlTmwVXIndZ6oicoKlMiPKvMZSiqphtnuJ8C9irr4+Mse4g0wVtSsIPw9TOfE6gOfe9PecuTqUTguUX8KNFjGR8h7SfNaxJkBqmdI4ftSpfSytNBjO1MvpYUsXdgsAQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QFQ+fvVO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41F52C4CED3;
+	Tue,  5 Nov 2024 23:14:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730848473;
+	bh=+voRVJsqASUWCnvpnWD63XH3qZJXH/vo7y1dIWBip1k=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=QFQ+fvVO5n3A79FSYsAzxnlQaI1vNsP/jKDfd10EInB2dH1LdK7UKqNlWhH3f+kUZ
+	 8xwWxPVELOLS+TZjaankDUNfbdRT01+wTxIQtPbeor/hXMJ+YFrgFcZo8+xr0m1i7M
+	 TxLXdYxybnZ7UkB5ZuTSvIh5fnNlKCh7sHe3dCHDc6It98zzWuwsdz68/1z4zpkBXH
+	 /Om+pUR7kU9tUKaE09kcTZwwc5Ndy+Xf1uIGhxv1xhf6wQNpn0ADmcqZaoO4fHokfc
+	 TuRyBd5WVVkioJJnW0HvT4fNdINqQwscCYJUi4MYx2RXmDtDDBHzG7UEwIVhPE0vK7
+	 u/O8TuyhSqBVA==
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-539e3f35268so7400809e87.3;
+        Tue, 05 Nov 2024 15:14:33 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCWX4Aes2pXsvMfmCfpT+09TLQS72hRpkgeuxLyX3sBOpjBP/1yXjd79FbFT8OwBCV1XxKLZKy6mGhJdRag=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzTVf09Tiync3lmAFCskGfqJHjXtXcJgfpq2wuCegFF+XBHmu9+
+	jxXi2vk6CMgnnFhaiWsT1kgYeGLLK9Wdt9nJTph04ylC3f6is7w8t9k1o93f68JtgTlFVD4PhLS
+	Jcn297b4o8vjSuTVBwDtmQy1Xxc8=
+X-Google-Smtp-Source: AGHT+IEM9QJsCPRKdfpax8cGcFMwkaVtHBdpfHiaq0AbyJDrTwxfTmMpNNhNaB36vZcjDyC2BkCgvnPFJZNKcA7przM=
+X-Received: by 2002:a05:6512:32ca:b0:539:93e8:7eca with SMTP id
+ 2adb3069b0e04-53d65e02513mr8807866e87.35.1730848471972; Tue, 05 Nov 2024
+ 15:14:31 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+References: <20241014141345.5680-1-david.hunter.linux@gmail.com> <20241014141345.5680-4-david.hunter.linux@gmail.com>
+In-Reply-To: <20241014141345.5680-4-david.hunter.linux@gmail.com>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Wed, 6 Nov 2024 08:13:55 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAQ0xwiaq7vMWRb4xh7tacthTfWwokqjio2vEbtTga+Bfg@mail.gmail.com>
+Message-ID: <CAK7LNAQ0xwiaq7vMWRb4xh7tacthTfWwokqjio2vEbtTga+Bfg@mail.gmail.com>
+Subject: Re: [PATCH v2 3/7] streamline_config.pl: remove prompt warnings for
+ configs with defaults
+To: David Hunter <david.hunter.linux@gmail.com>
+Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	shuah@kernel.org, javier.carrasco.cruz@gmail.com, 
+	Steven Rostedt <rostedt@goodmis.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue,  5 Nov 2024 16:54:05 +0200 Alexandru Ardelean <aardelean@baylibre.com> wrote:
-
-> A bug was found in the find_closest() (find_closest_descending() is also
-> affected after some testing), where for certain values with small
-> progressions, the rounding (done by averaging 2 values) causes an incorrect
-> index to be returned.
-
-Convincing changelog, thanks.
-
-> -#define find_closest(x, a, as) __find_closest(x, a, as, <=)
-> +#define find_closest(x, a, as)						\
-> +({									\
-> +	typeof(as) __fc_i, __fc_as = (as) - 1;				\
-> +	long __fc_mid_x, __fc_x = (x);					\
-> +	long __fc_left, __fc_right;					\
-> +	typeof(*a) const *__fc_a = (a);					\
-> +	for (__fc_i = 0; __fc_i < __fc_as; __fc_i++) {			\
-> +		__fc_mid_x = (__fc_a[__fc_i] + __fc_a[__fc_i + 1]) / 2;	\
-> +		if (__fc_x <= __fc_mid_x) {				\
-> +			__fc_left = __fc_x - __fc_a[__fc_i];		\
-> +			__fc_right = __fc_a[__fc_i + 1] - __fc_x;	\
-> +			if (__fc_right < __fc_left)			\
-> +				__fc_i++;				\
-> +			break;						\
-> +		}							\
-> +	}								\
-> +	(__fc_i);							\
-> +})
+On Mon, Oct 14, 2024 at 11:14=E2=80=AFPM David Hunter
+<david.hunter.linux@gmail.com> wrote:
 >
-> ...
+> Ignore process select warnings for config entries that have a default
+> option. Some config entries have no prompt, and nothing selects them, but
+> these config options are okay because they have a default option.
 >
-> +#define find_closest_descending(x, a, as)				\
+> Signed-off-by: David Hunter <david.hunter.linux@gmail.com>
+> ---
 
-Boy these things are hard to read.  They're also bloaty and I'm
-counting 36ish callsites!
+Applied to linux-kbuild.
+Thanks.
 
-Can we fix both issues by just giving up on the macro approach and
-reimplement them in out-of-line C code?  All the sites I looked at are
-using 32-bit quantities - a mix of signed and unsigned.  
 
-It's separate from this bugfix of course, but would it be feasible for
-someone to go switch all callers to use u32's then reimplement these in
-lib/find_closest.c?
+> V1 https://lore.kernel.org/all/20240913171205.22126-7-david.hunter.linux@=
+gmail.com/
+>
+> V2
+>         - changed subject
+>         - put a space between "if" and "("
+> ---
+>  scripts/kconfig/streamline_config.pl | 14 ++++++++++++--
+>  1 file changed, 12 insertions(+), 2 deletions(-)
+>
+> diff --git a/scripts/kconfig/streamline_config.pl b/scripts/kconfig/strea=
+mline_config.pl
+> index 85f4712e2bf3..8e23faab5d22 100755
+> --- a/scripts/kconfig/streamline_config.pl
+> +++ b/scripts/kconfig/streamline_config.pl
+> @@ -144,6 +144,7 @@ my %selects;
+>  my %prompts;
+>  my %objects;
+>  my %config2kfile;
+> +my %defaults;
+>  my $var;
+>  my $iflevel =3D 0;
+>  my @ifdeps;
+> @@ -222,6 +223,7 @@ sub read_kconfig {
+>             $depends{$config} .=3D " " . $1;
+>         } elsif ($state ne "NONE" && /^\s*def(_(bool|tristate)|ault)\s+(\=
+S.*)$/) {
+>             my $dep =3D $3;
+> +            $defaults{$config} =3D 1;
+>             if ($dep !~ /^\s*(y|m|n)\s*$/) {
+>                 $dep =3D~ s/.*\sif\s+//;
+>                 $depends{$config} .=3D " " . $dep;
+> @@ -523,8 +525,16 @@ sub parse_config_selects
+>
+>      # If no possible config selected this, then something happened.
+>      if (!defined($next_config)) {
+> -       print STDERR "WARNING: $config is required, but nothing in the\n"=
+;
+> -       print STDERR "  current config selects it.\n";
+> +
+> +       # Some config options have no prompt, and nothing selects them, b=
+ut
+> +       # they stay turned on once the final checks for the configs
+> +       # are done. These configs have a default option, so turn off the
+> +       # warnings for configs with default options.
+> +       if (!defined($defaults{$config})) {
+> +           print STDERR "WARNING: $config is required, but nothing in th=
+e\n";
+> +           print STDERR "  current config selects it.\n";
+> +       }
+> +
+>         return;
+>      }
+>
+> --
+> 2.43.0
+>
 
+
+--=20
+Best Regards
+Masahiro Yamada
 
