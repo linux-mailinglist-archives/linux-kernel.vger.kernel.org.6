@@ -1,68 +1,151 @@
-Return-Path: <linux-kernel+bounces-396696-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396698-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24B689BD0C1
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 16:39:33 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0373B9BD0C7
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 16:40:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DDE02286EC5
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 15:39:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2C0E61F21929
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 15:40:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B35EE17332C;
-	Tue,  5 Nov 2024 15:37:39 +0000 (UTC)
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E22313D531;
+	Tue,  5 Nov 2024 15:39:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BC+t4IwR"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9D83168C3F
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 15:37:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3663513A409;
+	Tue,  5 Nov 2024 15:38:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730821059; cv=none; b=nCtB/pDWdCKK76Mwd3bmEiDYP5CeDlk4jxXa5nu+hnwh58znvWHvlc4OVdO46PAiTqleLTNj1zA/Z95UIi+i0j9/plr7rvsxYzG7iIgOg7mAqlFsZkIvzFEoCssrHF5+qPQXTE1Rwd9rB67yHqDc68s5W4HzMXlFPXqDGHEdcDU=
+	t=1730821141; cv=none; b=dQwICqTtRBPzH3BCWdgfHn9Zgcfc4YVjk8GQhw3pW+Kd3fWRcn+Tv0M61wPdvJxIk4jjY0PEX6FbBbouOZha1teXzNbSdTwevy16px/68x6DHgWfMFdNwY5Xbd+gb13N5hWpm1t7wLyjTzaGWEoyEJmdXH20fRF3ylST2PIssmQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730821059; c=relaxed/simple;
-	bh=0Hbco/w5KpVsOY79Rdk2hqEAnZLV3UEccMZMryu3wXs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GHdmzUX4vyR1ja2BI+rgtImVyYP5Icz8e2ctRzmUKE9Lr4baWgdtVhb4qn5hINOqlDfJhAGaG9WecSN6dytPp81DGscN2ZGxHGZTdKmsqXe5he9XYTPL42DQbyNkT027OJmB/3WGaKI35mEnSuYnOoz+gCYuAGMk0YAudWvXkN0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id ADE36227AAC; Tue,  5 Nov 2024 16:37:33 +0100 (CET)
-Date: Tue, 5 Nov 2024 16:37:33 +0100
-From: Christoph Hellwig <hch@lst.de>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Christoph Hellwig <hch@lst.de>, kernel test robot <lkp@intel.com>,
-	Damien Le Moal <dlemoal@kernel.org>, oe-kbuild-all@lists.linux.dev,
-	linux-kernel@vger.kernel.org, Hannes Reinecke <hare@suse.de>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	Bart Van Assche <bvanassche@acm.org>
-Subject: Re: block/blk-zoned.c:579:5-24: WARNING: atomic_dec_and_test
- variation before object free at line 583.
-Message-ID: <20241105153733.GA7219@lst.de>
-References: <202411050650.ilIZa8S7-lkp@intel.com> <20241105153422.GA7132@lst.de> <e86904d7-bf42-4b38-889e-3978e89358f2@kernel.dk>
+	s=arc-20240116; t=1730821141; c=relaxed/simple;
+	bh=lSYMITN9xGOGlPjRYwyC90WrOfPVKQ6Nh+LwhhwSiiI=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=hNUTDiMrq0MBQKGG+G2vOlqQ+Dwt1ORTv6+iOvHIjXDhDd4RI5Pg0KId7FBE+QwKh/knuIK91GTFX7U288Xvoq2WD4lmid1yy9IzOurv+i0TFqBRZvg3/ecOC+2Qg455xmkoS7uAgHFnODwZpqHZ8+Qo6i9laeUtN0pRLxuz9aM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BC+t4IwR; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730821140; x=1762357140;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=lSYMITN9xGOGlPjRYwyC90WrOfPVKQ6Nh+LwhhwSiiI=;
+  b=BC+t4IwRom6fZ77n3uja/GR1mcE4VkM1WED6kZh8ZQi9wZeNYndPtOjA
+   SN+hf/sHfi6JNs5ov6uJpfjdZsL+Mws+MavXwWiY3qbMagCrkLoL7NpWt
+   kfH6BJA74bx3Rj9rqjdzNprxPO13JBSI8hknZP4LlWjjHCJ05t84auQ9m
+   KFdi572TTJY0P3j+ScqRTXIKbQl3dAZVx/rFzGFKavcA0AiJ4KX1HTOHP
+   WkMGF5KYIepiNmq27nB/+G2P3a6j//VHkmkV2ZgvmN7LrBIX9kGzAtH78
+   iIoY5RjZmuUlWw/bXtzguQiAyggZOaqlDlOWdFMWn7AqjRB3PXjLA4gSA
+   w==;
+X-CSE-ConnectionGUID: /AB6LK5GRVaCYcA/VXE97A==
+X-CSE-MsgGUID: irvNXktYTyW6v/DKqt6rtw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11247"; a="33415958"
+X-IronPort-AV: E=Sophos;i="6.11,260,1725346800"; 
+   d="scan'208";a="33415958"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2024 07:38:58 -0800
+X-CSE-ConnectionGUID: WW/vFsOZSfCs9cj29Y6WxA==
+X-CSE-MsgGUID: LW6KXejcS4K1NpgNofDbDQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,260,1725346800"; 
+   d="scan'208";a="114860359"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.201])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2024 07:38:53 -0800
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Tue, 5 Nov 2024 17:38:50 +0200 (EET)
+To: Mario Limonciello <mario.limonciello@amd.com>
+cc: Hans de Goede <hdegoede@redhat.com>, 
+    "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, 
+    Maximilian Luz <luzmaximilian@gmail.com>, Lee Chun-Yi <jlee@suse.com>, 
+    Shyam Sundar S K <Shyam-sundar.S-k@amd.com>, 
+    Corentin Chary <corentin.chary@gmail.com>, 
+    "Luke D . Jones" <luke@ljones.dev>, Ike Panhc <ike.pan@canonical.com>, 
+    Henrique de Moraes Holschuh <hmh@hmh.eng.br>, 
+    Alexis Belmonte <alexbelm48@gmail.com>, 
+    =?ISO-8859-15?Q?Uwe_Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>, 
+    Ai Chao <aichao@kylinos.cn>, Gergo Koteles <soyer@irl.hu>, 
+    open list <linux-kernel@vger.kernel.org>, 
+    "open list:ACPI" <linux-acpi@vger.kernel.org>, 
+    "open list:MICROSOFT SURFACE PLATFORM PROFILE DRIVER" <platform-driver-x86@vger.kernel.org>, 
+    "open list:THINKPAD ACPI EXTRAS DRIVER" <ibm-acpi-devel@lists.sourceforge.net>, 
+    Mark Pearson <mpearson-lenovo@squebb.ca>, 
+    Matthew Schwartz <matthew.schwartz@linux.dev>
+Subject: Re: [PATCH v4 06/20] ACPI: platform_profile: Move matching string
+ for new profile out of mutex
+In-Reply-To: <20241105153316.378-7-mario.limonciello@amd.com>
+Message-ID: <47780252-0d09-ec4a-9e4b-924939e0df4a@linux.intel.com>
+References: <20241105153316.378-1-mario.limonciello@amd.com> <20241105153316.378-7-mario.limonciello@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e86904d7-bf42-4b38-889e-3978e89358f2@kernel.dk>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Content-Type: multipart/mixed; boundary="8323328-259802314-1730821130=:949"
 
-On Tue, Nov 05, 2024 at 08:36:33AM -0700, Jens Axboe wrote:
-> On 11/5/24 8:34 AM, Christoph Hellwig wrote:
-> > On Tue, Nov 05, 2024 at 06:52:25AM +0800, kernel test robot wrote:
-> >>>> block/blk-zoned.c:579:5-24: WARNING: atomic_dec_and_test variation before object free at line 583.
-> > 
-> > Does anyone know what this warning is supposed to mean?
-> 
-> It's supposed to mean "use refcount_t for things like this".
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-Have we finally resolved the performance problems with refcount_t for
-fast path operations?
+--8323328-259802314-1730821130=:949
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
+On Tue, 5 Nov 2024, Mario Limonciello wrote:
+
+> Holding the mutex is not necessary while scanning the string passed into
+> platform_profile_store().
+>=20
+> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+> ---
+>  drivers/acpi/platform_profile.c | 12 +++++-------
+>  1 file changed, 5 insertions(+), 7 deletions(-)
+>=20
+> diff --git a/drivers/acpi/platform_profile.c b/drivers/acpi/platform_prof=
+ile.c
+> index 4e8a155589c21..70e7f1ba68676 100644
+> --- a/drivers/acpi/platform_profile.c
+> +++ b/drivers/acpi/platform_profile.c
+> @@ -83,6 +83,11 @@ static ssize_t platform_profile_store(struct device *d=
+ev,
+>  {
+>  =09int err, i;
+> =20
+> +=09/* Scan for a matching profile */
+> +=09i =3D sysfs_match_string(profile_names, buf);
+> +=09if (i < 0)
+> +=09=09return -EINVAL;
+> +
+>  =09err =3D mutex_lock_interruptible(&profile_lock);
+>  =09if (err)
+>  =09=09return err;
+> @@ -92,13 +97,6 @@ static ssize_t platform_profile_store(struct device *d=
+ev,
+>  =09=09return -ENODEV;
+>  =09}
+> =20
+> -=09/* Scan for a matching profile */
+> -=09i =3D sysfs_match_string(profile_names, buf);
+> -=09if (i < 0) {
+> -=09=09mutex_unlock(&profile_lock);
+> -=09=09return -EINVAL;
+> -=09}
+> -
+>  =09/* Check that platform supports this profile choice */
+>  =09if (!test_bit(i, cur_profile->choices)) {
+>  =09=09mutex_unlock(&profile_lock);
+>=20
+
+Reviewed-by: Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com>
+
+
+--=20
+ i.
+
+--8323328-259802314-1730821130=:949--
 
