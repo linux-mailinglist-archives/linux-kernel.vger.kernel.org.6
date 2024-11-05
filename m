@@ -1,189 +1,166 @@
-Return-Path: <linux-kernel+bounces-397238-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397239-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13C559BD89A
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 23:27:20 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 141329BD89F
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 23:27:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8FA428460F
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 22:27:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 79165B2263F
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 22:27:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFA6321644C;
-	Tue,  5 Nov 2024 22:27:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61007216A17;
+	Tue,  5 Nov 2024 22:27:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="VElI0Yor"
-Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SLEQktjv"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 746C2216203
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 22:27:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A281216A00;
+	Tue,  5 Nov 2024 22:27:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730845633; cv=none; b=TQkgG9Fbz6GYysSpzR7RUI83zFVl9FDtWBC8pksl7UlawA2oZMvnkDHRnGuPDuMO0FNNvRF5HGp0wxIoIJGb1elsobdyXNNM0px6v64YNBnSGzyUb8CL7Tb3twbEQDDkDMDDPEbhcW8zktImc70zXw3Q0Q/VF2QarcK60+VjynY=
+	t=1730845636; cv=none; b=irkjCpdi3lrK34AyHmfEA8T29gcd53MutOtM8AxKK5ctQmvlvZUzwwMK6jyls+vpJug4w/4Q8cnfb+giJq/Kr/W5zymesMBIpS7sdey0Va3VLHXmg4tj4KQGeWd1bSGUtcGVH/pDT5B0FGHb+ZElovfmTclB3rnSvCnNzu04Y2A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730845633; c=relaxed/simple;
-	bh=F6WCB3ktHHg+ij4FHJhdtfQMaZPpNGQxSLIHDywd7Uo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JH+ZXbjt2Npcdb6lCvt1NiYGa1RzUOi+H9Cl1ZEIafRuRdmSH6xZMYUQz3GvsWv57s6Y0BJNzRlI3YlH8Zg5lu7qi0CEBOnLloRjLKvCtIOVgpd91qQFJytQc9leI4+OLK+emTXK5szWsXOckDu2RwCsrPbmbcOaz6bd2/KeFGQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=VElI0Yor; arc=none smtp.client-ip=202.36.163.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
-Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 2E3E92C0272;
-	Wed,  6 Nov 2024 11:27:08 +1300 (NZDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
-	s=mail181024; t=1730845628;
-	bh=JY02SUnt6htoA49OFlo1YnKt7Mb4X+QH3DcUwcE5qIE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=VElI0Yor/guJRRzsi3xED56igPWeJMeq9aCKOlRicOKFZIScBm8m19gFHJxw1LQzI
-	 MQuRLruOkJCyqyzp564r7+C+k7oExnGerikLawWTDwZ4MjO6mb0MUDXMsvvZOXsUQ+
-	 l+OVmfkJxdkd9ab13gIGa5rbO8E9xl/kH4xNKoLPiz06xsDWnQIGnFzdaH1MD/MSCq
-	 WqrV0ilVg1JABpf57hIiyAesON7u3EjBkpeCz1wlg4Fg0m8ryo7ZFwbCKPergqQFxn
-	 kIzOAX4bw7CnvJ6FJbLeCDxKUrDZh6LhfEleZIea3TpORllq3dIu4dqQjZBoIyMfX0
-	 WeWnl6InC4CAQ==
-Received: from pat.atlnz.lc (Not Verified[10.32.16.33]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
-	id <B672a9bbc0000>; Wed, 06 Nov 2024 11:27:08 +1300
-Received: from [10.33.22.30] (chrisp-dl.ws.atlnz.lc [10.33.22.30])
-	by pat.atlnz.lc (Postfix) with ESMTP id 0197B13ECC4;
-	Wed,  6 Nov 2024 11:27:08 +1300 (NZDT)
-Message-ID: <5b915330-ef77-418d-82b1-9d751f1c157e@alliedtelesis.co.nz>
-Date: Wed, 6 Nov 2024 11:27:07 +1300
+	s=arc-20240116; t=1730845636; c=relaxed/simple;
+	bh=2T40XpaqtxgeuN0I8keNWpQc6lEEgaKrm7K/bebhG/w=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=ipgffls4O9W4hn8ZQ3kGGk6DNCwH6URFuplLfz10yDsAKU5M4wdYNi8TK/Fsx5eJdQJPlz1ebfTYHHhwx2g2eevNOjfyWtO8c2vyVKIWTydT301tbEwm7D2nYI1qPGWpGbqWJmaST32MViZ2ITY5FXEBOXWo8Bt3FHKjEayulHc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SLEQktjv; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730845636; x=1762381636;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version:content-transfer-encoding;
+  bh=2T40XpaqtxgeuN0I8keNWpQc6lEEgaKrm7K/bebhG/w=;
+  b=SLEQktjvVMKDIz04oZoqq7AxrsNCtX/0tO5T/3O8UmJ1iyrtXtjwqllC
+   eYlFOP2NwuNBwOwAUWxb3FxV73OWSlAQTZZwinMKxb9XUKdzYOtCSnN07
+   uALLd7mc+yKKd5TYclvVepHZgwOE2wXNMvgmatJIEagtRy+aAL6ByVGm0
+   TF5rgdpkTWwkr5D2i3jj82eVZNk23gdm78Seq61aRcvh/vQnnebxbqQhU
+   ro3jIJoJaOWREu2KonTpDNFoq5JNEEGyoeW23kR32b0cKsSlzieVVC3YU
+   4HPw5LrZIEa7+La4XisrRxlgv1gwHToIvKmhmvys+b/nAUP84XOXHxqnY
+   A==;
+X-CSE-ConnectionGUID: v1GjZUMeRPGfYAZgnqKz5A==
+X-CSE-MsgGUID: lsupN1ktReWnF8w6AKFA6A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11247"; a="56020738"
+X-IronPort-AV: E=Sophos;i="6.11,261,1725346800"; 
+   d="scan'208";a="56020738"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2024 14:27:15 -0800
+X-CSE-ConnectionGUID: HeOGFYR9SsKNOe0QbM4hHg==
+X-CSE-MsgGUID: 6iruFa55RAK6hE29LMIryA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,261,1725346800"; 
+   d="scan'208";a="83730334"
+Received: from ehanks-mobl1.amr.corp.intel.com (HELO vcostago-mobl3) ([10.124.221.238])
+  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2024 14:27:14 -0800
+From: Vinicius Costa Gomes <vinicius.gomes@intel.com>
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: brauner@kernel.org, hu1.chen@intel.com, miklos@szeredi.hu,
+ malini.bhandaru@intel.com, tim.c.chen@intel.com, mikko.ylinen@intel.com,
+ linux-unionfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH overlayfs-next v3 0/4] overlayfs: Optimize
+ override/revert creds
+In-Reply-To: <CAOQ4uxiaRE_cQ9m9LZMEiDCeSQKkZDfsJbpt85ds6hgvjnwHUQ@mail.gmail.com>
+References: <20241105193514.828616-1-vinicius.gomes@intel.com>
+ <CAOQ4uxiaRE_cQ9m9LZMEiDCeSQKkZDfsJbpt85ds6hgvjnwHUQ@mail.gmail.com>
+Date: Tue, 05 Nov 2024 14:27:13 -0800
+Message-ID: <871pzpqptq.fsf@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird Beta
-Subject: Re: [PATCH v8 7/7] i2c: Add driver for the RTL9300 I2C controller
-To: Andi Shyti <andi.shyti@kernel.org>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, lee@kernel.org,
- sre@kernel.org, tsbogend@alpha.franken.de, linux-i2c@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-pm@vger.kernel.org, linux-mips@vger.kernel.org
-References: <20241031200350.274945-1-chris.packham@alliedtelesis.co.nz>
- <20241031200350.274945-8-chris.packham@alliedtelesis.co.nz>
- <x2ptxjqmcui6uh6qhjur5bymb6cjgikekt7bo2bnyoqbble4kh@zanxmiq3sau6>
-Content-Language: en-US
-From: Chris Packham <chris.packham@alliedtelesis.co.nz>
-In-Reply-To: <x2ptxjqmcui6uh6qhjur5bymb6cjgikekt7bo2bnyoqbble4kh@zanxmiq3sau6>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-SEG-SpamProfiler-Analysis: v=2.4 cv=ca1xrWDM c=1 sm=1 tr=0 ts=672a9bbc a=KLBiSEs5mFS1a/PbTCJxuA==:117 a=IkcTkHD0fZMA:10 a=VlfZXiiP6vEA:10 a=62ntRvTiAAAA:8 a=jdP34snFAAAA:8 a=VwQbUJbxAAAA:8 a=NGLwXv0Z13XHn4elL4kA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=pToNdpNmrtiFLRE6bQ9Z:22 a=jlphF6vWLdwq7oh3TaWq:22
-X-SEG-SpamProfiler-Score: 0
-x-atlnz-ls: pat
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
+Hi,
 
-On 6/11/24 10:10, Andi Shyti wrote:
-> Hi Chris,
->
-> On Fri, Nov 01, 2024 at 09:03:50AM +1300, Chris Packham wrote:
->> Add support for the I2C controller on the RTL9300 SoC. There are two I2C
->> controllers in the RTL9300 that are part of the Ethernet switch register
->> block. Each of these controllers owns a SCL pin (GPIO8 for the fiorst
->> I2C controller, GPIO17 for the second). There are 8 possible SDA pins
->> (GPIO9-16) that can be assigned to either I2C controller. This
->> relationship is represented in the device tree with a child node for
->> each SDA line in use.
+Amir Goldstein <amir73il@gmail.com> writes:
+
+> On Tue, Nov 5, 2024 at 8:35=E2=80=AFPM Vinicius Costa Gomes
+> <vinicius.gomes@intel.com> wrote:
 >>
->> This is based on the openwrt implementation[1] but has been
->> significantly modified
+>> Hi,
 >>
->> [1] - https://scanmail.trustwave.com/?c=20988&d=2Imq58SgjkO2w5EzbSeL1kys6iYwJJIG5Ij2dyaU8A&u=https%3a%2f%2fgit%2eopenwrt%2eorg%2f%3fp%3dopenwrt%2fopenwrt%2egit%3ba%3dblob%3bf%3dtarget%2flinux%2frealtek%2ffiles-5%2e15%2fdrivers%2fi2c%2fbusses%2fi2c-rtl9300%2ec
+>> This series is rebased on top of Amir's overlayfs-next branch.
 >>
->> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
-> Looks good. As a self reminder:
+>> Changes from v2:
+>>  - Removed the "convert to guard()/scoped_guard()" patches (Miklos Szere=
+di);
+>>  - In the overlayfs code, convert all users of override_creds()/revert_c=
+reds() to the _light() versions by:
+>>       1. making ovl_override_creds() use override_creds_light();
+>>       2. introduce ovl_revert_creds() which calls revert_creds_light();
+>>       3. convert revert_creds() to ovl_revert_creds()
+>>    (Amir Goldstein);
+>>  - Fix an potential reference counting issue, as the lifetime
+>>    expectations of the mounter credentials are different (Christian
+>>    Brauner);
+>>
 >
-> Reviewed-by: Andi Shyti <andi.shyti@kernel.org>
+> Hi Vicius,
 >
-> Some comments below, though.
+> The end result looks good to me, but we still need to do the series a
+> bit differently.
 >
-> ...
+>> The series is now much simpler:
+>>
+>> Patch 1: Introduce the _light() version of the override/revert cred oper=
+ations;
+>> Patch 2: Convert backing-file.c to use those;
+>> Patch 3: Do the conversion to use the _light() version internally;
 >
->> +#define RTL9300_I2C_MST_CTRL1			0x0
->> +#define  RTL9300_I2C_MST_CTRL1_MEM_ADDR_OFS	8
->> +#define  RTL9300_I2C_MST_CTRL1_MEM_ADDR_MASK	GENMASK(31, 8)
->> +#define  RTL9300_I2C_MST_CTRL1_SDA_OUT_SEL_OFS	4
->> +#define  RTL9300_I2C_MST_CTRL1_SDA_OUT_SEL_MASK	GENMASK(6, 4)
->> +#define  RTL9300_I2C_MST_CTRL1_GPIO_SCL_SEL	BIT(3)
->> +#define  RTL9300_I2C_MST_CTRL1_RWOP		BIT(2)
->> +#define  RTL9300_I2C_MST_CTRL1_I2C_FAIL		BIT(1)
->> +#define  RTL9300_I2C_MST_CTRL1_I2C_TRIG		BIT(0)
->> +#define RTL9300_I2C_MST_CTRL2			0x4
->> +#define  RTL9300_I2C_MST_CTRL2_RD_MODE		BIT(15)
->> +#define  RTL9300_I2C_MST_CTRL2_DEV_ADDR_OFS	8
->> +#define  RTL9300_I2C_MST_CTRL2_DEV_ADDR_MASK	GENMASK(14, 8)
->> +#define  RTL9300_I2C_MST_CTRL2_DATA_WIDTH_OFS	4
->> +#define  RTL9300_I2C_MST_CTRL2_DATA_WIDTH_MASK	GENMASK(7, 4)
->> +#define  RTL9300_I2C_MST_CTRL2_MEM_ADDR_WIDTH_OFS	2
->> +#define  RTL9300_I2C_MST_CTRL2_MEM_ADDR_WIDTH_MASK	GENMASK(3, 2)
->> +#define  RTL9300_I2C_MST_CTRL2_SCL_FREQ_OFS	0
->> +#define  RTL9300_I2C_MST_CTRL2_SCL_FREQ_MASK	GENMASK(1, 0)
->> +#define RTL9300_I2C_MST_DATA_WORD0		0x8
->> +#define RTL9300_I2C_MST_DATA_WORD1		0xc
->> +#define RTL9300_I2C_MST_DATA_WORD2		0x10
->> +#define RTL9300_I2C_MST_DATA_WORD3		0x14
-> Not everything here is perfectly aligned, but I'm not going to
-> be too picky.
+> This patch mixes a small logic change and a large mechanical change
+> that is not a good mix.
 >
-> ...
+> I took the liberty to split out the large mechanical change to
+> ovl: use wrapper ovl_revert_creds()
+> and pushed it to branch
+> https://github.com/amir73il/linux/commits/ovl_creds
+>
+> I then rebased overlayfs-next over this commit and resolved the
+> conflicts with the pure mechanical change.
+>
+> Now you can rebase your patches over ovl_creds and they should
+> not be conflicting with overlayfs-next changes.
+>
+> The reason I wanted to do this is that Christian could take your changes
+> as well as my ovl_creds branch through the vfs tree if he chooses to do s=
+o.
+>
 
-Since I'm making other changes I'll tidy up the alignment.
+Makes sense.
 
->> +static int rtl9300_i2c_execute_xfer(struct rtl9300_i2c *i2c, char read_write,
->> +				int size, union i2c_smbus_data *data, int len)
-> You could align this a little better.
-
-Ack.
-
->> +{
->> +	u32 val, mask;
->> +	int ret;
-> ...
+>> Patch 4: Fix a potential refcounting issue
 >
->> +static int rtl9300_i2c_smbus_xfer(struct i2c_adapter *adap, u16 addr, unsigned short flags,
->> +				  char read_write, u8 command, int size,
->> +				  union i2c_smbus_data *data)
->> +{
->> +	struct rtl9300_i2c_chan *chan = i2c_get_adapdata(adap);
->> +	struct rtl9300_i2c *i2c = chan->i2c;
->> +	int len = 0, ret;
-> ...
+> This patch cannot be separated from patch #3 because it would introduce t=
+he
+> refcount leak mid series.
 >
->> +	ret = rtl9300_i2c_execute_xfer(i2c, read_write, size, data, len);
-> do we want to bail out if len is '0'?
+> But after I took out all the mechanical changes out of patch #3,
+> there should be no problem for you to squash patches #3 and #4 together.
 >
-> ...
 
-I think it'll be OK. In the write case the len should be set via 
-data->block[0]. I the read case we will pass len=0 which will cause 
-rtl9300_i2c_execute_xfer() to grab all 16 bytes from the i2c controller 
-registers but for the read block data the i2c device should provide the 
-correct number bytes in byte 0.
+Done.=20
 
->> +static int rtl9300_i2c_probe(struct platform_device *pdev)
->> +{
->> +	struct device *dev = &pdev->dev;
->> +	struct rtl9300_i2c_chan *chan;
->> +	struct rtl9300_i2c *i2c;
->> +	struct i2c_adapter *adap;
-> "chan" and "adap" can be declared inside
-> the device_for_each_child_node()
-Ack.
->> +	u32 clock_freq, sda_pin;
->> +	int ret, i = 0;
->> +	struct fwnode_handle *child;
-> ...
+> One more nit: please use "ovl: ..." for commit titles instead of
+> "fs/overlayfs: ...".
 >
->> +	device_for_each_child_node(dev, child) {
->> +		chan = &i2c->chans[i];
->> +		adap = &chan->adap;
->> +
+
+Also done. Will give the series a round of testing, just to be sure, and
+will send the next version tomorrow.
+
 > Thanks,
-> Andi
+> Amir.
+
+
+Cheers,
+--=20
+Vinicius
 
