@@ -1,124 +1,107 @@
-Return-Path: <linux-kernel+bounces-396259-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396260-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 739DA9BCA4B
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 11:21:26 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9CD29BCA4D
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 11:21:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 353CD281383
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 10:21:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A09491F236B7
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 10:21:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44D111D2226;
-	Tue,  5 Nov 2024 10:21:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7204F1D1F57;
+	Tue,  5 Nov 2024 10:21:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="S79E5S7e"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OUInRfQ/"
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E1D01D1747
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 10:21:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80A1E1CF7C9
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 10:21:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730802077; cv=none; b=QNGtId9WYoMEvGwwdtYX4sgy1BIKb0cXk+O3I11XMuvOUx5ofJhNadls5SIuKmruGsW1SOnfJtxPDfgywkBSWx9gILQ/vKHolmYw8c+L2K+YjtLkUEok58k16mYY5MWusahkIfqCy+BjP9L2sNDvLvtaPvV6deJensmuLjvAxs4=
+	t=1730802085; cv=none; b=FDzZqU4x3B6WoaOg9lDVlKtnpeQ25QJksRCamMPt0EUcY+3DQqNMVpsmOVehGV7ZZCKkacS1mIbndP036avgV8QlJc34D2XWYHVvsr65H+OXZRh3GTXOZCMOyu7nbJARfQNR0kVCx/4G3wiHgBnVguTob7IQJsxH0NI2JeRsTrk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730802077; c=relaxed/simple;
-	bh=t5ej7ZMTDzTltNF7X963OJIQrTWEDlW49GE1prreceg=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=lmO5SnLiE0fNIF9t1XGXkEqv8J25IDFnh70ZN5oFfVsKv3DEwFYWV2LEPwD926n7nXd5+pY4KmPFPDKEgIjWc5245EyHPd+Snne5+CS4cvydRyN93La41XHbrt/bo8FjrxbkOnx15G0JUbsJ8pkGyszjBhhk4M5kTC/rJfIC2Hs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=S79E5S7e; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-43161c0068bso44512725e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 02:21:15 -0800 (PST)
+	s=arc-20240116; t=1730802085; c=relaxed/simple;
+	bh=7johmFIxlLMPLSJqq5TydQDo3koGyzHVL0vN4smmk5U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oCiS6LiI8n7y7uvnpgMZy2UuvO0I137D1EbTCZTliIt0a6C6KA+YKSEKe3Rn9fQpvflti+VbvUzLadmnNU7mwy3tlkwExTaba5POQobbueCG/ADHb0R2e5jVZEGTqmgTv0KlvtJWe2ORMWPDa51vBDOITZ3jgYMhiu20xeu2g7s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OUInRfQ/; arc=none smtp.client-ip=209.85.210.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-72061bfec2dso4856956b3a.2
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 02:21:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1730802074; x=1731406874; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ArC80tKtjP3dBGGXx79noUAvUpR4S9jUKLPnbzjNTSY=;
-        b=S79E5S7ehcvZpH4aucidonezD+vipqdymRbyXWS77zprE0vmRarFewbXDyP8YKyF0v
-         QbfFn1gx8kiVozCFMkA02AWM5Oiw353nfGWJMEl3iA0PSRiIyF2tX5XvYg1AfgKh8NXS
-         AhqX0ZLLGMbhxIZeiSc9KipKhkBu6ej0J7qBsHG5AMiVCEQboVyZ8t/SZYSYXQk0chzI
-         nRKvIi7I34w76h+yW3Y9gsuv6TodLVtd5xM3Wu6GhkfXUVNDlGXkL7YErW0IawpTZ2oi
-         zoB5k/CLo+NT2pZG2e5GWK8SpndKzDa56lh5A9j5TTs5QEthm4Y20vLU8ipqYPlA4mqg
-         d+6g==
+        d=gmail.com; s=20230601; t=1730802084; x=1731406884; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=7johmFIxlLMPLSJqq5TydQDo3koGyzHVL0vN4smmk5U=;
+        b=OUInRfQ/cA+Qt/XQ6y+dZZCbmsugNYoOURpi0El0yL14ABUXnz2WiyZvEZqGlu/9Nw
+         em7ww9BQNczzGWRsibzT6mWPHMYZQi0DzQtRM4ltf5kZlA1cv4EaThFfAEwql41P+yH0
+         Ki8iKpUZ0Kmzer6R8fZwKk5v7nCLaJN0NBemGqZofiGRemCUdo30T4+ABRz9GSfxReK1
+         Hs6TCzpSFbHgXqEbDsCSpl/1mH5Trxs2EE3bTAdoTkDS+I33d4pZ/8aL0A/pBs84pB/F
+         7UvkE4WEpdjQTUwY49xLc6EUed/3MfTc6WjEBhQEgQPFjuFNXpAI3kQzgJr9ZWMR3O7w
+         CoBw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730802074; x=1731406874;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ArC80tKtjP3dBGGXx79noUAvUpR4S9jUKLPnbzjNTSY=;
-        b=CVeJjLuryqzNGPAHhoL1UcuhgcPJsRkyHbX3eS59pecfwv1IwCVbtc9ErqbjRaSHsB
-         IlzxNW6nwd1HZckH+rLcmbRsOid6gao4wr6rPElw2zMUYyTxcTgvW60uZXBZQtXKhNlM
-         Kw4SwyABgUFSjDjVHRQWRn+ECo21lGAxDGMdA3cTcUXvG82WnsT7XNx/cgKKRWcIimkU
-         jbmKAhm4mVMnCoDNfWH749m5EIjJ1KaCVcP0wj/70bTgxNktwGYpYaFoq0Uv1EIIn2OC
-         1UJFCJe3KD1+1Lh/6tZXgruiZt+USBHHEIySnmJTFGSrNFTFC2EqnwZlPhKT4grpXNM6
-         fDUA==
-X-Forwarded-Encrypted: i=1; AJvYcCUjTQ50kzavjLO0VHiNinAKEe8NpoiDR/4IoCr61tDBsqW/6bv2XYvTlLuXFMa5QjGJEcDGcEF8ZKqrvd8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwHwG69foer9fvLf0JZPgDWxIRX0ateT5aBHs4PoN8I8gzS7M61
-	k0yQ1jclY7fTvrbx2qf+e/ejeGS+fTVt+oBiwtoZTrZUfO1awuCymPMlRWK2z3I=
-X-Google-Smtp-Source: AGHT+IE2n92iA9zFLecVDleLRsQnsU2LzZqCh08NUKJAXXircidE3s23XD0vusQDwPGzqgQof5ziDA==
-X-Received: by 2002:a05:600c:4fd3:b0:431:44fe:fd9a with SMTP id 5b1f17b1804b1-4328325118emr131647305e9.19.1730802074391;
-        Tue, 05 Nov 2024 02:21:14 -0800 (PST)
-Received: from [127.0.1.1] ([82.76.168.176])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4327d5ab254sm182319745e9.3.2024.11.05.02.21.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Nov 2024 02:21:13 -0800 (PST)
-From: Abel Vesa <abel.vesa@linaro.org>
-To: Abel Vesa <abelvesa@kernel.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
- Sascha Hauer <s.hauer@pengutronix.de>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Fabio Estevam <festevam@gmail.com>, Aisheng Dong <aisheng.dong@nxp.com>, 
- "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
-Cc: linux-clk@vger.kernel.org, imx@lists.linux.dev, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Peng Fan <peng.fan@nxp.com>, Jacky Bai <ping.bai@nxp.com>, 
- Carlos Song <carlos.song@nxp.com>
-In-Reply-To: <20241027-imx-clk-v1-v3-0-89152574d1d7@nxp.com>
-References: <20241027-imx-clk-v1-v3-0-89152574d1d7@nxp.com>
-Subject: Re: [PATCH v3 0/5] clk: imx: scu and fracn pll update
-Message-Id: <173080207299.1891569.12565190669016776250.b4-ty@linaro.org>
-Date: Tue, 05 Nov 2024 12:21:12 +0200
+        d=1e100.net; s=20230601; t=1730802084; x=1731406884;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7johmFIxlLMPLSJqq5TydQDo3koGyzHVL0vN4smmk5U=;
+        b=hQpCGpcKBFZ1kA/BIxLNB7dX5/nwNjoDiUM/FqGeMMV1I3DeF3pY3UdVdUGUL7oXLK
+         T/OjKpnr22FwS4dfX6OMbrT1sfzTWwUaOh8mpsIOn3uoj00JbE6G6xihtL33YWg3puqv
+         jKbT2//ASzjsPZqOQ9pC4aL2uuTShjRx5dS4nf2jftoKPHb/T5E8fLEFqUYVN9BS5sRr
+         6Z8qE1oQmtrZD0Vq9K6vIj7KgjAUeyfaf8B0iF1N91zpJniLNfKjsqhR+SBAqpSEQUCB
+         uQenOJH0ICiksO8tgyIxsndl+aaxnnX5hJRZtPoRlzRCeVWd4u4lcxSMmPX+yrItQwmp
+         IiYw==
+X-Forwarded-Encrypted: i=1; AJvYcCXRZ0tGORhHE4jqJ03tbl1aceea+GjrsR8CIXV36LyVVSMiudZFGiwHBQ9Nx8gh4d6gUP6v84IjjFw/b0U=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywx3wk3WNvWYK16AZLtxsFVD/Syw0SF1iEbLTolEtx9/m2VMPVM
+	VXxB1aG3LJ+fLsPLAvqFad+bpprnAHUV/AndArZWdKK9fDxyJPwC89HJuamfRws5t1ZNQXN+4v/
+	9PplP6AhL5KjEDFJwcqBlzLOlLYd97l4B
+X-Google-Smtp-Source: AGHT+IGbd1N33EFPPngiyV0kWvChfD3xYpzmCqXRcDRgBnf1Ooc0ARy5UKUi+cbzUnCCAiKwcTZRwKSDCVwbJyRn6tM=
+X-Received: by 2002:a05:6a21:6d8d:b0:1db:eb50:abb0 with SMTP id
+ adf61e73a8af0-1dbeb50ac23mr5158105637.3.1730802083687; Tue, 05 Nov 2024
+ 02:21:23 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-dedf8
+References: <20241102022204.155039-1-gye976@gmail.com> <hdffht6z6a6dnap7kpbg6w5hyiftgahpiyhidvgga4qjeiw5xz@wu3ca5tvfj3l>
+ <p3vspkvcm7nq3gankpblloudrumenpcuflhu5fpdse75kcyyk6@w7adi7togz4j>
+In-Reply-To: <p3vspkvcm7nq3gankpblloudrumenpcuflhu5fpdse75kcyyk6@w7adi7togz4j>
+From: gyeyoung <gye976@gmail.com>
+Date: Tue, 5 Nov 2024 19:21:12 +0900
+Message-ID: <CAKbEzntS731PtOZ7iSvC8Y5XEBaFqG5TEciXQe2EiqWOv85Vdg@mail.gmail.com>
+Subject: Re: [PATCH v4] drm/xe: Fix build error for XE_IOCTL_DBG macro
+To: Lucas De Marchi <lucas.demarchi@intel.com>
+Cc: =?UTF-8?Q?Thomas_Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>, 
+	Rodrigo Vivi <rodrigo.vivi@intel.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	intel-xe@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
+> there were some checkpatch issues about mixing tabs and spaces. Next
+> time please double check the checkpatch output. I also reworded the
+> commit message a little bit to follow an imperative mood as outlined at
+> https://www.kernel.org/doc/html/v4.10/process/submitting-patches.html#describe-your-changes
 
-On Sun, 27 Oct 2024 20:00:06 +0800, Peng Fan (OSS) wrote:
-> Patch 1 is to resubmit [1] with comments addressed.
-> Patch 2 and Patch 3 are for i.MX93 Fracn PLL fix.
-> Patch 4 is for clk scu fix
-> Patch 5 is for hdmi. Fix tag not needed.
-> 
-> Detailed information is in commit log of each patch.
-> 
-> [...]
+I'm sorry for not being more careful, I'll use a script next time
+instead of doing it manually.
 
-Applied, thanks!
+Thanks,
+Gyeyoung Baek
 
-[1/5] clk: imx: lpcg-scu: SW workaround for errata (e10858)
-      commit: 5ee063fac85656bea9cfe3570af147ba1701ba18
-[2/5] clk: imx: fracn-gppll: correct PLL initialization flow
-      commit: 557be501c38e1864b948fc6ccdf4b035d610a2ea
-[3/5] clk: imx: fracn-gppll: fix pll power up
-      commit: ff4279618f0aec350b0fb41b2b35841324fbd96e
-[4/5] clk: imx: clk-scu: fix clk enable state save and restore
-      commit: e81361f6cf9bf4a1848b0813bc4becb2250870b8
-[5/5] clk: imx: lpcg-scu: Skip HDMI LPCG clock save/restore
-      commit: 92888f39193419c117e282cce7fd762ba78784a4
-
-Best regards,
--- 
-Abel Vesa <abel.vesa@linaro.org>
-
+>
+> Applied to drm-xe-next. Thanks.
+>
+> Lucas De Marchi
+>
+> >
+> >thanks
+> >Lucas De Marchi
 
