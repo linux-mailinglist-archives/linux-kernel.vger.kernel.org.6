@@ -1,136 +1,137 @@
-Return-Path: <linux-kernel+bounces-396382-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396383-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E7109BCC63
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 13:09:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 561029BCC65
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 13:10:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 39D8D1F23051
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 12:09:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E2581F230A7
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 12:10:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B77D1D516B;
-	Tue,  5 Nov 2024 12:09:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 013271D5159;
+	Tue,  5 Nov 2024 12:10:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WB8rD+7Q"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="T7i/zeJj"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B092C1D47D9;
-	Tue,  5 Nov 2024 12:09:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1137E1D47C8;
+	Tue,  5 Nov 2024 12:10:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730808571; cv=none; b=iwQFk/uVD6L8vwW6uC/AxfNao7qiSrgRKub0ogVzUxeuWE12Rsl8hi4BySGtcHM9JIwh7Yalzeg6ZGk1Mn2Ip9XVUVMnCHHGbrzGi6i8PntBoUkkyVjhytHwBbji4fFL0ittcqSKOfn4ORcMhBm9VPkr6WV4GNw3yilHVZXh7zI=
+	t=1730808620; cv=none; b=NTXzP/tryf7nnRX7kJM1zaSvRQVNiEpe1cLB0mXNca9DNk3h+fYQJ6IaJCziOpwRchx3uddx65I28cGniw+xmgyVNYljNF/GNquefJRsOPCcpWN5emXLFs7XljtwAMCokg+elHRKKYoL0FRUnj0meJqr4MXVx5tNC9TXWo5wO2s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730808571; c=relaxed/simple;
-	bh=J/B+ENA4OJ4XDGIbjRbvBcVaTYPoDG6+MJhHGv0MEQQ=;
+	s=arc-20240116; t=1730808620; c=relaxed/simple;
+	bh=D/Sjnsy+/xB8yB9ivMteFWzQ4KLjCq4S2+qQfStaHW8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=M6hifuOmO9YGjwep4gz4UR1uhU/eaEICSoMaO7e4KXwiW1HUtEE0eTK39Ktx0mzM9ej/Xe9j0wiah4TYK9UqqnNJ8MpcEmj0AcIzB+pDX94Oz3gAUXaweO8n928j0Ez+KfDSvGBJMyCkq+76vS+jsTEFXFkrd8VBTP4prBoZ7yo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WB8rD+7Q; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730808570; x=1762344570;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=J/B+ENA4OJ4XDGIbjRbvBcVaTYPoDG6+MJhHGv0MEQQ=;
-  b=WB8rD+7Q4xq0Wz0gm4/t9PeANaRpdwZMu31DO2pwJen/v57VdWOWyiM5
-   r7TBHzpx42Iz3clUNP8wes7xrskPXTt6ZKSqSN3ADv0+2NtoquDZ3+v7Z
-   8Y+YYZdgS6EAaWrzaLqtSbgu5JVMqB1v7W27SBR85rzJn0nQ0HxyLKTIa
-   +gidH6MQTF+7Hl4Wj/o0OB5oYQQkBlSGwILgvXb8IuOdVSRG5inEmRBhq
-   GUvZrUh5RUD+JmovJB7xFNPRYPKi6xrcb0RyAEfp2xbk1FVTDvLBKIX2J
-   C5MjmXNHOEvdSOE8tZAdWODNb8jAbFsGxpOu89caBeEPEacIGE5D+ZD8C
-   Q==;
-X-CSE-ConnectionGUID: UkpkIvJDQA6qTVIb4LUMvA==
-X-CSE-MsgGUID: 7ozrjAU1SvuaLxlf6AycMg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11246"; a="33389693"
-X-IronPort-AV: E=Sophos;i="6.11,260,1725346800"; 
-   d="scan'208";a="33389693"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2024 04:09:29 -0800
-X-CSE-ConnectionGUID: zQ/rrbs1RB6/gxOiycK1og==
-X-CSE-MsgGUID: LlRr8a9hR5ensXNCeAb/cA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,260,1725346800"; 
-   d="scan'208";a="83649240"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by fmviesa007.fm.intel.com with ESMTP; 05 Nov 2024 04:09:26 -0800
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1t8INA-000m1e-0k;
-	Tue, 05 Nov 2024 12:09:24 +0000
-Date: Tue, 5 Nov 2024 20:08:54 +0800
-From: kernel test robot <lkp@intel.com>
-To: Dionna Glaze <dionnaglaze@google.com>, x86@kernel.org,
-	linux-kernel@vger.kernel.org,
-	Tom Lendacky <thomas.lendacky@amd.com>,
-	John Allen <john.allen@amd.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	"David S. Miller" <davem@davemloft.net>,
-	Ashish Kalra <ashish.kalra@amd.com>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	netdev@vger.kernel.org, Dionna Glaze <dionnaglaze@google.com>,
-	linux-crypto@vger.kernel.org
-Subject: Re: [PATCH v4 3/6] crypto: ccp: Track GCTX through sev commands
-Message-ID: <202411051934.6vECpMIv-lkp@intel.com>
-References: <20241105010558.1266699-4-dionnaglaze@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=LQ5QcEQwcjtxB6K7su9g9oL4Toey3U6uAG5Dcwl18y5bvxLIFwxIJD0Z3pDBa24BuZkAUy+Fxhkh4CRXnhOuCwNU8xce9mKJVcJDskFAfPWqgmz8tQXxucopZkda2rjfWPCEtJbJUbhnbeJfp2/E7HhqwTSMXzyZEE/jR/CDDjQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=T7i/zeJj; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=JMfl+NyZcivvY2Hh7sjOcV4qti2lDbv6tUdw1BYPUR8=; b=T7i/zeJjDWLLrif0Z/0xNB0e24
+	74a1VpvHrVOsx16+tD3a1rKwp8fv56k/kTwkGSlcXDC4RoX3/0WH3sIRDzYfOzeLJ/ONoJE+K+L6e
+	qbsNawDJlidF1/L+/QHWOi+H5U4ANDsvPfSgfU71LDN8fgX8gAFGXnZ6pRJfczWeym98BPM/aJfJR
+	4zZh2BNI9Fh5mXjGMXSaYygA2QiqN0Gn4qvy8ARch2Elsqfe7mjoL1dZHf9wVR3RA7TZC+5CsY4zj
+	kYwmaO1lJ4YfgWMrw5BQP9wT5Lv4WFO+yjAjoViYTClj4jSTuSoByKk1f3CNsOpzy164GmQhiMMWS
+	8NtPPjFQ==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1t8INt-00000002lvd-12FH;
+	Tue, 05 Nov 2024 12:10:10 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 7AD6A30042E; Tue,  5 Nov 2024 13:10:09 +0100 (CET)
+Date: Tue, 5 Nov 2024 13:10:09 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: =?iso-8859-1?Q?Andr=E9?= Almeida <andrealmeid@igalia.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+	Darren Hart <dvhart@infradead.org>,
+	Davidlohr Bueso <dave@stgolabs.net>, Arnd Bergmann <arnd@arndb.de>,
+	sonicadvance1@gmail.com, linux-kernel@vger.kernel.org,
+	kernel-dev@igalia.com, linux-api@vger.kernel.org,
+	Nathan Chancellor <nathan@kernel.org>
+Subject: Re: [PATCH v2 2/3] futex: Create set_robust_list2
+Message-ID: <20241105121009.GH24862@noisy.programming.kicks-ass.net>
+References: <20241101162147.284993-1-andrealmeid@igalia.com>
+ <20241101162147.284993-3-andrealmeid@igalia.com>
+ <20241104112240.GA24862@noisy.programming.kicks-ass.net>
+ <8373eb11-d61c-40c4-9289-1047ec35c4d6@igalia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20241105010558.1266699-4-dionnaglaze@google.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <8373eb11-d61c-40c4-9289-1047ec35c4d6@igalia.com>
 
-Hi Dionna,
+On Mon, Nov 04, 2024 at 06:55:45PM -0300, André Almeida wrote:
+> Hi Peter,
+> 
+> Em 04/11/2024 08:22, Peter Zijlstra escreveu:
+> > On Fri, Nov 01, 2024 at 01:21:46PM -0300, André Almeida wrote:
+> > > @@ -1046,24 +1095,44 @@ static inline void exit_pi_state_list(struct task_struct *curr) { }
+> > >   static void futex_cleanup(struct task_struct *tsk)
+> > >   {
+> > > +	struct robust_list2_entry *curr, *n;
+> > > +	struct list_head *list2 = &tsk->robust_list2;
+> > > +
+> > >   #ifdef CONFIG_64BIT
+> > >   	if (unlikely(tsk->robust_list)) {
+> > > -		exit_robust_list64(tsk);
+> > > +		exit_robust_list64(tsk, tsk->robust_list);
+> > >   		tsk->robust_list = NULL;
+> > >   	}
+> > >   #else
+> > >   	if (unlikely(tsk->robust_list)) {
+> > > -		exit_robust_list32(tsk);
+> > > +		exit_robust_list32(tsk, (struct robust_list_head32 *) tsk->robust_list);
+> > >   		tsk->robust_list = NULL;
+> > >   	}
+> > >   #endif
+> > >   #ifdef CONFIG_COMPAT
+> > >   	if (unlikely(tsk->compat_robust_list)) {
+> > > -		exit_robust_list32(tsk);
+> > > +		exit_robust_list32(tsk, tsk->compat_robust_list);
+> > >   		tsk->compat_robust_list = NULL;
+> > >   	}
+> > >   #endif
+> > > +	/*
+> > > +	 * Walk through the linked list, parsing robust lists and freeing the
+> > > +	 * allocated lists
+> > > +	 */
+> > > +	if (unlikely(!list_empty(list2))) {
+> > > +		list_for_each_entry_safe(curr, n, list2, list) {
+> > > +			if (curr->head != NULL) {
+> > > +				if (curr->list_type == ROBUST_LIST_64BIT)
+> > > +					exit_robust_list64(tsk, curr->head);
+> > > +				else if (curr->list_type == ROBUST_LIST_32BIT)
+> > > +					exit_robust_list32(tsk, curr->head);
+> > > +				curr->head = NULL;
+> > > +			}
+> > > +			list_del_init(&curr->list);
+> > > +			kfree(curr);
+> > > +		}
+> > > +	}
+> > >   	if (unlikely(!list_empty(&tsk->pi_state_list)))
+> > >   		exit_pi_state_list(tsk);
+> > 
+> > I'm still digesting this, but the above seems particularly silly.
+> > 
+> > Should not the legacy lists also be on the list of lists? I mean, it
+> > makes no sense to have two completely separate means of tracking lists.
+> > 
+> 
+> You are asking if, whenever someone calls set_robust_list() or
+> compat_set_robust_list() to be inserted into &current->robust_list2 instead
+> of using tsk->robust_list and tsk->compat_robust_list?
 
-kernel test robot noticed the following build errors:
-
-[auto build test ERROR on herbert-cryptodev-2.6/master]
-[also build test ERROR on herbert-crypto-2.6/master kvm/queue linus/master v6.12-rc6 next-20241105]
-[cannot apply to kvm/linux-next]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Dionna-Glaze/kvm-svm-Fix-gctx-page-leak-on-invalid-inputs/20241105-090822
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/herbert/cryptodev-2.6.git master
-patch link:    https://lore.kernel.org/r/20241105010558.1266699-4-dionnaglaze%40google.com
-patch subject: [PATCH v4 3/6] crypto: ccp: Track GCTX through sev commands
-config: arm64-allmodconfig (https://download.01.org/0day-ci/archive/20241105/202411051934.6vECpMIv-lkp@intel.com/config)
-compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 639a7ac648f1e50ccd2556e17d401c04f9cce625)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241105/202411051934.6vECpMIv-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202411051934.6vECpMIv-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
->> drivers/crypto/ccp/sev-fw.c:9:10: fatal error: 'asm/sev.h' file not found
-       9 | #include <asm/sev.h>
-         |          ^~~~~~~~~~~
-   1 error generated.
-
-Kconfig warnings: (for reference only)
-   WARNING: unmet direct dependencies detected for MODVERSIONS
-   Depends on [n]: MODULES [=y] && !COMPILE_TEST [=y]
-   Selected by [y]:
-   - RANDSTRUCT_FULL [=y] && (CC_HAS_RANDSTRUCT [=y] || GCC_PLUGINS [=n]) && MODULES [=y]
-
-
-vim +9 drivers/crypto/ccp/sev-fw.c
-
-     8	
-   > 9	#include <asm/sev.h>
-    10	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Yes, that.
 
