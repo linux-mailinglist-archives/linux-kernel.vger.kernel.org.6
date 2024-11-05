@@ -1,68 +1,71 @@
-Return-Path: <linux-kernel+bounces-396722-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396723-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1514A9BD13D
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 16:58:24 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C66A9BD13F
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 16:58:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B6FE1C2245A
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 15:58:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E0884281AF4
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 15:58:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18DDC14A4DC;
-	Tue,  5 Nov 2024 15:58:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98B09155C8D;
+	Tue,  5 Nov 2024 15:58:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GhSlWear"
-Received: from mail-oo1-f47.google.com (mail-oo1-f47.google.com [209.85.161.47])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J/AdAzqC"
+Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com [209.85.222.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA34E14A0B8
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 15:58:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51AD61384B3;
+	Tue,  5 Nov 2024 15:58:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730822297; cv=none; b=a1AfySBQgneCn/v2t/mmuC3T3TaIA1TV/MukaWzURTwNeroC7lmW+zCIDLcwkLAkP547QfLzticjIrJj9cbR/tEHOgHxp8/xXFuBhN6dyS6g6lm1LKeDrewfsKkjzloLymUwYBStICqaqE++VB69NHG1U0LwaKvcheErIXv7tts=
+	t=1730822298; cv=none; b=Yne7bSzBbpD88N46pppSMdWFhUM8cgr2WS0YJWV/5rCU6dT6evID6VLSFDH5eO41KQKAMF17ICbwwUCRYSIRHh+yONb4zamuSsi5iiJn6zb+79Fg7DLfLumDfTRxBmav6uBbBWZnt+Z3loosOg8bxANhoU6PSFL5OGg6PP0yIDw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730822297; c=relaxed/simple;
-	bh=+QNlM2gJUGR5E+GaodKNqSiwoUISyQyhaIVTWAVgVbk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MkXlptwb+ed98PsQHrJfyxxpHF4p9iyFvjkd5rxnS+Q9YTBR8ghOOvrkd3T0YhPFn5BzU8XwFsfa8qW8IQZJTCFBQNl78ldBcLsVb6DQY6ZjhjTwdIGr8qhJToCMcaMVMiGoLMOyZuJCfZReV/wCADzohVJ9xNttUhAR4afElJM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GhSlWear; arc=none smtp.client-ip=209.85.161.47
+	s=arc-20240116; t=1730822298; c=relaxed/simple;
+	bh=NX7H3MvTsW9DRuBwQkrInDdn6GS/Et44Ott+QFyFoiY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Ui5geVrytqfh+h8MXtuqiG66lBcA8WQrDD2oVIeRcncNBJxSWXUC1ZHKXeSx/2DO3Qi7nWTZ5TC1dLc5q4ip0HKK2P38lS4YrDjsT95EG6qqlZRC32beMJKFpimU0gI1mrYqSTosM0vGHV2xsuEyfGhJqJL4GXyW3xzaoDTf98s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J/AdAzqC; arc=none smtp.client-ip=209.85.222.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oo1-f47.google.com with SMTP id 006d021491bc7-5ec1ee25504so2140713eaf.3
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 07:58:15 -0800 (PST)
+Received: by mail-qk1-f177.google.com with SMTP id af79cd13be357-7b15467f383so395769485a.3;
+        Tue, 05 Nov 2024 07:58:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730822294; x=1731427094; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Llp/0vB41RULMS9wDAxk5MCSo/RyfVNGYYdqtFNEPgk=;
-        b=GhSlWeara526lFJOcR+y5EB2BtF82qOk06Q8VjbfuAP7wlYT9N3VE2EkUEqyGWjzow
-         zbVmgOOYugMTgaxqQ6fySdl+70ARhrJwXy1rXpoU/eA/v6DY4MikC7ZJenUHKw3H36oo
-         RAiinMoFPJmzCv82973Xbr0b5v/Ks4Q2QQh2ZubLy24gW9XTDTZ0E/HdgVNv0X5wlUVK
-         vLbhTG83PHHZYV2LuZbRjDjiSnrUTw2zLrX0NEr6ULUC/n3mHqSEkKhtsQ5+VwSMd4SG
-         oNq5QRziCB+XPuBvvHW/IsFCoxmBAu2RUrSlG7W4108vC8v9o+IOIeYlK8sma4X0uKG9
-         7wPg==
+        d=gmail.com; s=20230601; t=1730822296; x=1731427096; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qSGF9RIONMCy+lm6lwN/0OP9d1KIw8FJWDz+4Vvo1qE=;
+        b=J/AdAzqCnJ9qVn4IyYKBuJ2T4Dwx/RQzrWNuRjCi5uJ1l4D3nYrUqOYA2KBBm8zxVF
+         KZJsgud7N5bX0CVwHZ8+AsHCHECa4QAgpSgNecWCq2obK+t4gHGF/14/bowyWy9PgbSQ
+         LR5NkqT9UCNul0Pn2gs2h0M1DVATvYqQIabjioQz1oYdfZPtRVbhFKVHbqpJVHfRhKX9
+         Kao3lCrh82HO3VEeRanjIk0Gz7kzLZk/Z7VmRyg7L7tKIsBLzad3KtUJnTx1EJq9H4yB
+         9xuvViseKSTb5zxVegbx6jdErxvRAzfzxWsiqaoonGw4XTkFZohBy3S0OiGTB6jGhtf5
+         rqnQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730822294; x=1731427094;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Llp/0vB41RULMS9wDAxk5MCSo/RyfVNGYYdqtFNEPgk=;
-        b=w2eFrU/5SJ0CZS0pHrcBlvF3iEYeWAhMIjJPkRQSoCRMXC3P9M3DCi2gM0UcyE2pAO
-         Y7gLRJiDQxpfPzX9Mzco0uiM2a9wRGsoPAQ1hMYXdcguYxHZ9j/mEr1TJZFjbxLaAnza
-         5aerQuryo1DgQM01Rkgf6xliZg2W32cSTdk0rEBJ7qkYxC8p43pUcdNVBQcJmJJL8G8J
-         gKnhchbZ0O00Yxb/3PbENhF4qPMdyvmwrv950Bjb2Nl1GIVmwhhlwmqfF26KVlKsx9gF
-         LwR7xKJ8Py/HxT0dq6YeEEd2WkAR/u459wDI/BKmYA1+ETFI+yS8RQevDCminK3cg48l
-         xoig==
-X-Gm-Message-State: AOJu0YwA400dMmZlggQDo58kJlEPhxSGh6cYCRd5rIL82Sv5I2HYHBAq
-	agxTv+TzMbcYlY3lcvUuWNylUT2Ng+Ux32b0IoRYBDBE/bB+oHw8wP32
-X-Google-Smtp-Source: AGHT+IG45n3dU/PC+iHZz173WcxoDnTiAV8UDLuOxxUeC0h1OpMxpxBGbb6SZLyNhZuDhCtGS/ZUPg==
-X-Received: by 2002:a05:6358:e49f:b0:1c3:7a2e:a474 with SMTP id e5c5f4694b2df-1c5ee92cfc6mr852797555d.6.1730822294499;
-        Tue, 05 Nov 2024 07:58:14 -0800 (PST)
+        d=1e100.net; s=20230601; t=1730822296; x=1731427096;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qSGF9RIONMCy+lm6lwN/0OP9d1KIw8FJWDz+4Vvo1qE=;
+        b=Bg293YVBCncqblGq7fNkft9zxH4iW7RPHXg7ZArlRiRs7GLiIyVSqD6TtflniKS7vW
+         AMrnGdZE4FAnkH6yqwps6F4U2ZpBov1tOpzOMlKLbQSyQWjRghLHNp2gxeBM+zBT5ald
+         SnRJFK07bWhSMxF+1OKGFa0Etlql4FBno4eODsOnI3+N7BJlelqOLiq5IqhiJUyb3Wxy
+         4dOwsgyw41MgYaJg93uhdiShZQIiIHvU5Lt86doq+CFlo44guWlpOcjzTmiUndXAp0QU
+         Apy2+Lm2qXQ8hnO6r/Z8mAIA04e62xoz6pBLfraia1iFDVS8qNlvEuEeyB5Yo8SJZTCE
+         x24w==
+X-Forwarded-Encrypted: i=1; AJvYcCU0lz5n4CFmSbXZB9aKBn67l2btMc+2ANqzqKOLLl1inQyZGToDSHRmFwDuO6LwJRd/cIwbgxY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwEeunP4KFuVDw/Xn4eqn/ZtjdbPqvPhsLEdLayxwTbvNNOXDVd
+	OR0R/neoO2K48yYodrN9NOepjtzqRPz3wwk12AIm7Kx718v4dE54P9kI
+X-Google-Smtp-Source: AGHT+IF72m9JE3C6mYCC457d4K6hcqs2XKMqtnJi7ytPhEDIUKBZ/dL5xKmqM82I1eo3ZS58f4hvyw==
+X-Received: by 2002:a05:6214:2c10:b0:6d3:452d:e1a1 with SMTP id 6a1803df08f44-6d351ad3f37mr263141716d6.31.1730822295721;
+        Tue, 05 Nov 2024 07:58:15 -0800 (PST)
 Received: from citadel.lan ([2600:6c4a:4d3f:6d5c::1019])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d353fc6d07sm61710586d6.44.2024.11.05.07.58.13
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d353fc6d07sm61710586d6.44.2024.11.05.07.58.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Nov 2024 07:58:14 -0800 (PST)
+        Tue, 05 Nov 2024 07:58:15 -0800 (PST)
 From: Brian Gerst <brgerst@gmail.com>
 To: linux-kernel@vger.kernel.org,
 	x86@kernel.org
@@ -72,11 +75,17 @@ Cc: Ingo Molnar <mingo@kernel.org>,
 	Borislav Petkov <bp@alien8.de>,
 	Ard Biesheuvel <ardb@kernel.org>,
 	Uros Bizjak <ubizjak@gmail.com>,
+	stable@vger.kernel.org,
+	Fangrui Song <i@maskray.me>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Andy Lutomirski <luto@kernel.org>,
 	Brian Gerst <brgerst@gmail.com>
-Subject: [PATCH v5 00/16] x86-64: Stack protector and percpu improvements
-Date: Tue,  5 Nov 2024 10:57:45 -0500
-Message-ID: <20241105155801.1779119-1-brgerst@gmail.com>
+Subject: [PATCH v5 01/16] x86/stackprotector: Work around strict Clang TLS symbol requirements
+Date: Tue,  5 Nov 2024 10:57:46 -0500
+Message-ID: <20241105155801.1779119-2-brgerst@gmail.com>
 X-Mailer: git-send-email 2.47.0
+In-Reply-To: <20241105155801.1779119-1-brgerst@gmail.com>
+References: <20241105155801.1779119-1-brgerst@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,84 +94,137 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Currently, x86-64 uses an unusual percpu layout, where the percpu section
-is linked at absolute address 0.  The reason behind this is that older GCC
-versions placed the stack protector (if enabled) at a fixed offset from the
-GS segment base.  Since the GS segement is also used for percpu variables,
-this forced the current layout.
+From: Ard Biesheuvel <ardb@kernel.org>
 
-GCC since version 8.1 supports a configurable location for the stack
-protector value, which allows removal of the restriction on how the percpu
-section is linked.  This allows the percpu section to be linked normally,
-like other architectures.  In turn, this allows removal of code that was
-needed to support the zero-based percpu section.
+GCC and Clang both implement stack protector support based on Thread
+Local Storage (TLS) variables, and this is used in the kernel to
+implement per-task stack cookies, by copying a task's stack cookie into
+a per-CPU variable every time it is scheduled in.
 
-v5:
-- Added two patches from Ard Biesheuvel to make stack protector work
-  properly when compiling with clang.
-- Raise minimum GCC version to 8.1 for x86.
-- Drop objtool conversion code.
+Both now also implement -mstack-protector-guard-symbol=, which permits
+the TLS variable to be specified directly. This is useful because it
+will allow us to move away from using a fixed offset of 40 bytes into
+the per-CPU area on x86_64, which requires a lot of special handling in
+the per-CPU code and the runtime relocation code.
 
-Ard Biesheuvel (2):
-  x86/stackprotector: Work around strict Clang TLS symbol requirements
-  x86/module: Deal with GOT based stack cookie load on Clang < 17
+However, while GCC is rather lax in its implementation of this command
+line option, Clang actually requires that the provided symbol name
+refers to a TLS variable (i.e., one declared with __thread), although it
+also permits the variable to be undeclared entirely, in which case it
+will use an implicit declaration of the right type.
 
-Brian Gerst (14):
-  x86: Raise minimum GCC version to 8.1
-  x86/stackprotector: Remove stack protector test scripts
-  x86/boot: Disable stack protector for early boot code
-  x86/pvh: Use fixed_percpu_data for early boot GSBASE
-  x86/relocs: Handle R_X86_64_REX_GOTPCRELX relocations
-  x86/stackprotector/64: Convert to normal percpu variable
-  x86/percpu/64: Use relative percpu offsets
-  x86/percpu/64: Remove fixed_percpu_data
-  x86/boot/64: Remove inverse relocations
-  x86/percpu/64: Remove INIT_PER_CPU macros
-  percpu: Remove PER_CPU_FIRST_SECTION
-  percpu: Remove PERCPU_VADDR()
-  percpu: Remove __per_cpu_load
-  kallsyms: Remove KALLSYMS_ABSOLUTE_PERCPU
+The upshot of this is that Clang will emit the correct references to the
+stack cookie variable in most cases, e.g.,
 
- arch/x86/Kconfig                          |  11 +-
- arch/x86/Makefile                         |  19 +--
- arch/x86/boot/compressed/misc.c           |  14 +--
- arch/x86/entry/entry.S                    |  14 +++
- arch/x86/entry/entry_64.S                 |   2 +-
- arch/x86/include/asm/asm-prototypes.h     |   3 +
- arch/x86/include/asm/desc.h               |   1 -
- arch/x86/include/asm/elf.h                |   3 +-
- arch/x86/include/asm/percpu.h             |  22 ----
- arch/x86/include/asm/processor.h          |  28 +----
- arch/x86/include/asm/stackprotector.h     |  36 +-----
- arch/x86/kernel/Makefile                  |   2 +
- arch/x86/kernel/asm-offsets_64.c          |   6 -
- arch/x86/kernel/cpu/common.c              |  11 +-
- arch/x86/kernel/head64.c                  |   2 +-
- arch/x86/kernel/head_64.S                 |  20 ++-
- arch/x86/kernel/irq_64.c                  |   1 -
- arch/x86/kernel/module.c                  |  15 +++
- arch/x86/kernel/setup_percpu.c            |  12 +-
- arch/x86/kernel/vmlinux.lds.S             |  38 +-----
- arch/x86/platform/pvh/head.S              |  14 ++-
- arch/x86/tools/relocs.c                   | 147 ++--------------------
- arch/x86/xen/xen-head.S                   |  10 +-
- include/asm-generic/sections.h            |   2 +-
- include/asm-generic/vmlinux.lds.h         |  38 +-----
- include/linux/percpu-defs.h               |  12 --
- init/Kconfig                              |   5 -
- kernel/kallsyms.c                         |  12 +-
- mm/percpu.c                               |   4 +-
- scripts/gcc-x86_32-has-stack-protector.sh |   8 --
- scripts/gcc-x86_64-has-stack-protector.sh |   4 -
- scripts/kallsyms.c                        |  72 ++---------
- scripts/link-vmlinux.sh                   |   4 -
- scripts/min-tool-version.sh               |   2 +
- 34 files changed, 122 insertions(+), 472 deletions(-)
- delete mode 100755 scripts/gcc-x86_32-has-stack-protector.sh
- delete mode 100755 scripts/gcc-x86_64-has-stack-protector.sh
+   10d:       64 a1 00 00 00 00       mov    %fs:0x0,%eax
+                      10f: R_386_32   __stack_chk_guard
 
+However, if a non-TLS definition of the symbol in question is visible in
+the same compilation unit (which amounts to the whole of vmlinux if LTO
+is enabled), it will drop the per-CPU prefix and emit a load from a
+bogus address.
 
-base-commit: 4b9984799820b5b32b0ae1f3d8074886895a44e1
+Work around this by using a symbol name that never occurs in C code, and
+emit it as an alias in the linker script.
+
+Fixes: 3fb0fdb3bbe7 ("x86/stackprotector/32: Make the canary into a regular percpu variable")
+Cc: <stable@vger.kernel.org>
+Cc: Fangrui Song <i@maskray.me>
+Cc: Uros Bizjak <ubizjak@gmail.com>
+Cc: Nathan Chancellor <nathan@kernel.org>
+Cc: Andy Lutomirski <luto@kernel.org>
+Link: https://github.com/ClangBuiltLinux/linux/issues/1854
+Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
+Signed-off-by: Brian Gerst <brgerst@gmail.com>
+---
+ arch/x86/Makefile                     |  5 +++--
+ arch/x86/entry/entry.S                | 16 ++++++++++++++++
+ arch/x86/include/asm/asm-prototypes.h |  3 +++
+ arch/x86/kernel/cpu/common.c          |  2 ++
+ arch/x86/kernel/vmlinux.lds.S         |  3 +++
+ 5 files changed, 27 insertions(+), 2 deletions(-)
+
+diff --git a/arch/x86/Makefile b/arch/x86/Makefile
+index cd75e78a06c1..5b773b34768d 100644
+--- a/arch/x86/Makefile
++++ b/arch/x86/Makefile
+@@ -142,9 +142,10 @@ ifeq ($(CONFIG_X86_32),y)
+ 
+     ifeq ($(CONFIG_STACKPROTECTOR),y)
+         ifeq ($(CONFIG_SMP),y)
+-			KBUILD_CFLAGS += -mstack-protector-guard-reg=fs -mstack-protector-guard-symbol=__stack_chk_guard
++            KBUILD_CFLAGS += -mstack-protector-guard-reg=fs \
++                             -mstack-protector-guard-symbol=__ref_stack_chk_guard
+         else
+-			KBUILD_CFLAGS += -mstack-protector-guard=global
++            KBUILD_CFLAGS += -mstack-protector-guard=global
+         endif
+     endif
+ else
+diff --git a/arch/x86/entry/entry.S b/arch/x86/entry/entry.S
+index 324686bca368..b7ea3e8e9ecc 100644
+--- a/arch/x86/entry/entry.S
++++ b/arch/x86/entry/entry.S
+@@ -51,3 +51,19 @@ EXPORT_SYMBOL_GPL(mds_verw_sel);
+ .popsection
+ 
+ THUNK warn_thunk_thunk, __warn_thunk
++
++#ifndef CONFIG_X86_64
++/*
++ * Clang's implementation of TLS stack cookies requires the variable in
++ * question to be a TLS variable. If the variable happens to be defined as an
++ * ordinary variable with external linkage in the same compilation unit (which
++ * amounts to the whole of vmlinux with LTO enabled), Clang will drop the
++ * segment register prefix from the references, resulting in broken code. Work
++ * around this by avoiding the symbol used in -mstack-protector-guard-symbol=
++ * entirely in the C code, and use an alias emitted by the linker script
++ * instead.
++ */
++#ifdef CONFIG_STACKPROTECTOR
++EXPORT_SYMBOL(__ref_stack_chk_guard);
++#endif
++#endif
+diff --git a/arch/x86/include/asm/asm-prototypes.h b/arch/x86/include/asm/asm-prototypes.h
+index 25466c4d2134..3674006e3974 100644
+--- a/arch/x86/include/asm/asm-prototypes.h
++++ b/arch/x86/include/asm/asm-prototypes.h
+@@ -20,3 +20,6 @@
+ extern void cmpxchg8b_emu(void);
+ #endif
+ 
++#if defined(__GENKSYMS__) && defined(CONFIG_STACKPROTECTOR)
++extern unsigned long __ref_stack_chk_guard;
++#endif
+diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
+index 8f41ab219cf1..9d42bd15e06c 100644
+--- a/arch/x86/kernel/cpu/common.c
++++ b/arch/x86/kernel/cpu/common.c
+@@ -2091,8 +2091,10 @@ void syscall_init(void)
+ 
+ #ifdef CONFIG_STACKPROTECTOR
+ DEFINE_PER_CPU(unsigned long, __stack_chk_guard);
++#ifndef CONFIG_SMP
+ EXPORT_PER_CPU_SYMBOL(__stack_chk_guard);
+ #endif
++#endif
+ 
+ #endif	/* CONFIG_X86_64 */
+ 
+diff --git a/arch/x86/kernel/vmlinux.lds.S b/arch/x86/kernel/vmlinux.lds.S
+index 410546bacc0f..d61c3584f3e6 100644
+--- a/arch/x86/kernel/vmlinux.lds.S
++++ b/arch/x86/kernel/vmlinux.lds.S
+@@ -468,6 +468,9 @@ SECTIONS
+ . = ASSERT((_end - LOAD_OFFSET <= KERNEL_IMAGE_SIZE),
+ 	   "kernel image bigger than KERNEL_IMAGE_SIZE");
+ 
++/* needed for Clang - see arch/x86/entry/entry.S */
++PROVIDE(__ref_stack_chk_guard = __stack_chk_guard);
++
+ #ifdef CONFIG_X86_64
+ /*
+  * Per-cpu symbols which need to be offset from __per_cpu_load
 -- 
 2.47.0
 
