@@ -1,163 +1,110 @@
-Return-Path: <linux-kernel+bounces-396578-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396582-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE7BB9BCF0B
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 15:21:17 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 808B09BCF15
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 15:22:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD03A1C22C9D
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 14:21:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E20BAB23D7F
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 14:22:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C4211D9669;
-	Tue,  5 Nov 2024 14:19:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="WK8KsgU1";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="zgzRxGZP"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A306D1D8E07;
+	Tue,  5 Nov 2024 14:21:33 +0000 (UTC)
+Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com [209.85.219.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B4EF1D933A
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 14:19:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D34A1D6DB9;
+	Tue,  5 Nov 2024 14:21:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730816376; cv=none; b=d8v1+3YIso/zd4toRGLujiX2mKdUdCIVdqMceSrl1Y7x3V7EM7J0AmeBkLWogF4rSw9geUpR9qf9OdkzwBv0HQ7bH0WzornxKe/lSyQ5wcSwUNTWevIMV82HReuUDHfgvrK+aeAvy81a0gpN1S6Y3M8ZjISG1IVQosqh93oXY8E=
+	t=1730816493; cv=none; b=O5kf6K6uLxjO/r8unn1yJbYeVYTtkgXNZ1v3+1FNSPSd0pwiC9YiTzdJtQDI/5pbzvs1SlQKve9ge0AXZ1IY17LzsHiLQxw0Z5RdFcCzzaoRXKaMS0sjcjHqbGVtFLjc1CVng/g+/JZj6HY9Omy2CZc7mKty9El9WhchGFcl0qo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730816376; c=relaxed/simple;
-	bh=iiLX1b/J0tiwuRIpePIIt5LneWbItyz0ZCjO4407Kf4=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=LCa8XQMw4vy1UiXZWozfS1DXPCm378OJPA8VgKIKy5ymHRht2ANpPpoI33dPEQvtPhpDAC1a8AccmZaccmRvIsp/OUslGW+UItuNViHKtfKKB+hw4ALBEYwWyx2GZRL92yTzjdLYMF2GVOEhuzc54e/MItIQJxnHXevCwqCmKqs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=WK8KsgU1; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=zgzRxGZP; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: John Ogness <john.ogness@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1730816371;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=D3f0JmLHkvF+6wnB/S3LI0uD2ynto7nK8TgQHv09rcI=;
-	b=WK8KsgU1/QBerDp5/7zg7F6Ow7NvKYSDCCXSpKzLEZrGJXa+8OtLdIA3nF3Kq9FH/YZCan
-	GxDtdGAJLBFZX2cj7Y47+dOZ7D4ekDsO+/ppRpNYi48PyrSXWQ5ImQBWcwYSKtI+U+TSRv
-	XU9UxlorSkZNEej27Ay1jhojthlZJLsAD6Jk+os4kS/eXhB6aG4i7UbDV+uU0K9JjJJYYy
-	WcPrzlrbbNSt/ACopLR4EfpKqIXZSIs4G7xwztsnw/Ohio+oCWeKYEbrCHC8lgfs9n6U/I
-	kfV5nsyI5fE4BEtcxIJjRCeMqEGAc3uOR2tLcNcE5iGo2KGIfx1pKqor8aS5hw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1730816371;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=D3f0JmLHkvF+6wnB/S3LI0uD2ynto7nK8TgQHv09rcI=;
-	b=zgzRxGZPqQir4mOgbd+OBFSjO59uQulWnQJVxsEWyBYwgkds1QLqoxWg+HRX8SINQU0bQh
-	lPi6fcDxz9t4UDDg==
-To: Petr Mladek <pmladek@suse.com>
-Cc: Jocelyn Falempe <jfalempe@redhat.com>, Maarten Lankhorst
- <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
- Daniel Vetter <daniel@ffwll.ch>, Javier Martinez Canillas
- <javierm@redhat.com>, "Guilherme G . Piccoli" <gpiccoli@igalia.com>,
- bluescreen_avenger@verizon.net, Caleb Connolly
- <caleb.connolly@linaro.org>, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 5/6] drm/log: Implement suspend/resume
-In-Reply-To: <ZyoNZfLT6tlVAWjO@pathway.suse.cz>
-References: <20241023121145.1321921-1-jfalempe@redhat.com>
- <20241023121145.1321921-6-jfalempe@redhat.com>
- <Zxpa2zt1P9Avy4Pm@pathway.suse.cz>
- <27c1a6bf-d1e4-469f-a0d4-3e74ab0d0a07@redhat.com>
- <a6c00956-3733-43a1-9538-aa2758d2b4a3@redhat.com>
- <ZyT7MScAsHxkACfD@pathway.suse.cz>
- <d5c8ea70-8596-42a1-8688-0f6131187b73@redhat.com>
- <84o72vcm46.fsf@jogness.linutronix.de> <ZyjXB52dbhjZEHp6@pathway.suse.cz>
- <84ikt3c8uy.fsf@jogness.linutronix.de> <ZyoNZfLT6tlVAWjO@pathway.suse.cz>
-Date: Tue, 05 Nov 2024 15:25:31 +0106
-Message-ID: <844j4lepak.fsf@jogness.linutronix.de>
+	s=arc-20240116; t=1730816493; c=relaxed/simple;
+	bh=HnchU3TAxMiEnb4LqA1IIZSHQ3nPshfnOq2ODMOQWR8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WAPAT70NZ+EnLVy5wMQCDvmQ1mDbjc8tVNe3doiQ0CdqLjNLJKmW5QJKe/q2t0TePmBMP+6C3ShHQ0hUbJWd2ZZaHhPSqBsP1cizT9An7WMp/twy0h7+i1BnxjnMOB6Jxmtxxz04mX75NC/ynJTDY0oQ9yQSoGEzGwsIsWWJqww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-e29687f4cc6so4342250276.2;
+        Tue, 05 Nov 2024 06:21:31 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730816489; x=1731421289;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=WQTogThULkTABxgO4qxQ15BGSdteC82xf8/FCwRDyos=;
+        b=Jwy0mEKCUpjWdK9+ZI9/NqM9gOCRBRAyDTqS4A752Dasep0YBF61q1ZAXuvuFi7yDj
+         WHitm/9wlqaLxGw3RiAVZS4dWbiGDVZbUrTc6xAgjrwlAff6cGOMq37gsqxSVCGmiwaj
+         ZDTWMzSdvvDnmatb97SpbLppJygJ40mIzHYXSTAXpv/PYUHNh8Lamo/Wz6b+IWy1I5b/
+         twafWUeqrvHaFjSkSl5Eu/IpE0k+epMGsV4LX5p0CCY1vpa97C2teqWgP28YDUVbjFI6
+         KiWSpzZhwQjWsJ8s8OeJQtyLXJtfaWBHwiZuiqbL1pjj8wN2+MkDji4D5sePcSv2QPkb
+         N6Zw==
+X-Forwarded-Encrypted: i=1; AJvYcCXAu+evPH0LjaqDbT0/2S+QBsRJcBcwFvOy41RCTzStIJfsnXzUU5ssTG1gNJU44rHtADWa0tntFG04GXw=@vger.kernel.org, AJvYcCXuPIIJLBgtRUD8iiWzfJ3YAUaYYF/wTe7yQhGHyUgaZbQ08NC018SMp+TQi1/tBZBP0NRR8bhCW0TY@vger.kernel.org
+X-Gm-Message-State: AOJu0YyNdFquFfodAhGK6H7fMSBDa0DID4XRzz3liXe2Oaqkkx9TzdtA
+	+GAYs8mIfdDOtWcypRYMse/RXNRrBKq1LB5mILpV4Lg0DnASe4CFyMR9unhb
+X-Google-Smtp-Source: AGHT+IEvSPfGP+sDAxrvN2d7XxFWVf9kLZDc6tHx4FzmN81o/2xNW40FPrk/bLyYCTYTlmHqPi+cBw==
+X-Received: by 2002:a05:6902:33c8:b0:e30:c614:5c40 with SMTP id 3f1490d57ef6-e330254f899mr12484735276.2.1730816489236;
+        Tue, 05 Nov 2024 06:21:29 -0800 (PST)
+Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com. [209.85.128.179])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e30e8a95711sm2402853276.34.2024.11.05.06.21.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 05 Nov 2024 06:21:28 -0800 (PST)
+Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-6ea50585bf2so57881097b3.3;
+        Tue, 05 Nov 2024 06:21:28 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUbKVYp2Gna/m1G5X1qoPX6FLxLdkC2fJUnp8wypA/GBb8/xATQI3qeKPUhnNXuW5p+qCr2Cu+DsiUH@vger.kernel.org, AJvYcCVg5rmANgaqqR9wqpow98FbUXUN4whC1aF8nL19u3lv9MEUDxiheQQVis7D207IqyW0Vj93oHJ/Gc0ng2M=@vger.kernel.org
+X-Received: by 2002:a05:690c:d1c:b0:6dd:c474:9cd8 with SMTP id
+ 00721157ae682-6ea64af0eecmr155730677b3.18.1730816488050; Tue, 05 Nov 2024
+ 06:21:28 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <cover.1728377511.git.fthain@linux-m68k.org> <a912689ee714d35c13f4a5fe05df58c662a6dc8d.1728377511.git.fthain@linux-m68k.org>
+In-Reply-To: <a912689ee714d35c13f4a5fe05df58c662a6dc8d.1728377511.git.fthain@linux-m68k.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 5 Nov 2024 15:21:15 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdU8_RL9y3o24_jhPJuYb+5RP+PpBKbD7Ndn9fg7EYH_Hw@mail.gmail.com>
+Message-ID: <CAMuHMdU8_RL9y3o24_jhPJuYb+5RP+PpBKbD7Ndn9fg7EYH_Hw@mail.gmail.com>
+Subject: Re: [PATCH v3 2/2] m68k: mvme147, mvme16x: Adopt rtc-m48t59 platform driver
+To: Finn Thain <fthain@linux-m68k.org>
+Cc: Daniel Palmer <daniel@0x0f.com>, Michael Pavone <pavone@retrodev.com>, 
+	linux-m68k@lists.linux-m68k.org, linux-rtc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2024-11-05, Petr Mladek <pmladek@suse.com> wrote:
-> Observation:
+On Tue, Oct 8, 2024 at 10:55=E2=80=AFAM Finn Thain <fthain@linux-m68k.org> =
+wrote:
+> Both mvme147 and mvme16x platforms have their own RTC driver
+> implementations that duplicate functionality provided by the rtc-m48t59
+> driver. Adopt the rtc-m48t59 driver and remove the other ones.
 >
->   + CON_ENABLED is not needed for the original purpose. Only enabled
->     consoles are added into @console_list.
+> Tested-by: Daniel Palmer <daniel@0x0f.com>
+> Signed-off-by: Finn Thain <fthain@linux-m68k.org>
+> ---
+> This patch depends upon the m48t59 driver changes in the preceding patch.
 >
->   + CON_ENABLED is still used to explicitely block the console driver
->     during suspend by console_stop()/console_start() in serial_core.c.
->
->     It is not bad. But it is a bit confusing because we have
->     CON_SUSPENDED flag now and this is about suspend/resume.
+> Changed since v1:
+>  - Initialize yy_offset in struct m48t59_plat_data.
 
-Also note that CON_ENABLED is used to gate ->unblank(). It should
-probably consider CON_SUSPENDED as well.
+Reviewed-by: Geert Uytterhoeven <geert@linux-m68k.org>
 
->   + CON_SUSPENDED is per-console flag but it is set synchronously
->     for all consoles.
->
->     IMHO, a global variable would make more sense for the big hammer
->     purpose.
->
->
-> Big question:
->
->   Does the driver really needs to call console_stop()/console_start()
->   when there is the big hammer?
->
->   I would preserve it because it makes the design more robust.
+Gr{oetje,eeting}s,
 
-Agreed. They serve different purposes.
+                        Geert
 
-console_stop()/console_start() is a method for _drivers_ to communicate
-that they must not be called because their hardware is not
-available/functioning.
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
 
-console_suspend()/console_resume() is a method for the _system_ to
-communicate that consoles should be silent because they are annoying or
-we do not trust that they won't cause problems.
-
->   Anyway, the driver-specific handling looks like the right solution.
->   The big hammer feels like a workaround.
-
-Agreed. Do the 6 call sites even really need the big hammer? I am
-guessing yes because there are probably console drivers that do not use
-console_stop()/console_start() in their suspend/resume and thus rely on
-the whole subsystem being disabled.
-
-> Reasonable semantic:
->
->   1. Rename:
->
-> 	console_suspend() -> console_suspend_all()
-> 	console_resume()  -> console_resume_all()
->
->      and manipulate a global @consoles_suspended variable agagin.
->      It is the big hammer API.
-
-Agreed. As a global variable, it can still rely on SRCU for
-synchronization.
-
->   2. Rename:
->
-> 	console_stop(con)  -> console_suspend(con)
-> 	console_start(con) -> console_resume(con)
->
->      and manipulare the per-console CON_SUSPENDED flag here.
-
-Agreed.
-
->    3. Get rid of the ambiguous CON_ENABLED flag. It won't longer
->       have any purpose.
->
->       Except that it is also used to force console registration.
->       But it can be done a better way, e.g. by introducing
->       register_console_force() API.
-
-Agreed.
-
-John
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
