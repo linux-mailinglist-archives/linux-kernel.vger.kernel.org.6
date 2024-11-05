@@ -1,54 +1,54 @@
-Return-Path: <linux-kernel+bounces-396359-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396358-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D45169BCC1F
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 12:48:04 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EFD349BCC1E
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 12:48:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6067C1F221C2
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 11:48:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD5A828277E
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 11:47:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CAA71D515B;
-	Tue,  5 Nov 2024 11:47:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC7B01D514C;
+	Tue,  5 Nov 2024 11:47:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="KEtbemT+"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="jpwn2L47"
 Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A26F01D3593
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5947C1D47AE
 	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 11:47:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730807272; cv=none; b=Z9QIV2RWV0c2gzPgWb2sBqhzQDLeFL0igK2qx/QBo7/J/fdWHjhJn+TNTWRosAajDDJUSuTeke2wS15fets254VVawfk5Xwza0Yto99qoNnFPae0hLETmOZv5oUmtYR1VL2VIbqaKX8CO/q9ieLati0rXfM+2Qy0Y1L7S04/P4E=
+	t=1730807272; cv=none; b=U6Nc7VHVEepOmdJ43CVnol4xRHc2SSVys32Ng1CmI01lphSbXCn2SgHGcn9J9armCU9fAWQplljxFSq0c4pdttD1PXp62ByoDRsGeYwrgfg9DMAEr7d1vzuH6Nnq2idp5HtzcOfACexJdQy5kLLC2uKRzUMo1Mx4ofNckerO8tk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1730807272; c=relaxed/simple;
-	bh=ryXTU9fHZzQgpaF29u04yy9MkLK2NlveGQd5vziUiu0=;
+	bh=DYut+ZNmKVLDbuVR4KsvsENEo/4ybq+yq1mBLILhakU=;
 	h=Message-Id:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=pJ9KR9VnnEegWcWGgGUYX2UsbjFM2bLKhy0Ya2HU0ocMtst7KaXvUv/0my/ro4TBo/wghl3fqk42RbWQa3Emxb7EOD4X71aEvrhhwstos5yF6HtoEUKiOMc4fYDXIeY8pJRTKlFLRRHtHgkf+9tyvARUqcBtFNRW/+DafsNK/g4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=KEtbemT+; arc=none smtp.client-ip=90.155.92.199
+	 Content-Type; b=FY/wlNt67xyuwS1/u8hvu5fH5mrkSuf+lMQPTIEN8stYMudjHnMGbApAEWNcMOfWhhNttBE8FhEBvIIbIPyQpPpAYGjt4zCmyZdM1w4P95UZhUS0K775gTRmvQoJalt0dEWiOO7Cp5gdGSLbIHEZXzKhz2lnvGeCi511J6awJQM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=jpwn2L47; arc=none smtp.client-ip=90.155.92.199
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=desiato.20200630; h=Content-Type:MIME-Version:References:
 	Subject:Cc:To:From:Date:Message-Id:Sender:Reply-To:Content-Transfer-Encoding:
 	Content-ID:Content-Description:In-Reply-To;
-	bh=uzZy2VC0fu25fz6TAYvW25c3Fo100n5TxloGAF+9AvQ=; b=KEtbemT+LVy1nu+XKXgceM96uA
-	lLorNLKFjXiaRwXge3BLiM4tb+Xa0LEc8Jn49e1X58FmpYViRGa1U8Jc5/gJkkisEIf1jlA6/RUX3
-	N3hAiRGt0ZqBmRVXzUZZHvlaq34uJ+0/Ayr09XlTc3cK0fQQCCw9xCEFrEN0eRrMk6XP9u4NyzmeR
-	pef1gXiYymz0pMmVG9zhyF0qIUuOxzaDdyPXc7Jpg5d9hB0JKcLk38Zgv3UexQE3gwTTZe3QbR0Fy
-	cKSyII+EiqH/VjfL03mDhCuXbj5RGC72/tET0HCJng6STNAp5tJwbk/02iqHyTpiumIWC7hlIZ/Yx
-	n73T8DAg==;
+	bh=B01bUPAtb2sG7Vee4RtuggO+7OEXdIKofz2GrH09qY4=; b=jpwn2L47UMSF3erRgMDRV7HMj5
+	GBgysj7qg+E724WkQaQBrM/jkQmTQg9ObBl/KTjdDl1gGQ3kEAQPnp71P5NGNr08BordC60X/BNvu
+	585XOYQECqRHWq9Dm+wcqFt1OhFY+abbz69vD8uYYs/+48fPbca5U0tIwv9a2Qoa00CZGgGw55OZa
+	O+ajTG6dT7aogrqXK2ovVy3bsoHGkx1ZJtxhleL7SUerMwSKtRrcPVYCcdg3OEbxo6RNxUJnU+Bf1
+	C/fG4V9PiK8KxY9zEAoBTy+uiMSu78x4z/QAk3bFQ/OEg8WVcJXmtHUBIsNxhQR+kaMFtDopB94Y7
+	agGVYGyw==;
 Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
 	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1t8I2E-0000000Bjjm-1FFH;
-	Tue, 05 Nov 2024 11:47:46 +0000
+	id 1t8I2F-0000000Bjjs-0DM3;
+	Tue, 05 Nov 2024 11:47:47 +0000
 Received: by noisy.programming.kicks-ass.net (Postfix, from userid 0)
-	id E83BD300883; Tue,  5 Nov 2024 12:47:45 +0100 (CET)
-Message-Id: <20241105114522.174924003@infradead.org>
+	id ECA75300134; Tue,  5 Nov 2024 12:47:45 +0100 (CET)
+Message-Id: <20241105114522.285032152@infradead.org>
 User-Agent: quilt/0.65
-Date: Tue, 05 Nov 2024 12:39:05 +0100
+Date: Tue, 05 Nov 2024 12:39:06 +0100
 From: Peter Zijlstra <peterz@infradead.org>
 To: x86@kernel.org
 Cc: linux-kernel@vger.kernel.org,
@@ -62,7 +62,7 @@ Cc: linux-kernel@vger.kernel.org,
  ebiggers@kernel.org,
  samitolvanen@google.com,
  kees@kernel.org
-Subject: [PATCH 4/8] x86/alternative: Simplify callthunk patching
+Subject: [PATCH 5/8] x86/traps: Cleanup and robustify decode_bug()
 References: <20241105113901.348320374@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -72,175 +72,173 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 
-Now that paravirt call patching is implemented using alternatives, it
-is possible to avoid having to patch the alternative sites by
-including the altinstr_replacement calls in the call_sites list.
+Notably, don't attempt to decode an immediate when MOD == 3.
 
-This means we're now stacking relative adjustments like so:
-
-  callthunks_patch_builtin_calls():
-    patches all function calls to target: func() -> func()-10
-    since the CALL accounting lives in the CALL_PADDING.
-
-    This explicitly includes .altinstr_replacement
-
-  alt_replace_call():
-    patches: x86_BUG() -> target()
-
-    this patching is done in a relative manner, and will preserve
-    the above adjustment, meaning that with calldepth patching it
-    will do: x86_BUG()-10 -> target()-10
-
-  apply_relocation():
-    does code relocation, and adjusts all RIP-relative instructions
-    to the new location, also in a relative manner.
+Additionally have it return the instruction length, such that WARN
+like bugs can more reliably skip to the correct instruction.
 
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 ---
- arch/x86/include/asm/alternative.h |    1 -
- arch/x86/kernel/alternative.c      |    8 ++++----
- arch/x86/kernel/callthunks.c       |   13 -------------
- arch/x86/kernel/module.c           |   17 ++++++-----------
- tools/objtool/arch/x86/decode.c    |    1 +
- tools/objtool/check.c              |   12 ++----------
- 6 files changed, 13 insertions(+), 39 deletions(-)
+ arch/x86/include/asm/bug.h |    5 +-
+ arch/x86/include/asm/ibt.h |    4 +-
+ arch/x86/kernel/cet.c      |   18 +++++++---
+ arch/x86/kernel/traps.c    |   77 ++++++++++++++++++++++++++++++++-------------
+ 4 files changed, 73 insertions(+), 31 deletions(-)
 
---- a/arch/x86/include/asm/alternative.h
-+++ b/arch/x86/include/asm/alternative.h
-@@ -109,7 +109,6 @@ struct module;
+--- a/arch/x86/include/asm/bug.h
++++ b/arch/x86/include/asm/bug.h
+@@ -22,8 +22,9 @@
+ #define SECOND_BYTE_OPCODE_UD2	0x0b
  
- struct callthunk_sites {
- 	s32				*call_start, *call_end;
--	struct alt_instr		*alt_start, *alt_end;
- };
+ #define BUG_NONE		0xffff
+-#define BUG_UD1			0xfffe
+-#define BUG_UD2			0xfffd
++#define BUG_UD2			0xfffe
++#define BUG_UD1			0xfffd
++#define BUG_UD1_UBSAN		0xfffc
  
- #ifdef CONFIG_CALL_THUNKS
---- a/arch/x86/kernel/alternative.c
-+++ b/arch/x86/kernel/alternative.c
-@@ -1701,14 +1701,14 @@ void __init alternative_instructions(voi
- 	apply_retpolines(__retpoline_sites, __retpoline_sites_end);
- 	apply_returns(__return_sites, __return_sites_end);
+ #ifdef CONFIG_GENERIC_BUG
  
--	apply_alternatives(__alt_instructions, __alt_instructions_end);
--
- 	/*
--	 * Now all calls are established. Apply the call thunks if
--	 * required.
-+	 * Adjust all CALL instructions to point to func()-10, including
-+	 * those in .altinstr_replacement.
- 	 */
- 	callthunks_patch_builtin_calls();
+--- a/arch/x86/include/asm/ibt.h
++++ b/arch/x86/include/asm/ibt.h
+@@ -41,7 +41,7 @@
+ 	_ASM_PTR fname "\n\t"				\
+ 	".popsection\n\t"
  
-+	apply_alternatives(__alt_instructions, __alt_instructions_end);
-+
- 	/*
- 	 * Seal all functions that do not have their address taken.
- 	 */
---- a/arch/x86/kernel/callthunks.c
-+++ b/arch/x86/kernel/callthunks.c
-@@ -239,21 +239,10 @@ patch_call_sites(s32 *start, s32 *end, c
- }
- 
- static __init_or_module void
--patch_alt_call_sites(struct alt_instr *start, struct alt_instr *end,
--		     const struct core_text *ct)
--{
--	struct alt_instr *a;
--
--	for (a = start; a < end; a++)
--		patch_call((void *)&a->instr_offset + a->instr_offset, ct);
--}
--
--static __init_or_module void
- callthunks_setup(struct callthunk_sites *cs, const struct core_text *ct)
+-static inline __attribute_const__ u32 gen_endbr(void)
++static __always_inline __attribute_const__ u32 gen_endbr(void)
  {
- 	prdbg("Patching call sites %s\n", ct->name);
- 	patch_call_sites(cs->call_start, cs->call_end, ct);
--	patch_alt_call_sites(cs->alt_start, cs->alt_end, ct);
- 	prdbg("Patching call sites done%s\n", ct->name);
+ 	u32 endbr;
+ 
+@@ -56,7 +56,7 @@ static inline __attribute_const__ u32 ge
+ 	return endbr;
  }
  
-@@ -262,8 +251,6 @@ void __init callthunks_patch_builtin_cal
- 	struct callthunk_sites cs = {
- 		.call_start	= __call_sites,
- 		.call_end	= __call_sites_end,
--		.alt_start	= __alt_instructions,
--		.alt_end	= __alt_instructions_end
- 	};
+-static inline __attribute_const__ u32 gen_endbr_poison(void)
++static __always_inline __attribute_const__ u32 gen_endbr_poison(void)
+ {
+ 	/*
+ 	 * 4 byte NOP that isn't NOP4 (in fact it is OSP NOP3), such that it
+--- a/arch/x86/kernel/traps.c
++++ b/arch/x86/kernel/traps.c
+@@ -94,10 +94,17 @@ __always_inline int is_valid_bugaddr(uns
  
- 	if (!cpu_feature_enabled(X86_FEATURE_CALL_DEPTH))
---- a/arch/x86/kernel/module.c
-+++ b/arch/x86/kernel/module.c
-@@ -275,12 +275,7 @@ int module_finalize(const Elf_Ehdr *hdr,
- 		void *rseg = (void *)returns->sh_addr;
- 		apply_returns(rseg, rseg + returns->sh_size);
- 	}
--	if (alt) {
--		/* patch .altinstructions */
--		void *aseg = (void *)alt->sh_addr;
--		apply_alternatives(aseg, aseg + alt->sh_size);
--	}
--	if (calls || alt) {
-+	if (calls) {
- 		struct callthunk_sites cs = {};
+ /*
+  * Check for UD1 or UD2, accounting for Address Size Override Prefixes.
+- * If it's a UD1, get the ModRM byte to pass along to UBSan.
++ * If it's a UD1, further decode to determine its use:
++ *
++ * UBSan{0}:     67 0f b9 00             ud1    (%eax),%eax
++ * UBSan{10}:    67 0f b9 40 10          ud1    0x10(%eax),%eax
++ * static_call:  0f b9 cc                ud1    %esp,%ecx
++ *
++ * Notably UBSAN uses EAX, static_call uses ECX.
+  */
+-__always_inline int decode_bug(unsigned long addr, u32 *imm)
++__always_inline int decode_bug(unsigned long addr, s32 *imm, int *len)
+ {
++	unsigned long start = addr;
+ 	u8 v;
  
- 		if (calls) {
-@@ -288,13 +283,13 @@ int module_finalize(const Elf_Ehdr *hdr,
- 			cs.call_end = (void *)calls->sh_addr + calls->sh_size;
- 		}
+ 	if (addr < TASK_SIZE_MAX)
+@@ -110,24 +117,37 @@ __always_inline int decode_bug(unsigned
+ 		return BUG_NONE;
  
--		if (alt) {
--			cs.alt_start = (void *)alt->sh_addr;
--			cs.alt_end = (void *)alt->sh_addr + alt->sh_size;
--		}
--
- 		callthunks_patch_module_calls(&cs, me);
- 	}
-+	if (alt) {
-+		/* patch .altinstructions */
-+		void *aseg = (void *)alt->sh_addr;
-+		apply_alternatives(aseg, aseg + alt->sh_size);
+ 	v = *(u8 *)(addr++);
+-	if (v == SECOND_BYTE_OPCODE_UD2)
++	if (v == SECOND_BYTE_OPCODE_UD2) {
++		*len = addr - start;
+ 		return BUG_UD2;
 +	}
- 	if (ibt_endbr) {
- 		void *iseg = (void *)ibt_endbr->sh_addr;
- 		apply_seal_endbr(iseg, iseg + ibt_endbr->sh_size);
---- a/tools/objtool/arch/x86/decode.c
-+++ b/tools/objtool/arch/x86/decode.c
-@@ -845,5 +845,6 @@ bool arch_is_rethunk(struct symbol *sym)
- bool arch_is_embedded_insn(struct symbol *sym)
- {
- 	return !strcmp(sym->name, "retbleed_return_thunk") ||
-+	       !strcmp(sym->name, "srso_alias_safe_ret") ||
- 	       !strcmp(sym->name, "srso_safe_ret");
- }
---- a/tools/objtool/check.c
-+++ b/tools/objtool/check.c
-@@ -1410,15 +1410,6 @@ static void annotate_call_site(struct ob
- 	if (!sym)
- 		sym = reloc->sym;
  
--	/*
--	 * Alternative replacement code is just template code which is
--	 * sometimes copied to the original instruction. For now, don't
--	 * annotate it. (In the future we might consider annotating the
--	 * original instruction if/when it ever makes sense to do so.)
--	 */
--	if (!strcmp(insn->sec->name, ".altinstr_replacement"))
--		return;
+-	if (!IS_ENABLED(CONFIG_UBSAN_TRAP) || v != SECOND_BYTE_OPCODE_UD1)
++	if (v != SECOND_BYTE_OPCODE_UD1)
+ 		return BUG_NONE;
+ 
+-	/* Retrieve the immediate (type value) for the UBSAN UD1 */
+-	v = *(u8 *)(addr++);
+-	if (X86_MODRM_RM(v) == 4)
+-		addr++;
 -
- 	if (sym->static_call_tramp) {
- 		list_add_tail(&insn->call_node, &file->static_call_list);
- 		return;
-@@ -1476,7 +1467,8 @@ static void annotate_call_site(struct ob
- 		return;
+ 	*imm = 0;
+-	if (X86_MODRM_MOD(v) == 1)
+-		*imm = *(u8 *)addr;
+-	else if (X86_MODRM_MOD(v) == 2)
+-		*imm = *(u32 *)addr;
+-	else
+-		WARN_ONCE(1, "Unexpected MODRM_MOD: %u\n", X86_MODRM_MOD(v));
++	v = *(u8 *)(addr++);		/* ModRM */
++
++	/* Decode immediate, if present */
++	if (X86_MODRM_MOD(v) != 3) {
++		if (X86_MODRM_RM(v) == 4)
++			addr++;		/* Skip SIB byte */
++
++		if (X86_MODRM_MOD(v) == 1) {
++			*imm = *(s8 *)addr;
++			addr += 1;
++
++		} else if (X86_MODRM_MOD(v) == 2) {
++			*imm = *(s32 *)addr;
++			addr += 4;
++		}
++	}
++
++	/* record instruction length */
++	*len = addr - start;
++
++	if (X86_MODRM_REG(v) == 0)	/* EAX */
++		return BUG_UD1_UBSAN;
+ 
+ 	return BUG_UD1;
+ }
+@@ -258,10 +278,10 @@ static inline void handle_invalid_op(str
+ static noinstr bool handle_bug(struct pt_regs *regs)
+ {
+ 	bool handled = false;
+-	int ud_type;
+-	u32 imm;
++	int ud_type, ud_len;
++	s32 ud_imm;
+ 
+-	ud_type = decode_bug(regs->ip, &imm);
++	ud_type = decode_bug(regs->ip, &ud_imm, &ud_len);
+ 	if (ud_type == BUG_NONE)
+ 		return handled;
+ 
+@@ -281,15 +301,28 @@ static noinstr bool handle_bug(struct pt
+ 	 */
+ 	if (regs->flags & X86_EFLAGS_IF)
+ 		raw_local_irq_enable();
+-	if (ud_type == BUG_UD2) {
++
++	switch (ud_type) {
++	case BUG_UD2:
+ 		if (report_bug(regs->ip, regs) == BUG_TRAP_TYPE_WARN ||
+ 		    handle_cfi_failure(regs) == BUG_TRAP_TYPE_WARN) {
+-			regs->ip += LEN_UD2;
++			regs->ip += ud_len;
+ 			handled = true;
+ 		}
+-	} else if (IS_ENABLED(CONFIG_UBSAN_TRAP)) {
+-		pr_crit("%s at %pS\n", report_ubsan_failure(regs, imm), (void *)regs->ip);
++		break;
++
++	case BUG_UD1_UBSAN:
++		if (IS_ENABLED(CONFIG_UBSAN_TRAP)) {
++			pr_crit("%s at %pS\n",
++				report_ubsan_failure(regs, ud_imm),
++				(void *)regs->ip);
++		}
++		break;
++
++	default:
++		break;
  	}
- 
--	if (insn->type == INSN_CALL && !insn->sec->init)
-+	if (insn->type == INSN_CALL && !insn->sec->init &&
-+	    !insn->_call_dest->embedded_insn)
- 		list_add_tail(&insn->call_node, &file->call_list);
- 
- 	if (!sibling && dead_end_function(file, sym))
++
+ 	if (regs->flags & X86_EFLAGS_IF)
+ 		raw_local_irq_disable();
+ 	instrumentation_end();
 
 
 
