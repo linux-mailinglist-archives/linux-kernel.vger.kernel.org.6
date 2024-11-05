@@ -1,237 +1,76 @@
-Return-Path: <linux-kernel+bounces-396112-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396113-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1FC89BC7F7
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 09:26:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF93F9BC7F9
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 09:26:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D62A11C221EB
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 08:26:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 46E2B2837E2
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 08:26:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12F9F18C93B;
-	Tue,  5 Nov 2024 08:25:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="QcDHManh"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACF701AA785;
+	Tue,  5 Nov 2024 08:26:41 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A88BC18CC1B;
-	Tue,  5 Nov 2024 08:25:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9A9218C93B
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 08:26:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730795153; cv=none; b=P5VwK+mNpU+dNnEYQGjca5h81lQYFW5ybv0KRdOiAs+IW5Ow6ayM1lm/NfNOQMUbCMd7BSa1NRd5ts2RfWYS9zLTp/CNh/Z3hMKq1w5ciPMMaF89HsrmPvKT4mnKF8Q7oJpKonxpGMbrU9IZVk69sqAJKPm14tfYKU0Dp6M4x5A=
+	t=1730795201; cv=none; b=X9PCLIoNMMmubC/0BeqEOmbLQLZYIDdkfW01Qx77WwEF4ob3VnHbl74fgNbJnlESaSjvVjbRiwlgMLG46ALf3L6ImBrEsYr1ph3dYCuqlaFppMRLuhaLWmNaJ0/T9mHB7GY3uMAaX2IkzsB6TGLQlVo53WocT+6KPuPrTPaZ/Dc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730795153; c=relaxed/simple;
-	bh=8WJfZjEMb9mPRKNogJbIPOSjIWQQ5ZDrn+a7kIoFHVw=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=q+fIQQp8JcOxKp5rezXlXZeZXWsnGfPZRs2rqVFnAF+a1UkZ7tT/KAOFP9QYriIbDEfh8LjXXlVB0dkb6N8OYUde3+hZ4KDW39bE3kY0SJwQ0I44Xh/73yNy72XNZcCPyeqsvQdAOGNGMY/BPd+SLB53/uVpLYBvQaLAAFvXULU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=QcDHManh; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1730795148;
-	bh=8WJfZjEMb9mPRKNogJbIPOSjIWQQ5ZDrn+a7kIoFHVw=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=QcDHManhYpk915PpFdlCVajFRHYlt5BDAm+RPtWc4Xm76Mth3LiHbNw7e7dMCCWZ7
-	 6gnLjj3q3roZGAYgOdocGS+cBRS2JeOBgunGoA7ZBCxvaAeSw0UpbLZtqng5Ihhzl1
-	 B35UDSB8cfxCvSFe48S2HFeheM5CNeGTX4Go3IdITkWXYYx8ChBMzbHZQHswXGi7ze
-	 ZMlUbMiG8sS9R6tLKaEdS606AeoV/KJtQu+iC+nA0Jr6ewSi0oRwbqlW51Hro+kM6V
-	 d0WVm6ZbxnYANvVLZYXjOkGCi0gH+UqiwxnjmEUWDEZutYpMo3pREG8YGC4y0WPDl6
-	 iD5NO5KrSK6cw==
-Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bbrezillon)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 57D8717E1147;
-	Tue,  5 Nov 2024 09:25:48 +0100 (CET)
-Date: Tue, 5 Nov 2024 09:25:41 +0100
-From: Boris Brezillon <boris.brezillon@collabora.com>
-To: Jann Horn <jannh@google.com>
-Cc: Steven Price <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org
-Subject: Re: [PATCH] drm/panthor: Be stricter about IO mapping flags
-Message-ID: <20241105092541.4f253bc5@collabora.com>
-In-Reply-To: <20241105-panthor-flush-page-fixes-v1-1-829aaf37db93@google.com>
-References: <20241105-panthor-flush-page-fixes-v1-1-829aaf37db93@google.com>
-Organization: Collabora
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1730795201; c=relaxed/simple;
+	bh=M3lD6cxcnkextQjPr7CViWpMtHaB30dJ56Qz42cJpCA=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=No5yvSTeLpwUe5gtyui7Va4yVquLtPSEBvhu5l/GQj9LkoWFhtXtkJfBhCUw4WBggNdfQR3UUNMXCuPPH4YYq5DbcrH8SH4wCJsBaEzdP9ZX9rvLSoE6oxsnCNBSq5Ajd5sF44IAajS2hi2HK4pFTnkxNRn2s40AKT/XV0vyOT4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-83ab1b39ab1so517463239f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 00:26:39 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730795199; x=1731399999;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=M3lD6cxcnkextQjPr7CViWpMtHaB30dJ56Qz42cJpCA=;
+        b=o5rxbAF4tDLIw3oo8eLY7aaP/J1UhlxAP8GDnACdbHqCbpEBtl1vWNFmOllrHfO+lU
+         toKL7Osy1TnJKUOR1ybLbRlGotkmSQLzMLb87EYBFBePfvohnNVjXYSzHztkNnAUGBrC
+         NSkLjvz3elI6EvGJ8GXrjwMhbxp4tLdjUQxKPfQS1mipcUj6570poFcy7OMIusdGvp3E
+         DCN0pTqMLQvbmlWwOS1BKfU5TQPmlArHDlNovfdZbD6A0QExs9vlMJJkJGDk2jmHybhD
+         tDYJCE2sauzx2x1iB3TH5r88KkiKtdOwoe1E5oTNDa6vGgu/GWPLlDPBvuI7GfxxlXRP
+         JJdg==
+X-Gm-Message-State: AOJu0YxLptiP/OOP3GOSThP1qte2jjsHyIn/C3svFFjGtJNZPu5DWpTl
+	GjRZn6NIuJtpIVCWApJfgM1N4W7jPMLhtXHJeewSIqaUgHFHVgmST/cSHARBvrYBgHv1HDmWAoa
+	num9n7Ofilxw0aH+WwNbXyGIAKOA7ToJ9pJRI4fbyiML9MPF6lfOsuhI=
+X-Google-Smtp-Source: AGHT+IFwMOfNDUSBuqzd2Yk6iQ7bjLGiNtFW4WRv6evDedsXzgkoL1pVy5lbQvkzZGcoPJpFrsvpiDGuJTbjq0HxusjZUGgwF4/t
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:1c28:b0:3a0:a80a:997c with SMTP id
+ e9e14a558f8ab-3a4ed2de690mr365950815ab.19.1730795198784; Tue, 05 Nov 2024
+ 00:26:38 -0800 (PST)
+Date: Tue, 05 Nov 2024 00:26:38 -0800
+In-Reply-To: <66fbc081.050a0220.6bad9.0056.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6729d6be.050a0220.701a.0016.GAE@google.com>
+Subject: Re: [syzbot] KMSAN: uninit-value in __hfs_ext_cache_extent (2)
+From: syzbot <syzbot+d395b0c369e492a17530@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, 05 Nov 2024 00:17:13 +0100
-Jann Horn <jannh@google.com> wrote:
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org.
 
-> The current panthor_device_mmap_io() implementation has two issues:
-> 
-> 1. For mapping DRM_PANTHOR_USER_FLUSH_ID_MMIO_OFFSET,
->    panthor_device_mmap_io() bails if VM_WRITE is set, but does not clear
->    VM_MAYWRITE. That means userspace can use mprotect() to make the mapping
->    writable later on. This is a classic Linux driver gotcha.
->    I don't think this actually has any impact in practice:
->    When the GPU is powered, writes to the FLUSH_ID seem to be ignored; and
->    when the GPU is not powered, the dummy_latest_flush page provided by the
->    driver is deliberately designed to not do any flushes, so the only thing
->    writing to the dummy_latest_flush could achieve would be to make *more*
->    flushes happen.
-> 
-> 2. panthor_device_mmap_io() does not block MAP_PRIVATE mappings (which are
->    mappings without the VM_SHARED flag).
->    MAP_PRIVATE in combination with VM_MAYWRITE indicates that the VMA has
->    copy-on-write semantics, which for VM_PFNMAP are semi-supported but
->    fairly cursed.
->    In particular, in such a mapping, the driver can only install PTEs
->    during mmap() by calling remap_pfn_range() (because remap_pfn_range()
->    wants to **store the physical address of the mapped physical memory into
->    the vm_pgoff of the VMA**); installing PTEs later on with a fault
->    handler (as panthor does) is not supported in private mappings, and so
->    if you try to fault in such a mapping, vmf_insert_pfn_prot() splats when
->    it hits a BUG() check.
-> 
-> Fix it by clearing the VM_MAYWRITE flag (userspace writing to the FLUSH_ID
-> doesn't make sense) and requiring VM_SHARED (copy-on-write semantics for
-> the FLUSH_ID don't make sense).
-> 
-> Reproducers for both scenarios are in the notes of my patch on the mailing
-> list; I tested that these bugs exist on a Rock 5B machine.
-> 
-> Note that I only compile-tested the patch, I haven't tested it; I don't
-> have a working kernel build setup for the test machine yet. Please test it
-> before applying it.
+***
 
-Sure, I'll test it before applying.
+Subject: KMSAN: uninit-value in __hfs_ext_cache_extent (2)
+Author: sarvesh20123@gmail.com
 
-> 
-> Cc: stable@vger.kernel.org
-> Fixes: 5fe909cae118 ("drm/panthor: Add the device logical block")
-> Signed-off-by: Jann Horn <jannh@google.com>
-
-Reviewed-by: Boris Brezillon <boris.brezillon@collabora.com>
-
-> ---
-> First testcase (can write to the FLUSH_ID):
-> 
-> ```
-> 
->   typeof(x) __res = (x);      \
->   if (__res == (typeof(x))-1) \
->     err(1, "SYSCHK(" #x ")"); \
->   __res;                      \
-> })
-> 
-> int main(void) {
->   int fd = SYSCHK(open(GPU_PATH, O_RDWR));
-> 
->   // sanity-check that PROT_WRITE+MAP_SHARED fails
->   void *mmap_write_res = mmap(NULL, 0x1000, PROT_READ|PROT_WRITE,
->       MAP_SHARED, fd, DRM_PANTHOR_USER_FLUSH_ID_MMIO_OFFSET);
->   if (mmap_write_res == MAP_FAILED) {
->     perror("mmap() with PROT_WRITE+MAP_SHARED failed as expected");
->   } else {
->     errx(1, "mmap() with PROT_WRITE+MAP_SHARED worked???");
->   }
-> 
->   // make a PROT_READ+MAP_SHARED mapping, and upgrade it to writable
->   void *mmio_page = SYSCHK(mmap(NULL, 0x1000, PROT_READ, MAP_SHARED,
->       fd, DRM_PANTHOR_USER_FLUSH_ID_MMIO_OFFSET));
->   SYSCHK(mprotect(mmio_page, 0x1000, PROT_READ|PROT_WRITE));
-> 
->   volatile uint32_t *flush_counter = (volatile uint32_t*)mmio_page;
-> 
->   uint32_t last_old = -1;
->   while (1) {
->     uint32_t old_val = *flush_counter;
->     *flush_counter = 1111;
->     uint32_t new_val = *flush_counter;
->     if (old_val != last_old)
->       printf("flush counter: old=%u, new=%u\n", old_val, new_val);
->     last_old = old_val;
->   }
-> }
-> ```
-> 
-> Second testcase (triggers BUG() splat):
-> ```
-> 
->   typeof(x) __res = (x);      \
->   if (__res == (typeof(x))-1) \
->     err(1, "SYSCHK(" #x ")"); \
->   __res;                      \
-> })
-> 
-> int main(void) {
->   int fd = SYSCHK(open(GPU_PATH, O_RDWR));
-> 
->   // make a PROT_READ+**MAP_PRIVATE** mapping
->   void *ptr = SYSCHK(mmap(NULL, 0x1000, PROT_READ, MAP_PRIVATE,
->       fd, DRM_PANTHOR_USER_FLUSH_ID_MMIO_OFFSET));
-> 
->   // trigger a read fault
->   *(volatile char *)ptr;
-> }
-> ```
-> 
-> The second testcase splats like this:
-> ```
-> [ 2918.411814] ------------[ cut here ]------------
-> [ 2918.411857] kernel BUG at mm/memory.c:2220!
-> [ 2918.411955] Internal error: Oops - BUG: 00000000f2000800 [#1] SMP
-> [...]
-> [ 2918.416147] CPU: 3 PID: 2934 Comm: private_user_fl Tainted: G           O       6.1.43-19-rk2312 #428a0a5e6
-> [ 2918.417043] Hardware name: Radxa ROCK 5B (DT)
-> [ 2918.417464] pstate: 60400009 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-> [ 2918.418119] pc : vmf_insert_pfn_prot+0x40/0xe4
-> [ 2918.418567] lr : panthor_mmio_vm_fault+0xb0/0x12c [panthor]
-> [...]
-> [ 2918.425746] Call trace:
-> [ 2918.425972]  vmf_insert_pfn_prot+0x40/0xe4
-> [ 2918.426342]  __do_fault+0x38/0x7c
-> [ 2918.426648]  __handle_mm_fault+0x404/0x6dc
-> [ 2918.427018]  handle_mm_fault+0x13c/0x18c
-> [ 2918.427374]  do_page_fault+0x194/0x33c
-> [ 2918.427716]  do_translation_fault+0x60/0x7c
-> [ 2918.428095]  do_mem_abort+0x44/0x90
-> [ 2918.428410]  el0_da+0x40/0x68
-> [ 2918.428685]  el0t_64_sync_handler+0x9c/0xf8
-> [ 2918.429067]  el0t_64_sync+0x174/0x178
-> ```
-> ---
->  drivers/gpu/drm/panthor/panthor_device.c | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/panthor/panthor_device.c b/drivers/gpu/drm/panthor/panthor_device.c
-> index 4082c8f2951dfdace7f73a24d6fe34e9e7f920eb..6fbff516c1c1f047fcb4dee17b87d8263616dc0c 100644
-> --- a/drivers/gpu/drm/panthor/panthor_device.c
-> +++ b/drivers/gpu/drm/panthor/panthor_device.c
-> @@ -390,11 +390,15 @@ int panthor_device_mmap_io(struct panthor_device *ptdev, struct vm_area_struct *
->  {
->  	u64 offset = (u64)vma->vm_pgoff << PAGE_SHIFT;
->  
-> +	if ((vma->vm_flags & VM_SHARED) == 0)
-> +		return -EINVAL;
-> +
->  	switch (offset) {
->  	case DRM_PANTHOR_USER_FLUSH_ID_MMIO_OFFSET:
->  		if (vma->vm_end - vma->vm_start != PAGE_SIZE ||
->  		    (vma->vm_flags & (VM_WRITE | VM_EXEC)))
->  			return -EINVAL;
-> +		vm_flags_clear(vma, VM_MAYWRITE);
->  
->  		break;
->  
-> 
-> ---
-> base-commit: d78f0ee0406803cda8801fd5201746ccf89e5e4a
-> change-id: 20241104-panthor-flush-page-fixes-fe4202bb18c0
-> 
-
+#syz test
 
