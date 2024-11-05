@@ -1,71 +1,175 @@
-Return-Path: <linux-kernel+bounces-396124-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396125-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6111C9BC831
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 09:42:02 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78F3C9BC834
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 09:42:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0931A1F24649
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 08:42:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3DAD928396E
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 08:42:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B3061CEAB0;
-	Tue,  5 Nov 2024 08:41:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDF321D0171;
+	Tue,  5 Nov 2024 08:42:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="izHqV7Rd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=xs4all.nl header.i=@xs4all.nl header.b="lYgRInHZ"
+Received: from ewsoutbound.kpnmail.nl (ewsoutbound.kpnmail.nl [195.121.94.185])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87E931C233C;
-	Tue,  5 Nov 2024 08:41:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F13A1C233C
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 08:41:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.121.94.185
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730796113; cv=none; b=XXwNiVgEz5ve7HcnoYiuiio4HWktdoGDlN00pdF6EkignYo+XonRkTAXQqAqoexEkv9GXCTpxXiOQQZvlVwaA10D8D1xqf96fPFcfw1OTyQsVbVftpatx7v86r1lgNtpMXKfhR14bWX21LUBR4dQ56bYd8mSDcR8mLZFVX3G45U=
+	t=1730796121; cv=none; b=IadQT95KPF9ppY0hTjJGctbBQF/I2Ta4YINBWgy18mALXB5+lk/SqM/Spyhgy7g3oumgONJQB5EU3fiUZhjK5K6NJUfle7aZGcpHuWFIV+pmCBBYv/02MlO4QlxnUWDB9GQTcbfs/MDvmcRkEnSkh8XW6qKGQC2ZjpGOlsw3qeQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730796113; c=relaxed/simple;
-	bh=lcjUZiRno1Ml7Eu7/D4qbMfW+RtMrSIyM4fBtwM/V5k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=m5YEyE2wcmz9Q+zMgrbjrMHWwXNW1oQgaKqhY7zK7U4x5Nt/ll+7KXU6jFQGhLpBh3QHYpRjQLE7aklp/1UPkF3OZsk1NjfMLy5g4XL4g2+k8WRCKYc+scEpRE5pWbu72TclDAuDS0Bd3txOCKrn2Hz+8W2Sm1meIJu+nowY9dc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=izHqV7Rd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A480CC4CECF;
-	Tue,  5 Nov 2024 08:41:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1730796113;
-	bh=lcjUZiRno1Ml7Eu7/D4qbMfW+RtMrSIyM4fBtwM/V5k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=izHqV7RdRft0K8i6MdXxnu9z1rs+gBkcvH/vO/rAOV8A+N905pP/iTkhGfgnYmjYp
-	 EhT5KRvfR8lhtWKzLnrCYVTjncgNhQAHpNw8BAiqY2uBdVlLAxp0ZY4rTTYaTsIsDW
-	 Q5tg42pDJt9NaZBI57nB5e0u3iSYMc5DE23o9km8=
-Date: Tue, 5 Nov 2024 09:41:35 +0100
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: "Haowei Cheng(Harvey)" <harvey.cheng@fibocom.com>
-Cc: "chunfeng.yun@mediatek.com" <chunfeng.yun@mediatek.com>,
-	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: 0001-usb-mtu3-fix-panic-in-mtu3_gadget_wakeup.patch
-Message-ID: <2024110512-popcorn-germless-01be@gregkh>
-References: <SEZPR02MB54953820B2A9EEBD807D0ED18E512@SEZPR02MB5495.apcprd02.prod.outlook.com>
+	s=arc-20240116; t=1730796121; c=relaxed/simple;
+	bh=PghXW7gaZF1lHy96HgwX9n9i2uXrKk+8Si62faTbS18=;
+	h=Date:Message-Id:From:To:Cc:In-Reply-To:Subject:References; b=gcDYirq1mDmTxQ2m6NEyg8s9h/hZx7hxpRwKI0nGtVfX+VZz+1XfpW8XHivE9flSyGWHRkImAu8p7GzxsGST9XaBMdx2i/5DzCmn374FZqwwGlHhQmm84ieD0VyqhT1SQ3ERGuoPUed+IwFEK62VtohWbl0NyShHfBnFA5MBbKI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xs4all.nl; spf=pass smtp.mailfrom=xs4all.nl; dkim=pass (2048-bit key) header.d=xs4all.nl header.i=@xs4all.nl header.b=lYgRInHZ; arc=none smtp.client-ip=195.121.94.185
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xs4all.nl
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xs4all.nl
+X-KPN-MessageId: cbd3c289-9b51-11ef-8d51-005056999439
+Received: from smtp.kpnmail.nl (unknown [10.31.155.5])
+	by ewsoutbound.so.kpn.org (Halon) with ESMTPS
+	id cbd3c289-9b51-11ef-8d51-005056999439;
+	Tue, 05 Nov 2024 09:41:48 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=xs4all.nl; s=xs4all01;
+	h=subject:to:from:message-id:date;
+	bh=jefnxVo5g2H0Su9GziWcx7xJMa463Zc+Yp3+Yh3BVHg=;
+	b=lYgRInHZEGEGH/dOZfkoaC8/iZWU5AkH6VZn0Alk60Z7+RyVneblrEOPFdUR7WL4sVA518nO5q+Q/
+	 j8FO6vztuP1v3Q8BHY8VIY1JRqlyLJOqI/+EUFfvMXLOA7AzUfvvKPD0piD+1lHtE/nUArRLOa5bDW
+	 2/fGR02W9ejHFdMvvXUHE6PBsmW/BtMUB1mWeBVOegRgIBtxqXHg920URl5oUzrIg3AnliULfxbsiB
+	 6yRxu6JC8aVflWKzkebX+egmQeogHSS6ol45qgsRZ1lSxd9UgtG8oFiglt+54POChTFGLZD/3Sgwhr
+	 9F7J0MYHzEYaCS9lV1tWPVKR9z0fe+w==
+X-KPN-MID: 33|DvtP+JdYvzSblrsg267cZse9/LQIrxsjK7xbTQSHViMueZiHcwJ9JP7t5Z0peDU
+ eiukTx7x+7l/cI5g28XYgCXH+5MSPTXWzfQRdkH7uEL4=
+X-KPN-VerifiedSender: Yes
+X-CMASSUN: 33|JvOqZX1LaV8o6V89k1e3f0Nll+2+Ct0klrl86zRy/XeEYFMeTkVlUzc6ubdJbXB
+ HBTFMVcQRcXCMRT/CynX8wA==
+Received: from bloch.sibelius.xs4all.nl (80-61-163-207.fixed.kpn.net [80.61.163.207])
+	by smtp.xs4all.nl (Halon) with ESMTPSA
+	id cbfa2edc-9b51-11ef-b66d-00505699b758;
+	Tue, 05 Nov 2024 09:41:49 +0100 (CET)
+Date: Tue, 05 Nov 2024 09:41:48 +0100
+Message-Id: <87a5ee3wdv.fsf@bloch.sibelius.xs4all.nl>
+From: Mark Kettenis <mark.kettenis@xs4all.nl>
+To: j@jannau.net
+Cc: marcan@marcan.st, sven@svenpeter.dev, alyssa@rosenzweig.io,
+	broonie@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, asahi@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-spi@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, j@jannau.net,
+	towinchenmi@gmail.com, conor.dooley@microchip.com
+In-Reply-To: <20241105-asahi-spi-v4-1-d9734f089fc9@jannau.net> (message from
+	Janne Grunau via B4 Relay on Tue, 05 Nov 2024 09:08:29 +0100)
+Subject: Re: [PATCH v4 1/3] dt-bindings: spi: apple,spi: Add binding for Apple
+ SPI controllers
+References: <20241105-asahi-spi-v4-0-d9734f089fc9@jannau.net> <20241105-asahi-spi-v4-1-d9734f089fc9@jannau.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <SEZPR02MB54953820B2A9EEBD807D0ED18E512@SEZPR02MB5495.apcprd02.prod.outlook.com>
 
-On Mon, Nov 04, 2024 at 05:54:43PM +0000, Haowei Cheng(Harvey) wrote:
+> From: Janne Grunau via B4 Relay <devnull+j.jannau.net@kernel.org>
+> Date: Tue, 05 Nov 2024 09:08:29 +0100
 > 
+> From: Hector Martin <marcan@marcan.st>
+> 
+> The Apple SPI controller is present in SoCs such as the M1 (t8103) and
+> M1 Pro/Max (t600x). This controller uses one IRQ and one clock, and
+> doesn't need any special properties, so the binding is trivial.
 
+Matches what is currently in use for U-Boot and OpenBSD.
 
-For some reason you only attached a patch, please send it properly so we
-can actually review and apply it if needed.
+> Signed-off-by: Hector Martin <marcan@marcan.st>
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> Acked-by: Nick Chan <towinchenmi@gmail.com>
+> Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+> Signed-off-by: Janne Grunau <j@jannau.net>
 
-thanks,
+Reviewed-by: Mark Kettenis <kettenis@openbsd.org>
 
-greg k-h
+> ---
+>  .../devicetree/bindings/spi/apple,spi.yaml         | 62 ++++++++++++++++++++++
+>  1 file changed, 62 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/spi/apple,spi.yaml b/Documentation/devicetree/bindings/spi/apple,spi.yaml
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..7bef605a296353a62252282af4ba45a71b20b7b6
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/spi/apple,spi.yaml
+> @@ -0,0 +1,62 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/spi/apple,spi.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Apple ARM SoC SPI controller
+> +
+> +allOf:
+> +  - $ref: spi-controller.yaml#
+> +
+> +maintainers:
+> +  - Hector Martin <marcan@marcan.st>
+> +
+> +properties:
+> +  compatible:
+> +    items:
+> +      - enum:
+> +          - apple,t8103-spi
+> +          - apple,t8112-spi
+> +          - apple,t6000-spi
+> +      - const: apple,spi
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  power-domains:
+> +    maxItems: 1
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - clocks
+> +  - interrupts
+> +
+> +unevaluatedProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/interrupt-controller/apple-aic.h>
+> +    #include <dt-bindings/interrupt-controller/irq.h>
+> +
+> +    soc {
+> +      #address-cells = <2>;
+> +      #size-cells = <2>;
+> +
+> +      spi@39b104000 {
+> +        compatible = "apple,t6000-spi", "apple,spi";
+> +        reg = <0x3 0x9b104000 0x0 0x4000>;
+> +        interrupt-parent = <&aic>;
+> +        interrupts = <AIC_IRQ 0 1107 IRQ_TYPE_LEVEL_HIGH>;
+> +        #address-cells = <1>;
+> +        #size-cells = <0>;
+> +        clocks = <&clk>;
+> +      };
+> +    };
+> 
+> -- 
+> 2.47.0
+> 
+> 
+> 
+> 
 
