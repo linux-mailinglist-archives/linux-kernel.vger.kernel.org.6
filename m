@@ -1,95 +1,118 @@
-Return-Path: <linux-kernel+bounces-396285-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396286-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68DF79BCAC8
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 11:46:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 111D99BCACF
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 11:48:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 980971C22338
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 10:46:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA3F728285B
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 10:48:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7C1E1D2F4E;
-	Tue,  5 Nov 2024 10:46:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 954F21D2F74;
+	Tue,  5 Nov 2024 10:48:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="plUhP2C3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="TKpsVR3j"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2453918DF89;
-	Tue,  5 Nov 2024 10:46:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5475518DF89;
+	Tue,  5 Nov 2024 10:48:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730803602; cv=none; b=YxfVsTKRjPtDi70AL6Qj+g1qyWdgoyxj46hznoXBhc/hkgEy3w6xsoJaEqzxnPq26vKw/TDiF3186zY+3PlBh15LTsDO+YAfZ1hDQU8VnAX+cHCacXI2TYT+SwqLKlnMcDLcnj1HU7ydGxySWu/RNSphYl/c5RqZQVQazBUmAc0=
+	t=1730803693; cv=none; b=ku2o1v/2m2QC52hyIdPB3kcprJycutgnYQgoujHz4b0MXmkh7EtfL3MUCOOUeECS1FOxx/m/Xhliz1Xz4FnR6aTsuxCF/rg3UC74lofSDe9e4vk+VC3zksMLwJCSpOtcvCPrK4AISq/fbqAx8qJ1/QEWzr2SRNHyxj3npOkAsho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730803602; c=relaxed/simple;
-	bh=VdcGAmlztfS3pzAXrj9ZpjnvuwLT/ZrczgsQ13dzYRI=;
-	h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:
-	 MIME-Version:Content-Type; b=qfKRl8VToytBMdyjy2ROcptGnZmPquf4kTx8WxbfAK51MY26rdHO7vGNbIZFGU3yiJjKQsWa8md3Kx4zU6JVusaF/HQOna/TlKRl29ezCGLxDNMFGtvGxioCmAfmjJbCX16CJHvOGN7lTAjDMgcesu8Bij1erp7MPZXiUQGqOj4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=plUhP2C3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC8E1C4CED0;
-	Tue,  5 Nov 2024 10:46:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730803601;
-	bh=VdcGAmlztfS3pzAXrj9ZpjnvuwLT/ZrczgsQ13dzYRI=;
-	h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-	b=plUhP2C3q5UJFvR7SkoJu0skGSKd3Zydrusbb4zLzR+s4Rf8ogXEU9j49UIMaeqAT
-	 E6/63KVyAaUfXUnDLAM2xfTyhdB26M18/lm4UFbtZahe//vqJzE9mL2xCYJ8GAP5Dg
-	 gn4AV/2elGkC+4ApsIZfZBqApkDCSQLpeh/21eq2LgPp2osoAh+g8XL7hfHMA0VWY9
-	 2UjJrvwguhT4/QsKvOmnSKOKrzelhb/JqkOJn4pVk1EM6aFtLbwKf6k5jdgiTULfM2
-	 egGuBN8evTv0xyIFhIYALu+zN4iA0Jlcsu89UJ/EGa0JavoI61bW2UUBiZoHxM0apB
-	 a8GVm2IjwY0Zw==
-From: Kalle Valo <kvalo@kernel.org>
-To: Jeff Johnson <quic_jjohnson@quicinc.com>
-Cc: Aleksei Vetrov <vvvvvv@google.com>,  Johannes Berg
- <johannes@sipsolutions.net>,  Kees Cook <kees@kernel.org>,  "Gustavo A. R.
- Silva" <gustavoars@kernel.org>,  Dmitry Antipov <dmantipov@yandex.ru>,
-  <linux-wireless@vger.kernel.org>,  <linux-kernel@vger.kernel.org>,
-  <linux-hardening@vger.kernel.org>,  <stable@vger.kernel.org>
-Subject: Re: [PATCH v2] wifi: nl80211: fix bounds checker error in
- nl80211_parse_sched_scan
-References: <20241029-nl80211_parse_sched_scan-bounds-checker-fix-v2-1-c804b787341f@google.com>
-	<0bc2e4b0-4dad-4341-a41e-a98fbc4b1658@quicinc.com>
-Date: Tue, 05 Nov 2024 12:46:37 +0200
-In-Reply-To: <0bc2e4b0-4dad-4341-a41e-a98fbc4b1658@quicinc.com> (Jeff
-	Johnson's message of "Mon, 4 Nov 2024 09:12:09 -0800")
-Message-ID: <87ses6x8j6.fsf@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
+	s=arc-20240116; t=1730803693; c=relaxed/simple;
+	bh=9nci4TTFpI29fccUZhsQ38CiKylvkkP9B3D45Yw8JhM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=k3x1Clcm+FaEDF5uze3gu9XFmFx6Pu8V5W9X32pzHD3dvBQW0eFidXk+EOUtVGEjCT+USI6fsZPNkZz67hPmb9RnYNHMnBwU5LHqF/DQouAu6vwhyln3rNwJxCm+cAOVm0PfyhcK88fzUDxFz2xNTu/aecspcJdkyzHKg2RnlmQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=TKpsVR3j; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A59eqB6005247;
+	Tue, 5 Nov 2024 10:48:08 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=h1mQ3EIB/SODfCTJRZAJXrT+JUk0LmCmPS0
+	9GnmsJtw=; b=TKpsVR3j/gxtwJb7Zu1fnl/pG66NcItF2tduqdH0FZpq01spxCX
+	k1pq5eskAMzUh9n7FKUNbC9Ho8psoM7b+WqKYydm9Oi8mzas6UGlPUSlbPwle08y
+	AY9qpgyk8MJrNb34v4UAFnWmC6N450CQ9A2y4C53lwO4BR4hbt/JcMjz+zpo1WwC
+	gQwVW84NpVhRm5s/41MPjevXaNnZEROx60Og/yjB9Xk9Li067XYD51VCQfavLtSb
+	otliEU/SHxabjVGjYqSQ8GKb7f+l8SxyehJED+ZmR2HDw6qT19R5OxJ99iZyxsm9
+	e2HwcudkOHvFQbqphgr4oMFd5SfRYiiBMHw==
+Received: from apblrppmta02.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42ndc6yav6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 05 Nov 2024 10:48:08 +0000 (GMT)
+Received: from pps.filterd (APBLRPPMTA02.qualcomm.com [127.0.0.1])
+	by APBLRPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 4A5Am34C002819;
+	Tue, 5 Nov 2024 10:48:03 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by APBLRPPMTA02.qualcomm.com (PPS) with ESMTPS id 42nd5kx4m0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 05 Nov 2024 10:48:03 +0000
+Received: from APBLRPPMTA02.qualcomm.com (APBLRPPMTA02.qualcomm.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 4A5Am3xl002804;
+	Tue, 5 Nov 2024 10:48:03 GMT
+Received: from hu-devc-hyd-u22-c.qualcomm.com ([10.213.97.252])
+	by APBLRPPMTA02.qualcomm.com (PPS) with ESMTPS id 4A5Am2w4002800
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 05 Nov 2024 10:48:03 +0000
+Received: by hu-devc-hyd-u22-c.qualcomm.com (Postfix, from userid 4047106)
+	id B7FD74D9; Tue,  5 Nov 2024 16:18:01 +0530 (+0530)
+From: Viken Dadhaniya <quic_vdadhani@quicinc.com>
+To: vkoul@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+        linux-arm-msm@vger.kernel.org, dmaengine@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: quic_msavaliy@quicinc.com, quic_anupkulk@quicinc.com,
+        Viken Dadhaniya <quic_vdadhani@quicinc.com>
+Subject: [PATCH v1] dt-bindings: dma: qcom,gpi: Add QCS615 compatible
+Date: Tue,  5 Nov 2024 16:17:59 +0530
+Message-Id: <20241105104759.3775672-1-quic_vdadhani@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: wOsKnzbRCcUeUB24IZL1VwxgiPBuLMmX
+X-Proofpoint-GUID: wOsKnzbRCcUeUB24IZL1VwxgiPBuLMmX
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ lowpriorityscore=0 mlxlogscore=790 adultscore=0 clxscore=1011 mlxscore=0
+ phishscore=0 impostorscore=0 suspectscore=0 malwarescore=0 bulkscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411050081
 
-Jeff Johnson <quic_jjohnson@quicinc.com> writes:
+Document compatible for GPI DMA controller on QCS615 platform.
 
-> On 10/29/2024 6:22 AM, Aleksei Vetrov wrote:
->> The channels array in the cfg80211_scan_request has a __counted_by
->> attribute attached to it, which points to the n_channels variable. This
->> attribute is used in bounds checking, and if it is not set before the
->> array is filled, then the bounds sanitizer will issue a warning or a
->> kernel panic if CONFIG_UBSAN_TRAP is set.
->> 
->> This patch sets the size of allocated memory as the initial value for
->> n_channels. It is updated with the actual number of added elements after
->> the array is filled.
->> 
->> Fixes: aa4ec06c455d ("wifi: cfg80211: use __counted_by where appropriate")
->> Cc: stable@vger.kernel.org
->> Signed-off-by: Aleksei Vetrov <vvvvvv@google.com>
-> Reviewed-by: Jeff Johnson <quic_jjohnson@quicinc.com>
->
-> And it is exactly this kind of issue why I'm not accepting any __counted_by()
-> changes in ath.git without actually testing the code that is modified.
+Signed-off-by: Viken Dadhaniya <quic_vdadhani@quicinc.com>
+---
+ Documentation/devicetree/bindings/dma/qcom,gpi.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
-That's a good rule. If we ever manage to write that "wireless cleanup
-policy" document this is something we should add there.
-
+diff --git a/Documentation/devicetree/bindings/dma/qcom,gpi.yaml b/Documentation/devicetree/bindings/dma/qcom,gpi.yaml
+index 4ad56a409b9c..8fc94c87c421 100644
+--- a/Documentation/devicetree/bindings/dma/qcom,gpi.yaml
++++ b/Documentation/devicetree/bindings/dma/qcom,gpi.yaml
+@@ -25,6 +25,7 @@ properties:
+       - items:
+           - enum:
+               - qcom,qcm2290-gpi-dma
++              - qcom,qcs615-gpi-dma
+               - qcom,qdu1000-gpi-dma
+               - qcom,sar2130p-gpi-dma
+               - qcom,sc7280-gpi-dma
 -- 
-https://patchwork.kernel.org/project/linux-wireless/list/
+2.34.1
 
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
