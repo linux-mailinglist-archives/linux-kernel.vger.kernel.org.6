@@ -1,149 +1,183 @@
-Return-Path: <linux-kernel+bounces-396186-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396187-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C2839BC91C
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 10:28:25 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 095449BC91D
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 10:28:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F2B8628322A
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 09:28:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2CFFB1C211F9
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 09:28:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40FC81D0942;
-	Tue,  5 Nov 2024 09:28:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A96EF1CFEDB;
+	Tue,  5 Nov 2024 09:28:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cpB4VIKL"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kK+spCA9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B01070837;
-	Tue,  5 Nov 2024 09:28:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0802F1CEAD3;
+	Tue,  5 Nov 2024 09:28:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730798896; cv=none; b=HIMLc1hEwKX8nw+OXVYiepUzMgQbTX4wwepwgJ9VoCorc4NATdwl/Q1XDYqW6tAK5UQ+u29zmvKMnEXxayBs7k+uSFs/78Hp1Jb7jyvkKoKzhy6OzUWxDZWQYEUpB+HOKYbFADITcgLIA1Ppcx8RuWV8nPnlAAuE0Bk+4iPDwlw=
+	t=1730798916; cv=none; b=oAAgkM/ACO373zirbS9BnktnBGy6avZRAbtQTpoplfTrBDjvyW//n2hQq+0Qx09K5NvOYuMfLo1SBZiq9jWrn/FYwJrsBgMsbcISLJijE09AiZqM/pW9wAu9XjkQftUwWIsuX2ksdQwbKWq7maGIhkNhNGTctXATTFubAnF3Eso=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730798896; c=relaxed/simple;
-	bh=SOqA2KiSZ66RBSDN2Mzk1Ili+tcTWEUSzG2MTS2LVAw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nFPYFhj6/8tw0wzFKnZW3WJa1bTgEpvz3izQA0od5pNR2x060S5VPnNZeqGFGMAn/EoU1rvF+joGlffofPLJdJTq1v3RsV8QY3+p6pdDsqmPs+IVk/6+wfnpxdiCx9zwvZRzNBeRX4/gn5IAB7r1k92g6Xq0CGhEe9za8jEV3xY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cpB4VIKL; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-37d462c91a9so3068554f8f.2;
-        Tue, 05 Nov 2024 01:28:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730798893; x=1731403693; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WfYpsiaVhokXvMRE5Ly3ANC1QV6XyEt1nW28Am+u6yM=;
-        b=cpB4VIKLRo+biLeU7uth0wOg04Hh3BKEzc5w45caHRW2qCunbuzkI69SELOq/i04yf
-         UaHvov29iygUR/hK4tAEhjYWkyjLxfDEU3H/eaudwRJjtovzyDRGoujfNFvHA9vt8Ats
-         8qcy6eSvtVqxj30YclccOIDriAn8TCrF4K9uM20/J6hOa6GhiwEnUrLt69FtWPHgr8oI
-         CkRpJ7MjrF17c/GBVqI2prCIGqsUBIyV6imsiNppVdDi6WczRrjlhYItGzu2cnU7fA4v
-         1jix8OFR+hNW7UwKyLm2FRKbGV6stiPzGrPBP9P3fg2WQNe/q/ce7oYxeLotKprEDOjf
-         ebLg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730798893; x=1731403693;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=WfYpsiaVhokXvMRE5Ly3ANC1QV6XyEt1nW28Am+u6yM=;
-        b=S69IaRBBcdW0MtuT7JNxFCEth1LtuHGT5I/NryVV4CtqHW1ITsGHaSn4Y7Gyn5Yh/N
-         uKw5VlMR2ax4OuJbfG1vdurmxWpA2ygFkPcfKlguqaZwBcWIdO0M5K0MQ79kw5ekyqGn
-         Sr6rzyOsrGa4sEtq52PyDIvwodvWcVkEKCwSctd0wCRcjBoDGx/1rEg+NNtVIzgSdljx
-         /PdJIyLkcuUGhllDmxXg77CxLZcuIdkq3KR4ftV2U/3MBSlYjTQk2wbTNNfJemdLuJ5k
-         mNoRMGKXTsTzDWFqtvcFTewXBto8IXUzRMci8VZbXMXHZ1vB7htX/qa52J+JmNaV3S8u
-         3kjw==
-X-Forwarded-Encrypted: i=1; AJvYcCWbu6X0iI87zXgdLtF0RNmvXTfAxkPQN9VlHF51YngRzZyVV+/TIezRoa7U/6c8X9aZZ6JwQGmi@vger.kernel.org, AJvYcCXZOld9RAhPEk/7HEial9ieiXZfDdz+1l4gl5h1n6TKQ+Up8jM1mXxySGB1/FS/fDfDFwWneHDI02Lt9Lk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzJ9MT3ZkHbKs8T0WSK83FlbxHnOM837ODF1u8RysFA1/H++PX7
-	erG87viVEXgu3zJc2QesS+n7If4nhiT93vzvW9wpL2EFsO/LFQTo
-X-Google-Smtp-Source: AGHT+IHSIm7YyJ7tIlnXXnQYXgLSSY1yNj5/Ic8h4kFjLi0jQrWKCtJcJOW3S4lKcs+sxaecJgfr7w==
-X-Received: by 2002:a05:6000:d0f:b0:378:e8a9:98c5 with SMTP id ffacd0b85a97d-381b708b566mr15215408f8f.34.1730798893173;
-        Tue, 05 Nov 2024 01:28:13 -0800 (PST)
-Received: from localhost ([81.168.73.77])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381c113e69fsm15508974f8f.69.2024.11.05.01.28.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Nov 2024 01:28:12 -0800 (PST)
-Date: Tue, 5 Nov 2024 09:28:17 +0000
-From: Martin Habets <habetsm.xilinx@gmail.com>
-To: linux@treblig.org
-Cc: ecree.xilinx@gmail.com, andrew+netdev@lunn.ch, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	netdev@vger.kernel.org, linux-net-drivers@amd.com,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next 2/4] sfc: Remove unused efx_mae_mport_vf
-Message-ID: <20241105092817.GB595392@gmail.com>
-Mail-Followup-To: linux@treblig.org, ecree.xilinx@gmail.com,
-	andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
-	linux-net-drivers@amd.com, linux-kernel@vger.kernel.org
-References: <20241102151625.39535-1-linux@treblig.org>
- <20241102151625.39535-3-linux@treblig.org>
+	s=arc-20240116; t=1730798916; c=relaxed/simple;
+	bh=PPZvz5qoYNEfErwJ5Zdp9p8k7QnqWb6iyN5gYt91vdw=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=lbCJLN2wNznDlDQ1Et4aiMmzYnCyG5bn/cS2jKrI6qFFzl0TE4O+ULT1Uw1ntDebG0e3IL1UJtucMh2h4y4aJ70y1FTRUnGyUQz6Y7T695Wi2gDQ0LP3lLIvvKOc4LWuTKYd0ZWXbBMpHjLa8RI/l19jotPQS5KcrrwiBh/N9k4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kK+spCA9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66A88C4CECF;
+	Tue,  5 Nov 2024 09:28:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730798913;
+	bh=PPZvz5qoYNEfErwJ5Zdp9p8k7QnqWb6iyN5gYt91vdw=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=kK+spCA9XZ1JelSgBzWHUKZmLiNLH614lY5ad59Hx50NV7zu1lhvGVRR9LdCOv4VQ
+	 GBW5LFFwEREH4fjddMB15q31/7ksZnQNgKUDpPj+Y5h8Xc2BRizj3t2KrpsRgQjP65
+	 zhD+mbmQxQeXg2PuugGFy4LrIGgAvaRbNIxxOCGR/xnz5o2mtg9l3Up/reB+RkD+wA
+	 388xsXmwRb9Ww1tzJApNY27YBMA1RfYjkqJqp4TFc+abtxy6p/3YcyGl/AY+7d1bZ5
+	 VxLy49X1lsZSn5HmoPCPp1oOBgeW67NM2CJ1bWKQQp9tKyDDh6noTsCvqkBA29+zXW
+	 NnlWqqqRg0XqQ==
+Date: Tue, 5 Nov 2024 18:28:30 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>, Peter Zijlstra
+ <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, Ian Rogers
+ <irogers@google.com>, Dima Kogan <dima@secretsauce.net>, Alexander Lobakin
+ <aleksander.lobakin@intel.com>, Przemek Kitszel
+ <przemyslaw.kitszel@intel.com>, linux-perf-users@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/4] perf-probe: Require '@' prefix for filename always
+Message-Id: <20241105182830.384b70727ff34391eb0ef9eb@kernel.org>
+In-Reply-To: <ZykqQTMbA8PlaIBW@x1>
+References: <173073702882.2098439.13342508872190995896.stgit@mhiramat.roam.corp.google.com>
+	<173073704685.2098439.2208365513857043203.stgit@mhiramat.roam.corp.google.com>
+	<ZykqQTMbA8PlaIBW@x1>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241102151625.39535-3-linux@treblig.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Sat, Nov 02, 2024 at 03:16:23PM +0000, linux@treblig.org wrote:
-> 
-> From: "Dr. David Alan Gilbert" <linux@treblig.org>
-> 
-> efx_mae_mport_vf() has been unused since
-> commit 5227adff37af ("sfc: add mport lookup based on driver's mport data")
-> 
-> Remove it.
-> 
-> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+On Mon, 4 Nov 2024 17:10:41 -0300
+Arnaldo Carvalho de Melo <acme@kernel.org> wrote:
 
-Acked-by: Martin Habets <habetsm.xilinx@gmail.com>
+> On Tue, Nov 05, 2024 at 01:17:26AM +0900, Masami Hiramatsu (Google) wrote:
+> > From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+>  
+> > Currently perf probe allows user to specify probing place without '@'
+> > prefix, for example, both `-V file:line` and `-V function:line` are
+> > allowed. But this makes a problem if a (demangled) function name is
+> > hard to be distinguished from a file name.
+>  
+> > This changes the perf-probe to require '@' prefix for filename even
+> > without function name. For example, `-V @file:line` and
+> > `-V function:line` are acceptable.
+>  
+> > With this change, users can specify filename or function correctly.
+> 
+> Well, this will break scripts that use perf probe for a given file,
+> probably the right thing not to break backwards compatibility is to
+> continue accepting and when there is a real conflict, an ambiguity that
+> makes differentiating from file to function names, then refuse it,
+> stating that it is ambiguous, probably spelling out the names of the
+> files and functions that match so and stating that to make it
+> unambiguoius, prefix file names with @.
 
-> ---
->  drivers/net/ethernet/sfc/mae.c | 11 -----------
->  drivers/net/ethernet/sfc/mae.h |  1 -
->  2 files changed, 12 deletions(-)
+The problem is that the ambiguous function name. For example, Go's
+main routine is `main.main`, and this is not likely to the C function
+name, so currently perf probe treats it as a filename and failed to
+find that.
+
+I think one possible solution is to run search loop twice internally
+(search it as file name, if fails, search it as function name) if it
+looks like a file name but it does not start from `@`.
+This takes costs a bit but can keep backward compatibility.
+
+Thank you,
+
 > 
-> diff --git a/drivers/net/ethernet/sfc/mae.c b/drivers/net/ethernet/sfc/mae.c
-> index 10709d828a63..50f097487b14 100644
-> --- a/drivers/net/ethernet/sfc/mae.c
-> +++ b/drivers/net/ethernet/sfc/mae.c
-> @@ -76,17 +76,6 @@ void efx_mae_mport_uplink(struct efx_nic *efx __always_unused, u32 *out)
->  	*out = EFX_DWORD_VAL(mport);
->  }
+> - Arnaldo
 >  
-> -void efx_mae_mport_vf(struct efx_nic *efx __always_unused, u32 vf_id, u32 *out)
-> -{
-> -	efx_dword_t mport;
-> -
-> -	EFX_POPULATE_DWORD_3(mport,
-> -			     MAE_MPORT_SELECTOR_TYPE, MAE_MPORT_SELECTOR_TYPE_FUNC,
-> -			     MAE_MPORT_SELECTOR_FUNC_PF_ID, MAE_MPORT_SELECTOR_FUNC_PF_ID_CALLER,
-> -			     MAE_MPORT_SELECTOR_FUNC_VF_ID, vf_id);
-> -	*out = EFX_DWORD_VAL(mport);
-> -}
-> -
->  /* Constructs an mport selector from an mport ID, because they're not the same */
->  void efx_mae_mport_mport(struct efx_nic *efx __always_unused, u32 mport_id, u32 *out)
->  {
-> diff --git a/drivers/net/ethernet/sfc/mae.h b/drivers/net/ethernet/sfc/mae.h
-> index 8df30bc4f3ba..db79912c86d8 100644
-> --- a/drivers/net/ethernet/sfc/mae.h
-> +++ b/drivers/net/ethernet/sfc/mae.h
-> @@ -23,7 +23,6 @@ int efx_mae_free_mport(struct efx_nic *efx, u32 id);
->  
->  void efx_mae_mport_wire(struct efx_nic *efx, u32 *out);
->  void efx_mae_mport_uplink(struct efx_nic *efx, u32 *out);
-> -void efx_mae_mport_vf(struct efx_nic *efx, u32 vf_id, u32 *out);
->  void efx_mae_mport_mport(struct efx_nic *efx, u32 mport_id, u32 *out);
->  
->  int efx_mae_lookup_mport(struct efx_nic *efx, u32 selector, u32 *id);
-> -- 
-> 2.47.0
-> 
+> > Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> > ---
+> >  tools/perf/util/probe-event.c |   31 +++++++++----------------------
+> >  1 file changed, 9 insertions(+), 22 deletions(-)
+> > 
+> > diff --git a/tools/perf/util/probe-event.c b/tools/perf/util/probe-event.c
+> > index 665dcce482e1..913a27cbb5d9 100644
+> > --- a/tools/perf/util/probe-event.c
+> > +++ b/tools/perf/util/probe-event.c
+> > @@ -1341,7 +1341,7 @@ static bool is_c_func_name(const char *name)
+> >   * Stuff 'lr' according to the line range described by 'arg'.
+> >   * The line range syntax is described by:
+> >   *
+> > - *         SRC[:SLN[+NUM|-ELN]]
+> > + *         @SRC[:SLN[+NUM|-ELN]]
+> >   *         FNC[@SRC][:SLN[+NUM|-ELN]]
+> >   */
+> >  int parse_line_range_desc(const char *arg, struct line_range *lr)
+> > @@ -1404,16 +1404,10 @@ int parse_line_range_desc(const char *arg, struct line_range *lr)
+> >  			err = -ENOMEM;
+> >  			goto err;
+> >  		}
+> > +		if (*name != '\0')
+> > +			lr->function = name;
+> > +	} else
+> >  		lr->function = name;
+> > -	} else if (strpbrk_esc(name, "/."))
+> > -		lr->file = name;
+> > -	else if (is_c_func_name(name))/* We reuse it for checking funcname */
+> > -		lr->function = name;
+> > -	else {	/* Invalid name */
+> > -		semantic_error("'%s' is not a valid function name.\n", name);
+> > -		err = -EINVAL;
+> > -		goto err;
+> > -	}
+> >  
+> >  	return 0;
+> >  err:
+> > @@ -1463,7 +1457,7 @@ static int parse_perf_probe_point(char *arg, struct perf_probe_event *pev)
+> >  
+> >  	/*
+> >  	 * <Syntax>
+> > -	 * perf probe [GRP:][EVENT=]SRC[:LN|;PTN]
+> > +	 * perf probe [GRP:][EVENT=]@SRC[:LN|;PTN]
+> >  	 * perf probe [GRP:][EVENT=]FUNC[@SRC][+OFFS|%return|:LN|;PAT]
+> >  	 * perf probe %[GRP:]SDT_EVENT
+> >  	 */
+> > @@ -1516,19 +1510,12 @@ static int parse_perf_probe_point(char *arg, struct perf_probe_event *pev)
+> >  	/*
+> >  	 * Check arg is function or file name and copy it.
+> >  	 *
+> > -	 * We consider arg to be a file spec if and only if it satisfies
+> > -	 * all of the below criteria::
+> > -	 * - it does not include any of "+@%",
+> > -	 * - it includes one of ":;", and
+> > -	 * - it has a period '.' in the name.
+> > -	 *
+> > +	 * We consider arg to be a file spec if it starts with '@'.
+> >  	 * Otherwise, we consider arg to be a function specification.
+> >  	 */
+> > -	if (!strpbrk_esc(arg, "+@%")) {
+> > -		ptr = strpbrk_esc(arg, ";:");
+> > -		/* This is a file spec if it includes a '.' before ; or : */
+> > -		if (ptr && memchr(arg, '.', ptr - arg))
+> > -			file_spec = true;
+> > +	if (*arg == '@') {
+> > +		file_spec = true;
+> > +		arg++;
+> >  	}
+> >  
+> >  	ptr = strpbrk_esc(arg, ";:+@%");
+
+
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
