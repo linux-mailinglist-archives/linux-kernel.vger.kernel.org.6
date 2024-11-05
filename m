@@ -1,364 +1,133 @@
-Return-Path: <linux-kernel+bounces-396226-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396227-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 830209BC98F
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 10:49:12 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2565F9BC990
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 10:50:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 46811282267
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 09:49:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D05F81F23ADF
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 09:50:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF66F1D12E6;
-	Tue,  5 Nov 2024 09:49:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Jf01UEFI"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FD6F1D0784;
+	Tue,  5 Nov 2024 09:50:35 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E15A0163;
-	Tue,  5 Nov 2024 09:48:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93BF6163
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 09:50:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730800141; cv=none; b=QcSyDUlQrJVEtcNqTzTY+lk0CQXXMJIt5uKfGtE+1Q240ct87I16KzdUSqFBD9ST6UqorWUm5BjuP0Pa91YgeEWTfGR7cZonCJfTMaR6I4fCAUSheB+wPKo8Okc5c0ZQednFpY/TaBgNOAynTMV/AZ8WWtMnLwgv3G874yvHurQ=
+	t=1730800234; cv=none; b=iVUw65amEyGjmfSVFDaRgCrSMiYvqilao9hxtHE1nxEEO22T5uy1GDSalNwL3LHBjq4o/ZoNdTOm18ms+uosA3EZ2ahpz1eOyoCeTDMyaRhcgK1Rd6YSbb1VePinHCRYlWATgBQsPwGR7OKJN2mJ61p0TqfC2StZpM5d/NRXvDQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730800141; c=relaxed/simple;
-	bh=zxM5hAERtAB7gMIJ084EOz6L37mhY4koGGPbkVTQwTA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XCTFLdf45qZGxgCd3AZdJ7hCGklxfXaGYHEXXIGWgGgjcRcug/x3dT9Z/LNyimtXHsH7icRaUKdiE4nrPd0z4GFXgUyhUTwZC2x4cR3SEFng9Icqh0xDsXM79WtNBqt1ttHDm8kVSsgIJmYcjajHsuqcJc6yR/LiqaUauRpT+JA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Jf01UEFI; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-431688d5127so41474635e9.0;
-        Tue, 05 Nov 2024 01:48:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730800138; x=1731404938; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/w0WpjPEcium9zbrSap5bfYNsTXqLhqroWKQsTECXKM=;
-        b=Jf01UEFILvaSvF3q7Zbq7gqZ7Pm3Ckdx/bU7fy2oM7/zF9h4evT2uliMO7PbLPqq0z
-         FOjORE2KidYWBMFSyTCI4lY53g0zn1dQxjIeoEWka1C9Yv/WDmMB1kluHSjJb1viquHu
-         qesS5pEPYLcYaHX+zsEPaYMoOvQhz5RBUBANPTc7US72dWSqMJopxWujZLBXGWfEy4u4
-         ScmS/405KVS0u03UiSaIc8r7tjhrn6Lf8yZnJzoSsHtpaxoHQWNv+FrT+Mg/O3Tger50
-         oGGMOQ8Wn8EjIBC9L2mlmLB+FnllutSituYF6FCU9BU85Wu4PbUfG4kpBrFn72+H2kVw
-         pgjg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730800138; x=1731404938;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/w0WpjPEcium9zbrSap5bfYNsTXqLhqroWKQsTECXKM=;
-        b=fvE1IkWCjOO+Qhds6W8j6uu2Hp1sMycB6yho5R4i7uLQRmg028jv86w74n8J2XxlID
-         D6Po4YuQXGwZ6YGgQ892nxbNMAEtlx5ZdG/Xa72+CIg5DFJsyGuOMANhK4e1pbOPPZ5E
-         o4gDOCoYLTpnG45OH6p+J1OEmVejYcOD4dz0VkGYfsxqJ4vG/3GcY/SJgPn8cfpL9ynj
-         CqVLsn3XNCL+7WiDrhFkh0Ek9GlAFwSQGZPPWQkv/cX7leLDLY2wkXKKZRbucvSHG3EB
-         0nWU4GlvjGKIseML1LXfkFKFeeZBom6tO5FXPtfNn1idR0nRmUerCrfxuUGKNxYzy2mM
-         vKAw==
-X-Forwarded-Encrypted: i=1; AJvYcCWDbwEgdqqgM9wySB0YLJUD4CyBQlF1kL5045MGk8BuaeryMID7LPPM3EAZn4hEloNoaFjN/b65YX6HDaAs@vger.kernel.org, AJvYcCWM+fF1NQ6Dr9ljRkpPFl/eL6H3dItDzon35h/16S0wuXjS/CWLjU2cs0LA/hQuQTD9k1g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwaxF6q3q82pYjyKpQoKKSjnrICW8xDKA6TuajU96tKGS98hgmk
-	vVPeh9+feK1a90hAB6W/QZqcOqEV0E9vW/2KAAVybhSPE3Hd+TL+p3bQZMXL
-X-Google-Smtp-Source: AGHT+IHNmm2Ntw2+Ap6scTGTnQ8hpTqJZM/Tmkm9xYM7ujAthDKd3FDJ7+/j/s7g3RD+WvheukC5Yg==
-X-Received: by 2002:a05:600c:19c8:b0:430:54a4:5b03 with SMTP id 5b1f17b1804b1-4319ac6fad6mr279878385e9.6.1730800137880;
-        Tue, 05 Nov 2024 01:48:57 -0800 (PST)
-Received: from localhost ([81.168.73.77])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-431bd9ca6f8sm211157835e9.39.2024.11.05.01.48.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Nov 2024 01:48:56 -0800 (PST)
-Date: Tue, 5 Nov 2024 09:48:55 +0000
-From: Martin Habets <habetsm.xilinx@gmail.com>
-To: Rosen Penev <rosenp@gmail.com>
-Cc: netdev@vger.kernel.org, Edward Cree <ecree.xilinx@gmail.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Jesper Dangaard Brouer <hawk@kernel.org>,
-	John Fastabend <john.fastabend@gmail.com>,
-	"open list:SFC NETWORK DRIVER" <linux-net-drivers@amd.com>,
-	open list <linux-kernel@vger.kernel.org>,
-	"open list:XDP (eXpress Data Path):Keyword:(?:b|_)xdp(?:b|_)" <bpf@vger.kernel.org>
-Subject: Re: [PATCH net-next] net: sfc: use ethtool string helpers
-Message-ID: <20241105094855.GE595392@gmail.com>
-Mail-Followup-To: Rosen Penev <rosenp@gmail.com>, netdev@vger.kernel.org,
-	Edward Cree <ecree.xilinx@gmail.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Jesper Dangaard Brouer <hawk@kernel.org>,
-	John Fastabend <john.fastabend@gmail.com>,
-	"open list:SFC NETWORK DRIVER" <linux-net-drivers@amd.com>,
-	open list <linux-kernel@vger.kernel.org>,
-	"open list:XDP (eXpress Data Path):Keyword:(?:b|_)xdp(?:b|_)" <bpf@vger.kernel.org>
-References: <20241104202705.120939-1-rosenp@gmail.com>
+	s=arc-20240116; t=1730800234; c=relaxed/simple;
+	bh=m/Ix/B5cYcaGR0H8bw0CtJiYweqhPKvHLj5gVJf36CM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=JF+sTK6pOJLn7yRjXL+vMDEr4zDReRqdH7zqQoWlqEKDgRORAwWS1K6z4mP56jCJzzbNzHfrftYqfQqPcHi508o2nN4q3Ccnnl8prqSlm41n5wKO9jdiCQEhAbceRvvgNcvm3IwIz7Dmgy5UPX5jOGNYz+Eb8RqeGyvsvbRCzac=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: 5bf9f1769b5b11efa216b1d71e6e1362-20241105
+X-CTIC-Tags:
+	HR_CC_COUNT, HR_CC_DOMAIN_COUNT, HR_CC_NAME, HR_CC_NO_NAME, HR_CTE_8B
+	HR_CTT_MISS, HR_DATE_H, HR_DATE_WKD, HR_DATE_ZONE, HR_FROM_NAME
+	HR_SJ_LANG, HR_SJ_LEN, HR_SJ_LETTER, HR_SJ_NOR_SYM, HR_SJ_PHRASE
+	HR_SJ_PHRASE_LEN, HR_SJ_WS, HR_TO_COUNT, HR_TO_DOMAIN_COUNT, HR_TO_NO_NAME
+	DN_TRUSTED, SRC_TRUSTED, SA_UNTRUSTED, SA_LOWREP, SA_EXISTED
+	SN_UNTRUSTED, SN_LOWREP, SN_EXISTED, SPF_NOPASS, DKIM_NOPASS
+	DMARC_NOPASS
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.38,REQID:6e3c4b8d-f751-4922-af94-fd9f1ced5b1b,IP:10,
+	URL:0,TC:0,Content:-5,EDM:0,RT:0,SF:-5,FILE:0,BULK:0,RULE:Release_Ham,ACTI
+	ON:release,TS:0
+X-CID-INFO: VERSION:1.1.38,REQID:6e3c4b8d-f751-4922-af94-fd9f1ced5b1b,IP:10,UR
+	L:0,TC:0,Content:-5,EDM:0,RT:0,SF:-5,FILE:0,BULK:0,RULE:Release_Ham,ACTION
+	:release,TS:0
+X-CID-META: VersionHash:82c5f88,CLOUDID:a17ae252df21acc5267abab62b9334a4,BulkI
+	D:2411051750188MZ4VDPY,BulkQuantity:0,Recheck:0,SF:24|72|19|44|66|841|38|1
+	02,TC:nil,Content:0,EDM:-3,IP:-2,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC
+	:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0
+X-CID-BVR: 0,NGT
+X-CID-BAS: 0,NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_FSD,TF_CID_SPAM_FSI,TF_CID_SPAM_SNR
+X-UUID: 5bf9f1769b5b11efa216b1d71e6e1362-20241105
+X-User: zhangguopeng@kylinos.cn
+Received: from localhost.localdomain [(223.70.159.239)] by mailgw.kylinos.cn
+	(envelope-from <zhangguopeng@kylinos.cn>)
+	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
+	with ESMTP id 1526205533; Tue, 05 Nov 2024 17:50:15 +0800
+From: zhangguopeng <zhangguopeng@kylinos.cn>
+To: akpm@linux-foundation.org,
+	linux-kernel@vger.kernel.org
+Cc: daniel.lezcano@linaro.org,
+	festevam@denx.de,
+	joel.granados@kernel.org,
+	linux@weissschuh.net,
+	zhangguopeng <zhangguopeng@kylinos.cn>
+Subject: [PATCH] kernel/reboot: replace sprintf() with sysfs_emit()
+Date: Tue,  5 Nov 2024 17:49:41 +0800
+Message-Id: <20241105094941.33739-1-zhangguopeng@kylinos.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241104202705.120939-1-rosenp@gmail.com>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Nov 04, 2024 at 12:27:05PM -0800, Rosen Penev wrote:
-> 
-> The latter is the preferred way to copy ethtool strings.
-> 
-> Avoids manually incrementing the pointer. Cleans up the code quite well.
-> 
-> Signed-off-by: Rosen Penev <rosenp@gmail.com>
-> ---
->  drivers/net/ethernet/sfc/ethtool_common.c     | 34 +++++++------------
->  drivers/net/ethernet/sfc/falcon/ethtool.c     | 24 +++++--------
->  drivers/net/ethernet/sfc/falcon/nic.c         |  7 ++--
->  drivers/net/ethernet/sfc/nic.c                |  7 ++--
->  .../net/ethernet/sfc/siena/ethtool_common.c   | 34 +++++++------------
->  drivers/net/ethernet/sfc/siena/nic.c          |  7 ++--
->  6 files changed, 40 insertions(+), 73 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/sfc/ethtool_common.c b/drivers/net/ethernet/sfc/ethtool_common.c
-> index ae32e08540fa..d46972f45ec1 100644
-> --- a/drivers/net/ethernet/sfc/ethtool_common.c
-> +++ b/drivers/net/ethernet/sfc/ethtool_common.c
-> @@ -403,24 +403,19 @@ static size_t efx_describe_per_queue_stats(struct efx_nic *efx, u8 *strings)
->  	efx_for_each_channel(channel, efx) {
->  		if (efx_channel_has_tx_queues(channel)) {
->  			n_stats++;
-> -			if (strings != NULL) {
-> -				snprintf(strings, ETH_GSTRING_LEN,
-> -					 "tx-%u.tx_packets",
-> -					 channel->tx_queue[0].queue /
-> -					 EFX_MAX_TXQ_PER_CHANNEL);
-> -
-> -				strings += ETH_GSTRING_LEN;
-> -			}
-> +			if (strings)
-> +				ethtool_sprintf(
-> +					&strings, "tx-%u.tx_packets",
+As Documentation/filesystems/sysfs.rst suggested, show() should only use
+sysfs_emit() or sysfs_emit_at() when formatting the value to be returned
+to user space.
 
-This still fits after the opening parentheses above within 80 characters.
-I would prefer that style.
+No functional change intended.
 
-Martin
+Signed-off-by: zhangguopeng <zhangguopeng@kylinos.cn>
+---
+ kernel/reboot.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-> +					channel->tx_queue[0].queue /
-> +						EFX_MAX_TXQ_PER_CHANNEL);
->  		}
->  	}
->  	efx_for_each_channel(channel, efx) {
->  		if (efx_channel_has_rx_queue(channel)) {
->  			n_stats++;
-> -			if (strings != NULL) {
-> -				snprintf(strings, ETH_GSTRING_LEN,
-> -					 "rx-%d.rx_packets", channel->channel);
-> -				strings += ETH_GSTRING_LEN;
-> -			}
-> +			if (strings)
-> +				ethtool_sprintf(&strings, "rx-%d.rx_packets",
-> +						channel->channel);
->  		}
->  	}
->  	if (efx->xdp_tx_queue_count && efx->xdp_tx_queues) {
-> @@ -428,11 +423,10 @@ static size_t efx_describe_per_queue_stats(struct efx_nic *efx, u8 *strings)
->  
->  		for (xdp = 0; xdp < efx->xdp_tx_queue_count; xdp++) {
->  			n_stats++;
-> -			if (strings) {
-> -				snprintf(strings, ETH_GSTRING_LEN,
-> -					 "tx-xdp-cpu-%hu.tx_packets", xdp);
-> -				strings += ETH_GSTRING_LEN;
-> -			}
-> +			if (strings)
-> +				ethtool_sprintf(&strings,
-> +						"tx-xdp-cpu-%hu.tx_packets",
-> +						xdp);
->  		}
->  	}
->  
-> @@ -467,9 +461,7 @@ void efx_ethtool_get_strings(struct net_device *net_dev,
->  		strings += (efx->type->describe_stats(efx, strings) *
->  			    ETH_GSTRING_LEN);
->  		for (i = 0; i < EFX_ETHTOOL_SW_STAT_COUNT; i++)
-> -			strscpy(strings + i * ETH_GSTRING_LEN,
-> -				efx_sw_stat_desc[i].name, ETH_GSTRING_LEN);
-> -		strings += EFX_ETHTOOL_SW_STAT_COUNT * ETH_GSTRING_LEN;
-> +			ethtool_puts(&strings, efx_sw_stat_desc[i].name);
->  		strings += (efx_describe_per_queue_stats(efx, strings) *
->  			    ETH_GSTRING_LEN);
->  		efx_ptp_describe_stats(efx, strings);
-> diff --git a/drivers/net/ethernet/sfc/falcon/ethtool.c b/drivers/net/ethernet/sfc/falcon/ethtool.c
-> index f4db683b80f7..41bd63d0c40c 100644
-> --- a/drivers/net/ethernet/sfc/falcon/ethtool.c
-> +++ b/drivers/net/ethernet/sfc/falcon/ethtool.c
-> @@ -361,24 +361,18 @@ static size_t ef4_describe_per_queue_stats(struct ef4_nic *efx, u8 *strings)
->  	ef4_for_each_channel(channel, efx) {
->  		if (ef4_channel_has_tx_queues(channel)) {
->  			n_stats++;
-> -			if (strings != NULL) {
-> -				snprintf(strings, ETH_GSTRING_LEN,
-> -					 "tx-%u.tx_packets",
-> -					 channel->tx_queue[0].queue /
-> -					 EF4_TXQ_TYPES);
-> -
-> -				strings += ETH_GSTRING_LEN;
-> -			}
-> +			if (strings)
-> +				ethtool_sprintf(&strings, "tx-%u.tx_packets",
-> +						channel->tx_queue[0].queue /
-> +							EF4_TXQ_TYPES);
->  		}
->  	}
->  	ef4_for_each_channel(channel, efx) {
->  		if (ef4_channel_has_rx_queue(channel)) {
->  			n_stats++;
-> -			if (strings != NULL) {
-> -				snprintf(strings, ETH_GSTRING_LEN,
-> -					 "rx-%d.rx_packets", channel->channel);
-> -				strings += ETH_GSTRING_LEN;
-> -			}
-> +			if (strings)
-> +				ethtool_sprintf(&strings, "rx-%d.rx_packets",
-> +						channel->channel);
->  		}
->  	}
->  	return n_stats;
-> @@ -412,9 +406,7 @@ static void ef4_ethtool_get_strings(struct net_device *net_dev,
->  		strings += (efx->type->describe_stats(efx, strings) *
->  			    ETH_GSTRING_LEN);
->  		for (i = 0; i < EF4_ETHTOOL_SW_STAT_COUNT; i++)
-> -			strscpy(strings + i * ETH_GSTRING_LEN,
-> -				ef4_sw_stat_desc[i].name, ETH_GSTRING_LEN);
-> -		strings += EF4_ETHTOOL_SW_STAT_COUNT * ETH_GSTRING_LEN;
-> +			ethtool_puts(&strings, ef4_sw_stat_desc[i].name);
->  		strings += (ef4_describe_per_queue_stats(efx, strings) *
->  			    ETH_GSTRING_LEN);
->  		break;
-> diff --git a/drivers/net/ethernet/sfc/falcon/nic.c b/drivers/net/ethernet/sfc/falcon/nic.c
-> index 78c851b5a56f..a7f0caa8710f 100644
-> --- a/drivers/net/ethernet/sfc/falcon/nic.c
-> +++ b/drivers/net/ethernet/sfc/falcon/nic.c
-> @@ -451,11 +451,8 @@ size_t ef4_nic_describe_stats(const struct ef4_hw_stat_desc *desc, size_t count,
->  
->  	for_each_set_bit(index, mask, count) {
->  		if (desc[index].name) {
-> -			if (names) {
-> -				strscpy(names, desc[index].name,
-> -					ETH_GSTRING_LEN);
-> -				names += ETH_GSTRING_LEN;
-> -			}
-> +			if (names)
-> +				ethtool_puts(&names, desc[index].name);
->  			++visible;
->  		}
->  	}
-> diff --git a/drivers/net/ethernet/sfc/nic.c b/drivers/net/ethernet/sfc/nic.c
-> index a33ed473cc8a..51c975cff4fe 100644
-> --- a/drivers/net/ethernet/sfc/nic.c
-> +++ b/drivers/net/ethernet/sfc/nic.c
-> @@ -306,11 +306,8 @@ size_t efx_nic_describe_stats(const struct efx_hw_stat_desc *desc, size_t count,
->  
->  	for_each_set_bit(index, mask, count) {
->  		if (desc[index].name) {
-> -			if (names) {
-> -				strscpy(names, desc[index].name,
-> -					ETH_GSTRING_LEN);
-> -				names += ETH_GSTRING_LEN;
-> -			}
-> +			if (names)
-> +				ethtool_puts(&names, desc[index].name);
->  			++visible;
->  		}
->  	}
-> diff --git a/drivers/net/ethernet/sfc/siena/ethtool_common.c b/drivers/net/ethernet/sfc/siena/ethtool_common.c
-> index 075fef64de68..53b1cdf872d8 100644
-> --- a/drivers/net/ethernet/sfc/siena/ethtool_common.c
-> +++ b/drivers/net/ethernet/sfc/siena/ethtool_common.c
-> @@ -403,24 +403,19 @@ static size_t efx_describe_per_queue_stats(struct efx_nic *efx, u8 *strings)
->  	efx_for_each_channel(channel, efx) {
->  		if (efx_channel_has_tx_queues(channel)) {
->  			n_stats++;
-> -			if (strings != NULL) {
-> -				snprintf(strings, ETH_GSTRING_LEN,
-> -					 "tx-%u.tx_packets",
-> -					 channel->tx_queue[0].queue /
-> -					 EFX_MAX_TXQ_PER_CHANNEL);
-> -
-> -				strings += ETH_GSTRING_LEN;
-> -			}
-> +			if (strings)
-> +				ethtool_sprintf(
-> +					&strings, "tx-%u.tx_packets",
-> +					channel->tx_queue[0].queue /
-> +						EFX_MAX_TXQ_PER_CHANNEL);
->  		}
->  	}
->  	efx_for_each_channel(channel, efx) {
->  		if (efx_channel_has_rx_queue(channel)) {
->  			n_stats++;
-> -			if (strings != NULL) {
-> -				snprintf(strings, ETH_GSTRING_LEN,
-> -					 "rx-%d.rx_packets", channel->channel);
-> -				strings += ETH_GSTRING_LEN;
-> -			}
-> +			if (strings)
-> +				ethtool_sprintf(&strings, "rx-%d.rx_packets",
-> +						channel->channel);
->  		}
->  	}
->  	if (efx->xdp_tx_queue_count && efx->xdp_tx_queues) {
-> @@ -428,11 +423,10 @@ static size_t efx_describe_per_queue_stats(struct efx_nic *efx, u8 *strings)
->  
->  		for (xdp = 0; xdp < efx->xdp_tx_queue_count; xdp++) {
->  			n_stats++;
-> -			if (strings) {
-> -				snprintf(strings, ETH_GSTRING_LEN,
-> -					 "tx-xdp-cpu-%hu.tx_packets", xdp);
-> -				strings += ETH_GSTRING_LEN;
-> -			}
-> +			if (strings)
-> +				ethtool_sprintf(&strings,
-> +						"tx-xdp-cpu-%hu.tx_packets",
-> +						xdp);
->  		}
->  	}
->  
-> @@ -467,9 +461,7 @@ void efx_siena_ethtool_get_strings(struct net_device *net_dev,
->  		strings += (efx->type->describe_stats(efx, strings) *
->  			    ETH_GSTRING_LEN);
->  		for (i = 0; i < EFX_ETHTOOL_SW_STAT_COUNT; i++)
-> -			strscpy(strings + i * ETH_GSTRING_LEN,
-> -				efx_sw_stat_desc[i].name, ETH_GSTRING_LEN);
-> -		strings += EFX_ETHTOOL_SW_STAT_COUNT * ETH_GSTRING_LEN;
-> +			ethtool_puts(&strings, efx_sw_stat_desc[i].name);
->  		strings += (efx_describe_per_queue_stats(efx, strings) *
->  			    ETH_GSTRING_LEN);
->  		efx_siena_ptp_describe_stats(efx, strings);
-> diff --git a/drivers/net/ethernet/sfc/siena/nic.c b/drivers/net/ethernet/sfc/siena/nic.c
-> index 0ea0433a6230..06b97218b490 100644
-> --- a/drivers/net/ethernet/sfc/siena/nic.c
-> +++ b/drivers/net/ethernet/sfc/siena/nic.c
-> @@ -457,11 +457,8 @@ size_t efx_siena_describe_stats(const struct efx_hw_stat_desc *desc, size_t coun
->  
->  	for_each_set_bit(index, mask, count) {
->  		if (desc[index].name) {
-> -			if (names) {
-> -				strscpy(names, desc[index].name,
-> -					ETH_GSTRING_LEN);
-> -				names += ETH_GSTRING_LEN;
-> -			}
-> +			if (names)
-> +				ethtool_puts(&names, desc[index].name);
->  			++visible;
->  		}
->  	}
-> -- 
-> 2.47.0
-> 
+diff --git a/kernel/reboot.c b/kernel/reboot.c
+index ffdf86b717ab..a701000bab34 100644
+--- a/kernel/reboot.c
++++ b/kernel/reboot.c
+@@ -1137,7 +1137,7 @@ static ssize_t mode_show(struct kobject *kobj, struct kobj_attribute *attr, char
+ 		val = REBOOT_UNDEFINED_STR;
+ 	}
+ 
+-	return sprintf(buf, "%s\n", val);
++	return sysfs_emit(buf, "%s\n", val);
+ }
+ static ssize_t mode_store(struct kobject *kobj, struct kobj_attribute *attr,
+ 			  const char *buf, size_t count)
+@@ -1167,7 +1167,7 @@ static struct kobj_attribute reboot_mode_attr = __ATTR_RW(mode);
+ #ifdef CONFIG_X86
+ static ssize_t force_show(struct kobject *kobj, struct kobj_attribute *attr, char *buf)
+ {
+-	return sprintf(buf, "%d\n", reboot_force);
++	return sysfs_emit(buf, "%d\n", reboot_force);
+ }
+ static ssize_t force_store(struct kobject *kobj, struct kobj_attribute *attr,
+ 			  const char *buf, size_t count)
+@@ -1214,7 +1214,7 @@ static ssize_t type_show(struct kobject *kobj, struct kobj_attribute *attr, char
+ 		val = REBOOT_UNDEFINED_STR;
+ 	}
+ 
+-	return sprintf(buf, "%s\n", val);
++	return sysfs_emit(buf, "%s\n", val);
+ }
+ static ssize_t type_store(struct kobject *kobj, struct kobj_attribute *attr,
+ 			  const char *buf, size_t count)
+@@ -1247,7 +1247,7 @@ static struct kobj_attribute reboot_type_attr = __ATTR_RW(type);
+ #ifdef CONFIG_SMP
+ static ssize_t cpu_show(struct kobject *kobj, struct kobj_attribute *attr, char *buf)
+ {
+-	return sprintf(buf, "%d\n", reboot_cpu);
++	return sysfs_emit(buf, "%d\n", reboot_cpu);
+ }
+ static ssize_t cpu_store(struct kobject *kobj, struct kobj_attribute *attr,
+ 			  const char *buf, size_t count)
+-- 
+2.25.1
+
 
