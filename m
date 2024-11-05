@@ -1,164 +1,148 @@
-Return-Path: <linux-kernel+bounces-397060-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397056-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B6259BD633
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 20:54:57 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1C229BD620
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 20:53:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4A91283C04
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 19:54:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6E0D6B22357
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 19:52:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E086213EE3;
-	Tue,  5 Nov 2024 19:54:49 +0000 (UTC)
-Received: from gate.crashing.org (gate.crashing.org [63.228.1.57])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF818212EF8;
-	Tue,  5 Nov 2024 19:54:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.228.1.57
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F0AC2139CD;
+	Tue,  5 Nov 2024 19:52:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iItkjvTu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 652EB1E25FD;
+	Tue,  5 Nov 2024 19:52:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730836489; cv=none; b=C34SfQT1/QIg5ZqTlk+O55iLPykG97C7vATjhHWpA7qw6pZTVlmSK82rGNk7JNOxUWjDKAVXAkiqNAzxl+4QKToKQEqYFIz+GEa5MDkDeSWx/Yti/4KLzDmgvoHKrzXcAPglMLzBYRl/yfcxO/AEqoDnGuXKS1HZudu9ni0auQU=
+	t=1730836370; cv=none; b=eDOJbyVjm4SxjmV0AkwSmvnbnAAK5n9nRO+/GHFMuWQq8MWZm6+lKsK2q8/1QtBLa8d98uo3J4JexPFS9xarGfAhn1G2ZzzK1yHVpvF7aOrUOKdT/O+zfR9zeoBVWyFgWBGMCnp/HekfCMDcvvNiTojy6fxO7C2LlGyi1rMcBLU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730836489; c=relaxed/simple;
-	bh=VeYfp2hmYu+Muh1vIFhI12FMxTSkf/bdGLtpCElCHTY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Mime-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QnicxcbKQNjp0vJvZC/vVI35EgcwQiSr3502rw8cSj3/KvyfCN2/PSzWCskixhEoJaqcFUyi1GAQht9B+Viz8nTv7ot58gYYd+odYB/zFWJCNKhL98l5vSGwcBRlSWQSyyE2vmNF9oadLYYHLt2qr3VNvRYl6kARl7gLHWuNX90=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org; spf=pass smtp.mailfrom=kernel.crashing.org; arc=none smtp.client-ip=63.228.1.57
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.crashing.org
-Received: from gate.crashing.org (localhost.localdomain [127.0.0.1])
-	by gate.crashing.org (8.14.1/8.14.1) with ESMTP id 4A5Jq94A022745;
-	Tue, 5 Nov 2024 13:52:09 -0600
-Received: (from segher@localhost)
-	by gate.crashing.org (8.14.1/8.14.1/Submit) id 4A5Jq8Ge022742;
-	Tue, 5 Nov 2024 13:52:08 -0600
-X-Authentication-Warning: gate.crashing.org: segher set sender to segher@kernel.crashing.org using -f
-Date: Tue, 5 Nov 2024 13:52:08 -0600
-From: Segher Boessenkool <segher@kernel.crashing.org>
-To: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Hari Bathini <hbathini@linux.ibm.com>, Shuah Khan <shuah@kernel.org>,
-        linux-kselftest@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Madhavan Srinivasan <maddy@linux.ibm.com>,
-        "Naveen N. Rao" <naveen@kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        linux-trace-kernel@vger.kernel.org,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
-Subject: Re: [PATCH] selftests/ftrace: update kprobe syntax error test for ppc64le
-Message-ID: <20241105195208.GC29862@gate.crashing.org>
-References: <20241101191925.1550493-1-hbathini@linux.ibm.com> <20241101205948.GW29862@gate.crashing.org> <1916cb5c-cb3d-427c-bcf0-2c1b905fd6d1@linux.ibm.com> <20241104094431.GY29862@gate.crashing.org> <245fed6f-5fb4-4925-ba0a-fb2f32e650d0@linux.ibm.com> <20241104103615.GZ29862@gate.crashing.org> <f7e8243a-a4c8-44ce-ad03-7d232df461ed@linux.ibm.com> <20241105082018.GA29862@gate.crashing.org> <20241105181752.74a3d6fa2f06d0adfdf85322@kernel.org>
+	s=arc-20240116; t=1730836370; c=relaxed/simple;
+	bh=ifdrJqfK1N4E0OCQaVRQ91URLptDkX6eScHJuwPFLLg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qiN0om2uSovi6wUAngGioWdMY5BamgNmYn4dPb/yD7kaXxFOFyTVDNa8MkMFQXnnqsL5mrLXGepby69c7bj/+aMpoYxxnevZrhdNCp7EsCRIQAdsyO+0ui4zBtk1iXsmrgxC36jwooPxRldrJfV4h7rCIY2fcGF+rh/wf684ye8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iItkjvTu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 20AEFC4CECF;
+	Tue,  5 Nov 2024 19:52:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730836369;
+	bh=ifdrJqfK1N4E0OCQaVRQ91URLptDkX6eScHJuwPFLLg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=iItkjvTufXsEKLa2SL9674Ih7Q0fed8Tc1jTBBuFbwZPajk+JJ2IJB1pLwobyFj21
+	 DH0/7X3FsDP0WXwRKSIS2CQhSqSzslM5z8qU0bYbfqwgUfz/TPV25q7W5OlM8QSp44
+	 g7or9dcp15LVyTK2FYqReezpSSoz/0c1v1pidolBfEqcRJ5M0iKyhwKYQSaVG/454i
+	 PRb0eTdTqDFYhJsF08+28+nP4mqqyXI+U8fzog9BIeHGmV/GQZ6Jf+uenHsnGhY3ES
+	 BdYyYeAxh2K04fDefkYddsEYmmDIktsxUjgRlYdVzRWJJOmL9TJSfwPUIwjStJ+7JI
+	 thYtQ0kkqVNRw==
+Date: Tue, 5 Nov 2024 16:52:45 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	Athira Jajeev <atrajeev@linux.vnet.ibm.com>,
+	James Clark <james.clark@linaro.org>,
+	Dominique Martinet <asmadeus@codewreck.org>,
+	Yang Li <yang.lee@linux.alibaba.com>,
+	Colin Ian King <colin.i.king@gmail.com>,
+	Yang Jihong <yangjihong@bytedance.com>,
+	"Steinar H. Gunderson" <sesse@google.com>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Ilkka Koskinen <ilkka@os.amperecomputing.com>,
+	Ze Gao <zegao2021@gmail.com>, Weilin Wang <weilin.wang@intel.com>,
+	Ben Gainey <ben.gainey@arm.com>,
+	zhaimingbing <zhaimingbing@cmss.chinamobile.com>,
+	Zixian Cai <fzczx123@gmail.com>, Andi Kleen <ak@linux.intel.com>,
+	Paran Lee <p4ranlee@gmail.com>,
+	Thomas Falcon <thomas.falcon@intel.com>,
+	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+	"Steven Rostedt (Google)" <rostedt@goodmis.org>
+Subject: Re: [PATCH v2 4/6] perf evsel: Add/use accessor for tp_format
+Message-ID: <Zyp3jeLz4ympxfHv@x1>
+References: <20241102165400.75785-1-irogers@google.com>
+ <20241102165400.75785-5-irogers@google.com>
+ <ZypXmtlqQUxABhMI@x1>
+ <CAP-5=fUNR_t8R33enM1WHzR1-ZzZMUDM1hTLohPdefbKfhMSXA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241105181752.74a3d6fa2f06d0adfdf85322@kernel.org>
-User-Agent: Mutt/1.4.2.3i
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAP-5=fUNR_t8R33enM1WHzR1-ZzZMUDM1hTLohPdefbKfhMSXA@mail.gmail.com>
 
-Hi!
+On Tue, Nov 05, 2024 at 11:33:09AM -0800, Ian Rogers wrote:
+> On Tue, Nov 5, 2024 at 9:36 AM Arnaldo Carvalho de Melo <acme@kernel.org> wrote:
+> > On Sat, Nov 02, 2024 at 09:53:58AM -0700, Ian Rogers wrote:
+> > > Add an accessor function for tp_format. Rather than search+replace
+> > > uses try to use a variable and reuse it. Add additional NULL checks
+> > > when accessing/using the value. Make sure the PTR_ERR is nulled out on
+> > > error path in evsel__newtp_idx.
 
-On Tue, Nov 05, 2024 at 06:17:51PM +0900, Masami Hiramatsu wrote:
-> On Tue, 5 Nov 2024 02:20:18 -0600
-> Segher Boessenkool <segher@kernel.crashing.org> wrote:
-> > On Mon, Nov 04, 2024 at 11:06:23PM +0530, Hari Bathini wrote:
-> > > Seems like a bit of misunderstanding there. Function entry here intends
-> > > to mean the actual start of function code (function prologue) - after
-> > > GEP and function profiling sequence (mflr r0; bl mcount).
-> > 
-> > What you call "function entry" here simply does not exist.  The compiler
-> > can -- and ***WILL***, ***DOES*** -- mix up all of that.
+> > > Signed-off-by: Ian Rogers <irogers@google.com>
+
+> > > +++ b/tools/perf/builtin-kmem.c
+> > > @@ -772,8 +773,9 @@ static int parse_gfp_flags(struct evsel *evsel, struct perf_sample *sample,
+> > >       }
+> > >
+> > >       trace_seq_init(&seq);
+> > > -     tep_print_event(evsel->tp_format->tep,
+> > > -                     &seq, &record, "%s", TEP_PRINT_INFO);
+> > > +     tp_format = evsel__tp_format(evsel);
+> > > +     if (tp_format)
+> > > +             tep_print_event(tp_format->tep, &seq, &record, "%s", TEP_PRINT_INFO);
+> > >
+> > >       str = strtok_r(seq.buffer, " ", &pos);
+> > >       while (str) {
+> > > @@ -2011,14 +2013,15 @@ int cmd_kmem(int argc, const char **argv)
+> > >       }
+> > >
+> > >       if (kmem_page) {
+> > > -             struct evsel *evsel = evlist__find_tracepoint_by_name(session->evlist, "kmem:mm_page_alloc");
+> > > +             struct evsel *evsel = evlist__find_tracepoint_by_name(session->evlist,
+> > > +                                                                   "kmem:mm_page_alloc");
+> >
+> > Try to avoid these reflows to reduce patch size, please.
 > 
-> Here is the "function entry" means the function address.
+> Agreed, in this case check `checkpatch.pl` is complaining that the
+> line length is 109 columns.
 
-"Function entry point".  "Function entry" can mean whatever nebulous
-thing done at the start of a function :-)
+Ok, but it was like that before, your patch is not touching that line
+for some other reason, so it is unrelated to what you're doing, causing
+a distraction.
 
-You're free to use your own terminology of course, but it help to use
-standard names for standard things!
+Besides, even the documentation for checkpatch mentions that that is:
 
-> Not the prologue.
+  **LONG_LINE**
+    The line has exceeded the specified maximum length.
+    To use a different maximum line length, the --max-line-length=n option
+    may be added while invoking checkpatch.
 
-But that is literally what Hari said, so it confused me.
+    Earlier, the default line length was 80 columns.  Commit bdc48fa11e46
+    ("checkpatch/coding-style: deprecate 80-column warning") increased the
+    limit to 100 columns.  This is not a hard limit either and it's
+    preferable to stay within 80 columns whenever possible.
 
-> On some architecture, we are sure fixed sequences
-> right after the function address for ftrace/security. For example,
-> x86 has an `ENDBR` for security. Thus, even if we tend to put a
-> probe on the "function entry", kprobes shifts the probe point
-> forcibly skipping the `ENDBR`. So from the probe callback, the
-> probed address does not look like the function address (shift
-> the sizeof(ENDBR)).
+    See: https://www.kernel.org/doc/html/latest/process/coding-style.html#breaking-long-lines-and-strings
 
-On almmost all architectures and ABIs the prologues aren't so very
-fixed, which is a good thing, because typically the compiler can
-make things better in some way (typically faster or smaller code).  Or
-other parts of the toolchain can, the loader or dynamic loader often.
+----------------
 
-> However, the ENDBR does nothing from the program point of view, we
-> can still think of that address as the address of the function.
-> That is the reason why I introduced arch_kprobe_on_func_entry().
-
-Understood.
-
-> For the other architecture, it might be misunderstood and
-> could be miss-implemented. In that case, we should fix that.
-> 
-> >  In particular,
-> > "function prologue" does not exist at all (on any architecture worth
-> > its salt, including PowerPC), and all instructions you consider part of
-> > a function prologue might end up anywhere.  The "profiling sequence" is
-> > part of that btw, and that typically ends up *not* the first thing in
-> > the function, not the first thing after the LEP (register saves are
-> > earlier often, they are generated in that order in the first place,
-> > but they can (and will) be moved if that schedules better).
-> > 
-> > > Function arguments can be accessed with kprobe only while setting a
-> > > probe at an address the kernel treats as function start address.
-> > 
-> > That is a silly assumption to make.  There is no guarantee you can
-> > access function arguments *at all*, we're not in 1975 anymore.  You
-> > *need* to look at debug information if you want to deal with anything
-> > about your high-level language program.  Looking at the machine code
-> > can only tell you about the machine state, whatever is in registers
-> > etc.
-> 
-> Yeah, understood. So the `$arg*` here does not guarantee to access
-> arguments, but the best effort to do that. And it fully depends on
-
-Is that GDB syntax?  Or what else?
-
-> regs_get_kernel_argument(). Thus `$arg*` works only where the
-> regs_get_kernel_argument() can return most likely function argument
-> value from `pt_regs`. That is where we call "function entry" in
-> this context.
-> 
-> And since it checks the function entry by arch_kprobe_on_func_entry()
-> this test fails on powerpc because it returns true if the offset from
-> the kallsyms symbol address is less than 8/16 bytes.
-> 
-> > > Note that the test case pass criteria here is setting probe to fail by
-> > > providing an address (sym+offset) beyond the function start address.
-> > > 
-> > > And in this specific test case (with "vfs_read+8", where vfs_read is
-> > > the symbol and '8' is the offset), the test case was failing on powerpc
-> > > because setting the probe at 'sym+8' was succeeding, as anywhere between
-> > > 'sym' to 'sym+16' is treated as function start address on powerpc:
-> > 
-> > Yeah, fragile tests sometimes break.  Changing a randomly chosen number
-> > to some other randomly chosen number will not fix the problem (but you
-> > can postpone having to deal with it, sure!)
-> 
-> Yeah, sorry about the test case. Actually `+8` is also not a good number
-> for x86 too since we are not sure whether the address is an instruction
-> boundary or not. In that case it may report another error and failed.
-
-So what is it that the testcase really wants to test for?
-
-Thanks for explaining the context somewhat, I know nothing (except all
-details about ELFv2 and the other PowerPC ABIs :-) ), it helped :-)
-
-
-Segher
+So if it was there already, meaning the original author preferred it
+that way, its not touched by the feature that is being worked on in this
+patch, ends up being an extra hunk, just reflowing, a distraction.
+ 
+- Arnaldo
 
