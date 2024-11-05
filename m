@@ -1,151 +1,95 @@
-Return-Path: <linux-kernel+bounces-396284-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396285-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F9AA9BCAC4
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 11:46:09 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68DF79BCAC8
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 11:46:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B31E0B229AC
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 10:46:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 980971C22338
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 10:46:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 580B91D2B10;
-	Tue,  5 Nov 2024 10:45:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7C1E1D2F4E;
+	Tue,  5 Nov 2024 10:46:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f7ha7Wju"
-Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="plUhP2C3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 555A01D174E;
-	Tue,  5 Nov 2024 10:45:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2453918DF89;
+	Tue,  5 Nov 2024 10:46:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730803558; cv=none; b=s5+8LpXea7/3cB6pvbkWc3a5KLsoKQm85t3hzNpf63lc48IEeWi439vo2kfQPdAndknvBLxNIEC+9+UPZBxI4ddi043w6bG3ifpmRmV3ZvMCQzEJFf+rf/3FNdcptRhdDVropubmah+1ATwdZ7acPexP199T6jYsfEyqC98Kyh4=
+	t=1730803602; cv=none; b=YxfVsTKRjPtDi70AL6Qj+g1qyWdgoyxj46hznoXBhc/hkgEy3w6xsoJaEqzxnPq26vKw/TDiF3186zY+3PlBh15LTsDO+YAfZ1hDQU8VnAX+cHCacXI2TYT+SwqLKlnMcDLcnj1HU7ydGxySWu/RNSphYl/c5RqZQVQazBUmAc0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730803558; c=relaxed/simple;
-	bh=YAhFFdDBrQJySjuAGSSqaiwvhx73d4kURkImckkyLYw=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=lIOtAaZD+wX70kOc7xzg03mlUqYJtUVVbSQ5JCxdpEaH93/4u3vE8CvvMGjXVf8tfG6TgY2kKXKyaag6WpOgGTktOHCG35Fr3Qa84OJ2ii/N83wsXORIVc2Fh6f1wRg4jAMOImtlFqD/hCue4yn21ak7WYYlLI11ird0wNo77TI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f7ha7Wju; arc=none smtp.client-ip=209.85.215.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-7e6d04f74faso3597648a12.1;
-        Tue, 05 Nov 2024 02:45:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730803556; x=1731408356; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=2nqCzdAinTSs6r9LINYA0htJIpUUCl9grAyzKQ3FNXw=;
-        b=f7ha7WjuWSXWzazIHOETpNuuqMc1ouumFx/c544BWjKbnubUSJ1y2WSPvjdoW7Xgh7
-         kXVTr7cHI+qMb3HVu/1Vzys/2FdIyCdzDiVe7nF7OtQ7R0ZYpACTcaYJokJhJ1qNLUYl
-         37Cqwsulpl1Exw1l80Uro1lSG3Rd8ScbfvwLbW3u+8gplL1V6kPMl6j4POSnLOpzESkK
-         nbzWCJ3E9wjDBlOEUaigEhVs4L4rRJYoXIQ/yLKPc5VzZSrCGdeIRoKq0JkAmGjEBIxu
-         NIYIXiaHJ875S1VAeXfRheFLaeqRSPet7IRTWZ1pP+xMUw9JRBbl4PxVi4hi9eKJYE52
-         PzVA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730803556; x=1731408356;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=2nqCzdAinTSs6r9LINYA0htJIpUUCl9grAyzKQ3FNXw=;
-        b=bEls3wX1KQ6gIoKK613qhaHjGN2ggEcSRN5JPpVUO60hrFzZH+dbKPQwG0dhHxr7zN
-         itCylmOY81aQeE5iIRBgfUCKgPzPouoDbaA8PkQTpfQd2vry26LmjKTcYvICBk1wZNEH
-         DMDoRt80Akve+rZ5YXxhOgD/Hi0a55DODaXyqgzp6a4EbjXfbsRYg2SC4BFIvI+q8O4w
-         /p5f1TOp1cl2RS97+r8jEcP6MuqiAHVkZoX5/Te7HCLKIOHg0h/oJFNd/pW4pe2GggeD
-         2kk3bjRQQeSUBl9gqWpYJs7uYQfrdNXLhGE5qbqRfaa1rhncdSnJV34tynGpxJHgasDo
-         cnlg==
-X-Forwarded-Encrypted: i=1; AJvYcCU1ZGiXJ9HZQH5qQh0ITqnXWNYGxmduImSwgBUdaSXGeIbPwnKypdQybu68j6TpWALOaum1EDBdeeXK@vger.kernel.org, AJvYcCUz3bcBgB1NoyBPv2BGverDGt3es6TVJNldHFxXLrMPjoGuhYcAekxzbKsbDsVSq96M3+LDqggpqklk9E4=@vger.kernel.org, AJvYcCX08BH4JpV52qiTTeWKeQRBboDu0O+tXCoktwbS4at3bV3QkrUOFPmLNXycAyarY49MSn5kxwz1Z0RA6WW3@vger.kernel.org
-X-Gm-Message-State: AOJu0YwNNT4aBsVeSe9zBaI3VtDU68Y1ME2Wilv7nB6sD9VMBPaKingD
-	Yf0Y1Qbi/40DCF3v/7+xxJIwy0l/LX0GpmoFUmCEkWkAjZoF1kf2
-X-Google-Smtp-Source: AGHT+IFuMzmSrFyNbomcXyCKZcD5Ptda87WpuI1YNIlIu2eTML/Qcm8QIBq7OYbQ0MNRnPuijz8Y+w==
-X-Received: by 2002:a17:902:ec88:b0:20c:6bff:fcb1 with SMTP id d9443c01a7336-21105692ebfmr310242945ad.1.1730803556481;
-        Tue, 05 Nov 2024 02:45:56 -0800 (PST)
-Received: from fabio-Precision-3551.. ([2804:14c:485:4b61:cbc5:8de0:c558:652c])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211057c0ec7sm75358565ad.202.2024.11.05.02.45.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Nov 2024 02:45:55 -0800 (PST)
-From: Fabio Estevam <festevam@gmail.com>
-To: broonie@kernel.org
-Cc: robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	shengjiu.wang@nxp.com,
-	linux-sound@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Fabio Estevam <festevam@denx.de>
-Subject: [PATCH v2 RESEND] ASoC: dt-bindings: fsl_spdif: Document imx6sl/sx compatible fallback
-Date: Tue,  5 Nov 2024 07:45:47 -0300
-Message-Id: <20241105104547.947128-1-festevam@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1730803602; c=relaxed/simple;
+	bh=VdcGAmlztfS3pzAXrj9ZpjnvuwLT/ZrczgsQ13dzYRI=;
+	h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:
+	 MIME-Version:Content-Type; b=qfKRl8VToytBMdyjy2ROcptGnZmPquf4kTx8WxbfAK51MY26rdHO7vGNbIZFGU3yiJjKQsWa8md3Kx4zU6JVusaF/HQOna/TlKRl29ezCGLxDNMFGtvGxioCmAfmjJbCX16CJHvOGN7lTAjDMgcesu8Bij1erp7MPZXiUQGqOj4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=plUhP2C3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC8E1C4CED0;
+	Tue,  5 Nov 2024 10:46:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730803601;
+	bh=VdcGAmlztfS3pzAXrj9ZpjnvuwLT/ZrczgsQ13dzYRI=;
+	h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+	b=plUhP2C3q5UJFvR7SkoJu0skGSKd3Zydrusbb4zLzR+s4Rf8ogXEU9j49UIMaeqAT
+	 E6/63KVyAaUfXUnDLAM2xfTyhdB26M18/lm4UFbtZahe//vqJzE9mL2xCYJ8GAP5Dg
+	 gn4AV/2elGkC+4ApsIZfZBqApkDCSQLpeh/21eq2LgPp2osoAh+g8XL7hfHMA0VWY9
+	 2UjJrvwguhT4/QsKvOmnSKOKrzelhb/JqkOJn4pVk1EM6aFtLbwKf6k5jdgiTULfM2
+	 egGuBN8evTv0xyIFhIYALu+zN4iA0Jlcsu89UJ/EGa0JavoI61bW2UUBiZoHxM0apB
+	 a8GVm2IjwY0Zw==
+From: Kalle Valo <kvalo@kernel.org>
+To: Jeff Johnson <quic_jjohnson@quicinc.com>
+Cc: Aleksei Vetrov <vvvvvv@google.com>,  Johannes Berg
+ <johannes@sipsolutions.net>,  Kees Cook <kees@kernel.org>,  "Gustavo A. R.
+ Silva" <gustavoars@kernel.org>,  Dmitry Antipov <dmantipov@yandex.ru>,
+  <linux-wireless@vger.kernel.org>,  <linux-kernel@vger.kernel.org>,
+  <linux-hardening@vger.kernel.org>,  <stable@vger.kernel.org>
+Subject: Re: [PATCH v2] wifi: nl80211: fix bounds checker error in
+ nl80211_parse_sched_scan
+References: <20241029-nl80211_parse_sched_scan-bounds-checker-fix-v2-1-c804b787341f@google.com>
+	<0bc2e4b0-4dad-4341-a41e-a98fbc4b1658@quicinc.com>
+Date: Tue, 05 Nov 2024 12:46:37 +0200
+In-Reply-To: <0bc2e4b0-4dad-4341-a41e-a98fbc4b1658@quicinc.com> (Jeff
+	Johnson's message of "Mon, 4 Nov 2024 09:12:09 -0800")
+Message-ID: <87ses6x8j6.fsf@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-From: Fabio Estevam <festevam@denx.de>
+Jeff Johnson <quic_jjohnson@quicinc.com> writes:
 
-i.MX6SL and i.MX6SX SPDIF blocks are compatible with i.MX35.
+> On 10/29/2024 6:22 AM, Aleksei Vetrov wrote:
+>> The channels array in the cfg80211_scan_request has a __counted_by
+>> attribute attached to it, which points to the n_channels variable. This
+>> attribute is used in bounds checking, and if it is not set before the
+>> array is filled, then the bounds sanitizer will issue a warning or a
+>> kernel panic if CONFIG_UBSAN_TRAP is set.
+>> 
+>> This patch sets the size of allocated memory as the initial value for
+>> n_channels. It is updated with the actual number of added elements after
+>> the array is filled.
+>> 
+>> Fixes: aa4ec06c455d ("wifi: cfg80211: use __counted_by where appropriate")
+>> Cc: stable@vger.kernel.org
+>> Signed-off-by: Aleksei Vetrov <vvvvvv@google.com>
+> Reviewed-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+>
+> And it is exactly this kind of issue why I'm not accepting any __counted_by()
+> changes in ath.git without actually testing the code that is modified.
 
-Document 'fsl,imx35-spdif' as a fallback compatible for these two
-chip variants.
+That's a good rule. If we ever manage to write that "wireless cleanup
+policy" document this is something we should add there.
 
-This fixes the following dt-schema warnings:
-
-compatible: ['fsl,imx6sl-spdif', 'fsl,imx35-spdif'] is too long
-compatible: ['fsl,imx6sx-spdif', 'fsl,imx35-spdif'] is too long
-
-Signed-off-by: Fabio Estevam <festevam@denx.de>
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
----
-Changes since v1:
-- Keep the entries as one enum. (Rob)
-
- .../devicetree/bindings/sound/fsl,spdif.yaml  | 27 ++++++++++++-------
- 1 file changed, 17 insertions(+), 10 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/sound/fsl,spdif.yaml b/Documentation/devicetree/bindings/sound/fsl,spdif.yaml
-index 204f361cea27..5654e9f61aba 100644
---- a/Documentation/devicetree/bindings/sound/fsl,spdif.yaml
-+++ b/Documentation/devicetree/bindings/sound/fsl,spdif.yaml
-@@ -16,16 +16,23 @@ description: |
- 
- properties:
-   compatible:
--    enum:
--      - fsl,imx35-spdif
--      - fsl,vf610-spdif
--      - fsl,imx6sx-spdif
--      - fsl,imx8qm-spdif
--      - fsl,imx8qxp-spdif
--      - fsl,imx8mq-spdif
--      - fsl,imx8mm-spdif
--      - fsl,imx8mn-spdif
--      - fsl,imx8ulp-spdif
-+    oneOf:
-+      - items:
-+          - enum:
-+              - fsl,imx35-spdif
-+              - fsl,imx6sx-spdif
-+              - fsl,imx8mm-spdif
-+              - fsl,imx8mn-spdif
-+              - fsl,imx8mq-spdif
-+              - fsl,imx8qm-spdif
-+              - fsl,imx8qxp-spdif
-+              - fsl,imx8ulp-spdif
-+              - fsl,vf610-spdif
-+      - items:
-+          - enum:
-+              - fsl,imx6sl-spdif
-+              - fsl,imx6sx-spdif
-+          - const: fsl,imx35-spdif
- 
-   reg:
-     maxItems: 1
 -- 
-2.34.1
+https://patchwork.kernel.org/project/linux-wireless/list/
 
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
