@@ -1,273 +1,170 @@
-Return-Path: <linux-kernel+bounces-396912-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396913-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3C329BD426
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 19:07:32 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFFA19BD428
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 19:07:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 02E30B22AAB
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 18:07:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F1C081C22301
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 18:07:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BE9A1EF925;
-	Tue,  5 Nov 2024 18:05:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0C3B1F12F2;
+	Tue,  5 Nov 2024 18:06:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="mr5gwgJ4"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JXPa2yZb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 161721E7661;
-	Tue,  5 Nov 2024 18:05:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3023D1E7677;
+	Tue,  5 Nov 2024 18:05:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730829952; cv=none; b=gpJrGKmOxz8SNrA6VQg0trtY18LzuCOKQlCwvjyo5colGPYvnnoA2/XXdz8rWtGKdW7BPBePRmXEgJJWCWihfCKzCmNkUf+TKj6e6krD8AvC0ygraruLzk/sbY1qBItlo9Ehr4cprR9Z0MD2lH6Y89XfYlUKnOl82omfRUSBqi4=
+	t=1730829960; cv=none; b=tBwkP0v5bj0tyY4yEKg/ckM3/Uxme4jYc7YotBKZIaHsiY/BbHD3UDzXHajOyOrdFIYLIZy7VnUSmHnaJLnGNmN0hUn5J+yt+uZs4H6BvfDVpp7rdxmvFaXN1Xk/MeDc8ZyQ4OKWzbnniyUN6gyeT2g65h+FsLEKxr6B32paN/M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730829952; c=relaxed/simple;
-	bh=N9nOmAp428to/VheCGeL53sIG5iceZdmdcdD887Koms=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=gkt7YxsChD6QnqqQVI28dJ9ARTS93tjD1vWFW2npIYVvnxu3GrgvKvyETkUjhi7keI5JSWghjFqen+KeXTot/CjGv1X6bURR3aj9FmD+sL2VdMrVeGOrjtLYI3VKfB+PZgXTYn0faga5Sy9Iq8WxC+LTFpna00FDDHbSmvXDbXE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=mr5gwgJ4; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A59YWRh028840;
-	Tue, 5 Nov 2024 18:05:45 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	kd2JiE9B9EjKM0emvf0bQJLJXrq0QujoPl0mNkoNW3A=; b=mr5gwgJ4ciToyIal
-	+S98m9hlzJksbmue7SZ9sZa2tp6ri5sVXWpnwvTnGgHUsZwFLvFaPdLyj4h7wyOa
-	uii/gvCwUSdeplExZ4TWHSFp+2Qka7tOu7VUkKqBErtJvxg+38WE+KO+8gvDIlyq
-	5CrX3avffipyledrzrRayGFPAYuLUeC43nMqy6qdBW5lBAchgppxHfdIj5FQz+VM
-	pW2UZ3Juzpe7JNQQ4vdwTAKugZWQx7eTXItH7WOGb7RLT+72SJgjgeLaXOWI7LZ3
-	fDT1Hj5tQuJJai91CEJWKK7lU7ZHx5GuBPrbj9G2QsWxRllY/kNTJ/bJBmNcsPmU
-	V8W2nQ==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42nd288p2p-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 05 Nov 2024 18:05:44 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4A5I5h2T016738
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 5 Nov 2024 18:05:43 GMT
-Received: from hu-rajkbhag-blr.qualcomm.com (10.80.80.8) by
- nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Tue, 5 Nov 2024 10:05:39 -0800
-From: Raj Kumar Bhagat <quic_rajkbhag@quicinc.com>
-To: <ath12k@lists.infradead.org>
-CC: <linux-wireless@vger.kernel.org>, Kalle Valo <kvalo@kernel.org>,
-        "Rob
- Herring" <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        "Conor
- Dooley" <conor+dt@kernel.org>,
-        Jeff Johnson <jjohnson@kernel.org>,
-        "Bjorn
- Andersson" <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        Raj Kumar Bhagat <quic_rajkbhag@quicinc.com>
-Subject: [RFC PATCH v3 5/5] arm64: dts: qcom: ipq9574: Add WiFi nodes for RDP433
-Date: Tue, 5 Nov 2024 23:34:44 +0530
-Message-ID: <20241105180444.770951-6-quic_rajkbhag@quicinc.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241105180444.770951-1-quic_rajkbhag@quicinc.com>
-References: <20241105180444.770951-1-quic_rajkbhag@quicinc.com>
+	s=arc-20240116; t=1730829960; c=relaxed/simple;
+	bh=FA8YasXCkWty96pqWC0zbLicpOpd5y8Au/gsIejDV2Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=i0Jc0rnFDI1Kw+SKtiqyAHx0I1UHaPAwu25vDYpu7Ha9OEQNL5Bkk6ab4s6ilonfNvccY3bXXR8I1SQGtGG6ZaY/QlxQRUGNsH2Y3T7+ifNlgxj0zTFoO3XWPhV6MtP29ZzBOxdeOam1xQVTrSZDEOqK6XVsHa3NinZ34Xa/IjE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JXPa2yZb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14C10C4CED1;
+	Tue,  5 Nov 2024 18:05:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730829959;
+	bh=FA8YasXCkWty96pqWC0zbLicpOpd5y8Au/gsIejDV2Q=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JXPa2yZbl/YzFD6fN4IXrDTqd8EwkmHkksEM8AHSCKJIe5fBIMXKc59E24o2vevU7
+	 F2Ky3cwcsfqyKhbJRbeLpmreL3FYIzP/Cnrs4yI1gZbOXE/WJHbsF8l1nToXJ16qi5
+	 ax6x+yTZg+dbK7mXDVBLqVgy582W8oySuJApcK9ugfntggedBUYWjYAnwv9g3yRB6r
+	 pOsFUKhR+L7C1qeJdHFtJitcQu3U/Jrvy71zMhrEWSU+t6AmJoPsLuPFWz3OQiOZ2a
+	 2KSA5SPrmgJiJCoLNrQbyg4TvEzEJqUaF/HLw9xgNi2IhIsBCPDDFADHvp0kuIhkSd
+	 FXPH0XThYaJgg==
+Date: Tue, 5 Nov 2024 18:05:54 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Matt Coster <matt.coster@imgtec.com>
+Cc: Frank Binns <frank.binns@imgtec.com>, David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Nishanth Menon <nm@ti.com>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Tero Kristo <kristo@kernel.org>, dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, Randolph Sapp <rs@ti.com>,
+	Darren Etheridge <detheridge@ti.com>
+Subject: Re: [PATCH 03/21] dt-bindings: gpu: img: Power domain details
+Message-ID: <20241105-disarm-baggie-e2563299a24f@spud>
+References: <20241105-sets-bxs-4-64-patch-v1-v1-0-4ed30e865892@imgtec.com>
+ <20241105-sets-bxs-4-64-patch-v1-v1-3-4ed30e865892@imgtec.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: XLpjE65kjhiAo07QS_xZBZRRNoqQCuED
-X-Proofpoint-GUID: XLpjE65kjhiAo07QS_xZBZRRNoqQCuED
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 mlxlogscore=696
- clxscore=1015 lowpriorityscore=0 impostorscore=0 priorityscore=1501
- spamscore=0 phishscore=0 bulkscore=0 malwarescore=0 suspectscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411050139
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="RoFUdNR+eVTM1NxM"
+Content-Disposition: inline
+In-Reply-To: <20241105-sets-bxs-4-64-patch-v1-v1-3-4ed30e865892@imgtec.com>
 
-The RDP433 is a Qualcomm Reference Design Platform based on the
-IPQ9574. It has three QCN9274 WiFi devices connected to PCIe1, PCIe2,
-and PCIe3. These devices are also connected among themselves via
-WSI connection. This WSI connection is essential to exchange control
-information among these devices
 
-The WSI connection in RDP433 is represented below:
+--RoFUdNR+eVTM1NxM
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-          +-------+        +-------+        +-------+
-          | pcie1 |        | pcie2 |        | pcie3 |
-          |       |        |       |        |       |
-   +----->|  wsi  |------->|  wsi  |------->|  wsi  |-----+
-   |      | grp 0 |        | grp 0 |        | grp 0 |     |
-   |      +-------+        +-------+        +-------+     |
-   +------------------------------------------------------+
+On Tue, Nov 05, 2024 at 03:58:09PM +0000, Matt Coster wrote:
+> The single existing GPU (AXE-1-16M) only requires a single power domain.
+> Subsequent patches will add support for BXS-4-64 MC1, which has two power
+> domains. Add infrastructure now to allow for this.
+>=20
+> Signed-off-by: Matt Coster <matt.coster@imgtec.com>
+> ---
+>  .../devicetree/bindings/gpu/img,powervr-rogue.yaml | 29 ++++++++++++++++=
++++++-
+>  1 file changed, 28 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml=
+ b/Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml
+> index 6924831d3e9dd9b2b052ca8f9d7228ff25526532..55f422be1bc5b7564e3e81f24=
+c4b93857f3e12fe 100644
+> --- a/Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml
+> +++ b/Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml
+> @@ -49,7 +49,16 @@ properties:
+>      maxItems: 1
+> =20
+>    power-domains:
+> -    maxItems: 1
+> +    minItems: 1
+> +    maxItems: 2
+> +
+> +  power-domain-names:
+> +    oneOf:
+> +      - items:
+> +          - const: a
+> +      - items:
+> +          - const: a
+> +          - const: b
+> =20
+>  required:
+>    - compatible
+> @@ -57,10 +66,27 @@ required:
+>    - clocks
+>    - clock-names
+>    - interrupts
+> +  - power-domains
+> +  - power-domain-names
 
-Based on the above, the wifi node properties for QCN9274 at pcie2 are
-(considering QCN9274 at pcie2 is WSI controller):
+A new required property is an ABI break. Please explain why this is
+acceptable in your commit message.
 
- - qcom,wsi-controller
- - ports:
-    tx-port (port@0): endpoint at pcie3 RX port.
-    rx-port (port@1): endpoint at pcie1 TX port.
+> =20
+>  additionalProperties: false
+> =20
+>  allOf:
+> +  # Cores with a single power domain
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            anyOf:
+> +              - const: img,img-axe-1-16m
+> +    then:
+> +      properties:
+> +        power-domains:
+> +          minItems: 1
+> +          maxItems: 1
+> +        power-domain-names:
+> +          items:
+> +            - const: a
+>    # Vendor integrations using a single clock domain
+>    - if:
+>        properties:
+> @@ -90,4 +116,5 @@ examples:
+>          clock-names =3D "core";
+>          interrupts =3D <GIC_SPI 86 IRQ_TYPE_LEVEL_HIGH>;
+>          power-domains =3D <&k3_pds 187 TI_SCI_PD_EXCLUSIVE>;
+> +        power-domain-names =3D "a";
+>      };
+>=20
+> --=20
+> 2.47.0
+>=20
 
-Hence, add WiFi nodes with WSI properties for all three QCN9274
-devices connected to RDP433.
+--RoFUdNR+eVTM1NxM
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Signed-off-by: Raj Kumar Bhagat <quic_rajkbhag@quicinc.com>
----
- arch/arm64/boot/dts/qcom/ipq9574-rdp433.dts | 105 +++++++++++++++++++-
- 1 file changed, 104 insertions(+), 1 deletion(-)
+-----BEGIN PGP SIGNATURE-----
 
-diff --git a/arch/arm64/boot/dts/qcom/ipq9574-rdp433.dts b/arch/arm64/boot/dts/qcom/ipq9574-rdp433.dts
-index 165ebbb59511..a490a0d51fbb 100644
---- a/arch/arm64/boot/dts/qcom/ipq9574-rdp433.dts
-+++ b/arch/arm64/boot/dts/qcom/ipq9574-rdp433.dts
-@@ -3,7 +3,7 @@
-  * IPQ9574 RDP433 board device tree source
-  *
-  * Copyright (c) 2020-2021 The Linux Foundation. All rights reserved.
-- * Copyright (c) 2023 Qualcomm Innovation Center, Inc. All rights reserved.
-+ * Copyright (c) 2023-2024 Qualcomm Innovation Center, Inc. All rights reserved.
-  */
- 
- /dts-v1/;
-@@ -27,6 +27,40 @@ &pcie1 {
- 	perst-gpios = <&tlmm 26 GPIO_ACTIVE_LOW>;
- 	wake-gpios = <&tlmm 27 GPIO_ACTIVE_LOW>;
- 	status = "okay";
-+
-+	pcie@0 {
-+		device_type = "pci";
-+		reg = <0x0 0x0 0x0 0x0 0x0>;
-+		#address-cells = <3>;
-+		#size-cells = <2>;
-+		ranges;
-+
-+		wifi@0 {
-+			compatible = "pci17cb,1109";
-+			reg = <0x0 0x0 0x0 0x0 0x0>;
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+
-+					wifi1_wsi_tx: endpoint {
-+						remote-endpoint = <&wifi2_wsi_rx>;
-+					};
-+				};
-+
-+				port@1 {
-+					reg = <1>;
-+
-+					wifi1_wsi_rx: endpoint {
-+						remote-endpoint = <&wifi3_wsi_tx>;
-+					};
-+				};
-+			};
-+		};
-+	};
- };
- 
- &pcie2_phy {
-@@ -40,6 +74,42 @@ &pcie2 {
- 	perst-gpios = <&tlmm 29 GPIO_ACTIVE_LOW>;
- 	wake-gpios = <&tlmm 30 GPIO_ACTIVE_LOW>;
- 	status = "okay";
-+
-+	pcie@0 {
-+		device_type = "pci";
-+		reg = <0x0 0x0 0x0 0x0 0x0>;
-+		#address-cells = <3>;
-+		#size-cells = <2>;
-+		ranges;
-+
-+		wifi@0 {
-+			compatible = "pci17cb,1109";
-+			reg = <0x0 0x0 0x0 0x0 0x0>;
-+
-+			qcom,wsi-controller;
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+
-+					wifi2_wsi_tx: endpoint {
-+						remote-endpoint = <&wifi3_wsi_rx>;
-+					};
-+				};
-+
-+				port@1 {
-+					reg = <1>;
-+
-+					wifi2_wsi_rx: endpoint {
-+						remote-endpoint = <&wifi1_wsi_tx>;
-+					};
-+				};
-+			};
-+		};
-+	};
- };
- 
- &pcie3_phy {
-@@ -53,6 +123,39 @@ &pcie3 {
- 	perst-gpios = <&tlmm 32 GPIO_ACTIVE_LOW>;
- 	wake-gpios = <&tlmm 33 GPIO_ACTIVE_LOW>;
- 	status = "okay";
-+
-+	pcie@0 {
-+		device_type = "pci";
-+		reg = <0x0 0x0 0x0 0x0 0x0>;
-+		#address-cells = <3>;
-+		#size-cells = <2>;
-+		ranges;
-+
-+		wifi@0 {
-+			compatible = "pci17cb,1109";
-+			reg = <0x0 0x0 0x0 0x0 0x0>;
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+
-+					wifi3_wsi_tx: endpoint {
-+						remote-endpoint = <&wifi1_wsi_rx>;
-+					};
-+				};
-+
-+				port@1 {
-+					reg = <1>;
-+					wifi3_wsi_rx: endpoint {
-+						remote-endpoint = <&wifi2_wsi_tx>;
-+					};
-+				};
-+			};
-+		};
-+	};
- };
- 
- &sdhc_1 {
--- 
-2.34.1
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZypegQAKCRB4tDGHoIJi
+0hvYAP41d81+vVbGwurEhXKOPcmyx+xk6+iazN0Bol8EGVlghgEAg8Np/YUjcJ45
+HQFB+cbVr2jjAxIggFlx2U/eGOrdAA0=
+=CO6v
+-----END PGP SIGNATURE-----
 
+--RoFUdNR+eVTM1NxM--
 
