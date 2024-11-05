@@ -1,186 +1,571 @@
-Return-Path: <linux-kernel+bounces-397128-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397129-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA6699BD713
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 21:31:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B14269BD717
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 21:32:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B5AC71C23C50
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 20:31:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D5A371C2270D
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 20:32:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 870FB215C7C;
-	Tue,  5 Nov 2024 20:31:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC328215C7E;
+	Tue,  5 Nov 2024 20:32:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="OqJr2dhv"
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GY7FAQ7s"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DD2C29CE8
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 20:31:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D19529CE8;
+	Tue,  5 Nov 2024 20:32:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730838696; cv=none; b=ui/krmQfpoC7o9RNGesNFNoO7JDGZGp8dsirtRaF7n2y6QuozwodyHCYaUtV7L9QIl9q1iCorh1cbBjjmBUrP0SVf9ABeQrszPw6xPgIPU3XBm+/fSNXuteXJfJhjEl8VmcruYydtPk2YiM+pMMdW6W4UNRR0jLNmQ/eo33RTD8=
+	t=1730838753; cv=none; b=FGCKWQqnhTpyt1WYfeELTne3Mihb9MzFC0zhjP14+2SWxPONwjemcsFFCWVCviz91fB1zqhMaAryBNFsYB0yr40y1UjHcQQeNBEFHtfGLd5x7Ex+CoShn1HA8HkIrGyHqUeDXDLiMZhewepegdKiZ2NiWX9UaYJCob2ix2fgwMo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730838696; c=relaxed/simple;
-	bh=njXvbbUSXT8lEjmP/9Q1IPocvcnbvTecO5498SE8Yc4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lV4YcNAOjO8eBH0cPBKCKu9MjHAy/jza2bLf3etEC2SY8ZD/RbFW9hoZO96J6ZlwBHG0cL0DSb0p4G7VxLA4fA1lWRc9P6pKDEN8YHVxi8d6EcTUwj7WE12DLycHS4xkAEcyzpGhC/ynZde45yzzg3fZp1CtakM3ns/j9D1OXg0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=OqJr2dhv; arc=none smtp.client-ip=209.85.210.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-723f37dd76cso621578b3a.0
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 12:31:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fastly.com; s=google; t=1730838695; x=1731443495; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=UhUU35PCwT4qTbZoZwuMAItdxx0KbqWaKmuzg/Mfzrs=;
-        b=OqJr2dhvKej2lddFg90e68fvAhPsyOtYPFgWGSfgsp2axyPcmjl/wHlO0PMu7uzo5n
-         K46SbtUgSJoJUw1XB4TXx7qocKNmnGc/GkB9U4KHpDn2pdFtvVJaD0h6PUotVuS/hQiq
-         RgyzzsWIYL/YCmBqJlchNBxxozkXhCW7SEjUs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730838695; x=1731443495;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=UhUU35PCwT4qTbZoZwuMAItdxx0KbqWaKmuzg/Mfzrs=;
-        b=RaX96PCPI5QFIl+EVefrGk1+UGLS+8+bALgbYtslT7E7CYA00JEFXFbNhH2lrHPIqe
-         IXnj4/3M+0h1oUZw8r1oDI52/5V7nnB01bmcK1bIvBGulVS0SzbfRMGgL2L7HvG+2olZ
-         y7YAhuhH3iYDTZkOh2L2UIWPr8Ps9zckfU6TgEhAVRU4rtdx4C3hylJfOTA7dE0JbY/M
-         Sti11d0UjIOsuK4ya4DlkhMOXkaG/7cVbDBviKNHH1I2GPweGpr25pIqgjBjuqlYff29
-         Wiry2vK44JaFNNuKH/d6oF85E2Gesh8F+CMtV6RZ48gHaRgHDWJ9Am5xlb5g19wbPOH5
-         zTFA==
-X-Forwarded-Encrypted: i=1; AJvYcCXy7B7rtbavO2GsjEUctjWEOsOg1vxJNeDHWh+uDGoJa5OdWGiQ3FE4fi4NyhLIhF14/b/zocEUp8El6Rg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzX1oFhjw2AYpOJ5pjVoGB0CCPsNuW8DzzAin9KsHtawOmyVRZP
-	fIBO1BHdZV7uUtEBR7AFc9D/VNLLAx60EnkWXzg/TKI1GgolF5dtQfn+DubQFls=
-X-Google-Smtp-Source: AGHT+IHfc4XjOAk9aNraA/Fb/T/Rh+mWy4yMsOn09WygNpR/JUFt2lVx6QttW/7pfHEYXrMQoVD0wA==
-X-Received: by 2002:a05:6a20:12c7:b0:1db:eb2c:a74 with SMTP id adf61e73a8af0-1dbeb2c0b32mr7662206637.12.1730838693979;
-        Tue, 05 Nov 2024 12:31:33 -0800 (PST)
-Received: from LQ3V64L9R2 (c-24-6-151-244.hsd1.ca.comcast.net. [24.6.151.244])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-720bc1e592asm10212449b3a.60.2024.11.05.12.31.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Nov 2024 12:31:33 -0800 (PST)
-Date: Tue, 5 Nov 2024 12:31:30 -0800
-From: Joe Damato <jdamato@fastly.com>
-To: Philo Lu <lulie@linux.alibaba.com>
-Cc: netdev@vger.kernel.org, mst@redhat.com, jasowang@redhat.com,
-	xuanzhuo@linux.alibaba.com, eperezma@redhat.com,
-	andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, andrew@daynix.com,
-	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net 4/4] virtio_net: Update rss when set queue
-Message-ID: <ZyqAovoIOYkNvtys@LQ3V64L9R2>
-Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
-	Philo Lu <lulie@linux.alibaba.com>, netdev@vger.kernel.org,
-	mst@redhat.com, jasowang@redhat.com, xuanzhuo@linux.alibaba.com,
-	eperezma@redhat.com, andrew+netdev@lunn.ch, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	andrew@daynix.com, virtualization@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-References: <20241104085706.13872-1-lulie@linux.alibaba.com>
- <20241104085706.13872-5-lulie@linux.alibaba.com>
+	s=arc-20240116; t=1730838753; c=relaxed/simple;
+	bh=aUx+Up3qHsKlqZJcLk2SSDFVWkiR6YD1PM1TNhpPKQ4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BlxDQD38NnNURXlaHKgWJtu131pKbT2coSDS9YXRDftVR76mDaI4nKsw1c1siF+x/bsBDYrKrFpWN+yL3Mpw+3OyO4Q5fQnTNmDuIINjISPKV3oF8kmV8epWbS1qoVvZlh0RUxmMLiQbPtHrYNGvCH6n6rzM0XOw5avlI5QDB3A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GY7FAQ7s; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730838752; x=1762374752;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=aUx+Up3qHsKlqZJcLk2SSDFVWkiR6YD1PM1TNhpPKQ4=;
+  b=GY7FAQ7sW9ZO4ysUMr7ehz9CPTsuVTG8NE8SIpwlBY3IulrPIj72HH6A
+   EwoOGoSFN8ZoCx3D36JeUXUZ9Ia0JT7sXtLseZC5wGCEHdftvL0EHiW/w
+   6RnMJBiuZ3NbhXOLXVmfLOblnnN5lRsRP3alhCokrQIWlY3lnNsDCOpFe
+   WeowkKLlEbAxI3zgucOdKqkfREK4YRLYQ2VDJGPcN8Kl1sjQ1NRBidC7j
+   uMOYHV1V4WvfELHTVA7s8+b6+5b68gbnup0OPRJcgVQBkBrwIzOBsWjSB
+   kQHgEmDNeT4c4rtOXnbcQj2KDIhsRP6TeJy/1ZJFzmpCVKm28eCEAA89P
+   A==;
+X-CSE-ConnectionGUID: R93RqilQSxOO5Ti+2auCqA==
+X-CSE-MsgGUID: H+AkKKp7SJKLOBw0r5/sEA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="30462528"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="30462528"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2024 12:32:31 -0800
+X-CSE-ConnectionGUID: B6eZZQL3SxSocpMeVNlwag==
+X-CSE-MsgGUID: n9FSNWWVThmMAMSf7Ule/A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,261,1725346800"; 
+   d="scan'208";a="83696517"
+Received: from spandruv-mobl4.amr.corp.intel.com (HELO [10.125.109.253]) ([10.125.109.253])
+  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2024 12:32:28 -0800
+Message-ID: <827fe047-a456-48b4-9db1-d28c184b9cb3@intel.com>
+Date: Tue, 5 Nov 2024 13:32:26 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241104085706.13872-5-lulie@linux.alibaba.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v15 13/15] cxl/memfeature: Add CXL memory device sPPR
+ control feature
+To: shiju.jose@huawei.com, linux-edac@vger.kernel.org,
+ linux-cxl@vger.kernel.org, linux-acpi@vger.kernel.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org
+Cc: bp@alien8.de, tony.luck@intel.com, rafael@kernel.org, lenb@kernel.org,
+ mchehab@kernel.org, dan.j.williams@intel.com, dave@stgolabs.net,
+ jonathan.cameron@huawei.com, gregkh@linuxfoundation.org,
+ sudeep.holla@arm.com, jassisinghbrar@gmail.com, alison.schofield@intel.com,
+ vishal.l.verma@intel.com, ira.weiny@intel.com, david@redhat.com,
+ Vilas.Sridharan@amd.com, leo.duran@amd.com, Yazen.Ghannam@amd.com,
+ rientjes@google.com, jiaqiyan@google.com, Jon.Grimm@amd.com,
+ dave.hansen@linux.intel.com, naoya.horiguchi@nec.com, james.morse@arm.com,
+ jthoughton@google.com, somasundaram.a@hpe.com, erdemaktas@google.com,
+ pgonda@google.com, duenwen@google.com, gthelen@google.com,
+ wschwartz@amperecomputing.com, dferguson@amperecomputing.com,
+ wbs@os.amperecomputing.com, nifan.cxl@gmail.com, tanxiaofei@huawei.com,
+ prime.zeng@hisilicon.com, roberto.sassu@huawei.com,
+ kangkang.shen@futurewei.com, wanghuiqiang@huawei.com, linuxarm@huawei.com
+References: <20241101091735.1465-1-shiju.jose@huawei.com>
+ <20241101091735.1465-14-shiju.jose@huawei.com>
+Content-Language: en-US
+From: Dave Jiang <dave.jiang@intel.com>
+In-Reply-To: <20241101091735.1465-14-shiju.jose@huawei.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Nov 04, 2024 at 04:57:06PM +0800, Philo Lu wrote:
-> RSS configuration should be updated with queue number. In particular, it
-> should be updated when (1) rss enabled and (2) default rss configuration
-> is used without user modification.
+
+
+On 11/1/24 2:17 AM, shiju.jose@huawei.com wrote:
+> From: Shiju Jose <shiju.jose@huawei.com>
 > 
-> During rss command processing, device updates queue_pairs using
-> rss.max_tx_vq. That is, the device updates queue_pairs together with
-> rss, so we can skip the sperate queue_pairs update
-> (VIRTIO_NET_CTRL_MQ_VQ_PAIRS_SET below) and return directly.
+> Post Package Repair (PPR) maintenance operations may be supported by CXL
+> devices that implement CXL.mem protocol. A PPR maintenance operation
+> requests the CXL device to perform a repair operation on its media.
+> For example, a CXL device with DRAM components that support PPR features
+> may implement PPR Maintenance operations. DRAM components may support two
+> types of PPR: Hard PPR (hPPR), for a permanent row repair, and Soft PPR
+> (sPPR), for a temporary row repair. sPPR is much faster than hPPR, but the
+> repair is lost with a power cycle.
 > 
-> Also remove the `vi->has_rss ?` check when setting vi->rss.max_tx_vq,
-> because this is not used in the other hash_report case.
+> During the execution of a PPR Maintenance operation, a CXL memory device:
+> - May or may not retain data
+> - May or may not be able to process CXL.mem requests correctly, including
+> the ones that target the DPA involved in the repair.
+> These CXL Memory Device capabilities are specified by Restriction Flags
+> in the sPPR Feature and hPPR Feature.
 > 
-> Fixes: c7114b1249fa ("drivers/net/virtio_net: Added basic RSS support.")
-> Signed-off-by: Philo Lu <lulie@linux.alibaba.com>
-> Signed-off-by: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
+> sPPR maintenance operation may be executed at runtime, if data is retained
+> and CXL.mem requests are correctly processed. For CXL devices with DRAM
+> components, hPPR maintenance operation may be executed only at boot because
+> data would not be retained.
+> When a CXL device identifies a failure on a memory component, the device
+> may inform the host about the need for a PPR maintenance operation by using
+> an Event Record, where the Maintenance Needed flag is set. The Event Record
+> specifies the DPA that should be repaired. A CXL device may not keep track
+> of the requests that have already been sent and the information on which
+> DPA should be repaired may be lost upon power cycle.
+> The userspace tool requests for maintenance operation if the number of
+> corrected error reported on a CXL.mem media exceeds error threshold.
+> 
+> CXL spec 3.1 section 8.2.9.7.1.2 describes the device's sPPR (soft PPR)
+> maintenance operation and section 8.2.9.7.1.3 describes the device's
+> hPPR (hard PPR) maintenance operation feature.
+> 
+> CXL spec 3.1 section 8.2.9.7.2.1 describes the sPPR feature discovery and
+> configuration.
+> 
+> CXL spec 3.1 section 8.2.9.7.2.2 describes the hPPR feature discovery and
+> configuration.
+> 
+> Add support for controlling CXL memory device sPPR feature.
+> Register with EDAC driver, which gets the memory repair attr descriptors
+> from the EDAC memory repair driver and exposes sysfs repair control
+> attributes for PRR to the userspace. For example CXL PPR control for the
+> CXL mem0 device is exposed in /sys/bus/edac/devices/cxl_mem0/mem_repairX/
+> 
+> Tested with QEMU patch for CXL PPR feature.
+> https://lore.kernel.org/all/20240730045722.71482-1-dave@stgolabs.net/
+> 
+> Signed-off-by: Shiju Jose <shiju.jose@huawei.com>
+
+Just a nit below.
+
+Reviewed-by: Dave Jiang <dave.jiang@intel.com>
+
 > ---
->  drivers/net/virtio_net.c | 65 +++++++++++++++++++++++++++++++---------
->  1 file changed, 51 insertions(+), 14 deletions(-)
+>  drivers/cxl/core/memfeature.c | 369 +++++++++++++++++++++++++++++++++-
+>  1 file changed, 368 insertions(+), 1 deletion(-)
 > 
-> diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
-> index 59d9fdf562e0..189afad3ffaa 100644
-> --- a/drivers/net/virtio_net.c
-> +++ b/drivers/net/virtio_net.c
-> @@ -3394,15 +3394,59 @@ static void virtnet_ack_link_announce(struct virtnet_info *vi)
->  		dev_warn(&vi->dev->dev, "Failed to ack link announce.\n");
->  }
+> diff --git a/drivers/cxl/core/memfeature.c b/drivers/cxl/core/memfeature.c
+> index e641396a32f5..9238ad10766e 100644
+> --- a/drivers/cxl/core/memfeature.c
+> +++ b/drivers/cxl/core/memfeature.c
+> @@ -16,8 +16,9 @@
+>  #include <linux/limits.h>
+>  #include <cxl.h>
+>  #include <cxlmem.h>
+> +#include "core.h"
 >  
-> +static bool virtnet_commit_rss_command(struct virtnet_info *vi);
+> -#define CXL_DEV_NUM_RAS_FEATURES	2
+> +#define CXL_DEV_NUM_RAS_FEATURES	3
+>  #define CXL_DEV_HOUR_IN_SECS	3600
+>  
+>  #define CXL_SCRUB_NAME_LEN	128
+> @@ -606,17 +607,350 @@ static const struct edac_ecs_ops cxl_ecs_ops = {
+>  	.set_threshold = cxl_ecs_set_threshold,
+>  };
+>  
+> +/* CXL memory soft PPR & hard PPR control definitions */
+> +/* See CXL rev 3.1 @8.2.9.7.2 Table 8-110 Maintenance Operation */
+> +static const uuid_t cxl_sppr_uuid =
+> +	UUID_INIT(0x892ba475, 0xfad8, 0x474e, 0x9d, 0x3e, 0x69, 0x2c, 0x91, 0x75, 0x68, 0xbb);
 > +
-> +static void virtnet_rss_update_by_qpairs(struct virtnet_info *vi, u16 queue_pairs)
+> +static const uuid_t cxl_hppr_uuid =
+> +	UUID_INIT(0x80ea4521, 0x786f, 0x4127, 0xaf, 0xb1, 0xec, 0x74, 0x59, 0xfb, 0x0e, 0x24);
+> +
+> +struct cxl_ppr_context {
+> +	uuid_t repair_uuid;
+> +	u8 instance;
+> +	u16 get_feat_size;
+> +	u16 set_feat_size;
+> +	u8 get_version;
+> +	u8 set_version;
+> +	u16 set_effects;
+> +	struct cxl_memdev *cxlmd;
+> +	enum edac_mem_repair_type repair_type;
+> +	enum edac_mem_repair_persist_mode persist_mode;
+> +	u64 dpa;
+> +	u32 nibble_mask;
+> +};
+> +
+> +/**
+> + * struct cxl_memdev_ppr_params - CXL memory PPR parameter data structure.
+> + * @op_class: PPR operation class.
+> + * @op_subclass: PPR operation subclass.
+> + * @dpa_support: device physical address for PPR support.
+> + * @media_accessible: memory media is accessible or not during PPR operation.
+> + * @data_retained: data is retained or not during PPR operation.
+> + * @dpa: device physical address.
+> + */
+> +struct cxl_memdev_ppr_params {
+> +	u8 op_class;
+> +	u8 op_subclass;
+> +	bool dpa_support;
+> +	bool media_accessible;
+> +	bool data_retained;
+> +	u64 dpa;
+> +};
+> +
+> +enum cxl_ppr_param {
+> +	CXL_PPR_PARAM_DO_QUERY,
+> +	CXL_PPR_PARAM_DO_PPR,
+> +};
+> +
+> +/* See CXL rev 3.1 @8.2.9.7.2.1 Table 8-113 sPPR Feature Readable Attributes */
+> +/* See CXL rev 3.1 @8.2.9.7.2.2 Table 8-116 hPPR Feature Readable Attributes */
+> +#define	CXL_MEMDEV_PPR_QUERY_RESOURCE_FLAG BIT(0)
+
+Are all the extra spaces after #define intended?
+
+DJ
+
+> +
+> +#define CXL_MEMDEV_PPR_DEVICE_INITIATED_MASK BIT(0)
+> +#define CXL_MEMDEV_PPR_FLAG_DPA_SUPPORT_MASK BIT(0)
+> +#define CXL_MEMDEV_PPR_FLAG_NIBBLE_SUPPORT_MASK BIT(1)
+> +#define CXL_MEMDEV_PPR_FLAG_MEM_SPARING_EV_REC_SUPPORT_MASK BIT(2)
+> +
+> +#define CXL_MEMDEV_PPR_RESTRICTION_FLAG_MEDIA_ACCESSIBLE_MASK BIT(0)
+> +#define CXL_MEMDEV_PPR_RESTRICTION_FLAG_DATA_RETAINED_MASK BIT(2)
+> +
+> +#define CXL_MEMDEV_PPR_SPARING_EV_REC_EN_MASK BIT(0)
+> +
+> +struct cxl_memdev_repair_rd_attrs_hdr {
+> +	u8 max_op_latency;
+> +	__le16 op_cap;
+> +	__le16 op_mode;
+> +	u8 op_class;
+> +	u8 op_subclass;
+> +	u8 rsvd[9];
+> +}  __packed;
+> +
+> +struct cxl_memdev_ppr_rd_attrs {
+> +	struct cxl_memdev_repair_rd_attrs_hdr hdr;
+> +	u8 ppr_flags;
+> +	__le16 restriction_flags;
+> +	u8 ppr_op_mode;
+> +}  __packed;
+> +
+> +/* See CXL rev 3.1 @8.2.9.7.2.1 Table 8-114 sPPR Feature Writable Attributes */
+> +/* See CXL rev 3.1 @8.2.9.7.2.2 Table 8-117 hPPR Feature Writable Attributes */
+> +struct cxl_memdev_ppr_wr_attrs {
+> +	__le16 op_mode;
+> +	u8 ppr_op_mode;
+> +}  __packed;
+> +
+> +/* See CXL rev 3.1 @8.2.9.7.1.2 Table 8-103 sPPR Maintenance Input Payload */
+> +/* See CXL rev 3.1 @8.2.9.7.1.3 Table 8-104 hPPR Maintenance Input Payload */
+> +struct cxl_memdev_ppr_maintenance_attrs {
+> +	u8 flags;
+> +	__le64 dpa;
+> +	u8 nibble_mask[3];
+> +}  __packed;
+> +
+> +static int cxl_mem_ppr_get_attrs(struct device *dev,
+> +				 struct cxl_ppr_context *cxl_ppr_ctx,
+> +				 struct cxl_memdev_ppr_params *params)
 > +{
-> +	u32 indir_val = 0;
-> +	int i = 0;
+> +	struct cxl_memdev *cxlmd = cxl_ppr_ctx->cxlmd;
+> +	struct cxl_dev_state *cxlds = cxlmd->cxlds;
+> +	struct cxl_memdev_state *mds = to_cxl_memdev_state(cxlds);
+> +	size_t rd_data_size = sizeof(struct cxl_memdev_ppr_rd_attrs);
+> +	size_t data_size;
+> +	struct cxl_memdev_ppr_rd_attrs *rd_attrs __free(kfree) =
+> +				kmalloc(rd_data_size, GFP_KERNEL);
+> +	if (!rd_attrs)
+> +		return -ENOMEM;
 > +
-> +	for (; i < vi->rss_indir_table_size; ++i) {
-> +		indir_val = ethtool_rxfh_indir_default(i, queue_pairs);
-> +		vi->rss.indirection_table[i] = indir_val;
-> +	}
-> +	vi->rss.max_tx_vq = queue_pairs;
+> +	data_size = cxl_get_feature(mds, cxl_ppr_ctx->repair_uuid,
+> +				    CXL_GET_FEAT_SEL_CURRENT_VALUE,
+> +				    rd_attrs, rd_data_size);
+> +	if (!data_size)
+> +		return -EIO;
+> +
+> +	params->op_class = rd_attrs->hdr.op_class;
+> +	params->op_subclass = rd_attrs->hdr.op_subclass;
+> +	params->dpa_support = FIELD_GET(CXL_MEMDEV_PPR_FLAG_DPA_SUPPORT_MASK,
+> +					rd_attrs->ppr_flags);
+> +	params->media_accessible = FIELD_GET(CXL_MEMDEV_PPR_RESTRICTION_FLAG_MEDIA_ACCESSIBLE_MASK,
+> +					     rd_attrs->restriction_flags) ^ 1;
+> +	params->data_retained = FIELD_GET(CXL_MEMDEV_PPR_RESTRICTION_FLAG_DATA_RETAINED_MASK,
+> +					  rd_attrs->restriction_flags) ^ 1;
+> +
+> +	return 0;
 > +}
 > +
->  static int virtnet_set_queues(struct virtnet_info *vi, u16 queue_pairs)
->  {
->  	struct virtio_net_ctrl_mq *mq __free(kfree) = NULL;
-> -	struct scatterlist sg;
-> +	struct virtio_net_ctrl_rss old_rss;
->  	struct net_device *dev = vi->dev;
-> +	struct scatterlist sg;
->  
->  	if (!vi->has_cvq || !virtio_has_feature(vi->vdev, VIRTIO_NET_F_MQ))
->  		return 0;
->  
-> +	/* Firstly check if we need update rss. Do updating if both (1) rss enabled and
-> +	 * (2) no user configuration.
-> +	 *
-> +	 * During rss command processing, device updates queue_pairs using rss.max_tx_vq. That is,
-> +	 * the device updates queue_pairs together with rss, so we can skip the sperate queue_pairs
-> +	 * update (VIRTIO_NET_CTRL_MQ_VQ_PAIRS_SET below) and return directly.
-> +	 */
-> +	if (vi->has_rss && !netif_is_rxfh_configured(dev)) {
-
-Does there need to be an error case when:
-
-vi->has_rss && netif_is_rxfh_configured(dev)
-
-to return EINVAL? I noted that other drivers don't let users adjust
-the queue count and return error in this case.
-
-
-> +		memcpy(&old_rss, &vi->rss, sizeof(old_rss));
-> +		if (rss_indirection_table_alloc(&vi->rss, vi->rss_indir_table_size)) {
-> +			vi->rss.indirection_table = old_rss.indirection_table;
-> +			return -ENOMEM;
+> +static int cxl_mem_do_ppr_op(struct device *dev,
+> +			     struct cxl_ppr_context *cxl_ppr_ctx,
+> +			     struct cxl_memdev_ppr_params *rd_params,
+> +			     enum cxl_ppr_param param_type)
+> +{
+> +	struct cxl_memdev_ppr_maintenance_attrs maintenance_attrs;
+> +	struct cxl_memdev *cxlmd = cxl_ppr_ctx->cxlmd;
+> +	struct cxl_dev_state *cxlds = cxlmd->cxlds;
+> +	struct cxl_memdev_state *mds = to_cxl_memdev_state(cxlds);
+> +	int ret;
+> +
+> +	if (!rd_params->media_accessible || !rd_params->data_retained) {
+> +		/* Check if DPA is mapped */
+> +		if (cxl_dpa_to_region(cxlmd, cxl_ppr_ctx->dpa)) {
+> +			dev_err(dev, "CXL can't do PPR as DPA is mapped\n");
+> +			return -EBUSY;
 > +		}
-> +
-> +		virtnet_rss_update_by_qpairs(vi, queue_pairs);
-> +
-> +		if (!virtnet_commit_rss_command(vi)) {
-> +			/* restore ctrl_rss if commit_rss_command failed */
-> +			rss_indirection_table_free(&vi->rss);
-> +			memcpy(&vi->rss, &old_rss, sizeof(old_rss));
-> +
-> +			dev_warn(&dev->dev, "Fail to set num of queue pairs to %d, because committing RSS failed\n",
-> +				 queue_pairs);
-> +			return -EINVAL;
-> +		}
-> +		rss_indirection_table_free(&old_rss);
-> +		goto succ;
+> +	}
+> +	memset(&maintenance_attrs, 0, sizeof(maintenance_attrs));
+> +	if (param_type == CXL_PPR_PARAM_DO_QUERY)
+> +		maintenance_attrs.flags = CXL_MEMDEV_PPR_QUERY_RESOURCE_FLAG;
+> +	else
+> +		maintenance_attrs.flags = 0;
+> +	maintenance_attrs.dpa = cxl_ppr_ctx->dpa;
+> +	*((u32 *)&maintenance_attrs.nibble_mask[0]) = cxl_ppr_ctx->nibble_mask;
+> +	ret = cxl_do_maintenance(mds, rd_params->op_class, rd_params->op_subclass,
+> +				 &maintenance_attrs, sizeof(maintenance_attrs));
+> +	if (ret) {
+> +		dev_err(dev, "CXL do PPR failed ret=%d\n", ret);
+> +		up_read(&cxl_region_rwsem);
+> +		cxl_ppr_ctx->nibble_mask = 0;
+> +		cxl_ppr_ctx->dpa = 0;
+> +		return ret;
 > +	}
 > +
+> +	return 0;
+> +}
+> +
+> +static int cxl_mem_ppr_set_attrs(struct device *dev,
+> +				 struct cxl_ppr_context *cxl_ppr_ctx,
+> +				 enum cxl_ppr_param param_type)
+> +{
+> +	struct cxl_memdev_ppr_params rd_params;
+> +	int ret;
+> +
+> +	ret = cxl_mem_ppr_get_attrs(dev, cxl_ppr_ctx, &rd_params);
+> +	if (ret) {
+> +		dev_err(dev, "Get cxlmemdev PPR params failed ret=%d\n",
+> +			ret);
+> +		return ret;
+> +	}
+> +
+> +	switch (param_type) {
+> +	case CXL_PPR_PARAM_DO_QUERY:
+> +	case CXL_PPR_PARAM_DO_PPR:
+> +		ret = down_read_interruptible(&cxl_region_rwsem);
+> +		if (ret)
+> +			return ret;
+> +		ret = down_read_interruptible(&cxl_dpa_rwsem);
+> +		if (ret) {
+> +			up_read(&cxl_region_rwsem);
+> +			return ret;
+> +		}
+> +		ret = cxl_mem_do_ppr_op(dev, cxl_ppr_ctx, &rd_params, param_type);
+> +		up_read(&cxl_dpa_rwsem);
+> +		up_read(&cxl_region_rwsem);
+> +		return ret;
+> +	default:
+> +		return -EINVAL;
+> +	}
+> +}
+> +
+> +static int cxl_ppr_get_repair_type(struct device *dev, void *drv_data,
+> +				   u32 *repair_type)
+> +{
+> +	struct cxl_ppr_context *cxl_ppr_ctx = drv_data;
+> +
+> +	*repair_type = cxl_ppr_ctx->repair_type;
+> +
+> +	return 0;
+> +}
+> +
+> +static int cxl_ppr_get_persist_mode_avail(struct device *dev, void *drv_data,
+> +					  char *buf)
+> +{
+> +	return sysfs_emit(buf, "%u\n", EDAC_MEM_REPAIR_SOFT);
+> +}
+> +
+> +static int cxl_ppr_get_persist_mode(struct device *dev, void *drv_data,
+> +				    u32 *persist_mode)
+> +{
+> +	struct cxl_ppr_context *cxl_ppr_ctx = drv_data;
+> +
+> +	*persist_mode = cxl_ppr_ctx->persist_mode;
+> +
+> +	return 0;
+> +}
+> +
+> +static int cxl_ppr_get_dpa_support(struct device *dev, void *drv_data,
+> +				   u32 *dpa_support)
+> +{
+> +	struct cxl_ppr_context *cxl_ppr_ctx = drv_data;
+> +	struct cxl_memdev_ppr_params params;
+> +	int ret;
+> +
+> +	ret = cxl_mem_ppr_get_attrs(dev, cxl_ppr_ctx, &params);
+> +	if (ret)
+> +		return ret;
+> +
+> +	*dpa_support = params.dpa_support;
+> +
+> +	return 0;
+> +}
+> +
+> +static int cxl_get_ppr_safe_when_in_use(struct device *dev, void *drv_data,
+> +					u32 *safe)
+> +{
+> +	struct cxl_ppr_context *cxl_ppr_ctx = drv_data;
+> +	struct cxl_memdev_ppr_params params;
+> +	int ret;
+> +
+> +	ret = cxl_mem_ppr_get_attrs(dev, cxl_ppr_ctx, &params);
+> +	if (ret)
+> +		return ret;
+> +
+> +	*safe = params.media_accessible & params.data_retained;
+> +
+> +	return 0;
+> +}
+> +
+> +static int cxl_get_ppr_dpa(struct device *dev, void *drv_data,
+> +			   u64 *dpa)
+> +{
+> +	struct cxl_ppr_context *cxl_ppr_ctx = drv_data;
+> +
+> +	*dpa = cxl_ppr_ctx->dpa;
+> +
+> +	return 0;
+> +}
+> +
+> +static int cxl_set_ppr_dpa(struct device *dev, void *drv_data, u64 dpa)
+> +{
+> +	struct cxl_ppr_context *cxl_ppr_ctx = drv_data;
+> +
+> +	if (!dpa)
+> +		return -EINVAL;
+> +
+> +	cxl_ppr_ctx->dpa = dpa;
+> +
+> +	return 0;
+> +}
+> +
+> +static int cxl_get_ppr_nibble_mask(struct device *dev, void *drv_data,
+> +				   u64 *nibble_mask)
+> +{
+> +	struct cxl_ppr_context *cxl_ppr_ctx = drv_data;
+> +
+> +	*nibble_mask = cxl_ppr_ctx->nibble_mask;
+> +
+> +	return 0;
+> +}
+> +
+> +static int cxl_set_ppr_nibble_mask(struct device *dev, void *drv_data, u64 nibble_mask)
+> +{
+> +	struct cxl_ppr_context *cxl_ppr_ctx = drv_data;
+> +
+> +	cxl_ppr_ctx->nibble_mask = nibble_mask;
+> +
+> +	return 0;
+> +}
+> +
+> +static int cxl_do_query_ppr(struct device *dev, void *drv_data)
+> +{
+> +	struct cxl_ppr_context *cxl_ppr_ctx = drv_data;
+> +
+> +	if (!cxl_ppr_ctx->dpa)
+> +		return -EINVAL;
+> +
+> +	return cxl_mem_ppr_set_attrs(dev, cxl_ppr_ctx, CXL_PPR_PARAM_DO_QUERY);
+> +}
+> +
+> +static int cxl_do_ppr(struct device *dev, void *drv_data)
+> +{
+> +	struct cxl_ppr_context *cxl_ppr_ctx = drv_data;
+> +	int ret;
+> +
+> +	if (!cxl_ppr_ctx->dpa)
+> +		return -EINVAL;
+> +
+> +	ret = cxl_mem_ppr_set_attrs(dev, cxl_ppr_ctx, CXL_PPR_PARAM_DO_PPR);
+> +
+> +	return ret;
+> +}
+> +
+> +static const struct edac_mem_repair_ops cxl_sppr_ops = {
+> +	.get_repair_type = cxl_ppr_get_repair_type,
+> +	.get_persist_mode_avail = cxl_ppr_get_persist_mode_avail,
+> +	.get_persist_mode = cxl_ppr_get_persist_mode,
+> +	.get_dpa_support = cxl_ppr_get_dpa_support,
+> +	.get_repair_safe_when_in_use = cxl_get_ppr_safe_when_in_use,
+> +	.get_dpa = cxl_get_ppr_dpa,
+> +	.set_dpa = cxl_set_ppr_dpa,
+> +	.get_nibble_mask = cxl_get_ppr_nibble_mask,
+> +	.set_nibble_mask = cxl_set_ppr_nibble_mask,
+> +	.do_query = cxl_do_query_ppr,
+> +	.do_repair = cxl_do_ppr,
+> +};
+> +
+>  int cxl_mem_ras_features_init(struct cxl_memdev *cxlmd, struct cxl_region *cxlr)
+>  {
+>  	struct edac_dev_feature ras_features[CXL_DEV_NUM_RAS_FEATURES];
+>  	struct cxl_patrol_scrub_context *cxl_ps_ctx;
+>  	char cxl_dev_name[CXL_SCRUB_NAME_LEN];
+> +	struct cxl_ppr_context *cxl_sppr_ctx;
+>  	struct cxl_ecs_context *cxl_ecs_ctx;
+>  	struct cxl_feat_entry feat_entry;
+>  	struct cxl_memdev_state *mds;
+>  	struct cxl_dev_state *cxlds;
+>  	int num_ras_features = 0;
+>  	int num_media_frus;
+> +	u8 repair_inst = 0;
+>  	u8 scrub_inst = 0;
+>  	int rc, i;
+>  
+> @@ -714,6 +1048,39 @@ int cxl_mem_ras_features_init(struct cxl_memdev *cxlmd, struct cxl_region *cxlr)
+>  	}
+>  
+>  feat_ecs_done:
+> +	/* CXL sPPR */
+> +	rc = cxl_get_supported_feature_entry(mds, &cxl_sppr_uuid,
+> +					     &feat_entry);
+> +	if (rc < 0)
+> +		goto feat_sppr_done;
+> +
+> +	if (!(feat_entry.attr_flags & CXL_FEAT_ENTRY_FLAG_CHANGABLE))
+> +		goto feat_sppr_done;
+> +
+> +	cxl_sppr_ctx = devm_kzalloc(&cxlmd->dev, sizeof(*cxl_sppr_ctx),
+> +				    GFP_KERNEL);
+> +	if (!cxl_sppr_ctx)
+> +		goto feat_sppr_done;
+> +	*cxl_sppr_ctx = (struct cxl_ppr_context) {
+> +		.repair_uuid = cxl_sppr_uuid,
+> +		.get_feat_size = feat_entry.get_feat_size,
+> +		.set_feat_size = feat_entry.set_feat_size,
+> +		.get_version = feat_entry.get_feat_ver,
+> +		.set_version = feat_entry.set_feat_ver,
+> +		.set_effects = feat_entry.set_effects,
+> +		.cxlmd = cxlmd,
+> +		.repair_type = EDAC_TYPE_SPPR,
+> +		.persist_mode = EDAC_MEM_REPAIR_SOFT,
+> +		.instance = repair_inst++,
+> +	};
+> +
+> +	ras_features[num_ras_features].ft_type = RAS_FEAT_MEM_REPAIR;
+> +	ras_features[num_ras_features].instance = cxl_sppr_ctx->instance;
+> +	ras_features[num_ras_features].mem_repair_ops = &cxl_sppr_ops;
+> +	ras_features[num_ras_features].ctx = cxl_sppr_ctx;
+> +	num_ras_features++;
+> +
+> +feat_sppr_done:
+>  	return edac_dev_register(&cxlmd->dev, cxl_dev_name, NULL,
+>  				 num_ras_features, ras_features);
+>  }
+
 
