@@ -1,256 +1,109 @@
-Return-Path: <linux-kernel+bounces-396316-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396317-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75A679BCB6A
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 12:15:46 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 056659BCB6E
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 12:16:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 05DF81F21E61
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 11:15:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B0CB01F23A48
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 11:16:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B15D71D359C;
-	Tue,  5 Nov 2024 11:15:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yCrfsbXo"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC5B71D31B5;
+	Tue,  5 Nov 2024 11:16:20 +0000 (UTC)
+Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0390C1D4351
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 11:15:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C35ED192582
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 11:16:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730805324; cv=none; b=LIHwOgnoTn2I4ydK3WJ2ZZVsgRfnkmp0yd340AremujiDwCvPcOB3Q4+2737L+6pVT9NgQLa1GuSrBj6p63ZLNyfRON1h5iPKgDE0XZ5ioRuwRGXfUz/DaLZb4AmiMXvrOD4AtUpfFRHYT1nqLIbZ5whhJXXDJwpnI4vcmTYncM=
+	t=1730805380; cv=none; b=tVVh9MlDGuvCXQldOUqiOsqEUTwPmYNSqcuMNWD5iv/DIznyBezHDurnmuJHbEJ+i6JpITGzqjyBNeDSZ/kOgM+DgL9PXe4EwNwq2e2PTnoAGgxxFWaNDKicVuYJTggujZt5xdjV+fdkuVWNsaeiZ78dpfFfJ97Qam1uCRlj22Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730805324; c=relaxed/simple;
-	bh=k1//woTIU/hrkn6HxpkQgKFs3K74L+BoMNL8LPeXwjE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tSvIFMTklAcYLXsMOfI0GEjIFEef2lNZONfYooNlNjfHnWMOdTmbuvaOt3e7JV+rOZir8b/HYl1ihFXhOU/K6C0y59kNcB0ZjlXzOYf9G+C2ctuZslDxZ83xFZOmFA+DKg3xJ7XVUNu4+z/P0V12jkSkulU+Nn72t6nT2wcUtB4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yCrfsbXo; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-43155abaf0bso47145865e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 03:15:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1730805320; x=1731410120; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=XAUW7RPOeXwiKeLMnI883KAxUeeVxpO3A/xF2LaW6Sw=;
-        b=yCrfsbXoGEKGgxBeD3lEMN+OLnck8CJ6LyLPV6RG2HBe5AMaGWpghxI9yDtZS+CYcq
-         UG+qDTqK+vVBFzRO16CxKVdccznERUxkPYqjhZuz9NJZhk4gE+N/5XtCiDk0/j+78uV2
-         NOSJYVXiI35jf+xMiF8LcVR+1lm6Bsr6rhF6gIeXbeLvVWelFaLmMPoYSchYFOe7B0lP
-         DY5vta7VGoROpKS6r9Pb5Xsd9m9haErHcVcnmI+VB584F/+9JocIBf7/iJFPHfcPl9UJ
-         7qKI2nBMt3QtZfznIFW5nDht8sOpqQJGUD7WBkqPNN93mZaddovbfPgCLp9WAHbvNbFG
-         ckkg==
+	s=arc-20240116; t=1730805380; c=relaxed/simple;
+	bh=RQPh1D947TKzLE1f4ASFKIoCc3le035rVvblBWeTovs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NDn0QcAbSq7K4T2xTOoh5HsKcIo2cVvkC3mw0bqA8Hp+FfC9WLYfvx0KTUosJzJUjOL1brGtYVshRy5+iCJoxXAOBDOCgE20miePYtoW7/xhOJs2+W+JXqpA0r1+dD0GcNVjlkEPpswMNSvtH6dF3CCjL5GB6QAEpb0SHmNH+gc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-6e5cec98cceso42268617b3.2
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 03:16:18 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730805320; x=1731410120;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=XAUW7RPOeXwiKeLMnI883KAxUeeVxpO3A/xF2LaW6Sw=;
-        b=jJkJ3/ESOY9wVpnGdQjDc8x8hd79XNC5SyRoNqOtxTyBK/X68TGyYuwgpUoovl43l/
-         WZOSYXjxZ9Vix6w7Yk0WPXWgeBNayUgCFzKg1+dKdQTjWEn+H14QSHJL3A/0ault6lNo
-         ziaPblNXgq+ikSiQ891ZhoBPJ02qG8mPpZVsF24Zij/oSlyxTkkghfYYrFjDTkh1qDzZ
-         zsgxKh0IE8D7mCyo4QF36uuRflwMXIfOLE0jAtzZr7boZrXHOeGFEttE/0qDwybpcI0t
-         gMcsg0U8EuFRfoqp8hEBsDOE0X+wI92Lz+2Sj/V9KVkxbSQHZ3T9RfRoiP82a8YdLBdC
-         zI4g==
-X-Forwarded-Encrypted: i=1; AJvYcCWdgdzgkgi9xEuFE/bTGFD0VrIFNdzP40ro3Js0uNMmV5AMgBdcV/wjh18SOQ6CxZKCMory4smqKClHBpM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwhTdb8eF0Sg7b3izqcWZBUUYcd9nDPCls1Xv/3yF9x/mgLnvGj
-	6hE9NrEWu7YIkoOAKa29v6xUROg7rDJyhciKqgR149cqNtuQkIeem3FM9gsLFhk=
-X-Google-Smtp-Source: AGHT+IFxj5fSafC8gyEjZqCHdS86tjb6pALa9TeX7VspQtKSyrZ7noAYA8Z/wRxw84X9ChaBBEOulg==
-X-Received: by 2002:a05:600c:3054:b0:431:44fe:fd9f with SMTP id 5b1f17b1804b1-4328327ec3cmr113149925e9.23.1730805320278;
-        Tue, 05 Nov 2024 03:15:20 -0800 (PST)
-Received: from [192.168.0.40] ([176.61.106.227])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-431bd947c26sm218210655e9.26.2024.11.05.03.15.19
+        d=1e100.net; s=20230601; t=1730805377; x=1731410177;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=c3/fy7sgqquY1ABbaxJy+CpHhoUy/FOlWc4sY7atYCE=;
+        b=fg3I72M9RaO7lSXt2Ny+NRU/vIi+1tM7e9+IrGFiFm9ggxS9O/DH5/WKCewkVLp7Mz
+         tMY67bvRTh/9Q/yQLprPdSV2NMQR08ZCxQF4cb+b5FQX0EMl9h2wPidc05nNjAgvRzWR
+         8CLUk0gtl5BMV3evdxUhECfsFS+CrpxVHTFQLeRMXXWfByjY/GBlE9Emr9UbBylQI3w2
+         sFESRTIb0Pj/0D9xESkOHZjLvwxQLgXhLFC/iJ3mitWT1KA3xW2ZnpYoaZvQXgD/LiNH
+         9upXO9StcXSowngZgDzmNb5/yVneHInuSQDe6s5SDlRTBMVYxUYX07+Cx9q7TCFqBK/i
+         JCTg==
+X-Forwarded-Encrypted: i=1; AJvYcCXEmsSQ0fdL0zQbuLJLf3+RrckRZzoH8+INo3kLDfpIopbGD/M82FPgphwRW5JoyFF2rr+2+0RD91KN/QQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzUP21MUj5zxOcefWGRFZbLOAOgtbJi0nq2VF9fFlHP4RyyWFYI
+	vxjEd5+IoA/zqPudzgc4rHvGaMPm/zn86Py2XTNx6QHVDn6uhBrHh2xIewte
+X-Google-Smtp-Source: AGHT+IFkIySLjNHaFtUdTNFLE7TZyz+amms42YHUwWkeUe9MNMHN3SDKVUr6zlYSTqJvPEgxuZfgRw==
+X-Received: by 2002:a05:690c:c8e:b0:6e3:2be1:a2dc with SMTP id 00721157ae682-6ea52374db0mr188647557b3.11.1730805377057;
+        Tue, 05 Nov 2024 03:16:17 -0800 (PST)
+Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com. [209.85.219.176])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6ea55c45c68sm21553667b3.96.2024.11.05.03.16.16
+        for <linux-kernel@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 05 Nov 2024 03:15:19 -0800 (PST)
-Message-ID: <474d3c62-5747-45b9-b5c3-253607b0c17a@linaro.org>
-Date: Tue, 5 Nov 2024 11:15:19 +0000
+        Tue, 05 Nov 2024 03:16:16 -0800 (PST)
+Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-e290554afb4so5324497276.0
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 03:16:16 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCXqhmXae6sO/kNxSr8XMFSTqRmSukJzaGvNUUGq6jyLJaD/MIda0gGdqLMPWsl6t0nMNTJcsRCZaI8slro=@vger.kernel.org
+X-Received: by 2002:a05:690c:3512:b0:6b3:a6ff:7676 with SMTP id
+ 00721157ae682-6ea523295b1mr189170117b3.3.1730805375773; Tue, 05 Nov 2024
+ 03:16:15 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/4] media: venus: hfi_parser: avoid OOB access beyond
- payload word count
-To: Vikash Garodia <quic_vgarodia@quicinc.com>,
- Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- linux-kernel@vger.kernel.org, stable@vger.kernel.org
-References: <20241105-venus_oob-v1-0-8d4feedfe2bb@quicinc.com>
- <20241105-venus_oob-v1-2-8d4feedfe2bb@quicinc.com>
-Content-Language: en-US
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <20241105-venus_oob-v1-2-8d4feedfe2bb@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20241030195638.22542-1-arnd@kernel.org> <20241030195638.22542-2-arnd@kernel.org>
+In-Reply-To: <20241030195638.22542-2-arnd@kernel.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 5 Nov 2024 12:16:03 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdW1Z7QoZa4RtAMzQaM+WZ=JtrEGPpHvfuOb3YVm8m2K+w@mail.gmail.com>
+Message-ID: <CAMuHMdW1Z7QoZa4RtAMzQaM+WZ=JtrEGPpHvfuOb3YVm8m2K+w@mail.gmail.com>
+Subject: Re: [PATCH 2/2] m68k: select 68020 as fallback for classic
+To: Arnd Bergmann <arnd@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, linux-m68k@lists.linux-m68k.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 05/11/2024 08:54, Vikash Garodia wrote:
-> words_count denotes the number of words in total payload, while data
-> points to payload of various property within it. When words_count
-> reaches last word, data can access memory beyond the total payload.
-> Avoid this case by not allowing the loop for the last word count.
-> 
-> Cc: stable@vger.kernel.org
-> Fixes: 1a73374a04e5 ("media: venus: hfi_parser: add common capability parser")
-> Signed-off-by: Vikash Garodia <quic_vgarodia@quicinc.com>
-> ---
->   drivers/media/platform/qcom/venus/hfi_parser.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/media/platform/qcom/venus/hfi_parser.c b/drivers/media/platform/qcom/venus/hfi_parser.c
-> index 27d0172294d5154f4839e8cef172f9a619dfa305..20d9ea3626e9c4468d5f7dbd678743135f027c86 100644
-> --- a/drivers/media/platform/qcom/venus/hfi_parser.c
-> +++ b/drivers/media/platform/qcom/venus/hfi_parser.c
-> @@ -303,7 +303,7 @@ u32 hfi_parser(struct venus_core *core, struct venus_inst *inst, void *buf,
->   		memset(core->caps, 0, sizeof(core->caps));
->   	}
->   
-> -	while (words_count) {
-> +	while (words_count > 1) {
->   		data = word + 1;
->   
->   		switch (*word) {
-> 
+On Wed, Oct 30, 2024 at 8:57=E2=80=AFPM Arnd Bergmann <arnd@kernel.org> wro=
+te:
+> From: Arnd Bergmann <arnd@arndb.de>
+>
+> Building without a CPU selected does not work.
+>
+> Change the Kconfig logic slightly to make sure we always pick
+> 68020 if nothing else is enabled. There are still some
+> intentional warnings for builds with all platforms disabled.
+>
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-How is it the right thing to do to _not_ process the last u32 ?
+Reviewed-by: Geert Uytterhoeven <geert@linux-m68k.org>
+i.e. will queue in the m68k tree for v6.13.
 
-How does this overrun ? while (words_count) should be fine because it 
-decrements at the bottom of the loop...
+Gr{oetje,eeting}s,
 
-assuming your buffer is word aligned obvs
+                        Geert
 
-=>
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
 
-#include <stdio.h>
-#include <stdint.h>
-
-char somebuf[64];
-
-void init(char *buf, int len)
-{
-         int i;
-         char c = 0;
-
-         for (i = 0; i < len; i++)
-                 buf[i] = c++;
-}
-
-int hfi_parser(void *buf, int size)
-{
-         int word_count = size >> 2;
-         uint32_t *my_word = (uint32_t*)buf;
-
-         printf("Size %d word_count %d\n", size, word_count);
-
-         while(word_count) {
-                 printf("Myword %d == 0x%08x\n", word_count, *my_word);
-                 my_word++;
-                 word_count--;
-         }
-}
-
-int main(int argc, char *argv[])
-{
-         int i;
-
-         init(somebuf, sizeof(somebuf));
-         for (i = 0; i < sizeof(somebuf); i++)
-                 printf("%x = %x\n", i, somebuf[i]);
-
-         hfi_parser(somebuf, sizeof(somebuf));
-
-         return 0;
-}
-
-0 = 0
-1 = 1
-2 = 2
-3 = 3
-4 = 4
-5 = 5
-6 = 6
-7 = 7
-8 = 8
-9 = 9
-a = a
-b = b
-c = c
-d = d
-e = e
-f = f
-10 = 10
-11 = 11
-12 = 12
-13 = 13
-14 = 14
-15 = 15
-16 = 16
-17 = 17
-18 = 18
-19 = 19
-1a = 1a
-1b = 1b
-1c = 1c
-1d = 1d
-1e = 1e
-1f = 1f
-20 = 20
-21 = 21
-22 = 22
-23 = 23
-24 = 24
-25 = 25
-26 = 26
-27 = 27
-28 = 28
-29 = 29
-2a = 2a
-2b = 2b
-2c = 2c
-2d = 2d
-2e = 2e
-2f = 2f
-30 = 30
-31 = 31
-32 = 32
-33 = 33
-34 = 34
-35 = 35
-36 = 36
-37 = 37
-38 = 38
-39 = 39
-3a = 3a
-3b = 3b
-3c = 3c
-3d = 3d
-3e = 3e
-3f = 3f
-Size 64 word_count 16
-Myword 16 == 0x03020100
-Myword 15 == 0x07060504
-Myword 14 == 0x0b0a0908
-Myword 13 == 0x0f0e0d0c
-Myword 12 == 0x13121110
-Myword 11 == 0x17161514
-Myword 10 == 0x1b1a1918
-Myword 9 == 0x1f1e1d1c
-Myword 8 == 0x23222120
-Myword 7 == 0x27262524
-Myword 6 == 0x2b2a2928
-Myword 5 == 0x2f2e2d2c
-Myword 4 == 0x33323130
-Myword 3 == 0x37363534
-Myword 2 == 0x3b3a3938
-Myword 1 == 0x3f3e3d3c
-
----
-bod
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
