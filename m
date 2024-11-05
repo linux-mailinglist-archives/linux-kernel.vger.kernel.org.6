@@ -1,151 +1,83 @@
-Return-Path: <linux-kernel+bounces-396390-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396380-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D840E9BCC7A
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 13:15:16 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B26B9BCC5C
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 13:08:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9CFEF2837C9
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 12:15:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 291871F2280C
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 12:08:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 738291D517B;
-	Tue,  5 Nov 2024 12:15:10 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36A0F1D47D9;
+	Tue,  5 Nov 2024 12:08:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oNJy8gr/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89CFE1D460E;
-	Tue,  5 Nov 2024 12:15:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95DC31420A8
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 12:08:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730808910; cv=none; b=e1Ahec9oJjySTizeW0HEl9tFzoymdSQ+eLSaNUBOsmno+4196go5XxiTJtpx4ZVVv1TSgCbvIHF10fQnTMpp7WOuqNuDE9hXfiten6oQziVxPsz6lH6rOdWykFs62XDrtwtRVAuOYT4OnMP34rdTAFHF3M5/5WD69ABJGakZSdw=
+	t=1730808529; cv=none; b=cVh6g5sNuEyI5rJi5BaE4e3wupJPU4IwM+L09q1tYuowUnj1RpUZN1635iiwNV8Sq36AgrvEpVFyzA5p3I2r4UZ5uxBPeYN542dvXUgJ40guSMLuARnyKdS8sqt3ZRwx2ft6f/hyjHDXZ6zGBloxqtZcdMWR5YHt/R/6EkLlMbY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730808910; c=relaxed/simple;
-	bh=iXEKC62juvToWzOz9505gScfU3Uf65xMr1hlof+jCq0=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Flb8//efWa8NTeJ4uUZB4GUI76TVQbAivFkce4hzO6LECUCYdouqVr7XHPuBDZ2pCk7KO7jV9OBd+wXosCS2+MTaA7rf7kLckJGEQ+iq3fQPGZONmpdTHdmJzZl7sOsjCkFeHT7k9/NYVj/OUYvNkpXg68kSREcd8J0lngjcatA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=hisilicon.com; spf=pass smtp.mailfrom=hisilicon.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=hisilicon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hisilicon.com
-Received: from mail.maildlp.com (unknown [172.19.162.112])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4XjS0h6FMpz2Fbqc;
-	Tue,  5 Nov 2024 20:13:24 +0800 (CST)
-Received: from kwepemf100018.china.huawei.com (unknown [7.202.181.17])
-	by mail.maildlp.com (Postfix) with ESMTPS id B68511402E2;
-	Tue,  5 Nov 2024 20:15:04 +0800 (CST)
-Received: from localhost.localdomain (10.90.30.45) by
- kwepemf100018.china.huawei.com (7.202.181.17) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 5 Nov 2024 20:15:04 +0800
-From: Junxian Huang <huangjunxian6@hisilicon.com>
-To: <dennis.dalessandro@cornelisnetworks.com>, <jgg@ziepe.ca>,
-	<leon@kernel.org>
-CC: <linux-rdma@vger.kernel.org>, <linuxarm@huawei.com>,
-	<linux-kernel@vger.kernel.org>, <tangchengchang@huawei.com>,
-	<huangjunxian6@hisilicon.com>
-Subject: [PATCH for-next 2/2] RDMA: Delete NULL pointer checks for sg_offset in .map_mr_sg ops
-Date: Tue, 5 Nov 2024 20:08:41 +0800
-Message-ID: <20241105120841.860068-3-huangjunxian6@hisilicon.com>
-X-Mailer: git-send-email 2.30.0
-In-Reply-To: <20241105120841.860068-1-huangjunxian6@hisilicon.com>
-References: <20241105120841.860068-1-huangjunxian6@hisilicon.com>
+	s=arc-20240116; t=1730808529; c=relaxed/simple;
+	bh=3+foXM8xnS1OpF+Uo1xDiYRy/9Ln0IAUnPhy9K09zho=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ih+zI/LZ6Zb4xqE4LW07C1xwACeUg+E18NAabFPYh/MzUX6ATZJNaHpJ+lgzE3Durgu27ZsSqni96K/JMOgPaNnHYaG34Qfb4V4sNqM3rlZUb9/IJq8gx/Gy/92GwZBrR1BbaI7dbqi1pnKVYnFjn8ubzVJDQyLiB+pvOSb9Tzg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oNJy8gr/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B54EC4CECF;
+	Tue,  5 Nov 2024 12:08:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730808529;
+	bh=3+foXM8xnS1OpF+Uo1xDiYRy/9Ln0IAUnPhy9K09zho=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=oNJy8gr/2r8QgMgKseNovWnEbtZBUhMLlygYbpMPDBcIYq/bwp2X3JIpmTChv0dgp
+	 +GMFwAYeB1WVW/z1cwOQ9fzwWd1I663vJizP9uDNLasfY9ZjYQ4WZMurWo+DHacLFa
+	 SewT/uKmKWGGZKydeAH2cp/tNr2gs2qxbAaO/+B1MQMbxv+j8tHjIJuCF5QF2NQRIK
+	 DaX0oafocXAy8pxLeZSaslnd4rMBidjEZl7R5XCF6fhRthNy7SdKQq+1QPru3xBS4g
+	 2YO2gDJPK+INnoyANQ1Wv9D0zMAFvZiyu3/BHmrB9q1OWxU1ERfaS+PKEk7sz4N7Q1
+	 WWh67vpQijyQA==
+Date: Tue, 5 Nov 2024 13:08:45 +0100
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+	Anna-Maria Behnsen <anna-maria@linutronix.de>,
+	John Stultz <jstultz@google.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+	Eric Biederman <ebiederm@xmission.com>,
+	Oleg Nesterov <oleg@redhat.com>
+Subject: Re: [patch V7 11/21] signal: Replace resched_timer logic
+Message-ID: <ZyoKzeOWHmZLmWP4@2a01cb09803abb1ce3ad97aed0fef98f.ipv6.abo.wanadoo.fr>
+References: <20241105063544.565410398@linutronix.de>
+ <20241105064213.652658158@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- kwepemf100018.china.huawei.com (7.202.181.17)
+In-Reply-To: <20241105064213.652658158@linutronix.de>
 
-Since we can now ensure that the sg_offset/data_sg_offset/meta_sg_offset
-arguments are valid pointer, NULL pointer checks in drivers are no longer
-needed.
+Le Tue, Nov 05, 2024 at 09:14:43AM +0100, Thomas Gleixner a écrit :
+> From: Thomas Gleixner <tglx@linutronix.de>
+> 
+> In preparation for handling ignored posix timer signals correctly and
+> embedding the sigqueue struct into struct k_itimer, hand down a pointer to
+> the sigqueue struct into posix_timer_deliver_signal() instead of just
+> having a boolean flag.
+> 
+> No functional change.
+> 
+> Suggested-by: Eric W. Biederman <ebiederm@xmission.com>
+> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+> Acked-by: "Eric W. Biederman" <ebiederm@xmission.com>
 
-Signed-off-by: Junxian Huang <huangjunxian6@hisilicon.com>
----
- drivers/infiniband/hw/mlx5/mr.c         | 18 ++++++------------
- drivers/infiniband/sw/rdmavt/trace_mr.h |  2 +-
- 2 files changed, 7 insertions(+), 13 deletions(-)
-
-diff --git a/drivers/infiniband/hw/mlx5/mr.c b/drivers/infiniband/hw/mlx5/mr.c
-index 45d9dc9c6c8f..f119078ca671 100644
---- a/drivers/infiniband/hw/mlx5/mr.c
-+++ b/drivers/infiniband/hw/mlx5/mr.c
-@@ -2545,17 +2545,13 @@ mlx5_ib_map_pa_mr_sg_pi(struct ib_mr *ibmr, struct scatterlist *data_sg,
- 	if (data_sg_nents == 1) {
- 		n++;
- 		mr->mmkey.ndescs = 1;
--		if (data_sg_offset)
--			sg_offset = *data_sg_offset;
-+		sg_offset = *data_sg_offset;
- 		mr->data_length = sg_dma_len(data_sg) - sg_offset;
- 		mr->data_iova = sg_dma_address(data_sg) + sg_offset;
- 		if (meta_sg_nents == 1) {
- 			n++;
- 			mr->meta_ndescs = 1;
--			if (meta_sg_offset)
--				sg_offset = *meta_sg_offset;
--			else
--				sg_offset = 0;
-+			sg_offset = *meta_sg_offset;
- 			mr->meta_length = sg_dma_len(meta_sg) - sg_offset;
- 			mr->pi_iova = sg_dma_address(meta_sg) + sg_offset;
- 		}
-@@ -2576,7 +2572,7 @@ mlx5_ib_sg_to_klms(struct mlx5_ib_mr *mr,
- {
- 	struct scatterlist *sg = sgl;
- 	struct mlx5_klm *klms = mr->descs;
--	unsigned int sg_offset = sg_offset_p ? *sg_offset_p : 0;
-+	unsigned int sg_offset = *sg_offset_p;
- 	u32 lkey = mr->ibmr.pd->local_dma_lkey;
- 	int i, j = 0;
- 
-@@ -2594,15 +2590,14 @@ mlx5_ib_sg_to_klms(struct mlx5_ib_mr *mr,
- 		sg_offset = 0;
- 	}
- 
--	if (sg_offset_p)
--		*sg_offset_p = sg_offset;
-+	*sg_offset_p = sg_offset;
- 
- 	mr->mmkey.ndescs = i;
- 	mr->data_length = mr->ibmr.length;
- 
- 	if (meta_sg_nents) {
- 		sg = meta_sgl;
--		sg_offset = meta_sg_offset_p ? *meta_sg_offset_p : 0;
-+		sg_offset = *meta_sg_offset_p;
- 		for_each_sg(meta_sgl, sg, meta_sg_nents, j) {
- 			if (unlikely(i + j >= mr->max_descs))
- 				break;
-@@ -2615,8 +2610,7 @@ mlx5_ib_sg_to_klms(struct mlx5_ib_mr *mr,
- 
- 			sg_offset = 0;
- 		}
--		if (meta_sg_offset_p)
--			*meta_sg_offset_p = sg_offset;
-+		*meta_sg_offset_p = sg_offset;
- 
- 		mr->meta_ndescs = j;
- 		mr->meta_length = mr->ibmr.length - mr->data_length;
-diff --git a/drivers/infiniband/sw/rdmavt/trace_mr.h b/drivers/infiniband/sw/rdmavt/trace_mr.h
-index 0cb8e0a0565e..6f4c70480d34 100644
---- a/drivers/infiniband/sw/rdmavt/trace_mr.h
-+++ b/drivers/infiniband/sw/rdmavt/trace_mr.h
-@@ -159,7 +159,7 @@ TRACE_EVENT(
- 		__entry->user_base = to_imr(ibmr)->mr.user_base;
- 		__entry->ibmr_length = to_imr(ibmr)->mr.length;
- 		__entry->sg_nents = sg_nents;
--		__entry->sg_offset = sg_offset ? *sg_offset : 0;
-+		__entry->sg_offset = *sg_offset;
- 	),
- 	TP_printk(
- 		"[%s] ibmr_iova %llx iova %llx user_base %llx length %llx sg_nents %d sg_offset %u",
--- 
-2.33.0
-
+Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
 
