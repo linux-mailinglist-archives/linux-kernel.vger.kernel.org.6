@@ -1,174 +1,310 @@
-Return-Path: <linux-kernel+bounces-395737-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395739-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6783B9BC23E
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 01:58:38 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E28D9BC242
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 02:01:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E7BD61F2296C
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 00:58:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 962111C224BF
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 01:01:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3125C17C8B;
-	Tue,  5 Nov 2024 00:58:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2C6C17578;
+	Tue,  5 Nov 2024 01:01:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="RxYvmMZO"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g0xk4+5d"
+Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com [209.85.222.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3D4CDF5C;
-	Tue,  5 Nov 2024 00:58:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8D5F225D7
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 01:01:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730768308; cv=none; b=Og0lOrrCDxSagWxgMsy6MxgHV3EIBUn2rhh94FWsbPSQCx6oZ7Hqd/c3FGVGPtpz6laifsRho2WkeK/3qPGS+jD5EfhK1TwtSXwVYJN5SGZZpX2xwiQx3zx1C9EO/s6zcgCGCKYTOoavl0u8NcbkwLj/MTtSevI5C7EjohB7zPs=
+	t=1730768507; cv=none; b=kV3aiwHpOO3d5xfXGVword05mnK6RbYFZNiHDovge+48DxCeLhoHcIhjKMiFwbIzbxp/NgzMoVZzP58zLle+AEWZq+AhAs2A58kxfKECkgZk3igHYvQiOGl8Hc4RoqwAsJI8s2vpAPvtuNXlV+yC35HeNceJCVk2PdhHeoujBds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730768308; c=relaxed/simple;
-	bh=8HpIzpr8QQrsiK3rCz7mOPHzonGBwf+dtMEHHOXHVJo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=S1Dk2lkXNCZQBdTtvetPVtWwSBCE+bZTRqf1f7tlnaw1B7BtxkiAFnlnivDxBOVt32cp45pvrSsT7LjVB0i4WeAlwm1KM5LoPq6DB6ZC1YGzPaH9k2lb91s4YTpcpngmzj3oMpxolEpVWXuxt6pOzwn0vqnHslQ26qymvWR9fuY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=RxYvmMZO; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A4LIxSM001479;
-	Tue, 5 Nov 2024 00:58:19 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	thFT9R4zawQwXZDNXsi0vhiGW8TpNWoJBJ1cYQq1QF0=; b=RxYvmMZObB4ufg8q
-	P3WOfZA46hsW6Hv0zDtq9v69t8iGbkXbvebFPGTgtvGZaI+9SEA1IAtXEYRC1JDJ
-	D3EyS1JF3lzVAFafXmG7d25DgzDTOv90N5t8Q/KAZQuqOz1U2yy+YJfNhYiBGAk6
-	DcSWKPBaTAFdYzkb1AxX2Rd08EhYWCDUjre/A4DqQUMLeOo44nqyXZZJXWGUetrF
-	3r1uDejHM5c2IZqGTUvQk7eqQDoJiSiATzoTreyn5/MOo7atGcuCXnjvusWfZgFR
-	RiyQtKoIN1DbsEB0CCyZYT/CTeCNe0FHVmyeGgPMOyQ93YsC0l/Bb80m0P0T08oS
-	awaM0A==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42nd2s5w3n-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 05 Nov 2024 00:58:18 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4A50wHqn028893
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 5 Nov 2024 00:58:17 GMT
-Received: from [10.64.68.153] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 4 Nov 2024
- 16:58:13 -0800
-Message-ID: <9591930f-6ead-46d1-9dbb-114f2310f5f4@quicinc.com>
-Date: Tue, 5 Nov 2024 08:58:10 +0800
+	s=arc-20240116; t=1730768507; c=relaxed/simple;
+	bh=z5YGSDgvGB6bpjwsvQKMjvGcOCAtkEUyrxCrVB3VJZs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fq69mh1SyCNy/mfvlgcsol1xKlXgZkbJd4nBNUOHXlLM3vRwImoEq+PB0V9eax7XH186VwK3OrveMOSQMPZG0rG5g+sfu1mTwNtJbozhlO4qRE9UjDWsk+yd1QmET2uUN8xP2zKLHb0S5He+RotAZI4FZUv8nsl0+H33WMKwFc4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g0xk4+5d; arc=none smtp.client-ip=209.85.222.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f181.google.com with SMTP id af79cd13be357-7b15467f383so351288785a.3
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 17:01:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730768503; x=1731373303; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Or9PsYziaZUPWqGCBJkZi+Ijw9yEk7z687OLKIoWH48=;
+        b=g0xk4+5dF/9rBDVVkrRK4E3XNnf9wiI8Aw+TOKdfHKnAhkE2Xe25Vh0oI7VcggMzBn
+         0c471/dyQ8Asd/CIMWNM3d1YeFhCUGi9gDILQVVzzxFzXBWMuwEZG7YognrIX9J7IiBQ
+         0CkSF27P4RmYglaftGz/Cwv9k8k3pmOsMQ2qs6pbDJ8LPv41NZBpnhSFPospCUUTxam7
+         iXKgdW8T/Lb3cnnhIWYmwpmNs1xko0eSjpLZCGwGiR2o21hUDQGfA5u9hef81XTZGJm6
+         eSmSQDvymU7oauEzaERrFBH4uNV3l3Evh/7DciZpF4/00c8PwcVr6jX1vY8J2X8Ozk+t
+         mssQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730768503; x=1731373303;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Or9PsYziaZUPWqGCBJkZi+Ijw9yEk7z687OLKIoWH48=;
+        b=YbkzPkxNUA/yjxx6vmPC5GVZ3jRJGCFdWAkrPJuKCQIvMn9vuNzbiCad+fbgqfF8cz
+         7Rc1cb5ZZGAQAatlQ89EEBJMnAKp052/fw/LyR+sVD1TtpwRFmKBA03p2SQHw6hpq+UK
+         qPDOzfBcWJ8/iCcOsnPORIz5XFxWtXdztIIV/C+dLUilvrG3q5YmreLNS5QCxSLRx2XE
+         eFhB55FG/L0xzPV0tlwHoI4xXlGcGzGEPYqyt/Q4rpJ+uYTTl9psbBWhOByHcnNs6hKB
+         oCK6mbKx/qE/WO38DHpa/TkBN90SUVRmyp6Z9a2lqe02aVBfoT7N9znFfzvK3IXkejur
+         n6zA==
+X-Forwarded-Encrypted: i=1; AJvYcCU2GbaVIrMp43iULcrHLVG2Jo0S+4UXmwRr2M8iH900FQlOCKqvlXqbfvvI0KcDaza0ZNtWb+gYNMktiq4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz7UcjPr0l7Cj09aX0L6hJpf5C9LjBjgwxeGXdv4+IDZuCoaphO
+	zAk61Ru9j3owJ8+0hMP5/bSoFuvnA160L6TRFMJUwqSyM1J+DKql
+X-Google-Smtp-Source: AGHT+IHUQLFQhGnW6z5+2fS8VC3gI8vNmXoG9HSaPHonVhDHsgyMTXfrKv8FpWKgWCNNgdeDonnt6g==
+X-Received: by 2002:a05:620a:28c4:b0:7b1:5346:e72d with SMTP id af79cd13be357-7b2f24dd7c6mr2557316485a.23.1730768503394;
+        Mon, 04 Nov 2024 17:01:43 -0800 (PST)
+Received: from fauth-a1-smtp.messagingengine.com (fauth-a1-smtp.messagingengine.com. [103.168.172.200])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b2f3a868dasm472211985a.121.2024.11.04.17.01.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 04 Nov 2024 17:01:42 -0800 (PST)
+Received: from phl-compute-02.internal (phl-compute-02.phl.internal [10.202.2.42])
+	by mailfauth.phl.internal (Postfix) with ESMTP id 2229B1200043;
+	Mon,  4 Nov 2024 20:01:42 -0500 (EST)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-02.internal (MEProxy); Mon, 04 Nov 2024 20:01:42 -0500
+X-ME-Sender: <xms:dm4pZ-XEOH2HKjiFpRQQLfcREpxc9fysqdObu-4bc7J7dcvWZWzNrA>
+    <xme:dm4pZ6mvI7Pj8-wZMvczPvCl8PAGOoQ8RBpxQPnT8Um-UqBKOQRcHG4tCZye530-b
+    4kNc90prQjKXhbSKg>
+X-ME-Received: <xmr:dm4pZyb5L8srqyBwwIfvOxjI_JH2Z0OCZskiCKM_X-rqfL-JdA015t6CRlys_Q>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdeljedgfedtucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvden
+    ucfhrhhomhepuehoqhhunhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrd
+    gtohhmqeenucggtffrrghtthgvrhhnpefhtedvgfdtueekvdekieetieetjeeihedvteeh
+    uddujedvkedtkeefgedvvdehtdenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuve
+    hluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsghoqhhunhdo
+    mhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthidqieelvdeghedtieegqddujeejke
+    ehheehvddqsghoqhhunhdrfhgvnhhgpeepghhmrghilhdrtghomhesfhhigihmvgdrnhgr
+    mhgvpdhnsggprhgtphhtthhopedujedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoh
+    epsghighgvrghshieslhhinhhuthhrohhnihigrdguvgdprhgtphhtthhopehprghulhhm
+    tghksehkvghrnhgvlhdrohhrghdprhgtphhtthhopehvsggrsghkrgesshhushgvrdgtii
+    dprhgtphhtthhopegvlhhvvghrsehgohhoghhlvgdrtghomhdprhgtphhtthhopehlihhn
+    uhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehkrg
+    hsrghnqdguvghvsehgohhoghhlvghgrhhouhhpshdrtghomhdprhgtphhtthhopehlihhn
+    uhigqdhmmheskhhvrggtkhdrohhrghdprhgtphhtthhopehsfhhrsegtrghnsgdrrghuuh
+    hgrdhorhhgrdgruhdprhgtphhtthhopehlohhnghhmrghnsehrvgguhhgrthdrtghomh
+X-ME-Proxy: <xmx:dm4pZ1WlMIWEVGiCuOYM-VF9oO2USd01U_CU4bS_U_nsi_ALnUfuhw>
+    <xmx:dm4pZ4mH4MZS8TscmbX-MB4OJn-3Dv9z9iqVxwg69aWNskoeDvv56Q>
+    <xmx:dm4pZ6dnkahyC-Ypo8e9-3Os6595Oij9nZJMoi8vVySIaJu6xMORUA>
+    <xmx:dm4pZ6G9mjup8-HInUX6L3FVJeBoQUfVQtgBS_KlGYFh9Ci8yOSd3A>
+    <xmx:dm4pZ2kwXt4AIdKLZretNzMT_-5Ry-GWhSp3eVK4c---SOLCIKrG5lH6>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 4 Nov 2024 20:01:41 -0500 (EST)
+Date: Mon, 4 Nov 2024 17:00:19 -0800
+From: Boqun Feng <boqun.feng@gmail.com>
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: "Paul E. McKenney" <paulmck@kernel.org>,
+	Vlastimil Babka <vbabka@suse.cz>, Marco Elver <elver@google.com>,
+	linux-kernel@vger.kernel.org, kasan-dev@googlegroups.com,
+	linux-mm@kvack.org, sfr@canb.auug.org.au, longman@redhat.com,
+	cl@linux.com, penberg@kernel.org, rientjes@google.com,
+	iamjoonsoo.kim@lge.com, akpm@linux-foundation.org,
+	Tomas Gleixner <tglx@linutronix.de>,
+	Peter Zijlstra <peterz@infradead.org>
+Subject: Re: [PATCH 2/2] scftorture: Use a lock-less list to free memory.
+Message-ID: <ZyluI0A-LSvvbBb9@boqun-archlinux>
+References: <88694240-1eea-4f4c-bb7b-80de25f252e7@paulmck-laptop>
+ <20241104105053.2182833-1-bigeasy@linutronix.de>
+ <20241104105053.2182833-2-bigeasy@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: dts: qcom: Add coresight nodes for QCS615
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        Tingwei Zhang <quic_tingweiz@quicinc.com>,
-        Jinlong Mao
-	<quic_jinlmao@quicinc.com>,
-        Tao Zhang <quic_taozha@quicinc.com>
-References: <20241017030005.893203-1-quic_jiegan@quicinc.com>
- <69be09ec-e9a5-4fb6-890e-74a65f3ce404@oss.qualcomm.com>
- <3f90b3d6-9637-47b7-ad8a-ff43cb28ad32@quicinc.com>
- <e263d461-9e2b-4ffe-8221-cd9ecdd142c9@quicinc.com>
- <a41e3aeb-43b9-49c0-8243-29a78a3b1602@oss.qualcomm.com>
-Content-Language: en-US
-From: Jie Gan <quic_jiegan@quicinc.com>
-In-Reply-To: <a41e3aeb-43b9-49c0-8243-29a78a3b1602@oss.qualcomm.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 8XpJwqKuY7iMpw8mz6MBWuYrp6i_-Pvz
-X-Proofpoint-GUID: 8XpJwqKuY7iMpw8mz6MBWuYrp6i_-Pvz
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0
- lowpriorityscore=0 mlxlogscore=999 clxscore=1015 suspectscore=0
- adultscore=0 priorityscore=1501 bulkscore=0 mlxscore=0 malwarescore=0
- spamscore=0 impostorscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2409260000 definitions=main-2411050005
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241104105053.2182833-2-bigeasy@linutronix.de>
 
+Hi Sebastian,
 
+I love this approach, I think it's better than my workqueue work around,
+a few comments below:
 
-On 11/4/2024 10:11 PM, Konrad Dybcio wrote:
-> On 28.10.2024 3:53 AM, Jie Gan wrote:
->>
->>
->> On 10/28/2024 8:54 AM, Jie Gan wrote:
->>>
->>>
->>> On 10/26/2024 2:47 AM, Konrad Dybcio wrote:
->>>> On 17.10.2024 5:00 AM, Jie Gan wrote:
->>>>> Add following coresight components on QCS615, EUD, TMC/ETF, TPDM, dynamic
->>>>> Funnel, TPDA, Replicator and ETM.
->>>>>
->>>>> Signed-off-by: Jie Gan <quic_jiegan@quicinc.com>
->>>>> ---
->>>>> Already checked by command:dtbs_check W=1.
->>>>>
->>>>> Dependencies:
->>>>> 1. Depends on qcs615 base dtsi change:
->>>>> https://lore.kernel.org/all/20240926-add_initial_support_for_qcs615- v3-5-e37617e91c62@quicinc.com/
->>>>> 2. Depends on qcs615 AOSS_QMP change:
->>>>> https://lore.kernel.org/linux-arm-msm/20241017025313.2028120-4- quic_chunkaid@quicinc.com/
->>>>> ---
->>>>>    arch/arm64/boot/dts/qcom/qcs615.dtsi | 1632 ++++++++++++++++++++++++++
->>>>>    1 file changed, 1632 insertions(+)
->>>>>
->>>>> diff --git a/arch/arm64/boot/dts/qcom/qcs615.dtsi b/arch/arm64/boot/ dts/qcom/qcs615.dtsi
->>>>> index 856b40e20cf3..87cca5de018e 100644
->>>>> --- a/arch/arm64/boot/dts/qcom/qcs615.dtsi
->>>>> +++ b/arch/arm64/boot/dts/qcom/qcs615.dtsi
->>>>> @@ -202,6 +202,18 @@ l3_0: l3-cache {
->>>>>            };
->>>>>        };
->>>>> +    dummy_eud: dummy_sink {
->>>>
->>>> Node names (after the ':' and before the '{' signs) can't contain
->>>> underscores, use '-' instead.
->>> Sure, will fix it.
->>>
->>>>
->>>> [...]
->>>>
->>>>> +        stm@6002000 {
->>>>> +            compatible = "arm,coresight-stm", "arm,primecell";
->>>>> +            reg = <0x0 0x6002000 0x0 0x1000>,
->>>>
->>>> Please pad the non-zero address part to 8 hex digits with leading
->>>> zeroes, across the board
->>> Will fix it.
->>>
->>>>
->>>> This looks like a lot of nodes, all enabled by default. Will this run
->>>> on a production-fused device?
->>> Yes, usually Coresight nodes are enabled by default. Those nodes can run on the commercial devices.
->> Sorry, my last clarification is not clearly. The Coresight nodes are enabled by default for commercial devices(fused), but only part of functions can run with commercial devices because it needs check fuse data before running.
->>
->> If we want enable all debug functions related to coresight nodes on commercial devices, we need APDP override(APPS debug policy override) procedure first. The APDP override procedure will override some fuse data to allow debug sessions.
+On Mon, Nov 04, 2024 at 11:50:53AM +0100, Sebastian Andrzej Siewior wrote:
+> scf_handler() is used as a SMP function call. This function is always
+> invoked in IRQ-context even with forced-threading enabled. This function
+> frees memory which not allowed on PREEMPT_RT because the locking
+> underneath is using sleeping locks.
 > 
-> In other words, will a production fused device boot with this patch
-> applied?
+> Add a per-CPU scf_free_pool where each SMP functions adds its memory to
+> be freed. This memory is then freed by scftorture_invoker() on each
+> iteration. On the majority of invocations the number of items is less
+> than five. If the thread sleeps/ gets delayed the number exceed 350 but
+> did not reach 400 in testing. These were the spikes during testing.
+> The bulk free of 64 pointers at once should improve the give-back if the
+> list grows. The list size is ~1.3 items per invocations.
 > 
-Yes, a fused device can boot with this patch.
+> Having one global scf_free_pool with one cleaning thread let the list
+> grow to over 10.000 items with 32 CPUs (again, spikes not the average)
+> especially if the CPU went to sleep. The per-CPU part looks like a good
+> compromise.
+> 
+> Reported-by: "Paul E. McKenney" <paulmck@kernel.org>
+> Closes: https://lore.kernel.org/lkml/41619255-cdc2-4573-a360-7794fc3614f7@paulmck-laptop/
+> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+> ---
+>  kernel/scftorture.c | 47 +++++++++++++++++++++++++++++++++++++++++----
+>  1 file changed, 43 insertions(+), 4 deletions(-)
+> 
+> diff --git a/kernel/scftorture.c b/kernel/scftorture.c
+> index e5546fe256329..ba9f1125821b8 100644
+> --- a/kernel/scftorture.c
+> +++ b/kernel/scftorture.c
+> @@ -97,6 +97,7 @@ struct scf_statistics {
+>  static struct scf_statistics *scf_stats_p;
+>  static struct task_struct *scf_torture_stats_task;
+>  static DEFINE_PER_CPU(long long, scf_invoked_count);
+> +static DEFINE_PER_CPU(struct llist_head, scf_free_pool);
+>  
+>  // Data for random primitive selection
+>  #define SCF_PRIM_RESCHED	0
+> @@ -133,6 +134,7 @@ struct scf_check {
+>  	bool scfc_wait;
+>  	bool scfc_rpc;
+>  	struct completion scfc_completion;
+> +	struct llist_node scf_node;
+>  };
+>  
+>  // Use to wait for all threads to start.
+> @@ -148,6 +150,40 @@ static DEFINE_TORTURE_RANDOM_PERCPU(scf_torture_rand);
+>  
+>  extern void resched_cpu(int cpu); // An alternative IPI vector.
+>  
+> +static void scf_add_to_free_list(struct scf_check *scfcp)
+> +{
+> +	struct llist_head *pool;
+> +	unsigned int cpu;
+> +
+> +	cpu = raw_smp_processor_id() % nthreads;
+> +	pool = &per_cpu(scf_free_pool, cpu);
+> +	llist_add(&scfcp->scf_node, pool);
+> +}
+> +
+> +static void scf_cleanup_free_list(unsigned int cpu)
+> +{
+> +	struct llist_head *pool;
+> +	struct llist_node *node;
+> +	struct scf_check *scfcp;
+> +	unsigned int slot = 0;
+> +	void *free_pool[64];
+> +
+> +	pool = &per_cpu(scf_free_pool, cpu);
+> +	node = llist_del_all(pool);
+> +	while (node) {
+> +		scfcp = llist_entry(node, struct scf_check, scf_node);
+> +		node = node->next;
+> +		free_pool[slot] = scfcp;
+> +		slot++;
+> +		if (slot == ARRAY_SIZE(free_pool)) {
+> +			kfree_bulk(slot, free_pool);
+> +			slot = 0;
+> +		}
+> +	}
+> +	if (slot)
+> +		kfree_bulk(slot, free_pool);
+> +}
+> +
+>  // Print torture statistics.  Caller must ensure serialization.
+>  static void scf_torture_stats_print(void)
+>  {
+> @@ -296,7 +332,7 @@ static void scf_handler(void *scfc_in)
+>  		if (scfcp->scfc_rpc)
+>  			complete(&scfcp->scfc_completion);
+>  	} else {
+> -		kfree(scfcp);
+> +		scf_add_to_free_list(scfcp);
+>  	}
+>  }
+>  
+> @@ -363,7 +399,7 @@ static void scftorture_invoke_one(struct scf_statistics *scfp, struct torture_ra
+>  				scfp->n_single_wait_ofl++;
+>  			else
+>  				scfp->n_single_ofl++;
+> -			kfree(scfcp);
+> +			scf_add_to_free_list(scfcp);
+>  			scfcp = NULL;
+>  		}
+>  		break;
+> @@ -391,7 +427,7 @@ static void scftorture_invoke_one(struct scf_statistics *scfp, struct torture_ra
+>  				preempt_disable();
+>  		} else {
+>  			scfp->n_single_rpc_ofl++;
+> -			kfree(scfcp);
+> +			scf_add_to_free_list(scfcp);
+>  			scfcp = NULL;
+>  		}
+>  		break;
+> @@ -428,7 +464,7 @@ static void scftorture_invoke_one(struct scf_statistics *scfp, struct torture_ra
+>  			pr_warn("%s: Memory-ordering failure, scfs_prim: %d.\n", __func__, scfsp->scfs_prim);
+>  			atomic_inc(&n_mb_out_errs); // Leak rather than trash!
+>  		} else {
+> -			kfree(scfcp);
+> +			scf_add_to_free_list(scfcp);
+>  		}
+>  		barrier(); // Prevent race-reduction compiler optimizations.
+>  	}
+> @@ -442,6 +478,7 @@ static void scftorture_invoke_one(struct scf_statistics *scfp, struct torture_ra
+>  		schedule_timeout_uninterruptible(1);
+>  }
+>  
+> +
+>  // SCF test kthread.  Repeatedly does calls to members of the
+>  // smp_call_function() family of functions.
+>  static int scftorture_invoker(void *arg)
+> @@ -479,6 +516,8 @@ static int scftorture_invoker(void *arg)
+>  	VERBOSE_SCFTORTOUT("scftorture_invoker %d started", scfp->cpu);
+>  
+>  	do {
+> +		scf_cleanup_free_list(scfp->cpu);
+> +
 
-Thanks,
-Jie
+I think this needs to be:
 
+		scf_cleanup_free_list(cpu);
+
+or
+
+		scf_cleanup_free_list(curcpu);
+
+because scfp->cpu is actually the thread number, and I got a NULL
+dereference:
+
+[   14.219225] BUG: unable to handle page fault for address: ffffffffb2ff7210
+
+while running Paul's reproduce command:
+
+tools/testing/selftests/rcutorture/bin/kvm.sh --torture scf --allcpus --duration 2 --configs PREEMPT --kconfig CONFIG_NR_CPUS=64 --memory 7G --trust-make --kasan --bootargs "scftorture.nthreads=64 torture.disable_onoff_at_boot csdlock_debug=1"
+
+on my 48 cores VM (I think 48 core may be key to reproduce the NULL
+dereference).
+
+
+Another thing is, how do we guarantee that we don't exit the loop
+eariler (i.e. while there are still callbacks on the list)? After the
+following scftorture_invoke_one(), there could an IPI pending somewhere,
+and we may exit this loop if torture_must_stop() is true. And that IPI
+might add its scf_check to the list but no scf_cleanup_free_list() is
+going to handle that, right?
+
+Regards,
+Boqun
+
+>  		scftorture_invoke_one(scfp, &rand);
+>  		while (cpu_is_offline(cpu) && !torture_must_stop()) {
+>  			schedule_timeout_interruptible(HZ / 5);
+> -- 
+> 2.45.2
+> 
 
