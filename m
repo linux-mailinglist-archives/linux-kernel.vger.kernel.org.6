@@ -1,262 +1,202 @@
-Return-Path: <linux-kernel+bounces-396210-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396211-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C9BD9BC962
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 10:36:50 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F9C09BC964
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 10:37:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6451FB21B3C
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 09:36:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D3B122855B5
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 09:37:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58DA11D0F5F;
-	Tue,  5 Nov 2024 09:36:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 769471D1E72;
+	Tue,  5 Nov 2024 09:36:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="O1UoGCJh"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WYaD0QV0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDA3F18132A
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 09:36:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD60C1C9B81;
+	Tue,  5 Nov 2024 09:36:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730799387; cv=none; b=qwjVPSrxNxGOz9aqajpo8uhtZQMMiJLpuFDLYzIaoHwt4uamM47Mp78lUjzV2l/aW6tnsGx+as0NBfmGDnIk0twbDOIrObgX+NPkfqQEudDT3GsCV71yR28CGu7YZtmhtV0QAvg7XcAGhk+AQS4iFjjnQEcafv3zKTECQUIEKHY=
+	t=1730799397; cv=none; b=U7NOPyTgNYXsDQ3vzP/mgTbbqjcTOQG1C+dKf1BBQXf+KeoV3GuXzA7WhhTVxAqnGKyctVR45+YSRCMXzeYKdVgMm6JG4g2aqKVxdZcmXJ8jZzAyA6dOM5TyLGl/MVQqeeWqWpbtOfHWEze2zr9JGF0XZ7JREm+TNMM+DOBMS9A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730799387; c=relaxed/simple;
-	bh=HK61foKF9sfhHn911lfsPH3oJNxHw0IxahFyjACuxXo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=saWLRYLqnSm1ll1VXkh+Qu9TzUmd+Ly6KBj25U2eTjjBDx0EO+PsfXlmAMYlH5bbqSdgOFliGbOLM40O4JRs37bPlonAFA/sKMz8WSU3g2tBxzt/IEDj7YglzEFhHsFojMxKyxZby9ZBB8VpJKRsDb9agHd+sZfEB8ejw+PnyEI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=O1UoGCJh; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1730799384;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PnbUshi+Btrnsiq2772uBIQUdGC3j4HTKK/alQkcEt8=;
-	b=O1UoGCJhrxHdaF47dl0MrA57GF+YbfqA3WcHgZg7hLmvNrCQxzZl3+swBrhYgn3k3O1Fhl
-	faiyPRngxguqzsDYJ+sOohnJu/jp2BIknciUIiQiDdFdaQVhujApwXgmJCTTOboYXjNoMe
-	DdO+7qO375E7tbe6uAYnkKFBzv+EqrY=
-Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com
- [209.85.216.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-439-KtGbf_z2Oee0eDUZFqOtxQ-1; Tue, 05 Nov 2024 04:36:23 -0500
-X-MC-Unique: KtGbf_z2Oee0eDUZFqOtxQ-1
-Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-2e2fc2b1ce1so5405265a91.0
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 01:36:23 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730799382; x=1731404182;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=PnbUshi+Btrnsiq2772uBIQUdGC3j4HTKK/alQkcEt8=;
-        b=TGWCXZDC0JYQHWeCafutvBcjzulvkUBlv629zA+wlPkiMNBCWb0cAhNmaJKBN1bpGq
-         Zn0FkLxD5F9hEE016wxr+8t0YE9X9cJOyf+oYrblDtgkfDm0Q5OZ2K5wHoajHb+0n1nb
-         Rkz8wv3JNsg+Iq6Atq6jJVhXAohYDRR+pvRSUh5YTUJISjeQL8novy0RlY0MMu5TSOs0
-         94wxln+Z8/4ZZDRrDkVNqHF2W9VvApgfEOZez9goGx4kuuaqwc2rVsxWhCF2TZ/6zDeM
-         TSoDYxXRNvotZ0iztI/y5CEQrjyzAabBJrKwiKZHQhjcEMuvHZOjc2UDqkshrfCdZYk5
-         TQZg==
-X-Forwarded-Encrypted: i=1; AJvYcCVaEf+SlrbvL8FXC6tXSjJM4TQ9L0uNiWrbx3/gP+aLG1/lxXu6dwPyXVDlZev4yX6UoFP19fucMtGHv28=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxOT8ltbSLfPxw4kUID3E5sPMlEutiOPZPUDovi1zQlzCcdI0iw
-	ZUzLrLgPlM1YWl2F7YSDLiQj9VzweEgdeeJjIFdLBuu3ENktmTFJNCzbcU4ZuwX4ZehQXD+m3tA
-	HStB8X0Jg/IJdIHe3QUJsIJs+akevxkMqilQrnl0mhMnBtqlkHrUNKeFqRxgb3z2eG55Btzhpl6
-	PEt1v4Gn6HDzCPDWfIQy9INBEHDceoq9Oq7ELP
-X-Received: by 2002:a17:90a:7c06:b0:2e0:921a:3383 with SMTP id 98e67ed59e1d1-2e92ce2e140mr28075380a91.1.1730799382280;
-        Tue, 05 Nov 2024 01:36:22 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFJg2fGkDrPlr2g7lZBsioz2F06wiAP/oru+C0TIQLdkUIHO4sELJOq1Pr2P31GnsK5t0S2801xgDQ+dR9Kfek=
-X-Received: by 2002:a17:90a:7c06:b0:2e0:921a:3383 with SMTP id
- 98e67ed59e1d1-2e92ce2e140mr28075363a91.1.1730799381807; Tue, 05 Nov 2024
- 01:36:21 -0800 (PST)
+	s=arc-20240116; t=1730799397; c=relaxed/simple;
+	bh=65DAp6NgqhKj3zhKuiPXT1PINeTeLz5zEtrhqyY5Jpk=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=jOTBgEhsOS/0HSVIrm9HhVSkvMv6u/fbeXvHd1xjAVJBhaBU4JWo6ApxLS5UQQkZUMFP4Fh6J01bYL2Cms3DOVs1AyJsOPybMoiCMSFqb441rQmQS0Ch2YSZmQX0PdgD6Mgm+kPxTocdb574FvAIvznbM0joJVYFyofCV8j0+Ek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WYaD0QV0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3001C4CED0;
+	Tue,  5 Nov 2024 09:36:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730799396;
+	bh=65DAp6NgqhKj3zhKuiPXT1PINeTeLz5zEtrhqyY5Jpk=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=WYaD0QV0xgKvMK33Xnv0jzqhNpEcZdMXl3s49Kw95qBgKGqzDngebBNm6TJje1uaq
+	 Isgnhey733eP59wKo0ktiJ3da6+ud3mGpCp/ve+rtWv7YjA+u2thkSvSfiYqp5ibaZ
+	 4ViyCrYgttYATOcUBq7MVFiR/+1WmQlyzplH4kyK+noMs34ZSEG4SQcdt2cgmUN28q
+	 Yz8c2GML5VS0VXKj+9o9knObanFbOZu4lLYPDnXCAyjg3oKEBzWu4BWmzqrZCmVenr
+	 8Euah5HvfssASv07R5CWErWcGxg3Iw7+NpUPYIw7qhX8B0lfWH/+AGVWwju9ynlCQS
+	 V5Bj3VvnooEig==
+Date: Tue, 5 Nov 2024 18:36:33 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim
+ <namhyung@kernel.org>, Peter Zijlstra <peterz@infradead.org>, Ingo Molnar
+ <mingo@redhat.com>, Ian Rogers <irogers@google.com>, Dima Kogan
+ <dima@secretsauce.net>, Alexander Lobakin <aleksander.lobakin@intel.com>,
+ Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+ linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/4] perf-probe: Require '@' prefix for filename always
+Message-Id: <20241105183633.28048e908539d5c638ceb10a@kernel.org>
+In-Reply-To: <20241105182830.384b70727ff34391eb0ef9eb@kernel.org>
+References: <173073702882.2098439.13342508872190995896.stgit@mhiramat.roam.corp.google.com>
+	<173073704685.2098439.2208365513857043203.stgit@mhiramat.roam.corp.google.com>
+	<ZykqQTMbA8PlaIBW@x1>
+	<20241105182830.384b70727ff34391eb0ef9eb@kernel.org>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20241105072642.898710-1-lulu@redhat.com> <20241105072642.898710-5-lulu@redhat.com>
-In-Reply-To: <20241105072642.898710-5-lulu@redhat.com>
-From: Jason Wang <jasowang@redhat.com>
-Date: Tue, 5 Nov 2024 17:36:10 +0800
-Message-ID: <CACGkMEvwirx3C7QL_xYB_niYBYfugCR9OMWqwcPfAPX=E1Qm=Q@mail.gmail.com>
-Subject: Re: [PATCH v3 4/9] vhost: Add kthread support in function vhost_worker_create
-To: Cindy Lu <lulu@redhat.com>
-Cc: mst@redhat.com, michael.christie@oracle.com, sgarzare@redhat.com, 
-	linux-kernel@vger.kernel.org, virtualization@lists.linux-foundation.org, 
-	netdev@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Tue, Nov 5, 2024 at 3:27=E2=80=AFPM Cindy Lu <lulu@redhat.com> wrote:
->
-> Restored the previous functions kthread_wakeup and kthread_stop.
-> Also add a new structure, vhost_task_fn. The function vhost_worker_create
-> Will initializes this structure based on the value of inherit_owner.
->
-> Signed-off-by: Cindy Lu <lulu@redhat.com>
-> ---
->  drivers/vhost/vhost.c | 71 ++++++++++++++++++++++++++++++++++++-------
->  drivers/vhost/vhost.h |  6 ++++
->  2 files changed, 66 insertions(+), 11 deletions(-)
->
-> diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
-> index e40cef3a1fa5..603b146fccc1 100644
-> --- a/drivers/vhost/vhost.c
-> +++ b/drivers/vhost/vhost.c
-> @@ -741,43 +741,92 @@ static void vhost_workers_free(struct vhost_dev *de=
-v)
->         xa_destroy(&dev->worker_xa);
->  }
->
-> +static int vhost_task_wakeup_fn(void *vtsk)
-> +{
-> +       vhost_task_wake((struct vhost_task *)vtsk);
-> +       return 0;
-> +}
+On Tue, 5 Nov 2024 18:28:30 +0900
+Masami Hiramatsu (Google) <mhiramat@kernel.org> wrote:
 
-Let's have a newline between two functions.
+> On Mon, 4 Nov 2024 17:10:41 -0300
+> Arnaldo Carvalho de Melo <acme@kernel.org> wrote:
+> 
+> > On Tue, Nov 05, 2024 at 01:17:26AM +0900, Masami Hiramatsu (Google) wrote:
+> > > From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> >  
+> > > Currently perf probe allows user to specify probing place without '@'
+> > > prefix, for example, both `-V file:line` and `-V function:line` are
+> > > allowed. But this makes a problem if a (demangled) function name is
+> > > hard to be distinguished from a file name.
+> >  
+> > > This changes the perf-probe to require '@' prefix for filename even
+> > > without function name. For example, `-V @file:line` and
+> > > `-V function:line` are acceptable.
+> >  
+> > > With this change, users can specify filename or function correctly.
+> > 
+> > Well, this will break scripts that use perf probe for a given file,
+> > probably the right thing not to break backwards compatibility is to
+> > continue accepting and when there is a real conflict, an ambiguity that
+> > makes differentiating from file to function names, then refuse it,
+> > stating that it is ambiguous, probably spelling out the names of the
+> > files and functions that match so and stating that to make it
+> > unambiguoius, prefix file names with @.
+> 
+> The problem is that the ambiguous function name. For example, Go's
+> main routine is `main.main`, and this is not likely to the C function
+> name, so currently perf probe treats it as a filename and failed to
+> find that.
+> 
+> I think one possible solution is to run search loop twice internally
+> (search it as file name, if fails, search it as function name) if it
+> looks like a file name but it does not start from `@`.
+> This takes costs a bit but can keep backward compatibility.
 
-> +static int vhost_kthread_wakeup_fn(void *p)
-> +{
-> +       return wake_up_process((struct task_struct *)p);
-> +}
-> +static int vhost_task_stop_fn(void *vtsk)
-> +{
-> +       vhost_task_stop((struct vhost_task *)vtsk);
-> +       return 0;
-> +}
-> +static int vhost_kthread_stop_fn(void *k)
-> +{
-> +       return kthread_stop((struct task_struct *)k);
-> +}
-> +
->  static struct vhost_worker *vhost_worker_create(struct vhost_dev *dev)
->  {
->         struct vhost_worker *worker;
-> -       struct vhost_task *vtsk;
-> +       struct vhost_task *vtsk =3D NULL;
-> +       struct task_struct *task =3D NULL;
->         char name[TASK_COMM_LEN];
->         int ret;
->         u32 id;
->
-> +       /* Allocate resources for the worker */
->         worker =3D kzalloc(sizeof(*worker), GFP_KERNEL_ACCOUNT);
->         if (!worker)
->                 return NULL;
->
-> +       worker->fn =3D kzalloc(sizeof(struct vhost_task_fn), GFP_KERNEL_A=
-CCOUNT);
-> +       if (!worker->fn) {
-> +               kfree(worker);
-> +               return NULL;
-> +       }
-> +
->         worker->dev =3D dev;
->         snprintf(name, sizeof(name), "vhost-%d", current->pid);
->
-> -       vtsk =3D vhost_task_create(vhost_run_work_list, vhost_worker_kill=
-ed,
-> -                                worker, name);
-> -       if (!vtsk)
-> -               goto free_worker;
-> -
->         mutex_init(&worker->mutex);
->         init_llist_head(&worker->work_list);
->         worker->kcov_handle =3D kcov_common_handle();
-> -       worker->vtsk =3D vtsk;
->
-> -       vhost_task_start(vtsk);
-> +       if (dev->inherit_owner) {
-> +               /* Create and start a vhost task */
-> +               vtsk =3D vhost_task_create(vhost_run_work_list,
-> +                                        vhost_worker_killed, worker, nam=
-e);
-> +               if (!vtsk)
-> +                       goto free_worker;
-> +
-> +               worker->vtsk =3D vtsk;
-> +               worker->fn->wakeup =3D vhost_task_wakeup_fn;
-> +               worker->fn->stop =3D vhost_task_stop_fn;
-> +
-> +               vhost_task_start(vtsk);
-> +       } else {
-> +               /* Create and start a kernel thread */
-> +               task =3D kthread_create(vhost_run_work_kthread_list, work=
-er,
-> +                                     "vhost-%d", current->pid);
-> +               if (IS_ERR(task)) {
-> +                       ret =3D PTR_ERR(task);
-> +                       goto free_worker;
-> +               }
-> +               worker->task =3D task;
-> +               worker->fn->wakeup =3D vhost_kthread_wakeup_fn;
-> +               worker->fn->stop =3D vhost_kthread_stop_fn;
-> +
-> +               wake_up_process(task);
-> +               /* Attach to the vhost cgroup */
-> +               ret =3D vhost_attach_cgroups(dev);
-> +               if (ret)
-> +                       goto stop_worker;
-> +       }
->
->         ret =3D xa_alloc(&dev->worker_xa, &id, worker, xa_limit_32b, GFP_=
-KERNEL);
->         if (ret < 0)
->                 goto stop_worker;
->         worker->id =3D id;
-> -
->         return worker;
-> -
->  stop_worker:
-> -       vhost_task_stop(vtsk);
-> +       worker->fn->stop(dev->inherit_owner ? (void *)vtsk : (void *)task=
-);
->  free_worker:
-> +       kfree(worker->fn);
->         kfree(worker);
->         return NULL;
->  }
-> diff --git a/drivers/vhost/vhost.h b/drivers/vhost/vhost.h
-> index c650c4506c70..ebababa4e340 100644
-> --- a/drivers/vhost/vhost.h
-> +++ b/drivers/vhost/vhost.h
-> @@ -25,8 +25,13 @@ struct vhost_work {
->         vhost_work_fn_t         fn;
->         unsigned long           flags;
->  };
-> +struct vhost_task_fn {
-> +       int (*wakeup)(void *task);
+I found another good idea, support `@*` :) 
 
-Let's have comments to explain the semantics of each operation.
+For example, if the `main.main` is not a file, we can
 
-> +       int (*stop)(void *task);
-> +};
+ perf probe -x execfile -L 'main.main@*'
 
-I think the goal is to reduce if/else, so while at this, let's
-introduce more ops. For example the create_worker one?
+Then it is clear that `main.main` is a function name.
 
->
->  struct vhost_worker {
-> +       struct task_struct      *task;
->         struct vhost_task       *vtsk;
->         struct vhost_dev        *dev;
->         /* Used to serialize device wide flushing with worker swapping. *=
-/
-> @@ -36,6 +41,7 @@ struct vhost_worker {
->         u32                     id;
->         int                     attachment_cnt;
->         bool                    killed;
-> +       struct vhost_task_fn *fn;
->  };
->
->  /* Poll a file (eventfd or socket) */
-> --
-> 2.45.0
->
+Thank you!
 
-Thanks
+> 
+> Thank you,
+> 
+> > 
+> > - Arnaldo
+> >  
+> > > Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> > > ---
+> > >  tools/perf/util/probe-event.c |   31 +++++++++----------------------
+> > >  1 file changed, 9 insertions(+), 22 deletions(-)
+> > > 
+> > > diff --git a/tools/perf/util/probe-event.c b/tools/perf/util/probe-event.c
+> > > index 665dcce482e1..913a27cbb5d9 100644
+> > > --- a/tools/perf/util/probe-event.c
+> > > +++ b/tools/perf/util/probe-event.c
+> > > @@ -1341,7 +1341,7 @@ static bool is_c_func_name(const char *name)
+> > >   * Stuff 'lr' according to the line range described by 'arg'.
+> > >   * The line range syntax is described by:
+> > >   *
+> > > - *         SRC[:SLN[+NUM|-ELN]]
+> > > + *         @SRC[:SLN[+NUM|-ELN]]
+> > >   *         FNC[@SRC][:SLN[+NUM|-ELN]]
+> > >   */
+> > >  int parse_line_range_desc(const char *arg, struct line_range *lr)
+> > > @@ -1404,16 +1404,10 @@ int parse_line_range_desc(const char *arg, struct line_range *lr)
+> > >  			err = -ENOMEM;
+> > >  			goto err;
+> > >  		}
+> > > +		if (*name != '\0')
+> > > +			lr->function = name;
+> > > +	} else
+> > >  		lr->function = name;
+> > > -	} else if (strpbrk_esc(name, "/."))
+> > > -		lr->file = name;
+> > > -	else if (is_c_func_name(name))/* We reuse it for checking funcname */
+> > > -		lr->function = name;
+> > > -	else {	/* Invalid name */
+> > > -		semantic_error("'%s' is not a valid function name.\n", name);
+> > > -		err = -EINVAL;
+> > > -		goto err;
+> > > -	}
+> > >  
+> > >  	return 0;
+> > >  err:
+> > > @@ -1463,7 +1457,7 @@ static int parse_perf_probe_point(char *arg, struct perf_probe_event *pev)
+> > >  
+> > >  	/*
+> > >  	 * <Syntax>
+> > > -	 * perf probe [GRP:][EVENT=]SRC[:LN|;PTN]
+> > > +	 * perf probe [GRP:][EVENT=]@SRC[:LN|;PTN]
+> > >  	 * perf probe [GRP:][EVENT=]FUNC[@SRC][+OFFS|%return|:LN|;PAT]
+> > >  	 * perf probe %[GRP:]SDT_EVENT
+> > >  	 */
+> > > @@ -1516,19 +1510,12 @@ static int parse_perf_probe_point(char *arg, struct perf_probe_event *pev)
+> > >  	/*
+> > >  	 * Check arg is function or file name and copy it.
+> > >  	 *
+> > > -	 * We consider arg to be a file spec if and only if it satisfies
+> > > -	 * all of the below criteria::
+> > > -	 * - it does not include any of "+@%",
+> > > -	 * - it includes one of ":;", and
+> > > -	 * - it has a period '.' in the name.
+> > > -	 *
+> > > +	 * We consider arg to be a file spec if it starts with '@'.
+> > >  	 * Otherwise, we consider arg to be a function specification.
+> > >  	 */
+> > > -	if (!strpbrk_esc(arg, "+@%")) {
+> > > -		ptr = strpbrk_esc(arg, ";:");
+> > > -		/* This is a file spec if it includes a '.' before ; or : */
+> > > -		if (ptr && memchr(arg, '.', ptr - arg))
+> > > -			file_spec = true;
+> > > +	if (*arg == '@') {
+> > > +		file_spec = true;
+> > > +		arg++;
+> > >  	}
+> > >  
+> > >  	ptr = strpbrk_esc(arg, ";:+@%");
+> 
+> 
+> -- 
+> Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
+
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
