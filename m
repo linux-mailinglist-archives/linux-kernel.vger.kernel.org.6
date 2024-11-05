@@ -1,165 +1,104 @@
-Return-Path: <linux-kernel+bounces-396209-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396208-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3CD19BC95D
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 10:36:24 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8CF69BC95A
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 10:36:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B2754284325
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 09:36:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 269B51C22470
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 09:36:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4472D1D040B;
-	Tue,  5 Nov 2024 09:35:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B43391D0F63;
+	Tue,  5 Nov 2024 09:35:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="UtfvhuZC"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Y153kTmV"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C305C1D1F54;
-	Tue,  5 Nov 2024 09:35:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B977B1CCB56
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 09:35:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730799324; cv=none; b=VrSbN79VEwHPjFGkSolv8Z9+V/hvq2gXBlnvzNrc1/Y3dtxqKo6ephFi9vn42MbxFjYQBPUZLt64w9e6sMwmXn3gwczt5KiObtynrR2LThSiScNBKdeLtZQlOInZ7eFjVcCWI882x4U8812slClAmMX96HyKgN8YQ7XUue0xze4=
+	t=1730799321; cv=none; b=h8G4X0xGIGbstChr4ithucKI+HF8tzv8yUwVlLa/mDmPc0rQ8cn/FYZz/JiUgdgfsxVXum2gMKQ80s285tri4ZyGZRL+eU3voAlrAanU7UdffzBchx0Kj72vTn+xnq0iCebiPKDhTGliKITTOcp8PE1djAxdQQftdXsoxOZzi90=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730799324; c=relaxed/simple;
-	bh=g+y6xSTDDc/4iOIBVWx79ClWRqfmXl4RFvMLEW9wxR8=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=RBApoV35Q1jMWYoVFG3vPUkq8J7nJ1FflzLhtnKSyqBkKhlxy6YVkx9KL8nANGQqPzz2bTub2jgzTjZTlUesd2hIQjmBeTUjkp0XT0ryrRH1+5zyYkdHlLcM7ma1JvzacwRTuJp0Adj+/RwYT/OaM60EpRuOgqx83AxhN706QE4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=UtfvhuZC; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A59WBmw021458;
-	Tue, 5 Nov 2024 09:35:19 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:date:from:message-id:subject:to; s=qcppdkim1; bh=+3mobtsCqfmg
-	gYkUHIHhRo0d7QRYbP9IuytZtXf6vV8=; b=UtfvhuZCDEGTe4pG19vjvOUSi6Sz
-	IF+taeNNSOfak91Q7un4pFvDs7IRABjpO0PbNU1/iJuDOYJsFB7FXKFziyckLtuY
-	dp7b75e6CKe2ecqsYsCihxQZRJF6vRI+K9f+RhFPHY9bQ1sOhgUaAAQpL1YiWI0a
-	bNUFNF44oCI3gXvcqtddFEwxxmPBS/gwDDebplvCGOi50pYwNDUSzUVQujcJVIwk
-	ElSdQ0PyMPy23NVs68oL+1wr0/bKX/TrrL8DZU3Gv4n9IRCwq+ywg5ZoCIb2vf1A
-	47JeeMzOYZW2B61TH3LKka+C9RsXaIjL4hBVOPGiOYyZxFAx7KekDB1VEQ==
-Received: from apblrppmta01.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42ncyxy25x-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 05 Nov 2024 09:35:19 +0000 (GMT)
-Received: from pps.filterd (APBLRPPMTA01.qualcomm.com [127.0.0.1])
-	by APBLRPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 4A59ZGj5018185;
-	Tue, 5 Nov 2024 09:35:16 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTPS id 42nd5m734r-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+	s=arc-20240116; t=1730799321; c=relaxed/simple;
+	bh=99IJmx6f12Niwpv2988wr49Eyk36O3LUDYqGQ4qyTVE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VBUoj1/qWHZr4GsRzcQ7g4AcZrAC3qTQCSrYQF6Hd0FxGRY3vmd/Rx/X2KqPABvZjMAA3Fs1vVlkYfHe3XfnlA9n4dWkSvns8uVKLDEMaESmgTk5f1WM8aQgXXPK4AHKUP7SjEXv6A7KQE5Plscj7Zm6+VmmBbfTUQasZab/yuo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Y153kTmV; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=FRaK+l/7iIYfosK4LCr3DExnL+BzEF6OlZuBLjXKDJc=; b=Y153kTmVcZrHV4tMzQWwnpYNr2
+	uRf/LyBHhzv4i5shlLrUCk/+AxpQojzwLGTdGAiULLlOeS+1NSIbsCnvOvdKF7tNfinRWa2yYDBLw
+	Po/8A+0dX1Mj3Urv9x2bgzjmo6ZnbmvgHNmRU6fUh0QrJOa2CeVUc7h2YwkMrbJoZrskXPxvTYAq0
+	lYkqeoIhbHuAuP9mwE4sjBT+spP2HFa/aHzcyJs6tJvxx4D1FhkJspqKLGK5+qSxDOT7Tu1DvJP8S
+	ZxS0cGAHL7rmOGTn6ZQ9w6WSoauqKG+aVelIKA6pmS9dFaqR87Fuwv88qt4XffJJXw1MLy6eJYvWj
+	6ISmljgA==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1t8Fxz-00000002OBt-3yDk;
 	Tue, 05 Nov 2024 09:35:16 +0000
-Received: from APBLRPPMTA01.qualcomm.com (APBLRPPMTA01.qualcomm.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 4A59ZFp9018172;
-	Tue, 5 Nov 2024 09:35:15 GMT
-Received: from hu-maiyas-hyd.qualcomm.com (hu-sartgarg-hyd.qualcomm.com [10.213.105.147])
-	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTP id 4A59ZFfu018171;
-	Tue, 05 Nov 2024 09:35:15 +0000
-Received: by hu-maiyas-hyd.qualcomm.com (Postfix, from userid 2339771)
-	id 8BE8F5001CF; Tue,  5 Nov 2024 15:05:14 +0530 (+0530)
-From: Sarthak Garg <quic_sartgarg@quicinc.com>
-To: Adrian Hunter <adrian.hunter@intel.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Cc: linux-mmc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, quic_cang@quicinc.com,
-        quic_nguyenb@quicinc.com, quic_rampraka@quicinc.com,
-        quic_pragalla@quicinc.com, quic_sayalil@quicinc.com,
-        quic_nitirawa@quicinc.com, quic_sachgupt@quicinc.com,
-        quic_bhaskarv@quicinc.com, quic_narepall@quicinc.com,
-        kernel@quicinc.com, Sarthak Garg <quic_sartgarg@quicinc.com>
-Subject: [PATCH V1] mmc: sdhci-msm: Ensure SD card power isn't ON when card removed
-Date: Tue,  5 Nov 2024 15:05:13 +0530
-Message-Id: <20241105093513.16800-1-quic_sartgarg@quicinc.com>
-X-Mailer: git-send-email 2.17.1
-X-QCInternal: smtphost
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: x9aDHvmvt2y_Csly4ndLBcZzAdca7YmA
-X-Proofpoint-GUID: x9aDHvmvt2y_Csly4ndLBcZzAdca7YmA
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 suspectscore=0
- malwarescore=0 bulkscore=0 impostorscore=0 priorityscore=1501
- lowpriorityscore=0 mlxscore=0 phishscore=0 adultscore=0 mlxlogscore=999
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411050071
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 3958B30083E; Tue,  5 Nov 2024 10:35:16 +0100 (CET)
+Date: Tue, 5 Nov 2024 10:35:16 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Marco Elver <elver@google.com>
+Cc: Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
+	Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Dmitry Vyukov <dvyukov@google.com>, kasan-dev@googlegroups.com,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/5] time/sched_clock: Broaden sched_clock()'s
+ instrumentation coverage
+Message-ID: <20241105093516.GB10375@noisy.programming.kicks-ass.net>
+References: <20241104161910.780003-1-elver@google.com>
+ <20241104161910.780003-3-elver@google.com>
+ <CANpmjNNBo6SvESFxo6Kk2v4_HOa=CeAVR_unTJvQEP8UZQG6gg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CANpmjNNBo6SvESFxo6Kk2v4_HOa=CeAVR_unTJvQEP8UZQG6gg@mail.gmail.com>
 
-Make sure SD card power is not enabled when the card is
-being removed.
-On multi-card tray designs, the same card-tray would be used for SD
-card and SIM cards. If SD card is placed at the outermost location
-in the tray, then SIM card may come in contact with SD card power-
-supply while removing the tray. It may result in SIM damage.
-So in sdhci_msm_handle_pwr_irq we skip the BUS_ON request when the
-SD card is removed to be in consistent with the MGPI hardware fix to
-prevent any damage to the SIM card in case of mult-card tray designs.
-But we need to have a similar check in sdhci_msm_check_power_status to
-be in consistent with the sdhci_msm_handle_pwr_irq function.
-Also reset host->pwr and POWER_CONTROL register accordingly since we
-are not turning ON the power actually.
+On Tue, Nov 05, 2024 at 10:22:51AM +0100, Marco Elver wrote:
+> Oops, typo'd the commit message:
+> 
+> On Mon, 4 Nov 2024 at 17:19, Marco Elver <elver@google.com> wrote:
+> >
+> > Most of sched_clock()'s implementation is ineligible for instrumentation
+> > due to relying on sched_clock_noinstr().
+> >
+> > Split the implementation off into an __always_inline function
+> > __sched_clock(), which is then used by the noinstr and instrumentable
+> > version, to allow more of sched_clock() to be covered by various
+> > instrumentation.
+> >
+> > This will allow instrumentation with the various sanitizers (KASAN,
+> > KCSAN, KMSAN, UBSAN). For KCSAN, we know that raw seqcount_latch usage
+> > without annotations will result in false positive reports: tell it that
+> > all of __sched_clock() is "atomic" for the latch writer; later changes
+> 
+> s/writer/reader/
+> 
+> > in this series will take care of the readers.
+> 
+> s/readers/writers/
+> 
+> ... might be less confusing. If you apply, kindly fix up the commit
+> message, so that future people will be less confused. The code comment
+> is correct.
 
-Signed-off-by: Sarthak Garg <quic_sartgarg@quicinc.com>
----
- drivers/mmc/host/sdhci-msm.c | 20 ++++++++++++++++++--
- 1 file changed, 18 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/mmc/host/sdhci-msm.c b/drivers/mmc/host/sdhci-msm.c
-index e00208535bd1..443526c56194 100644
---- a/drivers/mmc/host/sdhci-msm.c
-+++ b/drivers/mmc/host/sdhci-msm.c
-@@ -1516,10 +1516,11 @@ static void sdhci_msm_check_power_status(struct sdhci_host *host, u32 req_type)
- {
- 	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
- 	struct sdhci_msm_host *msm_host = sdhci_pltfm_priv(pltfm_host);
--	bool done = false;
--	u32 val = SWITCHABLE_SIGNALING_VOLTAGE;
- 	const struct sdhci_msm_offset *msm_offset =
- 					msm_host->offset;
-+	struct mmc_host *mmc = host->mmc;
-+	bool done = false;
-+	u32 val = SWITCHABLE_SIGNALING_VOLTAGE;
- 
- 	pr_debug("%s: %s: request %d curr_pwr_state %x curr_io_level %x\n",
- 			mmc_hostname(host->mmc), __func__, req_type,
-@@ -1573,6 +1574,13 @@ static void sdhci_msm_check_power_status(struct sdhci_host *host, u32 req_type)
- 				 "%s: pwr_irq for req: (%d) timed out\n",
- 				 mmc_hostname(host->mmc), req_type);
- 	}
-+
-+	if (mmc->card && mmc->ops && mmc->ops->get_cd &&
-+		!mmc->ops->get_cd(mmc) && (req_type & REQ_BUS_ON)) {
-+		sdhci_writeb(host, 0, SDHCI_POWER_CONTROL);
-+		host->pwr = 0;
-+	}
-+
- 	pr_debug("%s: %s: request %d done\n", mmc_hostname(host->mmc),
- 			__func__, req_type);
- }
-@@ -1631,6 +1639,14 @@ static void sdhci_msm_handle_pwr_irq(struct sdhci_host *host, int irq)
- 		udelay(10);
- 	}
- 
-+	if (mmc->card && mmc->ops && mmc->ops->get_cd &&
-+		!mmc->ops->get_cd(mmc) && irq_status & CORE_PWRCTL_BUS_ON) {
-+		irq_ack = CORE_PWRCTL_BUS_FAIL;
-+		msm_host_writel(msm_host, irq_ack, host,
-+				msm_offset->core_pwrctl_ctl);
-+		return;
-+	}
-+
- 	/* Handle BUS ON/OFF*/
- 	if (irq_status & CORE_PWRCTL_BUS_ON) {
- 		pwr_state = REQ_BUS_ON;
--- 
-2.17.1
-
+So done. Thanks!
 
