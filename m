@@ -1,134 +1,169 @@
-Return-Path: <linux-kernel+bounces-396183-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396184-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3ACC9BC915
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 10:25:59 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7D1F9BC917
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 10:27:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B2A41F22F17
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 09:25:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 12FCBB21B1C
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 09:27:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E96F01D0784;
-	Tue,  5 Nov 2024 09:25:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C0E11D041B;
+	Tue,  5 Nov 2024 09:27:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ueUscxhA"
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZQbwDawb"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB6901CDA3E
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 09:25:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 028FA70837
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 09:27:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730798751; cv=none; b=SYuW16iEPF0enjYIlnr4AFN2hCRzqbaDCxGgG7F2nBjSMu+QXiuIY72TBqefS9A6rG9K+41P5tqxjRSe7zWiyXsof4wrbZYr2dkQs1Wh+B69Mr1193T6gpqNGGyWJ3Jg9LXf7WW53/WmJ4mhm65bLhe7EJqkjcvcoCFPR7Nlku4=
+	t=1730798845; cv=none; b=cIstGRD4JYJxNqjw6HI7Jo6o9c/vqJ68bzxp/O7Yz0+DL7uB1cpZErCvBs1z2Jg8fXmLEhPzulh37x1oCOYsNNCLr57Mvy/edeOEIa22norY9XnJC0ouuM1fQ4UA9lQCHXeO6h0Jlsy5/hR9NTk6T0OwDzezRdd05W/ooBh42Fw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730798751; c=relaxed/simple;
-	bh=KcY42FPvtnq6OFbQUwWWfgE+hW7UfWMrW1tl39zYFaU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Y+Fqe7Su3GyEZyJMo7UGqJNj1v7RCFGQZgBToTidPOeBdQFZfj8yiaff0FlNGKSJhP6JUdrQBQlLCrRNBNQmfEJr0mR9UtP508mzKLIT+YCjHy7O1KUQZeRQRm5D5twpmK0xLEvV7BYvzBaMdnHpzzM5GVaUdFOblBsYbGlJkS4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ueUscxhA; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5c9850ae22eso6401136a12.3
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 01:25:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1730798748; x=1731403548; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=s9FPXG1LQELNToyRoGqMx1mS5uhmOWH7uDHaAUOLnUw=;
-        b=ueUscxhA8AXkI1svH/2ejX60BzZGbFmong8EFGvvPLIkBckgzXuAVKiSwD75OMO69j
-         ZFVubf8p/xOpG9mX4aw5J3fUAsagiGDEIJLfMPAj4JqkAG4cRnyr7JSbtyueBqLa3zpx
-         rIx2yY+R3C7OfsIDNJWiiqW/6tVDuiqo+XA4fvkJk7Vfq/pMubb1aJR3bp2a19Tr+BDJ
-         W64OSqrYIIv/ynVeGJI64eg9zmrJQE27BfsiSEiDGxoLm0V9d60cSmnQB3lpinlY3VEt
-         kdNSfvuNw5tUXbKudC7WgMVa94y6psND9F1cCOByetjLpcjc+7vck4iwWgJlBtJdlOV0
-         jUAQ==
+	s=arc-20240116; t=1730798845; c=relaxed/simple;
+	bh=HuHzf+MqhJGpURxtX9qNPh+hM10o/G7WSixEaE9uEys=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cT0VmXXzYBMcfimwkmPdvIxkuwCsM2fcZMcdOXIjopELP156C62ydEWge1CvYSEldKVhS5TJOfkn1EfHUk/e4Z5q1nJybkhbFGXTtkkqgVElbsxjRGayb8UnjEKRw3GE9SctsWTSipWm/W55pqFoiMKJQePxk8fMlFs97ta3wLI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZQbwDawb; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1730798842;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=K3diC4LcG5d/+GbrQGIZW0Sx7qNZLaP/PHesTT7qPXI=;
+	b=ZQbwDawbYXflIK1abYFre5SvTZDsQxTGEHHEUMvAb6zCF10ven4ufzpSYIFN6h2a5/Ljun
+	Y2aqyc/LgN/iFZI27/vd2MvpFXbu194wNnw8MbqVK1LeCcb7BnorTuK3pIsd6nOncXzlCJ
+	jjUoVfKmYShp1CLRWR22dqBxpaCwHzo=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-286-MnjIJWUxMOuW_wSp3GG-lw-1; Tue, 05 Nov 2024 04:27:21 -0500
+X-MC-Unique: MnjIJWUxMOuW_wSp3GG-lw-1
+Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-37d5a3afa84so2645401f8f.3
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 01:27:20 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730798748; x=1731403548;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=s9FPXG1LQELNToyRoGqMx1mS5uhmOWH7uDHaAUOLnUw=;
-        b=KPrmgeRMGPEPNetyImGN4vKcnxe8Pv4o2AW0urc1ClgmqYfYiwgdZxwwGZV0AqJI6e
-         rdwrMEgUCEkhqOhUsA7FrR5c58Ex4BDJg3uEBsyTqHqEVmLDHOnozpjHrfFU7D3lOvlC
-         lAMepbiLKo+/WlnwRP+DnUUFK7kBISdNpD2rofjVJJgW5fbN6bxUNVJbe7I5FVLBMVMU
-         2BaQ6lHOBGU/Bj0qu8fXL2FrHbQwmSplh723b+cUeYth99EucEbdQgSyFK0ip82S+X7K
-         WDzENa88BwBT4kMe1Tk0ZVkrvzXQZXPCkHKzLeOivv5Z8LCpJ3fSLmPiEzwxw00Jffas
-         67bA==
-X-Forwarded-Encrypted: i=1; AJvYcCUDPgfXMOyoVfoMUr5nTNxmq20oPOg08Uul1Xro3zFP6ab83AJy7TQitYlhxtmaulX3t8ACipYdr9eZXL0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxIEBZeAtscwWiqvGaTj9AIUWFjCjcYN6GCw/Yxf1OwWdsQ+JgL
-	jBew6PstcLbvfgsrt7T60jU/lgF2xKzkFPT649qZUiRsrVp65srpbvYk5TlLbm0+xnQuPakPSda
-	1OD6g1Ia5mdvvfLAbRzWKSWs0QB4jvZbwYHjh
-X-Google-Smtp-Source: AGHT+IFWw5e0Lj3WFMEm21UIlPzv+yQa97oWMx8p8bOR9ghoVbBQ1kyOtpJM5Qa+FzaQTbnGQmtSwGG5N1r5PakPfjY=
-X-Received: by 2002:a17:907:2cc7:b0:a99:d308:926 with SMTP id
- a640c23a62f3a-a9de632d0a5mr3159772266b.57.1730798747742; Tue, 05 Nov 2024
- 01:25:47 -0800 (PST)
+        d=1e100.net; s=20230601; t=1730798839; x=1731403639;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=K3diC4LcG5d/+GbrQGIZW0Sx7qNZLaP/PHesTT7qPXI=;
+        b=dycSSjpM2t7o6YfdoYYVEpSgsdk5MtJUmV6X3KC3WW8mOQEENtPeE0kcxZMOaz9wPq
+         KCG0yrL6g/D0vqC1uv9KHn5UgTpkKwwoEhvu4kkeVrgMVYG+xOregJzDgg0XGnWpc5yN
+         KPL0tWvkNV7WxNyU7AkIPB7RwyHYJZ8fF9mmEcFTzcwHyiVrgvvQ0+Mfnu3750ZEVqoA
+         WVxSh0aAzuE6fuwxaq6xqAf4nJMCIOq1Mmy4ZertiN1xkl8LC5bpspsp/V18lfnQYs/y
+         Csm4lSQrCO2i6LEkW0JJoT3PHwy8UbfGNPFJBsvDfXMueZsn9vskVkUwmJquFKs9KH7S
+         heCA==
+X-Forwarded-Encrypted: i=1; AJvYcCV+/z+2ZBya8in7N4ZTDmvSde/sLuFClWKfO61yaS0LfUa9dPFckRWNSOKEwmJyZ/1yrvRbjwEc6NCNylw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzBlXDtSP1w3GB0CfDvNJJNZYY6kMHK9pDLuMvry94vPU7cCFZc
+	vXnIqjyVdWcBgPAeHjMxwbMJ5ZsB3yLKlB/fmI3rsSaMQYKTVj0vWiaeJzfi50v/1MwFSlI6fWY
+	iOnWyi/KzLs0raw5w4K+kZLm/O6l2dCPBgsLkRIlzYA3FmHYTvnQ1HHRA0iJOb912w7QVtw==
+X-Received: by 2002:a5d:64c5:0:b0:37d:5429:9004 with SMTP id ffacd0b85a97d-381c7a3a52amr9948972f8f.3.1730798839493;
+        Tue, 05 Nov 2024 01:27:19 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGd0D0YfbnU3NzZsDpew5RZ831pQ7qFlOc9vb73OqtmymlL7yjzae5dufSS8ZhcRxOhmi2/iQ==
+X-Received: by 2002:a5d:64c5:0:b0:37d:5429:9004 with SMTP id ffacd0b85a97d-381c7a3a52amr9948964f8f.3.1730798839092;
+        Tue, 05 Nov 2024 01:27:19 -0800 (PST)
+Received: from eisenberg.redhat.com (nat-pool-muc-t.redhat.com. [149.14.88.26])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381c10d7e0fsm15393636f8f.47.2024.11.05.01.27.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 05 Nov 2024 01:27:18 -0800 (PST)
+From: Philipp Stanner <pstanner@redhat.com>
+To: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
+Cc: linux-pwm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Philipp Stanner <pstanner@redhat.com>
+Subject: [PATCH] pwm: Replace deprecated PCI functions
+Date: Tue,  5 Nov 2024 10:26:42 +0100
+Message-ID: <20241105092641.49541-2-pstanner@redhat.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240912071702.221128-1-en-wei.wu@canonical.com>
- <20240912113518.5941b0cf@gmx.net> <CANn89iK31kn7QRcFydsH79Pm_FNUkJXdft=x81jvKD90Z5Y0xg@mail.gmail.com>
- <CAMqyJG1W1ER0Q_poS7HQhsogxr1cBo2inRmyz_y5zxPoMtRhrA@mail.gmail.com>
- <CANn89iJ+ijDsTebhKeviXYyB=NQxP2=srpZ99Jf677+xTe7wqg@mail.gmail.com>
- <CAMqyJG1aPBsRFz1XK2JvqY+QUg2HhxugVXG1ZaF8yKYg=KoP3Q@mail.gmail.com>
- <CANn89i+4c0iLXXjFpD1OWV7OBHr5w4S975MKRVB9VU2L-htm4w@mail.gmail.com>
- <CAMqyJG2MqU46jRC1NzYCUeJ45fiP5Z5nS78Mi0FLFjbKbLVrFg@mail.gmail.com> <CAMqyJG0DYVaTXHxjSH8G8ZPRc=2aDB0SZVhoPf2MXpiNT1OXxA@mail.gmail.com>
-In-Reply-To: <CAMqyJG0DYVaTXHxjSH8G8ZPRc=2aDB0SZVhoPf2MXpiNT1OXxA@mail.gmail.com>
-From: Eric Dumazet <edumazet@google.com>
-Date: Tue, 5 Nov 2024 10:25:35 +0100
-Message-ID: <CANn89iL-r3+HBC10m+QdFVn20DdNH=r5EBQDV=EmewWm6Vsyqg@mail.gmail.com>
-Subject: Re: [PATCH ipsec v2] xfrm: check MAC header is shown with both
- skb->mac_len and skb_mac_header_was_set()
-To: En-Wei WU <en-wei.wu@canonical.com>
-Cc: Peter Seiderer <ps.report@gmx.net>, steffen.klassert@secunet.com, 
-	herbert@gondor.apana.org.au, davem@davemloft.net, kuba@kernel.org, 
-	pabeni@redhat.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	kai.heng.feng@canonical.com, chia-lin.kao@canonical.com, 
-	anthony.wong@canonical.com, kuan-ying.lee@canonical.com, 
-	chris.chiu@canonical.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Fri, Oct 18, 2024 at 3:22=E2=80=AFPM En-Wei WU <en-wei.wu@canonical.com>=
- wrote:
->
-> > Seems like the __netif_receive_skb_core() and dev_gro_receive() are
-> > the places where it calls skb_reset_mac_len() with skb->mac_header =3D
-> > ~0U.
-> I believe it's the root cause.
->
-> My concern is that if we put something like:
-> +       if (!skb_mac_header_was_set(skb)) {
-> +               DEBUG_NET_WARN_ON_ONCE(1);
-> +               skb->mac_len =3D 0;
-> in skb_reset_mac_len(), it may degrade the RX path a bit.
+pcim_iomap_table() and pcim_request_regions() have been deprecated in
+commit e354bb84a4c1 ("PCI: Deprecate pcim_iomap_table(),
+pcim_iomap_regions_request_all()") and commit d140f80f60358 ("PCI:
+Deprecate pcim_iomap_regions() in favor of pcim_iomap_region()").
 
-I do not have such concerns. Note this is temporary until we fix the root c=
-ause.
+Replace these functions with pcim_iomap_region().
 
->
-> Catching the bug in xfrm4_remove_tunnel_encap() and
-> xfrm6_remove_tunnel_encap() (the original patch) is nice because it
-> won't affect the systems which are not using the xfrm.
->
+Additionally, pass the actual driver names to pcim_iomap_region()
+instead of the previous pci_name(), since the 'name' parameter should
+always reflect which driver owns a region.
 
-Somehow xfrm is feeding to gro_cells_receive() packets without the mac
-header being set, this is the bug that needs to be fixed.
+Signed-off-by: Philipp Stanner <pstanner@redhat.com>
+---
+ drivers/pwm/pwm-dwc.c      | 14 +++++---------
+ drivers/pwm/pwm-lpss-pci.c |  9 +++++----
+ 2 files changed, 10 insertions(+), 13 deletions(-)
 
-GRO needs skb_mac_header() to return the correct pointer.
+diff --git a/drivers/pwm/pwm-dwc.c b/drivers/pwm/pwm-dwc.c
+index fb3eadf6fbc4..9101a89447d6 100644
+--- a/drivers/pwm/pwm-dwc.c
++++ b/drivers/pwm/pwm-dwc.c
+@@ -66,20 +66,16 @@ static int dwc_pwm_probe(struct pci_dev *pci, const struct pci_device_id *id)
+ 
+ 	pci_set_master(pci);
+ 
+-	ret = pcim_iomap_regions(pci, BIT(0), pci_name(pci));
+-	if (ret)
+-		return dev_err_probe(dev, ret, "Failed to iomap PCI BAR\n");
+-
+ 	info = (const struct dwc_pwm_info *)id->driver_data;
+ 	ddata = devm_kzalloc(dev, struct_size(ddata, chips, info->nr), GFP_KERNEL);
+ 	if (!ddata)
+ 		return -ENOMEM;
+ 
+-	/*
+-	 * No need to check for pcim_iomap_table() failure,
+-	 * pcim_iomap_regions() already does it for us.
+-	 */
+-	ddata->io_base = pcim_iomap_table(pci)[0];
++	ddata->io_base = pcim_iomap_region(pci, 0, "pwm-dwc");
++	ret = PTR_ERR_OR_ZERO(ddata->io_base);
++	if (ret)
++		return dev_err_probe(dev, ret, "Failed to iomap PCI BAR\n");
++
+ 	ddata->info = info;
+ 
+ 	for (idx = 0; idx < ddata->info->nr; idx++) {
+diff --git a/drivers/pwm/pwm-lpss-pci.c b/drivers/pwm/pwm-lpss-pci.c
+index f7ece2809e6b..823f570afb80 100644
+--- a/drivers/pwm/pwm-lpss-pci.c
++++ b/drivers/pwm/pwm-lpss-pci.c
+@@ -18,6 +18,7 @@ static int pwm_lpss_probe_pci(struct pci_dev *pdev,
+ 			      const struct pci_device_id *id)
+ {
+ 	const struct pwm_lpss_boardinfo *info;
++	void __iomem *io_base;
+ 	struct pwm_chip *chip;
+ 	int err;
+ 
+@@ -25,12 +26,12 @@ static int pwm_lpss_probe_pci(struct pci_dev *pdev,
+ 	if (err < 0)
+ 		return err;
+ 
+-	err = pcim_iomap_regions(pdev, BIT(0), pci_name(pdev));
+-	if (err)
+-		return err;
++	io_base = pcim_iomap_region(pdev, 0, "pwm-lpss");
++	if (IS_ERR(io_base))
++		return PTR_ERR(io_base);
+ 
+ 	info = (struct pwm_lpss_boardinfo *)id->driver_data;
+-	chip = devm_pwm_lpss_probe(&pdev->dev, pcim_iomap_table(pdev)[0], info);
++	chip = devm_pwm_lpss_probe(&pdev->dev, io_base, info);
+ 	if (IS_ERR(chip))
+ 		return PTR_ERR(chip);
+ 
+-- 
+2.47.0
 
-For normal GRO, it is set either in :
-
-1) napi_gro_frags : napi_frags_skb()  calls skb_reset_mac_header(skb);
-
-2) napi_gro_receive() : callers are supposed to call eth_type_trans()
-before calling napi_gro_receive().
-    eth_type_trans() calls skb_reset_mac_header() as expected.
-
-xfrm calls skb_mac_header_rebuild(), but it might be a NOP if MAC
-header was never set.
 
