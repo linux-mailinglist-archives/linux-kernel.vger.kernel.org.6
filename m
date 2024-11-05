@@ -1,346 +1,113 @@
-Return-Path: <linux-kernel+bounces-396224-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396225-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 660999BC987
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 10:48:24 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBD489BC98A
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 10:48:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8892B1C225F4
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 09:48:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B064D2834C7
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 09:48:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 585501D0E0F;
-	Tue,  5 Nov 2024 09:48:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B18511D0F5F;
+	Tue,  5 Nov 2024 09:48:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lrsf4vFt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="cwJawqnX"
+Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C3CB163;
-	Tue,  5 Nov 2024 09:48:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C18D41CEEB4;
+	Tue,  5 Nov 2024 09:48:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730800096; cv=none; b=PDJngvAHb/dhdVE2ng3cOqiYFQYLyQkVsNqrRVJkhBRHEC4p9cwcAPivV49cpPBaDnvcpbVWHca+NJ92benrpjco5LOiWi4jkhVvyyQqnJPOLjuF6rQHWIctH8Jcr6k/30t3WAPMmZvlr+BFu8+pYftXKRQBY2dEei8JRuscY8E=
+	t=1730800118; cv=none; b=VeoQeUKbrBeF1J8tItpwnKZjKB4x/+FwBvx22QHwQdbzrC0kHx3EXwWnMfGtHW0Kg2uxL7RJ3TefVn45RHLkIMdiROQEDNDBJraiGX8ZkkN2sqPJUo8GDZgPm0QuBSF1vG8ANYqlLaC0nmhGcePsH1aRzzXeOk9PuHnVYn+Fanc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730800096; c=relaxed/simple;
-	bh=k7XKiw9IwqHy40KHuQPepYxcJBNl5vEHlPrYP3X0Hdk=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=ax1nJsOmZfKYIDrBgN8kGk9jZTuq9hg1nTfSzBI1T4TY3y4HWTkGcbNjAgC8zQsUbMqN0YequsIb5GdXfmiTIcV3ycwvmhdV96P7yhWqefJ0TiduVZ0koQ18V5pvwoKtTXfsy6dLB2rq3NMHuT0ny3gDueu5DOiu+N6AkQy4SeM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lrsf4vFt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79086C4CECF;
-	Tue,  5 Nov 2024 09:48:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730800095;
-	bh=k7XKiw9IwqHy40KHuQPepYxcJBNl5vEHlPrYP3X0Hdk=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=lrsf4vFty2CX93eITvtfE02J86QeNNwTeE1dhjVkflj1u/giY/PTek/oTaRzDKPw+
-	 o56EmqeNbGhStzlIQYJPT4Ijf4DGB4y3eHCmO1YteeLvib99ILc9vYLhZqO7/YYhLQ
-	 jd3+bPxEiPv6/WthAEAGtYz1L3o2yljlAod5IRHfphsPxAYi5Aq4OxZk6lrYAQgPbc
-	 T1DdwRryxb2kVUcnBt6glqCNd0NeQT3Go4LySkuY34X37pq2WGf//IWXqZr5MOAA0Q
-	 t9LA8ttVVTq7n30C+N05ixPucnqv9PIC8Z38YXOBvyE9TCHXCFU9Zhck4aizW7Jl7m
-	 jVS6inbQXWfwg==
-Date: Tue, 5 Nov 2024 18:48:12 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>, Peter Zijlstra
- <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, Ian Rogers
- <irogers@google.com>, Dima Kogan <dima@secretsauce.net>, Alexander Lobakin
- <aleksander.lobakin@intel.com>, Przemek Kitszel
- <przemyslaw.kitszel@intel.com>, linux-perf-users@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/4] perf-probe: Improbe non-C language support
-Message-Id: <20241105184812.e8256c3078505b63b83a6cf6@kernel.org>
-In-Reply-To: <ZykYwHifTM6niEmG@x1>
-References: <173073702882.2098439.13342508872190995896.stgit@mhiramat.roam.corp.google.com>
-	<ZykYwHifTM6niEmG@x1>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1730800118; c=relaxed/simple;
+	bh=/2QwgAXiPUODt4iE59pzhQ9GeyVS881QJbOf6HO4EEo=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Ho2UdaOENC8OmE8DP2rEnpMV4se82IdSaR1UaRwXg9VGrxYnqoSgQXfN/tPhXHPfvkFYDbqsQMkm5LitDuuLVR3Jid4CHjC3cMjU+RyYOX4DQ2le7L7hIJPdafRUUqnPQEk8NrBajcm0kEISg896qAbhnm5bdCWkqH/8W9Y+q+0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=cwJawqnX; arc=none smtp.client-ip=217.70.183.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id E8CB1FF804;
+	Tue,  5 Nov 2024 09:48:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1730800107;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wPMHfYx6OZKwpmgoXf5RalkYoqx0nz8w42w1wG828y4=;
+	b=cwJawqnXxr1f7ZN/2ZvfHNMJEDZ9q51ODGu4Xxrpjx3L8oppyPKkYDJ6ipF9ri7LxUnxW+
+	V4eHzflWTxKVgAVjYWLljJoJQ/990J7ROAt4rdNeLd/IMDv7hrzo/tMRdHDbviNfwkf0Ld
+	AsrIwCrlOOW5oyWfgYbcUcYcuyqbgh8eH2Q/aEqGIUVxXnTxORBnWs9Ce8L1w8XPU80QIT
+	D1dAQ7xln7m/QYMUwogJdOjGWN4kKsEKHTWOZC4rPILt4CWyC0V0c1rg18OGilPIjRuV/d
+	9msH4aSdSxU8MHNRBPHuEa1m/5pY1z5BgCdxYNrelOEo1sZ1pDYV99QjZZgPHA==
+Date: Tue, 5 Nov 2024 10:48:24 +0100
+From: Kory Maincent <kory.maincent@bootlin.com>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+ <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Jonathan Corbet
+ <corbet@lwn.net>, Donald Hunter <donald.hunter@gmail.com>, Rob Herring
+ <robh@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>, Simon Horman
+ <horms@kernel.org>, Heiner Kallweit <hkallweit1@gmail.com>, Russell King
+ <linux@armlinux.org.uk>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown
+ <broonie@kernel.org>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+ linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+ linux-doc@vger.kernel.org, Kyle Swenson <kyle.swenson@est.tech>, Dent
+ Project <dentproject@linuxfoundation.org>, kernel@pengutronix.de, Maxime
+ Chevallier <maxime.chevallier@bootlin.com>
+Subject: Re: [PATCH RFC net-next v2 08/18] net: pse-pd: Add support for
+ reporting events
+Message-ID: <20241105104824.2bc51cf7@kmaincent-XPS-13-7390>
+In-Reply-To: <ede82d07-6adc-486a-b715-e6e783655333@lunn.ch>
+References: <20241030-feature_poe_port_prio-v2-0-9559622ee47a@bootlin.com>
+	<20241030-feature_poe_port_prio-v2-8-9559622ee47a@bootlin.com>
+	<ede82d07-6adc-486a-b715-e6e783655333@lunn.ch>
+Organization: bootlin
+X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-Sasl: kory.maincent@bootlin.com
 
-On Mon, 4 Nov 2024 15:56:00 -0300
-Arnaldo Carvalho de Melo <acme@kernel.org> wrote:
+On Thu, 31 Oct 2024 22:54:00 +0100
+Andrew Lunn <andrew@lunn.ch> wrote:
 
-> On Tue, Nov 05, 2024 at 01:17:08AM +0900, Masami Hiramatsu (Google) wrote:
-> > Hi,
->  
-> > Here is a series of patches for perf probe to improve non-C language
-> > (e.g. Rust, Go) support.
->  
-> > The non-C symbols are demangled style in debuginfo, e.g. golang stores
->  
-> > ----
-> > $ ./perf probe -x /work/go/example/outyet/main -F main*
-> > main.(*Server).ServeHTTP
-> > main.(*Server).ServeHTTP.Print.func1
-> > main.(*Server).poll
-> > ...
-> > -----
-> 
-> I presented about this last year:
-> 
-> https://tracingsummit.org/ts/2023/bpf-non-c/
-> https://tracingsummit.org/ts/2023/files/Trying_to_use_uprobes_and_BPF_on_non-C_userspace.pdf
-> https://www.youtube.com/watch?v=RDFRy1vWyHg&feature=youtu.be
+> > +static struct phy_device *
+> > +pse_control_find_phy_by_id(struct pse_controller_dev *pcdev, int id)
+> > +{
+> > +	struct pse_control *psec;
+> > +
+> > +	mutex_lock(&pse_list_mutex);
+> > +	list_for_each_entry(psec, &pcdev->pse_control_head, list) {
+> > +		if (psec->id =3D=3D id)
+> > +			return psec->attached_phydev; =20
+>=20
+> The mutex is still locked. I'm surprised your testing did not
+> deadlock, and that none of the automated tools have reported this.
 
-Nice!
-
-> 
-> So trying to do some of the things I did while playing with golang, and
-> with your patches applied, I only had to cope with a minor clash with a
-> patch by Ian Rogers that is present on perf-tools-next, related to:
-> 
->         char buf[MAX_EVENT_NAME_LEN];
-> 
-> That in your patch expects the old 64 hard coded value, which will
-> appear in the my tests:
-
-Ah, OK let me rebase on it.
-
-> 
-> root@x1:/home/acme/git/libbpf-bootstrap/examples/c/tests/prometheus# perf probe -x main -F github*counter*
-> github.com/prometheus/client_golang/prometheus.(*counter).Add
-> github.com/prometheus/client_golang/prometheus.(*counter).AddWithExemplar
-> github.com/prometheus/client_golang/prometheus.(*counter).Collect
-> github.com/prometheus/client_golang/prometheus.(*counter).Desc
-> github.com/prometheus/client_golang/prometheus.(*counter).Describe
-> github.com/prometheus/client_golang/prometheus.(*counter).Inc
-> github.com/prometheus/client_golang/prometheus.(*counter).Write
-> github.com/prometheus/client_golang/prometheus.(*counter).updateExemplar
-> root@x1:/home/acme/git/libbpf-bootstrap/examples/c/tests/prometheus# perf probe -x main -F github*counter*
-> 
-> Then trying to add for all those:
-> 
-> root@x1:/home/acme/git/libbpf-bootstrap/examples/c/tests/prometheus# perf probe -d *:*
-> "*:*" does not hit any event.
->   Error: Failed to delete events.
-> root@x1:/home/acme/git/libbpf-bootstrap/examples/c/tests/prometheus# perf probe -l
-> root@x1:/home/acme/git/libbpf-bootstrap/examples/c/tests/prometheus#
-> 
-> root@x1:/home/acme/git/libbpf-bootstrap/examples/c/tests/prometheus# perf probe -x main github*counter*
-> A function DIE doesn't have decl_line. Maybe broken DWARF?
-> A function DIE doesn't have decl_line. Maybe broken DWARF?
-> A function DIE doesn't have decl_line. Maybe broken DWARF?
-> A function DIE doesn't have decl_line. Maybe broken DWARF?
-> A function DIE doesn't have decl_line. Maybe broken DWARF?
-> snprintf() failed: -7; the event name 'github_com_prometheus_client_golang_prometheus_counter_AddWithExemplar' is too long
->   Hint: Set a shorter event with syntax "EVENT=PROBEDEF"
->         EVENT: Event name (max length: 64 bytes).
->   Error: Failed to add events.
-> root@x1:/home/acme/git/libbpf-bootstrap/examples/c/tests/prometheus#
-> 
-> But:
-> 
-> root@x1:/home/acme/git/libbpf-bootstrap/examples/c/tests/prometheus# perf probe -l
->   probe_main:github_com_prometheus_client_golang_prometheus_counter_Desc (on github.com/prometheus/client_golang/prometheus.(*counter).Des>
-> (END)
-> 
-> That pager thing looks odd as well, since there is just one line in the
-> output...
-> 
-> So it failed to do all those, added just one, maybe state that some were
-> added but from the problematic one onwards it stopped? Or try all of
-> them and just state the ones that couldn't be added?
-
-OK, yes, it should show what events are actually added.
-
-> 
-> I.e. something like:
-> 
-> root@x1:/home/acme/git/libbpf-bootstrap/examples/c/tests/prometheus# perf probe -x main -F github*counter* | while read probename ; do perf probe -x main $probename ; done
-> A function DIE doesn't have decl_line. Maybe broken DWARF?
-> A function DIE doesn't have decl_line. Maybe broken DWARF?
-> Failed to find debug information for address 0x3287e0
-> Probe point 'github.com/prometheus/client_golang/prometheus.(*counter).Add' not found.
->   Error: Failed to add events.
-> snprintf() failed: -7; the event name 'github_com_prometheus_client_golang_prometheus_counter_AddWithExemplar' is too long
->   Hint: Set a shorter event with syntax "EVENT=PROBEDEF"
->         EVENT: Event name (max length: 64 bytes).
->   Error: Failed to add events.
-> A function DIE doesn't have decl_line. Maybe broken DWARF?
-> Failed to find debug information for address 0x33ab40
-> Probe point 'github.com/prometheus/client_golang/prometheus.(*counter).Collect' not found.
->   Error: Failed to add events.
-> Error: event "github_com_prometheus_client_golang_prometheus_counter_Desc" already exists.
->  Hint: Remove existing event by 'perf probe -d'
->        or force duplicates by 'perf probe -f'
->        or set 'force=yes' in BPF source.
->   Error: Failed to add events.
-> A function DIE doesn't have decl_line. Maybe broken DWARF?
-> Failed to find debug information for address 0x33aba0
-> Probe point 'github.com/prometheus/client_golang/prometheus.(*counter).Describe' not found.
->   Error: Failed to add events.
-> Added new event:
->   probe_main:github_com_prometheus_client_golang_prometheus_counter_Inc (on github.com/prometheus/client_golang/prometheus.(*counter).Inc in /home/acme/git/libbpf-bootstrap/examples/c/tests/prometheus/main)
-> 
-> You can now use it in all perf tools, such as:
-> 
-> 	perf record -e probe_main:github_com_prometheus_client_golang_prometheus_counter_Inc -aR sleep 1
-> 
-> Added new event:
->   probe_main:github_com_prometheus_client_golang_prometheus_counter_Write (on github.com/prometheus/client_golang/prometheus.(*counter).Write in /home/acme/git/libbpf-bootstrap/examples/c/tests/prometheus/main)
-> 
-> You can now use it in all perf tools, such as:
-> 
-> 	perf record -e probe_main:github_com_prometheus_client_golang_prometheus_counter_Write -aR sleep 1
-> 
-> snprintf() failed: -7; the event name 'github_com_prometheus_client_golang_prometheus_counter_updateExemplar' is too long
->   Hint: Set a shorter event with syntax "EVENT=PROBEDEF"
->         EVENT: Event name (max length: 64 bytes).
->   Error: Failed to add events.
-> root@x1:/home/acme/git/libbpf-bootstrap/examples/c/tests/prometheus#
-> 
-> In the end we get:
-> 
-> root@x1:/home/acme/git/libbpf-bootstrap/examples/c/tests/prometheus# perf probe -l
->   probe_main:github_com_prometheus_client_golang_prometheus_counter_Desc (on github.com/prometheus/client_golang/prometheus.(*counter).Desc@prometheus/counter.go in /home/acme/git/libbpf-bootstrap/examples/c/tests/prometheus/main)
->   probe_main:github_com_prometheus_client_golang_prometheus_counter_Inc (on github.com/prometheus/client_golang/prometheus.(*counter).Inc@prometheus/counter.go in /home/acme/git/libbpf-bootstrap/examples/c/tests/prometheus/main)
->   probe_main:github_com_prometheus_client_golang_prometheus_counter_Write (on github.com/prometheus/client_golang/prometheus.(*counter).Write@prometheus/counter.go in /home/acme/git/libbpf-bootstrap/examples/c/tests/prometheus/main)
-> root@x1:/home/acme/git/libbpf-bootstrap/examples/c/tests/prometheus#
-> 
-> That also explains the pager kicking in: I had to reduce font size in my
-> xterm (gnome-terminal really) and then the perf pager wasn't used (no
-> (END) at the last line waiting for me to press 'q').
-> 
-> The ones that got installed are working:
-> 
-> root@x1:/home/acme/git/libbpf-bootstrap/examples/c/tests/prometheus# perf trace -e probe_main:*
->      0.000 main/616840 probe_main:github_com_prometheus_client_golang_prometheus_counter_Inc(__probe_ip: 7506464)
->   1001.043 main/616926 probe_main:github_com_prometheus_client_golang_prometheus_counter_Inc(__probe_ip: 7506464)
->   1001.080 main/616926 probe_main:github_com_prometheus_client_golang_prometheus_counter_Inc(__probe_ip: 7506464)
->   4000.994 main/616926 probe_main:github_com_prometheus_client_golang_prometheus_counter_Inc(__probe_ip: 7506464)
-> ^Croot@x1:/home/acme/git/libbpf-bootstrap/examples/c/tests/prometheus# perf trace -e probe_main:*/max-stack=8/
->      0.000 main/616926 probe_main:github_com_prometheus_client_golang_prometheus_counter_Inc(__probe_ip: 7506464)
->                                        github.com/prometheus/client_golang/prometheus.(*counter).Inc (/home/acme/git/libbpf-bootstrap/examples/c/tests/prometheus/main)
->                                        runtime.goexit.abi0 (/home/acme/git/libbpf-bootstrap/examples/c/tests/prometheus/main)
->      0.030 main/616926 probe_main:github_com_prometheus_client_golang_prometheus_counter_Inc(__probe_ip: 7506464)
->                                        github.com/prometheus/client_golang/prometheus.(*counter).Inc (/home/acme/git/libbpf-bootstrap/examples/c/tests/prometheus/main)
->                                        runtime.goexit.abi0 (/home/acme/git/libbpf-bootstrap/examples/c/tests/prometheus/main)
->   3000.166 main/616840 probe_main:github_com_prometheus_client_golang_prometheus_counter_Inc(__probe_ip: 7506464)
->                                        github.com/prometheus/client_golang/prometheus.(*counter).Inc (/home/acme/git/libbpf-bootstrap/examples/c/tests/prometheus/main)
->                                        runtime.goexit.abi0 (/home/acme/git/libbpf-bootstrap/examples/c/tests/prometheus/main)
-> ^Croot@x1:/home/acme/git/libbpf-bootstrap/examples/c/tests/prometheus#
-> 
-> I'll test this some more later/tomorrow, just wanted to give this first
-> reaction, thanks for working on this!
-
-Thanks for testing and the information!
-
-Since the event name limitation is in the kernel too, user should specify
-abbreviated event name in this case (or use only the last few words).
-
-Thank you,
-
-> 
-> Btw, some more info about the environment (fedora 40):
-> 
-> root@x1:/home/acme/git/libbpf-bootstrap/examples/c/tests/prometheus# readelf -wi main | head -20
-> Contents of the .debug_info section:
-> 
->   Compilation Unit @ offset 0:
->    Length:        0x506 (32-bit)
->    Version:       4
->    Abbrev Offset: 0
->    Pointer Size:  8
->  <0><b>: Abbrev Number: 1 (DW_TAG_compile_unit)
->     <c>   DW_AT_name        : google.golang.org/protobuf/internal/strs
->     <35>   DW_AT_language    : 22	(Go)
->     <36>   DW_AT_stmt_list   : 0
->     <3a>   DW_AT_low_pc      : 0x667c40
->     <42>   DW_AT_ranges      : 0
->     <46>   DW_AT_comp_dir    : .
->     <48>   DW_AT_producer    : Go cmd/compile go1.22.7; regabi
->     <68>   Unknown AT value: 2905: strs
->  <1><6d>: Abbrev Number: 5 (DW_TAG_subprogram)
->     <6e>   DW_AT_name        : google.golang.org/protobuf/internal/strs.isASCIILower
->     <a4>   DW_AT_inline      : 1	(inlined)
->     <a5>   DW_AT_decl_line   : 188
-> root@x1:/home/acme/git/libbpf-bootstrap/examples/c/tests/prometheus#
-> 
-> - Arnaldo
->  
-> > And Rust stores
-> > -----
-> > $ ./perf probe -x /work/cro3/target/x86_64-unknown-linux-gnu/debug/cro3 -F cro3::cmd::servo*
-> > cro3::cmd::servo::run
-> > cro3::cmd::servo::run::CALLSITE
-> > cro3::cmd::servo::run::CALLSITE::META
-> > cro3::cmd::servo::run_control
-> > -----
-> > 
-> > These symbols are not parsed correctly because it looks like a file name or
-> > including line numbers (`:` caused it.) So, I decided to introduce the changes
-> > 
-> >  - filename MUST start from '@'. (so it is able to distinguish the filename
-> >    and the function name)
-> >  - Fix to allow backslash to escape to --lines option.
-> >  - Introduce quotation mark support.
-> >  - Replace non-alnum character to '_' for event name (for non-C symbols).
-> > 
-> > With these changes, we can run -L (--lines) on golang;
-> > 
-> > ------
-> > $ perf probe -x goexample/hello/hello -L \"main.main\"
-> > <main.main@/work/goexample/hello/hello.go:0>
-> >       0  func main() {
-> >                 // Configure logging for a command-line program.
-> >       2         log.SetFlags(0)
-> >       3         log.SetPrefix("hello: ")
-> > 
-> >                 // Parse flags.
-> >       6         flag.Usage = usage
-> >       7         flag.Parse()
-> > ------
-> > 
-> > And Rust
-> > ------
-> > $ perf probe -x cro3 -L \"cro3::cmd::servo::run_show\"
-> > <run_show@/work/cro3/src/cmd/servo.rs:0>
-> >       0  fn run_show(args: &ArgsShow) -> Result<()> {
-> >       1      let list = ServoList::discover()?;
-> >       2      let s = list.find_by_serial(&args.servo)?;
-> >       3      if args.json {
-> >       4          println!("{s}");
-> > ------
-> > 
-> > And event name are created automatically like below;
-> > 
-> > $ ./perf probe -x /work/go/example/outyet/main -D 'main.(*Server).poll'
-> > p:probe_main/main_Server_poll /work/go/example/outyet/main:0x353040
-> > 
-> > $ ./perf probe -x cro3 -D \"cro3::cmd::servo::run_show\"
-> > p:probe_cro3/cro3_cmd_servo_run_show /work/cro3/target/x86_64-unknown-linux-gnu/debug/cro3:0x197530
-> > 
-> > We still need some more work, but these shows how perf-probe can work
-> > with other languages.
-> > 
-> > Thank you,
-> > 
-> > ---
-> > 
-> > Masami Hiramatsu (Google) (4):
-> >       perf-probe: Fix to ignore escaped characters in --lines option
-> >       perf-probe: Require '@' prefix for filename always
-> >       perf-probe: Introduce quotation marks support
-> >       perf-probe: Replace unacceptable characters when generating event name
-> > 
-> > 
-> >  tools/perf/util/probe-event.c  |  136 ++++++++++++++++++++++------------------
-> >  tools/perf/util/probe-finder.c |    3 +
-> >  tools/perf/util/string.c       |  100 +++++++++++++++++++++++++++++
-> >  tools/perf/util/string2.h      |    2 +
-> >  4 files changed, 180 insertions(+), 61 deletions(-)
-> > 
-> > --
-> > Masami Hiramatsu (Google) <mhiramat@kernel.org>
+Ouch indeed! As explained in the cover letter, this v2 has not been fully
+tested.
+But I have built it with smatch and sparse. Weirdly they didn't find it.=20
+Thanks for seeing it.
 
 
--- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> ---
+> pw-bot: cr
+
+Does RFC patch series pass through the netdev CI build test?=20
+
+Regards,
+--=20
+K=C3=B6ry Maincent, Bootlin
+Embedded Linux and kernel engineering
+https://bootlin.com
 
