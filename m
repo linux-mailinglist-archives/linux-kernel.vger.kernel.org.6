@@ -1,163 +1,308 @@
-Return-Path: <linux-kernel+bounces-395879-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395880-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03F649BC460
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 05:33:34 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19BB99BC462
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 05:39:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 820391F21E1A
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 04:33:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B9D45282838
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 04:39:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FD09199E8D;
-	Tue,  5 Nov 2024 04:33:24 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C8541B0F18;
+	Tue,  5 Nov 2024 04:39:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="S+9PvnRG"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 528D8433B5
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 04:33:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68C7818EAD;
+	Tue,  5 Nov 2024 04:39:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730781203; cv=none; b=G/7PKMZxRoIn3JqDYCCW6ne7jxMDR+p0/StUshiF683i05BIDlKByDI9oL8KIO4icgQK9fG5I9KX+mKyf0l0xrbB88SArKorrmXegWgO5YapDuoLJlkgyhrdwPG+s2QLQeNKWiccGBSmPl6Tej79wCXC3hRge+KtvzxKR32Yzjg=
+	t=1730781550; cv=none; b=eCEtB/BMNfLpgjUGbUjceNPHinf8p0IihJ7WD5DUcUPoVePOmwTSPhhje5xfppHQb3j8c7Y8E5lw1e6BI4aJMpv6uFFIBpNIPWVemwx1ZqCP+zwu/vGzK6VFz100xwlbRa1m2Kszuye9hojhgu8ZY9GZ2BhxJn24Qrz3nlOCy1g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730781203; c=relaxed/simple;
-	bh=VOcYgorph87rNniZ/urBQKYFW61UsZGc5avEJffLTUk=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=F8vohEl4HU6q9KLhx0SGdL10sjYqVmoF0TNmetkxpN8zjvBZA/Ne7/GEDRDdtN0w2zUSRcbJo+ltnuS8ffMKhUN705TfqX5N5PIqdLQNqaTBokS7pZOxG9QAwE2bEsgLkuvgax5ZRGUmPxPg3FKlzAXSXswGaTwV2TbG23v8QAk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a6b2581364so40193205ab.0
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 20:33:22 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730781201; x=1731386001;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=1Dv5h/ThRRiN4Q9Yjm2/1X9R+DjHG+sT4aBxlPqHf3Q=;
-        b=WcgXrAKfg+H7U1FM/KW7TNiTfi+wEUqNx+AGusRooo8s7O9IU0fm2YVlr8A1Z1Wu9t
-         GxL/TxYXJdMMOy9bJQ9h4pfuRmnU5moWP3tf2LxOmVz8FZxstojoas9odp100EJMDjow
-         8nZQPMx44dwWCOr0MhB66rn6fSFPAlwy7AWey4sNQ1sAkOIb0TlOgPCa6NYgngjm5Ugz
-         /X4sKAzZoUM6R7ql4ziPA+AfOSBj1+R3x/l2w+f/n9uBL6eMeDExBUHiRUfzADCeebKI
-         sZfwajf/3F4pKcapjtoh6LW4T4VBycHfYXeR84v6/+Bo85IqZjHIKyWMxo42Acmftnz5
-         RrhQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVX/+u7ar/A1ygF8fwRExKuS8SrCOt1PXsIRQ2BuvJ0iTqU9Im6PvrCoUDyg64rs21nxys8KXzZQ6d3o3w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzWiUVwc5G9z3vFNwI7tAIWcQmP+YgY58/bm41mTKk7WjfMdilN
-	+tgyFWfmvioKZuLAK86dXvbHL4Htsd/RnExdR69gL3oMFflagkj06RozFXXHXTZAR/F/m3Z3ANL
-	6yYez2gU/S0xc469/BzAgQOnKBRhY8G0WX6afInwovIZFwXlc94/5tIA=
-X-Google-Smtp-Source: AGHT+IGGFyZlL39ODOGwf3LiveBZx19fylBuDdYyIGzcVrM++9hNgfQLjX/UEhF4ljfiM5ajnINdq4/xKq4boJuh5kx6d6zDfKBj
+	s=arc-20240116; t=1730781550; c=relaxed/simple;
+	bh=/obr6y8FYd0XJDGH7gU8iti3w+QV8rGZbnU2PQFDq+o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Qg6b42jUc50gxhQYfHqvvPEKG0ueYkJ1dkS5lk9Rw5LBU3F9PN1wyctNslQbHNCBKjZY2vQFy0RC4pL4vkjg9Fca6/Qr7bFAmS/Yj4EQMY99K3uuhQm+/ns38cSn29slBL2RmGCIN2mwhy7LckGSPCIhkz0NKHJATwm1VMekTzw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=S+9PvnRG; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730781548; x=1762317548;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=/obr6y8FYd0XJDGH7gU8iti3w+QV8rGZbnU2PQFDq+o=;
+  b=S+9PvnRGYgBVG3PU+coBr6JBzy2r6ut6BJMmRi5DgIp+6/Cjzd2RDvHi
+   Mc29k+ID9Qhfzywn1mSM23QU6RCyNkMYcG48EJ6x8K1tQlnEmfxnNS+3M
+   ug4QN8CMxgE3Cgdh4kHKh9BrOnR/1XR0TBPVTEMG2FhMxUEDpVqfQKqk8
+   T+rwqR4ANo0D/5+38re2DC6wfV4JRv26X9+6zwlHfAGFugaomUtAhxzdA
+   T4qlS0dbVc4tT4SG+D0mZ8NW/vUjIExB4zCzDYxtgryoZdbzWGQscv7hE
+   +dGUjRghjpPsoM8SDy0K+MC0rwzPo/HistYaox71Uj7elqqdMSLGWVVKA
+   w==;
+X-CSE-ConnectionGUID: 2OVd+IpKSBSKN+ej6naaug==
+X-CSE-MsgGUID: x+tx+DtsQJyNkTKc03TBKw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="30281920"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="30281920"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2024 20:39:08 -0800
+X-CSE-ConnectionGUID: O9EYPC1wReGwuguM+CaVDw==
+X-CSE-MsgGUID: LdyfWCsdT9iEqgQHHG/+cw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,259,1725346800"; 
+   d="scan'208";a="87803568"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by fmviesa003.fm.intel.com with ESMTP; 04 Nov 2024 20:39:05 -0800
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t8BLL-000lcv-0Q;
+	Tue, 05 Nov 2024 04:39:03 +0000
+Date: Tue, 5 Nov 2024 12:39:00 +0800
+From: kernel test robot <lkp@intel.com>
+To: Keren Sun <kerensun@google.com>, akpm@linux-foundation.org
+Cc: oe-kbuild-all@lists.linux.dev, roman.gushchin@linux.dev,
+	hannes@cmpxchg.org, mhocko@kernel.org, shakeel.butt@linux.dev,
+	muchun.song@linux.dev, cgroups@vger.kernel.org, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, Keren Sun <kerensun@google.com>
+Subject: Re: [PATCH 4/4] mm: Replace simple_strtoul() with kstrtoul()
+Message-ID: <202411051219.uj1XBcp1-lkp@intel.com>
+References: <20241104222737.298130-5-kerensun@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:3281:b0:3a6:c84f:9357 with SMTP id
- e9e14a558f8ab-3a6c84f97b3mr70739545ab.25.1730781201465; Mon, 04 Nov 2024
- 20:33:21 -0800 (PST)
-Date: Mon, 04 Nov 2024 20:33:21 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6729a011.050a0220.2edce.1501.GAE@google.com>
-Subject: [syzbot] [net?] WARNING in geneve_udp_encap_recv
-From: syzbot <syzbot+c28dd30bc14158282b3b@syzkaller.appspotmail.com>
-To: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com, 
-	kuba@kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
-	pabeni@redhat.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241104222737.298130-5-kerensun@google.com>
 
-Hello,
+Hi Keren,
 
-syzbot found the following issue on:
+kernel test robot noticed the following build warnings:
 
-HEAD commit:    90602c251cda Merge tag 'net-6.12-rc6' of git://git.kernel...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=16519340580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=4340261e4e9f37fc
-dashboard link: https://syzkaller.appspot.com/bug?extid=c28dd30bc14158282b3b
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+[auto build test WARNING on v6.12-rc6]
+[also build test WARNING on linus/master]
+[cannot apply to akpm-mm/mm-everything next-20241104]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Unfortunately, I don't have any reproducer for this issue yet.
+url:    https://github.com/intel-lab-lkp/linux/commits/Keren-Sun/mm-fix-quoted-strings-spliting-across-lines/20241105-063007
+base:   v6.12-rc6
+patch link:    https://lore.kernel.org/r/20241104222737.298130-5-kerensun%40google.com
+patch subject: [PATCH 4/4] mm: Replace simple_strtoul() with kstrtoul()
+config: arc-randconfig-001-20241105 (https://download.01.org/0day-ci/archive/20241105/202411051219.uj1XBcp1-lkp@intel.com/config)
+compiler: arceb-elf-gcc (GCC) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241105/202411051219.uj1XBcp1-lkp@intel.com/reproduce)
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-90602c25.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/6a2daa3dcb25/vmlinux-90602c25.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/4488ee6eec29/bzImage-90602c25.xz
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202411051219.uj1XBcp1-lkp@intel.com/
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+c28dd30bc14158282b3b@syzkaller.appspotmail.com
+All warnings (new ones prefixed by >>):
 
-memcpy: detected field-spanning write (size 4) of single field "_Generic(info, const struct ip_tunnel_info * : ((const void *)((info) + 1)), struct ip_tunnel_info * : ((void *)((info) + 1)) )" at include/net/ip_tunnels.h:653 (size 0)
-WARNING: CPU: 3 PID: 34 at include/net/ip_tunnels.h:653 ip_tunnel_info_opts_set include/net/ip_tunnels.h:653 [inline]
-WARNING: CPU: 3 PID: 34 at include/net/ip_tunnels.h:653 geneve_rx drivers/net/geneve.c:244 [inline]
-WARNING: CPU: 3 PID: 34 at include/net/ip_tunnels.h:653 geneve_udp_encap_recv+0x22cd/0x29a0 drivers/net/geneve.c:401
-Modules linked in:
-CPU: 3 UID: 0 PID: 34 Comm: ksoftirqd/3 Not tainted 6.12.0-rc5-syzkaller-00161-g90602c251cda #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-RIP: 0010:ip_tunnel_info_opts_set include/net/ip_tunnels.h:653 [inline]
-RIP: 0010:geneve_rx drivers/net/geneve.c:244 [inline]
-RIP: 0010:geneve_udp_encap_recv+0x22cd/0x29a0 drivers/net/geneve.c:401
-Code: 9e e9 ff ff e8 24 ca 53 fb c6 05 c4 65 0e 0a 01 90 31 c9 48 c7 c2 e0 3e 14 8c 4c 89 e6 48 c7 c7 c0 3f 14 8c e8 c4 b9 14 fb 90 <0f> 0b 90 90 e9 c7 ed ff ff e8 f5 c9 53 fb e8 80 8c c9 02 31 ff 41
-RSP: 0018:ffffc900008df630 EFLAGS: 00010282
-RAX: 0000000000000000 RBX: ffff888060da0f32 RCX: ffffffff814e6dd9
-RDX: ffff88801e294880 RSI: ffffffff814e6de6 RDI: 0000000000000001
-RBP: ffffc900008df750 R08: 0000000000000001 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000004
-R13: ffff888032d57c00 R14: 0000000000000000 R15: ffff88804583ef00
-FS:  0000000000000000(0000) GS:ffff88806a900000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fd1e8385f98 CR3: 000000004b406000 CR4: 0000000000352ef0
-DR0: 00000000e0002800 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- udp_queue_rcv_one_skb+0xad5/0x18c0 net/ipv4/udp.c:2135
- udp_queue_rcv_skb+0x198/0xd10 net/ipv4/udp.c:2213
- udp_unicast_rcv_skb+0x165/0x3b0 net/ipv4/udp.c:2373
- __udp4_lib_rcv+0x25fd/0x34e0 net/ipv4/udp.c:2449
- ip_protocol_deliver_rcu+0x2ff/0x4c0 net/ipv4/ip_input.c:205
- ip_local_deliver_finish+0x316/0x570 net/ipv4/ip_input.c:233
- NF_HOOK include/linux/netfilter.h:314 [inline]
- NF_HOOK include/linux/netfilter.h:308 [inline]
- ip_local_deliver+0x18e/0x1f0 net/ipv4/ip_input.c:254
- dst_input include/net/dst.h:460 [inline]
- ip_rcv_finish net/ipv4/ip_input.c:449 [inline]
- NF_HOOK include/linux/netfilter.h:314 [inline]
- NF_HOOK include/linux/netfilter.h:308 [inline]
- ip_rcv+0x2c3/0x5d0 net/ipv4/ip_input.c:569
- __netif_receive_skb_one_core+0x199/0x1e0 net/core/dev.c:5670
- __netif_receive_skb+0x1d/0x160 net/core/dev.c:5783
- process_backlog+0x443/0x15f0 net/core/dev.c:6115
- __napi_poll.constprop.0+0xb7/0x550 net/core/dev.c:6779
- napi_poll net/core/dev.c:6848 [inline]
- net_rx_action+0xa92/0x1010 net/core/dev.c:6970
- handle_softirqs+0x213/0x8f0 kernel/softirq.c:554
- run_ksoftirqd kernel/softirq.c:927 [inline]
- run_ksoftirqd+0x3a/0x60 kernel/softirq.c:919
- smpboot_thread_fn+0x661/0xa30 kernel/smpboot.c:164
- kthread+0x2c1/0x3a0 kernel/kthread.c:389
- ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
+   mm/memcontrol-v1.c: In function 'memcg_write_event_control':
+>> mm/memcontrol-v1.c:1926:27: warning: passing argument 3 of 'kstrtoul' makes pointer from integer without a cast [-Wint-conversion]
+    1926 |         kstrtoul(buf, 10, efd);
+         |                           ^~~
+         |                           |
+         |                           unsigned int
+   In file included from mm/memcontrol-v1.c:3:
+   include/linux/kstrtox.h:30:90: note: expected 'long unsigned int *' but argument is of type 'unsigned int'
+      30 | static inline int __must_check kstrtoul(const char *s, unsigned int base, unsigned long *res)
+         |                                                                           ~~~~~~~~~~~~~~~^~~
+   mm/memcontrol-v1.c:1931:27: warning: passing argument 3 of 'kstrtoul' makes pointer from integer without a cast [-Wint-conversion]
+    1931 |         kstrtoul(buf, 10, cfd);
+         |                           ^~~
+         |                           |
+         |                           unsigned int
+   include/linux/kstrtox.h:30:90: note: expected 'long unsigned int *' but argument is of type 'unsigned int'
+      30 | static inline int __must_check kstrtoul(const char *s, unsigned int base, unsigned long *res)
+         |                                                                           ~~~~~~~~~~~~~~~^~~
+>> mm/memcontrol-v1.c:1918:15: warning: unused variable 'endp' [-Wunused-variable]
+    1918 |         char *endp;
+         |               ^~~~
+>> mm/memcontrol-v1.c:1926:9: warning: ignoring return value of 'kstrtoul' declared with attribute 'warn_unused_result' [-Wunused-result]
+    1926 |         kstrtoul(buf, 10, efd);
+         |         ^~~~~~~~~~~~~~~~~~~~~~
+   mm/memcontrol-v1.c:1931:9: warning: ignoring return value of 'kstrtoul' declared with attribute 'warn_unused_result' [-Wunused-result]
+    1931 |         kstrtoul(buf, 10, cfd);
+         |         ^~~~~~~~~~~~~~~~~~~~~~
+>> mm/memcontrol-v1.c:1926:9: warning: 'efd' is used uninitialized [-Wuninitialized]
+    1926 |         kstrtoul(buf, 10, efd);
+         |         ^~~~~~~~~~~~~~~~~~~~~~
+   mm/memcontrol-v1.c:1913:22: note: 'efd' was declared here
+    1913 |         unsigned int efd, cfd;
+         |                      ^~~
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+vim +/kstrtoul +1926 mm/memcontrol-v1.c
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+  1897	
+  1898	/*
+  1899	 * DO NOT USE IN NEW FILES.
+  1900	 *
+  1901	 * Parse input and register new cgroup event handler.
+  1902	 *
+  1903	 * Input must be in format '<event_fd> <control_fd> <args>'.
+  1904	 * Interpretation of args is defined by control file implementation.
+  1905	 */
+  1906	static ssize_t memcg_write_event_control(struct kernfs_open_file *of,
+  1907						 char *buf, size_t nbytes, loff_t off)
+  1908	{
+  1909		struct cgroup_subsys_state *css = of_css(of);
+  1910		struct mem_cgroup *memcg = mem_cgroup_from_css(css);
+  1911		struct mem_cgroup_event *event;
+  1912		struct cgroup_subsys_state *cfile_css;
+  1913		unsigned int efd, cfd;
+  1914		struct fd efile;
+  1915		struct fd cfile;
+  1916		struct dentry *cdentry;
+  1917		const char *name;
+> 1918		char *endp;
+  1919		int ret;
+  1920	
+  1921		if (IS_ENABLED(CONFIG_PREEMPT_RT))
+  1922			return -EOPNOTSUPP;
+  1923	
+  1924		buf = strstrip(buf);
+  1925	
+> 1926		kstrtoul(buf, 10, efd);
+  1927		if (*buf != ' ')
+  1928			return -EINVAL;
+  1929		buf++;
+  1930	
+> 1931		kstrtoul(buf, 10, cfd);
+  1932		if (*buf == ' ')
+  1933			buf++;
+  1934		else if (*buf != '\0')
+  1935			return -EINVAL;
+  1936	
+  1937		event = kzalloc(sizeof(*event), GFP_KERNEL);
+  1938		if (!event)
+  1939			return -ENOMEM;
+  1940	
+  1941		event->memcg = memcg;
+  1942		INIT_LIST_HEAD(&event->list);
+  1943		init_poll_funcptr(&event->pt, memcg_event_ptable_queue_proc);
+  1944		init_waitqueue_func_entry(&event->wait, memcg_event_wake);
+  1945		INIT_WORK(&event->remove, memcg_event_remove);
+  1946	
+  1947		efile = fdget(efd);
+  1948		if (!fd_file(efile)) {
+  1949			ret = -EBADF;
+  1950			goto out_kfree;
+  1951		}
+  1952	
+  1953		event->eventfd = eventfd_ctx_fileget(fd_file(efile));
+  1954		if (IS_ERR(event->eventfd)) {
+  1955			ret = PTR_ERR(event->eventfd);
+  1956			goto out_put_efile;
+  1957		}
+  1958	
+  1959		cfile = fdget(cfd);
+  1960		if (!fd_file(cfile)) {
+  1961			ret = -EBADF;
+  1962			goto out_put_eventfd;
+  1963		}
+  1964	
+  1965		/* the process need read permission on control file */
+  1966		/* AV: shouldn't we check that it's been opened for read instead? */
+  1967		ret = file_permission(fd_file(cfile), MAY_READ);
+  1968		if (ret < 0)
+  1969			goto out_put_cfile;
+  1970	
+  1971		/*
+  1972		 * The control file must be a regular cgroup1 file. As a regular cgroup
+  1973		 * file can't be renamed, it's safe to access its name afterwards.
+  1974		 */
+  1975		cdentry = fd_file(cfile)->f_path.dentry;
+  1976		if (cdentry->d_sb->s_type != &cgroup_fs_type || !d_is_reg(cdentry)) {
+  1977			ret = -EINVAL;
+  1978			goto out_put_cfile;
+  1979		}
+  1980	
+  1981		/*
+  1982		 * Determine the event callbacks and set them in @event.  This used
+  1983		 * to be done via struct cftype but cgroup core no longer knows
+  1984		 * about these events.  The following is crude but the whole thing
+  1985		 * is for compatibility anyway.
+  1986		 *
+  1987		 * DO NOT ADD NEW FILES.
+  1988		 */
+  1989		name = cdentry->d_name.name;
+  1990	
+  1991		if (!strcmp(name, "memory.usage_in_bytes")) {
+  1992			event->register_event = mem_cgroup_usage_register_event;
+  1993			event->unregister_event = mem_cgroup_usage_unregister_event;
+  1994		} else if (!strcmp(name, "memory.oom_control")) {
+  1995			pr_warn_once("oom_control is deprecated and will be removed. Please report your usecase to linux-mm-@kvack.org if you depend on this functionality.\n");
+  1996			event->register_event = mem_cgroup_oom_register_event;
+  1997			event->unregister_event = mem_cgroup_oom_unregister_event;
+  1998		} else if (!strcmp(name, "memory.pressure_level")) {
+  1999			pr_warn_once("pressure_level is deprecated and will be removed. Please report your usecase to linux-mm-@kvack.org if you depend on this functionality.\n");
+  2000			event->register_event = vmpressure_register_event;
+  2001			event->unregister_event = vmpressure_unregister_event;
+  2002		} else if (!strcmp(name, "memory.memsw.usage_in_bytes")) {
+  2003			event->register_event = memsw_cgroup_usage_register_event;
+  2004			event->unregister_event = memsw_cgroup_usage_unregister_event;
+  2005		} else {
+  2006			ret = -EINVAL;
+  2007			goto out_put_cfile;
+  2008		}
+  2009	
+  2010		/*
+  2011		 * Verify @cfile should belong to @css.  Also, remaining events are
+  2012		 * automatically removed on cgroup destruction but the removal is
+  2013		 * asynchronous, so take an extra ref on @css.
+  2014		 */
+  2015		cfile_css = css_tryget_online_from_dir(cdentry->d_parent,
+  2016						       &memory_cgrp_subsys);
+  2017		ret = -EINVAL;
+  2018		if (IS_ERR(cfile_css))
+  2019			goto out_put_cfile;
+  2020		if (cfile_css != css) {
+  2021			css_put(cfile_css);
+  2022			goto out_put_cfile;
+  2023		}
+  2024	
+  2025		ret = event->register_event(memcg, event->eventfd, buf);
+  2026		if (ret)
+  2027			goto out_put_css;
+  2028	
+  2029		vfs_poll(fd_file(efile), &event->pt);
+  2030	
+  2031		spin_lock_irq(&memcg->event_list_lock);
+  2032		list_add(&event->list, &memcg->event_list);
+  2033		spin_unlock_irq(&memcg->event_list_lock);
+  2034	
+  2035		fdput(cfile);
+  2036		fdput(efile);
+  2037	
+  2038		return nbytes;
+  2039	
+  2040	out_put_css:
+  2041		css_put(css);
+  2042	out_put_cfile:
+  2043		fdput(cfile);
+  2044	out_put_eventfd:
+  2045		eventfd_ctx_put(event->eventfd);
+  2046	out_put_efile:
+  2047		fdput(efile);
+  2048	out_kfree:
+  2049		kfree(event);
+  2050	
+  2051		return ret;
+  2052	}
+  2053	
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
