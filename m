@@ -1,79 +1,115 @@
-Return-Path: <linux-kernel+bounces-396406-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396407-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FD209BCCB0
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 13:26:33 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3C949BCCB4
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 13:28:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 71BC21C2201B
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 12:26:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 313C61C20CC3
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 12:28:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40F4B1D5AA1;
-	Tue,  5 Nov 2024 12:26:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EB7F1D54E7;
+	Tue,  5 Nov 2024 12:28:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="HPEAw8tb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="D52MwWQs"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72BDF1C3025;
-	Tue,  5 Nov 2024 12:26:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E9801C3025
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 12:28:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730809584; cv=none; b=lUO80Di0LxS6g1OJiMIXzk7DxfooO6QCoIHUq5hst3rs6vtlFBsMYvHGlUt1DWIlsVm7X1lEKQrWoZ+L2sWvt1EnZuKdFJuqpmWcK+zfjFgCK7iRuifl6A5wMKZYm6az8rsPBsDjP1fZHa3RM+Zrwg4KXihDVDtEt9auJXdMow0=
+	t=1730809716; cv=none; b=QTFO7evMARxwFOgOkJnmc2/LKJPi7+GsplYO/9oJHhCEGQVWVKNMQkipaOywa761ZitCoPGmMivNoNNuZ17pwb+KqVipakL1UHMXQ1sc75klr9rJSepZgXQXjHPQvtQk/3MTb5YZ5omLVirR9/lbxd2Bwxh0VK6HrQF3EPnGN5U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730809584; c=relaxed/simple;
-	bh=p65u6pEVwp+z2uFB3EoaOxjkU6wS+vHhM8fSdafSUcw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FTzq7laC/ll9ln6hViDZIKyLGCAn5NgVIJyCrcFL8HbmrkFDo2cDPa776P7sNjXnmP0g5zK2nqfd95cKPBznPhbbx5Zo6yyNu2oyFmFlbhpICpFOECmIGXEFyyBdYySbSEqRL6FLgi0lSfaJqw3JenTnBsCqzmscrygn2MDOzc8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=HPEAw8tb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB6F4C4CECF;
-	Tue,  5 Nov 2024 12:26:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1730809584;
-	bh=p65u6pEVwp+z2uFB3EoaOxjkU6wS+vHhM8fSdafSUcw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HPEAw8tbyg8+of3RFA7tiW95xAAbHOS7PFiyoR3ug25sCT/DcLHCug/TtYomZWPCO
-	 VLwre+c5q+re3y/VKB9ntfxpiMLpDfXoMaKAPa5SYD6bmIE5iMA07r2VJEbPpM+xU+
-	 qlZFEs1eryFUC9WvpBKAlA6MxMW2f7GUCZkvbVd8=
-Date: Tue, 5 Nov 2024 13:26:04 +0100
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Tony Lindgren <tony@atomide.com>, Lee Jones <lee@kernel.org>,
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-input@vger.kernel.org, linux-leds@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-usb@vger.kernel.org,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>, Pavel Machek <pavel@ucw.cz>,
-	Dominik Brodowski <linux@dominikbrodowski.net>,
-	Daniel Mack <daniel@zonque.org>,
-	Haojian Zhuang <haojian.zhuang@gmail.com>,
-	Robert Jarzmik <robert.jarzmik@free.fr>
-Subject: Re: [PATCH v1 5/6] USB: gadget: pxa27x_udc: Avoid using
- GPIOF_ACTIVE_LOW
-Message-ID: <2024110557-reenter-unruffled-f88a@gregkh>
-References: <20241104093609.156059-1-andriy.shevchenko@linux.intel.com>
- <20241104093609.156059-6-andriy.shevchenko@linux.intel.com>
+	s=arc-20240116; t=1730809716; c=relaxed/simple;
+	bh=d8+q2cC8swJj6TPAWD6IMiRhjDy9S4yLyIVKCGShcA8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pOFoxf8naN/H42bWckAxH8TtB2vKIhdr/H3nRVa5YkZZgcCMu4aYe2YwQFukzlF7xshwcwPo9fVehLmhVX3omcCmXEcC6jcsUDOsTra/agOFk2ia1IPpmqtJjmloBJf5fWTrTmJPCcE+b1G7lHyBtJ25rIUZl838e0JQ0d+ayBw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=D52MwWQs; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1730809713;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GUC1nj0vvwjasfZw0SlmO9m9UAIg6vugQYsOMxhb2xU=;
+	b=D52MwWQs6LhJG8wsMZth3rFphJiQysa+Y2gMtYPw0a/gTr8QpuBp3/feHUmqTFSLvN9N6m
+	Crh9Ol9XNneTnoVkLBWfZYKv6ukjy4shEtfF65MocOs/TT7811+MWVstwgzuYZY+KX6SIh
+	rCCnRoVytI29ghcrUK4NS/Q/ePkmGIY=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-623-m5A7TQiHODCZHx1jzORODA-1; Tue, 05 Nov 2024 07:28:32 -0500
+X-MC-Unique: m5A7TQiHODCZHx1jzORODA-1
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-43157cff1d1so39788715e9.2
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 04:28:32 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730809711; x=1731414511;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=GUC1nj0vvwjasfZw0SlmO9m9UAIg6vugQYsOMxhb2xU=;
+        b=SiLS1hNQb2lyPBGMLX/Y950X0jiKBQ84m/m+Wp12vFJmTolNRS1BCUuFwU3fE9qmk8
+         FmI3lzU1ous0CpiR8Ix7lGOkxMVBQyEwEQsW5wOXUzUemfiiTEBVtfzC6EyUq6ocdGXc
+         nBgzSyKHN6mjO/lE4ojKWJ+Md35gezOpS7aCR2MUAxTIOE03LTwW+jvkenaB7JEs5oVY
+         AWTTK/6g4JicBNyHTlRh3T1k3HHmM/fVywqC3+28ok0LApQOm1WqT8H39GAlSwzP6Ibf
+         47eTqZ63XfInte/TNE+c4iv9saCba6cKF6WaPmwbfOej2MbZHJXxdaC6Gj+fdKcJ3sPP
+         9c9Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWemFDQBnLkPrG8RWQe/ReWAoIrvtX/Cy0r4j3rkYQ3c+C9wq54UgEOMFuiKQLBA0d7Q24TmYKF/SMQUiE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzBPR1KJYy7IUVp863AdzGddH7OZXTLl1qTyX7fh6F0y+VryGJg
+	9c7RpcKAg5CmDqnQRZPm2QmzHuNhiBhJKdGO3J/BLb9GDVZbbzuT+2qhRNvEpwqAMPqFQpPEIeD
+	15FS6ZOY9P1g3bkMWVdZi6XHHuEkKmXbr1tBSGKRQZmIDEzwd65SAUqZUbcbR6Q==
+X-Received: by 2002:a05:600c:1f91:b0:426:66a2:b200 with SMTP id 5b1f17b1804b1-4327b6c79f7mr178436345e9.0.1730809711039;
+        Tue, 05 Nov 2024 04:28:31 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFJblbpncVdFoO9qp4CKXUlwBXcuEdsxfBUGct4qinijfqhn5UtFb1mG40y+JWdLvUY4dnj6Q==
+X-Received: by 2002:a05:600c:1f91:b0:426:66a2:b200 with SMTP id 5b1f17b1804b1-4327b6c79f7mr178436175e9.0.1730809710696;
+        Tue, 05 Nov 2024 04:28:30 -0800 (PST)
+Received: from [192.168.88.24] (146-241-44-112.dyn.eolo.it. [146.241.44.112])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-431bd8e8466sm217372075e9.2.2024.11.05.04.28.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 05 Nov 2024 04:28:30 -0800 (PST)
+Message-ID: <68f209ba-2979-4a15-b344-4613c465b005@redhat.com>
+Date: Tue, 5 Nov 2024 13:28:28 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241104093609.156059-6-andriy.shevchenko@linux.intel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] ipv6: ip6_fib: fix possible null-pointer-dereference in
+ ipv6_route_native_seq_show
+To: Yi Zou <03zouyi09.25@gmail.com>, davem@davemloft.net
+Cc: 21210240012@m.fudan.edu.cn, 21302010073@m.fudan.edu.cn,
+ dsahern@kernel.org, edumazet@google.com, kuba@kernel.org,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241101044828.55960-1-03zouyi09.25@gmail.com>
+Content-Language: en-US
+From: Paolo Abeni <pabeni@redhat.com>
+In-Reply-To: <20241101044828.55960-1-03zouyi09.25@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Nov 04, 2024 at 11:34:23AM +0200, Andy Shevchenko wrote:
-> Avoid using GPIOF_ACTIVE_LOW as it's deprecated and subject to remove.
+
+
+On 11/1/24 05:48, Yi Zou wrote:
+> In the ipv6_route_native_seq_show function, the fib6_nh variable
+> is assigned the value from nexthop_fib6_nh(rt->nh), which could
+> return NULL. This creates a risk of a null-pointer-dereference
+> when accessing fib6_nh->fib_nh_gw_family. This can be resolved by
+> checking if fib6_nh is non-NULL before accessing fib6_nh->fib_nh_gw_family
+>  and assign dev using dev = fib6_nh ? fib6_nh->fib_nh_dev : NULL;
+> to prevent null-pointer dereference errors.
 > 
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> ---
->  drivers/usb/gadget/udc/pxa27x_udc.c | 7 ++++---
->  1 file changed, 4 insertions(+), 3 deletions(-)
+> Signed-off-by: Yi Zou <03zouyi09.25@gmail.com>
 
-Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Please send a new revision, including a the target tree in the subj
+prefix - in this case 'net' and a suitable Fixes tag.
+
+/P
+
 
