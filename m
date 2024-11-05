@@ -1,108 +1,134 @@
-Return-Path: <linux-kernel+bounces-395764-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395763-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9A919BC290
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 02:28:57 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D52BC9BC291
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 02:29:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6AF46284774
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 01:28:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 414E9B21A60
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 01:29:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 863D622331;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E51A428399;
 	Tue,  5 Nov 2024 01:28:46 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="VHDXD2pr"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6724288DA;
-	Tue,  5 Nov 2024 01:28:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03D9E2837B;
+	Tue,  5 Nov 2024 01:28:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730770126; cv=none; b=VU5Z8eh3xSP9GzRS+mUPXaHlg4ELEyVXtqpDLPsySwL20OLr8KsQDhpj4YaHE0Th4wjSc36NB7FOXBBnGjORRzoMdavG4/IRVYi2vZeZ5oltC9Fv2Xd9aWlEJBaMsd/qkD3PCjxeKBPtUyfgScDDL66ehwwykmIldUjYQYe04ok=
+	t=1730770126; cv=none; b=SGQm4y6XtZxnvWJ8xY6b4/No/xuQfMUoJ5L0688IHdhDHz99uS8tDY3kE5vzrEcrInLc6NtcBB6Ejhzjxx4lSxoZ9N3qtLX0rvSXCBVCK8X/AZXKJiY4ujcnwktWAmVlPnmRosyoVJRQYfKpmI+wkqarZe6j+gvMqyC7lqdb2Ak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1730770126; c=relaxed/simple;
-	bh=H5XfEhKOEzISIPvy1BCZlKaYQlO85XMro+9WSRsKA9Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KJbNxO8ds+9Pm1HDph03E2FdoPHyWwW4H7zsM4nRB6z5QrMqbRPtXNpYxulVC5Ol1I1rTnDPucUF2F4CTEJEZ7qB3TZTgQzj+/Yn5YDyq4GkehjUQf9JkhPXOKurGSPwd3xxh4y/QNWH5Xy/DiRAxHcxWRBnZIrvE9Nkurseo6A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Xj9hW52b2z4f3jtF;
-	Tue,  5 Nov 2024 09:28:27 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 833791A0568;
-	Tue,  5 Nov 2024 09:28:40 +0800 (CST)
-Received: from [10.67.110.36] (unknown [10.67.110.36])
-	by APP4 (Coremail) with SMTP id gCh0CgAH44bHdClnOnWFAw--.40595S2;
-	Tue, 05 Nov 2024 09:28:40 +0800 (CST)
-Message-ID: <6b9be7a5-4eeb-4688-a485-7ea9bf1b73b8@huaweicloud.com>
-Date: Tue, 5 Nov 2024 09:28:38 +0800
+	bh=Irjhm/hyzSaOy7K8L8MUaM7H/gFtinY+JmWS+0wPTsI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=ShMIo/D/7e7mB9a377HbYnoMYXVvOGfRagc4QKYV3sFZ8ssFw4s3n0numehO1g2sMik3C6lpmZCHDnVDCwoF2X9Fg11iQMXWuudt7pUilQy4PO56ObKMaIsrH3Fn6g1azpZwxzzKm9ute8df0y9cVowmaJDscIIRiMmZnSpkL/U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=VHDXD2pr; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1730770117;
+	bh=2ydqDCJfAjTtRMwJu/mQEQxyknSlntFKqHzTV922HGY=;
+	h=Date:From:To:Cc:Subject:From;
+	b=VHDXD2prYvHJgPnsosEFKbXN3LOAiXXc5QHEpEOPOQ8TcBS7u5TOXJlGdFMgpcTcY
+	 IyB6RFz65R6htaYjxmtb3peh3XuDdWyQAGY2Tc7JheXAuSI+gG70A4kKSGERuM0k87
+	 kvR0cItdrz7BLN8I+Yi0Z53QfdOCsFclO9QAokVybbW1Rvx0ATLPxKZ+ZOXJcecaNe
+	 dU+GE94deNxTOU4MqhVSkzTEOVvDhwggbkkb54qSEO14q/ZgmhSzokGZRuPSycJVed
+	 xidPgXiWegIudT7T8C/rJSFdE7ZvBkXyUTOCu7j8bKstUHWoyfdEo0AKBPA6/Kr3/C
+	 SoHBqTNPqakeQ==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Xj9hj1PPLz4w2N;
+	Tue,  5 Nov 2024 12:28:37 +1100 (AEDT)
+Date: Tue, 5 Nov 2024 12:28:38 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Alex Deucher <alexdeucher@gmail.com>, Dave Airlie <airlied@redhat.com>
+Cc: Alex Deucher <alexander.deucher@amd.com>, Christian =?UTF-8?B?S8O2bmln?=
+ <christian.koenig@amd.com>, Christian =?UTF-8?B?S8O2bmln?=
+ <ckoenig.leichtzumerken@gmail.com>, Jesse Zhang <Jesse.Zhang@amd.com>, DRI
+ <dri-devel@lists.freedesktop.org>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>, Vitaly Prosyak <vitaly.prosyak@amd.com>
+Subject: linux-next: manual merge of the amdgpu tree with the drm tree
+Message-ID: <20241105122838.0d6d94eb@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH -next v5 0/2] perf stat: Support inherit events for bperf
-To: Namhyung Kim <namhyung@kernel.org>, Peter Zijlstra
- <peterz@infradead.org>, song@kernel.org
-Cc: Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo
- <acme@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
- Adrian Hunter <adrian.hunter@intel.com>, kan.liang@linux.intel.com,
- linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
- bpf@vger.kernel.org
-References: <20241021110201.325617-1-wutengda@huaweicloud.com>
- <173074271194.3826985.11091687571723568879.b4-ty@kernel.org>
-Content-Language: en-US
-From: Tengda Wu <wutengda@huaweicloud.com>
-In-Reply-To: <173074271194.3826985.11091687571723568879.b4-ty@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:gCh0CgAH44bHdClnOnWFAw--.40595S2
-X-Coremail-Antispam: 1UD129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
-	VFW2AGmfu7bjvjm3AaLaJ3UjIYCTnIWjp_UUUYV7kC6x804xWl14x267AKxVW8JVW5JwAF
-	c2x0x2IEx4CE42xK8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII
-	0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xv
-	wVC0I7IYx2IY6xkF7I0E14v26r4UJVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4
-	x0Y4vEx4A2jsIEc7CjxVAFwI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG
-	64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r
-	1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwACI402YVCY1x02628vn2kI
-	c2xKxwCF04k20xvY0x0EwIxGrwCF54CYxVCY1x0262kKe7AKxVWUtVW8ZwCFx2IqxVCFs4
-	IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1r
-	MI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJV
-	WUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j
-	6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYx
-	BIdaVFxhVjvjDU0xZFpf9x07UWE__UUUUU=
-X-CM-SenderInfo: pzxwv0hjgdqx5xdzvxpfor3voofrz/
+Content-Type: multipart/signed; boundary="Sig_/xzOYzmjgbeNdirBYSiBDDcK";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
+--Sig_/xzOYzmjgbeNdirBYSiBDDcK
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
+Hi all,
 
-On 2024/11/5 1:51, Namhyung Kim wrote:
-> On Mon, 21 Oct 2024 11:01:59 +0000, Tengda Wu wrote:
-> 
->> Here is the 5th version of the series to support inherit events for bperf.
->> This version added the `inherit` flag for struct `target` instead of
->> `bpf_stat_opts`, and also fixed the logic when TGID w/o inherit.
->>
->>
->> bperf (perf-stat --bpf-counter) has not supported inherit events during
->> fork() since it was first introduced.
->>
->> [...]
-> 
-> Applied to perf-tools-next, thanks!
-> 
-> Best regards,
-> Namhyung
+Today's linux-next merge of the amdgpu tree got a conflict in:
 
-You're welcome, thank you!
+  drivers/gpu/drm/amd/amdgpu/amdgpu_job.c
 
-With Best regards,
-Tengda
+between commit:
 
+  b2ef808786d9 ("drm/sched: add optional errno to drm_sched_start()")
+
+from the drm tree and commit:
+
+  35984fd4a093 ("drm/amdgpu: add ring reset messages")
+
+from the amdgpu tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc drivers/gpu/drm/amd/amdgpu/amdgpu_job.c
+index ea2663169bf3,cbae2fc7b94e..000000000000
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_job.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_job.c
+@@@ -149,9 -150,11 +150,11 @@@ static enum drm_gpu_sched_stat amdgpu_j
+  			atomic_inc(&ring->adev->gpu_reset_counter);
+  			amdgpu_fence_driver_force_completion(ring);
+  			if (amdgpu_ring_sched_ready(ring))
+ -				drm_sched_start(&ring->sched);
+ +				drm_sched_start(&ring->sched, 0);
++ 			dev_err(adev->dev, "Ring %s reset success\n", ring->sched.name);
+  			goto exit;
+  		}
++ 		dev_err(adev->dev, "Ring %s reset failure\n", ring->sched.name);
+  	}
+ =20
+  	if (amdgpu_device_should_recover_gpu(ring->adev)) {
+
+--Sig_/xzOYzmjgbeNdirBYSiBDDcK
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmcpdMYACgkQAVBC80lX
+0Gym1Af/fOAJCphNBfESpwoprBZW3i+sAFLXwoyDMHJihVIOcu34HxOhtQdcGb/t
+9RVd9C3OQrVPsvlaR00Pqzu7DJkln+rOV5hrjZp/LHco8aXOFgHCTA54yekV+zik
+gPkvvJVlAcZL1DQ3Hw6+ijFXIRDUtmw/89cSMpO+LJC67UbJ3qYov425tN49k3+J
+naaCSqQFqxsAcdoWEgsNMCzYnreNjH+T0Hsk6KlCUg/MIPkVJm8FRzu8XP2JAM76
+sjt1hQsQbKQQGzTXJjfptDOVciktcOemISdfrlZL7OHIeMGWS5UHQoQYDDBb090t
+I577QL60ex3URgouFkalMf8O8zS22Q==
+=U35C
+-----END PGP SIGNATURE-----
+
+--Sig_/xzOYzmjgbeNdirBYSiBDDcK--
 
