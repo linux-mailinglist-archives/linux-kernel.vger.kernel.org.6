@@ -1,78 +1,166 @@
-Return-Path: <linux-kernel+bounces-396645-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396646-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80B2A9BD000
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 16:03:08 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 091A89BD009
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 16:05:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 16F99B2251E
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 15:03:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D1571C21ED3
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 15:05:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A22F91DAC95;
-	Tue,  5 Nov 2024 15:02:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48EEA1D9A61;
+	Tue,  5 Nov 2024 15:04:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EnKCQfcj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TuPVa2Yv"
+Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com [209.85.128.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F35451D9A6E;
-	Tue,  5 Nov 2024 15:02:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36E0C33080;
+	Tue,  5 Nov 2024 15:04:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730818967; cv=none; b=FyjrSIkbUcuEQNNDBjjuwws8PGeJpIMGw+Vpxlzw6dO303BtDBPAGigH+su/1Jrhorvt2eAJWZW7BS50jACjUnufKMhgNvepznZKzt/0vcfaiKLXiGsQ6Y6olDABk6Y6PD0c4de75+EghQfnZBgimfgvAeg4UfAGZx3l1fwBkR8=
+	t=1730819097; cv=none; b=dlCba3sOzmIGGCBS/+D5cngk1nS3RDjy2Pjptfv3x0QBfQ4F+Eqa9csWEMvyqdbtPUYNQpNW3DOA9IlTXqp4u6ztcruLfQbtkcK1vYVEeISCxpvJZsVTiJfHDDSu3cGiUgrQkWiHzEafAjKLC10d0CB/KfAHY0oQyI53F3fU7CA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730818967; c=relaxed/simple;
-	bh=F4WltQA5cg1waDpTGeUJMLZeM55/Ra2Tw+9xSUZNrPM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Oga+wL/TZUxnjwsN48BzHxveqmp0InOGh8WGuoGP+G1jgukidFkwp5NEaLyIYKR9ubNCfIk0BP3J/MmlSyPpMYbijjLdz0Zs6Yk/cHv63vlvjLZUJng2w9lazDuUukVi1YXRIAqSntBpWsKA0llXuQgRSU9M+BviV8J4mJKgJaI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EnKCQfcj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4F37C4CECF;
-	Tue,  5 Nov 2024 15:02:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730818966;
-	bh=F4WltQA5cg1waDpTGeUJMLZeM55/Ra2Tw+9xSUZNrPM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=EnKCQfcjgccBD0sDZsefLbxoJ6gIKqphICvj9eBlJCI40IImHiiuETIG4v+5lI39n
-	 UFvNzzzq5UHQ36Ch287qG3mseAlo4zKR8clCaBZbRXOC7xMA53KWoro8XoXqT9Y5IJ
-	 c99VsROCKwcUtr05772b3TYBpEvr3moWV6e9wInKKrnThRuLLa0U5DJFKfVcJltiva
-	 HFyEQ9wX4EaxKFrXCqj2TS+3pQju9clS4WdZ5MTdZgcsU66byoRIdpE8J67GDxt6yK
-	 8AuylbZ2Eep6jSfmCQMnPKfcmctQAdnWfpCVs77n6U8JbWIxcSddPVU9qxQkMza5BW
-	 23o7+FZF2ojCg==
-Date: Tue, 5 Nov 2024 16:02:43 +0100
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Ciprian Costea <ciprianmarian.costea@oss.nxp.com>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Fabio Estevam <festevam@gmail.com>, linux-i2c@vger.kernel.org, devicetree@vger.kernel.org, 
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, Christophe Lizzi <clizzi@redhat.com>, 
-	Alberto Ruiz <aruizrui@redhat.com>, Enric Balletbo <eballetb@redhat.com>
-Subject: Re: [PATCH 0/2] add I2C support for S32G2/S32G3 SoCs
-Message-ID: <b2nsny2ipcd37ke7jzbjptal2b63lcss5gs2galrdfqdu4u7y6@v3swrb3vzs74>
-References: <20241104100044.3634076-1-ciprianmarian.costea@oss.nxp.com>
+	s=arc-20240116; t=1730819097; c=relaxed/simple;
+	bh=63apKU3oCK84jQYr9wI2Tor+Zn6BKoINp1mEwP9zZfI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DDjfc3uZVlJA/BsQkEIPhgsu2oND5XEmKTjsLKgbY1Sa3u1muPs5aXcJZX1LicyhCyZBQreJ85n2K5+4zjMh4ecPQI650ktxkAKWm4rgzfvzXMW7GbLcJDMKPAFBgD5Eku5uf3s5NfyKk9fiDd7W/eGN1nFRqJ8oPgiPTQY73QA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TuPVa2Yv; arc=none smtp.client-ip=209.85.128.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-6e5cec98cceso44338397b3.2;
+        Tue, 05 Nov 2024 07:04:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730819095; x=1731423895; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=63apKU3oCK84jQYr9wI2Tor+Zn6BKoINp1mEwP9zZfI=;
+        b=TuPVa2YvHZwrp3Y3AAhN5wosKUC9E5bKSm9K5nonakYwC+2vwzAwpMpiNdQp2vYT8R
+         vB1sA/WSlkk8c+w2iG2MK/ZPTCo4XHOca5ImJg2LYXfHAXaWeqTrFV1hf5lo5pfbJrDG
+         1nkA9aQeYS9WCh1zrQpH8pppzv/Y6YHY50kNwT3fvYFiJalUEb2HgGNdLMP3oxC1+kWQ
+         bz7hmdKLzwHH/YegTuGvO+4LtRE5lfVJZXudPlHcIBCYUSeNU+5h4ryMgVVwnyWT2EWM
+         8g7Km0i8r5v+6gMcZj9KeL3hTz9fqArE6EYNt0tNVbKuslJ/uNER5oHk44P2piEQRBKH
+         g7Iw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730819095; x=1731423895;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=63apKU3oCK84jQYr9wI2Tor+Zn6BKoINp1mEwP9zZfI=;
+        b=lTcH8bVWWgcWGDXpV9js/T3y5z3s2q6h1RHdupqwvI/L2ZJFtpm0hldN8XxXMYuT7b
+         IHFGoJAL0/LSc8k1dBgEP6VKyx5mCgzHhTDrFfFihjCqjQC763l+jeFPzSKBd1XvIHMp
+         nKJ6qVqxmEWGRIzadMEp30j5m2Rcb3q33P+yjuZrT53Qi97/J/KXELP5EQqJImsJ+4RW
+         o+DflTMf5SN67vRWSSZnpGtrAEy8fVmRITSEY7XzksREOnrvXF+AwMBBcTWz5Dm5lJuw
+         DXugH+iFCg31Y7vVDEZuvsFhEZ8duLh/MWjUqgTIZp2BdxwNYixa8cuGinVj+yJqma3E
+         pZ6g==
+X-Forwarded-Encrypted: i=1; AJvYcCVW6XpdA0RMOvbN6crWl0TuKz+cqJBIz9YjsR2M3m+n9HRDadDY6XHaReVSYgDam6Ka166xnYZz@vger.kernel.org, AJvYcCW+ps+lot2RWDkx4lTC6+rBhVv39FZDccMFjjH2g4IiLui0mhU1mzC8QokGLeC+/f4nRyBT9/sUGEFZ@vger.kernel.org, AJvYcCX/Ki4mx1F47oLqDJTRWZz2WGqJ570tpB1zauMxzVgUO4D+sOD+QExU6Ra078vq4xPUys7y8UNUI+/rEQE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YytoQYD+EkygFxSeiuI+8Sul/QES8e8v9C9sPtJ4nGKF19dWtEI
+	LcRk16EQwY0Xxq+8q5eofTodN5NONUcaKTWv6r4XjdowGe+NlRSW89Do0Do0YWHEkBBYOrz8SOM
+	16cc3JXHokjhJAA2vBgB7yOybaDkv9eRHCa4=
+X-Google-Smtp-Source: AGHT+IG9OEtgCqxYH2AGUXx+y9wCsQ2BKy/xHrqmG9IrH/j8u8vvE2+KgIidIE6DaWBTb75baRQbZmqsFfJmCge7nmI=
+X-Received: by 2002:a05:690c:6ac2:b0:6ea:4d3f:df7c with SMTP id
+ 00721157ae682-6ea52329c6amr209250267b3.9.1730819095116; Tue, 05 Nov 2024
+ 07:04:55 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241104100044.3634076-1-ciprianmarian.costea@oss.nxp.com>
+References: <20241029103656.2151-1-dqfext@gmail.com> <87msid98dc.fsf@toke.dk>
+ <CALW65jbz=3JNTx-SWk21DT4yc+oD3Dsz49z__zgDXF7TjUV7Lw@mail.gmail.com> <87a5ed92ah.fsf@toke.dk>
+In-Reply-To: <87a5ed92ah.fsf@toke.dk>
+From: Qingfang Deng <dqfext@gmail.com>
+Date: Tue, 5 Nov 2024 23:04:44 +0800
+Message-ID: <CALW65jZtdy8xkNnMD2pCFKyf6JM4uwTHgt8v49M46GpCfS8cCw@mail.gmail.com>
+Subject: Re: [RFC PATCH net-next] net: ppp: convert to IFF_NO_QUEUE
+To: =?UTF-8?B?VG9rZSBIw7hpbGFuZC1Kw7hyZ2Vuc2Vu?= <toke@redhat.com>
+Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-ppp@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Ciprian,
+On Tue, Nov 5, 2024 at 10:35=E2=80=AFPM Toke H=C3=B8iland-J=C3=B8rgensen <t=
+oke@redhat.com> wrote:
+>
+> Qingfang Deng <dqfext@gmail.com> writes:
+>
+> > Hi Toke,
+> >
+> > On Tue, Nov 5, 2024 at 8:24=E2=80=AFPM Toke H=C3=B8iland-J=C3=B8rgensen=
+ <toke@redhat.com> wrote:
+> >>
+> >> Qingfang Deng <dqfext@gmail.com> writes:
+> >>
+> >> > When testing the parallel TX performance of a single PPPoE interface
+> >> > over a 2.5GbE link with multiple hardware queues, the throughput cou=
+ld
+> >> > not exceed 1.9Gbps, even with low CPU usage.
+> >> >
+> >> > This issue arises because the PPP interface is registered with a sin=
+gle
+> >> > queue and a tx_queue_len of 3. This default behavior dates back to L=
+inux
+> >> > 2.3.13, which was suitable for slower serial ports. However, in mode=
+rn
+> >> > devices with multiple processors and hardware queues, this configura=
+tion
+> >> > can lead to congestion.
+> >> >
+> >> > For PPPoE/PPTP, the lower interface should handle qdisc, so we need =
+to
+> >> > set IFF_NO_QUEUE.
+> >>
+> >> This bit makes sense - the PPPoE and PPTP channel types call through t=
+o
+> >> the underlying network stack, and their start_xmit() ops never return
+> >> anything other than 1 (so there's no pushback against the upper PPP
+> >> device anyway). The same goes for the L2TP PPP channel driver.
+> >>
+> >> > For PPP over a serial port, we don't benefit from a qdisc with such =
+a
+> >> > short TX queue, so handling TX queueing in the driver and setting
+> >> > IFF_NO_QUEUE is more effective.
+> >>
+> >> However, this bit is certainly not true. For the channel drivers that
+> >> do push back (which is everything apart from the three mentioned above=
+,
+> >> AFAICT), we absolutely do want a qdisc to store the packets, instead o=
+f
+> >> this arbitrary 32-packet FIFO inside the driver. Your comment about th=
+e
+> >> short TX queue only holds for the pfifo_fast qdisc (that's the only on=
+e
+> >> that uses the tx_queue_len for anything), anything else will do its ow=
+n
+> >> thing.
+> >>
+> >> (Side note: don't use pfifo_fast!)
+> >>
+> >> I suppose one option here could be to set the IFF_NO_QUEUE flag
+> >> conditionally depending on whether the underlying channel driver does
+> >> pushback against the PPP device or not (add a channel flag to indicate
+> >> this, or something), and then call the netif_{wake,stop}_queue()
+> >> functions conditionally depending on this. But setting the noqueue fla=
+g
+> >> unconditionally like this patch does, is definitely not a good idea!
+> >
+> > I agree. Then the problem becomes how to test if a PPP device is a PPPo=
+E.
+> > It seems like PPPoE is the only one that implements
+> > ops->fill_forward_path, should I use that? Or is there a better way?
+>
+> Just add a new field to struct ppp_channel and have the PPoE channel
+> driver set that? Could be a flags field, or even just a 'bool
+> direct_xmit' field...
 
-> Ciprian Marian Costea (2):
->   dt-bindings: i2c: imx: add SoC specific compatible strings for S32G
->   i2c: imx: add support for S32G2/S32G3 SoCs
+Okay, I'll send a patch later.
 
-with the change proposed by Frank in patch 2, I merged this
-series in i2c/i2c-host.
-
-Thanks,
-Andi
+>
+> -Toke
+>
 
