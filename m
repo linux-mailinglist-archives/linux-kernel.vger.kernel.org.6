@@ -1,139 +1,142 @@
-Return-Path: <linux-kernel+bounces-396300-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396301-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 152969BCB21
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 12:00:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 554C09BCB27
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 12:01:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BFAF81F2408C
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 11:00:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D9A51F23F3F
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 11:01:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8446D1D358B;
-	Tue,  5 Nov 2024 10:59:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EE661D358B;
+	Tue,  5 Nov 2024 11:01:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EI1xhvXi"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NRhk9/9k"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57D0B1D2B22;
-	Tue,  5 Nov 2024 10:59:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BE7D2B9B7
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 11:01:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730804395; cv=none; b=X7i7152pnkwnI9wLmMyKk9vnGZuITSf8g1MhNz7eg32X6ohkoYZ4WUx3EPwGeV67nzupGB5ufwpuutcdofF07Znd96dn7NrhoHVxUnHgVZgX9gMFEBr/JYKrVQeHpFiCPBy+vyVv/p8B3ss8f7dUCfvfTvrh3iVUTpAlx9n3SDk=
+	t=1730804504; cv=none; b=lOK+lFeXUpuRxz9TdCQVBVJx/EGwg8mhvrImm2YbQ0F083Li7n3gQyMTlEfD9DyKjUxP/kiZAbJVCUvQMXHLBUh11xgdWkilp/CoENvXHhawiU3/sL1NEv8Ox62S3YM7iPyDwALIuRFmimlcnWbV46lsXcIsFdlLeWb4CCMYNXw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730804395; c=relaxed/simple;
-	bh=X2aiaB2QLjmzxEz4BJTmcz5/caU1jLhjakEdzScTUNo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WgYgmL7Y7cEMDILS1/yOkE84PWZhMz/IaYCV5ccBlgHi4YbHr7N/VDEyvE3YBaJScbn3iGu73V4M6ORnC6xAQwAJ2G342X6KbkgHbCgGw7ClovQFVvfljBhvOsfGopZkawpfZfoQnOB2n462RYJn8e5S2c24DWqiMxLSNu5HelY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EI1xhvXi; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-539f1292a9bso6067725e87.2;
-        Tue, 05 Nov 2024 02:59:53 -0800 (PST)
+	s=arc-20240116; t=1730804504; c=relaxed/simple;
+	bh=5WNY4BTKpyqkgfx/aIHK+uOWMIt2dKDdpsq+9SR0ycc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VRne442D/CkUxDi0W1wVL7DJyZnAw+B/xnkGQAGAK60+YQxxXt1HjPszv9OybxHUU9abu9FB5Ashi6uxcrs8QK0BpQY27WfcGx9Isoc2UVmOGTDle4iv+BZw7m57Zy/uvYcYvqdbBsn/c5DdczQpDdl4gCJTNTL6vF5nNbqU3LQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NRhk9/9k; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-431548bd1b4so44787775e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 03:01:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730804391; x=1731409191; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Dxc2q9MRuwdMNmLTNPGQBcREWP4Y2xIFNTUX1iciaC4=;
-        b=EI1xhvXiq+qZH+OEBYJ3V1kR2lYkJfPbwqQu/TtWgcsEf+LPPWQIdONTvHtH6k+M9J
-         75f6HVODXmFoNZrLCNDGtHVbesVm3JxL2l27xrVIUKCKokvZjC6NzPvRkYuM1JbZ2hPX
-         pEtzQk51yjQS0TjdRlZWBtIfvMoQ+Dz+g5BYNkG86XWE1t+Cp4Ho8i54On4fRdKSZn5q
-         INi8AJnkQyST9hZ95WTZr+gWqcf0xbTWl37RFDXFV0W4pCMlxfd3PxK26iAGn6WzoOxn
-         5bTgsKJ4pBxn/Dm4rJGpw97PNtBw8+EuL0WQlzUi6vFZiUbDKJ3J8f4PfS3WftK3RFto
-         mVig==
+        d=linaro.org; s=google; t=1730804500; x=1731409300; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=0mqp3tTDVEC0dYJejZacw/zr4PmWIksNztPnZtcH9gY=;
+        b=NRhk9/9ky3OpCsUFsZ7o+vtgA5mPyaF+o4hS1iKfShuA/6MBNA+WR8+RsgT2vixms9
+         ZgHT/KL3jAnc3pPZin9tYOeyPTqzUslxeFKFW+WSA1HSwa90etqK92iR8oRnIX/SKJGY
+         85LSH7ux87tJPdJmVMWCpolQL9L9qKx85Se/gcPyxxf6pyFtXPiW7RSrs+xrbqQKI5rL
+         3dMgb0iNuEiE51OpLcsNMfN/ElmexXiQ4GM15biajn9gR4N3iig6ZkD6GUeujh1f/aDJ
+         dAD+Sn7bYRSU+/I7L4YKJt42b0Uiwxy9CVJod8R6N9zsdnr5shTASDNzvWfqHImXM7fq
+         8EZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730804391; x=1731409191;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Dxc2q9MRuwdMNmLTNPGQBcREWP4Y2xIFNTUX1iciaC4=;
-        b=w3G+TiI01UFPk018ccXuiDUVOiB52IzSqxN4HLojKYdCxF8in4D6AvO7hJArikPOyi
-         iOq3oJcETA5zo4zBc3jtrIMBFkrQOBOg0O9w8dHC+VGYpiWhgnup4kSgnY1S8Iz8Ndo0
-         DpvW7vptks4saydCm+bSLTwB5nZgjCOcsvFUiVHLB5ajbmx3o/OZkeNsd7JnfBzeUhuW
-         87OwLBVRO9GfIyJdQT2TgFaWtGnmlP5MfwG9GYCd/v4CEm5zlZh7/PT+1GamDEHHHny2
-         lmcR7Dn1f34Fxp6SdXQIe96BoKWD3R9rol9k7n3066/B9av5Tvxsd8wxw3hzpH5rlbDf
-         hWCw==
-X-Forwarded-Encrypted: i=1; AJvYcCUr3ZtqsZ+XvFvPsf7EB15/V9D+Js5SNHDkgCK1QzfBiJ2/wtOA9RY3XRDJZDlRFgE24oE+Rgg1@vger.kernel.org, AJvYcCVKklOTX26mA4BGg62YIpT4Kfc2pqg2aDZkTq/3Go5YeyptdSR5gZZ9gH4kKfaCKHmHwuWfzfGJoJ3UN60XXJk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+EQaXqKeY9rVnHOPnQnRbL3taVMYGPizkCYLyCV2MLcqi4HnH
-	bVcTDGPlfBQTe9mtS1SvGCQOXixx3rTdBYHrVHhp4q7u48WTg66y0Y/1dw==
-X-Google-Smtp-Source: AGHT+IGq9JvfEkZmwPMa2lZzGZKak8jTwKZkT3pCyrwQTV+HHuGBoCtanFcoeGc8mG4qdJKn8Yefwg==
-X-Received: by 2002:a05:6512:2341:b0:536:554a:24c2 with SMTP id 2adb3069b0e04-53b348c8978mr18599811e87.13.1730804391074;
-        Tue, 05 Nov 2024 02:59:51 -0800 (PST)
-Received: from [10.0.0.4] ([37.170.92.119])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4327d5e7c8bsm188562115e9.26.2024.11.05.02.59.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 05 Nov 2024 02:59:50 -0800 (PST)
-Message-ID: <7a2e5da2-5122-4c73-9a94-20e7f21a26f5@gmail.com>
-Date: Tue, 5 Nov 2024 11:59:49 +0100
+        d=1e100.net; s=20230601; t=1730804500; x=1731409300;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0mqp3tTDVEC0dYJejZacw/zr4PmWIksNztPnZtcH9gY=;
+        b=r8g7PWbc1j5JrJ8nIuKUK5c2HzzGIg0DbX/wRndVjtqVh6S39hQ1GqWDgb2B4UMFLe
+         ks8mdVQFxv1ooqO0Ir81SIy9RKTrLzIDfJBaFE9HYOVDAP4oNUONFgQJlXUSXKJUIMCf
+         O4yxl15ZLY78Gr9WgxJhmZJvjcKqajMpkVkfFDYKukDYSoLgpb5jAxuNnLjy1KTS13WW
+         R80dXNzz50haGqO/skMRWkUYljpW85ljfHWelJmkVcO325GMWtyflPUgYTrpSx1ZY24s
+         F3VTTIFai30uottoU9qY1XqSMLtDwwi/GWR1DGSKKN0NDZbxIzXn4kblo+scHaL32UII
+         OKLA==
+X-Forwarded-Encrypted: i=1; AJvYcCU6KOI+xMSZAH2KjniQRIT/nybOgunLZCe94TIRWxWzOskwOgNzI/U6kcvSdhlEdtYgkdL7AUhwUtVop3g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxF8G3p01gpIh7svKJRA9sYhSruSPZxGvBFI/HwuQIjxgqVCpqU
+	3nTdbgvuvzYUsZ1Q3Oat3wRu/DizOYZ+j1t/+ACFe3SjgfjK+ZEjidtuau+L90g=
+X-Google-Smtp-Source: AGHT+IHNIaTXDGPayDWrZncCkF8QcYlSviGx9GZU1YCBv4OUqG//R4A/X9nBYttt6C5Vr4YVKwEhEg==
+X-Received: by 2002:a05:600c:3150:b0:431:5ce5:4864 with SMTP id 5b1f17b1804b1-432832aa0b1mr120332515e9.35.1730804500460;
+        Tue, 05 Nov 2024 03:01:40 -0800 (PST)
+Received: from linaro.org ([82.76.168.176])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4327d5e7c8bsm188611715e9.26.2024.11.05.03.01.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 05 Nov 2024 03:01:39 -0800 (PST)
+Date: Tue, 5 Nov 2024 13:01:38 +0200
+From: Abel Vesa <abel.vesa@linaro.org>
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Johan Hovold <johan@kernel.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH v3 2/3] arm64: dts: qcom: x1e80100: Describe TLMM pins
+ for SDC2
+Message-ID: <Zyn7Em1HqTwysZsh@linaro.org>
+References: <20241022-x1e80100-qcp-sdhc-v3-0-46c401e32cbf@linaro.org>
+ <20241022-x1e80100-qcp-sdhc-v3-2-46c401e32cbf@linaro.org>
+ <a282021f-5e61-480c-84c4-272049e28244@oss.qualcomm.com>
+ <Zx9P+HQMOkJsJGcj@linaro.org>
+ <327507d8-2dc7-4645-ac3d-d68ff31a84dd@oss.qualcomm.com>
+ <ZyS50DFLhHVlnRtd@linaro.org>
+ <c6f8ff2e-bcc1-480a-9ca6-0b55991c099e@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 3/5] rtnetlink: do_setlink: Use sockaddr_storage
-To: Kees Cook <kees@kernel.org>, Jakub Kicinski <kuba@kernel.org>
-Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
- linux-hardening@vger.kernel.org
-References: <20241104221450.work.053-kees@kernel.org>
- <20241104222513.3469025-3-kees@kernel.org>
-Content-Language: en-US
-From: Eric Dumazet <eric.dumazet@gmail.com>
-In-Reply-To: <20241104222513.3469025-3-kees@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c6f8ff2e-bcc1-480a-9ca6-0b55991c099e@oss.qualcomm.com>
 
+On 24-11-04 15:06:29, Konrad Dybcio wrote:
+> On 1.11.2024 12:21 PM, Abel Vesa wrote:
+> > On 24-10-28 14:10:54, Konrad Dybcio wrote:
+> >> On 28.10.2024 9:48 AM, Abel Vesa wrote:
+> >>> On 24-10-25 20:34:19, Konrad Dybcio wrote:
+> >>>> On 22.10.2024 12:46 PM, Abel Vesa wrote:
+> >>>>> Describe the SDC2 default and sleep state pins configuration
+> >>>>> in TLMM. Do this in SoC dtsi file since they will be shared
+> >>>>> across multiple boards.
+> >>>>>
+> >>>>> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+> >>>>> ---
+> >>>>
+> >>>> Not very useful on its own but okay..
+> >>>
+> >>> Fair enough. For some reason, I'm not able to get sdc4 pinconf
+> >>> to work.
+> >>
+> >> Any chance you tried to define 'sdc4_cmd' etc.? This one seems to have
+> >> sdc4 pins on gpio127..=132
+> > 
+> > Yes.
+> > 
+> > But since the sdc4 pins can have other functions and since there is no
+> > device that uses them (yet). Shouldn't we just skip describing the sdc4
+> > pinconf entirely as that should be done on a per-board basis?
+> 
+> By that argument, why describe the controller in the first place :|
+> 
+> The possible pins are predefined and physically wired up inside the soc
 
-On 11/4/24 11:25 PM, Kees Cook wrote:
-> Instead of a heap allocation use a stack allocated sockaddr_storage to
-> support arbitrary length addr_len value (but bounds check it against the
-> maximum address length).
->
-> Signed-off-by: Kees Cook <kees@kernel.org>
-> ---
->   net/core/rtnetlink.c | 12 ++++--------
->   1 file changed, 4 insertions(+), 8 deletions(-)
->
-> diff --git a/net/core/rtnetlink.c b/net/core/rtnetlink.c
-> index f0a520987085..eddd10b74f06 100644
-> --- a/net/core/rtnetlink.c
-> +++ b/net/core/rtnetlink.c
-> @@ -2839,21 +2839,17 @@ static int do_setlink(const struct sk_buff *skb,
->   	}
->   
->   	if (tb[IFLA_ADDRESS]) {
-> -		struct sockaddr *sa;
-> -		int len;
-> +		struct sockaddr_storage addr;
-> +		struct sockaddr *sa = (struct sockaddr *)&addr;
+Right, unlike the sdc2 ones, these can be muxed to a different function.
 
+This is why I their pinconf need to be described in the board dts rather
+than SoC dtsi. Since there is no board that supports it, we don't
+describe them at all.
 
-We already use too much stack space.
+As for the controller, we should still describe it even if we don't have
+ways to test it yet.
 
-
-Please move addr into struct rtnl_newlink_tbs ?
-
-
->   
-> -		len = sizeof(sa_family_t) + max_t(size_t, dev->addr_len,
-> -						  sizeof(*sa));
-> -		sa = kmalloc(len, GFP_KERNEL);
-> -		if (!sa) {
-> +		if (dev->addr_len > sizeof(addr.__data)) {
->   			err = -ENOMEM;
->   			goto errout;
->   		}
->   		sa->sa_family = dev->type;
-> -		memcpy(sa->sa_data, nla_data(tb[IFLA_ADDRESS]),
-> +		memcpy(addr.__data, nla_data(tb[IFLA_ADDRESS]),
->   		       dev->addr_len);
->   		err = dev_set_mac_address_user(dev, sa, extack);
-> -		kfree(sa);
->   		if (err)
->   			goto errout;
->   		status |= DO_SETLINK_MODIFIED;
+> 
+> Konrad
 
