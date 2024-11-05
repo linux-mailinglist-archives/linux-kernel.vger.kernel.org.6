@@ -1,235 +1,127 @@
-Return-Path: <linux-kernel+bounces-395963-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395962-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E19D9BC570
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 07:30:41 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D4259BC56B
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 07:30:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C43C0B2253E
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 06:30:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 31FEDB221BC
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 06:30:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27C731E5731;
-	Tue,  5 Nov 2024 06:30:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80BF91DB54C;
+	Tue,  5 Nov 2024 06:29:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="NyUW0/Va"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F9BD2A1A4;
-	Tue,  5 Nov 2024 06:30:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.4
+	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="pxeH1phe"
+Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FCC941C69;
+	Tue,  5 Nov 2024 06:29:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730788232; cv=none; b=nM8pmiGtaPACXrL5VF1RtjGmYJSwXR1RLbfIX11fOvoE4+Ce4c1bD47aqcTWZlLCdhAqXvOnKKnquUXe/AuV49LS+OPVSvCEBeZYsbc2okymQflK91Sbn4RhEG0X3dxgP9YfNToB6TAzn7pLAHtLyQSTfCxAYYBhtJ3xU/7ILGw=
+	t=1730788194; cv=none; b=buHD5Y6Xh5DqNBTRP/C5tX5Nau3klFqJSZ2Oqm/e2grD3EpOQWczAlLtkVMhUTh7tLBg/IGto/aA7zKzDCaFgGdncAut6KkYsk8DNW49hSSizZz0pF5Kds/o2u7x6wUHjXOYwq03TTz9cdI10radFi78nVgN718FjvFAMiczFUs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730788232; c=relaxed/simple;
-	bh=kjbESFFWG4BDe9MOncRwl06BAfbr906Lw3teZlqXl3s=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=qvV4sRZLTnInnTnAYn8CtcgzOM2M4ymzB4ZueQW/dB+4xniIR3o1tF1xuXVaKQiEd5MtxOJl8ip3pNsgecCA+NJRfRavwTkpNcIIBAZN6em/bvf6zhA5WZodJP5M4y5U563UUTh45KKAAB7c5F/aq2goNklc1uN3dbavCF9k4xI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=NyUW0/Va; arc=none smtp.client-ip=117.135.210.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=D9tVf
-	W7C3vZfeOWSUmemUKmWuGxkufuqBcJukZRo+L0=; b=NyUW0/VaMYhK45P6ucsOU
-	Rhynz7Wo9h/vxa+F+/dwarL/AWxvBuRJtpm+M72fSVTjItdgo8n9syfyQBO4/kjE
-	46wux9z56hP9DGfFTjOW5oIBLQoHRzW8B+jOJeWizoxp+Bfkc/sQOVtURPNhOM7l
-	+YCKIxbAT/Tk8ifnNywpmQ=
-Received: from localhost.localdomain (unknown [111.48.69.246])
-	by gzsmtp4 (Coremail) with SMTP id PygvCgDXNVpluylnIOXNCQ--.54265S2;
-	Tue, 05 Nov 2024 14:29:57 +0800 (CST)
-From: zhouyuhang <zhouyuhang1010@163.com>
-To: brauner@kernel.org,
-	shuah@kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	zhouyuhang <zhouyuhang@kylinos.cn>
-Subject: [PATCH v4] selftests: clone3: Use the capget and capset syscall directly
-Date: Tue,  5 Nov 2024 14:29:48 +0800
-Message-Id: <20241105062948.1037011-1-zhouyuhang1010@163.com>
-X-Mailer: git-send-email 2.27.0
+	s=arc-20240116; t=1730788194; c=relaxed/simple;
+	bh=6DEYIIrf9rnJY37cFJ6bjpvI+y1KGnq1lzv188Z3PrQ=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=KuJf3jFYhWY0zgh/RJS3w6Z10zv1ULcUTWO4pC7/PXDu7wFNZrCqSwnzWNXFxx8mufzqGGmEv4Z4GWLpmYve0xT3r8kyu5TktmAbWboA1pCuJkfy02GradHO0S7q3Uepzn9hWsRgWxY0ciqO/Fe9MRNb1a5xVD93JwUDhkUA7y8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=pxeH1phe; arc=none smtp.client-ip=116.203.91.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:PygvCgDXNVpluylnIOXNCQ--.54265S2
-X-Coremail-Antispam: 1Uf129KBjvJXoWxKw4ftw1fur4DGFWUCF1fXrb_yoWxAry7pa
-	1kZr45Krs0gw1xJFWFywnruF10yFyrZr17Jw1UAw1fCr1akrs7tr4Sk3Wjq3Wj9a9xZwn8
-	XF1jkan7ZF9rAFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07juFALUUUUU=
-X-CM-SenderInfo: 52kr35xxkd0warqriqqrwthudrp/1tbiLxaOJmcpsknGWwAAs5
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
+	t=1730788190;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=RSfZmloa5ktLj5m2satJeJFjZZCI/khmEGOs0heit4E=;
+	b=pxeH1pheOQFO9IM4gwFWvB08/Pm/bh3299YWAbgeriWmT03jXKkL0l6UoF4H0KJNDGqcEt
+	2qFSavAgbdfOySL1PlPtKAny1u2Kx30iZpS1rM6FXytqu0r6we/O/Ncjec7nosgzTDKaqe
+	lxl09XU2iE+EQES14V7CPqY+Q4mi4u5x6wlqBkxCUtK43/j9bbxE4syPt5Y33F/Z0Tz+na
+	HvIG7GPMFiZ5ouSwo/Iiv5gEEFU9dPBgV1rkWi1ZC1XU8vpMYAPEHLSYUVTfDfsqYjXpgM
+	6EH4BnoOSCKm1Up5urHE9/X3F2Toxe7dDsycOe5Em9y12azIm6gGuwXvRCZUsA==
+Date: Tue, 05 Nov 2024 07:29:50 +0100
+From: Dragan Simic <dsimic@manjaro.org>
+To: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, Adrian Hunter
+ <adrian.hunter@intel.com>, Haibo Chen <haibo.chen@nxp.com>, Shawn Guo
+ <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix
+ Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>,
+ linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ imx@lists.linux.dev, s32@nxp.com, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] mmc: Use of_property_present() for non-boolean properties
+In-Reply-To: <20241104190707.275758-1-robh@kernel.org>
+References: <20241104190707.275758-1-robh@kernel.org>
+Message-ID: <e737fdb7766495ec95fdf42d23c68736@manjaro.org>
+X-Sender: dsimic@manjaro.org
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Authentication-Results: ORIGINATING;
+	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
 
-From: zhouyuhang <zhouyuhang@kylinos.cn>
+Hello Rob,
 
-The libcap commit aca076443591 ("Make cap_t operations thread safe.")
-added a __u8 mutex at the beginning of the struct _cap_struct, it changes
-the offset of the members in the structure that breaks the assumption
-made in the "struct libcap" definition in clone3_cap_checkpoint_restore.c.
-This causes the call to cap_set_proc here to fail with error code EPERM,
-and the output is as follows:
+On 2024-11-04 20:07, Rob Herring (Arm) wrote:
+> The use of of_property_read_bool() for non-boolean properties is
+> deprecated in favor of of_property_present() when testing for property
+> presence.
+> 
+> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
 
- #  RUN           global.clone3_cap_checkpoint_restore ...
- # clone3() syscall supported
- # clone3_cap_checkpoint_restore.c:151:clone3_cap_checkpoint_restore:Child has PID 130508
- cap_set_proc: Operation not permitted
- # clone3_cap_checkpoint_restore.c:160:clone3_cap_checkpoint_restore:Expected set_capability() (-1) == 0 (0)
- # clone3_cap_checkpoint_restore.c:161:clone3_cap_checkpoint_restore:Could not set CAP_CHECKPOINT_RESTORE
- # clone3_cap_checkpoint_restore: Test terminated by assertion
- #          FAIL  global.clone3_cap_checkpoint_restore
+Looking good to me, thanks for the patch!  See also a small nitpick 
+below.
 
-Changing to using capget and capset syscall directly here can fix this error,
-just like what the commit 663af70aabb7 ("bpf: selftests: Add helpers to directly
-use the capget and capset syscall") does.
-The output is as follows:
+Reviewed-by: Dragan Simic <dsimic@manjaro.org>
 
- #  RUN           global.clone3_cap_checkpoint_restore ...
- # clone3() syscall supported
- # clone3_cap_checkpoint_restore.c:160:clone3_cap_checkpoint_restore:Child has PID 23708
- # clone3_cap_checkpoint_restore.c:91:clone3_cap_checkpoint_restore:[23707] Trying clone3() with CLONE_SET_TID to 23708
- # clone3_cap_checkpoint_restore.c:58:clone3_cap_checkpoint_restore:Operation not permitted - Failed to create new process
- # clone3_cap_checkpoint_restore.c:93:clone3_cap_checkpoint_restore:[23707] clone3() with CLONE_SET_TID 23708 says:-1
- # clone3_cap_checkpoint_restore.c:91:clone3_cap_checkpoint_restore:[23707] Trying clone3() with CLONE_SET_TID to 23708
- # clone3_cap_checkpoint_restore.c:73:clone3_cap_checkpoint_restore:I am the parent (23707). My child's pid is 23708
- # clone3_cap_checkpoint_restore.c:66:clone3_cap_checkpoint_restore:I am the child, my PID is 23708 (expected 23708)
- # clone3_cap_checkpoint_restore.c:93:clone3_cap_checkpoint_restore:[23707] clone3() with CLONE_SET_TID 23708 says:0
- #            OK  global.clone3_cap_checkpoint_restore
- ok 1 global.clone3_cap_checkpoint_restore
- # PASSED: 1 / 1 tests passed.
+> ---
+>  drivers/mmc/host/mxcmmc.c          | 6 +++---
+>  drivers/mmc/host/sdhci-esdhc-imx.c | 2 +-
+>  2 files changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/mmc/host/mxcmmc.c b/drivers/mmc/host/mxcmmc.c
+> index 1edf65291354..dcb1a7336029 100644
+> --- a/drivers/mmc/host/mxcmmc.c
+> +++ b/drivers/mmc/host/mxcmmc.c
+> @@ -1048,9 +1048,9 @@ static int mxcmci_probe(struct platform_device 
+> *pdev)
+> 
+>  	if (pdata)
+>  		dat3_card_detect = pdata->dat3_card_detect;
+> -	else if (mmc_card_is_removable(mmc)
+> -			&& !of_property_read_bool(pdev->dev.of_node, "cd-gpios"))
+> -		dat3_card_detect = true;
+> +	else
+> +		dat3_card_detect = mmc_card_is_removable(mmc) &&
+> +			!of_property_present(pdev->dev.of_node, "cd-gpios");
 
-Signed-off-by: zhouyuhang <zhouyuhang@kylinos.cn>
----
-v4:
-	* Add some comments and modify the output and return value when set_capability fails
-v3:
-	* Remove locally declared system calls and retained the - lcap in the Makefile.
-v2:
-	* Move locally declared system calls to header file.
-v1:
-	* Directly using capget and capset and declare them locally.
----
- .../clone3/clone3_cap_checkpoint_restore.c    | 77 +++++++++++--------
- 1 file changed, 43 insertions(+), 34 deletions(-)
+There's enough space in the allowed 100 columns to align "mmc_card_..."
+and "!of_property_..." by indenting the latter further a bit.
 
-diff --git a/tools/testing/selftests/clone3/clone3_cap_checkpoint_restore.c b/tools/testing/selftests/clone3/clone3_cap_checkpoint_restore.c
-index 3c196fa86c99..076f9d4cce60 100644
---- a/tools/testing/selftests/clone3/clone3_cap_checkpoint_restore.c
-+++ b/tools/testing/selftests/clone3/clone3_cap_checkpoint_restore.c
-@@ -27,6 +27,13 @@
- #include "../kselftest_harness.h"
- #include "clone3_selftests.h"
- 
-+/*
-+ * Prevent not being defined in the header file
-+ */
-+#ifndef CAP_CHECKPOINT_RESTORE
-+#define CAP_CHECKPOINT_RESTORE 40
-+#endif
-+
- static void child_exit(int ret)
- {
- 	fflush(stdout);
-@@ -87,47 +94,49 @@ static int test_clone3_set_tid(struct __test_metadata *_metadata,
- 	return ret;
- }
- 
--struct libcap {
--	struct __user_cap_header_struct hdr;
-+static int set_capability(struct __test_metadata *_metadata)
-+{
- 	struct __user_cap_data_struct data[2];
--};
- 
--static int set_capability(void)
--{
--	cap_value_t cap_values[] = { CAP_SETUID, CAP_SETGID };
--	struct libcap *cap;
--	int ret = -1;
--	cap_t caps;
--
--	caps = cap_get_proc();
--	if (!caps) {
--		perror("cap_get_proc");
--		return -1;
--	}
-+	/*
-+	 * Only _LINUX_CAPABILITY_VERSION_3 can be used here.
-+	 * _LINUX_CAPABILITY_VERSION_1 represents use 32-bit capabilities,
-+	 * using it will cause CAP_CHECKPOINT_RESTORE to not be set.
-+	 * _LINUX_CAPABILITY_VERSION_2 has already been deprecated.
-+	 */
-+	struct __user_cap_header_struct hdr = {
-+		.version = _LINUX_CAPABILITY_VERSION_3,
-+	};
- 
--	/* Drop all capabilities */
--	if (cap_clear(caps)) {
--		perror("cap_clear");
--		goto out;
-+	/*
-+	 * CAP_CHECKPOINT_RESTORE is greater than 31, so we need two u32.
-+	 * cap0 is the lower 32bit and cap1 is the higher 32bit, they will
-+	 * be combined into a u64 in mk_kernel_cap.
-+	 */
-+	__u32 cap0 = 1 << CAP_SETUID | 1 << CAP_SETGID;
-+	__u32 cap1 = 1 << (CAP_CHECKPOINT_RESTORE - 32);
-+	int ret;
-+
-+	ret = capget(&hdr, data);
-+	if (ret) {
-+		TH_LOG("%s - Failed to get capability", strerror(errno));
-+		return -errno;
- 	}
- 
--	cap_set_flag(caps, CAP_EFFECTIVE, 2, cap_values, CAP_SET);
--	cap_set_flag(caps, CAP_PERMITTED, 2, cap_values, CAP_SET);
-+	/* Drop all capabilities */
-+	memset(&data, 0, sizeof(data));
- 
--	cap = (struct libcap *) caps;
-+	data[0].effective |= cap0;
-+	data[0].permitted |= cap0;
- 
--	/* 40 -> CAP_CHECKPOINT_RESTORE */
--	cap->data[1].effective |= 1 << (40 - 32);
--	cap->data[1].permitted |= 1 << (40 - 32);
-+	data[1].effective |= cap1;
-+	data[1].permitted |= cap1;
- 
--	if (cap_set_proc(caps)) {
--		perror("cap_set_proc");
--		goto out;
-+	ret = capset(&hdr, data);
-+	if (ret) {
-+		TH_LOG("%s - Failed to set capability", strerror(errno));
-+		return -errno;
- 	}
--	ret = 0;
--out:
--	if (cap_free(caps))
--		perror("cap_free");
- 	return ret;
- }
- 
-@@ -157,7 +166,7 @@ TEST(clone3_cap_checkpoint_restore)
- 	/* After the child has finished, its PID should be free. */
- 	set_tid[0] = pid;
- 
--	ASSERT_EQ(set_capability(), 0)
-+	ASSERT_EQ(set_capability(_metadata), 0)
- 		TH_LOG("Could not set CAP_CHECKPOINT_RESTORE");
- 
- 	ASSERT_EQ(prctl(PR_SET_KEEPCAPS, 1, 0, 0, 0), 0);
-@@ -169,7 +178,7 @@ TEST(clone3_cap_checkpoint_restore)
- 	set_tid[0] = pid;
- 	/* This would fail without CAP_CHECKPOINT_RESTORE */
- 	ASSERT_EQ(test_clone3_set_tid(_metadata, set_tid, 1), -EPERM);
--	ASSERT_EQ(set_capability(), 0)
-+	ASSERT_EQ(set_capability(_metadata), 0)
- 		TH_LOG("Could not set CAP_CHECKPOINT_RESTORE");
- 	/* This should work as we have CAP_CHECKPOINT_RESTORE as non-root */
- 	ASSERT_EQ(test_clone3_set_tid(_metadata, set_tid, 1), 0);
--- 
-2.27.0
-
+> 
+>  	ret = mmc_regulator_get_supply(mmc);
+>  	if (ret)
+> diff --git a/drivers/mmc/host/sdhci-esdhc-imx.c
+> b/drivers/mmc/host/sdhci-esdhc-imx.c
+> index 8f0bc6dca2b0..cda1872769e0 100644
+> --- a/drivers/mmc/host/sdhci-esdhc-imx.c
+> +++ b/drivers/mmc/host/sdhci-esdhc-imx.c
+> @@ -1629,7 +1629,7 @@ sdhci_esdhc_imx_probe_dt(struct platform_device 
+> *pdev,
+>  	 * Retrieveing and requesting the actual WP GPIO will happen
+>  	 * in the call to mmc_of_parse().
+>  	 */
+> -	if (of_property_read_bool(np, "wp-gpios"))
+> +	if (of_property_present(np, "wp-gpios"))
+>  		boarddata->wp_type = ESDHC_WP_GPIO;
+> 
+>  	of_property_read_u32(np, "fsl,tuning-step", &boarddata->tuning_step);
 
