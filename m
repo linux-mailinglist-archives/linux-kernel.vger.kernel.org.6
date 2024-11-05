@@ -1,107 +1,149 @@
-Return-Path: <linux-kernel+bounces-395890-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395891-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BD2B9BC491
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 06:11:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 123D09BC492
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 06:12:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F17D8282D53
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 05:11:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC049282A21
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 05:11:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC3651B4F0F;
-	Tue,  5 Nov 2024 05:10:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C9201B4F02;
+	Tue,  5 Nov 2024 05:11:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XCPJzLSX"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b="u1kntvzQ"
+Received: from mail-il1-f170.google.com (mail-il1-f170.google.com [209.85.166.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C96843D9E;
-	Tue,  5 Nov 2024 05:10:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C4BB3D9E
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 05:11:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730783456; cv=none; b=PeZ0/QFUoMwZO0qfcbFVx5KoGKXx22u49sSbZiMdfpop/ndmPpAm5CLjfTRDD5iN9AMcTUqfLF4vXA7r9qbWe/iw4Iw4gHe+zfdhD1qAVgkke2tLmMA+8hmKZGWbC8i4gi9Oj+FRAje8ooZc1bsq3ODB4j1kC9e6bFjIMhmxRw0=
+	t=1730783515; cv=none; b=GDe+0w2JZ37iTPcMfGoltAXnf+DJPQ/r6AeCZ5YIfy+5aUUQBFme1tfGacXf7wa5Z+CK4qWCsf03R8cvVC3ZJfxc0xKVAOSm8w/aNJUD+3o8MWR1kFM48GpcZs9JRVAM5k+UL2AsUQZ+rCbRrjSLkPzTmw4mCryahTDpSJXerVs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730783456; c=relaxed/simple;
-	bh=ZZ8M1K74AfBAeZw1KBbrNK2iUoUdzDaeh7JVH/wIDsg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ubtTo3rkqE4nFaxOvUqK7R8Rn/oNq1uyE05RVfWySLUNqBqIsxwelpy073nw2P2DEZgR6xeBZAsZu5B8pmXlUI4Y88NILIP3HqsCWB9xO2pFdgJtneYJcQ9YNlrqC0EnKfktMa3Hp5OvS77J1zfwnAJz+e9eKMXZGqWfM+QyR50=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XCPJzLSX; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-20c7ee8fe6bso46972525ad.2;
-        Mon, 04 Nov 2024 21:10:54 -0800 (PST)
+	s=arc-20240116; t=1730783515; c=relaxed/simple;
+	bh=g3X43PZZfzcStSl1Yx3BdP8/SjXgxrtAXnFZ6F/ppEo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Lc9i3R5BOaMfEbp6OFNobMqCkp2ftY3vfBvHIqdHWb8d6yl2qEUl5XTm6v5vE004ZRsF4LqcZ8gstz6dsBkMC1ir0Ycu211HWw28HjKWJhP2BiJX49uuWYc+cvCZGXN5yja3MpJ3JsetMV99qWRZwYoN4ePKNQIgVvZaoXOMuoQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org; spf=none smtp.mailfrom=brainfault.org; dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b=u1kntvzQ; arc=none smtp.client-ip=209.85.166.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=brainfault.org
+Received: by mail-il1-f170.google.com with SMTP id e9e14a558f8ab-3a6bcbd23c9so10972765ab.3
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 21:11:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730783454; x=1731388254; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=pYRQYYR+JdhQ0qAqYIjxsBozFzPNS0M2HhdVgVTXBhI=;
-        b=XCPJzLSXDGEas9a4vjkGHKjmvD0JfpFnBjKa8bvxgFKjjNXJrwcOr6Ddh6mRVPNwLM
-         nU2PLHf6XS7ti8R6VshOIbiRq1NBvL9zVX2rsuwDsN0u7WscUyPrev3GFi8ppgfa4ew4
-         FBzI2qbRtLELINePDZdJwA4DS03kxfrazPjZB8b5waWS3zymj9TM6+UP24X4ILQtx0ml
-         +e8e11yZ7dX48ZPsr3UJl1TrGIXhT4LxF4tKqbCUnJyJ9ZB4Osu/BqMDL821l21mHalg
-         SSCHCr9OpNa5g7XIouN1kuOPocDRDaPeQje/ZbJ/WgLs6HW5hx/plB1W51JHyKkDiIFo
-         FAVA==
+        d=brainfault-org.20230601.gappssmtp.com; s=20230601; t=1730783512; x=1731388312; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8l5esNem8PBBNIAd06UP9heND5ENpGUkBH0v3nolocY=;
+        b=u1kntvzQwSkUi5h5nF0L5+UjpFBGP4A+wqJ7vEkBpr7uc8UU5tLkRL8oGv29VNdjC2
+         apWdvF2FHWssiu/yS6/Jxab8BZNjhOWf4forxPjNcNg16Omx50p89D3PI6qiD4VaErBg
+         TrQ+MaHegDobTkesK4JTlvvfqzV1yvMEL9nIGdGXibSr2bX8hDd1y+q6Bdo9F7UxznoM
+         ARUuKChYNqzvU/pk3+/JF2ba/GE/lTQzWE/PbzmJOBaxw7CcN+DXObb6Cp2X2dbDS6Gb
+         3FcCYSYvo4C1LM+b2Ivz4wjt0OxgY8NiGvyEaSEvIwZMRm6GEtmML8wmORx+OkKPuMVN
+         MV1g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730783454; x=1731388254;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pYRQYYR+JdhQ0qAqYIjxsBozFzPNS0M2HhdVgVTXBhI=;
-        b=LcO1yN3ZLYD31/FZ8ivh28uJcG+U+SGncndAdW7YDqW6HyfxnUAJc1i7GmfDSxYBMC
-         92Wrb0FqgnrUgmTjsxcDXrFrWjp1bYtOVO+ZeaUtiJeeWdYADoAUvjBo/6ECnj0qEO5l
-         XaLAIU+DlNjTSJSnWYGeoxHfXXPWFwVh7gAkj/El0AcGOXljyqSo5zeybEKNrO1cMgp8
-         cUVsAjETbBCB1REGEwvvRF09R6q5Pp20GDlt+DBMJSBRDzVwt6amQAmNgcKPSwarFqBu
-         g2Hukhe/Cezme5t9fRwYx2d9HALTLgnd64iKukT3wy9YIi4SxG3joIxlNe1Poke5l5eW
-         5dWg==
-X-Forwarded-Encrypted: i=1; AJvYcCV0lGVvHpfF76rDw2A/xcrCHfYOHjIwK6MJ8VvFNftj35RELKYgJMpj5jOTH5Fctz8YAAZN54YZmDL5Z+g=@vger.kernel.org, AJvYcCVSeMEhTvSiWtoqQuSOvAmsAhm+iamUEFmDOsafYsLp6P/h1WMW60/0SAtSlnjmURpT3Dw/UWZr@vger.kernel.org
-X-Gm-Message-State: AOJu0YystKfddADhuWTfv3sUd1tyzf+BMxDsudiIxPBg9dBQGL7mE3Ri
-	5Q86LxQsFwwas8kEtW480q0O0e5BqHErj5cmzryxh2+yZZjLOtGx
-X-Google-Smtp-Source: AGHT+IE9YYi8i70c55z4uY1QrudbCshWUkBwISsO/eIU0cxOwovu3C2tOO5yobsD+fNZsNuiWwPB6w==
-X-Received: by 2002:a17:903:1108:b0:20c:e262:2580 with SMTP id d9443c01a7336-210c6c3ffb6mr415459855ad.44.1730783453867;
-        Mon, 04 Nov 2024 21:10:53 -0800 (PST)
-Received: from ?IPV6:2409:4040:d8e:59e0:9ed7:e897:20d8:410e? ([2409:4040:d8e:59e0:9ed7:e897:20d8:410e])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21105729894sm69538205ad.119.2024.11.04.21.10.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 04 Nov 2024 21:10:53 -0800 (PST)
-Message-ID: <4f4b747a-a7e9-45ea-ba3d-fa6144320119@gmail.com>
-Date: Tue, 5 Nov 2024 10:40:46 +0530
+        d=1e100.net; s=20230601; t=1730783512; x=1731388312;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=8l5esNem8PBBNIAd06UP9heND5ENpGUkBH0v3nolocY=;
+        b=fmbpAGp6lP+BB6smJ2dUY5bghp9zizFTwBH/2+9xcs7RMug7aMqubmMkzbtimZ6PUy
+         2iZA0oLwd70IFYOwWZs8OdorQPB0dGnKbIIoaUz8tPEdW76zU1HWD65dxkowPl8Klwf7
+         GDmJ9Rsk4R50e7Uck/8/s9dj04dJVv7XcyiB0K4wmXnmtIMUG+jhM+39GJy4Un4OG4NK
+         fdi3MrjHf538tIwJV4S2BIBgikaPZc0/FfQjoqAdklETM4XpD//L5BU0r1Xmy0MbZLO3
+         pxA8GSVp7Ulz/jmGySKCO5kMl89ZNTEWeRvbvBFymHfjnCbZg2i4z6w0ZRlnexlAPsBC
+         ejbQ==
+X-Gm-Message-State: AOJu0Yzl/ARGYTRyr29JXOnRcgt8L0zTCOZC5YmNOv02q+uKq+Zgv4A3
+	Q9/GVmD3nU3r8JWYa7EV8pqMmhHdoa9JUTiQnmpkOudZGutO4BNjQhOboDcGGOGxsIyAQ0lamaJ
+	KSyw0cnvzYTK3NY1UnbjGAU5sWU6UtW8d/JdJxA==
+X-Google-Smtp-Source: AGHT+IGEudYnCi3xjKq3yQuyp0LPEhZYmxUddO6fuja49PgBoSWrtEJM9MPf9ivcp3qpb4s6OoJ/iT+dNNtaTMkeEdw=
+X-Received: by 2002:a05:6e02:3f83:b0:3a6:c320:7ed with SMTP id
+ e9e14a558f8ab-3a6c3200a55mr86555625ab.10.1730783512341; Mon, 04 Nov 2024
+ 21:11:52 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] net: ipv6: fix inconsistent indentation in
- ipv6_gro_receive
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: davem@davemloft.net, dsahern@kernel.org, edumazet@google.com,
- pabeni@redhat.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241031065124.4834-1-surajsonawane0215@gmail.com>
- <20241103152213.2911b601@kernel.org>
-Content-Language: en-US
-From: Suraj Sonawane <surajsonawane0215@gmail.com>
-In-Reply-To: <20241103152213.2911b601@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20241029085542.30541-1-yongxuan.wang@sifive.com>
+In-Reply-To: <20241029085542.30541-1-yongxuan.wang@sifive.com>
+From: Anup Patel <anup@brainfault.org>
+Date: Tue, 5 Nov 2024 10:41:41 +0530
+Message-ID: <CAAhSdy022PTmMZ90OxRxSOiR9nKept+tKVj8XrqbekkM209eYQ@mail.gmail.com>
+Subject: Re: [PATCH v2 1/1] RISC-V: KVM: Fix APLIC in_clrip and clripnum write emulation
+To: Yong-Xuan Wang <yongxuan.wang@sifive.com>
+Cc: linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
+	kvm-riscv@lists.infradead.org, kvm@vger.kernel.org, greentime.hu@sifive.com, 
+	vincent.chen@sifive.com, Atish Patra <atishp@atishpatra.org>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 04/11/24 04:52, Jakub Kicinski wrote:
-> On Thu, 31 Oct 2024 12:21:24 +0530 Suraj Sonawane wrote:
->> Fix the indentation to ensure consistent code style and improve
->> readability, and to fix this warning:
->>
->> net/ipv6/ip6_offload.c:280 ipv6_gro_receive() warn: inconsistent indenting
-> 
-> Warning from what tool?
-> 
-> Unless it's gcc or clang let's leave the code be, it's fine.
-Thank you for the feedback and your time.
+On Tue, Oct 29, 2024 at 2:25=E2=80=AFPM Yong-Xuan Wang <yongxuan.wang@sifiv=
+e.com> wrote:
+>
+> In the section "4.7 Precise effects on interrupt-pending bits"
+> of the RISC-V AIA specification defines that:
+>
+> "If the source mode is Level1 or Level0 and the interrupt domain
+> is configured in MSI delivery mode (domaincfg.DM =3D 1):
+> The pending bit is cleared whenever the rectified input value is
+> low, when the interrupt is forwarded by MSI, or by a relevant
+> write to an in_clrip register or to clripnum."
+>
+> Update the aplic_write_pending() to match the spec.
+>
+> Fixes: d8dd9f113e16 ("RISC-V: KVM: Fix APLIC setipnum_le/be write emulati=
+on")
+> Signed-off-by: Yong-Xuan Wang <yongxuan.wang@sifive.com>
+> Reviewed-by: Vincent Chen <vincent.chen@sifive.com>
 
-The warning was flagged by smatch, a static analysis tool.
+Looks good to me.
 
-Best regards,
-Suraj Sonawane
+Reviewed-by: Anup Patel <anup@brainfault.org>
+
+Queued this patch for Linux-6.13.
+
+Thanks,
+Anup
+
+> ---
+> v2;
+> - add fixes tag (Anup)
+> - follow the suggestion from Anup
+> ---
+>  arch/riscv/kvm/aia_aplic.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/arch/riscv/kvm/aia_aplic.c b/arch/riscv/kvm/aia_aplic.c
+> index da6ff1bade0d..f59d1c0c8c43 100644
+> --- a/arch/riscv/kvm/aia_aplic.c
+> +++ b/arch/riscv/kvm/aia_aplic.c
+> @@ -143,7 +143,7 @@ static void aplic_write_pending(struct aplic *aplic, =
+u32 irq, bool pending)
+>         if (sm =3D=3D APLIC_SOURCECFG_SM_LEVEL_HIGH ||
+>             sm =3D=3D APLIC_SOURCECFG_SM_LEVEL_LOW) {
+>                 if (!pending)
+> -                       goto skip_write_pending;
+> +                       goto noskip_write_pending;
+>                 if ((irqd->state & APLIC_IRQ_STATE_INPUT) &&
+>                     sm =3D=3D APLIC_SOURCECFG_SM_LEVEL_LOW)
+>                         goto skip_write_pending;
+> @@ -152,6 +152,7 @@ static void aplic_write_pending(struct aplic *aplic, =
+u32 irq, bool pending)
+>                         goto skip_write_pending;
+>         }
+>
+> +noskip_write_pending:
+>         if (pending)
+>                 irqd->state |=3D APLIC_IRQ_STATE_PENDING;
+>         else
+> --
+> 2.17.1
+>
 
