@@ -1,116 +1,140 @@
-Return-Path: <linux-kernel+bounces-395805-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395806-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C0CA9BC33F
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 03:34:32 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A73D9BC342
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 03:34:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C402D284FD6
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 02:34:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C1AD2B21F04
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 02:34:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B30C41C6A;
-	Tue,  5 Nov 2024 02:33:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="LfXenQIV"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 672EF4EB50;
+	Tue,  5 Nov 2024 02:34:22 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42D813D0D5;
-	Tue,  5 Nov 2024 02:33:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.165.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19D0C487BF;
+	Tue,  5 Nov 2024 02:34:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730774034; cv=none; b=Rk9cG+JqNwU4m4jlVoVUb972Yr+ZhOdpGBznLxWRraLRn1Uj7lMPh2U9Gp8PxPb7xzR1TkXJslXWokOwR4fm/8XSBlPuCg1geVHp1W5ZOQT1UYM49hzOt+lkTCQd0cqaJq8NVywouPsJktkcEWle53w50ZSOH1GroMzGjWE9dc0=
+	t=1730774062; cv=none; b=TAt9k8/WNFfWahPdPEaDAo+paX4Ya30A2D8aKe89nHEDOhHhNsFDk2teZ2a4aWS68LO+qxv+1qkbT5h4waVsKz6vR3c00IYiRbi2DlGxGo3zr3u2/WhZwjpixbJ2s4BkWaQ5Gw447x7lBRZRfdEHCNrGz71696WFAUzgsQQI504=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730774034; c=relaxed/simple;
-	bh=Z9+To1r72kOymNV2hztmPDQ7n8Eqfg485YJ24O5I4CY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=KD1SDC3VDP83gjPGQWlXkhbv6j+Fc8ZPv93js4HEVkg8t9CRJwjE93eqpWpGhYuAjIfsdbTB0rcFFm0GBQitIKcX095TrbNZLaMnfjNweZso1knG+26VIW08MQ6gS0mC7m0eHRyOPMLaSlDUittHs8Y79Zv3iZSbHTaZX4DLhck=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=LfXenQIV; arc=none smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A52Ofcb023094;
-	Tue, 5 Nov 2024 02:33:35 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=
-	corp-2023-11-20; bh=pML2ykXqoEwg9YOxW7yFOaC2/tXlaBeDG7q5EqOJBm8=; b=
-	LfXenQIV1mIB+OdXH4y94J5sBufN6K7YgKyWDXqhMWqx0VLwbhlekEORRxko6GwH
-	+4OrWXyoM2PLHjsXaGXVNKhFjSfDAoeWyebWNfoDxSo4DWXsW2FQM6fCYcWtbBs4
-	xbZJblgBeaYstmGefWyIC40vC5dooh3/zAQ1SPAleCT3RsE4Z+4/Ta+39sZlNVNg
-	/W1rQK7lRNG1yf/u3BSkYsCwnnk0w5OeUszDFn5uYkXwsZeQb/h0FKUSce6Cm4u/
-	CldGZthcKywG3GhmMWaXQj4XEyJadSOIfImE6MnqFee5HmaZCMIyUzbbq44ZQNtI
-	MmEKLWs+YhDAiMj1HpRukQ==
-Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 42nby8v7mw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 05 Nov 2024 02:33:35 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 4A52LqYi036844;
-	Tue, 5 Nov 2024 02:33:33 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 42nah6g2m5-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 05 Nov 2024 02:33:33 +0000
-Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 4A52XVFw017503;
-	Tue, 5 Nov 2024 02:33:33 GMT
-Received: from ca-mkp2.ca.oracle.com.com (mpeterse-ol9.allregionaliads.osdevelopmeniad.oraclevcn.com [100.100.251.135])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 42nah6g2k1-6;
-	Tue, 05 Nov 2024 02:33:33 +0000
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-To: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        alim.akhtar@samsung.com, avri.altman@wdc.com, jejb@linux.ibm.com,
-        beanhuo@micron.com, bvanassche@acm.org, kwangwon.min@samsung.com,
-        kwmad.kim@samsung.com, sh425.lee@samsung.com, quic_nguyenb@quicinc.com,
-        cpgs@samsung.com, h10.kim@samsung.com, grant.jung@samsung.com,
-        junwoo80.lee@samsung.com, wkon.kim@samsung.com,
-        SEO HOYOUNG <hy50.seo@samsung.com>
-Cc: "Martin K . Petersen" <martin.petersen@oracle.com>
-Subject: Re: [PATCH v3 0/2] processing of asymmetric connected lanes
-Date: Mon,  4 Nov 2024 21:32:52 -0500
-Message-ID: <173077364676.2354920.5375785901601330949.b4-ty@oracle.com>
-X-Mailer: git-send-email 2.46.2
-In-Reply-To: <cover.1728544727.git.hy50.seo@samsung.com>
-References: <CGME20241010074222epcas2p4278413120c00584d83f654dbde6c0f49@epcas2p4.samsung.com> <cover.1728544727.git.hy50.seo@samsung.com>
+	s=arc-20240116; t=1730774062; c=relaxed/simple;
+	bh=FMGeXdlntCZ1NWZjWEjyqd+sX618XMxc0/DpiaG43pU=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=aBVfVaTufB0Izc67y/+3r8/oKq1TDObP0EsBcCAFPg8nLoaalVW9Z85dFsrA9az0VHLvyBtj0fdv0keF8fEeFeP+e9oUO2zIkmJqanjRhMlrMSwUf/myQle0f+zLKaeKjkgrnbpYpvSYqzok2LJ8/A2xJU12XHYw8jjbPc7QxKc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4XjC850ZHPz4f3jkv;
+	Tue,  5 Nov 2024 10:33:57 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id DC9181A018C;
+	Tue,  5 Nov 2024 10:34:09 +0800 (CST)
+Received: from [10.174.176.117] (unknown [10.174.176.117])
+	by APP4 (Coremail) with SMTP id gCh0CgAHMYUghClnW8eJAw--.49287S2;
+	Tue, 05 Nov 2024 10:34:09 +0800 (CST)
+Subject: Re: [PATCH bpf] selftests/bpf: Add a copyright notice to
+ lpm_trie_map_get_next_key
+To: Ilya Leoshkevich <iii@linux.ibm.com>,
+ Byeonguk Jeong <jungbu2855@gmail.com>
+Cc: andrii@kernel.org, daniel@iogearbox.net, martin.lau@linux.dev,
+ Alexei Starovoitov <ast@kernel.org>, bpf@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <ZycSXwjH4UTvx-Cn@ub22>
+ <925cb852-df24-81b6-318a-ee6a628d43c7@huaweicloud.com>
+ <d5137f25846ebf585383de4d994d388eabab9d60.camel@linux.ibm.com>
+From: Hou Tao <houtao@huaweicloud.com>
+Message-ID: <b75e09a9-1028-28a2-f85d-5c7130a201f6@huaweicloud.com>
+Date: Tue, 5 Nov 2024 10:34:08 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <d5137f25846ebf585383de4d994d388eabab9d60.camel@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-11-04_22,2024-11-04_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 adultscore=0 mlxscore=0
- malwarescore=0 suspectscore=0 phishscore=0 spamscore=0 mlxlogscore=999
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2409260000
- definitions=main-2411050019
-X-Proofpoint-ORIG-GUID: wZg2YJpFUcfSs1vLlDS-5wspScirAnsH
-X-Proofpoint-GUID: wZg2YJpFUcfSs1vLlDS-5wspScirAnsH
+Content-Language: en-US
+X-CM-TRANSID:gCh0CgAHMYUghClnW8eJAw--.49287S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7tw15Kw47Xw18uw4UKr4fGrg_yoW8Cw17pr
+	ZxtFZxtrWkGry2yw4kXw1j9rW8AasxGa1Ygr4kGr4Fk3Z0vrnavr409w17Gw17ur4vgw4j
+	vw4UtFZ7Aa45Ja7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUkEb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxk0xIA0c2IEe2xFo4CEbIxvr21lc7CjxVAaw2AF
+	wI0_JF0_Jw1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
+	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43
+	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
+	0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
+	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x07UK2N
+	tUUUUU=
+X-CM-SenderInfo: xkrx3t3r6k3tpzhluzxrxghudrp/
 
-On Thu, 10 Oct 2024 16:52:27 +0900, SEO HOYOUNG wrote:
+Hi Ilya,
 
-> Performance problems may occur if there is a problem with the
-> asymmetric connected lane such as h/w failure.
-> Currently, only check connected lane for rx/tx is checked if it is not 0.
-> But it should also be checked if it is asymmetrically connected.
-> So if it is an asymmetric connected lane, an error occurs.
-> 
-> v1 -> v2: add error routine.
-> ufs initialization error occurs in case of asymmetic connected
-> 
-> [...]
+On 11/4/2024 6:07 PM, Ilya Leoshkevich wrote:
+> On Mon, 2024-11-04 at 09:34 +0800, Hou Tao wrote:
+>> Hi,
+>>
+>> On 11/3/2024 2:04 PM, Byeonguk Jeong wrote:
+>>> Hi,
+>>>
+>>> The selftest "verifier_bits_iter/bad words" has been failed with
+>>> retval 115, while I did not touched anything but a comment.
+>>>
+>>> Do you have any idea why it failed? I am not sure whether it
+>>> indicates
+>>> any bugs in the kernel.
+>>>
+>>> Best,
+>>> Byeonguk
+>> Sorry for the inconvenience. It seems the test case
+>> "verifier_bits_iter/bad words" is flaky. It may fail randomly, such
+>> as
+>> in [1]. I think calling bpf_probe_read_kernel_common() on 3GB addr
+>> under
+>> s390 host may succeed and the content of the memory address will
+>> decide
+>> whether the test case will succeed or not. Do not know the reason why
+>> reading 3GB address succeeds under s390. Hope to get some insight
+>> from
+>> Ilya.  I think we could fix the failure first by using NULL as the
+>> address of bad words just like null_pointer test case does. Will
+>> merge
+>> the test in bad_words into the null_pointer case.
+> Hi,
+>
+> s390 kernel runs in a completely separate address space, there is no
+> user/kernel split at TASK_SIZE. The same address may be valid in both
+> the kernel and the user address spaces, there is no way to tell by
+> looking at it. The config option related to this property is
+> ARCH_HAS_NON_OVERLAPPING_ADDRESS_SPACE.
+>
+> Also, unfortunately, 0 is a valid address in the s390 kernel address
+> space.
 
-Applied to 6.13/scsi-queue, thanks!
+Thanks for the detailed explanation. It seems both arm and x86 have
+select ARCH_HAS_NON_OVERLAPPING_ADDRESS_SPACE.
+>
+> I wonder if we could use -4095 as an address that cannot be
+> dereferenced on all platforms?
 
-[1/2] scsi: ufs: core: check asymmetric connected lanes
-      https://git.kernel.org/mkp/scsi/c/10c58d7eea44
+I have tested it in both arm64 and x86-64 that reading from -4095 by
+using copy_from_kernel_nofault() will return -EFAULT . For s390, I hope
+the bpf CI could help to test it. Will post a fix patch later.
+>
+> Best regards,
+> Ilya
 
--- 
-Martin K. Petersen	Oracle Linux Engineering
 
