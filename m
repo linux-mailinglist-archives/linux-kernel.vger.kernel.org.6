@@ -1,93 +1,116 @@
-Return-Path: <linux-kernel+bounces-397233-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397234-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F42A9BD83A
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 23:12:25 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62EFF9BD86E
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 23:23:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CADD41F236DF
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 22:12:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B5551F23AB8
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 22:23:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64C2121642B;
-	Tue,  5 Nov 2024 22:12:17 +0000 (UTC)
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F6B4216431;
+	Tue,  5 Nov 2024 22:23:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dYm8i6d/"
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BE331FBCA3;
-	Tue,  5 Nov 2024 22:12:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82C021DD0D2;
+	Tue,  5 Nov 2024 22:23:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730844737; cv=none; b=SjQC1VGT+MuZeMyZNVI6HK1UgTMnHbfTfCFoI3S6dB69+MKW1zbcMhgitqHajp2BxarykNPzDlDHx1MJ+5AAOgKOvvAw4/sRb5ckIoDmp5ZWGN40+SCx1q1WlhOL8/5JdNW7XpxtHftAsBcLpvwdilKou+McAdtTN0l10axpDtQ=
+	t=1730845411; cv=none; b=hDpSKGFzpqvS1EoMsk8Y00zFC8HxNHQUvJHTp4vOvEFXrGu8zsDrwx29nIoibCbUAkc9Lz1vtFLnZT+PYwji4gFAo2QzKiOtuprw1KJpKwN0eHu0Jf3Pn4InniKHLc94ITwwp+/QmJcm1iiXjwK6/yHoXiHMnZ6cYbIK0MRFiM0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730844737; c=relaxed/simple;
-	bh=cd+NpLk0DVP4MnNZwOfkwMmMxg0c4b8a5Oo85O8W3SA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lVoodeY8SylT7UF1uXnyod8PL9KiTzKK7A44lvRgN94zbtspocj+OXOSJvTHEP/HLsxpgWtmmoQhZi5jx9fZeWKnQdNPQVt+G5FQjUQv8Ayso5WZZsEl9plLn2ewDAvt9FePZSx56cNHVnde7s4w5W86nOaBKcolN+weKt1ikLg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
+	s=arc-20240116; t=1730845411; c=relaxed/simple;
+	bh=PSDevF+9bpCAhn90b16Axgvx24s7F8xiPpVOOdIKsSg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IBIc852DG4LJWfAUvw7+DtyKHHbVhqGhCpS1ASMuPNu8T1QBiQ3y9yU6QlIV+DiZk+Y29hf/PvQcj+7RSBt5dCH3gSnavFWVRCHgnn4Xz12HDVh/11zLBaBd4vh08ClWx0xUqFksrc1X80U/4iFkavuc+Z4ts9vXtltaMtZHQHI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dYm8i6d/; arc=none smtp.client-ip=209.85.210.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-71e52582cf8so5204962b3a.2;
-        Tue, 05 Nov 2024 14:12:15 -0800 (PST)
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-71e52582cf8so5214745b3a.2;
+        Tue, 05 Nov 2024 14:23:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730845410; x=1731450210; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=RfEsgTfKusKVWTPk7T748FiQhgqqZfqkXXFdUcb5tus=;
+        b=dYm8i6d/l11yLUp7qihpbHC/l30SyZU13z+r3f/HUMmE5zm8RQf1FoPg2FmilxZ1S3
+         m7o7EgXm9BG+vZJYHRwydwHVlhMvTjl4lGfesGXrBj0CKKMU1Fy1HF+QlnvXIPbwnIxj
+         7bRaNPzVayFOr/3WpJnKb/Kj+DuZ2sP0aklhI/Q6cOup8IgyhlesmWqQB148PVDSyyZu
+         nuGgh91BJkKQGJUFQxRW1CI+4YsuTHbVRGIAbpn/LJFCxt1sDiCske4gltiVn2DqcPJk
+         1EFPxSa6k9Cjnjw5l0f2/MbVR85Gbnw/zo9OlQCR6oFZetvxi/Q7kFFZ3JQ0ugLaqmfh
+         D1qA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730844735; x=1731449535;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1ksD1ZvJrcU44thyxRfGTGYSQMrepj3N5lKWUPdqxZ4=;
-        b=JSo0gLyXqO/6fmMnHRO2roIqY61xSq14ZTyMmHkrC1KDNH8yIc8uxWijq2fD3yfWtx
-         55/cjnxCjtgddL1sHQ2Ou10kMa8sWqYC74/5aH+AHIp6bt8rBJkj4Dk7rLST2nJtRPKn
-         1mBs0SgXdnajhrW28d0YCrNdXZdrdUTi2sVW6uTnopCcONb706BGJ4wbonBLn9UoS435
-         z/UfMawwXm37VtCOxOENPIUW0P2TQWDQMuFf5p8RtXC6t8E4bhPs2eeqAoU9s3RKIDZW
-         h4Q5tt3rI9VoXwIMHBO9FuBll3MYWZVu4L2syd8N4k0Iq255+DH9/obmPlBRdOGLnGHx
-         T5Yg==
-X-Forwarded-Encrypted: i=1; AJvYcCURcVUJHkHLaA5LCoqI3Gj3WQQ0qZ7DwLN9axbnm+t6Ob7Ts56EungrqUTZbRCIRsuPRIicFZlN+hD/@vger.kernel.org, AJvYcCVIAeKaoBjKvai4o2QoEIqgwtz0EB+tfdKEQi2S1KkW8mR9/7thXR5+gokH1++mDMjNeIWCa0o8cgtAHaG4@vger.kernel.org, AJvYcCWt29ugU0MSj6DGUmI15J8clI6NUKksViGwzCKSFa5wmwfcGH54IrIGxgc0L6eQLS/kxQsXYBCY8rSG@vger.kernel.org
-X-Gm-Message-State: AOJu0YzlSNbUlwh51A5j4VzPa4Epx9TEwETgT5ttJ+Xg7jAVMbtPL9sN
-	vYWLkKfd9lQ5b80x7zDr/xd092v0u2vTsgPB0bZQ/OlTDR+N13j1
-X-Google-Smtp-Source: AGHT+IF29PlhC1/J3xdbpFkXUMNCkz2+BRJ9IFwswl1OWFPanYs98/Dws5pyMh0FKH4nDQt+cwuxEA==
-X-Received: by 2002:a05:6a20:431b:b0:1db:e922:9eaf with SMTP id adf61e73a8af0-1dbe922b072mr9595005637.27.1730844734882;
-        Tue, 05 Nov 2024 14:12:14 -0800 (PST)
-Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7ee452ac9b1sm9596817a12.31.2024.11.05.14.12.13
+        d=1e100.net; s=20230601; t=1730845410; x=1731450210;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=RfEsgTfKusKVWTPk7T748FiQhgqqZfqkXXFdUcb5tus=;
+        b=HZcuNrsg1ezl0Ey8HFkgU7lc0uwwYDle2FMAvvupHhOH64xK7E/+I7EBPgT0X6VUz9
+         YtnIslWeyjZ0YtwtAl7Eq9/wUlewBKnRjCDd9XXAdSUlXaNIud+aXI1BvFR7jVvDf8Fx
+         Z3RjTLif9oSY4WOxTUR3YqslCGTnVH8mRjHDUlEveSakGJNmrFHWHQml3zHAIH21petI
+         vWgjFJ53ELzHyGn6hPloNo3M6hGpSAjLjJuf2zk1wItnGMyN4DBJE3bom63OJTcmEvRn
+         qmUdE+cC+RUNxwyq5D55n9z7ClN6cbfs3g/mNuThEOUECKFuEACPA6wPzzKaYEbwJzPo
+         GpNQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVl+GbTMZn46HDn2mgJYr9frVlfkMPWueORat+mWxptNii6kJCQHsP9kGirdOUTeYKkpDIgcvwcF4ketfM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzXmrOjk7/tmYdgMXSDWTLr1gjQ4asA3H6/c1Uddzme+qTwTkm/
+	Ltn0fH1liSlUxQO1hMhqT5AyxgK2Vaw/NcUNParMGpi5rMQD6v5VQ+FI5Q==
+X-Google-Smtp-Source: AGHT+IENY2XxairW6ZJWBwXhI+SdDR6RNm3+EoGONnUXF1W6LfgjlCrYNIHry9L/+lYqU1DqKzovuw==
+X-Received: by 2002:a05:6a21:78a8:b0:1db:e464:3663 with SMTP id adf61e73a8af0-1dbe46438ccmr9967318637.17.1730845409056;
+        Tue, 05 Nov 2024 14:23:29 -0800 (PST)
+Received: from ryzen.lan ([2601:644:8200:dab8::a86])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-720bc1ed42fsm10219469b3a.78.2024.11.05.14.23.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Nov 2024 14:12:14 -0800 (PST)
-Date: Wed, 6 Nov 2024 07:12:12 +0900
-From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
-To: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Jingoo Han <jingoohan1@gmail.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-	linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: PCI: snps,dw-pcie: Drop "#interrupt-cells"
- from example
-Message-ID: <20241105221212.GA878254@rocinante>
-References: <20241105213217.442809-1-robh@kernel.org>
+        Tue, 05 Nov 2024 14:23:28 -0800 (PST)
+From: Rosen Penev <rosenp@gmail.com>
+To: linux-wireless@vger.kernel.org
+Cc: =?UTF-8?q?Toke=20H=C3=B8iland-J=C3=B8rgensen?= <toke@toke.dk>,
+	Kalle Valo <kvalo@kernel.org>,
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCHv3] wifi: ath9k: return by of_get_mac_address
+Date: Tue,  5 Nov 2024 14:23:26 -0800
+Message-ID: <20241105222326.194417-1-rosenp@gmail.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241105213217.442809-1-robh@kernel.org>
+Content-Transfer-Encoding: 8bit
 
-Hello,
+When using nvmem, ath9k could potentially be loaded before nvmem, which
+loads after mtd. This is an issue if DT contains an nvmem mac address.
 
-> "#interrupt-cells" is not valid without a corresponding "interrupt-map"
-> or "interrupt-controller" property. As the example has neither, drop
-> "#interrupt-cells". This fixes a dtc interrupt_provider warning.
+If nvmem is not ready in time for ath9k, -EPROBE_DEFER is returned. Pass
+it to _probe so that ath9k can properly grab a potentially present MAC
+address.
 
-Applied to dt-bindings, thank you!
+Signed-off-by: Rosen Penev <rosenp@gmail.com>
+---
+ v3: only return EPROBE_DEFER to avoid terminating probe.
+ v2: modified commit message
+ drivers/net/wireless/ath/ath9k/init.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-[01/01] dt-bindings: PCI: snps,dw-pcie: Drop "#interrupt-cells" from example
-        https://git.kernel.org/pci/pci/c/718c157a0b94
+diff --git a/drivers/net/wireless/ath/ath9k/init.c b/drivers/net/wireless/ath/ath9k/init.c
+index f9e77c4624d9..01e0dffbf57e 100644
+--- a/drivers/net/wireless/ath/ath9k/init.c
++++ b/drivers/net/wireless/ath/ath9k/init.c
+@@ -647,7 +647,9 @@ static int ath9k_of_init(struct ath_softc *sc)
+ 		ah->ah_flags |= AH_NO_EEP_SWAP;
+ 	}
+ 
+-	of_get_mac_address(np, common->macaddr);
++	ret = of_get_mac_address(np, common->macaddr);
++	if (ret == -EPROBE_DEFER)
++		return ret;
+ 
+ 	return 0;
+ }
+-- 
+2.47.0
 
-	Krzysztof
 
