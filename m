@@ -1,60 +1,55 @@
-Return-Path: <linux-kernel+bounces-396564-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396565-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 102519BCEE7
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 15:16:30 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD17C9BCEEC
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 15:17:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 25DF71C22C09
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 14:16:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 811D02844F5
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 14:17:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 405F11D8E05;
-	Tue,  5 Nov 2024 14:16:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 410F81D8DEA;
+	Tue,  5 Nov 2024 14:17:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="2QnkjUhu"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mO94tLrb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 964F91D9667
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 14:16:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 961F5433D0;
+	Tue,  5 Nov 2024 14:17:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730816165; cv=none; b=NOyoo0TRZ4rY69IPVwAQrBYNPLjNpx8RBQteejoUI39sqk4JPsX9Jsf/mfCrRBzHmRA8sVlrU15/3SvOW1Kp5dvvcT34/wxJ3kybYO0M/snbfo9haj3bZVgbgBtyuxaqQigKSKi0aTfuenrQ2VjIBJwb7KDdavZkkWyEpFAxQ9I=
+	t=1730816224; cv=none; b=qKZiKGc3i7I+xZdhP4cAiH1xkFX+tNckUMvQlLvQiNeHOeyqV33w+EpO6SL7+8RUqUIfHFEVhF9r3+wfplZZ/xBAyINjfLsFGqIlPWW6+BxPgXPWprX7ebde0MZW5Z9YHfBirWMLpfBmBEHMUdasQzHjrxd1DB8zIDc4m02Q114=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730816165; c=relaxed/simple;
-	bh=+dyqpfFMy4leGo5BAemyyMG5p4U6mS3MZnToKSINqzk=;
+	s=arc-20240116; t=1730816224; c=relaxed/simple;
+	bh=0+L3qxW3NQK3xwclGQm/lsHI4QA8u4yxQmE9vqPlbzg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hFbeVaaBVE55caaMPQOJgdPxUrm1cmh1TKkYMQnehzToh9NVB1/Gse63goby5fO6l8CDSoFGzesB/dSC9gbtIlfyk/UtKseaDiep5aqU+pQBBc7MRsRgWz3hR6q+qQFxKD38Tmt9bAr1JQoLh/IvSeJnj1ckUVJYg2grLJr2SxI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=2QnkjUhu; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=aWJGYnIxqcxTHPvjBIj+4E5cmSvWZZuMHFJD6CvJfRQ=; b=2QnkjUhuC40emm/MdVtf+Vnrnx
-	zlYpJRO0bwwvTiPvAjXiekdwQNMXwQI2p5eGRG9fNceFyOH5xv3BgSGcwBlJzFUmmSjOdp5qCjA6F
-	kCITfwg/rAgSKX1gzlqHv2yjFNqAcF+asB/1zenY19yKd8bXjR6FtCF4Bb+HLxpGfckO2Pdenn+fu
-	8WljUZdYlAaEGoH1qFlUsVJ5areQl9+Jq8t4GtXRbkLahwFudXffdXcU/y5fTFYOGF5/GUkzQ48Rt
-	+RAb5eUjqAzaUDpLnR7KzONDiW4UX0uJSDuD6y/5yy43QQPCMuChCkgFxfcUmAFBUnCh2MbeT+cvP
-	uKCMifjg==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1t8KLh-0000000HEQQ-0V0O;
-	Tue, 05 Nov 2024 14:16:01 +0000
-Date: Tue, 5 Nov 2024 06:16:01 -0800
-From: Christoph Hellwig <hch@infradead.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org, alyssa.milburn@intel.com,
-	scott.d.constable@intel.com, joao@overdrivepizza.com,
-	andrew.cooper3@citrix.com, jpoimboe@kernel.org,
-	alexei.starovoitov@gmail.com, ebiggers@kernel.org,
-	samitolvanen@google.com, kees@kernel.org
-Subject: Re: [PATCH 1/8] x86,kcfi: Fix EXPORT_SYMBOL vs kCFI
-Message-ID: <Zyoood0ooSbpultV@infradead.org>
-References: <20241105113901.348320374@infradead.org>
- <20241105114521.852053765@infradead.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=r7O0S6PZzgMlTMwSKQqoFw02CRhzzctYvukN4l3NAQYb4/X7RfETusKmCSJ9kkaeaEB8IuEqeLEuUr6rvbn3PO+87o+ccSU79NWT4YJitWEq023zOBdCfvJnJBSKbXxC1QBovItV3H8muGPOHJWRbYUDoptaSMM6sY0suEHHlNc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mO94tLrb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79348C4CECF;
+	Tue,  5 Nov 2024 14:17:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730816224;
+	bh=0+L3qxW3NQK3xwclGQm/lsHI4QA8u4yxQmE9vqPlbzg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=mO94tLrbQ9WmePaEa5eTBKLVjfQxFcuCIRtio8hjyC5O/0QAdX3EkZynfMXe895PN
+	 Y1qeG64q0N6B7Pean75rt6wr9aSZkV70WsgRSkFH1BNGSQy+ghxENRg1GUa9IMwz0d
+	 kTjNJUTa0csHEZPfMLsuKKQ99Xy41X6JlogDhdsNvxeBbYiYti9Zc7Ea0qRL0Qq36v
+	 KCb2dLREDogLwLmd40EuokeN62+4htEbh1wcPrfJJ7zprseiz6jqWqVzNNhe+NYsgf
+	 70NCBcnoUctJhM7nfFLXysBcH5HUIcCkRmxgRZrFte7dGjIysBZgziwMwqfvaAv5Fo
+	 Nqj8Rrk+kKSvQ==
+Date: Tue, 5 Nov 2024 14:17:00 +0000
+From: Simon Horman <horms@kernel.org>
+To: Andrew Kreimer <algonell@gmail.com>
+Cc: Karsten Keil <isdn@linux-pingi.de>, Jakub Kicinski <kuba@kernel.org>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Jeff Johnson <quic_jjohnson@quicinc.com>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH net-next] mISDN: Fix typos
+Message-ID: <20241105141700.GG4507@kernel.org>
+References: <20241102134856.11322-1-algonell@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,15 +58,42 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241105114521.852053765@infradead.org>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20241102134856.11322-1-algonell@gmail.com>
 
-On Tue, Nov 05, 2024 at 12:39:02PM +0100, Peter Zijlstra wrote:
-> The expectation is that all EXPORT'ed symbols are free to have their
-> address taken and called indirectly.
+On Sat, Nov 02, 2024 at 03:48:24PM +0200, Andrew Kreimer wrote:
+> Fix typos:
+>   - syncronized -> synchronized.
+>   - interfacs -> interface.
+> 
+> Signed-off-by: Andrew Kreimer <algonell@gmail.com>
 
-I don't think that is the case at all.  The is a relatively small number
-of exported symbols that are called indirectly.  I'd much rather mark
-those explicitly.
+Hi Andrew,
 
+I'm wondering if you could make this a bit more comprehensive by addressing
+all the non-false-positives flagged by codespell in this file.
+
+With your patch applied, manually filtering out the false-positives, I see:
+
+$ codespell drivers/isdn/hardware/mISDN/hfcmulti.c
+drivers/isdn/hardware/mISDN/hfcmulti.c:28: otherwhise ==> otherwise
+drivers/isdn/hardware/mISDN/hfcmulti.c:29: otherwhise ==> otherwise
+drivers/isdn/hardware/mISDN/hfcmulti.c:44: ony ==> only, on, one
+drivers/isdn/hardware/mISDN/hfcmulti.c:85: busses ==> buses
+drivers/isdn/hardware/mISDN/hfcmulti.c:903: syncronized ==> synchronized
+drivers/isdn/hardware/mISDN/hfcmulti.c:986: syncronized ==> synchronized
+drivers/isdn/hardware/mISDN/hfcmulti.c:2004: maxinum ==> maximum
+drivers/isdn/hardware/mISDN/hfcmulti.c:2565: syncronized ==> synchronized
+drivers/isdn/hardware/mISDN/hfcmulti.c:2568: syncronized ==> synchronized
+drivers/isdn/hardware/mISDN/hfcmulti.c:2738: syncronized ==> synchronized
+drivers/isdn/hardware/mISDN/hfcmulti.c:2740: syncronized ==> synchronized
+drivers/isdn/hardware/mISDN/hfcmulti.c:3235: syncronized ==> synchronized
+drivers/isdn/hardware/mISDN/hfcmulti.c:3938: syncronized ==> synchronized
+drivers/isdn/hardware/mISDN/hfcmulti.c:4006: syncronized ==> synchronized
+drivers/isdn/hardware/mISDN/hfcmulti.c:4532: syncronized ==> synchronized
+drivers/isdn/hardware/mISDN/hfcmulti.c:4556: syncronized ==> synchronized
+
+...
+
+-- 
+pw-bot: changes-requested
 
