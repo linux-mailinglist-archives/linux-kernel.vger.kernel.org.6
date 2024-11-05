@@ -1,257 +1,168 @@
-Return-Path: <linux-kernel+bounces-396273-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396275-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8E869BCA85
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 11:34:38 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FA2F9BCA97
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 11:36:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 13C3EB225C8
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 10:34:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 930A51C21820
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 10:36:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82E0F1D2B26;
-	Tue,  5 Nov 2024 10:34:24 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C3501D2B26;
+	Tue,  5 Nov 2024 10:36:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2E9iggUA"
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A6DC1D27AF
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 10:34:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCC9F1D14EC
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 10:35:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730802863; cv=none; b=CpSbOlxErWtxQJHRr5BOecjeKUriPzVKbh6gcbAi1aaQ8HM5uh6Ztev+i6udHZY9KdtsvtLHIhC2RwICMw+960qRZ8CE+0J+VHWkiM+JpTAOfnJ2GO12qQZfy08jNq2CuN2OjGry/Q/qUl4VK/73jJJ0NT/b6k7c/M/dpTIvaKo=
+	t=1730802960; cv=none; b=tWy1tjabJIr9gYn0qOOZG31kR1RZlOcRTNnzcpV3UiK1BEGbpkI0TdmJDYHe9SkhXTwGALdryF0QwLwq8UAHcDSEZJ3PqV32uOvq9IUskCYdKgIg16gfZtKxwkOxHD2ZBOavoOkc4yX+P0Y3fl8MZS9sfOAryQYkntbxfcaJjug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730802863; c=relaxed/simple;
-	bh=8XqNPqbT8ywnn8m4vxST+T4LV2TsnZeadJ/TpyvTu94=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=loyBMMOW2IrneMOTmJ7bYrlWv+A+/H92rlsBsRyGQs4vJIElla/gQEOdd2ZNJ8CfJ5z5KFQJSgSWL5bQH1lpnjxLWnByY3MJ6EKMnD3gzxHPYM/h5wW7ubEPuoGWzRNo1rgYR1L5V1QAMQtQSU9zmWCyllWGO1X7s2yzrkfwNJY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a3da2d46b9so56433675ab.0
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 02:34:22 -0800 (PST)
+	s=arc-20240116; t=1730802960; c=relaxed/simple;
+	bh=6HhMrwij3Sm4Ez5HTdLMk1GmRfoKOqzP5Je5fYiFaKY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=OENSoaQAf8wZFh4EymzV+9A7MCLCNJPoRBeCfR60YACWonwjJ/KKi4xBl2r24CUL/Usrk61Fo/oUD4KRrFFLVFGIwjqDFmw5rDrTTl9/xJ/qN0pFf9zMnOjCrrV7w65WsngrilBkcz5yTbRO5dzEUMLKomUvBNKsKUbKgpQ56ek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2E9iggUA; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5c9c28c1e63so6330050a12.0
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 02:35:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1730802957; x=1731407757; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sDJ/Kctg4e0f30HvMWXY+UgoVtT+n9MKZZPRr6MzBqE=;
+        b=2E9iggUAKqBSR1LN03HPKhPVOvgh2KKD9pzQ1sUyfa2Rmy33jiwJYmQBibQxNMljfx
+         PJgAagA+3V4tVMaZmCtIhO9lJ0I5sSOqXUsVmxRx0vNzVRrd7Q875EwFCYaVvoRj7aVs
+         itvpI7inseyDsLACySXkl5tF6tTFTPvFAG0VQYFoZz1s9Dh+b6wx8/RIStIZ/AxTg8U0
+         LOP3sO8dnVNCWtPZ8bsJxWl0JM0vAKvKkp+bcs04MeYPRz2lWY+7VfSqAWwPVUH5iV44
+         U4FkC+Qvm7WkVQDV4Ov2bADRCOHjQPrqRKLk4piQgt4d/j3IZIxEaAZuk2M/ZKCukxm8
+         y5nw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730802861; x=1731407661;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ZR86TsHfvHFsgEzYy2840HjD/SSTpPfsIpq/oyWK1zc=;
-        b=Y/6xLrInNVeuwiYVB7x2+jl42EgxQZPqlNW4LOB6S51Mz4apHteuZw+kKymYq0HIlP
-         3C8EpT4Unq26K9si68CAJ83/1xC7H98zzL4oariWLeeIgg9Lwd7W5ypOg8j/HcEN+pYj
-         VrjvDVEl5w0Zfn5b/26OR7kQL8t0Yb9bE5PcCxbljRJadgnQSXLxQXiHD4FINs4JCRyy
-         gKoYVT9GrPcGnNntIpd5c33byk34kRZvRkHS33CU/AoZYbxIjb06ztkLlzJpCkIZCStq
-         NCbQHVii/YvOFOq8VPNXyB1yMKpDh93j8UQ4Hga2DtpcPmsyMR1lRUc2kKXQtWJvx5dj
-         xR6w==
-X-Forwarded-Encrypted: i=1; AJvYcCUMl/aiwqyhX5pX7VrkO1bX5zfY+l6KolGOInJkycMuSn+T0xSaNo5XxkH20YE28+Zli8tyMUUmAi3+giA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzHlyg/C4H7D7f6b9Oh/lKkAFQaZBkaVr+pfnVFBamfX5mAkKi9
-	FuhjkMkbZtl5GjxHNy9L99kqswNklDNC2AGZfP0NQuXFXExq+T5c7YgrBBQlTWF8/7ysA9E3/pr
-	DuWMUfiI7VRguu8nHseWqoNRl1C4pEYhVbZ5CeEVYZByflMNMdz7vhbA=
-X-Google-Smtp-Source: AGHT+IE851aoyrRW8A1U6io0m2mRZRAKEvEcwEQFIeTYh8zKIloRGTj+9JgWUhU7fAWvoTGnt8MpZEAsCGU3r7/iVo+YDqncO6rf
+        d=1e100.net; s=20230601; t=1730802957; x=1731407757;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=sDJ/Kctg4e0f30HvMWXY+UgoVtT+n9MKZZPRr6MzBqE=;
+        b=c3pw9A+vloBcbPRVgDuBSj2LL+Qk6oxW/qRpNR7GMlmGN3I1DdF1a8xDnetnl8ba2k
+         MsVDeAzxcWIuJP9mjDfzhiTu2m3Wh7Hgy28ykIIg5ne3vnJqQPCs2Jwb8xdd+F5MW4RO
+         IFUmJfQgJrWSDPvAJFmdwKQN+k3YeR4devvjl5Icxv/AVLg2kwfGxcbqhQZL3BfRoqEX
+         qSFXPnAu5o4oHNdlwAEXotfsPNIxaYZtrW2VxWpQ+5sa7eAky7dwuUV3tXEgNRRmA8X3
+         y2XoGMtKad4y4vvO/2gZSfYzRUpqoMExugjC9dgC5yMlwN0i4ZGjfUyEh2OMfVjJaU/1
+         2slQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWjqo4hCTzBZZRQPVqfhp+M6sdxZg1zFtt1M46gc3GEi4lsMwtu1W7HfRp7Npl6IrJw2qrBZ4WDqIdcsUg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxRNDuaXjLh/61mxM3Lvw/jhFBPtektqfa7opDFrcPdBOhYJKuG
+	1d0DjNnomwGNPxSy9dRnsNxjSFxpjXj3WDYksLStJqFVSC7/GfoHfqC+XkXdwGy3vhsSvPKydEc
+	2kips5C7AEL8HsAt5+sMdhN1qxG80peQQj5Kk
+X-Google-Smtp-Source: AGHT+IG8aPze0kJVzo0IME8bHugDyPyiohoFX5zaBuXzmMbChOtscLPmMnEKHt24u7PgbFxdiPbd9OFtGrxcTJYEPSw=
+X-Received: by 2002:a17:907:7e84:b0:a9a:123d:3f1a with SMTP id
+ a640c23a62f3a-a9e508d4af3mr1757814966b.17.1730802956929; Tue, 05 Nov 2024
+ 02:35:56 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1d81:b0:3a6:cb15:42d2 with SMTP id
- e9e14a558f8ab-3a6cb154862mr68886485ab.6.1730802861450; Tue, 05 Nov 2024
- 02:34:21 -0800 (PST)
-Date: Tue, 05 Nov 2024 02:34:21 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6729f4ad.050a0220.2edce.1508.GAE@google.com>
-Subject: [syzbot] [net?] BUG: soft lockup in macvlan_handle_frame
-From: syzbot <syzbot+16fa103a3c4b0913b72c@syzkaller.appspotmail.com>
-To: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com, 
-	kuba@kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
-	pabeni@redhat.com, syzkaller-bugs@googlegroups.com
+References: <cover.1730244116.git.babu.moger@amd.com> <d27c3a15ccb11c6ba76794eba6cf7c013b0bb074.1730244116.git.babu.moger@amd.com>
+ <CALPaoCh1BWdWww8Kztd13GBaY9mMeZX268fOQgECRytiKm-nPQ@mail.gmail.com> <6fd12815-98eb-469f-8477-0de12af29aa2@amd.com>
+In-Reply-To: <6fd12815-98eb-469f-8477-0de12af29aa2@amd.com>
+From: Peter Newman <peternewman@google.com>
+Date: Tue, 5 Nov 2024 11:35:46 +0100
+Message-ID: <CALPaoCgiHEaY_cDbCo=537JJ7mkYZDFFDs9heYvtQ80fXuuvWQ@mail.gmail.com>
+Subject: Re: [PATCH v9 19/26] x86/resctrl: Add the interface to unassign a MBM counter
+To: babu.moger@amd.com
+Cc: corbet@lwn.net, reinette.chatre@intel.com, tglx@linutronix.de, 
+	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, 
+	fenghua.yu@intel.com, x86@kernel.org, hpa@zytor.com, thuth@redhat.com, 
+	paulmck@kernel.org, rostedt@goodmis.org, akpm@linux-foundation.org, 
+	xiongwei.song@windriver.com, pawan.kumar.gupta@linux.intel.com, 
+	daniel.sneddon@linux.intel.com, perry.yuan@amd.com, sandipan.das@amd.com, 
+	kai.huang@intel.com, xiaoyao.li@intel.com, seanjc@google.com, 
+	jithu.joseph@intel.com, brijesh.singh@amd.com, xin3.li@intel.com, 
+	ebiggers@google.com, andrew.cooper3@citrix.com, mario.limonciello@amd.com, 
+	james.morse@arm.com, tan.shaopeng@fujitsu.com, tony.luck@intel.com, 
+	vikas.shivappa@linux.intel.com, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, maciej.wieczor-retman@intel.com, 
+	eranian@google.com, jpoimboe@kernel.org, thomas.lendacky@amd.com
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+Hi Babu,
 
-syzbot found the following issue on:
+On Mon, Nov 4, 2024 at 7:21=E2=80=AFPM Moger, Babu <babu.moger@amd.com> wro=
+te:
+>
+> Hi Peter,
+>
+> On 11/4/24 08:16, Peter Newman wrote:
+> > Hi Babu,
+> >
+> > On Wed, Oct 30, 2024 at 12:25=E2=80=AFAM Babu Moger <babu.moger@amd.com=
+> wrote:
+> >>
+> >> The mbm_cntr_assign mode provides a limited number of hardware counter=
+s
+> >> that can be assigned to an RMID, event pair to monitor bandwidth while
+> >> assigned. If all counters are in use, the kernel will show an error
+> >> message: "Out of MBM assignable counters" when a new assignment is
+> >> requested. To make space for a new assignment, users must unassign an
+> >> already assigned counter.
+> >>
+> >> Introduce an interface that allows for the unassignment of counter IDs
+> >> from both the group and the domain. Additionally, ensure that the glob=
+al
+> >> counter is released if it is no longer assigned to any domains.
+> >
+> > This seems unnecessarily restrictive. What's wrong with monitoring
+> > different groups in different domains?
+>
+> Yes. User can monitor different groups in different domains. But, they
+> will have to use different global counter for each group.
 
-HEAD commit:    c40dd8c47325 bpf, test_run: Fix LIVE_FRAME frame update af..
-git tree:       bpf
-console output: https://syzkaller.appspot.com/x/log.txt?x=105e9340580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=309bb816d40abc28
-dashboard link: https://syzkaller.appspot.com/bug?extid=16fa103a3c4b0913b72c
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+What is a global counter anyways? It sounds like an artifact of an
+earlier revision. This concept does not sound intuitive to the user.
 
-Unfortunately, I don't have any reproducer for this issue yet.
+>
+> Here is an example.
+>
+> #cat /sys/fs/resctrl/info/L3_MON/mbm_assign_control
+> groupA//0=3Dt;1=3D_;
+> groupB//0=3D_;1=3Dl;
+>
+> Group A - counter 0 (Assigned to total event in Domain 0)
+> Group B - counter 1 (Assigned to local event in Domain 1)
+>
+> We allocate two different counters here.  Now we are left with 30 counter=
+s
+> (max 32).
+>
+>
+> This is similar to CLOSID management we follow in resctrl. This is not a
+> new restriction,
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/f38e93d395b4/disk-c40dd8c4.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/49f7c6b95b00/vmlinux-c40dd8c4.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/d58882140682/bzImage-c40dd8c4.xz
+It is a restriction in a new feature that resembles a restriction in
+an existing feature.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+16fa103a3c4b0913b72c@syzkaller.appspotmail.com
+I don't see what function the global allocator serves now that there
+is already a per-domain allocator. My best guess is that it avoids the
+case of an mbm_assign_control write that succeeds in some domains but
+fails in others.
 
-watchdog: BUG: soft lockup - CPU#1 stuck for 143s! [syz.2.47:6050]
-Modules linked in:
-irq event stamp: 11006527
-hardirqs last  enabled at (11006526): [<ffffffff8bc6e753>] irqentry_exit+0x63/0x90 kernel/entry/common.c:357
-hardirqs last disabled at (11006527): [<ffffffff8bc6c2fe>] sysvec_apic_timer_interrupt+0xe/0xc0 arch/x86/kernel/apic/apic.c:1049
-softirqs last  enabled at (10907692): [<ffffffff81578ce4>] __do_softirq kernel/softirq.c:588 [inline]
-softirqs last  enabled at (10907692): [<ffffffff81578ce4>] invoke_softirq kernel/softirq.c:428 [inline]
-softirqs last  enabled at (10907692): [<ffffffff81578ce4>] __irq_exit_rcu+0xf4/0x1c0 kernel/softirq.c:637
-softirqs last disabled at (10907695): [<ffffffff81578ce4>] __do_softirq kernel/softirq.c:588 [inline]
-softirqs last disabled at (10907695): [<ffffffff81578ce4>] invoke_softirq kernel/softirq.c:428 [inline]
-softirqs last disabled at (10907695): [<ffffffff81578ce4>] __irq_exit_rcu+0xf4/0x1c0 kernel/softirq.c:637
-CPU: 1 UID: 0 PID: 6050 Comm: syz.2.47 Not tainted 6.12.0-rc4-syzkaller-00175-gc40dd8c47325 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-RIP: 0010:lock_acquire+0x264/0x550 kernel/locking/lockdep.c:5829
-Code: 2b 00 74 08 4c 89 f7 e8 aa 4d 8e 00 f6 44 24 61 02 0f 85 85 01 00 00 41 f7 c7 00 02 00 00 74 01 fb 48 c7 44 24 40 0e 36 e0 45 <4b> c7 44 25 00 00 00 00 00 43 c7 44 25 09 00 00 00 00 43 c7 44 25
-RSP: 0018:ffffc90000a183c0 EFLAGS: 00000206
-RAX: 0000000000000001 RBX: 1ffff92000143084 RCX: ca3e8243d6909100
-RDX: dffffc0000000000 RSI: ffffffff8c0adcc0 RDI: ffffffff8c610360
-RBP: ffffc90000a18518 R08: ffffffff942ca8f7 R09: 1ffffffff285951e
-R10: dffffc0000000000 R11: fffffbfff285951f R12: 1ffff92000143080
-R13: dffffc0000000000 R14: ffffc90000a18420 R15: 0000000000000246
-FS:  00007f9fbd1246c0(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000020090000 CR3: 0000000028d92000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <IRQ>
- __raw_spin_lock include/linux/spinlock_api_smp.h:133 [inline]
- _raw_spin_lock+0x2e/0x40 kernel/locking/spinlock.c:154
- spin_lock include/linux/spinlock.h:351 [inline]
- macvlan_broadcast_enqueue drivers/net/macvlan.c:362 [inline]
- macvlan_handle_frame+0x8e0/0x1450 drivers/net/macvlan.c:487
- __netif_receive_skb_core+0x13e8/0x4570 net/core/dev.c:5560
- __netif_receive_skb_one_core net/core/dev.c:5664 [inline]
- __netif_receive_skb+0x12f/0x650 net/core/dev.c:5779
- process_backlog+0x662/0x15b0 net/core/dev.c:6111
- __napi_poll+0xcb/0x490 net/core/dev.c:6775
- napi_poll net/core/dev.c:6844 [inline]
- net_rx_action+0x89b/0x1240 net/core/dev.c:6966
- handle_softirqs+0x2c5/0x980 kernel/softirq.c:554
- __do_softirq kernel/softirq.c:588 [inline]
- invoke_softirq kernel/softirq.c:428 [inline]
- __irq_exit_rcu+0xf4/0x1c0 kernel/softirq.c:637
- irq_exit_rcu+0x9/0x30 kernel/softirq.c:649
- instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1049 [inline]
- sysvec_apic_timer_interrupt+0xa6/0xc0 arch/x86/kernel/apic/apic.c:1049
- </IRQ>
- <TASK>
- asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:702
-RIP: 0010:smp_call_function_many_cond+0x18a4/0x2ca0 kernel/smp.c:879
-Code: 72 f0 0b 00 4c 8b 7c 24 20 4d 85 f6 75 11 e8 63 f0 0b 00 83 7c 24 18 00 75 16 e9 c6 0b 00 00 e8 52 f0 0b 00 fb 83 7c 24 18 00 <0f> 84 b5 0b 00 00 44 3b 7c 24 78 0f 83 aa 0b 00 00 4d 8d 75 08 4c
-RSP: 0018:ffffc9000b1bf580 EFLAGS: 00000202
-RAX: ffffffff8188e76e RBX: 0000000000000000 RCX: ffff88802e4a9e00
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: ffffc9000b1bf780 R08: ffffffff8188e740 R09: 1ffffffff2859500
-R10: dffffc0000000000 R11: fffffbfff2859501 R12: dffffc0000000000
-R13: ffff8880b873fc80 R14: 0000000000000200 R15: 0000000000000000
- on_each_cpu_cond_mask+0x3f/0x80 kernel/smp.c:1051
- on_each_cpu include/linux/smp.h:71 [inline]
- text_poke_sync arch/x86/kernel/alternative.c:2085 [inline]
- text_poke_bp_batch+0x352/0xb30 arch/x86/kernel/alternative.c:2295
- text_poke_flush arch/x86/kernel/alternative.c:2486 [inline]
- text_poke_finish+0x30/0x50 arch/x86/kernel/alternative.c:2493
- arch_jump_label_transform_apply+0x1c/0x30 arch/x86/kernel/jump_label.c:146
- static_key_enable_cpuslocked+0x136/0x260 kernel/jump_label.c:210
- static_key_enable+0x1a/0x20 kernel/jump_label.c:223
- tracepoint_add_func+0x953/0x9e0 kernel/tracepoint.c:361
- tracepoint_probe_register_prio kernel/tracepoint.c:511 [inline]
- tracepoint_probe_register+0x105/0x160 kernel/tracepoint.c:531
- perf_trace_event_reg kernel/trace/trace_event_perf.c:129 [inline]
- perf_trace_event_init+0x478/0x930 kernel/trace/trace_event_perf.c:202
- perf_trace_init+0x243/0x2e0 kernel/trace/trace_event_perf.c:226
- perf_tp_event_init+0x8d/0x110 kernel/events/core.c:10357
- perf_try_init_event+0x146/0x810 kernel/events/core.c:11891
- perf_init_event kernel/events/core.c:11977 [inline]
- perf_event_alloc+0x135f/0x2310 kernel/events/core.c:12259
- __do_sys_perf_event_open kernel/events/core.c:12766 [inline]
- __se_sys_perf_event_open+0xb1f/0x3870 kernel/events/core.c:12657
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f9fbc37e719
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f9fbd124038 EFLAGS: 00000246 ORIG_RAX: 000000000000012a
-RAX: ffffffffffffffda RBX: 00007f9fbc535f80 RCX: 00007f9fbc37e719
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000020000040
-RBP: 00007f9fbc3f132e R08: 0000000000000000 R09: 0000000000000000
-R10: ffffffffffffffff R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000000 R14: 00007f9fbc535f80 R15: 00007ffd56eb9978
- </TASK>
-Sending NMI from CPU 1 to CPUs 0:
-NMI backtrace for cpu 0
-CPU: 0 UID: 0 PID: 5065 Comm: kworker/u8:7 Not tainted 6.12.0-rc4-syzkaller-00175-gc40dd8c47325 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-Workqueue: writeback wb_workfn (flush-8:0)
-RIP: 0010:csd_lock_wait kernel/smp.c:340 [inline]
-RIP: 0010:smp_call_function_many_cond+0x19f3/0x2ca0 kernel/smp.c:884
-Code: 45 8b 65 00 44 89 e6 83 e6 01 31 ff e8 56 f3 0b 00 41 83 e4 01 49 bc 00 00 00 00 00 fc ff df 75 07 e8 01 ef 0b 00 eb 38 f3 90 <42> 0f b6 04 23 84 c0 75 11 41 f7 45 00 01 00 00 00 74 1e e8 e5 ee
-RSP: 0018:ffffc9000f30e300 EFLAGS: 00000293
-RAX: ffffffff8188e8db RBX: 1ffff110170e8919 RCX: ffff888034589e00
-RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000000
-RBP: ffffc9000f30e500 R08: ffffffff8188e8aa R09: 1ffff92001e61c50
-R10: dffffc0000000000 R11: ffffffff81431160 R12: dffffc0000000000
-R13: ffff8880b87448c8 R14: ffff8880b863fc80 R15: 0000000000000001
-FS:  0000000000000000(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00005573c7fcdb10 CR3: 000000007a1b6000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <NMI>
- </NMI>
- <TASK>
- on_each_cpu_cond_mask+0x3f/0x80 kernel/smp.c:1051
- __flush_tlb_multi arch/x86/include/asm/paravirt.h:91 [inline]
- flush_tlb_multi arch/x86/mm/tlb.c:938 [inline]
- flush_tlb_mm_range+0x329/0x5c0 arch/x86/mm/tlb.c:1024
- flush_tlb_page arch/x86/include/asm/tlbflush.h:254 [inline]
- ptep_clear_flush+0x11a/0x170 mm/pgtable-generic.c:101
- page_vma_mkclean_one+0x58a/0x9a0 mm/rmap.c:1044
- page_mkclean_one+0x280/0x420 mm/rmap.c:1085
- rmap_walk_file+0x52f/0x9f0 mm/rmap.c:2700
- rmap_walk mm/rmap.c:2718 [inline]
- folio_mkclean+0x262/0x440 mm/rmap.c:1117
- folio_clear_dirty_for_io+0x22b/0xd00 mm/page-writeback.c:3024
- mpage_submit_folio+0x88/0x230 fs/ext4/inode.c:1902
- mpage_map_and_submit_buffers fs/ext4/inode.c:2167 [inline]
- mpage_map_and_submit_extent fs/ext4/inode.c:2299 [inline]
- ext4_do_writepages+0x1d1d/0x3d20 fs/ext4/inode.c:2724
- ext4_writepages+0x213/0x3c0 fs/ext4/inode.c:2813
- do_writepages+0x35d/0x870 mm/page-writeback.c:2683
- __writeback_single_inode+0x14f/0x10d0 fs/fs-writeback.c:1658
- writeback_sb_inodes+0x80c/0x1370 fs/fs-writeback.c:1954
- __writeback_inodes_wb+0x11b/0x260 fs/fs-writeback.c:2025
- wb_writeback+0x42f/0xbd0 fs/fs-writeback.c:2136
- wb_check_old_data_flush fs/fs-writeback.c:2240 [inline]
- wb_do_writeback fs/fs-writeback.c:2293 [inline]
- wb_workfn+0xba1/0x1090 fs/fs-writeback.c:2321
- process_one_work kernel/workqueue.c:3229 [inline]
- process_scheduled_works+0xa63/0x1850 kernel/workqueue.c:3310
- worker_thread+0x870/0xd30 kernel/workqueue.c:3391
- kthread+0x2f0/0x390 kernel/kthread.c:389
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
+I admit I said earlier that I was only planning to allocate globally,
+but now that I'm evaluating how to make resctrl's monitoring
+functionality scale on large systems, I'm being forced to reconsider.
 
+As long as this is only a limitation I can fix later, I don't see it
+as an obstacle. There would just need to be better documentation of
+what sort of internal data structures the user needs to visualize in
+order to use this feature successfully.
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+-Peter
 
