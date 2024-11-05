@@ -1,141 +1,86 @@
-Return-Path: <linux-kernel+bounces-396496-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396497-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E6289BCDEF
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 14:35:13 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B05B9BCDF3
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 14:35:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D581F282CF2
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 13:35:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 132461F215DC
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 13:35:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F2991D6DA3;
-	Tue,  5 Nov 2024 13:34:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19DCF1D8A12;
+	Tue,  5 Nov 2024 13:34:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PMc2n8pv"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hCf9YKwZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF97E1D63EE;
-	Tue,  5 Nov 2024 13:34:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70CD81D6DBB;
+	Tue,  5 Nov 2024 13:34:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730813681; cv=none; b=aPziDcIo9jyk6MQ+XaxyBOJTQZO/ITgxlz95ySNW6YSeWEvt1RXd/mMaStKhOOfUD2vDI7u/nHhAeb+YdQezxG7L5NdRWYN1S+CJd2NqmF0DuQ+ujyeiFZTvOXsc7+S0rnR+48pUQ5bf9Z/4qZX8RI3SWbgDiXkm32+1fpQJncc=
+	t=1730813683; cv=none; b=TDhmp66GozDxu2u/FoW92b8ru+KHhqLdefSd2HSf05aTPejvp3n3egbuoao7oUYclirX2UCJQlfKOBePcpoLE8e5+LKn/sRRcuY9FJIlrUqe4ENplv8YdCNTGPQ+I9FQep59aW9M+I3TJpTVvzHWrPzEGNW9mgRKZGv18ERqbyA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730813681; c=relaxed/simple;
-	bh=t7fHs7K7jwW1ucoMjVvg2nG51xxS8WuOmcmhyFFZGNE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=h0EhZIGIybQF0If0qZTdXuOa1pTDcGgx9GRVIliY0NRN5RLGIF/fnGHai+0mThFd///sgWdU8WMqsM7xw8Rhh9XMKnNGerwZMOVPB+E2okhf/4oLOxt84Ek1vI2U7K22M14+OpOaMtngX4LhD0L1jbsX3kAnFoVSAES4FVQyqgo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PMc2n8pv; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730813680; x=1762349680;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=t7fHs7K7jwW1ucoMjVvg2nG51xxS8WuOmcmhyFFZGNE=;
-  b=PMc2n8pvtO4PpBOzHDc5XEMYJ4YVD/ABSnu3VXE6O6EpHHJ4Tvfy2njD
-   bRla931nRrFn0X3uzxT858B51JwO9nTLl+jlY6396AULw6fKQuR0V3uHo
-   GUfM12meOuL11hVdjXtGloBjOMw6Q5nocsTPuuUVAD1ZbkfxIn3F74hrC
-   le3PQMrYiC41JTbAQkpi6f9gHNyk1sEHrAiyMT+wFdLQNiMZWrK5iYErn
-   jaYWJZ20nUBEePZ2rdbEAvGFH43AmAoaW+X2dcM9k0b4xgrPboP3trzn4
-   2nbVJOjdyR/7XtY1FN1dCbQTHHPm0UAzrnR8sSimIpPYi78PjgN6+IT+O
-   g==;
-X-CSE-ConnectionGUID: ZMUmd85vSeuMgaO2+uIiGg==
-X-CSE-MsgGUID: mjMK8IllR12wepsC99owwg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11246"; a="29977002"
-X-IronPort-AV: E=Sophos;i="6.11,260,1725346800"; 
-   d="scan'208";a="29977002"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2024 05:34:24 -0800
-X-CSE-ConnectionGUID: u+4Jd/6PR6OoeHm62EmHyQ==
-X-CSE-MsgGUID: BHQ6aUCWR2CgdM2Lb/eJ+A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,260,1725346800"; 
-   d="scan'208";a="88823048"
-Received: from xiaoyaol-hp-g830.ccr.corp.intel.com (HELO [10.124.247.1]) ([10.124.247.1])
-  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2024 05:34:22 -0800
-Message-ID: <bb0a1948-d418-4720-97bf-4aceb30ea787@intel.com>
-Date: Tue, 5 Nov 2024 21:34:19 +0800
+	s=arc-20240116; t=1730813683; c=relaxed/simple;
+	bh=f+dltnIbONF+ddlfH/eH4Kjbf7iN7W4LgqnVSQXYzsI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rvXDjrcG+zwsnTH6MH0/pDSCXdNs8nuYs42YLLYOiwR7pd99N1QIyyDf4xDw5DUb2WZl2Z0UHXj8ncgLRTzkGgysnHxlaNEo+A55/hu2iQYGnXHh0JDOrsREQs6GtTIlUELyF+fWgisG779NZY1vaXuFEDIA8K4RixrAp///Vk4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hCf9YKwZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D377C4CED3;
+	Tue,  5 Nov 2024 13:34:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730813683;
+	bh=f+dltnIbONF+ddlfH/eH4Kjbf7iN7W4LgqnVSQXYzsI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hCf9YKwZ3dWnonKa8ESMw8CHnRDs3pxRMAjKtIPiqn77AslCYcwJmM00f3GVr8AVj
+	 D9csyB6lKmZRf5dE0m1YAN++ESgyUvF1Zvf6fjyDAKyifYM0ixsGLOHyFtmxiS0080
+	 eiPqYQ4Rw5bvRhI6z/nP231kDs6eB36gDJADZZPHBhNJ8hXoyMHCJUjAs4wO/g0N7n
+	 3n7dGzwUg7i7YUOoXlmrbTXpYWI75JU6fxL9ZRvQy3SLSIxWFyRoAdpT44jz4qTcYu
+	 Ez8FCFNJT9Hfb3696Z9zXYEuX64LU/5shOuCxMDd1SApKgjPuDQcnkFS++E5jYbAOE
+	 I2r3RQIh1W3mg==
+Date: Tue, 5 Nov 2024 07:34:41 -0600
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Xianwei Zhao <xianwei.zhao@amlogic.com>
+Cc: Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Kevin Hilman <khilman@baylibre.com>, devicetree@vger.kernel.org,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	linux-gpio@vger.kernel.org, linux-amlogic@lists.infradead.org,
+	Linus Walleij <linus.walleij@linaro.org>,
+	linux-kernel@vger.kernel.org, Jerome Brunet <jbrunet@baylibre.com>,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH RFC v4 1/4] dt-bindings: pinctrl: Add support for Amlogic
+ A4 SoCs
+Message-ID: <173081368066.3086220.14112409084743616798.robh@kernel.org>
+References: <20241101-a4_pinctrl-v4-0-efd98edc3ad4@amlogic.com>
+ <20241101-a4_pinctrl-v4-1-efd98edc3ad4@amlogic.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] KVM: VMX: Bury Intel PT virtualization (guest/host
- mode) behind CONFIG_BROKEN
-To: Sean Christopherson <seanjc@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org,
- linux-kernel@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>
-References: <20241101185031.1799556-1-seanjc@google.com>
- <20241101185031.1799556-2-seanjc@google.com>
- <c7b8f395-579b-40d9-b3eb-29a347f73ec9@intel.com>
- <ZylO2lHCydixvYCL@google.com>
-Content-Language: en-US
-From: Xiaoyao Li <xiaoyao.li@intel.com>
-In-Reply-To: <ZylO2lHCydixvYCL@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241101-a4_pinctrl-v4-1-efd98edc3ad4@amlogic.com>
 
-On 11/5/2024 6:46 AM, Sean Christopherson wrote:
-> On Mon, Nov 04, 2024, Xiaoyao Li wrote:
->> On 11/2/2024 2:50 AM, Sean Christopherson wrote:
->>> Hide KVM's pt_mode module param behind CONFIG_BROKEN, i.e. disable support
->>> for virtualizing Intel PT via guest/host mode unless BROKEN=y.  There are
->>> myriad bugs in the implementation, some of which are fatal to the guest,
->>> and others which put the stability and health of the host at risk.
->>>
->>> For guest fatalities, the most glaring issue is that KVM fails to ensure
->>> tracing is disabled, and *stays* disabled prior to VM-Enter, which is
->>> necessary as hardware disallows loading (the guest's) RTIT_CTL if tracing
->>> is enabled (enforced via a VMX consistency check).  Per the SDM:
->>>
->>>     If the logical processor is operating with Intel PT enabled (if
->>>     IA32_RTIT_CTL.TraceEn = 1) at the time of VM entry, the "load
->>>     IA32_RTIT_CTL" VM-entry control must be 0.
->>>
->>> On the host side, KVM doesn't validate the guest CPUID configuration
->>> provided by userspace, and even worse, uses the guest configuration to
->>> decide what MSRs to save/load at VM-Enter and VM-Exit.  E.g. configuring
->>> guest CPUID to enumerate more address ranges than are supported in hardware
->>> will result in KVM trying to passthrough, save, and load non-existent MSRs,
->>> which generates a variety of WARNs, ToPA ERRORs in the host, a potential
->>> deadlock, etc.
->>>
->>> Fixes: f99e3daf94ff ("KVM: x86: Add Intel PT virtualization work mode")
->>> Cc: stable@vger.kernel.org
->>> Cc: Adrian Hunter <adrian.hunter@intel.com>
->>> Signed-off-by: Sean Christopherson <seanjc@google.com>
->>> ---
->>>    arch/x86/kvm/vmx/vmx.c | 4 +++-
->>>    1 file changed, 3 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
->>> index 6ed801ffe33f..087504fb1589 100644
->>> --- a/arch/x86/kvm/vmx/vmx.c
->>> +++ b/arch/x86/kvm/vmx/vmx.c
->>> @@ -217,9 +217,11 @@ module_param(ple_window_shrink, uint, 0444);
->>>    static unsigned int ple_window_max        = KVM_VMX_DEFAULT_PLE_WINDOW_MAX;
->>>    module_param(ple_window_max, uint, 0444);
->>> -/* Default is SYSTEM mode, 1 for host-guest mode */
->>> +/* Default is SYSTEM mode, 1 for host-guest mode (which is BROKEN) */
->>>    int __read_mostly pt_mode = PT_MODE_SYSTEM;
->>> +#ifdef CONFIG_BROKEN
->>>    module_param(pt_mode, int, S_IRUGO);
->>> +#endif
->>
->> I like the patch, but I didn't find any other usercase of CONFIG_BROKEN in
->> current Linux.
+
+On Fri, 01 Nov 2024 16:27:17 +0800, Xianwei Zhao wrote:
+> Add the new compatible name for Amlogic A4 pin controller, and add
+> a new dt-binding header file which document the GPIO bank names of
+> all Amlogic subsequent SoCs.
 > 
-> Ya, BROKEN is typically used directly in Kconfigs, e.g. "depends on BROKEN".  But
-> I can't think of any reason using it in this way would be problematic.
+> Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
+> ---
+>  .../bindings/pinctrl/amlogic,meson-pinctrl-a1.yaml |  2 +
+>  include/dt-bindings/gpio/amlogic-gpio.h            | 50 ++++++++++++++++++++++
+>  2 files changed, 52 insertions(+)
+> 
 
-I see. Thanks for the information!
-
-Reviewed-by: Xiaoyao Li <xiaoyao.li@intel.com>
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
 
 
