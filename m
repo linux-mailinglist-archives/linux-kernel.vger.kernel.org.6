@@ -1,138 +1,232 @@
-Return-Path: <linux-kernel+bounces-396525-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396526-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07A999BCE63
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 14:55:32 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90A949BCE67
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 14:57:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C5D57282678
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 13:55:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 22E981F22D58
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 13:57:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBEA51D6DB3;
-	Tue,  5 Nov 2024 13:55:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E56521D6DDD;
+	Tue,  5 Nov 2024 13:56:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eqCYQvXe"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="yPfSZpV9"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CC471D6DA3
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 13:55:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E79E1D45FD
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 13:56:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730814919; cv=none; b=XLltXa1UrT964tpwG95xpNMzlmxpSftL6CpoGkEBBnqftRwbOToJYVi2yiD4xtbX64MCkePxARSmDxisyEdw8t8cOnLWdZxHd6J8BCM3RZdVzmT/ge33DimIGcqHRJ4ncdSWsTF+6E5z5GNJBMS+0JrUR/FtAl5BfJisxCvVQxA=
+	t=1730815019; cv=none; b=NzyBPsZfGJxeahurfcoIJIBywroCUOOfHhpy/AF/OUB2ndXRqQfwps11iBHulkAKY/VYk3TCkr6+hzpKY0JBuyQbLZxl4Qst0a8xyeS0lbMUHgk4fA9u3oj/EvvbE/TNkre5c9pJsuVHq5NvwLdrHnyutnt+gpIttIVoGula4yw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730814919; c=relaxed/simple;
-	bh=q3GUUlKx9/4DSdIfudTo/BHl0hN1/E6WoZ6HBZQcFBQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Rqtg09AKBtVF20WT0D8TjwTJQTU+HXBTEbicDa9Li8LDj9NQqkHLrWh4MAtXVoqrD4wATQqmb6dfiysU88ZsDRqMUYG+Hr8XkoVlvaQG7B5G2akYcjRDwbfQSlN6t4XZzwsJvnfB199skWT7+apB5yjzvNSHXiNueJ1HBc/hAfY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=eqCYQvXe; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-539f72c8fc1so5340593e87.1
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 05:55:16 -0800 (PST)
+	s=arc-20240116; t=1730815019; c=relaxed/simple;
+	bh=DJkjA7NJvQi23HKgxrx3OCRxRVzocnpwy7YwAOlhaho=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rEXfKnycV6MLQsoS3tr3b8H4X3rY/kDHwVEuy32KLY6fCUM/Y4eJHPTRDjr1E7w+XX4m2RWRHsiX+8RwyfJRP8R8to1dl8B7DZ9j+N6J8XpkNErHzILdycx5OfZUVrwPawcihxLQUb0z58QsRZzR0nwDUser4zUPh8TrBV0PZto=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=yPfSZpV9; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-43193678216so47192955e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 05:56:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1730814915; x=1731419715; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=JYPfDLl1JujNUnzUwabCMz6D5QPnpcJrxkCJPH1YFNY=;
-        b=eqCYQvXeHRGvRxdW7FlF+UFkmDn712x9y6/xZvjDPZW18kfuCoG1q4XMpfFuowGLJ3
-         F4XDD296dEQCO/C/iuKCwkPKErI9dBWhJeMFx7P1OgKY4ATUg2TphS3tzP4HaH1R8Wnv
-         NdDQpfhFnhQGsUmSUoENwpWmdBVFvf/Cy21ouNt4UfIBGfjWOkJQurqz1KdkNA9XjcD9
-         jaxq+uQ7keCMJb0qOYRURV/lqe50825ln2WjFyt9LUz93wFMC68s2UrY/OAb6F0zqxqX
-         WpvT0uTiRiHZjPBGrS+HytlrzdSBsJONgCnfOZ2PqtenqX+8PEqIpUkS6MofwR0bGT0R
-         2H6Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730814915; x=1731419715;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1730815016; x=1731419816; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=JYPfDLl1JujNUnzUwabCMz6D5QPnpcJrxkCJPH1YFNY=;
-        b=gd9pSl+3iQ+WyteX51dNCMqKrlNUOwrs0qT41LIC9Z0vmfgVNg/WRrYxqQHur9HWbY
-         jgO78GYWYiIQ0ufVjjZ2Is6OXixxNSgwIu8+OX9BzNsvoIRT07chgXox4UVt2NNWb+BI
-         3HvC99veENiQMSUWcICR4C6deDHGj8vgX6LuPJConudwb/qsx3YotNKwab7t0Tp7nld5
-         ZeY17EyRl312l2cIzmqDx/yx8USN3sVpKp2Bf/ppV1r7RdkeQYTwgnQr7XXH/QyQenSX
-         Xxge9cK+ItyTyfe7dzTe0YQHXi3pCT7plUrIEg8CP9e6mo8Dz558D8i5nPfEuX5neQM3
-         0Xaw==
-X-Forwarded-Encrypted: i=1; AJvYcCXL0AFzgZfK7YM1Dd+omsH/DR7DXAahYTK2b1Q+X3biHHWGUmiAjtfhKnXmhd0Vj69ftJMlf2gRZfeQ92U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxpuVA9O62kcRma+PCY6jrRWyOo4t0JekJ/O7ogLDByRO/rmWFF
-	sSeHchQeLVJZyHib/Jp43f8hpwg/7yYpUoNpk91J0mxtFflellxLBMBJ2DBVvnk=
-X-Google-Smtp-Source: AGHT+IEpdU8rDqLX+DIyNpSfiPybyrFjFo19IbFA9Zw/IdLK8a2VdSMO8JD0bOCCp6sr0LFzmU0S1w==
-X-Received: by 2002:a05:6512:e9b:b0:539:fbfd:fc74 with SMTP id 2adb3069b0e04-53b7ed185a8mr13160964e87.40.1730814914500;
-        Tue, 05 Nov 2024 05:55:14 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53c7bdcbfa6sm2103558e87.208.2024.11.05.05.55.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Nov 2024 05:55:13 -0800 (PST)
-Date: Tue, 5 Nov 2024 15:55:10 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Vikash Garodia <quic_vgarodia@quicinc.com>
-Cc: Stanimir Varbanov <stanimir.k.varbanov@gmail.com>, 
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	stable@vger.kernel.org
-Subject: Re: [PATCH 1/4] media: venus: hfi_parser: add check to avoid out of
- bound access
-Message-ID: <b2yvyaycylsxo2bmynlrqp3pzhge2tjvtvzhmpvon2lzyx3bb4@747g3erapcro>
-References: <20241105-venus_oob-v1-0-8d4feedfe2bb@quicinc.com>
- <20241105-venus_oob-v1-1-8d4feedfe2bb@quicinc.com>
+        bh=DzlpItDjbomglGLyYv6ZYQR5XIRTbsFKXOc4xD6qxj0=;
+        b=yPfSZpV9xIyHTVRjNBftb8cG+k8txZYDNGVhJaggxxTuwDRx7u7vJrGlKXiwE8wB24
+         xCBDZuH4wnFZAAPMP+lOXjz0Qfzk7Z2V91POoxRw4q9uBCSjTUpuQKb/nMhD0k5tdwNl
+         pcjczIzpd8cOHLuYpVhgZ/pM4WCJU5KCy/7wxx7f7LXKRC4Ly2HUZ3ifYdnUYcSc7EOM
+         AQWA9ZBjDULh/zkkRtvydggWLZgj1N8GB8ywkVP79bSRIBmSQ1sSm6M+gL9CQ9DZ1ET5
+         FoYlxgoz1TfTBNHRSV7xWZ5jrEWITM2v8vpjEyH0lnKaj4u46v6GoHJL2wE0UD9v+pSf
+         jpSQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730815016; x=1731419816;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=DzlpItDjbomglGLyYv6ZYQR5XIRTbsFKXOc4xD6qxj0=;
+        b=jH08f92V2GFarMlAPJdgU1PtC7BbRiqxTAj8rgKywm8fJdKZUC6thkNGnvYu0NO1PW
+         vMo1v/XKL0pFzcdS62DnOX5iggmsJsa7sgGIzsypKlf3lgf68xKqKzmodp86a/IXdZ4s
+         ERZo7LLWFw9ZB1cxair5j4jnK6y9rBLDKYQqMTUaFPpd924PGXbzmFStYv6vJLhdqNQN
+         4TwfiiY+gsE5edc0mZQddfg+JYn3dnAPvgIAvCa0WKB/ldUBDuFMZCKFoo+3rvTKXFZy
+         DmI8fZ8WScsUOT6dJKmb5HMt9gaN23I4Zz/1YpwzmXYMbozZkdvmiiAXiEKiZT/R1nzq
+         9G9w==
+X-Forwarded-Encrypted: i=1; AJvYcCW/eqA7GaO+XxFU5lO2a+KJFR4IIpKRc+n5EVgHml5pyR2FImmKlKZErAnDiTAOUskHkVmr6TadmCXW9fw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxS6INxEb/8iQetNHsCdLq7OD1I9mYsvv6a8pg4itxrchayRHMW
+	GzjqOsaFJzYSEukuGQ7B5+nDNAnY1Ua23L3PO4RVSWaDAEgVFEI/MLS/qEFaZyx9rsRH273jT2D
+	3tKRJacIId3QKNyV1kpfvOLJGWKGz4FFdqiu7
+X-Google-Smtp-Source: AGHT+IGfGtcBSbUN4qfO7S8deLzFzsXT/Kon05UIs3myi6cEll38dO8bx64onPiGM+Aa+P5MdR7PO/Cmb45AkaZsNCM=
+X-Received: by 2002:a05:6000:11cb:b0:37d:3f81:153e with SMTP id
+ ffacd0b85a97d-380611282d9mr23992523f8f.14.1730815015642; Tue, 05 Nov 2024
+ 05:56:55 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241105-venus_oob-v1-1-8d4feedfe2bb@quicinc.com>
+References: <20241101185033.131880-1-lorenzo.stoakes@oracle.com>
+ <CAH5fLggUZJpmSd7F_k5bVKs0-ErK_74-zpWgMyWHX4vcSM-8Lg@mail.gmail.com> <e41dcb48-b59e-4d70-98f7-da18fafba31b@lucifer.local>
+In-Reply-To: <e41dcb48-b59e-4d70-98f7-da18fafba31b@lucifer.local>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Tue, 5 Nov 2024 14:56:43 +0100
+Message-ID: <CAH5fLggpEezhR_o+8RPmYix-JLZ47HwQLQM2OUzKQg3i7UYu5Q@mail.gmail.com>
+Subject: Re: [RFC PATCH] docs/mm: add VMA locks documentation
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Jonathan Corbet <corbet@lwn.net>, Andrew Morton <akpm@linux-foundation.org>, 
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Matthew Wilcox <willy@infradead.org>, 
+	Mike Rapoport <rppt@kernel.org>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	Suren Baghdasaryan <surenb@google.com>, linux-doc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Nov 05, 2024 at 02:24:54PM +0530, Vikash Garodia wrote:
-> There is a possibility that init_codecs is invoked multiple times during
-> manipulated payload from video firmware. In such case, if codecs_count
-> can get incremented to value more than MAX_CODEC_NUM, there can be OOB
-> access. Keep a check for max accessible memory before accessing it.
+On Mon, Nov 4, 2024 at 5:52=E2=80=AFPM Lorenzo Stoakes
+<lorenzo.stoakes@oracle.com> wrote:
+>
+> +cc Suren, linux-doc who I mistakenly didn't cc in first email!
+>
+> On Mon, Nov 04, 2024 at 03:47:56PM +0100, Alice Ryhl wrote:
+> > On Fri, Nov 1, 2024 at 7:50=E2=80=AFPM Lorenzo Stoakes
+> > <lorenzo.stoakes@oracle.com> wrote:
+> > >
+> > > Locking around VMAs is complicated and confusing. While we have a num=
+ber of
+> > > disparate comments scattered around the place, we seem to be reaching=
+ a
+> > > level of complexity that justifies a serious effort at clearly docume=
+nting
+> > > how locks are expected to be interacted with when it comes to interac=
+ting
+> > > with mm_struct and vm_area_struct objects.
+> > >
+> > > This is especially pertinent as regards efforts to find sensible
+> > > abstractions for these fundamental objects within the kernel rust
+> > > abstraction whose compiler strictly requires some means of expressing=
+ these
+> > > rules (and through this expression can help self-document these
+> > > requirements as well as enforce them which is an exciting concept).
+> > >
+> > > The document limits scope to mmap and VMA locks and those that are
+> > > immediately adjacent and relevant to them - so additionally covers pa=
+ge
+> > > table locking as this is so very closely tied to VMA operations (and =
+relies
+> > > upon us handling these correctly).
+> > >
+> > > The document tries to cover some of the nastier and more confusing ed=
+ge
+> > > cases and concerns especially around lock ordering and page table tea=
+rdown.
+> > >
+> > > The document also provides some VMA lock internals, which are up to d=
+ate
+> > > and inclusive of recent changes to recent sequence number changes.
+> > >
+> > > Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> >
+> > [...]
+> >
+> > > +Page table locks
+> > > +----------------
+> > > +
+> > > +When allocating a P4D, PUD or PMD and setting the relevant entry in =
+the above
+> > > +PGD, P4D or PUD, the `mm->page_table_lock` is acquired to do so. Thi=
+s is
+> > > +acquired in `__p4d_alloc()`, `__pud_alloc()` and `__pmd_alloc()` res=
+pectively.
+> > > +
+> > > +.. note::
+> > > +   `__pmd_alloc()` actually invokes `pud_lock()` and `pud_lockptr()`=
+ in turn,
+> > > +   however at the time of writing it ultimately references the
+> > > +   `mm->page_table_lock`.
+> > > +
+> > > +Allocating a PTE will either use the `mm->page_table_lock` or, if
+> > > +`USE_SPLIT_PMD_PTLOCKS` is defined, used a lock embedded in the PMD =
+physical
+> > > +page metadata in the form of a `struct ptdesc`, acquired by `pmd_ptd=
+esc()`
+> > > +called from `pmd_lock()` and ultimately `__pte_alloc()`.
+> > > +
+> > > +Finally, modifying the contents of the PTE has special treatment, as=
+ this is a
+> > > +lock that we must acquire whenever we want stable and exclusive acce=
+ss to
+> > > +entries pointing to data pages within a PTE, especially when we wish=
+ to modify
+> > > +them.
+> > > +
+> > > +This is performed via `pte_offset_map_lock()` which carefully checks=
+ to ensure
+> > > +that the PTE hasn't changed from under us, ultimately invoking `pte_=
+lockptr()`
+> > > +to obtain a spin lock at PTE granularity contained within the `struc=
+t ptdesc`
+> > > +associated with the physical PTE page. The lock must be released via
+> > > +`pte_unmap_unlock()`.
+> > > +
+> > > +.. note::
+> > > +   There are some variants on this, such as `pte_offset_map_rw_noloc=
+k()` when we
+> > > +   know we hold the PTE stable but for brevity we do not explore thi=
+s.
+> > > +   See the comment for `__pte_offset_map_lock()` for more details.
+> > > +
+> > > +When modifying data in ranges we typically only wish to allocate hig=
+her page
+> > > +tables as necessary, using these locks to avoid races or overwriting=
+ anything,
+> > > +and set/clear data at the PTE level as required (for instance when p=
+age faulting
+> > > +or zapping).
+> >
+> > Speaking as someone who doesn't know the internals at all ... this
+> > section doesn't really answer any questions I have about the page
+> > table. It looks like this could use an initial section about basic
+> > usage, and the detailed information could come after? Concretely, if I
+> > wish to call vm_insert_page or zap some pages, what are the locking
+> > requirements? What if I'm writing a page fault handler?
+>
+> Ack totally agree, I think we need this document to serve two purposes -
+> one is to go over, in detail, the locking requirements from an mm dev's
+> point of view with internals focus, and secondly to give those outside mm
+> this kind of information.
+>
+> It's good to get insight from an outside perspective as inevitably we mm
+> devs lose sight of the wood for the trees when it comes to internals
+> vs. practical needs of those who make use of mm in one respect or another=
+.
+>
+> So this kind of feedback is very helpful and welcome :) TL;DR - yes I wil=
+l
+> explicitly state what is required for various operations on the respin.
+>
+> >
+> > Alice
+>
+> As a wordy aside, a large part of the motivation of this document, or
+> certainly my prioritisation of it, is explicitly to help the rust team
+> correctly abstract this aspect of mm.
+>
+> The other part is to help the mm team, that is especailly myself, correct=
+ly
+> understand and _remember_ the numerous painful ins and outs of this stuff=
+,
+> much of which has been pertinent of late for not wonderfully positive
+> reasons.
+>
+> Hopefully we accomplish both! :>)
 
-No. Please make sure that init_codecs() does a correct thing, so that
-core->codecs_count isn't incremented that much (or even better that
-init_codecs() doesn't do anything if it is executed second time).
+I do think this has revealed one issue with my Rust patch, which is
+that VmAreaMut currently requires the mmap lock, but it should also
+require the vma lock, since you need both for writing.
 
-> 
-> Cc: stable@vger.kernel.org
-> Fixes: 1a73374a04e5 ("media: venus: hfi_parser: add common capability parser")
-> Signed-off-by: Vikash Garodia <quic_vgarodia@quicinc.com>
-> ---
->  drivers/media/platform/qcom/venus/hfi_parser.c | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/drivers/media/platform/qcom/venus/hfi_parser.c b/drivers/media/platform/qcom/venus/hfi_parser.c
-> index 3df241dc3a118bcdeb2c28a6ffdb907b644d5653..27d0172294d5154f4839e8cef172f9a619dfa305 100644
-> --- a/drivers/media/platform/qcom/venus/hfi_parser.c
-> +++ b/drivers/media/platform/qcom/venus/hfi_parser.c
-> @@ -23,6 +23,8 @@ static void init_codecs(struct venus_core *core)
->  		return;
->  
->  	for_each_set_bit(bit, &core->dec_codecs, MAX_CODEC_NUM) {
-> +		if (core->codecs_count >= MAX_CODEC_NUM)
-> +			return;
->  		cap = &caps[core->codecs_count++];
->  		cap->codec = BIT(bit);
->  		cap->domain = VIDC_SESSION_TYPE_DEC;
-> @@ -30,6 +32,8 @@ static void init_codecs(struct venus_core *core)
->  	}
->  
->  	for_each_set_bit(bit, &core->enc_codecs, MAX_CODEC_NUM) {
-> +		if (core->codecs_count >= MAX_CODEC_NUM)
-> +			return;
->  		cap = &caps[core->codecs_count++];
->  		cap->codec = BIT(bit);
->  		cap->domain = VIDC_SESSION_TYPE_ENC;
-> 
-> -- 
-> 2.34.1
-> 
-
--- 
-With best wishes
-Dmitry
+Alice
 
