@@ -1,322 +1,149 @@
-Return-Path: <linux-kernel+bounces-396867-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396868-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FB819BD35D
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 18:27:50 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A378E9BD360
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 18:29:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 94A1C1F2342D
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 17:27:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 59193283FC9
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 17:29:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E08771E7670;
-	Tue,  5 Nov 2024 17:26:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B7801E25FC;
+	Tue,  5 Nov 2024 17:29:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KhnfUAkN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fj1ZA9RW"
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0900C1E572D;
-	Tue,  5 Nov 2024 17:26:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F19A1DAC97;
+	Tue,  5 Nov 2024 17:28:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730827602; cv=none; b=ZezHTLKP8HPzBjQuVr+znx+/q2/IQCi0DJGB2hL/0F1GUi1GBunY2D8ZWIYdp0x6722LjtrFV7F/8zxvz2Mtr2xoeJ0CU+F6Lp9OancE4Q0O9lZ+O0++l+UkMTcmmmqHYGhW9cYG7QFWRf3vGFaWxctwTGF0pA8FovbHICM9ibE=
+	t=1730827740; cv=none; b=f29UY6SHm1EzMwazD5F4jfm/Ya4KjCICyK2IFG5JmcwV8sVJSJH8SmW9lqRfEp4UHt7pFccNDEwRf/7a7Dkzf6DJ7Q7O7fIDLglvdtTLkj0XqIYd5/wK1c0qQORymyu6M9uAq0HuXD1Rdzfs6sGM9N0ZnDhgXZ9BbxwV1AuehKk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730827602; c=relaxed/simple;
-	bh=rklxV/2//4lWBAPsekffYOBgTTnrf7YeFUf2y+iWzfs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Phmxs1uH+9t8LG+J0vLv5W22piXmKJOznLYvO/zLj2++4cHFmsP1wWqXXCPG0zcm2/NF2isMXsLmlAd5MdCEX9qKAq92zlViE/D8EdWKENbwE/Pn3QNoLnR4I/F4/gKnq8y2bWdTDq7iQ0sMJGvxrAltCne06xW8lRUbTvHPthY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KhnfUAkN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 159DAC4AF0F;
-	Tue,  5 Nov 2024 17:26:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730827601;
-	bh=rklxV/2//4lWBAPsekffYOBgTTnrf7YeFUf2y+iWzfs=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=KhnfUAkNd+26fCsREoBcuI2sinLC4XQnbVuXzUzDdNNNvzIv7MDvYSyjcOKLzsEDR
-	 StxuoHO+cfGPJS11GQS8aZP+2xdh8SLWWaXlOSp4yaQzVUiALtKI/fmuKBJ5zUtiRp
-	 XDwKUYpxh49/h1uPO/qItUXhKhfsuVC0tkOxev88lLGYv/ND9I2EEPn4svQnDTFsh3
-	 EMIM5fw862gsLbxkFtUWS+tB2cNCR9xiBK5cioftotgR8feWTcJy3dw2JkLJFiU0QA
-	 OxaAA31qkgJJoSRMHka18wpH/bVpdO7Fiqjb9nyNZBzt6Uf48c0nQkWL3KuJnaStZl
-	 ZR4NJ5RGtwZEQ==
-From: Namhyung Kim <namhyung@kernel.org>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Kan Liang <kan.liang@linux.intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	linux-perf-users@vger.kernel.org,
-	Song Liu <song@kernel.org>,
-	bpf@vger.kernel.org,
-	Stephane Eranian <eranian@google.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Kees Cook <kees@kernel.org>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Hyeonggon Yoo <42.hyeyoo@gmail.com>
-Subject: [PATCH 4/4] perf lock contention: Handle slab objects in -L/--lock-filter option
-Date: Tue,  5 Nov 2024 09:26:35 -0800
-Message-ID: <20241105172635.2463800-5-namhyung@kernel.org>
-X-Mailer: git-send-email 2.47.0.199.ga7371fff76-goog
-In-Reply-To: <20241105172635.2463800-1-namhyung@kernel.org>
-References: <20241105172635.2463800-1-namhyung@kernel.org>
+	s=arc-20240116; t=1730827740; c=relaxed/simple;
+	bh=xzSJ54sE6j/Nzy/nl51Jz3ImdBg22sPxhfbET3yiB/g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tUPGHeZ6Sr2h6dg3kpejTRYS8HdYeGSc3LP9Jh2LSlVZagisYcPs/hflKjLy+SmiyYBRwqxwBBPH22KlTkooPt8NXe3tiHS6rkxsLEYv1j/Fv+JspABzCdfmS/pPB0ukzEpwJwZdhw9xIICXfm6nyeDYovV2RkYU3jtYahoy9mE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fj1ZA9RW; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5cec9609303so4240615a12.1;
+        Tue, 05 Nov 2024 09:28:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730827737; x=1731432537; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=187RsLEuHvSyP/hnMpNWdmPF77wDCR9+I0JKJx3N5uU=;
+        b=fj1ZA9RWDcSFY9tGC8oWiy+w72nSpZMhyNfFDyQBnqOfdayfkwo4xtmv1beszNVXTH
+         ttMB7bgOI1r9fUXVv405wMw/xhFl8t/I3FMQm1LnvIr7eWARLr5NnyyNT0NfJqs09gHO
+         C8pmyWirWL+gScStA3WSdaU4Pptor44NytLfrW+xU/P2d1VKN5Rszrsr+phKqxrd/aqC
+         IWsTFE9Ewto6JKvjCtcB+YN4RTnO621RidWuZxhxeo65tfCDzsAU+sVQcCPbbHE9Ynly
+         qm9v5UtdC2sphGzImb964qlSGk/DgmM/JuCC6uFe0+ovIy6b73oORGSYf1hOfIOb9/9s
+         exFg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730827737; x=1731432537;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=187RsLEuHvSyP/hnMpNWdmPF77wDCR9+I0JKJx3N5uU=;
+        b=UyDqwg2gkDy/9HLUvrd94S2ySIMUtr9i2JQnfKxy7Z3eEwcbO85aLuHB3Z7i3YD66k
+         dvNNXfT+UponSZQZKGk+OtHTSrY1UQDhx/dq4tpwR55VpfaDuv3lF/LjCt3N1u2MkrFM
+         bcQHva6Qq7ejYzTiv/YFLJDvSi5oGe9PTzWy9tEVdVSAgGC1XdqGMpzCWiaaMqNaFkvR
+         MpXOpAsMvbvYr8F/pKR2e/rCPwGGeCRur4+nE4zH4R6xmM+QbxqbVEq53XI0CZMu8BOo
+         E40P4ojgLSU4Es1EejTmQdtyBk/THPW/RRRhkUuXOQ8Wq25X+GeWOJOIP4RPDt8WBS4J
+         wFaw==
+X-Forwarded-Encrypted: i=1; AJvYcCWC8Pjx/4PkQzgNdrTF9xpKx8vFW4yonYJFS20SJiVutzgCSQLpDva/5C58R5XBpmFFKmkc7PmU@vger.kernel.org, AJvYcCWpoyZKV4JEMhCysnsaaoYoVdSwIK8vjfY2F41XT9t3p95i5+qiuo0sejZ3KSSbMwgcZU+gBS1X3FqQsA==@vger.kernel.org, AJvYcCX3OernXGiN6uNsGmU6tECm67FLVTIgSiv6eI/maHUh2CegC+B+haY7pfSzvzBzErr4B4c1DjtjRd5VotI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwIVObL1kA9g3sRlnrWhiRRawLFVdw/Je5+5opG2y/zgvqnu+7i
+	/ByMUQybTwxu8t7r2SuvSyFnxOI3/Qtyib4EJLy3Nm0rBnS+2e5DxDMH3g==
+X-Google-Smtp-Source: AGHT+IEIvG45n2lgxPAOStyj2awwAFHHMTvEpHdz1CjjOG9fIFBlluWe3TQQVa7qEikgAFu8rYM7hg==
+X-Received: by 2002:a17:907:7ba1:b0:a99:509b:f524 with SMTP id a640c23a62f3a-a9de6331190mr3271121366b.57.1730827735342;
+        Tue, 05 Nov 2024 09:28:55 -0800 (PST)
+Received: from [172.27.60.131] ([193.47.165.251])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9eb17ceb1dsm165616266b.101.2024.11.05.09.28.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 05 Nov 2024 09:28:55 -0800 (PST)
+Message-ID: <e12067aa-9465-4c3f-a67e-e8e8dee14c8b@gmail.com>
+Date: Tue, 5 Nov 2024 19:28:48 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v3] mlx5/core: Schedule EQ comp tasklet only if
+ necessary
+To: Paolo Abeni <pabeni@redhat.com>,
+ Caleb Sander Mateos <csander@purestorage.com>,
+ Saeed Mahameed <saeedm@nvidia.com>, Leon Romanovsky <leon@kernel.org>,
+ Tariq Toukan <tariqt@nvidia.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>
+Cc: Parav Pandit <parav@nvidia.com>, netdev@vger.kernel.org,
+ linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <CY8PR12MB7195C97EB164CD3A0E9A99F9DC552@CY8PR12MB7195.namprd12.prod.outlook.com>
+ <20241031163436.3732948-1-csander@purestorage.com>
+ <cf2d112f-7888-4e36-8212-d8c632fd323d@redhat.com>
+Content-Language: en-US
+From: Tariq Toukan <ttoukan.linux@gmail.com>
+In-Reply-To: <cf2d112f-7888-4e36-8212-d8c632fd323d@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-This is to filter lock contention from specific slab objects only.
-Like in the lock symbol output, we can use '&' prefix to filter slab
-object names.
 
-  root@virtme-ng:/home/namhyung/project/linux# tools/perf/perf lock con -abl sleep 1
-   contended   total wait     max wait     avg wait            address   symbol
 
-           3     14.99 us     14.44 us      5.00 us   ffffffff851c0940   pack_mutex (mutex)
-           2      2.75 us      2.56 us      1.38 us   ffff98d7031fb498   &task_struct (mutex)
-           4      1.42 us       557 ns       355 ns   ffff98d706311400   &kmalloc-cg-512 (mutex)
-           2       953 ns       714 ns       476 ns   ffffffff851c3620   delayed_uprobe_lock (mutex)
-           1       929 ns       929 ns       929 ns   ffff98d7031fb538   &task_struct (mutex)
-           3       561 ns       210 ns       187 ns   ffffffff84a8b3a0   text_mutex (mutex)
-           1       479 ns       479 ns       479 ns   ffffffff851b4cf8   tracepoint_srcu_srcu_usage (mutex)
-           2       320 ns       195 ns       160 ns   ffffffff851cf840   pcpu_alloc_mutex (mutex)
-           1       212 ns       212 ns       212 ns   ffff98d7031784d8   &signal_cache (mutex)
-           1       177 ns       177 ns       177 ns   ffffffff851b4c28   tracepoint_srcu_srcu_usage (mutex)
+On 05/11/2024 14:21, Paolo Abeni wrote:
+> On 10/31/24 17:34, Caleb Sander Mateos wrote:
+>> Currently, the mlx5_eq_comp_int() interrupt handler schedules a tasklet
+>> to call mlx5_cq_tasklet_cb() if it processes any completions. For CQs
+>> whose completions don't need to be processed in tasklet context, this
+>> adds unnecessary overhead. In a heavy TCP workload, we see 4% of CPU
+>> time spent on the tasklet_trylock() in tasklet_action_common(), with a
+>> smaller amount spent on the atomic operations in tasklet_schedule(),
+>> tasklet_clear_sched(), and locking the spinlock in mlx5_cq_tasklet_cb().
+>> TCP completions are handled by mlx5e_completion_event(), which schedules
+>> NAPI to poll the queue, so they don't need tasklet processing.
+>>
+>> Schedule the tasklet in mlx5_add_cq_to_tasklet() instead to avoid this
+>> overhead. mlx5_add_cq_to_tasklet() is responsible for enqueuing the CQs
+>> to be processed in tasklet context, so it can schedule the tasklet. CQs
+>> that need tasklet processing have their interrupt comp handler set to
+>> mlx5_add_cq_to_tasklet(), so they will schedule the tasklet. CQs that
+>> don't need tasklet processing won't schedule the tasklet. To avoid
+>> scheduling the tasklet multiple times during the same interrupt, only
+>> schedule the tasklet in mlx5_add_cq_to_tasklet() if the tasklet work
+>> queue was empty before the new CQ was pushed to it.
+>>
+>> The additional branch in mlx5_add_cq_to_tasklet(), called for each EQE,
+>> may add a small cost for the userspace Infiniband CQs whose completions
+>> are processed in tasklet context. But this seems worth it to avoid the
+>> tasklet overhead for CQs that don't need it.
+>>
+>> Note that the mlx4 driver works the same way: it schedules the tasklet
+>> in mlx4_add_cq_to_tasklet() and only if the work queue was empty before.
+>>
+>> Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
+>> Reviewed-by: Parav Pandit <parav@nvidia.com>
+> 
+> @Saeed, @Leon, @Tariq: I assume you will apply this one and include in
+> the next mlx5 PR. please correct me if I'm wrong.
+> 
 
-With the filter, it can show contentions from the task_struct only.
+Hi Paolo,
 
-  root@virtme-ng:/home/namhyung/project/linux# tools/perf/perf lock con -abl -L '&task_struct' sleep 1
-   contended   total wait     max wait     avg wait            address   symbol
+I am doing the mlx5 core/en maintainer work right now. I work 
+differently to Saeed, as I do not have a kernel.org branch of my own 
+(nor use Saeed's ofcourse),
 
-           2      1.97 us      1.71 us       987 ns   ffff98d7032fd658   &task_struct (mutex)
-           1      1.20 us      1.20 us      1.20 us   ffff98d7032fd6f8   &task_struct (mutex)
+Please consider applying this one and any others once I acknowledge/review.
 
-It can work with other aggregation mode:
+Acked-by: Tariq Toukan <tariqt@nvidia.com>
 
-  root@virtme-ng:/home/namhyung/project/linux# tools/perf/perf lock con -ab -L '&task_struct' sleep 1
-   contended   total wait     max wait     avg wait         type   caller
-
-           1     25.10 us     25.10 us     25.10 us        mutex   perf_event_exit_task+0x39
-           1     21.60 us     21.60 us     21.60 us        mutex   futex_exit_release+0x21
-           1      5.56 us      5.56 us      5.56 us        mutex   futex_exec_release+0x21
-
-Signed-off-by: Namhyung Kim <namhyung@kernel.org>
----
- tools/perf/builtin-lock.c                     | 35 ++++++++++++++++
- tools/perf/util/bpf_lock_contention.c         | 40 ++++++++++++++++++-
- .../perf/util/bpf_skel/lock_contention.bpf.c  | 21 +++++++++-
- tools/perf/util/lock-contention.h             |  2 +
- 4 files changed, 95 insertions(+), 3 deletions(-)
-
-diff --git a/tools/perf/builtin-lock.c b/tools/perf/builtin-lock.c
-index 89ee2a2f78603906..405e95666257b7fe 100644
---- a/tools/perf/builtin-lock.c
-+++ b/tools/perf/builtin-lock.c
-@@ -1646,6 +1646,12 @@ static void lock_filter_finish(void)
- 
- 	zfree(&filters.cgrps);
- 	filters.nr_cgrps = 0;
-+
-+	for (int i = 0; i < filters.nr_slabs; i++)
-+		free(filters.slabs[i]);
-+
-+	zfree(&filters.slabs);
-+	filters.nr_slabs = 0;
- }
- 
- static void sort_contention_result(void)
-@@ -2412,6 +2418,27 @@ static bool add_lock_sym(char *name)
- 	return true;
- }
- 
-+static bool add_lock_slab(char *name)
-+{
-+	char **tmp;
-+	char *sym = strdup(name);
-+
-+	if (sym == NULL) {
-+		pr_err("Memory allocation failure\n");
-+		return false;
-+	}
-+
-+	tmp = realloc(filters.slabs, (filters.nr_slabs + 1) * sizeof(*filters.slabs));
-+	if (tmp == NULL) {
-+		pr_err("Memory allocation failure\n");
-+		return false;
-+	}
-+
-+	tmp[filters.nr_slabs++] = sym;
-+	filters.slabs = tmp;
-+	return true;
-+}
-+
- static int parse_lock_addr(const struct option *opt __maybe_unused, const char *str,
- 			   int unset __maybe_unused)
- {
-@@ -2435,6 +2462,14 @@ static int parse_lock_addr(const struct option *opt __maybe_unused, const char *
- 			continue;
- 		}
- 
-+		if (*tok == '&') {
-+			if (!add_lock_slab(tok + 1)) {
-+				ret = -1;
-+				break;
-+			}
-+			continue;
-+		}
-+
- 		/*
- 		 * At this moment, we don't have kernel symbols.  Save the symbols
- 		 * in a separate list and resolve them to addresses later.
-diff --git a/tools/perf/util/bpf_lock_contention.c b/tools/perf/util/bpf_lock_contention.c
-index 50c3039c647d4d77..2891a81380204b1d 100644
---- a/tools/perf/util/bpf_lock_contention.c
-+++ b/tools/perf/util/bpf_lock_contention.c
-@@ -113,7 +113,7 @@ static void exit_slab_cache_iter(void)
- int lock_contention_prepare(struct lock_contention *con)
- {
- 	int i, fd;
--	int ncpus = 1, ntasks = 1, ntypes = 1, naddrs = 1, ncgrps = 1;
-+	int ncpus = 1, ntasks = 1, ntypes = 1, naddrs = 1, ncgrps = 1, nslabs = 1;
- 	struct evlist *evlist = con->evlist;
- 	struct target *target = con->target;
- 
-@@ -202,6 +202,13 @@ int lock_contention_prepare(struct lock_contention *con)
- 
- 	check_slab_cache_iter(con);
- 
-+	if (con->filters->nr_slabs && has_slab_iter) {
-+		skel->rodata->has_slab = 1;
-+		nslabs = con->filters->nr_slabs;
-+	}
-+
-+	bpf_map__set_max_entries(skel->maps.slab_filter, nslabs);
-+
- 	if (lock_contention_bpf__load(skel) < 0) {
- 		pr_err("Failed to load lock-contention BPF skeleton\n");
- 		return -1;
-@@ -272,6 +279,36 @@ int lock_contention_prepare(struct lock_contention *con)
- 	bpf_program__set_autoload(skel->progs.collect_lock_syms, false);
- 
- 	lock_contention_bpf__attach(skel);
-+
-+	/* run the slab iterator after attaching */
-+	run_slab_cache_iter();
-+
-+	if (con->filters->nr_slabs) {
-+		u8 val = 1;
-+		int cache_fd;
-+		long key, *prev_key;
-+
-+		fd = bpf_map__fd(skel->maps.slab_filter);
-+
-+		/* Read the slab cache map and build a hash with its address */
-+		cache_fd = bpf_map__fd(skel->maps.slab_caches);
-+		prev_key = NULL;
-+		while (!bpf_map_get_next_key(cache_fd, prev_key, &key)) {
-+			struct slab_cache_data data;
-+
-+			if (bpf_map_lookup_elem(cache_fd, &key, &data) < 0)
-+				break;
-+
-+			for (i = 0; i < con->filters->nr_slabs; i++) {
-+				if (!strcmp(con->filters->slabs[i], data.name)) {
-+					bpf_map_update_elem(fd, &key, &val, BPF_ANY);
-+					break;
-+				}
-+			}
-+			prev_key = &key;
-+		}
-+	}
-+
- 	return 0;
- }
- 
-@@ -397,7 +434,6 @@ static void account_end_timestamp(struct lock_contention *con)
- 
- int lock_contention_start(void)
- {
--	run_slab_cache_iter();
- 	skel->bss->enabled = 1;
- 	return 0;
- }
-diff --git a/tools/perf/util/bpf_skel/lock_contention.bpf.c b/tools/perf/util/bpf_skel/lock_contention.bpf.c
-index b5bc37955560a58e..048a04fc3a7fc27d 100644
---- a/tools/perf/util/bpf_skel/lock_contention.bpf.c
-+++ b/tools/perf/util/bpf_skel/lock_contention.bpf.c
-@@ -100,6 +100,13 @@ struct {
- 	__uint(max_entries, 1);
- } cgroup_filter SEC(".maps");
- 
-+struct {
-+	__uint(type, BPF_MAP_TYPE_HASH);
-+	__uint(key_size, sizeof(long));
-+	__uint(value_size, sizeof(__u8));
-+	__uint(max_entries, 1);
-+} slab_filter SEC(".maps");
-+
- struct {
- 	__uint(type, BPF_MAP_TYPE_HASH);
- 	__uint(key_size, sizeof(long));
-@@ -131,6 +138,7 @@ const volatile int has_task;
- const volatile int has_type;
- const volatile int has_addr;
- const volatile int has_cgroup;
-+const volatile int has_slab;
- const volatile int needs_callstack;
- const volatile int stack_skip;
- const volatile int lock_owner;
-@@ -213,7 +221,7 @@ static inline int can_record(u64 *ctx)
- 		__u64 addr = ctx[0];
- 
- 		ok = bpf_map_lookup_elem(&addr_filter, &addr);
--		if (!ok)
-+		if (!ok && !has_slab)
- 			return 0;
- 	}
- 
-@@ -226,6 +234,17 @@ static inline int can_record(u64 *ctx)
- 			return 0;
- 	}
- 
-+	if (has_slab && bpf_get_kmem_cache) {
-+		__u8 *ok;
-+		__u64 addr = ctx[0];
-+		long kmem_cache_addr;
-+
-+		kmem_cache_addr = (long)bpf_get_kmem_cache(addr);
-+		ok = bpf_map_lookup_elem(&slab_filter, &kmem_cache_addr);
-+		if (!ok)
-+			return 0;
-+	}
-+
- 	return 1;
- }
- 
-diff --git a/tools/perf/util/lock-contention.h b/tools/perf/util/lock-contention.h
-index 1a7248ff388947e1..95331b6ec062410d 100644
---- a/tools/perf/util/lock-contention.h
-+++ b/tools/perf/util/lock-contention.h
-@@ -10,10 +10,12 @@ struct lock_filter {
- 	int			nr_addrs;
- 	int			nr_syms;
- 	int			nr_cgrps;
-+	int			nr_slabs;
- 	unsigned int		*types;
- 	unsigned long		*addrs;
- 	char			**syms;
- 	u64			*cgrps;
-+	char			**slabs;
- };
- 
- struct lock_stat {
--- 
-2.47.0.199.ga7371fff76-goog
+Regards,
+Tariq
 
 
