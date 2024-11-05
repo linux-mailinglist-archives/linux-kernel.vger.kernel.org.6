@@ -1,220 +1,164 @@
-Return-Path: <linux-kernel+bounces-395892-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395889-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E33469BC494
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 06:12:20 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D734D9BC48D
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 06:08:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CD13EB21CDF
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 05:12:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D4071F2213C
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 05:08:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 146BF1B4F02;
-	Tue,  5 Nov 2024 05:12:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 561061B4F1E;
+	Tue,  5 Nov 2024 05:08:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="qC6wYHK3"
-Received: from out203-205-221-231.mail.qq.com (out203-205-221-231.mail.qq.com [203.205.221.231])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AK6VuxFZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24BA83D9E
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 05:11:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.231
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E08A3987D;
+	Tue,  5 Nov 2024 05:08:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730783524; cv=none; b=fv3qDkxI5H3aJ6DYyqHjvz7ylEsYeFXZzdekNkfBte7RF+FroW1HMb+GoZbf7FZfeRXdHWj7eiEvpfIm63s4tff3kodjmgDqMNJyEX1K2ymGwVOc1Qbwb0k1zyG5GoAu8JxXCv55wO44Q38S0e6V91tIY8qtwssAj6Xwb9bS+EY=
+	t=1730783285; cv=none; b=qGDeLWvr0+fMEzOE3MoT0Dfk/Oq5PuAfuqxYK8You6FftIIueC/tXrmkl7LEHE5YY0Z0kumRHSF7Qw1BJVcynna3T/cW/NaT+dIRi7Z7/zb0Kno3lIZOIUQvWZdHkek3qITPpLX5JAa1JCSjnxvbJoSvvUzQfPpySVYujA6XyQc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730783524; c=relaxed/simple;
-	bh=ldStJo010qqTlagNeG6L/VN2O4aHXCpM2z6OG2PJNTw=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=XyALIRnZj1md0M7wtrcDrrrv21p7Al8xKpZGPD1KANzTa28z/kYYIDoAILKyf0QG6NYBzS8Fl6PHsfK2JJ5oYJ+brQUWRiqcMyf2HR3dZ615dMIOOqleDT958x5GgXJBfTbVgkwbJgy4+Vr2irAgPArBhMT7oTdguj1RDnHCZ9g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=qC6wYHK3; arc=none smtp.client-ip=203.205.221.231
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1730783510; bh=fZqCJDON1onUfVpEG8p0irECz1DbeLi+hzuVvvGDRRk=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=qC6wYHK3Ad4daz+u8WPDfl7+RfZLkW6SNHgcdm9bUgrY92d9l7y/89e0LPvdir9et
-	 dHNPyOxznSZTwqbfTexcuabbgH1YurPFx1rX9Waz+mlPhMLF/VtixJIxDqDt5lXkC9
-	 pA9OIZGM6dW5/9gYENhZ81ZI6TRgBfAtMqKYVd2s=
-Received: from pek-lxu-l1.wrs.com ([111.198.227.254])
-	by newxmesmtplogicsvrsza29-0.qq.com (NewEsmtp) with SMTP
-	id E41C8C6; Tue, 05 Nov 2024 13:03:36 +0800
-X-QQ-mid: xmsmtpt1730783016tcfxqz66g
-Message-ID: <tencent_803620964836C04B48745176CF66C03C1709@qq.com>
-X-QQ-XMAILINFO: NyTsQ4JOu2J2NKP0ku038bOwjY2UOdGvJSReZBeoDGQLJ6BymUeWQOPhjfbJqZ
-	 jmP+ymq49riSmCQfQw8PbhCnXYWpfllVmsYzePOIj+RyP3qIrQMwn/VIzyiio8fYGg3Inbb7xW0M
-	 ssuRfZYEt0v5pDL2WocJpR2kRtyVuAgjQAF0+BelIfYpCX7/f8S0MDawAAnzHTogRiaKWoirEWWH
-	 qMdaNc6WTLbPMJuZl8lgfcgvdCNxj19SpeKJBZOqeWEp8YglL65nejAQ66TyO2oZa2hxMhcdeCC5
-	 ZUX3g67y8a9DtxDbD0noBHnECFw7ElkMlqgYSyQ/uwrZOEd07RI1Q+zzreSoYr/lhz8zFZbgPCTH
-	 Vs58yvXRsmxY2cESYZI2+/o0Z1bMsXritLLzYVids6nEi91lInylbGq8HWH+vG397Giux05KbNwL
-	 YCZ543nASTG/nxsQHc096RvE6Pbhc6j/O0zatgtfZA6FDTYe0g7QIoskmyIYMS2O2tZE8ObL47Zv
-	 XlkhBqO2z6jdyfF9TyxZHChaTWVG2qagJc0hOad3Rj4rpxfRf2t1q6H1kmnwdI+CbshjjeG5kxS6
-	 Jy3NMHP/+fYyS2+q5aoqbNQm6bk43T+vEnDQWZ//lekC89SciIJFPcaIN3Z4dBEiho4EcfoI+beR
-	 ZCHTZTcMFSfSTv45RrX0IG9cu3H0jaNw3y+DOrqZ5wo/aKzihU9/KlfIoRetBiAfLGrkhrbWWcmB
-	 Tj4hf8jzQxkk7ZoUKMZnS9TW9QU+56XW40bMFxurStyNVNALdLc2MeomuuszVWgy/SC3VsabSK+O
-	 w8i12MyZWVX0Md6lYWl1GKILJu+8ezLa26WprEMrgX9A2H+YACTmbZXfMMut+oQNsH56alsNfj31
-	 QLmCIb4CzNH/nKr9FhwnZ94xiLH+UYQU8pV82DANz2qV4nGVFfeRxwMza8vgYrw8YIOWGMLLPbkg
-	 jnUJF/z4c=
-X-QQ-XMRINFO: MPJ6Tf5t3I/ycC2BItcBVIA=
-From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+73582d08864d8268b6fd@syzkaller.appspotmail.com
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [sound?] INFO: task hung in snd_card_free
-Date: Tue,  5 Nov 2024 13:03:37 +0800
-X-OQ-MSGID: <20241105050336.1584061-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <6726bf35.050a0220.35b515.018b.GAE@google.com>
-References: <6726bf35.050a0220.35b515.018b.GAE@google.com>
+	s=arc-20240116; t=1730783285; c=relaxed/simple;
+	bh=Woa5l/TBzfjnbejfeJNuhIdCkk1UOKkNCSAnyW42mrA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=M1grtJj0b3kRBueslMfacPkJGTah5y1XaeeiIFqSXQ5vCwu7wM/8dlhEuERtMkf4yz107/zbbkHvYCBA5MeWm6OIpbznlr5Nphx2lbHGvkmUl5Eq11y+OiVyk5yqrPbJXFJE2cPgrtk+a851XG/t/Zu3Fd3/3V4NFA/kC+P3VWY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AK6VuxFZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14238C4CECF;
+	Tue,  5 Nov 2024 05:08:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730783285;
+	bh=Woa5l/TBzfjnbejfeJNuhIdCkk1UOKkNCSAnyW42mrA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=AK6VuxFZ1qdb1ASJhFnrWnZ+gjqjzhn5itjDiDIbY6oA5hQ/MVC4po0h7T9x4iP+d
+	 ZTy31PQzwIe/YAjF9RT1WtQqVMAeK6En6Glkchdb81Q2pbUuJg/JQPr97aGEp218Rd
+	 S1h0+VwuCtaRmMAUzkWkQ0B5XtN6QSU30D9wOE+Mlj14S59wGMPw64CVqiAl07TwQh
+	 FQoCXxXydhukNne/RoKvirXXRse1ke8F4PM9ckEZDPOmVR31KvQ27NSPYDZFjIblNi
+	 /0KQcuc36UIzD9Joar7eKBo5yMAgB0+hohgNAoFwnjzsACSGwdL9QNvYwvnelBb6eE
+	 /Amp0A3yUXSnA==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1t8BnO-000000005Bi-3WGR;
+	Tue, 05 Nov 2024 06:08:03 +0100
+Date: Tue, 5 Nov 2024 06:08:02 +0100
+From: Johan Hovold <johan@kernel.org>
+To: Chris Lew <quic_clew@quicinc.com>
+Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>,
+	Qiang Yu <quic_qianyu@quicinc.com>,
+	Jeffrey Hugo <quic_jhugo@quicinc.com>,
+	Krishna chaitanya chundru <quic_krichai@quicinc.com>,
+	Konrad Dybcio <konradybcio@kernel.org>, mhi@lists.linux.dev,
+	linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: qrtr/mhi: NULL-deref with in-kernel pd-mapper
+Message-ID: <ZymoMlSCQQScpRIZ@hovoldconsulting.com>
+References: <ZyTtVdkCCES0lkl4@hovoldconsulting.com>
+ <da2bc665-5010-4d92-b9ac-7c442859cd10@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <da2bc665-5010-4d92-b9ac-7c442859cd10@quicinc.com>
 
-The sound card of usx2y's probe and disconnect need to be protected under mutex.
-debug: where hung in snd_card_do_free?
+On Mon, Nov 04, 2024 at 04:26:15PM -0800, Chris Lew wrote:
+> On 11/1/2024 8:01 AM, Johan Hovold wrote:
 
-#syz test
+> > [    8.825593] Unable to handle kernel NULL pointer dereference at virtual
+> > address 0000000000000034
+> > .
 
+> > [    9.002030] CPU: 10 UID: 0 PID: 11 Comm: kworker/u48:0 Not tainted 6.12.0-rc5 #4
+> > [    9.029550] Hardware name: Qualcomm CRD, BIOS 6.0.231221.BOOT.MXF.2.4-00348.1-HAMOA-1 12/21/2023
+> > [    9.029552] Workqueue: qrtr_ns_handler qrtr_ns_worker [qrtr]
+> > [    9.061350] pstate: a1400005 (NzCv daif +PAN -UAO -TCO +DIT -SSBS BTYPE=--)
+> > [    9.061353] pc : mhi_gen_tre+0x44/0x224 [mhi]
+> > [    9.106931] lr : mhi_gen_tre+0x40/0x224 [mhi]
+> > [    9.106934] sp : ffff8000800fb7d0
+> > [    9.106935] x29: ffff8000800fb7d0 x28: ffff6db7852bd000 x27: ffff800082490188
+> > [    9.120382] dwc3 a000000.usb: Adding to iommu group 5
+> > [    9.133750]
+> > [    9.133752] x26: 0000000000000000 x25: ffff6db783e65080 x24: ffff80008248ff88
+> > [    9.133754] x23: 0000000000000000 x22: ffff80008248ff80 x21: ffff8000800fb890
+> > [    9.133756] x20: 0000000000000000 x19: 0000000000000002 x18: 000000000005cf20
+> > [    9.133758] x17: 0000000000000028 x16: 0000000000000000
+> > [    9.172738]  x15: ffffa5834131fbd0
+> > [    9.172741] x14: ffffa5834137caf0 x13: 000000000000ce30 x12: ffff6db7808bc028
+> > [    9.172743] x11: ffffa58341993000 x10: 0000000000000000 x9 : 00000000cf3f2b90
+> > [    9.172745] x8 : 0000000094e5072b x7 : 00000000000404ce x6 : ffffa5834162cfb0
+> > [    9.172747] x5 : 000000000000008b x4 : ffffa583419cddf0 x3 : 0000000000000007
+> > [    9.172750] x2 : 0000000000000000
+> > [    9.192697]  x1 : 000000000000000a x0 : ffff6db7808bb700
+> > [    9.192700] Call trace:
+> > [    9.192701]  mhi_gen_tre+0x44/0x224 [mhi]
+> > [    9.192704]  mhi_queue+0x74/0x194 [mhi]
+> > [    9.192706]  mhi_queue_skb+0x5c/0x8c [mhi]
+> > [    9.210985]  qcom_mhi_qrtr_send+0x6c/0x160 [qrtr_mhi]
+> > [    9.210989]  qrtr_node_enqueue+0xd0/0x4a0 [qrtr]
+> > [    9.210992]  qrtr_bcast_enqueue+0x78/0xe8 [qrtr]
+> > [    9.225530]  qrtr_sendmsg+0x15c/0x33c [qrtr]
+> > [    9.225532]  sock_sendmsg+0xc0/0xec
+> > [    9.240436]  kernel_sendmsg+0x30/0x40
+> > [    9.240438]  service_announce_new+0xbc/0x1c4 [qrtr]
+> > [    9.240440]  qrtr_ns_worker+0x714/0x794 [qrtr]
+> > [    9.240441]  process_one_work+0x210/0x614
+> > [    9.254527]  worker_thread+0x23c/0x378
+> > [    9.254529]  kthread+0x124/0x128
+> > [    9.254531]  ret_from_fork+0x10/0x20
+> > [    9.254534] Code: aa0003f9 aa1b03e0 94001a4d f9401b14 (3940d280)
+> > [    9.267369] ---[ end trace 0000000000000000 ]---
+> > [    9.267371] Kernel panic - not syncing: Oops: Fatal exception in interrupt
+> 
+> Thanks for reporting this.
 
-diff --git a/sound/core/info.c b/sound/core/info.c
-index 1f5b8a3d9e3b..e584f3eb742b 100644
---- a/sound/core/info.c
-+++ b/sound/core/info.c
-@@ -566,7 +566,9 @@ int snd_info_card_free(struct snd_card *card)
- {
- 	if (!card)
- 		return 0;
-+	printk("card: %p, %s\n", card, __func__);
- 	snd_info_free_entry(card->proc_root);
-+	printk("2card: %p, %s\n", card, __func__);
- 	card->proc_root = NULL;
- 	return 0;
- }
-diff --git a/sound/core/init.c b/sound/core/init.c
-index 114fb87de990..84b88b1192d0 100644
---- a/sound/core/init.c
-+++ b/sound/core/init.c
-@@ -186,6 +186,7 @@ int snd_card_new(struct device *parent, int idx, const char *xid,
- 		return -ENOMEM;
- 
- 	err = snd_card_init(card, parent, idx, xid, module, extra_size);
-+	printk("err: %d, card: %p, %s\n", err, card, __func__);
- 	if (err < 0)
- 		return err; /* card is freed by error handler */
- 
-@@ -580,11 +581,14 @@ EXPORT_SYMBOL_GPL(snd_card_disconnect_sync);
- static int snd_card_do_free(struct snd_card *card)
- {
- 	card->releasing = true;
-+	printk("0card: %p, %s\n", card, __func__);
- #if IS_ENABLED(CONFIG_SND_MIXER_OSS)
- 	if (snd_mixer_oss_notify_callback)
- 		snd_mixer_oss_notify_callback(card, SND_MIXER_OSS_NOTIFY_FREE);
- #endif
-+	printk("1card: %p, %s\n", card, __func__);
- 	snd_device_free_all(card);
-+	printk("2card: %p, %s\n", card, __func__);
- 	if (card->private_free)
- 		card->private_free(card);
- 	if (snd_info_card_free(card) < 0) {
-diff --git a/sound/usb/usx2y/usbusx2y.c b/sound/usb/usx2y/usbusx2y.c
-index 2f9cede242b3..129210a81545 100644
---- a/sound/usb/usx2y/usbusx2y.c
-+++ b/sound/usb/usx2y/usbusx2y.c
-@@ -150,6 +150,7 @@ static int snd_usx2y_card_used[SNDRV_CARDS];
- 
- static void snd_usx2y_card_private_free(struct snd_card *card);
- static void usx2y_unlinkseq(struct snd_usx2y_async_seq *s);
-+static DEFINE_MUTEX(devices_mutex);
- 
- /*
-  * pipe 4 is used for switching the lamps, setting samplerate, volumes ....
-@@ -392,6 +393,7 @@ static void snd_usx2y_card_private_free(struct snd_card *card)
- {
- 	struct usx2ydev *usx2y = usx2y(card);
- 
-+	printk("card: %p, %s\n", card, __func__);
- 	kfree(usx2y->in04_buf);
- 	usb_free_urb(usx2y->in04_urb);
- 	if (usx2y->us428ctls_sharedmem)
-@@ -407,9 +409,12 @@ static void snd_usx2y_disconnect(struct usb_interface *intf)
- 	struct usx2ydev *usx2y;
- 	struct list_head *p;
- 
-+	mutex_lock(&devices_mutex);
- 	card = usb_get_intfdata(intf);
--	if (!card)
-+	if (!card) {
-+		mutex_unlock(&devices_mutex);
- 		return;
-+	}
- 	usx2y = usx2y(card);
- 	usx2y->chip_status = USX2Y_STAT_CHIP_HUP;
- 	usx2y_unlinkseq(&usx2y->as04);
-@@ -423,6 +428,7 @@ static void snd_usx2y_disconnect(struct usb_interface *intf)
- 	if (usx2y->us428ctls_sharedmem)
- 		wake_up(&usx2y->us428ctls_wait_queue_head);
- 	snd_card_free(card);
-+	mutex_unlock(&devices_mutex);
- }
- 
- static int snd_usx2y_probe(struct usb_interface *intf,
-@@ -432,15 +438,18 @@ static int snd_usx2y_probe(struct usb_interface *intf,
- 	struct snd_card *card;
- 	int err;
- 
-+	mutex_lock(&devices_mutex);
- 	if (le16_to_cpu(device->descriptor.idVendor) != 0x1604 ||
- 	    (le16_to_cpu(device->descriptor.idProduct) != USB_ID_US122 &&
- 	     le16_to_cpu(device->descriptor.idProduct) != USB_ID_US224 &&
--	     le16_to_cpu(device->descriptor.idProduct) != USB_ID_US428))
--		return -EINVAL;
-+	     le16_to_cpu(device->descriptor.idProduct) != USB_ID_US428)) {
-+		err = -EINVAL;
-+		goto out;
-+	}
- 
- 	err = usx2y_create_card(device, intf, &card);
- 	if (err < 0)
--		return err;
-+		goto out;
- 	err = usx2y_hwdep_new(card, device);
- 	if (err < 0)
- 		goto error;
-@@ -449,10 +458,13 @@ static int snd_usx2y_probe(struct usb_interface *intf,
- 		goto error;
- 
- 	dev_set_drvdata(&intf->dev, card);
-+	mutex_unlock(&devices_mutex);
- 	return 0;
- 
-- error:
-+error:
- 	snd_card_free(card);
-+out:
-+	mutex_unlock(&devices_mutex);
- 	return err;
- }
- 
-diff --git a/net/batman-adv/hard-interface.c b/net/batman-adv/hard-interface.c
-index 96a412beab2d..9e5a0eb43fec 100644
---- a/net/batman-adv/hard-interface.c
-+++ b/net/batman-adv/hard-interface.c
-@@ -523,9 +523,9 @@ static void batadv_check_known_mac_addr(const struct net_device *net_dev)
- 					net_dev->dev_addr))
- 			continue;
- 
--		pr_warn("The newly added mac address (%pM) already exists on: %s\n",
-+		pr_warn_ratelimited("The newly added mac address (%pM) already exists on: %s\n",
- 			net_dev->dev_addr, hard_iface->net_dev->name);
--		pr_warn("It is strongly recommended to keep mac addresses unique to avoid problems!\n");
-+		pr_warn_ratelimited("It is strongly recommended to keep mac addresses unique to avoid problems!\n");
- 	}
- 	rcu_read_unlock();
- }
+Thanks for taking a look, Chris.
 
+> I'm not sure the in-kernel pd-mapper should be affecting this path. I 
+> think this is for WLAN since it is the mhi qrtr and I'm not aware of 
+> WLAN needing to listen to the pd-mapper framework.
+
+This function is called for both the WWAN and WLAN on this machine, and
+it seems like the modem is typically probed first and around the time
+when I saw the NULL-deref.
+
+[    8.802728] mhi-pci-generic 0005:01:00.0: mhi_gen_tre - buf_info = ffff800080d75000, offsetof(buf_info->used) = 0x34
+...
+[    9.980638] ath12k_pci 0004:01:00.0: mhi_gen_tre - buf_info = ffff800081d35000, offsetof(buf_info->used) = 0x34
+ 
+> The offset seems to be mapped back to 
+> linux/drivers/bus/mhi/host/main.c:1220, I had some extra debug configs 
+> enabled so not sure the offset is still valid.
+> 
+> 	WARN_ON(buf_info->used);
+> 	buf_info->pre_mapped = info->pre_mapped;
+> 
+> This looks like the null pointer would happen if qrtr tried to send 
+> before mhi_channel_prepare() is called.
+
+I didn't look closely at the code, but I can confirm that the offset of
+buf_info->used is indeed 0x34, which could indicate that it's the
+
+	buf_info = buf_ring->wp;
+
+pointer that was NULL.
+
+> I think we have a patch that might fix this, let me dig it up and send 
+> it out.
+
+Would that patch still help?
+
+	https://lore.kernel.org/lkml/20241104-qrtr_mhi-v1-1-79adf7e3bba5@quicinc.com/
+
+I naively tried adding a sleep after registering the endpoint, but that
+is at least not sufficient to trigger the NULL-deref.
+
+Johan
 
