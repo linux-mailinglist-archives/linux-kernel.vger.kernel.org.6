@@ -1,122 +1,135 @@
-Return-Path: <linux-kernel+bounces-396193-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396200-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98CBA9BC92F
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 10:32:32 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E78FE9BC944
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 10:34:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA8CF1C22813
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 09:32:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 80D39B24012
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 09:34:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DFCC1D040B;
-	Tue,  5 Nov 2024 09:32:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="grX96xee"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82EF9188734;
+	Tue,  5 Nov 2024 09:33:21 +0000 (UTC)
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B5B1433B5
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 09:32:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A28D1D0F63
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 09:33:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730799147; cv=none; b=UHMwiYGRTPOuxx6A/jcqKxKY/YaEKTAORzKA2HfrTbFcBL3TwVOK/uJmhbHjkP2lGfOpDmrZKMCm6QWnaMkmrPJgcqDc9zEtVtTT+jCmBIatfy3othWE06/MBf0tBtEkZNbcB7s4k41pHxgWkNtGrVPNqvUJI7qA+eyoRCh9+AA=
+	t=1730799201; cv=none; b=hMEM+U0hXw9KXzihvQA6k4Fi/5Y3clbkgVBXXsNsHPtm2m15tHK299H9wFnZ2zpxMkPZ2XAO5UfDO4L7IW8Cyj0c940kMFHDIKLc9qPFmBJZ7loXlB4aqFwZ0k+/QTUG1dfGkCiC6PK9bDgZ2Ofgag48YxwKpkTCOYlbcPRm3JM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730799147; c=relaxed/simple;
-	bh=3boYlIm7+ysYJZ8hI0p5HudoZgakBgOBlMRjSuXyXRI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OJX18LgmkXZISvNJio3zuNMrMF6wV0+lXstb0+KXXXoEXdnsvNQPwfRy2a9WeO6w8c0urxSlA76I1tCUJ5B5ZO1VQrNXHO2E39OemcuUsnVAo7WuVMr+1at6JD4n4TfKJupC0GaizLKS+J+JdIv2150C77WbKkjYO4W9I+bHFuM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=grX96xee; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1730799145;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=CaELkgjNq5yohIp9CDpDpFO7U1TxTr29on+OWubj13o=;
-	b=grX96xee7qCq0ye4CSboji+bGs4Yh5jkzkWAwJXm637///8I9S9ts2PAGnS0OCM7s7LUz+
-	2WMfKbe2JqQwhz3DYTuePtlHB22Mvdr849Ncc61fCJFgvbsHhebhew6/ISJeRzfKCEPnMr
-	WsacZRUZ+h0u8CZNS8ryNbaYsmRp7dI=
-Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com
- [209.85.216.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-605-Ja8jlctfMXqtjJYczwSUaA-1; Tue, 05 Nov 2024 04:32:23 -0500
-X-MC-Unique: Ja8jlctfMXqtjJYczwSUaA-1
-Received: by mail-pj1-f69.google.com with SMTP id 98e67ed59e1d1-2e59d872d09so6703124a91.0
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 01:32:23 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730799143; x=1731403943;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=CaELkgjNq5yohIp9CDpDpFO7U1TxTr29on+OWubj13o=;
-        b=e61id5r6asZWB3CUIV0sF1+Vq3IN1lVLtVbOfEu8kOKflw67jeEugfZ1bn21n8adMN
-         Vuj8lysIcznP7DAIuEHFrM83tRd4vyTdMIEIPy4/JlXcWhOFsJ15fYV9nbm5TxCKc+4v
-         bQuU+9/ywlGaERdorf/M1E/1GSc+3sj38eqlI/jHsPeG0HjpMF4lnkA8QqL6LhQ9+G0o
-         STsfw98JFemzcDVl3VS3tO6tIws/0aRsVCUdK1V21kn9bmjZ8MwSThNTYap9G2YHLqhm
-         cvaUOGIuo6d+QCPi0oI+IKEYclZJFcqAZts0/zqbyBLwg/5rB8XdrMftbn9Wvdd2wBxY
-         8yMw==
-X-Forwarded-Encrypted: i=1; AJvYcCXc+HzH0eesLu+L+njQwsQLmiI5bO1F3lzy8j6TcafXYGLFRoxtYdoI6Za5ZUSysaduVCz9YKIuSiFs6BY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy/hogjw1Yrqze8x2cdRCVSUPgoRagU88/TEMwnLDrgSWeKrmYh
-	ML+DfTybv5qOX8pPunJhD4p4fRcsWVLNfmodAP0q4BXE6AaWIV1qir/SgKvGbDTtIjnq2qmbUoC
-	QgKE574wUlkz6xyzzmDr/DAEmP0DTtGLHn3oltwxuAZD0TMssjppAtcAr6UhDCvK9vbSaUSRuiv
-	xM7Fs/Mc/xRulTPe1cpnUm8LWOmpOBeyyMf7rF
-X-Received: by 2002:a17:90b:164f:b0:2e2:bfb0:c06 with SMTP id 98e67ed59e1d1-2e94c2b086cmr21054741a91.12.1730799142815;
-        Tue, 05 Nov 2024 01:32:22 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFrI2dYkCr6bnvyp62rgLDstJjcAcnHOsb+T5y5D8ck5xShQL7y314TViGgIjvrllU676F8agf4RY2ewZHmgK4=
-X-Received: by 2002:a17:90b:164f:b0:2e2:bfb0:c06 with SMTP id
- 98e67ed59e1d1-2e94c2b086cmr21054719a91.12.1730799142429; Tue, 05 Nov 2024
- 01:32:22 -0800 (PST)
+	s=arc-20240116; t=1730799201; c=relaxed/simple;
+	bh=mtbLo+J8r2HrGEDxQ3qNCbb5RRZCOixkEBOX+ZMMCmI=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=DQfJwaWq9p9dPzyS0oEfjVUGe2Ew5mLdBxZCwIgwvu8+p4iXkv4ASIVCOdBj0ZR5H9oIgmLnNW2QrnviWnliJL6Z6J4cid25C4GWQT8jwtGITdLGYPGBJsGHjWruv7t5zGnmTX/Loq20yEKdwz2Ug2HVlZNoD29J1bwAvhyYFxc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.194])
+	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4XjNQW53RZzQsYC;
+	Tue,  5 Nov 2024 17:32:03 +0800 (CST)
+Received: from kwepemd200014.china.huawei.com (unknown [7.221.188.8])
+	by mail.maildlp.com (Postfix) with ESMTPS id AF49D1400CA;
+	Tue,  5 Nov 2024 17:33:09 +0800 (CST)
+Received: from localhost.localdomain (10.50.165.33) by
+ kwepemd200014.china.huawei.com (7.221.188.8) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Tue, 5 Nov 2024 17:33:08 +0800
+From: Yicong Yang <yangyicong@huawei.com>
+To: <catalin.marinas@arm.com>, <will@kernel.org>, <sudeep.holla@arm.com>,
+	<tglx@linutronix.de>, <peterz@infradead.org>, <mpe@ellerman.id.au>,
+	<linux-arm-kernel@lists.infradead.org>, <mingo@redhat.com>, <bp@alien8.de>,
+	<dave.hansen@linux.intel.com>, <pierre.gondois@arm.com>,
+	<dietmar.eggemann@arm.com>
+CC: <linuxppc-dev@lists.ozlabs.org>, <x86@kernel.org>,
+	<linux-kernel@vger.kernel.org>, <morten.rasmussen@arm.com>,
+	<msuchanek@suse.de>, <gregkh@linuxfoundation.org>, <rafael@kernel.org>,
+	<jonathan.cameron@huawei.com>, <prime.zeng@hisilicon.com>,
+	<linuxarm@huawei.com>, <yangyicong@hisilicon.com>, <xuwei5@huawei.com>,
+	<guohanjun@huawei.com>
+Subject: [PATCH v8 0/4] Support SMT control on arm64
+Date: Tue, 5 Nov 2024 17:32:33 +0800
+Message-ID: <20241105093237.63565-1-yangyicong@huawei.com>
+X-Mailer: git-send-email 2.31.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241105072642.898710-1-lulu@redhat.com> <20241105072642.898710-2-lulu@redhat.com>
-In-Reply-To: <20241105072642.898710-2-lulu@redhat.com>
-From: Jason Wang <jasowang@redhat.com>
-Date: Tue, 5 Nov 2024 17:32:10 +0800
-Message-ID: <CACGkMEveK1uOg=Hq2WuYFW7+DbMoF_g6QjV5cUFkBHUEQXkcow@mail.gmail.com>
-Subject: Re: [PATCH v3 1/9] vhost: Add a new parameter to allow user select kthread
-To: Cindy Lu <lulu@redhat.com>
-Cc: mst@redhat.com, michael.christie@oracle.com, sgarzare@redhat.com, 
-	linux-kernel@vger.kernel.org, virtualization@lists.linux-foundation.org, 
-	netdev@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ kwepemd200014.china.huawei.com (7.221.188.8)
 
-On Tue, Nov 5, 2024 at 3:27=E2=80=AFPM Cindy Lu <lulu@redhat.com> wrote:
->
-> The vhost now uses vhost_task and workers as a child of the owner thread.
-> While this aligns with containerization principles,it confuses some legac=
-y
-> userspace app, Therefore, we are reintroducing kthread API support.
->
-> Introduce a new parameter to enable users to choose between
-> kthread and task mode. This will be exposed by module_param() later.
->
-> Signed-off-by: Cindy Lu <lulu@redhat.com>
-> ---
->  drivers/vhost/vhost.c | 2 ++
->  drivers/vhost/vhost.h | 1 +
->  2 files changed, 3 insertions(+)
->
-> diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
-> index 9ac25d08f473..eff6acbbb63b 100644
-> --- a/drivers/vhost/vhost.c
-> +++ b/drivers/vhost/vhost.c
-> @@ -41,6 +41,7 @@ static int max_iotlb_entries =3D 2048;
->  module_param(max_iotlb_entries, int, 0444);
->  MODULE_PARM_DESC(max_iotlb_entries,
->         "Maximum number of iotlb entries. (default: 2048)");
-> +static bool inherit_owner_default =3D true;
+From: Yicong Yang <yangyicong@hisilicon.com>
 
-I wonder how management can make a decision for this value.
+The core CPU control framework supports runtime SMT control which
+is not yet supported on arm64. Besides the general vulnerabilities
+concerns we want this runtime control on our arm64 server for:
 
-Thanks
+- better single CPU performance in some cases
+- saving overall power consumption
+
+This patchset implements it in the following aspects:
+
+- Provides a default topology_is_primary_thread()
+- support retrieve SMT thread number on OF based system
+- support retrieve SMT thread number on ACPI based system
+- select HOTPLUG_SMT for arm64
+
+Tests has been done on our real ACPI based arm64 server and on
+ACPI/OF based QEMU VMs.
+
+Change since v7:
+Address the comments from Thomas:
+- Add a newline between the glue define and function of topology_is_primary_thread
+- Explicitly mention the sibling mask won't be empty in the comment
+Link: https://lore.kernel.org/lkml/20241030125415.18994-1-yangyicong@huawei.com/
+
+Change since v6:
+- Fix unused variable if !CONFIG_ARM64 || !CONFIG_RISV found by lkp-test
+- Fix max_smt_thread_num updating in OF path pointed by Pierre
+- Drop unused variable and refine the comments/commit per Pierre
+Link: https://lore.kernel.org/linux-arm-kernel/20241015021841.35713-1-yangyicong@huawei.com/
+
+Change since v5:
+- Drop the dependency on CONFIG_SMP since it's always on on arm64, per Pierre
+- Avoid potential multiple calls of cpu_smt_set_num_threads() on asymmetric system, per Dietmar
+- Detect heterogenous SMT topology and issue a warning for partly support, per Pierre
+- Thanks Dietmar for testing, didn't pickup the tag due to code changes. Thanks testing by Pierre
+Link: https://lore.kernel.org/linux-arm-kernel/20240806085320.63514-1-yangyicong@huawei.com/
+
+Change since v4:
+- Provide a default topology_is_primary_thread() in the framework, Per Will
+Link: https://lore.kernel.org/linux-arm-kernel/20231121092602.47792-1-yangyicong@huawei.com/
+
+Change since v3:
+- Fix some build and kconfig error reported by kernel test robot <lkp@intel.com>
+Link: https://lore.kernel.org/linux-arm-kernel/20231114040110.54590-1-yangyicong@huawei.com/
+
+Change since v2:
+- Detect SMT thread number at topology build from ACPI/DT, avoid looping CPUs
+- Split patches into ACPI/OF/arch_topology path and enable the kconfig for arm64
+Link: https://lore.kernel.org/linux-arm-kernel/20231010115335.13862-1-yangyicong@huawei.com/
+
+Yicong Yang (4):
+  cpu/SMT: Provide a default topology_is_primary_thread()
+  arch_topology: Support SMT control for OF based system
+  arm64: topology: Support SMT control on ACPI based system
+  arm64: Kconfig: Enable HOTPLUG_SMT
+
+ arch/arm64/Kconfig                  |  1 +
+ arch/arm64/kernel/topology.c        | 57 +++++++++++++++++++++++++++++
+ arch/powerpc/include/asm/topology.h |  1 +
+ arch/x86/include/asm/topology.h     |  2 +-
+ drivers/base/arch_topology.c        | 24 ++++++++++++
+ include/linux/topology.h            | 20 ++++++++++
+ 6 files changed, 104 insertions(+), 1 deletion(-)
+
+-- 
+2.24.0
 
 
