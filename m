@@ -1,222 +1,65 @@
-Return-Path: <linux-kernel+bounces-397122-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397130-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C23F99BD703
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 21:27:18 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C84219BD718
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 21:34:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 81EF7283F8E
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 20:27:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 032461C2270D
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 20:34:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B40AE215C51;
-	Tue,  5 Nov 2024 20:26:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aF/PdT5m"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5397A215F42;
+	Tue,  5 Nov 2024 20:34:33 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2DBD215F53;
-	Tue,  5 Nov 2024 20:26:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7ABC29CE8;
+	Tue,  5 Nov 2024 20:34:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730838414; cv=none; b=mOXgFC2O7NrblP1jsb+5friOBKbHmXJMhzP0NdzA9sf5rRhHLNULeodS2Rk+vy6pEo7vGnuPA/AlxpBBTaI9TgnFnl2SrxmJkWO5nlWKkQIO1BD0QirDu3A3TGcps9vsroBu7h/GQx+BZOaNVa4c73WutHtIjXsxeqsOBXbjDaY=
+	t=1730838873; cv=none; b=Ou4dMQEdpVmT9XYPou1XHUTvu6/RNHYrqduPBCuD0KXIq7z3CnGi1g124eDOE0DCDt0gs5hXxRVB2MR+EkSd7P7O/zWLd7rqK0cTCCSxic3630r6CBu8jNv25Y06FwqLIWopi/f1fo0Em8xkbxcYThOYvFWtQfjJ485t5FcHpeE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730838414; c=relaxed/simple;
-	bh=ACzj8pdw96HChBwKsNw2pXfqhxjH1tOWpf8yeLsUYTc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=V3xwR9hpQx3G5+91nrXsLcJB9yQ1slU6K02tAxqdods0Brt3mn2b/myKTQB6iiHM8Bc82c2C+Ul3qB/9JbCKVPwxuz2aHtF+rCjSYRcaIAsMFRxfR0gO/0n2wXE57o1WK+FKmbhaVBVVLt3ArfCj+1ooTFEhH1r1EgtWBdxZXTM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aF/PdT5m; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-20cdbe608b3so59148915ad.1;
-        Tue, 05 Nov 2024 12:26:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730838412; x=1731443212; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=aBHrik1+PfGY8aie53DmTfdP4VfBjoDYBEfpHdyGKow=;
-        b=aF/PdT5m22+jnHr/h1cfLqdawxJmQ5zcDJj7EJSCuSWa1PtGgWr1yBkh4jqIoBJ/xc
-         pB/4PRXDE6EWmqJeoCn6R/rOsVOvgMMf1fFcOluu14m7odoInRujY1fagcH3V9RjKYy8
-         jRV5nbzsJhohbsSaQoc6HHiF6UAQSHCoj9JcU4ZRGJKUUkHJI+P7EheyW+rF23MSrz9q
-         zlv3snOuEKYA0ud6hMNOGWH+5ZzD9IIUtZaqlVJZlmwcBL937C5MI7OXQKo5vfWWeNt9
-         u8l2awoNfTxeyIO3KkFwwk0N/MxfPrPt1bdmE8XpAfqdWVtPnTVG/oS/WRvGoUH/FQFz
-         0z7w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730838412; x=1731443212;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=aBHrik1+PfGY8aie53DmTfdP4VfBjoDYBEfpHdyGKow=;
-        b=j+rTAi+m+u4Mgq9CDRkAFBGolQvFmeayAz83V/Z3kvVqco1n27914RnzCWJJ/H2yGL
-         qTfS+6aBpQ3FRqK60kditOl3Pg5RSIv4b/FbLChdmbdlqkHI02u8d/GFH+Q5lT6r2mgn
-         kI3rF8cp5ONCoW3gLwJEZFGBkUUs1Jv1rvWCfeUVy0Hueo+tRhdDixB/Bk3nSGuuZGsy
-         syKDdfMj9tF9L0l8G0oGPDP85+cKpSVpvv8+h1P9fIiSDHScsLtTl1x4pHY2uNdn/MbT
-         AU96gSVsbrblEnO6TnT2npeil7uIt/q0Y7/WsqPqlJj9E63wXgJGNDSRyemkgxDD9m0p
-         gN1w==
-X-Forwarded-Encrypted: i=1; AJvYcCVWUe3W0DJ6PZ00tb/18Smtz55mM+UsCxdWrN138+XIm+34f2C8jDJeAc07PBHtR9jIIMvU9qaLPysMkkU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxJrYFTALtgJVPyKPGTQ57zN6jBy+O7qdazBW1v077uX7AmrzJI
-	9iqe3HJ9BCeSR+jOklp4IWag0szMSE1QSIvnDzti/HEgnpiBn4nl
-X-Google-Smtp-Source: AGHT+IGgG50y/0914XGUzjBnyX8itH1E9DWnEvzd+QSjNQAJxFQWvHUuU/80Z/ECufnnjL+pO/kGaQ==
-X-Received: by 2002:a17:902:db0f:b0:20b:65d6:d268 with SMTP id d9443c01a7336-210f76f53eemr353224415ad.53.1730838411972;
-        Tue, 05 Nov 2024 12:26:51 -0800 (PST)
-Received: from localhost.localdomain ([27.7.141.222])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211056edc65sm82640665ad.10.2024.11.05.12.26.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Nov 2024 12:26:51 -0800 (PST)
-From: Shivam Chaudhary <cvam0000@gmail.com>
-To: shuah@kernel.org
-Cc: linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Shivam Chaudhary <cvam0000@gmail.com>
-Subject: [PATCH v4 2/2] selftests: tmpfs: Add kselftest support to tmpfs
-Date: Wed,  6 Nov 2024 01:56:39 +0530
-Message-ID: <20241105202639.1977356-3-cvam0000@gmail.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241105202639.1977356-1-cvam0000@gmail.com>
-References: <20241105202639.1977356-1-cvam0000@gmail.com>
+	s=arc-20240116; t=1730838873; c=relaxed/simple;
+	bh=5oGlmXIECbQ93Lq1NESvyNJUA67pBUvJc9Xt5LWWJdQ=;
+	h=From:Subject:Date:Message-ID:To; b=UvdvSl3cgUpk+k/XvcTFfwm1ToNla7smvPRNiRO5nRuyGR3U3a+YJbiwf1nljcmEKlNhsJbUtp4wG66KMidxkhx+ePDAgEk7bOVj+AwekcJMwfJmHsEWHF6Zl43XENG6Whryyu3VZTvxhotLd1xnCLBXmhOPgOvFy+MwWSqD348=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B1BDC4CECF;
+	Tue,  5 Nov 2024 20:34:32 +0000 (UTC)
+From: Joseph Salisbury <joseph.salisbury@oracle.com>
+Subject: [ANNOUNCE] 5.15.170-rt81
+Date: Tue, 05 Nov 2024 20:26:53 -0000
+Message-ID: <173083841317.3068608.16605335356855199499@jupiter>
+To: LKML <linux-kernel@vger.kernel.org>,linux-rt-users <linux-rt-users@vger.kernel.org>,Steven Rostedt <rostedt@goodmis.org>,Thomas Gleixner <tglx@linutronix.de>,Carsten Emde <C.Emde@osadl.org>,John Kacur <jkacur@redhat.com>,Sebastian Andrzej Siewior <bigeasy@linutronix.de>,Daniel Wagner <daniel.wagner@suse.com>,Tom Zanussi <tom.zanussi@linux.intel.com>,Clark Williams <williams@redhat.com>,Pavel Machek <pavel@denx.de>,Joseph Salisbury <josephtsalisbury@gmail.com>,Joseph Salisbury <joseph.salisbury@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-Replace direct error handling with 'ksft_test_result_*',
-'ksft_print_msg' and KSFT_SKIP  macros for better reporting.
+Hello RT-list!
 
-Test logs:
+I'm pleased to announce the 5.15.170-rt81 stable release.
 
-Before change:
+You can get this release via the git tree at:
 
-- Without root
- error: unshare, errno 1
+  git://git.kernel.org/pub/scm/linux/kernel/git/rt/linux-stable-rt.git
 
-- With root
- No, output
+  branch: v5.15-rt
+  Head SHA1: 67017c496f78e15598f48bb3115e3641a82ae507
 
-After change:
+Or to build 5.15.170-rt81 directly, the following patches should be applied:
 
-- Without root
- TAP version 13
- 1..1
-  ok 1 # SKIP This test needs root to run
+  https://www.kernel.org/pub/linux/kernel/projects/rt/5.15
 
-- With root
- TAP version 13
-1..1
-  unshare(): Creat new mount namespace: Success.
-  mount(): Root filesystem private mount: Success
-  mount(): Mounting tmpfs on /tmp: Success
-  openat(): Open first temporary file: Success
-  linkat(): Linking the temporary file: Success
-  openat(): Opening the second temporary file: Success
-  ok 1 Test : Success
-  Totals: pass:1 fail:0 xfail:0 xpass:0 skip:0 error:0
+  https://www.kernel.org/pub/linux/kernel/v5.x/linux-5.15.tar.xz
 
-Signed-off-by: Shivam Chaudhary <cvam0000@gmail.com>
----
+  https://www.kernel.org/pub/linux/kernel/v5.x/patch-5.15.170.xz
 
- .../selftests/tmpfs/bug-link-o-tmpfile.c      | 66 ++++++++++++++-----
- 1 file changed, 49 insertions(+), 17 deletions(-)
+  https://www.kernel.org/pub/linux/kernel/projects/rt/5.15/patch-5.15.170-rt81.patch.xz
 
-diff --git a/tools/testing/selftests/tmpfs/bug-link-o-tmpfile.c b/tools/testing/selftests/tmpfs/bug-link-o-tmpfile.c
-index cdab1e8c0392..f2e6a5b20698 100644
---- a/tools/testing/selftests/tmpfs/bug-link-o-tmpfile.c
-+++ b/tools/testing/selftests/tmpfs/bug-link-o-tmpfile.c
-@@ -42,39 +42,71 @@ int main(void)
- 
- 	if (unshare(CLONE_NEWNS) == -1) {
- 		if (errno == ENOSYS || errno == EPERM) {
--			fprintf(stderr, "error: unshare, errno %d\n", errno);
--			return 4;
-+			ksft_print_msg("unshare() error: unshare, errno %d\n", errno);
-+			exit(KSFT_SKIP);
-+
-+		}
-+		else{
-+			fprintf(stderr, "unshare() error: unshare, errno %d\n", errno);
-+			return 1;
-+
- 		}
--		fprintf(stderr, "error: unshare, errno %d\n", errno);
--		return 1;
-+	} 
-+	
-+	else {
-+		ksft_print_msg("unshare(): Creat new mount namespace: Success.\n");
-+
- 	}
--	if (mount(NULL, "/", NULL, MS_PRIVATE|MS_REC, NULL) == -1) {
--		fprintf(stderr, "error: mount '/', errno %d\n", errno);
--		return 1;
-+
-+
-+
-+	if (mount(NULL, "/", NULL, MS_PRIVATE | MS_REC, NULL) == -1) {
-+		ksft_print_msg("mount() error: Root filesystem private mount: Fail %d\n", errno);
-+		exit(KSFT_SKIP);
-+	} else {
-+		ksft_print_msg("mount(): Root filesystem private mount: Success\n");
- 	}
- 
-+
- 	/* Our heroes: 1 root inode, 1 O_TMPFILE inode, 1 permanent inode. */
- 	if (mount(NULL, "/tmp", "tmpfs", 0, "nr_inodes=3") == -1) {
--		fprintf(stderr, "error: mount tmpfs, errno %d\n", errno);
--		return 1;
-+		ksft_print_msg("mount() error: Mounting tmpfs on /tmp: Fail %d\n", errno);
-+		exit(KSFT_SKIP);
-+	} else {
-+		ksft_print_msg("mount(): Mounting tmpfs on /tmp: Success\n");
- 	}
- 
--	fd = openat(AT_FDCWD, "/tmp", O_WRONLY|O_TMPFILE, 0600);
-+
-+	fd = openat(AT_FDCWD, "/tmp", O_WRONLY | O_TMPFILE, 0600);
- 	if (fd == -1) {
--		fprintf(stderr, "error: open 1, errno %d\n", errno);
--		return 1;
-+		ksft_print_msg("openat() error: Open first temporary file: Fail %d\n", errno);
-+		exit(KSFT_SKIP);
-+	} else {
-+		ksft_print_msg("openat(): Open first temporary file: Success\n");
- 	}
-+
-+
- 	if (linkat(fd, "", AT_FDCWD, "/tmp/1", AT_EMPTY_PATH) == -1) {
--		fprintf(stderr, "error: linkat, errno %d\n", errno);
--		return 1;
-+		ksft_print_msg("linkat() error: Linking the temporary file: Fail %d\n", errno);
-+		/* Ensure fd is closed on failure */
-+		close(fd); 
-+		exit(KSFT_SKIP);
-+	} else {
-+		ksft_print_msg("linkat(): Linking the temporary file: Success\n");
- 	}
- 	close(fd);
- 
--	fd = openat(AT_FDCWD, "/tmp", O_WRONLY|O_TMPFILE, 0600);
-+
-+	fd = openat(AT_FDCWD, "/tmp", O_WRONLY | O_TMPFILE, 0600);
- 	if (fd == -1) {
--		fprintf(stderr, "error: open 2, errno %d\n", errno);
--		return 1;
-+		ksft_print_msg("openat() error: Opening the second temporary file: Fail %d\n", errno);
-+		exit(KSFT_SKIP);
-+	} else {
-+		ksft_print_msg("openat(): Opening the second temporary file: Success\n");
- 	}
- 
-+    ksft_test_result_pass("Test : Success\n");
-+	ksft_exit_pass();
- 	return 0;
- }
-+
--- 
-2.45.2
 
+Enjoy!
+Joseph Salisbury
 
