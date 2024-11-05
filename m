@@ -1,141 +1,89 @@
-Return-Path: <linux-kernel+bounces-396607-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396606-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1AA19BCF63
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 15:32:43 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8B659BCF61
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 15:32:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4B9CBB220B3
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 14:32:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B3E2285041
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 14:32:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15AAD1D8DE4;
-	Tue,  5 Nov 2024 14:32:36 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F7C414A91;
+	Tue,  5 Nov 2024 14:32:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="MGEkDjAH"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96FD833080
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 14:32:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B85D1D88D4
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 14:32:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730817155; cv=none; b=LbRfrzJBo4Fa91j9Dnm99EATsJDh3JWecjvKVI1R5FD6GJXSyoH2ckhKSr8HNYQCuhqSX4c4RR394AkbJRXScCYss7vRO007DBq7fhMMcUSrGq6O9GhgHdn3qQmfk25u1oxeV7jmpUB75jz2K9JSzGx6Ooa+gFahLMykqzM5Xn0=
+	t=1730817134; cv=none; b=tF5i4AufvVwUTLl/GN+o2/RnGF0OHi5Xcxf3LdvMnZP+RYGbB9Yfb0WZCxo92Vynk+1hmwFj+03sutrFdQJdwhRNyB5d/2sviKRPanwnS4QKlXBnHZqh4jCBbRZeBnI0AA73AzVjApuP8N/KuQa8exOecOKSr4LyOgFLUNPg3Yk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730817155; c=relaxed/simple;
-	bh=frQxkDxOlabdHzuh0NP3qfAHRwCrzOqfjKrCItIFrBM=;
+	s=arc-20240116; t=1730817134; c=relaxed/simple;
+	bh=OT6Ao99YyqdYA3LDUaUA99/DRS6BskIbMZP02iWqdAM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cPSTiGwyEKLOLpGQlU4kWBuJ4GM5UH1ZMChcKntyWfkU6zAmcxy8RNln/s+yyMy9NSTvDQYhYOTBGFQ14/2QkoBO7vZODhtO153ZJX6vDYBZytr6B9yg8P5HHo7bFJA16CDvDo/wRoFCktlgO0AlHnBsp9xtQB9HL98K7g0BM3A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ore@pengutronix.de>)
-	id 1t8KbK-0007mY-SW; Tue, 05 Nov 2024 15:32:10 +0100
-Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1t8KbJ-0029or-0W;
-	Tue, 05 Nov 2024 15:32:09 +0100
-Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1t8KbJ-00FPHS-07;
-	Tue, 05 Nov 2024 15:32:09 +0100
-Date: Tue, 5 Nov 2024 15:32:09 +0100
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Maxime Chevallier <maxime.chevallier@bootlin.com>
-Cc: "David S. Miller" <davem@davemloft.net>, Andrew Lunn <andrew@lunn.ch>,
-	Eric Dumazet <edumazet@google.com>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Vladimir Oltean <olteanv@gmail.com>,
-	Woojung Huh <woojung.huh@microchip.com>,
-	Arun Ramadoss <arun.ramadoss@microchip.com>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Rob Herring <robh+dt@kernel.org>, kernel@pengutronix.de,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	UNGLinuxDriver@microchip.com,
-	"Russell King (Oracle)" <linux@armlinux.org.uk>,
-	devicetree@vger.kernel.org, Marek Vasut <marex@denx.de>
-Subject: Re: [PATCH net-next v3 6/6] net: dsa: microchip: parse PHY config
- from device tree
-Message-ID: <ZyosafnNkdqt4JMb@pengutronix.de>
-References: <20241105090944.671379-1-o.rempel@pengutronix.de>
- <20241105090944.671379-7-o.rempel@pengutronix.de>
- <20241105152805.25f8b065@fedora.home>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZfqTdkXgY+58JKPXYOXylCgN3m0F4YscTHoRTTCwGyHoOEro4sH5cfw/cTJwEh+VLP+SMqFLDD2P6WXsJ5A64MWvB5Gid9OYdoR+AEk6pHYEFZ1IW2OQi3Go9pONaq6TP7c5yH6xtzsdrVu09RG1oR4nKN5QxTZF9ttfyGNuDlc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=MGEkDjAH; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=sQylJ4ZOQbI60fiEegukCbq2jv1FBBl6Nkf+RPhmi9c=; b=MGEkDjAHofG7t4YwBITHSB3zu/
+	+E6Z01s4JFiIYhubYlRBfYtVGqZEwdH6OxMpZyPfZi4wY+CBAbIN8/WRj3jlqiEpc2zW/AhDC+y8G
+	7hyoYk8j3+cwpJ0dIkAWzst0KSywKHrm24vjyFp/Ch1+ZhfDlu7f8evGD6FrNBKpA4831FijvkdjF
+	JzSPGsSMPulRV/T2n3W4FYz6jBdJIUJO5GbfHXiqJAi+zHFmagl91G+ZWnA/je/qF3SlrIQX1HGsz
+	lT6DUpebCwyRGmBaXpxN2Y3lmJZsSu/0FJ7qPpCX5XRMI9qowK7sOXuoexjG7lQq+9FnKv8BwkS7T
+	8dEq5vgQ==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1t8KbM-0000000HHAJ-2Fao;
+	Tue, 05 Nov 2024 14:32:12 +0000
+Date: Tue, 5 Nov 2024 06:32:12 -0800
+From: Christoph Hellwig <hch@infradead.org>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Christoph Hellwig <hch@infradead.org>, x86@kernel.org,
+	linux-kernel@vger.kernel.org, alyssa.milburn@intel.com,
+	scott.d.constable@intel.com, joao@overdrivepizza.com,
+	andrew.cooper3@citrix.com, jpoimboe@kernel.org,
+	alexei.starovoitov@gmail.com, ebiggers@kernel.org,
+	samitolvanen@google.com, kees@kernel.org
+Subject: Re: [PATCH 1/8] x86,kcfi: Fix EXPORT_SYMBOL vs kCFI
+Message-ID: <ZyosbEMNzMU6fOe_@infradead.org>
+References: <20241105113901.348320374@infradead.org>
+ <20241105114521.852053765@infradead.org>
+ <Zyoood0ooSbpultV@infradead.org>
+ <20241105142720.GG10375@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241105152805.25f8b065@fedora.home>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+In-Reply-To: <20241105142720.GG10375@noisy.programming.kicks-ass.net>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-Hi Maxime,
-
-On Tue, Nov 05, 2024 at 03:28:05PM +0100, Maxime Chevallier wrote:
-> > +	dsa_switch_for_each_user_port(dp, dev->ds) {
-> > +		if (!dev->info->internal_phy[dp->index])
-> > +			continue;
-> > +
-> > +		phy_node = of_parse_phandle(dp->dn, "phy-handle", 0);
-> > +		if (!phy_node) {
-> > +			dev_err(dev->dev, "failed to parse phy-handle for port %d.\n",
-> > +				dp->index);
-> > +			phys_are_valid = false;
-> > +			continue;
-> > +		}
-> > +
-> > +		phy_parent_node = of_get_parent(phy_node);
-> > +		if (!phy_parent_node) {
-> > +			dev_err(dev->dev, "failed to get PHY-parent node for port %d\n",
-> > +				dp->index);
-> > +			phys_are_valid = false;
-> > +		} else if (dev->info->internal_phy[dp->index] &&
-> > +			   phy_parent_node != mdio_np) {
+On Tue, Nov 05, 2024 at 03:27:20PM +0100, Peter Zijlstra wrote:
+> > I don't think that is the case at all.  The is a relatively small number
+> > of exported symbols that are called indirectly.  I'd much rather mark
+> > those explicitly.
 > 
-> There's a check a few lines above that guarantees that at this point
-> dev->info->internal_phy[dp->index] will always evaluate as true,
-> so you could simplify that condition a bit :)
-
-good point :)
-
-> > +			dev_err(dev->dev, "PHY-parent node mismatch for port %d, expected %pOF, got %pOF\n",
-> > +				dp->index, mdio_np, phy_parent_node);
-> > +			phys_are_valid = false;
-> > +		} else {
-> > +			ret = of_property_read_u32(phy_node, "reg", &phy_id);
-> > +			if (ret < 0) {
-> > +				dev_err(dev->dev, "failed to read PHY ID for port %d. Error %d\n",
-> > +					dp->index, ret);
-> > +				phys_are_valid = false;
-> > +			} else if (phy_id != dev->phy_addr_map[dp->index]) {
-> > +				dev_err(dev->dev, "PHY ID mismatch for port %d, expected 0x%x, got 0x%x\n",
-> > +					dp->index, dev->phy_addr_map[dp->index],
-> > +					phy_id);
+> I'm not claiming they have their address taken -- just saying that
+> traditionally this has always been a valid thing to do.
 > 
-> In this context, PHY ID might be a bit misleading, as PHY ID usually
-> refers to the identifier (OUI + model id used at probe to select the
-> driver). May I suggest phy_addr instead ?
+> Anyway, I raised this point last time, and I think back then the
+> consensus was to explicitly mark those you should not be able to call.
 
-ack, will rework it.
+Who came to that consensus?  There really is just a relatively well
+bounded number of functions that are used as either default methods
+or as ready made callbacks.  Everything else has no business being
+called indirectly.  While disallowing this might be a bit of work,
+I think it would be a great security improvement.
 
--- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
