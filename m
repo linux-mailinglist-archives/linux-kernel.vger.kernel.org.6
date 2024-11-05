@@ -1,104 +1,218 @@
-Return-Path: <linux-kernel+bounces-396583-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396584-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D46009BCF18
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 15:22:38 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B0AF9BCF1B
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 15:22:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B9631F213DA
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 14:22:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8C24DB240F0
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 14:22:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79B941D968E;
-	Tue,  5 Nov 2024 14:21:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E74601DACBA;
+	Tue,  5 Nov 2024 14:21:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YUQAY2Vt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="N6mGU9fx"
+Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D07A01D6DB9;
-	Tue,  5 Nov 2024 14:21:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BD571D933A
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 14:21:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730816495; cv=none; b=aLD8HOixSR6b0YwYpqh3+edDP2fQwK1zUl0qxk144/GE0riMZIQ9+B/OVMxHTbN6/C24LWMrLSBSMayiH+UnGKg3Gi3RvomVGK6SXErJb62v+/pMX3EhVIclwmjW4f9bFOHanRES6hhvankVUzn4jOALec63UXlTytn+jfRBML4=
+	t=1730816503; cv=none; b=Fj74dLk+PKN9Bqaw/aDtLxjo/0NUjYsiXWAM63ZrFMSC5tE0zr1fN99Yc7A9TQbsoHIrrLZPgrBQlI7lUSVdPPQW7TCjz0/4ayO+vf1WYlYJd9qPSpawX7Y6rJlPnOI5IVy7P1yPw98O2TihIEt3y9VDnaeCVA/MksaSF7Th+xw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730816495; c=relaxed/simple;
-	bh=DJ/kUd+DBcqBgpe9qw/202KtCsDESQxoQDuovJy9AQs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hOsRUDBZoDTCCvLgeNcYI6UfKadAD74U2YUUqC3z/HPOHABnHWnuo5YbyFpoOE0OjmWw9iDEhEYGcLuZVNiw8Bb0a48s5dJhlJLLNkbTCQItiNvnx22Y5ciQ61dwwSCSwRdhfWzKwmxQx14/DaE8JGZjgTGUT/ibHFJLNsJmpYI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YUQAY2Vt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05166C4CECF;
-	Tue,  5 Nov 2024 14:21:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730816495;
-	bh=DJ/kUd+DBcqBgpe9qw/202KtCsDESQxoQDuovJy9AQs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YUQAY2VtS3S95xlLPJHAEpqhXhFN/LXpztOjF/kPPM/auScTwyu7fJlj83qI3qTq2
-	 eGMUVeYB1hDxalbVG1VgnVbIyoIXHF+qzzDtYl9ztg2XOxBq5Zg3a2d+Pwn/jdlWuV
-	 HoJ2oXv6Du+E9lmDC/TP2SfcdRgMT7dslgdTfMBQKvo9Sbg/+UrIcb4aNnrfPsSQTz
-	 /gY+V2FSHPwKPeQvmMTpFnFoSDkr2+uGR6RRONDrLY5rAtj1PHomzXnZWGe2g2e+jG
-	 nrrcUELFRfD0cA8IfnTBdnNRCd5QNXDt3gv0AUiVR21rvuWKqheYcs29A9oenP5Y7z
-	 hjqVsiuVbAeaQ==
-Date: Tue, 5 Nov 2024 15:21:31 +0100
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Troy Mitchell <troymitchell988@gmail.com>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	linux-i2c@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v2 0/2] riscv: spacemit: add i2c support to K1 SoC
-Message-ID: <o55tg4zybyfroh7on7b6pxwbkw46fgafryzlc2gczmgecxr4ph@lptxs2timypu>
-References: <20241028053220.346283-1-TroyMitchell988@gmail.com>
- <stpzkggfwseaqy6kbppiog4xfbpq4r2jwix2nvredbmmjqzbsi@wkllt4jlingv>
- <edfaccd7-ac96-47fc-a174-912c8aaf0f5e@gmail.com>
+	s=arc-20240116; t=1730816503; c=relaxed/simple;
+	bh=+WeoblxcVi27gfW2V2SiOkOlm5SjuVVgD0/kYFf0aBI=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=M1XqVS0dso7UDEUewLyntj3k1sNpcQ00uhqsGAPcxPR1V8bkHoxezEsOJW5IRcgNqUV5aaPhK+TxX4UmaODn0n+kcy1nPXKvZ+quGRDh3OANZzIhYUnI40LcrUXzDme02twOaWvvRlH83hDqGB2n3wWv23Rq7YHSB4mnhrZ+S3o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=N6mGU9fx; arc=none smtp.client-ip=209.85.222.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-qk1-f169.google.com with SMTP id af79cd13be357-7b1488fde46so431102585a.2
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 06:21:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1730816500; x=1731421300; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=dJDZZo4Ve4iYh3WFwxUk1X5fJAMiaOerhjZjpwZfd8g=;
+        b=N6mGU9fxuBEF39JNfkPSvuUDWb5h9/rLYxgLhoF/2SOPMHX0khevkFIcgH06eqfeYR
+         o8ZG4x818s2Mvo+yj1MuAK/nqIHRvY089v1pC6Qkh3JTlq0Ya2w5ZbH+lhopsISTPNHx
+         EfdVPIlkr4OdV50M+a9JH8t5vd7YHTj0XFjIs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730816500; x=1731421300;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=dJDZZo4Ve4iYh3WFwxUk1X5fJAMiaOerhjZjpwZfd8g=;
+        b=ft/EW/Pdl/iSJDHDA79ziCaIC9nu3jgDmTWY6XQ+C8QrSUz53zmDDRE8ncegBkHH7A
+         gY/2aEhxwGUpY8E22n8FdJ2BnEHdjFGMxf6s7Y4w6fCrOShM7p+I+0E79V9MqBdTdJZt
+         CLi+zJdpX08u2ysDfJpzq44sdgm3eWO19OfIO4s5SHiV2KxnzvnxE9/8iVFTokKGPQ3e
+         sf/GQS/CN3v9HjuF+2G36mnLwh2zlVVEr/SaxBZC1r7tfaTgOSZoMEqSdlnHEkc8nVvx
+         sZcNasKGcXauJY09aQgl+0DXTVHTlCLSbmGpPQ7gnWR4St/RKJ2iRp7zvnYfzO0VDpw3
+         r7bQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUDsjwWIJ8Pd+MKWw6+rcOvXXSAxYxAD0a62DNGvxR1wg6PSCNqjKhQkpCHsh55S7HLTNEXkcO4iyyyFqQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwgPCejhz8SMyqiIMpVDNzqAKM8+/El2SE8A7iyM/Z+LP8K0ph5
+	nZqgvmDoLMsQ96UboeWJi07S7VivGKA57z70SY526VSRGaW0vKquf5qQSnecgQ==
+X-Google-Smtp-Source: AGHT+IET76wqGeZeiKOO0DDFoEAcw6qhsEUFzcltfZKRHsvnCaSVmQgqX4SOBZGzP4pWrL7tbrsm0A==
+X-Received: by 2002:a05:620a:3712:b0:7ac:dfed:65ee with SMTP id af79cd13be357-7b193ee170fmr5175922885a.3.1730816500369;
+        Tue, 05 Nov 2024 06:21:40 -0800 (PST)
+Received: from denia.c.googlers.com (189.216.85.34.bc.googleusercontent.com. [34.85.216.189])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b2f3a7139fsm521024685a.76.2024.11.05.06.21.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 05 Nov 2024 06:21:39 -0800 (PST)
+From: Ricardo Ribalda <ribalda@chromium.org>
+Date: Tue, 05 Nov 2024 14:21:38 +0000
+Subject: [PATCH v5] media: uvcvideo: Fix crash during unbind if gpio unit
+ is in use
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <edfaccd7-ac96-47fc-a174-912c8aaf0f5e@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241105-uvc-crashrmmod-v5-1-8623fa51a74f@chromium.org>
+X-B4-Tracking: v=1; b=H4sIAPEpKmcC/33Pyw7CIBCF4VcxrMUw3Fpc+R7GRYWhZdFiwBKN6
+ buLbky8Lf+TzJfMjWRMATPZrm4kYQk5xKmGWq+IHbqpRxpcbcIZl8AE0LlYalOXhzSO0VGttUP
+ hrQEJpB6dEvpweYL7Q+0h5HNM16df4LH+pApQoEwZj8qII6De2SHFMczjJqaePLTCXwIw9SHwK
+ ijZWNSdNprjF0H8F0QVLDPK2NYw7cQXQf4XJGW0/odKtp6ZpnsTlmW5AwqX/6V1AQAA
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Sakari Ailus <sakari.ailus@linux.intel.com>, 
+ stable@vger.kernel.org, Sergey Senozhatsky <senozhatsky@chromium.org>, 
+ Ricardo Ribalda <ribalda@chromium.org>
+X-Mailer: b4 0.13.0
 
-Hy Troy,
+We used the wrong device for the device managed functions. We used the
+usb device, when we should be using the interface device.
 
-On Mon, Nov 04, 2024 at 08:23:23PM +0800, Troy Mitchell wrote:
-> On 2024/10/31 19:43, Andi Shyti wrote:
-> > Hi Tony,
+If we unbind the driver from the usb interface, the cleanup functions
+are never called. In our case, the IRQ is never disabled.
 
-Sorry, I misread your name :-/
+If an IRQ is triggered, it will try to access memory sections that are
+already free, causing an OOPS.
 
-> > On Mon, Oct 28, 2024 at 01:32:18PM +0800, Troy Mitchell wrote:
-> >> Hi all,
-> >>
-> >> This patch implements I2C driver for the SpacemiT K1 SoC,
-> >> providing basic support for I2C read/write communication which
-> >> compatible with standard I2C bus specifications.
-> >>
-> >> In this version, the driver defaults to use fast-speed-mode and
-> >> interrupts for transmission, and does not support DMA, high-speed mode, or FIFO.
-> >>
-> >> The docs of I2C can be found here, in chapter 16.1 I2C [1]
-> >>
-> >> Link: https://developer.spacemit.com/documentation?token=Rn9Kw3iFHirAMgkIpTAcV2Arnkf#part5 [1]
-> >>
-> >> Troy Mitchell (2):
-> >>   dt-bindings: i2c: spacemit: add support for K1 SoC
-> >>   i2c: spacemit: add support for SpacemiT K1 SoC
-> > 
-> > As Krzysztof has asked, please do provide the changelog, it's
-> > important to track the progress of your series.
-> I saw a compilation warning sent to me by the robot, and I've
-> fixed the warning. Should I resend V2 with the changelog
-> what I miss or send V3?
+We cannot use the function devm_request_threaded_irq here. The devm_*
+clean functions are called after the main structure is released by
+uvc_delete.
 
-Please send a v3. When there are compilation issues, normally
-patches are less keen to be reviewed.
+Luckily this bug has small impact, as it is only affected by devices
+with gpio units and the user has to unbind the device, a disconnect will
+not trigger this error.
 
-You can add the changelog in the Patch 0/2 to avoid editing all
-the .patch files.
+Cc: stable@vger.kernel.org
+Fixes: 2886477ff987 ("media: uvcvideo: Implement UVC_EXT_GPIO_UNIT")
+Reviewed-by: Sergey Senozhatsky <senozhatsky@chromium.org>
+Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+---
+Changes in v5:
+- Revert non refcount, that belongs to a different set
+- Move cleanup to a different function
+- Link to v4: https://lore.kernel.org/r/20241105-uvc-crashrmmod-v4-0-410e548f097a@chromium.org
 
-Thanks,
-Andi
+Changes in v4: Thanks Laurent.
+- Remove refcounted cleaup to support devres.
+- Link to v3: https://lore.kernel.org/r/20241105-uvc-crashrmmod-v3-1-c0959c8906d3@chromium.org
+
+Changes in v3: Thanks Sakari.
+- Rename variable to initialized.
+- Other CodeStyle.
+- Link to v2: https://lore.kernel.org/r/20241105-uvc-crashrmmod-v2-1-547ce6a6962e@chromium.org
+
+Changes in v2: Thanks to Laurent.
+- The main structure is not allocated with devres so there is a small
+  period of time where we can get an irq with the structure free. Do not
+  use devres for the IRQ.
+- Link to v1: https://lore.kernel.org/r/20241031-uvc-crashrmmod-v1-1-059fe593b1e6@chromium.org
+---
+ drivers/media/usb/uvc/uvc_driver.c | 27 ++++++++++++++++++++-------
+ drivers/media/usb/uvc/uvcvideo.h   |  1 +
+ 2 files changed, 21 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/media/usb/uvc/uvc_driver.c b/drivers/media/usb/uvc/uvc_driver.c
+index a96f6ca0889f..aa937f07b6b5 100644
+--- a/drivers/media/usb/uvc/uvc_driver.c
++++ b/drivers/media/usb/uvc/uvc_driver.c
+@@ -1295,14 +1295,14 @@ static int uvc_gpio_parse(struct uvc_device *dev)
+ 	struct gpio_desc *gpio_privacy;
+ 	int irq;
+ 
+-	gpio_privacy = devm_gpiod_get_optional(&dev->udev->dev, "privacy",
++	gpio_privacy = devm_gpiod_get_optional(&dev->intf->dev, "privacy",
+ 					       GPIOD_IN);
+ 	if (IS_ERR_OR_NULL(gpio_privacy))
+ 		return PTR_ERR_OR_ZERO(gpio_privacy);
+ 
+ 	irq = gpiod_to_irq(gpio_privacy);
+ 	if (irq < 0)
+-		return dev_err_probe(&dev->udev->dev, irq,
++		return dev_err_probe(&dev->intf->dev, irq,
+ 				     "No IRQ for privacy GPIO\n");
+ 
+ 	unit = uvc_alloc_new_entity(dev, UVC_EXT_GPIO_UNIT,
+@@ -1329,15 +1329,27 @@ static int uvc_gpio_parse(struct uvc_device *dev)
+ static int uvc_gpio_init_irq(struct uvc_device *dev)
+ {
+ 	struct uvc_entity *unit = dev->gpio_unit;
++	int ret;
+ 
+ 	if (!unit || unit->gpio.irq < 0)
+ 		return 0;
+ 
+-	return devm_request_threaded_irq(&dev->udev->dev, unit->gpio.irq, NULL,
+-					 uvc_gpio_irq,
+-					 IRQF_ONESHOT | IRQF_TRIGGER_FALLING |
+-					 IRQF_TRIGGER_RISING,
+-					 "uvc_privacy_gpio", dev);
++	ret = request_threaded_irq(unit->gpio.irq, NULL, uvc_gpio_irq,
++				   IRQF_ONESHOT | IRQF_TRIGGER_FALLING |
++				   IRQF_TRIGGER_RISING,
++				   "uvc_privacy_gpio", dev);
++
++	unit->gpio.initialized = !ret;
++
++	return ret;
++}
++
++static void uvc_gpio_cleanup(struct uvc_device *dev)
++{
++	if (!dev->gpio_unit || !dev->gpio_unit->gpio.initialized)
++		return;
++
++	free_irq(dev->gpio_unit->gpio.irq, dev);
+ }
+ 
+ /* ------------------------------------------------------------------------
+@@ -1982,6 +1994,7 @@ static void uvc_unregister_video(struct uvc_device *dev)
+ 	if (media_devnode_is_registered(dev->mdev.devnode))
+ 		media_device_unregister(&dev->mdev);
+ #endif
++	uvc_gpio_cleanup(dev);
+ }
+ 
+ int uvc_register_video_device(struct uvc_device *dev,
+diff --git a/drivers/media/usb/uvc/uvcvideo.h b/drivers/media/usb/uvc/uvcvideo.h
+index 07f9921d83f2..965a789ed03e 100644
+--- a/drivers/media/usb/uvc/uvcvideo.h
++++ b/drivers/media/usb/uvc/uvcvideo.h
+@@ -234,6 +234,7 @@ struct uvc_entity {
+ 			u8  *bmControls;
+ 			struct gpio_desc *gpio_privacy;
+ 			int irq;
++			bool initialized;
+ 		} gpio;
+ 	};
+ 
+
+---
+base-commit: c7ccf3683ac9746b263b0502255f5ce47f64fe0a
+change-id: 20241031-uvc-crashrmmod-666de3fc9141
+
+Best regards,
+-- 
+Ricardo Ribalda <ribalda@chromium.org>
+
 
