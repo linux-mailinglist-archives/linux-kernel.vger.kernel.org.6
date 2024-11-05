@@ -1,152 +1,116 @@
-Return-Path: <linux-kernel+bounces-395955-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395956-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6D099BC549
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 07:14:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 219F09BC54D
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 07:17:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B6C7282BD9
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 06:14:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 061B5283175
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 06:17:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 147511C07C8;
-	Tue,  5 Nov 2024 06:14:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5A611FDF95;
+	Tue,  5 Nov 2024 06:17:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eKJlsJok"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="K2K18R4p"
+Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66252383;
-	Tue,  5 Nov 2024 06:14:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B70231DC074;
+	Tue,  5 Nov 2024 06:17:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730787281; cv=none; b=mE/Pwt1SZIbWWs70PE1ZTmMaXP+lVJeYhHi292t6QlGj4IVgG582EgP/5Ib25cZj+lf5yNn2HFf99ShhDaIbBCWJb1ysbjJubitSQ1vAcxDpzJYMBoGnK1YKpt+G0kTjwNcnmxweRJbU0YBDdo66SqEB0Iqx/0s4vYpM12sKYYo=
+	t=1730787437; cv=none; b=iZvm3YZhIFhFlog/HYEA6lNUTjygb50RZ8SEVGUFn8CBTG7USYYEbOsIHC7l4bqIpdVNAeCRuAVrtzTHjM62pBLREY/IdRU1iIlgvORHB3fDks5f+1FYhmTgL4mtntjCQr9628keB1Vl9BaOXtctW2HG9spz6vpNFNb1jZ4rakA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730787281; c=relaxed/simple;
-	bh=agzzbpp7l8r9gGcWt4SGJOxi/C1Sf+mXADljyim46VQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Z0yy1ZoZQKoBVAMt4bR2x8hTMhUawsyO76MonlBXuHcgl1kwi3xZtR5/AXyE0INcEU90/x9c0n4PRou4UYBaT17aqDQJmD5Ni6t+0enKScjv0+Gp1U82P4Ayf9vOC5A+S4iNRQxwXg5BX6w/mHcP6XH7f8u07Jr/rNdIQhi8cLU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eKJlsJok; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B85CC4CECF;
-	Tue,  5 Nov 2024 06:14:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730787280;
-	bh=agzzbpp7l8r9gGcWt4SGJOxi/C1Sf+mXADljyim46VQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=eKJlsJokCI5+XRBJmK2E4ik4ypZ52jwZWoVjsftqMn4OMgBFqZAw7w08YWhJNHBiP
-	 xGzRnyKKnScXTJYX+gNUa953mywFaFERWfumWdhgGYOm9vuAcSvC9RGGpFSEWOEI+K
-	 EZaqho7oz7/kWN9kxjGrKv+Iq0qBxoBjZRkMtaSAfPDO1xo6u0YERC+H5ugxbWpqTC
-	 CqqSx/Tzg/Wgv5epAl0yYm98G/Gy27IohxdxIuMjvADfzJPftWpyGyHA8GSsjfiwa/
-	 MpVL5Nt5WzeUJq9QbN4R+1ukrdyANhkMI4QYeN16Wuf8AaQEpaR9INzGSxD6FE4jNT
-	 7SO1/r51m7QcQ==
-Date: Mon, 4 Nov 2024 22:14:36 -0800
-From: Namhyung Kim <namhyung@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	James Clark <james.clark@linaro.org>,
-	Howard Chu <howardchu95@gmail.com>,
-	Athira Jajeev <atrajeev@linux.vnet.ibm.com>,
-	Michael Petlan <mpetlan@redhat.com>,
-	Veronika Molnarova <vmolnaro@redhat.com>,
-	Dapeng Mi <dapeng1.mi@linux.intel.com>,
-	Thomas Richter <tmricht@linux.ibm.com>,
-	Ilya Leoshkevich <iii@linux.ibm.com>,
-	Colin Ian King <colin.i.king@gmail.com>,
-	Weilin Wang <weilin.wang@intel.com>,
-	Andi Kleen <ak@linux.intel.com>,
-	Josh Poimboeuf <jpoimboe@redhat.com>, linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH v5 06/21] perf script: Move find_scripts to
- browser/scripts.c
-Message-ID: <Zym3zLDMY2eBuXg5@google.com>
-References: <Zykk2MJ4REGCaqVw@google.com>
- <CAP-5=fXQpej43wxEtMYFbxdofHtUi98X68W4AaR9UCfsbDir5A@mail.gmail.com>
- <ZykxD41c6gWQoIrQ@x1>
- <CAP-5=fWf8guTgqwfrrct3AGYDC=Lb1Oxo7kXU_x1yEr5urFSkQ@mail.gmail.com>
- <Zyk19KgzI7ybPkQ4@google.com>
- <CAP-5=fXj1-wqt+Bs-0ZypRsaZw2VP0qyKdeeRHpjUD5BwO9OBg@mail.gmail.com>
- <ZylGJF7Ux3JdJllo@google.com>
- <CAP-5=fUz_LSJ4v4aaAWoLMQRXAtsqeQSjcyRun2kBVXUHTzvUA@mail.gmail.com>
- <ZylXI4zj7Hs8Uvov@google.com>
- <CAP-5=fVK96t3-TKwqRQ1bfH2sOJHLhtVvDdJQ9U539Z1rd3kfg@mail.gmail.com>
+	s=arc-20240116; t=1730787437; c=relaxed/simple;
+	bh=UV9VG0k1Hxvx1DZUGLqAneCRsO8ykPZWz/XfeCWmqhE=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=n9jGpMl9GQfsjJhXQqpvDcYwy6H1/IWyJS/BM3GeaZ+D3g9+hQetdnvu3AuQz6WPV7bl4nQba4HQVzh5l26Qk1DDa5R+2pHHWRcS1/RQshzrtbD1T69Kq9zbBy4ngZiQXAO7iyEwVMZIy/ziYj/3iVGvMhGDjIJsG6Oj/8PSE3o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=K2K18R4p; arc=none smtp.client-ip=116.203.91.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAP-5=fVK96t3-TKwqRQ1bfH2sOJHLhtVvDdJQ9U539Z1rd3kfg@mail.gmail.com>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
+	t=1730787427;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=pzT1yWuSYo32MDvy838pA2Z2cGHks6slx4by0MlbsfU=;
+	b=K2K18R4p2w+mZKetYwZwYk+c++g/4wEGft+2ah3sEArgW3vNySgUUef6qkjhl1Ci0GvGSA
+	8J7cTyUb24+u6qfBvP2f0/e4o28XLUf7O5WwO60h8NokGnwWHijC0Kj04Fzc8KLaexwxn0
+	lRLnf3nJ3pA/LUnN3SMz612LhVwnanlYRJf0MB0m0bkXkzVGlEurzUQ7FEFve6useZKNr4
+	1CvTSeNPHJhm5gKthRtojQoUgTFWAmXezntrjYdLqK56tUxrMbCAvBqh8OrMeD8HI28rTG
+	hAb1vrJkSq9joeA+FWcyzwWYZqXDt757gNPq5iHj7qqcVLg98eWVACSHJaKaqw==
+Date: Tue, 05 Nov 2024 07:17:05 +0100
+From: Dragan Simic <dsimic@manjaro.org>
+To: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski
+ <brgl@bgdev.pl>, Heiko Stuebner <heiko@sntech.de>,
+ linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] gpio: Use of_property_present() for non-boolean
+ properties
+In-Reply-To: <20241104190628.274717-1-robh@kernel.org>
+References: <20241104190628.274717-1-robh@kernel.org>
+Message-ID: <61eb3f25ac1ab3d63e375350e0852b75@manjaro.org>
+X-Sender: dsimic@manjaro.org
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Authentication-Results: ORIGINATING;
+	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
 
-On Mon, Nov 04, 2024 at 03:28:15PM -0800, Ian Rogers wrote:
-> On Mon, Nov 4, 2024 at 3:22 PM Namhyung Kim <namhyung@kernel.org> wrote:
-> >
-> > On Mon, Nov 04, 2024 at 02:20:30PM -0800, Ian Rogers wrote:
-> > > On Mon, Nov 4, 2024 at 2:09 PM Namhyung Kim <namhyung@kernel.org> wrote:
-> > > >
-> > > > On Mon, Nov 04, 2024 at 01:06:35PM -0800, Ian Rogers wrote:
-> > > > > On Mon, Nov 4, 2024 at 1:00 PM Namhyung Kim <namhyung@kernel.org> wrote:
-> > > > > >
-> > > > > > On Mon, Nov 04, 2024 at 12:48:01PM -0800, Ian Rogers wrote:
-> > > > > > > Namhyung was asking that the c&p of code be 1 patch then "add new
-> > > > > > > changes like using openat() on top". That is:
-> > > > > > >
-> > > > > > > patch 1: add is_directory_at - introduce the 2 line helper function
-> > > > > > > patch 2: move the code
-> > > > > > > patch 3: update the code to use is_directory_at
-> > > > > > >
-> > > > > > > patch 2 is known broken as patch 3 is fixing it.
-> > > > > > >
-> > > > > > > Hopefully this is clear.
-> > > > > >
-> > > > > > Actually I don't care about the patch ordering.  My request is not
-> > > > > > to break build and just to separate different changes out. :)
-> > > > >
-> > > > > So, patch 2 can't be separated from patch 3 - are we agreed? So we
-> > > > > squash patch 2 with patch 3. Patch 1 is trivial and fails to meet the
-> > > > > bar of a meaningful change, so we squash that. We end up with this
-> > > > > patch. If there's a later revert and a dependence of the 2 liner, just
-> > > > > don't revert that part of the change. We've never had such a revert so
-> > > > > it is hard to see why we need to generate so much churn because of it.
-> > > >
-> > > > As I said the patch 1 should be the c&p and no need to introduce
-> > > > is_directory_at() before that.  Why not doing
-> > > >
-> > > >  patch1: move the code
-> > > >  patch2: add and use is_directory_at() + openat()
-> > > >
-> > > > ?
-> > >
-> > > Because placing all the code in 1 file expands GCC's analysis and the
-> > > build fails. In the commit message I describe this:
-> > > "The arrays are warned about potential buffer overflows by GCC now
-> > > that all the code exists in a single C file."
-> > > A standard unsound workaround to this is to change "sizeof(...)" to
-> > > "sizeof(...) - 1", as it is ugly I added is_directory_at to not suffer
-> > > the problem as the arrays are gone.
-> >
-> > Ok, it's strange that this type of analysis depends on the placement.
-> > Anyway it seems there's a problem in the code already.  Then we can fix
-> > it first and then move.  How about this?
-> >
-> >  patch1: add and use is_directory_at() + openat()
-> >  patch2: move the code
+Hello Rob,
+
+On 2024-11-04 20:06, Rob Herring (Arm) wrote:
+> The use of of_property_read_bool() for non-boolean properties is
+> deprecated in favor of of_property_present() when testing for property
+> presence.
 > 
-> I'm happy if the maintainers do that.
+> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
 
-It's probably not gonna happen anytime soon and I'd be happy if you
-could do that.
+Looking good to me, thanks for the patch!
 
-Thanks,
-Namhyung
+Reviewed-by: Dragan Simic <dsimic@manjaro.org>
 
+> ---
+>  drivers/gpio/gpio-rockchip.c | 2 +-
+>  drivers/gpio/gpiolib-of.c    | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/gpio/gpio-rockchip.c 
+> b/drivers/gpio/gpio-rockchip.c
+> index 365ab947983c..64924bc01591 100644
+> --- a/drivers/gpio/gpio-rockchip.c
+> +++ b/drivers/gpio/gpio-rockchip.c
+> @@ -602,7 +602,7 @@ static int rockchip_gpiolib_register(struct
+> rockchip_pin_bank *bank)
+>  	 * files which don't set the "gpio-ranges" property or systems that
+>  	 * utilize ACPI the driver has to call gpiochip_add_pin_range().
+>  	 */
+> -	if (!of_property_read_bool(bank->of_node, "gpio-ranges")) {
+> +	if (!of_property_present(bank->of_node, "gpio-ranges")) {
+>  		struct device_node *pctlnp = of_get_parent(bank->of_node);
+>  		struct pinctrl_dev *pctldev = NULL;
+> 
+> diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
+> index 880f1efcaca5..2e537ee979f3 100644
+> --- a/drivers/gpio/gpiolib-of.c
+> +++ b/drivers/gpio/gpiolib-of.c
+> @@ -337,7 +337,7 @@ static void of_gpio_flags_quirks(const struct
+> device_node *np,
+>  	 * to determine if the flags should have inverted semantics.
+>  	 */
+>  	if (IS_ENABLED(CONFIG_SPI_MASTER) && !strcmp(propname, "cs-gpios") &&
+> -	    of_property_read_bool(np, "cs-gpios")) {
+> +	    of_property_present(np, "cs-gpios")) {
+>  		u32 cs;
+>  		int ret;
 
