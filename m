@@ -1,159 +1,83 @@
-Return-Path: <linux-kernel+bounces-396144-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396145-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 051BC9BC87B
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 09:58:02 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A7DA9BC87E
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 09:59:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 89AFB1F2107E
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 08:58:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F62C282E2A
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 08:59:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BD541CF7DD;
-	Tue,  5 Nov 2024 08:57:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC2F11CF5EE;
+	Tue,  5 Nov 2024 08:59:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="VEmjrGCg";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="E20Ax+ra"
-Received: from fhigh-b6-smtp.messagingengine.com (fhigh-b6-smtp.messagingengine.com [202.12.124.157])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fQm1pmYS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 038EC1CEEB8;
-	Tue,  5 Nov 2024 08:57:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 347911CDA26;
+	Tue,  5 Nov 2024 08:59:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730797068; cv=none; b=jWVSROrRFq/B94sGN+9VL040h5HgSqwCrxqk4Le+MpGS7AEmXQq+flNugTVZTMdn9uSn4zPkHc4YZ1z0Spu4ICN/bElqRCzrbOAy298bAXuLNXnk5HHYg5Oi+tZA3p9W22/SddZCCqGL88dEOzdl7XK0yxhG04rztQ/2Wj1/OEw=
+	t=1730797158; cv=none; b=iWlNmV9gQnVQ7P61cijG9u9AWaQoH5q+6P+XTqscHc2hL1yDKrTmzp3pqRLFg7NAA82IzZy5qL6OdTIjlZPYXEWGr8bi0aRvvOlsqQubdNvYoQH+8/eQBhw8RphE7Y937wWEyx/4NtS5svWcdvA8ALNQVXWBoFrB1EsHmExr7A8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730797068; c=relaxed/simple;
-	bh=eVo19skSYM4/FeVkjG5DKP8xeomPVwkanJ4elVVAfUs=;
+	s=arc-20240116; t=1730797158; c=relaxed/simple;
+	bh=TecRWxjXwpw+WuZHTWmU9Bxq+5QkmQfUlgtvuq7O5Gs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R1NJ+WnG+nO/3mhgTU3otwmgFnj7GfJ/uuvUFWCl/ufR6qBCBPmr0ij+SkuqxxpMdEH0lbmExg7qTQ1lj8Aojwk4kEKHUbidkCGaSqZl8MC8m4ThyZUsY2S2a3ozm1jkrJVwwNNjXObWNAqOcDG/g8IqXniENxbO2npSfekkPqU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com; spf=pass smtp.mailfrom=kroah.com; dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b=VEmjrGCg; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=E20Ax+ra; arc=none smtp.client-ip=202.12.124.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kroah.com
-Received: from phl-compute-06.internal (phl-compute-06.phl.internal [10.202.2.46])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id C3CDF2540071;
-	Tue,  5 Nov 2024 03:57:43 -0500 (EST)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-06.internal (MEProxy); Tue, 05 Nov 2024 03:57:44 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm3; t=1730797063; x=1730883463; bh=4Fi+CuwsiG
-	kg8J5rFZ2VTi5CGPReWqS7KJyZGURo+Xo=; b=VEmjrGCglp6pXmAKodM3rwCVSo
-	YZKll7YXW1fGclpLzZpyloDcWrADXochnuRBB2bGBwGF87cCmLZe7NQ3TrYcOSP9
-	ruVfDGjUCL92d4caR4rkdf6n3C6f0nIYlAIpRr8bZCBKpUnF7WfVveb1Cm1l9Ozn
-	2uxaV6grYItuatxV71hjtB/c0T3lcWmdC3TjTcpG154VlUf8xC+lwbSEl+D+l/Ou
-	vM8K1bR0RDM8rmm+hFg2toIdAAP2j/GII8p+SAsa+WV2+1XcpHboTWI3optsvokE
-	Us2aT79Z5cKQNaYkUGDrRM0XFDrUu3VweTC7+ERWhVx6sFxSNOd0LwQ0FrFg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
-	1730797063; x=1730883463; bh=4Fi+CuwsiGkg8J5rFZ2VTi5CGPReWqS7KJy
-	ZGURo+Xo=; b=E20Ax+raw+uWgb7TK+Gv1sJ7v4BWlrRl4HpzqXp6Oestp+4xPdx
-	wK6YzCHssKiCpVn9hzNT0MTLpXczbywYOhDkwKNaApeTtF6eNKb402+G1RUErtaw
-	+1MfXaO1Azr1QD2kF4Zq6GZppvEeCsK+VIoo7zyYBtvpT4G86nBn4Pdz/G8kSvjO
-	m//7zYyS84s1txfsLzntWMRbz9iPymYaBzORU5PMw/s7gbCGDC/zS5OwsU9fmIPA
-	kcqOYu+TPCWXEegPXwqi+2pJLGFU3Alw66LCqMdzXVckHsMe8Znym2vgors81ZB0
-	X43BriVtst+h1AST3WrRBrceg5rddHuoN5w==
-X-ME-Sender: <xms:B94pZwLEcE985G7t6vOQoYifTuI4QSn6Qq4yJ2zSSXpT6irDQX0A9Q>
-    <xme:B94pZwJd69hkoXyEOzXh61-q7NPiQrROllosPZzBvpOh5OuJyVj7MsRdt3zYIX7R4
-    2bIKM30SJLxxw>
-X-ME-Received: <xmr:B94pZwu-_kKEYnIhTJNhR8pKikEvxE1lglAp4rVeXUW7snyIHG551GLnEvAzzh3XjCLxiy6257GQe3No65UB_ZHEHYo4TQPl7Wq4Ig>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdeljedguddvjecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttddv
-    necuhfhrohhmpefirhgvghcumffjuceoghhrvghgsehkrhhorghhrdgtohhmqeenucggtf
-    frrghtthgvrhhnpeehgedvvedvleejuefgtdduudfhkeeltdeihfevjeekjeeuhfdtueef
-    hffgheekteenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
-    hmpehgrhgvgheskhhrohgrhhdrtghomhdpnhgspghrtghpthhtohepkedpmhhouggvpehs
-    mhhtphhouhhtpdhrtghpthhtohepshhfrhestggrnhgsrdgruhhughdrohhrghdrrghupd
-    hrtghpthhtoheprghmihhtshgusehgohhoghhlvgdrtghomhdprhgtphhtthhopehlihhn
-    uhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlih
-    hnuhigqdhnvgigthesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:B94pZ9Y4PGbhG4KWS_6PDBGrCPUO1UkP-3QJo6sxBNjyVECDZO3j-w>
-    <xmx:B94pZ3Y7QNgN8sHGlz3NNsEVL47nVuXwgVPTHdn9t57C8LAMBB9KKg>
-    <xmx:B94pZ5Dxc24_FmMVz1Gu4yH17gWkqDrMuI11iMT7SkWTd0AWsVjUQQ>
-    <xmx:B94pZ9bLwjXNdW6-JC9qRBOp4-0SfEOfYbolZKaVflPeXfic1-nCCg>
-    <xmx:B94pZ1M_1XQftOHydNNgflMDvtNqhY44hkG5LWZpNrvSGm4rF2ysMOkp>
-Feedback-ID: i787e41f1:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 5 Nov 2024 03:57:42 -0500 (EST)
-Date: Tue, 5 Nov 2024 09:57:26 +0100
-From: Greg KH <greg@kroah.com>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Amit Sunil Dhamne <amitsd@google.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: manual merge of the usb tree with the usb.current
- tree
-Message-ID: <2024110513-molecule-diabolic-3bc7@gregkh>
-References: <20241101150730.090dc30f@canb.auug.org.au>
+	 Content-Type:Content-Disposition:In-Reply-To; b=HyFZcMgtnJT04J/QOWeskbFRvLwx2C8dy7IFp3q5e+dJ3vyIIBbizxhlRCT6OZViR7rJl/AM87EunYzSabZ3ddIz6qsDAq2EO/V0EhNCn2xwaZd2H7SzkeRbZkh4ge41+WvF7jW/0xtAMn6ZzkAIuUE6tcSf61JWoADfEjDhFdw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fQm1pmYS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3467CC4CECF;
+	Tue,  5 Nov 2024 08:59:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730797157;
+	bh=TecRWxjXwpw+WuZHTWmU9Bxq+5QkmQfUlgtvuq7O5Gs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fQm1pmYSOtMNp6aenuGRhpWvJqfuQF0lADrkq201hEFT59oGJ5VarcTEh3wr3p9Em
+	 QTFuyDShhq06TAfmpJyGvVl8MLHC5mYn3ZjFravzRU9aJ6amJ88DonE9Ryxhznh+IG
+	 ePeJpN8TQY0Cx7xwVfTstShHujYw35N46eCPwSizfagfyzv2Gt4lRHpi1NsOAEpuqV
+	 CYwdqTSL7uo3JTgF4dbTcLnytnU8ZT5GsfDXCj3nDkpIpREj018CkYfDXKU92gkl+r
+	 JPSD3pQvXdwiNEpAlMPyhlkwl29K+ea/ZHeUkYRcvy471X3cJtnxuRxOkSM3TwDXHI
+	 kaef2ALee8Qgg==
+Date: Tue, 5 Nov 2024 09:59:14 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Heiko Stuebner <heiko@sntech.de>
+Cc: vkoul@kernel.org, kishon@kernel.org, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, quentin.schulz@cherry.de, 
+	linux-phy@lists.infradead.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	Heiko Stuebner <heiko.stuebner@cherry.de>
+Subject: Re: [PATCH v2 1/2] dt-bindings: phy: Add Rockchip MIPI CSI/DSI PHY
+ schema
+Message-ID: <hyzfluc2v7j7zog5okgpf7eeramndrnb6nzdenpamwrf5gzdf3@kfx452yx7ryz>
+References: <20241104111121.99274-1-heiko@sntech.de>
+ <20241104111121.99274-2-heiko@sntech.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241101150730.090dc30f@canb.auug.org.au>
+In-Reply-To: <20241104111121.99274-2-heiko@sntech.de>
 
-On Fri, Nov 01, 2024 at 03:07:30PM +1100, Stephen Rothwell wrote:
-> Hi all,
+On Mon, Nov 04, 2024 at 12:11:15PM +0100, Heiko Stuebner wrote:
+> From: Heiko Stuebner <heiko.stuebner@cherry.de>
 > 
-> Today's linux-next merge of the usb tree got a conflict in:
+> Add dt-binding schema for the MIPI CSI/DSI PHY found on
+> Rockchip RK3588 SoCs.
 > 
->   drivers/usb/typec/tcpm/tcpm.c
-> 
-> between commit:
-> 
->   afb92ad8733e ("usb: typec: tcpm: restrict SNK_WAIT_CAPABILITIES_TIMEOUT transitions to non self-powered devices")
-> 
-> from the usb.current tree and commit:
-> 
->   33a0302455d6 ("usb: typec: tcpm: Add support for parsing time dt properties")
-> 
-> from the usb tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
-> 
-> -- 
-> Cheers,
-> Stephen Rothwell
-> 
-> diff --cc drivers/usb/typec/tcpm/tcpm.c
-> index 7ae341a40342,a8fcca029e78..000000000000
-> --- a/drivers/usb/typec/tcpm/tcpm.c
-> +++ b/drivers/usb/typec/tcpm/tcpm.c
-> @@@ -5042,13 -5055,10 +5056,14 @@@ static void run_state_machine(struct tc
->   		if (port->vbus_never_low) {
->   			port->vbus_never_low = false;
->   			tcpm_set_state(port, SNK_SOFT_RESET,
-> - 				       PD_T_SINK_WAIT_CAP);
-> + 				       port->timings.sink_wait_cap_time);
->   		} else {
->  -			tcpm_set_state(port, SNK_WAIT_CAPABILITIES_TIMEOUT,
->  +			if (!port->self_powered)
->  +				upcoming_state = SNK_WAIT_CAPABILITIES_TIMEOUT;
->  +			else
->  +				upcoming_state = hard_reset_state(port);
-> - 			tcpm_set_state(port, upcoming_state, PD_T_SINK_WAIT_CAP);
-> ++			tcpm_set_state(port, upcoming_state,
-> + 				       port->timings.sink_wait_cap_time);
->   		}
->   		break;
->   	case SNK_WAIT_CAPABILITIES_TIMEOUT:
+> Signed-off-by: Heiko Stuebner <heiko.stuebner@cherry.de>
+> ---
+>  .../phy/rockchip,rk3588-mipi-dcphy.yaml       | 82 +++++++++++++++++++
+>  1 file changed, 82 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/phy/rockchip,rk3588-mipi-dcphy.yaml
 
-Looks good, I've now resolved this in my branches.
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-greg k-h
+Best regards,
+Krzysztof
+
 
