@@ -1,143 +1,84 @@
-Return-Path: <linux-kernel+bounces-396590-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396591-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C5739BCF36
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 15:25:45 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B69C69BCF37
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 15:26:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 594AF1C24951
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 14:25:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F2F41F23B44
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 14:26:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CCE11D90B4;
-	Tue,  5 Nov 2024 14:25:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 602D01D8E05;
+	Tue,  5 Nov 2024 14:26:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I1lqxFFu"
-Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KiEnDZGQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 226C61D86CE;
-	Tue,  5 Nov 2024 14:25:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B522E1D2716
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 14:26:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730816736; cv=none; b=nDwSNQKg+Le/ELz/pNdS4urhueE4oI1u+PAfgaUQ35rWNkNw2OPMZT8kCZqCHpQ9dQ5zu08Hl5JTGrEcG7GwDByH2FiI+cBrHNBorjrJ+qH5wLCAS5jPp7gljTriuvGA3gf6XyGkRNjmHJGudlnXJJh/dlmfaipkZ4K5dn+6SNo=
+	t=1730816766; cv=none; b=LbGZscQ/pDx4nLrMyWHZRcthMCg9htKU6UGk0xKzTFnu5Tbq7WkpJPeXKXqwiiSaN0/fMazbS7U/M6WDPlrC4MrPLMOMvYlSZBu3v862Qyi9HQuCaAY9FL+vVYBEdQlUq3OaISjFGJnoXY6aw+xrM2LuzAaafYwN/xxfKICKmu8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730816736; c=relaxed/simple;
-	bh=jKywvlASPOyLP8DRMjcTka1z7/AS3/LjEEQY5ja8zGY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mlxrxR5E6ZnUD5JcABelg34iEDPabCLSSeC9YcF+kJ9fQepL6a47cRTR29t7gHKnhrUIsvi90R/zaeafms+6UgvHXWp9Qs2kVTFXdlgDcFPwRDWzBr5djLI9iZj+NvfNA/tDEJZCrQTNGRX4xQQqDYPXxX/7f5M5p9EacKrEg2Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I1lqxFFu; arc=none smtp.client-ip=209.85.128.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-6ea1407e978so51876017b3.1;
-        Tue, 05 Nov 2024 06:25:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730816734; x=1731421534; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jKywvlASPOyLP8DRMjcTka1z7/AS3/LjEEQY5ja8zGY=;
-        b=I1lqxFFuDCfMHdYTyg+8yxfvNm7HXkPTT3cZ6cg6iaCRZJlQDZeZqY7pJC9L08KP+R
-         worx2hQJMyfD8dWl78dJAjzp9ZFqVbWUdSOS78Ru6QbwKdvqSw45gNbM2+8Zgyyl5vie
-         RRtQBJedOV0z3LZtdR40LqvxxPL0OMXjF9PvGS5h340pJlSraL+ws3of9aDLfqUsGgOE
-         1eFst8FrzhbQqXhcuTIfiBQqkVKu1JHVVYY0M1jHoAYshLPrSgpbJnpAPBpyLYmviX6u
-         p5aAhmD1Q4SDNYt3dEPDJeM8l6IssebY7883BoTCTkyOSMB0alfwa2+/aN5o7w64q3jZ
-         WscQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730816734; x=1731421534;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jKywvlASPOyLP8DRMjcTka1z7/AS3/LjEEQY5ja8zGY=;
-        b=lztN0S/MLGn2ILqL5oFjm8WefWvXCaK39tqGiIRMfXNVYxOTFo3aQYk1tm88hI3aBY
-         dhTco+iecewFOm7BeKnmv0C3StniaDNDQtXuhw5ERSDqOIBGtI/i4tKpPrJmHWPk2q8i
-         J6qCQYrOlvoT0TqhErmVmY0AUHKil0RrbplPExmLTG1BlKUztuvlGOXSbI+MGIs9l7FL
-         +xPsT81GxZl5AqvPMS3sS+oT6GmF1z4xRaBgxQMN6SlPIP1GMucXfKKBWP0xN9pTk/7Y
-         mqYs1dXfbP1ImNr5OU3U9geamcrh+blLe8bIdPZyEXzSUUCVqe+wfFBuS/IaHv3ZZnHb
-         gtOA==
-X-Forwarded-Encrypted: i=1; AJvYcCWjsuA68CbOIKt37Y+oyYzmwTj5YfHbLljm5fVtb+3QjYBfVeTi7JsSWhWQ2GM7TIyGD7oE0Q9n@vger.kernel.org, AJvYcCXI1r2JGjyFiqvlKMMKehtEu8BwrrrZSLmGG4C3QBZd0qMSVpAjQ+S2rpYrqqiRnfyuJXSd53S4WMjn2Ew=@vger.kernel.org, AJvYcCXgSSb9POjfQkz7Vl6LmnUxkKDnKjH1vHW0ldaSjbMJRioyRSqq0UEMdJTAVYH2+MGQH2QfnXX4wpl+@vger.kernel.org
-X-Gm-Message-State: AOJu0YxSntAFe4vzIzbC5sK7/yhbEimoOKmkTw0t4UuTyeFZmswBVPMV
-	LLaFZqBqwqdptHwwwYXMB+pBZ5ifZbAkLOMB3RlpdYqi8IRfrCCU8ZTr8mrDzAiKWItD6uv5ws6
-	UbhYFmMhZDScmKf4cLi1NasujmWM+P3/t4iHzxA==
-X-Google-Smtp-Source: AGHT+IEDBM5Bvwz4//GIAc/5kSGLSMTJSY9VJft9ffmjTPVj9SD8qtX/F3jCktuGTe4ObCtClqmNucQY7xewGhz0eYc=
-X-Received: by 2002:a05:690c:360b:b0:6dd:d0fa:159e with SMTP id
- 00721157ae682-6ea64bb1aa1mr166148317b3.30.1730816733948; Tue, 05 Nov 2024
- 06:25:33 -0800 (PST)
+	s=arc-20240116; t=1730816766; c=relaxed/simple;
+	bh=RRB4S6oaCkWDGjowVs3OMVRc494gB+uLM8BscN42BXw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=h9sEhk/xt9B980aWpHxpgDyqgm3WX0CnGBBCP/IG1kMJJqmLdQkG+s/lZ2Yywk8gzXLA1IS41HWCe0I5z8EIjt7e3uHBeZz6ZeNvEPL0m9U1DB9zryfrKNnGkVWq49vMSoYKtNo3EPB+IF6kG8DUYMUi9aAVHkY7sqM2bHaGO9s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KiEnDZGQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5DFBFC4CECF;
+	Tue,  5 Nov 2024 14:26:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730816766;
+	bh=RRB4S6oaCkWDGjowVs3OMVRc494gB+uLM8BscN42BXw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=KiEnDZGQmUQLVLLuKOIJEEXBkzv7/CQKMd/UxphXfNrVj9JJfEti8/eUrudQ1+M0y
+	 5cDS1RBjLdOEPu4uaXdsG+HrTd/2UqnPSU6uFh2FV3f87Zx2efRh+Wi0G123rZW4IP
+	 x6BoD4tDIKsfDTv5skHysc1Dbg0TCnzIH+SxwjF5fpD1oMw1LZm6Wykkc8G3x258Sx
+	 i0EKS3tFgT9iQpSyLx4DM3RyBefgRVLDcgyVH3fOBCtWRUE/UU0vVM26O1gkwz+lyj
+	 1dPiXuUdMTdCUyCh3Pjp6ANnajZTtM4aTVlS1t7Td2/VwGDUsu8XE1jBkisqTOG7Pi
+	 i29W6dLF4f0UA==
+Date: Tue, 5 Nov 2024 15:26:02 +0100
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+	Anna-Maria Behnsen <anna-maria@linutronix.de>,
+	John Stultz <jstultz@google.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+	Eric Biederman <ebiederm@xmission.com>,
+	Oleg Nesterov <oleg@redhat.com>
+Subject: Re: [patch V7 19/21] posix-timers: Cleanup SIG_IGN workaround
+ leftovers
+Message-ID: <Zyoq-sc1_ihk-N2k@2a01cb09803abb1ce3ad97aed0fef98f.ipv6.abo.wanadoo.fr>
+References: <20241105063544.565410398@linutronix.de>
+ <20241105064214.187239060@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241029103656.2151-1-dqfext@gmail.com> <87msid98dc.fsf@toke.dk>
-In-Reply-To: <87msid98dc.fsf@toke.dk>
-From: Qingfang Deng <dqfext@gmail.com>
-Date: Tue, 5 Nov 2024 22:25:23 +0800
-Message-ID: <CALW65jbz=3JNTx-SWk21DT4yc+oD3Dsz49z__zgDXF7TjUV7Lw@mail.gmail.com>
-Subject: Re: [RFC PATCH net-next] net: ppp: convert to IFF_NO_QUEUE
-To: =?UTF-8?B?VG9rZSBIw7hpbGFuZC1Kw7hyZ2Vuc2Vu?= <toke@redhat.com>
-Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-ppp@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241105064214.187239060@linutronix.de>
 
-Hi Toke,
+Le Tue, Nov 05, 2024 at 09:14:55AM +0100, Thomas Gleixner a écrit :
+> From: Thomas Gleixner <tglx@linutronix.de>
+> 
+> Now that ignored posix timer signals are requeued and the timers are
+> rearmed on signal delivery the workaround to keep such timers alive and
+> self rearm them is not longer required.
+> 
+> Remove the relevant hacks and the not longer required return values from
+> the related functions. The alarm timer workarounds will be cleaned up in a
+> separate step.
+> 
+> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+> Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 
-On Tue, Nov 5, 2024 at 8:24=E2=80=AFPM Toke H=C3=B8iland-J=C3=B8rgensen <to=
-ke@redhat.com> wrote:
->
-> Qingfang Deng <dqfext@gmail.com> writes:
->
-> > When testing the parallel TX performance of a single PPPoE interface
-> > over a 2.5GbE link with multiple hardware queues, the throughput could
-> > not exceed 1.9Gbps, even with low CPU usage.
-> >
-> > This issue arises because the PPP interface is registered with a single
-> > queue and a tx_queue_len of 3. This default behavior dates back to Linu=
-x
-> > 2.3.13, which was suitable for slower serial ports. However, in modern
-> > devices with multiple processors and hardware queues, this configuratio=
-n
-> > can lead to congestion.
-> >
-> > For PPPoE/PPTP, the lower interface should handle qdisc, so we need to
-> > set IFF_NO_QUEUE.
->
-> This bit makes sense - the PPPoE and PPTP channel types call through to
-> the underlying network stack, and their start_xmit() ops never return
-> anything other than 1 (so there's no pushback against the upper PPP
-> device anyway). The same goes for the L2TP PPP channel driver.
->
-> > For PPP over a serial port, we don't benefit from a qdisc with such a
-> > short TX queue, so handling TX queueing in the driver and setting
-> > IFF_NO_QUEUE is more effective.
->
-> However, this bit is certainly not true. For the channel drivers that
-> do push back (which is everything apart from the three mentioned above,
-> AFAICT), we absolutely do want a qdisc to store the packets, instead of
-> this arbitrary 32-packet FIFO inside the driver. Your comment about the
-> short TX queue only holds for the pfifo_fast qdisc (that's the only one
-> that uses the tx_queue_len for anything), anything else will do its own
-> thing.
->
-> (Side note: don't use pfifo_fast!)
->
-> I suppose one option here could be to set the IFF_NO_QUEUE flag
-> conditionally depending on whether the underlying channel driver does
-> pushback against the PPP device or not (add a channel flag to indicate
-> this, or something), and then call the netif_{wake,stop}_queue()
-> functions conditionally depending on this. But setting the noqueue flag
-> unconditionally like this patch does, is definitely not a good idea!
-
-I agree. Then the problem becomes how to test if a PPP device is a PPPoE.
-It seems like PPPoE is the only one that implements
-ops->fill_forward_path, should I use that? Or is there a better way?
-
-- Qingfang
-
->
-> -Toke
->
+Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
 
