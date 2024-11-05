@@ -1,227 +1,263 @@
-Return-Path: <linux-kernel+bounces-395875-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395876-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1EAB9BC43D
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 05:14:18 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E63549BC443
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 05:16:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 412D41F21E74
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 04:14:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A1B2C282372
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 04:16:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E21421C07C8;
-	Tue,  5 Nov 2024 04:13:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9335199E8D;
+	Tue,  5 Nov 2024 04:16:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dxuuu.xyz header.i=@dxuuu.xyz header.b="NdfwSf6Y";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="oDlKsNgw"
-Received: from fout-b8-smtp.messagingengine.com (fout-b8-smtp.messagingengine.com [202.12.124.151])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="p3hWkmFr"
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2062.outbound.protection.outlook.com [40.107.236.62])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 587181AF0B5;
-	Tue,  5 Nov 2024 04:13:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.151
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730780022; cv=none; b=YQBPZPI1kyqzaD4Ziy/vZqzkHD0mBfaok33i1l4BdO2mCVXhe+ddLrTNlcTY74GECczIHLJ1C/fioKRn0NwcJXyd1AfwjRtjEzHZb6fbRM06AaIg2yIpovuF+1YCTW/d4VcXa1WcYjkss5PkHEgNB1L/X0guPvzUdRZsEC7BZjc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730780022; c=relaxed/simple;
-	bh=tr4lJVk02n088ptgm1RPgK2itrhiK0fzr9dZLHDpNJ8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=AobMOByogsivaMkkhXTwJdGq5D7iUyCxr2hIirCnieVut5LM5a23HPYaw7JmjKM1DezfoB6vaiitzrzzOGfzqrbssYJk4Z1IPDpx9Yl1n0PQhlNfc09babE4X3pPXvRx36hRDazu1e6Ph/kt4VlIP7Ksl5BoHByXH0MxCZ+HfRQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dxuuu.xyz; spf=pass smtp.mailfrom=dxuuu.xyz; dkim=pass (2048-bit key) header.d=dxuuu.xyz header.i=@dxuuu.xyz header.b=NdfwSf6Y; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=oDlKsNgw; arc=none smtp.client-ip=202.12.124.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dxuuu.xyz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dxuuu.xyz
-Received: from phl-compute-04.internal (phl-compute-04.phl.internal [10.202.2.44])
-	by mailfout.stl.internal (Postfix) with ESMTP id 3DD6411401C6;
-	Mon,  4 Nov 2024 23:13:39 -0500 (EST)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-04.internal (MEProxy); Mon, 04 Nov 2024 23:13:39 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dxuuu.xyz; h=cc
-	:cc:content-transfer-encoding:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm2; t=1730780019; x=
-	1730866419; bh=5U8yRCa69z0U5gKhi50bWHdbycRDn44AWGrPvfvbzUg=; b=N
-	dfwSf6Y6AG/8Dt9jbTEOQOjufuKyDtGBDnW8Km9AL3k4ZkHtdQdXjiOudNWGnWni
-	x1eagZ4Ad87Aw5rniV9UiMI3T/0YTqfn+elUvai0qXPSDhLqhalizFgOJYZlCLNg
-	xJnY0ItPCYaBcXQLm3E/rIS1mozG7gZIyRKQ4dJ6uSKc5fuJ92TwT+KFTKXaH0Wr
-	1rBgCcMHjrbOzk9TqA2kKMTE3XKpdXypVZ8Q27xpIakNr1Qk0bIz8MdQYUCkSLXR
-	VHOwSTHGWg9v+M7kC5b19MZjicc5JwbeYZmjygqDJtSAo/5KhdI7uWhDGIXWUFce
-	EAZxGJvr1yy7wrKP3jCbg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:date:date:feedback-id:feedback-id:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
-	:x-me-sender:x-sasl-enc; s=fm3; t=1730780019; x=1730866419; bh=5
-	U8yRCa69z0U5gKhi50bWHdbycRDn44AWGrPvfvbzUg=; b=oDlKsNgwMyyAKlKzR
-	yo92hZwdBwNhVbrZopj4+IpIKxixDe3XJVCA/wlUBfdhNiiDIEsJ/HCpJnJWiUQd
-	Bc407yTPlkJmzJgkBqtYnEBmWxL3zOZmslLLATZV1oHlwHqo0To05/z4BdmJvINw
-	q2yH7jhtGTFhMRMaw5dhH4+ebrvjldMNo9bxNfCgNmpebRVOXVQUlZxHUdctxlnZ
-	9K4AM3YQDs1LMi9lA0y/Cpjq+OTmsvx8C76/rp3tyCqY5y0W0lf0nPTmOWGhug7o
-	ss4tCV6BglpawkLH4LAn9onDn0lhxIf0x6ISJ0nlPIDHf8h6CbplPVnd4OJkOsNb
-	bOlgQ==
-X-ME-Sender: <xms:cpspZzf2mjBdTjOIcbU4WykSu9-Nhxn4jslQw0Ro8Vgy_8NAnTIMIQ>
-    <xme:cpspZ5Nb2t84TjBX4U2Q_QvEdHZ-hfMPljaJSRthCAgq4UVxSBbceqHqJlVuQgYGW
-    PEHYT2i34zbO2FdwA>
-X-ME-Received: <xmr:cpspZ8hnI1vX4S2SZyQ9Jwu8VySWft4QyYEHrQ2GRXeQsUW0eg08B_a8HA1FHNajEfIqFsUUsdWJKpwBqvlaz2VgPaMLAJDHFaR1xpdg-G1PTvQ6EYMB>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdeljedgieelucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucgfrhhlucfvnfffucdlje
-    dtmdenucfjughrpefhvfevufffkffojghfggfgsedtkeertdertddtnecuhfhrohhmpeff
-    rghnihgvlhcuighuuceougiguhesugiguhhuuhdrgiihiieqnecuggftrfgrthhtvghrnh
-    epgfefgfegjefhudeikedvueetffelieefuedvhfehjeeljeejkefgffeghfdttdetnecu
-    vehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepugiguhesug
-    iguhhuuhdrgiihiidpnhgspghrtghpthhtohepuddtpdhmohguvgepshhmthhpohhuthdp
-    rhgtphhtthhopegrnhgurhgvfidonhgvthguvghvsehluhhnnhdrtghhpdhrtghpthhtoh
-    epvgguuhhmrgiivghtsehgohhoghhlvgdrtghomhdprhgtphhtthhopehmihgthhgrvghl
-    rdgthhgrnhessghrohgruggtohhmrdgtohhmpdhrtghpthhtohepkhhusggrsehkvghrnh
-    gvlhdrohhrghdprhgtphhtthhopegurghvvghmsegurghvvghmlhhofhhtrdhnvghtpdhr
-    tghpthhtohepphgrsggvnhhisehrvgguhhgrthdrtghomhdprhgtphhtthhopehmrghrth
-    hinhdrlhgruheslhhinhhugidruggvvhdprhgtphhtthhopehnvghtuggvvhesvhhgvghr
-    rdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvg
-    hrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:cpspZ09MlP6aYT1LSoFgvJaPnWF6GZEC3qzrmaWx2Sik_1cW0PyyHg>
-    <xmx:cpspZ_s7y7jJj0J4Q3UTE6NNRw1f4DXU5ppa3cZqzuub2RhQzI4Yxw>
-    <xmx:cpspZzGotrxVRV2fEFE9JLSLkyCDqpPt-ZTwo-7qBvPkBBqL6G2fTQ>
-    <xmx:cpspZ2M0q3I9QwoXW99_EGkofoQVChQWqV3ON45ISEkwAjU9EmsPNA>
-    <xmx:c5spZwnDNGB43mi-WYWWpLxMz-_Btt__FmO478Ke0RcnSOCsN89qT7i9>
-Feedback-ID: i6a694271:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 4 Nov 2024 23:13:37 -0500 (EST)
-From: Daniel Xu <dxu@dxuuu.xyz>
-To: andrew+netdev@lunn.ch,
-	edumazet@google.com,
-	michael.chan@broadcom.com,
-	kuba@kernel.org,
-	davem@davemloft.net,
-	pabeni@redhat.com,
-	martin.lau@linux.dev
-Cc: netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	kernel-team@meta.com
-Subject: [PATCH net-next v3 2/2] bnxt_en: ethtool: Support unset l4proto on ip4/ip6 ntuple rules
-Date: Mon,  4 Nov 2024 21:13:20 -0700
-Message-ID: <1ac93a2836b25f79e7045f8874d9a17875229ffc.1730778566.git.dxu@dxuuu.xyz>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <cover.1730778566.git.dxu@dxuuu.xyz>
-References: <cover.1730778566.git.dxu@dxuuu.xyz>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADE6AA2D;
+	Tue,  5 Nov 2024 04:16:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.62
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730780182; cv=fail; b=ZwArZUKjSk0i8O7/uo6sAEG8TOhPa/evMUBY1UDGiJkeTgBlMSvDoatphJs4jPLBjmqDNdKOG9W5ZKrKhpKHq81V5Mp9lg/rUZQXbHRd1eLjTwGgXxb7bxbTyVJTLsIuYR/bhPYZ7O57qfUYQS9EWoIFyYaKfjFSrvq/VZcdpt0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730780182; c=relaxed/simple;
+	bh=q8IhqjYkBfbQDJfkj8r6lJFPRRXJAirDQGY5+vafnzg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=dsGgabIya85uDMfJBgxYhM7oMPgGLg8jih6G3a1uR2PUlj+ZNhGx1xh4C2M1DJFjnFnzMWQKaiCWTzRyAYZ9wsa6/CbizdwIoEV3vaIHoeHjEQGWOmkN+4iTiAUpI7aIDxerCr3J78rvz7BBzUM3bWMAhK/1kChhqwEYM1i5msk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=p3hWkmFr; arc=fail smtp.client-ip=40.107.236.62
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=FptecqUZNedxjVezOx5VOPVn++hpjdilWDhp4wYkNdrXS+oyGVOcqLuGW855cCZLtTfLmarGo7lD8f+v8KJS7CHUlC/wQeYaJH55UPEHTLC0lh41XyldVAXGptUNlr+KCIanD/opWTi51+S0WQuJGw6XUAiYPZNNCSVmETBlFM50ERzwAUkbr7GQDW0qDAFqNI806E489uJ2a28EoI3eqFk9wXpKHe4RIwDXh9hRe2ISV/RTyvyRwz/jyKcMvU0oQwqRE2kI85d/H4eedru08ND2k7+lSvYE2ML2J1rizD+ch0A6BewRW4+zIEichqSRwiGHzcFlDdLBImqKX023+Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=OVl40cnr3tvY8cQTuaW2fo3R7UnZBuSG99wWe+gNGus=;
+ b=Lkwl0Qyi680KXd5EARDyStx6ZHeBZbrCNBqVTHlaFe0G+yhzXi1XsFY3G4Qx1CBNv5mTaimlr6ZHXnwon6Sa/CZM+b0JrREOwaQzv8a0hwhZBdGCqc8w+seWusjG+KBGjfyHG/fcPKHCgo2GV7lWjXX/UzIWH8YfAFXFfVoPliNHAODkoQeGEQ4zzcJi8SuaHDmmJOwjlOaFmh7EmzYPSsMYizZ4I1EEgsztqnGDx8Ts37qqakdOlE0oKCG3R9Y9SMKuyyJKAXp5Q5w8+ANjO/kr8/Y1SnPPnU83P40Z5Jjlu6qF4YcCt0sMftTGMa8mrar++IepDgr4qW+g2C79uA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=google.com smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=OVl40cnr3tvY8cQTuaW2fo3R7UnZBuSG99wWe+gNGus=;
+ b=p3hWkmFrUE/h5SnTakzyzoGb/EYwu12omwkj+3+R5HCtOH3GsTAxU4MFSWiezeWk7QiAA9NgxPyhfz9Y9+qye/8Uz8r2wQwP7a3Jsztq30BkecyqamibDNtUWEPgoHUugyGI1OScUIMkfhjTCj+RuB25k3F6To1roS+DwJbPK3E=
+Received: from BL1PR13CA0223.namprd13.prod.outlook.com (2603:10b6:208:2bf::18)
+ by IA1PR12MB8238.namprd12.prod.outlook.com (2603:10b6:208:3f9::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8114.30; Tue, 5 Nov
+ 2024 04:16:15 +0000
+Received: from BL6PEPF00020E61.namprd04.prod.outlook.com
+ (2603:10b6:208:2bf:cafe::4e) by BL1PR13CA0223.outlook.office365.com
+ (2603:10b6:208:2bf::18) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.17 via Frontend
+ Transport; Tue, 5 Nov 2024 04:16:15 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ BL6PEPF00020E61.mail.protection.outlook.com (10.167.249.22) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8137.17 via Frontend Transport; Tue, 5 Nov 2024 04:16:15 +0000
+Received: from [172.31.11.224] (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 4 Nov
+ 2024 22:15:10 -0600
+Message-ID: <0efe04cf-9b12-4a22-ad76-b7cd1f719f45@amd.com>
+Date: Mon, 4 Nov 2024 22:14:47 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/9] KVM: selftests: Add a basic SNP smoke test
+To: Sean Christopherson <seanjc@google.com>
+CC: <kvm@vger.kernel.org>, <pbonzini@redhat.com>, <pgonda@google.com>,
+	<thomas.lendacky@amd.com>, <michael.roth@amd.com>, <shuah@kernel.org>,
+	<linux-kselftest@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <Zw2fW2AJU-_Yi5U6@google.com>
+ <4984cba7-427a-4065-9fcc-97b9f67163ed@amd.com> <Zx_QJJ1iAYewvP-k@google.com>
+ <71f0fb41-d5a7-450b-ba47-ad6c39dce586@amd.com> <ZyI4cRLsaTQ3FMk7@google.com>
+ <de2a6758-a906-4dc0-b481-6ce73aba24b9@amd.com> <ZyJzcOCPJstrumbE@google.com>
+ <11787a92-66ed-41ef-9623-d6c7220fb861@amd.com> <ZyOv5US9u22lAiPU@google.com>
+ <99e64d8e-2d10-41c7-8b7e-cd059c7e7f29@amd.com> <ZyldJ_ociCLg-b9a@google.com>
+Content-Language: en-US
+From: "Pratik R. Sampat" <pratikrajesh.sampat@amd.com>
+In-Reply-To: <ZyldJ_ociCLg-b9a@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL6PEPF00020E61:EE_|IA1PR12MB8238:EE_
+X-MS-Office365-Filtering-Correlation-Id: bc6217e0-f78f-42d0-a1e9-08dcfd509725
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|376014|36860700013|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?TXFObDJLbnViTWt0ZEt5SEU1ajcreW8zRVpqZmg0ZnhCZ0UrV3gxTko3N1hK?=
+ =?utf-8?B?R3ZoTTNlZ3BHcERrRjRWTndEakNTU3JOaS9nVUtDbEQyMmlxZnQ1VVpqQVB4?=
+ =?utf-8?B?MW94dmJ5UURJY3lINDNUMmkvRmh1ZTdyOXYxNzdkTU9NQ0dLeUtQWG9yYTYw?=
+ =?utf-8?B?NlJXcDBiNWlBMDltMHN5eEc2Rno2cmdTRmczYmhYU05nRE5zekJWNHJjTXNo?=
+ =?utf-8?B?NnFlNzg5QnZVcGkrZGlSQ0NDbGFDTzBqWDhOOFBZR1JQaThNNmx0RlUvSHZy?=
+ =?utf-8?B?WXhoUWlEYW01c2lUV29rQWd0YUlhV2FyNnQyRENPcWhSWUV2TG12Q0dSN3Na?=
+ =?utf-8?B?WmxRWGx4bjdIY2pTQVJHbWludVBlV0E0eDdwY3RQUGd4VTZGS0x4clNReWJq?=
+ =?utf-8?B?ekxzQUtXanFrMnUyM0R3WVpPVENnVGx0WEhER0lYZ0V5bXI2N3p0cTVBYlp6?=
+ =?utf-8?B?U2dDUHF5alkyeTVkMG8yNEIyWkROUkYwMG8xOTZZcUQvYUxRUGI2NXpzdlhO?=
+ =?utf-8?B?dXI1VEs1UnN0dlRScmRTSW85Tk1XMXhKWEQrSFRZTHlWcnRSZlprZ0IyK1Zr?=
+ =?utf-8?B?WllHY0k1czRPeDlabUFoYnFINkZBVHZuaVczdWpYeFkrVW1MNnVBelJmYUlD?=
+ =?utf-8?B?aWZ2T1ZEQlh6c01kbDEreS8xVHA1UThDQjBRSDJzcU15VmFnbEdEa3RCb1lJ?=
+ =?utf-8?B?azJla2dIaHZuU3dOSXBGVzhFQWJqMkJvV0NXb2NmcTRKSTRNN0U5cXVaMXRX?=
+ =?utf-8?B?eVVIRDQyYzF3c3FHY3BoTjBtdGFTN0dvSkI5WFhxekpyL0tPK1JMUiszK0tU?=
+ =?utf-8?B?cnV0VUt4bWlTM0Nxd09PdWN0dmp4MGhtOXZhNGZJZ2poWFBkeEd2SXBhRUpz?=
+ =?utf-8?B?UU9tOEVxUHlZUkt6WXhPK2xVV1RKcmZHTzZzMHJCMTd0eG9xcnE1UFo3bDFN?=
+ =?utf-8?B?WHQ4d1dyS1JrZXBESlREVUs0QnRGM0U2TWtOVEc2OFl6QVR5SUk2bHBKa1Vp?=
+ =?utf-8?B?Umo1b1lvRHJEM0tIQmVsOE1wM3MwaW5JOEtKWkQ1RkFpRWtoQmpDRkpJZU53?=
+ =?utf-8?B?WnhJR2IyT2pOcXkrSWRwQW5QWDFDWmZ1Nkp4aDVJZE9COWUwYXFZNTUyYk5Y?=
+ =?utf-8?B?a0dlZlJwcU04TGlSTHVRRUx0NTM4MFc4ODI4bU84Tkd6Mk1lZ2FPME9PV1Rx?=
+ =?utf-8?B?ZmVLQ3dPNFpvZ2R3QUFNN2FweEpnSEE2SkZpaHZ2djZ3YVlkWGswNVBHaVp0?=
+ =?utf-8?B?cUZXNFdXNFFtdkl0OVp5ZCsyZnozZUJlbzMyL0lDdUdUbmh5WWdMak1wenFM?=
+ =?utf-8?B?djVHVHhwSjBKc0hMdkR6NkZKRDZYdGgrUU1FSlkyUkNJQUUwSGdDR0I2aGVY?=
+ =?utf-8?B?RXFDd2dXUGtCbkVtaGI0VUFaMk5KaFFYK3FraUg5NHBtRm9lWStDQW0zRUpF?=
+ =?utf-8?B?aE1qdzFNR3JVdVJOaG44OTU5RkhuL2t2MUNLWkpyZmNFZ0J3bVdZM3QyQmZl?=
+ =?utf-8?B?T3hjeWxGcjloVEd1UVFzSFlobU5SSHQ3ZlZNcGJwUU1hemxQUEFPMnpHVVZ6?=
+ =?utf-8?B?U0U0WlJlQWxQODkzRUNJYzF6VHk0UG1SQkdVVG15QXNFUElRNlk5NUhXVno5?=
+ =?utf-8?B?MDkyNkxJNmo5U2Q0TkZRckViaEN3L2ZWejVnbHBmL2xyY0F1TEZMYlZDOTVt?=
+ =?utf-8?B?OC9zVGZPSHRhRm9kTldMMFdjNk42S1VrR0c5WDhhQlcwSTZHVFMxN3ZsbmxO?=
+ =?utf-8?B?WFg3STQ2UXJJU1dEZkVWa2d2SzI3OUdMbG5oTk1QbXZtdXM4dEdoOFh4c0J1?=
+ =?utf-8?Q?uffIB3M+cHyxZz5BS6o2J9T8O6Msf5ZZ1fM5A=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(376014)(36860700013)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Nov 2024 04:16:15.4179
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: bc6217e0-f78f-42d0-a1e9-08dcfd509725
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BL6PEPF00020E61.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB8238
 
-Previously, trying to insert an ip4/ip6 ntuple rule with an unset
-l4proto would get rejected with -EOPNOTSUPP. For example, the following
-would fail:
 
-    ethtool -N eth0 flow-type ip6 dst-ip $IP6 context 1
 
-The reason was that all the l4proto validation was being run despite the
-l4proto mask being set to 0x0. Fix by respecting the mask on l4proto and
-treating a mask of 0x0 as wildcard l4proto.
+On 11/4/2024 5:47 PM, Sean Christopherson wrote:
+> On Mon, Nov 04, 2024, Pratik R. Sampat wrote:
+>>
+>>
+>> On 10/31/2024 11:27 AM, Sean Christopherson wrote:
+>>> On Thu, Oct 31, 2024, Pratik R. Sampat wrote:
+>>>> Hi Sean,
+>>>>
+>>>> On 10/30/2024 12:57 PM, Sean Christopherson wrote:
+>>>>> On Wed, Oct 30, 2024, Pratik R. Sampat wrote:
+>>>>>> On 10/30/2024 8:46 AM, Sean Christopherson wrote:
+>>>>>>> +/* Minimum firmware version required for the SEV-SNP support */
+>>>>>>> +#define SNP_FW_REQ_VER_MAJOR   1
+>>>>>>> +#define SNP_FW_REQ_VER_MINOR   51
+>>>>>>>
+>>>>>>> Side topic, why are these hardcoded?  And where did they come from?  If they're
+>>>>>>> arbitrary KVM selftests values, make that super duper clear.
+>>>>>>
+>>>>>> Well, it's not entirely arbitrary. This was the version that SNP GA'd
+>>>>>> with first so that kind of became the minimum required version needed.
+>>>>>>
+>>>>>> I think the only place we've documented this is here -
+>>>>>> https://github.com/AMDESE/AMDSEV/tree/snp-latest?tab=readme-ov-file#upgrade-sev-firmware.
+>>>>>>
+>>>>>> Maybe, I can modify the comment above to say something like -
+>>>>>> Minimum general availability release firmware required for SEV-SNP support.
+>>>>>
+>>>>> Hmm, so if AMD says SNP is only supported for firmware version >= 1.51, why on
+>>>>> earth is that not checked and enforced by the kernel?  Relying on userspace to
+>>>>> not crash the host (or worse) because of unsupported firmware is not a winning
+>>>>> strategy.
+>>>>
+>>>> We do check against the firmware level 1.51 while setting things up
+>>>> first (drivers/crypto/ccp/sev-dev.c:__sev_snp_init_locked()) and we bail
+>>>> out if it's otherwise. From the userspace, calls to KVM_SEV_INIT2 or any
+>>>> other corresponding SNP calls should fail cleanly without any adverse
+>>>> effects to the host.
+>>>
+>>> And I'm saying, that's not good enough.  If the platform doesn't support SNP,
+>>> the KVM *must not* advertise support for SNP.
+>>>
+>>
+>> Sure, fair to expect this. Currently, if the FW check fails, SNP is not
+>> setup and there is nothing that indicates in the KVM capabilities (apart
+>> from one dmesg error) that the support does not exist.
+>>
+>> One thing I could do (as an independent patch) is to introduce a CC API
+>> that abstracts the FW version check made by the CCP module. Since sev
+>> platform status can be gotten before INIT to extract the major and minor
+>> version numbers, KVM can also call into this API and use that to decide
+>> if the KVM capabilities for SNP must be set or not.
+> 
+> Why is CC_ATTR_HOST_SEV_SNP set if hardware/firmware can't actually support SNP?
+> KVM shouldn't have to care about some arbitrary firmware API version, the whole
+> point of a driver is so that KVM doesn't have to deal with such details.
+> 
+> I'm a-ok with a KVM selftest *asserting* that the kernel isn't broken, but KVM
+> itself shouldn't need to manually check the firmware version.
 
-Signed-off-by: Daniel Xu <dxu@dxuuu.xyz>
----
- .../net/ethernet/broadcom/bnxt/bnxt_ethtool.c | 31 ++++++++++++++-----
- .../net/ethernet/broadcom/bnxt/bnxt_ethtool.h |  1 +
- 2 files changed, 24 insertions(+), 8 deletions(-)
+Clearing CC_ATTR_HOST_SEV_SNP when the init fails is one approach to go
+about it. Here we could clear it from here and eventually that would
+prevent the the SNP feature being set in KVM capability.
 
-diff --git a/drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.c b/drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.c
-index 41160aed9476..cfd2c65b1c90 100644
---- a/drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.c
-+++ b/drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.c
-@@ -1124,7 +1124,12 @@ static int bnxt_grxclsrule(struct bnxt *bp, struct ethtool_rxnfc *cmd)
- 	fkeys = &fltr->fkeys;
- 	fmasks = &fltr->fmasks;
- 	if (fkeys->basic.n_proto == htons(ETH_P_IP)) {
--		if (fkeys->basic.ip_proto == IPPROTO_ICMP) {
-+		if (fkeys->basic.ip_proto == BNXT_IP_PROTO_WILDCARD) {
-+			fs->flow_type = IP_USER_FLOW;
-+			fs->h_u.usr_ip4_spec.ip_ver = ETH_RX_NFC_IP4;
-+			fs->h_u.usr_ip4_spec.proto = BNXT_IP_PROTO_WILDCARD;
-+			fs->m_u.usr_ip4_spec.proto = 0;
-+		} else if (fkeys->basic.ip_proto == IPPROTO_ICMP) {
- 			fs->flow_type = IP_USER_FLOW;
- 			fs->h_u.usr_ip4_spec.ip_ver = ETH_RX_NFC_IP4;
- 			fs->h_u.usr_ip4_spec.proto = IPPROTO_ICMP;
-@@ -1149,7 +1154,11 @@ static int bnxt_grxclsrule(struct bnxt *bp, struct ethtool_rxnfc *cmd)
- 			fs->m_u.tcp_ip4_spec.pdst = fmasks->ports.dst;
- 		}
- 	} else {
--		if (fkeys->basic.ip_proto == IPPROTO_ICMPV6) {
-+		if (fkeys->basic.ip_proto == BNXT_IP_PROTO_WILDCARD) {
-+			fs->flow_type = IPV6_USER_FLOW;
-+			fs->h_u.usr_ip6_spec.l4_proto = BNXT_IP_PROTO_WILDCARD;
-+			fs->m_u.usr_ip6_spec.l4_proto = 0;
-+		} else if (fkeys->basic.ip_proto == IPPROTO_ICMPV6) {
- 			fs->flow_type = IPV6_USER_FLOW;
- 			fs->h_u.usr_ip6_spec.l4_proto = IPPROTO_ICMPV6;
- 			fs->m_u.usr_ip6_spec.l4_proto = BNXT_IP_PROTO_FULL_MASK;
-@@ -1274,10 +1283,12 @@ static int bnxt_add_l2_cls_rule(struct bnxt *bp,
- static bool bnxt_verify_ntuple_ip4_flow(struct ethtool_usrip4_spec *ip_spec,
- 					struct ethtool_usrip4_spec *ip_mask)
- {
-+	u8 mproto = ip_mask->proto;
-+	u8 sproto = ip_spec->proto;
-+
- 	if (ip_mask->l4_4_bytes || ip_mask->tos ||
- 	    ip_spec->ip_ver != ETH_RX_NFC_IP4 ||
--	    ip_mask->proto != BNXT_IP_PROTO_FULL_MASK ||
--	    ip_spec->proto != IPPROTO_ICMP)
-+	    (mproto && (mproto != BNXT_IP_PROTO_FULL_MASK || sproto != IPPROTO_ICMP)))
- 		return false;
- 	return true;
++++ b/drivers/crypto/ccp/sev-dev.c
+@@ -1099,6 +1099,7 @@ static int __sev_snp_init_locked(int *error)
+                return 0;
+
+        if (!sev_version_greater_or_equal(SNP_MIN_API_MAJOR, SNP_MIN_API_MINOR)) {
++               cc_platform_clear(CC_ATTR_HOST_SEV_SNP);
+
+A suggestion where we could more directly approach this could be by
+exporting an explicit check from ccp instead?
+
+--- a/drivers/crypto/ccp/sev-dev.c
++++ b/drivers/crypto/ccp/sev-dev.c
+@@ -122,6 +122,12 @@ static inline bool sev_version_greater_or_equal(u8 maj, u8 min)
+        return false;
  }
-@@ -1285,9 +1296,11 @@ static bool bnxt_verify_ntuple_ip4_flow(struct ethtool_usrip4_spec *ip_spec,
- static bool bnxt_verify_ntuple_ip6_flow(struct ethtool_usrip6_spec *ip_spec,
- 					struct ethtool_usrip6_spec *ip_mask)
- {
-+	u8 mproto = ip_mask->l4_proto;
-+	u8 sproto = ip_spec->l4_proto;
-+
- 	if (ip_mask->l4_4_bytes || ip_mask->tclass ||
--	    ip_mask->l4_proto != BNXT_IP_PROTO_FULL_MASK ||
--	    ip_spec->l4_proto != IPPROTO_ICMPV6)
-+	    (mproto && (mproto != BNXT_IP_PROTO_FULL_MASK || sproto != IPPROTO_ICMPV6)))
- 		return false;
- 	return true;
- }
-@@ -1341,7 +1354,8 @@ static int bnxt_add_ntuple_cls_rule(struct bnxt *bp,
- 		struct ethtool_usrip4_spec *ip_spec = &fs->h_u.usr_ip4_spec;
- 		struct ethtool_usrip4_spec *ip_mask = &fs->m_u.usr_ip4_spec;
- 
--		fkeys->basic.ip_proto = ip_spec->proto;
-+		fkeys->basic.ip_proto = ip_mask->proto ? ip_spec->proto
-+						       : BNXT_IP_PROTO_WILDCARD;
- 		fkeys->basic.n_proto = htons(ETH_P_IP);
- 		fkeys->addrs.v4addrs.src = ip_spec->ip4src;
- 		fmasks->addrs.v4addrs.src = ip_mask->ip4src;
-@@ -1372,7 +1386,8 @@ static int bnxt_add_ntuple_cls_rule(struct bnxt *bp,
- 		struct ethtool_usrip6_spec *ip_spec = &fs->h_u.usr_ip6_spec;
- 		struct ethtool_usrip6_spec *ip_mask = &fs->m_u.usr_ip6_spec;
- 
--		fkeys->basic.ip_proto = ip_spec->l4_proto;
-+		fkeys->basic.ip_proto = ip_mask->l4_proto ? ip_spec->l4_proto
-+							  : BNXT_IP_PROTO_WILDCARD;
- 		fkeys->basic.n_proto = htons(ETH_P_IPV6);
- 		fkeys->addrs.v6addrs.src = *(struct in6_addr *)&ip_spec->ip6src;
- 		fmasks->addrs.v6addrs.src = *(struct in6_addr *)&ip_mask->ip6src;
-diff --git a/drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.h b/drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.h
-index e2ee030237d4..33b86ede1ce5 100644
---- a/drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.h
-+++ b/drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.h
-@@ -44,6 +44,7 @@ struct bnxt_led_cfg {
- #define BNXT_PXP_REG_LEN	0x3110
- 
- #define BNXT_IP_PROTO_FULL_MASK	0xFF
-+#define BNXT_IP_PROTO_WILDCARD	0x0
- 
- extern const struct ethtool_ops bnxt_ethtool_ops;
- 
--- 
-2.46.0
+
++bool sev_snp_fw_available(void)
++{
++    return sev_version_greater_or_equal(SNP_MIN_API_MAJOR, SNP_MIN_API_MINOR);
++}
++EXPORT_SYMBOL_GPL(sev_snp_fw_available);
+
+which could be then called on will as follows:
+
+--- a/arch/x86/kvm/svm/sev.c
++++ b/arch/x86/kvm/svm/sev.c
+@@ -3050,7 +3050,9 @@ void __init sev_hardware_setup(void)
+        sev_es_asid_count = min_sev_asid - 1;
+        WARN_ON_ONCE(misc_cg_set_capacity(MISC_CG_RES_SEV_ES, sev_es_asid_count));
+        sev_es_supported = true;
+-       sev_snp_supported = sev_snp_enabled && cc_platform_has(CC_ATTR_HOST_SEV_SNP);
++       sev_snp_supported = sev_snp_enabled && cc_platform_has(CC_ATTR_HOST_SEV_SNP) && sev_snp_fw_available();
+
+ out:
+        if (boot_cpu_has(X86_FEATURE_SEV))
+
+This would ensure that we could enable and disable the SNP capability
+even in the case where maybe the firmware can get hotloaded using the
+proposed download_firmware_ex[1] or in cases where the INIT could be
+deferred; all while KVM wouldn't need to be bothered with the API
+details.
+
+[1]: https://lore.kernel.org/lkml/20241029183907.3536683-1-dionnaglaze@google.com/
+
 
 
