@@ -1,135 +1,174 @@
-Return-Path: <linux-kernel+bounces-397135-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397137-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E15A9BD72B
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 21:42:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E7D39BD72F
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 21:44:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 825131C22078
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 20:42:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D18121C22E2B
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 20:44:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E58BB2161FB;
-	Tue,  5 Nov 2024 20:42:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AFC41FC7D4;
+	Tue,  5 Nov 2024 20:44:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="nb0IBvxg"
-Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c9mghXbR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D48320D4FB
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 20:42:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 905451CB9E6;
+	Tue,  5 Nov 2024 20:44:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730839338; cv=none; b=mmj1aIKRqKm31okKpCaWz32WQ2ytgBkb2cvQI0wqmhyLgXnjcaVT20lq+w5yKmViygVp7CY/OAlGbOJ033wJsAyD7kkBAxDCRyxViGoxOdcF4Rd5eUVTSYxo6EhfYzQT4DRCOI8j+eUfSXZC/1EujofZs32/Auq52Z5F3nPmXDw=
+	t=1730839468; cv=none; b=CGMGEuJPKbBEqMiUBjuhL1kYxvCNkT143bJZG7m+s0R2Q6zulexujUAFLeqHw36PPN9QUUqXnm06q6gJIzeVjS9HbZXg+FJl6YUzo2r4s87jieXsZtHVz3Va5US7FtRpjT+5DuI4i+wyZsSBqaoxMyQaiIF4yRcnIptIdvgnxaE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730839338; c=relaxed/simple;
-	bh=7ON9W20Xj5wUtlNid6FvqrSm4m3tZah7hwTkMZJMwBQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=q7WXHQjdHQCjRNRgzVFItcZGyY+LJ1+qnn1JEA2c4P1ob5fws1zBxFbugdY5kvgwMqHoeCXW/WeOx0dqnWVJbV0v6m+2LtE9nnul+JFEFSgXjJQWK82PnFrzojtGps+K0Ixh3sLCha2r7b7W2yJ9+nu/ZI8YNwr6C+1/sHPeKNU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=nb0IBvxg; arc=none smtp.client-ip=209.85.222.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
-Received: by mail-qk1-f174.google.com with SMTP id af79cd13be357-7b148919e82so413907285a.0
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 12:42:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rowland.harvard.edu; s=google; t=1730839335; x=1731444135; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=PKa9cHj9kGwvPwp2QSl7YFPTHIINj3Z23PWuU6t00+k=;
-        b=nb0IBvxgqxmC9BvMTxW3mn8Ngqdiu1Amztlz1OX9ixMo1WnxVGrlIbuEJviwUN6nyt
-         yd/yZuBcBXMUSdKXKwq1hF6EXaehOlpMTHb2OjOVgwX0A83dxksk8xL+xR5OFrT1LQwF
-         OMECFRPwD1M4MXo0QyH5Zgp5LGW9aBocOmUpyLGo6TzsLEgAxAy0iYV1TTI7Ya9JwIHQ
-         v37UO1KNrju5O9EQS8VfiJ6q5d9RxqNaeeA/546Dedsiz5ebzoidlcWJ5fqrOb4KTtjL
-         CeDTui9Gx77fgX1m1ugEgs3qsApoGpwRFQNBi/a+NOXOfjk5EVLfZxs3yWBfHLs9ji5U
-         JnAA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730839335; x=1731444135;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PKa9cHj9kGwvPwp2QSl7YFPTHIINj3Z23PWuU6t00+k=;
-        b=qG4KchQpTAp2bM94gJRj9TKNUqN8JinpnRqENZ2+vsTnbY4EMH/oKIsLCJlDx9F9/x
-         AWjy2tqDYDtnqyHbn6Dq0P4RYyZN+GgMnaeddvKPl6nzPMZbCCE7sLD73bkIHI/LpRwJ
-         3YehBSrJ2ANj3bb2vSd687U8IRFoIo8mUraXTGKWc7ZWCArXNT35Haq1p0j3pUG6lNu8
-         Aq/HfGjBhKSKfmVW8OVJ89OPoxBjsBQ8qo6LNq2P4WrL5c9VrwOKZX4hNozT/Bbksh7W
-         Wjwzzx2ecplQk8to7Pa3mIWfctewAMpYuQB+F0EuS5nwv937R+a/pWD1wkZVeVc0nrOU
-         rijw==
-X-Forwarded-Encrypted: i=1; AJvYcCUn9KBUbvI01jrlpSqmZ5XlMjLtH2CiFiB28zri1NHbvL/mnafSSC4gSlVtpX8JW3oPcByOF1+RoiO3gh0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwIy/B7ZqCC0I06UHozBjIyC1LiZCVurIaYNj7UvMqn/RhFlLXV
-	j343ymZ7v9tgnt/aPN/9vKykHlCgFmKiAcIxZjbKpas9g+29JI70VLxN8e9O0g==
-X-Google-Smtp-Source: AGHT+IGLtHVQCozvs2LpnAtMWfAj3RRmkYSf+6MmmzJ7Zm3md0giCBLprcvqMrc91E/bZGIm2mFmlg==
-X-Received: by 2002:a05:620a:2415:b0:7b1:50ba:76e8 with SMTP id af79cd13be357-7b2f24dd667mr2787603485a.23.1730839335584;
-        Tue, 05 Nov 2024 12:42:15 -0800 (PST)
-Received: from rowland.harvard.edu ([140.247.12.5])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b2f39fb2a4sm559966985a.47.2024.11.05.12.42.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Nov 2024 12:42:14 -0800 (PST)
-Date: Tue, 5 Nov 2024 15:42:12 -0500
-From: Alan Stern <stern@rowland.harvard.edu>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: syzbot <syzbot+ccc0e1cfdb72b664f0d8@syzkaller.appspotmail.com>,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	pasha.tatashin@soleen.com, syzkaller-bugs@googlegroups.com,
-	linux-usb@vger.kernel.org
-Subject: Re: [syzbot] [mm?] kernel BUG in __page_table_check_zero (2)
-Message-ID: <c5a71213-ca55-4165-8e50-2686d05614e3@rowland.harvard.edu>
-References: <67230d7e.050a0220.529b6.0005.GAE@google.com>
- <20241104200007.dc8d0f018cc536a4957a1cd0@linux-foundation.org>
- <f94f3351-be53-4d61-a31a-2bb07925c5ad@rowland.harvard.edu>
- <20241105110236.40819b7effad3f44de73dddf@linux-foundation.org>
+	s=arc-20240116; t=1730839468; c=relaxed/simple;
+	bh=oPw9NdpDDLnz8rs83YdqEqUHVVctUKHOXEqimv5CgeQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=G2wZdycNSpdp8t08sGI8AMVjpzkwXrTDNQPajp7o3FEisT2OXW97o9OhQJtL0kU2KBvJqYl10u728vy44UZkwTGixO91edJoo3IP/Ajs1SwjbgmIOcVL/DMDA4AwVFu3QS4xCqI/R2h/KN+6FH3TRPlUWIX8jNjO8KIpyyxenn8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c9mghXbR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 105D5C4CED1;
+	Tue,  5 Nov 2024 20:44:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730839466;
+	bh=oPw9NdpDDLnz8rs83YdqEqUHVVctUKHOXEqimv5CgeQ=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=c9mghXbRvq0iilLhQYpGukf+ZffuzNQC7q5iTEkmOHcZinljH1ZzZ+Yg2QnxQi0X6
+	 aIQCTsi5Z79gWFLeOyfIYNotdVksJb21nhlKooYvFGhOn/By7Tv23+dlhj14LW4U0e
+	 JsLajrgdZdGfZWA/NzAT+jFNbiJwtaSLbaTGBAoRD94MkuQHClwxjEsnxaFL6Zsl7u
+	 RyUxX3aNqDXpwgFqWVBZQRzcOw43ZdtMgIQ2v0St1saXjNC1IWX9a9po0wSCURqy81
+	 oGBQJFJteaCcB7mDwg9Sw1rfOeo94ulCWllX/tipLS/h//RVM9RLisoNs6qGFK2ntv
+	 fgyolpX3jX4/Q==
+Received: by mail-oa1-f53.google.com with SMTP id 586e51a60fabf-290ff24354dso2750425fac.0;
+        Tue, 05 Nov 2024 12:44:26 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCU643Jn9VH3qXEDzrT5eIHkn8skMhQaf87XAWVSS0iZh5PZVdFqdMslxd3r0rOBJ7FXSmKNHjknYPzJ@vger.kernel.org, AJvYcCVDvRRfneTz4pRe5spaKqQMPkNddDpwQJEt+kO5ygCl9DvrteDsfxuOEqfoP+YmZ4H1r5xvLKRfYZL7Gk45@vger.kernel.org
+X-Gm-Message-State: AOJu0YyBHKBbbsXj/z0Rk8h8xF5XHwiI3FI3uEI91XVM+mZ8XdVr9k2z
+	wzNvKtwVyROUOTr3JUphVJb9ApT7rM9Mhr0hKCaF7pVBEnxl66T3JaouZPaV496dTPBGfoRFmYc
+	FZXysX+TjIkiMNMMZbuTfJVZeA4Y=
+X-Google-Smtp-Source: AGHT+IEYRC2oYocCJtFwkv7gITL7XNVhQKQ8mesVoyI/BViogf+LiF3JmzOwLEjp3lINSSoVS/PbDGhWrlolHc/BCp0=
+X-Received: by 2002:a05:6870:d14c:b0:286:f24f:c231 with SMTP id
+ 586e51a60fabf-2949ee54c2amr15117878fac.25.1730839465312; Tue, 05 Nov 2024
+ 12:44:25 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241105110236.40819b7effad3f44de73dddf@linux-foundation.org>
+References: <20241030123701.1538919-1-arnd@kernel.org>
+In-Reply-To: <20241030123701.1538919-1-arnd@kernel.org>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Tue, 5 Nov 2024 21:44:13 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0iU6q=6bUznR2Fyn2Qhr-KHuV4KvVPUxKiQoUXe7zRcvQ@mail.gmail.com>
+Message-ID: <CAJZ5v0iU6q=6bUznR2Fyn2Qhr-KHuV4KvVPUxKiQoUXe7zRcvQ@mail.gmail.com>
+Subject: Re: [PATCH 1/2] [v3] acpi: processor_perflib: extend X86 dependency
+To: Arnd Bergmann <arnd@kernel.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Len Brown <lenb@kernel.org>, 
+	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Nov 05, 2024 at 11:02:36AM -0800, Andrew Morton wrote:
-> On Tue, 5 Nov 2024 11:39:59 -0500 Alan Stern <stern@rowland.harvard.edu> wrote:
-> 
-> > On Mon, Nov 04, 2024 at 08:00:07PM -0800, Andrew Morton wrote:
-> > > On Wed, 30 Oct 2024 21:54:22 -0700 syzbot <syzbot+ccc0e1cfdb72b664f0d8@syzkaller.appspotmail.com> wrote:
-> > > 
-> > > > Hello,
-> > > > 
-> > > > syzbot found the following issue on:
-> > > 
-> > > Thanks.  I'm suspecting some USB issue - fault injection was used to
-> > > trigger a memory allocation failure and dec_usb_memory_use_count() ended
-> > > up freeing an in-use page.  Could USB folks please have a look?
-> > 
-> > Andrew, I'm not sure what to look for.
-> 
-> Thanks for looking.
-> 
-> > Can you read through 
-> > usbdev_mmap() in drivers/usb/core/devio.c, along with the four short 
-> > routines preceding it, and let us know if anything seems obviously 
-> > wrong?
-> 
-> All I see is lots of USB code which I don't understand ;) It seems odd
+On Wed, Oct 30, 2024 at 1:37=E2=80=AFPM Arnd Bergmann <arnd@kernel.org> wro=
+te:
+>
+> From: Arnd Bergmann <arnd@arndb.de>
+>
+> The majority of the processor_perflib code is only used by cpufreq
+> drivers on the x86 architecture and makes no sense without the
+> x86 SMI interactions that rely on I/O port access.
+>
+> Replace the existing #ifdef checks with one that covers all of the
+> code that is only used by x86 drivers, saving a little bit
+> of kernel code size on other architectures.
+>
+> There is likely more code under CONFIG_ACPI_PROCESSOR that falls
+> into this category, but changing those would require a larger
+> rework.
+>
+> Suggested-by: Rafael J. Wysocki <rafael@kernel.org>
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+> This is not needed for correctness, only as a small optimization.
+>
+> v3: fix build warning
+> ---
+>  drivers/acpi/processor_perflib.c | 13 +++++--------
+>  1 file changed, 5 insertions(+), 8 deletions(-)
+>
+> diff --git a/drivers/acpi/processor_perflib.c b/drivers/acpi/processor_pe=
+rflib.c
+> index 4265814c74f8..53996f1a2d80 100644
+> --- a/drivers/acpi/processor_perflib.c
+> +++ b/drivers/acpi/processor_perflib.c
+> @@ -24,8 +24,6 @@
+>
+>  #define ACPI_PROCESSOR_FILE_PERFORMANCE        "performance"
+>
+> -static DEFINE_MUTEX(performance_mutex);
+> -
+>  /*
+>   * _PPC support is implemented as a CPUfreq policy notifier:
+>   * This means each time a CPUfreq driver registered also with
+> @@ -209,6 +207,10 @@ void acpi_processor_ppc_exit(struct cpufreq_policy *=
+policy)
+>         }
+>  }
+>
+> +#ifdef CONFIG_X86
+> +
+> +static DEFINE_MUTEX(performance_mutex);
+> +
+>  static int acpi_processor_get_performance_control(struct acpi_processor =
+*pr)
+>  {
+>         int result =3D 0;
+> @@ -267,7 +269,6 @@ static int acpi_processor_get_performance_control(str=
+uct acpi_processor *pr)
+>         return result;
+>  }
+>
+> -#ifdef CONFIG_X86
+>  /*
+>   * Some AMDs have 50MHz frequency multiples, but only provide 100MHz rou=
+nding
+>   * in their ACPI data. Calculate the real values and fix up the _PSS dat=
+a.
+> @@ -298,9 +299,6 @@ static void amd_fixup_frequency(struct acpi_processor=
+_px *px, int i)
+>                         px->core_frequency =3D (100 * (fid + 8)) >> did;
+>         }
+>  }
+> -#else
+> -static void amd_fixup_frequency(struct acpi_processor_px *px, int i) {};
+> -#endif
+>
+>  static int acpi_processor_get_performance_states(struct acpi_processor *=
+pr)
+>  {
+> @@ -440,13 +438,11 @@ int acpi_processor_get_performance_info(struct acpi=
+_processor *pr)
+>          * the BIOS is older than the CPU and does not know its frequenci=
+es
+>          */
+>   update_bios:
+> -#ifdef CONFIG_X86
+>         if (acpi_has_method(pr->handle, "_PPC")) {
+>                 if(boot_cpu_has(X86_FEATURE_EST))
+>                         pr_warn(FW_BUG "BIOS needs update for CPU "
+>                                "frequency support\n");
+>         }
+> -#endif
+>         return result;
+>  }
+>  EXPORT_SYMBOL_GPL(acpi_processor_get_performance_info);
+> @@ -788,3 +784,4 @@ void acpi_processor_unregister_performance(unsigned i=
+nt cpu)
+>         mutex_unlock(&performance_mutex);
+>  }
+>  EXPORT_SYMBOL(acpi_processor_unregister_performance);
+> +#endif
+> --
 
-Well, I wouldn't expect you to understand the USB-specific stuff.  I was 
-really asking about the memory-management calls and error handling.
-
-> that usbdev_mmap() calls dec_usb_memory_use_count() on some error
-> paths, but goes direct to usbfs_decrease_memory_usage() on others.
-
-The paths that call dec_usb_memory_use_count() are those on which a 
-memory buffer has been allocated and needs to be deallocated.  That 
-routine then calls usbfs_decrease_memory_usage() as needed.
-
-> Did you try running the "C reproducer"?
-
-No, I haven't.  I haven't had much time to work on this.  In fact, I 
-couldn't even tell exactly which call in dec_usb_memory_use_count() 
-caused the fault; the line number listed in the bug report didn't match 
-up with any obvious suspects in my copy of the kernel source.  Was it 
-the kfree(usbm) call?
-
-Alan Stern
+Applied along with the [2/2] as 6.13 material, thanks!
 
