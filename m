@@ -1,140 +1,239 @@
-Return-Path: <linux-kernel+bounces-396830-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396833-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97A329BD2CE
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 17:50:18 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44A679BD2D7
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 17:50:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C93431C22138
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 16:50:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C88711F2308C
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 16:50:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FDCB1DB93A;
-	Tue,  5 Nov 2024 16:50:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 366231DB93A;
+	Tue,  5 Nov 2024 16:50:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="aPt89ZaC"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AOvCpM90"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3FAE757EA;
-	Tue,  5 Nov 2024 16:50:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0627B17C7CE
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 16:50:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730825410; cv=none; b=eZEo/2GDeDmQrAUIdBwgVXzuAlhaVi5Cnh0IqRjPdju1/F7NGCMmAwrGE0pLCgXSe+GeSZnG/IrFRmsBS1+tJ2D9rt9SBhQEXsv+R/tGbxyLhLaJMCXdUVGKb7gJGRUxzUrSxCTTx8UdNf6sIxwR3yECd712SMUzxuWeoilYQLU=
+	t=1730825444; cv=none; b=bKQCtnPTdiAZybKP9gFXgJaZE2xyxFf0ywBAfZr6LZEApkttOWDotPWb+9LVHtg2hGYCWw02h47OsxbCeh6as7ya8WW10Sb0qMIQN2QvmFmNEoVf7hzUUajipPT0/SZIjVZXm/AwUoe80Z7rmS/zqQtYcb0l/lXhfTsUIR6YPVs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730825410; c=relaxed/simple;
-	bh=+jxQ4m6ojnVrIiZknRHhFL0zF8P3yTebntQLrmCEsQI=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=kcM/QQxs6gTZXiuolQeyWhpu7Q9XsP00Ft1fzk1OqxGzfxEAAyEWpEIh80Z/VpUnDFt3/IfmIyp+VimbpO+6wLdQZdUY4Rzu1krFKp2PIY6OS0FWEMs371PgwPSyqGFBB6ziyzh9NJc/b2HCpZoDVHHmmyYrY1joDtQUWx2TWyg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=aPt89ZaC; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A5A9Ooi004167;
-	Tue, 5 Nov 2024 16:50:04 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=m5RGJklFLLw78PcIGmBV02
-	E4pThNNSclTnW8NqPbHCs=; b=aPt89ZaCUcqUVX5bBADcn6E02LO1fzhYFuyafD
-	wBLfkevFzYn9E2e6FrTbi8iDLgfG2Vco583Y87Mh0VZ6IADRf2D6Ld/Gi2V+2Sc9
-	cZB3v1nX1LAgU3i9gQObQmciL64cAb1mHhWPaZrXtvGm9jHmyaxZXFz/nafQwvvc
-	7+FMxTnhOvUWCqyX4NpRUVtKof3q1AWKEV4XCSmcgu2i6qvJtZR1xJKtTYMpz9q+
-	0tOoJikDuEqxlhzjeHEY35y2CtVyyTV2YSnDxFTGmFQn7+fX2zoJMQ4IYQYs4MAO
-	59rTSbFM3OmW1qCA298rR/c+azEK7aKKPGLYtoFf+MMcheTw==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42qhbu959c-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 05 Nov 2024 16:50:04 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4A5Go3jD005760
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 5 Nov 2024 16:50:03 GMT
-Received: from hu-kriskura-hyd.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Tue, 5 Nov 2024 08:49:59 -0800
-From: Krishna Kurapati <quic_kriskura@quicinc.com>
-To: Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konradybcio@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        "Dmitry
- Baryshkov" <dmitry.baryshkov@linaro.org>
-CC: <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <quic_ppratap@quicinc.com>,
-        <quic_jackp@quicinc.com>, Krishna Kurapati <quic_kriskura@quicinc.com>
-Subject: [PATCH v3 0/2] Add Devicetree support for USB controllers on QCS8300
-Date: Tue, 5 Nov 2024 22:19:44 +0530
-Message-ID: <20241105164946.2357821-1-quic_kriskura@quicinc.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1730825444; c=relaxed/simple;
+	bh=2j1rxLlZd31DwI6m/aF3mZF2zyCb/7ZZll95AQ3qe5s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MHtTpFcvwvRkSMyJwQbYaDVqzyYlkW969JK/zC3PPogPlcl7ncQMeB1va5AU14xTFbX5hgbPcWixJFWADF3buag1tG7YqmOmEqg/7r9fMAL/DhYeXMrLEtapmi6vszG1amZTIsIMFT0m7yCIVl5/Q3yemVJGbGtM5QLFF3i0W00=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AOvCpM90; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730825442; x=1762361442;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=2j1rxLlZd31DwI6m/aF3mZF2zyCb/7ZZll95AQ3qe5s=;
+  b=AOvCpM90M+JkLNJXKyWNxLex+d3/conh0blqK3EekGAdu84YrDdibkyl
+   Ijh04SJFKcJwcV/sSMfGSm64fih2k2lDadH0OVIv9K+4C6DFkFBIQmorD
+   qGTwo8fcSmGoV0QTsOcbWr5fbKittnUZXn2EUb9xpQckDxTkPn5pvm+EO
+   r7Dbc8O7/dU2QwBAH5KxWd4Bbs6QQdHtdlYALAv/pQX62sNwG8Tw8pnUE
+   J1xCmYapYJZ49uGPKRMGVaW8sOQHoyO0hB3ZRxEfBLPImYsm7Qj7z3kB0
+   14PWBVL5ytNWFRJLa716+yrDYWGOY4LWn/+uBFFthMvJ24RHocE0iBZKM
+   Q==;
+X-CSE-ConnectionGUID: LFCxA0ZoQHmwZ08N7eGv2Q==
+X-CSE-MsgGUID: RHnhoq+1RXGuSTDIzFmC8A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="48047367"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="48047367"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2024 08:50:41 -0800
+X-CSE-ConnectionGUID: O+IIc/JIRzOKW+7YisIoew==
+X-CSE-MsgGUID: dsFuuDq6SnS+WCUt2JAfng==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,260,1725346800"; 
+   d="scan'208";a="84409237"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by fmviesa010.fm.intel.com with ESMTP; 05 Nov 2024 08:50:38 -0800
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t8MlI-000mGR-26;
+	Tue, 05 Nov 2024 16:50:36 +0000
+Date: Wed, 6 Nov 2024 00:49:44 +0800
+From: kernel test robot <lkp@intel.com>
+To: Jiqian Chen <Jiqian.Chen@amd.com>,
+	Alex Deucher <alexander.deucher@amd.com>,
+	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+	Xinhui Pan <Xinhui.Pan@amd.com>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	amd-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	Pierre-Eric Pelloux-Prayer <pierre-eric.pelloux-prayer@amd.com>,
+	Jiqian Chen <Jiqian.Chen@amd.com>, Huang Rui <Ray.Huang@amd.com>
+Subject: Re: [PATCH 2/2] drm/amdgpu: Bypass resizing bars for PVH dom0
+Message-ID: <202411060019.p34zs7ce-lkp@intel.com>
+References: <20241105060531.3503788-3-Jiqian.Chen@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 1lGUtp05zZ_HwvX5NHgX2qi9KO6YAYIp
-X-Proofpoint-GUID: 1lGUtp05zZ_HwvX5NHgX2qi9KO6YAYIp
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- mlxlogscore=999 clxscore=1015 priorityscore=1501 adultscore=0 bulkscore=0
- suspectscore=0 phishscore=0 lowpriorityscore=0 spamscore=0 malwarescore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411050130
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241105060531.3503788-3-Jiqian.Chen@amd.com>
 
-This series aims at enabling USB on QCS8300 which has 2 USB controllers.
-The primary controller is SuperSpeed capable and secondary one is
-High Speed only capable. Both the High Speed Phys are Femto phys and the
-SuperSpeed Phy is a QMP Uni Phy.
+Hi Jiqian,
 
-Base DT Support has been added for both controllers while only one has
-been enabled on Ride Platform. The primary controller has been configured
-in device mode. The secondary controller will be enabled in host mode post
-addition of SPMI Node which allows control over PMIC Gpios for providing
-vbus to connected peripherals.
+kernel test robot noticed the following build errors:
 
-This series depends on the following series ACKed by upstream maintainers:
-Base DT: https://lore.kernel.org/all/20240925-qcs8300_initial_dtsi-v2-0-494c40fa2a42@quicinc.com/
+[auto build test ERROR on linus/master]
+[also build test ERROR on v6.12-rc6 next-20241105]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Bindings patches posted at:
-https://lore.kernel.org/all/20241009195348.2649368-1-quic_kriskura@quicinc.com/
+url:    https://github.com/intel-lab-lkp/linux/commits/Jiqian-Chen/drm-amdgpu-set-passthrough-mode-for-xen-pvh-hvm/20241105-141716
+base:   linus/master
+patch link:    https://lore.kernel.org/r/20241105060531.3503788-3-Jiqian.Chen%40amd.com
+patch subject: [PATCH 2/2] drm/amdgpu: Bypass resizing bars for PVH dom0
+config: arm64-allmodconfig (https://download.01.org/0day-ci/archive/20241106/202411060019.p34zs7ce-lkp@intel.com/config)
+compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 639a7ac648f1e50ccd2556e17d401c04f9cce625)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241106/202411060019.p34zs7ce-lkp@intel.com/reproduce)
 
-Link to v1:
-https://lore.kernel.org/all/20241009195636.2649952-1-quic_kriskura@quicinc.com/
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202411060019.p34zs7ce-lkp@intel.com/
 
-Link to v2:
-https://lore.kernel.org/all/20241011074619.796580-1-quic_kriskura@quicinc.com/
+All errors (new ones prefixed by >>):
 
-v3 has only been compile tested since only cosmetic changes have been done.
+   In file included from drivers/gpu/drm/amd/amdgpu/amdgpu_device.c:33:
+   In file included from include/linux/iommu.h:10:
+   In file included from include/linux/scatterlist.h:8:
+   In file included from include/linux/mm.h:2213:
+   include/linux/vmstat.h:504:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+     504 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+     505 |                            item];
+         |                            ~~~~
+   include/linux/vmstat.h:511:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+     511 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+     512 |                            NR_VM_NUMA_EVENT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+     518 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
+         |                               ~~~~~~~~~~~ ^ ~~~
+   include/linux/vmstat.h:524:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+     524 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+     525 |                            NR_VM_NUMA_EVENT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~~
+>> drivers/gpu/drm/amd/amdgpu/amdgpu_device.c:1542:6: error: call to undeclared function 'xen_initial_domain'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+    1542 |         if (xen_initial_domain() && xen_pvh_domain())
+         |             ^
+>> drivers/gpu/drm/amd/amdgpu/amdgpu_device.c:1542:30: error: call to undeclared function 'xen_pvh_domain'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+    1542 |         if (xen_initial_domain() && xen_pvh_domain())
+         |                                     ^
+   4 warnings and 2 errors generated.
 
-Changes in v3:
-Updated commit text for patch-2.
-Added dwc3 controller quirks that are applicable.
-Fixed nits pointed out in v2.
 
-Changes in v2:
-Added quirk to use pipe clk as utmi clk for second controller.
-Added wakeup source for second controller.
-Modified commit text for DTS change.
+vim +/xen_initial_domain +1542 drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
 
-Krishna Kurapati (2):
-  arm64: dts: qcom: Add support for usb nodes on QCS8300
-  arm64: dts: qcom: Enable USB controllers for QCS8300
-
- arch/arm64/boot/dts/qcom/qcs8300-ride.dts |  23 +++
- arch/arm64/boot/dts/qcom/qcs8300.dtsi     | 181 ++++++++++++++++++++++
- 2 files changed, 204 insertions(+)
+  1519	
+  1520	/**
+  1521	 * amdgpu_device_resize_fb_bar - try to resize FB BAR
+  1522	 *
+  1523	 * @adev: amdgpu_device pointer
+  1524	 *
+  1525	 * Try to resize FB BAR to make all VRAM CPU accessible. We try very hard not
+  1526	 * to fail, but if any of the BARs is not accessible after the size we abort
+  1527	 * driver loading by returning -ENODEV.
+  1528	 */
+  1529	int amdgpu_device_resize_fb_bar(struct amdgpu_device *adev)
+  1530	{
+  1531		int rbar_size = pci_rebar_bytes_to_size(adev->gmc.real_vram_size);
+  1532		struct pci_bus *root;
+  1533		struct resource *res;
+  1534		unsigned int i;
+  1535		u16 cmd;
+  1536		int r;
+  1537	
+  1538		if (!IS_ENABLED(CONFIG_PHYS_ADDR_T_64BIT))
+  1539			return 0;
+  1540	
+  1541		/* Bypass for PVH dom0 which doesn't support resizable bar */
+> 1542		if (xen_initial_domain() && xen_pvh_domain())
+  1543			return 0;
+  1544	
+  1545		/* Bypass for VF */
+  1546		if (amdgpu_sriov_vf(adev))
+  1547			return 0;
+  1548	
+  1549		/* PCI_EXT_CAP_ID_VNDR extended capability is located at 0x100 */
+  1550		if (!pci_find_ext_capability(adev->pdev, PCI_EXT_CAP_ID_VNDR))
+  1551			DRM_WARN("System can't access extended configuration space, please check!!\n");
+  1552	
+  1553		/* skip if the bios has already enabled large BAR */
+  1554		if (adev->gmc.real_vram_size &&
+  1555		    (pci_resource_len(adev->pdev, 0) >= adev->gmc.real_vram_size))
+  1556			return 0;
+  1557	
+  1558		/* Check if the root BUS has 64bit memory resources */
+  1559		root = adev->pdev->bus;
+  1560		while (root->parent)
+  1561			root = root->parent;
+  1562	
+  1563		pci_bus_for_each_resource(root, res, i) {
+  1564			if (res && res->flags & (IORESOURCE_MEM | IORESOURCE_MEM_64) &&
+  1565			    res->start > 0x100000000ull)
+  1566				break;
+  1567		}
+  1568	
+  1569		/* Trying to resize is pointless without a root hub window above 4GB */
+  1570		if (!res)
+  1571			return 0;
+  1572	
+  1573		/* Limit the BAR size to what is available */
+  1574		rbar_size = min(fls(pci_rebar_get_possible_sizes(adev->pdev, 0)) - 1,
+  1575				rbar_size);
+  1576	
+  1577		/* Disable memory decoding while we change the BAR addresses and size */
+  1578		pci_read_config_word(adev->pdev, PCI_COMMAND, &cmd);
+  1579		pci_write_config_word(adev->pdev, PCI_COMMAND,
+  1580				      cmd & ~PCI_COMMAND_MEMORY);
+  1581	
+  1582		/* Free the VRAM and doorbell BAR, we most likely need to move both. */
+  1583		amdgpu_doorbell_fini(adev);
+  1584		if (adev->asic_type >= CHIP_BONAIRE)
+  1585			pci_release_resource(adev->pdev, 2);
+  1586	
+  1587		pci_release_resource(adev->pdev, 0);
+  1588	
+  1589		r = pci_resize_resource(adev->pdev, 0, rbar_size);
+  1590		if (r == -ENOSPC)
+  1591			DRM_INFO("Not enough PCI address space for a large BAR.");
+  1592		else if (r && r != -ENOTSUPP)
+  1593			DRM_ERROR("Problem resizing BAR0 (%d).", r);
+  1594	
+  1595		pci_assign_unassigned_bus_resources(adev->pdev->bus);
+  1596	
+  1597		/* When the doorbell or fb BAR isn't available we have no chance of
+  1598		 * using the device.
+  1599		 */
+  1600		r = amdgpu_doorbell_init(adev);
+  1601		if (r || (pci_resource_flags(adev->pdev, 0) & IORESOURCE_UNSET))
+  1602			return -ENODEV;
+  1603	
+  1604		pci_write_config_word(adev->pdev, PCI_COMMAND, cmd);
+  1605	
+  1606		return 0;
+  1607	}
+  1608	
 
 -- 
-2.34.1
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
