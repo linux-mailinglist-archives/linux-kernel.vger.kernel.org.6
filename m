@@ -1,156 +1,133 @@
-Return-Path: <linux-kernel+bounces-396048-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396044-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5B7F9BC73B
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 08:46:02 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1A7A9BC725
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 08:40:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D2FB1F2215B
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 07:46:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F8FB283398
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 07:40:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CE271FE10B;
-	Tue,  5 Nov 2024 07:45:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D840C1FE0F0;
+	Tue,  5 Nov 2024 07:40:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="vobLQDZD"
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B1gmpNg3"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CA9B282F1;
-	Tue,  5 Nov 2024 07:45:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6A55EEBA;
+	Tue,  5 Nov 2024 07:40:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730792751; cv=none; b=GAiNM+hdcQcsJEiFs544eldSgcEgjU0d+IohASORghm7IwwKH8l8SZDbS+rWveSRTNDapBcA2v/Qk4ZCdwPkRhgwOl4yjbdT1j69NjQ9cmAKlSdIEt2bgypvzzqutPNuCF1SEdKiiaWoh1cFymhxfDmgBILYZwWQ9SFoFkCmqHc=
+	t=1730792423; cv=none; b=b0PwFiTHRuMhpdQrTgRTdnYXZdzsZI7U2HT0NcEIMaCyFrVTV7NLWl4wbrcMzw6peOkXrHKVO+f4XOCGNazFp2GpiYZZRFISIzM3ZrJ0Zh+bih65l1EdNWGsYEWmD4YHZI49RmzBhnsF+XW+saT9vxN9TbGIfV8iQWgJyRqYVdo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730792751; c=relaxed/simple;
-	bh=OaJnEkldqb8hP8lRpM/kenSEByCjXILbSKGWf1lsdc8=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Odpyglh8XL58m5F7Drlms+OS56ui4gBZOx+H0ttlKjMqdoZD8VrW6v//LRURGvkZnQ9smVE86CgPThBOjd6GMr3lsN9ypphduwrFury2/dEhKnnFYAO6ZrnaHjNn5CWSkeRUi8AxBnqGEmrkJVzRR6gxe5oj8PVBLwVvAy9xGYE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=vobLQDZD; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0369458.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A5135JP023435;
-	Tue, 5 Nov 2024 08:45:34 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=selector1; bh=agzLPwjtyIVcmji+qBbiwXvd
-	NNXbwTGcuXy/vqd4v6s=; b=vobLQDZD2qNGcCFGeAPMOcHK1jX8XoKA7p8EXbY1
-	K7TkP1GZ/Fzwiy/clo5SiJKmvNeb6qiX5w3W/3e6ZxBG5qODvF508afDzJqHD0tc
-	LrZOPaZCFE1c5SaMzhYqES3dZrBn9vofv553ZFRnQS0xauUrqqIzPwRPjQqPDTwM
-	2TFw89arm5o/X1LQUrsIa5ef3G6WKEr5GgMiCKtPDE37F6dV44I/iz6CCoH7ovF4
-	WReqn0nR6pjMgPzFrpiKjDzG2XmdLvpaQS1IUYr85eACNf7eihE0WiTBETdLCZjE
-	HzZrLAXv6VNCjPoCp3MgE4NBdxP1P3ov4vc1JBNSX2blBA==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 42nxh3rmc6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 05 Nov 2024 08:45:34 +0100 (CET)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id DA23B40047;
-	Tue,  5 Nov 2024 08:44:19 +0100 (CET)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 7DA3824F7A7;
-	Tue,  5 Nov 2024 08:43:23 +0100 (CET)
-Received: from gnbcxd0016.gnb.st.com (10.129.178.213) by SHFDAG1NODE1.st.com
- (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Tue, 5 Nov
- 2024 08:43:22 +0100
-Date: Tue, 5 Nov 2024 08:43:21 +0100
-From: Alain Volmat <alain.volmat@foss.st.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-CC: Hugues Fruchet <hugues.fruchet@foss.st.com>,
-        Mauro Carvalho Chehab
-	<mchehab@kernel.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre
- Torgue <alexandre.torgue@foss.st.com>,
-        Hans Verkuil
-	<hverkuil-cisco@xs4all.nl>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Rob
- Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor
- Dooley <conor+dt@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>, <linux-media@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>
-Subject: Re: [PATCH 12/15] dt-bindings: media: addition of stm32mp25
- compatible of DCMIPP
-Message-ID: <20241105074321.GB1413559@gnbcxd0016.gnb.st.com>
-References: <20241008-csi_dcmipp_mp25-v1-0-e3fd0ed54b31@foss.st.com>
- <20241008-csi_dcmipp_mp25-v1-12-e3fd0ed54b31@foss.st.com>
- <lu252oltrh6bftg2e4hpthazd4r3lwbd75mboezhz7f4bbfdip@w5k4jx6oyyzx>
+	s=arc-20240116; t=1730792423; c=relaxed/simple;
+	bh=7JYi0gA+D5ifWf/FH5BVdazYgaUP3auRzKD6OC/Vt4U=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Q/DUOUvd5n/AypRDDkogdKAo1SYDo4LGm2ZUFIFNRNEWGcgE6JcBycvZmxcdvTQQFAW0AbaeTmJCXHgLo8pRkAwX2RUpl3Zqkr3o7yE/UhOqFfhiqDJmoX5ZDjXHXLbd7bIFPyuvV++IE25QBQtn4xatJjSbtE9PfzVgFTdJGL0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B1gmpNg3; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-37d47eff9acso3318952f8f.3;
+        Mon, 04 Nov 2024 23:40:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730792420; x=1731397220; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=ocBWIeJyQeYQc+gJdO1SeCnJ/mpbgVz8TuewMujTg4A=;
+        b=B1gmpNg3nVF3sixVXJJji8qXEZhl7+biRel4O7bgeJ2MB/L8PcOdS2J2j4ohdziMpv
+         b8ADB4mbdiszEJ103hzpW8eF5E7L0Tuqpeh0J6bKPSs2tUmDXfDBozkooJSV/XjakTJi
+         ckKDsEj1VSusOtCeBPPCDwgEwHZnXbQDTmjZ7P5DDLL/MMc3MK+56iVloJcdt5oTRAAx
+         e/JRnsJVg+MIEfFRvXZwsY2ZIfgtT/tFeJlQqRj7Lqcodn0DL6tbB00DmOQsPsiUgJn7
+         Uy717WGdZDpGlB/OdEhhc3D+ph0tJMhNqvydb4p5bCI9Gnks/1BvDN4WZ3/+MuPfvpnR
+         dwkQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730792420; x=1731397220;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ocBWIeJyQeYQc+gJdO1SeCnJ/mpbgVz8TuewMujTg4A=;
+        b=q0kcslHbZFRQjhgbL6oUGTxkIQe5SiSUVg6PuJQOyKcsMWMG4fabPnC/X7ApNzZQTV
+         s00hg8m6VT1a4dnz5zwV6aNXwXC0VoMJWiBWN3teIgk0ijzpCMiF3zF0qybtVhmXS7k7
+         n/URsccBMRKLhRJEYs8npU5q4OtwfIH0sL2EIRqD0DvILDuvr9WbKmdPOI/1LJKTW+kY
+         Eiqbkg4X1RkSQZ6OPgZJ/rvHMEBLs99+75i877/a5ucuUVGGAFW9PyCiVOWXnRRDGuWD
+         bE0SjS4TM2OVcb5n23BmCd5e68Ca6rJ3qLZTicL1pu1p1k3fJc5Dx8t8OOTRGRCTS2zN
+         N+mg==
+X-Forwarded-Encrypted: i=1; AJvYcCV3VfqzcwOCwfj+T3QV4rALygmfTsfGrQORyWpeVctcXoIFfD7i/dOxJMuO8Acbr9acXPFBZt74J9A=@vger.kernel.org, AJvYcCXIgZp1wmkFmboyW8eROXzvWFnsRbfhBBSu+SQPjhGSGzBEm74qdrNP8Hstp3h32Dmo2Z1vuMIb5+nu1Zqv@vger.kernel.org
+X-Gm-Message-State: AOJu0YzLGqcwXYXcMwvbAYAgjibL1sYBaliqjJ3/dsxgg0BweHBFaRAe
+	rqana6cJcvknPBu640F4JP3ASH1MuEG7JMFGBctK3f4AYTIBBglz
+X-Google-Smtp-Source: AGHT+IGEdqChJi95E9f7lKq6z6VcnxyyANHegEKVyE8BVGIRMGCLPosT9rIRUsZjHC9h3NIiF9y3vg==
+X-Received: by 2002:a05:6000:4409:b0:381:d890:b503 with SMTP id ffacd0b85a97d-381d890b575mr3486481f8f.57.1730792419597;
+        Mon, 04 Nov 2024 23:40:19 -0800 (PST)
+Received: from ?IPv6:2003:f6:ef15:2100:888:d3c6:a442:4910? (p200300f6ef1521000888d3c6a4424910.dip0.t-ipconnect.de. [2003:f6:ef15:2100:888:d3c6:a442:4910])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-431bd9ca8eesm206041765e9.43.2024.11.04.23.40.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 04 Nov 2024 23:40:19 -0800 (PST)
+Message-ID: <f1aff5adfb369c3926e43b7ecaa95d23e0126343.camel@gmail.com>
+Subject: Re: [PATCH] iio: adc: ad7173: remove unused field
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: David Lechner <dlechner@baylibre.com>, Jonathan Cameron
+ <jic23@kernel.org>
+Cc: Michael Hennerich <Michael.Hennerich@analog.com>, 
+	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Tue, 05 Nov 2024 08:44:40 +0100
+In-Reply-To: <20241104-iio-adc-ad7173-remove-unused-field-v1-1-da9500a48750@baylibre.com>
+References: 
+	<20241104-iio-adc-ad7173-remove-unused-field-v1-1-da9500a48750@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <lu252oltrh6bftg2e4hpthazd4r3lwbd75mboezhz7f4bbfdip@w5k4jx6oyyzx>
-X-Disclaimer: ce message est personnel / this message is private
-X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE1.st.com
- (10.75.129.69)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
 
-Hi Krzysztof,
+On Mon, 2024-11-04 at 13:42 -0600, David Lechner wrote:
+> Remove the unused chan_reg field from struct ad7173_channel. This was
+> set but never read.
+>=20
+> Signed-off-by: David Lechner <dlechner@baylibre.com>
+> ---
 
-On Tue, Oct 08, 2024 at 03:41:59PM +0200, Krzysztof Kozlowski wrote:
-> On Tue, Oct 08, 2024 at 01:18:14PM +0200, Alain Volmat wrote:
-> > Addition of the stm32mp25 compatible for the DCMIPP.
-> 
-> "Add"
-> See submitting patches.
+Reviewed-by: Nuno Sa <nuno.sa@analog.com>
 
-Commit message corrected in the v2.
-
-> 
-> > The stm32mp25 distinguish with the stm32mp13 by the fact that:
-> >  - supports also csi inputs in addition to parallel inputs
-> >  - requires an addition csi clock to be present
-> > 
-> > The commit also adds access-controllers, an optional property that
-> 
-> "Add", see submitting patches.
-
-Here as well.
-
-> 
-> > allows a peripheral to refer to one or more domain access controller(s).
-> > 
-> > Signed-off-by: Alain Volmat <alain.volmat@foss.st.com>
-> > ---
-> >  .../devicetree/bindings/media/st,stm32-dcmipp.yaml | 53 +++++++++++++++++++---
-> >  1 file changed, 47 insertions(+), 6 deletions(-)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/media/st,stm32-dcmipp.yaml b/Documentation/devicetree/bindings/media/st,stm32-dcmipp.yaml
-> > index 87731f3ce7bd..bda28fef0b78 100644
-> > --- a/Documentation/devicetree/bindings/media/st,stm32-dcmipp.yaml
-> > +++ b/Documentation/devicetree/bindings/media/st,stm32-dcmipp.yaml
-> > @@ -10,9 +10,40 @@ maintainers:
-> >    - Hugues Fruchet <hugues.fruchet@foss.st.com>
-> >    - Alain Volmat <alain.volmat@foss.st.com>
-> >  
-> > +allOf:
-> 
-> Please put allOf: like in example schema, so after required:.
-
-Done in v2.
-
-> 
-> > +  - if:
-> > +      properties:
-> > +        compatible:
-> > +          contains:
-> > +            enum:
-> 
+> Noticed this while looking over the code.
+> ---
+> =C2=A0drivers/iio/adc/ad7173.c | 2 --
+> =C2=A01 file changed, 2 deletions(-)
+>=20
+> diff --git a/drivers/iio/adc/ad7173.c b/drivers/iio/adc/ad7173.c
+> index a0fca16c3be0..29ff9c7036c0 100644
+> --- a/drivers/iio/adc/ad7173.c
+> +++ b/drivers/iio/adc/ad7173.c
+> @@ -193,7 +193,6 @@ struct ad7173_channel_config {
+> =C2=A0};
+> =C2=A0
+> =C2=A0struct ad7173_channel {
+> -	unsigned int chan_reg;
+> =C2=A0	unsigned int ain;
+> =C2=A0	struct ad7173_channel_config cfg;
+> =C2=A0};
+> @@ -1316,7 +1315,6 @@ static int ad7173_fw_parse_channel_config(struct ii=
+o_dev
+> *indio_dev)
+> =C2=A0		chan->address =3D chan_index;
+> =C2=A0		chan->scan_index =3D chan_index;
+> =C2=A0		chan->channel =3D ain[0];
+> -		chan_st_priv->chan_reg =3D chan_index;
+> =C2=A0		chan_st_priv->cfg.input_buf =3D st->info->has_input_buf;
+> =C2=A0		chan_st_priv->cfg.odr =3D 0;
+> =C2=A0
+>=20
+> ---
+> base-commit: 56686ac80b859c2049cc372f7837470aa71c98cf
+> change-id: 20241104-iio-adc-ad7173-remove-unused-field-e3d2ca362501
+>=20
 > Best regards,
-> Krzysztof
-> 
+
 
