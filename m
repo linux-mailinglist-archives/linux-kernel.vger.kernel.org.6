@@ -1,106 +1,159 @@
-Return-Path: <linux-kernel+bounces-396624-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396625-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5ACB9BCFB1
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 15:47:53 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B45D9BCFB6
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 15:49:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8BFAAB22693
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 14:47:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D5EE1C233B9
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 14:49:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C1E01D7E4B;
-	Tue,  5 Nov 2024 14:47:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="rCwN0OvS"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 917821D47AF;
+	Tue,  5 Nov 2024 14:48:57 +0000 (UTC)
+Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA5403BB48;
-	Tue,  5 Nov 2024 14:47:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45A124084D
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 14:48:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730818064; cv=none; b=frnKryqow076Fi+30HsCbTW4GSJ1iehHAHoLr2NGD25AhRpSNjZSH6oAVu8C939p6geD45LdRMp3TkGXVxITL6Our4QpJtqa0TPLRhN2UvTGnn3OshDtWCJl92nqtPwxgpfv3m0v7gUgmrMliOVQTotCRu1ONQUUxajnBwGtumA=
+	t=1730818137; cv=none; b=qYwz/i/B2oMa3gYs2ZYGiNnp63gyO1dhjTY24AdiKqfCHQbruTJxnrbH91AH/ulyhnf28fsPm660DBb3L4Sh+vHNUdG2HRacyZRA8KCL7chzBw6Syn9+VWTfNTS151atA7vOsSpdMksBj0jFkg+jOwIxhIjbigbvtbs508+zgUU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730818064; c=relaxed/simple;
-	bh=PoMXd7dlUgpkCKiBbkJd6Cewg8bQWQ/YiMv9xYOQ8As=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=A+T//UuoaSnD2BRJ6mAkJCGgtIczKZ3tM7YbwbLcLRPzs0UGj4bvC9A9TKOJHzioAHD0CMHh2OeJMaOksktsA3wYh1A/dP2psh3yWS4MJLwc3Dc5froXPYv03yN3pugTywCDyVoPi7p+CPe84qf3pLPP+Vbecf2fFClC19Zg/xo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=rCwN0OvS; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net EA92F42C18
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1730818062; bh=JhjK8oTNggpbugVNNGBco7M0sdg9E4DFfHV94J2MJWU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=rCwN0OvS5F75E1dWKkP70arURvgbR2oYqARd44Iq2rzpnqySFqYpt+GWC42lhhaHe
-	 bi8LqvjvipRcFI1eR6ecFAXE9p2ZVie0OS+WMDaI0+N6AXUai8E0ThRHyk4WeRtGA8
-	 vzq8/0rWcK92gEhdGH0sbwBs1VpYgZUh2dDndZGdKvtkw9RR2OAJxrxovkw1rLSnUm
-	 iczoZkj0ONLltGGE3WwfP23eKHGZsc2jsgmGCFBH79AHWskyMo6IKz1wZikoIioIr/
-	 eE8zuKWn4Z0dh+O3YB69zCkwgAQh7vmKWOElUyKDrVIMFA9ZCQctdRnmHdNdU0iyWG
-	 zJZquT6/ykT3Q==
-Received: from localhost (unknown [IPv6:2601:280:5e00:625::1fe])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id EA92F42C18;
-	Tue,  5 Nov 2024 14:47:41 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: Yanteng Si <si.yanteng@linux.dev>, xu.xin16@zte.com.cn,
- alexs@kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- mudongliangabcd@gmail.com, seakeel@gmail.com
-Cc: wang.yaxin@zte.com.cn, fan.yu9@zte.com.cn, he.peilin@zte.com.cn,
- tu.qiang35@zte.com.cn, qiu.yutan@zte.com.cn, zhang.yunkai@zte.com.cn
-Subject: Re: [PATCH linux-next v8 RESEND] Docs/zh_CN: Translate
- physical_memory.rst to Simplified Chinese
-In-Reply-To: <641acef2-70f4-4172-9fa9-da0f5203a78e@linux.dev>
-References: <20241028135321916ZWK032bHhlbncjvmzDkZs@zte.com.cn>
- <87ikt294v6.fsf@trenco.lwn.net>
- <641acef2-70f4-4172-9fa9-da0f5203a78e@linux.dev>
-Date: Tue, 05 Nov 2024 07:47:41 -0700
-Message-ID: <871pzp7n5e.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1730818137; c=relaxed/simple;
+	bh=f4xXPtr/rczFDWSCXCnLBmqWV3vrsWDra9h8vOvQoLk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qp49Q34qrU6u+jqsScXkU7NZIfhR1MruP2UHjRC9yDT37Vnj8QrNL0ZbKmxbF/leVDVbqsTROziGHktT1IAvfZBsL2Kh6ez1QEc40dKURmbGPczuTY+3BiMBuPIm6jnDYIo+C44qAjxxSr/Cq+KkaI8vd46D/Y3V62sqbOBPIhM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-6ea7c9227bfso9322967b3.2
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 06:48:55 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730818133; x=1731422933;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=062wwg7reCXnZ2jiwUr0t2popBMcfyNM3miSTWB1lmU=;
+        b=HA437fvrRVKQ+9Y+QB7iT8uZh26qth8fteRuKKyv81tgf2hHOpOMjpAKOg3cvzFKLx
+         ur3PCrsDZpyGofGyME2GKRrS5JF3hx3eWecPnr04ahkB4TrlwGeLSlyDb+X1Jq/mdEPL
+         detDJE4UOKUrDhUVw81iuoMgln+hrcPK3NynFXOJHrFfHPpWqZl9aiTqZKK61k4/xArE
+         QntMVepgaEDBosC3W9rVdHCT9emVUAvzNMJT96951hzUOxlD/mMvrQOkr2btIu3KT9OA
+         mZGKP70i/1OW02+r60uCRhmY9o7eRsZReobIlJjs5YG0HoxHTQvGrVuyPEyYPkugJLAz
+         3kXg==
+X-Forwarded-Encrypted: i=1; AJvYcCUoURWtHkzdISSykpsxdEi0REPtwr3opWKYIs28Uis8aWmW3ASj1y65dIcMY+TebVtxTxHyJTf3DNsAbfE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzaXLuh8h4ThN+s96Pevqi47ltFZPzCfIOL+36LULk2crZnyWIp
+	otSDvcWwYs028STTvPH1K+H1A5QXXQYexAVyZTmmvHmchPYsaAxX+qn+9XOi
+X-Google-Smtp-Source: AGHT+IHIwb/No5kBAH+lgvorZrkMWM2GwTfszKpXnfMkuQ1OllXzVObPgCFfY8Zsb+ywFHgz7JwTew==
+X-Received: by 2002:a05:690c:9690:b0:6b1:8834:1588 with SMTP id 00721157ae682-6e9d8b00311mr346961837b3.35.1730818133430;
+        Tue, 05 Nov 2024 06:48:53 -0800 (PST)
+Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com. [209.85.128.180])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6ea8082cb2dsm14217297b3.12.2024.11.05.06.48.52
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 05 Nov 2024 06:48:52 -0800 (PST)
+Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-6e38fa1f82fso6928167b3.1
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 06:48:52 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCV1qYYXoo4bdsExqaYWT40I8nvMSQQNxTxckrsqNvez6YFtzchxnGZfqnbrkpU7LjXNRy/LVR0WPlt4Bgc=@vger.kernel.org
+X-Received: by 2002:a05:690c:ed3:b0:6e2:1527:446b with SMTP id
+ 00721157ae682-6e9d896200bmr337335377b3.3.1730818131998; Tue, 05 Nov 2024
+ 06:48:51 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+References: <b6112556472c657762f064ec5328f153e3ed03cd.1727926187.git.fthain@linux-m68k.org>
+In-Reply-To: <b6112556472c657762f064ec5328f153e3ed03cd.1727926187.git.fthain@linux-m68k.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 5 Nov 2024 15:48:39 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdXR6gN44MiE3Nc-bU6u92_RA2PWx37ndBKA7AD+gKErTQ@mail.gmail.com>
+Message-ID: <CAMuHMdXR6gN44MiE3Nc-bU6u92_RA2PWx37ndBKA7AD+gKErTQ@mail.gmail.com>
+Subject: Re: [PATCH] m68k: mvme147: Reinstate early console
+To: Finn Thain <fthain@linux-m68k.org>, Daniel Palmer <daniel@0x0f.com>
+Cc: stable@kernel.org, linux-m68k@lists.linux-m68k.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Yanteng Si <si.yanteng@linux.dev> writes:
+Hi Finn, Daniel,
 
-> =E5=9C=A8 2024/11/5 03:27, Jonathan Corbet =E5=86=99=E9=81=93:
->> OK, I have applied this patch.  A couple of comments for future referenc=
-e:
->>
->> <xu.xin16@zte.com.cn> writes:
->>
->>> Update to commit 7332f9e45d2e("docs/mm: Physical Memory: Fix grammar")
->> ...and this I don't understand at all; why do you need to reference that
->> patch here?
-> We use it to mark the progress of the translation against
-> the original document. If we don't put this tag on at the
-> very beginning, when the translation falls behind the original
-> document for a while, we'll have to go through the whole
-> original document log from the very top downwards, which
-> is an enormous amount of work. On the other hand, the
-> checktransupdate.py also works based on this tag.
+On Thu, Oct 3, 2024 at 5:32=E2=80=AFAM Finn Thain <fthain@linux-m68k.org> w=
+rote:
+> From: Daniel Palmer <daniel@0x0f.com>
 >
-> Yeah, this tag might seem a bit ambiguous. I think maybe
-> we could improve it? For example:
+> Commit a38eaa07a0ce ("m68k/mvme147: config.c - Remove unused functions"),
+> removed the console functionality for the mvme147 instead of wiring it
+> up to an early console. Put the console write function back and wire it u=
+p
+> like mvme16x does so it's possible to see Linux boot on this fine hardwar=
+e
+> once more.
+
+Thanks for your patch!
+
+> Cc: Daniel Palmer <daniel@0x0f.com>
+> Cc: stable@kernel.org
+> Fixes: a38eaa07a0ce ("m68k/mvme147: config.c - Remove unused functions")
+> Signed-off-by: Daniel Palmer <daniel@0x0f.com>
+> Reviewed-by: Finn Thain <fthain@linux-m68k.org>
+
+As this patch differs from Daniel's original, I guess you want
+
+    Co-deloped-by: Daniel Palmer <daniel@0x0f.com>
+    Signed-off-by: Daniel Palmer <daniel@0x0f.com>
+    Co-deloped-by: Finn Thain <fthain@linux-m68k.org>
+    Signed-off-by: Finn Thain <fthain@linux-m68k.org>
+
+instead?
+
+> --- a/arch/m68k/mvme147/config.c
+> +++ b/arch/m68k/mvme147/config.c
+> @@ -33,6 +33,7 @@
+>  #include <asm/mvme147hw.h>
+>  #include <asm/config.h>
 >
-> Trans_mark commit 7332f9e45d2e ("docs/mm: Physical Memory: Fix grammar")
+> +#include "mvme147.h"
+>
+>  static void mvme147_get_model(char *model);
+>  extern void mvme147_sched_init(void);
+> @@ -177,3 +178,29 @@ static u64 mvme147_read_clk(struct clocksource *cs)
+>
+>         return ticks;
+>  }
+> +
+> +#define SCC_DELAY do { __asm__ __volatile__ ("nop; nop;"); } while (0)
 
-"Update to commit xxx" suggests that the current patch is somehow
-changing that commit.  "Update the translation through commit xxxx"
-would be a bit clearer in that regard.  I think it's better to stay with
-something resembling plain language rather than adding a new pseudo-tag
-that outsiders won't understand.
+Please keep on using a static (inline) function instead of a macro.
 
-Thanks,
+> +
+> +static void scc_write(char ch)
+> +{
+> +       do {
+> +               SCC_DELAY;
+> +       } while (!(in_8(M147_SCC_A_ADDR) & BIT(2)));
+> +       SCC_DELAY;
+> +       out_8(M147_SCC_A_ADDR, 8);
+> +       SCC_DELAY;
+> +       out_8(M147_SCC_A_ADDR, ch);
+> +}
 
-jon
+The rest LGTM, so
+Reviewed-by: Geert Uytterhoeven <geert@linux-m68k.org>
 
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
