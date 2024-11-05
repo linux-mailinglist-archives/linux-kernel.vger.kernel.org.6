@@ -1,95 +1,47 @@
-Return-Path: <linux-kernel+bounces-396024-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396025-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BB939BC6DE
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 08:24:37 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AA139BC6E2
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 08:25:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 916B51F2368F
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 07:24:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D8D0283A22
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 07:25:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4FFE1FE0F0;
-	Tue,  5 Nov 2024 07:24:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 672891D4161;
+	Tue,  5 Nov 2024 07:25:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="cWZsX0hN";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Dn1im1Z2";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="cWZsX0hN";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Dn1im1Z2"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K14EgAS6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 831871FCC63;
-	Tue,  5 Nov 2024 07:24:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1E871FCC73;
+	Tue,  5 Nov 2024 07:25:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730791463; cv=none; b=BGzl9H9yyWrm3WhurCUUVdYWisgdFQNEouBi3eXx5yObEWckQK3V85bvjJrInvlH237JkU8S3iT7sXnTSHBntO1C7sCRocdL4yOJjvKBVh2uo5n3K46u+5CpZlKHVmA4xM+mz2gOefoGcp57AEGbz1p82ENG8u/jTz3V5bq+dUA=
+	t=1730791501; cv=none; b=mgGnvMBpkg2pB8Qv5xh2EOwQk1NbdKd8frEFgdPMU4A5If4QoCiWp4jCrwZwtr10tpkZED+JF8gD0cwOuWEnX3yr4cvHwZBbJPZfdvwL7RpF914NyWU5DQVIlAk/pIwkKegR1Zh+u8Lse7RlULkyvEBYCyZaHyGxngCyC1/tqb8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730791463; c=relaxed/simple;
-	bh=tZf4iGCKHaut23kHuRi13RmaE3baXf6aCu62FRe3I0c=;
+	s=arc-20240116; t=1730791501; c=relaxed/simple;
+	bh=eGZxOOO0qWTRtmyQ0DkH96remcaIk4dbRJWRtFjc1lI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ktGQZkjuUtv9pZVp0anh/ucC2mwnH9PoeY4PvpoGtqOyCEh6ydWCaWWn+3zxhoCxLDR8yv9GJ1jTui9/gYmVn2JCQi1j52gdgtGYa+lFS1BZ3ST7gtJazZ5xl1wfa2FqG2fTaCc1u8uo1/WWt1R4uBXUxbyZhk1MhI7bqzvKJ5g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=cWZsX0hN; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Dn1im1Z2; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=cWZsX0hN; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Dn1im1Z2; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 9216F21CC5;
-	Tue,  5 Nov 2024 07:24:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1730791459; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mTSk6dPrdVoblDJwYmQ358zSkY1AiYUIHp9DtlAvrHU=;
-	b=cWZsX0hNv2odLh4sPYbojHf8dz2cM9c614X+XVehBvA+UIzWM8ETPR23r56veCoVi9rgpS
-	i8cqVzT2o88jzHyCjhcKFVSGMhw+UNUGkDtVUw18zfBa3XxtO0l8m84RpADyqNOKPnY3cv
-	u37L1rMguparMgxRe4FqDLY0ZrHf6QA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1730791459;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mTSk6dPrdVoblDJwYmQ358zSkY1AiYUIHp9DtlAvrHU=;
-	b=Dn1im1Z2wy+0VbGfrA1O0qmQxTuNONi9WmYhQpIWNclQyAKQBpWl4PsFQ7GPzV0ryAZfuh
-	Cc4jWpqRJy806jDQ==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=cWZsX0hN;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=Dn1im1Z2
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1730791459; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mTSk6dPrdVoblDJwYmQ358zSkY1AiYUIHp9DtlAvrHU=;
-	b=cWZsX0hNv2odLh4sPYbojHf8dz2cM9c614X+XVehBvA+UIzWM8ETPR23r56veCoVi9rgpS
-	i8cqVzT2o88jzHyCjhcKFVSGMhw+UNUGkDtVUw18zfBa3XxtO0l8m84RpADyqNOKPnY3cv
-	u37L1rMguparMgxRe4FqDLY0ZrHf6QA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1730791459;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mTSk6dPrdVoblDJwYmQ358zSkY1AiYUIHp9DtlAvrHU=;
-	b=Dn1im1Z2wy+0VbGfrA1O0qmQxTuNONi9WmYhQpIWNclQyAKQBpWl4PsFQ7GPzV0ryAZfuh
-	Cc4jWpqRJy806jDQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 364E81394A;
-	Tue,  5 Nov 2024 07:24:19 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id P9anCyPIKWcVGAAAD6G6ig
-	(envelope-from <hare@suse.de>); Tue, 05 Nov 2024 07:24:19 +0000
-Message-ID: <ae72817e-689a-454a-950c-1a313dbc4c7f@suse.de>
-Date: Tue, 5 Nov 2024 08:24:18 +0100
+	 In-Reply-To:Content-Type; b=rQVWXY3ZNFRnVVgLfzOscmd0lr0jX724ZQ4O1UBdZM/OxCucXWNJOja6cZ3GFJ/YaqSLA2qPCrNtgS4qqOKXndKhYJn69FBq0Qfuyv+zQWEhHA5GXPRcIW4LsC0VaLTrk1LsjHp37YazpNA9wO/bZM1gM8qBLD8yWrr9AUxwnwc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K14EgAS6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2289DC4CECF;
+	Tue,  5 Nov 2024 07:24:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730791501;
+	bh=eGZxOOO0qWTRtmyQ0DkH96remcaIk4dbRJWRtFjc1lI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=K14EgAS6cDnTl21odnotu2jbCE8UH0RU0svMLudd6nSUM/Uypckng9DUUeJcf7uy1
+	 7WMup32SpBZ4FFT7474tkrYsoj3bB5Vz2uPit3OJh41bDq/mGK2jKrlaOtDHNrFIFO
+	 ZcHjKjZx7spAna2uRBPMaY363DM+N7qhKL6f+xSfRCdAWraEO7t5u5hP9/YLjlQjyy
+	 MAG09FxHOJ/gMyXpjJsxNkga1U183WuOTWmgyOpqKo1VAoTBBKJt3DjGUIdHnbtoMR
+	 yvWL+jm9w0TVbccw/l8g9940aSJ7tphWXZfftLUKLT1lCcqsYhwM63GIFT4JXuMG9y
+	 sJUaop/OYgL8w==
+Message-ID: <74c84937-fa12-4ab2-922b-7889eb5dda47@kernel.org>
+Date: Tue, 5 Nov 2024 08:24:55 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -97,67 +49,133 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 4/6] md/raid0: Handle bio_split() errors
-To: John Garry <john.g.garry@oracle.com>, axboe@kernel.dk, song@kernel.org,
- yukuai3@huawei.com, hch@lst.de
-Cc: martin.petersen@oracle.com, linux-block@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-raid@vger.kernel.org,
- Johannes.Thumshirn@wdc.com
-References: <20241031095918.99964-1-john.g.garry@oracle.com>
- <20241031095918.99964-5-john.g.garry@oracle.com>
+Subject: Re: [RFC PATCH v2 1/5] dt-bindings: net: wireless: ath12k: describe
+ WSI properties for QCN9274
+To: Raj Kumar Bhagat <quic_rajkbhag@quicinc.com>, ath12k@lists.infradead.org
+Cc: linux-wireless@vger.kernel.org, Kalle Valo <kvalo@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Jeff Johnson <jjohnson@kernel.org>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
+References: <20241029173050.2188150-1-quic_rajkbhag@quicinc.com>
+ <20241029173050.2188150-2-quic_rajkbhag@quicinc.com>
+ <764f8f22-146d-4edc-9d46-7fe3c7d9a2f2@kernel.org>
+ <cb69c30f-8230-4a8f-a538-3ec964b79084@quicinc.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: Hannes Reinecke <hare@suse.de>
-In-Reply-To: <20241031095918.99964-5-john.g.garry@oracle.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: 9216F21CC5
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	MIME_TRACE(0.00)[0:+];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,suse.de:dkim,suse.de:mid,oracle.com:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.51
-X-Spam-Flag: NO
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <cb69c30f-8230-4a8f-a538-3ec964b79084@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 10/31/24 10:59, John Garry wrote:
-> Add proper bio_split() error handling. For any error, set bi_status, end
-> the bio, and return.
+On 04/11/2024 19:44, Raj Kumar Bhagat wrote:
+>>>  $id: http://devicetree.org/schemas/net/wireless/qcom,ath12k.yaml#
+>>> @@ -18,10 +19,17 @@ properties:
+>>>    compatible:
+>>>      enum:
+>>>        - pci17cb,1107  # WCN7850
+>>> +      - pci17cb,1109  # QCN9274
+>>
+>> I asked for separate binding because it is quite a different device.
+>> Unless it is not... but then commit msg is quite not precise here.
+>>
 > 
-> Reviewed-by: Yu Kuai <yukuai3@huawei.com>
-> Signed-off-by: John Garry <john.g.garry@oracle.com>
-> ---
->   drivers/md/raid0.c | 12 ++++++++++++
->   1 file changed, 12 insertions(+)
+> sure, will create a separate binding, may be "qcom,ath12k_wsi.yaml".
+
+Underscores are not allowed in compatibles and the file name follows
+compatible name, so use hyphen.
+>>> +    type: object
+>>> +    description: |
+>>> +      The ath12k devices (QCN9274) feature WSI support. WSI stands for
+>>> +      WLAN Serial Interface. It is used for the exchange of specific
+>>> +      control information across radios based on the doorbell mechanism.
+>>> +      This WSI connection is essential to exchange control information
+>>> +      among these devices.
+>>> +
+>>> +      Diagram to represent one WSI connection (one WSI group) among
+>>> +      three devices.
+>>> +
+>>> +               +-------+        +-------+        +-------+
+>>> +               | pcie2 |        | pcie3 |        | pcie1 |
+>>> +               |       |        |       |        |       |
+>>> +        +----->|  wsi  |------->|  wsi  |------->|  wsi  |-----+
+>>> +        |      | grp 0 |        | grp 0 |        | grp 2 |     |
+>>> +        |      +-------+        +-------+        +-------+     |
+>>> +        +------------------------------------------------------+
+>>> +
+>>> +      Diagram to represent two WSI connections (two separate WSI groups)
+>>> +      among four devices.
+>>> +
+>>> +           +-------+    +-------+          +-------+    +-------+
+>>> +           | pcie2 |    | pcie3 |          | pcie1 |    | pcie0 |
+>>> +           |       |    |       |          |       |    |       |
+>>> +       +-->|  wsi  |--->|  wsi  |--+   +-->|  wsi  |--->|  wsi  |--+
+>>> +       |   | grp 0 |    | grp 0 |  |   |   | grp 1 |    | grp 1 |  |
+>>> +       |   +-------+    +-------+  |   |   +-------+    +-------+  |
+>>> +       +---------------------------+   +---------------------------+
+>>> +
+>>> +    properties:
+>>> +      qcom,wsi-group-id:
+>>> +        $ref: /schemas/types.yaml#/definitions/uint32
+>>> +        description:
+>>> +          It represents the identifier assigned to the WSI connection. All
+>>> +          the ath12k devices connected to same WSI connection have the
+>>> +          same wsi-group-id.
+>>
+>> That's not needed according to description. Entire group is defined by
+>> graph.
+>>
 > 
-Reviewed-by: Hannes Reinecke <hare@suse.de>
+> So this mean "qcom,wsi-group-id" to be dropped and we can assign the
+> group ID (in ath12k driver implementation) by using the graph?
 
-Cheers,
+Yes
 
-Hannes
--- 
-Dr. Hannes Reinecke                  Kernel Storage Architect
-hare@suse.de                                +49 911 74053 688
-SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
-HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
+> 
+Best regards,
+Krzysztof
+
 
