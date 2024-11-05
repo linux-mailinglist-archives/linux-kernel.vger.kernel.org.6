@@ -1,52 +1,88 @@
-Return-Path: <linux-kernel+bounces-395694-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395695-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 442BA9BC1BE
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 00:59:44 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C8A09BC1C0
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 01:00:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A53B7B217E4
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Nov 2024 23:59:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E6E51C21699
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 00:00:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC3FB1FE0F6;
-	Mon,  4 Nov 2024 23:59:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4A4E1FDFB9;
+	Tue,  5 Nov 2024 00:00:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nsHY+mRe"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="clBDYcfC"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E1AD139CFF;
-	Mon,  4 Nov 2024 23:59:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C00C21FE0FC
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 00:00:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730764773; cv=none; b=iVgFEtj2BTqvjI5SF32Tu7Erf3f8omfTjgHofi+KEHNIomhTBG4CD90IXU7NayfzbLwJNQ4ZV/7T1247B95oC2/tyr4F3d/8Dvd0OAYWqs3gdS9sJhw9Oz3gGWrjA39nIqshaSSQ2ekfbwjYVj+cJMZTcQVRAv4ynzNXHxHyggk=
+	t=1730764806; cv=none; b=LyAn0w/4ZcxijvDXKVpxqSgzLBBTCsuSD0MwHYS5ENAKvAK/Y9FtZe7dJK08ehli7ScJ2HGXgvYAMBJ3hDvW247d+cPpvhZeMYwlhVNIhip/P6CAGp3F45gKQVavoRIEuLAiPZi+X6SSjiIip3DojBc+M6mOo3zLhh6PdSPfI6o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730764773; c=relaxed/simple;
-	bh=xS4FlVRvslkC2U0BqdTfNNki8LuVdQ3DTqlvOv6iznQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=i2OfrqPJgy8LJtFf6bVpu7vcPVbgEyO1UxMi1ElrpR7modClzkrIfVJf6Yh0A+Lhlq7AuaD9GbL87fY8HUsk3V4K8t5+UPGTHdSRC8nZFfIhxwr0FBt9to0Y1yH3UJt/16BmoPkr1ZVHIjQTCMXm0P7SwvwPbgeC3JJQClpbGDc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nsHY+mRe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ADB35C4CECE;
-	Mon,  4 Nov 2024 23:59:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730764772;
-	bh=xS4FlVRvslkC2U0BqdTfNNki8LuVdQ3DTqlvOv6iznQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=nsHY+mRe6MOH6ym/mnv8oXQpY6gJNQ5YVwRDm52dWAYhQpzN3i142CZod+EN4Iu5M
-	 a0zMbeBDlivxT726udJgCjwJnss3EAXlve/rMwToVSk7ObfphDf4wX35SITJhz6+JV
-	 T3xWlLd3dtkd1AZt4utpsDwMQj5RKTxOTQZBr2cC7tYH8kh3Ngv92atvnFo7V5GXdO
-	 rq5dFnaqiu4JvOifxgFbM+A1trts6jrXoPWncySR6LwRowHqAdYKcOFTd9BpOTslx7
-	 ap0FYQ+G8dbK5r7kqjSWsaH/tzTnNdLLbjbazNOy8sxyWWH9ZaKDtZ2/9zTuNY3FmA
-	 0FVoDZ4eTYazA==
-Date: Mon, 4 Nov 2024 17:59:31 -0600
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Gowthami Thiagarajan <gthiagarajan@marvell.com>
-Cc: bhelgaas@google.com, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] PCI : Fix pcie_flag_reg in set_pcie_port_type
-Message-ID: <20241104235931.GA1447239@bhelgaas>
+	s=arc-20240116; t=1730764806; c=relaxed/simple;
+	bh=mAkFgCxWNbgHQQsvcbYxnXkz6l64EKdZMzmY/bptL6E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LaVX5vtrb4Nb8jAeMBWbrvWvqvn682NY8HNucIvAzHel7pCTCDeIUARE1MiUN8JOUISEG32jn5+DLV5AxmFOiVwU81M3HEogcqO83BfH5TpU/DRkYfhfgycDCj9K6gK9Kg66212odU4ZUBTTk1Lk/g+2UPoaK1uxDSqgFicINWM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=clBDYcfC; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-20caccadbeeso52610335ad.2
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 16:00:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fastly.com; s=google; t=1730764804; x=1731369604; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ss2wdvpc+S9jF1wGdl+GS9FQpnDeDgZxQImgGWvIwg4=;
+        b=clBDYcfCXnTB9oZXZEbu4vX2HNUAS6m7q74fLhDIIj/BAxewMlekirRF2AlguhM/cj
+         UCnBhE+m4AVaPcz+lKr1HjqgSmdpr/jGg9CRBX19uIikCZY7ZZLVh5ig3IscNeIixc3A
+         HzM4eSfSs7IDKPFbIVkzRgfeoQS5qjrCmVl4o=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730764804; x=1731369604;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ss2wdvpc+S9jF1wGdl+GS9FQpnDeDgZxQImgGWvIwg4=;
+        b=gZxNvsnEHhDWed+VAJv+wY9IZLwt7IMz/v3n8x0lkNP0SzlNndHY6MlaRW/VbLO6GC
+         u8b56awE+zIFYq7tmdXd66l6WnAqXnz+558tfh/+NhyHzPjETCXvQE8XW+iBeLUD9FkH
+         RPwsS6kAGwWkW49wFKq4EO4pdTF3kppy1pcueDoLBc+R6RxRgyjSknQUqql1zTsNIdlC
+         SrRgBTp4OZkORfjRClk7p17k+Ck7Hgxd2prHgTAKUgEXODkLCVLTAcYZQukYeYPjA9wJ
+         h8GAYaOLWKTflQBct6tXqCHQVbiosJ9oAdAVQmmUQAXfNMdSRfvDKZqV6oTC1pDnrTN+
+         bh+Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUuUOo00S4kk6Kcd76wPgi7WVMrqwXlTwQpsMsFdZaYOyFy0P+MlBwKha6ka7sX6Auohjvm15L9Ee1BeLk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzLLddDbVcCInusNzm11i54liOt/uJY0yISR5vcyKJtvBPva0cq
+	8FYUZBX3bR1fIhxyhGTyvrrmScIG7Jqoyjknvm0XlUo4nFxRYxGeB2UsBh1lmhA=
+X-Google-Smtp-Source: AGHT+IEkbdGvIND5jE3XAsTDbBC7w3dQ7XXuiWp6+dkn4ch0B6RZqBsVaq+6l6hQ27sWvq1RnnEcpw==
+X-Received: by 2002:a17:902:e812:b0:20c:ef90:e4b5 with SMTP id d9443c01a7336-21103ca54e2mr239137785ad.52.1730764804073;
+        Mon, 04 Nov 2024 16:00:04 -0800 (PST)
+Received: from LQ3V64L9R2 (c-24-6-151-244.hsd1.ca.comcast.net. [24.6.151.244])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211057c0518sm67092635ad.182.2024.11.04.16.00.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 04 Nov 2024 16:00:03 -0800 (PST)
+Date: Mon, 4 Nov 2024 16:00:00 -0800
+From: Joe Damato <jdamato@fastly.com>
+To: Stanislav Fomichev <sdf@fomichev.me>
+Cc: netdev@vger.kernel.org, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, andrew+netdev@lunn.ch,
+	shuah@kernel.org, horms@kernel.org, almasrymina@google.com,
+	willemb@google.com, petrm@nvidia.com
+Subject: Re: [PATCH net-next v7 08/12] selftests: ncdevmem: Use YNL to enable
+ TCP header split
+Message-ID: <ZylgAPuiYuNcEAvk@LQ3V64L9R2>
+Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
+	Stanislav Fomichev <sdf@fomichev.me>, netdev@vger.kernel.org,
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, andrew+netdev@lunn.ch,
+	shuah@kernel.org, horms@kernel.org, almasrymina@google.com,
+	willemb@google.com, petrm@nvidia.com
+References: <20241104181430.228682-1-sdf@fomichev.me>
+ <20241104181430.228682-9-sdf@fomichev.me>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,75 +91,24 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241104091627.400120-1-gthiagarajan@marvell.com>
+In-Reply-To: <20241104181430.228682-9-sdf@fomichev.me>
 
-On Mon, Nov 04, 2024 at 02:46:27PM +0530, Gowthami Thiagarajan wrote:
-> The port type in set_pcie_port_type is not set proper when an invalid
-> topology is detected. Since the port type was not set proper, the child's
-> extended config space becomes inaccessible.
-
-Please describe how the topology is invalid.
-
-> [   70.440438] pci 0002:00:00.0: [177d:a002] type 01 class 0x060401
-> [   70.463056] pci 0002:00:00.0: reg 0x38: [mem 0x600000000000-0x6000000007ff pref]
-> [   71.806936] pci 0002:00:00.0: bridge configuration invalid ([bus 00-00]), reconfiguring
-> [   71.906688] pci (null): claims to be downstream port but is acting as upstream port, correcting type
-> [   71.916138] pci 0002:01:00.0: [177d:a002] type 01 class 0x060401
-> [   71.935982] pci 0002:01:00.0: reg 0x38: [mem 0x600000000000-0x6000000007ff pref]
-> [   72.134703] pci 0002:01:00.0: bridge configuration invalid ([bus 00-00]), reconfiguring
-> [   72.198956] pci_bus 0002:02: extended config space not accessible
-> .......
-> [   83.762956] pci_bus 0002:03: extended config space not accessible
-> [   83.792530] pci 0002:03:00.0: [177d:a065] type 00 class 0x020000
-> [   83.813188] pci 0002:03:00.0: reg 0x10: [mem 0x600000000000-0x6003ffffffff 64bit pref]
-> [   83.832490] pci 0002:03:00.0: reg 0x18: [mem 0x600000000000-0x600003ffffff 64bit pref]
-> [   83.848507] pci 0002:03:00.0: reg 0x20: [mem 0x600000000000-0x60000000ffff 64bit pref]
-> [   83.935564] pci_bus 0002:03: busn_res: [bus 03-ff] end is updated to 03
-> [   83.998804] pci_bus 0002:04: extended config space not accessible
-> [   84.025026] pci 0002:04:00.0: [177d:a063] type 00 class 0x020000
-> [   84.055298] pci 0002:04:00.0: reg 0x18: [mem 0x600000000000-0x600003ffffff 64bit pref]
-> [   84.147582] pci_bus 0002:04: busn_res: [bus 04-ff] end is updated to 04
-> [   84.202778] pci_bus 0002:05: extended config space not accessible
-> [   84.228684] pci 0002:05:00.0: [177d:a063] type 00 class 0x020000
-> [   84.258887] pci 0002:05:00.0: reg 0x18: [mem 0x600000000000-0x600003ffffff 64bit pref]
-
-Remove timestamps since they don't help to understand the problem.
-
-Also, if this only has to do with the port type, the BAR information
-probably doesn't help understand this either, so we can remove it.
-
-I think if you use a current kernel, the dmesg logging should include
-the port type (Root Port, Upstream Port, etc), which might make this
-more readable.
-
-> Signed-off-by: Gowthami Thiagarajan <gthiagarajan@marvell.com>
+On Mon, Nov 04, 2024 at 10:14:26AM -0800, Stanislav Fomichev wrote:
+> In the next patch the hard-coded queue numbers are gonna be removed.
+> So introduce some initial support for ethtool YNL and use
+> it to enable header split.
+> 
+> Also, tcp-data-split requires latest ethtool which is unlikely
+> to be present in the distros right now.
+> 
+> (ideally, we should not shell out to ethtool at all).
+> 
+> Reviewed-by: Mina Almasry <almasrymina@google.com>
+> Signed-off-by: Stanislav Fomichev <sdf@fomichev.me>
 > ---
->  drivers/pci/probe.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
-> index 4f68414c3086..263ec21451d9 100644
-> --- a/drivers/pci/probe.c
-> +++ b/drivers/pci/probe.c
-> @@ -1596,7 +1596,7 @@ void set_pcie_port_type(struct pci_dev *pdev)
->  		if (pcie_downstream_port(parent)) {
->  			pci_info(pdev, "claims to be downstream port but is acting as upstream port, correcting type\n");
->  			pdev->pcie_flags_reg &= ~PCI_EXP_FLAGS_TYPE;
-> -			pdev->pcie_flags_reg |= PCI_EXP_TYPE_UPSTREAM;
-> +			pdev->pcie_flags_reg |= PCI_EXP_TYPE_UPSTREAM << 4;
->  		}
->  	} else if (type == PCI_EXP_TYPE_UPSTREAM) {
->  		/*
-> @@ -1607,7 +1607,7 @@ void set_pcie_port_type(struct pci_dev *pdev)
->  		if (pci_pcie_type(parent) == PCI_EXP_TYPE_UPSTREAM) {
->  			pci_info(pdev, "claims to be upstream port but is acting as downstream port, correcting type\n");
->  			pdev->pcie_flags_reg &= ~PCI_EXP_FLAGS_TYPE;
-> -			pdev->pcie_flags_reg |= PCI_EXP_TYPE_DOWNSTREAM;
-> +			pdev->pcie_flags_reg |= PCI_EXP_TYPE_DOWNSTREAM << 4;
->  		}
->  	}
->  }
-> -- 
-> 2.25.1
-> 
+>  tools/testing/selftests/net/Makefile   |  2 +-
+>  tools/testing/selftests/net/ncdevmem.c | 57 +++++++++++++++++++++++++-
+>  2 files changed, 56 insertions(+), 3 deletions(-)
+
+Reviewed-by: Joe Damato <jdamato@fastly.com>
 
