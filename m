@@ -1,89 +1,52 @@
-Return-Path: <linux-kernel+bounces-397184-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397185-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93CC29BD7C5
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 22:44:41 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9A8D9BD7C6
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 22:45:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4ABDB1F23954
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 21:44:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8684F283F76
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 21:45:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B69E92161F7;
-	Tue,  5 Nov 2024 21:44:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7247D1FF02E;
+	Tue,  5 Nov 2024 21:45:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="x1lEmYIU"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HVv3VNFL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC2092161EA
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 21:44:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D344D1802AB
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 21:45:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730843075; cv=none; b=moSXjgfi6kGKnQWZo+tN8/bQP+Cwrv0R93REiGHc0Ur9RSd5sz17OqbCdTiXjLb/ZtYPG/P6IUEFhcGRCN75nQo1s7ze65THJsWDkDbBI84EfcV32gvVFjUvqoOsnGgt3w0XOlUCHu5Cc3tLF7xPtn8dHCGWfDeqM+Lldg5r6uk=
+	t=1730843112; cv=none; b=Zkv0AusM3f4KqvPf8HgWEWO5QN7BoN3KRiSZ/RABZum/YOgrdxRgdKRC4RMFRjuS+ZRMiIoV+cEF9HRF3ueNvi9pEcOa9otxL5suuGdDSx+X0R/Ml8BVzTjl1zjVTy9T25ATHlvcVB2n1I3hdVas2y3fjmSUOcH4fNpGA/K317I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730843075; c=relaxed/simple;
-	bh=ElQX0glc7lwKuheiluiLjGbwTJ2UEP8N2/BYkCsZqVc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Dg1CJ5f4zA4loQna52GquCnkOFfu4WUrywTXpHSDcRvQ508OFnXY3mCPJgznzcSg8cYqY+197Q/rYX3BE6OOXIAWY66kiqG9PND5ldxiIJ/lBkDQyvem/hojrORw6jt1RT3UKVW6EAom4BSLOIeBFa6wegRH4cs8nfo5lhhdxcw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=x1lEmYIU; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-20c8ac50b79so43975ad.0
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 13:44:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1730843073; x=1731447873; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=+oLbfgRypN4eAv8cBDEtiqEYRjRnpZt3Ekt+N4Q9DIQ=;
-        b=x1lEmYIUl/lkw1ZrBM/Fb8lQYeZWJ2e2qsPyrqwigXmYK+s/KbmP6KWsG816d0uYKP
-         J5xXbDTkvTfNIdJGlFTwWQYwVga504nDEZWVaYRpBCY73xbyFlx/EH34wfI4ygveznUN
-         I6XtVOU9yMlI7oNEZ7txC2YKWn645rHHzoebRkClmcGKTMl59I9En7P5K4x4EVtCQ5Ys
-         O8Ld4qrqSw/qRrWKmt0v0I5JZs3htU2XWBsDS/h0xoLhlpcCvPn6p8wmEraHw4JYWSzw
-         OwZ3hEly+IE+bC9LarBJqrz51K0Hb54DFbvV00c86iIO0ZlflIduABuyR51BoOFBkBXz
-         OkVQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730843073; x=1731447873;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+oLbfgRypN4eAv8cBDEtiqEYRjRnpZt3Ekt+N4Q9DIQ=;
-        b=mh6EbB10VYkkXW8ibSeyrmh7sZarabrxb6MZybyRyLchghA98kpNKZn1x8jNIez4yQ
-         PVlVf5YK3Haukj6PNGf+ZRP2XfeIdGEy6B3UlCO0htwE/VyIcxUtK4AVCQH2u1vtJRJY
-         B09ENKD6Ps95k4ItrbKarybhxXwKgXPiVdALUL1xeBZQlJdCq2v/8hT2wQ2pv8QomaLX
-         biBYpNRgMbk4hFMLfhBuVr8Y3bykNuYzyQq6vpftd221UJqpqjFd/Qlgr7gUgk/2k9Wr
-         zdrBUDmSVIkErOOlPr5aPK/Et98g2sLhDtO1Xh8alSleWvkIffaCYvs7fGR0m/3F7kKo
-         2eEQ==
-X-Gm-Message-State: AOJu0YzBbJiG/Rw7LboFZPdCYk+l8MIn9qJZ9SXfMPge0JYJ7yd9n+bu
-	VM7svFXJaJloEFULvsf7dI2+DtUbDRGwBwS56AkAk3BYWcZ+YkgdpvCzht5Jyg==
-X-Gm-Gg: ASbGncugBh3xC4MgmzIksDO0G69lXoYCXt+Pm227kZ+pfxrf8za7NCVAGWNeVPBYLCP
-	O4C+Fa+gj3LFWRO8VkXtFIowGe8GsWZ30TA47Rcuw2tAAXi8f1Z+2Ox/1jO/cA55rQBk8m9kUQt
-	j7zEfTzcgCvMFl87ALHaLx3nFar7pSu0CIXXNq0Cy0SNzYyUUbNweFbqqbcQeTanyKa1HBdbR5Y
-	8mg1P4QenWoPIXOmclb5qwDoEZlrU8KRTJz3qeI5qVWdbijaywS+97j09OP1Ic4iKKQ+isSMT9E
-	WyPsWtVqdIw0A/w=
-X-Google-Smtp-Source: AGHT+IHmYaZX8ECh+kJzuRakdAFkRIX0exuqqo3tWsqagvGR+bxKyyCL3NfS/zhhdtSLsvizT0WPAw==
-X-Received: by 2002:a17:903:1103:b0:201:e2db:7be3 with SMTP id d9443c01a7336-2116cf79bc2mr32485ad.21.1730843073047;
-        Tue, 05 Nov 2024 13:44:33 -0800 (PST)
-Received: from google.com (180.145.227.35.bc.googleusercontent.com. [35.227.145.180])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-720bc2c4bdfsm10092330b3a.130.2024.11.05.13.44.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Nov 2024 13:44:32 -0800 (PST)
-Date: Tue, 5 Nov 2024 21:44:28 +0000
-From: Carlos Llamas <cmllamas@google.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Arve =?iso-8859-1?B?SGr4bm5lduVn?= <arve@android.com>,
-	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Christian Brauner <brauner@kernel.org>,
-	Suren Baghdasaryan <surenb@google.com>
-Cc: linux-kernel@vger.kernel.org, kernel-team@android.com,
-	Nhat Pham <nphamcs@gmail.com>, Johannes Weiner <hannes@cmpxchg.org>,
-	Barry Song <v-songbaohua@oppo.com>
-Subject: Re: [PATCH 8/8] binder: use per-vma lock in page installation
-Message-ID: <ZyqRvLlPdvKknbWE@google.com>
-References: <20241105200258.2380168-1-cmllamas@google.com>
- <20241105200258.2380168-9-cmllamas@google.com>
+	s=arc-20240116; t=1730843112; c=relaxed/simple;
+	bh=+bQJylxKBxswmtoVmFauRWf0nxG2ry0iPzzVrbzUbpU=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=nZZNzs15EV2Y6zdBDPVVrQ7ZkrJUTfBoFOuHCH8djyIKzRmFLG2e3VbKSDL2eE/8F+sYprTIfOBpFcIflfHDauVuJbetW2GcE7cVQVXKo0JOX79Y+/NB2S9iL5dxYTZeQdLGJHiV0Nfahk1i3ZRwd2z1H53mN5Zj41/Xigqqvlk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HVv3VNFL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4DB50C4CECF;
+	Tue,  5 Nov 2024 21:45:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730843112;
+	bh=+bQJylxKBxswmtoVmFauRWf0nxG2ry0iPzzVrbzUbpU=;
+	h=Date:From:To:Cc:Subject:From;
+	b=HVv3VNFLQRC7KvBDbauBsZ7BOP+GfQsGHGgToP+mx2GmHT0UFeNgZM45SGjdQeLP0
+	 NmwPEhS8DMd50AQGrwIGr+roZkDE2kBpirPHQm7u6VyHlovJduIKjcT6p4Gday7tfO
+	 7fpgLy3sK0qqS6iDwBu5KmjpNonI+06Fgc5Q6lG74a8V1oXTLR2atdkdkwKTBf1Dc7
+	 MQPMx9UMX857lqqVaZMtYPYQ1ZUrrStOHTZ7ZVNkm8R/vHDFAiOp0MTofhVZrGkdgg
+	 2tphsia1A9ctzNN3rGw6tnGxvPNhykm+fTGHQyS1RQ9tuxFxaOaSee+D8zLHmUK0wB
+	 +e1Oca9bvxM3w==
+Date: Tue, 5 Nov 2024 11:45:11 -1000
+From: Tejun Heo <tj@kernel.org>
+To: David Vernet <void@manifault.com>
+Cc: linux-kernel@vger.kernel.org, sched-ext@meta.comm, kernel-team@meta.com
+Subject: [PATCH sched_ext/for-6.12-fixes] sched_ext: Update scx_show_state.py
+ to match scx_ops_bypass_depth's new type
+Message-ID: <ZyqR51ROd198Ulu5@slm.duckdns.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,24 +55,27 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241105200258.2380168-9-cmllamas@google.com>
 
-On Tue, Nov 05, 2024 at 08:02:50PM +0000, Carlos Llamas wrote:
-> +static struct page *binder_page_lookup(struct mm_struct *mm,
-> +				       struct vm_area_struct *vma,
-> +				       unsigned long addr,
-> +				       bool mm_locked)
-> +{
-> +	struct folio_walk fw;
-> +	struct page *page;
-> +
-> +	/* folio_walk_start() requires the mmap_lock */
-> +	if (!mm_locked)
-> +		mmap_read_lock(mm);
-> +
-> +	if (!folio_walk_start(&fw, vma, addr, 0))
-> +		return NULL;
+0e7ffff1b811 ("scx: Fix raciness in scx_ops_bypass()") converted
+scx_ops_bypass_depth from an atomic to an int. Update scx_show_state.py
+accordingly.
 
-Just realized that mmap_lock need to be released if folio_walk_start()
-fails and !mm_locked. I'll add the fix for v2.
+Signed-off-by: Tejun Heo <tj@kernel.org>
+Fixes: 0e7ffff1b811 ("scx: Fix raciness in scx_ops_bypass()")
+---
+Applying to sched_ext/for-6.12-fixes. Thanks.
+
+ tools/sched_ext/scx_show_state.py |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/tools/sched_ext/scx_show_state.py
++++ b/tools/sched_ext/scx_show_state.py
+@@ -35,6 +35,6 @@ print(f'enabled       : {read_static_key
+ print(f'switching_all : {read_int("scx_switching_all")}')
+ print(f'switched_all  : {read_static_key("__scx_switched_all")}')
+ print(f'enable_state  : {ops_state_str(enable_state)} ({enable_state})')
+-print(f'bypass_depth  : {read_atomic("scx_ops_bypass_depth")}')
++print(f'bypass_depth  : {prog["scx_ops_bypass_depth"].value_()}')
+ print(f'nr_rejected   : {read_atomic("scx_nr_rejected")}')
+ print(f'enable_seq    : {read_atomic("scx_enable_seq")}')
 
