@@ -1,297 +1,258 @@
-Return-Path: <linux-kernel+bounces-396718-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396719-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F5EA9BD133
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 16:56:09 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B93B19BD135
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 16:56:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF8131F21C29
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 15:56:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7999C282D9E
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 15:56:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BEC014A611;
-	Tue,  5 Nov 2024 15:56:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 509871509AF;
+	Tue,  5 Nov 2024 15:56:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="g5ke2LQZ"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="UTbf4NQE"
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D9B438DD6
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 15:55:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7892538DD6
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 15:56:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730822159; cv=none; b=CCTb6UZZ9YORvobv3xGfS9/ze1BZDEFo8JT/v0sRp3SaNITlmUsWn/ErBp2jVIT8GNm0fIpnKTR61USrEQ9dozJ/QN9hHlvedc3rdVmN/PnrPZriQ2r3YuET9rLDlu2Yc7VGEPojHglco20dOaXHl8Kjy6F53sD4GOU0EKNo5Wg=
+	t=1730822202; cv=none; b=oa2R2BxheCx1o68zr4deOH+jgo3+5pxzAFOPb55YIQXCbFLiZh6gSu0yZV96Q4+jZADdMLMMCPDPTPUPYBT8lhlVn4EonjnuB8BKiGdZcOl/dZeeg/AfwSPGMlvjBYBPgwLpMfs12w23qdr8wVpzDKbEdVXjadFOUhJXvJ50fyY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730822159; c=relaxed/simple;
-	bh=yBCgu0cBK6TKXi2qna+AIIArRaBwHhg1D5hN16SsTIM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HeLx6OhKjoGMMK/MTfepzKX1IQvKj5QKhIfnmGHcQDukqbDh92V3Hcew6bq7l/hPJUoUD02dVOcYAca26qh/yBI3Yj3X3BZcSJ5gGXhtsy93Uz3M3tLH57KbOJvbPX84pd+LIupR0KlLTsAcZR3+Io2cXcUzAf6y1cr01/Jfco8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=g5ke2LQZ; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1730822156;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nP9moAG5M5/3yDbA+3U3o1BXa4WTXpfjgS/p50H0JGU=;
-	b=g5ke2LQZPdFCu0AZhJ7YzXzL/PawjxF0sLIFM5hNXPwNHsXdv61SYrTfzcmNS/cgyycH3v
-	0DeNTzKMH8mpBj0yNVFEW0/PEgbzlbWDjDcrcAhNMZJfVic9z5ky0WDvnXOSoJQ787Rcrr
-	+6Q1k/U+CQ9G1TxRMz0iIqnZ/1Zs2Fw=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-357-WnsfwOQpOlqKPwA43QAnKw-1; Tue,
- 05 Nov 2024 10:55:53 -0500
-X-MC-Unique: WnsfwOQpOlqKPwA43QAnKw-1
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id AB16D1955F79;
-	Tue,  5 Nov 2024 15:55:50 +0000 (UTC)
-Received: from pauld.westford.csb (unknown [10.22.64.146])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 912B71955F43;
-	Tue,  5 Nov 2024 15:55:46 +0000 (UTC)
-Date: Tue, 5 Nov 2024 10:55:43 -0500
-From: Phil Auld <pauld@redhat.com>
-To: Christian Loehle <christian.loehle@arm.com>
-Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Peter Zijlstra <peterz@infradead.org>, mingo@redhat.com,
-	juri.lelli@redhat.com, vincent.guittot@linaro.org,
-	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
-	vschneid@redhat.com, linux-kernel@vger.kernel.org,
-	kprateek.nayak@amd.com, wuyun.abel@bytedance.com,
-	youssefesmat@chromium.org, tglx@linutronix.de, efault@gmx.de
-Subject: Re: [PATCH 17/24] sched/fair: Implement delayed dequeue
-Message-ID: <20241105155543.GB33795@pauld.westford.csb>
-References: <20240727102732.960974693@infradead.org>
- <20240727105030.226163742@infradead.org>
- <20241101124715.GA689589@pauld.westford.csb>
- <ed46d844-e0b0-46fd-a164-9bfad538a7a9@arm.com>
- <20241104125009.GA749675@pauld.westford.csb>
- <93e73a42-0afc-4749-89db-73b9f72c8b0b@arm.com>
+	s=arc-20240116; t=1730822202; c=relaxed/simple;
+	bh=bz3e7dP1KeYuebRZGkFKNHi29d8JijMB5urnbXUCkJg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pnv/xDvWY/gYAGI60005s+CN9XTB33b7ztaC+gvz7YizfGJiNdQdB3iINeRWkarC9k2aZPwLVduGuc+NqyZbOqvv9Ei/QFQBUpXJLb8UzPOwZhBWDcax5wXN1R+qJcoz7sOQt93gqjr71DKhs36TEPn43DO2doayHY5PEo8L3Ck=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=UTbf4NQE; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-37d473c4bb6so5059908f8f.3
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 07:56:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1730822199; x=1731426999; darn=vger.kernel.org;
+        h=in-reply-to:autocrypt:from:content-language:references:cc:to
+         :subject:user-agent:mime-version:date:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=bz3e7dP1KeYuebRZGkFKNHi29d8JijMB5urnbXUCkJg=;
+        b=UTbf4NQEc1qZN2uZkn/UbHYreyzJ+l2H90X3T1ztJ5sny1wnL690Mlt5Rge3WrHiJo
+         WXmLsxUa4uP2B57/VlRirU3ZrGu8iFlg6mTLNV4/FOvhLXfypnCC5fn3NJcMyGtf+0T8
+         QUWIGLQ5wn33unIvDqhX0ZcaV2nY32+dIvLIGW2TT+NkrScuUY1cLtmmfcIrlNGUKFWn
+         Pq1m7qUqe/n9j5XFr7tShanKV9oTUp4ICfMLY+7cTQmnBRMTcthQMLnbwoZ5alk3C0xe
+         qPXbMQoHSKm/Cs7Rp/vONSWb2NxP8pDvTXcs3KLECGmApTPPnI3dKklGUtvjuucEXwGW
+         sLgA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730822199; x=1731426999;
+        h=in-reply-to:autocrypt:from:content-language:references:cc:to
+         :subject:user-agent:mime-version:date:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=bz3e7dP1KeYuebRZGkFKNHi29d8JijMB5urnbXUCkJg=;
+        b=PN4fLTTS5Cv22SrxqMp5T2SSHc7TrjVUfVXfRNg7Y1OHBvkz95ObMWyjeS/Uk9t9YH
+         6oYiyR+VJS3sfhePdLG/pMDTv48nPtKsdjEDEbUVNCBwq92omO2NNJri75w/MisgVMYz
+         nHyEDWiSKTl1Ka12NQT7a9VBtjXlKC1R20t8zD0TejW0DTHqbLCEZAxk2pT6tO2zy5K1
+         1iCd1XX1OrqsMyr/e3du6J1dNGJMEZ9eWOb1yHqgPzPZMvnEg+PiHqaEz3U1T5RzSKtx
+         w7IMEHh5Zc7nu9hbMhwg2P2rrYAckECnp8caf1ODrPhA/ddoFQIMVIzfTa5vvuzq+LOQ
+         /50Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWv0yJcTGbmVp7+COWs9n5Qg+60CKlf0OZXbat7TAzRwRF5VytznG2lksTHYjfcHROWIbMmcWYBAdgv08U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzKtMjKfmPnZ6ApsfPtbNc4jHm+5yUgWALF1E3+MC8UeW/6t17H
+	xNh58uUfIEnouIuEd9w1e0EtBp0foQQhFyhF8ajbSBJ00Cpy0KkmTHGrvj801U0=
+X-Google-Smtp-Source: AGHT+IEScPUofJaERY2yiZU967o6GxVCJasBuDqbrT9wmPNg0fIR0y3JxAZ2piRjiLQoHXIs/cDqjQ==
+X-Received: by 2002:adf:e199:0:b0:37d:4eeb:7370 with SMTP id ffacd0b85a97d-381c7ae14bdmr17673662f8f.56.1730822198751;
+        Tue, 05 Nov 2024 07:56:38 -0800 (PST)
+Received: from ?IPV6:2003:e5:872e:b100:d3c7:e0c0:5e3b:aa1c? (p200300e5872eb100d3c7e0c05e3baa1c.dip0.t-ipconnect.de. [2003:e5:872e:b100:d3c7:e0c0:5e3b:aa1c])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9eb18140a6sm150564266b.195.2024.11.05.07.56.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 05 Nov 2024 07:56:38 -0800 (PST)
+Message-ID: <79984ce2-98a2-42f4-85f8-fd53d71f10c7@suse.com>
+Date: Tue, 5 Nov 2024 16:56:37 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <93e73a42-0afc-4749-89db-73b9f72c8b0b@arm.com>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] xen: Fix the issue of resource not being properly
+ released in xenbus_dev_probe()
+To: Qiu-ji Chen <chenqiuji666@gmail.com>, sstabellini@kernel.org,
+ oleksandr_tyshchenko@epam.com, gregkh@linuxfoundation.org,
+ sumit.garg@linaro.org, xin.wang2@amd.com
+Cc: xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
+ baijiaju1990@gmail.com, stable@vger.kernel.org
+References: <20241105130919.4621-1-chenqiuji666@gmail.com>
+Content-Language: en-US
+From: =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>
+Autocrypt: addr=jgross@suse.com; keydata=
+ xsBNBFOMcBYBCACgGjqjoGvbEouQZw/ToiBg9W98AlM2QHV+iNHsEs7kxWhKMjrioyspZKOB
+ ycWxw3ie3j9uvg9EOB3aN4xiTv4qbnGiTr3oJhkB1gsb6ToJQZ8uxGq2kaV2KL9650I1SJve
+ dYm8Of8Zd621lSmoKOwlNClALZNew72NjJLEzTalU1OdT7/i1TXkH09XSSI8mEQ/ouNcMvIJ
+ NwQpd369y9bfIhWUiVXEK7MlRgUG6MvIj6Y3Am/BBLUVbDa4+gmzDC9ezlZkTZG2t14zWPvx
+ XP3FAp2pkW0xqG7/377qptDmrk42GlSKN4z76ELnLxussxc7I2hx18NUcbP8+uty4bMxABEB
+ AAHNH0p1ZXJnZW4gR3Jvc3MgPGpncm9zc0BzdXNlLmNvbT7CwHkEEwECACMFAlOMcK8CGwMH
+ CwkIBwMCAQYVCAIJCgsEFgIDAQIeAQIXgAAKCRCw3p3WKL8TL8eZB/9G0juS/kDY9LhEXseh
+ mE9U+iA1VsLhgDqVbsOtZ/S14LRFHczNd/Lqkn7souCSoyWsBs3/wO+OjPvxf7m+Ef+sMtr0
+ G5lCWEWa9wa0IXx5HRPW/ScL+e4AVUbL7rurYMfwCzco+7TfjhMEOkC+va5gzi1KrErgNRHH
+ kg3PhlnRY0Udyqx++UYkAsN4TQuEhNN32MvN0Np3WlBJOgKcuXpIElmMM5f1BBzJSKBkW0Jc
+ Wy3h2Wy912vHKpPV/Xv7ZwVJ27v7KcuZcErtptDevAljxJtE7aJG6WiBzm+v9EswyWxwMCIO
+ RoVBYuiocc51872tRGywc03xaQydB+9R7BHPzsBNBFOMcBYBCADLMfoA44MwGOB9YT1V4KCy
+ vAfd7E0BTfaAurbG+Olacciz3yd09QOmejFZC6AnoykydyvTFLAWYcSCdISMr88COmmCbJzn
+ sHAogjexXiif6ANUUlHpjxlHCCcELmZUzomNDnEOTxZFeWMTFF9Rf2k2F0Tl4E5kmsNGgtSa
+ aMO0rNZoOEiD/7UfPP3dfh8JCQ1VtUUsQtT1sxos8Eb/HmriJhnaTZ7Hp3jtgTVkV0ybpgFg
+ w6WMaRkrBh17mV0z2ajjmabB7SJxcouSkR0hcpNl4oM74d2/VqoW4BxxxOD1FcNCObCELfIS
+ auZx+XT6s+CE7Qi/c44ibBMR7hyjdzWbABEBAAHCwF8EGAECAAkFAlOMcBYCGwwACgkQsN6d
+ 1ii/Ey9D+Af/WFr3q+bg/8v5tCknCtn92d5lyYTBNt7xgWzDZX8G6/pngzKyWfedArllp0Pn
+ fgIXtMNV+3t8Li1Tg843EXkP7+2+CQ98MB8XvvPLYAfW8nNDV85TyVgWlldNcgdv7nn1Sq8g
+ HwB2BHdIAkYce3hEoDQXt/mKlgEGsLpzJcnLKimtPXQQy9TxUaLBe9PInPd+Ohix0XOlY+Uk
+ QFEx50Ki3rSDl2Zt2tnkNYKUCvTJq7jvOlaPd6d/W0tZqpyy7KVay+K4aMobDsodB3dvEAs6
+ ScCnh03dDAFgIq5nsB11j3KPKdVoPlfucX2c7kGNH+LUMbzqV6beIENfNexkOfxHfw==
+In-Reply-To: <20241105130919.4621-1-chenqiuji666@gmail.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="------------eTdyGz0k450u4KZEC4Cbyb0S"
 
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--------------eTdyGz0k450u4KZEC4Cbyb0S
+Content-Type: multipart/mixed; boundary="------------FTEVxyFrAV4twIPuT6CjSaEj";
+ protected-headers="v1"
+From: =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>
+To: Qiu-ji Chen <chenqiuji666@gmail.com>, sstabellini@kernel.org,
+ oleksandr_tyshchenko@epam.com, gregkh@linuxfoundation.org,
+ sumit.garg@linaro.org, xin.wang2@amd.com
+Cc: xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
+ baijiaju1990@gmail.com, stable@vger.kernel.org
+Message-ID: <79984ce2-98a2-42f4-85f8-fd53d71f10c7@suse.com>
+Subject: Re: [PATCH] xen: Fix the issue of resource not being properly
+ released in xenbus_dev_probe()
+References: <20241105130919.4621-1-chenqiuji666@gmail.com>
+In-Reply-To: <20241105130919.4621-1-chenqiuji666@gmail.com>
 
-Hi Christian,
+--------------FTEVxyFrAV4twIPuT6CjSaEj
+Content-Type: multipart/mixed; boundary="------------PI0x0UKMcbQZcGfSxIk646iX"
 
-On Tue, Nov 05, 2024 at 09:53:49AM +0000 Christian Loehle wrote:
-> On 11/4/24 12:50, Phil Auld wrote:
-> > 
-> > Hi Dietmar,
-> > 
-> > On Mon, Nov 04, 2024 at 10:28:37AM +0100 Dietmar Eggemann wrote:
-> >> Hi Phil,
-> >>
-> >> On 01/11/2024 13:47, Phil Auld wrote:
-> >>>
-> >>> Hi Peterm
-> >>>
-> >>> On Sat, Jul 27, 2024 at 12:27:49PM +0200 Peter Zijlstra wrote:
-> >>>> Extend / fix 86bfbb7ce4f6 ("sched/fair: Add lag based placement") by
-> >>>> noting that lag is fundamentally a temporal measure. It should not be
-> >>>> carried around indefinitely.
-> >>>>
-> >>>> OTOH it should also not be instantly discarded, doing so will allow a
-> >>>> task to game the system by purposefully (micro) sleeping at the end of
-> >>>> its time quantum.
-> >>>>
-> >>>> Since lag is intimately tied to the virtual time base, a wall-time
-> >>>> based decay is also insufficient, notably competition is required for
-> >>>> any of this to make sense.
-> >>>>
-> >>>> Instead, delay the dequeue and keep the 'tasks' on the runqueue,
-> >>>> competing until they are eligible.
-> >>>>
-> >>>> Strictly speaking, we only care about keeping them until the 0-lag
-> >>>> point, but that is a difficult proposition, instead carry them around
-> >>>> until they get picked again, and dequeue them at that point.
-> >>>
-> >>> This one is causing a 10-20% performance hit on our filesystem tests.
-> >>>
-> >>> On 6.12-rc5 (so with the latest follow ons) we get:
-> >>>
-> >>> with DELAY_DEQUEUE the bandwidth is 510 MB/s
-> >>> with NO_DELAY_DEQUEUE the bandwidth is 590 MB/s
-> >>>
-> >>> The test is fio, something like this:
-> >>>
-> >>> taskset -c 1,2,3,4,5,6,7,8 fio --rw randwrite --bs 4k --runtime 1m --fsync 0 --iodepth 32 --direct 1 --ioengine libaio --numjobs 8 --size 30g --nrfiles 1 --loops 1 --name default --randrepeat 1 --time_based --group_reporting --directory /testfs
-> >>
-> >> I'm not seeing this on my i7-13700K running tip sched/core (1a6151017ee5
-> >> - sched: psi: pass enqueue/dequeue flags to psi callbacks directly
-> >> (2024-10-26 Johannes Weiner)) (6.12.0-rc4 - based)
-> >>
-> >> Using 'taskset 0xaaaaa' avoiding SMT and running only on P-cores.
-> >>
-> >> vanilla features: 990MB/s (mean out of 5 runs, σ:  9.38)
-> >> NO_DELAY_DEQUEUE: 992MB/s (mean out of 5 runs, σ: 10.61)
-> >>
-> >> # sudo lshw -class disk -class storage
-> >>   *-nvme                    
-> >>        description: NVMe device
-> >>        product: GIGABYTE GP-ASM2NE6500GTTD
-> >>        vendor: Phison Electronics Corporation
-> >>        physical id: 0
-> >>        bus info: pci@0000:01:00.0
-> >>        logical name: /dev/nvme0
-> >>        version: EGFM13.2
-> >>        ...
-> >>        capabilities: nvme pciexpress msix msi pm nvm_express bus_master cap_list
-> >>        configuration: driver=nvme latency=0 nqn=nqn.2014.08.org.nvmexpress:19871987SN215108954872 GIGABYTE GP-ASM2NE6500GTTD state=live
-> >>        resources: irq:16 memory:70800000-70803fff 
-> >>
-> >> # mount | grep ^/dev/nvme0
-> >> /dev/nvme0n1p2 on / type ext4 (rw,relatime,errors=remount-ro)
-> >>
-> >> Which disk device you're using?
-> > 
-> > Most of the reports are on various NVME drives (samsung mostly I think).
-> > 
-> > 
-> > One thing I should add is that it's all on LVM: 
-> > 
-> > 
-> > vgcreate vg /dev/nvme0n1 -y
-> > lvcreate -n thinMeta -L 3GB vg -y
-> > lvcreate -n thinPool -l 99%FREE vg -y
-> > lvconvert --thinpool /dev/mapper/vg-thinPool --poolmetadata /dev/mapper/vg-thinMeta -Zn -y
-> > lvcreate -n testLV -V 1300G --thinpool thinPool vg
-> > wipefs -a /dev/mapper/vg-testLV
-> > mkfs.ext4 /dev/mapper/vg-testLV -E lazy_itable_init=0,lazy_journal_init=0 -F
-> > mount /dev/mapper/vg-testLV /testfs 
-> > 
-> > 
-> > With VDO or thinpool (as above) it shows on both ext4 and xfs. With fs on
-> > drive directly it's a little more variable. Some it shows on xfs, some it show
-> > on ext4 and not vice-versa, seems to depend on the drive or hw raid. But when
-> > it shows it's 100% reproducible on that setup. 
-> > 
-> > It's always the randwrite numbers. The rest look fine.
-> 
-> Hi Phil,
-> 
-> Thanks for the detailed instructions. Unfortunately even with your LVM setup on
-> the platforms I've tried I don't see a regression so far, all the numbers are
-> about equal for DELAY_DEQUEUE and NO_DELAY_DEQUEUE.
->
+--------------PI0x0UKMcbQZcGfSxIk646iX
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: base64
 
-Yeah, that's odd.
+T24gMDUuMTEuMjQgMTQ6MDksIFFpdS1qaSBDaGVuIHdyb3RlOg0KPiBUaGlzIHBhdGNoIGZp
+eGVzIGFuIGlzc3VlIGluIHRoZSBmdW5jdGlvbiB4ZW5idXNfZGV2X3Byb2JlKCkuIEluIHRo
+ZQ0KPiB4ZW5idXNfZGV2X3Byb2JlKCkgZnVuY3Rpb24sIHdpdGhpbiB0aGUgaWYgKGVycikg
+YnJhbmNoIGF0IGxpbmUgMzEzLCB0aGUNCj4gcHJvZ3JhbSBpbmNvcnJlY3RseSByZXR1cm5z
+IGVyciBkaXJlY3RseSB3aXRob3V0IHJlbGVhc2luZyB0aGUgcmVzb3VyY2VzDQo+IGFsbG9j
+YXRlZCBieSBlcnIgPSBkcnYtPnByb2JlKGRldiwgaWQpLiBBcyB0aGUgcmV0dXJuIHZhbHVl
+IGlzIG5vbi16ZXJvLA0KPiB0aGUgdXBwZXIgbGF5ZXJzIGFzc3VtZSB0aGUgcHJvY2Vzc2lu
+ZyBsb2dpYyBoYXMgZmFpbGVkLiBIb3dldmVyLCB0aGUgcHJvYmUNCj4gb3BlcmF0aW9uIHdh
+cyBwZXJmb3JtZWQgZWFybGllciB3aXRob3V0IGEgY29ycmVzcG9uZGluZyByZW1vdmUgb3Bl
+cmF0aW9uLg0KPiBTaW5jZSB0aGUgcHJvYmUgYWN0dWFsbHkgYWxsb2NhdGVzIHJlc291cmNl
+cywgZmFpbGluZyB0byBwZXJmb3JtIHRoZSByZW1vdmUNCj4gb3BlcmF0aW9uIGNvdWxkIGxl
+YWQgdG8gcHJvYmxlbXMuDQo+IA0KPiBUbyBmaXggdGhpcyBpc3N1ZSwgd2UgZm9sbG93ZWQg
+dGhlIHJlc291cmNlIHJlbGVhc2UgbG9naWMgb2YgdGhlDQo+IHhlbmJ1c19kZXZfcmVtb3Zl
+KCkgZnVuY3Rpb24gYnkgYWRkaW5nIGEgbmV3IGJsb2NrIGZhaWxfcmVtb3ZlIGJlZm9yZSB0
+aGUNCj4gZmFpbF9wdXQgYmxvY2suIEFmdGVyIGVudGVyaW5nIHRoZSBicmFuY2ggaWYgKGVy
+cikgYXQgbGluZSAzMTMsIHRoZQ0KPiBmdW5jdGlvbiB3aWxsIHVzZSBhIGdvdG8gc3RhdGVt
+ZW50IHRvIGp1bXAgdG8gdGhlIGZhaWxfcmVtb3ZlIGJsb2NrLA0KPiBlbnN1cmluZyB0aGF0
+IHRoZSBwcmV2aW91c2x5IGFjcXVpcmVkIHJlc291cmNlcyBhcmUgY29ycmVjdGx5IHJlbGVh
+c2VkLA0KPiB0aHVzIHByZXZlbnRpbmcgdGhlIHJlZmVyZW5jZSBjb3VudCBsZWFrLg0KPiAN
+Cj4gVGhpcyBidWcgd2FzIGlkZW50aWZpZWQgYnkgYW4gZXhwZXJpbWVudGFsIHN0YXRpYyBh
+bmFseXNpcyB0b29sIGRldmVsb3BlZA0KPiBieSBvdXIgdGVhbS4gVGhlIHRvb2wgc3BlY2lh
+bGl6ZXMgaW4gYW5hbHl6aW5nIHJlZmVyZW5jZSBjb3VudCBvcGVyYXRpb25zDQo+IGFuZCBk
+ZXRlY3RpbmcgcG90ZW50aWFsIGlzc3VlcyB3aGVyZSByZXNvdXJjZXMgYXJlIG5vdCBwcm9w
+ZXJseSBtYW5hZ2VkLg0KPiBJbiB0aGlzIGNhc2UsIHRoZSB0b29sIGZsYWdnZWQgdGhlIG1p
+c3NpbmcgcmVsZWFzZSBvcGVyYXRpb24gYXMgYQ0KPiBwb3RlbnRpYWwgcHJvYmxlbSwgd2hp
+Y2ggbGVkIHRvIHRoZSBkZXZlbG9wbWVudCBvZiB0aGlzIHBhdGNoLg0KPiANCj4gRml4ZXM6
+IDRiYWMwN2M5OTNkMCAoInhlbjogYWRkIHRoZSBYZW5idXMgc3lzZnMgYW5kIHZpcnR1YWwg
+ZGV2aWNlIGhvdHBsdWcgZHJpdmVyIikNCj4gQ2M6IHN0YWJsZUB2Z2VyLmtlcm5lbC5vcmcN
+Cj4gU2lnbmVkLW9mZi1ieTogUWl1LWppIENoZW4gPGNoZW5xaXVqaTY2NkBnbWFpbC5jb20+
+DQoNClJldmlld2VkLWJ5OiBKdWVyZ2VuIEdyb3NzIDxqZ3Jvc3NAc3VzZS5jb20+DQoNCg0K
+SnVlcmdlbg0K
+--------------PI0x0UKMcbQZcGfSxIk646iX
+Content-Type: application/pgp-keys; name="OpenPGP_0xB0DE9DD628BF132F.asc"
+Content-Disposition: attachment; filename="OpenPGP_0xB0DE9DD628BF132F.asc"
+Content-Description: OpenPGP public key
+Content-Transfer-Encoding: quoted-printable
 
-Fwiw:
+-----BEGIN PGP PUBLIC KEY BLOCK-----
 
-Architecture:             x86_64
-  CPU op-mode(s):         32-bit, 64-bit
-  Address sizes:          48 bits physical, 48 bits virtual
-  Byte Order:             Little Endian
-CPU(s):                   32
-  On-line CPU(s) list:    0-31
-Vendor ID:                AuthenticAMD
-  BIOS Vendor ID:         Advanced Micro Devices, Inc.
-  Model name:             AMD EPYC 7313P 16-Core Processor
-    BIOS Model name:      AMD EPYC 7313P 16-Core Processor                Unknown CPU @ 3.0GHz
-    BIOS CPU family:      107
-    CPU family:           25
-    ...
+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
+kt+z4drzFUyEjLM1vVvIMjkUoJs=3D
+=3DeeAB
+-----END PGP PUBLIC KEY BLOCK-----
 
-16 SMT2 cores (siblings are 16-31)
+--------------PI0x0UKMcbQZcGfSxIk646iX--
 
+--------------FTEVxyFrAV4twIPuT6CjSaEj--
 
-#lsblk -N
-NAME    TYPE MODEL                      SERIAL              REV TRAN   RQ-SIZE  MQ
-nvme3n1 disk SAMSUNG MZQL21T9HCJR-00A07 S64GNJ0T605178 GDC5602Q nvme      1023  32
-nvme2n1 disk SAMSUNG MZQL21T9HCJR-00A07 S64GNJ0T605128 GDC5602Q nvme      1023  32
-nvme0n1 disk SAMSUNG MZQL21T9HCJR-00A07 S64GNJ0T605125 GDC5602Q nvme      1023  32
-nvme1n1 disk SAMSUNG MZQL21T9HCJR-00A07 S64GNJ0T605127 GDC5602Q nvme      1023  32
+--------------eTdyGz0k450u4KZEC4Cbyb0S
+Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="OpenPGP_signature.asc"
 
-Where nvme0n1 is the one I'm actually using.
+-----BEGIN PGP SIGNATURE-----
 
-I'm on 6.12.0-0.rc5.44.eln143.x86_64  which is v6.12-rc5 with RHEL .config.  This
-should have little to no franken-kernel bits but now that I have the machine
-I'll build from upstream (with the RHEL .config still) to make sure.
+wsB5BAABCAAjFiEEhRJncuj2BJSl0Jf3sN6d1ii/Ey8FAmcqQDUFAwAAAAAACgkQsN6d1ii/Ey98
+oQf9G78mT3vg32/jkgPBfk3e87JtKYp0xwTMxC3WIEreRnKl5wfUPW4pOQqRyKj3NcoRy4hncQ5w
+Ez3viiQAAEOUokVzlsqR8pyBjw2QN3SN+/A32jc4VoCADjfGaPaV/OvkfXiSCF51yP4EO8Pso+1y
+h7p7EI+wG6Dh9iAEAf6AA6wj9rsuXvFIsdmJZEz8e3ObcUjAzyB96m7+JTm1lfuajvrrWu/HQJiU
+2G3TBJtluqKgbXcVp82pXPmMMBP2BUJgYYMtLBdIsSM4WLn35AJH/HSPJ5GbxmoVRu4uRZutSsJD
+JNGTUno81aAL1118XaOPfUW/EUC0bLqWOFAzkXZ9hA==
+=PTAO
+-----END PGP SIGNATURE-----
 
-We did see it on all the RCs so far. 
-
-
-> Anyway I have some follow-ups, first let me trim the fio command for readability:
-> fio --rw randwrite --bs 4k --runtime 1m --fsync 0 --iodepth 32 --direct 1 --ioengine libaio --numjobs 8 --size 30g --nrfiles 1 --loops 1 --name default --randrepeat 1 --time_based --group_reporting --directory /testfs
-> 
-> dropping defaults nr_files, loops, fsync, randrepeat
-> fio --rw randwrite --bs 4k --runtime 1m --iodepth 32 --direct 1 --ioengine libaio --numjobs 8 --size 30g --name default --time_based --group_reporting --directory /testfs
-> 
-> Adding the CPU affinities directly:
-> fio --cpus_allowed 1-8 --rw randwrite --bs 4k --runtime 1m --iodepth 32 --direct 1 --ioengine libaio --numjobs 8 --size 30g --name default --time_based --group_reporting --directory /testfs
->
-
-Fair enough.  It should work the same with taskset I suppose except the below bit. I've
-been given this from our perforance team. They have a framework that produces nice html
-pages with red and green results and graphs and whatnot.  Right now it's in the form of
-a script that pulls the KB/s number of out the json output which is nice and keeps me
-from going crosseyed looking at the full fio run output.
-
-> Now I was wondering about the following:
-> Is it actually the kworker (not another fio) being preempted? (I'm pretty sure it is)
-> To test: --cpus_allowed_policy split (each fio process gets it's own CPU).
-
-with  --cpus-allowed and --cpus_allowed_policy split the results with DELAY_DEQUEUE are
-better (540MB/s) but with NO_DELAY_DEQUEUE they are also better (640 MB/s). It was
-510MB/s and 590MB/s before. 
-
-> 
-> You wrote:
-> >I was thinking maybe the preemption was preventing some batching of IO completions or
-> >initiations. But that was wrong it seems.
-> 
-> So while it doesn't reproduce for me, the only thing being preempted regularly is
-> the kworker (running iomap_dio_complete_work). I don't quite follow the "that was
-> wrong it seems" part then. Could you elaborate?
->
-
-I was thinking that the fio batch test along with the disabling WAKEUP_PREEMPTION
-was telling me that it wasn't the over preemption issue, but that also I could be
-wrong about...
-
-
-> Could you also post the other benchmark numbers? Does any of them score higher in IOPS?
-> Is --rw write the same issue if you set --bs 4k (assuming you set a larger bs for seqwrite).
->
-
-I don't have numbers for all of the other flavors but I ran --rw write --bs 4k:
-
-DELAY_DEQUEUE     ~590MB/s
-NO_DELAY_DEQUEUE  ~840MB/s
-
-Those results are not good for DELAY_DEQUEUE either.
-
-> Can you set the kworkers handling completions to SCHED_BATCH too? Just to confirm.
-
-I think I did the wrong kworkes the first time. So I'll try again to figure out which
-kworkers to twiddle (or I'll just do all 227 of them...).
-
-
-
-Thanks,
-Phil
-
-
-> 
-> Regards,
-> Christian
-> 
-
--- 
-
+--------------eTdyGz0k450u4KZEC4Cbyb0S--
 
