@@ -1,169 +1,88 @@
-Return-Path: <linux-kernel+bounces-397155-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397156-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C2B49BD774
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 22:10:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DADC9BD775
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 22:12:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4DF0283E7D
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 21:10:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 713DE283E1B
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 21:12:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6E4A2161E6;
-	Tue,  5 Nov 2024 21:10:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LOUf7KGU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87A2B215F52;
+	Tue,  5 Nov 2024 21:12:06 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A0761D9A48;
-	Tue,  5 Nov 2024 21:10:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF4121D9A48
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 21:12:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730841044; cv=none; b=NEWMzX8FV++HmwwBoB274xETNNhzutKrKwhpOn4mp3TbEcGST6RGokXVG9gOYLARDus4/WYhsqCRspRQoVpYNHaJ3PaI7kT0BdEFxxbrzg8GQeAy939JU6hs0IYc8vbJtoOM1GmXUT8qI9tXuHID4JxKEcLaEw/rNm6mTDkb7KI=
+	t=1730841126; cv=none; b=VQ90cw245/sAhsIa3i9rl6YMKwaHBcX31yhkf40arI8rAa5iIR0UzWtbijzBAsNIEbT5mSMZ0D6X1gq/Jv0Y2zSAAGAcJZWasE+os3ncJB03iSpQ1RqxZ32PH0SI+HtYuAU2vwtcTAnhzhdk/PsQlRWtt3C9kk1yfLPsQaOBgFk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730841044; c=relaxed/simple;
-	bh=vIo0NaVqwTTucukEfETbcRMwHoSkKBJsMrYGDjW+3Lw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cmjTmWfV3VyXlji9X3+Z3U6lvoQ5nnihiOsFquJsHBgWfgfNurfCdqSycmbV2JUt0YDyNWJy05jgR7cUlCNtBcMWtomG11VIjXIPm14IxRAkbVyfJo+mgAzEs6dEm4InvY7+ocmjrejLZzj8bUhNc63id/h2KlhnM6Wd+dR06vE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LOUf7KGU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6460C4CECF;
-	Tue,  5 Nov 2024 21:10:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730841043;
-	bh=vIo0NaVqwTTucukEfETbcRMwHoSkKBJsMrYGDjW+3Lw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LOUf7KGU/6wES0Z3zitERi2w3oNCyirg4QhAg+3zCjZIhXHrz8bab+q3YrBotBma8
-	 H+rwnMDlhTMhdzYfb7mUbAuGvI50ZpdGJI5bwiGtgvTxJiEW9apGiMVfdcfzi6iSPL
-	 ABNVp/GPiqQYY2lIeIUgOxjB3UgZPuDzZ4HNH//UcyiU9Fu3+o2aGXlt5p/QfVdVbm
-	 GTqDFaDF1gdmS2iDR15QOQLsFyD3QY4BkdcQ/r8lZp20qnTRJ06bM6P3v0Ecyk7kDM
-	 2k3rTO7gVzZs8NHVDVbcos+TIOwNnwy3L+fVisqxPiB5gGjq5LebluDt9M6LkhWmKP
-	 jjreq6p3eD9iQ==
-Date: Tue, 5 Nov 2024 22:10:39 +0100
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Chris Packham <chris.packham@alliedtelesis.co.nz>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	lee@kernel.org, sre@kernel.org, tsbogend@alpha.franken.de, 
-	linux-i2c@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-pm@vger.kernel.org, linux-mips@vger.kernel.org
-Subject: Re: [PATCH v8 7/7] i2c: Add driver for the RTL9300 I2C controller
-Message-ID: <x2ptxjqmcui6uh6qhjur5bymb6cjgikekt7bo2bnyoqbble4kh@zanxmiq3sau6>
-References: <20241031200350.274945-1-chris.packham@alliedtelesis.co.nz>
- <20241031200350.274945-8-chris.packham@alliedtelesis.co.nz>
+	s=arc-20240116; t=1730841126; c=relaxed/simple;
+	bh=C772U9iMokHzu0JrOOk3mMzSs342g6hcNEPrF5NjuKw=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=hDZ52J6L1Q95Fm3F2OJfPjRKmrtBtsYxiKrDKMhNM5jgv3lnrr3bJUwcq0q1fjr+QW4gJjxUplFXvoDtzZBCjZBR2NhS7YHorAB9lDVW8mg9UJyow7xQVje2K22iAZkqsKs2badk7YEVj+nonhpfJmRjYKEZ1DTQoZt7ZUkGWEg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a6ca616500so32417535ab.2
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 13:12:04 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730841124; x=1731445924;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=HiqZxAbiHRA/vYcOpw+I+nowv69WYJnI52m84kBzOKM=;
+        b=dqTGO7Xm6IrdA3/58/UjM/mxlno/29zGIOWB1nkRzdybrcPq3P+QlzUVxMTo3TPKmS
+         cds2f3lRdo+b43ycgDzvNzxCZVeHN5loQSkPNEsHXZI/1tDMeugG1fD7l/Pk5Y6OuFFr
+         9kAUFH9WD/91temh/QNeao04eMdUy2/oMVQ1Qn3/CptVsJ5szDHo7H9JqBmIxX/ZYACn
+         A56BYmjoHkoBfRDU6DGvxTI/4aDfJcjgdzZ/NqLYaCTC/HzWrMtVt8HxW+OS4GrR6wl4
+         sOpTLIF46CAkFOrEMj3bwmMA3Naz41UxEKF0NHvdVtj6t/fCJAVmlvroyvXw1o2DVCT6
+         18IA==
+X-Gm-Message-State: AOJu0YxfVGgbi8hfQ1qVW8ivvIGB2b29EkFxvC8eDSFp4oPX+fDjtu+C
+	zn+Kj43PZe3BfBu8GX1q/6mrlFGrmMt1DgDesoGuhSeQmOLEiJQH3cgNbODKkSKeU7D+Q2QKfrr
+	2sk2WpcvRfwvDSSeOXW0GTetivD5j+uyVufULOdzS12DgUPnfOANjjww=
+X-Google-Smtp-Source: AGHT+IF7dlBlsLfX2yBqotKhQiGEnHyL2khEfUYLXZWIobYeCTMxIeCA+XzDlQ1FcaBDnFUhLHMk0AGea0WRK1CqHAlBHt0VCyPX
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241031200350.274945-8-chris.packham@alliedtelesis.co.nz>
+X-Received: by 2002:a05:6e02:220a:b0:3a6:c89d:4eb5 with SMTP id
+ e9e14a558f8ab-3a6c89d50e2mr104266175ab.15.1730841123917; Tue, 05 Nov 2024
+ 13:12:03 -0800 (PST)
+Date: Tue, 05 Nov 2024 13:12:03 -0800
+In-Reply-To: <CAN=OONwWNfETusinz2A7yGG2OFtS8Nnn8z9FhUTpPuugHKnMkw@mail.gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <672a8a23.050a0220.2edce.1511.GAE@google.com>
+Subject: Re: [syzbot] [hfs?] KMSAN: uninit-value in __hfs_ext_cache_extent (2)
+From: syzbot <syzbot+d395b0c369e492a17530@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, sarvesh20123@gmail.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Chris,
+Hello,
 
-On Fri, Nov 01, 2024 at 09:03:50AM +1300, Chris Packham wrote:
-> Add support for the I2C controller on the RTL9300 SoC. There are two I2C
-> controllers in the RTL9300 that are part of the Ethernet switch register
-> block. Each of these controllers owns a SCL pin (GPIO8 for the fiorst
-> I2C controller, GPIO17 for the second). There are 8 possible SDA pins
-> (GPIO9-16) that can be assigned to either I2C controller. This
-> relationship is represented in the device tree with a child node for
-> each SDA line in use.
-> 
-> This is based on the openwrt implementation[1] but has been
-> significantly modified
-> 
-> [1] - https://git.openwrt.org/?p=openwrt/openwrt.git;a=blob;f=target/linux/realtek/files-5.15/drivers/i2c/busses/i2c-rtl9300.c
-> 
-> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
+syzbot tried to test the proposed patch but the build/boot failed:
 
-Looks good. As a self reminder:
+failed to apply patch:
+checking file fs/hfs/bfind.c
+Hunk #1 FAILED at 23.
+1 out of 1 hunk FAILED
 
-Reviewed-by: Andi Shyti <andi.shyti@kernel.org>
 
-Some comments below, though.
 
-...
+Tested on:
 
-> +#define RTL9300_I2C_MST_CTRL1			0x0
-> +#define  RTL9300_I2C_MST_CTRL1_MEM_ADDR_OFS	8
-> +#define  RTL9300_I2C_MST_CTRL1_MEM_ADDR_MASK	GENMASK(31, 8)
-> +#define  RTL9300_I2C_MST_CTRL1_SDA_OUT_SEL_OFS	4
-> +#define  RTL9300_I2C_MST_CTRL1_SDA_OUT_SEL_MASK	GENMASK(6, 4)
-> +#define  RTL9300_I2C_MST_CTRL1_GPIO_SCL_SEL	BIT(3)
-> +#define  RTL9300_I2C_MST_CTRL1_RWOP		BIT(2)
-> +#define  RTL9300_I2C_MST_CTRL1_I2C_FAIL		BIT(1)
-> +#define  RTL9300_I2C_MST_CTRL1_I2C_TRIG		BIT(0)
-> +#define RTL9300_I2C_MST_CTRL2			0x4
-> +#define  RTL9300_I2C_MST_CTRL2_RD_MODE		BIT(15)
-> +#define  RTL9300_I2C_MST_CTRL2_DEV_ADDR_OFS	8
-> +#define  RTL9300_I2C_MST_CTRL2_DEV_ADDR_MASK	GENMASK(14, 8)
-> +#define  RTL9300_I2C_MST_CTRL2_DATA_WIDTH_OFS	4
-> +#define  RTL9300_I2C_MST_CTRL2_DATA_WIDTH_MASK	GENMASK(7, 4)
-> +#define  RTL9300_I2C_MST_CTRL2_MEM_ADDR_WIDTH_OFS	2
-> +#define  RTL9300_I2C_MST_CTRL2_MEM_ADDR_WIDTH_MASK	GENMASK(3, 2)
-> +#define  RTL9300_I2C_MST_CTRL2_SCL_FREQ_OFS	0
-> +#define  RTL9300_I2C_MST_CTRL2_SCL_FREQ_MASK	GENMASK(1, 0)
-> +#define RTL9300_I2C_MST_DATA_WORD0		0x8
-> +#define RTL9300_I2C_MST_DATA_WORD1		0xc
-> +#define RTL9300_I2C_MST_DATA_WORD2		0x10
-> +#define RTL9300_I2C_MST_DATA_WORD3		0x14
+commit:         2e1b3cc9 Merge tag 'arm-fixes-6.12-2' of git://git.ker..
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=85d8f50d88ddf2a
+dashboard link: https://syzkaller.appspot.com/bug?extid=d395b0c369e492a17530
+compiler:       
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=1433ed5f980000
 
-Not everything here is perfectly aligned, but I'm not going to
-be too picky.
-
-...
-
-> +static int rtl9300_i2c_execute_xfer(struct rtl9300_i2c *i2c, char read_write,
-> +				int size, union i2c_smbus_data *data, int len)
-
-You could align this a little better.
-
-> +{
-> +	u32 val, mask;
-> +	int ret;
-
-...
-
-> +static int rtl9300_i2c_smbus_xfer(struct i2c_adapter *adap, u16 addr, unsigned short flags,
-> +				  char read_write, u8 command, int size,
-> +				  union i2c_smbus_data *data)
-> +{
-> +	struct rtl9300_i2c_chan *chan = i2c_get_adapdata(adap);
-> +	struct rtl9300_i2c *i2c = chan->i2c;
-> +	int len = 0, ret;
-
-...
-
-> +	ret = rtl9300_i2c_execute_xfer(i2c, read_write, size, data, len);
-
-do we want to bail out if len is '0'?
-
-...
-
-> +static int rtl9300_i2c_probe(struct platform_device *pdev)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct rtl9300_i2c_chan *chan;
-> +	struct rtl9300_i2c *i2c;
-> +	struct i2c_adapter *adap;
-
-"chan" and "adap" can be declared inside
-the device_for_each_child_node()
-
-> +	u32 clock_freq, sda_pin;
-> +	int ret, i = 0;
-> +	struct fwnode_handle *child;
-
-...
-
-> +	device_for_each_child_node(dev, child) {
-> +		chan = &i2c->chans[i];
-> +		adap = &chan->adap;
-> +
-
-Thanks,
-Andi
 
