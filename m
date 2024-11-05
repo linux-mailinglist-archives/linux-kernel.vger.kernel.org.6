@@ -1,130 +1,108 @@
-Return-Path: <linux-kernel+bounces-396947-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396946-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0767E9BD4C8
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 19:38:11 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 952EB9BD4C6
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 19:37:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BFEF0283D1B
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 18:38:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C71791C204F6
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 18:37:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 789091EABD7;
-	Tue,  5 Nov 2024 18:37:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M7DzHrhx"
-Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5568C1E906B;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51CDD1E9063;
 	Tue,  5 Nov 2024 18:37:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.169
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KDzknkNi"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A854E188703;
+	Tue,  5 Nov 2024 18:37:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730831873; cv=none; b=OpDJw7N8F6UKrqr5dJO5LIGQ7wCLbDib7G921fMbfU3EaLfd0GcAQzSu/o3M0LSYvOfSmL5fiyL0nYsbNjT9qfO3HOzRHUk5sKHyxDXmKwxYlfu98UkYcdQAwSMG+Eo88roOMbrKjjDY7SqpuL8ZWabnGhMlxhkMH/+i/22Ycg4=
+	t=1730831871; cv=none; b=RNcr8Dgqt9ZY/abi/5gbFuVGml9c77Ko/hPzqmw7mJmP3Okt/99pYv8jLrSMEulhUaJuL1/IGL5CI3AQKQIFwzruP7v7yorX/883dTsNW5hEyr8jnK0812AJ4W7Ornir2/ox304qc24zFugq2WOftx300LOloV45+u5st2EQS20=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730831873; c=relaxed/simple;
-	bh=EgDlh2EBkM5FH3cZ7ahyg2+lYODj1FnKkc1N6UZ9HqE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ITvmkoxcyxnMRe/BzxnPWZThHqwLGKBO98BXEDdDkW2HkAxZExLnrKymSkYGxP4EwNStX1rlj38a6B/wf9CtK1rMJI2BlDY/wnJZxxu4l/TIIjLe+RK5efrlJsYM2fXkX/OqX/JRyMUCIvzfnduKzoNE4aAXx8AJSUz6HxqOPlI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=M7DzHrhx; arc=none smtp.client-ip=209.85.128.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-6e2e3e4f65dso11344167b3.3;
-        Tue, 05 Nov 2024 10:37:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730831871; x=1731436671; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2t4SvXKJl/as9BSR5e20xumSeA80xAkDkuxPKKvOGyQ=;
-        b=M7DzHrhxlRHx/y3qv5HVsjjxG0ysqAqy7lSW1bbOLUksB3FfsGriDY6QO49qCYTcgZ
-         RD2GTZtZuDI6wLDKrwduqHmvRzuOo2sTz9RqVQRRPQCHUzsvA8iAlbkVyzIlDTU6eB+B
-         PRKrnxrJjfJ+QdDjsFohNUf0buABSOjSVHOPQm4rRrqzs+0CMpQmFgaIjWPHmbWt1Wvg
-         Xdr5xGL4SoZ1KNEMoiMl6jP0Z9LZmSJMVCteEv4ZW51nQ3kFacmXxZ7VpcQ7gL5YQugN
-         cDkyzwEgEZHZihlKSMi0pRgPHcw1jA3bKFcNcYJsgrG0kC2Y876y9Sq991bx2q5OAedN
-         rFpA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730831871; x=1731436671;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2t4SvXKJl/as9BSR5e20xumSeA80xAkDkuxPKKvOGyQ=;
-        b=Sdcej0b1saANKieTDnsGC544F3jLTmi7UETIQ+jjo6zHExXHrAW4rKoAXf3SFNYBYj
-         FqsH0JO0B63ypscS2AyfMt5g0+RkPvQ6vB0edJ1dBv9a02WiFKxlQ1bME9REHXVxJhBv
-         oS6ei2Dywn8OJXUXDeRhb/j93nn2rczeabfvKx5+2nZ0z8/C9KFlIYoa9swQRZ9qpBlj
-         MWt6Z99SvSJOodgm808AWZkHgKeza6MtG7BYVBLCtUhUYiyTlGmnFPYNmxKadQWqUj7d
-         /Vx4YaJuzZqK4Kbjj55w251+nUhEw/mY0S6rP4NvstJJ6GdHpTtAZnRXJdAOeKS+cGzN
-         rDhA==
-X-Forwarded-Encrypted: i=1; AJvYcCWEWJbr2XuYOrm86Mt9PLqJd4nhWjy4RgUOvYOO71mW425ZPtpKDYkuY59rIhNDb4ZusWn83lnnbCrSr5s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzcyolLqVpHv21Gj5zdsIX+1D/RF5JtDcWsu//3uXO7TxpDVEYi
-	GoqLxcISFQGqOyu+WPIVYJ3L9TUtzpp5oCkJIpDGwfm+ZpdesNfoVUSCAoKz/qz+kYqetr2Z6Yv
-	PItkLqrK6FnB/mPvZjwN1pyvDdks=
-X-Google-Smtp-Source: AGHT+IHT8tJTXWv791Sn6gVFqB0xEube/wNW5a9FU6AKEXghvMNc8IOLUaGTE6vbzsdbEOYWWH8hGCCe6y4Hq41odpk=
-X-Received: by 2002:a05:690c:9a0a:b0:6e3:21a9:d3c9 with SMTP id
- 00721157ae682-6e9d8962048mr365855607b3.9.1730831871431; Tue, 05 Nov 2024
- 10:37:51 -0800 (PST)
+	s=arc-20240116; t=1730831871; c=relaxed/simple;
+	bh=W3QBAev3hXK8eM532TDH1kmmBvt7KGhrn8xsk9iVzVg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=F6NDvn9Wm2BH20mHm1Vou08ksnyPwR72gtiA5H3Z+sAFr/yFDH7sBbVV0X8972N0bW60s9A21hMFYpqrbWhHG94Q3sf+JA5ste7O2CNjP2/JI2ZDEu23PWCo/NaocvKNypF14kiSXQP7eG19XvtY/134xuqSC1+LATB3+JTtwK8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KDzknkNi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67722C4CECF;
+	Tue,  5 Nov 2024 18:37:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730831871;
+	bh=W3QBAev3hXK8eM532TDH1kmmBvt7KGhrn8xsk9iVzVg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=KDzknkNiNEOEfoLPTd6mu7J9wr3y/LRzX+1QFmL/NfLNX8sip7f65qR/om4VE3He5
+	 MHHNF7Kv+00lnr0wxwe6vJwX8sIL60XxRNNXXtmCirurfsd/bWlS1zIggfsMcRcNv6
+	 uy+KKmvBCBSvdUyY8eCyJn7rdKw3VkLdd8SzvlFu4HpoucMcS/pXSTxemPzEtkayGM
+	 f0XHtVw2bUsVmthvQ3UJnamY2zkhVX+wUcsfvCf2hQ3AcJ0G+XEilbofpa5C7glNFq
+	 +RYIGxXy0cNVdgWWQDOktHzaHjqzSTPNzfz02oy3XcgOEVhABnaWzniGkRRq3JGqMU
+	 mSQlz4khpIa1Q==
+Date: Tue, 5 Nov 2024 18:37:47 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc: Conor Dooley <conor.dooley@microchip.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Daire McNamara <daire.mcnamara@microchip.com>,
+	linux-rtc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RESEND] dt-bindings: rtc: mpfs-rtc: remove Lewis from
+ maintainers
+Message-ID: <20241105-boned-presuming-dec2b8b0da47@spud>
+References: <20241015-surcharge-caucasian-095d1fd2fa27@wendy>
+ <20241104-immodest-finishing-354430b8e386@spud>
+ <202411042055393b9cf4be@mail.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241101220023.290926-1-rosenp@gmail.com> <20241101220023.290926-2-rosenp@gmail.com>
- <20241105140043.GF4507@kernel.org>
-In-Reply-To: <20241105140043.GF4507@kernel.org>
-From: Rosen Penev <rosenp@gmail.com>
-Date: Tue, 5 Nov 2024 10:37:40 -0800
-Message-ID: <CAKxU2N--pCxqP5O_++danSig-MkXcNJftdX_-PiLgwBkvKWQDQ@mail.gmail.com>
-Subject: Re: [PATCH net-next] net: hisilicon: hns3: use ethtool string helpers
-To: Simon Horman <horms@kernel.org>
-Cc: netdev@vger.kernel.org, Jian Shen <shenjian15@huawei.com>, 
-	Salil Mehta <salil.mehta@huawei.com>, Andrew Lunn <andrew+netdev@lunn.ch>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Jijie Shao <shaojijie@huawei.com>, 
-	open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="aNhBK/A8u2gHdejT"
+Content-Disposition: inline
+In-Reply-To: <202411042055393b9cf4be@mail.local>
+
+
+--aNhBK/A8u2gHdejT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Nov 5, 2024 at 6:00=E2=80=AFAM Simon Horman <horms@kernel.org> wrot=
-e:
->
-> On Fri, Nov 01, 2024 at 03:00:23PM -0700, Rosen Penev wrote:
-> > The latter is the preferred way to copy ethtool strings.
-> >
-> > Avoids manually incrementing the pointer. Cleans up the code quite well=
-.
-> >
-> > Signed-off-by: Rosen Penev <rosenp@gmail.com>
-> > Reviewed-by: Jijie Shao <shaojijie@huawei.com>
-> > Tested-by: Jijie Shao <shaojijie@huawei.com>
->
-> ...
->
-> > diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c b/drive=
-rs/net/ethernet/hisilicon/hns3/hns3_ethtool.c
-> > index 97eaeec1952b..b6cc51bfdd33 100644
-> > --- a/drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c
-> > +++ b/drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c
-> > @@ -509,54 +509,38 @@ static int hns3_get_sset_count(struct net_device =
-*netdev, int stringset)
-> >       }
-> >  }
-> >
-> > -static void *hns3_update_strings(u8 *data, const struct hns3_stats *st=
-ats,
-> > -             u32 stat_count, u32 num_tqps, const char *prefix)
-> > +static void hns3_update_strings(u8 **data, const struct hns3_stats *st=
-ats,
-> > +                             u32 stat_count, u32 num_tqps,
-> > +                             const char *prefix)
-> >  {
-> >  #define MAX_PREFIX_SIZE (6 + 4)
->
-> Hi Rosen,
->
-> As per Jakub's feedback on v1, can't this #define be removed?
-Removed in v2.
->
-> ...
+On Mon, Nov 04, 2024 at 09:55:39PM +0100, Alexandre Belloni wrote:
+> On 04/11/2024 19:06:08+0000, Conor Dooley wrote:
+> > On Tue, Oct 15, 2024 at 07:52:05AM +0100, Conor Dooley wrote:
+> > > Lewis hasn't worked at Microchip for a while, and IIRC never actually
+> > > worked on the RTC in the first place. Remove him from the maintainers
+> > > list in the binding, leaving Daire.
+> > >=20
+> > > Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+> > > ---
+> > > Noticed him in the CC list of your resend, figured it was worth remov=
+ing
+> > > him.
+> >=20
+> > Could you pick this up Alexandre? I've got no contact info for Lewis, so
+> > I doubt you'll see an ack from him...
+>=20
+> I will, I'm super late on the RTC patch queue.
+
+Cool, thanks.
+
+--aNhBK/A8u2gHdejT
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZypl+wAKCRB4tDGHoIJi
+0jqRAQCWam0slrqjLsuLwnxzyjrk39WsiuTsc0DQeZu2i6BNRAD/ejLc8o+ylQ25
+utRVtpygEdpp4tSWD2ZcAoUe2xRgDQE=
+=MdtU
+-----END PGP SIGNATURE-----
+
+--aNhBK/A8u2gHdejT--
 
