@@ -1,553 +1,194 @@
-Return-Path: <linux-kernel+bounces-396709-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396710-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 158539BD104
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 16:50:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D18219BD112
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 16:52:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8061DB2089E
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 15:50:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 618AA1F2399B
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 15:52:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD9C214A0B8;
-	Tue,  5 Nov 2024 15:50:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E30114E2D8;
+	Tue,  5 Nov 2024 15:52:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Kw6opedM"
-Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b="YpneG5bJ"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCD48824BD
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 15:50:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E43C3824BD;
+	Tue,  5 Nov 2024 15:52:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730821840; cv=none; b=hVEWVybe2k1jEbP926+Y98e1z0ygzSLVgV9cUyN9wl/Aa6ur7ydzkKO3HFod0lmU169Kphj7zBd1yK+Rnupbj8rcnH18XzquX7CgmB1aNSRm3pGztxQ6FEJkh5F7RmPB0x0xhvirGOg/hBwbCuLH54X+Rn6RilazGF07V3ApHhs=
+	t=1730821958; cv=none; b=UB8X/XZZqfzQ9W8KVWDMngL6K8Wc7jWwaPIHeKSp2MuFm8PhqfGtXvPRo+PGzedRNlBVAKHen1XuLApmzD9v/p70hSoU98JmFFh5vyrezJr84YvUZVd9oo5kBsgpC7kcTANFJylx8vwGOS8I6ymkKF/lV9MUSvUrlFUmsgvRyPQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730821840; c=relaxed/simple;
-	bh=pYww9KL/hDybrTt0GCKOwf5OXIm5ozIIlry1IZCbDPE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=f2I6F5R6fYOku6XSj4eSzRGM925QRgjDAEIxRI9NuNM5UyL9keIyFl9Y6OK8fNJKEQh8NxYz2EjzOIJlzYo25xXsT899sRT5luRZr7ZofCFVA6bOyBgdK1FjO85WageR7Un/DD7cD2h5oHi3sNNRR+0WommlQ9im9Ct+jGFGdsU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Kw6opedM; arc=none smtp.client-ip=209.85.160.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-460969c49f2so419071cf.0
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 07:50:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1730821838; x=1731426638; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=10B3xZq3pNzYNd0L4SY/FR0IltNXHtBmueZ4qDd65pk=;
-        b=Kw6opedMS3UX7w6ttgHD8U9A8y8BfYYgu165QS5rhMPERY7FlMF9xJS3f82Mo7V6s5
-         7EOIzdu+FlMoFUFeGme6bDfe1MjM8sbmZiQkCgs6P+2hUT6TvcfaxkHtRqBAa4RYSKEu
-         NCWw/kR+2Y7ut2O6FFDF092IZlkexxD7jw/xB1cZZyL10XNXte33Fw73SbnjcCvCsGMF
-         JvSWiwURQ+/O38o/bgg1gYmDviSl57rGu3x8fmHloID1CEmVqVRYJq0XImr/ndAT26KP
-         uz51d9xnMM29g2U1NtMaicdCA5gXP7WMU6AEuvzNBUCOMeUnLHVaI6qexLoQ5HdueaND
-         NUuA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730821838; x=1731426638;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=10B3xZq3pNzYNd0L4SY/FR0IltNXHtBmueZ4qDd65pk=;
-        b=EQQW2yUvICsIeaDL5aKxpl4WCGtR02UpjGdUsgvXdxrq1mG5NavtdvliWyFayA9Fku
-         y5qiUd/DpXRMvPC0tK2LCNzEDbUikpYEw998GfEicU2vvzB1Uk0fqRRcU6Dzesh9nwkB
-         K7SuI9gxG0g0NGr3Pa7ctb/wVWM6ekvXpBaGk0MwaPG9ctc7l9fSBfgrSzyPUy+tjvxb
-         boq2VH9g+IRLDm4VwzgjXbuWUzGsI8xwhFl8g89aZuxV+Ra1WfVP7nRmFtC10MxyyNKb
-         se3aJ+b6jZpkPzdyU/GWnUKIK4SABPDPjURFHRK420EndbvBAltI3sTR+5utlzrsuzlt
-         jSqg==
-X-Forwarded-Encrypted: i=1; AJvYcCXFY9TAWNiHBM8GwMSKhB2WPnTr1YaOZhaQ7fk74KOvo/flLhbIJ3PlF7SBz/VHvdHZnfNlpoOZnFE1XZI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzBQUC42dA56RrNblmNBFcP36BJyjmAoy5LJXjPijvqMMs60b8I
-	kSutJGBn0e1lgAdj7SyZsRVfGrXLXtj0fxVqDOPyS3calQw/Ar+LazvQSSteFU8aWuEfVabDt1M
-	gf3npWnqy6vVOaSX704hZe+3ROqx2/2HvuCl8
-X-Gm-Gg: ASbGncvBw1HILOqbOu/j/JzkL7GvhBw2dSKpt/ZiU+QvJz3THVHY/1ZrAGAujVY+He/
-	bY0WDfXVvwM2oq/3x6WywOqjHqq0/i6VI
-X-Google-Smtp-Source: AGHT+IEumTeffzONvvlaY1PXysab76u5lX1pA8kv8AFZXJociZ11Cem/Qxd+YuWrUJKSjKlWtJmPT1ipNHUMbyL2Ac4=
-X-Received: by 2002:ac8:7dcb:0:b0:461:685d:324 with SMTP id
- d75a77b69052e-462e4eb440amr4724531cf.16.1730821837371; Tue, 05 Nov 2024
- 07:50:37 -0800 (PST)
+	s=arc-20240116; t=1730821958; c=relaxed/simple;
+	bh=A5wkn2g7ewXyxsGccABxzYa/pZrTsi476qh1bxTr+0Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YXTsNrkhkmCr7Ow2MZwFyXJdCGd8NyAu7rISH2Td81V8bfbnXDZSbHeGdR/octQz2iAjIkKn2Zl7eSncdreFPw7AnVwIGawAbjWdTdlcwko1r6Bu03M2eCmW6y0WJV0u4HwqA1pkTzhWkbaubFv85MUrR5LN9h4iozI0L/TBLlg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b=YpneG5bJ; arc=none smtp.client-ip=212.227.17.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
+	s=s31663417; t=1730821928; x=1731426728; i=wahrenst@gmx.net;
+	bh=w6BRqx3A6quV1vsoZcGcoTn++xiCKrR1U7u2eV5qVyc=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=YpneG5bJGnvLKmGToYXDgbt38gkeGGpnqWqhwoKiW1BeNfoCbt8f+6JG6M91H4h8
+	 25XIcg1MkxEbSvLsy0cGPwbcz2Lz4gqT2iM9RwmVwU7gG+yC7rVCVM6zcd3Tjt2CY
+	 wai51zIy6iMvP28wVyEOv1klz1PQe1lkb5MVo+8Pu/09HoEC7Cg1svAFakJzuJnAq
+	 BYEJwE6kbxuBsHMBMAE7cIVuvSPa9KOO+74tSyg5+MYxnMNpeWf8ufKMTKZieSbLs
+	 8Cp5sClw5qPUqvVkWoNJGgUEPaELVXemxDVUWCZPLkhe7HBurLCTQeLhgDv0qlson
+	 utqYcKbAIfieZjqCeg==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.1.105] ([37.4.248.43]) by mail.gmx.net (mrgmx105
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1MN5eX-1tROAf0k6P-00VvAM; Tue, 05
+ Nov 2024 16:52:08 +0100
+Message-ID: <283bbd2c-0997-43d6-bc24-08bf2cb2412b@gmx.net>
+Date: Tue, 5 Nov 2024 16:52:04 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241105142616.761042-1-acme@kernel.org> <20241105142616.761042-4-acme@kernel.org>
-In-Reply-To: <20241105142616.761042-4-acme@kernel.org>
-From: Ian Rogers <irogers@google.com>
-Date: Tue, 5 Nov 2024 07:50:25 -0800
-Message-ID: <CAP-5=fViyn9Khja2jPa3gDZy0onsqVt20Y3H7e584SdiWXQvQw@mail.gmail.com>
-Subject: Re: [PATCH v2 3/4] perf test: Don't suppress the libtraceevent tests,
- skip them
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>, Ingo Molnar <mingo@kernel.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
-	Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org, 
-	linux-perf-users@vger.kernel.org, Arnaldo Carvalho de Melo <acme@redhat.com>, 
-	Athira Rajeev <atrajeev@linux.vnet.ibm.com>, Howard Chu <howardchu95@gmail.com>, 
-	James Clark <james.clark@linaro.org>, Leo Yan <leo.yan@linux.dev>, 
-	Thomas Richter <tmricht@linux.ibm.com>, Veronika Molnarova <vmolnaro@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] ARM: imx_v6_v7_defconfig: enable SND_SOC_SPDIF
+To: Elinor Montmasson <elinor.montmasson@savoirfairelinux.com>,
+ Stefan Eichenberger <eichest@gmail.com>
+Cc: Shawn Guo <shawnguo2@yeah.net>, Russell King <linux@armlinux.org.uk>,
+ Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>,
+ linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+ imx <imx@lists.linux.dev>, linux-kernel <linux-kernel@vger.kernel.org>,
+ Stefan Eichenberger <stefan.eichenberger@toradex.com>
+References: <20241030122128.115000-1-eichest@gmail.com>
+ <ZyXTFhEm9UCBii2c@dragon> <ZyY41nJY9ghwe-Y4@eichest-laptop>
+ <065268d6-84eb-4247-b834-40a9ff32c1f4@gmx.net>
+ <ZyiAMpjmXuVMi5FX@eichest-laptop>
+ <787b45a1-9f8d-493d-8930-e1c8d396c818@gmx.net>
+ <Zyj0VsTJ2qDHiss2@eichest-laptop>
+ <1044800423.57572.1730815098440.JavaMail.zimbra@savoirfairelinux.com>
+Content-Language: en-US
+From: Stefan Wahren <wahrenst@gmx.net>
+In-Reply-To: <1044800423.57572.1730815098440.JavaMail.zimbra@savoirfairelinux.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:0e9SmOcFNlaLT3rD7fmlk1piqiI0xf9twOaT6BfM28EqKj0nVcR
+ o4F+e9wg1F9KMTPgwieP7dUOCU4Afe313a882FpkfRtSLwwH97GTo6nJ7e+XCUMOcAuwPBa
+ o97vj3JRErBEF9dJMLCTGatCaOU/5oF/PKr2QJBh5HWfnQ0/iYxakx/Z12r8PHFlkZ6ilPs
+ xBLxMJ2xlnMEMtCNfm02g==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:5y+4KYOBIe0=;7F6uroMgDxRYDS9DjneTwuHj82n
+ 6LD5t5muKL4oKm6lGgRVa+fz4MtGFqeZFq4B7cXclDheY6Pvd6yF70NB6PQXN8jcJo1IFMWDz
+ dED7W7xAE3/xAjck8Osso+Xdd1Cgwk4D7ndkPPM0sQPGwRMYKhvNfYFc4Z7HQ08ixeFakYBJy
+ hhEZfU0yo55E9cBkPz3xGV2FyUXfpTpUYmtHjrGZWOZN7KiB+mNkqIiGeIbMK+5TXk6GnRuzj
+ 8s1y+etj/xCoSTV0Q1sVOUdbT7Rz7jcw1AOCV1pndH+xfDsqWC2k297J5MI3awV36zb2Y1hd0
+ 5pLIffIyB0xyQkU/Qt+XRitQWNVyr0cqRWg07xb7W/YYH4u1ctjSkSJ1H6c+HBvrj5zTiOlkP
+ OMnpQhcfBbJGwqBS9jMJAcWip2OjCFe0tV5Mr1eksMsFjOe4eqA11GKocDObm11kWkDdY0jyI
+ io8qELe8gpKroPEzx0e37QilYl43nBsmTIvhdTRySRRCSaTXPXAuj2fAak1gKkciRXrl3p5UT
+ TdDoPGpDiA45KrGkE6Tl/qHhxQfx+zJ09rCMp59+RC/C01kEbt1qJ26gcjd5jcHYLh1fIE8gs
+ vdVbuemIOp16XsX9YvzurNKM9bDKmjdsU9Ekwbf5HOly5QnQTat6dPIsaAD9bMBHJAG9FTLmG
+ kqjQpF1LQ86mCx7/14NggNKP9N+evecjFk183kBgBUvcjpusL2hyFp83Y2Kf4CtqV0Mt1V38/
+ 7W+buQ6a4qTmx5Ce9Zg+xovDJHwhTkAuKccIw/Y1kikbsmpYnbGoHkBiWV6TCcnfDybegMM/R
+ VFqY+owNYAk+d8AO8QzpW8ug==
 
-On Tue, Nov 5, 2024 at 6:26=E2=80=AFAM Arnaldo Carvalho de Melo <acme@kerne=
-l.org> wrote:
+Am 05.11.24 um 14:58 schrieb Elinor Montmasson:
+> Hi Stefan,
 >
-> From: Arnaldo Carvalho de Melo <acme@redhat.com>
+> On Monday, 4 November, 2024 17:20:38, Stefan Eichenberger wrote:
+>> Hi Stefan,
+>>
+>> On Mon, Nov 04, 2024 at 12:39:40PM +0100, Stefan Wahren wrote:
+>>> Hi Stefan,
+>>>
+>>> Am 04.11.24 um 09:05 schrieb Stefan Eichenberger:
+>>>> Hi Stefan,
+>>>>
+>>>> On Sat, Nov 02, 2024 at 04:35:19PM +0100, Stefan Wahren wrote:
+>>>>> Hi Stefan,
+>>>>>
+>>>>> Am 02.11.24 um 15:36 schrieb Stefan Eichenberger:
+>>>>>> Hi Shawn,
+>>>>>>
+>>>>>> On Sat, Nov 02, 2024 at 03:21:58PM +0800, Shawn Guo wrote:
+>>>>>>> On Wed, Oct 30, 2024 at 01:21:12PM +0100, Stefan Eichenberger wrote:
+>>>>>>>> From: Stefan Eichenberger <stefan.eichenberger@toradex.com>
+>>>>>>>>
+>>>>>>>> Enable SND_SOC_SPDIF in imx_v6_v7_defconfig to support SPDIF audio. This
+>>>>>>>> change will fix commit d469b771afe1 ("ARM: dts: imx6: update spdif sound
+>>>>>>>> card node properties") which moves away from the old "spdif-controller"
+>>>>>>>> property to the new "audio-codec" property.
+>>>>>>>>
+>>>>>>>> Fixes: d469b771afe1 ("ARM: dts: imx6: update spdif sound card node properties")
+>>>>>>> It doesn't look a fix to me.
+>>>>>> I agree somehow, it was just that before the referenced commit our test
+>>>>>> succeeds with the imx_v6_v7_defconfig and after that we get the
+>>>>>> following error:
+>>>>>> [   24.165534] platform sound-spdif: deferred probe pending: fsl-asoc-card:
+>>>>>> snd_soc_register_card failed
+>>>>> this error should have been in the commit message including the
+>>>>> information which platform/board is affected.
+>>>> Okay, I will add this information to the next version. We see this error
+>>>> on an Apalis iMX6 which has in my variant an NXP i.MX6Q SoC.
+>>>>
+>>>>>> So maybe it is not a fix in the sense of a bug, but it fixes the error
+>>>>>> message. However, I'm also fine with removing the Fixes tag.
+>>>>> But this patch doesn't look like the real approach.
+>>>>>
+>>>>> Could you please clarify the impact of the regression?
+>>>> So the problem is that before commit d469b771afe1 ("ARM: dts: imx6:
+>>>> update spdif sound card node properties") the audio driver was
+>>>> using an implementation of linux,spdif-dit and linux,spdif-dir which was
+>>>> directly inside the fsl,imx-audio-spdif compatible driver. Now with the
+>>>> referenced commit the idea is to use the more generic linux,spdif-dir
+>>>> and linux,spdif-dit compatible drivers. That's why this driver must be
+>>>> enabled in the kernel configuration.
+>>>>
+>>>>> Is it just this error message and audio works fine or is audio also broken?
+>>>> It is not just the error message, audio is not working because the
+>>>> driver deferes and because it is not enabled it will never succeed to
+>>>> load. I don't know if this is called a regression, because the driver is
+>>>> there it is just not enabled in the imx6_v7_defconfig. I thought because
+>>>> a lot of the i.MX6 based board use the generic driver, it makes sense to
+>>>> enable it in the imx_v6_v7_defconfig.
+>>> okay, thanks for the clarification. From my understanding
+>>> imx6_v7_defconfig is just an example config for testing. All possible
+>>> users of these boards might have their own configs and stumble across
+>>> the same issue. So I thought it would be better to add the dependency in
+>>> the Kconfig of the FSL audio driver.
+>>>
+>>> I'm not that audio driver expert and don't know how the dependency
+>>> handling between the FSL audio driver and the required codecs like
+>>> SND_SOC_SPDIF. So it's possible that I'm completely wrong here and your
+>>> approach is the best we can do.
+>> That might be a good point. I don't know how this is usually handled.
+>> @Shawn and @Elinor, do you think this could be an approach to make
+>> SND_SOC_FSL_ASOC_CARD select SND_SOC_SPDIF? It already seems to do this
+>> for SND_SOC_WM8994 and SND_SOC_FSL_SPDIF.
+> SND_SOC_FSL_ASOC_CARD will compile the machine driver fsl-asoc-card,
+> SND_SOC_FSL_SPDIF the CPU DAI driver fsl_spdif for the SPDIF
+> and SND_SOC_SPDIF the codec drivers spdif-rx and spdif-tx.
 >
-> As suggested by Namhyung for the "import perf" python binding test, skip
-> the tests that require perf being linked with libtraceevent, telling the
-> reason:
+> In my commit series I made SND_SOC_FSL_ASOC_CARD select SND_SOC_FSL_SPDIF
+> because the old machine driver previously compiled with SND_SOC_IMX_SPDIF
+> selected SND_SOC_FSL_SPDIF.
+> But because fsl-asoc-card is a generic driver, it could be used on a system
+> that doesn't have an SPDIF device, and therefore should not require
+> SND_SOC_SPDIF nor SND_SOC_FSL_SPDIF.
+> So maybe it is not a good idea to automatically select SND_SOC_FSL_SPDIF or SND_SOC_SPDIF.
 >
->   $ make -C tools/perf NO_LIBTRACEEVENT=3D1
->   # perf check feature libtraceevent
->          libtraceevent: [ OFF ]  # HAVE_LIBTRACEEVENT
->   # ldd ~/bin/perf | grep traceevent
->   #
->   # perf test
->     1: vmlinux symtab matches kallsyms                 : Ok
->     2: Detect openat syscall event                     : Skip (not linked=
- with libtraceevent)
->     3: Detect openat syscall event on all cpus         : Skip (not linked=
- with libtraceevent)
->     4: mmap interface tests                            :
->     4.1: Read samples using the mmap interface         : Skip (not linked=
- with libtraceevent)
->     4.2: User space counter reading of instructions    : Skip (not linked=
- with libtraceevent)
->     4.3: User space counter reading of cycles          : Skip (not linked=
- with libtraceevent)
-> <SNIP>
->    14: Parse sched tracepoints fields                  : Skip (not linked=
- with libtraceevent)
->    15: syscalls:sys_enter_openat event fields          : Skip (not linked=
- with libtraceevent)
-> <SNIP>
->    32: Track with sched_switch                         : Skip (not linked=
- with libtraceevent)
-> <SNIP>
+> On the other hand, if every imx6 or imx7 boards have an SPDIF device, then
+> I suppose SND_SOC_SPDIF can be put in imx_v6_v7_defconfig.
+Okay, I'm fine with the original approach.
 >
-> Cc: Adrian Hunter <adrian.hunter@intel.com>
-> Cc: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
-> Cc: Howard Chu <howardchu95@gmail.com>
-> Cc: Ian Rogers <irogers@google.com>
-> Cc: James Clark <james.clark@linaro.org>
-> Cc: Jiri Olsa <jolsa@kernel.org>
-> Cc: Kan Liang <kan.liang@linux.intel.com>
-> Cc: Leo Yan <leo.yan@linux.dev>
-> Cc: Namhyung Kim <namhyung@kernel.org>
-> Cc: Thomas Richter <tmricht@linux.ibm.com>
-> Cc: Veronika Molnarova <vmolnaro@redhat.com>
-> Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+> Regards,
+> Elinor
+>
 
-This will conflict with:
-https://lore.kernel.org/lkml/20241102165400.75785-7-irogers@google.com/
-
-Thanks,
-Ian
-
-> ---
->  tools/perf/tests/Build                      | 12 +++++-----
->  tools/perf/tests/builtin-test.c             |  6 -----
->  tools/perf/tests/evsel-tp-sched.c           | 16 +++++++++++--
->  tools/perf/tests/mmap-basic.c               | 26 +++++++++++++++++++--
->  tools/perf/tests/openat-syscall-all-cpus.c  | 11 ++++++++-
->  tools/perf/tests/openat-syscall-tp-fields.c | 11 ++++++++-
->  tools/perf/tests/openat-syscall.c           | 11 ++++++++-
->  tools/perf/tests/switch-tracking.c          | 23 +++++++++++++++++-
->  8 files changed, 96 insertions(+), 20 deletions(-)
->
-> diff --git a/tools/perf/tests/Build b/tools/perf/tests/Build
-> index 01ed9335db4dba4e..c57ac14e7114e291 100644
-> --- a/tools/perf/tests/Build
-> +++ b/tools/perf/tests/Build
-> @@ -5,13 +5,13 @@ perf-test-y +=3D tests-scripts.o
->  perf-test-y +=3D parse-events.o
->  perf-test-y +=3D dso-data.o
->  perf-test-y +=3D vmlinux-kallsyms.o
-> -perf-test-$(CONFIG_LIBTRACEEVENT) +=3D openat-syscall.o
-> -perf-test-$(CONFIG_LIBTRACEEVENT) +=3D openat-syscall-all-cpus.o
-> -perf-test-$(CONFIG_LIBTRACEEVENT) +=3D openat-syscall-tp-fields.o
-> -perf-test-$(CONFIG_LIBTRACEEVENT) +=3D mmap-basic.o
-> +perf-test-y +=3D openat-syscall.o
-> +perf-test-y +=3D openat-syscall-all-cpus.o
-> +perf-test-y +=3D openat-syscall-tp-fields.o
-> +perf-test-y +=3D mmap-basic.o
->  perf-test-y +=3D perf-record.o
->  perf-test-y +=3D evsel-roundtrip-name.o
-> -perf-test-$(CONFIG_LIBTRACEEVENT) +=3D evsel-tp-sched.o
-> +perf-test-y +=3D evsel-tp-sched.o
->  perf-test-y +=3D fdarray.o
->  perf-test-y +=3D pmu.o
->  perf-test-y +=3D pmu-events.o
-> @@ -29,7 +29,7 @@ perf-test-y +=3D task-exit.o
->  perf-test-y +=3D sw-clock.o
->  perf-test-y +=3D mmap-thread-lookup.o
->  perf-test-y +=3D thread-maps-share.o
-> -perf-test-$(CONFIG_LIBTRACEEVENT) +=3D switch-tracking.o
-> +perf-test-y +=3D switch-tracking.o
->  perf-test-y +=3D keep-tracking.o
->  perf-test-y +=3D code-reading.o
->  perf-test-y +=3D sample-parsing.o
-> diff --git a/tools/perf/tests/builtin-test.c b/tools/perf/tests/builtin-t=
-est.c
-> index d2cabaa8ad922d68..5ebeaf3d7b69a8d0 100644
-> --- a/tools/perf/tests/builtin-test.c
-> +++ b/tools/perf/tests/builtin-test.c
-> @@ -60,11 +60,9 @@ static struct test_suite *arch_tests[] =3D {
->
->  static struct test_suite *generic_tests[] =3D {
->         &suite__vmlinux_matches_kallsyms,
-> -#ifdef HAVE_LIBTRACEEVENT
->         &suite__openat_syscall_event,
->         &suite__openat_syscall_event_on_all_cpus,
->         &suite__basic_mmap,
-> -#endif
->         &suite__mem,
->         &suite__parse_events,
->         &suite__expr,
-> @@ -74,10 +72,8 @@ static struct test_suite *generic_tests[] =3D {
->         &suite__tool_pmu,
->         &suite__dso_data,
->         &suite__perf_evsel__roundtrip_name_test,
-> -#ifdef HAVE_LIBTRACEEVENT
->         &suite__perf_evsel__tp_sched_test,
->         &suite__syscall_openat_tp_fields,
-> -#endif
->         &suite__hists_link,
->         &suite__python_use,
->         &suite__bp_signal,
-> @@ -95,9 +91,7 @@ static struct test_suite *generic_tests[] =3D {
->         &suite__thread_maps_share,
->         &suite__hists_output,
->         &suite__hists_cumulate,
-> -#ifdef HAVE_LIBTRACEEVENT
->         &suite__switch_tracking,
-> -#endif
->         &suite__fdarray__filter,
->         &suite__fdarray__add,
->         &suite__kmod_path__parse,
-> diff --git a/tools/perf/tests/evsel-tp-sched.c b/tools/perf/tests/evsel-t=
-p-sched.c
-> index 3da6a76eac3856d1..a7d3a59f01217280 100644
-> --- a/tools/perf/tests/evsel-tp-sched.c
-> +++ b/tools/perf/tests/evsel-tp-sched.c
-> @@ -1,10 +1,12 @@
->  // SPDX-License-Identifier: GPL-2.0
->  #include <linux/err.h>
-> -#include <traceevent/event-parse.h>
->  #include "evsel.h"
->  #include "tests.h"
->  #include "debug.h"
->
-> +#ifdef HAVE_LIBTRACEEVENT
-> +#include <traceevent/event-parse.h>
-> +
->  static int evsel__test_field(struct evsel *evsel, const char *name, int =
-size, bool should_be_signed)
->  {
->         struct tep_format_field *field =3D evsel__field(evsel, name);
-> @@ -31,10 +33,12 @@ static int evsel__test_field(struct evsel *evsel, con=
-st char *name, int size, bo
->
->         return ret;
->  }
-> +#endif // HAVE_LIBTRACEEVENT
->
->  static int test__perf_evsel__tp_sched_test(struct test_suite *test __may=
-be_unused,
->                                            int subtest __maybe_unused)
->  {
-> +#ifdef HAVE_LIBTRACEEVENT
->         struct evsel *evsel =3D evsel__newtp("sched", "sched_switch");
->         int ret =3D TEST_OK;
->
-> @@ -87,12 +91,20 @@ static int test__perf_evsel__tp_sched_test(struct tes=
-t_suite *test __maybe_unuse
->
->         evsel__delete(evsel);
->         return ret;
-> +#else
-> +       return TEST_SKIP;
-> +#endif // HAVE_LIBTRACEEVENT
->  }
->
->  static struct test_case tests__perf_evsel__tp_sched_test[] =3D {
->         TEST_CASE_REASON("Parse sched tracepoints fields",
->                          perf_evsel__tp_sched_test,
-> -                        "permissions"),
-> +#ifdef HAVE_LIBTRACEEVENT
-> +                        "permissions"
-> +#else
-> +                        "not linked with libtraceevent"
-> +#endif
-> +                       ),
->         {       .name =3D NULL, }
->  };
->
-> diff --git a/tools/perf/tests/mmap-basic.c b/tools/perf/tests/mmap-basic.=
-c
-> index 012c8ae439fdcf56..f87ec3c40e091d5d 100644
-> --- a/tools/perf/tests/mmap-basic.c
-> +++ b/tools/perf/tests/mmap-basic.c
-> @@ -10,6 +10,7 @@
->  #include "evsel.h"
->  #include "thread_map.h"
->  #include "tests.h"
-> +#include "tests/tests.h"
->  #include "util/mmap.h"
->  #include "util/sample.h"
->  #include <linux/err.h>
-> @@ -31,6 +32,7 @@
->   */
->  static int test__basic_mmap(struct test_suite *test __maybe_unused, int =
-subtest __maybe_unused)
->  {
-> +#ifdef HAVE_LIBTRACEEVENT
->         int err =3D TEST_FAIL;
->         union perf_event *event;
->         struct perf_thread_map *threads;
-> @@ -167,10 +169,14 @@ static int test__basic_mmap(struct test_suite *test=
- __maybe_unused, int subtest
->  out_free_threads:
->         perf_thread_map__put(threads);
->         return err;
-> +#else
-> +       return TEST_SKIP;
-> +#endif // HAVE_LIBTRACEEVENT
->  }
->
-> -static int test_stat_user_read(int event)
-> +static int test_stat_user_read(int event __maybe_unused)
->  {
-> +#ifdef HAVE_LIBTRACEEVENT
->         struct perf_counts_values counts =3D { .val =3D 0 };
->         struct perf_thread_map *threads;
->         struct perf_evsel *evsel;
-> @@ -264,6 +270,9 @@ static int test_stat_user_read(int event)
->
->         perf_thread_map__put(threads);
->         return ret;
-> +#else
-> +       return TEST_SKIP;
-> +#endif // HAVE_LIBTRACEEVENT
->  }
->
->  static int test__mmap_user_read_instr(struct test_suite *test __maybe_un=
-used,
-> @@ -281,23 +290,36 @@ static int test__mmap_user_read_cycles(struct test_=
-suite *test __maybe_unused,
->  static struct test_case tests__basic_mmap[] =3D {
->         TEST_CASE_REASON("Read samples using the mmap interface",
->                          basic_mmap,
-> -                        "permissions"),
-> +#ifdef HAVE_LIBTRACEEVENT
-> +                        "permissions"
-> +#else
-> +                        "not linked with libtraceevent"
-> +#endif
-> +                       ),
->         TEST_CASE_REASON("User space counter reading of instructions",
->                          mmap_user_read_instr,
-> +#ifdef HAVE_LIBTRACEEVENT
->  #if defined(__i386__) || defined(__x86_64__) || defined(__aarch64__) || =
-\
->                          (defined(__riscv) && __riscv_xlen =3D=3D 64)
->                          "permissions"
->  #else
->                          "unsupported"
-> +#endif
-> +#else
-> +                        "not linked with libtraceevent"
->  #endif
->                 ),
->         TEST_CASE_REASON("User space counter reading of cycles",
->                          mmap_user_read_cycles,
-> +#ifdef HAVE_LIBTRACEEVENT
->  #if defined(__i386__) || defined(__x86_64__) || defined(__aarch64__) || =
-\
->                          (defined(__riscv) && __riscv_xlen =3D=3D 64)
->                          "permissions"
->  #else
->                          "unsupported"
-> +#endif
-> +#else
-> +                        "not linked with libtraceevent"
->  #endif
->                 ),
->         {       .name =3D NULL, }
-> diff --git a/tools/perf/tests/openat-syscall-all-cpus.c b/tools/perf/test=
-s/openat-syscall-all-cpus.c
-> index fb114118c87640b8..72dc22bef917f17d 100644
-> --- a/tools/perf/tests/openat-syscall-all-cpus.c
-> +++ b/tools/perf/tests/openat-syscall-all-cpus.c
-> @@ -22,6 +22,7 @@
->  static int test__openat_syscall_event_on_all_cpus(struct test_suite *tes=
-t __maybe_unused,
->                                                   int subtest __maybe_unu=
-sed)
->  {
-> +#ifdef HAVE_LIBTRACEEVENT
->         int err =3D TEST_FAIL, fd, idx;
->         struct perf_cpu cpu;
->         struct perf_cpu_map *cpus;
-> @@ -122,13 +123,21 @@ static int test__openat_syscall_event_on_all_cpus(s=
-truct test_suite *test __mayb
->  out_thread_map_delete:
->         perf_thread_map__put(threads);
->         return err;
-> +#else
-> +       return TEST_SKIP;
-> +#endif // HAVE_LIBTRACEEVENT
->  }
->
->
->  static struct test_case tests__openat_syscall_event_on_all_cpus[] =3D {
->         TEST_CASE_REASON("Detect openat syscall event on all cpus",
->                          openat_syscall_event_on_all_cpus,
-> -                        "permissions"),
-> +#ifdef HAVE_LIBTRACEEVENT
-> +                        "permissions"
-> +#else
-> +                        "not linked with libtraceevent"
-> +#endif
-> +                       ),
->         {       .name =3D NULL, }
->  };
->
-> diff --git a/tools/perf/tests/openat-syscall-tp-fields.c b/tools/perf/tes=
-ts/openat-syscall-tp-fields.c
-> index 3943da441979c0fc..cc0e31958646e88c 100644
-> --- a/tools/perf/tests/openat-syscall-tp-fields.c
-> +++ b/tools/perf/tests/openat-syscall-tp-fields.c
-> @@ -26,6 +26,7 @@
->  static int test__syscall_openat_tp_fields(struct test_suite *test __mayb=
-e_unused,
->                                           int subtest __maybe_unused)
->  {
-> +#ifdef HAVE_LIBTRACEEVENT
->         struct record_opts opts =3D {
->                 .target =3D {
->                         .uid =3D UINT_MAX,
-> @@ -144,12 +145,20 @@ static int test__syscall_openat_tp_fields(struct te=
-st_suite *test __maybe_unused
->         evlist__delete(evlist);
->  out:
->         return ret;
-> +#else
-> +       return TEST_SKIP;
-> +#endif // HAVE_LIBTRACEEVENT
->  }
->
->  static struct test_case tests__syscall_openat_tp_fields[] =3D {
->         TEST_CASE_REASON("syscalls:sys_enter_openat event fields",
->                          syscall_openat_tp_fields,
-> -                        "permissions"),
-> +#ifdef HAVE_LIBTRACEEVENT
-> +                        "permissions"
-> +#else
-> +                        "not linked with libtraceevent"
-> +#endif
-> +                       ),
->         {       .name =3D NULL, }
->  };
->
-> diff --git a/tools/perf/tests/openat-syscall.c b/tools/perf/tests/openat-=
-syscall.c
-> index 131b62271bfa270b..2ca0b7d2cca7672e 100644
-> --- a/tools/perf/tests/openat-syscall.c
-> +++ b/tools/perf/tests/openat-syscall.c
-> @@ -17,6 +17,7 @@
->  static int test__openat_syscall_event(struct test_suite *test __maybe_un=
-used,
->                                       int subtest __maybe_unused)
->  {
-> +#ifdef HAVE_LIBTRACEEVENT
->         int err =3D TEST_FAIL, fd;
->         struct evsel *evsel;
->         unsigned int nr_openat_calls =3D 111, i;
-> @@ -69,12 +70,20 @@ static int test__openat_syscall_event(struct test_sui=
-te *test __maybe_unused,
->  out_thread_map_delete:
->         perf_thread_map__put(threads);
->         return err;
-> +#else
-> +       return TEST_SKIP;
-> +#endif // HAVE_LIBTRACEEVENT
->  }
->
->  static struct test_case tests__openat_syscall_event[] =3D {
->         TEST_CASE_REASON("Detect openat syscall event",
->                          openat_syscall_event,
-> -                        "permissions"),
-> +#ifdef HAVE_LIBTRACEEVENT
-> +                        "permissions"
-> +#else
-> +                        "not linked with libtraceevent"
-> +#endif
-> +                       ),
->         {       .name =3D NULL, }
->  };
->
-> diff --git a/tools/perf/tests/switch-tracking.c b/tools/perf/tests/switch=
--tracking.c
-> index 5cab17a1942e67d7..591ae74b663af3c1 100644
-> --- a/tools/perf/tests/switch-tracking.c
-> +++ b/tools/perf/tests/switch-tracking.c
-> @@ -22,6 +22,7 @@
->  #include "util/sample.h"
->  #include "pmus.h"
->
-> +#ifdef HAVE_LIBTRACEEVENT
->  static int spin_sleep(void)
->  {
->         struct timeval start, now, diff, maxtime;
-> @@ -314,6 +315,7 @@ static int process_events(struct evlist *evlist,
->         free_event_nodes(&events);
->         return ret;
->  }
-> +#endif // HAVE_LIBTRACEEVENT
->
->  /**
->   * test__switch_tracking - test using sched_switch and tracking events.
-> @@ -325,6 +327,7 @@ static int process_events(struct evlist *evlist,
->   */
->  static int test__switch_tracking(struct test_suite *test __maybe_unused,=
- int subtest __maybe_unused)
->  {
-> +#ifdef HAVE_LIBTRACEEVENT
->         const char *sched_switch =3D "sched:sched_switch";
->         const char *cycles =3D "cycles:u";
->         struct switch_tracking switch_tracking =3D { .tids =3D NULL, };
-> @@ -581,6 +584,24 @@ static int test__switch_tracking(struct test_suite *=
-test __maybe_unused, int sub
->  out_err:
->         err =3D -1;
->         goto out;
-> +#else
-> +       return TEST_SKIP;
-> +#endif // HAVE_LIBTRACEEVENT
->  }
->
-> -DEFINE_SUITE("Track with sched_switch", switch_tracking);
-> +static struct test_case tests__switch_tracking[] =3D {
-> +       {
-> +               .name =3D "switch_tracking",
-> +               .desc =3D "Track with sched_switch",
-> +               .run_case =3D test__switch_tracking,
-> +#ifndef HAVE_LIBTRACEEVENT
-> +               .skip_reason =3D "not linked with libtraceevent",
-> +#endif
-> +       },
-> +       {       .name =3D NULL, }
-> +};
-> +
-> +struct test_suite suite__switch_tracking =3D {
-> +       .desc =3D "Track with sched_switch",
-> +       .test_cases =3D tests__switch_tracking,
-> +};
-> --
-> 2.47.0
->
 
