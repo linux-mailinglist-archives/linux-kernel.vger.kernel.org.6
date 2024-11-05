@@ -1,192 +1,200 @@
-Return-Path: <linux-kernel+bounces-396523-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396522-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5F129BCE54
+	by mail.lfdr.de (Postfix) with ESMTPS id 507A99BCE53
 	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 14:53:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C5C01F22E7C
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 13:53:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C4C121F22DDA
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 13:53:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46F811D86D2;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2780F1D86CE;
 	Tue,  5 Nov 2024 13:53:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="G9HC5G/P"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="h+PDJR+D"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E57B01D63EE;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF9A11D45EA;
 	Tue,  5 Nov 2024 13:53:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730814815; cv=none; b=Sbnt764zw5vlXkZQFiAR9U7NeljSohnkWJ+ELs2PJQoJoII13qT3WpjIGQ+xUP9blktQe5kUiixTxp12PyOxio5ZarKivzbAmPCEfCJzW5VNdcBF73Fvfot858eL/atJF37W7Obv5CGSHU/T4LfIVy3uj/EXVu/mMcG9N3zDMLE=
+	t=1730814815; cv=none; b=m7uiY64G1S/OoOuRthSaUzwZ1hXKeYcyHUy45XrDuzSQ2Zc59QlYMz9rOyySdl30+Hjxj2EOBmjxpsCFLk3JJ7NucdNs3JTrkc3gVjniBSt7XsrSwHHO/VgSL6HqK6ocbrOAqs6UptmVbfvtUOOpC6h9rTtAYWbNECc31IS3aHM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1730814815; c=relaxed/simple;
-	bh=UsvC3m2JvvVYASUjWR0IgE6EmOJsUD6WK6mloPO4LsQ=;
-	h=Content-Type:Subject:From:In-Reply-To:Date:Cc:Message-Id:
-	 References:To:MIME-Version; b=PtjsFwojL1EcuNEBPG6tDgbhqCuCWwgmJczm5S36Jet11ThUY3LHyO3Hst0ldSNC8Remg1X14vT40ppuU2g0KXOj9G33oEcdlFYgNc5KCdaGHr2MqR7gw3zdLa45jy8kjTmhT8eUl9WsRL7o0dD6WZ9qOFv7UqyBfm2HDbDemIA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.vnet.ibm.com; spf=none smtp.mailfrom=linux.vnet.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=G9HC5G/P; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.vnet.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.vnet.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A5De6qZ025769;
-	Tue, 5 Nov 2024 13:53:22 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=l0hkhG
-	WWdLSxMBmOO+9gWFmOxAxKBPvD0qz5ng5GIYw=; b=G9HC5G/PMS4jKzMy8kZ0Ey
-	d3KG+Ne8k5QBd7f7MO4VkiGuFJvF1upihxJdCr5AXQzuSOEnVKez2LJ2lQANsTiY
-	udfUJ0njkQxejVqKJMw/xKMBOWS3Sjif0WiQ+EBNMDE0ATvkY83xPXFaWhwhosK8
-	koJMwhXbFRyPwqrWsEayGpsazpeLYBgvRTTMhNy42y3Q8gUZ7YkgKHG02jTIUPgt
-	zEH3Ad/N5OiTSP45UFWyeu9KOZuZBrYbLP3t2yGFs6jQtUFb/aOubkpFXCHBGxQk
-	0dWTkq58gDZOi/LrTtCmvxrymes6q2uiImPtxEqgxhxy9P/VEEUxgJfWq7b6uoOg
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42qmepg2hk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 05 Nov 2024 13:53:22 +0000 (GMT)
-Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4A5DrMCN030893;
-	Tue, 5 Nov 2024 13:53:22 GMT
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42qmepg2hb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 05 Nov 2024 13:53:22 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4A5DLVDn023916;
-	Tue, 5 Nov 2024 13:53:21 GMT
-Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 42nxsy8y40-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 05 Nov 2024 13:53:21 +0000
-Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
-	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4A5DrJJ040370470
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 5 Nov 2024 13:53:19 GMT
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 3F4AD2004B;
-	Tue,  5 Nov 2024 13:53:19 +0000 (GMT)
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id D79BC20040;
-	Tue,  5 Nov 2024 13:53:13 +0000 (GMT)
-Received: from smtpclient.apple (unknown [9.61.252.221])
-	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Tue,  5 Nov 2024 13:53:13 +0000 (GMT)
-Content-Type: text/plain;
-	charset=utf-8
-Subject: Re: [PATCH] copy_class_filename: replace deprecated strlcpy with
- strscpy
-From: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
-In-Reply-To: <20241105071225.426026-1-danielyangkang@gmail.com>
-Date: Tue, 5 Nov 2024 19:22:59 +0530
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        "Liang, Kan" <kan.liang@linux.intel.com>,
-        "open list:PERFORMANCE EVENTS SUBSYSTEM" <linux-perf-users@vger.kernel.org>,
-        "open list:PERFORMANCE EVENTS SUBSYSTEM" <linux-kernel@vger.kernel.org>
-Message-Id: <B1BDDA8D-BD9F-4A4D-AE13-0D4902144DBE@linux.vnet.ibm.com>
-References: <20241105071225.426026-1-danielyangkang@gmail.com>
-To: Daniel Yang <danielyangkang@gmail.com>
-X-Mailer: Apple Mail (2.3818.100.11.1.3)
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: d4wYiGxQJ-c8N31wQqugR6RTcV02frXJ
-X-Proofpoint-ORIG-GUID: kwgg1pIi62c1u8sOyazCZtzOn6_Y5eOy
-Content-Transfer-Encoding: quoted-printable
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+	bh=bcHiwJs4IVlRBeorVrw2V8nVNqnrV5jvY/5NCJVZP4M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mW2LU9iWI1UaN29Q6Oo+ONCVEZSRIPcrXThPHGr7tdKvVag0MoJeP549eEzW7Jo8wnbdkK40Lv3bnmV8lvMD6CCy1aqorlHeuj2kneQer0qw1hYXle4hgg2xpoulvmJcAA1oNAc1WWGXS69dBAndsqsN6igbEby2cT04mj/11lA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=h+PDJR+D; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730814814; x=1762350814;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=bcHiwJs4IVlRBeorVrw2V8nVNqnrV5jvY/5NCJVZP4M=;
+  b=h+PDJR+DEpgR9bEXFr80BoM3DHHLaQOPE1k0GGukmowfP3t1z4AMeqFe
+   3GQCnDwKT4yQI46jQcGhrvpRq/JbFI89PhHK4cmfdS1Ozlkdz68jjZI0f
+   jomiScOmh36MsSQbkh6LCadqzAS7DCf220Fb8meb8GC7j9UQgeeqe5EpI
+   JQTDOu9Ww5/2RH6/vizILxfPRTg5lMnjZ9VXFK+ElMFmSQOKtsFvzwNzH
+   T1cKVzydpyxbCs45Pw7Cze1ky61ck/y84+wAOR1ZAEf3BUxtVRAJutIC8
+   HDQFRvujj/E3u77EO9UqtTIFc7i4+lQo+oj6fmJ8NPGy5/7CwMtu0p3E/
+   w==;
+X-CSE-ConnectionGUID: 6Sg8RzZhTNSsOPihAEQSyg==
+X-CSE-MsgGUID: AAvvZ5DTSV6H9DNO/+UiVg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11246"; a="30671884"
+X-IronPort-AV: E=Sophos;i="6.11,260,1725346800"; 
+   d="scan'208";a="30671884"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2024 05:53:33 -0800
+X-CSE-ConnectionGUID: nIOTDAXsRuyN3p9bBGhYVA==
+X-CSE-MsgGUID: 1C04mx9KRXCAsYVq1kdfnw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,260,1725346800"; 
+   d="scan'208";a="84361458"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by fmviesa010.fm.intel.com with ESMTP; 05 Nov 2024 05:53:32 -0800
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t8Jzt-000m6l-06;
+	Tue, 05 Nov 2024 13:53:29 +0000
+Date: Tue, 5 Nov 2024 21:53:25 +0800
+From: kernel test robot <lkp@intel.com>
+To: Frank Li <Frank.Li@nxp.com>, Haibo Chen <haibo.chen@nxp.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	"open list:NXP i.MX 7D/6SX/6UL/93 AND VF610 ADC DRIVER" <linux-iio@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev
+Subject: Re: [PATCH 2/2] iio: adc: vf610_adc: limit i.MX6SX's channel number
+ to 4
+Message-ID: <202411052136.jstxD0iJ-lkp@intel.com>
+References: <20241104231200.2745342-2-Frank.Li@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 adultscore=0
- mlxlogscore=999 malwarescore=0 clxscore=1015 lowpriorityscore=0
- impostorscore=0 bulkscore=0 phishscore=0 mlxscore=0 priorityscore=1501
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411050105
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241104231200.2745342-2-Frank.Li@nxp.com>
+
+Hi Frank,
+
+kernel test robot noticed the following build warnings:
+
+[auto build test WARNING on jic23-iio/togreg]
+[also build test WARNING on next-20241105]
+[cannot apply to linus/master v6.12-rc6]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Frank-Li/iio-adc-vf610_adc-limit-i-MX6SX-s-channel-number-to-4/20241105-071339
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git togreg
+patch link:    https://lore.kernel.org/r/20241104231200.2745342-2-Frank.Li%40nxp.com
+patch subject: [PATCH 2/2] iio: adc: vf610_adc: limit i.MX6SX's channel number to 4
+config: alpha-randconfig-r072-20241105 (https://download.01.org/0day-ci/archive/20241105/202411052136.jstxD0iJ-lkp@intel.com/config)
+compiler: alpha-linux-gcc (GCC) 13.3.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241105/202411052136.jstxD0iJ-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202411052136.jstxD0iJ-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   drivers/iio/adc/vf610_adc.c: In function 'vf610_adc_probe':
+>> drivers/iio/adc/vf610_adc.c:874:35: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+     874 |         indio_dev->num_channels = (u32)device_get_match_data(dev);
+         |                                   ^
 
 
+vim +874 drivers/iio/adc/vf610_adc.c
 
-> On 5 Nov 2024, at 12:42=E2=80=AFPM, Daniel Yang <danielyangkang@gmail.com=
-> wrote:
->=20
-> The latest kernel docs:
-> https://www.kernel.org/doc/html/latest/process/deprecated.html
-> recommends replacing strlcpy with strscpy as the safer alternative. The
-> value of strlcpy is not used so there shouldn't be issues with replacing
-> the deprecated call.
->=20
-> Signed-off-by: Daniel Yang <danielyangkang@gmail.com>
-> ---
-> tools/perf/jvmti/libjvmti.c | 2 +-
-> 1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/tools/perf/jvmti/libjvmti.c b/tools/perf/jvmti/libjvmti.c
-> index fcca275e5..04d6825d2 100644
-> --- a/tools/perf/jvmti/libjvmti.c
-> +++ b/tools/perf/jvmti/libjvmti.c
-> @@ -158,7 +158,7 @@ copy_class_filename(const char * class_sign, const ch=
-ar * file_name, char * resu
-> result[i] =3D '\0';
-> } else {
-> /* fallback case */
-> - strlcpy(result, file_name, max_length);
-> + strscpy(result, file_name, max_length);
+   817	
+   818	static int vf610_adc_probe(struct platform_device *pdev)
+   819	{
+   820		struct device *dev = &pdev->dev;
+   821		struct vf610_adc *info;
+   822		struct iio_dev *indio_dev;
+   823		int irq;
+   824		int ret;
+   825	
+   826		indio_dev = devm_iio_device_alloc(&pdev->dev, sizeof(struct vf610_adc));
+   827		if (!indio_dev)
+   828			return dev_err_probe(&pdev->dev, -ENOMEM, "Failed allocating iio device\n");
+   829	
+   830		info = iio_priv(indio_dev);
+   831		info->dev = &pdev->dev;
+   832	
+   833		info->regs = devm_platform_ioremap_resource(pdev, 0);
+   834		if (IS_ERR(info->regs))
+   835			return PTR_ERR(info->regs);
+   836	
+   837		irq = platform_get_irq(pdev, 0);
+   838		if (irq < 0)
+   839			return irq;
+   840	
+   841		ret = devm_request_irq(info->dev, irq,
+   842					vf610_adc_isr, 0,
+   843					dev_name(&pdev->dev), indio_dev);
+   844		if (ret < 0)
+   845			dev_err_probe(&pdev->dev, ret, "failed requesting irq, irq = %d\n", irq);
+   846	
+   847		info->clk = devm_clk_get_enabled(&pdev->dev, "adc");
+   848		if (IS_ERR(info->clk))
+   849			return dev_err_probe(&pdev->dev, PTR_ERR(info->clk),
+   850					     "failed getting clock, err = %ld\n",
+   851					     PTR_ERR(info->clk));
+   852	
+   853		info->vref = devm_regulator_get(&pdev->dev, "vref");
+   854		if (IS_ERR(info->vref))
+   855			return PTR_ERR(info->vref);
+   856	
+   857		info->vref_uv = devm_regulator_get_enable_read_voltage(&pdev->dev, "vref");
+   858		if (info->vref_uv < 0)
+   859			return info->vref_uv;
+   860	
+   861		device_property_read_u32_array(dev, "fsl,adck-max-frequency", info->max_adck_rate, 3);
+   862	
+   863		info->adc_feature.default_sample_time = DEFAULT_SAMPLE_TIME;
+   864		device_property_read_u32(dev, "min-sample-time", &info->adc_feature.default_sample_time);
+   865	
+   866		platform_set_drvdata(pdev, indio_dev);
+   867	
+   868		init_completion(&info->completion);
+   869	
+   870		indio_dev->name = dev_name(&pdev->dev);
+   871		indio_dev->info = &vf610_adc_iio_info;
+   872		indio_dev->modes = INDIO_DIRECT_MODE;
+   873		indio_dev->channels = vf610_adc_iio_channels;
+ > 874		indio_dev->num_channels = (u32)device_get_match_data(dev);
+   875	
+   876		vf610_adc_cfg_init(info);
+   877		vf610_adc_hw_init(info);
+   878	
+   879		ret = devm_iio_triggered_buffer_setup(&pdev->dev, indio_dev, &iio_pollfunc_store_time,
+   880						      NULL, &iio_triggered_buffer_setup_ops);
+   881		if (ret < 0)
+   882			return dev_err_probe(&pdev->dev, ret, "Couldn't initialise the buffer\n");
+   883	
+   884		mutex_init(&info->lock);
+   885	
+   886		ret = devm_iio_device_register(&pdev->dev, indio_dev);
+   887		if (ret)
+   888			return dev_err_probe(&pdev->dev, ret, "Couldn't register the device.\n");
+   889	
+   890		return 0;
+   891	}
+   892	
 
-Hi,
-
-This hits a compilation error:
-
-In file included from jvmti/libjvmti.c:3:
-jvmti/libjvmti.c: In function =E2=80=98copy_class_filename=E2=80=99:
-/home/athira/perf-tools-next/tools/include/linux/string.h:15:17: error: too=
- many arguments to function =E2=80=98strcpy=E2=80=99
-   15 | #define strscpy strcpy
-      |                 ^~~~~~
-jvmti/libjvmti.c:161:17: note: in expansion of macro =E2=80=98strscpy=E2=80=
-=99
-  161 |                 strscpy(result, file_name, max_length);
-      |                 ^~~~~~~
-In file included from /usr/include/features.h:490,
-                 from /usr/include/bits/libc-header-start.h:33,
-                 from /usr/include/stdint.h:26,
-                 from /usr/lib/gcc/ppc64le-redhat-linux/11/include/stdint.h=
-:9,
-                 from /home/athira/perf-tools-next/tools/include/linux/type=
-s.h:7,
-                 from /home/athira/perf-tools-next/tools/include/linux/comp=
-iler.h:131,
-                 from jvmti/libjvmti.c:2:
-/usr/include/bits/string_fortified.h:77:1: note: declared here
-   77 | __NTH (strcpy (char *__restrict __dest, const char *__restrict __sr=
-c))
-      | ^~~~~
-
-
-My analysis/review for this is same as my response for your similar patch h=
-ere:
-https://lore.kernel.org/linux-perf-users/3CA737FF-2F21-42CA-BF95-5F0341F6B6=
-8B@linux.vnet.ibm.com/T/#m619e016f6dd4abb1e1830580bdc74c86b4fcace8
-
-Thanks
-Athira
-
-> }
-> }
->=20
-> --=20
-> 2.39.2
->=20
->=20
-
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
