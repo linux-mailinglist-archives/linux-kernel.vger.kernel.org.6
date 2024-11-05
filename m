@@ -1,193 +1,116 @@
-Return-Path: <linux-kernel+bounces-396009-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396010-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39FE29BC6A9
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 08:07:05 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8E629BC6AA
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 08:07:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 935DAB22573
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 07:07:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 38BDDB23446
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 07:07:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F41F41FF038;
-	Tue,  5 Nov 2024 07:02:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 490731FE0F4;
+	Tue,  5 Nov 2024 07:04:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i3dpbmwH"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K9b1sj5h"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10E3C1FEFD4;
-	Tue,  5 Nov 2024 07:02:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A40911FDF9D
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 07:04:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730790175; cv=none; b=RcJeWZ6v52G06I3IJ7catWvPxRXIlj3AmNTX2upEKe1gL281mlAVS6gvBS/Dnx3uI01DCsNpKqn9u0c9oSZV5qwNVN7DlCoeW/sTgLbBL3Eh/eN1R+gPA887izB1NONSr5EHSJL9AFi5oQBp4jyT6f++7QML7iywRBOBvn02JEU=
+	t=1730790264; cv=none; b=QSBS6+FctQwswgzmGLOIKDO+6PWEwReF6DIaj/lFzh/cw7pt3EMoJpC4cz7EMbbd+zw1wt6J4bUp0ZrR4Ka/236QwCBp7mXhMWrBcCbXeAzF7ruhVGI1Dow8gGD8jmVgbIpVgMHb57x2OfzB0HJ1bAPg+fUHlyIWzyd5DuejPU4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730790175; c=relaxed/simple;
-	bh=vfcX72EWl1PlKyFBzjhHz5V71yaLAfzK3VjVgomZL4Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Uj/7jDTU/QqpD9FFIjKjnCvPfRZF9vJoxPylVeB5cmvjdCmI+cxnpcr9kIWY/H6xMRd+aj/A/5iI9dPeHF4wvcqSAQifexW70in+eKc3yObppkL/p9VI6ZIRoQCk7d1C1zWjQqppaNwnaOEV960KLEQc7l9IaQq/cGWTUHwoh24=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i3dpbmwH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4B12C4CECF;
-	Tue,  5 Nov 2024 07:02:35 +0000 (UTC)
+	s=arc-20240116; t=1730790264; c=relaxed/simple;
+	bh=bbE301m90ULv29UrCtK4FKya/NA2/RTIhNtW40SMa7M=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=uj6ZYLFdpGvorO9RFfCAWEIr+wkEGWaMTKx3E1GHzer7nMDd+JrdFbiAe/eUvcAwYqdOSdtggdg6I0EMSearBT1793Eu8J/lAaSnKTeyod1uMW/lUwBs2fAIiQfAvnyy/WYyKVKzWe3CAJ0X/G2lz3ufcq+CjwNqYE56uCo9tQE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K9b1sj5h; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6FFABC4CECF;
+	Tue,  5 Nov 2024 07:04:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730790174;
-	bh=vfcX72EWl1PlKyFBzjhHz5V71yaLAfzK3VjVgomZL4Y=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=i3dpbmwHLfd+qUmJoaWeTGPHb10DC+M0kf+DMEykGWoYpGOuSUDviaUCAAx4zIAfi
-	 my4z1l/oyVoPrY5WEhvGAqrSv0MLPuXbzVIKUoMd0jh8oEVUCEONnRV4s7PDepCIp9
-	 ZD54y4ohFGVDY1Cs7nPdmpyfCNtvqUqW5KJ/Ch+xipF5ZFMCAivKT3JR6Xd9V1a/4G
-	 LvZ1wHQ1rlIUNyplCl+fPkOtsT/XeAFLJAPXe+EdvajpWUHCrgFIHiD89oCp0/Bkx4
-	 xYtH7/sknC5+POJtdvm/YMmFy0WRYObll2kMIURKDi3pF/30ytxQP7HSq81EZrmTXO
-	 namiYtOl86+Aw==
-Date: Tue, 5 Nov 2024 09:02:26 +0200
-From: Mike Rapoport <rppt@kernel.org>
-To: Nathan Chancellor <nathan@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	Andreas Larsson <andreas@gaisler.com>,
-	Andy Lutomirski <luto@kernel.org>, Ard Biesheuvel <ardb@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
-	Brian Cain <bcain@quicinc.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Christoph Hellwig <hch@infradead.org>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Dinh Nguyen <dinguyen@kernel.org>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Guo Ren <guoren@kernel.org>, Helge Deller <deller@gmx.de>,
-	Huacai Chen <chenhuacai@kernel.org>, Ingo Molnar <mingo@redhat.com>,
-	Johannes Berg <johannes@sipsolutions.net>,
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
-	Kent Overstreet <kent.overstreet@linux.dev>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Matt Turner <mattst88@gmail.com>, Max Filippov <jcmvbkbc@gmail.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Michal Simek <monstr@monstr.eu>, Oleg Nesterov <oleg@redhat.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Richard Weinberger <richard@nod.at>,
-	Russell King <linux@armlinux.org.uk>, Song Liu <song@kernel.org>,
-	Stafford Horne <shorne@gmail.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Vineet Gupta <vgupta@kernel.org>, Will Deacon <will@kernel.org>,
-	bpf@vger.kernel.org, linux-alpha@vger.kernel.org,
-	linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-csky@vger.kernel.org, linux-hexagon@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
-	linux-mips@vger.kernel.org, linux-mm@kvack.org,
-	linux-modules@vger.kernel.org, linux-openrisc@vger.kernel.org,
-	linux-parisc@vger.kernel.org, linux-riscv@lists.infradead.org,
-	linux-sh@vger.kernel.org, linux-snps-arc@lists.infradead.org,
-	linux-trace-kernel@vger.kernel.org, linux-um@lists.infradead.org,
-	linuxppc-dev@lists.ozlabs.org, loongarch@lists.linux.dev,
-	sparclinux@vger.kernel.org, x86@kernel.org
-Subject: Re: [PATCH v7 6/8] x86/module: prepare module loading for ROX
- allocations of text
-Message-ID: <ZynDAhW0lKCfOqZl@kernel.org>
-References: <20241023162711.2579610-1-rppt@kernel.org>
- <20241023162711.2579610-7-rppt@kernel.org>
- <20241104232741.GA3843610@thelio-3990X>
+	s=k20201202; t=1730790264;
+	bh=bbE301m90ULv29UrCtK4FKya/NA2/RTIhNtW40SMa7M=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=K9b1sj5h6ECF4jsJwNY+ic/mV0j84+esX6RTfeJuUGyVKSTHqzwpxK17fhxTS43Td
+	 1tmtdvByWPwGhatX3OWvtW2S16Qqx3yqrg8g6FrQ7Hj58vWd5v0IWebGhWG+0L6U30
+	 OQWcLp662hDzkhwjuW8YzHH4rXbkBGBM2guXXMP7r0ruAdiWQ/AeULM3PCbbZ02Z7P
+	 puK9DSPFIfSCRP1CkfomtiM5DbxGGnJmelhd6qqBlTIJ0Pz2swhYODZL7S/0tNbydm
+	 q+8QBHcOMjhZWQJD6HX9w8ssJD7XgJG/ErbU/jGbDxBpPJVuUWD+3vEydhZ6HPlz1t
+	 Pfy0rbaRo3fMg==
+Message-ID: <ab9f63b2-8d02-411b-8d2f-bc1b5b748ffe@kernel.org>
+Date: Tue, 5 Nov 2024 15:04:20 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241104232741.GA3843610@thelio-3990X>
+User-Agent: Mozilla Thunderbird
+Cc: Chao Yu <chao@kernel.org>, linux-f2fs-devel@lists.sourceforge.net,
+ linux-kernel@vger.kernel.org, niuzhiguo84@gmail.com, ke.wang@unisoc.com,
+ Hao_hao.Wang@unisoc.com
+Subject: Re: [PATCH V2] f2fs: fix to adjust appropriate length for fiemap
+To: Zhiguo Niu <zhiguo.niu@unisoc.com>, jaegeuk@kernel.org
+References: <1730685372-2995-1-git-send-email-zhiguo.niu@unisoc.com>
+Content-Language: en-US
+From: Chao Yu <chao@kernel.org>
+In-Reply-To: <1730685372-2995-1-git-send-email-zhiguo.niu@unisoc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Nathan,
+On 2024/11/4 9:56, Zhiguo Niu wrote:
+> If user give a file size as "length" parameter for fiemap
+> operations, but if this size is non-block size aligned,
+> it will show 2 segments fiemap results even this whole file
+> is contiguous on disk, such as the following results:
+> 
+>   ./f2fs_io fiemap 0 19034 ylog/analyzer.py
+> Fiemap: offset = 0 len = 19034
+>          logical addr.    physical addr.   length           flags
+> 0       0000000000000000 0000000020baa000 0000000000004000 00001000
+> 1       0000000000004000 0000000020bae000 0000000000001000 00001001
+> 
+> after this patch:
+> ./f2fs_io fiemap 0 19034 ylog/analyzer.py
+> Fiemap: offset = 0 len = 19034
+>      logical addr.    physical addr.   length           flags
+> 0    0000000000000000 00000000315f3000 0000000000005000 00001001
+> 
+> Signed-off-by: Zhiguo Niu <zhiguo.niu@unisoc.com>
+> ---
+> V2: correct commit msg according to Chao's questions
+> f2fs_io has been modified for testing, the length for fiemap is
+> real file size, not block number
+> ---
+>   fs/f2fs/data.c | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+> index 306b86b0..9fc229d 100644
+> --- a/fs/f2fs/data.c
+> +++ b/fs/f2fs/data.c
+> @@ -1966,8 +1966,8 @@ int f2fs_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
+>   			goto out;
+>   	}
+>   
+> -	if (bytes_to_blks(inode, len) == 0)
+> -		len = blks_to_bytes(inode, 1);
+> +	if (len & (blks_to_bytes(inode, 1) - 1))
+> +		len = round_up(len, blks_to_bytes(inode, 1));
 
-On Mon, Nov 04, 2024 at 04:27:41PM -0700, Nathan Chancellor wrote:
-> Hi Mike,
-> 
-> On Wed, Oct 23, 2024 at 07:27:09PM +0300, Mike Rapoport wrote:
-> > From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
-> > 
-> > When module text memory will be allocated with ROX permissions, the
-> > memory at the actual address where the module will live will contain
-> > invalid instructions and there will be a writable copy that contains the
-> > actual module code.
-> > 
-> > Update relocations and alternatives patching to deal with it.
-> > 
-> > Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
-> > Tested-by: kdevops <kdevops@lists.linux.dev>
-> 
-> Hopefully the last time you have to hear from me, as I am only
-> experiencing issues with only one of my test machines at this point and
-> it is my only machine that supports IBT, so it seems to point to
-> something specific with the IBT part of the FineIBT support. I notice
-> either a boot hang or an almost immediate reboot (triple fault?). I
-> guess this is how I missed reporting this earlier, as my machine was
-> falling back to the default distribution kernel after the restart and I
-> did not notice I was not actually testing a -next kernel.
-> 
-> Checking out the version of this change that is in next-20241104, commit
-> 7ca6ed09db62 ("x86/module: prepare module loading for ROX allocations of
-> text"), it boots with either 'cfi=off' or 'cfi=kcfi' but it exhibits the
-> issues noted above with 'cfi=fineibt'. At the immediate parent, commit
-> b575d981092f ("arch: introduce set_direct_map_valid_noflush()"), all
-> three combinations boot fine.
-> 
->   $ uname -r; tr ' ' '\n' </proc/cmdline | grep cfi=
-> 
->   6.12.0-rc5-debug-00214-g7ca6ed09db62
->   cfi=kcfi
-> 
->   6.12.0-rc5-debug-00214-g7ca6ed09db62
->   cfi=off
-> 
->   6.12.0-rc5-debug-00213-gb575d981092f
->   cfi=fineibt
-> 
->   6.12.0-rc5-debug-00213-gb575d981092f
->   cfi=kcfi
-> 
->   6.12.0-rc5-debug-00213-gb575d981092f
->   cfi=off
-> 
-> I do not think this machine has an accessible serial port and I do not
-> think IBT virtualization is supported via either KVM or TCG in QEMU, so
-> I am not sure how to get more information about what is going on here. I
-> wanted to try reverting these changes on top of next-20241104 but there
-> was a non-trivial conflict in mm/execmem.c due to some changes on top,
-> so I just tested in the mm history.
-> 
-> If there is any other information I can provide or patches I can test, I
-> am more than happy to do so.
+How do you think of getting rid of above alignment for len?
 
-Yes, please :)
+>   
+>   	start_blk = bytes_to_blks(inode, start);
+>   	last_blk = bytes_to_blks(inode, start + len - 1);
 
-There's a silly mistake in cfi_rewrite_endbr() in that commit, the patch
-below should fix it. Can you please test?
+And round up end position w/:
 
-diff --git a/arch/x86/kernel/alternative.c b/arch/x86/kernel/alternative.c
-index 3407efc26528..243843e44e89 100644
---- a/arch/x86/kernel/alternative.c
-+++ b/arch/x86/kernel/alternative.c
-@@ -1241,7 +1241,7 @@ static void cfi_rewrite_endbr(s32 *start, s32 *end, struct module *mod)
- 		void *addr = (void *)s + *s;
- 		void *wr_addr = module_writable_address(mod, addr);
- 
--		poison_endbr(addr+16, wr_addr, false);
-+		poison_endbr(addr + 16, wr_addr + 16, false);
- 	}
- }
- 
- 
-> Cheers,
-> Nathan
+last_blk = bytes_to_blks(inode, round_up(start + len - 1, F2FS_BLKSIZE));
 
--- 
-Sincerely yours,
-Mike.
+Thanks,
+
 
