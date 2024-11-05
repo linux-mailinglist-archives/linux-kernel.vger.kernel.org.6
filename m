@@ -1,165 +1,98 @@
-Return-Path: <linux-kernel+bounces-395756-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395757-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89DBA9BC277
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 02:21:20 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 499819BC278
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 02:21:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 18DA81F22CCD
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 01:21:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EAFFF1F22CFC
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 01:21:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E3001CD02;
-	Tue,  5 Nov 2024 01:21:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C199918643;
+	Tue,  5 Nov 2024 01:21:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZENJDM4z"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="ysCUfXmZ"
+Received: from out30-100.freemail.mail.aliyun.com (out30-100.freemail.mail.aliyun.com [115.124.30.100])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C263210FB;
-	Tue,  5 Nov 2024 01:21:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CD35168BD
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 01:21:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730769668; cv=none; b=NOnpWLEnF3igDojYOfV6f86uKvfvgY+SJ1qLZpbrAbdwk6obqsMz9hAbqKlLMUXsv94A5aIP7mhilnCNUyYBapeZYJkNz2D1NcgdY6TGJF2znRbWBLp0f4HzAhIFiAlHVlLuMBTDW0HiHkJGkVRn9ZzbePTegOn3EfTA1UmhJKk=
+	t=1730769692; cv=none; b=QeQW8cbsH7V92cAnD6FBLwTpPyTNTYfEA5+HXnM4UQyxnB6HwSOCH/ZY61NgLnIK0b6Ui0deQzejjIF3syZ2xAqazjcZCzwP/Elnm0lonuATq6/3h3oP77L0pUwRv9YKUpBgn6ObVtG/91eHwPXd3SBsqez0OWRcj+2tO+OTMeM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730769668; c=relaxed/simple;
-	bh=VZ8ZU0WsepzEPLxSHPS93xbgg2Gq28vQVhTZXl+F0Yo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ArL6WvogBYdZnmkZrYk0cgUEWXynQKcOIwRb8DgS1UK7paicYf1buVl5Q3dPAB/kpkCbc4AVimowVn5a7WPNbROdzecCzm3eP8Ef4NDt4U1oJa2ofOOS+pjkr/rm2fMcaJEJl+I/mfdmwNkTLnBeqrQUQ71nDAZq4qKYeSu4WTE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZENJDM4z; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-20cdbe608b3so48104185ad.1;
-        Mon, 04 Nov 2024 17:21:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730769666; x=1731374466; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=I+LMkYkWlRPsmB3Ncg3sqZVlDRsn5em99yS0jQuNnWc=;
-        b=ZENJDM4zRhgKeZwL+h1sA9GPziEE2m0+idLovxm4qAK5wM847p9JtmRv/Q8ZEtBCkU
-         4X5kdcF7vcKhoZg/kV+GSYzk0vy4Jx2vkWmnPiT16DPAfc7fsheiNVmWGpxLodCZWaIF
-         g/dDJW+bEAIFM7x/pjNnk/H5LiBQYaHaGOHlImMXEwFZndtq+N2zPZ693cgUvFINMeyO
-         tkEt4i5WNz2XSrI1zTj3OjMz5DU6Tia7lrP4g+BlxZiPbTGGe0QBrIfmcWX63Kw9i+e7
-         8IVyq0gqNgr53ThNIUUh4sup1rargI6tyiPmw82mGR6YZGGPS8ss3hVoGEBmvWJEr634
-         RbrQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730769666; x=1731374466;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=I+LMkYkWlRPsmB3Ncg3sqZVlDRsn5em99yS0jQuNnWc=;
-        b=wuZwDTZEwMxVgN+FiBRvHUYxDbgIZf0T+ZkUUqHzuska5TAFtRZP6DpOSVp+SHdPcV
-         fidwcE/UxMiQLSPnsDYfWjTjKDL1Qurhlj/8xBvc164GVtFzb8xNB3u/03KG/OtBf4rO
-         kg7QEUsdFbzCiXyd88l1dr9I2zDIFMEcOgMRZLIOzD6vd9b9A83KwuIHZ/sBW8IePwCM
-         q0ibImxefwzVQ0Z3LLkGW96E6TbQNAJADHCAPjVCkSm/VDKqD2h8AfsKbv/G+jqkUsAF
-         uSadTyQq22dkuuIrSn/sWD18DT4xzXh8HhKBZow534soel1TVXxzUnwvtdq75Qw6utUl
-         35HA==
-X-Forwarded-Encrypted: i=1; AJvYcCUb/CQLAIAMPECgBbm7eJPTOLDY0T36/HQh36qiWF2qc2t5QrjIOzMiE7WFqjG9bDvNYDk=@vger.kernel.org, AJvYcCVyEp5SpTe6HidmtF5o5flGcVquLGUZlQ/Ve0CE7Hd1exV8c2DEuPzPrpylzdrWljQvOfYiRYiJ0hfY0Zcb@vger.kernel.org, AJvYcCWhlvMeGBPwN7/ZVhM+uiqlDG14Srr813vFOdax9FUzobXzz/20nxHMSrE6OhRKrmrvyN5VGCJHv+94@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw2gt9BU3boD4fwWLhT3NSg8yBT1h4cV8kEW4UWb5m1ynOsYsAv
-	UFKWbPBP3iQcZTlLVXcgTsuDhp0LmpuP67zb9oY17df0yA7EtBMw
-X-Google-Smtp-Source: AGHT+IF64o8gpNOqMASVWYWFpE0R0w/dtjr62OjqjEwkG32O/Wkht74v20ETki9XH2sWXZ+AYqg5+A==
-X-Received: by 2002:a17:902:eccd:b0:20b:6e74:b712 with SMTP id d9443c01a7336-210f76d66cemr342551005ad.45.1730769666343;
-        Mon, 04 Nov 2024 17:21:06 -0800 (PST)
-Received: from archie.me ([103.124.138.155])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21105705fa2sm67297965ad.64.2024.11.04.17.21.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Nov 2024 17:21:05 -0800 (PST)
-Received: by archie.me (Postfix, from userid 1000)
-	id DBCEA420B6E5; Tue, 05 Nov 2024 08:21:00 +0700 (WIB)
-Date: Tue, 5 Nov 2024 08:21:00 +0700
-From: Bagas Sanjaya <bagasdotme@gmail.com>
-To: Jonathan Corbet <corbet@lwn.net>, Joe Damato <jdamato@fastly.com>
-Cc: netdev@vger.kernel.org, hdanton@sina.com, pabeni@redhat.com,
-	namangulati@google.com, edumazet@google.com,
-	amritha.nambiar@intel.com, sridhar.samudrala@intel.com,
-	sdf@fomichev.me, peter@typeblog.net, m2shafiei@uwaterloo.ca,
-	bjorn@rivosinc.com, hch@infradead.org, willy@infradead.org,
-	willemdebruijn.kernel@gmail.com, skhawaja@google.com,
-	kuba@kernel.org, Martin Karsten <mkarsten@uwaterloo.ca>,
-	"David S. Miller" <davem@davemloft.net>,
-	Simon Horman <horms@kernel.org>,
-	Linux Documentation <linux-doc@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux BPF <bpf@vger.kernel.org>
-Subject: Re: [PATCH net-next v5 7/7] docs: networking: Describe irq suspension
-Message-ID: <Zyly_D2DMcsf3bx9@archie.me>
-References: <20241103052421.518856-1-jdamato@fastly.com>
- <20241103052421.518856-8-jdamato@fastly.com>
- <ZyinhIlMIrK58ABF@archie.me>
- <ZykRdK6WgfR_4p5X@LQ3V64L9R2>
- <87v7x296wq.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1730769692; c=relaxed/simple;
+	bh=Abg9E5PbyN8zKFJE/eaP+QX3ulRxErnGHnbUjLh4laA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MM8FyWwH5jF7UlhtjgjDYRaSKXb4cwRU0j283xr8/zldXWNZfExzBwoQ6V8tqJPwyVUGLXoy3bs+avkNwDlToV7vaLgLcn5gBh+yt2nn1rhoLoQ8A6x/UDBDW1YkE+BEXGsRZfMM5pjcN7JPS5W7CftwbTLobhIt0FG8U51JbrI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=ysCUfXmZ; arc=none smtp.client-ip=115.124.30.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1730769685; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=7hmXB0YjoavMhOzKtGXpOjuxd+fLP7nuhjWqR0OFL7k=;
+	b=ysCUfXmZP1Yb7llTzxsg6FcLzrTz/iZgdFk1QVmDv2jnVhNa4ecJJhIagqc5TYE2rAAS0vqivlDqDpQc9pxEHkXmYF6EnLAJdtCOU0bU/NXlkAd8aCiANIB7EkXdIn2dE6zSIR8UkBE88GbUsTScul0hZ0ATY2fgyedIwhZjn7c=
+Received: from 30.178.65.199(mailfrom:yaoma@linux.alibaba.com fp:SMTPD_---0WIkzzBP_1730769684 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Tue, 05 Nov 2024 09:21:24 +0800
+Message-ID: <10b8fc5b-fa72-4772-939b-7b43b7861eca@linux.alibaba.com>
+Date: Tue, 5 Nov 2024 09:21:23 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="nq/PazSObm4LFAxl"
-Content-Disposition: inline
-In-Reply-To: <87v7x296wq.fsf@trenco.lwn.net>
+User-Agent: =?UTF-8?B?TW96aWxsYSBUaHVuZGVyYmlyZCDmtYvor5XniYg=?=
+Subject: Re: [PATCH] sched: Remove unnecessary initialization in
+ init_cfs_bandwidth() function
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: mingo@redhat.com, juri.lelli@redhat.com, vincent.guittot@linaro.org,
+ linux-kernel@vger.kernel.org
+References: <20241104121443.86468-1-yaoma@linux.alibaba.com>
+ <20241104121847.GE24862@noisy.programming.kicks-ass.net>
+From: yaoma <yaoma@linux.alibaba.com>
+In-Reply-To: <20241104121847.GE24862@noisy.programming.kicks-ass.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
 
---nq/PazSObm4LFAxl
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Mon, Nov 04, 2024 at 11:43:17AM -0700, Jonathan Corbet wrote:
-> Joe Damato <jdamato@fastly.com> writes:
->=20
-> > On Mon, Nov 04, 2024 at 05:52:52PM +0700, Bagas Sanjaya wrote:
-> >> On Sun, Nov 03, 2024 at 05:24:09AM +0000, Joe Damato wrote:
-> >> > +It is important to note that choosing a large value for ``gro_flush=
-_timeout``
-> >> > +will defer IRQs to allow for better batch processing, but will indu=
-ce latency
-> >> > +when the system is not fully loaded. Choosing a small value for
-> >> > +``gro_flush_timeout`` can cause interference of the user applicatio=
-n which is
-> >> > +attempting to busy poll by device IRQs and softirq processing. This=
- value
-> >> > +should be chosen carefully with these tradeoffs in mind. epoll-base=
-d busy
-> >> > +polling applications may be able to mitigate how much user processi=
-ng happens
-> >> > +by choosing an appropriate value for ``maxevents``.
-> >> > +
-> >> > +Users may want to consider an alternate approach, IRQ suspension, t=
-o help deal
-> >>                                                                      t=
-o help dealing
-> >> > +with these tradeoffs.
-> >> > +
-> >
-> > Thanks for the careful review. I read this sentence a few times and
-> > perhaps my English grammar isn't great, but I think it should be
-> > one of:
-> >
-> > Users may want to consider an alternate approach, IRQ suspension, to
-> > help deal with these tradeoffs.  (the original)
->=20
-> The original is just fine here.  Bagas, *please* do not bother our
-> contributors with this kind of stuff, it does not help.
+在 2024/11/4 20:18, Peter Zijlstra 写道:
+> On Mon, Nov 04, 2024 at 08:14:43PM +0800, Bitao Hu wrote:
+>> The root task group is statically defined, and non-root task groups
+>> are allocated memory using kmem_cache_alloc() with the __GFP_ZERO
+>> flag. In both cases, the corresponding 'struct cfs_bandwidth' is a
+>> block of all-zero memory. Therefore, it is unnecessary to explicitly
+>> set zeros in the init_cfs_bandwidth() function.
+>>
+>> Signed-off-by: Bitao Hu <yaoma@linux.alibaba.com>
+>> ---
+>>   kernel/sched/fair.c | 2 --
+>>   1 file changed, 2 deletions(-)
+>>
+>> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+>> index 2d16c8545c71..2fd96641164f 100644
+>> --- a/kernel/sched/fair.c
+>> +++ b/kernel/sched/fair.c
+>> @@ -6573,10 +6573,8 @@ static enum hrtimer_restart sched_cfs_period_timer(struct hrtimer *timer)
+>>   void init_cfs_bandwidth(struct cfs_bandwidth *cfs_b, struct cfs_bandwidth *parent)
+>>   {
+>>   	raw_spin_lock_init(&cfs_b->lock);
+>> -	cfs_b->runtime = 0;
+>>   	cfs_b->quota = RUNTIME_INF;
+>>   	cfs_b->period = ns_to_ktime(default_cfs_period());
+>> -	cfs_b->burst = 0;
+>>   	cfs_b->hierarchical_quota = parent ? parent->hierarchical_quota : RUNTIME_INF;
+>>   
+>>   	INIT_LIST_HEAD(&cfs_b->throttled_cfs_rq);
+> 
+> But this shows someone thought about it and 0 is the right value, and
+> not an oversight.
 
-I should have hinted the fixes instead of pasting them...
+Okay, I got it.
 
-Thanks.
-
---=20
-An old man doll... just what I always wanted! - Clara
-
---nq/PazSObm4LFAxl
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCZyly/AAKCRD2uYlJVVFO
-o+tTAQCWkcadSmX3wxsEpjQjj8WxLObwpWps8IxxktOqM9Ta8wEAmImsEuWA7xfI
-yvzVNIeGeybV8MQeKugYfMWyxL/YSA4=
-=C4ow
------END PGP SIGNATURE-----
-
---nq/PazSObm4LFAxl--
 
