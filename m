@@ -1,102 +1,149 @@
-Return-Path: <linux-kernel+bounces-395958-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395959-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A81A9BC559
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 07:21:33 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6F409BC55C
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 07:22:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2331B1F24DD9
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 06:21:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8BF35282C91
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 06:22:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC3801DC185;
-	Tue,  5 Nov 2024 06:21:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UDFgIUEv"
-Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com [209.85.219.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A43CA1D2F78;
+	Tue,  5 Nov 2024 06:22:06 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E37D61DFE8;
-	Tue,  5 Nov 2024 06:21:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8F5CAD5B;
+	Tue,  5 Nov 2024 06:22:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730787681; cv=none; b=ih3smCWuWoEbV6VlCEHO1c82ZcsLepxipfN7S03Jfuj4sO7bQNClp3cmS9pVz+zDvIpqvYNP7ZArMMp46rdwVqRnUFBI3mcwyiQTpIqTXrjAT/e6/q6iF0KyoAORF2Qsq3wcBaVohSv5/6ucUj/p+mg01i/oyuv2rrhlOqe8RDU=
+	t=1730787726; cv=none; b=Z6bBLGukubPghDXBivGkTHC+iMo2MeUDNN9E5Umpm/G+92+RNyePGioHxglvpr2kmZHCHbADNKEpB7sdVBruYIurxo92czQXm4vn0zI0g5Xkul5UwqXiWprh+qfqwF9xMkL+Zk4BQx6ItMR60Sww7czFAGyppkdSyRb81iJvorg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730787681; c=relaxed/simple;
-	bh=kk8dszoqp8PqiEkZB9fm5YAoTt8ToqdKlYqHvKHmOa0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IlJS7697aGpqVaEpgQd8jHgV0+YIKxO5wflOiHia7UFc2Hl1LUJkb5pB+ldLjNI4O6bbvH6X6jzxgOA7Vcd6hkQ3dI3Jh87RzPlUPvyzJSIbvx/wk0rnGKfKQnce0EW8LOlhYdbgGoWhyJmbgz67Wx+0NgyU6reS25ArGlqzh3E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UDFgIUEv; arc=none smtp.client-ip=209.85.219.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f178.google.com with SMTP id 3f1490d57ef6-e2e340218daso5050854276.0;
-        Mon, 04 Nov 2024 22:21:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730787678; x=1731392478; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=t3wFW12/6RoBqXny0VQWOTmH5aSf+LWh0KZ4bCkVkr0=;
-        b=UDFgIUEvoXQ0tOWsfZzd1cNcMKWGiquULIjrzIFwCHnkVplP2eDnjXVmcLVPlfFDMe
-         KQ6qiRkSrjpLMaEM6Byr4D4Q2bh5ZZbxkXwis3FWGZWaJ8jG/tIDSX3TVXVswvjx26rw
-         6IB/Ur+rmXACuoIxpa8QuGq6C6/ttJ04ATeGt9gdGLMKL8eML3RnLH3shH47tzEEwqcq
-         sFct5hre/HVGudfOOMnvwuXZK1Cic4ONXk+3hWAL29PQJge7sBYozlLuDpWFsMuTFD2e
-         i0D9I/9rlxwZOqEQjMM+kOhdhCbv9w9CFHJsohW36p/zQxnT0bHUjSUEgG9pMXv0moqZ
-         iA1g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730787678; x=1731392478;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=t3wFW12/6RoBqXny0VQWOTmH5aSf+LWh0KZ4bCkVkr0=;
-        b=FtCWOynGII977DVSQlLV7a4hsKaGZpfuH/i01hoEb8OLqcsBqlQtwY/lu6W4Bzr3x/
-         N/f2vO6LVxKTSsl4rDbHcGYbMbijOeIAlPvjRB7CYzUM5QD3ORt7067Byus4mDDNEyQt
-         S6Fs7soDKuWK/HLQbriF0yDF3fdol3YqGj5l7lx3CammjhHRiDcQigBr6Y6Z587oLmg+
-         wGZvcKXa9mMnTQm5cbJ6Oee2TbZgx0DK4gVR+ue6x7aTHtQSVXLvfQegTuFxrggFv/7l
-         A8yZT19UAYmwHvlEMpWTH4DSaECgCP41sX3Jzci6m5eddsVJaIKKPcTAIqvAcuhJRIrt
-         dpsg==
-X-Forwarded-Encrypted: i=1; AJvYcCUi/RTmww2fBBEhsWqJ9/KHrrITWMZpj5STIQw5d9k+Ra/jL6dbQdMsEa9LQdmhUwZbHhNPuVGq598=@vger.kernel.org, AJvYcCVEMTymjrGQlbPG6Js2UUFRG1IKGf6bB1OcUm7yKQ62B8rGvZmIvkRCQxVgwYcE/dqKYCIC1L9Keg4112E=@vger.kernel.org, AJvYcCVI/7mIgZg+iIDJO74Jp/dytKeSqMLQvWNkkHClT7dcXc5ucMJpdschNYUSGFdF0c7PBIj1AbYr/L+gGJ04aHA=@vger.kernel.org, AJvYcCVQ9jkFV2yot1V4G0v7SmjTDxV1ezvqpoPZBjprZuGJJGy9Eg7uBIB+zb7Nc7dKRo0qokRR+GX71sRi@vger.kernel.org, AJvYcCVV2bUUeRfQaEnzYcTJbqP3pkZe95JvP4Dxs4qbst2psN0Iv4a0+nxczqm0sX+TL3wKmq23LZ7BqX9Ym8gY@vger.kernel.org, AJvYcCVrcpzf0qWH+i9h0n4UyAoYiN2ZMJL8QAkL8dKCirEXu9xXQHFDCCwlMDkGEbpuaeBEC/0Z7XwExPLsYQ==@vger.kernel.org, AJvYcCW5uOgORflXjroIlWko1DsoP3ZEf0u7Sjrzj0MnCMc6hRTHVxIlv2v28IPGMYukfQDsZW0tBzs9Epxk@vger.kernel.org, AJvYcCWDeBrSTQObBrgZSLyQwPtZgM2+iQYA3di0r2Zl6blPG7D5E1s6hn8KiU2an3+P/2330sjEg8Zf@vger.kernel.org, AJvYcCWcFjTndcE21ow7Scl64CaeiJgtoDLmZzmd38/JFDoTzBlMeksMZktDy0fvzmJzet7ht1HngbJ5x/wJ@vger.kernel.org, AJvYcCWrEZCgWtO8USER3+roGYiOPHQ9BYlc
- wEYOntV+6fYSQYOvzN/14gEZ75o8HLe14OjKuIcq1S330o2B@vger.kernel.org
-X-Gm-Message-State: AOJu0YyWHGP4ZAPPfIcq23xAHxbqPgWVbn9m11d/au4Dyj9nnlXVY1id
-	CKBvSYr6Rwq65vvv6t6JDqgncMsxdoDPj29Nk5gPCRbyc2IXgdfOtiqgQ3BD9AzuuEV74L++Lsr
-	B+XnmiQu99yBFqErlyAoOeLrRHiA=
-X-Google-Smtp-Source: AGHT+IHa9Wl6kaZMC2Iqh+PZ97OJD2htTC9UI9oFXhLn0ebZGsBU/q2UeprWViXbP5D6nHQs3LLDaTs6iEW2fsyU8bY=
-X-Received: by 2002:a05:6902:15c4:b0:e29:24c:1d82 with SMTP id
- 3f1490d57ef6-e30e5b576e7mr16882810276.38.1730787677760; Mon, 04 Nov 2024
- 22:21:17 -0800 (PST)
+	s=arc-20240116; t=1730787726; c=relaxed/simple;
+	bh=fUsLKpu589KieHw/CBhz56VR/qBOiQQzgesY9vaxU7A=;
+	h=Subject:From:To:Cc:References:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=TTF4tCncWmmTebi2K/FyeJISe2Wzy3AkAaqmgcyaaBWo0AxapurUQEh0VzC6KzfsmRVlng2a/5yx5jA4N3dH7n33m83Pn7VNFvmCcgl2ydczYe9WhSmFhTUxt0panZmS0Sonj4noWf3yzZm2NqXcJCB095L5ISMW13gJxclIEX0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4XjJBq1HTHz4f3jXl;
+	Tue,  5 Nov 2024 14:21:39 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.112])
+	by mail.maildlp.com (Postfix) with ESMTP id 1C7A41A058E;
+	Tue,  5 Nov 2024 14:21:57 +0800 (CST)
+Received: from [10.174.176.117] (unknown [10.174.176.117])
+	by APP1 (Coremail) with SMTP id cCh0CgCHfK6BuSlndB+BAw--.16882S2;
+	Tue, 05 Nov 2024 14:21:56 +0800 (CST)
+Subject: Re: [PATCH bpf] selftests/bpf: Add a copyright notice to
+ lpm_trie_map_get_next_key
+From: Hou Tao <houtao@huaweicloud.com>
+To: Ilya Leoshkevich <iii@linux.ibm.com>,
+ Byeonguk Jeong <jungbu2855@gmail.com>
+Cc: andrii@kernel.org, daniel@iogearbox.net, martin.lau@linux.dev,
+ Alexei Starovoitov <ast@kernel.org>, bpf@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <ZycSXwjH4UTvx-Cn@ub22>
+ <925cb852-df24-81b6-318a-ee6a628d43c7@huaweicloud.com>
+ <d5137f25846ebf585383de4d994d388eabab9d60.camel@linux.ibm.com>
+ <b75e09a9-1028-28a2-f85d-5c7130a201f6@huaweicloud.com>
+Message-ID: <8d61d6ab-b6c4-9e7b-45f2-f0a4972f04ce@huaweicloud.com>
+Date: Tue, 5 Nov 2024 14:21:53 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241024085922.133071-1-tmyu0@nuvoton.com> <20241024085922.133071-8-tmyu0@nuvoton.com>
- <20241026154113.66fe0324@jic23-huawei>
-In-Reply-To: <20241026154113.66fe0324@jic23-huawei>
-From: Ming Yu <a0282524688@gmail.com>
-Date: Tue, 5 Nov 2024 14:21:06 +0800
-Message-ID: <CAOoeyxXmOE5R03Gof9zXS_E+32AFaY-miPN7jNZU+2GGX+nsKQ@mail.gmail.com>
-Subject: Re: [PATCH v1 7/9] iio: adc: Add Nuvoton NCT6694 IIO support
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: tmyu0@nuvoton.com, lee@kernel.org, linus.walleij@linaro.org, brgl@bgdev.pl, 
-	andi.shyti@kernel.org, mkl@pengutronix.de, mailhol.vincent@wanadoo.fr, 
-	andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com, 
-	kuba@kernel.org, pabeni@redhat.com, wim@linux-watchdog.org, 
-	linux@roeck-us.net, jdelvare@suse.com, lars@metafoo.de, ukleinek@kernel.org, 
-	alexandre.belloni@bootlin.com, linux-kernel@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org, 
-	linux-can@vger.kernel.org, netdev@vger.kernel.org, 
-	linux-watchdog@vger.kernel.org, linux-hwmon@vger.kernel.org, 
-	linux-iio@vger.kernel.org, linux-pwm@vger.kernel.org, 
-	linux-rtc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <b75e09a9-1028-28a2-f85d-5c7130a201f6@huaweicloud.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-CM-TRANSID:cCh0CgCHfK6BuSlndB+BAw--.16882S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7WFy5XrWUCFyDWw4rXr43Jrb_yoW8tw45pr
+	98tFZxtr4DJr12yw4kt3WDurW0ywnxG3Wagr1DGr15u3Z093Zaqr40kw17CFnF9r48Kw4U
+	Zw1UJFZ7J345Aa7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxk0xIA0c2IEe2xFo4CEbIxvr21lc7CjxVAaw2AF
+	wI0_JF0_Jw1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
+	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43
+	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
+	0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
+	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUwx
+	hLUUUUU
+X-CM-SenderInfo: xkrx3t3r6k3tpzhluzxrxghudrp/
 
-Dear Jonathan,
+Hi,
 
-Thank you for your comments,
-I will make changes based on the part you mentioned in the  future.
+On 11/5/2024 10:34 AM, Hou Tao wrote:
+> Hi Ilya,
+>
+> On 11/4/2024 6:07 PM, Ilya Leoshkevich wrote:
+>> On Mon, 2024-11-04 at 09:34 +0800, Hou Tao wrote:
+>>> Hi,
+>>>
+>>> On 11/3/2024 2:04 PM, Byeonguk Jeong wrote:
+>>>> Hi,
+>>>>
+>>>> The selftest "verifier_bits_iter/bad words" has been failed with
+>>>> retval 115, while I did not touched anything but a comment.
+>>>>
+>>>> Do you have any idea why it failed? I am not sure whether it
+>>>> indicates
+>>>> any bugs in the kernel.
+>>>>
+>>>> Best,
+>>>> Byeonguk
+>>> Sorry for the inconvenience. It seems the test case
+>>> "verifier_bits_iter/bad words" is flaky. It may fail randomly, such
+>>> as
+>>> in [1]. I think calling bpf_probe_read_kernel_common() on 3GB addr
+>>> under
+>>> s390 host may succeed and the content of the memory address will
+>>> decide
+>>> whether the test case will succeed or not. Do not know the reason why
+>>> reading 3GB address succeeds under s390. Hope to get some insight
+>>> from
+>>> Ilya.  I think we could fix the failure first by using NULL as the
+>>> address of bad words just like null_pointer test case does. Will
+>>> merge
+>>> the test in bad_words into the null_pointer case.
+>> Hi,
+>>
+>> s390 kernel runs in a completely separate address space, there is no
+>> user/kernel split at TASK_SIZE. The same address may be valid in both
+>> the kernel and the user address spaces, there is no way to tell by
+>> looking at it. The config option related to this property is
+>> ARCH_HAS_NON_OVERLAPPING_ADDRESS_SPACE.
+>>
+>> Also, unfortunately, 0 is a valid address in the s390 kernel address
+>> space.
+> Thanks for the detailed explanation. It seems both arm and x86 have
+> select ARCH_HAS_NON_OVERLAPPING_ADDRESS_SPACE.
+>> I wonder if we could use -4095 as an address that cannot be
+>> dereferenced on all platforms?
+> I have tested it in both arm64 and x86-64 that reading from -4095 by
+> using copy_from_kernel_nofault() will return -EFAULT . For s390, I hope
+> the bpf CI could help to test it. Will post a fix patch later.
 
+On s390 host, it seems that using copy_from_kernel_nofault() to read
+from -4095 returns -EFAULT as well [1], so the suggestion works. Thanks
+again for the suggestion.
 
-Best regards
-Ming
+[1]
+https://github.com/kernel-patches/bpf/actions/runs/11677589805/job/32515868794
+>> Best regards,
+>> Ilya
+>
+> .
+
 
