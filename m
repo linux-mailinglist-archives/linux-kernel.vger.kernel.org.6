@@ -1,233 +1,182 @@
-Return-Path: <linux-kernel+bounces-395853-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395854-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A869E9BC3ED
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 04:33:52 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15E829BC3F0
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 04:34:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CC76F1C20FA1
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 03:33:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E5BAE1C2124B
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 03:34:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 437D518454E;
-	Tue,  5 Nov 2024 03:33:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FDF5187550;
+	Tue,  5 Nov 2024 03:34:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="UPXQjZSc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QUumOkA1"
+Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65B32183CBB
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 03:33:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EECA23D9E;
+	Tue,  5 Nov 2024 03:34:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730777626; cv=none; b=awZko7rcvgr/1WpHcPVGFlOhjAcKo143JtUoR9UzZQkWCT1+VzKfIWMbYftfoLvthfDxP2SfmX4Cf5/J86bB4FRPIXKvdYCMBlQUITz7t4XA6jlTerfY1wfkAzIAKG+3sBge+dqUiUvOzYaEpiE0KIlPqFdtEa4AiA3rOVKmUkI=
+	t=1730777673; cv=none; b=KBgcntkSw6DFRVyd24f3q4Jm6JasRjEseeMdjXHL/m15Zab7TsJVhHdrDg+StvapuTRQlcQrdwd6sP6RU+BXWvggljuYUgdKcJbtKW1nkKXaFy+CopA1oEGpIvsfigIZcXhwgnUbfJROQ7wkuCtzhWdEIfwLozZsUv8IZYr2TUE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730777626; c=relaxed/simple;
-	bh=tOV/TgxMTE8U+xAKUdozx/9HmSYiA5+MmP5/YhxVm7o=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=UBcLWgQavz2cmMnCdBZ/ey0zcrudqoa4jZOCugHRUaWRd9ppBouSlxoG2Llg4g2u5UTc5T3Os1OMi4y6iRnsEIp8TM1lreH/srQF/dFyNF5OlSoBY7plw+sheSSoIiBUUpGv08KKG7aoXhwBtbFgs2pEp8oQwA3t5mWn0Z5+YoU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=UPXQjZSc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6AE2C4CECF;
-	Tue,  5 Nov 2024 03:33:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1730777625;
-	bh=tOV/TgxMTE8U+xAKUdozx/9HmSYiA5+MmP5/YhxVm7o=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=UPXQjZScQRIIccCv+ZpaVzgW/x0K8vEhCxBXOgO/zKBeMsb6cGaU8dLehLKx++Msr
-	 b75J7gUoks93CnmwzXMJRJUJXk9snf/SoQEw/DEhW4THQZHvjE3M5iYuhWL5UJuyy8
-	 1+TExEWa36XSSRN0+rOJ9hqifUDVdEmvmMwXzKSI=
-Date: Mon, 4 Nov 2024 19:33:45 -0800
-From: Andrew Morton <akpm@linux-foundation.org>
-To: syzbot <syzbot+56dc65adbd1d2ae1f844@syzkaller.appspotmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- syzkaller-bugs@googlegroups.com, Boqun Feng <boqun.feng@gmail.com>, Peter
- Zijlstra <peterz@infradead.org>
-Subject: Re: [syzbot] [mm?] WARNING: locking bug in __set_page_owner
-Message-Id: <20241104193345.94e0d057a6b16dfb9d83a3fc@linux-foundation.org>
-In-Reply-To: <6727a996.050a0220.35b515.019e.GAE@google.com>
-References: <6727a996.050a0220.35b515.019e.GAE@google.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1730777673; c=relaxed/simple;
+	bh=/zkq0tofzKwv60XMTrmCP+LAJXE7HfavU3QZkSxWQPY=;
+	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PzcBivT5/GqDkJrMf5i9cxO6VvPySS8FyPiANdZ98v2q921kivrjHHiP6v8S+hLtcPhm/3y/vFas79D2LrEiw/JdRMIW6HW1VX23wLFkvn5JPE/Ip1xHEn4FErJ/BTtb8ZgcaATebdzoQynt7Q+y4uIDXn8UsRia5QRIQUbdS0I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QUumOkA1; arc=none smtp.client-ip=209.85.215.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-7ed9c16f687so3511169a12.0;
+        Mon, 04 Nov 2024 19:34:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730777671; x=1731382471; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=X6AIe/dTqMIYfTgiz4qxI4zvtCNJoQcTeXciVnJdiHI=;
+        b=QUumOkA1kJleauelbVXK9FTKBhEfLIoq3VHuB1LSQ5hp1Kl3kpwMphtnrftgjpBG/d
+         gFI89vUwv60UM6NY3lckfCB/FjUaXArit51aYv4gAA+bnbZ+gGnGmu1DgJDHiw6HqWNI
+         iB2Mt7XIU+vF3F96AXynuS8vK2+fpvwRsX35I/LqSrThWjsRhYISqsu55L6+rcMcb1LU
+         oGK/jbrj5z8Mlz9M2W0wfwpt1yKTYg06wU/baDs70rJPbqmSehRkAFBjInJcmgzoNFfp
+         Lb7C7ndJgwGN365IRHUUpM6h+YM0kMwh6/HgcnZJyMUKyJiG5v6fsA2wtnnQUFthqHzi
+         sRwA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730777671; x=1731382471;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=X6AIe/dTqMIYfTgiz4qxI4zvtCNJoQcTeXciVnJdiHI=;
+        b=c7lI6r/49wX/y4gttF5t1j5Js6nIG2D0XKH1lDUsO2Q2c4LK0h152ZJZSyHxN8aVJQ
+         kwzkmJTYrGA8t8S2lk2OaMdh17qZPOzAdlmYqIGnqT6rOY7DT1DBtmN3Hata4I/bT9LH
+         kgeZ235wA1Uy2EbYfy6VmQMmG6iGhbPTzWQ5GNHp4bZrQ4SHILkm4NAICKyyO2QZ7MEs
+         wGmDJf1REAkp/7zKrCmXrgOacZLMQAT3j6cW/aYip5kpjbMam6unSjmAay0goP46O3ij
+         9hSASE6YOLHzafE5Vr6ACSRVsSg4Yi8mkXPQjPDMHz7JWi3sXxWQ20wezz8uVKpfnRCF
+         usUA==
+X-Forwarded-Encrypted: i=1; AJvYcCUJCZ6ddtuJE7kRaerbT+f9td7iiBSKmcW2MvRlsstvEU6z1SfrC8StXDN1fHktHgCytgy/AWu/@vger.kernel.org, AJvYcCViWidbrEXJJlj6mEaVeYO/i7o6Vx38ZugRkdWcPfOhYHYAhm849JOaqfYWcz6hRYyyFk7l6bjJEZqseyCjSuC3@vger.kernel.org, AJvYcCXT9AIFYRipZkfDc86Rf2ZsiFKPD3hHhUsjTc2OeRc81yfdLcxf5zBUoud/mL7lhZAS6RaQTvmsjgv5JEc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YywTQnsa5Yo7dr24PW+nA6vAlLbdjARVAQ5WzIEansx7c8osdB0
+	ROb6dBhvUs1ZhUZ57QMYhj9qdSN3GP7P2KLZ5b806AyaqNMlmNs=
+X-Google-Smtp-Source: AGHT+IG99VSv7YooZkG+TpE0SxkBFCnr8DMr16i90UPeDqyOBVlUtW5FCSgaEccRwWlwfwR68xj+yQ==
+X-Received: by 2002:a17:90b:2243:b0:2e2:c421:894b with SMTP id 98e67ed59e1d1-2e93c14fd5dmr23051033a91.14.1730777671021;
+        Mon, 04 Nov 2024 19:34:31 -0800 (PST)
+Received: from localhost ([2601:646:9e00:f56e:123b:cea3:439a:b3e3])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211057bffffsm68835685ad.188.2024.11.04.19.34.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 04 Nov 2024 19:34:30 -0800 (PST)
+Date: Mon, 4 Nov 2024 19:34:30 -0800
+From: Stanislav Fomichev <stfomichev@gmail.com>
+To: Joe Damato <jdamato@fastly.com>, Stanislav Fomichev <sdf@fomichev.me>,
+	netdev@vger.kernel.org, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, andrew+netdev@lunn.ch,
+	shuah@kernel.org, horms@kernel.org, almasrymina@google.com,
+	willemb@google.com, petrm@nvidia.com
+Subject: Re: [PATCH net-next v7 12/12] selftests: ncdevmem: Add automated test
+Message-ID: <ZymSRij76y6bvRi9@mini-arch>
+References: <20241104181430.228682-1-sdf@fomichev.me>
+ <20241104181430.228682-13-sdf@fomichev.me>
+ <ZyljjgxP94IBWnI6@LQ3V64L9R2>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <ZyljjgxP94IBWnI6@LQ3V64L9R2>
 
-On Sun, 03 Nov 2024 08:49:26 -0800 syzbot <syzbot+56dc65adbd1d2ae1f844@syzkaller.appspotmail.com> wrote:
+On 11/04, Joe Damato wrote:
+> On Mon, Nov 04, 2024 at 10:14:30AM -0800, Stanislav Fomichev wrote:
+> > Only RX side for now and small message to test the setup.
+> > In the future, we can extend it to TX side and to testing
+> > both sides with a couple of megs of data.
+> > 
+> >   make \
+> >   	-C tools/testing/selftests \
+> >   	TARGETS="drivers/hw/net" \
+> >   	install INSTALL_PATH=~/tmp/ksft
+> > 
+> >   scp ~/tmp/ksft ${HOST}:
+> >   scp ~/tmp/ksft ${PEER}:
+> > 
+> >   cfg+="NETIF=${DEV}\n"
+> >   cfg+="LOCAL_V6=${HOST_IP}\n"
+> >   cfg+="REMOTE_V6=${PEER_IP}\n"
+> >   cfg+="REMOTE_TYPE=ssh\n"
+> >   cfg+="REMOTE_ARGS=root@${PEER}\n"
+> > 
+> >   echo -e "$cfg" | ssh root@${HOST} "cat > ksft/drivers/net/net.config"
+> >   ssh root@${HOST} "cd ksft && ./run_kselftest.sh -t drivers/net:devmem.py"
+> > 
+> > Reviewed-by: Mina Almasry <almasrymina@google.com>
+> > Signed-off-by: Stanislav Fomichev <sdf@fomichev.me>
+> > ---
+> >  .../testing/selftests/drivers/net/hw/Makefile |  1 +
+> >  .../selftests/drivers/net/hw/devmem.py        | 45 +++++++++++++++++++
+> >  2 files changed, 46 insertions(+)
+> >  create mode 100755 tools/testing/selftests/drivers/net/hw/devmem.py
+> > 
+> > diff --git a/tools/testing/selftests/drivers/net/hw/Makefile b/tools/testing/selftests/drivers/net/hw/Makefile
+> > index 182348f4bd40..1c6a77480923 100644
+> > --- a/tools/testing/selftests/drivers/net/hw/Makefile
+> > +++ b/tools/testing/selftests/drivers/net/hw/Makefile
+> > @@ -3,6 +3,7 @@
+> >  TEST_PROGS = \
+> >  	csum.py \
+> >  	devlink_port_split.py \
+> > +	devmem.py \
+> >  	ethtool.sh \
+> >  	ethtool_extended_state.sh \
+> >  	ethtool_mm.sh \
+> > diff --git a/tools/testing/selftests/drivers/net/hw/devmem.py b/tools/testing/selftests/drivers/net/hw/devmem.py
+> > new file mode 100755
+> > index 000000000000..1416c31ff81e
+> > --- /dev/null
+> > +++ b/tools/testing/selftests/drivers/net/hw/devmem.py
+> > @@ -0,0 +1,45 @@
+> > +#!/usr/bin/env python3
+> > +# SPDX-License-Identifier: GPL-2.0
+> > +
+> > +from lib.py import ksft_run, ksft_exit
+> > +from lib.py import ksft_eq, KsftSkipEx
+> > +from lib.py import NetDrvEpEnv
+> > +from lib.py import bkg, cmd, rand_port, wait_port_listen
+> > +from lib.py import ksft_disruptive
+> > +
+> > +
+> > +def require_devmem(cfg):
+> > +    if not hasattr(cfg, "_devmem_probed"):
+> > +        port = rand_port()
+> > +        probe_command = f"./ncdevmem -f {cfg.ifname}"
+> > +        cfg._devmem_supported = cmd(probe_command, fail=False, shell=True).ret == 0
+> > +        cfg._devmem_probed = True
+> > +
+> > +    if not cfg._devmem_supported:
+> > +        raise KsftSkipEx("Test requires devmem support")
+> > +
+> > +
+> > +@ksft_disruptive
+> > +def check_rx(cfg) -> None:
+> > +    cfg.require_v6()
+> > +    require_devmem(cfg)
+> > +
+> > +    port = rand_port()
+> > +    listen_cmd = f"./ncdevmem -l -f {cfg.ifname} -s {cfg.v6} -p {port}"
+> > +
+> > +    with bkg(listen_cmd) as nc:
+> > +        wait_port_listen(port)
+> > +        cmd(f"echo -e \"hello\\nworld\"| nc {cfg.v6} {port}", host=cfg.remote, shell=True)
+> 
+> FWIW, in the v3 of the series I submit, Jakub asked me to replace nc
+> with socat due to issues with nc [1].
+> 
+> Your usage of nc seems pretty basic though, so maybe it's fine?
+> 
+> [1]: https://lore.kernel.org/netdev/20241101063426.2e1423a8@kernel.org/
 
-> Hello,
-> 
-> syzbot found the following issue on:
-
-Help.  I don't understand this lockdep report. 
-add_stack_record_to_list() is taking spin_lock_irqsave(stack_list_lock)
-from within softirq. all seems well?
-
-> HEAD commit:    f9f24ca362a4 Add linux-next specific files for 20241031
-> git tree:       linux-next
-> console output: https://syzkaller.appspot.com/x/log.txt?x=11ac6630580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=328572ed4d152be9
-> dashboard link: https://syzkaller.appspot.com/bug?extid=56dc65adbd1d2ae1f844
-> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=171232a7980000
-> 
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/eb84549dd6b3/disk-f9f24ca3.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/beb29bdfa297/vmlinux-f9f24ca3.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/8881fe3245ad/bzImage-f9f24ca3.xz
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+56dc65adbd1d2ae1f844@syzkaller.appspotmail.com
-> 
-> =============================
-> [ BUG: Invalid wait context ]
-> 6.12.0-rc5-next-20241031-syzkaller #0 Not tainted
-> -----------------------------
-> syz.1.44/6083 is trying to lock:
-> ffffffff8ea733d8 (stack_list_lock){-.-.}-{3:3}, at: add_stack_record_to_list mm/page_owner.c:182 [inline]
-> ffffffff8ea733d8 (stack_list_lock){-.-.}-{3:3}, at: inc_stack_record_count mm/page_owner.c:214 [inline]
-> ffffffff8ea733d8 (stack_list_lock){-.-.}-{3:3}, at: __set_page_owner+0x5cb/0x800 mm/page_owner.c:329
-> other info that might help us debug this:
-> context-{2:2}
-> 1 lock held by syz.1.44/6083:
->  #0: ffff8880240995e0 (&mm->mmap_lock){++++}-{4:4}, at: mmap_write_lock include/linux/mmap_lock.h:129 [inline]
->  #0: ffff8880240995e0 (&mm->mmap_lock){++++}-{4:4}, at: exit_mmap+0x2da/0xcb0 mm/mmap.c:1701
-> stack backtrace:
-> CPU: 1 UID: 0 PID: 6083 Comm: syz.1.44 Not tainted 6.12.0-rc5-next-20241031-syzkaller #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-> Call Trace:
->  <IRQ>
->  __dump_stack lib/dump_stack.c:94 [inline]
->  dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
->  print_lock_invalid_wait_context kernel/locking/lockdep.c:4826 [inline]
->  check_wait_context kernel/locking/lockdep.c:4898 [inline]
->  __lock_acquire+0x15a8/0x2100 kernel/locking/lockdep.c:5176
->  lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
->  __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
->  _raw_spin_lock_irqsave+0xd5/0x120 kernel/locking/spinlock.c:162
->  add_stack_record_to_list mm/page_owner.c:182 [inline]
->  inc_stack_record_count mm/page_owner.c:214 [inline]
->  __set_page_owner+0x5cb/0x800 mm/page_owner.c:329
->  set_page_owner include/linux/page_owner.h:32 [inline]
->  post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1541
->  prep_new_page mm/page_alloc.c:1549 [inline]
->  get_page_from_freelist+0x3725/0x3870 mm/page_alloc.c:3495
->  __alloc_pages_noprof+0x292/0x710 mm/page_alloc.c:4771
->  alloc_pages_mpol_noprof+0x3e8/0x680 mm/mempolicy.c:2265
->  stack_depot_save_flags+0x666/0x830 lib/stackdepot.c:627
->  kasan_save_stack+0x4f/0x60 mm/kasan/common.c:48
->  __kasan_record_aux_stack+0xac/0xc0 mm/kasan/generic.c:544
->  task_work_add+0xd9/0x490 kernel/task_work.c:77
->  __run_posix_cpu_timers kernel/time/posix-cpu-timers.c:1219 [inline]
->  run_posix_cpu_timers+0x6ac/0x810 kernel/time/posix-cpu-timers.c:1418
->  tick_sched_handle kernel/time/tick-sched.c:276 [inline]
->  tick_nohz_handler+0x37c/0x500 kernel/time/tick-sched.c:297
->  __run_hrtimer kernel/time/hrtimer.c:1691 [inline]
->  __hrtimer_run_queues+0x551/0xd50 kernel/time/hrtimer.c:1755
->  hrtimer_interrupt+0x396/0x990 kernel/time/hrtimer.c:1817
->  local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1038 [inline]
->  __sysvec_apic_timer_interrupt+0x110/0x420 arch/x86/kernel/apic/apic.c:1055
->  instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1049 [inline]
->  sysvec_apic_timer_interrupt+0x52/0xc0 arch/x86/kernel/apic/apic.c:1049
->  asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:702
-> RIP: 0010:variable_ffs arch/x86/include/asm/bitops.h:321 [inline]
-> RIP: 0010:handle_softirqs+0x1e3/0x980 kernel/softirq.c:542
-> Code: 7c 24 70 45 0f b7 e4 48 c7 c7 20 c5 09 8c e8 c4 6c 6c 0a 65 66 c7 05 32 53 ac 7e 00 00 e8 05 67 45 00 fb 49 c7 c6 c0 a0 60 8e <b8> ff ff ff ff 41 0f bc c4 41 89 c7 41 ff c7 0f 84 eb 03 00 00 44
-> RSP: 0018:ffffc90000a18e40 EFLAGS: 00000286
-> RAX: b8b036f9cad4b600 RBX: ffffc90000a18ee0 RCX: ffffffff8170c69a
-> RDX: dffffc0000000000 RSI: ffffffff8c0ad3a0 RDI: ffffffff8c604dc0
-> RBP: ffffc90000a18f50 R08: ffffffff942cd877 R09: 1ffffffff2859b0e
-> R10: dffffc0000000000 R11: fffffbfff2859b0f R12: 0000000000000010
-> R13: 0000000000000000 R14: ffffffff8e60a0c0 R15: 1ffff11004bb4780
->  __do_softirq kernel/softirq.c:588 [inline]
->  invoke_softirq kernel/softirq.c:428 [inline]
->  __irq_exit_rcu+0xf4/0x1c0 kernel/softirq.c:637
->  irq_exit_rcu+0x9/0x30 kernel/softirq.c:649
->  common_interrupt+0xb9/0xd0 arch/x86/kernel/irq.c:278
->  </IRQ>
->  <TASK>
->  asm_common_interrupt+0x26/0x40 arch/x86/include/asm/idtentry.h:693
-> RIP: 0010:lock_is_held_type+0x13b/0x190
-> Code: 75 44 48 c7 04 24 00 00 00 00 9c 8f 04 24 f7 04 24 00 02 00 00 75 4c 41 f7 c4 00 02 00 00 74 01 fb 65 48 8b 04 25 28 00 00 00 <48> 3b 44 24 08 75 42 89 d8 48 83 c4 10 5b 41 5c 41 5d 41 5e 41 5f
-> RSP: 0018:ffffc9000307f618 EFLAGS: 00000206
-> RAX: b8b036f9cad4b600 RBX: 0000000000000001 RCX: ffff888025da3c00
-> RDX: ffff888025da3c00 RSI: ffffffff8c0ae580 RDI: ffffffff8c604dc0
-> RBP: 0000000000000000 R08: ffffffff81e2d437 R09: ffffffff8bb86877
-> R10: 0000000000000004 R11: ffff888025da3c00 R12: 0000000000000246
-> R13: ffff888025da3c00 R14: 0000000000000000 R15: ffff8880240995e0
->  rwsem_assert_held_write include/linux/rwsem.h:203 [inline]
->  mmap_assert_write_locked include/linux/mmap_lock.h:70 [inline]
->  __is_vma_write_locked include/linux/mm.h:747 [inline]
->  vma_start_write include/linux/mm.h:766 [inline]
->  free_pgtables+0x433/0x840 mm/memory.c:406
->  exit_mmap+0x4cd/0xcb0 mm/mmap.c:1704
->  __mmput+0x115/0x390 kernel/fork.c:1344
->  exit_mm+0x220/0x310 kernel/exit.c:570
->  do_exit+0x9b2/0x28e0 kernel/exit.c:925
->  do_group_exit+0x207/0x2c0 kernel/exit.c:1087
->  get_signal+0x16a3/0x1740 kernel/signal.c:2884
->  arch_do_signal_or_restart+0x96/0x860 arch/x86/kernel/signal.c:337
->  exit_to_user_mode_loop kernel/entry/common.c:111 [inline]
->  exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
->  __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
->  syscall_exit_to_user_mode+0xc9/0x370 kernel/entry/common.c:218
->  do_syscall_64+0x100/0x230 arch/x86/entry/common.c:89
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> RIP: 0033:0x7f3e8657e719
-> Code: Unable to access opcode bytes at 0x7f3e8657e6ef.
-> RSP: 002b:00007f3e872b30e8 EFLAGS: 00000246 ORIG_RAX: 00000000000000ca
-> RAX: 0000000000000001 RBX: 00007f3e86735f88 RCX: 00007f3e8657e719
-> RDX: 00000000000f4240 RSI: 0000000000000081 RDI: 00007f3e86735f8c
-> RBP: 00007f3e86735f80 R08: 7fffffffffffffff R09: 0000000000000000
-> R10: 000000000000003c R11: 0000000000000246 R12: 00007f3e86735f8c
-> R13: 0000000000000000 R14: 00007fff211a29e0 R15: 00007fff211a2ac8
->  </TASK>
-> ----------------
-> Code disassembly (best guess):
->    0:	7c 24                	jl     0x26
->    2:	70 45                	jo     0x49
->    4:	0f b7 e4             	movzwl %sp,%esp
->    7:	48 c7 c7 20 c5 09 8c 	mov    $0xffffffff8c09c520,%rdi
->    e:	e8 c4 6c 6c 0a       	call   0xa6c6cd7
->   13:	65 66 c7 05 32 53 ac 	movw   $0x0,%gs:0x7eac5332(%rip)        # 0x7eac534f
->   1a:	7e 00 00
->   1d:	e8 05 67 45 00       	call   0x456727
->   22:	fb                   	sti
->   23:	49 c7 c6 c0 a0 60 8e 	mov    $0xffffffff8e60a0c0,%r14
-> * 2a:	b8 ff ff ff ff       	mov    $0xffffffff,%eax <-- trapping instruction
->   2f:	41 0f bc c4          	bsf    %r12d,%eax
->   33:	41 89 c7             	mov    %eax,%r15d
->   36:	41 ff c7             	inc    %r15d
->   39:	0f 84 eb 03 00 00    	je     0x42a
->   3f:	44                   	rex.R
-> 
-> 
-> ---
-> This report is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
-> 
-> syzbot will keep track of this issue. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-> 
-> If the report is already addressed, let syzbot know by replying with:
-> #syz fix: exact-commit-title
-> 
-> If you want syzbot to run the reproducer, reply with:
-> #syz test: git://repo/address.git branch-or-commit-hash
-> If you attach or paste a git patch, syzbot will apply it before testing.
-> 
-> If you want to overwrite report's subsystems, reply with:
-> #syz set subsystems: new-subsystem
-> (See the list of subsystem names on the web dashboard)
-> 
-> If the report is a duplicate of another one, reply with:
-> #syz dup: exact-subject-of-another-report
-> 
-> If you want to undo deduplication, reply with:
-> #syz undup
+Since I'm doing a respin anyway will try to move to socat as well to keep it
+uniform, thanks!
 
