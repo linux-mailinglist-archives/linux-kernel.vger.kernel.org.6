@@ -1,120 +1,197 @@
-Return-Path: <linux-kernel+bounces-396781-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396782-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE1BA9BD1DB
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 17:12:35 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FAD59BD1E4
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 17:12:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EED231C22D93
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 16:12:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C27561C22AE3
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 16:12:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35D5A14A0B8;
-	Tue,  5 Nov 2024 16:12:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C00716631C;
+	Tue,  5 Nov 2024 16:12:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="XH15P0nX"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="efs34y0V"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB7F715DBB3
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 16:12:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ABF9165F1E;
+	Tue,  5 Nov 2024 16:12:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730823143; cv=none; b=dr3OwNi78Heo+fUtT7AKHSaL0lU4CHgtB0ngEbDLVTAlexJb/xkQ7IKVtZHBURLtnLmAQhWurUmNtJXeulXOQv4Vb4XRarwYEv4BSneORtzTbWuhUIH9cjL9lGHColDTNspe4xrhla2HKQeNqSFkAKoM2b6SOIP9YsWAJvzg++8=
+	t=1730823152; cv=none; b=DZBC4zWgPBXERhySxT0njdYJj94QIq2enXiRJShTLiZUmtqMnxtG10egV0jq8iXVF/2s0DMAXN9Qm+2TRc2Qod1nnlF57HnbDJ3b/1GP6KE68t+xL1BQgYZjaVIRPQ9qB8rfF4jrd8kCn2oIkvruQrWqufZIDdrodtQFBWndJdw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730823143; c=relaxed/simple;
-	bh=I2iRxkKM3NVWx6uzM/D8cb0+2M5mNdXMffas92BQWb4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OfYVg7uS7lZHfWOaxuYIHOMfEOgQFjidNuOjXfVB/fmJqOtOkrbfhurVS+/xSLdEfcnOL3XEj1H1+HbHqhgw/QD50LWybXAfs+6I0quBHqugUOqfVJEUwFqR/8yQ/Y/aOmW/0csqm48PU3M/EHlcp4pAXknnm9z10rbXOEhrLpc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=XH15P0nX; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-539e8607c2aso6198663e87.3
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 08:12:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1730823140; x=1731427940; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ttEjCbfgdrl3BvdcxSy4ImFqrGW8bqc6UJKJrO4z/W4=;
-        b=XH15P0nXH0JnXxkhNgKSvra/9I6ccz2rNz5MPSZAmxmzGF2E2n2rUuVelhZmtdC9+d
-         atYKStBhCotae630pUu7TN2Iwpnzaokei4QsZDhPCFwFLTlogOg2sVBE3HpELpGA5Y4v
-         so6NFVpJFk1MesZlmYTuFbSK5osIHijCA7KuP8ftDFK1KjAJUdPBYiItwrXnYTc/HHCN
-         bgUntHX17HO1Z7mlDqHw/saDCfSbU7GJGZXp1HV5FIDRqyPuNTmgZT6bez6eT+RFNFWY
-         /sJzGbo2+bGAP8Va/IoKTFK3KWb9ArDTxhilCJSbz17vKNP96Ji5IUf+v4P3Ec89IY5N
-         Sb+g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730823140; x=1731427940;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ttEjCbfgdrl3BvdcxSy4ImFqrGW8bqc6UJKJrO4z/W4=;
-        b=twTZKgfG5brE9kSGrUCh8u5qz00PmkS3LuoQSnSi568AYy5THk7Fzbv69ETll/RVQX
-         4cHmDRRTCqTkuUmPSFveBmdm0ZE1T3UeTRo7VhXvXlFPWvfBMpv2k/e1BjoZo0cb2LYh
-         RM2+RB6/sFRmj+TuDdiYx9N22PpS/GYAithbFF40Itaz4XA45iLPjcU8SoRgcHFLfBIv
-         vvdWmK2XOYE98bos4FYeVlucccBBQJ2R4HO2mWe/9B9QAk/Av3eLo9229jHHvSFWrokJ
-         6j4jDmuSVFaTuMKresh1+4CK6Ulxax+Gmg8Tbmq0EB3Vpcjzt5e+q9n2K16mUYf6iNWI
-         7iDQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUZ3F62pC60nyEJJ50cxS858rRVFtU+/Fg+0TcGP+f4WZOFmomC0+4Q/JyKVRD1krHjGZWuvvdIZBBS8Wk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yycf09JbBvzvJjhnccpAvE6yKtsDodwQ7zyQSBGS1dAc+e7IUUA
-	ltf3PRbchZZ4gENTNOtvWZbGABdJ12XQ5JYfgg4VpBJZjYR0xf8L5xRA02jaVhM=
-X-Google-Smtp-Source: AGHT+IHPUZr9A8FatRKEkRnjc/0qlX1T40Gkj0a50Y3dgrMI0+B4zd94X/VE7MRVgwbK4ko1t11QaQ==
-X-Received: by 2002:a05:6512:4022:b0:539:e333:1822 with SMTP id 2adb3069b0e04-53b348b7dc7mr18666577e87.4.1730823139852;
-        Tue, 05 Nov 2024 08:12:19 -0800 (PST)
-Received: from pathway.suse.cz ([176.114.240.50])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-431bd947c26sm226956235e9.26.2024.11.05.08.12.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Nov 2024 08:12:19 -0800 (PST)
-Date: Tue, 5 Nov 2024 17:12:17 +0100
-From: Petr Mladek <pmladek@suse.com>
-To: John Ogness <john.ogness@linutronix.de>
+	s=arc-20240116; t=1730823152; c=relaxed/simple;
+	bh=8/GSV8GjyuHHKyHHms4DjtgdqoFellDpxdUEvj3z83A=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=KjoA2FLozqDxGNVlGVrxzHKSJDi4EDD80Oq2Bf8w/Wz0DxqqIXBl9MnrcxIlpE+Ylj/zRxBQRsgmBsWZAp7cJsngz63bvbkO/yTrQ43blxDTpzYlOU/xrcuTt0i+fRsf+mmtBgv8Us0STAzfWHeSD4ZFh4JbnbJj787jo/6Hwio=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=efs34y0V; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8613AC4CECF;
+	Tue,  5 Nov 2024 16:12:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730823151;
+	bh=8/GSV8GjyuHHKyHHms4DjtgdqoFellDpxdUEvj3z83A=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=efs34y0VYNy9NICKxDgpHWgWNpydYg8Tg/7PuvZuy2HdJlAJM2Wjn9AMK+WfyNfd+
+	 7abvMe9SP08cQSEfsedYIjbzbOK2HzqelNIN1eKQJb9dubjDgUeEe44eKLRszA/SBn
+	 nb9DNpWDqli9kXtJhYGlrQ+wcOJcWmGk+D6NJdtQ/BluOlyFP/kZ0k6ogG2Z8VfR3e
+	 TipHX84n4i9fBO5KBUgA0squnAzLiwW8/u6O0HLF/ocdo7anV/39ecQXgA1ti0hB1Y
+	 AZeDZrlMW5tONNXXXOITCRG5wfOpNUwxWenVlcsrkD1ZymopQmBpIRzF50+TKr03+b
+	 CkD8zUyzmxghw==
+Date: Tue, 5 Nov 2024 10:12:30 -0600
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Esben Haabendal <esben@geanix.com>, linux-serial@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Rengarajan S <rengarajan.s@microchip.com>,
-	Serge Semin <fancer.lancer@gmail.com>,
-	Lino Sanfilippo <l.sanfilippo@kunbus.com>
-Subject: Re: [PATCH tty-next v3 2/6] serial: 8250: Use high-level write
- function for FIFO
-Message-ID: <ZypD4Uu7Xbbq7iMe@pathway.suse.cz>
-References: <20241025105728.602310-1-john.ogness@linutronix.de>
- <20241025105728.602310-3-john.ogness@linutronix.de>
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	Davidlohr Bueso <dave@stgolabs.net>,
+	Jonathan Cameron <jonathan.cameron@huawei.com>,
+	Dave Jiang <dave.jiang@intel.com>,
+	Alison Schofield <alison.schofield@intel.com>,
+	Vishal Verma <vishal.l.verma@intel.com>,
+	Ira Weiny <ira.weiny@intel.com>,
+	Alex Deucher <alexander.deucher@amd.com>,
+	Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>,
+	Xinhui Pan <Xinhui.Pan@amd.com>, David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Dennis Dalessandro <dennis.dalessandro@cornelisnetworks.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>,
+	Tudor Ambarus <tudor.ambarus@linaro.org>,
+	Pratyush Yadav <pratyush@kernel.org>,
+	Michael Walle <mwalle@kernel.org>,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	Richard Weinberger <richard@nod.at>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Naveen Krishna Chatradhi <naveenkrishna.chatradhi@amd.com>,
+	Carlos Bilbao <carlos.bilbao.osdev@gmail.com>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>,
+	"David E. Box" <david.e.box@linux.intel.com>,
+	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>,
+	Richard Henderson <richard.henderson@linaro.org>,
+	Matt Turner <mattst88@gmail.com>,
+	Frederic Barrat <fbarrat@linux.ibm.com>,
+	Andrew Donnellan <ajd@linux.ibm.com>, Arnd Bergmann <arnd@arndb.de>,
+	Logan Gunthorpe <logang@deltatee.com>,
+	"K. Y. Srinivasan" <kys@microsoft.com>,
+	Haiyang Zhang <haiyangz@microsoft.com>,
+	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	linux-cxl@vger.kernel.org, amd-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org, linux-rdma@vger.kernel.org,
+	linux-mtd@lists.infradead.org, platform-driver-x86@vger.kernel.org,
+	linux-scsi@vger.kernel.org, linux-usb@vger.kernel.org,
+	linux-alpha@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+	linux-hyperv@vger.kernel.org
+Subject: Re: [PATCH v2 02/10] sysfs: introduce callback
+ attribute_group::bin_size
+Message-ID: <20241105161230.GA1473411@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241025105728.602310-3-john.ogness@linutronix.de>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241103-sysfs-const-bin_attr-v2-2-71110628844c@weissschuh.net>
 
-On Fri 2024-10-25 13:03:24, John Ogness wrote:
-> Currently serial8250_console_fifo_write() directly writes into the
-> UART_TX register, rather than using the high-level function
-> serial8250_console_putchar(). This is because
-> serial8250_console_putchar() waits for the holding register to
-> become empty. That would defeat the purpose of the FIFO code.
+On Sun, Nov 03, 2024 at 05:03:31PM +0000, Thomas Weißschuh wrote:
+> Several drivers need to dynamically calculate the size of an binary
+> attribute. Currently this is done by assigning attr->size from the
+> is_bin_visible() callback.
+
+s/an binary/a binary/
+
+> This has drawbacks:
+> * It is not documented.
+> * A single attribute can be instantiated multiple times, overwriting the
+>   shared size field.
+> * It prevents the structure to be moved to read-only memory.
 > 
-> Move the LSR_THRE waiting to a new function
-> serial8250_console_wait_putchar() so that the FIFO code can use
-> serial8250_console_putchar(). This will be particularly important
-> for a follow-up commit, where output bytes are inspected to track
-> newlines.
+> Introduce a new dedicated callback to calculate the size of the
+> attribute.
 > 
-> This is only refactoring and has no functional change.
+> Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+> ---
+>  fs/sysfs/group.c      | 2 ++
+>  include/linux/sysfs.h | 8 ++++++++
+>  2 files changed, 10 insertions(+)
 > 
-> Signed-off-by: John Ogness <john.ogness@linutronix.de>
+> diff --git a/fs/sysfs/group.c b/fs/sysfs/group.c
+> index 45b2e92941da1f49dcc71af3781317c61480c956..8b01a7eda5fb3239e138372417d01967c7a3f122 100644
+> --- a/fs/sysfs/group.c
+> +++ b/fs/sysfs/group.c
+> @@ -98,6 +98,8 @@ static int create_files(struct kernfs_node *parent, struct kobject *kobj,
+>  				if (!mode)
+>  					continue;
+>  			}
+> +			if (grp->bin_size)
+> +				size = grp->bin_size(kobj, *bin_attr, i);
+>  
+>  			WARN(mode & ~(SYSFS_PREALLOC | 0664),
+>  			     "Attribute %s: Invalid permissions 0%o\n",
+> diff --git a/include/linux/sysfs.h b/include/linux/sysfs.h
+> index c4e64dc112063f7cb89bf66059d0338716089e87..4746cccb95898b24df6f53de9421ea7649b5568f 100644
+> --- a/include/linux/sysfs.h
+> +++ b/include/linux/sysfs.h
+> @@ -87,6 +87,11 @@ do {							\
+>   *		SYSFS_GROUP_VISIBLE() when assigning this callback to
+>   *		specify separate _group_visible() and _attr_visible()
+>   *		handlers.
+> + * @bin_size:
+> + *		Optional: Function to return the size of a binary attribute
+> + *		of the group. Will be called repeatedly for each binary
+> + *		attribute in the group. Overwrites the size field embedded
+> + *		inside the attribute itself.
 
-Looks good:
+"Overwrites" suggests that we write over the size field in the single
+shared attribute.  But that's not what create_files() does.
 
-Reviewed-by: Petr Mladek <pmladek@suse.com>
+create_files() instantiates sysfs files from the attribute template.
+Previously each instance used the size from the shared attribute.
+With this patch, if ->bin_size() exists, its return value is the size
+of this particular instance, over*riding* the default size from the
+shared attribute.
 
-Best Regards,
-Petr
+This description follows the language of other function pointers,
+which was the right approach.  But I think the existing language would
+be more helpful if it called out the difference between the attribute
+itself (a potentially read-only singleton structure shared by all
+kobjects with this attribute) and the instantiation of that attribute
+for each kobject.
+
+For example,
+
+  @bin_size:
+	      Optional: Function to return the size of this kobject's
+	      instantiation of a binary attribute.  If present, it is
+	      called for each bin_attribute in the group and overrides
+	      the default size from the bin_attribute template.
+
+This is nice work, thanks for doing it!
+
+>   * @attrs:	Pointer to NULL terminated list of attributes.
+>   * @bin_attrs:	Pointer to NULL terminated list of binary attributes.
+>   *		Either attrs or bin_attrs or both must be provided.
+> @@ -97,6 +102,9 @@ struct attribute_group {
+>  					      struct attribute *, int);
+>  	umode_t			(*is_bin_visible)(struct kobject *,
+>  						  struct bin_attribute *, int);
+> +	size_t			(*bin_size)(struct kobject *,
+> +					    const struct bin_attribute *,
+> +					    int);
+>  	struct attribute	**attrs;
+>  	struct bin_attribute	**bin_attrs;
+>  };
+> 
+> -- 
+> 2.47.0
+> 
 
