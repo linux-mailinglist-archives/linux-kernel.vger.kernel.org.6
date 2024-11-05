@@ -1,130 +1,239 @@
-Return-Path: <linux-kernel+bounces-396976-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396977-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDE6C9BD52C
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 19:46:08 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7A2A9BD52F
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 19:46:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F8BB1F2675A
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 18:46:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 78B941F262A8
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 18:46:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 627131E9073;
-	Tue,  5 Nov 2024 18:42:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB5D61EBFE4;
+	Tue,  5 Nov 2024 18:43:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="quRqXxyQ"
-Received: from mail-il1-f173.google.com (mail-il1-f173.google.com [209.85.166.173])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hxhoboBW"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9B4B1EABA6
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 18:42:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 493D11E8825
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 18:43:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730832158; cv=none; b=O54zzB/CZC5ZelStCmqto52lNFLwXLiJzVHinkz0bPdSPrav63Pzctw46PeiDb20G7l4DmDCJcsxYI0JeZRJaOSm9D2coTAKKD1GSNfG0kdzO2BUdrryS4U95RW1AKeUqVTYZ9pzewZiBZXNC0ODxFm1zvxFPyCnDrRniqIfI0k=
+	t=1730832225; cv=none; b=p14VAD4KQoi4ZLul6mbi8uYICEJ0x1pRj6RZDXvwbrOgkGdbEqF2PLgpO5/LUYm4vWd2wFVbaIo/n9xwhzqWD29mNHG/gTiBEoZJkFhtpFXPUlyT/S3Az/C1zcxF5zxjrJbeil0+Mi+jPtbDNIQbPIe20i40/t0UDdHb/wIXoT4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730832158; c=relaxed/simple;
-	bh=uRFSGSp6I5JuMM4uZmsg8At2nGyRL0YDNEodwAq8/EY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NdIMJYnzz2hCOWhYJHwt0xlx0c+0Robk2OFs62yd5f57o0bQ2QhdtDQKgElXZfcm2TquqdoGscrcVYckOb19nGEg8r9LpftWfkF8PTO6V3rwoC4NKX6FS7+M72HM548rMClApzxZXUqxMVANH6Kyl8hBihesTt5xVNqprrc6AeU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=quRqXxyQ; arc=none smtp.client-ip=209.85.166.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-il1-f173.google.com with SMTP id e9e14a558f8ab-3a4d1633df9so19650915ab.2
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 10:42:36 -0800 (PST)
+	s=arc-20240116; t=1730832225; c=relaxed/simple;
+	bh=pU4SAL7p4UGbfRfS1KrjNPbw+8NK+2LolXdUKKYNjA4=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=NpRk0Ol3jk+KsJtgG9ua/O8Hp/ze0tJ557zmOC3tA44NMZU7w9I5L+sAc4msUPG5xxIJTF48wTEmEVwudyePtXOlwO8RSOKyAupDbP4Xx0z4cAIv3dywJDL3fdJqhPnHktfQxfMGy5Mmno0nyx7dLpk4DgsLvGw5jyNkSysdoCo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jthoughton.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=hxhoboBW; arc=none smtp.client-ip=209.85.128.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jthoughton.bounces.google.com
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6ea33aad097so1236467b3.0
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 10:43:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1730832156; x=1731436956; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Q/5k2rLKTo7KgnD4BR9+2dIjyjzlQVVkq8ThtV9wFto=;
-        b=quRqXxyQcW2ur/r6B/n0BVaC+lLlki4s2hSmLr2FCPBpd7q8940fec2BUoloLWEOAd
-         abxx/qi2UiiLELk9VimGFf+uW8ftTZtPIfXYJ0L+EH3we1Qzq3vOX3LwCbg93+WY1uPj
-         35XSO84/fId6m1UKZOmcj5Q4jPXCIqoOSYi5pFADfxxFqsyTZ1/EETZTNXk/7fw702Yc
-         6x2VAIeeGHC1PnWlqFC6q0CHqZnG1iiDgluwIIr1bndtSQTQQ81AMl4T4/u/LuK0hfuO
-         mWBHTseM70oMxLKLnGGvaVgJtPY/liXSk6QO3IuBL3RZjAG0cLRiS1Pnnr3NtUsFQuT+
-         1T9A==
+        d=google.com; s=20230601; t=1730832222; x=1731437022; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=GuOZq+bvLT62AE/FqHwVPgkEApv4Maa2ZGeXoJtXZis=;
+        b=hxhoboBWYZxnEraKBm+fGoyGO8Y1Eqsxg+MbqtfO0PryneaR0tmgLPNR5MLOE/ygvQ
+         8AYqH6TBSI/Zzs2uX/0cMzH/HyRPMDAjOKEL5hX5Hmk2DD5wwvNqdX7EaC1bkkA/HV/G
+         IyN376ifGFMfLgzg6Wranq2PuRbJo8QprH97ujelijL2C69lWYpbnktgqU5j30iuOZAk
+         hs5tD+Xh7s6WVMO6pADtUZh0na6RqgzLflA1VDXM3gSEG/b0KCbqkydlUDrX3YZeXmkL
+         FMNCqCJaRtcRMbT2F//v2dK4JihdFtXDunCdZhT1+X5JUX+VJqtteBoS8H+C7cd81AtV
+         sKUw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730832156; x=1731436956;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Q/5k2rLKTo7KgnD4BR9+2dIjyjzlQVVkq8ThtV9wFto=;
-        b=aOR0CpVyTGgyCKVrMDRowNJkumshfjmCuCfRG6Y2O9tVAmgG5sUIBx/v4bIjLl9stX
-         a+LuZy8Y1MHjHo9cb+dFcEq6lcosEJDDdwCPlCawY5YtiYc4tAcrVnh25QN13RqDQf7H
-         K9KCTZuWOIgc5io0cgwKOHwuk/f+63PX/8InJo+T87APig3PCrSvWX9wfh9Gw/GpM40s
-         pEnB3bLh1D30kiMNT1kk4U6vrA3VpHx9xpmXkN9fU1eReWLiPgtD1sCGKRxbB41qjkkL
-         ljSu7ugD2wMfqWlAIdxpsZiENW246BBJT+flzlR4xmOtJt+3dxpNzMYFFSPBqZsBCbar
-         XSHA==
-X-Forwarded-Encrypted: i=1; AJvYcCUYyclqpxPWIqYAXHu7WOWJJ1Fm+6sH1lirgncGmevqTkKlrfplXs5KjC7VOxubL3sSYMrjzLWSCZb9aqE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwBOLndNagIU+JRTvTg8gJXQYR6CjP0svn4AXg/pbWKNzXpkt0M
-	iTBwX5UQBzMB5xGmE7PYROXFKs618OGBtHQ4yyHzbgUck9Jb23nmc7uvqsMd56NGTQeuXO6fmwV
-	n9sO3CxB7SyQ8AgMOawLJFylibnICCxPQ9YbeKg==
-X-Google-Smtp-Source: AGHT+IHafiE56RLycAX61PwBNuvy4TPzSnAPrcXkk0qt/3LnY4O4q/UmngQM9Vlm/dj0VEmvvCeNfFq4tqlEFF5LAvc=
-X-Received: by 2002:a05:6e02:152e:b0:3a6:b445:dc9c with SMTP id
- e9e14a558f8ab-3a6b445decemr144631815ab.3.1730832155951; Tue, 05 Nov 2024
- 10:42:35 -0800 (PST)
+        d=1e100.net; s=20230601; t=1730832222; x=1731437022;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=GuOZq+bvLT62AE/FqHwVPgkEApv4Maa2ZGeXoJtXZis=;
+        b=YfpHAANBSUMwuakJthX1ovs+zd/bFlzsXF6QMo56tJe+C/nMT4bBEAXJsIcz/3y2sV
+         P45Y9q0dES9Wp/WIoN9/5ODS6dj+qsiIbTi4+FDurWDcEBaAc1YiXl1DTYs1Fe5Ll+lm
+         LHn2EBKbwQLG4KxjoONxYJtH9KwvKbaPEqcnNdVdVhb0FX4xQPsXdUB0M1Qy316sOckQ
+         fqfj5ZOnSFexpXpnNkl8NAP1ImXs07Ejig19ZzCu7vIPIBqUdqkLnwoCCVp1f6LrNADk
+         c4E2ZPYFn7Rq83//0vMSGUWGxre69MeCtPL4bqxe3Z1Hpr9votjvNfHlcLPju41C05kR
+         SyVw==
+X-Forwarded-Encrypted: i=1; AJvYcCXbnXFqaovpdApDJvAy/k8W9KfOxVMh4Mi/59zwOlFQwgpRIXpimFB9DVu+SV1CX9x1w+0C32Al6eMNtA0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YztgirytbBMqj8kdTt/bLaVIB84LTe/Mumq3VdvE/xDTvlvdxyF
+	IQMHuj78yCBROvVx27hSBYtYKNe0i6n0Jmp3h3JPZWru/QCPvjQ8l1Q9ZzKGNsplm9QPlvnHGZW
+	AiBHobH4N/5g1yzYq7g==
+X-Google-Smtp-Source: AGHT+IFnfCE8HnSqPqXhgqX3PjG5pW2ak+1lY68Y94GynMu9XIVIPZx+uiDRa8pAmZ17XLGwC0ponEhG1reOcQzi
+X-Received: from jthoughton.c.googlers.com ([fda3:e722:ac3:cc00:13d:fb22:ac12:a84b])
+ (user=jthoughton job=sendgmr) by 2002:a05:690c:6f8a:b0:6d3:e7e6:8460 with
+ SMTP id 00721157ae682-6ea5576c8bdmr2660807b3.1.1730832222251; Tue, 05 Nov
+ 2024 10:43:42 -0800 (PST)
+Date: Tue,  5 Nov 2024 18:43:22 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20241104064650.799122-2-u.kleine-koenig@baylibre.com> <6b5b4f25-0f42-4f83-b6b5-82c1adbefe83@arm.com>
-In-Reply-To: <6b5b4f25-0f42-4f83-b6b5-82c1adbefe83@arm.com>
-From: Tomasz Jeznach <tjeznach@rivosinc.com>
-Date: Tue, 5 Nov 2024 10:42:25 -0800
-Message-ID: <CAH2o1u77TViePZ2eh+FY7oQXxFAp+SEVM38ROP1uKfeMZ9E7hg@mail.gmail.com>
-Subject: Re: [PATCH] iommu: Switch back to struct platform_driver::remove()
-To: Robin Murphy <robin.murphy@arm.com>
-Cc: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@baylibre.com>, 
-	Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, Hector Martin <marcan@marcan.st>, 
-	Sven Peter <sven@svenpeter.dev>, Alyssa Rosenzweig <alyssa@rosenzweig.io>, 
-	Rob Clark <robdclark@gmail.com>, Yong Wu <yong.wu@mediatek.com>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Orson Zhai <orsonzhai@gmail.com>, 
-	Baolin Wang <baolin.wang@linux.alibaba.com>, Chunyan Zhang <zhang.lyra@gmail.com>, 
-	Jason Gunthorpe <jgg@ziepe.ca>, Nicolin Chen <nicolinc@nvidia.com>, Michael Shavit <mshavit@google.com>, 
-	Mostafa Saleh <smostafa@google.com>, Lu Baolu <baolu.lu@linux.intel.com>, 
-	Georgi Djakov <quic_c_gdjako@quicinc.com>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, asahi@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	linux-mediatek@lists.infradead.org, linux-riscv@lists.infradead.org
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.47.0.199.ga7371fff76-goog
+Message-ID: <20241105184333.2305744-1-jthoughton@google.com>
+Subject: [PATCH v8 00/11] KVM: x86/mmu: Age sptes locklessly
+From: James Houghton <jthoughton@google.com>
+To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
+Cc: David Matlack <dmatlack@google.com>, David Rientjes <rientjes@google.com>, 
+	James Houghton <jthoughton@google.com>, Marc Zyngier <maz@kernel.org>, 
+	Oliver Upton <oliver.upton@linux.dev>, Wei Xu <weixugc@google.com>, Yu Zhao <yuzhao@google.com>, 
+	Axel Rasmussen <axelrasmussen@google.com>, kvm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-> > diff --git a/drivers/iommu/riscv/iommu-platform.c b/drivers/iommu/riscv/iommu-platform.c
-> > index da336863f152..382ba2841849 100644
-> > --- a/drivers/iommu/riscv/iommu-platform.c
-> > +++ b/drivers/iommu/riscv/iommu-platform.c
-> > @@ -81,7 +81,7 @@ static const struct of_device_id riscv_iommu_of_match[] = {
-> >
-> >   static struct platform_driver riscv_iommu_platform_driver = {
-> >       .probe = riscv_iommu_platform_probe,
-> > -     .remove_new = riscv_iommu_platform_remove,
-> > +     .remove = riscv_iommu_platform_remove,
-> >       .driver = {
-> >               .name = "riscv,iommu",
-> >               .of_match_table = riscv_iommu_of_match,
-> > diff --git a/drivers/iommu/sprd-iommu.c b/drivers/iommu/sprd-iommu.c
-> > index a2f4ffe6d949..e84806eee281 100644
-> > --- a/drivers/iommu/sprd-iommu.c
-> > +++ b/drivers/iommu/sprd-iommu.c
-> > @@ -531,7 +531,7 @@ static struct platform_driver sprd_iommu_driver = {
-> >               .suppress_bind_attrs = true,
-> >       },
-> >       .probe  = sprd_iommu_probe,
-> > -     .remove_new = sprd_iommu_remove,
-> > +     .remove = sprd_iommu_remove,
-> >   };
-> >   module_platform_driver(sprd_iommu_driver);
-> >
-> > base-commit: c88416ba074a8913cf6d61b789dd834bbca6681c
->
+Andrew has queued patches to make MGLRU consult KVM when doing aging[8].
+Now, make aging lockless for the shadow MMU and the TDP MMU. This allows
+us to reduce the time/CPU it takes to do aging and the performance
+impact on the vCPUs while we are aging.
 
-Thanks, LGTM for iommu/riscv part of the patch.
+The final patch in this series modifies access_tracking_stress_test to
+age using MGLRU. There is a mode (-p) where it will age while the vCPUs
+are faulting memory in. Here are some results with that mode:
 
-Reviewed-by: Tomasz Jeznach <tjeznach@rivosinc.com>
+TDP MMU disabled, no optimization:
+$ ./access_tracking_perf_test -l -r /dev/cgroup/memory -v 64 -p
+lru_gen avg pass duration     : 15.954388970s, (passes:1, total:15.954388970s)
+
+TDP MMU disabled, lockless:
+$ ./access_tracking_perf_test -l -r /dev/cgroup/memory -v 64 -p
+lru_gen avg pass duration     : 0.527091929s, (passes:35, total:18.448217547s)
+
+The vCPU time difference in these runs with the shadow MMU vary quite a
+lot, and there doesn't seem to be a notable improvement with this
+particular test.
+
+There are some more results with the TDP MMU from v4[4].
+
+I have also tested with Sean's mmu_stress_test changes[1].
+
+Note: the new MGLRU mode for access_tracking_perf_test will verify that
+aging is functional. It will only be functional with the MGLRU patches
+that have been sent to Andrew separately[8].
+
+=== Previous Versions ===
+
+Since v7[7]:
+ - Dropped MGLRU changes (Andrew has queued them[8]).
+ - Dropped DAMON cleanup (Andrew has queued this[9]).
+ - Dropped MMU notifier changes completely.
+ - Made shadow MMU aging *always* lockless, not just lockless when the
+   now-removed "fast_only" clear notifier was used.
+ - Given that the MGLRU changes no longer introduce a new MGLRU
+   capability, drop the new capability check from the selftest.
+ - Rebased on top of latest kvm-x86/next, including the x86 mmu changes
+   for marking pages as dirty.
+
+Since v6[6]:
+ - Rebased on top of kvm-x86/next and Sean's lockless rmap walking
+   changes.
+ - Removed HAVE_KVM_MMU_NOTIFIER_YOUNG_FAST_ONLY (thanks DavidM).
+ - Split up kvm_age_gfn() / kvm_test_age_gfn() optimizations (thanks
+   DavidM and Sean).
+ - Improved new MMU notifier documentation (thanks DavidH).
+ - Dropped arm64 locking change.
+ - No longer retry for CAS failure in TDP MMU non-A/D case (thanks
+   Sean).
+ - Added some R-bys and A-bys.
+
+Since v5[5]:
+ - Reworked test_clear_young_fast_only() into a new parameter for the
+   existing notifiers (thanks Sean).
+ - Added mmu_notifier.has_fast_aging to tell mm if calling fast-only
+   notifiers should be done.
+ - Added mm_has_fast_young_notifiers() to inform users if calling
+   fast-only notifier helpers is worthwhile (for look-around to use).
+ - Changed MGLRU to invoke a single notifier instead of two when
+   aging and doing look-around (thanks Yu).
+ - For KVM/x86, check indirect_shadow_pages > 0 instead of
+   kvm_memslots_have_rmaps() when collecting age information
+   (thanks Sean).
+ - For KVM/arm, some fixes from Oliver.
+ - Small fixes to access_tracking_perf_test.
+ - Added missing !MMU_NOTIFIER version of mmu_notifier_clear_young().
+
+Since v4[4]:
+ - Removed Kconfig that controlled when aging was enabled. Aging will
+   be done whenever the architecture supports it (thanks Yu).
+ - Added a new MMU notifier, test_clear_young_fast_only(), specifically
+   for MGLRU to use.
+ - Add kvm_fast_{test_,}age_gfn, implemented by x86.
+ - Fix locking for clear_flush_young().
+ - Added KVM_MMU_NOTIFIER_YOUNG_LOCKLESS to clean up locking changes
+   (thanks Sean).
+ - Fix WARN_ON and other cleanup for the arm64 locking changes
+   (thanks Oliver).
+
+Since v3[3]:
+ - Vastly simplified the series (thanks David). Removed mmu notifier
+   batching logic entirely.
+ - Cleaned up how locking is done for mmu_notifier_test/clear_young
+   (thanks David).
+ - Look-around is now only done when there are no secondary MMUs
+   subscribed to MMU notifiers.
+ - CONFIG_LRU_GEN_WALKS_SECONDARY_MMU has been added.
+ - Fixed the lockless implementation of kvm_{test,}age_gfn for x86
+   (thanks David).
+ - Added MGLRU functional and performance tests to
+   access_tracking_perf_test (thanks Axel).
+ - In v3, an mm would be completely ignored (for aging) if there was a
+   secondary MMU but support for secondary MMU walking was missing. Now,
+   missing secondary MMU walking support simply skips the notifier
+   calls (except for eviction).
+ - Added a sanity check for that range->lockless and range->on_lock are
+   never both provided for the memslot walk.
+
+For the changes since v2[2], see v3.
+
+Based on latest kvm-x86/next.
+
+[1]: https://lore.kernel.org/kvm/20241009154953.1073471-1-seanjc@google.com/
+[2]: https://lore.kernel.org/kvmarm/20230526234435.662652-1-yuzhao@google.com/
+[3]: https://lore.kernel.org/linux-mm/20240401232946.1837665-1-jthoughton@google.com/
+[4]: https://lore.kernel.org/linux-mm/20240529180510.2295118-1-jthoughton@google.com/
+[5]: https://lore.kernel.org/linux-mm/20240611002145.2078921-1-jthoughton@google.com/
+[6]: https://lore.kernel.org/linux-mm/20240724011037.3671523-1-jthoughton@google.com/
+[7]: https://lore.kernel.org/kvm/20240926013506.860253-1-jthoughton@google.com/
+[8]: https://lore.kernel.org/linux-mm/20241019012940.3656292-1-jthoughton@google.com/
+[9]: https://lore.kernel.org/linux-mm/20241021160212.9935-1-jthoughton@google.com/
+
+James Houghton (7):
+  KVM: Remove kvm_handle_hva_range helper functions
+  KVM: Add lockless memslot walk to KVM
+  KVM: x86/mmu: Factor out spte atomic bit clearing routine
+  KVM: x86/mmu: Relax locking for kvm_test_age_gfn and kvm_age_gfn
+  KVM: x86/mmu: Rearrange kvm_{test_,}age_gfn
+  KVM: x86/mmu: Only check gfn age in shadow MMU if
+    indirect_shadow_pages > 0
+  KVM: selftests: Add multi-gen LRU aging to access_tracking_perf_test
+
+Sean Christopherson (4):
+  KVM: x86/mmu: Refactor low level rmap helpers to prep for walking w/o
+    mmu_lock
+  KVM: x86/mmu: Add infrastructure to allow walking rmaps outside of
+    mmu_lock
+  KVM: x86/mmu: Add support for lockless walks of rmap SPTEs
+  KVM: x86/mmu: Support rmap walks without holding mmu_lock when aging
+    gfns
+
+ arch/x86/include/asm/kvm_host.h               |   4 +-
+ arch/x86/kvm/Kconfig                          |   1 +
+ arch/x86/kvm/mmu/mmu.c                        | 338 ++++++++++-----
+ arch/x86/kvm/mmu/tdp_iter.h                   |  27 +-
+ arch/x86/kvm/mmu/tdp_mmu.c                    |  23 +-
+ include/linux/kvm_host.h                      |   1 +
+ tools/testing/selftests/kvm/Makefile          |   1 +
+ .../selftests/kvm/access_tracking_perf_test.c | 366 ++++++++++++++--
+ .../selftests/kvm/include/lru_gen_util.h      |  55 +++
+ .../testing/selftests/kvm/lib/lru_gen_util.c  | 391 ++++++++++++++++++
+ virt/kvm/Kconfig                              |   2 +
+ virt/kvm/kvm_main.c                           | 102 +++--
+ 12 files changed, 1124 insertions(+), 187 deletions(-)
+ create mode 100644 tools/testing/selftests/kvm/include/lru_gen_util.h
+ create mode 100644 tools/testing/selftests/kvm/lib/lru_gen_util.c
+
+
+base-commit: a27e0515592ec9ca28e0d027f42568c47b314784
+-- 
+2.47.0.199.ga7371fff76-goog
+
 
