@@ -1,81 +1,78 @@
-Return-Path: <linux-kernel+bounces-396587-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396578-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC2B49BCF28
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 15:23:44 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE7BB9BCF0B
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 15:21:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD8F61C2401F
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 14:23:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD03A1C22C9D
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 14:21:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26AE71D90A4;
-	Tue,  5 Nov 2024 14:22:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C4211D9669;
+	Tue,  5 Nov 2024 14:19:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="gqkr7TxZ"
-Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="WK8KsgU1";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="zgzRxGZP"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 910F01D86D2;
-	Tue,  5 Nov 2024 14:22:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B4EF1D933A
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 14:19:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730816556; cv=none; b=PQf07lPudpqDB8g8ASchgvS+bQfa2EhoawJ9Rwb1ikvNFOapqL1K83n93gBBqz4CNwSw/iCUuvztZDaJpURP+mIQaeaVCISsJk81ETY8lRBGSGIvfHtiKPh+fEGB7lcL/KLrPdz4ddWSzVU/8YbCjsMD3dR2keHb+yKgUjcK6RU=
+	t=1730816376; cv=none; b=d8v1+3YIso/zd4toRGLujiX2mKdUdCIVdqMceSrl1Y7x3V7EM7J0AmeBkLWogF4rSw9geUpR9qf9OdkzwBv0HQ7bH0WzornxKe/lSyQ5wcSwUNTWevIMV82HReuUDHfgvrK+aeAvy81a0gpN1S6Y3M8ZjISG1IVQosqh93oXY8E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730816556; c=relaxed/simple;
-	bh=GgXqbrgnjscz1GJY/vuo3+8bT02sjpcVS4HHPzVjjeI=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kee9Hme+ZBiHpbCuIBBnacXao2M1m+Fe58XPVzNJEYszR1p68KD05GYhebteaYQ5WrZslO/FCuKtHucWYTWBGyERRd/DSlvZapD4lwO48KDwk1OaHtdwYbN1ARe6eGFuHFVhZDsPB/RDAN7lKeefOotZNTbg1chmObRl5hunGc8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=gqkr7TxZ; arc=none smtp.client-ip=60.244.123.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: 61becc469b8111efb88477ffae1fc7a5-20241105
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=K2LlcVPkVu2AiR+BkVm1jRgLTSzsLTgqctnGu+62FH4=;
-	b=gqkr7TxZHK3YvtKf5qZRSY48v1wiWjKDqT/Ej9GWxtcAYLKUc+LmeNNjAodJ+Oafa6eTgi54LrhG4OGY8VkVD4nXxp2cW+qNJWjK+u7eKmDzpYuuCMHKf31FWHWmAIXsgplH6cKMhIauSnMDqUGo83sEtNr9AKuKfTtlKORfrPs=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.42,REQID:ee666c02-ae22-4ab5-8106-4b34fbbb38eb,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:b0fcdc3,CLOUDID:6ee39507-7990-429c-b1a0-768435f03014,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
-	RL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,
-	SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: 61becc469b8111efb88477ffae1fc7a5-20241105
-Received: from mtkmbs14n2.mediatek.inc [(172.21.101.76)] by mailgw01.mediatek.com
-	(envelope-from <skylake.huang@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 1381273246; Tue, 05 Nov 2024 22:22:26 +0800
-Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
- MTKMBS14N1.mediatek.inc (172.21.101.75) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.26; Tue, 5 Nov 2024 22:22:24 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
- mtkmbs11n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1118.26 via Frontend Transport; Tue, 5 Nov 2024 22:22:24 +0800
-From: Sky Huang <SkyLake.Huang@mediatek.com>
-To: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>, "David S. Miller"
-	<davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
-	<kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Daniel Golle
-	<daniel@makrotopia.org>, Qingfang Deng <dqfext@gmail.com>, SkyLake Huang
-	<SkyLake.Huang@mediatek.com>, Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, "Simon
- Horman" <horms@kernel.org>, <linux-kernel@vger.kernel.org>,
-	<netdev@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-mediatek@lists.infradead.org>
-CC: Steven Liu <Steven.Liu@mediatek.com>, SkyLake.Huang
-	<skylake.huang@mediatek.com>
-Subject: [PATCH net-next v2 5/5] net: phy: mediatek: add MT7530 & MT7531's PHY ID macros
-Date: Tue, 5 Nov 2024 22:19:11 +0800
-Message-ID: <20241105141911.13326-6-SkyLake.Huang@mediatek.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20241105141911.13326-1-SkyLake.Huang@mediatek.com>
-References: <20241105141911.13326-1-SkyLake.Huang@mediatek.com>
+	s=arc-20240116; t=1730816376; c=relaxed/simple;
+	bh=iiLX1b/J0tiwuRIpePIIt5LneWbItyz0ZCjO4407Kf4=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=LCa8XQMw4vy1UiXZWozfS1DXPCm378OJPA8VgKIKy5ymHRht2ANpPpoI33dPEQvtPhpDAC1a8AccmZaccmRvIsp/OUslGW+UItuNViHKtfKKB+hw4ALBEYwWyx2GZRL92yTzjdLYMF2GVOEhuzc54e/MItIQJxnHXevCwqCmKqs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=WK8KsgU1; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=zgzRxGZP; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: John Ogness <john.ogness@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1730816371;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=D3f0JmLHkvF+6wnB/S3LI0uD2ynto7nK8TgQHv09rcI=;
+	b=WK8KsgU1/QBerDp5/7zg7F6Ow7NvKYSDCCXSpKzLEZrGJXa+8OtLdIA3nF3Kq9FH/YZCan
+	GxDtdGAJLBFZX2cj7Y47+dOZ7D4ekDsO+/ppRpNYi48PyrSXWQ5ImQBWcwYSKtI+U+TSRv
+	XU9UxlorSkZNEej27Ay1jhojthlZJLsAD6Jk+os4kS/eXhB6aG4i7UbDV+uU0K9JjJJYYy
+	WcPrzlrbbNSt/ACopLR4EfpKqIXZSIs4G7xwztsnw/Ohio+oCWeKYEbrCHC8lgfs9n6U/I
+	kfV5nsyI5fE4BEtcxIJjRCeMqEGAc3uOR2tLcNcE5iGo2KGIfx1pKqor8aS5hw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1730816371;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=D3f0JmLHkvF+6wnB/S3LI0uD2ynto7nK8TgQHv09rcI=;
+	b=zgzRxGZPqQir4mOgbd+OBFSjO59uQulWnQJVxsEWyBYwgkds1QLqoxWg+HRX8SINQU0bQh
+	lPi6fcDxz9t4UDDg==
+To: Petr Mladek <pmladek@suse.com>
+Cc: Jocelyn Falempe <jfalempe@redhat.com>, Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+ Daniel Vetter <daniel@ffwll.ch>, Javier Martinez Canillas
+ <javierm@redhat.com>, "Guilherme G . Piccoli" <gpiccoli@igalia.com>,
+ bluescreen_avenger@verizon.net, Caleb Connolly
+ <caleb.connolly@linaro.org>, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 5/6] drm/log: Implement suspend/resume
+In-Reply-To: <ZyoNZfLT6tlVAWjO@pathway.suse.cz>
+References: <20241023121145.1321921-1-jfalempe@redhat.com>
+ <20241023121145.1321921-6-jfalempe@redhat.com>
+ <Zxpa2zt1P9Avy4Pm@pathway.suse.cz>
+ <27c1a6bf-d1e4-469f-a0d4-3e74ab0d0a07@redhat.com>
+ <a6c00956-3733-43a1-9538-aa2758d2b4a3@redhat.com>
+ <ZyT7MScAsHxkACfD@pathway.suse.cz>
+ <d5c8ea70-8596-42a1-8688-0f6131187b73@redhat.com>
+ <84o72vcm46.fsf@jogness.linutronix.de> <ZyjXB52dbhjZEHp6@pathway.suse.cz>
+ <84ikt3c8uy.fsf@jogness.linutronix.de> <ZyoNZfLT6tlVAWjO@pathway.suse.cz>
+Date: Tue, 05 Nov 2024 15:25:31 +0106
+Message-ID: <844j4lepak.fsf@jogness.linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,76 +80,84 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain
-X-TM-AS-Product-Ver: SMEX-14.0.0.3152-9.1.1006-23728.005
-X-TM-AS-Result: No-10--4.900200-8.000000
-X-TMASE-MatchedRID: NJitR9TboxxKHSI+NapVgAPZZctd3P4Bbd6rGhWOAwRY/2pi7PK0EpJo
-	t8xOxyL5xxL5hQ2RIPifzCOk8u0mmnzWP1Z/x2lioMfp2vHck9V9LQinZ4QefCP/VFuTOXUTC5M
-	umjkcRzWOhzOa6g8KreXdaTxqvMobIxxFJpvbuyW+vg/JCDB20T2T8k+lKacfS9lLIS+y+QKfN4
-	mRNTlO+Mrt8YPzAidRP+0bY/yraU/hO0XhkI0mPcGQYFMiVRG5ehcPPz6UzEWlb5ogMngNpHOTE
-	n5IiRSOUASbXCnDmH6UTGVAhB5EbQ==
-X-TM-AS-User-Approved-Sender: No
-X-TM-AS-User-Blocked-Sender: No
-X-TMASE-Result: 10--4.900200-8.000000
-X-TMASE-Version: SMEX-14.0.0.3152-9.1.1006-23728.005
-X-TM-SNTS-SMTP:
-	2E53E153ABC76C601EB7830F32CDC43A8DDBD5370086513E6455D8DBF88E65B12000:8
-X-MTK: N
 
-From: "SkyLake.Huang" <skylake.huang@mediatek.com>
+On 2024-11-05, Petr Mladek <pmladek@suse.com> wrote:
+> Observation:
+>
+>   + CON_ENABLED is not needed for the original purpose. Only enabled
+>     consoles are added into @console_list.
+>
+>   + CON_ENABLED is still used to explicitely block the console driver
+>     during suspend by console_stop()/console_start() in serial_core.c.
+>
+>     It is not bad. But it is a bit confusing because we have
+>     CON_SUSPENDED flag now and this is about suspend/resume.
 
-This patch adds MT7530 & MT7531's PHY ID macros in mtk-ge.c so that
-it follows the same rule of mtk-ge-soc.c.
+Also note that CON_ENABLED is used to gate ->unblank(). It should
+probably consider CON_SUSPENDED as well.
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-Signed-off-by: SkyLake.Huang <skylake.huang@mediatek.com>
----
- drivers/net/phy/mediatek/mtk-ge.c | 11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
+>   + CON_SUSPENDED is per-console flag but it is set synchronously
+>     for all consoles.
+>
+>     IMHO, a global variable would make more sense for the big hammer
+>     purpose.
+>
+>
+> Big question:
+>
+>   Does the driver really needs to call console_stop()/console_start()
+>   when there is the big hammer?
+>
+>   I would preserve it because it makes the design more robust.
 
-diff --git a/drivers/net/phy/mediatek/mtk-ge.c b/drivers/net/phy/mediatek/mtk-ge.c
-index 9122899..ed2617b 100644
---- a/drivers/net/phy/mediatek/mtk-ge.c
-+++ b/drivers/net/phy/mediatek/mtk-ge.c
-@@ -5,6 +5,9 @@
- 
- #include "mtk.h"
- 
-+#define MTK_GPHY_ID_MT7530		0x03a29412
-+#define MTK_GPHY_ID_MT7531		0x03a29441
-+
- #define MTK_EXT_PAGE_ACCESS		0x1f
- #define MTK_PHY_PAGE_STANDARD		0x0000
- #define MTK_PHY_PAGE_EXTENDED		0x0001
-@@ -59,7 +62,7 @@ static int mt7531_phy_config_init(struct phy_device *phydev)
- 
- static struct phy_driver mtk_gephy_driver[] = {
- 	{
--		PHY_ID_MATCH_EXACT(0x03a29412),
-+		PHY_ID_MATCH_EXACT(MTK_GPHY_ID_MT7530),
- 		.name		= "MediaTek MT7530 PHY",
- 		.config_init	= mt7530_phy_config_init,
- 		/* Interrupts are handled by the switch, not the PHY
-@@ -73,7 +76,7 @@ static struct phy_driver mtk_gephy_driver[] = {
- 		.write_page	= mtk_phy_write_page,
- 	},
- 	{
--		PHY_ID_MATCH_EXACT(0x03a29441),
-+		PHY_ID_MATCH_EXACT(MTK_GPHY_ID_MT7531),
- 		.name		= "MediaTek MT7531 PHY",
- 		.config_init	= mt7531_phy_config_init,
- 		/* Interrupts are handled by the switch, not the PHY
-@@ -91,8 +94,8 @@ static struct phy_driver mtk_gephy_driver[] = {
- module_phy_driver(mtk_gephy_driver);
- 
- static struct mdio_device_id __maybe_unused mtk_gephy_tbl[] = {
--	{ PHY_ID_MATCH_EXACT(0x03a29441) },
--	{ PHY_ID_MATCH_EXACT(0x03a29412) },
-+	{ PHY_ID_MATCH_EXACT(MTK_GPHY_ID_MT7530) },
-+	{ PHY_ID_MATCH_EXACT(MTK_GPHY_ID_MT7531) },
- 	{ }
- };
- 
--- 
-2.45.2
+Agreed. They serve different purposes.
 
+console_stop()/console_start() is a method for _drivers_ to communicate
+that they must not be called because their hardware is not
+available/functioning.
+
+console_suspend()/console_resume() is a method for the _system_ to
+communicate that consoles should be silent because they are annoying or
+we do not trust that they won't cause problems.
+
+>   Anyway, the driver-specific handling looks like the right solution.
+>   The big hammer feels like a workaround.
+
+Agreed. Do the 6 call sites even really need the big hammer? I am
+guessing yes because there are probably console drivers that do not use
+console_stop()/console_start() in their suspend/resume and thus rely on
+the whole subsystem being disabled.
+
+> Reasonable semantic:
+>
+>   1. Rename:
+>
+> 	console_suspend() -> console_suspend_all()
+> 	console_resume()  -> console_resume_all()
+>
+>      and manipulate a global @consoles_suspended variable agagin.
+>      It is the big hammer API.
+
+Agreed. As a global variable, it can still rely on SRCU for
+synchronization.
+
+>   2. Rename:
+>
+> 	console_stop(con)  -> console_suspend(con)
+> 	console_start(con) -> console_resume(con)
+>
+>      and manipulare the per-console CON_SUSPENDED flag here.
+
+Agreed.
+
+>    3. Get rid of the ambiguous CON_ENABLED flag. It won't longer
+>       have any purpose.
+>
+>       Except that it is also used to force console registration.
+>       But it can be done a better way, e.g. by introducing
+>       register_console_force() API.
+
+Agreed.
+
+John
 
