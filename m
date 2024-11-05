@@ -1,107 +1,120 @@
-Return-Path: <linux-kernel+bounces-396529-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396532-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3C159BCE81
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 14:59:24 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61A639BCE8F
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 15:03:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 317421C20ABC
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 13:59:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DFBC5B20CBD
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 14:03:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF5DD1D86C7;
-	Tue,  5 Nov 2024 13:59:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E6251D86C7;
+	Tue,  5 Nov 2024 14:03:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SSc7j3I5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="LBb2SK2r"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 310651D6DA3;
-	Tue,  5 Nov 2024 13:59:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBC501D5160;
+	Tue,  5 Nov 2024 14:03:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730815146; cv=none; b=p0z9Yfmedr9B3lIO5xYhY3fqNxvgfyKr6uaCKNOcb05gWyBgdbCoVaWZAE6/Hu5vPxIqmeXamzG7+OjD2pYqnkxIUnhusWIpiswiuZBHGyp0xnFQtVbGSsQle8Acr39QvjQ0CFcVdP8ik5TuQCcbV9EprRmVt9Vw6W3fJyTLDUw=
+	t=1730815390; cv=none; b=WOaVux1rDvSxRYWpr48V2qp10mMjbgvMKDGbVyPWrINOPRB41yzV2AVK0xXJQP55WyiXlerdhM8J5kFw51WyirN0ecXoqz5ZzydtRY1oX0tw4FeOeXAGmR7EHEVdrWeu316POp6z5ErMELyJ6z90q65GoTGe1VXa0eC89bave9I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730815146; c=relaxed/simple;
-	bh=CvID57YmT4JMAq1iUTs3WtirP/sKV5Z6AefJvN/SSYM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Dph3Sm+CkY2aa2aZwZzvb3WQQJJjUsF86ySsVrnTSXKIHxywyQG6/V52k8HNTMILLJSykMMGPmSbckFznYQ0G8Wv/r3YBMpMNVv+uBs8B9LG8S7liALImSEEuAbgevaPZGgtSiz482LwOua0dUD3erls0qG7a+5aKx/NP6sesrc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SSc7j3I5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB48CC4CECF;
-	Tue,  5 Nov 2024 13:59:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730815145;
-	bh=CvID57YmT4JMAq1iUTs3WtirP/sKV5Z6AefJvN/SSYM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=SSc7j3I52dEaIwkDTn4ibAs0yL+sm1AUrdjsS5Foqi9CmitafJ0rmhkf8jgCLxDXv
-	 JLp2feUIvpp46K7GRII8y6DO1tvcztO0PFZdYUO5QMD3JD+SLVUz8OV0x0Z9jVBf+f
-	 dmc3hj4qkNab24foZVua9aC+kSzagud5ic/jNuGnRdZoG7bdTbZcIf8P4Z3GRHHPmX
-	 XfakUYr4UNG+yHNjgD6pu0ezdfKWFokPuu9x/Ww3WifZ6ghk4OhXiM7HuHM1BsulUx
-	 w8a8iXOrjgTucQAuuy+8372ySxPYNQ7IvnRIDd4kLjMwMmySgyIhaa/qX+/TgU8PbQ
-	 KYmLvcj2Zt7WQ==
-Date: Tue, 5 Nov 2024 13:59:00 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Janne Grunau <j@jannau.net>
-Cc: Hector Martin <marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>,
-	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, asahi@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-spi@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Nick Chan <towinchenmi@gmail.com>,
-	Conor Dooley <conor.dooley@microchip.com>
-Subject: Re: [PATCH v4 1/3] dt-bindings: spi: apple,spi: Add binding for
- Apple SPI controllers
-Message-ID: <722dbc29-3d37-4043-a0c1-f99ac1ceaa80@sirena.org.uk>
-References: <20241105-asahi-spi-v4-0-d9734f089fc9@jannau.net>
- <20241105-asahi-spi-v4-1-d9734f089fc9@jannau.net>
+	s=arc-20240116; t=1730815390; c=relaxed/simple;
+	bh=aAgUOU83++1ubqUQLjYI1QfRmHl6jjFqID+xsFAHSW4=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=aWSfso6H/eWJFfIQx3EwMJmNZVSFM56MMlvUW5CN5JBCeVWjyg1bxICtVkzBLUMs6iTS/WCPz7yh2I+1+Hmg/JK917fhaqwoKTj5JqWcmtJ2LMn9NG2wlkh000freVpEjQRcwfKwMVAtYMGxjkqmWg8MTegpC4vIopPHiLxp4/c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=LBb2SK2r; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A5DY4vk006828;
+	Tue, 5 Nov 2024 15:02:42 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=selector1; bh=r0pX1FHgLqkdgm4Z0bWZbm
+	zE7jup2PMJjNG85lq5xOw=; b=LBb2SK2rgGAzRdzHeWVMVj5wUrFOVcCj4SebnD
+	0YjsgEzAP5ZgAP/n0I8FIcSrOD2h1muBRAcXkAgqBlkauf7r8q+SEviZGTuV2ftI
+	uLKulkkQoi74lrGQwYTCObro85lYQTeR3scvvrsNrzNk/prb3uPDRpnWNvuGpYd6
+	Bu31CkevEqmAXPAjeQiMzJGWDihzgew4S1BshrCAXr46cAm15N6ZBVdVBmsQYcc2
+	pgUIhp9EGsLHVZibfJnPX1dfHLVT6GOyWA1JdL8JenhyZLagv/e3sNe2lCN0fRzp
+	FhflMwuRzWUIY0aSrcyPRMgMKJu2LahlJJgasPs2ieP/gJ+Q==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 42ncxbvpm2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 05 Nov 2024 15:02:42 +0100 (CET)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 8680940064;
+	Tue,  5 Nov 2024 15:01:37 +0100 (CET)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 19ECB2676C6;
+	Tue,  5 Nov 2024 15:00:15 +0100 (CET)
+Received: from localhost (10.252.16.126) by SHFDAG1NODE1.st.com (10.75.129.69)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Tue, 5 Nov
+ 2024 15:00:14 +0100
+From: Olivier Moysan <olivier.moysan@foss.st.com>
+To: Olivier Moysan <olivier.moysan@foss.st.com>,
+        Arnaud Pouliquen
+	<arnaud.pouliquen@foss.st.com>,
+        Liam Girdwood <lgirdwood@gmail.com>, Mark
+ Brown <broonie@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof
+ Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Maxime
+ Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue
+	<alexandre.torgue@foss.st.com>
+CC: <linux-sound@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH] ASoC: dt-bindings: stm32: add missing port property
+Date: Tue, 5 Nov 2024 14:59:41 +0100
+Message-ID: <20241105135942.526624-1-olivier.moysan@foss.st.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="D7mzdCilsziPoams"
-Content-Disposition: inline
-In-Reply-To: <20241105-asahi-spi-v4-1-d9734f089fc9@jannau.net>
-X-Cookie: I'll be Grateful when they're Dead.
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
 
+Add missing port property in STM32 SPDIFRX binding.
+This will prevent potential warning:
+Unevaluated properties are not allowed ('port' was unexpected)
 
---D7mzdCilsziPoams
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Olivier Moysan <olivier.moysan@foss.st.com>
+---
+ Documentation/devicetree/bindings/sound/st,stm32-spdifrx.yaml | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-On Tue, Nov 05, 2024 at 09:08:29AM +0100, Janne Grunau wrote:
-> From: Hector Martin <marcan@marcan.st>
->=20
-> The Apple SPI controller is present in SoCs such as the M1 (t8103) and
-> M1 Pro/Max (t600x). This controller uses one IRQ and one clock, and
-> doesn't need any special properties, so the binding is trivial.
+diff --git a/Documentation/devicetree/bindings/sound/st,stm32-spdifrx.yaml b/Documentation/devicetree/bindings/sound/st,stm32-spdifrx.yaml
+index 3dedc81ec12f..56c5738ea4c5 100644
+--- a/Documentation/devicetree/bindings/sound/st,stm32-spdifrx.yaml
++++ b/Documentation/devicetree/bindings/sound/st,stm32-spdifrx.yaml
+@@ -50,6 +50,10 @@ properties:
+   resets:
+     maxItems: 1
+ 
++  port:
++    $ref: audio-graph-port.yaml#
++    unevaluatedProperties: false
++
+   access-controllers:
+     minItems: 1
+     maxItems: 2
+-- 
+2.25.1
 
-Please submit patches using subject lines reflecting the style for the
-subsystem, this makes it easier for people to identify relevant patches.
-Look at what existing commits in the area you're changing are doing and
-make sure your subject lines visually resemble what they're doing.
-There's no need to resubmit to fix this alone.
-
---D7mzdCilsziPoams
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmcqJKMACgkQJNaLcl1U
-h9Clfgf+Pd2KCID4TdGn0iOZF2Js93e/8eeKynPSfYIathQZJzS1VgjiVV/2A4ed
-Pu2SpxxqQG93EebMnNm6MA+c9kR2ser/EC5Ty/9erPPkdFXPwiXIo260oxsdqmXz
-oJXob3jksOe5Zr+1jCksNjlpviRHrhToRqcJPPoLV5wWbmW20Uz9FAPKH/aMje7U
-QgLKNoIAISZGl2eKjjARFFIKmjtHxUQgbgmUTAncnGulmjlqFm3TWenZCFx7Scpf
-Ep5+910xQiNSfnQNmNGBPO+O6/VHRicXGUm7nWrCSAaghmOwdVDT231ELjxfY+Fm
-EXjZTcdv82Xqb6t4/J3wrJsgTBSqQw==
-=iEeU
------END PGP SIGNATURE-----
-
---D7mzdCilsziPoams--
 
