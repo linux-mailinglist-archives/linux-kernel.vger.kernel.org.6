@@ -1,219 +1,161 @@
-Return-Path: <linux-kernel+bounces-397112-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397113-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A73D9BD6D5
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 21:16:40 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40FAB9BD6D7
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 21:16:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 351DD1C20E2F
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 20:16:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7D2E1B20B5E
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 20:16:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24AEE214419;
-	Tue,  5 Nov 2024 20:16:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 585AF21441D;
+	Tue,  5 Nov 2024 20:16:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=amperemail.onmicrosoft.com header.i=@amperemail.onmicrosoft.com header.b="7Hr+tHdg"
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2139.outbound.protection.outlook.com [40.107.237.139])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kfocus-org.20230601.gappssmtp.com header.i=@kfocus-org.20230601.gappssmtp.com header.b="qZXOShhJ"
+Received: from mail-io1-f48.google.com (mail-io1-f48.google.com [209.85.166.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96CDA1EABD0;
-	Tue,  5 Nov 2024 20:16:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.139
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730837790; cv=fail; b=qW+3hriSh7mfGGiEptJRt2VV2n+TQXYg03YwQ17PK0frQNpyk3CZkaqfa0Z2TZ39LOa4ci5eAsmoPpKDiTMiZl5HbxL3wkDqHcwr71N3OX087E39Ma9NVTEWdpXZ8QwsTz49+cKyZEQe075BiV1QCjsNZNhvZJ/UA8jdmSunhbo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730837790; c=relaxed/simple;
-	bh=QGRu8e7Q8cMWbxkUQKXJDLkF0a1GKISCgJEGmwDJRKM=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=Lj9a0c3KBHYaYyrxZqwRsrRGvBw0E+sqFpg2CA65DBnejguEW16VfFoIAKTFeIVAYp0yS2OZa/2m6yHaxEAIT43NK+v1u1+LMcwFHMHHf/slQTLOgxcZwsW6cgpMIVHF4B8Cus+tCDroxx1uBTC7K6nbRzYMo3CpEfIti8soGJI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=amperemail.onmicrosoft.com; spf=pass smtp.mailfrom=os.amperecomputing.com; dkim=fail (0-bit key) header.d=amperemail.onmicrosoft.com header.i=@amperemail.onmicrosoft.com header.b=7Hr+tHdg reason="key not found in DNS"; arc=fail smtp.client-ip=40.107.237.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=amperemail.onmicrosoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=os.amperecomputing.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=i1AxyS2wCF/ySXxSpHavrmmF95fgKZiqq1kVtVxFK0kpbUFTfmmWw7FLbIR004CzMUMbVYLTXpikA3pI0bjBR4V0pq94Ka5ToDUbaBiV0muWENYZIKUSznEuoDDwI6ViOaoXUc5hXozmjVjKpnpAE4RvFRCCBKr+z8kWdJiKGY8nOiiiQoIl7E/Z1q6iiHOfkJquAj8DQDMCH0yRoNhq01oZZ49K8zoxR+bEqh/VAN4a9o6dqeT/HtuTVM617YoJ3hYVmiPnAZLA4QzX/VeRGgfhv0sVu6oc2+1npgpd2ixDanzYDf6wFvdSYPHWA9XwTyIMUEwwK/9xbAxStpYCAA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Tv8QdFk2GF7o9Ljjm0s/1doZenir128EfTZatqIsACA=;
- b=nUZ6JnjMBoMWWXgAKdAsY2C78pJL/PzEF9vjlylPmj3MSQd2SKK+j76IeJv7oxkJ6TX0bPmkhmuyDBX6q8TZgOV1zMqpjWo1WSb3Hmah5+4uWom+9eRuSYCmmT6j+uqt02Q0R/EGYfE1tkTb8QzIXOIagbJPe5QMNHhXRUd75JEgceLDhLI28FetsrrHH0VWbz2iQGNd1TfTXD8oNolW5aud5XftJOmzn6tWAKX9bt9x5TjUg5tuCkoN/JOC56VnLNOGDi2UyE7zQiL6/KKhMUcPOqXsMluFZafcX2qEj5ljPmS1BE/c23Wf79ApAvvC3bjd9crPqBAs/KOwAz4Gow==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=os.amperecomputing.com; dmarc=pass action=none
- header.from=amperemail.onmicrosoft.com; dkim=pass
- header.d=amperemail.onmicrosoft.com; arc=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D35E31FF7B2
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 20:16:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.48
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730837802; cv=none; b=pS+R0gD/PaXw1IYUiJKQN03qboXP8+yYs5y6abVsPgXjf73gBg4sOh5FdC3tzQICKYUixnphUoR25SFWFap9ZKG6SrSOKjNNmlTqu5QWTKyUnKzHXxvasbA3NpXvYrkyCV/tTNg5nYbNHY/SEjmyuD3nt5EdUCrFTkk/D0jd8f8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730837802; c=relaxed/simple;
+	bh=No+tBb3iM39T9nvSy4f1h/eCdw//wpvGehXzoVmwl0w=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=V1ao1+I5MR9NX3d/FhsLeDvsZ/tUJKqDIGbum9uH+nCTw6plQJCC4k5lYASbvOpzOam03YcuX+rRJUgrY2Ay0Cp7DYNgKQjIkCnY0xmVAxQ36zFaD3r7ycIpIMQQ/eNOFTzgK9tCNV6395PzkudcfUjNP1kq7k2ewdqLQBtEZCQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kfocus.org; spf=pass smtp.mailfrom=kfocus.org; dkim=pass (2048-bit key) header.d=kfocus-org.20230601.gappssmtp.com header.i=@kfocus-org.20230601.gappssmtp.com header.b=qZXOShhJ; arc=none smtp.client-ip=209.85.166.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kfocus.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kfocus.org
+Received: by mail-io1-f48.google.com with SMTP id ca18e2360f4ac-83aba237c03so234392339f.3
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 12:16:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amperemail.onmicrosoft.com; s=selector1-amperemail-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Tv8QdFk2GF7o9Ljjm0s/1doZenir128EfTZatqIsACA=;
- b=7Hr+tHdgdJ+Frb7q/l8pFWkdZ9DYsNXWJh60xlOCVAYLCHWeJtaxyzD21TXsofHAwXbdarJRx/SyZCJQOtTRyqUVw3Q58DAhC/A6ybcAwYwYotLtazIxwGfbeTzGxL1rKn8CaPUjEBlGepVeIIjbuAp4HqKK5NozfzsVJhlSOmU=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amperemail.onmicrosoft.com;
-Received: from SA0PR01MB6171.prod.exchangelabs.com (2603:10b6:806:e5::16) by
- LV8PR01MB8499.prod.exchangelabs.com (2603:10b6:408:187::12) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8137.18; Tue, 5 Nov 2024 20:16:25 +0000
-Received: from SA0PR01MB6171.prod.exchangelabs.com
- ([fe80::b0e5:c494:81a3:5e1d]) by SA0PR01MB6171.prod.exchangelabs.com
- ([fe80::b0e5:c494:81a3:5e1d%6]) with mapi id 15.20.8137.018; Tue, 5 Nov 2024
- 20:16:25 +0000
-Message-ID: <693f39f9-9505-4135-91db-a7280570fbc3@amperemail.onmicrosoft.com>
-Date: Tue, 5 Nov 2024 15:16:20 -0500
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 2/2] mctp pcc: Implement MCTP over PCC Transport
-To: Jeremy Kerr <jk@codeconstruct.com.au>, admiyo@os.amperecomputing.com,
- Matt Johnston <matt@codeconstruct.com.au>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- Sudeep Holla <sudeep.holla@arm.com>,
- Jonathan Cameron <Jonathan.Cameron@huawei.com>,
- Huisong Li <lihuisong@huawei.com>
-References: <20241029165414.58746-1-admiyo@os.amperecomputing.com>
- <20241029165414.58746-3-admiyo@os.amperecomputing.com>
- <b614c56f007b2669f1a23bfe8a8bc6c273f81bba.camel@codeconstruct.com.au>
- <3e68ad61-8b21-4d15-bc4c-412dd2c7b53d@amperemail.onmicrosoft.com>
- <675c2760e1ed64ee8e8bcd82c74af764d48fea6c.camel@codeconstruct.com.au>
-Content-Language: en-US
-From: Adam Young <admiyo@amperemail.onmicrosoft.com>
-In-Reply-To: <675c2760e1ed64ee8e8bcd82c74af764d48fea6c.camel@codeconstruct.com.au>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SJ0PR03CA0192.namprd03.prod.outlook.com
- (2603:10b6:a03:2ef::17) To SA0PR01MB6171.prod.exchangelabs.com
- (2603:10b6:806:e5::16)
+        d=kfocus-org.20230601.gappssmtp.com; s=20230601; t=1730837800; x=1731442600; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:organization:references
+         :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=9+ckaindqBCee5ve4hNcEd7sofPcYiZayRWOUc9OlIs=;
+        b=qZXOShhJ5lJyBUBj6OUo0ZUeTQZOY5Ds/7CcyzucetOZNIw7+qMOEiKYyERQS9xYPj
+         /hdSN2oApEN3lJAmqObQPhFYpic8xoaEyU2NaebMx3XwqFbI2Ai1x6rp0f4+eI82KWrI
+         bJ0JwiBo2YAMc3Urayn9/itOqqZh6Jyo/PC4KWeI3fc86ZSdXuVUEfYAGOdfjYFEbxQn
+         hkegQInI+URAePo747qDCnP2ojDYfHKt4t/fifZNSVb3ZhuSajlBG/5a94LSkkWzEcTu
+         XX8n4ub+8nVficMN7UBhRIk4WDcSdpijmWqi+pNqxE8LbXbWTGOSd/UcxY9Dky99rM5U
+         al9g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730837800; x=1731442600;
+        h=content-transfer-encoding:mime-version:organization:references
+         :in-reply-to:message-id:subject:cc:to:from:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=9+ckaindqBCee5ve4hNcEd7sofPcYiZayRWOUc9OlIs=;
+        b=USWNuWn8ixeM009CwBV81P9uEnSmvifpWrZgYEEIqNX/TKY4rs2uX90WQj55eBjrMs
+         nMFnzEdez60OV3odhxB4XNoNO7Eio9pD0tQ6bTA853ehnGzn7hK/tjZvn3q+mpmpSaXb
+         1z12uCT5py0WPHfotfjLGAmoBCy6RpEFNw3leEiWk1prU9VBg4/ZRjXoUzSc9+2ORVAo
+         bDof/cYc/DDQ2upvFS49AHy2P8mpLwAuD5ZCOJdzxWbzsT4JYBgLmI8i3RdgJAgw6z3v
+         A6/h/DiTamCPwrsnyQa2kDHJpCGwbSNtKl350t/Qu55r7iYU0sHBHgZ/TT16xYBWYD3/
+         RzWg==
+X-Forwarded-Encrypted: i=1; AJvYcCWyhW/K2+GjjMzi+hGnOrc81d3rlQpRGlQI+RKKDCswtwr17nrqIWK7YlMxLKWXEy04mIeeU5fl7QpVox8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxdu7CefgAsN+Xapg3EhWGgM7m/Lp8VfqnLvwFRpbp9wmPao4GG
+	JNh+gGsZ6Nayx5E8PisRkxIeQoloy7V9upjrdE0XsR7vl/vOfcenLrtjs0pjrtQ=
+X-Google-Smtp-Source: AGHT+IGl5dNOTJBptLvmxzYmyVucRPwQPhWHVJm4yI3f7fXU3aKkox0bkZmi8cwTTfMJAjZe3yP+Fw==
+X-Received: by 2002:a05:6602:6194:b0:83b:7164:ebb4 with SMTP id ca18e2360f4ac-83b7164ee02mr1673306239f.14.1730837799869;
+        Tue, 05 Nov 2024 12:16:39 -0800 (PST)
+Received: from kf-ir16 ([2607:fb91:759:8d6:2a49:bc88:6dfe:3a21])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4de048895a6sm2552499173.11.2024.11.05.12.16.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 05 Nov 2024 12:16:39 -0800 (PST)
+Date: Tue, 5 Nov 2024 14:16:36 -0600
+From: Aaron Rainbolt <arainbolt@kfocus.org>
+To: Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: YehezkelShB@gmail.com, michael.jamet@intel.com,
+ andreas.noever@gmail.com, linux-usb@vger.kernel.org, mmikowski@kfocus.org,
+ linux-kernel@vger.kernel.org, Gil Fine <gil.fine@linux.intel.com>
+Subject: Re: USB-C DisplayPort display failing to stay active with Intel
+ Barlow Ridge USB4 controller, power-management related issue?
+Message-ID: <20241105141627.5e5199b3@kf-ir16>
+In-Reply-To: <20241104060159.GY275077@black.fi.intel.com>
+References: <20241010232656.7fc6359e@kf-ir16>
+	<20241011163811.GU275077@black.fi.intel.com>
+	<20241011183751.7d27c59c@kf-ir16>
+	<20241023062737.GG275077@black.fi.intel.com>
+	<20241023073931.GH275077@black.fi.intel.com>
+	<20241023174413.451710ea@kf-ir16>
+	<20241024154341.GK275077@black.fi.intel.com>
+	<20241031095542.587e8aa6@kf-ir16>
+	<20241101072155.GW275077@black.fi.intel.com>
+	<20241101181334.25724aff@kf-ir16>
+	<20241104060159.GY275077@black.fi.intel.com>
+Organization: Kubuntu Focus
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SA0PR01MB6171:EE_|LV8PR01MB8499:EE_
-X-MS-Office365-Filtering-Correlation-Id: 89cf5ff0-f4dc-445e-2b89-08dcfdd6b93a
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|376014|7416014|1800799024|10070799003;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?MFVuTCtVbUk0T0NhMk9hZTgvT3k3V0luRkd3aDh1MEJ0NkxYS0RzT3J5NVBj?=
- =?utf-8?B?enhteUkvRzYvNDFDNUMxclo3QkZXSFBicWdWaGlZWHZZSHliakZDaFFseHZP?=
- =?utf-8?B?bVJDWEJoNjdxcnBiOC9kbG5oQlArWmU5b3B3N1dlK3Z3S210NG1aU2Y5cCty?=
- =?utf-8?B?N1YxaHMxN3MxSHhScVY4cWRhYWJRODhsVFY5UVhIQ0dBQTZNWW9NVlZMM2NO?=
- =?utf-8?B?RUlteHBWMVlwUk0vQVFTYVFCWXlESmFLR2d6cnRiaXZNTjdsbllMVzQvNnEw?=
- =?utf-8?B?c3lWVk1hRzlybS9rK0lyQjJjazNCVi84RDBwWEpQcU95eWNYT1F2dm5BU25U?=
- =?utf-8?B?NDJjRzFkenVPblA5eG1uaS94NjJGWjNpQS9TWFVFWVVxVVhKWkRlNXJJQTJX?=
- =?utf-8?B?bDY4Y3Nxd214MCtrVEhFQjMwQUJsN3VKeXY3NEpreHRUK0dQOU4wRlQ0YjdH?=
- =?utf-8?B?WlFOTGs4Wk03eUdGTkU5cEY2UzFzeDNpcG9LRGoxNWl3NnlicEE3RU5ySUpF?=
- =?utf-8?B?OU8rblk3MnE0VzhqZzBJYmlFQzR2ZXVwblN4VGErcDE0cVpST0x5SXg5S1Ay?=
- =?utf-8?B?WFVWbDByTTdvLzhnTDA1aEtUNFloUit4UWdUb2l4SnNYWngwOFpaTWdKcVVZ?=
- =?utf-8?B?bytHWFd1QVhsNFprSUZ5NS9XSjN1WEhBanpYSkNOTGpKQlhXdmhGdk9tcmtQ?=
- =?utf-8?B?Wjdkdk9ZSU5RYUNSN2huWDJHajYzNEVxNjQvWjh4cmRHUmNud2o3ZVNwbGYx?=
- =?utf-8?B?T2tiNlA3UHN4cjBESHFxb2xXYnlyMUY3WWU5MGFzZHBUUDRNS1pUVEk3V2s2?=
- =?utf-8?B?U0RBVTQyTVFialhZSC9UVTNicWJCK3VTREswbGdvZ0crL0NSRUtyYmg5aWQ4?=
- =?utf-8?B?d3pLdHVhRTdkbzR0WUJTMGR3V0JINUlzVHVVbm9NbFpFb0c2V0J1U2l6WE5x?=
- =?utf-8?B?dGpqRlJTZGFhQkxhNnI1UUlGZ1NvSHRXYjNhb08xOTl0YzZEcHJQMnVwUUhT?=
- =?utf-8?B?eFBQWWhMVk9BQkpSbzN6ZFVzellKZUwvMU5kd2lTY2hibHFON25mNmhZNXBR?=
- =?utf-8?B?VlgvWmhncThpQmVNWUpadSthSzNUcHFhWU9CVzZ4UXZDT1FhYVJlUmFzZDJ0?=
- =?utf-8?B?S2ZTWld1MUhWK2JWOCtjZFpEMG8ybVNtRjlvNzB4bmZOZElRN1hnM1Fxd1B4?=
- =?utf-8?B?dXFNK2QzWndiQmNBZGxBdGtwcXdDYThpOUlEdTZ1YWV4S2ZaMjk3UFgzRWVN?=
- =?utf-8?B?Y2lNWlh0NjlRS1hCSEFBeDZ5VzdUeVhVbWZrSCtIVnVzU3B6NnVWUGt0My9r?=
- =?utf-8?B?eXJhenYwSUptbFRRQkRkNGh6aDIwWmdQcFpna3ltY3doU3hudzdLdGFhY1Na?=
- =?utf-8?B?a2loQkVUZm50SndtZlR0Z0hPTndVQnpXam9ybkZHMCt2VmxWY216SXMvc2ts?=
- =?utf-8?B?NHFFQ0R1TW1HVUE0Rk91eHpveG5XTUZ5YW8rQkRxT2ltRndDMVhQN1F3Ui9u?=
- =?utf-8?B?N1kzc1FIQVhEY0ZCN0VUVTZ3ODFKaE5WRU9ITnVTL1UxNjdidjRYc21oMnMv?=
- =?utf-8?B?MlVNeDlPbmM1cG9CeVdxWXliNk8xNURHTE0vQ2dYVmpNNXUwVlhNeDBrdHhn?=
- =?utf-8?B?eGtkdmRzc0p0YmlUV0VpZmFQdFdJQ0M0dlBJblMyWDhWTWFSNmMvNWNaMFZh?=
- =?utf-8?B?R3pXczYyRmU5cGVNVWJLbGJGd3kvOUFJWjNPVkg5NGVBVlp5L1FCU3ZmcXRS?=
- =?utf-8?Q?uEyf1P213tcn8/tqNys1UdIYcgkxe+JePKJIVY4?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA0PR01MB6171.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024)(10070799003);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?NWJVYlJGc2J1anV6UmtjanE3UVlwV3JrL3NURE5scjQ2RzVObDFpYlAvbkJS?=
- =?utf-8?B?SkREOThHVXU1cVVoaEdnYzZaQ3M0YVlSNHRFY3BMRkIzK0FJZm1YU29rSU96?=
- =?utf-8?B?ZkVWWVBINU5TRG15TSttQ3dpbTlhZWI2UmcycGYrQWJlWWdkdTI0eGJMOXpW?=
- =?utf-8?B?TzRyQzI0RU1rNEdCbkFpVWdmNHZqVm5RRUVsNENsS0ZxMHYxS1pXWlFiUi9I?=
- =?utf-8?B?SjN6cnNEeEpQNUUzNTBablBMNkxZMUhjVWhyQis1bWdmMkFzeFNwakNNUldW?=
- =?utf-8?B?UnEwZld1aHNySnhVSHcvMDFsTjY2SWFvcFFlbndGYnRHcWRuMDlxZkZ6Nmxr?=
- =?utf-8?B?OXVVVlEvdE9TWGpuc21RVHh0S2VFUU0zVE5oZnFqNUc5SzNGSEdwMi9YU0da?=
- =?utf-8?B?NVpDdndNRUxKemZVZG9HZDdhMXhoeE9QbVZibnh2Q2h0K3NxKzk0SjZYVXdq?=
- =?utf-8?B?Y3FyVU1LUExCQzJJbnpCVUdXUDRuMTQ5a0JHeDM3M0pkL0l2bHgrdWwveTZC?=
- =?utf-8?B?bnc2WDFsblJ1Zkpsc2kwOXlnVnRrZWVEeGh2YmVPc3VaWWwvcnlFNmtNK3NT?=
- =?utf-8?B?R2hYbm9uUVFpajFzQTA0KzRvV3dRcEE1RlVJbUYzemtSemlGN0poaUQrT29p?=
- =?utf-8?B?dGRlallDTjY2bHRNUXlkUzd6OUh3MFpjbHhIbVJJbFc4ZnlZSTYzRUNiZ1BX?=
- =?utf-8?B?RW5WdU1Md3lZMDdYdE5GS1J0Y0czZ1BoMStmdVA5NTdOM2g4OU5nMlhhN21y?=
- =?utf-8?B?dFhpUldtd2FsYzZrLzVtWldCUmFlVkdlTmI3b3FJRnlnNWVHQ3lTd1ZQV0s5?=
- =?utf-8?B?eWEvOW9saFJ2ZklxTDJJMGZZaTNNV0lHak16NkpzM25hQnluZk1BaHl2MG1i?=
- =?utf-8?B?emN5Y0dQR3pyUXI4elo1Sjh3SS95VnR0d1RTOVZEUjNOU3p5S21GcWRQMjVt?=
- =?utf-8?B?UGNpWUE0WnVpdzVYY2d5YTIvSW5JTHFqUGVIMEd2UGdhSjRaQzdZM1dSZkNp?=
- =?utf-8?B?QU9sY0J4ZXF2MjBEbFljSGdsaWhOa2NFdjg5ZGdxUmt6cUU5UjZMNFR5MmlC?=
- =?utf-8?B?ZDdNOUdIQk1pU2JkWk05U21LYXkvVWVTVHlRYXhGVTcyMThXdlRsZWN5OHVi?=
- =?utf-8?B?RUVBdjFnYnZNSnBkaTFaUStPVVpwNG41Vnd5WlFYSG5Ta2diakR2aTFtcXc0?=
- =?utf-8?B?aGFGUnUreG1KRzRydnh4R3V6MGRwVkY5ZnNyZHlBZGg0ekV5TDdaZnpneGVT?=
- =?utf-8?B?VWY5MlEwM3Q0eTN0aHFaSzBYZmZXNmZNZFZURGtNWndHbWpXSkZuQjJIRkJE?=
- =?utf-8?B?MUV2amhxd3Voby8rMERtL3VHdURPOVZoMk9nRUdERVRYcXZtaWlCbmMya3d0?=
- =?utf-8?B?bk42dzlKdGtvbnBYdU5LSzZBd1FXV1pyRWhjeU9ySHE3aGVDVE5NZVAwcjVy?=
- =?utf-8?B?SWJNV043QWR0cWc4RmxzaGsxcFEwQy9SNXdwNUZsaUl4djhYY1NPL2ZibGgv?=
- =?utf-8?B?cllDSWtHVFlWSTQzTG9ZUU44QUUxc1ZPK0lnb3QxN1NPQTdubEtCZkVaYm5Z?=
- =?utf-8?B?d3RUR2dnZllwR1kxM0tkVTZIT29PTENOamdrRHJTdmhZZW9YdHM5ZU14V1Ni?=
- =?utf-8?B?cnpJK2RONklHeklEWEMrVlpjVVd4T1NabGpQQ20rclJsYWxrYVdzU011eDli?=
- =?utf-8?B?QzBKbzBwVFZaeUF2ZXZNL2NtOFlyT2x0c29BZlBOWjFvREpmWFdmNkxEbkNH?=
- =?utf-8?B?dGFNdkxLV0tRZWNQUWgvZEVsVmY3dUovMk9nVWZubE1HTlNwSGdZNnY0TVNx?=
- =?utf-8?B?SzkreHduTEFaLzNEcG1yaEZvbXAyNjJIc2pWblh6aHp4dDdnVGQwTENFRUpW?=
- =?utf-8?B?QjFtN00yMWhDTlJmMjNzZlZCdFo3NnVMbmhKUFJGdXhNZ2pPcDZxTkwxVmgr?=
- =?utf-8?B?NERoM2MraHQvV0RpNXk5YjNmZFZKbXMzQk00VTNpWk1WenpEd3NVNW9FaERh?=
- =?utf-8?B?bUVwOU5reVFTa2NtWEZOUmhRVDRlSm9hUUxWMXh1SisxOEVxajg2RFV3bDdX?=
- =?utf-8?B?cmZyblN2ajFFa2lpRVQxSS94Qk5ubHRuNlROSGVMRE5wUTZKQmdjRXdDcjJl?=
- =?utf-8?B?Y1JjS04vVUFUR0ZFS1krYndKcXRGcW95S01YM01BdTU2aUlmekRSUUJpa3hq?=
- =?utf-8?B?VnIvdDF6WERibzdNUkJqZzdqUFFXY0hHNnFtWHNPcElzMHRSaklBcDNUNTFv?=
- =?utf-8?Q?fhJ67nPSjqezJ2IDthOEEr0qM333FhZsoY35Rzk+X0=3D?=
-X-OriginatorOrg: amperemail.onmicrosoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 89cf5ff0-f4dc-445e-2b89-08dcfdd6b93a
-X-MS-Exchange-CrossTenant-AuthSource: SA0PR01MB6171.prod.exchangelabs.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Nov 2024 20:16:25.3996
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3bc2b170-fd94-476d-b0ce-4229bdc904a7
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: boxyklQSxJrlNjEfLodxKwkVBILFtdjN2b22OSsivnG/8BdlQeKGnjEtSq6WZL0pTiyi//gFLbyBT/IijEJZpOMGFDnE/HbH9lj67zetxUNYSaZcjmpO7HQowXX0kXhY
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV8PR01MB8499
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
+On Mon, 4 Nov 2024 08:01:59 +0200
+Mika Westerberg <mika.westerberg@linux.intel.com> wrote:
 
-On 11/1/24 04:55, Jeremy Kerr wrote:
-> Just to clarify that: for physical (ie, null-EID) addressing, you don't
-> need the hardware address, you need:
->
->   1) the outgoing interface's ifindex; and
->   2) the hardware address of the*remote*  endpoint, in whatever
->      format is appropriate for link type
+...snip...
 
+> Okay, thanks again for testing!
+> 
+> It means disabling adapter 16 in DROM is actually intentional as that
+> is not connected to the dGPU and so makes sense.
+> 
+> > * Boot the system up, nothing connected.
+> > * Wait for Barlow Ridge to enter runtime suspend. This takes ~15
+> >   seconds so waiting for > 15 seconds should be enough.
+> > * Plug in USB-C monitor to the USB-C port of the Barlow Ridge.
+> >   Screen shows in log, screen wakes, but then no signal is
+> > received, and no image ever appears. Screen then sleeps after its
+> > timeout.
+> > * Run lspci -k to wake up the monitors. Once this is run, the
+> > display shows correctly and is stable. Adding another USB-C display
+> > after this also works correctly: It is recognized and lights up in
+> > seconds to show the desktop background, and remains stable.
+> > 
+> > Notice that pre-6.5 kernels work fine with Barlow Ridge, which
+> > implies that new code is causing this. It may be new support code
+> > for tbt capability (and therefore pretty much required). But
+> > regardless, it's still new code. With the current patch, we can run
+> > a udev rule that enables hot plugging that likely always work, or
+> > (worst case) at least empowers the customer to refresh monitors by
+> > clicking a button.  
+> 
+> We definitely want to fix this properly so there is no need for anyone
+> to run 'lspci' or similar hacks but because I'm unable to reproduce
+> this with my reference Barlow Ridge setup, I need some help from you.
+> 
+> You say with v6.5 it works? That's interesting because we only added
+> this redrive mode workaround for v6.9 and without that the domain
+> surely will not be kept powered but maybe I'm missing something.
 
-So Here is what I was thinking:
+6.5 is *broken*. 6.1 works correctly, but that's probably because it
+doesn't have Thunderbolt support for Barlow Ridge chips at all. I
+suspect this is because the chip is just acting as a USB-C controller,
+and that works just fine without the Thunderbolt driver.
 
-Lets ignore the namespace for now, as that is a future-proofing thing 
-and will be all 0.  If The OS listens on index 11 and the PLatform 
-listens index 22, the HW address for the OS would be
+> I wonder if your test team could provide log from v6.5 as well
+> following the same steps, no need to run 'lspci' just do:
+> 
+>   1. Boot the system up, nothing connected.
+>   2. Wait for ~15 seconds for the domain to enter runtime suspend.
+>   3. Plug in USB-C monitor to the USB-C port of Barlow Ridge.
+>   4. Verify that it wakes up and, there is picture on the screen.
+>   5. Wait for ~15 seconds.
+> 
+> Expectation: After step 5 the monitor still displays picture.
+> 
+> If this works as above then I'm really surprised but if that's the
+> case then we can maybe think of another approach of dealing with the
+> redrive mode.
 
-00001122
-
-and for the Platform
-
-00002211
-
-This is all the info  for the calling application to know both the 
-ifindex and the remote endpoint.
-
-They can re-order the address to 00002211 for the remote endpoint.  If 
-they have the link they have the ifindex.  It seems like a clean solution.
-
-Adding the inbox id ( to the HW address does not harm anything, and it 
-makes things much more explicit.
-
-It seems like removing either the inbox or the outbox id from the HW 
-address is hiding information that should be exposed.  And the two 
-together make up the hardware addressing for the device, just not in 
-that exact format, but it maps directly.  That is what will be in the 
-upcoming version of the spec as well.
-
+We'd be happy to run this testing on the 6.1 kernel if it would be
+helpful. Will that work, or is 6.1 too old?
 
