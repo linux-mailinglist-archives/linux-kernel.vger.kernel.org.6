@@ -1,231 +1,651 @@
-Return-Path: <linux-kernel+bounces-396115-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396116-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A3C29BC7FC
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 09:27:30 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2E2F9BC807
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 09:30:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2DA9B1C22739
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 08:27:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 73CFC1F23801
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 08:30:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 119CE1CB9E2;
-	Tue,  5 Nov 2024 08:27:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C02661925BE;
+	Tue,  5 Nov 2024 08:30:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TgrMOohF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="gXWxeCPv"
+Received: from mail-ed1-f66.google.com (mail-ed1-f66.google.com [209.85.208.66])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4011318C93B;
-	Tue,  5 Nov 2024 08:27:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1B0318D63C
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 08:30:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730795243; cv=none; b=uidqlUARFsd5tOR/aGlkASsEbA9rMQdr3TFI95MCy4yqCP8zHaIfb08jm+obiFYeoWACFq+37rB79STlwPZfPdztUhSrFvi/NFhBbEYChJQqk8zbeXa/NQZAnlsTKZxnqMTu9/t3NXjjvGGh4EyNSbogyVt9Hr0M43DKdGpCSNc=
+	t=1730795417; cv=none; b=ae04kaoQbIQTKitJZWlMxN0y9yD3/LH7xT2d+f58xzJpchbtHGKzVsmqdyp2LUULo9yZa2/mykPxrBztmfHtO6Mp5hf/ZN17sNC5FuIUDqxlMUOsCO+bTxhwuEphagx4bUtP8gQie2Xki285OVVrOgyLuxEawDIB64efPtDCRjk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730795243; c=relaxed/simple;
-	bh=hLMfl3hW/+09JrNz2Nj8Tf7VWOLtmcZNq27hi91zz+o=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=MKENHBOVvzTNtYIP3UuB5dAtYzTSC83eBKS7tn5T9pEj5MD3xIRbYVHV5QhF+yByvWJV/Ddo9oPxqHgips+T74Jq0ifG9alIJEmM+kFE2zdENpzOH80JD1iriwno1mujDH5oIpGdqMIPkPF3JaIWAzE5slbEOAQ2S/ILonzaF2Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TgrMOohF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7328FC4CECF;
-	Tue,  5 Nov 2024 08:27:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730795242;
-	bh=hLMfl3hW/+09JrNz2Nj8Tf7VWOLtmcZNq27hi91zz+o=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=TgrMOohF2fjSG52ZeIT3y9SJtB8BRHFEnTSPhlwT/O3NQr1sBf9TYiK0yUsm4nHmy
-	 3j7wn8hWpqzAlX4NLqHiGnCIGldHsGaQvUOioXuohZ4TZWbJyfI5hkjE8eAnWRm6BL
-	 yQB0mkgvmTru/ANr5LazxVUGf5cNPokxEOTbdeiqvPEbmM8pS0R41DJdm97bTYpScB
-	 71we34sWT4LhWQ7HrmAYqW3/+cQMhUDVXo/4h6XB0MHunv7jTQeOiAjt1Krh4m0u9Y
-	 icJOkTaRQU2FcyB9LvT8k2KFPJZ6zGWs3k2Ya09uN9vsunfSBNC3BUh4YCWtMh57bh
-	 T4qqZVHlRz9sA==
-Date: Tue, 5 Nov 2024 17:27:19 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>, Peter Zijlstra
- <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, Ian Rogers
- <irogers@google.com>, Dima Kogan <dima@secretsauce.net>, Alexander Lobakin
- <aleksander.lobakin@intel.com>, Przemek Kitszel
- <przemyslaw.kitszel@intel.com>, linux-perf-users@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/4] perf-probe: Replace unacceptable characters when
- generating event name
-Message-Id: <20241105172719.ae199c4674526752a394ddd3@kernel.org>
-In-Reply-To: <Zykv2CdUbDIpTkrX@x1>
-References: <173073702882.2098439.13342508872190995896.stgit@mhiramat.roam.corp.google.com>
-	<173073706473.2098439.14379969075482451249.stgit@mhiramat.roam.corp.google.com>
-	<Zykv2CdUbDIpTkrX@x1>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1730795417; c=relaxed/simple;
+	bh=FEBIAaA2LrirNuL99GbWEPrHwblsHtQGutZPgiED1Ck=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=h9LfkwCbjjXxSNO4dPVWRkA1gvIfEQjKe/QW0Q9huJPzu0nt2ncOx9C0xXugD0HeqdmnRha0Hj3xj0XZVH4zlzGrYivf75EkyvpWlSGFY1FKfnwvbgl+q6cVW9P9vbHoFFpJg8ntMPtzwBO0wzh/eXjKincgrSgLW5kJnpAEbTA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=gXWxeCPv; arc=none smtp.client-ip=209.85.208.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ed1-f66.google.com with SMTP id 4fb4d7f45d1cf-5ceb03aadb1so5518963a12.0
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 00:30:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1730795412; x=1731400212; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Kpw01HNU/Sv0xgXPzYBXhrajrBvyrTSpHufBO5hxwkk=;
+        b=gXWxeCPvzx0V+b4004tJQpXsCedVCh8oBzHppdgo9kob3s6NcBgamATPKGKP8MR+00
+         tAqHPpTeJ/8cH/cSe7ZI3Em3Rt2n5+NUhH8pb/WrnKlSAKhXgm7FaQB5DXmjIwc6Fx5c
+         j4vczbgDoeA54+3gQlNe5jbIRb3r50TVsxA/NpXMXZMNcsHn2Sjlxlg4wMQuQVaPaq3w
+         7amZ223kAD9lpfK7OVuvLjPlkI5H5H4xmO6qXE1qhRwi4Hot7XqusET/Ld3aZ5YYZGBK
+         EVxFsWKdMK2HWVaV4Jv5fbYqwmQ/AEVf4tPCA2jsyTbpdQCzw5trS6O+uKTZvrKdfasb
+         gogA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730795412; x=1731400212;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Kpw01HNU/Sv0xgXPzYBXhrajrBvyrTSpHufBO5hxwkk=;
+        b=Gphzjeh42RmWLuuXKPYAy8Eh2K5QPOZpRct7V+WtRyeJzOgRscqz4WTdUlA5iRFjrw
+         qSOtNaCQrQZu2uT3w0BYYGijzbKzs7JRnSkmRaDayWfVDlHp8WYgjmdtqwLxjsXSJDMV
+         hPdwGVOlmyCklDcbd0MokZ+lTSgXXj++ZORMpG3c9rl5VLH2vT84HE/zdwO0/SBBMHQ0
+         V5U+lJgkv0KDzL0dt1G2b75jxoY/fkP81FeOKGYZSGvVn5ru0jFivLOG3i/Oqyc/eymL
+         A30F0vC0ut4Jbv0zlFkTrsy5VPcS5qKVQxeJY+zjeoIZrNi3XjwDo+98K57m5LBa7O6h
+         8ADw==
+X-Forwarded-Encrypted: i=1; AJvYcCW1D0Ba2QXAhgZbXM25ltD4KXFHvsr4IhGol0vTNZBP5SrPdIrmIYhuJ0IGV1Xf0wLrm6VRN7PhYrVyaSg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxMNLQLxHgNUYn00Q+4WHwVyROLBEvxAjiP7zWcEe89OBbF6vP6
+	JnwasjHT54+n7zhGLyiXb0CoIHA4qRxo+d7RuUYOUvjX+b68wee/SKPynGMygVw=
+X-Google-Smtp-Source: AGHT+IE4HmcRyyOJrLcIvLVZE/X26LsWeylyyS8o4KlNGwK33ooeQUPKh0OQozoC1twhQBug+FmFNg==
+X-Received: by 2002:a17:907:7e8f:b0:a99:dde6:9f42 with SMTP id a640c23a62f3a-a9e50b935bcmr1654303266b.47.1730795411966;
+        Tue, 05 Nov 2024 00:30:11 -0800 (PST)
+Received: from localhost (host-79-35-211-193.retail.telecomitalia.it. [79.35.211.193])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9eb16da0b6sm98946766b.76.2024.11.05.00.30.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 05 Nov 2024 00:30:11 -0800 (PST)
+From: Andrea della Porta <andrea.porta@suse.com>
+X-Google-Original-From: Andrea della Porta <aporta@suse.de>
+Date: Tue, 5 Nov 2024 09:30:38 +0100
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: Andrea della Porta <andrea.porta@suse.com>,
+	Andrew Lunn <andrew@lunn.ch>, Arnd Bergmann <arnd@arndb.de>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Krzysztof Wilczynski <kw@linux.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Rob Herring <robh@kernel.org>,
+	Saravana Kannan <saravanak@google.com>,
+	Stefan Wahren <wahrenst@gmx.net>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Will Deacon <will@kernel.org>, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-rpi-kernel@lists.infradead.org
+Subject: Re: [PATCH v3 07/12] clk: rp1: Add support for clocks provided by RP1
+Message-ID: <ZynXrg8OlGvPcmWb@apocalypse>
+References: <cover.1730123575.git.andrea.porta@suse.com>
+ <c20e3d6d87c71691b149cdeeafc94009953346b2.1730123575.git.andrea.porta@suse.com>
+ <01c2bb3609dcb32191a78293c1666b0a.sboyd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <01c2bb3609dcb32191a78293c1666b0a.sboyd@kernel.org>
 
-On Mon, 4 Nov 2024 17:34:32 -0300
-Arnaldo Carvalho de Melo <acme@kernel.org> wrote:
+Hi Stephen,
 
-> On Tue, Nov 05, 2024 at 01:17:44AM +0900, Masami Hiramatsu (Google) wrote:
-> > From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-> > 
-> > Replace unacceptable characters with '_' when generating event name from
-> > the probing function name. This is not for C program. For the C program,
-> > it will continue to remove suffixes.
-> > 
-> > For example.
-> > 
-> > $ ./perf probe -x cro3 -D \"cro3::cmd::servo::run_show\"
-> > p:probe_cro3/cro3_cmd_servo_run_show /work/cro3/target/x86_64-unknown-linux-gnu/debug/cro3:0x197530
-> > 
-> > $ ./perf probe -x /work/go/example/outyet/main -D 'main.(*Server).poll'
-> > p:probe_main/main_Server_poll /work/go/example/outyet/main:0x353040
-> > 
-> > Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-> > ---
-> >  tools/perf/util/probe-event.c |   37 ++++++++++++++++++++++++++++++-------
-> >  1 file changed, 30 insertions(+), 7 deletions(-)
-> > 
-> > diff --git a/tools/perf/util/probe-event.c b/tools/perf/util/probe-event.c
-> > index bcba8273204d..27698b9a8c95 100644
-> > --- a/tools/perf/util/probe-event.c
-> > +++ b/tools/perf/util/probe-event.c
-> > @@ -2729,7 +2729,7 @@ int show_perf_probe_events(struct strfilter *filter)
-> >  
-> >  static int get_new_event_name(char *buf, size_t len, const char *base,
-> >  			      struct strlist *namelist, bool ret_event,
-> > -			      bool allow_suffix)
-> > +			      bool allow_suffix, bool is_C_symname)
-> >  {
-> >  	int i, ret;
-> >  	char *p, *nbase;
-> > @@ -2740,10 +2740,24 @@ static int get_new_event_name(char *buf, size_t len, const char *base,
-> >  	if (!nbase)
-> >  		return -ENOMEM;
-> >  
-> > -	/* Cut off the dot suffixes (e.g. .const, .isra) and version suffixes */
-> > -	p = strpbrk(nbase, ".@");
-> > -	if (p && p != nbase)
-> > -		*p = '\0';
-> > +	if (is_C_symname) {
-> > +		/* Cut off the dot suffixes (e.g. .const, .isra) and version suffixes */
-> > +		p = strpbrk(nbase, ".@");
-> > +		if (p && p != nbase)
-> > +			*p = '\0';
-> > +	} else {
-> > +		/* Replace non-alnum with '_' */
-> > +		char *s, *d;
+On 15:20 Mon 28 Oct     , Stephen Boyd wrote:
+> Quoting Andrea della Porta (2024-10-28 07:07:24)
+> > diff --git a/drivers/clk/clk-rp1.c b/drivers/clk/clk-rp1.c
+> > new file mode 100644
+> > index 000000000000..69b9cf037cb2
+> > --- /dev/null
+> [...]
 > > +
-> > +		s = d = nbase;
-> > +		do {
-> > +			if (*s && !isalnum(*s)) {
-> > +				if (d != nbase && *(d - 1) != '_')
-> > +					*d++ = '_';
-> > +			} else
-> > +				*d++ = *s;
-> > +		} while (*s++);
-> > +	}
-> >  
-> >  	/* Try no suffix number */
-> >  	ret = e_snprintf(buf, len, "%s%s", nbase, ret_event ? "__return" : "");
-> > @@ -2832,6 +2846,7 @@ static int probe_trace_event__set_name(struct probe_trace_event *tev,
-> >  				       bool allow_suffix)
-> >  {
-> >  	const char *event, *group;
-> > +	bool is_C_symname = false;
-> >  	char buf[64];
-> >  	int ret;
-> >  
-> > @@ -2846,8 +2861,16 @@ static int probe_trace_event__set_name(struct probe_trace_event *tev,
-> >  			(strncmp(pev->point.function, "0x", 2) != 0) &&
-> >  			!strisglob(pev->point.function))
-> >  			event = pev->point.function;
-> > -		else
-> > +		else {
-> >  			event = tev->point.realname;
-> > +			/*
-> > +			 * `realname` comes from real symbol, which can have a suffix.
-> > +			 * However, if we see some glab-like wildcard in the symbol, it
->                                                    "glob"?
-> > +			 * might not be a C program.
-> > +			 */
-> > +			if (!strisglob(event))
-> > +				is_C_symname = true;
+> > +struct rp1_clockman {
+> > +       struct device *dev;
+> > +       void __iomem *regs;
 > 
-> 				non_C_symname would be a bit more clear,
->                                 i.e. inverting the logic, as a C symname is
-> 				valid in other languages :-)
+> Do you still need this if there's a regmap?
 
-OK.
+Unfortunately the clk_divider registered in rp1_register_pll_divider()
+mandates the use of a MMIO registeri, and yes, the divider and teh other
+clock shares some registers. AFAICT there were attempts to upstream generic
+regmap support for clk_divider, but right now there are just custom
+implementations (e.g. drivers/clk/qcom/clk-regmap.c).  So, in order to
+use regmap, that clock divider shoulf be first augmented with regmap
+support. Please let me know if you think it's worth the effort.
 
 > 
-> 				Also since we _can_ know if it comes
-> from a C, as we have:
+> > +       struct regmap *regmap;
+> > +       spinlock_t regs_lock; /* spinlock for all clocks */
 > 
-> root@x1:~# readelf -wi /usr/lib/debug/lib/modules/6.11.4-201.fc40.x86_64/vmlinux | grep -m10 DW_AT_language
->     <12>   DW_AT_language    : 29	(C11)
->     <2b0a5>   DW_AT_language    : 29	(C11)
->     <2f3a4>   DW_AT_language    : 29	(C11)
->     <573b0>   DW_AT_language    : 29	(C11)
->     <6dd73>   DW_AT_language    : 29	(C11)
->     <879eb>   DW_AT_language    : 29	(C11)
->     <8c094>   DW_AT_language    : 29	(C11)
->     <9ce09>   DW_AT_language    : 29	(C11)
->     <9d8fb>   DW_AT_language    : 29	(C11)
->     <b877a>   DW_AT_language    : 29	(C11)
-> root@x1:~# 
-> root@x1:~# readelf -wi /usr/lib/debug/lib/modules/6.11.4-201.fc40.x86_64/vmlinux | grep -m1 -B5 DW_AT_language
->    Unit Type:     DW_UT_compile (1)
->    Abbrev Offset: 0
->    Pointer Size:  8
->  <0><c>: Abbrev Number: 246 (DW_TAG_compile_unit)
->     <e>   DW_AT_producer    : (indirect string, offset: 0x4edb56): GNU C11 14.2.1 20240912 (Red Hat 14.2.1-3) -mno-sse -mno-mmx -mno-sse2 -mno-3dnow -mno-avx -m64 -mno-80387 -mno-fp-ret-in-387 -mpreferred-stack-boundary=3 -mskip-rax-setup -mtune=generic -mno-red-zone -mcmodel=kernel -mindirect-branch=thunk-extern -mindirect-branch-register -mindirect-branch-cs-prefix -mfunction-return=thunk-extern -mharden-sls=all -mrecord-mcount -mfentry -march=x86-64 -g -O2 -std=gnu11 -p -fshort-wchar -funsigned-char -fno-common -fno-PIE -fno-strict-aliasing -fcf-protection=branch -falign-jumps=1 -falign-loops=1 -fno-asynchronous-unwind-tables -fno-jump-tables -fpatchable-function-entry=16,16 -fno-delete-null-pointer-checks -fno-allow-store-data-races -fstack-protector-strong -ftrivial-auto-var-init=zero -fno-stack-clash-protection -fmin-function-alignment=16 -fstrict-flex-arrays=3 -fno-strict-overflow -fstack-check=no -fconserve-stack -fno-function-sections -fno-data-sections -fsanitize=bounds-s
- trict -fsanitize=shift
->     <12>   DW_AT_language    : 29	(C11)
-> root@x1:~#
-> 
-> 	Wouldn't it be better to use that to decide how to deal with
-> symbols in a CU?
+> Do you need this or is the spinlock in the regmap sufficient?
 
-Yes, it also works, but only with debuginfo. Maybe we can use
-this as a hint flag to ensure this is non-C.
+The original code wrapped multiple registers write/read inside the spinlock,
+so I suspect that using the internal regmap spinlock for each single
+transaciton (so to open up for interleaved register access, although I have
+no evidence of that) could have side-effects so I would prefer to stay safe
+and manage the lock from outside. I could easily use regmap_multi_reg_write()
+and friends to synchronize access across multiple registers but then we would
+have the problem above about missing regmap support in clk_divider, since now
+it's solved by passing the same spinlock to it too. I'm open to alternatives
+here...
 
 > 
-> 	The advantage of using just the symbol name and that heuristic
-> about finding glob characters in the symbols is when we don't have
-> access to the DWARF info, having just the ELF symbol table, when we
-> don't have the lang code for the CU.
+> > +
+> > +       /* Must be last */
+> > +       struct clk_hw_onecell_data onecell;
+> > +};
+> > +
+> > +struct rp1_pll_core_data {
+> > +       const char *name;
+> 
+> These 'name' members can move to clk_init_data?
 
-Agreed. So if we can use DWARF and found the DW_AT_language, it will
-be passed as a hint flag which ensure that this code comes from C or
-not. BTW, Rust is 28 and C11 is 29, thus if the compiler supports the
-newer version of C, it will have unknown code. So the hint flag should
-be "the source code is a known C version".
-
-Thank you,
+You've read my mind, I was exactly planning that for the next revision
 
 > 
-> - Arnaldo
+> > +       u32 cs_reg;
+> > +       u32 pwr_reg;
+> > +       u32 fbdiv_int_reg;
+> > +       u32 fbdiv_frac_reg;
+> > +       unsigned long flags;
 > 
-> > +		}
-> >  	}
-> >  	if (pev->group && !pev->sdt)
-> >  		group = pev->group;
-> > @@ -2858,7 +2881,7 @@ static int probe_trace_event__set_name(struct probe_trace_event *tev,
-> >  
-> >  	/* Get an unused new event name */
-> >  	ret = get_new_event_name(buf, sizeof(buf), event, namelist,
-> > -				 tev->point.retprobe, allow_suffix);
-> > +				 tev->point.retprobe, allow_suffix, is_C_symname);
-> >  	if (ret < 0)
-> >  		return ret;
-> >  
+> And probably flags as well? It seems like clk_init_data should be
+> declared at the same time as struct rp1_pll_core_data is.
+
+Ditto.
+
 > 
+> > +       u32 fc0_src;
+> > +};
+> > +
+> > +struct rp1_pll_data {
+> > +       const char *name;
+> > +       u32 ctrl_reg;
+> > +       unsigned long flags;
+> > +       u32 fc0_src;
+> > +};
+> > +
+> > +struct rp1_pll_ph_data {
+> > +       const char *name;
+> > +       unsigned int phase;
+> > +       unsigned int fixed_divider;
+> > +       u32 ph_reg;
+> > +       unsigned long flags;
+> > +       u32 fc0_src;
+> > +};
+> > +
+> > +struct rp1_pll_divider_data {
+> > +       const char *name;
+> > +       u32 sec_reg;
+> > +       unsigned long flags;
+> > +       u32 fc0_src;
+> > +};
+> > +
+> > +struct rp1_clock_data {
+> > +       const char *name;
+> > +       int num_std_parents;
+> > +       int num_aux_parents;
+> > +       unsigned long flags;
+> > +       u32 oe_mask;
+> > +       u32 clk_src_mask;
+> > +       u32 ctrl_reg;
+> > +       u32 div_int_reg;
+> > +       u32 div_frac_reg;
+> > +       u32 sel_reg;
+> > +       u32 div_int_max;
+> > +       unsigned long max_freq;
+> > +       u32 fc0_src;
+> > +};
+> > +
+> > +struct rp1_clk_desc {
+> > +       struct clk_hw *(*clk_register)(struct rp1_clockman *clockman,
+> > +                                      struct rp1_clk_desc *desc);
+> > +       const void *data;
+> > +       struct clk_hw hw;
+> > +       struct rp1_clockman *clockman;
+> > +       unsigned long cached_rate;
+> > +       struct clk_divider div;
+> > +};
+> > +
+> > +#define FIELD_SET(_reg, _mask, _val)           \
+> > +do {                                           \
+> > +       u32 mask = (_mask);                     \
+> > +       (_reg) &= ~mask;                        \
+> > +       (_reg) |= FIELD_PREP(mask, (_val));     \
+> 
+> Please just write
+> 
+> 	reg &= ~mask
+> 	reg |= FIELD_PREP(mask, val);
+> 
+> instead of using this macro.
 
+Ack.
 
--- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> 
+> > +} while (0)
+> > +
+> > +
+> [...]
+> > +
+> > +static struct clk_hw *rp1_register_pll_core(struct rp1_clockman *clockman,
+> > +                                           struct rp1_clk_desc *desc)
+> > +{
+> > +       const struct rp1_pll_core_data *pll_core_data = desc->data;
+> > +       struct clk_init_data init = { };
+> > +       int ret;
+> > +
+> > +       /* All of the PLL cores derive from the external oscillator. */
+> > +       init.parent_data = desc->hw.init->parent_data;
+> > +       init.num_parents = desc->hw.init->num_parents;
+> > +       init.name = pll_core_data->name;
+> > +       init.ops = &rp1_pll_core_ops;
+> > +       init.flags = pll_core_data->flags | CLK_IGNORE_UNUSED | CLK_IS_CRITICAL;
+> > +
+> > +       desc->clockman = clockman;
+> > +       desc->hw.init = &init;
+> > +
+> > +       ret = devm_clk_hw_register(clockman->dev, &desc->hw);
+> > +
+> > +       if (ret)
+> > +               return ERR_PTR(ret);
+> > +
+> > +       return &desc->hw;
+> > +}
+> > +
+> > +static struct clk_hw *rp1_register_pll(struct rp1_clockman *clockman,
+> > +                                      struct rp1_clk_desc *desc)
+> > +{
+> > +       const struct rp1_pll_data *pll_data = desc->data;
+> > +       struct clk_init_data init = { };
+> > +       int ret;
+> > +
+> > +       init.parent_data = desc->hw.init->parent_data;
+> > +       init.num_parents = desc->hw.init->num_parents;
+> > +       init.name = pll_data->name;
+> > +       init.ops = &rp1_pll_ops;
+> > +       init.flags = pll_data->flags | CLK_IGNORE_UNUSED | CLK_IS_CRITICAL;
+> > +
+> > +       desc->clockman = clockman;
+> > +       desc->hw.init = &init;
+> > +
+> > +       ret = devm_clk_hw_register(clockman->dev, &desc->hw);
+> > +
+> > +       if (ret)
+> > +               return ERR_PTR(ret);
+> > +
+> > +       return &desc->hw;
+> > +}
+> > +
+> > +static struct clk_hw *rp1_register_pll_ph(struct rp1_clockman *clockman,
+> > +                                         struct rp1_clk_desc *desc)
+> > +{
+> > +       const struct rp1_pll_ph_data *ph_data = desc->data;
+> > +       struct clk_init_data init = { };
+> > +       int ret;
+> > +
+> > +       init.parent_data = desc->hw.init->parent_data;
+> > +       init.num_parents = desc->hw.init->num_parents;
+> > +       init.name = ph_data->name;
+> > +       init.ops = &rp1_pll_ph_ops;
+> > +       init.flags = ph_data->flags | CLK_IGNORE_UNUSED;
+> > +
+> > +       desc->clockman = clockman;
+> > +       desc->hw.init = &init;
+> > +
+> > +       ret = devm_clk_hw_register(clockman->dev, &desc->hw);
+> > +
+> > +       if (ret)
+> > +               return ERR_PTR(ret);
+> > +
+> > +       return &desc->hw;
+> > +}
+> > +
+> > +static struct clk_hw *rp1_register_pll_divider(struct rp1_clockman *clockman,
+> > +                                              struct rp1_clk_desc *desc)
+> > +{
+> > +       const struct rp1_pll_data *divider_data = desc->data;
+> > +       struct clk_init_data init = { };
+> > +       int ret;
+> > +
+> > +       init.parent_data = desc->hw.init->parent_data;
+> > +       init.num_parents = desc->hw.init->num_parents;
+> > +       init.name = divider_data->name;
+> > +       init.ops = &rp1_pll_divider_ops;
+> > +       init.flags = divider_data->flags | CLK_IGNORE_UNUSED | CLK_IS_CRITICAL;
+> > +
+> > +       desc->div.reg = clockman->regs + divider_data->ctrl_reg;
+> 
+> Why is 'regs' used here? Isn't everything using a regmap now so it's all
+> offsets?
+
+Already explained above.
+
+> 
+> > +       desc->div.shift = PLL_SEC_DIV_SHIFT;
+> > +       desc->div.width = PLL_SEC_DIV_WIDTH;
+> > +       desc->div.flags = CLK_DIVIDER_ROUND_CLOSEST;
+> > +       desc->div.flags |= CLK_IS_CRITICAL;
+> > +       desc->div.lock = &clockman->regs_lock;
+> > +       desc->div.hw.init = &init;
+> > +       desc->div.table = pll_sec_div_table;
+> > +
+> > +       desc->clockman = clockman;
+> > +
+> > +       ret = devm_clk_hw_register(clockman->dev, &desc->div.hw);
+> > +
+> > +       if (ret)
+> > +               return ERR_PTR(ret);
+> > +
+> > +       return &desc->div.hw;
+> > +}
+> > +
+> > +static struct clk_hw *rp1_register_clock(struct rp1_clockman *clockman,
+> > +                                        struct rp1_clk_desc *desc)
+> > +{
+> > +       const struct rp1_clock_data *clock_data = desc->data;
+> > +       struct clk_init_data init = { };
+> > +       int ret;
+> > +
+> > +       if (WARN_ON_ONCE(MAX_CLK_PARENTS <
+> > +              clock_data->num_std_parents + clock_data->num_aux_parents))
+> > +               return NULL;
+> > +
+> > +       /* There must be a gap for the AUX selector */
+> > +       if (WARN_ON_ONCE(clock_data->num_std_parents > AUX_SEL &&
+> > +                        desc->hw.init->parent_data[AUX_SEL].index != -1))
+> > +               return NULL;
+> > +
+> > +       init.parent_data = desc->hw.init->parent_data;
+> > +       init.num_parents = desc->hw.init->num_parents;
+> > +       init.name = clock_data->name;
+> > +       init.flags = clock_data->flags | CLK_IGNORE_UNUSED;
+> > +       init.ops = &rp1_clk_ops;
+> > +
+> > +       desc->clockman = clockman;
+> > +       desc->hw.init = &init;
+> > +
+> > +       ret = devm_clk_hw_register(clockman->dev, &desc->hw);
+> > +
+> > +       if (ret)
+> > +               return ERR_PTR(ret);
+> > +
+> > +       return &desc->hw;
+> > +}
+> > +
+> > +/* Assignment helper macros for different clock types. */
+> > +#define _REGISTER(f, ...)      { .clk_register = f, __VA_ARGS__ }
+> > +
+> > +#define PARENT_CLK(pnum, ...)  .hw.init = &(const struct clk_init_data) { \
+> 
+> Instead of this macro just use CLK_HW_INIT_HW() or
+> CLK_HW_INIT_PARENTS_DATA()?
+
+Ack.
+
+> 
+> > +                               .parent_data = (const struct               \
+> > +                                               clk_parent_data[]) {       \
+> > +                                                       __VA_ARGS__        \
+> > +                                               },                         \
+> > +                               .num_parents = pnum }
+> > +
+> > +#define CLK_DATA(type, ...)    .data = &(struct type) { __VA_ARGS__ }
+> > +
+> > +#define REGISTER_PLL_CORE(...) _REGISTER(&rp1_register_pll_core,       \
+> > +                                         __VA_ARGS__)
+> > +
+> > +#define REGISTER_PLL(...)      _REGISTER(&rp1_register_pll,            \
+> > +                                         __VA_ARGS__)
+> > +
+> > +#define REGISTER_PLL_PH(...)   _REGISTER(&rp1_register_pll_ph,         \
+> > +                                         __VA_ARGS__)
+> > +
+> > +#define REGISTER_PLL_DIV(...)  _REGISTER(&rp1_register_pll_divider,    \
+> > +                                         __VA_ARGS__)
+> > +
+> > +#define REGISTER_CLK(...)      _REGISTER(&rp1_register_clock,          \
+> > +                                         __VA_ARGS__)
+> > +
+> > +static struct rp1_clk_desc clk_desc_array[] = {
+> > +       [RP1_PLL_SYS_CORE] = REGISTER_PLL_CORE(PARENT_CLK(1, { .index = 0 }),
+> > +                               CLK_DATA(rp1_pll_core_data,
+> > +                                        .name = "pll_sys_core",
+> > +                                        .cs_reg = PLL_SYS_CS,
+> > +                                        .pwr_reg = PLL_SYS_PWR,
+> > +                                        .fbdiv_int_reg = PLL_SYS_FBDIV_INT,
+> > +                                        .fbdiv_frac_reg = PLL_SYS_FBDIV_FRAC,
+> > +                               )),
+> > +
+> > +       [RP1_PLL_AUDIO_CORE] = REGISTER_PLL_CORE(PARENT_CLK(1, { .index = 0 }),
+> > +                               CLK_DATA(rp1_pll_core_data,
+> > +                                        .name = "pll_audio_core",
+> > +                                        .cs_reg = PLL_AUDIO_CS,
+> > +                                        .pwr_reg = PLL_AUDIO_PWR,
+> > +                                        .fbdiv_int_reg = PLL_AUDIO_FBDIV_INT,
+> > +                                        .fbdiv_frac_reg = PLL_AUDIO_FBDIV_FRAC,
+> > +                               )),
+> > +
+> > +       [RP1_PLL_VIDEO_CORE] = REGISTER_PLL_CORE(PARENT_CLK(1, { .index = 0 }),
+> > +                               CLK_DATA(rp1_pll_core_data,
+> > +                                        .name = "pll_video_core",
+> > +                                        .cs_reg = PLL_VIDEO_CS,
+> > +                                        .pwr_reg = PLL_VIDEO_PWR,
+> > +                                        .fbdiv_int_reg = PLL_VIDEO_FBDIV_INT,
+> > +                                        .fbdiv_frac_reg = PLL_VIDEO_FBDIV_FRAC,
+> > +                               )),
+> > +
+> > +       [RP1_PLL_SYS] = REGISTER_PLL(PARENT_CLK(1,
+> > +                               { .hw = &clk_desc_array[RP1_PLL_SYS_CORE].hw }
+> > +                               ),
+> > +                               CLK_DATA(rp1_pll_data,
+> > +                                        .name = "pll_sys",
+> > +                                        .ctrl_reg = PLL_SYS_PRIM,
+> > +                                        .fc0_src = FC_NUM(0, 2),
+> > +                               )),
+> > +
+> > +       [RP1_CLK_ETH_TSU] = REGISTER_CLK(PARENT_CLK(1, { .index = 0 }),
+> > +                               CLK_DATA(rp1_clock_data,
+> > +                                        .name = "clk_eth_tsu",
+> > +                                        .num_std_parents = 0,
+> > +                                        .num_aux_parents = 1,
+> > +                                        .ctrl_reg = CLK_ETH_TSU_CTRL,
+> > +                                        .div_int_reg = CLK_ETH_TSU_DIV_INT,
+> > +                                        .sel_reg = CLK_ETH_TSU_SEL,
+> > +                                        .div_int_max = DIV_INT_8BIT_MAX,
+> > +                                        .max_freq = 50 * HZ_PER_MHZ,
+> > +                                        .fc0_src = FC_NUM(5, 7),
+> > +                               )),
+> > +
+> > +       [RP1_CLK_SYS] = REGISTER_CLK(PARENT_CLK(3,
+> > +                               { .index = 0 },
+> > +                               { .index = -1 },
+> > +                               { .hw = &clk_desc_array[RP1_PLL_SYS].hw }
+> > +                               ),
+> > +                               CLK_DATA(rp1_clock_data,
+> > +                                        .name = "clk_sys",
+> > +                                        .num_std_parents = 3,
+> > +                                        .num_aux_parents = 0,
+> > +                                        .ctrl_reg = CLK_SYS_CTRL,
+> > +                                        .div_int_reg = CLK_SYS_DIV_INT,
+> > +                                        .sel_reg = CLK_SYS_SEL,
+> > +                                        .div_int_max = DIV_INT_24BIT_MAX,
+> > +                                        .max_freq = 200 * HZ_PER_MHZ,
+> > +                                        .fc0_src = FC_NUM(0, 4),
+> > +                                        .clk_src_mask = 0x3,
+> > +                               )),
+> > +
+> > +       [RP1_PLL_SYS_PRI_PH] = REGISTER_PLL_PH(PARENT_CLK(1,
+> > +                               { .hw = &clk_desc_array[RP1_PLL_SYS].hw }
+> > +                               ),
+> > +                               CLK_DATA(rp1_pll_ph_data,
+> > +                                        .name = "pll_sys_pri_ph",
+> > +                                        .ph_reg = PLL_SYS_PRIM,
+> > +                                        .fixed_divider = 2,
+> > +                                        .phase = RP1_PLL_PHASE_0,
+> > +                                        .fc0_src = FC_NUM(1, 2),
+> > +                               )),
+> > +
+> > +       [RP1_PLL_SYS_SEC] = REGISTER_PLL_DIV(PARENT_CLK(1,
+> > +                               { .hw = &clk_desc_array[RP1_PLL_SYS_CORE].hw }
+> > +                               ),
+> > +                               CLK_DATA(rp1_pll_data,
+> > +                                        .name = "pll_sys_sec",
+> > +                                        .ctrl_reg = PLL_SYS_SEC,
+> > +                                        .fc0_src = FC_NUM(2, 2),
+> > +                               )),
+> > +};
+> > +
+> > +static const struct regmap_range rp1_reg_ranges[] = {
+> > +       regmap_reg_range(PLL_SYS_CS, PLL_SYS_SEC),
+> > +       regmap_reg_range(PLL_AUDIO_CS, PLL_AUDIO_TERN),
+> > +       regmap_reg_range(PLL_VIDEO_CS, PLL_VIDEO_SEC),
+> > +       regmap_reg_range(GPCLK_OE_CTRL, GPCLK_OE_CTRL),
+> > +       regmap_reg_range(CLK_SYS_CTRL, CLK_SYS_DIV_INT),
+> > +       regmap_reg_range(CLK_SYS_SEL, CLK_SYS_SEL),
+> > +       regmap_reg_range(CLK_SLOW_SYS_CTRL, CLK_SLOW_SYS_DIV_INT),
+> > +       regmap_reg_range(CLK_SLOW_SYS_SEL, CLK_SLOW_SYS_SEL),
+> > +       regmap_reg_range(CLK_DMA_CTRL, CLK_DMA_DIV_INT),
+> > +       regmap_reg_range(CLK_DMA_SEL, CLK_DMA_SEL),
+> > +       regmap_reg_range(CLK_UART_CTRL, CLK_UART_DIV_INT),
+> > +       regmap_reg_range(CLK_UART_SEL, CLK_UART_SEL),
+> > +       regmap_reg_range(CLK_ETH_CTRL, CLK_ETH_DIV_INT),
+> > +       regmap_reg_range(CLK_ETH_SEL, CLK_ETH_SEL),
+> > +       regmap_reg_range(CLK_PWM0_CTRL, CLK_PWM0_SEL),
+> > +       regmap_reg_range(CLK_PWM1_CTRL, CLK_PWM1_SEL),
+> > +       regmap_reg_range(CLK_AUDIO_IN_CTRL, CLK_AUDIO_IN_DIV_INT),
+> > +       regmap_reg_range(CLK_AUDIO_IN_SEL, CLK_AUDIO_IN_SEL),
+> > +       regmap_reg_range(CLK_AUDIO_OUT_CTRL, CLK_AUDIO_OUT_DIV_INT),
+> > +       regmap_reg_range(CLK_AUDIO_OUT_SEL, CLK_AUDIO_OUT_SEL),
+> > +       regmap_reg_range(CLK_I2S_CTRL, CLK_I2S_DIV_INT),
+> > +       regmap_reg_range(CLK_I2S_SEL, CLK_I2S_SEL),
+> > +       regmap_reg_range(CLK_MIPI0_CFG_CTRL, CLK_MIPI0_CFG_DIV_INT),
+> > +       regmap_reg_range(CLK_MIPI0_CFG_SEL, CLK_MIPI0_CFG_SEL),
+> > +       regmap_reg_range(CLK_MIPI1_CFG_CTRL, CLK_MIPI1_CFG_DIV_INT),
+> > +       regmap_reg_range(CLK_MIPI1_CFG_SEL, CLK_MIPI1_CFG_SEL),
+> > +       regmap_reg_range(CLK_PCIE_AUX_CTRL, CLK_PCIE_AUX_DIV_INT),
+> > +       regmap_reg_range(CLK_PCIE_AUX_SEL, CLK_PCIE_AUX_SEL),
+> > +       regmap_reg_range(CLK_USBH0_MICROFRAME_CTRL, CLK_USBH0_MICROFRAME_DIV_INT),
+> > +       regmap_reg_range(CLK_USBH0_MICROFRAME_SEL, CLK_USBH0_MICROFRAME_SEL),
+> > +       regmap_reg_range(CLK_USBH1_MICROFRAME_CTRL, CLK_USBH1_MICROFRAME_DIV_INT),
+> > +       regmap_reg_range(CLK_USBH1_MICROFRAME_SEL, CLK_USBH1_MICROFRAME_SEL),
+> > +       regmap_reg_range(CLK_USBH0_SUSPEND_CTRL, CLK_USBH0_SUSPEND_DIV_INT),
+> > +       regmap_reg_range(CLK_USBH0_SUSPEND_SEL, CLK_USBH0_SUSPEND_SEL),
+> > +       regmap_reg_range(CLK_USBH1_SUSPEND_CTRL, CLK_USBH1_SUSPEND_DIV_INT),
+> > +       regmap_reg_range(CLK_USBH1_SUSPEND_SEL, CLK_USBH1_SUSPEND_SEL),
+> > +       regmap_reg_range(CLK_ETH_TSU_CTRL, CLK_ETH_TSU_DIV_INT),
+> > +       regmap_reg_range(CLK_ETH_TSU_SEL, CLK_ETH_TSU_SEL),
+> > +       regmap_reg_range(CLK_ADC_CTRL, CLK_ADC_DIV_INT),
+> > +       regmap_reg_range(CLK_ADC_SEL, CLK_ADC_SEL),
+> > +       regmap_reg_range(CLK_SDIO_TIMER_CTRL, CLK_SDIO_TIMER_DIV_INT),
+> > +       regmap_reg_range(CLK_SDIO_TIMER_SEL, CLK_SDIO_TIMER_SEL),
+> > +       regmap_reg_range(CLK_SDIO_ALT_SRC_CTRL, CLK_SDIO_ALT_SRC_DIV_INT),
+> > +       regmap_reg_range(CLK_SDIO_ALT_SRC_SEL, CLK_SDIO_ALT_SRC_SEL),
+> > +       regmap_reg_range(CLK_GP0_CTRL, CLK_GP0_SEL),
+> > +       regmap_reg_range(CLK_GP1_CTRL, CLK_GP1_SEL),
+> > +       regmap_reg_range(CLK_GP2_CTRL, CLK_GP2_SEL),
+> > +       regmap_reg_range(CLK_GP3_CTRL, CLK_GP3_SEL),
+> > +       regmap_reg_range(CLK_GP4_CTRL, CLK_GP4_SEL),
+> > +       regmap_reg_range(CLK_GP5_CTRL, CLK_GP5_SEL),
+> > +       regmap_reg_range(CLK_SYS_RESUS_CTRL, CLK_SYS_RESUS_CTRL),
+> > +       regmap_reg_range(CLK_SLOW_SYS_RESUS_CTRL, CLK_SLOW_SYS_RESUS_CTRL),
+> > +       regmap_reg_range(FC0_REF_KHZ, FC0_RESULT),
+> > +       regmap_reg_range(VIDEO_CLK_VEC_CTRL, VIDEO_CLK_VEC_DIV_INT),
+> > +       regmap_reg_range(VIDEO_CLK_VEC_SEL, VIDEO_CLK_DPI_DIV_INT),
+> > +       regmap_reg_range(VIDEO_CLK_DPI_SEL, VIDEO_CLK_MIPI1_DPI_SEL),
+> > +};
+> > +
+> > +static const struct regmap_access_table rp1_reg_table = {
+> > +       .yes_ranges = rp1_reg_ranges,
+> > +       .n_yes_ranges = ARRAY_SIZE(rp1_reg_ranges),
+> > +};
+> > +
+> > +static const struct regmap_config rp1_clk_regmap_cfg = {
+> > +       .reg_bits = 32,
+> > +       .val_bits = 32,
+> > +       .reg_stride = 4,
+> > +       .max_register = PLL_VIDEO_SEC,
+> > +       .name = "rp1-clk",
+> > +       .rd_table = &rp1_reg_table,
+> > +};
+> > +
+> > +static int rp1_clk_probe(struct platform_device *pdev)
+> > +{
+> > +       const size_t asize = ARRAY_SIZE(clk_desc_array);
+> > +       struct rp1_clk_desc *desc;
+> > +       struct device *dev = &pdev->dev;
+> > +       struct rp1_clockman *clockman;
+> > +       struct clk_hw **hws;
+> > +       unsigned int i;
+> > +
+> > +       clockman = devm_kzalloc(dev, struct_size(clockman, onecell.hws, asize),
+> > +                               GFP_KERNEL);
+> > +       if (!clockman)
+> > +               return -ENOMEM;
+> > +
+> > +       spin_lock_init(&clockman->regs_lock);
+> > +       clockman->dev = dev;
+> > +
+> > +       clockman->regs = devm_platform_ioremap_resource(pdev, 0);
+> > +       if (IS_ERR(clockman->regs))
+> > +               return PTR_ERR(clockman->regs);
+> > +
+> > +       clockman->regmap = devm_regmap_init_mmio(dev, clockman->regs,
+> > +                                                &rp1_clk_regmap_cfg);
+> > +       if (IS_ERR(clockman->regmap)) {
+> > +               dev_err(dev, "could not init clock regmap\n");
+> 
+> return dev_err_probe()?
+
+Ack.
+
+Many thanks,
+Andrea
+
+> 
+> > +               return PTR_ERR(clockman->regmap);
+> > +       }
+> > +
+> > +       clockman->onecell.num = asize;
+> > +       hws = clockman->onecell.hws;
+> > +
+> > +       for (i = 0; i < asize; i++) {
+> > +               desc = &clk_desc_array[i];
+> > +               if (desc->clk_register && desc->data) {
+> > +                       hws[i] = desc->clk_register(clockman, desc);
+> > +                       if (IS_ERR_OR_NULL(hws[i]))
+> > +                               dev_err_probe(dev, PTR_ERR(hws[i]),
+> > +                                             "Unable to register clock: %s\n",
+> > +                                             clk_hw_get_name(hws[i]));
+> > +               }
+> > +       }
+> > +
+> > +       platform_set_drvdata(pdev, clockman);
+> > +
+> > +       return devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get,
+> > +                                          &clockman->onecell);
+> > +}
 
