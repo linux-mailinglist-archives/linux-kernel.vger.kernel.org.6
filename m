@@ -1,124 +1,57 @@
-Return-Path: <linux-kernel+bounces-396185-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396171-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DCDA9BC919
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 10:27:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3152A9BC8E6
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 10:16:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C2CD12833B8
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 09:27:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E48D32810E6
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 09:16:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50F511D094B;
-	Tue,  5 Nov 2024 09:27:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74C951D040B;
+	Tue,  5 Nov 2024 09:16:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=atlas.cz header.i=@atlas.cz header.b="cAeumkLW"
-Received: from gmmr-4.centrum.cz (gmmr-4.centrum.cz [46.255.227.205])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Yv9G6haA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 393371D040B;
-	Tue,  5 Nov 2024 09:27:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.255.227.205
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 933F118132A;
+	Tue,  5 Nov 2024 09:16:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730798860; cv=none; b=oeSVQYf4cbKu/Frp97HUtAOGPwrF/SEKBOMp+tFauT4RHT1HvoruopcFYKuSfE2WM2CCImu9WAlI5neyqi+pLYh26POcOmCQm8Y7R52XRf8WdnZpOngxzmXO3RYVh08PNmhzSyBOje1CxudBwY4m5/A5weGOKMsUfZ8Eg+lv5/c=
+	t=1730798195; cv=none; b=M8gBYASl/MCPgWDYZyxtsmPhhN6LwBVqMGc4me2Q8zBGgvGmyDlw/g+HGAtEeU8lmfcaorSfqXhtAl9iZGvxwmYRo2KBmAXd/tFXF8V3Y6xlsqmO9JhCfLAMrrBVeL/+G8zc0njkWy/5P9jmU/hwhuy+zMlVaBUdTUaQoRLo98I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730798860; c=relaxed/simple;
-	bh=JSHFHZSGnbrGaCOZClJ9s38M76+XA809XKv7+1kWT8Q=;
+	s=arc-20240116; t=1730798195; c=relaxed/simple;
+	bh=WcZMe9/VfUeI82nF/gy6lNIFFjy2UM0JuNhq+6rR4XQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=q5YtbXs1csmNf4bYz4nPDjvJ4uPRU50yd8HpG0pi9cWabBQSWx7LA6m9W+gkV3a9/UHv8nJ2dxK16mM9b3Jgz5KRjj4XItq0WEoqSfgBPResSLjn9iJk9GELfFIAFxnU6wR7/O6+ciHl2gLC64kSJ2a+1b8XiHWJyqUr1Ndx+mQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=atlas.cz; spf=pass smtp.mailfrom=atlas.cz; dkim=pass (1024-bit key) header.d=atlas.cz header.i=@atlas.cz header.b=cAeumkLW; arc=none smtp.client-ip=46.255.227.205
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=atlas.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=atlas.cz
-Received: from gmmr-4.centrum.cz (localhost [127.0.0.1])
-	by gmmr-4.centrum.cz (Postfix) with ESMTP id 8906E4B34;
-	Tue,  5 Nov 2024 10:27:34 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=atlas.cz; s=mail;
-	t=1730798854; bh=Zh5NaP9DoUAhSs5KOhgU1QXVHVMBkSsfoS+iLptkMUk=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=As4KEpDWIigWRBVPkat8isg7kacJXZHklGneuTMluqjjF0TPisK0tMN7vRiXLJ9w+0MX+D56kmiedDigv71fTuOkLJqyB9kICn9MSnLANfE+udscoJcBAo1nI3lN99dB4ZF7Pd+wD4wGJ8VmOGxUEJHdBhUHKOaWtibctrjiSlA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Yv9G6haA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A1D8C4CECF;
+	Tue,  5 Nov 2024 09:16:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730798194;
+	bh=WcZMe9/VfUeI82nF/gy6lNIFFjy2UM0JuNhq+6rR4XQ=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cAeumkLWJNN2xnyCMI3fuCnZXaw/z+Isi1jdg0vPVh6NkFBF+9mvWJU7bcdfwGoKY
-	 panaRAC86pBHp9AZvD9tACbICcBCkUSwagWRqrUqlAcT8jZMWkVOJO8lsjEijMEF1n
-	 bBrUTSVbL3C860EcUkHL3PpD5oHecrz/I4g57+3A=
-Received: from antispam29.centrum.cz (antispam29.cent [10.30.208.29])
-	by gmmr-4.centrum.cz (Postfix) with ESMTP id 79979200D91C;
-	Tue,  5 Nov 2024 10:27:34 +0100 (CET)
-X-CSE-ConnectionGUID: 9CUH/m/PTzabEO9Low0X8w==
-X-CSE-MsgGUID: CPKpUBMGT0Gw1yU3vMcUVA==
-X-ThreatScanner-Verdict: Negative
-X-IPAS-Result: =?us-ascii?q?A2EVAwB75Cln/0vj/y5aHgEBCxIMQAmBPwuJe5Fxi3WGN?=
- =?us-ascii?q?YEghACGS4F+DwEBAQEBAQEBAQlEBAEBhH0KAoo1JzUIDgECBAEBAQEDAgMBA?=
- =?us-ascii?q?QEBAQEBAQENAQEGAgEBAQEGBgECgR2FNVOCYgGEAAEFIw8BRhALDQsCAiYCA?=
- =?us-ascii?q?lYGgxSCMAE0rxyBMhoCZdxvAoEjYYEqgRouiEwBhWgBhHdCgg2EPz6BBQGHG?=
- =?us-ascii?q?IJpBIJHhR8liRWXY1J7HANZIAERAVUTFwsHBYEpJCwDglJ/gTmBUQGDH0qDP?=
- =?us-ascii?q?YFeBTcKP4JKaU06Ag0CNoIkfYJQhR2BCwODYoRsfR1AAwttPTUUGwajCYN3x?=
- =?us-ascii?q?jODHIEIhE2KH5JtM4NxE5NlA5JhmHepIoFoAYIUMyIwgyNRGY5Hx3SBMgIHA?=
- =?us-ascii?q?QoBAQMJgjuNS4FDCAEB?=
-IronPort-PHdr: A9a23:+r+RbhTRI3T7tFeVS5DQsKr7tNpsotCZAWYlg6HPa5pwe6iut67vI
- FbYra00ygOSBcOBuqIP07GempujcFJDyK7JiGoFfp1IWk1NouQttCtkLei7TGbWF7rUVRE8B
- 9lIT1R//nu2YgB/Ecf6YEDO8DXptWZBUhrwOhBoKevrB4Xck9q41/yo+53Ufg5EmCexbal9I
- Ri4sQndrNcajI9hJ6o+1hfErGZDdvhLy29vOV+ckBHw69uq8pV+6SpQofUh98BBUaX+Yas1S
- KFTASolPW4o+sDlrAHPQwSX6HQTS2kbjBVGDRXd4B71Qpn+vC36tvFg2CaBJs35Uao0WTW54
- Kh1ThLjlToKOCQ48GHTjcxwkb5brRe8rBFx34LYfIeYP+dlc6jDYd0VW3ZOXsdJVyxAHIy8a
- ZcPD/EcNupctoXxukcCoQe7CQSqGejhyCJHhmXu0KM00+ovDx/L0hEjEdIAv3vbsMj6OqgQX
- u2u0KnFzi/OY+9K1Tvh6oXFdA0qr/GWXbJ3dMrc0VMhGB3ZjlWKtIfqMCma1uITtmiY8uFtU
- vigi3Qkqw5rpzig3N0sh5LTiYIJzlDL7z55zJwpKty5UUN2Z8OvH5RMuS+ALYR2Xt8iTH9yu
- CY80rALpZG2cScFxpopwxPSaPyJfoaH7B79VOucLit1iG94dLyxmRu+70itx+ziWsWo0FtHr
- DZJnsXPu30Q1xLe98iJR/1g9UmiwTaCzw/e5+BeLUwqlafWK4QtzqAumpcRq0jOHC/7lF3og
- KOLeEgo4Pak5/r7brn8uJOROJN4hhv6P6kvnMG0HP42PRIUX2eB/OSxzLjj/UrkT7pUlvA2i
- azZsIzCJcQcu665HxdZ0oY95Ba7CDeryNsYnXweIFJefRKHk5DpN0zTLPziEfiwnVKskCtxx
- /DbO73tGInCL3nbnLfge7Zy9VJcxRI8wN1e/Z5YFLEMLfLpVkPvqtDVDAU1Pg60zur/DdVyz
- IIeWWaBAq+DN6PStEeF6fg1I+mPfoAVvSzyK+I+6vH0kX85nUUSfbKz0ZQLaXG0Bu5mLFmBY
- XrwntcBFn8HsRA4TOP3kl2NTzBSa2yuUKI74TE7EJypDZ3NS422nLOB3Tu7HodXZmFJEFyDD
- XDod4CcV/cWdC2SOtNhkiADVbW5RY4h1BWutAv6yrd8L+rU/CMYtYj529do+eLcjww9+SZzD
- 8SH3GGBV3t0kX8QRz8qwKB/plRwyliZ0admjPxYFtxT6uhNUgc7M57c0uN7C971WgLceNeGV
- UypQsmnATE2SNI92dgOY1xyG9m6lBDMwzKqA6MJl7yMHJE777jT32bwJ8lg0HvGzrcugEQmQ
- sRVKW2qnLJw9w/WB4LRiUWWi76qdbgA3C7K7GqDyWuOvEdFUA9/SKnFXm4QZlHQrdvn4kPPV
- KGuCbs5PQtb08KCKbVFasfvjVpYQPfvItPeY3i+m2uoHxaH2quMbJb2e2UaxCjdDEkEkwYO/
- XeJLAQ/CSmho3nFATxwGlLgfVns/fN9qHylVE80yR+Fb0l727qy4B4ViuSQS/UI0b0coicut
- y10HEqh39LRE9eNphJtc7hfYdM85VdKzXrXuQNzMZK+M65vmlgQIExLuBbH0RltB5oIus8tt
- H4whF57L66C3UwHfDSfxZ3qYZXcK3Xo/QDpYKnTjALwytGTr58C9O5wlVzlHwLhQkM48Hxi2
- sN92meY746MBxhEAsG5aVo+6xUv/+KSWSI6/Y6BkCQ0acGJ
-IronPort-Data: A9a23:byanXK8b1j6pxdWFNzyYDrUDSX+TJUtcMsCJ2f8bNWPcYEJGY0x3m
- mEYWzqGa/reajCkKNp1bIjn808D68CEm4AxGgI+qy9EQiMRo6IpJ/zCdxutYHnCRiHgZB89s
- 59OOoGowOQcFCK0SsKFa+C5xZVE/fjVAOe6UaicZ30ZqTZMEE8JkQhkl/MynrlmiN24BxLlk
- d7pqqUzAnf8s9JPGjxSsvvrRC9H5qyo5GpB5gFmP5ingXeH/5UrJMNCTU2OBySgKmVkNrbSb
- /rOyri/4lTY838FYvu5kqz2e1E9WbXbOw6DkBJ+A8BOVTAfzsCa+v9T2Ms0MS+7uR3Q9zxC4
- IklWaiLdOscFvakdNI1CEAETn4kbcWqz5ecSZS3mZT7I0Qr6BIAyd02ZK09FdVwFuqanQiiX
- BHXQdwARknrug64/F60YrhHu+RkKY7TAJEWsFxHnBXeEq4WEY+WFs0m5fcAtNsxrs9LWO3be
- 9JAMHxkYRLceQBKfFwFYH48tLv2wCOiLnsC8g3T+vdfD2v7lWSd1JDkKtncf9WQbcxJmk+D4
- GnUl4j8KktEZYXGkGrbohpAgMfkpQDjZag3O4Hg2eEzkWDI2EkYNSM/AA7TTf6RzxTWt8hkA
- 0US9jAjsu4580uzQ8Omdxa5vGSFrlgXXN84O/I77AWc4qvS7RyQCmUNQnhGctNOnMAsSDMp1
- neNntX0FTJorbuZQG6c8bHSqim9UQAZJHEDaQceQAcF6sWlq4Y25jrLT9B+AOu2g8fzFDXY3
- T+Htm49iq8VgMpN0L+0lXjDgjSxtt3ZQBUd+AraRCSm4xl/aYrjYJangWU39t4ccsDDEwTH5
- iJb3ZfDhAwTMayweOW2aL1lNNmUCzytbGWB0DaDw7FJG+yRxkOe
-IronPort-HdrOrdr: A9a23:R8wVVqNkvOoAssBcTsyjsMiBIKoaSvp037Dk7S9MoDhuA6mlfq
- eV7ZAmPH7P+VQssR4b8+xoVJPsfZqYz+8T3WBzB8bAYOCFggqVxehZhOOI/9SjIU3DH4Vmu5
- uIHZITNOHN
-X-Talos-CUID: =?us-ascii?q?9a23=3A+KkLnGtn7iZf0aSUHV1Wo4236It0WUD9i3KXG3O?=
- =?us-ascii?q?qAGxEb+yxTkDIyPN7xp8=3D?=
-X-Talos-MUID: =?us-ascii?q?9a23=3AH2v6dA8g+DOGfu1Hi4xnmpeQf+xQwLyTImUirc0?=
- =?us-ascii?q?ppJCVCHduHjygsh3iFw=3D=3D?=
-X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-AV: E=Sophos;i="6.11,259,1725314400"; 
-   d="scan'208";a="269111868"
-Received: from unknown (HELO gm-smtp11.centrum.cz) ([46.255.227.75])
-  by antispam29.centrum.cz with ESMTP; 05 Nov 2024 10:16:05 +0100
-Received: from arkam (ip-213-220-240-96.bb.vodafone.cz [213.220.240.96])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by gm-smtp11.centrum.cz (Postfix) with ESMTPSA id EB4491015BC69;
-	Tue,  5 Nov 2024 10:16:04 +0100 (CET)
-Date: Tue, 5 Nov 2024 10:16:03 +0100
-From: Petr =?utf-8?B?VmFuxJtr?= <arkamar@atlas.cz>
-To: Andrew Cooper <andrew.cooper3@citrix.com>
-Cc: david@redhat.com, gregkh@linuxfoundation.org,
-	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
-	willy@infradead.org
-Subject: Re: xfs: Xen/HPT related regression in v6.6
-Message-ID: <20241159163-ZyniUyCdoAYdWpG2-arkamar@atlas.cz>
-References: <202411584429-Zyna7RpVesXAiTBM-arkamar@atlas.cz>
- <df10f269-0494-46d9-be8f-7e5dc9cd3745@citrix.com>
+	b=Yv9G6haAugRVNUqDmDVNm9Zt+aj3atfwiskZQiuFtO2Rln71uUQcIi6iK2xqbB/gY
+	 T6GsnAiaaGRwSMIXK3UENS41UL889E7z4/Rw1v+OyGr6JUk9DxWdiaIhzpmct9rRSZ
+	 JqBfnr7HYhudu8njRT5qJHGlIQZrgn+47ELxcKRjnSoykYzEXyVNSu5iMp0/PCbu9e
+	 M6f/xwXl6CWa/hSr1FMTvRgxMttAKQwChSoLDcMnrg3qJRs55PIL7tzZmrC9BLRQBl
+	 sjo3SXwXC/CHd9Z8oyGm8EEk8WFzpKR9pXcol5bmRsdG/17Y1i+OqN+EFIqkdWlEnv
+	 bDLfVRxjK59ig==
+Date: Tue, 5 Nov 2024 10:16:30 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Sean Nyekjaer <sean@geanix.com>
+Cc: Marc Kleine-Budde <mkl@pengutronix.de>, 
+	Vincent Mailhol <mailhol.vincent@wanadoo.fr>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+	Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-can@vger.kernel.org, 
+	netdev@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: can: convert tcan4x5x.txt to DT schema
+Message-ID: <dq36jlwfm7hz7dstrp3bkwd6r6jzcxqo57enta3n2kibu3e7jw@krwn5nsu6a4d>
+References: <20241104125342.1691516-1-sean@geanix.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -127,26 +60,229 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <df10f269-0494-46d9-be8f-7e5dc9cd3745@citrix.com>
+In-Reply-To: <20241104125342.1691516-1-sean@geanix.com>
 
-On Tue, Nov 05, 2024 at 08:55:17AM +0000, Andrew Cooper wrote:
-> >> At least years ago, this feature was not available in XEN PV guests [1]. 
-> > Yes, as I understand it, the hugepages are not available in my Xen
-> > guest.
+On Mon, Nov 04, 2024 at 01:53:40PM +0100, Sean Nyekjaer wrote:
+> Convert binding doc tcan4x5x.txt to yaml.
 > 
-> Xen PV guests are strictly 4k-only.
-> 
-> Xen HVM guests (using normal VT-x/SVM hardware support) have all page
-> sizes available.
-> 
-> But lucky to find this thread.  We've had several reports and no luck
-> isolating what changed.
+> Signed-off-by: Sean Nyekjaer <sean@geanix.com>
+> ---
+> Changes since rfc:
 
-I am happy to hear that :) It was partially my intention to inform
-others because I spent some time isolating it.
+That's a v2. RFC was v1. *ALWAYS*.
+Try by yourself:
+b4 diff 20241104125342.1691516-1-sean@geanix.com
 
-Cheers,
-Petr
+Works? No. Should work? Yes.
+
+
+>   - Tried to re-add ti,tcan4x5x wildcard
+>   - Removed xceiver and vdd supplies (copy paste error)
+>   - Corrected max SPI frequency
+>   - Copy pasted bosch,mram-cfg from bosch,m_can.yaml
+>   - device-state-gpios and device-wake-gpios only available for tcan4x5x
+
+...
+
+> +properties:
+> +  compatible:
+> +    oneOf:
+> +      - items:
+> +          - enum:
+> +              - ti,tcan4552
+> +          - const: ti,tcan4x5x
+> +      - items:
+> +          - enum:
+> +              - ti,tcan4553
+
+Odd syntax. Combine these two into one enum.
+
+> +          - const: ti,tcan4x5x
+> +      - items:
+
+Drop items.
+
+> +          - enum:
+
+... and drop enum. That's just const or do you already plan to add here
+entries?
+
+> +              - ti,tcan4x5x
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +    description: The GPIO parent interrupt.
+> +
+> +  clocks:
+> +    maxItems: 1
+> +
+> +  reset-gpios:
+> +    description: Hardwired output GPIO. If not defined then software reset.
+> +    maxItems: 1
+> +
+> +  device-state-gpios:
+> +    description: |
+
+Do not need '|' unless you need to preserve formatting.
+
+Didn't you get this comment alerady?
+
+> +      Input GPIO that indicates if the device is in a sleep state or if the
+> +      device is active. Not available with tcan4552/4553.
+> +    maxItems: 1
+> +
+> +  device-wake-gpios:
+> +    description: |
+> +      Wake up GPIO to wake up the TCAN device.
+> +      Not available with tcan4552/4553.
+> +    maxItems: 1
+> +
+> +  bosch,mram-cfg:
+> +    description: |
+> +      Message RAM configuration data.
+> +      Multiple M_CAN instances can share the same Message RAM
+> +      and each element(e.g Rx FIFO or Tx Buffer and etc) number
+> +      in Message RAM is also configurable, so this property is
+> +      telling driver how the shared or private Message RAM are
+> +      used by this M_CAN controller.
+> +
+> +      The format should be as follows:
+> +      <offset sidf_elems xidf_elems rxf0_elems rxf1_elems rxb_elems txe_elems txb_elems>
+> +      The 'offset' is an address offset of the Message RAM where
+> +      the following elements start from. This is usually set to
+> +      0x0 if you're using a private Message RAM. The remain cells
+> +      are used to specify how many elements are used for each FIFO/Buffer.
+> +
+> +      M_CAN includes the following elements according to user manual:
+> +      11-bit Filter	0-128 elements / 0-128 words
+> +      29-bit Filter	0-64 elements / 0-128 words
+> +      Rx FIFO 0		0-64 elements / 0-1152 words
+> +      Rx FIFO 1		0-64 elements / 0-1152 words
+> +      Rx Buffers	0-64 elements / 0-1152 words
+> +      Tx Event FIFO	0-32 elements / 0-64 words
+> +      Tx Buffers	0-32 elements / 0-576 words
+> +
+> +      Please refer to 2.4.1 Message RAM Configuration in Bosch
+> +      M_CAN user manual for details.
+> +    $ref: /schemas/types.yaml#/definitions/int32-array
+> +    items:
+> +      - description: The 'offset' is an address offset of the Message RAM where
+> +          the following elements start from. This is usually set to 0x0 if
+> +          you're using a private Message RAM.
+> +        default: 0
+> +      - description: 11-bit Filter 0-128 elements / 0-128 words
+> +        minimum: 0
+> +        maximum: 128
+> +      - description: 29-bit Filter 0-64 elements / 0-128 words
+> +        minimum: 0
+> +        maximum: 64
+> +      - description: Rx FIFO 0 0-64 elements / 0-1152 words
+> +        minimum: 0
+> +        maximum: 64
+> +      - description: Rx FIFO 1 0-64 elements / 0-1152 words
+> +        minimum: 0
+> +        maximum: 64
+> +      - description: Rx Buffers 0-64 elements / 0-1152 words
+> +        minimum: 0
+> +        maximum: 64
+> +      - description: Tx Event FIFO 0-32 elements / 0-64 words
+> +        minimum: 0
+> +        maximum: 32
+> +      - description: Tx Buffers 0-32 elements / 0-576 words
+> +        minimum: 0
+> +        maximum: 32
+> +    minItems: 1
+> +
+> +  spi-max-frequency:
+> +    description:
+> +      Must be half or less of "clocks" frequency.
+> +    maximum: 18000000
+> +
+> +  wakeup-source:
+> +    $ref: /schemas/types.yaml#/definitions/flag
+> +    description: |
+
+Do not need '|' unless you need to preserve formatting.
+
+> +      Enable CAN remote wakeup.
+> +
+> +allOf:
+> +  - $ref: can-controller.yaml#
+> +  - $ref: /schemas/spi/spi-peripheral-props.yaml#
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            enum:
+> +              - ti,tcan4552
+> +              - ti,tcan4553
+> +    then:
+> +      properties:
+> +        device-state-gpios: false
+> +        device-wake-gpios: false
+
+Heh, this is a weird binding. It should have specific compatibles for
+all other variants because above does not make sense. For 4552 one could
+skip front compatible and use only fallback, right? And then add these
+properties bypassing schema check. I commented on this already that
+original binding is flawed and should be fixed, but no one cares then I
+also don't care.
+
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - interrupts
+> +  - clocks
+> +  - bosch,mram-cfg
+> +
+> +additionalProperties: false
+
+Implement feedback. Nothing changed here.
+
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/gpio/gpio.h>
+> +    #include <dt-bindings/interrupt-controller/irq.h>
+> +
+> +    spi {
+> +        #address-cells = <1>;
+> +        #size-cells = <0>;
+> +
+> +        can@0 {
+> +            compatible = "ti,tcan4x5x";
+> +            reg = <0>;
+> +            clocks = <&can0_osc>;
+> +            pinctrl-names = "default";
+> +            pinctrl-0 = <&can0_pins>;
+> +            spi-max-frequency = <10000000>;
+> +            bosch,mram-cfg = <0x0 0 0 16 0 0 1 1>;
+> +            interrupt-parent = <&gpio1>;
+> +            interrupts = <14 IRQ_TYPE_LEVEL_LOW>;
+> +            device-state-gpios = <&gpio3 21 GPIO_ACTIVE_HIGH>;
+> +            device-wake-gpios = <&gpio1 15 GPIO_ACTIVE_HIGH>;
+> +            reset-gpios = <&gpio1 27 GPIO_ACTIVE_HIGH>;
+> +            wakeup-source;
+> +        };
+> +    };
+> +  - |
+> +    #include <dt-bindings/gpio/gpio.h>
+> +    #include <dt-bindings/interrupt-controller/irq.h>
+> +
+> +    spi {
+> +        #address-cells = <1>;
+> +        #size-cells = <0>;
+> +
+> +        can@0 {
+> +            compatible = "ti,tcan4552","ti,tcan4x5x";
+
+Missing space after ,.
+
+Best regards,
+Krzysztof
 
 
