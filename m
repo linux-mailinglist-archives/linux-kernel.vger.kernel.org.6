@@ -1,124 +1,101 @@
-Return-Path: <linux-kernel+bounces-396475-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396477-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 531CC9BCD9C
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 14:15:07 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A570C9BCDA5
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 14:16:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D070AB2141D
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 13:15:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D58F41C226A6
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 13:16:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3992B1D63C4;
-	Tue,  5 Nov 2024 13:14:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0C511D5AA9;
+	Tue,  5 Nov 2024 13:16:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Rh0AQUT4"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="a9+mYfby";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Ijc+eqIR"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90FDA1D5AB6
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 13:14:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4D0B33981
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 13:16:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730812498; cv=none; b=tpNfxCTvY/75l6ImJU+ffP4J2Hq65WG5QlSNXjgGH4ywcInnZ8QwNKA+FAMFaLChXVL/VJgoyChLmsKqVAzUvfYWn6/bRyD2YMk/siUQqY7FKo88UTg8KcQ9nfMKpfqSmKypqKxrY/NBOyh6UK5I9lz6jTBMZ7yB+SFsjG8S6q4=
+	t=1730812599; cv=none; b=iETkYdE7eLdKJs8PyBPyt1vXpkgmj6U9AVwyC9vmMANpntVAypubFtdFtmhJUyPyEfAdStk/MLUp96ijXU94NVEWzF35SmvnwWhjjSzJVPa1SoZ2l8Km9yXlmrg1zVdlOqMRKtY//otaswVaLF5wiSKRBB8OvgJVMFZMARO8ODs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730812498; c=relaxed/simple;
-	bh=nIfRuCv8NOVzvOxVlZqFNtL7vNI/sQ8/tUTt7WPlACo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UO1gLAQ+avqEaBccFHY5d/PfzGrOnaMV+d3AWYbj/64KLtn/YhO0tRWDyCerPNod0YVG0yWXisYX0ivYXxd9fEPJ14LvQ96EyhfXPJ6TyEH1uVaxXve5poQvSxW12jwlhlRIzrA6vvor2sL74++M4kTCqYLRAusp+frKtboJXdw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Rh0AQUT4; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a9eaaab29bcso265476366b.2
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 05:14:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1730812495; x=1731417295; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=nIfRuCv8NOVzvOxVlZqFNtL7vNI/sQ8/tUTt7WPlACo=;
-        b=Rh0AQUT40T3yxAOvwll+ZDF8g7rJXzH9G3WxDL3gXNCF5T130Ms9qF/AmE/fqUXGeh
-         jCw9Cgb/oDmMP0M2EnwJ9ITxN4F6qXMjh0dJvaewCsbsCvV1IXoT8yKQ5tUy6kyuU4Cz
-         uRu07x1DUUvtVSnNBHxLPMcHCXSxPskktQi2y0K0zzJQWlMRPvAZVVXZZIehCST4PSJn
-         4VlHeuXUgpUK4zx/cl/pANyCovnYdMOkaWP/Rs55U4R1I9dO/oL8R5mKqT9t6dMdlAbt
-         7zq4KTxXKNZJwtsYZcG6H9B/i8nWaBN4wn3gcWYybbE/c0UmNxv1qf/W/ewk9T0Oby2C
-         7g2g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730812495; x=1731417295;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nIfRuCv8NOVzvOxVlZqFNtL7vNI/sQ8/tUTt7WPlACo=;
-        b=C9TbAfFsjMbKeC97LeS9wCkIKOd1lkzWUK0ALePKtXj4BBP7QHY14H4zxhSs7OBkUW
-         IabWbAUN1fgWhlyDHif6YXxffKVABw5T1xhkdkImc6NIrlwVoCQj/woO2tqtwEBAO7HH
-         s19AhfUrSfD4YI8Xqq+lnHFcqbS8eDn1+0q2GBi/F178AgDWUEEh4U61+34lSdrbrDby
-         qH7lK6E+rFBoY24CsNlDqaFHwDwi+u7f3ASRSPr9prlK0ihk1hPIH8fADlDN7SnlHSaM
-         HaDi2HeoyDyD8P2tRT0VZfdS8omJ+BDMGFNJKj1iNJe2URnEFc9x4hh0IN/kyGiHessV
-         bARg==
-X-Forwarded-Encrypted: i=1; AJvYcCXZvLZ/9kpTVN0Vlv4oJoaKH9n6su+IK4kawpb17IQjOmazG/9PP6877xnoXJGeu521D+qKbOVPccbjvLM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxOT3hAd5drvO7jqOmA5utyojDuT8qPCzzGVyoHZ1TyMmBSBGUa
-	LUbcMiKpeWXAXoHQExM+ruRINdQzgB6xmN+zjkxm7WAhsTb2LrO4d1+RSjTaO8w=
-X-Google-Smtp-Source: AGHT+IHVOo+x/THWNs3/mHtaNNJeAx+rDnTMptfCEAVraFtB0d4G6Dagju4LnspKhatdDFwS1cWHxg==
-X-Received: by 2002:a17:907:2d8e:b0:a9a:3705:9ad9 with SMTP id a640c23a62f3a-a9e50b95730mr1721715366b.50.1730812494709;
-        Tue, 05 Nov 2024 05:14:54 -0800 (PST)
-Received: from blackdock.suse.cz ([193.86.92.181])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9eb17ceb1dsm134961666b.101.2024.11.05.05.14.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Nov 2024 05:14:54 -0800 (PST)
-Date: Tue, 5 Nov 2024 14:14:52 +0100
-From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
-To: Muchun Song <songmuchun@bytedance.com>
-Cc: tj@kernel.org, hannes@cmpxchg.org, longman@redhat.com, 
-	cgroups@vger.kernel.org, linux-kernel@vger.kernel.org, Zefan Li <lizf.kern@gmail.com>, 
-	Zefan Li <lizefan.x@bytedance.com>
-Subject: Re: [PATCH v2] MAINTAINERS: remove Zefan Li
-Message-ID: <lplrh5jp3iuoy5esckhc4pbed2fhi4nriqxlswknlxiyvcrbod@pxvho7abga5b>
-References: <20241105030252.82419-1-songmuchun@bytedance.com>
+	s=arc-20240116; t=1730812599; c=relaxed/simple;
+	bh=KHdogWpkeY7Om37xbAy5eS+G07V9w4pMUr+kMtfrSh4=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=HiBxuY/4wY1TczO9tzsXrWmMQK9Sv4/1eA5bke1h6ejnRb0/x3UD/n8xzruf1m3FTcnu0m5Bx3znyTZYFU4zzaI6zYDhUSkdzS7s/GmHes2qtIaQLPJyQEwiJA3R41wHU4pzcZVw5V5tVM/p//wDtNl7myx+R3KvCw0O+oErUxc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=a9+mYfby; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Ijc+eqIR; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: John Ogness <john.ogness@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1730812589;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ZPkQk0VjMWZh6rtK6XcZtd2+mZOL929NUUV2Q+vzqL8=;
+	b=a9+mYfbyYIuh8oBUPQ3f4LUaOLYVpyzEQI7fsQockCUmUHymOXRBR0PIovra52AkPbN3Un
+	M7qh2SnIyWY8ZpYClQ9+wYZX5W6y395aVX95PhS0CCun4ZIEKTLIMW28Q0JVAG21ox02Ez
+	yfAzCkA9jwn5SNnvq+myNs4fnhncV1K26JYJqYLWDmYtVGn23CEQBk9uDwCntq6KwPQOSc
+	JDBpxcNwAkN6VovocrVfDAe6wHdK6hqYLax9STtPF6oQLHX5vGVGZwLvKnmQU9ZuwyDdBd
+	RAOr3+8WFlMqrm0E3lGqy/Z+tZOorj/KQmJBpEByoaHbwDSUILSeQ/cmrrr7mw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1730812589;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ZPkQk0VjMWZh6rtK6XcZtd2+mZOL929NUUV2Q+vzqL8=;
+	b=Ijc+eqIRga7ZM58MJd4ieLFTZQXjCRq6IyYkJmXYcfXY9ZhLabhEZK6JcFSXkQhpQFfmer
+	+7FVFBYWxnfH3hAQ==
+To: Jocelyn Falempe <jfalempe@redhat.com>, Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+ Daniel Vetter <daniel@ffwll.ch>, Javier Martinez Canillas
+ <javierm@redhat.com>, "Guilherme G . Piccoli" <gpiccoli@igalia.com>,
+ bluescreen_avenger@verizon.net, Caleb Connolly
+ <caleb.connolly@linaro.org>, Petr Mladek <pmladek@suse.com>,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Cc: Jocelyn Falempe <jfalempe@redhat.com>
+Subject: Re: [PATCH v6 2/6] drm/log: Introduce a new boot logger to draw the
+ kmsg on the screen
+In-Reply-To: <20241105125109.226866-3-jfalempe@redhat.com>
+References: <20241105125109.226866-1-jfalempe@redhat.com>
+ <20241105125109.226866-3-jfalempe@redhat.com>
+Date: Tue, 05 Nov 2024 14:22:29 +0106
+Message-ID: <84fro5es7m.fsf@jogness.linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="pqyjwghnwb2xyzmv"
-Content-Disposition: inline
-In-Reply-To: <20241105030252.82419-1-songmuchun@bytedance.com>
+Content-Type: text/plain
 
+On 2024-11-05, Jocelyn Falempe <jfalempe@redhat.com> wrote:
+> drm_log is a simple logger that uses the drm_client API to print the
+> kmsg boot log on the screen. This is not a full replacement to fbcon,
+> as it will only print the kmsg. It will never handle user input, or a
+> terminal because this is better done in userspace.
+>
+> Design decisions:
+>  * It uses the drm_client API, so it should work on all drm drivers
+>    from the start.
+>  * It doesn't scroll the message, that way it doesn't need to redraw
+>    the whole screen for each new message.
+>    It also means it doesn't have to keep drawn messages in memory, to
+>    redraw them when scrolling.
+>  * It uses the new non-blocking console API, so it should work well
+>    with PREEMPT_RT.
+>
+> This patch also adds a Kconfig menu to select the drm client to use.
+> It can be overwritten on the kernel command line with:
+> drm_client_lib.default=log or drm_client_lib.default=fbdev
+>
+> Signed-off-by: Jocelyn Falempe <jfalempe@redhat.com>
 
---pqyjwghnwb2xyzmv
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Tue, Nov 05, 2024 at 11:02:52AM GMT, Muchun Song <songmuchun@bytedance.c=
-om> wrote:
-> From: Zefan Li <lizf.kern@gmail.com>
->=20
-> Not active for a long time, so remove myself from MAINTAINERS.
->=20
-> Cc: Zefan Li <lizefan.x@bytedance.com>
-> Signed-off-by: Zefan Li <lizf.kern@gmail.com>
-> Signed-off-by: Muchun Song <songmuchun@bytedance.com>
-
-I trust this comes from lizf.kern@gmail.com so
-
-Acked-by: Michal Koutn=FD <mkoutny@suse.com>
-
-(And thanks for the past work too.)
-
-Michal
-
---pqyjwghnwb2xyzmv
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQTd6mfF2PbEZnpdoAkt3Wney77BSQUCZyoaSgAKCRAt3Wney77B
-SZjXAQDoJlx7lBPFcdB9S4uIo37WQs7bEjiKDaP89P4fbiw78AEA6AxPnD8IJMAB
-R8DLE56cwcmwIU6FuGTQp/d9GqIAqQM=
-=LWDx
------END PGP SIGNATURE-----
-
---pqyjwghnwb2xyzmv--
+Reviewed-by: John Ogness <john.ogness@linutronix.de> # console API
 
