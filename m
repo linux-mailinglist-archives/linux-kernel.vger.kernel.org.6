@@ -1,116 +1,200 @@
-Return-Path: <linux-kernel+bounces-396295-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396296-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1E3B9BCB0C
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 11:53:22 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D30CF9BCB10
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 11:54:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 98ABA1F23A68
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 10:53:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3E94AB226E3
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 10:54:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D9491D318F;
-	Tue,  5 Nov 2024 10:53:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C2CF1D2F48;
+	Tue,  5 Nov 2024 10:54:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="oIImtxyY"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="l+Ei59g1"
+Received: from mail-qv1-f43.google.com (mail-qv1-f43.google.com [209.85.219.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DC431D27A9;
-	Tue,  5 Nov 2024 10:53:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B01EF1D358B
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 10:54:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730803994; cv=none; b=Ru32OAMWm9iTvMqLtKq/C3v5B5z20aHhoBVQZCWcZQUognnrPUNLc/VuqDU04iDUuxQSb3yUOheRRK5Us/LkfjLd29G0iHk8Fnu9xfppL2UVyblN9ptecAWPNPKnNGhHv6NZkWll1V0b3Bsidtqj8osVUk8qsBLvCdhHdnvAMvA=
+	t=1730804046; cv=none; b=AQnqzBsyCVUO2lwZdwDFERmAxQsMLcLwo6bQCkRttspFU638pvudcWIFJv41M09zgjctHAGR7AAMzXkcJxa8vZ9SewBCi7HrYhmhAdl4dMex4H5bcHXrNRKvAlfefHGfUYEgSv89lrxC6zwL/P6W6JJM45X+RVTvFkfylyVkbUA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730803994; c=relaxed/simple;
-	bh=KVvcpQ5F/M9q98s+qccoETOvBMw6mTVjp58jf47uN90=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tb3k17paG9LUbVo1HHnwiLhX5NOboCPRpzLFntik/rf8ztxNL3SZ2i8nmPN4h2rWWOUJxCgdOVK5glhX1MMXJ5vtpPWUoP7nBehC04VgEC7mZ2BOALPJwUyVaAXV31QVSLlFDv3QTFKtbFpx2ZLkjB/nLPj3Tdy50Cpo7ssUxm8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=oIImtxyY; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730803992; x=1762339992;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=KVvcpQ5F/M9q98s+qccoETOvBMw6mTVjp58jf47uN90=;
-  b=oIImtxyY7kNz+Cxq9MUThZhvLf5MZkkNQ9dhH6ZwiNRKEKoHOoc7FvmC
-   HWgy1pcY9oNhP8KJZstnhboNtKGzYe2nFSP0p9xn58+1y65Of+ICy7cII
-   gUV7qZbWQGDP4/5lcnFkeIs7KWz0iWx0cCVx4JBvzdO3vhS0y3nKTAMR8
-   LP2vvKT9A/sZfqHxzPPqyFjJLIOxuCZ6hbS6SR3HXE0c2sc2IVxgMYbfb
-   1SU6oo/EGAbbldI2/pdoqSzQczN7/hJ1RWkcT14ZYheIzpp2u3ozTCcjG
-   vRSFBg/Vv8mJ3PrKm1AugxrmIrpyitN+Es5FhzSmfCUoU/9KOHZDD59vY
-   A==;
-X-CSE-ConnectionGUID: i69TXIUaQeiqJaM7+uxH8w==
-X-CSE-MsgGUID: hfiu+kncThKSbDOYsleW6A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11246"; a="30653521"
-X-IronPort-AV: E=Sophos;i="6.11,259,1725346800"; 
-   d="scan'208";a="30653521"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2024 02:53:11 -0800
-X-CSE-ConnectionGUID: h4i639knRvOKyDrJl0aW8w==
-X-CSE-MsgGUID: dV0VB4bERsKTIxQsQJPO6w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="88741763"
-Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
-  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2024 02:53:02 -0800
-Received: from kekkonen.localdomain (localhost [127.0.0.1])
-	by kekkonen.fi.intel.com (Postfix) with SMTP id F131411F9C3;
-	Tue,  5 Nov 2024 12:52:58 +0200 (EET)
-Date: Tue, 5 Nov 2024 10:52:58 +0000
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Liu Ying <victor.liu@nxp.com>
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	andrzej.hajda@intel.com, neil.armstrong@linaro.org,
-	rfoss@kernel.org, Laurent.pinchart@ideasonboard.com,
-	jonas@kwiboo.se, jernej.skrabec@gmail.com,
-	maarten.lankhorst@linux.intel.com, mripard@kernel.org,
-	tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	quic_jesszhan@quicinc.com, mchehab@kernel.org, shawnguo@kernel.org,
-	s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
-	catalin.marinas@arm.com, will@kernel.org, hverkuil@xs4all.nl,
-	tomi.valkeinen@ideasonboard.com, quic_bjorande@quicinc.com,
-	geert+renesas@glider.be, dmitry.baryshkov@linaro.org, arnd@arndb.de,
-	nfraprado@collabora.com, thierry.reding@gmail.com,
-	prabhakar.mahadev-lad.rj@bp.renesas.com, sam@ravnborg.org,
-	marex@denx.de, biju.das.jz@bp.renesas.com
-Subject: Re: [PATCH v4 04/13] media: uapi: Add
- MEDIA_BUS_FMT_RGB101010_1X7X5_{SPWG, JEIDA}
-Message-ID: <Zyn5CgZvyg05cgJW@kekkonen.localdomain>
-References: <20241028023740.19732-1-victor.liu@nxp.com>
- <20241028023740.19732-5-victor.liu@nxp.com>
+	s=arc-20240116; t=1730804046; c=relaxed/simple;
+	bh=I/zxD1ZX5xViP0hA+xiMUSFElQFf5YSxEvrMcQj7olE=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=h33LKZrSsUqsjbj/RbF3BBe/jYHEmmDdyF+XTjUwwdL6DNQflPu7PrldlCTxxSV9SNVsp1qdNZ1ojCTKNBtMTffqyYZmQl4kSDSEt0qwNXPrYoc7FtoyBm2hWW83ZT7/CsiJvH6VHu7vynDoYIqZwNlXqEXxc9jiJC9xsJ29JC0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=l+Ei59g1; arc=none smtp.client-ip=209.85.219.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-qv1-f43.google.com with SMTP id 6a1803df08f44-6cbd00dd21cso30940856d6.3
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 02:54:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1730804044; x=1731408844; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=s9LlhOovcF6A+v0lu4WJaM/qiFM0SFBq/pB5i7J9JwM=;
+        b=l+Ei59g1kvqJ3fYC56psG6MXCgT/6vlRI/GAqsi6p6sZ/kpVuRy949Z+ZBnDIS3FHl
+         IrO8WSi2AjOSNQBQXIsqN7JH1gx5rph/ApD7AxZAIu/7yDLe5uMkarhSM9FitLH0qNCg
+         8u1ZfTCCRFN6l8S3AEIByJw4OL3nRrCEiDAYo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730804044; x=1731408844;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=s9LlhOovcF6A+v0lu4WJaM/qiFM0SFBq/pB5i7J9JwM=;
+        b=DYjPi6ByHg8yfbIU9RuncXZR8i786lriBVPm0Sep7GsabegXzBhvt6YoRBjaVJfk9w
+         vbnPpm6YPP73BUdVMK69LpGwAkO5znqTWIQq/A7ILr5w1O7ojREulyqYdEVZEAx73zoF
+         fHPLXr3OzNJVbNxWMoQD0WaVG2Q5Bd/3SunBNprOMivgB+r3ScfcDcTw8XD9iTBJsLTD
+         kwA9O7RSA3qYLMBjdLk/3iva/vtZQodPaE0CkQG3fV7PvLSt29RsA1/PO71/gR8yg0mI
+         sehfqdDI6tpyL1wG5dkm6vD64DdaJdm8KN6HXyRr45kdMBGKg7q9An1eaPwf5ZMB49U/
+         ey3g==
+X-Forwarded-Encrypted: i=1; AJvYcCX9N3l+w2yb5sWtNQN8vXC3MnyM/YLr48EbyfoeWsLjk6S2jGIBwcUbVd26n7ZbB5GQE5oGbs9xcVUg5IA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzvX7jYH52jIQ9J2x9VDHX6v4eEyZ0GXRCaOo92waslOHwaTJg5
+	8vKdZhYUnfd89WoGvVlIR9fmUoOQiKce1ckOsfwf+Po7V1Wk8u3zrwBcwKecYg==
+X-Google-Smtp-Source: AGHT+IH1P3HlgzEOSpgPpqcH4O+hZepqfFtlWOVIoe8EIKIKxbnJCrC5OfHZjfzzOW+yhahs8+zHgA==
+X-Received: by 2002:a05:6214:5b85:b0:6cb:e798:5589 with SMTP id 6a1803df08f44-6d346022456mr328000856d6.28.1730804043699;
+        Tue, 05 Nov 2024 02:54:03 -0800 (PST)
+Received: from denia.c.googlers.com (189.216.85.34.bc.googleusercontent.com. [34.85.216.189])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d353fd8308sm58284686d6.57.2024.11.05.02.54.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 05 Nov 2024 02:54:02 -0800 (PST)
+From: Ricardo Ribalda <ribalda@chromium.org>
+Date: Tue, 05 Nov 2024 10:53:59 +0000
+Subject: [PATCH v2] media: uvcvideo: Fix crash during unbind if gpio unit
+ is in use
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241028023740.19732-5-victor.liu@nxp.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241105-uvc-crashrmmod-v2-1-547ce6a6962e@chromium.org>
+X-B4-Tracking: v=1; b=H4sIAEb5KWcC/3XMyw6CMBCF4Vchs7aG4dIEV76HYYHtlM6i1Eyh0
+ RDe3cre5X+S8+2QSJgS3KodhDInjkuJ5lKB8dMyk2JbGpq66bBuUW3ZKCNT8hJCtEprbal1ZsA
+ OoZxeQo7fJ/gYS3tOa5TP6Wf8rX+pjApV3Q+O+qF9Ium78RIDb+EaZYbxOI4venbrw68AAAA=
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
+ Sergey Senozhatsky <senozhatsky@chromium.org>, 
+ Ricardo Ribalda <ribalda@chromium.org>
+X-Mailer: b4 0.13.0
 
-Hi Ying,
+We used the wrong device for the device managed functions. We used the
+usb device, when we should be using the interface device.
 
-On Mon, Oct 28, 2024 at 10:37:31AM +0800, Liu Ying wrote:
-> Add two media bus formats that identify 30-bit RGB pixels transmitted
-> by a LVDS link with five differential data pairs, serialized into 7
-> time slots, using standard SPWG/VESA or JEIDA data mapping.
-> 
-> Signed-off-by: Liu Ying <victor.liu@nxp.com>
+If we unbind the driver from the usb interface, the cleanup functions
+are never called. In our case, the IRQ is never disabled.
 
-Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+If an IRQ is triggered, it will try to access memory sections that are
+already free, causing an OOPS.
 
-It's fine to merge this via another tree, too.
+Luckily this bug has small impact, as it is only affected by devices
+with gpio units and the user has to unbind the device, a disconnect will
+not trigger this error.
 
+Cc: stable@vger.kernel.org
+Fixes: 2886477ff987 ("media: uvcvideo: Implement UVC_EXT_GPIO_UNIT")
+Reviewed-by: Sergey Senozhatsky <senozhatsky@chromium.org>
+Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+---
+Changes in v2: Thanks to Laurent.
+- The main structure is not allocated with devres so there is a small
+  period of time where we can get an irq with the structure free. Do not
+  use devres for the IRQ.
+- Link to v1: https://lore.kernel.org/r/20241031-uvc-crashrmmod-v1-1-059fe593b1e6@chromium.org
+---
+ drivers/media/usb/uvc/uvc_driver.c | 28 +++++++++++++++++++++-------
+ drivers/media/usb/uvc/uvcvideo.h   |  1 +
+ 2 files changed, 22 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/media/usb/uvc/uvc_driver.c b/drivers/media/usb/uvc/uvc_driver.c
+index a96f6ca0889f..af6aec27083c 100644
+--- a/drivers/media/usb/uvc/uvc_driver.c
++++ b/drivers/media/usb/uvc/uvc_driver.c
+@@ -1295,14 +1295,14 @@ static int uvc_gpio_parse(struct uvc_device *dev)
+ 	struct gpio_desc *gpio_privacy;
+ 	int irq;
+ 
+-	gpio_privacy = devm_gpiod_get_optional(&dev->udev->dev, "privacy",
++	gpio_privacy = devm_gpiod_get_optional(&dev->intf->dev, "privacy",
+ 					       GPIOD_IN);
+ 	if (IS_ERR_OR_NULL(gpio_privacy))
+ 		return PTR_ERR_OR_ZERO(gpio_privacy);
+ 
+ 	irq = gpiod_to_irq(gpio_privacy);
+ 	if (irq < 0)
+-		return dev_err_probe(&dev->udev->dev, irq,
++		return dev_err_probe(&dev->intf->dev, irq,
+ 				     "No IRQ for privacy GPIO\n");
+ 
+ 	unit = uvc_alloc_new_entity(dev, UVC_EXT_GPIO_UNIT,
+@@ -1329,15 +1329,28 @@ static int uvc_gpio_parse(struct uvc_device *dev)
+ static int uvc_gpio_init_irq(struct uvc_device *dev)
+ {
+ 	struct uvc_entity *unit = dev->gpio_unit;
++	int ret;
+ 
+ 	if (!unit || unit->gpio.irq < 0)
+ 		return 0;
+ 
+-	return devm_request_threaded_irq(&dev->udev->dev, unit->gpio.irq, NULL,
+-					 uvc_gpio_irq,
+-					 IRQF_ONESHOT | IRQF_TRIGGER_FALLING |
+-					 IRQF_TRIGGER_RISING,
+-					 "uvc_privacy_gpio", dev);
++	ret = request_threaded_irq(unit->gpio.irq, NULL, uvc_gpio_irq,
++				   IRQF_ONESHOT | IRQF_TRIGGER_FALLING |
++				   IRQF_TRIGGER_RISING,
++				   "uvc_privacy_gpio", dev);
++
++	if (!ret)
++		dev->gpio_unit->gpio.inited = true;
++
++	return ret;
++}
++
++static void uvc_gpio_cleanup(struct uvc_device *dev)
++{
++	if (!dev->gpio_unit || !dev->gpio_unit->gpio.inited)
++		return;
++
++	free_irq(dev->gpio_unit->gpio.irq, dev);
+ }
+ 
+ /* ------------------------------------------------------------------------
+@@ -1880,6 +1893,7 @@ static void uvc_delete(struct kref *kref)
+ 	struct uvc_device *dev = container_of(kref, struct uvc_device, ref);
+ 	struct list_head *p, *n;
+ 
++	uvc_gpio_cleanup(dev);
+ 	uvc_status_cleanup(dev);
+ 	uvc_ctrl_cleanup_device(dev);
+ 
+diff --git a/drivers/media/usb/uvc/uvcvideo.h b/drivers/media/usb/uvc/uvcvideo.h
+index 07f9921d83f2..376cd670539b 100644
+--- a/drivers/media/usb/uvc/uvcvideo.h
++++ b/drivers/media/usb/uvc/uvcvideo.h
+@@ -234,6 +234,7 @@ struct uvc_entity {
+ 			u8  *bmControls;
+ 			struct gpio_desc *gpio_privacy;
+ 			int irq;
++			bool inited;
+ 		} gpio;
+ 	};
+ 
+
+---
+base-commit: c7ccf3683ac9746b263b0502255f5ce47f64fe0a
+change-id: 20241031-uvc-crashrmmod-666de3fc9141
+
+Best regards,
 -- 
-Regards,
+Ricardo Ribalda <ribalda@chromium.org>
 
-Sakari Ailus
 
