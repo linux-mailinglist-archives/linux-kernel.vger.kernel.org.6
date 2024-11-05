@@ -1,109 +1,125 @@
-Return-Path: <linux-kernel+bounces-396635-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396633-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF2489BCFDC
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 15:57:16 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4C809BCFD8
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 15:56:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 341831C2074C
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 14:57:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 83E541F21A8F
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 14:56:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E21C1DAC9C;
-	Tue,  5 Nov 2024 14:56:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09ED01D9588;
+	Tue,  5 Nov 2024 14:56:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="KWaTZyu3"
-Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HSS/ZCBo"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46D931D9588;
-	Tue,  5 Nov 2024 14:56:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B56FEAD2;
+	Tue,  5 Nov 2024 14:56:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730818613; cv=none; b=LQO6jQ6z5j+8lsZKBlT0BTqwTtfyFiXuCBBBHN/yLOU412uUT2tpf+Inl6H6HWsV+c0n64bBFLsFUm4at20YCYtgK1VHUIkzlZdOiFASkxi4gffuakv9sdfFS9c5CJrLrqkysrNv06Usaa9s01BZt9ysozKZvcpXZMRK6UmcnaQ=
+	t=1730818603; cv=none; b=sIQgA3jEb48aVT3pftuzBJ0Rrz0CasmznWreKYyVJ+r/yXa5/mYvw2eDOUvmHAK+SXjWN0QslXlHcB/H6i7tWHxBM5opsp0E8Ku88STjbg/9Zx9xmz+OjkhvdxSHleUOrlnTAbcx1AnWgXLL3hbDOjIlHAg1vrMfM6hkYt//A6g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730818613; c=relaxed/simple;
-	bh=NzjCVKdAFx7+QxSlsS/mIp9dss8BCH7ZZF7zgDUxFDg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qu34oi3cukStqWUKzx+aR+C7jsEArNwM98j6CM07EDgR0yZ7wrWKZysGO4A4JeVj/P11dd/NGeICZELq4KQ8eQBmaRp0i7KUY/i0oe+Bjez34Hsym2CSFZe8eAnHCdy7OPXzO8XOk0ve3zNhDImZRcHahciwzCHj+LDkrAuiao4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=KWaTZyu3; arc=none smtp.client-ip=217.70.183.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPA id 200CE40010;
-	Tue,  5 Nov 2024 14:56:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1730818609;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=QA9Z6DlABQAh/zHFAwCMIMgA9gtG670bOQgehg6enAk=;
-	b=KWaTZyu3vLcDyz9FWyowSmBHC3XiZrmKJULGPtt9hzaqj0+xJODq0QR1ihReN61VqnwxCk
-	cyoakzjNknp34vXM3mBZCHBYo0gmRejGd4PWdqrQoDSwYqgeQGazh5ofxOpKDGc6x7zm8X
-	kSgyKuZ0UDNSmVFqo+CFEGNa+MY+IsX8tKInCVCBVJh6Y73IoUTL2hHCZUv5yZeg+3gDmY
-	CP5ktynlkskg3ruNt8nCELLrlhibV7PF6UGal945LwEqulLbG5vGsWom8qQx5vINJf/c9s
-	QAXF8i1kCKMsokbKbWKwXiIEQqqY6emQ3dSvWkcVoiJ0juZ/S7e689/sACCY+g==
-From: Herve Codina <herve.codina@bootlin.com>
-To: Herve Codina <herve.codina@bootlin.com>,
-	Qiang Zhao <qiang.zhao@nxp.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Mark Brown <broonie@kernel.org>,
-	Li Yang <leoyang.li@nxp.com>
-Cc: linuxppc-dev@lists.ozlabs.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	kernel test robot <lkp@intel.com>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	stable@vger.kernel.org
-Subject: [PATCH] soc: fsl: cpm1: qmc: Set the ret error code on platform_get_irq() failure
-Date: Tue,  5 Nov 2024 15:56:23 +0100
-Message-ID: <20241105145623.401528-1-herve.codina@bootlin.com>
-X-Mailer: git-send-email 2.46.2
+	s=arc-20240116; t=1730818603; c=relaxed/simple;
+	bh=bXQHXT6ZImyGG14uAG/J7P3v/eBu0r86aT4uSsUX9ng=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=of++CUdQ4Y5M554QdSZ25/95uGLAPdSuM/rIHA42RSVE+dxL0/0Zp56KSMcpD0f8mHosPRdf6XYrho3zy6w6haBFZt4TvqJEtBx2HygGctvi4w6Bus48EUa0Suemb9XQZnJx7cdNdNhqdbWSzMiBtzaku7eY3tOZd+Rei2L1/KE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HSS/ZCBo; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730818602; x=1762354602;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=bXQHXT6ZImyGG14uAG/J7P3v/eBu0r86aT4uSsUX9ng=;
+  b=HSS/ZCBoSoqmmlDm06dHm06cwbZSRvs6m2TfwwRTqK457kGXMA4B4iD3
+   rhDB3otiG0eub7HOskxCIWSNDphtFPgdLoNCnIcFAy9wTMNGSzD2DhqF+
+   fL5C9rcrAuWQ1y6jVZT6wFIMSRoyTpQEZQ4UefQEKMKEInh3qc+zYQZJw
+   0lVOaP4HUvXJmFzpmhmNvUMAYMavDGG072EKJ0HbDER0Y7w9Af1bPsFs6
+   hefP8gmlZPnKNYmQgidgrkJIPkOrKebUkCfV8NWAZldeqACqkFSXam3gf
+   ombY2hf21mvBN74+qxj2uIuVBMivj4ivelAXywdIXU3DAkMY4vrfBiSSa
+   g==;
+X-CSE-ConnectionGUID: gxa9ek92TtGstEVYnq/IRQ==
+X-CSE-MsgGUID: +W8S6beFSWCEsMqVqkwRcw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="48032846"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="48032846"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2024 06:56:41 -0800
+X-CSE-ConnectionGUID: WMnr0vMNT1+2xKdMa2XSaA==
+X-CSE-MsgGUID: 6oMmzSiRRwmw9AbY58KDNQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,260,1725346800"; 
+   d="scan'208";a="88557321"
+Received: from smile.fi.intel.com ([10.237.72.154])
+  by fmviesa005.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2024 06:56:40 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1t8Kyz-0000000BRHA-3UnC;
+	Tue, 05 Nov 2024 16:56:37 +0200
+Date: Tue, 5 Nov 2024 16:56:37 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Andi Shyti <andi.shyti@kernel.org>
+Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/1] i2c: busses: Use *-y instead of *-objs in Makefile
+Message-ID: <ZyoyJSiWXBNar47_@smile.fi.intel.com>
+References: <20241104103935.195988-1-andriy.shevchenko@linux.intel.com>
+ <l75w7qvvw34u3vwvd7ddnka2q3fcrvzpxbfwrh22niggndrp2s@fctmlyvdfiqm>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-GND-Sasl: herve.codina@bootlin.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <l75w7qvvw34u3vwvd7ddnka2q3fcrvzpxbfwrh22niggndrp2s@fctmlyvdfiqm>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-A kernel test robot detected a missing error code:
-   qmc.c:1942 qmc_probe() warn: missing error code 'ret'
+On Tue, Nov 05, 2024 at 03:44:34PM +0100, Andi Shyti wrote:
+> On Mon, Nov 04, 2024 at 12:39:14PM +0200, Andy Shevchenko wrote:
+> > *-objs suffix is reserved rather for (user-space) host programs while
+> > usually *-y suffix is used for kernel drivers (although *-objs works
+> > for that purpose for now).
+> > 
+> > Let's correct the old usages of *-objs in Makefiles.
 
-Indeed, the error returned by platform_get_irq() is checked and the
-operation is aborted in case of failure but the ret error code is
-not set in that case.
+...
 
-Set the ret error code.
+> >  config I2C_AT91_SLAVE_EXPERIMENTAL
+> > -	tristate "Microchip AT91 I2C experimental slave mode"
+> > +	bool "Microchip AT91 I2C experimental slave mode"
+> >  	depends on I2C_AT91
+> >  	select I2C_SLAVE
+> >  	help
+> > @@ -440,7 +440,7 @@ config I2C_AT91_SLAVE_EXPERIMENTAL
+> >  	  been tested in a heavy way, help wanted.
+> >  	  There are known bugs:
+> >  	    - It can hang, on a SAMA5D4, after several transfers.
+> > -	    - There are some mismtaches with a SAMA5D4 as slave and a SAMA5D2 as
+> > +	    - There are some mismatches with a SAMA5D4 as slave and a SAMA5D2 as
+> 
+> Although these changes are related and I'm OK also with the typo
+> fix, could you please propose here a couple of lines that I can
+> add to the commit message?
 
-Reported-by: kernel test robot <lkp@intel.com>
-Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-Closes: https://lore.kernel.org/r/202411051350.KNy6ZIWA-lkp@intel.com/
-Fixes: 3178d58e0b97 ("soc: fsl: cpm1: Add support for QMC")
-Cc: stable@vger.kernel.org
-Signed-off-by: Herve Codina <herve.codina@bootlin.com>
----
- drivers/soc/fsl/qe/qmc.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+Would this work?
+"While at it, fix an obvious typo in help section of the Kconfig."
 
-diff --git a/drivers/soc/fsl/qe/qmc.c b/drivers/soc/fsl/qe/qmc.c
-index 19cc581b06d0..b3f773e135fd 100644
---- a/drivers/soc/fsl/qe/qmc.c
-+++ b/drivers/soc/fsl/qe/qmc.c
-@@ -2004,8 +2004,10 @@ static int qmc_probe(struct platform_device *pdev)
- 
- 	/* Set the irq handler */
- 	irq = platform_get_irq(pdev, 0);
--	if (irq < 0)
-+	if (irq < 0) {
-+		ret = irq;
- 		goto err_exit_xcc;
-+	}
- 	ret = devm_request_irq(qmc->dev, irq, qmc_irq_handler, 0, "qmc", qmc);
- 	if (ret < 0)
- 		goto err_exit_xcc;
+Of course, feel free to drop that hunk or request for a new version without it
+(or split into a separate change), I am fine with all options.
+
+Note, bool is essential to for the patch, but can be split as a prerequisite,
+but without this patch it doesn't really fix match as we never try to build
+the code when it was =m.
+
 -- 
-2.46.2
+With Best Regards,
+Andy Shevchenko
+
 
 
