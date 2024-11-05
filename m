@@ -1,221 +1,195 @@
-Return-Path: <linux-kernel+bounces-396616-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396618-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36C5B9BCF95
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 15:37:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B22E39BCF9D
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 15:43:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD62A1F2323D
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 14:37:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 430B61F233BF
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 14:43:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36D351D968E;
-	Tue,  5 Nov 2024 14:37:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=6wind.com header.i=@6wind.com header.b="ceTtK023"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8882A1D9697;
+	Tue,  5 Nov 2024 14:43:06 +0000 (UTC)
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 735731D86F1
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 14:37:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 451411D90B1
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 14:43:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730817458; cv=none; b=XnqZtpSZ2yYRFV658HvUZHAqPtq9x7hGSF7BBRjmX+jik72PH+7iCYERsZ/Nb0oApvVnqUXObo0CCUC/qecMjcdG43LGrl8Uk71+h8Mw7z14WopcENJLT72Wg/mONB98cR6dHyww8LbS3ATpM4Mg38Qrm+Rd6XXqVl9uVOdPJzs=
+	t=1730817786; cv=none; b=EDnDty6CYq64d15NTo6CM5hjiIXgiNbY1Xt0avsATUEQTdfr+jEJUFy0qVyZ5SbuakqtAfqYuSwTellgx5Im0n5i5ojrUYiX5Z1s5IWIYF+s7IalsrjiyuRRDV30a/YEdlIRbUWb2XY32sWoHyWVpu3Gq4TVAepW/sRRNFwjMUg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730817458; c=relaxed/simple;
-	bh=UI80saSNGQyeENZwHXQ20TbdoevVCEFmRy69WMBcnh8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=i1Bn83BzQoY/LhKy+kebHSBRH4u71tfkkfqKSHb/XGz7I4JaIuMQzhPLVLnkdiWlfASfmvmssfjOcRZIFMtldbM7vk2vdLxEXjwuNXGrbHM1izIpI708GkPrnG/51LWNL7eaDXv4d/WowrFqUczh+GPOlf1iDQFGyoyEhZHG4MY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=6wind.com; spf=pass smtp.mailfrom=6wind.com; dkim=pass (2048-bit key) header.d=6wind.com header.i=@6wind.com header.b=ceTtK023; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=6wind.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=6wind.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5c939e5a0f6so542306a12.2
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 06:37:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=6wind.com; s=google; t=1730817455; x=1731422255; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:content-language
-         :from:references:cc:to:subject:reply-to:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=QPuUXaKIVWgxMoZDzRHV+Ij4osZDivWBSJCKiW/uKdM=;
-        b=ceTtK0234IYVNp/EIGkh++V05nPwxZ2IpTDcEx37waKxh6Wrz9KH1czC8g/KyJQueT
-         fAh3eLysjhKwQtZhCArJW0Mxcx903RqK6LyTDFKrIg+1weiVJxzyZLIqT8gcMjtyzcWz
-         IS9lDdBNcVZJzTo1BrrkXT0B4RjTlGEbQnLYIr32imjY1mV+QzjgA7miu4srhHTVWAGt
-         Q67uMOqnpGJfLXYV/Y47A0ni99CVEfqiuiuZDi4OW74zf6TsY52AbRzUNap+I6GJEeaF
-         5vgToOhS9ku0VjNcK4eTDx/9wBiWYcV7X1LPgps39BqQfhecFt1Fa/qTaXlVVOenfZ5e
-         Kytw==
+	s=arc-20240116; t=1730817786; c=relaxed/simple;
+	bh=110IyjSStVOb9YuhidGQIkWZlivIid1liiPs3nyU/x8=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=en1HMomMra7GfbrocZWU+Xnf6fGqK+VTqiRuD8ClZRC96/vV2oOEXu5QzquNJW3l6bL6biJj4F6lgL1bTOQnyQUlnuuSeVcBFypbQ5ECEiyRpZrkRmbxmtmQh/wel/34S+jm8jV/QmXbJOk7ZDfxm9avzF7O2j30q/NZKOee7WI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2fb51f39394so46156201fa.2
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 06:43:02 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730817455; x=1731422255;
-        h=content-transfer-encoding:in-reply-to:organization:content-language
-         :from:references:cc:to:subject:reply-to:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1730817781; x=1731422581;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=QPuUXaKIVWgxMoZDzRHV+Ij4osZDivWBSJCKiW/uKdM=;
-        b=H8aTcXbdjTU5uwUX8fw7dsybVk1vMO2PF8sIQnS/Rg2UjsQHl1GCaxqtLuMJrBXCjm
-         vIsj/bXG1C/zPjN59IsXBpnHZsv1SXnqpiHR62VDPq9yBzQu4dJ8LtViPiRK5gWIrTP0
-         VZl11RmzWSybX1gHn3gLSsFKkSwODWBlJQdnxlmCdXx5TDcwGWeb5UiFbO7lB00O7sNj
-         gsuUMVyj7EK+aGDNT7uWZflBVOR7iK+PZ2fPi3+yWHye4UQ7aQljaTCMT40x84DHwKSm
-         2VTcsKGzAMJusirfi0WgXWFSjrqJD9S0xMGFrLH7lWUCEDWbtyRKS7lCGPRb6s9GDTEI
-         TU8g==
-X-Forwarded-Encrypted: i=1; AJvYcCUZI817g2mcehHnuby1mXzAltfSw3BxflHqZ8QvRRRAtkY0XdBbfv+7kTCA89t6RkIDyvT1C5pSTHz9HlY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxajivfoibY0e0tCQIYKLZuuYefjYgJ4VO+vYl9nuD1fZ2lUROU
-	OEuCxO3ACUbSwyzRVRU/3j34/d2aGwkv3va1TUR51AjOkvVUzY+0FCUBCUyZKx4=
-X-Google-Smtp-Source: AGHT+IG+eEaOxwwxnqnBi7IH4m8CimowCnFKODJk37Vb46MQue71WVSIC0ndfLwQiCJS/6/D5SZ7ig==
-X-Received: by 2002:a17:906:dc8f:b0:a99:f388:6f49 with SMTP id a640c23a62f3a-a9de61a0fc0mr1328330766b.9.1730817454689;
-        Tue, 05 Nov 2024 06:37:34 -0800 (PST)
-Received: from ?IPV6:2a01:e0a:b41:c160:5127:810a:3f6b:b00f? ([2a01:e0a:b41:c160:5127:810a:3f6b:b00f])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9eb17cf842sm142063366b.121.2024.11.05.06.37.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 05 Nov 2024 06:37:34 -0800 (PST)
-Message-ID: <0a8d6565-fdc0-452f-b132-5d237a1b7dec@6wind.com>
-Date: Tue, 5 Nov 2024 15:37:32 +0100
+        bh=5vIy8/a9aiXFl3rcfyGsmdu83APhG1KQgWV74xlkHbk=;
+        b=gIBJgRcGeOgaPRmfMZOAYfzdo5l4vjg91Aq+4Ti0UiRByHafXhKcsc7mOYtUK2lP9o
+         9zTl4z+uhSWYdmybdtnaM53UEz2z/H/5P6+XtROTdkYuZNcfBd7+EmusjNktqB7QG3l9
+         eVzx1f3YN7AiT8PYzPmSeFilMbbZsUVuydLWZDvLs2BY8+EE+QwW4qd5VWiQiujhXGnD
+         PbbKu5gdNRuKQq9hpkeyhKx8+/H1GnBBBX9bBWiqZZMgjYUoFd6JO3/vihkvvY4uZRaF
+         Q8wGvmfSqRE/MMDMA747Gcc/U5ZVMrNfxh8T4gvbCKGmtgFuNMfu6e7XXUNgaNf4P88a
+         /IIg==
+X-Forwarded-Encrypted: i=1; AJvYcCV6ZLEaR4tHh6IEeAV49WzkG5adWqTz2onCclRNXWWkf3CdTYV41nOswGmnmz26h0T0Qn+r5xsDLOaS2gs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy/DUO+k85CpaR6iQtF8kH1AtaKtYRW3mkEOd46dibb3dCMcH7T
+	3xXF4mrTz2QjGV0QW1c3YRqc79r0133Npe1qvLiNE5zUgwYqck/aZuFkYQ==
+X-Google-Smtp-Source: AGHT+IGJVfakpm67z/6merecDWZjEioE1MjlTp0I1x/17PR+xbhIKd4ub9edUmeg1BY49irbKjFprA==
+X-Received: by 2002:a05:651c:154a:b0:2fb:7e65:cb27 with SMTP id 38308e7fff4ca-2fcbdf68bf5mr206616391fa.6.1730817780751;
+        Tue, 05 Nov 2024 06:43:00 -0800 (PST)
+Received: from localhost (fwdproxy-lla-009.fbsv.net. [2a03:2880:30ff:9::face:b00c])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cee6ac399bsm1366680a12.52.2024.11.05.06.42.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 05 Nov 2024 06:43:00 -0800 (PST)
+From: Breno Leitao <leitao@debian.org>
+Date: Tue, 05 Nov 2024 06:42:46 -0800
+Subject: [PATCH] nvme/multipath: Fix RCU list traversal to use SRCU
+ primitive
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Reply-To: nicolas.dichtel@6wind.com
-Subject: Re: [PATCH net 1/1] net/ipv6: Netlink flag for new IPv6 Default
- Routes
-To: Matt Muggeridge <Matt.Muggeridge@hpe.com>
-Cc: David Ahern <dsahern@kernel.org>, "David S . Miller"
- <davem@davemloft.net>, linux-api@vger.kernel.org, stable@vger.kernel.org,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241105031841.10730-1-Matt.Muggeridge@hpe.com>
- <20241105031841.10730-2-Matt.Muggeridge@hpe.com>
-From: Nicolas Dichtel <nicolas.dichtel@6wind.com>
-Content-Language: en-US
-Organization: 6WIND
-In-Reply-To: <20241105031841.10730-2-Matt.Muggeridge@hpe.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241105-nvme_multipath_rcu-v1-1-2d7450c1cd84@debian.org>
+X-B4-Tracking: v=1; b=H4sIAOUuKmcC/x3MUQqEIBQF0K087neCOv6MW4kIs+f0oCy0YiDc+
+ 8CcBZwHlYtwhacHhW+psmd4Mh0hLiF/WMkMT7DaOmO0U/neeNyu9ZQjnMtY4qXe8xT0K0U3aYu
+ OcBRO8v2n/dDaD8TjljtkAAAA
+X-Change-ID: 20241104-nvme_multipath_rcu-9dba03fc4b02
+To: Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>, 
+ Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>
+Cc: linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ kernel-team@meta.com, Breno Leitao <leitao@debian.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4084; i=leitao@debian.org;
+ h=from:subject:message-id; bh=110IyjSStVOb9YuhidGQIkWZlivIid1liiPs3nyU/x8=;
+ b=owEBbQKS/ZANAwAIATWjk5/8eHdtAcsmYgBnKi7z2MZCI4evEWx0fsjg+t99XgLdznFE4RxRu
+ 6YgWk4v+MOJAjMEAAEIAB0WIQSshTmm6PRnAspKQ5s1o5Of/Hh3bQUCZyou8wAKCRA1o5Of/Hh3
+ bf7AEACYitXkDX7P2OopVTZSjwNnDHp4Cdydu1OXuDBL1wNFZ5+isGb0wabJAcbChKGpktkj9EE
+ xuCNBnQlP7xKuHfK5ixIjJk39ISq4HEbRpsMjtEyU+i6FCfOb8FQSSzOMNKd8jGqtW+k4QFrGZ3
+ Ol6yfcXpjScHjhud9Tq9tOhVRqmmKDsJ4ZiNa5m/sLoROC1/l8+dnJIupvSOiPk1dVxH9u3Mj1m
+ H9PWbx0HRlPY94emLbCDnd2U1xlh+ylee4lGRmCngl2Yc6KrRDofkrbeRYD895S/rUAdWRU7UvP
+ egyz767RIeuO7/2teK6uiR9AXT84hd8ixhe/eglKaSCPb8M4FgCMJ7Y3U1cSsnDjK8RavTi8h02
+ YcuIwViU/1d51N8WSvqb3M3ZaGP4TkFIb4DD4bqfVX0rAEKt8cOQakuV1WxxAQ5uTyySk7XWeO1
+ l4QNCuabaPTWPy8z/fHKDQ40RPLop3mHKNeeLgTCCIeaTRhHN1yCZoK8Pd088NfRAAGMTEZT2xx
+ yg5iMwz38jt/WPfO2tYC/Qxu0oiTpKhtbOCBGNxyoWVvW4emIDOoEslwTcUo3oObEcs90n9VHp6
+ UHBNSudn5Cjc6QevLTorpTs86BABKQdJ+EYNK+nZyjsp1ThC1w/l92n4iwni4xM3R6C1iJUl+3z
+ rhu+E9xf5Qekknw==
+X-Developer-Key: i=leitao@debian.org; a=openpgp;
+ fpr=AC8539A6E8F46702CA4A439B35A3939FFC78776D
 
-Le 05/11/2024 à 04:18, Matt Muggeridge a écrit :
-> Add a Netlink rtm_flag, RTM_F_RA_ROUTER for the RTM_NEWROUTE message.
-> This allows an IPv6 Netlink client to indicate the default route came
-> from an RA. This results in the kernel creating individual default
-> routes, rather than coalescing multiple default routes into a single
-> ECMP route.
-> 
-> Details:
-> 
-> For IPv6, a Netlink client is unable to create default routes in the
-> same manner as the kernel. This leads to failures when there are
-> multiple default routers, as they were being coalesced into a single
-> ECMP route. When one of the ECMP default routers becomes UNREACHABLE, it
-> was still being selected as the nexthop.
-> 
-> Meanwhile, when the kernel processes RAs from multiple default routers,
-> it sets the fib6_flags: RTF_ADDRCONF | RTF_DEFAULT. The RTF_ADDRCONF
-> flag is checked by rt6_qualify_for_ecmp(), which returns false when
-> ADDRCONF is set. As such, the kernel creates separate default routes.
-> 
-> E.g. compare the routing tables when RAs are processed by the kernel
-> versus a Netlink client (systemd-networkd, in my case).
-> 
-> 1) RA Processed by kernel (accept_ra = 2)
-> $ ip -6 route
-> 2001:2:0:1000::/64 dev enp0s9 proto kernel metric 256 expires ...
-> fe80::/64 dev enp0s9 proto kernel metric 256 pref medium
-> default via fe80::200:10ff:fe10:1060 dev enp0s9 proto ra ...
-> default via fe80::200:10ff:fe10:1061 dev enp0s9 proto ra ...
-> 
-> 2) RA Processed by Netlink client (accept_ra = 0)
-> $ ip -6 route
-> 2001:2:0:1000::/64 dev enp0s9 proto ra metric 1024 expires ...
-> fe80::/64 dev enp0s3 proto kernel metric 256 pref medium
-> fe80::/64 dev enp0s9 proto kernel metric 256 pref medium
-> default proto ra metric 1024 expires 595sec pref medium
-> 	nexthop via fe80::200:10ff:fe10:1060 dev enp0s9 weight 1
-> 	nexthop via fe80::200:10ff:fe10:1061 dev enp0s9 weight 1
-> 
-> IPv6 Netlink clients need a mechanism to identify a route as coming from
-> an RA. i.e. a Netlink client needs a method to set the kernel flags:
-> 
->     RTF_ADDRCONF | RTF_DEFAULT
-> 
-> This is needed when there are multiple default routers that each send
-> an RA. Setting the RTF_ADDRCONF flag ensures their fib entries do not
-> qualify for ECMP routes, see rt6_qualify_for_ecmp().
-> 
-> To achieve this, introduce a user-level flag RTM_F_RA_ROUTER that a
-> Netlink client can pass to the kernel.
-> 
-> A Netlink user-level network manager, such as systemd-networkd, may set
-> the RTM_F_RA_ROUTER flag in the Netlink RTM_NEWROUTE rtmsg. When set,
-> the kernel sets RTF_RA_ROUTER in the fib6_config fc_flags. This causes a
-> default route to be created in the same way as if the kernel processed
-> the RA, via rt6add_dflt_router().
-> 
-> This is needed by user-level network managers, like systemd-networkd,
-> that prefer to do the RA processing themselves. ie. they disable the
-> kernel's RA processing by setting net.ipv6.conf.<intf>.accept_ra=0.
-> 
-> Without this flag, when there are mutliple default routers, the kernel
-> coalesces multiple default routes into an ECMP route. The ECMP route
-> ignores per-route REACHABILITY information. If one of the default
-> routers is unresponsive, with a Neighbor Cache entry of INCOMPLETE, then
-> it can still be selected as the nexthop for outgoing packets. This
-> results in an inability to communicate with remote hosts, even though
-> one of the default routers remains REACHABLE. This violates RFC4861
-> section 6.3.6, bullet 1.
-> 
-> Extract from RFC4861 6.3.6 bullet 1:
->      1) Routers that are reachable or probably reachable (i.e., in any
->         state other than INCOMPLETE) SHOULD be preferred over routers
->         whose reachability is unknown or suspect (i.e., in the
->         INCOMPLETE state, or for which no Neighbor Cache entry exists).
-> 
-> This fixes the IPv6 Logo conformance test v6LC_2_2_11, and others that
-> test with multiple default routers. Also see systemd issue #33470:
-> https://github.com/systemd/systemd/issues/33470.
-> 
-> Signed-off-by: Matt Muggeridge <Matt.Muggeridge@hpe.com>
-> Cc: David Ahern <dsahern@kernel.org>
-> Cc: David S. Miller <davem@davemloft.net>
-> Cc: linux-api@vger.kernel.org
-> Cc: stable@vger.kernel.org
-> ---
->  include/uapi/linux/rtnetlink.h | 9 +++++----
->  net/ipv6/route.c               | 3 +++
->  2 files changed, 8 insertions(+), 4 deletions(-)
-> 
-> diff --git a/include/uapi/linux/rtnetlink.h b/include/uapi/linux/rtnetlink.h
-> index 3b687d20c9ed..9f0259f6e4ed 100644
-> --- a/include/uapi/linux/rtnetlink.h
-> +++ b/include/uapi/linux/rtnetlink.h
-> @@ -202,7 +202,7 @@ enum {
->  #define RTM_NR_FAMILIES	(RTM_NR_MSGTYPES >> 2)
->  #define RTM_FAM(cmd)	(((cmd) - RTM_BASE) >> 2)
->  
-> -/* 
-> +/*
->     Generic structure for encapsulation of optional route information.
->     It is reminiscent of sockaddr, but with sa_family replaced
->     with attribute type.
-> @@ -242,7 +242,7 @@ struct rtmsg {
->  
->  	unsigned char		rtm_table;	/* Routing table id */
->  	unsigned char		rtm_protocol;	/* Routing protocol; see below	*/
-> -	unsigned char		rtm_scope;	/* See below */	
-> +	unsigned char		rtm_scope;	/* See below */
->  	unsigned char		rtm_type;	/* See below	*/
->  
->  	unsigned		rtm_flags;
-> @@ -336,6 +336,7 @@ enum rt_scope_t {
->  #define RTM_F_FIB_MATCH	        0x2000	/* return full fib lookup match */
->  #define RTM_F_OFFLOAD		0x4000	/* route is offloaded */
->  #define RTM_F_TRAP		0x8000	/* route is trapping packets */
-> +#define RTM_F_RA_ROUTER		0x10000	/* route is a default route from RA */
-Please, don't mix whitespace changes with the changes related to the new flag.
+The code currently uses list_for_each_entry_rcu() while holding an SRCU
+lock, triggering false positive warnings with CONFIG_PROVE_RCU=y
+enabled:
 
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst#n166
+	drivers/nvme/host/multipath.c:168 RCU-list traversed in non-reader section!!
+	drivers/nvme/host/multipath.c:227 RCU-list traversed in non-reader section!!
+	drivers/nvme/host/multipath.c:260 RCU-list traversed in non-reader section!!
 
+While the list is properly protected by SRCU lock, the code uses the
+wrong list traversal primitive. Replace list_for_each_entry_rcu() with
+list_for_each_entry_srcu() to correctly indicate SRCU-based protection
+and eliminate the false warning.
 
-Regards,
-Nicolas
+Signed-off-by: Breno Leitao <leitao@debian.org>
+Fixes: be647e2c76b2 ("nvme: use srcu for iterating namespace list")
+---
+ drivers/nvme/host/multipath.c | 21 ++++++++++++++-------
+ 1 file changed, 14 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/nvme/host/multipath.c b/drivers/nvme/host/multipath.c
+index 6a15873055b9513f827709ad780bc7e18f75e439..f25582e4d88bb04c0f866ada11735ce562f227d4 100644
+--- a/drivers/nvme/host/multipath.c
++++ b/drivers/nvme/host/multipath.c
+@@ -165,7 +165,8 @@ void nvme_kick_requeue_lists(struct nvme_ctrl *ctrl)
+ 	int srcu_idx;
+ 
+ 	srcu_idx = srcu_read_lock(&ctrl->srcu);
+-	list_for_each_entry_rcu(ns, &ctrl->namespaces, list) {
++	list_for_each_entry_srcu(ns, &ctrl->namespaces, list,
++				 srcu_read_lock_held(&ctrl->srcu)) {
+ 		if (!ns->head->disk)
+ 			continue;
+ 		kblockd_schedule_work(&ns->head->requeue_work);
+@@ -209,7 +210,8 @@ void nvme_mpath_clear_ctrl_paths(struct nvme_ctrl *ctrl)
+ 	int srcu_idx;
+ 
+ 	srcu_idx = srcu_read_lock(&ctrl->srcu);
+-	list_for_each_entry_rcu(ns, &ctrl->namespaces, list) {
++	list_for_each_entry_srcu(ns, &ctrl->namespaces, list,
++				 srcu_read_lock_held(&ctrl->srcu)) {
+ 		nvme_mpath_clear_current_path(ns);
+ 		kblockd_schedule_work(&ns->head->requeue_work);
+ 	}
+@@ -224,7 +226,8 @@ void nvme_mpath_revalidate_paths(struct nvme_ns *ns)
+ 	int srcu_idx;
+ 
+ 	srcu_idx = srcu_read_lock(&head->srcu);
+-	list_for_each_entry_rcu(ns, &head->list, siblings) {
++	list_for_each_entry_srcu(ns, &head->list, siblings,
++				 srcu_read_lock_held(&head->srcu)) {
+ 		if (capacity != get_capacity(ns->disk))
+ 			clear_bit(NVME_NS_READY, &ns->flags);
+ 	}
+@@ -257,7 +260,8 @@ static struct nvme_ns *__nvme_find_path(struct nvme_ns_head *head, int node)
+ 	int found_distance = INT_MAX, fallback_distance = INT_MAX, distance;
+ 	struct nvme_ns *found = NULL, *fallback = NULL, *ns;
+ 
+-	list_for_each_entry_rcu(ns, &head->list, siblings) {
++	list_for_each_entry_srcu(ns, &head->list, siblings,
++				 srcu_read_lock_held(&head->srcu)) {
+ 		if (nvme_path_is_disabled(ns))
+ 			continue;
+ 
+@@ -356,7 +360,8 @@ static struct nvme_ns *nvme_queue_depth_path(struct nvme_ns_head *head)
+ 	unsigned int min_depth_opt = UINT_MAX, min_depth_nonopt = UINT_MAX;
+ 	unsigned int depth;
+ 
+-	list_for_each_entry_rcu(ns, &head->list, siblings) {
++	list_for_each_entry_srcu(ns, &head->list, siblings,
++				 srcu_read_lock_held(&head->srcu)) {
+ 		if (nvme_path_is_disabled(ns))
+ 			continue;
+ 
+@@ -424,7 +429,8 @@ static bool nvme_available_path(struct nvme_ns_head *head)
+ 	if (!test_bit(NVME_NSHEAD_DISK_LIVE, &head->flags))
+ 		return NULL;
+ 
+-	list_for_each_entry_rcu(ns, &head->list, siblings) {
++	list_for_each_entry_srcu(ns, &head->list, siblings,
++				 srcu_read_lock_held(&head->srcu)) {
+ 		if (test_bit(NVME_CTRL_FAILFAST_EXPIRED, &ns->ctrl->flags))
+ 			continue;
+ 		switch (nvme_ctrl_state(ns->ctrl)) {
+@@ -785,7 +791,8 @@ static int nvme_update_ana_state(struct nvme_ctrl *ctrl,
+ 		return 0;
+ 
+ 	srcu_idx = srcu_read_lock(&ctrl->srcu);
+-	list_for_each_entry_rcu(ns, &ctrl->namespaces, list) {
++	list_for_each_entry_srcu(ns, &ctrl->namespaces, list,
++				 srcu_read_lock_held(&ctrl->srcu)) {
+ 		unsigned nsid;
+ again:
+ 		nsid = le32_to_cpu(desc->nsids[n]);
+
+---
+base-commit: 822eca3e06d039ea9ebf46c6192af06661f50d58
+change-id: 20241104-nvme_multipath_rcu-9dba03fc4b02
+
+Best regards,
+-- 
+Breno Leitao <leitao@debian.org>
+
 
