@@ -1,146 +1,98 @@
-Return-Path: <linux-kernel+bounces-395896-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395897-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B5879BC4A3
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 06:23:39 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4025D9BC4A8
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 06:26:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ACFB51C2133C
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 05:23:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 312D0282B78
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 05:26:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA6841B6539;
-	Tue,  5 Nov 2024 05:23:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A31F1BC066;
+	Tue,  5 Nov 2024 05:25:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=remote-tech-co-uk.20230601.gappssmtp.com header.i=@remote-tech-co-uk.20230601.gappssmtp.com header.b="OUPKLLqG"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DA1B1AB505
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 05:23:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="XoA7ggLs"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32D9076C61;
+	Tue,  5 Nov 2024 05:25:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730784214; cv=none; b=BUE6Tf+H9Rs+S+LJWVLWpD/FHNQQfd08/ZQLkZ/FiXKchDWDF3rj4TGpNH/a4O+gYAB7zwxvjK9paNOMub84zqsXa0kB53sH3EQG/ASOU57euRUrOCaY0c3o5DmwqKyEnM4YMTqjakZ7jhJArMV6z/5WXIxx3rIlJWCTa+zxZVM=
+	t=1730784357; cv=none; b=oATurcbmxXgvBfgheFyoDb5hyvkwj4n/zieE+joeMy3ZNs30KhmfCcRSFoxgrXLzZ+r/b9yACJ9Qa9+9uLnLsDM1tni0VH7ClUKQjvKoOUYNi/H5fx87AtJR/xPcnh1KdNFsbd7vgDQvtg1WZ9AECS8MpYb7r+6wOo/s03Aezig=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730784214; c=relaxed/simple;
-	bh=Zsdsrn5QyifI5KpUEy3Si6Hqlwx2uydMgzuv5g0ftik=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pLp9JvEO2NCKZmtSIVYJVhf/ZSkYlm0fK1HNPhpPjN90NsyP4vwLq86mB6oaRg0J7UlyaUlnJAJerh4Z6IXaJGNmTScjhwJ99BovgME/SfRvgPUZ1FnyvvfrSMKSS+md8egGdlGMC+E86OuW2Oemp2EP36Szia8jSPBTq4ur9iA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=remote-tech.co.uk; spf=pass smtp.mailfrom=remote-tech.co.uk; dkim=pass (2048-bit key) header.d=remote-tech-co-uk.20230601.gappssmtp.com header.i=@remote-tech-co-uk.20230601.gappssmtp.com header.b=OUPKLLqG; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=remote-tech.co.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=remote-tech.co.uk
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a9a850270e2so829069366b.0
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 21:23:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=remote-tech-co-uk.20230601.gappssmtp.com; s=20230601; t=1730784210; x=1731389010; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=sLek+8rRFefzz3qfy2bF6CDdC5m9OTEU8lr9WxdqGCM=;
-        b=OUPKLLqGiaq3JR1DjLLeKfn96BtuzkXt4KDKQoBGkM7tCUlGb0+oukSonlBsetvca+
-         KEEMZEWOdVZpvofCrzf5vI5IrnVKeLiVS39JaKvDzXFfrAZOhhjI7oNLtxijFicckY+2
-         DwlE0hLTTw9ETXmt8j8+vts64oYCx32+oA71FNMTzJ9eIX0BVFc+bhm36/ZdfYSs1bHE
-         5C7VvLi5pyTcVOu5IKW1kKYzuW2mHY1XxCKMUO186oM6U4t24An2RyD6S17MCrcQQCuH
-         /U09YzSqYanZ2KOQrsg4LEvhO3VcW5FTUBdQcdlGhxQsC+hXkfoUZbGZgRx4Tckd3wNY
-         vKgQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730784210; x=1731389010;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sLek+8rRFefzz3qfy2bF6CDdC5m9OTEU8lr9WxdqGCM=;
-        b=RLhbLf7yJ+86wnIZ4WdlccSOsk48Rgzz9sVCkHScjXM6D6rWnnm+doKKJqEChNQB9j
-         sxQsmd82HjYGSVcSymBllnx9VKZa+w7JnHV7rgRo2AKjysttmTkT87lGErNSMpa140OI
-         La6osEvDxVmc27nRfX2G206Id/IaXaRHg4xcuXZNNB9J/76YEbhk6xN2bXNllzsdUzbl
-         NNMeLsWYCBNpBJJFajTD0CT268nm87BqlhXShMgcEVzYKW1yUGR9RNZMOu+kLtrxBF6L
-         UZ4wLPvTbQI0zlXkodbvpx9uGqxqphbtkapT6TuNDSvmhUhQzXSc7qaYsX/R2s+ZAwKC
-         Porw==
-X-Forwarded-Encrypted: i=1; AJvYcCXM+Enh/qQ1ABXdfVoAZwiQWJZ3g09H7hZ8Z0gXY3m7mDlD22NrfAGLrYoCYbEvs+PHebFQHOktT66yHkE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzY/9Dg9BfcYeBy7jIG3tGXY6yYjYWkMsShOhw1NhElzVkXEcQB
-	m7TKm87NV6xNfKr754qBcwiTVQKXwHTd8ot2DTZ2y9bj+s7Xx1/kQ6EHPAFSxphh3kwixSc+msU
-	pW2G9zKiWIQQcUwWdJ8O0+Cryu15NZgJnFUDiaVO00SsAk/RnbBp1aG+9Px+5/Aou3It6JLqfxi
-	qUj5om6pKbib0dvtaBCw3YvcZide7HozX1Z0Hq4svv
-X-Google-Smtp-Source: AGHT+IHEIACSt9/rcfK3SRS20RLq+YIWg4Kpqj9LfsyCOxuVCHRmz+k9dQ4OGU35Nq4IDBHXxM7DQQ==
-X-Received: by 2002:a17:906:c145:b0:a99:7bc0:bca9 with SMTP id a640c23a62f3a-a9e6553af4fmr1495008166b.3.1730784209066;
-        Mon, 04 Nov 2024 21:23:29 -0800 (PST)
-Received: from admins-Air ([2a02:810d:aec0:2a54:587b:f26d:2c10:f02a])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9eb181398bsm76145566b.196.2024.11.04.21.23.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Nov 2024 21:23:27 -0800 (PST)
-Date: Tue, 5 Nov 2024 06:23:20 +0100
-From: Vicentiu Galanopulo <vicentiu.galanopulo@remote-tech.co.uk>
-To: michal.vokac@ysoft.com, pavel@ucw.cz, lee@kernel.org,
-	linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org,
-	krzk+dt@kernel.org
-Subject: Re: [PATCH v4 2/3] leds: Add LED1202 I2C driver
-Message-ID: <ZymryKmQxU6Ndkih@admins-Air>
-References: <Zx0A8ywBb9J65Rxl@admins-Air>
- <20241101170658.GA1807686@google.com>
- <ZyYKCMbviprVnoDK@admins-Air>
- <01b7029f-ecac-4b45-a28d-04081b326024@ysoft.com>
+	s=arc-20240116; t=1730784357; c=relaxed/simple;
+	bh=Mm+fZahzjtAt05oPTf2ol5MxaqohzF9B19BPS25AXMU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kzCvA/vXH+hbipAC+wX3fLh5IrwLtfVe2u7C5PXuYdGIeDEugzLbCQg4X/1uht3wTkhAsSCoaGuBkCYFXNgedoKr5SfkJqjV6Bjs9ZoxQwva3drxrSorUiaONQBwXdu7T/uPO6uzAniyLtdMPfV2I3VgNhKygdVAmhOnC5ST6n4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=XoA7ggLs; arc=none smtp.client-ip=220.197.31.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-ID:MIME-Version; bh=DFv3e
+	ZrYxuDxMVSrDe8nMHgcYuyOHJe7Z8E9ycfSa6A=; b=XoA7ggLsrGsqgSkAlhIul
+	s5/pzPpcnMfgXlwKTVgxhHLz68tdaJpyusyjpJfszvKbyQ6jWvEmo5IqmYAlIKpW
+	PnHYfKX+N8En+viTZ8NaZ+bEeejWfTMEAsdTRtB08SElxd3vSpKo/wFXYkTH7TsN
+	XXbFgWK+cpV5sDYS+T4fiE=
+Received: from localhost.localdomain (unknown [114.86.104.95])
+	by gzga-smtp-mtada-g0-0 (Coremail) with SMTP id _____wDXnxcRrClnHzxmDQ--.3311S2;
+	Tue, 05 Nov 2024 13:24:34 +0800 (CST)
+From: Haiyue Wang <haiyuewa@163.com>
+To: linux-perf-users@vger.kernel.org
+Cc: Haiyue Wang <haiyuewa@163.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	linux-kernel@vger.kernel.org (open list:PERFORMANCE EVENTS SUBSYSTEM)
+Subject: [PATCH v1] perf tools: Add the empty-pmu-events build to .gitignore
+Date: Tue,  5 Nov 2024 13:24:05 +0800
+Message-ID: <20241105052409.7783-1-haiyuewa@163.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <01b7029f-ecac-4b45-a28d-04081b326024@ysoft.com>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wDXnxcRrClnHzxmDQ--.3311S2
+X-Coremail-Antispam: 1Uf129KBjvdXoW7GrWDJFy8JryfAw4fCF48WFg_yoWfGwb_Kw
+	4xGrWv9FWrtrnYyrWxCF45Ar4Fqa15A3s8JFW7tF1rA3yUGa4j9as0yrZrA3yrGay7Gw12
+	kwn8Gr18XFWxujkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IUbwvtJUUUUU==
+X-CM-SenderInfo: 5kdl53xhzdqiywtou0bp/1tbiYAKNa2coDJX2FgABsz
 
-> 
-> Hi Vicentiu,
+The commit 0fe881f10ceb ("perf jevents: Autogenerate empty-pmu-events.c")
+build will generate two files, add them to .gitignore:
 
-Hey Michal
- 
-> Once a while I browse through the patches in various mailing lists to keep myself informed.
-> So I came across your patch set pretty randomly.
-> 
-> I have few tips for you to make your life easier before you get to some serious troubles
-> with the maintainers ;)
-> 
+	tools/perf/pmu-events/empty-pmu-events.log
+	tools/perf/pmu-events/test-empty-pmu-events.c
 
-Thanks for the advice. Annoying the maintainers was definitely not my intention.
-My apologies for any inconvenience.
+Signed-off-by: Haiyue Wang <haiyuewa@163.com>
+---
+ tools/perf/.gitignore | 2 ++
+ 1 file changed, 2 insertions(+)
 
-> 1. Always send all the patches in the series to the same recipients list.
-> 
-> That is, do not send dt-bindings to just Rob, Krzysztof etc. and LED driver
-> patches to Lee et al. We all need to see the whole thing.
-> 
-> If you run the scripts/get_maintainer.pl script on the series, you get a complete list.
-> This is what Krzysztof requested you to do in his comments to v3.
+diff --git a/tools/perf/.gitignore b/tools/perf/.gitignore
+index f5b81d439387..51713b655f62 100644
+--- a/tools/perf/.gitignore
++++ b/tools/perf/.gitignore
+@@ -39,6 +39,8 @@ trace/beauty/generated/
+ pmu-events/pmu-events.c
+ pmu-events/jevents
+ pmu-events/metric_test.log
++pmu-events/empty-pmu-events.log
++pmu-events/test-empty-pmu-events.c
+ tests/shell/*.shellcheck_log
+ tests/shell/coresight/*.shellcheck_log
+ tests/shell/lib/*.shellcheck_log
+-- 
+2.47.0
 
-Ok. Understood
-
-> 2. Use git format-patch and git send-email tools to submit patches.
-> 
-> If you use these tools you will avoid issues with wrong threading of the messages.
-> 
-
-I have a Macbook as a work computer. 
-I've found online that the way to send it on Mac is with mutt.
-Most certanly I lack some skills, but I took me almost 1 day to have everything working
-mutt + google account + script mutt_oauth2.py
-
-So, quickly jumping to git format-patch and git send-email was something I was not looking
-forward to.
-
-
-> 3. The following text should not be here.
-> 
-> You are supposed to just reply in-place to the review messages to acknowledge
-> that you read the comments and you understand what the reviewers want to
-> change. Then you send a next version of the series as a new message to all
-> the recipients. Definitely not as a in-reply-to to the previous version.
-> 
-
-Ok. I think I got. Hopefully the next ones will be ok.
-
-> 
-> Best regards,
-> Michal
-
-Thanks again and best regards,
-Vicentiu
 
