@@ -1,299 +1,258 @@
-Return-Path: <linux-kernel+bounces-397160-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397161-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C7099BD782
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 22:19:58 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C6EF9BD78C
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 22:21:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CFCDD1F238BA
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 21:19:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A03A21C2298B
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 21:21:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13F4621219E;
-	Tue,  5 Nov 2024 21:19:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CF642161FB;
+	Tue,  5 Nov 2024 21:20:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Bk7W7FYm"
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fAil14rw"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEF8A3D81
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 21:19:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DCED1FC7D4;
+	Tue,  5 Nov 2024 21:20:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730841590; cv=none; b=ahjoFxxHdkoT6cZqQRgBeI5LxREdvARRPnIVOQkX5jYnJVu+SearEQyJ6uwjqrFOuZzYIBGzKzParKgpkzrML0ZAykU5UBftfONIx30kTjxHYGhVIdJeyPQcsAcweo9k3yDS3aDJFj8KYeXALmvpTBe1jjFOfRwR7Y9Gsnc3aM8=
+	t=1730841655; cv=none; b=Q1UkPPRYpzTTSiQbQxtHAk1D/ICoX6Ddde9Z+o8jBmllmZFuZ5xFne6P3J2R+rOK+jgn6jf2tc/rMkPni8gsWajvmSEKheYu3le7OT7UhxzaNQrM8kwqQ+ysbYUNtzbzm3yjDx3DQuPQNFi92Kh1ja9p/gDAAJmWZ6NF+LOD14s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730841590; c=relaxed/simple;
-	bh=ekAEcLCRQdROLQZ94HycNYS/g//N+wxfyxwB2cXS3Zg=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=i1d5QxdoONDdVW5egWUbInEwErfI8aeC8m6+gm0zQmSYEe7SHa0K4tOvfBJXo2+mWmsfnAxNAGy/J1NEOrPmceFeT+TScRI8yYW4VChvw1ZwQzgKQuK4WPBZwK0Z4oQVl8sCpMSeYQhuLvfZNi03BqSAXxDwh99e4zxaPwXLW7s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Bk7W7FYm; arc=none smtp.client-ip=209.85.210.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-723db2798caso2672146b3a.0
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 13:19:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730841588; x=1731446388; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=78g/UltacuctUqO/KqSaHCwdizA+7FjwVPdidVsrYh8=;
-        b=Bk7W7FYmDEJXtgIeK4Dac4UTFeYlPFRPGs6IUzPyfbYnEhFySUULSk7CLfAUYDDmEm
-         WowaD5wNvtCD6gTo+rB5YiAAF2HIHpf695+SrpGKx62IBUBQW52sMYbgdmah+tB1UTjN
-         sf9qOYZUwvvAVRMMzMVVINw5irJGUyB9q7vFoEW5s1OiQKCau7CvpF5/IHsSEZwNYRIB
-         5xM0OGLfX89r2myIRQLl2xgfG7yIVi7thijNhPDJV5V5gx676TmqOLzWv8WVHkY6oNTH
-         nI4jkhCi5fteo1opWX2qqbqvqrqWiKfy4M+1ZqwMf0Kn8CRgpbSAI/NXatS1DwNA+wV2
-         5n2Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730841588; x=1731446388;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=78g/UltacuctUqO/KqSaHCwdizA+7FjwVPdidVsrYh8=;
-        b=Fdh4Zlwh0OvYh5HIVrZdtNz8WYTyN6CX1cGAL75JgrzAOkbpwFfCuEjPIjRm60NBgk
-         IILz7PSPpJ/FxxRFsdXKN6C8tiif6A42xtw1QSRjLILdfv92F7qnAo4pyEvqfeNePzWj
-         dD1tEGNHvOHpBgSqYGGiXqi1Ys3r9kyp/FJKxBtDg/6lyHqY71JVYEHMY4/wFrGoGRoa
-         i8+eHonKR2gYY2nfZH9aZ7HL8U62zN7r0n66P6ipNlQGgwiGiEwVMhYOWO/m4JLo1c7G
-         X+0k5urbwxCyQfECt1qAE9wzP94dQmuwPkXHfQ1D/2bDOLjdB9QcIuLFYLBoLG+Tg8Cy
-         6Heg==
-X-Gm-Message-State: AOJu0YxgzJ7jh4hK0HjKD7+5RQcD7mlEWii/oPYuaWa3YVVeWAqh0jAB
-	4fzYOeb2t7n2pbzqzOc06RLz1wSrukDYHP4iYDW7RuNKsGsoDHf7
-X-Google-Smtp-Source: AGHT+IHboVYLLbLpYHtd/PM6QhN03QTE5xzXp/O1/frEEs2UDffScaNan1q2/LypjnySfgkoVR8/eA==
-X-Received: by 2002:a05:6a00:27a0:b0:71d:f510:b791 with SMTP id d2e1a72fcca58-720ab3c6d19mr33962932b3a.12.1730841587791;
-        Tue, 05 Nov 2024 13:19:47 -0800 (PST)
-Received: from Barrys-MBP.hub ([2407:7000:8942:5500:19bb:246:5891:e8ce])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-720bc2c7ef1sm10162920b3a.103.2024.11.05.13.19.40
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Tue, 05 Nov 2024 13:19:47 -0800 (PST)
-From: Barry Song <21cnbao@gmail.com>
-To: akpm@linux-foundation.org,
-	linux-mm@kvack.org
-Cc: linux-kernel@vger.kernel.org,
-	Barry Song <v-songbaohua@oppo.com>,
-	Nhat Pham <nphamcs@gmail.com>,
-	Usama Arif <usamaarif642@gmail.com>,
-	Chengming Zhou <chengming.zhou@linux.dev>,
-	Yosry Ahmed <yosryahmed@google.com>,
-	Hailong Liu <hailong.liu@oppo.com>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	David Hildenbrand <david@redhat.com>,
-	Hugh Dickins <hughd@google.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	Shakeel Butt <shakeel.butt@linux.dev>,
-	Andi Kleen <ak@linux.intel.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Chris Li <chrisl@kernel.org>,
-	"Huang, Ying" <ying.huang@intel.com>,
-	Kairui Song <kasong@tencent.com>,
-	Ryan Roberts <ryan.roberts@arm.com>
-Subject: [PATCH v3] mm: count zeromap read and set for swapout and swapin
-Date: Wed,  6 Nov 2024 10:19:34 +1300
-Message-Id: <20241105211934.5083-1-21cnbao@gmail.com>
-X-Mailer: git-send-email 2.39.3 (Apple Git-146)
+	s=arc-20240116; t=1730841655; c=relaxed/simple;
+	bh=HKzWNl+2gNPBHTjyug5xLVbK+7v2ikZFVkCCRxefCNs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=j5RC1KqgAdtYlL8TDry0GkVkWZFmPbpGrJNboskwl7zmvITl9C3QMyJjBzgEuFMJBunrbiV6OBoSyOlgYN12poQYScFbnKFGj0/QkCV0FDoYbWvfukzQrNAI3vFQJaGPnuIEdonDG/8eRXbmCBBZxP7wl9Tfu5J1zDXNvrrV9Jg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fAil14rw; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730841652; x=1762377652;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=HKzWNl+2gNPBHTjyug5xLVbK+7v2ikZFVkCCRxefCNs=;
+  b=fAil14rwXHrz0nV0iM4bcaGYM9OIdOoY1SU8x0yaPU4wvOJsI5532SgM
+   z0vWTZ9WGh4ziObVUZa4uo1irJDeh14llOMZFaiPMWxh4AvhQYypi9/T/
+   coxVH5Bn1ttvhoHoqU9p6yt+0l73Bz1DuFqMi0ilBNVjcIbjxejhsvdQ4
+   LDpRMErlxYjQjs7K1DDL50hwBDr03xVWUzPc6gmTHRLQxnt0oiUGSkXv0
+   xxAMNtQEyuIS4QcyvSUPbQ3W96jqGLyDvjXUT1oQ07dQJox0Ewz4spTS6
+   QWZDwNdzgrpoxMjYt5HlO9R0MqzzaIVLQK1fY3lpzCXIQsgwV6rHDEZb2
+   g==;
+X-CSE-ConnectionGUID: OECRhiUDQDq1aVa2UeLL0A==
+X-CSE-MsgGUID: O+pH6j9SSBCDOW0ct5cNPw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11247"; a="33455992"
+X-IronPort-AV: E=Sophos;i="6.11,261,1725346800"; 
+   d="scan'208";a="33455992"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2024 13:20:51 -0800
+X-CSE-ConnectionGUID: Ex1FPkmbTaGNaNY+qn6sEA==
+X-CSE-MsgGUID: SlG1Ac0iQDW32yIm0AkXsA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,261,1725346800"; 
+   d="scan'208";a="114959947"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by orviesa002.jf.intel.com with ESMTP; 05 Nov 2024 13:20:49 -0800
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t8Qyk-000mUB-2f;
+	Tue, 05 Nov 2024 21:20:46 +0000
+Date: Wed, 6 Nov 2024 05:20:10 +0800
+From: kernel test robot <lkp@intel.com>
+To: Qiu-ji Chen <chenqiuji666@gmail.com>, james.smart@broadcom.com,
+	dick.kennedy@broadcom.com, James.Bottomley@hansenpartnership.com,
+	martin.petersen@oracle.com
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+	baijiaju1990@gmail.com, Qiu-ji Chen <chenqiuji666@gmail.com>,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] scsi: lpfc: Fix improper handling of refcount in
+ lpfc_bsg_hba_get_event()
+Message-ID: <202411060527.qPI24Q8a-lkp@intel.com>
+References: <20241105130902.4603-1-chenqiuji666@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241105130902.4603-1-chenqiuji666@gmail.com>
 
-From: Barry Song <v-songbaohua@oppo.com>
+Hi Qiu-ji,
 
-When the proportion of folios from the zeromap is small, missing their
-accounting may not significantly impact profiling. However, it’s easy
-to construct a scenario where this becomes an issue—for example,
-allocating 1 GB of memory, writing zeros from userspace, followed by
-MADV_PAGEOUT, and then swapping it back in. In this case, the swap-out
-and swap-in counts seem to vanish into a black hole, potentially
-causing semantic ambiguity.
+kernel test robot noticed the following build errors:
 
-On the other hand, Usama reported that zero-filled pages can exceed 10% in
-workloads utilizing zswap, while Hailong noted that some app in Android
-have more than 6% zero-filled pages. Before commit 0ca0c24e3211 ("mm: store
-zero pages to be swapped out in a bitmap"), both zswap and zRAM implemented
-similar optimizations, leading to these optimized-out pages being counted
-in either zswap or zRAM counters (with pswpin/pswpout also increasing for
-zRAM). With zeromap functioning prior to both zswap and zRAM, userspace
-will no longer detect these swap-out and swap-in actions.
+[auto build test ERROR on jejb-scsi/for-next]
+[also build test ERROR on mkp-scsi/for-next linus/master v6.12-rc6 next-20241105]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-We have three ways to address this:
+url:    https://github.com/intel-lab-lkp/linux/commits/Qiu-ji-Chen/scsi-lpfc-Fix-improper-handling-of-refcount-in-lpfc_bsg_hba_get_event/20241105-211110
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi.git for-next
+patch link:    https://lore.kernel.org/r/20241105130902.4603-1-chenqiuji666%40gmail.com
+patch subject: [PATCH] scsi: lpfc: Fix improper handling of refcount in lpfc_bsg_hba_get_event()
+config: x86_64-allyesconfig (https://download.01.org/0day-ci/archive/20241106/202411060527.qPI24Q8a-lkp@intel.com/config)
+compiler: clang version 19.1.3 (https://github.com/llvm/llvm-project ab51eccf88f5321e7c60591c5546b254b6afab99)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241106/202411060527.qPI24Q8a-lkp@intel.com/reproduce)
 
-1. Introduce a dedicated counter specifically for the zeromap.
-2. Use pswpin/pswpout accounting, treating the zero map as a standard
-backend. This approach aligns with zRAM's current handling of
-same-page fills at the device level. However, it would mean losing
-the optimized-out page counters previously available in zRAM and
-would not align with systems using zswap. Additionally, as noted by
-Nhat Pham, pswpin/pswpout counters apply only to I/O done directly
-to the backend device.
-3. Count zeromap pages under zswap, aligning with system behavior when
-zswap is enabled. However, this would not be consistent with zRAM,
-nor would it align with systems lacking both zswap and zRAM.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202411060527.qPI24Q8a-lkp@intel.com/
 
-Given the complications with options 2 and 3, this patch selects
-option 1.
+All error/warnings (new ones prefixed by >>):
 
-We can find these counters from /proc/vmstat (counters for the whole
-system) and memcg's memory.stat (counters for the interested memcg).
+   In file included from drivers/scsi/lpfc/lpfc_bsg.c:25:
+   In file included from include/linux/pci.h:1650:
+   In file included from include/linux/dmapool.h:14:
+   In file included from include/linux/scatterlist.h:8:
+   In file included from include/linux/mm.h:2213:
+   include/linux/vmstat.h:504:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+     504 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+     505 |                            item];
+         |                            ~~~~
+   include/linux/vmstat.h:511:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+     511 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+     512 |                            NR_VM_NUMA_EVENT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+     518 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
+         |                               ~~~~~~~~~~~ ^ ~~~
+   include/linux/vmstat.h:524:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+     524 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+     525 |                            NR_VM_NUMA_EVENT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~~
+>> drivers/scsi/lpfc/lpfc_bsg.c:1297:8: error: use of undeclared label 'job_error_unref'
+    1297 |                 goto job_error_unref;
+         |                      ^
+>> drivers/scsi/lpfc/lpfc_bsg.c:1332:1: warning: unused label 'job_err_unref' [-Wunused-label]
+    1332 | job_err_unref:
+         | ^~~~~~~~~~~~~~
+   drivers/scsi/lpfc/lpfc_bsg.c:2810:11: warning: variable 'offset' set but not used [-Wunused-but-set-variable]
+    2810 |         int cnt, offset = 0, i = 0;
+         |                  ^
+   6 warnings and 1 error generated.
 
-For example:
+Kconfig warnings: (for reference only)
+   WARNING: unmet direct dependencies detected for MODVERSIONS
+   Depends on [n]: MODULES [=y] && !COMPILE_TEST [=y]
+   Selected by [y]:
+   - RANDSTRUCT_FULL [=y] && (CC_HAS_RANDSTRUCT [=y] || GCC_PLUGINS [=n]) && MODULES [=y]
 
-$ grep -E 'swpin_zero|swpout_zero' /proc/vmstat
-swpin_zero 1648
-swpout_zero 33536
 
-$ grep -E 'swpin_zero|swpout_zero' /sys/fs/cgroup/system.slice/memory.stat
-swpin_zero 3905
-swpout_zero 3985
+vim +/job_error_unref +1297 drivers/scsi/lpfc/lpfc_bsg.c
 
-This patch does not address any specific zeromap bug, but the missing
-swpout and swpin counts for zero-filled pages can be highly confusing
-and may mislead user-space agents that rely on changes in these counters
-as indicators. Therefore, we add a Fixes tag to encourage the inclusion
-of this counter in any kernel versions with zeromap.
+  1243	
+  1244	/**
+  1245	 * lpfc_bsg_hba_get_event - process a GET_EVENT bsg vendor command
+  1246	 * @job: GET_EVENT fc_bsg_job
+  1247	 **/
+  1248	static int
+  1249	lpfc_bsg_hba_get_event(struct bsg_job *job)
+  1250	{
+  1251		struct lpfc_vport *vport = shost_priv(fc_bsg_to_shost(job));
+  1252		struct lpfc_hba *phba = vport->phba;
+  1253		struct fc_bsg_request *bsg_request = job->request;
+  1254		struct fc_bsg_reply *bsg_reply = job->reply;
+  1255		struct get_ct_event *event_req;
+  1256		struct get_ct_event_reply *event_reply;
+  1257		struct lpfc_bsg_event *evt, *evt_next;
+  1258		struct event_data *evt_dat = NULL;
+  1259		unsigned long flags;
+  1260		uint32_t rc = 0;
+  1261	
+  1262		if (job->request_len <
+  1263		    sizeof(struct fc_bsg_request) + sizeof(struct get_ct_event)) {
+  1264			lpfc_printf_log(phba, KERN_WARNING, LOG_LIBDFC,
+  1265					"2613 Received GET_CT_EVENT request below "
+  1266					"minimum size\n");
+  1267			rc = -EINVAL;
+  1268			goto job_error;
+  1269		}
+  1270	
+  1271		event_req = (struct get_ct_event *)
+  1272			bsg_request->rqst_data.h_vendor.vendor_cmd;
+  1273	
+  1274		event_reply = (struct get_ct_event_reply *)
+  1275			bsg_reply->reply_data.vendor_reply.vendor_rsp;
+  1276		spin_lock_irqsave(&phba->ct_ev_lock, flags);
+  1277		list_for_each_entry_safe(evt, evt_next, &phba->ct_ev_waiters, node) {
+  1278			if (evt->reg_id == event_req->ev_reg_id) {
+  1279				if (list_empty(&evt->events_to_get))
+  1280					break;
+  1281				lpfc_bsg_event_ref(evt);
+  1282				evt->wait_time_stamp = jiffies;
+  1283				evt_dat = list_entry(evt->events_to_get.prev,
+  1284						     struct event_data, node);
+  1285				list_del(&evt_dat->node);
+  1286				break;
+  1287			}
+  1288		}
+  1289		spin_unlock_irqrestore(&phba->ct_ev_lock, flags);
+  1290	
+  1291		/* The app may continue to ask for event data until it gets
+  1292		 * an error indicating that there isn't anymore
+  1293		 */
+  1294		if (evt_dat == NULL) {
+  1295			bsg_reply->reply_payload_rcv_len = 0;
+  1296			rc = -ENOENT;
+> 1297			goto job_error_unref;
+  1298		}
+  1299	
+  1300		if (evt_dat->len > job->request_payload.payload_len) {
+  1301			evt_dat->len = job->request_payload.payload_len;
+  1302			lpfc_printf_log(phba, KERN_WARNING, LOG_LIBDFC,
+  1303					"2618 Truncated event data at %d "
+  1304					"bytes\n",
+  1305					job->request_payload.payload_len);
+  1306		}
+  1307	
+  1308		event_reply->type = evt_dat->type;
+  1309		event_reply->immed_data = evt_dat->immed_dat;
+  1310		if (evt_dat->len > 0)
+  1311			bsg_reply->reply_payload_rcv_len =
+  1312				sg_copy_from_buffer(job->request_payload.sg_list,
+  1313						    job->request_payload.sg_cnt,
+  1314						    evt_dat->data, evt_dat->len);
+  1315		else
+  1316			bsg_reply->reply_payload_rcv_len = 0;
+  1317	
+  1318		if (evt_dat) {
+  1319			kfree(evt_dat->data);
+  1320			kfree(evt_dat);
+  1321		}
+  1322	
+  1323		spin_lock_irqsave(&phba->ct_ev_lock, flags);
+  1324		lpfc_bsg_event_unref(evt);
+  1325		spin_unlock_irqrestore(&phba->ct_ev_lock, flags);
+  1326		job->dd_data = NULL;
+  1327		bsg_reply->result = 0;
+  1328		bsg_job_done(job, bsg_reply->result,
+  1329			       bsg_reply->reply_payload_rcv_len);
+  1330		return 0;
+  1331	
+> 1332	job_err_unref:
+  1333		spin_lock_irqsave(&phba->ct_ev_lock, flags);
+  1334		lpfc_bsg_event_unref(evt);
+  1335		spin_unlock_irqrestore(&phba->ct_ev_lock, flags);
+  1336	job_error:
+  1337		job->dd_data = NULL;
+  1338		bsg_reply->result = rc;
+  1339		return rc;
+  1340	}
+  1341	
 
-Fixes: 0ca0c24e3211 ("mm: store zero pages to be swapped out in a bitmap")
-Reviewed-by: Nhat Pham <nphamcs@gmail.com>
-Cc: Usama Arif <usamaarif642@gmail.com>
-Cc: Chengming Zhou <chengming.zhou@linux.dev>
-Cc: Yosry Ahmed <yosryahmed@google.com>
-Cc: Hailong Liu <hailong.liu@oppo.com>
-Cc: Johannes Weiner <hannes@cmpxchg.org>
-Cc: David Hildenbrand <david@redhat.com>
-Cc: Hugh Dickins <hughd@google.com>
-Cc: Matthew Wilcox (Oracle) <willy@infradead.org>
-Cc: Shakeel Butt <shakeel.butt@linux.dev>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Baolin Wang <baolin.wang@linux.alibaba.com>
-Cc: Chris Li <chrisl@kernel.org>
-Cc: "Huang, Ying" <ying.huang@intel.com>
-Cc: Kairui Song <kasong@tencent.com>
-Cc: Ryan Roberts <ryan.roberts@arm.com>
-Signed-off-by: Barry Song <v-songbaohua@oppo.com>
----
- -v3:
- * collected Nhat's reviewed-by, thanks!
- * refine doc per Usama and David, thanks!
- * refine changelog
-
- Documentation/admin-guide/cgroup-v2.rst |  9 +++++++++
- include/linux/vm_event_item.h           |  2 ++
- mm/memcontrol.c                         |  4 ++++
- mm/page_io.c                            | 16 ++++++++++++++++
- mm/vmstat.c                             |  2 ++
- 5 files changed, 33 insertions(+)
-
-diff --git a/Documentation/admin-guide/cgroup-v2.rst b/Documentation/admin-guide/cgroup-v2.rst
-index db3799f1483e..13736a94edfd 100644
---- a/Documentation/admin-guide/cgroup-v2.rst
-+++ b/Documentation/admin-guide/cgroup-v2.rst
-@@ -1599,6 +1599,15 @@ The following nested keys are defined.
- 	  pglazyfreed (npn)
- 		Amount of reclaimed lazyfree pages
- 
-+	  swpin_zero
-+		Number of pages swapped into memory and filled with zero, where I/O
-+		was optimized out because the page content was detected to be zero
-+		during swapout.
-+
-+	  swpout_zero
-+		Number of zero-filled pages swapped out with I/O skipped due to the
-+		content being detected as zero.
-+
- 	  zswpin
- 		Number of pages moved in to memory from zswap.
- 
-diff --git a/include/linux/vm_event_item.h b/include/linux/vm_event_item.h
-index aed952d04132..f70d0958095c 100644
---- a/include/linux/vm_event_item.h
-+++ b/include/linux/vm_event_item.h
-@@ -134,6 +134,8 @@ enum vm_event_item { PGPGIN, PGPGOUT, PSWPIN, PSWPOUT,
- #ifdef CONFIG_SWAP
- 		SWAP_RA,
- 		SWAP_RA_HIT,
-+		SWPIN_ZERO,
-+		SWPOUT_ZERO,
- #ifdef CONFIG_KSM
- 		KSM_SWPIN_COPY,
- #endif
-diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-index 5e44d6e7591e..7b3503d12aaf 100644
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -441,6 +441,10 @@ static const unsigned int memcg_vm_event_stat[] = {
- 	PGDEACTIVATE,
- 	PGLAZYFREE,
- 	PGLAZYFREED,
-+#ifdef CONFIG_SWAP
-+	SWPIN_ZERO,
-+	SWPOUT_ZERO,
-+#endif
- #ifdef CONFIG_ZSWAP
- 	ZSWPIN,
- 	ZSWPOUT,
-diff --git a/mm/page_io.c b/mm/page_io.c
-index 5d9b6e6cf96c..4b4ea8e49cf6 100644
---- a/mm/page_io.c
-+++ b/mm/page_io.c
-@@ -204,7 +204,9 @@ static bool is_folio_zero_filled(struct folio *folio)
- 
- static void swap_zeromap_folio_set(struct folio *folio)
- {
-+	struct obj_cgroup *objcg = get_obj_cgroup_from_folio(folio);
- 	struct swap_info_struct *sis = swp_swap_info(folio->swap);
-+	int nr_pages = folio_nr_pages(folio);
- 	swp_entry_t entry;
- 	unsigned int i;
- 
-@@ -212,6 +214,12 @@ static void swap_zeromap_folio_set(struct folio *folio)
- 		entry = page_swap_entry(folio_page(folio, i));
- 		set_bit(swp_offset(entry), sis->zeromap);
- 	}
-+
-+	count_vm_events(SWPOUT_ZERO, nr_pages);
-+	if (objcg) {
-+		count_objcg_events(objcg, SWPOUT_ZERO, nr_pages);
-+		obj_cgroup_put(objcg);
-+	}
- }
- 
- static void swap_zeromap_folio_clear(struct folio *folio)
-@@ -507,6 +515,7 @@ static void sio_read_complete(struct kiocb *iocb, long ret)
- static bool swap_read_folio_zeromap(struct folio *folio)
- {
- 	int nr_pages = folio_nr_pages(folio);
-+	struct obj_cgroup *objcg;
- 	bool is_zeromap;
- 
- 	/*
-@@ -521,6 +530,13 @@ static bool swap_read_folio_zeromap(struct folio *folio)
- 	if (!is_zeromap)
- 		return false;
- 
-+	objcg = get_obj_cgroup_from_folio(folio);
-+	count_vm_events(SWPIN_ZERO, nr_pages);
-+	if (objcg) {
-+		count_objcg_events(objcg, SWPIN_ZERO, nr_pages);
-+		obj_cgroup_put(objcg);
-+	}
-+
- 	folio_zero_range(folio, 0, folio_size(folio));
- 	folio_mark_uptodate(folio);
- 	return true;
-diff --git a/mm/vmstat.c b/mm/vmstat.c
-index 22a294556b58..c8ef7352f9ed 100644
---- a/mm/vmstat.c
-+++ b/mm/vmstat.c
-@@ -1418,6 +1418,8 @@ const char * const vmstat_text[] = {
- #ifdef CONFIG_SWAP
- 	"swap_ra",
- 	"swap_ra_hit",
-+	"swpin_zero",
-+	"swpout_zero",
- #ifdef CONFIG_KSM
- 	"ksm_swpin_copy",
- #endif
 -- 
-2.39.3 (Apple Git-146)
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
