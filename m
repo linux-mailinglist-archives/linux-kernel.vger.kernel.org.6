@@ -1,36 +1,36 @@
-Return-Path: <linux-kernel+bounces-396418-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396419-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45DE99BCCDD
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 13:39:24 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 808539BCCDF
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 13:39:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 017D1282133
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 12:39:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A43281C220EB
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 12:39:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 098F61D618A;
-	Tue,  5 Nov 2024 12:39:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C4141D63F5;
+	Tue,  5 Nov 2024 12:39:16 +0000 (UTC)
 Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A72941D5AA8
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 12:39:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEDAB1D5AB7
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 12:39:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730810354; cv=none; b=gYrALtvdCRU8l/bxvhiIwPLkvSbRLtGW6ZAZY58d3y0WtZlENGXpRp3Zt+eg/VBEUKgYSmJM9ZKSJDvvquu7KyfjpBX1L+3cSDWUG1oWsosyoCJbro+nhTzYrV1DJ8V9Ku/HTudie2ogSLDVwkbIdZB9i11qK0lMdXnNpxRfHH4=
+	t=1730810356; cv=none; b=Gd5d+ACpoX00+DJsVWFAXaQPMj6TdaG4LZ8wSfW0VyQf2ky5Xj2WtmByI+rgfKZhtATgzMfKC1KtyZIwdFX3Gw4sx5yYji2Jkgyvy7QKPCcEnucEn3fnbWfDgyXWBZvoylqzDxrtCPsRs7yiEPOD6xWEAoKbsZE0+CgTWHDJho8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730810354; c=relaxed/simple;
-	bh=WuYh2QNbB1DXYMDkZ4MpKfVONFKDR2ri1ITDB4mHoqs=;
+	s=arc-20240116; t=1730810356; c=relaxed/simple;
+	bh=1P9y8x6CeepxT8JghLYZnzdwyIS2oAFeo31CZBM8/1I=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=G8M0SVXCBz7cXBk9z8BrFaP07JsGeFhxRbAcdIsqN6Yb0SOFupMBDrgNtROl6IiOo0Euwetw+8a5JWzKnAtwYXx14S8+oDPD7XClHpBAvTSawrpxmzw+EOjfqd2zeEsZz0PQLEqE+SfOM5jXsP8EFK5UD0jIJ/LR9M8F4Bhhti8=
+	 MIME-Version; b=R5+lm6G5qwa13p+R6s2eePfcb3iEeYuVOxbAtioNHI3e273DDNFpJvB+ipEf6647Ok4LDUeG4kxE2OceAU5n2U9+e7FIGE/lTAP/txVtZlUSseIQM+5D+BgKV5F5NvZxM1FIdFEtkCz9BO4rKG5gu1aIdfx9nxS+TbE0lez7Zws=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
 Received: from loongson.cn (unknown [113.200.148.30])
-	by gateway (Coremail) with SMTP id _____8AxquHuESpnirUxAA--.36195S3;
-	Tue, 05 Nov 2024 20:39:10 +0800 (CST)
+	by gateway (Coremail) with SMTP id _____8DxQK_wESpnkrUxAA--.10283S3;
+	Tue, 05 Nov 2024 20:39:12 +0800 (CST)
 Received: from linux.localdomain (unknown [113.200.148.30])
-	by front1 (Coremail) with SMTP id qMiowMBxrsLsESpnw4lCAA--.26454S4;
+	by front1 (Coremail) with SMTP id qMiowMBxrsLsESpnw4lCAA--.26454S5;
 	Tue, 05 Nov 2024 20:39:10 +0800 (CST)
 From: Tiezhu Yang <yangtiezhu@loongson.cn>
 To: Huacai Chen <chenhuacai@kernel.org>,
@@ -38,9 +38,9 @@ To: Huacai Chen <chenhuacai@kernel.org>,
 	Peter Zijlstra <peterz@infradead.org>
 Cc: loongarch@lists.linux.dev,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/5] objtool: Handle special cases of discard.reachable
-Date: Tue,  5 Nov 2024 20:39:03 +0800
-Message-ID: <20241105123906.26072-3-yangtiezhu@loongson.cn>
+Subject: [PATCH v2 3/5] objtool/LoongArch: Add support for switch table
+Date: Tue,  5 Nov 2024 20:39:04 +0800
+Message-ID: <20241105123906.26072-4-yangtiezhu@loongson.cn>
 X-Mailer: git-send-email 2.42.0
 In-Reply-To: <20241105123906.26072-1-yangtiezhu@loongson.cn>
 References: <20241105123906.26072-1-yangtiezhu@loongson.cn>
@@ -51,11 +51,11 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowMBxrsLsESpnw4lCAA--.26454S4
+X-CM-TRANSID:qMiowMBxrsLsESpnw4lCAA--.26454S5
 X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
-X-Coremail-Antispam: 1Uk129KBj93XoW7CF4kuryfGr4DKr17uw47ZFc_yoW8WF4Dpa
-	y5Cay3Jr4DXr48W3W7Wws5WryfKw4fGrW8XryfJ34UK3s8Xwn5KFn3tay2v3Zxua1ag3Wa
-	qFsI934UZF1DArcCm3ZEXasCq-sJn29KB7ZKAUJUUUUr529EdanIXcx71UUUUU7KY7ZEXa
+X-Coremail-Antispam: 1Uk129KBj93XoWxCw4rWw18Wr1fGr1kCw4kuFX_yoWrGr1DpF
+	W7C345Kr45XryfWw13ta18uryakws3WFy7Jr9xKr93Aw42qF1rtFs3tFn0yF15Crs0yr4I
+	qr4fKr4UCF4DAabCm3ZEXasCq-sJn29KB7ZKAUJUUUUr529EdanIXcx71UUUUU7KY7ZEXa
 	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
 	0xBIdaVrnRJUUU9Fb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
 	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
@@ -71,50 +71,114 @@ X-Coremail-Antispam: 1Uk129KBj93XoW7CF4kuryfGr4DKr17uw47ZFc_yoW8WF4Dpa
 	AIcVC2z280aVAFwI0_Gr0_Cr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2
 	KfnxnUUI43ZEXa7IU8EeHDUUUUU==
 
-There are some "unreachable instruction" objtool warnings when compling
-with Clang on LoongArch, this is because the "break" instruction is set
-as dead end due to its type is INSN_BUG in decode_instructions() at the
-beginning, and it does not set insn->dead_end of the "break" instruction
-as false after checking ".rela.discard.reachable" in add_dead_ends(), so
-the next instruction of "break" is marked as unreachable.
+The objtool program needs to analysis the control flow of each object file
+generated by compiler toolchain, it needs to know all the locations that a
+branch instruction may jump into, if a jump table is used, objtool has to
+correlate the jump instruction with the table.
 
-Actually, it can find the reachable instruction after parsing the section
-".rela.discard.reachable", in some cases, the "break" instruction may not
-be the first previous instruction with scheduling by Machine Instruction
-Scheduler of LLVM, it should find more times and then set insn->dead_end
-of the "break" instruction as false.
+On x86 which is the only port supported by objtool before LoongArch, there
+is a relocation on the jump instruction and to the table directly. But on
+LoongArch, the relocation is on some kind of instruction prior to the jump
+instruction, and also with scheduling it is not easy to tell the offset of
+that instruction from the jump instruction. Furthermore, because LoongArch
+has -fsection-anchors (often enabled at -O1 or above) the relocation may
+actually points to a section anchor instead of the table itself.
 
-This is preparation for later patch on LoongArch, there is no effect for
-the other archs with this patch.
+There is a GCC patch "LoongArch: Add support to annotate tablejump" which
+has been merged into the upstream mainline, the changes are very trivial
+in GCC, it makes life much easier for switch table support of objtool on
+LoongArch.
 
+By now, there is an additional section ".discard.tablejump_annotate" to
+store the jump info as pairs of addresses, each pair contains the address
+of jump instruction and the address of jump table.
+
+In order to find switch table, it is easy to parse the relocation section
+".rela.discard.tablejump_annotate" to get table_sec and table_offset, the
+rest process is somehow like x86.
+
+Link: https://gcc.gnu.org/git/?p=gcc.git;a=commit;h=0ee028f55640
 Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
 ---
- tools/objtool/check.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ tools/objtool/arch/loongarch/special.c | 59 +++++++++++++++++++++++++-
+ 1 file changed, 58 insertions(+), 1 deletion(-)
 
-diff --git a/tools/objtool/check.c b/tools/objtool/check.c
-index 9601235e908d..6607cd56459b 100644
---- a/tools/objtool/check.c
-+++ b/tools/objtool/check.c
-@@ -711,6 +711,18 @@ static int add_dead_ends(struct objtool_file *file)
- 		}
+diff --git a/tools/objtool/arch/loongarch/special.c b/tools/objtool/arch/loongarch/special.c
+index 9bba1e9318e0..31e0f94e31e8 100644
+--- a/tools/objtool/arch/loongarch/special.c
++++ b/tools/objtool/arch/loongarch/special.c
+@@ -1,4 +1,5 @@
+ // SPDX-License-Identifier: GPL-2.0-or-later
++#include <string.h>
+ #include <objtool/special.h>
  
- 		insn->dead_end = false;
+ bool arch_support_alt_relocation(struct special_alt *special_alt,
+@@ -8,8 +9,64 @@ bool arch_support_alt_relocation(struct special_alt *special_alt,
+ 	return false;
+ }
+ 
++static struct reloc *find_reloc_by_table_annotate(struct objtool_file *file,
++						  struct instruction *insn)
++{
++	struct section *rsec;
++	struct reloc *reloc;
++	unsigned long offset;
 +
-+		/* Handle the special cases compiled with Clang on LoongArch */
-+		if (file->elf->ehdr.e_machine == EM_LOONGARCH &&
-+		    reloc->sym->type == STT_SECTION) {
-+			while (insn && insn_func(insn)) {
-+				insn = prev_insn_same_sym(file, insn);
-+				if (insn && insn->dead_end) {
-+					insn->dead_end = false;
-+					break;
-+				}
-+			}
++	rsec = find_section_by_name(file->elf, ".rela.discard.tablejump_annotate");
++	if (!rsec)
++		return NULL;
++
++	for_each_reloc(rsec, reloc) {
++		if (reloc->sym->sec->rodata)
++			continue;
++
++		if (strcmp(insn->sec->name, reloc->sym->sec->name))
++			continue;
++
++		if (reloc->sym->type == STT_SECTION)
++			offset = reloc_addend(reloc);
++		else
++			offset = reloc->sym->offset;
++
++		if (insn->offset == offset) {
++			reloc++;
++			return reloc;
 +		}
- 	}
- 
- 	return 0;
++	}
++
++	return NULL;
++}
++
+ struct reloc *arch_find_switch_table(struct objtool_file *file,
+ 				     struct instruction *insn)
+ {
+-	return NULL;
++	struct reloc *annotate_reloc;
++	struct reloc *rodata_reloc;
++	struct section *table_sec;
++	unsigned long table_offset;
++
++	annotate_reloc = find_reloc_by_table_annotate(file, insn);
++	if (!annotate_reloc)
++		return NULL;
++
++	table_sec = annotate_reloc->sym->sec;
++	if (annotate_reloc->sym->type == STT_SECTION)
++		table_offset = reloc_addend(annotate_reloc);
++	else
++		table_offset = annotate_reloc->sym->offset;
++
++	/*
++	 * Each table entry has a rela associated with it.  The rela
++	 * should reference text in the same function as the original
++	 * instruction.
++	 */
++	rodata_reloc = find_reloc_by_dest(file->elf, table_sec, table_offset);
++	if (!rodata_reloc)
++		return NULL;
++
++	return rodata_reloc;
+ }
 -- 
 2.42.0
 
