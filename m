@@ -1,70 +1,71 @@
-Return-Path: <linux-kernel+bounces-396540-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396541-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CFAA9BCEA9
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 15:06:35 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 042DE9BCEB1
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 15:06:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 00D532826B7
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 14:06:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8AB2A1F223F1
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 14:06:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E22CB1D935D;
-	Tue,  5 Nov 2024 14:06:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E9351D9A54;
+	Tue,  5 Nov 2024 14:06:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="JkP0BmgD"
-Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="PKaGrq1n"
+Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 584141D89F8
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 14:06:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 991BF1D8DE1
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 14:06:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730815572; cv=none; b=ogRcoLr7GmSfTBQNoTh1T1XCjpAu9ZFnWtGM0Lci5rUtuDq/fOwCPq5Pa9VaPo4EEuGQOlvYtvonVKYMgscMP7QfIV60yAwfctjt/2NqbnPSfs4q8sghuEEB3Kh+q0X7TG9vrvgfIP7XidrbSxwB7TlFZA0XqdHBccrP+iEyCcw=
+	t=1730815573; cv=none; b=ZyuBCeF6zq8lnfGI5rkJtbh3tT+6vbqgKRdp0sTv/j6JNe/vONdncYy12Xp0sRiBdrdzq1C/7IgwlpTUD7iRCW+D4gHfk8tvAMvdgSqCJs0SWdY7rExuVJLxtDcJFHnMLcSJAttBPq11Vwo/oSrRHKXexVayDTt1y+8DOKth8BE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730815572; c=relaxed/simple;
-	bh=RyosKProBqD7GdBDeEWWMCeaBTC4J/TV8BuDGgi07uM=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=X/2g/xZ8VvwrEF798LKmr+srcUTwm5l1CjwaDpkcq6IhHx/iblDs8dC0I32SZoU8uWgJC7rWbVayWvtNADtGBNh6J0NIHlG5XwvsSS+we7eyL0qCXu7CMdlOWG9UGCba6pgPU1nR/EBCFHRuHDsImcsmC+CKxllB4ZuTODoAxP8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=JkP0BmgD; arc=none smtp.client-ip=209.85.222.178
+	s=arc-20240116; t=1730815573; c=relaxed/simple;
+	bh=llHpLGlkUHZowYuOkDk6k/JCIAhD9hLmX4RX3PNhlsQ=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=APL88VFTblcPeGOMS3C5CPWLjqp00eh39f70jP8dyADZChv6MOIvaX5FaYc1539IdkQ5tklU3aNbN38q7zlmNS1Pb02Um4pR07bwtgpcrU0stebrhzyP4P3fkHfn8vO3ABDdd0GXJrqf+cp9I5GSTogZ4aCd8ADpid3YWthMZVI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=PKaGrq1n; arc=none smtp.client-ip=209.85.222.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-7b154f71885so443675885a.0
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 06:06:10 -0800 (PST)
+Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-7b158542592so389877285a.2
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 06:06:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1730815569; x=1731420369; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=To1pY+0ejhgy7bPxablm79ffBSWqRzm24XAQuXWVHHs=;
-        b=JkP0BmgD1PZ8IMhd6Sx3CK3IsiLVFu5sksFlVh5lkTI2kzXCLwF4D3S0G9QVrawKNf
-         PZ4keKMpVOpCnoA3ZZxetcotMimLp0z+7FD+fO3lW73okyHUHn4hRL+Ht49YcNFP+Adm
-         mKiW3als/mgXxcy/n9ZGJTulnOHwQu/2DPDyE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730815569; x=1731420369;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=chromium.org; s=google; t=1730815570; x=1731420370; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=To1pY+0ejhgy7bPxablm79ffBSWqRzm24XAQuXWVHHs=;
-        b=tY4lApEmiTcA35392GUYfcMeUBFEiKdainHW0Sgvd5+aotQH/AM7VBchTToHYuxJbs
-         VmjGPrxuIquBeALXrMTmIFYRsqKNxUNINcUou5/SHXlAOzbyPFSEaxAVN60lmWkv78lw
-         jFuI8I2lE6tthJOU8I65KebbWPmcwrR0lMYa3nOQQxx9mudKGxuT/Xt8mfkW2wGM2+fx
-         tp0MLgPCJG4HgXQ4pTyYkW2YA9XDMNjzfTrZr9K9oKcf8Cei3lWsO74yrXITAioQR3lw
-         Q7tpxNt6bjDpoAr045sDKzptofAv+TRaOFH8poyLLlGhpS4KAI5Su5IKv9hHBNXR13sD
-         WOIQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXLhgnCIjGZgydjjFIbT7LR6o8vPRpmugFl9jeL5cLaLykAhRo8cD99O0NTPd6R4NgzrMRT3yLDx0Q8J20=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzIEhrw25YaZS/m6NvITlijJZLTqzqN1EOBVAIwLG8NrOaKg2m4
-	0HvS9c8Kn2XPIrffaw6kX3IG37oH3U0tuJ2HucOVkBQbG8D/2BmROVPk046eTA==
-X-Google-Smtp-Source: AGHT+IGvzADAlPGIc8XPrDiCAfG0jFnnvTAwT4/O8VMAFu7gzQBezviOLrZFmd9PU3FVWJ4iwBD/fA==
-X-Received: by 2002:a05:620a:190f:b0:7b1:ab32:b719 with SMTP id af79cd13be357-7b2fb98a15cmr2053691385a.38.1730815569232;
-        Tue, 05 Nov 2024 06:06:09 -0800 (PST)
+        bh=Gio7v/Jh4+pISjPYX2FMMZSUjUbp0P+7Vz75sUpvXsU=;
+        b=PKaGrq1nJyNdSxwiQg6orjFw8thaOymlBjKIRG/HhxpJ3POB7+KMv16ZmbmmAGU8NA
+         0uyq8V6qpJ4AuqMzz/pbBku6jcPokLfkmXzdcMnbZcNzyyFACmFCtcFTyGs0C910yEH/
+         FFB+XuiOgSzlqVAcGOkGgZ/9c5AmwEOCbpHg0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730815570; x=1731420370;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Gio7v/Jh4+pISjPYX2FMMZSUjUbp0P+7Vz75sUpvXsU=;
+        b=bEG8AsqFcmxiA3nuN6dFLdsylLtGyjPLfWC/9vi7hcL+Qg0PB6p7UEgCsCliLky0a7
+         esMNtGjb38KEJV4hvApp5vajTuTFbI0DHpf9qCV5xRaRDsc0l2+OP6QtQCQQSzSQSr6c
+         b36eLn3jLJ5POwe44bE+aYVzUY/LaF9M9qJwFr0XPCtqPk3ct0C7Br5hlYYjFNWTCM8V
+         DfypaLXXRCMSaFWmw4KgYwwELhhNpBoCv0F7ycEz6zaotvvI05G04R3S72Y+Fydf3XEq
+         Z+4S6qsYmiNC2TlqUfyZFvKJ0deNV0CM1QFFFyhi8PCFflrLFCBOibysBX6NAxpU/y7y
+         brQQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUukfPKJweB6ViXlKLckc1itIN4VV6ApFTPX8jL31Yu/uwXaZO6qFqYbZZ1xE6+e2gkdVjzeIKMveQckkQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxnw7HcHOtzbUjBbrDco7OQQe6ppuvH1EKAR9wjwB5qUn0ct5tC
+	dlQKmZpBwa1VZ8uxXozy7MEoXvScVJdHI9fX542/OrjWt++qrDiCzbvmGC8rqQ==
+X-Google-Smtp-Source: AGHT+IHJSp6KoCO0JCiw9Js2LtOlX7ZsvBREP0xvGv2MuJzWFhwN8LTZLpMVZXngGMQU2mZFB23TSQ==
+X-Received: by 2002:a05:620a:2a12:b0:7b1:4caf:3750 with SMTP id af79cd13be357-7b2fb9beb07mr2585903885a.53.1730815570498;
+        Tue, 05 Nov 2024 06:06:10 -0800 (PST)
 Received: from denia.c.googlers.com (189.216.85.34.bc.googleusercontent.com. [34.85.216.189])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b2f3a816afsm520422185a.101.2024.11.05.06.06.07
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b2f3a816afsm520422185a.101.2024.11.05.06.06.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Nov 2024 06:06:08 -0800 (PST)
+        Tue, 05 Nov 2024 06:06:10 -0800 (PST)
 From: Ricardo Ribalda <ribalda@chromium.org>
-Subject: [PATCH v4 0/2] uvc: Fix OOPs after rmmod if gpio unit is used
-Date: Tue, 05 Nov 2024 14:06:05 +0000
-Message-Id: <20241105-uvc-crashrmmod-v4-0-410e548f097a@chromium.org>
+Date: Tue, 05 Nov 2024 14:06:06 +0000
+Subject: [PATCH v4 1/2] media: uvcvideo: Remove refcounted cleanup
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,49 +74,126 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAE0mKmcC/33MSw7CIBSF4a00jMVweSmO3IdxUOG2ZdBiwBJN0
- 71LOzHxNfxPcr6JJIweEzlUE4mYffJhKCE3FbFdPbRIvStNOOMSmAA6ZkttrFMX+z44qrV2KBp
- rQAIpp2vExt9X8HQu3fl0C/Gx+hmW9SeVgQJlyjSojLgA6qPtYuj92G9DbMmiZf4SgKkPgRdBy
- Z1FXWujOX4RxH9BFMEyo4zdG6adeBPmeX4Cx7HdiDMBAAA=
+Message-Id: <20241105-uvc-crashrmmod-v4-1-410e548f097a@chromium.org>
+References: <20241105-uvc-crashrmmod-v4-0-410e548f097a@chromium.org>
+In-Reply-To: <20241105-uvc-crashrmmod-v4-0-410e548f097a@chromium.org>
 To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
  Mauro Carvalho Chehab <mchehab@kernel.org>
 Cc: Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org, 
  linux-kernel@vger.kernel.org, Ricardo Ribalda <ribalda@chromium.org>, 
- Sakari Ailus <sakari.ailus@linux.intel.com>, stable@vger.kernel.org, 
- Sergey Senozhatsky <senozhatsky@chromium.org>
+ Sakari Ailus <sakari.ailus@linux.intel.com>, stable@vger.kernel.org
 X-Mailer: b4 0.13.0
 
+After commit: c9ec6f173636 ("media: uvcvideo: Stop stream during unregister")
+we have some guarantee that userspace will not be able to access any of
+our internal structures after disconnect().
+
+This means that we can do the cleanup at the end of disconnect and we
+will be able to use devres functions without fear of races.
+
+Cc: stable@vger.kernel.org
+Fixes: 2886477ff987 ("media: uvcvideo: Implement UVC_EXT_GPIO_UNIT")
 Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
 ---
-Changes in v4: Thanks Laurent.
-- Remove refcounted cleaup to support devres.
-- Link to v3: https://lore.kernel.org/r/20241105-uvc-crashrmmod-v3-1-c0959c8906d3@chromium.org
-
-Changes in v3: Thanks Sakari.
-- Rename variable to initialized.
-- Other CodeStyle.
-- Link to v2: https://lore.kernel.org/r/20241105-uvc-crashrmmod-v2-1-547ce6a6962e@chromium.org
-
-Changes in v2: Thanks to Laurent.
-- The main structure is not allocated with devres so there is a small
-  period of time where we can get an irq with the structure free. Do not
-  use devres for the IRQ.
-- Link to v1: https://lore.kernel.org/r/20241031-uvc-crashrmmod-v1-1-059fe593b1e6@chromium.org
-
----
-Ricardo Ribalda (2):
-      media: uvcvideo: Remove refcounted cleanup
-      media: uvcvideo: Fix crash during unbind if gpio unit is in use
-
- drivers/media/usb/uvc/uvc_driver.c | 30 ++++++++----------------------
+ drivers/media/usb/uvc/uvc_driver.c | 24 +++++-------------------
  drivers/media/usb/uvc/uvcvideo.h   |  1 -
- 2 files changed, 8 insertions(+), 23 deletions(-)
----
-base-commit: c7ccf3683ac9746b263b0502255f5ce47f64fe0a
-change-id: 20241031-uvc-crashrmmod-666de3fc9141
+ 2 files changed, 5 insertions(+), 20 deletions(-)
 
-Best regards,
+diff --git a/drivers/media/usb/uvc/uvc_driver.c b/drivers/media/usb/uvc/uvc_driver.c
+index a96f6ca0889f..2735fccdf454 100644
+--- a/drivers/media/usb/uvc/uvc_driver.c
++++ b/drivers/media/usb/uvc/uvc_driver.c
+@@ -1868,16 +1868,12 @@ static int uvc_scan_device(struct uvc_device *dev)
+ /*
+  * Delete the UVC device.
+  *
+- * Called by the kernel when the last reference to the uvc_device structure
+- * is released.
+- *
+- * As this function is called after or during disconnect(), all URBs have
++ * As this function is called during disconnect(), all URBs have
+  * already been cancelled by the USB core. There is no need to kill the
+  * interrupt URB manually.
+  */
+-static void uvc_delete(struct kref *kref)
++static void uvc_delete(struct uvc_device *dev)
+ {
+-	struct uvc_device *dev = container_of(kref, struct uvc_device, ref);
+ 	struct list_head *p, *n;
+ 
+ 	uvc_status_cleanup(dev);
+@@ -1919,14 +1915,6 @@ static void uvc_delete(struct kref *kref)
+ 	kfree(dev);
+ }
+ 
+-static void uvc_release(struct video_device *vdev)
+-{
+-	struct uvc_streaming *stream = video_get_drvdata(vdev);
+-	struct uvc_device *dev = stream->dev;
+-
+-	kref_put(&dev->ref, uvc_delete);
+-}
+-
+ /*
+  * Unregister the video devices.
+  */
+@@ -2009,7 +1997,7 @@ int uvc_register_video_device(struct uvc_device *dev,
+ 	vdev->v4l2_dev = &dev->vdev;
+ 	vdev->fops = fops;
+ 	vdev->ioctl_ops = ioctl_ops;
+-	vdev->release = uvc_release;
++	vdev->release = video_device_release_empty;
+ 	vdev->prio = &stream->chain->prio;
+ 	if (type == V4L2_BUF_TYPE_VIDEO_OUTPUT)
+ 		vdev->vfl_dir = VFL_DIR_TX;
+@@ -2045,7 +2033,6 @@ int uvc_register_video_device(struct uvc_device *dev,
+ 		return ret;
+ 	}
+ 
+-	kref_get(&dev->ref);
+ 	return 0;
+ }
+ 
+@@ -2160,7 +2147,6 @@ static int uvc_probe(struct usb_interface *intf,
+ 	INIT_LIST_HEAD(&dev->entities);
+ 	INIT_LIST_HEAD(&dev->chains);
+ 	INIT_LIST_HEAD(&dev->streams);
+-	kref_init(&dev->ref);
+ 	atomic_set(&dev->nmappings, 0);
+ 
+ 	dev->udev = usb_get_dev(udev);
+@@ -2300,7 +2286,7 @@ static int uvc_probe(struct usb_interface *intf,
+ 
+ error:
+ 	uvc_unregister_video(dev);
+-	kref_put(&dev->ref, uvc_delete);
++	uvc_delete(dev);
+ 	return -ENODEV;
+ }
+ 
+@@ -2319,7 +2305,7 @@ static void uvc_disconnect(struct usb_interface *intf)
+ 		return;
+ 
+ 	uvc_unregister_video(dev);
+-	kref_put(&dev->ref, uvc_delete);
++	uvc_delete(dev);
+ }
+ 
+ static int uvc_suspend(struct usb_interface *intf, pm_message_t message)
+diff --git a/drivers/media/usb/uvc/uvcvideo.h b/drivers/media/usb/uvc/uvcvideo.h
+index 07f9921d83f2..feb8de640a26 100644
+--- a/drivers/media/usb/uvc/uvcvideo.h
++++ b/drivers/media/usb/uvc/uvcvideo.h
+@@ -578,7 +578,6 @@ struct uvc_device {
+ 
+ 	/* Video Streaming interfaces */
+ 	struct list_head streams;
+-	struct kref ref;
+ 
+ 	/* Status Interrupt Endpoint */
+ 	struct usb_host_endpoint *int_ep;
+
 -- 
-Ricardo Ribalda <ribalda@chromium.org>
+2.47.0.199.ga7371fff76-goog
 
 
