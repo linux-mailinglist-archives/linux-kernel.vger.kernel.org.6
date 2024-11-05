@@ -1,887 +1,249 @@
-Return-Path: <linux-kernel+bounces-395877-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395878-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56D7E9BC445
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 05:18:18 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5F859BC44D
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 05:24:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4C7E7B2157B
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 04:18:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D9BD2826DA
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 04:24:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB11218756D;
-	Tue,  5 Nov 2024 04:18:09 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E213418E023;
+	Tue,  5 Nov 2024 04:24:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="cu32Sdz4"
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2084.outbound.protection.outlook.com [40.107.92.84])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29CBAA2D
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 04:18:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730780287; cv=none; b=WUPzHh1kV2nQfF4dnNlfhmsOktBMjLxmr6puUZh+D/cJb2CKgUOJSVZSMlc4JNIkXWjwt6gjUKgEB1s/PxEZIeIeKTjW8eR44F4rTFs2sWWjmbHwP8sZhqRaq1t9KKY9CWUcwicja3XvJgURfhF3lu6iN1XX9aT+JnQ2TW43iSY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730780287; c=relaxed/simple;
-	bh=UFQcvDRotMUDvvBL/OUgZxbalzf4Tab1NPzWRKgHTy0=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=CYurOSg7kxLnXLqkOJMUJWOxSpBVYginTb5xCf1LXeUm/Jjapy3IZFE5kNaMpYsswCm19SZyGlvM7umbSYumve9tCOudtM678O2O9OUQCbnfGfo8yiC/jHCEtybBjf/mvNJPJ6Yj9O5BYvSEzf/y03DzoCJfs9O/58RZKS4zbwI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a3c72d4ac4so54237405ab.3
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 20:18:03 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730780283; x=1731385083;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0+HodXbI7JGI3UWqn5f+mQIk1y/ERll1L5q6DOYhVVs=;
-        b=j8QO+uFdweg7P2gxXU3OJDGNFXOkL3wylN/7dOdr5bvYMfMKyDgVAq9+ApR1LcL+6D
-         gKIb4It0Zgu6qIUUtXV2pdEqPuug3nq1a0aD0g6HivoJsAW3SXAQRqYRRn7tUzo+W1dG
-         E3B+FfDwrWkfTEkYUoL0qHGSUlHdYjONRuPXKu1CH9YUgZ06E5Vwi0WPkwMZNOvIQ3jx
-         JlPCwRiBcg7x5FV74MazjAkN4UgsNtw6w6QRzBUzNJLdET1a4hNy74hMWR5KygKvIe5X
-         vdelbkKoge4LhQiL49iB2fyfO1rJaDpzvRmZPefxyRZ3HYj32NidBXE3q0De9F8jTg5p
-         bUkQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWAlR2pCw0II22u1wWcvoHwQDq1SV6OumSgda/VEdOPN6UZlV/df35SiEm2pt0AVkTtqNpMznrSy3Pan6M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwDSfhZNSRD0uf9a9mTjUMpNMQYk7uorm2YbcAuXzJkT6RS/zYY
-	zfj3It+grg6tOGggkMpzCbZJ8ewkK2LLcUx/MXkjlPa5rJz4pGyfj69a0dLPRgUZSIG/9E16mtN
-	vOgu/uMIk6/EHgQLZkMd7fnt3Sxnt1P0MFkFKdex/wSb38Km1A4GDjLQ=
-X-Google-Smtp-Source: AGHT+IFwECl1BZr+ykr7blNfhh2sZ+c4NGFhrf+8UlzmofnHE6bYOxrdMwEMt4a3eXE8/5JY4K62GwocK/EwvZ8Z8bUnxBYQJkUb
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62143376E0
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 04:24:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.84
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730780673; cv=fail; b=ekfsPUzDLfRtUKqNgoMXfW1bZRfah+btNlG1q2Xsd59+fAKsYm0dMRIu42N+2fIjHYUkytT95EuVVwm4jyoBonHCUQxa4fzE/2zs1pP2BETYD/JSNZT92/dY0pJgpmNMV/s/9bRmGAvrDGqfjX1cDBcqczOp6yR8Fhk5/fBajDs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730780673; c=relaxed/simple;
+	bh=mHj+3lTwj2c0SroMQuKDgL+rdi/xULfirhQnz4udVhM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=mUFhjpcxrUxWZgyn1LiT6QNIhnCBPK7A58nx313ZmNmL898Kb/iwaxbikcOP3IzSQs2kug1tijA9o67wEdcwgzl4DaZWy6v80E5TRWxge7Nl2kOBLysS+Fa1rZGaLSNnRY0fYZ3pUXVzcofg5h//EYs9Mfv8sHtSBwbaZILHIvM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=cu32Sdz4; arc=fail smtp.client-ip=40.107.92.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=pfTj4L9pUFwJJ+ofRL7+ncNNNdWotp7NJ9Csn9xi+jAqTvumQRkUW4R2ajog6PdgZhi2SCeYR+r9CQrObmi6uVyWT1k1VahlAK+llUfhh5qwjK8KlL79OHrX6m4n2zy1lkSjEaaQ+FL3m6fAPJugap0mp3UdtDrA7b3IqTDXa2gp4gv8KOSM7Ue6DyxZktlOlRkNCV0bIJwU9f5b8sh3Hh1yy3yTTjPT9S0ZuA7/8KqYggbu/ar/JtgDgYJ5H4yYpeFY01jFOizlNNTtZdt7cCL5wM5XANWKPOnLsAOcOfosl5jG1BVzx2mAHBs3TsuebioksrFL/vyp335apL+w4A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Pw4jyjLeQj/mgdzRx+YNwNwEeMxFRtl7ztVKuDsohDY=;
+ b=u0uaeQRCCdgYon1A3vVFrdxlzLQaDCj/MEt6U8NT06fv769H/cWAcvpYoGlxjw457/bQWQNwI0UQFJ+hykECmR4pHmra85bSVigdpGWZQQpTzWJosPKVn/16UiiE7Wpgza6IMtMgOYKfyojaaJNbNMdCkd/uaoUri2xr/MawklCQrnmhbJg6KaIXb9aEAEdVY5eLKxV7N53HSrFwB0yq5TlEMLZ5qJQ3B86gqKvFBNlwYTv9ZiJWphW0/oY1s90oqmdQCqGVBkmhQyM9ybgYiX1ksbo5PXn/qInWGRfauVDq77bH20qvX9/GOuwpsYbpNEASk6DB8JomDnlW97Pj4Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=gmx.de smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Pw4jyjLeQj/mgdzRx+YNwNwEeMxFRtl7ztVKuDsohDY=;
+ b=cu32Sdz4gq7Dr4tDNUMmt3dEr5g63dr62JhSfj51fBLzfqQHRoXWbMK7VFm07gehahAuoy08CkVqZqu8KzeW98UnMXV7r0NpjUTtfRycwejs/3XBHX+wpJUJ1vg9pi+49Z/94WI+u30tWZmRBomFZRthwJwRQ+/mHtV5OY5hbEk=
+Received: from BN0PR04CA0086.namprd04.prod.outlook.com (2603:10b6:408:ea::31)
+ by MW6PR12MB8897.namprd12.prod.outlook.com (2603:10b6:303:24a::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8114.31; Tue, 5 Nov
+ 2024 04:24:24 +0000
+Received: from BL6PEPF0001AB4D.namprd04.prod.outlook.com
+ (2603:10b6:408:ea:cafe::fb) by BN0PR04CA0086.outlook.office365.com
+ (2603:10b6:408:ea::31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8114.30 via Frontend
+ Transport; Tue, 5 Nov 2024 04:24:23 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ BL6PEPF0001AB4D.mail.protection.outlook.com (10.167.242.71) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8137.17 via Frontend Transport; Tue, 5 Nov 2024 04:24:23 +0000
+Received: from [10.136.47.53] (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 4 Nov
+ 2024 22:23:25 -0600
+Message-ID: <b8ed9d5d-4186-4b2a-aabf-d027d183c44a@amd.com>
+Date: Tue, 5 Nov 2024 09:52:54 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:c243:0:b0:3a0:9fd8:f70b with SMTP id
- e9e14a558f8ab-3a5e245844emr212065325ab.6.1730780283159; Mon, 04 Nov 2024
- 20:18:03 -0800 (PST)
-Date: Mon, 04 Nov 2024 20:18:03 -0800
-In-Reply-To: <tencent_31F4971436464B9475FB763166423D473709@qq.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67299c7b.050a0220.2edce.1500.GAE@google.com>
-Subject: Re: [syzbot] [sound?] INFO: task hung in snd_card_free
-From: syzbot <syzbot+73582d08864d8268b6fd@syzkaller.appspotmail.com>
-To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.6.1
+Subject: Re: [PATCH 17/24] sched/fair: Implement delayed dequeue
+Content-Language: en-US
+To: Mike Galbraith <efault@gmx.de>, Phil Auld <pauld@redhat.com>
+CC: Peter Zijlstra <peterz@infradead.org>, <mingo@redhat.com>,
+	<juri.lelli@redhat.com>, <vincent.guittot@linaro.org>,
+	<dietmar.eggemann@arm.com>, <rostedt@goodmis.org>, <bsegall@google.com>,
+	<mgorman@suse.de>, <vschneid@redhat.com>, <linux-kernel@vger.kernel.org>,
+	<wuyun.abel@bytedance.com>, <youssefesmat@chromium.org>, <tglx@linutronix.de>
+References: <20240727102732.960974693@infradead.org>
+ <20240727105030.226163742@infradead.org>
+ <20241101124715.GA689589@pauld.westford.csb>
+ <20241101125659.GY14555@noisy.programming.kicks-ass.net>
+ <20241101133822.GC689589@pauld.westford.csb>
+ <20241101142649.GX9767@noisy.programming.kicks-ass.net>
+ <20241101144225.GD689589@pauld.westford.csb>
+ <a59a1a99b7807d9937e424881c262ba7476d8b6b.camel@gmx.de>
+ <20241101200704.GE689589@pauld.westford.csb>
+ <59355fae66255a92f2cbc4d7ed38368ff3565140.camel@gmx.de>
+ <20241104130515.GB749675@pauld.westford.csb>
+ <1bffa5f2ca0fec8a00f84ffab86dc6e8408af31c.camel@gmx.de>
+From: K Prateek Nayak <kprateek.nayak@amd.com>
+In-Reply-To: <1bffa5f2ca0fec8a00f84ffab86dc6e8408af31c.camel@gmx.de>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL6PEPF0001AB4D:EE_|MW6PR12MB8897:EE_
+X-MS-Office365-Filtering-Correlation-Id: 02ad534c-d062-495d-4dbb-08dcfd51ba25
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|1800799024|376014|7416014|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?dCs4SXp3clE3WHB1amVvZlRoQnJSdEk5Zk1UL3pFY0dTajdnNmlINDhVZXc5?=
+ =?utf-8?B?TXlVN2NyRitKdnJJdkxTTThRV1ZtWGdTNDdBSk5iTE1kVGJzclp5M1E2MjF6?=
+ =?utf-8?B?ZE5ZVnFFNTZIdXp6SDBnaTlIWll2elR2QzVHSHRtK3Jwd1pOMHVSTWI1WlU5?=
+ =?utf-8?B?S3RjRGM5RG9LeXhKbHNQZjVvbXRURjVlQjA3T0h0RXNCTHJCVW9YVEtTeWVG?=
+ =?utf-8?B?L0c1QVRXNSsxajRSWFNYNi9Ha29kZExjWHA1VmtNejczMFFCS1ZsV1AzRjB2?=
+ =?utf-8?B?RzBUWk02bW1EajRRUFlGVTFsSUNYRldHVExFWERGSHVqRDRuRmNJUkpYN1Jn?=
+ =?utf-8?B?UGRwdUx3ek9DYTgwQ3l0ZXljQ0dhN2NDV2JJY2E2YytObFBzTjEycVQ0K0c5?=
+ =?utf-8?B?TEY3WDJ3eXg1TDdBaTVuemlYL3duM0hmSVF3Z1VMK2gyaGpGeHNZb2xEdHVr?=
+ =?utf-8?B?Q0tVMUJ1YW4vd3BNU1ZLWDd5VlVQdFR1TXp3dUJ6Yi9JSXpqbVFFblJJWUty?=
+ =?utf-8?B?Y0gyQXNrUVBDdFE3dEtPUDhuOUtobU5uaklvOEZQQUF6V2JWdGh2V2VReTNK?=
+ =?utf-8?B?dUY4YUZVQ3FKejBUbU0wY2ZORGhHTHpEYlUxL3FtdjgyWGpyZWhhdzVZMjZx?=
+ =?utf-8?B?dWI1R0dmbmtXNGVuUFhMQ2NneFQybmRrKzk2ZDVJeEtrSTE1K3pxMXMrY2Ey?=
+ =?utf-8?B?c0VUcDcrTXJCOWRxWm1SWndhZlNKek9sOXRlMWtFVm1USGZsVTFLWW5PMGVw?=
+ =?utf-8?B?aXZSTGJEVkp2eHVSQVA2d3c1ZjRDS21aTWgyZkptMEI4TEZvZjhGMGlYWUNU?=
+ =?utf-8?B?aEFrZElNaTVVMHF5NWsrRncyekFxTDBvdzVnUDdZVEdXS2IyTXAwVE1Ub1NX?=
+ =?utf-8?B?NEtQRjNmelhuNDRudCtBdU4wNk4vd0VZZUlsZVJsOEpEdzRPK0ZJempDdTNy?=
+ =?utf-8?B?Q3ZnRW52cFpWWWYrM2hTSHJQZkpJK2d4a3U0UUJabXZVR0pMWnNLZG12T0Fm?=
+ =?utf-8?B?bXlqRkxkWmhveHk1SEtnWXhFUytTa2FIMk9MWitRVFY0MGJoYjVHRzU1SDV0?=
+ =?utf-8?B?WUEyTXFPcVhVNWNOdmhibFBCNm82M0t5bG93VlNGcUs1ZXpZc0d3YldVRmJI?=
+ =?utf-8?B?VGk5R21nUVBpWXFndjJqaEhQZ0xpNE1RWFAwYWxTNlVCOTBQdXVPQThIVVg1?=
+ =?utf-8?B?OWNxbW9rNUJ6aVNsK01RRjkrZk1Ra0dLaGllaU1RSTg4TDBTWFVETkM5S0Ju?=
+ =?utf-8?B?anI0TTdaWlRWR21BVFRPUlVwcVJ2cTVZWnUwN0RraEgwQWNaMi9kaWRJRjdP?=
+ =?utf-8?B?cDFzZ01Cbjh6dHIreWhFZ21VVDU4V1c2RStmZHRJSUsvYWlpTkNaMDNjRWs3?=
+ =?utf-8?B?M0Z5bktTSHcvSWFxRnVPTDE5bmxuMGl4L3ovZVc3UXZMdHpuMTFPU1VmR05Z?=
+ =?utf-8?B?VVlZaTc5SzYwMVdXeGozWFBEcEtDLytDcFRmVlBwa0RpZ21PQkhKZ2VxeVI1?=
+ =?utf-8?B?N0RBalJlV0xCakx5aW4vMG80Y0FkeGQvSnNqb2dWbmxwUWIrdVF3bytLNm5H?=
+ =?utf-8?B?eEJUL3Z0ZTF1enN5eWd2UitwbU1reDQ4WHVtaUJxekJzSURqTk5wdUFxNEsy?=
+ =?utf-8?B?R0RUY3hHbE81UTdmOXppNDY1OXlqYWNmNlBucUFxMzlqUWtuem1UaCtJWTJL?=
+ =?utf-8?B?ci9kK2NwcTBrUFM1b2dJVU5aZmZ1Q0YwbkxOQXJiYU90M284K3pDODZYK2Zh?=
+ =?utf-8?B?S3hac3E0eEZJcTR2SDFMdWVDMWUzbjRieVJJbHhyOEhqVDRKZ24wZnc4VDRY?=
+ =?utf-8?B?RHJVSGpPKzVScUFmaFBXT3RBOUFscHRCWlZsQy85dHdybTQwZTFxOFRTV2lR?=
+ =?utf-8?B?cXpQbDRNU1gzTUlpbXNvbXhKeEYxd2RjSllOa0orN3JrZ1E9PQ==?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(376014)(7416014)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Nov 2024 04:24:23.6171
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 02ad534c-d062-495d-4dbb-08dcfd51ba25
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BL6PEPF0001AB4D.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW6PR12MB8897
 
-Hello,
+Hello Mike,
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-INFO: task hung in snd_usx2y_probe
+On 11/5/2024 9:35 AM, Mike Galbraith wrote:
+> On Mon, 2024-11-04 at 08:05 -0500, Phil Auld wrote:
+>> On Sat, Nov 02, 2024 at 05:32:14AM +0100 Mike Galbraith wrote:
+>>
+>>>
+>>> The buddy being preempted certainly won't be wakeup migrated...
+>>
+>> Not the waker who gets preempted but the wakee may be a bit more
+>> sticky on his current cpu and thus stack more since he's still
+>> in that runqueue.
+> 
+> Ah, indeed, if wakees don't get scraped off before being awakened, they
+> can and do miss chances at an idle CPU according to trace_printk().
+> 
+> I'm undecided if overall it's boon, bane or even matters, as there is
+> still an ample supply of wakeup migration, but seems it can indeed
+> inject wakeup latency needlessly, so <sharpens stick>...
 
-INFO: task kworker/0:1:9 blocked for more than 143 seconds.
-      Not tainted 6.12.0-rc6-syzkaller-g2e1b3cc9d7f7-dirty #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:kworker/0:1     state:D stack:24016 pid:9     tgid:9     ppid:2      flags:0x00004000
-Workqueue: usb_hub_wq hub_event
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5328 [inline]
- __schedule+0xe55/0x5740 kernel/sched/core.c:6690
- __schedule_loop kernel/sched/core.c:6767 [inline]
- schedule+0xe7/0x350 kernel/sched/core.c:6782
- schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6839
- __mutex_lock_common kernel/locking/mutex.c:684 [inline]
- __mutex_lock+0x5b8/0x9c0 kernel/locking/mutex.c:752
- snd_usx2y_probe+0xaf/0x9c0 sound/usb/usx2y/usbusx2y.c:441
- usb_probe_interface+0x309/0x9d0 drivers/usb/core/driver.c:399
- call_driver_probe drivers/base/dd.c:579 [inline]
- really_probe+0x23e/0xa90 drivers/base/dd.c:658
- __driver_probe_device+0x1de/0x440 drivers/base/dd.c:800
- driver_probe_device+0x4c/0x1b0 drivers/base/dd.c:830
- __device_attach_driver+0x1df/0x310 drivers/base/dd.c:958
- bus_for_each_drv+0x157/0x1e0 drivers/base/bus.c:459
- __device_attach+0x1e8/0x4b0 drivers/base/dd.c:1030
- bus_probe_device+0x17f/0x1c0 drivers/base/bus.c:534
- device_add+0x114b/0x1a70 drivers/base/core.c:3672
- usb_set_configuration+0x10cb/0x1c50 drivers/usb/core/message.c:2210
- usb_generic_driver_probe+0xb1/0x110 drivers/usb/core/generic.c:254
- usb_probe_device+0xec/0x3e0 drivers/usb/core/driver.c:294
- call_driver_probe drivers/base/dd.c:579 [inline]
- really_probe+0x23e/0xa90 drivers/base/dd.c:658
- __driver_probe_device+0x1de/0x440 drivers/base/dd.c:800
- driver_probe_device+0x4c/0x1b0 drivers/base/dd.c:830
- __device_attach_driver+0x1df/0x310 drivers/base/dd.c:958
- bus_for_each_drv+0x157/0x1e0 drivers/base/bus.c:459
- __device_attach+0x1e8/0x4b0 drivers/base/dd.c:1030
- bus_probe_device+0x17f/0x1c0 drivers/base/bus.c:534
- device_add+0x114b/0x1a70 drivers/base/core.c:3672
- usb_new_device+0xd90/0x1a10 drivers/usb/core/hub.c:2651
- hub_port_connect drivers/usb/core/hub.c:5521 [inline]
- hub_port_connect_change drivers/usb/core/hub.c:5661 [inline]
- port_event drivers/usb/core/hub.c:5821 [inline]
- hub_event+0x2d9a/0x4e10 drivers/usb/core/hub.c:5903
- process_one_work+0x9c5/0x1ba0 kernel/workqueue.c:3229
- process_scheduled_works kernel/workqueue.c:3310 [inline]
- worker_thread+0x6c8/0xf00 kernel/workqueue.c:3391
- kthread+0x2c1/0x3a0 kernel/kthread.c:389
- ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-INFO: task kworker/1:1:51 blocked for more than 144 seconds.
-      Not tainted 6.12.0-rc6-syzkaller-g2e1b3cc9d7f7-dirty #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:kworker/1:1     state:D stack:24928 pid:51    tgid:51    ppid:2      flags:0x00004000
-Workqueue: usb_hub_wq hub_event
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5328 [inline]
- __schedule+0xe55/0x5740 kernel/sched/core.c:6690
- __schedule_loop kernel/sched/core.c:6767 [inline]
- schedule+0xe7/0x350 kernel/sched/core.c:6782
- schedule_timeout+0x258/0x2a0 kernel/time/timer.c:2591
- do_wait_for_common kernel/sched/completion.c:95 [inline]
- __wait_for_common+0x3e1/0x600 kernel/sched/completion.c:116
- snd_card_free+0x128/0x190 sound/core/init.c:656
- snd_usx2y_disconnect+0x1aa/0x230 sound/usb/usx2y/usbusx2y.c:430
- usb_unbind_interface+0x1e8/0x970 drivers/usb/core/driver.c:461
- device_remove drivers/base/dd.c:569 [inline]
- device_remove+0x122/0x170 drivers/base/dd.c:561
- __device_release_driver drivers/base/dd.c:1273 [inline]
- device_release_driver_internal+0x44a/0x610 drivers/base/dd.c:1296
- bus_remove_device+0x22f/0x420 drivers/base/bus.c:576
- device_del+0x396/0x9f0 drivers/base/core.c:3861
- usb_disable_device+0x36c/0x7f0 drivers/usb/core/message.c:1418
- usb_disconnect+0x2e1/0x920 drivers/usb/core/hub.c:2304
- hub_port_connect drivers/usb/core/hub.c:5361 [inline]
- hub_port_connect_change drivers/usb/core/hub.c:5661 [inline]
- port_event drivers/usb/core/hub.c:5821 [inline]
- hub_event+0x1da5/0x4e10 drivers/usb/core/hub.c:5903
- process_one_work+0x9c5/0x1ba0 kernel/workqueue.c:3229
- process_scheduled_works kernel/workqueue.c:3310 [inline]
- worker_thread+0x6c8/0xf00 kernel/workqueue.c:3391
- kthread+0x2c1/0x3a0 kernel/kthread.c:389
- ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-INFO: task kworker/1:3:5905 blocked for more than 145 seconds.
-      Not tainted 6.12.0-rc6-syzkaller-g2e1b3cc9d7f7-dirty #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:kworker/1:3     state:D stack:22720 pid:5905  tgid:5905  ppid:2      flags:0x00004000
-Workqueue: usb_hub_wq hub_event
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5328 [inline]
- __schedule+0xe55/0x5740 kernel/sched/core.c:6690
- __schedule_loop kernel/sched/core.c:6767 [inline]
- schedule+0xe7/0x350 kernel/sched/core.c:6782
- schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6839
- __mutex_lock_common kernel/locking/mutex.c:684 [inline]
- __mutex_lock+0x5b8/0x9c0 kernel/locking/mutex.c:752
- snd_usx2y_probe+0xaf/0x9c0 sound/usb/usx2y/usbusx2y.c:441
- usb_probe_interface+0x309/0x9d0 drivers/usb/core/driver.c:399
- call_driver_probe drivers/base/dd.c:579 [inline]
- really_probe+0x23e/0xa90 drivers/base/dd.c:658
- __driver_probe_device+0x1de/0x440 drivers/base/dd.c:800
- driver_probe_device+0x4c/0x1b0 drivers/base/dd.c:830
- __device_attach_driver+0x1df/0x310 drivers/base/dd.c:958
- bus_for_each_drv+0x157/0x1e0 drivers/base/bus.c:459
- __device_attach+0x1e8/0x4b0 drivers/base/dd.c:1030
- bus_probe_device+0x17f/0x1c0 drivers/base/bus.c:534
- device_add+0x114b/0x1a70 drivers/base/core.c:3672
- usb_set_configuration+0x10cb/0x1c50 drivers/usb/core/message.c:2210
- usb_generic_driver_probe+0xb1/0x110 drivers/usb/core/generic.c:254
- usb_probe_device+0xec/0x3e0 drivers/usb/core/driver.c:294
- call_driver_probe drivers/base/dd.c:579 [inline]
- really_probe+0x23e/0xa90 drivers/base/dd.c:658
- __driver_probe_device+0x1de/0x440 drivers/base/dd.c:800
- driver_probe_device+0x4c/0x1b0 drivers/base/dd.c:830
- __device_attach_driver+0x1df/0x310 drivers/base/dd.c:958
- bus_for_each_drv+0x157/0x1e0 drivers/base/bus.c:459
- __device_attach+0x1e8/0x4b0 drivers/base/dd.c:1030
- bus_probe_device+0x17f/0x1c0 drivers/base/bus.c:534
- device_add+0x114b/0x1a70 drivers/base/core.c:3672
- usb_new_device+0xd90/0x1a10 drivers/usb/core/hub.c:2651
- hub_port_connect drivers/usb/core/hub.c:5521 [inline]
- hub_port_connect_change drivers/usb/core/hub.c:5661 [inline]
- port_event drivers/usb/core/hub.c:5821 [inline]
- hub_event+0x2d9a/0x4e10 drivers/usb/core/hub.c:5903
- process_one_work+0x9c5/0x1ba0 kernel/workqueue.c:3229
- process_scheduled_works kernel/workqueue.c:3310 [inline]
- worker_thread+0x6c8/0xf00 kernel/workqueue.c:3391
- kthread+0x2c1/0x3a0 kernel/kthread.c:389
- ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-INFO: task kworker/0:4:5989 blocked for more than 147 seconds.
-      Not tainted 6.12.0-rc6-syzkaller-g2e1b3cc9d7f7-dirty #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:kworker/0:4     state:D stack:26384 pid:5989  tgid:5989  ppid:2      flags:0x00004000
-Workqueue: usb_hub_wq hub_event
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5328 [inline]
- __schedule+0xe55/0x5740 kernel/sched/core.c:6690
- __schedule_loop kernel/sched/core.c:6767 [inline]
- schedule+0xe7/0x350 kernel/sched/core.c:6782
- schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6839
- __mutex_lock_common kernel/locking/mutex.c:684 [inline]
- __mutex_lock+0x5b8/0x9c0 kernel/locking/mutex.c:752
- snd_usx2y_disconnect+0x22/0x230 sound/usb/usx2y/usbusx2y.c:412
- usb_unbind_interface+0x1e8/0x970 drivers/usb/core/driver.c:461
- device_remove drivers/base/dd.c:569 [inline]
- device_remove+0x122/0x170 drivers/base/dd.c:561
- __device_release_driver drivers/base/dd.c:1273 [inline]
- device_release_driver_internal+0x44a/0x610 drivers/base/dd.c:1296
- bus_remove_device+0x22f/0x420 drivers/base/bus.c:576
- device_del+0x396/0x9f0 drivers/base/core.c:3861
- usb_disable_device+0x36c/0x7f0 drivers/usb/core/message.c:1418
- usb_disconnect+0x2e1/0x920 drivers/usb/core/hub.c:2304
- hub_port_connect drivers/usb/core/hub.c:5361 [inline]
- hub_port_connect_change drivers/usb/core/hub.c:5661 [inline]
- port_event drivers/usb/core/hub.c:5821 [inline]
- hub_event+0x1da5/0x4e10 drivers/usb/core/hub.c:5903
- process_one_work+0x9c5/0x1ba0 kernel/workqueue.c:3229
- process_scheduled_works kernel/workqueue.c:3310 [inline]
- worker_thread+0x6c8/0xf00 kernel/workqueue.c:3391
- kthread+0x2c1/0x3a0 kernel/kthread.c:389
- ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-INFO: task udevd:6311 blocked for more than 147 seconds.
-      Not tainted 6.12.0-rc6-syzkaller-g2e1b3cc9d7f7-dirty #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:udevd           state:D stack:27216 pid:6311  tgid:6311  ppid:5199   flags:0x00000002
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5328 [inline]
- __schedule+0xe55/0x5740 kernel/sched/core.c:6690
- __schedule_loop kernel/sched/core.c:6767 [inline]
- schedule+0xe7/0x350 kernel/sched/core.c:6782
- schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6839
- __mutex_lock_common kernel/locking/mutex.c:684 [inline]
- __mutex_lock+0x5b8/0x9c0 kernel/locking/mutex.c:752
- device_lock include/linux/device.h:1014 [inline]
- uevent_show+0x188/0x3b0 drivers/base/core.c:2736
- dev_attr_show+0x53/0xe0 drivers/base/core.c:2430
- sysfs_kf_seq_show+0x23e/0x410 fs/sysfs/file.c:59
- seq_read_iter+0x4f4/0x12b0 fs/seq_file.c:230
- kernfs_fop_read_iter+0x414/0x580 fs/kernfs/file.c:279
- new_sync_read fs/read_write.c:488 [inline]
- vfs_read+0x87f/0xbe0 fs/read_write.c:569
- ksys_read+0x12f/0x260 fs/read_write.c:712
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f6f46d16b6a
-RSP: 002b:00007ffe20c8c6f8 EFLAGS: 00000246 ORIG_RAX: 0000000000000000
-RAX: ffffffffffffffda RBX: 00005620db10aa70 RCX: 00007f6f46d16b6a
-RDX: 0000000000001000 RSI: 00005620db12a1b0 RDI: 0000000000000008
-RBP: 00005620db10aa70 R08: 0000000000000008 R09: 0000000000000000
-R10: 000000000000010f R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000003fff R14: 00007ffe20c8cbd8 R15: 000000000000000a
- </TASK>
-INFO: task udevd:6332 blocked for more than 147 seconds.
-      Not tainted 6.12.0-rc6-syzkaller-g2e1b3cc9d7f7-dirty #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:udevd           state:D stack:27216 pid:6332  tgid:6332  ppid:5199   flags:0x00000002
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5328 [inline]
- __schedule+0xe55/0x5740 kernel/sched/core.c:6690
- __schedule_loop kernel/sched/core.c:6767 [inline]
- schedule+0xe7/0x350 kernel/sched/core.c:6782
- schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6839
- __mutex_lock_common kernel/locking/mutex.c:684 [inline]
- __mutex_lock+0x5b8/0x9c0 kernel/locking/mutex.c:752
- device_lock include/linux/device.h:1014 [inline]
- uevent_show+0x188/0x3b0 drivers/base/core.c:2736
- dev_attr_show+0x53/0xe0 drivers/base/core.c:2430
- sysfs_kf_seq_show+0x23e/0x410 fs/sysfs/file.c:59
- seq_read_iter+0x4f4/0x12b0 fs/seq_file.c:230
- kernfs_fop_read_iter+0x414/0x580 fs/kernfs/file.c:279
- new_sync_read fs/read_write.c:488 [inline]
- vfs_read+0x87f/0xbe0 fs/read_write.c:569
- ksys_read+0x12f/0x260 fs/read_write.c:712
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f6f46d16b6a
-RSP: 002b:00007ffe20c8c6f8 EFLAGS: 00000246 ORIG_RAX: 0000000000000000
-RAX: ffffffffffffffda RBX: 00005620db10aa70 RCX: 00007f6f46d16b6a
-RDX: 0000000000001000 RSI: 00005620db12c910 RDI: 0000000000000008
-RBP: 00005620db10aa70 R08: 0000000000000008 R09: 0000000000000000
-R10: 000000000000010f R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000003fff R14: 00007ffe20c8cbd8 R15: 000000000000000a
- </TASK>
-INFO: task syz.3.22:6550 blocked for more than 148 seconds.
-      Not tainted 6.12.0-rc6-syzkaller-g2e1b3cc9d7f7-dirty #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:syz.3.22        state:D stack:26352 pid:6550  tgid:6549  ppid:6391   flags:0x00000004
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5328 [inline]
- __schedule+0xe55/0x5740 kernel/sched/core.c:6690
- __schedule_loop kernel/sched/core.c:6767 [inline]
- schedule+0xe7/0x350 kernel/sched/core.c:6782
- schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6839
- __mutex_lock_common kernel/locking/mutex.c:684 [inline]
- __mutex_lock+0x5b8/0x9c0 kernel/locking/mutex.c:752
- device_lock include/linux/device.h:1014 [inline]
- usbdev_do_ioctl drivers/usb/core/devio.c:2608 [inline]
- usbdev_ioctl+0x1a9/0x4010 drivers/usb/core/devio.c:2824
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:907 [inline]
- __se_sys_ioctl fs/ioctl.c:893 [inline]
- __x64_sys_ioctl+0x18f/0x220 fs/ioctl.c:893
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f87b437e719
-RSP: 002b:00007f87b51db038 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 00007f87b4535f80 RCX: 00007f87b437e719
-RDX: 0000000000000000 RSI: 00000000c0105512 RDI: 0000000000000003
-RBP: 00007f87b43f132e R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000000 R14: 00007f87b4535f80 R15: 00007fff56f3bd58
- </TASK>
-INFO: task syz.1.16:6557 blocked for more than 148 seconds.
-      Not tainted 6.12.0-rc6-syzkaller-g2e1b3cc9d7f7-dirty #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:syz.1.16        state:D stack:27632 pid:6557  tgid:6556  ppid:6384   flags:0x00000004
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5328 [inline]
- __schedule+0xe55/0x5740 kernel/sched/core.c:6690
- __schedule_loop kernel/sched/core.c:6767 [inline]
- schedule+0xe7/0x350 kernel/sched/core.c:6782
- schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6839
- __mutex_lock_common kernel/locking/mutex.c:684 [inline]
- __mutex_lock+0x5b8/0x9c0 kernel/locking/mutex.c:752
- device_lock include/linux/device.h:1014 [inline]
- usbdev_do_ioctl drivers/usb/core/devio.c:2608 [inline]
- usbdev_ioctl+0x1a9/0x4010 drivers/usb/core/devio.c:2824
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:907 [inline]
- __se_sys_ioctl fs/ioctl.c:893 [inline]
- __x64_sys_ioctl+0x18f/0x220 fs/ioctl.c:893
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7ff338b7e719
-RSP: 002b:00007ff3398cb038 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 00007ff338d35f80 RCX: 00007ff338b7e719
-RDX: 0000000000000000 RSI: 00000000c0105512 RDI: 0000000000000003
-RBP: 00007ff338bf132e R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000000 R14: 00007ff338d35f80 R15: 00007ffda8d7b3f8
- </TASK>
-INFO: task kworker/1:6:6588 blocked for more than 149 seconds.
-      Not tainted 6.12.0-rc6-syzkaller-g2e1b3cc9d7f7-dirty #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:kworker/1:6     state:D stack:26832 pid:6588  tgid:6588  ppid:2      flags:0x00004000
-Workqueue: usb_hub_wq hub_event
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5328 [inline]
- __schedule+0xe55/0x5740 kernel/sched/core.c:6690
- __schedule_loop kernel/sched/core.c:6767 [inline]
- schedule+0xe7/0x350 kernel/sched/core.c:6782
- schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6839
- __mutex_lock_common kernel/locking/mutex.c:684 [inline]
- __mutex_lock+0x5b8/0x9c0 kernel/locking/mutex.c:752
- snd_usx2y_probe+0xaf/0x9c0 sound/usb/usx2y/usbusx2y.c:441
- usb_probe_interface+0x309/0x9d0 drivers/usb/core/driver.c:399
- call_driver_probe drivers/base/dd.c:579 [inline]
- really_probe+0x23e/0xa90 drivers/base/dd.c:658
- __driver_probe_device+0x1de/0x440 drivers/base/dd.c:800
- driver_probe_device+0x4c/0x1b0 drivers/base/dd.c:830
- __device_attach_driver+0x1df/0x310 drivers/base/dd.c:958
- bus_for_each_drv+0x157/0x1e0 drivers/base/bus.c:459
- __device_attach+0x1e8/0x4b0 drivers/base/dd.c:1030
- bus_probe_device+0x17f/0x1c0 drivers/base/bus.c:534
- device_add+0x114b/0x1a70 drivers/base/core.c:3672
- usb_set_configuration+0x10cb/0x1c50 drivers/usb/core/message.c:2210
- usb_generic_driver_probe+0xb1/0x110 drivers/usb/core/generic.c:254
- usb_probe_device+0xec/0x3e0 drivers/usb/core/driver.c:294
- call_driver_probe drivers/base/dd.c:579 [inline]
- really_probe+0x23e/0xa90 drivers/base/dd.c:658
- __driver_probe_device+0x1de/0x440 drivers/base/dd.c:800
- driver_probe_device+0x4c/0x1b0 drivers/base/dd.c:830
- __device_attach_driver+0x1df/0x310 drivers/base/dd.c:958
- bus_for_each_drv+0x157/0x1e0 drivers/base/bus.c:459
- __device_attach+0x1e8/0x4b0 drivers/base/dd.c:1030
- bus_probe_device+0x17f/0x1c0 drivers/base/bus.c:534
- device_add+0x114b/0x1a70 drivers/base/core.c:3672
- usb_new_device+0xd90/0x1a10 drivers/usb/core/hub.c:2651
- hub_port_connect drivers/usb/core/hub.c:5521 [inline]
- hub_port_connect_change drivers/usb/core/hub.c:5661 [inline]
- port_event drivers/usb/core/hub.c:5821 [inline]
- hub_event+0x2d9a/0x4e10 drivers/usb/core/hub.c:5903
- process_one_work+0x9c5/0x1ba0 kernel/workqueue.c:3229
- process_scheduled_works kernel/workqueue.c:3310 [inline]
- worker_thread+0x6c8/0xf00 kernel/workqueue.c:3391
- kthread+0x2c1/0x3a0 kernel/kthread.c:389
- ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-INFO: task syz.0.15:6617 blocked for more than 149 seconds.
-      Not tainted 6.12.0-rc6-syzkaller-g2e1b3cc9d7f7-dirty #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:syz.0.15        state:D stack:28384 pid:6617  tgid:6615  ppid:6386   flags:0x00000004
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5328 [inline]
- __schedule+0xe55/0x5740 kernel/sched/core.c:6690
- __schedule_loop kernel/sched/core.c:6767 [inline]
- schedule+0xe7/0x350 kernel/sched/core.c:6782
- schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6839
- __mutex_lock_common kernel/locking/mutex.c:684 [inline]
- __mutex_lock+0x5b8/0x9c0 kernel/locking/mutex.c:752
- device_lock include/linux/device.h:1014 [inline]
- usbdev_open+0x1b8/0x8c0 drivers/usb/core/devio.c:1051
- chrdev_open+0x237/0x6a0 fs/char_dev.c:414
- do_dentry_open+0x6ca/0x1530 fs/open.c:958
- vfs_open+0x82/0x3f0 fs/open.c:1088
- do_open fs/namei.c:3774 [inline]
- path_openat+0x1e6a/0x2d60 fs/namei.c:3933
- do_filp_open+0x1dc/0x430 fs/namei.c:3960
- do_sys_openat2+0x17a/0x1e0 fs/open.c:1415
- do_sys_open fs/open.c:1430 [inline]
- __do_sys_openat fs/open.c:1446 [inline]
- __se_sys_openat fs/open.c:1441 [inline]
- __x64_sys_openat+0x175/0x210 fs/open.c:1441
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f0db2f7d0b0
-RSP: 002b:00007f0db21fdb70 EFLAGS: 00000293 ORIG_RAX: 0000000000000101
-RAX: ffffffffffffffda RBX: 0000000000000d81 RCX: 00007f0db2f7d0b0
-RDX: 0000000000000d81 RSI: 00007f0db21fdc10 RDI: 00000000ffffff9c
-RBP: 00007f0db21fdc10 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000293 R12: 0000000000000000
-R13: 0000000000000001 R14: 00007f0db3135f80 R15: 00007ffeb5dc5cc8
- </TASK>
-Future hung task reports are suppressed, see sysctl kernel.hung_task_warnings
-INFO: task syz.2.17:6621 blocked for more than 150 seconds.
-      Not tainted 6.12.0-rc6-syzkaller-g2e1b3cc9d7f7-dirty #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:syz.2.17        state:D stack:27024 pid:6621  tgid:6619  ppid:6396   flags:0x00004004
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5328 [inline]
- __schedule+0xe55/0x5740 kernel/sched/core.c:6690
- __schedule_loop kernel/sched/core.c:6767 [inline]
- schedule+0xe7/0x350 kernel/sched/core.c:6782
- schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6839
- __mutex_lock_common kernel/locking/mutex.c:684 [inline]
- __mutex_lock+0x5b8/0x9c0 kernel/locking/mutex.c:752
- device_lock include/linux/device.h:1014 [inline]
- usbdev_open+0x1b8/0x8c0 drivers/usb/core/devio.c:1051
- chrdev_open+0x237/0x6a0 fs/char_dev.c:414
- do_dentry_open+0x6ca/0x1530 fs/open.c:958
- vfs_open+0x82/0x3f0 fs/open.c:1088
- do_open fs/namei.c:3774 [inline]
- path_openat+0x1e6a/0x2d60 fs/namei.c:3933
- do_filp_open+0x1dc/0x430 fs/namei.c:3960
- do_sys_openat2+0x17a/0x1e0 fs/open.c:1415
- do_sys_open fs/open.c:1430 [inline]
- __do_sys_openat fs/open.c:1446 [inline]
- __se_sys_openat fs/open.c:1441 [inline]
- __x64_sys_openat+0x175/0x210 fs/open.c:1441
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f22d457d0b0
-RSP: 002b:00007f22d5366b70 EFLAGS: 00000293 ORIG_RAX: 0000000000000101
-RAX: ffffffffffffffda RBX: 0000000000000d81 RCX: 00007f22d457d0b0
-RDX: 0000000000000d81 RSI: 00007f22d5366c10 RDI: 00000000ffffff9c
-RBP: 00007f22d5366c10 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000293 R12: 0000000000000000
-R13: 0000000000000001 R14: 00007f22d4735f80 R15: 00007ffdd9d18a78
- </TASK>
-Future hung task reports are suppressed, see sysctl kernel.hung_task_warnings
-INFO: task syz.4.19:6627 blocked for more than 150 seconds.
-      Not tainted 6.12.0-rc6-syzkaller-g2e1b3cc9d7f7-dirty #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:syz.4.19        state:D stack:27680 pid:6627  tgid:6626  ppid:6398   flags:0x00004004
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5328 [inline]
- __schedule+0xe55/0x5740 kernel/sched/core.c:6690
- __schedule_loop kernel/sched/core.c:6767 [inline]
- schedule+0xe7/0x350 kernel/sched/core.c:6782
- schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6839
- __mutex_lock_common kernel/locking/mutex.c:684 [inline]
- __mutex_lock+0x5b8/0x9c0 kernel/locking/mutex.c:752
- device_lock include/linux/device.h:1014 [inline]
- usbdev_open+0x1b8/0x8c0 drivers/usb/core/devio.c:1051
- chrdev_open+0x237/0x6a0 fs/char_dev.c:414
- do_dentry_open+0x6ca/0x1530 fs/open.c:958
- vfs_open+0x82/0x3f0 fs/open.c:1088
- do_open fs/namei.c:3774 [inline]
- path_openat+0x1e6a/0x2d60 fs/namei.c:3933
- do_filp_open+0x1dc/0x430 fs/namei.c:3960
- do_sys_openat2+0x17a/0x1e0 fs/open.c:1415
- do_sys_open fs/open.c:1430 [inline]
- __do_sys_openat fs/open.c:1446 [inline]
- __se_sys_openat fs/open.c:1441 [inline]
- __x64_sys_openat+0x175/0x210 fs/open.c:1441
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f8b8957d0b0
-RSP: 002b:00007f8b8a376b70 EFLAGS: 00000293 ORIG_RAX: 0000000000000101
-RAX: ffffffffffffffda RBX: 0000000000000d81 RCX: 00007f8b8957d0b0
-RDX: 0000000000000d81 RSI: 00007f8b8a376c10 RDI: 00000000ffffff9c
-RBP: 00007f8b8a376c10 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000293 R12: 0000000000000000
-R13: 0000000000000001 R14: 00007f8b89735f80 R15: 00007ffdd1dfae68
- </TASK>
-Future hung task reports are suppressed, see sysctl kernel.hung_task_warnings
+I had tried this out a while back but I was indiscriminately doing a
+DEQUEUE_DELAYED and letting delayed tasks go through a full ttwu cycle
+which did not yield any improvements on hackbench. Your approach to
+selectively do it might indeed be better (more thoughts below)
 
-Showing all locks held in the system:
-6 locks held by kworker/0:1/9:
- #0: ffff88801b14b948 ((wq_completion)usb_hub_wq){+.+.}-{0:0}, at: process_one_work+0x129b/0x1ba0 kernel/workqueue.c:3204
- #1: ffffc900000e7d80 ((work_completion)(&hub->events)){+.+.}-{0:0}, at: process_one_work+0x921/0x1ba0 kernel/workqueue.c:3205
- #2: ffff888144fa0190 (&dev->mutex){....}-{3:3}, at: device_lock include/linux/device.h:1014 [inline]
- #2: ffff888144fa0190 (&dev->mutex){....}-{3:3}, at: hub_event+0x1c1/0x4e10 drivers/usb/core/hub.c:5849
- #3: ffff88803642b190 (&dev->mutex){....}-{3:3}, at: device_lock include/linux/device.h:1014 [inline]
- #3: ffff88803642b190 (&dev->mutex){....}-{3:3}, at: __device_attach+0x7f/0x4b0 drivers/base/dd.c:1005
- #4: ffff88803371b160 (&dev->mutex){....}-{3:3}, at: device_lock include/linux/device.h:1014 [inline]
- #4: ffff88803371b160 (&dev->mutex){....}-{3:3}, at: __device_attach+0x7f/0x4b0 drivers/base/dd.c:1005
- #5: ffffffff8fe67c88 (devices_mutex){+.+.}-{3:3}, at: snd_usx2y_probe+0xaf/0x9c0 sound/usb/usx2y/usbusx2y.c:441
-3 locks held by kworker/u8:0/11:
- #0: ffff88814d396148 ((wq_completion)ipv6_addrconf){+.+.}-{0:0}, at: process_one_work+0x129b/0x1ba0 kernel/workqueue.c:3204
- #1: ffffc90000107d80 ((work_completion)(&(&ifa->dad_work)->work)){+.+.}-{0:0}, at: process_one_work+0x921/0x1ba0 kernel/workqueue.c:3205
- #2: ffffffff8fee3828 (rtnl_mutex){+.+.}-{3:3}, at: addrconf_dad_work+0xcf/0x14d0 net/ipv6/addrconf.c:4196
-1 lock held by khungtaskd/30:
- #0: ffffffff8e1b8340 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire include/linux/rcupdate.h:337 [inline]
- #0: ffffffff8e1b8340 (rcu_read_lock){....}-{1:2}, at: rcu_read_lock include/linux/rcupdate.h:849 [inline]
- #0: ffffffff8e1b8340 (rcu_read_lock){....}-{1:2}, at: debug_show_all_locks+0x7f/0x390 kernel/locking/lockdep.c:6720
-6 locks held by kworker/1:1/51:
- #0: ffff88801b14b948 ((wq_completion)usb_hub_wq){+.+.}-{0:0}, at: process_one_work+0x129b/0x1ba0 kernel/workqueue.c:3204
- #1: ffffc90000bc7d80 ((work_completion)(&hub->events)){+.+.}-{0:0}, at: process_one_work+0x921/0x1ba0 kernel/workqueue.c:3205
- #2: ffff888029210190 (&dev->mutex){....}-{3:3}, at: device_lock include/linux/device.h:1014 [inline]
- #2: ffff888029210190 (&dev->mutex){....}-{3:3}, at: hub_event+0x1c1/0x4e10 drivers/usb/core/hub.c:5849
- #3: ffff88805eb5c190 (&dev->mutex){....}-{3:3}, at: device_lock include/linux/device.h:1014 [inline]
- #3: ffff88805eb5c190 (&dev->mutex){....}-{3:3}, at: usb_disconnect+0x10a/0x920 drivers/usb/core/hub.c:2295
- #4: ffff8880797b6160 (&dev->mutex){....}-{3:3}, at: device_lock include/linux/device.h:1014 [inline]
- #4: ffff8880797b6160 (&dev->mutex){....}-{3:3}, at: __device_driver_lock drivers/base/dd.c:1095 [inline]
- #4: ffff8880797b6160 (&dev->mutex){....}-{3:3}, at: device_release_driver_internal+0xa4/0x610 drivers/base/dd.c:1293
- #5: ffffffff8fe67c88 (devices_mutex){+.+.}-{3:3}, at: snd_usx2y_disconnect+0x22/0x230 sound/usb/usx2y/usbusx2y.c:412
-3 locks held by kworker/u8:3/52:
-6 locks held by kworker/0:2/969:
- #0: ffff88801b14b948 ((wq_completion)usb_hub_wq){+.+.}-{0:0}, at: process_one_work+0x129b/0x1ba0 kernel/workqueue.c:3204
- #1: ffffc90003e57d80 ((work_completion)(&hub->events)){+.+.}-{0:0}, at: process_one_work+0x921/0x1ba0 kernel/workqueue.c:3205
- #2: ffff888144fc0190 (&dev->mutex){....}-{3:3}, at: device_lock include/linux/device.h:1014 [inline]
- #2: ffff888144fc0190 (&dev->mutex){....}-{3:3}, at: hub_event+0x1c1/0x4e10 drivers/usb/core/hub.c:5849
- #3: ffff88806880a190 (&dev->mutex){....}-{3:3}, at: device_lock include/linux/device.h:1014 [inline]
- #3: ffff88806880a190 (&dev->mutex){....}-{3:3}, at: __device_attach+0x7f/0x4b0 drivers/base/dd.c:1005
- #4: ffff888031dc4160 (&dev->mutex){....}-{3:3}, at: device_lock include/linux/device.h:1014 [inline]
- #4: ffff888031dc4160 (&dev->mutex){....}-{3:3}, at: __device_attach+0x7f/0x4b0 drivers/base/dd.c:1005
- #5: ffffffff8fe67c88 (devices_mutex){+.+.}-{3:3}, at: snd_usx2y_probe+0xaf/0x9c0 sound/usb/usx2y/usbusx2y.c:441
-1 lock held by syslogd/5181:
- #0: ffff8880b863ee98 (&rq->__lock){-.-.}-{2:2}, at: raw_spin_rq_lock_nested+0x29/0x130 kernel/sched/core.c:598
-1 lock held by klogd/5188:
- #0: ffff8880b863ee98 (&rq->__lock){-.-.}-{2:2}, at: raw_spin_rq_lock_nested+0x29/0x130 kernel/sched/core.c:598
-2 locks held by getty/5582:
- #0: ffff888037c0a0a0 (&tty->ldisc_sem){++++}-{0:0}, at: tty_ldisc_ref_wait+0x24/0x80 drivers/tty/tty_ldisc.c:243
- #1: ffffc90002f062f0 (&ldata->atomic_read_lock){+.+.}-{3:3}, at: n_tty_read+0xfba/0x1480 drivers/tty/n_tty.c:2211
-6 locks held by kworker/0:3/5861:
- #0: ffff88801b14b948 ((wq_completion)usb_hub_wq){+.+.}-{0:0}, at: process_one_work+0x129b/0x1ba0 kernel/workqueue.c:3204
- #1: ffffc90004447d80 ((work_completion)(&hub->events)){+.+.}-{0:0}, at: process_one_work+0x921/0x1ba0 kernel/workqueue.c:3205
- #2: ffff888145330190 (&dev->mutex){....}-{3:3}, at: device_lock include/linux/device.h:1014 [inline]
- #2: ffff888145330190 (&dev->mutex){....}-{3:3}, at: hub_event+0x1c1/0x4e10 drivers/usb/core/hub.c:5849
- #3: ffff88802558c190 (&dev->mutex){....}-{3:3}, at: device_lock include/linux/device.h:1014 [inline]
- #3: ffff88802558c190 (&dev->mutex){....}-{3:3}, at: __device_attach+0x7f/0x4b0 drivers/base/dd.c:1005
- #4: ffff888029550160 (&dev->mutex){....}-{3:3}, at: device_lock include/linux/device.h:1014 [inline]
- #4: ffff888029550160 (&dev->mutex){....}-{3:3}, at: __device_attach+0x7f/0x4b0 drivers/base/dd.c:1005
- #5: ffffffff8fe67c88 (devices_mutex){+.+.}-{3:3}, at: snd_usx2y_probe+0xaf/0x9c0 sound/usb/usx2y/usbusx2y.c:441
-6 locks held by kworker/1:3/5905:
- #0: ffff88801b14b948 ((wq_completion)usb_hub_wq){+.+.}-{0:0}, at: process_one_work+0x129b/0x1ba0 kernel/workqueue.c:3204
- #1: ffffc90003f07d80 ((work_completion)(&hub->events)){+.+.}-{0:0}, at: process_one_work+0x921/0x1ba0 kernel/workqueue.c:3205
- #2: ffff888029228190 (&dev->mutex){....}-{3:3}, at: device_lock include/linux/device.h:1014 [inline]
- #2: ffff888029228190 (&dev->mutex){....}-{3:3}, at: hub_event+0x1c1/0x4e10 drivers/usb/core/hub.c:5849
- #3: ffff8880636a9190 (&dev->mutex){....}-{3:3}, at: device_lock include/linux/device.h:1014 [inline]
- #3: ffff8880636a9190 (&dev->mutex){....}-{3:3}, at: __device_attach+0x7f/0x4b0 drivers/base/dd.c:1005
- #4: ffff88802618d160 (&dev->mutex){....}-{3:3}, at: device_lock include/linux/device.h:1014 [inline]
- #4: ffff88802618d160 (&dev->mutex){....}-{3:3}, at: __device_attach+0x7f/0x4b0 drivers/base/dd.c:1005
- #5: ffffffff8fe67c88 (devices_mutex){+.+.}-{3:3}, at: snd_usx2y_probe+0xaf/0x9c0 sound/usb/usx2y/usbusx2y.c:441
-6 locks held by kworker/0:4/5989:
- #0: ffff88801b14b948 ((wq_completion)usb_hub_wq){+.+.}-{0:0}, at: process_one_work+0x129b/0x1ba0 kernel/workqueue.c:3204
- #1: ffffc90004dafd80 ((work_completion)(&hub->events)){+.+.}-{0:0}, at: process_one_work+0x921/0x1ba0 kernel/workqueue.c:3205
- #2: ffff888144fb0190 (&dev->mutex){....}-{3:3}, at: device_lock include/linux/device.h:1014 [inline]
- #2: ffff888144fb0190 (&dev->mutex){....}-{3:3}, at: hub_event+0x1c1/0x4e10 drivers/usb/core/hub.c:5849
- #3: ffff88802ad74190 (&dev->mutex){....}-{3:3}, at: device_lock include/linux/device.h:1014 [inline]
- #3: ffff88802ad74190 (&dev->mutex){....}-{3:3}, at: usb_disconnect+0x10a/0x920 drivers/usb/core/hub.c:2295
- #4: ffff88802b17f160 (&dev->mutex){....}-{3:3}, at: device_lock include/linux/device.h:1014 [inline]
- #4: ffff88802b17f160 (&dev->mutex){....}-{3:3}, at: __device_driver_lock drivers/base/dd.c:1095 [inline]
- #4: ffff88802b17f160 (&dev->mutex){....}-{3:3}, at: device_release_driver_internal+0xa4/0x610 drivers/base/dd.c:1293
- #5: ffffffff8fe67c88 (devices_mutex){+.+.}-{3:3}, at: snd_usx2y_disconnect+0x22/0x230 sound/usb/usx2y/usbusx2y.c:412
-4 locks held by udevd/6298:
- #0: ffff888021b531c8 (&p->lock){+.+.}-{3:3}, at: seq_read_iter+0xd8/0x12b0 fs/seq_file.c:182
- #1: ffff88803176e888 (&of->mutex#2){+.+.}-{3:3}, at: kernfs_seq_start+0x4d/0x240 fs/kernfs/file.c:154
- #2: ffff8880741142d8 (kn->active#5){++++}-{0:0}, at: kernfs_seq_start+0x71/0x240 fs/kernfs/file.c:155
- #3: ffff88802558c190 (&dev->mutex){....}-{3:3}, at: device_lock include/linux/device.h:1014 [inline]
- #3: ffff88802558c190 (&dev->mutex){....}-{3:3}, at: uevent_show+0x188/0x3b0 drivers/base/core.c:2736
-4 locks held by udevd/6311:
- #0: ffff8880300780a0 (&p->lock){+.+.}-{3:3}, at: seq_read_iter+0xd8/0x12b0 fs/seq_file.c:182
- #1: ffff888068868488 (&of->mutex#2){+.+.}-{3:3}, at: kernfs_seq_start+0x4d/0x240 fs/kernfs/file.c:154
- #2: ffff8880307bdf08 (kn->active#5){++++}-{0:0}, at: kernfs_seq_start+0x71/0x240 fs/kernfs/file.c:155
- #3: ffff88803642b190 (&dev->mutex){....}-{3:3}, at: device_lock include/linux/device.h:1014 [inline]
- #3: ffff88803642b190 (&dev->mutex){....}-{3:3}, at: uevent_show+0x188/0x3b0 drivers/base/core.c:2736
-4 locks held by udevd/6332:
- #0: ffff888033594e80 (&p->lock){+.+.}-{3:3}, at: seq_read_iter+0xd8/0x12b0 fs/seq_file.c:182
- #1: ffff88807fb58888 (&of->mutex#2){+.+.}-{3:3}, at: kernfs_seq_start+0x4d/0x240 fs/kernfs/file.c:154
- #2: ffff8880372142d8 (kn->active#5){++++}-{0:0}, at: kernfs_seq_start+0x71/0x240 fs/kernfs/file.c:155
- #3: ffff888036e8f190 (&dev->mutex){....}-{3:3}, at: device_lock include/linux/device.h:1014 [inline]
- #3: ffff888036e8f190 (&dev->mutex){....}-{3:3}, at: uevent_show+0x188/0x3b0 drivers/base/core.c:2736
-4 locks held by udevd/6333:
- #0: ffff888036c06790 (&p->lock){+.+.}-{3:3}, at: seq_read_iter+0xd8/0x12b0 fs/seq_file.c:182
- #1: ffff8880660a5888 (&of->mutex#2){+.+.}-{3:3}, at: kernfs_seq_start+0x4d/0x240 fs/kernfs/file.c:154
- #2: ffff8880325dfb48 (kn->active#5){++++}-{0:0}, at: kernfs_seq_start+0x71/0x240 fs/kernfs/file.c:155
- #3: ffff88806880a190 (&dev->mutex){....}-{3:3}, at: device_lock include/linux/device.h:1014 [inline]
- #3: ffff88806880a190 (&dev->mutex){....}-{3:3}, at: uevent_show+0x188/0x3b0 drivers/base/core.c:2736
-3 locks held by kworker/u9:5/6393:
- #0: ffff8880339ed148 ((wq_completion)hci14){+.+.}-{0:0}, at: process_one_work+0x129b/0x1ba0 kernel/workqueue.c:3204
- #1: ffffc9000381fd80 ((work_completion)(&hdev->cmd_sync_work)){+.+.}-{0:0}, at: process_one_work+0x921/0x1ba0 kernel/workqueue.c:3205
- #2: ffff888032058d80 (&hdev->req_lock){+.+.}-{3:3}, at: hci_cmd_sync_work+0x170/0x410 net/bluetooth/hci_sync.c:331
-4 locks held by udevd/6436:
- #0: ffff88803044e0a0 (&p->lock){+.+.}-{3:3}, at: seq_read_iter+0xd8/0x12b0 fs/seq_file.c:182
- #1: ffff888030e9f088 (&of->mutex#2){+.+.}-{3:3}, at: kernfs_seq_start+0x4d/0x240 fs/kernfs/file.c:154
- #2: ffff88805ed165a8 (kn->active#29){.+.+}-{0:0}, at: kernfs_seq_start+0x71/0x240 fs/kernfs/file.c:155
- #3: ffff888030cec190 (&dev->mutex){....}-{3:3}, at: device_lock_interruptible include/linux/device.h:1019 [inline]
- #3: ffff888030cec190 (&dev->mutex){....}-{3:3}, at: manufacturer_show+0x26/0xa0 drivers/usb/core/sysfs.c:142
-1 lock held by syz.3.22/6550:
- #0: ffff888144fb0190 (&dev->mutex){....}-{3:3}, at: device_lock include/linux/device.h:1014 [inline]
- #0: ffff888144fb0190 (&dev->mutex){....}-{3:3}, at: usbdev_do_ioctl drivers/usb/core/devio.c:2608 [inline]
- #0: ffff888144fb0190 (&dev->mutex){....}-{3:3}, at: usbdev_ioctl+0x1a9/0x4010 drivers/usb/core/devio.c:2824
-1 lock held by syz.1.16/6557:
- #0: ffff888144fb0190 (&dev->mutex){....}-{3:3}, at: device_lock include/linux/device.h:1014 [inline]
- #0: ffff888144fb0190 (&dev->mutex){....}-{3:3}, at: usbdev_do_ioctl drivers/usb/core/devio.c:2608 [inline]
- #0: ffff888144fb0190 (&dev->mutex){....}-{3:3}, at: usbdev_ioctl+0x1a9/0x4010 drivers/usb/core/devio.c:2824
-6 locks held by kworker/1:6/6588:
- #0: ffff88801b14b948 ((wq_completion)usb_hub_wq){+.+.}-{0:0}, at: process_one_work+0x129b/0x1ba0 kernel/workqueue.c:3204
- #1: ffffc9000344fd80 ((work_completion)(&hub->events)){+.+.}-{0:0}, at: process_one_work+0x921/0x1ba0 kernel/workqueue.c:3205
- #2: ffff888144fb1190 (&dev->mutex){....}-{3:3}, at: device_lock include/linux/device.h:1014 [inline]
- #2: ffff888144fb1190 (&dev->mutex){....}-{3:3}, at: hub_event+0x1c1/0x4e10 drivers/usb/core/hub.c:5849
- #3: ffff888036e8f190 (&dev->mutex){....}-{3:3}, at: device_lock include/linux/device.h:1014 [inline]
- #3: ffff888036e8f190 (&dev->mutex){....}-{3:3}, at: __device_attach+0x7f/0x4b0 drivers/base/dd.c:1005
- #4: ffff88802618e160 (&dev->mutex){....}-{3:3}, at: device_lock include/linux/device.h:1014 [inline]
- #4: ffff88802618e160 (&dev->mutex){....}-{3:3}, at: __device_attach+0x7f/0x4b0 drivers/base/dd.c:1005
- #5: ffffffff8fe67c88 (devices_mutex){+.+.}-{3:3}, at: snd_usx2y_probe+0xaf/0x9c0 sound/usb/usx2y/usbusx2y.c:441
-6 locks held by kworker/1:8/6591:
- #0: ffff88801b14b948 ((wq_completion)usb_hub_wq){+.+.}-{0:0}, at: process_one_work+0x129b/0x1ba0 kernel/workqueue.c:3204
- #1: ffffc9000341fd80 ((work_completion)(&hub->events)){+.+.}-{0:0}, at: process_one_work+0x921/0x1ba0 kernel/workqueue.c:3205
- #2: ffff888145318190 (&dev->mutex){....}-{3:3}, at: device_lock include/linux/device.h:1014 [inline]
- #2: ffff888145318190 (&dev->mutex){....}-{3:3}, at: hub_event+0x1c1/0x4e10 drivers/usb/core/hub.c:5849
- #3: ffff888030cec190 (&dev->mutex){....}-{3:3}, at: device_lock include/linux/device.h:1014 [inline]
- #3: ffff888030cec190 (&dev->mutex){....}-{3:3}, at: __device_attach+0x7f/0x4b0 drivers/base/dd.c:1005
- #4: ffff888069111160 (&dev->mutex){....}-{3:3}, at: device_lock include/linux/device.h:1014 [inline]
- #4: ffff888069111160 (&dev->mutex){....}-{3:3}, at: __device_attach+0x7f/0x4b0 drivers/base/dd.c:1005
- #5: ffffffff8fe67c88 (devices_mutex){+.+.}-{3:3}, at: snd_usx2y_probe+0xaf/0x9c0 sound/usb/usx2y/usbusx2y.c:441
-1 lock held by syz.0.15/6617:
- #0: ffff888144fb0190 (&dev->mutex){....}-{3:3}, at: device_lock include/linux/device.h:1014 [inline]
- #0: ffff888144fb0190 (&dev->mutex){....}-{3:3}, at: usbdev_open+0x1b8/0x8c0 drivers/usb/core/devio.c:1051
-1 lock held by syz.2.17/6621:
- #0: ffff888144fb0190 (&dev->mutex){....}-{3:3}, at: device_lock include/linux/device.h:1014 [inline]
- #0: ffff888144fb0190 (&dev->mutex){....}-{3:3}, at: usbdev_open+0x1b8/0x8c0 drivers/usb/core/devio.c:1051
-6 locks held by kworker/0:6/6623:
- #0: ffff88801b14b948 ((wq_completion)usb_hub_wq){+.+.}-{0:0}, at: process_one_work+0x129b/0x1ba0 kernel/workqueue.c:3204
- #1: ffffc90004747d80 ((work_completion)(&hub->events)){+.+.}-{0:0}, at: process_one_work+0x921/0x1ba0 kernel/workqueue.c:3205
- #2: ffff888029368190 (&dev->mutex){....}-{3:3}, at: device_lock include/linux/device.h:1014 [inline]
- #2: ffff888029368190 (&dev->mutex){....}-{3:3}, at: hub_event+0x1c1/0x4e10 drivers/usb/core/hub.c:5849
- #3: ffff88807eb81190 (&dev->mutex){....}-{3:3}, at: device_lock include/linux/device.h:1014 [inline]
- #3: ffff88807eb81190 (&dev->mutex){....}-{3:3}, at: __device_attach+0x7f/0x4b0 drivers/base/dd.c:1005
- #4: ffff888037284160 (&dev->mutex){....}-{3:3}, at: device_lock include/linux/device.h:1014 [inline]
- #4: ffff888037284160 (&dev->mutex){....}-{3:3}, at: __device_attach+0x7f/0x4b0 drivers/base/dd.c:1005
- #5: ffffffff8fe67c88 (devices_mutex){+.+.}-{3:3}, at: snd_usx2y_probe+0xaf/0x9c0 sound/usb/usx2y/usbusx2y.c:441
-1 lock held by syz.4.19/6627:
- #0: ffff888144fb0190 (&dev->mutex){....}-{3:3}, at: device_lock include/linux/device.h:1014 [inline]
- #0: ffff888144fb0190 (&dev->mutex){....}-{3:3}, at: usbdev_open+0x1b8/0x8c0 drivers/usb/core/devio.c:1051
-1 lock held by syz.5.23/6891:
- #0: ffff888144fb0190 (&dev->mutex){....}-{3:3}, at: device_lock include/linux/device.h:1014 [inline]
- #0: ffff888144fb0190 (&dev->mutex){....}-{3:3}, at: usbdev_open+0x1b8/0x8c0 drivers/usb/core/devio.c:1051
-4 locks held by udevd/6897:
- #0: ffff888062295b08 (&p->lock){+.+.}-{3:3}, at: seq_read_iter+0xd8/0x12b0 fs/seq_file.c:182
- #1: ffff88807fbda488 (&of->mutex#2){+.+.}-{3:3}, at: kernfs_seq_start+0x4d/0x240 fs/kernfs/file.c:154
- #2: ffff888069384d28 (kn->active#5){++++}-{0:0}, at: kernfs_seq_start+0x71/0x240 fs/kernfs/file.c:155
- #3: ffff88805ee58190 (&dev->mutex){....}-{3:3}, at: device_lock include/linux/device.h:1014 [inline]
- #3: ffff88805ee58190 (&dev->mutex){....}-{3:3}, at: uevent_show+0x188/0x3b0 drivers/base/core.c:2736
-1 lock held by syz.6.24/6926:
- #0: ffff888144fb0190 (&dev->mutex){....}-{3:3}, at: device_lock include/linux/device.h:1014 [inline]
- #0: ffff888144fb0190 (&dev->mutex){....}-{3:3}, at: usbdev_open+0x1b8/0x8c0 drivers/usb/core/devio.c:1051
-4 locks held by udevd/6934:
- #0: ffff8880622959e0 (&p->lock){+.+.}-{3:3}, at: seq_read_iter+0xd8/0x12b0 fs/seq_file.c:182
- #1: ffff88807fbd9088 (&of->mutex#2){+.+.}-{3:3}, at: kernfs_seq_start+0x4d/0x240 fs/kernfs/file.c:154
- #2: ffff8880284a6c38 (kn->active#5){++++}-{0:0}, at: kernfs_seq_start+0x71/0x240 fs/kernfs/file.c:155
- #3: ffff88807eb81190 (&dev->mutex){....}-{3:3}, at: device_lock include/linux/device.h:1014 [inline]
- #3: ffff88807eb81190 (&dev->mutex){....}-{3:3}, at: uevent_show+0x188/0x3b0 drivers/base/core.c:2736
-3 locks held by kworker/u8:8/6948:
- #0: ffff88801b081148 ((wq_completion)events_unbound){+.+.}-{0:0}, at: process_one_work+0x129b/0x1ba0 kernel/workqueue.c:3204
- #1: ffffc9000338fd80 ((linkwatch_work).work){+.+.}-{0:0}, at: process_one_work+0x921/0x1ba0 kernel/workqueue.c:3205
- #2: ffffffff8fee3828 (rtnl_mutex){+.+.}-{3:3}, at: linkwatch_event+0x51/0xc0 net/core/link_watch.c:276
-1 lock held by syz.7.25/6968:
- #0: ffff888144fb0190 (&dev->mutex){....}-{3:3}, at: device_lock include/linux/device.h:1014 [inline]
- #0: ffff888144fb0190 (&dev->mutex){....}-{3:3}, at: usbdev_open+0x1b8/0x8c0 drivers/usb/core/devio.c:1051
-6 locks held by kworker/1:10/6971:
- #0: ffff88801b14b948 ((wq_completion)usb_hub_wq){+.+.}-{0:0}, at: process_one_work+0x129b/0x1ba0 kernel/workqueue.c:3204
- #1: ffffc90002e4fd80 ((work_completion)(&hub->events)){+.+.}-{0:0}, at: process_one_work+0x921/0x1ba0 kernel/workqueue.c:3205
- #2: ffff888029358190 (&dev->mutex){....}-{3:3}, at: device_lock include/linux/device.h:1014 [inline]
- #2: ffff888029358190 (&dev->mutex){....}-{3:3}, at: hub_event+0x1c1/0x4e10 drivers/usb/core/hub.c:5849
- #3: ffff88805ee58190 (&dev->mutex){....}-{3:3}, at: device_lock include/linux/device.h:1014 [inline]
- #3: ffff88805ee58190 (&dev->mutex){....}-{3:3}, at: __device_attach+0x7f/0x4b0 drivers/base/dd.c:1005
- #4: ffff88803745b160 (&dev->mutex){....}-{3:3}, at: device_lock include/linux/device.h:1014 [inline]
- #4: ffff88803745b160 (&dev->mutex){....}-{3:3}, at: __device_attach+0x7f/0x4b0 drivers/base/dd.c:1005
- #5: ffffffff8fe67c88 (devices_mutex){+.+.}-{3:3}, at: snd_usx2y_probe+0xaf/0x9c0 sound/usb/usx2y/usbusx2y.c:441
-1 lock held by syz.9.27/6974:
- #0: ffff888144fb0190 (&dev->mutex){....}-{3:3}, at: device_lock include/linux/device.h:1014 [inline]
- #0: ffff888144fb0190 (&dev->mutex){....}-{3:3}, at: usbdev_open+0x1b8/0x8c0 drivers/usb/core/devio.c:1051
-1 lock held by syz.8.26/6975:
- #0: ffff888144fb0190 (&dev->mutex){....}-{3:3}, at: device_lock include/linux/device.h:1014 [inline]
- #0: ffff888144fb0190 (&dev->mutex){....}-{3:3}, at: usbdev_open+0x1b8/0x8c0 drivers/usb/core/devio.c:1051
-1 lock held by syz.3.28/6999:
- #0: ffff888144fb0190 (&dev->mutex){....}-{3:3}, at: device_lock include/linux/device.h:1014 [inline]
- #0: ffff888144fb0190 (&dev->mutex){....}-{3:3}, at: usbdev_open+0x1b8/0x8c0 drivers/usb/core/devio.c:1051
-1 lock held by syz.1.29/7014:
- #0: ffff888144fb0190 (&dev->mutex){....}-{3:3}, at: device_lock include/linux/device.h:1014 [inline]
- #0: ffff888144fb0190 (&dev->mutex){....}-{3:3}, at: usbdev_open+0x1b8/0x8c0 drivers/usb/core/devio.c:1051
-1 lock held by syz.0.30/7048:
- #0: ffff888144fb0190 (&dev->mutex){....}-{3:3}, at: device_lock include/linux/device.h:1014 [inline]
- #0: ffff888144fb0190 (&dev->mutex){....}-{3:3}, at: usbdev_open+0x1b8/0x8c0 drivers/usb/core/devio.c:1051
-1 lock held by syz.2.31/7065:
- #0: ffff888144fb0190 (&dev->mutex){....}-{3:3}, at: device_lock include/linux/device.h:1014 [inline]
- #0: ffff888144fb0190 (&dev->mutex){....}-{3:3}, at: usbdev_open+0x1b8/0x8c0 drivers/usb/core/devio.c:1051
-1 lock held by syz.4.32/7068:
- #0: ffff888144fb0190 (&dev->mutex){....}-{3:3}, at: device_lock include/linux/device.h:1014 [inline]
- #0: ffff888144fb0190 (&dev->mutex){....}-{3:3}, at: usbdev_open+0x1b8/0x8c0 drivers/usb/core/devio.c:1051
-1 lock held by syz.5.33/7096:
- #0: ffff888144fb0190 (&dev->mutex){....}-{3:3}, at: device_lock include/linux/device.h:1014 [inline]
- #0: ffff888144fb0190 (&dev->mutex){....}-{3:3}, at: usbdev_open+0x1b8/0x8c0 drivers/usb/core/devio.c:1051
-1 lock held by syz.6.34/7112:
- #0: ffff888144fb0190 (&dev->mutex){....}-{3:3}, at: device_lock include/linux/device.h:1014 [inline]
- #0: ffff888144fb0190 (&dev->mutex){....}-{3:3}, at: usbdev_open+0x1b8/0x8c0 drivers/usb/core/devio.c:1051
-1 lock held by syz.7.35/7144:
- #0: ffff888144fb0190 (&dev->mutex){....}-{3:3}, at: device_lock include/linux/device.h:1014 [inline]
- #0: ffff888144fb0190 (&dev->mutex){....}-{3:3}, at: usbdev_open+0x1b8/0x8c0 drivers/usb/core/devio.c:1051
-1 lock held by syz.8.36/7175:
- #0: ffff888144fb0190 (&dev->mutex){....}-{3:3}, at: device_lock include/linux/device.h:1014 [inline]
- #0: ffff888144fb0190 (&dev->mutex){....}-{3:3}, at: usbdev_open+0x1b8/0x8c0 drivers/usb/core/devio.c:1051
-1 lock held by syz.9.37/7178:
- #0: ffff888144fb0190 (&dev->mutex){....}-{3:3}, at: device_lock include/linux/device.h:1014 [inline]
- #0: ffff888144fb0190 (&dev->mutex){....}-{3:3}, at: usbdev_open+0x1b8/0x8c0 drivers/usb/core/devio.c:1051
-1 lock held by syz.3.38/7200:
- #0: ffff888144fb0190 (&dev->mutex){....}-{3:3}, at: device_lock include/linux/device.h:1014 [inline]
- #0: ffff888144fb0190 (&dev->mutex){....}-{3:3}, at: usbdev_open+0x1b8/0x8c0 drivers/usb/core/devio.c:1051
-1 lock held by syz.1.39/7210:
- #0: ffff888144fb0190 (&dev->mutex){....}-{3:3}, at: device_lock include/linux/device.h:1014 [inline]
- #0: ffff888144fb0190 (&dev->mutex){....}-{3:3}, at: usbdev_open+0x1b8/0x8c0 drivers/usb/core/devio.c:1051
-1 lock held by syz.0.40/7226:
- #0: ffff888144fb0190 (&dev->mutex){....}-{3:3}, at: device_lock include/linux/device.h:1014 [inline]
- #0: ffff888144fb0190 (&dev->mutex){....}-{3:3}, at: usbdev_open+0x1b8/0x8c0 drivers/usb/core/devio.c:1051
-1 lock held by syz.2.41/7251:
- #0: ffff888144fb0190 (&dev->mutex){....}-{3:3}, at: device_lock include/linux/device.h:1014 [inline]
- #0: ffff888144fb0190 (&dev->mutex){....}-{3:3}, at: usbdev_open+0x1b8/0x8c0 drivers/usb/core/devio.c:1051
-1 lock held by syz.4.42/7264:
- #0: ffff888144fb0190 (&dev->mutex){....}-{3:3}, at: device_lock include/linux/device.h:1014 [inline]
- #0: ffff888144fb0190 (&dev->mutex){....}-{3:3}, at: usbdev_open+0x1b8/0x8c0 drivers/usb/core/devio.c:1051
-1 lock held by syz.5.43/7291:
- #0: ffff888144fb0190 (&dev->mutex){....}-{3:3}, at: device_lock include/linux/device.h:1014 [inline]
- #0: ffff888144fb0190 (&dev->mutex){....}-{3:3}, at: usbdev_open+0x1b8/0x8c0 drivers/usb/core/devio.c:1051
-1 lock held by syz.6.44/7315:
- #0: ffff888144fb0190 (&dev->mutex){....}-{3:3}, at: device_lock include/linux/device.h:1014 [inline]
- #0: ffff888144fb0190 (&dev->mutex){....}-{3:3}, at: usbdev_open+0x1b8/0x8c0 drivers/usb/core/devio.c:1051
-1 lock held by syz.7.45/7330:
- #0: ffff888144fb0190 (&dev->mutex){....}-{3:3}, at: device_lock include/linux/device.h:1014 [inline]
- #0: ffff888144fb0190 (&dev->mutex){....}-{3:3}, at: usbdev_open+0x1b8/0x8c0 drivers/usb/core/devio.c:1051
-1 lock held by syz.8.46/7361:
- #0: ffff888144fb0190 (&dev->mutex){....}-{3:3}, at: device_lock include/linux/device.h:1014 [inline]
- #0: ffff888144fb0190 (&dev->mutex){....}-{3:3}, at: usbdev_open+0x1b8/0x8c0 drivers/usb/core/devio.c:1051
-1 lock held by syz.9.47/7377:
- #0: ffff888144fb0190 (&dev->mutex){....}-{3:3}, at: device_lock include/linux/device.h:1014 [inline]
- #0: ffff888144fb0190 (&dev->mutex){....}-{3:3}, at: usbdev_open+0x1b8/0x8c0 drivers/usb/core/devio.c:1051
-1 lock held by syz.3.48/7390:
- #0: ffff888144fb0190 (&dev->mutex){....}-{3:3}, at: device_lock include/linux/device.h:1014 [inline]
- #0: ffff888144fb0190 (&dev->mutex){....}-{3:3}, at: usbdev_open+0x1b8/0x8c0 drivers/usb/core/devio.c:1051
-1 lock held by syz.1.49/7413:
- #0: ffff888144fb0190 (&dev->mutex){....}-{3:3}, at: device_lock include/linux/device.h:1014 [inline]
- #0: ffff888144fb0190 (&dev->mutex){....}-{3:3}, at: usbdev_open+0x1b8/0x8c0 drivers/usb/core/devio.c:1051
-1 lock held by syz.0.50/7428:
- #0: ffff888144fb0190 (&dev->mutex){....}-{3:3}, at: device_lock include/linux/device.h:1014 [inline]
- #0: ffff888144fb0190 (&dev->mutex){....}-{3:3}, at: usbdev_open+0x1b8/0x8c0 drivers/usb/core/devio.c:1051
-1 lock held by syz.2.51/7453:
- #0: ffff888144fb0190 (&dev->mutex){....}-{3:3}, at: device_lock include/linux/device.h:1014 [inline]
- #0: ffff888144fb0190 (&dev->mutex){....}-{3:3}, at: usbdev_open+0x1b8/0x8c0 drivers/usb/core/devio.c:1051
-1 lock held by syz.4.52/7475:
- #0: ffff888144fb0190 (&dev->mutex){....}-{3:3}, at: device_lock include/linux/device.h:1014 [inline]
- #0: ffff888144fb0190 (&dev->mutex){....}-{3:3}, at: usbdev_open+0x1b8/0x8c0 drivers/usb/core/devio.c:1051
-1 lock held by syz.5.53/7497:
- #0: ffff888144fb0190 (&dev->mutex){....}-{3:3}, at: device_lock include/linux/device.h:1014 [inline]
- #0: ffff888144fb0190 (&dev->mutex){....}-{3:3}, at: usbdev_open+0x1b8/0x8c0 drivers/usb/core/devio.c:1051
-1 lock held by syz.6.54/7519:
- #0: ffff888144fb0190 (&dev->mutex){....}-{3:3}, at: device_lock include/linux/device.h:1014 [inline]
- #0: ffff888144fb0190 (&dev->mutex){....}-{3:3}, at: usbdev_open+0x1b8/0x8c0 drivers/usb/core/devio.c:1051
-1 lock held by syz.7.55/7536:
- #0: ffff888144fb0190 (&dev->mutex){....}-{3:3}, at: device_lock include/linux/device.h:1014 [inline]
- #0: ffff888144fb0190 (&dev->mutex){....}-{3:3}, at: usbdev_open+0x1b8/0x8c0 drivers/usb/core/devio.c:1051
-1 lock held by syz.8.56/7562:
- #0: ffff888144fb0190 (&dev->mutex){....}-{3:3}, at: device_lock include/linux/device.h:1014 [inline]
- #0: ffff888144fb0190 (&dev->mutex){....}-{3:3}, at: usbdev_open+0x1b8/0x8c0 drivers/usb/core/devio.c:1051
-1 lock held by syz.9.57/7585:
- #0: ffff888144fb0190 (&dev->mutex){....}-{3:3}, at: device_lock include/linux/device.h:1014 [inline]
- #0: ffff888144fb0190 (&dev->mutex){....}-{3:3}, at: usbdev_open+0x1b8/0x8c0 drivers/usb/core/devio.c:1051
-1 lock held by syz.3.58/7601:
- #0: ffff888144fb0190 (&dev->mutex){....}-{3:3}, at: device_lock include/linux/device.h:1014 [inline]
- #0: ffff888144fb0190 (&dev->mutex){....}-{3:3}, at: usbdev_open+0x1b8/0x8c0 drivers/usb/core/devio.c:1051
-1 lock held by syz.1.59/7620:
- #0: ffff888144fb0190 (&dev->mutex){....}-{3:3}, at: device_lock include/linux/device.h:1014 [inline]
- #0: ffff888144fb0190 (&dev->mutex){....}-{3:3}, at: usbdev_open+0x1b8/0x8c0 drivers/usb/core/devio.c:1051
-2 locks held by syz-executor/7627:
- #0: ffffffff8fee3828 (rtnl_mutex){+.+.}-{3:3}, at: rtnl_lock net/core/rtnetlink.c:79 [inline]
- #0: ffffffff8fee3828 (rtnl_mutex){+.+.}-{3:3}, at: rtnetlink_rcv_msg+0x372/0xea0 net/core/rtnetlink.c:6672
- #1: ffffffff8e1c3c38 (rcu_state.exp_mutex){+.+.}-{3:3}, at: exp_funnel_lock+0x282/0x3b0 kernel/rcu/tree_exp.h:297
-2 locks held by syz-executor/7633:
- #0: ffffffff8fecde10 (pernet_ops_rwsem){++++}-{3:3}, at: copy_net_ns+0x292/0x6b0 net/core/net_namespace.c:490
- #1: ffffffff8fee3828 (rtnl_mutex){+.+.}-{3:3}, at: register_nexthop_notifier+0x1b/0x70 net/ipv4/nexthop.c:3885
-1 lock held by syz.0.60/7639:
- #0: ffff888144fb0190 (&dev->mutex){....}-{3:3}, at: device_lock include/linux/device.h:1014 [inline]
- #0: ffff888144fb0190 (&dev->mutex){....}-{3:3}, at: usbdev_open+0x1b8/0x8c0 drivers/usb/core/devio.c:1051
+> 
+> My box booted and neither become exceptionally noisy nor inexplicably
+> silent in.. oh, minutes now, so surely yours will be perfectly fine.
+> 
+> After one minute of lightly loaded box browsing, trace_printk() said:
+> 
+>    645   - racy peek says there is a room available
+>     11   - cool, reserved room is free
+>    206   - no vacancy or wakee pinned
+> 38807   - SIS accommodates room seeker
+> 
+> The below should improve the odds, but high return seems unlikely.
+> 
+> ---
+>   kernel/sched/core.c |    9 ++++++++-
+>   1 file changed, 8 insertions(+), 1 deletion(-)
+> 
+> --- a/kernel/sched/core.c
+> +++ b/kernel/sched/core.c
+> @@ -3790,7 +3790,13 @@ static int ttwu_runnable(struct task_str
+>   	rq = __task_rq_lock(p, &rf);
+>   	if (task_on_rq_queued(p)) {
+>   		update_rq_clock(rq);
+> -		if (p->se.sched_delayed)
+> +		/*
+> +		 * If wakee is mobile and the room it reserved is occupied, let it try to migrate.
+> +		 */
+> +		if (p->se.sched_delayed && rq->nr_running > 1 && cpumask_weight(p->cpus_ptr) > 1) {
 
-=============================================
+Would checking "p->nr_cpus_allowed > 1" be enough instead of doing a
+"cpumask_weight(p->cpus_ptr) > 1"?
 
-NMI backtrace for cpu 0
-CPU: 0 UID: 0 PID: 30 Comm: khungtaskd Not tainted 6.12.0-rc6-syzkaller-g2e1b3cc9d7f7-dirty #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
- nmi_cpu_backtrace+0x27b/0x390 lib/nmi_backtrace.c:113
- nmi_trigger_cpumask_backtrace+0x29c/0x300 lib/nmi_backtrace.c:62
- trigger_all_cpu_backtrace include/linux/nmi.h:162 [inline]
- check_hung_uninterruptible_tasks kernel/hung_task.c:223 [inline]
- watchdog+0xf0c/0x1240 kernel/hung_task.c:379
- kthread+0x2c1/0x3a0 kernel/kthread.c:389
- ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-Sending NMI from CPU 0 to CPUs 1:
-NMI backtrace for cpu 1
-CPU: 1 UID: 0 PID: 6948 Comm: kworker/u8:8 Not tainted 6.12.0-rc6-syzkaller-g2e1b3cc9d7f7-dirty #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-Workqueue: events_unbound cfg80211_wiphy_work
-RIP: 0010:orc_find arch/x86/kernel/unwind_orc.c:217 [inline]
-RIP: 0010:unwind_next_frame+0x1c8/0x20c0 arch/x86/kernel/unwind_orc.c:494
-Code: 56 ff 39 d0 0f 83 09 15 00 00 48 ba 00 00 00 00 00 fc ff df 89 c1 48 8d 3c 8d 4c b2 aa 91 49 89 f8 49 c1 e8 03 45 0f b6 04 10 <48> 89 fa 83 e2 07 83 c2 03 44 38 c2 7c 2f 45 84 c0 74 2a 48 89 4c
-RSP: 0018:ffffc9000338f6f8 EFLAGS: 00000a03
-RAX: 0000000000099168 RBX: 0000000000000001 RCX: 0000000000099168
-RDX: dffffc0000000000 RSI: 00000000000a6001 RDI: ffffffff91d0f7ec
-RBP: ffffc9000338f7b0 R08: 0000000000000000 R09: ffffffff917fb79a
-R10: ffffc9000338f768 R11: 0000000000099168 R12: ffffc9000338f7b8
-R13: ffffc9000338f768 R14: ffffc9000338f79d R15: ffffffff8a916806
+I was thinking, since the task is indeed delayed, there has to be more
+than one task on the runqueue right since a single task by itself cannot
+be ineligible and be marked for delayed dequeue? The only time we
+encounter a delayed task with "rq->nr_running == 1" is if the other
+tasks have been fully dequeued and pick_next_task() is in the process of
+picking off all the delayed task, but since that is done with the rq
+lock held in schedule(), it is even possible for the
+"rq->nr_running > 1" to be false here?
 
+> +			dequeue_task(rq, p, DEQUEUE_SLEEP | DEQUEUE_DELAYED | DEQUEUE_NOCLOCK);
+> +			goto out_unlock;
+> +		} else if (p->se.sched_delayed)
+>   			enqueue_task(rq, p, ENQUEUE_NOCLOCK | ENQUEUE_DELAYED);
+>   		if (!task_on_cpu(rq, p)) {
+>   			/*
+> @@ -3802,6 +3808,7 @@ static int ttwu_runnable(struct task_str
+>   		ttwu_do_wakeup(p);
+>   		ret = 1;
+>   	}
+> +out_unlock:
+>   	__task_rq_unlock(rq, &rf);
+> 
+>   	return ret;
+> 
+> 
 
-Tested on:
-
-commit:         2e1b3cc9 Merge tag 'arm-fixes-6.12-2' of git://git.ker..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1529a740580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=2effb62852f5a821
-dashboard link: https://syzkaller.appspot.com/bug?extid=73582d08864d8268b6fd
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=11210e30580000
-
+-- 
+Thanks and Regards,
+Prateek
 
