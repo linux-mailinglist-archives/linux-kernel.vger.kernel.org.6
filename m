@@ -1,143 +1,96 @@
-Return-Path: <linux-kernel+bounces-395881-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395882-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 872C19BC466
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 05:42:11 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D5439BC467
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 05:42:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3983D1F2202E
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 04:42:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2891F1C212C1
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 04:42:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B55F41B3928;
-	Tue,  5 Nov 2024 04:42:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="SqdWNhUv"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 874C118EAD;
-	Tue,  5 Nov 2024 04:42:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EF3B1925A0;
+	Tue,  5 Nov 2024 04:42:16 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D129818EAD
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 04:42:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730781723; cv=none; b=UwtGYkF7yX/fxwUk4F+3LdYINxaWIhP9EHR7fxtvDNQnDwz/NDhH+r/qLI+mOJr/gWPY553XKpkQ4pDaqKH9pu+YGrlK/vN0e49owH3ciPTfm9WFEmMgg9gQDBK29iicrb7y7QCHY+ZJ3yXz+pNQZzDGkMRGpGQ8N+kI/U2+3o4=
+	t=1730781735; cv=none; b=HMkForlgIYZOo01PYQnyM33p6gd5GMtn5W8ZM+GNyKt7HPlaOV0540rH6z//yiDdkEg+1XpFFClWsA2vfX8kd7whVVGsn+HW7CK02Ulv0kjmpgWccWi8cBGQjrfcqxEVT6CsdM0R5qr+Huaac10SAkepOSTE8V13v+GHgDKFW/k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730781723; c=relaxed/simple;
-	bh=GERzyHXG1j7vDe7Sv3QECeL9y4wkacoKyJifFZB5SCc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=GzsFiCinvSaW8kwqgLNDxZTu0UNH1MCmTjeUiqK19aWxqYA51Enua7/jcK6B2UAzEkaRIBsC3fZp+RcjrO3rxiLKT1PVnbtVeBh6H02RenpY3pkgGu59HjPzD1zdowz03b4skI+Er/iRVUdUomdumt72pXUSVjPl/XhhDXYO3K4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=SqdWNhUv; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A4LJNlO001852;
-	Tue, 5 Nov 2024 04:41:56 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	M/A196zbFjuy+n7rnSJl+Mcogsu5xntqgmxXdF4fZTc=; b=SqdWNhUvqOV68GuA
-	M+B3Yx6C0xtwx8oCoeH8lA7w43IFzUQr1Ori1HeLfRrTUbEkc+xIDnDL1gHRtpuP
-	C06rfqfx4rxevl6r7v7WzmHkTozmC/kjCixl1bH9a+McYbbgvkWH3AO9xfEggOWk
-	gOhtviKBNgJXw+GuucF5rbcay3VK9rMWrFkdlua5EOaZdctE/YaZvz9XV9HRZ2mm
-	PYR0Hz1fKqp9pfdJ7cwQ1kSwaQWjo4aUwg6XEV1+mX7Eie/0o7izztbRInFbbnlu
-	NDa3Q9aL6KOMOqqXvoVovF/Imhn8r0Hr6V9FKMgav2hwe1ahk1jirXANPG7WYpmG
-	Yk+0Qg==
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42nd2s6bj8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 05 Nov 2024 04:41:56 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4A54ftuD010042
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 5 Nov 2024 04:41:55 GMT
-Received: from [10.216.1.57] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 4 Nov 2024
- 20:41:50 -0800
-Message-ID: <59562d2d-936e-4a96-b9de-d152a503e552@quicinc.com>
-Date: Tue, 5 Nov 2024 10:11:42 +0530
+	s=arc-20240116; t=1730781735; c=relaxed/simple;
+	bh=KYdKWG+4BlRhbZlGabYii9qMbqXI/8M3GyffK2NTq7M=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=tc200O/AD2I2GAvud5t9v9ycF/slnRSrN6w05AXrzqX2WEQeXHTqxAEjQ7/WvKw3aVSJBpdHqIK5A2b3SAjsTVh05QHVRQSGIl7RUpBe+r7OQ3l09MyHqS7NwD0FkgaIh7zgq6ltjBVYNI2128w+c5Yno75mUVyAgzKWPtJev7M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D8F5DFEC;
+	Mon,  4 Nov 2024 20:42:35 -0800 (PST)
+Received: from a077893.arm.com (unknown [10.163.45.103])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 3F5073F66E;
+	Mon,  4 Nov 2024 20:42:00 -0800 (PST)
+From: Anshuman Khandual <anshuman.khandual@arm.com>
+To: linux-arm-kernel@lists.infradead.org
+Cc: Anshuman Khandual <anshuman.khandual@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Ryan Roberts <ryan.roberts@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] arm64/ptdump: Test both PTE_TABLE_BIT and PTE_VALID for block mappings
+Date: Tue,  5 Nov 2024 10:11:54 +0530
+Message-Id: <20241105044154.4064181-1-anshuman.khandual@arm.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/6] dt-bindings: clock: qcom: Add GPU clocks for
- QCS8300
-To: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
-        Krzysztof Kozlowski
-	<krzk@kernel.org>
-CC: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Ajit Pandey <quic_ajipan@quicinc.com>,
-        Taniya Das
-	<quic_tdas@quicinc.com>,
-        Jagadeesh Kona <quic_jkona@quicinc.com>,
-        "Satya
- Priya Kakitapalli" <quic_skakitap@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20241024-qcs8300-mm-patches-v2-0-76c905060d0a@quicinc.com>
- <20241024-qcs8300-mm-patches-v2-1-76c905060d0a@quicinc.com>
- <jhwf2slcwvkpxggqt42mfmnyiibhbnvwtqk3to7ueq3ppla7q7@23qrl2z56ygu>
- <f5d24079-58e4-4ca2-a910-4e4b3feb04f7@linaro.org>
-Content-Language: en-US
-From: Imran Shaik <quic_imrashai@quicinc.com>
-In-Reply-To: <f5d24079-58e4-4ca2-a910-4e4b3feb04f7@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: GAP70G87Svtfkkwp3wIctEdBRA--Hh2W
-X-Proofpoint-GUID: GAP70G87Svtfkkwp3wIctEdBRA--Hh2W
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0
- lowpriorityscore=0 mlxlogscore=962 clxscore=1011 suspectscore=0
- adultscore=0 priorityscore=1501 bulkscore=0 mlxscore=0 malwarescore=0
- spamscore=0 impostorscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2409260000 definitions=main-2411050031
+Content-Transfer-Encoding: 8bit
 
+Test both PTE_TABLE_BIT and PTE_VALID for block mappings, similar to KVM S2
+ptdump. This ensures consistency in identifying block mappings, both in the
+S1 and the S2 page tables. Besides being kernel page tables, there will not
+be any unmapped (!PTE_VALID) block mappings.
 
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Will Deacon <will@kernel.org>
+Cc: Ard Biesheuvel <ardb@kernel.org>
+Cc: Ryan Roberts <ryan.roberts@arm.com>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
+---
+This patch applies on v6.12-rc6
 
-On 10/30/2024 4:29 PM, Vladimir Zapolskiy wrote:
-> On 10/26/24 15:20, Krzysztof Kozlowski wrote:
->> On Thu, Oct 24, 2024 at 07:01:14PM +0530, Imran Shaik wrote:
->>> The QCS8300 GPU clock controller is mostly identical to SA8775P, but
->>> QCS8300 has few additional clocks and minor differences. Hence, reuse
->>> SA8775P gpucc bindings and add additional clocks required for QCS8300.
->>
->> IIUC, these clocks are not valid for SA8775p. How do we deal with such
->> cases for other Qualcomm SoCs?
->>
-> 
-> It always possible to add a new platform specific header file and
-> include the old one.
-> 
-> For reference see commit a6a61b9701d1 ("dt-bindings: clock: qcom: Add
-> SM8650 video clock controller"), I believe that's the preferred way
-> of adding new platform clocks whenever technically possible.
-> 
+ arch/arm64/mm/ptdump.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-Sure, I will follow the same approach as the commit a6a61b9701d1 and 
-post next series.
-
-Thanks,
-Imran
-
-> -- 
-> Best wishes,
-> Vladimir
+diff --git a/arch/arm64/mm/ptdump.c b/arch/arm64/mm/ptdump.c
+index 264c5f9b97d8..688fbe0271ca 100644
+--- a/arch/arm64/mm/ptdump.c
++++ b/arch/arm64/mm/ptdump.c
+@@ -80,10 +80,10 @@ static const struct ptdump_prot_bits pte_bits[] = {
+ 		.set	= "CON",
+ 		.clear	= "   ",
+ 	}, {
+-		.mask	= PTE_TABLE_BIT,
+-		.val	= PTE_TABLE_BIT,
+-		.set	= "   ",
+-		.clear	= "BLK",
++		.mask	= PTE_TABLE_BIT | PTE_VALID,
++		.val	= PTE_VALID,
++		.set	= "BLK",
++		.clear	= "   ",
+ 	}, {
+ 		.mask	= PTE_UXN,
+ 		.val	= PTE_UXN,
+-- 
+2.30.2
 
 
