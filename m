@@ -1,88 +1,94 @@
-Return-Path: <linux-kernel+bounces-397156-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397157-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DADC9BD775
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 22:12:12 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B0989BD77D
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 22:18:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 713DE283E1B
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 21:12:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2FD68283F82
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 21:18:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87A2B215F52;
-	Tue,  5 Nov 2024 21:12:06 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32380215F52;
+	Tue,  5 Nov 2024 21:18:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ny9sCyO6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF4121D9A48
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 21:12:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A7363D81;
+	Tue,  5 Nov 2024 21:18:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730841126; cv=none; b=VQ90cw245/sAhsIa3i9rl6YMKwaHBcX31yhkf40arI8rAa5iIR0UzWtbijzBAsNIEbT5mSMZ0D6X1gq/Jv0Y2zSAAGAcJZWasE+os3ncJB03iSpQ1RqxZ32PH0SI+HtYuAU2vwtcTAnhzhdk/PsQlRWtt3C9kk1yfLPsQaOBgFk=
+	t=1730841529; cv=none; b=dvYa7KK1f2nxopGgDWPVI+ZQHNXcWymFNV1hiOLd+EIiOz9wo3dcL2TyHKtVzO4rWpfufdOzGYd99oCHovALkGn92aS5AQySmHW93kW+bVPnKSBQmtVFm9FisMbm+4TZjLq7PHirU/ZIRSCD9q7TBn2gsoESih5SEIyxAe8/U/U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730841126; c=relaxed/simple;
-	bh=C772U9iMokHzu0JrOOk3mMzSs342g6hcNEPrF5NjuKw=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=hDZ52J6L1Q95Fm3F2OJfPjRKmrtBtsYxiKrDKMhNM5jgv3lnrr3bJUwcq0q1fjr+QW4gJjxUplFXvoDtzZBCjZBR2NhS7YHorAB9lDVW8mg9UJyow7xQVje2K22iAZkqsKs2badk7YEVj+nonhpfJmRjYKEZ1DTQoZt7ZUkGWEg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a6ca616500so32417535ab.2
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 13:12:04 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730841124; x=1731445924;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=HiqZxAbiHRA/vYcOpw+I+nowv69WYJnI52m84kBzOKM=;
-        b=dqTGO7Xm6IrdA3/58/UjM/mxlno/29zGIOWB1nkRzdybrcPq3P+QlzUVxMTo3TPKmS
-         cds2f3lRdo+b43ycgDzvNzxCZVeHN5loQSkPNEsHXZI/1tDMeugG1fD7l/Pk5Y6OuFFr
-         9kAUFH9WD/91temh/QNeao04eMdUy2/oMVQ1Qn3/CptVsJ5szDHo7H9JqBmIxX/ZYACn
-         A56BYmjoHkoBfRDU6DGvxTI/4aDfJcjgdzZ/NqLYaCTC/HzWrMtVt8HxW+OS4GrR6wl4
-         sOpTLIF46CAkFOrEMj3bwmMA3Naz41UxEKF0NHvdVtj6t/fCJAVmlvroyvXw1o2DVCT6
-         18IA==
-X-Gm-Message-State: AOJu0YxfVGgbi8hfQ1qVW8ivvIGB2b29EkFxvC8eDSFp4oPX+fDjtu+C
-	zn+Kj43PZe3BfBu8GX1q/6mrlFGrmMt1DgDesoGuhSeQmOLEiJQH3cgNbODKkSKeU7D+Q2QKfrr
-	2sk2WpcvRfwvDSSeOXW0GTetivD5j+uyVufULOdzS12DgUPnfOANjjww=
-X-Google-Smtp-Source: AGHT+IF7dlBlsLfX2yBqotKhQiGEnHyL2khEfUYLXZWIobYeCTMxIeCA+XzDlQ1FcaBDnFUhLHMk0AGea0WRK1CqHAlBHt0VCyPX
+	s=arc-20240116; t=1730841529; c=relaxed/simple;
+	bh=ITqqGq6mWtWfAtqIp8o0iLGvCeORRBMChO8HBBT5CJQ=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=EDxF6xgESv7vZL/JQbfdmHMqDRDnBzO+w7nrDbTmhr0UmrFtlZNkZQK3XErvkPAWLHtN+OjiYl92bZn87j2Jrur7kq3l3tSowCHsPeppkT0RZX7JkTgq6TV3NfL0Bmxke9STVVPlYOv+UZZDtXBcttYodqWZpAdBluFhBgsv8a4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ny9sCyO6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08673C4CECF;
+	Tue,  5 Nov 2024 21:18:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730841529;
+	bh=ITqqGq6mWtWfAtqIp8o0iLGvCeORRBMChO8HBBT5CJQ=;
+	h=From:Subject:Date:To:Cc:From;
+	b=Ny9sCyO6mFQ3XL9ao31MrZF9ooikmFG6s6XV/aBBCvYDQrH1D1qzfCsKcSn/xTEJ7
+	 QwxvKM07WDP0NvT3wVLx/5m4JQzB4V+0UoijRdoI4+6rBeR5v3Gj6gqlVxLU73r9hu
+	 S2FHh3GZ62ZoeNFbl5OoJBWTEZniFu50rGrFpnt4wx2Y6SFml9ReW5N6BfwajOsLAT
+	 pAy7sKp9am8qMsDijiHE+Sre7aj92gnIm2M9SyLKkUCzQD/RzGhunIois98/bWr42b
+	 Md09g0x8T1UIm09ya3ZGPSNxxVx6XtpyxlUb1DkfMUeXJwtKgBKfaXlx/2pC3KSE5n
+	 AgRtFFbv2v6JA==
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Subject: [PATCH RESEND v2 0/2] arm64: dts: PL022 clock fixes
+Date: Tue, 05 Nov 2024 15:18:38 -0600
+Message-Id: <20241105-dts-spi-fixes-v2-0-623501e5d1ca@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:220a:b0:3a6:c89d:4eb5 with SMTP id
- e9e14a558f8ab-3a6c89d50e2mr104266175ab.15.1730841123917; Tue, 05 Nov 2024
- 13:12:03 -0800 (PST)
-Date: Tue, 05 Nov 2024 13:12:03 -0800
-In-Reply-To: <CAN=OONwWNfETusinz2A7yGG2OFtS8Nnn8z9FhUTpPuugHKnMkw@mail.gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <672a8a23.050a0220.2edce.1511.GAE@google.com>
-Subject: Re: [syzbot] [hfs?] KMSAN: uninit-value in __hfs_ext_cache_extent (2)
-From: syzbot <syzbot+d395b0c369e492a17530@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, sarvesh20123@gmail.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAK6LKmcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyjHQUlJIzE
+ vPSU3UzU4B8JSMDIxNDQwNT3ZSSYt3igkzdtMyK1GJdy2Qjk1RzczPjNOMkJaCegqJUsARQS7R
+ SkGuwq5+LUmxtLQDbJBfPZwAAAA==
+To: soc@kernel.org, Kuldeep Singh <singh.kuldeep87k@gmail.com>, 
+ Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>, 
+ Tom Lendacky <thomas.lendacky@amd.com>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Chanho Min <chanho.min@lge.com>, 
+ Vladimir Zapolskiy <vz@mleia.com>, 
+ Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org
+X-Mailer: b4 0.15-dev
 
-Hello,
+Arnd, this series[1] from 2.5 years ago was never applied. There was 
+some discussion on the lpc32xx patch, but nothing on the first 2 
+patches. So I'm resending the first 2. Please apply directly.
 
-syzbot tried to test the proposed patch but the build/boot failed:
+Rob
 
-failed to apply patch:
-checking file fs/hfs/bfind.c
-Hunk #1 FAILED at 23.
-1 out of 1 hunk FAILED
+[1] https://lore.kernel.org/all/20220311093800.18778-1-singh.kuldeep87k@gmail.com/
 
+Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+---
+Kuldeep Singh (2):
+      arm64: dts: seattle: Update spi clock properties
+      arm64: dts: lg131x: Update spi clock properties
 
+ arch/arm64/boot/dts/amd/amd-seattle-soc.dtsi | 8 ++++----
+ arch/arm64/boot/dts/lg/lg1312.dtsi           | 8 ++++----
+ arch/arm64/boot/dts/lg/lg1313.dtsi           | 8 ++++----
+ 3 files changed, 12 insertions(+), 12 deletions(-)
+---
+base-commit: 6f2ca0f00f319c694ad5bb494b64745a43b40756
+change-id: 20241105-dts-spi-fixes-9c24e7763f3b
 
-Tested on:
-
-commit:         2e1b3cc9 Merge tag 'arm-fixes-6.12-2' of git://git.ker..
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=85d8f50d88ddf2a
-dashboard link: https://syzkaller.appspot.com/bug?extid=d395b0c369e492a17530
-compiler:       
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=1433ed5f980000
+Best regards,
+-- 
+Rob Herring (Arm) <robh@kernel.org>
 
 
