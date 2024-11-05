@@ -1,123 +1,153 @@
-Return-Path: <linux-kernel+bounces-396489-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396493-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 795F59BCDE2
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 14:33:33 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 314AF9BCDE9
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 14:34:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E19842834CA
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 13:33:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DBBB3283514
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 13:34:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AA9D1D6DB5;
-	Tue,  5 Nov 2024 13:33:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14FCC1D63F7;
+	Tue,  5 Nov 2024 13:34:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u1tv1TyE"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DuO2uDDu"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69F4E1D63E9;
-	Tue,  5 Nov 2024 13:33:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52BE71D63F4;
+	Tue,  5 Nov 2024 13:34:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730813605; cv=none; b=aGKflPTnQL56e2tLzltg0b8Z51r3tWNshSGJrEG00HwOUDIHe9iDPw5AvKbWsDTvQtbEshKGFJZUBKKcXKuc3KM7FnR/nNvEVMccARQgjZ2yNuyob/nG2v/mQnQnV3l0wCuCL905+y5duB2ffcSopa9U2/LfMLzBqNUxi3Z8vE4=
+	t=1730813651; cv=none; b=sSdsRbkdhVm1hsN6npZJa+KqctGkm7pdugGevIX3WeC6sRDpCMi44rH3boZ9mt3exObvB8/gCy6e4DDIHVTr4nhc0KWZcH1kGX8eesQC59vBJg3r+17edFe9lmjqs60eQXmORX9pUgZ/i0rC6kzXOgh7AgAm9cR2cIOS8XPYzg8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730813605; c=relaxed/simple;
-	bh=KT5zF8H18NGC/TLWrYKsVRBqgBnqV8X9qCR3wlC7Y0M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=d2foJr+t2w9EmWyMPi8lmfCeDRCShzYRx9OGpD3yHfmdYxafP0F7518/NGCCqqAzGCuwaYbR43WGfck8IgU6Q0VxuXsjbpwrVzmaNtKQIbVPPVNn5XkwFQ/4DYEG1Xb/pfx4mKGFzuEFySXyQ3hwa+U3eY7aL4sIYuqm+vX/AfA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u1tv1TyE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A906FC4CED0;
-	Tue,  5 Nov 2024 13:33:24 +0000 (UTC)
+	s=arc-20240116; t=1730813651; c=relaxed/simple;
+	bh=lueueggmqJh1jG3+SJ1RDmw3IpHs4MrLZqQ9gGf5CPo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pCzyjLemd+wZa9NnCeRd+48ELUdIUY2wFFCby0CGe8zr4yjnasjmOswr9S8Eoo6AZUxIrUfZPRZAN5DF0c10feYmMG0WpLFGDu12hTvvl+XcixTqiK4at7LJXD/RTwjRyyUOzPZa84vqNb3oYTZhd8u4mrM6jb8GkDWlv2hiIeU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DuO2uDDu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3148C4CECF;
+	Tue,  5 Nov 2024 13:34:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730813605;
-	bh=KT5zF8H18NGC/TLWrYKsVRBqgBnqV8X9qCR3wlC7Y0M=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=u1tv1TyEwKjibGh1x0gjsbRD/lt8MpK0gB2VmVMfRZLB5Dg/ynIzXBqgNeH+cc4qJ
-	 uNAv3tGFmIsAOBk4ApEq+f03TEU34E81SpatHnnxAAHCPn3ftPKsMaHLY6FVrrs1Qd
-	 9b8QSn86aAgOqtzLWst37UrPAvQQ/JFRSnI+644HCn8Qs30J+3bj/ZJiiFwV7J9RZo
-	 GNyfwSQfZtrXkyjh3ndm+AbxUaT6A1fZjM3wT5HZqS9PGM8CqewldJoJO07g9AqJle
-	 eCTEW2MADNVoORRCYkBPxUAT+fSVHmOaPjPwwd3AOsW7GUMziavXcnw1eEXg+kOwnE
-	 rEMJYfoqyAoPg==
-Date: Tue, 5 Nov 2024 07:33:23 -0600
-From: Rob Herring <robh@kernel.org>
-To: =?iso-8859-1?Q?Th=E9o?= Lebrun <theo.lebrun@bootlin.com>
-Cc: Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>,
-	=?iso-8859-1?Q?Gr=E9gory?= Clement <gregory.clement@bootlin.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	linux-mips@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Tawfik Bayouk <tawfik.bayouk@mobileye.com>
-Subject: Re: [PATCH 01/13] dt-bindings: soc: mobileye: set `#clock-cells =
- <1>` for all compatibles
-Message-ID: <20241105133323.GA3064907-robh@kernel.org>
-References: <20241031-mbly-clk-v1-0-89d8b28e3006@bootlin.com>
- <20241031-mbly-clk-v1-1-89d8b28e3006@bootlin.com>
- <20241104153727.GA192461-robh@kernel.org>
- <D5DJOUV9NPY4.22MIOBKLAYGA3@bootlin.com>
+	s=k20201202; t=1730813650;
+	bh=lueueggmqJh1jG3+SJ1RDmw3IpHs4MrLZqQ9gGf5CPo=;
+	h=From:To:Cc:Subject:Date:From;
+	b=DuO2uDDuxdybcn/82DZkQ9p6iUToHpsBdnCSFhpWxkCMowE5NeHdf16NRN5nPp+us
+	 b0/T5VgZ68y5ijnHqv6Y+rQ5lrsqsF9DO9cYFLrQry1cojgysPtumQZbctURH3F16X
+	 gPsHgT/S98bv0RiIgGfHli4bOzU1Bp76170WA3k18HvkCD7UmlUUX9pxj2l2YMaGjK
+	 jE7gJPxv0I45pfzDAnRB9L3oZdXfHf1xt9QxevYQJ0UggrCLbp/E1dnxk7i1FHe/3z
+	 oWUHbA8nQlKITFEjF8vrBNen8OAz+JT6j5IaOt30EjR4UPiDtZJ1rXoddhwvsoLBQ1
+	 0l6mOsyztaRSw==
+From: Jiri Olsa <jolsa@kernel.org>
+To: Oleg Nesterov <oleg@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Andrii Nakryiko <andrii@kernel.org>
+Cc: bpf@vger.kernel.org,
+	Song Liu <songliubraving@fb.com>,
+	Yonghong Song <yhs@fb.com>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Hao Luo <haoluo@google.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Alan Maguire <alan.maguire@oracle.com>,
+	linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org
+Subject: [RFC 00/11] uprobes: Add support to optimize usdt probes on x86_64
+Date: Tue,  5 Nov 2024 14:33:54 +0100
+Message-ID: <20241105133405.2703607-1-jolsa@kernel.org>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <D5DJOUV9NPY4.22MIOBKLAYGA3@bootlin.com>
 
-On Mon, Nov 04, 2024 at 05:46:10PM +0100, Théo Lebrun wrote:
-> On Mon Nov 4, 2024 at 4:37 PM CET, Rob Herring wrote:
-> > On Thu, Oct 31, 2024 at 04:52:51PM +0100, Théo Lebrun wrote:
-> > > Some compatibles expose a single clock. For those, we used to let them
-> > > using `#clock-cells = <0>` (ie <&olb> reference rather than <&olb 0>).
-> > > 
-> > > Switch away from that: enforce a cell for all compatibles. This is more
-> > > straight forward, and avoids devicetree changes whenever a compatible
-> > > goes from exposing a single clock to multiple ones.
-> >
-> > Your reasoning is flawed. Changing #clock-cells is an ABI break. So you 
-> > should only be changing this if it was just wrong. And if it's not wrong 
-> > in some cases, you shouldn't be changing those. The h/w either has 1 
-> > clock or multiple and #clocks-cells should match.
-> 
-> I see your reasoning, and I agree that changing #clock-cells is an ABI
-> break. However, there are two things to take into account:
-> 
->  - We do not (yet?) have an omniscient view of the hardware. We do not
->    know what every single register in those memory regions do.
-> 
->    Some clocks might be lurking in the shadows, especially as we don't
->    support many HW capabilities yet.
-> 
->  - The earlier the better. If we discover later down the road that,
->    indeed, some more clocks were hiding, we'll have to do an ABI break.
-> 
->    At that point, some people might actually be using the platform.
->    Seeing what we currently have supported upstream versus the amount
->    of HW blocks available in the SoC, I cannot imagine anyone using the
->    platform with an upstream kernel.
-> 
-> So the choice is:
->  - potential ABI break in the future, once people use the platform, or,
->  - guaranteed ABI break now, when no one is using it.
-> 
-> I pick option two! Do you agree with the thought process?
+hi,
+this patchset adds support to optimize usdt probes on top of 5-byte
+nop instruction.
 
-Ultimately, it is up to you and the maintainers for the platform to 
-decide. I only ask that ABI breaks are called out as ABI breaks with 
-reasoning given for the ABI break.
+The generic approach (optimize all uprobes) is hard due to emulating
+possible multiple original instructions and its related issues. The
+usdt case, which stores 5-byte nop seems much easier, so starting
+with that.
 
-I had no clue whether you have access to RTL or are reverse engineering 
-this or something in between.
+The basic idea is to replace breakpoint exception with syscall which
+is faster on x86_64. For more details please see changelog of patch 7.
 
-Please summarize the above explanation for the commit msg.
+The first benchmark shows about 68% speed up (see below). The benchmark
+triggers usdt probe in a loop and counts how many of those happened
+per second.
 
-Rob
+It's still rfc state with some loose ends, but I'd be interested in
+any feedback about the direction of this.
+
+It's based on tip/perf/core with bpf-next/master merged on top of
+that together with uprobe session patchset.
+
+thanks,
+jirka
+
+
+current:
+        # ./bench -w2 -d5 -a  trig-usdt
+        Setting up benchmark 'trig-usdt'...
+        Benchmark 'trig-usdt' started.
+        Iter   0 ( 46.982us): hits    4.893M/s (  4.893M/prod), drops    0.000M/s, total operations    4.893M/s
+        Iter   1 ( -5.967us): hits    4.892M/s (  4.892M/prod), drops    0.000M/s, total operations    4.892M/s
+        Iter   2 ( -2.771us): hits    4.899M/s (  4.899M/prod), drops    0.000M/s, total operations    4.899M/s
+        Iter   3 (  1.286us): hits    4.889M/s (  4.889M/prod), drops    0.000M/s, total operations    4.889M/s
+        Iter   4 ( -2.871us): hits    4.881M/s (  4.881M/prod), drops    0.000M/s, total operations    4.881M/s
+        Iter   5 (  1.005us): hits    4.886M/s (  4.886M/prod), drops    0.000M/s, total operations    4.886M/s
+        Iter   6 ( 11.626us): hits    4.906M/s (  4.906M/prod), drops    0.000M/s, total operations    4.906M/s
+        Iter   7 ( -6.638us): hits    4.896M/s (  4.896M/prod), drops    0.000M/s, total operations    4.896M/s
+        Summary: hits    4.893 +- 0.009M/s (  4.893M/prod), drops    0.000 +- 0.000M/s, total operations    4.893 +- 0.009M/s
+
+optimized:
+        # ./bench -w2 -d5 -a  trig-usdt
+        Setting up benchmark 'trig-usdt'...
+        Benchmark 'trig-usdt' started.
+        Iter   0 ( 46.073us): hits    8.258M/s (  8.258M/prod), drops    0.000M/s, total operations    8.258M/s
+        Iter   1 ( -5.752us): hits    8.264M/s (  8.264M/prod), drops    0.000M/s, total operations    8.264M/s
+        Iter   2 ( -1.333us): hits    8.263M/s (  8.263M/prod), drops    0.000M/s, total operations    8.263M/s
+        Iter   3 ( -2.996us): hits    8.265M/s (  8.265M/prod), drops    0.000M/s, total operations    8.265M/s
+        Iter   4 ( -0.620us): hits    8.264M/s (  8.264M/prod), drops    0.000M/s, total operations    8.264M/s
+        Iter   5 ( -2.624us): hits    8.236M/s (  8.236M/prod), drops    0.000M/s, total operations    8.236M/s
+        Iter   6 ( -0.840us): hits    8.232M/s (  8.232M/prod), drops    0.000M/s, total operations    8.232M/s
+        Iter   7 ( -1.783us): hits    8.235M/s (  8.235M/prod), drops    0.000M/s, total operations    8.235M/s
+        Summary: hits    8.249 +- 0.016M/s (  8.249M/prod), drops    0.000 +- 0.000M/s, total operations    8.249 +- 0.016M/s
+
+---
+Jiri Olsa (11):
+      uprobes: Rename arch_uretprobe_trampoline function
+      uprobes: Make copy_from_page global
+      uprobes: Add len argument to uprobe_write_opcode
+      uprobes: Add data argument to uprobe_write_opcode function
+      uprobes: Add mapping for optimized uprobe trampolines
+      uprobes: Add uprobe syscall to speed up uprobe
+      uprobes/x86: Add support to optimize uprobes
+      selftests/bpf: Use 5-byte nop for x86 usdt probes
+      selftests/bpf: Add usdt trigger bench
+      selftests/bpf: Add uprobe/usdt optimized test
+      selftests/bpf: Add hit/attach/detach race optimized uprobe test
+
+ arch/x86/entry/syscalls/syscall_64.tbl                    |   1 +
+ arch/x86/include/asm/uprobes.h                            |   7 +++
+ arch/x86/kernel/uprobes.c                                 | 180 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-
+ include/linux/syscalls.h                                  |   2 +
+ include/linux/uprobes.h                                   |  25 +++++++++-
+ kernel/events/uprobes.c                                   | 222 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++------
+ kernel/fork.c                                             |   2 +
+ kernel/sys_ni.c                                           |   1 +
+ tools/testing/selftests/bpf/bench.c                       |   2 +
+ tools/testing/selftests/bpf/benchs/bench_trigger.c        |  45 +++++++++++++++++
+ tools/testing/selftests/bpf/prog_tests/uprobe_optimized.c | 252 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ tools/testing/selftests/bpf/progs/trigger_bench.c         |  10 +++-
+ tools/testing/selftests/bpf/progs/uprobe_optimized.c      |  29 +++++++++++
+ tools/testing/selftests/bpf/sdt.h                         |   9 +++-
+ 14 files changed, 768 insertions(+), 19 deletions(-)
+ create mode 100644 tools/testing/selftests/bpf/prog_tests/uprobe_optimized.c
+ create mode 100644 tools/testing/selftests/bpf/progs/uprobe_optimized.c
 
