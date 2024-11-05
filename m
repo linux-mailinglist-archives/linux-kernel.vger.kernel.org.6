@@ -1,110 +1,104 @@
-Return-Path: <linux-kernel+bounces-396582-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396583-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 808B09BCF15
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 15:22:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D46009BCF18
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 15:22:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E20BAB23D7F
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 14:22:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B9631F213DA
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 14:22:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A306D1D8E07;
-	Tue,  5 Nov 2024 14:21:33 +0000 (UTC)
-Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com [209.85.219.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79B941D968E;
+	Tue,  5 Nov 2024 14:21:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YUQAY2Vt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D34A1D6DB9;
-	Tue,  5 Nov 2024 14:21:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D07A01D6DB9;
+	Tue,  5 Nov 2024 14:21:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730816493; cv=none; b=O5kf6K6uLxjO/r8unn1yJbYeVYTtkgXNZ1v3+1FNSPSd0pwiC9YiTzdJtQDI/5pbzvs1SlQKve9ge0AXZ1IY17LzsHiLQxw0Z5RdFcCzzaoRXKaMS0sjcjHqbGVtFLjc1CVng/g+/JZj6HY9Omy2CZc7mKty9El9WhchGFcl0qo=
+	t=1730816495; cv=none; b=aLD8HOixSR6b0YwYpqh3+edDP2fQwK1zUl0qxk144/GE0riMZIQ9+B/OVMxHTbN6/C24LWMrLSBSMayiH+UnGKg3Gi3RvomVGK6SXErJb62v+/pMX3EhVIclwmjW4f9bFOHanRES6hhvankVUzn4jOALec63UXlTytn+jfRBML4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730816493; c=relaxed/simple;
-	bh=HnchU3TAxMiEnb4LqA1IIZSHQ3nPshfnOq2ODMOQWR8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WAPAT70NZ+EnLVy5wMQCDvmQ1mDbjc8tVNe3doiQ0CdqLjNLJKmW5QJKe/q2t0TePmBMP+6C3ShHQ0hUbJWd2ZZaHhPSqBsP1cizT9An7WMp/twy0h7+i1BnxjnMOB6Jxmtxxz04mX75NC/ynJTDY0oQ9yQSoGEzGwsIsWWJqww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-e29687f4cc6so4342250276.2;
-        Tue, 05 Nov 2024 06:21:31 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730816489; x=1731421289;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WQTogThULkTABxgO4qxQ15BGSdteC82xf8/FCwRDyos=;
-        b=Jwy0mEKCUpjWdK9+ZI9/NqM9gOCRBRAyDTqS4A752Dasep0YBF61q1ZAXuvuFi7yDj
-         WHitm/9wlqaLxGw3RiAVZS4dWbiGDVZbUrTc6xAgjrwlAff6cGOMq37gsqxSVCGmiwaj
-         ZDTWMzSdvvDnmatb97SpbLppJygJ40mIzHYXSTAXpv/PYUHNh8Lamo/Wz6b+IWy1I5b/
-         twafWUeqrvHaFjSkSl5Eu/IpE0k+epMGsV4LX5p0CCY1vpa97C2teqWgP28YDUVbjFI6
-         KiWSpzZhwQjWsJ8s8OeJQtyLXJtfaWBHwiZuiqbL1pjj8wN2+MkDji4D5sePcSv2QPkb
-         N6Zw==
-X-Forwarded-Encrypted: i=1; AJvYcCXAu+evPH0LjaqDbT0/2S+QBsRJcBcwFvOy41RCTzStIJfsnXzUU5ssTG1gNJU44rHtADWa0tntFG04GXw=@vger.kernel.org, AJvYcCXuPIIJLBgtRUD8iiWzfJ3YAUaYYF/wTe7yQhGHyUgaZbQ08NC018SMp+TQi1/tBZBP0NRR8bhCW0TY@vger.kernel.org
-X-Gm-Message-State: AOJu0YyNdFquFfodAhGK6H7fMSBDa0DID4XRzz3liXe2Oaqkkx9TzdtA
-	+GAYs8mIfdDOtWcypRYMse/RXNRrBKq1LB5mILpV4Lg0DnASe4CFyMR9unhb
-X-Google-Smtp-Source: AGHT+IEvSPfGP+sDAxrvN2d7XxFWVf9kLZDc6tHx4FzmN81o/2xNW40FPrk/bLyYCTYTlmHqPi+cBw==
-X-Received: by 2002:a05:6902:33c8:b0:e30:c614:5c40 with SMTP id 3f1490d57ef6-e330254f899mr12484735276.2.1730816489236;
-        Tue, 05 Nov 2024 06:21:29 -0800 (PST)
-Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com. [209.85.128.179])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e30e8a95711sm2402853276.34.2024.11.05.06.21.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 05 Nov 2024 06:21:28 -0800 (PST)
-Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-6ea50585bf2so57881097b3.3;
-        Tue, 05 Nov 2024 06:21:28 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUbKVYp2Gna/m1G5X1qoPX6FLxLdkC2fJUnp8wypA/GBb8/xATQI3qeKPUhnNXuW5p+qCr2Cu+DsiUH@vger.kernel.org, AJvYcCVg5rmANgaqqR9wqpow98FbUXUN4whC1aF8nL19u3lv9MEUDxiheQQVis7D207IqyW0Vj93oHJ/Gc0ng2M=@vger.kernel.org
-X-Received: by 2002:a05:690c:d1c:b0:6dd:c474:9cd8 with SMTP id
- 00721157ae682-6ea64af0eecmr155730677b3.18.1730816488050; Tue, 05 Nov 2024
- 06:21:28 -0800 (PST)
+	s=arc-20240116; t=1730816495; c=relaxed/simple;
+	bh=DJ/kUd+DBcqBgpe9qw/202KtCsDESQxoQDuovJy9AQs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hOsRUDBZoDTCCvLgeNcYI6UfKadAD74U2YUUqC3z/HPOHABnHWnuo5YbyFpoOE0OjmWw9iDEhEYGcLuZVNiw8Bb0a48s5dJhlJLLNkbTCQItiNvnx22Y5ciQ61dwwSCSwRdhfWzKwmxQx14/DaE8JGZjgTGUT/ibHFJLNsJmpYI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YUQAY2Vt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05166C4CECF;
+	Tue,  5 Nov 2024 14:21:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730816495;
+	bh=DJ/kUd+DBcqBgpe9qw/202KtCsDESQxoQDuovJy9AQs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YUQAY2VtS3S95xlLPJHAEpqhXhFN/LXpztOjF/kPPM/auScTwyu7fJlj83qI3qTq2
+	 eGMUVeYB1hDxalbVG1VgnVbIyoIXHF+qzzDtYl9ztg2XOxBq5Zg3a2d+Pwn/jdlWuV
+	 HoJ2oXv6Du+E9lmDC/TP2SfcdRgMT7dslgdTfMBQKvo9Sbg/+UrIcb4aNnrfPsSQTz
+	 /gY+V2FSHPwKPeQvmMTpFnFoSDkr2+uGR6RRONDrLY5rAtj1PHomzXnZWGe2g2e+jG
+	 nrrcUELFRfD0cA8IfnTBdnNRCd5QNXDt3gv0AUiVR21rvuWKqheYcs29A9oenP5Y7z
+	 hjqVsiuVbAeaQ==
+Date: Tue, 5 Nov 2024 15:21:31 +0100
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Troy Mitchell <troymitchell988@gmail.com>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	linux-i2c@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v2 0/2] riscv: spacemit: add i2c support to K1 SoC
+Message-ID: <o55tg4zybyfroh7on7b6pxwbkw46fgafryzlc2gczmgecxr4ph@lptxs2timypu>
+References: <20241028053220.346283-1-TroyMitchell988@gmail.com>
+ <stpzkggfwseaqy6kbppiog4xfbpq4r2jwix2nvredbmmjqzbsi@wkllt4jlingv>
+ <edfaccd7-ac96-47fc-a174-912c8aaf0f5e@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1728377511.git.fthain@linux-m68k.org> <a912689ee714d35c13f4a5fe05df58c662a6dc8d.1728377511.git.fthain@linux-m68k.org>
-In-Reply-To: <a912689ee714d35c13f4a5fe05df58c662a6dc8d.1728377511.git.fthain@linux-m68k.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 5 Nov 2024 15:21:15 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdU8_RL9y3o24_jhPJuYb+5RP+PpBKbD7Ndn9fg7EYH_Hw@mail.gmail.com>
-Message-ID: <CAMuHMdU8_RL9y3o24_jhPJuYb+5RP+PpBKbD7Ndn9fg7EYH_Hw@mail.gmail.com>
-Subject: Re: [PATCH v3 2/2] m68k: mvme147, mvme16x: Adopt rtc-m48t59 platform driver
-To: Finn Thain <fthain@linux-m68k.org>
-Cc: Daniel Palmer <daniel@0x0f.com>, Michael Pavone <pavone@retrodev.com>, 
-	linux-m68k@lists.linux-m68k.org, linux-rtc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <edfaccd7-ac96-47fc-a174-912c8aaf0f5e@gmail.com>
 
-On Tue, Oct 8, 2024 at 10:55=E2=80=AFAM Finn Thain <fthain@linux-m68k.org> =
-wrote:
-> Both mvme147 and mvme16x platforms have their own RTC driver
-> implementations that duplicate functionality provided by the rtc-m48t59
-> driver. Adopt the rtc-m48t59 driver and remove the other ones.
->
-> Tested-by: Daniel Palmer <daniel@0x0f.com>
-> Signed-off-by: Finn Thain <fthain@linux-m68k.org>
-> ---
-> This patch depends upon the m48t59 driver changes in the preceding patch.
->
-> Changed since v1:
->  - Initialize yy_offset in struct m48t59_plat_data.
+Hy Troy,
 
-Reviewed-by: Geert Uytterhoeven <geert@linux-m68k.org>
+On Mon, Nov 04, 2024 at 08:23:23PM +0800, Troy Mitchell wrote:
+> On 2024/10/31 19:43, Andi Shyti wrote:
+> > Hi Tony,
 
-Gr{oetje,eeting}s,
+Sorry, I misread your name :-/
 
-                        Geert
+> > On Mon, Oct 28, 2024 at 01:32:18PM +0800, Troy Mitchell wrote:
+> >> Hi all,
+> >>
+> >> This patch implements I2C driver for the SpacemiT K1 SoC,
+> >> providing basic support for I2C read/write communication which
+> >> compatible with standard I2C bus specifications.
+> >>
+> >> In this version, the driver defaults to use fast-speed-mode and
+> >> interrupts for transmission, and does not support DMA, high-speed mode, or FIFO.
+> >>
+> >> The docs of I2C can be found here, in chapter 16.1 I2C [1]
+> >>
+> >> Link: https://developer.spacemit.com/documentation?token=Rn9Kw3iFHirAMgkIpTAcV2Arnkf#part5 [1]
+> >>
+> >> Troy Mitchell (2):
+> >>   dt-bindings: i2c: spacemit: add support for K1 SoC
+> >>   i2c: spacemit: add support for SpacemiT K1 SoC
+> > 
+> > As Krzysztof has asked, please do provide the changelog, it's
+> > important to track the progress of your series.
+> I saw a compilation warning sent to me by the robot, and I've
+> fixed the warning. Should I resend V2 with the changelog
+> what I miss or send V3?
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
+Please send a v3. When there are compilation issues, normally
+patches are less keen to be reviewed.
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+You can add the changelog in the Patch 0/2 to avoid editing all
+the .patch files.
+
+Thanks,
+Andi
 
