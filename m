@@ -1,131 +1,123 @@
-Return-Path: <linux-kernel+bounces-397024-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397025-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA43C9BD5BA
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 20:16:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E1C79BD5BC
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 20:18:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EB9AE1C20D01
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 19:16:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 119EE284135
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 19:18:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DACCD1EBA0F;
-	Tue,  5 Nov 2024 19:16:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40C421EBA10;
+	Tue,  5 Nov 2024 19:18:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ml9H62b6"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jrygHNjt"
+Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E80721487CD;
-	Tue,  5 Nov 2024 19:16:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55C5B1E766D
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 19:18:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730834203; cv=none; b=oAVITL5/3VqToJfojcPgGW3Pc1HzTzphQXt6eSvRhpdjYeeAtR0Yoni9lX0xculR4fzYbjeZSDGrxmet7BPqYfB/70VKofQnjARBszU87CzBhyE+I6PPHIwn3Mvf5pR1v1kBb1dQ0GSMynGb34ykjhoro5IEI4VJCOatdVpu9Wo=
+	t=1730834299; cv=none; b=JXC3rfHFzsm8VLS7j2my9w4/1MWPcBaxoyS2mrAoaL+PLP3o/xnRm7A6GeGwqLcGqK4Qa6b2zBpcjMHJqcPl8JhVdnrU1R7/Fwl7hX3m17VQVH9MW5VhkXFEifj+7LMSnB+jJZ1StwgmIBPD5/RUWo/k1ocrQyu6OuXCRqoAqk8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730834203; c=relaxed/simple;
-	bh=bp72WN2NK6Nw91TteXnU8xM5psVR50kQZBi6Eu4OUlk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hutCSRHS1SBOFfang/p4wVZGDsNuFPiqbqX5ECGQPbN0Bdx86wcHQAtiOcPZHKrtIKJRnoHHsXWvVEVMzvb7dNLbnf6xNpX9zJXsy2HGvSbar1Nf9S22CVvLSNwfLj1wJj6Z+m47LiEjnqUdLAhbulR8/37HVhdlV3TBL3sNoXI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ml9H62b6; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-207115e3056so54925115ad.2;
-        Tue, 05 Nov 2024 11:16:41 -0800 (PST)
+	s=arc-20240116; t=1730834299; c=relaxed/simple;
+	bh=KcLNmdINbboEOcPBnOOngbnVFtKqG1jrQP932oLB02k=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=fNS/iu53j88tZxEFagTIb7UJg4R+YVFb6T+6MgrUg9BAc2HcYhFcVwf7qNcPBX4htOrDLHc1BSjK8Rqu5nV/ZVG6FyCR9XBLYDBVa79H70aBGSqAqC+QfvjkwvXMpd+qRqatCBN70njka/zslEvrTFqvoqA9FFkaRqbqDpDDdRs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=jrygHNjt; arc=none smtp.client-ip=209.85.214.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-20c2cffd698so62655355ad.2
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 11:18:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730834201; x=1731439001; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=1foUF5fv2xw3zsSd0ahFRtImYfNB3vhJ91jFfTHDfPs=;
-        b=Ml9H62b6nGzuOmS9myTlB8pJc59D+hWLN1HUoGGG+9yUlDkPHCYt8og7vn6Ye09xxR
-         WXQgQaMUTT0KESOJFj9A2Ny/5hFa7xNiESDYiEd6dD0UoHoXLRJjgfmG1ERl0vwkZoY1
-         obzeTyNXSboOW8AocpU4XykuMoDTvv7lTkq78XBTDZRgMQvEU//78nY7hvD8aC4D1vHy
-         EkpiNyANbqzHBW+tmAlQKjrJO3Z1q6aedvQAilTpk7kZt9gA22QyElCX5gcfltVQ5Hjn
-         ComGxIzdaX6np4y7TTbK17X5dJXNrY+Em7BC1KK7/7qlNfacUZYBLZQHch4KOciYXVpL
-         sTmw==
+        d=google.com; s=20230601; t=1730834298; x=1731439098; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=9f4OfL/WzG7jWvwRWk9HMZifJUGYJMKeOzFPitEAUFc=;
+        b=jrygHNjtZKGCqBn6FUXaLqHFlbU5FDIR5klRoMU/5AETQ6YEZdEIVGUegGV2GtckbS
+         JJQ5oTsq8onF/9Oew4FNOOkXtuEpa+CRlGNBsisxko+bCrM+Rz2H3sT8N5vAMzPzG1qY
+         h4GiRYQkWubfA1u1aBCWDIuMtlZd+I/SpIEJpG0yOnrlC5sagu5+p/+sP2oAg3udSy7X
+         klwciuAS/vid1kwFBW9vSAsF1IjFVYOD+IOLsEgSaFc3jfgmXsvQINFEmFzelNilvaSr
+         xrq8xhEI7SpBxl8Py0vJ1Hc+A2QOaERT0/DGf9r0F4dw42dD1VmG9hiKIodmI/J5CpfR
+         kLCQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730834201; x=1731439001;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1foUF5fv2xw3zsSd0ahFRtImYfNB3vhJ91jFfTHDfPs=;
-        b=rk2VeuuxPHhq/axI32UBBviMraXUtf+n3kjPLeHVlKoZa7x6I++DxLRVsvHIMy8Phn
-         1kLHduW5VPGeyCRL2nZfVz44G2d+cfui/aKe/6KrgYZfOjeB2hjMz2Yg2LgFaADwsHCy
-         GBsl4tcqQi8a6glR+xdHIMeCIRDN4bUwO9uAtOg5ATJA7y58zNCpoQDiulwhdMCRhhil
-         low+rKcjn28Q3ex8Ll56dCOeQMy+kxXKiz2f4NkHlIMHGCQtS/R8aNiIXN10h8YKqc+u
-         IOycu9MiDNDpAG4sggYqFC67LdwDtoImSUlrwjfCDsvb4k0VlACHuML/EID2QMQsmyLJ
-         c++g==
-X-Forwarded-Encrypted: i=1; AJvYcCWJY3Dol4DaH5uGLcr5D69/OHiJpvnlpE2ZWf2QI52e7hHDK0HP/C8qVqag8z3rE1pvX/huhCggdG7ImpA=@vger.kernel.org, AJvYcCXerWrexkpIwreUqOP2mYNAbOqSzVRRN8NH+NYp9JaCstyJ6DG6vnabkzuAfzUE8raoTpFtZmPEtS8S@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxo0hMRzafogA68gbCLXkEfGmXlWQ+sWQVkRKEcNtsevob2acWB
-	Onjmfg5gX9ZqRqrSKFB6ButjvpXM0L6eyU+iPj+4DFzNsucF4T5T
-X-Google-Smtp-Source: AGHT+IFPj+mNP+satzrGgiaz4xce0A3/dkm35dbKVZS88h3ciwvXRhLpjKL8aAOWaebfPuzbCJIL+Q==
-X-Received: by 2002:a17:902:f684:b0:20c:bffe:e1e5 with SMTP id d9443c01a7336-210c6892b57mr521655965ad.19.1730834201150;
-        Tue, 05 Nov 2024 11:16:41 -0800 (PST)
-Received: from google.com ([2620:15c:9d:2:65d0:e6fa:350:5727])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211056ee46fsm81936095ad.21.2024.11.05.11.16.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Nov 2024 11:16:40 -0800 (PST)
-Date: Tue, 5 Nov 2024 11:16:38 -0800
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Markus Burri <markus.burri@mt.com>
-Cc: linux-kernel@vger.kernel.org, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Marek Vasut <marek.vasut@gmail.com>, linux-input@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 1/7] Input: matrix_keypad - use fsleep for variable
- delay duration
-Message-ID: <ZypvFmWc3-_N4IZM@google.com>
-References: <20241031063004.69956-1-markus.burri@mt.com>
- <20241105130322.213623-1-markus.burri@mt.com>
- <20241105130322.213623-2-markus.burri@mt.com>
+        d=1e100.net; s=20230601; t=1730834298; x=1731439098;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=9f4OfL/WzG7jWvwRWk9HMZifJUGYJMKeOzFPitEAUFc=;
+        b=tooBRjGv5EcKzlBBuVp08e9CfYLk/Do7dm/HxbOScycSb7HO04Un2llXj+i4U5ixNE
+         6JDPNeenkW8UchVnUgxb8Q8SuAm4W3k3TQVDDoejWI2s23kSlPq1jx/HKwpIy8500cyc
+         HujXrqjDRhpIi/Vfv/gBbicokRhWKJH+gSPTBci9qf6gnAkJNY5tLMJifBnxnppa7rsK
+         9nfcB/cBVh32cppmC6estn7GlV8doQXtxFMRZv1wvN4un52uwlSNrPynIa0J6FFfXLLK
+         aLBfpl5WwykE/SPAjI5P8erDb2E5VhjLJeqinEM+W8etD4JVi0/KvVEGQussr9/O2XCO
+         0Z6w==
+X-Forwarded-Encrypted: i=1; AJvYcCUr5eICb4MFT0m993+IavkiJ7VO+2KpXiNpmiQjT39XRwcGNsmSK7Pr7s1kDQmV1UNgwNWpx80gXwZ91Rw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzXs7nGzPuM9Yk1sASAYvgO9uZ+pEhOfLReV9+Uefa+gBaM4Ouo
+	WTyXYKTcB3iZPF4nAqXCD0CSR2YWpvwZEogrpFfgDTdPeprh+XXHEJftGO7r+VPsC0aAW7AjxZX
+	CyQ==
+X-Google-Smtp-Source: AGHT+IHMYuAZnXAc/S1cVTWe83OJa2YM6NdR95YJGJDDiTdYVajYkwQdrKNrGa/D+hjmRYf6j640qi+2ZIM=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
+ (user=seanjc job=sendgmr) by 2002:a17:90a:a40e:b0:2e2:d3d2:347 with SMTP id
+ 98e67ed59e1d1-2e94c51d7c1mr31265a91.6.1730834297611; Tue, 05 Nov 2024
+ 11:18:17 -0800 (PST)
+Date: Tue, 5 Nov 2024 11:18:16 -0800
+In-Reply-To: <20241105185622.GEZypqVul2vRh6yDys@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241105130322.213623-2-markus.burri@mt.com>
+Mime-Version: 1.0
+References: <20241104101543.31885-1-bp@kernel.org> <ZyltcHfyCiIXTsHu@google.com>
+ <20241105123416.GBZyoQyAoUmZi9eMkk@fat_crate.local> <ZypfjFjk5XVL-Grv@google.com>
+ <20241105185622.GEZypqVul2vRh6yDys@fat_crate.local>
+Message-ID: <ZypvePo2M0ZvC4RF@google.com>
+Subject: Re: [PATCH] x86/bugs: Adjust SRSO mitigation to new features
+From: Sean Christopherson <seanjc@google.com>
+To: Borislav Petkov <bp@alien8.de>
+Cc: Borislav Petkov <bp@kernel.org>, X86 ML <x86@kernel.org>, Josh Poimboeuf <jpoimboe@redhat.com>, 
+	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, kvm@vger.kernel.org, 
+	LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
 
-On Tue, Nov 05, 2024 at 02:03:16PM +0100, Markus Burri wrote:
-> The delay is retrieved from a device-tree property, so the duration is
-> variable. fsleep guesses the best delay function based on duration.
-
-activate_col() may be called in atomic context, and if fsleep() turns
-into usleep_range() or msleep() we are going to have a bad time.
-
-We should either stop using request_any_context_irq() or figure out if
-interrupt handler can sleep or not and adjust behavior properly.
-
+On Tue, Nov 05, 2024, Borislav Petkov wrote:
+> On Tue, Nov 05, 2024 at 10:10:20AM -0800, Sean Christopherson wrote:
+> > All of the actual maintainers.
 > 
-> Link: https://www.kernel.org/doc/html/latest/timers/timers-howto.html
+> Which maintainers do you mean? tip ones? If so, they're all shorted to
+> x86@kernel.org.
 > 
-> Signed-off-by: Markus Burri <markus.burri@mt.com>
-> ---
->  drivers/input/keyboard/matrix_keypad.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> > AFAIK, Paolo doesn't subscribe to kvm@.
 > 
-> diff --git a/drivers/input/keyboard/matrix_keypad.c b/drivers/input/keyboard/matrix_keypad.c
-> index 3c38bae..9eb6808 100644
-> --- a/drivers/input/keyboard/matrix_keypad.c
-> +++ b/drivers/input/keyboard/matrix_keypad.c
-> @@ -69,7 +69,7 @@ static void activate_col(struct matrix_keypad *keypad, int col, bool on)
->  	__activate_col(keypad, col, on);
->  
->  	if (on && keypad->col_scan_delay_us)
-> -		udelay(keypad->col_scan_delay_us);
-> +		fsleep(keypad->col_scan_delay_us);
->  }
->  
->  static void activate_all_cols(struct matrix_keypad *keypad, bool on)
-> -- 
-> 2.39.5
-> 
+> Oh boy, srsly?! I thought I'd reach the proper crowd with
+> kvm@vger.kernel.org...
 
-Thanks.
+It gets there, usually (as evidenced by my response).  But even for me, there's
+a non-zero chance I'll miss something that's only Cc'd to kvm@, largely because
+kvm@ is used by all things virt, i.e. it's a bit noisy:
 
--- 
-Dmitry
+$ git grep kvm@ MAINTAINERS | wc -l
+29
+
+> > What does the bit actually do?  I can't find any useful documentation, and the
+> > changelog is equally useless.
+ 
+> 
+> "Processors which set SRSO_MSR_FIX=1 support an MSR bit which mitigates SRSO
+> across guest/host boundaries. Software may enable this by setting bit
+> 4 (BpSpecReduce) of MSR C001_102E. This bit can be set once during boot and
+> should be set identically across all processors in the system."
+> 
+> From: https://www.amd.com/content/dam/amd/en/documents/corporate/cr/speculative-return-stack-overflow-whitepaper.pdf
+> 
+> I think that's the only public info we have on that bit.
+
+Heh, I found that.  Not very helpful.
+
+If you can't document the specifics, can you at least describe the performance
+implications?  It's practically impossible to give meaningful feedback without
+having any idea what the magic bit does.
 
