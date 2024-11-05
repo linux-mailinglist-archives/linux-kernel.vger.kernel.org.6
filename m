@@ -1,155 +1,191 @@
-Return-Path: <linux-kernel+bounces-397043-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397044-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id F18049BD5FC
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 20:37:02 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB5BD9BD5FE
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 20:37:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 84A8AB21C1B
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 19:37:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CFC031C20B12
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 19:37:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C864020E024;
-	Tue,  5 Nov 2024 19:35:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14F4B212638;
+	Tue,  5 Nov 2024 19:35:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mlZfRNyS"
-Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com [209.85.219.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KVlBxrWq"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BA04212EF0
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 19:35:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB1D7212624
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 19:35:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730835345; cv=none; b=l14RtgxdOTZmfSFDKKINbT7sF5phgCFRVNaEKwopFOOZSSYncMrhFK7fUvuc/mtvYVS1pJXMfrMAQPXbijQCff/IIEClSnii1hPS5zsn8lycvl2ltWt+YONa2mlZwIg+R4kK6xJNxLqYXiQACM2rCdTxacSZ8uoSwM1vkRnfy74=
+	t=1730835357; cv=none; b=NLKCa6Wu9VsW1dy3ROL10waP3ve2v7jkQL4OK6vFofL1Yj2NISZRk5kUlA780MyvvZuMThg6W2KLZnbUXqzCGcdri5lbrT0+DBsvXVQaPToN0ZwpMJatWncB3TpJ/VUuHR+zoYUFpJDlOkRVBIzEbsmJAqkcG7Yc6M7QpKyxjBw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730835345; c=relaxed/simple;
-	bh=34EBB02qLglczeLB5qc7NWhxtQbeKZXTV9/H28It/fc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YuodwiTsXivZjhZItKMP49FAhz5BMJ4XAsJnxUq+K+p68948MzNotPTlMj/WHD8isaCdI7Dz6175kk2AehhR7DLv18gvry6mPowi2tK/cxO58FEqDJvHxxyaxDfi220pP5wgmTh2rLULcnIr4oIX7yHWswzGCb+h2a1Cve9fiLs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mlZfRNyS; arc=none smtp.client-ip=209.85.219.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f52.google.com with SMTP id 6a1803df08f44-6cbe3e99680so31826286d6.3
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 11:35:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730835342; x=1731440142; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=34EBB02qLglczeLB5qc7NWhxtQbeKZXTV9/H28It/fc=;
-        b=mlZfRNySXS0tiFr5A7UpVIN+alDrl0hak5l/4IDINN1iYS5VZ5HW7pW0b1zSssjdzu
-         6D+FecgZn3zWwoQPSVsEytIaddVfDZJ1foxs3JTCmGxelVJO4APjAnHBCdnWCthekyby
-         ETkQqU1j3LC0EEBFpJDLMQpkuGM/0BGJpNr/XHrDIoJjFYo2xlNAw0hVJTF2WkBw4209
-         b2BThaulhNduBqF4jE/+s+StAadwXfykLGJm2HcgLtlbRK4CIUnwOznw84Vm26FS8mT9
-         T8RqOxVpOJKivw6MACxBnyLn27pj84MRM/BxSmd6sT1r86x0vDgrequpR0MN9OSVH22y
-         my4w==
+	s=arc-20240116; t=1730835357; c=relaxed/simple;
+	bh=4+95HUFhL8vPl9O5BC3iJiexytwjFZUxkV+lVi+6onw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JIWOS+Z+Gm5BUv2m3gRQdjEg8a2Pw8dRD46szAOBnbWIPjVj1fN6XKbpT8ZjDN6jZgG9DgdAw9hCUZBP7hgmJo3mIYwsbVzRwzZGWV0kMQXp4RkoM0/XjPg28u2BA20QCZ8xzpKb5vVtE7TKECp49B5D/WcdfcxUQzoprfBx/Fc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KVlBxrWq; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1730835354;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=cZKdK16iudZZCyq1X7AC24F8WR5QTZiOTUd+AqJ8W9U=;
+	b=KVlBxrWq0RuB8nlFbbb33MIW9507V0JWaFvR08l+0xkxL1HPlkxllEPrwiKeEVD39Mwptm
+	k1yNsrAsTmdTrJqKLyr9H62D4tRjgvvkGxlE7yvZXfT0MCN9DkJHFaLKOSCY8QAvzXsCMG
+	E4ONYkcbUWDpXEXGKsGPBYII40OTnE4=
+Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
+ [209.85.218.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-365-eT4iXfHWOsC8FmB9mk_xoQ-1; Tue, 05 Nov 2024 14:35:53 -0500
+X-MC-Unique: eT4iXfHWOsC8FmB9mk_xoQ-1
+Received: by mail-ej1-f70.google.com with SMTP id a640c23a62f3a-a9a157d028aso446827966b.2
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 11:35:53 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730835342; x=1731440142;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=34EBB02qLglczeLB5qc7NWhxtQbeKZXTV9/H28It/fc=;
-        b=VS7zJn6SU7KKZtOoR/3Docgf9VGa/NtEDAPifYfsjcfjL6qVrskHUPixkRuTIJEyT6
-         QXrlClmP4kK1ajrED3AFF8MysobggD5xtl3/pLx4NP8/qx/sHykUIg9fAZoInXGMDYtE
-         h2MxkNooI7IZ13kYdeIApsEwlYh9Evr62evDbB7bLT+Th2mewAXRfSORSvE54ASdboGt
-         JiswUwpP6ZltCuxqLYbtz6GV4BTL/7Kaoi75vP0FvDphB8ueYh48gng+vdf66CSpzLBO
-         Ry7xRo2TgYQlfIHLGvve/TC8kB1wOuTMnX1QfRzF97wwZ7UuHjFHOXYJnZoff9Zz67Dq
-         hYRQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWNkM0QV37sFX3KSHt4vexU2N3yDBgY/rD+2Uc6i2ZTGbX/Fjk220229o9gRwYW1WOV2Nx2g398kygvvIg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yycl9VZiTEXvT6FdxVxP0FPvtKWoV+pNpxeOuCmyKIfB6BNjLkL
-	OvFRr/IpyE7JySS8O2lyECxJTwgTXYizwcHynOLi0on3lQgjapSqLz9UWJU92ubM5UHGu9UIPvN
-	gmevUfzhaSiiiUjTaJaI6gT630yQ=
-X-Google-Smtp-Source: AGHT+IHUiYLp/JoQQjAX5DzYlllLrbDkaCy2q+uKnPJMvfHv4JT7Du9uZLkU/K7awIA3IagbTglqj9Izb1fwu4yRa/Q=
-X-Received: by 2002:a05:6214:5d93:b0:6c1:6e3a:6d17 with SMTP id
- 6a1803df08f44-6d185674992mr551096586d6.6.1730835342334; Tue, 05 Nov 2024
- 11:35:42 -0800 (PST)
+        d=1e100.net; s=20230601; t=1730835351; x=1731440151;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=cZKdK16iudZZCyq1X7AC24F8WR5QTZiOTUd+AqJ8W9U=;
+        b=t1wUoP9A+P2kpNqQkfICSEjrv2Wpo2eOzOlOxwkx9DPgVUSgovkW/a/0PCi7BAsiRY
+         QRX/T5QtgZQYHJEBwEcNiQIXI5dxlhApGG2AZgXWaqhZo8RxD2iHrQMxvhD9iZP85zx/
+         4fREf/07pVcmag3/N+cc2D5trzpr25GCOTqgWE5c9awdmGiGufn/mFVevb1gGzSF97HC
+         eREd7H0Wr9uGxiYnsLJywSkc2GxrueWAmQfOqdtKLtzM2fXZw/AVvdTqDFU/s5s9qz9P
+         t4VUzmFN1ers86mQ5d3bp5EQ22GO3Otl3Y25Cq7AlxtexgFeCBPKMUSBt/KaDw55Pgtd
+         tSkg==
+X-Forwarded-Encrypted: i=1; AJvYcCVzpCe+pbwDbPKr68DGjE/QFBby9MUbE+X85aFS1FCuNdhyk1XYkZGPC5i89C0lHNGSgENhSN/08CI+SF0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwThyFNYRWu1D1Y++RzX2nUGLBo9alJFtscc7UEIW965i72YR+k
+	dECmeqJCsOyBfptbtsVm6lmeXKXKV4U/IKMzsdK2YTaXhsNfI28ljg14oFnI8C55s4Riodxlucy
+	8JsR5bDi7qUG2Ji3ysNh/WvJXLZbDSgSBD1SOn1WTLlSSdsQBVflvzr5bSjd8zG79WT5r3Q==
+X-Received: by 2002:a05:6402:358f:b0:5ce:d6a0:be32 with SMTP id 4fb4d7f45d1cf-5ced6a0c1bamr6098503a12.1.1730835351249;
+        Tue, 05 Nov 2024 11:35:51 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IE+/jS7yD4IqKehP9xWZffiKY4QUimYf6f82X8Z0SCxVKffpyKS64jEOnMQvkOYbF72XdS3wA==
+X-Received: by 2002:a05:6402:358f:b0:5ce:d6a0:be32 with SMTP id 4fb4d7f45d1cf-5ced6a0c1bamr6098483a12.1.1730835350784;
+        Tue, 05 Nov 2024 11:35:50 -0800 (PST)
+Received: from ?IPV6:2001:1c00:2a07:3a01:e7a9:b143:57e6:261b? (2001-1c00-2a07-3a01-e7a9-b143-57e6-261b.cable.dynamic.v6.ziggo.nl. [2001:1c00:2a07:3a01:e7a9:b143:57e6:261b])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cee6ac399bsm1683158a12.52.2024.11.05.11.35.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 05 Nov 2024 11:35:49 -0800 (PST)
+Message-ID: <2d5f8d30-e579-4d90-9609-be8d155d6f42@redhat.com>
+Date: Tue, 5 Nov 2024 20:35:47 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241102101240.35072-1-21cnbao@gmail.com>
-In-Reply-To: <20241102101240.35072-1-21cnbao@gmail.com>
-From: Nhat Pham <nphamcs@gmail.com>
-Date: Tue, 5 Nov 2024 11:35:31 -0800
-Message-ID: <CAKEwX=MTX9-rhV7muW__2=GuXKfbuKX8nAT+CLmM=-wEMZ5Y-Q@mail.gmail.com>
-Subject: Re: [PATCH v2] mm: count zeromap read and set for swapout and swapin
-To: Barry Song <21cnbao@gmail.com>
-Cc: akpm@linux-foundation.org, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, Barry Song <v-songbaohua@oppo.com>, 
-	Usama Arif <usamaarif642@gmail.com>, Chengming Zhou <chengming.zhou@linux.dev>, 
-	Yosry Ahmed <yosryahmed@google.com>, Johannes Weiner <hannes@cmpxchg.org>, 
-	David Hildenbrand <david@redhat.com>, Hugh Dickins <hughd@google.com>, 
-	Matthew Wilcox <willy@infradead.org>, Shakeel Butt <shakeel.butt@linux.dev>, 
-	Andi Kleen <ak@linux.intel.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
-	Chris Li <chrisl@kernel.org>, "Huang, Ying" <ying.huang@intel.com>, 
-	Kairui Song <kasong@tencent.com>, Ryan Roberts <ryan.roberts@arm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [rft, PATCH v1 1/1] media: atomisp: Replace macros from
+ math_support.h
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Kate Hsuan <hpa@redhat.com>,
+ linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-staging@lists.linux.dev
+Cc: Andy Shevchenko <andy@kernel.org>,
+ Sakari Ailus <sakari.ailus@linux.intel.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+References: <20240923085652.3457117-1-andriy.shevchenko@linux.intel.com>
+Content-Language: en-US
+From: Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <20240923085652.3457117-1-andriy.shevchenko@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Sat, Nov 2, 2024 at 3:12=E2=80=AFAM Barry Song <21cnbao@gmail.com> wrote=
-:
->
-> From: Barry Song <v-songbaohua@oppo.com>
->
-> When the proportion of folios from the zero map is small, missing their
-> accounting may not significantly impact profiling. However, it=E2=80=99s =
-easy
-> to construct a scenario where this becomes an issue=E2=80=94for example,
-> allocating 1 GB of memory, writing zeros from userspace, followed by
-> MADV_PAGEOUT, and then swapping it back in. In this case, the swap-out
-> and swap-in counts seem to vanish into a black hole, potentially
-> causing semantic ambiguity.
->
-> We have two ways to address this:
->
-> 1. Add a separate counter specifically for the zero map.
-> 2. Continue using the current accounting, treating the zero map like
-> a normal backend. (This aligns with the current behavior of zRAM
-> when supporting same-page fills at the device level.)
->
-> This patch adopts option 1 as pswpin/pswpout counters are that they
-> only apply to IO done directly to the backend device (as noted by
-> Nhat Pham).
->
-> We can find these counters from /proc/vmstat (counters for the whole
-> system) and memcg's memory.stat (counters for the interested memcg).
->
-> For example:
->
-> $ grep -E 'swpin_zero|swpout_zero' /proc/vmstat
-> swpin_zero 1648
-> swpout_zero 33536
->
-> $ grep -E 'swpin_zero|swpout_zero' /sys/fs/cgroup/system.slice/memory.sta=
-t
-> swpin_zero 3905
-> swpout_zero 3985
->
+Hi,
 
-LGTM FWIW, so I'll leave my review tag here:
+On 23-Sep-24 10:56 AM, Andy Shevchenko wrote:
+> Replace rarely used macros by generic ones from Linux kernel headers.
+> 
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> ---
+> 
+> Please, apply only after tests that confirm everything is working
+> as expected.
 
-Reviewed-by: Nhat Pham <nphamcs@gmail.com>
+I gave this a try today and I'm afraid that it causes problems.
 
-Too many emails in this thread, but my opinions is:
+The original CEIL_DIV helper had a check to avoid divide by 0 and
+it looks like that check is necessary in at least some cases
+(I did not investigate this further):
 
-1. A fix tag is appropriate. It's not a kernel bug per se, but it's
-incredibly confusing, and can potentially throw off user space agents
-who rely on the rate of change of these counters as signals.
+[  494.054038] Oops: divide error: 0000 [#1] PREEMPT SMP PTI
+[  494.054083] CPU: 0 UID: 1000 PID: 2622 Comm: qcam Tainted: G         C  E      6.12.0-rc3+ #175
+[  494.054112] Tainted: [C]=CRAP, [E]=UNSIGNED_MODULE
+[  494.054124] Hardware name: Acer Iconia W4-820/Cheetah3, BIOS V1.16 03/13/2014
+[  494.054138] RIP: 0010:atomisp_css2_hw_store_32+0x503/0x5b0 [atomisp]
+[  494.054296] Code: 48 c1 e8 23 39 f0 72 7b 4c 8b af 68 0f 00 00 41 81 bd 58 01 00 00 ff 1f 00 00 0f 87 9b 00 00 00 89 e8 31 d2 d1 e8 8d 44 01 ff <f7> f1 31 d2 89 c1 44 89 e0 d1 e8 8d 44 06 ff f7 f6 39 c1 0f 85 37
+[  494.054316] RSP: 0018:ffff9e3d458379c0 EFLAGS: 00010206
+[  494.054339] RAX: 00000000000003bf RBX: ffff909c42f584a0 RCX: 0000000000000000
+[  494.054354] RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffff909c42f584a0
+[  494.054369] RBP: 0000000000000780 R08: 00000000000005a0 R09: 0000000000000780
+[  494.054383] R10: ffffffffc0f448e0 R11: 0000000000000000 R12: 00000000000005a0
+[  494.054397] R13: ffff909c42f58028 R14: ffffffffc0f44e20 R15: ffffffffc0f44d90
+[  494.054413] FS:  00007f2c5f4006c0(0000) GS:ffff909cb4800000(0000) knlGS:0000000000000000
+[  494.054431] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  494.054446] CR2: 00007f2c8247ea19 CR3: 00000000327b6000 CR4: 00000000001026f0
+[  494.054463] Call Trace:
+[  494.054478]  <TASK>
+[  494.054494]  ? __die_body.cold+0x19/0x27
+[  494.054523]  ? die+0x2a/0x50
+[  494.054551]  ? do_trap+0xc6/0x110
+[  494.054577]  ? atomisp_css2_hw_store_32+0x503/0x5b0 [atomisp]
+[  494.054717]  ? do_error_trap+0x81/0x110
+[  494.054737]  ? atomisp_css2_hw_store_32+0x503/0x5b0 [atomisp]
+[  494.054890]  ? exc_divide_error+0x34/0x50
+[  494.054916]  ? atomisp_css2_hw_store_32+0x503/0x5b0 [atomisp]
+[  494.055117]  ? asm_exc_divide_error+0x16/0x20
+[  494.055147]  ? __pfx_atomisp_css_preview_get_output_frame_info+0x10/0x10 [atomisp]
+[  494.055357]  ? __pfx_atomisp_css_preview_configure_pp_input+0x10/0x10 [atomisp]
+[  494.055545]  ? __pfx_atomisp_css_preview_configure_output+0x10/0x10 [atomisp]
+[  494.055721]  ? atomisp_css2_hw_store_32+0x503/0x5b0 [atomisp]
+[  494.055933]  atomisp_css_preview_configure_pp_input+0xe0/0x1e0 [atomisp]
+[  494.056151]  ? __pfx_atomisp_css_preview_configure_pp_input+0x10/0x10 [atomisp]
+[  494.056367]  atomisp_set_fmt+0x774/0xb80 [atomisp]
+[  494.056580]  v4l_s_fmt+0x1c7/0x5a0 [videodev]
+[  494.056761]  __video_do_ioctl+0x456/0x480 [videodev]
+[  494.056936]  video_usercopy+0x381/0x830 [videodev]
+[  494.057052]  ? __pfx___video_do_ioctl+0x10/0x10 [videodev]
+[  494.057167]  ? ioctl_has_perm.constprop.0.isra.0+0xa8/0xe0
+[  494.057204]  ? __pfx_inode_insert5+0x5/0x10
+[  494.057235]  ? __fget_files+0x9b/0x190
+[  494.057258]  ? lock_release+0x175/0x2a0
+[  494.057299]  v4l2_ioctl+0x49/0x50 [videodev]
+[  494.057455]  __x64_sys_ioctl+0x90/0xd0
+[  494.057485]  do_syscall_64+0x93/0x180
+[  494.057511]  ? lock_release+0x175/0x2a0
+[  494.057532]  ? _raw_spin_unlock_irqrestore+0x35/0x60
+[  494.057563]  ? ldsem_up_read+0x17/0x40
+[  494.057587]  ? file_tty_write.isra.0+0x224/0x2d0
+[  494.057622]  ? vfs_write+0x259/0x510
+[  494.057654]  ? syscall_exit_to_user_mode+0x11/0x280
+[  494.057681]  ? do_syscall_64+0x9f/0x180
+[  494.057708]  ? lockdep_hardirqs_on+0x78/0x100
+[  494.057738]  ? do_syscall_64+0x9f/0x180
+[  494.057765]  ? __rseq_handle_notify_resume+0x316/0x580
+[  494.057804]  ? do_syscall_64+0x9f/0x180
+[  494.057830]  ? lockdep_hardirqs_on+0x78/0x100
+[  494.057859]  ? do_syscall_64+0x9f/0x180
+[  494.057891]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+[  494.057920] RIP: 0033:0x7f2c818fe0ad
+[  494.057950] Code: 04 25 28 00 00 00 48 89 45 c8 31 c0 48 8d 45 10 c7 45 b0 10 00 00 00 48 89 45 b8 48 8d 45 d0 48 89 45 c0 b8 10 00 00 00 0f 05 <89> c2 3d 00 f0 ff ff 77 1a 48 8b 45 c8 64 48 2b 04 25 28 00 00 00
+[  494.057977] RSP: 002b:00007f2c5f3fe2f0 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+[  494.058004] RAX: ffffffffffffffda RBX: 00007f2c5f3fe750 RCX: 00007f2c818fe0ad
+[  494.058021] RDX: 00007f2c5f3fe390 RSI: 00000000c0d05605 RDI: 0000000000000025
+[  494.058036] RBP: 00007f2c5f3fe340 R08: 00007f2c300178d0 R09: 000000000000000d
+[  494.058052] R10: 00007f2c3000b320 R11: 0000000000000246 R12: 00000000ffffffea
+[  494.058067] R13: 0000000000000001 R14: 00007f2c5f3fe740 R15: 00007f2c5f3fe750
+[  494.058110]  </TASK>
 
-2. I do think we should use a separate set of counters for this
-optimization. No strong opinions regarding combining this with the
-zswap counters, but it can get confusing for users when they
-enable/disable zswap.
+Regards,
 
-If we are to combine, I'd be much more comfortable if we have a
-generic name, like the one David suggested in v1 ("swpin_skip" /
-"swpout_skip"). This would still require some API change tho, so not
-sure if this is the best approach? :)
+Hans
 
-It would also be appropriate if we bring back the same-filled
-optimization (which should be doable in the swap ID world, but I
-digress).
+
+
 
