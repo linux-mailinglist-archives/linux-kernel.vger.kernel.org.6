@@ -1,200 +1,378 @@
-Return-Path: <linux-kernel+bounces-396296-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396297-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D30CF9BCB10
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 11:54:20 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F1359BCB18
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 11:57:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3E94AB226E3
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 10:54:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4FB232826F1
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 10:57:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C2CF1D2F48;
-	Tue,  5 Nov 2024 10:54:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19C291D358B;
+	Tue,  5 Nov 2024 10:57:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="l+Ei59g1"
-Received: from mail-qv1-f43.google.com (mail-qv1-f43.google.com [209.85.219.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b="04nmS5FR"
+Received: from www530.your-server.de (www530.your-server.de [188.40.30.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B01EF1D358B
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 10:54:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7B571A08DB;
+	Tue,  5 Nov 2024 10:57:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.40.30.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730804046; cv=none; b=AQnqzBsyCVUO2lwZdwDFERmAxQsMLcLwo6bQCkRttspFU638pvudcWIFJv41M09zgjctHAGR7AAMzXkcJxa8vZ9SewBCi7HrYhmhAdl4dMex4H5bcHXrNRKvAlfefHGfUYEgSv89lrxC6zwL/P6W6JJM45X+RVTvFkfylyVkbUA=
+	t=1730804233; cv=none; b=kk5yvUz765ncvRHwbivAXjyWSRtyc1w/oqaRyBBKggI+51/JrPFyxYtAGePskX9A/dizAU3m//70ej1cEZUhYKVFqBNHaqOPn+ceMWsPGORRQnc33INwqLnIkP9Q/T7Fu9T2+je8fx0kLCs5L1yl/G1ZEeE+uRDxF6N9jS64mMU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730804046; c=relaxed/simple;
-	bh=I/zxD1ZX5xViP0hA+xiMUSFElQFf5YSxEvrMcQj7olE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=h33LKZrSsUqsjbj/RbF3BBe/jYHEmmDdyF+XTjUwwdL6DNQflPu7PrldlCTxxSV9SNVsp1qdNZ1ojCTKNBtMTffqyYZmQl4kSDSEt0qwNXPrYoc7FtoyBm2hWW83ZT7/CsiJvH6VHu7vynDoYIqZwNlXqEXxc9jiJC9xsJ29JC0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=l+Ei59g1; arc=none smtp.client-ip=209.85.219.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-qv1-f43.google.com with SMTP id 6a1803df08f44-6cbd00dd21cso30940856d6.3
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 02:54:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1730804044; x=1731408844; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=s9LlhOovcF6A+v0lu4WJaM/qiFM0SFBq/pB5i7J9JwM=;
-        b=l+Ei59g1kvqJ3fYC56psG6MXCgT/6vlRI/GAqsi6p6sZ/kpVuRy949Z+ZBnDIS3FHl
-         IrO8WSi2AjOSNQBQXIsqN7JH1gx5rph/ApD7AxZAIu/7yDLe5uMkarhSM9FitLH0qNCg
-         8u1ZfTCCRFN6l8S3AEIByJw4OL3nRrCEiDAYo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730804044; x=1731408844;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=s9LlhOovcF6A+v0lu4WJaM/qiFM0SFBq/pB5i7J9JwM=;
-        b=DYjPi6ByHg8yfbIU9RuncXZR8i786lriBVPm0Sep7GsabegXzBhvt6YoRBjaVJfk9w
-         vbnPpm6YPP73BUdVMK69LpGwAkO5znqTWIQq/A7ILr5w1O7ojREulyqYdEVZEAx73zoF
-         fHPLXr3OzNJVbNxWMoQD0WaVG2Q5Bd/3SunBNprOMivgB+r3ScfcDcTw8XD9iTBJsLTD
-         kwA9O7RSA3qYLMBjdLk/3iva/vtZQodPaE0CkQG3fV7PvLSt29RsA1/PO71/gR8yg0mI
-         sehfqdDI6tpyL1wG5dkm6vD64DdaJdm8KN6HXyRr45kdMBGKg7q9An1eaPwf5ZMB49U/
-         ey3g==
-X-Forwarded-Encrypted: i=1; AJvYcCX9N3l+w2yb5sWtNQN8vXC3MnyM/YLr48EbyfoeWsLjk6S2jGIBwcUbVd26n7ZbB5GQE5oGbs9xcVUg5IA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzvX7jYH52jIQ9J2x9VDHX6v4eEyZ0GXRCaOo92waslOHwaTJg5
-	8vKdZhYUnfd89WoGvVlIR9fmUoOQiKce1ckOsfwf+Po7V1Wk8u3zrwBcwKecYg==
-X-Google-Smtp-Source: AGHT+IH1P3HlgzEOSpgPpqcH4O+hZepqfFtlWOVIoe8EIKIKxbnJCrC5OfHZjfzzOW+yhahs8+zHgA==
-X-Received: by 2002:a05:6214:5b85:b0:6cb:e798:5589 with SMTP id 6a1803df08f44-6d346022456mr328000856d6.28.1730804043699;
-        Tue, 05 Nov 2024 02:54:03 -0800 (PST)
-Received: from denia.c.googlers.com (189.216.85.34.bc.googleusercontent.com. [34.85.216.189])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d353fd8308sm58284686d6.57.2024.11.05.02.54.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Nov 2024 02:54:02 -0800 (PST)
-From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Tue, 05 Nov 2024 10:53:59 +0000
-Subject: [PATCH v2] media: uvcvideo: Fix crash during unbind if gpio unit
- is in use
+	s=arc-20240116; t=1730804233; c=relaxed/simple;
+	bh=y+lPqjh/GIHR5UufXIzSTEnWNXMzwzt3TB30nfMKBfk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CWlKrgYfhgd9RVF7ZjFClhCmsBko7SsA7ne1oM4SbNgKoYY2qx/8bkmtFqamXuJNj4sKLrxDKp9PQ8sHpj3jABWSB6zv9X9zi3S/tsSIdczO6O2D3q6qJ0A6iyQAE26Oq0SGq2vDY0oYB1euFP7u2dL0nFKVqrRUDMcMT8bjeuQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com; spf=pass smtp.mailfrom=geanix.com; dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b=04nmS5FR; arc=none smtp.client-ip=188.40.30.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=geanix.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=geanix.com;
+	s=default2211; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID; bh=7qxOHEx8NwGIvVG7AtzRXGD9ioexpGa5ds6j8cVsFio=; b=04nmS5
+	FRYvLeETzLNzmob18KRgoPt+7yYgKBpKADK5X5EODm3LXWwI1rths1nuuNNLArhjkZLSq7cmqh5NH
+	xYOqH9pJs3bqHtSEWNbEDIi6AJae6xL10jCETQDxjFsUjQlksmcoS8a1w/0oLxO9XpQguo370ka4V
+	qDgGsH+QG1lI7w8gNc4TTmiaLOEEg2b0pjKElOBWYEFfPEd29JPy/oUKCmus39g6EOlDfy8+ll5jz
+	ASu4NBG3cXGTe5OmiMKXCoh+z3sBG4p+se/DzKWyTmb8s9aVenJTN5uOHIf6P1xdTOnpx7RvYnad0
+	SRsXq33d+d7W2u7B35kmzJ/U57/Q==;
+Received: from sslproxy01.your-server.de ([78.46.139.224])
+	by www530.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <sean@geanix.com>)
+	id 1t8HFE-0003hG-3n; Tue, 05 Nov 2024 11:57:08 +0100
+Received: from [185.17.218.86] (helo=Seans-MacBook-Pro.local)
+	by sslproxy01.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <sean@geanix.com>)
+	id 1t8HFD-0009Gz-18;
+	Tue, 05 Nov 2024 11:57:07 +0100
+Date: Tue, 5 Nov 2024 11:57:06 +0100
+From: Sean Nyekjaer <sean@geanix.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Marc Kleine-Budde <mkl@pengutronix.de>, 
+	Vincent Mailhol <mailhol.vincent@wanadoo.fr>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+	Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-can@vger.kernel.org, 
+	netdev@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: can: convert tcan4x5x.txt to DT schema
+Message-ID: <k5czh4tugbps6fncqyqc4edd4plcrs7uapjo5idaw6lgmktlql@6hgibvhwsfwm>
+References: <20241104125342.1691516-1-sean@geanix.com>
+ <dq36jlwfm7hz7dstrp3bkwd6r6jzcxqo57enta3n2kibu3e7jw@krwn5nsu6a4d>
+ <wdn2rtfahf3iu6rsgxm6ctfgft7bawtp6vzhgn7dffd54i72lu@r4v5lizhae57>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241105-uvc-crashrmmod-v2-1-547ce6a6962e@chromium.org>
-X-B4-Tracking: v=1; b=H4sIAEb5KWcC/3XMyw6CMBCF4Vchs7aG4dIEV76HYYHtlM6i1Eyh0
- RDe3cre5X+S8+2QSJgS3KodhDInjkuJ5lKB8dMyk2JbGpq66bBuUW3ZKCNT8hJCtEprbal1ZsA
- OoZxeQo7fJ/gYS3tOa5TP6Wf8rX+pjApV3Q+O+qF9Ium78RIDb+EaZYbxOI4venbrw68AAAA=
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org, 
- linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
- Sergey Senozhatsky <senozhatsky@chromium.org>, 
- Ricardo Ribalda <ribalda@chromium.org>
-X-Mailer: b4 0.13.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <wdn2rtfahf3iu6rsgxm6ctfgft7bawtp6vzhgn7dffd54i72lu@r4v5lizhae57>
+X-Authenticated-Sender: sean@geanix.com
+X-Virus-Scanned: Clear (ClamAV 0.103.10/27449/Tue Nov  5 10:36:43 2024)
 
-We used the wrong device for the device managed functions. We used the
-usb device, when we should be using the interface device.
+On Tue, Nov 05, 2024 at 11:33:33AM +0100, Sean Nyekjaer wrote:
+> On Tue, Nov 05, 2024 at 10:16:30AM +0100, Krzysztof Kozlowski wrote:
+> > On Mon, Nov 04, 2024 at 01:53:40PM +0100, Sean Nyekjaer wrote:
+> > > Convert binding doc tcan4x5x.txt to yaml.
+> > > 
+> > > Signed-off-by: Sean Nyekjaer <sean@geanix.com>
+> > > ---
+> > > Changes since rfc:
+> > 
+> > That's a v2. RFC was v1. *ALWAYS*.
+> > Try by yourself:
+> > b4 diff 20241104125342.1691516-1-sean@geanix.com
+> > 
+> > Works? No. Should work? Yes.
+> > 
+> > 
+> 
+> Ok. Good to know RFC cannot be used...
+> Next version would need to be? In order to fix this?
+> 
+> I have enrolled my patch into b4, next verison will be v2 ;)
+> 
+> > >   - Tried to re-add ti,tcan4x5x wildcard
+> > >   - Removed xceiver and vdd supplies (copy paste error)
+> > >   - Corrected max SPI frequency
+> > >   - Copy pasted bosch,mram-cfg from bosch,m_can.yaml
+> > >   - device-state-gpios and device-wake-gpios only available for tcan4x5x
+> > 
+> > ...
+> > 
+> > > +properties:
+> > > +  compatible:
+> > > +    oneOf:
+> > > +      - items:
+> > > +          - enum:
+> > > +              - ti,tcan4552
+> > > +          - const: ti,tcan4x5x
+> > > +      - items:
+> > > +          - enum:
+> > > +              - ti,tcan4553
+> > 
+> > Odd syntax. Combine these two into one enum.
+> > 
+> > > +          - const: ti,tcan4x5x
+> > > +      - items:
+> > 
+> > Drop items.
+> > 
+> > > +          - enum:
+> > 
+> > ... and drop enum. That's just const or do you already plan to add here
+> > entries?
+> 
+> Honestly I'm struggling a bit with the syntax and I feel the feedback is containing
+> a lot of implicit terms :)
+> 
+> Something like:
+> properties:
+>   compatible:
+>     oneOf:
+>       - items:
+>           - enum:
+>               - ti,tcan4552
+>               - ti,tcan4x5x
+>       - items:
+>           - enum:
+>               - ti,tcan4553
+>               - ti,tcan4x5x
+>       - const: ti,tcan4x5x
+> 
+> Gives:
+> /linux/Documentation/devicetree/bindings/net/can/ti,tcan4x5x.example.dtb: can@0: compatible: ['ti,tcan4x5x'] is valid under each of {'items': [{'enum': ['ti,tcan4553', 'ti,tcan4x5x']}], 'type': 'array', 'minItems': 1, 'maxItems': 1}, {'items': [{'const': 'ti,tcan4x5x'}], 'type': 'array', 'minItems': 1, 'maxItems': 1}, {'items': [{'enum': ['ti,tcan4552', 'ti,tcan4x5x']}], 'type': 'array', 'minItems': 1, 'maxItems': 1}
+>         from schema $id: http://devicetree.org/schemas/net/can/ti,tcan4x5x.yaml#
+> /linux/Documentation/devicetree/bindings/net/can/ti,tcan4x5x.example.dtb: can@0: compatible: 'oneOf' conditional failed, one must be fixed:
+>         ['ti,tcan4552', 'ti,tcan4x5x'] is too long
+>         'ti,tcan4552' is not one of ['ti,tcan4553', 'ti,tcan4x5x']
+>         'ti,tcan4x5x' was expected
+>         from schema $id: http://devicetree.org/schemas/net/can/ti,tcan4x5x.yaml#
+> 
+> I can understand the original binding is broken.
+> I kinda agree with Marc that we cannot break things for users of this.
+> 
 
-If we unbind the driver from the usb interface, the cleanup functions
-are never called. In our case, the IRQ is never disabled.
+Oh, did you mean something like:
 
-If an IRQ is triggered, it will try to access memory sections that are
-already free, causing an OOPS.
+properties:
+  compatible:
+    oneOf:
+      - items:
+          - enum:
+              - ti,tcan4552
+              - ti,tcan4553
+          - const: ti,tcan4x5x
+      - const: ti,tcan4x5x
 
-Luckily this bug has small impact, as it is only affected by devices
-with gpio units and the user has to unbind the device, a disconnect will
-not trigger this error.
-
-Cc: stable@vger.kernel.org
-Fixes: 2886477ff987 ("media: uvcvideo: Implement UVC_EXT_GPIO_UNIT")
-Reviewed-by: Sergey Senozhatsky <senozhatsky@chromium.org>
-Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
----
-Changes in v2: Thanks to Laurent.
-- The main structure is not allocated with devres so there is a small
-  period of time where we can get an irq with the structure free. Do not
-  use devres for the IRQ.
-- Link to v1: https://lore.kernel.org/r/20241031-uvc-crashrmmod-v1-1-059fe593b1e6@chromium.org
----
- drivers/media/usb/uvc/uvc_driver.c | 28 +++++++++++++++++++++-------
- drivers/media/usb/uvc/uvcvideo.h   |  1 +
- 2 files changed, 22 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/media/usb/uvc/uvc_driver.c b/drivers/media/usb/uvc/uvc_driver.c
-index a96f6ca0889f..af6aec27083c 100644
---- a/drivers/media/usb/uvc/uvc_driver.c
-+++ b/drivers/media/usb/uvc/uvc_driver.c
-@@ -1295,14 +1295,14 @@ static int uvc_gpio_parse(struct uvc_device *dev)
- 	struct gpio_desc *gpio_privacy;
- 	int irq;
- 
--	gpio_privacy = devm_gpiod_get_optional(&dev->udev->dev, "privacy",
-+	gpio_privacy = devm_gpiod_get_optional(&dev->intf->dev, "privacy",
- 					       GPIOD_IN);
- 	if (IS_ERR_OR_NULL(gpio_privacy))
- 		return PTR_ERR_OR_ZERO(gpio_privacy);
- 
- 	irq = gpiod_to_irq(gpio_privacy);
- 	if (irq < 0)
--		return dev_err_probe(&dev->udev->dev, irq,
-+		return dev_err_probe(&dev->intf->dev, irq,
- 				     "No IRQ for privacy GPIO\n");
- 
- 	unit = uvc_alloc_new_entity(dev, UVC_EXT_GPIO_UNIT,
-@@ -1329,15 +1329,28 @@ static int uvc_gpio_parse(struct uvc_device *dev)
- static int uvc_gpio_init_irq(struct uvc_device *dev)
- {
- 	struct uvc_entity *unit = dev->gpio_unit;
-+	int ret;
- 
- 	if (!unit || unit->gpio.irq < 0)
- 		return 0;
- 
--	return devm_request_threaded_irq(&dev->udev->dev, unit->gpio.irq, NULL,
--					 uvc_gpio_irq,
--					 IRQF_ONESHOT | IRQF_TRIGGER_FALLING |
--					 IRQF_TRIGGER_RISING,
--					 "uvc_privacy_gpio", dev);
-+	ret = request_threaded_irq(unit->gpio.irq, NULL, uvc_gpio_irq,
-+				   IRQF_ONESHOT | IRQF_TRIGGER_FALLING |
-+				   IRQF_TRIGGER_RISING,
-+				   "uvc_privacy_gpio", dev);
-+
-+	if (!ret)
-+		dev->gpio_unit->gpio.inited = true;
-+
-+	return ret;
-+}
-+
-+static void uvc_gpio_cleanup(struct uvc_device *dev)
-+{
-+	if (!dev->gpio_unit || !dev->gpio_unit->gpio.inited)
-+		return;
-+
-+	free_irq(dev->gpio_unit->gpio.irq, dev);
- }
- 
- /* ------------------------------------------------------------------------
-@@ -1880,6 +1893,7 @@ static void uvc_delete(struct kref *kref)
- 	struct uvc_device *dev = container_of(kref, struct uvc_device, ref);
- 	struct list_head *p, *n;
- 
-+	uvc_gpio_cleanup(dev);
- 	uvc_status_cleanup(dev);
- 	uvc_ctrl_cleanup_device(dev);
- 
-diff --git a/drivers/media/usb/uvc/uvcvideo.h b/drivers/media/usb/uvc/uvcvideo.h
-index 07f9921d83f2..376cd670539b 100644
---- a/drivers/media/usb/uvc/uvcvideo.h
-+++ b/drivers/media/usb/uvc/uvcvideo.h
-@@ -234,6 +234,7 @@ struct uvc_entity {
- 			u8  *bmControls;
- 			struct gpio_desc *gpio_privacy;
- 			int irq;
-+			bool inited;
- 		} gpio;
- 	};
- 
-
----
-base-commit: c7ccf3683ac9746b263b0502255f5ce47f64fe0a
-change-id: 20241031-uvc-crashrmmod-666de3fc9141
-
-Best regards,
--- 
-Ricardo Ribalda <ribalda@chromium.org>
-
+> > 
+> > > +              - ti,tcan4x5x
+> > > +
+> > > +  reg:
+> > > +    maxItems: 1
+> > > +
+> > > +  interrupts:
+> > > +    maxItems: 1
+> > > +    description: The GPIO parent interrupt.
+> > > +
+> > > +  clocks:
+> > > +    maxItems: 1
+> > > +
+> > > +  reset-gpios:
+> > > +    description: Hardwired output GPIO. If not defined then software reset.
+> > > +    maxItems: 1
+> > > +
+> > > +  device-state-gpios:
+> > > +    description: |
+> > 
+> > Do not need '|' unless you need to preserve formatting.
+> > 
+> > Didn't you get this comment alerady?
+> > 
+> 
+> No, but I have removed the '|'
+> 
+> > > +      Input GPIO that indicates if the device is in a sleep state or if the
+> > > +      device is active. Not available with tcan4552/4553.
+> > > +    maxItems: 1
+> > > +
+> > > +  device-wake-gpios:
+> > > +    description: |
+> > > +      Wake up GPIO to wake up the TCAN device.
+> > > +      Not available with tcan4552/4553.
+> > > +    maxItems: 1
+> > > +
+> > > +  bosch,mram-cfg:
+> > > +    description: |
+> > > +      Message RAM configuration data.
+> > > +      Multiple M_CAN instances can share the same Message RAM
+> > > +      and each element(e.g Rx FIFO or Tx Buffer and etc) number
+> > > +      in Message RAM is also configurable, so this property is
+> > > +      telling driver how the shared or private Message RAM are
+> > > +      used by this M_CAN controller.
+> > > +
+> > > +      The format should be as follows:
+> > > +      <offset sidf_elems xidf_elems rxf0_elems rxf1_elems rxb_elems txe_elems txb_elems>
+> > > +      The 'offset' is an address offset of the Message RAM where
+> > > +      the following elements start from. This is usually set to
+> > > +      0x0 if you're using a private Message RAM. The remain cells
+> > > +      are used to specify how many elements are used for each FIFO/Buffer.
+> > > +
+> > > +      M_CAN includes the following elements according to user manual:
+> > > +      11-bit Filter	0-128 elements / 0-128 words
+> > > +      29-bit Filter	0-64 elements / 0-128 words
+> > > +      Rx FIFO 0		0-64 elements / 0-1152 words
+> > > +      Rx FIFO 1		0-64 elements / 0-1152 words
+> > > +      Rx Buffers	0-64 elements / 0-1152 words
+> > > +      Tx Event FIFO	0-32 elements / 0-64 words
+> > > +      Tx Buffers	0-32 elements / 0-576 words
+> > > +
+> > > +      Please refer to 2.4.1 Message RAM Configuration in Bosch
+> > > +      M_CAN user manual for details.
+> > > +    $ref: /schemas/types.yaml#/definitions/int32-array
+> > > +    items:
+> > > +      - description: The 'offset' is an address offset of the Message RAM where
+> > > +          the following elements start from. This is usually set to 0x0 if
+> > > +          you're using a private Message RAM.
+> > > +        default: 0
+> > > +      - description: 11-bit Filter 0-128 elements / 0-128 words
+> > > +        minimum: 0
+> > > +        maximum: 128
+> > > +      - description: 29-bit Filter 0-64 elements / 0-128 words
+> > > +        minimum: 0
+> > > +        maximum: 64
+> > > +      - description: Rx FIFO 0 0-64 elements / 0-1152 words
+> > > +        minimum: 0
+> > > +        maximum: 64
+> > > +      - description: Rx FIFO 1 0-64 elements / 0-1152 words
+> > > +        minimum: 0
+> > > +        maximum: 64
+> > > +      - description: Rx Buffers 0-64 elements / 0-1152 words
+> > > +        minimum: 0
+> > > +        maximum: 64
+> > > +      - description: Tx Event FIFO 0-32 elements / 0-64 words
+> > > +        minimum: 0
+> > > +        maximum: 32
+> > > +      - description: Tx Buffers 0-32 elements / 0-576 words
+> > > +        minimum: 0
+> > > +        maximum: 32
+> > > +    minItems: 1
+> > > +
+> > > +  spi-max-frequency:
+> > > +    description:
+> > > +      Must be half or less of "clocks" frequency.
+> > > +    maximum: 18000000
+> > > +
+> > > +  wakeup-source:
+> > > +    $ref: /schemas/types.yaml#/definitions/flag
+> > > +    description: |
+> > 
+> > Do not need '|' unless you need to preserve formatting.
+> > 
+> 
+> OK
+> 
+> > > +      Enable CAN remote wakeup.
+> > > +
+> > > +allOf:
+> > > +  - $ref: can-controller.yaml#
+> > > +  - $ref: /schemas/spi/spi-peripheral-props.yaml#
+> > > +  - if:
+> > > +      properties:
+> > > +        compatible:
+> > > +          contains:
+> > > +            enum:
+> > > +              - ti,tcan4552
+> > > +              - ti,tcan4553
+> > > +    then:
+> > > +      properties:
+> > > +        device-state-gpios: false
+> > > +        device-wake-gpios: false
+> > 
+> > Heh, this is a weird binding. It should have specific compatibles for
+> > all other variants because above does not make sense. For 4552 one could
+> > skip front compatible and use only fallback, right? And then add these
+> > properties bypassing schema check. I commented on this already that
+> > original binding is flawed and should be fixed, but no one cares then I
+> > also don't care.
+> 
+> To me it looks like the example you linked:
+> https://elixir.bootlin.com/linux/v5.19/source/Documentation/devicetree/bindings/example-schema.yaml#L223
+> 
+> If you use fallback for a 4552 then it would enable the use of the
+> optional pins device-state-gpios and device-wake-gpios. But the chip
+> doesn't have those so the hw guys would connect them and they won't
+> be in the DT.
+> 
+> Honestly I'm confused :/
+> 
+> > 
+> > > +
+> > > +required:
+> > > +  - compatible
+> > > +  - reg
+> > > +  - interrupts
+> > > +  - clocks
+> > > +  - bosch,mram-cfg
+> > > +
+> > > +additionalProperties: false
+> > 
+> > Implement feedback. Nothing changed here.
+> > 
+> 
+> Uh? feedback?
+> 
+> > > +
+> > > +examples:
+> > > +  - |
+> > > +    #include <dt-bindings/gpio/gpio.h>
+> > > +    #include <dt-bindings/interrupt-controller/irq.h>
+> > > +
+> > > +    spi {
+> > > +        #address-cells = <1>;
+> > > +        #size-cells = <0>;
+> > > +
+> > > +        can@0 {
+> > > +            compatible = "ti,tcan4x5x";
+> > > +            reg = <0>;
+> > > +            clocks = <&can0_osc>;
+> > > +            pinctrl-names = "default";
+> > > +            pinctrl-0 = <&can0_pins>;
+> > > +            spi-max-frequency = <10000000>;
+> > > +            bosch,mram-cfg = <0x0 0 0 16 0 0 1 1>;
+> > > +            interrupt-parent = <&gpio1>;
+> > > +            interrupts = <14 IRQ_TYPE_LEVEL_LOW>;
+> > > +            device-state-gpios = <&gpio3 21 GPIO_ACTIVE_HIGH>;
+> > > +            device-wake-gpios = <&gpio1 15 GPIO_ACTIVE_HIGH>;
+> > > +            reset-gpios = <&gpio1 27 GPIO_ACTIVE_HIGH>;
+> > > +            wakeup-source;
+> > > +        };
+> > > +    };
+> > > +  - |
+> > > +    #include <dt-bindings/gpio/gpio.h>
+> > > +    #include <dt-bindings/interrupt-controller/irq.h>
+> > > +
+> > > +    spi {
+> > > +        #address-cells = <1>;
+> > > +        #size-cells = <0>;
+> > > +
+> > > +        can@0 {
+> > > +            compatible = "ti,tcan4552","ti,tcan4x5x";
+> > 
+> > Missing space after ,.
+> > 
+> 
+> Added
+> 
+> Thanks for the review.
+> 
+> /Sean
+/Sean
 
