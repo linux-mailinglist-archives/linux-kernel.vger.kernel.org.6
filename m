@@ -1,68 +1,81 @@
-Return-Path: <linux-kernel+bounces-396878-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396881-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B20BC9BD393
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 18:38:59 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99CD39BD39C
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 18:40:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E1E8A1C229CE
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 17:38:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A7EF28321B
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 17:40:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52F8E1E3788;
-	Tue,  5 Nov 2024 17:38:51 +0000 (UTC)
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F00351E5718;
+	Tue,  5 Nov 2024 17:39:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TIQCUrTZ"
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88AB21E282C;
-	Tue,  5 Nov 2024 17:38:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFBFB1E285D;
+	Tue,  5 Nov 2024 17:39:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730828330; cv=none; b=h0Si992cCl7jnCoaB1vEV7nk+eLZun7lVZEpik+bxnqzsG7kgXj39Y/2pYQtt/Z9+pIrdFWO1V1WLi8ztA9Bi9/T/gp2VauKdEMtyQdo5NTPABvpcjOG9f9CPgcm+9rjyvgOfQkFy69ko2WzSdRh5giy7grOQ+phD5xEiMPygTY=
+	t=1730828385; cv=none; b=MpIN2x2wxXkAXkjfC8AeT3a8QhZFHj/gZ8zQOFxqU/pGNp92Xf8yiNUobx605dsOo9fIqEt/Z8iEMSdm7zdAm/Vy75xFv9H3CnbvqQibW+Rk4EnvRS5BO2Atdao8kEvhH/POANWbis4+PVq6T8JoKPyaTC0LBEGnAFOhF2b+KoQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730828330; c=relaxed/simple;
-	bh=4lVqMlvbVeIaLRC8JY24fuipuiQcsU90cbAOjOhbmfE=;
+	s=arc-20240116; t=1730828385; c=relaxed/simple;
+	bh=//t3fv7IHALZDb+9vEeYfS9gixpboKbA/f3rzebXHIk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KlYA9Sj6MIER7Jp7TW2qk94qA7Q1+KVxvzk4Q7+DKcxxAxzSIWk71Hh0BAeeBatMYlJMDMfIiG69Mn3rOz4HbvFEnfuDNI45B82tbPRfhLlrllMLalb724+2oImRQx5Z9IXz8C/GR+GGIVw2By2/wnPFS4paDJlFwko7e0azS+w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=mx33W7/GnN/4Cqz+pk5mT7ZG4HFmYexFYBtyP8CeWjfGXK2I6Zg3iuzNZnP37BdaWPLnFc/j04ft+/HCz4tvq87xfnaQIGhz1Th/k2J1+4WhUO04TYm8cJS9q0kH86+uilnskD+yj4Rxvjfl6ds0l0BfgKKEvBtjzaXc9orYdV4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TIQCUrTZ; arc=none smtp.client-ip=209.85.210.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-71e4244fdc6so4558995b3a.0;
-        Tue, 05 Nov 2024 09:38:49 -0800 (PST)
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-720aa3dbda5so4194075b3a.1;
+        Tue, 05 Nov 2024 09:39:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730828383; x=1731433183; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=D+fe20P1tDN9qmX/MwpVQyjr05QyE2RvNajCiS4GD+Q=;
+        b=TIQCUrTZ4ZbfhEinElpzQ+OavCwrZmKj46pVO/EotiAf3oNPwGHZX+UBM7FVIsUbxs
+         zKtkNN/qsBtnzfY+oN4p2/Vtoz1eI1peVxiHGx+sjR2ToQKsqUh2jvH0zN6Xn3dsbiCf
+         uWe8tcSE8eZqmPVMXoazKwR5cD6eyEeYtjonwhohnPtwri+s443GpeJ+26goTEkZ8CHv
+         jZhem/YyzKeURMVUTfZVcfXd3y+X1TgBceCACLCtcQNpgEurY8FQcC4eN6HlBr/gXOkt
+         XyHLj2C5PTpDaVZ/C77XbTNcDI3NSyPCgl+XYXtskLvNye1agxQ8jyJfQ8URhfHyDZhq
+         gMiA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730828329; x=1731433129;
+        d=1e100.net; s=20230601; t=1730828383; x=1731433183;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=PD7THQBIWGT0uMZ+0fdmv+Bq/KO1hinbqgfjxdPvwIM=;
-        b=m7Zf8j769mUlbBGtxbcQKZewZdw5xUrSpY2jtE2IDYtwmv/8bO2p2rOcoci/MOMC9q
-         RG3JHlRcGBAloJtEqz1uK1obXk0lDkCaKjq5yFiqIcte6lSe8pjxQnAEtfx5xAFd75vR
-         leyqe81x/75IZ8aLFdmb8wx+oVWd2w8x/r8DTn8DiTlVoonf0rW5Ym/ivthFm7AfLtC3
-         FuqhgMDgzxZb7LgNEONDUmafAyKCtGnODSDAfCGwcbFnu3ouJQCfItU8XnamghU2dA6v
-         U/mXF0leSBw9eB5+qz2LI3JsEfia87u2uk/H5pVGwZSFhG2t34Xzoc6Z2PuYs8fDn0OB
-         b0yA==
-X-Forwarded-Encrypted: i=1; AJvYcCVjq8nCuM9S5MHaNqTsWEeZdV7G8MnOCMyWa454hkV6WSBvhzVqExMQYfzjb3H443S3B6es6u03BOds@vger.kernel.org, AJvYcCX7JIyIQfNA4s9oOsbAKi4vmtma8tCRysZfj02p3oW9ssS21R3CjULNz0GqLHXeSAP2qUrZQ06LW4oXqn8r@vger.kernel.org, AJvYcCXXO8sOqEeBAfENtRHEwEPVZNVsRInDw0zQrN9VWm/WxlP3CjjKYYrGcskL7piJftEMMC93HqvB97sU1bRY@vger.kernel.org
-X-Gm-Message-State: AOJu0YzTjs0q7ewtcfUqxXNuN0swTqt/EkJ926siUok5pAcA3/61Rf1E
-	oNUDT4NES2xD4HAUe9zyeDxwYaw0SQaAqQrsYJkIseXVptlCNfbe
-X-Google-Smtp-Source: AGHT+IG+ht2m85l7VwQoVcTgAteAcpdGNxxC01z797LcY7Qet5QMRhqLO5vLNbROnpbC+W9JL8/TXw==
-X-Received: by 2002:a05:6a20:7351:b0:1db:ec7f:609e with SMTP id adf61e73a8af0-1dbec801b78mr6496376637.41.1730828328809;
-        Tue, 05 Nov 2024 09:38:48 -0800 (PST)
-Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7ee45296c97sm9294730a12.14.2024.11.05.09.38.47
+        bh=D+fe20P1tDN9qmX/MwpVQyjr05QyE2RvNajCiS4GD+Q=;
+        b=lKZnrufqJvKGYLlew45aW7Thda+00WayK/8R6y/WMScq7yMCVFEyCnL6o/GGrEE7a4
+         Wm1CE8XEJ+O2Hv8WaVBMdUchsqteDpLZN1I4QgrFfyXXTjb4IfnrSINV74hJm/TGPfno
+         /iFgFaI1hMgnZUkLE3NFuFu+gLrHsYcEbzU+E2KkMzgnI9oPubJ8NAoDvLBl7UAhucAB
+         3+vmeiUzABuIOLm/7WTcZE7YxLaewhNlIBeaoE9SpID0H3FXQzo6MtK/F3EKzL6aCkzd
+         OkGb5qwwM+3gr2ia7WUq39CxumA2geDzJiXYiP+v/NacJgHGOsjMBCnOqXdb9YBuDAXM
+         HIgQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU39v85et+rgwLMAeGBdzDISCumaVs84WbgDfXnjqOMZIVjPcbQOipUTPkzvE/cfDJ9+uNKCVa4ZHijyRmH@vger.kernel.org, AJvYcCWw8hvrhTid5xB82FisxeG/mkrh4zjihe4T0GXzimAsRElL52Jm2cmxVrqRRYjvhhLONfxAQydbSok=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwFS7qRiQ8oAIIBN+xzYd9a2669Ch9SdzqmK1/DQGVESICd+QxN
+	J8vG7TKrXNefTHsgeYhv/UODXLOMzC/DQ0sGJYcPQKvyiwbJNFpV
+X-Google-Smtp-Source: AGHT+IHneVKAeOmejkaaF7F6uzEtsGTngUHMIDr8g/ZYKsQZJoEIWsiIYWYVbuz/PjRR8FuHSZS4xQ==
+X-Received: by 2002:a05:6a00:ac4:b0:71e:587d:f268 with SMTP id d2e1a72fcca58-720ab39e43dmr35923944b3a.4.1730828382921;
+        Tue, 05 Nov 2024 09:39:42 -0800 (PST)
+Received: from Emma ([2401:4900:1c97:5a7:5054:ff:fe53:2787])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-720bc2c9382sm9895501b3a.138.2024.11.05.09.39.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Nov 2024 09:38:48 -0800 (PST)
-Date: Wed, 6 Nov 2024 02:38:46 +0900
-From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
-To: Zhongqiu Han <quic_zhonhan@quicinc.com>
-Cc: manivannan.sadhasivam@linaro.org, kishon@kernel.org,
-	bhelgaas@google.com, lpieralisi@kernel.org, dlemoal@kernel.org,
-	mhi@lists.linux.dev, linux-arm-msm@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] PCI: epf-mhi: Fix potential NULL dereference in
- pci_epf_mhi_bind()
-Message-ID: <20241105173846.GB448500@rocinante>
-References: <20241105120735.1240728-1-quic_zhonhan@quicinc.com>
+        Tue, 05 Nov 2024 09:39:42 -0800 (PST)
+Date: Tue, 5 Nov 2024 17:39:36 +0000
+From: Karan Sanghavi <karansanghvi98@gmail.com>
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, linux-iio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Shuah Khan <skhan@linuxfoundation.org>, 
+	Anup <anupnewsmail@gmail.com>
+Subject: Re: [PATCH] iio: invensense: fix integer overflow while
+ multiplication
+Message-ID: <zttjwj47aro4xr56c5qwme3zyiv7v5fdu4e5c2sgzllpwljw7e@iasdxaxjylt3>
+References: <20241103-coverity1586045integeroverflow-v1-1-43ea37a3f3cd@gmail.com>
+ <20241103111827.0894a40a@jic23-huawei>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -71,17 +84,65 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241105120735.1240728-1-quic_zhonhan@quicinc.com>
+In-Reply-To: <20241103111827.0894a40a@jic23-huawei>
 
-Hello,
+On Sun, Nov 03, 2024 at 11:18:27AM +0000, Jonathan Cameron wrote:
+> On Sun, 03 Nov 2024 08:43:14 +0000
+> Karan Sanghavi <karansanghvi98@gmail.com> wrote:
+> 
+> Hi Karan,
+> 
+> > Typecast a variable to int64_t for 64-bit arithmetic multiplication
+> 
+> The path to actually triggering this is non obvious as these
+> inputs are the result of rather complex code paths and per chip
+> constraints.  Have you identified a particular combination that overflows
+> or is this just based on the type?  I have no problem with applying this
+> as hardening against future uses but unless we have a path to trigger
+> it today it isn't a fix.
+> 
+> If you do have a path, this description should state what it is.
+>
+I found this in the coverity scan with CID:1586045 stating
 
-> If platform_get_resource_byname() fails and returns NULL, dereferencing
-> res->start will cause a NULL pointer access. Add a check to prevent it.
+overflow_before_widen: Potentially overflowing expression ts->min_period * ts->mult with type 
+unsigned int (32 bits, unsigned) is evaluated using 32-bit arithmetic, and then used in a 
+context that expects an expression of type int64_t const (64 bits, signed).
 
-Applied to endpoint, thank you!
-
-[01/01] PCI: endpoint: epf-mhi: Fix potential NULL dereference in pci_epf_mhi_bind()
-        https://git.kernel.org/pci/pci/c/ff977d1bf478
-
-	Krzysztof
+> > 
+> > Signed-off-by: Karan Sanghavi <karansanghvi98@gmail.com>
+> If it's a real bug, needs a Fixes tag so we know how far to backport it.
+>
+I thought that this is a fix to this coverity issue thus used fix in the
+subject. 
+If I have to mention the fix tag for this then can you please let me
+know what should I mention in the fix tag.
+> > ---
+> >  drivers/iio/common/inv_sensors/inv_sensors_timestamp.c | 4 ++--
+> >  1 file changed, 2 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/drivers/iio/common/inv_sensors/inv_sensors_timestamp.c b/drivers/iio/common/inv_sensors/inv_sensors_timestamp.c
+> > index f44458c380d9..d1d11d0b2458 100644
+> > --- a/drivers/iio/common/inv_sensors/inv_sensors_timestamp.c
+> > +++ b/drivers/iio/common/inv_sensors/inv_sensors_timestamp.c
+> > @@ -105,8 +105,8 @@ static bool inv_update_chip_period(struct inv_sensors_timestamp *ts,
+> >  
+> >  static void inv_align_timestamp_it(struct inv_sensors_timestamp *ts)
+> >  {
+> > -	const int64_t period_min = ts->min_period * ts->mult;
+> > -	const int64_t period_max = ts->max_period * ts->mult;
+> > +	const int64_t period_min = (int64_t)ts->min_period * ts->mult;
+> > +	const int64_t period_max = (int64_t)ts->max_period * ts->mult;
+> >  	int64_t add_max, sub_max;
+> >  	int64_t delta, jitter;
+> >  	int64_t adjust;
+> > 
+> > ---
+> > base-commit: 81983758430957d9a5cb3333fe324fd70cf63e7e
+> > change-id: 20241102-coverity1586045integeroverflow-cbbf357475d9
+> > 
+> > Best regards,
+>  
+Thank you,
+Karan.
 
