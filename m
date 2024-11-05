@@ -1,64 +1,65 @@
-Return-Path: <linux-kernel+bounces-396700-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396701-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77B9C9BD0CE
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 16:40:58 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D9629BD0D0
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 16:41:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2DAD41F21F6F
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 15:40:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CF0AA1C20D78
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 15:41:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D589013BADF;
-	Tue,  5 Nov 2024 15:40:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEE0A7DA93;
+	Tue,  5 Nov 2024 15:41:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gj9SDxMn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="REuFJmXL"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28E871F95A;
-	Tue,  5 Nov 2024 15:40:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D305B7D3F4
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 15:41:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730821245; cv=none; b=UBTN8UJiiog8hz4zIUm3zcfICBTXDfPWp9m8S7zmfIaNdlGMC8TS4DkzbCV/A8UVW4zr76HtFDcd0oHSFYYDv+pgCggP/RPzXXEIN7YvGctNC3roZyyafAuNY7ImZqKdGTSGVNOPZE64phg4+pqRgkpTCZyp5KQ24h0UNkfaV3Y=
+	t=1730821275; cv=none; b=KoH7TxSDI4mVjnUsD2Ql2KtWIg6mBWtbzH3CZTISySkUGh6vRsldWEhLWfiP7gso8JmaV0HTXqQgK+AYYWOpUlL8OhxN7KhByVRHoFFyLMmP5sv+h1pyuyHisH0DF0bnRLcYeGPpgtBEyp0Pz+Ou9r5+UdtzSKcHZZWbvjtT2uQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730821245; c=relaxed/simple;
-	bh=7OjgiT/5KWhncWMPQtywWtXOowrxvsv0GUnpAW8McSs=;
+	s=arc-20240116; t=1730821275; c=relaxed/simple;
+	bh=X8Tn2kfEz/8sQ8qe6hl0sZCPND4hV+hzMBpsCFo6Lgo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iz1m+Ho6YUSD49iHWG0yGRmV/G371/JNWgqbSbffVjcoyTsmERgUWdzWQrTXSHZtYYDsV1lyHS+ka3eN17R4r2dTE2e0gmlqOaorGXmVCmE96wwchB0tdFdurS47qilIiidv5YlrFlfzwndblKXAAaQuBi9KkIryIcu5eqCrYgg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Gj9SDxMn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94DA4C4CECF;
-	Tue,  5 Nov 2024 15:40:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730821244;
-	bh=7OjgiT/5KWhncWMPQtywWtXOowrxvsv0GUnpAW8McSs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Gj9SDxMnK4fc6zGZT9isKG9j2IsblpkNDrCw38KDbP9872nfekYt4Kws5j6coR2KG
-	 ysrCJM+ofqsuFT7rA9inPLdrEul1/oAfQqcPpFoKe/RWsQf8vqZ4tiPTHTX3vk27hE
-	 UsWe36ZAgLma+9BkBTYKSS1zApvqDsQhIIUCz7RAo5wLniXkRhoTlqsEg8WxCvPBQe
-	 +C/ZjxdGtTh6dGKStu25ZxY9pYEGp+rosATiBwKqsWAGTog5nGdTvgpIaDLwEFNnJh
-	 ucymuYH18YU+tutd+q+cG0Yo9rEHgIPMlqvJo86kHs6h9ef358MSynueqJVG53ySTB
-	 4JVTuYl8jvbew==
-Date: Tue, 5 Nov 2024 07:40:44 -0800
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Theodore Ts'o <tytso@mit.edu>, Carlos Maiolino <cem@kernel.org>,
-	"Ritesh Harjani (IBM)" <ritesh.list@gmail.com>,
-	John Garry <john.g.garry@oracle.com>, brauner@kernel.org,
-	Catherine Hoang <catherine.hoang@oracle.com>,
-	linux-ext4@vger.kernel.org, Jan Kara <jack@suse.cz>,
-	Christoph Hellwig <hch@infradead.org>,
-	Ojaswin Mujoo <ojaswin@linux.ibm.com>, linux-block@vger.kernel.org,
-	Dave Chinner <david@fromorbit.com>, linux-kernel@vger.kernel.org,
-	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [ANNOUNCE] work tree for untorn filesystem writes
-Message-ID: <20241105154044.GD2578692@frogsfrogsfrogs>
-References: <20241105004341.GO21836@frogsfrogsfrogs>
- <fegazz7mxxhrpn456xek54vtpc7p4eec3pv37f2qznpeexyrvn@iubpqvjzl36k>
- <72515c41-4313-4287-97cc-040ec143b3c5@kernel.dk>
- <20241105150812.GA227621@mit.edu>
- <5557bb8e-0ab8-4346-907e-a6cfea1dabf8@kernel.dk>
+	 Content-Type:Content-Disposition:In-Reply-To; b=s+wXGhnqsu+oZ/YXDKzTPKiY0HUR07VGOsuBnKZXTo3+UwQOskd7ThSMYFXCBYu3i6+boD9ibbyk/k4OXhxKkZZLDmos3cGvHUuroVrw0yz/4ZZsbGlXcLuBZPsC9TRswRr1D45duTfwMK87DLG41F9qq2HT1jBK8ewLQnx+HK4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=REuFJmXL; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=UPHw2IiDaWM/l4GsTAEfiswduoyNvvNd/EA3DH7veLY=; b=REuFJmXLaI3NKZGwq5OEvAl7i9
+	/PID4INtijbyyGTEaEyHIdtyl25s8Ljb7QOj6YUmKeqaCTCrbYImnMGt/btruBs6ACrTTzvXRlhKr
+	nplynN2h7BDOUGcnGZdgv+D/gx4tXMyf/no0VRs+1yXVYE4aqgLZNNl1EpZnoNQtrKh1cv+biD1Fk
+	mhKXcgwkhXsdGp7sJ4IjlontecOqgzXcm4tFJT8zu4LCPMLUlA+lLO1RdHDfI6hOjf8PwbNx7tIWb
+	R4p329LF5N3J44GbwktzJMV6Jl0f5hfNsa7P7sQvgBJIOPLPU7PkW7Ih7K12tqx9gGCYlPS5+czkb
+	ymWIALkg==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1t8Lg9-0000000HSOs-1XAv;
+	Tue, 05 Nov 2024 15:41:13 +0000
+Date: Tue, 5 Nov 2024 07:41:13 -0800
+From: Christoph Hellwig <hch@infradead.org>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Christoph Hellwig <hch@infradead.org>, x86@kernel.org,
+	linux-kernel@vger.kernel.org, alyssa.milburn@intel.com,
+	scott.d.constable@intel.com, joao@overdrivepizza.com,
+	andrew.cooper3@citrix.com, jpoimboe@kernel.org,
+	alexei.starovoitov@gmail.com, ebiggers@kernel.org,
+	samitolvanen@google.com, kees@kernel.org
+Subject: Re: [PATCH 1/8] x86,kcfi: Fix EXPORT_SYMBOL vs kCFI
+Message-ID: <Zyo8mdoQOXa9kiBv@infradead.org>
+References: <20241105113901.348320374@infradead.org>
+ <20241105114521.852053765@infradead.org>
+ <Zyoood0ooSbpultV@infradead.org>
+ <20241105142720.GG10375@noisy.programming.kicks-ass.net>
+ <ZyosbEMNzMU6fOe_@infradead.org>
+ <20241105145842.GH10375@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,73 +68,19 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <5557bb8e-0ab8-4346-907e-a6cfea1dabf8@kernel.dk>
+In-Reply-To: <20241105145842.GH10375@noisy.programming.kicks-ass.net>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Tue, Nov 05, 2024 at 08:11:52AM -0700, Jens Axboe wrote:
-> On 11/5/24 8:08 AM, Theodore Ts'o wrote:
-> > On Tue, Nov 05, 2024 at 05:52:05AM -0700, Jens Axboe wrote:
-> >>
-> >> Why is this so difficult to grasp? It's a pretty common method for
-> >> cross subsystem work - it avoids introducing conflicts when later
-> >> work goes into each subsystem, and freedom of either side to send a
-> >> PR before the other.
-> >>
-> >> So please don't start committing the patches again, it'll just cause
-> >> duplicate (and empty) commits in Linus's tree.
-> > 
-> > Jens, what's going on is that in order to test untorn (aka "atomic"
-> > although that's a bit of a misnomer) writes, changes are needed in the
-> > block, vfs, and ext4 or xfs git trees.  So we are aware that you had
-> > taken the block-related patches into the block tree.  What Darrick has
-> > done is to apply the the vfs patches on top of the block commits, and
-> > then applied the ext4 and xfs patches on top of that.
+On Tue, Nov 05, 2024 at 03:58:42PM +0100, Peter Zijlstra wrote:
+> > bounded number of functions that are used as either default methods
+> > or as ready made callbacks.  Everything else has no business being
+> > called indirectly.  While disallowing this might be a bit of work,
+> > I think it would be a great security improvement.
 > 
-> And what I'm saying is that is _wrong_. Darrick should be pulling the
-> branch that you cut from my email:
-> 
-> for-6.13/block-atomic
-> 
-> rather than re-applying patches. At least if the intent is to send that
-> branch to Linus. But even if it's just for testing, pretty silly to have
-> branches with duplicate commits out there when the originally applied
-> patches can just be pulled in.
+> Well, we don't disagree. But since most of the EXPORT'ed functions are
+> done in C, we need something that works there too.
 
-I *did* start my branch at the end of your block-atomic branch.
+Yes, absolutely.  In fact I doubt there are more than a handful of
+assembly exports that are valid targets for indirect calls.
 
-Notice how the commits I added yesterday have a parent commitid of
-1eadb157947163ca72ba8963b915fdc099ce6cca, which is the head of your
-for-6.13/block-atomic branch?
-
-But, it's my fault for not explicitly stating that I did that.  One of
-the lessons I apparently keep needing to learn is that senior developers
-here don't actually pull and examine the branches I link to in my emails
-before hitting Reply All to scold.  You obviously didn't.
-
-Maybe the lesson I really need to learn here is that none of this
-constant pointless aggravation in my life is worth it.
-
---D
-
-> > I'm willing to allow the ext4 patches to flow to Linus's tree without
-> > it personally going through the ext4 tree.  If all Maintainers
-> > required that patches which touched their trees had to go through
-> > their respective trees, it would require multiple (strictly ordered)
-> > pull requests during the merge window, or multiple merge windows, to
-> 
-> That is simply not true. There's ZERO ordering required here. Like I
-> also mentioned in my reply, and that you also snipped out, is that no
-> ordering is implied here - either tree can send their PR at any time.
-> 
-> > land these series.  Since you insisted on the block changes had to go
-> > through the block tree, we're trying to accomodate you; and also (a)
-> > we don't want to have duplicate commits in Linus's tree; and at the
-> > same time, (b) but these patches have been waiting to land for almost
-> > two years, and we're also trying to make things land a bit more
-> > expeditiously.
-> 
-> Just pull the branch that was created for it... There's zero other
-> things in there outside of the 3 commits.
-> 
-> -- 
-> Jens Axboe
 
