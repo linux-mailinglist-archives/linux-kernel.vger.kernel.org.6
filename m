@@ -1,104 +1,165 @@
-Return-Path: <linux-kernel+bounces-395719-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395720-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDFF59BC209
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 01:32:26 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8666B9BC20E
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 01:33:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1CD241C21887
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 00:32:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CD920B21A04
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 00:33:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E6CBE573;
-	Tue,  5 Nov 2024 00:32:20 +0000 (UTC)
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B16CF9C0;
+	Tue,  5 Nov 2024 00:33:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="AUDsRB1/"
+Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48987B65C;
-	Tue,  5 Nov 2024 00:32:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1C9FAD39;
+	Tue,  5 Nov 2024 00:33:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730766739; cv=none; b=aUAjZtF0tpcGjoykHawdMlJZgEQCvyiT4Hy2pK2Eo7DW8+ymD6lRElW6OWfyYLIMdalEhwYLbc0PZhrqfIpRKK04asGQA1Q9VWnQjim6aGrsn2kEoE2ecIIQjhQu9iPr+NpqPltXkjPJvfK4YVrGljcghTXBdfaiTgXGvWNb7gE=
+	t=1730766819; cv=none; b=erEAPx8YzsB/rF9m408TZIbq+nhlA8CtPmeWNCvF97ejuXqHarRtPSYfEYtnDH5gfNlWT6cMvPWq1We+z8v6IfZRKjkwSKRVo4YvjL3SY/OIIC/lMk9XCwJhVSMzOZgSSPpTimbi9l7eFTPvEL+j5vrNPUmDxSGUD+jUV8lj8Vo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730766739; c=relaxed/simple;
-	bh=BJoeVM64nHvQI9nb+JQ4yzqQafTXnoxlqLEr+k9ifSw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QsOJQA+yQD/lD/l+uNZ/O659QZoACuEgJsLmgpV7espN0KHNB9noR456gry04e80oyUUBFdOXRXeDz7PFGer8/pQaO4bEj2N29p+Oe/MSTJx8Xmy/KEVPMPPiZaK7ROfPUmUc3wBd+7Gop88KIe0XManyRpdkdaGXxBKExNQ3cg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-720aa3dbda5so3515757b3a.1;
-        Mon, 04 Nov 2024 16:32:17 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730766736; x=1731371536;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sVFKOV2U1tZu5ariNJuZSEYQCGwrXBb6JURzVqRRFIg=;
-        b=nABZ2wlwsdwMrwLRF2G8IjYhWxPA743vCBuxVFkzr0c1VroTtTcQeF0KIWyhFJcSlU
-         KQOJwKR02I/RY/YOniv4MQe6pLSFdxRFWtp588N97ft3cliKzk1Zfw8bVmobClAbwu0S
-         tWHxXl8/2NV6VORs91TjN699icOQmDYTTwzaJu/4ruNxeFZCcFzmcUg9+SnV7Wdrvc9+
-         nZUtwsfoO4EPukBEb01KSGsE6Sz4L0ZRtMOm4h+OIAsbEJCLzbz5ygXtM1gz0tsL9HYq
-         qhq6VEu79yKAPvlAEBObR2Q+AIjUGu4/u7b3lqHrXvUvkTIz0Z4VX3QFrjkZV6VHah6n
-         xXTQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVR1CXbMAVM8olXQmryldLOOCCtSuWJaWw/tGmXglKtxxZaIgASYXtXhjUqzJM64EsXKbud5mg7ztEa@vger.kernel.org, AJvYcCWQeF3YI63MbYcAp7G+Fn46OP3Tmg5qtat27e5mn/C/f/+W2CAq4N8CeFC/bfE+Mlbv8E422N25RGVYxcg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwXc4oag4YpFrEeUM7v0seVDJ7+5xR+JMvdviDP8RUeJZMBkIiF
-	SZwT3rTzdYYKHdLNN8xmDLF+l2Bk9KGmt5LZoQWjB6zBEVtMaO6FgGgUA0CO
-X-Google-Smtp-Source: AGHT+IFe7Zrh53Gk5JMJVfagTghIwtCaFVjaPXkfpfyJUjZgVj71OYdbph2ie1Xr9Hoazgv2NdD2ow==
-X-Received: by 2002:a05:6a00:2e93:b0:71e:41b3:a56b with SMTP id d2e1a72fcca58-720ab4c5d9bmr28160923b3a.24.1730766736559;
-        Mon, 04 Nov 2024 16:32:16 -0800 (PST)
-Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7ee45a002d4sm7821587a12.70.2024.11.04.16.32.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Nov 2024 16:32:16 -0800 (PST)
-Date: Tue, 5 Nov 2024 09:32:14 +0900
-From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: manivannan.sadhasivam@linaro.org, Bjorn Helgaas <bhelgaas@google.com>,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Johan Hovold <johan+linaro@kernel.org>,
-	Abel Vesa <abel.vesa@linaro.org>,
-	Stephan Gerhold <stephan.gerhold@linaro.org>,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>,
-	stable+noautosel@kernel.org
-Subject: Re: [PATCH 0/5] PCI/pwrctl: Ensure that the pwrctl drivers are
- probed before PCI client drivers
-Message-ID: <20241105003214.GA1614659@rocinante>
-References: <20241103203107.GA237624@rocinante>
- <20241105001206.GA1447985@bhelgaas>
+	s=arc-20240116; t=1730766819; c=relaxed/simple;
+	bh=Xmwxg1h2S3GmdUxdYbcV8vAvia134i82J4iyVpWPIMg=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=SYqd2oQaKgU+0y6sxUsK1UtzvEoLx3OgPiAzlLAEIq674n+JQ60aqZ6aDo0lM1azipaaBgHR10LuLiUhBmIXz7SefIMEVbxX1rnWU9h/Vtu6OLTmufF5ZCOdMO9TVUj8sclMUylDdRlr8snA8s+zv8jkzA1NXSNhaUYt/u9PZ/w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=AUDsRB1/; arc=none smtp.client-ip=203.29.241.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=codeconstruct.com.au; s=2022a; t=1730766815;
+	bh=36wSJdCPKTJa+pneI4xqY1eNvL6gR9xuN9Id9gxbFnc=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References;
+	b=AUDsRB1/SnWNB05Bh7/nXGANt9HOyTC6CQhGs8nEgXGa1rUwo0qEPyvmc8gOAoc0h
+	 iulp1MUJmq6WiYAzHE6LsjtkahYFQbdR3vb5D9OrvO8QnC3evjwpobiyBn7bXitSA5
+	 8fTeFXStcGYX3vVGCtCBxq/c2dKsIYZIu1uqFN0zsVltNbKoemWYO5ulZSPLwzuubg
+	 RQWZSFfCV25ewjc7FSFTJLeTwxcblA6jN019R1UdCDc4EjCIgetPkR8KG24+VM1gMz
+	 11JHb8ZQLgXcrXo2SmiXZ59HBUuw01CwxNKMlHQ3qEk22A63hfzrdTMPt97sTWreMJ
+	 dWajekN8ALT1g==
+Received: from [192.168.68.112] (ppp118-210-162-114.adl-adc-lon-bras34.tpg.internode.on.net [118.210.162.114])
+	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 38B436A3C9;
+	Tue,  5 Nov 2024 08:33:34 +0800 (AWST)
+Message-ID: <ac9698862598f0d09d35872d0e091537f822fbcd.camel@codeconstruct.com.au>
+Subject: Re: [PATCH v6 2/2] ARM: dts: aspeed: sbp1: IBM sbp1 BMC board
+From: Andrew Jeffery <andrew@codeconstruct.com.au>
+To: Naresh Solanki <naresh.solanki@9elements.com>, robh@kernel.org, 
+ krzk+dt@kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, jdelvare@suse.com, linux@roeck-us.net,
+ sylv@sylv.io,  linux-hwmon@vger.kernel.org, Joel Stanley <joel@jms.id.au>
+Cc: Patrick Rudolph <patrick.rudolph@9elements.com>, 
+	linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org
+Date: Tue, 05 Nov 2024 11:03:33 +1030
+In-Reply-To: <20241104092220.2268805-2-naresh.solanki@9elements.com>
+References: <20241104092220.2268805-1-naresh.solanki@9elements.com>
+	 <20241104092220.2268805-2-naresh.solanki@9elements.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241105001206.GA1447985@bhelgaas>
 
-Hello,
+On Mon, 2024-11-04 at 14:52 +0530, Naresh Solanki wrote:
+> From: Patrick Rudolph <patrick.rudolph@9elements.com>
+>=20
+> Add a device tree for IBM sbp1 BMC board which is based on AST2600
+> SOC.
+>=20
+> sbp1 baseboard has:
+> - support for up to four Sapphire Rapids sockets having 16 DIMMS
+> each.
+> =C2=A0 - 240 core/480 threads at maximum
+> - 32x CPU PCIe slots
+> - 2x M.2 PCH PCIe slots
+> - Dual 200Gbit/s NIC
+> - SPI TPM
+>=20
+> Added the following:
+> - Indication LEDs
+> - I2C mux & GPIO controller, pin assignments,
+> - Thermister,
+> - Voltage regulator
+> - EEPROM/VPD
+>=20
+> Signed-off-by: Patrick Rudolph <patrick.rudolph@9elements.com>
+> Signed-off-by: Naresh Solanki <Naresh.Solanki@9elements.com>
+>=20
+> ---
+> Changes in V6:
+> - Verified all regulators warning resolved.
 
-> > > This series reworks the PCI/pwrctl integration to ensure that the pwrctl drivers
-> > > are always probed before the PCI client drivers. This series addresses a race
-> > > condition when both pwrctl and pwrctl/pwrseq drivers probe parallely (even when
-> > > the later one probes last). One such issue was reported for the Qcom X13s
-> > > platform with WLAN module and fixed with 'commit a9aaf1ff88a8 ("power:
-> > > sequencing: request the WLAN enable GPIO as-is")'.
-> > > 
-> > > Though the issue was fixed with a hack in the pwrseq driver, it was clear that
-> > > the issue is applicable to all pwrctl drivers. Hence, this series tries to
-> > > address the issue in the PCI/pwrctl integration.
-> > 
-> > Applied to bwctrl, thank you!
-> 
-> Should be pci/pwrctl.  bwctrl (bandwidth control) and pwrctl (power
-> control) are quite different despite the confusingly similar names.
+How did you verify this? Testing the patches locally, I see:
 
-Correct.  I moved patches to the correct branch.  Sorry about that!
+   +/home/andrew/src/kernel.org/linux/origin/build.aspeed_g5/arch/arm/boot/=
+dts/aspeed/aspeed-bmc-ibm-sbp1.dtb: pvccinfaon-pvccfa-cpu2@58: 'regulators'=
+ does not match any of the regexes: 'pinctrl-[0-9]+'
+   +       from schema $id: http://devicetree.org/schemas/trivial-devices.y=
+aml#
+   +/home/andrew/src/kernel.org/linux/origin/build.aspeed_g5/arch/arm/boot/=
+dts/aspeed/aspeed-bmc-ibm-sbp1.dtb: mp2973-pvccin-pvccfa-cpu2@58: 'regulato=
+rs' does not match any of the regexes: 'pinctrl-[0-9]+'
+   +       from schema $id: http://devicetree.org/schemas/trivial-devices.y=
+aml#
+   +/home/andrew/src/kernel.org/linux/origin/build.aspeed_g5/arch/arm/boot/=
+dts/aspeed/aspeed-bmc-ibm-sbp1.dtb: pvccinfaon-pvccfa-cpu1@58: 'regulators'=
+ does not match any of the regexes: 'pinctrl-[0-9]+'
+   +       from schema $id: http://devicetree.org/schemas/trivial-devices.y=
+aml#
+   +/home/andrew/src/kernel.org/linux/origin/build.aspeed_g5/arch/arm/boot/=
+dts/aspeed/aspeed-bmc-ibm-sbp1.dtb: mp2973-pvccin-pvccfa-cpu1@58: 'regulato=
+rs' does not match any of the regexes: 'pinctrl-[0-9]+'
+   +       from schema $id: http://devicetree.org/schemas/trivial-devices.y=
+aml#
+   +/home/andrew/src/kernel.org/linux/origin/build.aspeed_g5/arch/arm/boot/=
+dts/aspeed/aspeed-bmc-ibm-sbp1.dtb: pvccinfaon-pvccfa-cpu3@58: 'regulators'=
+ does not match any of the regexes: 'pinctrl-[0-9]+'
+   +       from schema $id: http://devicetree.org/schemas/trivial-devices.y=
+aml#
+   +/home/andrew/src/kernel.org/linux/origin/build.aspeed_g5/arch/arm/boot/=
+dts/aspeed/aspeed-bmc-ibm-sbp1.dtb: mp2973-pvccin-pvccfa-cpu3@58: 'regulato=
+rs' does not match any of the regexes: 'pinctrl-[0-9]+'
+   +       from schema $id: http://devicetree.org/schemas/trivial-devices.y=
+aml#
+   +/home/andrew/src/kernel.org/linux/origin/build.aspeed_g5/arch/arm/boot/=
+dts/aspeed/aspeed-bmc-ibm-sbp1.dtb: regulator@5f: 'regulators' does not mat=
+ch any of the regexes: 'pinctrl-[0-9]+'
+   +       from schema $id: http://devicetree.org/schemas/trivial-devices.y=
+aml#
+   +/home/andrew/src/kernel.org/linux/origin/build.aspeed_g5/arch/arm/boot/=
+dts/aspeed/aspeed-bmc-ibm-sbp1.dtb: regulator@5f: 'regulators' does not mat=
+ch any of the regexes: 'pinctrl-[0-9]+'
+   +       from schema $id: http://devicetree.org/schemas/trivial-devices.y=
+aml#
+   +/home/andrew/src/kernel.org/linux/origin/build.aspeed_g5/arch/arm/boot/=
+dts/aspeed/aspeed-bmc-ibm-sbp1.dtb: regulator@5f: 'regulators' does not mat=
+ch any of the regexes: 'pinctrl-[0-9]+'
+   +       from schema $id: http://devicetree.org/schemas/trivial-devices.y=
+aml#
+   +/home/andrew/src/kernel.org/linux/origin/build.aspeed_g5/arch/arm/boot/=
+dts/aspeed/aspeed-bmc-ibm-sbp1.dtb: regulator@5f: 'regulators' does not mat=
+ch any of the regexes: 'pinctrl-[0-9]+'
+   +       from schema $id: http://devicetree.org/schemas/trivial-devices.y=
+aml#
+   +/home/andrew/src/kernel.org/linux/origin/build.aspeed_g5/arch/arm/boot/=
+dts/aspeed/aspeed-bmc-ibm-sbp1.dtb: pvccinfaon-pvccfa-cpu0@58: 'regulators'=
+ does not match any of the regexes: 'pinctrl-[0-9]+'
+   +       from schema $id: http://devicetree.org/schemas/trivial-devices.y=
+aml#
+   +/home/andrew/src/kernel.org/linux/origin/build.aspeed_g5/arch/arm/boot/=
+dts/aspeed/aspeed-bmc-ibm-sbp1.dtb: mp2973-pvccin-pvccfa-cpu0@58: 'regulato=
+rs' does not match any of the regexes: 'pinctrl-[0-9]+'
+   +       from schema $id: http://devicetree.org/schemas/trivial-devices.y=
+aml#
 
-	Krzysztof
+From a spot check, the warnings seem legitimate. Did you send the right
+patches?
+
+Andrew
 
