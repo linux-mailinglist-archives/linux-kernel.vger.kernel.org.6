@@ -1,63 +1,88 @@
-Return-Path: <linux-kernel+bounces-395702-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395703-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A11E9BC1D6
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 01:10:39 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C8799BC1DC
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 01:11:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A8872824F9
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 00:10:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CEFFF1C2125D
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 00:11:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A5501367;
-	Tue,  5 Nov 2024 00:10:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A3D06FC3;
+	Tue,  5 Nov 2024 00:11:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TLjgk9AL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="V9DycDZc"
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 707AAAD51;
-	Tue,  5 Nov 2024 00:10:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 301B1817
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 00:11:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730765430; cv=none; b=glCPKLVrskwLUtSVHu3L8sDnJtyYj7Inl8MUii71JguuBthKjWXKWiMqINCZ24oG19GFuIrLBBV6Ky0NVrPjPMhLIECx2KPNkDGcseTGrAJYHrdh8SYVL8xgHCao677pgLJWtbvuDnbnRdD8uPu0tPYBhhN5xy6qrIv8821V0UM=
+	t=1730765497; cv=none; b=dZuWiYtty/DFYNYNY+KmOhfgKubBYYj6THeJsk6j/anen0wK5KySnoKvR6bxfsqnj83DGZY6yJ2rp/CqqUs+RilSiHo0KP0hkKJJgXCjhXimWS/IbSVCgWXt8FEiz8LA+3u/9+22nLaVH8eXuAubxOlZ+DgCW8ZTeNGxzhy2WqA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730765430; c=relaxed/simple;
-	bh=1PZtNyhB5M5weBUBBQDdgStBwqsY04q1zWaOCxm7ULs=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=kVWcPKQk7yMLEZ/+p8n1fLaV1F5YlCW7QZEf8Hf1U+TGlXjNZYyheDKAzzQmDIjDHxayzWA8Gls0C5VGtseEsahevEZwd2s26IFIpppdAR7bGS7Q/3dPDcxa5tJ7/iiL2EuAzeHabNwM5w8uUCCTNmqswl6fbSIqq5wbTskltlc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TLjgk9AL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4BCBC4CECE;
-	Tue,  5 Nov 2024 00:10:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730765430;
-	bh=1PZtNyhB5M5weBUBBQDdgStBwqsY04q1zWaOCxm7ULs=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=TLjgk9ALqIbJNb0yCC2QkLYWeyQXRMZB3nHoLJTVQCJLPjb3JSAZSLdzRdnV4s1kt
-	 7rLq1kcUSWSvIh+3rPeN2ZBbHcidp2ZI3xKEaGkJ5Rkll9w/UfYquqOjKwxLQ+zwMx
-	 n5wXZD2seaDufQb5OQOrodgnMWnMZoi3jt3WXvQSy11y2fpqXZrzmMDI5cnfkb3tyg
-	 K8wM7z0DqezAp5WHmKg0622Le83MlSzsRw03D5ZF0mMXFlMi9PH8z4Rlp5cgfhyUaf
-	 fgZl39+tF7XwmH0L5+BwYwap9uCBEZGhrlWbMDLCR8BnLDDXHpVECIUQW5ggjgMFum
-	 M15KfcYyH6iDQ==
-Date: Mon, 4 Nov 2024 18:10:27 -0600
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Leon Romanovsky <leon@kernel.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	linux-pci@vger.kernel.org, Ariel Almog <ariela@nvidia.com>,
-	Aditya Prabhune <aprabhune@nvidia.com>,
-	Hannes Reinecke <hare@suse.de>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Arun Easi <aeasi@marvell.com>, Jonathan Chocron <jonnyc@amazon.com>,
-	Bert Kenward <bkenward@solarflare.com>,
-	Matt Carlson <mcarlson@broadcom.com>,
-	Kai-Heng Feng <kai.heng.feng@canonical.com>,
-	Jean Delvare <jdelvare@suse.de>,
-	Alex Williamson <alex.williamson@redhat.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] PCI/sysfs: Fix read permissions for VPD attributes
-Message-ID: <20241105001027.GA1447341@bhelgaas>
+	s=arc-20240116; t=1730765497; c=relaxed/simple;
+	bh=gWgRcXOWyPuYyTeu+HI4eru08VqwWwTDaEH/C3Ai8TY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IPZ9df+pGOiD9zaHQw1K8JcKzgVCHRmBPKoIyoAMjRCcmkiZcW3AGHIuxwxZRtzoA1dVNwQi4WvsxcVt+dITZTqzIVEkaDcQ0rKhTQpBDY8DM9ISVZ9TSXw2ctczllfgw3wWlwonev26XuZKUYs9ojyCcNAJHnlra6kbvxeRL+o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=V9DycDZc; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-720d14c8dbfso3732747b3a.0
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 16:11:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fastly.com; s=google; t=1730765494; x=1731370294; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ZzBGIIzGVWypDF2F/j8kxcVTvvbYnIIP9aDVrmVHUqo=;
+        b=V9DycDZcrQMIiQgw99c8ifLm4wYIdgDN2GLr0l3lnmzTBH6iUmfpRqswwvXCjy90Xq
+         Tn1dxlJ/63MYXkzJblf9BC8YJ7S3o7i2WhtYvhcWGYn29i0jdSUCM9x0cDRnAN8DQVZg
+         ZyP1sxi/7nLU/PhHNKBhGe2Sn9Yvdh43kxais=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730765494; x=1731370294;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZzBGIIzGVWypDF2F/j8kxcVTvvbYnIIP9aDVrmVHUqo=;
+        b=XmgpuTDCNxHa4X5j4KSm7k7ZDPi5ng7L9OkpPS3yvruX1U1CG7dnrdN7y6ZYEZbiOW
+         ORHJ67BF57TD6NlhY5nfE7aRncEY55WGDmqQoa78AQq5etGKcMvoAbixpNKUD0gpoXxh
+         xezP1HPcyfTFpfblpL70ntJPnZJ6SZngJRiXTbrVJfVD7yRj2VGsmWfKkW44dPElkNT2
+         MXjlvbLNCNaU7yQnonlEHARzjMdnqeZHaXgLJQe6h9EQs8/0cDAeyAJSYWjI/fVZIoA0
+         oSMdGJ9ew4Xx/PFZWqqDaIqdJ8JrCeHMh9AXF5jsrKVydboMGVMcpoMwnhcZ5ym75qb8
+         COCA==
+X-Forwarded-Encrypted: i=1; AJvYcCXOOsUWMBg7np4i7NwgEg1aLg5jeNSIOxx2lH0X2GQk5oyKd2q7jDJxIdl9V6oQrtpivgnYdaf8LkXRk+8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwwnlqQD0Wo8kMjxzY1bKC23E58P7juKBo5mp95kITE30FcPx8q
+	JsF8XnfW054SFT2N0lzze4eGfdspM19CwuSpUtEPzkCkaIU36B8XwdCQE0pEHg4=
+X-Google-Smtp-Source: AGHT+IE6+0r70GgR/JYYtrp8S6WEpFk6AKBf4ysxpcdZyo74q6Lq8+iIND0dfroDCYdzA0K/G5OkBQ==
+X-Received: by 2002:a05:6a20:d498:b0:1d9:1823:83bf with SMTP id adf61e73a8af0-1db91d516d0mr24240567637.8.1730765494528;
+        Mon, 04 Nov 2024 16:11:34 -0800 (PST)
+Received: from LQ3V64L9R2 (c-24-6-151-244.hsd1.ca.comcast.net. [24.6.151.244])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-720bc1eac2fsm8150260b3a.72.2024.11.04.16.11.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 04 Nov 2024 16:11:34 -0800 (PST)
+Date: Mon, 4 Nov 2024 16:11:31 -0800
+From: Joe Damato <jdamato@fastly.com>
+To: Stanislav Fomichev <sdf@fomichev.me>
+Cc: netdev@vger.kernel.org, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, andrew+netdev@lunn.ch,
+	shuah@kernel.org, horms@kernel.org, almasrymina@google.com,
+	willemb@google.com, petrm@nvidia.com
+Subject: Re: [PATCH net-next v7 10/12] selftests: ncdevmem: Run selftest when
+ none of the -s or -c has been provided
+Message-ID: <ZyliszeFtcZqfsnm@LQ3V64L9R2>
+Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
+	Stanislav Fomichev <sdf@fomichev.me>, netdev@vger.kernel.org,
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, andrew+netdev@lunn.ch,
+	shuah@kernel.org, horms@kernel.org, almasrymina@google.com,
+	willemb@google.com, petrm@nvidia.com
+References: <20241104181430.228682-1-sdf@fomichev.me>
+ <20241104181430.228682-11-sdf@fomichev.me>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,141 +91,66 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241103123344.GA42867@unreal>
+In-Reply-To: <20241104181430.228682-11-sdf@fomichev.me>
 
-On Sun, Nov 03, 2024 at 02:33:44PM +0200, Leon Romanovsky wrote:
-> On Fri, Nov 01, 2024 at 11:47:37AM -0500, Bjorn Helgaas wrote:
-> > On Fri, Nov 01, 2024 at 04:33:00PM +0200, Leon Romanovsky wrote:
-> > > On Thu, Oct 31, 2024 at 06:22:52PM -0500, Bjorn Helgaas wrote:
-> > > > On Tue, Oct 29, 2024 at 07:04:50PM -0500, Bjorn Helgaas wrote:
-> > > > > On Mon, Oct 28, 2024 at 10:05:33AM +0200, Leon Romanovsky wrote:
-> > > > > > From: Leon Romanovsky <leonro@nvidia.com>
-> > > > > > 
-> > > > > > The Virtual Product Data (VPD) attribute is not readable by regular
-> > > > > > user without root permissions. Such restriction is not really needed,
-> > > > > > as data presented in that VPD is not sensitive at all.
-> > > > > > 
-> > > > > > This change aligns the permissions of the VPD attribute to be accessible
-> > > > > > for read by all users, while write being restricted to root only.
-> > > > > > 
-> > > > > > Cc: stable@vger.kernel.org
-> > > > > > Fixes: d93f8399053d ("PCI/sysfs: Convert "vpd" to static attribute")
-> > > > > > Signed-off-by: Leon Romanovsky <leonro@nvidia.com>
-> > > > > 
-> > > > > Applied to pci/vpd for v6.13, thanks!
-> > > > 
-> > > > I think this deserves a little more consideration than I gave it
-> > > > initially.
-> > > > 
-> > > > Obviously somebody is interested in using this; can we include some
-> > > > examples so we know there's an actual user?
-> > > 
-> > > I'll provide it after the weekend.
+On Mon, Nov 04, 2024 at 10:14:28AM -0800, Stanislav Fomichev wrote:
+> This will be used as a 'probe' mode in the selftest to check whether
+> the device supports the devmem or not. Use hard-coded queue layout
+> (two last queues) and prevent user from passing custom -q and/or -t.
 > 
-> As it is seen through lspci, nothing criminal here.
-> 08:00.0 Ethernet controller: Mellanox Technologies MT2910 Family [ConnectX-7]
-> ...
->         Capabilities: [48] Vital Product Data
->                 Product Name: NVIDIA ConnectX-7 HHHL adapter Card, 200GbE / NDR200 IB, Dual-port QSFP112, PCIe 5.0 x16 with x16 PCIe extension option, Crypto, Secure Boot Capable
->                 Read-only fields:
->                         [PN] Part number: MCX713106AEHEA_QP1
->                         [EC] Engineering changes: A5
->                         [V2] Vendor specific: MCX713106AEHEA_QP1
->                         [SN] Serial number: MT2314XZ0JUZ
->                         [V3] Vendor specific: 0a5efb8958deed118000946dae7db798
->                         [VA] Vendor specific: MLX:MN=MLNX:CSKU=V2:UUID=V3:PCI=V0:MODL=CX713106A
->                         [V0] Vendor specific: PCIeGen5 x16
->                         [VU] Vendor specific: MT2314XZ0JUZMLNXS0D0F0
->                         [RV] Reserved: checksum good, 1 byte(s) reserved
->                 End
+> Reviewed-by: Mina Almasry <almasrymina@google.com>
+> Signed-off-by: Stanislav Fomichev <sdf@fomichev.me>
+> ---
+>  tools/testing/selftests/net/ncdevmem.c | 42 ++++++++++++++++++++------
+>  1 file changed, 32 insertions(+), 10 deletions(-)
 > 
-> > > > Are we confident that VPD never contains anything sensitive?
-> > > > It may contain arbitrary vendor-specific information, so we
-> > > > can't know what might be in that part.
-> > > 
-> > > It depends on the vendor, but I'm pretty confident that any sane
-> > > vendor who read the PCI spec will not put sensitive information
-> > > in the VPD. The spec is very clear that this open to everyone.
-> > 
-> > I don't think the spec really defines "everyone" in this context,
-> > does it?  The concept of privileged vs unprivileged users is an OS
-> > construct, not really something the PCIe spec covers.
-> 
-> Agree that it OS specific, but for me, the fields like manufacturer
-> ID, serial number e.t.c shows that the VPD doesn't contain sensitive
-> information.
+> diff --git a/tools/testing/selftests/net/ncdevmem.c b/tools/testing/selftests/net/ncdevmem.c
+> index 044198ce02a7..270a77206f65 100644
+> --- a/tools/testing/selftests/net/ncdevmem.c
+> +++ b/tools/testing/selftests/net/ncdevmem.c
+> @@ -76,7 +76,7 @@ static char *client_ip;
+>  static char *port;
+>  static size_t do_validation;
+>  static int start_queue = -1;
+> -static int num_queues = 1;
+> +static int num_queues = -1;
+>  static char *ifname;
+>  static unsigned int ifindex;
+>  static unsigned int dmabuf_id;
+> @@ -731,19 +731,31 @@ int main(int argc, char *argv[])
+>  		}
+>  	}
+>  
+> -	if (!server_ip)
+> -		error(1, 0, "Missing -s argument\n");
+> -
+> -	if (!port)
+> -		error(1, 0, "Missing -p argument\n");
+> -
+>  	if (!ifname)
+>  		error(1, 0, "Missing -f argument\n");
+>  
+>  	ifindex = if_nametoindex(ifname);
+>  
+> -	if (start_queue < 0) {
+> -		start_queue = rxq_num(ifindex) - 1;
+> +	if (!server_ip && !client_ip) {
+> +		if (start_queue < 0 && num_queues < 0) {
+> +			num_queues = rxq_num(ifindex);
+> +			if (num_queues < 0)
+> +				error(1, 0, "couldn't detect number of queues\n");
+> +			/* make sure can bind to multiple queues */
+> +			start_queue = num_queues / 2;
+> +			num_queues /= 2;
 
-I don't follow the reasoning that because these fields don't seem
-sensitive, other fields won't be :)
+Sorry for the beginner question :) -- is it possible that rxq_num
+ever returns 1 and thus start_queue = 0, num_queues = 0
 
-> > > > Reading VPD is fairly complicated and we've had problems in
-> > > > the past (we have quirk_blacklist_vpd() for devices that
-> > > > behave "unpredictably"), so it's worth considering whether
-> > > > allowing non-root to do this could be exploited or could allow
-> > > > DOS attacks.
-> > > 
-> > > It is not different from any other PCI field. If you are afraid
-> > > of DOS, you should limit to read all other fields too.
-> > 
-> > Reading VPD is much different than reading things from config space.
-> > 
-> > To read VPD, software needs to:
-> > 
-> >   - Mutex with any other read/write path
-> > 
-> >   - Write the VPD address to read to the VPD Address register, with F
-> >     bit clear
-> > 
-> >   - Wait (with timeout) for hardware to set the F bit of VPD Address
-> >     register
-> > 
-> >   - Read VPD information from the VPD Data register
-> > 
-> >   - Repeat as necessary
-> > 
-> > The address is 15 bits wide, so there may be up to 32KB of VPD data.
-> > The only way to determine the actual length is to read the data and
-> > parse the data items, which is vulnerable to corrupted EEPROMs and
-> > hardware issues if we read beyond the implemented size.
-> > 
-> > The PCI core currently doesn't touch VPD until a driver or userspace
-> > (via sysfs) reads or writes it, so this path is not tested on most
-> > devices.
-> 
-> The patch yes, but the flow is tested very well. It is hard to imagine
-> situation where "lspci -vv" or corresponding library, never used to read
-> data from device. Maybe it is not used daily on all computers, but all
-> devices at least once in their lifetime were accessed.
+> +		}
+> +
+> +		if (start_queue < 0 || num_queues < 0)
+> +			error(1, 0, "Both -t and -q are required\n");
 
-Well, true, but I think "lspci -vv" requires root privilege to read
-the VPD data, doesn't it?
-
-> > > I'm enabling it for modern device which is compliant to PCI spec
-> > > v6.0.  Do you want me to add quirk_allow_vpd() to allow only
-> > > specific devices to read that field? It is doable but not
-> > > scalable.
-> > 
-> > None of these questions really has to do with old vs new devices.
-> > An "allow-list" quirk is possible, but I agree it would be a
-> > maintenance headache.  To me it feels like VPD is kind of in the
-> > same category as dmesg logs.  We try to avoid putting secret stuff
-> > in dmesg, but generally distros still don't make it completely
-> > public.
-> 
-> They hide it as dmesg already exposes a lot of sensitive data. For
-> example, the kernel panic reveals a lot of such data. It is
-> definitely not the case for VPD, and VPD vs. dmesg comparison is not
-> correct one.
-
-dmidecode is another similar case, which is also not public.
-
-What's the use case?  How does an unprivileged user use the VPD
-information?
-
-I can certainly imagine using VPD for bug reporting, but that would
-typically involve dmesg, dmidecode, lspci -vv, etc, all of which
-already require privilege, so it's not clear to me how public VPD info
-would help in that scenario.
-
-Bjorn
+And then isn't caught here because this only checks < 0 (instead of
+num_queues <= 0) ?
 
