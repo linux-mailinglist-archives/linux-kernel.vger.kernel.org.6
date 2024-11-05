@@ -1,104 +1,99 @@
-Return-Path: <linux-kernel+bounces-396921-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396923-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C6DC9BD45A
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 19:15:44 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C4B49BD462
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 19:16:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ADB8A1C234FB
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 18:15:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 256F6B228E0
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 18:16:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E3BC1E7C2C;
-	Tue,  5 Nov 2024 18:15:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE9AA1E7C2D;
+	Tue,  5 Nov 2024 18:15:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tp+AHXtT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="LkvctTHk"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E35E81E7675;
-	Tue,  5 Nov 2024 18:15:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 883591E767B;
+	Tue,  5 Nov 2024 18:15:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730830529; cv=none; b=SWTDxaxikTQPVMNvqY5QV46eIBPS4g0+ZHctF78ZHzBxna0VSm6r4SDqMX7NEIBBbUWcBjjvzMa2svpNj3/mJFe1+hK68G4DAwYq5k9N6Q4piJKgxfCVw5kaJxH5tH2wutx+GpeR5+PA5l2yBau69u5RwrGzcSqOiROXsOh/PMk=
+	t=1730830547; cv=none; b=kp+gakBlva2PXPBDj1dJBaDWjV3vyTJUyuGW5uwJLkMt3ANCKqW9K62juoG4R9roRoqrPv640DpSvSNfMA1lYOFPXhWA15asJeubEPGBA8go4Em+qYecQTDB6iBf6muWMB+zVWKJ9CJNDml0Zeg8wUX2Mis2E0Pso9y0OKnt3GI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730830529; c=relaxed/simple;
-	bh=0SLyPYXn8qaiU3kOUbKXZq/OLmpMozf3yCJYHEr3Ea0=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=rYUEg9ATmIXQTyAUop+VerRWEqRzB0QzhNvii3y9i2fzVLfvcL3v5C4IECA6Z1/+Pil8NhqLYy1zxm+PV7CHmNLWqaCvtCJymlj40RcuqTgbftZVcfYeqv4+B3eZhuOLXiAIUY/1hbL4BONMMBILsUGGVUsKaxUFQQj5PzcK/nY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tp+AHXtT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA06CC4CED3;
-	Tue,  5 Nov 2024 18:15:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730830527;
-	bh=0SLyPYXn8qaiU3kOUbKXZq/OLmpMozf3yCJYHEr3Ea0=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=tp+AHXtTXvtedpfAIISt8W+JoF+2R4z2B7o6AEGmZ2ioHcxjLQV2cID4zKARYJRD1
-	 uQAm5qvitzA4T4aelDRL2FRV35uxkBkmMIgOaxIQeFgXVSy7YH0YBZARO4oywaFf/h
-	 9KieqTw+nHHAmcLix8cRyT9rC4iI+oj86DpKhaqtQy53zj7AQJoLsDeHYjunYIWM4O
-	 XE64ePaaZzORzA7It9RUz3wdo9LBOjqhoxXApy2Zgp/lMfEN5P/Ib7QAGNYFdBUn/d
-	 u2ndf1nMdmLOIAIAImA/+IAcrhX0mejyu5tWTIze8ArMNcZm8hPPE4hmrTGFmQ5E7z
-	 yEOodN5gCfPYw==
-From: Mark Brown <broonie@kernel.org>
-To: Fei Shao <fshao@chromium.org>
-Cc: Conor Dooley <conor+dt@kernel.org>, 
- David Yang <yangxiaohua@everest-semi.com>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-sound@vger.kernel.org
-In-Reply-To: <20241105091910.3984381-1-fshao@chromium.org>
-References: <20241105091910.3984381-1-fshao@chromium.org>
-Subject: Re: [PATCH] ASoC: dt-bindings: everest,es8326: Document interrupt
- property
-Message-Id: <173083052542.94172.3226642386925576095.b4-ty@kernel.org>
-Date: Tue, 05 Nov 2024 18:15:25 +0000
+	s=arc-20240116; t=1730830547; c=relaxed/simple;
+	bh=BBjsb+hg8t8mwlkHWp3i3xePfqIavB+Df6w6mwWrwY0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WUdoNUl+BnGioAsqbpKhS+knmf1J8TgX2Q9chvW6DnN8vbJi3QrLW9UeZzdsCddeMYnf3R8d6J6BocQScIilC1MSLXLC7D0foAypAfwSfk9bIp/Lg85Z3UW95hzu29xIiX3tvZZSFlRMM3Q2/jONcBuW2ymu1A7ax+x6WhKlGAg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=LkvctTHk; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=Uqmym68O0/QCfZxx9k0c637XLqVZRZcVImmW75Z3t+Q=; b=LkvctTHk2IviG4ktAPZXRLQWAr
+	xZu/R3iqT3E/YzV7CSGbPc5X8ub1kAI9NQR33xXa2gAo+HBSxQNMG6XnmWVFmUZu58rV+hp9hYZof
+	fkN2KAm2cpK2oz8BozxWN8b7nSgrGXHITv/zXX00PL0BTAA1lRFD3KMD+sMUmiisB+lc=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1t8O5Q-00CElW-0I; Tue, 05 Nov 2024 19:15:28 +0100
+Date: Tue, 5 Nov 2024 19:15:27 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Vladimir Oltean <olteanv@gmail.com>,
+	Woojung Huh <woojung.huh@microchip.com>,
+	Arun Ramadoss <arun.ramadoss@microchip.com>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>, kernel@pengutronix.de,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	UNGLinuxDriver@microchip.com,
+	"Russell King (Oracle)" <linux@armlinux.org.uk>,
+	devicetree@vger.kernel.org, Marek Vasut <marex@denx.de>
+Subject: Re: [PATCH net-next v3 3/6] net: dsa: microchip: Refactor MDIO
+ handling for side MDIO access
+Message-ID: <790cbc97-6a08-495c-9afd-b8a49e546241@lunn.ch>
+References: <20241105090944.671379-1-o.rempel@pengutronix.de>
+ <20241105090944.671379-4-o.rempel@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-9b746
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241105090944.671379-4-o.rempel@pengutronix.de>
 
-On Tue, 05 Nov 2024 17:18:11 +0800, Fei Shao wrote:
-> The ES8326 audio codec has one interrupt pin for headset detection
-> according to the datasheet. Document that in the binding.
+On Tue, Nov 05, 2024 at 10:09:41AM +0100, Oleksij Rempel wrote:
+> Add support for accessing PHYs via a side MDIO interface in LAN937x
+> switches. The existing code already supports accessing PHYs via main
+> management interfaces, which can be SPI, I2C, or MDIO, depending on the
+> chip variant. This patch enables using a side MDIO bus, where SPI is
+> used for the main switch configuration and MDIO for managing the
+> integrated PHYs. On LAN937x, this is optional, allowing them to operate
+> in both configurations: SPI only, or SPI + MDIO. Typically, the SPI
+> interface is used for switch configuration, while MDIO handles PHY
+> management.
 > 
-> This fixes dtbs_check error:
->   'interrupts-extended' does not match any of the regexes:
->   'pinctrl-[0-9]+'
+> Additionally, update interrupt controller code to support non-linear
+> port to PHY address mapping, enabling correct interrupt handling for
+> configurations where PHY addresses do not directly correspond to port
+> indexes. This change ensures that the interrupt mechanism properly
+> aligns with the new, flexible PHY address mappings introduced by side
+> MDIO support.
 > 
-> [...]
+> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
 
-Applied to
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
-
-Thanks!
-
-[1/1] ASoC: dt-bindings: everest,es8326: Document interrupt property
-      commit: 99348781d249817c8f96a7cbf636b7c6d74bd756
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
+    Andrew
 
