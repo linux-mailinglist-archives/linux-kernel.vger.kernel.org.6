@@ -1,235 +1,173 @@
-Return-Path: <linux-kernel+bounces-397274-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397275-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 421D19BD9C2
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 00:33:59 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B08A29BD9C5
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 00:34:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 620DC1C20D9E
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 23:33:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E6E3284208
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 23:34:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1161A216A1A;
-	Tue,  5 Nov 2024 23:33:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BE62216A31;
+	Tue,  5 Nov 2024 23:34:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J5V/saDb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="LSI/exDI"
+Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55E531D1F79;
-	Tue,  5 Nov 2024 23:33:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 111D41D31A9;
+	Tue,  5 Nov 2024 23:34:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730849632; cv=none; b=DQybJQFBOkkO4XQIfo6xQDl0kusiCaYpXSTD15Rouza8mcsHMzTtrNpLVjw+SWxasD51t+7qZ6cdMPqZd3kSzV6NXsuX2sbXDXchvMtyw0vG9Iuzh78gG59a4/So8vQa/eYQz6Hdtgc9fX++svuPYmukg4pUWlSBH9q2XM5PSJM=
+	t=1730849690; cv=none; b=usAg5NlKPFpm7jQXaUR3PS3Gkn0MHiL39AdJ2igOMLstInwHdWkbwVqMnaCZ1X7p47JpERF7vodQ2rMKEn3s/hpWYvJhQSHnhRcTusEqRK+ZPLExbnu3plBNL6/nCYu3kK9r00LQ9+brAp5xfUj+GJMOdBiTQ00hNPNTKkMi7J8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730849632; c=relaxed/simple;
-	bh=QHI+wwzfVZxBUMpFpA54NjSU2ksTEPpsBrYkMgLBBLk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XfS2TPsvepAkPUrbBJPXkUmAll74WuaK5KtL+8s7kM5aTLESvWjrhbPai301XsdAtm0b8kE2sJq5nt9DBaFkkVDB+uAsGXBMt026NYwLiEVxDTNR7bzh8I37cQaY15lwp0q/ZC7FnELCwTm4vnc4AQ1U24XaK4SQdm/yCcFlKSc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J5V/saDb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C98D5C4CED3;
-	Tue,  5 Nov 2024 23:33:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730849631;
-	bh=QHI+wwzfVZxBUMpFpA54NjSU2ksTEPpsBrYkMgLBBLk=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=J5V/saDb/KJZdqrKQ1V1Y8XNTzphHtliQ+SD3HzN1eQcmBa9/YOahwVSgsIv5VZij
-	 BLxMRRJ4CBU+2ebh2Oy9y/j9icMn/O3TeDUod2OtxXfvQPcn7Wh1Iexh0LLjXHRZDA
-	 asEflod9oe7ngKt5kiYGP2Aoo2XPKR605pxwm+QsxdMtjcVj8tlFSsL7GB3II/9L3H
-	 F78qT7ANkk1ibTMOzbXy9U1Mighq9802RYjp0rc9R6095yyFO3PHHQogqOWKfmAGWs
-	 aeUQYw8enOvplN+V9uDMDPv1snK7evR1RUqtVZCdEa7xBwDWPjobnkJO2MGKGGE2im
-	 Dmewyo8tewR3Q==
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-539f1292a9bso7004744e87.2;
-        Tue, 05 Nov 2024 15:33:51 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCX3TtJiuDl5aXdCLrYf4A6KOP/mnWNPDknG6Qq/fNa8XogXMfzCDO4/iCq4FhMhjAjYeV4ZtFGBBnKz8EY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzuNB/41ZA2d02D64b+3nKZ+2i+ArF+i4WSVbBBSHVCpTl6CMQ7
-	nmdg97tF9EuWNapkZeyhndghcJHZeIifyvH6pPDugTgh/9buHm4FQEcBQPTbmE/+VsIH0kDdC1v
-	nRMIg2rWRAE5BPsVAerQPpm7V6AI=
-X-Google-Smtp-Source: AGHT+IHiA0xhJICDe3U8xuUU+bYaFNvF3OT809WNQMFjMZior0Tcj7JoqkJwawctOdY9wfxtv61wqgMnEyGqhcDU6f8=
-X-Received: by 2002:a05:6512:1314:b0:534:3cdc:dbef with SMTP id
- 2adb3069b0e04-53b3491cd2amr21662326e87.43.1730849630447; Tue, 05 Nov 2024
- 15:33:50 -0800 (PST)
+	s=arc-20240116; t=1730849690; c=relaxed/simple;
+	bh=SU8DwkNDTzeQ2NIK+yrgU5JF0OSH+sCfFE5Eac/5L1o=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=KbQAcLyrhZMSQqThh7VNlEWgo95fxrn1y3v87JKhvSIipzSqK/I+ggCDmHfWIXnFbRHXb/v+1KcOeteHaSjViz/zwIQLMQCCi38aqNYJtHyL+sS/pOPmfIceEaV25y7bDAknsl/jRx0T29nmoogPPBrJMyg0E9TtYCkb0p1jSKk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=LSI/exDI; arc=none smtp.client-ip=203.29.241.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=codeconstruct.com.au; s=2022a; t=1730849685;
+	bh=SU8DwkNDTzeQ2NIK+yrgU5JF0OSH+sCfFE5Eac/5L1o=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References;
+	b=LSI/exDIwaTfqG20PDM3xVYWO4hEIO011twPHfviMD7kYq8tmjuruuV5scTmfWXUo
+	 PLpzOR4VeZR6BazKffzpoBqfihezqQ5rqTkrB5TwxQq5xW8dU44xlRq1gb7WEDDwPM
+	 ob7xrZzfkoOG8hhZYKEBXmVPV777crqx4z59yXxBLxBUzkz35SyLmL54mlZB5eslnW
+	 Gks3AYlypU74C0L1j+bxnKGXNAbSonX93xWZn9IPSKCZGdGrOyrU3Gwz4vlwh0zuKn
+	 YAb/LJxfkEKUNb4yW2zfLW65a09HK7nwFOPOYZWOUADL+LjdoD/3oYHELgEPIq9pl7
+	 cdHCmd46bCKBg==
+Received: from [192.168.68.112] (ppp118-210-162-114.adl-adc-lon-bras34.tpg.internode.on.net [118.210.162.114])
+	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 91CD16B1F7;
+	Wed,  6 Nov 2024 07:34:44 +0800 (AWST)
+Message-ID: <ebdc6c112457db0ec73b43a404e240052dd3c7e4.camel@codeconstruct.com.au>
+Subject: Re: [PATCH v6 1/2] dt-bindings: arm: aspeed: add IBM SBP1 board
+From: Andrew Jeffery <andrew@codeconstruct.com.au>
+To: Conor Dooley <conor@kernel.org>
+Cc: "Rob Herring (Arm)" <robh@kernel.org>, Naresh Solanki
+ <naresh.solanki@9elements.com>, jdelvare@suse.com, Conor Dooley
+ <conor.dooley@microchip.com>, linux-aspeed@lists.ozlabs.org, 
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ krzk+dt@kernel.org,  sylv@sylv.io, linux-arm-kernel@lists.infradead.org,
+ linux-hwmon@vger.kernel.org,  linux@roeck-us.net, Joel Stanley
+ <joel@jms.id.au>, conor+dt@kernel.org
+Date: Wed, 06 Nov 2024 10:04:44 +1030
+In-Reply-To: <20241105-regroup-busily-adbb9b342abc@spud>
+References: <20241104092220.2268805-1-naresh.solanki@9elements.com>
+	 <173072771091.3690717.11563964377469449295.robh@kernel.org>
+	 <20241104-saturate-device-d020a0d7321f@spud>
+	 <f468a5c0a0112cee35815fb6c7b7f9933934adc2.camel@codeconstruct.com.au>
+	 <20241105-regroup-busily-adbb9b342abc@spud>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241014141345.5680-1-david.hunter.linux@gmail.com> <20241014141345.5680-6-david.hunter.linux@gmail.com>
-In-Reply-To: <20241014141345.5680-6-david.hunter.linux@gmail.com>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Wed, 6 Nov 2024 08:33:13 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAQmV=CGzEyJtBRSfz+YW6yTfWza7mf1dPXEiaJDT7z5xQ@mail.gmail.com>
-Message-ID: <CAK7LNAQmV=CGzEyJtBRSfz+YW6yTfWza7mf1dPXEiaJDT7z5xQ@mail.gmail.com>
-Subject: Re: [PATCH v2 5/7] streamline_config.pl: fix: implement choice for kconfigs
-To: David Hunter <david.hunter.linux@gmail.com>
-Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	shuah@kernel.org, javier.carrasco.cruz@gmail.com, 
-	Steven Rostedt <rostedt@goodmis.org>
-Content-Type: multipart/mixed; boundary="00000000000062147f062632d582"
 
---00000000000062147f062632d582
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+On Tue, 2024-11-05 at 18:53 +0000, Conor Dooley wrote:
+> On Tue, Nov 05, 2024 at 10:39:34AM +1030, Andrew Jeffery wrote:
+> > Hi Conor,
+> >=20
+> > On Mon, 2024-11-04 at 18:49 +0000, Conor Dooley wrote:
+> > > On Mon, Nov 04, 2024 at 08:39:21AM -0600, Rob Herring (Arm)
+> > > wrote:
+> > > >=20
+> > > > On Mon, 04 Nov 2024 14:52:14 +0530, Naresh Solanki wrote:
+> > > > > Document the new compatibles used on IBM SBP1.
+> > > > >=20
+> > > > > Signed-off-by: Naresh Solanki <naresh.solanki@9elements.com>
+> > > > > Acked-by: Conor Dooley <conor.dooley@microchip.com>
+> > > > > ---
+> > > > > Changes in V4:
+> > > > > - Retain Acked-by from v2.
+> > > > > - Fix alphabetic order
+> > > > > ---
+> > > > > =C2=A0Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml | =
+1
+> > > > > +
+> > > > > =C2=A01 file changed, 1 insertion(+)
+> > > > >=20
+> > > >=20
+> > > >=20
+> > > > My bot found new DTB warnings on the .dts files added or
+> > > > changed in
+> > > > this
+> > > > series.
+> > > >=20
+> > > > Some warnings may be from an existing SoC .dtsi. Or perhaps the
+> > > > warnings
+> > > > are fixed by another series. Ultimately, it is up to the
+> > > > platform
+> > > > maintainer whether these warnings are acceptable or not. No
+> > > > need to
+> > > > reply
+> > > > unless the platform maintainer has comments.
+> > > >=20
+> > > > If you already ran DT checks and didn't see these error(s),
+> > > > then
+> > > > make sure dt-schema is up to date:
+> > > >=20
+> > > > =C2=A0 pip3 install dtschema --upgrade
+> > > >=20
+> > > >=20
+> > > > New warnings running 'make CHECK_DTBS=3Dy aspeed/aspeed-bmc-ibm-
+> > > > sbp1.dtb' for
+> > > > 20241104092220.2268805-1-naresh.solanki@9elements.com:
+> > >=20
+> > > Really? This many warnings on a v6?
+> > >=20
+> >=20
+> > I understand that it's surprising and disappointing, however these
+> > warnings are from the Aspeed DTSIs and not directly from the
+> > proposed
+> > DTS. Many are an artefact of history, and I'm (slowly) working to
+> > clean
+> > them up. Recently I haven't had any time to dedicate to that
+> > effort,
+> > and as I'm somewhat responsible for the state of things, I'm not
+> > prepared to block other people's patches and push my own
+> > responsibilities onto them.
+>=20
+> Ah, you see that's where I would say "no new warnings" and get the
+> submitter to fix them ;) And were I the submitter, I'd want to
+> resolve
+> the warnings rather than run into issues down the road when things
+> get
+> "fixed"/documented.But I guess that's why I have the schmucks task of
+> reviewing bindings innit..
 
-On Mon, Oct 14, 2024 at 11:14=E2=80=AFPM David Hunter
-<david.hunter.linux@gmail.com> wrote:
->
-> Properly implement the config entries that are within the choice keyword
-> for kconfig. Currently, the script only stops the previous config entry
-> when a choice keyword is encountered.
->
-> When the keyword "choice" is encountered, do the following:
->         - distribute the lines immediately following the "choice"
->           keyword to each config entry inside the "choice" section.
->         - process the config entries with the distributed lines.
->
-> Signed-off-by: David Hunter <david.hunter.linux@gmail.com>
-> ---
-> V1 https://lore.kernel.org/all/20240913171205.22126-6-david.hunter.linux@=
-gmail.com/
->
-> V2
->         - changed the subject prefix
->         - changed the method for storing and distributing the choice
->           block. No longer using temp file.
-> ---
->  scripts/kconfig/streamline_config.pl | 47 ++++++++++++++++++++++++++--
->  1 file changed, 45 insertions(+), 2 deletions(-)
->
-> diff --git a/scripts/kconfig/streamline_config.pl b/scripts/kconfig/strea=
-mline_config.pl
-> index b7ed79c5e070..4149c4b344db 100755
-> --- a/scripts/kconfig/streamline_config.pl
-> +++ b/scripts/kconfig/streamline_config.pl
-> @@ -149,6 +149,34 @@ my $var;
->  my $iflevel =3D 0;
->  my @ifdeps;
->
-> +# distributes choice entries to different config options
-> +sub set_hash_value {
-> +    my %htable =3D %{$_[0]};
-> +    my $tmp_config =3D $_[1];
-> +    my $current_config =3D $_[2];
-> +    if (defined($htable{$tmp_config})) {
-> +       ${$_[0]}{$current_config} =3D $htable{$tmp_config};
-> +    }
-> +}
-> +
-> +# distribute choice config entries
-> +sub copy_configs {
-> +    my $tmp_config =3D "TMP_CONFIG";
-> +    my $choice_config =3D $_[0];
-> +    set_hash_value (\%depends, $tmp_config, $choice_config);
-> +    set_hash_value (\%selects, $tmp_config, $choice_config);
-> +    set_hash_value (\%prompts, $tmp_config, $choice_config);
-> +    set_hash_value (\%defaults, $tmp_config, $choice_config);
-> +}
-> +
-> +sub delete_temp_config {
-> +    my $tmp_config =3D "TMP_CONFIG";
-> +    $depends{$tmp_config} =3D undef;
-> +    $selects{$tmp_config} =3D undef;
-> +    $prompts{$tmp_config} =3D undef;
-> +    $defaults{$tmp_config} =3D undef;
-> +}
-> +
+I have to manage that in tension with my concern of people simply not
+upstreaming their devicetrees in response. I'd prefer to have them
+merged upstream than to encourage more forks in this corner of the
+world. If people would like to take the initiative and do the binding
+conversions, corrections and devicetree fixes themselves, I'll
+definitely review them.
 
+>=20
+> > I've been replying to those proposing new Aspeed-based devicetrees
+> > to
+> > separate the warnings they're introducing from the warnings that
+> > already exist, and requiring them to fix the issues they're
+> > responsible
+> > for. I hope that I'll have time to continue to improve the
+> > situation,
+> > as this is obviously a tedious task for me too.=20
+>=20
+> Well, it is your platform and if you're confident that these nodes
+> are
+> correct despite the warnings, who am I to stop you!
 
-I previously suggested checking how the 'if' statement is handled.
-https://lore.kernel.org/lkml/CAK7LNAQ8D4OVT81iTVs8jjrBXX6Zgwc+VJ_vb7hb4J-vC=
-ZZN=3Dg@mail.gmail.com/
+I think where things stand currently is a bit fuzzier than anyone would
+like. The nodes are not incorrect to the point of being non-functional
+with respect to their intent, but clearly they're not so correct that
+they do not have room for improvement.
 
-
-These two behave in a similar way
-regarding the dependency propagation.
-
-
-if FOO
-config A
-           bool "A"
-
-config B
-           bool "B"
-endif
-
-
-
-choice
-         prompt "choose"
-         depends on FOO
-config A
-           bool "A"
-config B
-           bool "B"
-endchoice
-
-
-The inner A and B inherit the dependency on FOO.
-
-I attached a completely-untested patch.
-I think 'if' and 'choice' can share the code.
-
-
-BTW, 'menu' also can have 'depends on'.
-
-
-menu "menu"
-         depends on FOO
-config A
-           bool "A"
-config B
-           bool "B"
-endmenu
-
-
-This is not implemented, either.
-
-I am not sure how much effort should be invested in this script, though.
-
-
---=20
-Best Regards
-Masahiro Yamada
-
---00000000000062147f062632d582
-Content-Type: text/x-patch; charset="US-ASCII"; name="choice.diff"
-Content-Disposition: attachment; filename="choice.diff"
-Content-Transfer-Encoding: base64
-Content-ID: <f_m352zl0z0>
-X-Attachment-Id: f_m352zl0z0
-
-ZGlmZiAtLWdpdCBhL3NjcmlwdHMva2NvbmZpZy9zdHJlYW1saW5lX2NvbmZpZy5wbCBiL3Njcmlw
-dHMva2NvbmZpZy9zdHJlYW1saW5lX2NvbmZpZy5wbAppbmRleCA4ZTIzZmFhYjVkMjIuLjI4ZmFm
-OGNkMGUyYSAxMDA3NTUKLS0tIGEvc2NyaXB0cy9rY29uZmlnL3N0cmVhbWxpbmVfY29uZmlnLnBs
-CisrKyBiL3NjcmlwdHMva2NvbmZpZy9zdHJlYW1saW5lX2NvbmZpZy5wbApAQCAtMTQ2LDcgKzE0
-Niw3IEBAIG15ICVvYmplY3RzOwogbXkgJWNvbmZpZzJrZmlsZTsKIG15ICVkZWZhdWx0czsKIG15
-ICR2YXI7Ci1teSAkaWZsZXZlbCA9IDA7CitteSAkaWZsZXZlbCA9IC0xOwogbXkgQGlmZGVwczsK
-IAogIyBwcmV2ZW50IHJlY3Vyc2lvbgpAQCAtMjA2LDcgKzIwNiw3IEBAIHN1YiByZWFkX2tjb25m
-aWcgewogCSAgICAkY29uZmlnMmtmaWxleyJDT05GSUdfJGNvbmZpZyJ9ID0gJGtjb25maWc7CiAK
-IAkgICAgIyBBZGQgZGVwZW5kcyBmb3IgJ2lmJyBuZXN0aW5nCi0JICAgIGZvciAobXkgJGkgPSAw
-OyAkaSA8ICRpZmxldmVsOyAkaSsrKSB7CisJICAgIGZvciAobXkgJGkgPSAwOyAkaSA8PSAkaWZs
-ZXZlbDsgJGkrKykgewogCQlpZiAoJGkpIHsKIAkJICAgICRkZXBlbmRzeyRjb25maWd9IC49ICIg
-IiAuICRpZmRlcHNbJGldOwogCQl9IGVsc2UgewpAQCAtMjIxLDYgKzIyMSwxMCBAQCBzdWIgcmVh
-ZF9rY29uZmlnIHsKIAkgICAgJGRlcGVuZHN7JGNvbmZpZ30gPSAkMTsKIAl9IGVsc2lmICgkc3Rh
-dGUgZXEgIkRFUCIgJiYgL15ccypkZXBlbmRzXHMrb25ccysoLiopJC8pIHsKIAkgICAgJGRlcGVu
-ZHN7JGNvbmZpZ30gLj0gIiAiIC4gJDE7CisJfSBlbHNpZiAoJHN0YXRlIGVxICJOT05FIiAmJiAv
-XlxzKmRlcGVuZHNccytvblxzKyguKikkLykgeworCSAgICAjICJkZXBlbmRzIG9uIiBpbiB0aGUg
-Ik5PTkUiIHN0YXRlIGlzIGZyb20gYSBjaG9pY2UgYmxvY2suCisJICAgICMgUHJvcGFnYXRlIHRo
-ZSBkZXBlbmRlbmN5IHRvIGl0cyBtZW1iZXIgY29uZmlnIG9wdGlvbnMuCisJICAgICRpZmRlcHNb
-JGlmbGV2ZWxdIC49ICc6JyAuICRpZmRlcHNbJGlmbGV2ZWxdOwogCX0gZWxzaWYgKCRzdGF0ZSBu
-ZSAiTk9ORSIgJiYgL15ccypkZWYoXyhib29sfHRyaXN0YXRlKXxhdWx0KVxzKyhcUy4qKSQvKSB7
-CiAJICAgIG15ICRkZXAgPSAkMzsKICAgICAgICAgICAgICRkZWZhdWx0c3skY29uZmlnfSA9IDE7
-CkBAIC0yNTMsMTEgKzI1OCwxNiBAQCBzdWIgcmVhZF9rY29uZmlnIHsKIAogCSAgICBteSBAZGVw
-cyA9IHNwbGl0IC9bXmEtekEtWjAtOV9dKy8sICRkZXBzOwogCi0JICAgICRpZmRlcHNbJGlmbGV2
-ZWwrK10gPSBqb2luICc6JywgQGRlcHM7CisJICAgICRpZmRlcHNbKyskaWZsZXZlbF0gPSBqb2lu
-ICc6JywgQGRlcHM7CiAKLQl9IGVsc2lmICgvXmVuZGlmLykgeworCX0gZWxzaWYgKC9eXHMqY2hv
-aWNlXHMqJC8pIHsKIAotCSAgICAkaWZsZXZlbC0tIGlmICgkaWZsZXZlbCk7CisJICAgICRzdGF0
-ZSA9ICJOT05FIjsKKwkgICAgJGlmZGVwc1srKyRpZmxldmVsXSA9ICcnOworCisJfSBlbHNpZiAo
-L14oZW5kaWZ8ZW5kY2hvaWNlKS8pIHsKKworCSAgICAtLSRpZmxldmVsIGlmICgkaWZsZXZlbCA+
-IC0xKTsKIAogCSMgc3RvcCBvbiAiaGVscCIgYW5kIGtleXdvcmRzIHRoYXQgZW5kIGEgbWVudSBl
-bnRyeQogCX0gZWxzaWYgKC9eXHMqKC0tLSk/aGVscCgtLS0pP1xzKiQvIHx8IC9eKGNvbW1lbnR8
-Y2hvaWNlfG1lbnUpXGIvKSB7Cg==
---00000000000062147f062632d582--
+Andrew
 
