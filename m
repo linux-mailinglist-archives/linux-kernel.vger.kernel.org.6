@@ -1,70 +1,70 @@
-Return-Path: <linux-kernel+bounces-396732-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396733-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 285699BD15F
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 17:00:15 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09D709BD161
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 17:00:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ACA271F23D59
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 16:00:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 56766B24624
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 16:00:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3CD817BEBF;
-	Tue,  5 Nov 2024 15:58:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 510041D9A6F;
+	Tue,  5 Nov 2024 15:58:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kFQlFI8w"
-Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lFwEFWLY"
+Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F3BE153803
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 15:58:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A121D1D414B
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 15:58:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730822309; cv=none; b=Hid/m/ZJhKEEHHZHO0hMpc0lmL6G6R0l+CfYgQTWQPlPkiERmCdl7IwkgAICPB4vjz6MRdYT/FM/OSlMwFlGnPmJZ3RmAZxTxOlYFHTm40Uxr3l4RQ+Ul3Pzi/XxccRBMatTbVQLCh1uQJEQk8uWZy9JvCosolc+SGr6nO9mlQI=
+	t=1730822310; cv=none; b=JD85Y4I5f/OtNQbIz/px+/A2dLPAj8IFEp4IL+7L0/KUDnjbV+U0sehWhfxrPg3iZxSQ0ynjzSTR9nYfYMQGKPIGvR4cDcA0iaCaNhNJ9kwljsdti9eW8t+YTDk1DU3s7U51a0sIP9A2/BIkQ62at7OItqe8cRnVqCRd/jz95c8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730822309; c=relaxed/simple;
-	bh=VKZxyxQuCeCAp7E1ZD/xgpVA5NwZJY41JC3Fi32MySo=;
+	s=arc-20240116; t=1730822310; c=relaxed/simple;
+	bh=TmUCx4UpY+BQFLsOPmL14Hg7eWM+uT42BafZdQbiR4g=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=nrlCjPwzRpxBXrhnF8YK9+nVJPnqjl31dGqo3FDAjkWNhaJK/13rOUBazZhyN/yBlQ2hSdfzQF1La/YDMsmEfGdUUK6ZzopV0hSPTYikCF2kvqzZUKQVQm37Xruvm4lzT5z/3knBWJr0KH+5QAZdbMCfTeuZeQ8mzQpj4BkoLVQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kFQlFI8w; arc=none smtp.client-ip=209.85.222.180
+	 MIME-Version; b=WVn36whMQYROhNihT8CVSPXPEBg8GUogkR2CbdWrW0u6TKqGIzw3nPfr2ocK3kDb/xfliPrTaP0cVw4sc/kfVlXq4s28gBAv9ZVogawVr8CRzYUEKdi0KmNiESZEzlouicEu2OrXGlRZqp4QNEhXG1afWv6GiQ0vRl7V6S4mmPw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lFwEFWLY; arc=none smtp.client-ip=209.85.222.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-7b1507c42faso488391085a.0
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 07:58:27 -0800 (PST)
+Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-7b14f3927ddso431239285a.3
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 07:58:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730822306; x=1731427106; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1730822307; x=1731427107; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=rYtUu/3spTzBfsHpJwDAQi6vkZMUuhHEudbP0S8CJAI=;
-        b=kFQlFI8wMajP2qN8EZWYnUrrDaVeuF3eS0NWGOyZx8NEQw+k0Unfcw/9adeOrywTVn
-         G6NVrNSAjONM+luc+n+IFzAbZzSXRVkiSINtC0kdp4AiN5yJBsLpL2rajlHPO0JM6oI+
-         NyNNDs6CVzdkrkW2nsAi26InLH/e+oWtoX+YRjuqNhJTM296O1AreNjE+oF8udoEfCXw
-         WIko07guox8dp8uw9nGbcs7xUNzm4TKuHMiyN0fNVpMvwenwVrG7izS3DZ8O7QHTVXgm
-         VFAucQ5VBSk+QEbEO+1BAWHNzWG1l/LjXNBYL129O71Vi/V/M2EC/mBWULQHLo8E26bM
-         hlRA==
+        bh=m9WD19gdt8CNaGFyWP/88P7iTTjUvAoc05Lsqx3RBdA=;
+        b=lFwEFWLYXvWTEem7BdaXVuN2n/Q9W6OamrTz1TT6U9uOLNjA30m6Dbk0vvsVfGIhC6
+         VWCvFw6DdhNSEejGbwNJcdMn1zsCfkKTMeQQb6pBmuIxuW3hBawKGjUmLo5WopctwM4k
+         qKuwFjaup1TC5gQbjZBZ2MjogzdII1tAGCfjawaBodAx5lEbFDUbKmN1bR7qDSRvxwVB
+         bD6ej9ARQNERFL7WdDRxllmcJ0c4+5EVzBPEkSU3izV223P0qweiD/0Zpu4yvyp6kbFA
+         QoFvCm6ARqX8NZhYJUXPzHzolliIBKyu9w5Z/KngrGqGPWcTAWQzCusSixxfUSXH/H0L
+         fMEw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730822306; x=1731427106;
+        d=1e100.net; s=20230601; t=1730822307; x=1731427107;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=rYtUu/3spTzBfsHpJwDAQi6vkZMUuhHEudbP0S8CJAI=;
-        b=X/IcK0nIvZtu+2wp902Xm/IvD1GqXJgN4XOyFzVpw6z+oyHuEQX+AKK3wOnrthPluU
-         phMXBcO76OZ5S6AGgf6sORfiCAX7CBvue1Du7hYIjdu2plLGCjvKrqKNhOqPchi6timc
-         406hJkmWcVon2pd3s6heU6SMflpQTqQorgyjklBjMXa3UsZc3aRr8yWGOPJMgyBnAEtX
-         8y/x1e3uQKdKrdwWUfzoCQ46+RDv1WlBmYBMKCBWPVTqOZfGWZhXpj9bxVZLu2t23e52
-         +AvQ5ukAfdwMlTJt1C0bemEAJtMRhRu82AeIP5VIbQB/xd05PE5djAB/NPY7CyjRN2Tn
-         VJUA==
-X-Gm-Message-State: AOJu0YzbNtwyLAPvS73jWdJjDlB+xx746mZr9s5gFZCXZLf0kFCZbgCg
-	bqUWTij9CUSwoxuRUgSsUwls9Rxuox7mxqS3H6qksR7vLT6mAZkZK97h
-X-Google-Smtp-Source: AGHT+IHJ0vJs6Nk1zwPgH5KUP/ZZRTfwjSoxm05Oh/3CWA4aU8hlkdRE/ebP8IGoApHWXFwDOT1uWA==
-X-Received: by 2002:a05:6214:483:b0:6cb:644e:c9a8 with SMTP id 6a1803df08f44-6d35b8e6aefmr286579416d6.4.1730822305870;
-        Tue, 05 Nov 2024 07:58:25 -0800 (PST)
+        bh=m9WD19gdt8CNaGFyWP/88P7iTTjUvAoc05Lsqx3RBdA=;
+        b=DKJFi7y6jArL5VMgsOjMOEN96uIbIo4CfwofJ9PYqOgDTPTjKPPiJHi1CbS8WnL1O7
+         ObzFl9EDhSYYfMqL/+hTmTi4xRXyHfkgG2+lmk1n6nk3JljoFxsWt4kAamGC4UQLLH55
+         kUTByi1ROAv9OWBAMN9hPz1Efw3AKPiJdpuXRpau42RuUOMSLbfxwWI80T/jrIfej1cj
+         gM2yzRbwwpkMwbQi2RCxGwhEBcgNXbC/4yyZGLNbTIdjthiVk73kdkf5G3fXEFUuI7as
+         OTymn0ekspS0KSatkCyEQ3O9Kt9S0YKKtIqoZcBtOsiD/LdEUgrlmicT9jeJJfE8VS/p
+         nqOQ==
+X-Gm-Message-State: AOJu0Yx16Oer28W3OrB/UilZnW7J0Im41QpYmlmCeK4E8giFy/ca5Uh3
+	2fSDP5UHGcaW33jMexZYxVix5mNb0oCqIJVIo4SbLRBsysd/qsaY3Ji/
+X-Google-Smtp-Source: AGHT+IFBJUBm5do6sgjewQawqaxPEnRX6M4L/ZUZIiKr4vCweI0y7slZ6Q4FQihmyy14BQsPKfVOOw==
+X-Received: by 2002:a05:6214:469a:b0:6d3:45ad:d850 with SMTP id 6a1803df08f44-6d345addb51mr358711426d6.26.1730822307045;
+        Tue, 05 Nov 2024 07:58:27 -0800 (PST)
 Received: from citadel.lan ([2600:6c4a:4d3f:6d5c::1019])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d353fc6d07sm61710586d6.44.2024.11.05.07.58.24
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d353fc6d07sm61710586d6.44.2024.11.05.07.58.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Nov 2024 07:58:25 -0800 (PST)
+        Tue, 05 Nov 2024 07:58:26 -0800 (PST)
 From: Brian Gerst <brgerst@gmail.com>
 To: linux-kernel@vger.kernel.org,
 	x86@kernel.org
@@ -75,9 +75,9 @@ Cc: Ingo Molnar <mingo@kernel.org>,
 	Ard Biesheuvel <ardb@kernel.org>,
 	Uros Bizjak <ubizjak@gmail.com>,
 	Brian Gerst <brgerst@gmail.com>
-Subject: [PATCH v5 10/16] x86/percpu/64: Remove fixed_percpu_data
-Date: Tue,  5 Nov 2024 10:57:55 -0500
-Message-ID: <20241105155801.1779119-11-brgerst@gmail.com>
+Subject: [PATCH v5 11/16] x86/boot/64: Remove inverse relocations
+Date: Tue,  5 Nov 2024 10:57:56 -0500
+Message-ID: <20241105155801.1779119-12-brgerst@gmail.com>
 X-Mailer: git-send-email 2.47.0
 In-Reply-To: <20241105155801.1779119-1-brgerst@gmail.com>
 References: <20241105155801.1779119-1-brgerst@gmail.com>
@@ -89,75 +89,269 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Now that the stack protector canary value is a normal percpu variable,
-fixed_percpu_data is unused and can be removed.
+Inverse relocations were needed to offset the effects of relocation for
+RIP-relative accesses to zero-based percpu data.  Now that the percpu
+section is linked normally as part of the kernel image, they are no
+longer needed.
 
 Signed-off-by: Brian Gerst <brgerst@gmail.com>
 ---
- arch/x86/include/asm/processor.h | 8 --------
- arch/x86/kernel/cpu/common.c     | 4 ----
- arch/x86/kernel/vmlinux.lds.S    | 1 -
- arch/x86/tools/relocs.c          | 1 -
- 4 files changed, 14 deletions(-)
+ arch/x86/boot/compressed/misc.c |  14 +---
+ arch/x86/tools/relocs.c         | 130 +-------------------------------
+ 2 files changed, 2 insertions(+), 142 deletions(-)
 
-diff --git a/arch/x86/include/asm/processor.h b/arch/x86/include/asm/processor.h
-index ae50d5d4fa26..e1b856e2f944 100644
---- a/arch/x86/include/asm/processor.h
-+++ b/arch/x86/include/asm/processor.h
-@@ -418,14 +418,6 @@ struct irq_stack {
- } __aligned(IRQ_STACK_SIZE);
+diff --git a/arch/x86/boot/compressed/misc.c b/arch/x86/boot/compressed/misc.c
+index 0d37420cad02..1cdcd4aaf395 100644
+--- a/arch/x86/boot/compressed/misc.c
++++ b/arch/x86/boot/compressed/misc.c
+@@ -235,7 +235,7 @@ static void handle_relocations(void *output, unsigned long output_len,
  
- #ifdef CONFIG_X86_64
--struct fixed_percpu_data {
--	char		gs_base[40];
--	unsigned long	reserved;
--};
--
--DECLARE_PER_CPU_FIRST(struct fixed_percpu_data, fixed_percpu_data) __visible;
--DECLARE_INIT_PER_CPU(fixed_percpu_data);
--
- static inline unsigned long cpu_kernelmode_gs_base(int cpu)
- {
- #ifdef CONFIG_SMP
-diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-index 1f33d5feb050..d6102e772c7e 100644
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -2020,10 +2020,6 @@ EXPORT_PER_CPU_SYMBOL(pcpu_hot);
- EXPORT_PER_CPU_SYMBOL(const_pcpu_hot);
- 
- #ifdef CONFIG_X86_64
--DEFINE_PER_CPU_FIRST(struct fixed_percpu_data,
--		     fixed_percpu_data) __aligned(PAGE_SIZE) __visible;
--EXPORT_PER_CPU_SYMBOL_GPL(fixed_percpu_data);
--
- static void wrmsrl_cstar(unsigned long val)
- {
  	/*
-diff --git a/arch/x86/kernel/vmlinux.lds.S b/arch/x86/kernel/vmlinux.lds.S
-index 42d1c05b0207..859ff7c0dc02 100644
---- a/arch/x86/kernel/vmlinux.lds.S
-+++ b/arch/x86/kernel/vmlinux.lds.S
-@@ -456,7 +456,6 @@ PROVIDE(__ref_stack_chk_guard = __stack_chk_guard);
-  */
- #define INIT_PER_CPU(x) init_per_cpu__##x = ABSOLUTE(x)
- INIT_PER_CPU(gdt_page);
--INIT_PER_CPU(fixed_percpu_data);
- INIT_PER_CPU(irq_stack_backing_store);
- 
- #ifdef CONFIG_MITIGATION_UNRET_ENTRY
+ 	 * Process relocations: 32 bit relocations first then 64 bit after.
+-	 * Three sets of binary relocations are added to the end of the kernel
++	 * Two sets of binary relocations are added to the end of the kernel
+ 	 * before compression. Each relocation table entry is the kernel
+ 	 * address of the location which needs to be updated stored as a
+ 	 * 32-bit value which is sign extended to 64 bits.
+@@ -245,8 +245,6 @@ static void handle_relocations(void *output, unsigned long output_len,
+ 	 * kernel bits...
+ 	 * 0 - zero terminator for 64 bit relocations
+ 	 * 64 bit relocation repeated
+-	 * 0 - zero terminator for inverse 32 bit relocations
+-	 * 32 bit inverse relocation repeated
+ 	 * 0 - zero terminator for 32 bit relocations
+ 	 * 32 bit relocation repeated
+ 	 *
+@@ -263,16 +261,6 @@ static void handle_relocations(void *output, unsigned long output_len,
+ 		*(uint32_t *)ptr += delta;
+ 	}
+ #ifdef CONFIG_X86_64
+-	while (*--reloc) {
+-		long extended = *reloc;
+-		extended += map;
+-
+-		ptr = (unsigned long)extended;
+-		if (ptr < min_addr || ptr > max_addr)
+-			error("inverse 32-bit relocation outside of kernel!\n");
+-
+-		*(int32_t *)ptr -= delta;
+-	}
+ 	for (reloc--; *reloc; reloc--) {
+ 		long extended = *reloc;
+ 		extended += map;
 diff --git a/arch/x86/tools/relocs.c b/arch/x86/tools/relocs.c
-index 8b5e2bc3d241..a661a6bab4cf 100644
+index a661a6bab4cf..8d9e82748615 100644
 --- a/arch/x86/tools/relocs.c
 +++ b/arch/x86/tools/relocs.c
-@@ -829,7 +829,6 @@ static void percpu_init(void)
-  *	__per_cpu_load
-  *
-  * The "gold" linker incorrectly associates:
-- *	init_per_cpu__fixed_percpu_data
-  *	init_per_cpu__gdt_page
-  */
- static int is_percpu_sym(ElfW(Sym) *sym, const char *symname)
+@@ -29,7 +29,6 @@ static struct relocs		relocs16;
+ static struct relocs		relocs32;
+ 
+ #if ELF_BITS == 64
+-static struct relocs		relocs32neg;
+ static struct relocs		relocs64;
+ # define FMT PRIu64
+ 
+@@ -90,7 +89,6 @@ static const char * const	sym_regex_kernel[S_NSYMTYPES] = {
+ 	"__initramfs_start|"
+ 	"(jiffies|jiffies_64)|"
+ #if ELF_BITS == 64
+-	"__per_cpu_load|"
+ 	"init_per_cpu__.*|"
+ 	"__end_rodata_hpage_align|"
+ #endif
+@@ -289,34 +287,6 @@ static const char *sym_name(const char *sym_strtab, Elf_Sym *sym)
+ 	return name;
+ }
+ 
+-static Elf_Sym *sym_lookup(const char *symname)
+-{
+-	int i;
+-
+-	for (i = 0; i < shnum; i++) {
+-		struct section *sec = &secs[i];
+-		long nsyms;
+-		char *strtab;
+-		Elf_Sym *symtab;
+-		Elf_Sym *sym;
+-
+-		if (sec->shdr.sh_type != SHT_SYMTAB)
+-			continue;
+-
+-		nsyms = sec->shdr.sh_size/sizeof(Elf_Sym);
+-		symtab = sec->symtab;
+-		strtab = sec->link->strtab;
+-
+-		for (sym = symtab; --nsyms >= 0; sym++) {
+-			if (!sym->st_name)
+-				continue;
+-			if (strcmp(symname, strtab + sym->st_name) == 0)
+-				return sym;
+-		}
+-	}
+-	return 0;
+-}
+-
+ #if BYTE_ORDER == LITTLE_ENDIAN
+ # define le16_to_cpu(val)	(val)
+ # define le32_to_cpu(val)	(val)
+@@ -765,78 +735,8 @@ static void walk_relocs(int (*process)(struct section *sec, Elf_Rel *rel,
+ 	}
+ }
+ 
+-/*
+- * The .data..percpu section is a special case for x86_64 SMP kernels.
+- * It is used to initialize the actual per_cpu areas and to provide
+- * definitions for the per_cpu variables that correspond to their offsets
+- * within the percpu area. Since the values of all of the symbols need
+- * to be offsets from the start of the per_cpu area the virtual address
+- * (sh_addr) of .data..percpu is 0 in SMP kernels.
+- *
+- * This means that:
+- *
+- *	Relocations that reference symbols in the per_cpu area do not
+- *	need further relocation (since the value is an offset relative
+- *	to the start of the per_cpu area that does not change).
+- *
+- *	Relocations that apply to the per_cpu area need to have their
+- *	offset adjusted by by the value of __per_cpu_load to make them
+- *	point to the correct place in the loaded image (because the
+- *	virtual address of .data..percpu is 0).
+- *
+- * For non SMP kernels .data..percpu is linked as part of the normal
+- * kernel data and does not require special treatment.
+- *
+- */
+-static int per_cpu_shndx = -1;
+-static Elf_Addr per_cpu_load_addr;
+-
+-static void percpu_init(void)
+-{
+-	int i;
+-
+-	for (i = 0; i < shnum; i++) {
+-		ElfW(Sym) *sym;
+-
+-		if (strcmp(sec_name(i), ".data..percpu"))
+-			continue;
+-
+-		if (secs[i].shdr.sh_addr != 0)	/* non SMP kernel */
+-			return;
+-
+-		sym = sym_lookup("__per_cpu_load");
+-		if (!sym)
+-			die("can't find __per_cpu_load\n");
+-
+-		per_cpu_shndx = i;
+-		per_cpu_load_addr = sym->st_value;
+-
+-		return;
+-	}
+-}
+-
+ #if ELF_BITS == 64
+ 
+-/*
+- * Check to see if a symbol lies in the .data..percpu section.
+- *
+- * The linker incorrectly associates some symbols with the
+- * .data..percpu section so we also need to check the symbol
+- * name to make sure that we classify the symbol correctly.
+- *
+- * The GNU linker incorrectly associates:
+- *	__init_begin
+- *	__per_cpu_load
+- *
+- * The "gold" linker incorrectly associates:
+- *	init_per_cpu__gdt_page
+- */
+-static int is_percpu_sym(ElfW(Sym) *sym, const char *symname)
+-{
+-	return 0;
+-}
+-
+-
+ static int do_reloc64(struct section *sec, Elf_Rel *rel, ElfW(Sym) *sym,
+ 		      const char *symname)
+ {
+@@ -847,12 +747,6 @@ static int do_reloc64(struct section *sec, Elf_Rel *rel, ElfW(Sym) *sym,
+ 	if (sym->st_shndx == SHN_UNDEF)
+ 		return 0;
+ 
+-	/*
+-	 * Adjust the offset if this reloc applies to the percpu section.
+-	 */
+-	if (sec->shdr.sh_info == per_cpu_shndx)
+-		offset += per_cpu_load_addr;
+-
+ 	switch (r_type) {
+ 	case R_X86_64_NONE:
+ 		/* NONE can be ignored. */
+@@ -862,32 +756,21 @@ static int do_reloc64(struct section *sec, Elf_Rel *rel, ElfW(Sym) *sym,
+ 	case R_X86_64_PLT32:
+ 	case R_X86_64_REX_GOTPCRELX:
+ 		/*
+-		 * PC relative relocations don't need to be adjusted unless
+-		 * referencing a percpu symbol.
++		 * PC relative relocations don't need to be adjusted.
+ 		 *
+ 		 * NB: R_X86_64_PLT32 can be treated as R_X86_64_PC32.
+ 		 */
+-		if (is_percpu_sym(sym, symname))
+-			add_reloc(&relocs32neg, offset);
+ 		break;
+ 
+ 	case R_X86_64_PC64:
+ 		/*
+ 		 * Only used by jump labels
+ 		 */
+-		if (is_percpu_sym(sym, symname))
+-			die("Invalid R_X86_64_PC64 relocation against per-CPU symbol %s\n", symname);
+ 		break;
+ 
+ 	case R_X86_64_32:
+ 	case R_X86_64_32S:
+ 	case R_X86_64_64:
+-		/*
+-		 * References to the percpu area don't need to be adjusted.
+-		 */
+-		if (is_percpu_sym(sym, symname))
+-			break;
+-
+ 		if (shn_abs) {
+ 			/*
+ 			 * Whitelisted absolute symbols do not require
+@@ -1094,7 +977,6 @@ static void emit_relocs(int as_text, int use_real_mode)
+ 	/* Order the relocations for more efficient processing */
+ 	sort_relocs(&relocs32);
+ #if ELF_BITS == 64
+-	sort_relocs(&relocs32neg);
+ 	sort_relocs(&relocs64);
+ #else
+ 	sort_relocs(&relocs16);
+@@ -1126,13 +1008,6 @@ static void emit_relocs(int as_text, int use_real_mode)
+ 		/* Now print each relocation */
+ 		for (i = 0; i < relocs64.count; i++)
+ 			write_reloc(relocs64.offset[i], stdout);
+-
+-		/* Print a stop */
+-		write_reloc(0, stdout);
+-
+-		/* Now print each inverse 32-bit relocation */
+-		for (i = 0; i < relocs32neg.count; i++)
+-			write_reloc(relocs32neg.offset[i], stdout);
+ #endif
+ 
+ 		/* Print a stop */
+@@ -1185,9 +1060,6 @@ void process(FILE *fp, int use_real_mode, int as_text,
+ 	read_symtabs(fp);
+ 	read_relocs(fp);
+ 
+-	if (ELF_BITS == 64)
+-		percpu_init();
+-
+ 	if (show_absolute_syms) {
+ 		print_absolute_symbols();
+ 		return;
 -- 
 2.47.0
 
