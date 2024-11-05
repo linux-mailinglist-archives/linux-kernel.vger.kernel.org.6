@@ -1,134 +1,181 @@
-Return-Path: <linux-kernel+bounces-395763-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395765-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D52BC9BC291
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 02:29:03 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2E479BC295
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 02:31:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 414E9B21A60
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 01:29:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C62D21C21FF9
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 01:31:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E51A428399;
-	Tue,  5 Nov 2024 01:28:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D54FF22F1C;
+	Tue,  5 Nov 2024 01:31:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="VHDXD2pr"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="RXbq5GUX"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03D9E2837B;
-	Tue,  5 Nov 2024 01:28:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACBBE1CABA;
+	Tue,  5 Nov 2024 01:31:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730770126; cv=none; b=SGQm4y6XtZxnvWJ8xY6b4/No/xuQfMUoJ5L0688IHdhDHz99uS8tDY3kE5vzrEcrInLc6NtcBB6Ejhzjxx4lSxoZ9N3qtLX0rvSXCBVCK8X/AZXKJiY4ujcnwktWAmVlPnmRosyoVJRQYfKpmI+wkqarZe6j+gvMqyC7lqdb2Ak=
+	t=1730770266; cv=none; b=DEC/HdOPlEMGEfRj/nOZy32Wqs/aUf8ogghXbs04wFMVEqZPEPUzzRGlgCWMXCoTJZ31LMb/dJbiEarP5Ej5TISL9cR8TUM6FLbViTdLO1eDJmv/oODIgXwNQtOVRqEf2FYZMGUkgXRZruDloKWPDmhBagPORU32sa4ZACT4CsA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730770126; c=relaxed/simple;
-	bh=Irjhm/hyzSaOy7K8L8MUaM7H/gFtinY+JmWS+0wPTsI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=ShMIo/D/7e7mB9a377HbYnoMYXVvOGfRagc4QKYV3sFZ8ssFw4s3n0numehO1g2sMik3C6lpmZCHDnVDCwoF2X9Fg11iQMXWuudt7pUilQy4PO56ObKMaIsrH3Fn6g1azpZwxzzKm9ute8df0y9cVowmaJDscIIRiMmZnSpkL/U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=VHDXD2pr; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1730770117;
-	bh=2ydqDCJfAjTtRMwJu/mQEQxyknSlntFKqHzTV922HGY=;
-	h=Date:From:To:Cc:Subject:From;
-	b=VHDXD2prYvHJgPnsosEFKbXN3LOAiXXc5QHEpEOPOQ8TcBS7u5TOXJlGdFMgpcTcY
-	 IyB6RFz65R6htaYjxmtb3peh3XuDdWyQAGY2Tc7JheXAuSI+gG70A4kKSGERuM0k87
-	 kvR0cItdrz7BLN8I+Yi0Z53QfdOCsFclO9QAokVybbW1Rvx0ATLPxKZ+ZOXJcecaNe
-	 dU+GE94deNxTOU4MqhVSkzTEOVvDhwggbkkb54qSEO14q/ZgmhSzokGZRuPSycJVed
-	 xidPgXiWegIudT7T8C/rJSFdE7ZvBkXyUTOCu7j8bKstUHWoyfdEo0AKBPA6/Kr3/C
-	 SoHBqTNPqakeQ==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Xj9hj1PPLz4w2N;
-	Tue,  5 Nov 2024 12:28:37 +1100 (AEDT)
-Date: Tue, 5 Nov 2024 12:28:38 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Alex Deucher <alexdeucher@gmail.com>, Dave Airlie <airlied@redhat.com>
-Cc: Alex Deucher <alexander.deucher@amd.com>, Christian =?UTF-8?B?S8O2bmln?=
- <christian.koenig@amd.com>, Christian =?UTF-8?B?S8O2bmln?=
- <ckoenig.leichtzumerken@gmail.com>, Jesse Zhang <Jesse.Zhang@amd.com>, DRI
- <dri-devel@lists.freedesktop.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>, Vitaly Prosyak <vitaly.prosyak@amd.com>
-Subject: linux-next: manual merge of the amdgpu tree with the drm tree
-Message-ID: <20241105122838.0d6d94eb@canb.auug.org.au>
+	s=arc-20240116; t=1730770266; c=relaxed/simple;
+	bh=HE0Z3PdKCdARQTSpQnr3tQHQ+p3SRWB8GBHMNvVTmWY=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=JlMNvgkKlxnEXzfnZtfBiocTD8VDFV5zkVy9uT02b196h82FYxhpJ/yHRXa5xi4kTYeBvH0IQcfOOUV72JGTxjMV1mLXZBdvo9Ry/J+e4WYSqqDeK4xTwZTDiHursAdCMtEF5HUrkMZQODN+Zy55TTEQH8ir6hDe9tknCnsVFfY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=RXbq5GUX; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A4LIlvh009195;
+	Tue, 5 Nov 2024 01:30:27 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=SGfY4xcVJjM84r0YsAPvG1
+	hVrTz+bA8oYOJiz362C8c=; b=RXbq5GUXs0e3ke+y14PG1gBZysIvdtWzkPrTGN
+	JHbHxyYKlzDl3LYi7y4dl7IEXQ/kYnodaYJazRKMvHrViuTzjDdojDSuwXhwBF2q
+	aaUzTKt89v5cc4/4yBfLLdHYh2YS7aUNZfv87/vOdEZQvykkixHcI30bqhCLmWGI
+	/73W9MWD1taoPYRELfERQWRD0DA9XyjGXWxalkfSHmHiGBEch0GOW4ratqb3GQS1
+	D6rBk781wFQf77Wci2Czpz9tHcla5ZpP3rrmY2hyUjsl9CWewxeGhlaJddnYo2Tz
+	mv//etZUjc2BC4YPIn3NpWx5CSFVXepWnJ13rxGf6F+ch/Cg==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42nd4unye2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 05 Nov 2024 01:30:27 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4A51UQcw014305
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 5 Nov 2024 01:30:26 GMT
+Received: from hu-clew-lv.qualcomm.com (10.49.16.6) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Mon, 4 Nov 2024 17:30:25 -0800
+From: Chris Lew <quic_clew@quicinc.com>
+Date: Mon, 4 Nov 2024 17:29:37 -0800
+Subject: [PATCH] net: qrtr: mhi: synchronize qrtr and mhi preparation
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/xzOYzmjgbeNdirBYSiBDDcK";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20241104-qrtr_mhi-v1-1-79adf7e3bba5@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAAB1KWcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxNDQwMT3cKikqL43IxM3ZS01GRjU2MDY4PENCWg8oKi1LTMCrBR0bG1tQB
+ RBdbMWgAAAA==
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        "David S.
+ Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        "Jakub
+ Kicinski" <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+        Simon Horman
+	<horms@kernel.org>,
+        Hemant Kumar <quic_hemantk@quicinc.com>,
+        Loic Poulain
+	<loic.poulain@linaro.org>,
+        Maxim Kochetkov <fido_max@inbox.ru>
+CC: Manivannan Sadhasivam <mani@kernel.org>,
+        Bjorn Andersson
+	<bjorn.andersson@oss.qualcomm.com>,
+        <linux-arm-msm@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Bhaumik Bhatt
+	<bbhatt@codeaurora.org>,
+        Johan Hovold <johan@kernel.org>, Chris Lew
+	<quic_clew@quicinc.com>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1730770225; l=2100;
+ i=quic_clew@quicinc.com; s=20240508; h=from:subject:message-id;
+ bh=l/2R1bFTH1P6r02ldFAB/Su/VVR10tVU+0qSK5qySvM=;
+ b=/79qRr0F+lIQoeAb9KFZVcP4ODBJoBFOJEnNVYG0fXfeumbmctYkOXfAuodPxupRM7paHl2H7
+ 3Vq79Y84drZDxrM+MFvjaLZYLCYgE7aUYfDedZWwxDQEI8oVSs9Ns+G
+X-Developer-Key: i=quic_clew@quicinc.com; a=ed25519;
+ pk=lEYKFaL1H5dMC33BEeOULLcHAwjKyHkTLdLZQRDTKV4=
+X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: wp-EMW0fy4hDk3Pfut9U-pAFgIahto6M
+X-Proofpoint-ORIG-GUID: wp-EMW0fy4hDk3Pfut9U-pAFgIahto6M
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 malwarescore=0
+ lowpriorityscore=0 bulkscore=0 phishscore=0 priorityscore=1501
+ mlxlogscore=816 impostorscore=0 suspectscore=0 spamscore=0 mlxscore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411050010
 
---Sig_/xzOYzmjgbeNdirBYSiBDDcK
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+From: Bhaumik Bhatt <bbhatt@codeaurora.org>
 
-Hi all,
+The call to qrtr_endpoint_register() was moved before
+mhi_prepare_for_transfer_autoqueue() to prevent a case where a dl
+callback can occur before the qrtr endpoint is registered.
 
-Today's linux-next merge of the amdgpu tree got a conflict in:
+Now the reverse can happen where qrtr will try to send a packet
+before the channels are prepared. Add a wait in the sending path to
+ensure the channels are prepared before trying to do a ul transfer.
 
-  drivers/gpu/drm/amd/amdgpu/amdgpu_job.c
+Fixes: 68a838b84eff ("net: qrtr: start MHI channel after endpoit creation")
+Reported-by: Johan Hovold <johan@kernel.org>
+Closes: https://lore.kernel.org/linux-arm-msm/ZyTtVdkCCES0lkl4@hovoldconsulting.com/
+Signed-off-by: Bhaumik Bhatt <bbhatt@codeaurora.org>
+Signed-off-by: Chris Lew <quic_clew@quicinc.com>
+---
+ net/qrtr/mhi.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-between commit:
+diff --git a/net/qrtr/mhi.c b/net/qrtr/mhi.c
+index 69f53625a049..5b7268868bbd 100644
+--- a/net/qrtr/mhi.c
++++ b/net/qrtr/mhi.c
+@@ -15,6 +15,7 @@ struct qrtr_mhi_dev {
+ 	struct qrtr_endpoint ep;
+ 	struct mhi_device *mhi_dev;
+ 	struct device *dev;
++	struct completion prepared;
+ };
+ 
+ /* From MHI to QRTR */
+@@ -53,6 +54,10 @@ static int qcom_mhi_qrtr_send(struct qrtr_endpoint *ep, struct sk_buff *skb)
+ 	if (skb->sk)
+ 		sock_hold(skb->sk);
+ 
++	rc = wait_for_completion_interruptible(&qdev->prepared);
++	if (rc)
++		goto free_skb;
++
+ 	rc = skb_linearize(skb);
+ 	if (rc)
+ 		goto free_skb;
+@@ -85,6 +90,7 @@ static int qcom_mhi_qrtr_probe(struct mhi_device *mhi_dev,
+ 	qdev->mhi_dev = mhi_dev;
+ 	qdev->dev = &mhi_dev->dev;
+ 	qdev->ep.xmit = qcom_mhi_qrtr_send;
++	init_completion(&qdev->prepared);
+ 
+ 	dev_set_drvdata(&mhi_dev->dev, qdev);
+ 	rc = qrtr_endpoint_register(&qdev->ep, QRTR_EP_NID_AUTO);
+@@ -97,6 +103,7 @@ static int qcom_mhi_qrtr_probe(struct mhi_device *mhi_dev,
+ 		qrtr_endpoint_unregister(&qdev->ep);
+ 		return rc;
+ 	}
++	complete_all(&qdev->prepared);
+ 
+ 	dev_dbg(qdev->dev, "Qualcomm MHI QRTR driver probed\n");
+ 
 
-  b2ef808786d9 ("drm/sched: add optional errno to drm_sched_start()")
+---
+base-commit: 1ffec08567f426a1c593e038cadc61bdc38cb467
+change-id: 20241104-qrtr_mhi-dfec353030af
 
-from the drm tree and commit:
+Best regards,
+-- 
+Chris Lew <quic_clew@quicinc.com>
 
-  35984fd4a093 ("drm/amdgpu: add ring reset messages")
-
-from the amdgpu tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc drivers/gpu/drm/amd/amdgpu/amdgpu_job.c
-index ea2663169bf3,cbae2fc7b94e..000000000000
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_job.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_job.c
-@@@ -149,9 -150,11 +150,11 @@@ static enum drm_gpu_sched_stat amdgpu_j
-  			atomic_inc(&ring->adev->gpu_reset_counter);
-  			amdgpu_fence_driver_force_completion(ring);
-  			if (amdgpu_ring_sched_ready(ring))
- -				drm_sched_start(&ring->sched);
- +				drm_sched_start(&ring->sched, 0);
-+ 			dev_err(adev->dev, "Ring %s reset success\n", ring->sched.name);
-  			goto exit;
-  		}
-+ 		dev_err(adev->dev, "Ring %s reset failure\n", ring->sched.name);
-  	}
- =20
-  	if (amdgpu_device_should_recover_gpu(ring->adev)) {
-
---Sig_/xzOYzmjgbeNdirBYSiBDDcK
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmcpdMYACgkQAVBC80lX
-0Gym1Af/fOAJCphNBfESpwoprBZW3i+sAFLXwoyDMHJihVIOcu34HxOhtQdcGb/t
-9RVd9C3OQrVPsvlaR00Pqzu7DJkln+rOV5hrjZp/LHco8aXOFgHCTA54yekV+zik
-gPkvvJVlAcZL1DQ3Hw6+ijFXIRDUtmw/89cSMpO+LJC67UbJ3qYov425tN49k3+J
-naaCSqQFqxsAcdoWEgsNMCzYnreNjH+T0Hsk6KlCUg/MIPkVJm8FRzu8XP2JAM76
-sjt1hQsQbKQQGzTXJjfptDOVciktcOemISdfrlZL7OHIeMGWS5UHQoQYDDBb090t
-I577QL60ex3URgouFkalMf8O8zS22Q==
-=U35C
------END PGP SIGNATURE-----
-
---Sig_/xzOYzmjgbeNdirBYSiBDDcK--
 
