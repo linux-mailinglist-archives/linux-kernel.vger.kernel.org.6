@@ -1,100 +1,125 @@
-Return-Path: <linux-kernel+bounces-396107-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396111-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E3DF9BC7E9
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 09:23:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A02CF9BC7F4
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 09:25:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 90B7F1C22355
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 08:23:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C39BF1C22368
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 08:25:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA8421A7AE3;
-	Tue,  5 Nov 2024 08:22:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A5E51AA785;
+	Tue,  5 Nov 2024 08:25:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="loh+p4/W"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="VkTiBz7F"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D05F8762D2
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 08:22:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00A1918C93B
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 08:25:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730794978; cv=none; b=khTJZfQLuuF4lkM9AsbPHyRuuMqW212pGT0RqiYgTUjY8lLfazZdBNt94HonRKuD1v/rhfZ53z3fCAa0G3FDZ9lXxnFxfKQjc9CaNu0yZougI/CPyemD2x0wylh8rIdYFI+BGeOvy4aV5eqObau+XYIjxful8FcL+j3KjsrmR/o=
+	t=1730795133; cv=none; b=cN9lDbA/asnF65xOPj02xCEUJW2eZ1QR+UEi8BmWSNsZoa4pugNDA4js6h3QiuMGV2/l/+elZyeaJH0haPIDwFkbmm75/p3FBVTrJIl0Ar7vByRQW2matl1AFufa8zk1qA7S3KRr4UhSaibETC7G62WSoEZNTGL2R5se74O2faI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730794978; c=relaxed/simple;
-	bh=pDWRVTIIVd539bJF3xnYypJRZFABqCixIOL8uAG/ZbU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FCRJUh/2Bb1n/GAu+FO2JkTafeQTfyrlVY5zvuys9RUdM5pXLyDTR1t+DnLiZPcn0YDdFdsYZbtoro/+/kggbh+vhYQv14vPaCMPsmWnwrt1G5NQ17zdKTj4o7nGsOSgvOi2JChXG+OuDv4lHtHe8wC0wZnY3+htYrSlu4ATHb8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=loh+p4/W; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4314b316495so43889855e9.2
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 00:22:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730794975; x=1731399775; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=r5G5P4ojeaiWao+UaxuX3ijXfztM6+oSFmGiVcnC80I=;
-        b=loh+p4/W2bxryAzTuNpgIIQyLBiLDWU5OqpfSlwoqPIP1Yyl3MyAQAwwVKiEOmIjdR
-         q1uCLMsI+XZ1MoziyQqoVXL5DUBXjkpnmcFNVXtCiMjOCLKXB+Acgs9c7lTcrqyFotRH
-         6MpViDz1Tk0Mdgi+xl6MFnPpGH9vFsWNruqpNLd7GV3xZC1ed/wQeIf9iwseU3MmxxfT
-         oNPwTzxlAQayBmcfItS6k9ikhUdviCuZFyBCJQyuqCCe/Q6837sz4M+PdrD8BKB5v5ir
-         9ac8l3FzsNaRTd2NYJTuf0RTNxnEJW5o1nm77DweZ0vVtr4xLXfv3EIZT7hn6oeOoHdP
-         m4sA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730794975; x=1731399775;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=r5G5P4ojeaiWao+UaxuX3ijXfztM6+oSFmGiVcnC80I=;
-        b=k4qRnP1Vi5SOKWxslHwclHmsTuDqMFdA1Xbs1eoVDqd5P/YpdA7JQ39RlGcCV0xtH6
-         UpT9j+vgmnHJoLByMFmKJgdNXs4E6fkobD7i96oV/PQ+LFvgH4CB7XHFYzCF+curJlu4
-         IZpOzePXfV5YBVcidKSBA4tAQNpgZomxu+QUgnLt4HWfL7lAStzi/aB9hxbMs1IlaSJp
-         3Qfu5A2v+AahPpANZfsZUYPeVb2ed9B//j2X3k2h/znGZj5s1JUs530Sz6yTe9U1Zz83
-         UOGRtLfovcDor5qlyjklSXJimJr7RwJd3T42h1TOcSEXMPtEBx4tNHmBFx5dhgA22Aoe
-         Cn3w==
-X-Forwarded-Encrypted: i=1; AJvYcCUoWnmdw/VCJH+UIBwKSVYOmHjVpEAFGfQKYt68tvEaKqA7sHGbYVRfKCm7fhCCg44yWPZvwbSfOw7wgl8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy29z0wDZPppT5g0b/iTJp/0O5d9rBIY79puH3nBytnfOvSF4QV
-	sf4njKvr5YtalDSev6Mp/TMUSYciwJUe7Tqt/ZyWHDMS+rNNwCNe
-X-Google-Smtp-Source: AGHT+IEcMXQw8/WHDQdJxmE7WsNgC0l0q22WI6nuU2q9XsbmYSnuJG8GoAjWORpJgiqXCycmpYuQ+g==
-X-Received: by 2002:a05:600c:3b91:b0:431:57d2:d7b4 with SMTP id 5b1f17b1804b1-4327b7ea7c6mr173442175e9.26.1730794975007;
-        Tue, 05 Nov 2024 00:22:55 -0800 (PST)
-Received: from egonzo ([82.64.73.52])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-431bd8e8471sm215004125e9.4.2024.11.05.00.22.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Nov 2024 00:22:54 -0800 (PST)
-Date: Tue, 5 Nov 2024 09:22:50 +0100
-From: Dave Penkler <dpenkler@gmail.com>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: gregkh@linuxfoundation.org, linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org, skhan@linuxfoundation.org,
-	arnd@arndb.de
-Subject: Re: [PATCH v3 00/12] staging: gpib: Patch set for gpib staging
- drivers
-Message-ID: <ZynV2jm7vaI7xiMj@egonzo>
-References: <20241104175014.12317-1-dpenkler@gmail.com>
- <d0c4c59f-dbaa-403f-ae39-4ee0476ed9e7@suswa.mountain>
+	s=arc-20240116; t=1730795133; c=relaxed/simple;
+	bh=25JB0joO6/APWdWGU9npMYA29F9CUK1XLBMuinxiP4I=;
+	h=Message-ID:Subject:From:To:CC:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=FCb5FhCDhu4HJo+Y22ELd+eSq6HOvwm3FvlHuPFYtfs/KyZEh4tDhpLRwMVgI6zR8x+IjTPBlFMsEzmI8Yo0mIg5YYbkK+bUtQvpsTLPcLxm3C4Z/cEcB9SnX6NJx+oKy+eEGsQIJ05bxKuen0Wvpd6aniy4s8VDEdMIceAMP3Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=VkTiBz7F; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A56uQvx022315;
+	Tue, 5 Nov 2024 09:25:03 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	25JB0joO6/APWdWGU9npMYA29F9CUK1XLBMuinxiP4I=; b=VkTiBz7FYMa5Tv0k
+	J+YUoTY39W91PJZv+iyDXEEiisQF037iGaJ30A/fDNHsAdXrRunxyQhic9qSqfGS
+	BCUJbeWwFQ+EgdqBIRtlfpGEEgcwRiHdRHWwVuMhvSBoxF/Y8YxzgVLmsXwuPiTO
+	GhSo+OuSmVspehP/HsL1gIr080uRnIkrjeJExPWPQIBZ6GJnMf9nRMnogDLLAlwJ
+	d0sXxtTiuAhevV7OMmuw03ewYTYlEwQLoAB39fiTLZlDYXp0IejQfysKNCxT6i1w
+	K1uje9cgzoM40AkGdWlhnM5KDJD4yownykkP7Sz6O8dexHYomgJIZIZ+O9nkMGWh
+	fdx1xw==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 42ncxbu10k-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 05 Nov 2024 09:25:02 +0100 (CET)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 4380240052;
+	Tue,  5 Nov 2024 09:24:10 +0100 (CET)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 787DF24B194;
+	Tue,  5 Nov 2024 09:23:44 +0100 (CET)
+Received: from [192.168.8.15] (10.48.87.33) by SHFDAG1NODE1.st.com
+ (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Tue, 5 Nov
+ 2024 09:23:44 +0100
+Message-ID: <008a261f5407ab38bb025768624bdc6bd1869c84.camel@foss.st.com>
+Subject: Re: [Linux-stm32] [PATCH] irqchip/stm32mp-exti: Use
+ of_property_present() for non-boolean properties
+From: Antonio Borneo <antonio.borneo@foss.st.com>
+To: "Rob Herring (Arm)" <robh@kernel.org>,
+        Thomas Gleixner
+	<tglx@linutronix.de>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre
+ Torgue <alexandre.torgue@foss.st.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>
+Date: Tue, 5 Nov 2024 09:23:43 +0100
+In-Reply-To: <20241104190836.278117-1-robh@kernel.org>
+References: <20241104190836.278117-1-robh@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.48.4 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d0c4c59f-dbaa-403f-ae39-4ee0476ed9e7@suswa.mountain>
+X-ClientProxiedBy: EQNCAS1NODE3.st.com (10.75.129.80) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
 
-On Tue, Nov 05, 2024 at 09:33:32AM +0300, Dan Carpenter wrote:
-> Thank you!
-> 
-> Reviewed-by: Dan Carpenter <dan.carpenter@linaro.org>
-> 
-> regards,
-> dan carpenter
-> 
-Thank you!
-cheers,
--dave penkler
+On Mon, 2024-11-04 at 13:08 -0600, Rob Herring (Arm) wrote:
+> The use of of_property_read_bool() for non-boolean properties is
+> deprecated in favor of of_property_present() when testing for property
+> presence.
+>=20
+> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+> ---
+> =C2=A0drivers/irqchip/irq-stm32mp-exti.c | 3 +--
+> =C2=A01 file changed, 1 insertion(+), 2 deletions(-)
+>=20
+> diff --git a/drivers/irqchip/irq-stm32mp-exti.c b/drivers/irqchip/irq-stm=
+32mp-exti.c
+> index 33e0cfdea654..cb83d6cc6113 100644
+> --- a/drivers/irqchip/irq-stm32mp-exti.c
+> +++ b/drivers/irqchip/irq-stm32mp-exti.c
+> @@ -696,8 +696,7 @@ static int stm32mp_exti_probe(struct platform_device =
+*pdev)
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (ret)
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0return ret;
+> =C2=A0
+> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (of_property_read_bool(np, =
+"interrupts-extended"))
+> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0host_data->dt_has_irqs_desc =3D true;
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0host_data->dt_has_irqs_desc =
+=3D of_property_present(np, "interrupts-extended");
+> =C2=A0
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0return 0;
+> =C2=A0}
+
+Reviewed-by: Antonio Borneo <antonio.borneo@foss.st.com>
+
+Thanks,
+Antonio
 
