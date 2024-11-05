@@ -1,130 +1,127 @@
-Return-Path: <linux-kernel+bounces-396425-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396420-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45B399BCCEC
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 13:41:29 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 299209BCCE2
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 13:40:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 77DA91C223D6
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 12:41:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9DC05B2141C
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 12:40:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA1A21D5CFF;
-	Tue,  5 Nov 2024 12:40:33 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D9A71D54FE
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 12:40:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4ACD51D5AB6;
+	Tue,  5 Nov 2024 12:40:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="BtAsYMZ1"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 243041D47DC;
+	Tue,  5 Nov 2024 12:40:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730810433; cv=none; b=WlVyY/pYgPuD0mqTQBBnjaroKhljdgAU3tYuLjSjioBc/Z2fb2u+c5oG9weUUuZi7cWKu0fGPu2atDO/hyunS936NmD9nE00gy/w3JkdNcAKGx/fmqvANQXzdUbifR8EvazeAo82sl9sMypmRYIsitIlr6itQUkl8hyN217GBM8=
+	t=1730810413; cv=none; b=OZGTFQToj/iVt4coL4PbIoOICTub/Co5QarADY0gGvJMDU9BpzyuJ5oWsiGejfqwYrPqg9uPl7TgDJdV7J94dO5V0yyNz/Ypo/MhtmwMLTtqjgF9yacOZ8TIouCK9EQ0WhrUpcnWcICqu/h2U/KoKA1n+jCjAbmejCb4qcd9LBs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730810433; c=relaxed/simple;
-	bh=Rwqaw/Ie96v4mk5XllciCpWVfbKETe4TlSqOSrnJlYI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=kJGNuremgn+C8TnF26OppW1C+0nViGq6HKCuh5zpPqgSIikbsXofguACloyqYZS69JMrXRXWbECZivrlaXCgT6Q3Yt+3F/SnnKzd2CO/oKxrEzTbX77BzRufpg6PQWN3EYflqla880PFlGR3C9qHeJBp+16duHc2VfvuHnEI+l0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [113.200.148.30])
-	by gateway (Coremail) with SMTP id _____8CxPuPxESpnm7UxAA--.33729S3;
-	Tue, 05 Nov 2024 20:39:13 +0800 (CST)
-Received: from linux.localdomain (unknown [113.200.148.30])
-	by front1 (Coremail) with SMTP id qMiowMBxrsLsESpnw4lCAA--.26454S7;
-	Tue, 05 Nov 2024 20:39:12 +0800 (CST)
-From: Tiezhu Yang <yangtiezhu@loongson.cn>
-To: Huacai Chen <chenhuacai@kernel.org>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>
-Cc: loongarch@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 5/5] LoongArch: Enable jump table with GCC for objtool
-Date: Tue,  5 Nov 2024 20:39:06 +0800
-Message-ID: <20241105123906.26072-6-yangtiezhu@loongson.cn>
-X-Mailer: git-send-email 2.42.0
-In-Reply-To: <20241105123906.26072-1-yangtiezhu@loongson.cn>
-References: <20241105123906.26072-1-yangtiezhu@loongson.cn>
+	s=arc-20240116; t=1730810413; c=relaxed/simple;
+	bh=mo3pK/uRf4nosDj+nZOCxXszbKAL/k6c6AlUOfiipLo=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ecuJriNQxhk0FF0kB1qksN0Xx1wslEphY3/O6KFF6tKripo4VCjdM0VitMYijfhmTEYgGLWyJ2PJQIw+S8uBwIw5BzaZmy2Urz3PO7g5SJN6Y04kqp43vJsXaHE64VXKKtaAesH7Rfc1zWG6Bd0MjJ6x0XtMSrX4KI2T0HYRBDA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=BtAsYMZ1; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A59auqE027535;
+	Tue, 5 Nov 2024 12:40:00 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:message-id:mime-version:subject:to; s=
+	qcppdkim1; bh=NIO7QJxPWoJ5mekrk8Cb+rOKsbGs5KoQoleroKLnPM0=; b=Bt
+	AsYMZ1GRZe2vVIudIwYH+RHiCD+m+uZcOm4PLETLa6Lw8EFurl2FAbBgRSSsipp0
+	i5YO2y9rn/aUJSPDyxYSPa3cKk2RfwWh0yuKqy18WQMLME5CeMJxqMX8Kgc34uZ6
+	q8ZG2TqPi2gkmDMuv1C8QFik0MnqhA0lceL2CB/mKnCABAdYIHElchL6Ocw5FAre
+	SRQDnToIu7odnlwElBRBZ9q+M1imvMx0bhV+3Dz/cEtpgmsXq2/eHKGZzWx33kjM
+	jXpon87yiv27sl2moMmPrhj0wjiv7UnE7CM98xnU5w8H2E2R7Bn3C1CkLTwi+b7a
+	GeZ3uFpFwFA0EG+l7IVg==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42nd8hfjvw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 05 Nov 2024 12:39:59 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4A5CdxwK005378
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 5 Nov 2024 12:39:59 GMT
+Received: from jinlmao-gv.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Tue, 5 Nov 2024 04:39:56 -0800
+From: Mao Jinlong <quic_jinlmao@quicinc.com>
+To: Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Mike Leach
+	<mike.leach@linaro.org>,
+        James Clark <james.clark@linaro.org>,
+        "Alexander
+ Shishkin" <alexander.shishkin@linux.intel.com>
+CC: Mao Jinlong <quic_jinlmao@quicinc.com>, <coresight@lists.linaro.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>
+Subject: [PATCH v2 0/3] Add support to configure TPDM MCMB subunit
+Date: Tue, 5 Nov 2024 20:39:37 +0800
+Message-ID: <20241105123940.39602-1-quic_jinlmao@quicinc.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowMBxrsLsESpnw4lCAA--.26454S7
-X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
-X-Coremail-Antispam: 1Uk129KBj93XoW7CF48AFy5Aw17Kw13Aw4kZrc_yoW8ZF43p3
-	ykur1DKr4kXFs7trZrJrWSgr98Jrnrtr13WF47ta48ArW7Z345Zr4Iya9rWFy5Cws5JrWI
-	qFWfKFyayF4UA3XCm3ZEXasCq-sJn29KB7ZKAUJUUUUr529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUU9Fb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AK
-	xVW8Jr0_Cr1UM2kKe7AKxVWUXVWUAwAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07
-	AIYIkI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWU
-	tVWrXwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7V
-	AKI48JMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMxCIbckI1I0E14v2
-	6r1Y6r17MI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17
-	CEb7AF67AKxVWUAVWUtwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26ryj6F1UMIIF
-	0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIx
-	AIcVC2z280aVAFwI0_Gr0_Cr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2
-	KfnxnUUI43ZEXa7IU8EeHDUUUUU==
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 2cG-WFxGk2XkZeBNfIlFNjADft_VvcsN
+X-Proofpoint-GUID: 2cG-WFxGk2XkZeBNfIlFNjADft_VvcsN
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 malwarescore=0
+ priorityscore=1501 phishscore=0 clxscore=1015 mlxscore=0 impostorscore=0
+ bulkscore=0 mlxlogscore=867 adultscore=0 suspectscore=0 lowpriorityscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
+ definitions=main-2411050097
 
-For now, it is time to remove the compiler option -fno-jump-tables
-to enable jump table for objtool if the compiler is GCC and it has
-the compiler option -mannotate-tablejump, otherwise still keep the
-compiler option -fno-jump-tables to maintain compatibility with the
-older compilers.
+Introduction of TPDM MCMB(Multi-lane Continuous Multi Bit) subunit
+MCMB (Multi-lane CMB) is a special form of CMB dataset type. MCMB
+subunit has the same number and usage of registers as CMB subunit.
+Just like the CMB subunit, the MCMB subunit must be configured prior
+to enablement. This series adds support for TPDM to configure the
+MCMB subunit.
 
-By the way, the compiler behaviors are different for various archs,
-there are some corner issues after removing -fno-jump-tables if the
-compiler is Clang, so just keep the compiler option -fno-jump-tables
-for Clang at present.
+Once this series patches are applied properly, the new tpdm nodes for
+should be observed at the tpdm path /sys/bus/coresight/devices/tpdm*
+which supports MCMB subunit. All sysfs files of CMB subunit TPDM are
+included in MCMB subunit TPDM. On this basis, MCMB subunit TPDM will
+have new sysfs files to select and enable the lane.
 
-Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
----
- arch/loongarch/Kconfig  | 3 +++
- arch/loongarch/Makefile | 9 +++++++++
- 2 files changed, 12 insertions(+)
+Changes in V2:
+1. Use tdpm_data->cmb instead of (tpdm_has_cmb_dataset(tpdm_data) ||
+tpdm_has_mcmb_dataset(tpdm_data)) for cmb dataset support.
+2. Embed mcmb_dataset struct into cmb struct.
+3. Update the date and version in sysfs-bus-coresight-devices-tpdm
 
-diff --git a/arch/loongarch/Kconfig b/arch/loongarch/Kconfig
-index bb35c34f86d2..500ee9b2cd88 100644
---- a/arch/loongarch/Kconfig
-+++ b/arch/loongarch/Kconfig
-@@ -284,6 +284,9 @@ config AS_HAS_LBT_EXTENSION
- config AS_HAS_LVZ_EXTENSION
- 	def_bool $(as-instr,hvcl 0)
- 
-+config CC_HAS_ANNOTATE_TABLEJUMP
-+	def_bool $(cc-option,-mannotate-tablejump)
-+
- menu "Kernel type and options"
- 
- source "kernel/Kconfig.hz"
-diff --git a/arch/loongarch/Makefile b/arch/loongarch/Makefile
-index ae3f80622f4c..61484df4eccc 100644
---- a/arch/loongarch/Makefile
-+++ b/arch/loongarch/Makefile
-@@ -101,8 +101,17 @@ KBUILD_AFLAGS			+= $(call cc-option,-mthin-add-sub) $(call cc-option,-Wa$(comma)
- KBUILD_CFLAGS			+= $(call cc-option,-mthin-add-sub) $(call cc-option,-Wa$(comma)-mthin-add-sub)
- 
- ifdef CONFIG_OBJTOOL
-+ifdef CONFIG_CC_IS_GCC
-+ifdef CONFIG_CC_HAS_ANNOTATE_TABLEJUMP
-+KBUILD_CFLAGS			+= $(call cc-option,-mannotate-tablejump)
-+else
- KBUILD_CFLAGS			+= -fno-jump-tables
- endif
-+endif
-+ifdef CONFIG_CC_IS_CLANG
-+KBUILD_CFLAGS			+= -fno-jump-tables
-+endif
-+endif
- 
- KBUILD_RUSTFLAGS		+= --target=loongarch64-unknown-none-softfloat
- KBUILD_RUSTFLAGS_KERNEL		+= -Zdirect-access-external-data=yes
+Mao Jinlong (1):
+  coresight-tpdm: Add MCMB dataset support
+
+Tao Zhang (2):
+  coresight-tpdm: Add support to select lane
+  coresight-tpdm: Add support to enable the lane for MCMB TPDM
+
+ .../testing/sysfs-bus-coresight-devices-tpdm  |  15 +++
+ drivers/hwtracing/coresight/coresight-tpda.c  |   7 +-
+ drivers/hwtracing/coresight/coresight-tpdm.c  | 124 +++++++++++++++++-
+ drivers/hwtracing/coresight/coresight-tpdm.h  |  33 +++--
+ 4 files changed, 158 insertions(+), 21 deletions(-)
+
 -- 
-2.42.0
+2.17.1
 
 
