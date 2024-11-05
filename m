@@ -1,123 +1,129 @@
-Return-Path: <linux-kernel+bounces-396371-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396370-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 130B09BCC47
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 13:02:08 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FC3B9BCC45
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 13:01:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 292891C228C6
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 12:02:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF3231F2221A
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 12:01:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C90B01D5143;
-	Tue,  5 Nov 2024 12:02:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 761C91D433C;
+	Tue,  5 Nov 2024 12:01:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="YJcOmrSq"
-Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="PRmP1Llc"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 301271420A8;
-	Tue,  5 Nov 2024 12:01:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67A321420A8
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 12:01:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730808120; cv=none; b=msDuWli4yz0goDUnuxUlA4czdhlufQgAG/TNVArhrysGodX1t0vGR24wqkvvmxdhuOqNK523TT697+soFIbjnZ8dhsSSLxxboZMlLggXTzS2wRMLrUqWaYDiWuUn7vL56zVeawck1iZCW1do68OebG6JaWFy9+xRzNRA0bqqf0A=
+	t=1730808109; cv=none; b=pemYut/WndVyXCc0pUz6O9htQDk0qOdPPzkalHagfn9f8sa+mXnWOVrR+YMTLvYuGA7lALnUzMGx+FQCXvV3+UEsXMnwVDPqZA0PAt1iHt0Vilcb2UDi/LtmJTenTO+d0K5eVf84Hve+u1qiNnDfobxVXJuoj2riSuKp9cGpL6I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730808120; c=relaxed/simple;
-	bh=TX6sX6x1up/HYFMnp1EPSdB0aCTeIScsn4RhiXQgfc4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=RHJKVFr6Wih3AlvYwcaZB99KpLyg57CtqO9HEvxKWzRD+oswNMaGZwgclYcRDuKvKK7Ct0LoxcMqLSEQs4+8eVEGi0pKGw0yi6AhyB2Q501dOtQDoLF0dm/HqwkhbY6O6KE798rK/OKxZ6r9dnLCiMsmzCMgrfK/2HYlxA+V6Tg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=YJcOmrSq; arc=none smtp.client-ip=198.47.23.249
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4A5C1KxR073177;
-	Tue, 5 Nov 2024 06:01:20 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1730808080;
-	bh=I8Ot+L92FMNzAT/dVawQMY/gWiO3L4DG4uE/gA9uMU4=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=YJcOmrSqnbVxJv3RZnS+O4a2zYBk1oirNEMArSbhYG+TopXlv7wUrfxEt2RI6JGKx
-	 OfLuH6P6fQ61TMuaGeuytiWNFJV0jOQlE1FZ7DlIwOgeUhcjacN1VKLJDl+AcI3rIB
-	 mEhgAIeNhybc3XEWtCGMyuTG/e6n3xW8GjFhIpvQ=
-Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4A5C1KA1076249
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 5 Nov 2024 06:01:20 -0600
-Received: from DLEE114.ent.ti.com (157.170.170.25) by DLEE115.ent.ti.com
- (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 5
- Nov 2024 06:01:19 -0600
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE114.ent.ti.com
- (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Tue, 5 Nov 2024 06:01:20 -0600
-Received: from [10.249.139.24] ([10.249.139.24])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4A5C1DuV010566;
-	Tue, 5 Nov 2024 06:01:14 -0600
-Message-ID: <e5c5c9ba-fca1-4fa3-a416-1fc972ebd258@ti.com>
-Date: Tue, 5 Nov 2024 17:31:13 +0530
+	s=arc-20240116; t=1730808109; c=relaxed/simple;
+	bh=wc8L28J8ce+9ES6pYmXILBTcBDOi/xJ2iFmePZUWUqw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fbCYLpEoQK45vFYCKcAXyUyBsSafwBbMgtXZyu42B+uNx7Bi89h0krWhJKDQnDMm1Vh3bYciu54A0qXT65IThE+SDmTufWwUDlZjzfyKej3ZQ+UbPCQzWlAumQcsYXZR7TFOmOUS1UT5Y7zYlrcMEZGX8QqKRABZ8P0hJyp3U8Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=PRmP1Llc; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=ePK68Do9bSOsgDttsQBxob0Zqr35Orl6F6MvbMbi8IA=; b=PRmP1LlcZRJJ2VE6juGIkhmLNN
+	OyGRLMYwByJt5QrgcSmzpbik+SVT7kd53zg84fLAOXvl5jTQ6sgzBp453SkoB8YrT8UXdt1Varl1q
+	dv3lMa4qj2zhrUdhTlMFUxfKE6/q2F6D/GVM+tUBbguQjPFUCSjTgLBkhDIe4TP6j9D2LYcF4Ipy5
+	fMV58clNilCDJrGYLiI/ZxkKRqOfIbahe+P9L8XTucOf7DZfNEjMKGrmZjEEOp3yP5uWITGmR//Js
+	3bcKBQypoUCAwGAGrzFdJDq5IQir805RisiqV0uj+EADlOHRTyXfhjMqXamn896gMBh0LKDfWNsOB
+	w5CFn7oQ==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1t8IFj-0000000BjrN-3kjB;
+	Tue, 05 Nov 2024 12:01:44 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 85EA7300324; Tue,  5 Nov 2024 13:01:43 +0100 (CET)
+Date: Tue, 5 Nov 2024 13:01:43 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Uros Bizjak <ubizjak@gmail.com>
+Cc: mingo@kernel.org, lucas.demarchi@intel.com,
+	linux-kernel@vger.kernel.org, willy@infradead.org, acme@kernel.org,
+	namhyung@kernel.org, mark.rutland@arm.com,
+	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+	irogers@google.com, adrian.hunter@intel.com,
+	kan.liang@linux.intel.com
+Subject: Re: [PATCH 03/19] perf: Fix perf_pmu_register() vs perf_init_event()
+Message-ID: <20241105120143.GD10375@noisy.programming.kicks-ass.net>
+References: <20241104133909.669111662@infradead.org>
+ <20241104135517.858805880@infradead.org>
+ <0dac9a18-e993-d60d-9b13-da2cd0c3bd4c@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net v3] net: ti: icssg-prueth: Fix 1 PPS sync
-To: Jakub Kicinski <kuba@kernel.org>
-CC: <vigneshr@ti.com>, <horms@kernel.org>, <jan.kiszka@siemens.com>,
-        <diogo.ivo@siemens.com>, <pabeni@redhat.com>, <edumazet@google.com>,
-        <davem@davemloft.net>, <andrew+netdev@lunn.ch>,
-        <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <srk@ti.com>,
-        Roger Quadros
-	<rogerq@kernel.org>, <danishanwar@ti.com>,
-        Vadim Fedorenko
-	<vadim.fedorenko@linux.dev>
-References: <20241028111051.1546143-1-m-malladi@ti.com>
- <20241031185905.610c982f@kernel.org>
- <7c3318f4-a2d4-4cbf-8a93-33c6a8afd6c4@ti.com>
- <20241104185031.0c843951@kernel.org>
-Content-Language: en-US
-From: "Malladi, Meghana" <m-malladi@ti.com>
-In-Reply-To: <20241104185031.0c843951@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0dac9a18-e993-d60d-9b13-da2cd0c3bd4c@gmail.com>
 
+On Mon, Nov 04, 2024 at 04:36:26PM +0100, Uros Bizjak wrote:
+> 
+> 
+> On 4. 11. 24 14:39, Peter Zijlstra wrote:
+> > There is a fairly obvious race between perf_init_event() doing
+> > idr_find() and perf_pmu_register() doing idr_alloc() with an
+> > incompletely initialized pmu pointer.
+> > 
+> > Avoid by doing idr_alloc() on a NULL pointer to register the id, and
+> > swizzling the real pmu pointer at the end using idr_replace().
+> > 
+> > Also making sure to not set pmu members after publishing the pmu, duh.
+> > 
+> > [ introduce idr_cmpxchg() in order to better handle the idr_replace()
+> >    error case -- if it were to return an unexpected pointer, it will
+> >    already have replaced the value and there is no going back. ]
+> > 
+> > Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> > ---
+> >   kernel/events/core.c |   28 ++++++++++++++++++++++++++--
+> >   1 file changed, 26 insertions(+), 2 deletions(-)
+> > 
+> > --- a/kernel/events/core.c
+> > +++ b/kernel/events/core.c
+> > @@ -11739,6 +11739,21 @@ static int pmu_dev_alloc(struct pmu *pmu
+> >   static struct lock_class_key cpuctx_mutex;
+> >   static struct lock_class_key cpuctx_lock;
+> > +static bool idr_cmpxchg(struct idr *idr, unsigned long id, void *old, void *new)
+> > +{
+> > +	void *tmp, *val = idr_find(idr, id);
+> > +
+> > +	if (val != old)
+> > +		return false;
+> > +
+> > +	tmp = idr_replace(idr, new, id);
+> > +	if (IS_ERR(tmp))
+> > +		return false;
+> > +
+> > +	WARN_ON_ONCE(tmp != val);
+> > +	return true;
+> > +}
+> 
+> Can the above function be named idr_try_cmpxchg?
+> 
+> cmpxchg family of functions return an old value from the location and one
+> would expect that idr_cmpxchg() returns an old value from *idr, too.
+> idr_cmpxchg() function however returns success/failure status, and this is
+> also what functions from try_cmpxchg family return.
 
+Fair enough -- OTOH, this function is very much not atomic. I considered
+calling it idr_cas() as to distance itself from cmpxchg family.
 
-On 11/5/2024 8:20 AM, Jakub Kicinski wrote:
-> On Mon, 4 Nov 2024 16:55:46 +0530 Malladi, Meghana wrote:
->> On 11/1/2024 7:29 AM, Jakub Kicinski wrote:
->>> On Mon, 28 Oct 2024 16:40:52 +0530 Meghana Malladi wrote:
->>>> The first PPS latch time needs to be calculated by the driver
->>>> (in rounded off seconds) and configured as the start time
->>>> offset for the cycle. After synchronizing two PTP clocks
->>>> running as master/slave, missing this would cause master
->>>> and slave to start immediately with some milliseconds
->>>> drift which causes the PPS signal to never synchronize with
->>>> the PTP master.
->>>
->>> You're reading a 64b value in chunks, is it not possible that it'd wrap
->>> in between reads? This can be usually detected by reading high twice and
->>> making sure it didn't change.
->>>
->>> Please fix or explain in the commit message why this is not a problem..
->> Yes I agree that there might be a wrap if the read isn't atomic. As
->> suggested by Andrew I am currently not using custom read where I can
->> implement the logic you suggested
-> 
-> Right but I think Andrew was commenting on a patch which contained pure
-> re-implementation of read low / hi with no extra bells or whistles.
-> 
->> (reading high twice and making sure if
->> didn't change). Can you share me some references where this logic is
->> implemented in the kernel, so I can directly use that instead of writing
->> custom functions.
-> 
-> I think you need to write a custom one. Example:
-> https://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.git/tree/drivers/net/ethernet/meta/fbnic/fbnic_time.c#n40
-Ok thank you. I will add custom function for this and update the patch.
+Also, it is local to perf, and not placed in idr.h or similar.
+
+While the usage here is somewhat spurious, it gets used later on in the
+series to better effect.
 
