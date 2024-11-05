@@ -1,105 +1,143 @@
-Return-Path: <linux-kernel+bounces-395822-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395823-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 980499BC38A
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 04:03:04 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA71D9BC38C
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 04:04:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C26B81C21C3D
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 03:03:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 35C75B21D4A
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 03:04:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2ED8B6F073;
-	Tue,  5 Nov 2024 03:02:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65F155674D;
+	Tue,  5 Nov 2024 03:03:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="pdc3cgtS"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="ZwP8pNov"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02A4F38DDB;
-	Tue,  5 Nov 2024 03:02:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6106055E53
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 03:03:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730775775; cv=none; b=jUu0fC3H3cs4DLufcgVFvl7KA8S24wzB1+2BPYUIHOlrBM/bD8sM+Bqt9ojOYTuGVcA5kf+RhapsdgVR9pllKSgujtL3oXuxSqa9gm/98L+JSUROYF4XsFEzAGjy82FO2b6Qx4VgojlIj9Vb64utEeeZAfp/X+jvhBLLkHQ0x1s=
+	t=1730775833; cv=none; b=Z5nPrS+2k9jxETFmw2KJwwkwSU0ssPHa1zCRU7lJmSYAZ3phgw8Aro3YxFgHDcxXOVelJ0jWdMbSGV6LHfIhTpblUnQqfW+Fxt0w7H4yZZeGf49ak3OIOujFS3fkMvlddJrlHJUWFcrCRXNATu5wvWKooIAvsmlG2PunKcMupMk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730775775; c=relaxed/simple;
-	bh=sQpNHZKSwsm9PuF+xXorp5UNtacEVOe8mMj/L81nvyU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=m5E0CO8f/68GsofAkQA/KwG/beaRnZzxVHSXuzd/YSi9sP3wbw7Vsm1MI2QuGzvAzVZR1s8IqelEkKfkVoEazIXgnctiK860BbTF96e6HZAPXr4lZrmsmN+PEdax3aNeBIIVajH1S/OVPg8atwN8WRCkNgrRVBOhm0ZxjmQ1YTU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=pdc3cgtS; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=hoFMWyq+iDCYAmm6oQjVciE92ijPEyH2UIFa3czySUg=; b=pdc3cgtSRw6I6BPGsED5u6EMoY
-	z5lSAxX20a4ZlT6VJmvrr4ZTsFlwpu9w0EaJm0Rp6TyP9NbZMxyEGXFEaZz3GI7lf0KOTLcqqEc+T
-	nDS6WFZXnBcaQ55qsPmGWVCs7UCzd8nFHFLG+ppCdaXx9Res56Q6Jj9uKfWZsYXpn2ro=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1t89qE-00CAfH-2V; Tue, 05 Nov 2024 04:02:50 +0100
-Date: Tue, 5 Nov 2024 04:02:50 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Alistair Francis <alistair23@gmail.com>
-Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	linux@armlinux.org.uk, hkallweit1@gmail.com,
-	Alistair Francis <alistair.francis@wdc.com>
-Subject: Re: [PATCH] include: mdio: Guard inline function with CONFIG_MDIO
-Message-ID: <01d60932-f78f-4e4b-88e7-f331535b8076@lunn.ch>
-References: <20241104070950.502719-1-alistair.francis@wdc.com>
- <9ae6af15-790a-4d34-901d-55fca0be9fd2@lunn.ch>
- <CAKmqyKOX8gcRT2dSOvJY2o4bpoF+VuPmhaygJj7pTb1KesrFOQ@mail.gmail.com>
- <680bd06f-6a76-4a5c-b5d2-51dd172c8428@lunn.ch>
- <CAKmqyKNkPGPg8xsYDY9FtNvqJQsFmQ1o8KYHQXutrN1kHxsPww@mail.gmail.com>
+	s=arc-20240116; t=1730775833; c=relaxed/simple;
+	bh=9BMNST86hXoq7tnK+iM6FaNmtJgWm/NevWWYcnnCBPw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=qYynvYGno1Bl8xhyYR1s0IFjj5sgQwNV1JiKkNodMAhbztk0V9Qs/119ic2lp4i6C0FWc86n4WH1FUsjbWYqgONa5ACNIoorbErxmTl+t8rJbs04u8TRW05vyCSOpnEdzpFf6x0xclf9L8MY9WDYt34gzfLeLA7c6Iw5zsIannM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=ZwP8pNov; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-20ca1b6a80aso50479825ad.2
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 19:03:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1730775832; x=1731380632; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=081u9OxR4oMwyBpE2M7xzAk8x7mY8I7bQvk7Iyys+N0=;
+        b=ZwP8pNovTeBq8e6JlxMbamo+sIxakPY1o7IGkEKkW+efX61ZxDNVCuvEz4gc8N2Myt
+         lOVl6te3rR8lh6HQyn5/m53o4KKy9fxvG3eHVaKoCpUEJF9pIqv45j42G4XKGqb6CbPH
+         hQTlJbdGD1DBF4hp9fbZLF8i1zSSG39Q9uN3Gq7SSefAA1P0kzCD9R1Q988qMQhAX5O8
+         3R8vo13xaZVhnYiOS6lcEI2r9Di9J4C+kHUb8fApN8NiKPEkT6JWvrcdQqx11bmcGXlB
+         I8UhAbLC1YDHaj0JKdwI9UEsssWoysO32YDXpVWjQlz1qN6ER1smi/RVhPcxDXEv/29f
+         ZBbA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730775832; x=1731380632;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=081u9OxR4oMwyBpE2M7xzAk8x7mY8I7bQvk7Iyys+N0=;
+        b=eAXJnKbY3Rd7O3VzZZqUnCq/QFqoL6bhCTdmeDn840ERoTnbLBQ1DzjZCLir6iswl+
+         FWM7hHlITNDKop4swXb5Ljz/OSDrsBWbBO//rg/LbTC1/zvTTVrMF5Ey87KL4oXw/cFx
+         gYnFqi3Ad0UVOQfqrXxuRWJycUIzTp193plukJyj6tsPL3Fs92blWnOZ1FKUJWptIjv4
+         Vz/6nGjThrMmqqpm4PbN+VxxpJtcMVikqjSb7UgayX+EahHPQw45bDAh4NP5y0Q9brtW
+         fCRszQ2o1knHdzema4R70nda8GzRDT9XzWYxJPssGWUPQ7m5S5AViVc1ZSky4f706gtK
+         qWTQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVTM6wnWphXx5Ck5cf5etkOdndyZUrj9uNw2nYRp79IDuznviWaDThrU9TM/O3TJzx6wFPCvpUocfEJRkc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzDscPzOZEwxUtGAOZpWldYu+dvsxQowwpL/iDv9nncPMXdv727
+	fON5tQ61FIZTmJQWqUODS42447oMDmDq/d59xO2H8z0RjEj2WUC7rjC2++1sbsXMzrdS/jzLpMk
+	Ko+A=
+X-Google-Smtp-Source: AGHT+IH/L7hHG+MT/u1QX/Ur69PydXRoAFtt1JhiVv6qeo3eCMvbbjsEY7Zk1fBjidqC36zg70QWCA==
+X-Received: by 2002:a17:90b:3c0e:b0:2e2:ffb0:8a5c with SMTP id 98e67ed59e1d1-2e94c50d149mr19862460a91.27.1730775831422;
+        Mon, 04 Nov 2024 19:03:51 -0800 (PST)
+Received: from PXLDJ45XCM.bytedance.net ([139.177.225.229])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e93da8e879sm8538424a91.10.2024.11.04.19.03.47
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Mon, 04 Nov 2024 19:03:50 -0800 (PST)
+From: Muchun Song <songmuchun@bytedance.com>
+To: tj@kernel.org,
+	hannes@cmpxchg.org,
+	mkoutny@suse.com,
+	longman@redhat.com
+Cc: cgroups@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Zefan Li <lizf.kern@gmail.com>,
+	Zefan Li <lizefan.x@bytedance.com>,
+	Muchun Song <songmuchun@bytedance.com>
+Subject: [PATCH v2] MAINTAINERS: remove Zefan Li
+Date: Tue,  5 Nov 2024 11:02:52 +0800
+Message-Id: <20241105030252.82419-1-songmuchun@bytedance.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAKmqyKNkPGPg8xsYDY9FtNvqJQsFmQ1o8KYHQXutrN1kHxsPww@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-> Which comes from autogenerated C code like this
-> 
-> ```
-> void mdio45_ethtool_gset__extern(const struct mdio_if_info *mdio,
-> struct ethtool_cmd *ecmd) { mdio45_ethtool_gset(mdio, ecmd); }
-> ```
-> 
-> mdio45_ethtool_gset__extern() is never called, so I'm not clear why
-> it's not optimised out.
+From: Zefan Li <lizf.kern@gmail.com>
 
-I think you need to understand this first, before deciding on the path
-forward.
+Not active for a long time, so remove myself from MAINTAINERS.
+
+Cc: Zefan Li <lizefan.x@bytedance.com>
+Signed-off-by: Zefan Li <lizf.kern@gmail.com>
+Signed-off-by: Muchun Song <songmuchun@bytedance.com>
+---
+v2:
+ - Add Muchun SOB (Tejun).
+
+ CREDITS     | 3 +++
+ MAINTAINERS | 2 --
+ 2 files changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/CREDITS b/CREDITS
+index d6cbd4c792a12..717c7d9de5f64 100644
+--- a/CREDITS
++++ b/CREDITS
+@@ -567,6 +567,9 @@ N: Zach Brown
+ E: zab@zabbo.net
+ D: maestro pci sound
  
-> It's not only MDIO that hits this, but so far there aren't too many
-> cases. That will obviously depend on the config used though.
-> 
-> There will be issues like this over the kernel. I'm not sure fixing
-> them all is the right approach as it might be too much work and too
-> hard to narrow down all occurance.
++N: Zefan Li
++D: Contribution to control group stuff
++
+ N: David Brownell
+ D: Kernel engineer, mentor, and friend.  Maintained USB EHCI and
+ D: gadget layers, SPI subsystem, GPIO subsystem, and more than a few
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 32a63c456aa0d..e6db40f53784f 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -5664,7 +5664,6 @@ F:	kernel/context_tracking.c
+ 
+ CONTROL GROUP (CGROUP)
+ M:	Tejun Heo <tj@kernel.org>
+-M:	Zefan Li <lizefan.x@bytedance.com>
+ M:	Johannes Weiner <hannes@cmpxchg.org>
+ M:	Michal Koutný <mkoutny@suse.com>
+ L:	cgroups@vger.kernel.org
+@@ -5693,7 +5692,6 @@ F:	include/linux/blk-cgroup.h
+ 
+ CONTROL GROUP - CPUSET
+ M:	Waiman Long <longman@redhat.com>
+-M:	Zefan Li <lizefan.x@bytedance.com>
+ L:	cgroups@vger.kernel.org
+ S:	Maintained
+ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/tj/cgroup.git
+-- 
+2.20.1
 
-Actually, that is mostly just CPU cycles. There are build bots which
-make builds with random configurations. Arnd Bergmann has one such
-bot, for example. Systems like that will find the issues for you.
-
-> But to me it seems like the correct
-> fix as the current code is calling a function that might not exist,
-> hence the patch :)
-
-As 0-day has shown, another build bot, your patch is not correct and
-causes problems. You can try again, but maybe first dig into the
-linker.
-
-Humm, interesting. I don't actually find anything calling
-mdio45_ethtool_gset(). So you might be able to just remove it.  And
-then i think you can remove mdio45_ethtool_gset_npage(). But i might
-be wrong...
-
-	Andrew
 
