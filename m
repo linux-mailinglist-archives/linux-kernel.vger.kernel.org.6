@@ -1,117 +1,122 @@
-Return-Path: <linux-kernel+bounces-396192-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396193-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E10C99BC92E
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 10:32:20 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98CBA9BC92F
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 10:32:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 97AAB1F21BC1
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 09:32:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA8CF1C22813
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 09:32:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7691C1D040B;
-	Tue,  5 Nov 2024 09:32:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DFCC1D040B;
+	Tue,  5 Nov 2024 09:32:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bsAwKZzT"
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="grX96xee"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B3D41CEAA0;
-	Tue,  5 Nov 2024 09:32:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B5B1433B5
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 09:32:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730799134; cv=none; b=Ufb0nnVXoxqUrkg6VW8C2f9mjscchjMTmGcDKv535M7NtVwL7rxohyPcaU8m4fyKZdErB/sI1lm7QlshJLQrymS6HWwL6VXQL6WhmAaLvu3VC2FqDSCsNBVPldlzces5U9/QIOKrS/7ix/fNDYBXgDkj0uH1h6MSb8b5X3cf1ec=
+	t=1730799147; cv=none; b=UHMwiYGRTPOuxx6A/jcqKxKY/YaEKTAORzKA2HfrTbFcBL3TwVOK/uJmhbHjkP2lGfOpDmrZKMCm6QWnaMkmrPJgcqDc9zEtVtTT+jCmBIatfy3othWE06/MBf0tBtEkZNbcB7s4k41pHxgWkNtGrVPNqvUJI7qA+eyoRCh9+AA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730799134; c=relaxed/simple;
-	bh=y3k9t7IlGyTNXiIeWwet9nwGsTFYHdSA6pQdrYorthU=;
+	s=arc-20240116; t=1730799147; c=relaxed/simple;
+	bh=3boYlIm7+ysYJZ8hI0p5HudoZgakBgOBlMRjSuXyXRI=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sXE/s9XBZ5z5ctGssbDKAzDJF8OOmU1QWxvZvTAkXXXY0f9XG8O2lp1sRCHmdJ7SlhoG4AvHTlhm7SIApwclbaDP7v9VBfAoGeksmFOJfTOCynkBkQoHdeO8A+xX11t1LjmL9VRbiMuXunSm4f/c30L7Y1up0BJK0EZva2MT3Kc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bsAwKZzT; arc=none smtp.client-ip=209.85.210.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-71e5a00d676so259709b3a.1;
-        Tue, 05 Nov 2024 01:32:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730799131; x=1731403931; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KjScqKwTVHOB/jKA3HSvu1a3WrYkMhLJWnO+IQHcbSE=;
-        b=bsAwKZzT1mlhwcxsvnXR1eUoXVHRPJBl8lQy4xkXGSzJICFgvKXYwnwLxSyY0LusQY
-         KdWsmPwemfLmXa/Fk67xhgDKtOgKlxAVbH435k6CSvCNo07Y8hr8kVqvbkMWRYj7pllp
-         4REc1WBFFQgnLdINAEbNRzvZ4o/0GACwl0iA58/mdaB2SUOT6IX6wzF2KPMmcZniyDUZ
-         JNjZexnnJEZsy7wgW0uKrrlKnvzD/G150H58NmU91mWDBCcEXP+Kkl1U7ypyKXo3TCBj
-         KVIT9L60prIdnv3PEpY9o6nB52qa3vNdrrEx6lO3CwkNexXGwRuPYG7mHU8HH3d6IaV1
-         1lyQ==
+	 To:Cc:Content-Type; b=OJX18LgmkXZISvNJio3zuNMrMF6wV0+lXstb0+KXXXoEXdnsvNQPwfRy2a9WeO6w8c0urxSlA76I1tCUJ5B5ZO1VQrNXHO2E39OemcuUsnVAo7WuVMr+1at6JD4n4TfKJupC0GaizLKS+J+JdIv2150C77WbKkjYO4W9I+bHFuM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=grX96xee; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1730799145;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=CaELkgjNq5yohIp9CDpDpFO7U1TxTr29on+OWubj13o=;
+	b=grX96xee7qCq0ye4CSboji+bGs4Yh5jkzkWAwJXm637///8I9S9ts2PAGnS0OCM7s7LUz+
+	2WMfKbe2JqQwhz3DYTuePtlHB22Mvdr849Ncc61fCJFgvbsHhebhew6/ISJeRzfKCEPnMr
+	WsacZRUZ+h0u8CZNS8ryNbaYsmRp7dI=
+Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com
+ [209.85.216.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-605-Ja8jlctfMXqtjJYczwSUaA-1; Tue, 05 Nov 2024 04:32:23 -0500
+X-MC-Unique: Ja8jlctfMXqtjJYczwSUaA-1
+Received: by mail-pj1-f69.google.com with SMTP id 98e67ed59e1d1-2e59d872d09so6703124a91.0
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 01:32:23 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730799131; x=1731403931;
+        d=1e100.net; s=20230601; t=1730799143; x=1731403943;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=KjScqKwTVHOB/jKA3HSvu1a3WrYkMhLJWnO+IQHcbSE=;
-        b=XlHJkJOoAhfetPkI0l1RF2IXmj8aIKOAtou49i9RZjcymqlditzZYfMb2Y3OU1E0FF
-         LEjHbYlKR6MqpPrEtt7dLdkmqANRViIkQalrv1eGCut4UI/ztkCuBZbibbArTyU1QldJ
-         nWuPb5Y5D08lObiTLwccN+n7Wg+AgWOZ2T9QerSq7vyWEXichQwKGiJ57v/2hMVlYySf
-         7VQFJUGqocHQuV65gIsRuz5hewIHJykKqiNv3qnfVx5g2gbmWYMXpFZcctkaXgZ9KHnI
-         Eys5heOdjys9G1tsJCTHx9uUuhyALU6YAjQeP9piDcJQg4NHvrzZY5461rdm8a2h6StF
-         SAHg==
-X-Forwarded-Encrypted: i=1; AJvYcCV1CxoytjRdHNsbTKKFsn/3Hpm6TLNgKzkWpfm4UdR/sd5Pv9B+pY8wM5j8JJoq9z5++Ft0nZ5D3bpC1JZ3cg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyvjQn7pwRK02Hvxoq4Nfuo433Its6mCdaqOw5dAYzDVGsyPBGT
-	2kClUVBSca69YedlFNpqHP+RdMTJIo/j6hJ8RsFXxhBnzUWnA7YtX3QJjCeyvhh0XQT43PS3oz1
-	Bs1AFmeEhyW7ymaMANv1AHVFo/WI=
-X-Google-Smtp-Source: AGHT+IGRd4XDNlYX0EkHremT6+nIdodm4gRNBRYKAOsJFM+Oj6DD4zTVHYe3RsWa+rp/MyTW7eaTvNcJ8+D7PVtENfI=
-X-Received: by 2002:a17:90a:f016:b0:2e2:d881:5936 with SMTP id
- 98e67ed59e1d1-2e8f11ace1emr17324063a91.7.1730799131484; Tue, 05 Nov 2024
- 01:32:11 -0800 (PST)
+        bh=CaELkgjNq5yohIp9CDpDpFO7U1TxTr29on+OWubj13o=;
+        b=e61id5r6asZWB3CUIV0sF1+Vq3IN1lVLtVbOfEu8kOKflw67jeEugfZ1bn21n8adMN
+         Vuj8lysIcznP7DAIuEHFrM83tRd4vyTdMIEIPy4/JlXcWhOFsJ15fYV9nbm5TxCKc+4v
+         bQuU+9/ywlGaERdorf/M1E/1GSc+3sj38eqlI/jHsPeG0HjpMF4lnkA8QqL6LhQ9+G0o
+         STsfw98JFemzcDVl3VS3tO6tIws/0aRsVCUdK1V21kn9bmjZ8MwSThNTYap9G2YHLqhm
+         cvaUOGIuo6d+QCPi0oI+IKEYclZJFcqAZts0/zqbyBLwg/5rB8XdrMftbn9Wvdd2wBxY
+         8yMw==
+X-Forwarded-Encrypted: i=1; AJvYcCXc+HzH0eesLu+L+njQwsQLmiI5bO1F3lzy8j6TcafXYGLFRoxtYdoI6Za5ZUSysaduVCz9YKIuSiFs6BY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy/hogjw1Yrqze8x2cdRCVSUPgoRagU88/TEMwnLDrgSWeKrmYh
+	ML+DfTybv5qOX8pPunJhD4p4fRcsWVLNfmodAP0q4BXE6AaWIV1qir/SgKvGbDTtIjnq2qmbUoC
+	QgKE574wUlkz6xyzzmDr/DAEmP0DTtGLHn3oltwxuAZD0TMssjppAtcAr6UhDCvK9vbSaUSRuiv
+	xM7Fs/Mc/xRulTPe1cpnUm8LWOmpOBeyyMf7rF
+X-Received: by 2002:a17:90b:164f:b0:2e2:bfb0:c06 with SMTP id 98e67ed59e1d1-2e94c2b086cmr21054741a91.12.1730799142815;
+        Tue, 05 Nov 2024 01:32:22 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFrI2dYkCr6bnvyp62rgLDstJjcAcnHOsb+T5y5D8ck5xShQL7y314TViGgIjvrllU676F8agf4RY2ewZHmgK4=
+X-Received: by 2002:a17:90b:164f:b0:2e2:bfb0:c06 with SMTP id
+ 98e67ed59e1d1-2e94c2b086cmr21054719a91.12.1730799142429; Tue, 05 Nov 2024
+ 01:32:22 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241105022143.1087112-1-alistair.francis@wdc.com>
-In-Reply-To: <20241105022143.1087112-1-alistair.francis@wdc.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Tue, 5 Nov 2024 10:31:58 +0100
-Message-ID: <CANiq72=L=CMUBu7jBn0H2Wb8vupYzOYFrSQ_9gyFZj_w2JU_uQ@mail.gmail.com>
-Subject: Re: [PATCH] rust: bindings: Support some inline static functions
-To: Alistair Francis <alistair23@gmail.com>
-Cc: linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	ojeda@kernel.org, boqun.feng@gmail.com, a.hindborg@kernel.org, 
-	benno.lossin@proton.me, aliceryhl@google.com, tmgross@umich.edu, 
-	gary@garyguo.net, Alistair Francis <alistair.francis@wdc.com>
+References: <20241105072642.898710-1-lulu@redhat.com> <20241105072642.898710-2-lulu@redhat.com>
+In-Reply-To: <20241105072642.898710-2-lulu@redhat.com>
+From: Jason Wang <jasowang@redhat.com>
+Date: Tue, 5 Nov 2024 17:32:10 +0800
+Message-ID: <CACGkMEveK1uOg=Hq2WuYFW7+DbMoF_g6QjV5cUFkBHUEQXkcow@mail.gmail.com>
+Subject: Re: [PATCH v3 1/9] vhost: Add a new parameter to allow user select kthread
+To: Cindy Lu <lulu@redhat.com>
+Cc: mst@redhat.com, michael.christie@oracle.com, sgarzare@redhat.com, 
+	linux-kernel@vger.kernel.org, virtualization@lists.linux-foundation.org, 
+	netdev@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Nov 5, 2024 at 3:22=E2=80=AFAM Alistair Francis <alistair23@gmail.c=
-om> wrote:
+On Tue, Nov 5, 2024 at 3:27=E2=80=AFPM Cindy Lu <lulu@redhat.com> wrote:
 >
-> If this is accepted or at least Acked I can work on removing the
-> existing rust_helper_* functions and convert them to be auto-generated.
+> The vhost now uses vhost_task and workers as a child of the owner thread.
+> While this aligns with containerization principles,it confuses some legac=
+y
+> userspace app, Therefore, we are reintroducing kthread API support.
+>
+> Introduce a new parameter to enable users to choose between
+> kthread and task mode. This will be exposed by module_param() later.
+>
+> Signed-off-by: Cindy Lu <lulu@redhat.com>
+> ---
+>  drivers/vhost/vhost.c | 2 ++
+>  drivers/vhost/vhost.h | 1 +
+>  2 files changed, 3 insertions(+)
+>
+> diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
+> index 9ac25d08f473..eff6acbbb63b 100644
+> --- a/drivers/vhost/vhost.c
+> +++ b/drivers/vhost/vhost.c
+> @@ -41,6 +41,7 @@ static int max_iotlb_entries =3D 2048;
+>  module_param(max_iotlb_entries, int, 0444);
+>  MODULE_PARM_DESC(max_iotlb_entries,
+>         "Maximum number of iotlb entries. (default: 2048)");
+> +static bool inherit_owner_default =3D true;
 
-Yeah, we have tracked the feature for a long time, please see:
+I wonder how management can make a decision for this value.
 
-    https://github.com/Rust-for-Linux/linux/issues/353
+Thanks
 
-So it is definitely in our plan to use (assuming it works).
-
-But, yeah, we would need the patch with the conversions, to show how
-it would look in practice (i.e. comparing before/after etc.), i.e. the
-usual kernel rule.
-
-> +       --allowlist-function crypto_shash_descsize
-
-We probably should put this into something similar to
-`rust/bindgen_parameters` (and remove this variable).
-
-> +       @cp /tmp/bindgen/extern.c $(src)/
-
-I don't think we can use/assume `/tmp` -- we will need
-`--wrap-static-fns-path` or similar.
-
-Thanks for trying out the new feature!
-
-Cheers,
-Miguel
 
