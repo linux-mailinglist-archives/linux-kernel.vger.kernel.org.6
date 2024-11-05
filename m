@@ -1,155 +1,159 @@
-Return-Path: <linux-kernel+bounces-396032-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396037-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D86C79BC6FD
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 08:28:43 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2183C9BC70B
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 08:30:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B6D31F23876
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 07:28:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7EA2283A71
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 07:30:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B83231FF60B;
-	Tue,  5 Nov 2024 07:27:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76D701FF03A;
+	Tue,  5 Nov 2024 07:28:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="jBzBBe6d";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Iqian8kt";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="jBzBBe6d";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Iqian8kt"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SgQa3fUi"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B7661FE109;
-	Tue,  5 Nov 2024 07:27:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16F791FE105
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 07:28:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730791647; cv=none; b=Y9nWQFPB1b2EixTpUI8n2JcugyGVN864HXVr9ErrJsQDahsbKR8WU5JW0oAejY0YiLrPeVoM50kJUV8toMMAT5zBBSGcsJ/5hlST7jY1pbzOVGTSQPjQG3UC485Gxn0+1v37o7UAkNYuxheTcAcrbOtN1MgB/s3OHn6gcH/7yyo=
+	t=1730791702; cv=none; b=pltGKha3ojnBSwgEPdzXQdkFdcuj+BBcPN+du8ThJTHyOxzMhfH8Ya1jyKRfX+7VOCg66KMBj5lVhqWzmM8rKd14lN6sNjCiconIP9zKq/L710Nb4H0Lai0WfJA8diklfTVwdl1Glv4UANUue9R5eC0REb3FUwnQa7g/bCYaceE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730791647; c=relaxed/simple;
-	bh=TiL8f4qfH+mjEN4L9NMWEtVGaq1x5lzs/dWxaSC4qRs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZFKKYv0cRpuFyB79QMN9cUsk5JDxwjpAa0RbO/k0Sbwz0Ob+9E27d5DNjbsaTl7+6H8abQT0d3aaKAYKe3t6OZwnYqgis/eOEE3JSJxl6mj+x/0dyHCYZ1agDEPMQhDBcWCabzXFRrXEB9sKd2pfazXr+Dq5baTZAL6njft+M18=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=jBzBBe6d; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Iqian8kt; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=jBzBBe6d; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Iqian8kt; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id A54001FBAF;
-	Tue,  5 Nov 2024 07:27:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1730791643; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3K9u8hz3jWj7gG+61BlB4e2Y14/5VD9mLmISrQ/fRKY=;
-	b=jBzBBe6dlqWxtuHzPgVZsp3zOK5M2d+S+/SDlx9R/wL8uTOS2b0k2Spgq2O2kLantzrt0n
-	xWKmbDeMZ17QPEyk2+QXGYABvThWxj9kpYQ/rzgy9vsdPS8WQfpkaiYxcMXd2HpYrRSlmZ
-	PTtBRbhrCA7CYAkWKqrjTq4Grd13XKA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1730791643;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3K9u8hz3jWj7gG+61BlB4e2Y14/5VD9mLmISrQ/fRKY=;
-	b=Iqian8ktzmkGaOEsSM4CpnYaJNhr/1VSzY70zblgqxV3t9l/GU/Q/o08RD9qpwu0OGpjB7
-	6fUJ4UYTI2mUVLCw==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1730791643; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3K9u8hz3jWj7gG+61BlB4e2Y14/5VD9mLmISrQ/fRKY=;
-	b=jBzBBe6dlqWxtuHzPgVZsp3zOK5M2d+S+/SDlx9R/wL8uTOS2b0k2Spgq2O2kLantzrt0n
-	xWKmbDeMZ17QPEyk2+QXGYABvThWxj9kpYQ/rzgy9vsdPS8WQfpkaiYxcMXd2HpYrRSlmZ
-	PTtBRbhrCA7CYAkWKqrjTq4Grd13XKA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1730791643;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3K9u8hz3jWj7gG+61BlB4e2Y14/5VD9mLmISrQ/fRKY=;
-	b=Iqian8ktzmkGaOEsSM4CpnYaJNhr/1VSzY70zblgqxV3t9l/GU/Q/o08RD9qpwu0OGpjB7
-	6fUJ4UYTI2mUVLCw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 496BD1394A;
-	Tue,  5 Nov 2024 07:27:23 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 40LYD9vIKWfnGAAAD6G6ig
-	(envelope-from <hare@suse.de>); Tue, 05 Nov 2024 07:27:23 +0000
-Message-ID: <ce5f93d0-71da-4364-8e6f-064447b49fde@suse.de>
-Date: Tue, 5 Nov 2024 08:27:22 +0100
+	s=arc-20240116; t=1730791702; c=relaxed/simple;
+	bh=klpkap17FjqoH1PbSy9hIcIvY77oWxk+ZRYjPel3ghU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UG3gv344UQ+mhaKeklHGdAZYION6V0E58xJtc8neQtE0YXpw61VNts3VBTOrUghYD6x/5IcKHlpBa6JRvxdSNN+xUywH1+AUhJUs++mh1Y9aRzOvmYMDuMmuG9mswmvi/IbfhWcFlq12EIt4MGZRVr+6m04ov4RJdYNwC2fXCgo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SgQa3fUi; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-37d5045987dso441414f8f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 23:28:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730791697; x=1731396497; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NR+0fJY21qOQ4pKy7qaBE0+v2RefTjKds+lqx/Uls8U=;
+        b=SgQa3fUiiTHGKlZwsu7ORBjOmHfyQJGDU61ohF1m8UtFQSTnIFm4Bi4JdO/DEYVKIv
+         QPGJJOqOFUSvEvduk3NhKlXHm8POPxaUqA3FOIGwCsyaTyFVmVdZNzP+eSYlEs/HPh9Q
+         gmDVKv471kdqECeoj111bYKTRLrVo0jJ3y5hmU7aomWqAwSZgX5pkVuYJPx/PcnCA78l
+         bWlGZpsGIRAbZHV8RtOrSsD0AQL0vWoFNFhTsdSeMVF10FhJGislA/Gt960jF7zBBWCh
+         GDO9EHo721ZtujmlLuVuwsK/1UbJ1G0EinK9USilBr/X5+1E9M7ExHars+VEZS4fQXXW
+         EZGQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730791697; x=1731396497;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=NR+0fJY21qOQ4pKy7qaBE0+v2RefTjKds+lqx/Uls8U=;
+        b=ESp6lE2JZDhLL4oY0RgSKGKru3EdUlhGvHLQTwF1A+glOfvxCqO5rikwhjtzNrfsnb
+         +lHdf91kd2P9UurQVYuL1+lNA0/vTbDft2db29O0Euz1xUa52VjrOlemakUAW2r80a/D
+         qKsW/dpssco9KHLtwVnjkYcNDlmSNRQckwjRl+pgYDxArPrm/ihy6KALM0qKIJPUY2OO
+         TfCtS18zN2AuY/qi2G3A/4GuTWLHLuoqX3HjXu7phBc279FagIKQ79Ew7DQF9ObqEluC
+         jYN0SeWCar5kUcZ69cwsMrf6c6mmKqP3/CwYIDuVWCTSQns4MmU6sJ2bqFaqeLnWl7O/
+         0jDQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWknCWF7C9qVlhhq48QVTd4Sn7KCMOZByVsaQe5r+fKjim3UuDMIPlaMxvsvp7gNUkt+CsOztPsksVZ1ew=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzlC/nuHjYYIExKzO18F/S4c7FxoYAIZhT7QGWPkp9sf5jocgBZ
+	wNpobE68o1kNyyeGCe2cRosDJlI611bOhP8qRGfoS65gOU6xWO8iPxlio8hE28B4EcPgQEhsL2J
+	lrblmpyAkKdDKeHoNWOINSBC18gc=
+X-Google-Smtp-Source: AGHT+IEGT+on1DX3p1vF1HvZpo63Gp5w5OxpW/OQ7mVoa4w2wrlFBXlYD17R3fdF7NX+uCMUjx3EuFafgtg1dRcutLI=
+X-Received: by 2002:a05:6000:4588:b0:381:d004:83c2 with SMTP id
+ ffacd0b85a97d-381d0048465mr2733931f8f.5.1730791697099; Mon, 04 Nov 2024
+ 23:28:17 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 6/6] md/raid10: Handle bio_split() errors
-To: John Garry <john.g.garry@oracle.com>, axboe@kernel.dk, song@kernel.org,
- yukuai3@huawei.com, hch@lst.de
-Cc: martin.petersen@oracle.com, linux-block@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-raid@vger.kernel.org,
- Johannes.Thumshirn@wdc.com
-References: <20241031095918.99964-1-john.g.garry@oracle.com>
- <20241031095918.99964-7-john.g.garry@oracle.com>
-Content-Language: en-US
-From: Hannes Reinecke <hare@suse.de>
-In-Reply-To: <20241031095918.99964-7-john.g.garry@oracle.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,suse.de:mid,oracle.com:email,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Score: -4.30
-X-Spam-Flag: NO
+References: <1730685372-2995-1-git-send-email-zhiguo.niu@unisoc.com> <ab9f63b2-8d02-411b-8d2f-bc1b5b748ffe@kernel.org>
+In-Reply-To: <ab9f63b2-8d02-411b-8d2f-bc1b5b748ffe@kernel.org>
+From: Zhiguo Niu <niuzhiguo84@gmail.com>
+Date: Tue, 5 Nov 2024 15:28:06 +0800
+Message-ID: <CAHJ8P3L9o2RJgV=TtUf_MPj36wasgPn7bn9FnGPXu=TgpE7ATQ@mail.gmail.com>
+Subject: Re: [PATCH V2] f2fs: fix to adjust appropriate length for fiemap
+To: Chao Yu <chao@kernel.org>
+Cc: Zhiguo Niu <zhiguo.niu@unisoc.com>, jaegeuk@kernel.org, 
+	linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, 
+	ke.wang@unisoc.com, Hao_hao.Wang@unisoc.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 10/31/24 10:59, John Garry wrote:
-> Add proper bio_split() error handling. For any error, call
-> raid_end_bio_io() and return. Except for discard, where we end the bio
-> directly.
-> 
-> Signed-off-by: John Garry <john.g.garry@oracle.com>
-> ---
->   drivers/md/raid10.c | 47 ++++++++++++++++++++++++++++++++++++++++++++-
->   1 file changed, 46 insertions(+), 1 deletion(-)
-> 
-Reviewed-by: Hannes Reinecke <hare@suse.de>
-
-Cheers,
-
-Hannes
--- 
-Dr. Hannes Reinecke                  Kernel Storage Architect
-hare@suse.de                                +49 911 74053 688
-SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
-HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
+Chao Yu <chao@kernel.org> =E4=BA=8E2024=E5=B9=B411=E6=9C=885=E6=97=A5=E5=91=
+=A8=E4=BA=8C 15:04=E5=86=99=E9=81=93=EF=BC=9A
+>
+> On 2024/11/4 9:56, Zhiguo Niu wrote:
+> > If user give a file size as "length" parameter for fiemap
+> > operations, but if this size is non-block size aligned,
+> > it will show 2 segments fiemap results even this whole file
+> > is contiguous on disk, such as the following results:
+> >
+> >   ./f2fs_io fiemap 0 19034 ylog/analyzer.py
+> > Fiemap: offset =3D 0 len =3D 19034
+> >          logical addr.    physical addr.   length           flags
+> > 0       0000000000000000 0000000020baa000 0000000000004000 00001000
+> > 1       0000000000004000 0000000020bae000 0000000000001000 00001001
+> >
+> > after this patch:
+> > ./f2fs_io fiemap 0 19034 ylog/analyzer.py
+> > Fiemap: offset =3D 0 len =3D 19034
+> >      logical addr.    physical addr.   length           flags
+> > 0    0000000000000000 00000000315f3000 0000000000005000 00001001
+> >
+> > Signed-off-by: Zhiguo Niu <zhiguo.niu@unisoc.com>
+> > ---
+> > V2: correct commit msg according to Chao's questions
+> > f2fs_io has been modified for testing, the length for fiemap is
+> > real file size, not block number
+> > ---
+> >   fs/f2fs/data.c | 4 ++--
+> >   1 file changed, 2 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+> > index 306b86b0..9fc229d 100644
+> > --- a/fs/f2fs/data.c
+> > +++ b/fs/f2fs/data.c
+> > @@ -1966,8 +1966,8 @@ int f2fs_fiemap(struct inode *inode, struct fiema=
+p_extent_info *fieinfo,
+> >                       goto out;
+> >       }
+> >
+> > -     if (bytes_to_blks(inode, len) =3D=3D 0)
+> > -             len =3D blks_to_bytes(inode, 1);
+> > +     if (len & (blks_to_bytes(inode, 1) - 1))
+> > +             len =3D round_up(len, blks_to_bytes(inode, 1));
+>
+> How do you think of getting rid of above alignment for len?
+>
+> >
+> >       start_blk =3D bytes_to_blks(inode, start);
+> >       last_blk =3D bytes_to_blks(inode, start + len - 1);
+>
+> And round up end position w/:
+>
+> last_blk =3D bytes_to_blks(inode, round_up(start + len - 1, F2FS_BLKSIZE)=
+);
+Hi Chao,
+I think this will change the current code logic
+-------------
+if (start_blk > last_blk)
+    goto out;
+-------------
+for example, a file with size 19006, but the length from the user is 16384.
+before this modification,  last_blk =3D  bytes_to_blks(inode, start +
+len - 1) =3D (inode, 16383) =3D 3
+after the first f2fs_map_blocks(). start_blk change to be 4,
+after the second f2fs_map_blocks(), fiemap_fill_nex_exten will be
+called to fill user parameter and then
+will goto out because start_blk > last_blk, then fiemap flow finishes.
+but after this modification, last_blk will be 4
+will do f2fs_map_blocks() until reach the max_file_blocks(inode)
+thanks=EF=BC=81
+>
+> Thanks,
+>
 
