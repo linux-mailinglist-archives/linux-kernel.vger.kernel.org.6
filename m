@@ -1,690 +1,211 @@
-Return-Path: <linux-kernel+bounces-396072-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396074-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E6FA9BC798
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 08:57:01 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51EF89BC7A0
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 08:58:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 56C821C222F3
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 07:57:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 89B89B22CDC
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 07:58:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 124901FEFBB;
-	Tue,  5 Nov 2024 07:56:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A64401FEFBF;
+	Tue,  5 Nov 2024 07:58:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wbinvd.org header.i=@wbinvd.org header.b="e/KOvMxD"
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JRqdxfVk"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90D44282F1
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 07:56:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 018BD282F1
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 07:58:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730793412; cv=none; b=tWnuwcwKkwGnDARzW7fxwsBtABhSxIzvzdb0Hiap4WSzemvaXzRBXVXztEXvmWtuS0b2w7qQ1q7mfSQgXGXxmNWmLa0VvVRFe2ydcpfhuvurNBfBx+x1yIdm7V1qgZPeU62pgFSjohk8k2LsDjVHTfLewV42MPS1tpEi845i3kM=
+	t=1730793501; cv=none; b=N2TyWcOzjaa4zA1ehdeSNiLANMe+Ly5Ge7uFQX1Mu6y/SQ1n3XhKddgwPDnmzEX4fcwGl2YXmmBy5K2wQd8pq8NRJm6xtYvkjuJ5bKtpANlt7W68eRKz/nr+N+JGori/wtaacyc0fYeTZtzVIw+tksSY8k5W0bCZgsSzRTpqrvQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730793412; c=relaxed/simple;
-	bh=bq6MSN59iN0IVMJ9aNuudKrXZcyiK42iS5O8Dh844qc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=FMA3wcjSa5Te10ZfyIHB2grxpo3ouGUZVhgAUYH+Sf7wHY5m/JmoFXkLNrlXPRUcKBjo1WmnkeSOGuHi5PuOgnwKSNuJU9vNhPJiLClsXFf/6UoobWhasx4oIy/rD+BTqxPKLDpk+Ro3z9NNrxYyiclxF74oKSgc1Gzf29PJyVY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wbinvd.org; spf=pass smtp.mailfrom=wbinvd.org; dkim=pass (2048-bit key) header.d=wbinvd.org header.i=@wbinvd.org header.b=e/KOvMxD; arc=none smtp.client-ip=209.85.210.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wbinvd.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wbinvd.org
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-720e94d36c8so1978902b3a.1
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 23:56:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=wbinvd.org; s=wbinvd; t=1730793410; x=1731398210; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xdJSbaBNt8yK/8bznTA9Mve2MmveJb2TotpjT1i1g0o=;
-        b=e/KOvMxDhdTRpP9SYdUnbx9P+7tlzAvnjVuErLNg5l8olX+rsAZMlVlxw2bVR0Zciz
-         kyCeuxEhkkoOcdia92xQz5M2XL0p+AEAJRNH1MxSSoImnqVxI39pI+TEdngGYjL04XA5
-         /eS2/aiy4KaczW4lWMdScG6jFQTpN6W6v6x6YvAu7jZ2A+b0wihOtIKvJ1/C43nJ4IyX
-         mZmsmXDkTeLcsrIEXN2ofGJsHwnbWfF51eM5p7PmlODM2nVhpT0tElaL+9Y07MQXDlNO
-         9NRKwTav7qG7PH6SwyAFlhsOsxfSySEwkoc9zvoZ3c00u+y0sOX1vutChtcohjEnVb5m
-         WgDw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730793410; x=1731398210;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xdJSbaBNt8yK/8bznTA9Mve2MmveJb2TotpjT1i1g0o=;
-        b=hugfdY32d/85OzQyOi4ALq85aXSmLLa3YcOhj6JL6WZ//4v1D3Niq1D5MmOMHNVjCe
-         +I97TggFeroOH7A6lIe9mu+tGq+ct1h27KYMVBxmAOELnT0gzv5iI2Rgi2kTERZNNFWP
-         6rDafL7s5Q0WslCsbBPwzkGK1f/LlFpEelcfSycbfQ7PjfkpUGsdt0abP2eSmxEYpNYI
-         sSg9/YkY5gjR5z5K12fVdQsEqI97tB9q0lEHuhnA6P0Zle1qBFUa2zNTdWDMkN03/AYh
-         00yt3fcE/Q/HObY9KOabtlw0iifP4ScuxIeMmkZbax5CL+UggH2E/BoRgQ9/idRiHv+P
-         af3A==
-X-Forwarded-Encrypted: i=1; AJvYcCVnXm4zuza4t4WQTRblD9PaZc1I5fLcyK/Nw5julbmAmrRFdP9K5Vu6kswt/ws9Lyq2Rvj/CIHSB/513f0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxQi6vbMxVrGlvxmFoHSd+X4ltEFFgwqq9/iKTREgtLx1BIMiaG
-	tych651mxIWXhB+8zDPPokFGu7jnZekPAM8vrzXiDjd5RQZRvRIJqBcxjhVx6OXg99wWBWxaML1
-	m
-X-Google-Smtp-Source: AGHT+IHQ9wKAB/aC/AFfcDiiWZhQDmy9WMlE7EZV8znIMIf1XqwGFSPcWDwqiUdRS+k6BvhIQGI3Pg==
-X-Received: by 2002:aa7:93c7:0:b0:71e:7258:c69b with SMTP id d2e1a72fcca58-720c98495d5mr20957892b3a.14.1730793409654;
-        Mon, 04 Nov 2024 23:56:49 -0800 (PST)
-Received: from mozart.vkv.me (192-184-160-110.fiber.dynamic.sonic.net. [192.184.160.110])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-720bc313e0csm8967641b3a.189.2024.11.04.23.56.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Nov 2024 23:56:49 -0800 (PST)
-From: Calvin Owens <calvin@wbinvd.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Rodolfo Giometti <giometti@enneenne.com>,
-	George Spelvin <linux@horizon.com>,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: [PATCH v3] pps: Fix a use-after-free
-Date: Mon,  4 Nov 2024 23:56:19 -0800
-Message-ID: <abc43b18f21379c21a4d2c63372a04b2746be665.1730792731.git.calvin@wbinvd.org>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <2024101350-jinx-haggler-5aca@gregkh>
-References: <2024101350-jinx-haggler-5aca@gregkh>
+	s=arc-20240116; t=1730793501; c=relaxed/simple;
+	bh=hO7an0Moj11psSaHZsLLbOtdKf8aP/vZ9Rj0Y1MoRIo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=M+9mBpRmBAHnncrq+fCFLa2JHaTb4OhD8mA2csBjt+D1woHKbBmJUH3a/0a2rMhyDU8YzeHYdFgwJpKf0KBdPHMX+gNLonVkgtbWfiDo5TvcjKaXdgcUYZynEt7EFGWGwCRx6GQXu1+JCctXLI2a4+jMCx6xbgxhbgnck622Vy8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JRqdxfVk; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1730793497;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=cXuRtv2tzeGDq5JMVAB7TV/Y+R0spfWDATrGbqGdvcU=;
+	b=JRqdxfVkadgoN5LrFhfYKB6eYnO3s7yrX+Qi9Y0S9L8y40pi34Y83Z5Ot+egcSkAchE6bG
+	jOv+hXdxhhF77ZEw4v7X26vWdwnEcuvjNefLx50pdVCSzA5WWtlJO7TJluM9uwtM7qUOG3
+	TeGuf5FahF7ekcD3LcP2tmDeAXOxBOc=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-3-xYsGdY0_OkKr0S0R7jeUNQ-1; Tue,
+ 05 Nov 2024 02:58:14 -0500
+X-MC-Unique: xYsGdY0_OkKr0S0R7jeUNQ-1
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 715121955BC9;
+	Tue,  5 Nov 2024 07:58:13 +0000 (UTC)
+Received: from fedora (unknown [10.72.116.156])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E1E6E1956086;
+	Tue,  5 Nov 2024 07:58:07 +0000 (UTC)
+Date: Tue, 5 Nov 2024 15:58:01 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: Yu Kuai <yukuai1@huaweicloud.com>
+Cc: axboe@kernel.dk, linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org, yi.zhang@huawei.com,
+	yangerkun@huawei.com, "yukuai (C)" <yukuai3@huawei.com>
+Subject: Re: [PATCH -next] block: fix uaf for flush rq while iterating tags
+Message-ID: <ZynQCXVc5OjGaF-1@fedora>
+References: <20241104110005.1412161-1-yukuai1@huaweicloud.com>
+ <ZynG3g8o_iLOjwai@fedora>
+ <88ffc0a3-10ab-e6fd-01e1-57ff8011c257@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <88ffc0a3-10ab-e6fd-01e1-57ff8011c257@huaweicloud.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-On a board running ntpd and gpsd, I'm seeing a consistent use-after-free
-in sys_exit() from gpsd when rebooting:
+On Tue, Nov 05, 2024 at 03:36:36PM +0800, Yu Kuai wrote:
+> Hi,
+> 
+> 在 2024/11/05 15:18, Ming Lei 写道:
+> > On Mon, Nov 04, 2024 at 07:00:05PM +0800, Yu Kuai wrote:
+> > > From: Yu Kuai <yukuai3@huawei.com>
+> > > 
+> > > blk_mq_clear_flush_rq_mapping() is not called during scsi probe, by
+> > > checking blk_queue_init_done(). However, QUEUE_FLAG_INIT_DONE is cleared
+> > > in del_gendisk by commit aec89dc5d421 ("block: keep q_usage_counter in
+> > > atomic mode after del_gendisk"), hence for disk like scsi, following
+> > > blk_mq_destroy_queue() will not clear flush rq from tags->rqs[] as well,
+> > > cause following uaf that is found by our syzkaller for v6.6:
+> > > 
+> > > ==================================================================
+> > > BUG: KASAN: slab-use-after-free in blk_mq_find_and_get_req+0x16e/0x1a0 block/blk-mq-tag.c:261
+> > > Read of size 4 at addr ffff88811c969c20 by task kworker/1:2H/224909
+> > > 
+> > > CPU: 1 PID: 224909 Comm: kworker/1:2H Not tainted 6.6.0-ga836a5060850 #32
+> > > Workqueue: kblockd blk_mq_timeout_work
+> > > Call Trace:
+> > > 
+> > > __dump_stack lib/dump_stack.c:88 [inline]
+> > > dump_stack_lvl+0x91/0xf0 lib/dump_stack.c:106
+> > > print_address_description.constprop.0+0x66/0x300 mm/kasan/report.c:364
+> > > print_report+0x3e/0x70 mm/kasan/report.c:475
+> > > kasan_report+0xb8/0xf0 mm/kasan/report.c:588
+> > > blk_mq_find_and_get_req+0x16e/0x1a0 block/blk-mq-tag.c:261
+> > > bt_iter block/blk-mq-tag.c:288 [inline]
+> > > __sbitmap_for_each_set include/linux/sbitmap.h:295 [inline]
+> > > sbitmap_for_each_set include/linux/sbitmap.h:316 [inline]
+> > > bt_for_each+0x455/0x790 block/blk-mq-tag.c:325
+> > > blk_mq_queue_tag_busy_iter+0x320/0x740 block/blk-mq-tag.c:534
+> > > blk_mq_timeout_work+0x1a3/0x7b0 block/blk-mq.c:1673
+> > > process_one_work+0x7c4/0x1450 kernel/workqueue.c:2631
+> > > process_scheduled_works kernel/workqueue.c:2704 [inline]
+> > > worker_thread+0x804/0xe40 kernel/workqueue.c:2785
+> > > kthread+0x346/0x450 kernel/kthread.c:388
+> > > ret_from_fork+0x4d/0x80 arch/x86/kernel/process.c:147
+> > > ret_from_fork_asm+0x1b/0x30 arch/x86/entry/entry_64.S:293
+> > > 
+> > > Allocated by task 942:
+> > > kasan_save_stack+0x22/0x50 mm/kasan/common.c:45
+> > > kasan_set_track+0x25/0x30 mm/kasan/common.c:52
+> > > ____kasan_kmalloc mm/kasan/common.c:374 [inline]
+> > > __kasan_kmalloc mm/kasan/common.c:383 [inline]
+> > > __kasan_kmalloc+0xaa/0xb0 mm/kasan/common.c:380
+> > > kasan_kmalloc include/linux/kasan.h:198 [inline]
+> > > __do_kmalloc_node mm/slab_common.c:1007 [inline]
+> > > __kmalloc_node+0x69/0x170 mm/slab_common.c:1014
+> > > kmalloc_node include/linux/slab.h:620 [inline]
+> > > kzalloc_node include/linux/slab.h:732 [inline]
+> > > blk_alloc_flush_queue+0x144/0x2f0 block/blk-flush.c:499
+> > > blk_mq_alloc_hctx+0x601/0x940 block/blk-mq.c:3788
+> > > blk_mq_alloc_and_init_hctx+0x27f/0x330 block/blk-mq.c:4261
+> > > blk_mq_realloc_hw_ctxs+0x488/0x5e0 block/blk-mq.c:4294
+> > > blk_mq_init_allocated_queue+0x188/0x860 block/blk-mq.c:4350
+> > > blk_mq_init_queue_data block/blk-mq.c:4166 [inline]
+> > > blk_mq_init_queue+0x8d/0x100 block/blk-mq.c:4176
+> > > scsi_alloc_sdev+0x843/0xd50 drivers/scsi/scsi_scan.c:335
+> > > scsi_probe_and_add_lun+0x77c/0xde0 drivers/scsi/scsi_scan.c:1189
+> > > __scsi_scan_target+0x1fc/0x5a0 drivers/scsi/scsi_scan.c:1727
+> > > scsi_scan_channel drivers/scsi/scsi_scan.c:1815 [inline]
+> > > scsi_scan_channel+0x14b/0x1e0 drivers/scsi/scsi_scan.c:1791
+> > > scsi_scan_host_selected+0x2fe/0x400 drivers/scsi/scsi_scan.c:1844
+> > > scsi_scan+0x3a0/0x3f0 drivers/scsi/scsi_sysfs.c:151
+> > > store_scan+0x2a/0x60 drivers/scsi/scsi_sysfs.c:191
+> > > dev_attr_store+0x5c/0x90 drivers/base/core.c:2388
+> > > sysfs_kf_write+0x11c/0x170 fs/sysfs/file.c:136
+> > > kernfs_fop_write_iter+0x3fc/0x610 fs/kernfs/file.c:338
+> > > call_write_iter include/linux/fs.h:2083 [inline]
+> > > new_sync_write+0x1b4/0x2d0 fs/read_write.c:493
+> > > vfs_write+0x76c/0xb00 fs/read_write.c:586
+> > > ksys_write+0x127/0x250 fs/read_write.c:639
+> > > do_syscall_x64 arch/x86/entry/common.c:51 [inline]
+> > > do_syscall_64+0x70/0x120 arch/x86/entry/common.c:81
+> > > entry_SYSCALL_64_after_hwframe+0x78/0xe2
+> > > 
+> > > Freed by task 244687:
+> > > kasan_save_stack+0x22/0x50 mm/kasan/common.c:45
+> > > kasan_set_track+0x25/0x30 mm/kasan/common.c:52
+> > > kasan_save_free_info+0x2b/0x50 mm/kasan/generic.c:522
+> > > ____kasan_slab_free mm/kasan/common.c:236 [inline]
+> > > __kasan_slab_free+0x12a/0x1b0 mm/kasan/common.c:244
+> > > kasan_slab_free include/linux/kasan.h:164 [inline]
+> > > slab_free_hook mm/slub.c:1815 [inline]
+> > > slab_free_freelist_hook mm/slub.c:1841 [inline]
+> > > slab_free mm/slub.c:3807 [inline]
+> > > __kmem_cache_free+0xe4/0x520 mm/slub.c:3820
+> > > blk_free_flush_queue+0x40/0x60 block/blk-flush.c:520
+> > > blk_mq_hw_sysfs_release+0x4a/0x170 block/blk-mq-sysfs.c:37
+> > > kobject_cleanup+0x136/0x410 lib/kobject.c:689
+> > > kobject_release lib/kobject.c:720 [inline]
+> > > kref_put include/linux/kref.h:65 [inline]
+> > > kobject_put+0x119/0x140 lib/kobject.c:737
+> > > blk_mq_release+0x24f/0x3f0 block/blk-mq.c:4144
+> > > blk_free_queue block/blk-core.c:298 [inline]
+> > > blk_put_queue+0xe2/0x180 block/blk-core.c:314
+> > > blkg_free_workfn+0x376/0x6e0 block/blk-cgroup.c:144
+> > > process_one_work+0x7c4/0x1450 kernel/workqueue.c:2631
+> > > process_scheduled_works kernel/workqueue.c:2704 [inline]
+> > > worker_thread+0x804/0xe40 kernel/workqueue.c:2785
+> > > kthread+0x346/0x450 kernel/kthread.c:388
+> > > ret_from_fork+0x4d/0x80 arch/x86/kernel/process.c:147
+> > > ret_from_fork_asm+0x1b/0x30 arch/x86/entry/entry_64.S:293
+> > > 
+> > > Other than blk_mq_clear_flush_rq_mapping(), the flag is only used in
+> > > blk_register_queue() from initialization path, hence it's safe not to
+> > > clear the flag in del_gendisk. And since QUEUE_FLAG_REGISTERED already
+> > > make sure that queue should only be registered once, there is no need
+> > > to test the flag as well.
+> > 
+> > But disk can be added again in case of sd rebind, so the check should be
+> > kept.
+> 
+> I don't understand yet, I mean the other flag QUEUE_FLAG_REGISTERED can
+> cover the case to call percpu_ref_switch_to_percpu() for the rebind
+> case, the flag QUEUE_FLAG_INIT_DONE now is useless other than
+> blk_mq_clear_flush_rq_mapping().
 
-    pps pps1: removed
-    ------------[ cut here ]------------
-    kobject: '(null)' (00000000db4bec24): is not initialized, yet kobject_put() is being called.
-    WARNING: CPU: 2 PID: 440 at lib/kobject.c:734 kobject_put+0x120/0x150
-    CPU: 2 UID: 299 PID: 440 Comm: gpsd Not tainted 6.11.0-rc6-00308-gb31c44928842 #1
-    Hardware name: Raspberry Pi 4 Model B Rev 1.1 (DT)
-    pstate: 60000005 (nZCv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-    pc : kobject_put+0x120/0x150
-    lr : kobject_put+0x120/0x150
-    sp : ffffffc0803d3ae0
-    x29: ffffffc0803d3ae0 x28: ffffff8042dc9738 x27: 0000000000000001
-    x26: 0000000000000000 x25: ffffff8042dc9040 x24: ffffff8042dc9440
-    x23: ffffff80402a4620 x22: ffffff8042ef4bd0 x21: ffffff80405cb600
-    x20: 000000000008001b x19: ffffff8040b3b6e0 x18: 0000000000000000
-    x17: 0000000000000000 x16: 0000000000000000 x15: 696e6920746f6e20
-    x14: 7369203a29343263 x13: 205d303434542020 x12: 0000000000000000
-    x11: 0000000000000000 x10: 0000000000000000 x9 : 0000000000000000
-    x8 : 0000000000000000 x7 : 0000000000000000 x6 : 0000000000000000
-    x5 : 0000000000000000 x4 : 0000000000000000 x3 : 0000000000000000
-    x2 : 0000000000000000 x1 : 0000000000000000 x0 : 0000000000000000
-    Call trace:
-     kobject_put+0x120/0x150
-     cdev_put+0x20/0x3c
-     __fput+0x2c4/0x2d8
-     ____fput+0x1c/0x38
-     task_work_run+0x70/0xfc
-     do_exit+0x2a0/0x924
-     do_group_exit+0x34/0x90
-     get_signal+0x7fc/0x8c0
-     do_signal+0x128/0x13b4
-     do_notify_resume+0xdc/0x160
-     el0_svc+0xd4/0xf8
-     el0t_64_sync_handler+0x140/0x14c
-     el0t_64_sync+0x190/0x194
-    ---[ end trace 0000000000000000 ]---
+OK, looks fine, since queue usage counter only works in percpu mode with
+disk attached for !GD_OWNS_QUEUE, maybe QUEUE_FLAG_INIT_DONE can be renamed
+too, but anyway:
 
-...followed by more symptoms of corruption, with similar stacks:
+Reviewed-by: Ming Lei <ming.lei@redhat.com>
 
-    refcount_t: underflow; use-after-free.
-    kernel BUG at lib/list_debug.c:62!
-    Kernel panic - not syncing: Oops - BUG: Fatal exception
 
-This happens because pps_device_destruct() frees the pps_device with the
-embedded cdev immediately after calling cdev_del(), but, as the comment
-above cdev_del() notes, fops for previously opened cdevs are still
-callable even after cdev_del() returns. I think this bug has always
-been there: I can't explain why it suddenly started happening every time
-I reboot this particular board.
-
-In commit d953e0e837e6 ("pps: Fix a use-after free bug when
-unregistering a source."), George Spelvin suggested removing the
-embedded cdev. That seems like the simplest way to fix this, so I've
-implemented his suggestion, using __register_chrdev() with pps_idr
-becoming the source of truth for which minor corresponds to which
-device.
-
-But now that pps_idr defines userspace visibility instead of cdev_add(),
-we need to be sure the pps->dev refcount can't reach zero while
-userspace can still find it again. So, the idr_remove() call moves to
-pps_unregister_cdev(), and pps_idr now holds a reference to pps->dev.
-
-    pps_core: source serial1 got cdev (251:1)
-    <...>
-    pps pps1: removed
-    pps_core: unregistering pps1
-    pps_core: deallocating pps1
-
-Fixes: d953e0e837e6 ("pps: Fix a use-after free bug when unregistering a source.")
-Cc: stable@vger.kernel.org
-Signed-off-by: Calvin Owens <calvin@wbinvd.org>
----
-Changes in v3:
-- Shorten patch title
-- Embed the device struct in the pps struct
-- Use foo_device(&pps->dev) instead of kobject_foo(&pps->dev.kobj)
-Changes in v2:
-- Don't move pr_debug() from pps_device_destruct() to pps_unregister_cdev()
-- Actually add stable@vger.kernel.org to CC
----
- drivers/pps/clients/pps-gpio.c    |   2 +-
- drivers/pps/clients/pps-ktimer.c  |   4 +-
- drivers/pps/clients/pps-ldisc.c   |   6 +-
- drivers/pps/clients/pps_parport.c |   4 +-
- drivers/pps/kapi.c                |  10 +--
- drivers/pps/kc.c                  |  10 +--
- drivers/pps/pps.c                 | 127 ++++++++++++++++--------------
- include/linux/pps_kernel.h        |   3 +-
- 8 files changed, 85 insertions(+), 81 deletions(-)
-
-diff --git a/drivers/pps/clients/pps-gpio.c b/drivers/pps/clients/pps-gpio.c
-index 791fdc9326dd..a21bf56e7a87 100644
---- a/drivers/pps/clients/pps-gpio.c
-+++ b/drivers/pps/clients/pps-gpio.c
-@@ -214,7 +214,7 @@ static int pps_gpio_probe(struct platform_device *pdev)
- 		return -EINVAL;
- 	}
- 
--	dev_info(data->pps->dev, "Registered IRQ %d as PPS source\n",
-+	dev_info(&data->pps->dev, "Registered IRQ %d as PPS source\n",
- 		 data->irq);
- 
- 	return 0;
-diff --git a/drivers/pps/clients/pps-ktimer.c b/drivers/pps/clients/pps-ktimer.c
-index d33106bd7a29..00cf406377a1 100644
---- a/drivers/pps/clients/pps-ktimer.c
-+++ b/drivers/pps/clients/pps-ktimer.c
-@@ -56,7 +56,7 @@ static struct pps_source_info pps_ktimer_info = {
- 
- static void __exit pps_ktimer_exit(void)
- {
--	dev_info(pps->dev, "ktimer PPS source unregistered\n");
-+	dev_info(&pps->dev, "ktimer PPS source unregistered\n");
- 
- 	del_timer_sync(&ktimer);
- 	pps_unregister_source(pps);
-@@ -74,7 +74,7 @@ static int __init pps_ktimer_init(void)
- 	timer_setup(&ktimer, pps_ktimer_event, 0);
- 	mod_timer(&ktimer, jiffies + HZ);
- 
--	dev_info(pps->dev, "ktimer PPS source registered\n");
-+	dev_info(&pps->dev, "ktimer PPS source registered\n");
- 
- 	return 0;
- }
-diff --git a/drivers/pps/clients/pps-ldisc.c b/drivers/pps/clients/pps-ldisc.c
-index 443d6bae19d1..49ae33cca03d 100644
---- a/drivers/pps/clients/pps-ldisc.c
-+++ b/drivers/pps/clients/pps-ldisc.c
-@@ -32,7 +32,7 @@ static void pps_tty_dcd_change(struct tty_struct *tty, bool active)
- 	pps_event(pps, &ts, active ? PPS_CAPTUREASSERT :
- 			PPS_CAPTURECLEAR, NULL);
- 
--	dev_dbg(pps->dev, "PPS %s at %lu\n",
-+	dev_dbg(&pps->dev, "PPS %s at %lu\n",
- 			active ? "assert" : "clear", jiffies);
- }
- 
-@@ -69,7 +69,7 @@ static int pps_tty_open(struct tty_struct *tty)
- 		goto err_unregister;
- 	}
- 
--	dev_info(pps->dev, "source \"%s\" added\n", info.path);
-+	dev_info(&pps->dev, "source \"%s\" added\n", info.path);
- 
- 	return 0;
- 
-@@ -89,7 +89,7 @@ static void pps_tty_close(struct tty_struct *tty)
- 	if (WARN_ON(!pps))
- 		return;
- 
--	dev_info(pps->dev, "removed\n");
-+	dev_info(&pps->dev, "removed\n");
- 	pps_unregister_source(pps);
- }
- 
-diff --git a/drivers/pps/clients/pps_parport.c b/drivers/pps/clients/pps_parport.c
-index abaffb4e1c1c..24db06750297 100644
---- a/drivers/pps/clients/pps_parport.c
-+++ b/drivers/pps/clients/pps_parport.c
-@@ -81,7 +81,7 @@ static void parport_irq(void *handle)
- 	/* check the signal (no signal means the pulse is lost this time) */
- 	if (!signal_is_set(port)) {
- 		local_irq_restore(flags);
--		dev_err(dev->pps->dev, "lost the signal\n");
-+		dev_err(&dev->pps->dev, "lost the signal\n");
- 		goto out_assert;
- 	}
- 
-@@ -98,7 +98,7 @@ static void parport_irq(void *handle)
- 	/* timeout */
- 	dev->cw_err++;
- 	if (dev->cw_err >= CLEAR_WAIT_MAX_ERRORS) {
--		dev_err(dev->pps->dev, "disabled clear edge capture after %d"
-+		dev_err(&dev->pps->dev, "disabled clear edge capture after %d"
- 				" timeouts\n", dev->cw_err);
- 		dev->cw = 0;
- 		dev->cw_err = 0;
-diff --git a/drivers/pps/kapi.c b/drivers/pps/kapi.c
-index d9d566f70ed1..a76685c147ee 100644
---- a/drivers/pps/kapi.c
-+++ b/drivers/pps/kapi.c
-@@ -41,7 +41,7 @@ static void pps_add_offset(struct pps_ktime *ts, struct pps_ktime *offset)
- static void pps_echo_client_default(struct pps_device *pps, int event,
- 		void *data)
- {
--	dev_info(pps->dev, "echo %s %s\n",
-+	dev_info(&pps->dev, "echo %s %s\n",
- 		event & PPS_CAPTUREASSERT ? "assert" : "",
- 		event & PPS_CAPTURECLEAR ? "clear" : "");
- }
-@@ -112,7 +112,7 @@ struct pps_device *pps_register_source(struct pps_source_info *info,
- 		goto kfree_pps;
- 	}
- 
--	dev_info(pps->dev, "new PPS source %s\n", info->name);
-+	dev_info(&pps->dev, "new PPS source %s\n", info->name);
- 
- 	return pps;
- 
-@@ -166,7 +166,7 @@ void pps_event(struct pps_device *pps, struct pps_event_time *ts, int event,
- 	/* check event type */
- 	BUG_ON((event & (PPS_CAPTUREASSERT | PPS_CAPTURECLEAR)) == 0);
- 
--	dev_dbg(pps->dev, "PPS event at %lld.%09ld\n",
-+	dev_dbg(&pps->dev, "PPS event at %lld.%09ld\n",
- 			(s64)ts->ts_real.tv_sec, ts->ts_real.tv_nsec);
- 
- 	timespec_to_pps_ktime(&ts_real, ts->ts_real);
-@@ -188,7 +188,7 @@ void pps_event(struct pps_device *pps, struct pps_event_time *ts, int event,
- 		/* Save the time stamp */
- 		pps->assert_tu = ts_real;
- 		pps->assert_sequence++;
--		dev_dbg(pps->dev, "capture assert seq #%u\n",
-+		dev_dbg(&pps->dev, "capture assert seq #%u\n",
- 			pps->assert_sequence);
- 
- 		captured = ~0;
-@@ -202,7 +202,7 @@ void pps_event(struct pps_device *pps, struct pps_event_time *ts, int event,
- 		/* Save the time stamp */
- 		pps->clear_tu = ts_real;
- 		pps->clear_sequence++;
--		dev_dbg(pps->dev, "capture clear seq #%u\n",
-+		dev_dbg(&pps->dev, "capture clear seq #%u\n",
- 			pps->clear_sequence);
- 
- 		captured = ~0;
-diff --git a/drivers/pps/kc.c b/drivers/pps/kc.c
-index 50dc59af45be..fbd23295afd7 100644
---- a/drivers/pps/kc.c
-+++ b/drivers/pps/kc.c
-@@ -43,11 +43,11 @@ int pps_kc_bind(struct pps_device *pps, struct pps_bind_args *bind_args)
- 			pps_kc_hardpps_mode = 0;
- 			pps_kc_hardpps_dev = NULL;
- 			spin_unlock_irq(&pps_kc_hardpps_lock);
--			dev_info(pps->dev, "unbound kernel"
-+			dev_info(&pps->dev, "unbound kernel"
- 					" consumer\n");
- 		} else {
- 			spin_unlock_irq(&pps_kc_hardpps_lock);
--			dev_err(pps->dev, "selected kernel consumer"
-+			dev_err(&pps->dev, "selected kernel consumer"
- 					" is not bound\n");
- 			return -EINVAL;
- 		}
-@@ -57,11 +57,11 @@ int pps_kc_bind(struct pps_device *pps, struct pps_bind_args *bind_args)
- 			pps_kc_hardpps_mode = bind_args->edge;
- 			pps_kc_hardpps_dev = pps;
- 			spin_unlock_irq(&pps_kc_hardpps_lock);
--			dev_info(pps->dev, "bound kernel consumer: "
-+			dev_info(&pps->dev, "bound kernel consumer: "
- 				"edge=0x%x\n", bind_args->edge);
- 		} else {
- 			spin_unlock_irq(&pps_kc_hardpps_lock);
--			dev_err(pps->dev, "another kernel consumer"
-+			dev_err(&pps->dev, "another kernel consumer"
- 					" is already bound\n");
- 			return -EINVAL;
- 		}
-@@ -83,7 +83,7 @@ void pps_kc_remove(struct pps_device *pps)
- 		pps_kc_hardpps_mode = 0;
- 		pps_kc_hardpps_dev = NULL;
- 		spin_unlock_irq(&pps_kc_hardpps_lock);
--		dev_info(pps->dev, "unbound kernel consumer"
-+		dev_info(&pps->dev, "unbound kernel consumer"
- 				" on device removal\n");
- 	} else
- 		spin_unlock_irq(&pps_kc_hardpps_lock);
-diff --git a/drivers/pps/pps.c b/drivers/pps/pps.c
-index 25d47907db17..6a02245ea35f 100644
---- a/drivers/pps/pps.c
-+++ b/drivers/pps/pps.c
-@@ -25,7 +25,7 @@
-  * Local variables
-  */
- 
--static dev_t pps_devt;
-+static int pps_major;
- static struct class *pps_class;
- 
- static DEFINE_MUTEX(pps_idr_lock);
-@@ -62,7 +62,7 @@ static int pps_cdev_pps_fetch(struct pps_device *pps, struct pps_fdata *fdata)
- 	else {
- 		unsigned long ticks;
- 
--		dev_dbg(pps->dev, "timeout %lld.%09d\n",
-+		dev_dbg(&pps->dev, "timeout %lld.%09d\n",
- 				(long long) fdata->timeout.sec,
- 				fdata->timeout.nsec);
- 		ticks = fdata->timeout.sec * HZ;
-@@ -80,7 +80,7 @@ static int pps_cdev_pps_fetch(struct pps_device *pps, struct pps_fdata *fdata)
- 
- 	/* Check for pending signals */
- 	if (err == -ERESTARTSYS) {
--		dev_dbg(pps->dev, "pending signal caught\n");
-+		dev_dbg(&pps->dev, "pending signal caught\n");
- 		return -EINTR;
- 	}
- 
-@@ -98,7 +98,7 @@ static long pps_cdev_ioctl(struct file *file,
- 
- 	switch (cmd) {
- 	case PPS_GETPARAMS:
--		dev_dbg(pps->dev, "PPS_GETPARAMS\n");
-+		dev_dbg(&pps->dev, "PPS_GETPARAMS\n");
- 
- 		spin_lock_irq(&pps->lock);
- 
-@@ -114,7 +114,7 @@ static long pps_cdev_ioctl(struct file *file,
- 		break;
- 
- 	case PPS_SETPARAMS:
--		dev_dbg(pps->dev, "PPS_SETPARAMS\n");
-+		dev_dbg(&pps->dev, "PPS_SETPARAMS\n");
- 
- 		/* Check the capabilities */
- 		if (!capable(CAP_SYS_TIME))
-@@ -124,14 +124,14 @@ static long pps_cdev_ioctl(struct file *file,
- 		if (err)
- 			return -EFAULT;
- 		if (!(params.mode & (PPS_CAPTUREASSERT | PPS_CAPTURECLEAR))) {
--			dev_dbg(pps->dev, "capture mode unspecified (%x)\n",
-+			dev_dbg(&pps->dev, "capture mode unspecified (%x)\n",
- 								params.mode);
- 			return -EINVAL;
- 		}
- 
- 		/* Check for supported capabilities */
- 		if ((params.mode & ~pps->info.mode) != 0) {
--			dev_dbg(pps->dev, "unsupported capabilities (%x)\n",
-+			dev_dbg(&pps->dev, "unsupported capabilities (%x)\n",
- 								params.mode);
- 			return -EINVAL;
- 		}
-@@ -144,7 +144,7 @@ static long pps_cdev_ioctl(struct file *file,
- 		/* Restore the read only parameters */
- 		if ((params.mode & (PPS_TSFMT_TSPEC | PPS_TSFMT_NTPFP)) == 0) {
- 			/* section 3.3 of RFC 2783 interpreted */
--			dev_dbg(pps->dev, "time format unspecified (%x)\n",
-+			dev_dbg(&pps->dev, "time format unspecified (%x)\n",
- 								params.mode);
- 			pps->params.mode |= PPS_TSFMT_TSPEC;
- 		}
-@@ -165,7 +165,7 @@ static long pps_cdev_ioctl(struct file *file,
- 		break;
- 
- 	case PPS_GETCAP:
--		dev_dbg(pps->dev, "PPS_GETCAP\n");
-+		dev_dbg(&pps->dev, "PPS_GETCAP\n");
- 
- 		err = put_user(pps->info.mode, iuarg);
- 		if (err)
-@@ -176,7 +176,7 @@ static long pps_cdev_ioctl(struct file *file,
- 	case PPS_FETCH: {
- 		struct pps_fdata fdata;
- 
--		dev_dbg(pps->dev, "PPS_FETCH\n");
-+		dev_dbg(&pps->dev, "PPS_FETCH\n");
- 
- 		err = copy_from_user(&fdata, uarg, sizeof(struct pps_fdata));
- 		if (err)
-@@ -206,7 +206,7 @@ static long pps_cdev_ioctl(struct file *file,
- 	case PPS_KC_BIND: {
- 		struct pps_bind_args bind_args;
- 
--		dev_dbg(pps->dev, "PPS_KC_BIND\n");
-+		dev_dbg(&pps->dev, "PPS_KC_BIND\n");
- 
- 		/* Check the capabilities */
- 		if (!capable(CAP_SYS_TIME))
-@@ -218,7 +218,7 @@ static long pps_cdev_ioctl(struct file *file,
- 
- 		/* Check for supported capabilities */
- 		if ((bind_args.edge & ~pps->info.mode) != 0) {
--			dev_err(pps->dev, "unsupported capabilities (%x)\n",
-+			dev_err(&pps->dev, "unsupported capabilities (%x)\n",
- 					bind_args.edge);
- 			return -EINVAL;
- 		}
-@@ -227,7 +227,7 @@ static long pps_cdev_ioctl(struct file *file,
- 		if (bind_args.tsformat != PPS_TSFMT_TSPEC ||
- 				(bind_args.edge & ~PPS_CAPTUREBOTH) != 0 ||
- 				bind_args.consumer != PPS_KC_HARDPPS) {
--			dev_err(pps->dev, "invalid kernel consumer bind"
-+			dev_err(&pps->dev, "invalid kernel consumer bind"
- 					" parameters (%x)\n", bind_args.edge);
- 			return -EINVAL;
- 		}
-@@ -259,7 +259,7 @@ static long pps_cdev_compat_ioctl(struct file *file,
- 		struct pps_fdata fdata;
- 		int err;
- 
--		dev_dbg(pps->dev, "PPS_FETCH\n");
-+		dev_dbg(&pps->dev, "PPS_FETCH\n");
- 
- 		err = copy_from_user(&compat, uarg, sizeof(struct pps_fdata_compat));
- 		if (err)
-@@ -296,20 +296,36 @@ static long pps_cdev_compat_ioctl(struct file *file,
- #define pps_cdev_compat_ioctl	NULL
- #endif
- 
-+static struct pps_device *pps_idr_get(unsigned long id)
-+{
-+	struct pps_device *pps;
-+
-+	mutex_lock(&pps_idr_lock);
-+	pps = idr_find(&pps_idr, id);
-+	if (pps)
-+		get_device(&pps->dev);
-+
-+	mutex_unlock(&pps_idr_lock);
-+	return pps;
-+}
-+
- static int pps_cdev_open(struct inode *inode, struct file *file)
- {
--	struct pps_device *pps = container_of(inode->i_cdev,
--						struct pps_device, cdev);
-+	struct pps_device *pps = pps_idr_get(iminor(inode));
-+
-+	if (!pps)
-+		return -ENODEV;
-+
- 	file->private_data = pps;
--	kobject_get(&pps->dev->kobj);
- 	return 0;
- }
- 
- static int pps_cdev_release(struct inode *inode, struct file *file)
- {
--	struct pps_device *pps = container_of(inode->i_cdev,
--						struct pps_device, cdev);
--	kobject_put(&pps->dev->kobj);
-+	struct pps_device *pps = file->private_data;
-+
-+	WARN_ON(pps->id != iminor(inode));
-+	put_device(&pps->dev);
- 	return 0;
- }
- 
-@@ -331,22 +347,13 @@ static void pps_device_destruct(struct device *dev)
- {
- 	struct pps_device *pps = dev_get_drvdata(dev);
- 
--	cdev_del(&pps->cdev);
--
--	/* Now we can release the ID for re-use */
- 	pr_debug("deallocating pps%d\n", pps->id);
--	mutex_lock(&pps_idr_lock);
--	idr_remove(&pps_idr, pps->id);
--	mutex_unlock(&pps_idr_lock);
--
--	kfree(dev);
- 	kfree(pps);
- }
- 
- int pps_register_cdev(struct pps_device *pps)
- {
- 	int err;
--	dev_t devt;
- 
- 	mutex_lock(&pps_idr_lock);
- 	/*
-@@ -363,40 +370,29 @@ int pps_register_cdev(struct pps_device *pps)
- 		goto out_unlock;
- 	}
- 	pps->id = err;
--	mutex_unlock(&pps_idr_lock);
--
--	devt = MKDEV(MAJOR(pps_devt), pps->id);
--
--	cdev_init(&pps->cdev, &pps_cdev_fops);
--	pps->cdev.owner = pps->info.owner;
- 
--	err = cdev_add(&pps->cdev, devt, 1);
--	if (err) {
--		pr_err("%s: failed to add char device %d:%d\n",
--				pps->info.name, MAJOR(pps_devt), pps->id);
-+	pps->dev.class = pps_class;
-+	pps->dev.parent = pps->info.dev;
-+	pps->dev.devt = MKDEV(pps_major, pps->id);
-+	dev_set_drvdata(&pps->dev, pps);
-+	dev_set_name(&pps->dev, "pps%d", pps->id);
-+	err = device_register(&pps->dev);
-+	if (err)
- 		goto free_idr;
--	}
--	pps->dev = device_create(pps_class, pps->info.dev, devt, pps,
--							"pps%d", pps->id);
--	if (IS_ERR(pps->dev)) {
--		err = PTR_ERR(pps->dev);
--		goto del_cdev;
--	}
- 
- 	/* Override the release function with our own */
--	pps->dev->release = pps_device_destruct;
-+	pps->dev.release = pps_device_destruct;
- 
--	pr_debug("source %s got cdev (%d:%d)\n", pps->info.name,
--			MAJOR(pps_devt), pps->id);
-+	pr_debug("source %s got cdev (%d:%d)\n", pps->info.name, pps_major,
-+		 pps->id);
- 
-+	get_device(&pps->dev);
-+	mutex_unlock(&pps_idr_lock);
- 	return 0;
- 
--del_cdev:
--	cdev_del(&pps->cdev);
--
- free_idr:
--	mutex_lock(&pps_idr_lock);
- 	idr_remove(&pps_idr, pps->id);
-+	put_device(&pps->dev);
- out_unlock:
- 	mutex_unlock(&pps_idr_lock);
- 	return err;
-@@ -406,7 +402,13 @@ void pps_unregister_cdev(struct pps_device *pps)
- {
- 	pr_debug("unregistering pps%d\n", pps->id);
- 	pps->lookup_cookie = NULL;
--	device_destroy(pps_class, pps->dev->devt);
-+	device_destroy(pps_class, pps->dev.devt);
-+
-+	/* Now we can release the ID for re-use */
-+	mutex_lock(&pps_idr_lock);
-+	idr_remove(&pps_idr, pps->id);
-+	put_device(&pps->dev);
-+	mutex_unlock(&pps_idr_lock);
- }
- 
- /*
-@@ -426,6 +428,11 @@ void pps_unregister_cdev(struct pps_device *pps)
-  * so that it will not be used again, even if the pps device cannot
-  * be removed from the idr due to pending references holding the minor
-  * number in use.
-+ *
-+ * Since pps_idr holds a reference to the device, the returned
-+ * pps_device is guaranteed to be valid until pps_unregister_cdev() is
-+ * called on it. But after calling pps_unregister_cdev(), it may be
-+ * freed at any time.
-  */
- struct pps_device *pps_lookup_dev(void const *cookie)
- {
-@@ -448,13 +455,11 @@ EXPORT_SYMBOL(pps_lookup_dev);
- static void __exit pps_exit(void)
- {
- 	class_destroy(pps_class);
--	unregister_chrdev_region(pps_devt, PPS_MAX_SOURCES);
-+	__unregister_chrdev(pps_major, 0, PPS_MAX_SOURCES, "pps");
- }
- 
- static int __init pps_init(void)
- {
--	int err;
--
- 	pps_class = class_create("pps");
- 	if (IS_ERR(pps_class)) {
- 		pr_err("failed to allocate class\n");
-@@ -462,8 +467,9 @@ static int __init pps_init(void)
- 	}
- 	pps_class->dev_groups = pps_groups;
- 
--	err = alloc_chrdev_region(&pps_devt, 0, PPS_MAX_SOURCES, "pps");
--	if (err < 0) {
-+	pps_major = __register_chrdev(0, 0, PPS_MAX_SOURCES, "pps",
-+				      &pps_cdev_fops);
-+	if (pps_major < 0) {
- 		pr_err("failed to allocate char device region\n");
- 		goto remove_class;
- 	}
-@@ -476,8 +482,7 @@ static int __init pps_init(void)
- 
- remove_class:
- 	class_destroy(pps_class);
--
--	return err;
-+	return pps_major;
- }
- 
- subsys_initcall(pps_init);
-diff --git a/include/linux/pps_kernel.h b/include/linux/pps_kernel.h
-index 78c8ac4951b5..c7abce28ed29 100644
---- a/include/linux/pps_kernel.h
-+++ b/include/linux/pps_kernel.h
-@@ -56,8 +56,7 @@ struct pps_device {
- 
- 	unsigned int id;			/* PPS source unique ID */
- 	void const *lookup_cookie;		/* For pps_lookup_dev() only */
--	struct cdev cdev;
--	struct device *dev;
-+	struct device dev;
- 	struct fasync_struct *async_queue;	/* fasync method */
- 	spinlock_t lock;
- };
--- 
-2.45.2
+Thanks,
+Ming
 
 
