@@ -1,299 +1,203 @@
-Return-Path: <linux-kernel+bounces-397171-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397170-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AB469BD7A0
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 22:29:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 69D3B9BD79C
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 22:29:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA40F1F2327D
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 21:29:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E64F31F22502
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 21:29:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB05D216200;
-	Tue,  5 Nov 2024 21:29:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 180DF216215;
+	Tue,  5 Nov 2024 21:28:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gR+NMJE9"
-Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y8Ehu90G"
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E77E215F5A
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 21:29:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B93F1E0B65;
+	Tue,  5 Nov 2024 21:28:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730842143; cv=none; b=Sydvi2aHRf1XT6W7Q+SFT71cCFuZ5ablGo/cfYSmkfI8slgBpp9/60XGZKizhu7jIA08CwxAWySWwLIbz0mCAz6mQ0GNkcWwFxZAl2LmpZ+TZcVJYW3H/3RHRY32jit24xfBOLbKquzj1YPwooq7yBAw8aMDfWGImlku8Jt8ZWw=
+	t=1730842137; cv=none; b=H2v2e4Tmdv0XZxffM1btiQyoN3C2qYGltRzYe+6YzbpBgFClGjAHuWVSBj6ncG7MvvdjPZbE7hmgciF89i0cNY5s4F1z4mKKLaiF5dJFIQ36FdAVBWDCk6NriIFLk4LN0PfxbEfBQmytquk/uEoJ7+vY+DOo4GL/+McjBPBWO+g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730842143; c=relaxed/simple;
-	bh=0vlrR7m4wjvDiUOsNx/txRfIE+ymrJZzhXVyiDgB9BI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nGl1jFoXL2m5D4faHlklcaVynnWwFx35d9Q8nRPM9ajwv2IUbBAgnoEQF+wGqS8vwdWAb5WbINB5Uhmfcmwonc6SWav/OOpb5eBrcvc/iXpF4UZfPYl4N+nmo/y2unBNMKhDv6a2r88q9weinm816RAWG7eq75ON+ci8hTDP/88=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=gR+NMJE9; arc=none smtp.client-ip=209.85.160.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-4608dddaa35so79921cf.0
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 13:29:01 -0800 (PST)
+	s=arc-20240116; t=1730842137; c=relaxed/simple;
+	bh=ClrekfPxZQ76ZNV7DZX8QGPxXakxpQ0qHEZc3EGpDHI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pIPRrObye9+W6c+iyt1AAzbR5nnA650h39zTS8SKnbpRnBF4kCna/CvK15Q4s+sS7is5C9nZeIgh4WRvAiE7tEpNXB6PWyAkI40sR5993ZCbGPAJPjod8FPjvgOOhZ7PsfyN/P+mYR8YA+kLcnFzA/PH2blbXLd7VwcyFSa06Lg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y8Ehu90G; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5c941623a5aso400484a12.0;
+        Tue, 05 Nov 2024 13:28:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1730842141; x=1731446941; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=h4h1iJYzcKiOZWJuU1HDZyOsv6VUMD/8hUZDwNyB5Yw=;
-        b=gR+NMJE98f8ZtMubbC4ZK29JywhAVqu7wCdR0bTEeLRApHUiDE/BGq0D8cu9G9LBR0
-         1NWzYWW245z/EAe4y2CDL1ch2Cppg5Jyxrw9QZWSuKUaduaHcLcnaQvitbYH+ZFuMrDo
-         ArNp7H139jpIaz+5YtgsbYiRHKN7+HV6QrenAzILqJSwNsHpShViEtKyhU9FzITa9VCi
-         r4meDKacRyzc5wSG3NwhJIDY1Hubuf+P2gWS+YREiGtSvu45Y/SkMIWA/qpz7Vw9Ains
-         u46HmXjHT+jDuYaItLsp2cqxouUAT/lDhNrru2fqJxq667I/6pPmE/SS9lFdRTNa4Z71
-         u5nQ==
+        d=gmail.com; s=20230601; t=1730842134; x=1731446934; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=eP2/dmGZ6upd0meydOq+bVFxjAFfyWnPqjTOOaybaFY=;
+        b=Y8Ehu90GhTVJNDn6VrZ1xAYygTnpsWo7+avzQhe6Nd82hveHaBo2tFzggnWTSXjzC/
+         lLYW09iag1iWbxFdQHQp7Ve5b/fupuPRYopcIl39g0cchjTf/3vXFNcCzc2lNIMUReAO
+         pToysTGNYmSk1ZjT/5/pyniXEznY0Uf/9cHnD+2DWMupd4bc8hZDm1F69J3WehZUQ9pE
+         4aSO5Ml+6AbOzaHg/0UsJU0P+Qj5TUBhlks1OGD6H+2x2ssq5NOCRG655geYLtrCouhp
+         nc0OKfMWxsOcuqfnfXIj+Fq5Wiwfj4c0pFhWHf59whA/cWcytLdA6DLx+iH5XNU+uxKH
+         edPw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730842141; x=1731446941;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=h4h1iJYzcKiOZWJuU1HDZyOsv6VUMD/8hUZDwNyB5Yw=;
-        b=BaytdiJA40c5eu5y7Q99BXsWsAnHEpXwB79tj9qrBHNlmINcYRzR19C0nyUcF/cEga
-         yx1U35QBemFyj/II29WYC0/6P+hKHlf4pJhIrMkxCBJPuqKqFBjckegpArj12DMhZgsX
-         FrHHnLirN90/ZTncp21uezFk3pioURXqGjQrMShuE+/FEW4YZnjwDz2MVZXedyi6slGG
-         31fM324pxfhGis0vN6J1xtq0GD4JB/FOPKVGH2cMccptfC/ML1b7IqmGmbzDnFxGXTmw
-         1eVRrN6U3NGiI+ypAtVMDU5DZMfAQTTj2Plse3oaH4apOiQOwluONjz8cQI86yMmcvc6
-         zwVQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUDkDtbNXAMxTZd2Dv4V08BPh01+DEmdPK26ePerMWP4aX8jEdhtlX9BzWnH8D8r0xpljVxk+aGfj/qUbo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yykg2vmxBQPiYrJ3fT+Wah3afkDYSrRGXsC670/7xayed6+3EkB
-	E+8dSPEOz7B3AIPOCbRxx24rb6IRj4MhS++O1TQfblEIYN0GfJ+3UYBhisdDSpZXJJM4nFaFZiy
-	UReijPO+1VC8gZdeuwaAyT6K2wckI/RbwdOsf
-X-Gm-Gg: ASbGncv77mesRWBKrfabZ/CfmLLkv019vIh518ZNJmdE7ES02uw4+lSdSxZ9sJTw4eV
-	i/6nX2623PSX4O7XX/FwSARrnN6oGYAMxep0M+Dr6BDw7L7N21Qt+eyEUHvEpWw==
-X-Google-Smtp-Source: AGHT+IEjSIel43idNBo3lwSTd9iu0fSJLfqvR0Aru+x0iW0YghL0qiYES/xu1qLkLznMBR9vBO3PhLQzAVjOfrFcDVg=
-X-Received: by 2002:a05:622a:189f:b0:462:b36f:294 with SMTP id
- d75a77b69052e-462f01e3099mr804661cf.24.1730842140683; Tue, 05 Nov 2024
- 13:29:00 -0800 (PST)
+        d=1e100.net; s=20230601; t=1730842134; x=1731446934;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=eP2/dmGZ6upd0meydOq+bVFxjAFfyWnPqjTOOaybaFY=;
+        b=WO24XvaQ+I9SsbZiySDzkkP78DYWVPsH/sOwtAtCEMzBS+b55UPXWBiWqGCphssMqo
+         INVFTRswvXi18F32bpOEQlp1dDc/ihLAPTcrDY/PCpcDFhbqXz4Djrlf2HyBDfaTDdGg
+         VjijSb5Ef8ahm5G5zbtfwwU2SezxACybS2p+9KEssmGXpp22y/dCvnXJURUNUPqF8U4x
+         0zk/PHzsoiFhIgC+aaOhESFgLw2DcSRiowhBxDGbGguzs5DnvhzkA8mSqmy0uqcafTH1
+         3RCVGRBzdlk6mzAwwroaB+aXIylZRdD/ZqeSrm8N6BXKGQDPBPchpqdcjJs8RN0d4pbD
+         ydpw==
+X-Forwarded-Encrypted: i=1; AJvYcCU8KYgfIHDw2pQkhX/3vkl5dGo4V7Ntz5qcaEMw+BQFqv7PPvmMAeVh4/rTa+uwqLplwD8Pfm5LrejuzWk=@vger.kernel.org, AJvYcCWrsoxmNlR8Ye+aKt+myGtbqQQtMMqFce/ompmdpoX+1P4743EZfOvpk3OVCi7OAjA1gVkDQccimQKVwVIRQ8FIaD4=@vger.kernel.org, AJvYcCXPypLIi9srPo8kAsYxnF/kTH/rSWwrev1n2XQbTWJOML4GcmhUvukENLXUl3KwgXJPUsfXdMudGfoUOV8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwbFAlusr6qkR7HjaWlgy5meHcuXFI4idA6nn4AdaBIhxldppcY
+	yVU3XuAk9K1lvBC28oV76XIslNufYUGmNxY+6IoOp07yY8uv7pbL
+X-Google-Smtp-Source: AGHT+IHUZAxiDAWEcZd5uQeTbY5C3HluVgi/eb5cOKQYEX/QkwtA0Jhcn5FY5SM7HLsTN2r4FykKig==
+X-Received: by 2002:a05:6402:2709:b0:5ce:c7b1:e052 with SMTP id 4fb4d7f45d1cf-5cef55266f9mr306262a12.9.1730842133414;
+        Tue, 05 Nov 2024 13:28:53 -0800 (PST)
+Received: from [192.168.0.131] ([194.183.54.57])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cee6ac09edsm1785846a12.40.2024.11.05.13.28.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 05 Nov 2024 13:28:52 -0800 (PST)
+Message-ID: <a2c66875-490f-9b8e-5683-fa4ad1fba6da@gmail.com>
+Date: Tue, 5 Nov 2024 22:28:51 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241029205524.1306364-1-almasrymina@google.com>
- <20241029205524.1306364-2-almasrymina@google.com> <ZyJDxK5stZ_RF71O@mini-arch>
- <CAHS8izNKbQHFAHm2Sz=bwwO_A0S_dOLNDff7GTSM=tJiJD2m0A@mail.gmail.com> <ZyJLkn3uM1Qz6NZn@mini-arch>
-In-Reply-To: <ZyJLkn3uM1Qz6NZn@mini-arch>
-From: Mina Almasry <almasrymina@google.com>
-Date: Tue, 5 Nov 2024 13:28:48 -0800
-Message-ID: <CAHS8izMWbcKSr3uOVWQDmo5=aQvFdcD6o_myz1bw=a1rzrJE_A@mail.gmail.com>
-Subject: Re: [PATCH net-next v1 6/7] net: fix SO_DEVMEM_DONTNEED looping too long
-To: Stanislav Fomichev <stfomichev@gmail.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Simon Horman <horms@kernel.org>, Jesper Dangaard Brouer <hawk@kernel.org>, 
-	Ilias Apalodimas <ilias.apalodimas@linaro.org>, Shuah Khan <shuah@kernel.org>, 
-	Yi Lai <yi1.lai@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH] media: platform: samsung: s5p-jpeg: Remove deadcode
+To: linux@treblig.org, andrzejtp2010@gmail.com, s.nawrocki@samsung.com,
+ mchehab@kernel.org, krzk@kernel.org, alim.akhtar@samsung.com
+Cc: linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241103192315.288743-1-linux@treblig.org>
+Content-Language: en-US
+From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+In-Reply-To: <20241103192315.288743-1-linux@treblig.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Oct 30, 2024 at 8:07=E2=80=AFAM Stanislav Fomichev <stfomichev@gmai=
-l.com> wrote:
->
-> On 10/30, Mina Almasry wrote:
-> > On Wed, Oct 30, 2024 at 7:33=E2=80=AFAM Stanislav Fomichev <stfomichev@=
-gmail.com> wrote:
-> > >
-> > > On 10/29, Mina Almasry wrote:
-> > > > Check we're going to free a reasonable number of frags in token_cou=
-nt
-> > > > before starting the loop, to prevent looping too long.
-> > > >
-> > > > Also minor code cleanups:
-> > > > - Flip checks to reduce indentation.
-> > > > - Use sizeof(*tokens) everywhere for consistentcy.
-> > > >
-> > > > Cc: Yi Lai <yi1.lai@linux.intel.com>
-> > > >
-> > > > Signed-off-by: Mina Almasry <almasrymina@google.com>
-> > > >
-> > > > ---
-> > > >  net/core/sock.c | 46 ++++++++++++++++++++++++++++-----------------=
--
-> > > >  1 file changed, 28 insertions(+), 18 deletions(-)
-> > > >
-> > > > diff --git a/net/core/sock.c b/net/core/sock.c
-> > > > index 7f398bd07fb7..8603b8d87f2e 100644
-> > > > --- a/net/core/sock.c
-> > > > +++ b/net/core/sock.c
-> > > > @@ -1047,11 +1047,12 @@ static int sock_reserve_memory(struct sock =
-*sk, int bytes)
-> > > >
-> > > >  #ifdef CONFIG_PAGE_POOL
-> > > >
-> > > > -/* This is the number of tokens that the user can SO_DEVMEM_DONTNE=
-ED in
-> > > > +/* This is the number of frags that the user can SO_DEVMEM_DONTNEE=
-D in
-> > > >   * 1 syscall. The limit exists to limit the amount of memory the k=
-ernel
-> > > > - * allocates to copy these tokens.
-> > > > + * allocates to copy these tokens, and to prevent looping over the=
- frags for
-> > > > + * too long.
-> > > >   */
-> > > > -#define MAX_DONTNEED_TOKENS 128
-> > > > +#define MAX_DONTNEED_FRAGS 1024
-> > > >
-> > > >  static noinline_for_stack int
-> > > >  sock_devmem_dontneed(struct sock *sk, sockptr_t optval, unsigned i=
-nt optlen)
-> > > > @@ -1059,43 +1060,52 @@ sock_devmem_dontneed(struct sock *sk, sockp=
-tr_t optval, unsigned int optlen)
-> > > >       unsigned int num_tokens, i, j, k, netmem_num =3D 0;
-> > > >       struct dmabuf_token *tokens;
-> > > >       netmem_ref netmems[16];
-> > > > +     u64 num_frags =3D 0;
-> > > >       int ret =3D 0;
-> > > >
-> > > >       if (!sk_is_tcp(sk))
-> > > >               return -EBADF;
-> > > >
-> > > > -     if (optlen % sizeof(struct dmabuf_token) ||
-> > > > -         optlen > sizeof(*tokens) * MAX_DONTNEED_TOKENS)
-> > > > +     if (optlen % sizeof(*tokens) ||
-> > > > +         optlen > sizeof(*tokens) * MAX_DONTNEED_FRAGS)
-> > > >               return -EINVAL;
-> > > >
-> > > > -     tokens =3D kvmalloc_array(optlen, sizeof(*tokens), GFP_KERNEL=
-);
-> > > > +     num_tokens =3D optlen / sizeof(*tokens);
-> > > > +     tokens =3D kvmalloc_array(num_tokens, sizeof(*tokens), GFP_KE=
-RNEL);
-> > > >       if (!tokens)
-> > > >               return -ENOMEM;
-> > > >
-> > > > -     num_tokens =3D optlen / sizeof(struct dmabuf_token);
-> > > >       if (copy_from_sockptr(tokens, optval, optlen)) {
-> > > >               kvfree(tokens);
-> > > >               return -EFAULT;
-> > > >       }
-> > > >
-> > > > +     for (i =3D 0; i < num_tokens; i++) {
-> > > > +             num_frags +=3D tokens[i].token_count;
-> > > > +             if (num_frags > MAX_DONTNEED_FRAGS) {
-> > > > +                     kvfree(tokens);
-> > > > +                     return -E2BIG;
-> > > > +             }
-> > > > +     }
-> > > > +
-> > > >       xa_lock_bh(&sk->sk_user_frags);
-> > > >       for (i =3D 0; i < num_tokens; i++) {
-> > > >               for (j =3D 0; j < tokens[i].token_count; j++) {
-> > > >                       netmem_ref netmem =3D (__force netmem_ref)__x=
-a_erase(
-> > > >                               &sk->sk_user_frags, tokens[i].token_s=
-tart + j);
-> > > >
-> > > > -                     if (netmem &&
-> > > > -                         !WARN_ON_ONCE(!netmem_is_net_iov(netmem))=
-) {
-> > > > -                             netmems[netmem_num++] =3D netmem;
-> > > > -                             if (netmem_num =3D=3D ARRAY_SIZE(netm=
-ems)) {
-> > > > -                                     xa_unlock_bh(&sk->sk_user_fra=
-gs);
-> > > > -                                     for (k =3D 0; k < netmem_num;=
- k++)
-> > > > -                                             WARN_ON_ONCE(!napi_pp=
-_put_page(netmems[k]));
-> > > > -                                     netmem_num =3D 0;
-> > > > -                                     xa_lock_bh(&sk->sk_user_frags=
-);
-> > > > -                             }
-> > > > -                             ret++;
-> > >
-> > > [..]
-> > >
-> > > > +                     if (!netmem || WARN_ON_ONCE(!netmem_is_net_io=
-v(netmem)))
-> > > > +                             continue;
-> > >
-> > > Any reason we are not returning explicit error to the callers here?
-> > > That probably needs some mechanism to signal which particular one fai=
-led
-> > > so the users can restart?
-> >
-> > Only because I can't think of a simple way to return an array of frags
-> > failed to DONTNEED to the user.
->
-> I'd expect the call to return as soon as it hits the invalid frag
-> entry (plus the number of entries that it successfully refilled up to
-> the invalid one). But too late I guess.
->
-> > Also, this error should be extremely rare or never hit really. I don't
-> > know how we end up not finding a netmem here or the netmem is page.
-> > The only way is if the user is malicious (messing with the token ids
-> > passed to the kernel) or if a kernel bug is happening.
->
-> I do hit this error with 1500 mtu, so it would've been nice to
-> understand which particular token triggered that. It might be
-> something buggy on the driver side, I need to investigate. (it's
-> super low prio because 1500)
->
+Hi David,
 
-Hmm, I've never seen this, in production (code is similar to
-upstreamed, but I guess not exactly the same), and in my ncdevmem
-upstream testing.
+Thank you for the patch.
 
-FWIW leaked frags are extremely bad, because there is no opportunity
-to reap them until the entire dmabuf has been rebound. You will need
-to root cause this if you're seeing it and are interested in using
-devmem tcp in prod.
+On 11/3/24 20:23, linux@treblig.org wrote:
+> From: "Dr. David Alan Gilbert" <linux@treblig.org>
+> 
+> exynos3250_jpeg_operating() has been unused since it was added in 2014's
+> commit 3246fdaa0ac2 ("[media] s5p-jpeg: Add support for Exynos3250 SoC")
+> 
+> exynos4_jpeg_get_fifo_status(), exynos4_jpeg_get_frame_size(), and
+> exynos4_jpeg_set_timer_count() have been unused since they were added by
+> commit 80529ae5c137 ("[media] s5p-jpeg:  JPEG codec")
+> 
+> Remove them.
+> 
+> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+> ---
+>   .../samsung/s5p-jpeg/jpeg-hw-exynos3250.c     |  5 -----
+>   .../samsung/s5p-jpeg/jpeg-hw-exynos3250.h     |  1 -
+>   .../samsung/s5p-jpeg/jpeg-hw-exynos4.c        | 19 -------------------
+>   .../samsung/s5p-jpeg/jpeg-hw-exynos4.h        |  4 ----
+>   4 files changed, 29 deletions(-)
+> 
+> diff --git a/drivers/media/platform/samsung/s5p-jpeg/jpeg-hw-exynos3250.c b/drivers/media/platform/samsung/s5p-jpeg/jpeg-hw-exynos3250.c
+> index 637a5104d948..6657d294c10a 100644
+> --- a/drivers/media/platform/samsung/s5p-jpeg/jpeg-hw-exynos3250.c
+> +++ b/drivers/media/platform/samsung/s5p-jpeg/jpeg-hw-exynos3250.c
+> @@ -427,11 +427,6 @@ void exynos3250_jpeg_clear_int_status(void __iomem *regs,
+>   	writel(value, regs + EXYNOS3250_JPGINTST);
+>   }
+>   
+> -unsigned int exynos3250_jpeg_operating(void __iomem *regs)
+> -{
+> -	return readl(regs + S5P_JPGOPR) & EXYNOS3250_JPGOPR_MASK;
+> -}
+> -
+>   unsigned int exynos3250_jpeg_compressed_size(void __iomem *regs)
+>   {
+>   	return readl(regs + EXYNOS3250_JPGCNT) & EXYNOS3250_JPGCNT_MASK;
+> diff --git a/drivers/media/platform/samsung/s5p-jpeg/jpeg-hw-exynos3250.h b/drivers/media/platform/samsung/s5p-jpeg/jpeg-hw-exynos3250.h
+> index 15af928fad76..709c61ae322c 100644
+> --- a/drivers/media/platform/samsung/s5p-jpeg/jpeg-hw-exynos3250.h
+> +++ b/drivers/media/platform/samsung/s5p-jpeg/jpeg-hw-exynos3250.h
+> @@ -45,7 +45,6 @@ void exynos3250_jpeg_rstart(void __iomem *regs);
+>   unsigned int exynos3250_jpeg_get_int_status(void __iomem *regs);
+>   void exynos3250_jpeg_clear_int_status(void __iomem *regs,
+>   						unsigned int value);
+> -unsigned int exynos3250_jpeg_operating(void __iomem *regs);
+>   unsigned int exynos3250_jpeg_compressed_size(void __iomem *regs);
+>   void exynos3250_jpeg_dec_stream_size(void __iomem *regs, unsigned int size);
+>   void exynos3250_jpeg_dec_scaling_ratio(void __iomem *regs, unsigned int sratio);
+> diff --git a/drivers/media/platform/samsung/s5p-jpeg/jpeg-hw-exynos4.c b/drivers/media/platform/samsung/s5p-jpeg/jpeg-hw-exynos4.c
+> index 0828cfa783fe..479288fc8c77 100644
+> --- a/drivers/media/platform/samsung/s5p-jpeg/jpeg-hw-exynos4.c
+> +++ b/drivers/media/platform/samsung/s5p-jpeg/jpeg-hw-exynos4.c
+> @@ -185,11 +185,6 @@ unsigned int exynos4_jpeg_get_int_status(void __iomem *base)
+>   	return readl(base + EXYNOS4_INT_STATUS_REG);
+>   }
+>   
+> -unsigned int exynos4_jpeg_get_fifo_status(void __iomem *base)
+> -{
+> -	return readl(base + EXYNOS4_FIFO_STATUS_REG);
+> -}
+> -
+>   void exynos4_jpeg_set_huf_table_enable(void __iomem *base, int value)
+>   {
+>   	unsigned int	reg;
+> @@ -300,22 +295,8 @@ void exynos4_jpeg_set_dec_bitstream_size(void __iomem *base, unsigned int size)
+>   	writel(size, base + EXYNOS4_BITSTREAM_SIZE_REG);
+>   }
+>   
+> -void exynos4_jpeg_get_frame_size(void __iomem *base,
+> -			unsigned int *width, unsigned int *height)
+> -{
+> -	*width = (readl(base + EXYNOS4_DECODE_XY_SIZE_REG) &
+> -				EXYNOS4_DECODED_SIZE_MASK);
+> -	*height = (readl(base + EXYNOS4_DECODE_XY_SIZE_REG) >> 16) &
+> -				EXYNOS4_DECODED_SIZE_MASK;
+> -}
+> -
+>   unsigned int exynos4_jpeg_get_frame_fmt(void __iomem *base)
+>   {
+>   	return readl(base + EXYNOS4_DECODE_IMG_FMT_REG) &
+>   				EXYNOS4_JPEG_DECODED_IMG_FMT_MASK;
+>   }
+> -
+> -void exynos4_jpeg_set_timer_count(void __iomem *base, unsigned int size)
+> -{
+> -	writel(size, base + EXYNOS4_INT_TIMER_COUNT_REG);
+> -}
+> diff --git a/drivers/media/platform/samsung/s5p-jpeg/jpeg-hw-exynos4.h b/drivers/media/platform/samsung/s5p-jpeg/jpeg-hw-exynos4.h
+> index 3e2887526960..b941cc89e4ba 100644
+> --- a/drivers/media/platform/samsung/s5p-jpeg/jpeg-hw-exynos4.h
+> +++ b/drivers/media/platform/samsung/s5p-jpeg/jpeg-hw-exynos4.h
+> @@ -35,10 +35,6 @@ void exynos4_jpeg_select_dec_h_tbl(void __iomem *base, char c, char x);
+>   void exynos4_jpeg_set_encode_hoff_cnt(void __iomem *base, unsigned int fmt);
+>   void exynos4_jpeg_set_dec_bitstream_size(void __iomem *base, unsigned int size);
+>   unsigned int exynos4_jpeg_get_stream_size(void __iomem *base);
+> -void exynos4_jpeg_get_frame_size(void __iomem *base,
+> -			unsigned int *width, unsigned int *height);
+>   unsigned int exynos4_jpeg_get_frame_fmt(void __iomem *base);
+> -unsigned int exynos4_jpeg_get_fifo_status(void __iomem *base);
+> -void exynos4_jpeg_set_timer_count(void __iomem *base, unsigned int size);
+>   
+>   #endif /* JPEG_HW_EXYNOS4_H_ */
 
-sk_user_frags is only really touched in:
-- sock_devmem_dontneed(), where they are removed from the xarray.
-- tcp_recvmsg_dmabuf(), where they are added to the xarray.
-- tcp_v4_destroy_sock(), where they are freed (but not removed from
-the xarray?!).
+Reviewed-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
 
-The only root causes for this bug I see are:
-
-1. You're racing tcp_v4_destroy_sock() with sock_devmem_dontneed(), so
-somehow you're trying to release a frag already released in that loop?
-Or,
-2. You're releasing a frag that was never added by
-tcp_recvmsg_dmabuf(). I.e. There is a bug in tcp_recvmsg_dmabuf() that
-it put_cmsg the frag_id to the userspace but never adds it to the
-sk_user_frags. That should be accompanied by a ncdevmem validation
-error.
-
-The way to debug #2 is really to test with the ncdevmem validation. I
-got the sense from reviewing the test series that you don't like to
-use it, but it's how I root cause such issues. You should familiarize
-yourself with it if you want to root cause such issues as well. To use
-it:
-
-client: yes $(echo -e \\x01\\x02\\x03\\x04\\x05\\x06) | tr \\n \\0 \
-          | head -c 1G | nc <server ip> -p 5224
- server: ncdevmem -s <server IP> -c <client IP> -f eth1 -l -p 5224 -v 7
-
-If you see a validation error with your missing frag, send me the
-logs, I may be able to guess what's wrong.
-
-> > Also, the information is useless to the user. If the user sees 'frag
-> > 128 failed to free'. There is nothing really the user can do to
-> > recover at runtime. Only usefulness that could come is for the user to
-> > log the error. We already WARN_ON_ONCE on the error the user would not
-> > be able to trigger.
->
-> I'm thinking from the pow of user application. It might have bugs as
-> well and try to refill something that should not have been refilled.
-> Having info about which particular token has failed (even just for
-> the logging purposes) might have been nice.
-
-Yeah, it may have been nice. On the flip side it complicates calling
-sock_devmem_dontneed(). The userspace need to count the freed frags in
-its input, remove them, skip the leaked one, and re-call the syscall.
-On the flipside the userspace gets to know the id of the frag that
-leaked but the usefulness of the information is slightly questionable
-for me. :shrug:
-
-
---=20
-Thanks,
-Mina
+-- 
+Best regards,
+Jacek Anaszewski
 
