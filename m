@@ -1,139 +1,114 @@
-Return-Path: <linux-kernel+bounces-396925-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396926-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C7B09BD46A
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 19:19:08 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 137269BD46C
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 19:19:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ADDC41C222AC
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 18:19:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C064C1F246FF
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 18:19:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A0481E7661;
-	Tue,  5 Nov 2024 18:19:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 658751E7C1F;
+	Tue,  5 Nov 2024 18:19:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fyf52Bv5"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Wzta4frQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2009213D51E
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 18:19:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B90541E7647;
+	Tue,  5 Nov 2024 18:19:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730830742; cv=none; b=HJXooZmyo3CxgVn4gQ50dPPBt6eUu+O1mxSc6e9EbQ8P1VkECv2G7wexoEyK+0aVfx84BwGBRHLSjVrXq2noOHUpmagt/IX4ziwJWUmNEZZ2P4pwPuUGndlK/GASKuGS6gAcVep3bqiYOO6iGr6Dnng4+2Ve4vF5+NAiP7eUCck=
+	t=1730830761; cv=none; b=Ic6v86FIpCO2lWdt9bcComtSn6tVZivIq79dxDF+7MWegTAc7lEcarZg29jAjNlpyYxBSm8iR8q5kRC/8pOaz9NXqMZqli+EY+WOFE2j6T2M8EpZbFlPKxWsommyMXJI2wbyCcpEw+VvLR3F4Qo6rvhgVXPLCmGHMKiV6j8fg/c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730830742; c=relaxed/simple;
-	bh=wvRSAYs3rsDyEyx2uErygYM6LqQrDkxqRE+1X+C/K8A=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=c+xgqQtDxn5fvn8J6+2uoD/omuBiXQSmz4s5Ay1E6CgIXIY/Yab0DWihOvVN3Vspj31D6/X4YZ0y425DVneCE8aPHn/LKIAc0v9IC63oZnyZSF378KyoQ9TIGRccvzHf5Yj0RRGB5pkze4V/Dt4F4CyT8ZScc6rYpg0BsE3OlR8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fyf52Bv5; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-20c9978a221so59377525ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 10:19:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730830740; x=1731435540; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=gFcn89fIoB6eD8igdjIgNFL2KkUGAKDd0Xov8oHjAXc=;
-        b=fyf52Bv52SNQYKC2si2T2AMNA+rh+Q83gu5URDoa9JrjyDK14p6pMr+HUzzoXfC0J1
-         vmPMJDFB8SeoxQZB64bdJAtR5LOK6Px9R8JBGIIeY2oDFY62XVIzl7nk7u4MF60unxkU
-         hTaUd2rQ+okrC0GENcmcL8JneKlw0Oz+hBC2dLfD/9cyPfv50DZbfnGfysKwIkdZgrsL
-         Chs8dtTFTUJVyzv0wb4NacOFQtPo0nYvBIkT4lZhTCFBppx/Lz1uvsJImJHeqO0NI1aJ
-         8mem99fGSGwhL7Y7qru5IB838GEYRogeKGCnmK64gANtZJPoQnZ+iZKXC6lbG+y4iND/
-         lAAA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730830740; x=1731435540;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=gFcn89fIoB6eD8igdjIgNFL2KkUGAKDd0Xov8oHjAXc=;
-        b=fbptLSCacfLRuzMG2tXyACQqAwxB1z9ufpRT3NPSfbp5cQfo5JjdzoVfsN7w/lNqGE
-         a1vRx+d1LIW4qY9nj/o4vjhJ4C9wwd/KgjoS+kQQs0KSQEepdL7foKN1hKbN33rj1kU5
-         mihEBRJ6TV1cUakaE0oWy8XVxjZvj/EW0CHtMWapg1WFy9UXgAnzk/z/rkkSkZsY0AMH
-         RpFelt8mbY6zhO1vheCjMWNMnZSrRBaDUpgAHNzpr/zMuXx8iv8lts0miYHrAljCOPWV
-         OL1aS/EqilrEMbTW4pYZTzZS5Swi51XQ0NGEKlLKVUl7UT8JsPC/4MCryVr1uXGMba2S
-         +SuQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUwwhHexZYvM1HTBcmWpil09ggFvfblciqzO5yq7oFyCEINqEKIKxKiPizEiS0frgY9ywqtC0wUvaLC+Vg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxWsFCmaA1Y4aT3PFw2ygFrIRnb1NpwQ+7sUUYhX4xT9X+isUuX
-	/cLh4v0u5eJGrnMHv76aKWGPmWMLmvN/HSP+MhtCfEadTC0CrYj4
-X-Google-Smtp-Source: AGHT+IEdjJFisK8cPYnddVc07XFagAr0tosxVTWcS5kPRCLoXBKMcfxPfCn7QDkgIIIcEpVfjlfxlA==
-X-Received: by 2002:a17:903:1c2:b0:20c:a175:1943 with SMTP id d9443c01a7336-210c6c6d9a5mr505410645ad.40.1730830740228;
-        Tue, 05 Nov 2024 10:19:00 -0800 (PST)
-Received: from Emma ([2401:4900:1c97:5a7:5054:ff:fe53:2787])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211057a2eaasm81208945ad.159.2024.11.05.10.18.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Nov 2024 10:18:59 -0800 (PST)
-From: Karan Sanghavi <karansanghvi98@gmail.com>
-Date: Tue, 05 Nov 2024 18:18:42 +0000
-Subject: [PATCH] drm:sprd: Correct left shift operator evaluating constant
- expression
+	s=arc-20240116; t=1730830761; c=relaxed/simple;
+	bh=KLo/rEHIE6am70Vo9zl892I6Woc0BURA4LAhcckibeU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=utdY3NG2K9a0yJtXEFf90u/Yji33LZg9ZcNG9N1C7cu+hz4m2ZnHlQzXCK3LoSdPmCVLaiOYgRwJxcZAqpeDmjDSuljUUW93Z9U57+m5LFXZATymw7okkSSWhwnnvKfhclHjj7vvujimw+oCIxDqBr7GEzwiwC8f9YrM/n/D3BA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Wzta4frQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32F80C4CECF;
+	Tue,  5 Nov 2024 18:19:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730830760;
+	bh=KLo/rEHIE6am70Vo9zl892I6Woc0BURA4LAhcckibeU=;
+	h=From:To:Cc:Subject:Date:From;
+	b=Wzta4frQAfI+4x29xiW8d95oYiYMxDwzeUtVWVyxDS1oUTnFvakcknjMNjmV59u8x
+	 s6w5C7WqSSq5pm152rGl/d+Ns/2NXaRTkrTeFe4kMlW3/ugHTz/Iw9//DMH0TL043G
+	 WGWXmMW6T/oRX9lkWkk5VWWNEpssvtmrDa18Re9xeN/uOFm4VPEnrgIhkW2NCuSSTY
+	 sWg1NgdhxcjETb4r1O47SzSPTEFSihoziq/5Y5RVOuIjXFN5mHxzZ2Ik/lpoNU3T16
+	 ThWrqxS5f8u/XdkUPaRQZHRJsv/njGi9uL6/eE8elHb4k0J3eIRjmO22YfB29R3Qco
+	 tf6VjvAeNvy5g==
+From: Kees Cook <kees@kernel.org>
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Kees Cook <kees@kernel.org>,
+	syzbot+03e1af5c332f7e0eb84b@syzkaller.appspotmail.com,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	Eric Biederman <ebiederm@xmission.com>,
+	linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org,
+	Tycho Andersen <tandersen@netflix.com>,
+	=?UTF-8?q?Zbigniew=20J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>,
+	linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: [PATCH] exec: NULL out bprm->argv0 when it is an ERR_PTR
+Date: Tue,  5 Nov 2024 10:19:11 -0800
+Message-Id: <20241105181905.work.462-kees@kernel.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241105-coverity1511468wrongoperator-v1-1-06c7513c3efc@gmail.com>
-X-B4-Tracking: v=1; b=H4sIAIFhKmcC/x3MPQ6DMAxA4asgz41kpwEhroI6pMGlXmLkIH6Eu
- Hujjt/w3gWFTbjA0FxgvEkRzRX0aCB9Y57ZyVQNHn0gwtYl3WqxntQSha7fTfOsC1tc1ZxHeuI
- 7TcEHhLpYjD9y/Pfj675/980BHW4AAAA=
-To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Orson Zhai <orsonzhai@gmail.com>, 
- Baolin Wang <baolin.wang@linux.alibaba.com>, 
- Chunyan Zhang <zhang.lyra@gmail.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
- Shuah Khan <skhan@linuxfoundation.org>, 
- Karan Sanghavi <karansanghvi98@gmail.com>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1730830736; l=1441;
- i=karansanghvi98@gmail.com; s=20241017; h=from:subject:message-id;
- bh=wvRSAYs3rsDyEyx2uErygYM6LqQrDkxqRE+1X+C/K8A=;
- b=CgjOZ0VtIDWUoRD0Yf5FbUnA+DHoIVLNVlo427a5rDs+icdBvp3hgYaZkHdPJhljSvJ4rbQVc
- f3sn+bRSmulBmqq40nd9nHxjZxNGqTJ+DM2dz1H46kWlCI69d0HdsoT
-X-Developer-Key: i=karansanghvi98@gmail.com; a=ed25519;
- pk=UAcbefT1C06npNVDJHdgpPqTm4WE9IhaA1fmJb3A37Y=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1391; i=kees@kernel.org; h=from:subject:message-id; bh=KLo/rEHIE6am70Vo9zl892I6Woc0BURA4LAhcckibeU=; b=owGbwMvMwCVmps19z/KJym7G02pJDOlaifPnGyS82b/muRhXf1nrDL+nbivKFV8oKxtG8T/fs vIHt6hCRykLgxgXg6yYIkuQnXuci8fb9nD3uYowc1iZQIYwcHEKwES4rjL8lV0nvoYlzPJdBW/x 9vUhHHsKS4qPP2dLPv+y+69b4t/7mYwML71dr6nqdhzI+PWgVKKNuSjg68a+13YiemdmpygVVd7 mBAA=
+X-Developer-Key: i=kees@kernel.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
+Content-Transfer-Encoding: 8bit
 
-The left shift operation followed by a mask with 0xf will
-always result in 0. To correctly evaluate the expression for
-the bitwise OR operation, use a right shift instead.
+Attempting to free an ERR_PTR will not work. ;)
 
-Reported by Coverity Scan CID: 1511468
+    process 'syz-executor210' launched '/dev/fd/3' with NULL argv: empty string added
+    kernel BUG at arch/x86/mm/physaddr.c:23!
 
-Signed-off-by: Karan Sanghavi <karansanghvi98@gmail.com>
+Set bprm->argv0 to NULL if it fails to get a string from userspace so
+that bprm_free() will not try to free an invalid pointer when cleaning up.
+
+Reported-by: syzbot+03e1af5c332f7e0eb84b@syzkaller.appspotmail.com
+Closes: https://lore.kernel.org/all/6729d8d1.050a0220.701a.0017.GAE@google.com
+Fixes: 7bdc6fc85c9a ("exec: fix up /proc/pid/comm in the execveat(AT_EMPTY_PATH) case")
+Signed-off-by: Kees Cook <kees@kernel.org>
 ---
-Coverity Scan Message:
-CID 1511468: (#1 of 1): Wrong operator used (CONSTANT_EXPRESSION_RESULT)
-operator_confusion: (pll->kint << 4) & 15 is always 0 regardless of the 
-values of its operands. This occurs as the bitwise second operand of "|"
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: Christian Brauner <brauner@kernel.org>
+Cc: Jan Kara <jack@suse.cz>
+Cc: Eric Biederman <ebiederm@xmission.com>
+Cc: linux-fsdevel@vger.kernel.org
+Cc: linux-mm@kvack.org
 ---
- drivers/gpu/drm/sprd/megacores_pll.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/exec.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/sprd/megacores_pll.c b/drivers/gpu/drm/sprd/megacores_pll.c
-index 3091dfdc11e3..43c10a5fc441 100644
---- a/drivers/gpu/drm/sprd/megacores_pll.c
-+++ b/drivers/gpu/drm/sprd/megacores_pll.c
-@@ -94,7 +94,7 @@ static void dphy_set_pll_reg(struct dphy_pll *pll, struct regmap *regmap)
- 	reg_val[3] = pll->vco_band | (pll->sdm_en << 1) | (pll->refin << 2);
- 	reg_val[4] = pll->kint >> 12;
- 	reg_val[5] = pll->kint >> 4;
--	reg_val[6] = pll->out_sel | ((pll->kint << 4) & 0xf);
-+	reg_val[6] = pll->out_sel | ((pll->kint >> 4) & 0xf);
- 	reg_val[7] = 1 << 4;
- 	reg_val[8] = pll->det_delay;
+diff --git a/fs/exec.c b/fs/exec.c
+index 79045c1d1608..65448ea609a2 100644
+--- a/fs/exec.c
++++ b/fs/exec.c
+@@ -1522,8 +1522,12 @@ static int bprm_add_fixup_comm(struct linux_binprm *bprm,
+ 		return 0;
  
-
----
-base-commit: 81983758430957d9a5cb3333fe324fd70cf63e7e
-change-id: 20241105-coverity1511468wrongoperator-20130bcd4240
-
-Best regards,
+ 	bprm->argv0 = strndup_user(p, MAX_ARG_STRLEN);
+-	if (IS_ERR(bprm->argv0))
+-		return PTR_ERR(bprm->argv0);
++	if (IS_ERR(bprm->argv0)) {
++		int rc = PTR_ERR(bprm->argv0);
++
++		bprm->argv0 = NULL;
++		return rc;
++	}
+ 
+ 	return 0;
+ }
 -- 
-Karan Sanghavi <karansanghvi98@gmail.com>
+2.34.1
 
 
