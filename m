@@ -1,120 +1,100 @@
-Return-Path: <linux-kernel+bounces-396532-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396530-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61A639BCE8F
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 15:03:21 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D8949BCE8A
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 15:00:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DFBC5B20CBD
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 14:03:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3DA71283764
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 14:00:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E6251D86C7;
-	Tue,  5 Nov 2024 14:03:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFA211D79BE;
+	Tue,  5 Nov 2024 14:00:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="LBb2SK2r"
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lP7SG5rM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBC501D5160;
-	Tue,  5 Nov 2024 14:03:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26EC01DA5F;
+	Tue,  5 Nov 2024 14:00:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730815390; cv=none; b=WOaVux1rDvSxRYWpr48V2qp10mMjbgvMKDGbVyPWrINOPRB41yzV2AVK0xXJQP55WyiXlerdhM8J5kFw51WyirN0ecXoqz5ZzydtRY1oX0tw4FeOeXAGmR7EHEVdrWeu316POp6z5ErMELyJ6z90q65GoTGe1VXa0eC89bave9I=
+	t=1730815248; cv=none; b=AMLKnYoPX53qKrsrul1Wvy/fzO2y2Toobpww6BOthTDd3fs/dwlfSXiT8xHv7r5gAA4Z7SjrWWenUpZf7BGG3CaMPkGpU3YPP2TiaU8xMvCwvzLuITmlVctYSAUP9Ef4rcUOTFaOusVgqpZ11aVTW2z2srVoEVCDAGMsBSFdKn8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730815390; c=relaxed/simple;
-	bh=aAgUOU83++1ubqUQLjYI1QfRmHl6jjFqID+xsFAHSW4=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=aWSfso6H/eWJFfIQx3EwMJmNZVSFM56MMlvUW5CN5JBCeVWjyg1bxICtVkzBLUMs6iTS/WCPz7yh2I+1+Hmg/JK917fhaqwoKTj5JqWcmtJ2LMn9NG2wlkh000freVpEjQRcwfKwMVAtYMGxjkqmWg8MTegpC4vIopPHiLxp4/c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=LBb2SK2r; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A5DY4vk006828;
-	Tue, 5 Nov 2024 15:02:42 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=selector1; bh=r0pX1FHgLqkdgm4Z0bWZbm
-	zE7jup2PMJjNG85lq5xOw=; b=LBb2SK2rgGAzRdzHeWVMVj5wUrFOVcCj4SebnD
-	0YjsgEzAP5ZgAP/n0I8FIcSrOD2h1muBRAcXkAgqBlkauf7r8q+SEviZGTuV2ftI
-	uLKulkkQoi74lrGQwYTCObro85lYQTeR3scvvrsNrzNk/prb3uPDRpnWNvuGpYd6
-	Bu31CkevEqmAXPAjeQiMzJGWDihzgew4S1BshrCAXr46cAm15N6ZBVdVBmsQYcc2
-	pgUIhp9EGsLHVZibfJnPX1dfHLVT6GOyWA1JdL8JenhyZLagv/e3sNe2lCN0fRzp
-	FhflMwuRzWUIY0aSrcyPRMgMKJu2LahlJJgasPs2ieP/gJ+Q==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 42ncxbvpm2-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 05 Nov 2024 15:02:42 +0100 (CET)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 8680940064;
-	Tue,  5 Nov 2024 15:01:37 +0100 (CET)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 19ECB2676C6;
-	Tue,  5 Nov 2024 15:00:15 +0100 (CET)
-Received: from localhost (10.252.16.126) by SHFDAG1NODE1.st.com (10.75.129.69)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Tue, 5 Nov
- 2024 15:00:14 +0100
-From: Olivier Moysan <olivier.moysan@foss.st.com>
-To: Olivier Moysan <olivier.moysan@foss.st.com>,
-        Arnaud Pouliquen
-	<arnaud.pouliquen@foss.st.com>,
-        Liam Girdwood <lgirdwood@gmail.com>, Mark
- Brown <broonie@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof
- Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Maxime
- Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue
-	<alexandre.torgue@foss.st.com>
-CC: <linux-sound@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH] ASoC: dt-bindings: stm32: add missing port property
-Date: Tue, 5 Nov 2024 14:59:41 +0100
-Message-ID: <20241105135942.526624-1-olivier.moysan@foss.st.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1730815248; c=relaxed/simple;
+	bh=YCW0XGeSSzzVQLlrqXv/VoQiYY8Ddc0JcOH7fxYi49E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rkZ8yDT7cU6fSk1+Ka95I9qKR+NwfO9vw1tOLWVqsMonR2/H+0X6+RQmMeUFxVRUWQmedy0yuPWFiUpWUgBs8+82z0h+jFoF2bHtjz2kJJzDYc7KOJBdgWYDq3TJiKTXvgYGKsIrmRVX22Eit4cyi23cP2l462OX/lTL9G1owxU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lP7SG5rM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8EEB8C4CECF;
+	Tue,  5 Nov 2024 14:00:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730815247;
+	bh=YCW0XGeSSzzVQLlrqXv/VoQiYY8Ddc0JcOH7fxYi49E=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=lP7SG5rMXgGJnNkX17yiqKaryOUIskjfDIuZ5hPwuNKDueqQCa+o+gL7pxZqOK3MM
+	 7GASBJS7IuzqA8TA83KJagYa1Xls0pNNyjaShM47l/zw+q6EFHkZNaMR/q0exi0UCd
+	 AiR3BxaULqXxGj5mU1D9M6JyLbtjeDTeoyROtKFvCbrePzWn3chfMQNcBxCI63kLrs
+	 B4xSDgKFlR4+1UKfNmR5hKrMGlcTJbFXuoGwnREtL0RCFG1wLPlXLZVO4ncnTewkdH
+	 dQ0ue+RTSbYMKDfyiG15cazCLmwCsa7fyZ33XsFsuTjJCOx6CUyT0jxfrxGuJ5gYch
+	 bb5gUvFzuPMOQ==
+Date: Tue, 5 Nov 2024 14:00:43 +0000
+From: Simon Horman <horms@kernel.org>
+To: Rosen Penev <rosenp@gmail.com>
+Cc: netdev@vger.kernel.org, Jian Shen <shenjian15@huawei.com>,
+	Salil Mehta <salil.mehta@huawei.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Jijie Shao <shaojijie@huawei.com>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH net-next] net: hisilicon: hns3: use ethtool string helpers
+Message-ID: <20241105140043.GF4507@kernel.org>
+References: <20241101220023.290926-1-rosenp@gmail.com>
+ <20241101220023.290926-2-rosenp@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE1.st.com
- (10.75.129.69)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241101220023.290926-2-rosenp@gmail.com>
 
-Add missing port property in STM32 SPDIFRX binding.
-This will prevent potential warning:
-Unevaluated properties are not allowed ('port' was unexpected)
+On Fri, Nov 01, 2024 at 03:00:23PM -0700, Rosen Penev wrote:
+> The latter is the preferred way to copy ethtool strings.
+> 
+> Avoids manually incrementing the pointer. Cleans up the code quite well.
+> 
+> Signed-off-by: Rosen Penev <rosenp@gmail.com>
+> Reviewed-by: Jijie Shao <shaojijie@huawei.com>
+> Tested-by: Jijie Shao <shaojijie@huawei.com>
 
-Signed-off-by: Olivier Moysan <olivier.moysan@foss.st.com>
----
- Documentation/devicetree/bindings/sound/st,stm32-spdifrx.yaml | 4 ++++
- 1 file changed, 4 insertions(+)
+...
 
-diff --git a/Documentation/devicetree/bindings/sound/st,stm32-spdifrx.yaml b/Documentation/devicetree/bindings/sound/st,stm32-spdifrx.yaml
-index 3dedc81ec12f..56c5738ea4c5 100644
---- a/Documentation/devicetree/bindings/sound/st,stm32-spdifrx.yaml
-+++ b/Documentation/devicetree/bindings/sound/st,stm32-spdifrx.yaml
-@@ -50,6 +50,10 @@ properties:
-   resets:
-     maxItems: 1
- 
-+  port:
-+    $ref: audio-graph-port.yaml#
-+    unevaluatedProperties: false
-+
-   access-controllers:
-     minItems: 1
-     maxItems: 2
--- 
-2.25.1
+> diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c b/drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c
+> index 97eaeec1952b..b6cc51bfdd33 100644
+> --- a/drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c
+> +++ b/drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c
+> @@ -509,54 +509,38 @@ static int hns3_get_sset_count(struct net_device *netdev, int stringset)
+>  	}
+>  }
+>  
+> -static void *hns3_update_strings(u8 *data, const struct hns3_stats *stats,
+> -		u32 stat_count, u32 num_tqps, const char *prefix)
+> +static void hns3_update_strings(u8 **data, const struct hns3_stats *stats,
+> +				u32 stat_count, u32 num_tqps,
+> +				const char *prefix)
+>  {
+>  #define MAX_PREFIX_SIZE (6 + 4)
 
+Hi Rosen,
+
+As per Jakub's feedback on v1, can't this #define be removed?
+
+...
 
