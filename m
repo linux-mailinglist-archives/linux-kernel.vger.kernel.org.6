@@ -1,79 +1,45 @@
-Return-Path: <linux-kernel+bounces-396398-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396399-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B429B9BCC9C
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 13:22:04 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E66BC9BCC9F
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 13:22:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D56DE2817D1
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 12:22:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E58E1F23F2E
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 12:22:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 354831D5173;
-	Tue,  5 Nov 2024 12:21:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="V3utGeaK"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 089D31D517A;
+	Tue,  5 Nov 2024 12:22:20 +0000 (UTC)
+Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BF671D4350
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 12:21:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F69F1D460E;
+	Tue,  5 Nov 2024 12:22:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730809314; cv=none; b=qJWMI8MkLdI6xgTyodlB0ozchrYZ+qKed/AtD14ePL6JhOpSfC7Pk5UD8LONfpvs5y5NYXTxAvi6/1bejY9yDWs7ReQTIK/GRGvPogQOtA/FZHNnHg3Q30DPbH1ThLrE2I5IJglFAPELzXL8OWah/8XJ1pGnBHFplfcIMxAorVE=
+	t=1730809339; cv=none; b=FS/xIyEuezG5QE8wUnSqRtgZuKSG45djXkwPQTUkhxkz5DNQvTTVQNSy2zoUOBJ/Kx1X6oVvgOY2oi40TwOW9kiqUre5FZhYBk4DHdrXYKR0LWIj3ND7XUb1AMM2kxBcihxKoBofHBMrSqBdKV4SdM9E8Eo5Byc/fo8i4ZxhSMU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730809314; c=relaxed/simple;
-	bh=vG0KWC1LE0UJesUU3184SJ4BehKG41tJxDaxP+vPcxs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Gnvc0mkuw0CF2Q7PiQVspzm832bjEqiTVkE6WqwgddkonxXMlx8BjEwknoKFhyjeiBQWHUQrFwBSD6bzmwUinpF4U1HLDK0ZRnZfYJzDeZ9wXTydfloQqgb+6iUZW6XxGRW+mo4pNOYYRZ4T+xBP1PQtuAhB7JLN4StvYdHBsJg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=V3utGeaK; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1730809312;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=E4x3cZcwzqLo2OiaZWP5ZXd22cNNK5WVyCAU0fbChj4=;
-	b=V3utGeaKjNC+aPE2SoubPwivs6lOg5YD7CtGwN0xmnuFFSaiaIvyWAjuyrPt46IrB4j5R6
-	/r4Ve0rOlFEo2LBHHqo0CXZAsA2ZyFgVHHECehVIHTcGZ3gg46VEtzTTtknmIryTCSR0Qd
-	vlXIjl1/p/0cIqmZ4TmEQ7GOhEhsmg8=
-Received: from mail-lf1-f72.google.com (mail-lf1-f72.google.com
- [209.85.167.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-265-KQLqzS9BNfKiAnOcjynHcA-1; Tue, 05 Nov 2024 07:21:51 -0500
-X-MC-Unique: KQLqzS9BNfKiAnOcjynHcA-1
-Received: by mail-lf1-f72.google.com with SMTP id 2adb3069b0e04-539e4b7c8f4so3903354e87.1
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 04:21:50 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730809309; x=1731414109;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=E4x3cZcwzqLo2OiaZWP5ZXd22cNNK5WVyCAU0fbChj4=;
-        b=tVnLF3GOSdDFsA1zQ2u8DHO4lYnnQHJtWxD88Xys//YZaMdnXEQxsTDR4ogPzIu/WL
-         ykkH1LcthRv69V0miWKB3SfIGf0VkUgkWf5TVxBmlgKm3PSI9kV9bp3/9JAP/xBsRNsY
-         r8Td/A8pggce0XKUBP2uABtuXFwWOUCTZFxNAHnDfLLw0efvz6ne1UMSHQTBgnrCzGvh
-         ILrnxcvwIiS0d84nmMa73E/l3DnvMFrZK+bGIP6RSqa+gasISriSA67hYDrkLFaZTYI6
-         VTQm3jDhsw/0xAhYKhQrQsAi5VAM9/kxmQi4stXD2lw7F87RmtXtaY1TN1UMvzUlJeFk
-         D5Dg==
-X-Forwarded-Encrypted: i=1; AJvYcCXiJSXSgptrXPdGE7u1RoPqGGvngJLTJxST004xioZEoqjoLqnSPa6XFTnV1z1cG8CK4AmhLbVe2h8zG3M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzBpKgLNItmQbsoUEKKBafLr/oUMTf0Zeali3f7bCbqleARpRx4
-	mkuH4WFgz4ag8BtUlUR1FOvN+0/a5h9dtFFIvj5giXkbwID+MIzdCfbKQXa+aviCIUWcP8wUu5y
-	8xwoXsgVFflnue57/EeH4MVBlvKAr/uNLL3wOk56yDKe/MkR3X8vT9Q2vNf+m7w==
-X-Received: by 2002:a05:6512:350e:b0:53b:1526:3a48 with SMTP id 2adb3069b0e04-53b348f98c0mr12724360e87.14.1730809309413;
-        Tue, 05 Nov 2024 04:21:49 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGHy6kDvqkvG/IVz7ifoKDwWXTd7XSOaI9JwapLoF2JEaILzTP4wN3J6XCLx39qLBCjQkukNQ==
-X-Received: by 2002:a05:6512:350e:b0:53b:1526:3a48 with SMTP id 2adb3069b0e04-53b348f98c0mr12724342e87.14.1730809308915;
-        Tue, 05 Nov 2024 04:21:48 -0800 (PST)
-Received: from [192.168.88.24] (146-241-44-112.dyn.eolo.it. [146.241.44.112])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381c10e7449sm16073607f8f.49.2024.11.05.04.21.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 05 Nov 2024 04:21:48 -0800 (PST)
-Message-ID: <cf2d112f-7888-4e36-8212-d8c632fd323d@redhat.com>
-Date: Tue, 5 Nov 2024 13:21:46 +0100
+	s=arc-20240116; t=1730809339; c=relaxed/simple;
+	bh=OML+bH4Z4lVz1a/atUWg07jHrx6lWsbTB6Lg4hkS7MY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=kKYuhyS3PgyoMevdF2vPmF3f1v50EPt7bCNfngY8we8FRJKQ/IInquTScA+YsYV5K0LUbsoMnD0C7dvyAmNSNvyHdkuqndsW0H9PelEyRoKWfuYJQczPVo0OVTeMpPTpjClaqXO5RIHWrxHTcRBRPbRb2jfGCiK4z4hW/tL3q6Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4XjS8421x2z1T9h4;
+	Tue,  5 Nov 2024 20:19:48 +0800 (CST)
+Received: from kwepemd200013.china.huawei.com (unknown [7.221.188.133])
+	by mail.maildlp.com (Postfix) with ESMTPS id 08B37180105;
+	Tue,  5 Nov 2024 20:22:07 +0800 (CST)
+Received: from [10.67.110.108] (10.67.110.108) by
+ kwepemd200013.china.huawei.com (7.221.188.133) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Tue, 5 Nov 2024 20:22:06 +0800
+Message-ID: <46451dbe-056c-4c13-bfae-7ee8d6e115b5@huawei.com>
+Date: Tue, 5 Nov 2024 20:22:05 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,60 +47,337 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v3] mlx5/core: Schedule EQ comp tasklet only if
- necessary
-To: Caleb Sander Mateos <csander@purestorage.com>,
- Saeed Mahameed <saeedm@nvidia.com>, Leon Romanovsky <leon@kernel.org>,
- Tariq Toukan <tariqt@nvidia.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>
-Cc: Parav Pandit <parav@nvidia.com>, netdev@vger.kernel.org,
- linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <CY8PR12MB7195C97EB164CD3A0E9A99F9DC552@CY8PR12MB7195.namprd12.prod.outlook.com>
- <20241031163436.3732948-1-csander@purestorage.com>
-Content-Language: en-US
-From: Paolo Abeni <pabeni@redhat.com>
-In-Reply-To: <20241031163436.3732948-1-csander@purestorage.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH] arm64: uprobes: Simulate STP for pushing fp/lr into user
+ stack
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>, Mark Rutland
+	<mark.rutland@arm.com>
+CC: <catalin.marinas@arm.com>, <will@kernel.org>, <mhiramat@kernel.org>,
+	<oleg@redhat.com>, <peterz@infradead.org>, <ast@kernel.org>,
+	<puranjay@kernel.org>, <andrii@kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<linux-trace-kernel@vger.kernel.org>, <bpf@vger.kernel.org>
+References: <20240910060407.1427716-1-liaochang1@huawei.com>
+ <ZxpUX1rbppLqS0bD@J2N7QTR9R3.cambridge.arm.com>
+ <CAEf4Bzb9fM+hx8quHpCCeRh2p7UVk9Kk6yGj3XvyJLTQu9C-2w@mail.gmail.com>
+From: "Liao, Chang" <liaochang1@huawei.com>
+In-Reply-To: <CAEf4Bzb9fM+hx8quHpCCeRh2p7UVk9Kk6yGj3XvyJLTQu9C-2w@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ kwepemd200013.china.huawei.com (7.221.188.133)
 
-On 10/31/24 17:34, Caleb Sander Mateos wrote:
-> Currently, the mlx5_eq_comp_int() interrupt handler schedules a tasklet
-> to call mlx5_cq_tasklet_cb() if it processes any completions. For CQs
-> whose completions don't need to be processed in tasklet context, this
-> adds unnecessary overhead. In a heavy TCP workload, we see 4% of CPU
-> time spent on the tasklet_trylock() in tasklet_action_common(), with a
-> smaller amount spent on the atomic operations in tasklet_schedule(),
-> tasklet_clear_sched(), and locking the spinlock in mlx5_cq_tasklet_cb().
-> TCP completions are handled by mlx5e_completion_event(), which schedules
-> NAPI to poll the queue, so they don't need tasklet processing.
-> 
-> Schedule the tasklet in mlx5_add_cq_to_tasklet() instead to avoid this
-> overhead. mlx5_add_cq_to_tasklet() is responsible for enqueuing the CQs
-> to be processed in tasklet context, so it can schedule the tasklet. CQs
-> that need tasklet processing have their interrupt comp handler set to
-> mlx5_add_cq_to_tasklet(), so they will schedule the tasklet. CQs that
-> don't need tasklet processing won't schedule the tasklet. To avoid
-> scheduling the tasklet multiple times during the same interrupt, only
-> schedule the tasklet in mlx5_add_cq_to_tasklet() if the tasklet work
-> queue was empty before the new CQ was pushed to it.
-> 
-> The additional branch in mlx5_add_cq_to_tasklet(), called for each EQE,
-> may add a small cost for the userspace Infiniband CQs whose completions
-> are processed in tasklet context. But this seems worth it to avoid the
-> tasklet overhead for CQs that don't need it.
-> 
-> Note that the mlx4 driver works the same way: it schedules the tasklet
-> in mlx4_add_cq_to_tasklet() and only if the work queue was empty before.
-> 
-> Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
-> Reviewed-by: Parav Pandit <parav@nvidia.com>
+Andrii and Mark.
 
-@Saeed, @Leon, @Tariq: I assume you will apply this one and include in
-the next mlx5 PR. please correct me if I'm wrong.
+在 2024/10/26 4:51, Andrii Nakryiko 写道:
+> On Thu, Oct 24, 2024 at 7:06 AM Mark Rutland <mark.rutland@arm.com> wrote:
+>>
+>> On Tue, Sep 10, 2024 at 06:04:07AM +0000, Liao Chang wrote:
+>>> This patch is the second part of a series to improve the selftest bench
+>>> of uprobe/uretprobe [0]. The lack of simulating 'stp fp, lr, [sp, #imm]'
+>>> significantly impact uprobe/uretprobe performance at function entry in
+>>> most user cases. Profiling results below reveals the STP that executes
+>>> in the xol slot and trap back to kernel, reduce redis RPS and increase
+>>> the time of string grep obviously.
+>>>
+>>> On Kunpeng916 (Hi1616), 4 NUMA nodes, 64 Arm64 cores@2.4GHz.
+>>>
+>>> Redis GET (higher is better)
+>>> ----------------------------
+>>> No uprobe: 49149.71 RPS
+>>> Single-stepped STP: 46750.82 RPS
+>>> Emulated STP: 48981.19 RPS
+>>>
+>>> Redis SET (larger is better)
+>>> ----------------------------
+>>> No uprobe: 49761.14 RPS
+>>> Single-stepped STP: 45255.01 RPS
+>>> Emulated stp: 48619.21 RPS
+>>>
+>>> Grep (lower is better)
+>>> ----------------------
+>>> No uprobe: 2.165s
+>>> Single-stepped STP: 15.314s
+>>> Emualted STP: 2.216s
+>>
+>> The results for grep are concerning.
+>>
+>> In theory, the overhead for stepping should be roughly double the
+>> overhead for emulating, assuming the exception-entry and
+>> exception-return are the dominant cost. The cost of stepping should be
+>> trivial.
+>>
+>> Those results show emulating adds 0.051s (for a ~2.4% overhead), while
+>> stepping adds 13.149s (for a ~607% overhead), meaning stepping is 250x
+>> more expensive.
+>>
+>> Was this tested bare-metal, or in a VM?
+> 
+> Hey Mark, I hope Liao will have a chance to reply, I don't know the
+> details of his benchmarking. But I can try to give you my numbers and
+> maybe answer a few questions, hopefully that helps move the
+> conversation forward.
+> 
+> So, first of all, I did a quick benchmark on bare metal (without
+> Liao's optimization, though), here are my results:
+> 
+> uprobe-nop            ( 1 cpus):    2.334 ± 0.011M/s  (  2.334M/s/cpu)
+> uprobe-push           ( 1 cpus):    2.321 ± 0.010M/s  (  2.321M/s/cpu)
+> uprobe-ret            ( 1 cpus):    4.144 ± 0.041M/s  (  4.144M/s/cpu)
+> 
+> uretprobe-nop         ( 1 cpus):    1.684 ± 0.004M/s  (  1.684M/s/cpu)
+> uretprobe-push        ( 1 cpus):    1.736 ± 0.003M/s  (  1.736M/s/cpu)
+> uretprobe-ret         ( 1 cpus):    2.502 ± 0.006M/s  (  2.502M/s/cpu)
+> 
+> uretprobes are inherently slower, so I'll just compare uprobe, as the
+> differences are very clear either way.
+> 
+> -nop is literally nop (Liao solved that issue, I just don't have his
+> patch applied on my test machine). -push has `stp     x29, x30, [sp,
+> #-0x10]!` instruction traced. -ret is literally just `ret`
+> instruction.
+> 
+> So you can see that -ret is almost twice as fast as the -push variant
+> (it's a microbenchmark, yes, but still).
+> 
+>>
+>> AFAICT either:
+>>
+>> * Single-stepping is unexpectedly expensive.
+>>
+>>   Historically we had performance issues with hypervisor trapping of
+>>   debug features, and there are things we might be able to improve in
+>>   the hypervisor and kernel, which would improve stepping *all*
+>>   instructions.
+>>
+> 
+> Single-stepping will always be more expensive, as it necessitates
+> extra hop kernel->user space->kernel, so no matter the optimization
+> for single-stepping, if we can avoid it, we should. It will be
+> noticeable.
+> 
+>>   If stepping is the big problem, we could move uprobes over to a BRK
+>>   rather than a single-step. That would require require updating and
+>>   fixing the logic to decide which instructions are steppable, but
+>>   that's necessary anyway given it has extant soundness issues.
+> 
+> I'm afraid I don't understand what BRK means and what are the
+> consequences in terms of overheads. I'm not an ARM person either, so
+> sorry if that's a stupid question. But either way, I can't address
+> this. But see above, emulating an instruction feels like a much better
+> approach, if possible.
 
-Thanks,
+As I understand, Mark's suggestion is to place a BRK instruction next to
+the instruction in the xol slot. Once the instruction in the xol slot
+executed, the BRK instruction would trigger a trap into kernel. This is
+a common technique used on platforms that don't support hardware single-
+step. However, since Arm64 does support hardware single-stepping, kernel
+enables it in pre_ssout(), allowing the CPU to automatically trap into kernel
+after instruction in xol slot executed. But even we move uprobes over
+to a BRK rather than a single-step. It can't reduce the overhead of user->
+kernel->user context switch on the bare-metal. Maybe I am wrong, Mark,
+could you give more details about the BRK.
 
-Paolo
+> 
+>>
+>> * XOL management is absurdly expensive.
+>>
+>>   Does uprobes keep the XOL slot around (like krpobes does), or does it
+>>   create the slot afresh for each trap?
+> 
+> XOL *page* is created once per process, lazily, and then we just
+> juggle a bunch of fixed slots there for each instance of
+> single-stepped uprobe. And yes, there are some bottlenecks in XOL
+> management, though it's mostly due to lock contention (as it is
+> implemented right now). Liao and Oleg have been improving XOL
+> management, but still, avoiding XOL in the first place is the much
+> preferred way.
+> 
+>>
+>>   If that's trying to create a slot afresh for each trap, there are
+>>   several opportunities for improvement, e.g. keep the slot around for
+>>   as long as the uprobe exists, or pre-allocate shared slots for common
+>>   instructions and use those.
+> 
+> As I mentioned, a XOL page is allocated and mapped once, but yes, it
+> seems like we dynamically get a slot in it for each single-stepped
+> execution (see xol_take_insn_slot() in kernel/events/uprobes.c). It's
+> probably not a bad idea to just cache and hold a XOL slot for each
+> specific uprobe, I don't see why we should limit ourselves to just one
+> XOL page. We also don't need to pre-size each slot, we can probably
+> allocate just the right amount of space for a given uprobe.
+> 
+> All good ideas for sure, we should do them, IMO. But we'll still be
+> paying an extra kernel->user->kernel switch, which almost certainly is
+> slower than doing a simple stack push emulation just like we do in
+> x86-64 case, no?
+> 
+> 
+> BTW, I did a quick local profiling run. I don't think XOL management
+> is the main source of overhead. I see 5% of CPU cycles spent in
+> arch_uprobe_copy_ixol, but other than that XOL doesn't figure in stack
+> traces. There are at least 22% CPU cycles spent in some
+> local_daif_restore function, though, not sure what that is, but might
+> be related to interrupt handling, right?
+
+The local_daif_restore() is part of the path for all user->kernel->user
+context switch, including interrupt handling, breakpoints, and single-stepping
+etc. I am surprised to see it consuming 22% of CPU cycles as well. I haven't
+been enable to reproduce this on my local machine.
+
+Andrii, could you use the patch below to see if it can reduce the 5% of
+CPU cycles spent in arch_uprobe_copy_ixol, I doubt that D/I cache
+synchronization is the cause of this part of overhead.
+
+https://lore.kernel.org/all/20240919121719.2148361-1-liaochang1@huawei.com/
+
+> 
+> 
+> The take away I'd like to communicate here is avoiding the
+> single-stepping need is *the best way* to go, IMO. So if we can
+> emulate those STP instructions for uprobe *cheaply*, that would be
+> awesome.
+
+Given some significant uprobe optimizations from Oleg and Andrii
+merged, I am curious to see how these changes impact the profiling
+result on Arm64. So I re-ran the selftest bench on the latest kernel
+(based on tag next-20241104) and the kernel (based on tag next-20240909)
+that I used when I submitted this patch. The results re-ran are shown
+below.
+
+next-20240909(xol stp + xol nop)
+--------------------------------
+uprobe-nop      ( 1 cpus):    0.424 ± 0.000M/s  (  0.424M/s/cpu)
+uprobe-push     ( 1 cpus):    0.415 ± 0.001M/s  (  0.415M/s/cpu)
+uprobe-ret      ( 1 cpus):    2.101 ± 0.002M/s  (  2.101M/s/cpu)
+uretprobe-nop   ( 1 cpus):    0.347 ± 0.000M/s  (  0.347M/s/cpu)
+uretprobe-push  ( 1 cpus):    0.349 ± 0.000M/s  (  0.349M/s/cpu)
+uretprobe-ret   ( 1 cpus):    1.051 ± 0.001M/s  (  1.051M/s/cpu)
+
+next-20240909(sim stp + sim nop)
+--------------------------------
+uprobe-nop      ( 1 cpus):    2.042 ± 0.002M/s  (  2.042M/s/cpu)
+uprobe-push     ( 1 cpus):    1.363 ± 0.002M/s  (  1.363M/s/cpu)
+uprobe-ret      ( 1 cpus):    2.052 ± 0.002M/s  (  2.052M/s/cpu)
+uretprobe-nop   ( 1 cpus):    1.049 ± 0.001M/s  (  1.049M/s/cpu)
+uretprobe-push  ( 1 cpus):    0.780 ± 0.000M/s  (  0.780M/s/cpu)
+uretprobe-ret   ( 1 cpus):    1.065 ± 0.001M/s  (  1.065M/s/cpu)
+
+next-20241104 (xol stp + sim nop)
+---------------------------------
+uprobe-nop      ( 1 cpus):    2.044 ± 0.003M/s  (  2.044M/s/cpu)
+uprobe-push     ( 1 cpus):    0.415 ± 0.001M/s  (  0.415M/s/cpu)
+uprobe-ret      ( 1 cpus):    2.047 ± 0.001M/s  (  2.047M/s/cpu)
+uretprobe-nop   ( 1 cpus):    0.832 ± 0.003M/s  (  0.832M/s/cpu)
+uretprobe-push  ( 1 cpus):    0.328 ± 0.000M/s  (  0.328M/s/cpu)
+uretprobe-ret   ( 1 cpus):    0.833 ± 0.003M/s  (  0.833M/s/cpu)
+
+next-20241104 (sim stp + sim nop)
+---------------------------------
+uprobe-nop      ( 1 cpus):    2.052 ± 0.002M/s  (  2.052M/s/cpu)
+uprobe-push     ( 1 cpus):    1.411 ± 0.002M/s  (  1.411M/s/cpu)
+uprobe-ret      ( 1 cpus):    2.052 ± 0.005M/s  (  2.052M/s/cpu)
+uretprobe-nop   ( 1 cpus):    0.839 ± 0.005M/s  (  0.839M/s/cpu)
+uretprobe-push  ( 1 cpus):    0.702 ± 0.002M/s  (  0.702M/s/cpu)
+uretprobe-ret   ( 1 cpus):    0.837 ± 0.001M/s  (  0.837M/s/cpu)
+
+It seems that the STP simluation approach in this patch significantly
+improves uprobe-push throughtput by 240% (from 0.415Ms/ to 1.411M/s)
+and uretprobe-push by 114% (from 0.328M/s to 0.702M/s) on kernels
+bases on next-20240909 and next-20241104. While there is still room
+for improvement to reach the throughput of -nop and -ret, the gains
+are very substantail.
+
+But I'm a bit puzzled by the throughput of uprobe/uretprobe-push using
+single-stepping stp, which are far lower compared to the result when
+when I submitted patch(look closely to the uprobe-push and uretprobe-push
+results in commit log). I'm certain that the tests were run on the
+same bare-metal machine with background tasked minimized. I doubt some
+uncommitted uprobe optimization on my local repo twist the result of
+-push using single-step.
+
+In addition to the micro benchmark, I also re-ran Redis benchmark to
+compare the impact of single-stepping STP and simluated STP to the
+throughput of redis-server. I believe the impact of uprobe on the real
+application depends on the frequency of uprobe triggered and the application's
+hot paths. Therefore, I wouldn't say the simluated STP will benefit all
+real world applications.
+
+$ redis-benchmark -h [redis-server IP] -p 7778 -n 64000 -d 4 -c 128 -t SET
+$ redis-server --port 7778 --protected-mode no --save "" --appendonly no & &&
+  bpftrace -e 'uprobe:redis-server:readQueryFromClient{}
+               uprobe:redis-server:processCommand{}
+	       uprobe:redis-server:aeApiPoll {}'
+
+next-20241104
+-------------
+RPS: 55602.1
+
+next-20241104 + ss stp
+----------------------
+RPS: 47220.9
+uprobe@@aeApiPoll: 554565
+uprobe@processCommand: 1275160
+uprobe@readQueryFromClient: 1277710
+
+next-20241104 + sim stp
+-----------------------
+RPS           54290.09
+uprobe@aeApiPoll: 496007
+uprobe@processCommand: 1275160
+uprobe@readQueryFromClient: 1277710
+
+Andrii expressed concern that the STP simulation in this patch is too
+expensive. If we believe the result I re-ran, perhaps it is not a
+bad way to simluate STP. Looking forward to your feedbacks, or someone
+could propose a cheaper way to simluate STP, I'm very happy to test it
+on my machine, thanks.
+
+[...]
+
+>>>
+>>> xol-stp
+>>> -------
+>>> uprobe-nop      ( 1 cpus):    1.566 ± 0.006M/s  (  1.566M/s/cpu)
+>>> uprobe-push     ( 1 cpus):    0.868 ± 0.001M/s  (  0.868M/s/cpu)
+>>> uprobe-ret      ( 1 cpus):    1.629 ± 0.001M/s  (  1.629M/s/cpu)
+>>> uretprobe-nop   ( 1 cpus):    0.871 ± 0.001M/s  (  0.871M/s/cpu)
+>>> uretprobe-push  ( 1 cpus):    0.616 ± 0.001M/s  (  0.616M/s/cpu)
+>>> uretprobe-ret   ( 1 cpus):    0.878 ± 0.002M/s  (  0.878M/s/cpu)
+>>>
+>>> simulated-stp
+>>> -------------
+>>> uprobe-nop      ( 1 cpus):    1.544 ± 0.001M/s  (  1.544M/s/cpu)
+>>> uprobe-push     ( 1 cpus):    1.128 ± 0.002M/s  (  1.128M/s/cpu)
+>>> uprobe-ret      ( 1 cpus):    1.550 ± 0.005M/s  (  1.550M/s/cpu)
+>>> uretprobe-nop   ( 1 cpus):    0.872 ± 0.004M/s  (  0.872M/s/cpu)
+>>> uretprobe-push  ( 1 cpus):    0.714 ± 0.001M/s  (  0.714M/s/cpu)
+>>> uretprobe-ret   ( 1 cpus):    0.896 ± 0.001M/s  (  0.896M/s/cpu)
+>>>
+>>> The profiling results based on the upstream kernel with spinlock
+>>> optimization patches [2] reveals the simulation of STP increase the
+>>> uprobe-push throughput by 29.3% (from 0.868M/s/cpu to 1.1238M/s/cpu) and
+>>> uretprobe-push by 15.9% (from 0.616M/s/cpu to 0.714M/s/cpu).
+>>>
+>>> [0] https://lore.kernel.org/all/CAEf4BzaO4eG6hr2hzXYpn+7Uer4chS0R99zLn02ezZ5YruVuQw@mail.gmail.com/
+>>> [1] https://lore.kernel.org/all/Zr3RN4zxF5XPgjEB@J2N7QTR9R3/
+>>> [2] https://lore.kernel.org/all/20240815014629.2685155-1-liaochang1@huawei.com/
+>>>
+>>> Signed-off-by: Liao Chang <liaochang1@huawei.com>
+>>> ---
+>>>  arch/arm64/include/asm/insn.h            |  1 +
+>>>  arch/arm64/kernel/probes/decode-insn.c   | 16 +++++
+>>>  arch/arm64/kernel/probes/decode-insn.h   |  1 +
+>>>  arch/arm64/kernel/probes/simulate-insn.c | 89 ++++++++++++++++++++++++
+>>>  arch/arm64/kernel/probes/simulate-insn.h |  1 +
+>>>  arch/arm64/kernel/probes/uprobes.c       | 21 ++++++
+>>>  arch/arm64/lib/insn.c                    |  5 ++
+>>>  7 files changed, 134 insertions(+)
+>>>
+> 
+> [...]
+
+-- 
+BR
+Liao, Chang
 
 
