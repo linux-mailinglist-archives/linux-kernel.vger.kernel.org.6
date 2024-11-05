@@ -1,222 +1,266 @@
-Return-Path: <linux-kernel+bounces-396298-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396299-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5DB29BCB1A
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 11:58:03 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69B439BCB1D
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 11:59:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7569B1F23B64
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 10:58:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E6CDC1F23BA3
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 10:59:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC1241D3184;
-	Tue,  5 Nov 2024 10:57:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 713871D3181;
+	Tue,  5 Nov 2024 10:59:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i8ADDP/N"
-Received: from mail-ua1-f53.google.com (mail-ua1-f53.google.com [209.85.222.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e/gMbzQZ"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76C771D27AF
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 10:57:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED5202B9B7
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 10:59:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730804277; cv=none; b=NipcoJEbXt68xze0xD9xbkhKOwK5L+DziEyOAMursFtWRvL8W6TPhVrhGu3oAmAoUVMpaS1yRGl24T11DpTpOqczorJMojBXSIVKP1YuK2DacCbftx7tq2sNHGKez1xsAhKkz6kDuVmzu29x+1heUXvzhlSKHA6TWASxQDWzNek=
+	t=1730804360; cv=none; b=PJavGlVPKixHIA5K0Ni7KN74PpTCrlnewRftGGeEF1ZVEs5a2caKZ5Je2NQR/UkY9wEXDtaNZEVA58K8irGGjOyCWZ3vRzDLDVzJnzqw+W9ZYVYwbCEs/yHmw78AvXQw9sDTCE23VtMQC2mGKQ3km5ITW/mgLmbdvkdy5lAWXfE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730804277; c=relaxed/simple;
-	bh=eV2viirJ5WHpPDhI85QO4dxhMP7y7UjkxdAMVF5QhM8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EpKgt6AV9vo1pLXTb6740J180yZyIVC85MR7yxxjlqU5ELYGn6tQKxlosT2h6iqyZk2u1w98MxGFRxcWSl+Q89OMxQdLw4OB7+h1i+OfJoJe08M1nmI8/NMXtJiVluDmyMCx8Wnu7ht5PpqZYEMA2+66Gh2wgG0mf5C2tX38c7k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i8ADDP/N; arc=none smtp.client-ip=209.85.222.53
+	s=arc-20240116; t=1730804360; c=relaxed/simple;
+	bh=clf/ny0YoQUu926bpzdu3PvW1p9GIfTxcfU5pkicftI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Vc89RAv/JGsAuVk+fd8gDOOrvOqSwFOBSwhywPuaEOFZ+yy6ccdV2OqotRwVYro/JJMcWrG7yywzgrTajSdSpaTxaF0Nf5LDefxa9z/V3f1AiYESZEyC3mwmoK25wgz/ZjxIC6/+dF5LMJUtrTx/CjscXZs4BptLFDyJwysJeJU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=e/gMbzQZ; arc=none smtp.client-ip=209.85.128.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f53.google.com with SMTP id a1e0cc1a2514c-85019a60523so1744635241.1
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 02:57:55 -0800 (PST)
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4314f38d274so62942375e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 02:59:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730804274; x=1731409074; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=P7XM9/dVatJ/H1vTPPYlueifW2nkKAEOY6leLXkNvBU=;
-        b=i8ADDP/N0uDBBiZXwJiFqp01FwO90aHrefyKXPcp2snglb/A4v8TgCfOCXEtVVrWHT
-         iNu7EcjazRrLOgWtpPfeOG9jQ+X+A53vjDVif4+SRKM6i4YjgLDyMZlrbsKzt0Z0Y7F/
-         feB42AojSLIQ74grubkslbXo8KBJGbd3z1WEkkGRK2D0aMROxYfhPbwX3FBP00bakAwr
-         oNKhA4xmpFV4xnoXifOXhKLHZE741s6Zx2AhOzILn8fQhViMwXMMgt5WE5yf6sYynDWb
-         W85sFBH6cj2p2u6f1XrhWUF6hD5+aNVDiOEH0lkkWIG/Y+tlkLj7W4iT1QyRfAL9IYte
-         tb6w==
+        d=gmail.com; s=20230601; t=1730804357; x=1731409157; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=uNdr11hGVrcXD6Kt/ak9C3q/RmQsxEhFNmU01xZcnvs=;
+        b=e/gMbzQZ7bhvtNszjp1ebky7OWxpLmug74kWm+8tZjaRhkyBr6cP0MYbJJe6wJM8Mp
+         bhkXtODA3uf5/BExAFSi1jfGM81lK57b0dhWy/xSo3t8FrE7WzRUlGUFyOW5JK9Z7hMp
+         cgIJDBa3dKZjw/iH9yp0tDU+w8WgK+ZGNhNpG+tFmMcFrUGC3ePqMgJByvi68HFbqBLt
+         FCxiz6CY019Ld9WGr3IendHyMNwxJRXB+yN5TF/CfqSoMBUTq/qnuLG7MMke5nI/kTGi
+         J00d6cWlz9iMtGodXVCFreYhrdbsXLN+F2jSfzEq65MSXKhmyxjoBT2paw2l03Lq6WMj
+         iKnw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730804274; x=1731409074;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=P7XM9/dVatJ/H1vTPPYlueifW2nkKAEOY6leLXkNvBU=;
-        b=j3vJXcSVpMz1DkupVSM6EGl90tHhw3IKlIiaSl2LPpPiKqx3MGL7PWavTAsAZX3Y2h
-         Ccb7Un/c+pzP5/ued7VtyXWr6I06omb54U7TubvglUgpbM8htixO+8kjKp0PevCaea33
-         k6duNykYF8xLzhZSloGqaGM6JP7EiBRZ1v0mPbkeii9kZyEazp9NA/7I6ohQ4Q+f1lUg
-         iuPRZrQsqFoHuUA0X4tpT4zhP9NsFBmuAWjXcUfiZA1VdpLxg2aCrBgVCV29Ch3dxK1/
-         T2TcskICjeZbbOsy/VFdAgxtZHpFW8sFhyKKnARbIO8Tw5XQ0r7iH9qcL2IrJ0ViR2GA
-         ldkA==
-X-Forwarded-Encrypted: i=1; AJvYcCWL0P8223Bd8qy2qvzdCXD7iDfv3hNCblqqlynRchGvaAhTVXB37gfZ/QerLNA3b4TIb99fpWZUinLGbrQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyBrTOtrmt7tuGrOCT2Hotg/N/9gUr9lZBR5U2wqKTMBzkE0VBj
-	5g05wcaPg7vCvF5VcCUi99LuDiz7yfScsmcfAjTBTR1t7G+k+P1oX1F0M0MSylwpUABfn73/4u/
-	tvs3aN52XVIaDUHJtaADT72n5Qnc=
-X-Google-Smtp-Source: AGHT+IEEqhV2ShZtO63Bqg7YDE/NcvOL2RLWyDoJEGuu374QlVHH7YDRCwWJsuRQ4mqAdBvZcUYvoSEw30nNm6286K8=
-X-Received: by 2002:a05:6102:2aca:b0:4a7:4829:8c93 with SMTP id
- ada2fe7eead31-4a8cfb4b9d9mr33019569137.12.1730804274145; Tue, 05 Nov 2024
- 02:57:54 -0800 (PST)
+        d=1e100.net; s=20230601; t=1730804357; x=1731409157;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=uNdr11hGVrcXD6Kt/ak9C3q/RmQsxEhFNmU01xZcnvs=;
+        b=deCaZq5pp4T7TD00eLWC39I3F+c/chr7xFcugWS84HxVES8luvqraYbZgglOTPqbVv
+         LOvOeGV351ohpqY7+SiIxbcd+qHkwLbcqEshZTf1fkhmu8gO4m8XXt1zLVnKWq1V9I6Q
+         3lz9LTvTlLthdR6XpV3J+GKKtteHWbxrbH/HaNxDghgZyKbduFuoDSREXEPXa9EgWlpr
+         f4a0855dBTW9Pa4dS/RPsaNwmbcbGOozX4sqTz+dFOgBclQukuVfLLfsNbUMh5cz4Ro2
+         mCpHm7IquPnFJir8saza9AHdVVqgP1z95UzHnfhbDWB7xXSkK0jR28YPs63Z/c2yHV6v
+         V9tQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUyTUarbi6Uxi9KNSphB081aL0NxcfAP8QUMiaMbrZzYNaIiTPdMEUd4VI6qbJUE/LpSGbFrxX3TnPRAHY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyyqfZ73WMxZrtM4mLuqrv0OYvQTaS/2rGUTeB88XzanR6mYJOM
+	Dauf04wZkfM6jipcneRb6gBGpw8gsYlXUgTSCoy0RNyQolWl+LUe
+X-Google-Smtp-Source: AGHT+IHRjx4s+ZF8EEdKlpdzEHOla4kk+SpHNiqx1PefCH83gU1CHVZAtoYj/tiPyFvzDPnTQAow0Q==
+X-Received: by 2002:a05:600c:22d3:b0:431:b264:bad9 with SMTP id 5b1f17b1804b1-432849fa045mr166642935e9.14.1730804356961;
+        Tue, 05 Nov 2024 02:59:16 -0800 (PST)
+Received: from partp-nb.corp.toradex.com (31-10-206-125.static.upc.ch. [31.10.206.125])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-431bd9aa611sm214315245e9.34.2024.11.05.02.59.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 05 Nov 2024 02:59:16 -0800 (PST)
+From: Parth Pancholi <parth105105@gmail.com>
+To: Tudor Ambarus <tudor.ambarus@linaro.org>,
+	Pratyush Yadav <pratyush@kernel.org>,
+	Michael Walle <mwalle@kernel.org>,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	Richard Weinberger <richard@nod.at>,
+	Vignesh Raghavendra <vigneshr@ti.com>
+Cc: Parth Pancholi <parth.pancholi@toradex.com>,
+	linux-mtd@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] mtd: spi-nor: macronix: remove mx25u25635f from parts list to enable SFDP
+Date: Tue,  5 Nov 2024 11:58:44 +0100
+Message-Id: <20241105105844.257676-1-parth105105@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241102101240.35072-1-21cnbao@gmail.com> <6c14ab2c-7917-489b-b51e-401d208067f3@gmail.com>
- <CAGsJ_4wpdf6Fky7jj8O6OuLc0WTBjKXTfEqxE0cXiUjxxuLgZA@mail.gmail.com>
- <3f943f72-59d6-4124-96b2-e0bb8d7a5ebd@redhat.com> <20241104194024.0284288a28a71a70a3eab9b0@linux-foundation.org>
- <942f8355-4b23-4fd9-b00e-1121552d89ee@redhat.com> <CAGsJ_4yzq35ng77LjOi0jj0A6-9o+s5jKgP=S2Cx9fSsJtyzeA@mail.gmail.com>
- <11bd51b2-fa2d-4d99-912a-563521aaa6da@gmail.com>
-In-Reply-To: <11bd51b2-fa2d-4d99-912a-563521aaa6da@gmail.com>
-From: Barry Song <21cnbao@gmail.com>
-Date: Tue, 5 Nov 2024 23:57:42 +1300
-Message-ID: <CAGsJ_4xBx2WJHxEJSaJ0t=sAtXOGS7i1ZMa-xMuxerAUaXq0Eg@mail.gmail.com>
-Subject: Re: [PATCH v2] mm: count zeromap read and set for swapout and swapin
-To: Usama Arif <usamaarif642@gmail.com>
-Cc: David Hildenbrand <david@redhat.com>, Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, Barry Song <v-songbaohua@oppo.com>, 
-	Chengming Zhou <chengming.zhou@linux.dev>, Yosry Ahmed <yosryahmed@google.com>, 
-	Nhat Pham <nphamcs@gmail.com>, Johannes Weiner <hannes@cmpxchg.org>, Hugh Dickins <hughd@google.com>, 
-	Matthew Wilcox <willy@infradead.org>, Shakeel Butt <shakeel.butt@linux.dev>, 
-	Andi Kleen <ak@linux.intel.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
-	Chris Li <chrisl@kernel.org>, "Huang, Ying" <ying.huang@intel.com>, 
-	Kairui Song <kasong@tencent.com>, Ryan Roberts <ryan.roberts@arm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Tue, Nov 5, 2024 at 11:44=E2=80=AFPM Usama Arif <usamaarif642@gmail.com>=
- wrote:
->
->
->
-> On 05/11/2024 09:15, Barry Song wrote:
-> > On Tue, Nov 5, 2024 at 9:23=E2=80=AFPM David Hildenbrand <david@redhat.=
-com> wrote:
-> >>
-> >> On 05.11.24 04:40, Andrew Morton wrote:
-> >>> On Mon, 4 Nov 2024 13:32:55 +0100 David Hildenbrand <david@redhat.com=
-> wrote:
-> >>>
-> >>>>> As mentioned above, this isn't about fixing a bug; it's simply to e=
-nsure
-> >>>>> that swap-related metrics don't disappear.
-> >>>>
-> >>>> Documentation/process/submitting-patches.rst:
-> >>>>
-> >>>> "A Fixes: tag indicates that the patch fixes an issue in a previous
-> >>>> commit. It is used to make it easy to determine where a bug originat=
-ed,
-> >>>> which can help review a bug fix."
-> >>>>
-> >>>> If there is no BUG, I'm afraid you are abusing that tag.
-> >>>
-> >>> I think the abuse is reasonable.  We have no Should-be-included-with:=
-.
-> >>
-> >> A "Belongs-to:" might make sense, for this kind of stuff that is still
-> >> only in an RFC. Or we update the doc to explicitly spell out this
-> >> special case of using "Fixes" to sort out something into the RC.
-> >>
-> >> Because if this would be already in a released kernel, it would get a
-> >> bit trickier: stable rules explicitly spell out "fix a real bug".
-> >>
-> >>>
-> >>> 0ca0c24e3211 is only in 6.12-rcX so this is the time to make
-> >>> userspace-visible tweaks, so the 6.12 interfaces are the same as the
-> >>> 6.13+ interfaces (which is what I think is happening here?)
-> >>  > > And including the Fixes in this patch might be useful to someone =
-who is
-> >>> backporting 0ca0c24e3211 into some earlier kernel for their own
-> >>> purposes.
-> >>
-> >> Just to be clear: adding new counters would hardly be fixing existing
-> >> tools that perform calculations based on existing counters. So we are
-> >> already changing the "userspace-visible" portion in some way, and I ha=
-ve
-> >> no idea what in vmstat we consider "stable".
-> >>
-> >> But I still don't think it's all that big of a deal except in some
-> >> handcrafted scenarios hardly anybody cares about; the cover letter is
-> >> also pretty clear on that.
-> >
-> > I may have been mistaken in the cover letter. According to the zswap da=
-ta Usama
-> > provided for servers, zero-filled pages accounted for about 1%.
->
-> 10% not 1% (https://lore.kernel.org/all/20240612124750.2220726-1-usamaari=
-f642@gmail.com/).
->
+From: Parth Pancholi <parth.pancholi@toradex.com>
 
-Sorry. My memory must have faded; my mind is confused by the 1% non-zero
-same-page data and the 10% same-page data. Getting old :-)
+The Macronix mx25u25635f flash device supports SFDP initialization.
+This commit removes the specific mx25u25635f entry (NOR ID 0xc22539),
+along with its size and flags, from the NOR parts list. By removing
+this entry, both mx25u25635f and mx25u25645g (which share the same
+NOR ID) will utilize the generic flash driver configuration.
 
-> > So
-> > really doesn't
-> > matter too much, but I just checked with Hailong from our team=E2=80=94=
-he has data
-> > on same-page-filled usage in Android apps, which on average show 3-4%
-> > same-page-filled, with over 85% being zero-filled. Some apps even reach
-> > 6-7% zero-filled pages. We previously used these counters to profile
-> > optimizations, but with zeromap now serving as the frontend for swap fi=
-les,
-> > those counters will disappear entirely from both zRAM and pswpin/pswpou=
-t
-> > metrics, as folios are filtered earlier.
-> >
-> This is what I meant in https://lore.kernel.org/all/79deed1a-9b0e-42e0-be=
-2f-f0c3ef5fee11@gmail.com/
-> when I said it affects zram as well!
->
-> I am happy with the current version of the patch, just need the change
-> in Documentation/admin-guide/cgroup-v2.rst.
+This change allows both devices (mx25u25635f and mx25u25645g) to
+leverage SFDP-defined parameters, enabling dual and quad read
+operations without the need for manual adjustment of no_sfdp_flags.
 
-I will update the document and send version 3 tomorrow, incorporating both
-your comments on "zero-filled" and David's suggestion regarding "move out o=
-f
-memory".
+Link: https://www.macronix.com/Lists/Datasheet/Attachments/8663/MX25U25635F,%201.8V,%20256Mb,%20v1.5.pdf
+Signed-off-by: Parth Pancholi <parth.pancholi@toradex.com>
+---
+v2: enable SFDP for mx25u25635f(and mx25u25645g) by removing it's entry from parts list
 
->
-> Thanks,
-> Usama
->
-> > Hailong essentially has a table that looks like the below which could b=
-e
-> > collected from the existing counters:
-> >
-> > com.xxx.app     5% same-page-filled.    88% zero
-> > com.yyy.app     6% same-page-filled.     85% zero
-> > com.zzz.map   6.7 same-page-filled.       88% zero
-> > ....
-> >
-> > Anyone on 6.12 will be unable to track zero-filled pages unless they
-> > backport this patch from a newer kernel version if it doesn=E2=80=99t m=
-ake it
-> > into 6.12.
-> >
-> > Whether it's marked as 'Belongs-to:' or 'Fixes:', I'd prefer we aim to
-> > land it in
-> > 6.12 :-)
-> >
-> >>
-> >> So I'll shut up now and let people figure out the naming first, and if=
- a
-> >> new counter is required at all :)
-> >>
-> >> --
-> >> Cheers,
-> >>
-> >> David / dhildenb
-> >>
-> >
+mx25u25645g flash is populated on the Toradex Aquila development carrier
+board and was tested at 66 MHz frequency using the "ti,am654-ospi" SPI controller.
 
-Thanks
-Barry
+root@aquila-am69-02242602:~# cat /sys/bus/spi/devices/spi3.0/spi-nor/partname
+spi-nor-generic
+
+root@aquila-am69-02242602:~# cat /sys/bus/spi/devices/spi3.0/spi-nor/jedec_id
+c22539c22539
+
+root@aquila-am69-02242602:~# xxd -p /sys/bus/spi/devices/spi3.0/spi-nor/sfdp
+53464450060102ff00060110300000ffc2000104100100ff84000102c000
+00ffffffffffffffffffffffffffffffffffe520fbffffffff0f44eb086b
+083b04bbfeffffffffff00ffffff44eb0c200f5210d800ff8749b50082d2
+04d24403673830b030b0f7bdd55c4a9e29fff050f985ffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffff7f8fffff215cdcffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+ffff002050169df9c06485cbffffffffffff
+
+root@aquila-am69-02242602:~# sha256sum /sys/bus/spi/devices/spi3.0/spi-nor/sfdp
+cc74a7490301b752a45fa147a860be43ed71a6f1cf598adae7ac38b19fb745f1  /sys/bus/spi/devices/spi3.0/spi-nor/sfdp
+
+root@aquila-am69-02242602:~# cat /sys/kernel/debug/spi-nor/spi3.0/capabilities
+Supported read modes by the flash
+ 1S-1S-1S
+  opcode        0x13
+  mode cycles   0
+  dummy cycles  0
+ 1S-1S-2S
+  opcode        0x3c
+  mode cycles   0
+  dummy cycles  8
+ 1S-2S-2S
+  opcode        0xbc
+  mode cycles   0
+  dummy cycles  4
+ 1S-1S-4S
+  opcode        0x6c
+  mode cycles   0
+  dummy cycles  8
+ 1S-4S-4S
+  opcode        0xec
+  mode cycles   2
+  dummy cycles  4
+ 4S-4S-4S
+  opcode        0xec
+  mode cycles   2
+  dummy cycles  4
+
+Supported page program modes by the flash
+ 1S-1S-1S
+  opcode        0x12
+ 1S-4S-4S
+  opcode        0x3e
+
+root@aquila-am69-02242602:~# cat /sys/kernel/debug/spi-nor/spi3.0/params
+name            spi-nor-generic
+id              c2 25 39 c2 25 39
+size            32.0 MiB
+write size      1
+page size       256
+address nbytes  4
+flags           4B_OPCODES | HAS_4BAIT | SOFT_RESET
+
+opcodes
+ read           0xec
+  dummy cycles  6
+ erase          0x21
+ program        0x3e
+ 8D extension   none
+
+protocols
+ read           1S-4S-4S
+ write          1S-4S-4S
+ register       1S-1S-1S
+
+erase commands
+ 21 (4.00 KiB) [1]
+ 5c (32.0 KiB) [2]
+ dc (64.0 KiB) [3]
+ c7 (32.0 MiB)
+
+sector map
+ region (in hex)   | erase mask | flags
+ ------------------+------------+----------
+ 00000000-01ffffff |     [ 123] |
+
+root@aquila-am69-02242602:~# dd if=/dev/urandom of=./spi_test bs=1M count=2
+2+0 records in
+2+0 records out
+2097152 bytes (2.1 MB, 2.0 MiB) copied, 0.0147001 s, 143 MB/s
+
+root@aquila-am69-02242602:~# mtd_debug erase /dev/mtd0 0 2097152
+Erased 2097152 bytes from address 0x00000000 in flash
+
+root@aquila-am69-02242602:~# mtd_debug read /dev/mtd0 0 2097152 spi_read
+Copied 2097152 bytes from address 0x00000000 in flash to spi_read
+
+root@aquila-am69-02242602:~# hexdump spi_read
+0000000 ffff ffff ffff ffff ffff ffff ffff ffff
+*
+0200000
+
+root@aquila-am69-02242602:~# sha256sum spi_read
+4bda3a28f4ffe603c0ec1258c0034d65a1a0d35ab7bd523a834608adabf03cc5  spi_read
+
+root@aquila-am69-02242602:~# mtd_debug write /dev/mtd0 0 2097152 spi_test
+Copied 2097152 bytes from spi_test to address 0x00000000 in flash
+
+root@aquila-am69-02242602:~# mtd_debug read /dev/mtd0 0 2097152 spi_read
+Copied 2097152 bytes from address 0x00000000 in flash to spi_read
+
+root@aquila-am69-02242602:~# sha256sum spi*
+7156e42306db1fd79e6dfc22320adaa126b394361abde4777a679924cc9fc0fc  spi_read
+7156e42306db1fd79e6dfc22320adaa126b394361abde4777a679924cc9fc0fc  spi_test
+
+root@aquila-am69-02242602:~# mtd_debug erase /dev/mtd0 0 2097152
+Erased 2097152 bytes from address 0x00000000 in flash
+
+root@aquila-am69-02242602:~# mtd_debug read /dev/mtd0 0 2097152 spi_read
+Copied 2097152 bytes from address 0x00000000 in flash to spi_read
+
+root@aquila-am69-02242602:~# sha256sum spi*
+4bda3a28f4ffe603c0ec1258c0034d65a1a0d35ab7bd523a834608adabf03cc5  spi_read
+7156e42306db1fd79e6dfc22320adaa126b394361abde4777a679924cc9fc0fc  spi_test
+
+root@aquila-am69-02242602:~# mtd_debug info /dev/mtd0
+mtd.type = MTD_NORFLASH
+mtd.flags = MTD_CAP_NORFLASH
+mtd.size = 33554432 (32M)
+mtd.erasesize = 4096 (4K)
+mtd.writesize = 1
+mtd.oobsize = 0
+regions = 0
+---
+ drivers/mtd/spi-nor/macronix.c | 6 ------
+ 1 file changed, 6 deletions(-)
+
+diff --git a/drivers/mtd/spi-nor/macronix.c b/drivers/mtd/spi-nor/macronix.c
+index ea6be95e75a5..5a0d1af99afe 100644
+--- a/drivers/mtd/spi-nor/macronix.c
++++ b/drivers/mtd/spi-nor/macronix.c
+@@ -125,12 +125,6 @@ static const struct flash_info macronix_nor_parts[] = {
+ 		.name = "mx25u12835f",
+ 		.size = SZ_16M,
+ 		.no_sfdp_flags = SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ,
+-	}, {
+-		.id = SNOR_ID(0xc2, 0x25, 0x39),
+-		.name = "mx25u25635f",
+-		.size = SZ_32M,
+-		.no_sfdp_flags = SECT_4K,
+-		.fixup_flags = SPI_NOR_4B_OPCODES,
+ 	}, {
+ 		.id = SNOR_ID(0xc2, 0x25, 0x3a),
+ 		.name = "mx25u51245g",
+-- 
+2.34.1
+
 
