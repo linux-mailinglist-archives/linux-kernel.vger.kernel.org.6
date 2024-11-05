@@ -1,156 +1,169 @@
-Return-Path: <linux-kernel+bounces-395703-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-395705-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C8799BC1DC
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 01:11:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CC71F9BC1DF
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 01:12:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CEFFF1C2125D
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 00:11:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A7361C2109B
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 00:12:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A3D06FC3;
-	Tue,  5 Nov 2024 00:11:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4B278F6B;
+	Tue,  5 Nov 2024 00:12:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="V9DycDZc"
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qcOM/gr+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 301B1817
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 00:11:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2ACABB667;
+	Tue,  5 Nov 2024 00:12:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730765497; cv=none; b=dZuWiYtty/DFYNYNY+KmOhfgKubBYYj6THeJsk6j/anen0wK5KySnoKvR6bxfsqnj83DGZY6yJ2rp/CqqUs+RilSiHo0KP0hkKJJgXCjhXimWS/IbSVCgWXt8FEiz8LA+3u/9+22nLaVH8eXuAubxOlZ+DgCW8ZTeNGxzhy2WqA=
+	t=1730765528; cv=none; b=UuHVgkehMOJEKplKrWKRTuw/fh6dQGtesu9kkWGI/gctVlBG+nNJ71TnLSml8dJpHBzpzVDLbLDPu9PSj1lYkQSFiDOhHqoGOhrI1doOGEMW8f14XIOrX2SwAih13vcdoh10WYY3yvYcAhr8NAMcqcAAKlecqm/yN+G6etM3yvs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730765497; c=relaxed/simple;
-	bh=gWgRcXOWyPuYyTeu+HI4eru08VqwWwTDaEH/C3Ai8TY=;
+	s=arc-20240116; t=1730765528; c=relaxed/simple;
+	bh=w7D1Hj3ipxcnW2gjAuaYHySmVpmD4euqpzkiW/spD5Q=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IPZ9df+pGOiD9zaHQw1K8JcKzgVCHRmBPKoIyoAMjRCcmkiZcW3AGHIuxwxZRtzoA1dVNwQi4WvsxcVt+dITZTqzIVEkaDcQ0rKhTQpBDY8DM9ISVZ9TSXw2ctczllfgw3wWlwonev26XuZKUYs9ojyCcNAJHnlra6kbvxeRL+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=V9DycDZc; arc=none smtp.client-ip=209.85.210.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-720d14c8dbfso3732747b3a.0
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Nov 2024 16:11:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fastly.com; s=google; t=1730765494; x=1731370294; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ZzBGIIzGVWypDF2F/j8kxcVTvvbYnIIP9aDVrmVHUqo=;
-        b=V9DycDZcrQMIiQgw99c8ifLm4wYIdgDN2GLr0l3lnmzTBH6iUmfpRqswwvXCjy90Xq
-         Tn1dxlJ/63MYXkzJblf9BC8YJ7S3o7i2WhtYvhcWGYn29i0jdSUCM9x0cDRnAN8DQVZg
-         ZyP1sxi/7nLU/PhHNKBhGe2Sn9Yvdh43kxais=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730765494; x=1731370294;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZzBGIIzGVWypDF2F/j8kxcVTvvbYnIIP9aDVrmVHUqo=;
-        b=XmgpuTDCNxHa4X5j4KSm7k7ZDPi5ng7L9OkpPS3yvruX1U1CG7dnrdN7y6ZYEZbiOW
-         ORHJ67BF57TD6NlhY5nfE7aRncEY55WGDmqQoa78AQq5etGKcMvoAbixpNKUD0gpoXxh
-         xezP1HPcyfTFpfblpL70ntJPnZJ6SZngJRiXTbrVJfVD7yRj2VGsmWfKkW44dPElkNT2
-         MXjlvbLNCNaU7yQnonlEHARzjMdnqeZHaXgLJQe6h9EQs8/0cDAeyAJSYWjI/fVZIoA0
-         oSMdGJ9ew4Xx/PFZWqqDaIqdJ8JrCeHMh9AXF5jsrKVydboMGVMcpoMwnhcZ5ym75qb8
-         COCA==
-X-Forwarded-Encrypted: i=1; AJvYcCXOOsUWMBg7np4i7NwgEg1aLg5jeNSIOxx2lH0X2GQk5oyKd2q7jDJxIdl9V6oQrtpivgnYdaf8LkXRk+8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwwnlqQD0Wo8kMjxzY1bKC23E58P7juKBo5mp95kITE30FcPx8q
-	JsF8XnfW054SFT2N0lzze4eGfdspM19CwuSpUtEPzkCkaIU36B8XwdCQE0pEHg4=
-X-Google-Smtp-Source: AGHT+IE6+0r70GgR/JYYtrp8S6WEpFk6AKBf4ysxpcdZyo74q6Lq8+iIND0dfroDCYdzA0K/G5OkBQ==
-X-Received: by 2002:a05:6a20:d498:b0:1d9:1823:83bf with SMTP id adf61e73a8af0-1db91d516d0mr24240567637.8.1730765494528;
-        Mon, 04 Nov 2024 16:11:34 -0800 (PST)
-Received: from LQ3V64L9R2 (c-24-6-151-244.hsd1.ca.comcast.net. [24.6.151.244])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-720bc1eac2fsm8150260b3a.72.2024.11.04.16.11.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Nov 2024 16:11:34 -0800 (PST)
-Date: Mon, 4 Nov 2024 16:11:31 -0800
-From: Joe Damato <jdamato@fastly.com>
-To: Stanislav Fomichev <sdf@fomichev.me>
-Cc: netdev@vger.kernel.org, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, andrew+netdev@lunn.ch,
-	shuah@kernel.org, horms@kernel.org, almasrymina@google.com,
-	willemb@google.com, petrm@nvidia.com
-Subject: Re: [PATCH net-next v7 10/12] selftests: ncdevmem: Run selftest when
- none of the -s or -c has been provided
-Message-ID: <ZyliszeFtcZqfsnm@LQ3V64L9R2>
-Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
-	Stanislav Fomichev <sdf@fomichev.me>, netdev@vger.kernel.org,
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, andrew+netdev@lunn.ch,
-	shuah@kernel.org, horms@kernel.org, almasrymina@google.com,
-	willemb@google.com, petrm@nvidia.com
-References: <20241104181430.228682-1-sdf@fomichev.me>
- <20241104181430.228682-11-sdf@fomichev.me>
+	 Content-Type:Content-Disposition:In-Reply-To; b=I6kvuB/IszKNgtZGjjl5bgkQT9XVqk3ogD6V36RdK/7kdZ/nUgKfhwQVPTg6dAkLnu3e8H1r83yg0bBFuc4egTw4+8FLESDej9006K8uqNyZzzCv4oZbJYKTNY2k70dnzjWugiwfa5TwTRGw18seJvButy1tI7+hSsJ5Rh0PBvg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qcOM/gr+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F41CFC4CECE;
+	Tue,  5 Nov 2024 00:12:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730765527;
+	bh=w7D1Hj3ipxcnW2gjAuaYHySmVpmD4euqpzkiW/spD5Q=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qcOM/gr+EwjXicV1S9H4Wjli8ALlc9StWLjoHjMzcjuDS+FPMf5wjmZno2Qpa8pnX
+	 FnA5yWS7UiHQYuv0JwCckghrwx0MwZzGKnThuex3yl+eN3HTdEpWCzrgE5Xx6hMGaq
+	 0qb7D8MIZ4wyG1g7YCZdLY0x1YrT0HevP6K+c5g6ifR9IscdkOTcgyksWBZjMdOs+m
+	 Y0nplmIw7uIO5Tz5ELKKM0aw1CPgu+/nZwRcAjt0HfMohq2Clc2uycjF0U2WeX+HZ5
+	 ETPCqbk6fdPOoIDtlCXRrAAHY8BW3lZaWtCamCi+dPOvodf3Vucxps85ABSmSZNoh5
+	 yQ4vbzS5HdYAw==
+Date: Mon, 4 Nov 2024 16:12:05 -0800
+From: Namhyung Kim <namhyung@kernel.org>
+To: Chun-Tse Shao <ctshao@google.com>
+Cc: linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Liang Kan <kan.liang@linux.intel.com>, Ze Gao <zegao2021@gmail.com>,
+	Yang Jihong <yangjihong1@huawei.com>,
+	Weilin Wang <weilin.wang@intel.com>,
+	linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH v2 2/3] perf: Reveal PMU type in fdinfo
+Message-ID: <Zyli1TWn8ZaNWSxm@google.com>
+References: <20241101211757.824743-1-ctshao@google.com>
+ <20241101211757.824743-2-ctshao@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241104181430.228682-11-sdf@fomichev.me>
+In-Reply-To: <20241101211757.824743-2-ctshao@google.com>
 
-On Mon, Nov 04, 2024 at 10:14:28AM -0800, Stanislav Fomichev wrote:
-> This will be used as a 'probe' mode in the selftest to check whether
-> the device supports the devmem or not. Use hard-coded queue layout
-> (two last queues) and prevent user from passing custom -q and/or -t.
+On Fri, Nov 01, 2024 at 09:17:56PM +0000, Chun-Tse Shao wrote:
+> It gives useful info on knowing which PMUs are reserved by this process.
+> Also add extra attributes which would be useful.
 > 
-> Reviewed-by: Mina Almasry <almasrymina@google.com>
-> Signed-off-by: Stanislav Fomichev <sdf@fomichev.me>
+> ```
+> Testing cycles
+> $ ./perf stat -e cycles &
+> $ cat /proc/`pidof perf`/fdinfo/3
+> pos:    0
+> flags:  02000002
+> mnt_id: 16
+> ino:    3081
+> perf_event-attr.type:   0
+
+Maybe 'perf_event_attr' would be appropriate as it's the name of the
+struct.
+
+> perf_event-attr.config: 0
+> perf_event-attr.config1:        0
+> perf_event-attr.config2:        0
+> perf_event-attr.config3:        0
+
+It's hard to pick which fields to show here but I'd say that those
+config[123] are not used frequently at least for regular events.
+Maybe just showing type and config is fine.
+
+> 
+> Testing L1-dcache-load-misses//
+> $ ./perf stat -e L1-dcache-load-misses &
+> $ cat /proc/`pidof perf`/fdinfo/3
+> pos:    0
+> flags:  02000002
+> mnt_id: 16
+> ino:    1072
+> perf_event-attr.type:   3
+> perf_event-attr.config: 65536
+> perf_event-attr.config1:        0
+> perf_event-attr.config2:        0
+> perf_event-attr.config3:        0
+> ```
+> 
+> Signed-off-by: Chun-Tse Shao <ctshao@google.com>
 > ---
->  tools/testing/selftests/net/ncdevmem.c | 42 ++++++++++++++++++++------
->  1 file changed, 32 insertions(+), 10 deletions(-)
+>  kernel/events/core.c | 13 +++++++++++++
+>  1 file changed, 13 insertions(+)
+
+FYI usually the kernel changes are applied to a different tree than the
+tools.
+
 > 
-> diff --git a/tools/testing/selftests/net/ncdevmem.c b/tools/testing/selftests/net/ncdevmem.c
-> index 044198ce02a7..270a77206f65 100644
-> --- a/tools/testing/selftests/net/ncdevmem.c
-> +++ b/tools/testing/selftests/net/ncdevmem.c
-> @@ -76,7 +76,7 @@ static char *client_ip;
->  static char *port;
->  static size_t do_validation;
->  static int start_queue = -1;
-> -static int num_queues = 1;
-> +static int num_queues = -1;
->  static char *ifname;
->  static unsigned int ifindex;
->  static unsigned int dmabuf_id;
-> @@ -731,19 +731,31 @@ int main(int argc, char *argv[])
->  		}
->  	}
->  
-> -	if (!server_ip)
-> -		error(1, 0, "Missing -s argument\n");
-> -
-> -	if (!port)
-> -		error(1, 0, "Missing -p argument\n");
-> -
->  	if (!ifname)
->  		error(1, 0, "Missing -f argument\n");
->  
->  	ifindex = if_nametoindex(ifname);
->  
-> -	if (start_queue < 0) {
-> -		start_queue = rxq_num(ifindex) - 1;
-> +	if (!server_ip && !client_ip) {
-> +		if (start_queue < 0 && num_queues < 0) {
-> +			num_queues = rxq_num(ifindex);
-> +			if (num_queues < 0)
-> +				error(1, 0, "couldn't detect number of queues\n");
-> +			/* make sure can bind to multiple queues */
-> +			start_queue = num_queues / 2;
-> +			num_queues /= 2;
-
-Sorry for the beginner question :) -- is it possible that rxq_num
-ever returns 1 and thus start_queue = 0, num_queues = 0
-
-> +		}
+> diff --git a/kernel/events/core.c b/kernel/events/core.c
+> index cdd09769e6c56..c950b6fc92cda 100644
+> --- a/kernel/events/core.c
+> +++ b/kernel/events/core.c
+> @@ -55,6 +55,7 @@
+>  #include <linux/pgtable.h>
+>  #include <linux/buildid.h>
+>  #include <linux/task_work.h>
+> +#include <linux/seq_file.h>
+> 
+>  #include "internal.h"
+> 
+> @@ -6820,6 +6821,17 @@ static int perf_fasync(int fd, struct file *filp, int on)
+>  	return 0;
+>  }
+> 
+> +static void perf_show_fdinfo(struct seq_file *m, struct file *f)
+> +{
+> +	struct perf_event *event = f->private_data;
 > +
-> +		if (start_queue < 0 || num_queues < 0)
-> +			error(1, 0, "Both -t and -q are required\n");
+> +	seq_printf(m, "perf_event-attr.type:\t%u\n", event->orig_type);
+> +	seq_printf(m, "perf_event-attr.config:\t%llu\n", event->attr.config);
 
-And then isn't caught here because this only checks < 0 (instead of
-num_queues <= 0) ?
+I'm not sure if all archs are happy with treating it as %llu.
+
+Thanks,
+Namhyung
+
+
+> +	seq_printf(m, "perf_event-attr.config1:\t%llu\n", event->attr.config1);
+> +	seq_printf(m, "perf_event-attr.config2:\t%llu\n", event->attr.config2);
+> +	seq_printf(m, "perf_event-attr.config3:\t%llu\n", event->attr.config3);
+> +}
+> +
+>  static const struct file_operations perf_fops = {
+>  	.release		= perf_release,
+>  	.read			= perf_read,
+> @@ -6828,6 +6840,7 @@ static const struct file_operations perf_fops = {
+>  	.compat_ioctl		= perf_compat_ioctl,
+>  	.mmap			= perf_mmap,
+>  	.fasync			= perf_fasync,
+> +	.show_fdinfo		= perf_show_fdinfo,
+>  };
+> 
+>  /*
+> --
+> 2.47.0.163.g1226f6d8fa-goog
+> 
 
