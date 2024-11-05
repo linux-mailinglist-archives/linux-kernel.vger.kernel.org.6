@@ -1,195 +1,210 @@
-Return-Path: <linux-kernel+bounces-397006-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397008-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7F129BD57F
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 19:56:45 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4DE79BD586
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 19:59:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3AA591F238B8
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 18:56:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E898E1C22D4B
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 18:59:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48BCE1EABB3;
-	Tue,  5 Nov 2024 18:56:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C77C1EABB9;
+	Tue,  5 Nov 2024 18:59:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qV3al8eh"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jr0bXlD+"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93ED817BEB7;
-	Tue,  5 Nov 2024 18:56:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 759E61E47B6;
+	Tue,  5 Nov 2024 18:59:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730832994; cv=none; b=ee62gao2ofDK3+k9Zf2qY1KHpLwMtdTcB/6F5j055GeXtQsN41rYrLzglTBDVxPdMppQq/k1BSNWvWS1BgN1WFvOX+rjOdG1ZL5UmqGHvhW1SnqvvgrpZaqR9cDklXb9SkVJvhPq4C8XZaZAHVZ0dn89zFhWsspP5o2llpo795w=
+	t=1730833143; cv=none; b=XjLPeEo2Oy904wH3xi75uOaqYIr2AMWBQVNhKtgtRCBX7aNjcCKYlKUklurRWOw3GugMV75jVs444waM1UoeUunpeaAVH82zVOsBX7Rx85AOrCFusYuvDRJhhWySwdLKhh9qdka7DKTthylByPKnaua7gy8baZcVTWFQnkDtcwk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730832994; c=relaxed/simple;
-	bh=c/J5SfUIJ9hQst/+9a2BMM/+0T0QUgD6O198Li/u3mo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pDzcFQjvgO3gn2LCu+fH6eKxygDgg4yQv7hDs1EqIim9RUkndsaeVIGVSeLLSILatf4v7GqMy/1t8uUJUb42O8vQ04BVl0aLQylWFv2qki3E3jAVp0cT+30AtlyzBsgfmyb9axAsw/ptnp5JEj93cPbx06uLbGNFh2Q4Jj3pzmY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qV3al8eh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D8A9C4CECF;
-	Tue,  5 Nov 2024 18:56:34 +0000 (UTC)
+	s=arc-20240116; t=1730833143; c=relaxed/simple;
+	bh=3zdgXCPPKSD1xfYxWDmC/EUuKY/QlMHd4XNXizG5HRI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=H+GEmQzBgPyDsthBbfvLbG8NHALqstYKQyQr8x9P7SGgY5dWOhiZIrHG/5aF7xYwKQu1A20YRf077Zyt+9irbvkxMoXxEtMrJObxwtKb0xeMepNuIBwg/Tn+5CeYhhNJlFZQDi49LP0KIqKL6YR41as0sNsiPtjwqc0WrWrEMM0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jr0bXlD+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23D7DC4CED3;
+	Tue,  5 Nov 2024 18:59:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730832994;
-	bh=c/J5SfUIJ9hQst/+9a2BMM/+0T0QUgD6O198Li/u3mo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qV3al8eh5yGBIlvCge0rhsVraqUXO27A+aqiSVDZA5tCLYlWKWOGLDWFSgGOgNTOI
-	 Qn8OtFnHkRoQYja3H6tOBkwfekfawfjTrTb6F6H8Y+4edPtaRGEFIVHeQJjx08X2Ir
-	 xhFjsiY1wnGeOFfcSYgT1ifE9JSch6vBOiiSy9ra3xO3171ANU33EbGatSuJmpmGzP
-	 b12JaYiD9ZIQeavoZfoWbaDpOZ7Cc38rfDrOkoMP3UCmH7/hGj+1J0BZuLemgfERjL
-	 CNlimFcs6Hfgo9mRCKxQk0N5bmI2k9YBeL6ds57lLI6iaPd35BIjN3GO9qaAjuinHC
-	 AB1DoBGjv6nQA==
-Date: Tue, 5 Nov 2024 10:56:32 -0800
-From: Saeed Mahameed <saeed@kernel.org>
-To: Caleb Sander Mateos <csander@purestorage.com>
-Cc: Saeed Mahameed <saeedm@nvidia.com>, Leon Romanovsky <leon@kernel.org>,
-	Tariq Toukan <tariqt@nvidia.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Parav Pandit <parav@nvidia.com>, netdev@vger.kernel.org,
-	linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v3] mlx5/core: Schedule EQ comp tasklet only if
- necessary
-Message-ID: <ZypqYHaRbBCGo3FD@x130>
-References: <CY8PR12MB7195C97EB164CD3A0E9A99F9DC552@CY8PR12MB7195.namprd12.prod.outlook.com>
- <20241031163436.3732948-1-csander@purestorage.com>
+	s=k20201202; t=1730833143;
+	bh=3zdgXCPPKSD1xfYxWDmC/EUuKY/QlMHd4XNXizG5HRI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=jr0bXlD+Y7HkfD1pk02WZCFcYoAvd8GiC4vkRusK24T0PRzsD9KtF4hLRr5dZO9IS
+	 bZ/PrWY8eNQO8dhzBPBmrX7B2+720xztPGp0PAN2fcSeGaeoJ4cmFse9ffXMcQyuQT
+	 LUyC9h64eAWM1D4/uuhY5lhIK4WmDegV9FCVjBhZ+FBZxZEcffibZWdudJqwO7wYIE
+	 fLcqtO4IUQNZhsQXQRX9US6uT7ZRxD7LVQEdjtpipSJFLtchuwTMojzr7UFWhHoQ/y
+	 M2ESLiYty9uLngtbi49nBOXsywBwIYGtepxOoGuG7rQEbubfbKELjJEaC5elt1CHIO
+	 NlTFRHAzxjVkw==
+Date: Tue, 5 Nov 2024 12:59:01 -0600
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Herve Codina <herve.codina@bootlin.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Saravana Kannan <saravanak@google.com>,
+	Bjorn Helgaas <bhelgaas@google.com>, Lizhi Hou <lizhi.hou@amd.com>,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-pci@vger.kernel.org,
+	Allan Nielsen <allan.nielsen@microchip.com>,
+	Horatiu Vultur <horatiu.vultur@microchip.com>,
+	Steen Hegelund <steen.hegelund@microchip.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH 6/6] PCI: of: Create device-tree root bus node
+Message-ID: <20241105185901.GA1479626@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241031163436.3732948-1-csander@purestorage.com>
+In-Reply-To: <20241104172001.165640-7-herve.codina@bootlin.com>
 
-On 31 Oct 10:34, Caleb Sander Mateos wrote:
->Currently, the mlx5_eq_comp_int() interrupt handler schedules a tasklet
->to call mlx5_cq_tasklet_cb() if it processes any completions. For CQs
->whose completions don't need to be processed in tasklet context, this
->adds unnecessary overhead. In a heavy TCP workload, we see 4% of CPU
->time spent on the tasklet_trylock() in tasklet_action_common(), with a
->smaller amount spent on the atomic operations in tasklet_schedule(),
->tasklet_clear_sched(), and locking the spinlock in mlx5_cq_tasklet_cb().
->TCP completions are handled by mlx5e_completion_event(), which schedules
->NAPI to poll the queue, so they don't need tasklet processing.
->
->Schedule the tasklet in mlx5_add_cq_to_tasklet() instead to avoid this
->overhead. mlx5_add_cq_to_tasklet() is responsible for enqueuing the CQs
->to be processed in tasklet context, so it can schedule the tasklet. CQs
->that need tasklet processing have their interrupt comp handler set to
->mlx5_add_cq_to_tasklet(), so they will schedule the tasklet. CQs that
->don't need tasklet processing won't schedule the tasklet. To avoid
->scheduling the tasklet multiple times during the same interrupt, only
->schedule the tasklet in mlx5_add_cq_to_tasklet() if the tasklet work
->queue was empty before the new CQ was pushed to it.
->
->The additional branch in mlx5_add_cq_to_tasklet(), called for each EQE,
->may add a small cost for the userspace Infiniband CQs whose completions
->are processed in tasklet context. But this seems worth it to avoid the
->tasklet overhead for CQs that don't need it.
->
->Note that the mlx4 driver works the same way: it schedules the tasklet
->in mlx4_add_cq_to_tasklet() and only if the work queue was empty before.
->
->Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
->Reviewed-by: Parav Pandit <parav@nvidia.com>
->---
->v3: revise commit message
->v2: reorder variable declarations, describe CPU profile results
->
-> drivers/net/ethernet/mellanox/mlx5/core/cq.c | 5 +++++
-> drivers/net/ethernet/mellanox/mlx5/core/eq.c | 5 +----
-> 2 files changed, 6 insertions(+), 4 deletions(-)
->
->diff --git a/drivers/net/ethernet/mellanox/mlx5/core/cq.c b/drivers/net/ethernet/mellanox/mlx5/core/cq.c
->index 4caa1b6f40ba..25f3b26db729 100644
->--- a/drivers/net/ethernet/mellanox/mlx5/core/cq.c
->+++ b/drivers/net/ethernet/mellanox/mlx5/core/cq.c
->@@ -69,22 +69,27 @@ void mlx5_cq_tasklet_cb(struct tasklet_struct *t)
-> static void mlx5_add_cq_to_tasklet(struct mlx5_core_cq *cq,
-> 				   struct mlx5_eqe *eqe)
-> {
-> 	unsigned long flags;
-> 	struct mlx5_eq_tasklet *tasklet_ctx = cq->tasklet_ctx.priv;
->+	bool schedule_tasklet = false;
->
-> 	spin_lock_irqsave(&tasklet_ctx->lock, flags);
-> 	/* When migrating CQs between EQs will be implemented, please note
-> 	 * that you need to sync this point. It is possible that
-> 	 * while migrating a CQ, completions on the old EQs could
-> 	 * still arrive.
-> 	 */
-> 	if (list_empty_careful(&cq->tasklet_ctx.list)) {
-> 		mlx5_cq_hold(cq);
+On Mon, Nov 04, 2024 at 06:20:00PM +0100, Herve Codina wrote:
+> PCI devices device-tree nodes can be already created. This was
+> introduced by commit 407d1a51921e ("PCI: Create device tree node for
+> bridge").
 
-The condition here is counter intuitive, please add a comment that relates
-to the tasklet routine mlx5_cq_tasklet_cb, something like.
-/* If this list isn't empty, the tasklet is already scheduled, and not yet
-  * executing the list, the spinlock here guarantees the addition of this CQ
-  * will be seen by the next execution, so rescheduling the tasklet is not
-  * required */ 
+I guess 407d1a51921e creates device tree nodes for bridges, including
+Root Ports, which are enumerated as PCI-to-PCI bridges, right?
 
-One other way to do this, is to flag tasklet_ctx.sched_flag = true, inside
-mlx5_add_cq_to_tasklet, and then schedule once at the end of eq irq processing 
-if (tasklet_ctx.sched_flag == true). to avoid "too" early scheduling, but
-since the tasklet can't run until the irq handler returns, I think your
-solution shouldn't suffer from "too" early scheduling .. 
+> In order to have device-tree nodes related to PCI devices attached on
+> their PCI root bus, a root bus device-tree node is needed. This root bus
+> node will be used as the parent node of the first level devices scanned
+> on the bus.
+>
+> On non device-tree based system (such as ACPI), a device-tree node for
+> the PCI root bus does not exist.  ...
 
-Acked-by: Saeed Mahameed <saeedm@nvidia.com>
+I'm wondering if "root bus" is the right description for this patch
+and whether "PCI host bridge" might be more accurate.  The bus itself
+doesn't really have a physical counterpart other than being the
+secondary side of a PCI host bridge where the primary side is some
+kind of CPU bus.
 
+An ACPI namespace doesn't include a "root bus" object, but it *does*
+include a PCI host bridge (PNP0A03) object, which is where any address
+translation between the CPU bus and the PCI hierarchy is described.
 
->+		schedule_tasklet = list_empty(&tasklet_ctx->list);
-> 		list_add_tail(&cq->tasklet_ctx.list, &tasklet_ctx->list);
-> 	}
-> 	spin_unlock_irqrestore(&tasklet_ctx->lock, flags);
->+
->+	if (schedule_tasklet)
->+		tasklet_schedule(&tasklet_ctx->task);
-> }
->
-> /* Callers must verify outbox status in case of err */
-> int mlx5_create_cq(struct mlx5_core_dev *dev, struct mlx5_core_cq *cq,
-> 		   u32 *in, int inlen, u32 *out, int outlen)
->diff --git a/drivers/net/ethernet/mellanox/mlx5/core/eq.c b/drivers/net/ethernet/mellanox/mlx5/core/eq.c
->index 859dcf09b770..3fd2091c11c8 100644
->--- a/drivers/net/ethernet/mellanox/mlx5/core/eq.c
->+++ b/drivers/net/ethernet/mellanox/mlx5/core/eq.c
->@@ -112,14 +112,14 @@ static int mlx5_eq_comp_int(struct notifier_block *nb,
-> 	struct mlx5_eq_comp *eq_comp =
-> 		container_of(nb, struct mlx5_eq_comp, irq_nb);
-> 	struct mlx5_eq *eq = &eq_comp->core;
-> 	struct mlx5_eqe *eqe;
-> 	int num_eqes = 0;
->-	u32 cqn = -1;
->
-> 	while ((eqe = next_eqe_sw(eq))) {
-> 		struct mlx5_core_cq *cq;
->+		u32 cqn;
->
-> 		/* Make sure we read EQ entry contents after we've
-> 		 * checked the ownership bit.
-> 		 */
-> 		dma_rmb();
->@@ -142,13 +142,10 @@ static int mlx5_eq_comp_int(struct notifier_block *nb,
-> 			break;
-> 	}
->
-> 	eq_update_ci(eq, 1);
->
->-	if (cqn != -1)
->-		tasklet_schedule(&eq_comp->tasklet_ctx.task);
->-
-> 	return 0;
-> }
->
-> /* Some architectures don't latch interrupts when they are disabled, so using
->  * mlx5_eq_poll_irq_disabled could end up losing interrupts while trying to
->-- 
->2.45.2
->
->
+I suspect this patch is adding a DT node that corresponds to the
+PNP0A03 host bridge object, and the "ranges" property of the new node
+will describe the mapping from the CPU address space to the PCI
+address space.
+
+> Indeed, this component is not described
+> in a device-tree used at boot.
+
+But maybe I'm on the wrong track, because obviously PCI host
+controllers *are* described in DTs used at boot.
+
+> The device-tree PCI root bus node creation needs to be done at runtime.
+> This is done in the same way as for the creation of the PCI device
+> nodes. I.e. node and properties are created based on computed
+> information done by the PCI core.
+
+See address translation question below.
+
+> +void of_pci_make_root_bus_node(struct pci_bus *bus)
+> +{
+> +	struct device_node *np = NULL;
+> +	struct of_changeset *cset;
+> +	const char *name;
+> +	int ret;
+> +
+> +	/*
+> +	 * If there is already a device tree node linked to this device,
+> +	 * return immediately.
+> +	 */
+> +	if (pci_bus_to_OF_node(bus))
+> +		return;
+> +
+> +	/* Check if there is a DT root node to attach this created node */
+> +	if (!of_root) {
+> +		pr_err("of_root node is NULL, cannot create PCI root bus node");
+> +		return;
+> +	}
+> +
+> +	name = kasprintf(GFP_KERNEL, "pci-root@%x,%x", pci_domain_nr(bus),
+> +			 bus->number);
+
+Should this be "pci%d@%x,%x" to match the typical descriptions of PCI
+host bridges in DT?
+
+> +static int of_pci_root_bus_prop_ranges(struct pci_bus *bus,
+> +				       struct of_changeset *ocs,
+> +				       struct device_node *np)
+> +{
+> +	struct pci_host_bridge *bridge = to_pci_host_bridge(bus->bridge);
+> +	struct resource_entry *window;
+> +	unsigned int ranges_sz = 0;
+> +	unsigned int n_range = 0;
+> +	struct resource *res;
+> +	int n_addr_cells;
+> +	u32 *ranges;
+> +	u64 val64;
+> +	u32 flags;
+> +	int ret;
+> +
+> +	n_addr_cells = of_n_addr_cells(np);
+> +	if (n_addr_cells <= 0 || n_addr_cells > 2)
+> +		return -EINVAL;
+> +
+> +	resource_list_for_each_entry(window, &bridge->windows) {
+> +		res = window->res;
+> +		if (!of_pci_is_range_resource(res, &flags))
+> +			continue;
+> +		n_range++;
+> +	}
+> +
+> +	if (!n_range)
+> +		return 0;
+> +
+> +	ranges = kcalloc(n_range,
+> +			 (OF_PCI_ADDRESS_CELLS + OF_PCI_SIZE_CELLS +
+> +			  n_addr_cells) * sizeof(*ranges),
+> +			 GFP_KERNEL);
+> +	if (!ranges)
+> +		return -ENOMEM;
+> +
+> +	resource_list_for_each_entry(window, &bridge->windows) {
+> +		res = window->res;
+> +		if (!of_pci_is_range_resource(res, &flags))
+> +			continue;
+> +
+> +		/* PCI bus address */
+> +		val64 = res->start;
+> +		of_pci_set_address(NULL, &ranges[ranges_sz], val64, 0, flags, false);
+> +		ranges_sz += OF_PCI_ADDRESS_CELLS;
+> +
+> +		/* Host bus address */
+> +		if (n_addr_cells == 2)
+> +			ranges[ranges_sz++] = upper_32_bits(val64);
+> +		ranges[ranges_sz++] = lower_32_bits(val64);
+
+IIUC this sets both the parent address (the host bus (CPU) physical
+address) and the child address (PCI bus address) to the same value.
+
+I think that's wrong because these addresses need not be identical.
+
+I think the parent address should be the res->start value, and the
+child address should be "res->start - window->offset", similar to
+what's done by pcibios_resource_to_bus().
+
+> +		/* Size */
+> +		val64 = resource_size(res);
+> +		ranges[ranges_sz] = upper_32_bits(val64);
+> +		ranges[ranges_sz + 1] = lower_32_bits(val64);
+> +		ranges_sz += OF_PCI_SIZE_CELLS;
+> +	}
+> +
+> +	ret = of_changeset_add_prop_u32_array(ocs, np, "ranges", ranges, ranges_sz);
+> +	kfree(ranges);
+> +	return ret;
+> +}
 
