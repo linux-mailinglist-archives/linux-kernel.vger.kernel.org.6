@@ -1,129 +1,78 @@
-Return-Path: <linux-kernel+bounces-396644-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396645-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02C3D9BCFFD
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 16:02:54 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80B2A9BD000
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 16:03:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC9771F2426D
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 15:02:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 16F99B2251E
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 15:03:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C1E41D9350;
-	Tue,  5 Nov 2024 15:02:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A22F91DAC95;
+	Tue,  5 Nov 2024 15:02:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="maDr4YOu"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EnKCQfcj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22C253D0D5;
-	Tue,  5 Nov 2024 15:02:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F35451D9A6E;
+	Tue,  5 Nov 2024 15:02:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730818965; cv=none; b=T2NqFNIlIuq5tJi80/Y/F0p4FA2TG/Qk/Kg60aM5P+s/+rgr+6atQTGATKeySCrnmmyoUa6bha3RFMetq8NpnpkpDXJGO1uH8hctAUA9hd1Phr2B/87N3+T0upSnCOhE1I0FUbrbTF4XFFGDMEP6AgD47yayTpb//9lXNVwENIw=
+	t=1730818967; cv=none; b=FyjrSIkbUcuEQNNDBjjuwws8PGeJpIMGw+Vpxlzw6dO303BtDBPAGigH+su/1Jrhorvt2eAJWZW7BS50jACjUnufKMhgNvepznZKzt/0vcfaiKLXiGsQ6Y6olDABk6Y6PD0c4de75+EghQfnZBgimfgvAeg4UfAGZx3l1fwBkR8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730818965; c=relaxed/simple;
-	bh=kAW7oETZEfzL8D/Rhw4QbRy1C16BeO1NPTdITkgYSoE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=e5n2HYv2n5nXo9qbgRs6oOgLXYCWxYe5SBJ81HfN442ItGDZuKrL8HhXCLc0NHELYZsGNE50TDsbGx/sUrex7ZoIG3PJIY66CA14W629fHpCoSFAxKD2u3FcUjb6yhj9AH457ulZFvgNt6IFPLoPX8wGPGZyYaQHIwmUXjwoEjw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=maDr4YOu; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-20e576dbc42so58137875ad.0;
-        Tue, 05 Nov 2024 07:02:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730818963; x=1731423763; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=GylzRZAw80Z1YP9ykCKe0zWAimOryNrUB5zoTN5UfS8=;
-        b=maDr4YOu5KrSvIOVcBy4QVJgNWufyTbhvX+1UIozLhigs+WbQsi20lG3obTiPAKd+I
-         pVMcbkI8NSAFLxNohe0UdVt71XWdCISZAKS6JrvhrcWsxMchT6OzVw2kBd3BYBorJpOW
-         hIEssB7itMCDarTE7JiCAzsfDgTvJj2am1HrnPtYSzCNmY4+OjEj7F9gY11AyVuGvcYu
-         z1uTOqqICOv3re3dy/Y+PdRWPGpyXJb49aCoRWVm7OFn0lZbj17qh5TmVDgtJdsqiZq+
-         7cN9ykuuE1BnnCtR7cGhb20XH92uZhNfj7gjUMBgVmu4hlfEsfbL54p9xgV5WvqhSgKP
-         0Dqg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730818963; x=1731423763;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=GylzRZAw80Z1YP9ykCKe0zWAimOryNrUB5zoTN5UfS8=;
-        b=osRg6EWXsmF4XTsKFZu0QL15PzGMajuJq53TOqiqNGrV0FSCVMU85dAyETacAfxzz8
-         7r4HhunFeWonuwQ482sIBgOoMeguiDxzZJEQWVXP2ECi6AMfp/X9+GV9J3J2uptUzEsi
-         Nk2xTBYxianSMmYyZAuVJNwHiP8jeZJXKJGYLtMgXLq0hivAwffaoqmsFW9oXAIy+O6t
-         ncviboNzy0OqQL9ePki05OybD0rRRqrj5UK4xgn1pieWJ0i6cQPIRu6QEU0UPcGKZoza
-         8w17MH1yuT7CFbGyXSs5Y4fwdpYbqsyo0U8PQlpwFhIgM3NiGvKB4o9aIsb+NwS0bx2X
-         rERA==
-X-Forwarded-Encrypted: i=1; AJvYcCUD61FN0kDG/uxWFNUtH6bB9qkDUFCujiuvI52FVwAXRT3Pf7nZoJ+n7k5fKVrQuCfKxCkjT9RUOpgQyIE=@vger.kernel.org, AJvYcCVq+PLP5ZolIQctPgrJNX9Od/ZptUEUdPKM9eGhFpoYn0UYwflBCntBuJChNsY4/S+0YzCwwHfAJtRxsEAa@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy/q8RrEa0zmzPH5RbyLLCx94LGbMCB0C40XXwpJWoTtVGPX7B7
-	dFpn+FZFutxkSQF/2gJxH49ruhG0ZtYy3S8z6DuaTOwUp0cUg9IA
-X-Google-Smtp-Source: AGHT+IF/eUZKDzQsRxKzTlua0VGkAg3XHFmVRb6DFSZ+1VJsC1hbumlf8z0CTzQo9N2NGxWAK6QLWQ==
-X-Received: by 2002:a17:902:ce89:b0:207:1675:6709 with SMTP id d9443c01a7336-211039ed04fmr280580415ad.0.1730818963193;
-        Tue, 05 Nov 2024 07:02:43 -0800 (PST)
-Received: from [192.168.1.7] ([27.7.141.222])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7ee459f927dsm9131881a12.75.2024.11.05.07.02.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 05 Nov 2024 07:02:42 -0800 (PST)
-Message-ID: <2946c37e-d46d-46a3-a965-4932d5fc34bf@gmail.com>
-Date: Tue, 5 Nov 2024 20:32:38 +0530
+	s=arc-20240116; t=1730818967; c=relaxed/simple;
+	bh=F4WltQA5cg1waDpTGeUJMLZeM55/Ra2Tw+9xSUZNrPM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Oga+wL/TZUxnjwsN48BzHxveqmp0InOGh8WGuoGP+G1jgukidFkwp5NEaLyIYKR9ubNCfIk0BP3J/MmlSyPpMYbijjLdz0Zs6Yk/cHv63vlvjLZUJng2w9lazDuUukVi1YXRIAqSntBpWsKA0llXuQgRSU9M+BviV8J4mJKgJaI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EnKCQfcj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4F37C4CECF;
+	Tue,  5 Nov 2024 15:02:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730818966;
+	bh=F4WltQA5cg1waDpTGeUJMLZeM55/Ra2Tw+9xSUZNrPM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=EnKCQfcjgccBD0sDZsefLbxoJ6gIKqphICvj9eBlJCI40IImHiiuETIG4v+5lI39n
+	 UFvNzzzq5UHQ36Ch287qG3mseAlo4zKR8clCaBZbRXOC7xMA53KWoro8XoXqT9Y5IJ
+	 c99VsROCKwcUtr05772b3TYBpEvr3moWV6e9wInKKrnThRuLLa0U5DJFKfVcJltiva
+	 HFyEQ9wX4EaxKFrXCqj2TS+3pQju9clS4WdZ5MTdZgcsU66byoRIdpE8J67GDxt6yK
+	 8AuylbZ2Eep6jSfmCQMnPKfcmctQAdnWfpCVs77n6U8JbWIxcSddPVU9qxQkMza5BW
+	 23o7+FZF2ojCg==
+Date: Tue, 5 Nov 2024 16:02:43 +0100
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Ciprian Costea <ciprianmarian.costea@oss.nxp.com>
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Fabio Estevam <festevam@gmail.com>, linux-i2c@vger.kernel.org, devicetree@vger.kernel.org, 
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, Christophe Lizzi <clizzi@redhat.com>, 
+	Alberto Ruiz <aruizrui@redhat.com>, Enric Balletbo <eballetb@redhat.com>
+Subject: Re: [PATCH 0/2] add I2C support for S32G2/S32G3 SoCs
+Message-ID: <b2nsny2ipcd37ke7jzbjptal2b63lcss5gs2galrdfqdu4u7y6@v3swrb3vzs74>
+References: <20241104100044.3634076-1-ciprianmarian.costea@oss.nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] Typo: Fix typo in atmel_serial.c
-To: Richard GENOUD <richard.genoud@bootlin.com>, Hari.PrasathGE@microchip.com
-Cc: alexandre.belloni@bootlin.com, gregkh@linuxfoundation.org,
- linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
- claudiu.beznea@tuxon.dev, jirislaby@kernel.org,
- linux-arm-kernel@lists.infradead.org
-References: <20241024172300.968015-1-cvam0000@gmail.com>
- <5933bb3c-3b1e-4579-88c6-b9bbbed93a4f@microchip.com>
- <94726cb7-7cd5-48cf-b158-a66e6b279058@bootlin.com>
-Content-Language: en-US
-From: Shivam Chaudhary <cvam0000@gmail.com>
-In-Reply-To: <94726cb7-7cd5-48cf-b158-a66e6b279058@bootlin.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241104100044.3634076-1-ciprianmarian.costea@oss.nxp.com>
 
+Hi Ciprian,
 
-On 05/11/24 6:40 PM, Richard GENOUD wrote:
-> Le 05/11/2024 à 13:18, Hari.PrasathGE@microchip.com a écrit :
->> Hi,
->>
->> On 10/24/24 10:53 PM, Shivam Chaudhary wrote:
->>> [You don't often get email from cvam0000@gmail.com. Learn why this 
->>> is important at https://aka.ms/LearnAboutSenderIdentification ]
->>>
->>> EXTERNAL EMAIL: Do not click links or open attachments unless you 
->>> know the content is safe
->>>
->>> Corrected minor typo in atmel_serial.c
->>> - Fixed "retreives" to "retrieves"
->>>
->>
->> Pls fix the subject line. Refer to the previous commits from the git log
->> of the same file. Also,the commit message should be in imperative mood.
->> Send a v2 with the above comments addressed. Some useful links below:
->>
->> https://kernelnewbies.org/FirstKernelPatch
->> https://kernelnewbies.org/PatchPhilosophy
->
-> And for this kind of patches, I think it should go through the 
-> kernel-janitors ML.
->
-Thanks for responding , i think kernel-janitors is not active 
-anymore(IMK). Ill address the
+> Ciprian Marian Costea (2):
+>   dt-bindings: i2c: imx: add SoC specific compatible strings for S32G
+>   i2c: imx: add support for S32G2/S32G3 SoCs
 
-review comments and send the V2.
+with the change proposed by Frank in patch 2, I merged this
+series in i2c/i2c-host.
 
-
-thanks
-
---Shivam
-
+Thanks,
+Andi
 
