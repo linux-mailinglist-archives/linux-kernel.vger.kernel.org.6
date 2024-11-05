@@ -1,144 +1,127 @@
-Return-Path: <linux-kernel+bounces-396542-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396543-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD2AC9BCEB6
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 15:07:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9521C9BCEB8
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 15:07:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EF12DB21E99
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 14:06:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0C6BCB21FB1
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 14:07:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B685D1D9A6D;
-	Tue,  5 Nov 2024 14:06:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 254991DB93A;
+	Tue,  5 Nov 2024 14:06:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Q7YTCTM+"
-Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JTQVzyp8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 665ED1D935A
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 14:06:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 740C11D8DFD;
+	Tue,  5 Nov 2024 14:06:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730815574; cv=none; b=Lg7Qaxw64EYQndPS7hMNNAbRhD0PHaRt5X8tGNrxGBzVNGQ0h7jLK7p6MStTu3LNOfPJXeVkM+g3jgeBnDqBPDSrVXRW6a+2J1MWj8mR9BCA8oehYhduoV2etyw+vpqdK4cdv38sZqBCb4QlVFR3186CZ2s3N9TPKDf4DLiBA4I=
+	t=1730815575; cv=none; b=f9OKkTIV4cbNZPXucVUd52OoJpMLaG9gkLY2GqrKPEBMXHXG5P/hMtuLWKffP41IuDWxsPg7pLfRYAyTgapZHlTztD6snJM9VMRxYk5fHvG6GinbUV7ZOsNM6BcaO4IunGXf8frJ3qqCR/H/FeIlgakhuIvwxL5EF58itl0+beY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730815574; c=relaxed/simple;
-	bh=QVb1o0qgKlSv/qhNBm0mM8Ma1splu8Yi7c/RKdK6kZM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=X/ecOCigW3NC1L6bTM+aioMKU+fWuf+0OMRrzeVni5puf3dRi3jkrqzphKy+TNFshOHDbmILQX3QXT4j7MR9CAjrG8kCf92tkIFcUNMkVsbb5q5H02zNeARB/duGRgSIkPwEWolVP6hrOyCk7EAzzZYF1nqkhIXfKHcfxIbvXCI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Q7YTCTM+; arc=none smtp.client-ip=209.85.222.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-7b157c9ad12so344781785a.1
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 06:06:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1730815571; x=1731420371; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=yf0PBF4kMneT4CHz7Zgh8clF/HAKHaFSwjgqCM9cvPA=;
-        b=Q7YTCTM+IjYnIZSWoNvmO0a3vBgwu4FvTww1mEK2vigGkojBKJgzml/v3ATwzhvZ1G
-         1kGhNdlrA7UokNW9legHVLOozF1foDLSdEcU1ucNotwVtdB8gyaVA1WPLjytPihe6SqX
-         nEYO7SO3mPZDTP2ZiedajikwPGVkc/VOn9JwA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730815571; x=1731420371;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=yf0PBF4kMneT4CHz7Zgh8clF/HAKHaFSwjgqCM9cvPA=;
-        b=MRx5lXbeLr6GEQMUkcsxMWPc3D5keszByqUxFxp6KNZ+RNoNDpiDmvu2YKBMS/SHgE
-         jZaMxeuyXdm3Un6LbNlvC8UA2xOiDCuBtfbimXXFHDQCOWvaa9nTFTnKoBBNfHRu2s8a
-         tCfY6XvwHOVKb60IHzAWagNuYgak2gT555Alvqu6isVMZU6+EOMyCKOkhjMv9kyZK+Ez
-         FgXAj/bV3oYrrEGqUrZItS5a6uNFejSO6j6B092egaKbXX06yWjxcirbXUiZnH+v4Uig
-         SV2LJ6oG9hAJI8vs1cK3Nhz6sWu12fqflLcQS5Y3d7LA75W5ge2AqGIps0sKKI8fOPaT
-         Y4zQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXInFRZw8yiIVWMJyn0gHfcKh2lhQgoJTZA4maM8mzzKZQAdYMY7gzt5gohkHWcon3ueOvNI7NZpyK8Zhk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwMnhX6/Btzoj0yaIIBh3vDzTj3vvFA6eterVM282qZ+pkWSxXz
-	tLHG9F/0wxkN+FnK7ZjQzdwxV4sS11skXehUO/Qwtk7aDYIEBpOXfvZThoK81Q==
-X-Google-Smtp-Source: AGHT+IEWVNYihrENoX/DowKpgEnulMjOF544+crUJdNi7nlfrQ1ImMrZyVSzPhhVwnMGSZIZ0F8ulQ==
-X-Received: by 2002:a05:620a:45a4:b0:7b1:3754:7da2 with SMTP id af79cd13be357-7b193ed8335mr5096381185a.3.1730815571112;
-        Tue, 05 Nov 2024 06:06:11 -0800 (PST)
-Received: from denia.c.googlers.com (189.216.85.34.bc.googleusercontent.com. [34.85.216.189])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b2f3a816afsm520422185a.101.2024.11.05.06.06.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Nov 2024 06:06:10 -0800 (PST)
-From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Tue, 05 Nov 2024 14:06:07 +0000
-Subject: [PATCH v4 2/2] media: uvcvideo: Fix crash during unbind if gpio
- unit is in use
+	s=arc-20240116; t=1730815575; c=relaxed/simple;
+	bh=SYt9goHZas4AHHxRIrhK5bC+IsV/Y4MON9+0jggU4ok=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SQI2iKVmullCoAgGeWHg1/dP/MJaUVMJd0wzbbe5dbOt9AHdSWL9PZaFaSYpRMyD3Pn54tkBkQ4LtLv8Lk0cVzLllnKN7nznA2YvCaTyMgX9STl9cVC2HWJ3169OCEEhPbY1WQs7N0AV87it86HPjDMbIhLAdSVQvdZPZpPI6Eo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JTQVzyp8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8858DC4CED0;
+	Tue,  5 Nov 2024 14:06:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730815575;
+	bh=SYt9goHZas4AHHxRIrhK5bC+IsV/Y4MON9+0jggU4ok=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=JTQVzyp8dTzTRDZPVbYtpXRYBssbk4jreAfjLMEUzStgwaVSFMFEWSlZVVg2OS+J8
+	 XOFMvJH64F4J5QtkrcYkpxDuG3alfV3r+RqqXYBs4I6+PMz8BBJ7N1yCwxUx4k/3hd
+	 hvPTy8bObRBAgvRCwYmTvLHXPAs51APRb7oJiuUFy1uHLUVcfiI8gtlawnMnxQY0pq
+	 b4at0Qr0tVna2gOyDTlrrXqRpBPiXc8uChPkt3BlJHuc+RtgMRUe98DXjYArNrumeL
+	 ympjm5c2Y9wTIab14XSocgGOyQhJtaKOHOiCJYX/AAVRIq/HlFyXH9OOKw63nhj9Db
+	 5vCJRyWLyR0Vg==
+Message-ID: <2e002aea-e1da-4da9-9b64-0ac4f5c0a695@kernel.org>
+Date: Tue, 5 Nov 2024 15:06:09 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] dt-bindings: arm: mediatek: Add MT8188 Lenovo
+ Chromebook Duet (11", 9)
+To: Fei Shao <fshao@chromium.org>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Matthias Brugger <matthias.bgg@gmail.com>
+Cc: Conor Dooley <conor+dt@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org
+References: <20241105093222.4055774-1-fshao@chromium.org>
+ <20241105093222.4055774-2-fshao@chromium.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
+ QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
+ gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
+ /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
+ iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
+ VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
+ 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
+ xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
+ eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
+ AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
+ MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
+ Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
+ ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
+ vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
+ oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
+ lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
+ t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
+ uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
+ 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
+ 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
+In-Reply-To: <20241105093222.4055774-2-fshao@chromium.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241105-uvc-crashrmmod-v4-2-410e548f097a@chromium.org>
-References: <20241105-uvc-crashrmmod-v4-0-410e548f097a@chromium.org>
-In-Reply-To: <20241105-uvc-crashrmmod-v4-0-410e548f097a@chromium.org>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Ricardo Ribalda <ribalda@chromium.org>, 
- Sakari Ailus <sakari.ailus@linux.intel.com>, stable@vger.kernel.org, 
- Sergey Senozhatsky <senozhatsky@chromium.org>
-X-Mailer: b4 0.13.0
 
-We used the wrong device for the device managed functions. We used the
-usb device, when we should be using the interface device.
+On 05/11/2024 10:30, Fei Shao wrote:
+> Add entries for the MT8188-based Chromebook "Ciri", also known as
+> Lenovo Chromebook Duet (11", 9).
+> 
+> This device features a detachable design with touchscreen, detachable
+> keyboard and USI 2.0 Stylus support, and has 8 SKUs to accommodate the
+> combinations of second-source components.
+> 
+> Signed-off-by: Fei Shao <fshao@chromium.org>
 
-If we unbind the driver from the usb interface, the cleanup functions
-are never called. In our case, the IRQ is never disabled.
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-If an IRQ is triggered, it will try to access memory sections that are
-already free, causing an OOPS.
-
-Luckily this bug has small impact, as it is only affected by devices
-with gpio units and the user has to unbind the device, a disconnect will
-not trigger this error.
-
-Cc: stable@vger.kernel.org
-Fixes: 2886477ff987 ("media: uvcvideo: Implement UVC_EXT_GPIO_UNIT")
-Reviewed-by: Sergey Senozhatsky <senozhatsky@chromium.org>
-Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
----
- drivers/media/usb/uvc/uvc_driver.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/media/usb/uvc/uvc_driver.c b/drivers/media/usb/uvc/uvc_driver.c
-index 2735fccdf454..c1b2fb7f1428 100644
---- a/drivers/media/usb/uvc/uvc_driver.c
-+++ b/drivers/media/usb/uvc/uvc_driver.c
-@@ -1295,14 +1295,14 @@ static int uvc_gpio_parse(struct uvc_device *dev)
- 	struct gpio_desc *gpio_privacy;
- 	int irq;
- 
--	gpio_privacy = devm_gpiod_get_optional(&dev->udev->dev, "privacy",
-+	gpio_privacy = devm_gpiod_get_optional(&dev->intf->dev, "privacy",
- 					       GPIOD_IN);
- 	if (IS_ERR_OR_NULL(gpio_privacy))
- 		return PTR_ERR_OR_ZERO(gpio_privacy);
- 
- 	irq = gpiod_to_irq(gpio_privacy);
- 	if (irq < 0)
--		return dev_err_probe(&dev->udev->dev, irq,
-+		return dev_err_probe(&dev->intf->dev, irq,
- 				     "No IRQ for privacy GPIO\n");
- 
- 	unit = uvc_alloc_new_entity(dev, UVC_EXT_GPIO_UNIT,
-@@ -1333,7 +1333,7 @@ static int uvc_gpio_init_irq(struct uvc_device *dev)
- 	if (!unit || unit->gpio.irq < 0)
- 		return 0;
- 
--	return devm_request_threaded_irq(&dev->udev->dev, unit->gpio.irq, NULL,
-+	return devm_request_threaded_irq(&dev->intf->dev, unit->gpio.irq, NULL,
- 					 uvc_gpio_irq,
- 					 IRQF_ONESHOT | IRQF_TRIGGER_FALLING |
- 					 IRQF_TRIGGER_RISING,
-
--- 
-2.47.0.199.ga7371fff76-goog
+Best regards,
+Krzysztof
 
 
