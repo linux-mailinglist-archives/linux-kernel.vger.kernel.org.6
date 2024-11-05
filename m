@@ -1,230 +1,205 @@
-Return-Path: <linux-kernel+bounces-396062-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396054-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 834199BC776
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 08:53:52 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 049889BC74E
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 08:50:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 42C1B282F53
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 07:53:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 83BD81F22ED9
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 07:50:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0149200125;
-	Tue,  5 Nov 2024 07:52:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4BEF1FEFAA;
+	Tue,  5 Nov 2024 07:50:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="PVKwV3x5"
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	dkim=pass (2048-bit key) header.d=jannau.net header.i=@jannau.net header.b="T9gosV/O";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="TmIgENc4"
+Received: from fout-a6-smtp.messagingengine.com (fout-a6-smtp.messagingengine.com [103.168.172.149])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 585831FF02D;
-	Tue,  5 Nov 2024 07:52:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7791F282F1;
+	Tue,  5 Nov 2024 07:50:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.149
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730793147; cv=none; b=MU37QmRs50JptsU46csetgVzdUZxcDb+/nl/X/a3KKTaN/Q3GdNV1GBj7bBNcHW65urii2l07nECs7mmA/kN1m0Tvze0rVcDHakDfyssCyfhuvNJOAMulqQIQdB8McEVCaKvHKi65jEbBK5zyEg4Gs7R7GluHQZE9wZWYrsw6aI=
+	t=1730793016; cv=none; b=jr32Xl13+LyyaZ0u0+5XAWYtq/4RAH8NH4fHr8Tz72YACxsTagpH1u92DtjINEIXed0yyS2UnX5jBt8FCrzpzWDb+bkXPabtrVuisbrEjGMbz9n8Hn7biBSu6rRMqAwhEanWnkSt7WZSQ3wBxTLP2ZhNrZV3/G2596t5ir35yFk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730793147; c=relaxed/simple;
-	bh=t0g3tyGLXDa9mEU8ERU+pY2ZJyv+jnWCEShMpLm4R7o=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=DZpqyXzL3xOp3Wq4R2kLjX4ZLnkQI5lWOuEwQUNKIOzp4qDQX8ar81EvPykcemUbvR1eat041tAr6rihTxq4OHjx2NwQtsANLwbU8GpONsFr8OLBYAIors9j3mkqCFEGUx7wQQtY7QwOKkri4rC6BKrjyQpeULIUNeBHsdnFChs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=PVKwV3x5; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0369458.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A53M0JY005010;
-	Tue, 5 Nov 2024 08:52:12 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	i0SEXjer4NUU2DKUJapl8bqAlE+SwlDXXIr03qjV7WU=; b=PVKwV3x5dgrvKDs4
-	CVTXpQti/lb4DAzxkkYtJA3QpfonI89d7Tv8JjurCZC8CrF75RC0dTzR4IQFMq5L
-	RmOlUVmlyodsdZ8cq24i3uURyZ24N3bLycByeNRtZKc69UHlmhvjGnNCzOqApGBJ
-	QhxB0x1QsG6rRSoG/knLu5EYecAJcRSYLA1610DQnS5gkvjlxwHwQM4safrKmxsp
-	ewJvEjhAVfrrRHIa1ic3B47udaD7WCkKL0YXYyIIswCgnnzpAI8foxrZM+UezxsB
-	Nq3TrYsN9MquOFYGwdKqFHWJI7u8v0ASo5NeGkxBqbu9sb81b4QfNsnswP5zGyxp
-	0tWsPA==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 42nxh3rnkd-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 05 Nov 2024 08:52:11 +0100 (CET)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 07D3040056;
-	Tue,  5 Nov 2024 08:50:30 +0100 (CET)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 9DA622513C4;
-	Tue,  5 Nov 2024 08:49:37 +0100 (CET)
-Received: from localhost (10.129.178.213) by SHFDAG1NODE1.st.com
- (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Tue, 5 Nov
- 2024 08:49:37 +0100
-From: Alain Volmat <alain.volmat@foss.st.com>
-Date: Tue, 5 Nov 2024 08:49:18 +0100
-Subject: [PATCH v2 15/15] arm64: dts: st: enable imx335/csi/dcmipp pipeline
- on stm32mp257f-ev1
+	s=arc-20240116; t=1730793016; c=relaxed/simple;
+	bh=qAOB4Tys5t6tpZB/veCWrbZMv0vMqWXPzqNzaCQOZ+k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oN7GT/ZYCpwv0iabg9J+IdeYeYiLr8SI31rcyjDN59GkDKcYdcSZyI6bHxml5tjhIgJUxfRXfJV9kYklV80WaaH+W7cVyVtGTKWoUKHLCjRa08NAGW/C6J4qh4GPuNGd+ICJ+dP9rekjy+7JEimTNRmfveJ1TjzRvTet8xgKcOI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jannau.net; spf=pass smtp.mailfrom=jannau.net; dkim=pass (2048-bit key) header.d=jannau.net header.i=@jannau.net header.b=T9gosV/O; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=TmIgENc4; arc=none smtp.client-ip=103.168.172.149
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jannau.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jannau.net
+Received: from phl-compute-11.internal (phl-compute-11.phl.internal [10.202.2.51])
+	by mailfout.phl.internal (Postfix) with ESMTP id A86B21380601;
+	Tue,  5 Nov 2024 02:50:13 -0500 (EST)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-11.internal (MEProxy); Tue, 05 Nov 2024 02:50:13 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jannau.net; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1730793013;
+	 x=1730879413; bh=D6OCx3NzmrJdDDip+0qK9zMAnmCzPOYRXUxgWn1goh8=; b=
+	T9gosV/O6KKn+nbmM0uE04aOhEHtzDt9NRv8YLMqJubADrKNYMP+wz8IVqKxQbvp
+	/QZ94IbSeRF+2urkUBecDpSCqED4mKB3cDkBr4wjFGHJm71r1PocxpWsCHf/kLXo
+	nuctPwor1kwoTdOnxmex61J4IPl2LrjjGUS7ZUZ9SfvrknKeR5jpSSLcnbqLi3tO
+	SLkgiK4L/J0FR8/BgapBz/PF0aXeYvFeDkjt1vw7rJIv4mLUrbkE3/HSEiUfbr2P
+	SGA2G34XN9oljawyTaX8XPl8AFXKVpMUeVSN1hoDNfpBagSgcrV1sbW++WHIput3
+	fEEi7z6XiWMwCl/sc0cQOg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1730793013; x=
+	1730879413; bh=D6OCx3NzmrJdDDip+0qK9zMAnmCzPOYRXUxgWn1goh8=; b=T
+	mIgENc4DC3vg8e58XWWAlPPC+Q7U8v+QD+8CkhsocjVLSpaYLyScnXsaJvL/UpC4
+	L95Ypm2lS0Z2oouUPuqaDqyzqPuDLGR2z3NZ3pKEufaxwTJHtN8ECMQDfeL/RDd3
+	pGJStNFqyClN3XXPusEMqlFK0G5lhVio+pbqdEknxlGTY3izaYuzVn97rGkXu7jV
+	R+iV3jmz0/eG3SmWKj9eq4C+Z8+X5vRJPbLdNUgmL9lLWbNsUrumr9vrvpdcYB21
+	K7rZ+DsFlk3B8gxBUW4NcN2uiFbRMN66bdaPtJCDDmGYt2pROLffs2sJTmN9NLLy
+	Sd7MZZF3WDTFlipO8Wy7A==
+X-ME-Sender: <xms:Nc4pZ-3ECSKEE8XxIjWFt8cD9jqV6Wg5RtiOLlu7NLclo59Z7EuWfw>
+    <xme:Nc4pZxHjh50Tm9SE-eom3h44vf4JnHnQ0x0s2brwdU9iyZuQpGBELCMEFb8Sz159G
+    cZi99rawlcp05-xq8I>
+X-ME-Received: <xmr:Nc4pZ25M6TGHJzJasOsDM7YAoDrwhxU0M-8h8VHOVAawJrZX1qzzOTYvE8BHdf21tesvrSN6TzaVLkU5lEAwcNEcfD8J8uIn1Nk>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdeljedguddufecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtugfgjgesthekredttddt
+    jeenucfhrhhomheplfgrnhhnvgcuifhruhhnrghuuceojhesjhgrnhhnrghurdhnvghtqe
+    enucggtffrrghtthgvrhhnpeevfeekuedutedtvdffvefhvedvkefhgfevheefhfffheef
+    tefgteffuefgveefhfenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrih
+    hlfhhrohhmpehjsehjrghnnhgruhdrnhgvthdpnhgspghrtghpthhtohepudegpdhmohgu
+    vgepshhmthhpohhuthdprhgtphhtthhopegthhhrihhsthhophhhvgdrjhgrihhllhgvth
+    esfigrnhgrughoohdrfhhrpdhrtghpthhtohepuggvvhhnuhhllhdojhdrjhgrnhhnrghu
+    rdhnvghtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegrshgrhhhisehlihhsthhsrd
+    hlihhnuhigrdguvghvpdhrtghpthhtoheplhhinhhugidqrghrmhdqkhgvrhhnvghlsehl
+    ihhsthhsrdhinhhfrhgruggvrggurdhorhhgpdhrtghpthhtoheplhhinhhugidqshhpih
+    esvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopeguvghvihgtvghtrhgvvges
+    vhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlh
+    esvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehmrghrtggrnhesmhgrrhgt
+    rghnrdhsthdprhgtphhtthhopehsvhgvnhesshhvvghnphgvthgvrhdruggvvh
+X-ME-Proxy: <xmx:Nc4pZ_3KS_ljVMmTlx3iWxMco4k3hhmRZ_NyMqBy1Z2cCLZBwK9Jvw>
+    <xmx:Nc4pZxGAJAFf6jqQo0MNohbbYF1WA22ckV8ur5ZbkxNT4uHdz9yn3w>
+    <xmx:Nc4pZ49pLJaX10Rw7OTYV2qav_Wltpptfqkle33erLrAdYpE0OtDrQ>
+    <xmx:Nc4pZ2n9MJzEklKJt5lkLPbGFqoFAcmtM4EWss9TldUKHy23GcdRHA>
+    <xmx:Nc4pZ-dm3BU-dKHsi2K66keV3bFCqxzPVu6XA7UvxuqJoD0cGTlScUMZ>
+Feedback-ID: i47b949f6:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 5 Nov 2024 02:50:12 -0500 (EST)
+Date: Tue, 5 Nov 2024 08:50:12 +0100
+From: Janne Grunau <j@jannau.net>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Janne Grunau via B4 Relay <devnull+j.jannau.net@kernel.org>,
+	asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-spi@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Hector Martin <marcan@marcan.st>,
+	Sven Peter <sven@svenpeter.dev>,
+	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+	Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Subject: Re: [PATCH v3 2/3] spi: apple: Add driver for Apple SPI controller
+Message-ID: <20241105075012.GC923511@robin.jannau.net>
+References: <20241101-asahi-spi-v3-0-3b411c5fb8e5@jannau.net>
+ <20241101-asahi-spi-v3-2-3b411c5fb8e5@jannau.net>
+ <ff82c5bf-c757-4496-83ac-c3b257ef476c@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20241105-csi_dcmipp_mp25-v2-15-b9fc8a7273c2@foss.st.com>
-References: <20241105-csi_dcmipp_mp25-v2-0-b9fc8a7273c2@foss.st.com>
-In-Reply-To: <20241105-csi_dcmipp_mp25-v2-0-b9fc8a7273c2@foss.st.com>
-To: Hugues Fruchet <hugues.fruchet@foss.st.com>,
-        Mauro Carvalho Chehab
-	<mchehab@kernel.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre
- Torgue <alexandre.torgue@foss.st.com>,
-        Hans Verkuil
-	<hverkuil-cisco@xs4all.nl>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Rob
- Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor
- Dooley <conor+dt@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>
-CC: <linux-media@vger.kernel.org>, <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, Alain Volmat <alain.volmat@foss.st.com>
-X-Mailer: b4 0.14.2
-X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE1.st.com
- (10.75.129.69)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ff82c5bf-c757-4496-83ac-c3b257ef476c@wanadoo.fr>
 
-Enable the camera pipeline with a imx335 sensor connected to the
-dcmipp via the csi interface.
+On Mon, Nov 04, 2024 at 08:16:25PM +0100, Christophe JAILLET wrote:
+> Le 01/11/2024 à 20:26, Janne Grunau via B4 Relay a écrit :
+> > From: Hector Martin <marcan-WKacp4m3WJJeoWH0uzbU5w@public.gmane.org>
+> > 
+> > This SPI controller is present in Apple SoCs such as the M1 (t8103) and
+> > M1 Pro/Max (t600x). It is a relatively straightforward design with two
+> > 16-entry FIFOs, arbitrary transfer sizes (up to 2**32 - 1) and fully
+> > configurable word size up to 32 bits. It supports one hardware CS line
+> > which can also be driven via the pinctrl/GPIO driver instead, if
+> > desired. TX and RX can be independently enabled.
+> > 
+> > There are a surprising number of knobs for tweaking details of the
+> > transfer, most of which we do not use right now. Hardware CS control
+> > is available, but we haven't found a way to make it stay low across
+> > multiple logical transfers, so we just use software CS control for now.
+> > 
+> > There is also a shared DMA offload coprocessor that can be used to handle
+> > larger transfers without requiring an IRQ every 8-16 words, but that
+> > feature depends on a bunch of scaffolding that isn't ready to be
+> > upstreamed yet, so leave it for later.
+> > 
+> > The hardware shares some register bit definitions with spi-s3c24xx which
+> > suggests it has a shared legacy with Samsung SoCs, but it is too
+> > different to warrant sharing a driver.
+> > 
+> > Signed-off-by: Hector Martin <marcan-WKacp4m3WJJeoWH0uzbU5w@public.gmane.org>
+> > Signed-off-by: Janne Grunau <j@jannau.net>
+> > ---
+> 
+> Hi,
+> 
+> > diff --git a/drivers/spi/spi-apple.c b/drivers/spi/spi-apple.c
+> > new file mode 100644
+> > index 0000000000000000000000000000000000000000..1a3f61501db56d0d7689cc3d6f987bf636130cdb
+> > --- /dev/null
+> > +++ b/drivers/spi/spi-apple.c
+> > @@ -0,0 +1,531 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +//
+> > +// Apple SoC SPI device driver
+> > +//
+> > +// Copyright The Asahi Linux Contributors
+> > +//
+> > +// Based on spi-sifive.c, Copyright 2018 SiFive, Inc.
+> > +
+> > +#include <linux/bitfield.h>
+> > +#include <linux/bits.h>
+> > +#include <linux/clk.h>
+> > +#include <linux/module.h>
+> 
+> Move a few lines below to keep alphabetical order?
 
-Signed-off-by: Alain Volmat <alain.volmat@foss.st.com>
+done
 
----
+> > +#include <linux/interrupt.h>
+> > +#include <linux/io.h>
+> > +#include <linux/of.h>
+> > +#include <linux/platform_device.h>
+> > +#include <linux/pm_runtime.h>
+> > +#include <linux/spi/spi.h>
+> 
+> ...
+> 
+> > +static int apple_spi_probe(struct platform_device *pdev)
+> > +{
+> > +	struct apple_spi *spi;
+> > +	int ret, irq;
+> > +	struct spi_controller *ctlr;
+> > +
+> > +	ctlr = devm_spi_alloc_master(&pdev->dev, sizeof(struct apple_spi));
+> > +	if (!ctlr)
+> > +		return -ENOMEM;
+> > +
+> > +	spi = spi_controller_get_devdata(ctlr);
+> > +	init_completion(&spi->done);
+> > +	platform_set_drvdata(pdev, ctlr);
+> 
+> Is it needed?
+> There is no platform_get_drvdata()
 
-v2:
-  - correct regulators & camera node names
-  - removal of powerdown property within imx335 node
-  - removal of useless status property within imx335 node
-  - correct imx335 reset-gpio polarity
----
- arch/arm64/boot/dts/st/stm32mp257f-ev1.dts | 85 ++++++++++++++++++++++++++++++
- 1 file changed, 85 insertions(+)
+no, it is not used anymore. It's a leftover from v1 which used
+platform_get_drvdata() in apple_spi_remove() which is gone now.
 
-diff --git a/arch/arm64/boot/dts/st/stm32mp257f-ev1.dts b/arch/arm64/boot/dts/st/stm32mp257f-ev1.dts
-index 214191a8322b81e7ae453503863b4465d9b625e0..d45851b3904d760f73298bf7b260f917b582db55 100644
---- a/arch/arm64/boot/dts/st/stm32mp257f-ev1.dts
-+++ b/arch/arm64/boot/dts/st/stm32mp257f-ev1.dts
-@@ -27,6 +27,38 @@ chosen {
- 		stdout-path = "serial0:115200n8";
- 	};
- 
-+	clocks {
-+		clk_ext_camera: clk-ext-camera {
-+			#clock-cells = <0>;
-+			compatible = "fixed-clock";
-+			clock-frequency = <24000000>;
-+		};
-+	};
-+
-+	imx335_2v9: regulator-2v9 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "imx335-avdd";
-+		regulator-min-microvolt = <2900000>;
-+		regulator-max-microvolt = <2900000>;
-+		regulator-always-on;
-+	};
-+
-+	imx335_1v8: regulator-1v8 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "imx335-ovdd";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <1800000>;
-+		regulator-always-on;
-+	};
-+
-+	imx335_1v2: regulator-1v2 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "imx335-dvdd";
-+		regulator-min-microvolt = <1200000>;
-+		regulator-max-microvolt = <1200000>;
-+		regulator-always-on;
-+	};
-+
- 	memory@80000000 {
- 		device_type = "memory";
- 		reg = <0x0 0x80000000 0x1 0x0>;
-@@ -50,6 +82,40 @@ &arm_wdt {
- 	status = "okay";
- };
- 
-+&csi {
-+	vdd-supply =  <&scmi_vddcore>;
-+	vdda18-supply = <&scmi_v1v8>;
-+	status = "okay";
-+	ports {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		port@0 {
-+			reg = <0>;
-+			csi_sink: endpoint {
-+				remote-endpoint = <&imx335_ep>;
-+				data-lanes = <1 2>;
-+				bus-type = <4>;
-+			};
-+		};
-+		port@1 {
-+			reg = <1>;
-+			csi_source: endpoint {
-+				remote-endpoint = <&dcmipp_0>;
-+			};
-+		};
-+	};
-+};
-+
-+&dcmipp {
-+	status = "okay";
-+	port {
-+		dcmipp_0: endpoint {
-+			remote-endpoint = <&csi_source>;
-+			bus-type = <4>;
-+		};
-+	};
-+};
-+
- &ethernet2 {
- 	pinctrl-names = "default", "sleep";
- 	pinctrl-0 = <&eth2_rgmii_pins_a>;
-@@ -81,6 +147,25 @@ &i2c2 {
- 	i2c-scl-falling-time-ns = <13>;
- 	clock-frequency = <400000>;
- 	status = "okay";
-+
-+	imx335: camera@1a {
-+		compatible = "sony,imx335";
-+		reg = <0x1a>;
-+		clocks = <&clk_ext_camera>;
-+		avdd-supply = <&imx335_2v9>;
-+		ovdd-supply = <&imx335_1v8>;
-+		dvdd-supply = <&imx335_1v2>;
-+		reset-gpios = <&gpioi 7 (GPIO_ACTIVE_LOW | GPIO_PUSH_PULL)>;
-+
-+		port {
-+			imx335_ep: endpoint {
-+				remote-endpoint = <&csi_sink>;
-+				clock-lanes = <0>;
-+				data-lanes = <1 2>;
-+				link-frequencies = /bits/ 64 <594000000>;
-+			};
-+		};
-+	};
- };
- 
- &i2c8 {
-
--- 
-2.25.1
-
+thanks, I'll send a v4 shortly
+Janne
 
