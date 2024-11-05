@@ -1,198 +1,218 @@
-Return-Path: <linux-kernel+bounces-397289-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397285-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EEC569BDA06
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 00:58:26 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D82249BD9FA
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 00:54:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2C41E1C2216E
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 23:58:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6875B1F21F63
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 23:54:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A553216A38;
-	Tue,  5 Nov 2024 23:58:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DA58216A32;
+	Tue,  5 Nov 2024 23:54:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="PCpB71Mx"
-Received: from fhigh-a3-smtp.messagingengine.com (fhigh-a3-smtp.messagingengine.com [103.168.172.154])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="YfC6RSr8"
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1804216A28
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 23:58:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93E3A1D45E0
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 23:54:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730851102; cv=none; b=fz3chbunO0umY6M4sTfnqIF/Pl7XK9QW0HIkvl1WrxDuCHQIfTVC/CkItxRia2Z8Bk5YUZxQ9UwrM4jYl8859eKqx1GsbBCWSbUMNO9lK9w3tcPhjYujLU7wesbfQ+oumAWzX5+t5ZRNVRiouUcT0VmrV2FtejxdCgiuHJXm5ik=
+	t=1730850882; cv=none; b=YDBmdMVPBrn9/NDSTphadKuTyjAkYvPZGQ8CTxFYVdFjqQx5AEPexrSXyUxf0i0VgkvaAs0CpZgapcvaE0tqu1HFBe2LR6lm1o3VfSfoP5apkx4C9h0JUPBEiKHLto+BMXPrj+3LI5onoRLSoj7IoUGEJXGBjZafiMJCa5dUO58=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730851102; c=relaxed/simple;
-	bh=JtUF2H9w8fqLw+OadS7UHTS9qtXIn2XKlYlYS+esBA4=;
-	h=To:Cc:Message-ID:From:Subject:Date; b=S8NBXveKUH+3Uqv6HK20UUf0KQ8vpdIkgZz1F9rFY/ybvdr3Dc40cnP3PHB7pGUhbH7iLgoPb4/qOpoGQbwQqnPYToIiL7rRMKQVY3Aq/81ZpTw8Od4i3/BVp3Wl5zxmy3ZpVPRzJz4XaFv6MgqWmABeF0ltA22pXCradxLFUGg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=none smtp.mailfrom=linux-m68k.org; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=PCpB71Mx; arc=none smtp.client-ip=103.168.172.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
-Received: from phl-compute-08.internal (phl-compute-08.phl.internal [10.202.2.48])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id BA7FC11401B0;
-	Tue,  5 Nov 2024 18:58:17 -0500 (EST)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-08.internal (MEProxy); Tue, 05 Nov 2024 18:58:17 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:date:date:feedback-id
-	:feedback-id:from:from:in-reply-to:message-id:reply-to:subject
-	:subject:to:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm3; t=1730851097; x=1730937497; bh=8ndbTcqqvH3rcUpcuPISyy7t255N
-	OSgE5KUHC2VGzSU=; b=PCpB71MxcShoPNKJkCI0U0Mp+iWb0vgbJj9v8/AZ3N7I
-	lXg8mJEIMJMQCi6s2ojc6b7R65oLTvYUg1m4dlIWlW8FD9bSp3JS01v893va4H0J
-	+QB0JkRPMCkbVrGl9A5EYbaORZlUU3zJZTVYzkn6zXNlmrXYdDY0pTGmkkEYcaft
-	OUPpxu6kppVPEWSLCTVUrgVYyXRjbPta31YMOF5P645RWXwWEAssU7WI8eldhDvk
-	hbpgoxsX0BqgjKR9iB5zWW+R8ZJJI2xiNSn0BUkB+ZSay/4rjsFoZYe5EWRNWUHA
-	iCJnvLPMo7CfPQ7Ka7FdGmJAcQR6zUjry5I7LzrIXA==
-X-ME-Sender: <xms:GbEqZ9mC-b_Iw9ocF0MC4IHORuRwx-J4SsRLBvwJV1oBOuh9GcbCIw>
-    <xme:GbEqZ43Izf5H9beXZUm9zJ6KADY798kEiwK52J5YR4WhnMbIA1dSjs-p3hGOA7MDD
-    MjxbWEQ8PawflTravk>
-X-ME-Received: <xmr:GbEqZzpqKX-yFLRuPogKwGwYaA4GZrmn8J6QfH63wgA25crdq-fB2MzqompzAQwFJTAJ_YKouHsjwe03LIyzKqQFEeSaiwAPe90>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrtddugddujecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
-    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
-    hsucdlqddutddtmdenucfjughrpefvvefkhffuffestddtredttddttdenucfhrhhomhep
-    hfhinhhnucfvhhgrihhnuceofhhthhgrihhnsehlihhnuhigqdhmieekkhdrohhrgheqne
-    cuggftrfgrthhtvghrnhepheffgfegfeevgeevtdeiffefveeutdeghfeuheeiteffjeef
-    gfegveefuedvudelnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilh
-    hfrhhomhepfhhthhgrihhnsehlihhnuhigqdhmieekkhdrohhrghdpnhgspghrtghpthht
-    ohephedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepghgvvghrtheslhhinhhugi
-    dqmheikehkrdhorhhgpdhrtghpthhtohepuggrnhhivghlsedtgidtfhdrtghomhdprhgt
-    phhtthhopehsthgrsghlvgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugi
-    dqmheikehksehlihhsthhsrdhlihhnuhigqdhmieekkhdrohhrghdprhgtphhtthhopehl
-    ihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:GbEqZ9nCbdgbPmTpeEURSY0Y2K5JfpLpgUwHQz7Tdph8n7lSg0UtlQ>
-    <xmx:GbEqZ72wGs58WGBjmOSqjdbV1Lc5d-7vEed4gcW-xTShe2FNiuEqVg>
-    <xmx:GbEqZ8uqSRH2DR-0hPAN0d-THuxjJK4Y8-WNoH78DWRpQ6P11lH6DQ>
-    <xmx:GbEqZ_WrkXvc07D2AMH0lNwHiOW7wR2GaZmxiixKpKZnEmmZEz_XEg>
-    <xmx:GbEqZ2Tk7sFizi360hax5GclOwOJijQN_GxhIBTLzCajmWyXxydtWZF5>
-Feedback-ID: i58a146ae:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 5 Nov 2024 18:58:15 -0500 (EST)
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Daniel Palmer <daniel@0x0f.com>,
-    stable@kernel.org,
-    linux-m68k@lists.linux-m68k.org,
-    linux-kernel@vger.kernel.org
-Message-ID: <a82e8f0068a8722996a0ccfe666abb5e0a5c120d.1730850684.git.fthain@linux-m68k.org>
-From: Finn Thain <fthain@linux-m68k.org>
-Subject: [PATCH] m68k: mvme147: Reinstate early console
-Date: Wed, 06 Nov 2024 10:51:24 +1100
+	s=arc-20240116; t=1730850882; c=relaxed/simple;
+	bh=+0YNPE0BApDV8D9LH1clPl6cgfACiphUM10pWrK2zik=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=CbTK7pqBQ3Br3RuqG8RGJp3I77ugIaJnUGGzOsZc5VWA1izStpBqpIGv7QwS8JiSwwbPfpOin2ICsOu/ukMqhK/SouCCNd2Y7iy0/EGdgpOopIv594vL8LtfzbHEZYze/fbbaLXtpY+XAfvF4FkxSOgBIy358hTwuEXJN3jcxB8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=YfC6RSr8; arc=none smtp.client-ip=203.254.224.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
+	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20241105235437epoutp025e11b0892c00c381e3ce2ad50398d9f3~FN7PfO8SH0239202392epoutp02H
+	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 23:54:37 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20241105235437epoutp025e11b0892c00c381e3ce2ad50398d9f3~FN7PfO8SH0239202392epoutp02H
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1730850877;
+	bh=+0YNPE0BApDV8D9LH1clPl6cgfACiphUM10pWrK2zik=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=YfC6RSr8pMJqek4b1i0i0xbRWN+GOb7iJM38rdTZW/mxQD7N/6phrRq6feVzJI3cL
+	 OLA3lU62mSJSthnrJcvZ9nul2XmC851uBz9hYzxRZ0m7supKfF7X6K6IxATwk2poA4
+	 WVm90h6PlZrrVGSQJO0yaD60PPKrWevCgr8TIpSg=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+	epcas1p2.samsung.com (KnoxPortal) with ESMTP id
+	20241105235436epcas1p2e04590c97bfe779e87e873d4e4e1ad2a~FN7OgGF8K0460104601epcas1p24;
+	Tue,  5 Nov 2024 23:54:36 +0000 (GMT)
+Received: from epsmgec1p1-new.samsung.com (unknown [182.195.38.236]) by
+	epsnrtp3.localdomain (Postfix) with ESMTP id 4XjlYl3SDlz4x9Pt; Tue,  5 Nov
+	2024 23:54:35 +0000 (GMT)
+Received: from epcas1p3.samsung.com ( [182.195.41.47]) by
+	epsmgec1p1-new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	43.6E.19363.B30BA276; Wed,  6 Nov 2024 08:54:35 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+	epcas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20241105235434epcas1p1069647697127465bc9f4dd832ee22271~FN7NKDP651947819478epcas1p1M;
+	Tue,  5 Nov 2024 23:54:34 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20241105235434epsmtrp1aad7ef54cfaee17e5b54ac0a40f04a4f~FN7NIzozG2958329583epsmtrp1G;
+	Tue,  5 Nov 2024 23:54:34 +0000 (GMT)
+X-AuditID: b6c32a4c-02dff70000004ba3-50-672ab03be685
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	08.41.35203.A30BA276; Wed,  6 Nov 2024 08:54:34 +0900 (KST)
+Received: from inkidae001 (unknown [10.113.221.213]) by epsmtip1.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20241105235434epsmtip17ee608fcfacf20d1619b46f6c0bdbf89~FN7M1kP6f3005730057epsmtip1h;
+	Tue,  5 Nov 2024 23:54:34 +0000 (GMT)
+From: =?UTF-8?B?64yA7J246riwL1RpemVuIFBsYXRmb3JtIExhYihTUikv7IK87ISx7KCE7J6Q?=
+	<inki.dae@samsung.com>
+To: "'Rob Herring'" <robh@kernel.org>
+Cc: "'Kaustabh Chakraborty'" <kauschluss@disroot.org>, "'Seung-Woo Kim'"
+	<sw0312.kim@samsung.com>, "'Kyungmin Park'" <kyungmin.park@samsung.com>,
+	"'David	Airlie'" <airlied@gmail.com>, "'Simona Vetter'" <simona@ffwll.ch>,
+	"'Krzysztof	Kozlowski'" <krzk@kernel.org>, "'Alim Akhtar'"
+	<alim.akhtar@samsung.com>, "'Maarten	Lankhorst'"
+	<maarten.lankhorst@linux.intel.com>, "'Maxime Ripard'" <mripard@kernel.org>,
+	"'Thomas Zimmermann'" <tzimmermann@suse.de>, "'Conor Dooley'"
+	<conor@kernel.org>, <dri-devel@lists.freedesktop.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-samsung-soc@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+In-Reply-To: <CAL_JsqL62AvDEu3pmRLoV=2yFbHr_DfwsubtHbFS6cwXEhngHw@mail.gmail.com>
+Subject: RE: [PATCH 0/6] Samsung Exynos 7870 DECON driver support
+Date: Wed, 6 Nov 2024 08:54:34 +0900
+Message-ID: <000001db2fde$10bc1b50$323451f0$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 16.0
+Content-Language: ko
+Thread-Index: AQETcOy7JkGSF7VbGFg+ao1ZCztJewFhWZRKAdSMimcCXGuBibQMRcpA
+X-Brightmail-Tracker: H4sIAAAAAAAAA01TfUxTVxzNfW1fW0zZa2HZTWcYPHGGbnxUKHswSubGyNskS43GOMeGL+Wt
+	EKCt/ZAhyewYVFEnIhqg8uEHVEQCplREViRDJyB2ldmMZRkbrDAHIgsl4KqMreXhxn/nd3LO
+	O79z7308lmgSFfNy1QZap6bycTSI3XUrKjb6zasSVVyNL5QYHL2AEOMNXShx+UwrSjTe/o5D
+	uBf/RInlFRdKuFxXuYSzZJZL2Dw/cIgHPXUoUeO6iRDn56+xCXO5lUP84+jmEmfn+rhETdU0
+	SthnKzlvCcmh9k6E7F06xyZvWMa4pK21HCUbhnaQvx4bQMjOpkPkCXsrIDuHi8kFW5giaG9e
+	Sg5NZdO6cFqt1GTnqlVyfPvOrHeyZIlx0mhpEvEGHq6mCmg5npahiE7PzffXwcMPUPlGP6Wg
+	9Ho8NjVFpzEa6PAcjd4gx2ltdr5Wpo3RUwV6o1oVo6YNydK4uK0yv3BfXo5veBzVNkk+m7x3
+	CZjAF1FHAZ8HsQR4YaSPfRQE8USYA8CH170oM3gBbCm1cgMqEbYEoPPwhueOifu9XEbUC+Bf
+	y5fXhmkAy9wjrIAKxVRw7JgJCeBQbDMssYyvZrAwKwdOLwyufpaP7YDVtydWDSHYNrhyow4E
+	MBuLhB6n278HjyfAkqCnIihACzAhHKqdZAcwC3sNWs8/YjEbhUPflJXD8KHwbLmZxeSmw5lS
+	HwjkQuwwH7q8M4AxpMH6lk6UwSFwZsDOZbAYTleYuYyhCsCfR1vYzFAD4C3f6Jo7HvY1VyGB
+	7VhYFOzoiWWSg+Hc4nFOgIaYAB4xixg1Du+M/LjmhPB+UyXKSEj4Va3xJIiwrKtmWVfNsq6O
+	5f+sc4DdCsS0Vl+gopVSrTRaTRf+d+NKTYENrD53SUY3eNLxd0w/QHigH0AeCw8VNNBbVCJB
+	NlV0kNZpsnTGfFrfD2T+865kiV9Uavz/i9qQJU1IiktI3BqfQEgTpfhLgnvuA7QIU1EGOo+m
+	tbTuuQ/h8cUmZGPyourVyIGHgpJtl5avN5v/CI3odjwrPsgLm5cWByePlex7t/bm1PsVe0/V
+	3c19+0r6xY17Yk4u1NuHv/x4/MNDhUXLqsjc1FdGU7fUinuqFufu7m901zdrG09PTCj5KTUv
+	yzrk3cH72yRm07fTE2kYJ1P++PchxwZvYapzN+I1bxI6TZua7jxJ+yapun3qyNLOTx8VNZ8Y
+	eVAqr3j2edc1+rfuOkdtJjez7WvJ5oanOj5CTSqET0XCjJmQCM8v/e0vZKCe2e8lrZUf/JSV
+	vXIcjMY3dIzMP6ZMHcYyxXb+GUJmtPWfTmsz6pyfuN4rUzsmw+yDvmSjrXrX67s/umKFe3C2
+	PoeSSlg6PfUvhSPdYHcEAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrFIsWRmVeSWpSXmKPExsWy7bCSnK7VBq10g6s3TSxOXF/EZPFg3jY2
+	i5VTV7FZzD9yjtXiytf3bBZ//p1nszh/fgO7xdmmN+wWmx5fY7W4vGsOm8WM8/uYLBZ+3Mpi
+	0da5jNXi/54d7Baz3+1nt5gx+SWbxZY3E1kdBD1OrtvM5LH32wIWj52z7rJ7bFrVyeYx72Sg
+	x/3u40wem5fUe/RtWcXosfl0tcfnTXIBXFFcNimpOZllqUX6dglcGSvW/mcp2CdXcW/nYpYG
+	xk7JLkZODgkBE4mHF/aydzFycQgJ7GaUWNO4jqWLkQMoISGxZSsHhCkscfhwMUTJc0aJ32dW
+	sID0sgmkStz49JEdxBYRUJVomvWABaSIWWATq8Tp9nYmiI5OJokrH18xglRxCgRKTD/ykBnE
+	FhZwlPi3cw5YnEVAReLx2StsINt4BSwlHvdzgYR5BQQlTs58AraMWUBbovdhKyOMvWzha2aI
+	BxQkfj5dxgoRF5GY3dnGDHGQm8Srlp+MExiFZyEZNQvJqFlIRs1C0r6AkWUVo2RqQXFuem6x
+	YYFhXmq5XnFibnFpXrpecn7uJkZwdGtp7mDcvuqD3iFGJg7GQ4wSHMxKIrzzUtXThXhTEiur
+	Uovy44tKc1KLDzFKc7AoifOKv+hNERJITyxJzU5NLUgtgskycXBKNTDN3f1l2t0TW+Zqnplx
+	+HfJqqANv7rn1E+x0zyysnCL1Ale8yQupkJb2yc2bx8c4758LvBo+LVPmUJtS0z0S6Mm9S+J
+	tlA5vaT4L29e3O1OywW7XNpL53yewqkdYDF3IY9HfGGX6ZnT+sf5PR3XiKxiv6KsUWrc0ypZ
+	sZBnRVVk923ZRboH7Xd/61RlYu/3WM+c9l+/6LHB/fMnbRq4UiNnTnn3Wjh3xjSVct348AvT
+	3u9m0p3Xf5B/mlZykWTcJSdGXXX/aSWWfA5bLLjky8WT0tT43i/ZonZrtd7JB5XJYrO2vW29
+	rtCt+Mbjw9/mliMWtzK+h9vvfsswafXnAC7NbdOTflf+39X18YDuayklluKMREMt5qLiRACh
+	MxUQXQMAAA==
+X-CMS-MailID: 20241105235434epcas1p1069647697127465bc9f4dd832ee22271
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240919151130epcas1p10a885b3364250f5ff4e06975cfef13e4
+References: <CGME20240919151130epcas1p10a885b3364250f5ff4e06975cfef13e4@epcas1p1.samsung.com>
+	<20240919-exynosdrm-decon-v1-0-6c5861c1cb04@disroot.org>
+	<000001db2c1c$12e86c50$38b944f0$@samsung.com>
+	<CAL_JsqL62AvDEu3pmRLoV=2yFbHr_DfwsubtHbFS6cwXEhngHw@mail.gmail.com>
 
-From: Daniel Palmer <daniel@0x0f.com>
+Hi Rob Herring,
 
-Commit a38eaa07a0ce ("m68k/mvme147: config.c - Remove unused functions"),
-removed the console functionality for the mvme147 instead of wiring it
-up to an early console. Put the console write function back and wire it up
-like mvme16x does so it's possible to see Linux boot on this fine hardware
-once more.
-
-Cc: Daniel Palmer <daniel@0x0f.com>
-Cc: stable@kernel.org
-Fixes: a38eaa07a0ce ("m68k/mvme147: config.c - Remove unused functions")
-Signed-off-by: Daniel Palmer <daniel@0x0f.com>
-Co-developed-by: Finn Thain <fthain@linux-m68k.org>
-Signed-off-by: Finn Thain <fthain@linux-m68k.org>
-Reviewed-by: Geert Uytterhoeven <geert@linux-m68k.org>
----
-Changed since previous submission:
- - Added co-developed-by and reviewed-by tags.
- - Use a static scc_delay() function instead of a macro.
-
-This revision produces the same object code as the previous one.
-Hence it doesn't need further testing.
----
- arch/m68k/kernel/early_printk.c |  3 +++
- arch/m68k/mvme147/config.c      | 30 ++++++++++++++++++++++++++++++
- arch/m68k/mvme147/mvme147.h     |  6 ++++++
- 3 files changed, 39 insertions(+)
- create mode 100644 arch/m68k/mvme147/mvme147.h
-
-diff --git a/arch/m68k/kernel/early_printk.c b/arch/m68k/kernel/early_printk.c
-index 3cc944df04f6..d9399be89ad3 100644
---- a/arch/m68k/kernel/early_printk.c
-+++ b/arch/m68k/kernel/early_printk.c
-@@ -14,6 +14,7 @@
- 
- 
- #include "../mvme16x/mvme16x.h"
-+#include "../mvme147/mvme147.h"
- 
- asmlinkage void __init debug_cons_nputs(const char *s, unsigned n);
- 
-@@ -24,6 +25,8 @@ static void __ref debug_cons_write(struct console *c,
-       defined(CONFIG_COLDFIRE))
- 	if (MACH_IS_MVME16x)
- 		mvme16x_cons_write(c, s, n);
-+	else if (MACH_IS_MVME147)
-+		mvme147_scc_write(c, s, n);
- 	else
- 		debug_cons_nputs(s, n);
- #endif
-diff --git a/arch/m68k/mvme147/config.c b/arch/m68k/mvme147/config.c
-index 8b5dc07f0811..cc2fb0a83cf0 100644
---- a/arch/m68k/mvme147/config.c
-+++ b/arch/m68k/mvme147/config.c
-@@ -32,6 +32,7 @@
- #include <asm/mvme147hw.h>
- #include <asm/config.h>
- 
-+#include "mvme147.h"
- 
- static void mvme147_get_model(char *model);
- extern void mvme147_sched_init(void);
-@@ -185,3 +186,32 @@ int mvme147_hwclk(int op, struct rtc_time *t)
- 	}
- 	return 0;
- }
-+
-+static void scc_delay(void)
-+{
-+	__asm__ __volatile__ ("nop; nop;");
-+}
-+
-+static void scc_write(char ch)
-+{
-+	do {
-+		scc_delay();
-+	} while (!(in_8(M147_SCC_A_ADDR) & BIT(2)));
-+	scc_delay();
-+	out_8(M147_SCC_A_ADDR, 8);
-+	scc_delay();
-+	out_8(M147_SCC_A_ADDR, ch);
-+}
-+
-+void mvme147_scc_write(struct console *co, const char *str, unsigned int count)
-+{
-+	unsigned long flags;
-+
-+	local_irq_save(flags);
-+	while (count--)	{
-+		if (*str == '\n')
-+			scc_write('\r');
-+		scc_write(*str++);
-+	}
-+	local_irq_restore(flags);
-+}
-diff --git a/arch/m68k/mvme147/mvme147.h b/arch/m68k/mvme147/mvme147.h
-new file mode 100644
-index 000000000000..140bc98b0102
---- /dev/null
-+++ b/arch/m68k/mvme147/mvme147.h
-@@ -0,0 +1,6 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+
-+struct console;
-+
-+/* config.c */
-+void mvme147_scc_write(struct console *co, const char *str, unsigned int count);
--- 
-2.44.2
-
+> -----Original Message-----
+> From: Rob Herring <robh=40kernel.org>
+> Sent: Wednesday, November 6, 2024 5:11 AM
+> To: =EB=8C=80=EC=9D=B8=EA=B8=B0/Tizen=20Platform=20Lab(SR)/=EC=82=BC=EC=
+=84=B1=EC=A0=84=EC=9E=90=20<inki.dae=40samsung.com>=0D=0A>=20Cc:=20Kaustabh=
+=20Chakraborty=20<kauschluss=40disroot.org>;=20Seung-Woo=20Kim=0D=0A>=20<sw=
+0312.kim=40samsung.com>;=20Kyungmin=20Park=20<kyungmin.park=40samsung.com>;=
+=20David=0D=0A>=20Airlie=20<airlied=40gmail.com>;=20Simona=20Vetter=20<simo=
+na=40ffwll.ch>;=20Krzysztof=0D=0A>=20Kozlowski=20<krzk=40kernel.org>;=20Ali=
+m=20Akhtar=20<alim.akhtar=40samsung.com>;=0D=0A>=20Maarten=20Lankhorst=20<m=
+aarten.lankhorst=40linux.intel.com>;=20Maxime=20Ripard=0D=0A>=20<mripard=40=
+kernel.org>;=20Thomas=20Zimmermann=20<tzimmermann=40suse.de>;=20Conor=0D=0A=
+>=20Dooley=20<conor=40kernel.org>;=20dri-devel=40lists.freedesktop.org;=20l=
+inux-arm-=0D=0A>=20kernel=40lists.infradead.org;=20linux-samsung-soc=40vger=
+.kernel.org;=20linux-=0D=0A>=20kernel=40vger.kernel.org;=20devicetree=40vge=
+r.kernel.org=0D=0A>=20Subject:=20Re:=20=5BPATCH=200/6=5D=20Samsung=20Exynos=
+=207870=20DECON=20driver=20support=0D=0A>=20=0D=0A>=20On=20Fri,=20Nov=201,=
+=202024=20at=2012:08=E2=80=AFAM=20=EB=8C=80=EC=9D=B8=EA=B8=B0/Tizen=20Platf=
+orm=20Lab(SR)/=EC=82=BC=EC=84=B1=EC=A0=84=EC=9E=90=0D=0A>=20<inki.dae=40sam=
+sung.com>=20wrote:=0D=0A>=20>=0D=0A>=20>=20Hi=20Kaustabh=20Chakraborty,=0D=
+=0A>=20>=0D=0A>=20>=20Sorry=20for=20late.=0D=0A>=20>=0D=0A>=20>=20>=20-----=
+Original=20Message-----=0D=0A>=20>=20>=20From:=20Kaustabh=20Chakraborty=20<=
+kauschluss=40disroot.org>=0D=0A>=20>=20>=20Sent:=20Friday,=20September=2020=
+,=202024=2012:11=20AM=0D=0A>=20>=20>=20To:=20Inki=20Dae=20<inki.dae=40samsu=
+ng.com>;=20Seung-Woo=20Kim=0D=0A>=20>=20>=20<sw0312.kim=40samsung.com>;=20K=
+yungmin=20Park=20<kyungmin.park=40samsung.com>;=0D=0A>=20David=0D=0A>=20>=
+=20>=20Airlie=20<airlied=40gmail.com>;=20Simona=20Vetter=20<simona=40ffwll.=
+ch>;=20Krzysztof=0D=0A>=20>=20>=20Kozlowski=20<krzk=40kernel.org>;=20Alim=
+=20Akhtar=20<alim.akhtar=40samsung.com>;=0D=0A>=20>=20>=20Maarten=20Lankhor=
+st=20<maarten.lankhorst=40linux.intel.com>;=20Maxime=20Ripard=0D=0A>=20>=20=
+>=20<mripard=40kernel.org>;=20Thomas=20Zimmermann=20<tzimmermann=40suse.de>=
+;=20Rob=0D=0A>=20Herring=0D=0A>=20>=20>=20<robh=40kernel.org>;=20Conor=20Do=
+oley=20<conor=40kernel.org>=0D=0A>=20>=20>=20Cc:=20dri-devel=40lists.freede=
+sktop.org;=20linux-arm-=0D=0A>=20kernel=40lists.infradead.org;=0D=0A>=20>=
+=20>=20linux-samsung-soc=40vger.kernel.org;=20linux-kernel=40vger.kernel.or=
+g;=0D=0A>=20>=20>=20devicetree=40vger.kernel.org;=20Kaustabh=20Chakraborty=
+=0D=0A>=20<kauschluss=40disroot.org>=0D=0A>=20>=20>=20Subject:=20=5BPATCH=
+=200/6=5D=20Samsung=20Exynos=207870=20DECON=20driver=20support=0D=0A>=20>=
+=20>=0D=0A>=20>=20>=20This=20patch=20series=20aims=20at=20adding=20support=
+=20for=20Exynos7870's=20DECON=20in=20the=0D=0A>=20>=20>=20Exynos7=20DECON=
+=20driver.=20It=20introduces=20a=20driver=20data=20struct=20so=20that=0D=0A=
+>=20support=0D=0A>=20>=20>=20for=20DECON=20on=20other=20SoCs=20can=20be=20a=
+dded=20to=20it=20in=20the=20future.=0D=0A>=20>=20>=0D=0A>=20>=20>=20It=20al=
+so=20fixes=20a=20few=20bugs=20in=20the=20driver,=20such=20as=20functions=20=
+recieving=0D=0A>=20bad=0D=0A>=20>=20>=20pointers.=0D=0A>=20>=20>=0D=0A>=20>=
+=20>=20Tested=20on=20Samsung=20Galaxy=20J7=20Prime=20and=20Samsung=20Galaxy=
+=20A2=20Core.=0D=0A>=20>=20>=0D=0A>=20>=20>=20Signed-off-by:=20Kaustabh=20C=
+hakraborty=20<kauschluss=40disroot.org>=0D=0A>=20>=20>=20---=0D=0A>=20>=20>=
+=20Kaustabh=20Chakraborty=20(6):=0D=0A>=20>=20>=20=20=20=20=20=20=20drm/exy=
+nos:=20exynos7_drm_decon:=20fix=20uninitialized=20crtc=20reference=0D=0A>=
+=20in=0D=0A>=20>=20>=20functions=0D=0A>=20>=20>=20=20=20=20=20=20=20drm/exy=
+nos:=20exynos7_drm_decon:=20fix=20suspended=20condition=20in=0D=0A>=20>=20>=
+=20decon_commit()=0D=0A>=20>=20>=20=20=20=20=20=20=20drm/exynos:=20exynos7_=
+drm_decon:=20fix=20ideal_clk=20by=20converting=20it=20to=0D=0A>=20Hz=0D=0A>=
+=20>=20>=20=20=20=20=20=20=20drm/exynos:=20exynos7_drm_decon:=20properly=20=
+clear=20channels=20during=0D=0A>=20bind=0D=0A>=20>=20>=20=20=20=20=20=20=20=
+drm/exynos:=20exynos7_drm_decon:=20add=20driver=20data=20and=20support=20fo=
+r=0D=0A>=20>=20>=20Exynos7870=0D=0A>=20>=20>=20=20=20=20=20=20=20dt-binding=
+s:=20display:=20samsung,exynos7-decon:=20add=20exynos7870=0D=0A>=20>=20>=20=
+compatible=0D=0A>=20>=0D=0A>=20>=20I=20will=20apply=20all=20except=20for=20=
+the=20two=20patches=20below,=0D=0A>=20>=20=5BPATCH=202/6=5D=20drm/exynos:=
+=20exynos7_drm_decon:=20fix=20suspended=20condition=20in=0D=0A>=20decon_com=
+mit()=0D=0A>=20>=20=5BPATCH=206/6=5D=20dt-bindings:=20display:=20samsung,ex=
+ynos7-decon:=20add=20exynos7870=0D=0A>=20compatible=0D=0A>=20=0D=0A>=20Now=
+=20we=20have=20a=20warning=20in=20linux-next=20that=20samsung,exynos7870-de=
+con=20is=0D=0A>=20not=20documented.=0D=0A>=20=0D=0A>=20Please=20apply=20the=
+=20binding=20patch.=20Or=20let=20me=20know=20if=20it=20missed=206.13=20for=
+=0D=0A>=20DRM=20tree=20and=20I'll=20apply=20it.=0D=0A>=20=0D=0A=0D=0AAh...=
+=20sorry=20for=20this.=20I=20didn't=20check=20the=20warning.=20Will=20apply=
+=20the=20binding=20patch.=20I=20was=20awaiting=20the=20submission=20of=20DT=
+S.=0D=0A=0D=0AThanks,=0D=0AInki=20Dae=0D=0A=0D=0A>=20Rob=0D=0A=0D=0A=0D=0A
 
