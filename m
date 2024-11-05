@@ -1,138 +1,111 @@
-Return-Path: <linux-kernel+bounces-396400-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-396403-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 285489BCCA2
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 13:24:21 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1121B9BCCA7
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 13:24:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8BD42B20D8C
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 12:24:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 42BBD1C2268C
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Nov 2024 12:24:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A24E11D460E;
-	Tue,  5 Nov 2024 12:24:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2FB71D5ACC;
+	Tue,  5 Nov 2024 12:24:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IFt2oHD3"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="vOjhiQl4"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AF2D1D47C7
-	for <linux-kernel@vger.kernel.org>; Tue,  5 Nov 2024 12:24:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B38CE1D514F;
+	Tue,  5 Nov 2024 12:24:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730809448; cv=none; b=lXqoXdUwuAtrDD51HJDugJTgWK9p5/RzkKiJ5+Rf02znq95g/RtkFZtjlDduofAG9SpfzO7Wn943BOwi466wfReRoOxTRQHu8NatpWjIZlTs3/9O7EEfWIZg5MrE8dhk5Bwf5qgNMtO3qvh2tOrUAUm98NW+xQqrDB76BZrQ7IQ=
+	t=1730809475; cv=none; b=Af6A2glyoL5Az++DjpcLZYSiGBuVQWNu06EqS65PgrQ/Zo/UpbgylvfZRtyrAUVu1ILEfcQZx6ex/EP1UC1WCz/C5VcVqt/Wlyd3i/trV7qCLa/WWv5ZMgjv3Y9p5GaHNie7J5ghlaO0L/I2wEmABImgjJEh55qT6xBPnVIa58w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730809448; c=relaxed/simple;
-	bh=Z3RxKyFF+Ak9RYp0Y7HGuKQtSUXZCbiRnqXg63PqVbU=;
-	h=From:To:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=LHXSzFUPgBGVVS/NoCzzapv0ClX8BQjGGkoh+rh0oP4sWXrPAG2AW2wxd0DHQMlmZ2lw3n4iqJVyJ8tOaR/jSafSn8pcLYbG2CuSJHBmpzcnIWtxyx3kXXDQFp/+Sy3bkcq8tEMN9TrC2m+BSEkW1+3+j6RgxUUX3jat0GndgOI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=IFt2oHD3; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1730809445;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Z3RxKyFF+Ak9RYp0Y7HGuKQtSUXZCbiRnqXg63PqVbU=;
-	b=IFt2oHD3qNYE1P+wrY2C2Xlt7A8V8iFgVw+pVEWIzllEW0vnPbF1+CTC+olfSC/ufnZUZj
-	UuSPefEHlHX1v+XPDAsY0XcoJA94SjPE67CBdiCNaqlYnGH2A5OQyIouRAqRPW38o6wIDt
-	kIBxU8vIdvilUzFqyErbMFbCePIxYRw=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-534-NKAPh83uPxOORVM_YhmkIw-1; Tue, 05 Nov 2024 07:24:03 -0500
-X-MC-Unique: NKAPh83uPxOORVM_YhmkIw-1
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-37d49887a2cso2908982f8f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 04:24:03 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730809442; x=1731414242;
-        h=mime-version:message-id:date:references:in-reply-to:subject:to:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Z3RxKyFF+Ak9RYp0Y7HGuKQtSUXZCbiRnqXg63PqVbU=;
-        b=TiA3lER7eJwD2hKI9BIUQc1rTc6xB33xQK1iES7ssQUoAfYrgbmmWeNmQX0zR+cRlH
-         icg4vj2nxd/x8lcN1ucSpERP+U9kEJ06FcIl5aMAWrofhDMddC0/2PMNaxxj75WlOLB9
-         ulOCuGCg4eBqjCGrrgi4qTa2miAE3SVk3ICGf9oXbJkiAAq76Znc0c7o9dlg/borWXLi
-         C4ptTG5cdo4oApn0h7BeOB0ATs13/4ayOK9OwcrAw0y6sUSWAIgt0eE8s1T2sGX2u5z8
-         k3CL9GXFK2ebYwxOuH8v/ZzkljUER+RfP0hTDCNkeNYbYxTO1sY0rgOkLTPpFMdR/W6Y
-         leHQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW694abjyY1Cyigh8bjypTGEyXGqV6IE6vYEoT5LZwP0HFTa6aEhQ8jNbaqYoBEFrg7xbCivnXmrYp/Hoo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxBLa5DPGXEpjUxW+K8HfJc7FxwLn0KaSTiFz8h0FP4XguJFMMy
-	Kb2sPH6Cx2qlZnb+ZByIdOr5lGtNT414SANNwuUhmdHbeSsK4kAQYLlq1My0gRrk6BGNeDcKw7w
-	Mas+W8xzEfr6gHEZQIk4I44VUT8RqG4Kmz+zs2eMlgjKeNvExrHHOHxxFwCLcwmn8i6fB/Q==
-X-Received: by 2002:a5d:64a7:0:b0:374:c7cd:8818 with SMTP id ffacd0b85a97d-381c79e366dmr13150401f8f.22.1730809442215;
-        Tue, 05 Nov 2024 04:24:02 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGzZvOHp9mDNLf51xpdI90j858qfaPZWduW8ds6lyIOgmL+9RgRFkJgWVGEH17X6Wx/BjpnPQ==
-X-Received: by 2002:a5d:64a7:0:b0:374:c7cd:8818 with SMTP id ffacd0b85a97d-381c79e366dmr13150378f8f.22.1730809441710;
-        Tue, 05 Nov 2024 04:24:01 -0800 (PST)
-Received: from alrua-x1.borgediget.toke.dk ([2a0c:4d80:42:443::2])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381c113e69fsm16050891f8f.69.2024.11.05.04.24.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Nov 2024 04:24:01 -0800 (PST)
-Received: by alrua-x1.borgediget.toke.dk (Postfix, from userid 1000)
-	id 061B0164C230; Tue, 05 Nov 2024 13:24:00 +0100 (CET)
-From: Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>
-To: Qingfang Deng <dqfext@gmail.com>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
- <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-ppp@vger.kernel.org
-Subject: Re: [RFC PATCH net-next] net: ppp: convert to IFF_NO_QUEUE
-In-Reply-To: <20241029103656.2151-1-dqfext@gmail.com>
-References: <20241029103656.2151-1-dqfext@gmail.com>
-X-Clacks-Overhead: GNU Terry Pratchett
-Date: Tue, 05 Nov 2024 13:23:59 +0100
-Message-ID: <87msid98dc.fsf@toke.dk>
+	s=arc-20240116; t=1730809475; c=relaxed/simple;
+	bh=jMWTjfSOyCX0vrUu3o8ZZlqSwKOd9wgA61R6qFZN5uI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SNMiIVWwr2bzWaGPsWcobU8AkQJcb5q2G8s69DOnl/+FTnR3L7SvjVtSmaEbdt+j2DJxr5yY+dabE8W6oRQU7WxLK0F3SnajpfrRgwpA02RUCQJcNxevoQnY3CAw1zLfMZNbvctwNkmxhhKmCLuuPTQWYAJBPGVVWdi+7yXVfB0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=vOjhiQl4; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=RhUrIAI/1i86k5bor11f5iDkU0M1CAv0v6o50442/1s=; b=vOjhiQl4o3pTL7h/ltb5nKkH1i
+	L4HyeFfsZNjU+/nRIcqeJScMugbVUPCj8v2MfEsXeiwme8+FewH2HjQtxd8WuDRKKd+dzvVxFgPld
+	4XepR/l6exWKZgKZKvNj3LNmo2wTBr2jdEPZK2uXxJYf9xwjhR9WxVMEgdc0QHeGuP40KnCJ/DNoY
+	YOuUP8wCB4L8OnHWnKbR8MAAFfNOKB4/eSEPn+AxwV/z26tfEH5KQScdI4XvMAbawOuqTIGWPERSP
+	/oRLRVEMuI5XK0jyy8HZKyuSOsqB0XBv6mrL/qoFe+Gup6woONrUiWaBefRtGcb4czNlDtGHfElTJ
+	8NB3Nizw==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1t8Ibe-00000002oEw-3t9Y;
+	Tue, 05 Nov 2024 12:24:23 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 29A2130068B; Tue,  5 Nov 2024 13:24:23 +0100 (CET)
+Date: Tue, 5 Nov 2024 13:24:23 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Chun-Tse Shao <ctshao@google.com>
+Cc: linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>, Liang@google.com,
+	Kan <kan.liang@linux.intel.com>, Ze Gao <zegao2021@gmail.com>,
+	Yang Jihong <yangjihong1@huawei.com>,
+	Weilin Wang <weilin.wang@intel.com>,
+	linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH 2/3] perf: Reveal PMU type in fdinfo
+Message-ID: <20241105122423.GJ24862@noisy.programming.kicks-ass.net>
+References: <20241031223948.4179222-1-ctshao@google.com>
+ <20241031223948.4179222-2-ctshao@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241031223948.4179222-2-ctshao@google.com>
 
-Qingfang Deng <dqfext@gmail.com> writes:
+On Thu, Oct 31, 2024 at 10:39:44PM +0000, Chun-Tse Shao wrote:
+> It gives useful info on knowing which PMUs are reserved by this process.
+> Also add extra attributes which would be useful.
+> 
+> ```
+> Testing cycles
+> $ ./perf stat -e cycles &
+> $ cat /proc/`pidof perf`/fdinfo/3
+> pos:    0
+> flags:  02000002
+> mnt_id: 16
+> ino:    3081
+> perf_event-orig_type:   0
+> perf_event-attr.config1:        0
+> perf_event-attr.config2:        0
+> perf_event-attr.config3:        0
+> 
+> Testing L1-dcache-load-misses//
+> $ ./perf stat -e L1-dcache-load-misses &
+> $ cat /proc/`pidof perf`/fdinfo/3
+> pos:    0
+> flags:  02000002
+> mnt_id: 16
+> ino:    1072
+> perf_event-attr.type:   3
+> perf_event-attr.config: 65536
+> perf_event-attr.config1:        0
+> perf_event-attr.config2:        0
+> perf_event-attr.config3:        0
+> ```
 
-> When testing the parallel TX performance of a single PPPoE interface
-> over a 2.5GbE link with multiple hardware queues, the throughput could
-> not exceed 1.9Gbps, even with low CPU usage.
->
-> This issue arises because the PPP interface is registered with a single
-> queue and a tx_queue_len of 3. This default behavior dates back to Linux
-> 2.3.13, which was suitable for slower serial ports. However, in modern
-> devices with multiple processors and hardware queues, this configuration
-> can lead to congestion.
->
-> For PPPoE/PPTP, the lower interface should handle qdisc, so we need to
-> set IFF_NO_QUEUE.
-
-This bit makes sense - the PPPoE and PPTP channel types call through to
-the underlying network stack, and their start_xmit() ops never return
-anything other than 1 (so there's no pushback against the upper PPP
-device anyway). The same goes for the L2TP PPP channel driver.
-
-> For PPP over a serial port, we don't benefit from a qdisc with such a
-> short TX queue, so handling TX queueing in the driver and setting
-> IFF_NO_QUEUE is more effective.
-
-However, this bit is certainly not true. For the channel drivers that
-do push back (which is everything apart from the three mentioned above,
-AFAICT), we absolutely do want a qdisc to store the packets, instead of
-this arbitrary 32-packet FIFO inside the driver. Your comment about the
-short TX queue only holds for the pfifo_fast qdisc (that's the only one
-that uses the tx_queue_len for anything), anything else will do its own
-thing.
-
-(Side note: don't use pfifo_fast!)
-
-I suppose one option here could be to set the IFF_NO_QUEUE flag
-conditionally depending on whether the underlying channel driver does
-pushback against the PPP device or not (add a channel flag to indicate
-this, or something), and then call the netif_{wake,stop}_queue()
-functions conditionally depending on this. But setting the noqueue flag
-unconditionally like this patch does, is definitely not a good idea!
-
--Toke
-
+First time I hear about fdinfo.. How much of an ABI is this, and why
+this random selection of the perf_event_attr structure? What if someone
+else wants something and then we change it. Will this then break ABI?
 
