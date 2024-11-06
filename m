@@ -1,112 +1,121 @@
-Return-Path: <linux-kernel+bounces-398311-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398312-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 675199BEF6E
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 14:48:46 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D17249BEF71
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 14:49:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B77E28471F
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 13:48:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 96DB928556A
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 13:49:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7736D1DF97B;
-	Wed,  6 Nov 2024 13:48:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F7F4200CB4;
+	Wed,  6 Nov 2024 13:49:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CGYIZuVt"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G9M6C7uj"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D206A3D66;
-	Wed,  6 Nov 2024 13:48:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E09D188CC9;
+	Wed,  6 Nov 2024 13:49:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730900918; cv=none; b=jpwV1HVLVz0/IcJiRVe+p9j0r5h6qKFl2QdAnpqFTLBkv/9gnZFd7rOOmeiaoQltxutH3TIi4fDmQXHAr1odVNC7LfMYCUOT3MJOnm/jDMZn79FP/VIRcGjDNgEBDLWvzaRlt37eNZkpdlJuJmqTXKgP1kj0jTmAzqNxhbAzr5s=
+	t=1730900947; cv=none; b=bS5O6Jcs3P8YA46FoxlKrRYn+88d2uSvzofSkSNzzvh4d16EK40E16KrNTPBo18Sfm3/F05357PhZhuGplR4UtAQyXlbbBSsuGraGSOy9UVOw1oQ2/AMCrLXweaZvc7hiiqcUn1p+GNerqgU3/OrYyF59htFURMzUQDTtSkP0DQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730900918; c=relaxed/simple;
-	bh=c7SeyIvl6VsGmWGuO3Eonlnsp4/I/OGjZxvHqsAte8I=;
-	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=XZDPBLQgHiX9EtYDNhvUMtByovmr8t6N5UVx2AhM6HSk10F5mBslZa2W1gXtQYLhjy7efYFMSHrHraf/dZt7JfPUuZXqjcy+XSkHwNW7kA+GsvLx/7fIvK7m3ZMO+m7WhQGv2VRGflAjbTCfLZ2j2wO9URVd2lJ2NFdeDx7VMM0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CGYIZuVt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E6D2C4CEC6;
-	Wed,  6 Nov 2024 13:48:38 +0000 (UTC)
+	s=arc-20240116; t=1730900947; c=relaxed/simple;
+	bh=kP5RNnwnRakHjp7IiUrY3EZP4voLJK0ckjyows/28Og=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DDV0v7PXYrDGsqyHRhXbXyvOuxeLNGXPpE7Xg54/BEMfP1vx/ljQzN3L+uF6nL4IaYnZ/EdvLeStTLwUeh8UburEtgRlwjkkuZFRjWP0fDNun3XtUXcC6s8sja8TBK48Pwc0irPbbG+kFxNpzPC3Gb0fJ/AwyRp8E9vJ5K5+5G4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G9M6C7uj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B356FC4CEC6;
+	Wed,  6 Nov 2024 13:49:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730900918;
-	bh=c7SeyIvl6VsGmWGuO3Eonlnsp4/I/OGjZxvHqsAte8I=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=CGYIZuVtUXzuISt/z0zmHlPQsDWE5HyiQz5h12xMLdAnFYwG42Ns6h8zs+1I+N+qw
-	 MQGL9Vr2CauQIyD6K0vJ4Jei7Pl4qCv6Mp5Qs8XGjEwtw6wvrwLnAm1xnomWRDe8qi
-	 LFq0B6uy5MSwkeK+soGsq9/05b3TExyxCh8ZqwhZy4DZCmYTHLGJbxnsLQ2woHOUDY
-	 hNObXqbaxt9B4wZPSRUuqIoBHHa4hGfAoA5gplGmp3Mc1us/vx3LBOCXffVTviXO7E
-	 J9AXkK7/r7GwFPJllSjgvIGqab1aHceMPBH5rIuG8LXF5FErRs/DW1qJVnASbHhJDM
-	 MvnRaqy69kyYw==
-Date: Wed, 06 Nov 2024 07:48:36 -0600
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=k20201202; t=1730900947;
+	bh=kP5RNnwnRakHjp7IiUrY3EZP4voLJK0ckjyows/28Og=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=G9M6C7ujoR2l2An6oFv/Nne/k7peIsT4TOU71BCK/kvL6ynxw2avyJtD+gZFfTNs4
+	 ZJzkq4hByd83nVmbB8zRY9EWxQcPYXPEbVBT86ovTdP0e2HF7h4tXDGLBA8f5SZvyD
+	 NVuowSQJ70ZkhDM6W6aaQCt5VNphlChlgHuAnLm2v/T030CXUqWR4xyMh9Ik4L5Tnw
+	 XHiWKwhhAfmvpzbmAHMPV4RU77bZRvsS6Cr+i6nr0Q+YmYYRUEzje1IKU5TabziiSD
+	 b4kc7YfsaH8qE1Zx8hYtFElzpCH3bhkN8uVCHioGQqWKSKJKbqtMogWyR/344YKnZY
+	 0XfFyW6hUlUIg==
+Date: Wed, 6 Nov 2024 13:49:02 +0000
+From: Simon Horman <horms@kernel.org>
+To: mrpre <mrpre@163.com>
+Cc: yonghong.song@linux.dev, john.fastabend@gmail.com,
+	martin.lau@kernel.org, edumazet@google.com, jakub@cloudflare.com,
+	davem@davemloft.net, dsahern@kernel.org, kuba@kernel.org,
+	pabeni@redhat.com, netdev@vger.kernel.org, bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] bpf: Introduce cpu affinity for sockmap
+Message-ID: <20241106134902.GP4507@kernel.org>
+References: <20241101023832.32404-1-mrpre@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Heiko Stuebner <heiko@sntech.de>
-Cc: neil.armstrong@linaro.org, krzk+dt@kernel.org, jonas@kwiboo.se, 
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
- andrzej.hajda@intel.com, linux-kernel@vger.kernel.org, 
- Laurent.pinchart@ideasonboard.com, conor+dt@kernel.org, 
- Heiko Stuebner <heiko.stuebner@cherry.de>, mripard@kernel.org, 
- rfoss@kernel.org, andy.yan@rock-chips.com, jernej.skrabec@gmail.com, 
- quentin.schulz@cherry.de, dri-devel@lists.freedesktop.org, 
- devicetree@vger.kernel.org, tzimmermann@suse.de, 
- maarten.lankhorst@linux.intel.com
-In-Reply-To: <20241106123304.422854-3-heiko@sntech.de>
-References: <20241106123304.422854-1-heiko@sntech.de>
- <20241106123304.422854-3-heiko@sntech.de>
-Message-Id: <173090091636.3280912.9491997051985691570.robh@kernel.org>
-Subject: Re: [PATCH 2/3] dt-bindings: display: rockchip: Add schema for
- RK3588 DW DSI2 controller
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241101023832.32404-1-mrpre@163.com>
 
+On Fri, Nov 01, 2024 at 10:38:31AM +0800, mrpre wrote:
 
-On Wed, 06 Nov 2024 13:33:03 +0100, Heiko Stuebner wrote:
-> From: Heiko Stuebner <heiko.stuebner@cherry.de>
-> 
-> The Display Serial Interface 2 (DSI-2) is part of a group of communication
-> protocols defined by the MIPI Alliance. The RK3588 implements this
-> specification in its two MIPI DSI-2 Host Controllers that are based on a
-> new Synopsis IP.
-> 
-> Signed-off-by: Heiko Stuebner <heiko.stuebner@cherry.de>
-> ---
->  .../rockchip/rockchip,rk3588-mipi-dsi2.yaml   | 119 ++++++++++++++++++
->  1 file changed, 119 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/display/rockchip/rockchip,rk3588-mipi-dsi2.yaml
-> 
+...
 
-My bot found errors running 'make dt_binding_check' on your patch:
+> diff --git a/net/core/sock_map.c b/net/core/sock_map.c
+> index 07d6aa4e39ef..36e9787c60de 100644
+> --- a/net/core/sock_map.c
+> +++ b/net/core/sock_map.c
+> @@ -465,7 +465,7 @@ static int sock_map_get_next_key(struct bpf_map *map, void *key, void *next)
+>  }
+>  
+>  static int sock_map_update_common(struct bpf_map *map, u32 idx,
+> -				  struct sock *sk, u64 flags)
+> +				  struct sock *sk, u64 flags, s32 target_cpu)
+>  {
+>  	struct bpf_stab *stab = container_of(map, struct bpf_stab, map);
+>  	struct sk_psock_link *link;
+> @@ -490,6 +490,8 @@ static int sock_map_update_common(struct bpf_map *map, u32 idx,
+>  	psock = sk_psock(sk);
+>  	WARN_ON_ONCE(!psock);
+>  
+> +	psock->target_cpu = target_cpu;
+> +
+>  	spin_lock_bh(&stab->lock);
+>  	osk = stab->sks[idx];
+>  	if (osk && flags == BPF_NOEXIST) {
 
-yamllint warnings/errors:
+Hi Jiayuan Chen,
 
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/display/rockchip/rockchip,rk3588-mipi-dsi2.yaml: $id: Cannot determine base path from $id, relative path/filename doesn't match actual path or filename
- 	 $id: http://devicetree.org/schemas/display/rockchip/rockchip,dw-mipi-dsi2.yaml
- 	file: /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/display/rockchip/rockchip,rk3588-mipi-dsi2.yaml
+The code immediately following the hunk above is:
 
-doc reference errors (make refcheckdocs):
+		ret = -EEXIST;
+		goto out_unlock;
+	} else if (!osk && flags == BPF_EXIST) {
+		ret = -ENOENT;
+		goto out_unlock;
+	}
 
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20241106123304.422854-3-heiko@sntech.de
+And it seems that these gotos are the only code paths that lead to
+out_unlock, which looks like this:
 
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
+out_unlock:
+	spin_unlock_bh(&stab->lock);
+	if (psock)
+		sk_psock_put(sk, psock);
+out_free:
+	sk_psock_free_link(link);
+	return ret;
+}
 
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
+As you can see, the code under out_unlock expects that psock may be NULL.
+But the code added to this function by your patch dereferences it
+unconditionally. This seems inconsistent.
 
-pip3 install dtschema --upgrade
+Flagged by Smatch.
 
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
+...
 
