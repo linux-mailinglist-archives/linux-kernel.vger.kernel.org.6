@@ -1,141 +1,139 @@
-Return-Path: <linux-kernel+bounces-399061-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399062-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 301FC9BFA58
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 00:45:40 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35C389BFA59
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 00:45:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C85F21C21C88
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 23:45:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB24B1F22B79
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 23:45:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5BE2209668;
-	Wed,  6 Nov 2024 23:45:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C1FD1DE8A6;
+	Wed,  6 Nov 2024 23:45:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="cTT8TQfj"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=engflow.com header.i=@engflow.com header.b="MWfoRhFh"
+Received: from mail-io1-f51.google.com (mail-io1-f51.google.com [209.85.166.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 746E61D966A;
-	Wed,  6 Nov 2024 23:45:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730936724; cv=pass; b=Uauh3+XaJpJd72NhRdR4poz5Y3GD3O7QwzuLJ5J+7J15Ej637oqRFBm0qDff5VG0FnhesuY+L1kmtJjYRqjXf+I2BDwrUToJszvUtzMbTDfTSo3cnqP+UlZk2RO0pHojsv2G8sfW/dL7oY1Vu3RdM4hne4lWMh/vSSWY8fzlgjk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730936724; c=relaxed/simple;
-	bh=w9RBdGBrQqRvP4QVYXJHPuVD77PpiUcpzIMOVebp6nc=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=bNBKlThnjCcfs7Wz8afDAV4W0HIFj08nVMG4aXpHPU8wbZoevv+jWTV5k5JHX0rzDyZIBtQ1UOABH4i0i/+qahVXbYqs3opL+1FzUmOFXTY34bVsXFNCj7hTfx06I+Vyff6lL4O24KYSVXM5HByCIWifGuBcrpgbhMxsCxjp7qs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=cTT8TQfj; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1730936695; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=R6HMMUHtc1LGPVEXrD5PNCVUxuA7BNkb7qJL3b0pLjLv8KPrIoadLVYSoabQ3Z+dYr67mzJPDqk/klYxmCyN1pZjEL4TFpbrIa/ruLX0WAV5YTwj4qgQXrVd1NZP9xJ/sg3VtgwMoaE2n2XRNUbiyFJfhoPtoeSxNv7H4Xsf8c8=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1730936695; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=w9RBdGBrQqRvP4QVYXJHPuVD77PpiUcpzIMOVebp6nc=; 
-	b=RXsjqdDFZQ9QelySvS1PT8h+kkEyaqZOHzHv477RVO68k+djASH4mQZcOoGs4jU7GagDjlOuSd/TDOH6AgQ0wSgDtC60AmAog+s3Ux5EmBnHhhCPpkU3CNN47P9ocdI2umln9L1hWbpG9cqA8CiSj2cAoJ/K2xa2WHvbG58n/nc=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1730936695;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
-	bh=w9RBdGBrQqRvP4QVYXJHPuVD77PpiUcpzIMOVebp6nc=;
-	b=cTT8TQfjqYSX70R+jyXBXf3BreIvqkS/bPYdo1zcpQqYXavSLEcTWfuKhcb/sFB/
-	c9+YbkfqcF5ndTea00wwVd7HXbcGw7u9YZr3XhaKwno6pflglCl+Kr+3fHn9/GkfQ6x
-	IfqTxL1p3uzUoEE0DKAu4CHGUxwEeNcfWMmQdFfU=
-Received: by mx.zohomail.com with SMTPS id 1730936692453913.7917799009244;
-	Wed, 6 Nov 2024 15:44:52 -0800 (PST)
-Content-Type: text/plain;
-	charset=utf-8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 108231D966A
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 23:45:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.51
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730936730; cv=none; b=fB3Z74iQktriBVAGzswwQKXKJqmdSxMBT6mCRgvaBJXAKOAtJGnpR5wyfXNT/E6N1wDkEpsB4seRbR76HqOAnavsHtyNVxG6mCMp1+lGxpOCdwHaxYM3dNWSezKoDvQQDz1R23/weqjB1sQwiPa7vpnim2fml83wzK/RJT4U10k=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730936730; c=relaxed/simple;
+	bh=Qfirc4O31/ZM0gFfIfa1xSrbiS63G6QjT5cC1qr0Dto=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=RzTTiJD09e4TY1o/VO9s3Jt4B/HJUZcNCfEs5P1t6LCgo1LSpiIEiGmutgLIbhbyG+9NheDqLKVe839UFqo0Uk/2dBY6aIJ6v1LWkRtEeOoHt+2yZ2b3nKYO7jZ/1ztu38y8wKpzwJVyAu722u4iSJPnLcc9JaO1x4ltbv1753k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=engflow.com; spf=pass smtp.mailfrom=engflow.com; dkim=pass (1024-bit key) header.d=engflow.com header.i=@engflow.com header.b=MWfoRhFh; arc=none smtp.client-ip=209.85.166.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=engflow.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=engflow.com
+Received: by mail-io1-f51.google.com with SMTP id ca18e2360f4ac-83ab694ebe5so14192539f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2024 15:45:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=engflow.com; s=google; t=1730936726; x=1731541526; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ptJC94diYWOUdvMtH8z3GbtBqdTfvSWNLK4dH6tAaKg=;
+        b=MWfoRhFhDpNqmQBQZsy3r4RJ70C6XYo0FdlhupqUINiaC5Ry+MiVXF6BhW/2aimp27
+         Xaf8xjbEkl/XfOazdEa14laUvQ/JMBhlcwFAUQ2s+KRVr51A9OgYAIlxKxlB8UwSxGFP
+         nzv3DCwhS1hONMvBJqfUTnSCyzpgSQY+YvgVQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730936726; x=1731541526;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ptJC94diYWOUdvMtH8z3GbtBqdTfvSWNLK4dH6tAaKg=;
+        b=VdeR1MUD4dR91AXdev6DRvgIbd3FKFu27Q9QZVMfplekmbl2o9hLh09sSr/AoBJwxj
+         +HmLqRJ4Wut5VQ87RCfKatWOr7FYQTMwVh2pPIO0c0jmruUJgljJXA0KIZzLLeXB5u6+
+         FfkeM4zjy//oW/Vmhqixixrxr0gSgaTlwJr6dShy8vECJ68bCe8rGbq6KkOeGy8781FR
+         2Fo7LjMLznkt5oFlcHwz42QioUPAzFbt22JDDV7bwiKTi4L2fAzb4x+sB5O81QrccjkU
+         DYHpFhUWQICkscwjuB4c0vz2XH544NXl80BejhFS7qA5NHpumLNSvNIUi7bAuouPDhbI
+         bKbg==
+X-Forwarded-Encrypted: i=1; AJvYcCX3Qh7pRwQrB1vYgz55If6g2GK95GhUhGJHKClQ0XcbcfEoQ/IR40KfQJj1U/7hbvYnsmMmxL4dJ3g2PSM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywkx8Q1P7Qzgs55a1+0/d73tBZWhNJXTZmjM/fTkk8pQgIXh84Z
+	iw9kXWwx6UETowLsaqc7gBHfesnqzYgTJRlIBJq4xitFxh2imOSjOWJHCUPpoJ8=
+X-Google-Smtp-Source: AGHT+IH5eRb7TmUcP7kRbCY2LBcoVcAb3ol/Ro6z2gFuEKQC361+qx8U8LRIAjY3kCj2oElyLAjt9w==
+X-Received: by 2002:a92:cdac:0:b0:3a2:6cd7:3250 with SMTP id e9e14a558f8ab-3a4ed29dcdemr417202125ab.10.1730936725982;
+        Wed, 06 Nov 2024 15:45:25 -0800 (PST)
+Received: from benjamin-test-build-vm.us-central1-b.c.engflow-remote-execution.internal (209.179.154.104.bc.googleusercontent.com. [104.154.179.209])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3a6eac8c5c0sm127745ab.6.2024.11.06.15.45.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 06 Nov 2024 15:45:25 -0800 (PST)
+From: Benjamin Peterson <benjamin@engflow.com>
+To: 
+Cc: Benjamin Peterson <benjamin@engflow.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	linux-perf-users@vger.kernel.org (open list:PERFORMANCE EVENTS SUBSYSTEM),
+	linux-kernel@vger.kernel.org (open list:PERFORMANCE EVENTS SUBSYSTEM)
+Subject: [PATCH 1/2] perf trace: do not lose last events in a race
+Date: Wed,  6 Nov 2024 23:45:17 +0000
+Message-Id: <20241106234518.115234-1-benjamin@engflow.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.200.121\))
-Subject: Re: [PATCH v3 09/16] rust: add `io::Io` base type
-From: Daniel Almeida <daniel.almeida@collabora.com>
-In-Reply-To: <CAH5fLgjC5Rcq5VJbEFSVP_rE0xjj8CGdqxZexhPVsGcTZ+85HA@mail.gmail.com>
-Date: Wed, 6 Nov 2024 20:44:35 -0300
-Cc: Danilo Krummrich <dakr@kernel.org>,
- gregkh@linuxfoundation.org,
- rafael@kernel.org,
- bhelgaas@google.com,
- ojeda@kernel.org,
- alex.gaynor@gmail.com,
- boqun.feng@gmail.com,
- gary@garyguo.net,
- bjorn3_gh@protonmail.com,
- benno.lossin@proton.me,
- tmgross@umich.edu,
- a.hindborg@samsung.com,
- airlied@gmail.com,
- fujita.tomonori@gmail.com,
- lina@asahilina.net,
- pstanner@redhat.com,
- ajanulgu@redhat.com,
- lyude@redhat.com,
- robh@kernel.org,
- saravanak@google.com,
- rust-for-linux@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- linux-pci@vger.kernel.org,
- devicetree@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <A309C141-E390-44C1-A2B7-A7A9CDB132D7@collabora.com>
-References: <20241022213221.2383-1-dakr@kernel.org>
- <20241022213221.2383-10-dakr@kernel.org>
- <CAH5fLggFD7pq0WCfMPYTZcFkvrXajPbxTBtkvSeh-N2isT1Ryw@mail.gmail.com>
- <ZyCo9SRP4aFZ6KsZ@pollux>
- <CAH5fLgjC5Rcq5VJbEFSVP_rE0xjj8CGdqxZexhPVsGcTZ+85HA@mail.gmail.com>
-To: Alice Ryhl <aliceryhl@google.com>
-X-Mailer: Apple Mail (2.3826.200.121)
-X-ZohoMailClient: External
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-Sorry, I didn=E2=80=99t see this:
+If a perf trace event selector specifies a maximum number of events to output
+(i.e., "/nr=N/" syntax), the event printing handler, trace__event_handler,
+disables the event selector after the maximum number events are
+printed. Furthermore, trace__event_handler checked if the event selector was
+disabled before doing any work. This avoided exceeding the maximum number of
+events to print if more events were in the buffer before the selector was
+disabled. However, the event selector can be disabled for reasons other than
+exceeding the maximum number of events. In particular, when the traced
+subprocess exits, the main loop disables all event selectors. This meant the
+last events of a traced subprocess might be lost to the printing handler's
+short-circuiting logic.
 
-> On 29 Oct 2024, at 07:18, Alice Ryhl <aliceryhl@google.com> wrote:
->=20
-> What you're doing now is a bit awkward to use. You have to make sure
-> that it never escapes the struct it's created for, so e.g. you can't
-> give out a mutable reference as the user could otherwise `mem::swap`
-> it with another Io. Similarly, the Io can never be in a public field.
-> Your safety comment on Io::new really needs to say something like
-> "while this struct exists, the `addr` must be a valid I/O region",
-> since I assume such regions are not valid forever? Similarly if we
+This nondeterministic problem could be seen by running the following many times:
 
-Io is meant to be a private member within a wrapper type that actually
-acquires the underlying I/O region, like `pci::Bar` or =
-`Platform::IoMem`.
+  $ perf trace -e syscalls:sys_enter_exit_group true
 
-Doesn=E2=80=99t that fix the above?
+trace__event_handler should simply check for exceeding the maximum number of
+events to print rather than the state of the event selector.
 
-> look at [1], the I/O region actually gets unmapped *before* the Io is
-> destroyed since IoMem::drop runs before the fields of IoMem are
-> destroyed, so you really need something like "until the last use of
-> this Io" and not "until this Io is destroyed" in the safety comment.
->=20
-> If you compare similar cases in Rust, then they also do what I
-> suggested. For example, Vec<T> holds a raw pointer, and it uses unsafe
-> to assert that it's valid on each use of the raw pointer - it does not
-> create e.g. an `&'static mut [T]` to hold in a field of the Vec<T>.
-> Having an IoRaw<S> and an Io<'a, S> corresponds to what Vec<T> does
-> with IoRaw being like NonNull<T> and Io<'a, S> being like &'a T.
->=20
-> [1]: =
-https://lore.kernel.org/all/20241024-topic-panthor-rs-platform_io_support-=
-v1-1-3d1addd96e30@collabora.com/
+Fixes: a9c5e6c1e9bff ("perf trace: Introduce per-event maximum number of events property")
+Signed-off-by: Benjamin Peterson <benjamin@engflow.com>
+---
+ tools/perf/builtin-trace.c | 9 ++-------
+ 1 file changed, 2 insertions(+), 7 deletions(-)
 
-What I was trying to say in my last message is that the wrapper type, =
-i.e.:
-IoMem and so on, should not have a lifetime parameter, but IIUC this is =
-not
-what you=E2=80=99re suggesting here, right?
+diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
+index d3f11b90d025..f6179b13b8b4 100644
+--- a/tools/perf/builtin-trace.c
++++ b/tools/perf/builtin-trace.c
+@@ -3096,13 +3096,8 @@ static int trace__event_handler(struct trace *trace, struct evsel *evsel,
+ {
+ 	struct thread *thread;
+ 	int callchain_ret = 0;
+-	/*
+-	 * Check if we called perf_evsel__disable(evsel) due to, for instance,
+-	 * this event's max_events having been hit and this is an entry coming
+-	 * from the ring buffer that we should discard, since the max events
+-	 * have already been considered/printed.
+-	 */
+-	if (evsel->disabled)
++
++	if (evsel->nr_events_printed >= evsel->max_events)
+ 		return 0;
+ 
+ 	thread = machine__findnew_thread(trace->host, sample->pid, sample->tid);
+-- 
+2.39.5
 
-=E2=80=94 Daniel=
 
