@@ -1,320 +1,178 @@
-Return-Path: <linux-kernel+bounces-398556-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398561-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A66549BF2CB
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 17:09:07 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 645149BF2D8
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 17:10:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 377111F219C6
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 16:09:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E48CB1F243DD
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 16:10:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC0B0204F77;
-	Wed,  6 Nov 2024 16:08:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 692B2206519;
+	Wed,  6 Nov 2024 16:08:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AiPxPu/9"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="iI/Bm03R"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 044B5203703;
-	Wed,  6 Nov 2024 16:08:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05985189F5C
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 16:08:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730909284; cv=none; b=KH8NfhLD/zhqi1Q2AWO1LTWt9Q+eM1x/drS8tBo0R78wAHu8/6gJLEq3MQfrltrGeZOJaPM+fW6mPKLb99314wjTkm3pG2FNiPw6zSqOk5iZ3pac+ITFt9gZUlyxPxDOlBVQnPTyMuyO5citLGnJkJqYXeSvbid0oLDyUMke7MA=
+	t=1730909313; cv=none; b=OE3fZf9qMbF44cgOiiWZD1nwf6ma8d41a3hNqNYQYF/1HEDyruODV+XHm6jXtrucoQUEiMGdHsYTN605v9IiZJXF24Kh0vVmhq041UrvUq7T1jG37zN5FIXYLYvN4TpELJ9EHjKTtpOINZnO+L6E6tg9T4bnSAbSXFiMeSrcOIA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730909284; c=relaxed/simple;
-	bh=YqxQs5N7780pZPl+viPzrqgEiiSjrsm9V2x3PaeBgBM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OmaxjU1CnOsPS0Zm2U+kcLRwjhx3yIC/BNgcKYY5oUFa46MkWMi7VT/aGXXt6f1SP5v55cWcgkoSPm9kQhpIyqvQy3/s7PYxBW1wGX0bs44pbefRy19opUSHoYNMPhNmpRygp5pE3pt6V81D2/4k71XHJ0hNyyT53qE6O+AGOFA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AiPxPu/9; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730909283; x=1762445283;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=YqxQs5N7780pZPl+viPzrqgEiiSjrsm9V2x3PaeBgBM=;
-  b=AiPxPu/9BW93C01IeU9xSyMjWsMgtdLdy2gIyUvtfvAEN/3Qcmisl3e+
-   jae/y5vRSJ6JsKw+1nA/Nxnaz96frQhNv4vEbJY0ludroxP3mX+H3UZzz
-   E063LF/YNn4F6n/bBNkq53MH10XjiKlHB15ho29vpczEF9hYNf/h//1bU
-   LCjH9n/ztrmhWHR/pKfKqGh+/LJwmeo6+C9OEKBJWUuGuSr6AMJnNNUtO
-   BPTvTzwmy4Pp1Y40Rb5u2Xch8fnNhMj5HCnQqsLJpJJCxirHq0/XZqc9A
-   V9ScaVG3H6Gx5LBVMpqG6aFSKZmGymhH4XbOU1aSYTS+y9qoZ3XKck+aW
-   g==;
-X-CSE-ConnectionGUID: dVdQsUfcRwKlR7cbA1KMVA==
-X-CSE-MsgGUID: dIXMeLMRRiuYMq/+tNqmww==
-X-IronPort-AV: E=McAfee;i="6700,10204,11248"; a="30932615"
-X-IronPort-AV: E=Sophos;i="6.11,263,1725346800"; 
-   d="scan'208";a="30932615"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2024 08:08:02 -0800
-X-CSE-ConnectionGUID: 09YIEWwaQoulcZ9i16jkuA==
-X-CSE-MsgGUID: iezak7uMSDC1ynrtqPQ/4w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,263,1725346800"; 
-   d="scan'208";a="89211010"
-Received: from linux.intel.com ([10.54.29.200])
-  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2024 08:07:58 -0800
-Received: from [10.212.82.230] (kliang2-mobl1.ccr.corp.intel.com [10.212.82.230])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by linux.intel.com (Postfix) with ESMTPS id 2CB5920B5703;
-	Wed,  6 Nov 2024 08:07:54 -0800 (PST)
-Message-ID: <007cfed1-111d-45aa-b873-24cca9d4af01@linux.intel.com>
-Date: Wed, 6 Nov 2024 11:07:53 -0500
+	s=arc-20240116; t=1730909313; c=relaxed/simple;
+	bh=n0xRcBe0rIsVQ1363YpVYQ//vPK33a4m4GsHEeT6hog=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BXMk34WmkM8lD16RkiGKV4K1Q+ntptuNtZtYqTQ5QO9k2xbQOiS3VPewaK+moDrm/iMtaSenUma63P9mYYcRxsCrhXkt0RPH/lhYr9/H0VnsNSQcQHxDyL7T7AGn3usNry4fjFD9iaC3tMYT3oazMEKO+74RSV+bX4DhvAbVhWo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=iI/Bm03R; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1730909309;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gtktfGJOSu4yP8vXJE1RmnBu/n+VHlAgoAhCDtbar/M=;
+	b=iI/Bm03RZtNg+/H7lqo7FoXM0AS7moTpN6J33sBVgHTyX4gQUCXqFBqHQXhwbtLZomeqym
+	D5OUvG8Sgc5NIoaGmtYFpN7htuT/8utA7DjiUt9JQnkuLfST4qgaiOF6sUJQ8OqH4Db0vC
+	VDh2XfRLFG8rjonu4BFtR8RzDgVqp9o=
+Received: from mail-oi1-f199.google.com (mail-oi1-f199.google.com
+ [209.85.167.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-491-vSQnOx1sOg2QXeuDjxv4KA-1; Wed, 06 Nov 2024 11:08:25 -0500
+X-MC-Unique: vSQnOx1sOg2QXeuDjxv4KA-1
+X-Mimecast-MFC-AGG-ID: vSQnOx1sOg2QXeuDjxv4KA
+Received: by mail-oi1-f199.google.com with SMTP id 5614622812f47-3e6587f103bso4472371b6e.3
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2024 08:08:24 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730909303; x=1731514103;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gtktfGJOSu4yP8vXJE1RmnBu/n+VHlAgoAhCDtbar/M=;
+        b=Iz0fcAAOQRSnds3gEFj0ZNBNRMcQPAkvNCU2OULKrrQtLHFWt2q9uzCEgR5jy84paH
+         w24ivVW3Ei/T+m0PKfGKdO5/DCyHR7oGoMWI29905Adlj5W+oQmgP2gtSYn/MTe7G7GU
+         RtZXdfkvo+QSwokYEvUiCLdR3o8kkP7doOqcj3xKoE+c+YBw7obhO2rNEdL0mvcj7UdP
+         CaS2Qkka9SWy9Z6uFqalzNkTI2aKLvoReRpCHhJ0tJK2SUs1gTP4hSx+IiVmoZa5Trel
+         bDM+EhxtJhakjjSScYqHH754RQ/HXes0VOujkECDl6qaw1+HQFc/njn8wF2Uy5kbNjyH
+         96Ag==
+X-Gm-Message-State: AOJu0YyNIeK7DwxC7vY4JgD9x1ZjdXR6tD1VzbXm22XrFJ572g+7459Z
+	MjlvVEVWUqSKzWFT6EbHMkMQT5ePHk25psMz+AzeljXcQD9BWukmcHBEH95WSiHRDh682cY3pMy
+	k1f7/u9Dzubzo4eD17EjAmUQOCLpIoGsuVJAIailKO8eYPbd7lnGCNCU+ylZ5XA==
+X-Received: by 2002:a05:6808:2023:b0:3e6:b47:6226 with SMTP id 5614622812f47-3e758c4be90mr19099643b6e.27.1730909303571;
+        Wed, 06 Nov 2024 08:08:23 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFRwQG9IyzATA4SoiRH7kwIVlnMSE+WwDnNnWWqZnN8xxFintYiC+5HL3aDsUu7eDxWGtmMwQ==
+X-Received: by 2002:a05:6808:2023:b0:3e6:b47:6226 with SMTP id 5614622812f47-3e758c4be90mr19099603b6e.27.1730909303245;
+        Wed, 06 Nov 2024 08:08:23 -0800 (PST)
+Received: from jlelli-thinkpadt14gen4.remote.csb ([151.29.142.6])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-3e66119120dsm3024857b6e.12.2024.11.06.08.08.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 06 Nov 2024 08:08:22 -0800 (PST)
+Date: Wed, 6 Nov 2024 17:08:16 +0100
+From: Juri Lelli <juri.lelli@redhat.com>
+To: Joel Fernandes <joel@joelfernandes.org>
+Cc: linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Suleiman Souhlal <suleiman@google.com>,
+	Aashish Sharma <shraash@google.com>,
+	Shin Kawamura <kawasin@google.com>,
+	Vineeth Remanan Pillai <vineeth@bitbyteword.org>,
+	Waiman Long <longman@redhat.com>
+Subject: Re: [PATCH] dl_server: Reset DL server params when rd changes
+Message-ID: <ZyuUcJDPBln1BK1Y@jlelli-thinkpadt14gen4.remote.csb>
+References: <20241029225116.3998487-1-joel@joelfernandes.org>
+ <ZyJC9MkbPeF9_rdP@jlelli-thinkpadt14gen4.remote.csb>
+ <20241030195017.GA4171541@google.com>
+ <Zyin7P2WNZMM40tp@jlelli-thinkpadt14gen4.remote.csb>
+ <20241104174109.GA1044726@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 5/5] perf: Correct perf sampling with guest VMs
-To: Colton Lewis <coltonlewis@google.com>, kvm@vger.kernel.org
-Cc: Oliver Upton <oliver.upton@linux.dev>,
- Sean Christopherson <seanjc@google.com>,
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
- Adrian Hunter <adrian.hunter@intel.com>, Will Deacon <will@kernel.org>,
- Russell King <linux@armlinux.org.uk>,
- Catalin Marinas <catalin.marinas@arm.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
- Christophe Leroy <christophe.leroy@csgroup.eu>,
- Naveen N Rao <naveen@kernel.org>, Heiko Carstens <hca@linux.ibm.com>,
- Vasily Gorbik <gor@linux.ibm.com>, Alexander Gordeev
- <agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>,
- Sven Schnelle <svens@linux.ibm.com>, Thomas Gleixner <tglx@linutronix.de>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
- linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
- linux-s390@vger.kernel.org
-References: <20241105195603.2317483-1-coltonlewis@google.com>
- <20241105195603.2317483-6-coltonlewis@google.com>
-Content-Language: en-US
-From: "Liang, Kan" <kan.liang@linux.intel.com>
-In-Reply-To: <20241105195603.2317483-6-coltonlewis@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241104174109.GA1044726@google.com>
 
+On 04/11/24 17:41, Joel Fernandes wrote:
+> On Mon, Nov 04, 2024 at 11:54:36AM +0100, Juri Lelli wrote:
 
+...
 
-On 2024-11-05 2:56 p.m., Colton Lewis wrote:
-> Previously any PMU overflow interrupt that fired while a VCPU was
-> loaded was recorded as a guest event whether it truly was or not. This
-> resulted in nonsense perf recordings that did not honor
-> perf_event_attr.exclude_guest and recorded guest IPs where it should
-> have recorded host IPs.
+> > I added a printk in __dl_server_attach_root which is called after the
+> > dynamic rd is built to transfer bandwidth to it.
+> > 
+> > __dl_server_attach_root came with d741f297bceaf ("sched/fair: Fair
+> > server interface"), do you have this change in your backport?
 > 
-> Rework the sampling logic to only record guest samples for events with
-> exclude_guest = 0. This way any host-only events with exclude_guest
-> set will never see unexpected guest samples. The behaviour of events
-> with exclude_guest = 0 is unchanged.
+> You nailed it! Our 5.15 backport appears to be slightly older and is missing
+> this from topology.c as you mentioned. Thanks for clarifying!
 > 
-> Note that events configured to sample both host and guest may still
-> misattribute a PMI that arrived in the host as a guest event depending
-> on KVM arch and vendor behavior.
 > 
-> Signed-off-by: Colton Lewis <coltonlewis@google.com>
-> Acked-by: Mark Rutland <mark.rutland@arm.com>
-> Reviewed-by: Oliver Upton <oliver.upton@linux.dev>
-> ---
->  arch/arm64/include/asm/perf_event.h |  4 ----
->  arch/arm64/kernel/perf_callchain.c  | 28 ----------------------------
->  arch/x86/events/core.c              | 16 ++++------------
->  include/linux/perf_event.h          | 21 +++++++++++++++++++--
->  kernel/events/core.c                | 21 +++++++++++++++++----
->  5 files changed, 40 insertions(+), 50 deletions(-)
+>         /*
+>          * Because the rq is not a task, dl_add_task_root_domain() did not
+>          * move the fair server bw to the rd if it already started.
+>          * Add it now.
+>          */
+>         if (rq->fair_server.dl_server)
+>                 __dl_server_attach_root(&rq->fair_server, rq);
 > 
-> diff --git a/arch/arm64/include/asm/perf_event.h b/arch/arm64/include/asm/perf_event.h
-> index 31a5584ed423..ee45b4e77347 100644
-> --- a/arch/arm64/include/asm/perf_event.h
-> +++ b/arch/arm64/include/asm/perf_event.h
-> @@ -10,10 +10,6 @@
->  #include <asm/ptrace.h>
->  
->  #ifdef CONFIG_PERF_EVENTS
-> -struct pt_regs;
-> -extern unsigned long perf_arch_instruction_pointer(struct pt_regs *regs);
-> -extern unsigned long perf_arch_misc_flags(struct pt_regs *regs);
-> -#define perf_arch_misc_flags(regs)	perf_misc_flags(regs)
->  #define perf_arch_bpf_user_pt_regs(regs) &regs->user_regs
->  #endif
->  
-> diff --git a/arch/arm64/kernel/perf_callchain.c b/arch/arm64/kernel/perf_callchain.c
-> index 01a9d08fc009..9b7f26b128b5 100644
-> --- a/arch/arm64/kernel/perf_callchain.c
-> +++ b/arch/arm64/kernel/perf_callchain.c
-> @@ -38,31 +38,3 @@ void perf_callchain_kernel(struct perf_callchain_entry_ctx *entry,
->  
->  	arch_stack_walk(callchain_trace, entry, current, regs);
->  }
-> -
-> -unsigned long perf_arch_instruction_pointer(struct pt_regs *regs)
-> -{
-> -	if (perf_guest_state())
-> -		return perf_guest_get_ip();
-> -
-> -	return instruction_pointer(regs);
-> -}
-> -
-> -unsigned long perf_arch_misc_flags(struct pt_regs *regs)
-> -{
-> -	unsigned int guest_state = perf_guest_state();
-> -	int misc = 0;
-> -
-> -	if (guest_state) {
-> -		if (guest_state & PERF_GUEST_USER)
-> -			misc |= PERF_RECORD_MISC_GUEST_USER;
-> -		else
-> -			misc |= PERF_RECORD_MISC_GUEST_KERNEL;
-> -	} else {
-> -		if (user_mode(regs))
-> -			misc |= PERF_RECORD_MISC_USER;
-> -		else
-> -			misc |= PERF_RECORD_MISC_KERNEL;
-> -	}
-> -
-> -	return misc;
-> -}
-> diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
-> index 24910c625e3d..aae0c5eabf09 100644
-> --- a/arch/x86/events/core.c
-> +++ b/arch/x86/events/core.c
-> @@ -3005,9 +3005,6 @@ static unsigned long code_segment_base(struct pt_regs *regs)
->  
->  unsigned long perf_arch_instruction_pointer(struct pt_regs *regs)
->  {
-> -	if (perf_guest_state())
-> -		return perf_guest_get_ip();
-> -
->  	return regs->ip + code_segment_base(regs);
->  }
->  
-> @@ -3034,17 +3031,12 @@ unsigned long perf_arch_guest_misc_flags(struct pt_regs *regs)
->  
->  unsigned long perf_arch_misc_flags(struct pt_regs *regs)
->  {
-> -	unsigned int guest_state = perf_guest_state();
->  	unsigned long misc = common_misc_flags(regs);
->  
-> -	if (guest_state) {
-> -		misc |= perf_arch_guest_misc_flags(regs);
-> -	} else {
-> -		if (user_mode(regs))
-> -			misc |= PERF_RECORD_MISC_USER;
-> -		else
-> -			misc |= PERF_RECORD_MISC_KERNEL;
-> -	}
-> +	if (user_mode(regs))
-> +		misc |= PERF_RECORD_MISC_USER;
-> +	else
-> +		misc |= PERF_RECORD_MISC_KERNEL;
->  
->  	return misc;
->  }
-> diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
-> index 772ad352856b..e207acdd9e73 100644
-> --- a/include/linux/perf_event.h
-> +++ b/include/linux/perf_event.h
-> @@ -1655,8 +1655,9 @@ extern void perf_tp_event(u16 event_type, u64 count, void *record,
->  			  struct task_struct *task);
->  extern void perf_bp_event(struct perf_event *event, void *data);
->  
-> -extern unsigned long perf_misc_flags(struct pt_regs *regs);
-> -extern unsigned long perf_instruction_pointer(struct pt_regs *regs);
-> +extern unsigned long perf_misc_flags(struct perf_event *event, struct pt_regs *regs);
-> +extern unsigned long perf_instruction_pointer(struct perf_event *event,
-> +					      struct pt_regs *regs);
->  
->  #ifndef perf_arch_misc_flags
->  # define perf_arch_misc_flags(regs) \
-> @@ -1667,6 +1668,22 @@ extern unsigned long perf_instruction_pointer(struct pt_regs *regs);
->  # define perf_arch_bpf_user_pt_regs(regs) regs
->  #endif
->  
-> +#ifndef perf_arch_guest_misc_flags
-> +static inline unsigned long perf_arch_guest_misc_flags(struct pt_regs *regs)
-> +{
-> +	unsigned long guest_state = perf_guest_state();
-> +
-> +	if (guest_state & PERF_GUEST_USER)
-> +		return PERF_RECORD_MISC_GUEST_USER;
-> +
-> +	if (guest_state & PERF_GUEST_ACTIVE)
-> +		return PERF_RECORD_MISC_GUEST_KERNEL;
+> > 
+> > > So if rd changes during boot initialization, the correct dl_bw has to be
+> > > updated AFAICS. Also if cpusets are used, the rd for a CPU may change.
+> > 
+> > cpusets changes are something that I still need to double check. Will
+> > do.
+> > 
+> 
+> Sounds good, that would be good to verify.
 
-Is there by any chance to add a PERF_GUEST_KERNEL flag in KVM?
+So, I played a little bit with it and came up with a simple set of ops
+that point out an issue (default fedora server install):
 
-The PERF_GUEST_ACTIVE flag check looks really confusing.
+echo Y >/sys/kernel/debug/sched/verbose
 
-Thanks,
-Kan
-> +
-> +	return 0;
-> +}
-> +# define perf_arch_guest_misc_flags(regs)	perf_arch_guest_misc_flags(regs)
-> +#endif
-> +
->  static inline bool has_branch_stack(struct perf_event *event)
->  {
->  	return event->attr.sample_type & PERF_SAMPLE_BRANCH_STACK;
-> diff --git a/kernel/events/core.c b/kernel/events/core.c
-> index 2c44ffd6f4d8..c62164a2ff23 100644
-> --- a/kernel/events/core.c
-> +++ b/kernel/events/core.c
-> @@ -7022,13 +7022,26 @@ void perf_unregister_guest_info_callbacks(struct perf_guest_info_callbacks *cbs)
->  EXPORT_SYMBOL_GPL(perf_unregister_guest_info_callbacks);
->  #endif
->  
-> -unsigned long perf_misc_flags(struct pt_regs *regs)
-> +static bool should_sample_guest(struct perf_event *event)
->  {
-> +	return !event->attr.exclude_guest && perf_guest_state();
-> +}
-> +
-> +unsigned long perf_misc_flags(struct perf_event *event,
-> +			      struct pt_regs *regs)
-> +{
-> +	if (should_sample_guest(event))
-> +		return perf_arch_guest_misc_flags(regs);
-> +
->  	return perf_arch_misc_flags(regs);
->  }
->  
-> -unsigned long perf_instruction_pointer(struct pt_regs *regs)
-> +unsigned long perf_instruction_pointer(struct perf_event *event,
-> +				       struct pt_regs *regs)
->  {
-> +	if (should_sample_guest(event))
-> +		return perf_guest_get_ip();
-> +
->  	return perf_arch_instruction_pointer(regs);
->  }
->  
-> @@ -7849,7 +7862,7 @@ void perf_prepare_sample(struct perf_sample_data *data,
->  	__perf_event_header__init_id(data, event, filtered_sample_type);
->  
->  	if (filtered_sample_type & PERF_SAMPLE_IP) {
-> -		data->ip = perf_instruction_pointer(regs);
-> +		data->ip = perf_instruction_pointer(event, regs);
->  		data->sample_flags |= PERF_SAMPLE_IP;
->  	}
->  
-> @@ -8013,7 +8026,7 @@ void perf_prepare_header(struct perf_event_header *header,
->  {
->  	header->type = PERF_RECORD_SAMPLE;
->  	header->size = perf_sample_data_size(data, event);
-> -	header->misc = perf_misc_flags(regs);
-> +	header->misc = perf_misc_flags(event, regs);
->  
->  	/*
->  	 * If you're adding more sample types here, you likely need to do
+echo +cpuset >/sys/fs/cgroup/cgroup.subtree_control
+
+echo 0-7 > /sys/fs/cgroup/user.slice/cpuset.cpus
+echo 6-7 > /sys/fs/cgroup/user.slice/cpuset.cpus.exclusive
+echo root >/sys/fs/cgroup/user.slice/cpuset.cpus.partition
+
+The domains are rebuilt correctly, but we end up with a null total_bw.
+
+The conditional call above takes care correctly of adding back dl_server
+per-rq bandwidth when we pass from the single domain to the 2 exclusive
+ones, but I noticed that we go through partition_sched_domains_locked()
+twice for a single write of 'root' and the second one, since it's not
+actually destroying/rebuilding anything, is resetting total_bw w/o
+addition dl_server contribution back.
+
+Now, not completely sure why we need to go through partition_sched_
+domains_locked() twice, as we have (it also looked like a pattern from
+other call paths)
+
+update_prstate()
+-> update_cpumasks_hier()
+   -> rebuild_sched_domains_locked() <- right at the end
+-> update_partition_sd_lb()
+   -> rebuild_sched_domains_locked() <- right after the above call
+
+Removing the first call does indeed fix the issue and domains look OK,
+but I'm pretty sure I'm missing all sort of details and corner cases.
+
+Waiman (now Cc-ed), maybe you can help here understanding why the two
+back to back calls are needed?
+
+Thanks!
+Juri
 
 
