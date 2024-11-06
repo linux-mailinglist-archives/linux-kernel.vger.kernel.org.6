@@ -1,184 +1,219 @@
-Return-Path: <linux-kernel+bounces-398827-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398829-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A50849BF692
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 20:33:39 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D07619BF698
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 20:34:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CF6781C227D8
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 19:33:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 000441C224BA
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 19:34:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFBCE20969B;
-	Wed,  6 Nov 2024 19:33:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68E7720A5FA;
+	Wed,  6 Nov 2024 19:34:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="ENr9eiVZ"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="PcvHh6zd"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B53AA17B4FF;
-	Wed,  6 Nov 2024 19:33:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 292A8209F3C;
+	Wed,  6 Nov 2024 19:34:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730921612; cv=none; b=B3M+xYm1DyLx4dfxO6RC0ldxF4AATpv9ylA16xADSP98ujZkj4LWwNdT4aLdb+oCCdGovk7v22lCsliA79thmxgNqey4gooYeT+p8tVYixst/+yopwHnbGm8k59EXZnacDlH1edZY2uG3O543s45EIxBXLA9voyxmtFLKFrzfOg=
+	t=1730921658; cv=none; b=ouBZGK/r/nmwcIh9rjAUu4YjnpOdPfS+I7zPm87gAnXWXfj1degFUx6lLYhqeUH5H9nhkHj6y6mIybG7TKWfSYJhoOfTQ2OtusnySjdjhS+V3VarOpNdYrz/8JQVA0UPSgehfodsM9PcszwOmG7rX3z80J86fKbnQac80/T42t4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730921612; c=relaxed/simple;
-	bh=Bh1/gSz4W7o4J39pG+iqfl78BR69v4xlANMsxCQ/nKw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uz52JbZnyuNVLCL+zrVEv5CQmhPi9zo/dXYZvTFyDmI/uzskli8Odj1/jMW73QOEc9dqvlQ14unFW7wqovtuGTeJvS7OYKHvtNwS7A0FeSgI78TEHr9LKehaow+7IsAbQmjn8E3+X3mhCOK1kIgahOZxrUH/ng7A42ipERGiUBM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=ENr9eiVZ; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A6Ie2xn019000;
-	Wed, 6 Nov 2024 19:33:08 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=pp1; bh=DWKirZ0Dp0Cmi7IM3wOgw90y9rfSjrE2uL6xs36Ca
-	BI=; b=ENr9eiVZ04SS+raMo7YOwe/5lqseQep5DBV0mxtj4ejs6+D6s9ty+mVdL
-	yo+w7ofJrydqMWdkYqNFTgqsJvSHqWSYDNIKk3RQinPE7o/7DwsjOSRwjW+22/fo
-	NOQXk728926OMGZ/1lRM7eeVSwrloJhOXNFhdXdvxOKBDq7urArFKRw8yDyOy8Am
-	Ppwq3cfxtHD1QpIF+Id4CF/WaTHp+E4LM6RM6CqeIs+xKQWaW3oL8lL/73tzAjRz
-	F9z4tRgba7b7B4MNZZyh9Jk3EolaIePA/UuWabvLYAbPxYYD2Rct49Z3XD7LUETW
-	Sh4vKmDjS/c3MGUnjRPf74t/icEog==
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42rdxc87t0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 06 Nov 2024 19:33:07 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4A6Fpd2Q019096;
-	Wed, 6 Nov 2024 19:33:06 GMT
-Received: from smtprelay07.dal12v.mail.ibm.com ([172.16.1.9])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 42p0mj6rhv-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 06 Nov 2024 19:33:06 +0000
-Received: from smtpav03.wdc07v.mail.ibm.com (smtpav03.wdc07v.mail.ibm.com [10.39.53.230])
-	by smtprelay07.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4A6JX6Di47841676
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 6 Nov 2024 19:33:06 GMT
-Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 09AAF5805C;
-	Wed,  6 Nov 2024 19:33:06 +0000 (GMT)
-Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 850925805A;
-	Wed,  6 Nov 2024 19:33:05 +0000 (GMT)
-Received: from slate16.aus.stglabs.ibm.com (unknown [9.61.24.137])
-	by smtpav03.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Wed,  6 Nov 2024 19:33:05 +0000 (GMT)
-From: Eddie James <eajames@linux.ibm.com>
-To: linux-aspeed@lists.ozlabs.org
-Cc: andrew@codeconstruct.com.au, joel@jms.id.au, robh@kernel.org,
-        krzk+dt@kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Eddie James <eajames@linux.ibm.com>
-Subject: [PATCH] arm: dts: aspeed: Everest and Fuji: Add VRM presence gpio expander
-Date: Wed,  6 Nov 2024 13:33:03 -0600
-Message-ID: <20241106193303.748824-1-eajames@linux.ibm.com>
-X-Mailer: git-send-email 2.43.5
+	s=arc-20240116; t=1730921658; c=relaxed/simple;
+	bh=yZbr6t2r/51VOBGcLdopwAHQuZu8xeGQDcebwLwRMLA=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=aq+jM3UCQASDEA8FtRw5Z3sYK7OJIz8c1Gfox6K9IWWEN/HmZqA8jVSMSsyfew3Oiyc0j1SBvyou5Ah2+HzUFNW5hjAPpUCpPlsgOxLfrJk85rk5i9ZsVv5HHqFowbRVdrCnu2dRL0laZ1fPPQ1Fi3sqScfoAeq77XmlGUTFRTU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=PcvHh6zd; arc=none smtp.client-ip=212.227.17.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1730921587; x=1731526387; i=w_armin@gmx.de;
+	bh=NC+6frFK+YWcDsZjV4UHxiwIbgV1D+/UHxIrix9H8CA=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:From:To:
+	 Cc:References:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=PcvHh6zdFLqnLmnuOQ9L83vDW6UE9Vem9vwgjyyHeF/cMmQcjA+UsIg6GvUZPXPH
+	 Dmr3F/PIr7Odl5ixM4Dlz3vx9S6MeBLOcoT+JRL6nvfJ/AZsvqXp5AIk7pmFMzPbN
+	 hXoGqd25I/h9qRoAB0WwY1WmLVZIiZzd1nH3WNanoTwhKPJfikLUmWmZmvgrle82a
+	 Oy7GL+Mcx/DdhPS5CyFdqsFf5JGLEA2cy6BGOgeKv+LcqZ8qnWk1Jg2PcASCWAO39
+	 5bNS6mx12H3ZizOV9cGz7sC9Ej5nnrr5fbICYqLKghCYt8nZFwapNz1wOD20avPJY
+	 +8xgDf94qW3riLDq2g==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [141.30.226.129] ([141.30.226.129]) by mail.gmx.net (mrgmx104
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1N4z6q-1trgso41fI-013QBt; Wed, 06
+ Nov 2024 20:33:07 +0100
+Message-ID: <cbf90e6e-1522-4235-b1fd-90dc54df35d5@gmx.de>
+Date: Wed, 6 Nov 2024 20:33:04 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: PJz5APyk2-yIADYsMYqQhSW6YClopaTn
-X-Proofpoint-ORIG-GUID: PJz5APyk2-yIADYsMYqQhSW6YClopaTn
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 malwarescore=0
- bulkscore=0 lowpriorityscore=0 spamscore=0 suspectscore=0 phishscore=0
- clxscore=1011 impostorscore=0 adultscore=0 mlxlogscore=602
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411060147
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 18/20] ACPI: platform_profile: Allow multiple handlers
+From: Armin Wolf <W_Armin@gmx.de>
+To: Mario Limonciello <mario.limonciello@amd.com>,
+ Hans de Goede <hdegoede@redhat.com>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
+ Maximilian Luz <luzmaximilian@gmail.com>, Lee Chun-Yi <jlee@suse.com>,
+ Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
+ Corentin Chary <corentin.chary@gmail.com>, "Luke D . Jones"
+ <luke@ljones.dev>, Ike Panhc <ike.pan@canonical.com>,
+ Henrique de Moraes Holschuh <hmh@hmh.eng.br>,
+ Alexis Belmonte <alexbelm48@gmail.com>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+ Ai Chao <aichao@kylinos.cn>, Gergo Koteles <soyer@irl.hu>,
+ open list <linux-kernel@vger.kernel.org>,
+ "open list:ACPI" <linux-acpi@vger.kernel.org>,
+ "open list:MICROSOFT SURFACE PLATFORM PROFILE DRIVER"
+ <platform-driver-x86@vger.kernel.org>,
+ "open list:THINKPAD ACPI EXTRAS DRIVER"
+ <ibm-acpi-devel@lists.sourceforge.net>,
+ Mark Pearson <mpearson-lenovo@squebb.ca>,
+ Matthew Schwartz <matthew.schwartz@linux.dev>
+References: <20241105153316.378-1-mario.limonciello@amd.com>
+ <20241105153316.378-19-mario.limonciello@amd.com>
+ <42623eed-1220-4cdf-aa7f-3a9777a3da4b@gmx.de>
+Content-Language: en-US
+In-Reply-To: <42623eed-1220-4cdf-aa7f-3a9777a3da4b@gmx.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:+XvEJZfJJZZ41PGe1l9dnx9BgPiF4v314WbePpZlv4IS10H+YXe
+ AWb+j4McYN61/wQewuiiW1kbROk36eUz+ObL18MUUC7wYsxFz8HQNm87haXu0AXIw4q845y
+ PYYZlSUZ8YkmT2qlXkTRbdVvbODBMJ3DEw8qq4LALvjIhf6PHy1eLu5yLD++VVcd12GtUcf
+ c+Jia7f+rP+LagQsLNnCQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:kKo2Zz1k/5w=;Ls+NxHyQ+Qqv4RoCvJ7xVc28oM/
+ Wu70OcCldxqkWKFdlK+XlfAyNCC22wmzqpGn6BuJySWbF+QcelQ7CEJzwyCSlHcTvSyfEwJU5
+ Ndn4FsarVXVkqR8Yiw1mQuagVJ8BsU7Fu6WdDgy/ekY74rF3DgwGQ5jQxG5AoyUSCNj942btW
+ EiyVM1k35X0Vu7wc7wz1CKLRrodF3iLnIpI5uuCIF8PNWOrViCP+AIXTCObo7ln4nQxn6IH9o
+ 3MveOdGgZxfxwn7VZCH9r7mr4msSzD/JwxMGs1ckQjw77Wt9XSYN3FqWXuc2jkrXKr6QcU85D
+ 5wApwzrNbPMhD/28mZHUHpF4dhg+icHpk8Uk3lNW0YToQXPGKzRu0M3SE7ihnU0NZH4bXisSU
+ oJk0MHkNbSnYxZpOslsLSq3G0oHhtbUmwHFXTV3RH+OIIYC0F/znC11bEmx/dB+xWfoZHPIAl
+ 0LcGOUpcbXkvHvGLGebM6pf1rdK8o6KR/ENCYGVwjclae0mNdTmbLmt4w0rCeJ8+rnmKfOHHQ
+ Fk2Y4VA+/XzkQa5QDxmTHQpqU2N/dJ2gqkBr7ZJuzBeJH5AFG5UHsuIQg46WE8aAh+xiZeIj/
+ n208OVDcNyufiAPJhBBmUM+F0GjpzjZ5eaiyHSaygIArjcleThgdd0mlgrirTrLXz5iPUmMa/
+ f6/MWvOqsigaqEl9gVShAjJ4B/24zZg+DElrvwLxV4i+nkm6q4tzYjW0gm3pJJk9jlvGK1c4r
+ bTiBw/iEyqUTuv29zbw6a/UlnpNP5jMbCrutc+eAGY7vdWULUFF4IL/9vGjbhNc40XFMunYSh
+ MAw9n7KqvCvTKIvYusxI0u1QMH6MgoMvc06/9j40lQ1KN0usWBBsFnzDrTMhBONDsrDzvcGVe
+ bLjtlbb0sOqmw8V8a52LayIwlfsu3pRwS/UppzgJ7Sk+Bzuv03g29HacF
 
-Add the gpio expander that provides the VRM presence detection
-pins.
+Am 06.11.24 um 20:21 schrieb Armin Wolf:
 
-Signed-off-by: Eddie James <eajames@linux.ibm.com>
----
- .../dts/aspeed/aspeed-bmc-ibm-everest.dts     | 27 +++++++++++++++++++
- .../boot/dts/aspeed/aspeed-bmc-ibm-fuji.dts   | 27 +++++++++++++++++++
- 2 files changed, 54 insertions(+)
+> Am 05.11.24 um 16:33 schrieb Mario Limonciello:
+>
+>> Multiple drivers may attempt to register platform profile handlers,
+>> but only one may be registered and the behavior is non-deterministic
+>> for which one wins.=C2=A0 It's mostly controlled by probing order.
+>>
+>> This can be problematic if one driver changes CPU settings and another
+>> driver notifies the EC for changing fan curves.
+>>
+>> Modify the ACPI platform profile handler to let multiple drivers
+>> register platform profile handlers and abstract this detail from
+>> userspace.
+>>
+>> To avoid undefined behaviors only offer profiles that are commonly
+>> advertised across multiple handlers.
+>>
+>> If any problems occur when changing profiles for any driver, then rever=
+t
+>> back to the balanced profile, which is now required.
+>
+> Reviewed-by: Armin Wolf <W_Armin@gmx.de>
+>
+I just noticed that the following text might need to be removed:
 
-diff --git a/arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-everest.dts b/arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-everest.dts
-index 513077a1f4be..9961508ee872 100644
---- a/arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-everest.dts
-+++ b/arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-everest.dts
-@@ -353,6 +353,33 @@ pca1: pca9552@62 {
- 			"presence-base-op",
- 			"";
- 	};
-+
-+	led-controller@63 {
-+		compatible = "nxp,pca9552";
-+		reg = <0x63>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+
-+		gpio-line-names =
-+			"presence-vrm-c12",
-+			"presence-vrm-c13",
-+			"presence-vrm-c15",
-+			"presence-vrm-c16",
-+			"presence-vrm-c17",
-+			"presence-vrm-c18",
-+			"presence-vrm-c20",
-+			"presence-vrm-c21",
-+			"presence-vrm-c54",
-+			"presence-vrm-c55",
-+			"presence-vrm-c57",
-+			"presence-vrm-c58",
-+			"presence-vrm-c59",
-+			"presence-vrm-c60",
-+			"presence-vrm-c62",
-+			"presence-vrm-c63";
-+	};
- };
- 
- &i2c1 {
-diff --git a/arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-fuji.dts b/arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-fuji.dts
-index c24e464e5faa..27ded3bba66d 100644
---- a/arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-fuji.dts
-+++ b/arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-fuji.dts
-@@ -355,6 +355,33 @@ led-controller@62 {
- 			"presence-base-op",
- 			"";
- 	};
-+
-+	led-controller@63 {
-+		compatible = "nxp,pca9552";
-+		reg = <0x63>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+
-+		gpio-line-names =
-+			"presence-vrm-c12",
-+			"presence-vrm-c13",
-+			"presence-vrm-c15",
-+			"presence-vrm-c16",
-+			"presence-vrm-c17",
-+			"presence-vrm-c18",
-+			"presence-vrm-c20",
-+			"presence-vrm-c21",
-+			"presence-vrm-c54",
-+			"presence-vrm-c55",
-+			"presence-vrm-c57",
-+			"presence-vrm-c58",
-+			"presence-vrm-c59",
-+			"presence-vrm-c60",
-+			"presence-vrm-c62",
-+			"presence-vrm-c63";
-+	};
- };
- 
- &i2c1 {
--- 
-2.43.5
+"If any problems occur when changing profiles for any driver, then revert
+  back to the balanced profile, which is now required."
 
+Thanks,
+Armin Wolf
+
+>> Tested-by: Matthew Schwartz <matthew.schwartz@linux.dev>
+>> Reviewed-by: Mark Pearson <mpearson-lenovo@squebb.ca>
+>> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+>> ---
+>> =C2=A0 drivers/acpi/platform_profile.c | 12 ++----------
+>> =C2=A0 1 file changed, 2 insertions(+), 10 deletions(-)
+>>
+>> diff --git a/drivers/acpi/platform_profile.c
+>> b/drivers/acpi/platform_profile.c
+>> index 568485e285061..b9eb25f58a2a2 100644
+>> --- a/drivers/acpi/platform_profile.c
+>> +++ b/drivers/acpi/platform_profile.c
+>> @@ -10,7 +10,6 @@
+>> =C2=A0 #include <linux/platform_profile.h>
+>> =C2=A0 #include <linux/sysfs.h>
+>>
+>> -static struct platform_profile_handler *cur_profile;
+>> =C2=A0 static DEFINE_MUTEX(profile_lock);
+>>
+>> =C2=A0 static const char * const profile_names[] =3D {
+>> @@ -368,8 +367,7 @@ static const struct attribute_group
+>> platform_profile_group =3D {
+>>
+>> =C2=A0 void platform_profile_notify(void)
+>> =C2=A0 {
+>> -=C2=A0=C2=A0=C2=A0 if (!cur_profile)
+>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return;
+>> +=C2=A0=C2=A0=C2=A0 guard(mutex)(&profile_lock);
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (!class_is_registered(&platform_profi=
+le_class))
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return;
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 sysfs_notify(acpi_kobj, NULL, "platform_=
+profile");
+>> @@ -428,9 +426,6 @@ int platform_profile_register(struct
+>> platform_profile_handler *pprof)
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
+>>
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 guard(mutex)(&profile_lock);
+>> -=C2=A0=C2=A0=C2=A0 /* We can only have one active profile */
+>> -=C2=A0=C2=A0=C2=A0 if (cur_profile)
+>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return -EEXIST;
+>>
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (!class_is_registered(&platform_profi=
+le_class)) {
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /* class for ind=
+ividual handlers */
+>> @@ -451,9 +446,9 @@ int platform_profile_register(struct
+>> platform_profile_handler *pprof)
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (IS_ERR(pprof->class_dev))
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return PTR_ERR(p=
+prof->class_dev);
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dev_set_drvdata(pprof->class_dev, pprof)=
+;
+>> +
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 sysfs_notify(acpi_kobj, NULL, "platform_=
+profile");
+>>
+>> -=C2=A0=C2=A0=C2=A0 cur_profile =3D pprof;
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return 0;
+>>
+>> =C2=A0 cleanup_class:
+>> @@ -467,13 +462,10 @@ int platform_profile_remove(struct
+>> platform_profile_handler *pprof)
+>> =C2=A0 {
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 guard(mutex)(&profile_lock);
+>>
+>> -=C2=A0=C2=A0=C2=A0 cur_profile =3D NULL;
+>> -
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 sysfs_notify(acpi_kobj, NULL, "platform_=
+profile");
+>>
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 device_destroy(&platform_profile_class, =
+MKDEV(0, pprof->minor));
+>>
+>> -=C2=A0=C2=A0=C2=A0 cur_profile =3D NULL;
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return 0;
+>> =C2=A0 }
+>> =C2=A0 EXPORT_SYMBOL_GPL(platform_profile_remove);
+>
 
