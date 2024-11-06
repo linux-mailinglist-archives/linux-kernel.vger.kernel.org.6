@@ -1,200 +1,132 @@
-Return-Path: <linux-kernel+bounces-397900-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397904-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76D8B9BE21C
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 10:15:54 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 450B59BE231
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 10:18:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 99DF71C22CF8
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 09:15:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF3EE284DCC
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 09:18:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 059391D95A8;
-	Wed,  6 Nov 2024 09:15:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D6891DACBB;
+	Wed,  6 Nov 2024 09:17:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e6YU4Ku6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="KcYzHBOz"
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4069B1D9329;
-	Wed,  6 Nov 2024 09:15:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 267EB1D88CA;
+	Wed,  6 Nov 2024 09:17:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730884533; cv=none; b=f62hp4xkf7ZWPUxw+016rUtprF5U+WhTrjLqnOytDx53PGefD8AG7msMYkMNxqbBzwCKZx+eGc1YUDXFk4WPQ1xyUnLzLxmUsy9VL+K/3Vyi5BYeAMJAHXPxiLc5NGVB7SKLluZpwyRzZ50Ks+jnneqHOqqSPN7zpHd6hFYvNYc=
+	t=1730884671; cv=none; b=cNjuYV9lIsT3YXh2O8V1x35vhbeWFs3Vs4Yfx0Rii2Bs15Q/leeOTtVgfdDrd0z7Q+rLYJeH7mZH7oL8ir7DQF8YiPK8Dy+ymeq/4/Lb9Wz9Vw84YPm4rNA/2eyk8a2RPTmz/k0A2WndSdUuhiShz8RZk5o06bwhU9dxTx05bVc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730884533; c=relaxed/simple;
-	bh=EwAJq0GjySd0IJ1U4/MaQRX0fXrzwNh3orlaf6pjFQE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qXWi2PcGjhEV4cZHArjfpKlrlR17MTw8dYvo0xNOwE9Dj7JedOhnSELxXO++IsHS6R6Sp/XHkP2itCymqimJ8tpNqZE+5n5NZs4BgTEoiBQ0GYaaKrwX4PtFXk5hqR/QMvH6Hwj9QfaAluHXdo552JogBHsEeg7dvDOkdogMsQY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e6YU4Ku6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3742C4CECD;
-	Wed,  6 Nov 2024 09:15:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730884532;
-	bh=EwAJq0GjySd0IJ1U4/MaQRX0fXrzwNh3orlaf6pjFQE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=e6YU4Ku6I+ni7xq3vLu1huym1FyGpwUtUsFP63qGYPPMcZSYcOAPNCOAGyE2tnOD+
-	 kFp9NuFnyTUGRaydRbvD6qlYt/52XljzLEIsUrpcqHk+nPE70OuiwTo9TX7Gl3FnqQ
-	 nCgWygWxFML+BPzrzkG/5Ou5wfHWMigdLdOr4szqgDNxLDipbfMtd5yIHquZirXFMh
-	 2e864SNAHbTFdfVNTWpOhIsAHXpd9REuWS66FGdKYT2QIkIj/0cLXkGe20zTwectbe
-	 5HjavNReU71zkSJRIlq0SxnPawGfkgQLd0z1hcltKYl19B2IsLUTWRTWJtf9zMKHbn
-	 9phjPbWRwVi5g==
-Date: Wed, 6 Nov 2024 10:15:27 +0100
-From: Niklas Cassel <cassel@kernel.org>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>, Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	imx@lists.linux.dev, dlemoal@kernel.org, maz@kernel.org,
-	tglx@linutronix.de, jdmason@kudzu.us
-Subject: Re: [PATCH v4 0/5] PCI: EP: Add RC-to-EP doorbell with platform MSI
- controller
-Message-ID: <Zyszr3Cqg8UXlbqw@ryzen>
-References: <20241031-ep-msi-v4-0-717da2d99b28@nxp.com>
+	s=arc-20240116; t=1730884671; c=relaxed/simple;
+	bh=GLb7HcmZQX1gdpiPdgniwXZvg7q5HYGuj2rJTZsZB1E=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=g/Zy9DyDxVnyTXMgfKylAWOEa4x43stl5ElLmIq9W53SQFfis8Qo/YVqqRJkMIa31XAnZqGPc8iUsmaatg8HDyHaNQtwNb/5H02DIjbqiHuLP+08DDZ5QSJYRGiGEIsuqbZBhxntlZese+t/Ll8GR+bauVT8bTAabyThW1+R9AY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=KcYzHBOz; arc=none smtp.client-ip=198.47.23.248
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4A69HD7B035681;
+	Wed, 6 Nov 2024 03:17:13 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1730884633;
+	bh=iLrRXXFqcwItg0lw31N6XVp0ETawlclPWtIL3rnRHeo=;
+	h=From:To:CC:Subject:Date;
+	b=KcYzHBOzUEy/w4upgPzx/Y9kvkZgH+xmTlyNeAxaFzhQWQKVOHex6fmTAfCZPlPfL
+	 TJHMWSpMtyCxZW6xyLYZ0bIFCM8qDJmEmp0+rfctHjuTutbZMKzH4ecJmsezU6d/ju
+	 4+Ck0t5e32x98gspJ4Xg2RMmnHv0cmedvirsi6EI=
+Received: from DFLE108.ent.ti.com (dfle108.ent.ti.com [10.64.6.29])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4A69HDIb116843
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Wed, 6 Nov 2024 03:17:13 -0600
+Received: from DFLE108.ent.ti.com (10.64.6.29) by DFLE108.ent.ti.com
+ (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 6
+ Nov 2024 03:17:13 -0600
+Received: from fllvsmtp7.itg.ti.com (10.64.40.31) by DFLE108.ent.ti.com
+ (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Wed, 6 Nov 2024 03:17:13 -0600
+Received: from fllv0122.itg.ti.com (fllv0122.itg.ti.com [10.247.120.72])
+	by fllvsmtp7.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4A69HDus081192;
+	Wed, 6 Nov 2024 03:17:13 -0600
+Received: from localhost (danish-tpc.dhcp.ti.com [10.24.69.25])
+	by fllv0122.itg.ti.com (8.14.7/8.14.7) with ESMTP id 4A69HBXA020759;
+	Wed, 6 Nov 2024 03:17:12 -0600
+From: MD Danish Anwar <danishanwar@ti.com>
+To: <geliang@kernel.org>, <liuhangbin@gmail.com>, <jiri@resnulli.us>,
+        <w-kwok2@ti.com>, <aleksander.lobakin@intel.com>, <lukma@denx.de>,
+        <jan.kiszka@siemens.com>, <diogo.ivo@siemens.com>, <shuah@kernel.org>,
+        <horms@kernel.org>, <pabeni@redhat.com>, <kuba@kernel.org>,
+        <edumazet@google.com>, <davem@davemloft.net>, <andrew+netdev@lunn.ch>
+CC: <linux-kselftest@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <netdev@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <srk@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
+        Roger Quadros
+	<rogerq@kernel.org>, <danishanwar@ti.com>
+Subject: [PATCH net-next v3 0/4] Introduce VLAN support in HSR
+Date: Wed, 6 Nov 2024 14:47:06 +0530
+Message-ID: <20241106091710.3308519-1-danishanwar@ti.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241031-ep-msi-v4-0-717da2d99b28@nxp.com>
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Hello Frank,
+This series adds VLAN support to HSR framework.
+This series also adds VLAN support to HSR mode of ICSSG Ethernet driver.
 
-On Thu, Oct 31, 2024 at 12:26:59PM -0400, Frank Li wrote:
-> ┌────────────┐   ┌───────────────────────────────────┐   ┌────────────────┐
-> │            │   │                                   │   │                │
-> │            │   │ PCI Endpoint                      │   │ PCI Host       │
-> │            │   │                                   │   │                │
-> │            │◄──┤ 1.platform_msi_domain_alloc_irqs()│   │                │
-> │            │   │                                   │   │                │
-> │ MSI        ├──►│ 2.write_msi_msg()                 ├──►├─BAR<n>         │
-> │ Controller │   │   update doorbell register address│   │                │
-> │            │   │   for BAR                         │   │                │
-> │            │   │                                   │   │ 3. Write BAR<n>│
-> │            │◄──┼───────────────────────────────────┼───┤                │
-> │            │   │                                   │   │                │
-> │            ├──►│ 4.Irq Handle                      │   │                │
-> │            │   │                                   │   │                │
-> │            │   │                                   │   │                │
-> └────────────┘   └───────────────────────────────────┘   └────────────────┘
-> 
-> This patches based on old https://lore.kernel.org/imx/20221124055036.1630573-1-Frank.Li@nxp.com/
-> 
-> Original patch only target to vntb driver. But actually it is common
-> method.
-> 
-> This patches add new API to pci-epf-core, so any EP driver can use it.
-> 
-> Previous v2 discussion here.
-> https://lore.kernel.org/imx/20230911220920.1817033-1-Frank.Li@nxp.com/
-> 
-> Changes in v4:
-> - Remove patch genirq/msi: Add cleanup guard define for msi_lock_descs()/msi_unlock_descs()
-> - Use new method to avoid compatible problem.
->   Add new command DOORBELL_ENABLE and DOORBELL_DISABLE.
->   pcitest -B send DOORBELL_ENABLE first, EP test function driver try to
-> remap one of BAR_N (except test register bar) to ITS MSI MMIO space. Old
-> driver don't support new command, so failure return, not side effect.
->   After test, DOORBELL_DISABLE command send out to recover original map, so
-> pcitest bar test can pass as normal.
-> - Other detail change see each patches's change log
-> - Link to v3: https://lore.kernel.org/r/20241015-ep-msi-v3-0-cedc89a16c1a@nxp.com
-> 
-> Change from v2 to v3
-> - Fixed manivannan's comments
-> - Move common part to pci-ep-msi.c and pci-ep-msi.h
-> - rebase to 6.12-rc1
-> - use RevID to distingiush old version
-> 
-> mkdir /sys/kernel/config/pci_ep/functions/pci_epf_test/func1
-> echo 16 > /sys/kernel/config/pci_ep/functions/pci_epf_test/func1/msi_interrupts
-> echo 0x080c > /sys/kernel/config/pci_ep/functions/pci_epf_test/func1/deviceid
-> echo 0x1957 > /sys/kernel/config/pci_ep/functions/pci_epf_test/func1/vendorid
-> echo 1 > /sys/kernel/config/pci_ep/functions/pci_epf_test/func1/revid
-> ^^^^^^ to enable platform msi support.
-> ln -s /sys/kernel/config/pci_ep/functions/pci_epf_test/func1 /sys/kernel/config/pci_ep/controllers/4c380000.pcie-ep
+Changes from v2 to v3:
+*) Modified hsr_ndo_vlan_rx_add_vid() to handle arbitrary HSR_PT_SLAVE_A,
+HSR_PT_SLAVE_B order and skip INTERLINK port in patch 2/4 as suggested by
+Paolo Abeni <pabeni@redhat.com>
+*) Removed handling of HSR_PT_MASTER in hsr_ndo_vlan_rx_kill_vid() as MASTER
+and INTERLINK port will be ignored anyway in the default switch case as
+suggested by Paolo Abeni <pabeni@redhat.com>
+*) Modified the selftest in patch 4/4 to use vlan by default. The test will
+check the exposed feature `vlan-challenged` and if vlan is not supported, skip
+the vlan test as suggested by Paolo Abeni <pabeni@redhat.com>. Test logs can be
+found at [1]
 
-Perhaps drop these steps, to not confuse the reader.
-They are no longer relevant with the latest revision anyway.
+Changes from v1 to v2:
+*) Added patch 4/4 to add test script related to VLAN in HSR as asked by
+Lukasz Majewski <lukma@denx.de>
 
-> 
-> - use new device ID, which identify support doorbell to avoid broken
-> compatility.
-> 
->     Enable doorbell support only for PCI_DEVICE_ID_IMX8_DB, while other devices
->     keep the same behavior as before.
-> 
->            EP side             RC with old driver      RC with new driver
->     PCI_DEVICE_ID_IMX8_DB          no probe              doorbell enabled
->     Other device ID             doorbell disabled*       doorbell disabled*
-> 
->     * Behavior remains unchanged.
-> 
-> Change from v1 to v2
-> - Add missed patch for endpont/pci-epf-test.c
-> - Move alloc and free to epc driver from epf.
-> - Provide general help function for EPC driver to alloc platform msi irq.
-> - Fixed manivannan's comments.
+[1] https://gist.githubusercontent.com/danish-ti/d309f92c640134ccc4f2c0c442de5be1/raw/9cfb5f8bd12b374ae591f4bd9ba3e91ae509ed4f/hsr_vlan_logs
+v1 https://lore.kernel.org/all/20241004074715.791191-1-danishanwar@ti.com/
+v2 https://lore.kernel.org/all/20241024103056.3201071-1-danishanwar@ti.com/
 
-I wanted to try this series on rk3588, which has a MSI controller as part of the GIC
-using Interrupt Translation Services (ITS), for the Root Complex DT node:
-https://github.com/torvalds/linux/blob/v6.12-rc6/arch/arm64/boot/dts/rockchip/rk3588-extra.dtsi#L164
-https://github.com/torvalds/linux/blob/v6.12-rc6/arch/arm64/boot/dts/rockchip/rk3588-base.dtsi#L1981-L1999
+MD Danish Anwar (1):
+  selftests: hsr: Add test for VLAN
 
-There isn't any reference to a MSI controller in the Endpoint DT node:
-https://github.com/torvalds/linux/blob/v6.12-rc6/arch/arm64/boot/dts/rockchip/rk3588-extra.dtsi#L189
+Murali Karicheri (1):
+  net: hsr: Add VLAN CTAG filter support
 
-When testing your series, I get an error in
-platform_device_msi_init_and_alloc_irqs(), because no domain is found.
+Ravi Gunasekaran (1):
+  net: ti: icssg-prueth: Add VLAN support for HSR mode
 
-I assume that is it "msi-parent" that we should add here.
+WingMan Kwok (1):
+  net: hsr: Add VLAN support
 
-However, looking at:
-$ git grep -p msi-parent arch/arm64/boot/dts/freescale/
-
-I do not see any freescale/iMX platform specifying a msi-parent for the EP node.
-
-Is there any additional DTS changes needed for iMX that is not part of this series,
-or what am I missing?
-
-When adding "msi-parent = <&its1 0x0000>;
-to the EP node
-(this is just a guess since RC node has: msi-map = <0x0000 &its1 0x0000 0x1000>;)
-
-I do get a domain, but I do not get any IRQ on the EP side when the RC side is
-writing the doorbell (as part of pcitest -B),
-
-[    7.978984] pci_epc_alloc_doorbell: num_db: 1
-[    7.979545] pci_epf_test_bind: doorbell_addr: 0x40
-[    7.979978] pci_epf_test_bind: doorbell_data: 0x0
-[    7.980397] pci_epf_test_bind: doorbell_bar: 0x1
-[   21.114613] pci_epf_enable_doorbell db_bar: 1
-[   21.115001] pci_epf_enable_doorbell: doorbell_addr: 0xfe650040
-[   21.115512] pci_epf_enable_doorbell: phys_addr: 0xfe650000
-[   21.115994] pci_epf_enable_doorbell: success
-
-# cat /proc/interrupts | grep epc
-117:          0          0          0          0          0          0          0          0  ITS-pMSI-a40000000.pcie-ep   0 Edge      pci-epc-doorbell0
-
-Even if I try to write the doorbell manually from EP side using devmem:
-
-# devmem 0xfe670040 32 1
-
-it still doesn't trigger a IRQ on the EP side:
-# cat /proc/interrupts | grep epc
-117:          0          0          0          0          0          0          0          0  ITS-pMSI-a40000000.pcie-ep   0 Edge      pci-epc-doorbell0
-
-Any ideas?
+ drivers/net/ethernet/ti/icssg/icssg_prueth.c | 45 ++++++++-
+ net/hsr/hsr_device.c                         | 85 +++++++++++++++--
+ net/hsr/hsr_forward.c                        | 19 +++-
+ tools/testing/selftests/net/hsr/config       |  1 +
+ tools/testing/selftests/net/hsr/hsr_ping.sh  | 98 ++++++++++++++++++++
+ 5 files changed, 236 insertions(+), 12 deletions(-)
 
 
-Kind regards,
-Niklas
+base-commit: a84e8c05f58305dfa808bc5465c5175c29d7c9b6
+-- 
+2.34.1
+
 
