@@ -1,284 +1,232 @@
-Return-Path: <linux-kernel+bounces-398712-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398713-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 084A79BF506
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 19:16:06 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E2D99BF507
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 19:16:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2C3E01C23903
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 18:16:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 977B4B25496
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 18:16:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9288B207A3A;
-	Wed,  6 Nov 2024 18:15:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33A29207A2E;
+	Wed,  6 Nov 2024 18:15:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="erzD9ojk"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hbFBv1a6"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FB39209F24;
-	Wed,  6 Nov 2024 18:15:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E537C208231
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 18:15:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730916916; cv=none; b=FKRIxkQpan8topG8D9KVpk0cFdrDsyxkEC5O4EKvSAeMOqEf95jFBZGvVO42fQSNFO9ShF7QA/NIFwIEgqR4rhOVVFuF/W38K8pFfVK5YFd7Ggo/5M8Qvw/+PnTuDeHqUUEUGEgK1wQ5fryca99N1SlhEwIvlCQCdhxXp3DvHac=
+	t=1730916921; cv=none; b=VPIc51zC51sZi9H77mLUIgr9L85W8ghosDROcr+iI7X086fdT73XMBtBewxBRGNWa+IWoKobokRM7p0SRLSEny4HOghbBURwAm9/eiptZml48mwmbUwNl5CgmPUldHLRN9k5w+2MYOyjZ0nVKYCTnFAh5IYX4dfMNtwPNro7yxM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730916916; c=relaxed/simple;
-	bh=bjBVCWJs3JVih9LLkEdAs06aFgKWyrXCnVS0nCRANps=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=G+MfKzTLqDJCTMHSxLCf5VsTvHFfsnORkRatmVOTWk4iWtND6QB187r3CxtmYtaW9vkconO5bq59IxOcLnrPi2NNsyYvSnXcQQU6rmFzvPoFBhQnd/mzMXsMDOr1QYdR4q5Qaqt0mFGUJeporabmS/d042kZr9WGSdxrPHwRy7A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=erzD9ojk; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A68GiK0004743;
-	Wed, 6 Nov 2024 18:15:11 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	gmB9e571dxANu14lGWTGGq0+uEwpcPxl12XWbz/4KLk=; b=erzD9ojkPVfvBXp6
-	w4nNqVfN1uV8w5H1nJ3diZdkzjZMNyP0GhiTtZ+PFrBCeOm7k/H5znrKDBTTSdON
-	i8p+rng+6X/ZuFlugNFCAiKkEeB3Bb0hNeW/zwxWsPPZJ68wFWsq0MUvHcVUD/zz
-	lMVwb7tTcBg6gJPg81pP3upanyg5FFDrA5MoNoGBCSSGnq9pDlogde8EUDBqv/yO
-	Fuyv3f/6IFleVfmwQ3TVAdx4luK21NYwQShmD3NhhAUpEdU2uwOHmFNhgMTgoBXa
-	Nz5DE+u1lNlzmQ9WFrptAautvmslCDnKUTHMjatwGwDeYZuS7nSnAMtI9K6F5K+W
-	nNQJAw==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42qfdx53he-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 06 Nov 2024 18:15:11 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4A6IFAXr020047
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 6 Nov 2024 18:15:10 GMT
-Received: from [10.216.22.206] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 6 Nov 2024
- 10:15:06 -0800
-Message-ID: <4b57566e-bcfa-4218-a4ba-8f1d49493df2@quicinc.com>
-Date: Wed, 6 Nov 2024 23:45:05 +0530
+	s=arc-20240116; t=1730916921; c=relaxed/simple;
+	bh=X/z/fq3fM2vDFRaUyPgNlBTfT3p13Tlyf7O49OnaLzU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=eH3qJNwBA16Ei1CNMwwoTV8eDzuDA7fhee8xPBTcrkMnx5dyhSL1u1GU+KpFE70RWIF65Hu84D2ck5jmtCZwHvK/kDZdrSfeovQnlXJkca02Ex3WkmFIP5RFO7HN42MLu3S++NRN236x7PaDDPHmgrSVhvzpHhzw9jvOS61Wm70=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=hbFBv1a6; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-20ca03687fdso10785ad.0
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2024 10:15:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1730916919; x=1731521719; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=a2xLYmuySCzFVrJ3cUAOni0+7Dd9Fa47pe2AtilN+Ak=;
+        b=hbFBv1a6ZNejTSAnUL3O4TH1ciA7bdGcYwSoRFCTjD83F3aQT4ib3PEDihfCsjukaG
+         0gObQBGKNpN42/DHb33vFGqYKrdRFIEpRK7OOF41M/Q8qrnGUSeV/P3em0cKFamS0yQt
+         V8m+J4Ca2e1egSbR4QK+W6vw+D6bW+ehgjGs2iK2PTLZKBaiagQkTLO01ygT+KHkapfu
+         mpeRTVtD7M6QFh/nCbu1IiLL0NRFKMmKnpa/O0CKiecDqXKzQXWyUQiEl3nPnkVA9AW7
+         QkTjHwuwlbF52KLpwxFt84ZiLaH6nYbn77kUOm0SE8XpOSlwD1zBO3C0/r1GBCWItocN
+         +Cng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730916919; x=1731521719;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=a2xLYmuySCzFVrJ3cUAOni0+7Dd9Fa47pe2AtilN+Ak=;
+        b=QLzukVsQ7WK0DsetFxuAmsWbVDiSjfauKGqvNJMvejBpNAWTdGD7UZHPPrCb45ztGb
+         7U0yDyUUEJvPDzLHoI9A9wLE7Ys/m2aSNfXL4pYGhm4wdy26BShWneDJkq0lgplo9LJl
+         Xchi+9Ms4ds8L++x6sC+PpMchOGibgQfCymYmwZS0zIs7K6tuuXcTFPpy2o4AowmBH46
+         ievUNgIl3rr/h6gQyvYuLvuHXgr18MS/TREg73L03Abtd6kfQIPG1a1H4YqI3ly5CyV9
+         VbNLKAb+tdNRahfvpm0VkYqKAxgee8RojAUzwag7B9xVFwYu8aYJOOR+Q0aRc9jnvTGZ
+         8fvw==
+X-Forwarded-Encrypted: i=1; AJvYcCWiOs3QIn7AJGgHeqeLSTpio0uYNupAYrsKO8Z6tCyd3DhKxIiofDF/p+FLkXi0D4B23SI0b8wPHKnB3Xg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz79FC149BsQKW3uSmYz50S4jticK3xyMfPlam/ThRZLErOQABm
+	P1msGcb32w4A+5cdvd4cq2AABtrGuvEWS4CU2I0PYcGX7lKljCCkvQ5tGYAMNfnQuaLgeFKhBkd
+	yes9321JD8Zxc4c4wBOgB1VSIvCAKJQbGEFUK
+X-Gm-Gg: ASbGncvKgwYhObR3mRkzFAKiW7bXNF3FFMZd4cru5tUke/E866SqZ2xiNguxbsfaaoZ
+	VR83cBW9kIESnA3DQoj0cPDpUALDoqK5+khytmFUrXXYqymZ5FaVHt0afZ1j/kBc=
+X-Google-Smtp-Source: AGHT+IEgroDsp0onx0K7wietJn6JnANYvY4f2U8zLM51cmNpvxlAnM0RNe75sEdp5mOQBFO8L+V6+wouh+x1KMnrO/U=
+X-Received: by 2002:a17:903:234a:b0:20c:675d:920f with SMTP id
+ d9443c01a7336-21174a00513mr582095ad.25.1730916918975; Wed, 06 Nov 2024
+ 10:15:18 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5/7] clk: qcom: Add support for GCC clock controller on
- SM8750
-To: Bjorn Andersson <andersson@kernel.org>,
-        Melody Olvera
-	<quic_molvera@quicinc.com>
-CC: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
-	<sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Trilok Soni
-	<quic_tsoni@quicinc.com>,
-        "Satya Durga Srinivasu Prabhala --cc=linux-arm-msm
- @ vger . kernel . org" <quic_satyap@quicinc.com>,
-        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20241021230359.2632414-1-quic_molvera@quicinc.com>
- <20241021230359.2632414-6-quic_molvera@quicinc.com>
- <4rp4h2inllsa2zd62yg6giyf45skhe3bzcgkjb5btwn4hhh33b@pdjllzwaqtks>
-Content-Language: en-US
-From: Taniya Das <quic_tdas@quicinc.com>
-In-Reply-To: <4rp4h2inllsa2zd62yg6giyf45skhe3bzcgkjb5btwn4hhh33b@pdjllzwaqtks>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: lAp0gs0ojnfOtNbXS2zWgXxBfAO0fMfn
-X-Proofpoint-ORIG-GUID: lAp0gs0ojnfOtNbXS2zWgXxBfAO0fMfn
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 malwarescore=0
- lowpriorityscore=0 suspectscore=0 phishscore=0 priorityscore=1501
- impostorscore=0 mlxscore=0 bulkscore=0 spamscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411060141
+References: <20240926175035.408668-1-irogers@google.com> <20240926175035.408668-7-irogers@google.com>
+ <244b4c80-2ab2-4248-b930-22fea9ed6429@linux.intel.com>
+In-Reply-To: <244b4c80-2ab2-4248-b930-22fea9ed6429@linux.intel.com>
+From: Ian Rogers <irogers@google.com>
+Date: Wed, 6 Nov 2024 10:15:07 -0800
+Message-ID: <CAP-5=fW1dACyxesnjpMQLAgomnRH+nA1sVphbpLyCFN3A79xSQ@mail.gmail.com>
+Subject: Re: [PATCH v4 06/22] perf jevents: Add tsx metric group for Intel models
+To: "Liang, Kan" <kan.liang@linux.intel.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, linux-perf-users@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Perry Taylor <perry.taylor@intel.com>, 
+	Samantha Alt <samantha.alt@intel.com>, Caleb Biggers <caleb.biggers@intel.com>, 
+	Weilin Wang <weilin.wang@intel.com>, Edward Baker <edward.baker@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Wed, Nov 6, 2024 at 9:53=E2=80=AFAM Liang, Kan <kan.liang@linux.intel.co=
+m> wrote:
+>
+>
+>
+> On 2024-09-26 1:50 p.m., Ian Rogers wrote:
+> > Allow duplicated metric to be dropped from json files. Detect when TSX
+> > is supported by a model by using the json events, use sysfs events at
+> > runtime as hypervisors, etc. may disable TSX.
+> >
+> > Add CheckPmu to metric to determine if which PMUs have been associated
+> > with the loaded events.
+> >
+> > Signed-off-by: Ian Rogers <irogers@google.com>
+> > ---
+> >  tools/perf/pmu-events/intel_metrics.py | 52 +++++++++++++++++++++++++-
+> >  1 file changed, 51 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/tools/perf/pmu-events/intel_metrics.py b/tools/perf/pmu-ev=
+ents/intel_metrics.py
+> > index f34b4230a4ee..58e243695f0a 100755
+> > --- a/tools/perf/pmu-events/intel_metrics.py
+> > +++ b/tools/perf/pmu-events/intel_metrics.py
+> > @@ -1,12 +1,13 @@
+> >  #!/usr/bin/env python3
+> >  # SPDX-License-Identifier: (LGPL-2.1 OR BSD-2-Clause)
+> > -from metric import (d_ratio, has_event, max, Event, JsonEncodeMetric,
+> > +from metric import (d_ratio, has_event, max, CheckPmu, Event, JsonEnco=
+deMetric,
+> >                      JsonEncodeMetricGroupDescriptions, LoadEvents, Met=
+ric,
+> >                      MetricGroup, MetricRef, Select)
+> >  import argparse
+> >  import json
+> >  import math
+> >  import os
+> > +from typing import Optional
+> >
+> >  # Global command line arguments.
+> >  _args =3D None
+> > @@ -74,6 +75,54 @@ def Smi() -> MetricGroup:
+> >      ], description =3D 'System Management Interrupt metrics')
+> >
+> >
+> > +def Tsx() -> Optional[MetricGroup]:
+> > +  pmu =3D "cpu_core" if CheckPmu("cpu_core") else "cpu"
+> > +  cycles =3D Event('cycles')
+>
+> Isn't the pmu prefix required for cycles as well?
 
+Makes sense.
 
-On 10/23/2024 9:30 AM, Bjorn Andersson wrote:
-> On Mon, Oct 21, 2024 at 04:03:57PM GMT, Melody Olvera wrote:
-> [..]
->> diff --git a/drivers/clk/qcom/gcc-sm8750.c b/drivers/clk/qcom/gcc-sm8750.c
-> [..]
->> +static struct clk_regmap_mux gcc_pcie_0_pipe_clk_src = {
->> +	.reg = 0x6b080,
->> +	.shift = 0,
->> +	.width = 2,
->> +	.parent_map = gcc_parent_map_7,
->> +	.clkr = {
->> +		.hw.init = &(const struct clk_init_data) {
->> +			.name = "gcc_pcie_0_pipe_clk_src",
->> +			.parent_data = gcc_parent_data_7,
->> +			.num_parents = ARRAY_SIZE(gcc_parent_data_7),
->> +			.ops = &clk_regmap_mux_closest_ops,
-> 
-> Please confirm that the PCIe pipe clock sources should not be
-> &clk_regmap_phy_mux_ops, as on other platforms.
-> 
+> > +  cycles_in_tx =3D Event(f'{pmu}/cycles\-t/')
+> > +  cycles_in_tx_cp =3D Event(f'{pmu}/cycles\-ct/')
+> > +  try:
+> > +    # Test if the tsx event is present in the json, prefer the
+> > +    # sysfs version so that we can detect its presence at runtime.
+> > +    transaction_start =3D Event("RTM_RETIRED.START")
+> > +    transaction_start =3D Event(f'{pmu}/tx\-start/')
+>
+> What's the difference between this check and the later has_event() check?
+>
+> All the tsx related events are model-specific events. We should check
+> them all before using it.
 
-Yes Bjorn this will be fixed in the next series.
+So if there is PMU in the Event name then the Event logic assumes you
+are using sysfs and doesn't check the event exists in json. As you
+say, I needed a way to detect does this model support TSX? I wanted to
+avoid a model lookup table, so I used the existence of
+RTM_RETIRED.START for a model as the way to determine if the model
+supports TSX. Once we know we have a model supporting TSX then we use
+the sysfs event name and has_event check, so that if the TSX and the
+event have been disabled the metric doesn't fail parsing.
 
->> +		},
->> +	},
->> +};
->> +
-> [..]
->> +static const struct freq_tbl ftbl_gcc_sdcc2_apps_clk_src[] = {
->> +	F(400000, P_BI_TCXO, 12, 1, 4),
->> +	F(25000000, P_GCC_GPLL0_OUT_EVEN, 12, 0, 0),
->> +	F(50000000, P_GCC_GPLL0_OUT_EVEN, 6, 0, 0),
->> +	F(100000000, P_GCC_GPLL0_OUT_EVEN, 3, 0, 0),
->> +	F(202000000, P_GCC_GPLL9_OUT_MAIN, 4, 0, 0),
->> +	{ }
->> +};
->> +
->> +static struct clk_rcg2 gcc_sdcc2_apps_clk_src = {
->> +	.cmd_rcgr = 0x1401c,
->> +	.mnd_width = 8,
->> +	.hid_width = 5,
->> +	.parent_map = gcc_parent_map_8,
->> +	.freq_tbl = ftbl_gcc_sdcc2_apps_clk_src,
->> +	.clkr.hw.init = &(const struct clk_init_data) {
->> +		.name = "gcc_sdcc2_apps_clk_src",
->> +		.parent_data = gcc_parent_data_8,
->> +		.num_parents = ARRAY_SIZE(gcc_parent_data_8),
->> +		.flags = CLK_SET_RATE_PARENT,
->> +		.ops = &clk_rcg2_shared_ops,
-> 
-> Please confirm that the sdcc apps_clk_src no longer needs to use
-> &clk_rcg2_floor_ops.
-> 
+So, the first check is a compile time check of, "does this model have
+TSX?". The "has_event" check is a runtime thing where we want to see
+if the event exists in sysfs in case the TSX was disabled say in the
+BIOS.
 
-This too would be fixed in the next series.
+Thanks,
+Ian
 
->> +	},
->> +};
->> +
-> [..]
->> +static struct gdsc gcc_pcie_0_gdsc = {
->> +	.gdscr = 0x6b004,
->> +	.en_rest_wait_val = 0x2,
->> +	.en_few_wait_val = 0x2,
->> +	.clk_dis_wait_val = 0xf,
->> +	.collapse_ctrl = 0x5214c,
->> +	.collapse_mask = BIT(0),
->> +	.pd = {
->> +		.name = "gcc_pcie_0_gdsc",
->> +	},
->> +	.pwrsts = PWRSTS_OFF_ON,
-> 
-> Shouldn't the PCIe GDSCs be PWRSTS_RET_ON?
-> 
-
-Not required.
-
->> +	.flags = POLL_CFG_GDSCR | RETAIN_FF_ENABLE | VOTABLE,
->> +};
->> +
-> [..]
->> +static int gcc_sm8750_probe(struct platform_device *pdev)
->> +{
->> +	struct regmap *regmap;
->> +	int ret;
->> +
->> +	regmap = qcom_cc_map(pdev, &gcc_sm8750_desc);
->> +	if (IS_ERR(regmap))
->> +		return PTR_ERR(regmap);
->> +
->> +	ret = qcom_cc_register_rcg_dfs(regmap, gcc_dfs_clocks,
->> +				       ARRAY_SIZE(gcc_dfs_clocks));
->> +	if (ret)
->> +		return ret;
->> +
->> +	/*
->> +	 * Keep clocks always enabled:
->> +	 *	gcc_cam_bist_mclk_ahb_clk
->> +	 *	gcc_camera_ahb_clk
->> +	 *	gcc_camera_xo_clk
->> +	 *	gcc_disp_ahb_clk
->> +	 *	gcc_eva_ahb_clk
->> +	 *	gcc_eva_xo_clk
->> +	 *	gcc_gpu_cfg_ahb_clk
->> +	 *	gcc_pcie_rscc_cfg_ahb_clk
->> +	 *	gcc_pcie_rscc_xo_clk
->> +	 *	gcc_video_ahb_clk
->> +	 *	gcc_video_xo_clk
->> +	 */
->> +	regmap_update_bits(regmap, 0xa0004, BIT(0), BIT(0));
->> +	regmap_update_bits(regmap, 0x26004, BIT(0), BIT(0));
->> +	regmap_update_bits(regmap, 0x26034, BIT(0), BIT(0));
->> +	regmap_update_bits(regmap, 0x27004, BIT(0), BIT(0));
->> +	regmap_update_bits(regmap, 0x9f004, BIT(0), BIT(0));
->> +	regmap_update_bits(regmap, 0x9f01c, BIT(0), BIT(0));
->> +	regmap_update_bits(regmap, 0x71004, BIT(0), BIT(0));
-
->> +	regmap_update_bits(regmap, 0x52010, BIT(20), BIT(20));
->> +	regmap_update_bits(regmap, 0x52010, BIT(21), BIT(21));
-These will still require to use the regmap_update_bits().
-
->> +	regmap_update_bits(regmap, 0x32004, BIT(0), BIT(0));
->> +	regmap_update_bits(regmap, 0x32038, BIT(0), BIT(0));
-> 
-> Any reason why qcom_branch_set_clk_en() can't be used here?
-> 
-
-Yes, I agree it is a miss.
-
->> +
->> +	/* FORCE_MEM_CORE_ON for ufs phy ice core clocks */
->> +	regmap_update_bits(regmap, gcc_ufs_phy_ice_core_clk.halt_reg,
->> +			   BIT(14), BIT(14));
-> 
-> qcom_branch_set_force_mem_core() ?
-> 
-
-It will be fixed.
-
-> Regards,
-> Bjorn
-> 
->> +
->> +	return qcom_cc_really_probe(&pdev->dev, &gcc_sm8750_desc, regmap);
->> +}
->> +
->> +static struct platform_driver gcc_sm8750_driver = {
->> +	.probe = gcc_sm8750_probe,
->> +	.driver = {
->> +		.name = "gcc-sm8750",
->> +		.of_match_table = gcc_sm8750_match_table,
->> +	},
->> +};
->> +
->> +static int __init gcc_sm8750_init(void)
->> +{
->> +	return platform_driver_register(&gcc_sm8750_driver);
->> +}
->> +subsys_initcall(gcc_sm8750_init);
->> +
->> +static void __exit gcc_sm8750_exit(void)
->> +{
->> +	platform_driver_unregister(&gcc_sm8750_driver);
->> +}
->> +module_exit(gcc_sm8750_exit);
->> +
->> +MODULE_DESCRIPTION("QTI GCC SM8750 Driver");
->> +MODULE_LICENSE("GPL");
->> -- 
->> 2.46.1
->>
-
--- 
-Thanks & Regards,
-Taniya Das.
+>
+> Thanks,
+> Kan
+> > +  except:> +    return None
+> > +
+> > +  elision_start =3D None
+> > +  try:
+> > +    # Elision start isn't supported by all models, but we'll not
+> > +    # generate the tsx_cycles_per_elision metric in that
+> > +    # case. Again, prefer the sysfs encoding of the event.
+> > +    elision_start =3D Event("HLE_RETIRED.START")
+> > +    elision_start =3D Event(f'{pmu}/el\-start/')
+> > +  except:
+> > +    pass
+> > +
+> > +  return MetricGroup('transaction', [
+> > +      Metric('tsx_transactional_cycles',
+> > +             'Percentage of cycles within a transaction region.',
+> > +             Select(cycles_in_tx / cycles, has_event(cycles_in_tx), 0)=
+,
+> > +             '100%'),
+> > +      Metric('tsx_aborted_cycles', 'Percentage of cycles in aborted tr=
+ansactions.',
+> > +             Select(max(cycles_in_tx - cycles_in_tx_cp, 0) / cycles,
+> > +                    has_event(cycles_in_tx),
+> > +                    0),
+> > +             '100%'),
+> > +      Metric('tsx_cycles_per_transaction',
+> > +             'Number of cycles within a transaction divided by the num=
+ber of transactions.',
+> > +             Select(cycles_in_tx / transaction_start,
+> > +                    has_event(cycles_in_tx),
+> > +                    0),
+> > +             "cycles / transaction"),
+> > +      Metric('tsx_cycles_per_elision',
+> > +             'Number of cycles within a transaction divided by the num=
+ber of elisions.',
+> > +             Select(cycles_in_tx / elision_start,
+> > +                    has_event(elision_start),
+> > +                    0),
+> > +             "cycles / elision") if elision_start else None,
+> > +  ], description=3D"Breakdown of transactional memory statistics")
+> > +
+> > +
+> >  def main() -> None:
+> >    global _args
+> >
+> > @@ -100,6 +149,7 @@ def main() -> None:
+> >        Idle(),
+> >        Rapl(),
+> >        Smi(),
+> > +      Tsx(),
+> >    ])
+> >
+> >
+>
 
