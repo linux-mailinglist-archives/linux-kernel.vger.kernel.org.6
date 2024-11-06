@@ -1,75 +1,48 @@
-Return-Path: <linux-kernel+bounces-398516-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398517-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65FA99BF24A
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 16:55:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AF239BF24E
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 16:57:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D4BF7B24E8C
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 15:55:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7F63CB21165
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 15:57:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABBAB20400E;
-	Wed,  6 Nov 2024 15:55:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85153204094;
+	Wed,  6 Nov 2024 15:57:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SHfNbF7i"
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TWovxzsU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CFF5190075;
-	Wed,  6 Nov 2024 15:55:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 598EC190075;
+	Wed,  6 Nov 2024 15:57:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730908534; cv=none; b=mqU2nX2uhx0vffk/93qR8Kt+sb1Ny7WJ++CaMVd/NIH1l6+vJ3jP3c4nS5EKn8khqCWFdwhZeIkpotqUZocCEnxb/qwpbtKGB0u8YE/UOGd7TPck4J64xdU4RkcKr/I9A+QFgZ933bbTJDjGWbmSqoNnyu2aqU7wCwyK+LGcFdQ=
+	t=1730908651; cv=none; b=SeZCPJlI1ipvT8/UrWCO+n9VklCKAyL2ISzmUqG4Gv6FgecJAGAZYLwCzXT5gnH+oynQRo+0qv2l+eQgY4ZYzS2gpungc88TOsR3RX5paBul7HqW2dtg3Bd20WB8RI0ZQtqFgua3lDbIISo/bM3yGlTpV/CcqCi5aiYTXxbznSY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730908534; c=relaxed/simple;
-	bh=lmZ34mpN9FKQ2MZimuXtaoFX+pwfJtaEkD7X19/GC8c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KtjmwI6B07AmBp7EBpd/8x4/K8AloX3aLLfd6O5P68SOcS71QKVVbaloO2oXG3AuXIrH9x6Bz1d2WjUYkjtcE0g/A3MttiOChemA8oZdkkwXZJQl8XY4U8ahqDHkx4dDGRZc78uUps6xmEAGQjZY23RmCK+Uojv1nmU/YcJJPuI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SHfNbF7i; arc=none smtp.client-ip=209.85.210.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-720be27db74so886031b3a.1;
-        Wed, 06 Nov 2024 07:55:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730908533; x=1731513333; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=jXs+F/oKsf4Wfse4T8HZVhXMFtchgJeyB9DnhWTGYD0=;
-        b=SHfNbF7iSN6lAAapbmVvrm9joqYnUbjnBU8KSyLakIuJOU1DxS/nS7u8vXNIFIKUhP
-         pIC1XDAwZP5bk7a9bZtPPPIqQv5n0YFyv0Lpgqq8zVB8fGvu3xhuGIBl4BAIq/SG3QgU
-         sgNKmB9YkoBjnOmEhXn+FJcZVI1Lt7eesZCf5HXswtNHecHec/ZPDvvtbv6416w5PzJD
-         4AobnaL5svztiDRdXU9cYJMEaAkcrMXP4gGRnVLMeSSdPRHyo2WCCrM66Hvup+IgsP/k
-         t8nZWKS2ri5kpIyaZvD6HCM+A5uylmhcSdwAiIFSKAO13Leeuj9aLmJiPK4RB6oBO0PI
-         YsWg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730908533; x=1731513333;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jXs+F/oKsf4Wfse4T8HZVhXMFtchgJeyB9DnhWTGYD0=;
-        b=tj+0nYQzd4RA75QmS+eEf+r9kdI8aj9r7oYK8aNkb1F9A8M0ZKNPmy4yJNrCLBIakx
-         jAdN1CQkjIttE2rZzXPBMKAR1wAeouJgaZCaSBI/xtYL+KU0XWGsVpcdRXxbTVdety0J
-         9xGYwomyDvtd+UnbMhrvKbU9Epk+SjdeEyzGVFaAQdyZmxMa/QmwTVvd5Mzqoy3ytgZS
-         CtpusA95zJWSQI4tXRuux/17bHfK+r8OhVnbqsHyIZiiW2VBThBh1zjrnsakMLoZgwYx
-         HeEc6BkT3BhMN5+qxsVPrX2pbbKsIH9meGFrcFXPu6eYHLBSypPzZgwCV3kp8Rz7XGJ4
-         aoWQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUPw2YVNVn+gmg9/5DuzbLNwwkP4IjanfWSBUr7bOdFwzKinQW72xVHQCkE74DtmoWSkKyNw3TRoeKO7d0E@vger.kernel.org, AJvYcCV4wX/+NT5VRoE12lDeWWGL5YaBmjpB5tW11lkhX4p7sLkAcbobquuhxb4ikWSQSqTIGZUQSdPqmtMlb9g=@vger.kernel.org, AJvYcCXd9TYIOkoliQH2+LPCnp9rluv88Bn9t1z3JiJqHrIKu+vNxbTFi20tpuw2rrP5Ml2jcqIHYftANJyR@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywa4kJ4+9Yn/eFIsFedYbtPPKjjJ01oDLRcckPDM2dKwyvwcFUa
-	8nrshZ4Qwuri6R9DGZ6mGxhdPSiG35QyFQ1pT/5jeXY9XmhTdvfO
-X-Google-Smtp-Source: AGHT+IHRceEXaz4pH/Bn4VqW0+lmY0WB4+hP8S8LIqUPVBWY1GPT/V//tYeEzO3AQB2Pecq2M2/apw==
-X-Received: by 2002:aa7:88c6:0:b0:71e:6a99:4732 with SMTP id d2e1a72fcca58-723f7a8ecbfmr4985051b3a.11.1730908532538;
-        Wed, 06 Nov 2024 07:55:32 -0800 (PST)
-Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-720bc315ad0sm11860092b3a.198.2024.11.06.07.55.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 06 Nov 2024 07:55:31 -0800 (PST)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <55825e91-b111-4689-bb3e-ede2c241728d@roeck-us.net>
-Date: Wed, 6 Nov 2024 07:55:30 -0800
+	s=arc-20240116; t=1730908651; c=relaxed/simple;
+	bh=hL3/AiTUyM9f/ClgjbViiWTaBnOSPZP5UlllxCvfslE=;
+	h=Content-Type:Message-ID:Date:MIME-Version:Subject:From:To:Cc:
+	 References:In-Reply-To; b=PY3KWX9mRV9Aw1iXUayVBJRwdOat/9zpwrnAcb1REfGiTGT2uexAR4sOnMrFAXaxHdomdVGslPkH42w+76guG24ejVVu6WbCSAXdFIo/SvekWVyNuD7B1fbDAAfmgCQNQXZLnRibL4e8QGi7mH0+e2hq1tZJ6Lqxh9ZL67A8qOM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TWovxzsU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2114BC4CEC6;
+	Wed,  6 Nov 2024 15:57:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730908651;
+	bh=hL3/AiTUyM9f/ClgjbViiWTaBnOSPZP5UlllxCvfslE=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=TWovxzsUZoMUcsupSP1TsmzLxOXF8RWpG72e+lNGlZ3II6x6bWP8hGKiczh2xL7aX
+	 sh+lc/USMZnbOhUC7B0rGRCMt6/KLxTJoSj8RKGa1Vxl9t0sV5Z9mGhzJf9r94hvXZ
+	 B2S39eXuLIYyeGi2xcLEuNbpJeGeApNkl07+55tfMTAfb6VCzZOlh5RyRgvvZ/HFPF
+	 TR2dya8+00foq53oIc3yQe/y5KSrYPfDAhpg5r/bQDBeoleZFzRdKTWCRNxh5IKHuL
+	 ovLSvaes4hzBMv3KPAT8azf/LxgVFuBIV3bNbGbh4KTv5kIynpgPM8/la7FQ46osi1
+	 9nafxBwCZYhmQ==
+Content-Type: multipart/mixed; boundary="------------DkaSgiVyEyouYV9Gnp3M5WgO"
+Message-ID: <b8b7818a-e44b-45f5-91c2-d5eceaa5dd5b@kernel.org>
+Date: Wed, 6 Nov 2024 16:57:25 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,172 +50,364 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] hwmon: (pmbus/adp1050): Support adp1051 and adp1055
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Alexis Cezar Torreno <alexisczezar.torreno@analog.com>
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, linux-hwmon@vger.kernel.org,
- Radu Sabau <radu.sabau@analog.com>, Jean Delvare <jdelvare@suse.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-References: <20241106090311.17536-1-alexisczezar.torreno@analog.com>
- <20241106090311.17536-3-alexisczezar.torreno@analog.com>
- <ZytSCD0dViGp-l2b@smile.fi.intel.com>
+Subject: Re: [PATCH net-next v3 3/3] page_pool: fix IOMMU crash when driver
+ has already unbound
+From: Jesper Dangaard Brouer <hawk@kernel.org>
+To: Yunsheng Lin <linyunsheng@huawei.com>,
+ =?UTF-8?Q?Toke_H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>,
+ davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com
+Cc: zhangkun09@huawei.com, fanghaiqing@huawei.com, liuyonglong@huawei.com,
+ Robin Murphy <robin.murphy@arm.com>,
+ Alexander Duyck <alexander.duyck@gmail.com>, IOMMU <iommu@lists.linux.dev>,
+ Andrew Morton <akpm@linux-foundation.org>, Eric Dumazet
+ <edumazet@google.com>, Ilias Apalodimas <ilias.apalodimas@linaro.org>,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+ kernel-team <kernel-team@cloudflare.com>, Viktor Malik <vmalik@redhat.com>
+References: <20241022032214.3915232-1-linyunsheng@huawei.com>
+ <20241022032214.3915232-4-linyunsheng@huawei.com>
+ <dbd7dca7-d144-4a0f-9261-e8373be6f8a1@kernel.org>
+ <113c9835-f170-46cf-92ba-df4ca5dfab3d@huawei.com> <878qudftsn.fsf@toke.dk>
+ <d8e0895b-dd37-44bf-ba19-75c93605fc5e@huawei.com> <87r084e8lc.fsf@toke.dk>
+ <0c146fb8-4c95-4832-941f-dfc3a465cf91@kernel.org>
+ <204272e7-82c3-4437-bb0d-2c3237275d1f@huawei.com>
+ <18ba4489-ad30-423e-9c54-d4025f74c193@kernel.org>
 Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-In-Reply-To: <ZytSCD0dViGp-l2b@smile.fi.intel.com>
+In-Reply-To: <18ba4489-ad30-423e-9c54-d4025f74c193@kernel.org>
+
+This is a multi-part message in MIME format.
+--------------DkaSgiVyEyouYV9Gnp3M5WgO
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 11/6/24 03:24, Andy Shevchenko wrote:
-> On Wed, Nov 06, 2024 at 05:03:11PM +0800, Alexis Cezar Torreno wrote:
->> ADP1051: 6 PWM for I/O Voltage, I/O Current, Temperature
->> ADP1055: 6 PWM for I/O Voltage, I/O Current, Power, Temperature
+
+
+On 06/11/2024 14.25, Jesper Dangaard Brouer wrote:
 > 
-> Missing blank line and perhaps you can add Datasheet: tag(s) for these HW?
-> (see `git log --no-merges --grep Datasheet:` for the example)
+> On 26/10/2024 09.33, Yunsheng Lin wrote:
+>> On 2024/10/25 22:07, Jesper Dangaard Brouer wrote:
+>>
+>> ...
+>>
+>>>
+>>>>> You and Jesper seems to be mentioning a possible fact that there might
+>>>>> be 'hundreds of gigs of memory' needed for inflight pages, it would 
+>>>>> be nice
+>>>>> to provide more info or reasoning above why 'hundreds of gigs of 
+>>>>> memory' is
+>>>>> needed here so that we don't do a over-designed thing to support 
+>>>>> recording
+>>>>> unlimited in-flight pages if the driver unbound stalling turns out 
+>>>>> impossible
+>>>>> and the inflight pages do need to be recorded.
+>>>>
+>>>> I don't have a concrete example of a use that will blow the limit you
+>>>> are setting (but maybe Jesper does), I am simply objecting to the
+>>>> arbitrary imposing of any limit at all. It smells a lot of "640k ought
+>>>> to be enough for anyone".
+>>>>
+>>>
+>>> As I wrote before. In *production* I'm seeing TCP memory reach 24 GiB
+>>> (on machines with 384GiB memory). I have attached a grafana screenshot
+>>> to prove what I'm saying.
+>>>
+>>> As my co-worker Mike Freemon, have explain to me (and more details in
+>>> blogposts[1]). It is no coincident that graph have a strange "sealing"
+>>> close to 24 GiB (on machines with 384GiB total memory).  This is because
+>>> TCP network stack goes into a memory "under pressure" state when 6.25%
+>>> of total memory is used by TCP-stack. (Detail: The system will stay in
+>>> that mode until allocated TCP memory falls below 4.68% of total memory).
+>>>
+>>>   [1] 
+>>> https://blog.cloudflare.com/unbounded-memory-usage-by-tcp-for-receive-buffers-and-how-we-fixed-it/
+>>
+>> Thanks for the info.
+> 
+> Some more info from production servers.
+> 
+> (I'm amazed what we can do with a simple bpftrace script, Cc Viktor)
+> 
+> In below bpftrace script/oneliner I'm extracting the inflight count, for
+> all page_pool's in the system, and storing that in a histogram hash.
+> 
+> sudo bpftrace -e '
+>   rawtracepoint:page_pool_state_release { @cnt[probe]=count();
+>    @cnt_total[probe]=count();
+>    $pool=(struct page_pool*)arg0;
+>    $release_cnt=(uint32)arg2;
+>    $hold_cnt=$pool->pages_state_hold_cnt;
+>    $inflight_cnt=(int32)($hold_cnt - $release_cnt);
+>    @inflight=hist($inflight_cnt);
+>   }
+>   interval:s:1 {time("\n%H:%M:%S\n");
+>    print(@cnt); clear(@cnt);
+>    print(@inflight);
+>    print(@cnt_total);
+>   }'
+> 
+> The page_pool behavior depend on how NIC driver use it, so I've run this 
+> on two prod servers with drivers bnxt and mlx5, on a 6.6.51 kernel.
+> 
+> Driver: bnxt_en
+> - kernel 6.6.51
+> 
+> @cnt[rawtracepoint:page_pool_state_release]: 8447
+> @inflight:
+> [0]             507 |                                        |
+> [1]             275 |                                        |
+> [2, 4)          261 |                                        |
+> [4, 8)          215 |                                        |
+> [8, 16)         259 |                                        |
+> [16, 32)        361 |                                        |
+> [32, 64)        933 |                                        |
+> [64, 128)      1966 |                                        |
+> [128, 256)   937052 |@@@@@@@@@                               |
+> [256, 512)  5178744 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@|
+> [512, 1K)     73908 |                                        |
+> [1K, 2K)    1220128 |@@@@@@@@@@@@                            |
+> [2K, 4K)    1532724 |@@@@@@@@@@@@@@@                         |
+> [4K, 8K)    1849062 |@@@@@@@@@@@@@@@@@@                      |
+> [8K, 16K)   1466424 |@@@@@@@@@@@@@@                          |
+> [16K, 32K)   858585 |@@@@@@@@                                |
+> [32K, 64K)   693893 |@@@@@@                                  |
+> [64K, 128K)  170625 |@                                       |
+> 
+> Driver: mlx5_core
+>   - Kernel: 6.6.51
+> 
+> @cnt[rawtracepoint:page_pool_state_release]: 1975
+> @inflight:
+> [128, 256)         28293 |@@@@                               |
+> [256, 512)        184312 |@@@@@@@@@@@@@@@@@@@@@@@@@@@        |
+> [512, 1K)              0 |                                   |
+> [1K, 2K)            4671 |                                   |
+> [2K, 4K)          342571 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@|
+> [4K, 8K)          180520 |@@@@@@@@@@@@@@@@@@@@@@@@@@@        |
+> [8K, 16K)          96483 |@@@@@@@@@@@@@@                     |
+> [16K, 32K)         25133 |@@@                                |
+> [32K, 64K)          8274 |@                                  |
+> 
+> 
+> The key thing to notice that we have up-to 128,000 pages in flight on
+> these random production servers. The NIC have 64 RX queue configured,
+> thus also 64 page_pool objects.
 > 
 
-Is that an official tag ? Frankly, if so, I think it is quite useless
-in the patch description because datasheet locations keep changing.
-I think it is much better to provide a link in the driver documentation.
+I realized that we primarily want to know the maximum in-flight pages.
 
->> Signed-off-by: Alexis Cezar Torreno <alexisczezar.torreno@analog.com>
-> 
-> ...
-> 
->> --- a/drivers/hwmon/pmbus/adp1050.c
->> +++ b/drivers/hwmon/pmbus/adp1050.c
->> @@ -6,8 +6,8 @@
->>    */
->>   #include <linux/bits.h>
->>   #include <linux/i2c.h>
->> -#include <linux/mod_devicetable.h>
->>   #include <linux/module.h>
->> +#include <linux/mod_devicetable.h>
->>   
->>   #include "pmbus.h"
-> 
-> Stray change. This pure depends on the your `locale` settings.
-> The original one seems using en_US.UTF-8 and it's perfectly fine.
-> 
+So, I modified the bpftrace oneliner to track the max for each page_pool 
+in the system.
 
-Agreed.
+sudo bpftrace -e '
+  rawtracepoint:page_pool_state_release { @cnt[probe]=count();
+   @cnt_total[probe]=count();
+   $pool=(struct page_pool*)arg0;
+   $release_cnt=(uint32)arg2;
+   $hold_cnt=$pool->pages_state_hold_cnt;
+   $inflight_cnt=(int32)($hold_cnt - $release_cnt);
+   $cur=@inflight_max[$pool];
+   if ($inflight_cnt > $cur) {
+     @inflight_max[$pool]=$inflight_cnt;}
+  }
+  interval:s:1 {time("\n%H:%M:%S\n");
+   print(@cnt); clear(@cnt);
+   print(@inflight_max);
+   print(@cnt_total);
+  }'
 
-> ...
-> 
->> +static struct pmbus_driver_info adp1051_info = {
->> +	.pages = 1,
->> +	.format[PSC_VOLTAGE_IN] = linear,
->> +	.format[PSC_VOLTAGE_OUT] = linear,
->> +	.format[PSC_CURRENT_IN] = linear,
->> +	.format[PSC_TEMPERATURE] = linear,
->> +	.func[0] = PMBUS_HAVE_VIN | PMBUS_HAVE_IIN | PMBUS_HAVE_VOUT
->> +		   | PMBUS_HAVE_IOUT | PMBUS_HAVE_TEMP | PMBUS_HAVE_STATUS_VOUT
->> +		   | PMBUS_HAVE_STATUS_IOUT | PMBUS_HAVE_STATUS_INPUT
->> +		   | PMBUS_HAVE_STATUS_TEMP,
-> 
-> I dunno if the other entries in the file are written in the same style, but
-> usual one is
-> 
-> 	.func[0] = PMBUS_HAVE_VIN | PMBUS_HAVE_IIN | PMBUS_HAVE_VOUT |
-> 		   PMBUS_HAVE_IOUT | PMBUS_HAVE_TEMP | PMBUS_HAVE_STATUS_VOUT |
-> 		   PMBUS_HAVE_STATUS_IOUT | PMBUS_HAVE_STATUS_INPUT |
-> 		   PMBUS_HAVE_STATUS_TEMP,
-> 
-> Or even more logically
-> 
-> 	.func[0] = PMBUS_HAVE_VIN | PMBUS_HAVE_IIN |
-> 		   PMBUS_HAVE_VOUT | PMBUS_HAVE_IOUT |
-> 		   PMBUS_HAVE_TEMP |
-> 		   PMBUS_HAVE_STATUS_INPUT |
-> 		   PMBUS_HAVE_STATUS_VOUT | PMBUS_HAVE_STATUS_IOUT |
-> 		   PMBUS_HAVE_STATUS_TEMP,
-> 
->> +};
->> +
->> +static struct pmbus_driver_info adp1055_info = {
->> +	.pages = 1,
->> +	.format[PSC_VOLTAGE_IN] = linear,
->> +	.format[PSC_VOLTAGE_OUT] = linear,
->> +	.format[PSC_CURRENT_IN] = linear,
->> +	.format[PSC_TEMPERATURE] = linear,
->> +	.func[0] = PMBUS_HAVE_VIN | PMBUS_HAVE_IIN | PMBUS_HAVE_VOUT
->> +		   | PMBUS_HAVE_IOUT | PMBUS_HAVE_TEMP2 | PMBUS_HAVE_TEMP3
->> +		   | PMBUS_HAVE_POUT | PMBUS_HAVE_STATUS_VOUT
->> +		   | PMBUS_HAVE_STATUS_IOUT | PMBUS_HAVE_STATUS_INPUT
->> +		   | PMBUS_HAVE_STATUS_TEMP,
-> 
-> Ditto.
-> 
+I've attached the output from the script.
+For unknown reason this system had 199 page_pool objects.
 
-That one slipped through with the original driver submission.
-I thought that checkpatch complains about that, but it turns out that
-it doesn't. I agree, though, that the usual style should be used.
+The 20 top users:
 
-Guenter
+$ cat out02.inflight-max | grep inflight_max | tail -n 20
+@inflight_max[0xffff88829133d800]: 26473
+@inflight_max[0xffff888293c3e000]: 27042
+@inflight_max[0xffff888293c3b000]: 27709
+@inflight_max[0xffff8881076f2800]: 29400
+@inflight_max[0xffff88818386e000]: 29690
+@inflight_max[0xffff8882190b1800]: 29813
+@inflight_max[0xffff88819ee83800]: 30067
+@inflight_max[0xffff8881076f4800]: 30086
+@inflight_max[0xffff88818386b000]: 31116
+@inflight_max[0xffff88816598f800]: 36970
+@inflight_max[0xffff8882190b7800]: 37336
+@inflight_max[0xffff888293c38800]: 39265
+@inflight_max[0xffff888293c3c800]: 39632
+@inflight_max[0xffff888293c3b800]: 43461
+@inflight_max[0xffff888293c3f000]: 43787
+@inflight_max[0xffff88816598f000]: 44557
+@inflight_max[0xffff888132ce9000]: 45037
+@inflight_max[0xffff888293c3f800]: 51843
+@inflight_max[0xffff888183869800]: 62612
+@inflight_max[0xffff888113d08000]: 73203
 
->> +};
-> 
-> ...
-> 
->>   static const struct i2c_device_id adp1050_id[] = {
->> -	{"adp1050"},
->> +	{ .name = "adp1050", .driver_data = (kernel_ulong_t)&adp1050_info},
->> +	{ .name = "adp1051", .driver_data = (kernel_ulong_t)&adp1051_info},
->> +	{ .name = "adp1055", .driver_data = (kernel_ulong_t)&adp1055_info},
->>   	{}
->>   };
-> 
->> +
-> 
-> Stray blank line.
-> 
->>   MODULE_DEVICE_TABLE(i2c, adp1050_id);
-> 
+Adding all values together:
 
+  grep inflight_max out02.inflight-max | awk 'BEGIN {tot=0} {tot+=$2; 
+printf "total:" tot "\n"}' | tail -n 1
+
+total:1707129
+
+Worst case we need a data structure holding 1,707,129 pages.
+Fortunately, we don't need a single data structure as this will be split
+between 199 page_pool's.
+
+--Jesper
+
+--------------DkaSgiVyEyouYV9Gnp3M5WgO
+Content-Type: text/plain; charset=UTF-8; name="out02.inflight-max"
+Content-Disposition: attachment; filename="out02.inflight-max"
+Content-Transfer-Encoding: base64
+
+MTU6MDc6MDUKQGNudFtyYXd0cmFjZXBvaW50OnBhZ2VfcG9vbF9zdGF0ZV9yZWxlYXNlXTog
+NjM0NApAaW5mbGlnaHRfbWF4WzB4ZmZmZjg4YTE1MTJkOTgwMF06IDMxOApAaW5mbGlnaHRf
+bWF4WzB4ZmZmZjg4YTA3MTcwMzgwMF06IDMxOApAaW5mbGlnaHRfbWF4WzB4ZmZmZjg4YTE1
+MTM2NzgwMF06IDMxOApAaW5mbGlnaHRfbWF4WzB4ZmZmZjg4YTE1MTJmYzAwMF06IDMxOApA
+aW5mbGlnaHRfbWF4WzB4ZmZmZjg4YTE1MTM2NTAwMF06IDMxOApAaW5mbGlnaHRfbWF4WzB4
+ZmZmZjg4YTE1MTJkODAwMF06IDMxOApAaW5mbGlnaHRfbWF4WzB4ZmZmZjg4YTE1MTJmZTgw
+MF06IDMxOApAaW5mbGlnaHRfbWF4WzB4ZmZmZjg4YTE1MTJkZDgwMF06IDMxOApAaW5mbGln
+aHRfbWF4WzB4ZmZmZjg4YTE1MTJkZTgwMF06IDMxOApAaW5mbGlnaHRfbWF4WzB4ZmZmZjg4
+YTA3MTcwNzgwMF06IDMxOApAaW5mbGlnaHRfbWF4WzB4ZmZmZjg4YTE1MTJmZjAwMF06IDMx
+OApAaW5mbGlnaHRfbWF4WzB4ZmZmZjg4YTE1MTJkZDAwMF06IDMxOApAaW5mbGlnaHRfbWF4
+WzB4ZmZmZjg4YTE1MTJkYzgwMF06IDMxOApAaW5mbGlnaHRfbWF4WzB4ZmZmZjg4YTE1MTM2
+NjgwMF06IDMxOApAaW5mbGlnaHRfbWF4WzB4ZmZmZjg4YTA3MTcwMTAwMF06IDMxOApAaW5m
+bGlnaHRfbWF4WzB4ZmZmZjg4YTE1MTJmOTgwMF06IDMxOApAaW5mbGlnaHRfbWF4WzB4ZmZm
+Zjg4YTA3MTcwNjAwMF06IDMxOApAaW5mbGlnaHRfbWF4WzB4ZmZmZjg4YTE1MTJmYjAwMF06
+IDMxOApAaW5mbGlnaHRfbWF4WzB4ZmZmZjg4YTA3MTcwMDAwMF06IDMxOApAaW5mbGlnaHRf
+bWF4WzB4ZmZmZjg4YTE1MTM2MDgwMF06IDMxOApAaW5mbGlnaHRfbWF4WzB4ZmZmZjg4YTE1
+MTJmYTgwMF06IDMxOApAaW5mbGlnaHRfbWF4WzB4ZmZmZjg4YTE1MTM2MDAwMF06IDMxOApA
+aW5mbGlnaHRfbWF4WzB4ZmZmZjg4YTE1MTM2MTgwMF06IDMxOApAaW5mbGlnaHRfbWF4WzB4
+ZmZmZjg4YTE1MTJkYTAwMF06IDMxOApAaW5mbGlnaHRfbWF4WzB4ZmZmZjg4YTE1MTJkZTAw
+MF06IDMxOApAaW5mbGlnaHRfbWF4WzB4ZmZmZjg4YTE1MTJkYjgwMF06IDMxOApAaW5mbGln
+aHRfbWF4WzB4ZmZmZjg4YTE1MTJmYjgwMF06IDMxOApAaW5mbGlnaHRfbWF4WzB4ZmZmZjg4
+YTE1MTJmZTAwMF06IDMxOApAaW5mbGlnaHRfbWF4WzB4ZmZmZjg4YTE1MTM2NDgwMF06IDMx
+OApAaW5mbGlnaHRfbWF4WzB4ZmZmZjg4YTA3MTcwNjgwMF06IDMxOApAaW5mbGlnaHRfbWF4
+WzB4ZmZmZjg4YTE1MTM2NDAwMF06IDMxOApAaW5mbGlnaHRfbWF4WzB4ZmZmZjg4YTE1MTJm
+ZDAwMF06IDMxOApAaW5mbGlnaHRfbWF4WzB4ZmZmZjg4YTE1MTM2NjAwMF06IDMxOApAaW5m
+bGlnaHRfbWF4WzB4ZmZmZjg4YTA3MTcwMTgwMF06IDMxOApAaW5mbGlnaHRfbWF4WzB4ZmZm
+Zjg4YTE1MTJkYTgwMF06IDMxOApAaW5mbGlnaHRfbWF4WzB4ZmZmZjg4YTA3MTcwMDgwMF06
+IDMxOApAaW5mbGlnaHRfbWF4WzB4ZmZmZjg4YTE1MTJmZDgwMF06IDMxOApAaW5mbGlnaHRf
+bWF4WzB4ZmZmZjg4YTA3MTcwMjAwMF06IDMxOApAaW5mbGlnaHRfbWF4WzB4ZmZmZjg4YTE1
+MTM2NTgwMF06IDMxOApAaW5mbGlnaHRfbWF4WzB4ZmZmZjg4YTE1MTM2MTAwMF06IDMxOApA
+aW5mbGlnaHRfbWF4WzB4ZmZmZjg4YTE1MTJmODAwMF06IDMxOApAaW5mbGlnaHRfbWF4WzB4
+ZmZmZjg4YTA3MTcwNTAwMF06IDMxOApAaW5mbGlnaHRfbWF4WzB4ZmZmZjg4YTE1MTM2Mzgw
+MF06IDMxOApAaW5mbGlnaHRfbWF4WzB4ZmZmZjg4YTE1MTM2MjAwMF06IDMxOApAaW5mbGln
+aHRfbWF4WzB4ZmZmZjg4YTE1MTJkODgwMF06IDMxOApAaW5mbGlnaHRfbWF4WzB4ZmZmZjg4
+YTA3MTcwNDgwMF06IDMxOApAaW5mbGlnaHRfbWF4WzB4ZmZmZjg4YTE1MTJkYjAwMF06IDMx
+OApAaW5mbGlnaHRfbWF4WzB4ZmZmZjg4YTE1MTJmYzgwMF06IDMxOApAaW5mbGlnaHRfbWF4
+WzB4ZmZmZjg4YTE1MTJkZjAwMF06IDMxOApAaW5mbGlnaHRfbWF4WzB4ZmZmZjg4YTE1MTJm
+ODgwMF06IDMxOApAaW5mbGlnaHRfbWF4WzB4ZmZmZjg4YTE1MTJkZjgwMF06IDMxOApAaW5m
+bGlnaHRfbWF4WzB4ZmZmZjg4YTA3MTcwNzAwMF06IDMxOApAaW5mbGlnaHRfbWF4WzB4ZmZm
+Zjg4YTE1MTJkYzAwMF06IDMxOApAaW5mbGlnaHRfbWF4WzB4ZmZmZjg4YTA3MTcwNDAwMF06
+IDMxOApAaW5mbGlnaHRfbWF4WzB4ZmZmZjg4YTA3MTcwMjgwMF06IDMxOApAaW5mbGlnaHRf
+bWF4WzB4ZmZmZjg4YTA3MTcwMzAwMF06IDMxOApAaW5mbGlnaHRfbWF4WzB4ZmZmZjg4YTE1
+MTJkOTAwMF06IDMxOApAaW5mbGlnaHRfbWF4WzB4ZmZmZjg4YTE1MTM2MjgwMF06IDMxOApA
+aW5mbGlnaHRfbWF4WzB4ZmZmZjg4YTE1MTM2NzAwMF06IDMxOApAaW5mbGlnaHRfbWF4WzB4
+ZmZmZjg4YTE1MTJmOTAwMF06IDMxOApAaW5mbGlnaHRfbWF4WzB4ZmZmZjg4YTE1MTM2MzAw
+MF06IDMxOApAaW5mbGlnaHRfbWF4WzB4ZmZmZjg4YTE1MTJmYTAwMF06IDMxOApAaW5mbGln
+aHRfbWF4WzB4ZmZmZjg4YTA3MTcwNTgwMF06IDMxOApAaW5mbGlnaHRfbWF4WzB4ZmZmZjg4
+OTkxZDk2OTAwMF06IDMzMQpAaW5mbGlnaHRfbWF4WzB4ZmZmZjg4OTljYTdiNjgwMF06IDMz
+NgpAaW5mbGlnaHRfbWF4WzB4ZmZmZjg4OTkxZDk2YzAwMF06IDMzOQpAaW5mbGlnaHRfbWF4
+WzB4ZmZmZjg4OTljYTdiNjAwMF06IDM0MApAaW5mbGlnaHRfbWF4WzB4ZmZmZjg4OTljYTdi
+MzAwMF06IDM0MgpAaW5mbGlnaHRfbWF4WzB4ZmZmZjg4OTljYTdhMTgwMF06IDM0MgpAaW5m
+bGlnaHRfbWF4WzB4ZmZmZjg4OTljYTdiMjgwMF06IDM0MgpAaW5mbGlnaHRfbWF4WzB4ZmZm
+Zjg4OTljYTdhNzgwMF06IDM0MwpAaW5mbGlnaHRfbWF4WzB4ZmZmZjg4OTkxZDk2ZTAwMF06
+IDM0MwpAaW5mbGlnaHRfbWF4WzB4ZmZmZjg4OTkxZDk2YTAwMF06IDM0NApAaW5mbGlnaHRf
+bWF4WzB4ZmZmZjg4OTkxZDk2YjAwMF06IDM0NApAaW5mbGlnaHRfbWF4WzB4ZmZmZjg4OThi
+M2M5MjgwMF06IDM0NQpAaW5mbGlnaHRfbWF4WzB4ZmZmZjg4OTljYTdhNDgwMF06IDM0NQpA
+aW5mbGlnaHRfbWF4WzB4ZmZmZjg4OTljYTdiNDAwMF06IDM0NgpAaW5mbGlnaHRfbWF4WzB4
+ZmZmZjg4OThiM2M5MzgwMF06IDM0NwpAaW5mbGlnaHRfbWF4WzB4ZmZmZjg4OTkxZDk2ODAw
+MF06IDM0NwpAaW5mbGlnaHRfbWF4WzB4ZmZmZjg4OTkxZDk2ZjgwMF06IDM0OApAaW5mbGln
+aHRfbWF4WzB4ZmZmZjg4OThiM2M5MjAwMF06IDM0OApAaW5mbGlnaHRfbWF4WzB4ZmZmZjg4
+OTkxZDk2YjgwMF06IDM1MApAaW5mbGlnaHRfbWF4WzB4ZmZmZjg4OThiM2M5MDgwMF06IDM1
+MApAaW5mbGlnaHRfbWF4WzB4ZmZmZjg4OThiM2M5NjgwMF06IDM1MQpAaW5mbGlnaHRfbWF4
+WzB4ZmZmZjg4OTljYTdiNTAwMF06IDM1MQpAaW5mbGlnaHRfbWF4WzB4ZmZmZjg4OThiM2M5
+NzgwMF06IDM1MQpAaW5mbGlnaHRfbWF4WzB4ZmZmZjg4OTljYTdiNDgwMF06IDM1MgpAaW5m
+bGlnaHRfbWF4WzB4ZmZmZjg4OThiM2M5MzAwMF06IDM1MwpAaW5mbGlnaHRfbWF4WzB4ZmZm
+Zjg4OTkxZDk2OTgwMF06IDM1MwpAaW5mbGlnaHRfbWF4WzB4ZmZmZjg4OTljYTdiNTgwMF06
+IDM1NApAaW5mbGlnaHRfbWF4WzB4ZmZmZjg4OTljYTdhMjAwMF06IDM1NwpAaW5mbGlnaHRf
+bWF4WzB4ZmZmZjg4OThiM2M5MTAwMF06IDM1NwpAaW5mbGlnaHRfbWF4WzB4ZmZmZjg4OThi
+M2M5NzAwMF06IDM1NwpAaW5mbGlnaHRfbWF4WzB4ZmZmZjg4OTljYTdiMTAwMF06IDM1OApA
+aW5mbGlnaHRfbWF4WzB4ZmZmZjg4OThiM2M5NDAwMF06IDM1OQpAaW5mbGlnaHRfbWF4WzB4
+ZmZmZjg4OTkxZDk2ZDgwMF06IDM2MgpAaW5mbGlnaHRfbWF4WzB4ZmZmZjg4OTljYTdiMDgw
+MF06IDM2MwpAaW5mbGlnaHRfbWF4WzB4ZmZmZjg4OTljYTdhMTAwMF06IDM2NApAaW5mbGln
+aHRfbWF4WzB4ZmZmZjg4OTljYTdhMDAwMF06IDM2NApAaW5mbGlnaHRfbWF4WzB4ZmZmZjg4
+OThiM2M5NTgwMF06IDM2NApAaW5mbGlnaHRfbWF4WzB4ZmZmZjg4OTljYTdiNzgwMF06IDM2
+NApAaW5mbGlnaHRfbWF4WzB4ZmZmZjg4OThiM2M5NDgwMF06IDM2NQpAaW5mbGlnaHRfbWF4
+WzB4ZmZmZjg4OTkxZDk2ZDAwMF06IDM2NQpAaW5mbGlnaHRfbWF4WzB4ZmZmZjg4OTkxZDk2
+ODgwMF06IDM2NQpAaW5mbGlnaHRfbWF4WzB4ZmZmZjg4OThiM2M5MDAwMF06IDM2NQpAaW5m
+bGlnaHRfbWF4WzB4ZmZmZjg4OTljYTdhNTgwMF06IDM2NQpAaW5mbGlnaHRfbWF4WzB4ZmZm
+Zjg4OTljYTdhNTAwMF06IDM2NgpAaW5mbGlnaHRfbWF4WzB4ZmZmZjg4OTljYTdhMjgwMF06
+IDM2NgpAaW5mbGlnaHRfbWF4WzB4ZmZmZjg4OTljYTdiMDAwMF06IDM2NgpAaW5mbGlnaHRf
+bWF4WzB4ZmZmZjg4OTljYTdhNzAwMF06IDM2NwpAaW5mbGlnaHRfbWF4WzB4ZmZmZjg4OTkx
+ZDk2YTgwMF06IDM2OApAaW5mbGlnaHRfbWF4WzB4ZmZmZjg4OTkxZDk2YzgwMF06IDM2OApA
+aW5mbGlnaHRfbWF4WzB4ZmZmZjg4OTljYTdhMDgwMF06IDM2OApAaW5mbGlnaHRfbWF4WzB4
+ZmZmZjg4OTljYTdhMzgwMF06IDM3MApAaW5mbGlnaHRfbWF4WzB4ZmZmZjg4OTkxZDk2ZjAw
+MF06IDM3MQpAaW5mbGlnaHRfbWF4WzB4ZmZmZjg4OTkxZDk2ZTgwMF06IDM3MgpAaW5mbGln
+aHRfbWF4WzB4ZmZmZjg4OTljYTdiMzgwMF06IDM3MwpAaW5mbGlnaHRfbWF4WzB4ZmZmZjg4
+OTljYTdiMjAwMF06IDM3MwpAaW5mbGlnaHRfbWF4WzB4ZmZmZjg4OTljYTdiNzAwMF06IDM3
+MwpAaW5mbGlnaHRfbWF4WzB4ZmZmZjg4OTljYTdhNjgwMF06IDM3MwpAaW5mbGlnaHRfbWF4
+WzB4ZmZmZjg4OTljYTdhNDAwMF06IDM3NApAaW5mbGlnaHRfbWF4WzB4ZmZmZjg4OTljYTdh
+NjAwMF06IDM3NwpAaW5mbGlnaHRfbWF4WzB4ZmZmZjg4OTljYTdhMzAwMF06IDM3OApAaW5m
+bGlnaHRfbWF4WzB4ZmZmZjg4OThiM2M5NTAwMF06IDM3OQpAaW5mbGlnaHRfbWF4WzB4ZmZm
+Zjg4OThiM2M5MTgwMF06IDM3OQpAaW5mbGlnaHRfbWF4WzB4ZmZmZjg4OThiM2M5NjAwMF06
+IDM4OQpAaW5mbGlnaHRfbWF4WzB4ZmZmZjg4ODExMTA3OTgwMF06IDQyMDEKQGluZmxpZ2h0
+X21heFsweGZmZmY4ODgxMTEyMDUwMDBdOiA0MjAzCkBpbmZsaWdodF9tYXhbMHhmZmZmODg4
+MTExMDc5MDAwXTogNDM5MwpAaW5mbGlnaHRfbWF4WzB4ZmZmZjg4ODExMzRmYjgwMF06IDQ1
+MTkKQGluZmxpZ2h0X21heFsweGZmZmY4ODgxMTEwN2Q4MDBdOiA0NTIwCkBpbmZsaWdodF9t
+YXhbMHhmZmZmODg4MTEzNGZjODAwXTogNDU4NgpAaW5mbGlnaHRfbWF4WzB4ZmZmZjg4ODEx
+MTA3YTAwMF06IDQ2NTAKQGluZmxpZ2h0X21heFsweGZmZmY4ODgxMTExYjE4MDBdOiA1Njc0
+CkBpbmZsaWdodF9tYXhbMHhmZmZmODg4MTExMDdkMDAwXTogNjMxNApAaW5mbGlnaHRfbWF4
+WzB4ZmZmZjg4ODI5M2MzZDgwMF06IDExNzE0CkBpbmZsaWdodF9tYXhbMHhmZmZmODg4MTgz
+ODZjMDAwXTogMTIzMDIKQGluZmxpZ2h0X21heFsweGZmZmY4ODgyOTNjM2MwMDBdOiAxMjM5
+MwpAaW5mbGlnaHRfbWF4WzB4ZmZmZjg4ODEzMmNlYTgwMF06IDEyNTAwCkBpbmZsaWdodF9t
+YXhbMHhmZmZmODg4MTY1OTY2MDAwXTogMTI5NDAKQGluZmxpZ2h0X21heFsweGZmZmY4ODgx
+MTNkMGQ4MDBdOiAxMzM3MApAaW5mbGlnaHRfbWF4WzB4ZmZmZjg4ODE4Mzg2YzgwMF06IDEz
+NTEwCkBpbmZsaWdodF9tYXhbMHhmZmZmODg4MTEzZDBjODAwXTogMTQwMjcKQGluZmxpZ2h0
+X21heFsweGZmZmY4ODgyMTkwYjA4MDBdOiAxNTE0OQpAaW5mbGlnaHRfbWF4WzB4ZmZmZjg4
+ODEzMmNlYjgwMF06IDE1NDA1CkBpbmZsaWdodF9tYXhbMHhmZmZmODg4MTMyY2ViMDAwXTog
+MTU2MzMKQGluZmxpZ2h0X21heFsweGZmZmY4ODgxODM4NjkwMDBdOiAxNTY4NApAaW5mbGln
+aHRfbWF4WzB4ZmZmZjg4ODE4Mzg2YjgwMF06IDE2MTQyCkBpbmZsaWdodF9tYXhbMHhmZmZm
+ODg4MTMyY2VkMDAwXTogMTY0NTAKQGluZmxpZ2h0X21heFsweGZmZmY4ODgxNjU5NjQ4MDBd
+OiAxNzAwNwpAaW5mbGlnaHRfbWF4WzB4ZmZmZjg4ODIxOTBiNTgwMF06IDE3ODc5CkBpbmZs
+aWdodF9tYXhbMHhmZmZmODg4MjE5MGI2MDAwXTogMTc5MTUKQGluZmxpZ2h0X21heFsweGZm
+ZmY4ODgxOWVlODA4MDBdOiAxNzk3NwpAaW5mbGlnaHRfbWF4WzB4ZmZmZjg4ODE5ZWU4NDAw
+MF06IDE4MTMyCkBpbmZsaWdodF9tYXhbMHhmZmZmODg4MTE4NjgwMDAwXTogMTgyMDQKQGlu
+ZmxpZ2h0X21heFsweGZmZmY4ODgxMTg2ODA4MDBdOiAxODUxNApAaW5mbGlnaHRfbWF4WzB4
+ZmZmZjg4ODE5ZWU4MzAwMF06IDE4NTQ2CkBpbmZsaWdodF9tYXhbMHhmZmZmODg4MTgzODY4
+MDAwXTogMTg1NTIKQGluZmxpZ2h0X21heFsweGZmZmY4ODgxMDc2ZjE4MDBdOiAxODcwNgpA
+aW5mbGlnaHRfbWF4WzB4ZmZmZjg4ODE5ZWU4NzAwMF06IDE4ODAxCkBpbmZsaWdodF9tYXhb
+MHhmZmZmODg4MTY1OTY1ODAwXTogMTk1NTYKQGluZmxpZ2h0X21heFsweGZmZmY4ODgyOTNj
+M2QwMDBdOiAyMDY3NQpAaW5mbGlnaHRfbWF4WzB4ZmZmZjg4ODE4Mzg2ZDAwMF06IDIwNzQ5
+CkBpbmZsaWdodF9tYXhbMHhmZmZmODg4MTgzODZhODAwXTogMjEyMjYKQGluZmxpZ2h0X21h
+eFsweGZmZmY4ODgxODM4Njg4MDBdOiAyMTU1OQpAaW5mbGlnaHRfbWF4WzB4ZmZmZjg4ODEw
+NzZmMzAwMF06IDIxOTMzCkBpbmZsaWdodF9tYXhbMHhmZmZmODg4MjkzYzNhMDAwXTogMjIw
+ODYKQGluZmxpZ2h0X21heFsweGZmZmY4ODgxOWVlODI4MDBdOiAyMjk3NQpAaW5mbGlnaHRf
+bWF4WzB4ZmZmZjg4ODE4Mzg2YTAwMF06IDIzNjAwCkBpbmZsaWdodF9tYXhbMHhmZmZmODg4
+MTY1OThjMDAwXTogMjQwOTIKQGluZmxpZ2h0X21heFsweGZmZmY4ODgyOTNjMzk4MDBdOiAy
+NDA5MwpAaW5mbGlnaHRfbWF4WzB4ZmZmZjg4ODE4Mzg2ZjAwMF06IDI0NDM4CkBpbmZsaWdo
+dF9tYXhbMHhmZmZmODg4MTEzZDBlODAwXTogMjQ4ODIKQGluZmxpZ2h0X21heFsweGZmZmY4
+ODgyOTNjMzkwMDBdOiAyNTIxOApAaW5mbGlnaHRfbWF4WzB4ZmZmZjg4ODE4Mzg2ZDgwMF06
+IDI1Mjc2CkBpbmZsaWdodF9tYXhbMHhmZmZmODg4MjkzYzNhODAwXTogMjUyOTIKQGluZmxp
+Z2h0X21heFsweGZmZmY4ODgyOTNjM2U4MDBdOiAyNTQyOQpAaW5mbGlnaHRfbWF4WzB4ZmZm
+Zjg4ODI5M2MzODAwMF06IDI1Nzk0CkBpbmZsaWdodF9tYXhbMHhmZmZmODg4MTA3NmY2ODAw
+XTogMjYwMzAKQGluZmxpZ2h0X21heFsweGZmZmY4ODgyOTEzM2Q4MDBdOiAyNjQ3MwpAaW5m
+bGlnaHRfbWF4WzB4ZmZmZjg4ODI5M2MzZTAwMF06IDI3MDQyCkBpbmZsaWdodF9tYXhbMHhm
+ZmZmODg4MjkzYzNiMDAwXTogMjc3MDkKQGluZmxpZ2h0X21heFsweGZmZmY4ODgxMDc2ZjI4
+MDBdOiAyOTQwMApAaW5mbGlnaHRfbWF4WzB4ZmZmZjg4ODE4Mzg2ZTAwMF06IDI5NjkwCkBp
+bmZsaWdodF9tYXhbMHhmZmZmODg4MjE5MGIxODAwXTogMjk4MTMKQGluZmxpZ2h0X21heFsw
+eGZmZmY4ODgxOWVlODM4MDBdOiAzMDA2NwpAaW5mbGlnaHRfbWF4WzB4ZmZmZjg4ODEwNzZm
+NDgwMF06IDMwMDg2CkBpbmZsaWdodF9tYXhbMHhmZmZmODg4MTgzODZiMDAwXTogMzExMTYK
+QGluZmxpZ2h0X21heFsweGZmZmY4ODgxNjU5OGY4MDBdOiAzNjk3MApAaW5mbGlnaHRfbWF4
+WzB4ZmZmZjg4ODIxOTBiNzgwMF06IDM3MzM2CkBpbmZsaWdodF9tYXhbMHhmZmZmODg4Mjkz
+YzM4ODAwXTogMzkyNjUKQGluZmxpZ2h0X21heFsweGZmZmY4ODgyOTNjM2M4MDBdOiAzOTYz
+MgpAaW5mbGlnaHRfbWF4WzB4ZmZmZjg4ODI5M2MzYjgwMF06IDQzNDYxCkBpbmZsaWdodF9t
+YXhbMHhmZmZmODg4MjkzYzNmMDAwXTogNDM3ODcKQGluZmxpZ2h0X21heFsweGZmZmY4ODgx
+NjU5OGYwMDBdOiA0NDU1NwpAaW5mbGlnaHRfbWF4WzB4ZmZmZjg4ODEzMmNlOTAwMF06IDQ1
+MDM3CkBpbmZsaWdodF9tYXhbMHhmZmZmODg4MjkzYzNmODAwXTogNTE4NDMKQGluZmxpZ2h0
+X21heFsweGZmZmY4ODgxODM4Njk4MDBdOiA2MjYxMgpAaW5mbGlnaHRfbWF4WzB4ZmZmZjg4
+ODExM2QwODAwMF06IDczMjAzCkBjbnRfdG90YWxbcmF3dHJhY2Vwb2ludDpwYWdlX3Bvb2xf
+c3RhdGVfcmVsZWFzZV06IDY3MjYzMTI5Cg==
+
+--------------DkaSgiVyEyouYV9Gnp3M5WgO--
 
