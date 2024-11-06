@@ -1,133 +1,190 @@
-Return-Path: <linux-kernel+bounces-397812-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397808-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AAA359BE0EC
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 09:29:25 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3FB09BE0E3
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 09:28:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F2B828273C
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 08:29:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 132A61C20B77
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 08:28:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 804921D7E3E;
-	Wed,  6 Nov 2024 08:26:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C59ED1D9346;
+	Wed,  6 Nov 2024 08:20:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=perex.cz header.i=@perex.cz header.b="iadLFGLL"
-Received: from mail1.perex.cz (mail1.perex.cz [77.48.224.245])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NXUX+5Yl"
+Received: from mail-qv1-f46.google.com (mail-qv1-f46.google.com [209.85.219.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 912AE1D365B;
-	Wed,  6 Nov 2024 08:26:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=77.48.224.245
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A6C31D8DE1;
+	Wed,  6 Nov 2024 08:20:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730881581; cv=none; b=sSmQjwBQ81rummlcAANBzWne30CkpUYvP88k2T4CpsTSqy8NMFh5xSepIFKazXWnfWpHbSWxWsTMWJBtZeGTj6C3q/9t35+fQtW0kmfVv1SPVdJuEblhac6VHIH46UkYsKexlPLkQUVNXZhGCTE77LezzaKjDQNNPYHAaNcQFLk=
+	t=1730881238; cv=none; b=nRTst1xVJlPNnilCE2taWcMOdQeCtM+HGkw0UBY/NstukUVXp7CLLXGBuEB+Y/yAUwSc5UVORl3HDFpkYQi+xvLlIS8+1B8QUL5vY9cJVczlI6CCAuHSbWJLs+xab1DBTqfemhn3kEssta4qqe/PbPvJvuG6MzZH96Apg3ixzSg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730881581; c=relaxed/simple;
-	bh=bV025Co0bBWaXpWR16zDuD6cDIBpn2m+56Y7IEtSJgA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=po6xredPAsIcfRvlI1GWtwu6OVCL/86839MXXQ80wAGo5yHqb05SBspU97J5OrneiPZVKZFuC0NLgJunh97WN/5XWh66GWWwpa3IsCj146tG4b3bFm8UUZyqLgx6+1fmTvOrtwChbMVbRhA5vZf56qQjpFKF2jc731CwSMLtA5o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=perex.cz; spf=pass smtp.mailfrom=perex.cz; dkim=pass (1024-bit key) header.d=perex.cz header.i=@perex.cz header.b=iadLFGLL; arc=none smtp.client-ip=77.48.224.245
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=perex.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=perex.cz
-Received: from mail1.perex.cz (localhost [127.0.0.1])
-	by smtp1.perex.cz (Perex's E-mail Delivery System) with ESMTP id 6FCAA3625B;
-	Wed,  6 Nov 2024 09:19:18 +0100 (CET)
-DKIM-Filter: OpenDKIM Filter v2.11.0 smtp1.perex.cz 6FCAA3625B
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=perex.cz; s=default;
-	t=1730881158; bh=OZzWDpRx/TVouc9VsNg2LXKg2uuXNrMqu0ZIyJbBfPQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=iadLFGLLuOA1g3t04+7CmiXfYWDT0C4/OthKWfycEfzkTSUb9PuzTal+U4mvnEXdE
-	 ECkpzWCosvUspYbR3XX0+IbaC+Gnt/R9xh/AmBqWb7pMv2PDSUGXOnvbsjUHqjr78C
-	 s6Jj/apeH78ibgSETHgOgU9rdeBIT7heeIDcJzxw=
-Received: from [192.168.100.98] (unknown [192.168.100.98])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: perex)
-	by mail1.perex.cz (Perex's E-mail Delivery System) with ESMTPSA;
-	Wed,  6 Nov 2024 09:19:11 +0100 (CET)
-Message-ID: <553f9a5c-9d98-46bf-b0e5-6a9a49231104@perex.cz>
-Date: Wed, 6 Nov 2024 09:19:10 +0100
+	s=arc-20240116; t=1730881238; c=relaxed/simple;
+	bh=G68askeglz0Zycs/ZtvuBkulP5B1kE34vWfd5VV4eaI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=aqVxAQV8gDUFfptzrZOATW2xQw235AlFAoy/KzoBOVpy3jrBR5zUwMZJB280UvwVFjeJzeZUjNMpm1ZH5t5d8+lFKtiQCzfwCtGhSlXAUuvMdx7oVylI5i5sx8v+txSPCfV5nQyW2nCsCpy4REVkKexHDINxn03oso/OG6eQhA4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NXUX+5Yl; arc=none smtp.client-ip=209.85.219.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f46.google.com with SMTP id 6a1803df08f44-6cbce8d830dso41937896d6.1;
+        Wed, 06 Nov 2024 00:20:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730881235; x=1731486035; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9liWDNx4iphIAePTwPX4+XTvgFUOWAVBEnwX8vIu5vo=;
+        b=NXUX+5YlbyFvWICynm7XRGbB2jvQBiL2z+LZ5OOz0gT7R6LjBL1B83DnD5YzhDD4CW
+         TP5qUqsi5TkuCU1lfCX7HHc4kPI6uPj0au6nZfp/evn6x4HiuME/mDSAcipYwnVxj9MO
+         dhEz7OslBbsV4pmtmwLJ86u3aKoUBqDmN1lZGI5jmpx591KGgX47qxMVRnswjafjQIsd
+         wLPwT/BvZoIawcVQs6i9h/01yEL9C5Wcdh+8D4Kop7M+23i0b8cdQdJTNo++a+m1/c3D
+         vOxygm6qnYzvPKsoxI9+pVzq/zZ1T6eJerZJb5ENWaGzBXuVv66QX/DSwX9j0yYyIz7J
+         rDCQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730881235; x=1731486035;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9liWDNx4iphIAePTwPX4+XTvgFUOWAVBEnwX8vIu5vo=;
+        b=l4dtklIsStN3DAq9ID1PaRKgpiHaVmEM1+8n2j4iIu7Edu7HNu68ggd8/LtFkgsCK/
+         Jl3+7m2GcWvXszzdx7vdVMfqXNS0O5tWmql6V9s6lfKnO7/aTsXl5YkqfM+vrwpbgpLw
+         1DehA9+8sBjP2sh1s9FYEhpt2ANlANYlv+/L6tzYzVmLDKFkCu+NM9MW+U34MyRCXNd3
+         YCcEQrn6VTKzJcvuO2/uVF+q3s8yejMaxUaQj+dhPpU6QpLWKWRubZkAEdM+xsqSKrUs
+         r2Fe3b+qcoo8a2IsQznF56lyJao7dC2hfXBdLNAhBp8uDYeE24k7UM3iO2MurI3YR669
+         /7Iw==
+X-Forwarded-Encrypted: i=1; AJvYcCX053i24nKtfTh+FEsh37uo6uKLqoLVBP8dVWeYO858Y30gtPLgGtdfiTFaIu+ZWY7i43KEMLcgw57OKCdJ@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz5AwW/fcR6PqEhQezAN7EPNJed23Kx4HXi99880phZZOkKOjMc
+	DaPn50pGk5RIbBAE+9AJQ83nDqH5z5E9AyAIxCzSn9F86y9SDWJaLN2zalxIrmso1y/99CM7LdQ
+	jrLKkiWErF9HpM6QZc5YnP+Toibg=
+X-Google-Smtp-Source: AGHT+IGPQp/P6EbblcA1XsCvVA7c6e1OroBMyYoa1OCNRugD2V0+QX4orBfHxTKkeRKPbOoUwqRYvHYBCok2SXeNnEs=
+X-Received: by 2002:a05:6214:3c8b:b0:6ce:3cfb:d158 with SMTP id
+ 6a1803df08f44-6d35c14e8bfmr268227306d6.26.1730881235243; Wed, 06 Nov 2024
+ 00:20:35 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ALSA: compress_offload: Use runtime pointer in
- snd_compr_poll()
-To: Peter Ujfalusi <peter.ujfalusi@linux.intel.com>, vkoul@kernel.org,
- tiwai@suse.com
-Cc: linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
- broonie@kernel.org, amadeuszx.slawinski@linux.intel.com
-References: <20241106075312.15601-1-peter.ujfalusi@linux.intel.com>
-Content-Language: en-US
-From: Jaroslav Kysela <perex@perex.cz>
-Autocrypt: addr=perex@perex.cz; keydata=
- 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
-In-Reply-To: <20241106075312.15601-1-peter.ujfalusi@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <CAOQ4uxi36iUbYa27c81pNpO7T0vR=rY63b7KACJLP6b4HTJGXQ@mail.gmail.com>
+ <tencent_08A4E8A2ED86CE7C793E6CC02FBD6FF0960A@qq.com>
+In-Reply-To: <tencent_08A4E8A2ED86CE7C793E6CC02FBD6FF0960A@qq.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Wed, 6 Nov 2024 09:20:24 +0100
+Message-ID: <CAOQ4uxi-G3u0fXDdD4a_5p_HAFSh7oJ5C0w5RZeDh=jM353qvg@mail.gmail.com>
+Subject: Re: [syzbot] [overlayfs?] WARNING in ovl_encode_real_fh
+To: Edward Adam Davis <eadavis@qq.com>
+Cc: linux-kernel@vger.kernel.org, linux-unionfs@vger.kernel.org, 
+	miklos@szeredi.hu, syzbot+ec07f6f5ce62b858579f@syzkaller.appspotmail.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 06. 11. 24 8:53, Peter Ujfalusi wrote:
-> runtime is not used as seen with W=1 :
-> sound/core/compress_offload.c: In function ‘snd_compr_poll’:
-> sound/core/compress_offload.c:409:35: error: variable ‘runtime’ set but not used [-Werror=unused-but-set-variable]
->    409 |         struct snd_compr_runtime *runtime;
->        |                                   ^~~~~~~
-> 
-> Instead of dropping the runtime, use it in the function in place of
-> stream->runtime
+On Wed, Nov 6, 2024 at 3:43=E2=80=AFAM Edward Adam Davis <eadavis@qq.com> w=
+rote:
+>
+> On Mon, 4 Nov 2024 20:30:41 +0100, Amir Goldstein <amir73il@gmail.com> wr=
+ote:
+> > > When the memory is insufficient, the allocation of fh fails, which ca=
+uses
+> > > the failure to obtain the dentry fid, and finally causes the dentry e=
+ncoding
+> > > to fail.
+> > > Retry is used to avoid the failure of fh allocation caused by tempora=
+ry
+> > > insufficient memory.
+> > >
+> > > #syz test
+> > >
+> > > diff --git a/fs/overlayfs/copy_up.c b/fs/overlayfs/copy_up.c
+> > > index 2ed6ad641a20..1e027a3cf084 100644
+> > > --- a/fs/overlayfs/copy_up.c
+> > > +++ b/fs/overlayfs/copy_up.c
+> > > @@ -423,15 +423,22 @@ struct ovl_fh *ovl_encode_real_fh(struct ovl_fs=
+ *ofs, struct dentry *real,
+> > >         int fh_type, dwords;
+> > >         int buflen =3D MAX_HANDLE_SZ;
+> > >         uuid_t *uuid =3D &real->d_sb->s_uuid;
+> > > -       int err;
+> > > +       int err, rtt =3D 0;
+> > >
+> > >         /* Make sure the real fid stays 32bit aligned */
+> > >         BUILD_BUG_ON(OVL_FH_FID_OFFSET % 4);
+> > >         BUILD_BUG_ON(MAX_HANDLE_SZ + OVL_FH_FID_OFFSET > 255);
+> > >
+> > > +retry:
+> > >         fh =3D kzalloc(buflen + OVL_FH_FID_OFFSET, GFP_KERNEL);
+> > > -       if (!fh)
+> > > +       if (!fh) {
+> > > +               if (!rtt) {
+> > > +                       cond_resched();
+> > > +                       rtt++;
+> > > +                       goto retry;
+> > > +               }
+> > >                 return ERR_PTR(-ENOMEM);
+> > > +       }
+> > >
+> > >         /*
+> > >          * We encode a non-connectable file handle for non-dir, becau=
+se we
+> > >
+> >
+> > This endless loop is out of the question and anyway, syzbot reported
+> > a WARN_ON in line 448:
+> >             WARN_ON(fh_type =3D=3D FILEID_INVALID))
+> >
+> > How does that have to do with memory allocation failure?
+> > What am I missing?
+> Look following log, it in https://syzkaller.appspot.com/text?tag=3DCrashL=
+og&x=3D178bf640580000:
+> [   64.050342][ T5103] FAULT_INJECTION: forcing a failure.
+> [   64.050342][ T5103] name failslab, interval 1, probability 0, space 0,=
+ times 0
+> [   64.055933][ T5103] CPU: 0 UID: 0 PID: 5103 Comm: syz-executor195 Not =
+tainted 6.12.0-rc4-syzkaller-00047-gc2ee9f594da8 #0
+> [   64.060023][ T5103] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009)=
+, BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+> [   64.063941][ T5103] Call Trace:
+> [   64.065199][ T5103]  <TASK>
+> [   64.066296][ T5103]  dump_stack_lvl+0x241/0x360
+> [   64.068028][ T5103]  ? __pfx_dump_stack_lvl+0x10/0x10
+> [   64.069939][ T5103]  ? __pfx__printk+0x10/0x10
+> [   64.071667][ T5103]  ? __kmalloc_cache_noprof+0x44/0x2c0
+> [   64.073756][ T5103]  ? __pfx___might_resched+0x10/0x10
+> [   64.075720][ T5103]  should_fail_ex+0x3b0/0x4e0
+> [   64.077525][ T5103]  should_failslab+0xac/0x100
+> [   64.079341][ T5103]  ? ovl_encode_real_fh+0xdf/0x410
+> [   64.081295][ T5103]  __kmalloc_cache_noprof+0x6c/0x2c0
+> [   64.083282][ T5103]  ? dput+0x37/0x2b0
+> [   64.084758][ T5103]  ovl_encode_real_fh+0xdf/0x410
+> [   64.086578][ T5103]  ? __pfx_ovl_encode_real_fh+0x10/0x10
+> [   64.088687][ T5103]  ? _raw_spin_unlock+0x28/0x50
+> [   64.090550][ T5103]  ovl_encode_fh+0x388/0xc20
+> [   64.092281][ T5103]  exportfs_encode_fh+0x1bd/0x3e0
+> [   64.094122][ T5103]  ovl_encode_real_fh+0x129/0x410
+> [   64.095883][ T5103]  ? __pfx_ovl_encode_real_fh+0x10/0x10
+> [   64.097852][ T5103]  ? bpf_lsm_capable+0x9/0x10
+> [   64.099620][ T5103]  ? capable+0x89/0xe0
+> [   64.101064][ T5103]  ovl_copy_up_flags+0x1068/0x46f0
 
-Yes, it was the desired target for this change. Unfortunately unfinished. Thanks.
+I see. it is nested overlayfs, so a memory allocation failure in the lower
+overlayfs, causes ovl_encode_fh() to return FILEID_INVALID.
 
-Reviewed-by: Jaroslav Kysela <perex@perex.cz>
+> >
+> > Probably this WARN_ON as well as the one in line 446 should be
+> > relaxed because it is perfectly possible for fs to return negative or
+> > FILEID_INVALID for encoding a file handle even if fs supports encoding
+> > file handles.
+> >
 
--- 
-Jaroslav Kysela <perex@perex.cz>
-Linux Sound Maintainer; ALSA Project; Red Hat, Inc.
+As I wrote, the correct fix is to relax the WARN_ON from
+fh_type =3D=3D FILEID_INVALID and fh_type < 0 conditions because
+those are valid return values from filesystems.
 
+Thanks,
+Amir,
 
