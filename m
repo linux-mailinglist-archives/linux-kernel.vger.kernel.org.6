@@ -1,57 +1,101 @@
-Return-Path: <linux-kernel+bounces-398297-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398298-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EF3D9BEF2D
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 14:36:59 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A92F9BEF31
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 14:37:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 47BB61F2436E
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 13:36:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF6541C21A21
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 13:37:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD0791F9EA5;
-	Wed,  6 Nov 2024 13:36:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 771CA1F9EAB;
+	Wed,  6 Nov 2024 13:37:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gYMjKNIV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="PKBrFlha";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="bUBEoRY3";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="PKBrFlha";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="bUBEoRY3"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15B5A1DE4CA;
-	Wed,  6 Nov 2024 13:36:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1C1F191461;
+	Wed,  6 Nov 2024 13:37:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730900212; cv=none; b=ZqsxpNgXYEFQ7k//fDvBS2rqcDmB2/UCpTVuCwCcye2eP03zLKI/YjfyNdOHFHNd3liKpuMVUPkCdCGVyKIXmkLVLmWgAilsk3t/9RYji26MK0zmvE+B6wFa/XvGSPKCiU8A0bHmHtGwBFJFH3z43MPaj3gic7p4qjqsyNpQhJU=
+	t=1730900243; cv=none; b=HOII5B6qfl4i3BRULwI/DVff89K01adU/AtAQLabibCqwLdqaIrMgCiIAUGwzvB4s5x5YqAKwpPRI0+x7eheFDbrgIS1xZqYeutLEiDO46u8K4tvP1ZlZUVdLPOgv+AFlMkFWONWGfg/p+soMKELJufZuL6/9BzT1Zx0Awp6fzo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730900212; c=relaxed/simple;
-	bh=LNXfloYp9NxsfFEtf3y74Qg0Z197tnIsIXZDZW9Ablk=;
+	s=arc-20240116; t=1730900243; c=relaxed/simple;
+	bh=9P4Ht0z4Mn0o9+NWZd896rbeSCtbO6r7+kwdhHA3BuU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Hvn1ZDZzy8aVuOP4bRSY58cmvlut28iXiX11JaAJgTiBETjpSUDWN3SNOxq7EB9ZhKMcYaYH6TUsE4uTSm4ZpnvgUIyoS16gYxZ4gVwCBWCjfnfnHk8iVXOODr0sTPqAF9OQuIM1fDqAceMx6ZEekKDuA97BB5H5vhCPUWXWpzE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gYMjKNIV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34C65C4CED3;
-	Wed,  6 Nov 2024 13:36:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730900211;
-	bh=LNXfloYp9NxsfFEtf3y74Qg0Z197tnIsIXZDZW9Ablk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gYMjKNIVQaq4ELhbqWiYPYj1cytI2t7mj1eVLEmSVCEMeKxOIkH/EnPDdXVzTwhqp
-	 cA7LpX4dKR5KGQ8W7D3ATdtFEaw76M2NVSqP+44q/83EvFm2OicmTQI3f7W49LsnT4
-	 lXSwdzS+8K1IoA2LM4TAF+DQZAjKu1cSbp7bocBsj9bIJhDjrIG60X7ms/ISMHo1N/
-	 oS1M0OzCdhQDwICdmjHzENIsFSZ/2f/GlLwPW9CdEFn53ppvI2FgcZD8ZE8dq+nA5g
-	 OGNzZ3OBgdQzjMGG7bO99CuspLIXfwSBbKxUMin8Dsqc5QJQs8dgdENXOIFg76WDyi
-	 ATAuV8KJtmnkg==
-Date: Wed, 6 Nov 2024 15:36:46 +0200
-From: Leon Romanovsky <leon@kernel.org>
-To: Junxian Huang <huangjunxian6@hisilicon.com>
-Cc: dennis.dalessandro@cornelisnetworks.com, jgg@ziepe.ca,
-	linux-rdma@vger.kernel.org, linuxarm@huawei.com,
-	linux-kernel@vger.kernel.org, tangchengchang@huawei.com
-Subject: Re: [PATCH for-next 0/2] Small optimization for ib_map_mr_sg() and
- ib_map_mr_sg_pi()
-Message-ID: <20241106133646.GE5006@unreal>
-References: <20241105120841.860068-1-huangjunxian6@hisilicon.com>
- <20241106120819.GA5006@unreal>
- <b7dd1cc5-849d-781e-ad08-c5b554900150@hisilicon.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=NOR25W3oftGo2hjI6sOZDswmgjKTS7FKeKJgm3C7mxA4YIDIzPKlt2OPseo2XQtK/a2kC5ze3xfFUGyCqYtfQNUKF399sRh+vESbw2eNqbRpVOI687W4yxRwk3CNVYt2GG+mdCVPN1qjPkfHw3HptYlOE2GNYcp4zGQfMBGD1lc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=PKBrFlha; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=bUBEoRY3; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=PKBrFlha; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=bUBEoRY3; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id F2EBE21D32;
+	Wed,  6 Nov 2024 13:37:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1730900240; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=g58jj5g36ijnF7hh32dzprjYDPypYPMjByIDbTAl0jE=;
+	b=PKBrFlhaST79s/4PB9a0CEiA03AHKMX2vAnBIZWw2fRMmqz5A0HqFKRnYWJ8w2Ko/0cJwu
+	UkFthUE988QPTRN1JZ3ubJrQYdFja3YsOBuBmMLraMg3YkaEXETE4ET+aiNN61YpskWXhe
+	pIIGvuUVU/GhXef1PDzyWaRnVq8Rzmc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1730900240;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=g58jj5g36ijnF7hh32dzprjYDPypYPMjByIDbTAl0jE=;
+	b=bUBEoRY38V5WI8T9wIaIRoaHGy3BJG/+vmgbEVvlEPLcnQwrDjOmSVPvgWOktdHezqnBz0
+	e5OoNa3DDHkT9hAQ==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1730900240; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=g58jj5g36ijnF7hh32dzprjYDPypYPMjByIDbTAl0jE=;
+	b=PKBrFlhaST79s/4PB9a0CEiA03AHKMX2vAnBIZWw2fRMmqz5A0HqFKRnYWJ8w2Ko/0cJwu
+	UkFthUE988QPTRN1JZ3ubJrQYdFja3YsOBuBmMLraMg3YkaEXETE4ET+aiNN61YpskWXhe
+	pIIGvuUVU/GhXef1PDzyWaRnVq8Rzmc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1730900240;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=g58jj5g36ijnF7hh32dzprjYDPypYPMjByIDbTAl0jE=;
+	b=bUBEoRY38V5WI8T9wIaIRoaHGy3BJG/+vmgbEVvlEPLcnQwrDjOmSVPvgWOktdHezqnBz0
+	e5OoNa3DDHkT9hAQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E2601137C4;
+	Wed,  6 Nov 2024 13:37:19 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id Z8I+Nw9xK2e+JgAAD6G6ig
+	(envelope-from <jack@suse.cz>); Wed, 06 Nov 2024 13:37:19 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 8E478A0AFB; Wed,  6 Nov 2024 14:37:15 +0100 (CET)
+Date: Wed, 6 Nov 2024 14:37:15 +0100
+From: Jan Kara <jack@suse.cz>
+To: Jeff Layton <jlayton@kernel.org>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Josef Bacik <josef@toxicpanda.com>, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] fs: add the ability for statmount() to report the
+ fs_subtype
+Message-ID: <20241106133715.ellv3pf7ekz34fmi@quack3>
+References: <20241106-statmount-v1-1-b93bafd97621@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,56 +104,138 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <b7dd1cc5-849d-781e-ad08-c5b554900150@hisilicon.com>
+In-Reply-To: <20241106-statmount-v1-1-b93bafd97621@kernel.org>
+X-Spam-Score: -3.80
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_COUNT_THREE(0.00)[3];
+	ARC_NA(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+];
+	FROM_HAS_DN(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On Wed, Nov 06, 2024 at 09:12:47PM +0800, Junxian Huang wrote:
+On Wed 06-11-24 08:29:19, Jeff Layton wrote:
+> /proc/self/mountinfo prints out the sb->s_subtype after the type. In
+> particular, FUSE makes use of this to display the fstype as
+> fuse.<subtype>.
 > 
+> Add STATMOUNT_FS_SUBTYPE and claim one of the __spare2 fields to point
+> to the offset into the str[] array. The STATMOUNT_FS_SUBTYPE will only
+> be set in the return mask if there is a subtype associated with the
+> mount.
 > 
-> On 2024/11/6 20:08, Leon Romanovsky wrote:
-> > On Tue, Nov 05, 2024 at 08:08:39PM +0800, Junxian Huang wrote:
-> >> ib_map_mr_sg() and ib_map_mr_sg_pi() allow ULPs to specify NULL as
-> >> the sg_offset/data_sg_offset/meta_sg_offset arguments. Drivers who
-> >> need to derefernce these arguments have to add NULL pointer checks
-> >> to avoid crashing the kernel.
-> >>
-> >> This can be optimized by adding dummy sg_offset pointer to these
-> >> two APIs. When the sg_offset arguments are NULL, pass the pointer
-> >> of dummy to drivers. Drivers can always get a valid pointer, so no
-> >> need to add NULL pointer checks.
-> >>
-> >> Junxian Huang (2):
-> >>   RDMA/core: Add dummy sg_offset pointer for ib_map_mr_sg() and
-> >>     ib_map_mr_sg_pi()
-> >>   RDMA: Delete NULL pointer checks for sg_offset in .map_mr_sg ops
-> >>
-> >>  drivers/infiniband/core/verbs.c         | 12 +++++++++---
-> >>  drivers/infiniband/hw/mlx5/mr.c         | 18 ++++++------------
-> >>  drivers/infiniband/sw/rdmavt/trace_mr.h |  2 +-
-> >>  3 files changed, 16 insertions(+), 16 deletions(-)
-> > 
-> > So what does this change give us?
-> > We have same functionality, same number of lines, same everything ...
-> > 
-> 
-> Actually this is inspired by an hns bug. When ib_map_mr_sg() passes a NULL
-> sg_offset pointer to hns_roce_map_mr_sg(), we dereference this pointer
-> without a NULL check.
-> 
-> Of course we can fix it by adding NULL check in hns, but I think this
-> patch may be a better solution since the sg_offset is guaranteed to be
-> a valid pointer. This could benefit future drivers who also want to
-> dereference sg_offset, they won't need to care about NULL checks.
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
 
-Let's fix hns please. We are moving away from SG in RDMA.
+Looks good to me. I'm just curious: Do you have any particular user that is
+interested in getting subtype from statmount(2)?
 
+								Honza
+
+> ---
+>  fs/namespace.c             | 20 +++++++++++++++++++-
+>  include/uapi/linux/mount.h |  5 ++++-
+>  2 files changed, 23 insertions(+), 2 deletions(-)
 > 
-> Junxian
+> diff --git a/fs/namespace.c b/fs/namespace.c
+> index ba77ce1c6788dfe461814b5826fcbb3aab68fad4..5f2fb692449a9c0a15b60549fb9f7bedd10f1f3d 100644
+> --- a/fs/namespace.c
+> +++ b/fs/namespace.c
+> @@ -5006,6 +5006,14 @@ static int statmount_fs_type(struct kstatmount *s, struct seq_file *seq)
+>  	return 0;
+>  }
+>  
+> +static int statmount_fs_subtype(struct kstatmount *s, struct seq_file *seq)
+> +{
+> +	struct super_block *sb = s->mnt->mnt_sb;
+> +
+> +	seq_puts(seq, sb->s_subtype);
+> +	return 0;
+> +}
+> +
+>  static void statmount_mnt_ns_id(struct kstatmount *s, struct mnt_namespace *ns)
+>  {
+>  	s->sm.mask |= STATMOUNT_MNT_NS_ID;
+> @@ -5064,6 +5072,13 @@ static int statmount_string(struct kstatmount *s, u64 flag)
+>  		sm->mnt_opts = seq->count;
+>  		ret = statmount_mnt_opts(s, seq);
+>  		break;
+> +	case STATMOUNT_FS_SUBTYPE:
+> +		/* ignore if no s_subtype */
+> +		if (!s->mnt->mnt_sb->s_subtype)
+> +			return 0;
+> +		sm->fs_subtype = seq->count;
+> +		ret = statmount_fs_subtype(s, seq);
+> +		break;
+>  	default:
+>  		WARN_ON_ONCE(true);
+>  		return -EINVAL;
+> @@ -5203,6 +5218,9 @@ static int do_statmount(struct kstatmount *s, u64 mnt_id, u64 mnt_ns_id,
+>  	if (!err && s->mask & STATMOUNT_MNT_OPTS)
+>  		err = statmount_string(s, STATMOUNT_MNT_OPTS);
+>  
+> +	if (!err && s->mask & STATMOUNT_FS_SUBTYPE)
+> +		err = statmount_string(s, STATMOUNT_FS_SUBTYPE);
+> +
+>  	if (!err && s->mask & STATMOUNT_MNT_NS_ID)
+>  		statmount_mnt_ns_id(s, ns);
+>  
+> @@ -5224,7 +5242,7 @@ static inline bool retry_statmount(const long ret, size_t *seq_size)
+>  }
+>  
+>  #define STATMOUNT_STRING_REQ (STATMOUNT_MNT_ROOT | STATMOUNT_MNT_POINT | \
+> -			      STATMOUNT_FS_TYPE | STATMOUNT_MNT_OPTS)
+> +			      STATMOUNT_FS_TYPE | STATMOUNT_MNT_OPTS | STATMOUNT_FS_SUBTYPE)
+>  
+>  static int prepare_kstatmount(struct kstatmount *ks, struct mnt_id_req *kreq,
+>  			      struct statmount __user *buf, size_t bufsize,
+> diff --git a/include/uapi/linux/mount.h b/include/uapi/linux/mount.h
+> index 225bc366ffcbf0319929e2f55f1fbea88e4d7b81..fa206fb56b3b25cf80f7d430e1b6bab19c3220e4 100644
+> --- a/include/uapi/linux/mount.h
+> +++ b/include/uapi/linux/mount.h
+> @@ -173,7 +173,9 @@ struct statmount {
+>  	__u32 mnt_root;		/* [str] Root of mount relative to root of fs */
+>  	__u32 mnt_point;	/* [str] Mountpoint relative to current root */
+>  	__u64 mnt_ns_id;	/* ID of the mount namespace */
+> -	__u64 __spare2[49];
+> +	__u32 fs_subtype;	/* [str] Subtype of fs_type (if any) */
+> +	__u32 __spare1[1];
+> +	__u64 __spare2[48];
+>  	char str[];		/* Variable size part containing strings */
+>  };
+>  
+> @@ -207,6 +209,7 @@ struct mnt_id_req {
+>  #define STATMOUNT_FS_TYPE		0x00000020U	/* Want/got fs_type */
+>  #define STATMOUNT_MNT_NS_ID		0x00000040U	/* Want/got mnt_ns_id */
+>  #define STATMOUNT_MNT_OPTS		0x00000080U	/* Want/got mnt_opts */
+> +#define STATMOUNT_FS_SUBTYPE		0x00000100U	/* Want/got subtype */
+>  
+>  /*
+>   * Special @mnt_id values that can be passed to listmount
 > 
-> > Thanks
-> > 
-> >>
-> >> --
-> >> 2.33.0
-> >>
-> >>
+> ---
+> base-commit: 26213e1a6caa5a7f508b919059b0122b451f4dfe
+> change-id: 20241106-statmount-3f91a7ed75fa
+> 
+> Best regards,
+> -- 
+> Jeff Layton <jlayton@kernel.org>
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
