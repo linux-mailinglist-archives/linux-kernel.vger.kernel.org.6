@@ -1,186 +1,87 @@
-Return-Path: <linux-kernel+bounces-398285-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398292-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47E889BEEF6
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 14:24:37 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B571C9BEF12
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 14:30:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C3521C236AF
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 13:24:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7AFE5285F05
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 13:30:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F2CD1E00AB;
-	Wed,  6 Nov 2024 13:24:32 +0000 (UTC)
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B18881DFD8D;
+	Wed,  6 Nov 2024 13:30:39 +0000 (UTC)
+Received: from mail-gw01.astralinux.ru (mail-gw01.astralinux.ru [37.230.196.243])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31DA61DE4E6
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 13:24:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 655F51D356F;
+	Wed,  6 Nov 2024 13:30:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.230.196.243
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730899471; cv=none; b=AtzbAAPHM9w6LucZD07Xz3y600F+3MRe8WU2u0Lkp/+wZeq3UrE8afQe6JNHnP2nZmgxzJRdEOKIQWpJcPCzgaj+iGArahy8Nn47HE2CAUi/KaZc/UgV0MYhLNn3XMvjzN4hKKMP5PdaUM7/PiGhmGnHEIukkB8l4eoANAdnQyM=
+	t=1730899839; cv=none; b=uyDCYm9adPM7dY82ljbCavowZSdHoxhqQ2HYAwqhVZQxIxdS4qmdIwuHhzFQtOZBAQ/gvY7XGzCDBV/ggkoQCqtP7oW1hpvojuN58G4ecqT873LIGWtWbJylF7Ge13wLOwf/wR0208XSsF0MS/4lwurlh0A7oD8vzXh85peSfiE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730899471; c=relaxed/simple;
-	bh=ENA9AWi0tjn+1a3zT70Krgt930E7soDwAJinHc+5dUM=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=YSirlRMNcMmF3FnWjemGOrwxY2xbGpCZXNxOU2l/EPVvV8UI2pEdI7bz0BJ+IPiaLxc7yJQhNLvewvLI9AB1GofbdMfmmdC09S9kdTFoRvvrelOMDnOnnCe8Bi2Rn2xR+GqjrhB9GHMCsIqdSpZEpwoi4drx6du2pbD7ZGKeekM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-83aed4f24a9so695852839f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2024 05:24:29 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730899469; x=1731504269;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=HHvtJ8N+bx/9aPCFxEqXjWPVaAHCL5HZey8ePX+IBqg=;
-        b=IPMsitLJTvDPVd60CoeK0FoKj7TYxtgVUfQpdHIH2uHNERlBoXw4Atu5t/8F0Khj0N
-         7VS6AFjo1N8ZbnwJ/NotdK9wIsDyL9k+HjDtnHqBPZDyzs8fv0QgAsmi9YChTtmlMBgK
-         hKbyzih8MXsHjNuI0GgyrzCeALERvLb/Uz5/aowFdnAD1C5bhhofZR7j2gkyYXTHbmJq
-         YnT4upkT07C8gKHzkZQ1hnSPuQu0PpO7iCuaJYpqBWePU/Zccc0gY9Mnldh4FpahAUuz
-         XXDTw6ilAh6RsBIPuxqSi1ge68dh5c2k6LpAgxHYSE90xtw5rz8zfgeyyURLR7GQcjPc
-         GQ3g==
-X-Forwarded-Encrypted: i=1; AJvYcCVwQ3xV2oKFY9m8i/+HSm8MV2UCqXxM6ZqZpmdkNc8s5xaAphuZyjMU4UAqnjsl4lv4yZf0ud9vQzcy2K4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwKgSqPVJhBDlJdVDIfdZXwNuGCrlmTnEGfoT488Z5q8qAldA5B
-	nETCLvQWCgYAkj9M94IC4CmjxT4YzPv5PyhkY/1Z9Xkwi6nSiTbKNdlvocUg98K/VfhFh/XyTBK
-	gjH5IYldooju1+rSEMH9sZ45xi2YRN5tqTnTAxORa7DrNW2kzeL4Ff5I=
-X-Google-Smtp-Source: AGHT+IENVoPWcUMexzAHUgyOtsY+zH1/ohLNJevAiZYyAtrb91HgAbGnz4QiyAbmWsEu7CgX5idlkXoCc6S1W7V8X0q47mHeA70m
+	s=arc-20240116; t=1730899839; c=relaxed/simple;
+	bh=2EaEJLFlmJcjWsYlAVFTf3ZThy1dAY37f7G0UVb64dY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JwhRSsqZnGvsf2OHWnK2gIarn5LFZvA3h+p39e4PqUVgChiwAUWX+BM3077Wf7vX3pv00bcDt+UgKG7xiZjQTwUn81qhjtdGrN/vBHgR9i3CTO1w3dx5+bbys8+64aRLcZMdzWxnD9LcvGhBHMZYMuIHXVRG1LQ9oUNHEwgCKLE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=astralinux.ru; spf=pass smtp.mailfrom=astralinux.ru; arc=none smtp.client-ip=37.230.196.243
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=astralinux.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=astralinux.ru
+Received: from gca-sc-a-srv-ksmg01.astralinux.ru (localhost [127.0.0.1])
+	by mail-gw01.astralinux.ru (Postfix) with ESMTP id 6597424F9F;
+	Wed,  6 Nov 2024 16:24:47 +0300 (MSK)
+Received: from new-mail.astralinux.ru (gca-yc-ruca-srv-mail05.astralinux.ru [10.177.185.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail-gw01.astralinux.ru (Postfix) with ESMTPS;
+	Wed,  6 Nov 2024 16:24:46 +0300 (MSK)
+Received: from MBP-Anastasia.DL (unknown [10.198.46.47])
+	by new-mail.astralinux.ru (Postfix) with ESMTPA id 4Xk5XS5yTbz1c03C;
+	Wed,  6 Nov 2024 16:24:40 +0300 (MSK)
+From: Anastasia Belova <abelova@astralinux.ru>
+To: stable@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Anastasia Belova <abelova@astralinux.ru>,
+	lvc-project@linuxtesting.org,
+	Huang Rui <ray.huang@amd.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 6.1 0/1] cpufreq: amd-pstate: add check for cpufreq_cpu_get's return value
+Date: Wed,  6 Nov 2024 16:24:33 +0300
+Message-ID: <20241106132437.38024-1-abelova@astralinux.ru>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1c41:b0:3a5:d2a:10e0 with SMTP id
- e9e14a558f8ab-3a6b0229ecbmr187669405ab.5.1730899469442; Wed, 06 Nov 2024
- 05:24:29 -0800 (PST)
-Date: Wed, 06 Nov 2024 05:24:29 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <672b6e0d.050a0220.350062.024e.GAE@google.com>
-Subject: [syzbot] [bcachefs?] kernel BUG in bch2_btree_path_traverse_one
-From: syzbot <syzbot+997f0573004dcb964555@syzkaller.appspotmail.com>
-To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-KSMG-AntiPhishing: NotDetected
+X-KSMG-AntiSpam-Auth: dkim=none
+X-KSMG-AntiSpam-Envelope-From: abelova@astralinux.ru
+X-KSMG-AntiSpam-Info: LuaCore: 41 0.3.41 623e98d5198769c015c72f45fabbb9f77bdb702b, {Tracking_from_domain_doesnt_match_to}, astralinux.ru:7.1.1;127.0.0.199:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;new-mail.astralinux.ru:7.1.1, FromAlignment: s
+X-KSMG-AntiSpam-Interceptor-Info: scan successful
+X-KSMG-AntiSpam-Lua-Profiles: 188994 [Nov 06 2024]
+X-KSMG-AntiSpam-Method: none
+X-KSMG-AntiSpam-Rate: 0
+X-KSMG-AntiSpam-Status: not_detected
+X-KSMG-AntiSpam-Version: 6.1.1.7
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.1.0.7854, bases: 2024/11/06 08:16:00 #26825679
+X-KSMG-AntiVirus-Status: NotDetected, skipped
+X-KSMG-LinksScanning: NotDetected
+X-KSMG-Message-Action: skipped
+X-KSMG-Rule-ID: 1
 
-Hello,
+NULL-dereference is possible in amd_pstate_adjust_perf in 6.1 stable
+release.
 
-syzbot found the following issue on:
+The problem has been fixed by the following upstream patch that was adapted
+to 6.1. The patch couldn't be applied clearly but the changes made are 
+minor.
 
-HEAD commit:    11066801dd4b Merge tag 'linux_kselftest-fixes-6.12-rc6' of..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=123e755f980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=672325e7ab17fdf7
-dashboard link: https://syzkaller.appspot.com/bug?extid=997f0573004dcb964555
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=156b2987980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=163e755f980000
-
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-11066801.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/b062b193560b/vmlinux-11066801.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/5b6da4ee7c42/bzImage-11066801.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/8becb7eaabe7/mount_0.gz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+997f0573004dcb964555@syzkaller.appspotmail.com
-
-bcachefs (loop0): check_btree_backpointers... done
-bcachefs (loop0): check_backpointers_to_extents... done
-bcachefs (loop0): check_extents_to_backpointers...
-------------[ cut here ]------------
-kernel BUG at fs/bcachefs/btree_cache.h:129!
-Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN NOPTI
-CPU: 0 UID: 0 PID: 5320 Comm: syz-executor345 Not tainted 6.12.0-rc5-syzkaller-00299-g11066801dd4b #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-RIP: 0010:bch2_btree_id_root fs/bcachefs/btree_cache.h:129 [inline]
-RIP: 0010:btree_path_lock_root fs/bcachefs/btree_iter.c:723 [inline]
-RIP: 0010:bch2_btree_path_traverse_one+0x28de/0x2940 fs/bcachefs/btree_iter.c:1183
-Code: f4 8e 48 89 de e8 92 da dc 00 e9 78 f8 ff ff e8 38 e1 7b fd 90 0f 0b e8 c0 2d ae 07 e8 2b e1 7b fd 90 0f 0b e8 23 e1 7b fd 90 <0f> 0b e8 1b e1 7b fd 90 0f 0b e8 13 e1 7b fd 90 0f 0b 48 8b 4c 24
-RSP: 0018:ffffc9000d0d5de0 EFLAGS: 00010293
-RAX: ffffffff8418f8fd RBX: ffff888044480000 RCX: ffff88801f084880
-RDX: 0000000000000000 RSI: 0000000000000004 RDI: 0000000000000000
-RBP: ffffc9000d0d60d0 R08: ffffffff8418e949 R09: ffffffff8418b9a9
-R10: 0000000000000002 R11: ffff88801f084880 R12: dffffc0000000000
-R13: 0000000000000004 R14: ffff8880414cc380 R15: 0000000000000000
-FS:  0000555593398380(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000056431d273820 CR3: 0000000044502000 CR4: 0000000000352ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- bch2_btree_path_traverse fs/bcachefs/btree_iter.h:247 [inline]
- bch2_btree_iter_peek_slot+0x84f/0x2550 fs/bcachefs/btree_iter.c:2629
- bch2_backpointer_get_key+0x2bc/0x970 fs/bcachefs/backpointers.c:322
- check_bp_exists fs/bcachefs/backpointers.c:579 [inline]
- check_extent_to_backpointers+0x21f9/0x46b0 fs/bcachefs/backpointers.c:683
- bch2_check_extents_to_backpointers_pass fs/bcachefs/backpointers.c:879 [inline]
- bch2_check_extents_to_backpointers+0x1190/0x1bf0 fs/bcachefs/backpointers.c:932
- bch2_run_recovery_pass+0xf0/0x1e0 fs/bcachefs/recovery_passes.c:185
- bch2_run_recovery_passes+0x387/0x870 fs/bcachefs/recovery_passes.c:232
- bch2_fs_recovery+0x25cc/0x39c0 fs/bcachefs/recovery.c:861
- bch2_fs_start+0x356/0x5b0 fs/bcachefs/super.c:1036
- bch2_fs_get_tree+0xd68/0x1710 fs/bcachefs/fs.c:2170
- vfs_get_tree+0x90/0x2b0 fs/super.c:1814
- do_new_mount+0x2be/0xb40 fs/namespace.c:3507
- do_mount fs/namespace.c:3847 [inline]
- __do_sys_mount fs/namespace.c:4057 [inline]
- __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:4034
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f31be2970aa
-Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 5e 04 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffd6f7edc68 EFLAGS: 00000282 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 00007ffd6f7edc70 RCX: 00007f31be2970aa
-RDX: 00000000200058c0 RSI: 0000000020005900 RDI: 00007ffd6f7edc70
-RBP: 0000000000000004 R08: 00007ffd6f7edcb0 R09: 00000000000058cb
-R10: 0000000000000001 R11: 0000000000000282 R12: 00007ffd6f7edcb0
-R13: 0000000000000003 R14: 0000000001000000 R15: 00007f31be2de03b
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:bch2_btree_id_root fs/bcachefs/btree_cache.h:129 [inline]
-RIP: 0010:btree_path_lock_root fs/bcachefs/btree_iter.c:723 [inline]
-RIP: 0010:bch2_btree_path_traverse_one+0x28de/0x2940 fs/bcachefs/btree_iter.c:1183
-Code: f4 8e 48 89 de e8 92 da dc 00 e9 78 f8 ff ff e8 38 e1 7b fd 90 0f 0b e8 c0 2d ae 07 e8 2b e1 7b fd 90 0f 0b e8 23 e1 7b fd 90 <0f> 0b e8 1b e1 7b fd 90 0f 0b e8 13 e1 7b fd 90 0f 0b 48 8b 4c 24
-RSP: 0018:ffffc9000d0d5de0 EFLAGS: 00010293
-RAX: ffffffff8418f8fd RBX: ffff888044480000 RCX: ffff88801f084880
-RDX: 0000000000000000 RSI: 0000000000000004 RDI: 0000000000000000
-RBP: ffffc9000d0d60d0 R08: ffffffff8418e949 R09: ffffffff8418b9a9
-R10: 0000000000000002 R11: ffff88801f084880 R12: dffffc0000000000
-R13: 0000000000000004 R14: ffff8880414cc380 R15: 0000000000000000
-FS:  0000555593398380(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000055cc391660a8 CR3: 0000000044502000 CR4: 0000000000352ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+Found by Linux Verification Center (linuxtesting.org) with SVACE.
 
