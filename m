@@ -1,140 +1,122 @@
-Return-Path: <linux-kernel+bounces-398980-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398981-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA1AA9BF8DA
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 23:04:27 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A8FC9BF8DF
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 23:05:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AFCA428440E
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 22:04:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F37C8284540
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 22:05:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B061820CCC5;
-	Wed,  6 Nov 2024 22:04:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5529420CCC2;
+	Wed,  6 Nov 2024 22:05:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MNPSqa5n"
-Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J4cM9EmH"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B42621D0E23;
-	Wed,  6 Nov 2024 22:04:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25053824A3;
+	Wed,  6 Nov 2024 22:05:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730930656; cv=none; b=YR2zAMSXvwGa7AK+RTELIKpCEaUIl188AKQuAIcRitHL10X+r1OJja/fN8gaiOcdgt6TN61If7vNg1dR55G9Upp/JDN/2fHIKUU8cZjEtEnmhhjp7i+Afb+tFsP/zSa7zpI1tI0FHxhUFJY0gcEmfx8oe4+bmqe3SGXmTfNSPnk=
+	t=1730930737; cv=none; b=skaeDuqHQ3/naDblNPr6S1JIUpRWZdIvPMqACHtOk/ndaf2O6jF0U5HmWtEWIu6W64Ov0+x2Jl0lj/r5jh5imZDx3wPt7DgztEXLeyVBRMKr7IGmtV1aOpn/gmAChsrLXOec2LasmGY/A2eAn3YFC4VRLVf0CnwlgWIYXtvpKsg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730930656; c=relaxed/simple;
-	bh=XWlE48RqZQ5truz2JBDBGqsYLK+eKE8hxeJQAdnWLKw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=B1BwLn8aNqV2xr1a75WhtL68vMjd0appGTPPxjDMFvlD1gCMpvn1cEynW+ErP16SQki03JY6uObJkB1s7ZpHeFXUkcjm5vil1QHiuHZ39L9BbrWw+6KRPEAQxnnDS6Z/2OzqsGhByItbMFqYL/7K/alsk6171Oqc1lWGy7uhhI0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MNPSqa5n; arc=none smtp.client-ip=209.85.216.48
+	s=arc-20240116; t=1730930737; c=relaxed/simple;
+	bh=5hIr4DqH344QQRXKlkjp641JXAdj+t2BweafuQTt1EA=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=VtKy5JTK8KYES9I2tcfX+xvBpyeqQc2PE7TK8KxwaYYm4Kbrezgc+k8Ph22A7/A/PPPRP9N+wbG9qWu5jJXwbh8rkclZamUYj9jPKlVupF8t6kWUrULCqodyVd5Pd6gt1MAy75whfS9RupzZkJynDpXPadhVRuaxB3LEsC99Mx4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J4cM9EmH; arc=none smtp.client-ip=209.85.128.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-2e2cc469c62so218563a91.2;
-        Wed, 06 Nov 2024 14:04:14 -0800 (PST)
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-43161c0068bso2677335e9.1;
+        Wed, 06 Nov 2024 14:05:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730930653; x=1731535453; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PfGNi4Eab08D4rDIFJXSfdEQm138IE7MugUyEGUzqSg=;
-        b=MNPSqa5n7uio5spmm4M5r4BGlaadv+jD90XL8G1DjwCeWuiS0qzkOWDUplXPKwesf5
-         jvplQ5zkvDa+E9GLbAoKGgM6JbxqUKosoVnXp8P2qXINrN8EQzlD0+/FyDIrhk3fBcqt
-         z2JQb1Mcgv7y8/uLRa3CX7hS9ABCzRHr7oVTFwnfo8hH34mtKPkQPQRtAQoJTrkHM+Zm
-         DZpysl9y453gKuUmcAO7Uzc2tHNNTyqYiw1kmS5/YMzch2VgyLC/2HuyV4dr2Az5GPDc
-         eY/Jh46e2icruY4ZhKmK4biU/FHwkO9mFVRWegEXwtHZHGNxuPIO+IfZNDkbjZVh+zSG
-         8VtQ==
+        d=gmail.com; s=20230601; t=1730930734; x=1731535534; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=dqklnXtcZ0T+lSHc7mcdxj8FxKGKc9PBldQlZBXC1T4=;
+        b=J4cM9EmHIeRIhoKGWro6p5eGqXMMux6VZdTz5G0T0kYEW0682kBl9o550LMymKfnKD
+         9CDyQkcV2yy41qIblZL47ytUXr7DCwT0MJqQmsNdOKxGBU0rak9J5cEZvn4+luj8iFJF
+         ydnf560ct8UVJojGOjg+u496dN6Da+wtfzcTUGn1Q90QjeYC054yELVQtNySfaarC9k5
+         UwSm28BMHbrKuZvFZYQ3SVSkCnkfS4htvLP2RdBltvKYctNNKNog8aGLnVRCiYICJHBe
+         PqcxG249vbD4KR5U2MAGG/C28UY+docyvTlsxuhW7snhTjZgMlXTUG5/CsvOUeftSdI/
+         pDJw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730930654; x=1731535454;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=PfGNi4Eab08D4rDIFJXSfdEQm138IE7MugUyEGUzqSg=;
-        b=B+/VH5MloSnyyrngddiXckFYi65fdLc0RixQhIN6OIIZi5o82GpVej2Pw4hgyan+J1
-         cvPy3m9NF/yfShWf6mt4LHp5JF5xraVcDu2l//pf0rgUQnd3csHnetECZsJvJCEt2BP+
-         Ry2NrQeoeOO4wall9gel0szWmzQEiOsYLZz8AyRbGwwajaRWC+5gv0vNPF9Ct9eYtiF7
-         SrtXL/jlq9eQ7jn9ao3kbREqkzE2RxIer8RW00v6cmLhE/F6fq0jiXObq6o1AkLVQQXH
-         xRvZCOPH5eCPYzTDTx+5cTx3DyLZbsZ5C6jKtI/n9X6O1efZHpdb8iAByUIU2NJdcz7y
-         uYZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUoHb1z2D4FDIxUIYaIaVxIqXzmyCdBbFPFgrPg+Hfk/VJ/AXAeTvwFIo0CCh+/9PLUuMDlyHUUIKXFqpD3EPO2@vger.kernel.org, AJvYcCVrDZfBya1QPXrRxpeXtU/mGaPqJxSwJ8dJpQAxznNgxp78K2lPrbEdKdHVb9iNTV/hNmQ=@vger.kernel.org, AJvYcCWz3A5bKYnqMoM1JiPeZKVbdeZnlJ9/YZjIwvbuMFZqlU0cGbq7dxBiyQcoXk0xktgtXAWWC8cy@vger.kernel.org, AJvYcCX83aeFlDOFJq/pk595YTtyWRGZV9pXYnpQCFa6Cx/I8jN64mlmevYPGTbl6u8og+D3XN/j+XftPYAmudkZ@vger.kernel.org
-X-Gm-Message-State: AOJu0YyxiF16u5DZHjizrTwzM9G+bkkHNGWlghx8PNWQB8NcGrSB76XC
-	6IObvYVlYKMXcp/GbpzfCA45j6vMCyaDjWOZro2L/fuopoyFjjudmZA6TdR4zCIBZP52vhGzUBZ
-	mQJTFeuJWiIIaYrfgaQrgZrST/5I=
-X-Google-Smtp-Source: AGHT+IHiIFN3vV3i+lrEACl/mdE0HQWZtzx800XFbju733sBmVhjjP4bbDv2RZKt8j7XpLWja7xZVa0f8ftoFXrmJPw=
-X-Received: by 2002:a17:90b:4a49:b0:2e2:b64e:f506 with SMTP id
- 98e67ed59e1d1-2e94c2afe78mr30385346a91.13.1730930653594; Wed, 06 Nov 2024
- 14:04:13 -0800 (PST)
+        d=1e100.net; s=20230601; t=1730930734; x=1731535534;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=dqklnXtcZ0T+lSHc7mcdxj8FxKGKc9PBldQlZBXC1T4=;
+        b=TCeNp7aAGA9KMywYe0LdVzoyDPoRC31dbJHtm0y0V8w6QZF3YxKUPrmhhKmwYUDbWp
+         /Ct0hreUkco3dKvybUY/bhFlBKnQXI8p4s/sSaw8cJ/eWHPWKp83xLGgRTdQk+vDV4Rn
+         KOqBjA4iX8dcvR9UD6u6kGVlWijSdjIttqjR/o/a9YLsocmx+U+eFoI/YOprA7PQCLCm
+         C2xSs5DKeJ8bu5iYXKYm1AI//0rcTBtTwvrcpM7ZraoUY/RaqlmlqaIudWUMQ/a6jKp6
+         5LSthQBi0HoTGakfu35KKwtZaJk9omvxqKfvEFM7RB9Tmnudcqf7LehFKjN757pHi+JF
+         k0Fw==
+X-Forwarded-Encrypted: i=1; AJvYcCUQr/zpUBSsuZzWsaR5q+EPKT5mbK+x6zvWJ2n4KRw5aNXg9WFlaijx0XJD763TQ4kx6dRuLuXHQG7h@vger.kernel.org, AJvYcCVUrbN2or5tyLSjky/FeblpR2s0MIupRViQfJONm3bUnejNDtgeTiAi/mAVcKKZRVeMdPpzn5FO@vger.kernel.org, AJvYcCXGvrX+z2+BO60m8oIWtjbdaXL/HxkPhiDyllTGXx7eKKpou0AQKJFaKTivMTuGAT66Rw2xp26/v7u8/l8R7biEaqE=@vger.kernel.org, AJvYcCXrkcbkgfZk/RfcTSAaLGGmeL8MKW3OWYdKGlnz2YKNLm0Xn5R2nvnjrvKiFKJEb/QrCkETeIl+7rCa00tR@vger.kernel.org
+X-Gm-Message-State: AOJu0YxC4piGKxmByDw8LhuxFuWNTbh4onbzejn1cCx9bxxMqyggPhLw
+	Nri+RhaHGkm6fsmwy11yY4YsJ4rDpoXqmPbHckZz5chgK+yQ2+Y8OM053A==
+X-Google-Smtp-Source: AGHT+IE6Y7ubo9iP0AJhvaqbFPGr9/zv6r/DCkyqFoxY8CAAbQQy/4bGLHV4b4+wJnMD6OeaRvp01Q==
+X-Received: by 2002:a05:600c:4f06:b0:431:5f1b:a7c6 with SMTP id 5b1f17b1804b1-432832965d2mr183460825e9.30.1730930734049;
+        Wed, 06 Nov 2024 14:05:34 -0800 (PST)
+Received: from [127.0.1.1] (2a02-8389-41cf-e200-20b4-40af-8ae8-9c61.cable.dynamic.v6.surfer.at. [2a02:8389:41cf:e200:20b4:40af:8ae8:9c61])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381c116b0eesm20288493f8f.106.2024.11.06.14.05.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 06 Nov 2024 14:05:33 -0800 (PST)
+From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Subject: [PATCH 0/2] pinctrl: samsung: fix fwnode refcount cleanup in error
+ path and update comment
+Date: Wed, 06 Nov 2024 23:04:38 +0100
+Message-Id: <20241106-samsung-pinctrl-put-v1-0-de854e26dd03@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240927131355.350918-1-bjorn@kernel.org> <172835823300.66789.3704854116445399222.git-patchwork-notify@kernel.org>
- <87bjyvpa6h.fsf@all.your.base.are.belong.to.us>
-In-Reply-To: <87bjyvpa6h.fsf@all.your.base.are.belong.to.us>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Wed, 6 Nov 2024 14:04:01 -0800
-Message-ID: <CAEf4BzZbq9OwSGi4pdb5_q8YkErfFiQFKYXg3g1rjpdejafx+Q@mail.gmail.com>
-Subject: Re: [PATCH bpf-next 1/2] libbpf: Add missing per-arch include path
-To: =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@kernel.org>
-Cc: patchwork-bot+netdevbpf@kernel.org, andrii@kernel.org, eddyz87@gmail.com, 
-	mykolal@fb.com, bpf@vger.kernel.org, netdev@vger.kernel.org, 
-	bjorn@rivosinc.com, linux-kselftest@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
-	charlie@rivosinc.com, Andreas Schwab <schwab@suse.de>, Anand Moon <linux.amoon@gmail.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAPbnK2cC/x3MTQ5AMBBA4avIrE2i9ReuIhZVg0mopoNIxN01l
+ t/ivQeEApNAmzwQ6GLh3UWoNAG7GDcT8hgNOtOFUlmFYjY53YyenT3Civ480A5NnZu8pKnUEEs
+ faOL7v3b9+3723MfqZQAAAA==
+To: Krzysztof Kozlowski <krzk@kernel.org>, 
+ Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, 
+ Linus Walleij <linus.walleij@linaro.org>, Tomasz Figa <t.figa@samsung.com>, 
+ Thomas Abraham <thomas.abraham@linaro.org>, 
+ Kyungmin Park <kyungmin.park@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+ linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Javier Carrasco <javier.carrasco.cruz@gmail.com>, stable@vger.kernel.org
+X-Mailer: b4 0.14-dev
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1730930732; l=794;
+ i=javier.carrasco.cruz@gmail.com; s=20240312; h=from:subject:message-id;
+ bh=5hIr4DqH344QQRXKlkjp641JXAdj+t2BweafuQTt1EA=;
+ b=UW8O+ZSbS9ocVYCoSiiqQ02rZTe+4QqvnvDRkzg7Zoadme/L5yho3KU7WsPQfax8iYAh3Wjym
+ Cm+YahsvW+wDrI/MVuRCI05vflLgW6STYBl4o08MbpZsAZio+qsk7xP
+X-Developer-Key: i=javier.carrasco.cruz@gmail.com; a=ed25519;
+ pk=lzSIvIzMz0JhJrzLXI0HAdPwsNPSSmEn6RbS+PTS9aQ=
 
-On Mon, Nov 4, 2024 at 2:26=E2=80=AFAM Bj=C3=B6rn T=C3=B6pel <bjorn@kernel.=
-org> wrote:
->
-> patchwork-bot+netdevbpf@kernel.org writes:
->
-> > Hello:
-> >
-> > This series was applied to bpf/bpf-next.git (master)
-> > by Andrii Nakryiko <andrii@kernel.org>:
-> >
-> > On Fri, 27 Sep 2024 15:13:52 +0200 you wrote:
-> >> From: Bj=C3=B6rn T=C3=B6pel <bjorn@rivosinc.com>
-> >>
-> >> libbpf does not include the per-arch tools include path, e.g.
-> >> tools/arch/riscv/include. Some architectures depend those files to
-> >> build properly.
-> >>
-> >> Include tools/arch/$(SUBARCH)/include in the libbpf build.
-> >>
-> >> [...]
-> >
-> > Here is the summary with links:
-> >   - [bpf-next,1/2] libbpf: Add missing per-arch include path
-> >     https://git.kernel.org/bpf/bpf-next/c/710fbca820c7
-> >   - [bpf-next,2/2] selftests: bpf: Add missing per-arch include path
-> >     https://git.kernel.org/bpf/bpf-next/c/19090f0306f1
->
-> Andrii, I just noted that this landed into bpf-next, and not bpf
-> (fixes).
+The first patch completes a previous fix where one error path stayed as
+a direct return after the child nodes were acquired, and the second,
+completely trivial, updates the function name used in the comment to
+indicate where the references are released.
 
-Hi Bjorn,
+Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+---
+Javier Carrasco (2):
+      pinctrl: samsung: fix fwnode refcount cleanup if platform_get_irq_optional() fails
+      pinctrl: samsung: update child reference drop comment
 
-Yes, libbpf and selftests fixes are generally applied through
-bpf-next, unless the issue is pretty bad and immediate.
+ drivers/pinctrl/samsung/pinctrl-samsung.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+---
+base-commit: 5b913f5d7d7fe0f567dea8605f21da6eaa1735fb
+change-id: 20241106-samsung-pinctrl-put-cb973a35ef52
 
-I'm sorry, but unfortunately it's too late now to move those patches
-as it's now been more than a month since they landed. For the future,
-please let us know ASAP if you think patches were misrouted. I think
-we are stuck with the need to do a stable backport for these, sorry.
+Best regards,
+-- 
+Javier Carrasco <javier.carrasco.cruz@gmail.com>
 
->
-> RISC-V libbpf/perf needs this fix in 6.12 to properly build. Would it be
-> possible to have it in the bpf tree, and have it land in 6.12-rc7?
->
-> Andreas that has a similar fix [1].
->
->
-> Bj=C3=B6rn
->
-> [1] https://lore.kernel.org/linux-riscv/mvm5xq44bqh.fsf@suse.de/
 
