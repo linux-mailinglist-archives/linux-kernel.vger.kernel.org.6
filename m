@@ -1,307 +1,131 @@
-Return-Path: <linux-kernel+bounces-397532-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397533-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FA5E9BDD14
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 03:39:06 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7D239BDD19
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 03:39:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 729FE1C231DE
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 02:39:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E82551C231DD
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 02:39:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DC2118E047;
-	Wed,  6 Nov 2024 02:34:09 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CBC018F2C1;
+	Wed,  6 Nov 2024 02:39:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bioSsQrK"
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 571A7142E86
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 02:34:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5F6B21106;
+	Wed,  6 Nov 2024 02:39:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730860449; cv=none; b=M3lPkSHnxNLWaUoVT7b9zpH/rFAWMXlg9XJLtkW5HpKYpIgopl18OdUP41VOgHYi3uSu2Zw3LNVmfSnP+40cYFRays+plzqQQCtEWWYDo6To5B37OWUgZlVG6ovhHw3I+NjepBwzTeZ5yD8z1sbcy6NfdG0kkrbDezABoA9ntd8=
+	t=1730860778; cv=none; b=L+GvdDcyq710mqpjrF9KxPVPT5BeF61f8Ti3WILILKAcxVmq8NGif5O1Url7xQoXyJXB5qZRT3ZWKTJimXNkGGnfEB9mCK5A+r2nl7GMFrHantBmq1im6DdRoCXsLE8Cyak8+ioooXrPJzqd0r87DCOl/6i+ii8IjsXQ625y/OA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730860449; c=relaxed/simple;
-	bh=xaU3pQ6FD5tmwrsUbjVWX8mtJ1wMeb5HokM2S+2T3Yw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=ju+cB4OWEudcSaJDGkrNqbafek8NeyWFAkjlrL1hRuUIIr1K9UloKQlylAWIV1Qm6IzaYH7gH1yebqg7XsLYxWIVYmEY8xnjmFRi5dNip7NdoqGrOM1OxnIBClCaQ0jXAGlRgcbUDVMXy+r/+jlGhtGT4q/XB+OR1Ttxkbo03A4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.44])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4Xjq4R4QKrz20rYR;
-	Wed,  6 Nov 2024 10:32:55 +0800 (CST)
-Received: from kwepemg200008.china.huawei.com (unknown [7.202.181.35])
-	by mail.maildlp.com (Postfix) with ESMTPS id 2D9D41400E8;
-	Wed,  6 Nov 2024 10:34:02 +0800 (CST)
-Received: from [10.67.109.254] (10.67.109.254) by
- kwepemg200008.china.huawei.com (7.202.181.35) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 6 Nov 2024 10:34:01 +0800
-Message-ID: <473f5db8-3fb6-6160-fb4b-4561befe56c0@huawei.com>
-Date: Wed, 6 Nov 2024 10:34:00 +0800
+	s=arc-20240116; t=1730860778; c=relaxed/simple;
+	bh=QRKo8U7x3Co0izA3jDtoKaPVGfIjqejXHW7FurDca+8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=bXt07mECL+D9TjTq9nv1SxCuQ/BzJIe4nAHvw3un1NwzO2QVYSVtqtU1W+kCusim86pOes1wB0yHIL5mtgrRmJcLf3AyUmr3FsGRfzkwsNnEFVJFrJLBUpmpQyuGieCQPEYxkIbOMSPHQMQDo4Bz3GBnsmSV2Shqw/OoHWCrEoE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bioSsQrK; arc=none smtp.client-ip=209.85.210.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-72041ff06a0so5356026b3a.2;
+        Tue, 05 Nov 2024 18:39:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730860776; x=1731465576; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=5aqta9xWdl89diKgAynphJa4Bu9tznPgpZ4juTK/lOs=;
+        b=bioSsQrKpm6vFEU9Lbpa1is/7fjmtshfcRZqY7d32SOZDL0sbfyZ3RdPhKB5ZZ8Sjt
+         9mDHSTTm1xoPXgGzCIftfHhT8QI9bh5CjZajpFUdDh6KdZscGgP7D5Z+Z1cP4XncpJqk
+         WRJKYx0mMp7Txekhzi++XhcdUdecAho1ZxjSMdH0Jw+DCMg3/C49wrXzEZkdJz44QpuH
+         UGPNMl0yoFnpV4h/F+SPOc1pwnox9xYwd6/SktDzycocoLMmTO7ZACTNo9dzESfHalyJ
+         unxsh6eGTWC50htc5YV2zLsiZuZS4gUg8Zlx76wrpZdoKzGa4rYV2scFWERGfuSeqn9r
+         1x4A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730860776; x=1731465576;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=5aqta9xWdl89diKgAynphJa4Bu9tznPgpZ4juTK/lOs=;
+        b=mFza9nlNYEQfmIKIJ5bnpjhQxyLvQ4lu9gn16xoVePi6Tq/KbQNJZRBQWJowzqoyjm
+         cFb69m44xv+/cccyigByL7Ib3kxgwhggwZNj998zQonZ2fZDwnfjs+xbAM631TYDjuQ4
+         7KB/FGLDZorqMEoV7h6OvWFEmFUgW0yWJX0IaFCT3dn8tUcpWYmwwa9KEHzAu2vPxB6d
+         +NFc84iSCMeRzIyv3hUQNCEK+Jix75oro3dt7/dTrvp1IVkmQlQSfyHUFu1GDpaMIq9w
+         JG/l1OH6on/leKQ/ilwEJ4+Sy2utesCgbCseLZ8BwGLy1917s+s+MYOzKdLrebFudXCZ
+         xxfg==
+X-Forwarded-Encrypted: i=1; AJvYcCU5Xk2xCyWuPvyq3xfMa5R8CANSJ8RVjf5Gtj+oWqyvSxTiOakBzRA8K+BeFFB/+biZR89gNCgfFZPV@vger.kernel.org, AJvYcCUQX26hjc2KiAhU3rP+o/wu03JKXgJVF9CciGIC5fXWnEehVeZQ6KSF7o/XSIcN5vxH658FIF4RmJ99XaES@vger.kernel.org, AJvYcCWNKkdyWDmnlLBWO+Cm00i7sT3EsfueTp0aXu7qsl6maruXZdUQIDvlHsVxTm43TyWFS6blOTeC3ifk@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx/wP1PavwipZVSXpCMa98bbNA6wvFsl3zBQmiVrMEzEadV52+D
+	/yF8P7U9M+SRqwf5drA6WNm+idVPGMLC7K67oFx6obaP7k5Dxr/p
+X-Google-Smtp-Source: AGHT+IGHXwrWMQWOHGiJbdIOc25nriZXhePbhiKeAdZty+sczhomUbGDQZgQON2Ctu8YaN4Kln3sSg==
+X-Received: by 2002:a05:6a00:a2a:b0:71d:f64d:ec60 with SMTP id d2e1a72fcca58-720c98a3d45mr24435157b3a.7.1730860775842;
+        Tue, 05 Nov 2024 18:39:35 -0800 (PST)
+Received: from hcdev-d520mt.. (60-250-192-107.hinet-ip.hinet.net. [60.250.192.107])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-720bc2c39acsm10382484b3a.137.2024.11.05.18.39.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 05 Nov 2024 18:39:35 -0800 (PST)
+From: Eason Yang <j2anfernee@gmail.com>
+To: avifishman70@gmail.com,
+	tmaimon77@gmail.com,
+	tali.perry1@gmail.com,
+	venture@google.com,
+	yuenn@google.com,
+	benjaminfair@google.com,
+	jic23@kernel.org,
+	lars@metafoo.de,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	nuno.sa@analog.com,
+	dlechner@baylibre.com,
+	javier.carrasco.cruz@gmail.com,
+	andy@kernel.org,
+	marcelo.schmitt@analog.com,
+	olivier.moysan@foss.st.com,
+	mitrutzceclan@gmail.com,
+	matteomartelli3@gmail.com,
+	alisadariana@gmail.com,
+	joao.goncalves@toradex.com,
+	marius.cristea@microchip.com,
+	mike.looijmans@topic.nl,
+	chanh@os.amperecomputing.com,
+	KWLIU@nuvoton.com,
+	yhyang2@nuvoton.com
+Cc: openbmc@lists.ozlabs.org,
+	linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Eason Yang <j2anfernee@gmail.com>
+Subject: [PATCH v1 0/2] iio: adc: add Nuvoton NCT720x ADC driver
+Date: Wed,  6 Nov 2024 10:39:14 +0800
+Message-Id: <20241106023916.440767-1-j2anfernee@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.0
-Subject: Re: [RESEND PATCH V4 2/3] riscv: mm: Add soft-dirty page tracking
- support
-Content-Language: en-US
-To: Alexandre Ghiti <alex@ghiti.fr>, Chunyan Zhang <zhang.lyra@gmail.com>
-CC: Chunyan Zhang <zhangchunyan@iscas.ac.cn>, Paul Walmsley
-	<paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou
-	<aou@eecs.berkeley.edu>, Andrew Morton <akpm@linux-foundation.org>,
-	<linux-riscv@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	=?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@rivosinc.com>
-References: <20240830011101.3189522-1-zhangchunyan@iscas.ac.cn>
- <20240830011101.3189522-3-zhangchunyan@iscas.ac.cn>
- <c4fbc62f-e398-1229-c1b1-7bab30e4460e@huawei.com>
- <CAAfSe-vDtJKeSeUgpeJM0ZQe4XKdKz_Rgz2TQkPb4giPBLsOdw@mail.gmail.com>
- <d1a84096-9722-47f1-ad8e-671144a3d109@ghiti.fr>
-From: Jinjie Ruan <ruanjinjie@huawei.com>
-In-Reply-To: <d1a84096-9722-47f1-ad8e-671144a3d109@ghiti.fr>
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- kwepemg200008.china.huawei.com (7.202.181.35)
 
+Changes since version 1:
+ - Add new property in iio:adc binding document.
+ - Add new driver for Nuvoton NCT720x driver.
 
+Eason Yang (2):
+  dt-bindings: iio: adc: Add binding for Nuvoton NCT720x ADCs
+  iio: adc: add Nuvoton NCT720x ADC driver
 
-On 2024/11/5 21:14, Alexandre Ghiti wrote:
-> On 30/08/2024 04:31, Chunyan Zhang wrote:
->> Hi Jinjie,
->>
->> On Fri, 30 Aug 2024 at 09:31, Jinjie Ruan <ruanjinjie@huawei.com> wrote:
->>>
->>>
->>> On 2024/8/30 9:11, Chunyan Zhang wrote:
->>>> The PTE bit(9) is reserved for software, now used by DEVMAP,
->>>> this patch reuse bit(9) for soft-dirty which is enabled only
->>>> if !CONFIG_ARCH_HAS_PTE_DEVMAP, in other words, soft-dirty
->>>> and devmap will be mutually exclusive on RISC-V.
->>>>
->>>> To add swap PTE soft-dirty tracking, we borrow bit (4) which is
->>>> available for swap PTEs on RISC-V systems.
->>>>
->>>> Signed-off-by: Chunyan Zhang <zhangchunyan@iscas.ac.cn>
->>>> ---
->>>>   arch/riscv/Kconfig                    | 27 ++++++++++-
->>>>   arch/riscv/include/asm/pgtable-bits.h | 12 +++++
->>>>   arch/riscv/include/asm/pgtable.h      | 69
->>>> ++++++++++++++++++++++++++-
->>>>   3 files changed, 106 insertions(+), 2 deletions(-)
->>>>
->>>> diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
->>>> index 0f3cd7c3a436..f1460fc01cd4 100644
->>>> --- a/arch/riscv/Kconfig
->>>> +++ b/arch/riscv/Kconfig
->>>> @@ -39,7 +39,6 @@ config RISCV
->>>>        select ARCH_HAS_NON_OVERLAPPING_ADDRESS_SPACE
->>>>        select ARCH_HAS_PMEM_API
->>>>        select ARCH_HAS_PREPARE_SYNC_CORE_CMD
->>>> -     select ARCH_HAS_PTE_DEVMAP if 64BIT && MMU
->>>>        select ARCH_HAS_PTE_SPECIAL
->>>>        select ARCH_HAS_SET_DIRECT_MAP if MMU
->>>>        select ARCH_HAS_SET_MEMORY if MMU
->>>> @@ -948,6 +947,32 @@ config RANDOMIZE_BASE
->>>>
->>>>             If unsure, say N.
->>>>
->>>> +choice
->>>> +     prompt "PET RSW Bit(9) used for"
->>>> +     default RISCV_HAS_PTE_DEVMEP
->>>> +     depends on MMU && 64BIT
->>>> +     help
->>>> +       RISC-V PTE bit(9) is reserved for software, and used by more
->>>> than
->>>> +       one kernel features which cannot be supported at the same time.
->>>> +       So we have to select one for it.
->>>> +
->>>> +config RISCV_HAS_PTE_DEVMEP
->>>> +     bool "DEVMAP mark"
->>>> +     select ARCH_HAS_PTE_DEVMAP
->>>> +     help
->>>> +       The PTE bit(9) is used for DEVMAP mark. ZONE_DEVICE pages
->>>> need DEVMAP
->>>> +       PTEs support to function.
->>>> +
->>>> +       So if you want to use ZONE_DEVICE, select this.
->>>> +
->>>> +config RISCV_HAS_SOFT_DIRTY
->>>> +     bool "soft dirty"
->>>> +     select HAVE_ARCH_SOFT_DIRTY
->>>> +     help
->>>> +       The PTE bit(9) is used for soft-dirty tracking.
->>>> +
->>>> +endchoice
->>>> +
->>> Hi, ARCH_HAS_PTE_DEVMAP will be removed in following patch, I guess
->>> riscv will too:
->>>
->>> https://lore.kernel.org/all/47c26640cd85f3db2e0a2796047199bb984d1b3f.1719386613.git-series.apopple@nvidia.com/
->> Thanks for sharing, I didn't notice this.
->> It looks like we should remove PTE_DEVMAP first and then add soft
->> dirty and uffd_wp.
-> 
-> 
-> I have not seen any progress in the removal of PTE_DEVMAP so I'd say we
-> should keep going with your patchset and we can still remove devmap later.
+ .../bindings/iio/adc/nuvoton,nct720x.yaml     |  47 ++
+ MAINTAINERS                                   |   2 +
+ drivers/iio/adc/Kconfig                       |   9 +
+ drivers/iio/adc/Makefile                      |   1 +
+ drivers/iio/adc/nct720x.c                     | 617 ++++++++++++++++++
+ 5 files changed, 676 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/iio/adc/nuvoton,nct720x.yaml
+ create mode 100644 drivers/iio/adc/nct720x.c
 
-Sure, it is time to keep going on.
+-- 
+2.34.1
 
-I started by implementing a patch similar to multiplexing bit 9, but
-considering the above remove PTE_DEVMAP patch, so just gave it up.
-
-> 
-> Thanks,
-> 
-> Alex
-> 
-> 
->>
->> Thanks,
->> Chunyan
->>
->>>>   endmenu # "Kernel features"
->>>>
->>>>   menu "Boot options"
->>>> diff --git a/arch/riscv/include/asm/pgtable-bits.h
->>>> b/arch/riscv/include/asm/pgtable-bits.h
->>>> index 5bcc73430829..c6d51fe9fc6f 100644
->>>> --- a/arch/riscv/include/asm/pgtable-bits.h
->>>> +++ b/arch/riscv/include/asm/pgtable-bits.h
->>>> @@ -26,6 +26,18 @@
->>>>   #define _PAGE_DEVMAP 0
->>>>   #endif /* CONFIG_ARCH_HAS_PTE_DEVMAP */
->>>>
->>>> +#ifdef CONFIG_MEM_SOFT_DIRTY
->>>> +#define _PAGE_SOFT_DIRTY     (1 << 9)    /* RSW: 0x2 for software
->>>> dirty tracking */
->>>> +/*
->>>> + * BIT 4 is not involved into swap entry computation, so we
->>>> + * can borrow it for swap page soft-dirty tracking.
->>>> + */
->>>> +#define _PAGE_SWP_SOFT_DIRTY _PAGE_USER
->>>> +#else
->>>> +#define _PAGE_SOFT_DIRTY     0
->>>> +#define _PAGE_SWP_SOFT_DIRTY 0
->>>> +#endif /* CONFIG_MEM_SOFT_DIRTY */
->>>> +
->>>>   #define _PAGE_TABLE     _PAGE_PRESENT
->>>>
->>>>   /*
->>>> diff --git a/arch/riscv/include/asm/pgtable.h
->>>> b/arch/riscv/include/asm/pgtable.h
->>>> index 089f3c9f56a3..d41507919ef2 100644
->>>> --- a/arch/riscv/include/asm/pgtable.h
->>>> +++ b/arch/riscv/include/asm/pgtable.h
->>>> @@ -428,7 +428,7 @@ static inline pte_t pte_mkwrite_novma(pte_t pte)
->>>>
->>>>   static inline pte_t pte_mkdirty(pte_t pte)
->>>>   {
->>>> -     return __pte(pte_val(pte) | _PAGE_DIRTY);
->>>> +     return __pte(pte_val(pte) | _PAGE_DIRTY | _PAGE_SOFT_DIRTY);
->>>>   }
->>>>
->>>>   static inline pte_t pte_mkclean(pte_t pte)
->>>> @@ -461,6 +461,38 @@ static inline pte_t pte_mkhuge(pte_t pte)
->>>>        return pte;
->>>>   }
->>>>
->>>> +#ifdef CONFIG_HAVE_ARCH_SOFT_DIRTY
->>>> +static inline int pte_soft_dirty(pte_t pte)
->>>> +{
->>>> +     return pte_val(pte) & _PAGE_SOFT_DIRTY;
->>>> +}
->>>> +
->>>> +static inline pte_t pte_mksoft_dirty(pte_t pte)
->>>> +{
->>>> +     return __pte(pte_val(pte) | _PAGE_SOFT_DIRTY);
->>>> +}
->>>> +
->>>> +static inline pte_t pte_clear_soft_dirty(pte_t pte)
->>>> +{
->>>> +     return __pte(pte_val(pte) & ~(_PAGE_SOFT_DIRTY));
->>>> +}
->>>> +
->>>> +static inline int pte_swp_soft_dirty(pte_t pte)
->>>> +{
->>>> +     return pte_val(pte) & _PAGE_SWP_SOFT_DIRTY;
->>>> +}
->>>> +
->>>> +static inline pte_t pte_swp_mksoft_dirty(pte_t pte)
->>>> +{
->>>> +     return __pte(pte_val(pte) | _PAGE_SWP_SOFT_DIRTY);
->>>> +}
->>>> +
->>>> +static inline pte_t pte_swp_clear_soft_dirty(pte_t pte)
->>>> +{
->>>> +     return __pte(pte_val(pte) & ~(_PAGE_SWP_SOFT_DIRTY));
->>>> +}
->>>> +#endif /* CONFIG_HAVE_ARCH_SOFT_DIRTY */
->>>> +
->>>>   #ifdef CONFIG_RISCV_ISA_SVNAPOT
->>>>   #define pte_leaf_size(pte)   (pte_napot(pte)
->>>> ?                               \
->>>>                                       
->>>> napot_cont_size(napot_cont_order(pte)) :\
->>>> @@ -751,6 +783,40 @@ static inline pmd_t pmd_mkdevmap(pmd_t pmd)
->>>>        return pte_pmd(pte_mkdevmap(pmd_pte(pmd)));
->>>>   }
->>>>
->>>> +#ifdef CONFIG_HAVE_ARCH_SOFT_DIRTY
->>>> +static inline int pmd_soft_dirty(pmd_t pmd)
->>>> +{
->>>> +     return pte_soft_dirty(pmd_pte(pmd));
->>>> +}
->>>> +
->>>> +static inline pmd_t pmd_mksoft_dirty(pmd_t pmd)
->>>> +{
->>>> +     return pte_pmd(pte_mksoft_dirty(pmd_pte(pmd)));
->>>> +}
->>>> +
->>>> +static inline pmd_t pmd_clear_soft_dirty(pmd_t pmd)
->>>> +{
->>>> +     return pte_pmd(pte_clear_soft_dirty(pmd_pte(pmd)));
->>>> +}
->>>> +
->>>> +#ifdef CONFIG_ARCH_ENABLE_THP_MIGRATION
->>>> +static inline int pmd_swp_soft_dirty(pmd_t pmd)
->>>> +{
->>>> +     return pte_swp_soft_dirty(pmd_pte(pmd));
->>>> +}
->>>> +
->>>> +static inline pmd_t pmd_swp_mksoft_dirty(pmd_t pmd)
->>>> +{
->>>> +     return pte_pmd(pte_swp_mksoft_dirty(pmd_pte(pmd)));
->>>> +}
->>>> +
->>>> +static inline pmd_t pmd_swp_clear_soft_dirty(pmd_t pmd)
->>>> +{
->>>> +     return pte_pmd(pte_swp_clear_soft_dirty(pmd_pte(pmd)));
->>>> +}
->>>> +#endif /* CONFIG_ARCH_ENABLE_THP_MIGRATION */
->>>> +#endif /* CONFIG_HAVE_ARCH_SOFT_DIRTY */
->>>> +
->>>>   static inline void set_pmd_at(struct mm_struct *mm, unsigned long
->>>> addr,
->>>>                                pmd_t *pmdp, pmd_t pmd)
->>>>   {
->>>> @@ -841,6 +907,7 @@ extern pmd_t pmdp_collapse_flush(struct
->>>> vm_area_struct *vma,
->>>>    * Format of swap PTE:
->>>>    *   bit            0:       _PAGE_PRESENT (zero)
->>>>    *   bit       1 to 3:       _PAGE_LEAF (zero)
->>>> + *   bit            4:       _PAGE_SWP_SOFT_DIRTY
->>>>    *   bit            5:       _PAGE_PROT_NONE (zero)
->>>>    *   bit            6:       exclusive marker
->>>>    *   bits      7 to 11:      swap type
->> _______________________________________________
->> linux-riscv mailing list
->> linux-riscv@lists.infradead.org
->> http://lists.infradead.org/mailman/listinfo/linux-riscv
 
