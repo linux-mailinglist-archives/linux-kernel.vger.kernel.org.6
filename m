@@ -1,78 +1,55 @@
-Return-Path: <linux-kernel+bounces-399029-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399030-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E01E9BF9D6
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 00:16:53 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C58F9BF9D9
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 00:18:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4CCDC2840F9
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 23:16:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 96AF41C21B8F
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 23:18:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8415620D4F2;
-	Wed,  6 Nov 2024 23:16:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FB2120D4FB;
+	Wed,  6 Nov 2024 23:18:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YF3HkRMz"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="RXSFROyD"
+Received: from out-186.mta1.migadu.com (out-186.mta1.migadu.com [95.215.58.186])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0826F1917D7;
-	Wed,  6 Nov 2024 23:16:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEF66201110
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 23:18:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.186
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730935005; cv=none; b=g0XnUZRbss17laEnYyD8hIJ9zYu00InrGL1aNQPaW5G66VjVlVoeF1rfJfglwRJR3yR2tQNgApDx9oRBVrwJM+YAoWBttNlcB3IF0lwLhMAkpi7QbAdXJLgNucFdyz6eyT63t2xucvTEzHYYzQXXOKNuoc1S3d4cxLBsRB2RDlE=
+	t=1730935088; cv=none; b=ZFX7/EUfShFvsmxhtqlc+zN7tvoWPj6azKlsKeHIFbUjqeJG6x8HWkRC2J6gt36MV/ZMoRpWACqmDILaNr27Q0zCoX91LdjJJ1O8ghRXQHJ7MMBGTbiLTYRDw7EtFzu7xy2v/3aftpBkkM/Ell1a+DvFw1ikF9MVp0mF1a1mXLg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730935005; c=relaxed/simple;
-	bh=8t4OEcNHJDzTfLCGQpw/anttTxd3p+Oa+vM7lHiVVxw=;
+	s=arc-20240116; t=1730935088; c=relaxed/simple;
+	bh=PUmzDhC+uKnfHyfhNP+/2eA5FZ8D+PqVS/ZGZ8V4VNE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nfiWuiFNABTf28i8qMBs5mXLYxtcPd0y51DkQd1Iqsgt9bjv1OfTuTk1L1FgTWEV0sCDtJ6e5oj4SgrWasGZeJqAxM7uLsFerXWAMHY8vODW4xHlifqfVZzjNgYuPrh2lZXOGE6z7k4o6P7fQ70TGyeWVuarJs6efgkde50TYks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YF3HkRMz; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730935003; x=1762471003;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=8t4OEcNHJDzTfLCGQpw/anttTxd3p+Oa+vM7lHiVVxw=;
-  b=YF3HkRMzSNnOub6CbVSh3wAwP9Irfz3CmSvoTUsUdAzXmC1M+rGwEX4k
-   Sc7+xrsJGgPq/IQHQnE/kpxmYDZSgs0jGVis7+JhRvYz/D7dFP4H625u5
-   ltQQfTPJj/MJJ7zgdypMVUGUH/wOM8pABMXVWVwwoLVsFGGKPO5TPiRpM
-   5zoZyngJAvm+UoqaWtgQrIszzvZmLMF58PeuMdCZ/9rgaYrtJvMbEToMc
-   bXrFpXOVSLFdE2kWcr3d3sW0ivw5JklzFjwKmHTsS+pRFF2P+2jCENtAp
-   XcSuxo+pRLhW15A2ZKDPvVvRe4noBWY7gcMhV1gQVWx5Y5CS0KBp5SFGE
-   A==;
-X-CSE-ConnectionGUID: sQiz/yTlT2WlsAczZsEIkg==
-X-CSE-MsgGUID: eFTXd2zrTDiM4ahKlxiCsg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11248"; a="42162654"
-X-IronPort-AV: E=Sophos;i="6.11,264,1725346800"; 
-   d="scan'208";a="42162654"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2024 15:16:43 -0800
-X-CSE-ConnectionGUID: gJdqCi98T0+DMt2pX58LyQ==
-X-CSE-MsgGUID: IQVfLupFSiW0UjsM/h+pIw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,264,1725346800"; 
-   d="scan'208";a="115608972"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by fmviesa001.fm.intel.com with ESMTP; 06 Nov 2024 15:16:40 -0800
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1t8pGP-000pWO-38;
-	Wed, 06 Nov 2024 23:16:37 +0000
-Date: Thu, 7 Nov 2024 07:16:15 +0800
-From: kernel test robot <lkp@intel.com>
-To: Frank Li <Frank.Li@nxp.com>, Haibo Chen <haibo.chen@nxp.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	"open list:NXP i.MX 7D/6SX/6UL/93 AND VF610 ADC DRIVER" <linux-iio@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev
-Subject: Re: [PATCH v2 1/2] iio: adc: vf610_adc: use devm_* and
- dev_err_probe() to simple code
-Message-ID: <202411070633.NIrO7Ert-lkp@intel.com>
-References: <20241105160822.2761261-1-Frank.Li@nxp.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=eM309ZpKAoACij+OiGMgY9/lWzCLj9/hEWGFuH9PEfptKICLxTznqDIK3ZuDtuOd2p0hCBgYRT4nPLEN+/F/PcrIbAL9+OFPP+rbFDD3BYwYAQb/LhB9swb77M8vVhg90sXHDw3/Ts3AcLTjCnLFYCgy3PD/X9pc1XLMvt13Kv8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=RXSFROyD; arc=none smtp.client-ip=95.215.58.186
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Wed, 6 Nov 2024 15:17:57 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1730935083;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=HVNrxnOTWHw6OWmvKt8/LXHQA09+jId2msib6dundh4=;
+	b=RXSFROyDzEB9tUKffr0Rj0kBDUtbDnAtgKjs9ckhRQ1I7+9NsVePjXPKvOIBfqi2r+hNxB
+	5IUHUCbcZfffV48SVsy7X44NDu4qctGk0L5nzcfrJDnFep62Tl0XQ3/J7qUFFLtpACn+fs
+	PB2mvdhWZpcOasvmNMWvQuZxEZW6hw4=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Shakeel Butt <shakeel.butt@linux.dev>
+To: Joshua Hahn <joshua.hahnjy@gmail.com>
+Cc: hannes@cmpxchg.org, mhocko@kernel.org, roman.gushchin@linux.dev, 
+	muchun.song@linux.dev, akpm@linux-foundation.org, cgroups@vger.kernel.org, 
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org, kernel-team@meta.com
+Subject: Re: [PATCH 1/2] memcg/hugetlb: Introduce memcg_accounts_hugetlb
+Message-ID: <xy4c7ts7ijnyowurayb5qpw2cnrbcouypw47ka7cbvxkbbukgt@srna4jid2qxq>
+References: <20241106221434.2029328-1-joshua.hahnjy@gmail.com>
+ <20241106221434.2029328-2-joshua.hahnjy@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,114 +58,73 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241105160822.2761261-1-Frank.Li@nxp.com>
+In-Reply-To: <20241106221434.2029328-2-joshua.hahnjy@gmail.com>
+X-Migadu-Flow: FLOW_OUT
 
-Hi Frank,
+On Wed, Nov 06, 2024 at 02:14:33PM -0800, Joshua Hahn wrote:
+> This patch isolates the check for whether memcg accounts hugetlb.
+> This condition can only be true if the memcg mount option
+> memory_hugetlb_accounting is on, which includes hugetlb usage
+> in memory.current.
+> 
+> Signed-of-by: Joshua Hahn <joshua.hahnjy@gmail.com>
+> 
+> ---
+>  include/linux/memcontrol.h |  2 ++
+>  mm/memcontrol.c            | 12 ++++++++++--
+>  2 files changed, 12 insertions(+), 2 deletions(-)
+> 
+> diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
+> index 34d2da05f2f1..25761d55799e 100644
+> --- a/include/linux/memcontrol.h
+> +++ b/include/linux/memcontrol.h
+> @@ -694,6 +694,8 @@ static inline int mem_cgroup_charge(struct folio *folio, struct mm_struct *mm,
+>  	return __mem_cgroup_charge(folio, mm, gfp);
+>  }
+>  
+> +bool memcg_accounts_hugetlb(void);
+> +
+>  int mem_cgroup_hugetlb_try_charge(struct mem_cgroup *memcg, gfp_t gfp,
+>  		long nr_pages);
+>  
+> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+> index 5444d0e7bb64..59dea0122579 100644
+> --- a/mm/memcontrol.c
+> +++ b/mm/memcontrol.c
+> @@ -4497,6 +4497,15 @@ int __mem_cgroup_charge(struct folio *folio, struct mm_struct *mm, gfp_t gfp)
+>  	return ret;
+>  }
+>  
+> +bool memcg_accounts_hugetlb(void)
 
-kernel test robot noticed the following build warnings:
+If this is only used in memcontrol.c then no need to add in the header,
+just make it static here.
 
-[auto build test WARNING on jic23-iio/togreg]
-[also build test WARNING on next-20241106]
-[cannot apply to linus/master v6.12-rc6]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> +{
+> +#ifdef CONFIG_HUGETLB_PAGE
+> +	return cgrp_dfl_root.flags & CGRP_ROOT_MEMORY_HUGETLB_ACCOUNTING;
+> +#else
+> +	return false;
+> +#endif
+> +}
+> +
+>  /**
+>   * mem_cgroup_hugetlb_try_charge - try to charge the memcg for a hugetlb folio
+>   * @memcg: memcg to charge.
+> @@ -4522,8 +4531,7 @@ int mem_cgroup_hugetlb_try_charge(struct mem_cgroup *memcg, gfp_t gfp,
+>  	 * but do not attempt to commit charge later (or cancel on error) either.
+>  	 */
+>  	if (mem_cgroup_disabled() || !memcg ||
+> -		!cgroup_subsys_on_dfl(memory_cgrp_subsys) ||
+> -		!(cgrp_dfl_root.flags & CGRP_ROOT_MEMORY_HUGETLB_ACCOUNTING))
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Frank-Li/iio-adc-vf610_adc-limit-i-MX6SX-s-channel-number-to-4/20241106-001101
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git togreg
-patch link:    https://lore.kernel.org/r/20241105160822.2761261-1-Frank.Li%40nxp.com
-patch subject: [PATCH v2 1/2] iio: adc: vf610_adc: use devm_* and dev_err_probe() to simple code
-config: i386-randconfig-141-20241107 (https://download.01.org/0day-ci/archive/20241107/202411070633.NIrO7Ert-lkp@intel.com/config)
-compiler: clang version 19.1.3 (https://github.com/llvm/llvm-project ab51eccf88f5321e7c60591c5546b254b6afab99)
+Why not replace in mem_cgroup_hugetlb_try_charge() as well?
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202411070633.NIrO7Ert-lkp@intel.com/
-
-smatch warnings:
-drivers/iio/adc/vf610_adc.c:857 vf610_adc_probe() warn: unsigned 'info->vref_uv' is never less than zero.
-
-vim +857 drivers/iio/adc/vf610_adc.c
-
-   816	
-   817	static int vf610_adc_probe(struct platform_device *pdev)
-   818	{
-   819		struct device *dev = &pdev->dev;
-   820		struct vf610_adc *info;
-   821		struct iio_dev *indio_dev;
-   822		int irq;
-   823		int ret;
-   824	
-   825		indio_dev = devm_iio_device_alloc(&pdev->dev, sizeof(struct vf610_adc));
-   826		if (!indio_dev)
-   827			return dev_err_probe(&pdev->dev, -ENOMEM, "Failed allocating iio device\n");
-   828	
-   829		info = iio_priv(indio_dev);
-   830		info->dev = &pdev->dev;
-   831	
-   832		info->regs = devm_platform_ioremap_resource(pdev, 0);
-   833		if (IS_ERR(info->regs))
-   834			return PTR_ERR(info->regs);
-   835	
-   836		irq = platform_get_irq(pdev, 0);
-   837		if (irq < 0)
-   838			return irq;
-   839	
-   840		ret = devm_request_irq(info->dev, irq,
-   841					vf610_adc_isr, 0,
-   842					dev_name(&pdev->dev), indio_dev);
-   843		if (ret < 0)
-   844			dev_err_probe(&pdev->dev, ret, "failed requesting irq, irq = %d\n", irq);
-   845	
-   846		info->clk = devm_clk_get_enabled(&pdev->dev, "adc");
-   847		if (IS_ERR(info->clk))
-   848			return dev_err_probe(&pdev->dev, PTR_ERR(info->clk),
-   849					     "failed getting clock, err = %ld\n",
-   850					     PTR_ERR(info->clk));
-   851	
-   852		info->vref = devm_regulator_get(&pdev->dev, "vref");
-   853		if (IS_ERR(info->vref))
-   854			return PTR_ERR(info->vref);
-   855	
-   856		info->vref_uv = devm_regulator_get_enable_read_voltage(&pdev->dev, "vref");
- > 857		if (info->vref_uv < 0)
-   858			return info->vref_uv;
-   859	
-   860		device_property_read_u32_array(dev, "fsl,adck-max-frequency", info->max_adck_rate, 3);
-   861	
-   862		info->adc_feature.default_sample_time = DEFAULT_SAMPLE_TIME;
-   863		device_property_read_u32(dev, "min-sample-time", &info->adc_feature.default_sample_time);
-   864	
-   865		platform_set_drvdata(pdev, indio_dev);
-   866	
-   867		init_completion(&info->completion);
-   868	
-   869		indio_dev->name = dev_name(&pdev->dev);
-   870		indio_dev->info = &vf610_adc_iio_info;
-   871		indio_dev->modes = INDIO_DIRECT_MODE;
-   872		indio_dev->channels = vf610_adc_iio_channels;
-   873		indio_dev->num_channels = ARRAY_SIZE(vf610_adc_iio_channels);
-   874	
-   875		vf610_adc_cfg_init(info);
-   876		vf610_adc_hw_init(info);
-   877	
-   878		ret = devm_iio_triggered_buffer_setup(&pdev->dev, indio_dev, &iio_pollfunc_store_time,
-   879						      NULL, &iio_triggered_buffer_setup_ops);
-   880		if (ret < 0)
-   881			return dev_err_probe(&pdev->dev, ret, "Couldn't initialise the buffer\n");
-   882	
-   883		mutex_init(&info->lock);
-   884	
-   885		ret = devm_iio_device_register(&pdev->dev, indio_dev);
-   886		if (ret)
-   887			return dev_err_probe(&pdev->dev, ret, "Couldn't register the device.\n");
-   888	
-   889		return 0;
-   890	}
-   891	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> +		!cgroup_subsys_on_dfl(memory_cgrp_subsys) || !memcg_accounts_hugetlb())
+>  		return -EOPNOTSUPP;
+>  
+>  	if (try_charge(memcg, gfp, nr_pages))
+> -- 
+> 2.43.5
+> 
 
