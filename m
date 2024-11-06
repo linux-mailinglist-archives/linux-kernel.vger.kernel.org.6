@@ -1,142 +1,224 @@
-Return-Path: <linux-kernel+bounces-397956-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397958-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A0249BE2F6
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 10:45:28 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBF659BE2FB
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 10:46:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1103F1F236DB
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 09:45:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4B85DB216D7
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 09:46:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CD981DAC92;
-	Wed,  6 Nov 2024 09:45:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F059F1DAC92;
+	Wed,  6 Nov 2024 09:46:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NwFXZbfg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="fTDmSyUX"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B057C3211;
-	Wed,  6 Nov 2024 09:45:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECBA83211;
+	Wed,  6 Nov 2024 09:46:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730886319; cv=none; b=UmpnzBr+jCJ4gwKTeackDWqC3YxBO53L07TyeM13M+Vr+RUMZfq8O3+CTTdeubBZUEfRIrxBuEB/6eHHGkpYrDKIIV9uvZ+YJYZv2E0ZYckz3cDryc1mYZG3Slgo2tVVWscv4Wzf9evlEjj6x4rlTBo1RmK5lZzAOe27/yZFMhY=
+	t=1730886365; cv=none; b=W4UeBIElAiFqinrC/AwyzUFduzTT6T7pCz0XduXHxpzlnznAH+XEzToDg73UjUB3At6DCLMgVYa+YGD4qkHUJhy8ZcB7xl6yG/QeNmPjds/Zi1wCLJHu+KKFZy79nEJmlZvSKvdRw1hjS8Fh/bvEzHqFGh8zCRq9eq4KasBonyI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730886319; c=relaxed/simple;
-	bh=IrjvnY9pMMzq8Aj0Nx18xgmSSg9tmfrMJz8voL6BzL0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hYOfql4+sOtPBaVgkV6kc3Ar8I4/YJynvP4y41igrtIqe9ta6psjGkDzGGQ45v3RU6MUjAjmsaajdOJ62VwG9uf5JHlynbC+QIslcI7sDQSDuK6hXxWOHS9sPQJu6GEauJFVe0Xn/M8aaB8Lj8DKKnLzCO9mAa6vzaQdcruH3os=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NwFXZbfg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D90E6C4CECD;
-	Wed,  6 Nov 2024 09:45:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730886319;
-	bh=IrjvnY9pMMzq8Aj0Nx18xgmSSg9tmfrMJz8voL6BzL0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=NwFXZbfgLDHnYQfA5ZLZmRsRzVvSGmk5PZ6dTEVvZMAe3qGF/ouJWFlg8KZbi0QwD
-	 Mgkj2n7UitYcGtEpu/vwLn4ZTlBXgIxRI0KHwuq5P4lxU5fjXG1q4OrE48btfA9Pyc
-	 saKmiKSP96bwvRi7LTXQjYLS2MLRYiXto+INl4q8MFUBG/ovyLHPJ/FrxJTFXqlj6i
-	 tUd9mEeJhoPmCOlNnIm6Gn78izFnczCLnLMVuz/3cNSbqEt2q4rZnFdjLP/pz0OOSX
-	 pLmgsQxiUk4Fae1k/n2HzKG/vrf23bpd4960xH9DXc4qV5/F2bmRn1DAPeKrUr3SWC
-	 oT/8yVQTUq9Sw==
-Date: Wed, 6 Nov 2024 09:45:10 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Przemek Kitszel <przemyslaw.kitszel@intel.com>, Stephen Rothwell
- <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar
- <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, Linux Kernel Mailing
- List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>, megi@xff.cz, lars@metafoo.de,
- linux-iio@vger.kernel.org
-Subject: Re: linux-next: build failure after merge of the tip tree
-Message-ID: <20241106094510.3234cae1@jic23-huawei>
-In-Reply-To: <20241104140106.GF24862@noisy.programming.kicks-ass.net>
-References: <20241028165336.7b46ce25@canb.auug.org.au>
-	<20241101141952.4990f238@canb.auug.org.au>
-	<dd740dda-a03e-4f3a-bb46-e551f0799c50@intel.com>
-	<20241104140106.GF24862@noisy.programming.kicks-ass.net>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1730886365; c=relaxed/simple;
+	bh=7MghTJQkR44qaMgyLxvcz4iaHBncGIlDk0onWf/Qlhc=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=djvgpfXvIaPMsOv7LGjfo90F6TYlBsC1Sgc46yN3jEWcRGnYH7B8yUwM1DPk4IpKOxE233JKgUvVMobHTKlYYKx2uAqfK5MwU8SdiYjQBIS3m1gq+/jU1oQzYmTa1zLKwpzF4izOdgWX7wFwq+CQ6NXm8whmgCAKqTjBDxb68W0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=fTDmSyUX; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A68jNV6030512;
+	Wed, 6 Nov 2024 09:45:36 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=nK6e8P
+	6ZRM5mtyMlMQA9ZJRtAhJyqAzVLet89KVCreo=; b=fTDmSyUXe4rtrnFKr/uBJF
+	0sZ89u1kmYlOPTIiD+4zwU9L7YJ2+CbMQMQeR3lZyXRMDVXAaa3rWK9xEtjd2+VK
+	bzDwvfJufrQmFs5DhxFdqmsaq2S5IjbOvMs/iVJ2uNZRpTENJsGh/nmvqsGSb9M1
+	rxBsIncxPUWfGsFFo8xbWlJKLF2Ivqqs87RMnMO1/RSpeeVRThFaBYsYfTrMkzRs
+	GG0FP5j2Rh5+Db2GzId6VGUtqr1rT83e8aKsuL5cBoIOUKep06yj9OlQCzsIfDa7
+	NkHvsfQjavyvnDYFHhuggLRFbQ2cU2jNhqH6ws34iy/MtrF/GkzCBR2baDN6pEEg
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42r57f88ec-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 06 Nov 2024 09:45:36 +0000 (GMT)
+Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4A69jZ9L029206;
+	Wed, 6 Nov 2024 09:45:35 GMT
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42r57f88e5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 06 Nov 2024 09:45:35 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4A68BZP1023983;
+	Wed, 6 Nov 2024 09:45:34 GMT
+Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 42nxsyj5kr-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 06 Nov 2024 09:45:33 +0000
+Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
+	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4A69jUhd30802462
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 6 Nov 2024 09:45:30 GMT
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id E50DD20043;
+	Wed,  6 Nov 2024 09:45:29 +0000 (GMT)
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 831E420040;
+	Wed,  6 Nov 2024 09:45:29 +0000 (GMT)
+Received: from [9.152.222.93] (unknown [9.152.222.93])
+	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Wed,  6 Nov 2024 09:45:29 +0000 (GMT)
+Message-ID: <c6509104-b8ff-41ef-8afa-a44cf740b779@linux.ibm.com>
+Date: Wed, 6 Nov 2024 10:45:29 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 15/19] perf: Add deferred user callchains
+To: Josh Poimboeuf <jpoimboe@kernel.org>, x86@kernel.org
+Cc: Peter Zijlstra <peterz@infradead.org>,
+        Steven Rostedt <rostedt@goodmis.org>, Ingo Molnar <mingo@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        linux-kernel@vger.kernel.org, Indu Bhagat <indu.bhagat@oracle.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
+        Ian Rogers <irogers@google.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        linux-perf-users@vger.kernel.org, Mark Brown <broonie@kernel.org>,
+        linux-toolchains@vger.kernel.org, Jordan Rome <jordalgo@meta.com>,
+        Sam James <sam@gentoo.org>, linux-trace-kernel@vger.kerne.org,
+        Andrii Nakryiko <andrii.nakryiko@gmail.com>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Florian Weimer <fweimer@redhat.com>, Andy Lutomirski <luto@kernel.org>,
+        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>
+References: <cover.1730150953.git.jpoimboe@kernel.org>
+ <1ce857387c781afa66efaa61eb88ff596b352500.1730150953.git.jpoimboe@kernel.org>
+From: Jens Remus <jremus@linux.ibm.com>
+Content-Language: en-US
+Organization: IBM Deutschland Research & Development GmbH
+In-Reply-To: <1ce857387c781afa66efaa61eb88ff596b352500.1730150953.git.jpoimboe@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: swUQO9jKgjXMxLyMdhtN5jKIz3DG6jzN
+X-Proofpoint-ORIG-GUID: b9j_YAQ3_uLl4q74CrGwxVXWXxnfe6Bx
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 impostorscore=0
+ lowpriorityscore=0 mlxlogscore=999 adultscore=0 bulkscore=0 clxscore=1015
+ mlxscore=0 malwarescore=0 phishscore=0 suspectscore=0 priorityscore=1501
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
+ definitions=main-2411060073
 
-On Mon, 4 Nov 2024 15:01:06 +0100
-Peter Zijlstra <peterz@infradead.org> wrote:
+On 28.10.2024 22:48, Josh Poimboeuf wrote:
+...
+> diff --git a/kernel/events/core.c b/kernel/events/core.c
+> index ebf143aa427b..bf97b2fa8a9c 100644
+> --- a/kernel/events/core.c
+> +++ b/kernel/events/core.c
+...
+> @@ -6955,6 +6958,53 @@ static void perf_pending_irq(struct irq_work *entry)
+>   		perf_swevent_put_recursion_context(rctx);
+>   }
+>   
+> +static void perf_pending_unwind_irq(struct irq_work *entry)
+> +{
+> +	struct perf_event *event = container_of(entry, struct perf_event, pending_unwind_irq);
+> +
+> +	if (event->pending_unwind) {
+> +		unwind_user_deferred(&perf_unwind_callback_cb, NULL, event);
+> +		event->pending_unwind = 0;
+> +	}
+> +}
+> +
+> +struct perf_callchain_deferred_event {
+> +	struct perf_event_header	header;
+> +	u64				ctx_cookie;
 
-> It might help if we put the relevant maintainers on Cc?
-> 
-> On Mon, Nov 04, 2024 at 02:37:57PM +0100, Przemek Kitszel wrote:
-> > On 11/1/24 04:19, Stephen Rothwell wrote:  
-> > > Hi all,
-> > > 
-> > > On Mon, 28 Oct 2024 16:53:36 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:  
-> > > > 
-> > > > After merging the tip tree, today's linux-next build (x86_64 allmodconfig)
-> > > > failed like this:
-> > > > 
-> > > > drivers/iio/magnetometer/af8133j.c: In function 'af8133j_set_scale':
-> > > > drivers/iio/magnetometer/af8133j.c:315:12: error: suggest explicit braces to avoid ambiguous 'else' [-Werror=dangling-else]
-> > > >    315 |         if (!pm_runtime_status_suspended(dev))
-> > > >        |            ^
-> > > > cc1: all warnings being treated as errors
-> > > > 
-> > > > Probably caused by commit
-> > > > 
-> > > >    fcc22ac5baf0 ("cleanup: Adjust scoped_guard() macros to avoid potential warning")
-> > > > 
-> > > > I have applied the following for today but I wonder if there may be
-> > > > others.
-> > > > 
-> > > > From: Stephen Rothwell <sfr@canb.auug.org.au>
-> > > > Date: Mon, 28 Oct 2024 16:01:15 +1100
-> > > > Subject: [PATCH] fix up for "cleanup: Adjust scoped_guard() macros to avoid
-> > > >   potential warning"
-> > > > 
-> > > > Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> > > > ---
-> > > >   drivers/iio/magnetometer/af8133j.c | 3 ++-
-> > > >   1 file changed, 2 insertions(+), 1 deletion(-)
-> > > > 
-> > > > diff --git a/drivers/iio/magnetometer/af8133j.c b/drivers/iio/magnetometer/af8133j.c
-> > > > index d81d89af6283..acd291f3e792 100644
-> > > > --- a/drivers/iio/magnetometer/af8133j.c
-> > > > +++ b/drivers/iio/magnetometer/af8133j.c
-> > > > @@ -312,10 +312,11 @@ static int af8133j_set_scale(struct af8133j_data *data,
-> > > >   	 * When suspended, just store the new range to data->range to be
-> > > >   	 * applied later during power up.
-> > > >   	 */
-> > > > -	if (!pm_runtime_status_suspended(dev))
-> > > > +	if (!pm_runtime_status_suspended(dev)) {
-> > > >   		scoped_guard(mutex, &data->mutex)
-> > > >   			ret = regmap_write(data->regmap,
-> > > >   					   AF8133J_REG_RANGE, range);
-> > > > +	}
+This introduces ctx_cookie in the struct used to produce deferred events but misses to do so in the struct used to consume them. This causes the ctx_cookie value to erroneously get interpreted as nr (number of IPs) in perf:
 
-Might as well flip it to a guard() given the scope is the same and it will
-be a little more readable.
+Core was generated by `perf record -F 99 --call-graph fp /opt/binutils-sframe2/bin/objdump --sframe /opt/binutils-sframe2/bin/objdump'.
+Program terminated with signal SIGSEGV, Segmentation fault.
+#0  __GI_memcpy () at ../sysdeps/s390/memcpy-z900.S:209
+209             mvc     0(256,%r1),0(%r3)
+[Current thread is 1 (Thread 0x3ff8bb5fe80 (LWP 16554))]
+(gdb) bt
+#0  __GI_memcpy () at ../sysdeps/s390/memcpy-z900.S:209
+#1  0x00000000012ad0ca in sample__merge_deferred_callchain (sample_orig=0x3ffd2ff53c8, sample_callchain=0x3ffd2ff5b18) at util/callchain.c:1853
+...
+(gdb) p/x sample_callchain->callchain->nr
+$2 = 0x489cb
 
-Otherwise I'm fine taking a patch doing this if someone can send on to
-linux-iio@vger.kernel.org
+With debug output from perf_event_callchain_deferred() (see below):
 
+DEBUG: perf_event_callchain_deferred: ctx_cookie=0x00000000000489cb, nr=2
 
-I'll get to making a patch at somepoint but just back from travel
-so a lot of other things on my queue today.
+> +	u64				nr;
+> +	u64				ips[];
+> +};
+> +
+> +static void perf_event_callchain_deferred(struct unwind_stacktrace *trace,
+> +					  u64 ctx_cookie, void *_data)
+> +{
+> +	struct perf_callchain_deferred_event deferred_event;
+> +	u64 callchain_context = PERF_CONTEXT_USER;
+> +	struct perf_output_handle handle;
+> +	struct perf_event *event = _data;
+> +	struct perf_sample_data data;
+> +	u64 nr = trace->nr + 1 /* callchain_context */;
+> +
+> +	deferred_event.header.type = PERF_RECORD_CALLCHAIN_DEFERRED;
+> +	deferred_event.header.misc = PERF_RECORD_MISC_USER;
+> +	deferred_event.header.size = sizeof(deferred_event) + (nr * sizeof(u64));
+> +
+> +	deferred_event.ctx_cookie = ctx_cookie;
+> +	deferred_event.nr = nr;
+> +
+> +	perf_event_header__init_id(&deferred_event.header, &data, event);
 
+	pr_info_ratelimited("DEBUG: perf_event_callchain_deferred: ctx_cookie=0x%016llx, nr=%llu\n",
+		deferred_event.ctx_cookie, deferred_event.nr);
 
+> +
+> +	if (perf_output_begin(&handle, &data, event, deferred_event.header.size))
+> +		return;
+> +
+> +	perf_output_put(&handle, deferred_event);
+> +	perf_output_put(&handle, callchain_context);
+> +	perf_output_copy(&handle, trace->entries, trace->nr * sizeof(u64));
+> +	perf_event__output_id_sample(event, &handle, &data);
+> +
+> +	perf_output_end(&handle);
+> +}
+> +
+>   static void perf_pending_task(struct callback_head *head)
+>   {
+>   	struct perf_event *event = container_of(head, struct perf_event, pending_task);
+...
 
-> > > >   	pm_runtime_enable(dev);  
-> > > 
-> > > I am still applying this patch.
-> > >   
-> > 
-> > This patch of yours is necessary, could you make it permanent?
-> > 
-> > Reviewed-by: Przemek Kitszel <przemyslaw.kitszel@intel.com>  
+Regards,
+Jens
+-- 
+Jens Remus
+Linux on Z Development (D3303) and z/VSE Support
++49-7031-16-1128 Office
+jremus@de.ibm.com
+
+IBM
+
+IBM Deutschland Research & Development GmbH; Vorsitzender des Aufsichtsrats: Wolfgang Wendt; Geschäftsführung: David Faller; Sitz der Gesellschaft: Böblingen; Registergericht: Amtsgericht Stuttgart, HRB 243294
+IBM Data Privacy Statement: https://www.ibm.com/privacy/
 
 
