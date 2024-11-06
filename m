@@ -1,100 +1,85 @@
-Return-Path: <linux-kernel+bounces-398367-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398369-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C679E9BF05F
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 15:31:36 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E0D69BF067
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 15:32:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D9831F2145C
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 14:31:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 00D2928338B
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 14:32:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26B1D1F9EB5;
-	Wed,  6 Nov 2024 14:30:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B746020127C;
+	Wed,  6 Nov 2024 14:32:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZzfAdHFt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="S3Dt5grQ";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="zGySzyAF"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 827C41CC14B;
-	Wed,  6 Nov 2024 14:30:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAF891917FF;
+	Wed,  6 Nov 2024 14:32:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730903450; cv=none; b=ul/vNk4PHHiRk9uHTbiRP8ewAAWwnqGq6UZ1Tl6kiWuH7TdvqIY/13snBllrh528gkHXcW0luHdpv529uoydH5k/0AZk9UIRRgmqmp+1QCGwunrIiCpvkmqaHBUH49J3drLe1+U/7MtfCAx1Ugj2/cHgkWMkPqGwBktoGk+cRsU=
+	t=1730903550; cv=none; b=ejLhmg8ZchaaEF+BA1FDOHyekdC3hV07/nmD392bY4Xmuq2TMPbCO944ssvmS48IBDOH5cEZ6YTzt71GFCuDjAtHnvm2V86u3cOOzwvnazydsVJaElKaBQdYEc1WEdJ4qKgVYScWJTIKRyxJ8bnz7k4gnf3r9Uf/cn7Av6NYq3g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730903450; c=relaxed/simple;
-	bh=n6K8US+dgiUl2jqiZqxsPy7aq61LHMhzpmauz2R5f2I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Eg85DAnkaH42CCJfA0IPZUXy5Fr57J4mF8a8iqiHJYdYydadnfeNzDT1kyxPIidrzraIZee+ZSjgEzZ/vcZ1MeE3WMIW9NfUdWuVjLXm5cEi6IkFZFPSczJP5Nb1TcwkcC0tFw3QOW5HGnHXxpopR67hkC1opgJC6QBWmoZvjTg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZzfAdHFt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F1BCC4CECC;
-	Wed,  6 Nov 2024 14:30:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730903450;
-	bh=n6K8US+dgiUl2jqiZqxsPy7aq61LHMhzpmauz2R5f2I=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZzfAdHFtZTdTeCXeIadJi25bnASD9CtX5EjaA6tB4FMLAf0qfIpIfeCt9mXOUBpFh
-	 C+VSWGCjtNvV6+chSSjbjh/NkavmIdgE8IABQ8Ifbn5XzAaFrCli8p57Ho52H9ZlzM
-	 kbNaSeIloz/O1J2xWzcvsQKznus9bjZwb42vFmlMJoOTYg5RK5ipeQHtvdAgfo9eyw
-	 WP3riFy1BBL4rXSZcNfGXWnsVwG9Nv43210iZb0d9LsifxEdVkilX64hrkce0k6gR2
-	 yzrH5Q5iW+9gMwLdFgINWKxjELEQr8X9fXqgbZN9nU28OtkMmreT1bvaUQi1/rDk9a
-	 EvZ29xZ6Q1+bg==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1t8h3Z-000000005cC-29Ym;
-	Wed, 06 Nov 2024 15:30:50 +0100
-Date: Wed, 6 Nov 2024 15:30:49 +0100
-From: Johan Hovold <johan@kernel.org>
-To: Qiu-ji Chen <chenqiuji666@gmail.com>
-Cc: dtwlin@gmail.com, elder@kernel.org, gregkh@linuxfoundation.org,
-	greybus-dev@lists.linaro.org, linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org, baijiaju1990@gmail.com
-Subject: Re: [PATCH v2] greybus/uart: Fix atomicity violation in
- get_serial_info()
-Message-ID: <Zyt9mf-6hNYWyNhJ@hovoldconsulting.com>
-References: <20241106095819.15194-1-chenqiuji666@gmail.com>
+	s=arc-20240116; t=1730903550; c=relaxed/simple;
+	bh=P8h5oDz9fnH0URFEQE7KPe+OypR1nRSTtAEtQ2gRETk=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=qYzj36NWZsDL8CZ2imwQ6IS+wDqoCOQLdv1GOXafOWZW6jxw/rZ+/EsPyjh0NPgzrwJfAxJJ4mEQbCI5Ep6OjiY6Xc6DmaTPRzX/ybQU1WBTyZ/JvrVYOYmqDEvQq2lAKhLjDqFlYkFtnwfJwJBco9abjSXJThz08hZo+tV6TvY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=S3Dt5grQ; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=zGySzyAF; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: John Ogness <john.ogness@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1730903546;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=P8h5oDz9fnH0URFEQE7KPe+OypR1nRSTtAEtQ2gRETk=;
+	b=S3Dt5grQvG76Zz9A5N5xrwkVB0V+5RCrQbsnGwGju2niNiM4i9r8wFvK7Zi2tPeIJysU6k
+	Tqj0GMxAe7/zIFyCrEklezpljO+WKgAlTvDvg2SRrFD4VDcEHH2VuQcVyz4HwNyNfcdf3Y
+	AB7jbfna1nlbbQowPgwZ+L4XfbctOaC2PnVohtNwVesQp4h0GAdS5d0b88O44YArHakX2c
+	xoYeeNEg49sbhcSQLAgGgQ/8Ra/ypggX5ZsdMbGZh3c2QKIhVZQq6YPi2S6w5GJHIAG4Uy
+	88A5YVD8xHxmqFAVXp2aPucpEpYeRTXCI8Y+vpguH/uwa8r+xl2CkE82/5XqaA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1730903546;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=P8h5oDz9fnH0URFEQE7KPe+OypR1nRSTtAEtQ2gRETk=;
+	b=zGySzyAFI3/hPcXFEHROpmpuhLceTdNuNTMyBZHCvTC0tIp/nOnIiwrekiObeaGIZftpJM
+	NavCdCF7t6erxbBQ==
+To: Nam Cao <namcao@linutronix.de>, Shuah Khan <shuah@kernel.org>, Andrew
+ Morton <akpm@linux-foundation.org>, Oleg Nesterov <oleg@redhat.com>, Dylan
+ Hatch <dylanbhatch@google.com>, "Eric W . Biederman"
+ <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>,
+ linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-kselftest@vger.kernel.org
+Cc: Nam Cao <namcao@linutronix.de>
+Subject: Re: [PATCH 2/2] selftests: coredump: Add stackdump test
+In-Reply-To: <66d3fbd62cc1a658ce4f77eb907f8737c467fdbf.1730883229.git.namcao@linutronix.de>
+References: <cover.1730883229.git.namcao@linutronix.de>
+ <66d3fbd62cc1a658ce4f77eb907f8737c467fdbf.1730883229.git.namcao@linutronix.de>
+Date: Wed, 06 Nov 2024 15:38:25 +0106
+Message-ID: <845xp0fn5y.fsf@jogness.linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241106095819.15194-1-chenqiuji666@gmail.com>
+Content-Type: text/plain
 
-On Wed, Nov 06, 2024 at 05:58:19PM +0800, Qiu-ji Chen wrote:
-> Our static checker found a bug where set_serial_info() uses a mutex, but 
-> get_serial_info() does not. Fortunately, the impact of this is relatively 
-> minor. It doesn't cause a crash or any other serious issues. However, if a 
-> race condition occurs between set_serial_info() and get_serial_info(), 
-> there is a chance that the data returned by get_serial_info() will be 
-> meaningless.
-> 
-> Signed-off-by: Qiu-ji Chen <chenqiuji666@gmail.com>
-> Fixes: 0aad5ad563c8 ("greybus/uart: switch to ->[sg]et_serial()")
-> ---
-> V2:
-> Modified the patch description to make it more concise and easier to understand.
-> Changed the fix code to ensure the logic is correct.
-> Thanks to Johan Hovold and Dan Carpenter for helpful suggestion.
+On 2024-11-06, Nam Cao <namcao@linutronix.de> wrote:
+> Add a test which checks that the kstkesp field in /proc/pid/stat can be
+> read for all threads of a coredumping process.
+>
+> For full details including the motivation for this test and how it works,
+> see the README file added by this commit.
+>
+> Signed-off-by: Nam Cao <namcao@linutronix.de>
 
-Much better, thanks.
-
-But please try to use the same patch prefix as previous patches for the
-driver you're modifying (e.g. by looking at git log --oneline for the
-driver in question).
-
-In this case it should have been:
-
-	staging: greybus: uart: fix ...
-
-so that it's clear where this patch should be applied.
-
-Care to fix that up in a v3?
-
-Reviewed-by: Johan Hovold <johan+linaro@kernel.org>
-
-Johan
+Reviewed-by: John Ogness <john.ogness@linutronix.de>
 
