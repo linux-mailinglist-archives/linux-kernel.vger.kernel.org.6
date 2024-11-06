@@ -1,181 +1,132 @@
-Return-Path: <linux-kernel+bounces-398940-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398941-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D0489BF846
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 21:59:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FEA49BF849
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 22:01:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 200742849EB
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 20:59:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 09999283427
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 21:01:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D49920CCF6;
-	Wed,  6 Nov 2024 20:59:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07ECF1C3050;
+	Wed,  6 Nov 2024 21:01:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="qp8eh+VZ"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TMbx0ibt"
+Received: from mail-ua1-f43.google.com (mail-ua1-f43.google.com [209.85.222.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DD5D20CCD2;
-	Wed,  6 Nov 2024 20:59:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 087AA13CFAD
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 21:00:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730926774; cv=none; b=s4s0/J4eeqSbj6t3vsleokOxdHIQqwzDtD/YPa8bSSoeOGtffWzTlQl/1A0iP714S+ip+UNggqEx4woA1/YImYLp/v+pVELXSFFA4rW2+pULMrY7atAXHHmS6BO0Bn5q8/8MQNJZ0qemvSJ5+/VLvoQzhexir4kXvxE5aZLeVWY=
+	t=1730926861; cv=none; b=upC5FSDrI+uLFc+ZyYmgdBn19MlX2xSkADULSgNycAivf1urTTNruUSZAs94cB2LzUNxCYqxjLFGXm4m26FOOLhGyYCy9C5v/lG5H2Ht8CPEbFoQBTFOWPq+5xq1Jer/98semyA7u7Y5/OjvbIyrFhA0AMmKz674wsMmU+adErY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730926774; c=relaxed/simple;
-	bh=LxWHqQIC4YcjFMZSkIcr52HBHxSAHeDib3RUyYnyJws=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=eUJQr2Tw8DMykY+KlgmpZ6cSqGM4tx+c86CtMn2rcCzZHEQaHX1zNUMzGSW+cEaW5OMomGu8PfIOIRP/RcvkrBgg1akYk/3muN5Hkv79Pezgjs8tW3IST7LLNFzJghPG8UJ3/FrxIl3LUkDxboMHzVR2jbdUbe4Sh6ITOzenQuM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=qp8eh+VZ; arc=none smtp.client-ip=212.227.15.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1730926704; x=1731531504; i=w_armin@gmx.de;
-	bh=LxWHqQIC4YcjFMZSkIcr52HBHxSAHeDib3RUyYnyJws=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:From:Subject:To:
-	 Cc:References:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=qp8eh+VZ/fxS/nD2yQq5eGWa91EBTJvEALS9CK2d6Tl2tqD0Abd9PpF8lC31K2OM
-	 2v8yWVmX3qjWFcGAfeji0dGHtAaEpMTQO5ewvqC4glccETOonCEkqdB81Fzti5Dj8
-	 biUeTWZTFbtQPkpl6vbQhiwUwayC+47uxGbA01yKCn7Q/q7hhC53OH77qauIVUVAT
-	 ynCzT8uGCjZFhOLMSADBtXI0/Y21Crw2qgwuX5+iFvTrzEgdhcivq0v03HBUB4zlW
-	 XA5DmzsBk4hiiG9iMSLu92tvPrS85nKAXKuARjcUTwps5ma4izLKcdQt0Pw3YNOV3
-	 jZ9ZEcW74OP4puVhkg==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [141.30.226.129] ([141.30.226.129]) by mail.gmx.net (mrgmx005
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1N9dsV-1tvpTh0GZx-0126VB; Wed, 06
- Nov 2024 21:58:24 +0100
-Message-ID: <8ac7f4b6-525f-4394-a4e7-36640359ea17@gmx.de>
-Date: Wed, 6 Nov 2024 21:58:22 +0100
+	s=arc-20240116; t=1730926861; c=relaxed/simple;
+	bh=hM6H3aZX+b8NNMeV7fjPJizjkaBE142mV+rqJDNX9Xo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BASF5xSCfxdiO48/UhChGiheOW6CAl4DilQw794RaJ9kBrtf+AcETETp/smstQpaSvDduS9cCh89LnhuXsUB1UcVzbuvpd+gb/+4USlN9RQJUg3Prmjp+Cxjt4ebZ/mU9FH+YWy19KwGWMCgI0lERC7Wl8xHh1RI0DbuKJv0Pv8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TMbx0ibt; arc=none smtp.client-ip=209.85.222.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f43.google.com with SMTP id a1e0cc1a2514c-84fc0209e87so72561241.1
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2024 13:00:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730926859; x=1731531659; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rP4uisdfc1zjfK+2lZpIDlK/Mivf6HgrmxOj3vGs25s=;
+        b=TMbx0ibtjzRElv+QDsl9N/ZnWGZzYdGm+NJeu33DAt8uAToJNWgPJWXLsGH+dwLdZW
+         0wQoDzsRAx8f6WqoLLNPJNClOvQP1TM8VA/nxXhHfUp3eHNkyrJx9rOS00PnWfNOa8pS
+         +0p5pouHce8anSxU5F8BTKAc3/KOdLcKnEfB0iHrOEf0teJYTHQxWKvTL0yTHbUzhCHe
+         bGsMUluGegWtmUtFPwo7gn7CpzAJTuH/MdfNfjFIPFqvdKl5g8JK+eFTKkdBeYpyNKEl
+         Oha0L0u4a8YLRho8t1/dMr9NO6V2QOGVePQ3h+PifZ2/kokW1+CgPXpJ/6fSeEy00EHq
+         kiwg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730926859; x=1731531659;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=rP4uisdfc1zjfK+2lZpIDlK/Mivf6HgrmxOj3vGs25s=;
+        b=X7AmNWeVFMU8RB6DRTY+2hBHOuHNpHxJXeHh8ccX7URly+6cWB0FlhpUFmLP0tvTef
+         UIvWq+i0seRJl2SdCat7dsm64nkQekqq3oOlfiJVL3oDKGdRFDgrAvSLcEpwSXHndwnx
+         XVT6V5drEjcP7zyGTVJYXi60Y/6gje9gVzxk+f3E8sI9pObz+s0zZzArIdXO3lIXWsvl
+         0yE5WwHtKd+kt9RF9Z2clG3TOW2Om1ohOs7PlcnKUQzBDZEBy9SSxAKU3pKOpcga/WBT
+         0L6pT7pzD+oVP2Ld5r6XjMcoF2y7GwFW70Dlgs/zXoWkeoY1//JZ0Z2XuaaZi+r+ss8M
+         rUBg==
+X-Forwarded-Encrypted: i=1; AJvYcCX3YvFVa9duT7np6gHPkeaDHvNsVBiLytMbPwophPNNJzwDIPMA3jwLC9VWq8v6FUjxmeDmTexHLH5k6Dg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxudo4RG3MZ0B7FGG+TOS5NCGmqzeNHQr71qD3MCLf8ZfF04KHU
+	YYQv88lVRAURL/AVeRLe4nSg8iqyRauyN1K+7HcZDSuXSudcWDf49oC7zTrxC3r36uvdBpYjQlG
+	uOjZkEOpjMxjJlamS8HjpnQfXqkA=
+X-Google-Smtp-Source: AGHT+IGdSZPexxSpaevgOqWWazi2SAZKv+vK7A6R+O4NfsGyaoOevXiBmae2SCYBTtGbOuPFfR/UNfr3X778bBg/Qvc=
+X-Received: by 2002:a05:6102:2908:b0:498:d12b:4774 with SMTP id
+ ada2fe7eead31-4a9542a6661mr24402690137.7.1730926858332; Wed, 06 Nov 2024
+ 13:00:58 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Armin Wolf <W_Armin@gmx.de>
-Subject: Re: [PATCH v4 13/20] ACPI: platform_profile: Notify change events on
- register and unregister
-To: Mario Limonciello <mario.limonciello@amd.com>,
- Hans de Goede <hdegoede@redhat.com>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
- Maximilian Luz <luzmaximilian@gmail.com>, Lee Chun-Yi <jlee@suse.com>,
- Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
- Corentin Chary <corentin.chary@gmail.com>, "Luke D . Jones"
- <luke@ljones.dev>, Ike Panhc <ike.pan@canonical.com>,
- Henrique de Moraes Holschuh <hmh@hmh.eng.br>,
- Alexis Belmonte <alexbelm48@gmail.com>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
- Ai Chao <aichao@kylinos.cn>, Gergo Koteles <soyer@irl.hu>,
- open list <linux-kernel@vger.kernel.org>,
- "open list:ACPI" <linux-acpi@vger.kernel.org>,
- "open list:MICROSOFT SURFACE PLATFORM PROFILE DRIVER"
- <platform-driver-x86@vger.kernel.org>,
- "open list:THINKPAD ACPI EXTRAS DRIVER"
- <ibm-acpi-devel@lists.sourceforge.net>,
- Mark Pearson <mpearson-lenovo@squebb.ca>,
- Matthew Schwartz <matthew.schwartz@linux.dev>
-References: <20241105153316.378-1-mario.limonciello@amd.com>
- <20241105153316.378-14-mario.limonciello@amd.com>
- <5ad884fc-886e-4924-8c5b-e537846fda60@gmx.de>
- <31247970-55b7-4952-a802-a0e2069c1c6d@amd.com>
-Content-Language: en-US
-In-Reply-To: <31247970-55b7-4952-a802-a0e2069c1c6d@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+References: <20241105211934.5083-1-21cnbao@gmail.com> <20241106150631.GA1172372@cmpxchg.org>
+ <CAGsJ_4zYiRzG6mBnW-2wh7YCo_PJQc7u1syd05DNdic7MaE7Zw@mail.gmail.com> <20241106124225.632b42c3680cae0b940d2871@linux-foundation.org>
+In-Reply-To: <20241106124225.632b42c3680cae0b940d2871@linux-foundation.org>
+From: Barry Song <21cnbao@gmail.com>
+Date: Thu, 7 Nov 2024 10:00:47 +1300
+Message-ID: <CAGsJ_4xoHbg+6CtGhC7dPePPC44OMH8azQsOWMEJnXpCQs=bDQ@mail.gmail.com>
+Subject: Re: [PATCH v3] mm: count zeromap read and set for swapout and swapin
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Johannes Weiner <hannes@cmpxchg.org>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	Barry Song <v-songbaohua@oppo.com>, Nhat Pham <nphamcs@gmail.com>, 
+	Usama Arif <usamaarif642@gmail.com>, Chengming Zhou <chengming.zhou@linux.dev>, 
+	Yosry Ahmed <yosryahmed@google.com>, Hailong Liu <hailong.liu@oppo.com>, 
+	David Hildenbrand <david@redhat.com>, Hugh Dickins <hughd@google.com>, 
+	Matthew Wilcox <willy@infradead.org>, Shakeel Butt <shakeel.butt@linux.dev>, 
+	Andi Kleen <ak@linux.intel.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
+	Chris Li <chrisl@kernel.org>, "Huang, Ying" <ying.huang@intel.com>, 
+	Kairui Song <kasong@tencent.com>, Ryan Roberts <ryan.roberts@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:MW1jLqbc+XfNsUPh78G53KPUoZda+GYvXdJhJQEuhJwwDcl3kpT
- nzQYjKFjs/IzYIUNQAJZIUO8jfT5vZzT+U5EZH4y224Xn9Y/JjSbJT2gopzD9yq3t+i2klB
- ohdWFnvd28+Kj5KCXzzpWUU7frFsp/Vd4igpH3AT8NzcE7c2DgveWYOCuWrzwjQU6vtPTyA
- Sp0ckMPrWY20OxnZRLswg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:BBiBAj5dk1c=;/FAq4W9s7jlLyd/IgJ9gogGD2VI
- DzH/uO0DVGoHVDjZR+zYbGm6uV/OiZYY9qH+zyEfHosufinHRRpF/ORj+NvxwMjrrDWCgr/kr
- CYSGtmTev6HtgY/nOHYzrzasEA3MiB/Jldoa6GwndYt5LGT2ZmNglDinrB0pJ8MdAAbkXcWGd
- CXUn3TDjKCgSb7bS0a1bjuhrAgH+4FDh5XJeVXUBFf6OauSMWVYHvHkxZC68C0USbaLf7gOnY
- EGRqFDZABvR3d7N3RvcPCjefJGLpErToL8VosYSwfDi6QDExbBF8g8zrydqv8EtgMuC9eHQ1f
- ZFjd1LnL4g0zYpEJZquy4PsZ9j7qPbp8lxhVCPCGOY61XviuPU1L7eUWFA+oGDVU3svqkznr4
- 2lYe6BWbtr66VeLvCRoCOOO5lcjFnJWghk//JZu5VELDbf/UwKqYX91a8Mfd2wdKemo1LDx63
- 9GzmsxQcajve3krVnFJcTg0hAXPakb+QR4mJt6xq+le/qm9pQXJ2X8KiPiHVrrG48WrYJpIFD
- wevKVoJ2ljrGvqoJ/6EaK6bPBMNochfTAs+kf3RBrJbgZ0MKhdunvs3/ptqkS+pRumV9+RAPa
- hl9pytOJD1Qoyazis/Tovj92b9KiisLN0mrMM072J1AbiQZ7sZFUMQcsqH+QrsW28bemRl6jx
- ASffGetX0GwqwOXHn6pdHm+36pRAaZqcMx0e7BRw52eI81N24mkPkx8jWAhqtU/7YdemzsqHJ
- y32BrMK+5LfwVD+JgnQvB3o6G8uJLCKTOjYVDSUSNX+n53g6KC/t1celC0ipIYo+GR4J10ed+
- D1MvimHx+dQ3CSqPhVV9ZknGFEX0b1rW/bsqYt01YhVHI=
 
-Am 06.11.24 um 20:44 schrieb Mario Limonciello:
+On Thu, Nov 7, 2024 at 9:42=E2=80=AFAM Andrew Morton <akpm@linux-foundation=
+.org> wrote:
+>
+> On Thu, 7 Nov 2024 09:01:14 +1300 Barry Song <21cnbao@gmail.com> wrote:
+>
+> > Oops, it seems that it depends on Kanchana's 'mm: change count_objcg_ev=
+ent() to
+> > count_objcg_events() for batch event updates,' which also isn't present=
+ in 6.12.
+> >
+> > Otherwise, it won't build, as reported here:
+> > https://lore.kernel.org/linux-mm/CAGsJ_4whD31+Lk0m2uq-o=3DygvkRsw1uXcPe=
+qxBONV-RUXkeEzg@mail.gmail.com/
+>
+> argh.
+>
 
-> On 11/6/2024 13:40, Armin Wolf wrote:
->> Am 05.11.24 um 16:33 schrieb Mario Limonciello:
->>
->>> As multiple platform profile handlers may come and go, send a
->>> notification
->>> to userspace each time that a platform profile handler is registered o=
-r
->>> unregistered.
->>>
->>> Tested-by: Matthew Schwartz <matthew.schwartz@linux.dev>
->>> Reviewed-by: Mark Pearson <mpearson-lenovo@squebb.ca>
->>> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
->>> ---
->>> =C2=A0 drivers/acpi/platform_profile.c | 5 ++++-
->>> =C2=A0 1 file changed, 4 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/drivers/acpi/platform_profile.c b/drivers/acpi/
->>> platform_profile.c
->>> index 79083d0bb22e3..c9917daf683cb 100644
->>> --- a/drivers/acpi/platform_profile.c
->>> +++ b/drivers/acpi/platform_profile.c
->>> @@ -404,6 +404,7 @@ int platform_profile_register(struct
->>> platform_profile_handler *pprof)
->>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (IS_ERR(pprof->class_dev))
->>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return PTR_ERR(=
-pprof->class_dev);
->>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dev_set_drvdata(pprof->class_dev, pprof=
-);
->>> +=C2=A0=C2=A0=C2=A0 sysfs_notify(acpi_kobj, NULL, "platform_profile");
->>>
->>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 cur_profile =3D pprof;
->>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return 0;
->>> @@ -419,7 +420,9 @@ int platform_profile_remove(struct
->>> platform_profile_handler *pprof)
->>> =C2=A0 {
->>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 guard(mutex)(&profile_lock);
->>>
->>> -=C2=A0=C2=A0=C2=A0 sysfs_remove_group(acpi_kobj, &platform_profile_gr=
-oup);
->>
->> When do we remove platform_profile_group now?
->>
->
-> When incorporating your other feedback I noticed this was still there
-> and it will be removed for the next revision.
->
-> The idea will be as soon as a class registers the legacy interface is
-> created and will stay for the lifetime of the boot.
->
-> If all drivers are unloaded it will return -EINVAL until a new driver
-> is loaded.
+Apologies for the inconvenience.
 
-And what happens when the platform profile core itself is unloaded?
+> > Hi Andrew,
+> > What=E2=80=99s the best approach here? Should we include Kanchana's pat=
+ch that extends
+> > the nr argument for count_objcg_events() in 6.12-rc as well?
+>
+> Let's do the right thing here.  I'll drop this patch from mm-hotfixes.
+> Please send a v4 against Linus mainline fairly soon then I'll redo
+> Kanchana's series around that.
 
-Thanks,
-Armin Wolf
+Alright. The question is whether we should integrate Kanchana's 'mm:
+change count_objcg_event() to count_objcg_events() for batch event
+updates' into 'mm: count zeromap read and set for swapout and swapin,'
+or keep it as a separate patch as patch 1/2?
 
->
->> Thanks,
->> Armin Wolf
->>
->>> +=C2=A0=C2=A0=C2=A0 cur_profile =3D NULL;
->>> +
->>> +=C2=A0=C2=A0=C2=A0 sysfs_notify(acpi_kobj, NULL, "platform_profile");
->>>
->>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 device_destroy(&platform_profile_class,=
- MKDEV(0, pprof->minor));
->>>
->
->
+I guess integration would be better, as hotfixes may not be ideal for a pat=
+ch
+series?
+
+Thanks
+Barry
 
