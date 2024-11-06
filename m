@@ -1,160 +1,83 @@
-Return-Path: <linux-kernel+bounces-397770-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397769-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 430569BE015
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 09:14:02 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6B469BE011
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 09:13:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C5B891F239CA
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 08:14:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6F500B21F74
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 08:13:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26AE11D54D1;
-	Wed,  6 Nov 2024 08:13:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E49F1D47A6;
+	Wed,  6 Nov 2024 08:13:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="v44/QYXW"
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zu4f7KW7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A26E1D2F42
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 08:13:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73DBF1D31BE;
+	Wed,  6 Nov 2024 08:13:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730880816; cv=none; b=ghILEDath3ukpxUgQKEmJsKzyOHvnhnTZ/4k5ffUsdHoTzx4to11QNfig1Sb0eAI6QstXemW1dwm9GH4S6scuI7fLQFz6jbSlhrA1/ZEOADC1bJsbF6dk5RIW9ENNtgbyuNpzI5xA9ZDXqq2ufXkCD2pX0EngtywlKwQIxzNyec=
+	t=1730880815; cv=none; b=KLHVDvznKiezgJzg4qIfkBIHsttfAAyTyoWfL3ZWu6eFnnDv8prwO+eefLia7upeTL/YdtojwDIJXLQu6GpIefLlJLSuHiLKQP0rv4euD709vq924b554j3d9M+vDJ/o4iBjJkerDcLBMO5Vp0PJAWqaMhfrGy6gjGVhz2t2OYQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730880816; c=relaxed/simple;
-	bh=39oPjtpebp5GhAYDuduuaxLDvPhFVrS2MKVO0YN1SyA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XPkRPFDByMbRO168N+/Cpel34zDhQptemCBl7pldg0AnJA+5oMRuEtXIxzLAqFBMLiiRVyFBW54/wRqfc3nG41B9+Ib/VdmpEQ6V0BOjmBJKks7kWFerS5mI7My/KYR38/hNTgjCpuNE/BP/h+a6h8G+Qpa6NTCT2Vb95fUmiBU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=v44/QYXW; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a99f646ff1bso882010966b.2
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2024 00:13:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1730880812; x=1731485612; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Dtq8iQE0SFCyweopqsqMbbfSb6OPmzQGXb5kTOJ8hYk=;
-        b=v44/QYXWvPHIhx9R4Sq7pVA9PPgu+PJNLm+KrBhbeYtwa/moqH2Lafh/lrv7SW7zjH
-         pNO7ZPNmUicYwfhJgGO7OISa5yYi+EasVATsfff8ODHVjTzxIle1UWQ91I4v/02kmZJu
-         ZmoQPU4O2MsQgb+YswmSn5ROsPA/Ey3FuINRPDQQondnmAYKb6XJ3J2MQJvIO80mznPk
-         NlpWNVYFNnG+J9QTOV8MHSFtPktYzTM8xbpJTF9ktnkXt+B7/OLqZli5hnMJNHj6/Y1q
-         ZpZaD+DGjvyfcnRVAn80Q8Fj6O5w5RcyK59+Iz5nn+Qt2jPNk5l/nEhto2vnJi5dRUA7
-         4Akg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730880812; x=1731485612;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Dtq8iQE0SFCyweopqsqMbbfSb6OPmzQGXb5kTOJ8hYk=;
-        b=IQg5JiyU8Dff5h0b3oh1dOU8CWzOXEtizOjwAWAX9OQq3NWAJ9O2eAz3GRHVEF14/7
-         CMtNJNFqAfcRCyVywtGOUV5DucyckhqwVKC5xhGWNZSsTEa0jO8UDTTbKS3zOCPwWy5o
-         HYZckdujdVIyl1Eh5ojUVrnzqgeqxLGMTbvfzEB/0iayrv9HnMOh0YTX+ydWS4QeabE2
-         jDq7j+dJL1o2bPvgHDK11AMWty6VichZamic7wZ8b/lCKgwrjJQgdAnqnZ7KWK45/opm
-         xnwb+eSmyP7yO+dARraFgaRhVuYDuKn3sEJlQbnUvDqzNtDHRkI24uoixzjYa3xSVEeI
-         xRaw==
-X-Forwarded-Encrypted: i=1; AJvYcCUE2J9UGGPuuwLlmpNVbeFI54sedWwAxSebpOBLCXj5TwNTehz9/nPXlUeucEZZU3ixTQomuY0NndpqTQI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw5p7csf9orOGKHIq+xlN/+3Fb0yRkPYyoWCszE8QreZhAsCGqc
-	GzmVmWsxmAbe3ZoR0BhcWH/s9eJUR6ElwphSx8zKxXAn7dtxwn3LTFhw2Pm6Z/g=
-X-Google-Smtp-Source: AGHT+IFOiZLYl9p7fXS9SJkoBSOvsaanhDLne8lHROTJqLWKZRRzxv+g7HXejeHBWWi1TeT0t5DzMw==
-X-Received: by 2002:a17:907:31c3:b0:a99:65c6:7f34 with SMTP id a640c23a62f3a-a9e3a57380emr2601209966b.7.1730880811570;
-        Wed, 06 Nov 2024 00:13:31 -0800 (PST)
-Received: from localhost (p509159f1.dip0.t-ipconnect.de. [80.145.89.241])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9eb18144e3sm238129066b.203.2024.11.06.00.13.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Nov 2024 00:13:30 -0800 (PST)
-Date: Wed, 6 Nov 2024 09:13:29 +0100
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: Dimitri Fedrau <dima.fedrau@gmail.com>
-Cc: Rob Herring <robh+dt@kernel.org>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, linux-pwm@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 2/2] pwm: add support for NXPs high-side switch
- MC33XS2410
-Message-ID: <nmlnzinyynah3wqgszk7p3ojxdtekeiftmpkusuyqj2yhymd5x@iudiukib25ea>
-References: <20240927125745.38367-1-dima.fedrau@gmail.com>
- <20240927125745.38367-3-dima.fedrau@gmail.com>
- <oppdnsda4tqjcpsb26j5ew62t4bkkmtxuu7e2fpinnazubk5ky@tmz76o5xdrlj>
- <20241023125221.GA197308@debian>
- <eyom32milbbqp6floun4r5bpozuewbe5kk2htvhp5cmcytj2oy@bpcrd2aiwk6m>
- <20241103190709.GA466098@debian>
- <atkj7wnhl4n6frl5swjwrto6r6dhofjtnqisqrn5z6w3cmfl3h@dgqgdxovrqb4>
- <20241103205215.GA509903@debian>
- <dy5abepkqhkmbgirwjkblbmw6vwb56vaqgazluyt675qflzioz@glp4djy6fhuo>
- <20241104130753.GA14681@debian>
+	s=arc-20240116; t=1730880815; c=relaxed/simple;
+	bh=7fTByFKlWnki+W+x/XRvQjnhf1dF4z2VG7cuiXTlMJU=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=APvEQhikmYmtJ/y97xLEOsOI2GS71qMre/LVUgyIJY1tghP8t5AgnALMV1XXSEnXo6hfi7DJ+kqpr5J2NV/BI/NJY48HUXRo3nPrs5yIP4phgJuWn0bRErQwapAjIV2p4J0a4O6y8TA4soQxDsDK4h/602oQdV7nly7M9DLo2S8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Zu4f7KW7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C826CC4CECD;
+	Wed,  6 Nov 2024 08:13:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730880814;
+	bh=7fTByFKlWnki+W+x/XRvQjnhf1dF4z2VG7cuiXTlMJU=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=Zu4f7KW7JVcsx7ZDbq497GAXthydcOXV/7w6DYXWiiJ0+Cp8Z873VRVKSqrpRe1aE
+	 3J9VT+brooJJXcNrPHEKDwnQsFx1D/DXnOCQnZVGTEHGkY2E/DAvljfZ2QOon8j+gA
+	 MdCaZQt5/7x32MF241IiAMliuFmDjjcFG1URlJS8FBFCw9AtC9TvWcaXlG8vZVRKRI
+	 fPc5P/qRjbBhqRNM5hzQYPIG4L4BQNLwGoBn/KBqK6ppW6kvq+TIWq6hZLuuqNuXn3
+	 EkFLgrSWnPrDOwGU1xGZs5xYa3q9iifIROK5lsY8DLKKqnm0xnkZPbL6jUKASCLYvV
+	 Lp7tOcwE7E77Q==
+From: Lee Jones <lee@kernel.org>
+To: Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>, 
+ Patrick Rudolph <patrick.rudolph@9elements.com>, 
+ Naresh Solanki <Naresh.Solanki@9elements.com>, 
+ Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20241031-max5970-of_node_put-v2-1-0ffe1f1d3bc9@gmail.com>
+References: <20241031-max5970-of_node_put-v2-1-0ffe1f1d3bc9@gmail.com>
+Subject: Re: (subset) [PATCH v2] leds: max5970: fix unreleased
+ fwnode_handle in probe function
+Message-Id: <173088081255.3235523.10852876825461288324.b4-ty@kernel.org>
+Date: Wed, 06 Nov 2024 08:13:32 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="l44dbdpqwkklzq3j"
-Content-Disposition: inline
-In-Reply-To: <20241104130753.GA14681@debian>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.13.0
 
+On Thu, 31 Oct 2024 17:30:30 +0100, Javier Carrasco wrote:
+> An object initialized via device_get_named_child_node() requires calls
+> to fwnode_handle_put() when it is no longer required to avoid leaking
+> memory.
+> 
+> Add the automatic cleanup facility for 'led_node' to ensure that
+> fwnode_handle_put() is called in all execution paths.
+> 
+> [...]
 
---l44dbdpqwkklzq3j
-Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v6 2/2] pwm: add support for NXPs high-side switch
- MC33XS2410
-MIME-Version: 1.0
+Applied, thanks!
 
-On Mon, Nov 04, 2024 at 02:07:53PM +0100, Dimitri Fedrau wrote:
-> Am Mon, Nov 04, 2024 at 09:52:51AM +0100 schrieb Uwe Kleine-K=F6nig:
-> > `echo 0 > /sys/class/pwm/pwmchip3/pwm0/duty_cycle` should result in
-> > MC33XS2410_PWM_CTRL3 having MC33XS2410_PWM_CTRL3_EN(pwm->hwpwm) cleared.
-> > When mc33xs2410_pwm_get_state() is called then it returns state->enabled
-> > =3D false and in that case the above mentioned warning doesn't trigger.
->
-> Yes, as you explained. But the warning is shown.
->=20
-> > Where is the misunderstanding?
->=20
-> if (state->enabled && state->duty_cycle < s2.duty_cycle)
-> 	dev_warn(pwmchip_parent(chip),
-> 		".apply is supposed to round down duty_cycle (requested: %llu/%llu, app=
-lied: %llu/%llu)\n",
-> 		state->duty_cycle, state->period,
-> 		s2.duty_cycle, s2.period);
->=20
-> state has previously applied settings and is parameter of pwm_apply_debug,
-> in that case s2=3Ds1, and s1 is returned by get_state:
->=20
-> state->enabled=3Dtrue
-> state->duty_cycle=3D0
-> s2.enabled=3Dfalse
-> s2.duty_cycle=3D1908
->=20
-> Due to the code the warning should be raised. If it shouldn't the check
-> should be different, something like if (state->enabled && s2.enabled &&
-> ...)
+[1/1] leds: max5970: fix unreleased fwnode_handle in probe function
+      commit: 02f58f97419c828f58e30f24f54395ac9be159c0
 
-This should be fixed with https://lore.kernel.org/linux-pwm/20241105153521.=
-1001864-2-u.kleine-koenig@baylibre.com/T/#u
-Test feedback and review very welcome.
+--
+Lee Jones [李琼斯]
 
-Best regards
-Uwe
-
---l44dbdpqwkklzq3j
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmcrJScACgkQj4D7WH0S
-/k5gXggAqPu+yRoXyGFQb73n3hZivFCZ9JKqoIVvQt8+1uDS+FUmtlMTX/LZ3gfx
-sBpqANYsq2B1f+fV8dekuQYY5jqFa+OI9YQNZja8muf4WvauRftQAInEtiOlPrRG
-MZWedwP/Ie8N7q+GpNKjs5IaNgTJO68MqvYowi5ZujfHTRGCV/5oRBLZBTotqTZg
-HxZP+S9jO+BQ0R5WdPx2lHzg6S44ETemK03znqun5Uy4Vw6iG14NsrcSfWehe1zO
-CT1R/iWhEXhjGzx5c/uvsALe8DoHa4Ldrzmjft3h+SLMB7QHGXWkiORk2ASDIjgn
-yKKzdKEBXpVwR6Ug5Y0ZlcbXM381+A==
-=oxv3
------END PGP SIGNATURE-----
-
---l44dbdpqwkklzq3j--
 
