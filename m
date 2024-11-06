@@ -1,149 +1,147 @@
-Return-Path: <linux-kernel+bounces-398602-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398603-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66B999BF370
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 17:41:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 69F659BF372
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 17:41:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1FDDA1F20F33
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 16:41:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 21C9D1F20FC9
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 16:41:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C7DF205E1F;
-	Wed,  6 Nov 2024 16:40:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5295A2064F4;
+	Wed,  6 Nov 2024 16:41:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="S9YOMynJ"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a/tDVlPs"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5F612038BF;
-	Wed,  6 Nov 2024 16:40:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9753F20408D;
+	Wed,  6 Nov 2024 16:41:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730911231; cv=none; b=Cnjk3BTyirO2CDbcYEM84NgZVzFsSodIFCPInSc0eqF64eMq/dFWsv8sAvDP2WaxRan72zy/upKG2HZ2wCkT9Pc1ptmpYV2AqCSbuYAIRvVCM+nr6sLFIDQ/X3Rb0QwZePqea3kRd35zX1hNrlP+gh8A5CoFyYlRJSBwEYMONI8=
+	t=1730911261; cv=none; b=TJSYjEDCA7jU1FY1B8ua1BnE931mcKC0LhcAaod1R4d/9zRSok2tZHfIMXRfDSPD1bAOQjskzo99iJdgeByRxvwQQP11/h8/BPGsXaoS3NTgaoC+iwiy9na0QoeuZ/HdKJQY/NAStpmrsfLSMvSHWV5lNoVS0aR9LbkkiW95x1E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730911231; c=relaxed/simple;
-	bh=FwGjrB4Xov+J3GULSU5ZLeqm2acMIY8YeIdZeoVv4GA=;
+	s=arc-20240116; t=1730911261; c=relaxed/simple;
+	bh=/GIrb8lH6MtB9ni0oZQC5O1PWk0ZuEvid3uRJD/gFEk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PEIhr4PwgtCjqNLiMdOjfsvPwrOij6ISQ6vwifVhYIL9JV/SD+Othrq2REOPo/7UGNb1M2QikE/7R1lUDDbSWEXzGBcvpm9M87ryemJG1Cz1ercRs1e+eJjsvTJrPZL3xFe8lbdUsa0RQ0z08AcPY/R2OFkIl9PX6YHfmw1gywQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=S9YOMynJ; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730911229; x=1762447229;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=FwGjrB4Xov+J3GULSU5ZLeqm2acMIY8YeIdZeoVv4GA=;
-  b=S9YOMynJHq4xtPkWFcX3hrO7DxAeat5KzKpAnwMZKoutCaLPdkFE3ITi
-   e8xMysJ9ZaScdYhHt6n9XJwY+wIdpsp6vYeQsBJncLwvXaCa9lrXdCN3n
-   T8myKofaABEDhS6dUzVkLNwQ6b982vRrZP+7qoYhvBbCXjzZ6+LTbCvcb
-   /pWK3gC+f4sHFE0VICQSLpZXtnL8X2F7OTMJLVuLbXKTxQ1I8QRposlXa
-   y9Lczvb4Du1shCrr2Cq/bjEKHGhCk+Pl7bk9u9ivqv8UKrZYuHnlklsg9
-   5X0OGnpddI6v+qr4oQMPQf7RDtYv9D0rnBvVmwErp52d1nDcNGJ9BbUUd
-   w==;
-X-CSE-ConnectionGUID: ikdI60NYRKS7i1t+aa7EFA==
-X-CSE-MsgGUID: EIDPG3wcRJuaBkwpgaryLw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="34418302"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="34418302"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2024 08:40:28 -0800
-X-CSE-ConnectionGUID: v/KZ/PUcRoyJxlpv5b/l4g==
-X-CSE-MsgGUID: Ikuk+uEcQgGFd8F8gzv4NA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,263,1725346800"; 
-   d="scan'208";a="88602921"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by fmviesa003.fm.intel.com with ESMTP; 06 Nov 2024 08:40:23 -0800
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1t8j4v-000p8e-0l;
-	Wed, 06 Nov 2024 16:40:21 +0000
-Date: Thu, 7 Nov 2024 00:40:04 +0800
-From: kernel test robot <lkp@intel.com>
-To: Alexis Cezar Torreno <alexisczezar.torreno@analog.com>,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-hwmon@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, Radu Sabau <radu.sabau@analog.com>,
-	Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
+	 Content-Type:Content-Disposition:In-Reply-To; b=cIzq9bOs0FZbvQA8Sd+Ob2kY0p16cqfa2BVvUFp90Byd2YEIVgAo8mbDT6uEzca10OG/o0uH1hKMYOSsuuEGq3KtEkzp/KowsC4M9/ZfqPaNux8qXTB3SRBeLFdvp/oPTod7kELPMs3qkNpxw+C4p3EdvVob3ZG3V0vr67HQ4Us=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a/tDVlPs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5FC78C4CEC6;
+	Wed,  6 Nov 2024 16:40:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730911260;
+	bh=/GIrb8lH6MtB9ni0oZQC5O1PWk0ZuEvid3uRJD/gFEk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=a/tDVlPsFSxqrW/jxij2IoAoHIVPLSEYkIWy4w1eFfFs8RoMwmk3WbWBgmUVjitiR
+	 kYy7iRQs/rx0N5huEMCFuFRGHgVPtI7vVGbJfPS3N5bBwlcJA+3f02facNV4Y5RjBG
+	 o5UbkUB3XNhvFIjFLP0CsZwXriRM66aWfZYgBnRtIc9IgJ7ykIXwD2XPHBNoGbhQk0
+	 urJvbUcOaX0rmlSegERf/yG2qsPlR5Fl9OuKadaKKd7O18Q17zVcmszNnzVjeswddX
+	 El3xioF32fP6OkqbGaQdE+AqbuyJv92rowbq5itKl41dC3ZvJwaoQVjb3ro9SAgKTa
+	 yGUO3AyedBd/A==
+Date: Wed, 6 Nov 2024 16:40:54 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
+Cc: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
+	Tero Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Alexis Cezar Torreno <alexisczezar.torreno@analog.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>
-Subject: Re: [PATCH 2/2] hwmon: (pmbus/adp1050): Support adp1051 and adp1055
-Message-ID: <202411070008.3X7zgKXO-lkp@intel.com>
-References: <20241106090311.17536-3-alexisczezar.torreno@analog.com>
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Kees Cook <kees@kernel.org>, Tony Luck <tony.luck@intel.com>,
+	"Guilherme G. Piccoli" <gpiccoli@igalia.com>,
+	Felipe Balbi <balbi@kernel.org>,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+	linux-hardening@vger.kernel.org, Devarsh Thakkar <devarsht@ti.com>,
+	Hari Nagalla <hnagalla@ti.com>, linux@ew.tq-group.com
+Subject: Re: [PATCH 2/5] dt-bindings: arm: ti: Add compatible for AM625-based
+ TQMa62xx SOM family and carrier board
+Message-ID: <20241106-happy-anything-46f7293f6aca@spud>
+References: <cover.1730299760.git.matthias.schiffer@ew.tq-group.com>
+ <4f5ad877f44df35a3b2c7f336647f057c4e6377d.1730299760.git.matthias.schiffer@ew.tq-group.com>
+ <20241104-floral-dexterous-7d3fee2ff616@spud>
+ <c73cac598788ccabd1791b1232e8fd9d7ce23ac6.camel@ew.tq-group.com>
+ <20241105-tinsmith-countable-fbb51045bc98@spud>
+ <7286141141fe4930cd2581dac7a1fb36a98e62c4.camel@ew.tq-group.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="oJ2Y6Urhi+vkl28I"
+Content-Disposition: inline
+In-Reply-To: <7286141141fe4930cd2581dac7a1fb36a98e62c4.camel@ew.tq-group.com>
+
+
+--oJ2Y6Urhi+vkl28I
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241106090311.17536-3-alexisczezar.torreno@analog.com>
+Content-Transfer-Encoding: quoted-printable
 
-Hi Alexis,
+On Wed, Nov 06, 2024 at 01:03:08PM +0100, Matthias Schiffer wrote:
+> On Tue, 2024-11-05 at 18:55 +0000, Conor Dooley wrote:
+> > On Tue, Nov 05, 2024 at 11:40:20AM +0100, Matthias Schiffer wrote:
+> > > On Mon, 2024-11-04 at 18:47 +0000, Conor Dooley wrote:
+> > > > On Mon, Nov 04, 2024 at 10:47:25AM +0100, Matthias Schiffer wrote:
+> > > > > The TQMa62xx is a SoM family with a pluggable connector. The MBa6=
+2xx is
+> > > > > the matching reference/starterkit carrier board.
+> > > >=20
+> > > > Why all the wildcards? Why isn't there a compatible per device in t=
+he
+> > > > family?
+>=20
+> Because all variants use the same Device Tree. There is also only one com=
+patible and one (main) DTSI
+> for the AM62 SoC family, which our Device Trees are based on.
 
-kernel test robot noticed the following build errors:
+So what varies between the members of the family?
 
-[auto build test ERROR on aa8cbc0898902070f1ad093a6e036cf57f0d47bc]
+> > > For the compatible string we've chosen the TQMa6254 as the representa=
+tive for the TQMa62xx family.
+> >=20
+> > And all the boards in the family are the exact same?
+>=20
+> There is a single TQMa62xx PCB, which has some AM62 family SoC installed =
+(AM6254 in the case of the
+> TQMa6254, but all AM62 are possible). TQMa62xx is also the name used for =
+marketing when not talking
+> about a specific SoC variant:
+> https://www.tq-group.com/en/products/tq-embedded/arm-architecture/tqma62x=
+x/
+>=20
+> Some SoM variants with different RAM/eMMC/SPI-NOR/... do exist, but they =
+don't have separate device
+> trees (firmware may patch some variant information into the DTB however, =
+like the correct RAM size).
+>=20
+> Choosing one representative for the family including the SoC variant numb=
+er, but not distinguishing
+> minor variants matches the level of detail used for our other SOMs alread=
+y supported by mainline
+> Linux (like the TQMa64xxL and various i.MX-based platforms).
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Alexis-Cezar-Torreno/dt-bindings-hwmon-pmbus-adp1050-Support-adp1051-and-adp1055-add-bindings/20241106-170853
-base:   aa8cbc0898902070f1ad093a6e036cf57f0d47bc
-patch link:    https://lore.kernel.org/r/20241106090311.17536-3-alexisczezar.torreno%40analog.com
-patch subject: [PATCH 2/2] hwmon: (pmbus/adp1050): Support adp1051 and adp1055
-config: i386-randconfig-141-20241106 (https://download.01.org/0day-ci/archive/20241107/202411070008.3X7zgKXO-lkp@intel.com/config)
-compiler: clang version 19.1.3 (https://github.com/llvm/llvm-project ab51eccf88f5321e7c60591c5546b254b6afab99)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241107/202411070008.3X7zgKXO-lkp@intel.com/reproduce)
+I don't like any of this wildcard stuff at all, who is to say that the
+next soc you put on your SoM won't be an am62a7, which has a specific
+compatible in the kernel? Your fallback then would be ti,am62a7 not
+ti,am625. Probably someone will say "that's the am62a family not the
+am62 family" - but that exact thing is why I hate all of this
+wildcarding. It's barely any more effort to have a tqm6231 and a tqm6254
+compatible than what you're doing with wildcard but it is unambiguous.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202411070008.3X7zgKXO-lkp@intel.com/
+--oJ2Y6Urhi+vkl28I
+Content-Type: application/pgp-signature; name="signature.asc"
 
-All errors (new ones prefixed by >>):
+-----BEGIN PGP SIGNATURE-----
 
-   In file included from drivers/hwmon/pmbus/adp1050.c:8:
-   In file included from include/linux/i2c.h:19:
-   In file included from include/linux/regulator/consumer.h:35:
-   In file included from include/linux/suspend.h:5:
-   In file included from include/linux/swap.h:9:
-   In file included from include/linux/memcontrol.h:21:
-   In file included from include/linux/mm.h:2213:
-   include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
-     518 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
-         |                               ~~~~~~~~~~~ ^ ~~~
->> drivers/hwmon/pmbus/adp1050.c:59:32: error: passing 'const struct pmbus_driver_info *' to parameter of type 'struct pmbus_driver_info *' discards qualifiers [-Werror,-Wincompatible-pointer-types-discards-qualifiers]
-      59 |         return pmbus_do_probe(client, info);
-         |                                       ^~~~
-   drivers/hwmon/pmbus/pmbus.h:541:73: note: passing argument to parameter 'info' here
-     541 | int pmbus_do_probe(struct i2c_client *client, struct pmbus_driver_info *info);
-         |                                                                         ^
-   1 warning and 1 error generated.
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZyucFgAKCRB4tDGHoIJi
+0nTOAP49AhXzVo1rMKvtd3ePJuffEjuHdGlp/GqT6bBrNTGtFwD/eogtLPtuaM+U
+fil0gvlsrbgOMKWtdE3BthhK3ZCfvQw=
+=yzQZ
+-----END PGP SIGNATURE-----
 
-
-vim +59 drivers/hwmon/pmbus/adp1050.c
-
-    50	
-    51	static int adp1050_probe(struct i2c_client *client)
-    52	{
-    53		const struct pmbus_driver_info *info;
-    54	
-    55		info = device_get_match_data(&client->dev);
-    56		if (!info)
-    57			return -ENODEV;
-    58	
-  > 59		return pmbus_do_probe(client, info);
-    60	}
-    61	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+--oJ2Y6Urhi+vkl28I--
 
