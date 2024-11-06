@@ -1,107 +1,136 @@
-Return-Path: <linux-kernel+bounces-398697-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398705-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2686D9BF4D0
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 19:06:30 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BB1B9BF4ED
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 19:13:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 57D0F1C23270
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 18:06:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 108A7285E3E
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 18:13:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44F08207A1F;
-	Wed,  6 Nov 2024 18:06:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74871207A39;
+	Wed,  6 Nov 2024 18:13:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="iSlLa/Wt"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=katalix.com header.i=@katalix.com header.b="ophAy6CZ"
+Received: from mail.katalix.com (mail.katalix.com [3.9.82.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30AFE207A19
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 18:06:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAAAD2076DE
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 18:13:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=3.9.82.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730916383; cv=none; b=qpTTr2vfJQShOPXsgBEHncitBO+aAhD4Q00cTyS8mGMU4e7PgjQPMDaaX727Ul9k++DLBTNS4lYAR4B+GlfBgpXaO1E+sjko09/Ewykdj0CVYoLDSJuLfdnJW7pW3Fo+8hB5GsuW8z45nRRQgiy1BPASw+clL7JgnYkJQSPOllU=
+	t=1730916813; cv=none; b=EWyqipYiBxPWLXP8dx6382pdUn3VjFwGBh4+en+7z4wu2S9Bvz5rnbfSSIGltjRQUuko47osQi95ZmZ41I+gCrC4xITDyvQe6soGuCUWx/aiKsdRKttAUQy1Yg+QMKm2H7y6REojgcGphjYN73jgjEeyf3afyXgH2Ce43BH3KeE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730916383; c=relaxed/simple;
-	bh=GTHKe0ymyoYw3PBQepXHYDCepXxmuKG5AEFhsgkQVwg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dz/YonbszsOm/16y05utXIY29tMPD74aV/pVpp7TmomDHyCdyM3yKLVAD4Zc5EvLtbKqg1bDV+TVsdBJo1WsWic4qse4qkNT4aEtp31qz1/38J4Vj4K4Dyhej66vB9IarrUTq3bcNhndolPFC9rN1xKvS9Elw2jMG58zcI63NcE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=iSlLa/Wt; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=ktiYEZPNTXVbDlJWeKZ3D8MKCbiDmZrAL5yTcsVdQuM=; b=iSlLa/WtvxZIvXIZa+i3IFbcyf
-	ipIOmx/nd9gxsyS4j7IJrVxScrpsdJLHxtBJ5J5D4Ogl/tjcZOG4Orv8biwWfAGrhGASbF6A5pP8n
-	grODpsMjLnKKnaxzpfDbUDF9FQn6ZMOh94FxcNIlRr7LBz5Rzmkc1HHeF1CpPFNxWQeATvN3paXRa
-	xr/q+90e85IPfOmExxgtbVDLRuLdleIFlcUf/OrynPk9cBbzzn4jjDEIrwl9oPxhtA6x/Dp23Iwy3
-	Eb5KXQrWbuzSH1ih9M5Ft/IBPXXrYLO4Qck7x51De1m0mflL6biybh4vCMiGrV9Dl+Z0T4WaBIa8k
-	4o0yoCBA==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1t8kQ1-000000054Gx-0O6g;
-	Wed, 06 Nov 2024 18:06:13 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 594DB300478; Wed,  6 Nov 2024 19:06:13 +0100 (CET)
-Date: Wed, 6 Nov 2024 19:06:13 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Yury Norov <yury.norov@gmail.com>
+	s=arc-20240116; t=1730916813; c=relaxed/simple;
+	bh=CjR3zzRrP/Tq/gW6QLzF1lfcrd4/ESzxdp2qlsMrvbg=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=Ox++9P4Lm7sFHBP/hNFSCQkmwVve3vocygVVj1C7gQnsmSzwlXV6SNerve3QAY7Fd1JWReAXWtZBmhgu5s/67bnsrx0NQkHO2WWi1ecZ+2glqdP7SUzU9+BnYSvu7uaQHI7+hb8xvvBpW1m8LUJv+1cAVTDlnTTb4aDl+dKmdzw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=katalix.com; spf=pass smtp.mailfrom=katalix.com; dkim=pass (2048-bit key) header.d=katalix.com header.i=@katalix.com header.b=ophAy6CZ; arc=none smtp.client-ip=3.9.82.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=katalix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=katalix.com
+Received: from katalix.com (unknown [IPv6:2a02:8010:6359:1:ca3f:3ca4:dc38:27ae])
+	(Authenticated sender: james)
+	by mail.katalix.com (Postfix) with ESMTPSA id 350E87DCA0;
+	Wed,  6 Nov 2024 18:07:06 +0000 (GMT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=katalix.com; s=mail;
+	t=1730916426; bh=CjR3zzRrP/Tq/gW6QLzF1lfcrd4/ESzxdp2qlsMrvbg=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:From;
+	z=From:=20James=20Chapman=20<jchapman@katalix.com>|To:=20syzbot+332
+	 fe1e67018625f63c9@syzkaller.appspotmail.com|Cc:=20linux-kernel@vge
+	 r.kernel.org,=0D=0A=09syzkaller-bugs@googlegroups.com|Subject:=20t
+	 est=20fix=20for=20WARN_ON=20in=20l2tp_exit_net|Date:=20Wed,=20=206
+	 =20Nov=202024=2018:07:06=20+0000|Message-Id:=20<20241106180706.330
+	 326-1-jchapman@katalix.com>|In-Reply-To:=20<672ba5ac.050a0220.4939
+	 3.016b.GAE@google.com>|References:=20<672ba5ac.050a0220.49393.016b
+	 .GAE@google.com>|MIME-Version:=201.0;
+	b=ophAy6CZkD/JLCpgBqpdNunq7yADdmoyFCf0EqBUvTkz6KZWqgbT4NNR0lHnWEVnD
+	 mjc3A+H58A7M2JYjy7woGfwkG+nWopemG/Ky54E6ufoU6kSNI9xluZ+egbYpPAcks8
+	 eG3Zy1vim/X9aCVK7sLvgu+7eaMNT0uk9Q+hmQXzipkKjZI2vXNwygtX8Xr6e1sC+D
+	 wQR0qeSu6kBGSCbYOSMpiBlBjHbsqyPxsesGptRpLw6gWcuM7IB2ZgfEhfu/jjji6Z
+	 IoNClwRiXH7oQFxc9XZMU3Y60kANgxlWpZXs5qKaGkIjQlY7ymoWiqrQe7ireyx1dM
+	 g2p5pwV45t2yQ==
+From: James Chapman <jchapman@katalix.com>
+To: syzbot+332fe1e67018625f63c9@syzkaller.appspotmail.com
 Cc: linux-kernel@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	Chen Yu <yu.c.chen@intel.com>, Leonardo Bras <leobras@redhat.com>,
-	Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>
-Subject: Re: [PATCH v3 0/3] sched/topology: optimize topology_span_sane()
-Message-ID: <20241106180613.GQ10375@noisy.programming.kicks-ass.net>
-References: <20240902183609.1683756-1-yury.norov@gmail.com>
+	syzkaller-bugs@googlegroups.com
+Subject: test fix for WARN_ON in l2tp_exit_net
+Date: Wed,  6 Nov 2024 18:07:06 +0000
+Message-Id: <20241106180706.330326-1-jchapman@katalix.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <672ba5ac.050a0220.49393.016b.GAE@google.com>
+References: <672ba5ac.050a0220.49393.016b.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240902183609.1683756-1-yury.norov@gmail.com>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Sep 02, 2024 at 11:36:04AM -0700, Yury Norov wrote:
-> The function may call cpumask_equal with tl->mask(cpu) == tl->mask(i),
-> even when cpu != i. In such case, cpumask_equal() would always return
-> true, and we can proceed to the next iteration immediately.
-> 
-> Valentin Schneider shares on it:
-> 
->   PKG can potentially hit that condition, and so can any
->   sched_domain_mask_f that relies on the node masks...
-> 
->   I'm thinking ideally we should have checks in place to
->   ensure all node_to_cpumask_map[] masks are disjoint,
->   then we could entirely skip the levels that use these
->   masks in topology_span_sane(), but there's unfortunately
->   no nice way to flag them... Also there would be cases
->   where there's no real difference between PKG and NODE
->   other than NODE is still based on a per-cpu cpumask and
->   PKG isn't, so I don't see a nicer way to go about this.
-> 
-> v1: https://lore.kernel.org/lkml/ZrJk00cmVaUIAr4G@yury-ThinkPad/T/
-> v2: https://lkml.org/lkml/2024/8/7/1299
-> v3:
->  - add topology_cpumask_equal() helper in #3;
->  - re-use 'cpu' as an iterator int the for_each_cpu() loop;
->  - add proper versioning for all patches.
-> 
-> Yury Norov (3):
->   sched/topology: pre-compute topology_span_sane() loop params
->   sched/topology: optimize topology_span_sane()
->   sched/topology: reorganize topology_span_sane() checking order
+Resend to include the patch inline.
 
-Why are we doing this? Subject says optimize, but I see no performance
-numbers?
+#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git ccb35037c48a
+
+From fa6758c4ac6439c3ef4bedf6c0abfbf3ee17d36e Mon Sep 17 00:00:00 2001
+From: James Chapman <jchapman@katalix.com>
+Date: Wed, 6 Nov 2024 16:04:44 +0000
+Subject: [PATCH] l2tp: fix warning in l2tp_exit_net found by syzbot
+
+l2tp uses idr_is_empty to check that its IDRs are empty in its net
+exit handler before calling idr_destroy and warns if the IDR isn't
+empty. syzbot is able to hit this warning by injecting a memory
+allocation fail inside idr_alloc_u32 (radix_tree_node_alloc). However,
+this leaves the IDR root with its IDR_FREE tag unset such that the IDR
+appears non-empty to idr_is_empty callers.
+
+Fix this in l2tp by checking that the IDR is empty using idr_for_each
+instead of idr_is_empty.
+
+Reported-by: syzbot+332fe1e67018625f63c9@syzkaller.appspotmail.com
+Fixes: 73d33bd063c4c ("l2tp: avoid using drain_workqueue in l2tp_pre_exit_net")
+
+---
+ net/l2tp/l2tp_core.c | 17 ++++++++++++++---
+ 1 file changed, 14 insertions(+), 3 deletions(-)
+
+diff --git a/net/l2tp/l2tp_core.c b/net/l2tp/l2tp_core.c
+index 3eec23ac5ab1..a665bdf3f9c6 100644
+--- a/net/l2tp/l2tp_core.c
++++ b/net/l2tp/l2tp_core.c
+@@ -1870,15 +1870,26 @@ static __net_exit void l2tp_pre_exit_net(struct net *net)
+ 	}
+ }
+ 
++static int l2tp_idr_item_unexpected(int id, void *p, void *data)
++{
++	const char *idr_name = data;
++	pr_err("IDR %s not empty\n", idr_name);
++	WARN_ON_ONCE(1);
++	return 1;
++}
++
+ static __net_exit void l2tp_exit_net(struct net *net)
+ {
+ 	struct l2tp_net *pn = l2tp_pernet(net);
+ 
+-	WARN_ON_ONCE(!idr_is_empty(&pn->l2tp_v2_session_idr));
++	rcu_read_lock_bh();
++	idr_for_each(&pn->l2tp_v2_session_idr, l2tp_idr_item_unexpected, "v2_session");
++	idr_for_each(&pn->l2tp_v3_session_idr, l2tp_idr_item_unexpected, "v3_session");
++	idr_for_each(&pn->l2tp_tunnel_idr, l2tp_idr_item_unexpected, "tunnel");
++	rcu_read_unlock_bh();
++
+ 	idr_destroy(&pn->l2tp_v2_session_idr);
+-	WARN_ON_ONCE(!idr_is_empty(&pn->l2tp_v3_session_idr));
+ 	idr_destroy(&pn->l2tp_v3_session_idr);
+-	WARN_ON_ONCE(!idr_is_empty(&pn->l2tp_tunnel_idr));
+ 	idr_destroy(&pn->l2tp_tunnel_idr);
+ }
+ 
+-- 
+2.34.1
+
 
