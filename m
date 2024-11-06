@@ -1,125 +1,148 @@
-Return-Path: <linux-kernel+bounces-398083-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398082-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9C149BE50C
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 12:00:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7587F9BE508
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 12:00:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 05BB31C214C7
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 11:00:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A71231C20C5E
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 11:00:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52F411DE4E4;
-	Wed,  6 Nov 2024 11:00:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AAA81DDC30;
+	Wed,  6 Nov 2024 11:00:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="VOcXmTqa"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T6JFf3Qy"
+Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 300F41D7E4C;
-	Wed,  6 Nov 2024 11:00:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F17C142E86;
+	Wed,  6 Nov 2024 11:00:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730890835; cv=none; b=rBLsy8LJbIzgpscoRWlVQuxPPw9RbXc2HdtSl7vXkTG0BJgKSD76aRe87HqKl7uf6wJeIr7dYXykwVq12zBjboOg/n5vGaiQUnD0wJ3ORNoyArPWG91DmPh1jmfJHEo7Qhbx+7l7yGf6f3GsbhsqWnDnhaezIE1E7CkGi9vrnL8=
+	t=1730890822; cv=none; b=BzLCG9dIR0uHZUBZsRfpyMNLQgLtK/p3WWZgz4QDMgXl8PUiUXzrHZ6d4iLXEhTSe2IVQgXDmoTZsLTm8mfSRbeAHJEIwZovjZKLx2zdYNZ8paeJx6v4zO1vLU9CSaqjIInRl2oY1HyooWHcN9icHYCvm1B0tj+2zBxlbRfBt5U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730890835; c=relaxed/simple;
-	bh=WHO6Fbf0Co5ZuUbgBqbbt54asoPO4yQNGslciR+0aMU=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YCr0H68zJAPX5zByoJ1okcC52iLj3z/qMjPD7W8M9sx/hJHlebEHlgfvQDyybT6JJ+QNo28JIoxVF8+ntX+KlTx3fwuIeBGR+rJ5UHSYPwqm6XYQh40r/n82uFL20j2V/oVeczLRIdito/ozItN6J309xrWQnTyM0kkGU5FSyks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=VOcXmTqa; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A663JYd024800;
-	Wed, 6 Nov 2024 11:00:27 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	8XZ5kGEBmjfULP5jtE/qgR3t1KVn5Jt5Sd1mWcR9+Fo=; b=VOcXmTqabCWFg3Ii
-	MPuarkM2YLoY0MoxX7SdC7AGLiJDqEh+FQ3gPc5m3C8JAngwiXwESJX0XQmGX35B
-	wlcuM6FTrc1DE54b7CWr42zA+ZCNCTQBXCCiMw2ifaRFVompY+QaNQLlvAdyLpOK
-	Fj+lz6J5Qse3R9ww5Xf+H1vM/GJLSyGkiBR/+CGpgcEUs3Xv8DVbZlF1ZGiN9M70
-	WTgSAWcobr/xkbefzcWizMxg/t647LRegsdDbyMopJQJ/RTE/4qov00zzG3WiMPx
-	obSQsbqVCebpm4HJfbNK6sQjd4mgPJ1S3PIw2wiQMTcYr5dO0rJFqXRIJUTHHzdn
-	0EfB5A==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42r2ugrrxh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 06 Nov 2024 11:00:27 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4A6B0QmI011476
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 6 Nov 2024 11:00:26 GMT
-Received: from hu-yrangana-hyd.qualcomm.com (10.80.80.8) by
- nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Wed, 6 Nov 2024 03:00:22 -0800
-From: Yuvaraj Ranganathan <quic_yrangana@quicinc.com>
-To: Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller"
-	<davem@davemloft.net>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Vinod Koul
-	<vkoul@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-crypto@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <quic_yrangana@quicinc.com>, <quic_sravank@quicinc.com>
-Subject: [PATCH V1 1/2] dt-bindings: crypto: qcom,prng: document QCS8300
-Date: Wed, 6 Nov 2024 16:30:01 +0530
-Message-ID: <20241106110002.3054839-2-quic_yrangana@quicinc.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241106110002.3054839-1-quic_yrangana@quicinc.com>
-References: <20241106110002.3054839-1-quic_yrangana@quicinc.com>
+	s=arc-20240116; t=1730890822; c=relaxed/simple;
+	bh=vuBjUAG4of3IMkztyA2vDfBAbLYce7Bwx42yfMGiEQQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RLuZ4hOBjtvYV/goOBO/YXzlDxjS8NIBEfCaQQDoTbMTJHrlRJh3WO7zkKSSWHJ6di4hIJt3XoMbcCSzMg4v4qOhT15laEd1Vt2B45MLiEoD+BWqF7JW66mgZFHt9KrjXidilEa9bazpNq/doT5eB/imcwnwtRA+CzeqwqnUU+E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=T6JFf3Qy; arc=none smtp.client-ip=209.85.222.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f170.google.com with SMTP id af79cd13be357-7b14077ec5aso64981885a.1;
+        Wed, 06 Nov 2024 03:00:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730890818; x=1731495618; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vuBjUAG4of3IMkztyA2vDfBAbLYce7Bwx42yfMGiEQQ=;
+        b=T6JFf3Qyul05Ge72AZjl2KFP8h3KtyjIVdtJgOH0syT0xK5MW7CWKAjkrXEh8LcvF3
+         k5KRiMGvzNqg6eyPFf2bfmixhiIUkO+9QaQIbgOsJAigw6d7v1PrRphO7MP5qGhY2aQL
+         Vdi3qLrEsw73k1bd6mJa/Q3okdHr0lcGfoPwz/5+d/Xu3AnVa2g1e/hos7ypBxZSNAqj
+         iMFFxxs5/CotgSkNqRnuR7bpPGVO/onMawW4fNPm//b1jmj+iXop89GekRMZeeClqwkD
+         DEVlQvKRpUXi3C9Y+N023z7la606SZcrdybqg9D5a5jXH4ZFL6mivV4UznS3gQY73mW6
+         vCkw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730890818; x=1731495618;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=vuBjUAG4of3IMkztyA2vDfBAbLYce7Bwx42yfMGiEQQ=;
+        b=BRC8133ph2sOfUUMYZA7XCi5Q4sAikxTZYYVfmLRAatQgG1ql2q3zqAOgld8dKYPa+
+         bjXyWiuaPiTU8CLo9tBowDCPf3jysrTGjcWwkHCqmG7xsxBD2P23n2Oi/7xQ8+X6VVUc
+         bg7r0UcovzGKaHGvcHDyiZ1BT3C11Ab2I9D6WD8M1+iFx8jmInnR8JBO5j8b6m7/sM/W
+         OZzCKFNLuHX9kkarD5QRrJNzNd9lWm6fu0M8hgYZjOY8/2C+uvXUdxZGafbuVhFpzO1q
+         5UWZ01Hby8x+KbRueWzYqGOzTkMGw9yzMpyzJigjck8CnXOjUG4glM61g0xA7n/oQaKE
+         uy+g==
+X-Forwarded-Encrypted: i=1; AJvYcCVSCEFcNJY91X8Q7HwzMNsTUef4mSlmTY8tWqcaKKJUxXjNl0SMVlwmuKR9Ov9WD/VoxuF4h+YcfhiA6aHE@vger.kernel.org, AJvYcCWiBthabtHdikiHGiYwVNMsyoOmU5wyXs9MwWBfKgYc8T3yJo2IOmJzZabsDSi+HKIK9ieutA4Low==@vger.kernel.org, AJvYcCXN8hy5ZuBQ/m/f4OSmXfHS5nP7N9krLZXxJguBDIKEFfy1DubfzCmDowamD1EBPEBh22r8N6450P77xPeOkA==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxbazq175N8COuEz+3nr+iz5aVHNu1LWpI0aYMItxQzZmuW7w8D
+	soivZaE7ikkCWHf9pX87LTCrQLWgKem9FXh5aUcUVtNrfoP3klXR3YtxMuMYav5uXZ0XqpiELwT
+	pL+DVJ1oSyG+5td55LAobgbMF1D8=
+X-Google-Smtp-Source: AGHT+IGDQs3w2IhFZMBdFgltaWbiHO1oZQbH+OPxiNQfs+uts2rlZXy1unuWCu0Jv8a0wzA6Opjm+/x4F4o5IEVUdV0=
+X-Received: by 2002:a05:6214:3b88:b0:6cb:c661:49ce with SMTP id
+ 6a1803df08f44-6d38b22de8bmr31721206d6.23.1730890817791; Wed, 06 Nov 2024
+ 03:00:17 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: MJc86g3nDtU_9bsd8pEGhmbCKEnq4vNr
-X-Proofpoint-GUID: MJc86g3nDtU_9bsd8pEGhmbCKEnq4vNr
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- adultscore=0 mlxscore=0 suspectscore=0 priorityscore=1501 phishscore=0
- clxscore=1015 impostorscore=0 malwarescore=0 bulkscore=0 mlxlogscore=999
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411060089
+References: <20241106-overlayfs-fsopen-log-v1-1-9d883be7e56e@cyphar.com> <20241106-mehrzahl-bezaubern-109237c971e3@brauner>
+In-Reply-To: <20241106-mehrzahl-bezaubern-109237c971e3@brauner>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Wed, 6 Nov 2024 12:00:06 +0100
+Message-ID: <CAOQ4uxirsNEK24=u3K-X5A-EX80ofEx5ycjoqU4gocBoPVxbYw@mail.gmail.com>
+Subject: Re: [PATCH] overlayfs: port all superblock creation logging to fsopen logs
+To: Christian Brauner <brauner@kernel.org>, Miklos Szeredi <miklos@szeredi.hu>
+Cc: Aleksa Sarai <cyphar@cyphar.com>, Jan Kara <jack@suse.cz>, linux-unionfs@vger.kernel.org, 
+	linux-fs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Karel Zak <kzak@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Document QCS8300 compatible for the True Random Number
-Generator.
+On Wed, Nov 6, 2024 at 10:59=E2=80=AFAM Christian Brauner <brauner@kernel.o=
+rg> wrote:
+>
+> On Wed, Nov 06, 2024 at 02:09:58PM +1100, Aleksa Sarai wrote:
+> > overlayfs helpfully provides a lot of of information when setting up a
+> > mount, but unfortunately when using the fsopen(2) API, a lot of this
+> > information is mixed in with the general kernel log.
+> >
+> > In addition, some of the logs can become a source of spam if programs
+> > are creating many internal overlayfs mounts (in runc we use an internal
+> > overlayfs mount to protect the runc binary against container breakout
+> > attacks like CVE-2019-5736, and xino_auto=3Don caused a lot of spam in
+> > dmesg because we didn't explicitly disable xino[1]).
+> >
+> > By logging to the fs_context, userspace can get more accurate
+> > information when using fsopen(2) and there is less dmesg spam for
+> > systems where a lot of programs are using fsopen("overlay"). Legacy
+> > mount(2) users will still see the same errors in dmesg as they did
+> > before (though the prefix of the log messages will now be "overlay"
+> > rather than "overlayfs").
 
-Signed-off-by: Yuvaraj Ranganathan <quic_yrangana@quicinc.com>
----
- Documentation/devicetree/bindings/crypto/qcom,prng.yaml | 1 +
- 1 file changed, 1 insertion(+)
+I am not sure about the level of risk in this format change.
+Miklos, WDYT?
 
-diff --git a/Documentation/devicetree/bindings/crypto/qcom,prng.yaml b/Documentation/devicetree/bindings/crypto/qcom,prng.yaml
-index 048b769a73c0..2c959162e428 100644
---- a/Documentation/devicetree/bindings/crypto/qcom,prng.yaml
-+++ b/Documentation/devicetree/bindings/crypto/qcom,prng.yaml
-@@ -17,6 +17,7 @@ properties:
-           - qcom,prng-ee  # 8996 and later using EE
-       - items:
-           - enum:
-+              - qcom,qcs8300-trng
-               - qcom,sa8255p-trng
-               - qcom,sa8775p-trng
-               - qcom,sc7280-trng
--- 
-2.34.1
+> >
+> > [1]: https://bbs.archlinux.org/viewtopic.php?pid=3D2206551
+> >
+> > Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
+> > ---
+>
+> To me this sounds inherently useful! So I'm all for it.
+>
 
+[CC: Karel]
+
+I am quite concerned about this.
+I have a memory that Christian suggested to make this change back in the
+original conversion to new mount API, but back then mount tool
+did not print out the errors to users properly and even if it does
+print out errors,
+some script could very well be ignoring them.
+
+My strong feeling is that suppressing legacy errors to kmsg should be opt-i=
+n
+via the new mount API and that it should not be the default for libmount.
+IMO, it is certainly NOT enough that new mount API is used by userspace
+as an indication for the kernel to suppress errors to kmsg.
+I have no problem with reporting errors to both userspace and kmsg
+without opt-in from usersapce.
+
+Furthermore, looking at the existing invalfc() calls in overlayfs, I see th=
+at
+a few legacy pr_err() were converted to invalfc() with this commit
+(signed off by myself):
+819829f0319a ovl: refactor layer parsing helpers
+
+I am not really sure if the discussion about suppressing the kmsg errors wa=
+s
+resolved or dismissed or maybe it only happened in my head??
+
+Thanks,
+Amir.
 
