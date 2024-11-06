@@ -1,793 +1,259 @@
-Return-Path: <linux-kernel+bounces-397401-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397402-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96CF49BDBAB
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 02:56:40 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 592CE9BDBB4
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 02:59:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA22F1C22604
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 01:56:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE0341F24070
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 01:59:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D78F118CC07;
-	Wed,  6 Nov 2024 01:56:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3607F18D643;
+	Wed,  6 Nov 2024 01:59:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="qeqP/Ea8"
-Received: from mx0a-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="GjBw6tTE"
+Received: from EUR03-VI1-obe.outbound.protection.outlook.com (mail-vi1eur03on2051.outbound.protection.outlook.com [40.107.103.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A99418C929;
-	Wed,  6 Nov 2024 01:56:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730858181; cv=none; b=DOlESbyKSE1slNNgRHdc2pjbBsIiihzE9JISQG5umSpmMG3VybQ1ixnMshTmX1zNxomfvzfFvzMKH3rY9jm2+ShD+DrTDv7MXjfdqFzCw+MdtPbgw5cC1skuKkYdJW6Q1IRbbzGSKTYXkoaP6EhJ+Cbja/GHwSy8PidXOj3nUSM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730858181; c=relaxed/simple;
-	bh=VggNMwTYLkcQhTUeBscdZY/E2QRoVI1RA7yxz/ifiHU=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=RzEyMriyvcFQc9gNdz04sJnYsTag2KZ+7xJ+Njtpqr1B17mWH/h3hHLDIWdi6cABLOX7XGo3ZAhc5AWVPRYQv0hGbY/naKINtyz+fJuF2khlNi6uSZ9KALHduOn37MD9H1iB1SZg4TWs+7Pcnpf+TQ87nl8dJwhuVr8BTKJUOhg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=qeqP/Ea8; arc=none smtp.client-ip=148.163.135.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
-Received: from pps.filterd (m0167089.ppops.net [127.0.0.1])
-	by mx0a-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A60Lt73032760;
-	Tue, 5 Nov 2024 20:56:01 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=DKIM; bh=pcTty
-	4vYcZh33FRR7YJKOwpf8Ed/XG/l2CGCQoF5MO4=; b=qeqP/Ea8Tqnpb3APd1RTk
-	4eUXWpdzbhsBHYeg90jFvsmMZAptevSDGYRSUnS5iYEYDePufkBVmnd+4uL5oUQU
-	cMxbppwqLHPHrT704a7Lq77W6YYZbgFXIg30MAH95xHUyElJ8rzS0VysSHCTqSUE
-	mVjQlmk/3k8OoScVqyXxIhHzn5mduG15SRjyYJqS35TCbqNrGLlbJOJ4TTAjjr45
-	YXBC0WDgNoKQLtDdVOMmmYEm8tADupNYqNkkR3IWSMf595oeudHdZmk8kfwQMuDz
-	vZHlX64L78PoeNIx5yH7eLKzDYtqepqU1PY5mnksEJW5ToBOES5VkXxgPCjthEYk
-	w==
-Received: from nwd2mta4.analog.com ([137.71.173.58])
-	by mx0a-00128a01.pphosted.com (PPS) with ESMTPS id 42qf1dc5a9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 05 Nov 2024 20:56:00 -0500 (EST)
-Received: from ASHBMBX8.ad.analog.com (ASHBMBX8.ad.analog.com [10.64.17.5])
-	by nwd2mta4.analog.com (8.14.7/8.14.7) with ESMTP id 4A61txeq009778
-	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 5 Nov 2024 20:55:59 -0500
-Received: from ASHBMBX9.ad.analog.com (10.64.17.10) by ASHBMBX8.ad.analog.com
- (10.64.17.5) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.14; Tue, 5 Nov 2024
- 20:55:59 -0500
-Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx9.ad.analog.com
- (10.64.17.10) with Microsoft SMTP Server id 15.2.986.14 via Frontend
- Transport; Tue, 5 Nov 2024 20:55:59 -0500
-Received: from kim-VirtualBox.ad.analog.com (KPALLER2-L03.ad.analog.com [10.117.223.23])
-	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 4A61tgLY006618;
-	Tue, 5 Nov 2024 20:55:50 -0500
-From: Kim Seer Paller <kimseer.paller@analog.com>
-To: <linux-pm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-CC: Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Mike Looijmans <mike.looijmans@topic.nl>,
-        Kim Seer Paller
-	<kimseer.paller@analog.com>
-Subject: [PATCH v2 2/2] power/supply: Add support for ltc4162-f/s and ltc4015
-Date: Wed, 6 Nov 2024 09:55:37 +0800
-Message-ID: <20241106015537.6189-2-kimseer.paller@analog.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241106015537.6189-1-kimseer.paller@analog.com>
-References: <20241106015537.6189-1-kimseer.paller@analog.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0167218C93F;
+	Wed,  6 Nov 2024 01:59:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.103.51
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730858387; cv=fail; b=CinQvipfvGF5hjOdFWQ2FZErfwjNi9so4/E9kDdCdYIWfifd6Fxo5hqpMLKczm/1PAmOP0Nuy2rPeKeRrj9RTSfPxb3zKrcvx4z7abz0K7e2uQgWyv6uIAI9L+37/dq9DrI41AuY7lWf6JzWQD1uDr4Q0dDpDaX0lfXFEGfPfB8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730858387; c=relaxed/simple;
+	bh=x7bpjBEgZ0OPQl2CLQTgw8N74gGQE2666b0SjdUVBao=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=qzh5A9Bf4k56YXB6skzw8aFpCqHBxE7XVkFGTB3gIxoX60kR2gRL1FLZX6bfFOEk+E/OKmBCCcuTIMsFaSxcTq0TjDt/Uwcp9dlZlRVgBG6CoB1jkWiq5oy4baPs4ebZKoU9Ga9PZy+KBUlY5WLiyTLbO0Ok215+jTE5YPW6LEQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=GjBw6tTE; arc=fail smtp.client-ip=40.107.103.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=I9FI5zwhyWizLAiNfXix1X364F9Ma+27vnReOFCcQ/P9qRldAPjcLgk//B0bRZ70kBdiPXPc8Rv0ro34inq5hnuPe8Q7ghQ9GGLcmfsPpiHSFvXueMpKo+KnRXzPm60Lzm02VSGV89D4fVfXC/tf/f2Xmn6S81nP/HZGscrVomonR9INeoIXreXxo51BYEoeRaVRmuakAjlWwFMDjIziGOOOmVhp4AVhZyayrwWjqvSMZGK4IUZupCir3CSBtKIqPtUW60f0kz6l+1gWz8YVDGS/Z4PQuvYkHlJ9TgYdg6u2mVA/GmU4oYcMmZCLdkVfoyPcCqd8odOW5IHEYL7kUw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=x7bpjBEgZ0OPQl2CLQTgw8N74gGQE2666b0SjdUVBao=;
+ b=TD6gEciCmCHzr75a6lRtLQrPq4jpB89dspG5ZFPt40JwulYGBxkS9v/lbu7CEZVFrtm5VOMPa83/HxmJLNq3iDHSyPs5c4XABB4DcLdhe2iDAu6GFT9CsvKzM3blP063betjW7tEOknnthvr3GqqSuKfpXhKu52oFCGsKUbZ4LEFKcqp85XUJHiqBJiuAoLvD+3R3tD4GGq9zw9GCW+4Pvt1f3xfK/JDTmLm2TvP+QzafNwbll7WJqDHs3RTaNNMWBBZPYyuliNX8bOj85BrtD1rxaeUX4niAylA3bXOfQcISrR8Z6+0Aq5efaKl//RJ8Gb9IS8POkB4ewslCJlhYA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=x7bpjBEgZ0OPQl2CLQTgw8N74gGQE2666b0SjdUVBao=;
+ b=GjBw6tTE76zNvkjDsSIoCK7F2XS6kiabkwAa+ASxn4l/ZxZ6wjgsrzxSJZXH1fFkUUSuQOW69ui5CvoboB1bq8RdgrYR3KKzFj/k0ayCbHHRmoDcjknCMFzxHtyd7CnpTj4CJy2SiKMUZjXxQwLFFx6wZ73r44R7T8NESQPzXBtmPMm97DG6+hT9cxc1kOJFr6mZF/24Z8kQVyFbvLrd9d9x8rLUHypnfWE4ISNrD3/Vrt4+i7tAz412InKahoXkkIWv1HVPVSSeCPMT3BUBcFoLVGq0uJGtpZ0sdVae0ezLWwaLw89Ky7v9gYpbbiYiMLPixXT+RptAIpqnkQeTWg==
+Received: from AS8PR04MB8676.eurprd04.prod.outlook.com (2603:10a6:20b:42b::10)
+ by AM7PR04MB6775.eurprd04.prod.outlook.com (2603:10a6:20b:102::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.19; Wed, 6 Nov
+ 2024 01:59:41 +0000
+Received: from AS8PR04MB8676.eurprd04.prod.outlook.com
+ ([fe80::28b2:de72:ad25:5d93]) by AS8PR04MB8676.eurprd04.prod.outlook.com
+ ([fe80::28b2:de72:ad25:5d93%6]) with mapi id 15.20.8114.028; Wed, 6 Nov 2024
+ 01:59:41 +0000
+From: Hongxing Zhu <hongxing.zhu@nxp.com>
+To: Bjorn Helgaas <helgaas@kernel.org>
+CC: "kwilczynski@kernel.org" <kwilczynski@kernel.org>, "bhelgaas@google.com"
+	<bhelgaas@google.com>, "lorenzo.pieralisi@arm.com"
+	<lorenzo.pieralisi@arm.com>, Frank Li <frank.li@nxp.com>, "mani@kernel.org"
+	<mani@kernel.org>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "kernel@pengutronix.de"
+	<kernel@pengutronix.de>, "imx@lists.linux.dev" <imx@lists.linux.dev>
+Subject: RE: [PATCH v2] PCI: dwc: Fix resume failure if no EP is connected at
+ some platforms
+Thread-Topic: [PATCH v2] PCI: dwc: Fix resume failure if no EP is connected at
+ some platforms
+Thread-Index: AQHa3AEqv5bRdDxqKkSUwsC4eegPdrKp/GuAgAAjY0A=
+Date: Wed, 6 Nov 2024 01:59:41 +0000
+Message-ID:
+ <AS8PR04MB8676998092241543AEABFAAB8C532@AS8PR04MB8676.eurprd04.prod.outlook.com>
+References: <1721628913-1449-1-git-send-email-hongxing.zhu@nxp.com>
+ <20241105232701.GA1495103@bhelgaas>
+In-Reply-To: <20241105232701.GA1495103@bhelgaas>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: AS8PR04MB8676:EE_|AM7PR04MB6775:EE_
+x-ms-office365-filtering-correlation-id: f99edc40-eb81-4b9f-a400-08dcfe06ad80
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|7416014|366016|376014|1800799024|38070700018;
+x-microsoft-antispam-message-info:
+ =?gb2312?B?cDZmTEp5Zzh2SUZRYTlNc2xWRHVaSFFHZ3I0ZWtObjAvak1pcU9xUHkySlZn?=
+ =?gb2312?B?R1dLanNUeDFKNFZESStFbUE4OGlDdS9mWGl0Sk5aUHdPSGJMWE5TMDlvOHlL?=
+ =?gb2312?B?dlNXMitka01nTGZKSzRGbzl5dVZGWElWYm1jYmpFNVd4dGlMSnFYalFtMDJB?=
+ =?gb2312?B?dW1wdEM5dllCOWxTQ284UWxJTCtQUGlMb2h2a1RBckN2WkRHcnY5c3lIZVYv?=
+ =?gb2312?B?bUlYV2tiQ3BPTHUvVWtjRU55YW56emNWSnhUYVhRL2pYNkZhTkdlUFNKa2hZ?=
+ =?gb2312?B?RnVDbURGNmVqb0Y5ZHNBWkZVZmpORU5zTnVmK2lpUDF0a1VJdUk2Zkg0bWpK?=
+ =?gb2312?B?WUM2RWo3TGlxVEFMVlI2Tm5PTWhnMkxwbTl4ajRoa0ZRR2syZksyU0V6U3pW?=
+ =?gb2312?B?cTcxc0dyVzZWem9xdnhtckxlYndiTXZwUm9JRnNGelhvVGljM2RveStYbzFN?=
+ =?gb2312?B?NW9PdTRWK084Rk1TVUUzWlczcGJ4QWdOdGNFY2M1NlZmQ3Ewb3NTUW4yOWd0?=
+ =?gb2312?B?NnVQb0plVUVtS3pLQjlRbnNMck9kdm1VSjREWUYvSXJpa3BxSnZFWk9lc000?=
+ =?gb2312?B?dlR6QWlsaldhQUdJWHR2c2lVNFF6dW1YWUJCdk8zOHNYSFc5WHFPVW80OEJG?=
+ =?gb2312?B?alQyM015TGJCY2h0YnpZUjYzelJST2F2d1dieXMwZlN4NWNhWHBkK0tsNW50?=
+ =?gb2312?B?R2ZkWGxsSGRLK2t4YzdzOW1pcnZBbS9OMHh3UkNmVlB2WHFjOTZhSFRGWGdN?=
+ =?gb2312?B?THlBcCszSjJBNUNrK1VzRXIzVjFYY2w3ZGVOZzYwT2o3TXVoMU1WOTRGb2dU?=
+ =?gb2312?B?YjhPcUR3QWdnbEhwdlUzR1VOYlZRbkNwa2Q5L0xmajF3TW5wY1NJcUtDeTRk?=
+ =?gb2312?B?TjVYcWJBWXIyaHArcmlWQXYwUjVPZGhnd1FtK3hwTWtsRGtQT3ViTEdNNjJ0?=
+ =?gb2312?B?MC9LeHA5clkycTYvN1NkdlovWU1YakZNMzI0VVRVMWM3dk1hdEtwZWU2MEdt?=
+ =?gb2312?B?Umh3bll5UGc3WlVSSnBMenpnaE4wWHl1NFVwMXdHbW5hdDRJaG9JbmkxeTha?=
+ =?gb2312?B?SVJZUTVjQ3g5S2w5Z0wxS1oxYkF5a2R2dVlnbDNBeXorUVJJVFN2cC9mMjlK?=
+ =?gb2312?B?UzNDTEJ5My8yRzl0VTVSYlptbkV0bEw2R1A4dzFsd2FITlM0bTUzRXI2WjdT?=
+ =?gb2312?B?aU1EcmI4aXVkMzJYaXJvUThxa0VpSTRoMGtiQk5SQk1YQ1QzdGZseHZzRTJp?=
+ =?gb2312?B?and3ajZPdFkrak5FMFRBUk5hY1V1RzRtM0hTOFBrd2RLRCtYMGwxeGRKcFRW?=
+ =?gb2312?B?UkNqUzd0Z0xpOEFpK0NOaE9sWmZFVjhmUEZIUUlvMU9mcU1IWnZuRUVSMnhi?=
+ =?gb2312?B?RjgxSXlFWGlsbmZwSU4xRi8veGw5MURuTCthdHJYaU15bURCS2RkN0FtS3JI?=
+ =?gb2312?B?Yk1uRzBLVGhRWGlFanFBeUJGQjRTNVRPWUlPSVFKRUF0cTAxN2lRSVNMaU5T?=
+ =?gb2312?B?RFBSVlhqZU0yZzJ3TmpEeDRtSGxOeTg3M21EUWJMWW5iQ1FHaHFDc0hlcC93?=
+ =?gb2312?B?RTFEWEY3anpZM3hpeVFjYmZaNzFiamYrNzQ0UFNBVWVCV2lqaDE2K0Z0dEho?=
+ =?gb2312?B?MExoUkVUYnY3QjVOelNSZldmWEk4RHRjWitZTDI3ZWtsQTNkQmVPUDVtUVc1?=
+ =?gb2312?B?UVZ4d2lEYmNtVWVGZU55WUM5WlkvclNWMlpETlZrY1lkTi9TUkEwQTJQNnBq?=
+ =?gb2312?B?c3Y1UXQ2M1FxZW1sMjJQTmNRRXhwcTIyWVN2bTBDdEJ0eWRzWVhWNnVNd1pH?=
+ =?gb2312?Q?JwfqzaVbiZDPdcFXEUSM3DSguKuOfoDk63YeE=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:zh-cn;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR04MB8676.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(366016)(376014)(1800799024)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?gb2312?B?MW8yVk9DVkhCYzdITHZWaVRMMklxT2lDdDZlUU1DSnZiL3UvRFVuQVlSTzVD?=
+ =?gb2312?B?eS9NTEhhSlE0YWlYK1h3QWFoeUZUZ0RESzBYMmV5UDIxSU94L1Z2aXQ2dFdl?=
+ =?gb2312?B?dnpvQThheUl0MWw4L0ZMN3d3ZzhYRUZNZHlFVzBTQnZGMU4vVllFQWxwRGFy?=
+ =?gb2312?B?VTNRZlFRczNXS0hCMFVsNXc0K1BvSDJ4RGFTSW9zT0d5ZThDTC9Hc0xJUjQy?=
+ =?gb2312?B?ZU51ZUpZUGVSZUNOSjhJc0ZrYWNFcGlOL1ZlQStPaWR4TkVIa1hUSkl6ek5u?=
+ =?gb2312?B?VG45ZXVQcVp6dGpHNDN0bFpJYUtOUFVOSTFvT0V1MGFuQnp4WW4rVW5BNU5B?=
+ =?gb2312?B?ZkNIYTBnZlBtSW5YOWpDVkVkREs5MFJlQWFnYWNPTGtDL2x3Q1AxdW9uci8z?=
+ =?gb2312?B?MU5hZ2lheDF1ZUxONFQzL0xia01WSzJZVGhEbHZRNFdxb1RqNitiWlRLUHh3?=
+ =?gb2312?B?dHpUV1pPV0h3SlpLRlYxL0I2SUNrUzdOeE5MWE02NjhtdmNLTHN5K2JLRWtM?=
+ =?gb2312?B?SHRsUnNkYytCV25aUzkybHVyUlA0dHE3ejF3MmJsNWFiMlZpTDFwWlRNd2ll?=
+ =?gb2312?B?OTM1TVNONnloQlp1OGVMWUdKYU90U05oejRvK2ZpLzdoTEIvbjNyWGpmWFJw?=
+ =?gb2312?B?S1duWDdZS0s3MHBvR3dPVEZ4QnNKd1B0bG4wN2UwMnR2eUNDSFhJTWk0OWN6?=
+ =?gb2312?B?cktLallPbllLd3NGclJETkVxMHdkRXVpbjdpeUpIS2MreFhiajRwWHlDTGdK?=
+ =?gb2312?B?cVpSeW1ocGNRMFJJci9rSWc2bi9VLzhCYXpyOTVrMklTOW9UbysyRUtUUUxT?=
+ =?gb2312?B?WmtUSnpZY3NoTisrQ0ppTThJYUlpUTFWN3V5NU5RbmUwSmJ0ZkVNWi9sWGt3?=
+ =?gb2312?B?RU9xNnRPcm5LZ0lWSjJrQkhoNlBrMzFNMnVyNnpOSGZUb0lBWGNoMmtoVTdw?=
+ =?gb2312?B?ME1JZlQ3c3p4STFTYWhDUTlFVlNxUEw1VlBOZ0hrQk5YRXBkbE9HeS96R3Zs?=
+ =?gb2312?B?Sno3YzE2ZDN2aXFjMU1LNjczb3Nmb25rOHFEeVR4NFdHMkxkYVBxbUlBZ28w?=
+ =?gb2312?B?SUd2eW1IVkFMWTA4NHd5NUIybFk3TzdObjBWUTl5aXgwZW5FUjN2di9MTlcz?=
+ =?gb2312?B?RDUvSnEvdWdCcUU0bFkrRDZVaDBPV3o4QndpejhvZVQ0SXQzMmxvaVkwcDlX?=
+ =?gb2312?B?cjVuUC9keUFqVm5aV28yaE16WnRBTkpHRWU3ZWpIRUIrRjFPRnlPTDlHRzNh?=
+ =?gb2312?B?ODVGMFZDczBLbFBMSFRvQmNHSFRWNDZMZFJaelpYVFVWcmxLWUh2eDVvWEZy?=
+ =?gb2312?B?ZWROY0tUN05uOWtJMEVhelFGTDFkSStSREMxR1NjdGFqV1hVUzNKaUhzYjkr?=
+ =?gb2312?B?OElCa2dEc0NVbnZqamZySExBek0xUzBTcXREUE55SVA5SEtqcExJa2kxRVdk?=
+ =?gb2312?B?S2x4ZXh6QU05bUdHSmJCdnFXLytFcVNGYkFEdGlCYm8zMGZEbnRyN1liY0Nm?=
+ =?gb2312?B?VFZrYUFKT25sQXpzWWRSUGZTYTc1ZWhZTXNuYjBrV0ZHNTFWWjdvTHNZeTlT?=
+ =?gb2312?B?bXQ5NDBNUE9kcDg0VjZjRHk0a1lMTCt0MVVPeVNDRVdRd1U4ZHJLMVFJTCsy?=
+ =?gb2312?B?d1hwZHRrVXZncEpUNTZYcW5hNXhuNTRCYWtSSUFPbXR1dm1CSU9SUDZ5dVZC?=
+ =?gb2312?B?Njg2M1E0QjFDcDJYV2V2WGNUbzg1OWJtMWpZc2ZPelNUcG1nT2hUUjBjYld4?=
+ =?gb2312?B?elJQNGpPaGZ4M0ROK3p3b25BOEt6ck9PblNsU056Rm5NekFvVmwxQXBLcVV0?=
+ =?gb2312?B?WFA1MWFpVDZzY1BWODBOYVlIeTJ5cHZUOGNhVTlFQXdEWjZVTmRNTHlQdHVC?=
+ =?gb2312?B?b01qYzFES3hqTHJicVVrZ2lhc090QUMwV0cwWkNVZ3hrRDdPam1KdzlISWpF?=
+ =?gb2312?B?cnNUSHlKZU5xa2FTMHlxVmx6bnlZbi8yKzNoVlNVellvcloxWFhMMGNpNDhk?=
+ =?gb2312?B?V3NFWk5UcWZhdFVyUnRtaXMzZG1JQXZnSjJaZFU5LzVldmNGVUN3R0t6eGFa?=
+ =?gb2312?B?UW9Hb2VsOGlSek45dWdESzk4TjUzcmU2WWxKOTgxSWdJNDBoVk5UZmNPeXRs?=
+ =?gb2312?Q?GZFX6w+phF+X5J77Z+0OLYVup?=
+Content-Type: text/plain; charset="gb2312"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ADIRuleOP-NewSCL: Rule Triggered
-X-Proofpoint-ORIG-GUID: MpWy9_RlJkkxHrIk6uc6okVVgKByJSlK
-X-Proofpoint-GUID: MpWy9_RlJkkxHrIk6uc6okVVgKByJSlK
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 impostorscore=0
- malwarescore=0 lowpriorityscore=0 priorityscore=1501 mlxscore=0
- spamscore=0 suspectscore=0 phishscore=0 clxscore=1015 adultscore=0
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411060014
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: AS8PR04MB8676.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f99edc40-eb81-4b9f-a400-08dcfe06ad80
+X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Nov 2024 01:59:41.3784
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 9x4QqK7F5l8f9aCd6Zpl5phRRC7nSnCgHJS5dq/iVuZeDlRHIHq+tuWXf3ml1z0FP3k9puEEuYX5/1wzGCvVPQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM7PR04MB6775
 
-LTC4162-L 35V/3.2A Multi-Cell Lithium-Ion Step-Down Battery Charger
-LTC4162-F 35V/3.2A Multi-Cell LiFePO4 Step-Down Battery Charger
-LTC4162-S 35V/3.2A Lead-Acid Step-Down Battery Charger
-LTC4015 35V/3.2A Multichemistry Buck Battery Charger Controller
-
-Add chip_info struct to hold the chip specific data. Modify functions
-for battery voltage/current, input voltage/current, charge voltage,
-die temp, and force telemetry to handle different battery chemistries.
-
-Signed-off-by: Kim Seer Paller <kimseer.paller@analog.com>
----
-V1 -> V2: Modified commit message describing differences between
-	  variants/devices.
-
- drivers/power/supply/ltc4162-l-charger.c | 434 ++++++++++++++++++++---
- 1 file changed, 383 insertions(+), 51 deletions(-)
-
-diff --git a/drivers/power/supply/ltc4162-l-charger.c b/drivers/power/supply/ltc4162-l-charger.c
-index 2e4bc74e1..9c9ea7c5b 100644
---- a/drivers/power/supply/ltc4162-l-charger.c
-+++ b/drivers/power/supply/ltc4162-l-charger.c
-@@ -1,9 +1,14 @@
- // SPDX-License-Identifier: GPL-2.0-or-later
- /*
-- *  Driver for Analog Devices (Linear Technology) LTC4162-L charger IC.
-+ *  Driver for Analog Devices (Linear Technology)
-+ *  LTC4162-L 35V/3.2A Multi-Cell Lithium-Ion Step-Down Battery Charger
-+ *  LTC4162-F 35V/3.2A Multi-Cell LiFePO4 Step-Down Battery Charger
-+ *  LTC4162-S 35V/3.2A Lead-Acid Step-Down Battery Charger
-+ *  LTC4015 35V/3.2A Multichemistry Buck Battery Charger Controller
-  *  Copyright (C) 2020, Topic Embedded Products
-  */
- 
-+#include <linux/bitfield.h>
- #include <linux/module.h>
- #include <linux/delay.h>
- #include <linux/of.h>
-@@ -47,6 +52,20 @@
- #define LTC4162L_VBAT_FILT			0x47
- #define LTC4162L_INPUT_UNDERVOLTAGE_DAC		0x4B
- 
-+#define LTC4162L_CHEM_MASK			GENMASK(11, 8)
-+
-+enum ltc4162_chem {
-+	ltc4162_lad,
-+	ltc4162_l42,
-+	ltc4162_l41,
-+	ltc4162_l40,
-+	ltc4162_fad,
-+	ltc4162_ffs,
-+	ltc4162_fst,
-+	ltc4162_sst = 8,
-+	ltc4162_sad,
-+};
-+
- /* Enumeration as in datasheet. Individual bits are mutually exclusive. */
- enum ltc4162l_state {
- 	battery_detection = 2048,
-@@ -75,10 +94,28 @@ enum ltc4162l_charge_status {
- /* Magic number to write to ARM_SHIP_MODE register */
- #define LTC4162L_ARM_SHIP_MODE_MAGIC 21325
- 
-+struct ltc4162l_info;
-+
-+struct ltc4162l_chip_info {
-+	const char *name;
-+	int (*get_vbat)(struct ltc4162l_info *info, unsigned int reg,
-+			union power_supply_propval *val);
-+	int (*get_vcharge)(struct ltc4162l_info *info, unsigned int reg,
-+			   union power_supply_propval *val);
-+	int (*set_vcharge)(struct ltc4162l_info *info, unsigned int reg,
-+			   unsigned int value);
-+	int (*get_die_temp)(struct ltc4162l_info *info,
-+			    union power_supply_propval *val);
-+	unsigned int ibat_resolution_uv;
-+	unsigned int vin_resolution_mv;
-+	u8 telemetry_mask;
-+};
-+
- struct ltc4162l_info {
- 	struct i2c_client	*client;
- 	struct regmap		*regmap;
- 	struct power_supply	*charger;
-+	const struct ltc4162l_chip_info *chip_info;
- 	u32 rsnsb;	/* Series resistor that sets charge current, microOhm */
- 	u32 rsnsi;	/* Series resistor to measure input current, microOhm */
- 	u8 cell_count;	/* Number of connected cells, 0 while unknown */
-@@ -108,6 +145,18 @@ static u8 ltc4162l_get_cell_count(struct ltc4162l_info *info)
- 	return val;
- };
- 
-+static u8 ltc4162l_get_chem_type(struct ltc4162l_info *info)
-+{
-+	int ret;
-+	unsigned int val;
-+
-+	ret = regmap_read(info->regmap, LTC4162L_CHEM_CELLS_REG, &val);
-+	if (ret)
-+		return ret;
-+
-+	return FIELD_GET(LTC4162L_CHEM_MASK, val);
-+};
-+
- /* Convert enum value to POWER_SUPPLY_STATUS value */
- static int ltc4162l_state_decode(enum ltc4162l_state value)
- {
-@@ -223,25 +272,83 @@ static int ltc4162l_get_vbat(struct ltc4162l_info *info,
- 				  unsigned int reg,
- 				  union power_supply_propval *val)
- {
--	unsigned int regval;
-+	unsigned int regval, chem_type;
- 	int ret;
- 
- 	ret = regmap_read(info->regmap, reg, &regval);
- 	if (ret)
- 		return ret;
- 
--	/* cell_count × 192.4μV/LSB */
--	regval *= 1924;
--	regval *= ltc4162l_get_cell_count(info);
--	regval /= 10;
--	val->intval = regval;
-+	/*
-+	 * cell_count × scaling factor
-+	 * For ltc4162-s, it uses a cell_count value of 2 for each group of 3
-+	 * physical (2V) cells, thus will return 2, 4, 6, 8 for 6V, 12V, 18V,
-+	 * and 24V respectively, and has to divide by 2 to multiply the scale
-+	 * factor by 1, 2, 3, or 4 to represent a 6V, 12V, 18V, or 24V battery
-+	 * respectively.
-+	 */
-+	chem_type = ltc4162l_get_chem_type(info);
-+	switch (chem_type) {
-+	case ltc4162_lad ... ltc4162_fst:
-+		regval *= 1924;
-+		regval *= ltc4162l_get_cell_count(info);
-+		regval /= 10;
-+		val->intval = regval;
- 
--	return 0;
-+		return 0;
-+	case ltc4162_sst ... ltc4162_sad:
-+		regval *= 3848;
-+		regval *= ltc4162l_get_cell_count(info) / 2;
-+		regval /= 10;
-+		val->intval = regval;
-+
-+		return 0;
-+	default:
-+		return -EINVAL;
-+	}
-+}
-+
-+static int ltc4015_get_vbat(struct ltc4162l_info *info,
-+			    unsigned int reg,
-+			    union power_supply_propval *val)
-+{
-+	unsigned int regval, chem_type;
-+	int ret;
-+
-+	ret = regmap_read(info->regmap, reg, &regval);
-+	if (ret)
-+		return ret;
-+
-+	/*
-+	 * cell count x scaling factor
-+	 * ltc4015 lead-acid fixed and lead-acid programmable corresponds to
-+	 * 0x7 and 0x8 chem respectively
-+	 */
-+	chem_type = ltc4162l_get_chem_type(info);
-+	switch (chem_type) {
-+	case ltc4162_lad ... ltc4162_fst:
-+		regval *= 192264;
-+		regval *= ltc4162l_get_cell_count(info);
-+		regval /= 1000;
-+		val->intval = regval;
-+
-+		return 0;
-+	case ltc4162_sst - 1 ... ltc4162_sad - 1:
-+		regval *= 128176;
-+		regval *= ltc4162l_get_cell_count(info);
-+		regval /= 1000;
-+		val->intval = regval;
-+
-+		return 0;
-+	default:
-+		return -EINVAL;
-+	}
- }
- 
- static int ltc4162l_get_ibat(struct ltc4162l_info *info,
- 			     union power_supply_propval *val)
- {
-+	const struct ltc4162l_chip_info *chip_info = info->chip_info;
- 	unsigned int regval;
- 	int ret;
- 
-@@ -249,9 +356,8 @@ static int ltc4162l_get_ibat(struct ltc4162l_info *info,
- 	if (ret)
- 		return ret;
- 
--	/* Signed 16-bit number, 1.466μV / RSNSB amperes/LSB. */
- 	ret = (s16)(regval & 0xFFFF);
--	val->intval = 100 * mult_frac(ret, 14660, (int)info->rsnsb);
-+	val->intval = mult_frac(ret, chip_info->ibat_resolution_uv, info->rsnsb);
- 
- 	return 0;
- }
-@@ -260,6 +366,7 @@ static int ltc4162l_get_ibat(struct ltc4162l_info *info,
- static int ltc4162l_get_input_voltage(struct ltc4162l_info *info,
- 				      union power_supply_propval *val)
- {
-+	const struct ltc4162l_chip_info *chip_info = info->chip_info;
- 	unsigned int regval;
- 	int ret;
- 
-@@ -267,8 +374,7 @@ static int ltc4162l_get_input_voltage(struct ltc4162l_info *info,
- 	if (ret)
- 		return ret;
- 
--	/* 1.649mV/LSB */
--	val->intval =  regval * 1694;
-+	val->intval =  regval * chip_info->vin_resolution_mv;
- 
- 	return 0;
- }
-@@ -276,6 +382,7 @@ static int ltc4162l_get_input_voltage(struct ltc4162l_info *info,
- static int ltc4162l_get_input_current(struct ltc4162l_info *info,
- 				      union power_supply_propval *val)
- {
-+	const struct ltc4162l_chip_info *chip_info = info->chip_info;
- 	unsigned int regval;
- 	int ret;
- 
-@@ -283,11 +390,9 @@ static int ltc4162l_get_input_current(struct ltc4162l_info *info,
- 	if (ret)
- 		return ret;
- 
--	/* Signed 16-bit number, 1.466μV / RSNSI amperes/LSB. */
- 	ret = (s16)(regval & 0xFFFF);
--	ret *= 14660;
-+	ret *= chip_info->ibat_resolution_uv;
- 	ret /= info->rsnsi;
--	ret *= 100;
- 
- 	val->intval = ret;
- 
-@@ -336,7 +441,7 @@ static int ltc4162l_get_vcharge(struct ltc4162l_info *info,
- 				unsigned int reg,
- 				union power_supply_propval *val)
- {
--	unsigned int regval;
-+	unsigned int regval, chem_type;
- 	int ret;
- 	u32 voltage;
- 
-@@ -348,37 +453,177 @@ static int ltc4162l_get_vcharge(struct ltc4162l_info *info,
- 
- 	/*
- 	 * charge voltage setting can be computed from
--	 * cell_count × (vcharge_setting × 12.5mV + 3.8125V)
--	 * where vcharge_setting ranges from 0 to 31 (4.2V max).
-+	 * cell_count × (vcharge_setting × a + b)
-+	 * where vcharge_setting ranges from 0 to c (d).
-+	 * for ltc4162l: a = 12.5mV , b = 3.8125V, c = 31, d = 4.2Vmax
-+	 * for ltc4162f: a = 12.5mV , b = 3.4125V, c = 31, d = 3.8Vmax
-+	 *
-+	 * for ltc4162s, the charge voltage setting can be computed from
-+	 * N x (vcharge_setting x 28.571mV + 6.0V)
-+	 * where N is 1, 2, 3, or 4 for 6V, 12V, 18V, or 24V battery respectively,
-+	 * and vcharge_setting ranges from 0 to 31
- 	 */
--	voltage = 3812500 + (regval * 12500);
--	voltage *= ltc4162l_get_cell_count(info);
--	val->intval = voltage;
-+	chem_type = ltc4162l_get_chem_type(info);
-+	switch (chem_type) {
-+	case ltc4162_lad ... ltc4162_l40:
-+		voltage = 3812500 + (regval * 12500);
-+		voltage *= ltc4162l_get_cell_count(info);
-+		val->intval = voltage;
- 
--	return 0;
-+		return 0;
-+	case ltc4162_fad ... ltc4162_fst:
-+		voltage = 3412500 + (regval * 12500);
-+		voltage *= ltc4162l_get_cell_count(info);
-+		val->intval = voltage;
-+
-+		return 0;
-+	case ltc4162_sst ... ltc4162_sad:
-+		voltage = 6000000 + (regval * 28571);
-+		voltage *= ltc4162l_get_cell_count(info) / 2;
-+		val->intval = voltage;
-+
-+		return 0;
-+	default:
-+		return -EINVAL;
-+	}
- }
- 
--static int ltc4162l_set_vcharge(struct ltc4162l_info *info,
--				unsigned int reg,
--				unsigned int value)
-+static int ltc4015_get_vcharge(struct ltc4162l_info *info,
-+			       unsigned int reg,
-+			       union power_supply_propval *val)
- {
--	u8 cell_count = ltc4162l_get_cell_count(info);
-+	unsigned int regval, chem_type;
-+	int ret;
-+	u32 voltage;
-+
-+	ret = regmap_read(info->regmap, reg, &regval);
-+	if (ret)
-+		return ret;
- 
--	if (!cell_count)
--		return -EBUSY; /* Not available yet, try again later */
-+	regval &= BIT(6) - 1; /* Only the lower 5 bits */
-+
-+	/*
-+	 * charge voltage setting can be computed from:
-+	 * cell_count × (vcharge_setting × a + b)
-+	 * where vcharge_setting ranges from 0 to c (d).
-+	 * Li-Ion: a = 1/80V, b = 3.8125V, c = 31, d = 4.2Vmax
-+	 * LiFePO4: a = 1/80V, b = 3.4125V, c = 31, d = 3.8Vmax
-+	 * Lead Acid: a = 1/105V, b = 2V, c = 35, d = 2.6Vmax
-+	 */
-+	chem_type = ltc4162l_get_chem_type(info);
-+	switch (chem_type) {
-+	case ltc4162_lad ... ltc4162_l40:
-+		voltage = 3812500 + (regval * 12500);
-+		voltage *= ltc4162l_get_cell_count(info);
-+		val->intval = voltage;
-+
-+		return 0;
-+	case ltc4162_fad ... ltc4162_fst:
-+		voltage = 3412500 + (regval * 12500);
-+		voltage *= ltc4162l_get_cell_count(info);
-+		val->intval = voltage;
-+
-+		return 0;
-+	case ltc4162_sst - 1 ... ltc4162_sad - 1:
-+		voltage = 2000000 + mult_frac(regval, 1000000, 105);
-+		voltage *= ltc4162l_get_cell_count(info);
-+		val->intval = voltage;
- 
-+		return 0;
-+	default:
-+		return -EINVAL;
-+	}
-+}
-+
-+static int ltc4162l_vcharge(unsigned int base_voltage,
-+			    unsigned int scale_factor,
-+			    unsigned int range,
-+			    unsigned int value,
-+			    u8 cell_count)
-+{
- 	value /= cell_count;
- 
--	if (value < 3812500)
-+	if (value < base_voltage)
- 		return -EINVAL;
- 
--	value -= 3812500;
--	value /= 12500;
-+	value -= base_voltage;
-+	value /= scale_factor;
- 
--	if (value > 31)
-+	if (value > range)
- 		return -EINVAL;
- 
--	return regmap_write(info->regmap, reg, value);
-+	return value;
-+}
-+
-+static int ltc4162l_set_vcharge(struct ltc4162l_info *info,
-+				unsigned int reg,
-+				unsigned int value)
-+{
-+	unsigned int chem_type;
-+	u8 cell_count;
-+
-+	chem_type = ltc4162l_get_chem_type(info);
-+	switch (chem_type) {
-+	case ltc4162_lad ... ltc4162_l40:
-+		cell_count = ltc4162l_get_cell_count(info);
-+		if (!cell_count)
-+			return -EBUSY;
-+
-+		value = ltc4162l_vcharge(3812500, 12500, 31, value, cell_count);
-+		return regmap_write(info->regmap, reg, value);
-+	case ltc4162_fad ... ltc4162_fst:
-+		cell_count = ltc4162l_get_cell_count(info);
-+		if (!cell_count)
-+			return -EBUSY;
-+
-+		value = ltc4162l_vcharge(3412500, 12500, 31, value, cell_count);
-+		return regmap_write(info->regmap, reg, value);
-+	case ltc4162_sst ... ltc4162_sad:
-+		cell_count = ltc4162l_get_cell_count(info) / 2;
-+		if (!cell_count)
-+			return -EBUSY;
-+
-+		value = ltc4162l_vcharge(6000000, 28571, 31, value, cell_count);
-+		return regmap_write(info->regmap, reg, value);
-+	default:
-+		return -EINVAL;
-+	}
-+}
-+
-+static int ltc4015_set_vcharge(struct ltc4162l_info *info,
-+			       unsigned int reg,
-+			       unsigned int value)
-+{
-+	unsigned int chem_type;
-+	u8 cell_count;
-+
-+	chem_type = ltc4162l_get_chem_type(info);
-+	switch (chem_type) {
-+	case ltc4162_lad ... ltc4162_l40:
-+		cell_count = ltc4162l_get_cell_count(info);
-+		if (!cell_count)
-+			return -EBUSY;
-+
-+		value = ltc4162l_vcharge(3812500, 12500, 31, value, cell_count);
-+		return regmap_write(info->regmap, reg, value);
-+	case ltc4162_fad ... ltc4162_fst:
-+		cell_count = ltc4162l_get_cell_count(info);
-+		if (!cell_count)
-+			return -EBUSY;
-+
-+		value = ltc4162l_vcharge(3412500, 12500, 31, value, cell_count);
-+		return regmap_write(info->regmap, reg, value);
-+	case ltc4162_sst - 1 ... ltc4162_sad - 1:
-+		cell_count = ltc4162l_get_cell_count(info);
-+		if (!cell_count)
-+			return -EBUSY;
-+
-+		value = ltc4162l_vcharge(2000000, 1000000 / 105, 35,
-+					 value, cell_count);
-+		return regmap_write(info->regmap, reg, value);
-+	default:
-+		return -EINVAL;
-+	}
- }
- 
- static int ltc4162l_get_iin_limit_dac(struct ltc4162l_info *info,
-@@ -437,9 +682,30 @@ static int ltc4162l_get_die_temp(struct ltc4162l_info *info,
- 	return 0;
- }
- 
-+static int ltc4015_get_die_temp(struct ltc4162l_info *info,
-+				union power_supply_propval *val)
-+{
-+	unsigned int regval;
-+	int ret;
-+
-+	ret = regmap_read(info->regmap, LTC4162L_DIE_TEMPERATURE, &regval);
-+	if (ret)
-+		return ret;
-+
-+	/* (die_temp - 12010) / 45.6°C */
-+	ret = (s16)(regval & 0xFFFF);
-+	ret -= 12010;
-+	ret *= 1000;
-+	ret /= 456;
-+	val->intval = ret;
-+
-+	return 0;
-+}
-+
- static int ltc4162l_get_term_current(struct ltc4162l_info *info,
- 				     union power_supply_propval *val)
- {
-+	const struct ltc4162l_chip_info *chip_info = info->chip_info;
- 	unsigned int regval;
- 	int ret;
- 
-@@ -457,10 +723,9 @@ static int ltc4162l_get_term_current(struct ltc4162l_info *info,
- 	if (ret)
- 		return ret;
- 
--	/* 1.466μV / RSNSB amperes/LSB */
--	regval *= 14660u;
-+	regval *= chip_info->ibat_resolution_uv;
- 	regval /= info->rsnsb;
--	val->intval = 100 * regval;
-+	val->intval = regval;
- 
- 	return 0;
- }
-@@ -534,10 +799,11 @@ static ssize_t vbat_show(struct device *dev,
- {
- 	struct power_supply *psy = to_power_supply(dev);
- 	struct ltc4162l_info *info = power_supply_get_drvdata(psy);
-+	const struct ltc4162l_chip_info *chip_info = info->chip_info;
- 	union power_supply_propval val;
- 	int ret;
- 
--	ret = ltc4162l_get_vbat(info, LTC4162L_VBAT, &val);
-+	ret = chip_info->get_vbat(info, LTC4162L_VBAT, &val);
- 	if (ret)
- 		return ret;
- 
-@@ -550,10 +816,11 @@ static ssize_t vbat_avg_show(struct device *dev,
- {
- 	struct power_supply *psy = to_power_supply(dev);
- 	struct ltc4162l_info *info = power_supply_get_drvdata(psy);
-+	const struct ltc4162l_chip_info *chip_info = info->chip_info;
- 	union power_supply_propval val;
- 	int ret;
- 
--	ret = ltc4162l_get_vbat(info, LTC4162L_VBAT_FILT, &val);
-+	ret = chip_info->get_vbat(info, LTC4162L_VBAT_FILT, &val);
- 	if (ret)
- 		return ret;
- 
-@@ -589,7 +856,8 @@ static ssize_t force_telemetry_show(struct device *dev,
- 	if (ret)
- 		return ret;
- 
--	return sysfs_emit(buf, "%u\n", regval & BIT(2) ? 1 : 0);
-+	return sysfs_emit(buf, "%u\n", regval &
-+			  info->chip_info->telemetry_mask ? 1 : 0);
- }
- 
- static ssize_t force_telemetry_store(struct device *dev,
-@@ -607,7 +875,8 @@ static ssize_t force_telemetry_store(struct device *dev,
- 		return ret;
- 
- 	ret = regmap_update_bits(info->regmap, LTC4162L_CONFIG_BITS_REG,
--				 BIT(2), value ? BIT(2) : 0);
-+				 info->chip_info->telemetry_mask,
-+				 value ? info->chip_info->telemetry_mask : 0);
- 	if (ret < 0)
- 		return ret;
- 
-@@ -681,6 +950,7 @@ static int ltc4162l_get_property(struct power_supply *psy,
- 				 union power_supply_propval *val)
- {
- 	struct ltc4162l_info *info = power_supply_get_drvdata(psy);
-+	const struct ltc4162l_chip_info *chip_info = info->chip_info;
- 
- 	switch (psp) {
- 	case POWER_SUPPLY_PROP_STATUS:
-@@ -702,15 +972,13 @@ static int ltc4162l_get_property(struct power_supply *psy,
- 		return ltc4162l_get_icharge(info,
- 				LTC4162L_CHARGE_CURRENT_SETTING, val);
- 	case POWER_SUPPLY_PROP_CONSTANT_CHARGE_VOLTAGE:
--		return ltc4162l_get_vcharge(info,
--				LTC4162L_VCHARGE_DAC, val);
-+		return chip_info->get_vcharge(info, LTC4162L_VCHARGE_DAC, val);
- 	case POWER_SUPPLY_PROP_CONSTANT_CHARGE_VOLTAGE_MAX:
--		return ltc4162l_get_vcharge(info,
--				LTC4162L_VCHARGE_SETTING, val);
-+		return chip_info->get_vcharge(info, LTC4162L_VCHARGE_SETTING, val);
- 	case POWER_SUPPLY_PROP_INPUT_CURRENT_LIMIT:
- 		return ltc4162l_get_iin_limit_dac(info, val);
- 	case POWER_SUPPLY_PROP_TEMP:
--		return ltc4162l_get_die_temp(info, val);
-+		return chip_info->get_die_temp(info, val);
- 	case POWER_SUPPLY_PROP_CHARGE_TERM_CURRENT:
- 		return ltc4162l_get_term_current(info, val);
- 	default:
-@@ -772,7 +1040,6 @@ static enum power_supply_property ltc4162l_properties[] = {
- };
- 
- static const struct power_supply_desc ltc4162l_desc = {
--	.name		= "ltc4162-l",
- 	.type		= POWER_SUPPLY_TYPE_MAINS,
- 	.properties	= ltc4162l_properties,
- 	.num_properties	= ARRAY_SIZE(ltc4162l_properties),
-@@ -781,6 +1048,50 @@ static const struct power_supply_desc ltc4162l_desc = {
- 	.property_is_writeable = ltc4162l_property_is_writeable,
- };
- 
-+static const struct ltc4162l_chip_info ltc4162l_chip_info = {
-+	.name = "ltc4162-l",
-+	.get_vbat = ltc4162l_get_vbat,
-+	.get_vcharge = ltc4162l_get_vcharge,
-+	.set_vcharge = ltc4162l_set_vcharge,
-+	.get_die_temp = ltc4162l_get_die_temp,
-+	.ibat_resolution_uv = 1466000,
-+	.vin_resolution_mv = 1649,
-+	.telemetry_mask = BIT(2),
-+};
-+
-+static const struct ltc4162l_chip_info ltc4162f_chip_info = {
-+	.name = "ltc4162-f",
-+	.get_vbat = ltc4162l_get_vbat,
-+	.get_vcharge = ltc4162l_get_vcharge,
-+	.set_vcharge = ltc4162l_set_vcharge,
-+	.get_die_temp = ltc4162l_get_die_temp,
-+	.ibat_resolution_uv = 1466000,
-+	.vin_resolution_mv = 1649,
-+	.telemetry_mask = BIT(2),
-+};
-+
-+static const struct ltc4162l_chip_info ltc4162s_chip_info = {
-+	.name = "ltc4162-s",
-+	.get_vbat = ltc4162l_get_vbat,
-+	.get_vcharge = ltc4162l_get_vcharge,
-+	.set_vcharge = ltc4162l_set_vcharge,
-+	.get_die_temp = ltc4162l_get_die_temp,
-+	.ibat_resolution_uv = 1466000,
-+	.vin_resolution_mv = 1649,
-+	.telemetry_mask = BIT(2),
-+};
-+
-+static const struct ltc4162l_chip_info ltc4015_chip_info = {
-+	.name = "ltc4015",
-+	.get_vbat = ltc4015_get_vbat,
-+	.get_vcharge = ltc4015_get_vcharge,
-+	.set_vcharge = ltc4015_set_vcharge,
-+	.get_die_temp = ltc4015_get_die_temp,
-+	.ibat_resolution_uv = 1464870,
-+	.vin_resolution_mv = 1648,
-+	.telemetry_mask = BIT(4),
-+};
-+
- static bool ltc4162l_is_writeable_reg(struct device *dev, unsigned int reg)
- {
- 	/* all registers up to this one are writeable */
-@@ -825,6 +1136,8 @@ static int ltc4162l_probe(struct i2c_client *client)
- 	struct device *dev = &client->dev;
- 	struct ltc4162l_info *info;
- 	struct power_supply_config ltc4162l_config = {};
-+	struct power_supply_desc *desc;
-+	const struct ltc4162l_chip_info *chip_info;
- 	u32 value;
- 	int ret;
- 
-@@ -839,6 +1152,12 @@ static int ltc4162l_probe(struct i2c_client *client)
- 	info->client = client;
- 	i2c_set_clientdata(client, info);
- 
-+	chip_info = i2c_get_match_data(client);
-+	if (!chip_info)
-+		return -ENODEV;
-+
-+	info->chip_info = chip_info;
-+
- 	info->regmap = devm_regmap_init_i2c(client, &ltc4162l_regmap_config);
- 	if (IS_ERR(info->regmap)) {
- 		dev_err(dev, "Failed to initialize register map\n");
-@@ -870,8 +1189,15 @@ static int ltc4162l_probe(struct i2c_client *client)
- 	ltc4162l_config.drv_data = info;
- 	ltc4162l_config.attr_grp = ltc4162l_attr_groups;
- 
--	info->charger = devm_power_supply_register(dev, &ltc4162l_desc,
--						   &ltc4162l_config);
-+	/* Duplicate the default descriptor to set name based on chip_info. */
-+	desc = devm_kmemdup(dev, &ltc4162l_desc,
-+			    sizeof(struct power_supply_desc), GFP_KERNEL);
-+	if (!desc)
-+		return -ENOMEM;
-+
-+	desc->name = chip_info->name;
-+
-+	info->charger = devm_power_supply_register(dev, desc, &ltc4162l_config);
- 	if (IS_ERR(info->charger)) {
- 		dev_err(dev, "Failed to register charger\n");
- 		return PTR_ERR(info->charger);
-@@ -903,14 +1229,20 @@ static void ltc4162l_alert(struct i2c_client *client,
- }
- 
- static const struct i2c_device_id ltc4162l_i2c_id_table[] = {
--	{ "ltc4162-l" },
-+	{ "ltc4162-l", (kernel_ulong_t)&ltc4162l_chip_info },
-+	{ "ltc4162-f", (kernel_ulong_t)&ltc4162f_chip_info },
-+	{ "ltc4162-s", (kernel_ulong_t)&ltc4162s_chip_info },
-+	{ "ltc4015", (kernel_ulong_t)&ltc4015_chip_info },
- 	{ }
- };
- MODULE_DEVICE_TABLE(i2c, ltc4162l_i2c_id_table);
- 
- static const struct of_device_id ltc4162l_of_match[] __maybe_unused = {
--	{ .compatible = "lltc,ltc4162-l", },
--	{ },
-+	{ .compatible = "lltc,ltc4162-l", .data = &ltc4162l_chip_info },
-+	{ .compatible = "lltc,ltc4162-f", .data = &ltc4162f_chip_info },
-+	{ .compatible = "lltc,ltc4162-s", .data = &ltc4162s_chip_info },
-+	{ .compatible = "lltc,ltc4015", .data = &ltc4015_chip_info },
-+	{ }
- };
- MODULE_DEVICE_TABLE(of, ltc4162l_of_match);
- 
--- 
-2.34.1
-
+PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBCam9ybiBIZWxnYWFzIDxoZWxn
+YWFzQGtlcm5lbC5vcmc+DQo+IFNlbnQ6IDIwMjTE6jEx1MI2yNUgNzoyNw0KPiBUbzogSG9uZ3hp
+bmcgWmh1IDxob25neGluZy56aHVAbnhwLmNvbT4NCj4gQ2M6IGt3aWxjenluc2tpQGtlcm5lbC5v
+cmc7IGJoZWxnYWFzQGdvb2dsZS5jb207DQo+IGxvcmVuem8ucGllcmFsaXNpQGFybS5jb207IEZy
+YW5rIExpIDxmcmFuay5saUBueHAuY29tPjsgbWFuaUBrZXJuZWwub3JnOw0KPiBsaW51eC1wY2lA
+dmdlci5rZXJuZWwub3JnOyBsaW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmc7DQo+
+IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7IGtlcm5lbEBwZW5ndXRyb25peC5kZTsgaW14
+QGxpc3RzLmxpbnV4LmRldg0KPiBTdWJqZWN0OiBSZTogW1BBVENIIHYyXSBQQ0k6IGR3YzogRml4
+IHJlc3VtZSBmYWlsdXJlIGlmIG5vIEVQIGlzIGNvbm5lY3RlZCBhdA0KPiBzb21lIHBsYXRmb3Jt
+cw0KPiANCj4gT24gTW9uLCBKdWwgMjIsIDIwMjQgYXQgMDI6MTU6MTNQTSArMDgwMCwgUmljaGFy
+ZCBaaHUgd3JvdGU6DQo+ID4gVGhlIGR3X3BjaWVfc3VzcGVuZF9ub2lycSgpIGZ1bmN0aW9uIGN1
+cnJlbnRseSByZXR1cm5zIHN1Y2Nlc3MNCj4gPiBkaXJlY3RseSBpZiBubyBlbmRwb2ludCAoRVAp
+IGRldmljZSBpcyBjb25uZWN0ZWQuIEhvd2V2ZXIsIG9uIHNvbWUNCj4gPiBwbGF0Zm9ybXMsIHBv
+d2VyIGxvc3Mgb2NjdXJzIGR1cmluZyBzdXNwZW5kLCBjYXVzaW5nIGR3X3Jlc3VtZSgpIHRvIGRv
+DQo+IG5vdGhpbmcgaW4gdGhpcyBjYXNlLg0KPiA+IFRoaXMgcmVzdWx0cyBpbiBhIHN5c3RlbSBo
+YWx0IGJlY2F1c2UgdGhlIERXQyBjb250cm9sbGVyIGlzIG5vdA0KPiA+IGluaXRpYWxpemVkIGFm
+dGVyIHBvd2VyLW9uIGR1cmluZyByZXN1bWUuDQo+IA0KPiBkd19yZXN1bWUoKSBkb2Vzbid0IGV4
+aXN0LiAgV2hhdCBmdW5jdGlvbiBkaWQgeW91IG1lYW4/DQpBY3R1YWxseSwgaXQgaXMgZHdfcGNp
+ZV9yZXN1bWVfbm9pcnEoKQ0KPiANCj4gU3lzdGVtIGhhbHQ/ICBJbiBkd19wY2llX3Jlc3VtZV9u
+b2lycSgpPyAgV2hhdCBjYXVzZXMgdGhlIGhhbHQ/ICBBDQo+IE5VTEwgcG9pbnRlciBkZXJlZmVy
+ZW5jZT8gIEEgQ1BVIGhhbmcgYmVjYXVzZSBhIHJlYWQgb2Ygc29tZSBjb250cm9sbGVyDQo+IHJl
+Z2lzdGVyIG5ldmVyIGNvbXBsZXRlcz8gIEZlZWxzIGEgbGl0dGxlIGhhbmQtd2F2eS4NCldoZW4g
+bm8gZW5kcG9pbnQoRVApIGRldmljZSBpcyBjb25uZWN0ZWQuIFBvd2VyIGxvc3Mgb2NjdXJzIGR1
+cmluZyBzdXNwZW5kLA0KIHRoZW4gdGhlIGNvbnRyb2xsZXJzIGlzbid0IGEgcmVhZHkgc3RhdCBh
+bnltb3JlLiBTaW5jZSBkd19wY2llX3N1c3BlbmRfbm9pcnEoKQ0KIHJldHVybiBkaXJlY3RseSB3
+aXRoIHN1Y2Nlc3MsIGR3X3BjaWVfcmVzdW1lX25vaXJxKCkgd291bGQgYXNzdW1lIHRoYXQgdGhl
+DQogY29udHJvbGxlciBpcyBzdGlsbCByZWFkeSwgYW5kIHdvdWxkbid0IHJlLWluaXRpYWxpemVk
+IHRoZSBjb250cm9sbGVyLg0KQXQgZW5kLCB0aGVyZSB3b3VsZCBiZSBhIGhhbHQgd2hlbiBkcml2
+ZXIgYWNjZXNzZXMgY29udHJvbGxlcidzIHJlZ2lzdGVycy4NCg0KPiANCj4gQW5vdGhlciBjb21t
+ZW50IGJlbG93Lg0KPiANCj4gPiBDaGFuZ2UgY2FsbCB0byBkZWluaXQoKSBpbiBzdXNwZW5kIGFu
+ZCBpbml0KCkgYXQgcmVzdW1lIHJlZ2FyZGxlc3Mgb2YNCj4gPiB3aGV0aGVyIHRoZXJlIGFyZSBF
+UCBkZXZpY2UgY29ubmVjdGlvbnMgb3Igbm90LiBJdCBpcyBub3QgaGFybWZ1bCB0bw0KPiA+IHBl
+cmZvcm0gZGVpbml0KCkgYW5kIGluaXQoKSBhZ2FpbiBmb3IgdGhlIG5vIHBvd2VyLW9mZiBjYXNl
+LCBhbmQgaXQNCj4gPiBrZWVwcyB0aGUgY29kZSBzaW1wbGUgYW5kIGNvbnNpc3RlbnQgaW4gbG9n
+aWMuDQo+ID4NCj4gPiBGaXhlczogNDc3NGZhZjg1NGY1ICgiUENJOiBkd2M6IEltcGxlbWVudCBn
+ZW5lcmljIHN1c3BlbmQvcmVzdW1lDQo+ID4gZnVuY3Rpb25hbGl0eSIpDQo+ID4gU2lnbmVkLW9m
+Zi1ieTogUmljaGFyZCBaaHUgPGhvbmd4aW5nLnpodUBueHAuY29tPg0KPiA+IFJldmlld2VkLWJ5
+OiBGcmFuayBMaSA8RnJhbmsuTGlAbnhwLmNvbT4NCj4gPiAtLS0NCj4gPiAgLi4uL3BjaS9jb250
+cm9sbGVyL2R3Yy9wY2llLWRlc2lnbndhcmUtaG9zdC5jIHwgMzANCj4gPiArKysrKysrKystLS0t
+LS0tLS0tDQo+ID4gIDEgZmlsZSBjaGFuZ2VkLCAxNSBpbnNlcnRpb25zKCspLCAxNSBkZWxldGlv
+bnMoLSkNCj4gPg0KPiA+IGRpZmYgLS1naXQgYS9kcml2ZXJzL3BjaS9jb250cm9sbGVyL2R3Yy9w
+Y2llLWRlc2lnbndhcmUtaG9zdC5jDQo+ID4gYi9kcml2ZXJzL3BjaS9jb250cm9sbGVyL2R3Yy9w
+Y2llLWRlc2lnbndhcmUtaG9zdC5jDQo+ID4gaW5kZXggYTA4MjJkNTM3MWJjNS4uY2I4YzNjMmJj
+Yzc5MCAxMDA2NDQNCj4gPiAtLS0gYS9kcml2ZXJzL3BjaS9jb250cm9sbGVyL2R3Yy9wY2llLWRl
+c2lnbndhcmUtaG9zdC5jDQo+ID4gKysrIGIvZHJpdmVycy9wY2kvY29udHJvbGxlci9kd2MvcGNp
+ZS1kZXNpZ253YXJlLWhvc3QuYw0KPiA+IEBAIC05MzMsMjMgKzkzMywyMyBAQCBpbnQgZHdfcGNp
+ZV9zdXNwZW5kX25vaXJxKHN0cnVjdCBkd19wY2llICpwY2kpDQo+ID4gIAlpZiAoZHdfcGNpZV9y
+ZWFkd19kYmkocGNpLCBvZmZzZXQgKyBQQ0lfRVhQX0xOS0NUTCkgJg0KPiBQQ0lfRVhQX0xOS0NU
+TF9BU1BNX0wxKQ0KPiA+ICAJCXJldHVybiAwOw0KPiA+DQo+ID4gLQlpZiAoZHdfcGNpZV9nZXRf
+bHRzc20ocGNpKSA8PSBEV19QQ0lFX0xUU1NNX0RFVEVDVF9BQ1QpDQo+ID4gLQkJcmV0dXJuIDA7
+DQo+ID4gLQ0KPiA+IC0JaWYgKHBjaS0+cHAub3BzLT5wbWVfdHVybl9vZmYpDQo+ID4gLQkJcGNp
+LT5wcC5vcHMtPnBtZV90dXJuX29mZigmcGNpLT5wcCk7DQo+ID4gLQllbHNlDQo+ID4gLQkJcmV0
+ID0gZHdfcGNpZV9wbWVfdHVybl9vZmYocGNpKTsNCj4gPiArCWlmIChkd19wY2llX2dldF9sdHNz
+bShwY2kpID4gRFdfUENJRV9MVFNTTV9ERVRFQ1RfQUNUKSB7DQo+ID4gKwkJLyogT25seSBzZW5k
+IG91dCBQTUVfVFVSTl9PRkYgd2hlbiBQQ0lFIGxpbmsgaXMgdXAgKi8NCj4gPiArCQlpZiAocGNp
+LT5wcC5vcHMtPnBtZV90dXJuX29mZikNCj4gPiArCQkJcGNpLT5wcC5vcHMtPnBtZV90dXJuX29m
+ZigmcGNpLT5wcCk7DQo+ID4gKwkJZWxzZQ0KPiA+ICsJCQlyZXQgPSBkd19wY2llX3BtZV90dXJu
+X29mZihwY2kpOw0KPiANCj4gVGhpcyBsb29rcyBwb3NzaWJseSByYWN5IHNpbmNlIHRoZSBsaW5r
+IGNhbiBnbyBkb3duIGF0IGFueSBwb2ludC4NCj4gDQpXaGVuIGxpbmsgaXMgZG93biBhbmQgd2l0
+aG91dCB0aGlzIGNvbW1pdCBjaGFuZ2VzLCBkd19wY2llX3N1c3BlbmRfbm9pcnEoKQ0KIHJldHVy
+biBkaXJlY3RseSwgYW5kIHRoZSBQTUVfVFVSTl9PRkYgd291bGRuJ3QgYmUga2lja2VkIG9mZi4N
+Cg0KSSBjaGFuZ2UgdGhlIGJlaGF2aW9yIHRvIGlzc3VlIHRoZSBQTUVfVFVSTl9PRkYgd2hlbiBs
+aW5rIGlzIHVwIGhlcmUuDQoNCkJlc3QgUmVnYXJkcw0KUmljaGFyZCBaaHUNCj4gPiAtCWlmIChy
+ZXQpDQo+ID4gLQkJcmV0dXJuIHJldDsNCj4gPiArCQlpZiAocmV0KQ0KPiA+ICsJCQlyZXR1cm4g
+cmV0Ow0KPiA+DQo+ID4gLQlyZXQgPSByZWFkX3BvbGxfdGltZW91dChkd19wY2llX2dldF9sdHNz
+bSwgdmFsLCB2YWwgPT0NCj4gRFdfUENJRV9MVFNTTV9MMl9JRExFLA0KPiA+IC0JCQkJUENJRV9Q
+TUVfVE9fTDJfVElNRU9VVF9VUy8xMCwNCj4gPiAtCQkJCVBDSUVfUE1FX1RPX0wyX1RJTUVPVVRf
+VVMsIGZhbHNlLCBwY2kpOw0KPiA+IC0JaWYgKHJldCkgew0KPiA+IC0JCWRldl9lcnIocGNpLT5k
+ZXYsICJUaW1lb3V0IHdhaXRpbmcgZm9yIEwyIGVudHJ5ISBMVFNTTTogMHgleFxuIiwNCj4gdmFs
+KTsNCj4gPiAtCQlyZXR1cm4gcmV0Ow0KPiA+ICsJCXJldCA9IHJlYWRfcG9sbF90aW1lb3V0KGR3
+X3BjaWVfZ2V0X2x0c3NtLCB2YWwsIHZhbCA9PQ0KPiBEV19QQ0lFX0xUU1NNX0wyX0lETEUsDQo+
+ID4gKwkJCQkJUENJRV9QTUVfVE9fTDJfVElNRU9VVF9VUy8xMCwNCj4gPiArCQkJCQlQQ0lFX1BN
+RV9UT19MMl9USU1FT1VUX1VTLCBmYWxzZSwgcGNpKTsNCj4gPiArCQlpZiAocmV0KSB7DQo+ID4g
+KwkJCWRldl9lcnIocGNpLT5kZXYsICJUaW1lb3V0IHdhaXRpbmcgZm9yIEwyIGVudHJ5ISBMVFNT
+TToNCj4gMHgleFxuIiwgdmFsKTsNCj4gPiArCQkJcmV0dXJuIHJldDsNCj4gPiArCQl9DQo+ID4g
+IAl9DQo+ID4NCj4gPiAgCWlmIChwY2ktPnBwLm9wcy0+ZGVpbml0KQ0KPiA+IC0tDQo+ID4gMi4z
+Ny4xDQo+ID4NCg==
 
