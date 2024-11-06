@@ -1,83 +1,134 @@
-Return-Path: <linux-kernel+bounces-397633-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397634-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2CF59BDE45
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 06:25:24 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DBCB9BDE47
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 06:27:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E5981C22CCE
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 05:25:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 38DDB28501B
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 05:27:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1D1E19049D;
-	Wed,  6 Nov 2024 05:25:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 781C5191461;
+	Wed,  6 Nov 2024 05:26:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="wgnbkvF3"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="zXlLf0FW"
+Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43EAE2F44;
-	Wed,  6 Nov 2024 05:25:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78D272F44;
+	Wed,  6 Nov 2024 05:26:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730870719; cv=none; b=YnsMxd6swTPlNR75x24XBcf3st3aw0o4nud9WmztpeZwQxZ9byL30aan8bgLNlqxqLcNY5w02cVnabX+LNtABaV2n+SgHbo6KAqafm12N6w9v7cSS4bLkL8m+p298coS7m6ZwOgtOY+mTj5b8IUedXgRS359o+nIldDwZT1Wf0g=
+	t=1730870817; cv=none; b=ub6DEorLs0VJLOsVSfSic+cOhhNHJ/J8NmuLyfy5Hg7bNuh+by7XXO63qws0W2fXgmt0nu94VaYbP/vFSQ/TyspIkWys+PEixpS1N8+RIOakvBGqHrgaQrJ3TAwyHItf+hMztfMI08Vxjw6BzMJ4XeCCwHlF1xmkCVebKdiaqg0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730870719; c=relaxed/simple;
-	bh=l0aGCwkVhm1jLImaX/Bd/NxYLern8Z/9r21JjXpennI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=f3ESYi9NVe+C19qbK6H9s3AJMlzKJrz5HAK/fXO4vEy0C9gYx4g0HY9jThCGgSbDS5lVVbFAZrfQnza0+0UxPmt8bgtHCOzmx3yM2uz0iikY9KGJpQexRDw4aVEN+u2YR5lBDilhIZL16llXfI+gW2sQQLDijAaQvfqhpTuIUC0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=wgnbkvF3; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+	s=arc-20240116; t=1730870817; c=relaxed/simple;
+	bh=8vnVBBdpEmA2j9iXw65y2Q/bK2BDxlaz/SVioFjtHuU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CC0iz6uNU8e+u+gEmTBOePM8t6mOU2mG17s/RAnUop1tAmwnEHkkr6oepjYloEOz1TtO4or9DrAoB+KR2aTNfmwsCCAA0sT4Oht1OgcWiR9Y3Aa0Vt1m49F8cde+Rgj9fFWBYG4a0IuKwPZn/eOeU9wQqROWYW42DDCNeRUbLPQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=zXlLf0FW; arc=none smtp.client-ip=80.237.130.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=HsyTQA9Pe8F79mmQyU7MaE/8f1BJOvN5kT0VZS6VCGA=; b=wgnbkvF3yxAvCLCGvbXk2mQOqV
-	JjL9JlSO4IjIP0uWRg75mspI5KA3Z0p8SSYe1XpO02s44ZBT7IZccDbJOTKgV+0pHTDxP4Vvusq88
-	DeluJnb8oewwqq8utMUQgtPmr1+eQ57NJ1/KZLe7wzqhi9G7Ba/d/qjgJKnsuI3uzbla12qTg1csh
-	Rq4silM29FFAHPfQGkLqVZJJHkUziVMbXrg1dry9w2y0P3PXMDdB0LuWEJuR9UhUmjnVOdfENGjLn
-	4XsnQMKfzqT6CpY4JRoOXgP4rMFlrEIpHOETEMXMBPcdgffSZYwRxO6pNMeEtk1F6UxYAvNUw6h0j
-	q0uT+Ppg==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1t8YXc-00000001rcB-1vu9;
-	Wed, 06 Nov 2024 05:25:16 +0000
-Date: Tue, 5 Nov 2024 21:25:16 -0800
-From: Christoph Hellwig <hch@infradead.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Christoph Hellwig <hch@infradead.org>,
-	Thorsten Blum <thorsten.blum@linux.dev>,
-	linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Christian Brauner <brauner@kernel.org>
-Subject: Re: [PATCH] freevxfs: Replace one-element array with flexible array
- member
-Message-ID: <Zyr9vNpKpJWlD_wf@infradead.org>
-References: <20241103121707.102838-3-thorsten.blum@linux.dev>
- <ZyoAGsCAdWrGMQoj@infradead.org>
- <20241105105339.8d53c034b0d3fdd66139cdec@linux-foundation.org>
+	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:From:
+	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
+	References; bh=7fY30LO53lwxYrtKV8c3aohnzoqWnNZ4YP6STmTO+U4=; t=1730870815;
+	x=1731302815; b=zXlLf0FWsky5ADB+yWwMqFRvERJWIJdsBQQQaDO7g5+3CZvB61McM7yHbqrgm
+	x+dkyv5FigCRfFhOt/IdVTG6/bZ6RIISqqSb90Moj4NzHcVCRD7D+qj2+JLQ59uMiYC0AD+YNr6nk
+	PhsfcCiSUEgVMGJS8oiZFK6urkWei6lGx2rPK/8083g6NxNNBhGeXzLuqP543qatnkYbEKXllHuH0
+	YG7FKLBZYNMNarfGRqWBHd5T3x0P83OlcIU7R4SfeCzBWrBazkmsHRasafztvD/LdqhlRGGe2a/0W
+	3pgXAEHiqDsk03c8tsg+p+qHuICG++Kynk0RYuNdrLVg8eEQXA==;
+Received: from [2a02:8108:8980:2478:87e9:6c79:5f84:367d]; authenticated
+	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
+	id 1t8YZ7-0001h7-He; Wed, 06 Nov 2024 06:26:49 +0100
+Message-ID: <1a3dcbe4-76dd-40c4-bafd-16be33607e77@leemhuis.info>
+Date: Wed, 6 Nov 2024 06:26:49 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241105105339.8d53c034b0d3fdd66139cdec@linux-foundation.org>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] docs: bug-bisect: add a note about bisecting -next
+To: Bagas Sanjaya <bagasdotme@gmail.com>, Jonathan Corbet <corbet@lwn.net>
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-next@vger.kernel.org, Mark Brown <broonie@kernel.org>
+References: <ec19d5fc503ff7db3d4c4ff9e97fff24cc78f72a.1730808651.git.linux@leemhuis.info>
+ <ZyrAoWSF9KXxtuYL@archie.me>
+From: Thorsten Leemhuis <linux@leemhuis.info>
+Content-Language: en-MW
+Autocrypt: addr=linux@leemhuis.info; keydata=
+ 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 n7RI
+In-Reply-To: <ZyrAoWSF9KXxtuYL@archie.me>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-bounce-key: webpack.hosteurope.de;linux@leemhuis.info;1730870815;a45aa231;
+X-HE-SMSGID: 1t8YZ7-0001h7-He
 
-On Tue, Nov 05, 2024 at 10:53:39AM -0800, Andrew Morton wrote:
-> > Might be worth adding that nothing does a sizeof of the type or
-> > variables of the type, so just hcanging it is fine.
-> > 
-> > Otherwise looks good:
-> > 
-> > Reviewed-by: Christoph Hellwig <hch@lst.de>
-> > 
-> > Andrew, can you pick this up through -mm as there is no freevxfs tree?
+On 06.11.24 02:04, Bagas Sanjaya wrote:
+> On Tue, Nov 05, 2024 at 01:11:08PM +0100, Thorsten Leemhuis wrote:
+>> +Bisecting linux-next
+>> +--------------------
+>> +
+>> +If you face a problem only happening in linux-next, bisect between the
+>> +linux-next branches 'stable' and 'master'. The following commands will start
+>> +the process for a linux-next tree you added as a remote called 'next'::
+>> +
 > 
-> I assume Christian can scoop this up?
+> Has linux-next tree remote addition be covered before?
 
-Fine with me :)
+No. That document where this is added does not explain at all how to
+clone a git repo or add remotes, it just focuses on the bisection. So I
+don't think we need to explain this here.
+
+Documentation/admin-guide/verify-bugs-and-bisect-regressions.rst handles
+such things, as it has a different target audience. Should it cover
+-next as well? Not sure. I for now decided to focus on this addition.
+
+Ciao, Thorsten
 
