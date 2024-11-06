@@ -1,109 +1,113 @@
-Return-Path: <linux-kernel+bounces-398906-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398907-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76D0B9BF7D1
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 21:08:56 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE4159BF7D6
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 21:14:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3AF11283A05
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 20:08:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C0403283993
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 20:14:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1F0720BB4A;
-	Wed,  6 Nov 2024 20:08:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96FA91DE3BC;
+	Wed,  6 Nov 2024 20:14:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="snd6+Ptp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T2/swPpR"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0E5520BB40;
-	Wed,  6 Nov 2024 20:08:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B504820ADD5;
+	Wed,  6 Nov 2024 20:14:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730923730; cv=none; b=NyK/Z8ILlnfk4LWkGuq0va/XgbgdoyBCmDVnZxg6KqUfY90SH9YvpuR4BN6k9UBH57V9W5MUbB9NBkDBq9wNmyxrNF+A+cHiZl7XrZC53OoDGFgE1zEqwojejioFA0DdARWGlOjYD1hyi/CRtOrD39ZH9aseSFbscnqYU0PcD4E=
+	t=1730924055; cv=none; b=oPBgznQZeY2NJz2NfouCVBK3OU+IOeCs6IkEOLHpo21YrKUY2XXsokogy5dDG3YU8hlqM3apuPqtX4JlrigP92siqdJ8dMn5VI/0EuWsVBcrPfRdPm6gBjIWMwDYyrhi4H/Y5oQebMCP9pjXJRkBgoeRDNJuhYdYHLOldY0YdkY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730923730; c=relaxed/simple;
-	bh=LlUk3eFg56pt7glKzGWJnK1gGhXpfQ7rxkpRP9kafac=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=fo6p+2HRvbbxbSInWG7SAkwnWBFeitWSJxWIBclg1S+qEwjxOLj8F7fPutVk86d2xMLY0Wke+M4MwN8EYA+5cBmWRrxHnZS/3GjF4svVsCgMu9HjcTvh/MIwtW3yJIgW4EUw7WuEzRdNmofwoq5YYgp+nQ1pUn5SKsPHzitLIqw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=snd6+Ptp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 198B7C4CEC6;
-	Wed,  6 Nov 2024 20:08:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1730923729;
-	bh=LlUk3eFg56pt7glKzGWJnK1gGhXpfQ7rxkpRP9kafac=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=snd6+PtpLFwr5vlwQN/DQqTFf9pvtNOmTphTY6Zma9EsLff99+uUek4+2f0wuALHU
-	 0ag9tms8Su9dBDWDwfBqLKMrkXJLp+vWv8Av4Yz7O+/uC6Xvkw57AMvKkFiqKrB44L
-	 8ZWXC0r6xvQotZj982G2I/eKags4G6COINt65EwA=
-Date: Wed, 6 Nov 2024 12:08:48 -0800
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Alexandru Ardelean <aardelean@baylibre.com>
-Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
- jic23@kernel.org, bartosz.golaszewski@linaro.org,
- gregkh@linuxfoundation.org
-Subject: Re: [PATCH v2 1/2] util_macros.h: fix/rework find_closest() macros
-Message-Id: <20241106120848.63b6665af42264a70bba1621@linux-foundation.org>
-In-Reply-To: <CA+GgBR-a050NUMB4Z=Q1UhqjAcKRVVw4k+S9uBZp6iRGqHkB6A@mail.gmail.com>
-References: <20241105145406.554365-1-aardelean@baylibre.com>
-	<20241105150826.86b0a8f2c0df2a4822b07757@linux-foundation.org>
-	<CA+GgBR-a050NUMB4Z=Q1UhqjAcKRVVw4k+S9uBZp6iRGqHkB6A@mail.gmail.com>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1730924055; c=relaxed/simple;
+	bh=wi75TRb/esULtFCaR1cC8dPnXGvP95FgyG4wOpt8DxI=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=PuiRVbzx/JzE1l+2xBJBqKs4a9ioMboerFEwXVkc1aQj8nTJCylglDP6iQb/2zGUlDG5a4xROhZr7bX3AUw1/cYXpWenPAl+JHwZM1Bcq5enBZaEt4G6w5POHsGyu1C4GlEz9H0CJx18rGWT4cmUodb39r52Z8RNmpyK5oQ7kdk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=T2/swPpR; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-37d5aedd177so106708f8f.1;
+        Wed, 06 Nov 2024 12:14:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730924048; x=1731528848; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-language:in-reply-to:mime-version
+         :user-agent:date:message-id:from:references:cc:to:subject:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=a8VE3dFQLe/sXCOQV5eKWN92GAfnUx9NwFqd/SWFDPY=;
+        b=T2/swPpRLYOD2PJLBzV8zxCYmy8vS7qLepJR1X4U9y8iHrxhx+9Mtb80SMUXIuxK1W
+         bX+YXW3Am3DY+jr6DW2WyImfqDFxPL3P/TfPqasyVzCz7/T7vEU/hfggAL4oMgEZkWox
+         hGjwgLHdSEYSxkvHRw1XYkP86WE/IidCgnly+0KBasrN4TtvaWlgJCoKiqeF840gS6B+
+         VRheMMmkChoJTi9VKULocsm1zl2PTqqIFQdsacU4SEtAKVqyEKcDn4jOBXqdAAhIpqTD
+         6FNuoLl3xrCoyPM3ncUHRRaCjeRNX1QsuzBAE0pZCXZImz2LE4rX1L7xZV43Z+5sRjOO
+         FCOg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730924048; x=1731528848;
+        h=content-transfer-encoding:content-language:in-reply-to:mime-version
+         :user-agent:date:message-id:from:references:cc:to:subject
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=a8VE3dFQLe/sXCOQV5eKWN92GAfnUx9NwFqd/SWFDPY=;
+        b=fVmzSbgXSKHDqSM+bFahmtzENGvfkXIWxnc6GjsiJEPCIzscPwvZ0h910KLeIkDQo9
+         w+836OvQumS0/IzU7wzHSQ2ij572PUYaI2nIvNv2kDE3g8PIjj20khXR0EEPr8PcOroZ
+         i016ln5vAYBJiyrbdUZLmiSO/Mbf7KxHzaC+mMgRnTu5klVvSqsEE1OVI3x/8xQ7tdEI
+         g9pKniKCdDiwQCm/kKXCo/qwiRQSEbZjVNOgC3Dluh1CC0HlnjhmdY56HdleQqvXsxTm
+         yRd2RPCcsMm3RIgkUmp/gOGk0bYUKKv37tlfSJ3l/YvW1z4v30s8oiTsD6UzAHFlDplh
+         TiJQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVAkppxMWXbnruuDIFnEAlLkfaXyprehVAR6D6sQ8yB36RRjV1XMEF8w/JPnpAoY4TD080G9rKfJz1dF1mP@vger.kernel.org, AJvYcCW1ae9W8dn1nw+WrzMcn3R5ReryWPtAJSmWrYoLE/gq6N2wNOKwPmjaQhyVQz37h/Cba18=@vger.kernel.org, AJvYcCXbKx8h1RQL1ae3zJkS+2fom4e1NIOVhMAozGZK/Qal+PWJITBUR4l+1LRgj1gsmnHXiOA7fnQh@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywbc+5nnPt10uoI/g9p5mo6/u8AL8HA9MTYGxmEPkY+jI6xUIBL
+	q5bPRZUSJpjLUZJG7wPuvEHdNp3FPqiUlDueFi7cHi53Xm/w1tc9hQjkZQ==
+X-Google-Smtp-Source: AGHT+IG8YjCGwSwe7cSYU5D05Kue0A68YEkiZBJAKkkfAearDvF/FvVGgkqqJfQUuc7jGRQ9C9v6dg==
+X-Received: by 2002:a05:6000:4013:b0:37d:4517:acdb with SMTP id ffacd0b85a97d-381be783511mr21359365f8f.20.1730924047997;
+        Wed, 06 Nov 2024 12:14:07 -0800 (PST)
+Received: from [192.168.1.122] (cpc159313-cmbg20-2-0-cust161.5-4.cable.virginm.net. [82.0.78.162])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432aa6c7530sm35175855e9.25.2024.11.06.12.14.05
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 06 Nov 2024 12:14:07 -0800 (PST)
+Subject: Re: [PATCHv2 net-next] net: sfc: use ethtool string helpers
+To: Rosen Penev <rosenp@gmail.com>, netdev@vger.kernel.org
+Cc: Martin Habets <habetsm.xilinx@gmail.com>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Richard Cochran <richardcochran@gmail.com>,
+ Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
+ Jesper Dangaard Brouer <hawk@kernel.org>,
+ John Fastabend <john.fastabend@gmail.com>,
+ "open list:SFC NETWORK DRIVER" <linux-net-drivers@amd.com>,
+ open list <linux-kernel@vger.kernel.org>,
+ "open list:XDP (eXpress Data Path):Keyword:(?:b|_)xdp(?:b|_)"
+ <bpf@vger.kernel.org>
+References: <20241105231855.235894-1-rosenp@gmail.com>
+From: Edward Cree <ecree.xilinx@gmail.com>
+Message-ID: <d6d6a813-762f-b5a1-6a61-1cea24ba6618@gmail.com>
+Date: Wed, 6 Nov 2024 20:14:05 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.14.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+In-Reply-To: <20241105231855.235894-1-rosenp@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 
-On Wed, 6 Nov 2024 16:03:36 +0200 Alexandru Ardelean <aardelean@baylibre.com> wrote:
-
-> On Wed, Nov 6, 2024 at 1:08 AM Andrew Morton <akpm@linux-foundation.org> wrote:
-> > Can we fix both issues by just giving up on the macro approach and
-> > reimplement them in out-of-line C code?  All the sites I looked at are
-> > using 32-bit quantities - a mix of signed and unsigned.
-> >
+On 05/11/2024 23:18, Rosen Penev wrote:
+> The latter is the preferred way to copy ethtool strings.
 > 
-> Converting this to a static-inline was my other thought, rather than
-> keeping the macros.
-
-Non-inline, I think.  It's big.
-
-> But I'm not sure where to draw the line between too much rework vs a bug-fix.
-> Just fixing the bug was done in V1 of this patch, but then the kunit
-> exposed a bunch more.
-
-Sure, just the minimum for a bugfix.
-
-> > It's separate from this bugfix of course, but would it be feasible for
-> > someone to go switch all callers to use u32's then reimplement these in
-> > lib/find_closest.c?
-> >
+> Avoids manually incrementing the pointer. Cleans up the code quite well.
 > 
-> That would work.
-> How would a rework be preferred?
-> As a continuation to this patchset? Or a V3 to this patchset?
+> Signed-off-by: Rosen Penev <rosenp@gmail.com>
 
-A new and separate patchset.  A low-priority cleanup from whoever has
-the time and motivation ;)
+Acked-by: Edward Cree <ecree.xilinx@gmail.com>
 
-> But, moving forward: what would some preferences be?
-> - have variants of find_closest() for unsigned/signed arrays? (
-> find_closest_u32() or find_closest_i32() ?)
->    - AFAICT so far, there aren't any values in the arrays that get
-> close to INT32_MAX, so int32 may work for now
->    - maybe later some 64-bit variants could be added if needed
-> - should the variables X, mid, left & right be the same signedness as the array
->
-> The only preference (towards which I'm leaning) is just making sure
-> that X (and friends) are signed.
-
-Yes, I guess int32 would be best.  I agree that unsigned values greater
-than INT_MAX are unlikely.
-
-I suggest a series of patches which convert individual callers to int32
-and the final patch introduces lib/find_closest.c.
+I was initially curious why we still needed the 'n_stats++;' bits,
+ for the record it's for .get_sset_count().  (If you end up needing
+ to respin for any reason, perhaps make that explicit in the commit
+ message.)
 
