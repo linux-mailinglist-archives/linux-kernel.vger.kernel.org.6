@@ -1,134 +1,311 @@
-Return-Path: <linux-kernel+bounces-398654-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398655-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CC409BF439
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 18:21:56 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF6EA9BF43C
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 18:22:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 411DC2848A3
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 17:21:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F57E1F22D83
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 17:22:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 419522064FF;
-	Wed,  6 Nov 2024 17:21:51 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7365920651A;
+	Wed,  6 Nov 2024 17:22:48 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4106E190667
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 17:21:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00A601F9ABB
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 17:22:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730913710; cv=none; b=qbiKN7PmqNy/Z1imKAneePV/N3OOTM/XSWcGjrL/0M8sVYyuVuKCf24rFo0/Can5pdvjTHs5IoupO1xXwgKsJO4KD123lbqcsVzUq9Z4BbGZmAzHkykAT7oIKToJ95iK8DXscrTFluCdfbzsoL/EoxhqEyjN1ASeSjXfPTVNr9E=
+	t=1730913768; cv=none; b=f8pS5F+JtYaAS46xKvv7cjQpZ4pvFTTR5Tkbvsv1AYSOX3lHM/3ypn+WgOAlFqFBBQTm7muZxAIXBiXDQVmnyWtxGLwEI1cU4AlgIIFZsUhBX9pTSNSW/1fzkmbuDAYXn8W2LHZKDFRi7U0+YG4tsm9eImcHrOqg+8rOzBUMO7Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730913710; c=relaxed/simple;
-	bh=biHtMpgOM2mp0eq4vFc1eJ1pO9ucSrFLczTkH68Lv1I=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=LcFkZc5WzMV3aScb6jn4CRV5DdC8XH3OJJQW+6YYXuuVweiMTnel+Rcd/7fHDQUQYXodq55aOkBezdjxKQqTP5i6ILkBHIf+/tLRTqwWsKYr9IZ0ANiomKrjk+rn8U7C78QOMmZHBVrK2j9KLyvSa2iQwgHVIq9jfMZVfpVyLbw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-83aecd993faso99063539f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2024 09:21:48 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730913708; x=1731518508;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=bk09z7FHiyX2Z7MKYXieal7kpPgKLXHK3UI85PDA+BY=;
-        b=D5tp+RcdYDSgkV0MQhQ2gZDBlQISgvlgg46xHdrSBnMUdevnxPnmExv98YC5IhbN0M
-         cIjFb/6qvjaDAHDZ/GDCAjgZB7KQ1Y5VzEFmUxLcXvxuV3uUPzOUE9dIXnL+BBh3HCI+
-         QqXlObjIq0rq/jAugByinMw0Z5D3bSkkYuO4vs0x23l+OzPpUsOkK9+49Ina3moud5Hv
-         uUodf6Mx58WAYRwwmLR1GHTmRfKX/I2LUH6v8Krxi8lTq32Yk1QIQJmtrdxeo36/aZ1E
-         7Rx0wMpfdP7d0namAAQiQ2K7iC22hHmnRNM00/889Xt58/xTe4eRI+oZ72j5kH2P1HmS
-         Sf4w==
-X-Gm-Message-State: AOJu0YwZilhRHMG8Xy8cJ+pjgTh6hbaFI5VnlKAKDRGuurx1JPG3CrN4
-	snkSu58e6dJBVaQnnI9679auKarRWFD9pYAO0VxII1phHOLFcjxcyMygY9QEbkhgCYH2vzvMumk
-	lnKKuzJ4D8alY/4xfS0RotIyS19hNX9eSNFFv/+8HjHRDjR8Btm+6CtU=
-X-Google-Smtp-Source: AGHT+IHonsbEwcMByV2AvceZ7hffLJb0eMaX/1iaRgy+sV+ReiDvvkiEj09FdJQ+QZRh5u3ZPh6NiojVVfrrHuAGu8DaPW8Ulor2
+	s=arc-20240116; t=1730913768; c=relaxed/simple;
+	bh=BnnbcK7EvbaUNMV7DgM4BVKqLy+ZRqGziQZoMChzrZQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=DZQB6M0XQN9V6ZSHhwtAzGC0Iuu4TapwY9BVuUd8MBtT7lidMCUhyNp6stYKgPpAaurFGmVGtEoInRINDMGuDYiM5Vr4xeHL1WpSgXOat0hNMPvZOPiFAZAai+0ZzuFadlh/nes3+/MmTQY0HL5Os1vQcLPc99LwpZQIhc4OSIU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3F26C4CEC6;
+	Wed,  6 Nov 2024 17:22:46 +0000 (UTC)
+Date: Wed, 6 Nov 2024 12:22:50 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Kalesh Singh <kaleshsingh@google.com>
+Subject: [GIT PULL] tracefs: Fix regression of setting group permissions at
+ boot
+Message-ID: <20241106122250.2667681b@gandalf.local.home>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:d251:0:b0:3a1:a2b4:6665 with SMTP id
- e9e14a558f8ab-3a6e2a96369mr23056025ab.12.1730913708233; Wed, 06 Nov 2024
- 09:21:48 -0800 (PST)
-Date: Wed, 06 Nov 2024 09:21:48 -0800
-In-Reply-To: <0000000000005423e30621f745ff@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <672ba5ac.050a0220.49393.016b.GAE@google.com>
-Subject: Re: [syzbot] Re: [syzbot] [net?] WARNING in l2tp_exit_net
-From: syzbot <syzbot+332fe1e67018625f63c9@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+Kalesh Singh <kaleshsingh@google.com>
 
-***
+Linus,
 
-Subject: Re: [syzbot] [net?] WARNING in l2tp_exit_net
-Author: jchapman@katalix.com
+Fix tracefs mount options:
 
-On 06/11/2024 06:00, syzbot wrote:
-> syzbot has found a reproducer for the following issue on:
-> 
-> HEAD commit:    ccb35037c48a Merge branch 'net-lan969x-add-vcap-functional..
-> git tree:       net-next
-> console output: https://syzkaller.appspot.com/x/log.txt?x=16674f40580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=a9d1c42858837b59
-> dashboard link: https://syzkaller.appspot.com/bug?extid=332fe1e67018625f63c9
-> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=136a36a7980000
-> 
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/4c339ec95c42/disk-ccb35037.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/328f6f24277e/vmlinux-ccb35037.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/0473d4109fcb/bzImage-ccb35037.xz
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+332fe1e67018625f63c9@syzkaller.appspotmail.com
-> 
-> bond0 (unregistering): (slave bond_slave_0): Releasing backup interface
-> bond0 (unregistering): (slave bond_slave_1): Releasing backup interface
-> bond0 (unregistering): Released all slaves
-> ------------[ cut here ]------------
-> WARNING: CPU: 1 PID: 1153 at net/l2tp/l2tp_core.c:1881 l2tp_exit_net+0x165/0x170 net/l2tp/l2tp_core.c:1881
-> Modules linked in:
-> CPU: 1 UID: 0 PID: 1153 Comm: kworker/u8:5 Not tainted 6.12.0-rc5-syzkaller-01164-gccb35037c48a #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-> Workqueue: netns cleanup_net
-> RIP: 0010:l2tp_exit_net+0x165/0x170 net/l2tp/l2tp_core.c:1881
-> Code: 0f 0b 90 e9 3b ff ff ff e8 b8 31 a5 f6 eb 05 e8 b1 31 a5 f6 90 0f 0b 90 e9 7a ff ff ff e8 a3 31 a5 f6 eb 05 e8 9c 31 a5 f6 90 <0f> 0b 90 eb b5 66 0f 1f 44 00 00 90 90 90 90 90 90 90 90 90 90 90
-> RSP: 0018:ffffc90004177a98 EFLAGS: 00010293
-> RAX: ffffffff8aefa87d RBX: ffff888076669088 RCX: ffff8880277abc00
-> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000002
-> RBP: ffffc90004177bb0 R08: ffffffff8bc11bb6 R09: 1ffffffff203a5d5
-> R10: dffffc0000000000 R11: fffffbfff203a5d6 R12: dffffc0000000000
-> R13: 1ffffffff1fdb678 R14: ffff888076669130 R15: ffff888076669040
-> FS:  0000000000000000(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 00007ffca636d388 CR3: 0000000026e10000 CR4: 00000000003526f0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> Call Trace:
->   <TASK>
->   ops_exit_list net/core/net_namespace.c:173 [inline]
->   cleanup_net+0x802/0xcc0 net/core/net_namespace.c:633
->   process_one_work kernel/workqueue.c:3229 [inline]
->   process_scheduled_works+0xa63/0x1850 kernel/workqueue.c:3310
->   worker_thread+0x870/0xd30 kernel/workqueue.c:3391
->   kthread+0x2f0/0x390 kernel/kthread.c:389
->   ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
->   ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
->   </TASK>
+The commit 78ff64081949 ("vfs: Convert tracefs to use the new mount API")
+broke the gid setting when set by fstab or other mount utility.
+It is ignored when it is set. Fix the code so that it recognizes the
+option again and will honor the settings on mount at boot up.
 
-Attaching patch for testing.
+Update the internal documentation and create a selftest to make sure
+it doesn't break again in the future.
 
-#syz test: 
-git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git 
-ccb35037c48a
 
+Please pull the latest tracefs-v6.12-rc6 tree, which can be found at:
+
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git
+tracefs-v6.12-rc6
+
+Tag SHA1: ba611308a30ae768483f77653d25ac6c98c618a7
+Head SHA1: 8b55572e51805184353ee7d587c720a51818fb82
+
+
+Kalesh Singh (3):
+      tracing: Fix tracefs mount options
+      tracing: Document tracefs gid mount option
+      tracing/selftests: Add tracefs mount options test
+
+----
+ fs/tracefs/inode.c                                 |  12 ++-
+ kernel/trace/trace.c                               |   4 +
+ .../ftrace/test.d/00basic/mount_options.tc         | 101 +++++++++++++++++++++
+ .../ftrace/test.d/00basic/test_ownership.tc        |  16 +---
+ tools/testing/selftests/ftrace/test.d/functions    |  25 +++++
+ 5 files changed, 142 insertions(+), 16 deletions(-)
+ create mode 100644 tools/testing/selftests/ftrace/test.d/00basic/mount_options.tc
+---------------------------
+diff --git a/fs/tracefs/inode.c b/fs/tracefs/inode.c
+index 1748dff58c3b..cfc614c638da 100644
+--- a/fs/tracefs/inode.c
++++ b/fs/tracefs/inode.c
+@@ -392,6 +392,9 @@ static int tracefs_reconfigure(struct fs_context *fc)
+ 	struct tracefs_fs_info *sb_opts = sb->s_fs_info;
+ 	struct tracefs_fs_info *new_opts = fc->s_fs_info;
+ 
++	if (!new_opts)
++		return 0;
++
+ 	sync_filesystem(sb);
+ 	/* structure copy of new mount options to sb */
+ 	*sb_opts = *new_opts;
+@@ -478,14 +481,17 @@ static int tracefs_fill_super(struct super_block *sb, struct fs_context *fc)
+ 	sb->s_op = &tracefs_super_operations;
+ 	sb->s_d_op = &tracefs_dentry_operations;
+ 
+-	tracefs_apply_options(sb, false);
+-
+ 	return 0;
+ }
+ 
+ static int tracefs_get_tree(struct fs_context *fc)
+ {
+-	return get_tree_single(fc, tracefs_fill_super);
++	int err = get_tree_single(fc, tracefs_fill_super);
++
++	if (err)
++		return err;
++
++	return tracefs_reconfigure(fc);
+ }
+ 
+ static void tracefs_free_fc(struct fs_context *fc)
+diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+index a8f52b6527ca..2b64b3ec67d9 100644
+--- a/kernel/trace/trace.c
++++ b/kernel/trace/trace.c
+@@ -5501,6 +5501,10 @@ static const struct file_operations tracing_iter_fops = {
+ 
+ static const char readme_msg[] =
+ 	"tracing mini-HOWTO:\n\n"
++	"By default tracefs removes all OTH file permission bits.\n"
++	"When mounting tracefs an optional group id can be specified\n"
++	"which adds the group to every directory and file in tracefs:\n\n"
++	"\t e.g. mount -t tracefs [-o [gid=<gid>]] nodev /sys/kernel/tracing\n\n"
+ 	"# echo 0 > tracing_on : quick way to disable tracing\n"
+ 	"# echo 1 > tracing_on : quick way to re-enable tracing\n\n"
+ 	" Important files:\n"
+diff --git a/tools/testing/selftests/ftrace/test.d/00basic/mount_options.tc b/tools/testing/selftests/ftrace/test.d/00basic/mount_options.tc
+new file mode 100644
+index 000000000000..35e8d47d6072
+--- /dev/null
++++ b/tools/testing/selftests/ftrace/test.d/00basic/mount_options.tc
+@@ -0,0 +1,101 @@
++#!/bin/sh
++# SPDX-License-Identifier: GPL-2.0
++# description: Test tracefs GID mount option
++# requires: "[gid=<gid>]":README
++
++fail() {
++	local msg="$1"
++
++	echo "FAILED: $msg"
++	exit_fail
++}
++
++find_alternate_gid() {
++	local original_gid="$1"
++	tac /etc/group | grep -v ":$original_gid:" | head -1 | cut -d: -f3
++}
++
++mount_tracefs_with_options() {
++	local mount_point="$1"
++	local options="$2"
++
++	mount -t tracefs -o "$options" nodev "$mount_point"
++
++	setup
++}
++
++unmount_tracefs() {
++	local mount_point="$1"
++
++	# Need to make sure the mount isn't busy so that we can umount it
++	(cd $mount_point; finish_ftrace;)
++
++	cleanup
++}
++
++create_instance() {
++	local mount_point="$1"
++	local instance="$mount_point/instances/$(mktemp -u test-XXXXXX)"
++
++	mkdir "$instance"
++	echo "$instance"
++}
++
++remove_instance() {
++	local instance="$1"
++
++	rmdir "$instance"
++}
++
++check_gid() {
++	local mount_point="$1"
++	local expected_gid="$2"
++
++	echo "Checking permission group ..."
++
++	cd "$mount_point"
++
++	for file in "." "events" "events/sched" "events/sched/sched_switch" "events/sched/sched_switch/enable"; do
++		local gid=`stat -c "%g" $file`
++		if [ "$gid" -ne "$expected_gid" ]; then
++			cd - # Return to the previous working directory (tracefs root)
++			fail "$(realpath $file): Expected group $expected_gid; Got group $gid"
++		fi
++	done
++
++	cd - # Return to the previous working directory (tracefs root)
++}
++
++test_gid_mount_option() {
++	local mount_point=$(get_mount_point)
++	local mount_options=$(get_mnt_options "$mount_point")
++	local original_group=$(stat -c "%g" .)
++	local other_group=$(find_alternate_gid "$original_group")
++
++	# Set up mount options with new GID for testing
++	local new_options=`echo "$mount_options" | sed -e "s/gid=[0-9]*/gid=$other_group/"`
++	if [ "$new_options" = "$mount_options" ]; then
++		new_options="$mount_options,gid=$other_group"
++		mount_options="$mount_options,gid=$original_group"
++	fi
++
++	# Unmount existing tracefs instance and mount with new GID
++	unmount_tracefs "$mount_point"
++	mount_tracefs_with_options "$mount_point" "$new_options"
++
++	check_gid "$mount_point" "$other_group"
++
++	# Check that files created after the mount inherit the GID
++	local instance=$(create_instance "$mount_point")
++	check_gid "$instance" "$other_group"
++	remove_instance "$instance"
++
++	# Unmount and remount with the original GID
++	unmount_tracefs "$mount_point"
++	mount_tracefs_with_options "$mount_point" "$mount_options"
++	check_gid "$mount_point" "$original_group"
++}
++
++test_gid_mount_option
++
++exit 0
+diff --git a/tools/testing/selftests/ftrace/test.d/00basic/test_ownership.tc b/tools/testing/selftests/ftrace/test.d/00basic/test_ownership.tc
+index 094419e190c2..e71cc3ad0bdf 100644
+--- a/tools/testing/selftests/ftrace/test.d/00basic/test_ownership.tc
++++ b/tools/testing/selftests/ftrace/test.d/00basic/test_ownership.tc
+@@ -1,24 +1,14 @@
+ #!/bin/sh
+ # SPDX-License-Identifier: GPL-2.0
+ # description: Test file and directory ownership changes for eventfs
++# requires: "[gid=<gid>]":README
+ 
+ original_group=`stat -c "%g" .`
+ original_owner=`stat -c "%u" .`
+ 
+-mount_point=`stat -c '%m' .`
++local mount_point=$(get_mount_point)
+ 
+-# If stat -c '%m' does not work (e.g. busybox) or failed, try to use the
+-# current working directory (which should be a tracefs) as the mount point.
+-if [ ! -d "$mount_point" ]; then
+-	if mount | grep -qw $PWD ; then
+-		mount_point=$PWD
+-	else
+-		# If PWD doesn't work, that is an environmental problem.
+-		exit_unresolved
+-	fi
+-fi
+-
+-mount_options=`mount | grep "$mount_point" | sed -e 's/.*(\(.*\)).*/\1/'`
++mount_options=$(get_mnt_options "$mount_point")
+ 
+ # find another owner and group that is not the original
+ other_group=`tac /etc/group | grep -v ":$original_group:" | head -1 | cut -d: -f3`
+diff --git a/tools/testing/selftests/ftrace/test.d/functions b/tools/testing/selftests/ftrace/test.d/functions
+index 779f3e62ec90..84d6a9c7ad67 100644
+--- a/tools/testing/selftests/ftrace/test.d/functions
++++ b/tools/testing/selftests/ftrace/test.d/functions
+@@ -193,3 +193,28 @@ ftrace_errlog_check() { # err-prefix command-with-error-pos-by-^ command-file
+     # "  Command: " and "^\n" => 13
+     test $(expr 13 + $pos) -eq $N
+ }
++
++# Helper to get the tracefs mount point
++get_mount_point() {
++	local mount_point=`stat -c '%m' .`
++
++	# If stat -c '%m' does not work (e.g. busybox) or failed, try to use the
++	# current working directory (which should be a tracefs) as the mount point.
++	if [ ! -d "$mount_point" ]; then
++		if mount | grep -qw "$PWD"; then
++			mount_point=$PWD
++		else
++			# If PWD doesn't work, that is an environmental problem.
++			exit_unresolved
++		fi
++	fi
++	echo "$mount_point"
++}
++
++# Helper function to retrieve mount options for a given mount point
++get_mnt_options() {
++	local mnt_point="$1"
++	local opts=$(mount | grep -m1 "$mnt_point" | sed -e 's/.*(\(.*\)).*/\1/')
++
++	echo "$opts"
++}
+\ No newline at end of file
 
