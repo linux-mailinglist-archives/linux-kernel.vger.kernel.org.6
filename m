@@ -1,92 +1,92 @@
-Return-Path: <linux-kernel+bounces-398771-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398772-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 130E09BF5CC
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 19:58:18 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD2B49BF5CE
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 19:58:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB57E283EDE
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 18:58:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 84ED31F232D4
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 18:58:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2E0920896A;
-	Wed,  6 Nov 2024 18:58:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="JzsybBs+"
-Received: from mail-4316.protonmail.ch (mail-4316.protonmail.ch [185.70.43.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 393D0207A1A;
-	Wed,  6 Nov 2024 18:58:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D484B20896A;
+	Wed,  6 Nov 2024 18:58:23 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F682207A1A
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 18:58:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730919491; cv=none; b=XNXN3PkzalLDIZcvO9KJDEwkehaomhexyOx0oSYirf1/YLCjMj7OWNskcZ5OlSW5j0gdL/+Fz+j30KpCxZEVhe6vAhHCNl+VUPSswyNFJ32lLryoolWKwcdFi1bQBWbNLnJo+WTJi2CaRPHo8LaYloKhZXIoEw9v7PSlVGIsno4=
+	t=1730919503; cv=none; b=dmkG/4ae29PdahIzNQCsTYCHkGtoAjRZwek1luklMPDi6IAm/NX2oilDvmLYJlBaY2gYME7SD/EeMgSYaGgWxbdU6IAt0n0pJNtHWcVRiLbqKLV+IrV6PxZeiHvMyQ/2TO2mkZ6ojwSav9FP3AnDS+3led67SaerLEssp13NpaY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730919491; c=relaxed/simple;
-	bh=1SJUl3tA3a6a31XHunu4dXCE+Re7BWWToL00ihVENuw=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=p1zoApfyvekPNC1VvLSb2TECeA+84QvKAIautjXHvgN4MCQ+YsKRR5Bi43I3U0CRim+ag1/AZP5NWKpRB5NhQgxpX0SCVnijD8v2wslfrgDziMl2LT0EY0ixctrk0paiTD9qsmtY71PYHryzJEShsPl+VPSBRPH2g076crEzY1M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=JzsybBs+; arc=none smtp.client-ip=185.70.43.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=ldyvedltf5e6jkr5fuxoye5agq.protonmail; t=1730919487; x=1731178687;
-	bh=1SJUl3tA3a6a31XHunu4dXCE+Re7BWWToL00ihVENuw=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
-	b=JzsybBs+dGBhcUDfVv1zTRME55roTPOUdAXbLKezkYdV3brmizJz4FdNywE8hqMwv
-	 I5FqIfPuOnsBeTXlDEX+d9BmwWyiC54wLiXOQNz0ZD/slQn0Oi8PMez5RETyjrQ8+7
-	 bjes4Nsaa/Ob9lk72sMh908CsowLKEbwFQNqVCIXGksfV6rJE1TWq8sb/C5GRM0wmg
-	 Jzc/fThhsyTaMecLWSJoJCxaFktb5ZGOPaQYMsuqENb62XRQ6F74KgMlqfVvzxLkip
-	 zUIru/0DI+II0t4zsuWBHSqyWCzZfmJdQ9IykSCO7Bw9ksBbLO933r7C/ekzClbcE+
-	 0f5CsmlXZzxbg==
-Date: Wed, 06 Nov 2024 18:58:04 +0000
-To: Kent Overstreet <kent.overstreet@linux.dev>
-From: Piotr Zalewski <pZ010001011111@proton.me>
-Cc: linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, skhan@linuxfoundation.org, syzbot+bee87a0c3291c06aa8c6@syzkaller.appspotmail.com
-Subject: Re: [PATCH] Fix wrong max check in bch2_opt_validate
-Message-ID: <QYWUohk8PTK2Z_y-IZBUFDFqM6BNsqv4oS95yfOP5DGWuvCNyvC6R1bizXEubPYtqm2ZpRWNN4BH9__biGJ5Ti3Yh88Ge_9HCSSAdyU1MxA=@proton.me>
-In-Reply-To: <v5wttxaimwpqb5jfpxvcs3rmg27fm4mf7446slutl7ztha6q4p@434ppx3gzv7l>
-References: <20241031231823.688918-2-pZ010001011111@proton.me> <pkxqQnSTQLReyYEHegx90LNp5dbR6LlpcqUIkBFa2CiL-0P48QWpGJ1YYKtWwu0IFM7H-2T4fYQz0MldP6OqZppPzmqafQDKouhETLnM5o4=@proton.me> <v5wttxaimwpqb5jfpxvcs3rmg27fm4mf7446slutl7ztha6q4p@434ppx3gzv7l>
-Feedback-ID: 53478694:user:proton
-X-Pm-Message-ID: 74232368084e9af70729c236316a1e751cd6bf8b
+	s=arc-20240116; t=1730919503; c=relaxed/simple;
+	bh=a790h49AtUkJxgr+O+C1kiwWl+LUuuzrKpUHyHSOc3Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=O5Cvw+c8h3Gfb/+tt0k1V3Eibg280HQ/tPv1kUbKROE2FaGWvUcmjSnI5lCBCSMF7Iej1z6Xmi1trm8Nd/j/SrpYL2k38qTPdWF2klcrVKWKFXNKFivQ+lvNHQCnw0Wyw2Sx9EPWN7dCAwV/zzDazTZztqhwFlhkPGudsj10QK8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 490F7497;
+	Wed,  6 Nov 2024 10:58:48 -0800 (PST)
+Received: from e110455-lin.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 067FE3F528;
+	Wed,  6 Nov 2024 10:58:16 -0800 (PST)
+From: Liviu Dudau <liviu.dudau@arm.com>
+To: Boris Brezillon <boris.brezillon@collabora.com>
+Cc: Liviu Dudau <liviu.dudau@arm.com>,
+	Steven Price <steven.price@arm.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	Jann Horn <jannh@google.com>
+Subject: [PATCH v2] drm/panthor: Lock XArray when getting entries for the VM
+Date: Wed,  6 Nov 2024 18:58:06 +0000
+Message-ID: <20241106185806.389089-1-liviu.dudau@arm.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
+Similar to cac075706f29 ("drm/panthor: Fix race when converting
+group handle to group object") we need to use the XArray's internal
+locking when retrieving a vm pointer from there.
 
+v2: Removed part of the patch that was trying to protect fetching
+the heap pointer from XArray, as that operation is protected by
+the @pool->lock.
 
+Fixes: 647810ec2476 ("drm/panthor: Add the MMU/VM logical block")
+Reported-by: Jann Horn <jannh@google.com>
+Cc: Boris Brezillon <boris.brezillon@collabora.com>
+Cc: Steven Price <steven.price@arm.com>
+Signed-off-by: Liviu Dudau <liviu.dudau@arm.com>
+---
+ drivers/gpu/drm/panthor/panthor_mmu.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-
-
-Sent with Proton Mail secure email.
-
-On Wednesday, November 6th, 2024 at 6:52 PM, Kent Overstreet <kent.overstre=
-et@linux.dev> wrote:
-
-> On Wed, Nov 06, 2024 at 08:11:13AM +0000, Piotr Zalewski wrote:
->=20
-> > Hi Kent,
-> >=20
-> > Did you see this?
->=20
->=20
-> Whoops, I did miss it the first time.
-
-np
-
-> I think it'd be better to fix it in the OPT_STR() macro though.
-
-If changed in OPT_STR() macro it would also require a change in
-bch2_opt_to_text:434 (it also does -1 there).
-
-Best regards
+diff --git a/drivers/gpu/drm/panthor/panthor_mmu.c b/drivers/gpu/drm/panthor/panthor_mmu.c
+index 8ca85526491e6..46b84a557d9cc 100644
+--- a/drivers/gpu/drm/panthor/panthor_mmu.c
++++ b/drivers/gpu/drm/panthor/panthor_mmu.c
+@@ -1580,7 +1580,9 @@ panthor_vm_pool_get_vm(struct panthor_vm_pool *pool, u32 handle)
+ {
+ 	struct panthor_vm *vm;
+ 
++	xa_lock(&pool->xa);
+ 	vm = panthor_vm_get(xa_load(&pool->xa, handle));
++	xa_unlock(&pool->xa);
+ 
+ 	return vm;
+ }
+-- 
+2.47.0
 
 
