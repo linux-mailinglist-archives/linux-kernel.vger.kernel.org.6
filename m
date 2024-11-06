@@ -1,193 +1,124 @@
-Return-Path: <linux-kernel+bounces-398484-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398485-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BE779BF1CD
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 16:33:59 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 152F79BF1D0
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 16:35:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2BC56284F6D
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 15:33:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 46E541C25735
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 15:35:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92A07206500;
-	Wed,  6 Nov 2024 15:32:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE47D203709;
+	Wed,  6 Nov 2024 15:35:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a7F2y3kc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="U53m2Gyk"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3A0218FDB0;
-	Wed,  6 Nov 2024 15:32:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBDE716CD29
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 15:35:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730907149; cv=none; b=oD4ileObnVpZ27gCFF5ZtGodgk95a/UKroh/HTBrFqmdUH5saW/jEc2EA2anSpUaM1VEFzIcJ1fdil+N861uWEk8ihf4WRON+ER2ChNfMcVY2zRrJqKU+92R3T98T8wS5nQBhGuQmSkAIDkD12xZRRFWOSFCUD8UTg2xHgWPfok=
+	t=1730907320; cv=none; b=iIBqi+x7iStk9j5wYrXAkg1E1OTV4EYfU0htFce8eMX0O/OkeWxZxQwtGzgLxUuDq2AJWjjnCJFtfQF4/rMMTZ3/EdEVQUkEdcL7LcQKMVKxehujAdtzNa0lByniWLF0Ju5I/MtPzhlDRua216S1jFbytXHLIbUMMI1/mJJzX6M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730907149; c=relaxed/simple;
-	bh=i/urNZasEZGkqJe0WJR/j8fI69WJU8G5mFhs6F2dWfI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Cj8P9HEZ0fF73MoP4vYCE5PQneszThwLYwpZttgA0sCGpU7k8bB7l3fuYcXrXuHskJFOAW/rPZjRxjuem4DP7e6R2Cl/jojmo6GSezG1CgxDLSY4HZ0BflopWQkzu+XCtHn3WzqUbJLXqJf9Mn8b43cK/hUUZV3b4R8jWrXADt4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a7F2y3kc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 03517C4CEC6;
-	Wed,  6 Nov 2024 15:32:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730907146;
-	bh=i/urNZasEZGkqJe0WJR/j8fI69WJU8G5mFhs6F2dWfI=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=a7F2y3kc3m/u9hVltjxAoVOGYNs366ERYucq97ZsiFc3KWPgH7lDoVDgZmCj4e3dP
-	 H4lq9iBS2nnzMutVdWomxjbTwRBE575YEHRo3zraxMsUv4TDxUufd9qbRCHv4cE+is
-	 0+Sw34WoLfXOzL3JDHKX0mnrnfFN3WKtx1p/TEe4ER3R7RMU2t7eg/jMJyk1H0wlUu
-	 7S3rBo0kqfdMPIr+FD+U9OsOFnEE4p1KORGqSBOW6fCQCPOlU7NYLrge0s06hHuDe7
-	 ko5IxXVaNx3F8jYaDE/RG1H3SsONDFun+I8wrPd33xmrKVlq/W4Y9jKOfO4zKPoXuy
-	 WOWAylM70Qzbg==
-From: Frederic Weisbecker <frederic@kernel.org>
-To: LKML <linux-kernel@vger.kernel.org>
-Cc: Zqiang <qiang.zhang1211@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Neeraj Upadhyay <neeraj.upadhyay@amd.com>,
-	"Paul E . McKenney" <paulmck@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	rcu <rcu@vger.kernel.org>,
-	Frederic Weisbecker <frederic@kernel.org>
-Subject: [PATCH 2/2] rcu/nocb: Fix missed RCU barrier on deoffloading
-Date: Wed,  6 Nov 2024 16:32:13 +0100
-Message-ID: <20241106153213.38896-3-frederic@kernel.org>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20241106153213.38896-1-frederic@kernel.org>
-References: <20241106153213.38896-1-frederic@kernel.org>
+	s=arc-20240116; t=1730907320; c=relaxed/simple;
+	bh=BzMh/SkjF/vZhwo25zJAi8RA4wwY7ojx5tSTsjGDWMQ=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=beRfAYT8RtUBJdPIrAKZsdjf9xQs5WTzhlFQYsXoe41uiHIwou7nY3OYsvViOusv1rGGTJqlZDfNMhJ1tiJu198814dqAj+Ch2/LoWLamM3dshdikOrhzHtJI2/pzusSvGuxf10OPs75pvjDAuqhA/YtXlH+kPxDZY1C5F4HOhw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=U53m2Gyk; arc=none smtp.client-ip=209.85.128.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6ea863ecfe9so84402217b3.3
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2024 07:35:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1730907317; x=1731512117; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=/yuAQmTAdCCAAaxxu5QbRxg4oOjJGHpnFzwE4CldcWU=;
+        b=U53m2GykqvDaj/gz/83Nz/TuZ/YIjGvaatD6B86Wbx30pdX6rIfF6S7iF8dsBaewYG
+         IaYEAVzSsfMcb27xE4SuywzQAOQgXbMed4jurzRx7DNtib7uW5r3x8G1VGXXX43rNdDI
+         zS3ACcLnm6saxV2RIg0SY2Yt5CAvrVhNodRYQMJklVwQSxEVIniGICbTumPoCzT7WGWo
+         REK1sMN9wOy/9W2V42rpI7d5KbqVjTaZtpmFydOtjxl863KjcUOLFDNB691wXszOSuKZ
+         dzh9r5YNhJWtxrLc1vM7ANHBDB8qyg2e9Q5QdHh0oodcbqlik6me4a4EbpQp7ZGhMCN9
+         EXFw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730907317; x=1731512117;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/yuAQmTAdCCAAaxxu5QbRxg4oOjJGHpnFzwE4CldcWU=;
+        b=GuA8r9Glf7UgT0WrdjRCR62lCjpYSYbdAerqfFx7D+Yfn+EXu2+EimXjjJr4CtIfim
+         oKaeJO4gbMFQq6gyj7ryOTCvS1Xztepc/Wcu7NgI2Ti7wB2Pqn5UaZpHdfOcs6p75ysf
+         zBvI74MZWp3k+/eiQKbgSp/LZi7ooPgTqIvwJbRiwvLx8YqZWalM65VHNerOE6GJ+01N
+         I9OccG8qbcSWP3i9NyiYtNweeIluWp+S4I/NHpNFPzjauyOXhxnvheRrEJ+Ey8aveI9+
+         BZD9LrZWx4EOgmRWEzLEhw3X2iCpplzS0pRhQMvy0wbk704xZHmW2QYt1Rb5s1UyKgSS
+         w4eA==
+X-Forwarded-Encrypted: i=1; AJvYcCVOhZgl2Mc9V9AedfegRI3in83PodWjPUSKUDdK2aNU5k23MzDeisOYVhhqhavYtuvbvnq8dphVI8Fsucg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyF3884Hk8GZowDDUdB7AuDZ54F8/DITnSNmbmV77F3meMyGbwk
+	GQxioGDbNvyQEHT+jlHEp7nVev5L5aFqcmgsaDlIK2ekMBymIDepfddhIepjs1ygWZkdyNRTAWE
+	k2w==
+X-Google-Smtp-Source: AGHT+IHmNxgiraaP+U1uT1ChKSKhhI4xy7BUPpqdGKKVhBllQrZbqSbHpux9zDxuCCy+elXJIEPKqQ6aqPM=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
+ (user=seanjc job=sendgmr) by 2002:a05:690c:25c7:b0:6e2:6f2:efc with SMTP id
+ 00721157ae682-6e9d8ad570amr9938387b3.5.1730907316561; Wed, 06 Nov 2024
+ 07:35:16 -0800 (PST)
+Date: Wed, 6 Nov 2024 07:35:15 -0800
+In-Reply-To: <20241106152914.GFZyuLSvhKDCRWOeHa@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+References: <20241104101543.31885-1-bp@kernel.org> <ZyltcHfyCiIXTsHu@google.com>
+ <20241105123416.GBZyoQyAoUmZi9eMkk@fat_crate.local> <ZypfjFjk5XVL-Grv@google.com>
+ <20241105185622.GEZypqVul2vRh6yDys@fat_crate.local> <ZypvePo2M0ZvC4RF@google.com>
+ <20241105192436.GFZypw9DqdNIObaWn5@fat_crate.local> <ZyuJQlZqLS6K8zN2@google.com>
+ <20241106152914.GFZyuLSvhKDCRWOeHa@fat_crate.local>
+Message-ID: <ZyuMsz5p26h_XbRR@google.com>
+Subject: Re: [PATCH] x86/bugs: Adjust SRSO mitigation to new features
+From: Sean Christopherson <seanjc@google.com>
+To: Borislav Petkov <bp@alien8.de>
+Cc: Borislav Petkov <bp@kernel.org>, X86 ML <x86@kernel.org>, Josh Poimboeuf <jpoimboe@redhat.com>, 
+	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, kvm@vger.kernel.org, 
+	LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
 
-From: Zqiang <qiang.zhang1211@gmail.com>
+On Wed, Nov 06, 2024, Borislav Petkov wrote:
+> On Wed, Nov 06, 2024 at 07:20:34AM -0800, Sean Christopherson wrote:
+> > I prefer to be To:/Cc:'d on any patches that touch files that are covered by
+> > relevant MAINTAINERS entries.  IMO, pulling names/emails from git is useless noise
+> > the vast majority of the time.
+> 
+> Huh, that's what I did!
 
-Currently, running rcutorture test with torture_type=rcu fwd_progress=8
-n_barrier_cbs=8 nocbs_nthreads=8 nocbs_toggle=100 onoff_interval=60
-test_boost=2, will trigger the following warning:
+You didn't though.  The original mail Cc'd kvm@, but neither Paolo nor I.
 
-	WARNING: CPU: 19 PID: 100 at kernel/rcu/tree_nocb.h:1061 rcu_nocb_rdp_deoffload+0x292/0x2a0
-	RIP: 0010:rcu_nocb_rdp_deoffload+0x292/0x2a0
-	 Call Trace:
-	  <TASK>
-	  ? __warn+0x7e/0x120
-	  ? rcu_nocb_rdp_deoffload+0x292/0x2a0
-	  ? report_bug+0x18e/0x1a0
-	  ? handle_bug+0x3d/0x70
-	  ? exc_invalid_op+0x18/0x70
-	  ? asm_exc_invalid_op+0x1a/0x20
-	  ? rcu_nocb_rdp_deoffload+0x292/0x2a0
-	  rcu_nocb_cpu_deoffload+0x70/0xa0
-	  rcu_nocb_toggle+0x136/0x1c0
-	  ? __pfx_rcu_nocb_toggle+0x10/0x10
-	  kthread+0xd1/0x100
-	  ? __pfx_kthread+0x10/0x10
-	  ret_from_fork+0x2f/0x50
-	  ? __pfx_kthread+0x10/0x10
-	  ret_from_fork_asm+0x1a/0x30
-	  </TASK>
+> Please run this patch through get_maintainer.pl and tell me who else I should
+> have CCed.
 
-CPU0                               CPU2                          CPU3
-//rcu_nocb_toggle             //nocb_cb_wait                   //rcutorture
+  $ ./scripts/get_maintainer.pl --nogit --nogit-fallback --norolestats --nofixes -- <patch>
+  Thomas Gleixner <tglx@linutronix.de>
+  Ingo Molnar <mingo@redhat.com>
+  Borislav Petkov <bp@alien8.de>
+  Dave Hansen <dave.hansen@linux.intel.com>
+  x86@kernel.org
+  "H. Peter Anvin" <hpa@zytor.com>
+  Peter Zijlstra <peterz@infradead.org>
+  Josh Poimboeuf <jpoimboe@kernel.org>
+  Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+  Sean Christopherson <seanjc@google.com>
+  Paolo Bonzini <pbonzini@redhat.com>
+  linux-kernel@vger.kernel.org
+  kvm@vger.kernel.org
 
-// deoffload CPU1             // process CPU1's rdp
-rcu_barrier()
-    rcu_segcblist_entrain()
-        rcu_segcblist_add_len(1);
-        // len == 2
-        // enqueue barrier
-        // callback to CPU1's
-        // rdp->cblist
-                             rcu_do_batch()
-                                 // invoke CPU1's rdp->cblist
-                                 // callback
-                                 rcu_barrier_callback()
-                                                             rcu_barrier()
-                                                               mutex_lock(&rcu_state.barrier_mutex);
-                                                               // still see len == 2
-                                                               // enqueue barrier callback
-                                                               // to CPU1's rdp->cblist
-                                                               rcu_segcblist_entrain()
-                                                                   rcu_segcblist_add_len(1);
-                                                                   // len == 3
-                                 // decrement len
-                                 rcu_segcblist_add_len(-2);
-                             kthread_parkme()
+Versus the actual To + Cc:
 
-// CPU1's rdp->cblist len == 1
-// Warn because there is
-// still a pending barrier
-// trigger warning
-WARN_ON_ONCE(rcu_segcblist_n_cbs(&rdp->cblist));
-cpus_read_unlock();
-
-                                                                // wait CPU1 to comes online and
-                                                                // invoke barrier callback on
-                                                                // CPU1 rdp's->cblist
-                                                                wait_for_completion(&rcu_state.barrier_completion);
-// deoffload CPU4
-cpus_read_lock()
-  rcu_barrier()
-    mutex_lock(&rcu_state.barrier_mutex);
-    // block on barrier_mutex
-    // wait rcu_barrier() on
-    // CPU3 to unlock barrier_mutex
-    // but CPU3 unlock barrier_mutex
-    // need to wait CPU1 comes online
-    // when CPU1 going online will block on cpus_write_lock
-
-The above scenario will not only trigger a WARN_ON_ONCE(), but also
-trigger a deadlock.
-
-Thanks to nocb locking, a second racing rcu_barrier() on an offline CPU
-will either observe the decremented callback counter down to 0 and spare
-the callback enqueue, or rcuo will observe the new callback and keep
-rdp->nocb_cb_sleep to false.
-
-Therefore check rdp->nocb_cb_sleep before parking to make sure no
-further rcu_barrier() is waiting on the rdp.
-
-Fixes: 1fcb932c8b5c ("rcu/nocb: Simplify (de-)offloading state machine")
-Suggested-by: Frederic Weisbecker <frederic@kernel.org>
-Signed-off-by: Zqiang <qiang.zhang1211@gmail.com>
-Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
----
- kernel/rcu/tree_nocb.h | 13 ++++++++++++-
- 1 file changed, 12 insertions(+), 1 deletion(-)
-
-diff --git a/kernel/rcu/tree_nocb.h b/kernel/rcu/tree_nocb.h
-index 16865475120b..2605dd234a13 100644
---- a/kernel/rcu/tree_nocb.h
-+++ b/kernel/rcu/tree_nocb.h
-@@ -891,7 +891,18 @@ static void nocb_cb_wait(struct rcu_data *rdp)
- 	swait_event_interruptible_exclusive(rdp->nocb_cb_wq,
- 					    nocb_cb_wait_cond(rdp));
- 	if (kthread_should_park()) {
--		kthread_parkme();
-+		/*
-+		 * kthread_park() must be preceded by an rcu_barrier().
-+		 * But yet another rcu_barrier() might have sneaked in between
-+		 * the barrier callback execution and the callbacks counter
-+		 * decrement.
-+		 */
-+		if (rdp->nocb_cb_sleep) {
-+			rcu_nocb_lock_irqsave(rdp, flags);
-+			WARN_ON_ONCE(rcu_segcblist_n_cbs(&rdp->cblist));
-+			rcu_nocb_unlock_irqrestore(rdp, flags);
-+			kthread_parkme();
-+		}
- 	} else if (READ_ONCE(rdp->nocb_cb_sleep)) {
- 		WARN_ON(signal_pending(current));
- 		trace_rcu_nocb_wake(rcu_state.name, rdp->cpu, TPS("WokeEmpty"));
--- 
-2.46.0
-
+  X86 ML <x86@kernel.org>
+  Josh Poimboeuf <jpoimboe@redhat.com>,
+  Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+  kvm@vger.kernel.org,
+  LKML <linux-kernel@vger.kernel.org>,
+  "Borislav Petkov (AMD)" <bp@alien8.de>
 
