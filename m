@@ -1,89 +1,79 @@
-Return-Path: <linux-kernel+bounces-397319-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397320-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D11C39BDA5E
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 01:34:07 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 458D29BDA67
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 01:37:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 844171F24476
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 00:34:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F074A1F2401B
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 00:37:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8876061FEB;
-	Wed,  6 Nov 2024 00:33:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F289502B1;
+	Wed,  6 Nov 2024 00:37:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i6YLLdSd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="d2fqNuW7"
+Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4BA5CA5A
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 00:33:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6148CF9F8;
+	Wed,  6 Nov 2024 00:37:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730853235; cv=none; b=ghElkLKdMd0srOtbaggK4YrLFiksf42TCeVv7Vem/ArBxF20pb28rBME3zxPaDuBhpdDLBCGGs0BxDIrd5p9US1QRoqdQycD5Km6GUpPcVMlNF9NfKWfb+SuaitYhJEeGkCHIWZnferntSzwgLCVVFrxglI9/5QK81GNL9UgaRQ=
+	t=1730853469; cv=none; b=JiNc7sl4sLqTkLV6iMoXdqA+gJaF+Ui4+s7/l84ZIeHoLA2gFvKC+F7bT80EHMqOHAG6HAsTeOQjESKH2wVyn/x51zfb2lPmjSJgFKKzUMzjefGK0S1ns6tuFtKumZMNZznT8FdNRfS0pp9BSiuZM2BsTW+fGUDY+jIpxwJ/We8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730853235; c=relaxed/simple;
-	bh=3wzrMsXrDoCgqEE7p0Ouhq3heGwPmfe/6ZEZcV3rZ30=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=F6PS+4BAaASBqooRYW20nmxMg0GhYflQyK8DtNOjXLgJBNZIdLKPhdu/UHCq/d+wZeigyjuw8yJ5Xj+Put32HJ3A6LI0omOJkGYzyByz8jDvnSg5wx0Zj+upPmBLCCiRFWUC3rTItP2kIqpvtXfKUQLqL2KgbNaKEwKxs9pEEr4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i6YLLdSd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7488AC4CECF;
-	Wed,  6 Nov 2024 00:33:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730853234;
-	bh=3wzrMsXrDoCgqEE7p0Ouhq3heGwPmfe/6ZEZcV3rZ30=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=i6YLLdSdGnXazWUPcIZMvdt7QYyaH0lgO6PK7n91NIVsAv+pSlUhzfDc9oU9TjqFJ
-	 GZvzuhSLi+WGCYUL+C7EkvX+5Aeg3veoWfvM0qHUkVbUe5m/fql0IMGyit6DySqgOV
-	 6odUNJ7BttHJAOMXAQ+6NFuaTcARhjO0c2p6zAow5YH91cOsZClVVxeUnWe8hdOZ6/
-	 tj5DraFctPajzGbGOv6KvAvyQvSmBrx+mB16lQzb8RJz0tRn+8ygQODoENPdx0nfrV
-	 x2qh1F9pApflyuFPScLlI0R/drzMkFGwmgaZ32UndkmavY90FywmDGgV2XhZ5ifAPf
-	 xzDMEJCV8ndMQ==
-Date: Tue, 5 Nov 2024 14:33:53 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Andrea Righi <arighi@nvidia.com>
-Cc: David Vernet <void@manifault.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH sched_ext/for-6.13] sched_ext: Do not enable LLC/NUMA
- optimizations when domains overlap
-Message-ID: <Zyq5cX9fLE-3wZSx@slm.duckdns.org>
-References: <20241031073401.13034-1-arighi@nvidia.com>
- <Zyqq9fnsOg56aO7S@slm.duckdns.org>
- <Zyq4VFpbaKXERdDh@gpd3>
+	s=arc-20240116; t=1730853469; c=relaxed/simple;
+	bh=AefjFA+IgfWUhG6dpLMRHB3b1Nw1U0ySkL/AGgDnSEU=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=oYGqWWulI5zz/7XiuQHu/5AZ6puBQ88Of1J4LzfI49kyHMLrP8nj3VQxIG20uS++bg0Pc2ytzezh3bbvksGnbC7Rkst0ZE7ejdY5IZ6s0+8Cx9Gu1JD1+jRXSu0crvi+xpCWOK85W2bmHhhxVzhyPyz6P3+aVbOuy8485e36sdI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=d2fqNuW7; arc=none smtp.client-ip=203.29.241.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=codeconstruct.com.au; s=2022a; t=1730853459;
+	bh=MEcFU5Iqsgm3U1kleL1AuXyG0d6sZHwbrluDEXSnsOE=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date;
+	b=d2fqNuW7b4RXmB3s7G5PSJmu0Z6xCG88TD6MYvWYhkjYPejnPRZYYXKLr9d4Gw9rD
+	 P2yyInckCQLVw8ri12qNsZKAKnwTz07MOkRhuVsrmEJztJTZ81n+cAkDXagwI7Qnc+
+	 TV8HacgBK9b1iyD656HuSIs00K6kuz3Xfjd6TZeDSGcvcR7w3EGozUkAS7cb9cSvr8
+	 YmeyNv0cGwo/NOmbeS2UZalwT9pJNcD8v0KmjIako8kMbDlIV8ahDRxPuPBgijJbDl
+	 Xp1w0W9Mj9uKu4fwWQ6ibR/pj9iaO/xUBNmyo/cYrkIM8NfrmicA+49mQJxn8FVHk9
+	 koqwVmoXXpIzA==
+Received: from [127.0.1.1] (ppp118-210-162-114.adl-adc-lon-bras34.tpg.internode.on.net [118.210.162.114])
+	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id CF8176B28B;
+	Wed,  6 Nov 2024 08:37:35 +0800 (AWST)
+From: Andrew Jeffery <andrew@codeconstruct.com.au>
+To: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, jdelvare@suse.com, 
+ linux@roeck-us.net, sylv@sylv.io, linux-hwmon@vger.kernel.org, 
+ Joel Stanley <joel@jms.id.au>, 
+ Naresh Solanki <naresh.solanki@9elements.com>
+Cc: Conor Dooley <conor.dooley@microchip.com>, 
+ linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org
+In-Reply-To: <20241104092220.2268805-1-naresh.solanki@9elements.com>
+References: <20241104092220.2268805-1-naresh.solanki@9elements.com>
+Subject: Re: [PATCH v6 1/2] dt-bindings: arm: aspeed: add IBM SBP1 board
+Message-Id: <173085345571.351006.17162436911260710903.b4-ty@codeconstruct.com.au>
+Date: Wed, 06 Nov 2024 11:07:35 +1030
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zyq4VFpbaKXERdDh@gpd3>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.1
 
-Hello,
-
-On Wed, Nov 06, 2024 at 01:29:08AM +0100, Andrea Righi wrote:
-...
-> Let's say we have 2 NUMA nodes, each with 2 sockets, and each socket
-> has its own L3 cache. In this case, numa_cpus will be larger than
-> llc_cpus, and enabling both NUMA and LLC optimizations would be
-> beneficial.
+On Mon, 04 Nov 2024 14:52:14 +0530, Naresh Solanki wrote:
+> Document the new compatibles used on IBM SBP1.
 > 
-> On the other hand, if each NUMA node contains only 1 socket, numa_cpus
-> and llc_cpus will overlap completely, making it unnecessary to enable
-> both NUMA and LLC optimizations, so we can have just the LLC in this
-> case.
 > 
-> Would something like this help clarifying the first test?
 
-I was more thinking about the theoretical case where one socket has one LLC
-while a different socket has multiple LLCs. I don't think there are any
-systems which are actually like that but there's nothing in the code which
-prevents that (unlike a single CPU belonging to multiple domains), so it'd
-probably be worthwhile to explain why the abbreviated test is enough.
+Thanks, I've applied this to be picked up through the BMC tree.
 
-Thanks.
+--
+Andrew Jeffery <andrew@codeconstruct.com.au>
 
--- 
-tejun
 
