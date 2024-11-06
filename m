@@ -1,111 +1,145 @@
-Return-Path: <linux-kernel+bounces-398690-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398693-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88E739BF4BA
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 18:59:33 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDB039BF4BE
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 19:00:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 406281F24A21
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 17:59:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7542D1F249A5
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 18:00:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB1F0207A0A;
-	Wed,  6 Nov 2024 17:59:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA52520820F;
+	Wed,  6 Nov 2024 18:00:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="cl2L75m9"
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="hhhut2qi"
+Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1FFB2076CE;
-	Wed,  6 Nov 2024 17:59:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 971C6207A2E
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 18:00:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730915964; cv=none; b=XrKO0NU+tIc7wn7UE8KHOFXoxVNMl+oMchk45gg3wXWDhaRGYVAggZqtN4//V4Q24bA8EFQyTkry6tkRcbgRHSGazCUiJT50xn9zE1BNYR7/ieQFo8n0PLq2kGiWGgVmHL0/l4twqPNnISlnnm8tHCIU7aj6Yw9JfGxdU9stF60=
+	t=1730916029; cv=none; b=sFUSHWQ6//hEVAonXWbgzgoCf00j4RavmZV86rzLrxAi9T8cCHYYXH1gSNX9ffVxldeqOmBhLmna1lab94leKlxIFRSS75Mj/nYA9zcNOmHyhPMhjXvrF/V1G8/Ur8q209mRtJn8twz9vwaxbPKETdL+w6k/Q9DuoxAZ9zeSd20=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730915964; c=relaxed/simple;
-	bh=dcUwVXHDJvoq4ELZ+Jm0L84FW/3wK3XAHmM1DOyy8tg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ub7VcX/lIKmbx3VrfOWjEXZfyZ2Y6/yEQ5DlOBIT384csH8sbHaV9topnqbmd8BTpPb9AuY4ej+d3VGCTX/9xlhgDNbUMTZ8B3IBWm8D/37kLiGFXi50P4dWeQVqgIm3h3cXhWgWzRdcASf8aAy7iY/ANntGCNEBwDUJzWtLHHA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=cl2L75m9; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=8XbbN/vPoIJejDqiSIIveN8cogeYAqqr1cnFYFwXZig=; b=cl2L75m9Bxuf2hXw63OPeGjgmf
-	T3YE1lu5dgBfgNQko9QrlyUSx3jdxSIwkT8P16eXJV8NfmxnTiIBXZa/H7e3NDsPOQe0gPe7gE22K
-	cL0n33IjTivggzsXAahK0dyLNoO9003qoMcF6E+Jn4968FiCUwfxOkfF5eEKXsondpa3ca9XEfZ3J
-	cG0VETkZHzVmfidPkK/j6Tfbhu7U+Za7S4IxBUivODn1BMabpuaKqwTJCtqonyN+9+yqKQTVTj5X9
-	Si/1AXr44Cct9L6CpKERVV9AOwvgFVHtOsyOqCq9zZGeGlb4PtXf7rSJbN1rVhtm5E9QLWdxUcOF0
-	v/sOMnRQ==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1t8kJI-0000000BjqL-2a3p;
-	Wed, 06 Nov 2024 17:59:16 +0000
-Date: Wed, 6 Nov 2024 17:59:16 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Jan Kara <jack@suse.cz>
-Cc: "Ma, Yu" <yu.ma@intel.com>, Christian Brauner <brauner@kernel.org>,
-	mjguzik@gmail.com, edumazet@google.com,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	pan.deng@intel.com, tianyou.li@intel.com, tim.c.chen@intel.com,
-	tim.c.chen@linux.intel.com
-Subject: Re: [PATCH v5 0/3] fs/file.c: optimize the critical section of
- file_lock in
-Message-ID: <20241106175916.GX1350452@ZenIV>
-References: <20240614163416.728752-1-yu.ma@intel.com>
- <20240717145018.3972922-1-yu.ma@intel.com>
- <20240722-geliebt-feiern-9b2ab7126d85@brauner>
- <20240801191304.GR5334@ZenIV>
- <20240802-bewachsen-einpacken-343b843869f9@brauner>
- <20240802142248.GV5334@ZenIV>
- <20240805-gesaugt-crashtest-705884058a28@brauner>
- <5210f83c-d2d9-4df6-b3eb-3311da128dae@intel.com>
- <20240812024044.GF13701@ZenIV>
- <20241106174423.kdgv6eonsmwci5oj@quack3>
+	s=arc-20240116; t=1730916029; c=relaxed/simple;
+	bh=2uDUvUN/86SpqcEnCVLZ/V2MpmasoOsNoFzuJhsE06A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CYTqVzQ4qOua5h4WDACr0K+GCMBsK1jxyfzP+JOZgaRoU/1+k6r0mmP8Di+xynkP+1BG1veSKBmZe1GjFZr33BHuCK9C/ifAzLS06Xyb8JMlpyAhrrXBhgfTCmeXMSirn7qVlZzD6Zn9MDKQ4vZvhd1FtyBLNsooOiumVxJSwNc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=hhhut2qi; arc=none smtp.client-ip=209.85.215.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-7ede6803585so952574a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2024 10:00:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1730916027; x=1731520827; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LHvHVhlJUFnqh+GtXJR/IXcya5Bnm4YoBQuvLZg0UA8=;
+        b=hhhut2qixZNlRkI/MOY5/yJcMdBElqrA2zT932uG8s5XZ3kV+wn2MD0F5+BpFi0cO5
+         Ja9wxC9PEKivrNkoCzJKOC0UF5btflSTYnoTjEIy3DptRixaXx1LwIGR0+obE+MDl1yJ
+         Po7dDS3nz1PD+SCkbCkw9bQyfuyElSit4lCYw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730916027; x=1731520827;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=LHvHVhlJUFnqh+GtXJR/IXcya5Bnm4YoBQuvLZg0UA8=;
+        b=hcASSAXO439dxYT/2jhqAKvkW8jLJwPy3bntCID1/8O4EiwOIO7iebK6fpKPQyrjTa
+         ZLKZizSOLSktENMKVK7VqrIh4MVHbv0UUzkTyq8cKoV9MQLyLYpFvNTBAzCo4pwYQ0B+
+         StjXC7JUDlWjpkYYOj6O2SsDxGPtVncsWh2g4C/DSjvJ1TKCLZEIXk4O1K/RGXXONC39
+         1MLjg2JBuYV70+IgsQa5cPHf/qZPRCoJzBP16waCtFIPllIfUPwZ3ahq3R6sYnM+ZhVK
+         bvHq/gxaFyIAxGhuclXkpsWOfKnMcAPOh+ucnw/nJ2FUDRa0/ZQnj6CPIEEyr2q8+g1Z
+         BpBA==
+X-Forwarded-Encrypted: i=1; AJvYcCWEbbV4QHRZMheqeOVB+s1lnZr1Xl4Qpg14V7wZRTEjICfOsUF1jSUJqnV6ELjhbq8QVqrkWXhUWgDgW6U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwH7Axdfq12Ne4rqXr7Z0dZAoihqQKdNYS4GIaEdPh8MwSElrno
+	6a+P6OSF8e6KvVBH2sOkCTyUopOeRUnIztq9cbQfBxV4LlzGSgtqfawwoXiyb0OA/CdRM0VcoAg
+	=
+X-Google-Smtp-Source: AGHT+IHa3A3mRl8BuAJCpkQuWshaxXrgXKnDuGI9BjBBL4bzXyeEICRgLsnPDJJJeDa7AMPjqNPJ2Q==
+X-Received: by 2002:a17:903:245:b0:20c:cd01:79ae with SMTP id d9443c01a7336-21175b333f0mr2151495ad.24.1730916026614;
+        Wed, 06 Nov 2024 10:00:26 -0800 (PST)
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com. [209.85.214.174])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211057c0618sm97991975ad.205.2024.11.06.10.00.25
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 06 Nov 2024 10:00:25 -0800 (PST)
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-20c8ac50b79so6165ad.0
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2024 10:00:25 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCU1pfuxKn2W3clj+zGx3nMZoVzsNL4S8Zwkrl1AqDF6Nw4EfPGGS+SBJK67gSL2VHQHpSSimuekIdSuQVU=@vger.kernel.org
+X-Received: by 2002:a17:902:c407:b0:20b:b52:3f7c with SMTP id
+ d9443c01a7336-211749a4520mr546035ad.18.1730916024977; Wed, 06 Nov 2024
+ 10:00:24 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241106174423.kdgv6eonsmwci5oj@quack3>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+References: <7cbbd751-8332-4ab2-afa7-8c353834772a@linux.ibm.com>
+In-Reply-To: <7cbbd751-8332-4ab2-afa7-8c353834772a@linux.ibm.com>
+From: Brian Norris <briannorris@chromium.org>
+Date: Wed, 6 Nov 2024 10:00:12 -0800
+X-Gmail-Original-Message-ID: <CA+ASDXPKosUXy1x7Yvbu3pEYiMfDPSt69xt3Jq-zHw66yeUSRw@mail.gmail.com>
+Message-ID: <CA+ASDXPKosUXy1x7Yvbu3pEYiMfDPSt69xt3Jq-zHw66yeUSRw@mail.gmail.com>
+Subject: Re: [bug report] cpumask: gcc 13.x emits compilation error on PowerPC
+To: Nilay Shroff <nilay@linux.ibm.com>
+Cc: kees@kernel.org, nathan@kernel.org, yury.norov@gmail.com, 
+	linux-kernel@vger.kernel.org, Gregory Joyce <gjoyce@ibm.com>, 
+	=?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Nov 06, 2024 at 06:44:23PM +0100, Jan Kara wrote:
-> On Mon 12-08-24 03:40:44, Al Viro wrote:
-> > On Mon, Aug 12, 2024 at 09:31:17AM +0800, Ma, Yu wrote:
-> > > 
-> > > On 8/5/2024 2:56 PM, Christian Brauner wrote:
-> > > > On Fri, Aug 02, 2024 at 03:22:48PM GMT, Al Viro wrote:
-> > > > > On Fri, Aug 02, 2024 at 01:04:44PM +0200, Christian Brauner wrote:
-> > > > > > > Hmm...   Something fishy's going on - those are not reachable by any branches.
-> > > > > > Hm, they probably got dropped when rebasing to v6.11-rc1 and I did have
-> > > > > > to play around with --onto.
-> > > > > > 
-> > > > > > > I'm putting together (in viro/vfs.git) a branch for that area (#work.fdtable)
-> > > > > > > and I'm going to apply those 3 unless anyone objects.
-> > > > > > Fine since they aren't in that branch. Otherwise I generally prefer to
-> > > > > > just merge a common branch.
-> > > > > If it's going to be rebased anyway, I don't see much difference from cherry-pick,
-> > > > > TBH...
-> > > > Yeah, but I generally don't rebase after -rc1 anymore unles there's
-> > > > really annoying conflicts.
-> > > 
-> > > Thanks Christian and Al for your time and efforts. I'm not familiar with the
-> > > merging process, may i know about when these patches could be seen in master
-> > 
-> > It's in work.fdtable in my tree, will post that series tonight and add to #for-next
-> 
-> Al, it seems you didn't push the patches to Linus during the last merge
-> window. Do you plan to push them during the coming one?
+Hi,
 
-Yes, I do.  I can merge that branch into viro/vfs.git#for-next, but that would be
-redundant - note that vfs/vfs.git#workd.fdtable is identical to it (same sha1 of
-head) and vfs/vfs.git#vfs.file contains a merge from it and vfs/vfs.git#vfs.all
-merges #vfs.file.  So it's already in linux-next in the current form and until
-something else gets added to the branch I see no point.
+On Wed, Nov 6, 2024 at 5:02=E2=80=AFAM Nilay Shroff <nilay@linux.ibm.com> w=
+rote:
+>
+> Hi,
+>
+> Of late, I've been encountering the following compilation error while usi=
+ng GCC 13.x and latest upstream code:
+>
+> Compilation error:
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>   <snip>
+>   CC      kernel/padata.o
+> In file included from ./include/linux/string.h:390,
+>                  from ./arch/powerpc/include/asm/paca.h:16,
+>                  from ./arch/powerpc/include/asm/current.h:13,
+>                  from ./include/linux/thread_info.h:23,
+>                  from ./include/asm-generic/preempt.h:5,
+>                  from ./arch/powerpc/include/generated/asm/preempt.h:1,
+>                  from ./include/linux/preempt.h:79,
+>                  from ./include/linux/spinlock.h:56,
+>                  from ./include/linux/swait.h:7,
+>                  from ./include/linux/completion.h:12,
+>                  from kernel/padata.c:14:
+> In function =E2=80=98bitmap_copy=E2=80=99,
+>     inlined from =E2=80=98cpumask_copy=E2=80=99 at ./include/linux/cpumas=
+k.h:839:2,
+>     inlined from =E2=80=98__padata_set_cpumasks=E2=80=99 at kernel/padata=
+.c:730:2:
+> ./include/linux/fortify-string.h:114:33: error: =E2=80=98__builtin_memcpy=
+=E2=80=99 reading between 257 and 536870904 bytes from a region of size 256=
+ [-Werror=3Dstringop-overread]
+>   114 | #define __underlying_memcpy     __builtin_memcpy
+>       |                                 ^
+
+FWIW, I think Kees already was fielding a similar report a few days ago:
+
+Re: Fortify compilation warning in __padata_set_cpumask()
+https://lore.kernel.org/all/202411021337.85E9BB06@keescook/
+
+IIUC, he was hoping for better compiler diagnostics to help out there.
+
+(Also, I imitated Thomas's .config notes from that report and couldn't
+reproduce with my GCC 13.2.0.)
+
+I also happen to see there are a few scattered instances of either
+disabling or working around -Wstringop-overread false positives in the
+tree today.
+
+Brian
 
