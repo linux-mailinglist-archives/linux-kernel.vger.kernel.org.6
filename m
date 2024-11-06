@@ -1,112 +1,181 @@
-Return-Path: <linux-kernel+bounces-397423-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397422-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A3489BDBF0
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 03:11:18 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77AA89BDBED
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 03:11:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6BC8E1C22EF7
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 02:11:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 28A6E1F25842
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 02:11:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61D81190472;
-	Wed,  6 Nov 2024 02:09:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 970FB192583;
+	Wed,  6 Nov 2024 02:09:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Ywwtr1Yr"
-Received: from out-184.mta0.migadu.com (out-184.mta0.migadu.com [91.218.175.184])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TbzRWRYu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ACE019006F
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 02:09:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E527619006B;
+	Wed,  6 Nov 2024 02:09:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730858968; cv=none; b=VwTs2UZuLP7SMWfQTSvkroj+IN2q6Y2UHiXexY8YzCXVZn1E9y+ylvBoSQPkWvjwHMVJeRqQ+01W+vDXSTvZnGbbG/wNTFrUBPa/ENa9n5J3JBNElaGQ6CbdCunYqvR9dLQaUZZfU8xihlg0O9mCet89GDy9tCBfCP1MP4mfFEA=
+	t=1730858964; cv=none; b=oNMZQ57trMztOOJRkKrQBUg2ti6vgWjiNyLbb+xyNCJ/g+3NNAbzjwTeQ2BkRHKpzBPaqpepgPOiXZjPtAN1ABw2JFNcapzwXS1K8A68EjEUx5+z/AFTmF4HniRvQ21oEwefZOYmb8NBDuQMYbtCJ2+6N0wMT5pc3vwiS3omS5M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730858968; c=relaxed/simple;
-	bh=qoICrbOY2eN8WqKvK8iQFEjhTz0vF/bERGMi3ZJ3ZBE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uiTFO4NPrM8/qZLZEJfJSxsnpneTClxqDWYfmoK2GakMDVbm6jyAOPd8ptvVwVa+IUgToUkEAX9jeevFZZgBYT3+BJuuyim5RgIq//IZSi/ATBwHlpRQJeIBP3qznCdMgHN8xaSVcYySsR+eymZ2FATd7BLH47uFMNfjE5S1vYg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Ywwtr1Yr; arc=none smtp.client-ip=91.218.175.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <9209f37c-e3e8-4390-9630-0157ed8eb690@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1730858964;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fk3QSDOqZOzm7LJ9rcdSnlstSgCPdypDTHx34fMzi18=;
-	b=Ywwtr1Yr84/JkqcZ67GQ7Zo4xcXVaHPruO6DQ4Q7d4Qic967DC4RMbrejhdGoBATi7dVT7
-	U2pCeJBst191n+1KkZ17RxTSPgkuIRumIGfHswIOQmv5Ni66u5iGKwmKkJwcLuDud9Rvn/
-	3e1RFm95tWcpSKt7veiKKDHlu3PqU7A=
-Date: Wed, 6 Nov 2024 10:09:13 +0800
+	s=arc-20240116; t=1730858964; c=relaxed/simple;
+	bh=msElaN0h388wkDiBJ7aFMbSNP21TiZEWT0zi+8xApAA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=n/ZqZzFKpW/7dosci9gO91z4MZHItVDKMCrkVpvTXkDS/PTnrKO/sRuhj0DBCJIpfuAwoejP7IDAbHVwcq2eEpIi+bLpNib1CIpV/YH7bqiesqvBIWFfo6zTRW6m7ywmq+x6y/WuezybCd7UmujLmxAU1/lenUC3k0iAeFZb28Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TbzRWRYu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EDFA9C4CECF;
+	Wed,  6 Nov 2024 02:09:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730858963;
+	bh=msElaN0h388wkDiBJ7aFMbSNP21TiZEWT0zi+8xApAA=;
+	h=From:To:Cc:Subject:Date:From;
+	b=TbzRWRYu91vy5SFK8q66MgFGXV70xxOD2qRLYgfuey3vVsNZbTj8ZuqRzjHPLhAm7
+	 33SPQLI8yZNMRV/RyVHeNQBiQ/tqhkv9UTtmZuksCnL8WwiPKpmioDOHnVggK3ZdAX
+	 HK8KC7VPqX9TMmT14yp6JdgeFn9X7IWP22/XR0wgV8g/fxOYQxlpRi7EQVwwhy48gh
+	 zSuVzSBppaOl7UvgBSJLT33WgWIphyQMIFGSCJla0rtOPOS/DrkLORdk/q93B5e7Xo
+	 xYWgyGs5gOnsiczDMMDhmLoPM9Jjx8n1nxAXPBrgfOjEJyxJX4HOSpLU5A3T/ajBk8
+	 rWKY+N3OuwDGQ==
+From: Sasha Levin <sashal@kernel.org>
+To: stable@vger.kernel.org,
+	fdmanana@suse.com
+Cc: Qu Wenruo <wqu@suse.com>,
+	David Sterba <dsterba@suse.com>,
+	linux-btrfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: FAILED: Patch "btrfs: fix extent map merging not happening for adjacent extents" failed to apply to v6.6-stable tree
+Date: Tue,  5 Nov 2024 21:09:19 -0500
+Message-ID: <20241106020921.164780-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH linux-next v8 RESEND] Docs/zh_CN: Translate
- physical_memory.rst to Simplified Chinese
-To: Jonathan Corbet <corbet@lwn.net>, xu.xin16@zte.com.cn, alexs@kernel.org,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- mudongliangabcd@gmail.com, seakeel@gmail.com
-Cc: wang.yaxin@zte.com.cn, fan.yu9@zte.com.cn, he.peilin@zte.com.cn,
- tu.qiang35@zte.com.cn, qiu.yutan@zte.com.cn, zhang.yunkai@zte.com.cn
-References: <20241028135321916ZWK032bHhlbncjvmzDkZs@zte.com.cn>
- <87ikt294v6.fsf@trenco.lwn.net>
- <641acef2-70f4-4172-9fa9-da0f5203a78e@linux.dev>
- <871pzp7n5e.fsf@trenco.lwn.net>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Yanteng Si <si.yanteng@linux.dev>
-In-Reply-To: <871pzp7n5e.fsf@trenco.lwn.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+X-Patchwork-Hint: ignore
+X-stable: review
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
 
-
-
-
-在 2024/11/5 22:47, Jonathan Corbet 写道:
-> Yanteng Si <si.yanteng@linux.dev> writes:
->
->> 在 2024/11/5 03:27, Jonathan Corbet 写道:
->>> OK, I have applied this patch.  A couple of comments for future reference:
->>>
->>> <xu.xin16@zte.com.cn> writes:
->>>
->>>> Update to commit 7332f9e45d2e("docs/mm: Physical Memory: Fix grammar")
->>> ...and this I don't understand at all; why do you need to reference that
->>> patch here?
->> We use it to mark the progress of the translation against
->> the original document. If we don't put this tag on at the
->> very beginning, when the translation falls behind the original
->> document for a while, we'll have to go through the whole
->> original document log from the very top downwards, which
->> is an enormous amount of work. On the other hand, the
->> checktransupdate.py also works based on this tag.
->>
->> Yeah, this tag might seem a bit ambiguous. I think maybe
->> we could improve it? For example:
->>
->> Trans_mark commit 7332f9e45d2e ("docs/mm: Physical Memory: Fix grammar")
-> "Update to commit xxx" suggests that the current patch is somehow
-> changing that commit.  "Update the translation through commit xxxx"
-> would be a bit clearer in that regard.  I think it's better to stay with
-> something resembling plain language rather than adding a new pseudo-tag
-> that outsiders won't understand.
-Approve!
+The patch below does not apply to the v6.6-stable tree.
+If someone wants it applied there, or to any other stable or longterm
+tree, then please email the backport, including the original git commit
+id to <stable@vger.kernel.org>.
 
 Thanks,
-Yanteng
->
-> Thanks,
->
-> jon
->
->
+Sasha
+
+------------------ original commit in Linus's tree ------------------
+
+From a0f0625390858321525c2a8d04e174a546bd19b3 Mon Sep 17 00:00:00 2001
+From: Filipe Manana <fdmanana@suse.com>
+Date: Mon, 28 Oct 2024 16:23:00 +0000
+Subject: [PATCH] btrfs: fix extent map merging not happening for adjacent
+ extents
+
+If we have 3 or more adjacent extents in a file, that is, consecutive file
+extent items pointing to adjacent extents, within a contiguous file range
+and compatible flags, we end up not merging all the extents into a single
+extent map.
+
+For example:
+
+  $ mkfs.btrfs -f /dev/sdc
+  $ mount /dev/sdc /mnt/sdc
+
+  $ xfs_io -f -d -c "pwrite -b 64K 0 64K" \
+                 -c "pwrite -b 64K 64K 64K" \
+                 -c "pwrite -b 64K 128K 64K" \
+                 -c "pwrite -b 64K 192K 64K" \
+                 /mnt/sdc/foo
+
+After all the ordered extents complete we unpin the extent maps and try
+to merge them, but instead of getting a single extent map we get two
+because:
+
+1) When the first ordered extent completes (file range [0, 64K)) we
+   unpin its extent map and attempt to merge it with the extent map for
+   the range [64K, 128K), but we can't because that extent map is still
+   pinned;
+
+2) When the second ordered extent completes (file range [64K, 128K)), we
+   unpin its extent map and merge it with the previous extent map, for
+   file range [0, 64K), but we can't merge with the next extent map, for
+   the file range [128K, 192K), because this one is still pinned.
+
+   The merged extent map for the file range [0, 128K) gets the flag
+   EXTENT_MAP_MERGED set;
+
+3) When the third ordered extent completes (file range [128K, 192K)), we
+   unpin its extent map and attempt to merge it with the previous extent
+   map, for file range [0, 128K), but we can't because that extent map
+   has the flag EXTENT_MAP_MERGED set (mergeable_maps() returns false
+   due to different flags) while the extent map for the range [128K, 192K)
+   doesn't have that flag set.
+
+   We also can't merge it with the next extent map, for file range
+   [192K, 256K), because that one is still pinned.
+
+   At this moment we have 3 extent maps:
+
+   One for file range [0, 128K), with the flag EXTENT_MAP_MERGED set.
+   One for file range [128K, 192K).
+   One for file range [192K, 256K) which is still pinned;
+
+4) When the fourth and final extent completes (file range [192K, 256K)),
+   we unpin its extent map and attempt to merge it with the previous
+   extent map, for file range [128K, 192K), which succeeds since none
+   of these extent maps have the EXTENT_MAP_MERGED flag set.
+
+   So we end up with 2 extent maps:
+
+   One for file range [0, 128K), with the flag EXTENT_MAP_MERGED set.
+   One for file range [128K, 256K), with the flag EXTENT_MAP_MERGED set.
+
+   Since after merging extent maps we don't attempt to merge again, that
+   is, merge the resulting extent map with the one that is now preceding
+   it (and the one following it), we end up with those two extent maps,
+   when we could have had a single extent map to represent the whole file.
+
+Fix this by making mergeable_maps() ignore the EXTENT_MAP_MERGED flag.
+While this doesn't present any functional issue, it prevents the merging
+of extent maps which allows to save memory, and can make defrag not
+merging extents too (that will be addressed in the next patch).
+
+Fixes: 199257a78bb0 ("btrfs: defrag: don't use merged extent map for their generation check")
+CC: stable@vger.kernel.org # 6.1+
+Reviewed-by: Qu Wenruo <wqu@suse.com>
+Signed-off-by: Filipe Manana <fdmanana@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
+---
+ fs/btrfs/extent_map.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/fs/btrfs/extent_map.c b/fs/btrfs/extent_map.c
+index 668c617444a50..1d93e1202c339 100644
+--- a/fs/btrfs/extent_map.c
++++ b/fs/btrfs/extent_map.c
+@@ -230,7 +230,12 @@ static bool mergeable_maps(const struct extent_map *prev, const struct extent_ma
+ 	if (extent_map_end(prev) != next->start)
+ 		return false;
+ 
+-	if (prev->flags != next->flags)
++	/*
++	 * The merged flag is not an on-disk flag, it just indicates we had the
++	 * extent maps of 2 (or more) adjacent extents merged, so factor it out.
++	 */
++	if ((prev->flags & ~EXTENT_FLAG_MERGED) !=
++	    (next->flags & ~EXTENT_FLAG_MERGED))
+ 		return false;
+ 
+ 	if (next->disk_bytenr < EXTENT_MAP_LAST_BYTE - 1)
+-- 
+2.43.0
+
+
+
 
 
