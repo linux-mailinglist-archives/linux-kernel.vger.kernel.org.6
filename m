@@ -1,111 +1,123 @@
-Return-Path: <linux-kernel+bounces-398968-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398969-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D98B89BF8A1
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 22:44:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 655989BF8A3
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 22:45:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 66C9CB21755
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 21:44:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D1529B224AB
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 21:45:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7601320CCEF;
-	Wed,  6 Nov 2024 21:44:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9A301D9337;
+	Wed,  6 Nov 2024 21:45:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="nqfTyFvb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PkRxEy0h"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D23D01CF2A5
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 21:44:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 392932EAE0
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 21:45:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730929487; cv=none; b=loMYgdBPoDj3hkFuQcbsQ6XzqkFDYYwRg0XXLGpr3if9G/SFz5/tsNNR7f1BvjNodORyNT+1db9dz5/bC1ZmUzkq7R0C6zXiHRAdrZ9hO5Xm7tq6rGhw3Dnlmef9tM6qn3bUYT/ywTgjrEbr5BKrKJh+LqH+ry/I2wN3he6QEjw=
+	t=1730929541; cv=none; b=dbX4xg7EwxnxqV+Va5onnaNoQ4VIyx4WyS4EsuFieG8xd1ILfsemkJ9ECMuR8Cb3PXzTeLFBgrdmi7YzdNyxHaFnZCvIjRJA6+XMfC8GG/x4wagMeeS/7sA/QANUIHjHAierIS3bj8Cve7j9Ge6BKVLvjOiQFWqAyp3enZtSlA4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730929487; c=relaxed/simple;
-	bh=Jk69uuIZIlC/VrdhdkQeZ8y3KBI1zh2bkeTXN/BasrU=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=tXMk+xAGqXjAJ00q17QupUvqNMe0H4tndiLbw6xAa5IPFHAeoPbQUHnSwkm+gsdWu+LEzH3VOnw4k9bpdpmd99t+madnf96vlFWitYfoi4zXn0ScT1KU5JaJ1dgjRZaF2+eQiWyKXJmKd+rPBJV5FleoaQX94t9osmQAoWkDBBc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=nqfTyFvb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ACC17C4CEC6;
-	Wed,  6 Nov 2024 21:44:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1730929487;
-	bh=Jk69uuIZIlC/VrdhdkQeZ8y3KBI1zh2bkeTXN/BasrU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=nqfTyFvbYj+uzZfPFM2Cisv6TcVZpdYOz5ZJadwlmDUJ/gmnS8oMYmvdMuiNSxbtE
-	 N18nPXuopDhCf+uMWzzzdMQ/KBJp9aVUUnit0UFXzbGQpt+kz4fTdTxRlg5oQ3RkzX
-	 eA/jxXxWnaHwF1J8U+oQptp3tYCu7xAdRnbCJCVE=
-Date: Wed, 6 Nov 2024 13:44:46 -0800
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Barry Song <21cnbao@gmail.com>
-Cc: Johannes Weiner <hannes@cmpxchg.org>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, Barry Song <v-songbaohua@oppo.com>, Nhat Pham
- <nphamcs@gmail.com>, Usama Arif <usamaarif642@gmail.com>, Chengming Zhou
- <chengming.zhou@linux.dev>, Yosry Ahmed <yosryahmed@google.com>, Hailong
- Liu <hailong.liu@oppo.com>, David Hildenbrand <david@redhat.com>, Hugh
- Dickins <hughd@google.com>, Matthew Wilcox <willy@infradead.org>, Shakeel
- Butt <shakeel.butt@linux.dev>, Andi Kleen <ak@linux.intel.com>, Baolin Wang
- <baolin.wang@linux.alibaba.com>, Chris Li <chrisl@kernel.org>,
- "Huang, Ying" <ying.huang@intel.com>, Kairui Song <kasong@tencent.com>,
- Ryan Roberts <ryan.roberts@arm.com>
-Subject: Re: [PATCH v3] mm: count zeromap read and set for swapout and
- swapin
-Message-Id: <20241106134446.aaadc57a2a88c9efe899c838@linux-foundation.org>
-In-Reply-To: <CAGsJ_4xoHbg+6CtGhC7dPePPC44OMH8azQsOWMEJnXpCQs=bDQ@mail.gmail.com>
-References: <20241105211934.5083-1-21cnbao@gmail.com>
-	<20241106150631.GA1172372@cmpxchg.org>
-	<CAGsJ_4zYiRzG6mBnW-2wh7YCo_PJQc7u1syd05DNdic7MaE7Zw@mail.gmail.com>
-	<20241106124225.632b42c3680cae0b940d2871@linux-foundation.org>
-	<CAGsJ_4xoHbg+6CtGhC7dPePPC44OMH8azQsOWMEJnXpCQs=bDQ@mail.gmail.com>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1730929541; c=relaxed/simple;
+	bh=3XjTb8z/OatcAGlD70H52F9d4EjSpcmkKKzfQEYX9JI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=i38MuQO3LtZ09oyx3Hz3oWK6lsIIRYv1ht07erPzwbKH357c+A4tzZepjhqqV/2A+3+AbVjnYTv/RwDB1BEZEbJWJdehcLVgnIXNVrEru7DsFxuu5k7FYJQ1aMTCy0/pocJCDSHg6IJQl/xFgpHOEsc5Gnaf9oPvP95ks+1tamE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PkRxEy0h; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-37d47b38336so167647f8f.3
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2024 13:45:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1730929536; x=1731534336; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=SZG/igyMP++w3vhsSNt9GffWfG68As9xDtf6/9FjLaY=;
+        b=PkRxEy0h0Ur+Jmh5tYHalLezV8YDHl6inrztumpRGeRT6rT2BOhw6NslKTfYlDBhHP
+         dLxc6sDxitlOQgHyF451KlSXZ1oYfnCQUSRmf3wOv17aciImpNYtACYMyXLNIvEMdcqR
+         eTLVA9bNLG2FhPXuZhsKRmruzb0yN5pYdA8t+veQFTFvwTwfwK1bI2J6D/PJDD+z2LhY
+         0yay148HPPK0aQw3nx+LtpgGkNI0ckYGxGV+Wgu0yxzWlOfgv5J3z9ST59qjQTIJsric
+         PLX5SJ04rD0DePLSS7Ik0TLmwTTSXqKdMQbNJzM/dapZlgXcZ/r8I5XBfvkImNhs8O3C
+         bHDg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730929536; x=1731534336;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SZG/igyMP++w3vhsSNt9GffWfG68As9xDtf6/9FjLaY=;
+        b=LGBmGHhwoA1mDTsWLLa4YbIZ5DvIKD3EOvjDIBIik8i4G1NyXGqd1hNPeLUZJA11Og
+         9/QVqoFrVsnCRl6lIwFPTymezPVRQccpz/NZE8CLX0+srv2NEufuNRbZ9XPqEkGzZL3L
+         iIxjbkaNBqBh/ADy90te0fmQ3dqbRUgRZJalAfst0OKP4fQGrBHd5La2kNaeG+Ab7KFh
+         9NJ9rMqe0tMQaheZHJn87HYvO13TOzamIZN3ee5/T/mGDu6I6Ft/K3HXjMwz/jZRv83g
+         WhdwD2tvyOlmitRQ+Vyahmdtxb/Hc7L9Cu/N7Lm2Hev+Ca1MqPVD6xiZMREyk6EzbpeR
+         gzIg==
+X-Forwarded-Encrypted: i=1; AJvYcCUl5Tj1YTv1pStAOLBW986EvmU/pWYP2/6uhzYKNhj519Z1UIlE9jIWLVVqfRd0pEsDXUWuoZOpM0UQfU0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy3uWoeFOjKcFTDMyoy3b+LLXrL5DdvMwpyAgS5t/pzsriMpCXC
+	Zp8GlniuFTswVJKuy3zg6USd1QGtMltsp3UPd6M6/EO2UL+R+PfoKfRn4TZUHJU=
+X-Google-Smtp-Source: AGHT+IGQ0v+koMdAwFpvu3s3vBOtc/f9ove0xeGvJGuO0IWV0GiECd61P64DFb85ruuM8ktF6Hv5hQ==
+X-Received: by 2002:a05:6000:12c5:b0:37c:c5be:1121 with SMTP id ffacd0b85a97d-380610f7bb8mr28648760f8f.9.1730929535965;
+        Wed, 06 Nov 2024 13:45:35 -0800 (PST)
+Received: from localhost ([89.101.134.25])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381c10e7449sm20333098f8f.49.2024.11.06.13.45.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 06 Nov 2024 13:45:35 -0800 (PST)
+Date: Thu, 7 Nov 2024 00:45:33 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Colin Ian King <colin.i.king@gmail.com>
+Cc: Eric Van Hensbergen <ericvh@kernel.org>,
+	Latchesar Ionkov <lucho@ionkov.net>,
+	Dominique Martinet <asmadeus@codewreck.org>,
+	Christian Schoenebeck <linux_oss@crudebyte.com>,
+	v9fs@lists.linux.dev, kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] fs/9p: remove redundant variable ret
+Message-ID: <23a44a2f-2a99-47a7-a446-d96b5adf62ec@suswa.mountain>
+References: <20241106152209.1626630-1-colin.i.king@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241106152209.1626630-1-colin.i.king@gmail.com>
 
-On Thu, 7 Nov 2024 10:00:47 +1300 Barry Song <21cnbao@gmail.com> wrote:
+On Wed, Nov 06, 2024 at 03:22:09PM +0000, Colin Ian King wrote:
+> The assignments and return checks on ret are redundant. Clean up
+> the code by just returning the return value from the call to
+> v9fs_init_inode_cache.
+> 
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> ---
+>  fs/9p/v9fs.c | 7 +------
+>  1 file changed, 1 insertion(+), 6 deletions(-)
+> 
+> diff --git a/fs/9p/v9fs.c b/fs/9p/v9fs.c
+> index 281a1ed03a04..ee0a374e0d9d 100644
+> --- a/fs/9p/v9fs.c
+> +++ b/fs/9p/v9fs.c
+> @@ -661,12 +661,7 @@ static void v9fs_destroy_inode_cache(void)
+>  
+>  static int v9fs_cache_register(void)
+>  {
+> -	int ret;
+> -
+> -	ret = v9fs_init_inode_cache();
+> -	if (ret < 0)
+> -		return ret;
+> -	return ret;
+> +	return v9fs_init_inode_cache();
+>  }
 
-> On Thu, Nov 7, 2024 at 9:42 AM Andrew Morton <akpm@linux-foundation.org> wrote:
-> >
-> > On Thu, 7 Nov 2024 09:01:14 +1300 Barry Song <21cnbao@gmail.com> wrote:
-> >
-> > > Oops, it seems that it depends on Kanchana's 'mm: change count_objcg_event() to
-> > > count_objcg_events() for batch event updates,' which also isn't present in 6.12.
-> > >
-> > > Otherwise, it won't build, as reported here:
-> > > https://lore.kernel.org/linux-mm/CAGsJ_4whD31+Lk0m2uq-o=ygvkRsw1uXcPeqxBONV-RUXkeEzg@mail.gmail.com/
-> >
-> > argh.
-> >
-> 
-> Apologies for the inconvenience.
-> 
-> > > Hi Andrew,
-> > > What’s the best approach here? Should we include Kanchana's patch that extends
-> > > the nr argument for count_objcg_events() in 6.12-rc as well?
-> >
-> > Let's do the right thing here.  I'll drop this patch from mm-hotfixes.
-> > Please send a v4 against Linus mainline fairly soon then I'll redo
-> > Kanchana's series around that.
-> 
-> Alright. The question is whether we should integrate Kanchana's 'mm:
-> change count_objcg_event() to count_objcg_events() for batch event
-> updates' into 'mm: count zeromap read and set for swapout and swapin,'
-> or keep it as a separate patch as patch 1/2?
-> 
-> I guess integration would be better, as hotfixes may not be ideal for a patch
-> series?
+Better to delete the whole function and call v9fs_init_inode_cache()
+directly.
 
-I don't fully understand what you're asking here.
-
-I'm suggesting that you prepare a minimal patch that fixes the bug in
-Linus's kernel.  Then we figure out what to do with Kanchana's 6.13-rc1
-material after the bugfix is sorted out.
+regards,
+dan carpenter
 
 
