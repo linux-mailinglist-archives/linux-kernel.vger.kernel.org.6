@@ -1,147 +1,170 @@
-Return-Path: <linux-kernel+bounces-397687-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397688-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 215209BDF03
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 07:52:13 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A95679BDF06
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 07:52:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C78E51F23C6C
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 06:52:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9B9F41C2159F
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 06:52:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54C0E192B9A;
-	Wed,  6 Nov 2024 06:52:06 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E016A191F89;
+	Wed,  6 Nov 2024 06:52:25 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CC4F192B61
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 06:52:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6456192D67
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 06:52:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730875925; cv=none; b=RG/soDwTPqnCtzHxnk5zo/z/tzbFZVp9BomryAjxIABjhQfc4WlQ9XvslzylIzj6KjECLN44nLFH4aa1YfGirQSspgF1HhoGSzCYJjl5VECbiEieqAIqBI7wRIMq+h5tlTGgUvfiPuiz8jG9bc09r9zEHvRj38t6VRtpOVIX928=
+	t=1730875945; cv=none; b=GBqc4eA8GvJMNW1N0XJoIzmrO2Vq7yoLpVNsVY3RpspGyoinY3HA50B/WhOeWY1RsxDvA03FHyhlLr9GjL/mq9fEpfc/VMYnC6Q2kUX4dHBAp/VEaGdR0VaFf3Tczq/K6jYuHZyYsed3bOo9KjwG5RG54SbxX4RRcOstN/Z16AA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730875925; c=relaxed/simple;
-	bh=thZ78sQ1wX7huDUFTibHs6FAEpjcm0/kmHTe99mV+CA=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=um7AFLMuS3pGxGGkFbhoV/uXfAmYF4tdBwBkvTeArubPhr6YtRpCppGGCO8x+CjZY9QB/8EDR3cVkhFd5idC+ffB1+RAC6puHHDXjA7Gvxams1Qe3BzFDQRb/cAT3ikrofME7el/9V7AKS/BMqfmHo5nj9NH1w7i2Pp/chKly1U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+	s=arc-20240116; t=1730875945; c=relaxed/simple;
+	bh=c8wDQUjdvG2sqYrB9QE0P2TodiAtQlmbBFLA97WJrIA=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=OCsMRaPWtFzgLCpHwAYnaIakiGqYQRMKri3pVKpQyrPXL1lHtqUF7jxnWJoV4R2sJyE/pdy8E8/l3RBcjYjwkBkYVTm4AvGTXYDarfHc6OaKHK/3im90yK8AzoRvQ4bHJDPOKA1Sifs3wEnK8O5B/KvQsGGpkcRbKyDQYCbXemQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a6add3a52eso5367915ab.0
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 22:52:04 -0800 (PST)
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a4f3d7d13fso63527925ab.0
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 22:52:23 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730875923; x=1731480723;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=RDAowEPN9O9rsAiw3oeawwDgbLMeqyiOzdmicIqSLSs=;
-        b=D0y/5CMfILcsQKPpVz5BNN/DYT3kF7hYhg4PwluwzNirIae5yZrSJ3KLj1YNwzBC/M
-         NwWDImUxceAdNCKwYkNpmBeZRWQ8HgIc/nlz9FfqsG50S2oAZifyfvbjGwA6NUCc45wD
-         zkLVxlpdxYCIOGA6ab4d99hcoZcA8r3nykTDQ5+StmPfjpy0DQZ7Qkmz78gAbYFVL3F4
-         A6W3ZsIkL/wqo9Z4OAwhv9ZVrb0nkek6MRFJFSyY+rx4SxhCjpTgVQHA/7nQbhQ13mm7
-         7ExsJoJ6e88/IF4xUy2zhEY7Czh+909wm5ZqwF6SchRzJdOs/ZxFBPhhBIihX7cFvVY4
-         3URw==
-X-Gm-Message-State: AOJu0YxOJV2DT0xv02W8XwuzDVruKjDBwQX6uP79lb3xpnMx2KQn6qs/
-	9nQCK5MPImlls5ZZr2EX7vDeuvTcx2oWwFKKILIaJKys82/wa35C2PpXBa9vkAty4VjKiSTjk1Y
-	uRawmEBvPqJV1dsneWiFpQ+b7aa9AlMXsdpz2Nuy8zl2JyQMwhQwtFUA=
-X-Google-Smtp-Source: AGHT+IHC3NMphGFt5y38jPKBo1hFcmS3BXLjH76aJnuiazbnogSJ7305vJYo31OdXtdzuf4nKlOnwf12pr3d4A5S91XRx2p/lTbI
+        d=1e100.net; s=20230601; t=1730875943; x=1731480743;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=5IT6exZ/GN3jFcE8DkmEFeDjzbFdHy4iBdvg7NIR3+k=;
+        b=Ezv5rZhcdjNCJhvW1Zjzk4aN/BVZk4c6K9mD1rDpuMokO/Qt5E6PWkvSmTI2IY9HLD
+         +YHXJGKrp4DG9N8RrPF0SPEz1eh/vLNuvFzj8jcyLsLmLgsdfvoh+ajz8u232Hta0O8O
+         scVc8RHozmBJMxPpK+0KQi5FQyKvbuwe9hBPhAZF3Bjklv4J5QoOlq1H0WtxObtuGIuc
+         fN8pWw/NfmOe6HSnv9D6DfivGxfVNQdNBonvOmab8S2LCRdHG+t5DgkWcAYXjKd/3pE2
+         1cYRJIyhUt5boVZS3L/NskGGpuRkNcXHILACcmEuEwb2qwqovajhEbi2x0hYVHAkFGlb
+         FgFg==
+X-Forwarded-Encrypted: i=1; AJvYcCV8qu9M8L2zidDfFMczN/wRs1YDZS2QD47CTXmgoWqRLTp376FBCZn1+KkXZnqY2qUIacIjKI9H4rU6y0c=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx7Ava2q8nJiQjWFO8jRXVRFYacNAmbvsTsfV9tas8j7FvNxy78
+	xAsd5YZR3+0/5TZOHbLjNGBKp3FdsSGpO7b4IDR/H1tOc05+GrtXx/OOsQIzE+6mRc2iUGI/EtL
+	sqX5UUBBXbGYZ5OtrTbCJh80YOLlAfGR0kS7UMf9seBgmElew9FIhCK8=
+X-Google-Smtp-Source: AGHT+IF7a24gCwxQg3G5iwyhFgO+EbzDRmjm30aG1lRKDZZRv3j2gOiFEPBVQIbo1GGiju+05fG6xJb9zyP6jfq4ae83Hsqi0IFt
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:c203:0:b0:3a4:f275:c7bf with SMTP id
- e9e14a558f8ab-3a6e2a2970emr11204375ab.6.1730875923528; Tue, 05 Nov 2024
- 22:52:03 -0800 (PST)
-Date: Tue, 05 Nov 2024 22:52:03 -0800
-In-Reply-To: <CAN=OONzCeRjbK6TbqenTyjYSpPh4f1-5UmrzeYcW2anq80P_EA@mail.gmail.com>
+X-Received: by 2002:a05:6e02:2401:b0:3a6:c24d:c2d4 with SMTP id
+ e9e14a558f8ab-3a6c24dc619mr142579475ab.20.1730875943011; Tue, 05 Nov 2024
+ 22:52:23 -0800 (PST)
+Date: Tue, 05 Nov 2024 22:52:22 -0800
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <672b1213.050a0220.2a847.1b9d.GAE@google.com>
-Subject: Re: [syzbot] [hfs?] KMSAN: uninit-value in __hfs_ext_cache_extent (2)
-From: syzbot <syzbot+d395b0c369e492a17530@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, sarvesh20123@gmail.com, 
+Message-ID: <672b1226.050a0220.2a847.1b9f.GAE@google.com>
+Subject: [syzbot] [wireless?] possible deadlock in ieee80211_unregister_hw
+From: syzbot <syzbot+ec6009b644ee5b5c28c8@syzkaller.appspotmail.com>
+To: johannes@sipsolutions.net, linux-kernel@vger.kernel.org, 
+	linux-wireless@vger.kernel.org, netdev@vger.kernel.org, 
 	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 
 Hello,
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-KMSAN: uninit-value in __hfs_ext_cache_extent
+syzbot found the following issue on:
 
-loop0: detected capacity change from 0 to 64
-=====================================================
-BUG: KMSAN: uninit-value in __hfs_ext_read_extent fs/hfs/extent.c:160 [inline]
-BUG: KMSAN: uninit-value in __hfs_ext_cache_extent+0x69f/0x7e0 fs/hfs/extent.c:179
- __hfs_ext_read_extent fs/hfs/extent.c:160 [inline]
- __hfs_ext_cache_extent+0x69f/0x7e0 fs/hfs/extent.c:179
- hfs_ext_read_extent fs/hfs/extent.c:202 [inline]
- hfs_get_block+0x73e/0xf60 fs/hfs/extent.c:366
- __block_write_begin_int+0xa6b/0x2f80 fs/buffer.c:2121
- block_write_begin fs/buffer.c:2231 [inline]
- cont_write_begin+0xf82/0x1940 fs/buffer.c:2582
- hfs_write_begin+0x85/0x120 fs/hfs/inode.c:52
- cont_expand_zero fs/buffer.c:2509 [inline]
- cont_write_begin+0x32f/0x1940 fs/buffer.c:2572
- hfs_write_begin+0x85/0x120 fs/hfs/inode.c:52
- hfs_file_truncate+0x1a5/0xd30 fs/hfs/extent.c:494
- hfs_inode_setattr+0x998/0xab0 fs/hfs/inode.c:654
- notify_change+0x1a8e/0x1b80 fs/attr.c:503
- do_truncate+0x22a/0x2b0 fs/open.c:65
- vfs_truncate+0x5d4/0x680 fs/open.c:111
- do_sys_truncate+0x104/0x240 fs/open.c:134
- __do_sys_truncate fs/open.c:146 [inline]
- __se_sys_truncate fs/open.c:144 [inline]
- __x64_sys_truncate+0x6c/0xa0 fs/open.c:144
- x64_sys_call+0x2ce3/0x3ba0 arch/x86/include/generated/asm/syscalls_64.h:77
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Uninit was created at:
- slab_post_alloc_hook mm/slub.c:4091 [inline]
- slab_alloc_node mm/slub.c:4134 [inline]
- __do_kmalloc_node mm/slub.c:4263 [inline]
- __kmalloc_noprof+0x661/0xf30 mm/slub.c:4276
- kmalloc_noprof include/linux/slab.h:882 [inline]
- hfs_find_init+0x91/0x250 fs/hfs/bfind.c:21
- hfs_ext_read_extent fs/hfs/extent.c:200 [inline]
- hfs_get_block+0x699/0xf60 fs/hfs/extent.c:366
- __block_write_begin_int+0xa6b/0x2f80 fs/buffer.c:2121
- block_write_begin fs/buffer.c:2231 [inline]
- cont_write_begin+0xf82/0x1940 fs/buffer.c:2582
- hfs_write_begin+0x85/0x120 fs/hfs/inode.c:52
- cont_expand_zero fs/buffer.c:2509 [inline]
- cont_write_begin+0x32f/0x1940 fs/buffer.c:2572
- hfs_write_begin+0x85/0x120 fs/hfs/inode.c:52
- hfs_file_truncate+0x1a5/0xd30 fs/hfs/extent.c:494
- hfs_inode_setattr+0x998/0xab0 fs/hfs/inode.c:654
- notify_change+0x1a8e/0x1b80 fs/attr.c:503
- do_truncate+0x22a/0x2b0 fs/open.c:65
- vfs_truncate+0x5d4/0x680 fs/open.c:111
- do_sys_truncate+0x104/0x240 fs/open.c:134
- __do_sys_truncate fs/open.c:146 [inline]
- __se_sys_truncate fs/open.c:144 [inline]
- __x64_sys_truncate+0x6c/0xa0 fs/open.c:144
- x64_sys_call+0x2ce3/0x3ba0 arch/x86/include/generated/asm/syscalls_64.h:77
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-CPU: 0 UID: 0 PID: 6025 Comm: syz.0.15 Not tainted 6.12.0-rc6-syzkaller-00077-g2e1b3cc9d7f7-dirty #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-=====================================================
-
-
-Tested on:
-
-commit:         2e1b3cc9 Merge tag 'arm-fixes-6.12-2' of git://git.ker..
+HEAD commit:    05b92660cdfe Merge tag 'pci-v6.12-fixes-2' of git://git.ke..
 git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=14cbf587980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=b8a4f4c5365f96b
-dashboard link: https://syzkaller.appspot.com/bug?extid=d395b0c369e492a17530
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=15185d5f980000
+console output: https://syzkaller.appspot.com/x/log.txt?x=16ceb55f980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=728f7ffd25400452
+dashboard link: https://syzkaller.appspot.com/bug?extid=ec6009b644ee5b5c28c8
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
 
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-05b92660.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/240ba8a2a878/vmlinux-05b92660.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/fed8acdd322e/bzImage-05b92660.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+ec6009b644ee5b5c28c8@syzkaller.appspotmail.com
+
+======================================================
+WARNING: possible circular locking dependency detected
+6.12.0-rc5-syzkaller-00291-g05b92660cdfe #0 Not tainted
+------------------------------------------------------
+kworker/u32:4/77 is trying to acquire lock:
+but task is already holding lock:
+
+which lock already depends on the new lock.
+
+
+the existing dependency chain (in reverse order) is:
+-> #1 (&rdev->wiphy.mtx){+.+.}-{3:3}:
+       wiphy_lock include/net/cfg80211.h:6014 [inline]
+       ieee80211_open+0x12f/0x260 net/mac80211/iface.c:449
+       do_set_master+0x1bc/0x230 net/core/rtnetlink.c:2730
+       __rtnl_newlink+0xc35/0x1920 net/core/rtnetlink.c:3725
+       rtnetlink_rcv_msg+0x3c7/0xea0 net/core/rtnetlink.c:6675
+       netlink_rcv_skb+0x16b/0x440 net/netlink/af_netlink.c:2551
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+-> #0 (team->team_lock_key#4){+.+.}-{3:3}:
+       notifier_call_chain+0xb9/0x410 kernel/notifier.c:93
+       unregister_netdevice include/linux/netdevice.h:3118 [inline]
+       _cfg80211_unregister_wdev+0x64b/0x830 net/wireless/core.c:1211
+       ieee80211_remove_interfaces+0x36d/0x760 net/mac80211/iface.c:2300
+       process_one_work+0x9c5/0x1ba0 kernel/workqueue.c:3229
+       kthread+0x2c1/0x3a0 kernel/kthread.c:389
+
+other info that might help us debug this:
+
+
+       CPU0                    CPU1
+  lock(&rdev->wiphy.mtx);
+                               lock(&rdev->wiphy.mtx);
+
+ *** DEADLOCK ***
+
+ #3: ffffffff8fee34a8 (rtnl_mutex){+.+.}-{3:3}, at: ieee80211_unregister_hw+0x4d/0x3a0 net/mac80211/main.c:1664
+stack backtrace:
+CPU: 2 UID: 0 PID: 77 Comm: kworker/u32:4 Not tainted 6.12.0-rc5-syzkaller-00291-g05b92660cdfe #0
+Call Trace:
+ <TASK>
+ print_circular_bug+0x41c/0x610 kernel/locking/lockdep.c:2074
+ check_prev_add kernel/locking/lockdep.c:3161 [inline]
+ check_prevs_add kernel/locking/lockdep.c:3280 [inline]
+ validate_chain kernel/locking/lockdep.c:3904 [inline]
+ __lock_acquire+0x250b/0x3ce0 kernel/locking/lockdep.c:5202
+ __mutex_lock_common kernel/locking/mutex.c:608 [inline]
+ __mutex_lock+0x175/0x9c0 kernel/locking/mutex.c:752
+ team_del_slave+0x31/0x1b0 drivers/net/team/team_core.c:1990
+ call_netdevice_notifiers_extack net/core/dev.c:2034 [inline]
+ call_netdevice_notifiers net/core/dev.c:2048 [inline]
+ unregister_netdevice_many_notify+0x8d5/0x1e50 net/core/dev.c:11407
+ ieee80211_unregister_hw+0x55/0x3a0 net/mac80211/main.c:1671
+ cleanup_net+0x5b7/0xb40 net/core/net_namespace.c:626
+ process_one_work+0x9c5/0x1ba0 kernel/workqueue.c:3229
+ ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
