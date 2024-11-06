@@ -1,58 +1,54 @@
-Return-Path: <linux-kernel+bounces-397986-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397989-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15C059BE39E
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 11:07:17 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BF2C9BE3AF
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 11:08:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 47A371C22892
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 10:07:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CFB0C288966
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 10:08:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08BF81DE4C6;
-	Wed,  6 Nov 2024 10:06:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 599F51DD0D4;
+	Wed,  6 Nov 2024 10:08:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iHO6hjlz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="X7uhEJLK"
+Received: from mail-40130.protonmail.ch (mail-40130.protonmail.ch [185.70.40.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 358401DDA15;
-	Wed,  6 Nov 2024 10:06:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AC831DCB06;
+	Wed,  6 Nov 2024 10:08:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730887577; cv=none; b=upPLsyfNVGEBXGWITnv+lcL4dZC0vYVhI2eLM2HU8WWlDSRupGb3RIBM9+tI59fH4c5wakwFnfwOdSDyFtTWDwpuvpiP4Mkpc7prqNEYMyEkwDF84QMi7GYpg4CQjGUJHYpx3abv8ro2BafdGpe4tnPbxAcfDKWqTqN/tTjK75g=
+	t=1730887691; cv=none; b=oCCfImFIzBloVIU0tJCpIT8/ziWBu+hWLox49mLYEdoTEkw/0pfxIhvMc5vn5Kz1BPr2rWvGU8ReC1bccxRhVRhmFrzemWqFfp+4dOfN2BUmFO1dSdoSQHTvMozALod0BuesdxemM2TQguyzoZnprrxTOlkXU0fB5vXSuecwfQs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730887577; c=relaxed/simple;
-	bh=sLdEEwKwMLxWdWdZL65wb/2gBWurtCr+YBjQaRMnIDg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hX0jNGbiPgpAJ8+sXvoo6LVCtfe55/7ajnC1uXS0pgecJk5Efth9paMsfT2BzpP3Ll8c77lH0EGgxoL0apvLIcM30gZauRrY5jkFdzwkVLMgp6RNFWMPNewFzv6bBQdaYKVVsLEsMTV/Of1PrBfQUjEDybZgLz+Qkj+nujx3I1E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iHO6hjlz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C432C4CED4;
-	Wed,  6 Nov 2024 10:06:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730887576;
-	bh=sLdEEwKwMLxWdWdZL65wb/2gBWurtCr+YBjQaRMnIDg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=iHO6hjlz+1cwRAj11Z0BXNSd3Yq6BnEvTZZoGBv1qhp1x7HGDkemndDVxEVMG7J51
-	 Gdz8SwuQ/BfwAbWyCiYidSR2UDQ8QAqPcH9HdtDm/2jxHoLBUzwTVRM7XcSbmTizht
-	 zFfSspDks1KDLvwhuUv/HuWhPE3wHyi9+vVVOVF8kNgqdHL8TT40qZKa8oUL4EBss+
-	 tPpud4BB3rowu/lvm+SvsrUDIiyFr5FClJMP8DTtafe3fbi9ktfvQz/3x7HXc1hfeg
-	 aXZFxzbBZ3tECD9sDCGGU5caeLzmpy2hjygUe9YclZaeK8hYsEZn2fVE0Ae5Yz51zO
-	 rZA0wkMlJdM/Q==
-Date: Wed, 6 Nov 2024 11:06:10 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Tycho Andersen <tycho@tycho.pizza>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
-	Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>, 
-	Shuah Khan <skhan@linuxfoundation.org>, Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>, 
-	Aleksa Sarai <cyphar@cyphar.com>, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	Tycho Andersen <tandersen@netflix.com>
-Subject: Re: [PATCH 1/2] exec: fix up /proc/pid/comm in the
- execveat(AT_EMPTY_PATH) case
-Message-ID: <20241106-neukauf-befugnis-a54d08ac9b4b@brauner>
-References: <20241030203732.248767-1-tycho@tycho.pizza>
+	s=arc-20240116; t=1730887691; c=relaxed/simple;
+	bh=DioRjFg2BsUD83/DwMDVpmXfis+iVFsiJb7QBbbqNv4=;
+	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=DsnqKN5yoBYrfSdim6E4iAF9UZfm9iXbcyWZdocAGj188hPqZKB9UtgmQC+GtbF1Yjd9yPUd5g7dv11s947K88Jngwf8fBwpufTfKGzpTMA/k+0ym5IH574bzH3NYDNJQYujM8cDd4RLEDw2NWcWh3kki41NgLoUEPdBMOf183I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=X7uhEJLK; arc=none smtp.client-ip=185.70.40.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
+	s=protonmail3; t=1730887681; x=1731146881;
+	bh=V8yMZc9Tul1bQH+c+HZBXPgZ3WGspgX0f/zhkZDPElE=;
+	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
+	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector:
+	 List-Unsubscribe:List-Unsubscribe-Post;
+	b=X7uhEJLKYzJHzSA4QegoCAPrW1f9UZGo6GqvYkQ6T3FY2I2maGlcTtqYcc3FwfeWJ
+	 rK7FiGLqhKAUQMCU8ADy91h3fZsO19l1iGkp3pNG8xt7k/1BTKXO9koumDYu1js+OS
+	 rzgr/I+y+nEoZQm8UL8irCqpeYWlIZkcoA9Xl2ylqV/RW0zg1WBSjQVVC6So2sCSLt
+	 fK7PtN7hnGoCEBkZGnmBA1u0GewU8kUValFwExEZKsawFP07/q/mv/OkeDEu4Ty2UJ
+	 dW8oIgiKrQHtgiMmMmDYRCBmcxS6zcb2fWpy17ymidRgF+WQPWExXxT0rb0ucIJIdK
+	 fy3gkY8CGsGYg==
+Date: Wed, 06 Nov 2024 10:07:57 +0000
+To: Sean Wang <sean.wang@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Andy Teng <andy.teng@mediatek.com>
+From: Yassine Oudjana <y.oudjana@protonmail.com>
+Cc: Yassine Oudjana <y.oudjana@protonmail.com>, Yassine Oudjana <yassine.oudjana@gmail.com>, linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v7 0/7] MediaTek pinctrl DT binding cleanup and MT6735 pinctrl support
+Message-ID: <20241106100741.173825-1-y.oudjana@protonmail.com>
+Feedback-ID: 6882736:user:proton
+X-Pm-Message-ID: b1fe9a94280e119d52a160e45965c4ac9782960b
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,32 +56,113 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241030203732.248767-1-tycho@tycho.pizza>
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 30, 2024 at 02:37:31PM -0600, Tycho Andersen wrote:
-> From: Tycho Andersen <tandersen@netflix.com>
-> 
-> Zbigniew mentioned at Linux Plumber's that systemd is interested in
-> switching to execveat() for service execution, but can't, because the
-> contents of /proc/pid/comm are the file descriptor which was used,
-> instead of the path to the binary. This makes the output of tools like
-> top and ps useless, especially in a world where most fds are opened
-> CLOEXEC so the number is truly meaningless.
-> 
-> Change exec path to fix up /proc/pid/comm in the case where we have
-> allocated one of these synthetic paths in bprm_init(). This way the actual
-> exec machinery is unchanged, but cosmetically the comm looks reasonable to
-> admins investigating things.
-> 
-> Signed-off-by: Tycho Andersen <tandersen@netflix.com>
-> Suggested-by: Zbigniew Jędrzejewski-Szmek <zbyszek@in.waw.pl>
-> CC: Aleksa Sarai <cyphar@cyphar.com>
-> Link: https://github.com/uapi-group/kernel-features#set-comm-field-before-exec
-> ---
+These patches are part of a larger effort to support the MT6735 SoC family =
+in
+mainline Linux. More patches (unsent or sent and pending review or revision=
+) can
+be found here[1].
 
-We finally went full circle back to what was originally proposed :)
+This series adds a driver for the pin controller found on the MediaTek MT67=
+35
+and MT6735M SoCs. The two differ in the last 6 physical pins, which are use=
+d
+for MSDC2 on MT6735 but don't exist on MT6735M (since MSDC2 doesn't exist o=
+n it
+to begin with). In preparation to document DT bindings for this pin control=
+ler,
+the existing documents for MT67xx SoCs are combined into one in order to
+eliminate duplicate property definitions and standardize pin configuration =
+node
+names. Necessary cleanup is done along the way.
 
-Reviewed-by: Christian Brauner <brauner@kernel.org>
+[1] https://gitlab.com/mt6735-mainline/linux/-/commits/mt6735-staging
+
+Changes since v6:
+ - Mention changing MT6797 DT in 1st patch commit message.
+ - Squash MT6735 DT binding patches.
+ - Add debounce time to eint_hw struct. MT6735 supports the same debounce
+   times as MT6765 so reuse debounce_time_mt6765.
+Changes since v5:
+ - Revise and fix all register bits for all group register types (IES, SMT,
+   RDSEL, TDSEL, PUPD_R0_R1, PULLEN and PULLSEL).
+ - Add pull_type array.
+ - Use proper getters/setters for bias and drive.
+ - Add minItems for MT6795 interrupts.
+Changes since v4:
+ - Remove patches that were applied previously.
+ - Define interrupts items for each variant (bringing back maxItems: 1 to t=
+he top
+   level definition then adding maxItems: 2 under the MT6795 condition caus=
+es a
+   dt_binding_check error for some reason)
+ - Move example changes to the patch they belong to
+ - Don't unnecessarily move the allOf block.
+Changes since v3:
+ - Improve interrupts description to make clear what sysirq means.
+ - Set drive-strength constraints per variant.
+ - Set maxItems for reg in MT6795.
+ - Add blank lines between conditionals.
+ - Add ref for both pinmux-node.yaml and pincfg-node.yaml.
+ - Make pinctrl subnode-related changes in separate patch.
+ - Fix up some pinctrl subnode property descriptions.
+ - Add interrupts items descriptions to MT6765 and MT6735.Changes since v3:
+ - Improve interrupts description to make clear what sysirq means.
+ - Set drive-strength constraints per variant.
+ - Set maxItems for reg in MT6795.
+ - Add blank lines between conditionals.
+ - Add ref for both pinmux-node.yaml and pincfg-node.yaml.
+ - Make pinctrl subnode-related changes in separate patch.
+ - Fix up some pinctrl subnode property descriptions.
+ - Add interrupts items descriptions to MT6765 and MT6735.
+Changes since v2:
+ - Add interrupt descriptions.
+ - Change interrupts property item limits.
+ - Move pinmux examples from node description to example dts.
+ - Properly add myself as maintainer for MT6735 pinctrl driver and DT bindi=
+ngs
+   document.
+ - Remove tabs from a few defines in pinctrl-mt6735.c.
+Changes since v1:
+ - Combine other documents into existing mediatek,mt6779-pinctrl.yaml
+   instead of creating a new document with wild card in its name.
+ - Split first patch into smaller patches focused on specific changes.
+ - Remove syscon compatible from MT6779 DT to avoid a check error.
+ - Fix interrupt count for MT6795.
+
+Yassine Oudjana (7):
+  dt-bindings: pinctrl: mediatek,mt6779-pinctrl: Pull pinctrl node
+    changes from MT6795 document
+  dt-bindings: pinctrl: mediatek,mt6779-pinctrl: Improve pinctrl subnode
+    and property descriptions
+  dt-bindings: pinctrl: mediatek,mt6779-pinctrl: Add MT6795
+  arm64: dts: mediatek: mt6797: Make pin configuration nodes follow DT
+    bindings
+  dt-bindings: pinctrl: mediatek,mt6779-pinctrl: Document MT6765 pin
+    controller
+  dt-bindings: pinctrl: mediatek,mt6779-pinctrl: Add bindings for MT6735
+    pin controller
+  pinctrl: mediatek: Add MT6735 pinctrl driver
+
+ .../pinctrl/mediatek,mt6779-pinctrl.yaml      |  191 +-
+ .../pinctrl/mediatek,mt6795-pinctrl.yaml      |  228 -
+ MAINTAINERS                                   |    9 +
+ arch/arm64/boot/dts/mediatek/mt6797.dtsi      |   20 +-
+ drivers/pinctrl/mediatek/Kconfig              |    7 +
+ drivers/pinctrl/mediatek/Makefile             |    1 +
+ drivers/pinctrl/mediatek/pinctrl-mt6735.c     |  881 ++++
+ drivers/pinctrl/mediatek/pinctrl-mtk-mt6735.h | 3993 +++++++++++++++++
+ .../pinctrl/mediatek,mt6735-pinfunc.h         | 1148 +++++
+ 9 files changed, 6223 insertions(+), 255 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/pinctrl/mediatek,mt67=
+95-pinctrl.yaml
+ create mode 100644 drivers/pinctrl/mediatek/pinctrl-mt6735.c
+ create mode 100644 drivers/pinctrl/mediatek/pinctrl-mtk-mt6735.h
+ create mode 100644 include/dt-bindings/pinctrl/mediatek,mt6735-pinfunc.h
+
+--=20
+2.47.0
+
+
 
