@@ -1,205 +1,157 @@
-Return-Path: <linux-kernel+bounces-398868-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398869-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 017EB9BF766
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 20:47:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC1E79BF768
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 20:47:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 252E21C22B5E
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 19:47:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F47A283BFE
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 19:47:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03D4220CCE0;
-	Wed,  6 Nov 2024 19:39:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 187AD20D4E5;
+	Wed,  6 Nov 2024 19:39:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="pj2EC0Q9"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.22])
+	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="yNSkz/VV"
+Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6806209F47;
-	Wed,  6 Nov 2024 19:38:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D26F209F4B
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 19:39:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730921941; cv=none; b=h0+NN9g7V5UKzkaIC9aw4LzwnXE/3hsVVIkCwT6u4OdFrvcb48HXwJfMVW0m4ALqX03YSaHMqjKEjwuGSGGqOhrt/Qic/CUc/Od7OfICG0HOQsZl4SAy/hVPnJZPqX/ZFJc+eQinO5I9nfoZ11jc/xrtk8uGS+EyZ7qRwBrsr/g=
+	t=1730921945; cv=none; b=RHx0IBVFBzO0EntcrlyHMD7IQZYYg6yMMAaKzLk7R8503M7j/PLCJXYnc2DrgcK0Tm8v/wMBqdS/lqTboby2n8YxBuVDIAmDuX8fdt1471Rei1xPPWi7rURdmawkBbK0ekjCWbjHPEQcVprAlgCJxyDJc//GIstUjYuvCAlnlCA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730921941; c=relaxed/simple;
-	bh=HiCzIvkCW8MyO7NuYdiCDgGHjjseI8QbfQA4A5ThJHU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eFXix1UpK0BgiQ+V3OF5Fdh2DWUck+E3FdWY8VHNv2KX56jEA4qT84DpN8to//moEi920PuQSDm23rSYvAbFWVYv7qfu8ZkrG93+pD9x/hN/egLeREa1oqNBS3/A7SHDgl0oDa+j05B0BYmMMXPCP/TIsSO5o2Zr8+ngbbwNB7U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=pj2EC0Q9; arc=none smtp.client-ip=212.227.17.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1730921868; x=1731526668; i=w_armin@gmx.de;
-	bh=DWkopg69mn8S4SfXiFt/DcVunJCaA2dwQYyTiUNVYY4=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=pj2EC0Q9vQdOBQh0BrBKfehA6q/grE9zCbjsVZGT7oSYyt1VdjCYU4ZoN4pF4qRO
-	 E0mg2jpHdUIvwhFoJKGR86matj58mhcqxk1JM90cxGUFWnpGSgLEWkQ+56gmbOsoy
-	 Zb3NfifLivJmhBrOcNizH83Gdjersd1KNxB0z5vV37xlm5UYhzrQeY3Sv6zCGV8Oc
-	 xUSrxnYFPTbHGj6jF01l7gGOpdb+UZiYsM3SCLfA1uYYm5uJEJJC7QB0GcBy9sXq/
-	 atu0k06NO07Kmj4T3vC5FtxScw2mVm9XnAQQudRIB7ZSWmsKKfkx47mQVBir21gRC
-	 NuE5lpjHHwNZwsbcIA==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [141.30.226.129] ([141.30.226.129]) by mail.gmx.net (mrgmx105
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1MryTF-1teIn32Q9l-00aXeR; Wed, 06
- Nov 2024 20:37:48 +0100
-Message-ID: <1ce2e9f0-9b18-4c8e-b5ef-08795704a17f@gmx.de>
-Date: Wed, 6 Nov 2024 20:37:46 +0100
+	s=arc-20240116; t=1730921945; c=relaxed/simple;
+	bh=0yMXJ3amPkiTYtjDbP6sDDDoFte7LfJTl96OJZnq0QY=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=HM7K1HkVjUSAHnBjaMqiFbEHr4hqawXf1TK+cwqa6eEGhT6yRhPpdL3RAreOGnQ/DLfE0wZnNHBEO2W8DXPW+PRRfoUdhImSirQFZAyGfU3zadkq92oR+mtfNIjcfaRiSbsU8/3m0SMooVAm8sO9snVkE2SFyf7yXxPs38iShY8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=yNSkz/VV; arc=none smtp.client-ip=202.36.163.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
+Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id CE3B72C03C3;
+	Thu,  7 Nov 2024 08:38:58 +1300 (NZDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
+	s=mail181024; t=1730921938;
+	bh=0yMXJ3amPkiTYtjDbP6sDDDoFte7LfJTl96OJZnq0QY=;
+	h=From:To:CC:Subject:Date:References:In-Reply-To:From;
+	b=yNSkz/VVZNIzd38tOD9TA3rHugD/gTWnpjGlBCybjTTqn5tY615oySThaKEYRXqDM
+	 ljUAMoNlWhhbrtFEl7RoI49Uh3SvHzWLBg41cA3u3C01GAZpEPWE5lKKEnPCztXcvZ
+	 f9mLwGneA6ZFK8nLU+X+AZL9R8h/Kjtmlk27XzBBnrQObkKqbm6SawPyV59L9FMRJN
+	 e/f6IVEUNZR71B/cXaxgnLi1XCW5ozU/SUkF1CycDlHIE7Xntp/imVHLyf4CkafTCI
+	 8Yn04mYeO49EFnZKROahJOmo2/LSbGA9vShFo2pGUwkWpI3DzjnwShdm6Pr8olx9Yv
+	 SI1CiD2dRJgHQ==
+Received: from svr-chch-ex2.atlnz.lc (Not Verified[2001:df5:b000:bc8::76]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
+	id <B672bc5d20001>; Thu, 07 Nov 2024 08:38:58 +1300
+Received: from svr-chch-ex1.atlnz.lc (2001:df5:b000:bc8::77) by
+ svr-chch-ex2.atlnz.lc (2001:df5:b000:bc8:f753:6de:11c0:a008) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.2.1544.11; Thu, 7 Nov 2024 08:38:58 +1300
+Received: from svr-chch-ex2.atlnz.lc (2001:df5:b000:bc8::76) by
+ svr-chch-ex1.atlnz.lc (2001:df5:b000:bc8::77) with Microsoft SMTP Server
+ (TLS) id 15.0.1497.48; Thu, 7 Nov 2024 08:38:46 +1300
+Received: from svr-chch-ex2.atlnz.lc ([fe80::a9eb:c9b7:8b52:9567]) by
+ svr-chch-ex2.atlnz.lc ([fe80::a9eb:c9b7:8b52:9567%15]) with mapi id
+ 15.02.1544.011; Thu, 7 Nov 2024 08:38:46 +1300
+From: Chris Packham <Chris.Packham@alliedtelesis.co.nz>
+To: Miquel Raynal <miquel.raynal@bootlin.com>
+CC: "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+	"linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: ubifs_recover_master_node: failed to recover master node
+Thread-Topic: ubifs_recover_master_node: failed to recover master node
+Thread-Index: AQHbKZq96Tx6yEKYG0Wljc12ck8PQ7Kqb/M4//9p5YA=
+Date: Wed, 6 Nov 2024 19:38:45 +0000
+Message-ID: <2aadcbb0-298c-4b60-9d6f-a1b55f23de2b@alliedtelesis.co.nz>
+References: <7eaf332e-9439-4d4c-a2ea-d963e41f44f2@alliedtelesis.co.nz>
+ <87jzdgjrxw.fsf@bootlin.com>
+In-Reply-To: <87jzdgjrxw.fsf@bootlin.com>
+Accept-Language: en-NZ, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <38D079CB9521194784CA57B05BDE1B83@atlnz.lc>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 02/20] platform/x86/dell: dell-pc: Create platform
- device
-To: Mario Limonciello <mario.limonciello@amd.com>,
- Hans de Goede <hdegoede@redhat.com>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
- Maximilian Luz <luzmaximilian@gmail.com>, Lee Chun-Yi <jlee@suse.com>,
- Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
- Corentin Chary <corentin.chary@gmail.com>, "Luke D . Jones"
- <luke@ljones.dev>, Ike Panhc <ike.pan@canonical.com>,
- Henrique de Moraes Holschuh <hmh@hmh.eng.br>,
- Alexis Belmonte <alexbelm48@gmail.com>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
- Ai Chao <aichao@kylinos.cn>, Gergo Koteles <soyer@irl.hu>,
- open list <linux-kernel@vger.kernel.org>,
- "open list:ACPI" <linux-acpi@vger.kernel.org>,
- "open list:MICROSOFT SURFACE PLATFORM PROFILE DRIVER"
- <platform-driver-x86@vger.kernel.org>,
- "open list:THINKPAD ACPI EXTRAS DRIVER"
- <ibm-acpi-devel@lists.sourceforge.net>,
- Mark Pearson <mpearson-lenovo@squebb.ca>,
- Matthew Schwartz <matthew.schwartz@linux.dev>
-References: <20241105153316.378-1-mario.limonciello@amd.com>
- <20241105153316.378-3-mario.limonciello@amd.com>
-Content-Language: en-US
-From: Armin Wolf <W_Armin@gmx.de>
-In-Reply-To: <20241105153316.378-3-mario.limonciello@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:nXPG+XJerwMrXIeld8wFRfVFnJI4WcbE/wBi2vt+UXFGezhodEi
- v2bJwk9D1mc8karoqY7bksJqfpN5h2q/u993sVycDs2OhnRMVoQK/KfIrLASwYrwn3BzFDb
- HJ575ZtKAq/JHsEOx3D50QexYilfSeZjGUpsOy/zkXek0mNr6WzrG35IergHE0rCo3wLn2Q
- jBR/tybvFupf4sCm4+Spw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:DfE0K5Okpxs=;C9NNR5C324DtBHOjNMjQndf5+pv
- Y3ORZ9RDlG5DRRJ3lM9LE43BoLxbhfalPAUAgD6OFuk1q3NilOBJES+rYoVI2ax3VVwB7gSp9
- zyycKl8zO+KGYKdWFo5sYIgy9iCLLtCNWBgjpCErgt+A1owSXOzmlkJRAJI9WX+HbSaJ2hLxL
- fiKZXnGy44Ij67HUWUf5tYe0PAh6/CEV4R/L8o1A4lFwPEMBO5ZaTHg0htMBA/9AMj2Bh3hjs
- i7QQsamBn+AaCVPom2SNxX9O8ah7wBwz2nD3pwksHoAvxHhRHEp9ghOua85vF/oqqe70qa8Hz
- p6c/1URrkRoRUBaq3vgPTE0hImevzk61cRTj3e1I0M5PzNDSBTpfFd6PgBvBkykauJeXQUNau
- 9keypamRXw9EI2Eq7b+Y+s2e+KtVUgZG3VDXqagMPIzJ5xA6sMI7+fUnBZVncDzuuIbUqqe2v
- 306XwH5zzjUzjUYZj0iEmbDELTFdDG9uXMnddI93FzRiWdogo7GKBRO0dumlL1hoAwWK26hv9
- QAkzwu4DXNmRxSPeYfMKOXEuKuwBqd3gK8UGyzVxXJ44VGUOl3mDmVn1od0m83B+te6DCIVOg
- cXcXwVDbRxjdiQ9mhQI22ET/zV04TP2EkXt1PWiE6D+Bfoc13Vd1QnzSbPdr8krPV5+1Z8wCd
- y/EEp6mPSWrwDt3HWrjKqXkh4QiHJSPIzwdY5lv12cZpbSO50gnaBO5uGwtmvUKdRyfkaoIP9
- yU6HIArrmDlc9FAwm/6d6w3BqN9qW8we7cvO8ZOx54rOC2URsODvajCmGMJTwgurOnnbsKkwK
- TskIgSSjUw1mVmh7tnUrGRSw==
+X-SEG-SpamProfiler-Analysis: v=2.4 cv=ca1xrWDM c=1 sm=1 tr=0 ts=672bc5d2 a=Xf/6aR1Nyvzi7BryhOrcLQ==:117 a=xqWC_Br6kY4A:10 a=75chYTbOgJ0A:10 a=IkcTkHD0fZMA:10 a=VlfZXiiP6vEA:10 a=VwQbUJbxAAAA:8 a=aDF-memnnrlVHBypX7IA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+X-SEG-SpamProfiler-Score: 0
 
-Am 05.11.24 um 16:32 schrieb Mario Limonciello:
-
-> In order to have a device for the platform profile core to reference
-> create a platform device for dell-pc.
->
-> While doing this change the memory allocation for the thermal handler
-> to be device managed to follow the lifecycle of that device.
->
-> Reviewed-by: Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com>
-> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
-> ---
->   drivers/platform/x86/dell/dell-pc.c | 35 +++++++++++++++++++++--------
->   1 file changed, 26 insertions(+), 9 deletions(-)
->
-> diff --git a/drivers/platform/x86/dell/dell-pc.c b/drivers/platform/x86/=
-dell/dell-pc.c
-> index 3cf79e55e3129..b145fedb6b710 100644
-> --- a/drivers/platform/x86/dell/dell-pc.c
-> +++ b/drivers/platform/x86/dell/dell-pc.c
-> @@ -18,10 +18,13 @@
->   #include <linux/kernel.h>
->   #include <linux/module.h>
->   #include <linux/platform_profile.h>
-> +#include <linux/platform_device.h>
->   #include <linux/slab.h>
->
->   #include "dell-smbios.h"
->
-> +static struct platform_device *platform_device;
-> +
->   static const struct dmi_system_id dell_device_table[] __initconst =3D =
-{
->   	{
->   		.ident =3D "Dell Inc.",
-> @@ -244,9 +247,18 @@ static int thermal_init(void)
->   	if (!supported_modes)
->   		return 0;
->
-> -	thermal_handler =3D kzalloc(sizeof(*thermal_handler), GFP_KERNEL);
-> -	if (!thermal_handler)
-> +	platform_device =3D platform_device_alloc("dell-pc", PLATFORM_DEVID_NO=
-NE);
-> +	if (!platform_device)
->   		return -ENOMEM;
-> +	ret =3D platform_device_add(platform_device);
-
-Please use platform_device_register_simple() here.
-
-Other than that:
-
-Reviewed-by: Armin Wolf <W_Armin@gmx.de>
-
-> +	if (ret)
-> +		goto cleanup_platform_device;
-> +
-> +	thermal_handler =3D devm_kzalloc(&platform_device->dev, sizeof(*therma=
-l_handler), GFP_KERNEL);
-> +	if (!thermal_handler) {
-> +		ret =3D -ENOMEM;
-> +		goto cleanup_platform_device;
-> +	}
->   	thermal_handler->name =3D "dell-pc";
->   	thermal_handler->profile_get =3D thermal_platform_profile_get;
->   	thermal_handler->profile_set =3D thermal_platform_profile_set;
-> @@ -262,20 +274,25 @@ static int thermal_init(void)
->
->   	/* Clean up if failed */
->   	ret =3D platform_profile_register(thermal_handler);
-> -	if (ret) {
-> -		kfree(thermal_handler);
-> -		thermal_handler =3D NULL;
-> -	}
-> +	if (ret)
-> +		goto cleanup_thermal_handler;
-> +
-> +	return 0;
-> +
-> +cleanup_thermal_handler:
-> +	thermal_handler =3D NULL;
-> +
-> +cleanup_platform_device:
-> +	platform_device_del(platform_device);
->
->   	return ret;
->   }
->
->   static void thermal_cleanup(void)
->   {
-> -	if (thermal_handler) {
-> +	if (thermal_handler)
->   		platform_profile_remove();
-> -		kfree(thermal_handler);
-> -	}
-> +	platform_device_unregister(platform_device);
->   }
->
->   static int __init dell_init(void)
+SGkgTWlxdWVsLA0KDQpPbiA3LzExLzI0IDA0OjM1LCBNaXF1ZWwgUmF5bmFsIHdyb3RlOg0KPiBI
+aSBDaHJpcywNCj4NCj4gT24gMjkvMTAvMjAyNCBhdCAxMzozNzozMSArMTMsIENocmlzIFBhY2to
+YW0gPGNocmlzLnBhY2toYW1AYWxsaWVkdGVsZXNpcy5jby5uej4gd3JvdGU6DQo+DQo+PiBIaSwN
+Cj4+DQo+PiBJIHJlY2VudGx5IGFkZGVkIHN1cHBvcnQgZm9yIHRoZSBTUEktTkFORCBjb250cm9s
+bGVyIG9uIHRoZSBSVEw5MzAyQyBTb0NbMV0uIEkgZGlkIG1vc3Qgb2YgdGhlIHdvcmsgYWdhaW5z
+dCBMaW51eCA2LjExDQo+PiBhbmQgaXQncyB3b3JraW5nIGZpbmUgdGhlcmUuIEkgcmVjZW50bHkg
+cmViYXNlZCBhZ2FpbnN0IHRoZSB0aXAgb2YgTGludXMncyB0cmVlICg2LjEyLXJjNSkgYW5kIGZv
+dW5kIEkgd2FzIGdldHRpbmcgdWJpZnMNCj4+IGVycm9ycyB3aGVuIG1vdW50aW5nOg0KPj4NCj4+
+IFsgICAgMS4yNTUxOTFdIHNwaS1uYW5kIHNwaTEuMDogTWFjcm9uaXggU1BJIE5BTkQgd2FzIGZv
+dW5kLg0KPj4gWyAgICAxLjI2MTI4M10gc3BpLW5hbmQgc3BpMS4wOiAyNTYgTWlCLCBibG9jayBz
+aXplOiAxMjggS2lCLCBwYWdlIHNpemU6IDIwNDgsIE9PQiBzaXplOiA2NA0KPj4gWyAgICAxLjI3
+MTEzNF0gMiBmaXhlZC1wYXJ0aXRpb25zIHBhcnRpdGlvbnMgZm91bmQgb24gTVREIGRldmljZSBz
+cGkxLjANCj4+IFsgICAgMS4yNzgyNDddIENyZWF0aW5nIDIgTVREIHBhcnRpdGlvbnMgb24gInNw
+aTEuMCI6DQo+PiBbICAgIDEuMjgzNjMxXSAweDAwMDAwMDAwMDAwMC0weDAwMDAwZjAwMDAwMCA6
+ICJ1c2VyIg0KPj4gWyAgIDIwLjQ4MTEwOF0gMHgwMDAwMGYwMDAwMDAtMHgwMDAwMTAwMDAwMDAg
+OiAiUmVzZXJ2ZWQiDQo+PiBbICAgNzIuMjQwMzQ3XSB1YmkwOiBzY2FubmluZyBpcyBmaW5pc2hl
+ZA0KPj4gWyAgIDcyLjI3MDU3N10gdWJpMDogYXR0YWNoZWQgbXRkMyAobmFtZSAidXNlciIsIHNp
+emUgMjQwIE1pQikNCj4+IFsgICA3Mi4yNzY4MTVdIHViaTA6IFBFQiBzaXplOiAxMzEwNzIgYnl0
+ZXMgKDEyOCBLaUIpLCBMRUIgc2l6ZTogMTI2OTc2IGJ5dGVzDQo+PiBbICAgNzIuMjg0NTM3XSB1
+YmkwOiBtaW4uL21heC4gSS9PIHVuaXQgc2l6ZXM6IDIwNDgvMjA0OCwgc3ViLXBhZ2Ugc2l6ZSAy
+MDQ4DQo+PiBbICAgNzIuMjkyMTMyXSB1YmkwOiBWSUQgaGVhZGVyIG9mZnNldDogMjA0OCAoYWxp
+Z25lZCAyMDQ4KSwgZGF0YSBvZmZzZXQ6IDQwOTYNCj4+IFsgICA3Mi4yOTk4ODVdIHViaTA6IGdv
+b2QgUEVCczogMTkyMCwgYmFkIFBFQnM6IDAsIGNvcnJ1cHRlZCBQRUJzOiAwDQo+PiBbICAgNzIu
+MzA2Njg5XSB1YmkwOiB1c2VyIHZvbHVtZTogMSwgaW50ZXJuYWwgdm9sdW1lczogMSwgbWF4LiB2
+b2x1bWVzIGNvdW50OiAxMjgNCj4+IFsgICA3Mi4zMTQ3NDddIHViaTA6IG1heC9tZWFuIGVyYXNl
+IGNvdW50ZXI6IDEvMCwgV0wgdGhyZXNob2xkOiA0MDk2LCBpbWFnZSBzZXF1ZW5jZSBudW1iZXI6
+IDI1MjY0MjIzMA0KPj4gWyAgIDcyLjMyNDg1MF0gdWJpMDogYXZhaWxhYmxlIFBFQnM6IDAsIHRv
+dGFsIHJlc2VydmVkIFBFQnM6IDE5MjAsIFBFQnMgcmVzZXJ2ZWQgZm9yIGJhZCBQRUIgaGFuZGxp
+bmc6IDQwDQo+PiBbICAgNzIuMzcwMTIzXSB1YmkwOiBiYWNrZ3JvdW5kIHRocmVhZCAidWJpX2Jn
+dDBkIiBzdGFydGVkLCBQSUQgMTQxDQo+PiBbICAgNzIuNDcwNzQwXSBVQklGUyAodWJpMDowKTog
+TW91bnRpbmcgaW4gdW5hdXRoZW50aWNhdGVkIG1vZGUNCj4+IFsgICA3Mi40OTAyNDZdIFVCSUZT
+ICh1YmkwOjApOiBiYWNrZ3JvdW5kIHRocmVhZCAidWJpZnNfYmd0MF8wIiBzdGFydGVkLCBQSUQg
+MTQ0DQo+PiBbICAgNzIuNTI4MjcyXSBVQklGUyBlcnJvciAodWJpMDowIHBpZCAxNDMpOiB1Ymlm
+c19yZWNvdmVyX21hc3Rlcl9ub2RlOiBmYWlsZWQgdG8gcmVjb3ZlciBtYXN0ZXIgbm9kZQ0KPj4g
+WyAgIDcyLjU1MDEyMl0gVUJJRlMgKHViaTA6MCk6IGJhY2tncm91bmQgdGhyZWFkICJ1Ymlmc19i
+Z3QwXzAiIHN0b3BzDQo+PiBbICAgNzIuNzEwNzIwXSBVQklGUyAodWJpMDowKTogTW91bnRpbmcg
+aW4gdW5hdXRoZW50aWNhdGVkIG1vZGUNCj4+IFsgICA3Mi43MTc0NDddIFVCSUZTICh1YmkwOjAp
+OiBiYWNrZ3JvdW5kIHRocmVhZCAidWJpZnNfYmd0MF8wIiBzdGFydGVkLCBQSUQgMTQ5DQo+PiBb
+ICAgNzIuNzc3NjAyXSBVQklGUyBlcnJvciAodWJpMDowIHBpZCAxNDgpOiB1Ymlmc19yZWNvdmVy
+X21hc3Rlcl9ub2RlOiBmYWlsZWQgdG8gcmVjb3ZlciBtYXN0ZXIgbm9kZQ0KPj4gWyAgIDcyLjc4
+Nzc5Ml0gVUJJRlMgKHViaTA6MCk6IGJhY2tncm91bmQgdGhyZWFkICJ1Ymlmc19iZ3QwXzAiIHN0
+b3BzDQo+Pg0KPj4gRnVsbCBkbWVzZyBvdXRwdXQgaXMgYXRbMl0NCj4+DQo+PiBnaXQgYmlzZWN0
+IGxlYWQgbWUgdG8gY29tbWl0IDExODEzODU3ODY0ZiAoIm10ZDogc3BpLW5hbmQ6IG1hY3Jvbml4
+OiBDb250aW51b3VzIHJlYWQgc3VwcG9ydCIpLiBSZXZlcnRpbmcgdGhlIGJsYW1lZA0KPj4gY29t
+bWl0IGZyb20gNi4xMi1yYzUgc2VlbXMgdG8gYXZvaWQgdGhlIHByb2JsZW0uIFRoZSBmbGFzaCBj
+aGlwIG9uIG15IGJvYXJkIGlzIGEgTVgzMExGMkcyOEFELVRJLiBJJ20gbm90IHN1cmUgaWYgdGhl
+cmUNCj4+IGlzIGEgcHJvYmxlbSB3aXRoIDExODEzODU3ODY0ZiBvciB3aXRoIG15IHNwaS1tZW0g
+ZHJpdmVyIHRoYXQgaXMNCj4+IGV4cG9zZWQgYWZ0ZXIgc3VwcG9ydCBmb3IgY29udGludW91cyBy
+ZWFkIGlzIGVuYWJsZWQuDQo+IENyYXAuIEkgaGFkIGEgbG9vaywgYW5kIFRCSCBJIGRvbid0IGtu
+b3cuIFRoZSBvbmx5IHRoaW5nIEkgc2VlIGluIHlvdXINCj4gZHJpdmVyIG1pZ2h0IGJlIHRoZSBE
+TUEgdnMgUElPIGNob2ljZS4gQ291bGQgeW91IHRyeSB0byBhbHdheXMgcmV0dXJuDQo+IGZhbHNl
+IGZyb20gcnRsX3NuYW5kX2RtYV9vcCgpPw0KDQpJdCB0dXJuZWQgb3V0IHRoZSBsaW1pdGF0aW9u
+IHdhcyBpbiBteSBETUEgc3VwcG9ydC4gV2l0aCB0aGUgZml4IGZvciANCnRoYXRbMV0geW91ciBj
+aGFuZ2VzIGFyZSBmaW5lLiBJJ20gYSBsaXR0bGUgc3VycHJpc2VkIEkgbmV2ZXIgaGl0IA0KcHJv
+YmxlbXMgd2l0aCBETUEgcHJpb3IgdG8gdGhlIGNvbnRpbnVvdXMgcmVhZCBjaGFuZ2VzIGJ1dCBJ
+IGd1ZXNzIHRoZSANCnBhZ2UgcmVhZHMgd291bGQgaGF2ZSBiZWVuIHVuZGVyIHRoZSBsaW1pdCBh
+bmQgbXkgdGVzdGluZyBwcm9iYWJseSANCmRpZG4ndCB0cmlnZ2VyIGEgYmlnIGVub3VnaCB3cml0
+ZS4NCg0KPiBIb3dldmVyIHlvdSBzYXkgeW91J3JlIHVzaW5nIGFuIE1YMzAqIGRldmljZSwgdGhp
+cyBpcyBhIHJhdyBOQU5EIGNoaXAsDQo+IFNQSS1OQU5EIGNoaXBzIGFyZSBJIGJlbGlldmUgc3Rh
+cnRpbmcgd2l0aCBNWDM1KiBpbiB0aGVpciBJRHMsIG5vPw0KSSB0aGluayBJIGNvcGllZCB0aGF0
+IHBhcnQgbnVtYmVyIG9mZiB0aGUgd3JvbmcgZGF0YXNoZWV0IGluIG15IHVuc29ydGVkIA0KRG93
+bmxvYWRzIGRpcmVjdG9yeS4gVGhlIHNjaGVtYXRpYyBmb3IgdGhlIGJvYXJkIEkgaGF2ZSBzYXlz
+IA0KTVgzNUxGMkdFNEFELVo0IGFuZCB0aGUgY29ycmVjdCBkYXRhc2hlZXQgaGFzIGFsbCB0aGUg
+cmlnaHQgdGhpbmdzIGFib3V0IA0KU1BJLU5BTkQgYW5kIGNvbnRpbnVvdXMgcmVhZC4NCj4NCj4g
+VGhhbmtzLA0KPiBNaXF1w6hsDQoNCg0KWzFdIC0gDQpodHRwczovL2dpdC5rZXJuZWwub3JnL3B1
+Yi9zY20vbGludXgva2VybmVsL2dpdC9icm9vbmllL3NwaS5naXQvY29tbWl0Lz9pZD0yNWQyODQ3
+MTU4NDVhNDY1YTFhMzY5M2EwOWNmOGI2YWI4YmQ5Y2FmDQo=
 
