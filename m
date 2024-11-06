@@ -1,106 +1,161 @@
-Return-Path: <linux-kernel+bounces-398799-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398800-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CDDE9BF639
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 20:20:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C13D9BF63B
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 20:20:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 04CC61F21F9B
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 19:20:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 435931F238E3
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 19:20:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4F0A20966E;
-	Wed,  6 Nov 2024 19:18:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C831820BB37;
+	Wed,  6 Nov 2024 19:18:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=readmodwrite-com.20230601.gappssmtp.com header.i=@readmodwrite-com.20230601.gappssmtp.com header.b="FlCO/gpu"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D5EA20ADF9
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 19:18:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="mTE9yHU5"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A43BB20B207;
+	Wed,  6 Nov 2024 19:18:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730920732; cv=none; b=J8gs94eNJeOHcEM21IGmFUkpGOBp517dS/oFmoKjP6nPPLU2FlnetHkna31L7VnS8xoleLeWmlsns7YGI17HZzugT6hAjlmIt2iVEFFFKozEoHXgZFEZnL8nHZ6A29cmZh/SbVuZx0uTuv/uMGy8jKD4I0xCv73/E73F/l68TWw=
+	t=1730920736; cv=none; b=DH+IyE2+NZ2VmU6vWmti0pagd5c3rEeCfRFRm4qz4xtwqr/Fu8huOSIDsqJdb2dX7Vabt7J62haXDB+UD4XnQLSjT7Ou59bQTWMg0cq9kSTJ4A6vGzE+gSYz5rhV5hcyFZC3bk0hc1RrnzDK47ESaFQjk3pk8EATLYlrhtEe37M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730920732; c=relaxed/simple;
-	bh=qOe1CXVlc6MFF5iYmoeU/kZHwPZE0z1YOhnSZJKpHWc=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=VHwhNCW3F7YF5Bdy+AK7lWJceuTbdina7Y9EpMbVHbDdRtas4dAjETcK9iveRITGbctVdqMnNBshr+jHBOKmIfEpP226vs0/AzkdVIlFYxU3gHzS4VpmXIzCnvFkjNKFi5B3jOiSXxPWDJEb2bVrsQLEMo+DoqCvkbT12Zz7o+8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=readmodwrite.com; spf=none smtp.mailfrom=readmodwrite.com; dkim=pass (2048-bit key) header.d=readmodwrite-com.20230601.gappssmtp.com header.i=@readmodwrite-com.20230601.gappssmtp.com header.b=FlCO/gpu; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=readmodwrite.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=readmodwrite.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4315eeb2601so1831825e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2024 11:18:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=readmodwrite-com.20230601.gappssmtp.com; s=20230601; t=1730920729; x=1731525529; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qOe1CXVlc6MFF5iYmoeU/kZHwPZE0z1YOhnSZJKpHWc=;
-        b=FlCO/gpusn+K3rcuqWi3P3idxngUitO3mwKanUvxtlqIGpFCSRXytHOo4RPMBk5DgF
-         rKPSRjexqJB6yInovLZIbEtzGBa95unkLPlYRfN2HlOP9dDFZii6fYU8RvzmvG7SfxlP
-         ObaAMUyCz+kb2x7JjCugdBSqs9GfwzhMbSNekcNooWyeridXewt2oU1bAE1wx8NHylYT
-         DHMzG2DCw+bBcYE3zqIl7w7rRIsmj7v10Fd2StgzG1XtCX2x8BdODOx0EYT8y7G1hNvG
-         vrb0jsbi4wfsgL0QlYFL/N/HFY6evAkAw23RnYZvNszvMnLnUWj/QakLvoj6pUoEPtjn
-         FRhA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730920729; x=1731525529;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qOe1CXVlc6MFF5iYmoeU/kZHwPZE0z1YOhnSZJKpHWc=;
-        b=QKPGCKtsNLHp4fL0JRZe3Dn6lNZTeMXXxgtfj9PebGx6aIL0Za1fnz54vdHBloDOBn
-         j3rB/k52a1ZP6BP3EfNiuCVrM5BZv9fZgJgCr3Mtt9UcYPzfQt/FnKx3PncaI/HnxRp9
-         H9q2/7bxhiUtoimMOLv9VK0mKAV6ueyHaoJtJ+Dco3Wy52oCkiGKo+P1oNe00/gD2neY
-         fHKINcjvetligIVQr/KzyUy/lD7t5JIBRqgKIxmP7Q4L3USYT5bCPSO4OqBUD2Io1BL5
-         kabTHx1nXzhhqhLJ2WS1neASb0DY+YCzbrp92UV5Ui0QOPeMCEiQY9rVG8/OjyVJYT6o
-         ByQw==
-X-Forwarded-Encrypted: i=1; AJvYcCXCPUQEEaz00FsyDVF8RTE1r8iiUBSR23DGKJfO/kTe2794kOiXya08vgVnT+dWSiQcGMT4FslP9/yPysw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwgkALW5dyO2aSCvf7x+b2993m46RD0e9JRQIVNe4KO9nfx2PEh
-	rCyWZ0R1JVFkzvKJjiDjDbv2gAfAL9jOfwd2LZJkxauL54VNbJCz4021A1CSihU=
-X-Google-Smtp-Source: AGHT+IHIfvSuVMYE/OJ5z1Vf/8NWtnI3qpI11qZI1ZDjCQ5R1eoen0eQA7m2x6FHYRcVHKNghMdtTg==
-X-Received: by 2002:a5d:47ac:0:b0:37d:48f2:e749 with SMTP id ffacd0b85a97d-381c7a4636cmr20971751f8f.10.1730920728680;
-        Wed, 06 Nov 2024 11:18:48 -0800 (PST)
-Received: from matt-Precision-5490.. ([2a09:bac1:2880:f0::179:1ba])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381c10e7387sm19855419f8f.51.2024.11.06.11.18.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Nov 2024 11:18:48 -0800 (PST)
-From: Matt Fleming <matt@readmodwrite.com>
-To: nicolas@fjasle.eu
-Cc: benh@debian.org,
-	justinstitt@google.com,
-	linux-kbuild@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev,
-	masahiroy@kernel.org,
-	morbo@google.com,
-	nathan@kernel.org,
-	ndesaulniers@google.com,
-	re@w6rz.net,
-	kernel-team@cloudflare.com
-Subject: Re: [PATCH 2/3] kbuild: deb-pkg: add pkg.linux-upstream.nokernelheaders build profile
-Date: Wed,  6 Nov 2024 19:18:46 +0000
-Message-Id: <20241106191846.2079521-1-matt@readmodwrite.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <ZxkYYLbiXZ3p59iu@fjasle.eu>
-References: <ZxkYYLbiXZ3p59iu@fjasle.eu>
+	s=arc-20240116; t=1730920736; c=relaxed/simple;
+	bh=Ou+l3fSVssEMDncUOhgrcUyoeAk2ugDKrrGAONa/AiE=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=PLug4I5xBjmLhUzELDqd226HPFEVsxDD1wurawN7LPbNbyeNInlRGM1oVsyOn7MJdeE43Hse71Zqw8bx3aycdtvylKzP8qj+neSa9uv9ehltWUCYf6K5Zyagq07TdQYOGlK1iO0WnSEZITKC8Dmz1svybKWJHHA77DLQw4EbWKA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=mTE9yHU5; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from DESKTOP-0403QTC. (unknown [20.236.10.206])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 0FF42212C7E0;
+	Wed,  6 Nov 2024 11:18:51 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 0FF42212C7E0
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1730920733;
+	bh=rNzyWYfJCQD0LlT8+3XSt1D8NFOZPMLR98XqPQWHzu4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:Reply-To:From;
+	b=mTE9yHU5q4Ruwye8M/cyRhNjma7hAI6z5ESzssq2CTARZW97XNwavPqMmywM0Rgud
+	 Nbvp81iJ4pfllV1MO9CVwdwC42QkkN+kMssGEqhfXm/IQgZJgvTj+hOhjowpV/qTGe
+	 +9qvARFfnHla6Dv3nAFyM8gKT0y2At3zUJN2BP/I=
+Date: Wed, 6 Nov 2024 11:18:50 -0800
+From: Jacob Pan <jacob.pan@linux.microsoft.com>
+To: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: "Gowans, James" <jgowans@amazon.com>, "yi.l.liu@intel.com"
+ <yi.l.liu@intel.com>, "jinankjain@linux.microsoft.com"
+ <jinankjain@linux.microsoft.com>, "kvm@vger.kernel.org"
+ <kvm@vger.kernel.org>, "rppt@kernel.org" <rppt@kernel.org>, "kw@linux.com"
+ <kw@linux.com>, "iommu@lists.linux.dev" <iommu@lists.linux.dev>,
+ "madvenka@linux.microsoft.com" <madvenka@linux.microsoft.com>,
+ "anthony.yznaga@oracle.com" <anthony.yznaga@oracle.com>,
+ "robin.murphy@arm.com" <robin.murphy@arm.com>, "baolu.lu@linux.intel.com"
+ <baolu.lu@linux.intel.com>, "nh-open-source@amazon.com"
+ <nh-open-source@amazon.com>, "linux-kernel@vger.kernel.org"
+ <linux-kernel@vger.kernel.org>, "seanjc@google.com" <seanjc@google.com>,
+ "Saenz Julienne, Nicolas" <nsaenz@amazon.es>, "pbonzini@redhat.com"
+ <pbonzini@redhat.com>, "kevin.tian@intel.com" <kevin.tian@intel.com>,
+ "dwmw2@infradead.org" <dwmw2@infradead.org>, "ssengar@linux.microsoft.com"
+ <ssengar@linux.microsoft.com>, "joro@8bytes.org" <joro@8bytes.org>,
+ "will@kernel.org" <will@kernel.org>, "Graf (AWS), Alexander"
+ <graf@amazon.de>, "steven.sistare@oracle.com" <steven.sistare@oracle.com>,
+ jacob.pan@linux.microsoft.com, "zhangyu1@microsoft.com"
+ <zhangyu1@microsoft.com>
+Subject: Re: [RFC PATCH 05/13] iommufd: Serialise persisted iommufds and
+ ioas
+Message-ID: <20241106111850.69904346@DESKTOP-0403QTC.>
+In-Reply-To: <20241104130011.GD35848@ziepe.ca>
+References: <20240916113102.710522-1-jgowans@amazon.com>
+	<20240916113102.710522-6-jgowans@amazon.com>
+	<20241016152047.2a604f08@DESKTOP-0403QTC.>
+	<20241028090311.54bc537f@DESKTOP-0403QTC.>
+	<1f50020d9bd74ab8315cec473d3e6285d0fc8259.camel@amazon.com>
+	<20241104130011.GD35848@ziepe.ca>
+Reply-To: jacob.pan@linux.microsoft.com
+X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+
+Hi Jason,
+
+On Mon, 4 Nov 2024 09:00:11 -0400
+Jason Gunthorpe <jgg@ziepe.ca> wrote:
+
+> On Sat, Nov 02, 2024 at 10:22:54AM +0000, Gowans, James wrote:
+> 
+> > Yes, I think the guidance was to bind a device to iommufd in noiommu
+> > mode. It does seem a bit weird to use iommufd with noiommu, but we
+> > agreed it's the best/simplest way to get the functionality.   
+> 
+> noiommu should still have an ioas and still have kernel managed page
+> pinning.
+> 
+> My remark to bring it to iommufd was to also make it a fully
+> architected feature and stop relying on mprotect and /proc/ tricks.
+> 
+Just to clarify my tentative understanding with more details(please
+correct):
+
+1. create an iommufd access object for noiommu device when
+binding to an iommufd ctx.
+
+2. all user memory used by the device under noiommu mode should be
+pinned by iommufd, i.e. iommufd_access_pin_pages().
+I guess you meant stop doing mlock instead of mprotect trick? I think
+openHCL is using /dev/mem trick.
+
+3. ioas can be attched to the noiommu iommufd_access object, similar to
+emulated device, mdev.
+
+What kind/source of memory should be supported here?
+e.g. device meory regions exposed by PCI BARs.
 
 
-Hey there,
+> > Then as you suggest below the IOMMUFD_OBJ_DEVICE would be serialised
+> > too in some way, probably by iommufd telling the PCI layer that this
+> > device must be persistent and hence not to re-probe it on kexec.  
+> 
+> Presumably VFIO would be doing some/most of this part since it is the
+> driver that will be binding?
+> 
+Yes, it is the user mode driver that initiates the binding. I was
+thinking since the granularity for persistency is per iommufd ctx, the
+VFIO device flag to mark keep_alive can come from iommufd ctx.
 
-Can you explain how this change works a bit more? This reads like it's now
-impossible to build the debian linux-headers package with clang? At Cloudflare,
-we're using a custom build of gcc, not the gcc-x86-64-linux-gnu package, and
-with this change we can no longer build linux-headers.
+> > It's all a bit hand wavy at the moment, but something along those
+> > lines probably makes sense. I need to work on rev2 of this RFC as
+> > per Jason's feedback in the other thread. Rev2 will make the
+> > restore path more userspace driven, with fresh iommufd and pgtables
+> > objects being created and then atomically swapped over too. I'll
+> > also get the PCI layer involved with rev2. Once that's out (it'll
+> > be a few weeks as I'm on leave) then let's take a look at how the
+> > noiommu device persistence case would fit in.  
+> 
+> In a certain sense it would be nice to see the noiommu flow as it
+> breaks apart the problem into the first dependency:
+> 
+>  How to get the device handed across the kexec and safely land back in
+>  VFIO, and only VFIO's hands.
+> 
+> Preserving the iommu HW configuration is an incremental step built on
+> that base line.
+Makes sense, I need to catch up on the KHO series and hook up noiommu
+at the first step.
 
-What's the solution for those of us that want to build the linux-headers deb
-package but can't install gcc-*-linux-gnu?
+> Also, FWIW, this needs to follow good open source practices - we need
+> an open userspace for the feature and the kernel stuff should be
+> merged in a logical order.
+> 
+Yes, we will have matching userspace in openHCL
+https://github.com/microsoft/openvmm
+
+Thanks,
+
+Jacob
 
