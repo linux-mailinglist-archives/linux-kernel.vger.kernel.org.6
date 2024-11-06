@@ -1,70 +1,67 @@
-Return-Path: <linux-kernel+bounces-397592-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397594-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E2939BDDC2
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 04:44:14 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4C2B9BDDCA
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 04:48:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 909951C22D1B
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 03:44:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 62C63284FAF
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 03:48:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53F03190676;
-	Wed,  6 Nov 2024 03:44:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C1DA19148A;
+	Wed,  6 Nov 2024 03:48:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="eFjlg1jU"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Q0Is3a7u"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7895190468;
-	Wed,  6 Nov 2024 03:44:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE20D3F9D2
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 03:48:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730864643; cv=none; b=eN7+Age21KU/Dmg7aLVm+3oo/Ln73ZG13Ojc3v9ji23xH+BE81jioSSew/5SPda1FT0UgqOvUsp4/n6lOxzevoz97C3X8iN9FON/hSeIwCDkOJUXefg6cujBdQrnhPQ/wt4O997YrAiPulCIeldFr74iWSWTsr75ZgNDQABmCbY=
+	t=1730864902; cv=none; b=F2tZywFbZyaQ7NHtuaBwux4fVwoeHUu4SdVMk9/Jmo0w8g7mw/PmbJfpNjCPuekZIdnpKgDn3OvfgjTKvfZXUX3UsyjFX72kSCpT/tqXbGPwb8tx12ciT3GTKcy7BbH34DEWzLYqhOnJAv4B0iqQbrzB+Xe/xq0EWOQqcCuIRLI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730864643; c=relaxed/simple;
-	bh=ZncZUTSm22c5m24Ui4mJNMu57aMs6v/CYQsluLVrFuk=;
+	s=arc-20240116; t=1730864902; c=relaxed/simple;
+	bh=cOdY+EdKttLHZNHuNF7OKCg2ywpQnGvoGmKCJHKXHQ4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EZmdJRI7FXjitjmtCeoVycWu/Z3Qr/8pCk5/Rzm1f0KBRd34TkIEWlEgKykmLZZH5tNy5qpaTjqGCy93grS2Ntu0avGJ/AojYHbeSuEBf/R/fxATXW/gYL1xg1p9sKhxmevH7/N2N1enpDIi+FmZSQf8PqBouh8f+HnMXmB4oTg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=eFjlg1jU; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=62ogp206Pt4nsQOJ/YCTzDbyZHE4u3VhsCNVD+OXsko=; b=eFjlg1jUgGFnIu6M17ETvJbH10
-	0UlXroM4BfY4a7JmOvPtV8NKwcf/Q9HJvl61tpwrsEi74go5PZ75k8UcK34eePWr9JjsvkV/YxsG/
-	OxkC1afjkZTVE+UTrhTCeTfLABPYwd4P7km5r/z+xWphQ75C7HWK7LJCEhR1j3y0eKjs=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1t8WxL-00CHsW-Mw; Wed, 06 Nov 2024 04:43:43 +0100
-Date: Wed, 6 Nov 2024 04:43:43 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Lei Wei <quic_leiwei@quicinc.com>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	quic_kkumarcs@quicinc.com, quic_suruchia@quicinc.com,
-	quic_pavir@quicinc.com, quic_linchen@quicinc.com,
-	quic_luoj@quicinc.com, srinivas.kandagatla@linaro.org,
-	bartosz.golaszewski@linaro.org, vsmuthu@qti.qualcomm.com,
-	john@phrozen.org
-Subject: Re: [PATCH net-next 3/5] net: pcs: qcom-ipq: Add PCS create and
- phylink operations for IPQ9574
-Message-ID: <a0826aa8-703c-448d-8849-47808f847774@lunn.ch>
-References: <20241101-ipq_pcs_rc1-v1-0-fdef575620cf@quicinc.com>
- <20241101-ipq_pcs_rc1-v1-3-fdef575620cf@quicinc.com>
- <d7782a5e-2f67-4f62-a594-0f52144a368f@lunn.ch>
- <9b3a4f00-59f2-48d1-8916-c7d7d65df063@quicinc.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Sy1w8tQjHHaCCiX+qe+fqWR+ogn+7B4m/33g9jEGd8ooILbeiT688fjjlZr2K+5H50Yed89jcxeXEK8/Q7mkSB8DniJoG9OGd6sZ+1DTfhDtoDc4r6RByxvL3Zqx0jBZlcCR1PmxYA5FN0C+6gnycSTJNfz5daMh/SHqXnB9lm4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Q0Is3a7u; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1730864899;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=owEzSbX7QOgRoB0yw5RkcuD2LOOAbZTXHyrnqMS0rJo=;
+	b=Q0Is3a7uJY2mYl6Im+hwmHAXwWVQZ2m2NDpLW5EMHgpXyxCePLUo7VzVTQ08It7y5F5GHH
+	TWSBZyX5Mri7kv6Wy+miGqdEQyI2je2Uvsm0toe65Vmt3DBaNkHOURn86c+aNyW8QniKa9
+	bneGXYmbYw3GmQsQsKmNEQtXQUeTp1U=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-14-qGJJv-S2O3eo-NezkuVt2w-1; Tue,
+ 05 Nov 2024 22:48:14 -0500
+X-MC-Unique: qGJJv-S2O3eo-NezkuVt2w-1
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 464001956089;
+	Wed,  6 Nov 2024 03:48:12 +0000 (UTC)
+Received: from fedora (unknown [10.72.116.96])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 325CB1955F40;
+	Wed,  6 Nov 2024 03:48:07 +0000 (UTC)
+Date: Wed, 6 Nov 2024 11:48:02 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: syzbot <syzbot+ca7d7c797fee31d2b474@syzkaller.appspotmail.com>
+Cc: axboe@kernel.dk, linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [block?] possible deadlock in blk_mq_alloc_request
+Message-ID: <Zyrm8uw204eZW9wF@fedora>
+References: <672ad716.050a0220.2a847.1a9e.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,111 +70,70 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <9b3a4f00-59f2-48d1-8916-c7d7d65df063@quicinc.com>
+In-Reply-To: <672ad716.050a0220.2a847.1a9e.GAE@google.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-On Wed, Nov 06, 2024 at 11:16:37AM +0800, Lei Wei wrote:
+On Tue, Nov 05, 2024 at 06:40:22PM -0800, syzbot wrote:
+> Hello,
 > 
+> syzbot found the following issue on:
 > 
-> On 11/1/2024 9:21 PM, Andrew Lunn wrote:
-> > > +static int ipq_pcs_config_mode(struct ipq_pcs *qpcs,
-> > > +			       phy_interface_t interface)
-> > > +{
-> > > +	unsigned int val;
-> > > +	int ret;
-> > > +
-> > > +	/* Configure PCS interface mode */
-> > > +	switch (interface) {
-> > > +	case PHY_INTERFACE_MODE_SGMII:
-> > > +		/* Select Qualcomm SGMII AN mode */
-> > > +		ret = regmap_update_bits(qpcs->regmap, PCS_MODE_CTRL,
-> > > +					 PCS_MODE_SEL_MASK | PCS_MODE_AN_MODE,
-> > > +					 PCS_MODE_SGMII);
-> > 
-> > How does Qualcomm SGMII AN mode differ from Cisco SGMII AN mode?
-> > 
+> HEAD commit:    c88416ba074a Add linux-next specific files for 20241101
+> git tree:       linux-next
+> console output: https://syzkaller.appspot.com/x/log.txt?x=17e59aa7980000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=704b6be2ac2f205f
+> dashboard link: https://syzkaller.appspot.com/bug?extid=ca7d7c797fee31d2b474
+> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1250b630580000
 > 
-> Qualcomm SGMII AN mode extends Cisco SGMII spec Revision 1.8 by adding pause
-> bit support in the SGMII word format. It re-uses two of the reserved bits
-> 1..9 for this purpose. The PCS supports both Qualcomm SGMII AN and Cisco
-> SGMII AN modes.
-
-Is Qualcomm SGMII AN actually needed? I assume it only works against a
-Qualcomm PHY? What interoperability testing have you do against
-non-Qualcomm PHYs?
-
-> > > +struct phylink_pcs *ipq_pcs_create(struct device_node *np)
-> > > +{
-> > > +	struct platform_device *pdev;
-> > > +	struct ipq_pcs_mii *qpcs_mii;
-> > > +	struct device_node *pcs_np;
-> > > +	struct ipq_pcs *qpcs;
-> > > +	int i, ret;
-> > > +	u32 index;
-> > > +
-> > > +	if (!of_device_is_available(np))
-> > > +		return ERR_PTR(-ENODEV);
-> > > +
-> > > +	if (of_property_read_u32(np, "reg", &index))
-> > > +		return ERR_PTR(-EINVAL);
-> > > +
-> > > +	if (index >= PCS_MAX_MII_NRS)
-> > > +		return ERR_PTR(-EINVAL);
-> > > +
-> > > +	pcs_np = of_get_parent(np);
-> > > +	if (!pcs_np)
-> > > +		return ERR_PTR(-ENODEV);
-> > > +
-> > > +	if (!of_device_is_available(pcs_np)) {
-> > > +		of_node_put(pcs_np);
-> > > +		return ERR_PTR(-ENODEV);
-> > > +	}
-> > 
-> > How have you got this far if the parent is not available?
-> > 
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/760a8c88d0c3/disk-c88416ba.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/46e4b0a851a2/vmlinux-c88416ba.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/428e2c784b75/bzImage-c88416ba.xz
 > 
-> This check can fail only if the parent node is disabled in the board DTS. I
-> think this error situation may not be caught earlier than this point.
-> However I agree, the above check is redundant, since this check is
-> immediately followed by a validity check on the 'pdev' of the parent node,
-> which should be able cover any such errors as well.
-
-This was also because the driver does not work as i expected. I was
-expecting the PCS driver to walk its own DT and instantiate the PCS
-devices listed. If the parent is disabled, it is clearly not going to
-start its own children.  But it is in fact some other device which
-walks the PCS DT blob, and as a result the child/parent relationship
-is broken, a child could exist without its parent.
-
-> > > +	for (i = 0; i < PCS_MII_CLK_MAX; i++) {
-> > > +		qpcs_mii->clk[i] = of_clk_get_by_name(np, pcs_mii_clk_name[i]);
-> > > +		if (IS_ERR(qpcs_mii->clk[i])) {
-> > > +			dev_err(qpcs->dev,
-> > > +				"Failed to get MII %d interface clock %s\n",
-> > > +				index, pcs_mii_clk_name[i]);
-> > > +			goto err_clk_get;
-> > > +		}
-> > > +
-> > > +		ret = clk_prepare_enable(qpcs_mii->clk[i]);
-> > > +		if (ret) {
-> > > +			dev_err(qpcs->dev,
-> > > +				"Failed to enable MII %d interface clock %s\n",
-> > > +				index, pcs_mii_clk_name[i]);
-> > > +			goto err_clk_en;
-> > > +		}
-> > > +	}
-> > 
-> > Maybe devm_clk_bulk_get() etc will help you here? I've never actually
-> > used them, so i don't know for sure.
-> > 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+ca7d7c797fee31d2b474@syzkaller.appspotmail.com
 > 
-> We don't have a 'device' associated with the 'np', so we could not consider
-> using the "devm_clk_bulk_get()" API.
+> ============================================
+> WARNING: possible recursive locking detected
+> 6.12.0-rc5-next-20241101-syzkaller #0 Not tainted
+> --------------------------------------------
+> udevd/6086 is trying to acquire lock:
+> ffff8880288261c0 (&q->q_usage_counter(queue)#67){++++}-{0:0}, at: blk_mq_alloc_request+0x26b/0xab0 block/blk-mq.c:626
+> 
+> but task is already holding lock:
+> ffff8880288261c0 (&q->q_usage_counter(queue)#67){++++}-{0:0}, at: blk_freeze_queue block/blk-mq.c:177 [inline]
+> ffff8880288261c0 (&q->q_usage_counter(queue)#67){++++}-{0:0}, at: blk_mq_freeze_queue+0x15/0x20 block/blk-mq.c:187
+> 
+> other info that might help us debug this:
+>  Possible unsafe locking scenario:
+> 
+>        CPU0
+>        ----
+>   lock(&q->q_usage_counter(queue)#67);
+>   lock(&q->q_usage_counter(queue)#67);
+> 
+>  *** DEADLOCK ***
+> 
+>  May be due to missing lock nesting notation
+> 
+> 3 locks held by udevd/6086:
+>  #0: ffff888034a534c8 (&disk->open_mutex){+.+.}-{4:4}, at: bdev_open+0xf0/0xc50 block/bdev.c:904
+>  #1: ffff888028826188 (&q->q_usage_counter(io)#81){+.+.}-{0:0}, at: blk_freeze_queue block/blk-mq.c:177 [inline]
+>  #1: ffff888028826188 (&q->q_usage_counter(io)#81){+.+.}-{0:0}, at: blk_mq_freeze_queue+0x15/0x20 block/blk-mq.c:187
+>  #2: ffff8880288261c0 (&q->q_usage_counter(queue)#67){++++}-{0:0}, at: blk_freeze_queue block/blk-mq.c:177 [inline]
+>  #2: ffff8880288261c0 (&q->q_usage_counter(queue)#67){++++}-{0:0}, at: blk_mq_freeze_queue+0x15/0x20 block/blk-mq.c:187
 
-Another artefact of not have a child-parent relationship. I wounder if
-it makes sense to change the architecture. Have the PCS driver
-instantiate the PCS devices as its children. They then have a device
-structure for calls like clk_bulk_get(), and a more normal
-consumer/provider setup.
+Not get idea how blk_mq_freeze_queue is called in this context.
 
-	Andrew
+Is the blk_mq_unfreeze_queue() in sd_revalidate_disk() not released?
+
+Anyway, please test the not-merged fixes.
+
+#syz test: https://github.com/ming1/linux.git for-next
+
+
+Thanks, 
+Ming
+
 
