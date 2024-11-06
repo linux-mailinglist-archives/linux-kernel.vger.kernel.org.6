@@ -1,109 +1,140 @@
-Return-Path: <linux-kernel+bounces-398578-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398580-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 823F19BF312
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 17:18:56 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 640F19BF317
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 17:19:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B462F1C2147D
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 16:18:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 959911C2139F
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 16:19:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A2752038A1;
-	Wed,  6 Nov 2024 16:18:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 350E9205E09;
+	Wed,  6 Nov 2024 16:19:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Pps9zq+W"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ee9ZOa0y"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5B6F1E04AC;
-	Wed,  6 Nov 2024 16:18:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B462F1E04AC
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 16:19:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730909929; cv=none; b=QCKG8wsyLpEwDKXXzPpSX5UUXE32Njb5yYGCBn+sVhMj5IcQHsprKH+eeEDFV4dqCOPgrwN8J1avUHhTC334ecFkczSDjjEylkk7cblJ6fVMqsVP3SgV3xfKwJv+VENhfxU3e3alMwx78OlaM3d7Eiyd4vntSRTRs6N8nZ4A7vo=
+	t=1730909966; cv=none; b=AaajaaK0nSgE8ZPXk5mVxt6aBGS9da9LNfMX6d5nyvKHCZsuj1Wv971me43ucfrzCdjpWDbOvRjHqyp5ztx7Lo9mk9daglSGbfFRlv82DLrb3AWCKescs6QI6fsKWJRJNHVg0wZMubEl87V51wdkIon06amP4/AuxFtefGeaFq4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730909929; c=relaxed/simple;
-	bh=k9tWT/FSzffihY/db8sVNhdySykmh+eiRYELPcAcGv0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=L5K4XH4QLcbp2z2WK7H6pGHSY0PUmDpUuHXzeD5QGy4by34/johI4ovSBHrcuv5odn5X+XTyggugS1mTYpC4frTfyNQwvkVGnxY6550CRXzzHGTD//W+AmZhKDpQrzbO8zHUS/Wg5EjFUARGOyUMoavHB7ya/pOl1GoVW8XzR3w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Pps9zq+W; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 683E1C4CECC;
-	Wed,  6 Nov 2024 16:18:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730909929;
-	bh=k9tWT/FSzffihY/db8sVNhdySykmh+eiRYELPcAcGv0=;
-	h=From:To:Cc:Subject:Date:From;
-	b=Pps9zq+WRch8jkV0Z7gLVcexSVBgAgisGb5VAGMjBVPR9d4XIzTYwn0XXZThthFJD
-	 ZTPmjf++A7zkiS74tE0BmAhNSZdTKi9TtfUg3G1s0n1s1HgMS8hbupXxMdWrn3D77v
-	 wE1wlicpwm5nOsVlnGD/incgvgWUQ5m8bmM+bmJokxARm4ByogbAPX6GerkfoPkvin
-	 VfuQcxUCywxD7H/ZquHOFrNuiECSFFfitNiQKepow96+FgAkV2pKGtIboWGx2Y0tgH
-	 umYstO4Dgv39fBaQh1t63/8VyPM4xjh/UDSTaa1vvHlZhBa+Oggj48JtlQLSCYQO2/
-	 PlsnKQQFRbJbw==
-From: Masahiro Yamada <masahiroy@kernel.org>
-To: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
-Cc: linux-kbuild@vger.kernel.org,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Ingo Molnar <mingo@kernel.org>,
-	Kees Cook <kees@kernel.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] arm64: fix .data.rel.ro size assertion when CONFIG_LTO_CLANG
-Date: Thu,  7 Nov 2024 01:18:42 +0900
-Message-ID: <20241106161843.189927-1-masahiroy@kernel.org>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1730909966; c=relaxed/simple;
+	bh=syEZ0PUhB/s8AY7uLWeu+hDKYqIIr8eprxynDeL1Ahk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rkRVzJPnABwCfISEwbv+bSCPDIyPGTu5iXpMZLjCmuViwtaNmFmwqrBqybH5hhBKUL5kyzCfxdHcuOKW3e8iIfVDExt20n7bAsjsNZEynYWwYAQ3yhzSlVh/736QW2ALwIfedjwkv2MAPpD4+2DEjnO09567BZd/kYfoNccxjIc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ee9ZOa0y; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730909964; x=1762445964;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=syEZ0PUhB/s8AY7uLWeu+hDKYqIIr8eprxynDeL1Ahk=;
+  b=ee9ZOa0yXG9egZfPRIor7J2PFuWcpuXgraO/2b1ObkN3KOzym25+WnlC
+   Jp3zZsxSGUol1xK38VhVJ3Sg7MQsuSEQK1ByHuxh2AL6kWbcZMO+Th9uQ
+   NQshUjWPgOPBFd6/sQ8aiL/+6Dj+kOiLrP/MtVZawg27lV3TAp+2qCKiu
+   fGQMFxqBO6j9eMHw6jIXKVRZXqY7JGtpsyhFm1RZeVQMBapPhXkXBeKCX
+   rQYnkO8KnDw6VHSrgyehhRmgzeQdvED34sF1DJSqW7ATbdUSmNgL/oVbe
+   NZ3ZHn7CyoTpbUvliV60W7Ve76etT7uitv0MN/CeW9fW76cpUpKeuFyXF
+   w==;
+X-CSE-ConnectionGUID: D2UeBo5nTli0h7kVP6Ch5A==
+X-CSE-MsgGUID: nZNbRVq/SWqMvhovphOvjQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11248"; a="30934260"
+X-IronPort-AV: E=Sophos;i="6.11,263,1725346800"; 
+   d="scan'208";a="30934260"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2024 08:19:24 -0800
+X-CSE-ConnectionGUID: lhPZUfgZRP+LsZXDQg+Ong==
+X-CSE-MsgGUID: l2Tmkid3R9mXOwIn9SXByg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,263,1725346800"; 
+   d="scan'208";a="88587679"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by fmviesa003.fm.intel.com with ESMTP; 06 Nov 2024 08:19:22 -0800
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t8ika-000p7A-0d;
+	Wed, 06 Nov 2024 16:19:20 +0000
+Date: Thu, 7 Nov 2024 00:19:02 +0800
+From: kernel test robot <lkp@intel.com>
+To: Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
+Cc: oe-kbuild-all@lists.linux.dev,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>
+Subject: Re: [PATCH v2 3/4] drm/mode_object: add
+ drm_mode_object_read_refcount()
+Message-ID: <202411070038.tZJzI7NC-lkp@intel.com>
+References: <20241106-drm-small-improvements-v2-3-f6e2aef86719@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241106-drm-small-improvements-v2-3-f6e2aef86719@bootlin.com>
 
-Commit be2881824ae9 ("arm64/build: Assert for unwanted sections")
-introduced an assertion to ensure that the .data.rel.ro section does
-not exist.
+Hi Luca,
 
-However, this check does not work when CONFIG_LTO_CLANG is enabled,
-because .data.rel.ro matches the .data.[0-9a-zA-Z_]* pattern in the
-DATA_MAIN macro.
+kernel test robot noticed the following build warnings:
 
-Move the ASSERT() above the RW_DATA() line.
+[auto build test WARNING on 42f7652d3eb527d03665b09edac47f85fb600924]
 
-Fixes: be2881824ae9 ("arm64/build: Assert for unwanted sections")
-Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
----
+url:    https://github.com/intel-lab-lkp/linux/commits/Luca-Ceresoli/drm-drm_mode_object-fix-typo-in-kerneldoc/20241106-185032
+base:   42f7652d3eb527d03665b09edac47f85fb600924
+patch link:    https://lore.kernel.org/r/20241106-drm-small-improvements-v2-3-f6e2aef86719%40bootlin.com
+patch subject: [PATCH v2 3/4] drm/mode_object: add drm_mode_object_read_refcount()
+config: arc-randconfig-002-20241106 (https://download.01.org/0day-ci/archive/20241107/202411070038.tZJzI7NC-lkp@intel.com/config)
+compiler: arc-elf-gcc (GCC) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241107/202411070038.tZJzI7NC-lkp@intel.com/reproduce)
 
- arch/arm64/kernel/vmlinux.lds.S | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202411070038.tZJzI7NC-lkp@intel.com/
 
-diff --git a/arch/arm64/kernel/vmlinux.lds.S b/arch/arm64/kernel/vmlinux.lds.S
-index 58d89d997d05..f84c71f04d9e 100644
---- a/arch/arm64/kernel/vmlinux.lds.S
-+++ b/arch/arm64/kernel/vmlinux.lds.S
-@@ -287,6 +287,9 @@ SECTIONS
- 	__initdata_end = .;
- 	__init_end = .;
- 
-+	.data.rel.ro : { *(.data.rel.ro) }
-+	ASSERT(SIZEOF(.data.rel.ro) == 0, "Unexpected RELRO detected!")
-+
- 	_data = .;
- 	_sdata = .;
- 	RW_DATA(L1_CACHE_BYTES, PAGE_SIZE, THREAD_ALIGN)
-@@ -343,9 +346,6 @@ SECTIONS
- 		*(.plt) *(.plt.*) *(.iplt) *(.igot .igot.plt)
- 	}
- 	ASSERT(SIZEOF(.plt) == 0, "Unexpected run-time procedure linkages detected!")
--
--	.data.rel.ro : { *(.data.rel.ro) }
--	ASSERT(SIZEOF(.data.rel.ro) == 0, "Unexpected RELRO detected!")
- }
- 
- #include "image-vars.h"
+All warnings (new ones prefixed by >>):
+
+>> drivers/gpu/drm/drm_mode_object.c:228: warning: expecting prototype for drm_mode_object_get(). Prototype was for drm_mode_object_read_refcount() instead
+
+
+vim +228 drivers/gpu/drm/drm_mode_object.c
+
+   219	
+   220	/**
+   221	 * drm_mode_object_get - read the refcount for a mode object
+   222	 * @obj: DRM mode object
+   223	 *
+   224	 * This function returns the current object's refcount if it is a
+   225	 * refcounted modeset object, or 0 on any other object.
+   226	 */
+   227	unsigned int drm_mode_object_read_refcount(struct drm_mode_object *obj)
+ > 228	{
+   229		unsigned int refcount = 0;
+   230	
+   231		if (obj->free_cb) {
+   232			refcount = kref_read(&obj->refcount);
+   233			DRM_DEBUG("OBJ ID: %d (%d)\n", obj->id, refcount);
+   234		}
+   235	
+   236		return refcount;
+   237	}
+   238	EXPORT_SYMBOL(drm_mode_object_read_refcount);
+   239	
+
 -- 
-2.43.0
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
