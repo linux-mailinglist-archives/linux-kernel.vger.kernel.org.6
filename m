@@ -1,134 +1,87 @@
-Return-Path: <linux-kernel+bounces-399005-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399006-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1BAB9BF942
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 23:27:34 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 745559BF943
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 23:27:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 985D71F22499
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 22:27:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0A24FB22C36
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 22:27:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DF2B20CCF8;
-	Wed,  6 Nov 2024 22:26:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CYOW6ssN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DB9E20E00A;
+	Wed,  6 Nov 2024 22:27:06 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C51BD20C313;
-	Wed,  6 Nov 2024 22:26:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B200F20D515
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 22:27:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730932018; cv=none; b=UFDQ5WW31y6gEaijGklbQHCbz/CrwJaMDhGYriwZn7fi3kn+2rIsoHf9ciMSsKLxwwo0aPc0XGVmI+Cqmq4DxKCYqi6XXt2MhR32K5JrHdwlr/QtlojI1wh6weNUKjso5sZL3EKPL1JIYKOWKTXDcpBbCJuo1ZIiVSBGcwHrdgE=
+	t=1730932026; cv=none; b=sywmkOoXHucWz3PQR1U/faG1bvDAUDQl/SIe1jRm41U82AwNUt2Sj1mJNSMy37X9FmgPVVmBefIg/ayTsdEGR1mElu5ql6yL6VIQIaSaRo3uH9FVfXEl7+SdPP4h41Rol5tnlpKgVnABML4OermSBTlKAK9+3n8OWzqA/wBY2mI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730932018; c=relaxed/simple;
-	bh=OC5e4KnBysEavl1YeXx88vJZKGAoloUIPo2wglacvfg=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=Hn/3hTMapP32xM6VxuWlSVf4uGIC3IlXK6W+wZx+qMn4CRv1ICOG0l4JpCoph/X8UIHZP1daHPBZJQE0N802Kbahw31aEOotPJAwnUWdKfViwwIcVRr+vxBZxUTYIhTX/dDeyCCL3kJ7LUT1K6wYTpPQzSG2Cegtnt9ufudcOs4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CYOW6ssN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E87DCC4CEC6;
-	Wed,  6 Nov 2024 22:26:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730932018;
-	bh=OC5e4KnBysEavl1YeXx88vJZKGAoloUIPo2wglacvfg=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=CYOW6ssNu/aWE2b05S3LBoWLO+mIYt5+46hev9722vB11Z1yGBiGfmM/T1mxgO7xj
-	 y/FSOQq976hvxWKY69f0ZzSwzXdDScWkCGzOris7Z7Pqi+fbhRaJxS77J2iECB5rmE
-	 49rcyEFStCbfDECKeH116nqAEV6v3G79HHbAXfvrrkKoOYMUyUquY0g+y+4HvAT/L2
-	 XY7pjBdBDE8D95bstgVyOqGrD2qjMAKwIWblo+Awm7HpQ75b2Fq91RvPBI44v2ZSem
-	 7SsJtt+B/1nUt9QTgPh1WI6c3/YDrRjiCQJCOmRPEJX2ZI2np5ckPB2u07zhJ/HIXQ
-	 MYWwT7wN1+U4w==
+	s=arc-20240116; t=1730932026; c=relaxed/simple;
+	bh=1TaITtvy2eb/mnbYQr+EPTeoOjeFF1uMYjoYVpRQwGE=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=TT2XnSEJ09O4dNGyMBYam/i9suDa0gF4RJ8VbycOFFYAIcv0AWPauK0wXPfdwn93p4BKWkUYDxcj/w1XbLRmK+CzSRCvpoIoe2QUtqxHPyOXKuXTPAh9nsxpP59s6zgSxw579DTldFDjmT2DB678A/oALjk+vPSV8Yt0jtPSLgA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-83a8c0df400so34912339f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2024 14:27:04 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730932024; x=1731536824;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=KCRpFjqQcBnw7Wfeg7JfgGGwO9fw3TCvqG/7Y4ODjQ0=;
+        b=XrUz46i0qh2eHjSIa7zPGw5HZICH1DUsrv8bjGvNw1q6hp7Ttfpx69JVQqVB2S7oIM
+         cnWcWG8v+NYOhv6RZ1Jdvg3KlkGttntGcf7JQzg4okv2DTUHLfYKuW7gqyAf7fNuleO4
+         4K0dvfEMiy1MD9n+/qjGTvp7Iy0qFtU/CMqvBMDqXPD/kepU2bfVGn5yPOM3TbYSFJhc
+         hRwaNCUT+VrHWE9MM5R4UhjuqSX3qWTyPmsCwMrOM2kbcxIi7lMcIuS44PrBApHArSq4
+         2HPmpw99A/3CqeZU6KDb4iy1UOV+M4gsjiH5vyvt1Xd8vdG08VvNXE/YmRMA5oVumMVW
+         zuIQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW57VykBnKXwqqfKNP4b/Jg+Z6huUcMm9mg1b19UTcgweGDBTYL5xgzFiFVshrar8QdfewF8vS5JFsY77M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxR9ERHodk/N2YjJG+CirtAm9cHMr3EWHMITVGTtbpsJfScIYIX
+	8jkDAmGGXgB2k1VRgXlgWoQgGJynoe/4lTh/9RC00Lid4feZwCEjO/YFnLUbXb2+CCj+G2j+ddt
+	kfd27oY73Yl6uq1UlKvbqOUcQYpP1z2DQo/rdbGxAVpXRb9PMuVBAww0=
+X-Google-Smtp-Source: AGHT+IEhdX4ridmhZ9oiF9pcnssnDVwNUY7BLZ7N2FwBDqpA7YdUa2crIN5H9xLsATmWaoIeeqJey1goErv0z158XO8LOjTtAHFB
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 07 Nov 2024 00:26:54 +0200
-Message-Id: <D5FG6TOVUY5W.3SUG1J3CDB3J5@kernel.org>
-Cc: <James.Bottomley@HansenPartnership.com>, <roberto.sassu@huawei.com>,
- <mapengyu@gmail.com>, "Paul Moore" <paul@paul-moore.com>,
- <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC PATCH] tpm: Allow the TPM2 pcr_extend HMAC capability to
- be disabled on boot
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "Mimi Zohar" <zohar@linux.ibm.com>, <linux-integrity@vger.kernel.org>
-X-Mailer: aerc 0.18.2
-References: <20241015193916.59964-1-zohar@linux.ibm.com>
-In-Reply-To: <20241015193916.59964-1-zohar@linux.ibm.com>
+MIME-Version: 1.0
+X-Received: by 2002:a05:6e02:216e:b0:3a6:aa59:fffa with SMTP id
+ e9e14a558f8ab-3a6b02b808amr206630215ab.11.1730932023791; Wed, 06 Nov 2024
+ 14:27:03 -0800 (PST)
+Date: Wed, 06 Nov 2024 14:27:03 -0800
+In-Reply-To: <20241106180706.330326-1-jchapman@katalix.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <672bed37.050a0220.350062.027e.GAE@google.com>
+Subject: Re: [syzbot] [net?] WARNING in l2tp_exit_net
+From: syzbot <syzbot+332fe1e67018625f63c9@syzkaller.appspotmail.com>
+To: jchapman@katalix.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue Oct 15, 2024 at 10:39 PM EEST, Mimi Zohar wrote:
-> The initial TPM2 HMAC session capability added HMAC authentication to
-> each and every TPM communication making the pcr_extend performance
-> abysmal for HW TPMs. Further, the new CONFIG_TCG_TPM2_HMAC option was
-> configured by default on x86_64.
->
-> The decision to use the TPM2 HMAC session capability feature doesn't
-> differentiate between the critical encrypted and the non-encrypted
-> communication, but when configured is required for all TPM communication.
->
-> In addition, the reason to HMAC the tpm2_pcr_extend() as provided in comm=
-it
-> 6519fea6fd37 ("tpm: add hmac checks to tpm2_pcr_extend()") was to protect
-> tpm2_pcr_extend() when used by "trusted keys" to lock the PCR.  However,
-> locking the PCR is currently limited to TPM 1.2.
->
-> We can revert the commit which adds the HMAC sessions for
-> tpm2_pcr_extend, allow just the TPM2 pcr_extend HMAC capability to be
-> disabled on boot for better IMA performance, or define a generic boot
-> command line option to disable HMAC in general.  This patch allows
-> disabling the HMAC for just the TPM2_pcr_extend.
->
-> Fixes: 6519fea6fd37 ("tpm: add hmac checks to tpm2_pcr_extend()")
-> Co-developed-by: Roberto Sassu <roberto.sassu@huawei.com>
-> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
+Hello,
 
-I have alternative proposal that hit me today.
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-First an observation: I think this issue shows that we also stress
-beyond limits desktop configurations with encrypted bus, even tho it is
-not in the same way visible. This affects bunch of things, including
-e.g. power consumption. Not a lot but best possible situation would be
-if callers could be served without any additional stress.
+Reported-by: syzbot+332fe1e67018625f63c9@syzkaller.appspotmail.com
+Tested-by: syzbot+332fe1e67018625f63c9@syzkaller.appspotmail.com
 
-A second observation is in [1]:=20
+Tested on:
 
-"It is recommended that a TPM implement the RNG in a manner that would
-allow it to return RNG octets such that, as long as the value of
-bytesRequested is not greater than the maximum digest size, the
-frequency of bytesRequested being more than the number of octets
-available is an infrequent occurrence."
+commit:         ccb35037 Merge branch 'net-lan969x-add-vcap-functional..
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git
+console output: https://syzkaller.appspot.com/x/log.txt?x=16e85f40580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=a9d1c42858837b59
+dashboard link: https://syzkaller.appspot.com/bug?extid=332fe1e67018625f63c9
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=12b68d87980000
 
-I think from this we can derive a fair assumption that with any possible
-TPM2 chip we can pull a 32 byte value within a single transcation (i.e.
-matching SHA256 digest size).
-
-So based on these facts I think this might be a sweet spot in making a
-compromise between performance and security:
-
-1. Generate a 32 byte seed every N iterations (calls of
-   tpm2_get_random(). Store it to chip->random_seed.
-2. In-between iterations use PRNG to generate the values
-   starting form chip->random_seed.
-
-I think N could be fairly large without causing any major difference
-(even when analyzed through numerical error analysis) between calling
-TPM2_GetRandom for each and every iteration. And this way bus encryption
-never has to be disabled.
-
-I'd see this as win-win approach.
-
-PS. I have no idea what kind of PRNG's kernel provides (never used
-such).
-
-[1] 16.1.TPM2_GetRandom
-    https://trustedcomputinggroup.org/wp-content/uploads/TPM-2.0-1.83-Part-=
-3-Commands.pdf
-
-BR, Jarkko
+Note: testing is done by a robot and is best-effort only.
 
