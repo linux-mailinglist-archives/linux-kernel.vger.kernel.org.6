@@ -1,84 +1,122 @@
-Return-Path: <linux-kernel+bounces-397838-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397839-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8A189BE13C
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 09:43:23 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9FD39BE142
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 09:44:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A2DF1F245D8
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 08:43:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 634041F246C5
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 08:44:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A74171D54F2;
-	Wed,  6 Nov 2024 08:43:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D0831D5151;
+	Wed,  6 Nov 2024 08:44:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cffeO5Co"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sgMe4KmO"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DE6C1917CD;
-	Wed,  6 Nov 2024 08:43:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 636131D54D1;
+	Wed,  6 Nov 2024 08:44:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730882597; cv=none; b=a1CzW5HIg0JYVmwJlGDcbGj0OIhPC2HBfmd/QCiKZBFGrMs7Vg9TWeLdXqMk5u3Yts3CDmh2HTx+iUv7nO5ibp5f15/d1FtXYk1NKv0wj5d4juXSB1sVLJV1ABbRkk6X2tEejusfBKYDLf6l6jIzAf8YdhEIZuhR6Kj+eS8atJo=
+	t=1730882666; cv=none; b=Kptd3h0mBsOqYbTfzMQm8a4Sfaa8Bjk0mnSp51+Az0zfrlX5hgHtL9YX+OcVl2iUDeH28MfGBd5qDr6930sqletLdGcJpuLg5dtGShg26WxwQSCpRubQws8keq4qDqT0YaAVqGW3JGv2rROy0LzWyOLGFE/flo/N7tzCN5Mk9Wo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730882597; c=relaxed/simple;
-	bh=Rup2aixvNpnWoIPpedHVLtUBROMP081uHzovoGc4zQk=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=B9KMMANIhPImvd9msPDYOszqXXFLJk6Lb8KWvPKlFTzU3A/r5ZioMxhOI+ZF63NOCxnnv/TJRnCqSh7YCkEWPztzLQVyH7x0Hb9LSbCm33RDOylxi7soFy0DBCSge81jNSRpNNk8xMM3Q4z147VwiwT6ijI0ZztwVkwfHXvRIsg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cffeO5Co; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C2DFC4CED3;
-	Wed,  6 Nov 2024 08:43:15 +0000 (UTC)
+	s=arc-20240116; t=1730882666; c=relaxed/simple;
+	bh=epVEU2AYAhlpV2xVETpPhEIE78lqpbGzb/PrPhs7GSM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=DlXKkZh5ElPT/0JIv6cP0dICSeTqUzMfn6kbQ/8FHktUIzPhhyZZFnxIb/A6NTIKXDtad82p4DrnMgmi5A8dm1yNE2GstFl4NhyfH79FyV4Vq+veJXR2AQ6v19i8QJWWouGsSRUDWtxS1+F00Jx5UA/jnVnramyrF2Vw9UzYxb4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sgMe4KmO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E91CC4CECD;
+	Wed,  6 Nov 2024 08:44:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730882596;
-	bh=Rup2aixvNpnWoIPpedHVLtUBROMP081uHzovoGc4zQk=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=cffeO5CoV1o8hWTxbMlQCMenmky756cApenbZHXV+EEJytYPWVujagkRUzdLY5kmX
-	 orVSnAhOxrJwN17fNo8J6pnJDR3P1g1FV+rbytBdOvyeLm/TRrf6ipSKeuM5ACwFvs
-	 Y7TdjdcR98D5V+j9D0nHnXKL7mBpZsKZfaka97PnXApccnVtCAKhxv5kNdLHwYfPFN
-	 pXyy8cTcZnvMn12jc5FNDnowdUUghhr/QD/dnTTYaA9zIP+64Wilpip3qCLw5Z6Mu0
-	 bZWsYyp792R9rG+WPTCv6SRrOwoJOn8SmVr4LIDcZndJUDp+Wt7CMj5x3vFLhIw+NU
-	 ezOJVDpaK2RbQ==
-From: Lee Jones <lee@kernel.org>
-To: Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>, 
- Mukesh Ojha <quic_mojha@quicinc.com>
-Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20241103160527.82487-1-quic_mojha@quicinc.com>
-References: <20241103160527.82487-1-quic_mojha@quicinc.com>
-Subject: Re: (subset) [PATCH v3] leds: class: Protect brightness_show()
- with led_cdev->led_access mutex
-Message-Id: <173088259527.3252516.9517506943760955780.b4-ty@kernel.org>
-Date: Wed, 06 Nov 2024 08:43:15 +0000
+	s=k20201202; t=1730882666;
+	bh=epVEU2AYAhlpV2xVETpPhEIE78lqpbGzb/PrPhs7GSM=;
+	h=From:To:Cc:Subject:Date:From;
+	b=sgMe4KmOH7KJ1IcKn+B9Q79s6G9NZe5vOEBlKBzaiZHzZeOK0+NotQ+v2nOORZdpA
+	 46AIMqkYAd2Tmt+NDDGwIgyv++GFm6xhc9geukIkjFPthX+nxH5EtcezUywjY7Wkti
+	 mpq2aRs1pxyUMnJoJNpnM/3B0xt/Fk7FGC4WPflxBD6VVjNQiAa5+ga4GQNChoER6F
+	 mgoIr5qxqLTFZwexUfgLZuvjLAIJ80KrX9GZbHetq6TtgkucijjkI8WN8eMGu91C2f
+	 0KuhZQ6jvGo8Go5MpOzXYlgK09OYNZVczVQDGlBGLE743vpGiPNlSF+QH4ZrRfiBvV
+	 P8mFZzxa+0Zfw==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=valley-girl.lan)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1t8beJ-00AHp5-UJ;
+	Wed, 06 Nov 2024 08:44:24 +0000
+From: Marc Zyngier <maz@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	kvmarm@lists.linux.dev
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+	Christoffer Dall <christoffer.dall@arm.com>,
+	stable@vger.kernel.org
+Subject: [PATCH] irqchip/gic-v3: Force propagation of the active state with a read-back
+Date: Wed,  6 Nov 2024 08:44:18 +0000
+Message-Id: <20241106084418.3794612-1-maz@kernel.org>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.13.0
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, tglx@linutronix.de, christoffer.dall@arm.com, stable@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Sun, 03 Nov 2024 21:35:27 +0530, Mukesh Ojha wrote:
-> There is NULL pointer issue observed if from Process A where hid device
-> being added which results in adding a led_cdev addition and later a
-> another call to access of led_cdev attribute from Process B can result
-> in NULL pointer issue.
-> 
-> Use mutex led_cdev->led_access to protect access to led->cdev and its
-> attribute inside brightness_show() and max_brightness_show() and also
-> update the comment for mutex that it should be used to protect the led
-> class device fields.
-> 
-> [...]
+Christoffer reports that on some implementations, writing to
+GICR_ISACTIVER0 (and similar GICD registers) can race badly
+with a guest issuing a deactivation of that interrupt via the
+system register interface.
 
-Applied, thanks!
+There are multiple reasons to this:
 
-[1/1] leds: class: Protect brightness_show() with led_cdev->led_access mutex
-      commit: 4ca7cd938725a4050dcd62ae9472e931d603118d
+- we use an early write-acknoledgement memory type (nGnRE), meaning
+  that the write may only have made it as far as some interconnect
+  by the time the store is considered "done"
 
---
-Lee Jones [李琼斯]
+- the GIC itself is allowed to buffer the write until it decides to
+  take it into account (as long as it is in finite time)
+
+The effects are that the activation may not have taken effect by the
+time we enter the guest, forcing an immediate exit, or that a guest
+deactivation occurs before the interrupt is active, doing nothing.
+
+In order to guarantee that the write to the ISACTIVER register has
+taken effect, read back from it, forcing the interconnect to propagate
+the write, and the GIC to process the write before returning the read.
+
+Reported-by: Christoffer Dall <christoffer.dall@arm.com>
+Acked-by: Christoffer Dall <christoffer.dall@arm.com>
+Signed-off-by: Marc Zyngier <maz@kernel.org>
+Cc: stable@vger.kernel.org
+---
+ drivers/irqchip/irq-gic-v3.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/drivers/irqchip/irq-gic-v3.c b/drivers/irqchip/irq-gic-v3.c
+index ce87205e3e823..8b6159f4cdafa 100644
+--- a/drivers/irqchip/irq-gic-v3.c
++++ b/drivers/irqchip/irq-gic-v3.c
+@@ -524,6 +524,13 @@ static int gic_irq_set_irqchip_state(struct irq_data *d,
+ 	}
+ 
+ 	gic_poke_irq(d, reg);
++
++	/*
++	 * Force read-back to guarantee that the active state has taken
++	 * effect, and won't race with a guest-driven deactivation.
++	 */
++	if (reg == GICD_ISACTIVER)
++		gic_peek_irq(d, reg);
+ 	return 0;
+ }
+ 
+-- 
+2.39.2
 
 
