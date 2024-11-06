@@ -1,154 +1,141 @@
-Return-Path: <linux-kernel+bounces-399034-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399035-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CED5A9BF9E0
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 00:21:19 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B11019BF9E3
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 00:22:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0BFA51C21C4F
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 23:21:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 68C011F22980
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 23:22:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 083C720D502;
-	Wed,  6 Nov 2024 23:21:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N22rTv7T"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1352620D50F;
+	Wed,  6 Nov 2024 23:21:58 +0000 (UTC)
+Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BAE920CCFA;
-	Wed,  6 Nov 2024 23:21:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 206CE201110;
+	Wed,  6 Nov 2024 23:21:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730935275; cv=none; b=EQJr8DizO5pfEoouNoylLFz/iSF+eZiOAoNQgCl6vX84QWjDwBtnl50bnLt2qoXtE+4/ea+OkOJX9FTqri7/6FVUTA3O6btuaecRs3scyRTg/v7oCJiVmW65xC1jfH8PJYxGZN5gNWoaYyFAsf7HvzMv3ZDLgPSjc9odU26sisI=
+	t=1730935317; cv=none; b=q1+S61mrSKcCMNKfQRTpgrJY7fJ1ogtQGhv1BZcN87xVvcpkXuSFoRma7UCwdiCaXiDvB1SIvSS1C1Z16tyqqBztQcnM7jImhVg6WdMNKGR2jnbXVYn7P3/7P3DtGg6FadIgymG6VTdGjqU8Bo+aPT8BlQnB/sjAqJn9UEPvtoU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730935275; c=relaxed/simple;
-	bh=v0JKX5IwqEZCely79v6+Qi7NArjB8yIgCjKT3A9QR1k=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=j7KNs/+mjsF9f5mhgvTgxluo003nol5LMKU08bcYQLNpd6j2ZBWqYZT4IKArvkvt3ZGTkRY8COVldQfSI/hqKR2x3A2nlNd0jxEL3Fujb0p4KvkLlkhrxcr5rav768JhA98mv7jPzmSgksBlZlFGuBD11NxRBPLoYW1LY2eAz04=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N22rTv7T; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75ED4C4CEC6;
-	Wed,  6 Nov 2024 23:21:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730935275;
-	bh=v0JKX5IwqEZCely79v6+Qi7NArjB8yIgCjKT3A9QR1k=;
-	h=From:Date:Subject:To:Cc:From;
-	b=N22rTv7T/f4RrX2t/6HrlOb2N4tQnSUrWrVk5du6PWBKvzPkXPRDe37t1H9QObFFx
-	 9EfFX629HsCAD3tgbqdJIRYQvG8KMP7Xa1hOhbiywzjVyMmjRwqa3+dazq9juoMPbm
-	 evR50FHrXoQS/1XBPLLapkPjd7YHNaIebzcTQmzvkBdomrmO3QLT4EhcbkSlR7wOfN
-	 IC8rE25y/VUOj/23gQB7942qUF9bXk+sJQUdyebJfSxuwoS+ngFDPWkINlXVQaI8xl
-	 qHLO3N6BA6ZdMYfhjdwe6WFdUPTcqorbgCkDii9OFMFLKL86POKdMPtlhOEBqS8WG8
-	 E5RW9fy5h6soQ==
-From: Mark Brown <broonie@kernel.org>
-Date: Wed, 06 Nov 2024 23:20:51 +0000
-Subject: [PATCH] arm64/ptrace: Zero FPMR on streaming mode entry/exit
+	s=arc-20240116; t=1730935317; c=relaxed/simple;
+	bh=zNW1PkJb8oTMYdvD6wQ28czWu/t5wPxE88GgXumzFsI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=H721+PDRk5jibvG0DLFw/6ar1+aX645OwaumeFTKKDdCrrepd8pzOrwGu8rJ6PZNbRUlH/3i3AhshVvos/Uk3PSKgH7coBPKvcB+MHH7HJ06F9y+jStegLYR84eHDxwdESM/buPkBWae3WFBeHiTf0ylygzAu//3VMvLxywXiBs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-e290222fdd0so379216276.2;
+        Wed, 06 Nov 2024 15:21:55 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730935315; x=1731540115;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=mr7I/DCsBa7zp/nLt0wZ2PXjhJ/fsQvKBF0WA8i4t9c=;
+        b=b1zKIl6HQW+e9DuftWdFNi/oiAWvTaPM98O34I/5GfOd8d9DVrvWBq4sSLNskeHcFA
+         q9vy2ohHdloX9G6sZSKbCWCeZWaSq93wV9PMGcT+BHh7Kz7EWuCFO8Ops/c/ZN/0EpTA
+         0y0iIRAeXyRGEMFbHsF2OusxHo+ItqqNJBRa1WB1t2rXylRZgHcGdCJCZnd0XySPVHTn
+         C3pW4uU5cys8qKjmUctbDEEdDW8AvL2M8qSMBVGV0aH+40ovR7ORgMnH/H3D7maVn/Dc
+         fiLU7MluQQXI83fyqfj7g35QO4ub0Mo5sA48SNzAS9/ZZRAHtdKSNCj63dIs2SabFmv3
+         +FxQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV2M+mtLfzr4aa9PmShB9XenWt0EZVCe928u3kgpyE8zeKrJvHUboClwVhtI38jGTZLOXGt@vger.kernel.org, AJvYcCV9NccFOuf2qxqUX+ggBWjjv66SzQBxNat25HZPo6mDcaBfPizfuFwShuWv3deSTqEY/LRasjEC4y0mSr9w@vger.kernel.org, AJvYcCX00M5LiN3Ynzkqti0Cq2K77+23qQnEodQsh3hUM6BcQidZhbsyakFs5rIwg1xWKv8D8NrFwjKh@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz7CH5zPvfrZ4z/DSvQnwMI340aXP+6zyTGeWQdnWOCCcsMmqsX
+	c0sK0l4r9b5nT7jOkUyeEYQmzsGDfwZjya5ho+puRtyMrEbBF/75Jg9KWw==
+X-Google-Smtp-Source: AGHT+IGJjB3lEXI1jdfkqW5oz3WLZbO/nFQitm3Pad7mcqyXbxOEfRo0S6IFYVUUqvugxF9LVRiB9g==
+X-Received: by 2002:a05:6902:154f:b0:e29:2f53:9e15 with SMTP id 3f1490d57ef6-e3087b86ed6mr33952137276.29.1730935314959;
+        Wed, 06 Nov 2024 15:21:54 -0800 (PST)
+Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com. [209.85.219.173])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e336f1f204esm7749276.60.2024.11.06.15.21.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 06 Nov 2024 15:21:54 -0800 (PST)
+Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-e30d212b6b1so352469276.0;
+        Wed, 06 Nov 2024 15:21:54 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVOso+HBQzVXGMQcLv8v+bBwFdb1ziB10sqQrGKBd2k/AsiIp2vFQ8lcMrULApzfL4fWjlE@vger.kernel.org, AJvYcCVdCJoggbYoi6VtV/RB2PKWjO7GfUanNzQ38s4/4mDUPycrelEdUjSZCACpwUmbf2iyLNisX2mCVUqanWV1@vger.kernel.org, AJvYcCW8wy6ijRiwduQTal7X+XQeBcnsU4aPuDz3lHNjMr11pomMYTpJOkXAXxT13syGtEibihMCeQ5d@vger.kernel.org
+X-Received: by 2002:a05:690c:c94:b0:6e3:2cfb:9a86 with SMTP id
+ 00721157ae682-6e9d89970dfmr459496897b3.26.1730935313939; Wed, 06 Nov 2024
+ 15:21:53 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241106-arm64-ptrace-fpmr-sm-v1-1-c28429da37d3@kernel.org>
-X-B4-Tracking: v=1; b=H4sIANL5K2cC/x3MQQqAIBBA0avErBtQ06KuEi2kxpqFJWNEEN09a
- fkW/z+QSZgyDNUDQhdnPvYCXVcwb35fCXkpBqOM1Vq16CW2FtMpfiYMKQrmiNY1vQquN66zUNI
- kFPj+t+P0vh8eFvILZgAAAA==
-X-Change-ID: 20241106-arm64-ptrace-fpmr-sm-45390f592574
-To: Oleg Nesterov <oleg@redhat.com>, 
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Mark Brown <broonie@kernel.org>, stable@vger.kernel.org
-X-Mailer: b4 0.15-dev-9b746
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2693; i=broonie@kernel.org;
- h=from:subject:message-id; bh=v0JKX5IwqEZCely79v6+Qi7NArjB8yIgCjKT3A9QR1k=;
- b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBnK/noo9Br3v5fpH+eL1u9o3cQlJbT9iDlag0KwZOR
- R35tWkGJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZyv56AAKCRAk1otyXVSH0E4CB/
- 4u6knMTpqMANM3wlZLlyF8m0EYBuUKsqbjIW1dOZvoyucLPD8RIJkp2R6i9yboXiF44MNw2IjzS7HT
- El/BRvtJ7W1dPFFpK+erZXzEuN5LI6jD069NUhbXicIuov/h+6fhn21j/Wrgih/2/iCVRdtLdsYAnU
- gfkN7602fme2WAoxTe6Yz8lO5mt+MSTR3fNl/4Ru8FKUMkDiam3SiauQ3fKMIj2XL1PowIbygRu5wQ
- N3L0DerTy9vBQlXQOrfY9/PXmzFE830FGtRtOdkxM8NiXecqUceyU1Sw/OkJYvD64hhPB3bI4v9ief
- OhI1R0cO03MFxOnjufdIXKygDddcee
-X-Developer-Key: i=broonie@kernel.org; a=openpgp;
- fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
+References: <ZyAnSAw34jwWicJl@slm.duckdns.org> <1998a069-50a0-46a2-8420-ebdce7725720@redhat.com>
+ <ZyF858Ruj-jgdLLw@slm.duckdns.org> <CABgObfYR6e0XV94USugVOO5XcOfyctr1rAm+ZWJwfu9AHYPtiA@mail.gmail.com>
+ <ZyJ3eG8YHeyxqOe_@slm.duckdns.org>
+In-Reply-To: <ZyJ3eG8YHeyxqOe_@slm.duckdns.org>
+From: Luca Boccassi <bluca@debian.org>
+Date: Wed, 6 Nov 2024 23:21:43 +0000
+X-Gmail-Original-Message-ID: <CAMw=ZnQk5ttytEKO6pK+VLEhSO9diRAqE9DEUwjXnQkz+Vf7kA@mail.gmail.com>
+Message-ID: <CAMw=ZnQk5ttytEKO6pK+VLEhSO9diRAqE9DEUwjXnQkz+Vf7kA@mail.gmail.com>
+Subject: Re: cgroup2 freezer and kvm_vm_worker_thread()
+To: Tejun Heo <tj@kernel.org>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, Roman Gushchin <roman.gushchin@linux.dev>, kvm@vger.kernel.org, 
+	cgroups@vger.kernel.org, =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-When FPMR and SME are both present then entering and exiting streaming mode
-clears FPMR in the same manner as it clears the V/Z and P registers.
-Since entering and exiting streaming mode via ptrace is expected to have
-the same effect as doing so via SMSTART/SMSTOP it should clear FPMR too
-but this was missed when FPMR support was added. Add the required reset
-of FPMR.
+On Wed, 30 Oct 2024 at 18:14, Tejun Heo <tj@kernel.org> wrote:
+>
+> Hello,
+>
+> On Wed, Oct 30, 2024 at 01:05:16PM +0100, Paolo Bonzini wrote:
+> > On Wed, Oct 30, 2024 at 1:25=E2=80=AFAM Tejun Heo <tj@kernel.org> wrote=
+:
+> > > > I'm not sure if the KVM worker thread should process signals.  We w=
+ant it
+> > > > to take the CPU time it uses from the guest, but otherwise it's not=
+ running
+> > > > on behalf of userspace in the way that io_wq_worker() is.
+> > >
+> > > I see, so io_wq_worker()'s handle signals only partially. It sets
+> > > PF_USER_WORKER which ignores fatal signals, so the only signals which=
+ take
+> > > effect are STOP/CONT (and friends) which is handled in do_signal_stop=
+()
+> > > which is also where the cgroup2 freezer is implemented.
+> >
+> > What about SIGKILL? That's the one that I don't want to have for KVM
+> > workers, because they should only stop when the file descriptor is
+> > closed.
+>
+> I don't think SIGKILL does anything for PF_USER_WORKER threads. Those are
+> all handled in the fatal: label in kernel/signal.c::get_signal() and the
+> function just returns for PF_USER_WORKER threads. I haven't used it mysel=
+f
+> but looking at io_uring usage, it seems pretty straightforward.
+>
+> > (Replying to Luca: the kthreads are dropping some internal data
+> > structures that KVM had to "de-optimize" to deal with processor bugs.
+> > They allow the data structures to be rebuilt in the optimal way using
+> > large pages).
+> >
+> > > Given that the kthreads are tied to user processes, I think it'd be b=
+etter
+> > > to behave similarly to user tasks as possible in this regard if users=
+pace
+> > > being able to stop/cont these kthreads are okay.
+> >
+> > Yes, I totally agree with you on that, I'm just not sure of the best
+> > way to do it.
+> >
+> > I will try keeping the kthread and adding allow_signal(SIGSTOP).  That
+> > should allow me to process the SIGSTOP via get_signal().
+>
+> I *think* you can just copy what io_wq_worker() is doing.
+>
+> Thanks.
+>
+> --
+> tejun
 
-Since changing the vector length resets SVCR a SME vector length change
-implemented via a write to ZA can trigger an exit of streaming mode and
-we need to check when writing to ZA as well.
+Hi,
 
-Fixes: 4035c22ef7d4 ("arm64/ptrace: Expose FPMR via ptrace")
-Signed-off-by: Mark Brown <broonie@kernel.org>
-Cc: stable@vger.kernel.org
----
- arch/arm64/kernel/ptrace.c | 12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
-
-diff --git a/arch/arm64/kernel/ptrace.c b/arch/arm64/kernel/ptrace.c
-index b756578aeaeea1d3250276734520e3eaae8a671d..f242df53de2992bf8a3fd51710d6653fe82f7779 100644
---- a/arch/arm64/kernel/ptrace.c
-+++ b/arch/arm64/kernel/ptrace.c
-@@ -876,6 +876,7 @@ static int sve_set_common(struct task_struct *target,
- 			  const void *kbuf, const void __user *ubuf,
- 			  enum vec_type type)
- {
-+	u64 old_svcr = target->thread.svcr;
- 	int ret;
- 	struct user_sve_header header;
- 	unsigned int vq;
-@@ -903,8 +904,6 @@ static int sve_set_common(struct task_struct *target,
- 
- 	/* Enter/exit streaming mode */
- 	if (system_supports_sme()) {
--		u64 old_svcr = target->thread.svcr;
--
- 		switch (type) {
- 		case ARM64_VEC_SVE:
- 			target->thread.svcr &= ~SVCR_SM_MASK;
-@@ -1003,6 +1002,10 @@ static int sve_set_common(struct task_struct *target,
- 				 start, end);
- 
- out:
-+	/* If we entered or exited streaming mode then reset FPMR */
-+	if ((target->thread.svcr & SVCR_SM) != (old_svcr & SVCR_SM))
-+		target->thread.uw.fpmr = 0;
-+
- 	fpsimd_flush_task_state(target);
- 	return ret;
- }
-@@ -1099,6 +1102,7 @@ static int za_set(struct task_struct *target,
- 		  unsigned int pos, unsigned int count,
- 		  const void *kbuf, const void __user *ubuf)
- {
-+	u64 old_svcr = target->thread.svcr;
- 	int ret;
- 	struct user_za_header header;
- 	unsigned int vq;
-@@ -1175,6 +1179,10 @@ static int za_set(struct task_struct *target,
- 	target->thread.svcr |= SVCR_ZA_MASK;
- 
- out:
-+	/* If we entered or exited streaming mode then reset FPMR */
-+	if ((target->thread.svcr & SVCR_SM) != (old_svcr & SVCR_SM))
-+		target->thread.uw.fpmr = 0;
-+
- 	fpsimd_flush_task_state(target);
- 	return ret;
- }
-
----
-base-commit: 8e929cb546ee42c9a61d24fae60605e9e3192354
-change-id: 20241106-arm64-ptrace-fpmr-sm-45390f592574
-
-Best regards,
--- 
-Mark Brown <broonie@kernel.org>
-
+Any update on this? We keep getting reports of this issue, so it would
+be great if there was a fix for 6.12. Thanks!
 
