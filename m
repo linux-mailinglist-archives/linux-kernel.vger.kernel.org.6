@@ -1,224 +1,149 @@
-Return-Path: <linux-kernel+bounces-397958-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397959-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBF659BE2FB
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 10:46:15 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FA899BE2FF
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 10:46:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4B85DB216D7
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 09:46:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A62D5B22533
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 09:46:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F059F1DAC92;
-	Wed,  6 Nov 2024 09:46:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F1FA1DB527;
+	Wed,  6 Nov 2024 09:46:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="fTDmSyUX"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hhP5clCP"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECBA83211;
-	Wed,  6 Nov 2024 09:46:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BAF71D54EE;
+	Wed,  6 Nov 2024 09:46:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730886365; cv=none; b=W4UeBIElAiFqinrC/AwyzUFduzTT6T7pCz0XduXHxpzlnznAH+XEzToDg73UjUB3At6DCLMgVYa+YGD4qkHUJhy8ZcB7xl6yG/QeNmPjds/Zi1wCLJHu+KKFZy79nEJmlZvSKvdRw1hjS8Fh/bvEzHqFGh8zCRq9eq4KasBonyI=
+	t=1730886384; cv=none; b=LAok+gNJtk1K6e84uPGCfrs5n9ePKeLz+9HWDOo/E7ubvdgrnfzMVzPzQ419tZ/MwlGBUjiSpLAFfyy6+PmOtDaQ3Spo+V+iluuW+iXaXG4KAjUNlQktNHbkfZekdlLZKgxnZjVjGhUm2ZoW1ctQbZT31FDZfS2eYZZwaT46Xtw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730886365; c=relaxed/simple;
-	bh=7MghTJQkR44qaMgyLxvcz4iaHBncGIlDk0onWf/Qlhc=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=djvgpfXvIaPMsOv7LGjfo90F6TYlBsC1Sgc46yN3jEWcRGnYH7B8yUwM1DPk4IpKOxE233JKgUvVMobHTKlYYKx2uAqfK5MwU8SdiYjQBIS3m1gq+/jU1oQzYmTa1zLKwpzF4izOdgWX7wFwq+CQ6NXm8whmgCAKqTjBDxb68W0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=fTDmSyUX; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A68jNV6030512;
-	Wed, 6 Nov 2024 09:45:36 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=nK6e8P
-	6ZRM5mtyMlMQA9ZJRtAhJyqAzVLet89KVCreo=; b=fTDmSyUXe4rtrnFKr/uBJF
-	0sZ89u1kmYlOPTIiD+4zwU9L7YJ2+CbMQMQeR3lZyXRMDVXAaa3rWK9xEtjd2+VK
-	bzDwvfJufrQmFs5DhxFdqmsaq2S5IjbOvMs/iVJ2uNZRpTENJsGh/nmvqsGSb9M1
-	rxBsIncxPUWfGsFFo8xbWlJKLF2Ivqqs87RMnMO1/RSpeeVRThFaBYsYfTrMkzRs
-	GG0FP5j2Rh5+Db2GzId6VGUtqr1rT83e8aKsuL5cBoIOUKep06yj9OlQCzsIfDa7
-	NkHvsfQjavyvnDYFHhuggLRFbQ2cU2jNhqH6ws34iy/MtrF/GkzCBR2baDN6pEEg
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42r57f88ec-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 06 Nov 2024 09:45:36 +0000 (GMT)
-Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4A69jZ9L029206;
-	Wed, 6 Nov 2024 09:45:35 GMT
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42r57f88e5-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 06 Nov 2024 09:45:35 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4A68BZP1023983;
-	Wed, 6 Nov 2024 09:45:34 GMT
-Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 42nxsyj5kr-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 06 Nov 2024 09:45:33 +0000
-Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
-	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4A69jUhd30802462
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 6 Nov 2024 09:45:30 GMT
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id E50DD20043;
-	Wed,  6 Nov 2024 09:45:29 +0000 (GMT)
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 831E420040;
-	Wed,  6 Nov 2024 09:45:29 +0000 (GMT)
-Received: from [9.152.222.93] (unknown [9.152.222.93])
-	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Wed,  6 Nov 2024 09:45:29 +0000 (GMT)
-Message-ID: <c6509104-b8ff-41ef-8afa-a44cf740b779@linux.ibm.com>
-Date: Wed, 6 Nov 2024 10:45:29 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 15/19] perf: Add deferred user callchains
-To: Josh Poimboeuf <jpoimboe@kernel.org>, x86@kernel.org
-Cc: Peter Zijlstra <peterz@infradead.org>,
-        Steven Rostedt <rostedt@goodmis.org>, Ingo Molnar <mingo@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        linux-kernel@vger.kernel.org, Indu Bhagat <indu.bhagat@oracle.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
-        Ian Rogers <irogers@google.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        linux-perf-users@vger.kernel.org, Mark Brown <broonie@kernel.org>,
-        linux-toolchains@vger.kernel.org, Jordan Rome <jordalgo@meta.com>,
-        Sam James <sam@gentoo.org>, linux-trace-kernel@vger.kerne.org,
-        Andrii Nakryiko <andrii.nakryiko@gmail.com>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Florian Weimer <fweimer@redhat.com>, Andy Lutomirski <luto@kernel.org>,
-        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>
-References: <cover.1730150953.git.jpoimboe@kernel.org>
- <1ce857387c781afa66efaa61eb88ff596b352500.1730150953.git.jpoimboe@kernel.org>
-From: Jens Remus <jremus@linux.ibm.com>
-Content-Language: en-US
-Organization: IBM Deutschland Research & Development GmbH
-In-Reply-To: <1ce857387c781afa66efaa61eb88ff596b352500.1730150953.git.jpoimboe@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: swUQO9jKgjXMxLyMdhtN5jKIz3DG6jzN
-X-Proofpoint-ORIG-GUID: b9j_YAQ3_uLl4q74CrGwxVXWXxnfe6Bx
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+	s=arc-20240116; t=1730886384; c=relaxed/simple;
+	bh=FCzq19ZQriPVyzh0sTZo3Dh2ni0fniF4xDpwOt2piiA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UIgbaM1X+3xWGLMGKZ44aL9aQ1uFhl+Pw8+gXzIm+pSETsv7YTNAt0fzIiampwqFy5iEh/qFbfQLE3kSLmPr78+gdAsSifZ8mz9DiKTXwGeZu6I1af+ae1cWpj1rGVH+3nyd9KYaxblNGZGujj9scdB9Qo9F/J4GNNMBq7oqI10=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hhP5clCP; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730886383; x=1762422383;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=FCzq19ZQriPVyzh0sTZo3Dh2ni0fniF4xDpwOt2piiA=;
+  b=hhP5clCPYFqwEub2gwO2inkLyG49b1ocQXqt2V2DKLK7UlmKVo/xAfZP
+   jJSRQy3DfyQjwGce+OcZR+7SJMcggsD43vbPlGT5yMQZK2QSOHH3WvgGf
+   CTWnc+02mFK7jNXjh1xR+0QHvqHWlzmymzSffUjNb5KiyQl0sUVwhLSdF
+   spmnjqNH9FsngJlTEwnsjMtfsPBHCN3z3LYjXB0a0MFOP/kRs8BxUR+0h
+   B3j9s62tJhikmndZkoou4Cx+fLM088Pm6fLpoVGpFssYxhY5ELIQMc5Y1
+   Y9+IgyUQql2ujhiBYq59UacoWdg7HJNrtOa2Hv0SpnV7MxaYLcI3dwJG6
+   g==;
+X-CSE-ConnectionGUID: IsVyg6vXSzq0IIn/JbLsaA==
+X-CSE-MsgGUID: tnlm40tQSgClbGagK225kw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11247"; a="30788783"
+X-IronPort-AV: E=Sophos;i="6.11,262,1725346800"; 
+   d="scan'208";a="30788783"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2024 01:46:21 -0800
+X-CSE-ConnectionGUID: k2/7LShbSDaGOr4szaPsBw==
+X-CSE-MsgGUID: pcvQjkT9RbWo30mUfZPUFA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,262,1725346800"; 
+   d="scan'208";a="84847233"
+Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2024 01:46:07 -0800
+Received: from kekkonen.localdomain (localhost [127.0.0.1])
+	by kekkonen.fi.intel.com (Postfix) with SMTP id 2169A11F9C3;
+	Wed,  6 Nov 2024 11:46:05 +0200 (EET)
+Date: Wed, 6 Nov 2024 09:46:05 +0000
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Maxime Ripard <mripard@kernel.org>, dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-media@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, Liu Ying <victor.liu@nxp.com>,
+	andrzej.hajda@intel.com, neil.armstrong@linaro.org,
+	rfoss@kernel.org, Laurent.pinchart@ideasonboard.com,
+	jonas@kwiboo.se, jernej.skrabec@gmail.com,
+	maarten.lankhorst@linux.intel.com, tzimmermann@suse.de,
+	airlied@gmail.com, simona@ffwll.ch, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, quic_jesszhan@quicinc.com,
+	mchehab@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de,
+	kernel@pengutronix.de, festevam@gmail.com, catalin.marinas@arm.com,
+	will@kernel.org, hverkuil@xs4all.nl,
+	tomi.valkeinen@ideasonboard.com, quic_bjorande@quicinc.com,
+	geert+renesas@glider.be, arnd@arndb.de, nfraprado@collabora.com,
+	thierry.reding@gmail.com, prabhakar.mahadev-lad.rj@bp.renesas.com,
+	sam@ravnborg.org, marex@denx.de, biju.das.jz@bp.renesas.com
+Subject: Re: (subset) [PATCH v5 00/13] Add ITE IT6263 LVDS to HDMI converter
+ support
+Message-ID: <Zys63S2xy-wdwQ8P@kekkonen.localdomain>
+References: <20241104032806.611890-1-victor.liu@nxp.com>
+ <173080602214.231309.12977765173766280536.b4-ty@linaro.org>
+ <20241105-secret-seriema-of-anger-7acfdf@houat>
+ <CD810D31-F9C5-499D-86CF-B94BEF82449A@linaro.org>
+ <20241105-succinct-pygmy-dingo-4db79c@houat>
+ <7C2A2BDC-07E8-4ED7-B65B-BD7E4E5DC53F@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 impostorscore=0
- lowpriorityscore=0 mlxlogscore=999 adultscore=0 bulkscore=0 clxscore=1015
- mlxscore=0 malwarescore=0 phishscore=0 suspectscore=0 priorityscore=1501
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
- definitions=main-2411060073
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7C2A2BDC-07E8-4ED7-B65B-BD7E4E5DC53F@linaro.org>
 
-On 28.10.2024 22:48, Josh Poimboeuf wrote:
-...
-> diff --git a/kernel/events/core.c b/kernel/events/core.c
-> index ebf143aa427b..bf97b2fa8a9c 100644
-> --- a/kernel/events/core.c
-> +++ b/kernel/events/core.c
-...
-> @@ -6955,6 +6958,53 @@ static void perf_pending_irq(struct irq_work *entry)
->   		perf_swevent_put_recursion_context(rctx);
->   }
->   
-> +static void perf_pending_unwind_irq(struct irq_work *entry)
-> +{
-> +	struct perf_event *event = container_of(entry, struct perf_event, pending_unwind_irq);
-> +
-> +	if (event->pending_unwind) {
-> +		unwind_user_deferred(&perf_unwind_callback_cb, NULL, event);
-> +		event->pending_unwind = 0;
-> +	}
-> +}
-> +
-> +struct perf_callchain_deferred_event {
-> +	struct perf_event_header	header;
-> +	u64				ctx_cookie;
+Hi Dmitry, others,
 
-This introduces ctx_cookie in the struct used to produce deferred events but misses to do so in the struct used to consume them. This causes the ctx_cookie value to erroneously get interpreted as nr (number of IPs) in perf:
+On Wed, Nov 06, 2024 at 09:20:12AM +0000, Dmitry Baryshkov wrote:
+> On 5 November 2024 17:39:40 GMT, Maxime Ripard <mripard@kernel.org> wrote:
+> >On Tue, Nov 05, 2024 at 05:33:21PM +0000, Dmitry Baryshkov wrote:
+> >> On 5 November 2024 16:13:26 GMT, Maxime Ripard <mripard@kernel.org> wrote:
+> >> >On Tue, Nov 05, 2024 at 01:28:48PM +0200, Dmitry Baryshkov wrote:
+> >> >> On Mon, 04 Nov 2024 11:27:53 +0800, Liu Ying wrote:
+> >> >> > This patch series aims to add ITE IT6263 LVDS to HDMI converter on
+> >> >> > i.MX8MP EVK.  Combined with LVDS receiver and HDMI 1.4a transmitter,
+> >> >> > the IT6263 supports LVDS input and HDMI 1.4 output by conversion
+> >> >> > function.  IT6263 product link can be found at [1].
+> >> >> > 
+> >> >> > Patch 1 is a preparation patch to allow display mode of an existing
+> >> >> > panel to pass the added mode validation logic in patch 3.
+> >> >> > 
+> >> >> > [...]
+> >> >> 
+> >> >> Applied to drm-misc-next, thanks!
+> >> >> 
+> >> >> [04/13] media: uapi: Add MEDIA_BUS_FMT_RGB101010_1X7X5_{SPWG, JEIDA}
+> >> >>         commit: 5205b63099507a84458075c3ca7e648407e6c8cc
+> >> >
+> >> >Where's the immutable branch Laurent asked for?
+> >> 
+> >> The patch set has been picked up after getting an Ack from Sakari,
+> >> before Laurent's email. I am sorry if I rushed it in.
+> >
+> >I mean, this was less than a day after you've asked that question
+> >yourself. Waiting less than a day for a mail to be answered seems a bit
+> >short, especially when there's no rush to merge these patches in the
+> >first place.
+> 
+> Point noted. I should have been more patient. As a lame excuse I could point out that the patch has been up for review / comments for quite a while, etc, etc, but this is really lame. 
 
-Core was generated by `perf record -F 99 --call-graph fp /opt/binutils-sframe2/bin/objdump --sframe /opt/binutils-sframe2/bin/objdump'.
-Program terminated with signal SIGSEGV, Segmentation fault.
-#0  __GI_memcpy () at ../sysdeps/s390/memcpy-z900.S:209
-209             mvc     0(256,%r1),0(%r3)
-[Current thread is 1 (Thread 0x3ff8bb5fe80 (LWP 16554))]
-(gdb) bt
-#0  __GI_memcpy () at ../sysdeps/s390/memcpy-z900.S:209
-#1  0x00000000012ad0ca in sample__merge_deferred_callchain (sample_orig=0x3ffd2ff53c8, sample_callchain=0x3ffd2ff5b18) at util/callchain.c:1853
-...
-(gdb) p/x sample_callchain->callchain->nr
-$2 = 0x489cb
+The patch had been around for a few weeks already, I don't see this having
+been rushed in. It's a bit a matter of taste whether an immutable branch is
+necessary here, I thought it wouldn't be. I can also ask for one in the
+future in cases where there's even slightly more than an improbable
+possibility of a merge conflict going forward: it won't hurt in any case to
+have one.
 
-With debug output from perf_event_callchain_deferred() (see below):
-
-DEBUG: perf_event_callchain_deferred: ctx_cookie=0x00000000000489cb, nr=2
-
-> +	u64				nr;
-> +	u64				ips[];
-> +};
-> +
-> +static void perf_event_callchain_deferred(struct unwind_stacktrace *trace,
-> +					  u64 ctx_cookie, void *_data)
-> +{
-> +	struct perf_callchain_deferred_event deferred_event;
-> +	u64 callchain_context = PERF_CONTEXT_USER;
-> +	struct perf_output_handle handle;
-> +	struct perf_event *event = _data;
-> +	struct perf_sample_data data;
-> +	u64 nr = trace->nr + 1 /* callchain_context */;
-> +
-> +	deferred_event.header.type = PERF_RECORD_CALLCHAIN_DEFERRED;
-> +	deferred_event.header.misc = PERF_RECORD_MISC_USER;
-> +	deferred_event.header.size = sizeof(deferred_event) + (nr * sizeof(u64));
-> +
-> +	deferred_event.ctx_cookie = ctx_cookie;
-> +	deferred_event.nr = nr;
-> +
-> +	perf_event_header__init_id(&deferred_event.header, &data, event);
-
-	pr_info_ratelimited("DEBUG: perf_event_callchain_deferred: ctx_cookie=0x%016llx, nr=%llu\n",
-		deferred_event.ctx_cookie, deferred_event.nr);
-
-> +
-> +	if (perf_output_begin(&handle, &data, event, deferred_event.header.size))
-> +		return;
-> +
-> +	perf_output_put(&handle, deferred_event);
-> +	perf_output_put(&handle, callchain_context);
-> +	perf_output_copy(&handle, trace->entries, trace->nr * sizeof(u64));
-> +	perf_event__output_id_sample(event, &handle, &data);
-> +
-> +	perf_output_end(&handle);
-> +}
-> +
->   static void perf_pending_task(struct callback_head *head)
->   {
->   	struct perf_event *event = container_of(head, struct perf_event, pending_task);
-...
-
-Regards,
-Jens
 -- 
-Jens Remus
-Linux on Z Development (D3303) and z/VSE Support
-+49-7031-16-1128 Office
-jremus@de.ibm.com
+Kind regards,
 
-IBM
-
-IBM Deutschland Research & Development GmbH; Vorsitzender des Aufsichtsrats: Wolfgang Wendt; Geschäftsführung: David Faller; Sitz der Gesellschaft: Böblingen; Registergericht: Amtsgericht Stuttgart, HRB 243294
-IBM Data Privacy Statement: https://www.ibm.com/privacy/
-
+Sakari Ailus
 
