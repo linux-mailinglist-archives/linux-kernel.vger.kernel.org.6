@@ -1,105 +1,147 @@
-Return-Path: <linux-kernel+bounces-398553-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398554-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DA5B9BF2BB
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 17:08:11 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EEC269BF2C0
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 17:08:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 25E6E1F2156E
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 16:08:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A66C91F2235F
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 16:08:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6C002064EC;
-	Wed,  6 Nov 2024 16:05:25 +0000 (UTC)
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0A052064E7;
+	Wed,  6 Nov 2024 16:06:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jMSU+/Qb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D80B5204F67;
-	Wed,  6 Nov 2024 16:05:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7442204F7F;
+	Wed,  6 Nov 2024 16:06:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730909125; cv=none; b=NhyghzubQs1UsETt5S5VwKfXtHoEdi3/ld4wcHQLle3X4bz6vEEAzk+7D4BgWxy+eXjKhDGC+JzJnIoiuoLGmY/JhVQUaFL2tBNH6eai5ajPoerYoq1Ee4sxnYATQbjNW0/hA9XcfnFo3Vh53BoScz6RrNoHiwG9mcf9qLMLwGI=
+	t=1730909169; cv=none; b=kmfDvNZl//oSECZXdIHa2QryWq02nJranMc0kPflKD82dLvz34/W1+VfmoIVYp6IuumHZXak4zRuVfnnjiTZbQBiExwFm7eJAkLt88F4tGKuHnzQz+m57Lk1hhEWzAvFcS67Y5pXAuvqdV45OSfPPIt1HT11UFfFW8/xSkYzs4w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730909125; c=relaxed/simple;
-	bh=z++ZeuO7paBJ8+X4KHMkuG1v9kfVmEFqNfHktlRa89Y=;
+	s=arc-20240116; t=1730909169; c=relaxed/simple;
+	bh=owI1dOfUO3f36nslRIYvy0cGotXXjlEaH4q214cOC1c=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SmiIEYBWYtRteS9LhRNN/Ij9idDPE4zaZDxJdDZn3dn7U08OjQ788Yhtgt0cvvTYJdgOBoKUhfCeN94evHkZSUxb69yprSTYhxrv6rmCkh0u3CsfWYIbDiJN7ZJLMizu/H40R37iKCMfF81s6pvEBrT8KFLA/s9xY8M+gMJAhsE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-20c693b68f5so74719785ad.1;
-        Wed, 06 Nov 2024 08:05:23 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730909123; x=1731513923;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Luvxj0VLfiOJMq44JnritBWkaYJg5kfsvYj2fMawU0k=;
-        b=BqeF/up7fdapWO5t2YwsMtnrVL+I4Kz9JIINxD2ZEbcUhNedQuV0PggJKEh05XXkek
-         4UQJRH8qorsNqw99cfmhl1cApxL/B3Q/SLcfULwezWPUvbobKCH8LPMDs0R/SzB5AZA1
-         JXqfTQlGr4DZPDWv55E4+XCsP/DjVILtQjUZPnKxCIvejlPkrYrsNx7g8FpbncHncCc3
-         KkZnyhr4J8Ys8iFpAp1zVFrbE/asN3ybHXowzDp6S+n4EXAwSgzRTKUmpqTq9y8KHLnN
-         UwX3a0roLrxMnvxq5nQX/E1CH9Ocs3aCNIaEzNMS6T04/lOnOt5L3wz/B3Kl20aZsS1h
-         sgqw==
-X-Forwarded-Encrypted: i=1; AJvYcCVAB4LwixlLBuAg4pStmn+As8Cn1bn7DOvvkHFiY/x1Ur8TIg2bsMYRPZHVKVzHWNkxEylJs8tesmS4Dis=@vger.kernel.org, AJvYcCX2xqAQqhXtKSHdibMc+la6BraZhDwTC0SVnB51mMJxY1XswHAlzbBbA8Sa408dBPbYw6Yt/H3rFDTw@vger.kernel.org
-X-Gm-Message-State: AOJu0YwY4lsA5pJRvCQ11UIS5jafPfqkJv5NIwK42xeDqGuI/nzajxyX
-	zqsuDLfCob98HaX532/6Q53C0259W/fpmXRELT9iQWs5P/vRhqcS
-X-Google-Smtp-Source: AGHT+IGqN+w4IPky+TA68avq1xcHDWrLnXLWGcNEqb+lHzUgWoLGrwx5sr9SnQ1ogPHGuRxHeFbnmg==
-X-Received: by 2002:a17:902:f68f:b0:20c:8839:c515 with SMTP id d9443c01a7336-21103ca485bmr325423375ad.56.1730909123048;
-        Wed, 06 Nov 2024 08:05:23 -0800 (PST)
-Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211057c7560sm97276685ad.237.2024.11.06.08.05.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Nov 2024 08:05:22 -0800 (PST)
-Date: Thu, 7 Nov 2024 01:05:20 +0900
-From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Siddharth Vadapalli <s-vadapalli@ti.com>, lpieralisi@kernel.org,
-	robh@kernel.org, bhelgaas@google.com,
-	manivannan.sadhasivam@linaro.org, kishon@kernel.org,
-	u.kleine-koenig@pengutronix.de, cassel@kernel.org,
-	dlemoal@kernel.org, yoshihiro.shimoda.uh@renesas.com,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, srk@ti.com
-Subject: Re: [PATCH v2 1/2] PCI: keystone: Set mode as RootComplex for
- "ti,keystone-pcie" compatible
-Message-ID: <20241106160520.GD2745640@rocinante>
-References: <5983ad5e-729d-4cdc-bdb4-d60333410675@ti.com>
- <20241106154945.GA1526156@bhelgaas>
+	 Content-Type:Content-Disposition:In-Reply-To; b=itgE/Dmi+TdxJOOH+/rPmwNymQGF9I8SaCls3ODL+MX7je7O1cwH/ol1cqEmTXqezyHH7LOILUMAw7WY/nUnK+ExFEeV5Erayx3fR09BoSZTvohja8i0zpsUXnqNyo/PC9iyaGUqi3FtPpD9hS9h9sy+7b6NtmOmEMKHcN2Dbpg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jMSU+/Qb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D04BC4CEC6;
+	Wed,  6 Nov 2024 16:06:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730909168;
+	bh=owI1dOfUO3f36nslRIYvy0cGotXXjlEaH4q214cOC1c=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jMSU+/QbU/pj0W2yPaEzZ3tlG2Nxxjl29ftjebUJg//CpoYZie8Olae8TK9Qszn8Z
+	 cBFQdSSVI2F9HBW69bVCf3gulyFw1/JnI4PGJiFAraRg/NwE3UuPqbVyTZFqnsHTV7
+	 hUhA5U8s3eAmPNvXiqbQc0GsYH4drW2XdH3efH83RccdkJ86g56FKloRxm/2tVKZZK
+	 sILpHcZZDuu+gi+ySE2Zg2e0kFdapC3Uw+CJLNAx23AtbAcUsyy+sgttGhWZqLgQZn
+	 rNuERN65MXOGQsNcadg2XoBvnd9wHHDRmPrNWNvQ2+Yv0rdTOyoOJj3rXy2Y8ho4iv
+	 UdR7+rlq0tk5Q==
+Date: Wed, 6 Nov 2024 16:06:02 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Cedric Encarnacion <cedricjustine.encarnacion@analog.com>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-i2c@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-hwmon@vger.kernel.org, Jean Delvare <jdelvare@suse.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Peter Yin <peteryin.openbmc@gmail.com>,
+	Noah Wang <noahwang.wang@outlook.com>, Marek Vasut <marex@denx.de>,
+	Lukas Wunner <lukas@wunner.de>
+Subject: Re: [PATCH v2 1/2] dt-bindings: trivial-devices: add ltp8800
+Message-ID: <20241106-gatherer-glancing-495dbf9d86c7@spud>
+References: <20241106030918.24849-1-cedricjustine.encarnacion@analog.com>
+ <20241106030918.24849-2-cedricjustine.encarnacion@analog.com>
+ <8e4dc080-d779-4b06-8fd1-74784e06323a@roeck-us.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="g7f03nsiTMvmTYyW"
 Content-Disposition: inline
-In-Reply-To: <20241106154945.GA1526156@bhelgaas>
+In-Reply-To: <8e4dc080-d779-4b06-8fd1-74784e06323a@roeck-us.net>
 
-Hello,
 
-[...]
-> > I suppose that "data->mode" will default to zero for v3.65a prior to
-> > this commit, corresponding to "DW_PCIE_UNKNOWN_TYPE" rather than the
-> > correct value of "DW_PCIE_RC_TYPE". Since I don't have an SoC with the
-> > v3.65a version of the controller, I cannot test it out, but I presume
-> > that the "INVALID device type 0" error will be displayed. Though the probe
-> > will not fail since the "default" case doesn't return an error code, the
-> > controller probably will not be functional as the configuration associated
-> > with the "DW_PCIE_RC_TYPE" case has been skipped. Hence, I believe that
-> > this fix should be backported.
-> 
-> I guess nobody really cares too much since it's been broken for almost
-> four years.
-> 
-> But indeed, sounds like it should have a stable tag and maybe a commit
-> log hint about what the failure looks like.
+--g7f03nsiTMvmTYyW
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Added Cc for stable releases.  Siddharth, let me know how to update the
-commit log per Bjorn feedback, so I can do it directly on the branch.
+On Tue, Nov 05, 2024 at 08:34:01PM -0800, Guenter Roeck wrote:
+> On 11/5/24 19:09, Cedric Encarnacion wrote:
+> > Add Analog Devices LTP8800-1A, LTP8800-2, and LTP8800-4A DC/DC =CE=BCMo=
+dule
+> > regulator.
 
-Thank you!
+A single compatible for 3 devices is highly suspect. What is
+different between these devices?
 
-	Krzysztof
+> >=20
+> > Signed-off-by: Cedric Encarnacion <cedricjustine.encarnacion@analog.com>
+> > ---
+> >   Documentation/devicetree/bindings/trivial-devices.yaml | 2 ++
+> >   MAINTAINERS                                            | 5 +++++
+> >   2 files changed, 7 insertions(+)
+> >=20
+> > diff --git a/Documentation/devicetree/bindings/trivial-devices.yaml b/D=
+ocumentation/devicetree/bindings/trivial-devices.yaml
+> > index 90a7c0a3dc48..72877d00b8dd 100644
+> > --- a/Documentation/devicetree/bindings/trivial-devices.yaml
+> > +++ b/Documentation/devicetree/bindings/trivial-devices.yaml
+> > @@ -43,6 +43,8 @@ properties:
+> >             - adi,adp5589
+> >               # Analog Devices LT7182S Dual Channel 6A, 20V PolyPhase S=
+tep-Down Silent Switcher
+> >             - adi,lt7182s
+> > +            # Analog Devices LTP8800-1A/-2/-4A 150A/135A/200A, 54V DC/=
+DC =CE=BCModule regulator
+> > +          - adi,ltp8800
+> >               # AMS iAQ-Core VOC Sensor
+> >             - ams,iaq-core
+> >               # Temperature monitoring of Astera Labs PT5161L PCIe reti=
+mer
+> > diff --git a/MAINTAINERS b/MAINTAINERS
+> > index 7c357800519a..6ca691500fb7 100644
+> > --- a/MAINTAINERS
+> > +++ b/MAINTAINERS
+> > @@ -13555,6 +13555,11 @@ S:	Maintained
+> >   F:	Documentation/devicetree/bindings/iio/light/liteon,ltr390.yaml
+> >   F:	drivers/iio/light/ltr390.c
+> > +LTP8800 HARDWARE MONITOR DRIVER
+> > +M:	Cedric Encarnacion <cedricjustine.encarnacion@analog.com>
+> > +L:	linux-hwmon@vger.kernel.org
+> > +S:	Supported
+> > +
+>=20
+> This entry doesn't make sense in this patch.
+>=20
+> Guenter
+>=20
+> >   LYNX 28G SERDES PHY DRIVER
+> >   M:	Ioana Ciornei <ioana.ciornei@nxp.com>
+> >   L:	netdev@vger.kernel.org
+>=20
+
+--g7f03nsiTMvmTYyW
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZyuT6gAKCRB4tDGHoIJi
+0rjyAPwNU65BJtJsjvnjwbUO2RxFVge6HDRF720CkCn1W8byoAD/eVZZvsDtPJ5J
+eTiT6GnZMxq9T+7hd7gwM/r8/aBDfQM=
+=xBOT
+-----END PGP SIGNATURE-----
+
+--g7f03nsiTMvmTYyW--
 
