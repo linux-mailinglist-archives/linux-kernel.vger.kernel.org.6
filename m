@@ -1,100 +1,97 @@
-Return-Path: <linux-kernel+bounces-397712-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397714-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4047D9BDF65
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 08:26:35 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E9F09BDF69
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 08:28:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 045AD28146A
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 07:26:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 86A9C1C22C61
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 07:28:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 296851CC8BA;
-	Wed,  6 Nov 2024 07:26:31 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C2D3192580;
-	Wed,  6 Nov 2024 07:26:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75E671CCB2D;
+	Wed,  6 Nov 2024 07:27:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="UOWQFnyz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC96A192580;
+	Wed,  6 Nov 2024 07:27:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730877990; cv=none; b=LCUEm0uhVPDWvy4t7NNlKzti+H9KHpBFRyz0A1fcLAw2hlax/NzYFnhckkjn5DpLHHkrSI5lTEbwDQyMM2AqpkAKdsyZzWaf4S87H3v+RDNP9cRJGreRCN0dMEfEesT365Bq47D4esisUYul6OP54/1qsPsSCNAhjJpfNxeaAcc=
+	t=1730878074; cv=none; b=ssffImeJigkjW4/1U0NA7ZRBWevAC1pCIKYZ3uHSC/3Pz3xiHhp1E/10zvnjOeFJ1jE0DtMCQZPxe6goibkkr/xf/glzklCeq2+wZwp5pAKs1kJvGdgtzAqXTAtsU/s9dhUsLBqEmEG5Y4oC2sdJkpyz0p//G7zd4KQTO7JwGBg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730877990; c=relaxed/simple;
-	bh=agWYiCuHzgWc5vrawK4mbYjZ0dJtAHhRDMutt9drTh8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kD1cOi8NYffpjC3XUESJjuq+3AXM+I+QlOnandA5M3sxSlScr9uBp1pJzhHlnZjuJRHMKV3XIDzyafTX+xV+OO3GF8Vp126rJ94+lHu5389GViaNQ+JgXzAlyKV+yX1MKZ0ABmnZqPWwcjMLRaNy2H3ucfEuSQazUoyomlAX8hk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AD9681063;
-	Tue,  5 Nov 2024 23:26:56 -0800 (PST)
-Received: from usa.arm.com (e133711.arm.com [10.1.196.55])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id D06E83F66E;
-	Tue,  5 Nov 2024 23:26:24 -0800 (PST)
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	arm-scmi@vger.kernel.org,
-	Cristian Marussi <cristian.marussi@arm.com>
-Cc: Sudeep Holla <sudeep.holla@arm.com>,
-	james.quinlan@broadcom.com,
-	f.fainelli@gmail.com,
-	vincent.guittot@linaro.org,
-	etienne.carriere@st.com,
-	peng.fan@oss.nxp.com,
-	michal.simek@amd.com,
-	quic_sibis@quicinc.com,
-	quic_nkela@quicinc.com,
-	dan.carpenter@linaro.org
-Subject: Re: [PATCH v3 0/7] Expose SCMI Transport properties
-Date: Wed,  6 Nov 2024 07:26:21 +0000
-Message-Id: <173087788054.3975719.458271006715771508.b4-ty@arm.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241028120151.1301177-1-cristian.marussi@arm.com>
-References: <20241028120151.1301177-1-cristian.marussi@arm.com>
+	s=arc-20240116; t=1730878074; c=relaxed/simple;
+	bh=/A+HW5n513t0yCsOgKDg7mmDaz+/dgCUyIewoSqhw3M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iZkDM3OXe3jSqYYxx1/pBtsX69bK9qG6jBcguR8x82lmWKePB/kQBKAy7gmFu/rytOsXIX4yF7ONSPBhX+riA0aB0V54VF3fXdxuBWdxWm2g51SIv2tlBEYC6TIgoVINKN9CsOYtKdpWV65bd6C2KrfjZ5XIY0F9i/W7+Iwj2FA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=UOWQFnyz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5000FC4CECD;
+	Wed,  6 Nov 2024 07:27:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1730878074;
+	bh=/A+HW5n513t0yCsOgKDg7mmDaz+/dgCUyIewoSqhw3M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=UOWQFnyzskQjvmkwESYXS95F8PYnz43quEZUT0hPx+QHRAcW4FEzQ073OvBqUjNOj
+	 Z4pb0HtFJyigHWmV6ASSqNePBsnCghlHoejx2OExzRPmeb4UCDTZR3prHJ0KnNAlA+
+	 Af9OYw6JYU0sycb4juok7/N5g6h94ysvhF0ytqd0=
+Date: Wed, 6 Nov 2024 08:27:36 +0100
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Huacai Chen <chenhuacai@loongson.cn>
+Cc: Huacai Chen <chenhuacai@kernel.org>, Xuerui Wang <kernel@xen0n.name>,
+	loongarch@lists.linux.dev, Sasha Levin <sashal@kernel.org>,
+	stable@vger.kernel.org, Jiaxun Yang <jiaxun.yang@flygoat.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 6.1.y] LoongArch: Fix build errors due to backported
+ TIMENS
+Message-ID: <2024110622-dejected-underfeed-ac4a@gregkh>
+References: <20241102033616.3517188-1-chenhuacai@loongson.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241102033616.3517188-1-chenhuacai@loongson.cn>
 
-On Mon, 28 Oct 2024 12:01:44 +0000, Cristian Marussi wrote:
-> SCMI transports are characterized by a number of properties: the values
-> assumed by some of them tightly depend on the choices taken at design
-> time and on the overall archiecture of the specific platform: things like
-> timeouts, maximum message size and number of in-flight messages are closely
-> tied to the architecture of the platform like number of SCMI agents on the
-> system, physical memory available to the SCMI server...so on and so forth.
+On Sat, Nov 02, 2024 at 11:36:16AM +0800, Huacai Chen wrote:
+> Commit eb3710efffce1dcff83761db4615f91d93aabfcb ("LoongArch: Add support
+> to clone a time namespace") backports the TIMENS support for LoongArch
+> (corresponding upstream commit aa5e65dc0818bbf676bf06927368ec46867778fd)
+> but causes build errors:
 > 
-> [...]
+>   CC      arch/loongarch/kernel/vdso.o
+> arch/loongarch/kernel/vdso.c: In function ‘vvar_fault’:
+> arch/loongarch/kernel/vdso.c:54:36: error: implicit declaration of
+> function ‘find_timens_vvar_page’ [-Werror=implicit-function-declaration]
+>    54 |         struct page *timens_page = find_timens_vvar_page(vma);
+>       |                                    ^~~~~~~~~~~~~~~~~~~~~
+> arch/loongarch/kernel/vdso.c:54:36: warning: initialization of ‘struct
+> page *’ from ‘int’ makes pointer from integer without a cast
+> [-Wint-conversion]
+> arch/loongarch/kernel/vdso.c: In function ‘vdso_join_timens’:
+> arch/loongarch/kernel/vdso.c:143:25: error: implicit declaration of
+> function ‘zap_vma_pages’; did you mean ‘zap_vma_ptes’?
+> [-Werror=implicit-function-declaration]
+>   143 |                         zap_vma_pages(vma);
+>       |                         ^~~~~~~~~~~~~
+>       |                         zap_vma_ptes
+> cc1: some warnings being treated as errors
+> 
+> Because in 6.1.y we should define find_timens_vvar_page() by ourselves
+> and use zap_page_range() instead of zap_vma_pages(), so fix it.
+> 
+> Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
+> ---
+>  arch/loongarch/kernel/vdso.c | 28 +++++++++++++++++++++++++++-
+>  1 file changed, 27 insertions(+), 1 deletion(-)
 
-Applied to sudeep.holla/linux (for-next/scmi/updates), thanks!
+Now queued up, thanks!
 
-[1/7] firmware: arm_scmi: Account for SHMEM memory overhead
-      https://git.kernel.org/sudeep.holla/c/5c14f38893d0
-[2/7] firmware: arm_scmi: Calculate virtio PDU max size dynamically
-      https://git.kernel.org/sudeep.holla/c/3229e33311f8
-[3/7] dt-bindings: firmware: arm,scmi: Introduce more transport properties
-      https://git.kernel.org/sudeep.holla/c/5654d37268bc
-[4/7] firmware: arm_scmi: Use max_msg and max_msg_size devicetree properties
-      https://git.kernel.org/sudeep.holla/c/c091de2d383a
-[5/7] firmware: arm_scmi: Relocate atomic_threshold to scmi_desc
-      https://git.kernel.org/sudeep.holla/c/112ffc78dc8f
-
-(The below 2 were applied as fixes and sent for v6.12, sorry I missed
-to send confirmation earlier)
-
-[6/7] dt-bindings: firmware: arm,scmi: Add missing vendor string
-      https://git.kernel.org/sudeep.holla/c/7bf46ec090b9
-[7/7] firmware: arm_scmi: Use vendor string in max-rx-timeout-ms
-      https://git.kernel.org/sudeep.holla/c/54962707f8b8
-
---
-Regards,
-Sudeep
-
+greg k-h
 
