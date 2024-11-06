@@ -1,77 +1,78 @@
-Return-Path: <linux-kernel+bounces-398062-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398064-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0FC49BE4CB
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 11:51:49 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AAA2C9BE4CE
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 11:51:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 711541F2760D
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 10:51:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CDE321C23682
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 10:51:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E90F61E0E13;
-	Wed,  6 Nov 2024 10:48:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 324001E104A;
+	Wed,  6 Nov 2024 10:48:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="owmsYzb5";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="5v6sJbMf"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="XNwNLlxF";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="9WK8bCQf"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87A9B1DEFD3;
-	Wed,  6 Nov 2024 10:48:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B70A01DFDB1;
+	Wed,  6 Nov 2024 10:48:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730890131; cv=none; b=kasP6oHJSH4fWnMfFpAj5pZ6/aeMbLzNFP43KbxpZwbilNpC3oMRljidhUXZ9ngZDeBx7neWA33Z7t2lt7tqmbS1o4TydGdodAdoxWGHojShwRWNa/qLJh44mMSuQlJEAJwP4FByf4Id6ZpbYpdKJ3+dNqcv0S0LaYToaE23W7Q=
+	t=1730890132; cv=none; b=noiYpGnt+dRM2fNUhc3WDJP0a7BAKRRTFdQ5fB5lU1UosF0fdiHrGkfEXRNB90eZOZn1jSWS3tyLMYv2Kz0sPZDLJvXl7X3iU2ZkPEkcSK3UsjtP/LO5yrSVJXIHFLVFdEODUAfpWxkfcItS9Y+Kb/9b3+fP4ix3raw3Ysp8beg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730890131; c=relaxed/simple;
-	bh=qa+B8nCF4PW86PQLU8Srv1iWAECV4pKUTjIeZB0+kFg=;
+	s=arc-20240116; t=1730890132; c=relaxed/simple;
+	bh=oU5oke8gChdyWtq7zfSOHTsx2XlrBqy3JDQj8h8gRio=;
 	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=F6aNcPPOELgOWgLHOVVrOaTYfPrjT4yZ5wNIq1FY+51ZDuBLzCC3Iuiwnse07F25kZ2zVJhxsrxP8eexhCbLy+GjVLZXDz54u4HyZQ5wDCCmPmslUddcKXtP9fjbboca9EGziQyF+ibM6gAlEgyZV3AkGWTvfZzlfeIAwSjr59I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=owmsYzb5; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=5v6sJbMf; arc=none smtp.client-ip=193.142.43.55
+	 Message-ID:Content-Type; b=bAxwEqHHPVcyglkBgihLLOqP//XiCUxH0r38Nd5/ia/GxCE7p1MFdMCr/UlEcy4eNwLypYIlbrn0bYmubrAf8l4jmOGHqoOepQ+NIzv9IgbneyPIsXRxfSJk1IXbMqcjC9OxYw+Asb5KbroCx0RzYmb2zoJTs972UehChpAaCis=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=XNwNLlxF; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=9WK8bCQf; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 06 Nov 2024 10:48:46 -0000
+Date: Wed, 06 Nov 2024 10:48:47 -0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1730890127;
+	s=2020; t=1730890129;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=m6FPDWXerZOtQO20SBsVbcLBeMHfgC94FliWv8qNHiA=;
-	b=owmsYzb5UBfeg40ExsmOc5m9LQBlBLOH+1ZvEn2rN2fMiWwmMa+hB6rvC7RJGY6OHRm27i
-	bO8fnYgYAWnIW2buc8MDCzx+t7lFs4bIYkrqz0aBKFVyDc7qbb3vpxDyT14LQvbRE7jPkU
-	bLM6LOecNROw/fkJGVflEsDgFi3vHkGCDe9kqDICH+J7fji+ghjmqDm4L7+WAcoBnk1AxW
-	hWPempP8l/gopJ/AVyNnTKa7ubw032C95Zlge23HB7vUGkCigWUJKzeywEJkf6vIRZ1ilP
-	T6v9m8RP4daBioxFvGlglZSBMIrfQcAfjOjUTRUGfr9gedTD1FN5YteK9sDTZQ==
+	bh=LASTauJ60ErsJnQ5D+esLatpNpaz62RavH+/XLG2DCg=;
+	b=XNwNLlxFnqQfEfV+ZWAu1Ofd1xT7R+A24xhh93tY+t4+FPl0QUZF3/HwKXGstZDFHfxY4b
+	jrA2yOn+XDcfRkxyWcLU1qvcB+MS59L6a1EIHz8UkPNCCuN5WYu9n3rRq1tXpXIjVNrWoI
+	ahgyUdLMT/BO+8h1SFsdrDfKHI1SY7oixtjJiPt2YmZF2BIHz3oWZ9aXwAZRfc+kCBZSZR
+	vcMgg6jmEi2JSm0sW0i2JUYtrcjGCxx1iQ0w9VxcUQwYZ1HCnCunOuJ7/FuN2/cyPFdEfR
+	+eapZy8nGt8qg+QjuAkO7G5k5OzskAZPU0+rzaoVNLMCwzWR6RYMdUhsAAom6g==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1730890127;
+	s=2020e; t=1730890129;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=m6FPDWXerZOtQO20SBsVbcLBeMHfgC94FliWv8qNHiA=;
-	b=5v6sJbMfgWtWB6u7f/6nzvRtZawz/fHGdkORIlm/Er2Tn/Iq875FwyujSeEaN/ez79vee3
-	RcKBC9LOEWRn8KBQ==
+	bh=LASTauJ60ErsJnQ5D+esLatpNpaz62RavH+/XLG2DCg=;
+	b=9WK8bCQfKuJWP3ZCBmU4DJ42/CPlsvsSmCn76z9dtOLZr9zUfoEmcyfAAgs729Hp0pKn9G
+	8W0aE3wsYH6EdlCA==
 From: "tip-bot2 for Peter Zijlstra" <tip-bot2@linutronix.de>
 Sender: tip-bot2@linutronix.de
 Reply-to: linux-kernel@vger.kernel.org
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip: sched/core] sched: Enable PREEMPT_DYNAMIC for PREEMPT_RT
-Cc: "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+Subject: [tip: sched/core] sched: Add TIF_NEED_RESCHED_LAZY infrastructure
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+ "Peter Zijlstra (Intel)" <peterz@infradead.org>,
  Sebastian Andrzej Siewior <bigeasy@linutronix.de>, x86@kernel.org,
  linux-kernel@vger.kernel.org
-In-Reply-To: <20241007075055.441622332@infradead.org>
-References: <20241007075055.441622332@infradead.org>
+In-Reply-To: <20241007075055.219540785@infradead.org>
+References: <20241007075055.219540785@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <173089012636.32228.10876330075623941280.tip-bot2@tip-bot2>
+Message-ID: <173089012783.32228.17611031098154263925.tip-bot2@tip-bot2>
 Robot-ID: <tip-bot2@linutronix.de>
 Robot-Unsubscribe:
  Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -81,129 +82,246 @@ Content-Transfer-Encoding: 7bit
 
 The following commit has been merged into the sched/core branch of tip:
 
-Commit-ID:     35772d627b55cc7fb4f33bae57c564a25b3121a9
-Gitweb:        https://git.kernel.org/tip/35772d627b55cc7fb4f33bae57c564a25b3121a9
+Commit-ID:     26baa1f1c4bdc34b8d698c1900b407d863ad0e69
+Gitweb:        https://git.kernel.org/tip/26baa1f1c4bdc34b8d698c1900b407d863ad0e69
 Author:        Peter Zijlstra <peterz@infradead.org>
-AuthorDate:    Fri, 04 Oct 2024 14:46:56 +02:00
+AuthorDate:    Fri, 04 Oct 2024 14:47:02 +02:00
 Committer:     Peter Zijlstra <peterz@infradead.org>
-CommitterDate: Tue, 05 Nov 2024 12:55:38 +01:00
+CommitterDate: Tue, 05 Nov 2024 12:55:37 +01:00
 
-sched: Enable PREEMPT_DYNAMIC for PREEMPT_RT
+sched: Add TIF_NEED_RESCHED_LAZY infrastructure
 
-In order to enable PREEMPT_DYNAMIC for PREEMPT_RT, remove PREEMPT_RT
-from the 'Preemption Model' choice. Strictly speaking PREEMPT_RT is
-not a change in how preemption works, but rather it makes a ton more
-code preemptible.
+Add the basic infrastructure to split the TIF_NEED_RESCHED bit in two.
+Either bit will cause a resched on return-to-user, but only
+TIF_NEED_RESCHED will drive IRQ preemption.
 
-Notably, take away NONE and VOLUNTARY options for PREEMPT_RT, they make
-no sense (but are techincally possible).
+No behavioural change intended.
 
+Suggested-by: Thomas Gleixner <tglx@linutronix.de>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 Reviewed-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Link: https://lkml.kernel.org/r/20241007075055.441622332@infradead.org
+Link: https://lkml.kernel.org/r/20241007075055.219540785@infradead.org
 ---
- kernel/Kconfig.preempt | 12 +++++++-----
- kernel/sched/core.c    |  2 ++
- kernel/sched/debug.c   |  4 ++--
- 3 files changed, 11 insertions(+), 7 deletions(-)
+ include/linux/entry-common.h |  3 ++-
+ include/linux/entry-kvm.h    |  5 +++--
+ include/linux/sched.h        |  3 ++-
+ include/linux/thread_info.h  | 21 +++++++++++++++++----
+ kernel/entry/common.c        |  2 +-
+ kernel/entry/kvm.c           |  4 ++--
+ kernel/sched/core.c          | 34 +++++++++++++++++++++-------------
+ 7 files changed, 48 insertions(+), 24 deletions(-)
 
-diff --git a/kernel/Kconfig.preempt b/kernel/Kconfig.preempt
-index 09f06d8..7c1b29a 100644
---- a/kernel/Kconfig.preempt
-+++ b/kernel/Kconfig.preempt
-@@ -20,6 +20,7 @@ choice
+diff --git a/include/linux/entry-common.h b/include/linux/entry-common.h
+index 1e50cdb..fc61d02 100644
+--- a/include/linux/entry-common.h
++++ b/include/linux/entry-common.h
+@@ -64,7 +64,8 @@
  
- config PREEMPT_NONE
- 	bool "No Forced Preemption (Server)"
-+	depends on !PREEMPT_RT
- 	select PREEMPT_NONE_BUILD if !PREEMPT_DYNAMIC
- 	help
- 	  This is the traditional Linux preemption model, geared towards
-@@ -35,6 +36,7 @@ config PREEMPT_NONE
- config PREEMPT_VOLUNTARY
- 	bool "Voluntary Kernel Preemption (Desktop)"
- 	depends on !ARCH_NO_PREEMPT
-+	depends on !PREEMPT_RT
- 	select PREEMPT_VOLUNTARY_BUILD if !PREEMPT_DYNAMIC
- 	help
- 	  This option reduces the latency of the kernel by adding more
-@@ -54,7 +56,7 @@ config PREEMPT_VOLUNTARY
- config PREEMPT
- 	bool "Preemptible Kernel (Low-Latency Desktop)"
- 	depends on !ARCH_NO_PREEMPT
--	select PREEMPT_BUILD
-+	select PREEMPT_BUILD if !PREEMPT_DYNAMIC
- 	help
- 	  This option reduces the latency of the kernel by making
- 	  all kernel code (that is not executing in a critical section)
-@@ -74,7 +76,7 @@ config PREEMPT_LAZY
- 	bool "Scheduler controlled preemption model"
- 	depends on !ARCH_NO_PREEMPT
- 	depends on ARCH_HAS_PREEMPT_LAZY
--	select PREEMPT_BUILD
-+	select PREEMPT_BUILD if !PREEMPT_DYNAMIC
- 	help
- 	  This option provides a scheduler driven preemption model that
- 	  is fundamentally similar to full preemption, but is less
-@@ -82,6 +84,8 @@ config PREEMPT_LAZY
- 	  reduce lock holder preemption and recover some of the performance
- 	  gains seen from using Voluntary preemption.
+ #define EXIT_TO_USER_MODE_WORK						\
+ 	(_TIF_SIGPENDING | _TIF_NOTIFY_RESUME | _TIF_UPROBE |		\
+-	 _TIF_NEED_RESCHED | _TIF_PATCH_PENDING | _TIF_NOTIFY_SIGNAL |	\
++	 _TIF_NEED_RESCHED | _TIF_NEED_RESCHED_LAZY |			\
++	 _TIF_PATCH_PENDING | _TIF_NOTIFY_SIGNAL |			\
+ 	 ARCH_EXIT_TO_USER_MODE_WORK)
  
-+endchoice
+ /**
+diff --git a/include/linux/entry-kvm.h b/include/linux/entry-kvm.h
+index 6813171..16149f6 100644
+--- a/include/linux/entry-kvm.h
++++ b/include/linux/entry-kvm.h
+@@ -17,8 +17,9 @@
+ #endif
+ 
+ #define XFER_TO_GUEST_MODE_WORK						\
+-	(_TIF_NEED_RESCHED | _TIF_SIGPENDING | _TIF_NOTIFY_SIGNAL |	\
+-	 _TIF_NOTIFY_RESUME | ARCH_XFER_TO_GUEST_MODE_WORK)
++	(_TIF_NEED_RESCHED | _TIF_NEED_RESCHED_LAZY | _TIF_SIGPENDING | \
++	 _TIF_NOTIFY_SIGNAL | _TIF_NOTIFY_RESUME |			\
++	 ARCH_XFER_TO_GUEST_MODE_WORK)
+ 
+ struct kvm_vcpu;
+ 
+diff --git a/include/linux/sched.h b/include/linux/sched.h
+index a76e3d0..1d5cc3e 100644
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -2002,7 +2002,8 @@ static inline void set_tsk_need_resched(struct task_struct *tsk)
+ 
+ static inline void clear_tsk_need_resched(struct task_struct *tsk)
+ {
+-	clear_tsk_thread_flag(tsk,TIF_NEED_RESCHED);
++	atomic_long_andnot(_TIF_NEED_RESCHED | _TIF_NEED_RESCHED_LAZY,
++			   (atomic_long_t *)&task_thread_info(tsk)->flags);
+ }
+ 
+ static inline int test_tsk_need_resched(struct task_struct *tsk)
+diff --git a/include/linux/thread_info.h b/include/linux/thread_info.h
+index 9ea0b28..cf2446c 100644
+--- a/include/linux/thread_info.h
++++ b/include/linux/thread_info.h
+@@ -59,6 +59,14 @@ enum syscall_work_bit {
+ 
+ #include <asm/thread_info.h>
+ 
++#ifndef TIF_NEED_RESCHED_LAZY
++#ifdef CONFIG_ARCH_HAS_PREEMPT_LAZY
++#error Inconsistent PREEMPT_LAZY
++#endif
++#define TIF_NEED_RESCHED_LAZY TIF_NEED_RESCHED
++#define _TIF_NEED_RESCHED_LAZY _TIF_NEED_RESCHED
++#endif
 +
- config PREEMPT_RT
- 	bool "Fully Preemptible Kernel (Real-Time)"
- 	depends on EXPERT && ARCH_SUPPORTS_RT
-@@ -99,8 +103,6 @@ config PREEMPT_RT
- 	  Select this if you are building a kernel for systems which
- 	  require real-time guarantees.
+ #ifdef __KERNEL__
  
--endchoice
--
- config PREEMPT_COUNT
-        bool
+ #ifndef arch_set_restart_data
+@@ -179,22 +187,27 @@ static __always_inline unsigned long read_ti_thread_flags(struct thread_info *ti
  
-@@ -110,7 +112,7 @@ config PREEMPTION
+ #ifdef _ASM_GENERIC_BITOPS_INSTRUMENTED_NON_ATOMIC_H
  
- config PREEMPT_DYNAMIC
- 	bool "Preemption behaviour defined on boot"
--	depends on HAVE_PREEMPT_DYNAMIC && !PREEMPT_RT
-+	depends on HAVE_PREEMPT_DYNAMIC
- 	select JUMP_LABEL if HAVE_PREEMPT_DYNAMIC_KEY
- 	select PREEMPT_BUILD
- 	default y if HAVE_PREEMPT_DYNAMIC_CALL
+-static __always_inline bool tif_need_resched(void)
++static __always_inline bool tif_test_bit(int bit)
+ {
+-	return arch_test_bit(TIF_NEED_RESCHED,
++	return arch_test_bit(bit,
+ 			     (unsigned long *)(&current_thread_info()->flags));
+ }
+ 
+ #else
+ 
+-static __always_inline bool tif_need_resched(void)
++static __always_inline bool tif_test_bit(int bit)
+ {
+-	return test_bit(TIF_NEED_RESCHED,
++	return test_bit(bit,
+ 			(unsigned long *)(&current_thread_info()->flags));
+ }
+ 
+ #endif /* _ASM_GENERIC_BITOPS_INSTRUMENTED_NON_ATOMIC_H */
+ 
++static __always_inline bool tif_need_resched(void)
++{
++	return tif_test_bit(TIF_NEED_RESCHED);
++}
++
+ #ifndef CONFIG_HAVE_ARCH_WITHIN_STACK_FRAMES
+ static inline int arch_within_stack_frames(const void * const stack,
+ 					   const void * const stackend,
+diff --git a/kernel/entry/common.c b/kernel/entry/common.c
+index 5b6934e..e33691d 100644
+--- a/kernel/entry/common.c
++++ b/kernel/entry/common.c
+@@ -98,7 +98,7 @@ __always_inline unsigned long exit_to_user_mode_loop(struct pt_regs *regs,
+ 
+ 		local_irq_enable_exit_to_user(ti_work);
+ 
+-		if (ti_work & _TIF_NEED_RESCHED)
++		if (ti_work & (_TIF_NEED_RESCHED | _TIF_NEED_RESCHED_LAZY))
+ 			schedule();
+ 
+ 		if (ti_work & _TIF_UPROBE)
+diff --git a/kernel/entry/kvm.c b/kernel/entry/kvm.c
+index 2e0f75b..8485f63 100644
+--- a/kernel/entry/kvm.c
++++ b/kernel/entry/kvm.c
+@@ -13,7 +13,7 @@ static int xfer_to_guest_mode_work(struct kvm_vcpu *vcpu, unsigned long ti_work)
+ 			return -EINTR;
+ 		}
+ 
+-		if (ti_work & _TIF_NEED_RESCHED)
++		if (ti_work & (_TIF_NEED_RESCHED | _TIF_NEED_RESCHED_LAZY))
+ 			schedule();
+ 
+ 		if (ti_work & _TIF_NOTIFY_RESUME)
+@@ -24,7 +24,7 @@ static int xfer_to_guest_mode_work(struct kvm_vcpu *vcpu, unsigned long ti_work)
+ 			return ret;
+ 
+ 		ti_work = read_thread_flags();
+-	} while (ti_work & XFER_TO_GUEST_MODE_WORK || need_resched());
++	} while (ti_work & XFER_TO_GUEST_MODE_WORK);
+ 	return 0;
+ }
+ 
 diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index df6a34d..5c47d70 100644
+index aad4885..0cd05e3 100644
 --- a/kernel/sched/core.c
 +++ b/kernel/sched/core.c
-@@ -7450,11 +7450,13 @@ int preempt_dynamic_mode = preempt_dynamic_undefined;
- 
- int sched_dynamic_mode(const char *str)
+@@ -941,10 +941,9 @@ static inline void hrtick_rq_init(struct rq *rq)
+  * this avoids any races wrt polling state changes and thereby avoids
+  * spurious IPIs.
+  */
+-static inline bool set_nr_and_not_polling(struct task_struct *p)
++static inline bool set_nr_and_not_polling(struct thread_info *ti, int tif)
  {
-+#ifndef CONFIG_PREEMPT_RT
- 	if (!strcmp(str, "none"))
- 		return preempt_dynamic_none;
+-	struct thread_info *ti = task_thread_info(p);
+-	return !(fetch_or(&ti->flags, _TIF_NEED_RESCHED) & _TIF_POLLING_NRFLAG);
++	return !(fetch_or(&ti->flags, 1 << tif) & _TIF_POLLING_NRFLAG);
+ }
  
- 	if (!strcmp(str, "voluntary"))
- 		return preempt_dynamic_voluntary;
-+#endif
+ /*
+@@ -969,9 +968,9 @@ static bool set_nr_if_polling(struct task_struct *p)
+ }
  
- 	if (!strcmp(str, "full"))
- 		return preempt_dynamic_full;
-diff --git a/kernel/sched/debug.c b/kernel/sched/debug.c
-index 44a49f9..a48b2a7 100644
---- a/kernel/sched/debug.c
-+++ b/kernel/sched/debug.c
-@@ -248,9 +248,9 @@ static int sched_dynamic_show(struct seq_file *m, void *v)
- 		"none", "voluntary", "full", "lazy",
- 	};
- 	int j = ARRAY_SIZE(preempt_modes) - !IS_ENABLED(CONFIG_ARCH_HAS_PREEMPT_LAZY);
--	int i;
-+	int i = IS_ENABLED(CONFIG_PREEMPT_RT) * 2;
+ #else
+-static inline bool set_nr_and_not_polling(struct task_struct *p)
++static inline bool set_nr_and_not_polling(struct thread_info *ti, int tif)
+ {
+-	set_tsk_need_resched(p);
++	set_ti_thread_flag(ti, tif);
+ 	return true;
+ }
  
--	for (i = 0; i < j; i++) {
-+	for (; i < j; i++) {
- 		if (preempt_dynamic_mode == i)
- 			seq_puts(m, "(");
- 		seq_puts(m, preempt_modes[i]);
+@@ -1076,28 +1075,37 @@ void wake_up_q(struct wake_q_head *head)
+  * might also involve a cross-CPU call to trigger the scheduler on
+  * the target CPU.
+  */
+-void resched_curr(struct rq *rq)
++static void __resched_curr(struct rq *rq, int tif)
+ {
+ 	struct task_struct *curr = rq->curr;
++	struct thread_info *cti = task_thread_info(curr);
+ 	int cpu;
+ 
+ 	lockdep_assert_rq_held(rq);
+ 
+-	if (test_tsk_need_resched(curr))
++	if (cti->flags & ((1 << tif) | _TIF_NEED_RESCHED))
+ 		return;
+ 
+ 	cpu = cpu_of(rq);
+ 
+ 	if (cpu == smp_processor_id()) {
+-		set_tsk_need_resched(curr);
+-		set_preempt_need_resched();
++		set_ti_thread_flag(cti, tif);
++		if (tif == TIF_NEED_RESCHED)
++			set_preempt_need_resched();
+ 		return;
+ 	}
+ 
+-	if (set_nr_and_not_polling(curr))
+-		smp_send_reschedule(cpu);
+-	else
++	if (set_nr_and_not_polling(cti, tif)) {
++		if (tif == TIF_NEED_RESCHED)
++			smp_send_reschedule(cpu);
++	} else {
+ 		trace_sched_wake_idle_without_ipi(cpu);
++	}
++}
++
++void resched_curr(struct rq *rq)
++{
++	__resched_curr(rq, TIF_NEED_RESCHED);
+ }
+ 
+ void resched_cpu(int cpu)
+@@ -1192,7 +1200,7 @@ static void wake_up_idle_cpu(int cpu)
+ 	 * and testing of the above solutions didn't appear to report
+ 	 * much benefits.
+ 	 */
+-	if (set_nr_and_not_polling(rq->idle))
++	if (set_nr_and_not_polling(task_thread_info(rq->idle), TIF_NEED_RESCHED))
+ 		smp_send_reschedule(cpu);
+ 	else
+ 		trace_sched_wake_idle_without_ipi(cpu);
 
