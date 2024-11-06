@@ -1,72 +1,55 @@
-Return-Path: <linux-kernel+bounces-397873-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397876-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7E239BE1B2
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 10:06:08 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9ABC19BE1BD
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 10:07:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F1EB1F224CA
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 09:06:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CC3F51C236F8
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 09:07:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 745781DDC3F;
-	Wed,  6 Nov 2024 09:03:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA5A91DE4C9;
+	Wed,  6 Nov 2024 09:04:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="GzRhmvhD"
-Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="kZ78pNUP"
+Received: from out30-100.freemail.mail.aliyun.com (out30-100.freemail.mail.aliyun.com [115.124.30.100])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 141C91DD0E1;
-	Wed,  6 Nov 2024 09:03:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFE4E1DE3CB;
+	Wed,  6 Nov 2024 09:03:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730883826; cv=none; b=K8FcrO2c55LyHatyw9TuBUXXvWqH5XE4kZ5p0gd/XlW3qtiysBd+S6RYpA6GPKYd9zb50/F7zQvLTHJvkX4wrobFI+1wVoU83L8hzKqAknXnLOBI24lxRbLojrLVktdwcfWrKvg7sSmkAMfIgSvo8PZxFN5MxNNpvUqcs8iOYOs=
+	t=1730883841; cv=none; b=Ko0Qb7s8B16qWHPCBw6u0hjqus6jyFdKnwKUi7Ql88u9upJhKy+hCAK7/aP4KFCB6IeHU4NoC1z8bEGh9rkpz3kcNkq94kvs44T5UD52OcTL5O+FtqRa0QsOixeuVC35wLv2SIeSAnuIT3qQABwTvBtgx0kKRtKQZkvVZvSwiKg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730883826; c=relaxed/simple;
-	bh=HgpNPhPmBRsJWksj0+A8DbSRT3GIfHWeaZBQkwOcymk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=cKu3EnAJdLlLgmzlTgrfIByOpqby2GST+OoGmVP0faxIXMY7Wglk1WZN5pmgl5FOlFtyoKQ5JnxW5eIbcRglnO0UAF1YAEWpWD9GAYB3EQ7I3P1W+21sCcAxrwqnpZf8eZGQ4RUTxdv1wL6S7tKPckTNsvUL3eNnRCqhlwV/GNc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=GzRhmvhD; arc=none smtp.client-ip=217.70.183.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id E4815C000C;
-	Wed,  6 Nov 2024 09:03:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1730883823;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=E93S7Q8y++FOL3m/D0GbV+rHXdW8GgCuYU8lejTM1Gw=;
-	b=GzRhmvhDYab6e+aCvOAiscJ14yt1FYl8jh7MKLtr4A4vMqEZOHzd0P8TdQn6hOnAyQuYbf
-	hQnynd8cO05pDbs8uNL+GptssVm1mvRJbKcXtGWAEe7qmBqnymwkcCTPqNM2PDIa99+ZWO
-	uMs6xRvQnebX+7JxKrDlm6SHHRIECJJtO5Q9ePjtPjsaCA7d48br78MNm4j9w9cPKkTLzu
-	taNlpdcAE5Rxfs79B6Fae5yrpit0C7nurQMyDs2yPYhuTOswLbwzo3h2MZH5XAZXyFqXBk
-	wiSdvDBZp0SioSFlTzsKTCqGtkoiFXGIYLT1wGOzxi5D5yrh9mWqg5/h+LRy8Q==
-From: Maxime Chevallier <maxime.chevallier@bootlin.com>
-To: Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Jose Abreu <joabreu@synopsys.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	davem@davemloft.net,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Richard Cochran <richardcochran@gmail.com>
-Cc: Maxime Chevallier <maxime.chevallier@bootlin.com>,
-	=?UTF-8?q?Alexis=20Lothor=C3=A9?= <alexis.lothore@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	netdev@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH net-next v3 9/9] net: stmmac: dwmac_socfpga: This platform has GMAC
-Date: Wed,  6 Nov 2024 10:03:30 +0100
-Message-ID: <20241106090331.56519-10-maxime.chevallier@bootlin.com>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20241106090331.56519-1-maxime.chevallier@bootlin.com>
-References: <20241106090331.56519-1-maxime.chevallier@bootlin.com>
+	s=arc-20240116; t=1730883841; c=relaxed/simple;
+	bh=qidPoNUqR/ZCstdKkrYlQEKod8UWXPA6uyG69/L1ru4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=e1bfQBj7EVyGNavmxAZA0UUrm9Rix35QFlYcdX/04vooHidZ5vffWwSWDyGtZT4EwtaEkEnBO3OSzW+lV4WFbI7gVF2es3pg447qyx+EeXQ4UKAbZssEwm4Y+P0RMOl9HqnWJH70PFhdH2qluOaPwRUdbSAL0CnqL2fs69OxyMA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=kZ78pNUP; arc=none smtp.client-ip=115.124.30.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1730883831; h=From:To:Subject:Date:Message-ID:MIME-Version;
+	bh=/VbmmPghqrzkfDXHRbkEgFY7wgZZwTeBy4+zs3iLQME=;
+	b=kZ78pNUP4GA2lpA9nxV4bxWn5PIXQLTJ2KYOF91HRxx4ssScmCOt/5G/hc+HCYCR+s0B/S152FfD8YA5+Q+cV0Tv3YYgH5OsHg44RnYrcOH53uSzVQfCDw0gLwzr7XrH/kMKxo5iomDDtKDBrpLewTWxx/zMKx6MaEbnSfceiWA=
+Received: from localhost.localdomain(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0WIqmpCP_1730883829 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Wed, 06 Nov 2024 17:03:50 +0800
+From: Shuai Xue <xueshuai@linux.alibaba.com>
+To: linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org
+Cc: bhelgaas@google.com,
+	mahesh@linux.ibm.com,
+	oohall@gmail.com,
+	sathyanarayanan.kuppuswamy@linux.intel.com,
+	xueshuai@linux.alibaba.com
+Subject: [RFC PATCH v1 0/2] PCI/AER: report fatal errors of RCiEP and EP if link recoverd
+Date: Wed,  6 Nov 2024 17:03:37 +0800
+Message-ID: <20241106090339.24920-1-xueshuai@linux.alibaba.com>
+X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,31 +57,53 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-GND-Sasl: maxime.chevallier@bootlin.com
 
-Indicate that dwmac_socfpga has a gmac. This will make sure that
-gmac-specific interrupt processing is done, including timestamp
-interrupt handling. Without this, the external snapshot interrupt is
-never ack'd and we have an interrupt storm on external snapshot event.
+The AER driver has historically avoided reading the configuration space of an
+endpoint or RCiEP that reported a fatal error, considering the link to that
+device unreliable. Consequently, when a fatal error occurs, the AER and DPC
+drivers do not report specific error types, resulting in logs like:
 
-Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
----
- drivers/net/ethernet/stmicro/stmmac/dwmac-socfpga.c | 1 +
- 1 file changed, 1 insertion(+)
+[  245.281980] pcieport 0000:30:03.0: EDR: EDR event received
+[  245.287466] pcieport 0000:30:03.0: DPC: containment event, status:0x0005 source:0x3400
+[  245.295372] pcieport 0000:30:03.0: DPC: ERR_FATAL detected
+[  245.300849] pcieport 0000:30:03.0: AER: broadcast error_detected message
+[  245.307540] nvme nvme0: frozen state error detected, reset controller
+[  245.722582] nvme 0000:34:00.0: ready 0ms after DPC
+[  245.727365] pcieport 0000:30:03.0: AER: broadcast slot_reset message
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-socfpga.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-socfpga.c
-index 0745117d5872..248b30d7b864 100644
---- a/drivers/net/ethernet/stmicro/stmmac/dwmac-socfpga.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-socfpga.c
-@@ -485,6 +485,7 @@ static int socfpga_dwmac_probe(struct platform_device *pdev)
- 	plat_dat->pcs_init = socfpga_dwmac_pcs_init;
- 	plat_dat->pcs_exit = socfpga_dwmac_pcs_exit;
- 	plat_dat->select_pcs = socfpga_dwmac_select_pcs;
-+	plat_dat->has_gmac = true;
- 
- 	ret = stmmac_dvr_probe(&pdev->dev, plat_dat, &stmmac_res);
- 	if (ret)
+But, if the link recovered after hot reset, we can safely access AER status of
+the error device. In such case, report fatal error which helps to figure out the
+error root case.
+
+- Patch 1/2 identifies the error device by SOURCE ID register
+- Patch 2/3 reports the AER status if link recoverd.
+
+After this patch set, the logs like:
+
+[  414.356755] pcieport 0000:30:03.0: EDR: EDR event received
+[  414.362240] pcieport 0000:30:03.0: DPC: containment event, status:0x0005 source:0x3400
+[  414.370148] pcieport 0000:30:03.0: DPC: ERR_FATAL detected
+[  414.375642] pcieport 0000:30:03.0: AER: broadcast error_detected message
+[  414.382335] nvme nvme0: frozen state error detected, reset controller
+[  414.645413] pcieport 0000:30:03.0: waiting 100 ms for downstream link, after activation
+[  414.788016] nvme 0000:34:00.0: ready 0ms after DPC
+[  414.796975] nvme 0000:34:00.0: PCIe Bus Error: severity=Uncorrectable (Fatal), type=Data Link Layer, (Receiver ID)
+[  414.807312] nvme 0000:34:00.0:   device [144d:a804] error status/mask=00000010/00504000
+[  414.815305] nvme 0000:34:00.0:    [ 4] DLP                    (First)
+[  414.821768] pcieport 0000:30:03.0: AER: broadcast slot_reset message
+
+Shuai Xue (2):
+  PCI/AER: run recovery on device that detected the error
+  PCI/AER: report fatal errors of RCiEP and EP if link recoverd
+
+ drivers/pci/pci.h      |  3 ++-
+ drivers/pci/pcie/aer.c | 50 ++++++++++++++++++++++++++++++++++++++++++
+ drivers/pci/pcie/dpc.c | 30 ++++++++++++++++++++-----
+ drivers/pci/pcie/edr.c | 35 +++++++++++++++--------------
+ drivers/pci/pcie/err.c |  6 +++++
+ 5 files changed, 100 insertions(+), 24 deletions(-)
+
 -- 
-2.47.0
+2.39.3
 
 
