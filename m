@@ -1,188 +1,119 @@
-Return-Path: <linux-kernel+bounces-398936-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398937-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71D439BF83E
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 21:57:02 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D272B9BF83F
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 21:57:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D8C6AB23242
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 20:56:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0FB7A1C22968
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 20:57:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA39520C490;
-	Wed,  6 Nov 2024 20:56:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECA8020C308;
+	Wed,  6 Nov 2024 20:57:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="WCKKsTn5"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.15])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="vcq1KOGi"
+Received: from out-188.mta0.migadu.com (out-188.mta0.migadu.com [91.218.175.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC4EC14F9D9;
-	Wed,  6 Nov 2024 20:56:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AA4520968D
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 20:57:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730926612; cv=none; b=L65mq2+XOLSjvl6d4MXDNS5F7rwPIufYjF/MtH918VwnctyYxxQnzvB0PvxHtEpTT6vDhdh/xCRZlu4UvkLVjHY+S+Qtx8jknLkT+kV/LOkHOlH0Ef3+Y6VpUSfx58ZQKtQlzyECpb79gL5IY5o2vUtOdc8vIVAPCat0ZusTzyE=
+	t=1730926646; cv=none; b=MD0MePfaoYpSCgafLb19ntGidib3LAvNOmNICfU+gvZJpikx8iJ4ayV5VhK70dXrYLcqCQSLu24SfRVrPsDORrRpBOlniePojrNisqzS5sfwj0zcaltLxdqtcUXm2eLhW4W37Dn5UNqaN3mN2JFxc1hAHZU4fYoGHVi6no91qwA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730926612; c=relaxed/simple;
-	bh=emDfYC5gsNT0ZkPmo70caNBsgspO/o843GkMMi2Sc5M=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=fuQxa19eSIdS2PLe3Yt4g+RMBsFjO78AjmptSngbzTORr7RR2e7r7o/dtgsFqkBOY724vPMTT6ewpt8nK4hg7N5m+fI1vlwBF7XOmAaMGEF2VMDtDYEIgrD7dctRuaVnVd5EsGqbLfWgTknqueg3pw3iV5woM+oypc4UgknlEOk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=WCKKsTn5; arc=none smtp.client-ip=212.227.15.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1730926543; x=1731531343; i=w_armin@gmx.de;
-	bh=7gLnTY8NsEwYaE8L+E3HF94pvqFpm0jDrjzUD9d3p5g=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:From:Subject:To:
-	 Cc:References:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=WCKKsTn5HO/lJStk7LCXkocpUcy9uj/f3rzvrO+M1mq2Dk0rTQDVUI0u8uJfcQ3Z
-	 Ulr8hSqOb159NfweSpLdpROarVy9Yn4MZHkXSi2aBCCFO0QPYw1hjm499x34Hb7Us
-	 8WgddsBKzumz44QDh0Nzd7CnKh/fvTyfAl6YUfvSvuZzlMglxOdPszr7HBTExVQrg
-	 v6Di12v5knWSDcWlm63XTJEPGmC6q0lPVgQ5H7Owa8+8os4sRORGqtsU+xjD4PMRJ
-	 EDTjIPyk3iaO+/rn1hwlHfjZdP6Xk6rS9xHegZVGLiyd2qkwzTluUQDR0vy9hs3CB
-	 zPtMl04zMq+MuH5eZA==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [141.30.226.129] ([141.30.226.129]) by mail.gmx.net (mrgmx005
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1MrhUE-1teYzT2C2O-00kIaB; Wed, 06
- Nov 2024 21:55:43 +0100
-Message-ID: <2d9e5ff1-1e4b-4e50-86bd-970c652c39c7@gmx.de>
-Date: Wed, 6 Nov 2024 21:55:40 +0100
+	s=arc-20240116; t=1730926646; c=relaxed/simple;
+	bh=dZuvF83IXYJXupxHZE099aiodPb+Z5AqCA56iv4qUB8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ntueZlLmhBriDSHvge4oXJDrKtctKy4voI9uHInIEm3n4RB3O0hIkXLvPsBBX5rRbUcuOpFOv6YI5p3Xfoj840/vFVHWKPL7jZG4Q/xBllIKJ0ef8MjDEF4AaL099K7fnDJSvOkqB40wWVNDMhj0Z4LCLaifUHuflh7fWpQYOi0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=vcq1KOGi; arc=none smtp.client-ip=91.218.175.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Wed, 6 Nov 2024 15:57:16 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1730926642;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=LE7GTXlvS9azbZbdUMiTosoynBaaDsHv9uOptO4TBrg=;
+	b=vcq1KOGiykDrS+Uo+0erUxlROqlrje+d/lucdoA4/XIJ1Q3NjRLLvxy1Gjs+9yavewjEG/
+	0/Sqf2Q5rYWMROwbN8X+sjQ07DYu1SQA6TVugAp40RN+KTO2J6nRlvpQ52jCpduH0noAo8
+	K37oJrmZPDRymV/9wMPJG2T5es/mU5I=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Piotr Zalewski <pZ010001011111@proton.me>
+Cc: linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	skhan@linuxfoundation.org, syzbot+bee87a0c3291c06aa8c6@syzkaller.appspotmail.com
+Subject: Re: [PATCH v2] Change OPT_STR max to be 1 less than the size of
+ choices array
+Message-ID: <sxtugjw3gbifdvountioelfdpeqa7hnx4jxd3a76nh5uklf3du@vd7wof7b7nge>
+References: <20241106193443.307896-2-pZ010001011111@proton.me>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Armin Wolf <W_Armin@gmx.de>
-Subject: Re: [PATCH v4 17/20] ACPI: platform_profile: Check all profile
- handler to calculate next
-To: Mario Limonciello <mario.limonciello@amd.com>,
- Hans de Goede <hdegoede@redhat.com>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
- Maximilian Luz <luzmaximilian@gmail.com>, Lee Chun-Yi <jlee@suse.com>,
- Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
- Corentin Chary <corentin.chary@gmail.com>, "Luke D . Jones"
- <luke@ljones.dev>, Ike Panhc <ike.pan@canonical.com>,
- Henrique de Moraes Holschuh <hmh@hmh.eng.br>,
- Alexis Belmonte <alexbelm48@gmail.com>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
- Ai Chao <aichao@kylinos.cn>, Gergo Koteles <soyer@irl.hu>,
- open list <linux-kernel@vger.kernel.org>,
- "open list:ACPI" <linux-acpi@vger.kernel.org>,
- "open list:MICROSOFT SURFACE PLATFORM PROFILE DRIVER"
- <platform-driver-x86@vger.kernel.org>,
- "open list:THINKPAD ACPI EXTRAS DRIVER"
- <ibm-acpi-devel@lists.sourceforge.net>,
- Mark Pearson <mpearson-lenovo@squebb.ca>,
- Matthew Schwartz <matthew.schwartz@linux.dev>
-References: <20241105153316.378-1-mario.limonciello@amd.com>
- <20241105153316.378-18-mario.limonciello@amd.com>
-Content-Language: en-US
-In-Reply-To: <20241105153316.378-18-mario.limonciello@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:6T44JRw88vFGOMiDnicxFdYWi3AFF8XZYz2jm6IoJecfW0MTqyb
- UUXLkU9Dy7igZOWeyOIFHujSEizR6xzbakuu5lQ5TveTuQ5q5VrETF1HacqIyWjCDXANXw/
- 4T5j2HI53xpWt7TRnqS79KZHYxfoZym6+E2gSRYF1IsyRHbhKEBqMKY6kSyX6fUBVJPB1Cn
- yaYbSc2uLzGQXJdDW5Zdg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:zaUN1DBUT/U=;7XwXDYxkycQdkmvGQlIt0biBN5h
- sKXVsc9EZpLNH1olIFhKQXTF0NKu0KeXTc408msvt2F7GfcnWYd2i+e4uLnX04+LdGxfu5pK4
- lEFumusQDAC73dqvXyvqyOMZnoArvH0hBAeZkOJSV8Wv8PftovDtbj/qF6lJRGY3a4n3QApvZ
- jZlb6MaHx3YdLSJh3rPs5p9aP7nojgmakB9iFUE7g+k0lIKrZjBF+TrltHK+bMOCoLKSErms7
- 6nMrm0ZPSFrVMFb7I8A5tFfDQra9FxIMMdOELWsREmjgqRBTIBZ+9FSxexakIOQJyyH03iMeR
- Lddy+gjqkjbkjuDCzI1zwh865w5r/5tgQVQSFaH3QRojzW5P5D11OUm9NOAHqlIKRbBLMoVtu
- uRdxu/6nMI/Teaofl/sVNCGWxTUXhQVdZz/UHm/v9VS3I1XMg0DWV0w8G+KCrL6oYbPtA3PbQ
- sIo2Q2Q6pm2xGcfQy5OcuJ1mpaNSyLfiB2882Q6iXTlorneWReVPbLYvRDyvXDt/p7yf5Ya9r
- NZn7aByib01vq512wYb6GPiXShQw/BjowfAK2Y6YmaGvbfHmthKv1RPF+p/bYYmZAM4ySxROM
- Av685fY24SBKgzb9MV9mObOMgC19CcqO7qAV3cUIAEjZb8NHlUVhG28+5vwwYH8fmb9PAyEWc
- HfFm6zgyk8eAXRMPVZVnDNxnmam9rSWqvTbXnKjQBDfOACV8YNgul+50evetc/DhvxQMWGuR/
- evk6ZfmosOaQ1KmWAOuMSSDdE4mtA7uVNNhwtaKGMsANwaIVkwl7NBBr/Q5oG6CJwMBXNbVgJ
- +/SLqZkNgKDOU6pvdZNHi6gOZeFzrcof1eu+NJhi91P6g=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241106193443.307896-2-pZ010001011111@proton.me>
+X-Migadu-Flow: FLOW_OUT
 
-Am 05.11.24 um 16:33 schrieb Mario Limonciello:
+On Wed, Nov 06, 2024 at 07:46:30PM +0000, Piotr Zalewski wrote:
+> Change OPT_STR max value to be 1 less than the "ARRAY_SIZE" of "_choices"
+> array. As a result, remove -1 from (opt->max-1) in bch2_opt_to_text.
+> 
+> The "_choices" array is a null-terminated array, so computing the maximum
+> using "ARRAY_SIZE" without subtracting 1 yields an incorrect result. Since
+> bch2_opt_validate don't subtract 1, as bch2_opt_to_text does, values
+> bigger than the actual maximum would pass through option validation.
+> 
+> Reported-by: syzbot+bee87a0c3291c06aa8c6@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=bee87a0c3291c06aa8c6
+> Fixes: 63c4b2545382 ("bcachefs: Better superblock opt validation")
+> Suggested-by: Kent Overstreet <kent.overstreet@linux.dev>
+> Signed-off-by: Piotr Zalewski <pZ010001011111@proton.me>
 
-> As multiple platform profile handlers might not all support the same
-> profile, cycling to the next profile could have a different result
-> depending on what handler are registered.
->
-> Check what is active and supported by all handlers to decide what
-> to do.
->
-> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+Thanks! Applied
+
 > ---
->   drivers/acpi/platform_profile.c | 35 ++++++++++++++++++---------------
->   1 file changed, 19 insertions(+), 16 deletions(-)
->
-> diff --git a/drivers/acpi/platform_profile.c b/drivers/acpi/platform_pro=
-file.c
-> index 7861fccc2e58c..568485e285061 100644
-> --- a/drivers/acpi/platform_profile.c
-> +++ b/drivers/acpi/platform_profile.c
-> @@ -378,34 +378,37 @@ EXPORT_SYMBOL_GPL(platform_profile_notify);
->
->   int platform_profile_cycle(void)
->   {
-> +	enum platform_profile_option next =3D PLATFORM_PROFILE_LAST;
->   	enum platform_profile_option profile;
-> -	enum platform_profile_option next;
-> +	unsigned long choices;
->   	int err;
->
->   	if (!class_is_registered(&platform_profile_class))
->   		return -ENODEV;
->
-> -	scoped_cond_guard(mutex_intr, return -ERESTARTSYS, &profile_lock) {
-
-Since the aggregated choices might change at any moment, we still need
-some locking here.
-
-Thanks,
-Armin Wolf
-
-> -		if (!cur_profile)
-> -			return -ENODEV;
-> +	err =3D class_for_each_device(&platform_profile_class, NULL,
-> +				    &profile, _aggregate_profiles);
-> +	if (err)
-> +		return err;
->
-> -		err =3D cur_profile->profile_get(cur_profile, &profile);
-> -		if (err)
-> -			return err;
-> +	err =3D class_for_each_device(&platform_profile_class, NULL,
-> +				    &choices, _aggregate_choices);
-> +	if (err)
-> +		return err;
->
-> -		next =3D find_next_bit_wrap(cur_profile->choices, PLATFORM_PROFILE_LA=
-ST,
-> -					  profile + 1);
-> +	next =3D find_next_bit_wrap(&choices,
-> +				  PLATFORM_PROFILE_LAST,
-> +				  profile + 1);
->
-> -		if (WARN_ON(next =3D=3D PLATFORM_PROFILE_LAST))
-> -			return -EINVAL;
-> +	err =3D class_for_each_device(&platform_profile_class, NULL, &next,
-> +				    _store_class_profile);
->
-> -		err =3D cur_profile->profile_set(cur_profile, next);
-> -		if (err)
-> -			return err;
-> -	}
-> +	if (err)
-> +		return err;
->
->   	sysfs_notify(acpi_kobj, NULL, "platform_profile");
-> -	return 0;
-> +
-> +	return err;
->   }
->   EXPORT_SYMBOL_GPL(platform_profile_cycle);
->
+> 
+> Notes:
+>     Changes in v2:
+>         - Instead of subtracting 1 in bch2_opt_validate as in
+>           bch2_opt_to_text add -1 in OPT_STR macro definition
+>           and remove subtraction in bch2_opt_to_text.
+> 
+>     link to v1: https://lore.kernel.org/linux-bcachefs/20241031231823.688918-2-pZ010001011111@proton.me/
+> 
+>  fs/bcachefs/opts.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/fs/bcachefs/opts.c b/fs/bcachefs/opts.c
+> index 83f55cf99d46..49c59aec6954 100644
+> --- a/fs/bcachefs/opts.c
+> +++ b/fs/bcachefs/opts.c
+> @@ -227,7 +227,7 @@ const struct bch_option bch2_opt_table[] = {
+>  #define OPT_UINT(_min, _max)	.type = BCH_OPT_UINT,			\
+>  				.min = _min, .max = _max
+>  #define OPT_STR(_choices)	.type = BCH_OPT_STR,			\
+> -				.min = 0, .max = ARRAY_SIZE(_choices),	\
+> +				.min = 0, .max = ARRAY_SIZE(_choices) - 1, \
+>  				.choices = _choices
+>  #define OPT_STR_NOLIMIT(_choices)	.type = BCH_OPT_STR,		\
+>  				.min = 0, .max = U64_MAX,		\
+> @@ -429,7 +429,7 @@ void bch2_opt_to_text(struct printbuf *out,
+>  			prt_printf(out, "%lli", v);
+>  		break;
+>  	case BCH_OPT_STR:
+> -		if (v < opt->min || v >= opt->max - 1)
+> +		if (v < opt->min || v >= opt->max)
+>  			prt_printf(out, "(invalid option %lli)", v);
+>  		else if (flags & OPT_SHOW_FULL_LIST)
+>  			prt_string_option(out, opt->choices, v);
+> -- 
+> 2.47.0
+> 
+> 
 
