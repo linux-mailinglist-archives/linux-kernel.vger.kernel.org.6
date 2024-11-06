@@ -1,169 +1,95 @@
-Return-Path: <linux-kernel+bounces-397675-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397680-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB1B09BDEE3
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 07:31:52 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E2BB9BDEF4
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 07:40:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0B1F41C22F22
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 06:31:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF73A1C215AA
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 06:40:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29F7A191494;
-	Wed,  6 Nov 2024 06:31:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E136192D6B;
+	Wed,  6 Nov 2024 06:40:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="LpiVX1//"
-Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="MXoHcu3W"
+Received: from out162-62-57-210.mail.qq.com (out162-62-57-210.mail.qq.com [162.62.57.210])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5BD318FDC2;
-	Wed,  6 Nov 2024 06:31:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9B93824A3
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 06:40:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.210
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730874707; cv=none; b=A6yrpt72kD91Y2Gmzytuh5zbTPpJPpvS0exBkF6GXw474frqHUIvbrR5nDeufupudq+R7Sj6EUwwBZSj+FXga2e4oaWADRzto4JdgRqWNcplGBrLwPeWBi3u3kNGH2ttUUp/2CgGLfzNEg4a1OpgRcexOB0HnH+ZeTjN+7VMxtg=
+	t=1730875235; cv=none; b=bonZ4+EX8J1DObWwyPYRGM5/oPMrOndaLIoEYHk8i+J16xQSFFRH/OcZJZ0w46akyDgciWluX9Uoo28UbWGV3vBwqcu8i3GXEi4X90asbIZxadChONREOY9W1MfcrjsVUXxKKYi/yV5BWF1y+mWbPG2671z+pHHrKBv0WE0DktQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730874707; c=relaxed/simple;
-	bh=uP83JGONHOznuvXu3f4CH5ZvbbRdfVx2cuonvBPTYuM=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=GrjqmkvZ//xzpp3MtRIAviboOzaU0cuOqlP7WL+tTFiRncwt/nAp5RFPHnztmPpFDUIX+Y+4yPw0B497b28OnWKTg8muifOmcA6jlBOnqWb7GGURa+BnmIED+7BkQNyiEsF685zuYbYHBd/wPa6AgQSeMukTzEznUkJIO0JsAfI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=LpiVX1//; arc=none smtp.client-ip=116.203.91.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
+	s=arc-20240116; t=1730875235; c=relaxed/simple;
+	bh=rz9S3ScpICYzE+0PGpF+JEkPkOVUE3qh6SphvrTPkIs=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=oat2cUR15Hpd4Qvm+F5Q3ZvLsf9LMCOW+nRPzVZ8NoVNNVN53S29iCfc+jKdLyD/PH+g/EdaIjWAjfwx2ZtUXcHAulQlV9Uws9MC2CGEBXgsRZCvOMfXluL9taUEAH49Cdd3ZA6PgEoAVy1xDkHvIfmcvRKb6SmGA6UPOWDfe3g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=MXoHcu3W; arc=none smtp.client-ip=162.62.57.210
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1730875212; bh=aYZep8nd9xbQMiAZljVVU/z/rQgJ00os6jqqil7+Yug=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=MXoHcu3WOzEp+e6FyztDbXdqBAUOHivW7s/NvQi66giIkp75MFmmkzShsDb3LSAoP
+	 S8hgCkJXoiXo4VuwreHDiTuwnREWgF3aI0dfVyn2UrqMHW7Obyu6JBe7Oc/p+XyyyS
+	 psdHiBd5TrFHeOIojPMbaz8u5TyaFm98AZ3zsryQ=
+Received: from pek-lxu-l1.wrs.com ([111.198.227.254])
+	by newxmesmtplogicsvrszb20-0.qq.com (NewEsmtp) with SMTP
+	id 7EF9B233; Wed, 06 Nov 2024 14:31:47 +0800
+X-QQ-mid: xmsmtpt1730874707tvf178do1
+Message-ID: <tencent_536FC3A5A458D765576F66CF736AC3616905@qq.com>
+X-QQ-XMAILINFO: OGZxhFXqN7PJO9fwN0NmcXGeuJ6O3N/FXdmxc249bYjKYvjMH5z93ggepz2Htz
+	 qHg5NSL+x3P+MD/lsfms1hqIc32hyQVe+TRptdicGOpDUx3iopa7665QbOpBN7lCw4D9sTWxYQgd
+	 9Eh8oS/D5ECRHYUzVPzA9CvJDkdDpRFWGo9fD79twTSDdyKUydUrjU/ajvp8jC2h1P3w8nEiifke
+	 X++Kn0Fzn2WH25WHBRJVyhgsgYJ40MzNQ3g9GZJUTv/p3SsVSn0Xvy1v+8TAmhh+Qph39uMQkwae
+	 hX4NC/Su19yoROhVvvfMBQsZHTD2YYlMLMK3EZjqM0TZ0mZhRlSZzoSSuOloU6DH7Bu3EndxqVuu
+	 67nwdgzgY7/F2FBX6tQjKYbRF538KN+A42yP9X+BCgetzJmcCT0IAn5psMLPC5pXVZz6rjLHb8uf
+	 Cnl3KfzF/qz0WyouJzyhIU0IkCr8MZ3p7gPAhpfNj7+UA+UVEXLoBhvf+jSYQNcKFDjc11qPtniD
+	 JWOAtFpPxSkNZjhmFwhUCZwZQD7pFEfOfjMsrlI8p55JprigIVu3OXkDlJLSkrX2EMrBx+k/FePz
+	 0jMvA2SMdjk/yiclLZEGZr6YD61Dk2JcUxIaRbcmtbuMrXdhV/L8sKRlpLapEsrIqTSbpPQuiSkx
+	 Q2Wf6bBgfedO5ZKh14gseWk+xj75UaVz+JFBuTCjjkNh7CANDCKmWXCdQvuyF7BbpaPDWRdjA7DM
+	 8RpJf7PQ2Mk+Z3cBF9XBSNfFpxgiZDjDH9oVFLmrQSWKt1Pq+6/K4l3UpvRz1FFegA4wyQiRUJ02
+	 0Etj7DjbOFokE3nvX4pKm542+xBn29tlZn7fuXlsngsyJQwGrKhBL3Y3WPRdTwEkXtYcUYzRD6cK
+	 Gq0OLAMaBQDK6I/2sUtLaxr4WuKh8NqazcvvjqCFHc
+X-QQ-XMRINFO: MSVp+SPm3vtS1Vd6Y4Mggwc=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+968ecf5dc01b3e0148ec@syzkaller.appspotmail.com
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [hfs?] KMSAN: uninit-value in hfsplus_cat_bin_cmp_key
+Date: Wed,  6 Nov 2024 14:31:48 +0800
+X-OQ-MSGID: <20241106063147.2500734-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.47.0
+In-Reply-To: <672af85a.050a0220.2edce.151c.GAE@google.com>
+References: <672af85a.050a0220.2edce.151c.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
-	t=1730874703;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qxP9YcwVFKAJicqzFTfLQT+JXkODjBQKlOQxaMRpKVM=;
-	b=LpiVX1//YTrlPkWN11MudX8FgoByS4d0xmlSxUWXzk7vnHOKtecxfFdOQ/nLZXERk6rSah
-	PEpjEY8lMRy+e13zIylC0H26XRIKNyY2HwOE+HFrudIHgc21PpI/RhBgNx0cckXEorEEzp
-	+gPx1m6fjgyAP01xz4lqx6JviRMUX6LQm/xNzyRv1E9NBQkjzZuShNfJPQ2xTmS/KGQw8M
-	aLroN0McUq7y1yE1lwHhGlbR+yqAYHPUVKsIH8W/GzN8KVp0m0MPd5PbgiVP0IhqE3PZKe
-	49is7ozXfnr/DE8t94Rh7Ie8F3F8ZDSPnB82bjcyKNkTIGEjaPS2Pc9sQZ3+1A==
-Date: Wed, 06 Nov 2024 07:31:41 +0100
-From: Dragan Simic <dsimic@manjaro.org>
-To: wens@csie.org
-Cc: linux-sunxi@lists.linux.dev, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, jernej.skrabec@gmail.com, samuel@sholland.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, stable@vger.kernel.org, Ondrej Jirman
- <megi@xff.cz>, Andrey Skvortsov <andrej.skvortzov@gmail.com>
-Subject: Re: [PATCH] arm64: dts: allwinner: pinephone: Add mount matrix to
- accelerometer
-In-Reply-To: <CAGb2v67fLPf-yKObuds3LC77gT_W_OmgSK5y2KotRC-Zn9aL7w@mail.gmail.com>
-References: <129f0c754d071cca1db5d207d9d4a7bd9831dff7.1726773282.git.dsimic@manjaro.org>
- <bef0570137358c6c4a55f59e7a4977c4@manjaro.org>
- <CAGb2v66aody60h=Bpk49pxogq93FekmO48uThPET2RKxvx=OGw@mail.gmail.com>
- <cfc090cb87a8b926116d1a436694d17d@manjaro.org>
- <CAGb2v67fLPf-yKObuds3LC77gT_W_OmgSK5y2KotRC-Zn9aL7w@mail.gmail.com>
-Message-ID: <6f2c860c442838bd9892d5861b82e73e@manjaro.org>
-X-Sender: dsimic@manjaro.org
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
 Content-Transfer-Encoding: 8bit
-Authentication-Results: ORIGINATING;
-	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
 
-Hello Chen-Yu,
+bnode's record key length is smaller than 8?
 
-On 2024-11-06 03:19, Chen-Yu Tsai wrote:
-> On Sat, Oct 26, 2024 at 12:11 AM Dragan Simic <dsimic@manjaro.org> 
-> wrote:
->> On 2024-10-25 16:47, Chen-Yu Tsai wrote:
->> > On Wed, Oct 23, 2024 at 5:11 AM Dragan Simic <dsimic@manjaro.org>
->> > wrote:
->> >> On 2024-09-19 21:15, Dragan Simic wrote:
->> >> > The way InvenSense MPU-6050 accelerometer is mounted on the user-facing
->> >> > side
->> >> > of the Pine64 PinePhone mainboard, which makes it rotated 90 degrees
->> >> > counter-
->> >> > clockwise, [1] requires the accelerometer's x- and y-axis to be
->> >> > swapped, and
->> >> > the direction of the accelerometer's y-axis to be inverted.
->> >> >
->> >> > Rectify this by adding a mount-matrix to the accelerometer definition
->> >> > in the Pine64 PinePhone dtsi file.
->> >> >
->> >> > [1] https://files.pine64.org/doc/PinePhone/PinePhone%20mainboard%20bottom%20placement%20v1.1%2020191031.pdf
->> >> >
->> >> > Fixes: 91f480d40942 ("arm64: dts: allwinner: Add initial support for
->> >> > Pine64 PinePhone")
->> >> > Cc: stable@vger.kernel.org
->> >> > Helped-by: Ondrej Jirman <megi@xff.cz>
->> >> > Helped-by: Andrey Skvortsov <andrej.skvortzov@gmail.com>
->> >> > Signed-off-by: Dragan Simic <dsimic@manjaro.org>
->> >>
->> >> Just a brief reminder about this patch...  Please, let me know if some
->> >> further work is needed for it to become accepted.
->> >
->> > There's no "Helped-by" tag, and checkpatch would complain. The closest
->> > would be either Suggested-by or Co-developed-by, but with the latter
->> > you would also need their Signed-off-by.
->> 
->> Thanks for your response.  You're totally right about checkpatch.pl
->> not supporting Helped-by tags, but including neither Suggested-by
->> nor Co-developed-by would fit very well in this case, because the
->> associated level of credit falls right somewhere between what's
->> indicated by these two tags.
->> 
->> > I can change it to Suggested-by if that's OK with you.
->> 
->> I've created and submitted a patch [*] that adds support for Helped-by
->> tags to checkpatch.pl.  Let's see what kind of feedback that patch
->> will receive, and then we'll be able to move forward accordingly.
-> 
-> There doesn't seem to be any activity. Maybe also try adding it to the
-> 
->     Documentation/process/submitting-patches.rst
-> 
-> document?
+#syz test
 
-Good idea, thanks!  I've created and submitted the v2 [**] of my
-other patch, so it now also adds a description of the proposed
-Helped-by tag to Documentation/process/submitting-patches.rst.
-Let's see will that spark some interest.
+diff --git a/fs/hfsplus/bfind.c b/fs/hfsplus/bfind.c
+index 901e83d65d20..70deb143e518 100644
+--- a/fs/hfsplus/bfind.c
++++ b/fs/hfsplus/bfind.c
+@@ -116,7 +116,8 @@ int __hfs_brec_find(struct hfs_bnode *bnode, struct hfs_find_data *fd,
+ 		rec = (e + b) / 2;
+ 		len = hfs_brec_lenoff(bnode, rec, &off);
+ 		keylen = hfs_brec_keylen(bnode, rec);
+-		if (keylen == 0) {
++		printk("keylen: %u, off: %u, key: %p, %s\n", keylen, off, fd->key, __func__);
++		if (keylen < 8) {
+ 			res = -EINVAL;
+ 			goto fail;
+ 		}
 
-[*] 
-https://lore.kernel.org/linux-kernel/0e1ef28710e3e49222c966f07958a9879fa4e903.1729871544.git.dsimic@manjaro.org/T/#u
-[**] 
-https://lore.kernel.org/linux-kernel/cover.1730874296.git.dsimic@manjaro.org/T/#u
-
->> >> > ---
->> >> >
->> >> > Notes:
->> >> >     See also the linux-sunxi thread [2] that has led to this patch,
->> >> > which
->> >> >     provides a rather detailed analysis with additional details and
->> >> > pictures.
->> >> >     This patch effectively replaces the patch submitted in that thread.
->> >> >
->> >> >     [2]
->> >> > https://lore.kernel.org/linux-sunxi/20240916204521.2033218-1-andrej.skvortzov@gmail.com/T/#u
->> >> >
->> >> >  arch/arm64/boot/dts/allwinner/sun50i-a64-pinephone.dtsi | 3 +++
->> >> >  1 file changed, 3 insertions(+)
->> >> >
->> >> > diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-pinephone.dtsi
->> >> > b/arch/arm64/boot/dts/allwinner/sun50i-a64-pinephone.dtsi
->> >> > index 6eab61a12cd8..b844759f52c0 100644
->> >> > --- a/arch/arm64/boot/dts/allwinner/sun50i-a64-pinephone.dtsi
->> >> > +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-pinephone.dtsi
->> >> > @@ -212,6 +212,9 @@ accelerometer@68 {
->> >> >               interrupts = <7 5 IRQ_TYPE_EDGE_RISING>; /* PH5 */
->> >> >               vdd-supply = <&reg_dldo1>;
->> >> >               vddio-supply = <&reg_dldo1>;
->> >> > +             mount-matrix = "0", "1", "0",
->> >> > +                            "-1", "0", "0",
->> >> > +                            "0", "0", "1";
->> >> >       };
->> >> >  };
->> >>
 
