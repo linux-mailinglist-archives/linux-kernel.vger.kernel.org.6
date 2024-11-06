@@ -1,151 +1,84 @@
-Return-Path: <linux-kernel+bounces-398446-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398447-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D53CC9BF16C
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 16:18:12 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C79789BF16D
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 16:18:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9ADDF28343D
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 15:18:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F8641F224DF
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 15:18:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33EF3204948;
-	Wed,  6 Nov 2024 15:17:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="pL+UeLyI"
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07DDA2010F3;
+	Wed,  6 Nov 2024 15:18:22 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03E00202F78
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 15:17:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99F5218FDC6;
+	Wed,  6 Nov 2024 15:18:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730906252; cv=none; b=O7I+gviKrtnVtfi6kq3nN6HKsF6QhtQc6ve3qEb1AQInB0iiEAMergzJeKzbAVijFe2eV6TeLRuxUwZBNESOH+ztMRy6YZ/43mq4DYaZNLDIc6J8jc9b8vzB9+RLdRjQ04LC3/PJwrzndc0YyjJDs0Xn1FoHzYDUuFMo/rxEeUY=
+	t=1730906301; cv=none; b=Av3FWlCuZda1uppS+KFcvnv42ioZUBAznOohN/g8Wmz5hbxVRWcLDB2o1NU9Le395TI196hfa79s9Tm2RyI1yE0UnBmjz6WYHwvhubpMqhALwmiQ2x1eA6Q5fITRfhbPSfZysuVUlKcN9+RMDgOUt1zx+am7+DtroXmOh+R4Y/s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730906252; c=relaxed/simple;
-	bh=uKlUi9Sg140f0IdPzaKYU2GXQ6NZXSS0fvyz8qo/uPc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dHILp5MFJgu5bSiwzvpxwyfV1KEYopQBkG416/tj4POZO69jp/WxwUIwpOlZn/8fWmwVsRXJlys4YS99YFJoKMzjiBA6TeamG6QqGhCtVJTmAGTafiBva+DOB2tK72vCHAKiP8JM2z8Ao28NWZkm+o4l94rnhhq+eJ6hF5jKfhU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=pL+UeLyI; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-539ee1acb86so7036614e87.0
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2024 07:17:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1730906248; x=1731511048; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=4MsTq/WJqlO5g9jEiiWLZqf/MRDx8MkbY/RBJULejSE=;
-        b=pL+UeLyIg4maDpaK21NrO4Hya8+56wocLDvNRoWSGJ6fKpRJiyvmJPwxmW4Tj4IjHQ
-         TfBQb7PtNcule4MZ+h4wmJfcgs2rWol6miZLACzsMMV/yBc87uRBM+KU0OKkEVq8vkkK
-         Cp/oOIpjJB4se6BvZPVdigqEMdvS7e/uOksh71Vuy0LAmwog45XRJLqgZWv+Z5NSEAiq
-         vvE4b6R3jBnev4tGq3uJmuxEmRuxgw6ZQROY7eioFnwg82ynV+5myCoyZfkN4mBtuAPg
-         94NEPkQ0Bz8NotKdcl8HNOuu6FSAUtuA2HhXXf98jIcE9Plq6U5LzloZLGqn2TpufMRZ
-         lZhQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730906248; x=1731511048;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4MsTq/WJqlO5g9jEiiWLZqf/MRDx8MkbY/RBJULejSE=;
-        b=e7L5WmC8fzizbchaW8CD5hIoS1AzcK7JR1zfVRAyW/GRoUugtcjNaB7GyjMh1k9KGA
-         VK41xRJGp316eYZIbYkDJqDbtpw4JgDBT16te9PQ6VItWwmNv6Wdw4qtVLFrRZoiCEx4
-         iepGUH5yXEPEU3T7Vky9nlRxlvKl4aYNtYpHmq4OYMyfMN6r2at4mD3Dw5NoyhlAAiX6
-         zR59kXFDXZlnmT4DqMIdkSDe/8iek3Pi2sOnlq3R3MAkQ64EtZWJ9KiOMP5dmCVzi13a
-         fIYJ9kdtQENaUk92cH5ngcmTl+2LoalwJcQmQ68Z+RQXeD/zbzdaaB0IhzbpsR29fij6
-         3kaA==
-X-Forwarded-Encrypted: i=1; AJvYcCUwdY/3tbjCgCw2T766Um51tc0q49w8w5HAbb9SxU6o0Pb+v1SqFb00owHErmL6LpnFWtQ9QSsKjvPeWFA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxTgF95wGMvNr1NZdIbgsv0yZZcC6Rw8+KoZ3r6zGRb7Zqy7zNl
-	KKvbY4fOgoV+QpONDqCTJKoJWbruyyKWRAGD4PVeGDx5DE8wa6Sd+IqpCAxS31g=
-X-Google-Smtp-Source: AGHT+IGnJcBdTdgjK/B0z/HelObGqjcm5AB5nzH8x/DxvLNK2CcgfKasW11Fsyv2wiAlGSAOaH7rtw==
-X-Received: by 2002:a2e:be0d:0:b0:2fb:8774:440c with SMTP id 38308e7fff4ca-2fedb7a2a10mr97785331fa.10.1730906248023;
-        Wed, 06 Nov 2024 07:17:28 -0800 (PST)
-Received: from [192.168.50.4] ([82.78.167.28])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cee6a9a41bsm2855950a12.14.2024.11.06.07.17.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 06 Nov 2024 07:17:27 -0800 (PST)
-Message-ID: <4e233ebe-b0e1-4b37-9063-bdbeb5980b13@tuxon.dev>
-Date: Wed, 6 Nov 2024 17:17:22 +0200
+	s=arc-20240116; t=1730906301; c=relaxed/simple;
+	bh=7L2d0VRkBl2EnWFqlaEsHtgo5D8peTVTDkXGrdFcEQY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=aFs6YnQnfOz8INnpM2mgBZQ9tKNmJNdGJI4IAF4ykWo9VcXhOsxjorN4bw0C7qBoWnqvjJweJC4TocBa0fvhBlI65Y1JQ/2bsve2mfjcuOljeEk6GHYVnBU4cMFfgN4b8uUXPZyKBMed+KsYQFkLrXaCaVypIdwRyXNXyQ/X9vE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4CAE1C4CEC6;
+	Wed,  6 Nov 2024 15:18:20 +0000 (UTC)
+Date: Wed, 6 Nov 2024 10:18:23 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Marco Elver <elver@google.com>
+Cc: Kees Cook <keescook@chromium.org>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Andrew Morton <akpm@linux-foundation.org>, Oleg Nesterov <oleg@redhat.com>,
+ linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, Dmitry
+ Vyukov <dvyukov@google.com>, kasan-dev@googlegroups.com
+Subject: Re: [PATCH] tracing: Add task_prctl_unknown tracepoint
+Message-ID: <20241106101823.4a5d556d@gandalf.local.home>
+In-Reply-To: <CANpmjNP+CFijZ-nhwSR_sdxNDTjfRfyQ5c5wLE=fqN=nhL8FEA@mail.gmail.com>
+References: <20241105133610.1937089-1-elver@google.com>
+	<20241105113111.76c46806@gandalf.local.home>
+	<CANpmjNMuTdLDMmSeJkHmGjr59OtMEsf4+Emkr8hWD++XjQpSpg@mail.gmail.com>
+	<20241105120247.596a0dc9@gandalf.local.home>
+	<CANpmjNNTcrk7KtsQAdGVPmcOkiy446VmD-Y=YqxoUx+twTiOwA@mail.gmail.com>
+	<CANpmjNP+CFijZ-nhwSR_sdxNDTjfRfyQ5c5wLE=fqN=nhL8FEA@mail.gmail.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 12/31] ASoC: sh: rz-ssi: Use a proper bitmask for clear
- bits
-Content-Language: en-US
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, biju.das.jz@bp.renesas.com,
- prabhakar.mahadev-lad.rj@bp.renesas.com, lgirdwood@gmail.com,
- broonie@kernel.org, magnus.damm@gmail.com, linus.walleij@linaro.org,
- support.opensource@diasemi.com, perex@perex.cz, tiwai@suse.com,
- p.zabel@pengutronix.de, Adam.Thomson.Opensource@diasemi.com,
- linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-sound@vger.kernel.org, linux-gpio@vger.kernel.org,
- Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-References: <20241106081826.1211088-1-claudiu.beznea.uj@bp.renesas.com>
- <20241106081826.1211088-13-claudiu.beznea.uj@bp.renesas.com>
- <CAMuHMdWxmoUQSSnAVdqhpTQJYvUCJTL0EZbdKmLLhFWi8UCGkg@mail.gmail.com>
-From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <CAMuHMdWxmoUQSSnAVdqhpTQJYvUCJTL0EZbdKmLLhFWi8UCGkg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi, Geert,
+On Wed, 6 Nov 2024 10:22:15 +0100
+Marco Elver <elver@google.com> wrote:
 
-On 06.11.2024 16:56, Geert Uytterhoeven wrote:
-> Hi Claudiu,
+> On Tue, 5 Nov 2024 at 18:22, Marco Elver <elver@google.com> wrote:
+> ...
+> > > > > I'm also surprised that the comm didn't show in the trace_pipe.  
+> > > >
+> > > > Any config options or tweaks needed to get it to show more reliably?
+> > > >  
+> > > > > I've
+> > > > > updated the code so that it should usually find it. But saving it here may
+> > > > > not be a big deal.  
+> > >
+> > > How did you start it? Because it appears reliable for me.  
+> >
+> > Very normally from bash. Maybe my env is broken in other ways, I'll
+> > dig a little.  
 > 
-> On Wed, Nov 6, 2024 at 9:19 AM Claudiu <claudiu.beznea@tuxon.dev> wrote:
->> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->>
->> While it is still correct to pass zero as the bit-clear mask it may be
->> confusing. For this, use a proper bitmask for clear bits.
->>
->> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> 
-> Thanks for your patch!
-> 
->> --- a/sound/soc/renesas/rz-ssi.c
->> +++ b/sound/soc/renesas/rz-ssi.c
->> @@ -331,7 +331,7 @@ static void rz_ssi_set_idle(struct rz_ssi_priv *ssi)
->>                 dev_info(ssi->dev, "timeout waiting for SSI idle\n");
->>
->>         /* Hold FIFOs in reset */
->> -       rz_ssi_reg_mask_setl(ssi, SSIFCR, 0, SSIFCR_FIFO_RST);
->> +       rz_ssi_reg_mask_setl(ssi, SSIFCR, SSIFCR_FIFO_RST, SSIFCR_FIFO_RST);
-> 
-> But you're not clearing SSIFCR_FIFO_RST, you're setting it?
+> Some trial and error led me to conclude it's a race between the logic
+> looking up the comm and the process exiting: If the test program exits
+> soon after the traced event, it doesn't print the comm. Adding a
+> generous usleep() before it exits reliably prints the comm.
 
-The bits should be set to reset the FIFOs.
+Thanks for letting me know. Let me see if I can fix that!
 
-By "Use a proper bitmask for clear bits" phrase in the patch title or
-description I was referring at the 3rd argument of the
-rz_ssi_reg_mask_setl() function, which has the following prototype:
-
-static void rz_ssi_reg_mask_setl(struct rz_ssi_priv *priv, uint reg,
-
-                                 u32 bclr, u32 bset)
-
-
-Would you prefer to rephrase it in the next version?
-
-Thank you,
-Claudiu Beznea
-
-> 
->>  }
->>
->>  static int rz_ssi_start(struct rz_ssi_priv *ssi, struct rz_ssi_stream *strm)
-> 
-> Gr{oetje,eeting}s,
-> 
->                         Geert
-> 
+-- Steve
 
