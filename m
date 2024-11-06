@@ -1,109 +1,183 @@
-Return-Path: <linux-kernel+bounces-398926-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398927-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77EDA9BF81C
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 21:40:36 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C4C79BF81F
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 21:41:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3CA25281502
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 20:40:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7D9C8B23334
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 20:41:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8F1520C490;
-	Wed,  6 Nov 2024 20:40:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 305FF20C494;
+	Wed,  6 Nov 2024 20:40:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XCRK5yaD"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="fvIDciQG";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="L/DQSw+2";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="fvIDciQG";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="L/DQSw+2"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4270E20C483
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 20:40:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3C8320C47B;
+	Wed,  6 Nov 2024 20:40:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730925630; cv=none; b=Ez+ik9Kzw20Nr3VcqmJ8/CUGEDPUZ+H0g/HllYdCrpmMxjXw/2tX2yKYyF2juI/bNj0RdzQo42ouk4+eKXW8fo9snGOZe8BeWsm3caOBZ6rk1mq8fwV+R2zWflzhrDqk8XxXIYUO8gTDIum/GdfB3ZYHRWslYwL++ZJ7rxQEFoc=
+	t=1730925653; cv=none; b=qAM3CCHNqlTgLmeYnTYXni5PDNWFIYKjng4iWOmfgKY9GTz6+1W/99ADnBWY7sfVS+lLYst6Zsgg1dtPdw6OGBGPW5xtDsCIuCho6Gxq4ScGBE4Q5pywT9iSMxiL9T/VJVgqrJOqLoJ117at0hyPoY3yjW+zwST57S+HrUT+s+0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730925630; c=relaxed/simple;
-	bh=F+KE7KBA/1TmMwyqOENSHLf8ZBLeXogNnKlVFcjwcvI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=r3vMqJ9u0l+mDV7fIGczuMLvD5bF8lf/xTZJm5eeXSre9fynRTeEa51B496g3UYhmR2tRKrX3mJgNIfqmHGiF1oZ+4o8CZPSI1/LaKZHeuY9sxOiLiDaTck12PejwUbCNZiszaagxGk6GplsD+fje8HqJ2HG+49DYtqphOYMoj8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XCRK5yaD; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1730925626;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KKn4W9T/w7nBsU5GxlYBQNWch8oQwyyIJZkLvlSdOHs=;
-	b=XCRK5yaDHFAfUCPzUP419vluzbmumldtA4jO7Myd+JSDEIqWyJ8RfYCBOCuYPLEmnLGsyA
-	IylgtakcBegclv/k8vGTWobuTYdY25+ACxdWFAgDdzW2w04vL4PtociidABww7JxsfAI9E
-	z75aefklvtWLDuO5a6rrYGqvB5JY26A=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-376-06rhO1L1PVCNfvvNbR5cZQ-1; Wed,
- 06 Nov 2024 15:40:22 -0500
-X-MC-Unique: 06rhO1L1PVCNfvvNbR5cZQ-1
-X-Mimecast-MFC-AGG-ID: 06rhO1L1PVCNfvvNbR5cZQ
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	s=arc-20240116; t=1730925653; c=relaxed/simple;
+	bh=W7LCrVhBCKJDCj7yTDvNWsaAdUMN6aX+Sezbih3crWQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=AmppfDaV6TZHMh8CQbcH4aVGBn3uI4EnLfDcon3s5Zx3Wfk8rG13vlNPVGQKNKQxHSLvwVmH7CjsizMxOpy9gORvWOqug7MRLumtffxb6fLmVR84k4KU+b92fEy1elRJ34CO3ANSPFup6I7gEotM4vFQANBLTI0oNYjapi8w6xM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=fvIDciQG; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=L/DQSw+2; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=fvIDciQG; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=L/DQSw+2; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A92A31956096;
-	Wed,  6 Nov 2024 20:40:21 +0000 (UTC)
-Received: from [192.168.37.1] (unknown [10.22.58.17])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D0F4C1956088;
-	Wed,  6 Nov 2024 20:40:20 +0000 (UTC)
-From: Benjamin Coddington <bcodding@redhat.com>
-To: Roland Mainz <roland.mainz@nrubsig.org>
-Cc: open list <linux-kernel@vger.kernel.org>,
- Linux NFS Mailing List <linux-nfs@vger.kernel.org>
-Subject: Re: [PATCH] nfs_sysfs_link_rpc_client(): Replace strcpy with strscpy
-Date: Wed, 06 Nov 2024 15:40:18 -0500
-Message-ID: <283409A8-6FD1-461C-8490-0E81B266EF9D@redhat.com>
-In-Reply-To: <CAKAoaQnOfAU2LgLRwNNHion=-iHB1fSfPnfSFUQMmUyyEzu6LQ@mail.gmail.com>
-References: <20241106024952.494718-1-danielyangkang@gmail.com>
- <CAKAoaQnOfAU2LgLRwNNHion=-iHB1fSfPnfSFUQMmUyyEzu6LQ@mail.gmail.com>
+	by smtp-out2.suse.de (Postfix) with ESMTPS id B8E061FB72;
+	Wed,  6 Nov 2024 20:40:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1730925649; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:  in-reply-to:in-reply-to;
+	bh=3b6svSmPMRRXXayJxkjnSLgRaIEr/eGX1ESHi+OGbDg=;
+	b=fvIDciQGaTPK31+bWH04VLDq/ZFKupXpGmXzuFodHkL0IkYTnO5jkWmsGVWY9LGapZYqAd
+	dVy/bRdaHK1Ftgi4FUB9++LpSIBAmkTrOYm5qzqVdgPpOK5BdncLvd+/6BMszjsPA5r02m
+	eCaOOYDfPyqIZSUdfGVXdu8ad9bOpcQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1730925649;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:  in-reply-to:in-reply-to;
+	bh=3b6svSmPMRRXXayJxkjnSLgRaIEr/eGX1ESHi+OGbDg=;
+	b=L/DQSw+28RX95UrbeKydMKnscho6kXQ5pxMXFC6lfr9qWBFkgNOhh4+LYtL/9r6wCQzRV8
+	URI4jwiZIn1Rg8Dw==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=fvIDciQG;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b="L/DQSw+2"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1730925649; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:  in-reply-to:in-reply-to;
+	bh=3b6svSmPMRRXXayJxkjnSLgRaIEr/eGX1ESHi+OGbDg=;
+	b=fvIDciQGaTPK31+bWH04VLDq/ZFKupXpGmXzuFodHkL0IkYTnO5jkWmsGVWY9LGapZYqAd
+	dVy/bRdaHK1Ftgi4FUB9++LpSIBAmkTrOYm5qzqVdgPpOK5BdncLvd+/6BMszjsPA5r02m
+	eCaOOYDfPyqIZSUdfGVXdu8ad9bOpcQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1730925649;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:  in-reply-to:in-reply-to;
+	bh=3b6svSmPMRRXXayJxkjnSLgRaIEr/eGX1ESHi+OGbDg=;
+	b=L/DQSw+28RX95UrbeKydMKnscho6kXQ5pxMXFC6lfr9qWBFkgNOhh4+LYtL/9r6wCQzRV8
+	URI4jwiZIn1Rg8Dw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 7E620137C4;
+	Wed,  6 Nov 2024 20:40:49 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id JW/GGFHUK2f0KQAAD6G6ig
+	(envelope-from <rgoldwyn@suse.de>); Wed, 06 Nov 2024 20:40:49 +0000
+Date: Wed, 6 Nov 2024 15:40:44 -0500
+From: Goldwyn Rodrigues <rgoldwyn@suse.de>
+To: Xiubo Li <xiubli@redhat.com>
+Cc: "Luis Henriques (SUSE)" <luis.henriques@linux.dev>, 
+	Ilya Dryomov <idryomov@gmail.com>, ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH v2] ceph: ceph: fix out-of-bound array access when
+ doing a file read
+Message-ID: <yvmwdvnfzqz3efyoypejvkd4ihn5viagy4co7f4pquwrlvjli6@t7k6uihd2pp3>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e1c50195-07a9-4634-be01-71f4567daa54@redhat.com>
+X-Rspamd-Queue-Id: B8E061FB72
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	MISSING_XM_UA(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	ARC_NA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[linux.dev,gmail.com,vger.kernel.org];
+	RCPT_COUNT_FIVE(0.00)[5];
+	FROM_EQ_ENVFROM(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -4.01
+X-Spam-Flag: NO
 
-On 6 Nov 2024, at 15:20, Roland Mainz wrote:
+Hi Xiubo,
 
-> On Wed, Nov 6, 2024 at 3:49 AM Daniel Yang <danielyangkang@gmail.com> wrote:
->>
->> The function strcpy is deprecated due to lack of bounds checking. The
->> recommended replacement is strscpy.
->>
->> Signed-off-by: Daniel Yang <danielyangkang@gmail.com>
->> ---
->>  fs/nfs/sysfs.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/fs/nfs/sysfs.c b/fs/nfs/sysfs.c
->> index bf378ecd5..f3d0b2ef9 100644
->> --- a/fs/nfs/sysfs.c
->> +++ b/fs/nfs/sysfs.c
->> @@ -280,7 +280,7 @@ void nfs_sysfs_link_rpc_client(struct nfs_server *server,
->>         char name[RPC_CLIENT_NAME_SIZE];
->>         int ret;
->>
->> -       strcpy(name, clnt->cl_program->name);
->> +       strscpy(name, clnt->cl_program->name);
->
-> How should the "bounds checking" work in this case if you only pass
-> two arguments ?
+> BTW, so in the following code:
+> 
+> 1202                 idx = 0;
+> 1203                 if (ret <= 0)
+> 1204                         left = 0;
+> 1205                 else if (off + ret > i_size)
+> 1206                         left = i_size - off;
+> 1207                 else
+> 1208                         left = ret;
+> 
+> The 'ret' should be larger than '0', right ?
+> 
+> If so we do not check anf fix it in the 'else if' branch instead?
+> 
+> Because currently the read path code won't exit directly and keep 
+> retrying to read if it found that the real content length is longer than 
+> the local 'i_size'.
+> 
+> Again I am afraid your current fix will break the MIX filelock semantic ?
 
-The linux kernel strscpy() checks the sizeof the destination.
+Do you think changing left to ssize_t instead of size_t will
+fix the problem?
 
-Ben
 
+diff --git a/fs/ceph/file.c b/fs/ceph/file.c
+index 4b8d59ebda00..f8955773bdd7 100644
+--- a/fs/ceph/file.c
++++ b/fs/ceph/file.c
+@@ -1066,7 +1066,7 @@ ssize_t __ceph_sync_read(struct inode *inode, loff_t *ki_pos,
+ 	if (ceph_inode_is_shutdown(inode))
+ 		return -EIO;
+ 
+-	if (!len)
++	if (!len || !i_size)
+ 		return 0;
+ 	/*
+ 	 * flush any page cache pages in this range.  this
+@@ -1087,7 +1087,7 @@ ssize_t __ceph_sync_read(struct inode *inode, loff_t *ki_pos,
+ 		size_t page_off;
+ 		bool more;
+ 		int idx;
+-		size_t left;
++		ssize_t left;
+ 		struct ceph_osd_req_op *op;
+ 		u64 read_off = off;
+ 		u64 read_len = len;
+
+-- 
+Goldwyn
 
