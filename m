@@ -1,254 +1,153 @@
-Return-Path: <linux-kernel+bounces-398189-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398183-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5F149BE7F7
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 13:19:30 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 305C59BE7B3
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 13:16:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D6C99B222AC
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 12:19:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E5AA0283F07
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 12:16:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5FF81DF721;
-	Wed,  6 Nov 2024 12:19:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6FE71DF25B;
+	Wed,  6 Nov 2024 12:16:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=goldelico.com header.i=@goldelico.com header.b="W69Xj793";
-	dkim=permerror (0-bit key) header.d=goldelico.com header.i=@goldelico.com header.b="ZurwsuFW"
-Received: from mo4-p01-ob.smtp.rzone.de (mo4-p01-ob.smtp.rzone.de [81.169.146.167])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="InCqEwsK"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D66E1DF743;
-	Wed,  6 Nov 2024 12:19:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=81.169.146.167
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730895560; cv=pass; b=bOb1/mZxdxTMs8oqhQoMMAmV3SGTH2OdDZaharFXmyQyu4QDc9KE6S2cLMneZqjcH6qzGKwSpkwah+SDfUk04QJLFqveuU5Gt/10CAWTLfGHK2BsKMGr2NoXMzvaO0+TVQqu4ephINDdV0aHRZT5TWE9XAXNY0wHO2ZNPfnYFKA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730895560; c=relaxed/simple;
-	bh=uRy+I3CBpyDWHjwues5F8KRUANg2fEKZn09uKCmuRx4=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=L9uPSZdxMCHQPDK46NqzrkS11eEEm4JC8gjkfEj3dNh0+hIRewgEfI8tY0uQNQpwL2w4cOC3V0U6JltF9/GVy/fOP18PHD2pcLLlvQM3cioJitmGmlRn7hU9QNpucTmlnYnMNKV0xiWhaczMPRPgxFghOzpmy5O8fPKAmEvM+aU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=goldelico.com; spf=pass smtp.mailfrom=goldelico.com; dkim=pass (2048-bit key) header.d=goldelico.com header.i=@goldelico.com header.b=W69Xj793; dkim=permerror (0-bit key) header.d=goldelico.com header.i=@goldelico.com header.b=ZurwsuFW; arc=pass smtp.client-ip=81.169.146.167
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=goldelico.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goldelico.com
-ARC-Seal: i=1; a=rsa-sha256; t=1730895375; cv=none;
-    d=strato.com; s=strato-dkim-0002;
-    b=sgJY40JL4aVVCCfxUbMqIfZubM20thWUJ4nTQWdcFn8dXq8tJCKK/mG0EHbGJbBAwF
-    GwOlmwybM2cFZMX47FX5CFjedLAOcsW2Sv132EbEsTVlzHGJjqydqbLmfKPPJkVwc3UL
-    S+5kt+OpI/rxdJemNCBmXZL3qTEDKgzpCcbPNOXdGq8ipIPG+EpR/0SFT+sBrIJq0UpH
-    DVxa2VbSkxDKcpPxFihPdUTKMoiCky7ujNk5bO5JsUGuWaUDKMjxHbjj48Vl/ycL17PU
-    odaEiuS8Dq1o0vgIHJNZpQMJNXADYcuxXZv2vTu46t3EEpeFv0YFM5hv5mfyrEJWvwrn
-    8Ifw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1730895375;
-    s=strato-dkim-0002; d=strato.com;
-    h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:Cc:Date:
-    From:Subject:Sender;
-    bh=LsJ7BJEHDgw/eaZsbXlIAlGFRyIQvHsBP3sr/XremiQ=;
-    b=aJi0Y7dkHlAfjS+Ng7Fa0zC1XmMm4qrmNjWrIFM/2xVBcVODfkX3XjBFs2qT9WkLOI
-    xIIFS98nbs7KI3nuOuZQ5VuRcCX/uWQ9ydrWakcbMN3qxu/QL3D8UBKJexxrbJU85sWI
-    I7YhOAXaKaPeciRLYtn3dIroruon0DkVj56pBccBFjBV7uopPhyq19IWrWdxCxjsD85w
-    XYyLaqGMGJt02Y/Mm01oDxjwlSOCOWxp4YdOCQP4k3sqEr3tcd6LAInQtRWTBjoVzPLB
-    yIZk7EzKAm+ES/U5XjpjbZ/lIAnpm2hrHAX18w6NtXgfNEajgElJT9ne4VK6eVpHgX9h
-    NjBw==
-ARC-Authentication-Results: i=1; strato.com;
-    arc=none;
-    dkim=none
-X-RZG-CLASS-ID: mo01
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1730895375;
-    s=strato-dkim-0002; d=goldelico.com;
-    h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:Cc:Date:
-    From:Subject:Sender;
-    bh=LsJ7BJEHDgw/eaZsbXlIAlGFRyIQvHsBP3sr/XremiQ=;
-    b=W69Xj793ECmgklfxqSM6JxIqVeDYM7zRLjGT3j3J/IiDe2IPOVoLnAAAIE2c97p+0v
-    ZzF48XNKirEE1/GvNQ1OlHnc1FVsLCcVVqbW+v+gqAD1z6htfw2mCW6qkKv9TyADFXsn
-    xhewkq0WcDWgwBSWrw/b4wdvKvbU9akFkW4Sdwd9q+1m9R0JdNW7NMoFlT7eMh50bXRO
-    bdXOPsu3ZMcQif5EfaiL0jm5XNuTAqoTn/8gNc7Bg4f/RUdeqJhNhthMx8kSDYEOILk1
-    KmhRL49di6TmlUQOSHWo4Knm9rbLn0+nB7uHP8PxNacNMSf0Z1sRVZmfqYqvV10xysQy
-    2OgA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1730895375;
-    s=strato-dkim-0003; d=goldelico.com;
-    h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:Cc:Date:
-    From:Subject:Sender;
-    bh=LsJ7BJEHDgw/eaZsbXlIAlGFRyIQvHsBP3sr/XremiQ=;
-    b=ZurwsuFWulXpqhfuJbfFI7LxZ9oeyzbDu3VI7cuOov4BAroFPlUr71wkY834CqaqTz
-    /Qz2O751yptmtjrVRECA==
-X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMhflhwDubTJ9o12DNOsPj0lFzL1yeTkZ"
-Received: from smtpclient.apple
-    by smtp.strato.de (RZmta 51.2.11 DYNA|AUTH)
-    with ESMTPSA id Qb7e400A6CGE4h6
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve X9_62_prime256v1 with 256 ECDH bits, eq. 3072 bits RSA))
-	(Client did not present a certificate);
-    Wed, 6 Nov 2024 13:16:14 +0100 (CET)
-Content-Type: text/plain;
-	charset=us-ascii
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FC791DE8B4
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 12:16:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730895410; cv=none; b=URfUblpg6/UVfz5m1VzALg49bl0i587vicp3HOVoHgtOZjX7N6LunGnES2V827kp3mRKCug1cgPxo0J9GkcFpOOF8RxLgmDzTX4Ge1vBuy01BnZT+kw1U12npcdrupvoRTk4EEHLGK3lybOVwEszeMLhXqZEXk6CFp0goK9izoc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730895410; c=relaxed/simple;
+	bh=YcPzdGaKdcvEymYoNrWt7jy2/at2jPjvCWmCyoiUoIc=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=JcjG2ouMm9TziKaG+fBrEA1RtQ9YeWB7A8O9Hg/JpNoDRth+gi8R0fF+E5PLT3s0yfslFFDtRLHZhkuikzex+bRJ0Ghf9sCOtfZKDbJruXcb6WHSSXl8SrpjR7SW8AFGntu8lpH9OXBOx1T+mMdwFw7gdOMAUEJEUTrZJwzg9Pg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=InCqEwsK; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1730895405;
+	bh=YcPzdGaKdcvEymYoNrWt7jy2/at2jPjvCWmCyoiUoIc=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=InCqEwsK/rdYc8sEiH41VHMK+CnMosqltxkP2dk7/XqgB2rlL2cuiLPnK9SQbgGIl
+	 DLUpGEYqTW6WUWsQrwPSUR34bj4UGsOrtwDWfZe8i00yrwu4Lt/ppUm43LXwBU5+eq
+	 QnnLZbsThQX7Kre7+pAOh7G/VhKZwvhQTelAUCBBUxsCO2zu9g415CJOtCHdb1u940
+	 kCEJFMhjMNTESqjDZ8rFXjTHY2fd1NjS2E8YtTb0eNjzsvUW0yAWfPGC36JHdeI+jN
+	 6Q7RHy/h0VyMcjl42leNtnN2gJXkdhEZU8CRrJOdqEz5k5vVur5d0jdqJDs1+K1Z//
+	 tGZxVEAMBSC5A==
+Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bbrezillon)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 7E21E17E3617;
+	Wed,  6 Nov 2024 13:16:45 +0100 (CET)
+Date: Wed, 6 Nov 2024 13:16:41 +0100
+From: Boris Brezillon <boris.brezillon@collabora.com>
+To: Liviu Dudau <liviu.dudau@arm.com>
+Cc: Steven Price <steven.price@arm.com>, Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, Jann Horn <jannh@google.com>
+Subject: Re: [PATCH] drm/panthor: Lock XArray when getting entries for heap
+ and VM
+Message-ID: <20241106131641.47487624@collabora.com>
+In-Reply-To: <20241106120748.290697-1-liviu.dudau@arm.com>
+References: <20241106120748.290697-1-liviu.dudau@arm.com>
+Organization: Collabora
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51.11.1\))
-Subject: Re: [PATCH v2] i2c: omap: Fix standard mode false ACK readings
-From: "H. Nikolaus Schaller" <hns@goldelico.com>
-In-Reply-To: <20241106102342.393abe25@akair>
-Date: Wed, 6 Nov 2024 13:16:00 +0100
-Cc: Tony Lindgren <tony@atomide.com>,
- "Raghavendra, Vignesh" <vigneshr@ti.com>,
- Aaro Koskinen <aaro.koskinen@iki.fi>,
- Janusz Krzysztofik <jmkrzyszt@gmail.com>,
- Linux-OMAP <linux-omap@vger.kernel.org>,
- linux-i2c@vger.kernel.org,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <23103A2E-1BAF-4914-A580-2E118539AD00@goldelico.com>
-References: <20230426194956.689756-1-reidt@ti.com>
- <445b3cbf-ffbc-6f77-47db-c30fc599e88f@ti.com>
- <20230428074330.GJ14287@atomide.com>
- <20230428183037.wbhds54dz5l4v5xa@reidt-t5600.dhcp.ti.com>
- <664241E0-8D6B-4783-997B-2D8510ADAEA3@goldelico.com>
- <20241106102342.393abe25@akair>
-To: Andreas Kemnade <andreas@kemnade.info>,
- Reid Tonking <reidt@ti.com>
-X-Mailer: Apple Mail (2.3776.700.51.11.1)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
+On Wed,  6 Nov 2024 12:07:48 +0000
+Liviu Dudau <liviu.dudau@arm.com> wrote:
 
+> Similar to cac075706f29 ("drm/panthor: Fix race when converting
+> group handle to group object") we need to use the XArray's internal
+> locking when retrieving a pointer from there for heap and vm.
+> 
+> Reported-by: Jann Horn <jannh@google.com>
+> Cc: Boris Brezillon <boris.brezillon@collabora.com>
+> Cc: Steven Price <steven.price@arm.com>
+> Signed-off-by: Liviu Dudau <liviu.dudau@arm.com>
+> ---
+>  drivers/gpu/drm/panthor/panthor_heap.c | 15 +++++++++++++--
+>  drivers/gpu/drm/panthor/panthor_mmu.c  |  2 ++
+>  2 files changed, 15 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/panthor/panthor_heap.c b/drivers/gpu/drm/panthor/panthor_heap.c
+> index 3796a9eb22af2..fe0bcb6837f74 100644
+> --- a/drivers/gpu/drm/panthor/panthor_heap.c
+> +++ b/drivers/gpu/drm/panthor/panthor_heap.c
+> @@ -351,6 +351,17 @@ int panthor_heap_create(struct panthor_heap_pool *pool,
+>  	return ret;
+>  }
+>  
+> +static struct panthor_heap *panthor_heap_from_id(struct pathor_heap_pool *pool, u32 id)
 
-> Am 06.11.2024 um 10:23 schrieb Andreas Kemnade <andreas@kemnade.info>:
->=20
-> Am Wed, 11 Sep 2024 11:40:04 +0200
-> schrieb "H. Nikolaus Schaller" <hns@goldelico.com>:
->=20
->> Hi,
->>=20
->>> Am 28.04.2023 um 20:30 schrieb Reid Tonking <reidt@ti.com>:
->>>=20
->>> On 10:43-20230428, Tony Lindgren wrote: =20
->>>> * Raghavendra, Vignesh <vigneshr@ti.com> [230427 13:18]: =20
->>>>> On 4/27/2023 1:19 AM, Reid Tonking wrote: =20
->>>>>> Using standard mode, rare false ACK responses were appearing with
->>>>>> i2cdetect tool. This was happening due to NACK interrupt
->>>>>> triggering ISR thread before register access interrupt was
->>>>>> ready. Removing the NACK interrupt's ability to trigger ISR
->>>>>> thread lets register access ready interrupt do this instead. =20
->>>>=20
->>>> So is it safe to leave NACK interrupt unhandled until we get the
->>>> next interrupt, does the ARDY always trigger after hitting this?
->>>>=20
->>>> Regards,
->>>>=20
->>>> Tony =20
->>>=20
->>> Yep, the ARDY always gets set after a new command when register
->>> access is ready so there's no need for NACK interrupt to control
->>> this. =20
->>=20
->> I have tested one GTA04A5 board where this patch breaks boot on
->> v4.19.283 or v6.11-rc7 (where it was inherited from some earlier -rc
->> series).
->>=20
->> The device is either stuck with no signs of activity or reports RCU
->> stalls after a 20 second pause.
->>=20
-> Reproduced some problem here:
-> i2cset 1 0x69 0x14 0xb6 (reset command for gyro BMG160)
-> [  736.136108] omap_i2c 48072000.i2c: addr: 0x0069, len: 2, flags: =
-0x0,
-> stop: 1
-> [  736.136322] omap_i2c 48072000.i2c: IRQ (ISR =3D 0x0010)
-> either with this patch applied:
-> ... system mostly hangs, i2cset does not return.
-> with it reverted:
-> ... most times I see after this:
-> [  736.136505] omap_i2c 48072000.i2c: IRQ (ISR =3D 0x0002)
-> and i2cset says:
-> i2cset: write failed: Remote I/O error
->=20
-> ... sometimes:
-> omap_i2c 48072000.i2c: IRQ (ISR =3D 0x0004)
-> and i2cset is successful.
->=20
-> Other register writes seem to work reliably, just the reset command.
-> I had tested with bmg driver disabled earlier,
-> so it did not come to light.
+struct pathor_heap_pool does not exist :-).
 
-Indeed, I can confirm with your sequence (and bmg driver voluntarily
-disabled so that the effect just comes from the i2c bus & client chip).
+> +{
+> +	struct panthor_heap *heap;
+> +
+> +	xa_lock(&pool->xa);
+> +	heap = xa_load(&pool->xa, id);
+> +	xa_unlock(&pool->va);
 
-1. echo blacklist bmg160_i2c >/etc/modprobe.d/test.conf
-2. reboot & login:
-3.=20
+Access to panthor_heap_pool::xa is protected by the external
+pathor_heap_pool::lock, so taking the xa lock seems redundant here. How
+about adding a lockdep_assert_held(pool->lock) instead?
 
-Last login: Wed Nov  6 11:24:37 UTC 2024 on ttyO2
-root@letux:~# dmesg|fgrep bmg
-root@letux:~# i2cset -y 1 0x69 0x14 0xb6
-root@letux:~# i2cset -y 1 0x69 0x14 0xb6
-root@letux:~# i2cset -y 1 0x69 0x14 0xb6
-root@letux:~# i2cset -y 1 0x69 0x14 0xb6
---- hangs for some seconds ---
-[  109.664245] rcu: INFO: rcu_preempt self-detected stall on CPU
-[  109.670318] rcu:     0-...!: (2100 ticks this GP) =
-idle=3D7e74/1/0x40000004 softirq=3D9248/9248 fqs=3D0
-[  109.679260] rcu:     (t=3D2100 jiffies g=3D11389 q=3D33 ncpus=3D1)
-[  109.684753] rcu: rcu_preempt kthread timer wakeup didn't happen for =
-2099 jiffies! g11389 f0x0 RCU_GP_WAIT_FQS(5) ->state=3D0x402
-[  109.696685] rcu:     Possible timer handling issue on cpu=3D0 =
-timer-softirq=3D4004
-[  109.704010] rcu: rcu_preempt kthread starved for 2100 jiffies! g11389 =
-f0x0 RCU_GP_WAIT_FQS(5) ->state=3D0x402 ->cpu=3D0
-[  109.714935] rcu:     Unless rcu_preempt kthread gets sufficient CPU =
-time, OOM is now expected behavior.
-[  109.724517] rcu: RCU grace-period kthread stack dump:
-[  109.729797] task:rcu_preempt     state:I stack:0     pid:15    =
-tgid:15    ppid:2      flags:0x00000000
-[  109.739593] Call trace:=20
-[  109.739593]  __schedule from schedule+0x3c/0x64
-[  109.747039]  schedule from schedule_timeout+0xa8/0xd4
-[  109.752349]  schedule_timeout from rcu_gp_fqs_loop+0x148/0x370
-[  109.758514]  rcu_gp_fqs_loop from rcu_gp_kthread+0xec/0x124
-[  109.764373]  rcu_gp_kthread from kthread+0xfc/0x108
-[  109.769500]  kthread from ret_from_fork+0x14/0x28
-[  109.774444] Exception stack(0xf0041fb0 to 0xf0041ff8)
-[  109.779754] 1fa0:                                     00000000 =
-00000000 00000000 00000000
-[  109.788330] 1fc0: 00000000 00000000 00000000 00000000 00000000 =
-00000000 00000000 00000000
-[  109.796905] 1fe0: 00000000 00000000 00000000 00000000 00000013 =
-00000000
-[  109.803863] CPU: 0 UID: 0 PID: 3210 Comm: loginwindow Not tainted =
-6.12.0-rc6-letux+ #169
-[  109.803894] Hardware name: Generic OMAP36xx (Flattened Device Tree)
-[  109.803894] PC is at handle_softirqs+0x84/0x300
-[  109.803924] LR is at handle_softirqs+0x54/0x300
-[  109.803955] pc : [<c0133c3c>]    lr : [<c0133c0c>]    psr: 60070113
-[  109.803955] sp : f0001fa0  ip : 844ce392  fp : c0f02080
-[  109.803985] r10: f0651be0  r9 : c1008d28  r8 : f0651be8
-[  109.803985] r7 : c0f02d40  r6 : 00000200  r5 : c0e91600  r4 : =
-c0e91600
-[  109.803985] r3 : 2e70d000  r2 : 00000000  r1 : c0e91600  r0 : =
-c23cad00
-[  109.804016] Flags: nZCv  IRQs on  FIQs on  Mode SVC_32  ISA ARM  =
-Segment none
-[  109.804016] Control: 10c5387d  Table: 82b70019  DAC: 00000051
-[  109.804016] Call trace:=20
-[  109.804046]  handle_softirqs from __irq_exit_rcu+0x6c/0xb4
-[  109.804077]  __irq_exit_rcu from irq_exit+0x8/0x10
-[  109.804077]  irq_exit from call_with_stack+0x18/0x20
-[  109.804138]  call_with_stack from __irq_svc+0x98/0xcc
-[  109.804138] Exception stack(0xf0651b60 to 0xf0651ba8)
-[  109.804168] 1b60: c2c8f300 f0651ce0 c085aec0 c2c8f300 00000000 =
-00000019 00000000 00000000
-[  109.804168] 1b80: f0651be8 00000000 f0651be0 00000000 ffffffff =
-f0651bb0 c02ba850 c085aec0
-[  109.804199] 1ba0: a0070113 ffffffff
-[  109.804199]  __irq_svc from sock_poll+0x0/0xbc
-[  109.804229]  sock_poll from do_sys_poll+0x2a8/0x460
-[  109.804260]  do_sys_poll from sys_poll+0x74/0xe8
-[  109.804290]  sys_poll from ret_fast_syscall+0x0/0x54
-[  109.804290] Exception stack(0xf0651fa8 to 0xf0651ff0)
-[  109.804321] 1fa0:                   0000409b 00162f90 beeb07cc =
-00000001 ffffffff 00000000
-[  109.804321] 1fc0: 0000409b 00162f90 b61c3080 000000a8 00000000 =
-00162f9c 00163f90 beeb0874
-[  109.804351] 1fe0: 000000a8 beeb07a8 b6a83bd7 b6a057e6
-
+> +
+> +	return heap;
+> +}
+> +
+>  /**
+>   * panthor_heap_return_chunk() - Return an unused heap chunk
+>   * @pool: The pool this heap belongs to.
+> @@ -375,7 +386,7 @@ int panthor_heap_return_chunk(struct panthor_heap_pool *pool,
+>  		return -EINVAL;
+>  
+>  	down_read(&pool->lock);
+> -	heap = xa_load(&pool->xa, heap_id);
+> +	heap = panthor_heap_from_id(pool, heap_id);
+>  	if (!heap) {
+>  		ret = -EINVAL;
+>  		goto out_unlock;
+> @@ -438,7 +449,7 @@ int panthor_heap_grow(struct panthor_heap_pool *pool,
+>  		return -EINVAL;
+>  
+>  	down_read(&pool->lock);
+> -	heap = xa_load(&pool->xa, heap_id);
+> +	heap = panthor_heap_from_id(pool, heap_id);
+>  	if (!heap) {
+>  		ret = -EINVAL;
+>  		goto out_unlock;
+> diff --git a/drivers/gpu/drm/panthor/panthor_mmu.c b/drivers/gpu/drm/panthor/panthor_mmu.c
+> index 8ca85526491e6..8b5cda9d21768 100644
+> --- a/drivers/gpu/drm/panthor/panthor_mmu.c
+> +++ b/drivers/gpu/drm/panthor/panthor_mmu.c
+> @@ -1580,7 +1580,9 @@ panthor_vm_pool_get_vm(struct panthor_vm_pool *pool, u32 handle)
+>  {
+>  	struct panthor_vm *vm;
+>  
+> +	xa_lock(&pool->xa);
+>  	vm = panthor_vm_get(xa_load(&pool->xa, handle));
+> +	xa_unlock(&pool->va);
+>  
+>  	return vm;
+>  }
 
 
