@@ -1,204 +1,167 @@
-Return-Path: <linux-kernel+bounces-398973-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398974-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17FD49BF8BD
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 22:53:22 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99A1F9BF8BE
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 22:53:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8489B283E4D
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 21:53:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F4033B22405
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 21:53:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D73B1D9323;
-	Wed,  6 Nov 2024 21:53:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF3EC1D88D7;
+	Wed,  6 Nov 2024 21:53:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XvJ8i+Gu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gJ3zFXZw"
+Received: from mail-ua1-f52.google.com (mail-ua1-f52.google.com [209.85.222.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7670E18FDA5;
-	Wed,  6 Nov 2024 21:53:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5B9518FDA5
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 21:53:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730929992; cv=none; b=gDCpbSI+vCAUe6RvYn+FAYvfm3Kwxpx30B65kj2k56bCmFzVng9jwtzRH9G9k1wrFu3xMv+rkonPyFPiQHhE6aei1PH17PjWlnSd3eAGG5KwrE3o/6LyO6I1zF+X4VdcwDx2pgw4FKDXQpBlJx7NrbFEh2kRTUEf1mYS039EzTo=
+	t=1730930005; cv=none; b=PYl2Z+jwGHlcjQ/w8aO+OTG99xX6F2+6sjyWpudiBsn8K3PZnj80gbeCxHwWp81mRcqlKAETh0LyM+ZLnA1aht3jcFD0fqGywnIofGeDEGHOsp+b3PZAT320nYfvBe+bJ73xJ5JDKku3mjEsqt2o1xj14roOjK0Pcla39uwBXPo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730929992; c=relaxed/simple;
-	bh=vBUNYW41X8j9KVkVJ9SID98oI09XWTwBRYeK0M5j0TQ=;
+	s=arc-20240116; t=1730930005; c=relaxed/simple;
+	bh=/5dLYBymStii8ysWHL/5x3cFlohClo3vfr0XxH6eZ3w=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NpFB2rqEraUAfcDrPrA2YcgglXf2dF8JcpBp4DugfDZdB3DoacIOXJndPNKnyhVTct29sogob8O9jw1tE1qGd74/qtscyB/VWDCPrlsz6naGAf//oj/WNtV/VpncXHeMoWMKqUvPoQvuXByKF7g9PGytVE3f1WkGWpiVbou+og8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XvJ8i+Gu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA4B2C4CED0;
-	Wed,  6 Nov 2024 21:53:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730929992;
-	bh=vBUNYW41X8j9KVkVJ9SID98oI09XWTwBRYeK0M5j0TQ=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=XvJ8i+GuO0FBfeWdP1EP8PFsB3mhJ1SkIwubJeAPaHNg0Gxx1bFvGcBs6g7gEktgg
-	 Nc9JVIlBMyyzwrKz0FCiLZ7d35xt8z15/YtTxzeCGrV6nQh+zARjhMg1MZF8abfqDK
-	 kxpJ6iZSCIVgsk5+l2BbrFfKdvwI0Sd7eCue9CosGF+wB0kru5ZBM3i9DrHVHMjVWQ
-	 JR9WSTgBlB6VYTVtlIzhczXIz1SVE6kbU8irfZ0sVjOSOtAvvXoJelj2Ai/mpG7DiW
-	 huEKCFtpJ4vNbJbogwfAEPPuYlIC+fpWVfPc4UTknMNnOn98UFZTq0tBI6/sU9xqls
-	 QeHijuDF3pbHg==
-Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-e2bd7d8aaf8so267153276.3;
-        Wed, 06 Nov 2024 13:53:11 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCU4c38QU8OANM7lWwweFgST9SGzVKLfr2bKh7xmqUZzq3X0sLQSmpEzvifekWufHPJY2yNzKwZUr/96@vger.kernel.org, AJvYcCVyj2HL7cYPhMoTEznGLDmIgzEMsT3qR7nON6FnjXlw4PSmDdpLIENEQR8k6xWkSv+4q3upv1aD9pjkVJcB@vger.kernel.org
-X-Gm-Message-State: AOJu0YzOiG3lB5qXlxp/7R9a31SiLAJ3/87fi5WbVdUaeBe9Oj3XGi+9
-	CLZNcBbSEg6SLjEzZmYLfcc/vwVeE93iganHTe4zYYKLweB+3nJI6Tw2dBODq/EXfeucpbXnq4v
-	R4n2xNVC0v0APdZipW39B7egDWg==
-X-Google-Smtp-Source: AGHT+IFGsz0bjZks3SaX+0VdpO9QyxD6TF9jMNKPDx0ikEy137YNiUqssnlxpQt2OV0tyDlj1GpHTCW3MDe2kVYzq1g=
-X-Received: by 2002:a05:6902:1142:b0:e2b:b9bf:fe5b with SMTP id
- 3f1490d57ef6-e30e5a0226emr23814007276.8.1730929991130; Wed, 06 Nov 2024
- 13:53:11 -0800 (PST)
+	 To:Cc:Content-Type; b=Z1kkjbGUV34T0+uGAUvhW6uQwCOM9YQLgNMK0/MUjTlOzJ0+YiZRhPLNNEwHnhaE8dSmz2xj7SvHHvl4cOSfNmlFc755vdhXrStWgInZWu+LXUIGe+t/MCV0mkTxffQZ/tR3kwhuskUBRzx3zLs3f1mp3Qn1VA747f5WlLh1RdM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gJ3zFXZw; arc=none smtp.client-ip=209.85.222.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f52.google.com with SMTP id a1e0cc1a2514c-851f5d3001fso95099241.1
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2024 13:53:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730930002; x=1731534802; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=AF/zxMWhYdd3F+5qWwSaKGM6vouZPDy8y9g97i1mZbo=;
+        b=gJ3zFXZwzJP9FSXTNEr1mwh79HiS8ACABXhW141d7Y6zo5DEidb7mTBFZCLrd/LG9D
+         bGNlaX1+JvJYCCxjvLwH5cY3SG7z9ZFV1wVg6tc1r1p00bSPizPSnNExXKE5LSAMjKKl
+         QD6XK1Uvzcp0kO3vqeFnn7WjmqaICbe6vHTTMjb8Hng55+4YnxJNz0Jcb0PfnCAoklKJ
+         AkPynPWiYGQMO2+L196MPWSVfFogT74z39jR/1WQTkjyLiPhJFfAOAbyugmvAi+w9zv9
+         q0jm/O9EGhfZQa7Tus9cKRklEnfd47RMcaP6NDSZLrFQ5stwxLlDLaqk7fLu42lW/GEt
+         MZaw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730930002; x=1731534802;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=AF/zxMWhYdd3F+5qWwSaKGM6vouZPDy8y9g97i1mZbo=;
+        b=CzYcjCnF0lrbzx/w176Z9xzd6onLUFqwoU4wpe8Vb8XAVbg2Wg7zZM1mrZrDQnG+UX
+         jajDMGdFDDuGL3bTw8MEI70kA/pDU2s3e32IX+SORZd9XP6T7uUyLZxugM1N+DkK+y+Y
+         p7dEl1ErL1L+PqetM5wl+LrXN3ZCzjeKnRNgtwLCzCKYKGiu6IhAvsRaOAqUNTfscZnY
+         UaVr9YR5S3HDdu8pDB4Tmy1amw8ONHUDBc4gETo4VPDFhWnwqp0VcQpT4IhacUca9dmm
+         8Ekp9RPu+jLdYzIKEvj6zhtw1K3e/J1zR2suhVLpy9CoTA4KLWICo/ayRtu2QvftJxaa
+         CuNg==
+X-Forwarded-Encrypted: i=1; AJvYcCX5suqHBsDSdeKkO4G6Rum8Put485WSmdmBl/t+axM+ET0LVI+EZBFpGMiQEZzFWz039joON5rW75y2YAA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz/h8vTmxojY3AYZppYECo/g4zVU1r1/2cHrp4YlAN6r3sGTnG5
+	FUKcx6Wpwv5g16FuVPTZdx6Sm3py1ic9EDOtINVCWwmpJQnGC8XYPv3Sk+PvsRU3PYA9mQ4fM0o
+	vjcG9OXjn4YOYMGFPoTa+qGyQcTI=
+X-Google-Smtp-Source: AGHT+IHzVx0GzHxGxE7gncrXRX7YZTwBsFmcbvBR/mGsOtf6FSBN5/kujypl1V+CAG8IQXObE0r1Bca490Jx6n6jjhg=
+X-Received: by 2002:a05:6102:2ac7:b0:4a4:8ef0:25ae with SMTP id
+ ada2fe7eead31-4a901045900mr28978994137.25.1730930002472; Wed, 06 Nov 2024
+ 13:53:22 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241014193528.1896905-2-robh@kernel.org> <87r07p8x12.fsf@BLaptop.bootlin.com>
- <0A5AFF77-D888-4151-9C15-15A408709857@fw-web.de> <CAL_JsqKfpVVVh6L0PLmieBO3qMFpcDfWFwd+5=qzH_MbeZt31Q@mail.gmail.com>
- <4aa7f13e12646722d859ead240177eab@fw-web.de>
-In-Reply-To: <4aa7f13e12646722d859ead240177eab@fw-web.de>
-From: Rob Herring <robh@kernel.org>
-Date: Wed, 6 Nov 2024 15:52:59 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqJbYW3mpcjHb5YazUviVOmJEgjaWrbK0XYjR7xVQEb2+Q@mail.gmail.com>
-Message-ID: <CAL_JsqJbYW3mpcjHb5YazUviVOmJEgjaWrbK0XYjR7xVQEb2+Q@mail.gmail.com>
-Subject: Re: [PATCH] arm64: dts: marvell: Drop undocumented SATA phy names
-To: "Frank Wunderlich (linux)" <linux@fw-web.de>
-Cc: Gregory CLEMENT <gregory.clement@bootlin.com>, Andrew Lunn <andrew@lunn.ch>, 
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Russell King <linux@armlinux.org.uk>, 
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, frank-w@public-files.de
+References: <20241105211934.5083-1-21cnbao@gmail.com> <20241106150631.GA1172372@cmpxchg.org>
+ <CAGsJ_4zYiRzG6mBnW-2wh7YCo_PJQc7u1syd05DNdic7MaE7Zw@mail.gmail.com>
+ <20241106124225.632b42c3680cae0b940d2871@linux-foundation.org>
+ <CAGsJ_4xoHbg+6CtGhC7dPePPC44OMH8azQsOWMEJnXpCQs=bDQ@mail.gmail.com> <20241106134446.aaadc57a2a88c9efe899c838@linux-foundation.org>
+In-Reply-To: <20241106134446.aaadc57a2a88c9efe899c838@linux-foundation.org>
+From: Barry Song <21cnbao@gmail.com>
+Date: Thu, 7 Nov 2024 10:53:11 +1300
+Message-ID: <CAGsJ_4zLv=HpPL3g085vUaMo8tZZnPZBGT_SfLVCV-10zn+D3Q@mail.gmail.com>
+Subject: Re: [PATCH v3] mm: count zeromap read and set for swapout and swapin
+To: Andrew Morton <akpm@linux-foundation.org>, 
+	Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
+Cc: Johannes Weiner <hannes@cmpxchg.org>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	Barry Song <v-songbaohua@oppo.com>, Nhat Pham <nphamcs@gmail.com>, 
+	Usama Arif <usamaarif642@gmail.com>, Chengming Zhou <chengming.zhou@linux.dev>, 
+	Yosry Ahmed <yosryahmed@google.com>, Hailong Liu <hailong.liu@oppo.com>, 
+	David Hildenbrand <david@redhat.com>, Hugh Dickins <hughd@google.com>, 
+	Matthew Wilcox <willy@infradead.org>, Shakeel Butt <shakeel.butt@linux.dev>, 
+	Andi Kleen <ak@linux.intel.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
+	Chris Li <chrisl@kernel.org>, "Huang, Ying" <ying.huang@intel.com>, 
+	Kairui Song <kasong@tencent.com>, Ryan Roberts <ryan.roberts@arm.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Nov 6, 2024 at 3:17=E2=80=AFPM Frank Wunderlich (linux) <linux@fw-w=
-eb.de> wrote:
+On Thu, Nov 7, 2024 at 10:44=E2=80=AFAM Andrew Morton <akpm@linux-foundatio=
+n.org> wrote:
 >
-> Am 2024-11-06 19:39, schrieb Rob Herring:
-> > On Wed, Nov 6, 2024 at 12:34=E2=80=AFPM Frank Wunderlich <linux@fw-web.=
-de>
-> > wrote:
-> >>
-> >> Am 5. November 2024 17:28:57 MEZ schrieb Gregory CLEMENT
-> >> <gregory.clement@bootlin.com>:
-> >> >"Rob Herring (Arm)" <robh@kernel.org> writes:
-> >> >
-> >> >> While "phy-names" is allowed for sata-port nodes, the names used ar=
-en't
-> >> >> documented and are incorrect ("sata-phy" is what's documented). The=
- name
-> >> >> for a single entry is fairly useless, so just drop the property.
-> >> >>
-> >> >> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
-> >> >
-> >> >Applied on mvebu/dt64
-> >> >
-> >> >Thanks,
-> >> >
-> >> >Gregory
-> >> >> ---
-> >> >> Cc: Frank Wunderlich <linux@fw-web.de>
-> >> >>
-> >> >> There's also this 2 year old patch fixing other SATA errors[1] whic=
-h
-> >> >> was never picked up. :(
-> >> >>
-> >> >> [1] https://lore.kernel.org/linux-arm-kernel/20220311210357.222830-=
-3-linux@fw-web.de/
-> >>
-> >> Hi
-> >>
-> >> How to deal with my patch pointed by rob?
+> On Thu, 7 Nov 2024 10:00:47 +1300 Barry Song <21cnbao@gmail.com> wrote:
+>
+> > On Thu, Nov 7, 2024 at 9:42=E2=80=AFAM Andrew Morton <akpm@linux-founda=
+tion.org> wrote:
+> > >
+> > > On Thu, 7 Nov 2024 09:01:14 +1300 Barry Song <21cnbao@gmail.com> wrot=
+e:
+> > >
+> > > > Oops, it seems that it depends on Kanchana's 'mm: change count_objc=
+g_event() to
+> > > > count_objcg_events() for batch event updates,' which also isn't pre=
+sent in 6.12.
+> > > >
+> > > > Otherwise, it won't build, as reported here:
+> > > > https://lore.kernel.org/linux-mm/CAGsJ_4whD31+Lk0m2uq-o=3DygvkRsw1u=
+XcPeqxBONV-RUXkeEzg@mail.gmail.com/
+> > >
+> > > argh.
+> > >
 > >
-> > I believe it will conflict with mine. Can you rebase on top of
-> > mvebu/dt64 and resend it.
+> > Apologies for the inconvenience.
 > >
-> > Rob
+> > > > Hi Andrew,
+> > > > What=E2=80=99s the best approach here? Should we include Kanchana's=
+ patch that extends
+> > > > the nr argument for count_objcg_events() in 6.12-rc as well?
+> > >
+> > > Let's do the right thing here.  I'll drop this patch from mm-hotfixes=
+.
+> > > Please send a v4 against Linus mainline fairly soon then I'll redo
+> > > Kanchana's series around that.
+> >
+> > Alright. The question is whether we should integrate Kanchana's 'mm:
+> > change count_objcg_event() to count_objcg_events() for batch event
+> > updates' into 'mm: count zeromap read and set for swapout and swapin,'
+> > or keep it as a separate patch as patch 1/2?
+> >
+> > I guess integration would be better, as hotfixes may not be ideal for a=
+ patch
+> > series?
 >
-> i have rebased my patch [1], but it seems there are much more errors
-> there (which i tried to fix there too).
+> I don't fully understand what you're asking here.
 >
-> To be honest marvell is confusing to me finding the right file to patch
-> because of many dtsi files included by each other mixed with some
-> macros.
->
-> at least some properties have to be documented in yaml:
->
-> arch/arm64/boot/dts/marvell/armada-8040-db.dtb: sata@540000: Unevaluated
-> properties are not allowed ('#address-cells', '#size-cells',
-> 'dma-coherent', 'iommus' were unexpected)
+> I'm suggesting that you prepare a minimal patch that fixes the bug in
+> Linus's kernel.  Then we figure out what to do with Kanchana's 6.13-rc1
+> material after the bugfix is sorted out.
 
-iommus should be added to ahci-platform.yaml.
+Kanchana's commit 'mm: change count_objcg_event() to count_objcg_events()'
+changes count_objcg_event() to count_objcg_events() and supports
+nr_pages more than 1. This is what we need for the minimal patch of
+fixing zeromap
+as zeromap could be nr_pages > 1 for large folios.
 
-I think the others are just a side effect because sata-common.yaml
-fails due to phy-names. When phy-names is fixed, they should
-disappear.
+So my question is that, do I combine Kanchana's change into my patch
+and send a single patch, or do I send a patch series with 2 patches:
 
-> sata-node itself seems to be defined in
-> arch/arm64/boot/dts/marvell/armada-cp11x.dtsi (adress/size-cells and
-> dma-coherent are defined here)
->
-> iommus seems to be added with
-> 83a3545d9c37 2020-07-15 arm64: dts: marvell: add SMMU support Marcin
-> Wojtas  (tag: mvebu-dt64-5.9-1)
-> which seems not be documented in txt before i converted the binding.
->
-> so something like adding this to the binding:
->
->    '#address-cells':
->      const: 1
->
->    '#size-cells':
->      const: 0
->
->    dma-coherent: true
->
->    iommus:
->      maxItems: 1
->
-> dma-coherent was there in my version and seem to be broken with
->
-> 6f997d4bb98b 2022-09-09 dt-bindings: ata: ahci-platform: Move
-> dma-coherent to sata-common.yaml Serge Semin
->
-> but maybe i only get the error for it because of my call with my yaml
-> only
->
-> ARCH=3Darm64 CROSS_COMPILE=3Daarch64-linux-gnu- make dtbs_check
-> DT_SCHEMA_FILES=3DDocumentation/devicetree/bindings/ata/ahci-platform.yam=
-l
->
-> adress/size-cells is strange to me, i'm sure i tested the yaml against
-> the example which also contains them...i guess it was defined somewhere
-> else.
->
-> and this one:
->
-> arch/arm64/boot/dts/marvell/armada-8040-mcbin.dtb: sata@540000:
-> sata-port@0:phy-names:0: 'sata-phy' was expected
->         from schema $id: http://devicetree.org/schemas/ata/ahci-platform.=
-yaml#
->
-> i guess it is taken from here:
-> Documentation/devicetree/bindings/ata/ahci-common.yaml:107:
-> const: sata-phy
->
-> if i understand it the right way then if phy-names is defined in
-> sata-subnode it has to be value "sata-phy"...so basicly somewhere in the
-> chains of dtsi's a phy-name is defined to another value..am i right?
->
-> it looks like it is in
-> arch/arm64/boot/dts/marvell/armada-8040-mcbin.dtsi...if i drop the
-> phy-names for the other sata-ports (below cp1_sata0)
->
-> seems dropping them were missing from your patch as you remove another
-> one in same file (&cp0_sata0)
+1: Kanchana's mm: change count_objcg_event() to count_objcg_events()
+2: mm: count zeromap read and set for swapout and swapin
 
-Humm, not sure how I missed that. I was probably looking at warning
-counts and the others registered higher.
+If we combine them into a single patch, I'll need to incorporate the change=
+s
+from 1 into 2. I'm also unsure how to acknowledge Kanchana's contribution
+=E2=80=94perhaps mark it as co-developed?
 
-Rob
+Cc'd Kanchana as well.
+
+Thanks
+barry
 
