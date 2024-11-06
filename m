@@ -1,148 +1,292 @@
-Return-Path: <linux-kernel+bounces-397576-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397578-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9502F9BDD8F
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 04:25:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D8809BDD94
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 04:29:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 37649284DA9
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 03:25:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 986DC284CEF
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 03:29:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D263619006F;
-	Wed,  6 Nov 2024 03:25:17 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C524D19007D;
+	Wed,  6 Nov 2024 03:29:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="XGLqpZMT"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45C7164D;
-	Wed,  6 Nov 2024 03:25:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12DEE64D;
+	Wed,  6 Nov 2024 03:29:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730863517; cv=none; b=fTQKRWrXP78skDFkjtoQOzaUHTCwyAb9UhZnO0Abp2eZnBnYjmdK5MGe0Cp2EfatTWI9iokE0qm6DyE0vdb4AtukGoqxwIYd4g9sLSPnXZhl6PJBriPpynsJFq44FgSBkJMN/GNrIdTHVV25stPPfejVEbBOkeS0c+DRmZecFuI=
+	t=1730863746; cv=none; b=mMo5Wgp7dRZvbShW82gWJ6CNFQuWFdSg47cJRclF16KZxB/2P0B4ld+lqO0RM2FnsBPwVPD6VZfuW0P5nrCY5DtJaEcXzBadeXTemND+HxhZwGJMavCOr5p6n9lddq81HcCUozkEHHctY2CAEYe2SG6FrR741CKlUc/b2FOrZW0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730863517; c=relaxed/simple;
-	bh=XiaI+O/WQa0HTRDs4mpbMBnEOlZn70nBnpCnCaiy/iU=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=Pue+tt/kX15F9w++SOuAGLx8pfcPuDPvrRdRlJcwjbX2DL6sP4HpIeqAq+l4/jzz7xlMaj6WyjXCI3MpT8wns9bq63raBFAL+04sS3vo8xoWqWPaCkM69omyCN4jSatdGRN67qW1EWW1OYTLATZH5qFrI+xPZDMkM5pn1InoDD8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4XjrDS5CqXz4f3jqq;
-	Wed,  6 Nov 2024 11:24:56 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 937E01A06D7;
-	Wed,  6 Nov 2024 11:25:09 +0800 (CST)
-Received: from [10.174.176.73] (unknown [10.174.176.73])
-	by APP4 (Coremail) with SMTP id gCh0CgCngYWT4SpnxITsAw--.20767S3;
-	Wed, 06 Nov 2024 11:25:09 +0800 (CST)
-Subject: Re: [PATCH -next] block: fix uaf for flush rq while iterating tags
-To: Ming Lei <ming.lei@redhat.com>, Yu Kuai <yukuai1@huaweicloud.com>
-Cc: Christoph Hellwig <hch@infradead.org>, axboe@kernel.dk,
- linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
- yi.zhang@huawei.com, yangerkun@huawei.com, "yukuai (C)" <yukuai3@huawei.com>
-References: <20241104110005.1412161-1-yukuai1@huaweicloud.com>
- <Zyn_RGV2i9COvNQl@infradead.org>
- <217f242b-b4e2-89f7-3b0f-3337c251a603@huaweicloud.com>
- <ZyreVTWn2no-WCC3@fedora>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <43ed2c81-7e86-a106-3592-7f1944ce0f25@huaweicloud.com>
-Date: Wed, 6 Nov 2024 11:25:07 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+	s=arc-20240116; t=1730863746; c=relaxed/simple;
+	bh=8z6mpgKtC0sYeqR0f+xWDWY6CcphlBo6RSvoTKOEBBM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lGlplH8RJsyMsjx8H5cAw/MqbB/iWtwRiQI4/aiStr/Ay02RCD37wOoPkZg8iX1mSTPctyOfUD8CNAOULUGeTlWaCL8+N+hJ9Cp2/8SZAkucvKkogUYTz7eRl+yBK5Qm5/mycw+ot2kCk8IK76XkeNsTzzqmFEjj2BCopwi4SrY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=XGLqpZMT; arc=none smtp.client-ip=212.227.17.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1730863673; x=1731468473; i=w_armin@gmx.de;
+	bh=OBK21Tdfv+zM+bjwEo6sEkfi8wm7ScdHlW2LsThsuBU=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=XGLqpZMTbefGSy8loj6LO8tgMYQ24t79ng3csogl0lK8n+OIHMbT/unwpuUcKaTd
+	 q3XD5gKrKtU3wLEAJn5IygeJ9gdb97jtZFpLdp+/oHSHa7Br2CHUV5MOSplb8QeiQ
+	 sGpmDxS0voUg9dyMnInYbUIQD9xv3a/Ywvn2IyAokFUZ21OenwaePhRQGSChBpLEP
+	 LwnvQAtVTV2n7wIE6784X2IL5LEd4fD46zVv3yCe9kJp+h6QBrkUdjU9uDBRjuQo2
+	 c3C6V9Dmi7eL7SO7no9OXAn4/7Yvy8HvtaWhHmoJOoLLYXWydtyzu2RM1B0GIZwft
+	 idVe/iXpl7HfO/0rTQ==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [141.30.226.129] ([141.30.226.129]) by mail.gmx.net (mrgmx105
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1N1OXT-1tnogM1aI7-00y9AK; Wed, 06
+ Nov 2024 04:27:53 +0100
+Message-ID: <380cefa1-f578-495c-9f31-685482f44721@gmx.de>
+Date: Wed, 6 Nov 2024 04:27:49 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <ZyreVTWn2no-WCC3@fedora>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgCngYWT4SpnxITsAw--.20767S3
-X-Coremail-Antispam: 1UD129KBjvJXoW7ZrWxXFy8Gw18CFy5WFWUCFg_yoW8KF1rpF
-	Zxt3W3Krs5JrnF9Fs2v3y8XryIvwn7JFWkGF45CryaqF1DWFy0gFWxCrWFvF97Xr4rA3y0
-	gw4jvr9FvryYyaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvK14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lc7I2V7IY0VAS07AlzVAY
-	IcxG8wCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbV
-	WUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF
-	67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42
-	IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF
-	0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxh
-	VjvjDU0xZFpf9x0JUd-B_UUUUU=
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 01/20] ACPI: platform-profile: Add a name member to
+ handlers
+To: Mario Limonciello <mario.limonciello@amd.com>,
+ Hans de Goede <hdegoede@redhat.com>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
+ Maximilian Luz <luzmaximilian@gmail.com>, Lee Chun-Yi <jlee@suse.com>,
+ Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
+ Corentin Chary <corentin.chary@gmail.com>, "Luke D . Jones"
+ <luke@ljones.dev>, Ike Panhc <ike.pan@canonical.com>,
+ Henrique de Moraes Holschuh <hmh@hmh.eng.br>,
+ Alexis Belmonte <alexbelm48@gmail.com>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+ Ai Chao <aichao@kylinos.cn>, Gergo Koteles <soyer@irl.hu>,
+ open list <linux-kernel@vger.kernel.org>,
+ "open list:ACPI" <linux-acpi@vger.kernel.org>,
+ "open list:MICROSOFT SURFACE PLATFORM PROFILE DRIVER"
+ <platform-driver-x86@vger.kernel.org>,
+ "open list:THINKPAD ACPI EXTRAS DRIVER"
+ <ibm-acpi-devel@lists.sourceforge.net>,
+ Mark Pearson <mpearson-lenovo@squebb.ca>,
+ Matthew Schwartz <matthew.schwartz@linux.dev>
+References: <20241105153316.378-1-mario.limonciello@amd.com>
+ <20241105153316.378-2-mario.limonciello@amd.com>
+Content-Language: en-US
+From: Armin Wolf <W_Armin@gmx.de>
+In-Reply-To: <20241105153316.378-2-mario.limonciello@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:gO2nxtetvOO/R0uIm86U+FcTp/kghC079QDE/BddopcfAI+PJz7
+ 5+jtpiwxbcZEtCyCGD4MPmuDFPZ6RCmNazIZqg3Zkdg1gdUIXSsmI+U/gZQ+8vTR9hN0LxJ
+ SU/vC2IP2bUWGqhSAGs2sR5amLEGA098LZwTQW6+wVMIh1TYIxZmH1rc1GPeKVd8rNmVnOv
+ eMW/BJLOYrvo5Ed5oPM2w==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:UNWYe+cr6cA=;AmKccz5XqBE4VwkkrQCApsVu95q
+ G6Trg4HAl+jkcNLBbDCk75xIRSX0KHnh6Z9Ra+8aGWq11Drk0o9MPj6pCkapIUN/IM3tp3c4g
+ 4ProSATpjBmqQRbWjUBn3rJxfquEV3nfriD+3WBELhDw20t+n97cYCpCaNhjC4olS7cdIVvxL
+ 87F5GdNsYZIGt3o64jZEgb1O5kFQfw+Of/OEMT/rRukOvv9QqyPL87YeiiNYrfruXZuCk5lUD
+ 56Ys2qGhSKnIkc2kZaFrqYLa4AtbSEXF7NtWRcBZNLOUordX4RxSmJUieN+4eEnhy8FSY0Gfi
+ rQPpxpjcF9L7j9Nxb1d9RLFiaOf9UaYBHlcK7pRuWG3jQLGagEDq/u6nu6C5VL5vX7pn8W2Iv
+ UvVxyxM2AselEcWvftUROaQgP5HAMiz0Y59EJYgf6q5g5vHjE7xxaOOa0pXb6URSFjrFG+oY5
+ TrKQzelWY9YJs8PUCF8wmZqrVk54tDWdPXKwmNRXHHLGyZV9Klj39ndV7oSKo5rzHaupkA7x9
+ C0dlSJ76ZQmQZ67JSx0W65V64ScgBdAdsdDIBkq42iZOote8gdQE/0417makRTpAl7qcdyd93
+ L22v6APVt0Zi6ow5tCCB+Hs9hZca9+uCUXm4R9nDO6ib5CUmPJPhET4KBeB4+XJyiZP0Ix1Hz
+ RtBpoJGaPusNmZ64FtW/rZcOj/0PX6oVBu42Gjpq6NrK2VplU12Oly5gaQbGP1Av3rWLjEO40
+ dol+Muj9sxYNxqnLHKluAimrcb0JstApjIoAMWf9a2YSw1/Fl4T6HTVGWUgx5QtsfnzgF8DpQ
+ NHuFjgB1YHNPtMgHU4Z0BbrA==
 
-Hi,
+Am 05.11.24 um 16:32 schrieb Mario Limonciello:
 
-在 2024/11/06 11:11, Ming Lei 写道:
-> On Wed, Nov 06, 2024 at 10:58:40AM +0800, Yu Kuai wrote:
->> Hi,Ming and Christoph
->>
->> 在 2024/11/05 19:19, Christoph Hellwig 写道:
->>> On Mon, Nov 04, 2024 at 07:00:05PM +0800, Yu Kuai wrote:
->>>> From: Yu Kuai <yukuai3@huawei.com>
->>>>
->>>> blk_mq_clear_flush_rq_mapping() is not called during scsi probe, by
->>>> checking blk_queue_init_done(). However, QUEUE_FLAG_INIT_DONE is cleared
->>>> in del_gendisk by commit aec89dc5d421 ("block: keep q_usage_counter in
->>>> atomic mode after del_gendisk"), hence for disk like scsi, following
->>>> blk_mq_destroy_queue() will not clear flush rq from tags->rqs[] as well,
->>>> cause following uaf that is found by our syzkaller for v6.6:
->>>
->>> Which means we leave the flush request lingering after del_gendisk,
->>> which sounds like the real bug.  I suspect we just need to move the
->>> call to blk_mq_clear_flush_rq_mapping so that it is called from
->>> del_gendisk and doesn't leave the flush tag lingering around.
->>>
->>
->> This remind me that del_gendisk is still too late to do that. Noted that
->> flush_rq can acquire different tags, so if the multiple flush_rq is done
->> and those tags are not reused, the flush_rq can exist in multiple
->> entries in tags->rqs[]. The consequence I can think of is that iterating
->> tags can found the same flush_rq multiple times, and the flush_rq can be
->> inflight.
-> 
-> How can that be one problem?
-> 
-> Please look at
-> 
-> commit 364b61818f65 ("blk-mq: clearing flush request reference in tags->rqs[]")
-> commit bd63141d585b ("blk-mq: clear stale request in tags->rq[] before freeing one request pool")
-> 
-> and understand the motivation.
-> 
-> That also means it is just fine to delay blk_mq_clear_flush_rq_mapping()
-> after disk is deleted.
+> In order to prepare for allowing multiple handlers, introduce
+> a name field that can be used to distinguish between different
+> handlers.
 
-I do understand what you mean. Let's see if you want this to be avoided,
-for example(no disk is deleted):
+Reviewed-by: Armin Wolf <W_Armin@gmx.de>
 
-1) issue a flush, and tag 0 is used, after the flush is done,
-tags->rqs[0] = flush_rq
-2) issue another flush, and tag 1 is used, after the flush is done,
-tags->rqs[1] = flush_rq
-3) issue a flush again, and tag 2 is used, and the flush_rq is
-dispatched to disk;
-4) Then in this case, blk_mq_in_flight_rw() will found the same flush_rq
-3 times and think there are 3 inflight request, same for
-hctx_busy_show()...
-
-Thanks,
-Kuai
-
-> 
-> Thanks,
-> Ming
-> 
-> 
-> .
-> 
-
+> Tested-by: Matthew Schwartz <matthew.schwartz@linux.dev>
+> Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+> Reviewed-by: Mark Pearson <mpearson-lenovo@squebb.ca>
+> Reviewed-by: Maximilian Luz <luzmaximilian@gmail.com>
+> Reviewed-by: Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com>
+> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+> ---
+> v4:
+>   * add alienware-wmi too
+> ---
+>   drivers/platform/surface/surface_platform_profile.c | 1 +
+>   drivers/platform/x86/acer-wmi.c                     | 1 +
+>   drivers/platform/x86/amd/pmf/sps.c                  | 1 +
+>   drivers/platform/x86/asus-wmi.c                     | 1 +
+>   drivers/platform/x86/dell/alienware-wmi.c           | 1 +
+>   drivers/platform/x86/dell/dell-pc.c                 | 1 +
+>   drivers/platform/x86/hp/hp-wmi.c                    | 1 +
+>   drivers/platform/x86/ideapad-laptop.c               | 1 +
+>   drivers/platform/x86/inspur_platform_profile.c      | 1 +
+>   drivers/platform/x86/thinkpad_acpi.c                | 1 +
+>   include/linux/platform_profile.h                    | 1 +
+>   11 files changed, 11 insertions(+)
+>
+> diff --git a/drivers/platform/surface/surface_platform_profile.c b/drive=
+rs/platform/surface/surface_platform_profile.c
+> index 3de864bc66108..61aa488a80eb5 100644
+> --- a/drivers/platform/surface/surface_platform_profile.c
+> +++ b/drivers/platform/surface/surface_platform_profile.c
+> @@ -211,6 +211,7 @@ static int surface_platform_profile_probe(struct ssa=
+m_device *sdev)
+>
+>   	tpd->sdev =3D sdev;
+>
+> +	tpd->handler.name =3D "Surface Platform Profile";
+>   	tpd->handler.profile_get =3D ssam_platform_profile_get;
+>   	tpd->handler.profile_set =3D ssam_platform_profile_set;
+>
+> diff --git a/drivers/platform/x86/acer-wmi.c b/drivers/platform/x86/acer=
+-wmi.c
+> index d09baa3d3d902..53fbc9b4d3df7 100644
+> --- a/drivers/platform/x86/acer-wmi.c
+> +++ b/drivers/platform/x86/acer-wmi.c
+> @@ -1878,6 +1878,7 @@ static int acer_platform_profile_setup(void)
+>   	if (quirks->predator_v4) {
+>   		int err;
+>
+> +		platform_profile_handler.name =3D "acer-wmi";
+>   		platform_profile_handler.profile_get =3D
+>   			acer_predator_v4_platform_profile_get;
+>   		platform_profile_handler.profile_set =3D
+> diff --git a/drivers/platform/x86/amd/pmf/sps.c b/drivers/platform/x86/a=
+md/pmf/sps.c
+> index 92f7fb22277dc..e2d0cc92c4396 100644
+> --- a/drivers/platform/x86/amd/pmf/sps.c
+> +++ b/drivers/platform/x86/amd/pmf/sps.c
+> @@ -405,6 +405,7 @@ int amd_pmf_init_sps(struct amd_pmf_dev *dev)
+>   		amd_pmf_set_sps_power_limits(dev);
+>   	}
+>
+> +	dev->pprof.name =3D "amd-pmf";
+>   	dev->pprof.profile_get =3D amd_pmf_profile_get;
+>   	dev->pprof.profile_set =3D amd_pmf_profile_set;
+>
+> diff --git a/drivers/platform/x86/asus-wmi.c b/drivers/platform/x86/asus=
+-wmi.c
+> index 2ccc23b259d3e..c7c104c65a85a 100644
+> --- a/drivers/platform/x86/asus-wmi.c
+> +++ b/drivers/platform/x86/asus-wmi.c
+> @@ -3910,6 +3910,7 @@ static int platform_profile_setup(struct asus_wmi =
+*asus)
+>
+>   	dev_info(dev, "Using throttle_thermal_policy for platform_profile sup=
+port\n");
+>
+> +	asus->platform_profile_handler.name =3D "asus-wmi";
+>   	asus->platform_profile_handler.profile_get =3D asus_wmi_platform_prof=
+ile_get;
+>   	asus->platform_profile_handler.profile_set =3D asus_wmi_platform_prof=
+ile_set;
+>
+> diff --git a/drivers/platform/x86/dell/alienware-wmi.c b/drivers/platfor=
+m/x86/dell/alienware-wmi.c
+> index a800c28bb4d51..ac0038afd98fa 100644
+> --- a/drivers/platform/x86/dell/alienware-wmi.c
+> +++ b/drivers/platform/x86/dell/alienware-wmi.c
+> @@ -1056,6 +1056,7 @@ static int create_thermal_profile(void)
+>
+>   	pp_handler.profile_get =3D thermal_profile_get;
+>   	pp_handler.profile_set =3D thermal_profile_set;
+> +	pp_handler.name =3D "alienware-wmi";
+>
+>   	return platform_profile_register(&pp_handler);
+>   }
+> diff --git a/drivers/platform/x86/dell/dell-pc.c b/drivers/platform/x86/=
+dell/dell-pc.c
+> index 972385ca1990b..3cf79e55e3129 100644
+> --- a/drivers/platform/x86/dell/dell-pc.c
+> +++ b/drivers/platform/x86/dell/dell-pc.c
+> @@ -247,6 +247,7 @@ static int thermal_init(void)
+>   	thermal_handler =3D kzalloc(sizeof(*thermal_handler), GFP_KERNEL);
+>   	if (!thermal_handler)
+>   		return -ENOMEM;
+> +	thermal_handler->name =3D "dell-pc";
+>   	thermal_handler->profile_get =3D thermal_platform_profile_get;
+>   	thermal_handler->profile_set =3D thermal_platform_profile_set;
+>
+> diff --git a/drivers/platform/x86/hp/hp-wmi.c b/drivers/platform/x86/hp/=
+hp-wmi.c
+> index 81ccc96ffe40a..26cac73caf2b9 100644
+> --- a/drivers/platform/x86/hp/hp-wmi.c
+> +++ b/drivers/platform/x86/hp/hp-wmi.c
+> @@ -1624,6 +1624,7 @@ static int thermal_profile_setup(void)
+>   		set_bit(PLATFORM_PROFILE_COOL, platform_profile_handler.choices);
+>   	}
+>
+> +	platform_profile_handler.name =3D "hp-wmi";
+>   	set_bit(PLATFORM_PROFILE_BALANCED, platform_profile_handler.choices);
+>   	set_bit(PLATFORM_PROFILE_PERFORMANCE, platform_profile_handler.choice=
+s);
+>
+> diff --git a/drivers/platform/x86/ideapad-laptop.c b/drivers/platform/x8=
+6/ideapad-laptop.c
+> index 9d8c3f064050e..1f94c14c3b832 100644
+> --- a/drivers/platform/x86/ideapad-laptop.c
+> +++ b/drivers/platform/x86/ideapad-laptop.c
+> @@ -1102,6 +1102,7 @@ static int ideapad_dytc_profile_init(struct ideapa=
+d_private *priv)
+>
+>   	mutex_init(&priv->dytc->mutex);
+>
+> +	priv->dytc->pprof.name =3D "ideapad-laptop";
+>   	priv->dytc->priv =3D priv;
+>   	priv->dytc->pprof.profile_get =3D dytc_profile_get;
+>   	priv->dytc->pprof.profile_set =3D dytc_profile_set;
+> diff --git a/drivers/platform/x86/inspur_platform_profile.c b/drivers/pl=
+atform/x86/inspur_platform_profile.c
+> index 8440defa67886..03da2c8cf6789 100644
+> --- a/drivers/platform/x86/inspur_platform_profile.c
+> +++ b/drivers/platform/x86/inspur_platform_profile.c
+> @@ -177,6 +177,7 @@ static int inspur_wmi_probe(struct wmi_device *wdev,=
+ const void *context)
+>   	priv->wdev =3D wdev;
+>   	dev_set_drvdata(&wdev->dev, priv);
+>
+> +	priv->handler.name =3D "inspur-wmi";
+>   	priv->handler.profile_get =3D inspur_platform_profile_get;
+>   	priv->handler.profile_set =3D inspur_platform_profile_set;
+>
+> diff --git a/drivers/platform/x86/thinkpad_acpi.c b/drivers/platform/x86=
+/thinkpad_acpi.c
+> index 4c1b0553f8720..c8c316b8507a5 100644
+> --- a/drivers/platform/x86/thinkpad_acpi.c
+> +++ b/drivers/platform/x86/thinkpad_acpi.c
+> @@ -10549,6 +10549,7 @@ static void dytc_profile_refresh(void)
+>   }
+>
+>   static struct platform_profile_handler dytc_profile =3D {
+> +	.name =3D "thinkpad-acpi",
+>   	.profile_get =3D dytc_profile_get,
+>   	.profile_set =3D dytc_profile_set,
+>   };
+> diff --git a/include/linux/platform_profile.h b/include/linux/platform_p=
+rofile.h
+> index f5492ed413f36..6fa988e417428 100644
+> --- a/include/linux/platform_profile.h
+> +++ b/include/linux/platform_profile.h
+> @@ -27,6 +27,7 @@ enum platform_profile_option {
+>   };
+>
+>   struct platform_profile_handler {
+> +	const char *name;
+>   	unsigned long choices[BITS_TO_LONGS(PLATFORM_PROFILE_LAST)];
+>   	int (*profile_get)(struct platform_profile_handler *pprof,
+>   				enum platform_profile_option *profile);
+>
+> base-commit: d68cb6023356af3bd3193983ad4ec03954a0b3e2
 
