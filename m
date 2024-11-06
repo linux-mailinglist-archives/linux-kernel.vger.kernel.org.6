@@ -1,68 +1,68 @@
-Return-Path: <linux-kernel+bounces-398122-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398123-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C657C9BE5CC
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 12:41:26 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FD139BE5CD
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 12:41:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 084B3B24424
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 11:41:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E2C64280F67
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 11:41:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7CD91DED76;
-	Wed,  6 Nov 2024 11:41:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 306171DED6F;
+	Wed,  6 Nov 2024 11:41:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=aiven.io header.i=@aiven.io header.b="Tz2FZ4yH"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	dkim=pass (1024-bit key) header.d=aiven.io header.i=@aiven.io header.b="cYLRzsPs"
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADB171D619E
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 11:41:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCBDF1D619E
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 11:41:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730893278; cv=none; b=g6dntYYoXJMDjXybWPnk8duyZGqvOTCnW8kqeyAtzWe9TZpVZYxSFHDlmk16I7Y/TUNYgmcAEIrBT/SVqFxjnd49dfKBHRODr+gWG7Uu/KXU5d6z11uLpxD7EU/X2h2ci6iCBtUZSRpYh6TPYKYxr4QDJhChqSrK81Sh183wUcE=
+	t=1730893294; cv=none; b=YaPy6vNSrmelP0WkCi4yqB5mtYM79KhNwyGuhOCbXZ07DY29DhUl84VwP9qXF2iadbKSQHip9DpRzUX9S17ySLG3PVc/It/cO+iaEIhfuidTibqHrwOXDL2KvdT1NE8vSx1jcnv5KuUJiBTm+fMUjjuBkIHH+nqS0uLjy2FvlMU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730893278; c=relaxed/simple;
-	bh=avSNu0jxcOX+JToYoKPOxXqXoAKAFU2u/PiZkiumz/U=;
+	s=arc-20240116; t=1730893294; c=relaxed/simple;
+	bh=apl7e3mJoFn2XbWQpbe8pkRROPdUrvxhPgFBzUrah94=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Kw8NYrj6Vip9A8tzcH8aXLB7x+/hEIVwseZm6xDBvbK9gQAxU6J9Bq0J7lE2xJ50P/FDa8nSBRd5hGB4tmSpeTbmnEmwKgDppDnPmAdyBFibpFt+FcJ0g8CBc+hghK25+8LKczl9HCbdfIAuvXu/i/CowckRe+7lA8iuGNZFzto=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=aiven.io; spf=pass smtp.mailfrom=aiven.io; dkim=pass (1024-bit key) header.d=aiven.io header.i=@aiven.io header.b=Tz2FZ4yH; arc=none smtp.client-ip=209.85.221.52
+	 MIME-Version; b=sgWgIag1WFparcyk5QfUbO8UvC8E8MilhI8ZWBoba4CAnHaFJR+wPVkHPymQebreW22jNKw3pUdY1pf3B6P7cG6bdH/6vYUbRsIPTx1GdXS3NdrrGWzUhNRbwx3XhfjKTXVQwIDD3E8FahM5bMdmBoMEpBL9jQowrPmRlcOnjxQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=aiven.io; spf=pass smtp.mailfrom=aiven.io; dkim=pass (1024-bit key) header.d=aiven.io header.i=@aiven.io header.b=cYLRzsPs; arc=none smtp.client-ip=209.85.167.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=aiven.io
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aiven.io
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-37d4fd00574so468634f8f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2024 03:41:16 -0800 (PST)
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-539e63c8678so7351125e87.0
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2024 03:41:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=aiven.io; s=google; t=1730893275; x=1731498075; darn=vger.kernel.org;
+        d=aiven.io; s=google; t=1730893291; x=1731498091; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=2T1FnuxuOLfXTEuPhFAXlYWlJnV3S7rPr9KDCR50D/U=;
-        b=Tz2FZ4yHRYG4lmV/Gysq6ZLh8Iv9j3DYs79i1STYg4GKsPcPSIFAY5O9rS0TTxSoh7
-         zrRHk906GFjYpKfVGSDQkcP+rANVRugbrNGqs85ISRMqDWtVjpSZlq3P2ooWl+71fQ8V
-         KfDNmkU1UcxsGwdDuzHknyiy3l1lyjtft/MUE=
+        bh=dlN7JzcdEbavKyAODal4cf94DP35W34jit6g8RCrNoE=;
+        b=cYLRzsPsXW75lEl3wtVLFvPNfhpzXtKnO/Mgr+Ydlb3mRZfNCl7Duk30lLE1lVuO/k
+         pW7tYJojDIX3l8q0FqFSyN4fhKNS25pBhzyLpNDdcEgoYMuNbG3fdhhA6XtBdE/3s3xw
+         hJ76Easc1lmXtNxwa/9FV7G9nkgbrakABYuVY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730893275; x=1731498075;
+        d=1e100.net; s=20230601; t=1730893291; x=1731498091;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=2T1FnuxuOLfXTEuPhFAXlYWlJnV3S7rPr9KDCR50D/U=;
-        b=LeMaRtD2iF+fxR3qhSUeqbf+rXqFLEQXM3pyDcLQH3hm4aoEZbEmapiy5lxQAlyUJy
-         NXyux5Mwchgdz6d/+tyoGm3pLaPDf6DjxtpD3LoaSXzobAOcCf0233d6Y044g5Pw632S
-         X75ozZ5s4XaJTiaWlgpQS3UTFh1nKJ7I6iDoaC7mIXY0P1brdqgdNHjLBsSCvTWJcnBS
-         akFagG6K0oF9owKx9GfvAeeUbZ6HlodIgvXGU1biAh5zaQ7Ta9ig/4t/Jt9U/KVdqJLU
-         z6hReDslmcPxURyNWtlCL15v2tgLqYoEkuuYfE2pemi/IxaHcUki4XFAJNKtj4IbZUa+
-         Z5Pg==
-X-Forwarded-Encrypted: i=1; AJvYcCXK9+qiFKLcSJh5ypX1qSq+Hw+uq81Wg2HuClCH7/OHB3vw7yo0PuMEKUIKMasQ0GpsxU2cCjuc/u3i9F8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YysAZLibCcPkeOfRi0WasJ9cJ+lCVpcHYW/KghTzj7hPzVDXQG8
-	Rk9eU/HP/YHXP18EfEk2o1ElTNjeow6Hd2JJ019jCdYc5z+h6y4MBO2QU7Fk3W4=
-X-Google-Smtp-Source: AGHT+IGs7rtq/82Gf4X8l5DLzpbnfcApHai1n4nlgCsS52D3NRA4jUVMSqr7KG3kWQvNyUORpNBznw==
-X-Received: by 2002:a5d:588d:0:b0:374:b6e4:16a7 with SMTP id ffacd0b85a97d-381e81ca8d5mr1811747f8f.8.1730893275055;
-        Wed, 06 Nov 2024 03:41:15 -0800 (PST)
+        bh=dlN7JzcdEbavKyAODal4cf94DP35W34jit6g8RCrNoE=;
+        b=qbQxzHp9kM+/oWEBQFKhVXid5KsHfd05SbTP0hGIEAifid/VxFkJI8z7A4E+RZ5oUo
+         ldKaWoRGwrPOWGENpGi3U+RdBWh7SL6GKEhfEvcnCCYdBg8PPe9FqwOYC1wJy1KGRLmv
+         /ZZWpSma7p3cQlxqGgCxsuPOVyBr9u465wgUMV46u6hBh6ovyOU1+wisqNOb7H/TKsnR
+         r8Db+rJ2aIadGioCW7t1g1IBiodjblv9oJchqLFUNcAKCeUCeUHCUw9kV27pxEcP7o+T
+         EdwOAj+RmpT2lNnsYmz5M3HKOqvfF/HemlIYk6lQwZfQGXcrc0TuYd0g2LYCm/K6cKxA
+         N2dg==
+X-Forwarded-Encrypted: i=1; AJvYcCUPB9NIWbH1ohAAOrmDaxGglzcBgWSc4YW2WuT7PYuyyFF0LjHHsW9iw5pNXqS/BiI8UOa6Ah9dzXrbxgo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzbIzU+5cvUR9V+xlesnbHZLn16EZj2M/u4Cj6JN/J4zIHwQyA2
+	N2bNf3gh0+77GkVCK9K5xFHae4YHjMuoTfCOGDAvQEEyu7baVm3rww2cviJp2k0=
+X-Google-Smtp-Source: AGHT+IE5w1XpLWuVJXxnO8FGFsIqJic4Uxz8A2R8dhYAwHn/+iZlhlvJaC749E3qkfkw1T8G4ufSDg==
+X-Received: by 2002:a05:6512:401a:b0:536:a4e1:5fa2 with SMTP id 2adb3069b0e04-53d65df2818mr10182825e87.26.1730893290939;
+        Wed, 06 Nov 2024 03:41:30 -0800 (PST)
 Received: from ox.aiven-management.aivencloud.com (n114-74-229-70.bla3.nsw.optusnet.com.au. [114.74.229.70])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211057d3f87sm93796755ad.249.2024.11.06.03.41.11
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211057d3f87sm93796755ad.249.2024.11.06.03.41.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Nov 2024 03:41:14 -0800 (PST)
+        Wed, 06 Nov 2024 03:41:30 -0800 (PST)
 From: Orange Kao <orange@aiven.io>
 To: tony.luck@intel.com,
 	qiuxu.zhuo@intel.com
@@ -72,10 +72,11 @@ Cc: bp@alien8.de,
 	linux-edac@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	mchehab@kernel.org,
-	rric@kernel.org
-Subject: [PATCH 1/3] EDAC/igen6: Initialize edac_op_state according to the configuration data
-Date: Wed,  6 Nov 2024 11:35:45 +0000
-Message-ID: <20241106114024.941659-2-orange@aiven.io>
+	rric@kernel.org,
+	Orange Kao <orange@aiven.io>
+Subject: [PATCH 2/3] EDAC/igen6: Add polling support
+Date: Wed,  6 Nov 2024 11:35:46 +0000
+Message-ID: <20241106114024.941659-3-orange@aiven.io>
 X-Mailer: git-send-email 2.47.0
 In-Reply-To: <20241106114024.941659-1-orange@aiven.io>
 References: <20241106114024.941659-1-orange@aiven.io>
@@ -87,56 +88,88 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
+Some PCs with Intel N100 (with PCI device 8086:461c, DID_ADL_N_SKU4)
+experienced issues with error interrupts not working, even with the
+following configuration in the BIOS.
 
-Currently, igen6_edac sets edac_op_state to EDAC_OPSTATE_NMI, while the
-driver also supports memory errors reported from Machine Check. Initialize
-edac_op_state to the correct value according to the configuration data
-that the driver probed.
+    In-Band ECC Support: Enabled
+    In-Band ECC Operation Mode: 2 (make all requests protected and
+                                   ignore range checks)
+    IBECC Error Injection Control: Inject Correctable Error on insertion
+                                   counter
+    Error Injection Insertion Count: 251658240 (0xf000000)
 
-Signed-off-by: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
+Add polling mode support for these machines to ensure that memory error
+events are handled.
+
+Signed-off-by: Orange Kao <orange@aiven.io>
 ---
- drivers/edac/igen6_edac.c | 13 +++++++++++--
- 1 file changed, 11 insertions(+), 2 deletions(-)
+ drivers/edac/igen6_edac.c | 30 ++++++++++++++++++++++++++++--
+ 1 file changed, 28 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/edac/igen6_edac.c b/drivers/edac/igen6_edac.c
-index 07dacf8c10be..fa488ba15059 100644
+index fa488ba15059..dd62aa1ea9c3 100644
 --- a/drivers/edac/igen6_edac.c
 +++ b/drivers/edac/igen6_edac.c
-@@ -1350,6 +1350,15 @@ static void unregister_err_handler(void)
+@@ -1170,6 +1170,20 @@ static int igen6_pci_setup(struct pci_dev *pdev, u64 *mchbar)
+ 	return -ENODEV;
+ }
+ 
++static void igen6_check(struct mem_ctl_info *mci)
++{
++	struct igen6_imc *imc = mci->pvt_info;
++	u64 ecclog;
++
++	/* errsts_clear() isn't NMI-safe. Delay it in the IRQ context */
++	ecclog = ecclog_read_and_clear(imc);
++	if (!ecclog)
++		return;
++
++	if (!ecclog_gen_pool_add(imc->mc, ecclog))
++		irq_work_queue(&ecclog_irq_work);
++}
++
+ static int igen6_register_mci(int mc, u64 mchbar, struct pci_dev *pdev)
+ {
+ 	struct edac_mc_layer layers[2];
+@@ -1211,6 +1225,8 @@ static int igen6_register_mci(int mc, u64 mchbar, struct pci_dev *pdev)
+ 	mci->edac_cap = EDAC_FLAG_SECDED;
+ 	mci->mod_name = EDAC_MOD_STR;
+ 	mci->dev_name = pci_name(pdev);
++	if (edac_op_state == EDAC_OPSTATE_POLL)
++		mci->edac_check = igen6_check;
+ 	mci->pvt_info = &igen6_pvt->imc[mc];
+ 
+ 	imc = mci->pvt_info;
+@@ -1350,8 +1366,18 @@ static void unregister_err_handler(void)
  	unregister_nmi_handler(NMI_SERR, IGEN6_NMI_NAME);
  }
  
-+static void opstate_set(struct res_config *cfg)
-+{
-+	/* Set the mode according to the configuration data. */
-+	if (cfg->machine_check)
-+		edac_op_state = EDAC_OPSTATE_INT;
-+	else
-+		edac_op_state = EDAC_OPSTATE_NMI;
-+}
-+
- static int igen6_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+-static void opstate_set(struct res_config *cfg)
++static void opstate_set(struct res_config *cfg, const struct pci_device_id *ent)
  {
- 	u64 mchbar;
-@@ -1367,6 +1376,8 @@ static int igen6_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
++	/*
++	 * Quirk: Certain SoCs' error reporting interrupts don't work.
++	 *        Force polling mode for them to ensure that memory error
++	 *        events can be handled.
++	 */
++	if (ent->device == DID_ADL_N_SKU4) {
++		edac_op_state = EDAC_OPSTATE_POLL;
++		return;
++	}
++
+ 	/* Set the mode according to the configuration data. */
+ 	if (cfg->machine_check)
+ 		edac_op_state = EDAC_OPSTATE_INT;
+@@ -1376,7 +1402,7 @@ static int igen6_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
  	if (rc)
  		goto fail;
  
-+	opstate_set(res_cfg);
-+
+-	opstate_set(res_cfg);
++	opstate_set(res_cfg, ent);
+ 
  	for (i = 0; i < res_cfg->num_imc; i++) {
  		rc = igen6_register_mci(i, mchbar, pdev);
- 		if (rc)
-@@ -1450,8 +1461,6 @@ static int __init igen6_init(void)
- 	if (owner && strncmp(owner, EDAC_MOD_STR, sizeof(EDAC_MOD_STR)))
- 		return -EBUSY;
- 
--	edac_op_state = EDAC_OPSTATE_NMI;
--
- 	rc = pci_register_driver(&igen6_driver);
- 	if (rc)
- 		return rc;
 -- 
 2.47.0
 
