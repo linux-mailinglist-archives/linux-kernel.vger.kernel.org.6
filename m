@@ -1,110 +1,210 @@
-Return-Path: <linux-kernel+bounces-398888-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398889-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 759EB9BF794
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 20:51:56 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E1A29BF798
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 20:52:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2C78B1F21EE6
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 19:51:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F1BEF282801
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 19:52:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3F2420C012;
-	Wed,  6 Nov 2024 19:47:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05E7620C308;
+	Wed,  6 Nov 2024 19:49:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="0rmALPBs"
-Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="SDcVDBwK"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B972B20BB46
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 19:47:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02B42204022
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 19:49:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730922467; cv=none; b=U9HWcsq4a3aJrgOnOyzmRJB4Bn3YyLzGxnjipbiWTqjhZe2DNnPUiiBvpuhmX2UtI70rQpVRi6XH5u7nygmDdldXdS+qTilz5ioUSFwT89qZf/FWf9PUfV/RZIz+Rvw5TrhhanIiYC/6YKF8wYNgJQfN5WLyQOuZYzpoQnWh0Wc=
+	t=1730922575; cv=none; b=kREopbjjjxSbxtr4O4Wdmb7pdNHdP4tzotZ6fdsj2QZsj/fnBHG6kD0q749Am2rr1NsdwER/WBpj8lJkmQb3yA1wJe92a1iFStQt9FVxKmVZ7PbNCYFhNjYKb834iNf4LdaEOzeTBmnZPreH0JnZ4ebxaYZ7J8mhOLhl5N/tPJU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730922467; c=relaxed/simple;
-	bh=nfhOeOMNhx9ro9r5EU5bckyL1gdmm5pMCHqroYTsqXE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=T6e0kIS7LS55QYkb5zqu7nIswZQUIK9tHGx2mex9o04IBD8YxJ9TpmlhzuwTnrGPtQWzr+uShlEYSJuNyEWwXkSn6lp0LZiBvLrnRaE1MnMIvUZuxY10AahYKBsWLES4XjGokd9K9omsJgxTjw11me5iDk0uORxbdgCu1inUpO4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=0rmALPBs; arc=none smtp.client-ip=202.36.163.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
-Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
+	s=arc-20240116; t=1730922575; c=relaxed/simple;
+	bh=Yu+Js0pvY+mQCpw821Z7viaJMGNXO8zV2+RCODcAxV4=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=mLsVgG/YPkvmv/x/vHvdXgJhhlWF+ZMpMlJRyzCw4Y0ON/4hpEX2VO9+hOgSEdWuIhLigg+jpl71HEkdBQ9LnODEMMSPJRKj0R26zhC9R1yiOAqSiVjH3AKKO/xXPPR7W3dIIMQGDnOZmE4HY9BqOJ5lMVtdJ1WCltD7I8ZK72U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=SDcVDBwK; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1730922570;
+	bh=Yu+Js0pvY+mQCpw821Z7viaJMGNXO8zV2+RCODcAxV4=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=SDcVDBwKKR/Ln5OrXvDm4a+d2ZqpMxgg2+5OMdKRoJ4UJfYd/zv/OAaiUTWyTkNLI
+	 5D+wuczkeZc+xCr9/DVbCiWjvXUYcX9dWArB//aHrpFMCjRffcQXYOj5SGNDEkS2sU
+	 x0bSaSBMgfALh/ZqDY9m8MQ1+AllIu1qhB0nyfEejiAZLcu1XSQtL6Wr3lNe3EhBfM
+	 a2Bc5pBpW8e35Cgp+eO58wa+ilC2MNU3AaGSkkHi+k/4cECgjAgx4FYcwiiP2CXUMn
+	 XWgD/ymQ/EFIhN9NDyhzkpHraECVQc57ww83doXn1N8RAuPIKpKBKboh4wubOszBY+
+	 1rHKRxuADHrXQ==
+Received: from nicolas-tpx395.localdomain (unknown [IPv6:2606:6d00:15:862e::580])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id A04BE2C01F6;
-	Thu,  7 Nov 2024 08:47:42 +1300 (NZDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
-	s=mail181024; t=1730922462;
-	bh=ScnBUtaeifvVVpugBAsbHCHfD79Y+oTex2Xsw6PXO/0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=0rmALPBsk3KpDQon2NIfxmI5YGmR8qtmfG47c6yl0Svgg53uDndquPoraimagPC+1
-	 MroiuHdN/1BN90MmoNhdcM87Qsozu4IkFUsY4Tc2qjljo7Y5mZDqz9hkTJkL43cp7I
-	 R8ab9gLvAgKpPBiWXxgAwxf/+l1EuhZRSSqSqf/5ZL161LtjNzAjnLj+p1vVGFXlIC
-	 QV5aLFBZ2nPlpZ/O48/GCcIcNtZwqPFlQGwRGBbcPEHUaARzQYGM/MIkimTkXEkiGD
-	 yOnahh76/7A0h06A1KW4adYKZGw4F69xegWjbgNQZDw5Rnb49aNyewHqf1pshCYGEO
-	 Mg6k4dh9WZ4Yg==
-Received: from pat.atlnz.lc (Not Verified[10.32.16.33]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
-	id <B672bc7de0000>; Thu, 07 Nov 2024 08:47:42 +1300
-Received: from [10.33.22.30] (chrisp-dl.ws.atlnz.lc [10.33.22.30])
-	by pat.atlnz.lc (Postfix) with ESMTP id 73C5C13ED6B;
-	Thu,  7 Nov 2024 08:47:42 +1300 (NZDT)
-Message-ID: <d7ceaf59-8e39-4c76-9b9f-88746a22176d@alliedtelesis.co.nz>
-Date: Thu, 7 Nov 2024 08:47:42 +1300
+	(No client certificate requested)
+	(Authenticated sender: nicolas)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 0FC2717E3777;
+	Wed,  6 Nov 2024 20:49:26 +0100 (CET)
+Message-ID: <a8e06d9dcc664918d91fb6e7dd80692230df9b68.camel@collabora.com>
+Subject: Re: [PATCH] drm/fourcc: Add modifier definition for describing
+ Verisilicon video framebuffer
+From: Nicolas Dufresne <nicolas.dufresne@collabora.com>
+To: Benjamin Gaignard <benjamin.gaignard@collabora.com>, 
+	maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
+ 	airlied@gmail.com, simona@ffwll.ch, laurentiu.palcu@nxp.com,
+ aisheng.dong@nxp.com,  Lucas Stach <l.stach@pengutronix.de>, Philipp Zabel
+ <p.zabel@pengutronix.de>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, Collabora
+ Kernel ML <kernel@collabora.com>
+Date: Wed, 06 Nov 2024 14:49:24 -0500
+In-Reply-To: <e5b0252f-f097-4e47-ad07-701cadd965fb@collabora.com>
+References: 
+	<0102019301ab1b2d-5539e1c7-e026-47bc-8692-b3335f6f7584-000000@eu-west-1.amazonses.com>
+	 <e5b0252f-f097-4e47-ad07-701cadd965fb@collabora.com>
+Organization: Collabora
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.54.1 (3.54.1-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird Beta
-Subject: Re: [PATCH v9 4/4] i2c: Add driver for the RTL9300 I2C controller
-To: Andi Shyti <andi.shyti@kernel.org>
-Cc: lee@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- tsbogend@alpha.franken.de, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org,
- linux-i2c@vger.kernel.org
-References: <20241106001835.2725522-1-chris.packham@alliedtelesis.co.nz>
- <20241106001835.2725522-5-chris.packham@alliedtelesis.co.nz>
- <vn6t6qxqry2ay4tbvo3cb4rbjv53pnyl56vangul36vvvxibwp@q3pssbthesef>
-Content-Language: en-US
-From: Chris Packham <chris.packham@alliedtelesis.co.nz>
-In-Reply-To: <vn6t6qxqry2ay4tbvo3cb4rbjv53pnyl56vangul36vvvxibwp@q3pssbthesef>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-SEG-SpamProfiler-Analysis: v=2.4 cv=ca1xrWDM c=1 sm=1 tr=0 ts=672bc7de a=KLBiSEs5mFS1a/PbTCJxuA==:117 a=IkcTkHD0fZMA:10 a=VlfZXiiP6vEA:10 a=62ntRvTiAAAA:8 a=jdP34snFAAAA:8 a=VwQbUJbxAAAA:8 a=ovCuDd3x2qG2uVDzZbIA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=pToNdpNmrtiFLRE6bQ9Z:22 a=jlphF6vWLdwq7oh3TaWq:22
-X-SEG-SpamProfiler-Score: 0
-x-atlnz-ls: pat
+Content-Transfer-Encoding: 8bit
+
+Hi,
+
+Le mercredi 06 novembre 2024 à 16:53 +0100, Benjamin Gaignard a écrit :
+> + nicolas
+
+Thanks for the CC, I'm obviously watching kernel@collabora.com, I don't know why
+it didn't make it to my mailbox.
+
+I'm adding explicitly Lucas and Philipp, as I believe they can provide relevant
+information here.
+
+> 
+> Le 06/11/2024 à 14:30, Benjamin Gaignard a écrit :
+> > Verisilicon hardware video decoders can produce tiled (8x4 or 4x4)
+> > and compressed video framebuffers.
+> > It considerably reduces memory bandwidth while writing and reading
+> > frames in memory.
+
+I've seen for years this 8x4 references, but in reality, and I've implemented
+software converters that works on all the VSI/Hantro drivers we have mainline,
+there is no such thing as 8x4 tiled coming out of these chips.
+
+Unless we have new evidence, and V4L2 patches enabling these formats, I don't
+see any point of bringing what I believe is a TRM mistake, or an historical
+format.
+
+> > 
+> > The underlying storage in NV12 (for 8-bit) or NV15 (for 10-bit).
+> > 
+> > Display controllers, like imx DCSS, could use these modifier definition
+> > as input for overlay planes.
+> > 
+> > Signed-off-by: Benjamin Gaignard <benjamin.gaignard@collabora.com>
+> > ---
+> > The original code comes from:
+> > https://github.com/nxp-imx/linux-imx/commit/ab01b7fe82d5a11dfb533cfbd08c4dfa140815de
+> > I have port it and modify DRM_FORMAT_MOD_VENDOR_VSI value.
+> > 
+> >   include/uapi/drm/drm_fourcc.h | 27 +++++++++++++++++++++++++++
+> >   1 file changed, 27 insertions(+)
+> > 
+> > diff --git a/include/uapi/drm/drm_fourcc.h b/include/uapi/drm/drm_fourcc.h
+> > index 78abd819fd62..31d09a98d0d7 100644
+> > --- a/include/uapi/drm/drm_fourcc.h
+> > +++ b/include/uapi/drm/drm_fourcc.h
+> > @@ -421,6 +421,7 @@ extern "C" {
+> >   #define DRM_FORMAT_MOD_VENDOR_ARM     0x08
+> >   #define DRM_FORMAT_MOD_VENDOR_ALLWINNER 0x09
+> >   #define DRM_FORMAT_MOD_VENDOR_AMLOGIC 0x0a
+> > +#define DRM_FORMAT_MOD_VENDOR_VSI     0x0b
+> >   
+> >   /* add more to the end as needed */
+> >   
+> > @@ -1607,6 +1608,32 @@ drm_fourcc_canonicalize_nvidia_format_mod(__u64 modifier)
+> >   #define AMD_FMT_MOD_CLEAR(field) \
+> >   	(~((__u64)AMD_FMT_MOD_##field##_MASK << AMD_FMT_MOD_##field##_SHIFT))
+> >   
+> > +/* Verisilicon framebuffer modifiers */
+> > +
+> > +/*
+> > + * Verisilicon 8x4 tiling layout
+> > + *
+> > + * This is G1 VPU tiled layout using tiles of 8x4 pixels in a row-major
+> > + * layout.
+> > + */
+> > +#define DRM_FORMAT_MOD_VSI_G1_TILED fourcc_mod_code(VSI, 1)
+
+I have code in GStreamer mainline that handle the tiled G1 output in software
+and its 4x4, no doubt here ... 
+
+> > +
+> > +/*
+> > + * Verisilicon 4x4 tiling layout
+> > + *
+> > + * This is G2 VPU tiled layout using tiles of 4x4 pixels in a row-major
+> > + * layout.
+> > + */
+> > +#define DRM_FORMAT_MOD_VSI_G2_TILED fourcc_mod_code(VSI, 2)
+
+... Meaning this split make no sense, G2 shares the same format in V4L2 and
+works well in GStreamer software converters. In fact, in the NXP TRM, you should
+notice that in the G1 section, they document G2 tile and G1 tile is ignored.
+Perhaps the DCSS do implement some 8x4 tiling, but considering we don't have
+evidence of anything producing that, we should probably not have it.
+
+From the documentation from NXP, G2 Tile is identical to
+DRM_FORMAT_MOD_VIVANTE_TILED, so we really should reuse the existing definition.
+If not, I'd really like to know in the text why. Running Etnaviv patched with
+NV12 support (which I think got merged now), I can see that the combination is
+supported (but haven't tested it though since its not mapped properly in
+GStreamer yet):
 
 
-On 6/11/24 22:57, Andi Shyti wrote:
-> Hi Chris,
->
-> On Wed, Nov 06, 2024 at 01:18:35PM +1300, Chris Packham wrote:
->> Add support for the I2C controller on the RTL9300 SoC. There are two I2C
->> controllers in the RTL9300 that are part of the Ethernet switch register
->> block. Each of these controllers owns a SCL pin (GPIO8 for the fiorst
->> I2C controller, GPIO17 for the second). There are 8 possible SDA pins
->> (GPIO9-16) that can be assigned to either I2C controller. This
->> relationship is represented in the device tree with a child node for
->> each SDA line in use.
->>
->> This is based on the openwrt implementation[1] but has been
->> significantly modified
->>
->> [1] - https://scanmail.trustwave.com/?c=20988&d=pL2r5zHAPsW8d92uECdR2T8Eh4fYX_ZwrCyklfTCzQ&u=https%3a%2f%2fgit%2eopenwrt%2eorg%2f%3fp%3dopenwrt%2fopenwrt%2egit%3ba%3dblob%3bf%3dtarget%2flinux%2frealtek%2ffiles-5%2e15%2fdrivers%2fi2c%2fbusses%2fi2c-rtl9300%2ec
->>
->> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
->> Reviewed-by: Andi Shyti <andi.shyti@kernel.org>
-> Thanks for following up with v9. I think nothing prevents us from
-> already merging this 4/4 patch, right?
->
- From my end yes it's all good to go. Lee's just applied the mfd binding.
+| NV12         | NV12                    | external only |
+|              | NV12:0x0600000000000001 | external only |
+|              | NV12:0x0600000000000002 | external only |
 
-The only thing outstanding are the mips dts changes. I'll wait for a bit 
-and chase those up. Hopefully they can make it in the 6.13 window but 
-it's not the end of the world if they don't.
+Having a GL path is very efficient, but also gives compositors a composition
+fallback which is needed to enable a format and guarantee it can be rendered at
+all time.
+
+> > +
+> > +/*
+> > + * Verisilicon 4x4 tiling with compression layout
+> > + *
+> > + * This is G2 VPU tiled layout using tiles of 4x4 pixels in a row-major
+> > + * layout with compression.
+> > + */
+> > +#define DRM_FORMAT_MOD_VSI_G2_TILED_COMPRESSED fourcc_mod_code(VSI, 3)
+
+This one needs definition, but the doc provided does not seem to match what I
+can see in IMX8M TRM (see 14.2.2.3 Compressed format), here's a snippet, I don't
+yet fully understand it. They only explain the storage, not the compression
+technique, but this should be enough to understand its not a simple row-major
+4x4 tiling.
+
+   When compression is enabled, the picture is divided into CBS rows, which is
+   further divided into continuous CBS groups. Each CBS group is composed of 16
+   CBS. The luminance CBS is composed of 1 8x8 coded block (CB), which one
+   chrominance CBS is composed of two 8x4 coded blocks, with cb CB first then cr
+   CB following. The compression is performed to each CB in the CBS. The first
+   CB's compressed data saved from the same offset of that CBS in raster scan
+   buffer. And the compressed output of following CBs in the CBS row is saved
+   continuously. That means there may be gaps between the compressed data of
+   each CBS row.
+
+Nicolas
+
+> > +
+> >   #if defined(__cplusplus)
+> >   }
+> >   #endif
 
 
