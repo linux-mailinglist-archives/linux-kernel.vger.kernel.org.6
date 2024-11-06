@@ -1,164 +1,131 @@
-Return-Path: <linux-kernel+bounces-398402-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398403-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 491E29BF0E0
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 15:56:37 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90E299BF0E6
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 15:57:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 04C9B283F54
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 14:56:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D4441C217C2
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 14:57:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A929202F94;
-	Wed,  6 Nov 2024 14:56:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rfglnlle"
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C09720263A;
+	Wed,  6 Nov 2024 14:57:07 +0000 (UTC)
+Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com [209.85.219.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0C8A201116
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 14:56:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8009185B54;
+	Wed,  6 Nov 2024 14:57:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730904980; cv=none; b=cmD7IVLW+q9ZReTbw5NZlKZxW8HvFqXclblw1uQZl/9vLvKuckn615KOKmmbY23PFQQ28llLcEvyKcyiNjnbOBD+KTcBX2bgjNZI0Dpg4o16JK9jIIifof8DdMGLqdJpOZLt7mwG987HSKIWro9RTmye60ViMLLpWcOHUPypPq0=
+	t=1730905026; cv=none; b=pLBkbEgKVYRfz/1sh2tADQ19YBcj5IjuadqBuA3lULQVZ4EU3oD6N+7MUMdcHSahfDqL/QT/ZMLKfaz5w+u1DMPFiZugAc2Bz0leCtKAVGE7uNXGLz1xMfGPKa9zQrOTKsZYsewwUpTT1NDy842Pl4bqAcWR2RDDOGB3eNofAZ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730904980; c=relaxed/simple;
-	bh=N1t/qbvVe3iNx/AQhBmmHd7vwZLoBYrMmHYR1uGpW1E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Tcx/RRtoKs7aPAYWCA2XGkFqm0Dj+F8B2dSWgFqtxnBkJtAfeGkESvNSkZvU3CvWTTE5EwAt8mI/JGNxWQ9Eesy/rTRTsZwje2nLjvtgAdq4PfTB2h6GizNk2ABoQnCA9Gue9jhTELCKn7XFbKYE4pIDgduUneME1ldwR7vc+QI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rfglnlle; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a99f646ff1bso940535266b.2
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2024 06:56:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1730904977; x=1731509777; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=P5mEEE/p70DY7f9/MDi5BeuY9yjfwqeElPakjASaD9I=;
-        b=rfglnllehlBskjqw+vyZwjY1BH6lCeXK3HCA3ZFh+nGeiEV84sAT1Bp8SucrmSLg+v
-         apXe1EFlmdNpSgtIkhJeo1SAEuVkQwagbG9Aw/7vgN3eIU+8qqHmp3XvkgE1zlgI9sXl
-         xEL28O+btXH0CCmiyrXjubG7HnAD9f2FjBHngmNhP/xGet9NPul9KZKKqhje6G3lXVsV
-         DemA9y9MYhPADHJVJwyigHaXK8eFnOGFq4puFS0YeYb2A+0KmH3g+Euy3y//b1GzOqJi
-         mDj70/xLhb3ey3Joh+THt9ZYfT122G3sz174hWN2JI0CXjqpdSe/mo0XXHbazSoGLWNg
-         caPQ==
+	s=arc-20240116; t=1730905026; c=relaxed/simple;
+	bh=jpohf7BcyhQkTMNu3yh6QMrbC/g8TqQoMKpzGsMPnZU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kv0Pcy1cKY2NptDM/CgTHFk5a2h/cbzKuSlkizdhFGqkTLY/y16soXqSTzDzLPS1WPwlLQalKQhluVkc6RnZGEbT1JJ53nUG32s+oJ1mUJCoTkFJGfsnrGxnlxc5zFSv1aQoDbFhZ2L+E4S4bPIVEl5YHX/4/GU00C6pv3/wxJ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f178.google.com with SMTP id 3f1490d57ef6-e29687f4cc6so5597124276.2;
+        Wed, 06 Nov 2024 06:57:04 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730904977; x=1731509777;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=P5mEEE/p70DY7f9/MDi5BeuY9yjfwqeElPakjASaD9I=;
-        b=BwK8P2+Dxo9hRVgKBlr5OD5HAazvNCcb0VWtTdHEaAursessalwPyc89LghqAEW++N
-         8HHPr1SCdSaVWWK1R6qeAWYUwuNkG8ahs0l5yqN6n6haRLQ6Wkmx1NNEI3fSbqED3dut
-         yf1O0mcslTuRXeR2EJ3rhSe5foWOH3INMfm5C5Q6alDuqYBa+HkJoIepEHye7ixR8H87
-         aV0qz+5hRb+j1Y/KQRQ56FgWg+jNoWOq+qG7vlZ0oNmFGmuzodZSDOX8k23TqLMT13Lj
-         oRxPTSjOdpXsDLbrhsmbf11UcYoYQ4/CRL/yWV9s6q6q2gNtfymHhs9qFiFAf6mhFygg
-         JCSQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVgTjSrGcGtizHMOzvTZ0Rv2yykaCFJbyxLJ+l02s4C7Zy/FgGQz/VTdm3I8vK2r8uXvcMoLo7q7X13GZo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzKEDnoDJzMbM8jmWfaHQDKEEDN1vXtPf9gcm7fjMxi3iQgMzW1
-	HlXnzq6I0zFmUsgkqTyF0zFXbTG2yNSUJYL8v8FERtf1cSzKb08OXmFXleioMw==
-X-Google-Smtp-Source: AGHT+IF2mme5AoATunjfyJ51+ACYUXGvT7/jIPhOqjyAwZSM4kCNZeVrElZ6fNrFHPkT8xSlbnvSkg==
-X-Received: by 2002:a17:907:728e:b0:a9a:6284:91ef with SMTP id a640c23a62f3a-a9e3a57390dmr2706698766b.2.1730904977122;
-        Wed, 06 Nov 2024 06:56:17 -0800 (PST)
-Received: from thinkpad ([89.101.134.25])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9eb16d67a6sm297658666b.60.2024.11.06.06.56.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Nov 2024 06:56:16 -0800 (PST)
-Date: Wed, 6 Nov 2024 14:56:15 +0000
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Sricharan R <quic_srichara@quicinc.com>, bhelgaas@google.com,
-	lpieralisi@kernel.org, kw@linux.com, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, andersson@kernel.org,
-	konrad.dybcio@linaro.org, linux-arm-msm@vger.kernel.org,
-	linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V7 4/4] PCI: qcom: Add support for IPQ9574
-Message-ID: <20241106145615.25tc7n4zcdkp47jr@thinkpad>
-References: <20240801054803.3015572-5-quic_srichara@quicinc.com>
- <20241106014024.GA1499855@bhelgaas>
+        d=1e100.net; s=20230601; t=1730905022; x=1731509822;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=RbfgXHF/M5lJdXsELqbeNc9f4r5op8eDODQ6Its35/4=;
+        b=nc6tBtCmtFdY80gWVTvnxHqAWRAur52UuA1XYhw+Mr7cvbnoD4O2azs6jDU95y4xSq
+         Fq+pwDVqvyI7oHygGuvgbZsYzynIIHL0k/8VKu7sJtnoYozwhxyOS890E1egWkwXcVlm
+         sB35rXFke/Txc7KPcVgb5AK2YvlGQdeJfVK6pMp/21iESm8bX+NImHv1ts/qy2ukRHQD
+         YSe5MeMCwyZOo4mZP9Ub2LpDOsP+Bmytm93ZG8MluIKeWGRKba7TqhW052p+yRoj0xCO
+         KxHU8m/+6+dLXXsxRjtE0nu+2sSgBOMG/65+gaGHThrNyTJW2/5iIeNghZUiby5aqekX
+         AW8g==
+X-Forwarded-Encrypted: i=1; AJvYcCUMCUxtLpk8lMTQi3W4WZFCixzX8ymyu+tw+yqAqpyDJ7FH6CX4f70fMsg7/K3tmXIjqQGQcB4cQX9BnA==@vger.kernel.org, AJvYcCUR+R2BvJa3KRptyCM5zP+nFY1PqaZY3rF+H+B9zv6ERAQEJWScFfYaOS05on5rKu4WS/wxAIKdwFzg@vger.kernel.org, AJvYcCUscHPF86xmEGzx29JekecdOjm4iyjk1I+YJlpnxlPUpi4kRW0MGmQoBYeU4+FKDJMI3jPLMS2pA93+qMM=@vger.kernel.org, AJvYcCV3bu5uAp4mFDNgVwYWQ8kbqBu3no1vCQ35+ldSP2jdYCwVQN27rwha2vb0aw2Shk9/U6Z0/aF6vBDZBk8W@vger.kernel.org, AJvYcCVOJOqEkdhMwrpJA8/2oTAtZ163IRSVu9jEFcVh4AtxzX+6bFe2EJoNc2n9OC0ZI+zk3zjGWTy1BWeI@vger.kernel.org, AJvYcCWZTKpxCDCA9HvMX2jaDYGk10WliZahv3+qTaH4jfoOvkPt8GPBoi9LounX4sZDsq3Tb1rEOSRQ+4pee4++VKQRPLc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxwvNNHw91jR3R4mquYedlmnZCmMHzpAszLj2nNtEqFgSkguA/c
+	LZm/vQqBzEHYkRi+aK4WaeszvFpSGsqWsJzb5VY8w0GGmGpxbvE6j6Ni+Ab+
+X-Google-Smtp-Source: AGHT+IFa9X65WVkG10BvTZIN0NPNUf1oKbpKTVIZn+kMfdO5PvL4sKS4dKqx4MkLJA1WHNNiHZ6unQ==
+X-Received: by 2002:a05:6902:168a:b0:e2b:ba9d:64c5 with SMTP id 3f1490d57ef6-e330269611dmr17580457276.48.1730905022522;
+        Wed, 06 Nov 2024 06:57:02 -0800 (PST)
+Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com. [209.85.128.178])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e30e82c77e2sm2915046276.0.2024.11.06.06.57.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 06 Nov 2024 06:57:01 -0800 (PST)
+Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-6ea053b5929so56635607b3.0;
+        Wed, 06 Nov 2024 06:57:01 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCU+2FxwH9Gay6jxa662tJV769KupZz0v2BA3Rq+jAhd4q/YX7ygqwQFZdFbjTJFvxUE059imn3YndVkrLF7@vger.kernel.org, AJvYcCUmahFCH9Ho+bUMq0sapbIBL+qT0jXzPfNgfGspj8yAz328whKkYnGudNg7iLSHPI3ctH2sDYX5qlD6sB/2oZkOiTI=@vger.kernel.org, AJvYcCUtT9arbAqdNKimzkKzZ7d2q5q+hUNZYiipYA5cpTltCaJJRunJjeAQMuy3FztiFXLAeuZBmfU9XXEt@vger.kernel.org, AJvYcCV1HswiEbSGNh5eA3Qg3Lxp8hzS3SCoqei2hk/iB4f0M1mE/tsrJ1jJFCLuGlI1xTqB/VavRYvjJMbrOw==@vger.kernel.org, AJvYcCVh2FD+eS52BXoiG7kLUKESZoReh6SJ0sJy55JqrIy3BnoEwQZyFwVWyxadxm1GxpPfiO9W6DAkduLE@vger.kernel.org, AJvYcCWvBriImaRRglrN+1IYsL/3j+/Mt110Mk4SYssjeJG2OebDwcXqGTVKuxenkemcilSTWdJ7uyaJWlXmA04=@vger.kernel.org
+X-Received: by 2002:a05:690c:338d:b0:6e7:e2e9:6940 with SMTP id
+ 00721157ae682-6ea64aebcb5mr193177307b3.10.1730905020721; Wed, 06 Nov 2024
+ 06:57:00 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241106014024.GA1499855@bhelgaas>
+References: <20241106081826.1211088-1-claudiu.beznea.uj@bp.renesas.com> <20241106081826.1211088-13-claudiu.beznea.uj@bp.renesas.com>
+In-Reply-To: <20241106081826.1211088-13-claudiu.beznea.uj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 6 Nov 2024 15:56:49 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdWxmoUQSSnAVdqhpTQJYvUCJTL0EZbdKmLLhFWi8UCGkg@mail.gmail.com>
+Message-ID: <CAMuHMdWxmoUQSSnAVdqhpTQJYvUCJTL0EZbdKmLLhFWi8UCGkg@mail.gmail.com>
+Subject: Re: [PATCH 12/31] ASoC: sh: rz-ssi: Use a proper bitmask for clear bits
+To: Claudiu <claudiu.beznea@tuxon.dev>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, biju.das.jz@bp.renesas.com, 
+	prabhakar.mahadev-lad.rj@bp.renesas.com, lgirdwood@gmail.com, 
+	broonie@kernel.org, magnus.damm@gmail.com, linus.walleij@linaro.org, 
+	support.opensource@diasemi.com, perex@perex.cz, tiwai@suse.com, 
+	p.zabel@pengutronix.de, Adam.Thomson.Opensource@diasemi.com, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-sound@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Nov 05, 2024 at 07:40:24PM -0600, Bjorn Helgaas wrote:
-> On Thu, Aug 01, 2024 at 11:18:03AM +0530, Sricharan R wrote:
-> > From: devi priya <quic_devipriy@quicinc.com>
-> > 
-> > The IPQ9574 platform has four Gen3 PCIe controllers:
-> > two single-lane and two dual-lane based on SNPS core 5.70a.
-> > 
-> > QCOM IP rev is 1.27.0 and Synopsys IP rev is 5.80a.
-> > Reuse all the members of 'ops_2_9_0'.
-> 
-> Wow, this is confusing.
-> 
-> "Based on SNPS core 5.70a", but "Synopsys IP rev is 5.80a."
-> Are those supposed to match?  Or is it 5.70a of one thing but 5.80a of
-> a different thing?
-> 
+Hi Claudiu,
 
-Hmm, I'm not sure why 5.70a is mentioned here. It seems irrelevant (even if it
-is the base).
+On Wed, Nov 6, 2024 at 9:19=E2=80=AFAM Claudiu <claudiu.beznea@tuxon.dev> w=
+rote:
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>
+> While it is still correct to pass zero as the bit-clear mask it may be
+> confusing. For this, use a proper bitmask for clear bits.
+>
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-> And where does ops_2_9_0 come in?  The code comment says:
-> 
->   /* Qcom IP rev.: 2.9.0  Synopsys IP rev.: 5.00a */
->   static const struct qcom_pcie_ops ops_2_9_0 = {
-> 
-> which doesn't match 1.27.0 or 5.70a or 5.80a.  In fact there's nothing
-> in the file that matches 1.*27.*0
-> 
-> Honestly, I don't really care if you have all the versions here in the
-> commit log.  But if the versions *are* here, can we make them make
-> sense?
-> 
+Thanks for your patch!
 
-We name the 'ops' structure based on Qcom IP revision. And we reuse it across
-the SoCs which are compatible. That's why ops_2_9_0 is used for this SoC which
-has Qcom IP rev 1.27.0.
+> --- a/sound/soc/renesas/rz-ssi.c
+> +++ b/sound/soc/renesas/rz-ssi.c
+> @@ -331,7 +331,7 @@ static void rz_ssi_set_idle(struct rz_ssi_priv *ssi)
+>                 dev_info(ssi->dev, "timeout waiting for SSI idle\n");
+>
+>         /* Hold FIFOs in reset */
+> -       rz_ssi_reg_mask_setl(ssi, SSIFCR, 0, SSIFCR_FIFO_RST);
+> +       rz_ssi_reg_mask_setl(ssi, SSIFCR, SSIFCR_FIFO_RST, SSIFCR_FIFO_RS=
+T);
 
-- Mani
+But you're not clearing SSIFCR_FIFO_RST, you're setting it?
 
-> > Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> > Reviewed-by: Manivannan Sadhasivam <mani@kernel.org>
-> > Co-developed-by: Anusha Rao <quic_anusha@quicinc.com>
-> > Signed-off-by: Anusha Rao <quic_anusha@quicinc.com>
-> > Signed-off-by: devi priya <quic_devipriy@quicinc.com>
-> > Signed-off-by: Sricharan Ramabadhran <quic_srichara@quicinc.com>
-> > ---
-> >  [V7] Rebased on top of [1] to avoid DBI/ATU mirroring. With that dropped
-> >       the need for separate ops.
-> >  [1] https://lore.kernel.org/linux-arm-msm/a01404d2-2f4d-4fb8-af9d-3db66d39acf7@quicinc.com/
-> > 
-> >  drivers/pci/controller/dwc/pcie-qcom.c | 1 +
-> >  1 file changed, 1 insertion(+)
-> > 
-> > diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
-> > index 6976efb8e2f0..e9371f945900 100644
-> > --- a/drivers/pci/controller/dwc/pcie-qcom.c
-> > +++ b/drivers/pci/controller/dwc/pcie-qcom.c
-> > @@ -1752,6 +1752,7 @@ static const struct of_device_id qcom_pcie_match[] = {
-> >  	{ .compatible = "qcom,pcie-ipq8064-v2", .data = &cfg_2_1_0 },
-> >  	{ .compatible = "qcom,pcie-ipq8074", .data = &cfg_2_3_3 },
-> >  	{ .compatible = "qcom,pcie-ipq8074-gen3", .data = &cfg_2_9_0 },
-> > +	{ .compatible = "qcom,pcie-ipq9574", .data = &cfg_2_9_0 },
-> >  	{ .compatible = "qcom,pcie-msm8996", .data = &cfg_2_3_2 },
-> >  	{ .compatible = "qcom,pcie-qcs404", .data = &cfg_2_4_0 },
-> >  	{ .compatible = "qcom,pcie-sa8540p", .data = &cfg_sc8280xp },
-> > -- 
-> > 2.34.1
-> > 
+>  }
+>
+>  static int rz_ssi_start(struct rz_ssi_priv *ssi, struct rz_ssi_stream *s=
+trm)
 
--- 
-மணிவண்ணன் சதாசிவம்
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
