@@ -1,174 +1,157 @@
-Return-Path: <linux-kernel+bounces-398371-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398372-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDCC09BF071
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 15:35:07 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 019529BF077
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 15:35:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 73DFF28264A
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 14:35:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B41C4285B23
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 14:35:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D5D320127C;
-	Wed,  6 Nov 2024 14:35:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 903032022FA;
+	Wed,  6 Nov 2024 14:35:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="sIBBCyfr"
-Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kwhu1hMd"
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7C361E0480
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 14:34:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CE002010EC
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 14:35:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730903699; cv=none; b=QwJSxW08AgaPmsXulh9/JzrFiwRb6VAFryRueIp8h5Ha/qKMxR4VO+G5qINH2a09AOl/bt4KVvcJhCD1wVONi4W8xhnAftY3w1F+QjnVsPeQSwHvncEjU4fdvO/p8yn8kYHSA/8lYg1G9xgbst/yUnPWcjL9I/ZM984K1aZI9jw=
+	t=1730903717; cv=none; b=UsKmP/Bv2mMdFQvD4Sn7piM8Bhnkr04zYTw/kcTN9FDeo8acR92+jEZYBogIqc0lKdKRaqIF/nek+jk+8E/kKRxpozKKOF2wpJulR1ZtXzgUwl165D2xPpTGJuorF+AIur07qWe7rEcweSQaWgiM0yarWCQL4kqTvFhbWKw9uG4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730903699; c=relaxed/simple;
-	bh=pup6Bx2H6bbZiQK7VkJk+5M1i4APEfd+U0AYUwlyulw=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=SOh0RIgbz5yTcqQGNcDaMQ0TKBN+VfHmjSRLmFCFVXVuvqmUQBZGc33+Q5KJflIStcRY4pDDe1InmSe5liEQQY5z2mS8y2dz9Z4b+aMSWnGTL6gUDN1tNbP+aeTGGfgvUwX1eDuwlmbQIOlotA6SQv0npVq6oQQDuPtNy3iUrlI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=sIBBCyfr; arc=none smtp.client-ip=209.85.128.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6e7e7568ed3so11899547b3.1
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2024 06:34:57 -0800 (PST)
+	s=arc-20240116; t=1730903717; c=relaxed/simple;
+	bh=pQjjbYSj4ZS6KPiNFYIWrrPq6MbXf9GGUul0EVfRfJM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XOAeI4wSPdckfzO42iR2/4ObE9mgcWxwEB5cwGVgKGPA/lR2zEeU4TO+CDY5m3LS5ZtM/3YWtglSi33Px8SaZxSw7CW/VsLRx5VTt4pYT5axuYXrqVbynocml7iUQMihwRlPJdl0Ln8gCpdFN11bNPMAPnWuBtvRXQsUqQU9yj4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kwhu1hMd; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-539f1292a9bso7827505e87.2
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2024 06:35:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1730903697; x=1731508497; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=bdNfAfJ6uGcIqvjU9RF/tIhJYkjaGkmkvEaPHVyDj9c=;
-        b=sIBBCyfrbPpwK57DS58zU/XruZESGoDjrQk0W/9las4ndCpx7xz/3ekGjJE/krbn2K
-         pR3DsP8Qy/nLrCA1p6nBykt0LK49X/nhG1SbPro4+1ms2G+9cWuruV/J9PVfYEUWd4rc
-         qysryyKFxV12solcI5Yy2s11XrRSMEPPaYKAsc+iR0lRxx2pQAKHht6Qv6JUYa8l2kRo
-         lUxR3QF0KEcS3P1iiZCGbD47lE36JGKCX1mtd1uV8bN5BZtBDGNK+NDMjCJW3J85WC3k
-         vVEI5zfha+WqudcdzuhS0SI0CZ+IfZyuQyqzCfzHgY4EZilHhQqJsS5rt0YSkJMmpNhx
-         j0mA==
+        d=linaro.org; s=google; t=1730903714; x=1731508514; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=bnXDazCQ0RtTKBnn8REjgqiFnugp5BLQz0FcP1jAvLs=;
+        b=kwhu1hMdYaqiDRrEWOEtqnnrD6fpYEThus7x6Rqi81/29HRpJPnDRjkE31H3Xoei5F
+         n8DZKxZ1L2kIgxv2Gv10StnMIpAlsTyKg6UyveFt1hJ/BIdm/tlYpDicN4REVZnxZsYK
+         jT3dAX4rsC+Rc+s3l0/3/aSWEsR0k3MvPQLCzxUc3VWCihlIk22HBdudHDMxxjCL9TXN
+         6w8AQys05SJ3UXZcgsZaFJJtKGLibYlLz5GFr1+sMUxLcCpJhcJZwSYLGbUwuMIz6S5T
+         F+/j7YLRMZ+SGhsUMZoakXD9gPAbVKPL/WNvF3/EkcTWr8sibqImD8Q+klOpx7I0bvsk
+         Yx5Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730903697; x=1731508497;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=bdNfAfJ6uGcIqvjU9RF/tIhJYkjaGkmkvEaPHVyDj9c=;
-        b=Cxe0gnMLCSKJK6uxYPlFV4ASiONtaLS1IgZmGIacg+1PAqL+4jZCsYEr1duk2OtQME
-         ey8lXYJFSCTvJP43dk3W0utVWtl7IKQ3SKJiBbuwOjbEX+Oa2hII4df4M7ZbVMQes4Lr
-         /T9PeCmXaPeJt5ij6wUa3kk+zfncR1ViDhIEtrgFJ1lQXdQ8uy8Kn/p/+CLhfn69dsTe
-         VEtYpmUUBlknYa7iEAGzN6ZXZyk9rjXY4UT3OV6Fj1q1gukxEUFXY5kRcXvHzzAt1AsQ
-         ECWEwOOdfiCZMLHxT7tan9y0/Q7dcxMmu/+BOYicj47LpMK+PXpkt6UbtyHXvB/c4ea+
-         9iFQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVdNefiB+WxkacSbLm1kj7+WUuBA0FlA1xJaw7+UUog6befBuk7FEptTYl9YOLYNzKby75ObpFnH0PVEf0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy0yDJnMz341mlgarAiwnpTq0IVYfu+gwgfWsrmn/PV6QcD1bi+
-	LLCeXbO1JVV4xVfOaOM0XQfWNSsPvAypN5pp5gyglFe7QatMgL66bZ3w0pbsvt9OpyrzoqGLeg2
-	Lyw==
-X-Google-Smtp-Source: AGHT+IGLhqOze19LuZ5LfgYsjD+OI29UKlxovPVi1+TpctQx01BSgPbC/lpV7t9qzY5XocCyloyf4mmjJBI=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
- (user=seanjc job=sendgmr) by 2002:a25:ce0e:0:b0:e24:c330:f4cc with SMTP id
- 3f1490d57ef6-e335abea802mr11076276.6.1730903696980; Wed, 06 Nov 2024 06:34:56
- -0800 (PST)
-Date: Wed, 6 Nov 2024 06:34:55 -0800
-In-Reply-To: <20241105010558.1266699-2-dionnaglaze@google.com>
+        d=1e100.net; s=20230601; t=1730903714; x=1731508514;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=bnXDazCQ0RtTKBnn8REjgqiFnugp5BLQz0FcP1jAvLs=;
+        b=XkXX4EmDSxpyfqrWDs2u0jEWtEP5vQ8DBygjcsPbnVR/YfwprcwZXrMmDXb/zJeaKp
+         C3PGxFFn1HkDosoJ+zh8lWl1LEZYVMIZlkWZRo8qYu4pP3pFHBHwUKpH9MN/N5UmvFRd
+         xaw/66kMLYQw0cXMR5kZZ0enLYYE8jwXHifW11VmV2OLHbsnrQw9kjAFDf1DEcx3u7Y9
+         5aiqKSmE2SOH65A6rmeElnzJL3J6B7VRMyq2h1XAmI7JkKR67MWsMJv1LirAp3hip1u4
+         BKUtkyquvursfVbuCZf19aUHQZLOKh4iBR/YZrCfwYxOV4untHHyIme4kKZhYNwwc2wN
+         z8ig==
+X-Forwarded-Encrypted: i=1; AJvYcCW5//ml5t8D/3Q69A22SImfluArMYrDD2CTS9pgPivIp2+SXDGXQP8BwdOV6CgbCWsxgbumXgHz1AgDIaI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwHG+LLc8sHT7dTzKgj8HPCmSiHL3jRHyxzXncThKR1dpsl6J8q
+	46FZnfV1cjCgNtc3Z7YoCZEw3dlhBl8cNV7FC4ruK4vvZLa5R36cohm1TomMng==
+X-Google-Smtp-Source: AGHT+IFY7xsniFJYwZTMCPs0XA34VZgv3LQnQ0nmsY4lMKbdJP685p4rmkNLWAvlojUA7tIwGlZepw==
+X-Received: by 2002:a05:6512:1324:b0:539:8980:2009 with SMTP id 2adb3069b0e04-53b348e76femr20895757e87.36.1730903714190;
+        Wed, 06 Nov 2024 06:35:14 -0800 (PST)
+Received: from thinkpad ([89.101.134.25])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432aa7378e9sm26380495e9.37.2024.11.06.06.35.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 06 Nov 2024 06:35:13 -0800 (PST)
+Date: Wed, 6 Nov 2024 14:35:11 +0000
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Andrea della Porta <andrea.porta@suse.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof Wilczynski <kw@linux.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Saravana Kannan <saravanak@google.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-gpio@vger.kernel.org,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Stefan Wahren <wahrenst@gmx.net>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Andrew Lunn <andrew@lunn.ch>
+Subject: Re: [PATCH v3 05/12] PCI: of_property: Assign PCI instead of CPU bus
+ address to dynamic bridge nodes
+Message-ID: <20241106143511.2ao7nwjrxi3tiatt@thinkpad>
+References: <20241104150521.r4hbsurw4dbzlxpg@thinkpad>
+ <20241104234937.GA1446920@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20241105010558.1266699-1-dionnaglaze@google.com> <20241105010558.1266699-2-dionnaglaze@google.com>
-Message-ID: <Zyt-jxNsyMTH4f3q@google.com>
-Subject: Re: [PATCH v4 1/6] kvm: svm: Fix gctx page leak on invalid inputs
-From: Sean Christopherson <seanjc@google.com>
-To: Dionna Glaze <dionnaglaze@google.com>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org, 
-	Paolo Bonzini <pbonzini@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
-	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
-	"H. Peter Anvin" <hpa@zytor.com>, Michael Roth <michael.roth@amd.com>, 
-	Brijesh Singh <brijesh.singh@amd.com>, Ashish Kalra <ashish.kalra@amd.com>, 
-	Tom Lendacky <thomas.lendacky@amd.com>, John Allen <john.allen@amd.com>, 
-	Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, 
-	Luis Chamberlain <mcgrof@kernel.org>, Russ Weight <russ.weight@linux.dev>, 
-	Danilo Krummrich <dakr@redhat.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Tianfei zhang <tianfei.zhang@intel.com>, 
-	Alexey Kardashevskiy <aik@amd.com>, kvm@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241104234937.GA1446920@bhelgaas>
 
-KVM: SVM:
-
-In the future, please post bug fixes separately from new features series, especially
-when the fix has very little to do with the rest of the series (AFAICT, this has
-no relation whatsoever beyond SNP).
-
-On Tue, Nov 05, 2024, Dionna Glaze wrote:
-> Ensure that snp gctx page allocation is adequately deallocated on
-> failure during snp_launch_start.
+On Mon, Nov 04, 2024 at 05:49:37PM -0600, Bjorn Helgaas wrote:
+> On Mon, Nov 04, 2024 at 08:35:21PM +0530, Manivannan Sadhasivam wrote:
+> > On Mon, Nov 04, 2024 at 09:54:57AM +0100, Andrea della Porta wrote:
+> > > On 22:39 Sat 02 Nov     , Manivannan Sadhasivam wrote:
+> > > > On Mon, Oct 28, 2024 at 03:07:22PM +0100, Andrea della Porta wrote:
+> > > > > When populating "ranges" property for a PCI bridge, of_pci_prop_ranges()
+> > > > > incorrectly use the CPU bus address of the resource. Since this is a PCI-PCI
+> > > > > bridge, the window should instead be in PCI address space. Call
+> > > > > pci_bus_address() on the resource in order to obtain the PCI bus
+> > > > > address.
+> > > > 
+> > > > of_pci_prop_ranges() could be called for PCI devices also (not just PCI
+> > > > bridges), right?
+> > > 
+> > > Correct. Please note however that while the PCI-PCI bridge has the parent
+> > > address in CPU space, an endpoint device has it in PCI space: here we're
+> > > focusing on the bridge part. It probably used to work before since in many
+> > > cases the CPU and PCI address are the same, but it breaks down when they
+> > > differ.
+> > 
+> > When you say 'focusing', you are specifically referring to the
+> > bridge part of this API I believe. But I don't see a check for the
+> > bridge in your change, which is what concerning me. Am I missing
+> > something?
 > 
-> Fixes: 136d8bc931c8 ("KVM: SEV: Add KVM_SEV_SNP_LAUNCH_START command")
-
-This needs
-
-Cc: stable@vger.kernel.org
-
-especially if it doesn't get into 6.12.
-
-> CC: Sean Christopherson <seanjc@google.com>
-> CC: Paolo Bonzini <pbonzini@redhat.com>
-> CC: Thomas Gleixner <tglx@linutronix.de>
-> CC: Ingo Molnar <mingo@redhat.com>
-> CC: Borislav Petkov <bp@alien8.de>
-> CC: Dave Hansen <dave.hansen@linux.intel.com>
-> CC: Ashish Kalra <ashish.kalra@amd.com>
-> CC: Tom Lendacky <thomas.lendacky@amd.com>
-> CC: John Allen <john.allen@amd.com>
-> CC: Herbert Xu <herbert@gondor.apana.org.au>
-> CC: "David S. Miller" <davem@davemloft.net>
-> CC: Michael Roth <michael.roth@amd.com>
-> CC: Luis Chamberlain <mcgrof@kernel.org>
-> CC: Russ Weight <russ.weight@linux.dev>
-> CC: Danilo Krummrich <dakr@redhat.com>
-> CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> CC: "Rafael J. Wysocki" <rafael@kernel.org>
-> CC: Tianfei zhang <tianfei.zhang@intel.com>
-> CC: Alexey Kardashevskiy <aik@amd.com>
+> I think we want this change for all devices in the PCI address
+> domain, including PCI-PCI bridges and endpoints, don't we?  All those
+> "ranges" addresses should be in the PCI domain.
 > 
-> Signed-off-by: Dionna Glaze <dionnaglaze@google.com>
 
-Acked-by: Sean Christopherson <seanjc@google.com>
+Yeah, right. I was slightly confused by the commit message. Maybe including a
+sentence about how the change will work fine for endpoint devices would help.
+Also, why it went unnoticed till now (ie., both CPU and PCI addresses are same
+in many SoCs).
 
-Paolo, do you want to grab this one for 6.12 too?
+Also there should be a fixes tag (also CC stable) since this is a potential bug
+fix.
 
-> ---
->  arch/x86/kvm/svm/sev.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/arch/x86/kvm/svm/sev.c b/arch/x86/kvm/svm/sev.c
-> index 714c517dd4b72..f6e96ec0a5caa 100644
-> --- a/arch/x86/kvm/svm/sev.c
-> +++ b/arch/x86/kvm/svm/sev.c
-> @@ -2212,10 +2212,6 @@ static int snp_launch_start(struct kvm *kvm, struct kvm_sev_cmd *argp)
->  	if (sev->snp_context)
->  		return -EINVAL;
->  
-> -	sev->snp_context = snp_context_create(kvm, argp);
-> -	if (!sev->snp_context)
-> -		return -ENOTTY;
-> -
->  	if (params.flags)
->  		return -EINVAL;
->  
-> @@ -2230,6 +2226,10 @@ static int snp_launch_start(struct kvm *kvm, struct kvm_sev_cmd *argp)
->  	if (params.policy & SNP_POLICY_MASK_SINGLE_SOCKET)
->  		return -EINVAL;
->  
-> +	sev->snp_context = snp_context_create(kvm, argp);
-> +	if (!sev->snp_context)
-> +		return -ENOTTY;
+- Mani
 
-Related to this fix, the return values from snp_context_create() are garbage.  It
-should return ERR_PTR(), not NULL.  -ENOTTY on an OOM scenatio is blatantly wrong,
-as -ENOTTY on any SEV_CMD_SNP_GCTX_CREATE failure is too.
-
-> +
->  	start.gctx_paddr = __psp_pa(sev->snp_context);
->  	start.policy = params.policy;
->  	memcpy(start.gosvw, params.gosvw, sizeof(params.gosvw));
-> -- 
-> 2.47.0.199.ga7371fff76-goog
-> 
+-- 
+மணிவண்ணன் சதாசிவம்
 
