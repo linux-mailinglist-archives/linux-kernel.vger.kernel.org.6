@@ -1,304 +1,105 @@
-Return-Path: <linux-kernel+bounces-398007-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398008-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5285A9BE41C
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 11:19:35 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 612CF9BE421
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 11:20:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 427471C22CB5
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 10:19:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 25653284314
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 10:20:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41A3A1DE2B7;
-	Wed,  6 Nov 2024 10:18:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5559F1DE2AC;
+	Wed,  6 Nov 2024 10:20:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=imgtec.com header.i=@imgtec.com header.b="m32+VYKp";
-	dkim=pass (1024-bit key) header.d=IMGTecCRM.onmicrosoft.com header.i=@IMGTecCRM.onmicrosoft.com header.b="qORJdOcy"
-Received: from mx08-00376f01.pphosted.com (mx08-00376f01.pphosted.com [91.207.212.86])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ut/+8wcH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F59B1DE4FC;
-	Wed,  6 Nov 2024 10:18:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=91.207.212.86
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730888315; cv=fail; b=uPNZykQ0VQ+nyViQLdl5hESUO3WBf29JCbQMCMgzwiDOVfgupKeHUSh/eAMW9Cwm8MR5MMWoq7a1cvU13RXlcKocnPrSMBcttFUgZySoGgo68mUAXjoP9jT4VnJBqaxQO6Nig6KUhPZ0mREy+LbrckhCE0H/qDlt9HcwFrefOGA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730888315; c=relaxed/simple;
-	bh=tal+ROeQsOpYZm3tGKjWkD8X37KOMaOhf6f7rd0RhUA=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=YNTCZHzhEiL84LvdfgPKdqz1F9k6XOVB82jra/LJ7aDRy+xlQIBjH8nbUUREwDj3GHwChNLALdbWBFLwKzVodfauy7l9pi1M4Ix+27CeqLECu+22cVjcxzhutHvZGYrAYOZx07S4mdfZ+z7H4+WfCV4q+jNbzl0BGmLp3po/CTQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=imgtec.com; spf=pass smtp.mailfrom=imgtec.com; dkim=pass (2048-bit key) header.d=imgtec.com header.i=@imgtec.com header.b=m32+VYKp; dkim=pass (1024-bit key) header.d=IMGTecCRM.onmicrosoft.com header.i=@IMGTecCRM.onmicrosoft.com header.b=qORJdOcy; arc=fail smtp.client-ip=91.207.212.86
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=imgtec.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=imgtec.com
-Received: from pps.filterd (m0168888.ppops.net [127.0.0.1])
-	by mx08-00376f01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A68qKaa023051;
-	Wed, 6 Nov 2024 10:18:14 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=imgtec.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=dk201812; bh=GCWCrsXAsLjm4n7nnbHos2a7f
-	NIUp+0ug4g5Kr7MLzw=; b=m32+VYKpXpL4LREXyvW2zjUFzejWpe384vOWT/mnm
-	lORRrB5gootijvjsovhoAh+uNq8Gy+QbuCsoBaV5PtN4nC3RL5fb+3/e+ySefHo6
-	IAzZYx2OFKdmj6c4o04OfA6XMPW0sUR1jeZXSXDYJUCn+Oz9mtPLBWWaoTJ5mJ/S
-	XbEhCoQhIgTEJnlig22dUYR6+swQL3nwTaRC+O/rl9zYgWSz7ixALm+i9i3Bv26D
-	pyz8yrmfjQpaB6Gh6FxIMIyAP3UJrqfRTdPcbYjFLVdURMLsUYBXt8+Fa23y5z8F
-	/tINkJcCOiNjjk7ksrwaH4rj9KJAYCcIydzf+HJJ3bnhw==
-Received: from lo2p265cu024.outbound.protection.outlook.com (mail-uksouthazlp17011030.outbound.protection.outlook.com [40.93.67.30])
-	by mx08-00376f01.pphosted.com (PPS) with ESMTPS id 42qw83ratc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 06 Nov 2024 10:18:13 +0000 (GMT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Of7pvR/nqyLDqSYV9iX0dCDuUVi3mGc46r8B25TR/b2OFbKTMjt+cfiudCQGHTOXj5SKpKekkN4Xg97wHm+GbWJEDd6vq+mNolo0COSWWzTZqUCfaZgPHTAd/Qhst3xK3jXe+ht64ss1tdHKsZeNMiOp8y3AsYAbUV8KCispyVxkwz5kGmL2R/MelAwfZGYpO/6TyRTNSlj2y+ni1j//vl+Byfu74mpHA71NpjSRi3X63uWc6sT42jC5fHobGw5Z36lGBBylS9Aprx27RlobAveB0W6OpC9kamv+EmDYfUOuDBZyFs2ZSY3VaxWElo7jnH/KVrq8j/Gysdcd3PM90w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=GCWCrsXAsLjm4n7nnbHos2a7fNIUp+0ug4g5Kr7MLzw=;
- b=gZocsO9ZPvf8HFqJyCrLVc1PuIdzbwkLt4Mgft91M6OLdDhQyb9oL2TxVnd3UXXA8KVQbulky9ythK12eQYnK/Fms7xeU7SdM3547jvcMrRJIU1RhMnJPYIjpjwtozvhPut2M5uefIF2CmdJkGX3veB3YoUV2fK2SJYF6xIRjPD/AaLAfZ3RHEQjXXjny7IyqSAdPFGLS5HKNgHCXTdMgEszSot4a3eT0BTBon+A0W/oxO7Dbb4kI69ysgICnLiF91Sc0V+Q9xwtbMYdGJjQxOZwvtKOE/lmz9WnyQo6/iaduXHkxDA1Hy9tbzjBXEPvyzazjb1VZxINtjn58+hZgg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=imgtec.com; dmarc=pass action=none header.from=imgtec.com;
- dkim=pass header.d=imgtec.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=IMGTecCRM.onmicrosoft.com; s=selector2-IMGTecCRM-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=GCWCrsXAsLjm4n7nnbHos2a7fNIUp+0ug4g5Kr7MLzw=;
- b=qORJdOcyceiVZLV5dJWyuhdUqKaYq5/OwXsAh0/i1O5ksblgtX790JAbqTcfFTdIvbMVTKGeOPyfXc6T/GfjRDFYclhRe5wtE6vIIBtnfaF8iIvCQhiPt0Y1mzpuM++KlBP3HSgv14/Ps8dUUZ/DbR71x4PDGcUFCdnOWU4QLXQ=
-Received: from CWXP265MB3397.GBRP265.PROD.OUTLOOK.COM (2603:10a6:400:e7::8) by
- LO2P265MB7201.GBRP265.PROD.OUTLOOK.COM (2603:10a6:600:32e::10) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8137.18; Wed, 6 Nov 2024 10:18:10 +0000
-Received: from CWXP265MB3397.GBRP265.PROD.OUTLOOK.COM
- ([fe80::8e9d:6b2f:9881:1e15]) by CWXP265MB3397.GBRP265.PROD.OUTLOOK.COM
- ([fe80::8e9d:6b2f:9881:1e15%6]) with mapi id 15.20.8137.018; Wed, 6 Nov 2024
- 10:18:10 +0000
-From: Matt Coster <Matt.Coster@imgtec.com>
-To: Conor Dooley <conor@kernel.org>
-CC: Frank Binns <Frank.Binns@imgtec.com>, David Airlie <airlied@gmail.com>,
-        Simona Vetter <simona@ffwll.ch>,
-        Maarten Lankhorst
-	<maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Tero
- Kristo <kristo@kernel.org>,
-        "dri-devel@lists.freedesktop.org"
-	<dri-devel@lists.freedesktop.org>,
-        "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-        Randolph Sapp <rs@ti.com>, Darren
- Etheridge <detheridge@ti.com>
-Subject: Re: [PATCH 08/21] dt-bindings: gpu: img: Add BXS-4-64 devicetree
- bindings
-Thread-Topic: [PATCH 08/21] dt-bindings: gpu: img: Add BXS-4-64 devicetree
- bindings
-Thread-Index: AQHbL5uQ+BUfDOg4vkWwYh76aIUz9bKo+u0AgAEQNoA=
-Date: Wed, 6 Nov 2024 10:18:10 +0000
-Message-ID: <fd3d9f34-0e8f-44a1-ac21-2ee0c49d65fa@imgtec.com>
-References: <20241105-sets-bxs-4-64-patch-v1-v1-0-4ed30e865892@imgtec.com>
- <20241105-sets-bxs-4-64-patch-v1-v1-8-4ed30e865892@imgtec.com>
- <20241105-sulfite-justness-d7b7fb98905c@spud>
-In-Reply-To: <20241105-sulfite-justness-d7b7fb98905c@spud>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: yes
-X-MS-TNEF-Correlator:
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: CWXP265MB3397:EE_|LO2P265MB7201:EE_
-x-ms-office365-filtering-correlation-id: 0ec26177-3fb7-402d-070c-08dcfe4c50a0
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|376014|7416014|366016|1800799024|38070700018;
-x-microsoft-antispam-message-info:
- =?utf-8?B?R2RrNUdGbW9FMjBOK2JPWXgxdzhTZGZ1bVJjRXNnK0JSeG1PYUdYOG1jUXRU?=
- =?utf-8?B?ays2bTRqRWhZaVd4cE1KeTlPYXZJNFJoQWFZYSs5L0pmTGEzRVd0T2tqemY4?=
- =?utf-8?B?bXpyRXZoYmIrNFNTbVAwTUlmaGwwcVRSeU5WeWZmajhYUmNHeTNjMGtnMWZT?=
- =?utf-8?B?QnpuZ1NONVRrSnJhN0hnTmw2L2dyR3ljWkVhSS9jeXB1dHkzeDZmRlY0QnNp?=
- =?utf-8?B?RFJkS2pDSThyTkZoMzNGOEo0eHI4SXFSKzNudWEzVGtyN1c5Y3p5dnFWWTA0?=
- =?utf-8?B?ek44Znd1NmdPbzFuaXNVck9mT2JtK1JHa3d0cEJ0MnVUMERpNkxUWmhQQ3Fk?=
- =?utf-8?B?bmRTandHUnR0aEU3MUsrNmlSbDZjOWlrMzk4WitweWFsMW9td1ZGYSt3TGlX?=
- =?utf-8?B?VjArRlZOSTg5eDFhZFVsbElhOTFJMHVNRDcyUjlYWXpqSU43dW02ekNtbGJi?=
- =?utf-8?B?K0tmU2R4cnlXdnRjd2dUL0M0STZjVVZzODNJMk5sdkFVaUhLQ2RUTlNOa0d1?=
- =?utf-8?B?dnVMRklBa3VjNkNiZlU3T2xLM3lLSlJ6amExUWxUSGpoYkdYSkR0WC80QUMz?=
- =?utf-8?B?dGltamNUeEZiSVAzVGVyRlI4bmFDN21heUZ3U1pEMzB5UXpjMUFFMFhWNStG?=
- =?utf-8?B?N2FQeVEvbTEybFNERkQwVUx4aG5KWjk3SW9YNm1nekY0N2tXM0dkVitxSmU2?=
- =?utf-8?B?L09pdE1zOEc1NkYyaEgwWHBlQnZkWVlyK1A0bFJFOC92SDlkc0RXZWttOWx3?=
- =?utf-8?B?L2czUGxUODgyTGltYzIxaDJwU1NXVnN0TUdZUEVOZ2pscFBBU0xRY3VRby9W?=
- =?utf-8?B?alRrVlh2OTVMdUR3THpDaHd5OWV2NHpWUmlWbENhY2N5K1RGT3hBQTZSY0ZB?=
- =?utf-8?B?SVc0Q1lmeGFERmlIOURuc0dmVkxpMXhuWlJjM1pUSlp5ZEJMVFJjMzhnZm04?=
- =?utf-8?B?TC9FQTVPa2x3OHg4NHpNNFVaRHdhQy9ycmdUMnN5S2lpNGxUc1BRdkljeGJ5?=
- =?utf-8?B?U3BYUnp1UlptNUpQS0p4ZWJ5d2JEZ0hHRDgvLy8zRVViWmlwL2wzQzlLUTli?=
- =?utf-8?B?REJWbW9uWlNpZkNlMERCbjlaVTc1V2pNaE9senIzV3k5UjhZR1ZtSW9ya3pT?=
- =?utf-8?B?YzArZDZMcCt5bklDVWp0VHEwdHdFV3EybVd6ZkhNMnY3Z3pOdWhYeXJLc0pH?=
- =?utf-8?B?b01FaUhyVmVUb0hpSnF0cVErc0tLanAyRWYvTnRabVBjZU5aaVdObHFhZGhF?=
- =?utf-8?B?Zm54QnFKNlRSYjhQSUtSbjc4Z1Y1dkxWTU16NnV4VmFobzdlMWZoT2RDdURR?=
- =?utf-8?B?NVlQMEt3aTZ6Tis4UUhZTUpya29lRklpMTB1cU9ZcVRCSEZoVVkyTlo3Qmdj?=
- =?utf-8?B?RlJtZFpkcnoydUtnSjJ4NzFWTG9hVCs5Tm9adFFuZTJHYmZzOUh4MmVHRVBN?=
- =?utf-8?B?Q2Z0a3haN3ptZTZ6RkUvdkFqSnFHQTYxbVNoWXFuak4wcGh0bWVyY0U3NFFN?=
- =?utf-8?B?RUZObkxNRTBCTlBBQkNDTzBzNEdRa0hQazQzeEZjVUt4NlJoUlFvclR3V3pZ?=
- =?utf-8?B?T1pPRGlMek9KZmprdENnTDMwRzBrTzdQa1g3ZzRuQXdLSVpvUTE2UG01R1hY?=
- =?utf-8?B?OGZEYWRPY1ZEc1k1amtwYURmTjkycllCMW5TbVV6RVNLcHpkUlpNb09NdXJH?=
- =?utf-8?B?b1ZpNEJGQVZlSy91b3hJOXB6OFU0Y2JmWklLVXlnUmRhSlVYbDI1UHBHZXlQ?=
- =?utf-8?B?VE5sYVNic0pHYUEyWjUxR0E5QUVveGJDVGRHQnc4TzBXdFpROCs5NnRGbzN4?=
- =?utf-8?B?SkVwU0cvKzNHTFprK3o5Njlham55bDFyalEweHhyd2xsU2R4UlhzL2FoemNM?=
- =?utf-8?Q?wrmfFDTTi9PAM?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CWXP265MB3397.GBRP265.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024)(38070700018);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?bmVjOGNiaThEeG9DS2VRaThUUEhVTERFcWErYnNIMnVVSWFKL0FGVnNIem9k?=
- =?utf-8?B?NHEwU1BlNkxvK25xNHBuVDY3a0g3QXB0eEllSzZYd0hTRkQzQXhaMGVOT3BR?=
- =?utf-8?B?RE5sV3Vsa3J0REhrREZnVy9sZE1FSjFiSDNSYloySUxLM1pXVCtNU1JURGlp?=
- =?utf-8?B?a1hyNFpTYmUyQzRObUdmSmFNT2pKY0Rrb0l6UlVnZVZNKzVUY0ZpUEJGL29k?=
- =?utf-8?B?NUs4NG5QOFRBQk1ZZGNKVHdic1hycUx2TTdlQ0dydUJkaTA4Z2pTMklFWWNm?=
- =?utf-8?B?blVmalR3MHd3amR1N0pPWFdsamFTUHlvZW9zSGlHMEF2MUs3U21jcHpyODYx?=
- =?utf-8?B?VU8zeDRlK2lpRjU0T2Z4dHVmTHFVNGRDYXVYeDd3WEhYb0N3d0o1Ym9pL0Nq?=
- =?utf-8?B?VTVSS0xWaWZya2txbVhudmxxYmNGdGpJdkJZV2lBdUJxTnhsdGk5VFpKYm5F?=
- =?utf-8?B?empVYkdnMFZUSktTQWZiME9uVldvTWgvcFFXV2t0SlBmaWp6NzM5QXU4WlhE?=
- =?utf-8?B?UEd4M2JIeGluQzNBUXgrMy9ZZ2NSYUZmVXR6R0FXZXh6QTM1QVhQWFpNODhK?=
- =?utf-8?B?VFZxRVc3Zi9Ia29VczRUM3Y1b1hBRHJWNFFtRUhwVmF4Wmh2anNVems2Nm5y?=
- =?utf-8?B?bjEvME9uU29xcEEzck9YTkU4cDdpbG5MblNabjdXdUk0T0JzaEtBd2tmVFR2?=
- =?utf-8?B?d1ZrdnhNWllCNjVYTDhTb0t6Q1dXWmYwRWdENWpvWGxUZlEyUUJuQ1MzVDlW?=
- =?utf-8?B?ZFZveGRlcFRFV2FraVZJQWpGZkdaSFhYais2MkNvTHRDWHB1aGhTekZrRnZn?=
- =?utf-8?B?S21PWm9NMm5oWnFnMDBnbEEwVi9UNTZGMDhpYnRWeGU0WitxTlZYeXVIQlU5?=
- =?utf-8?B?RTI2MFJ5cXF3M0J5d2NLZlZzcndRbTB6MzV4d1RBZVZyOHd4eWFDVC9HUFlu?=
- =?utf-8?B?K1JMRFI5UUpweUU2d1laeCtVdUZWWnVGSGJWT2VJNERuZDMrbllkNGtuWFdl?=
- =?utf-8?B?UVVDejdGQnFZWVRvY1R6ZWtrZXNzeTRzNXhtWWhiRVJFK0dpekRKNTB0eWJy?=
- =?utf-8?B?UStxTkc4NkZIdzV4a3lkSXVVS3ZHa2FkZ3pEdXBmMTN3ZkYwNEZVTk0zcE9Q?=
- =?utf-8?B?MUpEeTBEODNtRWRVMlh2VTdqYTlLaUozU1lZb3Rlc2R2VzhsaWgzTnJCdXRh?=
- =?utf-8?B?TitFcnFjZmo0NE5ZaVVEanJnZGdJaG52U0c1VDF0TGN1eGlSS0gyNzdtZWYr?=
- =?utf-8?B?eWdSNUorRXpOdnlkQjdVOUErQ2hObE01UE1ISWl2RXdTVHdtNHVZQTNvbnV0?=
- =?utf-8?B?REh6UmI5MkJ3MHJTTXNFTExQNUdMdCs0d0hSb2d0NDFWaVNoMDQwRTRoQVhy?=
- =?utf-8?B?QnYrYXVaUHpVLzE4VVhkRHRKaVp4c3NPNUM5TzJVMG5JcGdhbE5SZkpCalRz?=
- =?utf-8?B?Tm55WEZ0YlNiZ0VxSEMyYzBiV3J3OHZjMDNPaGV0eStvWUQzaEhuNCtWUlJt?=
- =?utf-8?B?WUMzQXdvVS9pM3N5RHRLeHBzanIrcGlYQW83eE53UVh0N3ZNN0s1QnZTekND?=
- =?utf-8?B?R1NaOTE2TC8zVENyZC84MG9QUTNKTHBGR2ZtV0ZWR1pSRXhwcU83eUVyMmRZ?=
- =?utf-8?B?ZXFZRHdPam8rZ1RNK3Jqb3ZKNXVhZnVWRkRvLzJmanN1L2NEU2FidXVhWmgy?=
- =?utf-8?B?WUlBMUIzZy9ZTHpCVzREVEtZK3FodEttanIxZXJyYllGd0lVay9xVGtvRVFo?=
- =?utf-8?B?Z1kyZmNmM0RBVWZNR1g2VHdkK1ljVVhEOFIwVW1BWndoRkdKY1JGN2duL1FM?=
- =?utf-8?B?NlhmeXdWK1Z5Wm8vNG9OeWVld0RpWDlHZmoxNzdFWkdkL1hKbEQwWEZub0JI?=
- =?utf-8?B?WFFKT1BsMkpkbWdZMWdVTktnVDFvRGlCdy9rT2NxRndNczgvdE5KejhIK0tE?=
- =?utf-8?B?RjY4blJrRDEyVUk5Ti9OZGZzNDlZRW1LV1ZJRHJzQkg3eG1sYXZ5SmpPRTVJ?=
- =?utf-8?B?aElLd0dxQ3pkOEp5cVoxYlUwK09sZ1BrenNtRlMrQXViTEpDcndpRjVPZC9s?=
- =?utf-8?B?eElBWEVqaUF4Yll4cWVQRVRQZ09UL0RYMmFkNmIvbHF2RURsVWhlQVp5ZVpr?=
- =?utf-8?B?bG0zeFRScTBVZ002aVR5UDFiZnYzYWFaQXdlYy9iYjVaaUQwemhSSGg5UllU?=
- =?utf-8?B?aXc9PQ==?=
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="------------XzOpNSO3RShObokvrHvSqa8d"
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A581F1DACAA;
+	Wed,  6 Nov 2024 10:20:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730888415; cv=none; b=RfatBXdtdWlCrDxNll7OyNw9MmYL5cDVa4wyG0CU1t1bEmrQQ9qEYbnOEt8QyIk+ILWxoxS4Ny2Ap60sSF/Npb1iNBXsr3LW6cY8WFkamxWODHQqzUcbPzNxMuQSqOTUa/rjaX2NKJQStPYi2l6t21ws+h504OYUwBMenXGEny4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730888415; c=relaxed/simple;
+	bh=lXpB45YEiKcKgz5mKJKvT1SzNckif79TOWmyG/tgmZw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VnvX/RsHuudM36dCB5xARYo568rxcPNOzEObuhQkkEcR6sCjAkloUnw+Ly0sqORsq+WapDznOD7THE+5HsMkX+oMUkjY0AOfFmdxarPrGQ7/dgKKLoOw6Qia88O44qRRkITyhmRGv/hbdmWiGFb8Pze1O2uEphqSc7qmsOYUkfU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ut/+8wcH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D91CCC4CECD;
+	Wed,  6 Nov 2024 10:20:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730888415;
+	bh=lXpB45YEiKcKgz5mKJKvT1SzNckif79TOWmyG/tgmZw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ut/+8wcHMoHlEah+z1uEA09kuKP1PPJjtCkUptqxPo+CPvuPAm71BTxkR945Ht+ZW
+	 xL7hMe364LooETN3T87cqFTEYhAL8mEJy3X+Ql4+i3yHPYN9FD5MrCTIb42tKHcBGV
+	 tIGJORhucoV8CjDu/K1VBOTn1RLjnBmjqghYD4PDVbYLx2XlewK2JoT1IqsM4xMF5T
+	 uccr0sQHILtsz9FpxP/WuMnI7K0FyMQ4+YmP1ClURfsom3qDTkCUUJyXYY7Zjxu4Bd
+	 PhdjzhpkKnDZ7DPAqU9ngWAX11qJaLd8t04UCZsF+YhBNjgNJvdgEtSPKrBl/A8qO9
+	 TDiZ3YgHQd4bw==
+Date: Wed, 6 Nov 2024 10:20:10 +0000
+From: Simon Horman <horms@kernel.org>
+To: "Nemanov, Michael" <michael.nemanov@ti.com>
+Cc: Kalle Valo <kvalo@kernel.org>, "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-wireless@vger.kernel.org,
+	netdev@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Sabeeh Khan <sabeeh-khan@ti.com>
+Subject: Re: [PATCH v3 12/17] wifi: cc33xx: Add scan.c, scan.h
+Message-ID: <20241106102010.GN4507@kernel.org>
+References: <20240806170018.638585-1-michael.nemanov@ti.com>
+ <20240806170018.638585-13-michael.nemanov@ti.com>
+ <20240809160355.GD1951@kernel.org>
+ <33f3b6a4-f907-4374-90ac-d81a81700936@ti.com>
+ <20241102120030.GG1838431@kernel.org>
+ <d9640623-4b93-4fce-991f-f881a230b143@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: imgtec.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: CWXP265MB3397.GBRP265.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0ec26177-3fb7-402d-070c-08dcfe4c50a0
-X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Nov 2024 10:18:10.3182
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 0d5fd8bb-e8c2-4e0a-8dd5-2c264f7140fe
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 9nIiQuS9MQAgxj3UhUqoSKNu1TRUsq46hieMWnLoPsY0JeI5a/JkoQz3iVDN7bd4/fo7Oae0AjAXw8pntuhdpA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LO2P265MB7201
-X-Authority-Analysis: v=2.4 cv=CYNa56rl c=1 sm=1 tr=0 ts=672b4266 cx=c_pps a=cRjhvmALJ7+JJty0Yz2dHg==:117 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=VlfZXiiP6vEA:10 a=WnR_qW7rlZcA:10 a=NgoYpvdbvlAA:10 a=XYAwZIGsAAAA:8 a=r_1tXGB3AAAA:8
- a=-wnHUmGVWltVZzVUIaUA:9 a=QEXdDO2ut3YA:10 a=mF5ayFQRYOIQQG1wrwcA:9 a=FfaGCDsud1wA:10 a=E8ToXWR_bxluHZ7gmE-Z:22 a=t8nPyN_e6usw4ciXM-Pk:22
-X-Proofpoint-ORIG-GUID: d1-Bx-x0AoTS3ah2FGG0Y_o9N9AJyHjU
-X-Proofpoint-GUID: d1-Bx-x0AoTS3ah2FGG0Y_o9N9AJyHjU
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d9640623-4b93-4fce-991f-f881a230b143@ti.com>
 
---------------XzOpNSO3RShObokvrHvSqa8d
-Content-Type: multipart/mixed; boundary="------------X0n8iUjCyOyHzDQGH2EjMNa4";
- protected-headers="v1"
-From: Matt Coster <matt.coster@imgtec.com>
-To: Conor Dooley <conor@kernel.org>
-Cc: Frank Binns <frank.binns@imgtec.com>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Nishanth Menon <nm@ti.com>,
- Vignesh Raghavendra <vigneshr@ti.com>, Tero Kristo <kristo@kernel.org>,
- dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- Randolph Sapp <rs@ti.com>, Darren Etheridge <detheridge@ti.com>
-Message-ID: <fd3d9f34-0e8f-44a1-ac21-2ee0c49d65fa@imgtec.com>
-Subject: Re: [PATCH 08/21] dt-bindings: gpu: img: Add BXS-4-64 devicetree
- bindings
-References: <20241105-sets-bxs-4-64-patch-v1-v1-0-4ed30e865892@imgtec.com>
- <20241105-sets-bxs-4-64-patch-v1-v1-8-4ed30e865892@imgtec.com>
- <20241105-sulfite-justness-d7b7fb98905c@spud>
-In-Reply-To: <20241105-sulfite-justness-d7b7fb98905c@spud>
+On Sun, Nov 03, 2024 at 03:09:22PM +0200, Nemanov, Michael wrote:
+> On 11/2/2024 2:00 PM, Simon Horman wrote:
+> 
+> ...
+> 
+> > 
+> > I'm a but unsure why you see that, but what I was referring to is this:
+> > 
+> > $ ./scripts/kernel-doc -none drivers/net/wireless/ti/cc33xx/scan.h
+> > drivers/net/wireless/ti/cc33xx/scan.h:104: warning: Function parameter or struct member 'header' not described in 'cc33xx_cmd_ssid_list'
+> > drivers/net/wireless/ti/cc33xx/scan.h:104: warning: Function parameter or struct member 'scan_type' not described in 'cc33xx_cmd_ssid_list'
+> > drivers/net/wireless/ti/cc33xx/scan.h:104: warning: Function parameter or struct member 'n_ssids' not described in 'cc33xx_cmd_ssid_list'
+> > drivers/net/wireless/ti/cc33xx/scan.h:104: warning: Function parameter or struct member 'ssids' not described in 'cc33xx_cmd_ssid_list'
+> > drivers/net/wireless/ti/cc33xx/scan.h:104: warning: Function parameter or struct member 'padding' not described in 'cc33xx_cmd_ssid_list'
+> > drivers/net/wireless/ti/cc33xx/scan.h:104: warning: Excess struct member 'num_of_ssids' description in 'cc33xx_cmd_ssid_list'
+> > drivers/net/wireless/ti/cc33xx/scan.h:104: warning: Excess struct member 'ssid_list' description in 'cc33xx_cmd_ssid_list'
+> > drivers/net/wireless/ti/cc33xx/scan.h:149: warning: bad line:
+> > drivers/net/wireless/ti/cc33xx/scan.h:177: warning: cannot understand function prototype: 'struct sched_scan_plan_cmd '
+> > drivers/net/wireless/ti/cc33xx/scan.h:227: warning: Function parameter or struct member 'u' not described in 'scan_param'
+> > drivers/net/wireless/ti/cc33xx/scan.h:227: warning: Excess struct member 'one_shot' description in 'scan_param'
+> > drivers/net/wireless/ti/cc33xx/scan.h:227: warning: Excess struct member 'periodic' description in 'scan_param'
+> > drivers/net/wireless/ti/cc33xx/scan.h:269: warning: Function parameter or struct member 'header' not described in 'cc33xx_cmd_scan_params'
+> > drivers/net/wireless/ti/cc33xx/scan.h:269: warning: Function parameter or struct member 'padding' not described in 'cc33xx_cmd_scan_params'
+> > drivers/net/wireless/ti/cc33xx/scan.h:295: warning: Function parameter or struct member 'header' not described in 'cc33xx_cmd_set_ies'
+> > drivers/net/wireless/ti/cc33xx/scan.h:319: warning: Function parameter or struct member 'header' not described in 'cc33xx_cmd_scan_stop'
+> > drivers/net/wireless/ti/cc33xx/scan.h:319: warning: Function parameter or struct member 'padding' not described in 'cc33xx_cmd_scan_stop'
+> 
+> Right, fixed in v4, thanks.
+> 
+> In general, all of those structs are internal to scan.c and not part of an
+> interface so I think I'll move them there and drop the comments.
 
---------------X0n8iUjCyOyHzDQGH2EjMNa4
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-
-On 05/11/2024 18:03, Conor Dooley wrote:
-> On Tue, Nov 05, 2024 at 03:58:14PM +0000, Matt Coster wrote:
->> +    / {
->> +        #address-cells =3D <2>;
->> +        #size-cells =3D <2>;
->> +        interrupt-controller;
->> +        #interrupt-cells =3D <3>;
->> +
->> +        gpu@4e20000000 {
->> +            compatible =3D "ti,j721s2-gpu", "img,img-bxs-4-64", "img,=
-img-rogue";
->> +            reg =3D /bits/ 64 <0x4e20000000 0x80000>;
->=20
-> Can you format this normally please? Drop the #address/size-cells down
-> to 1 if you're against having 0x0s.
-
-Sure. I thought /bits/ was the "new" way of doing things, but I'm not
-really bothered either way.
-
-Cheers,
-Matt
-
-> Otherwise,
-> Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
->=20
->=20
->> +            clocks =3D <&k3_clks 130 1>;
->> +            clock-names =3D "core";
->> +            interrupts =3D <GIC_SPI 24 IRQ_TYPE_LEVEL_HIGH>;
->> +            power-domains =3D <&k3_pds 130 TI_SCI_PD_EXCLUSIVE>,
->> +                            <&k3_pds 373 TI_SCI_PD_EXCLUSIVE>;
->> +            power-domain-names =3D "a", "b";
->> +            dma-coherent;
->> +        };
->> +    };
->>
->> --=20
->> 2.47.0
->>
-
---=20
-Matt Coster
-E: matt.coster@imgtec.com
-
---------------X0n8iUjCyOyHzDQGH2EjMNa4--
-
---------------XzOpNSO3RShObokvrHvSqa8d
-Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="OpenPGP_signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-wnsEABYIACMWIQS4qDmoJvwmKhjY+nN5vBnz2d5qsAUCZytCYgUDAAAAAAAKCRB5vBnz2d5qsHzr
-AQDfS43acJTUXUbdGlJ8J4kHjf2Zrm9HbaNydKK+u8tkmwD/e+dJS5to0CLMhrWAySvYatJfw3Az
-CXv/yad+diZ6EAo=
-=MM18
------END PGP SIGNATURE-----
-
---------------XzOpNSO3RShObokvrHvSqa8d--
+Thanks, I think that makes sense.
 
