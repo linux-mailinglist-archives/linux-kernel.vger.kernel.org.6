@@ -1,99 +1,59 @@
-Return-Path: <linux-kernel+bounces-398178-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398181-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 227389BE717
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 13:10:32 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FFC39BE779
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 13:14:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4FA3C1C2347C
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 12:10:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 384B41F24C90
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 12:14:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 122061DF272;
-	Wed,  6 Nov 2024 12:10:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64A5A1DF726;
+	Wed,  6 Nov 2024 12:14:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="pLpXnFk/";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="hNLG7Mek";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="pLpXnFk/";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="hNLG7Mek"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A859A1DF25D;
-	Wed,  6 Nov 2024 12:10:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="ObfifXCQ"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.3])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA8B11DF722;
+	Wed,  6 Nov 2024 12:14:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730895026; cv=none; b=CTUqouwrAQTJnK9LkyjjfCqZToeQyNRlM7n9rLYQwch7oUKAlFZblfAad6lKRi9ueUfaaFLBT1Flc2Wc74cDzTJ2uksnFCapIOR8KVHlTkIGLxqBU5ype86T7g1y1h7dDYT1HpcCJU/rIc6MN+izF9/7CkzjkjMb2Y0XadmZS1Y=
+	t=1730895277; cv=none; b=tV5rYZO4PFClMi/Zs1KZMWrCS1GVG9GcHmKz3kT68UyAL/5VUHvilMq4hMopVsUpPnGEmsUtaRol9sBTUON0MuU5Gc/ZSU0CWpTZtDbmiDENHCkE7VSYzbqoPCT+4rW5m7P9O0+CwS7Yg40WpzJkc+/Ph3vbWdx33UziyafW15A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730895026; c=relaxed/simple;
-	bh=aW2xwDVdp7frKIFfXC7YyDMLsPfx5p8hyx6ZkoQG7D8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=OIp0d1sSTKi83iqpfjrp9Yt4yidWHOApkVVWtyziY929FNBtjL8NCD724z3o59bkbANYSTPM+//La8uZQlREJIBLKdCdQBBejs7KpzOwdDjJ2Lj0wB+1zBSB7D0vv4hGnpjG0DZxhIjyETwdPl5UrWTUtFw2jXOOHPuUH+im5vo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=pLpXnFk/; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=hNLG7Mek; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=pLpXnFk/; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=hNLG7Mek; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from kitsune.suse.cz (unknown [10.100.12.127])
-	by smtp-out1.suse.de (Postfix) with ESMTP id B212D21CB9;
-	Wed,  6 Nov 2024 12:10:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1730895022; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8ohwiTc+yZhDyRvRbtXG6pJM+owozZa197xSwSi956s=;
-	b=pLpXnFk/ycD+ULfoIakRcKlvXI5oUXDANOX4VJs3LOyoEWXt2wCuNjXLXwEs0fYddQUEcm
-	kVFqrE/cm1N4XnPWdKHxXzbUFmdSxItvKEx8psbvDrxsug35o0yPtAw+o2X2MAdu1mQGuL
-	3or5unDeqOGozBmIXbB0W4o4x3WxAFw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1730895022;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8ohwiTc+yZhDyRvRbtXG6pJM+owozZa197xSwSi956s=;
-	b=hNLG7MekLxD2oSy9GQ81JHS6Syztv0ET2URzJ2oIrG4qJ9W8/DIHAItGY+v0gWuZ2CsF8Y
-	IP/1fWptmtgTdGBg==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1730895022; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8ohwiTc+yZhDyRvRbtXG6pJM+owozZa197xSwSi956s=;
-	b=pLpXnFk/ycD+ULfoIakRcKlvXI5oUXDANOX4VJs3LOyoEWXt2wCuNjXLXwEs0fYddQUEcm
-	kVFqrE/cm1N4XnPWdKHxXzbUFmdSxItvKEx8psbvDrxsug35o0yPtAw+o2X2MAdu1mQGuL
-	3or5unDeqOGozBmIXbB0W4o4x3WxAFw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1730895022;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8ohwiTc+yZhDyRvRbtXG6pJM+owozZa197xSwSi956s=;
-	b=hNLG7MekLxD2oSy9GQ81JHS6Syztv0ET2URzJ2oIrG4qJ9W8/DIHAItGY+v0gWuZ2CsF8Y
-	IP/1fWptmtgTdGBg==
-From: Michal Suchanek <msuchanek@suse.de>
-To: linuxppc-dev@lists.ozlabs.org
-Cc: Michal Suchanek <msuchanek@suse.de>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	"David S. Miller" <davem@davemloft.net>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Naveen N Rao <naveen@kernel.org>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Danny Tsen <dtsen@linux.ibm.com>,
-	linux-crypto@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Nicolai Stange <nstange@suse.com>
-Subject: [PATCH] aes-gcm-p10: Use the correct bit to test for P10
-Date: Wed,  6 Nov 2024 13:09:33 +0100
-Message-ID: <20241106121019.25629-1-msuchanek@suse.de>
-X-Mailer: git-send-email 2.46.1
-In-Reply-To: <20240923133040.4630-3-dtsen@linux.ibm.com>
-References: <20240923133040.4630-3-dtsen@linux.ibm.com>
+	s=arc-20240116; t=1730895277; c=relaxed/simple;
+	bh=s+7ythMgvireZhHwMrelXrMJjMe+ZrPkY+vUjQgq9/I=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EOWvIBqRr2rhUnxretLdH1cxIbcsy3bi0zy52bWVkU+9YEOgPzJks55zYWVzm0dHqrPqLCUqPyFKWTMT4cO1beM/t0VIeZS197icKTAuxBF1EpTh7jPsA9966DfL33R2jIpbdpdXhZC1Zwk4RYTeW7nYLOC9bIKq/X5pNyKuBfc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=ObfifXCQ; arc=none smtp.client-ip=117.135.210.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-ID:MIME-Version; bh=WoFB7
+	HdhzNakUB5i2S2RJjooXmmquq4KbFJkQtdU1wU=; b=ObfifXCQtdBwGSqO9om6S
+	i9NcZqIvmxn2YhY0L1XPEvjY/bErqUP9gnhaLczkGSME+JgVxy5vroGLjRxR/hlU
+	/9LqOhKTCG8U1KR4My88Iq5Mz4Ge0jnFyUK29Cf2Gy09/PJEkmoY9JcUf5CospCn
+	rHih/McpEmuRnkbJ2JDNzQ=
+Received: from localhost.localdomain (unknown [114.86.104.95])
+	by gzga-smtp-mtada-g0-4 (Coremail) with SMTP id _____wD334deXStnf7GyFQ--.7977S2;
+	Wed, 06 Nov 2024 20:13:19 +0800 (CST)
+From: Haiyue Wang <haiyuewa@163.com>
+To: linux-perf-users@vger.kernel.org
+Cc: Haiyue Wang <haiyuewa@163.com>,
+	Ian Rogers <irogers@google.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	linux-kernel@vger.kernel.org (open list:PERFORMANCE EVENTS SUBSYSTEM)
+Subject: [PATCH v2] perf tools: Add the empty-pmu-events build to .gitignore
+Date: Wed,  6 Nov 2024 20:12:14 +0800
+Message-ID: <20241106121254.2869-1-haiyuewa@163.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -101,54 +61,41 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Spam-Score: -2.80
-X-Spamd-Result: default: False [-2.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_MISSING_CHARSET(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCPT_COUNT_TWELVE(0.00)[13];
-	RCVD_COUNT_ZERO(0.00)[0];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[suse.de,gondor.apana.org.au,davemloft.net,ellerman.id.au,gmail.com,csgroup.eu,kernel.org,linux.ibm.com,vger.kernel.org,suse.com];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,suse.de:mid,suse.de:email];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com]
-X-Spam-Flag: NO
-X-Spam-Level: 
+X-CM-TRANSID:_____wD334deXStnf7GyFQ--.7977S2
+X-Coremail-Antispam: 1Uf129KBjvdXoW7GrWDJFy8JryfAw4fCF48WFg_yoWfCrc_Kw
+	4xWrWqvr45tr9YyrWxCF45Zr4Fqa1Yy3s8JrW7tF1rAayUG34j93Z0yrZrA3yrWa9rGw1j
+	kwn8Gr18XFWxujkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IUbF_MDUUUUU==
+X-CM-SenderInfo: 5kdl53xhzdqiywtou0bp/1tbiLxmPa2crT6j3OQAAs3
 
-A hwcap feature bit is passed to cpu_has_feature, resulting in testing
-for CPU_FTR_MMCRA instead of the 3.1 platform revision.
+The commit 0fe881f10ceb ("perf jevents: Autogenerate empty-pmu-events.c")
+build will generate two files, add them to .gitignore:
 
-Fixes: c954b252dee9 ("crypto: powerpc/p10-aes-gcm - Register modules as SIMD")
-Reported-by: Nicolai Stange <nstange@suse.com>
-Signed-off-by: Michal Suchanek <msuchanek@suse.de>
+	tools/perf/pmu-events/empty-pmu-events.log
+	tools/perf/pmu-events/test-empty-pmu-events.c
+
+Signed-off-by: Haiyue Wang <haiyuewa@163.com>
+Reviewed-by: Ian Rogers <irogers@google.com>
 ---
- arch/powerpc/crypto/aes-gcm-p10-glue.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+v2: Rebase the perf-tools-next.git on branch 'perf-tools-next'
+---
+ tools/perf/.gitignore | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/powerpc/crypto/aes-gcm-p10-glue.c b/arch/powerpc/crypto/aes-gcm-p10-glue.c
-index e52629334cf8..1f8b67775658 100644
---- a/arch/powerpc/crypto/aes-gcm-p10-glue.c
-+++ b/arch/powerpc/crypto/aes-gcm-p10-glue.c
-@@ -414,7 +414,7 @@ static int __init p10_init(void)
- {
- 	int ret;
- 
--	if (!cpu_has_feature(PPC_FEATURE2_ARCH_3_1))
-+	if (!cpu_has_feature(CPU_FTR_ARCH_31))
- 		return 0;
- 
- 	ret = simd_register_aeads_compat(gcm_aes_algs,
+diff --git a/tools/perf/.gitignore b/tools/perf/.gitignore
+index 19ce1cd56f8c..5aaf73df6700 100644
+--- a/tools/perf/.gitignore
++++ b/tools/perf/.gitignore
+@@ -39,6 +39,8 @@ trace/beauty/generated/
+ pmu-events/pmu-events.c
+ pmu-events/jevents
+ pmu-events/metric_test.log
++pmu-events/empty-pmu-events.log
++pmu-events/test-empty-pmu-events.c
+ *.shellcheck_log
+ feature/
+ libapi/
 -- 
-2.46.1
+2.47.0
 
 
