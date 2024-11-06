@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-398784-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398785-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 912619BF60A
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 20:06:12 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 854909BF60B
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 20:06:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C35861C23005
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 19:06:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B7C7B1C22513
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 19:06:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6545320966D;
-	Wed,  6 Nov 2024 19:05:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19F72208993;
+	Wed,  6 Nov 2024 19:05:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Tu7fwz4C"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WrlhC3aK"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DAC5207A16;
-	Wed,  6 Nov 2024 19:05:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC09C20823B;
+	Wed,  6 Nov 2024 19:05:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730919950; cv=none; b=Qsm26lmXFeroR3anoqe5BOZm68X8NMwvR9zdiXjvPgYcmAKWX1eR8GsYNzOiHDCM2fJ0cUYpUTtOC1q+rJVt3URpI5Mfb613d1PQ6leo+mGIe3uoi5KLI8IPl9uKAnIEiV1bnxhSQPDd7AP/0F7Z5gWz2Jju2W5kTRUJ51BQ0ho=
+	t=1730919957; cv=none; b=BIjw/ULeulXrYDlmswu+nxBFnAJEr+l7dGBbOwyszmTxfPzm9BCa5DWmxEauzPRGdWr0lMrFryj1MrMfu1mUG2lKMWgeT4Y2Q/Zz2mvlKY4xghvtz/2tv0y15BS+qCgyXKdhCoeQneVBAcX6L6awn1+P/u6uHstxLzdg+eRGttQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730919950; c=relaxed/simple;
-	bh=Kg7Lms0u6Z+3VI96RSLRU1K0rLdKSK7aBILVEcBlDXo=;
+	s=arc-20240116; t=1730919957; c=relaxed/simple;
+	bh=gYYE7WALIEpcM8xTZ87zKQaz0gv3EJqz8eHRA15wiPE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bOx0T+SbmpPLl96Ji2kaiQ9qrMgE4SdhN5Pe4mJfzdm9xlGjq9xRvrCtrGGrfCdliCGWZTmzCmEg3jdZI4FRBfDr54ewzV5QCRCkTbcIGwGNe2TukGh/dxF76Wakn9+Oev1MAifrRUmDStqH4rgyzQ4Nu+wWSOUQkiWOZh41o9U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Tu7fwz4C; arc=none smtp.client-ip=209.85.218.49
+	 Content-Type:Content-Disposition:In-Reply-To; b=BgjjV0PrvLthq6RmRBtVg3apJEEdLriUbCuH6h8WfjFxoffG14LXHrgL4XvpAp2DLFNuHhByxJDJqz9ZkyUmQwtPY+bWPdGuP9AXMJ719gT8p3N01UKhP2+td7gxIuE3TEiLW+WS++5WXDxVHovOFLmJA0bkBa2yTABjlxI6GFY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WrlhC3aK; arc=none smtp.client-ip=209.85.218.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a9a68480164so11166566b.3;
-        Wed, 06 Nov 2024 11:05:48 -0800 (PST)
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a9eb3794a04so11760066b.3;
+        Wed, 06 Nov 2024 11:05:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730919947; x=1731524747; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1730919954; x=1731524754; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=k+5NR2U5/34qqCFR+0XtXIXJvL9i/r1BxuGabzfLAIY=;
-        b=Tu7fwz4CwALkNtI9lu5sVfly4tEmCN07jQO3+zST97tTn3+TzIZXY51VDu0gBbJRWR
-         Uwb0ZtGFdxXWvWimOklCxtyhTdUQvO8gYNe36ycX0UvShfr/8SMA3IJlt0nrk8h16qR+
-         LDXxX6TVpdA6Cx11qMeAQ7HE+1ozqF3e9/yvlSIRp4WrJdLQDu19vISpbHxuZVXUWUtI
-         5RX2jnszcYiIiXKbXWkas/4DWUfaiNh4WRGOn8A0zslncWZJgZZjJlClQaqI/nLEPWRp
-         VyijQ8i89yVPggLw14QWCOkqnqKsfzW6H9yWepFeHICGoYfvwxGd9lobZ1jelm3wLe9S
-         B/JA==
+        bh=cF7/ktaa6n7PwbzciOgKkGQIXgDWrklYx6VwJJpF/NE=;
+        b=WrlhC3aK7USzGuMC61XHIIT9O9pPE5L4wGXBeTF5g6qpmc5IH8y3loaYHa2aGpp/f2
+         PVwpHpL6zw5Qm00+GxLp1aqdMjerHQnPwpH0YWcs/wX8RVRm8vGIMKLWc057LKahGmhl
+         VSE0j7nI76Q9bMx1kJLWKnXBeUhoMzZXOAg1/AiyJOIAdxHVPVihn4Ty8HKwBHwYpBnE
+         +Dq4YZix1rk9zyzaZxXxJxOU/edrVACELBfPrb9p5VZOqDeS+miUIddcNJ9hzbYAgSmR
+         SIusxKlfs3eMUoRIwjGulGmPm7/Vj0Vf3sor9DIsCCDuFkP8Hem2tHiMEGtH2TtxFbpH
+         oZlA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730919947; x=1731524747;
+        d=1e100.net; s=20230601; t=1730919954; x=1731524754;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=k+5NR2U5/34qqCFR+0XtXIXJvL9i/r1BxuGabzfLAIY=;
-        b=hXu3PqhM4MlGgHB2s11eLAIjGzfSGwxJjUbHtnxbJOz03TBoQeA3wmBz4yFbvhZAOz
-         Syp6CMypM9Ze8PyEXsQMMXWxm5Er1pCi1ciYe/KuK9SsYHt7Xkrraz8JgXc4umMTIQBa
-         DBLHTJPu7YIhDaXzuCr+P2WduWSGXuyNnhhGxAXbsJHPOrUffrUhtLHFpnFZBOt/Ck7C
-         77QVSc+pweejZwElyY3n8cof1Vuw/ZgW69xFvgBAkz5ohgzlXtNE2NkDKlHqC9g+xJT/
-         CN+5BEBXDrSHJrGQdbJqgRLJ1ugzsqt+i7jZ2042X3IPYxrHgUou5+rWVwKgQPc1/jIJ
-         myAA==
-X-Forwarded-Encrypted: i=1; AJvYcCU6rAfDE27bgCqJtvern/YZNmOimsa6LAqMOIsvKgFk8ISMpGreksg/0WXsjfOG1fwyyrlE+0IwsqU9Mmo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyBCFRybLjTELfXm54F2em1R5I7hzKVg7N3NC5EX0/yGfG+/pfG
-	/Fat3dNuwZ6R/JPzGxHckQPZR/3Lz4vCx4e4P0hyg81eiZVD/So2OZrBog==
-X-Google-Smtp-Source: AGHT+IHMS38+uM800veYM3G4kYpXl0kTf038ie9RlOC8+llx9LpFwQI7AVl4zPEa8IaSkRK5Oel25A==
-X-Received: by 2002:a17:907:e8b:b0:a9a:714:4399 with SMTP id a640c23a62f3a-a9de6167a45mr4002316566b.51.1730919947162;
-        Wed, 06 Nov 2024 11:05:47 -0800 (PST)
+        bh=cF7/ktaa6n7PwbzciOgKkGQIXgDWrklYx6VwJJpF/NE=;
+        b=pLNBhuJ/+mn/sPDqcJTg6fYnSuPtmpS2WfJlZ+RuJn1WVrbcpyZIQmNIlcMeBX1QQ+
+         lFb6xFQMRCt+Jx4Ac7uuJnU3GWsyNtbQI4X+SZmPXED+qUHAfMOcuhkpAUz7DQ5I0flZ
+         sET5FB5diHntsbHPDjXNvHirkgdmk6mnTqdG7jWJ/y+FLQstt8dkM8qkN8fo0bqAk4Bb
+         /TZ25NQ9JoYO5YUiPUSEmedNwzjstcFoQ6AEwXdubGVc7OB2kI/hUZ4LUNyjCSiZrt8D
+         pk2mgNeAH84iUqgrVIRNAPF3wM/kd+diMxr5hpGZyPZ+tZj90ZbcrQZzhOFZ0j9LovEq
+         jWSw==
+X-Forwarded-Encrypted: i=1; AJvYcCXKV1zYoZERuDITRGhZscmpZxYB7h9bcLhotqc7p4FRSz+ywvfg/rotRHNiceEvg+aRKjO+viVG1rorMfE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzFHeN1BjfRT+EpdoUx1fMYBQCuEZW2oE/T0MF/0/L29TGLPMQF
+	y2b56dZm1TCMRxBZ4nYi87HleJJHt64PePGD0CbRiNAaeMN7shG2Ioh9/g==
+X-Google-Smtp-Source: AGHT+IHb0/KCYL04U0/vg62SxELEsU7lhBB6XVEUFvURcuXb8fhbHoL2HuGK0YgGOMa9LJAnenQfnQ==
+X-Received: by 2002:a17:907:26cb:b0:a9a:c769:5a5 with SMTP id a640c23a62f3a-a9e3a6c9183mr3031181266b.50.1730919954233;
+        Wed, 06 Nov 2024 11:05:54 -0800 (PST)
 Received: from standask-GA-A55M-S2HP (lu-nat-113-247.ehs.sk. [188.123.113.247])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9eb16d6620sm321092166b.54.2024.11.06.11.05.46
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9eb17cf906sm320785366b.112.2024.11.06.11.05.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Nov 2024 11:05:46 -0800 (PST)
-Date: Wed, 6 Nov 2024 20:05:45 +0100
+        Wed, 06 Nov 2024 11:05:53 -0800 (PST)
+Date: Wed, 6 Nov 2024 20:05:52 +0100
 From: Stanislav Jakubek <stano.jakubek@gmail.com>
 To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
@@ -74,9 +74,8 @@ To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Chunyan Zhang <zhang.lyra@gmail.com>
 Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 3/5] arm64: dts: sprd: sc2731: move fuel-gauge
- monitored-battery to device DTS
-Message-ID: <2959aa8567afbef17337829072adce01158f00bb.1730918663.git.stano.jakubek@gmail.com>
+Subject: [PATCH v2 4/5] arm64: dts: sprd: sc9863a: fix in-ports property
+Message-ID: <5318a47282b8c15a3135fd12dacedb8aa70592e2.1730918663.git.stano.jakubek@gmail.com>
 References: <cover.1730918663.git.stano.jakubek@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -88,65 +87,29 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 In-Reply-To: <cover.1730918663.git.stano.jakubek@gmail.com>
 
-The monitored-battery property is a property of the board, not the PMIC.
-Move this property to the DTS of its only user, sp9860g-1h10.
-While at it, disable the fuel-gauge node by default and enable it only
-for its users, as it requires board-specific properties to work correctly.
+This property is called "in-ports", not "in-port", fix it.
 
 Signed-off-by: Stanislav Jakubek <stano.jakubek@gmail.com>
 ---
 Changes in V2:
-- none
+- new patch
 
-Note that the 'sprd,calib-resistance-micro-ohms' property isn't specified
-as I do not have the board or any other source of information about it.
+ arch/arm64/boot/dts/sprd/sc9863a.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-If the SPRD folks could chime in here, that'd be great.
-
- arch/arm64/boot/dts/sprd/sc2731.dtsi      | 4 ++--
- arch/arm64/boot/dts/sprd/sp9860g-1h10.dts | 5 +++++
- 2 files changed, 7 insertions(+), 2 deletions(-)
-
-diff --git a/arch/arm64/boot/dts/sprd/sc2731.dtsi b/arch/arm64/boot/dts/sprd/sc2731.dtsi
-index 12136e68dada..2d27427c41a2 100644
---- a/arch/arm64/boot/dts/sprd/sc2731.dtsi
-+++ b/arch/arm64/boot/dts/sprd/sc2731.dtsi
-@@ -94,17 +94,17 @@ pmic_adc: adc@480 {
- 			nvmem-cells = <&adc_big_scale>, <&adc_small_scale>;
- 		};
+diff --git a/arch/arm64/boot/dts/sprd/sc9863a.dtsi b/arch/arm64/boot/dts/sprd/sc9863a.dtsi
+index e5a2857721e2..31172ac44adc 100644
+--- a/arch/arm64/boot/dts/sprd/sc9863a.dtsi
++++ b/arch/arm64/boot/dts/sprd/sc9863a.dtsi
+@@ -288,7 +288,7 @@ etf_little_out: endpoint {
+ 				};
+ 			};
  
--		fuel-gauge@a00 {
-+		pmic_fgu: fuel-gauge@a00 {
- 			compatible = "sprd,sc2731-fgu";
- 			reg = <0xa00>;
- 			bat-detect-gpio = <&pmic_eic 9 GPIO_ACTIVE_HIGH>;
- 			io-channels = <&pmic_adc 3>, <&pmic_adc 6>;
- 			io-channel-names = "bat-temp", "charge-vol";
--			monitored-battery = <&bat>;
- 			nvmem-cell-names = "fgu_calib";
- 			nvmem-cells = <&fgu_calib>;
- 			interrupt-parent = <&sc2731_pmic>;
- 			interrupts = <4>;
-+			status = "disabled";
- 		};
- 
- 		vibrator@ec8 {
-diff --git a/arch/arm64/boot/dts/sprd/sp9860g-1h10.dts b/arch/arm64/boot/dts/sprd/sp9860g-1h10.dts
-index 94af7700f3e2..b1fa817ece1e 100644
---- a/arch/arm64/boot/dts/sprd/sp9860g-1h10.dts
-+++ b/arch/arm64/boot/dts/sprd/sp9860g-1h10.dts
-@@ -84,6 +84,11 @@ bat: battery {
- 	};
- };
- 
-+&pmic_fgu {
-+	monitored-battery = <&bat>;
-+	status = "okay";
-+};
-+
- &uart0 {
- 	status = "okay";
- };
+-			in-port {
++			in-ports {
+ 				port {
+ 					etf_little_in: endpoint {
+ 						remote-endpoint =
 -- 
 2.43.0
 
