@@ -1,90 +1,90 @@
-Return-Path: <linux-kernel+bounces-397954-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397952-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 856379BE2EB
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 10:43:38 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DB159BE2E9
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 10:43:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B70A61C2095D
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 09:43:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AA7C6B21314
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 09:43:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 106CE1DD0CB;
-	Wed,  6 Nov 2024 09:43:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D497A1DACBB;
+	Wed,  6 Nov 2024 09:43:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZJK6rSuJ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eQP/8p1w"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C1C41DCB0D;
-	Wed,  6 Nov 2024 09:43:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C77F1D7E37;
+	Wed,  6 Nov 2024 09:43:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730886186; cv=none; b=MzUFL+nW5pODQNEgg9q15F7Cy/+AimcWOf3/jp5kSCP3HUSjpLnUyoNT68DmHjlbPJkBeko9w7fPSSoLk41iCXZ1jbOW9Fa1mIUgWhsadexx2aITl38xMhLqmuaxQi5GQMoyHWXf5bP1Snso4UhgR68jqBDVZJZzmOpHrYBZ8M8=
+	t=1730886182; cv=none; b=RIfX2RWxoxsB3KWjgvUNgman8AIbOtZcJZb1H7o6abWkKBEJSPOPSDPH64Chfh87l88I/E3+uKfHvtkLSZlhRttb02HWrVgoZb5kugQ5QQgQ4ckZo9+WK9OtE/Eg8bJMsNyI3c0PdV+wDoyQMFstbvbvO9wNU+9yxywvWGZsJ7Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730886186; c=relaxed/simple;
-	bh=LqDtCaf6sT8Ul0pzrf9sK08uH+kCq9d0G0LPwtKU58s=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=AXwQwlJB+v4sPasUDSX9mmUt57+HtDokQmz0vS+YJeBh00+vcwAnnGaSSJvJPqN/71I/uDy15cqS8exzEsRAcSn78o3hC4aRCVhCbcqE6TvVBz1yTlDCmSboNTyUODui0uBsq9KcsO08Hyyybj1uQYfRTdE7Z9t6DEmivl9SgVo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZJK6rSuJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97C40C4CED3;
-	Wed,  6 Nov 2024 09:43:04 +0000 (UTC)
+	s=arc-20240116; t=1730886182; c=relaxed/simple;
+	bh=ejHS7C/7ZbSIztex4f4UJCgT1blclG9gOy/DpK24OVs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XTAQaZOiilyQ544Hw4LsENK9Zo1fv/DySsI5jhwyCNyx+1SlHGdZEI1RxsJG5iGgM06YUaZrw2PVTACxztPPqxOTJ+g3dmj5RGsgQfvKCm3V2MCkXYioLboLEQXSniFtmeuIPYHcjfsUUVcQyrywlX4k8rhx4DV8nqa+muDY6uI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eQP/8p1w; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9DB9DC4CECD;
+	Wed,  6 Nov 2024 09:42:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730886186;
-	bh=LqDtCaf6sT8Ul0pzrf9sK08uH+kCq9d0G0LPwtKU58s=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ZJK6rSuJmhyrEylgy/xRh1WvXJEwwu6Qc12bUOq99FAS2c/4yILcrPq/K9Q4Lgcpy
-	 mKMLJmXVy/Ruyo8cUkxBCj9Wochf7Hln/xc7/Oli02ZjK9HaWwcL2x04umAG52dnUk
-	 oI9Q/2NoMDvqvaHN5HiC79jESLNf2vbidUeCdxvdnJTaRrKetpQuDKyuLt7/Mv0Jlu
-	 Q72xtEPxC92PN0c1jhQGqpEwS79Q0oStog7N4dEoDTVqL6qfAHOvdRrkLi31GGO8nW
-	 pRz23e8BTt01/w0KVqYcepV0xAacGaAsRl9QAcZpiA421v/ZrV77sOKF27luOcS9a/
-	 1+JSGOh9YWQrA==
-From: Christian Brauner <brauner@kernel.org>
-To: Christoph Hellwig <hch@infradead.org>,
-	Thorsten Blum <thorsten.blum@linux.dev>,
-	Andrew Morton <akpm@linux-foundation.org>
-Cc: Christian Brauner <brauner@kernel.org>,
-	linux-hardening@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] freevxfs: Replace one-element array with flexible array member
-Date: Wed,  6 Nov 2024 10:42:51 +0100
-Message-ID: <20241106-bauaufsicht-liberal-74a434043a7a@brauner>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241103121707.102838-3-thorsten.blum@linux.dev>
-References: <20241103121707.102838-3-thorsten.blum@linux.dev>
+	s=k20201202; t=1730886181;
+	bh=ejHS7C/7ZbSIztex4f4UJCgT1blclG9gOy/DpK24OVs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=eQP/8p1wgZwWzJ45BgjroCbaVs+5YbOb5IzDHn03FJpvbP6n01CO8AbbhcdXmaGLO
+	 hY0rL3z96Qi1B5gDGU0Rj190REZTEne/+z6Ki5PlzH6Ye95VbcX/8lrrWpLolzmYtK
+	 DV1624pYY6hvD2OI9IYbAsCkpcHJO96r4owwoInUrTIFj6fHkKeZbKlUBHcL6hD5ri
+	 pXEn3TdXFHsaNiIxhHHEOt8fmJyqg8ATnGGDP3IZ1D5L+G2S8Yw1xyO+K33XJE00XV
+	 76EVGPoaNre7RohP+kFi1TfX0kqOnBIc3WydIOuW7q49TvnmgAfflRkSNmu2zLPkfR
+	 EUTjWvqKJh0NA==
+Date: Wed, 6 Nov 2024 09:42:56 +0000
+From: Simon Horman <horms@kernel.org>
+To: =?utf-8?B?TsOtY29sYXMgRi4gUi4gQS4=?= Prado <nfraprado@collabora.com>
+Cc: Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Jose Abreu <joabreu@synopsys.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Qiang Ma <maqianga@uniontech.com>, kernel@collabora.com,
+	netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Subject: Re: [PATCH] net: stmmac: Fix unbalanced IRQ wake disable warning on
+ single irq case
+Message-ID: <20241106094256.GI4507@kernel.org>
+References: <20241101-stmmac-unbalanced-wake-single-fix-v1-1-5952524c97f0@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=950; i=brauner@kernel.org; h=from:subject:message-id; bh=LqDtCaf6sT8Ul0pzrf9sK08uH+kCq9d0G0LPwtKU58s=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaRrWyktf/Lyor24sLtmPIPok10hPFliYt+Pi7LyPP0vv 8mocbNpRykLgxgXg6yYIotDu0m43HKeis1GmRowc1iZQIYwcHEKwETytBj+Gf7Iv8cdY5H6x+H5 1kKF156/Duc/L1/9LT01LcclcUPRX0aGrw8PKE5VXvCeI98rb8LCimR3zoc+DA/nRRvdblvMb1/ LDQA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241101-stmmac-unbalanced-wake-single-fix-v1-1-5952524c97f0@collabora.com>
 
-On Sun, 03 Nov 2024 13:17:09 +0100, Thorsten Blum wrote:
-> Replace the deprecated one-element array with a modern flexible array
-> member in the struct vxfs_dirblk.
+On Fri, Nov 01, 2024 at 05:17:29PM -0400, Nícolas F. R. A. Prado wrote:
+> Commit a23aa0404218 ("net: stmmac: ethtool: Fixed calltrace caused by
+> unbalanced disable_irq_wake calls") introduced checks to prevent
+> unbalanced enable and disable IRQ wake calls. However it only
+> initialized the auxiliary variable on one of the paths,
+> stmmac_request_irq_multi_msi(), missing the other,
+> stmmac_request_irq_single().
 > 
+> Add the same initialization on stmmac_request_irq_single() to prevent
+> "Unbalanced IRQ <x> wake disable" warnings from being printed the first
+> time disable_irq_wake() is called on platforms that run on that code
+> path.
 > 
+> Fixes: a23aa0404218 ("net: stmmac: ethtool: Fixed calltrace caused by unbalanced disable_irq_wake calls")
+> Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
 
-Applied to the vfs.misc branch of the vfs/vfs.git tree.
-Patches in the vfs.misc branch should appear in linux-next soon.
+Reviewed-by: Simon Horman <horms@kernel.org>
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
-
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.misc
-
-[1/1] freevxfs: Replace one-element array with flexible array member
-      https://git.kernel.org/vfs/vfs/c/fdfa4c02e6dd
 
