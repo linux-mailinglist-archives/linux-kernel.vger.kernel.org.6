@@ -1,108 +1,139 @@
-Return-Path: <linux-kernel+bounces-398886-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398887-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74C879BF792
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 20:51:33 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB2F69BF793
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 20:51:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A0BDE1C24087
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 19:51:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 14BB81C2464F
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 19:51:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BEBE20BB27;
-	Wed,  6 Nov 2024 19:47:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A44D20BB3C;
+	Wed,  6 Nov 2024 19:47:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="NOgjvecs"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TjRfnhS9"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ECA6209F38
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9983198E84
 	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 19:47:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730922439; cv=none; b=BaLLE61FF7Og/BhCh28L5RIKDI78bIG10d+CxALN6W7f80u/YLKA5BdRUcoN1tAepjw+pXWO4xIi1KnCqiWmYvWKw2/YG9z7PZDvj0txr0XnUaxZeg1QoyNUn2zp4Pbn58V3sykdXIHtXecKKoEpVPkMUg2WPUSM0K89rj8R+CE=
+	t=1730922440; cv=none; b=N0sRBTN49TEN3uhkYSanS8GATZNMbpwuHWSYw19eOthBLCONoxCkrFw5vlkjSndKF8hKfm3tsBPmwxFtl0TIu+Saa67lXa5jdICvwcPPFaNODeElDC74qj+4p0As/UHgLB+fzSmN5UlKGnfPxjJSrCcvHn9bEfHUHRB9o+GDjKY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730922439; c=relaxed/simple;
-	bh=K44yoga4VIhQeNCPZsLu88MzsWWRBcfEnjv4cEeYyfk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=b+haGI3Kby6Q6tqCiTcku9AeOS7jhdbLS3nJ8IDC+aYbKcV/+E9QK4i8xjG37L9pLhKbqNzTVqiH/ZqRjOWMXtLIc6Rs/V6tZxyTHoecmHQ9G8yJw7WThpujlWz2RJnEBMGXI4sjxilZBi1za1g0KUNG2RG8kN3yI9r/lDCCXEY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=NOgjvecs; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 495FD40E0261;
-	Wed,  6 Nov 2024 19:47:15 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id YUTYsnELnGyw; Wed,  6 Nov 2024 19:47:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1730922430; bh=H5Gjfn+B+EHWqSPOlyScGe2vQXYXrhjgCwEMZg7sobo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NOgjvecsJ80sDcB5mT847+jD5vOS3hG6bpZT26jJR9nq/OOlyvz8AhZHmVDDkGNrc
-	 atc9GbN63PGC/CTg4q76Hi8r2Jc5iMZ3dI0otuEOOIx3MiT5BeoR4mzAzfJPzDs6Sn
-	 0Ha4XgVnum84tUyQe74rp7x7yOwAjGB3a+lh3mKz4U/UXJ8v96LoZsOzS1K1VZ/kWE
-	 IL7NMR7t2mo1vJInph4MNEbsKLZoAUZKqfeZFuSgXsu9BokCNbw6iEPlrfYH1Ui0s2
-	 jwaX3oPE7qehHAauYvBtMW0TNXMXvhSrpnm3485K2uemm2m+zYrHyWfh8UsSCCcYJQ
-	 oOLj6amKLurI0bO9bHyL1arGykgcOXcUOqWwR12KTi7biGTnFPIIhhv485qKWayIXR
-	 F3T4D9miNZSbgpO4GXITis7zN29H+0bLVdyueKGhB8ATit5Op/kqmSvt5l5CTwAzRu
-	 mJBeWk5xARbrZNbE7FhXkJ4Mk+DR0y2qyhhnhh36QyVz41V3EfQ1itO/Yak/eAxWz/
-	 wp6vWmTPbJpQjjOPbjAyQrQBv9cUuLruv0wT/c3TMMUEh9n8UlwrA2eRiBkzSpijfE
-	 L1rSLm2beHJ8s3aqvSroagnPJNv3FODj3WJHTQY+JbyUgciFHVZw+Ciyk54RWT8mRe
-	 sXRFJmv/JyRhGCNCjcVvxb7E=
-Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 94B9140E0191;
-	Wed,  6 Nov 2024 19:47:06 +0000 (UTC)
-Date: Wed, 6 Nov 2024 20:47:01 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Tom Lendacky <thomas.lendacky@amd.com>
-Cc: x86-ml <x86@kernel.org>, lkml <linux-kernel@vger.kernel.org>,
-	linux-coco@lists.linux.dev
-Subject: Re: [RFC PATCH] x86/sev: Cleanup vc_handle_msr()
-Message-ID: <20241106194701.GKZyvHtQrLXvZOJhbP@fat_crate.local>
-References: <20241106172647.GAZyum1zngPDwyD2IJ@fat_crate.local>
- <4816aded-9ac4-c55d-053c-a7c7f31d11c9@amd.com>
+	s=arc-20240116; t=1730922440; c=relaxed/simple;
+	bh=nd11ERs+dmBICSSQH2h2lO5tRN+3UQnTaXuilKeLtws=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Id3Syu/BPIsqD8Epn1i56RiYOuA3m0jB2c1iq/XRJBrXIbz1nUizvEav/ieDChSlWQGuQEaMYxRqXRr3YUt9thUF6E464rv6BTYctU+DvkWKUU9gfDp2K8+eNZhkm7qcHtImSFtJf4DT3462eUhmIzOHbYSIi+ubKsTYlpWkmCk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TjRfnhS9; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730922439; x=1762458439;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=nd11ERs+dmBICSSQH2h2lO5tRN+3UQnTaXuilKeLtws=;
+  b=TjRfnhS9gx6njgM0/F8f6Ls7iPPoX4uzmXIXN+PfezLjUZMtKHD5NICB
+   1yn/leow/efh92oYFTb6dEtedJPW6sx5+7Nh6B6DKMRDk0AzYyFZ0rKWP
+   rxVJqOc6jecFtY449YBlsOPW0gSucNXUQWuRGvaKgHl4fWiU0+M1jahxb
+   q8ROSTMuwCEVHW5l+GC1qT2+5QmUIfJZiR5KjI4Xuh1yrCE2wu5HYrAnT
+   m879g1HrO8hZLSc9adAJ0L2Gh9w9KdHRWoEDD35Qf6114Jvxp60EaoHTN
+   ZnPA3WmsBzsaRYTZrb97DtAskT2+GzlgXf84TavH3nsr3smvoTeL/rt5M
+   w==;
+X-CSE-ConnectionGUID: rKwCwsBVQ3qxodFLnCo2qQ==
+X-CSE-MsgGUID: g3DR0srHSluab4vlv6SRKg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="53300869"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="53300869"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2024 11:47:17 -0800
+X-CSE-ConnectionGUID: FPCxSOqySPaGuPyUV2OsKA==
+X-CSE-MsgGUID: ptJZw1V4SiWB7N4KjXjdWQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,263,1725346800"; 
+   d="scan'208";a="89257014"
+Received: from ssimmeri-mobl2.amr.corp.intel.com (HELO [10.124.222.69]) ([10.124.222.69])
+  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2024 11:47:16 -0800
+Message-ID: <19355174-c626-4f64-8158-820b393460d2@intel.com>
+Date: Wed, 6 Nov 2024 11:47:16 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <4816aded-9ac4-c55d-053c-a7c7f31d11c9@amd.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC] Restore PKRU to user-defined value after signal handling
+To: Aruna Ramakrishna <aruna.ramakrishna@oracle.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, "mingo@redhat.com"
+ <mingo@redhat.com>, "dave.hansen@linux.intel.com"
+ <dave.hansen@linux.intel.com>, "x86@kernel.org" <x86@kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ Rudi Horn <rudi.horn@oracle.com>, Joe Jin <joe.jin@oracle.com>,
+ Jeff Xu <jeffxu@chromium.org>
+References: <4225E088-6D34-421A-91AA-E3C4A6517EB7@oracle.com>
+ <4d484280-3bed-453f-b2f6-0619df4e9914@intel.com>
+ <9BA465A2-905D-4D0E-87A6-AB89C28A7B4F@oracle.com>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <9BA465A2-905D-4D0E-87A6-AB89C28A7B4F@oracle.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Nov 06, 2024 at 01:40:47PM -0600, Tom Lendacky wrote:
-> Is the !! necessary? It should have either 0 or 1 because of the boolean
-> operation used to set it, right?
+On 11/6/24 11:40, Aruna Ramakrishna wrote:
+> I do not understand why it has to be moved. Would you mind explaining?
 
-I was going to be overly cautious but integer promotion will make sure there
-really is a 0 or a 1. So yeah, I can drop the !!.
+You need to know what XSTATE_BV value got written by XSAVE.  That's
+dependent on: XINUSE and RFBM.
 
-> 
-> >  
-> > -	if ((ret == ES_OK) && (!exit_info_1)) {
-> > +	if ((ret == ES_OK) && (!write)) {
-> 
-> I guess the parentheses around "!write" can be removed while your at it.
+RFBM is 'mask' in xsave_to_user_sigframe().
 
-Ack.
-
-> Other than those two little things...
-> 
-> Reviewed-by: Tom Lendacky <thomas.lendacky@amd.com>
-
-Thanks!
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+So you can either completely regenerate 'mask' in
+update_pkru_in_sigframe() or you can just pass 'mask' in.
 
