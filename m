@@ -1,297 +1,172 @@
-Return-Path: <linux-kernel+bounces-397326-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397327-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A3639BDA81
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 01:46:13 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C8F19BDA83
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 01:47:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E94581F23F87
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 00:46:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A22D41F2405D
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 00:47:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E0BF558BC;
-	Wed,  6 Nov 2024 00:46:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sony.com header.i=@sony.com header.b="iW/VtED8"
-Received: from mx08-001d1705.pphosted.com (mx08-001d1705.pphosted.com [185.183.30.70])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53AE3558BC;
+	Wed,  6 Nov 2024 00:47:01 +0000 (UTC)
+Received: from SEVP216CU002.outbound.protection.outlook.com (mail-koreacentralazon11022083.outbound.protection.outlook.com [40.107.43.83])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3451F17D2;
-	Wed,  6 Nov 2024 00:45:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=185.183.30.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E81C42A82;
+	Wed,  6 Nov 2024 00:46:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.43.83
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730853960; cv=fail; b=OaLEVLnT1UsYXraQRe6D7aRoQQ4nZrF24lwOn+JubQI0cAi0s4b1jKqQORhWUBlyJ6JmZ00ZzraiYTmeYo9wGMlaXHqhFkSd+yCSVYo/AZzo+dfcbEfeR/H7MmdsAAkFyDopxQl4ZkB+qNtcRbw0oYi9Qe+ee0FjDSV0t+Fehzg=
+	t=1730854020; cv=fail; b=XTng+M5VPZ7KXObNsgtBvTTMQgU/UjtWmZG+HH7dJcXlUptZUJ7w3rh94VwXHwqc7OZ13jOmiaWzcseFs1WI6y+SHMIPBIcEcQcIaDAPRqSV/bgER4Ln1yioAtL9ff9tJ1S8hmy8eC9t82GxrSS+YCvfYabD3hkGRu/nTc54Gww=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730853960; c=relaxed/simple;
-	bh=Icxj715rIJcXm+xkgm+/yZDPWucs8eapJYrudVnYPIE=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 MIME-Version:Content-Type; b=k+Zrdwgp6n2qvZq3dVIzMsA6UfiykZh3lOSJYac45PL9RY07b/ucoO3AJU5Jua+A268D748cQZfy4QGkJl5R/P2IH+wL3tA1UiyzTPsYnu7tWFWuhtv7ZDxLOtfnVlC7AuUhERHy3IzKrgNu0Gdv72q5XDm3wo/570mhOOE2piE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sony.com; spf=pass smtp.mailfrom=sony.com; dkim=pass (2048-bit key) header.d=sony.com header.i=@sony.com header.b=iW/VtED8; arc=fail smtp.client-ip=185.183.30.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sony.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sony.com
-Received: from pps.filterd (m0209319.ppops.net [127.0.0.1])
-	by mx08-001d1705.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A5NAv9G006414;
-	Wed, 6 Nov 2024 00:45:51 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sony.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=S1; bh=rKMN5qJ
-	on1oYS1a/VfEyKq6fib/Saish7odwaUnDzvk=; b=iW/VtED8IbOnG5DtklQ3ewQ
-	LRooOIzXdE1Yma1riFgMGg3q8Ao3gwTVPcHg8ATaa2GAQCLt295XR+AjPYDzGo4y
-	VtBzNb0kZroDAlWhCvT5y/9gS1upGAC6rNI9CMJ2G4k0eNUg0Pm40Na6xeLiW4Ty
-	h5Iciye1dX3UNp8okwlQSmUR64MszRDKktNT03lCeSc9DSUuyW9eLjUpsuWKf3yV
-	kyEDclWotFm3a372RqIEBhvVtgOcrM0r2Fd7qOVkb7qJeeoRk152eTFNTCIHjvmc
-	aN5oSGW/VDYFK+faGqiD3SreTGP2luYpKfE33NPeuMKYn7sqzNVPyt9YBN4IBng=
-	=
-Received: from nam10-mw2-obe.outbound.protection.outlook.com (mail-mw2nam10lp2049.outbound.protection.outlook.com [104.47.55.49])
-	by mx08-001d1705.pphosted.com (PPS) with ESMTPS id 42ncfnay2g-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 06 Nov 2024 00:45:51 +0000 (GMT)
+	s=arc-20240116; t=1730854020; c=relaxed/simple;
+	bh=VX5/aDeI7RpUAsW4oz4ojBTpEb7t8bglxYe/odG/bHw=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=ux0FahxipAk7V/BJdRYcb9HsIuZvjv5KgV4lS1xbCx2WTtDnhUREBkmiaxEWDeQ8vOEEEgDfz0HjMDMNnDeI2W58Z0jxXiLRDpunxsVnvqf6fxRZK7C7DWYibeOOGHdgthOOFqzYRNbmyKkZUQQEmNQqkV4IjhjMlUE1Ojn+TMU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=irondevice.com; spf=pass smtp.mailfrom=irondevice.com; arc=fail smtp.client-ip=40.107.43.83
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=irondevice.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=irondevice.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=iHg5G08GtRkBW2FolTK5AIefPevFTn5C/7SPdjNAES+XUfa+TkOtTqBA+1uCj2iBDmUMD3EFQlYBJ1LdhBah6G7Q0SQu8P3xXy52v/dpznT/JXTICNZCdylmsMa0qIdR/p+Xd0ih7RzgKZFuTuLYwxV5gzhMmd60DgLncM1tiu3nIHn1ZBZOydbT2s42GKx4CBbYSHBl2WSAttYE8z9DUne+xcuMWaE3blBHXs4GX5cvAUpXS4vgsAQ+JDxW7liBF2+wp4/y9Zh43IRY15kVwZoMgDQcIP+3eQUSRwuMZrNYu0vQb4LvfyHQ1DWQM4KKhVbVRmhcvAB6KY3yICCtdw==
+ b=Oovu8pSSIcgt2KfnSx3j024w6YoXbbf2exxvbz8kn8lpk7z6SHtmJ4raCIlanOk4PzKUg+0mOPZvG4bJ27HdjD2JsWPhqhyMiVxKNZCLkjcXduZIZh87ymI9c3h9HNe4OtmXu7wkX8QNXyKIbY/Mz0Y1/FXwNCA61a9lot17uhwGN/7yZWAKJ2owCyoL9ldywXIZDDYUVe56149sH18cvlK/aVFpzSRkFP0Dh14EKwTupE3r7wXLqXuLc9N1blRYGJeYlBbcAR84HOOBV9y5vIGBKNF48CxT82S1TRUizIKv0NTcaI7Dtgw/Vj37Tk7ose9/c63qJq5+jULYE1EseA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=1Sfd7rjo1ciq7kvnNdwW5HigVfX6j4YxIECYIyT2Zqg=;
- b=L8MG7KJ85s08LVJN5TsSCdku4plP41fMBGwREDO+IukpZvFVn9U3K1rZMlcnuNJCMfFsbVc8eXGDcjOSGk40d2xjTRXO7J3JfLTSkdkt+tDWEiHkUxCB4wKDmhJWmHvCxxtwz9KUdF7LUIqSWbeM7rDf0NI6/Xa8AlJzw4KKJq1A8HqTVU9xzMFpQocWiOR+06OyNJo/npUV64IQDcV7ze4sv91Nh2pQuRClw4LOjqst8DIxIx8o+qZa4kVKKOfpRgjV2nx1Q3cBZdjrt/Ejn5fcwPkp6LIcjhG2d2sEuqeVnv1WwkC3dnM4ajwHghvyNsKcpDPNQNWdTAE6IqG/Nw==
+ bh=bV23W4nzMmhzR73WOHB8KPtMdTl7SMTa2Ion33EXmyY=;
+ b=mo5fwhfkmGpYtNLqnH2d5cfNh4QE+9N64WQkpUE7tgdIb3wHD4nxAzlhR1tDAYFmo1XIlCOkEsbNqczUhEF9B24PbE3LUjWpesGRNyHhnDRI1ZUqRJAlYphIvTBYesYJaylwlOp7gXVkrQhNELPvUfPlYsQSeISkH/AoFHks3tuqugN+CG+52geo9xHTlDId23rL806Bqu8wCWZK2nnAK6Kf5ceShylXr/9sIz0RRAkvGtbzkhwbsI96tZvDiYZkhsSlvHhTs7II8F031BcmvxbJO/JpfDzUn58ySeO88J7qEvigKuvpPJ/A06BGcLZqeQH+KOhf3Q8BKOUE2sScyQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=sony.com; dmarc=pass action=none header.from=sony.com;
- dkim=pass header.d=sony.com; arc=none
-Received: from MW5PR13MB5632.namprd13.prod.outlook.com (2603:10b6:303:197::16)
- by MWHPR13MB7060.namprd13.prod.outlook.com (2603:10b6:303:288::21) with
+ smtp.mailfrom=irondevice.com; dmarc=pass action=none
+ header.from=irondevice.com; dkim=pass header.d=irondevice.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=irondevice.com;
+Received: from SL2P216MB2337.KORP216.PROD.OUTLOOK.COM (2603:1096:101:14c::11)
+ by SE2P216MB1932.KORP216.PROD.OUTLOOK.COM (2603:1096:101:fa::15) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.19; Wed, 6 Nov
- 2024 00:45:46 +0000
-Received: from MW5PR13MB5632.namprd13.prod.outlook.com
- ([fe80::df7c:a5b9:aa3e:9197]) by MW5PR13MB5632.namprd13.prod.outlook.com
- ([fe80::df7c:a5b9:aa3e:9197%6]) with mapi id 15.20.8137.018; Wed, 6 Nov 2024
- 00:45:45 +0000
-From: "Bird, Tim" <Tim.Bird@sony.com>
-To: Brian Masney <bmasney@redhat.com>, Saravana Kannan <saravanak@google.com>
-CC: "linux-embedded@vger.kernel.org" <linux-embedded@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: Boot-time initiative (SIG) thoughts and next steps
-Thread-Topic: Boot-time initiative (SIG) thoughts and next steps
-Thread-Index: AdsnCeBneydgAwbrQsOuFQyqBOu5BAAb/amAAFavyuAALTTAgAGVsygAAADjN9A=
-Date: Wed, 6 Nov 2024 00:45:45 +0000
-Message-ID:
- <MW5PR13MB5632276F33CCE4E18D0258E0FD532@MW5PR13MB5632.namprd13.prod.outlook.com>
-References:
- <MW5PR13MB5632321E93B031C0E107DB38FD4F2@MW5PR13MB5632.namprd13.prod.outlook.com>
- <CAGETcx_c2nfFQ++-FcsdUdLUo3e-oe07MkLgbuyrnq2FPrcsXQ@mail.gmail.com>
- <MW5PR13MB5632E4EFFD802E0839027A51FD4A2@MW5PR13MB5632.namprd13.prod.outlook.com>
- <CAGETcx-Y6LHpZZUeexeuSF4RJ1E2MDtNtST=ytEUPAj7kKzwFA@mail.gmail.com>
- <Zyqz1LBDXZosrjle@x1>
-In-Reply-To: <Zyqz1LBDXZosrjle@x1>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: MW5PR13MB5632:EE_|MWHPR13MB7060:EE_
-x-ms-office365-filtering-correlation-id: c4ade4e5-4a5b-4e20-6f84-08dcfdfc59b9
-x-proofpoint-id: d8690225-876f-412f-87c6-a7cb45557a4c
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|366016|1800799024|376014|38070700018;
-x-microsoft-antispam-message-info:
- =?utf-8?B?bmN0WDduMWw2U1AvN3owWW9vMHJ2Y2JBTjRNam9ZdStBZjdyNDJXV0VxVU1y?=
- =?utf-8?B?dG5ES2liM2xxSEQwSEVENEE0OTB4QVhnWnhyVUtGUlV6SnVXNlJVT2Z6SUwv?=
- =?utf-8?B?Y0dQdHhsQmRFNFp5QzI3NExtRFZnN1UxUWdxNWtJN0VqSE1IaWwvOUdFaXFl?=
- =?utf-8?B?aVIwM1F3dEd0RHozaHhGMHpob1M2My9mSEFDeVI0eUR2Skwyd3hvSE1jWHZo?=
- =?utf-8?B?RlJLaUJ6d1dYYms5QitiVmphRC92cXcwcDJoZFVaVDV3a0xBYkpVUDlDZkgr?=
- =?utf-8?B?dkR2OUlUc045QXBYbzZoZVVEK1B6YTFIVGlDSzZMY2FqcW13Mk0zTHl4cVhF?=
- =?utf-8?B?U01pR2lPSWo0Vjh0dzNxYzlnbkM0eVRheFh0UHd3RExjbm5rMVZINmR5VC9m?=
- =?utf-8?B?bXhCeGM4ejNPU1lIV1A1dW8rQVJqVG5BcDFNMWVocWladDZVWDltcWd6cUY4?=
- =?utf-8?B?emFORG1DS0gxWnJkcllYOFF3eGtPcXg4VjNqUEFnSlZSbndlYU1JNjBJK3BC?=
- =?utf-8?B?TUx6ZVNVMFlHdVFhSkVEajcycDJwZXB0MkZsM3VwRWxTYzM2NlJaazJPeTZ6?=
- =?utf-8?B?V0Z4eElxbllrU05YVGI0b2Uybk9kQkF0QVVvc05UZnBkVEZyelNjbGJZMzhH?=
- =?utf-8?B?VmxZQ0VITkF0UmUxZldHRHpNTWd2LzdVcGFXNXg3YWhFTG9ZUzVhL1FXOW5i?=
- =?utf-8?B?VzU5cHUvOVYzZEtLMjliR0x4TU9oTE5xZDFUMnpmbGxKcWdKQzkxQjNpYWpE?=
- =?utf-8?B?NWxOak1ic3lUeFlJVmNJUTZyTVE4WTZrU25xZVRhaFArZGtoQ2lUemIxMy9k?=
- =?utf-8?B?cjBEVlJRMFh1Tnk3OW82MmwrWXBMSjFacUduTVJscWViSWZrS0ZOd0xQbWZo?=
- =?utf-8?B?dWNTNVcvZ1pPME1vdzE3S2dIajJLSy9SaDB1N1NjMFpwdlU5Zk81aGlFZmox?=
- =?utf-8?B?WFFaWGNTNGcxRG83djBjMEFVcHljRldKY2ptN3lvVFZNTVhzdUZiNHJoMTNm?=
- =?utf-8?B?ZnB3NkhTdGtna09ZdmN5YnZBY2gwZzM2dEJmWUtkTmdwTFYrNzhFWFBVYTJZ?=
- =?utf-8?B?TEpsY2loVlNaUllTVFptMXpjWGhYTHBpR0dwYXE3SmdXWkxCK2VQbFNtSFVk?=
- =?utf-8?B?VWJ5dExrSTRycVFkYmFIUWpvOUdocTk2TkFNem5odmZsUXVTVDB5UzlsNzdy?=
- =?utf-8?B?ZHpsRHBLWU9nL3F2UDBvSDN3VC9yazZZaTNJbUNSdlpvd1pUclhYcDZQTG91?=
- =?utf-8?B?WkdmZFdST2E0THNKdnRvZUp4VWswWWFWT0s1VGZSMDA2WjVvbkRCRG9sUk94?=
- =?utf-8?B?VmhZK05NOE9ybUF2WlNTMjl4UWdLbm5kUTdFbE80MVJrUVVGZUlTaElTOXl2?=
- =?utf-8?B?cFhuemhOZ0Z1VytqTUNDL3AxUFB5WFVteHE3MG51VDYyRXhza0lONU1FaWpT?=
- =?utf-8?B?M3JhNzM2UmZuRWd2OFo4LzBuZ1VCYzMycUJpcXhhMDhtbElYNUltcjlNUDI5?=
- =?utf-8?B?NzkvTE5WaGVnZXMyTSsyQ3doZHFLUExTQnRBbGEwQ29NMXQycW8wL2FNUG0w?=
- =?utf-8?B?ekdVN3J4RlZsWVNneStGTWQ3K0xPa0MvMjlZcHZTTFRXdUxab29KRXRidDB5?=
- =?utf-8?B?Tkh5WlgzUGtuOEF4VmVCQnRVb2R6Wjk0SDl2U2xpY1pxYlpCeGNWR09OellH?=
- =?utf-8?B?ejVGeVRNdmxUZVh0NlJRRHVSMzUvVW1McGQ3azhRaU1UcFdYdWhiSDhFd2Q2?=
- =?utf-8?B?bVJXQWN1MXB4YlBpSzhoUXFBb2xVQzFtT3VIT21jWENWeDIyckZ6L1JyeFpH?=
- =?utf-8?B?eWUyanlJVGZNWnRXVEZPb3JDT2hCS3pQUDE1S1J3d2Q2ZGZndnE3Y0NYRXJY?=
- =?utf-8?Q?ziRORPU500GdM?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW5PR13MB5632.namprd13.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?emdURlhzdkZGcHFsUXNjanVPZ1g3N1Z3cUIvelhpTmFGSDRGZzE3NXdVTFZE?=
- =?utf-8?B?VG5scnVPSTdvNEVGeTBWZWxlYTdjK2ZUYURtbUdwNDVoRUlWdlpVNHd2WitT?=
- =?utf-8?B?YVpveFRZUi9yTnpweXlDSmZ4MWthdUVJbU5qVCtlejlET1BFUUtPZFQ5bXBE?=
- =?utf-8?B?QmxSQ1BtNHllT05yaXMwZUhlTVB2NW0wRFl5NkdNY1JudWZMMmhNR1dERzZW?=
- =?utf-8?B?ZlF1ZUJ1d1ZLNWMxa0VDSjBIY0QrN0sySmdRR2FWMW5YWEpwU1BmVHVHR0tu?=
- =?utf-8?B?V0NwZXZxYnN6VlhjUlpPelpUOFppTXBqUWkwd1gyY2IxRHpjTms3TUNqNFRT?=
- =?utf-8?B?WVFVYTN2aXBjSytFYmtVMEhmVnpsZHpudXFDRlFZOHY2dm40ZzhYMnJmRnNQ?=
- =?utf-8?B?UEppNTNLdFBqbUt5Q0Y0ellUT0MxOG8rVEczUldENlpSWnVncVorL2NIL210?=
- =?utf-8?B?eSs2RlNRalZRcGN1cDVqWVA2ZHBPY1pML043UjRRS3NQbUk3ZWJzdGo2azRE?=
- =?utf-8?B?S2tXb04zUVBXeFVtdnVrVHNYWG1Kc3dra2NWLzdjRTFoNGVmRVliQkxJSFBU?=
- =?utf-8?B?S1lWb3BqZzYrbm5QTnFDV2RweEJBOWlYOWFaTmU1N3ExSVB1Nnhza3hIR3lI?=
- =?utf-8?B?V0tWR1VHWFZYcUVxY0U5WG1hYVhZNHVYeUtZbE9qQmpDRjhTaTRYUndjd1Mv?=
- =?utf-8?B?aExCUDNueCt1ajQyZU84TXRRM2V6Z24zNGE4clhSTGRmOGsxKzNtMTVzSGVl?=
- =?utf-8?B?K2FyRm5tRERSbTh2VjY3ck5rOWNkUFNTb1VXak5MMm5MTmlndHZ5a3RydUdi?=
- =?utf-8?B?NFNIZWwxZkRHS2pqMnpPdExYTk1aSG9QdVN2L0dnc0F4eWhSdHVFeXA4QytS?=
- =?utf-8?B?Wkk4SUNYYjA0a0hKKzNoQWd0ak45OVRGSGJuelZLMVpVb3FxZ0tkT0Rhd0g5?=
- =?utf-8?B?eWM3L1BrVGkrdjlVeEkrd2JIZ0cwYjlOc1o5aHNXRHBXSDAwSkFXT0tENDd3?=
- =?utf-8?B?N093TW9iNFJaMGdPZVhXS2lPdGo4RGQzWVhITytBNTltSTVpSjBkRWZ0L1BH?=
- =?utf-8?B?ait3NU00NnUzSWk4YktQWWdPQStqOFhBdVQ3TVVMRW0xRHBDL1J2OTc5T2d1?=
- =?utf-8?B?S3JJN0xtdjhLQkhPRU9zamhneSt4R01wVG9qNEFVWHFGTy85UmxtMUFaQlNh?=
- =?utf-8?B?L2krWE1tMXphUTlvdUlxWi9xWWRkcEMwZFBzNjdrV1FCTkFwaGQ2d082NkJX?=
- =?utf-8?B?TktXUzVlbmV3Mi9MTVcvSDYvTHpGMUJHYTJaSk5MdlNzZllWUVdRMlRiaVFN?=
- =?utf-8?B?b2pEcXVQL3EyQlcvc1pWV0lJZ0tHMmt0WWJ5S3daZ2tJMUhaS0hPMTJYTXh6?=
- =?utf-8?B?VzhpVTBtcUpwNWtWY0p0UlVaTUtTbGZkWHZBOGRPREJ2Y0hIcFpFZ0pCMzZp?=
- =?utf-8?B?bW9uYld1QlpReVBkd2hBT2lOeUM1T3ZKdGJ0ZmJNdUlHYUxaZk94cE9TYTFx?=
- =?utf-8?B?SUt0Q3lGSEl3Qk1tWFU3cXJlUDBQMUtUQmU3bFRJOXczMy9LTU5CNk51bEtD?=
- =?utf-8?B?ckFKQkJVdTdleDVNa2VPRmNUWTQwVnIzdjlFOUFva2w4ZlBWeDd2eWRPMEht?=
- =?utf-8?B?YmZsbWdiUWNpYm1wOGl5OXcwTGpaTzBOSlRQaWE5U0t5eEUyT2wzQUZ6dXBX?=
- =?utf-8?B?cHdLaDMrQ1NvUDRBWGNoWmxUM0h1dUVxc3FPeFlSSzlzM00xamdTQ1o1TC9L?=
- =?utf-8?B?RkNKam11NkFJdnZ0a0lJWXFhaXlvMmVLQy9ya3ExTzlTOGYrTWNkWHJBcUVM?=
- =?utf-8?B?VEtRMG5FTi90blUybmk4Y09QT1Q4cjk0SW1XRktXNXowcWFCc3Q3bXoxZDlS?=
- =?utf-8?B?YjhNeDVPdWY5ZUZZcXRIOEQ4eUZqcVZRS2VtUkErdVM5a2Q4L2JGT0dYQ1pC?=
- =?utf-8?B?MjZ6dXRqSDNwY09JWGJzajhkc0tYZTRhVjZpUlhqQlJYVzhBaEpTV0xvQk56?=
- =?utf-8?B?czhPa3dNWUZLcmJ0SGZoc1ZLanhHeERVK1BzR3R0ME01TlNqbmhlc2gyajU5?=
- =?utf-8?B?dFV2bnppYUhTKy9GV2YrRU1SZElHWmZFYTEyRkhnTDVwOURUajJZb0pWaFp4?=
- =?utf-8?Q?Fwx4gx5CKgqiHfrhCESOZC/7D?=
+ 2024 00:46:54 +0000
+Received: from SL2P216MB2337.KORP216.PROD.OUTLOOK.COM
+ ([fe80::7e8d:9550:c46b:2756]) by SL2P216MB2337.KORP216.PROD.OUTLOOK.COM
+ ([fe80::7e8d:9550:c46b:2756%4]) with mapi id 15.20.8114.031; Wed, 6 Nov 2024
+ 00:46:54 +0000
+From: Kiseok Jo <kiseok.jo@irondevice.com>
+To: Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jaroslav Kysela <perex@perex.cz>
+Cc: alsa-devel@alsa-project.org,
+	linux-sound@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Kiseok Jo <kiseok.jo@irondevice.com>
+Subject: [PATCH v4 0/2] Add a driver for the Iron Device SMA1307 Amp
+Date: Wed,  6 Nov 2024 09:46:19 +0900
+Message-Id: <20241106004621.7069-1-kiseok.jo@irondevice.com>
+X-Mailer: git-send-email 2.39.2
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SL2P216CA0139.KORP216.PROD.OUTLOOK.COM
+ (2603:1096:101:1::18) To SL2P216MB2337.KORP216.PROD.OUTLOOK.COM
+ (2603:1096:101:14c::11)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	nsV6ESuEib2hOzB7ft0wVNf4hx4Ro0O+EEMo3TKwUvTs2ISTM5f3gJs0y7Q8KIkPoCEQUgPHJvgluvtxOgKQmkD8vqngnG0g1ZFP8qN53RVmm7hCakxGzlJib00xcrRqCJ8Y+y2smaef+wriqpgf+R5PNG3zmfz58PVGy4sZtEZirgrzHEJXfmiGiUFSJILr5mSR7kndAaKBidDULOnjE6KfombAyJ51MVl6+zeAo4xRvzqjapwQYinJjwvf7Xa9skuEslUqYerbCXk+DdWAOOeG7wj3RSa0qgdngvjbEw4BSUvl3ZgCRou+Oqjvq1VbbUi8FDS8upXHUUYzO6bEME3Y4dQDwLz45p8FUQI0/GgsG0hpYRiRY0h/0jd8+ipCIirhhQtT8nNthnrYyE4Frue0g0UydIQ7FlWd/oI3RHAEot+y0Jzn5MdiQgaSQjrLZfqPI5YT3UcEVzZMqM9cvLZSax18ZqWWbhzf5QUCf2fZfyxL/iYNSFTqW3KUFrewP02UJ8dzQrTf0EM1oDk8rz7E9nGF09INGwkJEpwSHHzgG6X03s2Cv2xqMjBDaWTbd/B8lhEOVKNE6/5Dc77CA1WraT9XUAGfRs2qIJgj+xTYksLJ+1Hxqfx3PDOITukR
-X-OriginatorOrg: sony.com
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SL2P216MB2337:EE_|SE2P216MB1932:EE_
+X-MS-Office365-Filtering-Correlation-Id: 87ec6746-f61f-4bd0-c48b-08dcfdfc8283
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|376014|7416014|52116014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?lhvTP5qJRsdcaa53ILjamtYGwT53NC4gPhdKyr+AUyL13SYEVAMMKhRqh3wr?=
+ =?us-ascii?Q?nMbFac8BHpeLMXuK1NavW65S5doGxFGRSt771RllhLFTRdsSbK3PN3qLWWnF?=
+ =?us-ascii?Q?qQs1FySHQML+79wZMIU3PsQ1gATz13y0j0Q28OQHSIUE+TM7JMJs8oP2rK38?=
+ =?us-ascii?Q?gey005o6ijModcJ69OK/IMy90C91b9Xu5/kTCyAGsxO+InAUs7moUCqjijxc?=
+ =?us-ascii?Q?UC0WRy8aGk8KgcK0MEeiAR70iuyuWDCJufw7P7TLxr9/0Hx7UW0XeXUXqdIc?=
+ =?us-ascii?Q?X7yxeuIKy+qi5hzu3Q3BdDMb7qRwwD9Z99fkmdHypgTGKdw6ZFlSA3Py0kNR?=
+ =?us-ascii?Q?QgpchsGrgOOd6UhJSi06zTDlGQti5rQabIiKbx/JBA+itpiWD5CCt7sUtpbS?=
+ =?us-ascii?Q?E9oBgsyUfuvmHDyTvXPQdgZKuLxB4qPAmHoDFDWLJC8ZDiagvH2HLoRffvTV?=
+ =?us-ascii?Q?dy20X1QMvBDhm7v1fRvwtDCwxPqpALrzyk1rS1uDGocHuQgTQ+I7rZOWIb2s?=
+ =?us-ascii?Q?Sw8YHN31MIax0XlULsu2ZnyQdmzczvmgG4JCkk8OM4g+8cyQUGDlxU8c0Vaq?=
+ =?us-ascii?Q?sGOHkWbbm9ZplZRBQxcSbfnL+wgX8fDiuA1rA+7dCZ0z1tCaQbqZx6Bq8XuR?=
+ =?us-ascii?Q?KUOoJqMEryfTQm5pUTpThAyreK4yNroFiIf6aYOPwG74Qw5w/AuvfgignBZ6?=
+ =?us-ascii?Q?8IRykH2eWkTAJJuXDBAWRtBU1GLzg3zUZPtaHvXYwYhplsKXLv02m5wMQIvv?=
+ =?us-ascii?Q?H5hbzxZvUqzbc0FhJ3WumV0Ht5FSzKIxCvkjnjl4cbHzFJBq5DKS/2gWOqjh?=
+ =?us-ascii?Q?X7AiWBAQ6iWnG9Ymr6yFvKMFojzPjQRHJ6J2GLLPT8KQmnYWGZymBsvJkpk0?=
+ =?us-ascii?Q?C9x41TnHGbkLyWdiao3LZXp5FPUkxz5URGSUnDheTDzkF7h911KtlbFXPTj3?=
+ =?us-ascii?Q?3oIjR0q919cALRFrd3acLiwDgF3JdTKpuTAiBYvYGqDoz4ZQPfRORrfYQ52f?=
+ =?us-ascii?Q?q4NwWD8KRVR/fq/bIHgs1JgSR/8PEokkCXzvs+sUNVI/gIi/STTplGoLLQFL?=
+ =?us-ascii?Q?ygj/4lEpvhoXEHXZIky3BNFFXq442n5FhCHVe5ATHHimeTyVrMG007Spn69G?=
+ =?us-ascii?Q?3erCb1U5gr7j3b8jAW4A7gx7QxdQogSbKMONF23MRZAgf37ln/TgkvptUrUT?=
+ =?us-ascii?Q?qmJnrWLI6ZYbSHYkjSUKRsfngbyJvB7OnFJZfMfi04juvthtBXhKVEEE+3Ni?=
+ =?us-ascii?Q?TkNUQyFN8WvS3hj4QVPM+pnkzfMqvjPVHZ4/Rc5Nw3FYJtcIyVEp6bNT9z8T?=
+ =?us-ascii?Q?bM8bKPBgacpJ9pcmyj+tWe0eiURbL19lt/QqSk/W+GgTUpgo1guvuzvzWg0n?=
+ =?us-ascii?Q?elRp8i8=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SL2P216MB2337.KORP216.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014)(52116014)(38350700014);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?+7Vnzu/rX22up17LdjinZNgvpTsijhAQ0SB1Pyiz0swKzCak/VlKsNLON3z2?=
+ =?us-ascii?Q?uOBue8Eun9UExqhz73q9zA/7qV1EpD5c4VSCYfpO1rAhAB+Euut8Vz8GgGse?=
+ =?us-ascii?Q?w1X4dGF1wRaWSr4O0qeVGfQ5ziroWnU9NogfndKcg6WlgMExI6+PbYapdt5p?=
+ =?us-ascii?Q?hhLaLpL/MsCOLmy/pm2eJs++WH57cgdJVecJ1lNlfQqjzRRUCqLgcuO1ZDvg?=
+ =?us-ascii?Q?yWCG+1RV0rRKgf20c/JPLlDUdcWoD4lk6lxTNk19kTD06Wpow5YvGv370u0K?=
+ =?us-ascii?Q?zDbxHgk3Cjb72v7uyhZlSSZXzFKs4SPlVxquH5VHwHWdyOyuWyQaJSeUltkO?=
+ =?us-ascii?Q?ghNaPrPfj1B1xqp+KZUWPmGzQDLmTefWBTMfDbTIq8rP+aNPVIUFXK9pMwuf?=
+ =?us-ascii?Q?nibzcejTemyHq0CqOedY0vvWQEau4uYsnBDS040HuIhKBqouf1krmK05rex2?=
+ =?us-ascii?Q?JeWQgADWCr7aQUruDs18VqEPX4QcruIzRYUNR71/nyt9hWzuE0ap/N+3Nk60?=
+ =?us-ascii?Q?jhhm6eDm0zMfw8Oic0x+ZzFZ+NyLZ1lQgZyxPRtTXP9IXk3oDlOtohaUOzvH?=
+ =?us-ascii?Q?D0/lCMTBUMFYLltyaRZ8e1AGrJDbRnOB4r5yuVzA2vWe5QPAxpisiqShtXIG?=
+ =?us-ascii?Q?jyRcjML9ErI91yPRA8e56Odq//LJJ5G/XFtoQ6iz4kt1oYscvQql4nsVxbaK?=
+ =?us-ascii?Q?qvGHiso74fgC3jdOHz2Ecrs9AWnJ5Wg4htGEl1CtxMyVakeVF89n4Tqpkxqz?=
+ =?us-ascii?Q?NDWV2IlYKfw2t7omwa/vSU8TOvTmfEsnLBp0esHxDY6Y0OXpZdRvmuCKjLv0?=
+ =?us-ascii?Q?xdeNlplNHe+jtN/zT/qlt/ctwXSlAUXH2twrmshJtZ7FjyeTnoovkWvVqmVd?=
+ =?us-ascii?Q?MfPX8T+oCRFadJ3Mzo38E7WCjeekq3wzhwSlFLWsnt5hlE6RHLaMvkWhKESH?=
+ =?us-ascii?Q?yEBsEkReTDyqZMvSgcXaN4FWx+EWDIOUMishkPV7XD1g3iLiGSUhJcX4j6lA?=
+ =?us-ascii?Q?EcwIC/jD7DPmhwkfJCnqraI3nQr1QkV6H5voPXJwtXRhN5/axRFBikpwh/GT?=
+ =?us-ascii?Q?Apfnv6wMm7i35M5H93IE45Z7avUo2/E7MS033Ng6m9JKrwBPdPsqm8ijQJS7?=
+ =?us-ascii?Q?+H/Jll5XKcGehXNpGtVr50Adsdfc/PLvhOg3C2seN3YCuST68aP0jDPv0SqO?=
+ =?us-ascii?Q?GFOcFBpcT+m0OTUHO+6HEHGO/5eMv83wO/Mt7eGRADw9KYavuHyOuBO5UudV?=
+ =?us-ascii?Q?e0tqc+1ZVH/eIjBevz05pzaiCfF6Kqe7A9L70ChWAiLzFHscgKf4GNxt/Cwv?=
+ =?us-ascii?Q?RnlPwZnB/2TI0hVnaVc+DSZtzkDbidm3kNtwCyQYxHB7CgZ/G0QwDcPq1VQk?=
+ =?us-ascii?Q?cKx7UTvxPS89ViU8PjTWASRAn0YZxcAzoBeCISOHXmTwTbkFb22nr5i/Q3pA?=
+ =?us-ascii?Q?K4VSqqeS/h61oOF7ZuIFy3Z12km+kNezkoL8TvMk3oCeVesJMVQTyS66toNi?=
+ =?us-ascii?Q?SZD2L9ehX9CTfGfQV5jHAZJo+ajf3/HVpFuXausP6uOXvJjMBF8SDQ5OKzSA?=
+ =?us-ascii?Q?XZbgZsjDWUrPOFDrFgxW+pzBiV5Y7GvSN+HZjQxr?=
+X-OriginatorOrg: irondevice.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 87ec6746-f61f-4bd0-c48b-08dcfdfc8283
+X-MS-Exchange-CrossTenant-AuthSource: SL2P216MB2337.KORP216.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: MW5PR13MB5632.namprd13.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c4ade4e5-4a5b-4e20-6f84-08dcfdfc59b9
-X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Nov 2024 00:45:45.8450
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Nov 2024 00:46:54.4571
  (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 66c65d8a-9158-4521-a2d8-664963db48e4
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 4aHhUmXJ96FYuDVpc9pHzUOd8uXxy/J1Y+2/PIgF4xdieKSAk7/+yMlZaD8F25S9fzlX/Jz4KHoHXIkKoONMUg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR13MB7060
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
-X-Proofpoint-GUID: UaZCQ9ROitVwox2SI3HRA0n95pxYL7Ak
-X-Proofpoint-ORIG-GUID: UaZCQ9ROitVwox2SI3HRA0n95pxYL7Ak
-X-Sony-Outbound-GUID: UaZCQ9ROitVwox2SI3HRA0n95pxYL7Ak
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-11-05_08,2024-11-05_01,2024-09-30_01
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: b4849faa-3337-494e-a76a-cb25a3b3d7d1
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: CpOBh3RMuXCUlScHkE+rka8uiB+mCy/egmXuXql9p8F+VE37N0l/heVNZ7B1P3Q2IohWcKdip0T0pOC/LHKNX1EnPloKYhjYcm9YEvr/csQ=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SE2P216MB1932
 
+This adds basic audio support for the Iron Device SMA1307 amplifier
 
+Kiseok Jo (2):
+  This adds the schema binding for the Iron Device SMA1307 Amp
+  The Iron Device SMA1307 is a boosted digital speaker amplifier
 
-> -----Original Message-----
-> From: Brian Masney <bmasney@redhat.com>
-> Sent: Tuesday, November 5, 2024 5:10 PM
-> To: Saravana Kannan <saravanak@google.com>
-> Cc: Bird, Tim <Tim.Bird@sony.com>; linux-embedded@vger.kernel.org; linux-=
-kernel@vger.kernel.org
-> Subject: Re: Boot-time initiative (SIG) thoughts and next steps
->=20
-> On Mon, Oct 28, 2024 at 03:=E2=80=8A33:=E2=80=8A29PM -0700, Saravana Kann=
-an wrote: > On Sun, Oct 27, 2024 at 6:=E2=80=8A30 PM Bird, Tim
-> <Tim.=E2=80=8ABird@=E2=80=8Asony.=E2=80=8Acom> wrote: > > > On Fri, Oct 2=
-5, 2024 at 11:=E2=80=8A18 AM Bird, Tim <Tim.=E2=80=8ABird@=E2=80=8Asony.=E2=
-=80=8Acom> wrote: >
->=20
-> On Mon, Oct 28, 2024 at 03:33:29PM -0700, Saravana Kannan wrote:
-> > On Sun, Oct 27, 2024 at 6:30=E2=80=AFPM Bird, Tim <Tim.Bird@sony.com> w=
-rote:
-> > > > On Fri, Oct 25, 2024 at 11:18=E2=80=AFAM Bird, Tim <Tim.Bird@sony.c=
-om> wrote:
-> > > > > =3D wiki account =3D
-> > > > > The wiki where we'll be maintaining information about
-> > > > > boot time, and about activities of the boot time SIG, is the elin=
-ux wiki.
-> > > > > The page we'll be focusing on is: https://elinux.org/Boot_Time.
-> > > > > If you are interested in helping update and maintain the informat=
-ion there
-> > > > > (which I hope almost everyone is), then please make sure you have=
- a user
-> > > > > account on the wiki.
-> > > > > If you don't have one, please go here:
-> > > > > https://elinux.org/Special:RequestAccount
-> > > > > I have to manually approve accounts in order to fight spambots.  =
-It might
-> > > > > take a few days for me to get to your request.  It's very helpful=
- if you
-> > > > > put a comment in one of the request fields about this being relat=
-ed to
-> > > > > the boot-time initiative or SIG, so I can distinguish your reques=
-t from
-> > > > > spam requests.
-> > > >
-> > > > Can we instead keep this all a part of the kernel docs instead of t=
-he
-> > > > wiki? Couple of reasons for that:
-> > >
-> > > Ideally, we would put some material in the wiki, and also
-> > > produce a document - some kind of "boot-time tuning guide" that can
-> > > live in the kernel tree.
-> >
-> > This is the part I care most about being in the kernel docs. Eg: what
-> > configs to use. What commandline params to set. Dos and Don'ts for the
-> > drivers, etc. So, good to see that is an acceptable option.
->=20
-> I'm interested to help contribute to a boot speed document, and I
-> suspect some others at Red Hat are interested as well. Personally,
-> I would prefer to have a section in the kernel documentation over a
-> Wiki
-OK - that's at least two votes for an upstream kernel doc.
+ .../bindings/sound/irondevice,sma1307.yaml    |   53 +
+ sound/soc/codecs/Kconfig                      |   10 +
+ sound/soc/codecs/Makefile                     |    2 +
+ sound/soc/codecs/sma1307.c                    | 2052 +++++++++++++++++
+ sound/soc/codecs/sma1307.h                    |  444 ++++
+ 5 files changed, 2561 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/sound/irondevice,sma1307.yaml
+ create mode 100644 sound/soc/codecs/sma1307.c
+ create mode 100644 sound/soc/codecs/sma1307.h
 
-I think it would be good to have a boot time tuning guide upstream.
-I hope to augment that with a tool that will check for various
-items or conditions on a machine, and give a list of recommendations.
-This could go along with the tuning guide.
-
-However, I would still plan to collect some information on the wiki
-that I don't think will be upstreamable.  For example, see this page:
-https://elinux.org/Disable_Console
-
-The first few items on that page could be sentences in a kernel tuning
-guide, but the data from actual uses I don't think belongs there, as
-it will quickly bitrot.  (Indeed the information on that page has already
-bitrotted.)
-
-I think it would be useful to gather this results information on a wiki, bu=
-t its
-possible that if reports are sent by e-mail, just a few lore links would
-suffice.
-
-> Besides arch-specific recommendations, we can also contribute
-> some boot speed improvement techniques that we've done that are
-> specific to RT.
-That would be great.
-=20
-> In addition to the recommended configs, I think it would also be
-> beneficial to list some upstream patches that improve boot speed along
-> with the kernel version it was introduced in.
-I think this would be good also.
-
-We should discuss what a kernel boot-time tuning guide should look like
-and how it should be organized.  Starting this may be one of the first
-things the SIG does.  The other one may be a data-gathering tool that
-I've been working on, that (of all things) automatically populates a wiki
-with boot time data.  I will explain my intentions when I post the script
-(likely tomorrow).
- -- Tim
+-- 
+2.39.2
 
 
