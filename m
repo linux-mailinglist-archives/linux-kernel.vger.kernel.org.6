@@ -1,152 +1,137 @@
-Return-Path: <linux-kernel+bounces-397357-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397373-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 169099BDAF4
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 02:10:11 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87FED9BDB24
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 02:25:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC8741F21A27
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 01:10:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3EB12283CFD
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 01:25:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47D2F17BB34;
-	Wed,  6 Nov 2024 01:10:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1EFF10E5;
+	Wed,  6 Nov 2024 01:25:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="f1jkwQoD"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="mYivpvwa"
+Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A1AF13C918;
-	Wed,  6 Nov 2024 01:10:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1813418786C;
+	Wed,  6 Nov 2024 01:25:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730855402; cv=none; b=ZfSEBhgPyj+vRbZjNwX0pH0D6IW3hoGlJko6xGqyHPgPIkRmSEjvSPJDhF0PNPwoCiMHCGtdjMkqT77hwRBuC6ThOfgAgCz0Dobdpos0R8glYkozNBVZ96Wxtmqam9pub8eU19jcgjKx3SkKJ3PbhJyLJWV7v+bsePa8JZTsFTE=
+	t=1730856343; cv=none; b=cpvrhc7gyxHLLedYJwR3lKFTfPqu27fiJ0TgDkxqK6PWKzSNyin4fwsSK2gD/ffnjdvzxWqMZj7Rir0PF53qUbiMWjsYCvhAujlaHzd4/v7d0WH8PeSasNJBZO0fyY0PM+Yl65x3qNu7dDXztNSuga05V5QiJ1t5d87Ts2CHgis=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730855402; c=relaxed/simple;
-	bh=8wkwyTaOOs9Q5NnvxbQhqZPtZs3GJ1PNsILlDFMD+Ic=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WEq4OGTe5xVIYATfV/ux+H37ztPUKT6xcq1AvWPhCGdCxmtA+8h7tsTAjfwSpIST27U5cjcf90W7TSVwwI2DgKJpytrCABznG0qgpWxeO508n4PvzPVK9u7Pt7nYqlWQmVKYIUp8J1taUmbMDGQGF+c8qmmpDOjPPLyGh+6VlmE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=f1jkwQoD; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730855401; x=1762391401;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=8wkwyTaOOs9Q5NnvxbQhqZPtZs3GJ1PNsILlDFMD+Ic=;
-  b=f1jkwQoDTBYlKXY8YTuAysaBWintcHbhfmuZqKioP1/mm7gANIVTVIXv
-   ClRJoZCzSAJ09bQ3g1+hWTLF0OQaW49MVtMYcXjQsWVMHNSTqGq8lOGla
-   aNJF6k35AFoeXC2vVd02mNFJ0CfSkq4kd/XRLL1PLaFbfnk7L543g894r
-   q4cSQfMHGzg15iRfLFmvVgWsFW2AbxYQkTKZSj5ufxwsTYYKoctzyjtz6
-   7KycIHm7wrv/HKy26ECV7tTv8N1v//TMGW26l3twjCtF8d5h5fVlTMNEl
-   br9a1H8hGgfCf/tu5XHEcs4iyh+gf6ItKTOWybUDrDZDF20t1k8b8Gcm3
-   A==;
-X-CSE-ConnectionGUID: 2zVQhq9PSDithnQ/yf+5sw==
-X-CSE-MsgGUID: cWE8+CeCQmmg2eoerDW4PA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11247"; a="30740728"
-X-IronPort-AV: E=Sophos;i="6.11,261,1725346800"; 
-   d="scan'208";a="30740728"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2024 17:10:00 -0800
-X-CSE-ConnectionGUID: 8QkttW8lSlGJTh+nJBv2Tw==
-X-CSE-MsgGUID: nvQubyb8SZOi3RncHdWtHg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,261,1725346800"; 
-   d="scan'208";a="89395669"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by orviesa004.jf.intel.com with ESMTP; 05 Nov 2024 17:09:56 -0800
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1t8UYS-000mgP-3B;
-	Wed, 06 Nov 2024 01:09:52 +0000
-Date: Wed, 6 Nov 2024 09:09:38 +0800
-From: kernel test robot <lkp@intel.com>
-To: Mario Limonciello <mario.limonciello@amd.com>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: oe-kbuild-all@lists.linux.dev, "Rafael J . Wysocki" <rafael@kernel.org>,
-	Len Brown <lenb@kernel.org>,
-	Maximilian Luz <luzmaximilian@gmail.com>,
-	Lee Chun-Yi <jlee@suse.com>,
-	Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
-	Corentin Chary <corentin.chary@gmail.com>,
-	"Luke D . Jones" <luke@ljones.dev>,
-	Ike Panhc <ike.pan@canonical.com>,
-	Henrique de Moraes Holschuh <hmh@hmh.eng.br>,
-	Alexis Belmonte <alexbelm48@gmail.com>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
-	Ai Chao <aichao@kylinos.cn>, Gergo Koteles <soyer@irl.hu>,
-	open list <linux-kernel@vger.kernel.org>,
-	"open list:ACPI" <linux-acpi@vger.kernel.org>,
-	"open list:MICROSOFT SURFACE PLATFORM PROFILE DRIVER" <platform-driver-x86@vger.kernel.org>,
-	"open list:THINKPAD ACPI EXTRAS DRIVER" <ibm-acpi-devel@lists.sourceforge.net>,
-	Mark Pearson <mpearson-lenovo@squebb.ca>,
-	Matthew Schwartz <matthew.schwartz@linux.dev>,
-	Mario Limonciello <mario.limonciello@amd.com>
-Subject: Re: [PATCH v4 11/20] ACPI: platform_profile: Add choices attribute
- for class interface
-Message-ID: <202411060835.GlMKVSsy-lkp@intel.com>
-References: <20241105153316.378-12-mario.limonciello@amd.com>
+	s=arc-20240116; t=1730856343; c=relaxed/simple;
+	bh=vrtPNrB6+0BcgO9J9p5RfsVNy2E+QVqTdpWFiiQrQoU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gex9D5qyDE5SRsHOr/ogF7VnN627w5eTUaTUjsKNGtKTbfsUT+n5t+VYRWE3ZCZVfaMh1/JlnTVgFU3u6shJYEMsvy75+/9tqfUlp+GPvrvVLtnw6z8EQXl5QvCpJNq7chXZOFLz+C5YVGG2SMWRp4qYjBqGLEZBwpYV5eeIqUk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=mYivpvwa; arc=none smtp.client-ip=85.214.62.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
+Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
+	(No client certificate requested)
+	(Authenticated sender: marex@denx.de)
+	by phobos.denx.de (Postfix) with ESMTPSA id 78B3388D8D;
+	Wed,  6 Nov 2024 02:25:38 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
+	s=phobos-20191101; t=1730856339;
+	bh=Z1yoKzgo8+wbpL0mDUyPIejCTWSCHY6sxQ3QEw31KAs=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=mYivpvwalNGXewCotlReMZWG1dRdUf1S1ohdtCbhS1fxo4ihlzs9T6d5R/MNBQ6AS
+	 wUZg2iduzOO0MalQemqPOVhRec8AiaDU8G4DYFtzq2iCFo8bYuYetiypuN30WjmHnU
+	 fHoaIYHmB0BE0vmVzSh+Ca3f8ZDxUrIg9crHRQxz/hDc1+daXd+f+aUeeIQRNzx0Lc
+	 pWmbTgQas5CWMwnaM+uXci77LmiFoVaznHl9Hiw2N83FSqyH3BmQzgkbFLY67nADZ5
+	 0TSCqxwQGO2liQh6vwn0qGU5bzfysD821pASO4NnzeUUe880EwBmLQn1cVufRbuPV3
+	 gmgvOdxUzSHcg==
+Message-ID: <35a05978-a83f-4746-92cd-108b6586ac08@denx.de>
+Date: Wed, 6 Nov 2024 01:30:29 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241105153316.378-12-mario.limonciello@amd.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] ARM: dts: stm32: Describe M24256E write-lockable page
+ in DH STM32MP13xx DHCOR SoM DT
+To: Alexandre TORGUE <alexandre.torgue@foss.st.com>,
+ linux-arm-kernel@lists.infradead.org
+Cc: Christoph Niedermaier <cniedermaier@dh-electronics.com>,
+ Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org,
+ kernel@dh-electronics.com, linux-kernel@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com
+References: <20241017190933.131441-1-marex@denx.de>
+ <b616628b-f9e3-42dd-b5dd-e7aa0235daae@foss.st.com>
+Content-Language: en-US
+From: Marek Vasut <marex@denx.de>
+In-Reply-To: <b616628b-f9e3-42dd-b5dd-e7aa0235daae@foss.st.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
+X-Virus-Status: Clean
 
-Hi Mario,
+On 10/29/24 4:28 PM, Alexandre TORGUE wrote:
+> Hi Marek
+> 
+> On 10/17/24 21:09, Marek Vasut wrote:
+>> The STM32MP13xx DHCOR SoM is populated with M24256E EEPROM which has
+>> Additional Write lockable page at separate I2C address. Describe the
+>> page in DT to make it available.
+>>
+>> Note that the WLP page on this device is hardware write-protected by
+>> R37 which pulls the nWC signal high to VDD_3V3_1V8 power rail.
+>>
+>> Signed-off-by: Marek Vasut <marex@denx.de>
+>> ---
+>> Cc: Alexandre Torgue <alexandre.torgue@foss.st.com>
+>> Cc: Christoph Niedermaier <cniedermaier@dh-electronics.com>
+>> Cc: Conor Dooley <conor+dt@kernel.org>
+>> Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>
+>> Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>
+>> Cc: Rob Herring <robh@kernel.org>
+>> Cc: devicetree@vger.kernel.org
+>> Cc: kernel@dh-electronics.com
+>> Cc: linux-arm-kernel@lists.infradead.org
+>> Cc: linux-kernel@vger.kernel.org
+>> Cc: linux-stm32@st-md-mailman.stormreply.com
+>> ---
+>> V2: Fix up the M25256E in Subject
+>> ---
+>> DEPENDS:
+>> - https://lore.kernel.org/linux-i2c/20241017184152.128395-1- 
+>> marex@denx.de/
+>> - https://lore.kernel.org/linux-i2c/20241017184152.128395-2- 
+>> marex@denx.de/
+>> ---
+>>   arch/arm/boot/dts/st/stm32mp13xx-dhcor-som.dtsi | 6 ++++++
+>>   1 file changed, 6 insertions(+)
+>>
+>> diff --git a/arch/arm/boot/dts/st/stm32mp13xx-dhcor-som.dtsi b/arch/ 
+>> arm/boot/dts/st/stm32mp13xx-dhcor-som.dtsi
+>> index 5c633ed548f37..07133bd82efa6 100644
+>> --- a/arch/arm/boot/dts/st/stm32mp13xx-dhcor-som.dtsi
+>> +++ b/arch/arm/boot/dts/st/stm32mp13xx-dhcor-som.dtsi
+>> @@ -202,6 +202,12 @@ eeprom0: eeprom@50 {
+>>           pagesize = <64>;
+>>       };
+>> +    eeprom0wl: eeprom@58 {
+>> +        compatible = "st,24256e-wl";    /* ST M24256E WL page of 0x50 */
+>> +        pagesize = <64>;
+>> +        reg = <0x58>;
+>> +    };
+>> +
+> 
+> You could have sorted nodes by I2C addresses.
+Fixed in [PATCH] ARM: dts: stm32: Sort M24256E write-lockable page in DH 
+STM32MP13xx DHCOR SoM DT
 
-kernel test robot noticed the following build warnings:
+Sorry.
 
-[auto build test WARNING on d68cb6023356af3bd3193983ad4ec03954a0b3e2]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Mario-Limonciello/ACPI-platform-profile-Add-a-name-member-to-handlers/20241105-233922
-base:   d68cb6023356af3bd3193983ad4ec03954a0b3e2
-patch link:    https://lore.kernel.org/r/20241105153316.378-12-mario.limonciello%40amd.com
-patch subject: [PATCH v4 11/20] ACPI: platform_profile: Add choices attribute for class interface
-config: x86_64-rhel-8.3 (https://download.01.org/0day-ci/archive/20241106/202411060835.GlMKVSsy-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241106/202411060835.GlMKVSsy-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202411060835.GlMKVSsy-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> drivers/acpi/platform_profile.c:55: warning: Function parameter or struct member 'choices' not described in '_get_class_choices'
-
-
-vim +55 drivers/acpi/platform_profile.c
-
-    48	
-    49	/**
-    50	 * _get_class_choices - Get the available profile choices for a class device
-    51	 * @dev: The class device
-    52	 * Return: The available profile choices
-    53	 */
-    54	static int _get_class_choices(struct device *dev, unsigned long *choices)
-  > 55	{
-    56		struct platform_profile_handler *handler;
-    57		int i;
-    58	
-    59		scoped_cond_guard(mutex_intr, return -ERESTARTSYS, &profile_lock) {
-    60			handler = dev_get_drvdata(dev);
-    61			for_each_set_bit(i, handler->choices, PLATFORM_PROFILE_LAST)
-    62				*choices |= BIT(i);
-    63		}
-    64	
-    65		return 0;
-    66	}
-    67	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+(I also wrote me a sorting tool in the meantime, but it still isn't too 
+good)
 
