@@ -1,86 +1,130 @@
-Return-Path: <linux-kernel+bounces-397623-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397624-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1FC19BDE29
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 06:08:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C2F29BDE2B
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 06:10:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F63A284E21
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 05:08:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3F32284C91
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 05:10:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24F6F1917D2;
-	Wed,  6 Nov 2024 05:08:05 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47079191478;
+	Wed,  6 Nov 2024 05:10:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XIX4oawo"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B2E22F50
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 05:08:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 544242F50;
+	Wed,  6 Nov 2024 05:10:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730869684; cv=none; b=J+4IeyOida4VL1kep4qay0mIHummgXAGXqumqd/pGX4LL6rliOXJzaaYKZVvsu/+0mjihDmsDJY3ycRY1uvAxVo6bfFvGahdrNGXTfkGkx3DCsCEDethTA1PAR4Dazsm1bLovHopNwdctmjm2saDgPsbU0QQCRzxmeotnNOrc60=
+	t=1730869824; cv=none; b=mvkYrAz0WKZCGvN7zQUsIbr3VSgoZ4Vm4ESeuBWzysjBIkUyXicwTUWLY+FhNS45zmPTsWmTQ3eK/4G9sohMWiLkO9jZCM2lG+0zlMBM7YXzziq7CJj9O7ywb28Z77oCdpULwpMFMm9j2z9SVeR8QMLOSUHe3bKQ8g/L3Bx9dAo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730869684; c=relaxed/simple;
-	bh=a1d9rFYmiox8Cvtw9o+GMM5ZvGuCn8t66Hz/uZIPOVU=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=ogi2PeDgybysimG5Tbk40AN/ndsfePfjkmJw6t2JFurNcy3XgANIVksgwLe9hQZzQq94FB7PZspLKYTOJRY7tfFxHNGVxjyPY6SeU3DVLzFYlhMJdIX9nkKWrx0yO39kKPe4KlZl3WDbmcNDpyIPGVozTpIwFJRij9vgtaWk6Ik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a3b9c5bcd8so64861755ab.2
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 21:08:03 -0800 (PST)
+	s=arc-20240116; t=1730869824; c=relaxed/simple;
+	bh=sk6nClJft2TIKvzB6Hw0SeJ6iwv14nPpxUjUjJ6h+DE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=gg91J2vXVuGCwxXhqeY+mFhyNgheIQ191DIdOrYWKAC/HPySgdEdsHggfOiIoRh1F5tRTV0zKPu8uPwndskOD5bp+lBaCEigMteCJLhvCyPHuzVMzwttGleKlrwPvKkOt79u94WbkduKe4ocbViKBl5OMy9ZA/5cxc6T4K6E0Kc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XIX4oawo; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-20caccadbeeso68023435ad.2;
+        Tue, 05 Nov 2024 21:10:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730869822; x=1731474622; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=V+laD9lt/U32FXtuH2BFlYAYI8tzj0cNKJNCwws96t4=;
+        b=XIX4oawoqwspvGzihUbU38eZWWnUvcfajKXfK+MdB2zh8gnokAqsJOaQbvLC8siqWb
+         1wKVj4IvdHrF3eqDOyzvBt1WeVyULNUNfU4Iq1YRgN4ZA8DkSoTn2+qsyY/dTX2I2zXu
+         VLLB7BNJHBPprlkzuu1t1g5FiG4LW0tFXXtmmOvnF0tCO52qPiQ5QEHrUR93b3MgxFoM
+         azLnQF8BA8V8ulCjELoJw6yozAOC4hRo58yw9DoUA/LVl8JArJFQrWw5HJCYLolT3gHB
+         J0PJy5/W/OsIwkrgRhXld72KTk4LraQKsn3CjS25f8mirql1HV60smrgSpeXi3260kuz
+         YFDw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730869682; x=1731474482;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=GZCpyZnda5DlHXgbs9S3nxrto8V8O+1AIPUGm5d2KMU=;
-        b=jiFT0BxY0y/W/W6RoXHlKz+10Q3JIIzx4BYIxaOxOspJsY5gIYaeQ2UItuB9sSJ9jw
-         PufsSkD8HqORtG3KQiaF2pzo/PdVtsdBo4tGf+quSpseoQeiJymAGLNDJ0WA7omT95iE
-         ltvr6DbQs2KGGvNalnZcp2S2vtyAVBHdZycgWJ9xoQ2Kvh8owdLQfp20DupGMnmRmqK+
-         ygS3sp+4bGk6fcCtRKhrqNl+gb7fUp6zRvwVHtHx+NQzXvMPZHY+js3p2d+0Ee2Y1KbZ
-         8IFpg3ZNraEuAKJhsXSI8PJjGF57T6BZLteou5ZfbMmau809tPfUVaG6pbEqLokHa82z
-         qZ6Q==
-X-Gm-Message-State: AOJu0YxFznV68gJ3ZUrXXZfm1QAXVh684EN9cfcsGGr5kT9x1rLvoUhA
-	3e5b6h0izNy5SgTZKojsUjsOGgmGkaJE9KwaDX4+HsQy2YM6mkiCsdIvL80AUX8FljjkW/BdECA
-	4BeKrs0PTkfiICtU31ip9H8AWq3a32TTE6naevljMOzZe4bhOPMPqO/8=
-X-Google-Smtp-Source: AGHT+IEbaZMaak1hOR+JlAZzixE2T090fs8rKeKGEUM59TJWcInbswUrml2siCNIq69pOOmYlWTFxm+M7ofQwO7D98wedpFh6WoI
+        d=1e100.net; s=20230601; t=1730869822; x=1731474622;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=V+laD9lt/U32FXtuH2BFlYAYI8tzj0cNKJNCwws96t4=;
+        b=g8fjBIWb7mMbxjUnu9CnRuqQsXwfeF+Y42ijmD7ADURMF5C584SSkJUKncejV5jGhU
+         AQ3+jBYFZj5n+xt5TePJ810FNHfAkd5BFyMCLacV1LasU0mIcIxI2scpzBlMTpJxC/7z
+         QIl6WXmEQdjMc8FQpqeBQenk1AOD8NHhCTWrISLXNS21O8sz5+gk2iILbM+7COdQ3pYJ
+         Aj4oijIQ7h6w6MVsiRNsSsoWLcOd1MkLpu5qAEkAecsqcr5x5vqRV4Dczc9FWWLQCSIw
+         DuOvLtss28VbJspZFS0GdT/oUsw3lZkSNsS5yANCyZHUgvDJ5/AVws4oL9RbxCRL2cRp
+         9tiw==
+X-Forwarded-Encrypted: i=1; AJvYcCWg/hcWeWjlyz2iTrn28dEVBykN9vhIt+X7d9TU00hacI0mP0dfFLt04UhlMcf6odA7ifYA9qubFvc=@vger.kernel.org, AJvYcCXtC6jYcntAoLXkBsmALHWhFxbxXKtYHmJ736KOS6rpxhuWb2i8mRknNliWPe4JrHjdM8yXXQxZrpPG1POnDHrR+w==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy0oY6/4NyVDUoTsXIsv25axIBJD1u7YNKnGG9e0zvSJSt7ewbj
+	zhmI+YrMAXbltZbY9WVWFJADuNDNjHrenJITyjf8PmBWRCAyPUd9
+X-Google-Smtp-Source: AGHT+IEFCrPvwvcuTqVPkoH7AkosVTN7qzzJrm2b3pQpr84kIW+PkkcuES/px8yRqEhkfHLWnQ/zrA==
+X-Received: by 2002:a17:902:e850:b0:20b:6d8c:463 with SMTP id d9443c01a7336-21103b34f6dmr306869815ad.35.1730869822529;
+        Tue, 05 Nov 2024 21:10:22 -0800 (PST)
+Received: from anishs-Air.attlocal.net ([2600:1700:3bdc:8c10:f510:c8a3:8415:793d])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211057c0825sm86266055ad.207.2024.11.05.21.10.21
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Tue, 05 Nov 2024 21:10:21 -0800 (PST)
+From: anish kumar <yesanishhere@gmail.com>
+To: andersson@kernel.org,
+	mathieu.poirier@linaro.org,
+	corbet@lwn.net
+Cc: linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-remoteproc@vger.kernel.org,
+	anish kumar <yesanishhere@gmail.com>,
+	kernel test robot <lkp@intel.com>
+Subject: [RESEND PATCH V6 0/3] remoteproc documentation update 
+Date: Tue,  5 Nov 2024 21:10:13 -0800
+Message-Id: <20241106051016.89113-1-yesanishhere@gmail.com>
+X-Mailer: git-send-email 2.39.3 (Apple Git-146)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1948:b0:3a6:c7a8:a1cc with SMTP id
- e9e14a558f8ab-3a6c7a8a3ccmr130602465ab.20.1730869682494; Tue, 05 Nov 2024
- 21:08:02 -0800 (PST)
-Date: Tue, 05 Nov 2024 21:08:02 -0800
-In-Reply-To: <Zyr0DaD6yG6WDHXz@gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <672af9b2.050a0220.2a847.1b5e.GAE@google.com>
-Subject: Re: [syzbot] [usb?] KASAN: invalid-free in dev_free
-From: syzbot <syzbot+3e563d99e70973c0755c@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, marcus.yu.56@gmail.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hello,
+V6:
+divided the patches for each section as suggested by mathieu.
+First patch is updating introduction section
+second patch is for new overview section as suggested
+third patch is for devm version of rprod_add
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+V5:
+based on comment from mathieu poirier, remove all files
+and combined that in the original file and as he adviced
+nothing with respect to old documentation was changed.
 
-Reported-by: syzbot+3e563d99e70973c0755c@syzkaller.appspotmail.com
-Tested-by: syzbot+3e563d99e70973c0755c@syzkaller.appspotmail.com
+V4:
+Fixed compilation errors and moved documentation to
+driver-api directory.
 
-Tested on:
+V3:
+Seperated out the patches further to make the intention
+clear for each patch.
 
-commit:         6ff78df5 usb: Use (of|device)_property_present() for n..
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git usb-testing
-console output: https://syzkaller.appspot.com/x/log.txt?x=108d4e30580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=8f0eaad4c825e2e9
-dashboard link: https://syzkaller.appspot.com/bug?extid=3e563d99e70973c0755c
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=17154e30580000
+V2:
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202410161444.jOKMsoGS-lkp@intel.com/
 
-Note: testing is done by a robot and is best-effort only.
+Hello Folks,
+
+Sending this patchset again as revision was missing in the
+last series also added cover letter changes.
+
+Thanks,
+anish
+
+anish kumar (3):
+  Documentation: remoteproc: update introduction section
+  Documentation: remoteproc: add overview section
+  Documentation: remoteproc: add a note to rproc_add
+
+ Documentation/staging/remoteproc.rst | 68 ++++++++++++++++++++++++++++
+ 1 file changed, 68 insertions(+)
+
+-- 
+2.39.3 (Apple Git-146)
+
 
