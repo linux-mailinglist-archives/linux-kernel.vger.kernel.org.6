@@ -1,156 +1,145 @@
-Return-Path: <linux-kernel+bounces-399021-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399022-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 765FA9BF9A9
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 00:03:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A989E9BF9AB
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 00:03:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F35771F22735
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 23:03:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B6651F2220E
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 23:03:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F3BD1DE2CD;
-	Wed,  6 Nov 2024 23:02:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE8FE20CCF0;
+	Wed,  6 Nov 2024 23:03:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="K6qHlCnI"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="YlniAT2i"
+Received: from mail-io1-f43.google.com (mail-io1-f43.google.com [209.85.166.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A80C13A244
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 23:02:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 470F613A244
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 23:03:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730934177; cv=none; b=nBQRGnnUzKyPSSzSfM9el/ucqXPX4MNWcFvcOmAFAH3ioDLiIdgR1JAAnC/bxI5/TUQVgT1w9uKZ5EKtzzbhevNIYlnmLvbbQTU+kRM2bMQbyGxZs2hmI37Nr7MW6xqzFiWcYJUOQDVyqaZNhiwuRoGGd7VJ2BefeH8eh+mflJM=
+	t=1730934230; cv=none; b=HoY4P1JsdRyKeoUD1IKnLGLn5Bv8sTVJFoAIeJNNyw9sDF5YelgqS7tfuggQz/b6VNr877RCzkXFboCj32s0F7Gb1yVEk1upVdfkQ3hY80EqPIosXIbzWdsyLdq9HS99h/66D7ao2GZZ442E+DOraCMHlulBK0rx/pe6luBbzXM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730934177; c=relaxed/simple;
-	bh=vBXPxdEdRZfjzaHPelGTnrLmAt4+mOFflNoOS2Ws6lI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cjGF24UyNT3oForrFVja6PZfvOqmln0DgWe2brQ8q3AbbvRqL48on7Kji5hRxC3fWtai2moYIXFYhI2gpokDPG8yFjWXkXc/NVSKtGy48pDtaOY9k71Y1/NpHTWolldZ7r4WMSWF6fByrbOKZUddG/rTYjuSnfURu/Gx6fX84zo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=K6qHlCnI; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-539f4d8ef66so299548e87.1
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2024 15:02:55 -0800 (PST)
+	s=arc-20240116; t=1730934230; c=relaxed/simple;
+	bh=2m3lGSb0KPE5zZ2Db41fVxKYqG6pSElwHvTQFR4SvdE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=c3lOJMIl0+r9wVkgUknyAPXaKWMsACDs5cQjUE+QlFRWMkjcrwkzXGdRQLUEWGuj1Dj4ytTBlNY1gPE8nh6xerDzL0Ztg/b4fgPWtlXbYGewJE+Atb9otMv6zK4JuWhKWfJEeG+UXcwy2cr1gzIOSYBGCziFF1BOBweTfe1Vk7w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=YlniAT2i; arc=none smtp.client-ip=209.85.166.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-io1-f43.google.com with SMTP id ca18e2360f4ac-83a9be2c028so13370439f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2024 15:03:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1730934172; x=1731538972; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vBXPxdEdRZfjzaHPelGTnrLmAt4+mOFflNoOS2Ws6lI=;
-        b=K6qHlCnIhk3UtNBtNiN8OZHlywHOe611yQlkSwBAY7oQqn6uEtTerISSPLLcUDrBHV
-         3IvZUDwNsOmFcUfUR2Dr1MJcdSAbNpK0imZF5kdEfIclPjmG0bw17FYWrptlEev2rPcY
-         GHcfIVLsKCDnNwckN5+VhA893Y9KtufJSNwHY=
+        d=linuxfoundation.org; s=google; t=1730934226; x=1731539026; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Q9d2gmeIZhRgxPs/QSdKvrnEtcel9X904K+JgPPLUDA=;
+        b=YlniAT2iuNJrph7yBz94aFd9UJiJZImS+7hgRg/eFHykZLsr0oeawH86WgDVeWF0Bn
+         hUs4jj2b3vvR0Z8teu5jXa1Wo61Q2JwK98QfOxJnHEGbltma5oF3O3ofbVFMKhl8cnfg
+         CX3E70KrXAY9EBONXHa2KHr5YXQa6G8pmTn9A=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730934172; x=1731538972;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vBXPxdEdRZfjzaHPelGTnrLmAt4+mOFflNoOS2Ws6lI=;
-        b=P8Q6Ni9yquGtbBGjic4nDvvlymNmmLc2gSv8J5mJKS3QHiY8YsQkhzXY/P0VTHkLu5
-         Txl0ES5aifJZZLUw+XuSHcIsI18mk17/TtRM4rdcyCLM4436wmtQi2zB/pEUDlhp9+2w
-         dS11UZQe04RtKnYVIEKXPnvC5yAy8HI/2HQu5qY+3EBAzXouss3IZu/MrnHn6gvo4LFw
-         ALgkjdleaPaohwit4cCilzMFYn42ZqK+1g/NOk66ZhpvWYVvIoMCyKTNYEA/UV43F66q
-         GVVEV5E3hMq+mfkDzmmmsn8qmRzUZaVYb0+YWFT+5A1n2amoNrvtPFpYRYGGBFh6cL6Y
-         Dl/A==
-X-Forwarded-Encrypted: i=1; AJvYcCU1wYexYeimqL5K0dcLVHqejIirGBgi+z4Gx3LYjG3mPqLHQH2NsOQm5ZC1h49HK0Rp4jlOdrVX0BWj7Bg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwbO3rueyH3+azDilRRmTLrmGz/2EdzVoNDq9qQaQ0Ws6jnE4It
-	cwXzB2naqVDbzcG9qXtuKmf3Q5GADGNc0vS/aZfZZopIeNpLJ3qYbyzXqdAW6N3HPaiTtuhbaYv
-	rRQ==
-X-Google-Smtp-Source: AGHT+IHDrDOUG/AmMlIoRw0wo1GPMlGh1gZWibkljWaiZn7raqCz/RbntzFE0zbPyOyQHpQFKf7vaA==
-X-Received: by 2002:a05:6512:1392:b0:536:73b5:d971 with SMTP id 2adb3069b0e04-53b34c5f886mr21432958e87.38.1730934172383;
-        Wed, 06 Nov 2024 15:02:52 -0800 (PST)
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com. [209.85.167.46])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53d826a9d20sm15439e87.217.2024.11.06.15.02.51
-        for <linux-kernel@vger.kernel.org>
+        d=1e100.net; s=20230601; t=1730934226; x=1731539026;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Q9d2gmeIZhRgxPs/QSdKvrnEtcel9X904K+JgPPLUDA=;
+        b=Qpv3haHygtrrSDsfh3cu8rWWp80cOYe2YPI9l74RL6AduCG0r3RpzOUuL5S+4BXLvC
+         y9+c5z5TQyDmu4AKkPaCWXuULEb0ULMqGmaYeGK/Fj4I0RT5cAFvMfxdr0hL+z2o7w9u
+         TUCXyJmSA/My9UoNuZJ0pQ+Mm5gWPHMALaFCXu+lMnkX7sQeQwyuGFH2SblBg72VY80q
+         hnd/D3Ovjo2QA8YmmpjQgfJQ6TBdcdJ2xaPnp3S07UAWYtt/HybuGbxvN0vHiyYflg7H
+         JYP5/kzEJ1gsJX+p6tOTK0RaWpCXVDWxi75z5NXknV0K2GAqoCXiA1Qj4A4ZzeIP6h9I
+         Fj8A==
+X-Forwarded-Encrypted: i=1; AJvYcCWyu3VhpC9F/FYoi77sprucClIzcnSobmxZ6cQ0Lcj0ynXUPcAjuGarRY2U+lzCwF6Dgt5GwTUT8Xvioag=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy4PINFEaImu1PtPsKUOwhqMTjjN1d29tk8cMkPl+kD7QK+mYb+
+	4n0kdBwWqON8wX1yDuW91qzoqf51KV2vDm9BlIzVr4R0qlu9MvKsmtVPEFRGsW8=
+X-Google-Smtp-Source: AGHT+IG7HfSv2eyFIIKMy444jXmnmiWXPCH2AIv/dcp59B3nkjEgN8YGo6DZoIeWAXAVpXt23BaENQ==
+X-Received: by 2002:a92:cd86:0:b0:3a3:35f0:4c19 with SMTP id e9e14a558f8ab-3a6b03b0cd2mr218205245ab.21.1730934226357;
+        Wed, 06 Nov 2024 15:03:46 -0800 (PST)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4de5f83286fsm33597173.77.2024.11.06.15.03.45
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 06 Nov 2024 15:02:51 -0800 (PST)
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-539e59dadebso295194e87.0
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2024 15:02:51 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCX63eYJkhFy0+eQqpSw3Mr021LrkrJYEpi3XeHaGREzD3ClanvBDBvgjX/FAqIO2mZ3noigXN5fDhhSu8w=@vger.kernel.org
-X-Received: by 2002:a05:6512:3405:b0:539:fcb7:8d53 with SMTP id
- 2adb3069b0e04-53b34c5fa2cmr21132078e87.46.1730934170632; Wed, 06 Nov 2024
- 15:02:50 -0800 (PST)
+        Wed, 06 Nov 2024 15:03:45 -0800 (PST)
+Message-ID: <a18a7906-b213-4dde-abfc-2503250ad1bf@linuxfoundation.org>
+Date: Wed, 6 Nov 2024 16:03:44 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <ZyqSm4B4NuzuHEbp@slm.duckdns.org> <ZyqS0GP9h2hG2lvC@slm.duckdns.org>
- <CAD=FV=U7z-Lf_1T2cYyae3b6W5Joyp+oiRSp-iXe_3jz9Aqoaw@mail.gmail.com> <Zyvo7lFcnAddB9RT@slm.duckdns.org>
-In-Reply-To: <Zyvo7lFcnAddB9RT@slm.duckdns.org>
-From: Doug Anderson <dianders@chromium.org>
-Date: Wed, 6 Nov 2024 15:02:35 -0800
-X-Gmail-Original-Message-ID: <CAD=FV=UTh=JGUDZxO74+ZRQbF+yzcWnBo-f=oie0msmBn2_00g@mail.gmail.com>
-Message-ID: <CAD=FV=UTh=JGUDZxO74+ZRQbF+yzcWnBo-f=oie0msmBn2_00g@mail.gmail.com>
-Subject: Re: [PATCH sched_ext/for-6.13 2/2] sched_ext: Enable the ops breather
- and eject BPF scheduler on softlockup
-To: Tejun Heo <tj@kernel.org>
-Cc: David Vernet <void@manifault.com>, linux-kernel@vger.kernel.org, kernel-team@meta.com, 
-	sched-ext@meta.com, Andrea Righi <arighi@nvidia.com>, Changwoo Min <multics69@gmail.com>, 
-	Andrew Morton <akpm@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mfd: omap-usb-tll: handle clk_prepare return code in
+ usbtll_omap_probe
+To: Karol Przybylski <karprzy7@gmail.com>, aaro.koskinen@iki.fi,
+ andreas@kemnade.info, khilman@baylibre.com, rogerq@kernel.org,
+ tony@atomide.com, lee@kernel.org
+Cc: linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20241106223324.479341-1-karprzy7@gmail.com>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <20241106223324.479341-1-karprzy7@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi,
+On 11/6/24 15:33, Karol Przybylski wrote:
+> clk_prepare() is called in usbtll_omap_probe to fill clk array.
+> Return code is not checked, leaving possible error condition unhandled.
+> 
+> Added variable to hold return value from clk_prepare() and return statement
+> when it's not successful.
+> 
+> Found in coverity scan, CID 1594680
+> 
+> Signed-off-by: Karol Przybylski <karprzy7@gmail.com>
+> ---
+>   drivers/mfd/omap-usb-tll.c | 8 ++++++--
+>   1 file changed, 6 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/mfd/omap-usb-tll.c b/drivers/mfd/omap-usb-tll.c
+> index 0f7fdb99c809..28446b082c85 100644
+> --- a/drivers/mfd/omap-usb-tll.c
+> +++ b/drivers/mfd/omap-usb-tll.c
+> @@ -202,7 +202,7 @@ static int usbtll_omap_probe(struct platform_device *pdev)
+>   	struct device				*dev =  &pdev->dev;
+>   	struct usbtll_omap			*tll;
+>   	void __iomem				*base;
+> -	int					i, nch, ver;
+> +	int					i, nch, ver, err;
+>   
+>   	dev_dbg(dev, "starting TI HSUSB TLL Controller\n");
+>   
+> @@ -251,7 +251,11 @@ static int usbtll_omap_probe(struct platform_device *pdev)
+>   		if (IS_ERR(tll->ch_clk[i]))
+>   			dev_dbg(dev, "can't get clock : %s\n", clkname);
+>   		else
+> -			clk_prepare(tll->ch_clk[i]);
 
-On Wed, Nov 6, 2024 at 2:08=E2=80=AFPM Tejun Heo <tj@kernel.org> wrote:
->
-> Hello, Doug.
->
-> On Wed, Nov 06, 2024 at 01:32:40PM -0800, Doug Anderson wrote:
-> ...
-> > 1. It doesn't feel right to add knowledge of "sched-ext" to the
-> > softlockup detector. You're calling from a generic part of the kernel
-> > to a specific part and it just feels unexpected, like there should be
-> > some better boundaries between the two.
->
-> I suppose we can create a notifier like infrastructure if directly callin=
-g
-> is what's bothersome but it's likely an overkill at this point. The secon=
-d
-> point probably is more important to discuss.
->
-> > 2. You're relying on a debug feature to enforce correctness. The
-> > softlockup detector isn't designed to _fix_ softlockups. It's designed
-> > to detect and report softlockups and then possibly reboot the machine.
-> > Someone would not expect that turning on this debug feature would
-> > cause the system to take the action of kicking out a BPF scheduler.
->
-> Softlockups can trigger panic and thus system reset, which is arguably al=
-so
-> a remediative action.
+Braces for the conditional don't looks right.
 
-Sort of, though it doesn't feel to me like quite the same thing.
+> +			err = clk_prepare(tll->ch_clk[i]);
+> +			if (err) {
+> +				dev_err(dev, "Unable to prepare clock\n");
+> +				return err;
 
+Did you check to see if callers handle this new error return
+in this path?
 
-> > It feels like sched-ext should fix its own watchdog so it detects and
-> > fixes the problem before the softlockup detector does.
->
-> sched_ext has its own watchdog with configurable timeout and softlockups
-> would eventually trigger that too. However, that's looking at the time
-> between tasks waking up and running to detect stalls and the (configurabl=
-e)
-> time duration is usually longer than softlockup detection threshold, whic=
-h
-> makes sense given what the different failure modes they're looking at.
->
-> If sched_ext is to expand its watchdog to monitor softlockup like
-> conditions, it would essentially look just like softirq watchdog and we
-> would still have the same problem of coordinating detection thresholds.
->
-> Having a notification mechanism which triggers when watchdog is about to
-> trigger which can take a drastic action doesn't sound too odd to me. If I
-> make it use a notification chain so that the mechanism is more generic,
-> would that make it more acceptable to you?
+> +	}
 
-Honestly, it would feel better to me if the soft lockup timer didn't
-tell schedext to kill things but instead we just make some special
-exception for "schedext" tasks and exclude them from the softlockup
-detector because they're already being watched by their own watchdog.
-Would that be possible? Then tweaking the "softlockup" timeouts
-doesn't implicitly change how long schedext things can run.
+Same here
 
--Doug
+>   	}
+>   
+
+Same here
+>   	pm_runtime_put_sync(dev);
+
+thanks,
+-- Shuah
+
 
