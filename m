@@ -1,178 +1,119 @@
-Return-Path: <linux-kernel+bounces-397519-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397520-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E9C79BDCEA
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 03:34:25 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65DEE9BDCEE
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 03:34:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 41B521C23048
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 02:34:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 89FD31C2314F
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 02:34:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68E471D90AD;
-	Wed,  6 Nov 2024 02:16:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47BD219007E;
+	Wed,  6 Nov 2024 02:19:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dSi0Z35M"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bIKigZNR"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C178318FC75
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 02:16:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3706118FC8C
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 02:19:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730859384; cv=none; b=BJrEKInLB3LoY7RKbkM3NQCzIiorVzM07N/ecyKDvIl9PzkViJ2On4cGvYjp/6QGae3ckkQAd6ArfonhSo4gU9zxj89pKT9YfJB4XE4q2eeCT8SIYSkXrAsMrNNInIfV1hUip2rL0e+dBIWZcKw7OyKS8+HTotknNteNwipc16U=
+	t=1730859590; cv=none; b=fFw7dPdPI15Msnc91DxIbkZd/hp1q3s+Dz6zqKJT/3xpsjQToG0aS8ulBVZ4Iy52wSQrJMl+zduuj1C2z8ZsXQAyU1v7C1QFYvVNbbszcwDiY93X2r64Rd/PvNe/9TeJEk9KHl/ruyhxnKusTvyNEqTWfT+qPLYiYtzKbXsqN4M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730859384; c=relaxed/simple;
-	bh=06l34PWhvl4tdNiJSYbSZO4mr1xYv8cmwY77xvFqw2Q=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=mKJxDnnXRS03FkYTTHuP77ybkdL00j3i0Mka3qhfflp11pDTQGM1aHNLVfHYVQ67UiCcrcxJHeF3UcbSgTrRMKEo2Juqw3vucgmwCS1L0cMpEcjzvag0HZ3Ikpi+EZRPL02BE4degI1MTjESCDnADNKkYY6vFuVD8ooreFM7O4o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dSi0Z35M; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C423C4CED1;
-	Wed,  6 Nov 2024 02:16:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730859384;
-	bh=06l34PWhvl4tdNiJSYbSZO4mr1xYv8cmwY77xvFqw2Q=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=dSi0Z35MYmjitvBnV1jBnhBWpPchp+wG3KFIZXuY8ya7S6M9P+DXegErXesVIvIBn
-	 TgKj/SVY0vHbOh7TF1lgZnWeffWqby6TLMK1YsVwTojrMA8XFO1g+R7aCJTr5/ta9R
-	 WIAoj4ekSnvQjVLmZ5gcrdFCqjeiw67/COz2TBUo+Cwu2EzD3AqfsPg28UbQ9b/ys4
-	 TsYQd7p5i1/Hp6vnyIE4+P7azDxOcnov69XbBzS4U1YOtIgWRP1NVh46mH/LDnuW0X
-	 Xn65pf2fCjxq5IYe81/c8azbLHykJSgSg5t9+o5HmWFI8HNOHqeS4xZruqZIMcTh2q
-	 xq0/ic6Ai9GSg==
-Message-ID: <9199e9fc-7b5b-4069-b79b-65ba5ae1b0f6@kernel.org>
-Date: Wed, 6 Nov 2024 10:16:20 +0800
+	s=arc-20240116; t=1730859590; c=relaxed/simple;
+	bh=b8q2jY8ZdIO3Ym97tVpGEDxv/nMS39Kw1g/jf3jclLg=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=N74f0sL22ONP7iKlDOWT3GJ0D31iGgDuK5qgH3tmfyH2QTaEIzXK7a+TRQAdfYLL0Z1/U99p0PvEoPLhvz/mzssbSrPf+zB0NxTsQuCiVDOtu1fat4tOOTTCvXCabEVKT+6nz/vnpAZhMjDb7n242vkaxMGHayvxal3DykLjtGw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=bIKigZNR; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-20c714cd9c8so63412535ad.0
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 18:19:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1730859588; x=1731464388; darn=vger.kernel.org;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=dMwHZbqveg3qfQOk6hXWoEkDSZ7gjetBd5tA/0pn/RI=;
+        b=bIKigZNR6I6/XOjUbUZMTRz3PqfJuK+1bWdAgJ9AdgnwwQ2qq5mLfbcESFVtm4pxII
+         uFIIjExoHCF5joDo0FYow7n6H+Z5BbTdbmzMX5UZ4th1mCE+ojzJIuUnWFSWjJmlXueb
+         Zvop748N2lSYGi95x/keGSvAyVs6Vuipl3vw93YrhIm4dy2VI/0U8oyCevishWhL4wNX
+         kG3Qx3zaC6cA73k9NYwyjvrUrOzsZlmk4ZwCs7mY22eZ60CBJpOgdSlETbKSB9k/enhh
+         sMymXX7aRLIC+996ff2DlDLvPVrs94tJsikXYs/DyvXF5Rmv14rHOUohSYBDokE1gV0w
+         uilQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730859588; x=1731464388;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=dMwHZbqveg3qfQOk6hXWoEkDSZ7gjetBd5tA/0pn/RI=;
+        b=YuCW+j6051SME2NGtQf7XH8Q1YSvnUK/9GAtgrLrHsM/Hb4gOcc+Fi/QlRJYN8mLYZ
+         w81veYAFWmiZbwGU9pAGsAc//HOOk5aeV/n/CsUaFBS3nk1B8VTwNFXsdnlTE4HVr3w1
+         0fuOsjJOW654eSDFXjDuUT4kLBXY8F4zHrDoIWoVzqKR3+l1AA8KE9+SuSHggLHAClAH
+         lL9OeJZ7CH7K0a2FYwH5RZjwnOklcGIyaspxdJd/LfHtnt7KazJ/11tGBpDBORuwvXyJ
+         OKTTPjs895XIpwJFMw3ZfCNeWsx2aoDArrqFdlxUK12N1Je6SWB8MeSl9B7yxMfw96hU
+         bZsQ==
+X-Forwarded-Encrypted: i=1; AJvYcCURYKDf80LMzj3kDT+0YgPOGY9giIsHGJHmTJ/F3dkDAZ7w2ESMPWT1NHW4byjGborMBebNphKhvUL5QCs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzW/2SoWtNR3vCPf3AcW9rD3Tault/sTc28VAUkwUpVTpk0xWjj
+	GjgJ4xHsO4mRPg2zTGCJDFjuxE69pMwixJZA4iPHJlwvJwkfWbNzyJcGMZyO/g==
+X-Google-Smtp-Source: AGHT+IEx7//yPBQ3NT/CkT68ddSvV9UoTv2LGlCxfnUWr1gNgfBvRseUNmE7hQwH0O970Uk23pjQ7A==
+X-Received: by 2002:a17:902:e5c3:b0:20c:aae9:7bf8 with SMTP id d9443c01a7336-2111af1cfe3mr222576525ad.5.1730859588402;
+        Tue, 05 Nov 2024 18:19:48 -0800 (PST)
+Received: from darker.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21105707e43sm85878085ad.97.2024.11.05.18.19.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 05 Nov 2024 18:19:47 -0800 (PST)
+Date: Tue, 5 Nov 2024 18:19:38 -0800 (PST)
+From: Hugh Dickins <hughd@google.com>
+To: Roman Gushchin <roman.gushchin@linux.dev>
+cc: Sean Christopherson <seanjc@google.com>, Hugh Dickins <hughd@google.com>, 
+    Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org, 
+    Vlastimil Babka <vbabka@suse.cz>, linux-kernel@vger.kernel.org, 
+    stable@vger.kernel.org, Matthew Wilcox <willy@infradead.org>, 
+    Shakeel Butt <shakeel.butt@linux.dev>
+Subject: Re: [PATCH v2] mm: page_alloc: move mlocked flag clearance into
+ free_pages_prepare()
+In-Reply-To: <ZyrHSfS8Ro0l5VCP@google.com>
+Message-ID: <b0802ae7-b9dd-da98-1268-9084f269ebde@google.com>
+References: <20241021173455.2691973-1-roman.gushchin@linux.dev> <d50407d4-5a4e-de0c-9f70-222eef9a9f67@google.com> <ZxcK_Gkdn0fegRl6@google.com> <ZyrBuZPBjJi75gGU@google.com> <ZyrHSfS8Ro0l5VCP@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: Chao Yu <chao@kernel.org>, Zhiguo Niu <zhiguo.niu@unisoc.com>,
- jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- linux-kernel@vger.kernel.org, ke.wang@unisoc.com, Hao_hao.Wang@unisoc.com
-Subject: Re: [PATCH V2] f2fs: fix to adjust appropriate length for fiemap
-To: Zhiguo Niu <niuzhiguo84@gmail.com>
-References: <1730685372-2995-1-git-send-email-zhiguo.niu@unisoc.com>
- <ab9f63b2-8d02-411b-8d2f-bc1b5b748ffe@kernel.org>
- <CAHJ8P3L9o2RJgV=TtUf_MPj36wasgPn7bn9FnGPXu=TgpE7ATQ@mail.gmail.com>
- <22873055-370b-4240-83ff-96bcfa91413a@kernel.org>
- <CAHJ8P3LddwapGLV5nKmw1ULTm7qp5OMk-kFBK3s_UptPPeph7w@mail.gmail.com>
-Content-Language: en-US
-From: Chao Yu <chao@kernel.org>
-In-Reply-To: <CAHJ8P3LddwapGLV5nKmw1ULTm7qp5OMk-kFBK3s_UptPPeph7w@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
 
-On 2024/11/5 19:02, Zhiguo Niu wrote:
-> Chao Yu <chao@kernel.org> 于2024年11月5日周二 18:39写道：
->>
->> On 2024/11/5 15:28, Zhiguo Niu wrote:
->>> Chao Yu <chao@kernel.org> 于2024年11月5日周二 15:04写道：
->>>>
->>>> On 2024/11/4 9:56, Zhiguo Niu wrote:
->>>>> If user give a file size as "length" parameter for fiemap
->>>>> operations, but if this size is non-block size aligned,
->>>>> it will show 2 segments fiemap results even this whole file
->>>>> is contiguous on disk, such as the following results:
->>>>>
->>>>>     ./f2fs_io fiemap 0 19034 ylog/analyzer.py
->>>>> Fiemap: offset = 0 len = 19034
->>>>>            logical addr.    physical addr.   length           flags
->>>>> 0       0000000000000000 0000000020baa000 0000000000004000 00001000
->>>>> 1       0000000000004000 0000000020bae000 0000000000001000 00001001
->>>>>
->>>>> after this patch:
->>>>> ./f2fs_io fiemap 0 19034 ylog/analyzer.py
->>>>> Fiemap: offset = 0 len = 19034
->>>>>        logical addr.    physical addr.   length           flags
->>>>> 0    0000000000000000 00000000315f3000 0000000000005000 00001001
->>>>>
->>>>> Signed-off-by: Zhiguo Niu <zhiguo.niu@unisoc.com>
->>>>> ---
->>>>> V2: correct commit msg according to Chao's questions
->>>>> f2fs_io has been modified for testing, the length for fiemap is
->>>>> real file size, not block number
->>>>> ---
->>>>>     fs/f2fs/data.c | 4 ++--
->>>>>     1 file changed, 2 insertions(+), 2 deletions(-)
->>>>>
->>>>> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
->>>>> index 306b86b0..9fc229d 100644
->>>>> --- a/fs/f2fs/data.c
->>>>> +++ b/fs/f2fs/data.c
->>>>> @@ -1966,8 +1966,8 @@ int f2fs_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
->>>>>                         goto out;
->>>>>         }
->>>>>
->>>>> -     if (bytes_to_blks(inode, len) == 0)
->>>>> -             len = blks_to_bytes(inode, 1);
->>>>> +     if (len & (blks_to_bytes(inode, 1) - 1))
->>>>> +             len = round_up(len, blks_to_bytes(inode, 1));
->>>>
->>>> How do you think of getting rid of above alignment for len?
->>>>
->>>>>
->>>>>         start_blk = bytes_to_blks(inode, start);
->>>>>         last_blk = bytes_to_blks(inode, start + len - 1);
->>>>
->>>> And round up end position w/:
->>>>
->>>> last_blk = bytes_to_blks(inode, round_up(start + len - 1, F2FS_BLKSIZE));
->>> Hi Chao,
->>> I think this will change the current code logic
->>> -------------
->>> if (start_blk > last_blk)
->>>       goto out;
->>> -------------
->>> for example, a file with size 19006, but the length from the user is 16384.
->>> before this modification,  last_blk =  bytes_to_blks(inode, start +
->>> len - 1) = (inode, 16383) = 3
->>> after the first f2fs_map_blocks(). start_blk change to be 4,
->>> after the second f2fs_map_blocks(), fiemap_fill_nex_exten will be
->>> called to fill user parameter and then
->>> will goto out because start_blk > last_blk, then fiemap flow finishes.
->>> but after this modification, last_blk will be 4
->>> will do f2fs_map_blocks() until reach the max_file_blocks(inode)
->>
->> Yes, you're right, however, w/ this patch, it may change last_blk, e.g.
->>
->> xfs_io file -c "fiemap -v 0 19006" vs xfs_io file -c "fiemap -v 2 19006"
->> start_blk and last_blk will be: 0, 4 and 0, 5.
-> Hi Chao,
-> yes, but w/o this patch , the original code still has the same situation??
-> for example
-> xfs_io file -c "fiemap -v 0 16384" vs xfs_io file -c "fiemap -v 2 16384"
-> start_blk and last_blk will be: 0, 3 and 0, 4.
-
-For the case "fiemap -v 2 19006", offset is 2, and length is 19006, so last_offset
-is 19008, and last_blk should be 4 rather than 5, right?
-
-And for you case, it calculates last_blk correctly.
-
-Thanks,
-
-> but overall last_blk will change loop counts but has not affect on the results.
->>
->> Should we round_up len after start_blk & last_blk calculation?
-> I thinks it is ok ,but just a little bit redundant with the following
-> handling about len.
+On Wed, 6 Nov 2024, Roman Gushchin wrote:
+> On Tue, Nov 05, 2024 at 05:09:13PM -0800, Sean Christopherson wrote:
+> > On Tue, Oct 22, 2024, Roman Gushchin wrote:
+> > > On Mon, Oct 21, 2024 at 12:49:28PM -0700, Hugh Dickins wrote:
+> > > > On Mon, 21 Oct 2024, Roman Gushchin wrote:
+> > > > I don't think there's any need to change your text, but
+> > > > let me remind us that any "Bad page" report stops that page from being
+> > > > allocated again (because it's in an undefined, potentially dangerous
+> > > > state): so does amount to a small memory leak even if otherwise harmless.
+> > > 
+> > > It looks like I need to post v3 as soon as I get a publicly available
+> > > syzkaller report, so I'll add this to the commit log.
+> > 
+> > Today is your lucky day :-)
 > 
-> if (bytes_to_blks(inode, len) == 0)
->     len = blks_to_bytes(inode, 1);
+> I've been waiting for it for a long time :)
+> Thanks for forwarding it my way!
 > 
-> Based on the above situation,
-> do you have any other good suggestions? ^^
-> thanks!
-> 
->>
->> Thanks,
->>
->>> thanks！
->>>>
->>>> Thanks,
->>>>
->>
+> I'm still not sure what the conclusion of our discussion was. My understanding
+> is that my fix is not that pretty, but there are no better immediate ideas, only
+> long-term improvement projects. Does it matches everybody else's understanding?
 
+Yes, that matches my understanding, and my Acked-by stands:
+thanks a lot for keeping on this, Roman and Sean.
+
+Hugh
+
+> 
+> If so, I'll prepare a v3 with an updated link. Otherwise, please, let me know.
+> 
+> Thanks!
 
