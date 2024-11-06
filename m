@@ -1,126 +1,154 @@
-Return-Path: <linux-kernel+bounces-398177-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398178-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46BEF9BE6F1
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 13:08:52 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 227389BE717
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 13:10:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 014EF285D87
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 12:08:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4FA3C1C2347C
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 12:10:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B2691DF736;
-	Wed,  6 Nov 2024 12:08:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 122061DF272;
+	Wed,  6 Nov 2024 12:10:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b="q62i/63o"
-Received: from mail.tuxedocomputers.com (mail.tuxedocomputers.com [157.90.84.7])
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="pLpXnFk/";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="hNLG7Mek";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="pLpXnFk/";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="hNLG7Mek"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 921901DF24C;
-	Wed,  6 Nov 2024 12:08:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=157.90.84.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A859A1DF25D;
+	Wed,  6 Nov 2024 12:10:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730894922; cv=none; b=D3epH6eDHg3cbPUw7KxgewaTaVOWoRMBotdHov7AKsMgZaOejD818vx2JaFgSqUqUD6gjiP56mJSGPUbl28y7dIs+ChwMseN+/twrQHBA3GH1npUCzT8KwTPuacXP6WnMNtMHcFoojS6a+gGIyriU0VhZukyjn/agPeCabvFC3g=
+	t=1730895026; cv=none; b=CTUqouwrAQTJnK9LkyjjfCqZToeQyNRlM7n9rLYQwch7oUKAlFZblfAad6lKRi9ueUfaaFLBT1Flc2Wc74cDzTJ2uksnFCapIOR8KVHlTkIGLxqBU5ype86T7g1y1h7dDYT1HpcCJU/rIc6MN+izF9/7CkzjkjMb2Y0XadmZS1Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730894922; c=relaxed/simple;
-	bh=4EdajbeLaLBdqCivv+WYhCw/kuZ3B/enGg7P0ePCmf0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aSdC5U89rPPaztTrXiKTg13JEGeH4/MCdU1n0GQMvQHf5ZbzP86YXs0ek00LOQsu92zhsIwo5Nq6nqK7ne9vSr+mFPEfthntDbTK0Mpb4S5O+y4nOmcZpnSeXjyJXXTnTkd0djMRYCws0ZyI7tGQHuhRVA6G3Jff5YKy971P+yc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com; spf=pass smtp.mailfrom=tuxedocomputers.com; dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b=q62i/63o; arc=none smtp.client-ip=157.90.84.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxedocomputers.com
-Received: from [192.168.42.96] (p5de457db.dip0.t-ipconnect.de [93.228.87.219])
-	(Authenticated sender: wse@tuxedocomputers.com)
-	by mail.tuxedocomputers.com (Postfix) with ESMTPSA id 2A68A2FC004A;
-	Wed,  6 Nov 2024 13:08:36 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tuxedocomputers.com;
-	s=default; t=1730894916;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	s=arc-20240116; t=1730895026; c=relaxed/simple;
+	bh=aW2xwDVdp7frKIFfXC7YyDMLsPfx5p8hyx6ZkoQG7D8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=OIp0d1sSTKi83iqpfjrp9Yt4yidWHOApkVVWtyziY929FNBtjL8NCD724z3o59bkbANYSTPM+//La8uZQlREJIBLKdCdQBBejs7KpzOwdDjJ2Lj0wB+1zBSB7D0vv4hGnpjG0DZxhIjyETwdPl5UrWTUtFw2jXOOHPuUH+im5vo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=pLpXnFk/; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=hNLG7Mek; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=pLpXnFk/; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=hNLG7Mek; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from kitsune.suse.cz (unknown [10.100.12.127])
+	by smtp-out1.suse.de (Postfix) with ESMTP id B212D21CB9;
+	Wed,  6 Nov 2024 12:10:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1730895022; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=o/30wpGdyfSTLtV/rbRbi/mdTrhXhrq63YfJCVlalxw=;
-	b=q62i/63ovV3cLnGYzcJK91S9wP3aR2vjXDj9PYFBx50kBnoc/dYmY7r+7PVQ03EKuD5SVz
-	bWXzplSp/1LcVWk0rhbsILQTpUCTSfd9Wq5DVy9ZsEVaTtM5hcLxj7FjGOSDlyAVjpbEap
-	c8scNJ38uxBrBZo5zCIb/y+O4Cmot4Y=
-Authentication-Results: mail.tuxedocomputers.com;
-	auth=pass smtp.auth=wse@tuxedocomputers.com smtp.mailfrom=wse@tuxedocomputers.com
-Message-ID: <d71bdeaf-b137-4826-8926-da9da1904232@tuxedocomputers.com>
-Date: Wed, 6 Nov 2024 13:08:36 +0100
+	bh=8ohwiTc+yZhDyRvRbtXG6pJM+owozZa197xSwSi956s=;
+	b=pLpXnFk/ycD+ULfoIakRcKlvXI5oUXDANOX4VJs3LOyoEWXt2wCuNjXLXwEs0fYddQUEcm
+	kVFqrE/cm1N4XnPWdKHxXzbUFmdSxItvKEx8psbvDrxsug35o0yPtAw+o2X2MAdu1mQGuL
+	3or5unDeqOGozBmIXbB0W4o4x3WxAFw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1730895022;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8ohwiTc+yZhDyRvRbtXG6pJM+owozZa197xSwSi956s=;
+	b=hNLG7MekLxD2oSy9GQ81JHS6Syztv0ET2URzJ2oIrG4qJ9W8/DIHAItGY+v0gWuZ2CsF8Y
+	IP/1fWptmtgTdGBg==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1730895022; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8ohwiTc+yZhDyRvRbtXG6pJM+owozZa197xSwSi956s=;
+	b=pLpXnFk/ycD+ULfoIakRcKlvXI5oUXDANOX4VJs3LOyoEWXt2wCuNjXLXwEs0fYddQUEcm
+	kVFqrE/cm1N4XnPWdKHxXzbUFmdSxItvKEx8psbvDrxsug35o0yPtAw+o2X2MAdu1mQGuL
+	3or5unDeqOGozBmIXbB0W4o4x3WxAFw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1730895022;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8ohwiTc+yZhDyRvRbtXG6pJM+owozZa197xSwSi956s=;
+	b=hNLG7MekLxD2oSy9GQ81JHS6Syztv0ET2URzJ2oIrG4qJ9W8/DIHAItGY+v0gWuZ2CsF8Y
+	IP/1fWptmtgTdGBg==
+From: Michal Suchanek <msuchanek@suse.de>
+To: linuxppc-dev@lists.ozlabs.org
+Cc: Michal Suchanek <msuchanek@suse.de>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S. Miller" <davem@davemloft.net>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Naveen N Rao <naveen@kernel.org>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Danny Tsen <dtsen@linux.ibm.com>,
+	linux-crypto@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Nicolai Stange <nstange@suse.com>
+Subject: [PATCH] aes-gcm-p10: Use the correct bit to test for P10
+Date: Wed,  6 Nov 2024 13:09:33 +0100
+Message-ID: <20241106121019.25629-1-msuchanek@suse.de>
+X-Mailer: git-send-email 2.46.1
+In-Reply-To: <20240923133040.4630-3-dtsen@linux.ibm.com>
+References: <20240923133040.4630-3-dtsen@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: FAILED: Patch "ALSA: hda/realtek: Fix headset mic on TUXEDO
- Gemini 17 Gen3" failed to apply to v6.1-stable tree
-To: Sasha Levin <sashal@kernel.org>
-Cc: stable@vger.kernel.org, cs@tuxedo.de, Takashi Iwai <tiwai@suse.de>,
- linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241106021124.182205-1-sashal@kernel.org>
- <dc0af563-59d2-4176-ad15-fa93cf5c99d2@tuxedocomputers.com>
- <a7ab1da8-5fe8-4f46-bf18-bfc8d6fa3e6f@tuxedocomputers.com>
- <ZytaejmvQo3NkUrP@sashalap>
-Content-Language: en-US
-From: Werner Sembach <wse@tuxedocomputers.com>
-In-Reply-To: <ZytaejmvQo3NkUrP@sashalap>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-Spam-Score: -2.80
+X-Spamd-Result: default: False [-2.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_MISSING_CHARSET(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCPT_COUNT_TWELVE(0.00)[13];
+	RCVD_COUNT_ZERO(0.00)[0];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[suse.de,gondor.apana.org.au,davemloft.net,ellerman.id.au,gmail.com,csgroup.eu,kernel.org,linux.ibm.com,vger.kernel.org,suse.com];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,suse.de:mid,suse.de:email];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-Hi,
+A hwcap feature bit is passed to cpu_has_feature, resulting in testing
+for CPU_FTR_MMCRA instead of the 3.1 platform revision.
 
-Am 06.11.24 um 13:00 schrieb Sasha Levin:
-> On Wed, Nov 06, 2024 at 10:23:14AM +0100, Werner Sembach wrote:
->> Am 06.11.24 um 10:19 schrieb Werner Sembach:
->>> Hi,
->>>
->>> Am 06.11.24 um 03:11 schrieb Sasha Levin:
->>>> The patch below does not apply to the v6.1-stable tree.
->>>> If someone wants it applied there, or to any other stable or longterm
->>>> tree, then please email the backport, including the original git commit
->>>> id to <stable@vger.kernel.org>.
->>>
->>> Applying 33affa7fb46c0c07f6c49d4ddac9dd436715064c (ALSA: hda/realtek: Add 
->>> quirks for some Clevo laptops) first and then 
->>> 0b04fbe886b4274c8e5855011233aaa69fec6e75 (ALSA: hda/realtek: Fix headset mic 
->>> on TUXEDO Gemini 17 Gen3) and e49370d769e71456db3fbd982e95bab8c69f73e8 
->>> (ALSA: hda/realtek: Fix headset mic on TUXEDO Stellaris 16 Gen6 mb1) makes 
->>> everything work without alteration.
->>>
->>> The first one is just missing the cc stable tag, probably by accident.
->>>
->>> Should I alter the 2nd and 3rd commit or should I send a patchset that 
->>> includes the first one?
->>
->> Sorry just realized that for 5.15 it's a different patch that is missing for 
->> e49370d769e71456db3fbd982e95bab8c69f73e8 to cleanly apply
->>
->> I will just alter the patches
->
-> It applies, but fails to build:
->
-> In file included from sound/pci/hda/patch_realtek.c:21:
-> sound/pci/hda/patch_realtek.c:9530:59: error: 'ALC2XX_FIXUP_HEADSET_MIC' 
-> undeclared here (not in a function); did you mean 'ALC283_FIXUP_HEADSET_MIC'?
->  9530 |         SND_PCI_QUIRK(0x1d05, 0x1387, "TongFang GMxIXxx", 
-> ALC2XX_FIXUP_HEADSET_MIC),
->       | ^~~~~~~~~~~~~~~~~~~~~~~~
-> ./include/sound/core.h:465:50: note: in definition of macro 'SND_PCI_QUIRK'
->   465 |         {_SND_PCI_QUIRK_ID(vend, dev), .value = (val), .name = (xname)}
->       |                                                  ^~~
-> make[3]: *** [scripts/Makefile.build:289: sound/pci/hda/patch_realtek.o] Error 1
->
-I'm sorry I did not double check if the define exists ins 6.1.
+Fixes: c954b252dee9 ("crypto: powerpc/p10-aes-gcm - Register modules as SIMD")
+Reported-by: Nicolai Stange <nstange@suse.com>
+Signed-off-by: Michal Suchanek <msuchanek@suse.de>
+---
+ arch/powerpc/crypto/aes-gcm-p10-glue.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Considering that it's a fairly new device it's reasonable enough to assume that 
-it's probably not run with the 6.1 kernel and so I don't want to blow up the 
-patch to much. So just forget about it and sorry again that I caused you extra work.
-
-Kind regards,
-
-Werner Sembach
+diff --git a/arch/powerpc/crypto/aes-gcm-p10-glue.c b/arch/powerpc/crypto/aes-gcm-p10-glue.c
+index e52629334cf8..1f8b67775658 100644
+--- a/arch/powerpc/crypto/aes-gcm-p10-glue.c
++++ b/arch/powerpc/crypto/aes-gcm-p10-glue.c
+@@ -414,7 +414,7 @@ static int __init p10_init(void)
+ {
+ 	int ret;
+ 
+-	if (!cpu_has_feature(PPC_FEATURE2_ARCH_3_1))
++	if (!cpu_has_feature(CPU_FTR_ARCH_31))
+ 		return 0;
+ 
+ 	ret = simd_register_aeads_compat(gcm_aes_algs,
+-- 
+2.46.1
 
 
