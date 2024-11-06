@@ -1,305 +1,485 @@
-Return-Path: <linux-kernel+bounces-397315-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397313-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92BBF9BDA5A
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 01:31:52 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B1F89BDA56
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 01:31:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B69E71C228FE
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 00:31:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF7E92847A1
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 00:31:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 724C628DA1;
-	Wed,  6 Nov 2024 00:31:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A5F9CA5A;
+	Wed,  6 Nov 2024 00:31:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="tahfV2vt"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V6jp/OEe"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B100A2D613
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 00:31:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37FEC10E3;
+	Wed,  6 Nov 2024 00:31:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730853104; cv=none; b=Lchc4iGypl37vI6miyKbpeN9/BZsLdCkQuaFgeF2WZY52auvRNSlX/p+1ajChiBmRq+aNUUCpjOpnnzoYcyO+6LxY25JXsl5c+qav/ld4PTj0KLu5IpvIrJJ22u7tcpSnwSmTup7qfREkamx20HdK3rcsvAJz8IMMWG/zGX3gw4=
+	t=1730853071; cv=none; b=ePz8ZRbIc0dcuR0txbQop3hwhNBDVmyNOQsk0YmkqQDAnE2N0n5WYqMnnrlsz37kbBDsTjQOpj32GHwQZ5cRu2+fcuDnsRzXFAKnX5/YoPwBG9miZ2nLgvgnri3Z4889ZTDXHj1fgFTGjOESdP/86dE8GY3p40X1Dm/zXH9IHs0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730853104; c=relaxed/simple;
-	bh=tvqbSBvbe2a/Rt2zk5esfR2gvTPpdX2tE2rZG4WOpQE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qm7cWrxX2aO2ajJy7okjFVPPOXZvJ+5lUKryvodxqKU0B0JJpnf40/SEi4X/u/kxdVcB57Ysmb+Q/JJp+dHfotFSZk4OllJlHQmujc5OrcunA3zj56HYqeNgmoQzbtz10IxZLqY/FXpPFbsPdueITkBlm15QhKwRxwPjf+pnl2Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=tahfV2vt; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-37ed7eb07a4so4440155f8f.2
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 16:31:42 -0800 (PST)
+	s=arc-20240116; t=1730853071; c=relaxed/simple;
+	bh=jOx6xPm2NQ2Dy+LcxTA/n5pvFHgVVddEWkJjFZh6pN8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WBXhGREUSA4qJmEk7NfhcltOV90oSU2rrSbDZBrsJoXE/NZDjotxILr9zT7jlKo8qAhuhdrqyB1Mnay685qSff0b3sYf0Fv5Syuaxb5Jqk+rftIMrsy7zEk7Bh0JFezl1WxUXjNl3Uy+IJhAh7AFfpUBnRoBOE9J4jw+9chHmFw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=V6jp/OEe; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-37d8901cb98so181923f8f.0;
+        Tue, 05 Nov 2024 16:31:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1730853101; x=1731457901; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+bwT6sj9f92fSfbjyqUGWo/OaOQvWzzTMdBrwJO9qLQ=;
-        b=tahfV2vt+E71Up5j4m+xBUfJRr4fhHctX1f4SXq5K+5BvSCVIa6SvWfbpiyObnX5jj
-         X7muD47t2LmPHEYSj1ywmwuFZeSuPJjCun5kCa2kPZOD5xdRo1t7RT+vQSegN0Zwy7t2
-         Ie44HML+nPcsNLDAd2yfkBB+i8iUl1vsBS+NMdq96yxyQws5boommWqn2zAmki4zsXvW
-         MQj6JoMkkhoCgrIlETvbDdsWL7i/qFemJ3XWVa1qvSQhauqrhPgafLj9xF0SpqAHC8XM
-         PoyQNC4rOrpqaSzqLXWgP6IsoldqBJ7xibRv8dgTVPIkEzSJ57+/mo3BqZqTHkFY+v29
-         uXfg==
+        d=gmail.com; s=20230601; t=1730853067; x=1731457867; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=PYjmXwFHtnAB1duZTNcAEkMOaIotdcD7DShsEbstppg=;
+        b=V6jp/OEevZwhXOmbJrB4r6PLXy83yGBLnZu/ngh3QBZL4yhRs7ctUfiiRwKd+vWKt/
+         bbcBzwgxIUoH+ST94OijdZI7tmXvISWEmc5d8Q6OPwKdjyh4hXkQWGc6Pju7Ey+RqFco
+         d84dsXpjXGpa5pJ1mZCJauTbKsfWMIyu0ydrKvTzd2Z1pEJyZO82Wef8DF9NL5LFv+rQ
+         nj7+PZ1J1n8Zj9WFyEVEg/wYUgetCk47glKwSWpznYfvlGQGRJNWH+CJa4FwcjcdgfQ0
+         dpKowV+8YErGFiTdwJBpru/t5bwHicqnU4j0pxu8XPNlawdw2LUtb8jRDwyR6Wxaes99
+         47KQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730853101; x=1731457901;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+bwT6sj9f92fSfbjyqUGWo/OaOQvWzzTMdBrwJO9qLQ=;
-        b=a7jacCxVlMi3lQJGXKxlAVJHmSCPmLUjHv+u2/jK744hmogVkqy6zRI0EnN2lYWcLV
-         VE7nlq3fbtskyu/sARmiGwaG0RrdeHtrmB0Gjd1bERuphpPFByMEoEBOO6cyprpqL8Fa
-         c6/KpbQOU3Q6u3AfziYUN9TLHdQjW3EstPblZ5v3PJWYXfJUTgjUuiq2yERTH9fMdh0c
-         2ECGSqOx+4etM+e4miY8OOonPTlh2afRjPi1OTJ3HaZhxbpthJSVdtCJ34oengLwwrnv
-         /dKbhQyl+1Tszu1x+IxNUWOadoLUm4+q1etmakNBDWRoGWzYR9KIjVFtLzz1QL/S94Zi
-         K9pw==
-X-Gm-Message-State: AOJu0Yx8Bs0pcZONbbknxhLwgEefN2j6cmkXRzpeghqLlAXFyc0pFEdz
-	zDS3Pyo4sm5M7vuyA8SFT+WXrp3tKAPdR5O6kaTxyympT5KIurG0NFaLE0KfUW9eWlXdLlH9PWn
-	qJpBr5wJbKW7Defq9mqTyDqsi0hp+UPbSxeNS
-X-Google-Smtp-Source: AGHT+IFFX0zQ/6/F3wqKJIs6TJpCatofV/WGLJ3DATwLu5tbxPv7XwxGrY/F+RnpB/wLYAEhH3FHmupLmvA76tThdc0=
-X-Received: by 2002:a05:6000:178a:b0:37c:d227:d193 with SMTP id
- ffacd0b85a97d-381be7654bbmr18783674f8f.10.1730853100973; Tue, 05 Nov 2024
- 16:31:40 -0800 (PST)
+        d=1e100.net; s=20230601; t=1730853067; x=1731457867;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=PYjmXwFHtnAB1duZTNcAEkMOaIotdcD7DShsEbstppg=;
+        b=OnAQ4yFRl6HfvPd3yushfLn17azIEfhvYdy1lu7se80M4k9N7g1e+PSmXn+lTFRH58
+         4qw4Aw/RE3vfkfUVnXLg/Lo6aUX0V6ErsTNP7/R8zwqlc6pcmpA3DCyeEZh+yVJk13FS
+         aXTUPYCB2PP1rL625klHmU1dprrFOXzyxQRfBEPa0US7i0IZ99MEUgXxcEFwWtL25Umg
+         MM7meE9147GzAHpZzH/sIJLZYZyZSS4gQWbbaaYFW73HM0gOl7YkoWc2olbdupOW775U
+         5O1/2gv+y26iQWF7Gv2DBshWOkLLprNOSBxSIfRH8IGM03Lu7tRYcQ8UiDZh8VirgihA
+         n3RQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV59Ml5hjcXgz40/0XxzQbfBOUPv7MJVof/57idO9ZFiuOj0/dBySQ8YaxfAuw0ffmpLnUKrHTU/hCq8xo=@vger.kernel.org, AJvYcCXEfyjl68fvo2C/YBjGKeVr/S4o4Ou4aFSzxA7p1ndkMRTwJs6WAt4kKXPYncTW9M09Og7WKFNI@vger.kernel.org
+X-Gm-Message-State: AOJu0YxwTxrAmD2p/MHdOe2py1avu4NPqJBKooAUsKjJQCsx2bDiQqlH
+	SNV35CwlauFJ8CIMXL29ipiammfEzSqWjaXGTTDxP8jCPB2FGSpm
+X-Google-Smtp-Source: AGHT+IGZQlFVbZBFKAEy9zeOs9BkJdMECfm0uEy1awqXNEQsg3db0A3jYWtG4UkMKMfizWmRpQkZ2w==
+X-Received: by 2002:a5d:5f45:0:b0:37d:5251:e5ad with SMTP id ffacd0b85a97d-381e81c4953mr466700f8f.2.1730853067086;
+        Tue, 05 Nov 2024 16:31:07 -0800 (PST)
+Received: from [192.168.0.2] ([69.6.8.124])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432aa737c86sm2881955e9.38.2024.11.05.16.31.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 05 Nov 2024 16:31:06 -0800 (PST)
+Message-ID: <f35c2ec2-ef00-442d-94cd-fa695268c4f2@gmail.com>
+Date: Wed, 6 Nov 2024 02:31:33 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241101211757.824743-1-ctshao@google.com> <ZylgYE2HXzGpAdKQ@google.com>
-In-Reply-To: <ZylgYE2HXzGpAdKQ@google.com>
-From: Chun-Tse Shao <ctshao@google.com>
-Date: Tue, 5 Nov 2024 16:31:29 -0800
-Message-ID: <CAJpZYjWEr9T5z-aKAATmBsf1jgHq4c+WsV-qYriGQqbM-32uuw@mail.gmail.com>
-Subject: Re: [PATCH v2 1/3] perf evsel: Improve the evsel__open_strerror for EBUSY
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>, 
-	Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Liang Kan <kan.liang@linux.intel.com>, Ze Gao <zegao2021@gmail.com>, 
-	Weilin Wang <weilin.wang@intel.com>, linux-perf-users@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v11 02/23] net: introduce OpenVPN Data Channel
+ Offload (ovpn)
+To: Antonio Quartulli <antonio@openvpn.net>
+Cc: Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Donald Hunter <donald.hunter@gmail.com>,
+ Shuah Khan <shuah@kernel.org>, sd@queasysnail.net,
+ Andrew Lunn <andrew@lunn.ch>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, steffen.klassert@secunet.com,
+ antony.antony@secunet.com
+References: <20241029-b4-ovpn-v11-0-de4698c73a25@openvpn.net>
+ <20241029-b4-ovpn-v11-2-de4698c73a25@openvpn.net>
+Content-Language: en-US
+From: Sergey Ryazanov <ryazanov.s.a@gmail.com>
+In-Reply-To: <20241029-b4-ovpn-v11-2-de4698c73a25@openvpn.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Thanks for your review Namhyung! Here is the link to the v3 patch:
-https://lore.kernel.org/all/20241106003007.2112584-1-ctshao@google.com/
+On 29.10.2024 12:47, Antonio Quartulli wrote:
+> OpenVPN is a userspace software existing since around 2005 that allows
+> users to create secure tunnels.
+> 
+> So far OpenVPN has implemented all operations in userspace, which
+> implies several back and forth between kernel and user land in order to
+> process packets (encapsulate/decapsulate, encrypt/decrypt, rerouting..).
+> 
+> With `ovpn` we intend to move the fast path (data channel) entirely
+> in kernel space and thus improve user measured throughput over the
+> tunnel.
+> 
+> `ovpn` is implemented as a simple virtual network device driver, that
+> can be manipulated by means of the standard RTNL APIs. A device of kind
+> `ovpn` allows only IPv4/6 traffic and can be of type:
+> * P2P (peer-to-peer): any packet sent over the interface will be
+>    encapsulated and transmitted to the other side (typical OpenVPN
+>    client or peer-to-peer behaviour);
+> * P2MP (point-to-multipoint): packets sent over the interface are
+>    transmitted to peers based on existing routes (typical OpenVPN
+>    server behaviour).
+> 
+> After the interface has been created, OpenVPN in userspace can
+> configure it using a new Netlink API. Specifically it is possible
+> to manage peers and their keys.
+> 
+> The OpenVPN control channel is multiplexed over the same transport
+> socket by means of OP codes. Anything that is not DATA_V2 (OpenVPN
+> OP code for data traffic) is sent to userspace and handled there.
+> This way the `ovpn` codebase is kept as compact as possible while
+> focusing on handling data traffic only (fast path).
+> 
+> Any OpenVPN control feature (like cipher negotiation, TLS handshake,
+> rekeying, etc.) is still fully handled by the userspace process.
+> 
+> When userspace establishes a new connection with a peer, it first
+> performs the handshake and then passes the socket to the `ovpn` kernel
+> module, which takes ownership. From this moment on `ovpn` will handle
+> data traffic for the new peer.
+> When control packets are received on the link, they are forwarded to
+> userspace through the same transport socket they were received on, as
+> userspace is still listening to them.
+> 
+> Some events (like peer deletion) are sent to a Netlink multicast group.
+> 
+> Although it wasn't easy to convince the community, `ovpn` implements
+> only a limited number of the data-channel features supported by the
+> userspace program.
+> 
+> Each feature that made it to `ovpn` was attentively vetted to
+> avoid carrying too much legacy along with us (and to give a clear cut to
+> old and probalby-not-so-useful features).
+> 
+> Notably, only encryption using AEAD ciphers (specifically
+> ChaCha20Poly1305 and AES-GCM) was implemented. Supporting any other
+> cipher out there was not deemed useful.
+> 
+> Both UDP and TCP sockets ae supported.
 
-On Mon, Nov 4, 2024 at 4:01=E2=80=AFPM Namhyung Kim <namhyung@kernel.org> w=
-rote:
->
-> Hello CT,
->
-> On Fri, Nov 01, 2024 at 09:17:55PM +0000, Chun-Tse Shao wrote:
-> > From: Ian Rogers <irogers@google.com>
-> >
-> > The existing EBUSY strerror message is:
-> > ```
-> > The sys_perf_event_open() syscall returned with 16 (Device or resource =
-busy) for event (intel_bts//).
-> > "dmesg | grep -i perf" may provide additional information.
-> > ```
->
-> Just a nitpick.  I'd like to avoid this github markdown style notation
-> of triple backticks as it doesn't clearly separate code blocks (IMHO)
-> nor protect anything like '#' sign in the beginning of a line.
->
-> I prefer indenting with 2 spaces before and after a blank line.
->
+s/ae/are/
 
-Fixed in v3.
+> As explained above, in case of P2MP mode, OpenVPN will use the main system
+> routing table to decide which packet goes to which peer. This implies
+> that no routing table was re-implemented in the `ovpn` kernel module.
+> 
+> This kernel module can be enabled by selecting the CONFIG_OVPN entry
+> in the networking drivers section.
 
->
-> > The dmesg won't be useful. What is more useful is knowing what
-> > processes are potentially using the PMU, which some procfs scanning can
-> > reveal. When parallel testing tests/shell/stat_all_pmu.sh this yields:
-> > ```
-> > Testing intel_bts//
-> > Error:
-> > The PMU intel_bts counters are busy and in use by another process.
-> > Possible processes:
-> > 2585882 perf list
-> > 2585902 perf list -j -o /tmp/__perf_test.list_output.json.KF9MY
-> > 2585904 perf list
-> > 2585911 perf record -e task-clock --filter period > 1 -o /dev/null --qu=
-iet true
-> > 2585912 perf list
-> > 2585915 perf list
-> > 2586042 /tmp/perf/perf record -asdg -e cpu-clock -o /tmp/perftool-tests=
-uite_report.dIF/perf_report/perf.data -- sleep 2
-> > 2589078 perf record -g -e task-clock:u -o - perf test -w noploop
-> > 2589148 /tmp/perf/perf record --control=3Dfifo:control,ack -e cpu-clock=
- -m 1 sleep 10
-> > 2589379 perf --buildid-dir /tmp/perf.debug.Umx record --buildid-all -o =
-/tmp/perf.data.YBm /tmp/perf.ex.MD5.ZQW
-> > 2589568 perf record -o /tmp/__perf_test.program.mtcZH/perf.data --branc=
-h-filter any,save_type,u -- perf test -w brstack
-> > 2589649 perf record --per-thread -o /tmp/__perf_test.perf.data.5d3dc pe=
-rf test -w thloop
-> > 2589898 perf record -o /tmp/perf-test-script.BX2b27Dcnj/pp-perf.data --=
-sample-cpu uname
-> > ```
-> > Which gets a little closer to finding the issue.
-> >
-> > Signed-off-by: Ian Rogers <irogers@google.com>
-> > ---
-> >  tools/perf/util/evsel.c | 79 ++++++++++++++++++++++++++++++++++++++++-
-> >  1 file changed, 78 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
-> > index dbf9c8cee3c56..9a5b6a6f8d2e5 100644
-> > --- a/tools/perf/util/evsel.c
-> > +++ b/tools/perf/util/evsel.c
-> > @@ -3286,6 +3286,78 @@ static bool find_process(const char *name)
-> >       return ret ? false : true;
-> >  }
-> >
-> > +static int dump_perf_event_processes(char *msg, size_t size)
-> > +{
-> > +     DIR *proc_dir;
-> > +     struct dirent *proc_entry;
-> > +     int printed =3D 0;
-> > +
-> > +     proc_dir =3D opendir(procfs__mountpoint());
-> > +     if (!proc_dir)
-> > +             return 0;
-> > +
-> > +     /* Walk through the /proc directory. */
-> > +     while ((proc_entry =3D readdir(proc_dir)) !=3D NULL) {
-> > +             char path[PATH_MAX];
->
-> Can we use a much smaller buffer as it expects PIDs only?
->
+Most of the above text has no relation to the patch itself. Should it be 
+moved to the cover letter?
 
-It is actually used as a general purpose buffer, not only for `path`.
-It is also served for parsing `fdinfo` in patch 3, which I think 256
-would be safe for now.
+> NOTE: this first patch introduces the very basic framework only.
+> Features are then added patch by patch, however, although each patch
+> will compile and possibly not break at runtime, only after having
+> applied the full set it is expected to see the ovpn module fully working.
+> 
+> Cc: steffen.klassert@secunet.com
+> Cc: antony.antony@secunet.com
+> Signed-off-by: Antonio Quartulli <antonio@openvpn.net>
+> ---
+>   MAINTAINERS               |   8 ++++
+>   drivers/net/Kconfig       |  13 ++++++
+>   drivers/net/Makefile      |   1 +
+>   drivers/net/ovpn/Makefile |  11 +++++
+>   drivers/net/ovpn/io.c     |  22 +++++++++
+>   drivers/net/ovpn/io.h     |  15 ++++++
+>   drivers/net/ovpn/main.c   | 116 ++++++++++++++++++++++++++++++++++++++++++++++
+>   drivers/net/ovpn/main.h   |  15 ++++++
+>   include/uapi/linux/udp.h  |   1 +
+>   9 files changed, 202 insertions(+)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index f39ab140710f16b1245924bfe381cd64d499ff8a..09e193bbc218d74846cbae26f80ada3e04c3692a 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -17286,6 +17286,14 @@ F:	arch/openrisc/
+>   F:	drivers/irqchip/irq-ompic.c
+>   F:	drivers/irqchip/irq-or1k-*
+>   
+> +OPENVPN DATA CHANNEL OFFLOAD
+> +M:	Antonio Quartulli <antonio@openvpn.net>
+> +L:	openvpn-devel@lists.sourceforge.net (moderated for non-subscribers)
+> +L:	netdev@vger.kernel.org
+> +S:	Supported
+> +T:	git https://github.com/OpenVPN/linux-kernel-ovpn.git
+> +F:	drivers/net/ovpn/
+> +
+>   OPENVSWITCH
+>   M:	Pravin B Shelar <pshelar@ovn.org>
+>   L:	netdev@vger.kernel.org
+> diff --git a/drivers/net/Kconfig b/drivers/net/Kconfig
+> index 1fd5acdc73c6af0e1a861867039c3624fc618e25..269b73fcfd348a48174fb96b8f8d4f8788636fa8 100644
+> --- a/drivers/net/Kconfig
+> +++ b/drivers/net/Kconfig
+> @@ -115,6 +115,19 @@ config WIREGUARD_DEBUG
+>   
+>   	  Say N here unless you know what you're doing.
+>   
+> +config OVPN
+> +	tristate "OpenVPN data channel offload"
+> +	depends on NET && INET
+> +	select NET_UDP_TUNNEL
+> +	select DST_CACHE
+> +	select CRYPTO
+> +	select CRYPTO_AES
+> +	select CRYPTO_GCM
+> +	select CRYPTO_CHACHA20POLY1305
 
->
-> > +             DIR *fd_dir;
-> > +             struct dirent *fd_entry;
-> > +             int fd_dir_fd;
-> > +
-> > +             if ((proc_entry->d_type !=3D DT_DIR) ||
-> > +                  !strcmp(".", proc_entry->d_name) ||
-> > +                  !strcmp("..", proc_entry->d_name))
->
-> Maybe something like this?
+nit: Options from NET_UDP_TUNNEL to CRYPTO_CHACHA20POLY1305 are not 
+required for changes introduced in this patch. Should they be moved to 
+corresponding patches?
 
-Fixed in v3.
+> +	help
+> +	  This module enhances the performance of the OpenVPN userspace software
+> +	  by offloading the data channel processing to kernelspace.
+> +
+>   config EQUALIZER
+>   	tristate "EQL (serial line load balancing) support"
+>   	help
+> diff --git a/drivers/net/Makefile b/drivers/net/Makefile
+> index 13743d0e83b5fde479e9b30ad736be402d880dee..5152b3330e28da7eaec821018a26c973bb33ce0c 100644
+> --- a/drivers/net/Makefile
+> +++ b/drivers/net/Makefile
+> @@ -11,6 +11,7 @@ obj-$(CONFIG_IPVLAN) += ipvlan/
+>   obj-$(CONFIG_IPVTAP) += ipvlan/
+>   obj-$(CONFIG_DUMMY) += dummy.o
+>   obj-$(CONFIG_WIREGUARD) += wireguard/
+> +obj-$(CONFIG_OVPN) += ovpn/
+>   obj-$(CONFIG_EQUALIZER) += eql.o
+>   obj-$(CONFIG_IFB) += ifb.o
+>   obj-$(CONFIG_MACSEC) += macsec.o
+> diff --git a/drivers/net/ovpn/Makefile b/drivers/net/ovpn/Makefile
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..53fb197027d787d6683e9056d3d341abf6ed38e4
+> --- /dev/null
+> +++ b/drivers/net/ovpn/Makefile
+> @@ -0,0 +1,11 @@
+> +# SPDX-License-Identifier: GPL-2.0
+> +#
+> +# ovpn -- OpenVPN data channel offload in kernel space
+> +#
+> +# Copyright (C) 2020-2024 OpenVPN, Inc.
+> +#
+> +# Author:	Antonio Quartulli <antonio@openvpn.net>
+> +
+> +obj-$(CONFIG_OVPN) := ovpn.o
+> +ovpn-y += main.o
+> +ovpn-y += io.o
+> diff --git a/drivers/net/ovpn/io.c b/drivers/net/ovpn/io.c
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..ad3813419c33cbdfe7e8ad6f5c8b444a3540a69f
+> --- /dev/null
+> +++ b/drivers/net/ovpn/io.c
+> @@ -0,0 +1,22 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*  OpenVPN data channel offload
+> + *
+> + *  Copyright (C) 2019-2024 OpenVPN, Inc.
+> + *
+> + *  Author:	James Yonan <james@openvpn.net>
+> + *		Antonio Quartulli <antonio@openvpn.net>
+> + */
+> +
+> +#include <linux/netdevice.h>
+> +#include <linux/skbuff.h>
+> +
+> +#include "io.h"
+> +
+> +/* Send user data to the network
+> + */
+> +netdev_tx_t ovpn_net_xmit(struct sk_buff *skb, struct net_device *dev)
+> +{
+> +	skb_tx_error(skb);
+> +	kfree_skb(skb);
+> +	return NET_XMIT_DROP;
+> +}
+> diff --git a/drivers/net/ovpn/io.h b/drivers/net/ovpn/io.h
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..aa259be66441f7b0262f39da12d6c3dce0a9b24c
+> --- /dev/null
+> +++ b/drivers/net/ovpn/io.h
+> @@ -0,0 +1,15 @@
+> +/* SPDX-License-Identifier: GPL-2.0-only */
+> +/* OpenVPN data channel offload
+> + *
+> + *  Copyright (C) 2019-2024 OpenVPN, Inc.
+> + *
+> + *  Author:	James Yonan <james@openvpn.net>
+> + *		Antonio Quartulli <antonio@openvpn.net>
+> + */
+> +
+> +#ifndef _NET_OVPN_OVPN_H_
+> +#define _NET_OVPN_OVPN_H_
+> +
+> +netdev_tx_t ovpn_net_xmit(struct sk_buff *skb, struct net_device *dev);
+> +
+> +#endif /* _NET_OVPN_OVPN_H_ */
+> diff --git a/drivers/net/ovpn/main.c b/drivers/net/ovpn/main.c
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..369a5a2b2fc1a497c8444e59f9b058eb40e49524
+> --- /dev/null
+> +++ b/drivers/net/ovpn/main.c
+> @@ -0,0 +1,116 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*  OpenVPN data channel offload
+> + *
+> + *  Copyright (C) 2020-2024 OpenVPN, Inc.
+> + *
+> + *  Author:	Antonio Quartulli <antonio@openvpn.net>
+> + *		James Yonan <james@openvpn.net>
+> + */
+> +
+> +#include <linux/module.h>
+> +#include <linux/netdevice.h>
+> +#include <net/rtnetlink.h>
+> +
+> +#include "main.h"
+> +#include "io.h"
+> +
+> +/* Driver info */
+> +#define DRV_DESCRIPTION	"OpenVPN data channel offload (ovpn)"
+> +#define DRV_COPYRIGHT	"(C) 2020-2024 OpenVPN, Inc."
 
+nit: these strings are used only once for MODULE_{DESCRIPTION,AUTHOR} 
+below. Can we directly use strings to avoid levels of indirection?
 
->
->                 if (proc_entry->d_type !=3D DT_DIR ||
->                     !isdigit(proc_entry->d_name[0]) ||
->                     strlen(proc_entry->d_name) > sizeof(path) - 4)
->
-> Thanks,
-> Namhyung
->
->
-> > +                     continue;
-> > +
-> > +             scnprintf(path, sizeof(path), "%s/fd", proc_entry->d_name=
-);
-> > +             fd_dir_fd =3D openat(dirfd(proc_dir), path, O_DIRECTORY);
-> > +             if (fd_dir_fd =3D=3D -1)
-> > +                     continue;
-> > +             fd_dir =3D fdopendir(fd_dir_fd);
-> > +             if (!fd_dir) {
-> > +                     close(fd_dir_fd);
-> > +                     continue;
-> > +             }
-> > +             while ((fd_entry =3D readdir(fd_dir)) !=3D NULL) {
-> > +                     ssize_t link_size;
-> > +
-> > +                     if (fd_entry->d_type !=3D DT_LNK)
-> > +                             continue;
-> > +                     link_size =3D readlinkat(fd_dir_fd, fd_entry->d_n=
-ame, path, sizeof(path));
-> > +                     if (link_size < 0)
-> > +                             continue;
-> > +                     /* Take care as readlink doesn't null terminate t=
-he string. */
-> > +                     if (!strncmp(path, "anon_inode:[perf_event]", lin=
-k_size)) {
-> > +                             int cmdline_fd;
-> > +                             ssize_t cmdline_size;
-> > +
-> > +                             scnprintf(path, sizeof(path), "%s/cmdline=
-", proc_entry->d_name);
-> > +                             cmdline_fd =3D openat(dirfd(proc_dir), pa=
-th, O_RDONLY);
-> > +                             if (cmdline_fd =3D=3D -1)
-> > +                                     continue;
-> > +                             cmdline_size =3D read(cmdline_fd, path, s=
-izeof(path) - 1);
-> > +                             close(cmdline_fd);
-> > +                             if (cmdline_size < 0)
-> > +                                     continue;
-> > +                             path[cmdline_size] =3D '\0';
-> > +                             for (ssize_t i =3D 0; i < cmdline_size; i=
-++) {
-> > +                                     if (path[i] =3D=3D '\0')
-> > +                                             path[i] =3D ' ';
-> > +                             }
-> > +
-> > +                             if (printed =3D=3D 0)
-> > +                                     printed +=3D scnprintf(msg, size,=
- "Possible processes:\n");
-> > +
-> > +                             printed +=3D scnprintf(msg + printed, siz=
-e - printed,
-> > +                                             "%s %s\n", proc_entry->d_=
-name, path);
-> > +                             break;
-> > +                     }
-> > +             }
-> > +             closedir(fd_dir);
-> > +     }
-> > +     closedir(proc_dir);
-> > +     return printed;
-> > +}
-> > +
-> >  int __weak arch_evsel__open_strerror(struct evsel *evsel __maybe_unuse=
-d,
-> >                                    char *msg __maybe_unused,
-> >                                    size_t size __maybe_unused)
-> > @@ -3319,7 +3391,7 @@ int evsel__open_strerror(struct evsel *evsel, str=
-uct target *target,
-> >                       printed +=3D scnprintf(msg, size,
-> >                               "No permission to enable %s event.\n\n", =
-evsel__name(evsel));
-> >
-> > -             return scnprintf(msg + printed, size - printed,
-> > +             return printed + scnprintf(msg + printed, size - printed,
-> >                "Consider adjusting /proc/sys/kernel/perf_event_paranoid=
- setting to open\n"
-> >                "access to performance monitoring and observability oper=
-ations for processes\n"
-> >                "without CAP_PERFMON, CAP_SYS_PTRACE or CAP_SYS_ADMIN Li=
-nux capability.\n"
-> > @@ -3382,6 +3454,11 @@ int evsel__open_strerror(struct evsel *evsel, st=
-ruct target *target,
-> >                       return scnprintf(msg, size,
-> >       "The PMU counters are busy/taken by another profiler.\n"
-> >       "We found oprofile daemon running, please stop it and try again."=
-);
-> > +             printed +=3D scnprintf(
-> > +                     msg, size,
-> > +                     "The PMU %s counters are busy and in use by anoth=
-er process.\n",
-> > +                     evsel->pmu ? evsel->pmu->name : "");
-> > +             return printed + dump_perf_event_processes(msg + printed,=
- size - printed);
-> >               break;
-> >       case EINVAL:
-> >               if (evsel->core.attr.sample_type & PERF_SAMPLE_CODE_PAGE_=
-SIZE && perf_missing_features.code_page_size)
-> > --
-> > 2.47.0.163.g1226f6d8fa-goog
-> >
+> +
+> +/**
+> + * ovpn_dev_is_valid - check if the netdevice is of type 'ovpn'
+> + * @dev: the interface to check
+> + *
+> + * Return: whether the netdevice is of type 'ovpn'
+> + */
+> +bool ovpn_dev_is_valid(const struct net_device *dev)
+> +{
+> +	return dev->netdev_ops->ndo_start_xmit == ovpn_net_xmit;
+
+You can directly check for the ops matching saving one dereferencing 
+operation:
+
+return dev->netdev_ops == &ovpn_netdev_ops;
+
+You can define an empty ovpn_netdev_ops struct for this purpose in this 
+patch and fill ops later with next patches. This way you can even move 
+the ovpn_net_xmit() definition to the interface creation/destruction patch.
+
+> +}
+> +
+> +static int ovpn_newlink(struct net *src_net, struct net_device *dev,
+> +			struct nlattr *tb[], struct nlattr *data[],
+> +			struct netlink_ext_ack *extack)
+> +{
+> +	return -EOPNOTSUPP;
+> +}
+> +
+> +static struct rtnl_link_ops ovpn_link_ops = {
+> +	.kind = "ovpn",
+> +	.netns_refund = false,
+> +	.newlink = ovpn_newlink,
+> +	.dellink = unregister_netdevice_queue,
+> +};
+> +
+> +static int ovpn_netdev_notifier_call(struct notifier_block *nb,
+> +				     unsigned long state, void *ptr)
+> +{
+> +	struct net_device *dev = netdev_notifier_info_to_dev(ptr);
+> +
+> +	if (!ovpn_dev_is_valid(dev))
+> +		return NOTIFY_DONE;
+> +
+> +	switch (state) {
+> +	case NETDEV_REGISTER:
+> +		/* add device to internal list for later destruction upon
+> +		 * unregistration
+> +		 */
+> +		break;
+> +	case NETDEV_UNREGISTER:
+> +		/* can be delivered multiple times, so check registered flag,
+> +		 * then destroy the interface
+> +		 */
+> +		break;
+> +	case NETDEV_POST_INIT:
+> +	case NETDEV_GOING_DOWN:
+> +	case NETDEV_DOWN:
+> +	case NETDEV_UP:
+> +	case NETDEV_PRE_UP:
+> +	default:
+> +		return NOTIFY_DONE;
+> +	}
+> +
+> +	return NOTIFY_OK;
+> +}
+> +
+> +static struct notifier_block ovpn_netdev_notifier = {
+> +	.notifier_call = ovpn_netdev_notifier_call,
+> +};
+> +
+> +static int __init ovpn_init(void)
+> +{
+> +	int err = register_netdevice_notifier(&ovpn_netdev_notifier);
+> +
+> +	if (err) {
+> +		pr_err("ovpn: can't register netdevice notifier: %d\n", err);
+> +		return err;
+> +	}
+> +
+> +	err = rtnl_link_register(&ovpn_link_ops);
+> +	if (err) {
+> +		pr_err("ovpn: can't register rtnl link ops: %d\n", err);
+> +		goto unreg_netdev;
+> +	}
+> +
+> +	return 0;
+> +
+> +unreg_netdev:
+> +	unregister_netdevice_notifier(&ovpn_netdev_notifier);
+> +	return err;
+> +}
+> +
+> +static __exit void ovpn_cleanup(void)
+> +{
+> +	rtnl_link_unregister(&ovpn_link_ops);
+> +	unregister_netdevice_notifier(&ovpn_netdev_notifier);
+> +
+> +	rcu_barrier();
+> +}
+> +
+> +module_init(ovpn_init);
+> +module_exit(ovpn_cleanup);
+> +
+> +MODULE_DESCRIPTION(DRV_DESCRIPTION);
+> +MODULE_AUTHOR(DRV_COPYRIGHT);
+> +MODULE_LICENSE("GPL");
+> diff --git a/drivers/net/ovpn/main.h b/drivers/net/ovpn/main.h
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..a3215316c49bfcdf2496590bac878f145b8b27fd
+> --- /dev/null
+> +++ b/drivers/net/ovpn/main.h
+> @@ -0,0 +1,15 @@
+> +/* SPDX-License-Identifier: GPL-2.0-only */
+> +/*  OpenVPN data channel offload
+> + *
+> + *  Copyright (C) 2019-2024 OpenVPN, Inc.
+> + *
+> + *  Author:	James Yonan <james@openvpn.net>
+> + *		Antonio Quartulli <antonio@openvpn.net>
+> + */
+> +
+> +#ifndef _NET_OVPN_MAIN_H_
+> +#define _NET_OVPN_MAIN_H_
+> +
+> +bool ovpn_dev_is_valid(const struct net_device *dev);
+> +
+> +#endif /* _NET_OVPN_MAIN_H_ */
+> diff --git a/include/uapi/linux/udp.h b/include/uapi/linux/udp.h
+> index d85d671deed3c78f6969189281b9083dcac000c6..edca3e430305a6bffc34e617421f1f3071582e69 100644
+> --- a/include/uapi/linux/udp.h
+> +++ b/include/uapi/linux/udp.h
+> @@ -43,5 +43,6 @@ struct udphdr {
+>   #define UDP_ENCAP_GTP1U		5 /* 3GPP TS 29.060 */
+>   #define UDP_ENCAP_RXRPC		6
+>   #define TCP_ENCAP_ESPINTCP	7 /* Yikes, this is really xfrm encap types. */
+> +#define UDP_ENCAP_OVPNINUDP	8 /* OpenVPN traffic */
+
+nit: this specific change does not belong to this specific patch.
+
+>   
+>   #endif /* _UAPI_LINUX_UDP_H */
+> 
+
 
