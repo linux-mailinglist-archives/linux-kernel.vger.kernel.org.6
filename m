@@ -1,157 +1,134 @@
-Return-Path: <linux-kernel+bounces-398088-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397901-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F7A69BE527
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 12:04:51 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FD169BE220
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 10:16:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 066741F21A05
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 11:04:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 92F8F1C23085
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 09:16:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A75711DE4C7;
-	Wed,  6 Nov 2024 11:04:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85B891D88D7;
+	Wed,  6 Nov 2024 09:16:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ifh3OU9l"
-Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com [209.85.219.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=maxima.ru header.i=@maxima.ru header.b="JNuVFKJq"
+Received: from ksmg01.maxima.ru (ksmg01.maxima.ru [81.200.124.38])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EC961DB377;
-	Wed,  6 Nov 2024 11:04:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 239C4183CD6;
+	Wed,  6 Nov 2024 09:16:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.200.124.38
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730891082; cv=none; b=mQ3+QHalWNY9zFati3IdV8ZcIULpn4sCsLJGC3xtOpJSgqPGm9Iib19QmOy2FTd+ZYb81vS2Il5dsEGaO5BQfaA8nfrz0BKgHX3VtrF5nZlKcpMV/AS3FbXr10KyKOgyGDte974FZxBjl0OdWI7ewYJ3nTRMlsglyScmsPaHCBk=
+	t=1730884565; cv=none; b=o7G8WraeHQdJrhW+ZmxoFGb7xKks1PpsJFS6xjgX094+CWXgK6LFCgx/3gYTCgZLXWsRkEcmZRjfNDAxh8z02+ANbpPVOgHHw+7Tax37m0nypQIZgs/BGe9ms7a14wivOHT5QPyqLf7/3SD2fI8ls+MWaKJR/4yOThvg8u2Z5As=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730891082; c=relaxed/simple;
-	bh=QJzD2cy9KQWR48lFPZQEaD2sL9yIDbAudy3i3zK2Uss=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gOoclqyI9Gq4u2X5FjwSG/KUA6smm8s+zlFFYHt/Nm4QBb0EqJhGdjdXEdl+LuGNa06np816vwzwobfSgzIYex5YwUFzZ8nnxL4+9o6N3aHgRiDd0bnEkieulOPAU00CV9l+oYZbv4HklfD7YBLX7Jyzq1JpC5MPEwLOt4eBRNY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ifh3OU9l; arc=none smtp.client-ip=209.85.219.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f50.google.com with SMTP id 6a1803df08f44-6cbe3e99680so35170026d6.3;
-        Wed, 06 Nov 2024 03:04:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730891079; x=1731495879; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QJzD2cy9KQWR48lFPZQEaD2sL9yIDbAudy3i3zK2Uss=;
-        b=Ifh3OU9lbi0qCAhYUsb2PtwLgkcXIiEqv1r3wfK5ImoQKHaoHx4+sA9P00m/Lsof6g
-         v6Oj3+OZkmEpYy2Meb9B44zteCgr6gXQ2MxazXTTN0BrO4MaZxHxNVDH7mMskxM3Oxaz
-         bDocYNLuSvWBKJKvrt4Quzkcti4ro/MuvA+BIGhBpeWHiLRCNDHXkFLfo5rZLa7yTolR
-         8W0VmpaJO7Bq2PTs95iYpeThdbJ4EZ50IrjEjUnI9RcFYORa3vcprfoWPROLmS4BoLeJ
-         JJkL5NRBbIDt8Hna/gix6A/q9D8kWrYl2ACKVBVw649av4GpaGSDKeg7UWltuz3tJEIp
-         LChA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730891079; x=1731495879;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QJzD2cy9KQWR48lFPZQEaD2sL9yIDbAudy3i3zK2Uss=;
-        b=Eo/EHm4VFSSFGA54wePqVZHywl/LiWjozW2udnBJ6yIR8Zg4e5uF33QxNnkArndRL0
-         3Zhs7H7EbMkGez0tNISVjw9myfBcQXntseXb01f8dLnzVU1ZhZxA1rE+JWEyv9COKfIO
-         ILmqpzZqejzaOWqX0jGBU7lfWaJBM/Bw6VKg2NX9XK5D0JjqtUM92oGF0Cmh44Zx2sTm
-         dfApISimM4mbDJKT92rQIcawFa2YAIs1Xx11vzSdFRaZQH38YInAb4wKYaTDFIpm3Yu+
-         hZS+Wm32WWeu9iA60Og5/xw6273C6ad2TtLfiAxaB/oLBilvXVjUxmE8zZLe6K+qiYvr
-         ZS/g==
-X-Forwarded-Encrypted: i=1; AJvYcCVB79Zhp1za2NqRbCzWd9iywiy3mCiyxf/XdtKnU80XKW/Zn4e6bi9zX5vG/oIqNAyp12o8MlgeAvvt8hDy@vger.kernel.org, AJvYcCVDv0qbEx7JjYL5Zo4hhQOHysjT0v+Wblsu2t1dqLG2uQSN03ukZR76QdS3wtpOrAjRCowXXySaRv9za9RryQ==@vger.kernel.org, AJvYcCW+52BvZdj9mP3LnXKYUAzhebOfgVgaNoEkCHFyZhISF6gITsv0rC1Ohw8ZTXR0bZh8bYVoR1cWrZJojmIY@vger.kernel.org
-X-Gm-Message-State: AOJu0YxMVbBr8e+ftmljH5Mj8Vnwe+36QcBdewkT2mZkrIccgTYkPBYa
-	Qy+QeOgauXYJTb6kvsoWXm0/SPLXitymfGALoeC9RsBqdTReVTfaE62HwiPOkT+lVsrmv0oU3Ru
-	u/s+TfAkPe+z6DCYi9E5fwRxttApJp2TS
-X-Google-Smtp-Source: AGHT+IFDKH+mbTd2xwsg0nX0AaLCteb2Gnpa4GsMAtV3ol5yplQfOyye01XEeQJimIpoIHwqQBx3mT6BehChS//+utc=
-X-Received: by 2002:a05:6214:4b02:b0:6cb:afe7:1403 with SMTP id
- 6a1803df08f44-6d185866d2fmr585370366d6.48.1730891079186; Wed, 06 Nov 2024
- 03:04:39 -0800 (PST)
+	s=arc-20240116; t=1730884565; c=relaxed/simple;
+	bh=0MsT+PRcmMBQxJvoT42iJU1htJ6YTamf0usyHQ6hKUs=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=sX+qetgA7aPT41nP4Sq1Fq2oRNVUyXX75SumUfnWzjom+IThSCycdZGOk+3Lg3pTAtX/DgTCz4XyffDjaQrJ60Rge7OrQjPFsY0FOgO6d7gVpM9KFXFP11+qvauuUM8ka8mWuJiA/I4u7GDIf4WmTw6rmDlu1Jj7HYQkxbrPYl4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=maxima.ru; spf=pass smtp.mailfrom=maxima.ru; dkim=pass (2048-bit key) header.d=maxima.ru header.i=@maxima.ru header.b=JNuVFKJq; arc=none smtp.client-ip=81.200.124.38
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=maxima.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maxima.ru
+Received: from ksmg01.maxima.ru (localhost [127.0.0.1])
+	by ksmg01.maxima.ru (Postfix) with ESMTP id 6BDADC0002;
+	Wed,  6 Nov 2024 12:06:36 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 ksmg01.maxima.ru 6BDADC0002
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maxima.ru; s=sl;
+	t=1730883996; bh=zsIfNjJuQRzVx0PaAaQa+PRTtSriwy+5ltfs2Vpbja4=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
+	b=JNuVFKJqi9u8k5MpQyyQzuSqrmDj/Rn0L23cdQUe0AJUr/vgQMAH14DCBj138iDNe
+	 9bmUD16ABkOu2w5RBMKm6mo9NmB4yYS+9QoD/iCybitc8uF+IBEwDMDhrgZihmVh0H
+	 bYs/UKNsW+JW5t7QY0G62Abosa1A1eSAZatMbEIQ0uSj1msKyZt7wV7MuT7PPhVsdz
+	 FQHl6L7Sm9/D3fCpmwCjcq+hKdm+pdt5AEfe12zM8hmt6T8mLKrMvUg49x9+vvLE/6
+	 lVJXIo5AzOWhat7N3Q4aHWppInjIU5HigRQiULX3R4ScniVdWlyF368lbKg9s5dvNC
+	 bRT67QAbfgdhw==
+Received: from ksmg01.maxima.ru (mail.maxima.ru [81.200.124.61])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(Client CN "*.maxima.ru", Issuer "GlobalSign GCC R3 DV TLS CA 2020" (verified OK))
+	by ksmg01.maxima.ru (Postfix) with ESMTPS;
+	Wed,  6 Nov 2024 12:06:36 +0300 (MSK)
+Received: from localhost.maximatelecom.ru (10.0.247.43) by
+ mmail-p-exch01.mt.ru (81.200.124.61) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.2.1544.4; Wed, 6 Nov 2024 12:06:34 +0300
+From: Vitaliy Shevtsov <v.shevtsov@maxima.ru>
+To: Cezary Rojewski <cezary.rojewski@intel.com>
+CC: Vitaliy Shevtsov <v.shevtsov@maxima.ru>, Liam Girdwood
+	<liam.r.girdwood@linux.intel.com>, Peter Ujfalusi
+	<peter.ujfalusi@linux.intel.com>, Bard Liao
+	<yung-chuan.liao@linux.intel.com>, Ranjani Sridharan
+	<ranjani.sridharan@linux.intel.com>, Kai Vehmanen
+	<kai.vehmanen@linux.intel.com>, Pierre-Louis Bossart
+	<pierre-louis.bossart@linux.dev>, Mark Brown <broonie@kernel.org>, Jaroslav
+ Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	<linux-sound@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<lvc-project@linuxtesting.org>
+Subject: [PATCH] ASoC: Intel: sof_wm8804: add check for CLKDIV setting
+Date: Wed, 6 Nov 2024 14:06:02 +0000
+Message-ID: <20241106140603.14516-2-v.shevtsov@maxima.ru>
+X-Mailer: git-send-email 2.46.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241106-overlayfs-fsopen-log-v1-1-9d883be7e56e@cyphar.com>
- <20241106-mehrzahl-bezaubern-109237c971e3@brauner> <CAOQ4uxirsNEK24=u3K-X5A-EX80ofEx5ycjoqU4gocBoPVxbYw@mail.gmail.com>
-In-Reply-To: <CAOQ4uxirsNEK24=u3K-X5A-EX80ofEx5ycjoqU4gocBoPVxbYw@mail.gmail.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Wed, 6 Nov 2024 12:04:27 +0100
-Message-ID: <CAOQ4uxj+gAtM6cY_aEmM7TAqLor7498f0FO3eTek_NpUXUKNaw@mail.gmail.com>
-Subject: Re: [PATCH] overlayfs: port all superblock creation logging to fsopen logs
-To: Christian Brauner <brauner@kernel.org>, Miklos Szeredi <miklos@szeredi.hu>
-Cc: Aleksa Sarai <cyphar@cyphar.com>, Jan Kara <jack@suse.cz>, linux-unionfs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Karel Zak <kzak@redhat.com>, 
-	linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: mt-exch-01.mt.ru (91.220.120.210) To mmail-p-exch01.mt.ru
+ (81.200.124.61)
+X-KSMG-Rule-ID: 7
+X-KSMG-Message-Action: clean
+X-KSMG-AntiSpam-Lua-Profiles: 188984 [Nov 06 2024]
+X-KSMG-AntiSpam-Version: 6.1.1.7
+X-KSMG-AntiSpam-Envelope-From: v.shevtsov@maxima.ru
+X-KSMG-AntiSpam-Rate: 0
+X-KSMG-AntiSpam-Status: not_detected
+X-KSMG-AntiSpam-Method: none
+X-KSMG-AntiSpam-Auth: dmarc=none header.from=maxima.ru;spf=none smtp.mailfrom=maxima.ru;dkim=none
+X-KSMG-AntiSpam-Info: LuaCore: 41 0.3.41 623e98d5198769c015c72f45fabbb9f77bdb702b, {rep_avail}, {Tracking_from_domain_doesnt_match_to}, ksmg01.maxima.ru:7.1.1;maxima.ru:7.1.1;81.200.124.61:7.1.2;127.0.0.199:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1, FromAlignment: s, ApMailHostAddress: 81.200.124.61
+X-MS-Exchange-Organization-SCL: -1
+X-KSMG-AntiSpam-Interceptor-Info: scan successful
+X-KSMG-AntiPhishing: Clean
+X-KSMG-LinksScanning: Clean
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/11/06 04:26:00 #26824941
+X-KSMG-AntiVirus-Status: Clean, skipped
 
-[Fixed address of linux-fsdevel]
+Currently the return value of snd_soc_dai_set_clkdiv() is not checked for a
+possible failure. Despite it cannot fail as long as the second argument is
+either WM8804_CLKOUT_DIV or WM8804_MCLK_DIV because wm8804_set_clkdiv() handles
+both of them it is still better to add this check for the sake of completeness
+and correctness. Also this is the only snd_soc_dai_set_clkdiv() call site where
+the return value is not processed.
 
-On Wed, Nov 6, 2024 at 12:00=E2=80=AFPM Amir Goldstein <amir73il@gmail.com>=
- wrote:
->
-> On Wed, Nov 6, 2024 at 10:59=E2=80=AFAM Christian Brauner <brauner@kernel=
-.org> wrote:
-> >
-> > On Wed, Nov 06, 2024 at 02:09:58PM +1100, Aleksa Sarai wrote:
-> > > overlayfs helpfully provides a lot of of information when setting up =
-a
-> > > mount, but unfortunately when using the fsopen(2) API, a lot of this
-> > > information is mixed in with the general kernel log.
-> > >
-> > > In addition, some of the logs can become a source of spam if programs
-> > > are creating many internal overlayfs mounts (in runc we use an intern=
-al
-> > > overlayfs mount to protect the runc binary against container breakout
-> > > attacks like CVE-2019-5736, and xino_auto=3Don caused a lot of spam i=
-n
-> > > dmesg because we didn't explicitly disable xino[1]).
-> > >
-> > > By logging to the fs_context, userspace can get more accurate
-> > > information when using fsopen(2) and there is less dmesg spam for
-> > > systems where a lot of programs are using fsopen("overlay"). Legacy
-> > > mount(2) users will still see the same errors in dmesg as they did
-> > > before (though the prefix of the log messages will now be "overlay"
-> > > rather than "overlayfs").
->
-> I am not sure about the level of risk in this format change.
-> Miklos, WDYT?
->
-> > >
-> > > [1]: https://bbs.archlinux.org/viewtopic.php?pid=3D2206551
-> > >
-> > > Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
-> > > ---
-> >
-> > To me this sounds inherently useful! So I'm all for it.
-> >
->
-> [CC: Karel]
->
-> I am quite concerned about this.
-> I have a memory that Christian suggested to make this change back in the
-> original conversion to new mount API, but back then mount tool
-> did not print out the errors to users properly and even if it does
-> print out errors,
-> some script could very well be ignoring them.
->
-> My strong feeling is that suppressing legacy errors to kmsg should be opt=
--in
-> via the new mount API and that it should not be the default for libmount.
-> IMO, it is certainly NOT enough that new mount API is used by userspace
-> as an indication for the kernel to suppress errors to kmsg.
-> I have no problem with reporting errors to both userspace and kmsg
-> without opt-in from usersapce.
->
-> Furthermore, looking at the existing invalfc() calls in overlayfs, I see =
-that
-> a few legacy pr_err() were converted to invalfc() with this commit
-> (signed off by myself):
-> 819829f0319a ovl: refactor layer parsing helpers
->
-> I am not really sure if the discussion about suppressing the kmsg errors =
-was
-> resolved or dismissed or maybe it only happened in my head??
->
-> Thanks,
-> Amir.
+Found by Linux Verification Center (linuxtesting.org) with Svace.
+
+Signed-off-by: Vitaliy Shevtsov <v.shevtsov@maxima.ru>
+---
+ sound/soc/intel/boards/sof_wm8804.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/sound/soc/intel/boards/sof_wm8804.c b/sound/soc/intel/boards/sof_wm8804.c
+index facc6c32cbfe..d7ac54e9d0a8 100644
+--- a/sound/soc/intel/boards/sof_wm8804.c
++++ b/sound/soc/intel/boards/sof_wm8804.c
+@@ -123,7 +123,12 @@ static int sof_wm8804_hw_params(struct snd_pcm_substream *substream,
+ 		}
+ 	}
+ 
+-	snd_soc_dai_set_clkdiv(codec_dai, WM8804_MCLK_DIV, mclk_div);
++	ret = snd_soc_dai_set_clkdiv(codec_dai, WM8804_MCLK_DIV, mclk_div);
++	if (ret < 0) {
++		dev_err(rtd->card->dev, "Failed to set WM8804 CLKDIV\n");
++		return ret;
++	}
++
+ 	ret = snd_soc_dai_set_pll(codec_dai, 0, 0, sysclk, mclk_freq);
+ 	if (ret < 0) {
+ 		dev_err(rtd->card->dev, "Failed to set WM8804 PLL\n");
+-- 
+2.46.2
+
 
