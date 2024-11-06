@@ -1,277 +1,271 @@
-Return-Path: <linux-kernel+bounces-398597-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398601-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 863DA9BF354
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 17:37:07 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7B789BF36C
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 17:40:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 17FBE1F23166
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 16:37:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 69FB01F2130F
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 16:40:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 078D9203706;
-	Wed,  6 Nov 2024 16:37:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69A0A2071FD;
+	Wed,  6 Nov 2024 16:39:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=axis.com header.i=@axis.com header.b="BpboX83r"
-Received: from EUR02-DB5-obe.outbound.protection.outlook.com (mail-db5eur02on2056.outbound.protection.outlook.com [40.107.249.56])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dOJE2JWN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6115F201021
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 16:36:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.249.56
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730911019; cv=fail; b=MVcVCTIzVD8hugycEwdW8BaduxzrtSpHoR23L/YR8rcSiZb47mwVPj6raV0C22JKhLe9ighx4/+Cdo/N1mDwrdNuGmBcJdy7CVWElv/Boj2V1+9+K0O36ptioQlMOFeqj8LMjgPmDvY+ndnaVyGZazoi+LAcPTbatzZGxbk0afY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730911019; c=relaxed/simple;
-	bh=zXPqicMXjAyz2WVyGlehlf96MmpKNqDQYzlQN3TOvyg=;
-	h=From:To:CC:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=ZsHB0rhSn1EKf75D64pQOavADDOEWbjuR/EnAxedO+bnMilKgt92hi6EMJnY5H2HxMGwD4tU/XRfU1WOgIE+xgpBqBbhNiUJilCeXgbtEWmWqNoNYi/U/cgzrv8NSIyJskUP5XBvZehDPwhu5Sdq7DCo+0B5MSHY8zFiF5cRGC8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=axis.com; spf=pass smtp.mailfrom=axis.com; dkim=pass (1024-bit key) header.d=axis.com header.i=@axis.com header.b=BpboX83r; arc=fail smtp.client-ip=40.107.249.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=axis.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=axis.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=I/IhlRqoWpBnsFgpnkB+dNhfcIKYRCwoCcLcTCD1bX/5PLfl3HsmrAgXaT/N/HdTHNdsrdD+CCcpmFU4T4UF9DZQvoc7Ni5TmHddcl+9Z241mKsI0CU4y1kSqr8ASQcJ7KrAWi17A9YU3QyuzlVq9q6qsFuLjCUw9IA9HJufV2Rt+DI8kw4RZBUHJqyqjM2Yazj6GzTeQkyBt3u4oImE5Y/r9QWBRLQxSMEqWDrlG1DNDhsKrlaJjl8WiRHX4ZaApArN6wooqvu1YIYFuTbPR8dWtQgX9MirOXGCEE4IXMuzNybX25EcKgqpea9FJdvCl6L4aWRPGT0MpF+CIyVDDg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=1Org0fItIUfeJVa0PNPX2AGuBzHJRZ65cmBW1R4tmHM=;
- b=I08TASuzn0MgKkApiBD2+b/pInMxFh44YLwMIQKhseLrE+fbZZTRoWPvy8aPXAROy+XhHGPNFkSSbVHsHTJqRydfiw9HtZdaTX3nsrKJNyOo5iGUdsoOtVInd2qXDbu2nuN1TT4PosI7yIQ+101fKxYrky1rsMnnSJ1hgD+M9HcxpRevzOwLgqAGUqydwXOX1EweCiKIgs94vzhNFzTv8kN0MdF4cEb9ARQ4kN3gKezyrAeIgQJgmGa8sCuzLuQVJhjLTQtCDI8saxGezG0326nJBaqEWEX85oxamccAs2A6UtnWzVnw/UKiICIjH8cLSA0J/6XdaVw2yxfsMpJkeg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 195.60.68.100) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=axis.com;
- dmarc=pass (p=none sp=none pct=100) action=none header.from=axis.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=axis.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=1Org0fItIUfeJVa0PNPX2AGuBzHJRZ65cmBW1R4tmHM=;
- b=BpboX83r09c4erPw1P0SNrVJzGuPHmkM1blxKGC3QPiJyyVUM30naFKhPYhXr7XWbgfG7tAiB2/1QEd7Mwi4vziJo0OM25NoljsDdRh/QogIRxELfAWRz+SCNGXi6sItgkFrnmH/s1GWYUo1sYi9j3mwXG3t+pM19Pvkrbz+Dr8=
-Received: from PA7P264CA0004.FRAP264.PROD.OUTLOOK.COM (2603:10a6:102:2d3::10)
- by AS4PR02MB8288.eurprd02.prod.outlook.com (2603:10a6:20b:510::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.18; Wed, 6 Nov
- 2024 16:36:51 +0000
-Received: from AM4PEPF00025F95.EURPRD83.prod.outlook.com
- (2603:10a6:102:2d3:cafe::a2) by PA7P264CA0004.outlook.office365.com
- (2603:10a6:102:2d3::10) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.19 via Frontend
- Transport; Wed, 6 Nov 2024 16:36:51 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 195.60.68.100)
- smtp.mailfrom=axis.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=axis.com;
-Received-SPF: Pass (protection.outlook.com: domain of axis.com designates
- 195.60.68.100 as permitted sender) receiver=protection.outlook.com;
- client-ip=195.60.68.100; helo=mail.axis.com; pr=C
-Received: from mail.axis.com (195.60.68.100) by
- AM4PEPF00025F95.mail.protection.outlook.com (10.167.16.4) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8158.0 via Frontend Transport; Wed, 6 Nov 2024 16:36:50 +0000
-Received: from pc52311-2249 (10.4.0.13) by se-mail01w.axis.com (10.20.40.7)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 6 Nov
- 2024 17:36:49 +0100
-From: Waqar Hameed <waqar.hameed@axis.com>
-To: Zhihao Cheng <chengzhihao1@huawei.com>
-CC: Richard Weinberger <richard@nod.at>, Sascha Hauer
-	<s.hauer@pengutronix.de>, <kernel@axis.com>, <linux-mtd@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH RFC] ubifs: Fix use-after-free in ubifs_tnc_end_commit
-In-Reply-To: <b3b80d1c-6c99-5d47-cba0-3be14ff79c36@huawei.com> (Zhihao Cheng's
-	message of "Fri, 18 Oct 2024 09:40:57 +0800")
-References: <1225b9b5bbf5278e5ae512177712915f1bc0aebf.1728570925.git.waqar.hameed@axis.com>
-	<5173d3d2-4a6b-8b0b-c8f7-8034c9763532@huawei.com>
-	<pnd7ca9r0pt.fsf@axis.com>
-	<239af2ee-c18d-414f-099f-2c82f98d9671@huawei.com>
-	<pnd7ca6wp9r.fsf@axis.com>
-	<b3b80d1c-6c99-5d47-cba0-3be14ff79c36@huawei.com>
-Date: Wed, 6 Nov 2024 17:36:49 +0100
-Message-ID: <pndses42uam.fsf@axis.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73BBB20513F;
+	Wed,  6 Nov 2024 16:39:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730911187; cv=none; b=heCZ5WCc+QB2Ay0W3k/IrZIcGQIT+sBSgCPwvzmVTQpIUBL9UugmgvGon40m2QT+4JmKi72rtpdvDoZPhHvFcSR8VTXNlEq1jj4ZbW0CBjE2AQbu9j813g4D44osdQVVQwGojH91rSsQwM10V8wO3oXULG2mLJpJwoPMlj9RTP4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730911187; c=relaxed/simple;
+	bh=rOw1cNxmV5yTPdcWqbOutZVPQ5MsIKIqjCjabDSKhXE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=m3RCfW3mEijEkCdqMSO9Osv11vXcB9xZCCxcw8Ths+sZlNDNoklIW6v8ms3Gs5TMZydM6oS3aF4MIUFZO+R8ZpOgqgAA0cUSUWaPMQsPeZoeDEjwvK52eF5V9C9AxRJ8xY7ZYK2viCMwRNnQogk+myDHh/W79YEvSz8dum0QYUE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dOJE2JWN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4C3BC4CED3;
+	Wed,  6 Nov 2024 16:39:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730911187;
+	bh=rOw1cNxmV5yTPdcWqbOutZVPQ5MsIKIqjCjabDSKhXE=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=dOJE2JWNU00uzXhi+LB+wCrqGUdVxslMiwlG0aSDLSQsdlhwI/QNcG33OSShSKNZh
+	 y9W6eZBqwPk9Pu95Seh+V/0AaAJpxiCBjWOLYiGz+HM3aFxSy0zdK9nKHlxAqmmbTz
+	 S0+9asjMtN+6oyDS23wFv9G8SFwCPQwGYS7v0ci/kwFY+HwKqYRp/HqKrZyQz87sh7
+	 qEMIZeOV+QYpWjz08xJQ0PXCCs7Ar9PX9KuLXgEGMuVFLE6OB84r8sd4JMG88Ihujg
+	 G5L/pyWQ3RYV4mvtaBT5j2rAldXL45X5beA8fFDPn41pzTJinMRxsGMLggXCKaosl9
+	 EGjezBzVP2cjQ==
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2fb6110c8faso65707981fa.1;
+        Wed, 06 Nov 2024 08:39:46 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVGth44KT4jIUWaBdcDwsP9BLAcipguniA1b7G3SmGrfOxdbDi0Lv8BX2hwAum/9F2w1UI4ck6HhE/eWsyD@vger.kernel.org, AJvYcCWRDS1qH9UmOCpaKoeMAmuw3/5BU2ne/s7u45S42GLDHMFw135P3r3Ljkm9aVbTCmY0v3jVp/Kq@vger.kernel.org, AJvYcCXe35LJ203uYzNN83px5iFZxAhMTJScQM2JH6bDGkzcPsdnq36RKX5T8gLLQsnIxF4OBXbQ2GlfxJ5E@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy3hDGH8zz5K5RElNo6NqHbh9oz3brEeIaZE7URpveqqegjbWZK
+	Z/5EM/vMvTn88UE3k3vdoVr3DBwDeUIinbOcl12SDwG4ReUGegSJpFNwoetRJIKML0D/ZT8BduQ
+	+GfrG/i4QVa/8FNGufSoUS4zYi6Q=
+X-Google-Smtp-Source: AGHT+IHzF2jJ4wq8spwQz69HDRPf0ScsSSWGAuM4RFIdZYEHToQmNs2IgK6UCutHxy6jUQXVXP2UuZmv6s+hozl6jR4=
+X-Received: by 2002:a2e:a0cd:0:b0:2f7:4c9d:7a83 with SMTP id
+ 38308e7fff4ca-2fcbe078a64mr157857151fa.40.1730911185367; Wed, 06 Nov 2024
+ 08:39:45 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+References: <20241106161445.189399-1-masahiroy@kernel.org> <20241106161445.189399-2-masahiroy@kernel.org>
+In-Reply-To: <20241106161445.189399-2-masahiroy@kernel.org>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Thu, 7 Nov 2024 01:39:09 +0900
+X-Gmail-Original-Message-ID: <CAK7LNARKPGTbYdM5LxWD=_H6erPwxwb7XjTBBse3w28Yeb08vg@mail.gmail.com>
+Message-ID: <CAK7LNARKPGTbYdM5LxWD=_H6erPwxwb7XjTBBse3w28Yeb08vg@mail.gmail.com>
+Subject: Re: [PATCH 2/2] Rename .data.once to .data..once to fix resetting WARN*_ONCE
+To: linux-kbuild@vger.kernel.org
+Cc: Nicholas Piggin <npiggin@gmail.com>, Andi Kleen <ak@linux.intel.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Bill Wendling <morbo@google.com>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+	Justin Stitt <justinstitt@google.com>, Kees Cook <kees@kernel.org>, 
+	Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, 
+	Paolo Abeni <pabeni@redhat.com>, Sami Tolvanen <samitolvanen@google.com>, 
+	Simon Horman <horms@kernel.org>, linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, llvm@lists.linux.dev, netdev@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-ClientProxiedBy: se-mail01w.axis.com (10.20.40.7) To se-mail01w.axis.com
- (10.20.40.7)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM4PEPF00025F95:EE_|AS4PR02MB8288:EE_
-X-MS-Office365-Filtering-Correlation-Id: bc78499b-5e28-41fa-bada-08dcfe813731
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|82310400026|1800799024|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?WUhjNld0VHBQMTkwYjlUN2FiY3pmSlExNGgzRGlyR3owR0lURHBZc2VUREFC?=
- =?utf-8?B?anpUZFNCeE95L0IzdTArQm54a3VPMFEyUUxVMmNlVDA3SVFDU2tKbDVBVmpu?=
- =?utf-8?B?cytvblM3NXFHd2hJbzdQTE0vK0UyYzZRamhXQ3JqKy8wNkhwdktuczVKSUJo?=
- =?utf-8?B?R2xaZkxQR3VQYUt3WTVua2JqbUFyL3prbStmbFdHWG1wQ2F4NjVISnJjNTU0?=
- =?utf-8?B?V0tUbm5CZkc5czVBWDNxTzVEMEo3QXNYUEZ3d1Y3cDNySVEwUVA0MkNBQkRz?=
- =?utf-8?B?RlVWWGtKTldnb2kxd21hdUp3NjNDeTd4Z0ZsNVpOd2g3U1U0MmJOeCtGVDFV?=
- =?utf-8?B?MXVCS1BRdHhWTSsrSTRvcEpkcjdFL25WaVl4bWQvVUtrOVNDMmh6N1VSMWFw?=
- =?utf-8?B?aXIvNU9mWThZT0o1TmQ4L0VGbEFITGErcEFqUG9wYy9kTjZEWUZUdDFCYjNp?=
- =?utf-8?B?aDcrSnhWMENlbjFUY0NkQWlmS1dFMlFOTEUvQkl3LzJHQmVyTE4vSFI1MUFQ?=
- =?utf-8?B?UTJXNmFubDBTWm9sV28weEFZaExkZ0tjeFBrZmNVUDhuMmc1Q3U3SmR1bldo?=
- =?utf-8?B?dWdKQ0J3SE5va09FSHBrRWk2QWtrcEU1cHVwQmp1Z2NBdnVEYjh6V09ZODdQ?=
- =?utf-8?B?bHhCcGsxLzVWT21BTVlhVXBKRUNVWlFlbjdab09pSmY2QkpaM1ppVFRiWXJE?=
- =?utf-8?B?emhES0VuQ1N1QzNvRXdtSE5JeFJaZHR4WXZJckJxV0UwZlpKdFF4Tld1NmU5?=
- =?utf-8?B?Y3ZSYUVTQ1RYQ2lZYXpPK1UwbzBGOHl5aGZVSjZOZjZ4anJvcGViRWx4MDd4?=
- =?utf-8?B?elp0U2Y5QitycnVSNjhKc0pDMXgrbkZybWZ5UUtra1NpQjh0NE1oekdNaE9D?=
- =?utf-8?B?dmo3T3ErQXJyZ0lNMGlvTXNhdnNJTXlZU2RVbTB1dkpQWE44VmdKUWFHWkh3?=
- =?utf-8?B?aFNSODROeGJ2azBQY0JLSGhKa3F4Z1BuVm1BZ2ZFNXpVUHJvRS85TUJreWs5?=
- =?utf-8?B?L1prZTZOQmVoaEx1SUlpS3pST1pYSmRRMXlkNHVnV2FNdHovam5mbExiTjRZ?=
- =?utf-8?B?cVdGSWQ3eUV2KzdnV1REbVVFNVNFR3JycnUra3pCc1NveXJCeTFjSURMZkNa?=
- =?utf-8?B?b0NGcktSOVlKSkhzaytXL0wrOUoyaHRhOXI1VEF4QXdhM0toczViZFFtQyt5?=
- =?utf-8?B?b0NDbTBoU3BXdDVUVUtZL1BlTkZCa3hDSjQ2NXJHOWZtcUo0UFNocWRmYXdY?=
- =?utf-8?B?YnBBY25Ra29TTjNrUHpxb1VCWUdCT3p5K0N0eFNhcENpSEpHTEFTSjZ3RW4r?=
- =?utf-8?B?MHlxOUx0a29sVWVVSmJSRktoay9HYVl6aTRyS3FYOTJSRFBTVklGR1dIblB4?=
- =?utf-8?B?OUJiSHFTOG5JY2FtS2JkQ0pLVXRaR0dNY1h4SGt1ZWM5MEt5NzZ2SFlHMTNx?=
- =?utf-8?B?NDc1eEJXa2dPaEIxSTFnS2pQSG9kTGNXQUZyeDlyeDNaZWhrSlQ1ZlJucnVG?=
- =?utf-8?B?MFRJcmwzN2cvS3FmbmZ2NHNMTWI2ODIxblFrSkJvSGVrOHpCM3J2Zi9aakEy?=
- =?utf-8?B?Z1ZSVnNqU3JBNi9RZlRCSytJeHRjNXE3cDMwZ1RNRXUrd0IyaWpmb0UrWlVQ?=
- =?utf-8?B?TkhNejNwdFFxeEFXQUdzWk50YVc2Uk94Y21uRk5OV1ZMbmtlYVVDM2RNdXVW?=
- =?utf-8?B?VTNwREhsVEh4K3NVRXJoNkdheHFDVUNvSXJKbk51dW5LemxGUmxRUzR6aU1i?=
- =?utf-8?B?L1RiQVZEcUhZUmdUTExocVJ6ZFZFUDVyRUQzRGFVTWdteHBJNTNPZ1c4NVZM?=
- =?utf-8?B?RnJpSEVNQU9uWEVEVlo3djdTc1Q1elEydDZUYUtyeEZ5RmJVendUZ2pERVpL?=
- =?utf-8?B?ck0zWWphQjduQ2VhUkkxV1BmMm54cHdVSldSZmhCY0YzYUE9PQ==?=
-X-Forefront-Antispam-Report:
-	CIP:195.60.68.100;CTRY:SE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.axis.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(82310400026)(1800799024)(376014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: axis.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Nov 2024 16:36:50.9540
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: bc78499b-5e28-41fa-bada-08dcfe813731
-X-MS-Exchange-CrossTenant-Id: 78703d3c-b907-432f-b066-88f7af9ca3af
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=78703d3c-b907-432f-b066-88f7af9ca3af;Ip=[195.60.68.100];Helo=[mail.axis.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	AM4PEPF00025F95.EURPRD83.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS4PR02MB8288
 
-Sorry for the late response Zhihao! I've been quite busy these days...
-
-On Fri, Oct 18, 2024 at 09:40 +0800 Zhihao Cheng <chengzhihao1@huawei.com> =
-wrote:
-
-> =E5=9C=A8 2024/10/18 2:36, Waqar Hameed =E5=86=99=E9=81=93:
->> On Wed, Oct 16, 2024 at 10:11 +0800 Zhihao Cheng <chengzhihao1@huawei.co=
-m> wrote:
->> [...]
->>=20
->>> BTW, what is the configuration of your flash?(eg. erase size, page size=
-)?
->> $ mtdinfo /dev/mtd2
->>    mtd2
->>    Name:                           firmware
->>    Type:                           nand
->>    Eraseblock size:                131072 bytes, 128.0 KiB
->>    Amount of eraseblocks:          1832 (240123904 bytes, 229.0 MiB)
->>    Minimum input/output unit size: 2048 bytes
->>    Sub-page size:                  2048 bytes
->>    OOB size:                       64 bytes
->>    Character device major/minor:   90:4
->>    Bad blocks are allowed:         true
->>    Device is writable:             true
->> $ ubinfo /dev/ubi0_0
->>    Volume ID:   0 (on ubi0)
->>    Type:        dynamic
->>    Alignment:   1
->>    Size:        661 LEBs (83931136 bytes, 80.0 MiB)
->>    State:       OK
->>    Name:        test-vol
->>    Character device major/minor: 244:1
->> [...]
+On Thu, Nov 7, 2024 at 1:15=E2=80=AFAM Masahiro Yamada <masahiroy@kernel.or=
+g> wrote:
 >
-> Thanks, I will change my nandsim configurations to generate a mtd device =
-the
-> same model.
+> Commit b1fca27d384e ("kernel debug: support resetting WARN*_ONCE")
+> added support for clearing the state of once warnings. However,
+> it is not functional when CONFIG_LD_DEAD_CODE_DATA_ELIMINATION or
+> CONFIG_LTO_CLANG is enabled, because .data.unlikely matches the
 
-Did you manage to reproduce the issue with this?
+This is a copy-paste error.
 
->>=20
->>> Well, let's do a preliminary analysis.
->>> The znode->cparent[znode->ciip] is a freed address in write_index(), wh=
-ich
->>> means:
->>> 1. 'znode->ciip' is valid, znode->cparent is freed by tnc_delete, howev=
-er znode
->>> cannot be freed if znode->cnext is not NULL, which means:
->>>    a) 'znode->cparent' is not dirty, we should add an assertion like
->>>    ubifs_assert(c, ubifs_zn_dirty(znode->cparent)) in get_znodes_to_com=
-mit().
->>>    Note, please check that 'znode->cparent' is not NULL before the asse=
-rtion.
->>>    b) 'znode->cparent' is dirty, but it is not added into list 'c->cnex=
-t', we
->>>    should traverse the entire TNC in get_znodes_to_commit() to make sur=
-e that all
->>>    dirty znodes are collected into list 'c->cnext', so another assertio=
-n is
->>>   needed.
+  s/.data.unlikely/.data.once/
 
-I'm a little worried that traversing the whole TNC could change the
-timing behavior, and thus might not trigger the race. Let's do that in
-steps? Start with the other asserts (see diff below) and later just do
-this assert. Does that sound reasonable?
 
-I could modify `dbg_check_tnc()` so that it also checks that each dirty
-`znode` is present in `c->cnext` list. We then call this at the end of
-`get_znodes_to_commit()`.
-
->>> 2. 'znode->ciip' is invalid, and the value beyonds the memory area of
->>> znode->cparent. All znodes are allocated with size of 'c->max_znode_sz'=
-, which
->>> means that 'znode->ciip' exceeds the 'c->fantout', so we can add an ass=
-ertion
->>> like ubifs_assert(c, znode->ciip < c->fantout) in get_znodes_to_commit(=
-).
->>>
->>> That's what I can think of, are there any other possibilities?
->> I looked a little more at `get_znodes_to_commit()` when adding the
->> asserts you suggest, and I have a question: what happens when
->> `find_next_dirty()` returns `NULL`? In that case
->> ```
->> znode->cnext =3D c->cnext;
->> ```
->> but `znode->cparent` and `znode->ciip` are not updated. Shouldn't they?
+> .data.[0-9a-zA-Z_]* pattern in the DATA_MAIN macro.
 >
-> Good thinking.
-> According to the implementation of find_next_dirty(), the order of dirty =
-znodes
-> collection is bottom-up, which means that the last dirty znode is the root
-> znode, so it doesn't have a parent. You can verify that by adding asserti=
-on to
-> check whether the last dirty znode is the root.
+> Commit cb87481ee89d ("kbuild: linker script do not match C names unless
+> LD_DEAD_CODE_DATA_ELIMINATION is configured") was introduced to suppress
+> the issue for the default CONFIG_LD_DEAD_CODE_DATA_ELIMINATION=3Dn case,
+> providing a minimal fix for stable backporting. We were aware this did
+> not address the issue for CONFIG_LD_DEAD_CODE_DATA_ELIMINATION=3Dy. The
+> plan was to apply correct fixes and then revert cb87481ee89d. [1]
+>
+> Seven years have passed since then, yet the #ifdef workaround remains in
+> place. Meanwhile, commit b1fca27d384e introduced the .data.once section,
+> and commit dc5723b02e52 ("kbuild: add support for Clang LTO") extended
+> the #ifdef.
+>
+> Using a ".." separator in the section name fixes the issue for
+> CONFIG_LD_DEAD_CODE_DATA_ELIMINATION and CONFIG_LTO_CLANG.
+>
+> [1]: https://lore.kernel.org/linux-kbuild/CAK7LNASck6BfdLnESxXUeECYL26yUD=
+m0cwRZuM4gmaWUkxjL5g@mail.gmail.com/
+>
+> Fixes: b1fca27d384e ("kernel debug: support resetting WARN*_ONCE")
+> Fixes: dc5723b02e52 ("kbuild: add support for Clang LTO")
+> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+> ---
+>
+>  include/asm-generic/vmlinux.lds.h | 2 +-
+>  include/linux/mmdebug.h           | 6 +++---
+>  include/linux/once.h              | 4 ++--
+>  include/linux/once_lite.h         | 2 +-
+>  include/net/net_debug.h           | 2 +-
+>  mm/internal.h                     | 2 +-
+>  6 files changed, 9 insertions(+), 9 deletions(-)
+>
+> diff --git a/include/asm-generic/vmlinux.lds.h b/include/asm-generic/vmli=
+nux.lds.h
+> index 3c9dc1fd094d..54504013c749 100644
+> --- a/include/asm-generic/vmlinux.lds.h
+> +++ b/include/asm-generic/vmlinux.lds.h
+> @@ -359,7 +359,7 @@ defined(CONFIG_AUTOFDO_CLANG) || defined(CONFIG_PROPE=
+LLER_CLANG)
+>         *(.data..shared_aligned) /* percpu related */                   \
+>         *(.data..unlikely)                                              \
+>         __start_once =3D .;                                              =
+ \
+> -       *(.data.once)                                                   \
+> +       *(.data..once)                                                  \
+>         __end_once =3D .;                                                =
+ \
+>         STRUCT_ALIGN();                                                 \
+>         *(__tracepoints)                                                \
+> diff --git a/include/linux/mmdebug.h b/include/linux/mmdebug.h
+> index 39a7714605a7..d7cb1e5ecbda 100644
+> --- a/include/linux/mmdebug.h
+> +++ b/include/linux/mmdebug.h
+> @@ -46,7 +46,7 @@ void vma_iter_dump_tree(const struct vma_iterator *vmi)=
+;
+>                 }                                                       \
+>         } while (0)
+>  #define VM_WARN_ON_ONCE_PAGE(cond, page)       ({                      \
+> -       static bool __section(".data.once") __warned;                   \
+> +       static bool __section(".data..once") __warned;                  \
+>         int __ret_warn_once =3D !!(cond);                                =
+ \
+>                                                                         \
+>         if (unlikely(__ret_warn_once && !__warned)) {                   \
+> @@ -66,7 +66,7 @@ void vma_iter_dump_tree(const struct vma_iterator *vmi)=
+;
+>         unlikely(__ret_warn);                                           \
+>  })
+>  #define VM_WARN_ON_ONCE_FOLIO(cond, folio)     ({                      \
+> -       static bool __section(".data.once") __warned;                   \
+> +       static bool __section(".data..once") __warned;                  \
+>         int __ret_warn_once =3D !!(cond);                                =
+ \
+>                                                                         \
+>         if (unlikely(__ret_warn_once && !__warned)) {                   \
+> @@ -77,7 +77,7 @@ void vma_iter_dump_tree(const struct vma_iterator *vmi)=
+;
+>         unlikely(__ret_warn_once);                                      \
+>  })
+>  #define VM_WARN_ON_ONCE_MM(cond, mm)           ({                      \
+> -       static bool __section(".data.once") __warned;                   \
+> +       static bool __section(".data..once") __warned;                  \
+>         int __ret_warn_once =3D !!(cond);                                =
+ \
+>                                                                         \
+>         if (unlikely(__ret_warn_once && !__warned)) {                   \
+> diff --git a/include/linux/once.h b/include/linux/once.h
+> index bc714d414448..30346fcdc799 100644
+> --- a/include/linux/once.h
+> +++ b/include/linux/once.h
+> @@ -46,7 +46,7 @@ void __do_once_sleepable_done(bool *done, struct static=
+_key_true *once_key,
+>  #define DO_ONCE(func, ...)                                              =
+    \
+>         ({                                                               =
+    \
+>                 bool ___ret =3D false;                                   =
+      \
+> -               static bool __section(".data.once") ___done =3D false;   =
+      \
+> +               static bool __section(".data..once") ___done =3D false;  =
+      \
+>                 static DEFINE_STATIC_KEY_TRUE(___once_key);              =
+    \
+>                 if (static_branch_unlikely(&___once_key)) {              =
+    \
+>                         unsigned long ___flags;                          =
+    \
+> @@ -64,7 +64,7 @@ void __do_once_sleepable_done(bool *done, struct static=
+_key_true *once_key,
+>  #define DO_ONCE_SLEEPABLE(func, ...)                                    =
+       \
+>         ({                                                               =
+       \
+>                 bool ___ret =3D false;                                   =
+         \
+> -               static bool __section(".data.once") ___done =3D false;   =
+         \
+> +               static bool __section(".data..once") ___done =3D false;  =
+         \
+>                 static DEFINE_STATIC_KEY_TRUE(___once_key);              =
+       \
+>                 if (static_branch_unlikely(&___once_key)) {              =
+       \
+>                         ___ret =3D __do_once_sleepable_start(&___done);  =
+         \
+> diff --git a/include/linux/once_lite.h b/include/linux/once_lite.h
+> index b7bce4983638..27de7bc32a06 100644
+> --- a/include/linux/once_lite.h
+> +++ b/include/linux/once_lite.h
+> @@ -12,7 +12,7 @@
+>
+>  #define __ONCE_LITE_IF(condition)                                      \
+>         ({                                                              \
+> -               static bool __section(".data.once") __already_done;     \
+> +               static bool __section(".data..once") __already_done;    \
+>                 bool __ret_cond =3D !!(condition);                       =
+ \
+>                 bool __ret_once =3D false;                               =
+ \
+>                                                                         \
+> diff --git a/include/net/net_debug.h b/include/net/net_debug.h
+> index 1e74684cbbdb..4a79204c8d30 100644
+> --- a/include/net/net_debug.h
+> +++ b/include/net/net_debug.h
+> @@ -27,7 +27,7 @@ void netdev_info(const struct net_device *dev, const ch=
+ar *format, ...);
+>
+>  #define netdev_level_once(level, dev, fmt, ...)                        \
+>  do {                                                           \
+> -       static bool __section(".data.once") __print_once;       \
+> +       static bool __section(".data..once") __print_once;      \
+>                                                                 \
+>         if (!__print_once) {                                    \
+>                 __print_once =3D true;                            \
+> diff --git a/mm/internal.h b/mm/internal.h
+> index 93083bbeeefa..a23f7b11b760 100644
+> --- a/mm/internal.h
+> +++ b/mm/internal.h
+> @@ -48,7 +48,7 @@ struct folio_batch;
+>   * when we specify __GFP_NOWARN.
+>   */
+>  #define WARN_ON_ONCE_GFP(cond, gfp)    ({                              \
+> -       static bool __section(".data.once") __warned;                   \
+> +       static bool __section(".data..once") __warned;                  \
+>         int __ret_warn_once =3D !!(cond);                                =
+ \
+>                                                                         \
+>         if (unlikely(!(gfp & __GFP_NOWARN) && __ret_warn_once && !__warne=
+d)) { \
+> --
+> 2.43.0
+>
 
-[...]
 
-To summarize, I'll start a run with the following asserts:
-
-diff --git a/fs/ubifs/tnc_commit.c b/fs/ubifs/tnc_commit.c
-index a55e04822d16..4eef82e02afe 100644
---- a/fs/ubifs/tnc_commit.c
-+++ b/fs/ubifs/tnc_commit.c
-@@ -652,11 +652,17 @@ static int get_znodes_to_commit(struct ubifs_info *c)
- 	}
- 	cnt +=3D 1;
- 	while (1) {
-+		ubifs_assert(c, znode->ciip < c->fantout);
-+		if (znode->cparent) {
-+			ubifs_assert(c, ubifs_zn_dirty(znode->cparent));
-+		}
-+
- 		ubifs_assert(c, !ubifs_zn_cow(znode));
- 		__set_bit(COW_ZNODE, &znode->flags);
- 		znode->alt =3D 0;
- 		cnext =3D find_next_dirty(znode);
- 		if (!cnext) {
-+			ubifs_assert(c, znode =3D=3D c->zroot.znode);
- 			znode->cnext =3D c->cnext;
- 			break;
- 		}
-
-Then later, another run with a modified `dbg_check_tnc()` to check that
-all dirty `znode`s are indeed present in the list `c->cnext`.
+--=20
+Best Regards
+Masahiro Yamada
 
