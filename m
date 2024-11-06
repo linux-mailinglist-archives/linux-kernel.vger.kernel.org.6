@@ -1,265 +1,186 @@
-Return-Path: <linux-kernel+bounces-398226-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398245-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 478779BEA68
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 13:45:07 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92C699BEAFF
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 13:54:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 614381C259B3
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 12:45:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B7A2E1C23C08
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 12:54:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 973E51F9A8E;
-	Wed,  6 Nov 2024 12:38:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 719FA2036F7;
+	Wed,  6 Nov 2024 12:40:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="FSEk2wbb"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="vqhCgkyp";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="VbMxvtmi";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="KKpogcNS";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="L1WJ1IRV"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 669051F8F18;
-	Wed,  6 Nov 2024 12:38:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DCF01E1049;
+	Wed,  6 Nov 2024 12:40:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730896692; cv=none; b=RsPtKN+dnbJX6Qf5Tr4XNmJPpvBdJWfyHUj2MXq/0EicfgOvMGZEYy9j8MVoYiLoQHzGkAmslE4I7xY2ko/ni13yIh3NmXdxqPU8yYNl393cDzq8k8OKOcS8TZ72sZSWlu+MzixUgVPiVwBVNBW3IvZVjJRJjshuzpNSPFaw+CU=
+	t=1730896810; cv=none; b=mVb531cxfT1R4wMqMivUGiqmja7OJF75Wevhd2LpNNLR+JVOM95kI9aOe7WSI/GrBSDfVr/wQiPTscFtE+ReJxGOE9U5OpcGJx42AbbLd+xfP0IEsUXl2mtJUat+LAsTJ9PJ7r5mJb48QBXPMkPwfgF3xHT2FC8Hb2Lk74PVmaA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730896692; c=relaxed/simple;
-	bh=tMjpxvbngeNlNIlcaBFOupaNvK9ipw97vj5olVqIvoU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=OsVJErcpIvTG620WMVfC6gbz+809u9nKrCNjunPIihh0oM6VE0x8x1svaopfQnckAXZwEifB86IITvz8eTTleR+IvWK8MJOMjzQjlHtaIj7xBL8T2RSkRXPC58pk0MZj8rHnGRMY6xDOYvJVFaqmUUDsxwVLo2Nf4rUb7Zq+F4s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=FSEk2wbb; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Transfer-Encoding:MIME-Version:References:
-	In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=tgQ2wpFMOWfjeLb3bc1gmQMurl5R7B/AfYWdQuioG5k=; b=FSEk2wbbVXfw4R5fvPJc+K5Vcm
-	9LZSKXSjjOJUeUxSe4F1TP2U73GY6pT9elXAN1L0PJrm80e4vuoJ2yRXT4OvYzjvN3eASn7CRo3af
-	QgURrN4OxL8lfsnW4G6vqYe+ucgI3PTp7C6QAacFXvRNvc2BMi5MZ0zMILBU8oT5Un+HUrFtqzR4+
-	5A/SWWb2ec2u42gbpOac4RQc8AynO3boIaypuCU5N83uMTtdgLJPZv7ZZYEJmZPUtcpqCgHfo8eru
-	+h+xJYub8knsyCel3WJ+X2nuA7bvkVSFtkN8mULdAH7KBSDEIHDBb+LMVFr+Jeaam8gIY3v54r9wl
-	tfX/IlVQ==;
-Received: from i53875b28.versanet.de ([83.135.91.40] helo=localhost.localdomain)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1t8fIW-0007A8-Ko; Wed, 06 Nov 2024 13:38:08 +0100
-From: Heiko Stuebner <heiko@sntech.de>
-To: heiko@sntech.de
-Cc: quentin.schulz@cherry.de,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Heiko Stuebner <heiko.stuebner@cherry.de>
-Subject: [PATCH 3/3] arm64: dts: rockchip: add overlay for tiger-haikou video-demo adapter
-Date: Wed,  6 Nov 2024 13:37:58 +0100
-Message-ID: <20241106123758.423584-4-heiko@sntech.de>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241106123758.423584-1-heiko@sntech.de>
-References: <20241106123758.423584-1-heiko@sntech.de>
+	s=arc-20240116; t=1730896810; c=relaxed/simple;
+	bh=RNuTLGqC+bLXTtNPaVpjRNEjHj4wu2QtxANcNPKNJYI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Phv25Ug67ye10mocsHnA8fGnWUB5covoeTYziUl8diKfqKZhWfFr+JfxCSb5YUnGLzdozjjtDyb1/GXJWQZCiK9rQupkOmg6W0ihefBnZMRItkNtsP8bzvmnaQjVjrnMPc5rNAbtQ/ksLYVL1LY09TSau1ox1KNSnIxWRz3eQbQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=vqhCgkyp; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=VbMxvtmi; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=KKpogcNS; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=L1WJ1IRV; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 7C37D1FF3E;
+	Wed,  6 Nov 2024 12:40:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1730896806; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JzNZyCZ+EZSIT2sghTEuwBerYxmZUtNlOdMuhYFO3uw=;
+	b=vqhCgkypUz0QgFah9t67g6EZIBjs97ql9cTlo+4ZvXiobElZKGyjo8ktcdCxiKtZXHWqXw
+	FoTmj+EiDMCGWqoAavoXTo5ym+knkkGSsSuZfsiu+Vl0F+4yQNJ/uU6uEnS82SWUl7Y8iY
+	Daq7OLAOi4VButOUhKMBz9cdKQ4GO2o=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1730896806;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JzNZyCZ+EZSIT2sghTEuwBerYxmZUtNlOdMuhYFO3uw=;
+	b=VbMxvtmit7wva7R1Jp02YBdazc32k/DF4cSci0eiqnF9vHNRe1647w3m55wYQ1SEsnAmv8
+	Z4A7IVrN1Xhme3BQ==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=KKpogcNS;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=L1WJ1IRV
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1730896804; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JzNZyCZ+EZSIT2sghTEuwBerYxmZUtNlOdMuhYFO3uw=;
+	b=KKpogcNSgaA4mWFCjJHtgTXe/e5O/21h+QlWasEl1Ifsx9QGBOobgENn0f827Pw8dtdUm3
+	Zz04JcVIOyvpvOub7XJ3JG/hSqxZzFGy/tMPaKTpEmnRka3/ARtdoLTy3L/rCAFc31Wlps
+	QPD4ssNdnDQfq7bEX7qCkVJ1Tyyds4E=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1730896804;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JzNZyCZ+EZSIT2sghTEuwBerYxmZUtNlOdMuhYFO3uw=;
+	b=L1WJ1IRViRWfaUYX9kUW3bc4wx8a+Xba3+2NxlQw7d1Vf0cUBJjTkpxFDusRhJVCcFoKWr
+	anlkkf48PMCnnACQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 7257613736;
+	Wed,  6 Nov 2024 12:40:04 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id xLzkG6RjK2ehEwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Wed, 06 Nov 2024 12:40:04 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 26022A0AF6; Wed,  6 Nov 2024 13:40:00 +0100 (CET)
+Date: Wed, 6 Nov 2024 13:40:00 +0100
+From: Jan Kara <jack@suse.cz>
+To: Hao Ge <hao.ge@linux.dev>
+Cc: jack@suse.cz, sandeen@redhat.com, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Hao Ge <gehao@kylinos.cn>
+Subject: Re: [PATCH] isofs: avoid memory leak in iocharset
+Message-ID: <20241106124000.kcrscsv5nrtporjs@quack3>
+References: <20241106082841.51773-1-hao.ge@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241106082841.51773-1-hao.ge@linux.dev>
+X-Rspamd-Queue-Id: 7C37D1FF3E
+X-Spam-Score: -4.01
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	ARC_NA(0.00)[];
+	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
+	MISSING_XM_UA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email];
+	RCPT_COUNT_FIVE(0.00)[6];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_TLS_LAST(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-From: Heiko Stuebner <heiko.stuebner@cherry.de>
+On Wed 06-11-24 16:28:41, Hao Ge wrote:
+> From: Hao Ge <gehao@kylinos.cn>
+> 
+> A memleak was found as below:
+> 
+> unreferenced object 0xffff0000d10164d8 (size 8):
+>   comm "pool-udisksd", pid 108217, jiffies 4295408555
+>   hex dump (first 8 bytes):
+>     75 74 66 38 00 cc cc cc                          utf8....
+>   backtrace (crc de430d31):
+>     [<ffff800081046e6c>] kmemleak_alloc+0xb8/0xc8
+>     [<ffff8000803e6c3c>] __kmalloc_node_track_caller_noprof+0x380/0x474
+>     [<ffff800080363b74>] kstrdup+0x70/0xfc
+>     [<ffff80007bb3c6a4>] isofs_parse_param+0x228/0x2c0 [isofs]
+>     [<ffff8000804d7f68>] vfs_parse_fs_param+0xf4/0x164
+>     [<ffff8000804d8064>] vfs_parse_fs_string+0x8c/0xd4
+>     [<ffff8000804d815c>] vfs_parse_monolithic_sep+0xb0/0xfc
+>     [<ffff8000804d81d8>] generic_parse_monolithic+0x30/0x3c
+>     [<ffff8000804d8bfc>] parse_monolithic_mount_data+0x40/0x4c
+>     [<ffff8000804b6a64>] path_mount+0x6c4/0x9ec
+>     [<ffff8000804b6e38>] do_mount+0xac/0xc4
+>     [<ffff8000804b7494>] __arm64_sys_mount+0x16c/0x2b0
+>     [<ffff80008002b8dc>] invoke_syscall+0x7c/0x104
+>     [<ffff80008002ba44>] el0_svc_common.constprop.1+0xe0/0x104
+>     [<ffff80008002ba94>] do_el0_svc+0x2c/0x38
+>     [<ffff800081041108>] el0_svc+0x3c/0x1b8
+> 
+> The opt->iocharset is freed inside the isofs_fill_super function,
+> But there may be situations where it's not possible to
+> enter this function.
+> 
+> For example, in the get_tree_bdev_flags function,when
+> encountering the situation where "Can't mount, would change RO state,"
+> In such a case, isofs_fill_super will not have the opportunity
+> to be called,which means that opt->iocharset will not have the chance
+> to be freed,ultimately leading to a memory leak.
+> 
+> Let's move the memory freeing of opt->iocharset into
+> isofs_free_fc function.
+> 
+> Fixes: 1b17a46c9243 ("isofs: convert isofs to use the new mount API")
+> Signed-off-by: Hao Ge <gehao@kylinos.cn>
 
-This adds support for the video-demo-adapter for the Haikou devkit with
-Tiger RK3588 SoM.
+Thanks. I've added the patch to my tree.
 
-The Video Demo adapter is an adapter connected to the fake PCIe slot
-labeled "Video Connector" on the Haikou devkit.
-
-It's main feature is a Leadtek DSI-display with touchscreen. To drive these
-components a number of additional regulators are grouped on the adapter as
-well as a PCA9670 gpio-expander to provide the needed additional gpio-lines.
-
-Signed-off-by: Heiko Stuebner <heiko.stuebner@cherry.de>
----
- arch/arm64/boot/dts/rockchip/Makefile         |   1 +
- .../rk3588-tiger-haikou-video-demo.dtso       | 153 ++++++++++++++++++
- 2 files changed, 154 insertions(+)
- create mode 100644 arch/arm64/boot/dts/rockchip/rk3588-tiger-haikou-video-demo.dtso
-
-diff --git a/arch/arm64/boot/dts/rockchip/Makefile b/arch/arm64/boot/dts/rockchip/Makefile
-index 09423070c992..0c4ee6a767b8 100644
---- a/arch/arm64/boot/dts/rockchip/Makefile
-+++ b/arch/arm64/boot/dts/rockchip/Makefile
-@@ -143,6 +143,7 @@ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3588-rock-5b.dtb
- dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3588-rock-5b-pcie-ep.dtbo
- dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3588-rock-5b-pcie-srns.dtbo
- dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3588-tiger-haikou.dtb
-+dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3588-tiger-haikou-video-demo.dtbo
- dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3588-toybrick-x0.dtb
- dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3588-turing-rk1.dtb
- dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3588s-coolpi-4b.dtb
-diff --git a/arch/arm64/boot/dts/rockchip/rk3588-tiger-haikou-video-demo.dtso b/arch/arm64/boot/dts/rockchip/rk3588-tiger-haikou-video-demo.dtso
-new file mode 100644
-index 000000000000..c7416349e7d5
---- /dev/null
-+++ b/arch/arm64/boot/dts/rockchip/rk3588-tiger-haikou-video-demo.dtso
-@@ -0,0 +1,153 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-+/*
-+ * DT-overlay for the camera / DSI demo appliance for Haikou boards.
-+ * In the flavour for use with a Tiger system-on-module.
-+ */
-+
-+/dts-v1/;
-+/plugin/;
-+
-+#include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/interrupt-controller/irq.h>
-+#include <dt-bindings/leds/common.h>
-+#include <dt-bindings/pinctrl/rockchip.h>
-+#include <dt-bindings/soc/rockchip,vop2.h>
-+
-+&{/} {
-+	video-adapter-leds {
-+		compatible = "gpio-leds";
-+		status = "okay";
-+
-+		video-adapter-led {
-+			color = <LED_COLOR_ID_BLUE>;
-+			gpios = <&pca9670 7 GPIO_ACTIVE_HIGH>;
-+			label = "video-adapter-led";
-+			linux,default-trigger = "none";
-+		};
-+	};
-+
-+	backlight: backlight {
-+		compatible = "pwm-backlight";
-+		power-supply = <&dc_12v>;
-+		pwms = <&pwm0 0 25000 0>;
-+	};
-+
-+	hdmi-con {
-+		compatible = "hdmi-connector";
-+		type = "a";
-+
-+		port {
-+			hdmi_con_in: endpoint {
-+				remote-endpoint = <&hdmi0_out_con>;
-+			};
-+		};
-+	};
-+
-+	vcc1v8_video: regulator-vcc1v8-video {
-+		compatible = "regulator-fixed";
-+		regulator-name = "vcc1v8-video";
-+		regulator-always-on;
-+		regulator-boot-on;
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <1800000>;
-+		vin-supply = <&vcc3v3_baseboard>;
-+	};
-+
-+	vcc2v8_video: regulator-vcc2v8-video {
-+		compatible = "regulator-fixed";
-+		regulator-name = "vcc2v8-video";
-+		regulator-always-on;
-+		regulator-boot-on;
-+		regulator-min-microvolt = <2800000>;
-+		regulator-max-microvolt = <2800000>;
-+		vin-supply = <&vcc3v3_baseboard>;
-+	};
-+};
-+
-+&dsi0 {
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+	status = "okay";
-+
-+	panel@0 {
-+		compatible = "leadtek,ltk050h3148w";
-+		reg = <0>;
-+		backlight = <&backlight>;
-+		iovcc-supply = <&vcc1v8_video>;
-+		reset-gpios = <&pca9670 0 GPIO_ACTIVE_LOW>;
-+		vci-supply = <&vcc2v8_video>;
-+
-+		port {
-+			mipi_panel_in: endpoint {
-+				remote-endpoint = <&dsi0_out_panel>;
-+			};
-+		};
-+	};
-+};
-+
-+&dsi0_in {
-+	dsi0_in_vp3: endpoint {
-+		remote-endpoint = <&vp3_out_dsi0>;
-+	};
-+};
-+
-+&dsi0_out {
-+	dsi0_out_panel: endpoint {
-+		remote-endpoint = <&mipi_panel_in>;
-+	};
-+};
-+
-+&i2c6 {
-+	/* OV5675, GT911, DW9714 are limited to 400KHz */
-+	clock-frequency = <400000>;
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+
-+	touchscreen@14 {
-+		compatible = "goodix,gt911";
-+		reg = <0x14>;
-+		interrupt-parent = <&gpio3>;
-+		interrupts = <RK_PC3 IRQ_TYPE_LEVEL_LOW>;
-+		irq-gpios = <&gpio3 RK_PC3 GPIO_ACTIVE_HIGH>;
-+		pinctrl-0 = <&touch_int>;
-+		pinctrl-names = "default";
-+		reset-gpios = <&pca9670 1 GPIO_ACTIVE_HIGH>;
-+		AVDD28-supply = <&vcc2v8_video>;
-+		VDDIO-supply = <&vcc3v3_baseboard>;
-+	};
-+
-+	pca9670: gpio@27 {
-+		compatible = "nxp,pca9670";
-+		reg = <0x27>;
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+	};
-+};
-+
-+&mipidcphy0 {
-+	status = "okay";
-+};
-+
-+&pinctrl {
-+	touch {
-+		touch_int: touch-int {
-+			rockchip,pins = <3 RK_PC3 RK_FUNC_GPIO &pcfg_pull_none>;
-+		};
-+	};
-+};
-+
-+&pwm0 {
-+	pinctrl-0 = <&pwm0m1_pins>;
-+	pinctrl-names = "default";
-+	status = "okay";
-+};
-+
-+&vp3 {
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+
-+	vp3_out_dsi0: endpoint@ROCKCHIP_VOP2_EP_MIPI0 {
-+		reg = <ROCKCHIP_VOP2_EP_MIPI0>;
-+		remote-endpoint = <&dsi0_in_vp3>;
-+	};
-+};
+								Honza
 -- 
-2.45.2
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
