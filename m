@@ -1,251 +1,115 @@
-Return-Path: <linux-kernel+bounces-399064-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399065-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 777359BFA74
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 00:50:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AE059BFA77
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 00:52:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 07FE81F225ED
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 23:50:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 403F21F22B9B
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 23:52:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1B8B20E003;
-	Wed,  6 Nov 2024 23:50:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44C8620E01D;
+	Wed,  6 Nov 2024 23:52:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="q2mAxqyV"
-Received: from out-181.mta0.migadu.com (out-181.mta0.migadu.com [91.218.175.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Cpugjt5V"
+Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DE3020C303
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 23:50:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6306620D4FE;
+	Wed,  6 Nov 2024 23:52:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730937020; cv=none; b=Q0sirCA91Rdc/N5DB1L6U4asvYN8uOBJtPICQGMzipDvxuMHu9sWa0jy2LfquWPVsRzSM3mNrzJZGHFlxzxiEnKOrSHuDOPLxAZVt5v/hIJIWbC5JvhWRWlPTSqa0BmHTFKd9ENaCgOY36nAuRMtT6vq52FaHzl8Zp1Vl0floyM=
+	t=1730937142; cv=none; b=Kqtj+/yMDFvSrRagdZjMU8+IUwNL0KBFxqAOVGMLoJzncYYgD8PpE7nagwYW9mwZsq5iavF7cDh7ZUK+haWn4RD2oPGbtTE2zZFHDAdOpgG2yl2uSWwuNA+Ez0h1aB30S69anGefVAfLKQX626EldI524BwC2ok3SYpf6IdgCWI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730937020; c=relaxed/simple;
-	bh=o/1mJP6iyNuvjV8FxTsbxQ0X0cvhyb0dNuVHKSR69AM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uoKwhhI0RA9IUNYTq3riwbWFt9Pdr18tIDFOaeq08NEWbrxtad9sog5Sa8SwJi6Vs7Rgy1XQJ4P1acMmleogZztLkvWfskx2Q5YcspQKz9ALz33vFPQP83ZduoMpOTozdNnJbZtTV0l7nkK5v9HNmYMhVnZ3VMP3T9vXzhlq9YI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=q2mAxqyV; arc=none smtp.client-ip=91.218.175.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Wed, 6 Nov 2024 15:50:05 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1730937014;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Gg2GvaE+yzZyVFg0LFOVZxNsyEO3RamNhvSGqKggQhQ=;
-	b=q2mAxqyVW0UCvM1RaGeV38bhLQ7TyItjbQ1TtJuQ3PqusZI/nOuATgQroM6kw4U3Oh9qT2
-	zD8AVKu6rt0VN1UgtMQyxSbnZ9a9yUW2J/w8GYbChQB880hB7TBca+sAftYtldOGMeGrUg
-	ofsWvwFGfKzk/Y2RPGpuFYPTQ5+s4PE=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Shakeel Butt <shakeel.butt@linux.dev>
-To: Joshua Hahn <joshua.hahnjy@gmail.com>
-Cc: hannes@cmpxchg.org, mhocko@kernel.org, roman.gushchin@linux.dev, 
-	muchun.song@linux.dev, akpm@linux-foundation.org, cgroups@vger.kernel.org, 
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org, kernel-team@meta.com
-Subject: Re: [PATCH 2/2] memcg/hugetlb: Deprecate hugetlb memcg
- try-commit-cancel charging
-Message-ID: <o7dpwewfztqpkidrhvpdm57ikid4yswygag5gkjplfwdfkl54l@bs6oh2t4jp7z>
-References: <20241106221434.2029328-1-joshua.hahnjy@gmail.com>
- <20241106221434.2029328-3-joshua.hahnjy@gmail.com>
+	s=arc-20240116; t=1730937142; c=relaxed/simple;
+	bh=Y1qQw4FYOeQlsbYrvpZWQ8Dw59H+2DFmX490k1WVDLw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=k6dyHfE6XEIx27m0nFs12NwT7/0/4ZGTsTYhiRwJIdivylUszj3oxc+ThJvjI21PG1FolhdEmHP22CzWj5l00CoQLuRqJGMa2UrRRf2zI4Epus85lxsI/z8EKmB8bHM48v3nkzCFpVGcmHB2v3BT5SkFwX9urgRB77M+/PxQIxg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Cpugjt5V; arc=none smtp.client-ip=209.85.215.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-7ea7ad1e01fso318704a12.0;
+        Wed, 06 Nov 2024 15:52:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730937141; x=1731541941; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=BZoQBXfahC5oBSPPmFRFV/8BoW/kEtqQMgBRoBlf8qA=;
+        b=Cpugjt5VzAN/v7/to8uvPBmhzpIdttKyKgXwRDjST73nYk1Wc8Lv4VJwZpGdqAXi82
+         j9p+GnHGXI2NyeofR8T88t0NrRFlkOjDrxRImD0EGLPTmxHLTLmR5VF9nB5g95tLLczX
+         L7/qVruJjDCcY12XbPX9oI2EP6q67B3IVjLxv9lV2eP44GdyTGBAoSxxNvPSwAOj60dr
+         3CwKlW2iZeDnjg539ry/gFoJeX3ZlCPOjEdaCJW5nRWJjGjVnaBqotTA2U9qdWSos/Zc
+         eqcK68kBk6P0NEhf1z79oub2FB/6sZ6efH2u/s4t2p9Bs+kIx2UoV9TSDAscSh2y9+1e
+         gdcw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730937141; x=1731541941;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=BZoQBXfahC5oBSPPmFRFV/8BoW/kEtqQMgBRoBlf8qA=;
+        b=dDjwWfKfjq0d9iBpNakhKxokMbQ5Za6jYjprKa9EdPESzn0LQ1PZMpa9LSX3iU3mew
+         EwcHsDGGHjpWhqgvXU1fmHFctmlDNwdzATebWQpiKyF1dk1tohSE4AfzBfFSeIB7ogFC
+         b1YD8lXt6BfBHKMFDtL8AXgI1n8uc90R+ezJoyizMpQIo6PLEaixvBEYbZnguJrMP8EV
+         RfSys80M5FOm62HdmuEnzQSowcV8xSs1OJbbFdAbzddGraEmmAJ+vceNWjsRPfXrd1PS
+         1vk5hlpEtLpP/kvHQNFO8K4qCjI61SMXQ/X/5gm8O6o8xvcKmU4VihUZtGdXL3c0uVrF
+         kMbQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVLjqQF6HbJb5udZuN0fDXF/p0DD4fw/y0rFnN6Smrql4a2POPNUsjrDrCtToWannXU9rfYr4Mm6yM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwfswwNIMeQjZ8RGeFQ6uhmBfnFWE1RBv2OZsBvGri5T9rVPFQL
+	2KYQoWZ9mpXheAbrDCBBT7FzjAiOAjTSAB2ifKwPYUEuTbpAjD7c
+X-Google-Smtp-Source: AGHT+IEaWT2x2dkg8hWnsbNNHdlIEVlmXRlcTy4iqlOjzVVEHmONb9iRe1bPNQFrAFanCQABHTAY7w==
+X-Received: by 2002:a05:6a20:7346:b0:1d2:eaea:39d7 with SMTP id adf61e73a8af0-1dc105f22cbmr1976871637.9.1730937140712;
+        Wed, 06 Nov 2024 15:52:20 -0800 (PST)
+Received: from anishs-Air.attlocal.net ([2600:1700:3bdc:8c10:c934:17a7:b0a5:6e02])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72407a57105sm115903b3a.192.2024.11.06.15.52.19
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Wed, 06 Nov 2024 15:52:20 -0800 (PST)
+From: anish kumar <yesanishhere@gmail.com>
+To: corbet@lwn.net,
+	broonie@kernel.org,
+	dlechner@baylibre.com,
+	u.kleine-koenig@pengutronix.de,
+	Jonathan.Cameron@huawei.com,
+	pstanner@redhat.com
+Cc: linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	anish kumar <yesanishhere@gmail.com>
+Subject: [PATCH 1/2] Documentation: devres: add missing mailbox helpers
+Date: Wed,  6 Nov 2024 15:52:16 -0800
+Message-Id: <20241106235217.94718-1-yesanishhere@gmail.com>
+X-Mailer: git-send-email 2.39.3 (Apple Git-146)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241106221434.2029328-3-joshua.hahnjy@gmail.com>
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
 
-On Wed, Nov 06, 2024 at 02:14:34PM -0800, Joshua Hahn wrote:
-> This patch deprecates the memcg try-{commit,cancel} logic used in hugetlb.
-> Instead of having three points of error for memcg accounting, the error
-> patch is reduced to just one point at the end, and shares the same path
-> with the hugeTLB controller as well.
-> 
-> Please note that the hugeTLB controller still uses the try_charge to 
-> {commit/cancel} protocol. 
-> 
-> Signed-off-by: Joshua Hahn <joshua.hahnjy@gmail.com>
-> 
-> ---
->  include/linux/memcontrol.h |  3 +--
->  mm/hugetlb.c               | 35 ++++++++++++-----------------------
->  mm/memcontrol.c            | 37 +++++++++----------------------------
->  3 files changed, 22 insertions(+), 53 deletions(-)
-> 
-> diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
-> index 25761d55799e..0024634d161f 100644
-> --- a/include/linux/memcontrol.h
-> +++ b/include/linux/memcontrol.h
-> @@ -696,8 +696,7 @@ static inline int mem_cgroup_charge(struct folio *folio, struct mm_struct *mm,
->  
->  bool memcg_accounts_hugetlb(void);
->  
-> -int mem_cgroup_hugetlb_try_charge(struct mem_cgroup *memcg, gfp_t gfp,
-> -		long nr_pages);
-> +int mem_cgroup_charge_hugetlb(struct folio *folio, gfp_t gfp);
+mailbox api's were missing from the devres documentation.
+This patch adds them.
 
-Please cleanup mem_cgroup_cancel_charge() and mem_cgroup_commit_charge()
-as well as there will be no users after this patch.
+Signed-off-by: anish kumar <yesanishhere@gmail.com>
+---
+ Documentation/driver-api/driver-model/devres.rst | 4 ++++
+ 1 file changed, 4 insertions(+)
 
->  
->  int mem_cgroup_swapin_charge_folio(struct folio *folio, struct mm_struct *mm,
->  				  gfp_t gfp, swp_entry_t entry);
-> diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-> index fbb10e52d7ea..db9801b16d13 100644
-> --- a/mm/hugetlb.c
-> +++ b/mm/hugetlb.c
-> @@ -2967,21 +2967,13 @@ struct folio *alloc_hugetlb_folio(struct vm_area_struct *vma,
->  	struct hugepage_subpool *spool = subpool_vma(vma);
->  	struct hstate *h = hstate_vma(vma);
->  	struct folio *folio;
-> -	long map_chg, map_commit, nr_pages = pages_per_huge_page(h);
-> +	long map_chg, map_commit;
->  	long gbl_chg;
-> -	int memcg_charge_ret, ret, idx;
-> +	int ret, idx;
->  	struct hugetlb_cgroup *h_cg = NULL;
-> -	struct mem_cgroup *memcg;
->  	bool deferred_reserve;
->  	gfp_t gfp = htlb_alloc_mask(h) | __GFP_RETRY_MAYFAIL;
->  
-> -	memcg = get_mem_cgroup_from_current();
-> -	memcg_charge_ret = mem_cgroup_hugetlb_try_charge(memcg, gfp, nr_pages);
-> -	if (memcg_charge_ret == -ENOMEM) {
-> -		mem_cgroup_put(memcg);
-> -		return ERR_PTR(-ENOMEM);
-> -	}
-> -
->  	idx = hstate_index(h);
->  	/*
->  	 * Examine the region/reserve map to determine if the process
-> @@ -2989,12 +2981,8 @@ struct folio *alloc_hugetlb_folio(struct vm_area_struct *vma,
->  	 * code of zero indicates a reservation exists (no change).
->  	 */
->  	map_chg = gbl_chg = vma_needs_reservation(h, vma, addr);
-> -	if (map_chg < 0) {
-> -		if (!memcg_charge_ret)
-> -			mem_cgroup_cancel_charge(memcg, nr_pages);
-> -		mem_cgroup_put(memcg);
-> +	if (map_chg < 0)
->  		return ERR_PTR(-ENOMEM);
-> -	}
->  
->  	/*
->  	 * Processes that did not create the mapping will have no
-> @@ -3056,6 +3044,12 @@ struct folio *alloc_hugetlb_folio(struct vm_area_struct *vma,
->  		/* Fall through */
->  	}
->  
-> +	ret = mem_cgroup_charge_hugetlb(folio, gfp);
+diff --git a/Documentation/driver-api/driver-model/devres.rst b/Documentation/driver-api/driver-model/devres.rst
+index 5f2ee8d717b1..8350a098f81f 100644
+--- a/Documentation/driver-api/driver-model/devres.rst
++++ b/Documentation/driver-api/driver-model/devres.rst
+@@ -346,6 +346,10 @@ LED
+   devm_led_trigger_register()
+   devm_of_led_get()
+ 
++MAILBOX
++  devm_mbox_controller_register()
++  devm_mbox_controller_unregister()
++
+ MDIO
+   devm_mdiobus_alloc()
+   devm_mdiobus_alloc_size()
+-- 
+2.39.3 (Apple Git-146)
 
-You can not call this with hugetlb_lock held.
-
-> +	if (ret == -ENOMEM)
-> +		goto free_folio;
-> +	else if (!ret)
-> +		lruvec_stat_mod_folio(folio, NR_HUGETLB, pages_per_huge_page(h));
-> +
->  	hugetlb_cgroup_commit_charge(idx, pages_per_huge_page(h), h_cg, folio);
->  	/* If allocation is not consuming a reservation, also store the
->  	 * hugetlb_cgroup pointer on the page.
-> @@ -3092,13 +3086,11 @@ struct folio *alloc_hugetlb_folio(struct vm_area_struct *vma,
->  		}
->  	}
->  
-> -	if (!memcg_charge_ret)
-> -		mem_cgroup_commit_charge(folio, memcg);
-> -	lruvec_stat_mod_folio(folio, NR_HUGETLB, pages_per_huge_page(h));
-> -	mem_cgroup_put(memcg);
-> -
->  	return folio;
->  
-> +free_folio:
-> +	spin_unlock_irq(&hugetlb_lock);
-> +	free_huge_folio(folio);
->  out_uncharge_cgroup:
->  	hugetlb_cgroup_uncharge_cgroup(idx, pages_per_huge_page(h), h_cg);
->  out_uncharge_cgroup_reservation:
-> @@ -3110,9 +3102,6 @@ struct folio *alloc_hugetlb_folio(struct vm_area_struct *vma,
->  		hugepage_subpool_put_pages(spool, 1);
->  out_end_reservation:
->  	vma_end_reservation(h, vma, addr);
-> -	if (!memcg_charge_ret)
-> -		mem_cgroup_cancel_charge(memcg, nr_pages);
-> -	mem_cgroup_put(memcg);
->  	return ERR_PTR(-ENOSPC);
->  }
->  
-> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-> index 59dea0122579..3b728635d6aa 100644
-> --- a/mm/memcontrol.c
-> +++ b/mm/memcontrol.c
-> @@ -1448,8 +1448,7 @@ static void memcg_stat_format(struct mem_cgroup *memcg, struct seq_buf *s)
->  		u64 size;
->  
->  #ifdef CONFIG_HUGETLB_PAGE
-> -		if (unlikely(memory_stats[i].idx == NR_HUGETLB) &&
-> -		    !(cgrp_dfl_root.flags & CGRP_ROOT_MEMORY_HUGETLB_ACCOUNTING))
-> +		if (unlikely(memory_stats[i].idx == NR_HUGETLB) && !memcg_accounts_hugetlb())
->  			continue;
->  #endif
->  		size = memcg_page_state_output(memcg, memory_stats[i].idx);
-> @@ -4506,37 +4505,19 @@ bool memcg_accounts_hugetlb(void)
->  #endif
->  }
->  
-> -/**
-> - * mem_cgroup_hugetlb_try_charge - try to charge the memcg for a hugetlb folio
-> - * @memcg: memcg to charge.
-> - * @gfp: reclaim mode.
-> - * @nr_pages: number of pages to charge.
-> - *
-> - * This function is called when allocating a huge page folio to determine if
-> - * the memcg has the capacity for it. It does not commit the charge yet,
-> - * as the hugetlb folio itself has not been obtained from the hugetlb pool.
-> - *
-> - * Once we have obtained the hugetlb folio, we can call
-> - * mem_cgroup_commit_charge() to commit the charge. If we fail to obtain the
-> - * folio, we should instead call mem_cgroup_cancel_charge() to undo the effect
-> - * of try_charge().
-> - *
-> - * Returns 0 on success. Otherwise, an error code is returned.
-> - */
-> -int mem_cgroup_hugetlb_try_charge(struct mem_cgroup *memcg, gfp_t gfp,
-> -			long nr_pages)
-> +int mem_cgroup_charge_hugetlb(struct folio *folio, gfp_t gfp)
->  {
-> -	/*
-> -	 * If hugetlb memcg charging is not enabled, do not fail hugetlb allocation,
-> -	 * but do not attempt to commit charge later (or cancel on error) either.
-> -	 */
-> -	if (mem_cgroup_disabled() || !memcg ||
-> -		!cgroup_subsys_on_dfl(memory_cgrp_subsys) || !memcg_accounts_hugetlb())
-> +	struct mem_cgroup *memcg = get_mem_cgroup_from_current();
-
-Leaking the above reference in error paths.
-
-> +
-> +	if (mem_cgroup_disabled() || !memcg_accounts_hugetlb() ||
-> +			!memcg || !cgroup_subsys_on_dfl(memory_cgrp_subsys))
->  		return -EOPNOTSUPP;
->  
-> -	if (try_charge(memcg, gfp, nr_pages))
-> +	if (charge_memcg(folio, memcg, gfp))
->  		return -ENOMEM;
->  
-> +	mem_cgroup_put(memcg);
-> +
->  	return 0;
->  }
->  
-> -- 
-> 2.43.5
-> 
 
