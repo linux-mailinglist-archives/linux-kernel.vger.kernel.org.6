@@ -1,114 +1,119 @@
-Return-Path: <linux-kernel+bounces-397560-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397561-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30EB49BDD5F
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 03:59:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DA27E9BDD60
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 03:59:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E25F6284658
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 02:59:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E52028449B
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 02:59:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7452218FDDA;
-	Wed,  6 Nov 2024 02:58:55 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FB3218FDBD;
+	Wed,  6 Nov 2024 02:59:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JyHRpYGM"
+Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34B6D383;
-	Wed,  6 Nov 2024 02:58:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83E2718FC8C
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 02:59:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730861935; cv=none; b=j+IA1KBpRcwCKktDXbL9iHZ+GAp+nM+EZ2uV9ohLp5dw1OdoEJA3kvsiVv3X8ZmZrzw8A7gaVzh/h23P4xT+ihufO3Nl0FdFgOA9qAHAVO007u4SdgfMJeY6RT6UC87XKS0A2/redGai4fYG1WLHw3jfeRUcgIbz6WGOFrmcBCM=
+	t=1730861946; cv=none; b=hcNdrrC+jBOvNzMIcjqvUQbkceNu6G7Um0FkONW/iJqk2ZEed+RvKdLGo2paQoL+xJPOG7xWWOlGLro25cs5ilPJwplT/ZW3WKMUhnBP1dNRx9CLSKOKQhagkC57kYVFk6KXlhCvDdlhzvNNjRfCYhm4uAPLcJ9OdOCmcMceWoY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730861935; c=relaxed/simple;
-	bh=AQMoefxoaZUlBpcqyIZvT6CqLuUXN/W5jn9ZUn4XXXg=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=Hs1Ygw9pV3N1buK6NCmg08dNpuqA3pMxYR8EXVUVfDEl4/klBd9Q4T1ITmRU1H7Amt77l/mFc6v7nGv830sad3z+rr4RYN3aiLqOncMOvmkusYHE5clGlNFvHA0WwtEnxVB6lTdmPY3ZdqRv4J5S/lQDQqZStUgHcCHcuCWFceg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Xjqdq2WkMz4f3lW5;
-	Wed,  6 Nov 2024 10:58:23 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 2FFF01A0F73;
-	Wed,  6 Nov 2024 10:58:42 +0800 (CST)
-Received: from [10.174.176.73] (unknown [10.174.176.73])
-	by APP4 (Coremail) with SMTP id gCh0CgDHo4dg2ypns8TqAw--.25494S3;
-	Wed, 06 Nov 2024 10:58:42 +0800 (CST)
-Subject: Re: [PATCH -next] block: fix uaf for flush rq while iterating tags
-To: Christoph Hellwig <hch@infradead.org>, Yu Kuai <yukuai1@huaweicloud.com>
-Cc: axboe@kernel.dk, ming.lei@redhat.com, linux-block@vger.kernel.org,
- linux-kernel@vger.kernel.org, yi.zhang@huawei.com, yangerkun@huawei.com,
- "yukuai (C)" <yukuai3@huawei.com>
-References: <20241104110005.1412161-1-yukuai1@huaweicloud.com>
- <Zyn_RGV2i9COvNQl@infradead.org>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <217f242b-b4e2-89f7-3b0f-3337c251a603@huaweicloud.com>
-Date: Wed, 6 Nov 2024 10:58:40 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+	s=arc-20240116; t=1730861946; c=relaxed/simple;
+	bh=muPQDPmbSgck21JiDpDDSiXuIF+6p1CNkCqolNeuKvU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=sKXZWfQVYV9jfKJjNN4TRkY2MXHpt18nWD2E2RSGdPi0mMsPQBbcr6BQHFpy5MwGbW6eAjt9Fsp69hk/Bz9DYdt3QuVTA+cKLohtvEOhz3NPspMsFSEMxJFoNBL6ozgi1Js5Slq0VsCAcUG4OkhTlGVQ/UXoIvTr/8XOqu61pDw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JyHRpYGM; arc=none smtp.client-ip=209.85.215.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-7eab7622b61so4727473a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 18:59:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730861945; x=1731466745; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=aewHjfrZ6LdC32tAimnrPMNKi9I3ZmUsMUDWVZFlpnQ=;
+        b=JyHRpYGM1FyXY189Ggr9WgmJ1VunyydTQhqTEi9ZVQCvqoY1X7M42T+aXgxZwxNc5c
+         SzR6jTKnJwewX55UUwr8s+SSiENHqOo2wakLQky0lchzFU3K1ODITN6ijD9xmc6OHv9j
+         ohyxbXfJzIT+iXasQ64r6RJBPYXIdnqpQh9EsCjoVCwVzrfKLO9bdfBfPGAHRckkJOAu
+         CujFafiwOkriZ7XKR8gvD8y6FXrgo5KcRqgOPbwtg2UGDQ8aQ5eF9V1gDpnDuXJ5dAId
+         uuuX54xRu3BXB4Mo9P+gaN5jJMqhSRtnFSypkpBgDWFcP3GUwRK+VzSP0zEIe5KiXxON
+         jGFg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730861945; x=1731466745;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=aewHjfrZ6LdC32tAimnrPMNKi9I3ZmUsMUDWVZFlpnQ=;
+        b=gQKT29xwNZId3TmOWqGP6zuuJqEYlMhxZ1VlB4rg+q/3LZ198xIeXc99idopGBwOV2
+         zMB+Pn3zke2iRfI5KbzmNODnDzgpcwVq6ZzpHESKRXVPw8lvY0RVok1ybDntZXnKbxKQ
+         jKHrAa9HgtMur5Ne9F19GuNStj1LO28op9vbL8V5w/G8wPNlvPT5hdGCnuPNM4/l7w03
+         9QDKfn7GP8hA1qOvASlIyN1jviHRLd1qyvM6NEetL08e703S6QcoQksFcc1AQbFuMdiq
+         8sfvYGPGFzb7VKnJcUW7kMZIEDZiPWpPn4RQ/Wn90rFo9UzfF7Olnx53J2k1BvM0y60m
+         8BcA==
+X-Forwarded-Encrypted: i=1; AJvYcCUaMmc5U5g1yWcp6g4u3QWuEgOHMeRpLp2wHm4upYjMJkuiRHN8yPhMDPGH8556A/JKMrU9dt5daCCJ6q0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywby8ctQRjqA4zRkZpUrmcFI/r16+FLuYIbkJuUGgOzdZdU9weV
+	+blCULqiRS675OXRvnNYvAdqDz9arcVO0KT/t2Ks9A7KlEnu5iJl
+X-Google-Smtp-Source: AGHT+IFdajRjrww28Kj6g8apacq729YapnE+XxbuyZl2dP3cf++buuS2ltWTyb28xBmyhhmYLCwozg==
+X-Received: by 2002:a05:6a21:7895:b0:1db:ef18:d3d2 with SMTP id adf61e73a8af0-1dbef19ab02mr6658449637.26.1730861944721;
+        Tue, 05 Nov 2024 18:59:04 -0800 (PST)
+Received: from debian.resnet.ucla.edu (s-169-232-97-87.resnet.ucla.edu. [169.232.97.87])
+        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-720bc2c4bc9sm10586996b3a.108.2024.11.05.18.59.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 05 Nov 2024 18:59:04 -0800 (PST)
+From: Daniel Yang <danielyangkang@gmail.com>
+To: Jaegeuk Kim <jaegeuk@kernel.org>,
+	Chao Yu <chao@kernel.org>,
+	linux-f2fs-devel@lists.sourceforge.net (open list:F2FS FILE SYSTEM),
+	linux-kernel@vger.kernel.org (open list)
+Cc: Daniel Yang <danielyangkang@gmail.com>
+Subject: [PATCH] parse_options(): replace deprecated strcpy with strscpy
+Date: Tue,  5 Nov 2024 18:58:58 -0800
+Message-Id: <20241106025858.495458-1-danielyangkang@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <Zyn_RGV2i9COvNQl@infradead.org>
-Content-Type: text/plain; charset=gbk; format=flowed
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgDHo4dg2ypns8TqAw--.25494S3
-X-Coremail-Antispam: 1UD129KBjvJXoW7Kr45KF1kZr1UZw17XF4ktFb_yoW8GrWkpF
-	ZxKa15KrZ5Cr92kFs7A3yxXFySvwn7JFZ5JF1Yy34SvFnrWF10gFy2kF4FvFW8Jrs3J3yS
-	gr4jvr9Fvry0y3JanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvK14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lc7I2V7IY0VAS07AlzVAY
-	IcxG8wCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbV
-	WUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF
-	67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42
-	IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF
-	0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxh
-	VjvjDU0xZFpf9x0JUd-B_UUUUU=
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-Hi,Ming and Christoph
+strcpy is deprecated. Kernel docs recommend replacing strcpy with
+strscpy. The function strcpy() return value isn't used so there
+shouldn't be an issue replacing with the safer alternative strscpy.
 
-ÔÚ 2024/11/05 19:19, Christoph Hellwig Ð´µÀ:
-> On Mon, Nov 04, 2024 at 07:00:05PM +0800, Yu Kuai wrote:
->> From: Yu Kuai <yukuai3@huawei.com>
->>
->> blk_mq_clear_flush_rq_mapping() is not called during scsi probe, by
->> checking blk_queue_init_done(). However, QUEUE_FLAG_INIT_DONE is cleared
->> in del_gendisk by commit aec89dc5d421 ("block: keep q_usage_counter in
->> atomic mode after del_gendisk"), hence for disk like scsi, following
->> blk_mq_destroy_queue() will not clear flush rq from tags->rqs[] as well,
->> cause following uaf that is found by our syzkaller for v6.6:
-> 
-> Which means we leave the flush request lingering after del_gendisk,
-> which sounds like the real bug.  I suspect we just need to move the
-> call to blk_mq_clear_flush_rq_mapping so that it is called from
-> del_gendisk and doesn't leave the flush tag lingering around.
-> 
+Signed-off-by: Daniel Yang <danielyangkang@gmail.com>
+---
+ fs/f2fs/super.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-This remind me that del_gendisk is still too late to do that. Noted that
-flush_rq can acquire different tags, so if the multiple flush_rq is done
-and those tags are not reused, the flush_rq can exist in multiple
-entries in tags->rqs[]. The consequence I can think of is that iterating
-tags can found the same flush_rq multiple times, and the flush_rq can be
-inflight.
-
-Therefor, I think the best solution is to clear the flush_rq mapping
-when flush request is done.
-
-Thanks,
-Kuai
-> .
-> 
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 87ab5696b..ee8861b95 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -1158,7 +1158,7 @@ static int parse_options(struct super_block *sb, char *options, bool is_remount)
+ 				break;
+ 			}
+ 
+-			strcpy(ext[ext_cnt], name);
++			strscpy(ext[ext_cnt], name);
+ 			F2FS_OPTION(sbi).compress_ext_cnt++;
+ 			kfree(name);
+ 			break;
+@@ -1187,7 +1187,7 @@ static int parse_options(struct super_block *sb, char *options, bool is_remount)
+ 				break;
+ 			}
+ 
+-			strcpy(noext[noext_cnt], name);
++			strscpy(noext[noext_cnt], name);
+ 			F2FS_OPTION(sbi).nocompress_ext_cnt++;
+ 			kfree(name);
+ 			break;
+-- 
+2.39.5
 
 
