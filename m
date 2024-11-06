@@ -1,153 +1,186 @@
-Return-Path: <linux-kernel+bounces-398105-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398106-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA3399BE573
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 12:24:56 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 338159BE577
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 12:25:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8819F1F25875
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 11:24:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 16D9D1C21266
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 11:25:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0DE81DE3C3;
-	Wed,  6 Nov 2024 11:24:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB19B1DE4FA;
+	Wed,  6 Nov 2024 11:25:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="L2/RcPKX"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="G/ix3cpw"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ADB71D434E;
-	Wed,  6 Nov 2024 11:24:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A7541DDC30;
+	Wed,  6 Nov 2024 11:25:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730892289; cv=none; b=NImWOJXoLFIArKE55QjYziexZGq91oh9cDMJPMrHkNrfYcIuRqkFQf2TVTKVWtOTJ3KbWxyLPhSnedrnuq6l/svQ+YZ8ZbRKZGLBWG71lp4p8IVLjCLJMwSfTpCQMcR7TPGXvwTVFv+8gOouw0hvuGZ9LJYlgvwNy7hQs5jgp4k=
+	t=1730892305; cv=none; b=l8DDi0EiFJUU7uZBF5ZSMCfzo+WTXonc6J8RLVdKw3IvQ1GAfjtU6FkgOjmojvBC3UoHepaucmQ+v2rVhIwUv3bNX+iwFM9tYVRgg7FTyc5JD+xFJNZMIcwCyvISqEjZZ6bQ48tV/p+PK7O32AGYHEeN/yVMg6Mgkuf8zPYUDz8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730892289; c=relaxed/simple;
-	bh=RTAqQBFM4eL/55l9MZ6dHjOtX8cN0Yp8Bv3+++6PFRk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LMz4eQgU9iJ2qUHdg5uw0t2tnDNvC5xrpj1ta8vj5cb22jTCgQY+fVsp5D/CkbOXalSfII6ddTE02qkZJ+NW2TcPxqZx8OlHSxZ3ZgBJufex9FKDea7wCIPHphM0x9LQG2yKSkzWWnxnryZ4GK0/caDN1mtBnbNAAEgJkCvQ8Vg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=L2/RcPKX; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=vis9DrxowZ/AktTU/z9vKtuDIMJQDhrIDdxt5nA9NwY=; b=L2/RcPKXHIPU7IIHUAjSMoHx/t
-	8HwvGQ4D+Nx8SxCH+ld24GX/I1F/AGJa2YN4UCFEzlmJGCv++/nfFb08IIaFlmVOo6P+WahmEAgdX
-	PKfAHuLOoHEBE4AL2RZv3nCcBGB0F8oIhz7M/B3474NeBCIzHwG2BGGuHnOR4pvmMkpNd+IkNIXAa
-	+c08jdnycrbGBoB3aq3Z3ZgHyxaux14UQ7flR3AIWzNhtSNoBMRT89eKjSAbzMY3NWilBGd9tk4TD
-	AsN45eQSfr4wBAeKg4K/OZWeoG0QbyVWnwW1qBKDiWSNIHZpQEeMFAaNEgq1qNREZyhL1meX+AIHn
-	+V6T2c3Q==;
-Received: from i53875b28.versanet.de ([83.135.91.40] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1t8e9S-0006fE-Av; Wed, 06 Nov 2024 12:24:42 +0100
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: Dragan Simic <dsimic@manjaro.org>
-Cc: linux-rockchip@lists.infradead.org,
- Quentin Schulz <quentin.schulz@cherry.de>,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, alchark@gmail.com
-Subject:
- Re: [PATCH v2] arm64: dts: rockchip: Add OPP voltage ranges to RK3399 OP1 SoC
- dtsi
-Date: Wed, 06 Nov 2024 12:24:41 +0100
-Message-ID: <3515804.QJadu78ljV@diego>
-In-Reply-To: <77bc2898bbbd2633d6713b4935bd5ee3@manjaro.org>
-References:
- <dbee35c002bda99e44f8533623d94f202a60da95.1730881777.git.dsimic@manjaro.org>
- <3252308.5fSG56mABF@diego> <77bc2898bbbd2633d6713b4935bd5ee3@manjaro.org>
+	s=arc-20240116; t=1730892305; c=relaxed/simple;
+	bh=+s+4Z9BY1gKoGqiJ6WInB5iJMwPreFFWbpYFsVdwIDI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XBE223mqHHtnJuVdlgwpP1iy19e98J8S5mRxHWDP9Zx918dA65cRYJzxGag8kfNP4Hlv1BoUfsJcEdruns1UVFJ5y++A1LRfpcfQ+S/Uf+6rQAKs/u6LgAL+317v3G5DrhEUxhEv2K5jAIF+edNyNbjY/gwYQv5hAhsFa5TudlA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=G/ix3cpw; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730892304; x=1762428304;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=+s+4Z9BY1gKoGqiJ6WInB5iJMwPreFFWbpYFsVdwIDI=;
+  b=G/ix3cpwtweJ2rUy/JDh3j8fh9BIpr5KDdIpdytlmB2s5ipVae6J34bn
+   Rx+acuaE10HjZJumXWdFcAf+4Elnd2nG4DoYdDE4AB7f1TReutl95q5j5
+   Yl9XOXmZyxMmw01vAd0rP789wmtJsNSsDM6P5APezY73o4Gx9nEUnYxZD
+   k21wodNt/i2FRAephiU+xvI5sPc7uRu7snCARUwAifhsqn2JU3D9gUMIy
+   soSZjK6WnWByknhI41gvM1v9USMJJmfdT3B3vPsemFEwni3vOOEgLQnZD
+   6U1u/N0Z/faRgR1wSlfawb4ISEXE4QzS0CJJKFj1o+S9bp8lvHUwYGr7o
+   w==;
+X-CSE-ConnectionGUID: zDreIeM0QsWExQ1yQjjsSw==
+X-CSE-MsgGUID: GrTJUr1JRGKg6eG6HCvGkA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="41785294"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="41785294"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2024 03:25:03 -0800
+X-CSE-ConnectionGUID: +SW4i7uhT4uKtSCoAUx8lQ==
+X-CSE-MsgGUID: KfEoq31gSuGq/r24vJ6jpw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,262,1725346800"; 
+   d="scan'208";a="84398673"
+Received: from smile.fi.intel.com ([10.237.72.154])
+  by orviesa009.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2024 03:25:00 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1t8e9g-0000000Bm1P-1gx9;
+	Wed, 06 Nov 2024 13:24:56 +0200
+Date: Wed, 6 Nov 2024 13:24:56 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Alexis Cezar Torreno <alexisczezar.torreno@analog.com>
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-hwmon@vger.kernel.org,
+	Radu Sabau <radu.sabau@analog.com>,
+	Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>
+Subject: Re: [PATCH 2/2] hwmon: (pmbus/adp1050): Support adp1051 and adp1055
+Message-ID: <ZytSCD0dViGp-l2b@smile.fi.intel.com>
+References: <20241106090311.17536-1-alexisczezar.torreno@analog.com>
+ <20241106090311.17536-3-alexisczezar.torreno@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="iso-8859-1"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241106090311.17536-3-alexisczezar.torreno@analog.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-Am Mittwoch, 6. November 2024, 11:45:06 CET schrieb Dragan Simic:
-> Hello Heiko,
->=20
-> On 2024-11-06 10:41, Heiko St=FCbner wrote:
-> > Am Mittwoch, 6. November 2024, 10:32:06 CET schrieb Quentin Schulz:
-> >> On 11/6/24 9:33 AM, Dragan Simic wrote:
-> >> > Add support for voltage ranges to the CPU, GPU and DMC OPPs defined =
-in the
-> >> > SoC dtsi for Rockchip OP1, as a variant of the Rockchip RK3399.  Thi=
-s may be
-> >> > useful if there are any OP1-based boards whose associated voltage re=
-gulators
-> >> > are unable to deliver the exact voltages; otherwise, it causes no fu=
-nctional
-> >> > changes to the resulting OPP voltages at runtime.
-> >> >
-> >> > These changes cannot cause stability issues or any kind of damage, b=
-ecause
-> >> > it's perfectly safe to use the highest voltage from an OPP group for=
- each OPP
-> >> > in the same group.  The only possible negative effect of using highe=
-r voltages
-> >> > is wasted energy in form of some additionally generated heat.
-> >> >
-> >> > Reported-by: Quentin Schulz <quentin.schulz@cherry.de>
-> >>=20
-> >> Well, I merely highlighted that the voltage was different on OP1
-> >> compared to RK3399 for the 600MHz OPP :)
-> >>=20
-> >> So... If there's ONE SoC I'm pretty sure is working as expected it's=20
-> >> the
-> >> OP1 fitted on the Gru Chromebooks with the ChromiumOS kernel fork
-> >> (though yes, I believe all Gru CB are EoL since August 2023). In the=20
-> >> 6.1
-> >> kernel fork, there's also no range:
-> >> https://chromium.googlesource.com/chromiumos/third_party/kernel/+/refs=
-/heads/chromeos-6.1/arch/arm64/boot/dts/rockchip/rk3399-op1-opp.dtsi
-> >=20
-> > yeah, this somehow goes quite a bit into the "stuff that doesn't need=20
-> > to
-> > change" area. On the one hand it does make "some" sense to unify things
-> > if we're using ranges everywhere else.
->=20
-> I agree that it might be unneeded, but there's no possible harm, and
-> unifying the things may be seen as beneficial.
->=20
-> > On the other hand, as Quentin noted below, all existing OP1 devices=20
-> > seem
-> > to run just fine, and there won't be any more entering the kernel.
->=20
-> Hmm, why can't we add more OP1-based devices?  As I mentioned in my
-> earlier response to Quentin, my plan is to implement the board dts
-> for OP1-based TinkerBoard 2S, so I'd like to know is there something
-> that might prevent that board dts from becoming merged?
->=20
-> > So what do we realisitically gain here, except hiding existing=20
-> > git-history
-> > under another layer?
->=20
-> Sorry, I'm not sure what would become hidden by this patch?
+On Wed, Nov 06, 2024 at 05:03:11PM +0800, Alexis Cezar Torreno wrote:
+> ADP1051: 6 PWM for I/O Voltage, I/O Current, Temperature
+> ADP1055: 6 PWM for I/O Voltage, I/O Current, Power, Temperature
 
-When you change a part of the file, a git blame points to you,
-hiding the previous blame, so it makes traversing history a tiny
-bit harder.
+Missing blank line and perhaps you can add Datasheet: tag(s) for these HW?
+(see `git log --no-merges --grep Datasheet:` for the example)
 
-If you're actually doing the Tinkerboard and thus adding new things this
-changes the whole judgement a bit too.
-Like I was on the mindset-road of rk3399 is mostly done in terms of new
-boards, so what's in the kernel now will at max get some new peripherals
-but is in general already mostly working.
+> Signed-off-by: Alexis Cezar Torreno <alexisczezar.torreno@analog.com>
 
-If we're still adding new rk3399 boards, it does make more sense to go
-back and make the underlying parts nicer :-)
+...
 
+> --- a/drivers/hwmon/pmbus/adp1050.c
+> +++ b/drivers/hwmon/pmbus/adp1050.c
+> @@ -6,8 +6,8 @@
+>   */
+>  #include <linux/bits.h>
+>  #include <linux/i2c.h>
+> -#include <linux/mod_devicetable.h>
+>  #include <linux/module.h>
+> +#include <linux/mod_devicetable.h>
+>  
+>  #include "pmbus.h"
 
-Heiko
+Stray change. This pure depends on the your `locale` settings.
+The original one seems using en_US.UTF-8 and it's perfectly fine.
+
+...
+
+> +static struct pmbus_driver_info adp1051_info = {
+> +	.pages = 1,
+> +	.format[PSC_VOLTAGE_IN] = linear,
+> +	.format[PSC_VOLTAGE_OUT] = linear,
+> +	.format[PSC_CURRENT_IN] = linear,
+> +	.format[PSC_TEMPERATURE] = linear,
+> +	.func[0] = PMBUS_HAVE_VIN | PMBUS_HAVE_IIN | PMBUS_HAVE_VOUT
+> +		   | PMBUS_HAVE_IOUT | PMBUS_HAVE_TEMP | PMBUS_HAVE_STATUS_VOUT
+> +		   | PMBUS_HAVE_STATUS_IOUT | PMBUS_HAVE_STATUS_INPUT
+> +		   | PMBUS_HAVE_STATUS_TEMP,
+
+I dunno if the other entries in the file are written in the same style, but
+usual one is
+
+	.func[0] = PMBUS_HAVE_VIN | PMBUS_HAVE_IIN | PMBUS_HAVE_VOUT |
+		   PMBUS_HAVE_IOUT | PMBUS_HAVE_TEMP | PMBUS_HAVE_STATUS_VOUT |
+		   PMBUS_HAVE_STATUS_IOUT | PMBUS_HAVE_STATUS_INPUT |
+		   PMBUS_HAVE_STATUS_TEMP,
+
+Or even more logically
+
+	.func[0] = PMBUS_HAVE_VIN | PMBUS_HAVE_IIN |
+		   PMBUS_HAVE_VOUT | PMBUS_HAVE_IOUT |
+		   PMBUS_HAVE_TEMP |
+		   PMBUS_HAVE_STATUS_INPUT |
+		   PMBUS_HAVE_STATUS_VOUT | PMBUS_HAVE_STATUS_IOUT |
+		   PMBUS_HAVE_STATUS_TEMP,
+
+> +};
+> +
+> +static struct pmbus_driver_info adp1055_info = {
+> +	.pages = 1,
+> +	.format[PSC_VOLTAGE_IN] = linear,
+> +	.format[PSC_VOLTAGE_OUT] = linear,
+> +	.format[PSC_CURRENT_IN] = linear,
+> +	.format[PSC_TEMPERATURE] = linear,
+> +	.func[0] = PMBUS_HAVE_VIN | PMBUS_HAVE_IIN | PMBUS_HAVE_VOUT
+> +		   | PMBUS_HAVE_IOUT | PMBUS_HAVE_TEMP2 | PMBUS_HAVE_TEMP3
+> +		   | PMBUS_HAVE_POUT | PMBUS_HAVE_STATUS_VOUT
+> +		   | PMBUS_HAVE_STATUS_IOUT | PMBUS_HAVE_STATUS_INPUT
+> +		   | PMBUS_HAVE_STATUS_TEMP,
+
+Ditto.
+
+> +};
+
+...
+
+>  static const struct i2c_device_id adp1050_id[] = {
+> -	{"adp1050"},
+> +	{ .name = "adp1050", .driver_data = (kernel_ulong_t)&adp1050_info},
+> +	{ .name = "adp1051", .driver_data = (kernel_ulong_t)&adp1051_info},
+> +	{ .name = "adp1055", .driver_data = (kernel_ulong_t)&adp1055_info},
+>  	{}
+>  };
+
+> +
+
+Stray blank line.
+
+>  MODULE_DEVICE_TABLE(i2c, adp1050_id);
+
+-- 
+With Best Regards,
+Andy Shevchenko
 
 
 
