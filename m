@@ -1,63 +1,74 @@
-Return-Path: <linux-kernel+bounces-399069-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399070-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C55A79BFA84
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 00:57:33 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 034EE9BFA85
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 00:58:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4E9A3B227B1
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 23:57:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8F566B21FB6
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 23:58:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42B0720E034;
-	Wed,  6 Nov 2024 23:57:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6176920E034;
+	Wed,  6 Nov 2024 23:58:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hJXoojrA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="G5wNrCx8"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 963171E04AC;
-	Wed,  6 Nov 2024 23:57:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6074B20D4FE
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 23:58:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730937442; cv=none; b=sFp3WW8teyLe2JBuO+8yz76adzKkGzDsM0gnuRhJyDZwqXfirl/b7E4oryHEanjYr4z6Qy4D6XWtdJAcZsqigER5yyk3SGS0vV4gKiZ1XsuyvwEnayAX8ftq00xZxM2DNhz3YVqOWEoJSksrNzLFCHRDZslgAjTAwioYLygiGew=
+	t=1730937526; cv=none; b=XyXCKZlY2kdV6HbhDRnhjLjHe7fSLVFQwBdeD6ENuwn95ah7+lOryPOJhki9X+G75xFctu7fh1bLqmCrF1n59Ia1G0QZnUG7HTewabj9X7DW5ojeamUkNuycxkUbpfufhy9ybb1VEoM1yeylsWqGddM/PuGFv6lX4kddiStwirs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730937442; c=relaxed/simple;
-	bh=DonF2tK19bktznYDKFtWKjb2A0DFq9+Zr6P6AntNTwA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VbnJshI/1ZZHc3q45Wm63t05sAjQeTEI9OdsrkNXEwjNhcpUAN/E3z9jcVPQ+4QllTI7Qzodi34Z4LKDvoh8XvAypfezcI2O3hknkSVI2LD83+DQDsj2OqGLGM5DMP2iaj3+r1XkqxRJZVdW7Nxsfl4350xiQUCby6If2LXQ/aI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hJXoojrA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 516A1C4CEC6;
-	Wed,  6 Nov 2024 23:57:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730937442;
-	bh=DonF2tK19bktznYDKFtWKjb2A0DFq9+Zr6P6AntNTwA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hJXoojrAHfDtNDjbnHxFOTC/qc4NT08zXBL0OK2PX5didTEGluMMZUhzwmj06YkWu
-	 ZN5K6sNJTXYhcr0k03da080+Qe3NWw0iSeQ+XXnbN6l9M4MPTE5bRFnLF5kuwUGl7a
-	 QEUKJ/3HkurqQNoAhuZDLm/MmQG/JHH5/EoLjPt6t8LfSX+HzAoyJINSSU2mDyPiWz
-	 NUrcDOkmk5UPELqWtg0Lfr3PBtoVEN5V0EfZEzWfSdyLlCM9P20ujAjcaSAmwVo7Ti
-	 o3s2YjS/OFKi5cYtvJqS9lUZEq6zc1gJgEmltf89JjPo7B9WsB7RsvBmSrTZtB6968
-	 /+kTV1Uw3FwrQ==
-Date: Thu, 7 Nov 2024 00:57:16 +0100
-From: Niklas Cassel <cassel@kernel.org>
-To: Frank Li <Frank.li@nxp.com>
-Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>, Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	imx@lists.linux.dev, dlemoal@kernel.org, maz@kernel.org,
-	tglx@linutronix.de, jdmason@kudzu.us
-Subject: Re: [PATCH v4 0/5] PCI: EP: Add RC-to-EP doorbell with platform MSI
- controller
-Message-ID: <ZywCXOjuTTiayIxd@ryzen>
-References: <20241031-ep-msi-v4-0-717da2d99b28@nxp.com>
- <Zyszr3Cqg8UXlbqw@ryzen>
- <Zys4qs-uHvISaaPB@ryzen>
- <ZyujpT+4bd7TwbcM@lizhi-Precision-Tower-5810>
+	s=arc-20240116; t=1730937526; c=relaxed/simple;
+	bh=hNLUmVI0XIE1sSHTXGqPa6jNx4G+gM0tdom7cXKrWMM=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=bJ2ww067kEtSCnetRo/EjcJY/eLCDCnG5cB5fU1SkUo6Q625EnSZiNxIbwArpB53S0QgDolLRgi29TqisqmUi3aRuI6n/x8YtK0OWa1YaIDZx+rsWtICqvytJsIe715QkFycOMBHnidwxydTkkR1bqamoC4Kf/j/44Qm0FVgqRk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=G5wNrCx8; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730937524; x=1762473524;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=hNLUmVI0XIE1sSHTXGqPa6jNx4G+gM0tdom7cXKrWMM=;
+  b=G5wNrCx85ZbbfHF1pNT3HSqPnRDOmaizRsxceuOQtqTk+22ykm9DWa3i
+   ttcoi1nByUdKg2x2DCqydyvBA32QyJJhN5KvB8GXSRqSQP0pw78RKwqWo
+   rNs/OorSR32Lc8zpXW8guIwADfEFbWh5NaA+uyEbnwUbjqiBhuHp6W2sY
+   yZnvy5SN4ef2c3M5u1Hy0JUcWSkHWh+bjeKZ4hQfhiG1iHX5u1gYQI/lA
+   ZZIaTHU9awUBS9jx/JQFpfh56FrUuh9F54A5sVZihTRQ7eBtuVNJuDVW/
+   adSjcsEpQgcAhaYr/370udDkL3AgrCVyFg0tfWp8LKon0vwOPo5MrJO9D
+   g==;
+X-CSE-ConnectionGUID: rPQgbTNbSq27YX3LRKPr3A==
+X-CSE-MsgGUID: 5W+Rp5FYRcWFRG/rwFZnHg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11248"; a="30169098"
+X-IronPort-AV: E=Sophos;i="6.11,264,1725346800"; 
+   d="scan'208";a="30169098"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2024 15:58:44 -0800
+X-CSE-ConnectionGUID: Q4uQwBs0T5aEWDxGDYKj/Q==
+X-CSE-MsgGUID: 287zlRXWTqGwuJB/D2zrDg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,264,1725346800"; 
+   d="scan'208";a="89429028"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by fmviesa004.fm.intel.com with ESMTP; 06 Nov 2024 15:58:42 -0800
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t8pv6-000pY0-1J;
+	Wed, 06 Nov 2024 23:58:40 +0000
+Date: Thu, 7 Nov 2024 07:57:58 +0800
+From: kernel test robot <lkp@intel.com>
+To: Nathan Chancellor <nathan@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Luiz Augusto von Dentz <luiz.von.dentz@intel.com>,
+	Justin Stitt <justinstitt@google.com>
+Subject: vmlinux.o: warning: objtool: gntdev_copy+0x381: stack state
+ mismatch: cfa1=4+96 cfa2=-1+0
+Message-ID: <202411070755.aWgLgIN8-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,117 +77,25 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZyujpT+4bd7TwbcM@lizhi-Precision-Tower-5810>
 
-On Wed, Nov 06, 2024 at 12:13:09PM -0500, Frank Li wrote:
-> On Wed, Nov 06, 2024 at 10:36:42AM +0100, Niklas Cassel wrote:
-> > On Wed, Nov 06, 2024 at 10:15:27AM +0100, Niklas Cassel wrote:
-> > >
-> > > I do get a domain, but I do not get any IRQ on the EP side when the RC side is
-> > > writing the doorbell (as part of pcitest -B),
-> > >
-> > > [    7.978984] pci_epc_alloc_doorbell: num_db: 1
-> > > [    7.979545] pci_epf_test_bind: doorbell_addr: 0x40
-> > > [    7.979978] pci_epf_test_bind: doorbell_data: 0x0
-> > > [    7.980397] pci_epf_test_bind: doorbell_bar: 0x1
-> > > [   21.114613] pci_epf_enable_doorbell db_bar: 1
-> > > [   21.115001] pci_epf_enable_doorbell: doorbell_addr: 0xfe650040
-> > > [   21.115512] pci_epf_enable_doorbell: phys_addr: 0xfe650000
-> > > [   21.115994] pci_epf_enable_doorbell: success
-> > >
-> > > # cat /proc/interrupts | grep epc
-> > > 117:          0          0          0          0          0          0          0          0  ITS-pMSI-a40000000.pcie-ep   0 Edge      pci-epc-doorbell0
-> > >
-> > > Even if I try to write the doorbell manually from EP side using devmem:
-> > >
-> > > # devmem 0xfe670040 32 1
-> >
-> > Sorry, this should of course have been:
-> > # devmem 0xfe650040 32 1
-> 
-> Thank you test it. You can't write it at EP side. ITS identify the bus
-> master. master ID (streamid) of CPU is the diffference with PCI master's
-> ID (streamid). You set msi-parent = <&its0 0x0000>, not sure if 0x0000 is
-> validate stream.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   f43b15692129904ccc064180fa2dd796ba3843a5
+commit: 9bf4e919ccad613b3596eebf1ff37b05b6405307 Bluetooth: Fix type of len in {l2cap,sco}_sock_getsockopt_old()
+date:   7 months ago
+config: x86_64-randconfig-104-20241106 (https://download.01.org/0day-ci/archive/20241107/202411070755.aWgLgIN8-lkp@intel.com/config)
+compiler: clang version 19.1.3 (https://github.com/llvm/llvm-project ab51eccf88f5321e7c60591c5546b254b6afab99)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241107/202411070755.aWgLgIN8-lkp@intel.com/reproduce)
 
-I see, this makes sense since the ITS converts BDF to an MSI specifier.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202411070755.aWgLgIN8-lkp@intel.com/
 
+All warnings (new ones prefixed by >>):
 
-> 
-> You have to run at RC side, "devmem (Bar1+0x40) 32 0".  So PCIe EP
-> controller can use EP streamid.
-> 
-> some system need special register to config stream id, you can refer host
-> side's settings.
+>> vmlinux.o: warning: objtool: gntdev_copy+0x381: stack state mismatch: cfa1=4+96 cfa2=-1+0
 
-> <&its0 0x0000>,  second argument is your PCIe controller's stream ID. You
-> can ref RC side.
-
-The RC node looks like this:
-msi-map = <0x0000 &its1 0x0000 0x1000>;
-So it does indeed use 0x0 as the MSI specifier.
-
-
-> 
-> >
-> > Considering that the RC node is using &its1, that is probably
-> > also what should be used in the EP node when running the controller
-> > in EP mode instead of RC mode.
-> 
-> Generally,  RC node should use smmu-map, instead &its1. Or your PCI
-> controller direct use 16bit RID as streamid.
-
-smmu-map? Do you mean iommu-map?
-
-I don't see why we would need to have the SMMU enabled to use ITS.
-The iommu is currently disabled on my platform.
-
-I did enable the iommu, and all BAR tests, read tests, write tests,
-and copy tests pass. However I get an iommu error when the RC is
-writing the doorbell. Perhaps you need to do dma_map_single() on
-the address that you are setting the inbound address translation to?
-
-
-
-Without the IOMMU, if I modify pci_endpoint_test.c to not send the
-DISABLE_DOORBELL command on error (so that EP side still has DB enabled),
-I can read all BARs except BAR1 (which was used for the doorbell):
-[   21.077417] pci 0000:01:00.0: BAR 0 [mem 0xf0300000-0xf03fffff]: assigned
-[   21.078029] pci 0000:01:00.0: BAR 1 [mem 0xf0400000-0xf04fffff]: assigned
-[   21.078640] pci 0000:01:00.0: BAR 2 [mem 0xf0500000-0xf05fffff]: assigned
-[   21.079250] pci 0000:01:00.0: BAR 3 [mem 0xf0600000-0xf06fffff]: assigned
-[   21.079860] pci 0000:01:00.0: BAR 5 [mem 0xf0700000-0xf07fffff]: assigned
-# pcitest -B
-[   25.156623] COMMAND_ENABLE_DOORBELL complete - status: 0x440
-[   25.157131] db_bar: 1 addr: 0x40 data: 0x0
-[   25.157501] setting irq_type to: 1
-[   25.157802] writing: 0x0 to offset: 0x40 in BAR: 1
-[   35.300676] we wrote to the BAR, status is now: 0x0
-
-status is not updated after writing to DB,
-and /proc/interrupts on EP side is not incrementing.
-
-# devmem 0xf0300000
-0x00000000
-# devmem 0xf0400040
-0xFFFFFFFF
-# devmem 0xf0500000
-0x00000000
-# devmem 0xf0600000
-0x00000000
-# devmem 0xf0700000
-0x00000000
-
-So there does seem to be something wrong with the inbound translation,
-at least when testing on rk3588 which only uses 1MB fixed size BARs:
-https://github.com/torvalds/linux/blob/v6.12-rc6/drivers/pci/controller/dwc/pcie-dw-rockchip.c#L276-L281
-
-
-
-You also didn't answer which imx platform that you are using to test this,
-I don't see a single imx platform that specifies "msi-parent".
-
-
-Kind regards,
-Niklas
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
