@@ -1,191 +1,139 @@
-Return-Path: <linux-kernel+bounces-397537-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397538-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A0CB9BDD23
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 03:40:40 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08ECD9BDD24
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 03:41:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8EB831F24B3A
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 02:40:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 70117B254E9
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 02:41:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9616F18FDAF;
-	Wed,  6 Nov 2024 02:40:25 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 467EF18F2D8;
+	Wed,  6 Nov 2024 02:41:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=aosc.io header.i=@aosc.io header.b="Hvl+GhNX"
+Received: from relay5.mymailcheap.com (relay5.mymailcheap.com [159.100.248.207])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FE8D18F2D8
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 02:40:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80E9133F3;
+	Wed,  6 Nov 2024 02:41:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.100.248.207
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730860825; cv=none; b=rmZjU9Nww1kgaPaGCOl6HnV71ktzmefRAfc04fQsb1z2Da0qJyLsLCTF5Iojqmsmby5Sw5AeyHJ5wwhQkeKKMN+tGDPhEMXTmMgyulqYI9Apcr0B9nNaGPOa3VHJYd0XkJJVpeLPi9SVw0C+QvJWnjuMCFAkh3ZzTPp+i65KGzk=
+	t=1730860892; cv=none; b=hbRIueEisTkVD1UFb/ULyVFnkNmijmZ0uIHzCXeSfeLCqRd6mnYDmat/hg9rPV+Vu14hW7XAF6yWSiJ5IJjjB04XcHJnofWumTIE6u9Qc/bBJhgU3IhtK3suGJq+j9CoMbc4aLEB1GyUw/oC6sYB7hPQTtxamxd3GOWLPjHqNI8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730860825; c=relaxed/simple;
-	bh=u71oxFQ0BbNcjNqYXJyzZwn5VrBKxOKp/CHnzvq6jTU=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=OHCZ/PtvZnOtvGybzTbxYYYQKhWZVamN9Dm/BM8yn6V5vjPdo3beUUMbNtiF7RnRI2sXPk+BQprdyDJ5QV2Q1MNCmbnGFOkIt/cvd4T6DY6AT/LZF5iMXPoyBBwPITMLtLeMTlOCiJ+/1T+cXNxcpmVDGuGrm9+JkXYLKK4SL5M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a4f3d7d13fso61901105ab.0
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 18:40:23 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730860822; x=1731465622;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=PRRYYW8+CJ0RgBbu2SCSYRPh5rC9lLWQJnEO13Krag8=;
-        b=dxZZbYfNqoE37pA8+1d0FEtCxGKW3KxQoxaVJWtbrX1rWMC91hw1ObQR8l5wSWuv0A
-         FF9C00AxSCrbwkH4i6RYDr6aCvLQWCcLTOi5l8y7fqfa44JP5UtAdB70hDuLA/ftUXWl
-         cJxpl3gqtL7kVIcpA+E/xGS1nzNAMFHkn7qSwVGboJUqKukL1EKbBMRlieHS2pD78Q/5
-         TE+RfIeBF1zK4ainoWmIM0AdCPKBxnyrgLIRZWpy3aTgs8GTzYPYjP2ErhpX3T/m6s9p
-         NiQ3gZWsRc+aYIRbOFJO0+8Hs6teD82lsV1kQ8nxjzofjaCe9MMWA4z0chA+RruiypWo
-         8NDA==
-X-Forwarded-Encrypted: i=1; AJvYcCUW7aDndbY2DOqs+v5sCZ2oPP3w021nd8lzZ9VQyK/Ai4R6kIY/gVKm4Iubyf9tvOsick6Apbe2iy50ihE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwPdbx4b1awkrcbkTRJSm26OhzAJJKg7jlncbKM/QNP1I3mkCiB
-	+iV0xIXx55SE7BEJZJg5RvWvxANmycW/VKcbGWgkmanoIebu1GmA41HYwkNREzF00DC7fKMhhKa
-	X7eM5iPYxwJknLy8el9TG9KF6wJpncgXH15CmAAn5mpANNYsthrQKX2g=
-X-Google-Smtp-Source: AGHT+IGoaGtRwgzj5aT4wlsWrWFRqru+tH6uN0IGYzSwWwjxvn3rUPwBmc3Xf6YkOjRCuBfpA/6XrZGbol6W3svWHCNDM6sh6+fa
+	s=arc-20240116; t=1730860892; c=relaxed/simple;
+	bh=pS64vwLpBrJlarWl0zzizwy0z0t8uYC6elUgESteGMI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LTWk5B9B7Xs3hmTXm0T3tFDyVTUcCnwUKBp1qp1GK26mtpzqDyyl/DtQtlPEBUW+Im1YLWcd9EvHtTQfrqR/CHeBxXlc5rdRT81m5jdv2gwG1sc4gfobbUvT8U7q81mkh+UpkxnW3bJEX8M18uU16k80NcnWGmJXBot+9qAlfLs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=aosc.io; spf=pass smtp.mailfrom=aosc.io; dkim=pass (1024-bit key) header.d=aosc.io header.i=@aosc.io header.b=Hvl+GhNX; arc=none smtp.client-ip=159.100.248.207
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=aosc.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aosc.io
+Received: from relay4.mymailcheap.com (relay4.mymailcheap.com [137.74.80.156])
+	by relay5.mymailcheap.com (Postfix) with ESMTPS id 55F1626760;
+	Wed,  6 Nov 2024 02:41:28 +0000 (UTC)
+Received: from nf1.mymailcheap.com (nf1.mymailcheap.com [51.75.14.91])
+	by relay4.mymailcheap.com (Postfix) with ESMTPS id 704A820339;
+	Wed,  6 Nov 2024 02:41:19 +0000 (UTC)
+Received: from mail20.mymailcheap.com (mail20.mymailcheap.com [51.83.111.147])
+	by nf1.mymailcheap.com (Postfix) with ESMTPSA id 051E840078;
+	Wed,  6 Nov 2024 02:41:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=aosc.io; s=default;
+	t=1730860878; bh=pS64vwLpBrJlarWl0zzizwy0z0t8uYC6elUgESteGMI=;
+	h=From:To:Cc:Subject:Date:From;
+	b=Hvl+GhNXisHeHxVH/sqJ58w6zYU6J+4Po5uS7xNgL4gYfNVifuO8QwLbFleya1rgB
+	 vCEtqYJnYRAMeVkND/kgi8Vl60IObq1bwKbcVukXx1tTqC8U8nd1FdzBUyVsCeUkcm
+	 gMe8q2igrw3YfR26Crp1huE6LvUihzYHVPOldupI=
+Received: from JellyNote.localdomain (unknown [38.179.66.19])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail20.mymailcheap.com (Postfix) with ESMTPSA id 0100141344;
+	Wed,  6 Nov 2024 02:41:14 +0000 (UTC)
+From: Mingcong Bai <jeffbai@aosc.io>
+To: broonie@kernel.org
+Cc: kexybiscuit@aosc.io,
+	Mingcong Bai <jeffbai@aosc.io>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	Mario Limonciello <mario.limonciello@amd.com>,
+	"end.to.start" <end.to.start@mail.ru>,
+	Jiawei Wang <me@jwang.link>,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] ASoC: amd: yc: fix internal mic on Xiaomi Book Pro 14 2022
+Date: Wed,  6 Nov 2024 10:40:50 +0800
+Message-ID: <20241106024052.15748-1-jeffbai@aosc.io>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:3287:b0:3a6:c43d:1325 with SMTP id
- e9e14a558f8ab-3a6c43d1556mr129046755ab.8.1730860822543; Tue, 05 Nov 2024
- 18:40:22 -0800 (PST)
-Date: Tue, 05 Nov 2024 18:40:22 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <672ad716.050a0220.2a847.1a9e.GAE@google.com>
-Subject: [syzbot] [block?] possible deadlock in blk_mq_alloc_request
-From: syzbot <syzbot+ca7d7c797fee31d2b474@syzkaller.appspotmail.com>
-To: axboe@kernel.dk, linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Rspamd-Queue-Id: 051E840078
+X-Rspamd-Server: nf1.mymailcheap.com
+X-Spamd-Result: default: False [1.10 / 10.00];
+	MID_CONTAINS_FROM(1.00)[];
+	R_MISSING_CHARSET(0.50)[];
+	BAYES_HAM(-0.30)[75.02%];
+	MIME_GOOD(-0.10)[text/plain];
+	FROM_EQ_ENVFROM(0.00)[];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ASN(0.00)[asn:16276, ipnet:51.83.0.0/16, country:FR];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_COUNT_ONE(0.00)[1];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com,mail.ru];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	TO_MATCH_ENVRCPT_SOME(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	FREEMAIL_CC(0.00)[aosc.io,gmail.com,perex.cz,suse.com,amd.com,mail.ru,jwang.link,vger.kernel.org];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_TLS_ALL(0.00)[]
+X-Rspamd-Action: no action
 
-Hello,
+Xiaomi Book Pro 14 2022 (MIA2210-AD) requires a quirk entry for its
+internal microphone to be enabled.
 
-syzbot found the following issue on:
+This is likely due to similar reasons as seen previously on Redmi Book
+14/15 Pro 2022 models (since they likely came with similar firmware):
 
-HEAD commit:    c88416ba074a Add linux-next specific files for 20241101
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=17e59aa7980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=704b6be2ac2f205f
-dashboard link: https://syzkaller.appspot.com/bug?extid=ca7d7c797fee31d2b474
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1250b630580000
+- commit dcff8b7ca92d ("ASoC: amd: yc: Add Xiaomi Redmi Book Pro 15 2022
+  into DMI table")
+- commit c1dd6bf61997 ("ASoC: amd: yc: Add Xiaomi Redmi Book Pro 14 2022
+  into DMI table")
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/760a8c88d0c3/disk-c88416ba.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/46e4b0a851a2/vmlinux-c88416ba.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/428e2c784b75/bzImage-c88416ba.xz
+A quirk would likely be needed for Xiaomi Book Pro 15 2022 models, too.
+However, I do not have such device on hand so I will leave it for now.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+ca7d7c797fee31d2b474@syzkaller.appspotmail.com
-
-============================================
-WARNING: possible recursive locking detected
-6.12.0-rc5-next-20241101-syzkaller #0 Not tainted
---------------------------------------------
-udevd/6086 is trying to acquire lock:
-ffff8880288261c0 (&q->q_usage_counter(queue)#67){++++}-{0:0}, at: blk_mq_alloc_request+0x26b/0xab0 block/blk-mq.c:626
-
-but task is already holding lock:
-ffff8880288261c0 (&q->q_usage_counter(queue)#67){++++}-{0:0}, at: blk_freeze_queue block/blk-mq.c:177 [inline]
-ffff8880288261c0 (&q->q_usage_counter(queue)#67){++++}-{0:0}, at: blk_mq_freeze_queue+0x15/0x20 block/blk-mq.c:187
-
-other info that might help us debug this:
- Possible unsafe locking scenario:
-
-       CPU0
-       ----
-  lock(&q->q_usage_counter(queue)#67);
-  lock(&q->q_usage_counter(queue)#67);
-
- *** DEADLOCK ***
-
- May be due to missing lock nesting notation
-
-3 locks held by udevd/6086:
- #0: ffff888034a534c8 (&disk->open_mutex){+.+.}-{4:4}, at: bdev_open+0xf0/0xc50 block/bdev.c:904
- #1: ffff888028826188 (&q->q_usage_counter(io)#81){+.+.}-{0:0}, at: blk_freeze_queue block/blk-mq.c:177 [inline]
- #1: ffff888028826188 (&q->q_usage_counter(io)#81){+.+.}-{0:0}, at: blk_mq_freeze_queue+0x15/0x20 block/blk-mq.c:187
- #2: ffff8880288261c0 (&q->q_usage_counter(queue)#67){++++}-{0:0}, at: blk_freeze_queue block/blk-mq.c:177 [inline]
- #2: ffff8880288261c0 (&q->q_usage_counter(queue)#67){++++}-{0:0}, at: blk_mq_freeze_queue+0x15/0x20 block/blk-mq.c:187
-
-stack backtrace:
-CPU: 0 UID: 0 PID: 6086 Comm: udevd Not tainted 6.12.0-rc5-next-20241101-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
- print_deadlock_bug+0x483/0x620 kernel/locking/lockdep.c:3037
- check_deadlock kernel/locking/lockdep.c:3089 [inline]
- validate_chain+0x15e2/0x5920 kernel/locking/lockdep.c:3891
- __lock_acquire+0x1397/0x2100 kernel/locking/lockdep.c:5226
- lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
- blk_queue_enter+0xe1/0x600 block/blk-core.c:328
- blk_mq_alloc_request+0x26b/0xab0 block/blk-mq.c:626
- scsi_alloc_request drivers/scsi/scsi_lib.c:1222 [inline]
- scsi_execute_cmd+0x177/0x1090 drivers/scsi/scsi_lib.c:304
- ioctl_internal_command+0x16a/0x7f0 drivers/scsi/scsi_ioctl.c:79
- scsi_set_medium_removal+0x15a/0x340 drivers/scsi/scsi_ioctl.c:139
- sd_open+0x43c/0x610 drivers/scsi/sd.c:1564
- blkdev_get_whole+0x8e/0x450 block/bdev.c:689
- bdev_open+0x2d4/0xc50 block/bdev.c:916
- blkdev_open+0x389/0x4f0 block/fops.c:627
- do_dentry_open+0xbe1/0x1b70 fs/open.c:962
- vfs_open+0x3e/0x330 fs/open.c:1092
- do_open fs/namei.c:3774 [inline]
- path_openat+0x2c84/0x3590 fs/namei.c:3933
- do_filp_open+0x235/0x490 fs/namei.c:3960
- do_sys_openat2+0x13e/0x1d0 fs/open.c:1419
- do_sys_open fs/open.c:1434 [inline]
- __do_sys_openat fs/open.c:1450 [inline]
- __se_sys_openat fs/open.c:1445 [inline]
- __x64_sys_openat+0x247/0x2a0 fs/open.c:1445
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f21713169a4
-Code: 24 20 48 8d 44 24 30 48 89 44 24 28 64 8b 04 25 18 00 00 00 85 c0 75 2c 44 89 e2 48 89 ee bf 9c ff ff ff b8 01 01 00 00 0f 05 <48> 3d 00 f0 ff ff 76 60 48 8b 15 55 a4 0d 00 f7 d8 64 89 02 48 83
-RSP: 002b:00007ffec20c7d50 EFLAGS: 00000246 ORIG_RAX: 0000000000000101
-RAX: ffffffffffffffda RBX: 00005559ea473800 RCX: 00007f21713169a4
-RDX: 00000000000a0800 RSI: 00005559ea474730 RDI: 00000000ffffff9c
-RBP: 00005559ea474730 R08: 0000000000000006 R09: 7fffffffffffffff
-R10: 0000000000000000 R11: 0000000000000246 R12: 00000000000a0800
-R13: 00005559ea468070 R14: 0000000000000001 R15: 00005559ea457910
- </TASK>
-udevd[6086]: inotify_add_watch(7, /dev/sde, 10) failed: No such file or directory
-sd 6:0:0:1: [sde] Test Unit Ready failed: Result: hostbyte=DID_NO_CONNECT driverbyte=DRIVER_OK
-udevd[6086]: inotify_add_watch(7, /dev/sde, 10) failed: No such file or directory
-udevd[6086]: inotify_add_watch(7, /dev/sdd, 10) failed: No such file or directory
-
-
+Signed-off-by: Mingcong Bai <jeffbai@aosc.io>
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+ sound/soc/amd/yc/acp6x-mach.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+diff --git a/sound/soc/amd/yc/acp6x-mach.c b/sound/soc/amd/yc/acp6x-mach.c
+index 438865d5e376..dc476bfb6da4 100644
+--- a/sound/soc/amd/yc/acp6x-mach.c
++++ b/sound/soc/amd/yc/acp6x-mach.c
+@@ -395,6 +395,13 @@ static const struct dmi_system_id yc_acp_quirk_table[] = {
+ 			DMI_MATCH(DMI_PRODUCT_NAME, "Redmi Book Pro 15 2022"),
+ 		}
+ 	},
++	{
++		.driver_data = &acp6x_card,
++		.matches = {
++			DMI_MATCH(DMI_BOARD_VENDOR, "TIMI"),
++			DMI_MATCH(DMI_PRODUCT_NAME, "Xiaomi Book Pro 14 2022"),
++		}
++	},
+ 	{
+ 		.driver_data = &acp6x_card,
+ 		.matches = {
+-- 
+2.47.0
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
