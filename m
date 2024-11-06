@@ -1,70 +1,85 @@
-Return-Path: <linux-kernel+bounces-397971-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397972-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2F099BE33A
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 10:55:26 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D3EC9BE33B
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 10:55:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A9D4C1F2361B
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 09:55:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CFA4E2844E4
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 09:55:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11A141D54D1;
-	Wed,  6 Nov 2024 09:55:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="twJj0V/1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA7571DCB0C;
+	Wed,  6 Nov 2024 09:55:23 +0000 (UTC)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BEFC1D79A5;
-	Wed,  6 Nov 2024 09:55:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C69491DBB13;
+	Wed,  6 Nov 2024 09:55:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730886919; cv=none; b=Kd/RgBeanEzcFF/DvhVUmUpcsyT//Bqamoihhrt/RSYwIPYFzCOcu6FkALFBf7CejapspzvU4uKpl2NmYPnlXQxMAczefxPa2zpxx+fHC09wXFnWKQM/WpHy0qVDivcYMiwL6ghWc3Bizc0Wt1aWmgJZdd+SiL9rfR8HHBWoc3M=
+	t=1730886923; cv=none; b=KbCdJGsKBaHfLXgdkGPX5s3+K6dATeiLLwtwk1dTzy2gRGob7sC/9JZejXUhvjmGSan47M2QwxKyDgYEbI7mvlsqNMw+1SwBPsZhL52w0oGGgekty5DJa4zYj2KC/498urKQmpMIwm2Zq3ymzI3fQ7g77WOlUY6gFSSXv5Nbwfg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730886919; c=relaxed/simple;
-	bh=rYooDJtMHefj1YJza5M0AYt6KFkDApR0jWLlKVi6dPk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FT7xlNWAjuQ7bWRofqQLHzRmDVXc/K5Xhc1UC1XCKlwHv/wTSHpB/oHrd0Y2GLjHFL98raq4cADjZfy0oPmjk0Bt8gqFAHhfkFKrDsfguhMIZq210Y0MgW73Oo5UtLJlsPGol84qqQhL8b/uDWP6j1mZwLXHurNTlRZvZc8khBw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=twJj0V/1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D52FAC4CECD;
-	Wed,  6 Nov 2024 09:55:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730886919;
-	bh=rYooDJtMHefj1YJza5M0AYt6KFkDApR0jWLlKVi6dPk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=twJj0V/186QifDuvBj7OU1bIyHZff5TB6IkZSLNWQhXHif5jsQnwvRTvQO452720+
-	 mMeHodxe2pauYX96Xwhsm3V2ybyZpL0DtiRLeTYRWpQefh3hnTa31+AFqKzjnuj3vi
-	 uuD1+tJEWqO6XGmGkmqwdHJCEXurgfBLX5hzvuqZD52zoNG4n7zSCFaRn0nV7kbGm5
-	 EBjAseH5fmnMcDup8sYYvJiWYCHrzdYA1TQny5VGCOst6G8Sjj6Ws3vTUqie4a18hu
-	 3whGPD0WE6FAzzS4VAJBLohbkCy9Tok2cACIsq9E1bmvX2vL5WLrnBulQRo8NyXea1
-	 JM9aainBuE4Cw==
-Date: Wed, 6 Nov 2024 10:55:15 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: boot failure after merge of the vfs-brauner tree
-Message-ID: <20241106-manchmal-obrigkeit-a790ff30c8b2@brauner>
-References: <20241030183044.673e14b4@canb.auug.org.au>
+	s=arc-20240116; t=1730886923; c=relaxed/simple;
+	bh=7Opzae6eJxnPKWoay/5QnazLgTYEphKcrHcvH2svUe4=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
+	 In-Reply-To:Content-Type; b=F8TV+AxLM7bqJmuR/daVfNEfxlOalHZ7/RkAgXLrrGfU3AT7uBT8M5+mUJI8Ma0fw57O2RPgJ/IM3KdtJFDGCduv2FpvAOIc/e+YdOz1qOjVWybLWXdJpPeAaRr7sQxKEojUgARc7ZIk9/aYmWdgK8dBxkhVSJWmxdehDwNlB4k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.17])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4Xk0rx1sg5z1jxjs;
+	Wed,  6 Nov 2024 17:53:37 +0800 (CST)
+Received: from kwepemd200013.china.huawei.com (unknown [7.221.188.133])
+	by mail.maildlp.com (Postfix) with ESMTPS id 198391A0188;
+	Wed,  6 Nov 2024 17:55:18 +0800 (CST)
+Received: from [10.67.110.108] (10.67.110.108) by
+ kwepemd200013.china.huawei.com (7.221.188.133) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Wed, 6 Nov 2024 17:55:17 +0800
+Message-ID: <3d166642-4062-42ed-9e24-1771cd819110@huawei.com>
+Date: Wed, 6 Nov 2024 17:55:16 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241030183044.673e14b4@canb.auug.org.au>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm64: uprobes: Optimize cache flushes for xol slot
+From: "Liao, Chang" <liaochang1@huawei.com>
+To: <mhiramat@kernel.org>, <oleg@redhat.com>, <peterz@infradead.org>,
+	<catalin.marinas@arm.com>, <will@kernel.org>, <mark.rutland@arm.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-trace-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>
+References: <20240919121719.2148361-1-liaochang1@huawei.com>
+In-Reply-To: <20240919121719.2148361-1-liaochang1@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ kwepemd200013.china.huawei.com (7.221.188.133)
 
-On Wed, Oct 30, 2024 at 06:30:44PM +1100, Stephen Rothwell wrote:
-> Hi all,
+Hi, Will and Catalin
+
+在 2024/9/19 20:17, Liao Chang 写道:
+> On 09/23, Will Deacon wrote:
+>> However, we should use __GFP_ZERO anyway
+>> because I don't think it's a good idea to map an uninitialised page into
+>> userspace.
+> Agreed, and imo this even needs a separate "fix info leak" patch.
 > 
-> After merging the vfs-brauner tree, today's linux-next build (powerpc
-> pseries_le_defconfig) qemu boot test failed like this:
+> Oleg.
 
-This should have been fixed for a while now. Sorry, I'm just getting
-slowly back to work as I'm recovering from a rather sever illness. Let
-me know if this is still something you're seeing.
+Given that Oleg's fix info leak patch has been merged [1], the risk of leakage
+is gone. So I am looking forward to your options about this patch. As many
+functions start with same instructions like 'stp fp, lr, [sp, #imm]' or
+'paciasp'. So I think this patch could avoid unnecessary D/I cache synchronization.
+
+[1] https://lore.kernel.org/all/20240929162047.GA12611@redhat.com/
+
+-- 
+BR
+Liao, Chang
+
 
