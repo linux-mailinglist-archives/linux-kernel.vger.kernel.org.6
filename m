@@ -1,118 +1,114 @@
-Return-Path: <linux-kernel+bounces-397722-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397725-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6B5E9BDF8D
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 08:40:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id EB02E9BDF96
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 08:41:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9CC091F21EDC
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 07:40:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E4AE1F23558
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 07:41:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2BAC1D0BA3;
-	Wed,  6 Nov 2024 07:39:57 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AE741D3185;
+	Wed,  6 Nov 2024 07:41:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="uaJaysG9"
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F1A91514CC
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 07:39:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BA541D278C;
+	Wed,  6 Nov 2024 07:41:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730878797; cv=none; b=MGL5FgV0bT2Aski0N06as/VPwegLVjB/4f1v6AWGBnRaQwRCUXZUg+jnap9FLUtKJ6FwXT9XdlR5Plies14OzaA7GXlKa/eNBn1pxZnBe0OfybNmN0xMXCpW2UCdDg1YwMxhL7xHF0QzY5RpZpFIcidx+7f53XXIxYYquhn/Zy4=
+	t=1730878868; cv=none; b=D272VjTsFwxtmzqigmwhuTC8kPzWWtWA4Ds54hRO007fvI5f75+W8k+lA3IFWt76sK5Ie9EKu8IrzwdsfqCNGMlkYwtCZnokpRJlNF8U5DIilnOO4j+kmynIJk3WwcDQPtyDblPtr8FVtEaBEM5Ja5tORwulSaBE1sB4qewkUxA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730878797; c=relaxed/simple;
-	bh=WFTZZe83my0HVfbGmWJaeaWKAX1cqfRiclYP1RdKTMA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Mt7PV+HAo9zDU03mC/kYQsmxUwjzVMM0Ru8Rfx/wVUeFhLC/Yqbkz0rrmsaB53UvUEtJA/74cxtipuzGQpqCAGbrqul6wYYR2FlQYU5icgJ9I8EfHZq9kehPv/3p7KLCsB8wdgQPVg6EGAEEXtOZYvK0Nj82OJ5DT/F1SIHwSTY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: 4a7524d69c1211efa216b1d71e6e1362-20241106
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.38,REQID:acf78c2d-8473-499b-9954-9f3e4a6c78f8,IP:0,U
-	RL:0,TC:0,Content:-5,EDM:25,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
-	N:release,TS:20
-X-CID-META: VersionHash:82c5f88,CLOUDID:22f915138838171f3c8e3aac12197496,BulkI
-	D:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:5,IP:nil,URL:0,
-	File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:N
-	O,DKR:0,DKP:0,BRR:0,BRE:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: 4a7524d69c1211efa216b1d71e6e1362-20241106
-Received: from mail.kylinos.cn [(10.44.16.175)] by mailgw.kylinos.cn
-	(envelope-from <zhangheng@kylinos.cn>)
-	(Generic MTA)
-	with ESMTP id 406494892; Wed, 06 Nov 2024 15:39:44 +0800
-Received: from mail.kylinos.cn (localhost [127.0.0.1])
-	by mail.kylinos.cn (NSMail) with SMTP id 3E840E000E82;
-	Wed,  6 Nov 2024 15:39:44 +0800 (CST)
-X-ns-mid: postfix-672B1D40-7018570
-Received: from kylin-pc.. (unknown [172.25.130.133])
-	by mail.kylinos.cn (NSMail) with ESMTPA id D0F9DE000E82;
-	Wed,  6 Nov 2024 15:39:41 +0800 (CST)
-From: zhangheng <zhangheng@kylinos.cn>
-To: jk@ozlabs.org,
-	joel@jms.id.au,
-	alistair@popple.id.au,
-	eajames@linux.ibm.com
-Cc: linux-fsi@lists.ozlabs.org,
-	linux-kernel@vger.kernel.org,
-	zhangheng <zhangheng@kylinos.cn>
-Subject: [PATCH] fsi: core: use sysfs_emit() instead of sprintf()
-Date: Wed,  6 Nov 2024 15:39:37 +0800
-Message-ID: <20241106073937.2219081-1-zhangheng@kylinos.cn>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1730878868; c=relaxed/simple;
+	bh=TFda4sI5uMZRqUDsR0dAWVgvzcedGeHYwrugMLEeeaM=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=cRqHO6A1Mynf/Uln45DepLIyTg+Z322NemryN6+l5m8zhgc9fjwwp5GLVHxqxd6aQAJqn3BpDCYbxbGVDE1Ydnk5EOmqMm8XTj8XwmNGTfQYgLjT1SOoPVT3YNYEGYMrSl0dYdtHjS8HRSLziYfIwXW4ZK+TYCq5Emtv8thS4JM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=uaJaysG9; arc=none smtp.client-ip=198.47.19.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4A67elLw017749;
+	Wed, 6 Nov 2024 01:40:47 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1730878847;
+	bh=dkLZdfHad0BvKfYRCTi1v7nlEmkz9+TB8S+Kq67QAis=;
+	h=From:To:CC:Subject:Date;
+	b=uaJaysG9L3CXJigKp/2PPoUI4evbSyGirFRIIw2EJ0pMpM8LD+x5J3Y/vzFlhdFbp
+	 +ZlEE5TtRPC+RXSq0WCvfeH0twaMD2+lMmRKTAI/5nCaEhlToVleWyPZxFLioPlEaG
+	 RwsUgQy/jgEWP120DXuWz+TM1r4o3rO+dqBMOMIA=
+Received: from DLEE107.ent.ti.com (dlee107.ent.ti.com [157.170.170.37])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4A67elYO054237
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Wed, 6 Nov 2024 01:40:47 -0600
+Received: from DLEE109.ent.ti.com (157.170.170.41) by DLEE107.ent.ti.com
+ (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 6
+ Nov 2024 01:40:46 -0600
+Received: from fllvsmtp7.itg.ti.com (10.64.40.31) by DLEE109.ent.ti.com
+ (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Wed, 6 Nov 2024 01:40:46 -0600
+Received: from lelv0854.itg.ti.com (lelv0854.itg.ti.com [10.181.64.140])
+	by fllvsmtp7.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4A67ekts010485;
+	Wed, 6 Nov 2024 01:40:46 -0600
+Received: from localhost (meghana-pc.dhcp.ti.com [10.24.69.13] (may be forged))
+	by lelv0854.itg.ti.com (8.14.7/8.14.7) with ESMTP id 4A67ejXK014385;
+	Wed, 6 Nov 2024 01:40:46 -0600
+From: Meghana Malladi <m-malladi@ti.com>
+To: <vigneshr@ti.com>, <m-karicheri2@ti.com>, <m-malladi@ti.com>,
+        <jan.kiszka@siemens.com>, <javier.carrasco.cruz@gmail.com>,
+        <jacob.e.keller@intel.com>, <horms@kernel.org>,
+        <diogo.ivo@siemens.com>, <pabeni@redhat.com>, <kuba@kernel.org>,
+        <edumazet@google.com>, <davem@davemloft.net>, <andrew+netdev@lunn.ch>
+CC: <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <srk@ti.com>,
+        Roger Quadros
+	<rogerq@kernel.org>, <danishanwar@ti.com>
+Subject: [PATCH net 0/2] IEP clock module bug fixes
+Date: Wed, 6 Nov 2024 13:10:38 +0530
+Message-ID: <20241106074040.3361730-1-m-malladi@ti.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Follow the advice in Documentation/filesystems/sysfs.rst:
-show() should only use sysfs_emit() or sysfs_emit_at() when formatting
-the value to be returned to user space.
+Hi All,
+This series has some bug fixes for IEP module needed by PPS and
+timesync operations.
 
-Signed-off-by: zhangheng <zhangheng@kylinos.cn>
----
- drivers/fsi/fsi-core.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Patch 1/2 fixes firmware load sequence to ensure IEP module
+is always running when either of the ethernet interfaces is up.
 
-diff --git a/drivers/fsi/fsi-core.c b/drivers/fsi/fsi-core.c
-index e2e1e9df6115..2fdc866345ab 100644
---- a/drivers/fsi/fsi-core.c
-+++ b/drivers/fsi/fsi-core.c
-@@ -784,7 +784,7 @@ static ssize_t slave_send_echo_show(struct device *de=
-v,
- {
- 	struct fsi_slave *slave =3D to_fsi_slave(dev);
-=20
--	return sprintf(buf, "%u\n", slave->t_send_delay);
-+	return sysfs_emit(buf, "%u\n", slave->t_send_delay);
- }
-=20
- static ssize_t slave_send_echo_store(struct device *dev,
-@@ -828,7 +828,7 @@ static ssize_t chip_id_show(struct device *dev,
- {
- 	struct fsi_slave *slave =3D to_fsi_slave(dev);
-=20
--	return sprintf(buf, "%d\n", slave->chip_id);
-+	return sysfs_emit(buf, "%d\n", slave->chip_id);
- }
-=20
- static DEVICE_ATTR_RO(chip_id);
-@@ -839,7 +839,7 @@ static ssize_t cfam_id_show(struct device *dev,
- {
- 	struct fsi_slave *slave =3D to_fsi_slave(dev);
-=20
--	return sprintf(buf, "0x%x\n", slave->cfam_id);
-+	return sysfs_emit(buf, "0x%x\n", slave->cfam_id);
- }
-=20
- static DEVICE_ATTR_RO(cfam_id);
---=20
-2.45.2
+Patch 2/2 fixes distorted PPS signal when the ethernet interfaces
+are brough down and up. This patch also fixes enabling PPS signal
+after bringing the interface up, without disabling PPS.
+
+MD Danish Anwar (1):
+  net: ti: icssg-prueth: Fix firmware load sequence.
+
+Meghana Malladi (1):
+  net: ti: icssg-prueth: Fix clearing of IEP_CMP_CFG registers during
+    iep_init
+
+ drivers/net/ethernet/ti/icssg/icss_iep.c     | 10 ++++
+ drivers/net/ethernet/ti/icssg/icssg_config.c | 28 ++++++++++
+ drivers/net/ethernet/ti/icssg/icssg_config.h |  1 +
+ drivers/net/ethernet/ti/icssg/icssg_prueth.c | 58 ++++++++++++++++----
+ drivers/net/ethernet/ti/icssg/icssg_prueth.h |  1 +
+ 5 files changed, 87 insertions(+), 11 deletions(-)
+
+
+base-commit: 73840ca5ef361f143b89edd5368a1aa8c2979241
+-- 
+2.25.1
 
 
