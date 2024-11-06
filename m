@@ -1,110 +1,60 @@
-Return-Path: <linux-kernel+bounces-398672-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398674-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C84399BF47D
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 18:44:39 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E53B99BF484
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 18:45:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B0FC1F24784
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 17:44:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A1248284FAB
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 17:45:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F2202076A4;
-	Wed,  6 Nov 2024 17:44:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2545207A1D;
+	Wed,  6 Nov 2024 17:45:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="V5KURQh1";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="k0hojoQ2";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="V5KURQh1";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="k0hojoQ2"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="bckz7RTN"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B44C8204932;
-	Wed,  6 Nov 2024 17:44:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 887872076DD;
+	Wed,  6 Nov 2024 17:45:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730915071; cv=none; b=FTteZHw+ZTN05jp7THj/qV/ISh9ROagmXPCcEJ38jYv6q/2CmB/bvM5OkDNVxhGg24QN+0Rxr8RIQuLkW6zoqcyW4X1gj4q0ov6xOmJoBVx4OufuhLXLjHJgGPf5k2uW7L0o1dec57gRkch5WOvv10H179oiuixrA/5X/Jyd7iQ=
+	t=1730915124; cv=none; b=PtsG/7zT9w4/cfytOqzp3vejIr9As7iKOF9Qf8Rqyzc2IjeH82OQ3ULqAV2+2D7JzPl7ASz1N84ItNdYZoT0hOEFEWqhXZgW9gj/H5xj1PuxL5QtQheT9uTew/M28+gPoBaIcvZT5dJ2PA/iacY86HmSoJWydSSKNYsKykoEFI0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730915071; c=relaxed/simple;
-	bh=P9Im8Mja/NroOhr10JZTucnsIuTZZ4Un9St924nVyQs=;
+	s=arc-20240116; t=1730915124; c=relaxed/simple;
+	bh=UlRfXX19qsv4mCDBgj85GQYkTz0EJiViPpEmRjDcL2Q=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=L4yuZxoYtHOW/jh+dEzYoYHP8MAple5X6w6tle1KTrRfcf5fHZclF8h7lZw8M+jgaAI3MmEJvAgd5RKPi8cfQ5MPelHq3z3QP5bKrvlJ7McCxkXMJisMCunA6BvFODuJxxFgM5x3UtYc0+7eJIJoSa0zuBnhX3uqayOk2dNmhL8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=V5KURQh1; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=k0hojoQ2; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=V5KURQh1; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=k0hojoQ2; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id CFC121F846;
-	Wed,  6 Nov 2024 17:44:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1730915067; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9VFl2eelebdXx2dClx4rsISOiUVqPiYqhxkteQkA/0s=;
-	b=V5KURQh1NcCO48njiAdO5jUzgWp0K//VtpJs+i8QxLB/YF1x2+fJFkWvXqSqJMr8TmtEmO
-	rlE34R5WBsmy/WiRVllH2XFBSpzAcheI8WGZfF9wwprzcAFkM7WKUT2p4M1H6Sxs+ge7Wp
-	AEcPX2sJqZTEFT97/T5YI+CCabz11fI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1730915067;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9VFl2eelebdXx2dClx4rsISOiUVqPiYqhxkteQkA/0s=;
-	b=k0hojoQ2a3lu3qTqKlfOv67RJ5Nmd1F4GfW9G6SHNyFeNcOXwRxZeCZFjbNJPwlbx2WlHW
-	LaXbPe6Jy9xx03Dg==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1730915067; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9VFl2eelebdXx2dClx4rsISOiUVqPiYqhxkteQkA/0s=;
-	b=V5KURQh1NcCO48njiAdO5jUzgWp0K//VtpJs+i8QxLB/YF1x2+fJFkWvXqSqJMr8TmtEmO
-	rlE34R5WBsmy/WiRVllH2XFBSpzAcheI8WGZfF9wwprzcAFkM7WKUT2p4M1H6Sxs+ge7Wp
-	AEcPX2sJqZTEFT97/T5YI+CCabz11fI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1730915067;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9VFl2eelebdXx2dClx4rsISOiUVqPiYqhxkteQkA/0s=;
-	b=k0hojoQ2a3lu3qTqKlfOv67RJ5Nmd1F4GfW9G6SHNyFeNcOXwRxZeCZFjbNJPwlbx2WlHW
-	LaXbPe6Jy9xx03Dg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C3849137C4;
-	Wed,  6 Nov 2024 17:44:27 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id LfHSL/uqK2fneAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 06 Nov 2024 17:44:27 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 59A80A0AFB; Wed,  6 Nov 2024 18:44:23 +0100 (CET)
-Date: Wed, 6 Nov 2024 18:44:23 +0100
-From: Jan Kara <jack@suse.cz>
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: "Ma, Yu" <yu.ma@intel.com>, Christian Brauner <brauner@kernel.org>,
-	jack@suse.cz, mjguzik@gmail.com, edumazet@google.com,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	pan.deng@intel.com, tianyou.li@intel.com, tim.c.chen@intel.com,
-	tim.c.chen@linux.intel.com
-Subject: Re: [PATCH v5 0/3] fs/file.c: optimize the critical section of
- file_lock in
-Message-ID: <20241106174423.kdgv6eonsmwci5oj@quack3>
-References: <20240614163416.728752-1-yu.ma@intel.com>
- <20240717145018.3972922-1-yu.ma@intel.com>
- <20240722-geliebt-feiern-9b2ab7126d85@brauner>
- <20240801191304.GR5334@ZenIV>
- <20240802-bewachsen-einpacken-343b843869f9@brauner>
- <20240802142248.GV5334@ZenIV>
- <20240805-gesaugt-crashtest-705884058a28@brauner>
- <5210f83c-d2d9-4df6-b3eb-3311da128dae@intel.com>
- <20240812024044.GF13701@ZenIV>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ji4uCSwjZ9Xb1ZEQfrIUV27tJzrA6L1HH1m1vZD3U1xYV50kDAIMiVecdG+/B2Sz01VeBK3F37Pnpgsne50tzDYl4FLJCre/aLrSFWS6f9dyyzzBrFI+kP8Xyp+UP4L6rrS/i9TTr4d/iTu+2A4RmR1MmZYjnYLfRhEatZFX2/o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=bckz7RTN; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=UxOA/rfjI1KE6q3W8gj1BUxMxZg7BxDAt4RAStM8cQA=; b=bckz7RTNCff3o2N0qC4BrW5JJU
+	t/NSlxrsd+A4IZiqBPho+pn1msHV/R9j4murPChVT9pvz2n/KWHwQPw9bbpmOHohQVi4yWa4W48Nx
+	Z+sC2x4pxCgPMEbO9uSl0nDw3qEeV+BB5OSFFMDDDOnoLm5P0txnjkLVwplDdMhfGPY4=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1t8k5m-00CMZo-Fe; Wed, 06 Nov 2024 18:45:18 +0100
+Date: Wed, 6 Nov 2024 18:45:18 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	intel-wired-lan@lists.osuosl.org, anthony.l.nguyen@intel.com,
+	przemyslaw.kitszel@intel.com, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	richardcochran@gmail.com,
+	Aleksandr Loktionov <aleksandr.loktionov@intel.com>
+Subject: Re: [PATCH net-next v3 1/2] ptp: add control over HW timestamp latch
+ point
+Message-ID: <d20d8265-4263-4408-8448-4338a268d537@lunn.ch>
+References: <20241106010756.1588973-1-arkadiusz.kubalewski@intel.com>
+ <20241106010756.1588973-2-arkadiusz.kubalewski@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -113,62 +63,50 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240812024044.GF13701@ZenIV>
-X-Spam-Score: -3.80
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_COUNT_THREE(0.00)[3];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCPT_COUNT_TWELVE(0.00)[12];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FREEMAIL_CC(0.00)[intel.com,kernel.org,suse.cz,gmail.com,google.com,vger.kernel.org,linux.intel.com];
-	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email]
-X-Spam-Flag: NO
-X-Spam-Level: 
+In-Reply-To: <20241106010756.1588973-2-arkadiusz.kubalewski@intel.com>
 
-On Mon 12-08-24 03:40:44, Al Viro wrote:
-> On Mon, Aug 12, 2024 at 09:31:17AM +0800, Ma, Yu wrote:
-> > 
-> > On 8/5/2024 2:56 PM, Christian Brauner wrote:
-> > > On Fri, Aug 02, 2024 at 03:22:48PM GMT, Al Viro wrote:
-> > > > On Fri, Aug 02, 2024 at 01:04:44PM +0200, Christian Brauner wrote:
-> > > > > > Hmm...   Something fishy's going on - those are not reachable by any branches.
-> > > > > Hm, they probably got dropped when rebasing to v6.11-rc1 and I did have
-> > > > > to play around with --onto.
-> > > > > 
-> > > > > > I'm putting together (in viro/vfs.git) a branch for that area (#work.fdtable)
-> > > > > > and I'm going to apply those 3 unless anyone objects.
-> > > > > Fine since they aren't in that branch. Otherwise I generally prefer to
-> > > > > just merge a common branch.
-> > > > If it's going to be rebased anyway, I don't see much difference from cherry-pick,
-> > > > TBH...
-> > > Yeah, but I generally don't rebase after -rc1 anymore unles there's
-> > > really annoying conflicts.
-> > 
-> > Thanks Christian and Al for your time and efforts. I'm not familiar with the
-> > merging process, may i know about when these patches could be seen in master
+On Wed, Nov 06, 2024 at 02:07:55AM +0100, Arkadiusz Kubalewski wrote:
+> Currently HW support of ptp/timesync solutions in network PHY chips can be
+> implemented with two different approaches, the timestamp maybe latched
+> either at the beginning or after the Start of Frame Delimiter (SFD) [1].
 > 
-> It's in work.fdtable in my tree, will post that series tonight and add to #for-next
+> Allow ptp device drivers to provide user with control over the HW
+> timestamp latch point with ptp sysfs ABI. Provide a new file under sysfs
+> ptp device (/sys/class/ptp/ptp<N>/ts_point). The file is available for the
+> user, if the device driver implements at least one of newly provided
+> callbacks. If the file is not provided the user shall find a PHY timestamp
+> latch point within the HW vendor specification.
+> 
+> The file is designed for root user/group access only, as the read for
+> regular user could impact performance of the ptp device.
+> 
+> Usage, examples:
+> 
+> ** Obtain current state:
+> $ cat /sys/class/ptp/ptp<N>/ts_point
+> Command returns enum/integer:
+> * 1 - timestamp latched by PHY at the beginning of SFD,
+> * 2 - timestamp latched by PHY after the SFD,
+> * None - callback returns error to the user.
 
-Al, it seems you didn't push the patches to Linus during the last merge
-window. Do you plan to push them during the coming one?
+-EOPNOTSUPP would be more conventional, not None.
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+> 
+> ** Configure timestamp latch point at the beginning of SFD:
+> $ echo 1 > /sys/class/ptp/ptp<N>/ts_point
+> 
+> ** Configure timestamp latch point after the SFD:
+> $ echo 2 > /sys/class/ptp/ptp<N>/ts_point
+
+and i assume these also return -EOPNOTSUPP if it is not supported.
+
+And a dumb question, why should i care where the latch point is? Why
+would i want to change it? Richard always says that you cannot trust
+the kernel to have the same latency from kernel to kernel version
+because driver developers like to tweak the latency, invalidating all
+measurements the user has done when setting up their ptp4l
+daemon. This just seems like yet another way to break my ptp4l
+configuration.
+
+	Andrew
 
