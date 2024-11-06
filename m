@@ -1,437 +1,186 @@
-Return-Path: <linux-kernel+bounces-398428-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398429-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 435639BF128
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 16:05:34 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC48E9BF12A
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 16:06:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 82695B24009
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 15:05:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1A5D11C21C8B
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 15:06:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 595262036F5;
-	Wed,  6 Nov 2024 15:04:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r9Oc6fuK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C8C7185B58;
+	Wed,  6 Nov 2024 15:06:07 +0000 (UTC)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 334281E0480;
-	Wed,  6 Nov 2024 15:04:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46E02537FF
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 15:06:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730905498; cv=none; b=dbdVMb4kYiUc3aPpupu2G28bavD5M58HboEur8zpmohqxjhK1fuaLbjDe1SqVVy1Jmzel1xPPNcvRz0CNJFRsnbFg+NdZEheoYt75YCh9xapbA9uzBeNxV/Cmln+VfjMTho100E2McdQLqcvPqZ0TDdtRAOmktBzE/Pw1K6PCxY=
+	t=1730905566; cv=none; b=Mi+ZPPn4qW3DOobq/28jIln/lL9d8rQJGLAqDSkxBV5E+gjGw1u1fm/6t+BPG4+BGA6mKVaz8BPnUa+jf2347cJkFz+aaE2/PbOKJRww0smtzDdoqE61MszM5NT/ZeLJqaRqMXp8t/pquHumdynW2RthdV616rQ75aFlDpTCjDE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730905498; c=relaxed/simple;
-	bh=IfaawjWn1fbALvXJKQNwn06rrvAuiZb0NAT5paFbuDc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cpwrcH7oh/7vQxiUodVCkbLAUJZoi24mwlO6ppezDSOLBP9l60f8aU8S3oTjIFzQuXFyoqf/6N+FTStHjt9oyttJRYDp6rpkj2toBKD1OuEiR+0wpw9lPyDc3xKvMqW9ICarB5s1o3YCbKwRcKJEz1595tacbAbVKXcGQcNGKLY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r9Oc6fuK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5D91C4CEC6;
-	Wed,  6 Nov 2024 15:04:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730905497;
-	bh=IfaawjWn1fbALvXJKQNwn06rrvAuiZb0NAT5paFbuDc=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=r9Oc6fuKEKXhdm6WNri85FdcLcxISNcjYXgLhf7eDyPfQGIzJhavy3Rbs176Lnq9x
-	 lqTO+DOqGWSHLizTe6RIO+Oqj6FdhOCK2OwD+VTfUwSH4enz5okcoJkhBeA5VrOp64
-	 jyL6p5XEEAtXSdstKHHJgtC+7TGMIP4IWakOXQP/KI6ksWlTiNNwqCB26yALlTjK5u
-	 05yv8ji4uDIa/p3k7Pwh+bDNEIMQjwSR2R8lumntegr+4L/2Y+lSYloDzM/pM5Qtde
-	 3SoxTt8jEk0NXtkMV7WRxJIx2xv4ecAhRn1XhnucDIpg/qGKJo06SnKLIkn0hxMUf2
-	 dk8Ustx1mdJWQ==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 4EBD7CE0876; Wed,  6 Nov 2024 07:04:57 -0800 (PST)
-Date: Wed, 6 Nov 2024 07:04:57 -0800
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>
-Cc: Boqun Feng <boqun.feng@gmail.com>, stern@rowland.harvard.edu,
-	parri.andrea@gmail.com, will@kernel.org, peterz@infradead.org,
-	npiggin@gmail.com, dhowells@redhat.com, j.alglave@ucl.ac.uk,
-	luc.maranget@inria.fr, akiyks@gmail.com, dlustig@nvidia.com,
-	joel@joelfernandes.org, urezki@gmail.com, quic_neeraju@quicinc.com,
-	frederic@kernel.org, linux-kernel@vger.kernel.org,
-	lkmm@lists.linux.dev, hernan.poncedeleon@huaweicloud.com
-Subject: Re: [PATCH v4 5/5] tools/memory-model: Distinguish between syntactic
- and semantic tags
-Message-ID: <36c93729-8d3c-4ede-8f5d-3074d6ea7e64@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <20240930105710.383284-1-jonas.oberhauser@huaweicloud.com>
- <20240930105710.383284-6-jonas.oberhauser@huaweicloud.com>
- <ZyApMteRMxZbpBta@Boquns-Mac-mini.local>
- <cd97e045-dfa4-4ffe-9df0-f7abeec848e7@paulmck-laptop>
- <3b796ef4-735a-44df-a9b1-671df49fd44e@huaweicloud.com>
- <ZyJEBc1qwFHwQQT2@Boquns-Mac-mini.local>
- <7b755586-79ee-4344-bf50-27ef6e99e7bf@paulmck-laptop>
- <a06ed5e4-37a2-4295-986f-10977878c65b@huaweicloud.com>
+	s=arc-20240116; t=1730905566; c=relaxed/simple;
+	bh=quYL6+FlHA0cheZYOYCnPncpwtAp1HntMbJZgEAXU80=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=mRTgyj0HnA5V4xy05Y+2M7SO99H3TUXfJX0+mwt0r+bNHgPmd1a9gn0GTUrFdsTF+aOIffrgf/zPJSkBazF52P4jbomIeMwKw9/HLXnoQnZ3A5JOntXU6PYpz6ZXhG619HWaCoyHwy9FVdBE/qV/d0C3/0JynFJwsgDvVTL4ofc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-83aae46538bso710651039f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2024 07:06:05 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730905564; x=1731510364;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Uk9umGkAfRTN0+Uj5VR8v3xY0+9Z/Y+2qBBIBw83Ayg=;
+        b=wU/bM6em28eWGZQe8DBoo2rvnXg5+kASjoOckYSyd+meHBYRb626Npe4D3e32c7yG+
+         6L59c34TogqMFhfJr8JT4nh5mJDwmkzitIQT/dwTn53haxgBiEhdwAd6ZtqDODh21LKS
+         z1bn9IoXf8HKD81HaS2yy64GJ/3O8wvC7+BJCxgLQ+CyrTaRhMsk/46svONYAqyizYL2
+         M1/2Bl4XOeiA+dJRjpB5T6CUd+1tRtIptzN6OrkLa4Sl5A/pH/N5RrmeymKhDpB1j/5z
+         XAU8MaZyN9Q3VX54YUDfLHOh12KNL0Oiigbck5vtk8SN/tKHW6ku+veu68ogampX+gYV
+         64GA==
+X-Forwarded-Encrypted: i=1; AJvYcCXalV7qDz6npJoXpo1cEvG/8G7NUFGYJrSSvCCuRyT69YA5uFzUo1SaRds6QIINO500bVZVU/NjHPlMHis=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxxwilkrExtI+0g2Dkh4p1nGKI6Bl1pjQZUnwqL0a8ZI5SgQ1+K
+	aJeHew8Cdx9DczRkEfpV6L3eP380V1n7xylarNWZxW54oqUkj5s1sshY4F/pBHHvOrzgkO3d2a6
+	Kv6d17HIS5MN+PGBr9QcXMgcVxfoDMcJpAjuVuZbzcGQEVsfFVSdEciI=
+X-Google-Smtp-Source: AGHT+IHLMMBk0ub4WPZFmvIVVgAlxZRIv2z19Tr9OHGTrj6Q/TkT9U+F639yaGiStgXA4u8ZoN1bg3hxLFpEVRDluTDS1nAu2r7K
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a06ed5e4-37a2-4295-986f-10977878c65b@huaweicloud.com>
+X-Received: by 2002:a05:6e02:168c:b0:3a6:c43d:12ff with SMTP id
+ e9e14a558f8ab-3a6c43d15bcmr123226705ab.8.1730905564286; Wed, 06 Nov 2024
+ 07:06:04 -0800 (PST)
+Date: Wed, 06 Nov 2024 07:06:04 -0800
+In-Reply-To: <20241106145044.90199-1-aha310510@gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <672b85dc.050a0220.350062.0262.GAE@google.com>
+Subject: Re: [syzbot] [acpi?] [nvdimm?] KASAN: vmalloc-out-of-bounds Read in
+ acpi_nfit_ctl (2)
+From: syzbot <syzbot+7534f060ebda6b8b51b3@syzkaller.appspotmail.com>
+To: aha310510@gmail.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Nov 06, 2024 at 11:28:28AM +0100, Jonas Oberhauser wrote:
-> 
-> 
-> Am 11/5/2024 um 9:21 PM schrieb Paul E. McKenney:
-> > On Wed, Oct 30, 2024 at 07:34:45AM -0700, Boqun Feng wrote:
-> > > On Wed, Oct 30, 2024 at 12:38:26PM +0100, Jonas Oberhauser wrote:
-> > > > 
-> > > > 
-> > > > Am 10/30/2024 um 12:41 AM schrieb Paul E. McKenney:
-> > > > > On Mon, Oct 28, 2024 at 05:15:46PM -0700, Boqun Feng wrote:
-> > > > > > On Mon, Sep 30, 2024 at 12:57:10PM +0200, Jonas Oberhauser wrote:
-> > > > > > > Not all tags that are always there syntactically also provide semantic
-> > > > > > > membership in the corresponding set. For example, an 'acquire tag on a
-> > > > > > 
-> > > > > > Maybe:
-> > > > > > 
-> > > > > > Not all annotated accesses provide the same semantic as their syntactic
-> > > > > > tags...
-> > > > > > 
-> > > > > > ?
-> > > > > 
-> > > > > Jonas, are you OK with this change?  If so, I can apply it on my next
-> > > > > rebase.
-> > > > > 
-> > > > 
-> > > > I'm ok with an extra s after semantics and a minor rephrase:
-> > > > 
-> > > > Not all annotated accesses provide the semantics their syntactic
-> > > > tags would imply
-> > > > 
-> > > > What do you think @Boqun ?
-> > > 
-> > > Yes, of course! This looks good to me.
-> > 
-> > Please see below for what I currently have.  If there are no objections
-> > in a day or so, I will set up these five commits for the upcoming v6.13
-> > merge window.
-> > 
-> > The additional bit pointed out by Boqun [1] can be addressed by a
-> > separate commit.
-> > 
-> > 							Thanx, Paul
-> > 
-> > [1] https://lore.kernel.org/all/ZyAmlh5GDBsqY0sZ@Boquns-Mac-mini.local/
-> 
-> I'm confused, did I forget to add the fix to the capitalization issue
-> discovered by Boqun to the fixed commit? I vividly remember typing git
-> commit add ...
+Hello,
 
-It is quite possible that I have queued an old version of the patch.
-Could you please check this commit on -rcu, shown below?
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+KASAN: vmalloc-out-of-bounds Read in acpi_nfit_ctl
 
-c53d54ed7e40 ("tools/memory-model: Distinguish between syntactic and semantic tags")
+9
+==================================================================
+BUG: KASAN: vmalloc-out-of-bounds in cmd_to_func drivers/acpi/nfit/core.c:417 [inline]
+BUG: KASAN: vmalloc-out-of-bounds in acpi_nfit_ctl+0x2061/0x2440 drivers/acpi/nfit/core.c:460
+Read of size 4 at addr ffffc9000166e038 by task syz.0.15/5815
 
-If this is the wrong one, please point me to the right one.
+CPU: 0 UID: 0 PID: 5815 Comm: syz.0.15 Not tainted 6.12.0-rc6-syzkaller-00077-g2e1b3cc9d7f7-dirty #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+ print_address_description mm/kasan/report.c:377 [inline]
+ print_report+0x169/0x550 mm/kasan/report.c:488
+ kasan_report+0x143/0x180 mm/kasan/report.c:601
+ cmd_to_func drivers/acpi/nfit/core.c:417 [inline]
+ acpi_nfit_ctl+0x2061/0x2440 drivers/acpi/nfit/core.c:460
+ __nd_ioctl drivers/nvdimm/bus.c:1186 [inline]
+ nd_ioctl+0x1844/0x1fd0 drivers/nvdimm/bus.c:1264
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:907 [inline]
+ __se_sys_ioctl+0xf9/0x170 fs/ioctl.c:893
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f768a37e719
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f768b263038 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 00007f768a535f80 RCX: 00007f768a37e719
+RDX: 0000000020000180 RSI: 00000000c008640a RDI: 0000000000000003
+RBP: 00007f768a3f139e R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 00007f768a535f80 R15: 00007ffec5fc1248
+ </TASK>
 
-							Thanx, Paul
+The buggy address belongs to the virtual mapping at
+ [ffffc9000166e000, ffffc90001670000) created by:
+ __nd_ioctl drivers/nvdimm/bus.c:1169 [inline]
+ nd_ioctl+0x1594/0x1fd0 drivers/nvdimm/bus.c:1264
 
-------------------------------------------------------------------------
+The buggy address belongs to the physical page:
+page: refcount:1 mapcount:0 mapping:0000000000000000 index:0xffff888040f74360 pfn:0x40f74
+flags: 0x4fff00000000000(node=1|zone=1|lastcpupid=0x7ff)
+raw: 04fff00000000000 0000000000000000 dead000000000122 0000000000000000
+raw: ffff888040f74360 0000000000000000 00000001ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
+page_owner tracks the page as allocated
+page last allocated via order 0, migratetype Unmovable, gfp_mask 0x2cc2(GFP_KERNEL|__GFP_HIGHMEM|__GFP_NOWARN), pid 5815, tgid 5814 (syz.0.15), ts 117205092748, free_ts 117198254028
+ set_page_owner include/linux/page_owner.h:32 [inline]
+ post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1537
+ prep_new_page mm/page_alloc.c:1545 [inline]
+ get_page_from_freelist+0x303f/0x3190 mm/page_alloc.c:3457
+ __alloc_pages_noprof+0x292/0x710 mm/page_alloc.c:4733
+ alloc_pages_bulk_noprof+0x729/0xd40 mm/page_alloc.c:4681
+ alloc_pages_bulk_array_mempolicy_noprof+0x8ea/0x1600 mm/mempolicy.c:2556
+ vm_area_alloc_pages mm/vmalloc.c:3542 [inline]
+ __vmalloc_area_node mm/vmalloc.c:3646 [inline]
+ __vmalloc_node_range_noprof+0x752/0x13f0 mm/vmalloc.c:3828
+ __vmalloc_node_noprof mm/vmalloc.c:3893 [inline]
+ vmalloc_noprof+0x79/0x90 mm/vmalloc.c:3926
+ __nd_ioctl drivers/nvdimm/bus.c:1169 [inline]
+ nd_ioctl+0x1594/0x1fd0 drivers/nvdimm/bus.c:1264
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:907 [inline]
+ __se_sys_ioctl+0xf9/0x170 fs/ioctl.c:893
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+page last free pid 5612 tgid 5612 stack trace:
+ reset_page_owner include/linux/page_owner.h:25 [inline]
+ free_pages_prepare mm/page_alloc.c:1108 [inline]
+ free_unref_page+0xcfb/0xf20 mm/page_alloc.c:2638
+ __slab_free+0x31b/0x3d0 mm/slub.c:4490
+ qlink_free mm/kasan/quarantine.c:163 [inline]
+ qlist_free_all+0x9a/0x140 mm/kasan/quarantine.c:179
+ kasan_quarantine_reduce+0x14f/0x170 mm/kasan/quarantine.c:286
+ __kasan_slab_alloc+0x23/0x80 mm/kasan/common.c:329
+ kasan_slab_alloc include/linux/kasan.h:247 [inline]
+ slab_post_alloc_hook mm/slub.c:4085 [inline]
+ slab_alloc_node mm/slub.c:4134 [inline]
+ kmem_cache_alloc_noprof+0x135/0x2a0 mm/slub.c:4141
+ getname_flags+0xb7/0x540 fs/namei.c:139
+ do_sys_openat2+0xd2/0x1d0 fs/open.c:1409
+ do_sys_open fs/open.c:1430 [inline]
+ __do_sys_openat fs/open.c:1446 [inline]
+ __se_sys_openat fs/open.c:1441 [inline]
+ __x64_sys_openat+0x247/0x2a0 fs/open.c:1441
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-commit c53d54ed7e40255ea0ea66dd121672fd22423326
-Author: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>
-Date:   Mon Sep 30 12:57:10 2024 +0200
+Memory state around the buggy address:
+ ffffc9000166df00: f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8
+ ffffc9000166df80: f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8
+>ffffc9000166e000: 00 00 00 00 00 00 00 03 f8 f8 f8 f8 f8 f8 f8 f8
+                                        ^
+ ffffc9000166e080: f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8
+ ffffc9000166e100: f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8
+==================================================================
 
-    tools/memory-model: Distinguish between syntactic and semantic tags
-    
-    Not all annotated accesses provide the semantics their syntactic tags
-    would imply. For example, an 'acquire tag on a write does not imply that
-    the write is finally in the Acquire set and provides acquire ordering.
-    
-    To distinguish in those cases between the syntactic tags and actual
-    sets, we capitalize the former, so 'ACQUIRE tags may be present on both
-    reads and writes, but only reads will appear in the Acquire set.
-    
-    For tags where the two concepts are the same we do not use specific
-    capitalization to make this distinction.
-    
-    Reported-by: Boqun Feng <boqun.feng@gmail.com>
-    Signed-off-by: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>
-    Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-    Reviewed-by: Boqun Feng <boqun.feng@gmail.com>
-    Tested-by: Boqun Feng <boqun.feng@gmail.com>
 
-diff --git a/tools/memory-model/linux-kernel.bell b/tools/memory-model/linux-kernel.bell
-index 8ae47545df978..fe65998002b99 100644
---- a/tools/memory-model/linux-kernel.bell
-+++ b/tools/memory-model/linux-kernel.bell
-@@ -13,18 +13,18 @@
- 
- "Linux-kernel memory consistency model"
- 
--enum Accesses = 'once (*READ_ONCE,WRITE_ONCE*) ||
--		'release (*smp_store_release*) ||
--		'acquire (*smp_load_acquire*) ||
--		'noreturn (* R of non-return RMW *) ||
--		'mb (*xchg(),cmpxchg(),...*)
-+enum Accesses = 'ONCE (*READ_ONCE,WRITE_ONCE*) ||
-+		'RELEASE (*smp_store_release*) ||
-+		'ACQUIRE (*smp_load_acquire*) ||
-+		'NORETURN (* R of non-return RMW *) ||
-+		'MB (*xchg(),cmpxchg(),...*)
- instructions R[Accesses]
- instructions W[Accesses]
- instructions RMW[Accesses]
- 
- enum Barriers = 'wmb (*smp_wmb*) ||
- 		'rmb (*smp_rmb*) ||
--		'mb (*smp_mb*) ||
-+		'MB (*smp_mb*) ||
- 		'barrier (*barrier*) ||
- 		'rcu-lock (*rcu_read_lock*)  ||
- 		'rcu-unlock (*rcu_read_unlock*) ||
-@@ -42,10 +42,10 @@ instructions F[Barriers]
-  * semantic ordering, such as Acquire on a store or Mb on a failed RMW.
-  *)
- let FailedRMW = RMW \ (domain(rmw) | range(rmw))
--let Acquire = Acquire \ W \ FailedRMW
--let Release = Release \ R \ FailedRMW
--let Mb = Mb \ FailedRMW
--let Noreturn = Noreturn \ W
-+let Acquire = ACQUIRE \ W \ FailedRMW
-+let Release = RELEASE \ R \ FailedRMW
-+let Mb = MB \ FailedRMW
-+let Noreturn = NORETURN \ W
- 
- (* SRCU *)
- enum SRCU = 'srcu-lock || 'srcu-unlock || 'sync-srcu
-@@ -85,7 +85,7 @@ flag ~empty rcu-rscs & (po ; [Sync-srcu] ; po) as invalid-sleep
- flag ~empty different-values(srcu-rscs) as srcu-bad-value-match
- 
- (* Compute marked and plain memory accesses *)
--let Marked = (~M) | IW | Once | Release | Acquire | domain(rmw) | range(rmw) |
-+let Marked = (~M) | IW | ONCE | RELEASE | ACQUIRE | MB | RMW |
- 		LKR | LKW | UL | LF | RL | RU | Srcu-lock | Srcu-unlock
- let Plain = M \ Marked
- 
-diff --git a/tools/memory-model/linux-kernel.def b/tools/memory-model/linux-kernel.def
-index d7279a357cba0..49e402782e49c 100644
---- a/tools/memory-model/linux-kernel.def
-+++ b/tools/memory-model/linux-kernel.def
-@@ -6,18 +6,18 @@
- // which appeared in ASPLOS 2018.
- 
- // ONCE
--READ_ONCE(X) __load{once}(X)
--WRITE_ONCE(X,V) { __store{once}(X,V); }
-+READ_ONCE(X) __load{ONCE}(X)
-+WRITE_ONCE(X,V) { __store{ONCE}(X,V); }
- 
- // Release Acquire and friends
--smp_store_release(X,V) { __store{release}(*X,V); }
--smp_load_acquire(X) __load{acquire}(*X)
--rcu_assign_pointer(X,V) { __store{release}(X,V); }
--rcu_dereference(X) __load{once}(X)
--smp_store_mb(X,V) { __store{once}(X,V); __fence{mb}; }
-+smp_store_release(X,V) { __store{RELEASE}(*X,V); }
-+smp_load_acquire(X) __load{ACQUIRE}(*X)
-+rcu_assign_pointer(X,V) { __store{RELEASE}(X,V); }
-+rcu_dereference(X) __load{ONCE}(X)
-+smp_store_mb(X,V) { __store{ONCE}(X,V); __fence{MB}; }
- 
- // Fences
--smp_mb() { __fence{mb}; }
-+smp_mb() { __fence{MB}; }
- smp_rmb() { __fence{rmb}; }
- smp_wmb() { __fence{wmb}; }
- smp_mb__before_atomic() { __fence{before-atomic}; }
-@@ -28,14 +28,14 @@ smp_mb__after_srcu_read_unlock() { __fence{after-srcu-read-unlock}; }
- barrier() { __fence{barrier}; }
- 
- // Exchange
--xchg(X,V)  __xchg{mb}(X,V)
--xchg_relaxed(X,V) __xchg{once}(X,V)
--xchg_release(X,V) __xchg{release}(X,V)
--xchg_acquire(X,V) __xchg{acquire}(X,V)
--cmpxchg(X,V,W) __cmpxchg{mb}(X,V,W)
--cmpxchg_relaxed(X,V,W) __cmpxchg{once}(X,V,W)
--cmpxchg_acquire(X,V,W) __cmpxchg{acquire}(X,V,W)
--cmpxchg_release(X,V,W) __cmpxchg{release}(X,V,W)
-+xchg(X,V)  __xchg{MB}(X,V)
-+xchg_relaxed(X,V) __xchg{ONCE}(X,V)
-+xchg_release(X,V) __xchg{RELEASE}(X,V)
-+xchg_acquire(X,V) __xchg{ACQUIRE}(X,V)
-+cmpxchg(X,V,W) __cmpxchg{MB}(X,V,W)
-+cmpxchg_relaxed(X,V,W) __cmpxchg{ONCE}(X,V,W)
-+cmpxchg_acquire(X,V,W) __cmpxchg{ACQUIRE}(X,V,W)
-+cmpxchg_release(X,V,W) __cmpxchg{RELEASE}(X,V,W)
- 
- // Spinlocks
- spin_lock(X) { __lock(X); }
-@@ -63,86 +63,86 @@ atomic_set(X,V) { WRITE_ONCE(*X,V); }
- atomic_read_acquire(X) smp_load_acquire(X)
- atomic_set_release(X,V) { smp_store_release(X,V); }
- 
--atomic_add(V,X) { __atomic_op{noreturn}(X,+,V); }
--atomic_sub(V,X) { __atomic_op{noreturn}(X,-,V); }
--atomic_and(V,X) { __atomic_op{noreturn}(X,&,V); }
--atomic_or(V,X)  { __atomic_op{noreturn}(X,|,V); }
--atomic_xor(V,X) { __atomic_op{noreturn}(X,^,V); }
--atomic_inc(X)   { __atomic_op{noreturn}(X,+,1); }
--atomic_dec(X)   { __atomic_op{noreturn}(X,-,1); }
--atomic_andnot(V,X) { __atomic_op{noreturn}(X,&~,V); }
--
--atomic_add_return(V,X) __atomic_op_return{mb}(X,+,V)
--atomic_add_return_relaxed(V,X) __atomic_op_return{once}(X,+,V)
--atomic_add_return_acquire(V,X) __atomic_op_return{acquire}(X,+,V)
--atomic_add_return_release(V,X) __atomic_op_return{release}(X,+,V)
--atomic_fetch_add(V,X) __atomic_fetch_op{mb}(X,+,V)
--atomic_fetch_add_relaxed(V,X) __atomic_fetch_op{once}(X,+,V)
--atomic_fetch_add_acquire(V,X) __atomic_fetch_op{acquire}(X,+,V)
--atomic_fetch_add_release(V,X) __atomic_fetch_op{release}(X,+,V)
--
--atomic_fetch_and(V,X) __atomic_fetch_op{mb}(X,&,V)
--atomic_fetch_and_relaxed(V,X) __atomic_fetch_op{once}(X,&,V)
--atomic_fetch_and_acquire(V,X) __atomic_fetch_op{acquire}(X,&,V)
--atomic_fetch_and_release(V,X) __atomic_fetch_op{release}(X,&,V)
--
--atomic_fetch_or(V,X) __atomic_fetch_op{mb}(X,|,V)
--atomic_fetch_or_relaxed(V,X) __atomic_fetch_op{once}(X,|,V)
--atomic_fetch_or_acquire(V,X) __atomic_fetch_op{acquire}(X,|,V)
--atomic_fetch_or_release(V,X) __atomic_fetch_op{release}(X,|,V)
--
--atomic_fetch_xor(V,X) __atomic_fetch_op{mb}(X,^,V)
--atomic_fetch_xor_relaxed(V,X) __atomic_fetch_op{once}(X,^,V)
--atomic_fetch_xor_acquire(V,X) __atomic_fetch_op{acquire}(X,^,V)
--atomic_fetch_xor_release(V,X) __atomic_fetch_op{release}(X,^,V)
--
--atomic_inc_return(X) __atomic_op_return{mb}(X,+,1)
--atomic_inc_return_relaxed(X) __atomic_op_return{once}(X,+,1)
--atomic_inc_return_acquire(X) __atomic_op_return{acquire}(X,+,1)
--atomic_inc_return_release(X) __atomic_op_return{release}(X,+,1)
--atomic_fetch_inc(X) __atomic_fetch_op{mb}(X,+,1)
--atomic_fetch_inc_relaxed(X) __atomic_fetch_op{once}(X,+,1)
--atomic_fetch_inc_acquire(X) __atomic_fetch_op{acquire}(X,+,1)
--atomic_fetch_inc_release(X) __atomic_fetch_op{release}(X,+,1)
--
--atomic_sub_return(V,X) __atomic_op_return{mb}(X,-,V)
--atomic_sub_return_relaxed(V,X) __atomic_op_return{once}(X,-,V)
--atomic_sub_return_acquire(V,X) __atomic_op_return{acquire}(X,-,V)
--atomic_sub_return_release(V,X) __atomic_op_return{release}(X,-,V)
--atomic_fetch_sub(V,X) __atomic_fetch_op{mb}(X,-,V)
--atomic_fetch_sub_relaxed(V,X) __atomic_fetch_op{once}(X,-,V)
--atomic_fetch_sub_acquire(V,X) __atomic_fetch_op{acquire}(X,-,V)
--atomic_fetch_sub_release(V,X) __atomic_fetch_op{release}(X,-,V)
--
--atomic_dec_return(X) __atomic_op_return{mb}(X,-,1)
--atomic_dec_return_relaxed(X) __atomic_op_return{once}(X,-,1)
--atomic_dec_return_acquire(X) __atomic_op_return{acquire}(X,-,1)
--atomic_dec_return_release(X) __atomic_op_return{release}(X,-,1)
--atomic_fetch_dec(X) __atomic_fetch_op{mb}(X,-,1)
--atomic_fetch_dec_relaxed(X) __atomic_fetch_op{once}(X,-,1)
--atomic_fetch_dec_acquire(X) __atomic_fetch_op{acquire}(X,-,1)
--atomic_fetch_dec_release(X) __atomic_fetch_op{release}(X,-,1)
--
--atomic_xchg(X,V) __xchg{mb}(X,V)
--atomic_xchg_relaxed(X,V) __xchg{once}(X,V)
--atomic_xchg_release(X,V) __xchg{release}(X,V)
--atomic_xchg_acquire(X,V) __xchg{acquire}(X,V)
--atomic_cmpxchg(X,V,W) __cmpxchg{mb}(X,V,W)
--atomic_cmpxchg_relaxed(X,V,W) __cmpxchg{once}(X,V,W)
--atomic_cmpxchg_acquire(X,V,W) __cmpxchg{acquire}(X,V,W)
--atomic_cmpxchg_release(X,V,W) __cmpxchg{release}(X,V,W)
--
--atomic_sub_and_test(V,X) __atomic_op_return{mb}(X,-,V) == 0
--atomic_dec_and_test(X)  __atomic_op_return{mb}(X,-,1) == 0
--atomic_inc_and_test(X)  __atomic_op_return{mb}(X,+,1) == 0
--atomic_add_negative(V,X) __atomic_op_return{mb}(X,+,V) < 0
--atomic_add_negative_relaxed(V,X) __atomic_op_return{once}(X,+,V) < 0
--atomic_add_negative_acquire(V,X) __atomic_op_return{acquire}(X,+,V) < 0
--atomic_add_negative_release(V,X) __atomic_op_return{release}(X,+,V) < 0
--
--atomic_fetch_andnot(V,X) __atomic_fetch_op{mb}(X,&~,V)
--atomic_fetch_andnot_acquire(V,X) __atomic_fetch_op{acquire}(X,&~,V)
--atomic_fetch_andnot_release(V,X) __atomic_fetch_op{release}(X,&~,V)
--atomic_fetch_andnot_relaxed(V,X) __atomic_fetch_op{once}(X,&~,V)
--
--atomic_add_unless(X,V,W) __atomic_add_unless{mb}(X,V,W)
-+atomic_add(V,X) { __atomic_op{NORETURN}(X,+,V); }
-+atomic_sub(V,X) { __atomic_op{NORETURN}(X,-,V); }
-+atomic_and(V,X) { __atomic_op{NORETURN}(X,&,V); }
-+atomic_or(V,X)  { __atomic_op{NORETURN}(X,|,V); }
-+atomic_xor(V,X) { __atomic_op{NORETURN}(X,^,V); }
-+atomic_inc(X)   { __atomic_op{NORETURN}(X,+,1); }
-+atomic_dec(X)   { __atomic_op{NORETURN}(X,-,1); }
-+atomic_andnot(V,X) { __atomic_op{NORETURN}(X,&~,V); }
-+
-+atomic_add_return(V,X) __atomic_op_return{MB}(X,+,V)
-+atomic_add_return_relaxed(V,X) __atomic_op_return{ONCE}(X,+,V)
-+atomic_add_return_acquire(V,X) __atomic_op_return{ACQUIRE}(X,+,V)
-+atomic_add_return_release(V,X) __atomic_op_return{RELEASE}(X,+,V)
-+atomic_fetch_add(V,X) __atomic_fetch_op{MB}(X,+,V)
-+atomic_fetch_add_relaxed(V,X) __atomic_fetch_op{ONCE}(X,+,V)
-+atomic_fetch_add_acquire(V,X) __atomic_fetch_op{ACQUIRE}(X,+,V)
-+atomic_fetch_add_release(V,X) __atomic_fetch_op{RELEASE}(X,+,V)
-+
-+atomic_fetch_and(V,X) __atomic_fetch_op{MB}(X,&,V)
-+atomic_fetch_and_relaxed(V,X) __atomic_fetch_op{ONCE}(X,&,V)
-+atomic_fetch_and_acquire(V,X) __atomic_fetch_op{ACQUIRE}(X,&,V)
-+atomic_fetch_and_release(V,X) __atomic_fetch_op{RELEASE}(X,&,V)
-+
-+atomic_fetch_or(V,X) __atomic_fetch_op{MB}(X,|,V)
-+atomic_fetch_or_relaxed(V,X) __atomic_fetch_op{ONCE}(X,|,V)
-+atomic_fetch_or_acquire(V,X) __atomic_fetch_op{ACQUIRE}(X,|,V)
-+atomic_fetch_or_release(V,X) __atomic_fetch_op{RELEASE}(X,|,V)
-+
-+atomic_fetch_xor(V,X) __atomic_fetch_op{MB}(X,^,V)
-+atomic_fetch_xor_relaxed(V,X) __atomic_fetch_op{ONCE}(X,^,V)
-+atomic_fetch_xor_acquire(V,X) __atomic_fetch_op{ACQUIRE}(X,^,V)
-+atomic_fetch_xor_release(V,X) __atomic_fetch_op{RELEASE}(X,^,V)
-+
-+atomic_inc_return(X) __atomic_op_return{MB}(X,+,1)
-+atomic_inc_return_relaxed(X) __atomic_op_return{ONCE}(X,+,1)
-+atomic_inc_return_acquire(X) __atomic_op_return{ACQUIRE}(X,+,1)
-+atomic_inc_return_release(X) __atomic_op_return{RELEASE}(X,+,1)
-+atomic_fetch_inc(X) __atomic_fetch_op{MB}(X,+,1)
-+atomic_fetch_inc_relaxed(X) __atomic_fetch_op{ONCE}(X,+,1)
-+atomic_fetch_inc_acquire(X) __atomic_fetch_op{ACQUIRE}(X,+,1)
-+atomic_fetch_inc_release(X) __atomic_fetch_op{RELEASE}(X,+,1)
-+
-+atomic_sub_return(V,X) __atomic_op_return{MB}(X,-,V)
-+atomic_sub_return_relaxed(V,X) __atomic_op_return{ONCE}(X,-,V)
-+atomic_sub_return_acquire(V,X) __atomic_op_return{ACQUIRE}(X,-,V)
-+atomic_sub_return_release(V,X) __atomic_op_return{RELEASE}(X,-,V)
-+atomic_fetch_sub(V,X) __atomic_fetch_op{MB}(X,-,V)
-+atomic_fetch_sub_relaxed(V,X) __atomic_fetch_op{ONCE}(X,-,V)
-+atomic_fetch_sub_acquire(V,X) __atomic_fetch_op{ACQUIRE}(X,-,V)
-+atomic_fetch_sub_release(V,X) __atomic_fetch_op{RELEASE}(X,-,V)
-+
-+atomic_dec_return(X) __atomic_op_return{MB}(X,-,1)
-+atomic_dec_return_relaxed(X) __atomic_op_return{ONCE}(X,-,1)
-+atomic_dec_return_acquire(X) __atomic_op_return{ACQUIRE}(X,-,1)
-+atomic_dec_return_release(X) __atomic_op_return{RELEASE}(X,-,1)
-+atomic_fetch_dec(X) __atomic_fetch_op{MB}(X,-,1)
-+atomic_fetch_dec_relaxed(X) __atomic_fetch_op{ONCE}(X,-,1)
-+atomic_fetch_dec_acquire(X) __atomic_fetch_op{ACQUIRE}(X,-,1)
-+atomic_fetch_dec_release(X) __atomic_fetch_op{RELEASE}(X,-,1)
-+
-+atomic_xchg(X,V) __xchg{MB}(X,V)
-+atomic_xchg_relaxed(X,V) __xchg{ONCE}(X,V)
-+atomic_xchg_release(X,V) __xchg{RELEASE}(X,V)
-+atomic_xchg_acquire(X,V) __xchg{ACQUIRE}(X,V)
-+atomic_cmpxchg(X,V,W) __cmpxchg{MB}(X,V,W)
-+atomic_cmpxchg_relaxed(X,V,W) __cmpxchg{ONCE}(X,V,W)
-+atomic_cmpxchg_acquire(X,V,W) __cmpxchg{ACQUIRE}(X,V,W)
-+atomic_cmpxchg_release(X,V,W) __cmpxchg{RELEASE}(X,V,W)
-+
-+atomic_sub_and_test(V,X) __atomic_op_return{MB}(X,-,V) == 0
-+atomic_dec_and_test(X)  __atomic_op_return{MB}(X,-,1) == 0
-+atomic_inc_and_test(X)  __atomic_op_return{MB}(X,+,1) == 0
-+atomic_add_negative(V,X) __atomic_op_return{MB}(X,+,V) < 0
-+atomic_add_negative_relaxed(V,X) __atomic_op_return{ONCE}(X,+,V) < 0
-+atomic_add_negative_acquire(V,X) __atomic_op_return{ACQUIRE}(X,+,V) < 0
-+atomic_add_negative_release(V,X) __atomic_op_return{RELEASE}(X,+,V) < 0
-+
-+atomic_fetch_andnot(V,X) __atomic_fetch_op{MB}(X,&~,V)
-+atomic_fetch_andnot_acquire(V,X) __atomic_fetch_op{ACQUIRE}(X,&~,V)
-+atomic_fetch_andnot_release(V,X) __atomic_fetch_op{RELEASE}(X,&~,V)
-+atomic_fetch_andnot_relaxed(V,X) __atomic_fetch_op{ONCE}(X,&~,V)
-+
-+atomic_add_unless(X,V,W) __atomic_add_unless{MB}(X,V,W)
+Tested on:
+
+commit:         2e1b3cc9 Merge tag 'arm-fixes-6.12-2' of git://git.ker..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=16808d87980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=11254d3590b16717
+dashboard link: https://syzkaller.appspot.com/bug?extid=7534f060ebda6b8b51b3
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=1109b6a7980000
+
 
