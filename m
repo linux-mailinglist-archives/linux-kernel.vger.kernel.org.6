@@ -1,86 +1,125 @@
-Return-Path: <linux-kernel+bounces-398976-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398977-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 205C99BF8C8
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 23:00:21 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30A6A9BF8CB
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 23:01:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C72C91C219E0
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 22:00:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A4CA3B22802
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 22:01:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E56981DFE13;
-	Wed,  6 Nov 2024 22:00:04 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A4A81DA2FD;
+	Wed,  6 Nov 2024 22:01:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fhmO4vDR"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D9B920C48B
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 22:00:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 275261CF2A5
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 22:01:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730930404; cv=none; b=kJ1JieWNJBpZAk/rvex4F6Lu2tjSXvcKcio0LUMVV+uBfSCDu/bJ1tvdoyoT9QSDqEZHjy9N3M+xY90L/XH70bXS1ro4wuLUd3nbdn8Owb/CrtIi6oqUfCoVxT3FbvtGBXuM+zUHupSYrrxX3U1igvN0CbT4SFjSYIPMSk9+nGI=
+	t=1730930472; cv=none; b=FvVlPn1aJfF7OVKTnoAcBjlfmt604rvkOzimcScpJs5BpoQjx12wa0RWHMedxCZI/tLiaHdEBIOO4teIYZIYzyRRX9XldMp+QnWgv3Gt4pTLx99boFaMyJRD/Me/Hc2HG8sqlITrwnV8wZWMxZnkotlQEHV0HxpwiHgIsqi2+D4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730930404; c=relaxed/simple;
-	bh=nyCMCcUDfgZmYD3CT2Wfym7vQE4yvZlUvhVPdrMPbMw=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=FrR7fL4AXVYPj28HixR7YW3O31R7gT3tuVEmF3JrdZ+3JNb1ULOQ1C0OhybJRFgs13l14Trn8Izs8VqC+d1xWa2V7SYQUKVCPDih0y2uy6DFbDgwlPQSBJwnUlrD736tQgBz5ZMH+f6QR2p9tNsBmlUW9YqPNPonjOnY7/XPG9A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a6b963ca02so3556475ab.2
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2024 14:00:02 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730930402; x=1731535202;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ll395Y08osr8sXkNlWx7LdYdV3WVeC1GARy3OzH9sWY=;
-        b=f9wWqwCdAIHiYCM7dhyNJJjSvHAJQFHWWpabPHmF0xtbCXS873rAfO0JByfmuaUQkJ
-         Bp6J735tZ+DKIvAM1BRjwSTHMFSJ8VBEoRANgmfbDaewf9tbQhHxKrsY5OGQo+4EXZf9
-         uwhyCOsQ4d9PLGUnQHLW9xsCcsZ76sjqjopPogfcCJnB256mlEbJOJPYv4YyPCPWxdlQ
-         jJQlbMyxdFQBSwTSG0xk8qa5FikiafDhOufOXxzUtbdwlNEOCS7VWnHnAcn0HgINc9ix
-         BPHomVoPS/zNzGf99Ww90Rp1s7gbbyAAv75VZi4uyLvutiLgEemLdnlJGGryU5lk8AYu
-         +S1A==
-X-Gm-Message-State: AOJu0YwENsw6vHHfZjLbQ2CTn6u6YxsABT+h3xXRfhJNEgbqFmlHEuI5
-	OA51Rt6OCWlNDbYFjNoTWVxGv/r2jvQHNxvxk7CZH90dxQSOqfTyIA6xt4/12mKcPEZsN67X0Kp
-	1bfiLb58jDhKfE6KIYOVxKIdPgkyJRIG2MsXMwKA+Pd79QxeggxRWZLA=
-X-Google-Smtp-Source: AGHT+IEN1jG9cma8xviMDkM43taxeYrGXd8skPVxQUECKiqlObbGmOScVJ2FwnnfnybyT5zShZwEJ4yi0qJUa1tDv2xrhm2pgGch
+	s=arc-20240116; t=1730930472; c=relaxed/simple;
+	bh=Ouf4XzzU9BDiFBs8f/7h+WkG2cfCo4XqkFKzWinQv54=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XN944eEckvIQKBJiS8NmaISZkuISldC+6/HDkm9WDaLR6K7eqLxhEqG2EqymmHvfzAqlE4Z3aFumFBSSXTfBza0Qm5pq0W4hWHIBDm/6vrVw7j7oIUEKpwJ7aoDFfMCyBZnnrfEonWF8gc0pUqADXrH1C6+HIvaw/QExyIUyuL0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fhmO4vDR; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1730930470;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=CQkjpCq+FR4wEb3gcJTTVlpVQssWedAQsO1i+66yjS0=;
+	b=fhmO4vDRHExFJhemWJ2rAeKwcOrFrp5Ac2vhjWq4p9G4zQIEK7PQnqL0qkxbosRX/chue+
+	Koit2d2ohWJ6Gct0VtMimm9KDMMcS53q4NQdHZ4Hj2Jgg6kmppeQ3HsD8YKBSn/XFLL7Ue
+	3L8xVXdCo8tV5rSyTawm+37PIZcxfHQ=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-620-g35XZgqGMTmn5CkoR9Ysow-1; Wed,
+ 06 Nov 2024 17:01:06 -0500
+X-MC-Unique: g35XZgqGMTmn5CkoR9Ysow-1
+X-Mimecast-MFC-AGG-ID: g35XZgqGMTmn5CkoR9Ysow
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 76EFA1955F07;
+	Wed,  6 Nov 2024 22:01:05 +0000 (UTC)
+Received: from shalem.redhat.com (unknown [10.39.192.71])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id A39591956088;
+	Wed,  6 Nov 2024 22:01:03 +0000 (UTC)
+From: Hans de Goede <hdegoede@redhat.com>
+To: Tomas Winkler <tomas.winkler@intel.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Hans de Goede <hdegoede@redhat.com>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] mei: vsc: Do not re-enable interrupt from vsc_tp_reset()
+Date: Wed,  6 Nov 2024 23:01:02 +0100
+Message-ID: <20241106220102.40549-1-hdegoede@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:3287:b0:3a6:c43d:1325 with SMTP id
- e9e14a558f8ab-3a6c43d1556mr162662535ab.8.1730930402236; Wed, 06 Nov 2024
- 14:00:02 -0800 (PST)
-Date: Wed, 06 Nov 2024 14:00:02 -0800
-In-Reply-To: <CAN=OONwCrvagLau5FdcOWX=AkKkX4wz-xPGU05Jt-cYveA=g-w@mail.gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <672be6e2.050a0220.350062.027c.GAE@google.com>
-Subject: Re: [syzbot] [wireless?] WARNING in ieee80211_mark_sta_auth
-From: syzbot <syzbot+542f74e8fc8361630178@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, sarvesh20123@gmail.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-Hello,
+The only 2 callers of vsc_tp_reset() are:
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+1. mei_vsc_hw_reset(), which immediataly calls vsc_tp_intr_disable()
+   afterwards.
 
-Reported-by: syzbot+542f74e8fc8361630178@syzkaller.appspotmail.com
-Tested-by: syzbot+542f74e8fc8361630178@syzkaller.appspotmail.com
+2. vsc_tp_shutdown() which immediately calls free_irq() afterwards.
 
-Tested on:
+So neither actually wants the interrupt to be enabled after resetting
+the chip and having the interrupt enabled for a short time afer
+the reset is undesirable.
 
-commit:         26a2bebd Merge branch '100GbE' of git://git.kernel.org..
-git tree:       net
-console output: https://syzkaller.appspot.com/x/log.txt?x=13a43d5f980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=cae3eadd4ac1a645
-dashboard link: https://syzkaller.appspot.com/bug?extid=542f74e8fc8361630178
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=16ff0d87980000
+Drop the enable_irq() call from vsc_tp_reset(), so that the interrupt
+is left disabled after vsc_tp_reset().
 
-Note: testing is done by a robot and is best-effort only.
+Link: https://github.com/intel/ivsc-driver/issues/51
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+---
+ drivers/misc/mei/platform-vsc.c | 2 --
+ drivers/misc/mei/vsc-tp.c       | 2 --
+ 2 files changed, 4 deletions(-)
+
+diff --git a/drivers/misc/mei/platform-vsc.c b/drivers/misc/mei/platform-vsc.c
+index 20a11b299bcd..71f9994da2cc 100644
+--- a/drivers/misc/mei/platform-vsc.c
++++ b/drivers/misc/mei/platform-vsc.c
+@@ -256,8 +256,6 @@ static int mei_vsc_hw_reset(struct mei_device *mei_dev, bool intr_enable)
+ 
+ 	vsc_tp_reset(hw->tp);
+ 
+-	vsc_tp_intr_disable(hw->tp);
+-
+ 	return vsc_tp_init(hw->tp, mei_dev->dev);
+ }
+ 
+diff --git a/drivers/misc/mei/vsc-tp.c b/drivers/misc/mei/vsc-tp.c
+index 1618cca9a731..107177b05dcd 100644
+--- a/drivers/misc/mei/vsc-tp.c
++++ b/drivers/misc/mei/vsc-tp.c
+@@ -364,8 +364,6 @@ void vsc_tp_reset(struct vsc_tp *tp)
+ 	gpiod_set_value_cansleep(tp->wakeupfw, 1);
+ 
+ 	atomic_set(&tp->assert_cnt, 0);
+-
+-	enable_irq(tp->spi->irq);
+ }
+ EXPORT_SYMBOL_NS_GPL(vsc_tp_reset, VSC_TP);
+ 
+-- 
+2.47.0
+
 
