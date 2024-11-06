@@ -1,195 +1,108 @@
-Return-Path: <linux-kernel+bounces-398009-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398012-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A99E39BE426
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 11:21:33 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06CE09BE432
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 11:23:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 68C93283264
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 10:21:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9119CB2149C
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 10:23:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D2461DE2A3;
-	Wed,  6 Nov 2024 10:21:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F2041DE2DC;
+	Wed,  6 Nov 2024 10:23:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="MsqeP7+h"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bglYgFtl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F4371DBB19;
-	Wed,  6 Nov 2024 10:21:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BD721DDC3A;
+	Wed,  6 Nov 2024 10:23:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730888484; cv=none; b=FOYGUvgv+tptRe1CTlDSQ566b3JlnE16xBOYO+ut/4uJcel8K8Bkm9WSJArCZF/HTjaJ82hEBhcIgc3SgSwIUWK5TUqzIkXCia7GSF28Gm+Q6N3B+dvDYez26HKCoI6Q+etr3KoyIk0LRYOKv7q+ADP1b/qj9ImEf9I9dY7dxY8=
+	t=1730888611; cv=none; b=ulckLOhwWyJk/8TxfyjUhrtS9zJuTJVc50c9t5OqkpwPSgdZNRoJTCjTbiL+mxqMFXQ7xyA7s4PqtNQjQDdqAh7pdHGmnptgbjZg7+OQRfgIZ9Z1Sr8fw0y1g9dpyOymGLdydPXttPwOqIchy6P/+djUQOiVtx+K3WhiwL6M7dM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730888484; c=relaxed/simple;
-	bh=PQ2o5PxJV//B/SDV+R6qsRTowPv4eb3FpLR+95aS7w4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=eAHroGBrF4EMF1wZUCUgO86pYxcH17H3ZrDrhFi7UWe4qruorIAX6FxHohP7kHQV11gkT2l7hnS5mvX3osv8EAiURZ/13xlELGpW9kqS3fF/+73DRDfMK/wr5WPlvLz9MoV1UZRzZLNHf6yqA7hN4/aq465wL1eZd9isgKKdlIo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=MsqeP7+h; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A69WbvC028952;
-	Wed, 6 Nov 2024 10:21:16 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	yjpz5PvCxLqQic9Vv2wXPzL/5dQBB7Fhvy+j5Ys7CQk=; b=MsqeP7+huWjZZbGM
-	G+4Xsl2HsRlsthnf25NvZctAmB3CpoVn0QNaUhvjInq7gdcigJVkloaREr+4rodB
-	jYF0H0diBeOI3zqPq49FdXzSLj4NkZr/8vVnpLIVCzoN86MrdPqrEcS//SJCnULK
-	ApuSYyNifM6W2u0B1j2rfmcbURCHCYW7GLFkCptYBjbwcX6CtRkA0WQe78cPZSl1
-	4z2tA1UhNLH1KoEgC/Fk7lQDF5xDpgxy2Lx1Y4tY2B9nBJVa4zndYXHOra1sOhkK
-	pd3Rizc1127vv1fHAB8JsKqhkB9xr8CpJGxRzR5i5uNRyFiE8S3lI3FoqCQGHf3z
-	3pxiww==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42nd28aua6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 06 Nov 2024 10:21:15 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4A6ALE1B018773
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 6 Nov 2024 10:21:14 GMT
-Received: from [10.216.39.182] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 6 Nov 2024
- 02:21:10 -0800
-Message-ID: <556248aa-8d0e-4dbd-b32d-40017a59b972@quicinc.com>
-Date: Wed, 6 Nov 2024 15:51:05 +0530
+	s=arc-20240116; t=1730888611; c=relaxed/simple;
+	bh=6DxisW7D7zjNCbF4hlBcke6SsDosV23ni3y7W/phmvs=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=bBne/yHvifDGrqflwWtVtpQ1fEsWpMUPrP2aWR7N3KKKR0IPlMUHT2jxEPsrmRw7ty/jz6tz9KI1uSYFr6HylNgcJX90rwr1TAFOyjMrnrN11KH1U2WvSpH8oW4vBhPO9Wd9s2Hb/kRCN8b9c2jgr2s1zT8YuuAzNsYq5cFIc1U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bglYgFtl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0050C4CECD;
+	Wed,  6 Nov 2024 10:23:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730888611;
+	bh=6DxisW7D7zjNCbF4hlBcke6SsDosV23ni3y7W/phmvs=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=bglYgFtlGDDSFSE6HvhUiwDNerouRy8APG6TIzlAtdh4cS4ccBmejqicrrfMZWLs1
+	 +Fqet/7XzmLAK8PT0VHJJGKxTEzdjjbU3CViA+hDYaQtfHlktaincGVuRP58MC1PPu
+	 3z/64zEsU9oDC7bGK6APrOfIzBsdSzcxo43I7TGQhB/JIO1VfXCYkFl42yJzM+LK9G
+	 uK3/CxDLTu5tJYqtd0wY1yotZDqHDWLe/nGmDi106VVeOUgR3feW5bCP4jipTjFV/V
+	 52Kb1v5k7U7EaYXAxIAFXK45dXGh4ZDxI0GNd/1SHAK+U8CeYpkQsSEWIuf1yeIBPm
+	 Bl4zJuSN0cFTA==
+From: Christian Brauner <brauner@kernel.org>
+To: =?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	kernel-dev@igalia.com,
+	Theodore Ts'o <tytso@mit.edu>,
+	Hugh Dickins <hughd@google.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Jan Kara <jack@suse.cz>,
+	krisman@kernel.org,
+	Stephen Rothwell <sfr@canb.auug.org.au>,
+	Nathan Chancellor <nathan@kernel.org>
+Subject: Re: [PATCH v2 0/3] tmpfs: Casefold fixes
+Date: Wed,  6 Nov 2024 11:23:10 +0100
+Message-ID: <20241106-hofnarren-bestuhlung-b98bec741179@brauner>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20241101164251.327884-1-andrealmeid@igalia.com>
+References: <20241101164251.327884-1-andrealmeid@igalia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 3/3] arm64: dts: qcom: sc8280xp-blackrock: dt
- definition for WDK2023
-To: Jens Glathe <jens.glathe@oldschoolsolutions.biz>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Merck Hung <merckhung@gmail.com>,
-        Kalle Valo
-	<kvalo@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Rob Herring <robh@kernel.org>, <xlazom00@gmail.com>
-References: <20241101-jg-blackrock-for-upstream-v7-0-8295e9f545d9@oldschoolsolutions.biz>
- <20241101-jg-blackrock-for-upstream-v7-3-8295e9f545d9@oldschoolsolutions.biz>
- <945f3eae-0a68-4738-af07-74e228039508@quicinc.com>
- <dd5bad7b-d062-4028-b78a-3888dec4f934@oldschoolsolutions.biz>
- <f8697f7f-f6ac-4b6d-954b-a0777770dc8e@quicinc.com>
- <e13488a3-5f45-44b2-950d-5a29307d4ec4@oldschoolsolutions.biz>
-Content-Language: en-US
-From: Krishna Kurapati <quic_kriskura@quicinc.com>
-In-Reply-To: <e13488a3-5f45-44b2-950d-5a29307d4ec4@oldschoolsolutions.biz>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1395; i=brauner@kernel.org; h=from:subject:message-id; bh=6DxisW7D7zjNCbF4hlBcke6SsDosV23ni3y7W/phmvs=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaRrO8+q2d6qclPisbCzydK+DzoFdkp9ugoXr/3dcSbkF y9PXNDujlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgIm8+MnwT2v7lefdCj+MPvza vy9fRF/dZJtHTeYX5Q8cV0y2rdI1msTwP2T589KPm2xtJh78WjyHMXr+633bamIVn5z77Po7yXH ePjYA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: hOvJtcsmXAbsHXAqwxFHYYzs3CkuZFwK
-X-Proofpoint-GUID: hOvJtcsmXAbsHXAqwxFHYYzs3CkuZFwK
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 mlxlogscore=999
- clxscore=1015 lowpriorityscore=0 impostorscore=0 priorityscore=1501
- spamscore=0 phishscore=0 bulkscore=0 malwarescore=0 suspectscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411060084
 
-
-
-On 11/6/2024 2:23 PM, Jens Glathe wrote:
+On Fri, 01 Nov 2024 13:42:48 -0300, André Almeida wrote:
+> After casefold support for tmpfs was merged into vfs tree, two warnings
+> were reported and I also found a small fix in the code.
 > 
-> On 06.11.24 05:46, Krishna Kurapati wrote:
->>
->>
->> On 11/6/2024 12:57 AM, Jens Glathe wrote:
->>> On 04.11.24 05:31, Krishna Kurapati wrote:
->>>>
->>>>
->>>> On 11/1/2024 11:56 PM, Jens Glathe via B4 Relay wrote:
->>>>> From: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
->>>>>
->>>>> Device tree for the Microsoft Windows Dev Kit 2023. This work
->>>>> is based on the initial work of Merck Hung <merckhung@gmail.com>.
->>>>>
->>>>> Original work:
->>>>> https://github.com/merckhung/linux_ms_dev_kit/blob/ms-dev-kit-2023-v6.3.0/arch/arm64/boot/dts/qcom/sc8280xp-microsoft-dev-kit-2023.dts
->>>>>
->>>>>
->>>>> The Windows Dev Kit 2023 is a nice little desktop based on sc8280xp.
->>>>> Link: https://learn.microsoft.com/en-us/windows/arm/dev-kit/
->>>>>
->>>>> Supported features:
->>>>> - USB type-c and type-a ports
->>>>> - minidp connector
->>>>> - built-in r8152 Ethernet adapter
->>>>> - PCIe devices
->>>>> - nvme
->>>>> - ath11k WiFi (WCN6855)
->>>>> - WCN6855 Bluetooth
->>>>> - A690 GPU
->>>>> - ADSP and CDSP
->>>>> - GPIO keys
->>>>> - Audio definition (works via USB)
->>>>>
->>>>> Signed-off-by: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
->>>>> ---
->>>>
->>>> [...]
->>>>
->>>>> +&usb_2 {
->>>>> +    pinctrl-0 = <&usb2_en_state>;
->>>>> +    pinctrl-names = "default";
->>>>> +
->>>>
->>>> On the blackrock platform, for this controller, are there all 4 ports
->>>> given out for use or only one ?
->>>>
->>>> Because if all 4 are there, you might need to give all 4 pinctrls (one
->>>> for each TS3USB221A mux select) here for usb_2 node. If only one port
->>>> is given out for use on the platform, then only one phy (of the 4
->>>> activated below) needs to be marked as active.
->>>>
->>>> In my case, in [1] on the ADP platform, I marked them as always on for
->>>> all gpios on multiport controller since driver had no support added
->>>> yet.
->>>>
->>>> [1]:
->>>> https://lore.kernel.org/all/20240707085624.3411961-1-quic_kriskura@quicinc.com/
->>>>
->>>>
->>> Hi Krishna,
->>>
->>> thank you for the hints. Unfortunately, I don't have any schematics for
->>> the box. But I tested out activation combinations for all the
->>
->> My point is little different.
->> Third controller supports upto 4 physical ports. How many of them have
->> been exposed on this WDK2023 ? Depending on that, the phys have to be
->> enabled in DT.
->>
-> Okay I took the jump and reduced usb_2_dwc3 to only one qmpphy and one
-> hsphy. It works, the USB nodes look the same and work. What an odd
-> design, though, but why not.
+> Thanks Nathan Chancellor and Stephen Rothwell!
 > 
-> &usb_2_dwc3 {
->      phys = <&usb_2_hsphy0>, <&usb_2_qmpphy0>;
->      phy-names = "usb2-0", "usb3-0";
-> };
+> Changelog:
+> - Fixed ifdef guard for tmpfs_sysfs_init()
+> v1: https://lore.kernel.org/lkml/20241101013741.295792-1-andrealmeid@igalia.com/
 > 
-> I will do an amended V8 of the patch. Thank you for the hint again.
-> 
+> [...]
 
-Also, if there is only one port, then don't enable the other PHYs.
+Applied to the vfs.tmpfs branch of the vfs/vfs.git tree.
+Patches in the vfs.tmpfs branch should appear in linux-next soon.
 
-Regards,
-Krishna,
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
+
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.tmpfs
+
+[1/3] libfs: Fix kernel-doc warning in generic_ci_validate_strict_name
+      https://git.kernel.org/vfs/vfs/c/33b091c08ed8
+[2/3] tmpfs: Fix type for sysfs' casefold attribute
+      https://git.kernel.org/vfs/vfs/c/18d2f10f6284
+[3/3] tmpfs: Initialize sysfs during tmpfs init
+      https://git.kernel.org/vfs/vfs/c/65c481f30896
 
