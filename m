@@ -1,137 +1,219 @@
-Return-Path: <linux-kernel+bounces-397543-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397542-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2EFD9BDD2A
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 03:48:40 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F29969BDD29
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 03:48:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 429551F21356
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 02:48:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 22BD51C21206
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 02:48:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6515818FC7E;
-	Wed,  6 Nov 2024 02:48:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2C9618FC84;
+	Wed,  6 Nov 2024 02:48:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="f7HjKbfG"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XALZov/T"
+Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 708DD18A92C
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 02:48:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E3C5A47;
+	Wed,  6 Nov 2024 02:48:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730861314; cv=none; b=GIo6MaFZ2hZKjUECiaJpoUuH67itE+iotYZAIvxHtpRL0L3qjaCYgy5BpVMGrxe/7FyxXsWlbz5IEqbsu3nPat5UdaiK4UrrFsFgRpsa2y4vw+ZUaKR2WtqC2wJ+X81epe0uyDbW6GsLTNsVpsN626rjbnCp0UXKFtDFevBYleY=
+	t=1730861293; cv=none; b=j1uS+O4N7MLu/zIJsjZ3jypw/KvouuRyKc4BMgGaiWh7uFSxTR3/0tNtxHOSSakxxbxpd7VJ6C1iO3RQOut8Dfzn7ogUcUrxo4rbfYMgcpEuFIeCrDZLs1Q7GZ6/6fVDEexJ857gSZpD2TYtZLL/ktPiU/V8+YlHJ9c4KjXOUT4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730861314; c=relaxed/simple;
-	bh=pD3c1qN+3qwiiELhWPCeBpM9P+/1hDsGwN0sbnawkAw=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=QWh0MIkESPdn9TOC0SQdpHESyq/UeQYcij4fqXt0jNWpKz2w0/tuBHDAp3i2a1aWKuwJnwBeEgd8FYEHyLJpHf1BiV0t9k2gW81LWCj9mIzl6w1Uoi86q1q7jc47xn+lqfs+69GU9TE5UYgWilAE5M8AG9Anv5lnfxgb5oQCrbk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=f7HjKbfG; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [127.0.0.1] ([76.133.66.138])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 4A62lG2M501413
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Tue, 5 Nov 2024 18:47:16 -0800
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 4A62lG2M501413
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2024101701; t=1730861237;
-	bh=pD3c1qN+3qwiiELhWPCeBpM9P+/1hDsGwN0sbnawkAw=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=f7HjKbfGwKWB76QznpZbHstUDYwAQ7sHXv1EsCbVKJDvpo1EtgkY4z03HzpuJoefy
-	 r/7O3Fz6/IPdl94CLHyLJLjWiftppLkqToC5Bv4aU+1FCp/UkaSL6jiXVqaOdYvLhw
-	 jnahoLwkZnCx3v8bUpKLehbKtSXulSnUtRVTLwwOQQ7grW/c8BuKet+6tmfiY4wkRa
-	 /zVEMY/iFxBRJIQlWis4cwSx//5246n7jnfi84EbQ6xWOUyCRfhjfpvWendsQs3dY3
-	 jtT/JrtiBjeqMPpWmJ4Rhrzkba57F21PCSaEbPK1LRvRk4OTd+qfyZZR4asqt/NBzL
-	 XpEgMGbxNJW/w==
-Date: Tue, 05 Nov 2024 18:47:13 -0800
-From: "H. Peter Anvin" <hpa@zytor.com>
-To: David Woodhouse <dwmw2@infradead.org>,
-        "peterz@infradead.org" <peterz@infradead.org>,
-        "kexec@lists.infradead.org" <kexec@lists.infradead.org>,
-        "jpoimboe@kernel.org" <jpoimboe@kernel.org>
-CC: "horms@kernel.org" <horms@kernel.org>, "x86@kernel.org" <x86@kernel.org>,
-        "bp@alien8.de" <bp@alien8.de>, "mingo@redhat.com" <mingo@redhat.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "kai.huang@intel.com" <kai.huang@intel.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>,
-        "nik.borisov@suse.com" <nik.borisov@suse.com>,
-        "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>
-Subject: =?US-ASCII?Q?Re=3A_=5BRFC_PATCH_6/7=5D_x86/kexec=3A_Debuggi?=
- =?US-ASCII?Q?ng_support=3A_Dump_registers_on_exception?=
-User-Agent: K-9 Mail for Android
-In-Reply-To: <10f2dec7afbbff6570007495185ce1c4144e446b.camel@infradead.org>
-References: <20241103054019.3795299-1-dwmw2@infradead.org> <20241103054019.3795299-7-dwmw2@infradead.org> <230aacb0ca0d57581f9350f96390933646f203e4.camel@amazon.co.uk> <b66cd5ca-aae4-48eb-a0ba-2d1d4e53f810@zytor.com> <10f2dec7afbbff6570007495185ce1c4144e446b.camel@infradead.org>
-Message-ID: <B4EBAF27-5E42-4088-9857-DBCD0D19305C@zytor.com>
+	s=arc-20240116; t=1730861293; c=relaxed/simple;
+	bh=5Stzl46TvVRzSLhLOWShk+S8kp2aWvvpUWQwVQ2iJJ8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pPLEbxVQ2fpdxz1VCazvgqo9YsW0ojYIwA3MvJCkuD1Yt9hMnmEGu+tMZplcmKHKLacMWNEAIU9lyXYoeV53n8weZIe6Rb+Wes178fKz14V7Llft/s8diT1C30F9BSY+ADzfL3m3zQ/6S8j2iHX5MORhOrsja8+LDpmWTnSrS84=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XALZov/T; arc=none smtp.client-ip=209.85.215.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-7f3f1849849so899980a12.1;
+        Tue, 05 Nov 2024 18:48:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730861292; x=1731466092; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=XA4RV3f14XOhxic3OxE/rLOjQ3fBuwIvrwqO+BWPzBQ=;
+        b=XALZov/T3eWcjYcdRhsjPdSGoBbwSLFWOedwPDGO5uclgNPIoHGeVKplV4Bo6uhUcO
+         OyM2H4RyIPYIRTS6406oev9k/cb4zsWYe53fGzHVT6L3lwu0phOxh5/P4n7x8BFdTFd/
+         iLAJameHLx5onKRFTTAfe+jyNYVgg/Hi8OtJM1WHhlWl2ZE2xyEfK0E4CENf78HMk2Wf
+         8U40gcS9WWztpVlpRKioy+eSQZJ6ABKOqvLy9NzdDvGTgVdSyJFfbZrJzDoadSUlpS4d
+         42EDL8yB0eQCnF6Fy0z/FHEQYtFFYrOsMcdnh+I/0h0NFd3Xtb9BxrUhnXGdq0WpxrtH
+         /VXw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730861292; x=1731466092;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XA4RV3f14XOhxic3OxE/rLOjQ3fBuwIvrwqO+BWPzBQ=;
+        b=CkCJtBdd8OM/40HkxfGJ8v71KZb5kA1wRfzmybnv0SBcrCuJvMYuzKz2a6WzPlouWI
+         h1ZxH/94WPZY9zzhvEqooQo6eiOrwVjTnx6jfX0K10zD4R8jnZxBmuUPBNegIoTbOSYz
+         SfKc/aZO1MQGTAldOhmHpfDfkDqVDXgBvfBHtLveYn/g/r+mZpPA2JQXGBln0TxWAksl
+         GnQxO9V2yiNOo6dI4zFu8zspbLcfF40t1hnLFbs3U8wSapvXvCP7L111VS+sJsvD4WPi
+         1dkNHogAz892m5Ey6stzx6dUO2qiruWq2HERb1ib9bW1/GesIsrHyUpzgzbTCE2OZlj1
+         KBPw==
+X-Forwarded-Encrypted: i=1; AJvYcCU/2aVXUxS+VXWvp7NqniueUyaiweZ8tFEcCahFu3fFSg5OzyuKQRUam3H8+AFpkc12Ow8hE2o7@vger.kernel.org, AJvYcCX0TC23xQ3X3Hed9hc2GVQdn9BSMmjEz1dnl3wyKdkYtmQP/pJQ5ZBj/dnvIgy2rr6/2NG7FU8A01i21HU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxtEJVTVIhTkntJPTqchNGWhtheDmB4a1TDTGFiulR+jtJ9vgR6
+	ZVGfps4cFiL34a0/p9HiAZ0Cz2pEFQ04bGrytaN+1fFKTCOsrn+S
+X-Google-Smtp-Source: AGHT+IEhLwywn62cebsAZxheY2qHgMhbNy5pGIA5Apkn9GUpDIh3N0UWX98b/OFLLVgYI37dnqIfDA==
+X-Received: by 2002:a05:6a20:3d88:b0:1db:daab:2ae7 with SMTP id adf61e73a8af0-1dbdaab2b0bmr14629245637.19.1730861291582;
+        Tue, 05 Nov 2024 18:48:11 -0800 (PST)
+Received: from z790sl ([240f:74:7be:1:f95:4edb:e798:4ba9])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-720bc2eb6bcsm10576883b3a.169.2024.11.05.18.48.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 05 Nov 2024 18:48:11 -0800 (PST)
+Date: Wed, 6 Nov 2024 11:48:06 +0900
+From: Koichiro Den <koichiro.den@gmail.com>
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: Catalin Marinas <Catalin.Marinas@arm.com>, cl@linux.com, 
+	penberg@kernel.org, rientjes@google.com, iamjoonsoo.kim@lge.com, 
+	akpm@linux-foundation.org, roman.gushchin@linux.dev, 42.hyeyoo@gmail.com, kees@kernel.org, 
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH v2] mm/slab: fix warning caused by duplicate kmem_cache
+ creation in kmem_buckets_create
+Message-ID: <sdpgw6ni7thxpkuxpbrjrw2gm2rffejmrbpvzipxz4fl4oilnc@3vr64pl5ln4b>
+References: <20241105022747.2819151-1-koichiro.den@gmail.com>
+ <6125f047-7326-49f7-a568-9cabf80f51c7@suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6125f047-7326-49f7-a568-9cabf80f51c7@suse.cz>
 
-On November 5, 2024 6:43:44 PM PST, David Woodhouse <dwmw2@infradead=2Eorg>=
- wrote:
->On Tue, 2024-11-05 at 13:37 -0800, H=2E Peter Anvin wrote:
->>=20
->> Looking at your code, you have a much bigger problem here:
->>=20
->> +/*
->> + * This allows other types of serial ports to be used=2E
->> + *=C2=A0 - %al: Character to be printed (no clobber %rax)
->> + *=C2=A0 - %rdx: MMIO address or port=2E
->> + */
->> +=2Emacro pr_char
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 outb=C2=A0=C2=A0=C2=A0 %al, %dx
->> +=2Eendm
->> +
->>=20
->> This will overflow your UART buffer very quickly since you are now=20
->> dumping a whole bunch of data=2E The URT buffer -- if you even have one
->> and it is enabled -- is only 16 bytes in a standard 16550A UART=2E In=
-=20
->> older UARTs (or emulated older UARTs) you might not have a buffer at=20
->> all=2E To print more than a handful of bytes, you need to poll for the=
-=20
->> THRE bit=3D1 (bit 5 of register 5)=2E
->
->Emulated UARTs are generally fine because they don't really emulate the
->buffer at all=2E And when I originally wrote this it was purely a hack to
->debug an issue for myself, and used a different type of logging device
->altogether=2E
->
->But yeah, if this were to be used on bare metal 16550A it would indeed
->need to wait for space in the FIFO/THR=2E
->
->> What is the point of writing this code in assembly in the first place? =
-A=20
->> much more logical thing to do is to just push the registers you haven't=
-=20
->> pushed already onto the stack and call a C function to do the actual=20
->> dumping? It isn't like it is in any shape, way or form performance crit=
-ical=2E
->
->If we fix it up to use a proper linker script, that's slightly more
->feasible=2E=C2=A0As things stand, it's only really possible to do it in t=
-he
->existing asm file=2E=20
->
->And it's only the core of the exception handler "function" which could
->be moved out to C; it didn't seem particularly worth bothering=2E Would
->be nice to have the IDT generated from C code *before* calling
->relocate_kernel() instead of inside relocate_kernel itself, perhaps,
->but I was also trying to keep the #define DEBUG version of the code
->fairly self-contained=2E
->
->
+On Tue, Nov 05, 2024 at 05:48:56PM +0100, Vlastimil Babka wrote:
+> On 11/5/24 03:27, Koichiro Den wrote:
+> > Commit b035f5a6d852 ("mm: slab: reduce the kmalloc() minimum alignment
+> > if DMA bouncing possible") reduced ARCH_KMALLOC_MINALIGN to 8 on arm64.
+> > However, with KASAN_HW_TAGS enabled, arch_slab_minalign() becomes 16.
+> > This causes kmalloc_caches[*][8] to be aliased to kmalloc_caches[*][16],
+> > resulting in kmem_buckets_create() attempting to create a kmem_cache for
+> > size 16 twice. This duplication triggers warnings on boot:
+> > 
+> > [    2.325108] ------------[ cut here ]------------
+> > [    2.325135] kmem_cache of name 'memdup_user-16' already exists
+> > [    2.325783] WARNING: CPU: 0 PID: 1 at mm/slab_common.c:107 __kmem_cache_create_args+0xb8/0x3b0
+> > [    2.327957] Modules linked in:
+> > [    2.328550] CPU: 0 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.12.0-rc5mm-unstable-arm64+ #12
+> > [    2.328683] Hardware name: QEMU QEMU Virtual Machine, BIOS 2024.02-2 03/11/2024
+> > [    2.328790] pstate: 61000009 (nZCv daif -PAN -UAO -TCO +DIT -SSBS BTYPE=--)
+> > [    2.328911] pc : __kmem_cache_create_args+0xb8/0x3b0
+> > [    2.328930] lr : __kmem_cache_create_args+0xb8/0x3b0
+> > [    2.328942] sp : ffff800083d6fc50
+> > [    2.328961] x29: ffff800083d6fc50 x28: f2ff0000c1674410 x27: ffff8000820b0598
+> > [    2.329061] x26: 000000007fffffff x25: 0000000000000010 x24: 0000000000002000
+> > [    2.329101] x23: ffff800083d6fce8 x22: ffff8000832222e8 x21: ffff800083222388
+> > [    2.329118] x20: f2ff0000c1674410 x19: f5ff0000c16364c0 x18: ffff800083d80030
+> > [    2.329135] x17: 0000000000000000 x16: 0000000000000000 x15: 0000000000000000
+> > [    2.329152] x14: 0000000000000000 x13: 0a73747369786520 x12: 79646165726c6120
+> > [    2.329169] x11: 656820747563205b x10: 2d2d2d2d2d2d2d2d x9 : 0000000000000000
+> > [    2.329194] x8 : 0000000000000000 x7 : 0000000000000000 x6 : 0000000000000000
+> > [    2.329210] x5 : 0000000000000000 x4 : 0000000000000000 x3 : 0000000000000000
+> > [    2.329226] x2 : 0000000000000000 x1 : 0000000000000000 x0 : 0000000000000000
+> > [    2.329291] Call trace:
+> > [    2.329407]  __kmem_cache_create_args+0xb8/0x3b0
+> > [    2.329499]  kmem_buckets_create+0xfc/0x320
+> > [    2.329526]  init_user_buckets+0x34/0x78
+> > [    2.329540]  do_one_initcall+0x64/0x3c8
+> > [    2.329550]  kernel_init_freeable+0x26c/0x578
+> > [    2.329562]  kernel_init+0x3c/0x258
+> > [    2.329574]  ret_from_fork+0x10/0x20
+> > [    2.329698] ---[ end trace 0000000000000000 ]---
+> > 
+> > [    2.403704] ------------[ cut here ]------------
+> > [    2.404716] kmem_cache of name 'msg_msg-16' already exists
+> > [    2.404801] WARNING: CPU: 2 PID: 1 at mm/slab_common.c:107 __kmem_cache_create_args+0xb8/0x3b0
+> > [    2.404842] Modules linked in:
+> > [    2.404971] CPU: 2 UID: 0 PID: 1 Comm: swapper/0 Tainted: G        W          6.12.0-rc5mm-unstable-arm64+ #12
+> > [    2.405026] Tainted: [W]=WARN
+> > [    2.405043] Hardware name: QEMU QEMU Virtual Machine, BIOS 2024.02-2 03/11/2024
+> > [    2.405057] pstate: 60400009 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+> > [    2.405079] pc : __kmem_cache_create_args+0xb8/0x3b0
+> > [    2.405100] lr : __kmem_cache_create_args+0xb8/0x3b0
+> > [    2.405111] sp : ffff800083d6fc50
+> > [    2.405115] x29: ffff800083d6fc50 x28: fbff0000c1674410 x27: ffff8000820b0598
+> > [    2.405135] x26: 000000000000ffd0 x25: 0000000000000010 x24: 0000000000006000
+> > [    2.405153] x23: ffff800083d6fce8 x22: ffff8000832222e8 x21: ffff800083222388
+> > [    2.405169] x20: fbff0000c1674410 x19: fdff0000c163d6c0 x18: ffff800083d80030
+> > [    2.405185] x17: 0000000000000000 x16: 0000000000000000 x15: 0000000000000000
+> > [    2.405201] x14: 0000000000000000 x13: 0a73747369786520 x12: 79646165726c6120
+> > [    2.405217] x11: 656820747563205b x10: 2d2d2d2d2d2d2d2d x9 : 0000000000000000
+> > [    2.405233] x8 : 0000000000000000 x7 : 0000000000000000 x6 : 0000000000000000
+> > [    2.405248] x5 : 0000000000000000 x4 : 0000000000000000 x3 : 0000000000000000
+> > [    2.405271] x2 : 0000000000000000 x1 : 0000000000000000 x0 : 0000000000000000
+> > [    2.405287] Call trace:
+> > [    2.405293]  __kmem_cache_create_args+0xb8/0x3b0
+> > [    2.405305]  kmem_buckets_create+0xfc/0x320
+> > [    2.405315]  init_msg_buckets+0x34/0x78
+> > [    2.405326]  do_one_initcall+0x64/0x3c8
+> > [    2.405337]  kernel_init_freeable+0x26c/0x578
+> > [    2.405348]  kernel_init+0x3c/0x258
+> > [    2.405360]  ret_from_fork+0x10/0x20
+> > [    2.405370] ---[ end trace 0000000000000000 ]---
+> > 
+> > To address this, alias kmem_cache for sizes smaller than min alignment
+> > to the aligned sized kmem_cache, as done with the default system kmalloc
+> > bucket.
+> > 
+> > Cc: <stable@vger.kernel.org> # 6.11.x
+> > Fixes: b32801d1255b ("mm/slab: Introduce kmem_buckets_create() and family")
+> > Signed-off-by: Koichiro Den <koichiro.den@gmail.com>
+> 
+> Thanks. Given this warning was introduced in 6.12, I'm adding it to the
+> slab/for-6.12-rc7/fixes branch so we fix it before 6.12 is final.
+> 
+> > @@ -427,18 +426,29 @@ kmem_buckets *kmem_buckets_create(const char *name, slab_flags_t flags,
+> >  			cache_useroffset = useroffset;
+> >  			cache_usersize = min(size - cache_useroffset, usersize);
+> >  		}
+> > -		(*b)[idx] = kmem_cache_create_usercopy(cache_name, size,
+> > -					0, flags, cache_useroffset,
+> > -					cache_usersize, ctor);
+> > -		kfree(cache_name);
+> > -		if (WARN_ON(!(*b)[idx]))
+> > -			goto fail;
+> > +
+> > +		aligned_idx = __kmalloc_index(size, false);
+> > +		if (!(*b)[aligned_idx]) {
+> > +			cache_name = kasprintf(GFP_KERNEL, "%s-%s", name, short_size + 1);
+> > +			if (WARN_ON(!cache_name))
+> > +				goto fail;
+> > +			(*b)[aligned_idx] = kmem_cache_create_usercopy(cache_name, size,
+> > +						0, flags, cache_useroffset,
+> > +						cache_usersize, ctor);
+> > +			if (WARN_ON(!(*b)[aligned_idx])) {
+> > +				kfree(cache_name);
+> 
+> Note we need to free cache_name always, because kmem_cache_create() does a
+> kstrdup_const(), so your change would be creating a memory leak. I've fixed
+> it up locally.
+> 
+> Vlastimil
 
-Yes, the linker script needs to happen=2E=20
+Ugh, sorry about that. Thanks.
 
-This is a case of doing it right vs doing it quickly=2E
+> 
+> > +				goto fail;
+> > +			}
+> > +			set_bit(aligned_idx, &mask);
+> > +		}
+> > +		if (idx != aligned_idx)
+> > +			(*b)[idx] = (*b)[aligned_idx];
+> >  	}
+> >  
+> >  	return b;
+> >  
+> >  fail:
+> > -	for (idx = 0; idx < ARRAY_SIZE(kmalloc_caches[KMALLOC_NORMAL]); idx++)
+> > +	for_each_set_bit(idx, &mask, ARRAY_SIZE(kmalloc_caches[KMALLOC_NORMAL]))
+> >  		kmem_cache_destroy((*b)[idx]);
+> >  	kmem_cache_free(kmem_buckets_cache, b);
+> >  
+> 
 
