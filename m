@@ -1,408 +1,292 @@
-Return-Path: <linux-kernel+bounces-398280-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398263-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECCF09BEEAB
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 14:19:52 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98EE49BED15
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 14:09:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B22B1F25BF1
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 13:19:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 59070285ED9
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 13:09:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A971E1E00AB;
-	Wed,  6 Nov 2024 13:19:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAD141F80CD;
+	Wed,  6 Nov 2024 13:02:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="u4HlGf1U"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="rNqiOOqC"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B30731E04B2;
-	Wed,  6 Nov 2024 13:19:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 026591DFDB3
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 13:02:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730899167; cv=none; b=HIYS6gy4V07aS5CTAm5u8X56bzOdxfBUNGX9cSRMvQ/PxRexWVh5LnNKsNrD0sURR/EHVuIIx1EHrb6jIG8BbfiJNdaLr9+bjBRN9n3QBUsAKMwWXSXM5NG3GMEgbdXOI6nA7wWKiSG1pYdfu8wMIUfdudqAMVlSTXVNGK1dpWY=
+	t=1730898154; cv=none; b=oFGZVcJKnxike0r4iJPFh8ykpy8r5KVSk9lsXJ0wTwsQTO/g+Et1NXlGHNXMsLgjgclBag7yIMQST52NLnSw9h3BppJj5jV0dAU7Cnn788RXHMkX4+1pAdxXFMc7tYpAVWJItS4HQ0sDwcsq8PMSH69Uzf2YRu57D42hPtN1jGE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730899167; c=relaxed/simple;
-	bh=UcaWGER/H9Mo0lL7NOWT5Qk+c2J1oavPFlCQcTUealY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=N6n65Msnmh0WrYVqcLBrntmRdVNIlIQ0LlWvZOByfMm8QvCEUnhRCjkqc2Cw9uXzSS5bDSGiwcgjwTSfXIMAYV79FWZJiaEthr0ItdzDatueUAMIVOrm2SNPU2rTxYBp5qBh+cRpiSGIBYy1eknjhK3sMsUXj8Bl5l7OVFIPXV8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=u4HlGf1U; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08CD0C4CED3;
-	Wed,  6 Nov 2024 13:19:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1730899167;
-	bh=UcaWGER/H9Mo0lL7NOWT5Qk+c2J1oavPFlCQcTUealY=;
-	h=From:To:Cc:Subject:Date:From;
-	b=u4HlGf1UsI4edRyq7QrAIK43/Ca/5SocHMlwGtr7wjkcPTo+MGSo2R0AQmZssidAR
-	 DoisxiK7BomkOwOFLjUAB4izr/9SVHxZ9dWRAAGlCuSc5rGclyoQQZXU+YejVxn39E
-	 FydDxciFdPN5ll1YTolBJeA3tK6d7h1iRnOIjWFQ=
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: stable@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	torvalds@linux-foundation.org,
-	akpm@linux-foundation.org,
-	linux@roeck-us.net,
-	shuah@kernel.org,
-	patches@kernelci.org,
-	lkft-triage@lists.linaro.org,
-	pavel@denx.de,
-	jonathanh@nvidia.com,
-	f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com,
-	srw@sladewatkins.net,
-	rwarsow@gmx.de,
-	conor@kernel.org,
-	hagar@microsoft.com,
-	broonie@kernel.org
-Subject: [PATCH 5.15 00/73] 5.15.171-rc1 review
-Date: Wed,  6 Nov 2024 13:05:04 +0100
-Message-ID: <20241106120259.955073160@linuxfoundation.org>
-X-Mailer: git-send-email 2.47.0
+	s=arc-20240116; t=1730898154; c=relaxed/simple;
+	bh=7eVcjPX9gYUzc8X8Uwr1u6wuRzeJQYG8WzcwDWwSNoA=;
+	h=Message-ID:Date:From:Subject:To:Cc:Content-Type:MIME-Version; b=sUAjBJvM/KbMsJLwRB3ac2U85K+/3Kwdta2pDUUXpYGK5Tt64+fiajPettl3F23BbI/nJkaQCCL3Kq0B15E9n89mq/ylHypOWUnATzNyyHAnAqe806HqObld7SmbZ/k6ObE7/gcs5So9+Kip1nipMBFL34LKXKmCDbyKSra3GXI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=rNqiOOqC; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A6CsfFN013425;
+	Wed, 6 Nov 2024 13:02:29 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=pp1; bh=IFAQ2jL3vk6r82GGeYkZFOBienoB
+	peYOhZgdaD3L39E=; b=rNqiOOqCTEZMsVPe73UtrCzWGu+bmG+o9IazmKE80Hjn
+	4u4ap7mYKRM1zdRuEh+yMQ150fra6EiP13Gp8ivwcg03WGrqOB1mPBEeKrumtSqC
+	IyVkNaPElOIueFAlvfnUaxE9C9dI11Sy65kGb060IyghkmawDAf9uGYyjyxNQbF+
+	ZwHrYR6XdNjlrsQLhWhEJ0xa1eBshA2u3EwK7t9ZSKHYoz3q8aW98N1kovfxgLTH
+	RtIVyvn68qdxpZWZD3237Ddor751A+tCPTojnjBq6NbcLd/3LYogs6tiDltONp7S
+	Sdq+70xyGSgvBZ1OIWZMQwkCYtr93/xX20QIEX+oog==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42r8vgg1j9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 06 Nov 2024 13:02:29 +0000 (GMT)
+Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4A6D2Sue030687;
+	Wed, 6 Nov 2024 13:02:28 GMT
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42r8vgg1j7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 06 Nov 2024 13:02:28 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4A65O7EJ012237;
+	Wed, 6 Nov 2024 13:02:27 GMT
+Received: from smtprelay07.dal12v.mail.ibm.com ([172.16.1.9])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 42p140x42b-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 06 Nov 2024 13:02:27 +0000
+Received: from smtpav05.dal12v.mail.ibm.com (smtpav05.dal12v.mail.ibm.com [10.241.53.104])
+	by smtprelay07.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4A6D2R7Y57409826
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 6 Nov 2024 13:02:27 GMT
+Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 46FD358067;
+	Wed,  6 Nov 2024 13:02:27 +0000 (GMT)
+Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 43A975805D;
+	Wed,  6 Nov 2024 13:02:25 +0000 (GMT)
+Received: from [9.171.20.63] (unknown [9.171.20.63])
+	by smtpav05.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Wed,  6 Nov 2024 13:02:24 +0000 (GMT)
+Message-ID: <7cbbd751-8332-4ab2-afa7-8c353834772a@linux.ibm.com>
+Date: Wed, 6 Nov 2024 18:32:23 +0530
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+From: Nilay Shroff <nilay@linux.ibm.com>
+Subject: [bug report] cpumask: gcc 13.x emits compilation error on PowerPC
+To: briannorris@chromium.org, kees@kernel.org, nathan@kernel.org,
+        yury.norov@gmail.com
+Cc: linux-kernel@vger.kernel.org, Gregory Joyce <gjoyce@ibm.com>
+Content-Type: text/plain; charset=UTF-8
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: EbRiPEjS0ztEKiKN18fCM1OMdksXF24K
+X-Proofpoint-ORIG-GUID: adYppsxNZ1Il1-JIQjFe5bO7CX5tTMke
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: quilt/0.67
-X-stable: review
-X-Patchwork-Hint: ignore
-X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.15.171-rc1.gz
-X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-X-KernelTest-Branch: linux-5.15.y
-X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
-X-KernelTest-Version: 5.15.171-rc1
-X-KernelTest-Deadline: 2024-11-08T12:03+00:00
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0
+ priorityscore=1501 mlxscore=0 mlxlogscore=999 malwarescore=0
+ lowpriorityscore=0 clxscore=1011 impostorscore=0 spamscore=0 phishscore=0
+ suspectscore=0 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2409260000 definitions=main-2411060103
+
+Hi,
+
+Of late, I've been encountering the following compilation error while using GCC 13.x and latest upstream code:
+
+Compilation error:
+==================
+  <snip>
+  CC      kernel/padata.o
+In file included from ./include/linux/string.h:390,
+                 from ./arch/powerpc/include/asm/paca.h:16,
+                 from ./arch/powerpc/include/asm/current.h:13,
+                 from ./include/linux/thread_info.h:23,
+                 from ./include/asm-generic/preempt.h:5,
+                 from ./arch/powerpc/include/generated/asm/preempt.h:1,
+                 from ./include/linux/preempt.h:79,
+                 from ./include/linux/spinlock.h:56,
+                 from ./include/linux/swait.h:7,
+                 from ./include/linux/completion.h:12,
+                 from kernel/padata.c:14:
+In function ‘bitmap_copy’,
+    inlined from ‘cpumask_copy’ at ./include/linux/cpumask.h:839:2,
+    inlined from ‘__padata_set_cpumasks’ at kernel/padata.c:730:2:
+./include/linux/fortify-string.h:114:33: error: ‘__builtin_memcpy’ reading between 257 and 536870904 bytes from a region of size 256 [-Werror=stringop-overread]
+  114 | #define __underlying_memcpy     __builtin_memcpy
+      |                                 ^
+./include/linux/fortify-string.h:633:9: note: in expansion of macro ‘__underlying_memcpy’
+  633 |         __underlying_##op(p, q, __fortify_size);                        \
+      |         ^~~~~~~~~~~~~
+./include/linux/fortify-string.h:678:26: note: in expansion of macro ‘__fortify_memcpy_chk’
+  678 | #define memcpy(p, q, s)  __fortify_memcpy_chk(p, q, s,                  \
+      |                          ^~~~~~~~~~~~~~~~~~~~
+./include/linux/bitmap.h:259:17: note: in expansion of macro ‘memcpy’
+  259 |                 memcpy(dst, src, len);
+      |                 ^~~~~~
+kernel/padata.c: In function ‘__padata_set_cpumasks’:
+kernel/padata.c:713:48: note: source object ‘pcpumask’ of size [0, 256]
+  713 |                                  cpumask_var_t pcpumask,
+      |                                  ~~~~~~~~~~~~~~^~~~~~~~
+In function ‘bitmap_copy’,
+    inlined from ‘cpumask_copy’ at ./include/linux/cpumask.h:839:2,
+    inlined from ‘__padata_set_cpumasks’ at kernel/padata.c:730:2:
+./include/linux/fortify-string.h:114:33: error: ‘__builtin_memcpy’ reading between 257 and 536870904 bytes from a region of size 256 [-Werror=stringop-overread]
+  114 | #define __underlying_memcpy     __builtin_memcpy
+      |                                 ^
+./include/linux/fortify-string.h:633:9: note: in expansion of macro ‘__underlying_memcpy’
+  633 |         __underlying_##op(p, q, __fortify_size);                        \
+      |         ^~~~~~~~~~~~~
+./include/linux/fortify-string.h:678:26: note: in expansion of macro ‘__fortify_memcpy_chk’
+  678 | #define memcpy(p, q, s)  __fortify_memcpy_chk(p, q, s,                  \
+      |                          ^~~~~~~~~~~~~~~~~~~~
+./include/linux/bitmap.h:259:17: note: in expansion of macro ‘memcpy’
+  259 |                 memcpy(dst, src, len);
+      |                 ^~~~~~
+kernel/padata.c: In function ‘__padata_set_cpumasks’:
+kernel/padata.c:713:48: note: source object ‘pcpumask’ of size [0, 256]
+  713 |                                  cpumask_var_t pcpumask,
+      |                                  ~~~~~~~~~~~~~~^~~~~~~~
+cc1: all warnings being treated as errors
+make[3]: *** [scripts/Makefile.build:229: kernel/padata.o] Error 1
+make[2]: *** [scripts/Makefile.build:478: kernel] Error 2
+make[1]: *** [/root/linux/Makefile:1936: .] Error 2
+make: *** [Makefile:224: __sub-make] Error 2
+
+# gcc --version 
+gcc (GCC) 13.2.1 20231205 (Red Hat 13.2.1-6)
+Copyright (C) 2023 Free Software Foundation, Inc.
+This is free software; see the source for copying conditions.  There is NO
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+Note:
+=====
+I don't encounter above error using GCC 11.x and 12.x on PowerPC.
+Moreover, I don't encounter above error using GCC 11.x or 12.x or 13.x on x86_64.
+
+Git bisect:
+===========
+The git bisect points to the following commit causing the above compilation error:
+
+commit ab6b1010dab68f6d4bf063517db4ce2d63554bc6 (HEAD)
+Author: Brian Norris <briannorris@chromium.org>
+Date:   Thu Jul 18 17:50:39 2024 -0700
+
+    cpumask: Switch from inline to __always_inline
+    
+    On recent (v6.6+) builds with Clang (based on Clang 18.0.0) and certain
+    configurations [0], I'm finding that (lack of) inlining decisions may
+    lead to section mismatch warnings like the following:
+    
+      WARNING: modpost: vmlinux.o: section mismatch in reference:
+      cpumask_andnot (section: .text) ->
+      cpuhp_bringup_cpus_parallel.tmp_mask (section: .init.data) ERROR:
+      modpost: Section mismatches detected.
+    
+    or more confusingly:
+    
+      WARNING: modpost: vmlinux: section mismatch in reference:
+      cpumask_andnot+0x5f (section: .text) -> efi_systab_phys (section:
+      .init.data)
+    
+    The first warning makes a little sense, because
+    cpuhp_bringup_cpus_parallel() (an __init function) calls
+    cpumask_andnot() on tmp_mask (an __initdata symbol). If the compiler
+    doesn't inline cpumask_andnot(), this may appear like a mismatch.
+    
+    The second warning makes less sense, but might be because efi_systab_phys
+    and cpuhp_bringup_cpus_parallel.tmp_mask are laid out near each other,
+    and the latter isn't a proper C symbol definition.
+    
+    In any case, it seems a reasonable solution to suggest more strongly to
+    the compiler that these cpumask macros *must* be inlined, as 'inline' is
+    just a recommendation.
+    
+    This change has been previously proposed in the past as:
+      Subject: [PATCH 1/3] bitmap: switch from inline to __always_inline
+      https://lore.kernel.org/all/20221027043810.350460-2-yury.norov@gmail.com/
+    
+    But the change has been split up, to separately justify the cpumask
+    changes (which drive my work) and the bitmap/const optimizations (that
+    Yury separately proposed for other reasons). This ends up as somewhere
+    between a "rebase" and "rewrite" -- I had to rewrite most of the patch.
+    
+    According to bloat-o-meter, vmlinux decreases minimally in size (-0.00%
+    to -0.01%, depending on the version of GCC or Clang and .config in
+    question) with this series of changes:
+    
+    gcc 13.2.0, x86_64_defconfig
+    -3005 bytes, Before=21944501, After=21941496, chg -0.01%
+    
+    clang 16.0.6, x86_64_defconfig
+    -105 bytes, Before=22571692, After=22571587, chg -0.00%
+    
+    gcc 9.5.0, x86_64_defconfig
+    -1771 bytes, Before=21557598, After=21555827, chg -0.01%
+    
+    clang 18.0_pre516547 (ChromiumOS toolchain), x86_64_defconfig
+    -191 bytes, Before=22615339, After=22615148, chg -0.00%
+    
+    clang 18.0_pre516547 (ChromiumOS toolchain), based on ChromiumOS config + gcov
+    -979 bytes, Before=76294783, After=76293804, chg -0.00%
+    
+    [0] CONFIG_HOTPLUG_PARALLEL=y ('select'ed for x86 as of [1]) and
+        CONFIG_GCOV_PROFILE_ALL.
+    
+    [1] commit 0c7ffa32dbd6 ("x86/smpboot/64: Implement
+        arch_cpuhp_init_parallel_bringup() and enable it")
+    
+    Co-developed-by: Brian Norris <briannorris@chromium.org>
+    Signed-off-by: Brian Norris <briannorris@chromium.org>
+    Reviewed-by: Kees Cook <kees@kernel.org>
+    Reviewed-by: Nathan Chancellor <nathan@kernel.org>
+    Signed-off-by: Yury Norov <yury.norov@gmail.com>
+
+So it appears that changing cpumask_copy() from inline to __always_inline causing the 
+above error using Gcc 13.x. I am not gcc expert but it seems some issue with GCC 13.x?
+
+I tried the following patch which helps fix the above error but I'm not sure if this
+is the proper fix or do we need to fix it differently.
+
+Patch:
+======
+diff --git a/kernel/padata.c b/kernel/padata.c
+index d899f34558af..86aad2f71890 100644
+--- a/kernel/padata.c
++++ b/kernel/padata.c
+@@ -710,8 +710,8 @@ static bool padata_validate_cpumask(struct padata_instance *pinst,
+ }
+ 
+ static int __padata_set_cpumasks(struct padata_instance *pinst,
+-                                cpumask_var_t pcpumask,
+-                                cpumask_var_t cbcpumask)
++                                struct cpumask *pcpumask,
++                                struct cpumask *cbcpumask)
+ {
+        int valid;
+        int err;
+
+
+Please let me know if you need any further information.
+
+Thanks,
+--Nilay
 
-This is the start of the stable review cycle for the 5.15.171 release.
-There are 73 patches in this series, all will be posted as a response
-to this one.  If anyone has any issues with these being applied, please
-let me know.
 
-Responses should be made by Fri, 08 Nov 2024 12:02:47 +0000.
-Anything received after that time might be too late.
 
-The whole patch series can be found in one patch at:
-	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.15.171-rc1.gz
-or in the git tree and branch at:
-	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.15.y
-and the diffstat can be found below.
 
-thanks,
-
-greg k-h
-
--------------
-Pseudo-Shortlog of commits:
-
-Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-    Linux 5.15.171-rc1
-
-Johannes Berg <johannes.berg@intel.com>
-    mac80211: always have ieee80211_sta_restart()
-
-Jeongjun Park <aha310510@gmail.com>
-    vt: prevent kernel-infoleak in con_font_get()
-
-Rob Clark <robdclark@chromium.org>
-    drm/i915: Fix potential context UAFs
-
-Jason-JH.Lin <jason-jh.lin@mediatek.com>
-    Revert "drm/mipi-dsi: Set the fwnode for mipi_dsi_device"
-
-Jeongjun Park <aha310510@gmail.com>
-    mm: shmem: fix data-race in shmem_getattr()
-
-Johannes Berg <johannes.berg@intel.com>
-    wifi: iwlwifi: mvm: fix 6 GHz scan construction
-
-Ryusuke Konishi <konishi.ryusuke@gmail.com>
-    nilfs2: fix kernel bug due to missing clearing of checked flag
-
-Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-    x86/bugs: Use code segment selector for VERW operand
-
-Edward Adam Davis <eadavis@qq.com>
-    ocfs2: pass u64 to ocfs2_truncate_inline maybe overflow
-
-Matt Fleming <mfleming@cloudflare.com>
-    mm/page_alloc: let GFP_ATOMIC order-0 allocs access highatomic reserves
-
-Mel Gorman <mgorman@techsingularity.net>
-    mm/page_alloc: explicitly define how __GFP_HIGH non-blocking allocations accesses reserves
-
-Mel Gorman <mgorman@techsingularity.net>
-    mm/page_alloc: explicitly define what alloc flags deplete min reserves
-
-Mel Gorman <mgorman@techsingularity.net>
-    mm/page_alloc: explicitly record high-order atomic allocations in alloc_flags
-
-Mel Gorman <mgorman@techsingularity.net>
-    mm/page_alloc: treat RT tasks similar to __GFP_HIGH
-
-Mel Gorman <mgorman@techsingularity.net>
-    mm/page_alloc: rename ALLOC_HIGH to ALLOC_MIN_RESERVE
-
-Mel Gorman <mgorman@techsingularity.net>
-    mm/page_alloc: split out buddy removal code from rmqueue into separate helper
-
-Wonhyuk Yang <vvghjk1234@gmail.com>
-    mm/page_alloc: fix tracepoint mm_page_alloc_zone_locked()
-
-Eric Dumazet <edumazet@google.com>
-    mm/page_alloc: call check_new_pages() while zone spinlock is not held
-
-Chunyan Zhang <zhangchunyan@iscas.ac.cn>
-    riscv: Remove duplicated GET_RM
-
-Chunyan Zhang <zhangchunyan@iscas.ac.cn>
-    riscv: Remove unused GENERATING_ASM_OFFSETS
-
-WangYuli <wangyuli@uniontech.com>
-    riscv: Use '%u' to format the output of 'cpu'
-
-Heinrich Schuchardt <heinrich.schuchardt@canonical.com>
-    riscv: efi: Set NX compat flag in PE/COFF header
-
-Alexandre Ghiti <alexghiti@rivosinc.com>
-    riscv: vdso: Prevent the compiler from inserting calls to memset()
-
-Ryusuke Konishi <konishi.ryusuke@gmail.com>
-    nilfs2: fix potential deadlock with newly created symlinks
-
-Javier Carrasco <javier.carrasco.cruz@gmail.com>
-    iio: light: veml6030: fix microlux value calculation
-
-Zicheng Qu <quzicheng@huawei.com>
-    iio: adc: ad7124: fix division by zero in ad7124_set_channel_odr()
-
-Zicheng Qu <quzicheng@huawei.com>
-    staging: iio: frequency: ad9832: fix division by zero in ad9832_calc_freqreg()
-
-Ville Syrjälä <ville.syrjala@linux.intel.com>
-    wifi: iwlegacy: Clear stale interrupts before resuming device
-
-Manikanta Pubbisetty <quic_mpubbise@quicinc.com>
-    wifi: ath10k: Fix memory leak in management tx
-
-Felix Fietkau <nbd@nbd.name>
-    wifi: mac80211: do not pass a stopped vif to the driver in .get_txpower
-
-Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-    Revert "driver core: Fix uevent_show() vs driver detach race"
-
-Basavaraj Natikar <Basavaraj.Natikar@amd.com>
-    xhci: Use pm_runtime_get to prevent RPM on unsupported systems
-
-Faisal Hassan <quic_faisalh@quicinc.com>
-    xhci: Fix Link TRB DMA in command ring stopped completion event
-
-Javier Carrasco <javier.carrasco.cruz@gmail.com>
-    usb: typec: fix unreleased fwnode_handle in typec_port_register_altmodes()
-
-Zijun Hu <quic_zijuhu@quicinc.com>
-    usb: phy: Fix API devm_usb_put_phy() can not release the phy
-
-Zongmin Zhou <zhouzongmin@kylinos.cn>
-    usbip: tools: Fix detach_port() invalid port error path
-
-Dimitri Sivanich <sivanich@hpe.com>
-    misc: sgi-gru: Don't disable preemption in GRU driver
-
-Dai Ngo <dai.ngo@oracle.com>
-    NFS: remove revoked delegation from server's delegation list
-
-Daniel Palmer <daniel@0x0f.com>
-    net: amd: mvme147: Fix probe banner message
-
-Benjamin Marzinski <bmarzins@redhat.com>
-    scsi: scsi_transport_fc: Allow setting rport state to current state
-
-Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-    fs/ntfs3: Additional check in ni_clear()
-
-Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-    fs/ntfs3: Fix possible deadlock in mi_read
-
-Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-    fs/ntfs3: Fix warning possible deadlock in ntfs_set_state
-
-Andrew Ballance <andrewjballance@gmail.com>
-    fs/ntfs3: Check if more than chunk-size bytes are written
-
-Pierre Gondois <pierre.gondois@arm.com>
-    ACPI: CPPC: Make rmw_lock a raw_spin_lock
-
-Xiongfeng Wang <wangxiongfeng2@huawei.com>
-    firmware: arm_sdei: Fix the input parameter of cpuhp_remove_state()
-
-Pablo Neira Ayuso <pablo@netfilter.org>
-    netfilter: nft_payload: sanitize offset and length before calling skb_checksum()
-
-Benoît Monin <benoit.monin@gmx.fr>
-    net: skip offload for NETIF_F_IPV6_CSUM if ipv6 header contains extension
-
-Dong Chenchen <dongchenchen2@huawei.com>
-    netfilter: Fix use-after-free in get_info()
-
-Byeonguk Jeong <jungbu2855@gmail.com>
-    bpf: Fix out-of-bounds write in trie_get_next_key()
-
-Zichen Xie <zichenxie0106@gmail.com>
-    netdevsim: Add trailing zero to terminate the string in nsim_nexthop_bucket_activity_write()
-
-Pedro Tammela <pctammela@mojatatu.com>
-    net/sched: stop qdisc_tree_reduce_backlog on TC_H_ROOT
-
-Pablo Neira Ayuso <pablo@netfilter.org>
-    gtp: allow -1 to be specified as file description from userspace
-
-Ido Schimmel <idosch@nvidia.com>
-    ipv4: ip_tunnel: Fix suspicious RCU usage warning in ip_tunnel_init_flow()
-
-Wander Lairson Costa <wander@redhat.com>
-    igb: Disable threaded IRQ for igb_msix_other
-
-Furong Xu <0x1207@gmail.com>
-    net: stmmac: TSO: Fix unbalanced DMA map/unmap for non-paged SKB data
-
-Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-    ASoC: cs42l51: Fix some error handling paths in cs42l51_probe()
-
-Daniel Gabay <daniel.gabay@intel.com>
-    wifi: iwlwifi: mvm: Fix response handling in iwl_mvm_send_recovery_cmd()
-
-Emmanuel Grumbach <emmanuel.grumbach@intel.com>
-    wifi: iwlwifi: mvm: disconnect station vifs if recovery failed
-
-Youghandhar Chintala <youghand@codeaurora.org>
-    mac80211: Add support to trigger sta disconnect on hardware restart
-
-Johannes Berg <johannes.berg@intel.com>
-    mac80211: do drv_reconfig_complete() before restarting all
-
-Selvin Xavier <selvin.xavier@broadcom.com>
-    RDMA/bnxt_re: synchronize the qp-handle table array
-
-Patrisious Haddad <phaddad@nvidia.com>
-    RDMA/mlx5: Round max_rd_atomic/max_dest_rd_atomic up instead of down
-
-Leon Romanovsky <leon@kernel.org>
-    RDMA/cxgb4: Dump vendor specific QP details
-
-Geert Uytterhoeven <geert@linux-m68k.org>
-    wifi: brcm80211: BRCM_TRACING should depend on TRACING
-
-Felix Fietkau <nbd@nbd.name>
-    wifi: mac80211: skip non-uploaded keys in ieee80211_iter_keys
-
-Geert Uytterhoeven <geert@linux-m68k.org>
-    mac80211: MAC80211_MESSAGE_TRACING should depend on TRACING
-
-Xiu Jianfeng <xiujianfeng@huawei.com>
-    cgroup: Fix potential overflow issue when checking max_depth
-
-Koba Ko <kobak@nvidia.com>
-    ACPI: PRM: Find EFI_MEMORY_RUNTIME block for PRM handler and context
-
-Sudeep Holla <sudeep.holla@arm.com>
-    ACPI: PRM: Change handler_addr type to void pointer
-
-Aubrey Li <aubrey.li@intel.com>
-    ACPI: PRM: Remove unnecessary blank lines
-
-Namjae Jeon <linkinjeon@kernel.org>
-    ksmbd: fix user-after-free from session log off
-
-Donet Tom <donettom@linux.ibm.com>
-    selftests/mm: fix incorrect buffer->mirror size in hmm2 double_map test
-
-
--------------
-
-Diffstat:
-
- Makefile                                          |   4 +-
- arch/riscv/kernel/asm-offsets.c                   |   2 -
- arch/riscv/kernel/cpu-hotplug.c                   |   2 +-
- arch/riscv/kernel/efi-header.S                    |   2 +-
- arch/riscv/kernel/traps_misaligned.c              |   2 -
- arch/riscv/kernel/vdso/Makefile                   |   1 +
- arch/x86/include/asm/nospec-branch.h              |  11 +-
- drivers/acpi/cppc_acpi.c                          |   9 +-
- drivers/acpi/prmt.c                               |  33 ++--
- drivers/base/core.c                               |  13 +-
- drivers/base/module.c                             |   4 -
- drivers/firmware/arm_sdei.c                       |   2 +-
- drivers/gpu/drm/drm_mipi_dsi.c                    |   2 +-
- drivers/gpu/drm/i915/gem/i915_gem_context.c       |  24 ++-
- drivers/iio/adc/ad7124.c                          |   2 +-
- drivers/iio/light/veml6030.c                      |   2 +-
- drivers/infiniband/hw/bnxt_re/qplib_fp.c          |   4 +
- drivers/infiniband/hw/bnxt_re/qplib_rcfw.c        |  13 +-
- drivers/infiniband/hw/bnxt_re/qplib_rcfw.h        |   2 +
- drivers/infiniband/hw/cxgb4/provider.c            |   1 +
- drivers/infiniband/hw/mlx5/qp.c                   |   4 +-
- drivers/misc/sgi-gru/grukservices.c               |   2 -
- drivers/misc/sgi-gru/grumain.c                    |   4 -
- drivers/misc/sgi-gru/grutlbpurge.c                |   2 -
- drivers/net/ethernet/amd/mvme147.c                |   7 +-
- drivers/net/ethernet/intel/igb/igb_main.c         |   2 +-
- drivers/net/ethernet/stmicro/stmmac/stmmac_main.c |  22 ++-
- drivers/net/gtp.c                                 |  22 +--
- drivers/net/netdevsim/fib.c                       |   4 +-
- drivers/net/wireless/ath/ath10k/wmi-tlv.c         |   7 +-
- drivers/net/wireless/ath/ath10k/wmi.c             |   2 +
- drivers/net/wireless/broadcom/brcm80211/Kconfig   |   1 +
- drivers/net/wireless/intel/iwlegacy/common.c      |   2 +
- drivers/net/wireless/intel/iwlwifi/mvm/fw.c       |  22 ++-
- drivers/net/wireless/intel/iwlwifi/mvm/scan.c     |   3 +-
- drivers/scsi/scsi_transport_fc.c                  |   4 +-
- drivers/staging/iio/frequency/ad9832.c            |   7 +-
- drivers/tty/vt/vt.c                               |   2 +-
- drivers/usb/host/xhci-pci.c                       |   6 +-
- drivers/usb/host/xhci-ring.c                      |  16 +-
- drivers/usb/phy/phy.c                             |   2 +-
- drivers/usb/typec/class.c                         |   1 +
- fs/ksmbd/mgmt/user_session.c                      |  26 ++-
- fs/ksmbd/mgmt/user_session.h                      |   4 +
- fs/ksmbd/server.c                                 |   2 +
- fs/ksmbd/smb2pdu.c                                |   8 +-
- fs/nfs/delegation.c                               |   5 +
- fs/nilfs2/namei.c                                 |   3 +
- fs/nilfs2/page.c                                  |   1 +
- fs/ntfs3/frecord.c                                |   4 +-
- fs/ntfs3/lznt.c                                   |   3 +
- fs/ntfs3/namei.c                                  |   2 +-
- fs/ntfs3/ntfs_fs.h                                |   2 +-
- fs/ocfs2/file.c                                   |   8 +
- include/acpi/cppc_acpi.h                          |   2 +-
- include/net/ip_tunnels.h                          |   2 +-
- include/net/mac80211.h                            |  10 ++
- include/trace/events/kmem.h                       |  14 +-
- kernel/bpf/lpm_trie.c                             |   2 +-
- kernel/cgroup/cgroup.c                            |   4 +-
- mm/internal.h                                     |  13 +-
- mm/page_alloc.c                                   | 185 +++++++++++++---------
- mm/shmem.c                                        |   2 +
- net/core/dev.c                                    |   4 +
- net/mac80211/Kconfig                              |   2 +-
- net/mac80211/cfg.c                                |   3 +-
- net/mac80211/ieee80211_i.h                        |   3 +
- net/mac80211/key.c                                |  42 +++--
- net/mac80211/mlme.c                               |  14 +-
- net/mac80211/util.c                               |  45 ++++--
- net/netfilter/nft_payload.c                       |   3 +
- net/netfilter/x_tables.c                          |   2 +-
- net/sched/sch_api.c                               |   2 +-
- sound/soc/codecs/cs42l51.c                        |   7 +-
- tools/testing/selftests/vm/hmm-tests.c            |   2 +-
- tools/usb/usbip/src/usbip_detach.c                |   1 +
- 76 files changed, 481 insertions(+), 230 deletions(-)
 
 
 
