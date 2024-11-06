@@ -1,102 +1,286 @@
-Return-Path: <linux-kernel+bounces-398060-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398052-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A67199BE4C8
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 11:51:34 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 024509BE4B7
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 11:50:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 68AC7286158
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 10:51:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B6569282C84
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 10:50:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 163131DFE09;
-	Wed,  6 Nov 2024 10:48:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B7411DE88F;
+	Wed,  6 Nov 2024 10:48:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="JOOw3ts1"
-Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="rWgrEl8Y";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="h6oDxKC8"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63B241DED73
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 10:48:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BD491DE4EA;
+	Wed,  6 Nov 2024 10:48:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730890130; cv=none; b=bNF0lm4LOa+jDSSKaXryvVgk21aUoo98Au23c+FTWFwSsuTdiNN23VUTa5t9qYg6iuw7NNAdDnBsx80GMOmtsjy6raZ2PQvCoWGq5E7ByzlBNnQLlLvkFsz5C+DX6z4ZovBDsGIxHWQKprb5yRchbYg3/Hg+sYpnU0cL9Za5HWI=
+	t=1730890108; cv=none; b=pBqypMoFK/kmxFRYOD67xfnO5Nd8GQAI7AUKHZMt3nvDQFI0DdvS39emP6qpAafbjPPPna7dKS6ABi9EQ0Pb83XS+5SuDziEMR9ngBzQRPJjik5/6FDR+fDOHsyWkCW31XYku16NWc8VdvAVHlsNCvUyeSd+CME5gsaQ7mte4nc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730890130; c=relaxed/simple;
-	bh=kYn+tc6pK4Dk+lN2t5x9co8Nw7fiX0sfDQW4g4HBXX8=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=r6QPlbpRqazjYlMQLDavra1F9c8D9dL/G3IJk3GkoddobniKqCduq+UnuwPgqlNlAfC+A/1u//RyOdfLof/nKpKk6wK28FRgGJl38+GjOGxuMGTsgpjesu4IqVjmUSksJfujYF+kHR7hrcSlYQZbFp90MvDZ+TzSyXzQzHGiOds=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=JOOw3ts1; arc=none smtp.client-ip=217.70.183.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 2403360002;
-	Wed,  6 Nov 2024 10:48:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1730890122;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=qQtv4VNS8GSV+B6ud5SuNizwVsMdAG4YsmaGw7hcdAk=;
-	b=JOOw3ts1T2+jEEJzyarhzDU3+/RZ+Laym8+gunVhWUr7nQe3PgIxootN9IkgEO0+vP6T25
-	kPAISDCM1Grfrx/kFyqZLr2sVAiZL9kiWoLQBoZ9mCbJ3h+AtxMss2l9R9d9p3fCP+vr4i
-	ynbBaAgUXOeBDPw2r/0GMWiHb4Xbs+n3dlyz/RornfkeXtf0kV3028JTACAanaoef6Zc70
-	N1SOcSN5MSwzQUamkJc6dzLjOf7xlWglnNtf0vRPitUzac+HvRAd7suvcu4m6THh11G36H
-	0IZt//A7+ebXtpF6Z4XWWNhOrtYrYkfDamVfIOdgmnkBeGtX3gNOzFjcWmPYTQ==
-From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-Subject: [PATCH v2 0/4] DRM: small improvements
-Date: Wed, 06 Nov 2024 11:48:23 +0100
-Message-Id: <20241106-drm-small-improvements-v2-0-f6e2aef86719@bootlin.com>
+	s=arc-20240116; t=1730890108; c=relaxed/simple;
+	bh=RH+P9d4Jb5rHKZD7KqZXJ+Ylt+QD7kJIArEKN92dKDA=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=CTah4dpI169L6K6Eis0XicLrKssw2gLHsT82U19kkfpgfV8AneisKV6U22C9rRtcjS/ePeQnTKgbaRWUIyMjJPhoKSo34/UG3Ihn6Lb7wT6YC1yWvb1/hoZQXjU5UiMVWFP+6jM8Fz5H6bzSNvyoNO+XLv+YwpAtROWWOoNL5Z0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=rWgrEl8Y; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=h6oDxKC8; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 06 Nov 2024 10:48:23 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1730890104;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=u7Fa6M2fnop3VuvpY6tx7dkXuN01T3hNadJF77tyGtY=;
+	b=rWgrEl8YEfvL1iXhwAz6enuSwwEyTnDu2jsaRyfZEnM5XKYpQ3QMDOUtaoPvMg5iYnCrEF
+	5wbShHNtUWUdlPsmvl8M9pLdxuswxMNnBjaMiiLZtRDfvWjYTEwTXJbh7IKQqBQNWqOyOM
+	g5NPcmrUBrBhS1/1ojqwU6pq0+lYKy8fb8k+BpNyLleZZQTBSIIo9scsPou3yXyvzSEhW9
+	gbAY14ZZM+XFxRwQn+OkGJwnLRwIJ1tkfo8rtKbvaTvdsQMa8+xWZmA7BEyBaKPvyOVS6w
+	0MErF+aBFIvJiGfeW1iB6hjAjxL108p8wuX3ZgX75mzm/Vi5NKdgcScSNzg/nA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1730890104;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=u7Fa6M2fnop3VuvpY6tx7dkXuN01T3hNadJF77tyGtY=;
+	b=h6oDxKC8g+i/Fk9tqK8kkbvNsLjMophYixWeurWNCxPsfGkgwqNjdN2tvN4XcDGuFhOrD8
+	fYdCyrkbpavLgpAA==
+From: "tip-bot2 for Adrian Hunter" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: perf/core] perf/x86/intel/pt: Add support for pause / resume
+Cc: Adrian Hunter <adrian.hunter@intel.com>,
+ "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+ Andi Kleen <ak@linux.intel.com>, x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20241022155920.17511-4-adrian.hunter@intel.com>
+References: <20241022155920.17511-4-adrian.hunter@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Message-ID: <173089010397.32228.2658059574736833486.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAHdJK2cC/4WNQQ6CMBBFr0Jm7ZhOJQZceQ/CAodRJqEtaUmjI
- dzdygVcvpf89zdIElUS3KoNomRNGnwBe6qAp8G/BHUsDNbYmgw1OEaHyQ3zjOqWGLI48WtCGsn
- UzGRsY6CMlyhPfR/hri88aVpD/Bw/mX72bzITGmS+0FVoaBtu748Q1ln9mYODft/3L6uivOO+A
- AAA
-X-Change-ID: 20241018-drm-small-improvements-1d104cc10280
-To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
-Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
- Luca Ceresoli <luca.ceresoli@bootlin.com>, 
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-X-Mailer: b4 0.14.2
-X-GND-Sasl: luca.ceresoli@bootlin.com
 
-This series brings small improvements to the DRM documentation, logging and
-a warning on an incorrect code path.
+The following commit has been merged into the perf/core branch of tip:
 
-Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+Commit-ID:     08c7454ceb948d773fcd0ff7b6fb9c315e2f801a
+Gitweb:        https://git.kernel.org/tip/08c7454ceb948d773fcd0ff7b6fb9c315e2f801a
+Author:        Adrian Hunter <adrian.hunter@intel.com>
+AuthorDate:    Tue, 22 Oct 2024 18:59:09 +03:00
+Committer:     Peter Zijlstra <peterz@infradead.org>
+CommitterDate: Tue, 05 Nov 2024 12:55:44 +01:00
+
+perf/x86/intel/pt: Add support for pause / resume
+
+Prevent tracing to start if aux_paused.
+
+Implement support for PERF_EF_PAUSE / PERF_EF_RESUME. When aux_paused, stop
+tracing. When not aux_paused, only start tracing if it isn't currently
+meant to be stopped.
+
+Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Reviewed-by: Andi Kleen <ak@linux.intel.com>
+Link: https://lkml.kernel.org/r/20241022155920.17511-4-adrian.hunter@intel.com
 ---
-Changes in v2:
-- Added patches 3 and 4
-- Updated reviewed-by tags
-- Link to v1: https://lore.kernel.org/r/20241018-drm-small-improvements-v1-0-cc316e1a98c9@bootlin.com
+ arch/x86/events/intel/pt.c | 73 +++++++++++++++++++++++++++++++++++--
+ arch/x86/events/intel/pt.h |  4 ++-
+ 2 files changed, 74 insertions(+), 3 deletions(-)
 
----
-Luca Ceresoli (4):
-      drm/drm_mode_object: fix typo in kerneldoc
-      drm/atomic-helper: improve CRTC enabled/connectors mismatch logging message
-      drm/mode_object: add drm_mode_object_read_refcount()
-      drm/connector: warn when cleaning up a refcounted connector
-
- drivers/gpu/drm/drm_atomic_helper.c |  5 +++--
- drivers/gpu/drm/drm_connector.c     |  6 ++++++
- drivers/gpu/drm/drm_mode_object.c   | 20 ++++++++++++++++++++
- include/drm/drm_mode_object.h       |  3 ++-
- 4 files changed, 31 insertions(+), 3 deletions(-)
----
-base-commit: 42f7652d3eb527d03665b09edac47f85fb600924
-change-id: 20241018-drm-small-improvements-1d104cc10280
-
-Best regards,
--- 
-Luca Ceresoli <luca.ceresoli@bootlin.com>
-
+diff --git a/arch/x86/events/intel/pt.c b/arch/x86/events/intel/pt.c
+index a087bc0..4b0373b 100644
+--- a/arch/x86/events/intel/pt.c
++++ b/arch/x86/events/intel/pt.c
+@@ -418,6 +418,9 @@ static void pt_config_start(struct perf_event *event)
+ 	struct pt *pt = this_cpu_ptr(&pt_ctx);
+ 	u64 ctl = event->hw.aux_config;
+ 
++	if (READ_ONCE(event->hw.aux_paused))
++		return;
++
+ 	ctl |= RTIT_CTL_TRACEEN;
+ 	if (READ_ONCE(pt->vmx_on))
+ 		perf_aux_output_flag(&pt->handle, PERF_AUX_FLAG_PARTIAL);
+@@ -534,7 +537,24 @@ static void pt_config(struct perf_event *event)
+ 	reg |= (event->attr.config & PT_CONFIG_MASK);
+ 
+ 	event->hw.aux_config = reg;
++
++	/*
++	 * Allow resume before starting so as not to overwrite a value set by a
++	 * PMI.
++	 */
++	barrier();
++	WRITE_ONCE(pt->resume_allowed, 1);
++	/* Configuration is complete, it is now OK to handle an NMI */
++	barrier();
++	WRITE_ONCE(pt->handle_nmi, 1);
++	barrier();
+ 	pt_config_start(event);
++	barrier();
++	/*
++	 * Allow pause after starting so its pt_config_stop() doesn't race with
++	 * pt_config_start().
++	 */
++	WRITE_ONCE(pt->pause_allowed, 1);
+ }
+ 
+ static void pt_config_stop(struct perf_event *event)
+@@ -1516,6 +1536,7 @@ void intel_pt_interrupt(void)
+ 		buf = perf_aux_output_begin(&pt->handle, event);
+ 		if (!buf) {
+ 			event->hw.state = PERF_HES_STOPPED;
++			WRITE_ONCE(pt->resume_allowed, 0);
+ 			return;
+ 		}
+ 
+@@ -1524,6 +1545,7 @@ void intel_pt_interrupt(void)
+ 		ret = pt_buffer_reset_markers(buf, &pt->handle);
+ 		if (ret) {
+ 			perf_aux_output_end(&pt->handle, 0);
++			WRITE_ONCE(pt->resume_allowed, 0);
+ 			return;
+ 		}
+ 
+@@ -1578,6 +1600,26 @@ static void pt_event_start(struct perf_event *event, int mode)
+ 	struct pt *pt = this_cpu_ptr(&pt_ctx);
+ 	struct pt_buffer *buf;
+ 
++	if (mode & PERF_EF_RESUME) {
++		if (READ_ONCE(pt->resume_allowed)) {
++			u64 status;
++
++			/*
++			 * Only if the trace is not active and the error and
++			 * stopped bits are clear, is it safe to start, but a
++			 * PMI might have just cleared these, so resume_allowed
++			 * must be checked again also.
++			 */
++			rdmsrl(MSR_IA32_RTIT_STATUS, status);
++			if (!(status & (RTIT_STATUS_TRIGGEREN |
++					RTIT_STATUS_ERROR |
++					RTIT_STATUS_STOPPED)) &&
++			   READ_ONCE(pt->resume_allowed))
++				pt_config_start(event);
++		}
++		return;
++	}
++
+ 	buf = perf_aux_output_begin(&pt->handle, event);
+ 	if (!buf)
+ 		goto fail_stop;
+@@ -1588,7 +1630,6 @@ static void pt_event_start(struct perf_event *event, int mode)
+ 			goto fail_end_stop;
+ 	}
+ 
+-	WRITE_ONCE(pt->handle_nmi, 1);
+ 	hwc->state = 0;
+ 
+ 	pt_config_buffer(buf);
+@@ -1606,6 +1647,12 @@ static void pt_event_stop(struct perf_event *event, int mode)
+ {
+ 	struct pt *pt = this_cpu_ptr(&pt_ctx);
+ 
++	if (mode & PERF_EF_PAUSE) {
++		if (READ_ONCE(pt->pause_allowed))
++			pt_config_stop(event);
++		return;
++	}
++
+ 	/*
+ 	 * Protect against the PMI racing with disabling wrmsr,
+ 	 * see comment in intel_pt_interrupt().
+@@ -1613,6 +1660,15 @@ static void pt_event_stop(struct perf_event *event, int mode)
+ 	WRITE_ONCE(pt->handle_nmi, 0);
+ 	barrier();
+ 
++	/*
++	 * Prevent a resume from attempting to restart tracing, or a pause
++	 * during a subsequent start. Do this after clearing handle_nmi so that
++	 * pt_event_snapshot_aux() will not re-allow them.
++	 */
++	WRITE_ONCE(pt->pause_allowed, 0);
++	WRITE_ONCE(pt->resume_allowed, 0);
++	barrier();
++
+ 	pt_config_stop(event);
+ 
+ 	if (event->hw.state == PERF_HES_STOPPED)
+@@ -1662,6 +1718,10 @@ static long pt_event_snapshot_aux(struct perf_event *event,
+ 	if (WARN_ON_ONCE(!buf->snapshot))
+ 		return 0;
+ 
++	/* Prevent pause/resume from attempting to start/stop tracing */
++	WRITE_ONCE(pt->pause_allowed, 0);
++	WRITE_ONCE(pt->resume_allowed, 0);
++	barrier();
+ 	/*
+ 	 * There is no PT interrupt in this mode, so stop the trace and it will
+ 	 * remain stopped while the buffer is copied.
+@@ -1681,8 +1741,13 @@ static long pt_event_snapshot_aux(struct perf_event *event,
+ 	 * Here, handle_nmi tells us if the tracing was on.
+ 	 * If the tracing was on, restart it.
+ 	 */
+-	if (READ_ONCE(pt->handle_nmi))
++	if (READ_ONCE(pt->handle_nmi)) {
++		WRITE_ONCE(pt->resume_allowed, 1);
++		barrier();
+ 		pt_config_start(event);
++		barrier();
++		WRITE_ONCE(pt->pause_allowed, 1);
++	}
+ 
+ 	return ret;
+ }
+@@ -1798,7 +1863,9 @@ static __init int pt_init(void)
+ 	if (!intel_pt_validate_hw_cap(PT_CAP_topa_multiple_entries))
+ 		pt_pmu.pmu.capabilities = PERF_PMU_CAP_AUX_NO_SG;
+ 
+-	pt_pmu.pmu.capabilities	|= PERF_PMU_CAP_EXCLUSIVE | PERF_PMU_CAP_ITRACE;
++	pt_pmu.pmu.capabilities		|= PERF_PMU_CAP_EXCLUSIVE |
++					   PERF_PMU_CAP_ITRACE |
++					   PERF_PMU_CAP_AUX_PAUSE;
+ 	pt_pmu.pmu.attr_groups		 = pt_attr_groups;
+ 	pt_pmu.pmu.task_ctx_nr		 = perf_sw_context;
+ 	pt_pmu.pmu.event_init		 = pt_event_init;
+diff --git a/arch/x86/events/intel/pt.h b/arch/x86/events/intel/pt.h
+index a1b6c04..7ee94fc 100644
+--- a/arch/x86/events/intel/pt.h
++++ b/arch/x86/events/intel/pt.h
+@@ -119,6 +119,8 @@ struct pt_filters {
+  * @filters:		last configured filters
+  * @handle_nmi:		do handle PT PMI on this cpu, there's an active event
+  * @vmx_on:		1 if VMX is ON on this cpu
++ * @pause_allowed:	PERF_EF_PAUSE is allowed to stop tracing
++ * @resume_allowed:	PERF_EF_RESUME is allowed to start tracing
+  * @output_base:	cached RTIT_OUTPUT_BASE MSR value
+  * @output_mask:	cached RTIT_OUTPUT_MASK MSR value
+  */
+@@ -127,6 +129,8 @@ struct pt {
+ 	struct pt_filters	filters;
+ 	int			handle_nmi;
+ 	int			vmx_on;
++	int			pause_allowed;
++	int			resume_allowed;
+ 	u64			output_base;
+ 	u64			output_mask;
+ };
 
