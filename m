@@ -1,105 +1,195 @@
-Return-Path: <linux-kernel+bounces-398008-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398009-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 612CF9BE421
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 11:20:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A99E39BE426
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 11:21:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 25653284314
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 10:20:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 68C93283264
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 10:21:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5559F1DE2AC;
-	Wed,  6 Nov 2024 10:20:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D2461DE2A3;
+	Wed,  6 Nov 2024 10:21:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ut/+8wcH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="MsqeP7+h"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A581F1DACAA;
-	Wed,  6 Nov 2024 10:20:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F4371DBB19;
+	Wed,  6 Nov 2024 10:21:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730888415; cv=none; b=RfatBXdtdWlCrDxNll7OyNw9MmYL5cDVa4wyG0CU1t1bEmrQQ9qEYbnOEt8QyIk+ILWxoxS4Ny2Ap60sSF/Npb1iNBXsr3LW6cY8WFkamxWODHQqzUcbPzNxMuQSqOTUa/rjaX2NKJQStPYi2l6t21ws+h504OYUwBMenXGEny4=
+	t=1730888484; cv=none; b=FOYGUvgv+tptRe1CTlDSQ566b3JlnE16xBOYO+ut/4uJcel8K8Bkm9WSJArCZF/HTjaJ82hEBhcIgc3SgSwIUWK5TUqzIkXCia7GSF28Gm+Q6N3B+dvDYez26HKCoI6Q+etr3KoyIk0LRYOKv7q+ADP1b/qj9ImEf9I9dY7dxY8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730888415; c=relaxed/simple;
-	bh=lXpB45YEiKcKgz5mKJKvT1SzNckif79TOWmyG/tgmZw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VnvX/RsHuudM36dCB5xARYo568rxcPNOzEObuhQkkEcR6sCjAkloUnw+Ly0sqORsq+WapDznOD7THE+5HsMkX+oMUkjY0AOfFmdxarPrGQ7/dgKKLoOw6Qia88O44qRRkITyhmRGv/hbdmWiGFb8Pze1O2uEphqSc7qmsOYUkfU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ut/+8wcH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D91CCC4CECD;
-	Wed,  6 Nov 2024 10:20:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730888415;
-	bh=lXpB45YEiKcKgz5mKJKvT1SzNckif79TOWmyG/tgmZw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ut/+8wcHMoHlEah+z1uEA09kuKP1PPJjtCkUptqxPo+CPvuPAm71BTxkR945Ht+ZW
-	 xL7hMe364LooETN3T87cqFTEYhAL8mEJy3X+Ql4+i3yHPYN9FD5MrCTIb42tKHcBGV
-	 tIGJORhucoV8CjDu/K1VBOTn1RLjnBmjqghYD4PDVbYLx2XlewK2JoT1IqsM4xMF5T
-	 uccr0sQHILtsz9FpxP/WuMnI7K0FyMQ4+YmP1ClURfsom3qDTkCUUJyXYY7Zjxu4Bd
-	 PhdjzhpkKnDZ7DPAqU9ngWAX11qJaLd8t04UCZsF+YhBNjgNJvdgEtSPKrBl/A8qO9
-	 TDiZ3YgHQd4bw==
-Date: Wed, 6 Nov 2024 10:20:10 +0000
-From: Simon Horman <horms@kernel.org>
-To: "Nemanov, Michael" <michael.nemanov@ti.com>
-Cc: Kalle Valo <kvalo@kernel.org>, "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-wireless@vger.kernel.org,
-	netdev@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Sabeeh Khan <sabeeh-khan@ti.com>
-Subject: Re: [PATCH v3 12/17] wifi: cc33xx: Add scan.c, scan.h
-Message-ID: <20241106102010.GN4507@kernel.org>
-References: <20240806170018.638585-1-michael.nemanov@ti.com>
- <20240806170018.638585-13-michael.nemanov@ti.com>
- <20240809160355.GD1951@kernel.org>
- <33f3b6a4-f907-4374-90ac-d81a81700936@ti.com>
- <20241102120030.GG1838431@kernel.org>
- <d9640623-4b93-4fce-991f-f881a230b143@ti.com>
+	s=arc-20240116; t=1730888484; c=relaxed/simple;
+	bh=PQ2o5PxJV//B/SDV+R6qsRTowPv4eb3FpLR+95aS7w4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=eAHroGBrF4EMF1wZUCUgO86pYxcH17H3ZrDrhFi7UWe4qruorIAX6FxHohP7kHQV11gkT2l7hnS5mvX3osv8EAiURZ/13xlELGpW9kqS3fF/+73DRDfMK/wr5WPlvLz9MoV1UZRzZLNHf6yqA7hN4/aq465wL1eZd9isgKKdlIo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=MsqeP7+h; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A69WbvC028952;
+	Wed, 6 Nov 2024 10:21:16 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	yjpz5PvCxLqQic9Vv2wXPzL/5dQBB7Fhvy+j5Ys7CQk=; b=MsqeP7+huWjZZbGM
+	G+4Xsl2HsRlsthnf25NvZctAmB3CpoVn0QNaUhvjInq7gdcigJVkloaREr+4rodB
+	jYF0H0diBeOI3zqPq49FdXzSLj4NkZr/8vVnpLIVCzoN86MrdPqrEcS//SJCnULK
+	ApuSYyNifM6W2u0B1j2rfmcbURCHCYW7GLFkCptYBjbwcX6CtRkA0WQe78cPZSl1
+	4z2tA1UhNLH1KoEgC/Fk7lQDF5xDpgxy2Lx1Y4tY2B9nBJVa4zndYXHOra1sOhkK
+	pd3Rizc1127vv1fHAB8JsKqhkB9xr8CpJGxRzR5i5uNRyFiE8S3lI3FoqCQGHf3z
+	3pxiww==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42nd28aua6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 06 Nov 2024 10:21:15 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4A6ALE1B018773
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 6 Nov 2024 10:21:14 GMT
+Received: from [10.216.39.182] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 6 Nov 2024
+ 02:21:10 -0800
+Message-ID: <556248aa-8d0e-4dbd-b32d-40017a59b972@quicinc.com>
+Date: Wed, 6 Nov 2024 15:51:05 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d9640623-4b93-4fce-991f-f881a230b143@ti.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 3/3] arm64: dts: qcom: sc8280xp-blackrock: dt
+ definition for WDK2023
+To: Jens Glathe <jens.glathe@oldschoolsolutions.biz>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Merck Hung <merckhung@gmail.com>,
+        Kalle Valo
+	<kvalo@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Rob Herring <robh@kernel.org>, <xlazom00@gmail.com>
+References: <20241101-jg-blackrock-for-upstream-v7-0-8295e9f545d9@oldschoolsolutions.biz>
+ <20241101-jg-blackrock-for-upstream-v7-3-8295e9f545d9@oldschoolsolutions.biz>
+ <945f3eae-0a68-4738-af07-74e228039508@quicinc.com>
+ <dd5bad7b-d062-4028-b78a-3888dec4f934@oldschoolsolutions.biz>
+ <f8697f7f-f6ac-4b6d-954b-a0777770dc8e@quicinc.com>
+ <e13488a3-5f45-44b2-950d-5a29307d4ec4@oldschoolsolutions.biz>
+Content-Language: en-US
+From: Krishna Kurapati <quic_kriskura@quicinc.com>
+In-Reply-To: <e13488a3-5f45-44b2-950d-5a29307d4ec4@oldschoolsolutions.biz>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: hOvJtcsmXAbsHXAqwxFHYYzs3CkuZFwK
+X-Proofpoint-GUID: hOvJtcsmXAbsHXAqwxFHYYzs3CkuZFwK
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 mlxlogscore=999
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 priorityscore=1501
+ spamscore=0 phishscore=0 bulkscore=0 malwarescore=0 suspectscore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411060084
 
-On Sun, Nov 03, 2024 at 03:09:22PM +0200, Nemanov, Michael wrote:
-> On 11/2/2024 2:00 PM, Simon Horman wrote:
-> 
-> ...
-> 
-> > 
-> > I'm a but unsure why you see that, but what I was referring to is this:
-> > 
-> > $ ./scripts/kernel-doc -none drivers/net/wireless/ti/cc33xx/scan.h
-> > drivers/net/wireless/ti/cc33xx/scan.h:104: warning: Function parameter or struct member 'header' not described in 'cc33xx_cmd_ssid_list'
-> > drivers/net/wireless/ti/cc33xx/scan.h:104: warning: Function parameter or struct member 'scan_type' not described in 'cc33xx_cmd_ssid_list'
-> > drivers/net/wireless/ti/cc33xx/scan.h:104: warning: Function parameter or struct member 'n_ssids' not described in 'cc33xx_cmd_ssid_list'
-> > drivers/net/wireless/ti/cc33xx/scan.h:104: warning: Function parameter or struct member 'ssids' not described in 'cc33xx_cmd_ssid_list'
-> > drivers/net/wireless/ti/cc33xx/scan.h:104: warning: Function parameter or struct member 'padding' not described in 'cc33xx_cmd_ssid_list'
-> > drivers/net/wireless/ti/cc33xx/scan.h:104: warning: Excess struct member 'num_of_ssids' description in 'cc33xx_cmd_ssid_list'
-> > drivers/net/wireless/ti/cc33xx/scan.h:104: warning: Excess struct member 'ssid_list' description in 'cc33xx_cmd_ssid_list'
-> > drivers/net/wireless/ti/cc33xx/scan.h:149: warning: bad line:
-> > drivers/net/wireless/ti/cc33xx/scan.h:177: warning: cannot understand function prototype: 'struct sched_scan_plan_cmd '
-> > drivers/net/wireless/ti/cc33xx/scan.h:227: warning: Function parameter or struct member 'u' not described in 'scan_param'
-> > drivers/net/wireless/ti/cc33xx/scan.h:227: warning: Excess struct member 'one_shot' description in 'scan_param'
-> > drivers/net/wireless/ti/cc33xx/scan.h:227: warning: Excess struct member 'periodic' description in 'scan_param'
-> > drivers/net/wireless/ti/cc33xx/scan.h:269: warning: Function parameter or struct member 'header' not described in 'cc33xx_cmd_scan_params'
-> > drivers/net/wireless/ti/cc33xx/scan.h:269: warning: Function parameter or struct member 'padding' not described in 'cc33xx_cmd_scan_params'
-> > drivers/net/wireless/ti/cc33xx/scan.h:295: warning: Function parameter or struct member 'header' not described in 'cc33xx_cmd_set_ies'
-> > drivers/net/wireless/ti/cc33xx/scan.h:319: warning: Function parameter or struct member 'header' not described in 'cc33xx_cmd_scan_stop'
-> > drivers/net/wireless/ti/cc33xx/scan.h:319: warning: Function parameter or struct member 'padding' not described in 'cc33xx_cmd_scan_stop'
-> 
-> Right, fixed in v4, thanks.
-> 
-> In general, all of those structs are internal to scan.c and not part of an
-> interface so I think I'll move them there and drop the comments.
 
-Thanks, I think that makes sense.
+
+On 11/6/2024 2:23 PM, Jens Glathe wrote:
+> 
+> On 06.11.24 05:46, Krishna Kurapati wrote:
+>>
+>>
+>> On 11/6/2024 12:57 AM, Jens Glathe wrote:
+>>> On 04.11.24 05:31, Krishna Kurapati wrote:
+>>>>
+>>>>
+>>>> On 11/1/2024 11:56 PM, Jens Glathe via B4 Relay wrote:
+>>>>> From: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+>>>>>
+>>>>> Device tree for the Microsoft Windows Dev Kit 2023. This work
+>>>>> is based on the initial work of Merck Hung <merckhung@gmail.com>.
+>>>>>
+>>>>> Original work:
+>>>>> https://github.com/merckhung/linux_ms_dev_kit/blob/ms-dev-kit-2023-v6.3.0/arch/arm64/boot/dts/qcom/sc8280xp-microsoft-dev-kit-2023.dts
+>>>>>
+>>>>>
+>>>>> The Windows Dev Kit 2023 is a nice little desktop based on sc8280xp.
+>>>>> Link: https://learn.microsoft.com/en-us/windows/arm/dev-kit/
+>>>>>
+>>>>> Supported features:
+>>>>> - USB type-c and type-a ports
+>>>>> - minidp connector
+>>>>> - built-in r8152 Ethernet adapter
+>>>>> - PCIe devices
+>>>>> - nvme
+>>>>> - ath11k WiFi (WCN6855)
+>>>>> - WCN6855 Bluetooth
+>>>>> - A690 GPU
+>>>>> - ADSP and CDSP
+>>>>> - GPIO keys
+>>>>> - Audio definition (works via USB)
+>>>>>
+>>>>> Signed-off-by: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+>>>>> ---
+>>>>
+>>>> [...]
+>>>>
+>>>>> +&usb_2 {
+>>>>> +    pinctrl-0 = <&usb2_en_state>;
+>>>>> +    pinctrl-names = "default";
+>>>>> +
+>>>>
+>>>> On the blackrock platform, for this controller, are there all 4 ports
+>>>> given out for use or only one ?
+>>>>
+>>>> Because if all 4 are there, you might need to give all 4 pinctrls (one
+>>>> for each TS3USB221A mux select) here for usb_2 node. If only one port
+>>>> is given out for use on the platform, then only one phy (of the 4
+>>>> activated below) needs to be marked as active.
+>>>>
+>>>> In my case, in [1] on the ADP platform, I marked them as always on for
+>>>> all gpios on multiport controller since driver had no support added
+>>>> yet.
+>>>>
+>>>> [1]:
+>>>> https://lore.kernel.org/all/20240707085624.3411961-1-quic_kriskura@quicinc.com/
+>>>>
+>>>>
+>>> Hi Krishna,
+>>>
+>>> thank you for the hints. Unfortunately, I don't have any schematics for
+>>> the box. But I tested out activation combinations for all the
+>>
+>> My point is little different.
+>> Third controller supports upto 4 physical ports. How many of them have
+>> been exposed on this WDK2023 ? Depending on that, the phys have to be
+>> enabled in DT.
+>>
+> Okay I took the jump and reduced usb_2_dwc3 to only one qmpphy and one
+> hsphy. It works, the USB nodes look the same and work. What an odd
+> design, though, but why not.
+> 
+> &usb_2_dwc3 {
+>      phys = <&usb_2_hsphy0>, <&usb_2_qmpphy0>;
+>      phy-names = "usb2-0", "usb3-0";
+> };
+> 
+> I will do an amended V8 of the patch. Thank you for the hint again.
+> 
+
+Also, if there is only one port, then don't enable the other PHYs.
+
+Regards,
+Krishna,
 
