@@ -1,139 +1,138 @@
-Return-Path: <linux-kernel+bounces-398290-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398291-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0530D9BEF0A
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 14:29:50 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DCB459BEF0D
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 14:30:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 37DF11C23FA1
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 13:29:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E45D285A63
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 13:30:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F0A21E0DFD;
-	Wed,  6 Nov 2024 13:29:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B010335B5;
+	Wed,  6 Nov 2024 13:30:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="AVJoO+oe"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="jcGKYurY";
+	dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="Wp3z/iZY"
+Received: from a7-32.smtp-out.eu-west-1.amazonses.com (a7-32.smtp-out.eu-west-1.amazonses.com [54.240.7.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20DF41E0096;
-	Wed,  6 Nov 2024 13:29:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D27F715C138
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 13:30:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.240.7.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730899774; cv=none; b=db/2n/vidzGsdaztAukbk655A/qKbVK57mDwVWu+gwFOFfEuEF9Az5LZEUFcFCUigM1+nah1anjune72ZnxpL+cVcWCj1nBZ2byvvrtzT2hLmTs/e7nVsZifmxqklSLVZ0alTTfIlib2QdQfJg6ZFHK76PNseoXWwQZn+qXHsMs=
+	t=1730899814; cv=none; b=gqHr7Fy+x+wcHRntdcfbydQGHQqtikhegaR2D18CHtXhXZOJ5uqJR8rNqm3WJBKkLmnHdl/Q85I255W+C1jfJPtUcso1U5ju850gNAGjgj5QOkEcEtxv+mR2IA3Eua41AVNEteawjj+WiCLwg9NZpymCVa6XN9zYaWijredQ0WI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730899774; c=relaxed/simple;
-	bh=fVNkLpFzLkJsXQDVFwWhgGwWb8WzrbwjQ1RM/7ZwYPg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KO2X2LrliGtim4h3GbOMerwUG91mMeX6E+3P0hBbyqj0+aeiTpKatXfakFdcw1dm9rABvUl3P5EK6uSK4Apf1eNDaWeT7YhAo7qkP6+bD8uFW+CdCp5Z5r0ANRWw9EVJhqoywiR7QodqJodlHqPYgQfPeehK0NxKN8MTwBjCupg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=AVJoO+oe; arc=none smtp.client-ip=148.251.105.195
+	s=arc-20240116; t=1730899814; c=relaxed/simple;
+	bh=JuJPylewezAPI7wSda7iVtJm+RTVZzYzft96qUfPDBM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lYmK6FN0iPM8HCBN48jJuGAyz8HqFoeyp4HoIinflEg9YTxnoIWRfi633dQN9C4JGiGhMjFVIyRW6MxNXpEiBnYYZbDt2WM2+ogsh2rTuZBs9gzw24fIR8P+VdQ5Z4j5ymFJKbkYpaGm47lELXWxwEKXUNbUJdIBg7Rq8K4ffN4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=amazonses.collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=jcGKYurY; dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b=Wp3z/iZY; arc=none smtp.client-ip=54.240.7.32
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1730899770;
-	bh=fVNkLpFzLkJsXQDVFwWhgGwWb8WzrbwjQ1RM/7ZwYPg=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=AVJoO+oeMmm6+03UpFQIcu/uxg08bLNLx3b7YD2da7REpGSSjwKsSCYY9orX7+GLa
-	 +lEPCi5Wa3UjHuyTQuDiE+qUuIRHPefudnng2qA5oVp/NObxK2okD+nu4KW8raVwPA
-	 Ru8ku58XniWkPi0/f3AH5ZQWfPm8IubNRnTdIpf6hLESLuGRLYi+JWSnfpZVjLvNv3
-	 yUiYriF2uZhLxtpG2jl9rLQGmPoNkO94ickQYhoKkW3SKLeefU54klvGizPyMFKC1Y
-	 cvWPhVTrnbzVACKrdK2tBGK/iDvOp1fE7KTDaA71YrmhLbk27D95OmIbHk7DuuFDQe
-	 oMQtWCMeVGMJg==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id C6A2F17E3637;
-	Wed,  6 Nov 2024 14:29:29 +0100 (CET)
-Message-ID: <e2e41af9-ed09-4ac5-9481-e605d1340b3d@collabora.com>
-Date: Wed, 6 Nov 2024 14:29:29 +0100
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazonses.collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+	s=bc7lryepznv65m6r2ewkpoafjt4fiq42; d=collabora.com; t=1730899811;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Transfer-Encoding;
+	bh=JuJPylewezAPI7wSda7iVtJm+RTVZzYzft96qUfPDBM=;
+	b=jcGKYurYf124PKWF4I14ez5MbPaSNFtW/88QhTUfBFr/PWe2G5uEvJ9IAfn+iv+d
+	vwGlNH4JABfD7UIbm2MmiyOWsxrh45d1AyEAkBx6p9LOZ3E7AcfBph2inniDsm1EOMF
+	hcQeF+s1JQgqnsiqPGEgj/4ckYoksym8izKBnVtTpZmHvuuwcDgEKDP1pMrRLKOoK/w
+	gwpKqg84OlLesmdjpGtzIpBdOV+FeRnjKX/RV8TytbLr8eBMA8GFu3hZ0sEEM1eI55R
+	hGR1U7cC0rINdAYbqABWjfBcOjBfaUEWGlWWer4A37Og0obt4SxP3CSbpkYtRC4tIZ1
+	3qSr1Q6R1w==
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+	s=uku4taia5b5tsbglxyj6zym32efj7xqv; d=amazonses.com; t=1730899811;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Transfer-Encoding:Feedback-ID;
+	bh=JuJPylewezAPI7wSda7iVtJm+RTVZzYzft96qUfPDBM=;
+	b=Wp3z/iZYE/gCiwA7eVXrW4AiKI1lsvJEToaCQFUM9T+J0UG2sPyuGD/cBBJ/fjLz
+	ifSQW4M3YluLkb/lNX3OnmtKA2A8E/s477iaVYTBgemy9camlRTraAtr+OYTFYRCB06
+	kBL2qPQz9tie7rVgmPqqFeeb//5Vp/SaunZSq228=
+From: Benjamin Gaignard <benjamin.gaignard@collabora.com>
+To: maarten.lankhorst@linux.intel.com, mripard@kernel.org, 
+	tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch, 
+	laurentiu.palcu@nxp.com, aisheng.dong@nxp.com
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	kernel@collabora.org, 
+	Benjamin Gaignard <benjamin.gaignard@collabora.com>
+Subject: [PATCH] drm/fourcc: Add modifier definition for describing Verisilicon video framebuffer
+Date: Wed, 6 Nov 2024 13:30:11 +0000
+Message-ID: <0102019301ab1b2d-5539e1c7-e026-47bc-8692-b3335f6f7584-000000@eu-west-1.amazonses.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/2] PCI: mediatek-gen3: Add support for restricting
- link width
-To: =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>
-Cc: linux-pci@vger.kernel.org, ryder.lee@mediatek.com,
- jianjun.wang@mediatek.com, lpieralisi@kernel.org, robh@kernel.org,
- bhelgaas@google.com, matthias.bgg@gmail.com,
- linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, kernel@collabora.com,
- fshao@chromium.org, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-References: <20241104114935.172908-1-angelogioacchino.delregno@collabora.com>
- <20241104114935.172908-3-angelogioacchino.delregno@collabora.com>
- <20241104132046.GA2504924@rocinante>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20241104132046.GA2504924@rocinante>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+Feedback-ID: ::1.eu-west-1.YpP9ZbxnARFfy3Cb5pfsLd/pdsXBCNK0KEM7HforL4k=:AmazonSES
+X-SES-Outgoing: 2024.11.06-54.240.7.32
 
-Il 04/11/24 14:20, Krzysztof Wilczyński ha scritto:
-> 
-> Hello,
-> 
->> +	ret = of_property_read_u32(dev->of_node, "num-lanes", &num_lanes);
->> +	if (ret == 0) {
->> +		if (num_lanes == 0 || num_lanes > 16 || (num_lanes != 1 && num_lanes % 2))
->> +			dev_warn(dev, "Invalid num-lanes, using controller defaults\n");
->> +		else
->> +			pcie->num_lanes = num_lanes;
->> +	}
->> +
->>   	return 0;
->>   }
-> 
-> If you were to handle non-zero return value as an error here, perhaps the
-> property has not been set, then we could reduce the indentation here.
-> 
-> Something like this, perhaps?
-> 
->    ret = of_property_read_u32(dev->of_node, "num-lanes", &num_lanes);
->    if (ret) {
->            dev_err(dev, "Failed to read num-lanes: %d\n", ret);
->            return ret;
->    }
->    
->    if (!num_lanes || num_lanes > 16 || (num_lanes != 1 && num_lanes % 2))
->    	dev_warn(dev, "Invalid num-lanes, using controller defaults\n");
->    else
->    	pcie->num_lanes = num_lanes;
-> 
-> Does this make sense here?  Thoughts?
-> 
-> 	Krzysztof
+Verisilicon hardware video decoders can produce tiled (8x4 or 4x4)
+and compressed video framebuffers.
+It considerably reduces memory bandwidth while writing and reading
+frames in memory.
 
+The underlying storage in NV12 (for 8-bit) or NV15 (for 10-bit).
 
-Sorry I've just seen this email.
+Display controllers, like imx DCSS, could use these modifier definition
+as input for overlay planes.
 
-There's a problem here: this property has to be optional - and if you change that
-to return like that, you're breaking compatibility with older device trees, which
-are not specifying any "num-lanes" property.
+Signed-off-by: Benjamin Gaignard <benjamin.gaignard@collabora.com>
+---
+The original code comes from:
+https://github.com/nxp-imx/linux-imx/commit/ab01b7fe82d5a11dfb533cfbd08c4dfa140815de
+I have port it and modify DRM_FORMAT_MOD_VENDOR_VSI value.
 
-Please remember that of_property_read_u32() returns:
-  - 0 on success
-  - -EINVAL if the property does not exist
-  - -ENODATA or -EOVERFLOW
+ include/uapi/drm/drm_fourcc.h | 27 +++++++++++++++++++++++++++
+ 1 file changed, 27 insertions(+)
 
-Please either keep the error checking like I wrote, or alternatively you can do..
+diff --git a/include/uapi/drm/drm_fourcc.h b/include/uapi/drm/drm_fourcc.h
+index 78abd819fd62..31d09a98d0d7 100644
+--- a/include/uapi/drm/drm_fourcc.h
++++ b/include/uapi/drm/drm_fourcc.h
+@@ -421,6 +421,7 @@ extern "C" {
+ #define DRM_FORMAT_MOD_VENDOR_ARM     0x08
+ #define DRM_FORMAT_MOD_VENDOR_ALLWINNER 0x09
+ #define DRM_FORMAT_MOD_VENDOR_AMLOGIC 0x0a
++#define DRM_FORMAT_MOD_VENDOR_VSI     0x0b
+ 
+ /* add more to the end as needed */
+ 
+@@ -1607,6 +1608,32 @@ drm_fourcc_canonicalize_nvidia_format_mod(__u64 modifier)
+ #define AMD_FMT_MOD_CLEAR(field) \
+ 	(~((__u64)AMD_FMT_MOD_##field##_MASK << AMD_FMT_MOD_##field##_SHIFT))
+ 
++/* Verisilicon framebuffer modifiers */
++
++/*
++ * Verisilicon 8x4 tiling layout
++ *
++ * This is G1 VPU tiled layout using tiles of 8x4 pixels in a row-major
++ * layout.
++ */
++#define DRM_FORMAT_MOD_VSI_G1_TILED fourcc_mod_code(VSI, 1)
++
++/*
++ * Verisilicon 4x4 tiling layout
++ *
++ * This is G2 VPU tiled layout using tiles of 4x4 pixels in a row-major
++ * layout.
++ */
++#define DRM_FORMAT_MOD_VSI_G2_TILED fourcc_mod_code(VSI, 2)
++
++/*
++ * Verisilicon 4x4 tiling with compression layout
++ *
++ * This is G2 VPU tiled layout using tiles of 4x4 pixels in a row-major
++ * layout with compression.
++ */
++#define DRM_FORMAT_MOD_VSI_G2_TILED_COMPRESSED fourcc_mod_code(VSI, 3)
++
+ #if defined(__cplusplus)
+ }
+ #endif
+-- 
+2.43.0
 
-ret = of_property_read_u32(...)
-if (ret != -EINVAL) {
-	dev_err(dev, "Failed to read num-lanes: %d\n", ret);
-	return ret;
-} else {
-	if (num_lanes == 0 || ..... etc etc)
-		dev_warn()
-	else
-		pcie->num_lanes = num_lanes
-}
-
-Cheers,
-Angelo
 
