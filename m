@@ -1,146 +1,146 @@
-Return-Path: <linux-kernel+bounces-397833-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397834-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D4A79BE128
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 09:38:19 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA76F9BE129
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 09:39:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 606D61C206A7
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 08:38:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F9BC28397A
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 08:39:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 147F31D47AC;
-	Wed,  6 Nov 2024 08:38:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEE971D54D1;
+	Wed,  6 Nov 2024 08:38:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KRp2tm1D"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="j1Xm6UDU"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 723E01922E8
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 08:38:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BC0D38F82
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 08:38:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730882286; cv=none; b=R/sdJKrZ+qW5eFZl30jaeknoEDno2c+O2XA3CRDLIbuLJ45fZA/NmYazoxk8fnLma0ACjuYGIyVi4XDrXd4XnNtdZwJso07E2Yy2TEOlxgJCGKuJYKjHkanWkrb7utZRgFH+0LMaGOELk1hr+FqM+BZFVdT0wz+VZenS2Bp9TnE=
+	t=1730882338; cv=none; b=WT8hILNdCJ+jzVqANwnp8mOfra+687jSYofabXz8KTF0nyN/yBB4GvoYfUtBL69LatGO01HDbeWeMt4oLwER1kVQ7Ak2Tb3Bm73P7ldueXZ8q+FvIY6PtbKw4ShR/fS0We5feD87ODrIyPOuSNjZXMm5cC6WEkb7ftpeTKLPFv0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730882286; c=relaxed/simple;
-	bh=YgU92Inzmo2OGXiMJhJYEY7fKfhshzRIDsqVsaD18zU=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=i/g0MTRCWyguU71M+EmhcT0GrNwROKjWepdQzPOHOYDmRJ24D3EM3smHa6JsG7XgZSW571Q5coC/APoouUiOUTMv3Ck7TTWxuXzZO6VPHfvOrCA6GS7ha+YCCZ7o6JrfPHJkYHt0YdILGSF0SrQl7x+j4nkT1chgRB5XBpvnpDY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KRp2tm1D; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1730882283;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=P8R+edCnMlYIHT6YcW/hTuojpsCOQL3uAz99YEovrw8=;
-	b=KRp2tm1DihMyZ5wqY3BcCbXjOUQIz2WTUNtXgVDDZrGz3eS+Sj052zsPskCjc7th/ek/Qa
-	jTHa3H0U7x92SXHAtyvtrvImuNcehC+6wcyVhWb9jvzInP6p+uxDyIOrlBQ3OcwsRZiaCX
-	D4EkcjqWx2XaQ0ecZLBpbo76fZSZ7iA=
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com
- [209.85.166.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-656-IVXmC2UXNFSBAEbfLWAr4Q-1; Wed, 06 Nov 2024 03:38:00 -0500
-X-MC-Unique: IVXmC2UXNFSBAEbfLWAr4Q-1
-X-Mimecast-MFC-AGG-ID: IVXmC2UXNFSBAEbfLWAr4Q
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-83ac0354401so724293039f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2024 00:38:00 -0800 (PST)
+	s=arc-20240116; t=1730882338; c=relaxed/simple;
+	bh=jJaeBFIHIkLHuZkB2SPfqzxxy4446VpSvpu9ioiwLPo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sFxt4zpW9+d1LGCzOZGaK2woQIlANy6EkCz/8CEwKlj8dEoVwSaeALiz/DwB2KKmy2TMYJLJZNsmDdbHas6UpZeuqsQ/ZeAXrGyHzcraYuETXth9vy8otlqoJtRxoWWjbvO98E/oZ/KaisZCJ3oalpFDVEi5mlnaUdw3EgA+cvk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=j1Xm6UDU; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-43150ea2db6so43355e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2024 00:38:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1730882335; x=1731487135; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hmeeFoFOoLxB4yOuzfFJOjj34YSoSigNjNhyLeRpQgk=;
+        b=j1Xm6UDUBvrLnRxezOY5Qux7NHcp6k8eHvKPwryMeJofGbUUKZYgr1if4yhXg+9um5
+         z1O0ipaYVem5AcAvcsvaavogolqyTe3HaUzH15SvcxJohLz5Zg4rhdXnzJtg67FePmqw
+         DAEHuzyJw9jjBgA4CRz0TAQd/1YP/T2XaoLnaUGYFnr2Iqp1aGpd4bU78GAmYoMpPj5J
+         hYdp5Bpkdy/nrOLk6bNbImdXdZzN8FpiK5hFx14J5ey0SLberGcLOROZdJKmtV1Jnjf4
+         KMvu5f1AaDVimfCeScyySZ6NXA7cMMf4tO8GgCenEmjs1DI9eHeaLWvowdVF/rCSSpyR
+         Pc2g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730882280; x=1731487080;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=P8R+edCnMlYIHT6YcW/hTuojpsCOQL3uAz99YEovrw8=;
-        b=gsTggC9Q//thGVj87zZDIywSJRn8uplJIlLHUURdV+ennu9TH8sOM0rkRFVDXuZxt8
-         yliuGss2je7jQUGjtwCeQRequQMN7QUebh12bHA7i7jb2Q2VxiLZoj1Sr+GlkfzLVGTq
-         g77XIcr2ig+XYk3lzYYs3hJlMon3Z4Ofk3LDqXNzVwxCvZMAux4pPDUeHM8GgYYVgtlu
-         XxIOIDzAF4xIO6wcNaHwkcl0/s6+/xhw2qLQOSb09BGCRi0aVcO9J8KS3Sd/NEy91PFm
-         jNLlTRDRiFlD7cmdOkQWordW4XuV1f1U6heFkr5zzM7+NBULO2m3oT+aX5PBM6xRfUFS
-         Y0Cg==
-X-Forwarded-Encrypted: i=1; AJvYcCUn7Phr+9Z8CDR2nCwWqSM2LqvOdBrOF5oGPukyrmDLARjF/RYgZXLjO37j6ieX5ClvhnnojFJSTWO5KW0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxhXwK41xb5EZMoun4x92b9sUq5mLK0Bo1Rv2kxL/p7PxtsexAa
-	ejc7ICeI7zkpjd9kN8jfdaA/xDONxiLKq38u+7E6b2/LcLaLZwpW2LG/3U+V+kRmyd/Ll3EsV7n
-	Rb2y4HsgWWkXQuikbEgunPSpLAWZGH1Me7yd8FR/PGBJ3fXuSXEoBlj9G++SkdA==
-X-Received: by 2002:a05:6e02:1a8b:b0:3a5:e587:f7fa with SMTP id e9e14a558f8ab-3a6b0328e5bmr194179925ab.18.1730882280325;
-        Wed, 06 Nov 2024 00:38:00 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGGrp+Kq9oeDJXC6cKX/VL+Kbzl5O17jFc9ehGM64T7i6V1n5pIAdWUiSRgheecOb/on4phKQ==
-X-Received: by 2002:a05:6e02:1a8b:b0:3a5:e587:f7fa with SMTP id e9e14a558f8ab-3a6b0328e5bmr194179775ab.18.1730882280036;
-        Wed, 06 Nov 2024 00:38:00 -0800 (PST)
-Received: from [10.32.64.16] (nat-pool-muc-t.redhat.com. [149.14.88.26])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7ee455a7257sm10572741a12.44.2024.11.06.00.37.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Nov 2024 00:37:59 -0800 (PST)
-Message-ID: <b778fb587d7ce15b89847627ba3caca2d8d060d8.camel@redhat.com>
-Subject: Re: [PATCH] x86/platform/intel-mid: Replace deprecated PCI functions
-From: Philipp Stanner <pstanner@redhat.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
- linux-kernel@vger.kernel.org
-Date: Wed, 06 Nov 2024 09:37:51 +0100
-In-Reply-To: <ZyoxPQPupkorXPoa@smile.fi.intel.com>
-References: <20241105112521.58638-2-pstanner@redhat.com>
-	 <ZyoxPQPupkorXPoa@smile.fi.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
+        d=1e100.net; s=20230601; t=1730882335; x=1731487135;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=hmeeFoFOoLxB4yOuzfFJOjj34YSoSigNjNhyLeRpQgk=;
+        b=JfhX+/Ot1MlnIO8zPqO3Ilg4t44c4p7Q4PM5EtwKGd7ZTSm9r+GVX15i1m1g04KPan
+         WghcLnbizmBNf0V2N4fXoEnd7bzO0AKa/tjjAyLdgUQU0vhe7SA5DmWNAuDp5la6W9pH
+         Z6A6yplhRsMT2Pu+8lwvpL1t6zm9CtAT3zLddKoQGVlmHW/ORHz21Gz7Dfz273VRT2QV
+         tfIMTPQv+of+E/OUvkXTd5qxvUPInxtM3KIHAdkQ8PBEvAgiGcjkrSv6lpnXE/+5JiFJ
+         COGOQF6RvWzNB5/tYoZwxeEP6qqU7kmJUz6fGxTmdNerWtgQ2AUAGIFIN3iCiui697vw
+         foyQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVEustV8/ah0M9s/eYqgMVveVTlVrlGsZ1MYjWOCGLWo8gKTGPI73Zg6VqAlOBqdUNnT3nFHHF+gka0PDY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwF7xhY2fjMr1zttLltAi3JRiWZzc1eXjFx+BImzpcwF3jv1lnj
+	5WKrXstNvk9n7XletTNzPvEX5B82G7a7JbkU6eaLCxUrcFm0X4/dkpul4mMu1g8taIbq3dh3Z5j
+	sraKF8sVhJlYWbKuiXiKl/RVUv0lfD1l6fIGJ
+X-Gm-Gg: ASbGncsa8eOpEV89bLfWbMeQW/ANQ8rxU+lZTFZlGEw3mqmtwisAzkT/wSciCmfXplz
+	GqW7DWIn0qBJYzREVVNOJMdZJfiri+Su8uhSTqgOj3AkN3CoDtwAZd5Nx
+X-Google-Smtp-Source: AGHT+IFE7a8/uWdpVs+aeR5w7jYKXAaO8cfGjh6/ezR19M0yoD2tlzYRkDrPLuwTyjT1hVfrKzI5dBNM9Sqa/ASR3RM=
+X-Received: by 2002:a05:600c:2188:b0:426:6edd:61a7 with SMTP id
+ 5b1f17b1804b1-432aa3fdbe5mr756275e9.7.1730882334733; Wed, 06 Nov 2024
+ 00:38:54 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20241106083501.408074-1-guanyulin@google.com> <20241106083501.408074-6-guanyulin@google.com>
+In-Reply-To: <20241106083501.408074-6-guanyulin@google.com>
+From: Guan-Yu Lin <guanyulin@google.com>
+Date: Wed, 6 Nov 2024 16:38:43 +0800
+Message-ID: <CAOuDEK1r+2f-nXBRO-i0NZ7oriM93kyQzgKMpw+ocqgmWBBpoA@mail.gmail.com>
+Subject: Re: [PATCH v6 5/5] usb: host: enable sideband transfer during system sleep
+To: gregkh@linuxfoundation.org, Thinh.Nguyen@synopsys.com, 
+	mathias.nyman@intel.com, stern@rowland.harvard.edu, sumit.garg@linaro.org, 
+	dianders@chromium.org, kekrby@gmail.com, oneukum@suse.com, 
+	yajun.deng@linux.dev, niko.mauno@vaisala.com, christophe.jaillet@wanadoo.fr, 
+	tj@kernel.org, stanley_chang@realtek.com, andreyknvl@gmail.com, 
+	quic_jjohnson@quicinc.com, ricardo@marliere.net
+Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 2024-11-05 at 16:52 +0200, Andy Shevchenko wrote:
-> On Tue, Nov 05, 2024 at 12:25:22PM +0100, Philipp Stanner wrote:
-> > pcim_iomap_table() and pcim_request_regions() have been deprecated
-> > in
-> > commit e354bb84a4c1 ("PCI: Deprecate pcim_iomap_table(),
-> > pcim_iomap_regions_request_all()") and commit d140f80f60358 ("PCI:
-> > Deprecate pcim_iomap_regions() in favor of pcim_iomap_region()"),
-> > respectively.
-> >=20
-> > Replace these functions with pcim_iomap_region().
-> >=20
-> > Additionally, pass the actual driver name to pcim_iomap_region()
-> > instead of the previous pci_name(), since the 'name' parameter
-> > should
-> > always reflect which driver owns a region.
->=20
-> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
->=20
-> ...
->=20
-> > -	ret =3D pcim_iomap_regions(pdev, 1 << 0, pci_name(pdev));
-> > -	if (ret) {
-> > -		dev_err(&pdev->dev, "I/O memory remapping
-> > failed\n");
->=20
-> Btw, do we have a similar message to be printed inside the new call?
+On Wed, Nov 6, 2024 at 4:35=E2=80=AFPM Guan-Yu Lin <guanyulin@google.com> w=
+rote:
+>
+> diff --git a/drivers/usb/core/driver.c b/drivers/usb/core/driver.c
+> index e53cb4c267b3..e5bb26e6c71a 100644
+> --- a/drivers/usb/core/driver.c
+> +++ b/drivers/usb/core/driver.c
+> @@ -1583,6 +1583,11 @@ int usb_suspend(struct device *dev, pm_message_t m=
+sg)
+>         struct usb_device       *udev =3D to_usb_device(dev);
+>         int r;
+>
+> +       if (msg.event =3D=3D PM_EVENT_SUSPEND && usb_sideband_check(udev)=
+) {
+> +               dev_dbg(dev, "device accessed via sideband\n");
+> +               return 0;
+> +       }
+> +
+>         unbind_no_pm_drivers_interfaces(udev);
+>
+>         /* From now on we are sure all drivers support suspend/resume
+> @@ -1619,6 +1624,11 @@ int usb_resume(struct device *dev, pm_message_t ms=
+g)
+>         struct usb_device       *udev =3D to_usb_device(dev);
+>         int                     status;
+>
+> +       if (msg.event =3D=3D PM_EVENT_RESUME && usb_sideband_check(udev))=
+ {
+> +               dev_dbg(dev, "device accessed via sideband\n");
+> +               return 0;
+> +       }
+> +
+>         /* For all calls, take the device back to full power and
+>          * tell the PM core in case it was autosuspended previously.
+>          * Unbind the interfaces that will need rebinding later,
 
-Hm, no, it seems I forgot. Normally I keep those messages.
+In v5, Greg points out the race window between checking sideband
+activity and handling power management of usb devices. We should
+consider a lock mechanism to address the race window. Given that the
+design hasn't locked down and the race window might change from time
+to time. I'll address this after the discussion of suspending USB
+devices/interfaces has converged.
 
-In this particular case we probably want to say "I/O memory request /
-remapping failed\n", though.
-
-And/or we give back the error code, which would reveal the exact issue
-through -ENOMEM / -EBUSY
-
-P.
-
->=20
-> > -		return ret;
-> > -	}
->=20
-> ...
->=20
-> > +	pwr->regs =3D pcim_iomap_region(pdev, 0, "intel_mid_pwr");
-> > +	if (IS_ERR(pwr->regs))
-> > +		return PTR_ERR(pwr->regs);
->=20
-
+In addition, Alan suggests to only keep USB devices active but suspend
+the USB interfaces. However, hub events and key events require active
+USB interfaces to function. In the sideband model, the sideband driver
+only handles USB transfers on specific endpoints, leaving other
+functionalities like connection changes and key events to the Linux
+USB kernel drivers. Therefore, a potential design modification is to
+shift the sideband model's focus from voting for USB devices to voting
+for USB interfaces. This way, the driver could selectively hold
+necessary interfaces active during system suspend. This adjustment
+accommodates use cases where specific interfaces must remain active to
+support overall USB functionality when partial interfaces are
+offloaded to a sideband.
 
