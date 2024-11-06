@@ -1,108 +1,159 @@
-Return-Path: <linux-kernel+bounces-398038-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398040-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2AD69BE495
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 11:46:52 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40B539BE499
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 11:47:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 00CD31C2335D
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 10:46:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 71B991C23497
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 10:47:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DC211DE2C6;
-	Wed,  6 Nov 2024 10:46:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D209C1DE2DE;
+	Wed,  6 Nov 2024 10:47:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JHTKE9tx"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="3bWxbn3T";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="jt7mvqZ4"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EF441DB92C
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 10:46:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD4CB1DA622;
+	Wed,  6 Nov 2024 10:47:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730890007; cv=none; b=EXloESgw8uNkcv6GXgw9upDcWs55KPeGuaDqsGviTCbQnd2rJ7RCpgd5HlhccZgcdm1fXbCsdG/j6KOhQIWWDTiHYV3gD17Uirn/sNtMzmugcCKA8gAHd7IRuZ2tVVb9+DbYO6/btmL6pq7Ji0QiA50R2Dydz3EaUXZxfuNjxmo=
+	t=1730890065; cv=none; b=dy/AbzprGSCK1iaTdXMyr0c0TxOK2+xggbOdv5KvjIf85sXagmKonRnpn7EqOo/S0PvajLwSAp8BuAf3agFnVgTCySSugaPHv+BF1HUYvrlbykFhe0glwE4cwU0vgqOSLD6GppDd8rxPSqI7nuTeKTBHdM56xnitNTlVbyvUtc4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730890007; c=relaxed/simple;
-	bh=XbiIK6GjOS/yZ5j6g6CoF1rq3kPr/i/tae+WR3Cy8es=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=u6qQIkiLg02dFcqAKPm6GnFoQ8AnybssvsJvOhkV0tNgaIWTL7gcouJVQrAmzK3xNhMk+CS25yOKsG1feJMeG45nugjJ+gOvEE1DCAZ6uKFpy/PztppLalXULDQpuPPYQJ/nGKV5KdXqr1GNL7rER2O9aAeBAnDbCzrDmE7UXBQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JHTKE9tx; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a9a628b68a7so998829166b.2
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2024 02:46:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1730890003; x=1731494803; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=jnvfOfDupOxyZMEu8q+2hpeE5bOttK1dIHZM5bV1S7U=;
-        b=JHTKE9txH2p0/9srsdDkdLbJF0RfdhDFEfl8NIEEP7b6/LnP4f4jhBvG6XzPWlAymd
-         9iqZqVpuXwvt5A5JNoWhZ1btZ6gOEQ5wAcef2qJDw3lc2+sGiPZ982hs5I6gbIqqCBVx
-         kzW0K/gFJZzzpyQWnKwDEJgoAo6hOAvHRg9BV+l7oAEfcfQmqhxGM3hDFMyIxsdATV/z
-         VaWqbGlw3dFBQMY3HPXxT1PL1YKOrUq/VYMziyGenqoqMlAFsWMa5Rlcv6CoavzEacO4
-         +sdZDkuzjiUS1zcNCKx8iWTY6r+2ClPgZqIW8ZnOvKZC/CB8kWFZZFxgjbHBVyuZHIxn
-         Om5Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730890003; x=1731494803;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jnvfOfDupOxyZMEu8q+2hpeE5bOttK1dIHZM5bV1S7U=;
-        b=WJyUm1YfjOH5UjJFHw51CJoD0DxwVYCnkpp2CgHVG3QfMk17xq462+G1SmbQAGJZ/W
-         RZzsjoUsN+vXPSOM4Qz1YQn/pfoeUGiK7op73iCd4XS93YHBHZcYsl1RvlWpH6lsziEd
-         XaD7eRYPVi0phpmBOkhhPHR9ExEvJLHPL05YhOhDNlbf5/oDjog/geNiYMw2KpieUsyJ
-         L2Q4R54GpPim8hxwunKnixvgFsoeFu2NM8Fl7giH/XiFXHY9TVtlLomONlYnOyLJ0QNl
-         4cmFg/NABFAyjgML30k+DcRmk7XY+IgkidyArGnN93xsuH/dnv88w8e6tEgPWtoi15MQ
-         7t2w==
-X-Forwarded-Encrypted: i=1; AJvYcCWH1VNMFfMqqEfWoI6jBN0P2lGd2P///3pfhwwQY7OhOpgEkDv93lkKfPYNPhswZREyFFxHRZymvsAbJBo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx2eOwD51FMoeOYSWYQfwHmDsxO5aGUO0RHKRs3avIPYqWwQ+bs
-	jAujwJH08VP3NtXQ0xLNO2u6Wm3D8gC4Ahq2uliNDvH2XMrQirV8RI8wJP9TwcA=
-X-Google-Smtp-Source: AGHT+IFLqfCVbNW7IItqNBM12Hvln8l60e4gy4+M/K4utCO4TZx6BCGSX7in4grJXnBtZUzFTWezNA==
-X-Received: by 2002:a17:907:3ea3:b0:a99:d797:c132 with SMTP id a640c23a62f3a-a9e654cdcedmr2089540966b.16.1730890003621;
-        Wed, 06 Nov 2024 02:46:43 -0800 (PST)
-Received: from localhost ([154.14.63.34])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9eb17fa445sm259358966b.169.2024.11.06.02.46.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Nov 2024 02:46:43 -0800 (PST)
-Date: Wed, 6 Nov 2024 13:46:41 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Qiu-ji Chen <chenqiuji666@gmail.com>
-Cc: dtwlin@gmail.com, johan@kernel.org, elder@kernel.org,
-	gregkh@linuxfoundation.org, greybus-dev@lists.linaro.org,
-	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org,
-	baijiaju1990@gmail.com
-Subject: Re: [PATCH v2] greybus/uart: Fix atomicity violation in
- get_serial_info()
-Message-ID: <35c0f989-4618-46cd-9427-61f2a37269c0@suswa.mountain>
-References: <20241106095819.15194-1-chenqiuji666@gmail.com>
+	s=arc-20240116; t=1730890065; c=relaxed/simple;
+	bh=JAariSHFvtfO//5iJJB95MJtSZTrSQc0GI0d7GPbotI=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=a7zC/PUAoTjiCf4O6IQlrMGJTkrkJtKiI2ujqZPMhAusUg5T/pXnVZlMGD0Zvd4AmFrMisGYjNN0histkinKjxS3bSxcqmdp4qYoMBvFSz8YgD2OF7dPXbVBheA5OhQ4Tq27SW2D7chTr9Tk82cuBHsGKCoyk7XZ6cbiDYs4sL0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=3bWxbn3T; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=jt7mvqZ4; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 06 Nov 2024 10:47:40 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1730890061;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jPWV+t4MCgokZ/ftgwmpIPFZrqvMJZI9ZE5l8vgBVPE=;
+	b=3bWxbn3TXlZx+8fPaD3prAXLFCMucUR/mIkHjS7tzG646bDEtY1a+SU3uCF4KCd44TRWMT
+	wwGi2bMHtAGntN8jaWUSYeLPZcEOCGwNpZAj8gE1fh2M4yjLb8PNilEUD781iKnEwybdgl
+	svToe1j3cPV0Vbv8nY5hzN9POE37OK9Hg+1ky7mAaPGG/JNcurVUYnVOCL0dJrob7gi5sL
+	LD6Pfe9djYFujEaH1vRLv9zXKodHnAJ1hfce/F/0asi0roF4qLMz/jvpiku8PgkIf/kMBi
+	nhlxFHRdgkSQ074IwxC6fCUSloYyrjyBjlHxNL+PqXmbrCUAzaC+ELvK+bTkxQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1730890061;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jPWV+t4MCgokZ/ftgwmpIPFZrqvMJZI9ZE5l8vgBVPE=;
+	b=jt7mvqZ4NAVmhieewZN/IF4Kst5ujQ1+BgmpVrOQvpF1rF6r8DX+H+dJAWHSFrG/PMRs/E
+	FJoJWx6ctZ5KKRBw==
+From: "tip-bot2 for Marco Elver" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: locking/core] kcsan, seqlock: Fix incorrect assumption in
+ read_seqbegin()
+Cc: Marco Elver <elver@google.com>,
+ "Peter Zijlstra (Intel)" <peterz@infradead.org>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20241104161910.780003-6-elver@google.com>
+References: <20241104161910.780003-6-elver@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241106095819.15194-1-chenqiuji666@gmail.com>
+Message-ID: <173089006070.32228.15660437792189899549.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-On Wed, Nov 06, 2024 at 05:58:19PM +0800, Qiu-ji Chen wrote:
-> Our static checker found a bug where set_serial_info() uses a mutex, but 
-> get_serial_info() does not. Fortunately, the impact of this is relatively 
-> minor. It doesn't cause a crash or any other serious issues. However, if a 
-> race condition occurs between set_serial_info() and get_serial_info(), 
-> there is a chance that the data returned by get_serial_info() will be 
-> meaningless.
-> 
-> Signed-off-by: Qiu-ji Chen <chenqiuji666@gmail.com>
-> Fixes: 0aad5ad563c8 ("greybus/uart: switch to ->[sg]et_serial()")
-> ---
+The following commit has been merged into the locking/core branch of tip:
 
-Thanks!
+Commit-ID:     183ec5f26b2fc97a4a9871865bfe9b33c41fddb2
+Gitweb:        https://git.kernel.org/tip/183ec5f26b2fc97a4a9871865bfe9b33c41fddb2
+Author:        Marco Elver <elver@google.com>
+AuthorDate:    Mon, 04 Nov 2024 16:43:09 +01:00
+Committer:     Peter Zijlstra <peterz@infradead.org>
+CommitterDate: Tue, 05 Nov 2024 12:55:35 +01:00
 
-Reviewed-by: Dan Carpenter <dan.carpenter@linaro.org>
+kcsan, seqlock: Fix incorrect assumption in read_seqbegin()
 
-regards,
-dan carpenter
+During testing of the preceding changes, I noticed that in some cases,
+current->kcsan_ctx.in_flat_atomic remained true until task exit. This is
+obviously wrong, because _all_ accesses for the given task will be
+treated as atomic, resulting in false negatives i.e. missed data races.
 
+Debugging led to fs/dcache.c, where we can see this usage of seqlock:
+
+	struct dentry *d_lookup(const struct dentry *parent, const struct qstr *name)
+	{
+		struct dentry *dentry;
+		unsigned seq;
+
+		do {
+			seq = read_seqbegin(&rename_lock);
+			dentry = __d_lookup(parent, name);
+			if (dentry)
+				break;
+		} while (read_seqretry(&rename_lock, seq));
+	[...]
+
+As can be seen, read_seqretry() is never called if dentry != NULL;
+consequently, current->kcsan_ctx.in_flat_atomic will never be reset to
+false by read_seqretry().
+
+Give up on the wrong assumption of "assume closing read_seqretry()", and
+rely on the already-present annotations in read_seqcount_begin/retry().
+
+Fixes: 88ecd153be95 ("seqlock, kcsan: Add annotations for KCSAN")
+Signed-off-by: Marco Elver <elver@google.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Link: https://lore.kernel.org/r/20241104161910.780003-6-elver@google.com
+---
+ include/linux/seqlock.h | 12 +-----------
+ 1 file changed, 1 insertion(+), 11 deletions(-)
+
+diff --git a/include/linux/seqlock.h b/include/linux/seqlock.h
+index 45eee0e..5298765 100644
+--- a/include/linux/seqlock.h
++++ b/include/linux/seqlock.h
+@@ -810,11 +810,7 @@ static __always_inline void write_seqcount_latch_end(seqcount_latch_t *s)
+  */
+ static inline unsigned read_seqbegin(const seqlock_t *sl)
+ {
+-	unsigned ret = read_seqcount_begin(&sl->seqcount);
+-
+-	kcsan_atomic_next(0);  /* non-raw usage, assume closing read_seqretry() */
+-	kcsan_flat_atomic_begin();
+-	return ret;
++	return read_seqcount_begin(&sl->seqcount);
+ }
+ 
+ /**
+@@ -830,12 +826,6 @@ static inline unsigned read_seqbegin(const seqlock_t *sl)
+  */
+ static inline unsigned read_seqretry(const seqlock_t *sl, unsigned start)
+ {
+-	/*
+-	 * Assume not nested: read_seqretry() may be called multiple times when
+-	 * completing read critical section.
+-	 */
+-	kcsan_flat_atomic_end();
+-
+ 	return read_seqcount_retry(&sl->seqcount, start);
+ }
+ 
 
