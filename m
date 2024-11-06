@@ -1,299 +1,125 @@
-Return-Path: <linux-kernel+bounces-397746-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397732-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F8C39BDFC9
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 08:55:38 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5BDE9BDFAF
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 08:49:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0348CB23BB0
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 07:55:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 02C051C22DE7
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 07:49:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94A531D1F71;
-	Wed,  6 Nov 2024 07:55:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE73E1CC8B0;
+	Wed,  6 Nov 2024 07:49:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="kAsUOKQv"
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2084.outbound.protection.outlook.com [40.107.92.84])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IyK9CsY8"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B42CA1D1E62
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 07:55:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.84
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730879704; cv=fail; b=DT4LlGsOZ5wPL5VW2b5Lt+rxx8Z9dFnKKB274YPF6BvGLZHheCUCJI0kOdUmcsYMmC83Q248dWVSqci88qIKeGNWQSVH3qXx1RrxWjAuATUcYRjwBA6405aClotUky8x//cUQmpmEeQ60f59nVPQ+l+IbmPopnlo3KvJGWJ6+Eg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730879704; c=relaxed/simple;
-	bh=zgW/WA/0HRq3U5JUbW90ya/nCzPsgbcMjdW07MqsHX4=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=QOsDtVs2MLWiL8bwUKxJPnoTBNPC8cBm3bcTKI7oX1qEXgqimgzZwYRsudJgV49bb2BliIfQKp+cqS3VWcr7aa1d6PGxgg0lIdNPf4drlCBKycUGkDT7ga87xYZHCANCi0G2QFswflT+qKEY7Q+LU3eRPC4VwtH/YrC5amBCHnk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=kAsUOKQv; arc=fail smtp.client-ip=40.107.92.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ZDvXAJXgVCsFKL/A++4ur6hZO8hUcw/k1KhZkziQ6bcSdLSIVAL2NTG7APYfq9GvVE1rWZlxFJeG7grwi3D1V9bXg/FZFi92EiC+nApcE4UaKZHRshal6X8fpzC+YpyRN73SeCw/0VO6UZAos/VEPtPXvH+yiV7IFIiIwNNGJtvHnZHJD0pYFZOa+Ruqr9ViyWdUdzc4Ev/G15C+c+XDgDtote1hZoFVQW+1Hc1EBfezzH1AK6GO96B5cEKU54qJzSaTjt+TRpsH3OTVJiyQdvwbS5Ih9fXhCS+fZ7OLNAWLU6Anz41TaO+yEgLUxcE4uF36Mm+prY/RdppmXYFwFQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=+ARFf25kJpv4NqyfZyZtLT7RekhZqR3rK6YmDLrHYkY=;
- b=pnYP7OrqinGJh1Dt5mtn7zyMwi3DGUoxMh1O0M0pBq6DD9Ml29zLsrk4Ly+N7Ay7OeP8yHs1QBZnP4T260Vg6w09CQTBVe6zwnXfMPVatuc0ubFzVqQY1DLj+03cdTJ64q6WeSqRD5ADnIkTngNEkCX4CRGhSJO+QZL56VKaEnjpDPZ/P6mMjGWb96v/XH+I9Z1YR+0r8iRlY9HiVIqVPSQLf6VuG+7Bq9vudwM5oJyPgWgYYJtMJH7rULrVt12tc8Xk1Uit49SB9sHSbsDwOF6o2JD6cvvwLGnTw2Qfib8Xdzv2wmmtMZhK4MsK/7/p9GNme1KJSrC2aECYpuO+yw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=8bytes.org smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=+ARFf25kJpv4NqyfZyZtLT7RekhZqR3rK6YmDLrHYkY=;
- b=kAsUOKQvDh7k4u116zYYaGzdXqpMSpHwVkoX4yyMRiIfj8YOKo6073py61aaEQJmZzzRxtJwgqPICQqEkAEEOryfkYGzq6fK7uxwMBNG2+97FxZoxn7uF3Po3rx8UEfwmp4kD4zY/owJR/8BHQFfV+XwjG3pFEn7k8Q4MnsPNx8=
-Received: from BN9PR03CA0433.namprd03.prod.outlook.com (2603:10b6:408:113::18)
- by PH8PR12MB8608.namprd12.prod.outlook.com (2603:10b6:510:1bc::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.18; Wed, 6 Nov
- 2024 07:54:58 +0000
-Received: from MN1PEPF0000F0DE.namprd04.prod.outlook.com
- (2603:10b6:408:113:cafe::b1) by BN9PR03CA0433.outlook.office365.com
- (2603:10b6:408:113::18) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.18 via Frontend
- Transport; Wed, 6 Nov 2024 07:54:58 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- MN1PEPF0000F0DE.mail.protection.outlook.com (10.167.242.36) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8137.17 via Frontend Transport; Wed, 6 Nov 2024 07:54:58 +0000
-Received: from BLR-L-DHSRIVAS.amd.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 6 Nov
- 2024 01:53:38 -0600
-From: Dheeraj Kumar Srivastava <dheerajkumar.srivastava@amd.com>
-To: <joro@8bytes.org>, <suravee.suthikulpanit@amd.com>, <will@kernel.org>,
-	<robin.murphy@arm.com>, <linux-kernel@vger.kernel.org>,
-	<iommu@lists.linux.dev>
-CC: <vasant.hegde@amd.com>
-Subject: [PATCH v2 8/8] iommu/amd: Add documentation for AMD IOMMU debugfs support
-Date: Wed, 6 Nov 2024 13:16:39 +0530
-Message-ID: <20241106074639.2039-9-dheerajkumar.srivastava@amd.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20241106074639.2039-1-dheerajkumar.srivastava@amd.com>
-References: <20241106074639.2039-1-dheerajkumar.srivastava@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8611E3C39;
+	Wed,  6 Nov 2024 07:49:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730879347; cv=none; b=LOplYHn4u4r87WlYJUbwEluXLDjbk6bypdX/ll6Dv2Kgjpt8sSvlyKm5Ysj20dfuRhB8JOQe7W8vzmJ1hdga1/QqF852M+/Z0XCU8dwh1x7O57ZNTtzgcAUCj8u9Qjfxf4LezJU9+fT0vDdjZcj1HegpRcao85tMEMskUpcYP+k=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730879347; c=relaxed/simple;
+	bh=Gzdi/yUD+spkYaz59CYkeZqVqjhh9eyFjRvYedwnjtU=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=eqZn9MVQUUj/MljN6l9obmvw6Xhw1An6n2/vbc1VhVvckuIqUa73fSud/tRtMCvQaMAfyTFFPMKBiA6nRrMwaES+maYnX6TfCES76PYp0eC5M+CimN92xqOviLYUD3QmVhQUZAhjJoQXbmLhSIR5FcE+gZFsvHcSeL3f+YLR+EI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IyK9CsY8; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730879345; x=1762415345;
+  h=message-id:date:mime-version:subject:from:to:cc:
+   references:in-reply-to:content-transfer-encoding;
+  bh=Gzdi/yUD+spkYaz59CYkeZqVqjhh9eyFjRvYedwnjtU=;
+  b=IyK9CsY8wBtsZ78Oia/xexscWUBiZTAKuHD7GmyrM3TN9Ud3p9Taf9s8
+   wQEFzwe5L7yxnk4oexPqKU5iQXG0dt+em2qUMW4x6ryl9Goeh5nIGXPJv
+   9u2JtwcQOcCiitfK11LANQ/uNnKkM4h4LSGf9olk61I48RsEVRaRZY3Mr
+   dKnh6VkbOohhMPO+gjWH8z0fKnDX5GGGZ+O7Ui2AqKUxcY4iNMhi7eS93
+   NJtzPB/vppKGD504nAPBnzWPMtLKzuaWKHeOEmjgthH1Stgr+/M9edV26
+   BGDfsf9ySV59680DNAIk4Y0dsgQhT+dPrvGJkhHfyCKGnILtJt3J6iGk5
+   Q==;
+X-CSE-ConnectionGUID: 2eWafqquT0CReQU3KaEe1A==
+X-CSE-MsgGUID: MP0RZl5fTmGl8pMhaK7LrA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="48125079"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="48125079"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2024 23:49:05 -0800
+X-CSE-ConnectionGUID: ldNt2ObVTlmCQAYOw4pe0A==
+X-CSE-MsgGUID: +GEzy4uoQeuofeW+ClZPlQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,262,1725346800"; 
+   d="scan'208";a="89525719"
+Received: from dalessan-mobl3.ger.corp.intel.com (HELO [10.245.244.56]) ([10.245.244.56])
+  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2024 23:49:03 -0800
+Message-ID: <b26086ef-07b4-4013-97d8-6a8ff151d42c@linux.intel.com>
+Date: Wed, 6 Nov 2024 09:49:00 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] ALSA: compress_offload: Remove unused runtime pointer
+ from snd_compr_poll()
+From: =?UTF-8?Q?P=C3=A9ter_Ujfalusi?= <peter.ujfalusi@linux.intel.com>
+To: vkoul@kernel.org, perex@perex.cz, tiwai@suse.com
+Cc: linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
+ broonie@kernel.org, amadeuszx.slawinski@linux.intel.com
+References: <20241106070646.2599-1-peter.ujfalusi@linux.intel.com>
+Content-Language: en-US
+In-Reply-To: <20241106070646.2599-1-peter.ujfalusi@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN1PEPF0000F0DE:EE_|PH8PR12MB8608:EE_
-X-MS-Office365-Filtering-Correlation-Id: adfabb37-154e-4f8f-d4f2-08dcfe384f84
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|376014|1800799024|82310400026;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?94CbQbzOVZCJLfnXh5tAVd3CHlX7F/Co7WU+hlyxkRQ5ta4tDKmeOU4v+C2U?=
- =?us-ascii?Q?mxqGnLUTdEowhMsl/LugfV9vv99hTtIosNMYr/s2xOBleQdd78lxxn51lnUh?=
- =?us-ascii?Q?ZrzhwN/Wu1Tr2fuUcCpr6v44qk4AXtHHC1EDhvnhLDY/HblTb8qzGkEwFw/M?=
- =?us-ascii?Q?9i1N+xthFX1jOrYHrylbwCoLcDZFt3DgSzXfx0f0hotGUdMgu2fEJm3gi+tB?=
- =?us-ascii?Q?LXeoyfuwRvN8UQMqKHnX8tBWE2QY+JIJWQkv84pI6WlhRvibvqxu9VNO6hMi?=
- =?us-ascii?Q?bLTVAgZ1YW/6Oc7aFv+MJC78VH+jBgGNYxZ8HvOGbqPXAKSq4vkzOlkFc66e?=
- =?us-ascii?Q?8AGGLlf6djZCU6NcWVR355koqCWTRDJ70PGygLkWW8pzY7XCZlNKPK4Fh5/3?=
- =?us-ascii?Q?1vlLIVG/pvD0oo4Brk6dBzPbSuoiRK0RhanuMWn/IIJaK37QaQwrf+/5PGJ6?=
- =?us-ascii?Q?VNZWLjyh8+afpbE76BpfIcDub5slXeMmJRaeBW8ieyH/y38Phh1rIqw2QC8l?=
- =?us-ascii?Q?FHqA/Rt2EIkSALXyNkzThXeOayLs3WX2xAEXCfMkM6qmzK8P4GH/DEtKT0Bt?=
- =?us-ascii?Q?v4co7JGKE1drs0WqdCR4hMKkYC/HaZZI0Uo9MescCVl1VfZQ3/YDvCEod5q3?=
- =?us-ascii?Q?31yDi5XE6aE5isw6YBCzLiXjkhO8tzeSJas0LRWkASNkcJRqWjvwUlOdFxGv?=
- =?us-ascii?Q?iVWtfVoz4DVsMI9FD3cTISEbi/NplPsANS97xUy9EZ5488W4w7A4gjFbGZXO?=
- =?us-ascii?Q?o37BuxQZAkCQtJyoa/JOi1F1/MkSBAU23My8w5rRNaeJuxs3FQ6LBr7DGG1H?=
- =?us-ascii?Q?fcaGwmrEVAKcevKfA7w7Sm9t6+t30R4QXweQEDy5LD6qe/UqadgZqRcGUdGt?=
- =?us-ascii?Q?wmWwLUiojaMVVwwDpydzxQLAazdaNjSuK9xGtO8dPOmWrmvT0jkpzwsWab70?=
- =?us-ascii?Q?LDYIOqQ7X335DZ4AJVK5EL7O2kvH0kfG1HhUCVdEz8FDQzbR+EPdUrftRcWF?=
- =?us-ascii?Q?xM7p1XPByqoGldl29kmtwaWQBD4Uu7D/dc41rOf9hhNoXClr2+IJZVHr5w5z?=
- =?us-ascii?Q?gB9FWezsdSAGOQ7c1rishjp5qN5YdhSG1xmHhfEF8LSftkLvCj3RbR+OhP08?=
- =?us-ascii?Q?P5IhrIfsSEqUnYvI/9iu+ENr/aBEpKDjchu/rkVjwTw2Qha+SBZGyoumigVu?=
- =?us-ascii?Q?+cZ5d+NyjFh6RS3Twuyv5gVPD8A0iM9F/zaLOESh0CQiNc6cIx3/LO+OjBYH?=
- =?us-ascii?Q?ZD5EN+yiIktnmayjl0CZFJUrB7ucLpWYRNqupbFGfxXO5y/xf/MYu3KIslNv?=
- =?us-ascii?Q?RMkDcDsDlfCx/Jh2h2sQm1mLcEs09xF/2qax4WetYweZMjL1i8urhrKj611F?=
- =?us-ascii?Q?aTe2GF9t9ugNEFS+i/JyWtT2bsqaZza0mVX8hoAC37GfLKjKNw=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(376014)(1800799024)(82310400026);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Nov 2024 07:54:58.3465
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: adfabb37-154e-4f8f-d4f2-08dcfe384f84
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	MN1PEPF0000F0DE.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR12MB8608
 
-Add documentation describing how to use AMD IOMMU debugfs support to
-dump IOMMU data structures - IRT table, Device table, Registers (MMIO and
-Capability) and command buffer.
 
-Signed-off-by: Dheeraj Kumar Srivastava <dheerajkumar.srivastava@amd.com>
----
- Documentation/ABI/testing/debugfs-amd-iommu | 140 ++++++++++++++++++++
- 1 file changed, 140 insertions(+)
- create mode 100644 Documentation/ABI/testing/debugfs-amd-iommu
 
-diff --git a/Documentation/ABI/testing/debugfs-amd-iommu b/Documentation/ABI/testing/debugfs-amd-iommu
-new file mode 100644
-index 000000000000..9f7741e05217
---- /dev/null
-+++ b/Documentation/ABI/testing/debugfs-amd-iommu
-@@ -0,0 +1,140 @@
-+What:		/sys/kernel/debug/iommu/amd/iommu<x>/mmio
-+Date:		September 2024
-+Contact:	Dheeraj Kumar Srivastava <dheerajkumar.srivastava@amd.com>
-+Description:
-+		This is an input read/write access file. In this file, the user input
-+		mmio register offset for iommu<x> to print corresponding mmio register
-+		of iommu<x>.
-+
-+		Example:
-+		$ echo "0x18" > /sys/kernel/debug/iommu/amd/iommu00/mmio
-+		$ cat /sys/kernel/debug/iommu/amd/iommu00/mmio
-+
-+		Output:
-+		0x18
-+
-+What:		/sys/kernel/debug/iommu/amd/iommu<x>/mmio_dump
-+Date:		September 2024
-+Contact:	Dheeraj Kumar Srivastava <dheerajkumar.srivastava@amd.com>
-+Description:
-+		This is an output read only file that contains mmio register
-+		value at offset "/sys/kernel/debug/iommu/amd/iommu<x>/mmio".
-+
-+		Example:
-+		$ cat /sys/kernel/debug/iommu/amd/iommu00/mmio_dump
-+
-+		Output:
-+		0x0003f48d
-+
-+What:		/sys/kernel/debug/iommu/amd/iommu<x>/capability
-+Date:		September 2024
-+Contact:	Dheeraj Kumar Srivastava <dheerajkumar.srivastava@amd.com>
-+Description:
-+		This is an input read/write access file. In this file, the user input
-+                capability register offset for iommu<x> to print corresponding capability
-+		register of iommu<x>.
-+
-+		Example:
-+		$ echo "0x10" > /sys/kernel/debug/iommu/amd/iommu00/capability
-+		$ cat /sys/kernel/debug/iommu/amd/iommu00/capability
-+
-+		Output:
-+		0x10
-+
-+What:		/sys/kernel/debug/iommu/amd/iommu<x>/capability_dump
-+Date:		September 2024
-+Contact:	Dheeraj Kumar Srivastava <dheerajkumar.srivastava@amd.com>
-+Description:
-+		This is an output read only file that contains capability register
-+                value at offset "/sys/kernel/debug/iommu/amd/iommu<x>/capability".
-+
-+		Example:
-+		$ cat /sys/kernel/debug/iommu/amd/iommu00/capability_dump
-+
-+		Output:
-+		0x00203040
-+
-+What:		/sys/kernel/debug/iommu/amd/iommu<x>/cmdbuf
-+Date:		September 2024
-+Contact:	Dheeraj Kumar Srivastava <dheerajkumar.srivastava@amd.com>
-+Description:
-+		This file is an output read only file that contains iommu<x> command
-+		buffer entries.
-+
-+		Examples:
-+		$ cat /sys/kernel/debug/iommu/amd/iommu<x>/cmdbuf
-+
-+		Output:
-+		CMD Buffer Head Offset:339 Tail Offset:339
-+		  0: 008350011000000100003c0000000000
-+		  1: 0000000030000005fffff0037fffffff
-+		  2: 008350011000000100003c0100000000
-+		  3: 0000000030000005fffff0037fffffff
-+		  4: 008350011000000100003c0200000000
-+		  5: 0000000030000005fffff0037fffffff
-+		  6: 008350011000000100003c0300000000
-+		  7: 0000000030000005fffff0037fffffff
-+		  8: 008350011000000100003c0400000000
-+		  9: 0000000030000005fffff0037fffffff
-+		 10: 008350011000000100003c0500000000
-+		 11: 0000000030000005fffff0037fffffff
-+		[...]
-+
-+What:		/sys/kernel/debug/iommu/amd/devid
-+Date:		September 2024
-+Contact:	Dheeraj Kumar Srivastava <dheerajkumar.srivastava@amd.com>
-+Description:
-+		This is an input read/write file that takes device id user input.
-+		This input can be used for dumping iommu data structures like
-+		interrupt remapping table, device table etc.
-+
-+		Example:
-+		1.
-+		$ echo 0000:01:00.0 > /sys/kernel/debug/iommu/amd/devid
-+		$ cat /sys/kernel/debug/iommu/amd/devid
-+
-+		Output:
-+		0000:01:00.0
-+
-+		2.
-+		$ echo 01:00.0 > /sys/kernel/debug/iommu/amd/devid
-+		$ cat /sys/kernel/debug/iommu/amd/devid
-+
-+		Output:
-+		0000:01:00.0
-+
-+What:		/sys/kernel/debug/iommu/devtbl
-+Date:		September 2024
-+Contact:	Dheeraj Kumar Srivastava <dheerajkumar.srivastava@amd.com>
-+Description:
-+		This is an output read only file that contains device table entry for
-+		the device id input given in /sys/kernel/debug/iommu/amd/devid.
-+
-+		Example:
-+		$ cat /sys/kernel/debug/iommu/amd/devtbl
-+
-+		Output:
-+		DeviceId             QWORD[3]         QWORD[2]         QWORD[1]         QWORD[0] iommu
-+		0000:01:00.0 0000000000000000 20000001373b8013 0000000000000038 6000000114d7b603 iommu3
-+
-+What:		/sys/kernel/debug/iommu/irqtbl
-+Date:		September 2024
-+Contact:	Dheeraj Kumar Srivastava <dheerajkumar.srivastava@amd.com>
-+Description:
-+		This is an output read only file that contains IRT table valid entries
-+		for the device id input given in /sys/kernel/debug/iommu/amd/devid.
-+
-+		Example:
-+		$ cat /sys/kernel/debug/iommu/amd/irqtbl
-+
-+		Output:
-+		DeviceId 0000:01:00.0
-+		IRT[0000] 00000000000000200000000000000241
-+		IRT[0001] 00000000000000200000000000000841
-+		IRT[0002] 00000000000000200000000000002041
-+		IRT[0003] 00000000000000200000000000008041
-+		IRT[0004] 00000000000000200000000000020041
-+		IRT[0005] 00000000000000200000000000080041
-+		IRT[0006] 00000000000000200000000000200041
-+		IRT[0007] 00000000000000200000000000800041
-+		[...]
+On 06/11/2024 09:06, Peter Ujfalusi wrote:
+> runtime is not used as seen with W=1 :
+> sound/core/compress_offload.c: In function ‘snd_compr_poll’:
+> sound/core/compress_offload.c:409:35: error: variable ‘runtime’ set but not used [-Werror=unused-but-set-variable]
+>   409 |         struct snd_compr_runtime *runtime;
+>       |                                   ^~~~~~~
+> 
+> Fixes: 04177158cf98 ("ALSA: compress_offload: introduce accel operation mode")
+> Signed-off-by: Peter Ujfalusi <peter.ujfalusi@linux.intel.com>
+> ---
+>  sound/core/compress_offload.c | 3 ---
+>  1 file changed, 3 deletions(-)
+> 
+> diff --git a/sound/core/compress_offload.c b/sound/core/compress_offload.c
+> index 5ecdad80a0d8..c08afbd0155b 100644
+> --- a/sound/core/compress_offload.c
+> +++ b/sound/core/compress_offload.c
+> @@ -406,7 +406,6 @@ static __poll_t snd_compr_poll(struct file *f, poll_table *wait)
+>  {
+>  	struct snd_compr_file *data = f->private_data;
+>  	struct snd_compr_stream *stream;
+> -	struct snd_compr_runtime *runtime;
+>  	size_t avail;
+>  	__poll_t retval = 0;
+>  
+> @@ -414,8 +413,6 @@ static __poll_t snd_compr_poll(struct file *f, poll_table *wait)
+>  		return EPOLLERR;
+>  
+>  	stream = &data->stream;
+> -	runtime = stream->runtime;
+> -
+
+Probably it would be better to _use_ the runtime in the rest of the
+function. Please ignore this patch, I will send a new one.
+
+>  	guard(mutex)(&stream->device->lock);
+>  
+>  	switch (stream->runtime->state) {
+
 -- 
-2.25.1
+Péter
 
 
