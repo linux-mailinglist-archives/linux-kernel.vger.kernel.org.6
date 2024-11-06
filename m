@@ -1,127 +1,208 @@
-Return-Path: <linux-kernel+bounces-398330-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398331-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A5489BEFAE
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 14:59:26 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF0579BEFB4
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 14:59:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9C4FDB229B2
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 13:59:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F0771C2534C
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 13:59:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BADAD2010E6;
-	Wed,  6 Nov 2024 13:59:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5839517DFF2;
+	Wed,  6 Nov 2024 13:59:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AAC2tMlv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="F7dbBtlv"
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2063.outbound.protection.outlook.com [40.107.236.63])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15F8017DFF2;
-	Wed,  6 Nov 2024 13:59:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730901552; cv=none; b=GzZCkoLtGk4gxBVmutuN9ku12/STHGBUW+3PbGwdPrBO+nWgYAlD0VZXFrJm9lkv2uL2PBg5x0SmYey+dHttPdWet7EefKAWdReM8Ojxdcn72g8kOQFfR9zxc5c27sO9ucN4ngE2eXgD+VbOzeG2UOm/UKAuoOAZbBa0J8P/k9A=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730901552; c=relaxed/simple;
-	bh=L/8YMxvyNwnI5zLAy8H13m0yzgYnRf4I8l3T6fZ9kp0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kkNUL0FBZ+th6qVguHhw6Uf58Ek293uvte2gc1iaQlihwytgxV5VQqbA8gp7lQNvWVbIFpMEiBHL6PW50Vmh7BvzW5bOkb2n/4ZHCmGbRm75FeG0aHvOFzneBr74gAI2/1AoZTACa3LqhEixxtVsRXXKy3lfHmc3pjeMi6/LexY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AAC2tMlv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F352C4CEC6;
-	Wed,  6 Nov 2024 13:59:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730901551;
-	bh=L/8YMxvyNwnI5zLAy8H13m0yzgYnRf4I8l3T6fZ9kp0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=AAC2tMlvCJbV+uWBMVEliFPVSO9bTha3xYSXhQAPt+H9lLA58DMqvN4hmiwYYiWFx
-	 12R5+XhgTpUi6+t16UD2DJiIrY/lHPx3RkZHg8D4E65lpVPOEuNPrypkZmm4K0zXoV
-	 ci/sGr39maUiaVzl04vQfxAnLOeD9jIJy1RSkoejgQ3vtkGmXtnR2ZFpjMxUMFXwOY
-	 lSbjAp37B28zxvxdKWbIR3JbLt5rKg/9AcPQQEB+8oJrRy/kAsGAAPsoGQLYhNC6Uu
-	 jNG7hTe20UX3HX7UtlQ/l6haQHJquE/7LEGAKq1aysds6PuMzDsIEVI8YbzbQzcy2J
-	 oU8esAsYPShpg==
-Date: Wed, 6 Nov 2024 14:59:08 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Vicentiu Galanopulo <vicentiu.galanopulo@remote-tech.co.uk>
-Cc: Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Jonathan Corbet <corbet@lwn.net>, linux-leds@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
-Subject: Re: [PATCH 2/3] [PATCH v4] dt-bindings: leds: Add LED1202 LED
- Controller
-Message-ID: <us45a35olruo6xaykepmhkdhal3zbit6f5kxo2utzqiukc3kte@kzbwcm7qtfww>
-References: <20241106061812.6819-1-vicentiu.galanopulo@remote-tech.co.uk>
- <20241106061812.6819-2-vicentiu.galanopulo@remote-tech.co.uk>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94ED41F9ABD
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 13:59:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.63
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730901591; cv=fail; b=t08C25qt4Qtn/b+tRv2izm4DP/cOCUlfMUKYVfuCafikNsAMxH6ka4AdPvOJ4+hvIsPfGCxWG+6MucFaiNvIZvE/m2LslHKVnBqxh2TsSdwNoSDDT/C4bmpSvD5cN3p1SrJLwHnd/KZZUnFFAqD09zhD6l0TojEsfOOGVr6Y9oc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730901591; c=relaxed/simple;
+	bh=6b39FudWRkX4y3kaKy3+bAsIbr+5oeg/Poh56LJo6zw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=bXhe6pYAP5mYexN28vS+g7hF7eAR4i9XMlWOBJonJguywRC4m3VSBAuRQoVDOxIusfOdqOgVg6hHtIW0Er1lG4jn8lIrsJcjtg2Bm9048MJ3ql9FjjdBnQSeyr8UAuhXr4MoHchL8OgsEDlhtaTxmDGhwqt5fCImCJIIG2DgdbU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=F7dbBtlv; arc=fail smtp.client-ip=40.107.236.63
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=uxWVfeVVCWk/YnIl4BMACtPD0iCIWl4T6XiKk+E3Lg297IjcPLpqkLf4GnKs+KCBM/FZte2ZVzK1dive3Tzaad0IMuMXKOI2FVIoYBxEB7PQ2EiAjE0RCri+JBFRJqJN/g7xRuIS4wH4hwOZyG2W8jFFy1u6t/AnWNAsxIedkHbV379uWukJB9ppWxA8fUuQWqQhEgIodTCTZMbPZ9/EEWKutF8HAu11uDRGYre1q8Sy+0iu+ZX4rhXqlcrp53choNt5v/Wh+LN3mhGhsmU04T6PFoDRcLnA1YJR3Hr0zU6rgfDtTKtNEb+p8p8Jszz5Ai2vphuedjACDg29UwtMdg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=9k4PidC5JdIKY6MEKqYL6sYAs3JWw2YPt4xDsUf0NiY=;
+ b=Xe6wdsEz7wo6nU93hSgfySiJdCLuDqZaDSwjrDxXkiAw6eFYw6+I0Ye2Oc2NUp421VbgIZj96TPMngAnt7S1asXVBBTr8gf6Ot9pO8eEYqBdxnGzAv3AlOd40oxWU+4JfsBes5cJLqUe17EH4hC0iZsIhEbgcfUuGJq0YDzdGe+i7/UkvjGi88ImPbKsutw/UtDdDQsZueiLNP/QRW6pKBGiocxaobpwwW5rffmGwVaHtrTI/LGbSFwQjWiUwdJFdJkNMkYxob8K8lH5TYZOGdWN3k7m8+QLQSOtAs0AdXiOHh2LDLmcYQ7iwyrSuLXWSIr5wV+qWtbVwfbmA6lflg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=9k4PidC5JdIKY6MEKqYL6sYAs3JWw2YPt4xDsUf0NiY=;
+ b=F7dbBtlvTWnCpXC+/65++21+isFilAffqXhojFthcws7ZwAao+kZR/WIOEX84tJO2JW6rBBAvo67hCLmxtI0fYnexWrT5lqQomFmgwb/zNg3a/ciEF6W16HqA0FjLerZX98Lc9FEtr9we/dPzxD5n85HPQe03J1WpgOlz0b3Gjdlsnbg+EJGUlHGbc8bCuKdjM29GP72eNwCeLk811UYxT9hH+Nrxj6AVKvmpM2EBKx8V0zE4njFNJfQwjF+9xWuav6krX0jRuK6sgOjeuecmORXrGetI6iKKo2SH5J/VePXSwM3zU2kC2I1W++FX+HJFx8P0gIzQJGp6h0KD6enbw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH3PR12MB8659.namprd12.prod.outlook.com (2603:10b6:610:17c::13)
+ by MW4PR12MB7286.namprd12.prod.outlook.com (2603:10b6:303:22f::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.18; Wed, 6 Nov
+ 2024 13:59:45 +0000
+Received: from CH3PR12MB8659.namprd12.prod.outlook.com
+ ([fe80::6eb6:7d37:7b4b:1732]) by CH3PR12MB8659.namprd12.prod.outlook.com
+ ([fe80::6eb6:7d37:7b4b:1732%4]) with mapi id 15.20.8137.018; Wed, 6 Nov 2024
+ 13:59:45 +0000
+Date: Wed, 6 Nov 2024 09:59:44 -0400
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Zhangfei Gao <zhangfei.gao@linaro.org>, baolu.lu@linux.intel.com
+Cc: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+	jean-philippe <jean-philippe@linaro.org>, shamiali2008@gmail.com,
+	iommu@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] iommufd: modify iommufd_fault_iopf_enable limitation
+Message-ID: <20241106135944.GP458827@nvidia.com>
+References: <20241028113209.123-1-zhangfei.gao@linaro.org>
+ <CABQgh9H9HWaKRP=rFvXf90PjfVP1M6YpwfLcYTZH1hWET6GPsw@mail.gmail.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CABQgh9H9HWaKRP=rFvXf90PjfVP1M6YpwfLcYTZH1hWET6GPsw@mail.gmail.com>
+X-ClientProxiedBy: MN0P221CA0025.NAMP221.PROD.OUTLOOK.COM
+ (2603:10b6:208:52a::17) To CH3PR12MB8659.namprd12.prod.outlook.com
+ (2603:10b6:610:17c::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241106061812.6819-2-vicentiu.galanopulo@remote-tech.co.uk>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH3PR12MB8659:EE_|MW4PR12MB7286:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5f50a712-0b4a-4a01-5af5-08dcfe6b44fe
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?VuvLX3OFDJxv1jSQE/7OSFJnfSgvhM9h53WvKnVUkWhlR9CzX/M9tW+BaFr/?=
+ =?us-ascii?Q?l6ZjtVEE+REoc0xR1f7tptJ1eNHOiFImnhDaF4mE/4ezMPX97nXETcd/Qt8c?=
+ =?us-ascii?Q?r6p715PiIGEtSwhNYVu1TETc208COr63xkvkQX13HvttxZ7VDpEqAXF4E5p9?=
+ =?us-ascii?Q?JaZiPM/n+QMAXF+2JwTt+ixk16CvrGG6sctxqCLJhmVJRAEoSgyMFaXu6gm2?=
+ =?us-ascii?Q?gDtfl5EFYC3M7WKBOwzi/KRa5Q8LhYTY1gmCNgDj4B1yeeLTRChcRVOzMpx6?=
+ =?us-ascii?Q?lF3PYO5cF/9JVQvnJWeNDO3m8I8BbvcUPKab1FR/eaBLmEpuLBgIiZuUkJRw?=
+ =?us-ascii?Q?PWQAiAYs9A4GThQ8FCWY/blIMfTmd+cPRIH38jIQZDSdz/7WmQTSu+tjVL9I?=
+ =?us-ascii?Q?7ewsJGfRZ3iWhhEodFmnUrC46yJQrcCZGGKjT0tfDhclsOm5URDEcgRnq1AS?=
+ =?us-ascii?Q?x1wYCJ7doXdqRi/fSXaQnusmEKlVelfhEBI89zL8jQsOuTTUhEjo1UZ3q7BT?=
+ =?us-ascii?Q?4oB9afyOv0x95L/rxlxgJQjJhT62gCjO5LtplcHWfEvG/XITrFppE1d9OPfR?=
+ =?us-ascii?Q?rKTsBK5RTymPBksebs9TvtvUUazH7P3zhsoJQOFXv/fMXJo39rK/cxlxPLHQ?=
+ =?us-ascii?Q?kBpUnBJCqM7Tt7m6RxKymKBGv0WkrdCiGwNau7l/SzEK4PUoAc5Aa4hCzmPE?=
+ =?us-ascii?Q?Zk4tPAeYJqyS6fGEL6rkfGrGU5U9Q0PIJheEZEdP9AFUK0wbWUPczzGRynP0?=
+ =?us-ascii?Q?J8abYsYqNQg9WR6eNZgUeDLGD9uQGBccg4novRG8oLavJqfdZSoZVXtS5dq9?=
+ =?us-ascii?Q?txyNW7Xj4dvzsEeEgFR05r6AUKViudAGPieSycW2fs5ebdmftbJkC4uLI7Vd?=
+ =?us-ascii?Q?hHDMpWX4l8BwvDB7mU2h1jaT4mgS1wfguCJOy9MouQa5mXSHzIOqkBSDX9Zy?=
+ =?us-ascii?Q?EDIVvlIKT+30DGPbJT2n+qefQpdqt0jWWDoYZ5qPQU+u6LGhT4x4IGJgyDtM?=
+ =?us-ascii?Q?zYV3Zx8ZBeFp7p1lsmS73D136tkKF10xc7K+b52VAReoEIeqtEi0ky9tGhcU?=
+ =?us-ascii?Q?lNUfWuj0xvjjy96+Tpng5DF+5YjM0AQQqZttIFqm75lHpwYsMHxV8akPYdvp?=
+ =?us-ascii?Q?6kE5jxTdw1oKMqRDs1pvtGb4N45yKTkxJaUgkPpNH+z0UtlQ0xREAcFGRcoL?=
+ =?us-ascii?Q?nOT2ExHxiRTZFiDr6sLJ6NlWf+k3ql6PlZUz0DAr8CXzztoJrul1OeH1T7lH?=
+ =?us-ascii?Q?alT1RTMXr2xjwtwAAniHIxP1VGzazG77zDqDTSqOoTegmG6iHe/yN9j9k7DT?=
+ =?us-ascii?Q?u5c2Um1gLxIGOfQBiMvZUGyL?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8659.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?73MM7qPB228AZ8DPPqF9e3+YmN+YgKUYs260KCPlIhvRsjhkSce8Ke0WZ0Ac?=
+ =?us-ascii?Q?47pkC1ASwoTfq5n/eXFSyxygmdbdNiUSRyBezBJpolhKBGNEJiPViW1s01xO?=
+ =?us-ascii?Q?DPvNypmAMck4f3CYNAWfrIkjpeGvfIvCcSjTiLMz9mhWFXy9wPbtK1U9fT9i?=
+ =?us-ascii?Q?IsywGaXU/fPFwWFvqnOUr2VlmdkSd4kcVZ9U+WWVX+YUiGJS8uyz4dM9n9ew?=
+ =?us-ascii?Q?NRHdmb+nSNpM9rZ0y5W0Vz/NoaTlDK8pUw4t5pblGp3XdOt7Fz4c1yKo6ori?=
+ =?us-ascii?Q?qG9tJ0VDXqLYPurmnlwp+CjgxfupqteSQpcpKVX/NWZDP+AG/VBSoqdm9zuA?=
+ =?us-ascii?Q?zQvqK6RWcOcQYr4sc9toeYgf7TkYJSUSgTcWhDj3cIYsmXi+p7Cw6zc8DAS7?=
+ =?us-ascii?Q?aEd2oEI0YsuelqX+++aDVkEDPWdeNKeSBojZ7eVab3tmQu796B/1K/WTSa/7?=
+ =?us-ascii?Q?ZJcFpP0TG9RGahUM8NyNlaSB6xErQI08xAPyHZRqjAai/gxVzP/4qmoj43O5?=
+ =?us-ascii?Q?0YIGblWhM1WEidUS/4u7XpS3M8tHIAfL6v3GejZae7HRAoFUmNf2morDcoT0?=
+ =?us-ascii?Q?026bwW5r5A9gLsp5B1Dw0H4YXiVlg9jMcnjQKWZUjlnc8Et/4fVD1DHyW2Zh?=
+ =?us-ascii?Q?OKSRIkJfayDvM+0GBM9pb4LtNzIMA96oAvJRCtstdRlRsTMDHEEgdFA9Ss6D?=
+ =?us-ascii?Q?+EGcu96e5TC7GYn4+mvIjde5WhLiDn1R3M+QykH5v3HIu9IEtlLmRaRI2ZYT?=
+ =?us-ascii?Q?tWl4+h5VSyfqrqNr2py4exwSIOFYbrHcv5TEdhsIwfNQr1j9tjKD3FmHxVAg?=
+ =?us-ascii?Q?B+x/DlykyGAbnsjeHWr2JHcY7KrTdseLvLoBTSf/SO9AU6/smevf6yz8D75L?=
+ =?us-ascii?Q?RNvnprRpdheRoyScRfcMk7fSwiestabdyX+1ipFFp3fhuw4Z6fM6wV6uNT4u?=
+ =?us-ascii?Q?SEZDbUiHeMlI9So6fzcAhfrJVSf8K29H8AJ7fAdPgF35p80P8MGz3bqvXZ/x?=
+ =?us-ascii?Q?G6s57qIG5Aw8aVbnauAExb5jZGZsiIUVINKyUUwoTvgHgRrmSij5ivzYevWT?=
+ =?us-ascii?Q?InY7Jf8iI3J517k4+Q6IWizswC9dv6YGdIRTl3Tp9L/0V1ecUL7Rm44Lv1rJ?=
+ =?us-ascii?Q?YgQsvNGsN7K+8ZGaiIzEM8uZ5CiqW0+XXYCTfDULyeSynnLxpdyWUka6AxYC?=
+ =?us-ascii?Q?Sr+uIeCI+fSZl1AWpS37HxBTqKeEVv47GdTFvIfNdVNi12ii1Utcar9gvK69?=
+ =?us-ascii?Q?Eb3B/ceo76E3Y6a4yB6PyuIfwWfXbTkI8L0X7YeJBdEon65pDcsFA1lj2nMR?=
+ =?us-ascii?Q?HVztaVb9RmKHBNOZSsHeQVkUYXGcZkbbbCYIdO5kemn/79+TOP/AuX+QPMU6?=
+ =?us-ascii?Q?fEnpoDjTuclcJUppIZkguwEzABpjCLj53CwRLChCabS5SCIFHzt7oE02t1Hi?=
+ =?us-ascii?Q?RCicasl5UftCHXhNBvcPHNUF6hP/sl87A+WCWNQ1E3ogl2dPRd5nM6yGK7n+?=
+ =?us-ascii?Q?gp4ETIEf7PTQ0FDpf/2M8vdWW8Au2x8DufVkOMch2byLri0QRd7CTfp/QPmW?=
+ =?us-ascii?Q?TBBSOYDR3mDQ6bT5wKcLIsP9OzCuapS6BjlFlStS?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5f50a712-0b4a-4a01-5af5-08dcfe6b44fe
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8659.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Nov 2024 13:59:45.4193
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: nq208ayVSBNl+fAA/E3Ix0YYQ/yLZiLaP1p1lYTt0BFvxkcJMe9EveiehoBus3qK
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB7286
 
-On Wed, Nov 06, 2024 at 06:18:08AM +0000, Vicentiu Galanopulo wrote:
-> The LED1202 is a 12-channel low quiescent current LED driver with:
->   * Supply range from 2.6 V to 5 V
->   * 20 mA current capability per channel
->   * 1.8 V compatible I2C control interface
->   * 8-bit analog dimming individual control
->   * 12-bit local PWM resolution
->   * 8 programmable patterns
+On Wed, Nov 06, 2024 at 05:47:09AM +0000, Zhangfei Gao wrote:
+> On Mon, 28 Oct 2024 at 11:32, Zhangfei Gao <zhangfei.gao@linaro.org> wrote:
+> >
+> > iommufd_fault_iopf_enable has limitation to PRI on PCI/SRIOV VFs
+> > because the PRI might be a shared resource and current iommu
+> > subsystem is not ready to support enabling/disabling PRI on a VF
+> > without any impact on others.
+> >
+> > However, we have devices that appear as PCI but are actually on the
+> > AMBA bus. These fake PCI devices have PASID capability, support
+> > stall as well as SRIOV, so remove the limitation for these devices.
+> >
+> > Signed-off-by: Zhangfei Gao <zhangfei.gao@linaro.org>
+> > Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
+> > ---
+> >  drivers/iommu/iommufd/fault.c | 9 +++++++--
+> >  1 file changed, 7 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/drivers/iommu/iommufd/fault.c b/drivers/iommu/iommufd/fault.c
+> > index bca956d496bd..8b3e34250dae 100644
+> > --- a/drivers/iommu/iommufd/fault.c
+> > +++ b/drivers/iommu/iommufd/fault.c
+> > @@ -10,6 +10,7 @@
+> >  #include <linux/module.h>
+> >  #include <linux/mutex.h>
+> >  #include <linux/pci.h>
+> > +#include <linux/pci-ats.h>
+> >  #include <linux/poll.h>
+> >  #include <uapi/linux/iommufd.h>
+> >
+> > @@ -27,8 +28,12 @@ static int iommufd_fault_iopf_enable(struct iommufd_device *idev)
+> >          * resource between PF and VFs. There is no coordination for this
+> >          * shared capability. This waits for a vPRI reset to recover.
+> >          */
+> > -       if (dev_is_pci(dev) && to_pci_dev(dev)->is_virtfn)
+> > -               return -EINVAL;
+> > +       if (dev_is_pci(dev)) {
+> > +               struct pci_dev *pdev = to_pci_dev(dev);
+> > +
+> > +               if (pdev->is_virtfn && pci_pri_supported(pdev))
+> > +                       return -EINVAL;
+> > +       }
+> >
+> >         mutex_lock(&idev->iopf_lock);
+> >         /* Device iopf has already been on. */
+> >
 > 
-> If the led node is present in the controller then the channel is
-> set to active.
+> Hi, Jason
 > 
-> v1: https://lore.kernel.org/lkml/ZnCnnQfwuRueCIQ0@admins-Air/T/
-> v2: https://lore.kernel.org/all/ZniNdGgKyUMV-hjq@admins-Air/T/
-> v3: https://lore.kernel.org/all/ZniNdGgKyUMV-hjq@admins-Air/T/
+> Would you mind also taking a look at this.
 
-This goes after ---.
+Lu? Are you OK with this?
 
-Please run scripts/checkpatch.pl and fix reported warnings. Then please
-run 'scripts/checkpatch.pl --strict' and (probably) fix more warnings.
-Some warnings can be ignored, especially from --strict run, but the code
-here looks like it needs a fix. Feel free to get in touch if the warning
-is not clear.
-
-This ws correct in v3 so I do not understand what is happening with this
-patch.
-
-> 
-> Signed-off-by: Vicentiu Galanopulo <vicentiu.galanopulo@remote-tech.co.uk>
-> 
-> ---
-> Changes in v4:
->   - remove label property, use devm_led_classdev_register_ext instead
-
-Where? This is a binding.
-
->   - use as base patch the v3
-
-What does it mean? How can you no use v3, but something else?
-
-> Changes in v3:
->   - remove active property
-> Changes in v2:
->   - renamed label to remove color from it
->   - add color property for each node
->   - add function and function-enumerator property for each node
-> ---
-
-You have also whitespace errors in your patch. Again:
-Please run scripts/checkpatch.pl and fix reported warnings. Then please
-run 'scripts/checkpatch.pl --strict' and (probably) fix more warnings.
-Some warnings can be ignored, especially from --strict run, but the code
-here looks like it needs a fix. Feel free to get in touch if the warning
-is not clear.
-
->  .../devicetree/bindings/leds/st,led1202.yaml  | 132 ++++++++++++++++++
->  1 file changed, 132 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/leds/st,led1202.yaml
-
-Best regards,
-Krzysztof
-
+Jason
 
