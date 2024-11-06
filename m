@@ -1,102 +1,150 @@
-Return-Path: <linux-kernel+bounces-398449-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398452-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD0439BF172
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 16:20:45 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF7589BF17F
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 16:22:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7CDD9283104
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 15:20:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 584751F227AA
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 15:22:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4945A1D07BA;
-	Wed,  6 Nov 2024 15:20:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="QdySeG0O"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B3912022EE;
+	Wed,  6 Nov 2024 15:22:13 +0000 (UTC)
+Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F8781DFD83
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 15:20:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E629552F9B;
+	Wed,  6 Nov 2024 15:22:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730906437; cv=none; b=FW5ab6vV+UmyC6Qx2SaYQzi4oVYHWkYFTw5ok17jvUealt8SSNqVoRudpX3QBHN3ROjE0xOwT+jhMHAHECdYkkzEUU+cP+ZGMi3tIcRkzEsPCnjIDt/V1Lq4QtnaIRPHMvMw1nswDdk8bdNiB6HKb19Ns9aLU8PXjpQ5WCwL4sQ=
+	t=1730906532; cv=none; b=CK6MvLOTAOigJsBKLJ8vYpih8NAY8UU/dLzEbatcxIKKG2UQ3v3sU7SsbQ86+yeC4sfyW6FUOIDlZij7bQjNwx2p1Xaunt+e8txYgl0nKx15teuE57aIrZU+VKpzYS9cP4pCliJkuBMLc2jYUSi78PxUmDKZPCNFNzuT15N0Vjk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730906437; c=relaxed/simple;
-	bh=ILql3NzP/rngGHp+yWoMeyK6TmIIYBndwUyQh8CiBUU=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=PvUrbC6QN6S8suEyGr4ZGf0sB3IWozi/PjtaNR5/lL36GPSVXmSfO33vL5a3HQCJPgwdO28LNTReaTTGfZqohSmcR8ILSslN7nKMEzuKZ5ENYw9DIfZuGaUwcMgF4oKHUX0KhjjaZxUeK1LbpqK0dVdbEpqJO1ii72/0JiLU4Jk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=QdySeG0O; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2e2ca403f5dso6547534a91.1
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2024 07:20:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1730906436; x=1731511236; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=hG4tCYRFsSYdF7QUgL+lGN2NxaX7r7Qgh1HNcESyiPw=;
-        b=QdySeG0OeaVzDzLL8XW7dGsty3Jx1PgwObi39czfgZ3sSthK9rSRYnho/KSGF2FnBa
-         BHgzjCBdKtsspY35RE4jn9w480UIm5d97y+XnXkJQr/W6DWAkyWUpUFtywE8eJQu0sB1
-         DSChEWB2UqTO1tskmPROJTtVaOKhPZIQZ0VEKE+AFYPYfeTNN7htAMrQqoAbA0woDhNZ
-         JhZ57Wa2Lo0xnhWr9sdWE6pOPSinJWYBrdLlyZSqKYtarpIal1NjYOtf1inutRWgx/YM
-         rgpLQjvpL1NiiJvgpl8oTOkv2ep/86KbBSKT8foOAr0OhjqXTLCgK9WewLdEPxJipxVc
-         Syig==
+	s=arc-20240116; t=1730906532; c=relaxed/simple;
+	bh=yWz0ZoIl894qSrEs4p/3LumB+MuMd+WBPNQ8gaStZqI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=g14/hAX0VGsXHTBiUjOBc+k1xmIDQpARQ/8vbO2iy6afI4af+6qeEYlYsyEbPYtChT53UXTdowFDd5yWMAVXA3li7EDlmuG/pSDVwB1/Bwdts40bJK5X6lflg3yfqDCJ020oTG409xuYITL/QMETZQUU7ZX4/7i+6Yy27+xdrCk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-e2e444e355fso826689276.1;
+        Wed, 06 Nov 2024 07:22:10 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730906436; x=1731511236;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hG4tCYRFsSYdF7QUgL+lGN2NxaX7r7Qgh1HNcESyiPw=;
-        b=oBvKCWOqscBJxlhtAFKKGbd13xGuwyqe+eBekZElP5cLkboMpmePMN9Iw4uKLawHP0
-         AkcuhRTOjcCIq2GNqvbXulyPObOwQreWxywpDCCd9G41EQSNJinqoc/KNgV41fpGe0KH
-         HHAq3E0O19qOW0UuiGPZEd+Mx/0Z+AhoNDpVmdV0xAwMQKW6jq6eirlpHYPI+98+pS4K
-         28GAG+ImVJdKf/OSN4mUT2AnPtHMbKYAnp1DFwpKSEC7bmAXW0kvbx9fy+EqmYNm8Zrm
-         0oQC8g+4pWROtEYZ89u5847Q/rYgvqedeHJZQx+C754cbNenWNVEKuIT9TV217wm5bCF
-         o56g==
-X-Forwarded-Encrypted: i=1; AJvYcCUpTbi4qS+heGO4cmECnbDy5xVq4oSCkNJYTVdyBdvH6+OQOFNzluc4h7ru6Suu4tzS8Cv8TXF3QdK8yvA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzLmWi6IpnY/1o/sV7w0qGMCNuQfj2wn7zU87bb8t95hbF13Ze+
-	i2xt1kxfD5uaC//Ce61pOglBi+Iorn4dw1VQldi1D+DbbYYMUl0jMZZEaBJ/BPQouJTEL1Y9M7L
-	Vbw==
-X-Google-Smtp-Source: AGHT+IF/ZAHKEzkzhdYm1/o5YV26Ze1DiE96d6gldLJUs/9GOrRfh0iu32XwGysczT5r2hjIZk0Lyz53tlA=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
- (user=seanjc job=sendgmr) by 2002:a17:90b:1943:b0:2e2:af52:a7b4 with SMTP id
- 98e67ed59e1d1-2e8f11d0128mr81851a91.8.1730906435729; Wed, 06 Nov 2024
- 07:20:35 -0800 (PST)
-Date: Wed, 6 Nov 2024 07:20:34 -0800
-In-Reply-To: <20241105192436.GFZypw9DqdNIObaWn5@fat_crate.local>
+        d=1e100.net; s=20230601; t=1730906529; x=1731511329;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2ZCcFtuDO9+jlZixEXsylP2Du+IUl9/vDpjq5iLELto=;
+        b=G7Fchjo4t4hxeSvA1yAiLyUlrRrfZRx8fWPXpNaXDnxtzQKlAQ0UvfoYUakdTtBSOJ
+         f9DYDJzOKG3Q0xBlMPi02HfzmoMbNGxtnXP9C2qbLt65UNEbMXGH/bx4urViYurq2pL4
+         9YkKXEpcgT5AMApyIY8zSAc2IrOO2fInL3lcKen8U87iKLONor/gy+jzSk1UHjCqGZBG
+         SPXwpz1Wml5zOicWNBca2Rhp9VVyrU3guWsUSM9kB70DGXFs0XhUpuS84xow+UKRNZPg
+         V7oNDgd5b/PA0XLn4MFMHxPBmRfs1aZPjj8IDMuQGRJ9b8fkBrrJczvZI0A365M6Y6/6
+         leKw==
+X-Forwarded-Encrypted: i=1; AJvYcCURGt+iM7ZoxIbjY9ijn5jP0dO1rea0onDm8+3e6BJ0waReNLk/kT6f6KtYAv+8lPVdfouRY84Z6/MelA==@vger.kernel.org, AJvYcCUbD4k4oJO8AzUcWqdwy8frKjlPYpnAPlv8UJ08z/9+uKErOJuQNH2vX7pxZRFdIddyO4FmIuu1e9o7gD+wrIskW9Y=@vger.kernel.org, AJvYcCUhInyFX90000YPGWD5t33NZxLTVermbzwrIjXjJZbr1i49I6LLlEuNEz1t+ODsFK3DvVdTtjnbZ7jR@vger.kernel.org, AJvYcCV5/nNk59N2hRer05pG84s59lmRpgRVLFiJXgYErapoPP8QkpizouccW1UXoDdNPCBvkgje70jqwvEhEMQ=@vger.kernel.org, AJvYcCXvoaWHDeLjm9uezl6b9Q+qCOq+tyxTTZYgAWbAZHmz6lOk/0MNaK9lthx5qRY+80OjLOGU/m5cjtsnZsT2@vger.kernel.org, AJvYcCXvpmj1M0bBTzVuR5/OemfCUAmOfLTwQvhr/RWKSv1MVe2O3NnrUexcnQEtItCOBoVnJAJNJ3s58kcw@vger.kernel.org
+X-Gm-Message-State: AOJu0YzSbpStx08L5XwgCFFwN0Y++k6PBjeLZkjsCdLC/9jkvADYdXOD
+	YlSxjpGvb/MoreUay3ryQU1Iv/q3j4Z41z8e5KwbSGrNgarliJR4KrO/78eK
+X-Google-Smtp-Source: AGHT+IEjFv2YwWwSsE6AvnoEm4qKS9NUpuGrVJVh04raCcfhJVFWxqJl6wIAH1s8zhveIuwuh4U/ng==
+X-Received: by 2002:a05:690c:610f:b0:6e3:1d8c:1224 with SMTP id 00721157ae682-6eabf0589ffmr16184547b3.20.1730906529019;
+        Wed, 06 Nov 2024 07:22:09 -0800 (PST)
+Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com. [209.85.219.181])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6ea55ac9a22sm27907647b3.8.2024.11.06.07.22.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 06 Nov 2024 07:22:07 -0800 (PST)
+Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-e29218d34f8so794350276.1;
+        Wed, 06 Nov 2024 07:22:06 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVF974h96kthoFbYZNfc/4fqjiThIuof49Kh7npWSFc7L2j6HDXb6GDX8lU3n16ZVGcPAi+v+GtQVBTmPmAVD9axGM=@vger.kernel.org, AJvYcCVFS9rYpKNwPYbtCAXWVc90oAfZV7VeBLS+WzvchR9fQvGwccLCxxYZBTW+ArlfQR/7iNSPiyJkOCnh@vger.kernel.org, AJvYcCW/+2gJeudEQVE0fOU9INpEbzwJnZkuAV2rfKkeetOV/DDm3a3m3Vh1TXkvdi/TQCmfX8qYNWGrOezu@vger.kernel.org, AJvYcCWQ8l2KI+xtmLLZPEtOPsy9putGeZ5Xdbh5UScj6lrf64qk6yOLemlble7v+I1g779j3nzu+mxZnBXUshk=@vger.kernel.org, AJvYcCXOsr4k84yF3hlalbxCau9ocUBqDBp6C5qk6jNm/jWmz1TaVQdO4JMKf4ZF0z0ChVak7rmA+p+YQwzLwA==@vger.kernel.org, AJvYcCXZPLyt6WqpeAXqnyr9oKWQEeBltiittQiTpPH7bKJrr5kFyA8jKqA93giVmrI5szKoiG3gV4GTc9A2lvb+@vger.kernel.org
+X-Received: by 2002:a25:8243:0:b0:e30:c930:4af8 with SMTP id
+ 3f1490d57ef6-e335a9c8793mr2201505276.3.1730906526105; Wed, 06 Nov 2024
+ 07:22:06 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20241104101543.31885-1-bp@kernel.org> <ZyltcHfyCiIXTsHu@google.com>
- <20241105123416.GBZyoQyAoUmZi9eMkk@fat_crate.local> <ZypfjFjk5XVL-Grv@google.com>
- <20241105185622.GEZypqVul2vRh6yDys@fat_crate.local> <ZypvePo2M0ZvC4RF@google.com>
- <20241105192436.GFZypw9DqdNIObaWn5@fat_crate.local>
-Message-ID: <ZyuJQlZqLS6K8zN2@google.com>
-Subject: Re: [PATCH] x86/bugs: Adjust SRSO mitigation to new features
-From: Sean Christopherson <seanjc@google.com>
-To: Borislav Petkov <bp@alien8.de>
-Cc: Borislav Petkov <bp@kernel.org>, X86 ML <x86@kernel.org>, Josh Poimboeuf <jpoimboe@redhat.com>, 
-	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, kvm@vger.kernel.org, 
-	LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+References: <20241106081826.1211088-1-claudiu.beznea.uj@bp.renesas.com>
+ <20241106081826.1211088-13-claudiu.beznea.uj@bp.renesas.com>
+ <CAMuHMdWxmoUQSSnAVdqhpTQJYvUCJTL0EZbdKmLLhFWi8UCGkg@mail.gmail.com> <4e233ebe-b0e1-4b37-9063-bdbeb5980b13@tuxon.dev>
+In-Reply-To: <4e233ebe-b0e1-4b37-9063-bdbeb5980b13@tuxon.dev>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 6 Nov 2024 16:21:54 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdVrKoyRuaa=jtZ5SJ3OX8ytGyN_jwv2uKX2ohGpg6yiuA@mail.gmail.com>
+Message-ID: <CAMuHMdVrKoyRuaa=jtZ5SJ3OX8ytGyN_jwv2uKX2ohGpg6yiuA@mail.gmail.com>
+Subject: Re: [PATCH 12/31] ASoC: sh: rz-ssi: Use a proper bitmask for clear bits
+To: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, biju.das.jz@bp.renesas.com, 
+	prabhakar.mahadev-lad.rj@bp.renesas.com, lgirdwood@gmail.com, 
+	broonie@kernel.org, magnus.damm@gmail.com, linus.walleij@linaro.org, 
+	support.opensource@diasemi.com, perex@perex.cz, tiwai@suse.com, 
+	p.zabel@pengutronix.de, Adam.Thomson.Opensource@diasemi.com, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-sound@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Nov 05, 2024, Borislav Petkov wrote:
-> On Tue, Nov 05, 2024 at 11:18:16AM -0800, Sean Christopherson wrote:
-> > It gets there, usually (as evidenced by my response).  But even for me, there's
-> > a non-zero chance I'll miss something that's only Cc'd to kvm@, largely because
-> > kvm@ is used by all things virt, i.e. it's a bit noisy:
-> > 
-> > $ git grep kvm@ MAINTAINERS | wc -l
-> > 29
-> 
-> Hm, ok, so what do you guys prefer to be CCed on? Everyone from
-> get_maintainer.pl's output? commit signers, authors, everyone? Or?
+Hi Claudiu,
 
-I prefer to be To:/Cc:'d on any patches that touch files that are covered by
-relevant MAINTAINERS entries.  IMO, pulling names/emails from git is useless noise
-the vast majority of the time.
+On Wed, Nov 6, 2024 at 4:17=E2=80=AFPM Claudiu Beznea <claudiu.beznea@tuxon=
+.dev> wrote:
+> On 06.11.2024 16:56, Geert Uytterhoeven wrote:
+> > On Wed, Nov 6, 2024 at 9:19=E2=80=AFAM Claudiu <claudiu.beznea@tuxon.de=
+v> wrote:
+> >> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> >>
+> >> While it is still correct to pass zero as the bit-clear mask it may be
+> >> confusing. For this, use a proper bitmask for clear bits.
+> >>
+> >> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> >
+> > Thanks for your patch!
+> >
+> >> --- a/sound/soc/renesas/rz-ssi.c
+> >> +++ b/sound/soc/renesas/rz-ssi.c
+> >> @@ -331,7 +331,7 @@ static void rz_ssi_set_idle(struct rz_ssi_priv *ss=
+i)
+> >>                 dev_info(ssi->dev, "timeout waiting for SSI idle\n");
+> >>
+> >>         /* Hold FIFOs in reset */
+> >> -       rz_ssi_reg_mask_setl(ssi, SSIFCR, 0, SSIFCR_FIFO_RST);
+> >> +       rz_ssi_reg_mask_setl(ssi, SSIFCR, SSIFCR_FIFO_RST, SSIFCR_FIFO=
+_RST);
+> >
+> > But you're not clearing SSIFCR_FIFO_RST, you're setting it?
+>
+> The bits should be set to reset the FIFOs.
+>
+> By "Use a proper bitmask for clear bits" phrase in the patch title or
+> description I was referring at the 3rd argument of the
+> rz_ssi_reg_mask_setl() function, which has the following prototype:
+>
+> static void rz_ssi_reg_mask_setl(struct rz_ssi_priv *priv, uint reg,
+>
+>                                  u32 bclr, u32 bset)
+>
+>
+> Would you prefer to rephrase it in the next version?
+
+The idea behind such functions is to pass a bitmask representing the
+bits to be cleared to "bclr", and a bitmask representing the bits
+to be set to "bset".  In this case, you do not want to clear any bits,
+so the "bclr" parameter should be zero, and the original code is fine.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
