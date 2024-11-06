@@ -1,102 +1,99 @@
-Return-Path: <linux-kernel+bounces-398959-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398960-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 130FE9BF87A
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 22:27:11 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0429A9BF87C
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 22:28:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC973284574
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 21:27:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF1E11F22FDD
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 21:28:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C31320C02A;
-	Wed,  6 Nov 2024 21:27:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6937920CCC2;
+	Wed,  6 Nov 2024 21:28:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="p8odjkDj"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jK1f788f"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01D7B20CCF0;
-	Wed,  6 Nov 2024 21:26:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7F8013A26F;
+	Wed,  6 Nov 2024 21:28:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730928419; cv=none; b=iChWrwUBuTaiiujARwNGBgwnuS4lflLTQDWtQnoTqYbUSNV55ufddh4Wr3vS0aQq5siyWKwfEr/UFB7xESgM0G7f9Efj/934INk+EKP1g2UC3anwS7KXrcae/QsbPKhCqYo8zndy+v+HAHXs/Wk9VpMEYjjzJ17m/BHXLUMyiEs=
+	t=1730928508; cv=none; b=Iucu7Ni5rKA4OjG5G8+eYb3XQGCoeFyBDT6wz9cl/RdCzxklvouMV2LDv+QtLFEYpBuDe555cxZqqHg7c1lMTUZ3Xbatsu+exkm9wA8sbmqaAfxNzAAP6O2UN9VQHDdRpm4Mgdu11OlsZlYlVGp8o9AwS68ghqm+CjfqyIDF3kc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730928419; c=relaxed/simple;
-	bh=9g6T+MOclTYUgXeTrv5olCKGPoeDF0LBKeyubV2+kU8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=to3BdxYLEYui7xdb4TPyF/aJFYtdyM1OcZlOq1fWoS88uWKt5iTiCkRSzgylyp9CHAyDP5r4U0MyiMhb00AEdRCMc+DZ4RImhCCoSnegJlWfAD6G8MI7xl1MOj+h1xdo9kjtcE4LITgzrFdn2UcXfNpt+B1xxBYbigICPaEJIlk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=p8odjkDj; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1730928415;
-	bh=9g6T+MOclTYUgXeTrv5olCKGPoeDF0LBKeyubV2+kU8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=p8odjkDjQKL3CjEB/U5VkLC45YeQPK/nzseNlKYeMx/qPq5SV6KHAHgzMCMUmCZvq
-	 dinnaISVyg5W2Jtn2s1stbJMk99KBvFAEkmME+h5xntihSxKWEPtmxwDEuUGunRJli
-	 N9kjW44AeijTORTCNHmlkCepVttOKe+zT/tNSFPQ6QqcaS5NUu9bptnTKA6jupTCZy
-	 xUMUJvpvQZFCA5QQgJQVzZNRxfl2kHw74HaxI2qSimdhvOsOq6r8K0ow6WAnh5Mpii
-	 qrDf0I/Z5Q2XTPo1cepsm2CSXswdidZu2XlBZyZ9ajp9mvTw9JcNYXIG5lhnJLg/Hs
-	 yJZ3xSWjJbCaQ==
-Received: from [192.168.1.90] (unknown [188.24.146.62])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: cristicc)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 6926717E378F;
-	Wed,  6 Nov 2024 22:26:55 +0100 (CET)
-Message-ID: <fd2d2d7e-67ae-43a1-81ef-91e2852edcb6@collabora.com>
-Date: Wed, 6 Nov 2024 23:26:54 +0200
+	s=arc-20240116; t=1730928508; c=relaxed/simple;
+	bh=heDwOmYS80a2vqQlU25vx5OhaEZ1g8fx/F1gOcqR6zc=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=TX2O1170Y+sRKxRYLi1h9z9taqj1JyQVWdn+6bjHFml4TL7mO6JRinDs9xp/lifxXjHwMysbHUbtu9Pph9ma1yPDtkjBgtZrK3tdC4NuypkqrjDa3NE0avqs1l2OUIyGPcdfnIpmGXOeJ5+96gJy/2YD+swxiWe8ppOJ24UC2WY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jK1f788f; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E76FC4CEC6;
+	Wed,  6 Nov 2024 21:28:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730928508;
+	bh=heDwOmYS80a2vqQlU25vx5OhaEZ1g8fx/F1gOcqR6zc=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=jK1f788ffg+9zXXmPZvT8rJRWmXB4XglinUbPR1ef2rHV4POXF6XEpiPahJr2wYHG
+	 NtnzlYm9bcH0MxqRUTyIeLoNQ6XlVaZ9LNGNiSkdQUVDb0x1IBOp51rCgW7N0YhcCe
+	 DyNewWoK8j7gz8Wr2DN7HLWO64QUWEmnDdQKXBD98I5NjQoqbtsuS0t+WOySy7qnmu
+	 F6bZNzF2spJDzoiRE4FedLwrXVbdQwz3D+LkAWlADotv35ZJqp0TiUmh1QMpuzyUph
+	 wQHQDfu2MLnZs22MarnGOIhWxODtd6/FpA2wwX0oYsXL3/KvOIbzEJ51C2HTb/UwXc
+	 jpgt6Wd1O1EVg==
+Date: Wed, 6 Nov 2024 15:28:26 -0600
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: manivannan.sadhasivam@linaro.org
+Cc: Bjorn Helgaas <bhelgaas@google.com>,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Johan Hovold <johan+linaro@kernel.org>,
+	Abel Vesa <abel.vesa@linaro.org>,
+	Stephan Gerhold <stephan.gerhold@linaro.org>,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>,
+	stable+noautosel@kernel.org,
+	Krishna chaitanya chundru <quic_krichai@quicinc.com>
+Subject: Re: [PATCH v2 2/5] PCI/pwrctl: Create pwrctl devices only if at
+ least one power supply is present
+Message-ID: <20241106212826.GA1540916@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/5] arm64: dts: rockchip: Enable HDMI0 on rock-5b
-To: Link Mauve <linkmauve@linkmauve.fr>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
- Sebastian Reichel <sebastian.reichel@collabora.com>,
- Luis de Arquer <ldearquer@gmail.com>, Alexandre ARNOUD <aarnoud@me.com>,
- kernel@collabora.com, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-kernel@vger.kernel.org, FUKAUMI Naoki <naoki@radxa.com>
-References: <20241019-rk3588-hdmi0-dt-v2-0-466cd80e8ff9@collabora.com>
- <20241019-rk3588-hdmi0-dt-v2-2-466cd80e8ff9@collabora.com>
- <ZyvUsdc8ZhiD8-DY@desktop>
-Content-Language: en-US
-From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-In-Reply-To: <ZyvUsdc8ZhiD8-DY@desktop>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241025-pci-pwrctl-rework-v2-2-568756156cbe@linaro.org>
 
-On 11/6/24 10:42 PM, Link Mauve wrote:
-> Hi,
+On Fri, Oct 25, 2024 at 01:24:52PM +0530, Manivannan Sadhasivam via B4 Relay wrote:
+> From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 > 
-> I’ve tested this series on a Radxa Rock 5B using Weston, and thus
-> patches 1 and 2 are:
-> Tested-by: Link Mauve <linkmauve@linkmauve.fr>
-> 
-> On a TV which erroneously reports 1360×768 as its preferred mode,
-> nothing gets displayed.  Only setting a 1920×1080 mode will display
-> things correctly, every other mode stays black.
+> Currently, pwrctl devices are created if the corresponding PCI nodes are
+> defined in devicetree. But this is not correct, because not all PCI nodes
+> defined in devicetree require pwrctl support. Pwrctl comes into picture
+> only when the device requires kernel to manage its power state. This can
+> be determined using the power supply properties present in the devicetree
+> node of the device.
 
-I'd suggest to try the following patches from [1], they should improve the
-display modes support:
+> +bool of_pci_is_supply_present(struct device_node *np)
+> +{
+> +	struct property *prop;
+> +	char *supply;
+> +
+> +	if (!np)
+> +		return false;
 
-94b5c31f969d ("[WIP] drm/rockchip: vop2: Improve display modes handling on rk3588")
-c33c23053987 ("[WIP] arm64: dts: rockchip: Enable HDMI0 PHY clk provider on rk3588")
-6059245635c0 ("[WIP] arm64: dts: rockchip: Make use of HDMI0 PHY PLL on rock-5b")
+Why do we need to test !np here?  It should always be non-NULL.
 
-I'm currently cleaning this up and submit upstream when ready.
-
-Thanks for testing,
-Cristian
-
-[1] https://gitlab.collabora.com/hardware-enablement/rockchip-3588/linux/-/commits/rk3588
-
+> +	for_each_property_of_node(np, prop) {
+> +		supply = strrchr(prop->name, '-');
+> +		if (supply && !strcmp(supply, "-supply"))
+> +			return true;
+> +	}
+> +
+> +	return false;
+> +}
 
