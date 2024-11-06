@@ -1,37 +1,37 @@
-Return-Path: <linux-kernel+bounces-398044-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398045-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B62409BE4A1
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 11:48:13 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD27C9BE4A3
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 11:48:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A8E4285AF3
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 10:48:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ADB381C235AA
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 10:48:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2DD71DA622;
-	Wed,  6 Nov 2024 10:47:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 697451DE8BC;
+	Wed,  6 Nov 2024 10:47:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="W/bhVidz";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="XTAkgfyu"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="U6+Aw1r0";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="oBWVMyXy"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A02AB1DE3CD;
-	Wed,  6 Nov 2024 10:47:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52A081DE3DF;
+	Wed,  6 Nov 2024 10:47:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730890068; cv=none; b=flwtwmSZCl7ivC99j5iZUHSMZr2Oot30pr+djZBaqWrlWgRnH/M4daFYK3mcJAlaCsl8anTbve3RpNOJigQYMr9PNX7V2euaRzq+2kEF0lFSfVH10+wmM7gzaSYOEJROhdHvlqZ8T/XbU50wCr2I5Hd0bgXKRPHmY82vUSAV/0w=
+	t=1730890068; cv=none; b=fNxM3BjUMt9+PW2aJKfo02Hab8UqiwA0lJoOSp90sNDps0eJ4tXH0QJT6Y5/JOT2SDR3VhdNACO0Ar+Ha1xXUu4BKBgjJZRIXlwe+/05hFfkCmJ9Exu+giB9wfQWitC1MwW+DganQ8P+x0n0qz4yO1v6pIJppIS89hRWTeHV4yU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1730890068; c=relaxed/simple;
-	bh=EQjveyo27r/xz5MBvntCHY8/qlgjBSqyton0Z0ohYAM=;
+	bh=ThwDMIKPA14kHDxs2HAMfZ6ROkeQs2vZncVyzkTg7Nk=;
 	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=gB5d3GS50D4djdk2piZZG2ryMtoL+/koo2xedfN+OaaRgFbybqG/LB5+BJWxo4B8ZEU4yr0alVeXYrG1oHKmuMRd78sFyo+lxZiP35hADkb8qT7V82li7PFG6diiSYKTnI2WNiMj90L4nCiYA44OoqTNndvW1pNk7rAKPSpNS6A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=W/bhVidz; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=XTAkgfyu; arc=none smtp.client-ip=193.142.43.55
+	 Message-ID:Content-Type; b=AMgYy8dJ3ZT0S6iMunTWLPQ0UKE2fiDCgDbncE/akIf87Z4TMv8QimBpWP+ZSTlHRH59yATjyvKBLkbw8+bRfTGWjryQWdEZIkOfxngDfIoqXid7uUkwW07kAIdj7gJpEDSRwCUwlri0OqnuwdT7de9vxaayy+/tEm8wFNDgwag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=U6+Aw1r0; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=oBWVMyXy; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 06 Nov 2024 10:47:43 -0000
+Date: Wed, 06 Nov 2024 10:47:44 -0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
 	s=2020; t=1730890065;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
@@ -39,12 +39,12 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=/7GH7JFuryniSsxcVRzLnhbo9X9D1GzTzG3uIFqnb3Q=;
-	b=W/bhVidzaefkMLIrrkhR0y+fxqJxFQqPrkcLiWHRyS2mQDWnw/PMzAMJKPLNufc5AnB/wz
-	HHgqJ+zVFm0itWIbK6SWW9brszGhOcjevUJkBHCkWtrx7L9C74btXCfN3oznm0TEKVz/qV
-	cLt9/OfoSFBH3Gjt+FIrVijUzCJSQBbzgSWNpT2K5zYfbqP0U0vPlmsyon7ZvUU8udii6o
-	Zb5+h7U6lNG2deBtIloju8ht5h20B8tj7TK729W9RzXqRfGV64MmTe7Id8mVCEhajQiMla
-	hEKFeKYxNbs9OWi2ABNbpAyRin5eXHf6GX4QoYswZWoFEockTWPXCJB/BBno4Q==
+	bh=hwq9v4fv8IK2XK6Wdr0WNDaWRE03Bc+G1IOznVhiQBs=;
+	b=U6+Aw1r0PUA7EAsZl8k1s00AVdlZHkNVDaRT8yrSKaUrKaZuz8N1czZjKH+bCQf8FnRd86
+	84RhJVU3Gp5XxRmRHKpfOSN0q1aqlgKvdaeCaZHh1Y5+v/UXdq6uyYUKrJfM4NgpihzbPy
+	xgomdj/aMGJmUkex6o6TpOkbIJaZTYCZ4wiyTxQ8OLMltQgomFjNxcehYG3EGBKi72BFDC
+	ds+6HBPNQyZ/iocegIa3JA3PAJOkpAO0JmyOc74FrZABal+0nmD7f/4wcc4WIKha58gma1
+	ZGYyR6n1uJW9x0tsw/4QfHOpEfGb6KXAD7tTGLHWz6ITZWWXMhhCj5a+RgkC0w==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
 	s=2020e; t=1730890065;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
@@ -52,27 +52,27 @@ DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=/7GH7JFuryniSsxcVRzLnhbo9X9D1GzTzG3uIFqnb3Q=;
-	b=XTAkgfyu/4vdy43oIBCcWK9JWbjYsNhrE3oWMcfCHTUs+V4eZuNDQTzCi5SaM+CaSsX4bA
-	s1WOWNQt8g1a0VBA==
-From: "tip-bot2 for Marco Elver" <tip-bot2@linutronix.de>
+	bh=hwq9v4fv8IK2XK6Wdr0WNDaWRE03Bc+G1IOznVhiQBs=;
+	b=oBWVMyXyeXKix20zsdFtdvafQ///wYtSAOF3bJyhVZmkSz/Y87UG4Alb6N2My6RBrlU8m7
+	SLmqAtPmEmKS+wCA==
+From: "tip-bot2 for Uros Bizjak" <tip-bot2@linutronix.de>
 Sender: tip-bot2@linutronix.de
 Reply-to: linux-kernel@vger.kernel.org
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip: locking/core] time/sched_clock: Swap update_clock_read_data()
- latch writes
-Cc: Marco Elver <elver@google.com>,
+Subject: [tip: locking/core] locking/atomic/x86: Use ALT_OUTPUT_SP() for
+ __arch_{,try_}cmpxchg64_emu()
+Cc: Uros Bizjak <ubizjak@gmail.com>,
  "Peter Zijlstra (Intel)" <peterz@infradead.org>, x86@kernel.org,
  linux-kernel@vger.kernel.org
-In-Reply-To: <20241104161910.780003-2-elver@google.com>
-References: <20241104161910.780003-2-elver@google.com>
+In-Reply-To: <20241103160954.3329-2-ubizjak@gmail.com>
+References: <20241103160954.3329-2-ubizjak@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <173089006394.32228.1285388463688281244.tip-bot2@tip-bot2>
+Message-ID: <173089006497.32228.12901289269580776266.tip-bot2@tip-bot2>
 Robot-ID: <tip-bot2@linutronix.de>
 Robot-Unsubscribe:
  Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -82,47 +82,49 @@ Content-Transfer-Encoding: 7bit
 
 The following commit has been merged into the locking/core branch of tip:
 
-Commit-ID:     1139c71df5ca29a36f08e3a08c7cee160db21ec1
-Gitweb:        https://git.kernel.org/tip/1139c71df5ca29a36f08e3a08c7cee160db21ec1
-Author:        Marco Elver <elver@google.com>
-AuthorDate:    Mon, 04 Nov 2024 16:43:05 +01:00
+Commit-ID:     25cf4fbb596d730476afcc0fb87a9d708db14078
+Gitweb:        https://git.kernel.org/tip/25cf4fbb596d730476afcc0fb87a9d708db14078
+Author:        Uros Bizjak <ubizjak@gmail.com>
+AuthorDate:    Sun, 03 Nov 2024 17:09:32 +01:00
 Committer:     Peter Zijlstra <peterz@infradead.org>
 CommitterDate: Tue, 05 Nov 2024 12:55:34 +01:00
 
-time/sched_clock: Swap update_clock_read_data() latch writes
+locking/atomic/x86: Use ALT_OUTPUT_SP() for __arch_{,try_}cmpxchg64_emu()
 
-Swap the writes to the odd and even copies to make the writer critical
-section look like all other seqcount_latch writers.
+x86_32 __arch_{,try_}cmpxchg64_emu()() macros use CALL instruction
+inside asm statement. Use ALT_OUTPUT_SP() macro to add required
+dependence on %esp register.
 
-Signed-off-by: Marco Elver <elver@google.com>
+Fixes: 79e1dd05d1a2 ("x86: Provide an alternative() based cmpxchg64()")
+Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Link: https://lore.kernel.org/r/20241104161910.780003-2-elver@google.com
+Link: https://lkml.kernel.org/r/20241103160954.3329-2-ubizjak@gmail.com
 ---
- kernel/time/sched_clock.c | 6 +++---
+ arch/x86/include/asm/cmpxchg_32.h | 6 +++---
  1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/kernel/time/sched_clock.c b/kernel/time/sched_clock.c
-index 68d6c11..85595fc 100644
---- a/kernel/time/sched_clock.c
-+++ b/kernel/time/sched_clock.c
-@@ -119,9 +119,6 @@ unsigned long long notrace sched_clock(void)
-  */
- static void update_clock_read_data(struct clock_read_data *rd)
- {
--	/* update the backup (odd) copy with the new data */
--	cd.read_data[1] = *rd;
--
- 	/* steer readers towards the odd copy */
- 	raw_write_seqcount_latch(&cd.seq);
- 
-@@ -130,6 +127,9 @@ static void update_clock_read_data(struct clock_read_data *rd)
- 
- 	/* switch readers back to the even copy */
- 	raw_write_seqcount_latch(&cd.seq);
-+
-+	/* update the backup (odd) copy with the new data */
-+	cd.read_data[1] = *rd;
- }
- 
- /*
+diff --git a/arch/x86/include/asm/cmpxchg_32.h b/arch/x86/include/asm/cmpxchg_32.h
+index 62cef21..fd1282a 100644
+--- a/arch/x86/include/asm/cmpxchg_32.h
++++ b/arch/x86/include/asm/cmpxchg_32.h
+@@ -94,7 +94,7 @@ static __always_inline bool __try_cmpxchg64_local(volatile u64 *ptr, u64 *oldp, 
+ 	asm volatile(ALTERNATIVE(_lock_loc				\
+ 				 "call cmpxchg8b_emu",			\
+ 				 _lock "cmpxchg8b %a[ptr]", X86_FEATURE_CX8) \
+-		     : "+a" (o.low), "+d" (o.high)			\
++		     : ALT_OUTPUT_SP("+a" (o.low), "+d" (o.high))	\
+ 		     : "b" (n.low), "c" (n.high), [ptr] "S" (_ptr)	\
+ 		     : "memory");					\
+ 									\
+@@ -123,8 +123,8 @@ static __always_inline u64 arch_cmpxchg64_local(volatile u64 *ptr, u64 old, u64 
+ 				 "call cmpxchg8b_emu",			\
+ 				 _lock "cmpxchg8b %a[ptr]", X86_FEATURE_CX8) \
+ 		     CC_SET(e)						\
+-		     : CC_OUT(e) (ret),					\
+-		       "+a" (o.low), "+d" (o.high)			\
++		     : ALT_OUTPUT_SP(CC_OUT(e) (ret),			\
++				     "+a" (o.low), "+d" (o.high))	\
+ 		     : "b" (n.low), "c" (n.high), [ptr] "S" (_ptr)	\
+ 		     : "memory");					\
+ 									\
 
