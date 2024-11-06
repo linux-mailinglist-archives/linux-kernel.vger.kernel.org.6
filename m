@@ -1,149 +1,98 @@
-Return-Path: <linux-kernel+bounces-398574-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398575-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 390459BF303
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 17:15:43 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCE669BF308
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 17:16:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 41C021C24179
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 16:15:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4A319B251EB
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 16:16:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CAE120514C;
-	Wed,  6 Nov 2024 16:15:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA790205130;
+	Wed,  6 Nov 2024 16:15:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="awcB549r"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IUsq4+fr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56145202620;
-	Wed,  6 Nov 2024 16:15:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CBFE190075;
+	Wed,  6 Nov 2024 16:15:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730909714; cv=none; b=JD7sgadZLkGhw3VQbwpmOPh7T8OT7ncolQ+i8I/nXQ3TgNoRAV32KB37cSJE3ntpHxrt/f5ttL2Vst8oFhnNEgPk6ic0CS+YysGYJKgutdUHFjb8R7xaXv+OXt4gJnt0SBqpt22bXVlQLEkJgEf99jXsYhX92DYAgztO5YOivY0=
+	t=1730909742; cv=none; b=NYeYpJK+ULEdePgXHvG8d9A4k3tGztEty6Q7DBQsP85n0LNVf4Lm5jE7NveBe689FI0eapr1gVpDYSQlWSv/1qs3L9/slUnLm9AFM33VHHhZfCcY0doYQlQ26W3YsSitlMSfsIuDiol2dmL7L957rxtumCFOr65gQbVtYodekJw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730909714; c=relaxed/simple;
-	bh=c9tnBYgUOdSrn0I+qBFaOnvVIUWOFf6RdjI3dGuX/ac=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LnDWj2UEAV/63eKoGJIQJWwFCpVFyvh4rHyKHFQwMf1yVjYz7G1au4duG3XDpbkz2rqrwYY2WE5WVLpt+8LCTHLGFPQxj3Vh6GHjYgXsj+J+PQS8qcm3Lde/rmEh2ByjivtbRS9I4KkFLOAtTC+uzgLuVMyfsEgRjk0FK4r1BUg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=awcB549r; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-20c6f492d2dso75705005ad.0;
-        Wed, 06 Nov 2024 08:15:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730909713; x=1731514513; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FuM9FPVYlyiO8dA3+OPrpH3HUSy+nPdZ2IbMvNIALEU=;
-        b=awcB549ryZS1EC9M33SPSVgH3jp90nzLbvp+GfC0HWxsZdgYTnCNGYfYDwFo++tJiA
-         yeeJAwTB7z75kP5M+alBhpe88PyH8rRAGQnCkNGVMsbs5c+8aVJ4mmCcy5xRp9uHAa4r
-         Dfm5UVqVr3thgYYWZrEqWbKEvS0lwWoODPxtqf50b65vGUDH+jW3exdseqm/dwA8AYDC
-         G+WzdMpLq04pQ6/5a6tydLO+I2uExdQJ5tbEl7dCmoGkjkFn5+dgZKDUuaN5LQIblOHz
-         TGpvGDfO5+m4Co0zMwqT1zBmV0q1ehFCfkRx9DfMr/h2feQYtS1RmZ4IX9NV88nRyGD2
-         zubw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730909713; x=1731514513;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=FuM9FPVYlyiO8dA3+OPrpH3HUSy+nPdZ2IbMvNIALEU=;
-        b=pxEwhnF59ANK+rSO60BykvPhXz7rsQzQ5GD+ZcntXmhBGQSezfMrBI9f1sSZWsdVYW
-         Eb7c4GDWzjEyC+eD6MEvkZynBvoqikvcOUeLXOmFZGr4y+4XOAcofmzwBWQz6Fw3N5G5
-         tps7NN1nj+qOVdzoJ+c8fxoW6GqbZAvAcpuWalSwdoibqcCMv3HvkpTOppB0Y2LU6lFJ
-         Z62gjLvMAvXO+H0bnYAy252vf0fehfHW7kmVooI0bYbg3jKYqXJvts+4pNVknPrRks2n
-         zf2O6ldbkhHGX32tJN8u8Bp7NqGgzEA8TfgcXYz2OvAeNkZICLShwszo7PimEMxCGtMf
-         e5Lg==
-X-Forwarded-Encrypted: i=1; AJvYcCVEo/NcobFYvk9vlmxl1oZ0FzLXtLxZxz4heOdBQG71rORn8I6RxulSQJ6xmIuWMOfsmSE=@vger.kernel.org, AJvYcCVbBDEVFzOJS7EwLUt32EjkMTye5AuQKF+ZqZfJApOuUTsmdRJRsQgk/EtQevhjuSr+RM/FP0+0lb5MOE17JKijIRPD@vger.kernel.org, AJvYcCWMsZcxqHJhFoy4sP+RAky0LFXivuJlKBtqaGMktSR33vZyWR541xjiLt7CxE5+iPluSRrElE+JF51jW3mE@vger.kernel.org, AJvYcCWQ28n9TG7VVMlZ81UpMfSyfh+BGFOQGgpjCUuLC+1xR5DfQbDh+0UYN5WgETskEk3OxcrfiEXp4kwtPg6Rl0ii9g==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxoZj4i8XDY6gEccYWJ9E2WWRNiS3YtD6QBY9yIrJpCSp/TY3xT
-	euz2ZS4by3ge6PR/Ebg7+lWOZG8mRxzMVegIj5Krw+XqDSwHG2PUlCIoEsvfZVNZkuTHrzd/DId
-	BD7gdXkDmnMjryKJdleMDz6i42rQ=
-X-Google-Smtp-Source: AGHT+IGE7as/zhJ/0hEXJE5Nd8KS+oVlK6xJ3ACRVLTTH5+NKKQj62K4Tvc4N/owmW8kKUkfFogKU95TIgG/KpD68IE=
-X-Received: by 2002:a17:903:2cd:b0:207:6fd:57d5 with SMTP id
- d9443c01a7336-2111af38936mr255571785ad.36.1730909712511; Wed, 06 Nov 2024
- 08:15:12 -0800 (PST)
+	s=arc-20240116; t=1730909742; c=relaxed/simple;
+	bh=17VRjsdzd47xFESl41GTeJh5UTraVVQjFsJBtlc+9wE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cC1ubDOLK0kMdYQKPzWdpirLmHNjTytwunudJ1NUs0E8XTeOF4dqBKD8iXZkJJiy45T6RyNcPOuEBT93pYk2iue0zw/Q58bLcgIFe2YqASJVXbI82u4XVpyysgSgy0/Q2wR5oeKwf7kKIMQrs5yilgfdwgfncFRhOnF7Mjc/CyQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IUsq4+fr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DBC42C4CEC6;
+	Wed,  6 Nov 2024 16:15:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730909741;
+	bh=17VRjsdzd47xFESl41GTeJh5UTraVVQjFsJBtlc+9wE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=IUsq4+frJsYBp5OQPhW3XeBK/ACbbWa61SPYtNMrj6pDxNeU24RtUdcaIZmOKQveg
+	 71LZVH3udyt6foSZ1GiqbQfVDMseCJH+xQfEDj0iICj+2/RyLBqip65ew1J3GczXC4
+	 OnMmqMnYGPjMRpuezgGvTX7/TdMNv+A8xpFnyzWpTjkpxm3aZf9TsvVEMkqOneKXi6
+	 fSERs2h3WglAVV0X1RloDRRza8jHydoTN4ZJ1zt1MvaYbECTBL2WXcEvX/+KHDXXV8
+	 XxPt6i3wqj3sFsfQMbwziXgFCaG7VLXX/5udDbSunw7grWY6OuZsfvgEhrNQonGwAD
+	 q/BXzZ04dcxhg==
+Date: Wed, 6 Nov 2024 08:15:41 -0800
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Christian Brauner <brauner@kernel.org>
+Cc: "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>,
+	John Garry <john.g.garry@oracle.com>,
+	Catherine Hoang <catherine.hoang@oracle.com>,
+	linux-ext4@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>,
+	Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@infradead.org>,
+	Ojaswin Mujoo <ojaswin@linux.ibm.com>, linux-block@vger.kernel.org,
+	Dave Chinner <david@fromorbit.com>, linux-kernel@vger.kernel.org,
+	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [ANNOUNCE v2] work tree for untorn filesystem writes
+Message-ID: <20241106161541.GN2386201@frogsfrogsfrogs>
+References: <20241106005740.GM2386201@frogsfrogsfrogs>
+ <20241106-zerkleinern-verzweifeln-7ec8173c56ad@brauner>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAEf4BzarhiBHAQXECJzP5e-z0fbSaTpfQNPaSXwdgErz2f0vUA@mail.gmail.com>
- <ZyH_fWNeL3XYNEH1@krava> <CAEf4BzZTTuBdCT2Qe=n7gqhf3yENZwHYUdsrQP9WfaEC4C35rw@mail.gmail.com>
- <20241106104639.GL10375@noisy.programming.kicks-ass.net> <20241106110557.GY33184@noisy.programming.kicks-ass.net>
-In-Reply-To: <20241106110557.GY33184@noisy.programming.kicks-ass.net>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Wed, 6 Nov 2024 08:15:00 -0800
-Message-ID: <CAEf4Bzbv_kv11STXafjdO3FsfyMuMNEG-=xWpeTw1cJdMHj+gw@mail.gmail.com>
-Subject: Re: The state of uprobes work and logistics
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Jiri Olsa <olsajiri@gmail.com>, Ingo Molnar <mingo@kernel.org>, Will Deacon <will@kernel.org>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Mark Rutland <mark.rutland@arm.com>, 
-	Linux trace kernel <linux-trace-kernel@vger.kernel.org>, bpf <bpf@vger.kernel.org>, 
-	Oleg Nesterov <oleg@redhat.com>, Masami Hiramatsu <mhiramat@kernel.org>, 
-	Liao Chang <liaochang1@huawei.com>, 
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, 
-	open list <linux-kernel@vger.kernel.org>, 
-	"linux-perf-use." <linux-perf-users@vger.kernel.org>, Kernel Team <kernel-team@meta.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241106-zerkleinern-verzweifeln-7ec8173c56ad@brauner>
 
-On Wed, Nov 6, 2024 at 3:06=E2=80=AFAM Peter Zijlstra <peterz@infradead.org=
-> wrote:
->
-> On Wed, Nov 06, 2024 at 11:46:39AM +0100, Peter Zijlstra wrote:
-> > On Tue, Nov 05, 2024 at 06:11:07PM -0800, Andrii Nakryiko wrote:
-> > > On Wed, Oct 30, 2024 at 2:42=E2=80=AFAM Jiri Olsa <olsajiri@gmail.com=
-> wrote:
-> > > >
-> > > > On Wed, Oct 16, 2024 at 12:35:21PM -0700, Andrii Nakryiko wrote:
-> > > >
-> > > > SNIP
-> > > >
-> > > > >   - Jiri Olsa's uprobe "session" support ([5]). This is less
-> > > > > performance focused, but important functionality by itself. But I=
-'m
-> > > > > calling this out here because the first two patches are pure upro=
-be
-> > > > > internal changes, and I believe they should go into tip/perf/core=
- to
-> > > > > avoid conflicts with the rest of pending uprobe changes.
-> > > > >
-> > > > > Peter, do you mind applying those two and creating a stable tag f=
-or
-> > > > > bpf-next to pull? We'll apply the rest of Jiri's series to
-> > > > > bpf-next/master.
-> > > >
-> > > >
-> > > > Hi Ingo,
-> > > > there's uprobe session support change that already landed in tip tr=
-ee,
-> > > > but we have bpf related changes that need to go in through bpf-next=
- tree
-> > > >
-> > > > could you please create the stable tag that we could pull to bpf-ne=
-xt/master
-> > > > and apply the rest of the uprobe session changes in there?
-> > >
-> > > Ping. We (BPF) are blocked on this, we can't apply Jiri's uprobe
-> > > session series ([0]), until we merge two of his patches that landed
-> > > into perf/core. Can we please get a stable tag which we can use to
-> > > pull perf/core's patches into bpf-next/master?
-> >
-> > The whole tip/perf/core should be stable, but let me try and figure out
-> > how git tags work.. might as well read a man-page today.
->
-> I might have managed to create a perf-core-for-bpf-next tag, but I'm not
-> sure I know enough about git to even test it.
->
-> Let me know..
+On Wed, Nov 06, 2024 at 10:50:21AM +0100, Christian Brauner wrote:
+> On Tue, Nov 05, 2024 at 04:57:40PM -0800, Darrick J. Wong wrote:
+> > Hi everyone,
+> > 
+> > Here's a slightly updated working branch for the filesystem side of
+> > atomic write changes for 6.13:
+> > 
+> > https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux.git/log/?h=fs-atomic_2024-11-05
+> > 
+> > This branch is, like yesterday's, based off of axboe's
+> > for-6.13/block-atomic branch:
+> > 
+> > https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-block.git/log/?h=for-6.13/block-atomic
+> > 
+> > The only difference is that I added Ojaswin's Tested-by: tags to the end
+> > of the xfs series.  I have done basic testing with the shell script at
+> > the end of this email and am satisfied that it at least seems to do the
+> > (limited) things that I think we're targeting for 6.13.
+> > 
+> > Christian: Could you pull this fs-atomic branch into your vfs.git work
+> > for 6.13, please?
+> 
+> Of course!
+> 
+> I did git pull fs-atomic_2024-11-05 from your tree. It should show up in
+> -next tomorrow.
 
-Looks good, thank you. I'm merging it into bpf-next, testing, and if
-everything looks good I'll apply Jiri's patches on top.
+Yay, thank you!!
 
-Tag is more so of a promise that everything up to that tag won't be
-rebased, otherwise we'll run into tons of problems during the merge
-window. That seems to be the case, so I'm proceeding, thank you!
+--D
 
