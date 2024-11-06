@@ -1,118 +1,120 @@
-Return-Path: <linux-kernel+bounces-398025-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398026-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 400D29BE469
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 11:38:45 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C049C9BE46D
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 11:39:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB5E61F23B48
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 10:38:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 725DE1F225B4
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 10:39:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 767A51DE3B2;
-	Wed,  6 Nov 2024 10:38:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D39291DE3B2;
+	Wed,  6 Nov 2024 10:39:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="Edm/wyRZ"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="ZpaYPOov"
+Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 993821DE2DC
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 10:38:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8103B1D358B;
+	Wed,  6 Nov 2024 10:39:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730889513; cv=none; b=KRmhhrmYaUrZ243/B30vpQYGcdj6OPeYqY29unaCm8embJk40CIsafw4+QSowiLh+CTk9pSqMEZDXFBeSbV3mfFqrfW3SPuKhQcDWdNRo/OaubuqGgybN5oq85oKJ9jVZBCEVNyHyOb12jtmEMhkhWzsT+DOCBE30aDZFHvkm3c=
+	t=1730889543; cv=none; b=OctB02QNQqQV8xSdIdcvNJBgkNDPS8tnbUixZfY7ha6gXJfzdpn7xURKSQCXZVVCHv7Wr+Drv9N5o65V2azJ+igOOn3pjhF2E8rXu4r1v9B719RyG/+UJD8tpczsy51DbC0xCbHlWdgLTP2P7Uz5HjeBbHrFwmG/WodGLNxefJI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730889513; c=relaxed/simple;
-	bh=xfVECVyPhstuVzixwnpeD2YetzBptltzs/LNlYU8a0I=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=GdJ+f6DuyhMDi2YA1vIXCQ5/gdBStukIf6c6/TO6NH6jVl2rc8IHPI6zdL6MIrAMVI6rDRXQbNe71E0+TZjXVZtZWOiSLq/dC+V+bSZok8KV7hMwB2WNxqYMjpzA6HLLR2Cn1g1YgJ/J3rL4siMVqZqXf66OQdvjFxpuJOeXXfQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=Edm/wyRZ; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-43159c9f617so51166265e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2024 02:38:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1730889510; x=1731494310; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=VY6uZFvxEU5LyK6YK1tW8F5ABPl0h8dIQVI4hDIvL6U=;
-        b=Edm/wyRZ3h2Z0upEfBE5EFTB2uqTUKD+iMYH1BJt8Bms242NbnzlEJt6ITQZmhnbzD
-         bOGdG6IBt3OD0fdBHKKJnM7B8zXzAYknpX7KYm2kCsW+dgNp0qc2HpOeG9zfKtGyDg6W
-         3VXMoUJz8wMPg0gMYZGJ3dr4xA5OZPCFjzJoF6fcpnQ62abHi2VWWbYUkM3HYAbLH7ih
-         KbqHfWqLVbLbGn3R82EMTT1XAQHesiG15W1lv92Xl0Xz75mXzxseLDTUwzCD+KGq8Qao
-         VNm5mQSBigR0heCmnbEaUlVHnkmjNozai+eRQrADHzTpImxTSf0E2N0MA8PnurJPo+EO
-         6W/A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730889510; x=1731494310;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=VY6uZFvxEU5LyK6YK1tW8F5ABPl0h8dIQVI4hDIvL6U=;
-        b=FYeCZV34EU8Dt6/k/YW4SbGZUmnxWJjvjBDo81xK4+wztDDOCA/GssAf8afBcY3wOq
-         DEFkmATYKfWfFahsn95KlgPvyySM7+vNj6X+6RygeXT2b4sxphgbgzNRYnnE0Lkau9pV
-         b0wnS+mipMXfljQzjGQ/AgAq6rb9meN6wDmRswb1VEuqg3fvyruWUeEQdxd2xiP4OR3y
-         iXC/iwiNWEpvSH3vwL7b2sT1E/pyOZ3cmekVnL2cUqLqaq+b5vGTfu1PBMOxjY7ZDYCZ
-         MkxH1sK4jtAZFnkHmK5LG7Dshxe/O8bIjvkboNCMegWXClFVRPm6KwWdxb4Rh7TpgAi0
-         3+kA==
-X-Forwarded-Encrypted: i=1; AJvYcCU02QmBJ5ZherIN1xMeHVUL9g3DcFSKCSNJm7GGEuQMPROMNjBpRGstmEgOUvWhy85ke1Mb2zZQ6cBAcFg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx1eNus3jjWoOXcTYbzHsAMI1iB2w+C8Am/0cpxSVXndtlJaxPB
-	lBPyKXpl7zPIrG6NY+QXRSn7RXJVwTnoCocXGbYNIVDBeRY8Jf8NPVTaDgWGkmg=
-X-Google-Smtp-Source: AGHT+IG0moN4/ZDGzWYlA0aTjJYKTQ0jeyFFEkAKoyArrCWMEt0WHKRL7KNUzqDgf3nMKBqq7+I6Ng==
-X-Received: by 2002:a05:600c:2d81:b0:431:93dd:8e77 with SMTP id 5b1f17b1804b1-431b172b3bemr312880835e9.31.1730889509969;
-        Wed, 06 Nov 2024 02:38:29 -0800 (PST)
-Received: from axel-x1.baylibre (amontpellier-556-1-151-252.w109-210.abo.wanadoo.fr. [109.210.7.252])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432aa6da89bsm17667715e9.30.2024.11.06.02.38.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Nov 2024 02:38:29 -0800 (PST)
-From: ahaslam@baylibre.com
-To: jic23@kernel.org,
-	krzk+dt@kernel.org,
-	dlechner@baylibre.com
-Cc: Michael.Hennerich@analog.com,
-	robh@kernel.org,
-	conor+dt@kernel.org,
-	ahaslam@baylibre.com,
-	linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] dt-bindings: iio: dac: ad5791: ldac gpio is active low
-Date: Wed,  6 Nov 2024 11:38:24 +0100
-Message-Id: <20241106103824.579292-1-ahaslam@baylibre.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1730889543; c=relaxed/simple;
+	bh=2c7xC3VVkA4/2PdogbY+Prwga5xbdbc+MQzkEUwQiWA=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=ZBq4BcWnrDq8mlTx950UJ96BUVMNM6ELwENjEOzzpqkzSVUv7xnkBTjI5RZJ9msG9uu79v8n3CKP+C+UhZjwapvCccqbtvDRjH/v5YyU4Vx7PshQwqM5Bd/OWVTUdThi2bZt2CH02vXf3y+KEx/G6jq4gb4T5ILOTtCt51xGRaQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=ZpaYPOov; arc=none smtp.client-ip=116.203.91.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
+	t=1730889539;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8MHWiUN+hvZJqLkzW7YR9dn2TMo/r1ycB79pCW3nHhQ=;
+	b=ZpaYPOovhJrW7WRmAad0cBiYuAVwYFCfh7Q+1vQRonZIIGdRHJET+NX/BoOiOBaCj1Z3Rj
+	iIEk7q+V4CPqnbfxZP355dNGim7xBFY3bbgUJlX3Uro/RcGR2gdsBndLqiaWNVnFkUTirY
+	Ja8gHV7nRVlwWXiBXdlgtTxGcwoM9bAJy7a6Ws35djO1VmKy76lvZWGBN45IPopWfRkJiL
+	nbtu1nwj8sESAT+d2YGrSG19B1Th395mGvi2ppD2YbaozIKgbVGCGBKSd1+QuaSrVVAN2e
+	EEV+P3Ifhooi65+YC2r/5TTO/K2wgH3vAi6bf1TLGIjdR55QVfGdtVRanNFutw==
+Date: Wed, 06 Nov 2024 11:38:59 +0100
+From: Dragan Simic <dsimic@manjaro.org>
+To: Quentin Schulz <quentin.schulz@cherry.de>
+Cc: linux-rockchip@lists.infradead.org, heiko@sntech.de,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, alchark@gmail.com
+Subject: Re: [PATCH v2] arm64: dts: rockchip: Add OPP voltage ranges to RK3399
+ OP1 SoC dtsi
+In-Reply-To: <f6bb3387-4396-45d4-9cb4-594d58095510@cherry.de>
+References: <dbee35c002bda99e44f8533623d94f202a60da95.1730881777.git.dsimic@manjaro.org>
+ <f6bb3387-4396-45d4-9cb4-594d58095510@cherry.de>
+Message-ID: <afbc922d80e2c122bd412782ee882ec1@manjaro.org>
+X-Sender: dsimic@manjaro.org
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Authentication-Results: ORIGINATING;
+	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
 
-From: Axel Haslam <ahaslam@baylibre.com>
+Hello Quentin,
 
-On the example, the ldac gpio is flagged as active high, when in reality
-its an active low gpio. Fix the example by using the active low flag for
-the ldac gpio.
+On 2024-11-06 10:32, Quentin Schulz wrote:
+> On 11/6/24 9:33 AM, Dragan Simic wrote:
+>> Add support for voltage ranges to the CPU, GPU and DMC OPPs defined in 
+>> the
+>> SoC dtsi for Rockchip OP1, as a variant of the Rockchip RK3399.  This 
+>> may be
+>> useful if there are any OP1-based boards whose associated voltage 
+>> regulators
+>> are unable to deliver the exact voltages; otherwise, it causes no 
+>> functional
+>> changes to the resulting OPP voltages at runtime.
+>> 
+>> These changes cannot cause stability issues or any kind of damage, 
+>> because
+>> it's perfectly safe to use the highest voltage from an OPP group for 
+>> each OPP
+>> in the same group.  The only possible negative effect of using higher 
+>> voltages
+>> is wasted energy in form of some additionally generated heat.
+>> 
+>> Reported-by: Quentin Schulz <quentin.schulz@cherry.de>
+> 
+> Well, I merely highlighted that the voltage was different on OP1
+> compared to RK3399 for the 600MHz OPP :)
 
-Fixes: baaa92d284d5 ("dt-bindings: iio: dac: ad5791: Add optional reset, clr and ldac gpios")
-Signed-off-by: Axel Haslam <ahaslam@baylibre.com>
----
- Documentation/devicetree/bindings/iio/dac/adi,ad5791.yaml | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I just wanted to somehow acknowledge that you made me work on
+this patch, so to speak. :)
 
-diff --git a/Documentation/devicetree/bindings/iio/dac/adi,ad5791.yaml b/Documentation/devicetree/bindings/iio/dac/adi,ad5791.yaml
-index 79cb4b78a88a..2bd89e0aa46b 100644
---- a/Documentation/devicetree/bindings/iio/dac/adi,ad5791.yaml
-+++ b/Documentation/devicetree/bindings/iio/dac/adi,ad5791.yaml
-@@ -91,7 +91,7 @@ examples:
-             vrefn-supply = <&dac_vrefn>;
-             reset-gpios = <&gpio_bd 16 GPIO_ACTIVE_LOW>;
-             clear-gpios = <&gpio_bd 17 GPIO_ACTIVE_LOW>;
--            ldac-gpios = <&gpio_bd 18 GPIO_ACTIVE_HIGH>;
-+            ldac-gpios = <&gpio_bd 18 GPIO_ACTIVE_LOW>;
-         };
-     };
- ...
--- 
-2.34.1
+> So... If there's ONE SoC I'm pretty sure is working as expected it's
+> the OP1 fitted on the Gru Chromebooks with the ChromiumOS kernel fork
+> (though yes, I believe all Gru CB are EoL since August 2023). In the
+> 6.1 kernel fork, there's also no range:
+> https://chromium.googlesource.com/chromiumos/third_party/kernel/+/refs/heads/chromeos-6.1/arch/arm64/boot/dts/rockchip/rk3399-op1-opp.dtsi
+> 
+> So not sure we need to handle theoretical cases here. Will let
+> maintainers decide on that one. FWIW, there are two other OP1 devices,
+> the RockPi4A+ and RockPi4B+ which do not change the OPP either.
 
+The thing is that adding the voltage ranges won't change anything
+for the devices whose voltage regulators are capable of providing
+the exact OPP voltages.  They'll still be set to the exact values
+as before these changes, so there's no worry about breaking anything,
+while we make the things a bit more consistent this way.
+
+I also plan to implement and upstream the DT for TinkerBoard 2S,
+which is based on the OP1, and its voltage regulator setup may
+actually need these voltage ranges.
 
