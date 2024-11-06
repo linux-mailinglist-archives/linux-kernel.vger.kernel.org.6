@@ -1,235 +1,126 @@
-Return-Path: <linux-kernel+bounces-397917-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397918-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4CAC9BE259
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 10:24:03 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC4699BE25C
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 10:24:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 63B37287C86
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 09:24:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8DB021F214A9
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 09:24:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 630731D966A;
-	Wed,  6 Nov 2024 09:23:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58AC21DA11A;
+	Wed,  6 Nov 2024 09:23:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="y73pyFYl";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="8lku3hhO";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="y73pyFYl";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="8lku3hhO"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="WO9N43Ha"
+Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDFEC1D9598
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 09:23:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6A131D9339;
+	Wed,  6 Nov 2024 09:23:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730885020; cv=none; b=dSzJHZFKP50Y0AgKPAdkOepnRXw9FX236yyS3MYPQDR70+BFLM1c13cQBV55HDBxBiqsYeiYzc4sSeSu0EXrDlI9U4UWgTOnxD3XriGW2y23BH0MNEuGQgstCl5bLCfJYz5okardpw4R7Djag9qXGbImvCMHJtpiskMccbLevEo=
+	t=1730885037; cv=none; b=JFS5LK7Z+mQOF0pD+B7+s3hB50XXohPEAQ2cnYkjrv8D5m4cQI9qpzC52Vb3ATz/r+3BGnaT0+Qepj0Vjiojwg9AdJkRg8xwFhe+nnf4fDK0aFlIRFLNaFCFW+04C/ZO4SsDraUgSuBxlGfTMo7yS3+SL1eA7+D7g0nLz+80fnw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730885020; c=relaxed/simple;
-	bh=cHPQZLEjtouYjHO4dCl0FTa3LDj5Nz5AQLY8nuFBRB8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ew40qIoe0Uz4NLxPr+XOcGFxml/fLjrdfFjiB8OCJjjE2hOT2X7pRR8Ir4F233Sw9+yp49PnSTieywDHGxbcjRlaKohube+W26dtJl3H0JtDJWu0AdmXrS6SXA9Msh5uAvDDwfEpQK7j9Ldg3Tw4NzQGOaMfhk8d50KuOWt22Bo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=y73pyFYl; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=8lku3hhO; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=y73pyFYl; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=8lku3hhO; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id F1A6B21C29;
-	Wed,  6 Nov 2024 09:23:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1730885017; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=x1wxZBL7gdc64Tq3vyI4u8KFmJMP6vW9gBY9WDr8nPo=;
-	b=y73pyFYl0zRPSMbgA90HjEOzYjrwrmTOJWb4Q8o8TtT4VQPy2oCUdTkDXEuh9qKNqSEgDb
-	r6XgEXE9mzMtPyM6bpO05hU6KLTSrP0JzAxUILbfphr9SROJEwZfvf14MQvEg8SyMQFUmN
-	bmF3IVaPQOyPIFgSkOuVGmw36Xpc6xU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1730885017;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=x1wxZBL7gdc64Tq3vyI4u8KFmJMP6vW9gBY9WDr8nPo=;
-	b=8lku3hhOHi/fLguBC2f11zMO7xeZ/gUp2v4/q+2Os3MY2wjeH76h0vBe9GI0RBBfZSKqM1
-	ZW7IL3HKzCveoJAw==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=y73pyFYl;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=8lku3hhO
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1730885017; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=x1wxZBL7gdc64Tq3vyI4u8KFmJMP6vW9gBY9WDr8nPo=;
-	b=y73pyFYl0zRPSMbgA90HjEOzYjrwrmTOJWb4Q8o8TtT4VQPy2oCUdTkDXEuh9qKNqSEgDb
-	r6XgEXE9mzMtPyM6bpO05hU6KLTSrP0JzAxUILbfphr9SROJEwZfvf14MQvEg8SyMQFUmN
-	bmF3IVaPQOyPIFgSkOuVGmw36Xpc6xU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1730885017;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=x1wxZBL7gdc64Tq3vyI4u8KFmJMP6vW9gBY9WDr8nPo=;
-	b=8lku3hhOHi/fLguBC2f11zMO7xeZ/gUp2v4/q+2Os3MY2wjeH76h0vBe9GI0RBBfZSKqM1
-	ZW7IL3HKzCveoJAw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E3D4013736;
-	Wed,  6 Nov 2024 09:23:35 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id YwdeNJc1K2e7UQAAD6G6ig
-	(envelope-from <osalvador@suse.de>); Wed, 06 Nov 2024 09:23:35 +0000
-Date: Wed, 6 Nov 2024 10:23:34 +0100
-From: Oscar Salvador <osalvador@suse.de>
-To: John Hubbard <jhubbard@nvidia.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org,
-	David Hildenbrand <david@redhat.com>,
-	Vivek Kasireddy <vivek.kasireddy@intel.com>,
-	Dave Airlie <airlied@redhat.com>, Gerd Hoffmann <kraxel@redhat.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	Christoph Hellwig <hch@infradead.org>,
-	Jason Gunthorpe <jgg@nvidia.com>, Peter Xu <peterx@redhat.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Daniel Vetter <daniel.vetter@ffwll.ch>,
-	Dongwon Kim <dongwon.kim@intel.com>,
-	Hugh Dickins <hughd@google.com>,
-	Junxiao Chang <junxiao.chang@intel.com>,
-	Mike Kravetz <mike.kravetz@oracle.com>,
-	linux-stable@vger.kernel.org
-Subject: Re: [PATCH v2 1/1] [PATCH] mm/gup: avoid an unnecessary allocation
- call for FOLL_LONGTERM cases
-Message-ID: <Zys1luxxLWwy0yXh@localhost.localdomain>
-References: <20241105032944.141488-1-jhubbard@nvidia.com>
- <20241105032944.141488-2-jhubbard@nvidia.com>
+	s=arc-20240116; t=1730885037; c=relaxed/simple;
+	bh=05NiNYkzern77O2dzcorGVgTTuDosIz2qvsbEWhI1Ng=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=sEcAvtCuBiyBEpzhUiKoQ5m+4Je1RZjFkubKZ61amwFKeMW9gT7UFJqj6Jn+hgJhP0xWsItHYkD4Z7neqKjdAteuVOmvTA2IgaGCtgA9LsoPDVT7FxkFHuAAoTIwDOyke/nKXMpUn0aYopYpFzv7dr2RTeGK0CEf5IxmSmUJ6Zo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=WO9N43Ha; arc=none smtp.client-ip=178.238.236.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=kemnade.info; s=20220719; h=References:In-Reply-To:Cc:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=+C9y87arjknzfpBLjJ93cRQXmOcS1EWBKhC9mjNn3MM=; b=WO9N43HawEheQieAKYzN7m2qAl
+	c0/jBL1DlT2dLtS1K0PADrP3tXJp6yLkw/G1FSjE9jD/TDOzj/y8Y/65I6LbRQD/HyEn5GJekIXtx
+	+roFlLGkI8GUGdpZ/v+MnNlLmA/mSXig6LyJeLYj7AH263VOjpT/etAHc3yMyFC1/ez4JpJh3sPUj
+	9vSCdKfzoj7t+WlcR6uCdrFQk3v/aPlhcIokxdv3rDLOxVRf7DIxH1ruyWpx8KOKxoG40+INxnSHN
+	YmHR1tTZ+hsbXjz5ZUkEdIsXedXnaNKP78x+49HDm+NmcR4qynXv7Rq2+zKdKzk9N9SkrSbB0cPi6
+	9lJ04Kpw==;
+Date: Wed, 6 Nov 2024 10:23:42 +0100
+From: Andreas Kemnade <andreas@kemnade.info>
+To: "H. Nikolaus Schaller" <hns@goldelico.com>
+Cc: Reid Tonking <reidt@ti.com>, Tony Lindgren <tony@atomide.com>,
+ "Raghavendra, Vignesh" <vigneshr@ti.com>, Aaro Koskinen
+ <aaro.koskinen@iki.fi>, Janusz Krzysztofik <jmkrzyszt@gmail.com>,
+ Linux-OMAP <linux-omap@vger.kernel.org>, linux-i2c@vger.kernel.org, Linux
+ Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] i2c: omap: Fix standard mode false ACK readings
+Message-ID: <20241106102342.393abe25@akair>
+In-Reply-To: <664241E0-8D6B-4783-997B-2D8510ADAEA3@goldelico.com>
+References: <20230426194956.689756-1-reidt@ti.com>
+	<445b3cbf-ffbc-6f77-47db-c30fc599e88f@ti.com>
+	<20230428074330.GJ14287@atomide.com>
+	<20230428183037.wbhds54dz5l4v5xa@reidt-t5600.dhcp.ti.com>
+	<664241E0-8D6B-4783-997B-2D8510ADAEA3@goldelico.com>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241105032944.141488-2-jhubbard@nvidia.com>
-X-Rspamd-Queue-Id: F1A6B21C29
-X-Spam-Score: -4.51
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[19];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,suse.de:dkim,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,nvidia.com:email];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Mon, Nov 04, 2024 at 07:29:44PM -0800, John Hubbard wrote:
-> commit 53ba78de064b ("mm/gup: introduce
-> check_and_migrate_movable_folios()") created a new constraint on the
-> pin_user_pages*() API family: a potentially large internal allocation
-> must now occur, for FOLL_LONGTERM cases.
+Am Wed, 11 Sep 2024 11:40:04 +0200
+schrieb "H. Nikolaus Schaller" <hns@goldelico.com>:
+
+> Hi,
 > 
-> A user-visible consequence has now appeared: user space can no longer
-> pin more than 2GB of memory anymore on x86_64. That's because, on a 4KB
-> PAGE_SIZE system, when user space tries to (indirectly, via a device
-> driver that calls pin_user_pages()) pin 2GB, this requires an allocation
-> of a folio pointers array of MAX_PAGE_ORDER size, which is the limit for
-> kmalloc().
+> > Am 28.04.2023 um 20:30 schrieb Reid Tonking <reidt@ti.com>:
+> > 
+> > On 10:43-20230428, Tony Lindgren wrote:  
+> >> * Raghavendra, Vignesh <vigneshr@ti.com> [230427 13:18]:  
+> >>> On 4/27/2023 1:19 AM, Reid Tonking wrote:  
+> >>>> Using standard mode, rare false ACK responses were appearing with
+> >>>> i2cdetect tool. This was happening due to NACK interrupt
+> >>>> triggering ISR thread before register access interrupt was
+> >>>> ready. Removing the NACK interrupt's ability to trigger ISR
+> >>>> thread lets register access ready interrupt do this instead.  
+> >> 
+> >> So is it safe to leave NACK interrupt unhandled until we get the
+> >> next interrupt, does the ARDY always trigger after hitting this?
+> >> 
+> >> Regards,
+> >> 
+> >> Tony  
+> > 
+> > Yep, the ARDY always gets set after a new command when register
+> > access is ready so there's no need for NACK interrupt to control
+> > this.  
 > 
-> In addition to the directly visible effect described above, there is
-> also the problem of adding an unnecessary allocation. The **pages array
-> argument has already been allocated, and there is no need for a
-> redundant **folios array allocation in this case.
+> I have tested one GTA04A5 board where this patch breaks boot on
+> v4.19.283 or v6.11-rc7 (where it was inherited from some earlier -rc
+> series).
 > 
-> Fix this by avoiding the new allocation entirely. This is done by
-> referring to either the original page[i] within **pages, or to the
-> associated folio. Thanks to David Hildenbrand for suggesting this
-> approach and for providing the initial implementation (which I've tested
-> and adjusted slightly) as well.
+> The device is either stuck with no signs of activity or reports RCU
+> stalls after a 20 second pause.
 > 
-> Fixes: 53ba78de064b ("mm/gup: introduce check_and_migrate_movable_folios()")
-> Suggested-by: David Hildenbrand <david@redhat.com>
-> Cc: Vivek Kasireddy <vivek.kasireddy@intel.com>
-> Cc: Dave Airlie <airlied@redhat.com>
-> Cc: Gerd Hoffmann <kraxel@redhat.com>
-> Cc: Matthew Wilcox <willy@infradead.org>
-> Cc: Christoph Hellwig <hch@infradead.org>
-> Cc: Jason Gunthorpe <jgg@nvidia.com>
-> Cc: Peter Xu <peterx@redhat.com>
-> Cc: Arnd Bergmann <arnd@arndb.de>
-> Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
-> Cc: Dongwon Kim <dongwon.kim@intel.com>
-> Cc: Hugh Dickins <hughd@google.com>
-> Cc: Junxiao Chang <junxiao.chang@intel.com>
-> Cc: Mike Kravetz <mike.kravetz@oracle.com>
-> Cc: Oscar Salvador <osalvador@suse.de>
-> Cc: linux-stable@vger.kernel.org
-> Signed-off-by: John Hubbard <jhubbard@nvidia.com>
+Reproduced some problem here:
+i2cset 1 0x69 0x14 0xb6 (reset command for gyro BMG160)
+[  736.136108] omap_i2c 48072000.i2c: addr: 0x0069, len: 2, flags: 0x0,
+stop: 1
+[  736.136322] omap_i2c 48072000.i2c: IRQ (ISR = 0x0010)
+either with this patch applied:
+... system mostly hangs, i2cset does not return.
+with it reverted:
+... most times I see after this:
+[  736.136505] omap_i2c 48072000.i2c: IRQ (ISR = 0x0002)
+and i2cset says:
+i2cset: write failed: Remote I/O error
 
-Hi John, thanks for doing this.
+... sometimes:
+omap_i2c 48072000.i2c: IRQ (ISR = 0x0004)
+and i2cset is successful.
 
-Reviewed-by: Oscar Salvador <osalvador@suse.de>
+Other register writes seem to work reliably, just the reset command.
+I had tested with bmg driver disabled earlier,
+so it did not come to light.
 
-Nit below:
-
-> +static int
-> +migrate_longterm_unpinnable_folios(struct list_head *movable_folio_list,
-> +				   struct pages_or_folios *pofs)
->  {
->  	int ret;
->  	unsigned long i;
->  
-> -	for (i = 0; i < nr_folios; i++) {
-> -		struct folio *folio = folios[i];
-> +	for (i = 0; i < pofs->nr_entries; i++) {
-> +		struct folio *folio = pofs_get_folio(pofs, i);
->  
->  		if (folio_is_device_coherent(folio)) {
->  			/*
-> @@ -2344,7 +2380,7 @@ static int migrate_longterm_unpinnable_folios(
->  			 * convert the pin on the source folio to a normal
->  			 * reference.
->  			 */
-> -			folios[i] = NULL;
-> +			pofs_clear_entry(pofs, i);
->  			folio_get(folio);
->  			gup_put_folio(folio, 1, FOLL_PIN);
->  
-> @@ -2363,8 +2399,8 @@ static int migrate_longterm_unpinnable_folios(
->  		 * calling folio_isolate_lru() which takes a reference so the
->  		 * folio won't be freed if it's migrating.
->  		 */
-> -		unpin_folio(folios[i]);
-> -		folios[i] = NULL;
-> +		unpin_folio(pofs_get_folio(pofs, i));
-
-We already retrieved the folio before, cannot we just bypass
-pofs_get_folio() here?
-
-
--- 
-Oscar Salvador
-SUSE Labs
+Regards,
+Andreas
 
