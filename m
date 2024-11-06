@@ -1,146 +1,180 @@
-Return-Path: <linux-kernel+bounces-397834-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397835-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA76F9BE129
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 09:39:05 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3537F9BE130
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 09:40:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F9BC28397A
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 08:39:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 65E731C22B1D
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 08:40:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEE971D54D1;
-	Wed,  6 Nov 2024 08:38:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E8051D5151;
+	Wed,  6 Nov 2024 08:40:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="j1Xm6UDU"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bZJ3edXo"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BC0D38F82
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 08:38:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC61A7D3F4;
+	Wed,  6 Nov 2024 08:40:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730882338; cv=none; b=WT8hILNdCJ+jzVqANwnp8mOfra+687jSYofabXz8KTF0nyN/yBB4GvoYfUtBL69LatGO01HDbeWeMt4oLwER1kVQ7Ak2Tb3Bm73P7ldueXZ8q+FvIY6PtbKw4ShR/fS0We5feD87ODrIyPOuSNjZXMm5cC6WEkb7ftpeTKLPFv0=
+	t=1730882429; cv=none; b=iBnygQBx2vFMIx9XMubtXYkh6fcFeR7HGEm84vMnNI71EoHQhgGitj97kBKyO9sQvCnSq8C73RjJTqNi6jDFajdiflq5VgGqCbNdyl2/xectRW4AqTod44IzRN0EdCZ4knzlW5cjd2e0t7CdWQmDKc7Y8jaYr1eHHs12H8jRc3E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730882338; c=relaxed/simple;
-	bh=jJaeBFIHIkLHuZkB2SPfqzxxy4446VpSvpu9ioiwLPo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sFxt4zpW9+d1LGCzOZGaK2woQIlANy6EkCz/8CEwKlj8dEoVwSaeALiz/DwB2KKmy2TMYJLJZNsmDdbHas6UpZeuqsQ/ZeAXrGyHzcraYuETXth9vy8otlqoJtRxoWWjbvO98E/oZ/KaisZCJ3oalpFDVEi5mlnaUdw3EgA+cvk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=j1Xm6UDU; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-43150ea2db6so43355e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2024 00:38:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1730882335; x=1731487135; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hmeeFoFOoLxB4yOuzfFJOjj34YSoSigNjNhyLeRpQgk=;
-        b=j1Xm6UDUBvrLnRxezOY5Qux7NHcp6k8eHvKPwryMeJofGbUUKZYgr1if4yhXg+9um5
-         z1O0ipaYVem5AcAvcsvaavogolqyTe3HaUzH15SvcxJohLz5Zg4rhdXnzJtg67FePmqw
-         DAEHuzyJw9jjBgA4CRz0TAQd/1YP/T2XaoLnaUGYFnr2Iqp1aGpd4bU78GAmYoMpPj5J
-         hYdp5Bpkdy/nrOLk6bNbImdXdZzN8FpiK5hFx14J5ey0SLberGcLOROZdJKmtV1Jnjf4
-         KMvu5f1AaDVimfCeScyySZ6NXA7cMMf4tO8GgCenEmjs1DI9eHeaLWvowdVF/rCSSpyR
-         Pc2g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730882335; x=1731487135;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hmeeFoFOoLxB4yOuzfFJOjj34YSoSigNjNhyLeRpQgk=;
-        b=JfhX+/Ot1MlnIO8zPqO3Ilg4t44c4p7Q4PM5EtwKGd7ZTSm9r+GVX15i1m1g04KPan
-         WghcLnbizmBNf0V2N4fXoEnd7bzO0AKa/tjjAyLdgUQU0vhe7SA5DmWNAuDp5la6W9pH
-         Z6A6yplhRsMT2Pu+8lwvpL1t6zm9CtAT3zLddKoQGVlmHW/ORHz21Gz7Dfz273VRT2QV
-         tfIMTPQv+of+E/OUvkXTd5qxvUPInxtM3KIHAdkQ8PBEvAgiGcjkrSv6lpnXE/+5JiFJ
-         COGOQF6RvWzNB5/tYoZwxeEP6qqU7kmJUz6fGxTmdNerWtgQ2AUAGIFIN3iCiui697vw
-         foyQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVEustV8/ah0M9s/eYqgMVveVTlVrlGsZ1MYjWOCGLWo8gKTGPI73Zg6VqAlOBqdUNnT3nFHHF+gka0PDY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwF7xhY2fjMr1zttLltAi3JRiWZzc1eXjFx+BImzpcwF3jv1lnj
-	5WKrXstNvk9n7XletTNzPvEX5B82G7a7JbkU6eaLCxUrcFm0X4/dkpul4mMu1g8taIbq3dh3Z5j
-	sraKF8sVhJlYWbKuiXiKl/RVUv0lfD1l6fIGJ
-X-Gm-Gg: ASbGncsa8eOpEV89bLfWbMeQW/ANQ8rxU+lZTFZlGEw3mqmtwisAzkT/wSciCmfXplz
-	GqW7DWIn0qBJYzREVVNOJMdZJfiri+Su8uhSTqgOj3AkN3CoDtwAZd5Nx
-X-Google-Smtp-Source: AGHT+IFE7a8/uWdpVs+aeR5w7jYKXAaO8cfGjh6/ezR19M0yoD2tlzYRkDrPLuwTyjT1hVfrKzI5dBNM9Sqa/ASR3RM=
-X-Received: by 2002:a05:600c:2188:b0:426:6edd:61a7 with SMTP id
- 5b1f17b1804b1-432aa3fdbe5mr756275e9.7.1730882334733; Wed, 06 Nov 2024
- 00:38:54 -0800 (PST)
+	s=arc-20240116; t=1730882429; c=relaxed/simple;
+	bh=U4H1UkFB2GiREgkJc442onlPdKsWNCgG54uKnyfm/yE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OaYm89X1SSxQS6Dyj+mYsKirPNwV/asA4Rt7rJbC4hRa5qso29P2Ntc0ycnOfz9DPRpsphO7VXdH+rhQ9IcsqlM9qv1KzYUjrh8XUMIqnaJNEvjyfQbuZGdF3oStN0dLHhKVb16dtJbDwGdC1Ga6WyCdOasrh7ThqqXVetpG60o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bZJ3edXo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37D5CC4CECD;
+	Wed,  6 Nov 2024 08:40:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730882428;
+	bh=U4H1UkFB2GiREgkJc442onlPdKsWNCgG54uKnyfm/yE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=bZJ3edXoEfh9dGZK0jiFJthUAZChOZZGR/pTo3ShyIsPj0U8aTOe1AvVvxLR6Tjqs
+	 5tZhSQ8U85XSYeV2/DG3iYo460PUDQpw86RWcON4q1VY+JtCAp8r0zCVGfNFHZdP28
+	 nc9CrJRXKRnDQGX+WnpflWFZ22EkJLEybEwkb147mYEU9Aa4d8n175W8uwiuAHYgYP
+	 4AN70SZMKdITpwp1qA/T+X1joSJug6eRsq60bzBCkH1poDnVD5p4CIT2lkDvQUAAxQ
+	 6xEJIrj2XsYzoO0ELm0K/dHecBEPp8n4YPdG/BlUCZs1jUmzonvtXf9NCdAuRPiIJ8
+	 fUNivVesNfpHw==
+Date: Wed, 6 Nov 2024 08:40:24 +0000
+From: Lee Jones <lee@kernel.org>
+To: anish kumar <yesanishhere@gmail.com>
+Cc: Mukesh Ojha <quic_mojha@quicinc.com>, Pavel Machek <pavel@ucw.cz>,
+	linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] leds: class: Protect brightness_show() with
+ led_cdev->led_access mutex
+Message-ID: <20241106084024.GH1807686@google.com>
+References: <20241103160527.82487-1-quic_mojha@quicinc.com>
+ <CABCoZhCxgQmkpCtCUtSwpHRHzn-EUBRnT5jCEDGM0hh28Kkz5g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241106083501.408074-1-guanyulin@google.com> <20241106083501.408074-6-guanyulin@google.com>
-In-Reply-To: <20241106083501.408074-6-guanyulin@google.com>
-From: Guan-Yu Lin <guanyulin@google.com>
-Date: Wed, 6 Nov 2024 16:38:43 +0800
-Message-ID: <CAOuDEK1r+2f-nXBRO-i0NZ7oriM93kyQzgKMpw+ocqgmWBBpoA@mail.gmail.com>
-Subject: Re: [PATCH v6 5/5] usb: host: enable sideband transfer during system sleep
-To: gregkh@linuxfoundation.org, Thinh.Nguyen@synopsys.com, 
-	mathias.nyman@intel.com, stern@rowland.harvard.edu, sumit.garg@linaro.org, 
-	dianders@chromium.org, kekrby@gmail.com, oneukum@suse.com, 
-	yajun.deng@linux.dev, niko.mauno@vaisala.com, christophe.jaillet@wanadoo.fr, 
-	tj@kernel.org, stanley_chang@realtek.com, andreyknvl@gmail.com, 
-	quic_jjohnson@quicinc.com, ricardo@marliere.net
-Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CABCoZhCxgQmkpCtCUtSwpHRHzn-EUBRnT5jCEDGM0hh28Kkz5g@mail.gmail.com>
 
-On Wed, Nov 6, 2024 at 4:35=E2=80=AFPM Guan-Yu Lin <guanyulin@google.com> w=
-rote:
->
-> diff --git a/drivers/usb/core/driver.c b/drivers/usb/core/driver.c
-> index e53cb4c267b3..e5bb26e6c71a 100644
-> --- a/drivers/usb/core/driver.c
-> +++ b/drivers/usb/core/driver.c
-> @@ -1583,6 +1583,11 @@ int usb_suspend(struct device *dev, pm_message_t m=
-sg)
->         struct usb_device       *udev =3D to_usb_device(dev);
->         int r;
->
-> +       if (msg.event =3D=3D PM_EVENT_SUSPEND && usb_sideband_check(udev)=
-) {
-> +               dev_dbg(dev, "device accessed via sideband\n");
-> +               return 0;
-> +       }
-> +
->         unbind_no_pm_drivers_interfaces(udev);
->
->         /* From now on we are sure all drivers support suspend/resume
-> @@ -1619,6 +1624,11 @@ int usb_resume(struct device *dev, pm_message_t ms=
-g)
->         struct usb_device       *udev =3D to_usb_device(dev);
->         int                     status;
->
-> +       if (msg.event =3D=3D PM_EVENT_RESUME && usb_sideband_check(udev))=
- {
-> +               dev_dbg(dev, "device accessed via sideband\n");
-> +               return 0;
-> +       }
-> +
->         /* For all calls, take the device back to full power and
->          * tell the PM core in case it was autosuspended previously.
->          * Unbind the interfaces that will need rebinding later,
+On Sun, 03 Nov 2024, anish kumar wrote:
 
-In v5, Greg points out the race window between checking sideband
-activity and handling power management of usb devices. We should
-consider a lock mechanism to address the race window. Given that the
-design hasn't locked down and the race window might change from time
-to time. I'll address this after the discussion of suspending USB
-devices/interfaces has converged.
+> On Sun, Nov 3, 2024 at 8:15 AM Mukesh Ojha <quic_mojha@quicinc.com> wrote:
+> >
+> > There is NULL pointer issue observed if from Process A where hid device
+> > being added which results in adding a led_cdev addition and later a
+> > another call to access of led_cdev attribute from Process B can result
+> > in NULL pointer issue.
+> >
+> > Use mutex led_cdev->led_access to protect access to led->cdev and its
+> > attribute inside brightness_show() and max_brightness_show() and also
+> > update the comment for mutex that it should be used to protect the led
+> > class device fields.
+> >
+> >         Process A                               Process B
+> >
+> >  kthread+0x114
+> >  worker_thread+0x244
+> >  process_scheduled_works+0x248
+> >  uhid_device_add_worker+0x24
+> >  hid_add_device+0x120
+> >  device_add+0x268
+> >  bus_probe_device+0x94
+> >  device_initial_probe+0x14
+> >  __device_attach+0xfc
+> >  bus_for_each_drv+0x10c
+> >  __device_attach_driver+0x14c
+> >  driver_probe_device+0x3c
+> >  __driver_probe_device+0xa0
+> >  really_probe+0x190
+> >  hid_device_probe+0x130
+> >  ps_probe+0x990
+> >  ps_led_register+0x94
+> >  devm_led_classdev_register_ext+0x58
+> >  led_classdev_register_ext+0x1f8
+> >  device_create_with_groups+0x48
+> >  device_create_groups_vargs+0xc8
+> >  device_add+0x244
+> >  kobject_uevent+0x14
+> >  kobject_uevent_env[jt]+0x224
+> >  mutex_unlock[jt]+0xc4
+> >  __mutex_unlock_slowpath+0xd4
+> >  wake_up_q+0x70
+> >  try_to_wake_up[jt]+0x48c
+> >  preempt_schedule_common+0x28
+> >  __schedule+0x628
+> >  __switch_to+0x174
+> >                                                 el0t_64_sync+0x1a8/0x1ac
+> >                                                 el0t_64_sync_handler+0x68/0xbc
+> >                                                 el0_svc+0x38/0x68
+> >                                                 do_el0_svc+0x1c/0x28
+> >                                                 el0_svc_common+0x80/0xe0
+> >                                                 invoke_syscall+0x58/0x114
+> >                                                 __arm64_sys_read+0x1c/0x2c
+> >                                                 ksys_read+0x78/0xe8
+> >                                                 vfs_read+0x1e0/0x2c8
+> >                                                 kernfs_fop_read_iter+0x68/0x1b4
+> >                                                 seq_read_iter+0x158/0x4ec
+> >                                                 kernfs_seq_show+0x44/0x54
+> >                                                 sysfs_kf_seq_show+0xb4/0x130
+> >                                                 dev_attr_show+0x38/0x74
+> >                                                 brightness_show+0x20/0x4c
+> >                                                 dualshock4_led_get_brightness+0xc/0x74
+> >
+> > [ 3313.874295][ T4013] Unable to handle kernel NULL pointer dereference at virtual address 0000000000000060
+> > [ 3313.874301][ T4013] Mem abort info:
+> > [ 3313.874303][ T4013]   ESR = 0x0000000096000006
+> > [ 3313.874305][ T4013]   EC = 0x25: DABT (current EL), IL = 32 bits
+> > [ 3313.874307][ T4013]   SET = 0, FnV = 0
+> > [ 3313.874309][ T4013]   EA = 0, S1PTW = 0
+> > [ 3313.874311][ T4013]   FSC = 0x06: level 2 translation fault
+> > [ 3313.874313][ T4013] Data abort info:
+> > [ 3313.874314][ T4013]   ISV = 0, ISS = 0x00000006, ISS2 = 0x00000000
+> > [ 3313.874316][ T4013]   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
+> > [ 3313.874318][ T4013]   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
+> > [ 3313.874320][ T4013] user pgtable: 4k pages, 39-bit VAs, pgdp=00000008f2b0a000
+> > ..
+> >
+> > [ 3313.874332][ T4013] Dumping ftrace buffer:
+> > [ 3313.874334][ T4013]    (ftrace buffer empty)
+> > ..
+> > ..
+> > [ dd3313.874639][ T4013] CPU: 6 PID: 4013 Comm: InputReader
+> > [ 3313.874648][ T4013] pc : dualshock4_led_get_brightness+0xc/0x74
+> > [ 3313.874653][ T4013] lr : led_update_brightness+0x38/0x60
+> > [ 3313.874656][ T4013] sp : ffffffc0b910bbd0
+> > ..
+> > ..
+> > [ 3313.874685][ T4013] Call trace:
+> > [ 3313.874687][ T4013]  dualshock4_led_get_brightness+0xc/0x74
+> > [ 3313.874690][ T4013]  brightness_show+0x20/0x4c
+> > [ 3313.874692][ T4013]  dev_attr_show+0x38/0x74
+> > [ 3313.874696][ T4013]  sysfs_kf_seq_show+0xb4/0x130
+> > [ 3313.874700][ T4013]  kernfs_seq_show+0x44/0x54
+> > [ 3313.874703][ T4013]  seq_read_iter+0x158/0x4ec
+> > [ 3313.874705][ T4013]  kernfs_fop_read_iter+0x68/0x1b4
+> > [ 3313.874708][ T4013]  vfs_read+0x1e0/0x2c8
+> > [ 3313.874711][ T4013]  ksys_read+0x78/0xe8
+> > [ 3313.874714][ T4013]  __arm64_sys_read+0x1c/0x2c
+> > [ 3313.874718][ T4013]  invoke_syscall+0x58/0x114
+> > [ 3313.874721][ T4013]  el0_svc_common+0x80/0xe0
+> > [ 3313.874724][ T4013]  do_el0_svc+0x1c/0x28
+> > [ 3313.874727][ T4013]  el0_svc+0x38/0x68
+> > [ 3313.874730][ T4013]  el0t_64_sync_handler+0x68/0xbc
+> > [ 3313.874732][ T4013]  el0t_64_sync+0x1a8/0x1ac
+> >
+> > Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
+> 
+> 
+> reviewed-by: Anish Kumar <yesanishhere@gmail.com>
 
-In addition, Alan suggests to only keep USB devices active but suspend
-the USB interfaces. However, hub events and key events require active
-USB interfaces to function. In the sideband model, the sideband driver
-only handles USB transfers on specific endpoints, leaving other
-functionalities like connection changes and key events to the Linux
-USB kernel drivers. Therefore, a potential design modification is to
-shift the sideband model's focus from voting for USB devices to voting
-for USB interfaces. This way, the driver could selectively hold
-necessary interfaces active during system suspend. This adjustment
-accommodates use cases where specific interfaces must remain active to
-support overall USB functionality when partial interfaces are
-offloaded to a sideband.
+Please correct this and save it as a key-binding to prevent further
+typos.
+
+-- 
+Lee Jones [李琼斯]
 
