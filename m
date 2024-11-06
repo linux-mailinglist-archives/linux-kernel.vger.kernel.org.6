@@ -1,243 +1,296 @@
-Return-Path: <linux-kernel+bounces-398825-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398862-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A2699BF68A
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 20:32:14 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BEBD09BF759
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 20:45:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E05131F23CE4
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 19:32:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E2F8A1C2299F
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 19:45:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38AC020969D;
-	Wed,  6 Nov 2024 19:32:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75A1120BB30;
+	Wed,  6 Nov 2024 19:35:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="mjNND1x6"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="VVbLVXtQ"
+Received: from EUR05-DB8-obe.outbound.protection.outlook.com (mail-db8eur05olkn2100.outbound.protection.outlook.com [40.92.89.100])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 272BD17B4FF;
-	Wed,  6 Nov 2024 19:32:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.21
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730921524; cv=none; b=C/gbpOwi4NoQScTwXJ+94f5sJ7lqTL6H7j9/JL+pUWJCIayYP88fjrqYhXRfRSqZ/I6K2EN1KWmc77itFal2bHVkUDOub2SPqKdGzK/5pDTbDJ7O3RCViRcJaJg5c9X7MhtL/2fOKhooggwwIVywBDhUQmHfxZc86piI8DWkXXw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730921524; c=relaxed/simple;
-	bh=TYKWR9DYBBL55wxoxPY3TsrD/AdbkcYTUKyQd7y0/AU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nZyKmXb/tYIAKjQC+QpVsqA+JS/G8SNWPPH92eXOY27WLw8i4f/Stjb/ybd1ytT8Z16oEhc08bWoKU2nwHYaOJx4K0xFouEvh/Zz66rWKcK0YfFqFwk2edsYyWGq9w1TivbZBFQCPvoOJdBjVSfL4PVUzSUqbZ4v4bsxzmyxWiE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=mjNND1x6; arc=none smtp.client-ip=212.227.17.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1730921450; x=1731526250; i=w_armin@gmx.de;
-	bh=KIbzjUgUFUY+n6O++/E6r42sDRr1hTbs7/CdD6QYLjU=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=mjNND1x6jOo42ZfvQhbA0hCH43q0bPV8Nn/LDeZt/HXJp1GWjkF5Bi5vvCEy51lj
-	 91joEnueK4zdZ5oic46Yo0LGxdOh7iOH7CCl+lBmuvw4ncsXGdjDT4Q9ElmSBD2Ym
-	 y9vz3HBhJHmkuiuYY/8CXShb72Dcn5CGaVwiL30mw/HjHnpiIgciI0CRwiJuESN0I
-	 5WM94EYHjOYon0HXolmbwBkSkcy3djTmdcOVXqKtoA4MipwH1YURKDaOTbQfzQjRV
-	 kQmvK1xMuyXvakC1b6Wfnst40b0K4pl1zOmGkWnFtjra4DrXhk4tqc6KShhPIGlCq
-	 e17cIoKkL5/rbDBTfA==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [141.30.226.129] ([141.30.226.129]) by mail.gmx.net (mrgmx105
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1MCsUC-1t00IT4252-004nbU; Wed, 06
- Nov 2024 20:30:50 +0100
-Message-ID: <bff49c3b-2151-4795-aec4-ae1187765a9d@gmx.de>
-Date: Wed, 6 Nov 2024 20:30:43 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87E9320968E;
+	Wed,  6 Nov 2024 19:35:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.89.100
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730921737; cv=fail; b=VKAYNo+ddlaZJj/XBpPakzqpkmEqY7OD/pABTLZKbpy9hSW0htguSeFtcg4izHdZInttN9PPvw883cpGhqgrrMwvkJC/cGsqmKDeT7DnVAh+CJ6ev7WJCBNH1f2uXAUSzMQodJI3W/6XMqD3HFfxufPc/fz81O+zba0ALPlYELo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730921737; c=relaxed/simple;
+	bh=j3tuWgy9wMlXrVKZrpbol7zEr38O6ReSHWojpfcpcJI=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=jI4eD3YIP5eDHxYmVnW4joTusyYJLMH6LgumO6XTxKYiexEk5wSaMP1ztmw5JMtFve9IHwvS3BMNn9D7rlQj2p6DwsWvpuLTM/dPpv2hr4DQBVfyw/jJdvqWoSlyzv9OOll7KYhtmHoKv8xTxdmzmM+BzWoaZJK10T0NhWi5QLk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=VVbLVXtQ; arc=fail smtp.client-ip=40.92.89.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=D+uV+UFEWNvkrpUjuvdNY1xjNYPWEwMDfsAo0YQ5PFba3pwhKYax049PQk70AMFcpjHHD6xQ1n0JXZAYh7JR4tJGxdT/75VkUhitZ8STDFS+i+PtC40HXFLsgsI9XRbXVzi4y4tJuxzsCu/ZuYzL5i4X05dA1v1yLQ+59k0dKwZNNxS8ek7We3vB4MQFlaxCTlYoFv7XplMLk3H3IiYjAet3ojzOJ717mGkgkVhNI3kgB9SQ2jX2hgRsfHtoYkxndpAc8DhchGkHo53UjGwubehHW1UXWZeaKuvuo0n6fqQxmd6gILVx2F1SQvQj/5zUuwpZ9V4Uo2ih5NZBYGg+8A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=/hHJyZqGGxmCf9sw7HTlWRvmB1aVAVmb801VvA9oCCs=;
+ b=KqZc0fD9j717ZK5gjuPXmlSQhcuHznKbRvcAWcg1ZUziHfuna2cSd5c1u1+gKcNvE3XP+Uz3xEYnquS61Z3UI96cact5lRPq5qEYNfuGHK+YrJ12Donz9hRIwY1bvHzy/fyyoXkmjoScmNTcAyT2Kd1zWIFYGFsDyZZjoD9bQ8N9+DmfhHdbDFO0GjaMZtSj09vVLeB+qSsdIl4T35sW8JOOujU97l0SDNgVTirMsKDLPbYF2FQbihnvBsGKBSnO+05gjPTecIAzI9EZTqbcAYhRFB+NPb3xNmY0E9LMDw7eOuqiUVSIWUw5D1q9UiiK/2pWuOESfDdb7amvAyo0Rw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=/hHJyZqGGxmCf9sw7HTlWRvmB1aVAVmb801VvA9oCCs=;
+ b=VVbLVXtQKIEH081ZNT5R+pmMax1tFTwORyTnn9JHETD45HlZic7tTLD8qH7yIGZnqCBf9zcXj56d53f6xV3xieYasj/l7iYyRrVnbc7P32GTh+IQ7L+QPf45gS575M6ffb2AQiD6AkXzdVM1OleelCCmswiawCexO9mdUCdiRwt+uQH9oJ4GWsJ3+7UPURz17NJ+oONCDPwZdKJXBALSKCPx66PmXV+cT0JndytDBw/ULTlVXJ0WjVB5b7XVbON3QhoD62hBXHZeOQfWhPZMVqo9p5UPEm/m5plP8ndmI8TgshUFoXUiC4S56lUwyGDli3HiwLSMCgt0/onlAlLHBg==
+Received: from AM6PR03MB5848.eurprd03.prod.outlook.com (2603:10a6:20b:e4::10)
+ by GVXPR03MB8331.eurprd03.prod.outlook.com (2603:10a6:150:6e::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.19; Wed, 6 Nov
+ 2024 19:35:32 +0000
+Received: from AM6PR03MB5848.eurprd03.prod.outlook.com
+ ([fe80::4b97:bbdb:e0ac:6f7]) by AM6PR03MB5848.eurprd03.prod.outlook.com
+ ([fe80::4b97:bbdb:e0ac:6f7%4]) with mapi id 15.20.8093.027; Wed, 6 Nov 2024
+ 19:35:32 +0000
+From: Juntong Deng <juntong.deng@outlook.com>
+To: ast@kernel.org,
+	daniel@iogearbox.net,
+	john.fastabend@gmail.com,
+	andrii@kernel.org,
+	martin.lau@linux.dev,
+	eddyz87@gmail.com,
+	song@kernel.org,
+	yonghong.song@linux.dev,
+	kpsingh@kernel.org,
+	sdf@fomichev.me,
+	haoluo@google.com,
+	jolsa@kernel.org,
+	memxor@gmail.com,
+	snorcht@gmail.com,
+	brauner@kernel.org
+Cc: bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: [PATCH bpf-next v3 0/4] bpf/crib: Add open-coded style process file iterator and file related CRIB kfuncs
+Date: Wed,  6 Nov 2024 19:31:06 +0000
+Message-ID:
+ <AM6PR03MB58488FD29EB0D0B89D52AABB99532@AM6PR03MB5848.eurprd03.prod.outlook.com>
+X-Mailer: git-send-email 2.39.5
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: LO6P123CA0008.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:338::16) To AM6PR03MB5848.eurprd03.prod.outlook.com
+ (2603:10a6:20b:e4::10)
+X-Microsoft-Original-Message-ID:
+ <20241106193106.159562-1-juntong.deng@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 19/20] platform/x86/amd: pmf: Drop all quirks
-To: Mario Limonciello <mario.limonciello@amd.com>,
- Hans de Goede <hdegoede@redhat.com>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
- Maximilian Luz <luzmaximilian@gmail.com>, Lee Chun-Yi <jlee@suse.com>,
- Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
- Corentin Chary <corentin.chary@gmail.com>, "Luke D . Jones"
- <luke@ljones.dev>, Ike Panhc <ike.pan@canonical.com>,
- Henrique de Moraes Holschuh <hmh@hmh.eng.br>,
- Alexis Belmonte <alexbelm48@gmail.com>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
- Ai Chao <aichao@kylinos.cn>, Gergo Koteles <soyer@irl.hu>,
- open list <linux-kernel@vger.kernel.org>,
- "open list:ACPI" <linux-acpi@vger.kernel.org>,
- "open list:MICROSOFT SURFACE PLATFORM PROFILE DRIVER"
- <platform-driver-x86@vger.kernel.org>,
- "open list:THINKPAD ACPI EXTRAS DRIVER"
- <ibm-acpi-devel@lists.sourceforge.net>,
- Mark Pearson <mpearson-lenovo@squebb.ca>,
- Matthew Schwartz <matthew.schwartz@linux.dev>
-References: <20241105153316.378-1-mario.limonciello@amd.com>
- <20241105153316.378-20-mario.limonciello@amd.com>
-Content-Language: en-US
-From: Armin Wolf <W_Armin@gmx.de>
-In-Reply-To: <20241105153316.378-20-mario.limonciello@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:rRVCbRzphPVAZ6+vW+/uBuCps+005x+T1afnQ1mJWWq4Pa2O6Qi
- JVqG1g0lbf/DMjA4AxwgT5xomZUT+9Y5yCrGhDRgLJiI/BzyFweS6zqz0w9oDq47YygwdFu
- hs6J32Mtq63TTcIWBBlywQrr+7Vg+rl7dbCPkjg62swSzZDuiqMAa9t2O/Cu/r/KWaGMUX3
- XB+DG6BbHMH5OLGYH1FIg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:j5qyZvuXwxM=;6zPwP8NCVRsbDkstVL82SxdRUg3
- MTZTaDsI8arljzrqdJyDyBxGfxwcaFlotnRJzn7eWuM5533MOr3b1NmK5PrR3wGXBb+MCuHXd
- SdYC41UihbbtkccYAr2CV081H25mp30oyAYrVBSsWRtghfuC0qKWMVrywtMIlutpr3FhcTLyh
- Fx7DVrYOVhNXtiyfjxGFUq5JA3zll05XSp6N/idLZD+v7dozK5bAjuMUCGQOZlmtzmBzYFZ3N
- /JQZzAQqNXMuGLR2neIqQsFNWmeayaTYdHlG72v9TmpLDJqC71SUoHZsGzMEHKWXeboWQolfr
- 14XpldZp1Y2kdovpPE19AJI/+ZCl/WliD6nEbPr68IM7ZKxguZx09dCI6gTqXD02JjyRVkSV5
- eNWPETkVq45gbOhNidpeZFPTUIHO5pAn4nPRCLeSAzB57Z4Ba1JOaQ2ewsPJLVIhDV7yNOgAg
- qHwmoVBrzLz3ik02sYPAiy/w0T2XA1+0uTludxGwUwyN4y6tdMS5FMGbA4ro+RP/3WNBOXj26
- UmT3VPtcq11j9njXjQTdSrjZmW0ngNP8OnUEGZvzGqcYOEnfE0zGWX/1WU0xMcRJT7oQpf7yn
- 25x0eNtnh0NQC1MhDucsU32Zy9+1YTr0W+w7uG6WykpF4JR031PFgRqbrRaiJ9l1iSAkX+isl
- 4ffDAw6GlpS0JfOIyBc7qXyzXgw41Ve+clR3c4ixl6rfQxpWajg09zMx08d38DGxOAsVsiLYc
- HM46NbleIb8+yJc5c4Pk31QZ4ZlomFU9kpx04Hd6h5+QDuqesspcZiGa9HjG36OLr+48G3bWL
- JZiPRQu+5uboDrvwU3Kn4wtg==
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM6PR03MB5848:EE_|GVXPR03MB8331:EE_
+X-MS-Office365-Filtering-Correlation-Id: ce58d83e-af40-4273-c614-08dcfe9a2d69
+X-Microsoft-Antispam:
+	BCL:0;ARA:14566002|461199028|5062599005|8060799006|19110799003|5072599009|15080799006|440099028|4302099013|3412199025|10035399004|56899033|1602099012;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?eE6IpfHNrXCE1l0IQ3+RvfTmo2lEiNhFo5RCLN9u1eby+OsrwOSlQmkGzgpD?=
+ =?us-ascii?Q?BXBh8QQqpZfL2GKlppxzOFz0XIjYaQHDhBLhD0TgaWVcU/fToeI7s0WfF4DU?=
+ =?us-ascii?Q?oaPx6DgyJHWUpnZE8560/eIA1+agN56nKHMHlv9o00pd+YK0z56DwIpJ34SX?=
+ =?us-ascii?Q?oBdNjZ6c4ZBnOkV9O36e+fPnhYSn0YWuhuyTuKPsxkTTgesSvrDRLk9aRqUs?=
+ =?us-ascii?Q?blj/l69Vn64Ogq6ZL6hkafn5V81yXzPCXjbfOaqdds1fwj2UvttZ+haNqP3+?=
+ =?us-ascii?Q?H+uABY9bYyEgZxVfUp7+HK8q0bxfTu2dP3WW/Iy80MjoHWHv5al/JQwZBGiC?=
+ =?us-ascii?Q?tquHfXSQoJi4T0YDrnvFgshIIKexe5HCep6GveJZEOUC+KgdThXR4VgZBXlk?=
+ =?us-ascii?Q?CDmoCReF8ptId+ye7bAgDN4P4TSVeDf13WvoZtX6Ata1ULoQDZPLF2hp/scg?=
+ =?us-ascii?Q?+SG2CE61y8bTZVVR+y5MQEJzkrVXaW441wIjcyUgUsccITxSuygZi0TnQUNq?=
+ =?us-ascii?Q?wNgB6u5kX9eZQh01lxXBbIJClKqs6Vz/5xVxBoQfUXeqdox8n/gPBilTnouN?=
+ =?us-ascii?Q?Yk5xpddcKE7IjpE1gq3tXrPP7M3usBmwS2lh1HEYaPlzY5UUijCAxDLjsgde?=
+ =?us-ascii?Q?qPUT6jdPjqnHDFYqqQccz0huZjWQLI9JQ4YqJXjF9YWxrGAvQ36Qy/bpHt+R?=
+ =?us-ascii?Q?IrK4odxww1Om+oNoetE2t7rROqYB8PIBj7ggvR5cWS7L05l3kCI9fIDQcFb5?=
+ =?us-ascii?Q?GJE7hxF+NcugCeVDjudHsYVE3DM2ZiyP5iFIILZQFcXlpsL9xeqxfolYFZ29?=
+ =?us-ascii?Q?F3AmlzbQpWHTx3djCJZw/dvYMmeq1aZbqbQCSOd6X4R4BWRBomlF8A8YdqhT?=
+ =?us-ascii?Q?kCXoaLs6Ey1Av7CVXkTqQL9jhrk77FoBvstE1oZbBXc5tgiknANwRVGpw3pQ?=
+ =?us-ascii?Q?aRgL2Aagk9UwGh+DoY1oFhjmPAs28XxZi/T8c0t1RhvPrqwuCzCzoc+rUfmo?=
+ =?us-ascii?Q?5AcXJNUHL3QFNwUSKM5K7xmJZpCr5p2pbuuqRw3SWCp8GUWS6dEQbFN1jFvI?=
+ =?us-ascii?Q?Gc+/K432Jgq1d9WiS/pMDrnZ0uXzMdzqUcC0r2T1wCFESsLwuSmvdBy1/0JK?=
+ =?us-ascii?Q?2O4s4FMSCltMYzDP2+Cw3qoXX+DWlhx3XTH+tKbS/SNf8usrt5zfVJOw9RU2?=
+ =?us-ascii?Q?qBgD5ym098m8ANhF2Do2dTiE9hEspPJePo3LAw=3D=3D?=
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?hzapaWA8ZgneybEqdD4bkYnzwo+oSojfcr1WQwQJaeqozD7A+/qdmfR4fgbz?=
+ =?us-ascii?Q?JthNxIPkvhyeme+f7SiBp0gCO9yBRto8/oE4ilnrv3T4U0jfYKrpYf6sVge9?=
+ =?us-ascii?Q?R8w9oHRvIYdfEJ8XJXJGzTYuV/GQcwoJQ7QXZSsSLI+iqZRV7LVGW3N4oTMs?=
+ =?us-ascii?Q?7XNw7J1k4/FjtSD7SEtnydJFNsM21y15oRb9q9xJ5M/y+tptTZbZzCc6rchP?=
+ =?us-ascii?Q?cj/7mTCYVtuMZ4C9mPDPKs9MOCKmSkvblN9O3zaMgEG6tYvMuiIYadGGhYOf?=
+ =?us-ascii?Q?65XlnXLe9abZeiRoyoNpWbbc0DyYxErlF3cpGyMvRx07iBroXT0dDxiYVpPn?=
+ =?us-ascii?Q?YtLNAnYTdgofXfzweyJ2rz0HMqRkpwTjTqdXtjcOv034OGBWI5SzP6FU3Bqm?=
+ =?us-ascii?Q?8h1mPR6bCjuQkv9Ic/Xq0u/pymX3o40eVlJph7EQs+Fjztt8CBYH47oxsXFU?=
+ =?us-ascii?Q?qMrKGkMC5Boiv+M3tQPbU0x2ZZicr2o4zCRW0PWOLoQ2KTSBTgugAcfFHx74?=
+ =?us-ascii?Q?vF+aioz0mBDT8RG1FzmJ90SoviNTo+MmBqbrq1N46QCFlPGnbNXDk34/8CGL?=
+ =?us-ascii?Q?jTuJ1Tz6G/Nlt4SAC8Wed4yiz+MJvLo9d/fSwNa8ecywsYmckesWHT6teM+i?=
+ =?us-ascii?Q?XFJQUmIvIAvXN6heDGUH8igZvijxnJeNEZrpUWXnInOwBQ5K/WrGcLyYMofx?=
+ =?us-ascii?Q?Qq8lMDF56C0Nxdu0zeFvO4Jws4TYVNufB31SBMZelNTDtF+QjWAm1LgZWJiH?=
+ =?us-ascii?Q?z03CoCGznKEsDeYo6anBFdT8ZJh0TnYhofKXkQtgKBo7g4LPlbmlg9hd+x+V?=
+ =?us-ascii?Q?2yQGMjIbUKUnRs+tX14O20sU5JOhzDvJadDqwcAaEHSLmPKzYq7USyTHGYpl?=
+ =?us-ascii?Q?RqEQTtBff7ijNhkApr9gMm1zZ79sZyRXHUaqfNZVZKRgyHfPYYac1tpsdikf?=
+ =?us-ascii?Q?gaASEquV22ozVs0zkbY5+cIkoIGu6rO+ar9BKvjauHaHOuwmqo7AzERZILyJ?=
+ =?us-ascii?Q?rb49JUnj2dKmOWdSO3QaDyXLDkD8vnsAAWe1WBgBrhNoTZmlSsg21XCZgpb3?=
+ =?us-ascii?Q?50sYyFasJNUfDWSMdfU0zCj0xqrCkBX8KmqWVSBWsDHI1KKDtiybB4CAS9J6?=
+ =?us-ascii?Q?dPghPDWC5ENQhpXccxpNkhRsyF7fGz+2fpNw9mhna5xZFFMMv8a/d6f/eTQw?=
+ =?us-ascii?Q?LtCiHbC0f5jAOCv3fEeqYBKW6TgPVdMz4tYu+o3J0a+19Kc04zzDqx0BK4+0?=
+ =?us-ascii?Q?YHLO2Ok4/RUA9IoTfVTO?=
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ce58d83e-af40-4273-c614-08dcfe9a2d69
+X-MS-Exchange-CrossTenant-AuthSource: AM6PR03MB5848.eurprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Nov 2024 19:35:32.3697
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GVXPR03MB8331
 
-Am 05.11.24 um 16:33 schrieb Mario Limonciello:
+This patch series adds open-coded style process file iterator
+bpf_iter_task_file and file related kfuncs bpf_fget_task(),
+bpf_get_file_ops_type(), and corresponding selftests test cases.
 
-> As multiple platform profile handlers can now be registered, the quirks
-> to avoid registering amd-pmf as a handler are no longer necessary.
-> Drop them.
+Known future merge conflict: In linux-next task_lookup_next_fdget_rcu()
+has been removed and replaced with fget_task_next() [0], but that has
+not happened yet in bpf-next, so I still
+use task_lookup_next_fdget_rcu() in bpf_iter_task_file_next().
 
-I love it when we can get rid of quirk tables, so:
+[0]: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?id=8fd3395ec9051a52828fcca2328cb50a69dea8ef
 
-Reviewed-by: Armin Wolf <W_Armin@gmx.de>
+Although iter/task_file already exists, for CRIB we still need the
+open-coded iterator style process file iterator, and the same is true
+for other bpf iterators such as iter/tcp, iter/udp, etc.
 
-> Tested-by: Matthew Schwartz <matthew.schwartz@linux.dev>
-> Acked-by: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
-> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
-> ---
->   drivers/platform/x86/amd/pmf/Makefile     |  2 +-
->   drivers/platform/x86/amd/pmf/core.c       |  1 -
->   drivers/platform/x86/amd/pmf/pmf-quirks.c | 66 -----------------------
->   drivers/platform/x86/amd/pmf/pmf.h        |  3 --
->   4 files changed, 1 insertion(+), 71 deletions(-)
->   delete mode 100644 drivers/platform/x86/amd/pmf/pmf-quirks.c
->
-> diff --git a/drivers/platform/x86/amd/pmf/Makefile b/drivers/platform/x8=
-6/amd/pmf/Makefile
-> index 7d6079b02589c..6b26e48ce8ad2 100644
-> --- a/drivers/platform/x86/amd/pmf/Makefile
-> +++ b/drivers/platform/x86/amd/pmf/Makefile
-> @@ -7,4 +7,4 @@
->   obj-$(CONFIG_AMD_PMF) +=3D amd-pmf.o
->   amd-pmf-objs :=3D core.o acpi.o sps.o \
->   		auto-mode.o cnqf.o \
-> -		tee-if.o spc.o pmf-quirks.o
-> +		tee-if.o spc.o
-> diff --git a/drivers/platform/x86/amd/pmf/core.c b/drivers/platform/x86/=
-amd/pmf/core.c
-> index 47126abd13ca0..6ad00b3d472fe 100644
-> --- a/drivers/platform/x86/amd/pmf/core.c
-> +++ b/drivers/platform/x86/amd/pmf/core.c
-> @@ -455,7 +455,6 @@ static int amd_pmf_probe(struct platform_device *pde=
-v)
->   	mutex_init(&dev->lock);
->   	mutex_init(&dev->update_mutex);
->
-> -	amd_pmf_quirks_init(dev);
->   	apmf_acpi_init(dev);
->   	platform_set_drvdata(pdev, dev);
->   	amd_pmf_dbgfs_register(dev);
-> diff --git a/drivers/platform/x86/amd/pmf/pmf-quirks.c b/drivers/platfor=
-m/x86/amd/pmf/pmf-quirks.c
-> deleted file mode 100644
-> index 7cde5733b9cac..0000000000000
-> --- a/drivers/platform/x86/amd/pmf/pmf-quirks.c
-> +++ /dev/null
-> @@ -1,66 +0,0 @@
-> -// SPDX-License-Identifier: GPL-2.0-or-later
-> -/*
-> - * AMD Platform Management Framework Driver Quirks
-> - *
-> - * Copyright (c) 2024, Advanced Micro Devices, Inc.
-> - * All Rights Reserved.
-> - *
-> - * Author: Mario Limonciello <mario.limonciello@amd.com>
-> - */
-> -
-> -#include <linux/dmi.h>
-> -
-> -#include "pmf.h"
-> -
-> -struct quirk_entry {
-> -	u32 supported_func;
-> -};
-> -
-> -static struct quirk_entry quirk_no_sps_bug =3D {
-> -	.supported_func =3D 0x4003,
-> -};
-> -
-> -static const struct dmi_system_id fwbug_list[] =3D {
-> -	{
-> -		.ident =3D "ROG Zephyrus G14",
-> -		.matches =3D {
-> -			DMI_MATCH(DMI_SYS_VENDOR, "ASUSTeK COMPUTER INC."),
-> -			DMI_MATCH(DMI_PRODUCT_NAME, "GA403U"),
-> -		},
-> -		.driver_data =3D &quirk_no_sps_bug,
-> -	},
-> -	{
-> -		.ident =3D "ROG Ally X",
-> -		.matches =3D {
-> -			DMI_MATCH(DMI_SYS_VENDOR, "ASUSTeK COMPUTER INC."),
-> -			DMI_MATCH(DMI_PRODUCT_NAME, "RC72LA"),
-> -		},
-> -		.driver_data =3D &quirk_no_sps_bug,
-> -	},
-> -	{
-> -		.ident =3D "ASUS TUF Gaming A14",
-> -		.matches =3D {
-> -			DMI_MATCH(DMI_SYS_VENDOR, "ASUSTeK COMPUTER INC."),
-> -			DMI_MATCH(DMI_PRODUCT_NAME, "FA401W"),
-> -		},
-> -		.driver_data =3D &quirk_no_sps_bug,
-> -	},
-> -	{}
-> -};
-> -
-> -void amd_pmf_quirks_init(struct amd_pmf_dev *dev)
-> -{
-> -	const struct dmi_system_id *dmi_id;
-> -	struct quirk_entry *quirks;
-> -
-> -	dmi_id =3D dmi_first_match(fwbug_list);
-> -	if (!dmi_id)
-> -		return;
-> -
-> -	quirks =3D dmi_id->driver_data;
-> -	if (quirks->supported_func) {
-> -		dev->supported_func =3D quirks->supported_func;
-> -		pr_info("Using supported funcs quirk to avoid %s platform firmware bu=
-g\n",
-> -			dmi_id->ident);
-> -	}
-> -}
-> diff --git a/drivers/platform/x86/amd/pmf/pmf.h b/drivers/platform/x86/a=
-md/pmf/pmf.h
-> index 8ce8816da9c16..b89aa38434faa 100644
-> --- a/drivers/platform/x86/amd/pmf/pmf.h
-> +++ b/drivers/platform/x86/amd/pmf/pmf.h
-> @@ -795,7 +795,4 @@ int amd_pmf_smartpc_apply_bios_output(struct amd_pmf=
-_dev *dev, u32 val, u32 preq
->   void amd_pmf_populate_ta_inputs(struct amd_pmf_dev *dev, struct ta_pmf=
-_enact_table *in);
->   void amd_pmf_dump_ta_inputs(struct amd_pmf_dev *dev, struct ta_pmf_ena=
-ct_table *in);
->
-> -/* Quirk infrastructure */
-> -void amd_pmf_quirks_init(struct amd_pmf_dev *dev);
-> -
->   #endif /* PMF_H */
+The traditional bpf iterator is more like a bpf version of procfs, but
+similar to procfs, it is not suitable for CRIB scenarios that need to
+obtain large amounts of complex, multi-level in-kernel information.
+
+The following is from previous discussions [1].
+
+[1]: https://lore.kernel.org/bpf/AM6PR03MB5848CA34B5B68C90F210285E99B12@AM6PR03MB5848.eurprd03.prod.outlook.com/
+
+This is because the context of bpf iterators is fixed and bpf iterators
+cannot be nested. This means that a bpf iterator program can only
+complete a specific small iterative dump task, and cannot dump
+multi-level data.
+
+An example, when we need to dump all the sockets of a process, we need
+to iterate over all the files (sockets) of the process, and iterate over
+the all packets in the queue of each socket, and iterate over all data
+in each packet.
+
+If we use bpf iterator, since the iterator can not be nested, we need to
+use socket iterator program to get all the basic information of all
+sockets (pass pid as filter), and then use packet iterator program to
+get the basic information of all packets of a specific socket (pass pid,
+fd as filter), and then use packet data iterator program to get all the
+data of a specific packet (pass pid, fd, packet index as filter).
+
+This would be complicated and require a lot of (each iteration)
+bpf program startup and exit (leading to poor performance).
+
+By comparison, open coded iterator is much more flexible, we can iterate
+in any context, at any time, and iteration can be nested, so we can
+achieve more flexible and more elegant dumping through open coded
+iterators.
+
+With open coded iterators, all of the above can be done in a single
+bpf program, and with nested iterators, everything becomes compact
+and simple.
+
+Also, bpf iterators transmit data to user space through seq_file,
+which involves a lot of open (bpf_iter_create), read, close syscalls,
+context switching, memory copying, and cannot achieve the performance
+of using ringbuf.
+
+Discussion
+----------
+
+1. Do we need bpf_iter_task_file_get_fd()?
+
+Andrii suggested that next() should return a pointer to
+a bpf_iter_task_file_item, which contains *file and fd.
+
+This is feasible, but it might compromise iterator encapsulation?
+
+More detailed discussion can be found at [3] [4]
+
+[3]: https://lore.kernel.org/bpf/CAEf4Bzbt0kh53xYZL57Nc9AWcYUKga_NQ6uUrTeU4bj8qyTLng@mail.gmail.com/
+[4]: https://lore.kernel.org/bpf/AM6PR03MB584814D93FE3680635DE61A199562@AM6PR03MB5848.eurprd03.prod.outlook.com/
+
+What should we do? Maybe more discussion is needed?
+
+2. Where should we put CRIB related kfuncs?
+
+I totally agree that most of the CRIB related kfuncs are not
+CRIB specific.
+
+The goal of CRIB is to collect all relevant information about a process,
+which means we need to add kfuncs involving several different kernel
+subsystems (though these kfuncs are not complex and many just help the
+bpf program reach a certain data structure).
+
+But here is a question, where should these CRIB kfuncs be placed?
+There doesn't seem to be a suitable file to put them in.
+
+My current idea is to create a crib folder and then create new files for
+the relevant subsystems, e.g. crib/files.c, crib/socket.c, crib/mount.c
+etc. Putting them in the same folder makes it easier to maintain
+them centrally.
+
+If anyone else wants to use CRIB kfuncs, welcome to use them.
+
+Signed-off-by: Juntong Deng <juntong.deng@outlook.com>
+---
+v2 -> v3:
+1. Move task_file open-coded iterator to kernel/bpf/helpers.c.
+
+2. Fix duplicate error code 7 in test_bpf_iter_task_file().
+
+3. Add comment for case when bpf_iter_task_file_get_fd() returns -1.
+
+4. Add future plans in commit message of "Add struct file related
+CRIB kfuncs".
+
+5. Add Discussion section to cover letter.
+
+v1 -> v2:
+Fix a type definition error in the fd parameter of
+bpf_fget_task() at crib_common.h.
+
+Juntong Deng (4):
+  bpf/crib: Introduce task_file open-coded iterator kfuncs
+  selftests/bpf: Add tests for open-coded style process file iterator
+  bpf/crib: Add struct file related CRIB kfuncs
+  selftests/bpf: Add tests for struct file related CRIB kfuncs
+
+ kernel/bpf/Makefile                           |   1 +
+ kernel/bpf/crib/Makefile                      |   3 +
+ kernel/bpf/crib/crib.c                        |  28 ++++
+ kernel/bpf/crib/files.c                       |  54 ++++++++
+ kernel/bpf/helpers.c                          |   4 +
+ kernel/bpf/task_iter.c                        |  96 +++++++++++++
+ tools/testing/selftests/bpf/prog_tests/crib.c | 126 ++++++++++++++++++
+ .../testing/selftests/bpf/progs/crib_common.h |  25 ++++
+ .../selftests/bpf/progs/crib_files_failure.c  | 108 +++++++++++++++
+ .../selftests/bpf/progs/crib_files_success.c  | 119 +++++++++++++++++
+ 10 files changed, 564 insertions(+)
+ create mode 100644 kernel/bpf/crib/Makefile
+ create mode 100644 kernel/bpf/crib/crib.c
+ create mode 100644 kernel/bpf/crib/files.c
+ create mode 100644 tools/testing/selftests/bpf/prog_tests/crib.c
+ create mode 100644 tools/testing/selftests/bpf/progs/crib_common.h
+ create mode 100644 tools/testing/selftests/bpf/progs/crib_files_failure.c
+ create mode 100644 tools/testing/selftests/bpf/progs/crib_files_success.c
+
+-- 
+2.39.5
+
 
