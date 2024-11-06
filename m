@@ -1,178 +1,112 @@
-Return-Path: <linux-kernel+bounces-398037-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398039-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 938AF9BE492
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 11:46:19 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB1879BE497
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 11:47:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0D2B0B22037
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 10:46:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E1A51F23EC8
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 10:47:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6E691DE3D2;
-	Wed,  6 Nov 2024 10:46:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54A691DE4C6;
+	Wed,  6 Nov 2024 10:46:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="btSOA+op"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="RWgp7HSH"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F39442F44;
-	Wed,  6 Nov 2024 10:46:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C448E1DE3D0;
+	Wed,  6 Nov 2024 10:46:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730889967; cv=none; b=Sul5z0lxsNMKd3ANGa6IVtjj0VyRYvgoU+D8nZZAnxmJsF4A0za0AYGfZeA3FiPh4p5P73v9eUMuGJNfdRe0eLUiOALmYhVCrsj1LY5HY+G5SDREJ5y261rIKYdyXHfnTnbnscik/9Gf/8Kthydmru/Od2cJpZxLmLLyyUWpHik=
+	t=1730890012; cv=none; b=TRXqo3F37T4kFjtFWixHeujVZKjojpE7/DlPYp2GhTm1fV87abDDceydT4kbt6Rg9S7xVrHY9DHfQyiJ4Xmphhw6UXzwzkMO1cpXBb5Jl/mDCglPbl2m5C+OWH9jYn5pcq4DFcP+W/8U2UUBA9ejr9C29rZSfg7uolP+QfOryLc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730889967; c=relaxed/simple;
-	bh=Id80CP0/w/7Ra1ztx8OJIaV/Z4yYxZI/BwvJ/EnJH3Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=m1O9rPCnyqrsXAmNhPMFvwMRrIQwWghOvLCU13Ny09W4sohPBsy86V4kHHtFgyPaMoTKOLjbmO05v6cMkdw/okAH/7mYi2teYC8hKBLZcTyrhSNzPzv2NM3MeR2QeylPALS+errTWBdTc0H/GY/Tsx8Wx55mUnz+/pbMtl/R68E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=btSOA+op; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 03FBBC4CED0;
-	Wed,  6 Nov 2024 10:46:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730889966;
-	bh=Id80CP0/w/7Ra1ztx8OJIaV/Z4yYxZI/BwvJ/EnJH3Y=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=btSOA+op7PmdUtJZ2sWIkzile71qRDpIvDfAUiuxdtrahC/RDh18lrWYFENBsiEuC
-	 RCVaVwWAqLiPmuKIq/I6YI0PNckU3aj1NmSf5/en26XKrpb45r3uCCt+ScAIN+3CnK
-	 E1JMZYMsgfH/+i94kt5WfQH45dOHz/fzoE9pCzBKAWKY7K2EWXNRWqfTxEkTYirJiK
-	 0CtuZcTTgPJMZcbjfGL1n0pqi+2izC1XFCmhtSrCBRPwj+hU292YLAbDFIJcXKHAFN
-	 LicwZctZTZ1K3vemJVGiHiJirvSrh9SLj6FLwfWdCNTH38CbuCPj+u99PxU6YF8RNd
-	 eVoA0KlFwRjlQ==
-Message-ID: <a349a820-7b3f-4739-a506-e2947f6df68d@kernel.org>
-Date: Wed, 6 Nov 2024 11:46:02 +0100
+	s=arc-20240116; t=1730890012; c=relaxed/simple;
+	bh=vkkM2h695D/l5SDWyygknwKCqGMFK5wq+MaFFHsuDNo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=afEOUtc/YVnUEnihIEedxexc8PLrXO636daWPsnEcfXUhsEdiJ5UCYByPLky6lj36GVj/WaLQCpAWvtu9iKGcmc2CGT8erbblIWYW2RWvykT7lZXgh1uAhJqc1DHFP6IB322U+Duwp7zWjPdRT7eCbfLPJjACZSS5AMEvikkRVI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=RWgp7HSH; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=n9pw/ncIr5xOQG+ZVQBxpx/l5w//5qbE75eKMDsD6eQ=; b=RWgp7HSHErvWscYGf1Ffm3pndl
+	wZb86wwxZSTq50rJJ73hOf9XdgYa7NkwXbNsWfbMR490miX4DN5skr2j4TaPcbBBehFi2UOvpfs2L
+	iMGqnFjXS7MuIqFrjI67qlhWA0akoD+5TldIzUnkN+/gcwr/EY+smdDft6Fola4hDzOq2vcSr+x/m
+	OKXrbxMuJtXMOB0pJLvL1fHEP6UoS5BekteG+l+aaMlcIW5HN9kccPF0qkeqCIvSmHs9KXsRDxpkP
+	n9a/7rgziZhXmN3f7DYepd57Le/kzu9dDsPPNRv3I3xiXb26mQ9jPH8Udg8sXcdSgLXxIW/QWLdah
+	L/6nj1sg==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1t8dYd-00000004Olv-1fBL;
+	Wed, 06 Nov 2024 10:46:40 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 2C45A300478; Wed,  6 Nov 2024 11:46:39 +0100 (CET)
+Date: Wed, 6 Nov 2024 11:46:39 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: Jiri Olsa <olsajiri@gmail.com>, Ingo Molnar <mingo@kernel.org>,
+	Will Deacon <will@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Linux trace kernel <linux-trace-kernel@vger.kernel.org>,
+	bpf <bpf@vger.kernel.org>, Oleg Nesterov <oleg@redhat.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Liao Chang <liaochang1@huawei.com>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	"linux-perf-use." <linux-perf-users@vger.kernel.org>,
+	Kernel Team <kernel-team@meta.com>
+Subject: Re: The state of uprobes work and logistics
+Message-ID: <20241106104639.GL10375@noisy.programming.kicks-ass.net>
+References: <CAEf4BzarhiBHAQXECJzP5e-z0fbSaTpfQNPaSXwdgErz2f0vUA@mail.gmail.com>
+ <ZyH_fWNeL3XYNEH1@krava>
+ <CAEf4BzZTTuBdCT2Qe=n7gqhf3yENZwHYUdsrQP9WfaEC4C35rw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] leds: driver for O2 Micro LED IC
-To: anishkmr@amazon.com, pavel@ucw.cz, dmurphy@ti.com
-Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org,
- Anish Kumar <yesanishhere@gmail.com>, Karthik Poduval <kpoduval@lab126.com>,
- Yue Hu <yhuamzn@amazon.com>
-References: <20241106015441.995014-1-anishkmr@amazon.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20241106015441.995014-1-anishkmr@amazon.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAEf4BzZTTuBdCT2Qe=n7gqhf3yENZwHYUdsrQP9WfaEC4C35rw@mail.gmail.com>
 
-On 06/11/2024 02:54, anishkmr@amazon.com wrote:
-> From: Anish Kumar <anishkmr@amazon.com>
+On Tue, Nov 05, 2024 at 06:11:07PM -0800, Andrii Nakryiko wrote:
+> On Wed, Oct 30, 2024 at 2:42 AM Jiri Olsa <olsajiri@gmail.com> wrote:
+> >
+> > On Wed, Oct 16, 2024 at 12:35:21PM -0700, Andrii Nakryiko wrote:
+> >
+> > SNIP
+> >
+> > >   - Jiri Olsa's uprobe "session" support ([5]). This is less
+> > > performance focused, but important functionality by itself. But I'm
+> > > calling this out here because the first two patches are pure uprobe
+> > > internal changes, and I believe they should go into tip/perf/core to
+> > > avoid conflicts with the rest of pending uprobe changes.
+> > >
+> > > Peter, do you mind applying those two and creating a stable tag for
+> > > bpf-next to pull? We'll apply the rest of Jiri's series to
+> > > bpf-next/master.
+> >
+> >
+> > Hi Ingo,
+> > there's uprobe session support change that already landed in tip tree,
+> > but we have bpf related changes that need to go in through bpf-next tree
+> >
+> > could you please create the stable tag that we could pull to bpf-next/master
+> > and apply the rest of the uprobe session changes in there?
 > 
-> LED Driver for O2 Micro LED IC
-> 
-> reviewed-by: Anish Kumar <yesanishhere@gmail.com>
-> Signed-off-by: Karthik Poduval <kpoduval@lab126.com>
-> Signed-off-by: Yue Hu <yhuamzn@amazon.com>
-> ---
->  .../devicetree/bindings/leds/leds-ozl003.txt  |  23 ++
+> Ping. We (BPF) are blocked on this, we can't apply Jiri's uprobe
+> session series ([0]), until we merge two of his patches that landed
+> into perf/core. Can we please get a stable tag which we can use to
+> pull perf/core's patches into bpf-next/master?
 
-1. Please run scripts/checkpatch.pl and fix reported warnings. Then
-please run `scripts/checkpatch.pl --strict` and (probably) fix more
-warnings. Some warnings can be ignored, especially from --strict run,
-but the code here looks like it needs a fix. Feel free to get in touch
-if the warning is not clear.
-
-2. No bindings in TXT. They must com ine DT schema. It is no 2017
-anymore. Please reach to your colleagues in Amazon for some internal
-guidance on upstreaming. Such big companies should perform basic
-internal review instead of asking community to explain that basic stuff.
-
-3. Please use scripts/get_maintainers.pl to get a list of necessary
-people and lists to CC. It might happen, that command when run on an
-older kernel, gives you outdated entries. Therefore please be sure you
-base your patches on recent Linux kernel.
-
-Tools like b4 or scripts/get_maintainer.pl provide you proper list of
-people, so fix your workflow. Tools might also fail if you work on some
-ancient tree (don't, instead use mainline) or work on fork of kernel
-(don't, instead use mainline). Just use b4 and everything should be
-fine, although remember about `b4 prep --auto-to-cc` if you added new
-patches to the patchset.
-
-You missed at least devicetree list (maybe more), so this won't be
-tested by automated tooling. Performing review on untested code might be
-a waste of time.
-
-Please kindly resend and include all necessary To/Cc entries.
-
-
-
-...
-
-
-> +
-> +static struct i2c_driver ozl003_driver = {
-> +	.driver = {
-> +		.owner = THIS_MODULE,
-
-Please do no send downstream, junk code. This was fixed years ago.
-
-> +		.name = "ozl003",
-> +		.of_match_table = ozl003_match_table,
-> +	},
-> +	.id_table = ozl003_id,
-> +	.probe = ozl003_probe,
-> +	.remove = ozl003_remove,
-> +};
-> +
-
-...
-
-> +MODULE_LICENSE("GPL");
-> +MODULE_ALIAS("platform:ozl003-led");
-
-Drop as well. Useless or incorrect.
-
-Best regards,
-Krzysztof
-
+The whole tip/perf/core should be stable, but let me try and figure out
+how git tags work.. might as well read a man-page today.
 
