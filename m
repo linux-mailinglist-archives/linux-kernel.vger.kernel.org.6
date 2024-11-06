@@ -1,302 +1,221 @@
-Return-Path: <linux-kernel+bounces-397723-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397724-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20A079BDF90
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 08:41:03 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C27E9BDF92
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 08:41:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D5036282950
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 07:41:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B289C1F217AF
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 07:41:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7EE21D0171;
-	Wed,  6 Nov 2024 07:40:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5646A1D0169;
+	Wed,  6 Nov 2024 07:41:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SNhMFzvI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JXZRGDX5"
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E6171CC8A3
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 07:40:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F8331D0E36
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 07:40:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730878856; cv=none; b=Ibn/R9JQ8sYrYYqKYtQAMNA7E4th2rKbNhaPSzdWZB4oh8JMpiF5crx4nFN6/q2RcCIMS3g4qzMnTRyqDnt1BZLJlJSm34U7scwKrVZsrBJ+jFJ53V7AEGChf/ysIq344xG8P/i3Tpje170fwTymXo59MNHnQ1ikhp83hgz8zdY=
+	t=1730878862; cv=none; b=ZtCapAkbatLoUyUSgdSKW1KykqAxl43jEfbTqa636KMMtELIdvTZDk+jRdFgnpuJILnU9iH6tegEKF1OrkqdO+W8cGraZzpD6ORkC0uivhW6/JeH4QPyMZOZsciE3QLUBrnJn7vA17bQAijWwpDXzhE6avVPTlfDSXNAyUx/L2w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730878856; c=relaxed/simple;
-	bh=8wA53S4ezlIPTVZA/MykpScLT344CmnrMjVY2QQPs+k=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=B0rEa7cEXcV2whwGvJcsgZWmdt8X095qZ5grFf8pKcmqIDOiFui6GiHFe3hBKf4vzewjk1x9udrsVGb4TEffSMOVQhsqCZe6eUDXQOvlZ/hYzOQQdCbWOhfzRF/DzB23ZaqalA/FYiRYBLMjzJ3yC0gTatOpCBhudgK9Lf3BJTQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SNhMFzvI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC95FC4CED3;
-	Wed,  6 Nov 2024 07:40:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730878855;
-	bh=8wA53S4ezlIPTVZA/MykpScLT344CmnrMjVY2QQPs+k=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=SNhMFzvIsfvyyCKV08GxdIG6SyWcfw5/kaol0V28q0uGXbbN+A2kZm6iXXBIznX5+
-	 Ztx4UjQNf6yKeewYOdi77XHO1W+FvqX22YeH2blsW1uTnoiNhqrktAvb/pA1d4B4my
-	 yfVKhu6rQjoWx7G8FpT1Yi8ZjmpRDoAcPM5bMMXC7tM0cet4dx+xU19BDKTJGW1YiQ
-	 FHqISBwzS67zch7DQiNtExR8bJALHdAdwifxRcVk2s8fq1XlbaGf0aCgOx5coHiU37
-	 JoX+MefZ6hRjlv+euOcGJ7XfLQ1LJWwfpIKUCzvWOZPfw7KgmMHFRcOnfMqwnXXbzd
-	 RVKKr/aIPNbOg==
-Message-ID: <0a8f96da-302d-4d6c-9ab6-0b66a05cbcfd@kernel.org>
-Date: Wed, 6 Nov 2024 15:40:50 +0800
+	s=arc-20240116; t=1730878862; c=relaxed/simple;
+	bh=HQqOgF25zZrRJJrEPpwoe06g0XjJyk/IFMS5AN9Z/eg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sG3c3kQ9VD4dwk/6QvEh/m2dASjS03yiOp8Ot4EwR7MvbtWzVAW4Q2FxGg5KMYnPnLmiS/hsAqCu1N4ETEs2ZOgiTjyAMcrRMSIkYSjj42xwsmB7GVKvajj6wIMz9MHWTb5VdUuoEgwoFKVOr749qP42buYM20ZIwsd/58TlCik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JXZRGDX5; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-53c73f01284so65440e87.0
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 23:40:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1730878857; x=1731483657; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=tXO9RRbs3HveLlIZZM8HN1XONyaSb0qVhG5bV+yNI6E=;
+        b=JXZRGDX5W3F7ubX+PJuuAD0A8Sh6KqJAolXsyJ3BcRImJEIPneZ0NHSW6jphXC4Nnl
+         AAXzawdfeRe8XDq9R897eJeYP1fGNAhEoQFCneFTgTLXcN+4qhe3/uwP5qOHWnDshov0
+         xQ5N0jl7q6Qo5BahUeGZDuXWVeq0HCEYNZim2Y+H3sQXsoMtHU2AdjMuiJCmj+87BnOr
+         StJ1h6gchk53m50L+EqTDEk+EjlLUiqut2JgAusfCmIBZnNL15kwevpyGcm9Dnz67MHe
+         1n8/AgE1aCyTCw7Rd46CqAYRyUhi+ybbBLLsi0yIcYeuLhztzpfN7MO7eP/w2MP4lp4t
+         6Xew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730878857; x=1731483657;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tXO9RRbs3HveLlIZZM8HN1XONyaSb0qVhG5bV+yNI6E=;
+        b=q++golgLg0lXEo7HwGW/0QScUNigMHAJiYBVJpQpAzTA5n/tqDG9L3M9o+a/jk+c41
+         dsW4m99+kTCXjV5oVl6YaZBwkofSEKKT8NRp07QdKdXS7VWvA2ARsQ0I0eXSSmhsyxi0
+         zz91USzviCpGJgwtKXPl7w49ees5p3RkOyca/02BbwmLkCOtWArjdGJDxTGVD7vekcdO
+         Oxxwi99asPkw9cHtFxJ+DUkYh9gesdM7n5cEdmCYlHlRozoB4SGqrH+6tqf2SYtptZ8N
+         zl8Cg4+fjr3nZvuaGEbctGB7nDwuuB0WpyMOXAhcEr24IDHIBEFVc3QThKP+DmtXzW9l
+         CojQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUnFbtQGw2y4EJW1UP8CqHOXdH57bpthICgF52BwHuKUSzGx42AEnBQgPjqtm3YC8Q3KiPESUOekW0IXDM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxPYsD8Do+J7qSQ8O3yleqvy76SH5rRd5zJ3FODR5A6WgG/1YSH
+	ocg8ENlVKHFp9U5DaaBr2SzIgiDsIfzzfG5sP8h2C/rREIoCgD2SOTATKd6RxQg=
+X-Google-Smtp-Source: AGHT+IF0FcdGuJ0vO+niOKjEmLBEPpJB40aDmUzjOkTIqMnmTG4s9w+mRinnl+QEkzIM6X2Ng1KY4A==
+X-Received: by 2002:a05:6512:3c88:b0:539:e9f8:d45d with SMTP id 2adb3069b0e04-53c79ea6c5dmr10858734e87.52.1730878857022;
+        Tue, 05 Nov 2024 23:40:57 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53c7bc9c043sm2398395e87.102.2024.11.05.23.40.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 05 Nov 2024 23:40:55 -0800 (PST)
+Date: Wed, 6 Nov 2024 09:40:53 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Will Deacon <will@kernel.org>
+Cc: Bibek Kumar Patro <quic_bibekkum@quicinc.com>, robdclark@gmail.com, 
+	robin.murphy@arm.com, joro@8bytes.org, jgg@ziepe.ca, jsnitsel@redhat.com, 
+	robh@kernel.org, krzysztof.kozlowski@linaro.org, quic_c_gdjako@quicinc.com, 
+	iommu@lists.linux.dev, linux-arm-msm@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	Konrad Dybcio <konrad.dybcio@linaro.org>
+Subject: Re: [PATCH v16 1/5] iommu/arm-smmu: re-enable context caching in
+ smmu reset operation
+Message-ID: <uroldzsi6n7b6hyiutanqfqyqsny65zr4fzyggsmvqsmyfayrp@u5c27k3yi5cf>
+References: <20241008125410.3422512-1-quic_bibekkum@quicinc.com>
+ <20241008125410.3422512-2-quic_bibekkum@quicinc.com>
+ <20241024125241.GD30704@willie-the-truck>
+ <092db44e-f254-4abd-abea-e9a64e70df12@quicinc.com>
+ <20241029124708.GA4241@willie-the-truck>
+ <ygd6bryp73jgsm5zggy2jz4uc42dehht2e6ht5f6yowf74c6ns@u6dul4rnybt6>
+ <20241105113723.GA12600@willie-the-truck>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: Chao Yu <chao@kernel.org>, Zhiguo Niu <zhiguo.niu@unisoc.com>,
- jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- linux-kernel@vger.kernel.org, ke.wang@unisoc.com, Hao_hao.Wang@unisoc.com
-Subject: Re: [PATCH V2] f2fs: fix to adjust appropriate length for fiemap
-To: Zhiguo Niu <niuzhiguo84@gmail.com>
-References: <1730685372-2995-1-git-send-email-zhiguo.niu@unisoc.com>
- <ab9f63b2-8d02-411b-8d2f-bc1b5b748ffe@kernel.org>
- <CAHJ8P3L9o2RJgV=TtUf_MPj36wasgPn7bn9FnGPXu=TgpE7ATQ@mail.gmail.com>
- <22873055-370b-4240-83ff-96bcfa91413a@kernel.org>
- <CAHJ8P3LddwapGLV5nKmw1ULTm7qp5OMk-kFBK3s_UptPPeph7w@mail.gmail.com>
- <9199e9fc-7b5b-4069-b79b-65ba5ae1b0f6@kernel.org>
- <CAHJ8P3L68mKAcSdrgk-5VZQh4cW+BBroh+50ymvuzO0f5x5kMw@mail.gmail.com>
- <c070fd2d-6480-4833-b03c-ec032ee37a28@kernel.org>
- <CAHJ8P3L4Q4Pia66o1RQGw5NnUOVxzNgFXUPO33jtqfQ-Oc=G_g@mail.gmail.com>
-Content-Language: en-US
-From: Chao Yu <chao@kernel.org>
-In-Reply-To: <CAHJ8P3L4Q4Pia66o1RQGw5NnUOVxzNgFXUPO33jtqfQ-Oc=G_g@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241105113723.GA12600@willie-the-truck>
 
-On 2024/11/6 14:08, Zhiguo Niu wrote:
-> Chao Yu <chao@kernel.org> 于2024年11月6日周三 10:40写道：
->>
->> On 2024/11/6 10:26, Zhiguo Niu wrote:
->>> Chao Yu <chao@kernel.org> 于2024年11月6日周三 10:16写道：
->>>>
->>>> On 2024/11/5 19:02, Zhiguo Niu wrote:
->>>>> Chao Yu <chao@kernel.org> 于2024年11月5日周二 18:39写道：
->>>>>>
->>>>>> On 2024/11/5 15:28, Zhiguo Niu wrote:
->>>>>>> Chao Yu <chao@kernel.org> 于2024年11月5日周二 15:04写道：
->>>>>>>>
->>>>>>>> On 2024/11/4 9:56, Zhiguo Niu wrote:
->>>>>>>>> If user give a file size as "length" parameter for fiemap
->>>>>>>>> operations, but if this size is non-block size aligned,
->>>>>>>>> it will show 2 segments fiemap results even this whole file
->>>>>>>>> is contiguous on disk, such as the following results:
->>>>>>>>>
->>>>>>>>>       ./f2fs_io fiemap 0 19034 ylog/analyzer.py
->>>>>>>>> Fiemap: offset = 0 len = 19034
->>>>>>>>>              logical addr.    physical addr.   length           flags
->>>>>>>>> 0       0000000000000000 0000000020baa000 0000000000004000 00001000
->>>>>>>>> 1       0000000000004000 0000000020bae000 0000000000001000 00001001
->>>>>>>>>
->>>>>>>>> after this patch:
->>>>>>>>> ./f2fs_io fiemap 0 19034 ylog/analyzer.py
->>>>>>>>> Fiemap: offset = 0 len = 19034
->>>>>>>>>          logical addr.    physical addr.   length           flags
->>>>>>>>> 0    0000000000000000 00000000315f3000 0000000000005000 00001001
->>>>>>>>>
->>>>>>>>> Signed-off-by: Zhiguo Niu <zhiguo.niu@unisoc.com>
->>>>>>>>> ---
->>>>>>>>> V2: correct commit msg according to Chao's questions
->>>>>>>>> f2fs_io has been modified for testing, the length for fiemap is
->>>>>>>>> real file size, not block number
->>>>>>>>> ---
->>>>>>>>>       fs/f2fs/data.c | 4 ++--
->>>>>>>>>       1 file changed, 2 insertions(+), 2 deletions(-)
->>>>>>>>>
->>>>>>>>> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
->>>>>>>>> index 306b86b0..9fc229d 100644
->>>>>>>>> --- a/fs/f2fs/data.c
->>>>>>>>> +++ b/fs/f2fs/data.c
->>>>>>>>> @@ -1966,8 +1966,8 @@ int f2fs_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
->>>>>>>>>                           goto out;
->>>>>>>>>           }
->>>>>>>>>
->>>>>>>>> -     if (bytes_to_blks(inode, len) == 0)
->>>>>>>>> -             len = blks_to_bytes(inode, 1);
->>>>>>>>> +     if (len & (blks_to_bytes(inode, 1) - 1))
->>>>>>>>> +             len = round_up(len, blks_to_bytes(inode, 1));
->>>>>>>>
->>>>>>>> How do you think of getting rid of above alignment for len?
->>>>>>>>
->>>>>>>>>
->>>>>>>>>           start_blk = bytes_to_blks(inode, start);
->>>>>>>>>           last_blk = bytes_to_blks(inode, start + len - 1);
->>>>>>>>
->>>>>>>> And round up end position w/:
->>>>>>>>
->>>>>>>> last_blk = bytes_to_blks(inode, round_up(start + len - 1, F2FS_BLKSIZE));
->>>>>>> Hi Chao,
->>>>>>> I think this will change the current code logic
->>>>>>> -------------
->>>>>>> if (start_blk > last_blk)
->>>>>>>         goto out;
->>>>>>> -------------
->>>>>>> for example, a file with size 19006, but the length from the user is 16384.
->>>>>>> before this modification,  last_blk =  bytes_to_blks(inode, start +
->>>>>>> len - 1) = (inode, 16383) = 3
->>>>>>> after the first f2fs_map_blocks(). start_blk change to be 4,
->>>>>>> after the second f2fs_map_blocks(), fiemap_fill_nex_exten will be
->>>>>>> called to fill user parameter and then
->>>>>>> will goto out because start_blk > last_blk, then fiemap flow finishes.
->>>>>>> but after this modification, last_blk will be 4
->>>>>>> will do f2fs_map_blocks() until reach the max_file_blocks(inode)
->>>>>>
->>>>>> Yes, you're right, however, w/ this patch, it may change last_blk, e.g.
->>>>>>
->>>>>> xfs_io file -c "fiemap -v 0 19006" vs xfs_io file -c "fiemap -v 2 19006"
->>>>>> start_blk and last_blk will be: 0, 4 and 0, 5.
->>>>> Hi Chao,
->>>>> yes, but w/o this patch , the original code still has the same situation??
->>>>> for example
->>>>> xfs_io file -c "fiemap -v 0 16384" vs xfs_io file -c "fiemap -v 2 16384"
->>>>> start_blk and last_blk will be: 0, 3 and 0, 4.
->>>>
->>>> For the case "fiemap -v 2 19006", offset is 2, and length is 19006, so last_offset
->>>> is 19008, and last_blk should be 4 rather than 5, right?
->>> hi Chao,
->>> it is right w/o my patch.
->>>>
->>>> And for you case, it calculates last_blk correctly.
->>> So you suggest that "Should we round_up len after start_blk & last_blk
->>> calculation?"
->>
->> Zhiguo,
->>
->> Yes, I think alignment of len should not affect calculation of last_blk.
->>
->> I mean this,
->>
->> ---
->>    fs/f2fs/data.c          | 6 +++---
->>    include/linux/f2fs_fs.h | 3 ++-
->>    2 files changed, 5 insertions(+), 4 deletions(-)
->>
->> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
->> index 7d1bb9518a40..cbbb956f420d 100644
->> --- a/fs/f2fs/data.c
->> +++ b/fs/f2fs/data.c
->> @@ -1967,12 +1967,12 @@ int f2fs_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
->>                          goto out;
->>          }
->>
->> -       if (bytes_to_blks(inode, len) == 0)
->> -               len = blks_to_bytes(inode, 1);
->> -
->>          start_blk = bytes_to_blks(inode, start);
->>          last_blk = bytes_to_blks(inode, start + len - 1);
->>
->> +       if (len & F2FS_BLKSIZE_MASK)
->> +               len = round_up(len, F2FS_BLKSIZE);
->> +
-> Hi Chao,
-> this verion verify pass with my test case.
+On Tue, Nov 05, 2024 at 11:37:24AM +0000, Will Deacon wrote:
+> On Mon, Nov 04, 2024 at 01:10:12PM +0200, Dmitry Baryshkov wrote:
+> > On Tue, Oct 29, 2024 at 12:47:09PM +0000, Will Deacon wrote:
+> > > On Fri, Oct 25, 2024 at 07:51:22PM +0530, Bibek Kumar Patro wrote:
+> > > > 
+> > > > 
+> > > > On 10/24/2024 6:22 PM, Will Deacon wrote:
+> > > > > On Tue, Oct 08, 2024 at 06:24:06PM +0530, Bibek Kumar Patro wrote:
+> > > > > > Default MMU-500 reset operation disables context caching in
+> > > > > > prefetch buffer. It is however expected for context banks using
+> > > > > > the ACTLR register to retain their prefetch value during reset
+> > > > > > and runtime suspend.
+> > > > > > 
+> > > > > > Replace default MMU-500 reset operation with Qualcomm specific reset
+> > > > > > operation which envelope the default reset operation and re-enables
+> > > > > > context caching in prefetch buffer for Qualcomm SoCs.
+> > > > > > 
+> > > > > > Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+> > > > > > Signed-off-by: Bibek Kumar Patro <quic_bibekkum@quicinc.com>
+> > > > > > ---
+> > > > > >   drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c | 45 ++++++++++++++++++++--
+> > > > > >   1 file changed, 42 insertions(+), 3 deletions(-)
+> > > > > > 
+> > > > > > diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c b/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
+> > > > > > index 087fb4f6f4d3..0cb10b354802 100644
+> > > > > > --- a/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
+> > > > > > +++ b/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
+> > > > > > @@ -16,6 +16,16 @@
+> > > > > > 
+> > > > > >   #define QCOM_DUMMY_VAL	-1
+> > > > > > 
+> > > > > > +/*
+> > > > > > + * SMMU-500 TRM defines BIT(0) as CMTLB (Enable context caching in the
+> > > > > > + * macro TLB) and BIT(1) as CPRE (Enable context caching in the prefetch
+> > > > > > + * buffer). The remaining bits are implementation defined and vary across
+> > > > > > + * SoCs.
+> > > > > > + */
+> > > > > > +
+> > > > > > +#define CPRE			(1 << 1)
+> > > > > > +#define CMTLB			(1 << 0)
+> > > > > > +
+> > > > > >   static struct qcom_smmu *to_qcom_smmu(struct arm_smmu_device *smmu)
+> > > > > >   {
+> > > > > >   	return container_of(smmu, struct qcom_smmu, smmu);
+> > > > > > @@ -396,11 +406,40 @@ static int qcom_smmu_def_domain_type(struct device *dev)
+> > > > > >   	return match ? IOMMU_DOMAIN_IDENTITY : 0;
+> > > > > >   }
+> > > > > > 
+> > > > > > +static int qcom_smmu500_reset(struct arm_smmu_device *smmu)
+> > > > > > +{
+> > > > > > +	int ret;
+> > > > > > +	u32 val;
+> > > > > > +	int i;
+> > > > > > +
+> > > > > > +	ret = arm_mmu500_reset(smmu);
+> > > > > > +	if (ret)
+> > > > > > +		return ret;
+> > > > > > +
+> > > > > > +	/*
+> > > > > > +	 * arm_mmu500_reset() disables CPRE which is re-enabled here.
+> > > > > > +	 * The errata for MMU-500 before the r2p2 revision requires CPRE to be
+> > > > > > +	 * disabled. The arm_mmu500_reset function disables CPRE to accommodate all
+> > > > > > +	 * RTL revisions. Since all Qualcomm SoCs are on the r2p4 revision, where
+> > > > > > +	 * the CPRE bit can be enabled, the qcom_smmu500_reset function re-enables
+> > > > > > +	 * the CPRE bit for the next-page prefetcher to retain the prefetch value
+> > > > > > +	 * during reset and runtime suspend operations.
+> > > > > > +	 */
+> > > > > > +
+> > > > > > +	for (i = 0; i < smmu->num_context_banks; ++i) {
+> > > > > > +		val = arm_smmu_cb_read(smmu, i, ARM_SMMU_CB_ACTLR);
+> > > > > > +		val |= CPRE;
+> > > > > > +		arm_smmu_cb_write(smmu, i, ARM_SMMU_CB_ACTLR, val);
+> > > > > > +	}
+> > > > > 
+> > > > > If CPRE only needs to be disabled prior to r2p2, then please teach the
+> > > > > MMU-500 code about that instead of adding qualcomm-specific logic here.
+> > > > > 
+> > > > 
+> > > > Doing this on MMU-500 code would make it generic and reflect for SoC of all
+> > > > the vendors on this platform.
+> > > > We can make sure that it won't cause any problems in Qualcomm SoCs as we
+> > > > have been enabling this since for some years now and could not
+> > > > observe/reproduce any issues around these errata.
+> > > 
+> > > Unless you can explain definitively hy that's the case, I still don't
+> > > think we should be second-guessing the core SMMU driver code in the
+> > > Qualcomm backend.
+> > > 
+> > > > But we won't be able to guarantee the same behavior in SoC for other vendors
+> > > > where these errata might still be applicable as per [1] and [2].
+> > > > So as per my understanding it's safe to include in Qualcomm specific
+> > > > implementation and not changing the default behavior in all other vendors'
+> > > > SoC even if they are not prior to r2p2 revision [3].
+> > > 
+> > > If you want to gate the errata workarounds on policy, then please follow
+> > > what we do for the CPU: add a Kconfig option (e.g.
+> > > ARM_SMMU_WORKAROUND_BROKEN_CPRE) which defaults to "on" (assuming that
+> > > the relevant errata aren't all "rare") and update silicon-errata.rst
+> > > accordingly.
+> > > 
+> > > Then you can choose to disable them in your .config if you're happy to
+> > > pick up the pieces.
+> > 
+> > Is it actually going to work? For most of the CPU errata we can detect
+> > and limit the workarounds to some class of CPUs. For SMMU, if I'm not
+> > misunderstanding something, the errata will be enabled by default for
+> > all SMMU-500 implementation, so only very few kernels, targeting only
+> > the Qualcomm hardware, can get that disabled.
 > 
-> but there is still another issue in orginal code:
-> ylog/analyzer.py  size = 19034
-> if I input the following cmd(start/length are both real size, not block number)
-> /f2fs_io fiemap 2 16384 ylog/analyzer.py
-> and the results shows:
-> Fiemap: offset = 2 len = 16384
->      logical addr.    physical addr.   length           flags
-> 0    0000000000000000 0000000e2ebca000 0000000000004000 00001000
-> 1    0000000000004000 0000000e2ebce000 0000000000001000 00001001
-> so start_blk/last_blk should be calculate it in the following way?
-
-IIUC, the root cause is f2fs_map_blocks() will truncate size of
-returned extent to F2FS_BYTES_TO_BLK(len), so whenever parameter
-@len doesn't cover last extent, it triggers this bug.
-
-next:
-	memset(&map, 0, sizeof(map));
-	map.m_lblk = start_blk;
-	map.m_len = F2FS_BYTES_TO_BLK(len);  --- limit max size of extent it founds
-	map.m_next_pgofs = &next_pgofs;
-	map.m_seg_type = NO_CHECK_TYPE;
-...
-	ret = f2fs_map_blocks(inode, &map, F2FS_GET_BLOCK_FIEMAP);
-
-xfs_io file -c "fiemap -v 2 16384"
-file:
-  EXT: FILE-OFFSET      BLOCK-RANGE      TOTAL FLAGS
-    0: [0..31]:         139272..139303      32 0x1000
-    1: [32..39]:        139304..139311       8 0x1001
-xfs_io file -c "fiemap -v 0 16384"
-file:
-  EXT: FILE-OFFSET      BLOCK-RANGE      TOTAL FLAGS
-    0: [0..31]:         139272..139303      32 0x1000
-xfs_io file -c "fiemap -v 0 16385"
-file:
-  EXT: FILE-OFFSET      BLOCK-RANGE      TOTAL FLAGS
-    0: [0..39]:         139272..139311      40 0x1001
-
-Thoughts?
-
-Thanks,
-
-> before:
-> start_blk = bytes_to_blks(inode, start);
-> last_blk = bytes_to_blks(inode, start + len - 1);
-> after:
+> We can add checks based on rXpY per the erratum documentation, but Robin
+> was saying elsewhere in the thread that some of them are still open (i.e.
+> unfixed).
 > 
-> start_blk = bytes_to_blks(inode, start);
-> last_blk = start_blk + bytes_to_blks(inode, len - 1);
-> thanks!
->>    next:
->>          memset(&map, 0, sizeof(map));
->>          map.m_lblk = start_blk;
->> diff --git a/include/linux/f2fs_fs.h b/include/linux/f2fs_fs.h
->> index b0b821edfd97..954e8e8344b7 100644
->> --- a/include/linux/f2fs_fs.h
->> +++ b/include/linux/f2fs_fs.h
->> @@ -24,10 +24,11 @@
->>    #define NEW_ADDR              ((block_t)-1)   /* used as block_t addresses */
->>    #define COMPRESS_ADDR         ((block_t)-2)   /* used as compressed data flag */
->>
->> +#define F2FS_BLKSIZE_MASK              (F2FS_BLKSIZE - 1)
->>    #define F2FS_BYTES_TO_BLK(bytes)      ((bytes) >> F2FS_BLKSIZE_BITS)
->>    #define F2FS_BLK_TO_BYTES(blk)                ((blk) << F2FS_BLKSIZE_BITS)
->>    #define F2FS_BLK_END_BYTES(blk)               (F2FS_BLK_TO_BYTES(blk + 1) - 1)
->> -#define F2FS_BLK_ALIGN(x)                      (F2FS_BYTES_TO_BLK((x) + F2FS_BLKSIZE - 1))
->> +#define F2FS_BLK_ALIGN(x)              (F2FS_BYTES_TO_BLK((x) + F2FS_BLKSIZE - 1))
->>
->>    /* 0, 1(node nid), 2(meta nid) are reserved node id */
->>    #define F2FS_RESERVED_NODE_NUM                3
->> --
->> 2.40.1
->>
->>
->>
->>> Thanks
->>>>
->>>> Thanks,
->>>>
->>>>> but overall last_blk will change loop counts but has not affect on the results.
->>>>>>
->>>>>> Should we round_up len after start_blk & last_blk calculation?
->>>>> I thinks it is ok ,but just a little bit redundant with the following
->>>>> handling about len.
->>>>>
->>>>> if (bytes_to_blks(inode, len) == 0)
->>>>>       len = blks_to_bytes(inode, 1);
->>>>>
->>>>> Based on the above situation,
->>>>> do you have any other good suggestions? ^^
->>>>> thanks!
->>>>>
->>>>>>
->>>>>> Thanks,
->>>>>>
->>>>>>> thanks！
->>>>>>>>
->>>>>>>> Thanks,
->>>>>>>>
->>>>>>
->>>>
->>
+> So ultimately, the decision to disable workarounds for known errata on
+> broken hardware is going to be a niche sport, yes.
 
+Yes, I understand that. I'm just trying to understand if we can have a
+better solution than having errata workarounds enabled on a majority of
+the kernels (which means less testing for the non-workaround-enabled
+setup on Qualcomm devices).
+
+-- 
+With best wishes
+Dmitry
 
