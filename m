@@ -1,136 +1,84 @@
-Return-Path: <linux-kernel+bounces-397837-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397838-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03DA99BE137
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 09:42:34 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8A189BE13C
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 09:43:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B104F1F24708
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 08:42:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A2DF1F245D8
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 08:43:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94CB21D5AC6;
-	Wed,  6 Nov 2024 08:42:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A74171D54F2;
+	Wed,  6 Nov 2024 08:43:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b="OMonIA7i"
-Received: from mail.ispras.ru (mail.ispras.ru [83.149.199.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cffeO5Co"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99C6F199243;
-	Wed,  6 Nov 2024 08:42:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.149.199.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DE6C1917CD;
+	Wed,  6 Nov 2024 08:43:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730882545; cv=none; b=IySYGs4E2Qo31Gole/d/b1AIDmikLPCSdx8hPCYDwzf22iwX+plGov0Sxn1yCBpY4pDZxpPLe6xD1lfnTYgHU7oWprpRMkfdye6zkjdqyvFfPNlG67OgYkYOWW99sT4YzEVpkdEA62x7qMm8L8IaTlGQGKHrQTIotvxZkIDJU/Q=
+	t=1730882597; cv=none; b=a1CzW5HIg0JYVmwJlGDcbGj0OIhPC2HBfmd/QCiKZBFGrMs7Vg9TWeLdXqMk5u3Yts3CDmh2HTx+iUv7nO5ibp5f15/d1FtXYk1NKv0wj5d4juXSB1sVLJV1ABbRkk6X2tEejusfBKYDLf6l6jIzAf8YdhEIZuhR6Kj+eS8atJo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730882545; c=relaxed/simple;
-	bh=Jte0gfLZsslumFo3T7tW236NNEQ+MdUH9kSgX4TgCfY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ca+KL7EiptursFKW3qFeVW1NH9da2UtyblcjSfTt8g/WN1sxXLZscfqQBCsceeHULwDTHPSXAev5KsPd3u6fC7vqUHH2eMrg78ttg+npSHWgdWRIELkUi/zFYMV6HJ1O8GdjKvoG1AZy9hL9tjjssPU/gDu1OKXkB5eCAZrDsbI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru; spf=pass smtp.mailfrom=ispras.ru; dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b=OMonIA7i; arc=none smtp.client-ip=83.149.199.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ispras.ru
-Received: from fedor-21d0 (unknown [5.228.116.177])
-	by mail.ispras.ru (Postfix) with ESMTPSA id 465E14076182;
-	Wed,  6 Nov 2024 08:42:12 +0000 (UTC)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.ispras.ru 465E14076182
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ispras.ru;
-	s=default; t=1730882532;
-	bh=lVX427mKZLJm8d+EqoMyWKoFhrPazyuzoZYzNO11s0M=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OMonIA7iS8PTafh7Y1trunda3UMge5bviOnqaE7U1GrSy43kQCFbCmCe246O96Wjc
-	 zFlKya2Mb9KZvzXGdZL1ZJc44o59vUDsdqPX3iO6UoH9FFMoakq1n60Dor9KsJ786L
-	 z8ic+L3jl4kxholcIY2zjoblhK8dr9frVz5im9xY=
-Date: Wed, 6 Nov 2024 11:42:06 +0300
-From: Fedor Pchelkin <pchelkin@ispras.ru>
-To: Florent Revest <revest@chromium.org>, bpf@vger.kernel.org
-Cc: Yonghong Song <yonghong.song@linux.dev>, Hao Luo <haoluo@google.com>, 
-	lvc-project@linuxtesting.org, Daniel Borkmann <daniel@iogearbox.net>, 
-	Song Liu <song@kernel.org>, Ilya Shchipletsov <rabbelkin@mail.ru>, 
-	John Fastabend <john.fastabend@gmail.com>, Alexei Starovoitov <ast@kernel.org>, 
-	Andrii Nakryiko <andrii@kernel.org>, Nikita Marushkin <hfggklm@gmail.com>, 
-	Eduard Zingerman <eddyz87@gmail.com>, Stanislav Fomichev <sdf@fomichev.me>, 
-	Jiri Olsa <jolsa@kernel.org>, KP Singh <kpsingh@kernel.org>, 
-	Martin KaFai Lau <martin.lau@linux.dev>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH bpf v2 1/2] bpf: fix %p% runtime check in
- bpf_bprintf_prepare
-Message-ID: <20241106-3cf34ee84cd6c77a84785574-pchelkin@ispras.ru>
-References: <20241028195343.2104-1-rabbelkin@mail.ru>
- <20241028195343.2104-2-rabbelkin@mail.ru>
- <f4c533a8-0d5e-476a-96cb-e76b67a4d62c@linux.dev>
- <CABRcYm+fR0qRk1FS8edB0zNFtg+GXt3vp025HU4eq-vCR52rRg@mail.gmail.com>
+	s=arc-20240116; t=1730882597; c=relaxed/simple;
+	bh=Rup2aixvNpnWoIPpedHVLtUBROMP081uHzovoGc4zQk=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=B9KMMANIhPImvd9msPDYOszqXXFLJk6Lb8KWvPKlFTzU3A/r5ZioMxhOI+ZF63NOCxnnv/TJRnCqSh7YCkEWPztzLQVyH7x0Hb9LSbCm33RDOylxi7soFy0DBCSge81jNSRpNNk8xMM3Q4z147VwiwT6ijI0ZztwVkwfHXvRIsg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cffeO5Co; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C2DFC4CED3;
+	Wed,  6 Nov 2024 08:43:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730882596;
+	bh=Rup2aixvNpnWoIPpedHVLtUBROMP081uHzovoGc4zQk=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=cffeO5CoV1o8hWTxbMlQCMenmky756cApenbZHXV+EEJytYPWVujagkRUzdLY5kmX
+	 orVSnAhOxrJwN17fNo8J6pnJDR3P1g1FV+rbytBdOvyeLm/TRrf6ipSKeuM5ACwFvs
+	 Y7TdjdcR98D5V+j9D0nHnXKL7mBpZsKZfaka97PnXApccnVtCAKhxv5kNdLHwYfPFN
+	 pXyy8cTcZnvMn12jc5FNDnowdUUghhr/QD/dnTTYaA9zIP+64Wilpip3qCLw5Z6Mu0
+	 bZWsYyp792R9rG+WPTCv6SRrOwoJOn8SmVr4LIDcZndJUDp+Wt7CMj5x3vFLhIw+NU
+	 ezOJVDpaK2RbQ==
+From: Lee Jones <lee@kernel.org>
+To: Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>, 
+ Mukesh Ojha <quic_mojha@quicinc.com>
+Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20241103160527.82487-1-quic_mojha@quicinc.com>
+References: <20241103160527.82487-1-quic_mojha@quicinc.com>
+Subject: Re: (subset) [PATCH v3] leds: class: Protect brightness_show()
+ with led_cdev->led_access mutex
+Message-Id: <173088259527.3252516.9517506943760955780.b4-ty@kernel.org>
+Date: Wed, 06 Nov 2024 08:43:15 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CABRcYm+fR0qRk1FS8edB0zNFtg+GXt3vp025HU4eq-vCR52rRg@mail.gmail.com>
+X-Mailer: b4 0.13.0
 
-On Thu, 31. Oct 17:17, Florent Revest wrote:
-> Acked-by: Florent Revest <revest@chromium.org>
+On Sun, 03 Nov 2024 21:35:27 +0530, Mukesh Ojha wrote:
+> There is NULL pointer issue observed if from Process A where hid device
+> being added which results in adding a led_cdev addition and later a
+> another call to access of led_cdev attribute from Process B can result
+> in NULL pointer issue.
 > 
-> On Tue, Oct 29, 2024 at 7:18 AM Yonghong Song <yonghong.song@linux.dev> wrote:
-> > On 10/28/24 12:53 PM, Ilya Shchipletsov wrote:
-> > > Fuzzing reports a warning in format_decode()
-> > >
-> > > Please remove unsupported %� in format string
-> > > WARNING: CPU: 0 PID: 5091 at lib/vsprintf.c:2680 format_decode+0x1193/0x1bb0 lib/vsprintf.c:2680
-> > > Modules linked in:
-> > > CPU: 0 PID: 5091 Comm: syz-executor879 Not tainted 6.10.0-rc1-syzkaller-00021-ge0cce98fe279 #0
-> > > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/02/2024
-> > > RIP: 0010:format_decode+0x1193/0x1bb0 lib/vsprintf.c:2680
-> > > Call Trace:
-> > >   <TASK>
-> > >   bstr_printf+0x137/0x1210 lib/vsprintf.c:3253
-> > >   ____bpf_trace_printk kernel/trace/bpf_trace.c:390 [inline]
-> > >   bpf_trace_printk+0x1a1/0x230 kernel/trace/bpf_trace.c:375
-> > >   bpf_prog_21da1b68f62e1237+0x36/0x41
-> > >   bpf_dispatcher_nop_func include/linux/bpf.h:1243 [inline]
-> > >   __bpf_prog_run include/linux/filter.h:691 [inline]
-> > >   bpf_prog_run include/linux/filter.h:698 [inline]
-> > >   bpf_test_run+0x40b/0x910 net/bpf/test_run.c:425
-> > >   bpf_prog_test_run_skb+0xafa/0x13a0 net/bpf/test_run.c:1066
-> > >   bpf_prog_test_run+0x33c/0x3b0 kernel/bpf/syscall.c:4291
-> > >   __sys_bpf+0x48d/0x810 kernel/bpf/syscall.c:5705
-> > >   __do_sys_bpf kernel/bpf/syscall.c:5794 [inline]
-> > >   __se_sys_bpf kernel/bpf/syscall.c:5792 [inline]
-> > >   __x64_sys_bpf+0x7c/0x90 kernel/bpf/syscall.c:5792
-> > >   do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-> > >   do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-> > >   entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> > >
-> > > The problem occurs when trying to pass %p% at the end of format string,
-> > > which would result in skipping last % and passing invalid format string
-> > > down to format_decode() that would cause warning because of invalid
-> > > character after %.
-> > >
-> > > Fix issue by advancing pointer only if next char is format modifier.
-> > > If next char is null/space/punct, then just accept formatting as is,
-> > > without advancing the pointer.
-> > >
-> > > Found by Linux Verification Center (linuxtesting.org) with Syzkaller.
-> > >
-> > > Reported-by: syzbot+e2c932aec5c8a6e1d31c@syzkaller.appspotmail.com
-> > > Closes: https://syzkaller.appspot.com/bug?extid=e2c932aec5c8a6e1d31c
-> > > Fixes: 48cac3f4a96d ("bpf: Implement formatted output helpers with bstr_printf")
-> > > Co-developed-by: Nikita Marushkin <hfggklm@gmail.com>
-> > > Signed-off-by: Nikita Marushkin <hfggklm@gmail.com>
-> > > Signed-off-by: Ilya Shchipletsov <rabbelkin@mail.ru>
-> >
-> > Acked-by: Yonghong Song <yonghong.song@linux.dev>
-> >
+> Use mutex led_cdev->led_access to protect access to led->cdev and its
+> attribute inside brightness_show() and max_brightness_show() and also
+> update the comment for mutex that it should be used to protect the led
+> class device fields.
+> 
+> [...]
 
-The patches of the series are marked as "Changes Requested" in Patchwork.
-They've been acked twice. And there've been no additional comment posted
-on mailing lists explaining the "Changes Required" status.
+Applied, thanks!
 
-Is there anything to improve in the series? Or it can be applied as is?
+[1/1] leds: class: Protect brightness_show() with led_cdev->led_access mutex
+      commit: 4ca7cd938725a4050dcd62ae9472e931d603118d
 
 --
-Thanks,
-Fedor
+Lee Jones [李琼斯]
+
 
