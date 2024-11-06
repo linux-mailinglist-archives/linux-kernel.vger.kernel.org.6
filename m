@@ -1,169 +1,178 @@
-Return-Path: <linux-kernel+bounces-397518-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397519-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2AE5B9BDCE5
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 03:34:11 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E9C79BDCEA
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 03:34:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 73BB0B23633
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 02:34:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 41B521C23048
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 02:34:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEB61190057;
-	Wed,  6 Nov 2024 02:16:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68E471D90AD;
+	Wed,  6 Nov 2024 02:16:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MIhBZjsk"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dSi0Z35M"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E05CB335B5;
-	Wed,  6 Nov 2024 02:16:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C178318FC75
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 02:16:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730859364; cv=none; b=c5bj/rUu8S0qIreyl/DAED8VKi9u82OVkO9sRNu6WRGZG7OdtgrkUzcrrRPQdhyCX1Hafpd4UIhEqr4vkg4ywT/w5R0ZUUunt1vDY+0YqrOwFpt9YGIQXi1IHn56nRypzJP7i6XlB0RbpdgFD1AbporXQVfN1LvMAqWITMoufAk=
+	t=1730859384; cv=none; b=BJrEKInLB3LoY7RKbkM3NQCzIiorVzM07N/ecyKDvIl9PzkViJ2On4cGvYjp/6QGae3ckkQAd6ArfonhSo4gU9zxj89pKT9YfJB4XE4q2eeCT8SIYSkXrAsMrNNInIfV1hUip2rL0e+dBIWZcKw7OyKS8+HTotknNteNwipc16U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730859364; c=relaxed/simple;
-	bh=2ceZS9atdvYQglPAeHWkMwFTe23RRaA6HdpaUHEf2oE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YbAT2gD9/OD03sS214zUl44hqf0VbUqL1EIfUUlMkBX9fDhAhQa7WEppxXqZRpCH4fLfaXn9KYFMXxgP8urvAsbcwDgNO3Z7eRac8ns0NCbYl5p/K1mNTJ823JA4BL8d30FEIPEjC8cjexXOOH9Sx0Wmll3o1Bth2zc+aadrsfc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MIhBZjsk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13CBAC4CED1;
-	Wed,  6 Nov 2024 02:16:03 +0000 (UTC)
+	s=arc-20240116; t=1730859384; c=relaxed/simple;
+	bh=06l34PWhvl4tdNiJSYbSZO4mr1xYv8cmwY77xvFqw2Q=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=mKJxDnnXRS03FkYTTHuP77ybkdL00j3i0Mka3qhfflp11pDTQGM1aHNLVfHYVQ67UiCcrcxJHeF3UcbSgTrRMKEo2Juqw3vucgmwCS1L0cMpEcjzvag0HZ3Ikpi+EZRPL02BE4degI1MTjESCDnADNKkYY6vFuVD8ooreFM7O4o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dSi0Z35M; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C423C4CED1;
+	Wed,  6 Nov 2024 02:16:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730859363;
-	bh=2ceZS9atdvYQglPAeHWkMwFTe23RRaA6HdpaUHEf2oE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MIhBZjsktrtesO5k1TPXMbC8XTanJSHPKWNM0vGLuOl1bFPdHdk7n8gm3zZowb5Ms
-	 j32tLEsR3+YyNkxm9OWTUhs7yOStVihPojeRZG93G5LdAjLCsQVHrDmvnr1qTrY/lG
-	 kc2RqvxU50wYh5cftvuGAdvuETv7RcoLj1Yu6lhwk63mW3Gqm9g/K7awIsb6HzCJ+T
-	 dt8VZUHl0IFsTdAlEyuWyTf4FtZKW7jvUZsdMPvJqLQxG/S90yQP4FkYKIwQJ04qUd
-	 Rh3b8+Ahy00Sir0NK1AIlbFhCBlWKtC9bHag0/Jg8Qbmx1K4OKxKSfj0c0tSPNC9K1
-	 7OPXYta84teZQ==
-Date: Tue, 5 Nov 2024 18:16:01 -0800
-From: Luis Chamberlain <mcgrof@kernel.org>
-To: Matthew Maurer <mmaurer@google.com>
-Cc: Lucas De Marchi <lucas.demarchi@intel.com>,
-	Lucas De Marchi <lucas.de.marchi@gmail.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Naveen N Rao <naveen@kernel.org>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Petr Pavlu <petr.pavlu@suse.com>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Daniel Gomez <da.gomez@samsung.com>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nicolas Schier <nicolas@fjasle.eu>, Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-	linux-modules@vger.kernel.org, linux-kbuild@vger.kernel.org,
-	rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH v8 2/3] modpost: Produce extended MODVERSIONS information
-Message-ID: <ZyrRYUD0K1f7SwWg@bombadil.infradead.org>
-References: <20241030-extended-modversions-v8-0-93acdef62ce8@google.com>
- <20241030-extended-modversions-v8-2-93acdef62ce8@google.com>
- <ZyNr--iMz_6Fj4yq@bombadil.infradead.org>
- <CAGSQo00F07viDHQkwBS8_1-THxJHYwx9VkS=TXC5rz3i8zSZSw@mail.gmail.com>
- <ZyVDv0mTm3Bgh1BR@bombadil.infradead.org>
- <CAGSQo02uDZ5QoRMPOn=3Fa9g5d+VPfKW-vmSsS2H+pOdPYCBFw@mail.gmail.com>
+	s=k20201202; t=1730859384;
+	bh=06l34PWhvl4tdNiJSYbSZO4mr1xYv8cmwY77xvFqw2Q=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=dSi0Z35MYmjitvBnV1jBnhBWpPchp+wG3KFIZXuY8ya7S6M9P+DXegErXesVIvIBn
+	 TgKj/SVY0vHbOh7TF1lgZnWeffWqby6TLMK1YsVwTojrMA8XFO1g+R7aCJTr5/ta9R
+	 WIAoj4ekSnvQjVLmZ5gcrdFCqjeiw67/COz2TBUo+Cwu2EzD3AqfsPg28UbQ9b/ys4
+	 TsYQd7p5i1/Hp6vnyIE4+P7azDxOcnov69XbBzS4U1YOtIgWRP1NVh46mH/LDnuW0X
+	 Xn65pf2fCjxq5IYe81/c8azbLHykJSgSg5t9+o5HmWFI8HNOHqeS4xZruqZIMcTh2q
+	 xq0/ic6Ai9GSg==
+Message-ID: <9199e9fc-7b5b-4069-b79b-65ba5ae1b0f6@kernel.org>
+Date: Wed, 6 Nov 2024 10:16:20 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Cc: Chao Yu <chao@kernel.org>, Zhiguo Niu <zhiguo.niu@unisoc.com>,
+ jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ linux-kernel@vger.kernel.org, ke.wang@unisoc.com, Hao_hao.Wang@unisoc.com
+Subject: Re: [PATCH V2] f2fs: fix to adjust appropriate length for fiemap
+To: Zhiguo Niu <niuzhiguo84@gmail.com>
+References: <1730685372-2995-1-git-send-email-zhiguo.niu@unisoc.com>
+ <ab9f63b2-8d02-411b-8d2f-bc1b5b748ffe@kernel.org>
+ <CAHJ8P3L9o2RJgV=TtUf_MPj36wasgPn7bn9FnGPXu=TgpE7ATQ@mail.gmail.com>
+ <22873055-370b-4240-83ff-96bcfa91413a@kernel.org>
+ <CAHJ8P3LddwapGLV5nKmw1ULTm7qp5OMk-kFBK3s_UptPPeph7w@mail.gmail.com>
+Content-Language: en-US
+From: Chao Yu <chao@kernel.org>
+In-Reply-To: <CAHJ8P3LddwapGLV5nKmw1ULTm7qp5OMk-kFBK3s_UptPPeph7w@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAGSQo02uDZ5QoRMPOn=3Fa9g5d+VPfKW-vmSsS2H+pOdPYCBFw@mail.gmail.com>
 
-On Tue, Nov 05, 2024 at 04:26:51PM -0800, Matthew Maurer wrote:
-> On Fri, Nov 1, 2024 at 2:10 PM Luis Chamberlain <mcgrof@kernel.org> wrote:
-> >
-> > On Thu, Oct 31, 2024 at 01:00:28PM -0700, Matthew Maurer wrote:
-> > > > The question is, if only extended moversions are used, what new tooling
-> > > > requirements are there? Can you test using only extended modversions?
-> > > >
-> > > >   Luis
-> > >
-> > > I'm not sure precisely what you're asking for. Do you want:
-> > > 1. A kconfig that suppresses the emission of today's MODVERSIONS
-> > > format?
-> >
-> > Yes that's right, a brave new world, and with the warning of that.
+On 2024/11/5 19:02, Zhiguo Niu wrote:
+> Chao Yu <chao@kernel.org> 于2024年11月5日周二 18:39写道：
+>>
+>> On 2024/11/5 15:28, Zhiguo Niu wrote:
+>>> Chao Yu <chao@kernel.org> 于2024年11月5日周二 15:04写道：
+>>>>
+>>>> On 2024/11/4 9:56, Zhiguo Niu wrote:
+>>>>> If user give a file size as "length" parameter for fiemap
+>>>>> operations, but if this size is non-block size aligned,
+>>>>> it will show 2 segments fiemap results even this whole file
+>>>>> is contiguous on disk, such as the following results:
+>>>>>
+>>>>>     ./f2fs_io fiemap 0 19034 ylog/analyzer.py
+>>>>> Fiemap: offset = 0 len = 19034
+>>>>>            logical addr.    physical addr.   length           flags
+>>>>> 0       0000000000000000 0000000020baa000 0000000000004000 00001000
+>>>>> 1       0000000000004000 0000000020bae000 0000000000001000 00001001
+>>>>>
+>>>>> after this patch:
+>>>>> ./f2fs_io fiemap 0 19034 ylog/analyzer.py
+>>>>> Fiemap: offset = 0 len = 19034
+>>>>>        logical addr.    physical addr.   length           flags
+>>>>> 0    0000000000000000 00000000315f3000 0000000000005000 00001001
+>>>>>
+>>>>> Signed-off-by: Zhiguo Niu <zhiguo.niu@unisoc.com>
+>>>>> ---
+>>>>> V2: correct commit msg according to Chao's questions
+>>>>> f2fs_io has been modified for testing, the length for fiemap is
+>>>>> real file size, not block number
+>>>>> ---
+>>>>>     fs/f2fs/data.c | 4 ++--
+>>>>>     1 file changed, 2 insertions(+), 2 deletions(-)
+>>>>>
+>>>>> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+>>>>> index 306b86b0..9fc229d 100644
+>>>>> --- a/fs/f2fs/data.c
+>>>>> +++ b/fs/f2fs/data.c
+>>>>> @@ -1966,8 +1966,8 @@ int f2fs_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
+>>>>>                         goto out;
+>>>>>         }
+>>>>>
+>>>>> -     if (bytes_to_blks(inode, len) == 0)
+>>>>> -             len = blks_to_bytes(inode, 1);
+>>>>> +     if (len & (blks_to_bytes(inode, 1) - 1))
+>>>>> +             len = round_up(len, blks_to_bytes(inode, 1));
+>>>>
+>>>> How do you think of getting rid of above alignment for len?
+>>>>
+>>>>>
+>>>>>         start_blk = bytes_to_blks(inode, start);
+>>>>>         last_blk = bytes_to_blks(inode, start + len - 1);
+>>>>
+>>>> And round up end position w/:
+>>>>
+>>>> last_blk = bytes_to_blks(inode, round_up(start + len - 1, F2FS_BLKSIZE));
+>>> Hi Chao,
+>>> I think this will change the current code logic
+>>> -------------
+>>> if (start_blk > last_blk)
+>>>       goto out;
+>>> -------------
+>>> for example, a file with size 19006, but the length from the user is 16384.
+>>> before this modification,  last_blk =  bytes_to_blks(inode, start +
+>>> len - 1) = (inode, 16383) = 3
+>>> after the first f2fs_map_blocks(). start_blk change to be 4,
+>>> after the second f2fs_map_blocks(), fiemap_fill_nex_exten will be
+>>> called to fill user parameter and then
+>>> will goto out because start_blk > last_blk, then fiemap flow finishes.
+>>> but after this modification, last_blk will be 4
+>>> will do f2fs_map_blocks() until reach the max_file_blocks(inode)
+>>
+>> Yes, you're right, however, w/ this patch, it may change last_blk, e.g.
+>>
+>> xfs_io file -c "fiemap -v 0 19006" vs xfs_io file -c "fiemap -v 2 19006"
+>> start_blk and last_blk will be: 0, 4 and 0, 5.
+> Hi Chao,
+> yes, but w/o this patch , the original code still has the same situation??
+> for example
+> xfs_io file -c "fiemap -v 0 16384" vs xfs_io file -c "fiemap -v 2 16384"
+> start_blk and last_blk will be: 0, 3 and 0, 4.
+
+For the case "fiemap -v 2 19006", offset is 2, and length is 19006, so last_offset
+is 19008, and last_blk should be 4 rather than 5, right?
+
+And for you case, it calculates last_blk correctly.
+
+Thanks,
+
+> but overall last_blk will change loop counts but has not affect on the results.
+>>
+>> Should we round_up len after start_blk & last_blk calculation?
+> I thinks it is ok ,but just a little bit redundant with the following
+> handling about len.
 > 
-> OK, I can send another revision with a suppression config, perhaps
-> CONFIG_NO_BASIC_MODVERSIONS
-
-Great.
-
-> > > This would be fairly easy to do, but I was leaving it enabled
-> > > for compatibility's sake, at least until extended modversions become
-> > > more common. This way existing `kmod` tools and kernels would continue
-> > > to be able to load new-style modules.
-> >
-> > Sure, understood why we'd have both.
-> >
-> > > 2. libkmod support for parsing the new format? I can do that fairly
-> > > easily too, but wanted the format actually decided on and accepted
-> > > before I started modifying things that read modversions.
-> >
-> > This is implied, what I'd like is for an A vs B comparison to be able to
-> > be done on even without rust modules, so that we can see if really
-> > libkmod changes are all that's needed. Does boot fail without a new
-> > libkmod for this? If so the Kconfig should specificy that for this new
-> > brave new world.
+> if (bytes_to_blks(inode, len) == 0)
+>     len = blks_to_bytes(inode, 1);
 > 
-> libkmod changes are not needed for boot - the userspace tools do not
-> examine this data for anything inline with boot at the moment, libkmod
-> only looks at it for kmod_module_get_versions, and modprobe only looks
-> at that with --show-modversions or --dump-modversions, which are not
-> normally part of boot.
+> Based on the above situation,
+> do you have any other good suggestions? ^^
+> thanks!
 > 
-> With the code as is, the only change will be that if a module with
-> EXTENDED_MODVERSIONS set contains an over-length symbol (which
-> wouldn't have been possible before), the overlong symbol's modversion
-> data will not appear in --show-modversions. After patching `libkmod`
-> in a follow-up patch, long symbols would appear as well. If booted
-> against an old kernel, long symbols will not have their CRCs in the
-> list to be checked. However, the old kernel could not export these
-> symbols, so it will fail to resolve the symbol and fail the load
-> regardless.
+>>
+>> Thanks,
+>>
+>>> thanks！
+>>>>
+>>>> Thanks,
+>>>>
+>>
 
-Thanks for checking all this. It is exactly what I was looking for.
-All this should be part of the cover letter and Kconfig documentation.
-
-> If we add and enable NO_BASIC_MODVERSIONS like you suggested above,
-> today's --show-modversions will claim there is no modversions data.
-> Applying a libkmod patch will result in modversions info being
-> displayed by that command again. If booted against a new kernel,
-> everything will be fine.
-
-*This* is is the sort of information I was also looking for and I think
-it would be good to make it clear for the upcoming NO_BASIC_MODVERSIONS.
-
-> If booted against an old kernel, it will
-> behave as though there is no modversions information.
-
-Huh? This I don't get. If you have the new libkmod and boot
-an old kernel, that should just not break becauase well, long
-symbols were not ever supported properly anyway, so no regression.
-
-I'm not quite sure I understood your last comment here though,
-can you clarify what you meant?
-
-Anyway, so now that this is all cleared up, the next question I have
-is, let's compare a NO_BASIC_MODVERSIONS world now, given that the
-userspace requirements aren't large at all, what actual benefits does
-using this new extended mod versions have? Why wouldn't a distro end
-up preferring this for say a future release for all modules?
-
-  Luis
 
