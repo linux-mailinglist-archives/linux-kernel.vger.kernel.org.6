@@ -1,109 +1,91 @@
-Return-Path: <linux-kernel+bounces-398148-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398150-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 805939BE65B
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 12:58:36 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 610689BE667
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 12:59:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 425C028910E
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 11:58:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EE0C5B242BA
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 11:59:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 467931DEFF4;
-	Wed,  6 Nov 2024 11:53:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6EA11DFD8B;
+	Wed,  6 Nov 2024 11:57:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LWn/qJPG"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iE6ULav/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27A431DE8B2;
-	Wed,  6 Nov 2024 11:53:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1E011DEFC5;
+	Wed,  6 Nov 2024 11:57:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730894002; cv=none; b=ez9yuYlXvDxWbM0uVWSLk2ABBjd1+DptiGTI0l3LtlcJCzvWFoto+bdz9fRrfMNX1Wn/KqFdxLv21P1fD9zxnjZytlD8Jjlv/rT+iSnMEXSwc3EemegdEaAutfo/Lxewt87JVeiysV64ob2Ay59U7nSueMIBV691zhNykY7DXqo=
+	t=1730894258; cv=none; b=F41vssF6eJm17B25vF4ZhxW4bfo1f6on45Xy031myXtrMGNn7Qhc2HflHJpfixXMhfPMXBGrHJXo10COJ3SZNyYtjVchrR5GPbof86Oh9duwF7NofiZZPGMTf5WsgDAxFdjI2CC+wo8QdfQmf7L2zUgJVrORIdOTMvbg+dv7hCM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730894002; c=relaxed/simple;
-	bh=PhQvnKePAoEA2kX1y16keIzj/ld0vsePlMe+JYHLDL4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aU5DBLK6MqMPIvswl3Q8S1ve6jZ2smx4baunjw7a+okWcR+GTmM61mFuZwNXkmD+BcEqDO7rv9fa4Y1pyWKplNDb6034g+sic/JdV+tWX4+Ze5zIq4gLlyPM7oiOQo671rPdxb/eOyA3Ri3bEudDPJ0Q3xG60kiOCpg5UnvQKyA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LWn/qJPG; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730894002; x=1762430002;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=PhQvnKePAoEA2kX1y16keIzj/ld0vsePlMe+JYHLDL4=;
-  b=LWn/qJPGAX6K+iQOYM7dZS81dC8RfeBb+4kEm5zU2as6IXQimOvL7eKY
-   BmfoxJlIj7xFxve84BvNIV8fEiLY5aETIPD17BLKEfUpCkRPNpKLFwjty
-   R4t0odX5M2vY9IB99twgdd13LFie5G5mWI3PGXxbeF/2Vyg8rEFlCaKZf
-   mte1j55tPvtVEZoSTwCf4yA+QrWkYEiP7VwOOb2WfK/FV2V4LNnfQAmhs
-   eHqrJn+xRvj9y6bRZLKZDRw7r/lUGRC+XUDcT06hdSYGUB4VZmAVbIAAj
-   F1OWExNzPzunm8PWW6hYYpqXGwd4A+hhSugbBPfJqas4THYIJySqYTis7
-   Q==;
-X-CSE-ConnectionGUID: WgdiFrxjTcuJCoH6H2Jlzw==
-X-CSE-MsgGUID: tetSONq8QdWsT/d6KjE5fw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11247"; a="30800932"
-X-IronPort-AV: E=Sophos;i="6.11,262,1725346800"; 
-   d="scan'208";a="30800932"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2024 03:53:21 -0800
-X-CSE-ConnectionGUID: AMFhg14FTReoSDMQUH5hQA==
-X-CSE-MsgGUID: DuKM7Sh9SM6mYO/bsImZDA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,262,1725346800"; 
-   d="scan'208";a="88464152"
-Received: from mylly.fi.intel.com (HELO [10.237.72.151]) ([10.237.72.151])
-  by fmviesa003.fm.intel.com with ESMTP; 06 Nov 2024 03:53:18 -0800
-Message-ID: <bac8d1ea-ed0f-42db-a0f8-c36d7c571534@linux.intel.com>
-Date: Wed, 6 Nov 2024 13:53:17 +0200
+	s=arc-20240116; t=1730894258; c=relaxed/simple;
+	bh=zFu0y/SOeLlBtCda28wQpQ4py4Me3MCIdbd9B5cVi/w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KsHINoxqQn03KCvzbMnAupyN/GLedoE5lLj/vkdoqEgxz2dHhLqKaB/LU/Mg1SVgteaaKAHit3t/C3kI0qFO/ehS4O1RZaO4lDL3mSEI6LG1Zh5Aa9G+KqP/9ouvmrndByxZfIkKbAtkrmFDH89rF3ww1Ejd++J7fIs2aQ1VNrY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iE6ULav/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E922EC4CECD;
+	Wed,  6 Nov 2024 11:57:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730894257;
+	bh=zFu0y/SOeLlBtCda28wQpQ4py4Me3MCIdbd9B5cVi/w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=iE6ULav/NmEjzNz/5GZVCG9rEbDY3rod7sh+QlZrxgQOGfEq5xrOL5UvKq6+A2XH4
+	 PTA6jBNen9s7RlVyQLALay6oavMj32CPHX+XUx6vuppyerqxHsZDx/rtMZt3Ke8GRT
+	 gBNxoIJPwoiIwmP/l7XX6QiSjA6lWkZWmgFhBsBiTzve9zwY2DE/Ey3+CxKq3O4upE
+	 oB9mDP9AdG6hNhmm5tXpOYv6Uml1oleHD7B9VDiNVdIYa73m7wcH40ydlhwEXWa24t
+	 Z34aKNx96LNc7jdIQax12rx8fqi5fmcB+9lypwfsKb8FE9/J2xxe/cj+24VtrlOpZ9
+	 TARUot0n3zijQ==
+Date: Wed, 6 Nov 2024 12:57:29 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Imran Shaik <quic_imrashai@quicinc.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Ajit Pandey <quic_ajipan@quicinc.com>, Taniya Das <quic_tdas@quicinc.com>, 
+	Jagadeesh Kona <quic_jkona@quicinc.com>, Satya Priya Kakitapalli <quic_skakitap@quicinc.com>, 
+	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/6] dt-bindings: clock: qcom: Add GPU clocks for
+ QCS8300
+Message-ID: <36f2ng6bdovp63xmojrs4sxmbwnapl6oo2isehmiiuh6xl2les@7nfpou4ppkp7>
+References: <20241106-qcs8300-mm-patches-v3-0-f611a8f87f15@quicinc.com>
+ <20241106-qcs8300-mm-patches-v3-1-f611a8f87f15@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RESEND TO CC MAILLIST] i2c: designware: fix master holding
- SCL low when I2C_DYNAMIC_TAR_UPDATE not set
-To: Liu Peibao <loven.liu@jaguarmicro.com>, Andi Shyti <andi.shyti@kernel.org>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Mika Westerberg <mika.westerberg@linux.intel.com>,
- Jan Dabros <jsd@semihalf.com>, "xiaowu . ding"
- <xiaowu.ding@jaguarmicro.com>, Angus Chen <angus.chen@jaguarmicro.com>,
- linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241101081243.1230797-1-loven.liu@jaguarmicro.com>
- <ZySU7bEvct4_FbBX@smile.fi.intel.com>
- <3580ce2a-963b-4a50-98b5-52ecac43871c@jaguarmicro.com>
- <anhqlov5vdsicmopulnvbaerhctjaauwsvl6nlc3llsh4hi5sn@d3jmeqxnlhpl>
- <d2abc63a-884d-4d48-b652-56989e55d0cd@jaguarmicro.com>
- <lv7hm72ngmjohh3hd3tsiawh47pjcyq76iw3weboytfcywttmt@jjrcuwan74rw>
- <bfc14b55-35e1-479c-bd9b-d40d1ea88377@jaguarmicro.com>
-Content-Language: en-US
-From: Jarkko Nikula <jarkko.nikula@linux.intel.com>
-In-Reply-To: <bfc14b55-35e1-479c-bd9b-d40d1ea88377@jaguarmicro.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241106-qcs8300-mm-patches-v3-1-f611a8f87f15@quicinc.com>
 
-On 11/6/24 12:09 PM, Liu Peibao wrote:
-> On 2024/11/6 17:46, Andi Shyti wrote:
->>> Fixes: 2409205acd3c ("i2c: designware: fix __i2c_dw_disable() in case master is holding SCL low")
->>> Co-developed-by: xiaowu.ding <xiaowu.ding@jaguarmicro.com>
->>> Signed-off-by: xiaowu.ding <xiaowu.ding@jaguarmicro.com>
->>> Co-developed-by: Angus Chen <angus.chen@jaguarmicro.com>
->>> Signed-off-by: Angus Chen <angus.chen@jaguarmicro.com>
->>> Signed-off-by: Liu Peibao <loven.liu@jaguarmicro.com>
->>
->> Thanks, this make much more sense now.
->>
->> Just one question, do we want to keep xiaowu.ding or Xiaowu Ding?
->> Can I change it to the second way? It looks better and that's how
->> it's normally signed.
->>
+On Wed, Nov 06, 2024 at 03:21:56PM +0530, Imran Shaik wrote:
+> The QCS8300 GPU clock controller is mostly identical to SA8775P, but
+> QCS8300 has few additional clocks and minor differences. Hence, reuse
+> SA8775P gpucc bindings and add additional clocks required for QCS8300.
 > 
-> I have confirmed with Xiaowu, and that is surely okay.
+> Signed-off-by: Imran Shaik <quic_imrashai@quicinc.com>
+> ---
+>  Documentation/devicetree/bindings/clock/qcom,gpucc.yaml |  3 +++
+>  include/dt-bindings/clock/qcom,qcs8300-gpucc.h          | 17 +++++++++++++++++
+>  2 files changed, 20 insertions(+)
 > 
-Acked-by: Jarkko Nikula <jarkko.nikula@linux.intel.com>
+
+That's a bit unusual, I think none of other SoCs do it. Last time you
+brought existing example which used the same header and prefixes.
+
+Anyway, it's fine from DT point of view, if that's what SoC/clock
+maintainers want so:
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
+
+Best regards,
+Krzysztof
+
 
