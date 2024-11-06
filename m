@@ -1,78 +1,78 @@
-Return-Path: <linux-kernel+bounces-399047-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-399050-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37EB09BFA2C
-	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 00:33:20 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 946B29BFA36
+	for <lists+linux-kernel@lfdr.de>; Thu,  7 Nov 2024 00:34:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A7E61C21DAF
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 23:33:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 29E0BB22CA0
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 23:34:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F383D20EA2B;
-	Wed,  6 Nov 2024 23:32:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CE8B20F5CA;
+	Wed,  6 Nov 2024 23:32:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="zUReX7eQ";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="kuPB028V"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="gwkM79MK";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="5/6VAXcf"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B6FC20E024;
-	Wed,  6 Nov 2024 23:32:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 163EA20EA31;
+	Wed,  6 Nov 2024 23:32:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730935958; cv=none; b=Kx6OugslWvTyylnsl9tvrKOu9Bn+PiePSaRN5FsqgeCMD7IRCkT7JaY82N127qV0cFiJLbi8THUSby+GWHfEA/SJKeHMnaRbtkMKWDbpxiCr/FiqZdrcNCerNDl3PDOWDt0rsfYgK/ury/1JuebYSD2NkKEEEDctiQqIq5mvl8M=
+	t=1730935960; cv=none; b=amcrqzXFZ298eRFplSM6YPOlcqLz1sODdx8RkrmBgL87ChAMl2mkxV8zFnrit4TW6CV+xGcIACxaHY5HMMlaM2hkhLePGzRfye9A95/BzF1b/C7o0ZPYhVepfWZoQA7rA6N2HZueDXQwv8yvaJB3E3Ty/paNvywjS7HmWcFiabw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730935958; c=relaxed/simple;
-	bh=PqlyTGEH5AtUAytLW+FEHLigrAfJU2/su1H5gSxSIXY=;
+	s=arc-20240116; t=1730935960; c=relaxed/simple;
+	bh=+0hMoP1d8drFu4O0+wfQAWCu49MAdfS5kBK+nDBnbsc=;
 	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=ViSXst30OXVbJw+8U81quJBkgBCQ33NTL6/geRHrHEe15N+A7myUo2eln57LGNmtPt/p9LyEwsY8MhjommnAu/EtylVR8YlH1rXH8ZJUDfEoOukd1BTVfDf2XohEVHDdIURGP070OF5J73TebuvW+TdVhwdFARt/yr7V4/FhGL8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=zUReX7eQ; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=kuPB028V; arc=none smtp.client-ip=193.142.43.55
+	 Message-ID:Content-Type; b=GpgTRjwpRXJECxQYzPFZUs2VYHhSQKroswG2F7tuSfa9fLlNhm35/Q5OgtgBkxO8hgFfycVHeeOFRe/rm/4+YMH5Q4+0HAJInzp1h3fg/h6DGlaCn3PMXk2fXMrn/nMZ1IIFwwFP4478Hao4zdITmUMBDEF9ewfycrMsKUkGBvE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=gwkM79MK; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=5/6VAXcf; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 06 Nov 2024 23:32:34 -0000
+Date: Wed, 06 Nov 2024 23:32:36 -0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1730935954;
+	s=2020; t=1730935956;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=acU13DprxTh1tWdld2+/T3W8ymzl80rxnZg5/uDtsbw=;
-	b=zUReX7eQmDNuZS4USoG2f9xCY86gfBvoeosyfMSNFtqB22+lwL8z78V3Qql85AZlzyG+69
-	Wkmy8sxpVb0IASmKZ2jgrDrQrJygwtqEYp07fv0Im1mYUsDPhVwY3xUPpxrMnlOaVqll6o
-	hIU54AeVh1Ltu7UHujzQFlfUzI0DEOtMn6GG0Q3Wxs1EXU3OgbYTOgpMb8gigC2LtZE0FB
-	YXvVuQZlikqs6pTBeOFAq2Dp5GtP3jfd7f/zPNkSxl/2K/OlX3v3ZC1WtGP+8YWteVDjP4
-	o28TMW6qVGKbNz5k8YI1qJY84PQJsqun9zLumyJHA4uZ2zN4OruKbKw6Qb24ig==
+	bh=Oj3SAikcWcuQ63vnkIoJT043v/MwegATbAZ7Yz6/vOQ=;
+	b=gwkM79MKdDZldeJnNidxzgyS6fuEjzjyQAy1c4QxGEw4Z6TIkc18m6tMLwbIhr2Cb6CpaZ
+	mCg93ZR1ZXFm2qeKtpKZ2eCVoEosDIiCgxZhghVLrnp6Al9fLoeFi9Lqq1TPHac1Al6RQb
+	fYVnX+fJN96shg7SDY01ooQOtcMsyCKrlsHQ376NeCAxQ9GRY0J7U7NX2Zw21EXUkUmOdL
+	QDMaMExpvuSS1Y661g/8ntZDbXSdCJn/aG1CEmeHPgOnrwT79sKkOnyXXw16cQz3X3iakv
+	SRdKgMOArVhzu5FSpygZnmnbACgDPigxVtqW6wFhnhUGlbhb4lDqarHIqESlaA==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1730935954;
+	s=2020e; t=1730935956;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=acU13DprxTh1tWdld2+/T3W8ymzl80rxnZg5/uDtsbw=;
-	b=kuPB028Vw9qqq5v11WSxAmqyFvZ9rWAnLwYA1V9FbZwlZ7Ikjd95N+cmtXYVDW0xbXydes
-	z9qKEqt4DpHxNmBQ==
-From: "tip-bot2 for Inochi Amaoto" <tip-bot2@linutronix.de>
+	bh=Oj3SAikcWcuQ63vnkIoJT043v/MwegATbAZ7Yz6/vOQ=;
+	b=5/6VAXcfrEAfXtlI79nVWvnF7i9Opo7V9wTxayfc6vtdctPLH4BX12nNW1nLtSSWqLzU71
+	wOMRj7IIrQbKF4DQ==
+From: "tip-bot2 for Marc Zyngier" <tip-bot2@linutronix.de>
 Sender: tip-bot2@linutronix.de
 Reply-to: linux-kernel@vger.kernel.org
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip: irq/core] dt-bindings: interrupt-controller: Add T-HEAD C900
- ACLINT SSWI device
-Cc: Inochi Amaoto <inochiama@gmail.com>, Thomas Gleixner <tglx@linutronix.de>,
- Conor Dooley <conor.dooley@microchip.com>, x86@kernel.org,
- linux-kernel@vger.kernel.org, maz@kernel.org
-In-Reply-To: <20241031060859.722258-2-inochiama@gmail.com>
-References: <20241031060859.722258-2-inochiama@gmail.com>
+Subject: [tip: irq/urgent] irqchip/gic-v3: Force propagation of the active
+ state with a read-back
+Cc: Christoffer Dall <christoffer.dall@arm.com>, Marc Zyngier <maz@kernel.org>,
+ Thomas Gleixner <tglx@linutronix.de>, stable@vger.kernel.org, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20241106084418.3794612-1-maz@kernel.org>
+References: <20241106084418.3794612-1-maz@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <173093595402.32228.1049927571662435176.tip-bot2@tip-bot2>
+Message-ID: <173093595604.32228.1931318188286510625.tip-bot2@tip-bot2>
 Robot-ID: <tip-bot2@linutronix.de>
 Robot-Unsubscribe:
  Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -80,96 +80,65 @@ Precedence: bulk
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 
-The following commit has been merged into the irq/core branch of tip:
+The following commit has been merged into the irq/urgent branch of tip:
 
-Commit-ID:     2631c2b8e5c3406af62b60413ea04e155be9ebcc
-Gitweb:        https://git.kernel.org/tip/2631c2b8e5c3406af62b60413ea04e155be9ebcc
-Author:        Inochi Amaoto <inochiama@gmail.com>
-AuthorDate:    Thu, 31 Oct 2024 14:08:57 +08:00
+Commit-ID:     464cb98f1c07298c4c10e714ae0c36338d18d316
+Gitweb:        https://git.kernel.org/tip/464cb98f1c07298c4c10e714ae0c36338d18d316
+Author:        Marc Zyngier <maz@kernel.org>
+AuthorDate:    Wed, 06 Nov 2024 08:44:18 
 Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Thu, 07 Nov 2024 00:28:27 +01:00
+CommitterDate: Thu, 07 Nov 2024 00:22:44 +01:00
 
-dt-bindings: interrupt-controller: Add T-HEAD C900 ACLINT SSWI device
+irqchip/gic-v3: Force propagation of the active state with a read-back
 
-Sophgo SG2044 has a new version of T-HEAD C920, which implement a fully
-featured T-HEAD ACLINT device. This ACLINT device contains a SSWI device to
-support fast S-mode IPI.
+Christoffer reports that on some implementations, writing to
+GICR_ISACTIVER0 (and similar GICD registers) can race badly with a guest
+issuing a deactivation of that interrupt via the system register interface.
 
-Add necessary compatible string for the T-HEAD ACLINT SSWI device.
+There are multiple reasons to this:
 
-Signed-off-by: Inochi Amaoto <inochiama@gmail.com>
+ - this uses an early write-acknoledgement memory type (nGnRE), meaning
+   that the write may only have made it as far as some interconnect
+   by the time the store is considered "done"
+
+ - the GIC itself is allowed to buffer the write until it decides to
+   take it into account (as long as it is in finite time)
+
+The effects are that the activation may not have taken effect by the time
+the kernel enters the guest, forcing an immediate exit, or that a guest
+deactivation occurs before the interrupt is active, doing nothing.
+
+In order to guarantee that the write to the ISACTIVER register has taken
+effect, read back from it, forcing the interconnect to propagate the write,
+and the GIC to process the write before returning the read.
+
+Reported-by: Christoffer Dall <christoffer.dall@arm.com>
+Signed-off-by: Marc Zyngier <maz@kernel.org>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
-Link: https://lore.kernel.org/all/20241031060859.722258-2-inochiama@gmail.com
-Link: https://www.xrvm.com/product/xuantie/C920
+Acked-by: Christoffer Dall <christoffer.dall@arm.com>
+Cc: stable@vger.kernel.org
+Link: https://lore.kernel.org/all/20241106084418.3794612-1-maz@kernel.org
 
 ---
- Documentation/devicetree/bindings/interrupt-controller/thead,c900-aclint-sswi.yaml | 58 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 58 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/interrupt-controller/thead,c900-aclint-sswi.yaml
+ drivers/irqchip/irq-gic-v3.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/interrupt-controller/thead,c900-aclint-sswi.yaml b/Documentation/devicetree/bindings/interrupt-controller/thead,c900-aclint-sswi.yaml
-new file mode 100644
-index 0000000..8d33090
---- /dev/null
-+++ b/Documentation/devicetree/bindings/interrupt-controller/thead,c900-aclint-sswi.yaml
-@@ -0,0 +1,58 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/interrupt-controller/thead,c900-aclint-sswi.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
+diff --git a/drivers/irqchip/irq-gic-v3.c b/drivers/irqchip/irq-gic-v3.c
+index ce87205..8b6159f 100644
+--- a/drivers/irqchip/irq-gic-v3.c
++++ b/drivers/irqchip/irq-gic-v3.c
+@@ -524,6 +524,13 @@ static int gic_irq_set_irqchip_state(struct irq_data *d,
+ 	}
+ 
+ 	gic_poke_irq(d, reg);
 +
-+title: T-HEAD C900 ACLINT Supervisor-level Software Interrupt Device
-+
-+maintainers:
-+  - Inochi Amaoto <inochiama@outlook.com>
-+
-+description:
-+  The SSWI device is a part of the THEAD ACLINT device. It provides
-+  supervisor-level IPI functionality for a set of HARTs on a THEAD
-+  platform. It provides a register to set an IPI (SETSSIP) for each
-+  HART connected to the SSWI device.
-+
-+properties:
-+  compatible:
-+    items:
-+      - enum:
-+          - sophgo,sg2044-aclint-sswi
-+      - const: thead,c900-aclint-sswi
-+
-+  reg:
-+    maxItems: 1
-+
-+  "#interrupt-cells":
-+    const: 0
-+
-+  interrupt-controller: true
-+
-+  interrupts-extended:
-+    minItems: 1
-+    maxItems: 4095
-+
-+additionalProperties: false
-+
-+required:
-+  - compatible
-+  - reg
-+  - "#interrupt-cells"
-+  - interrupt-controller
-+  - interrupts-extended
-+
-+examples:
-+  - |
-+    interrupt-controller@94000000 {
-+      compatible = "sophgo,sg2044-aclint-sswi", "thead,c900-aclint-sswi";
-+      reg = <0x94000000 0x00004000>;
-+      #interrupt-cells = <0>;
-+      interrupt-controller;
-+      interrupts-extended = <&cpu1intc 1>,
-+                            <&cpu2intc 1>,
-+                            <&cpu3intc 1>,
-+                            <&cpu4intc 1>;
-+    };
-+...
++	/*
++	 * Force read-back to guarantee that the active state has taken
++	 * effect, and won't race with a guest-driven deactivation.
++	 */
++	if (reg == GICD_ISACTIVER)
++		gic_peek_irq(d, reg);
+ 	return 0;
+ }
+ 
 
