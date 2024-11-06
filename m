@@ -1,108 +1,119 @@
-Return-Path: <linux-kernel+bounces-398012-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398011-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06CE09BE432
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 11:23:50 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 563E29BE42F
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 11:23:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9119CB2149C
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 10:23:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D98E81F23405
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 10:23:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F2041DE2DC;
-	Wed,  6 Nov 2024 10:23:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bglYgFtl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BD721DDC3A;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C304D1DE2BF;
 	Wed,  6 Nov 2024 10:23:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oiGmJ5CE"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FA641DC194
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 10:23:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730888611; cv=none; b=ulckLOhwWyJk/8TxfyjUhrtS9zJuTJVc50c9t5OqkpwPSgdZNRoJTCjTbiL+mxqMFXQ7xyA7s4PqtNQjQDdqAh7pdHGmnptgbjZg7+OQRfgIZ9Z1Sr8fw0y1g9dpyOymGLdydPXttPwOqIchy6P/+djUQOiVtx+K3WhiwL6M7dM=
+	t=1730888611; cv=none; b=FmYBVTYNyyTTNcyPZ1otCZfXjA1aQPXFXMeWVk42GtsT9113uR8KZn+QaOI3LYhjB90ZwS+T3u9yEREUN4bLpYSmpSPi8kfiK6NnRpsnbdkKHNEG391fHmoKOwfjYXhL/VivuWaTgj4PkqOPHlKUmyU8APrzU/BQip0A/ig8KGo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1730888611; c=relaxed/simple;
-	bh=6DxisW7D7zjNCbF4hlBcke6SsDosV23ni3y7W/phmvs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=bBne/yHvifDGrqflwWtVtpQ1fEsWpMUPrP2aWR7N3KKKR0IPlMUHT2jxEPsrmRw7ty/jz6tz9KI1uSYFr6HylNgcJX90rwr1TAFOyjMrnrN11KH1U2WvSpH8oW4vBhPO9Wd9s2Hb/kRCN8b9c2jgr2s1zT8YuuAzNsYq5cFIc1U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bglYgFtl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0050C4CECD;
-	Wed,  6 Nov 2024 10:23:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730888611;
-	bh=6DxisW7D7zjNCbF4hlBcke6SsDosV23ni3y7W/phmvs=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=bglYgFtlGDDSFSE6HvhUiwDNerouRy8APG6TIzlAtdh4cS4ccBmejqicrrfMZWLs1
-	 +Fqet/7XzmLAK8PT0VHJJGKxTEzdjjbU3CViA+hDYaQtfHlktaincGVuRP58MC1PPu
-	 3z/64zEsU9oDC7bGK6APrOfIzBsdSzcxo43I7TGQhB/JIO1VfXCYkFl42yJzM+LK9G
-	 uK3/CxDLTu5tJYqtd0wY1yotZDqHDWLe/nGmDi106VVeOUgR3feW5bCP4jipTjFV/V
-	 52Kb1v5k7U7EaYXAxIAFXK45dXGh4ZDxI0GNd/1SHAK+U8CeYpkQsSEWIuf1yeIBPm
-	 Bl4zJuSN0cFTA==
-From: Christian Brauner <brauner@kernel.org>
-To: =?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	kernel-dev@igalia.com,
-	Theodore Ts'o <tytso@mit.edu>,
-	Hugh Dickins <hughd@google.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Jan Kara <jack@suse.cz>,
-	krisman@kernel.org,
-	Stephen Rothwell <sfr@canb.auug.org.au>,
-	Nathan Chancellor <nathan@kernel.org>
-Subject: Re: [PATCH v2 0/3] tmpfs: Casefold fixes
-Date: Wed,  6 Nov 2024 11:23:10 +0100
-Message-ID: <20241106-hofnarren-bestuhlung-b98bec741179@brauner>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241101164251.327884-1-andrealmeid@igalia.com>
-References: <20241101164251.327884-1-andrealmeid@igalia.com>
+	bh=5ZTdlscXjwXdZc28p/Of+HAHBUGlSUNLJL2+POeD/0M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=j7tl8FvzMO/6bJWJuX0+fuE3VTnzwcwVFBqZXxrQN8bHScBhaiOD0U5BuAnccVdzQ4W2ByE78o0xS6wWmA9GvH72DKxnEVubF1BeDUy8MPEdoAwLh9fnFf0eu7XOIJjrJPEDnp1Xmha4KoGqXf0c7ZRsiBy6sCbJOK25IRq6dlQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=oiGmJ5CE; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-37d4b0943c7so4130452f8f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2024 02:23:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1730888608; x=1731493408; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=alvW05AqLZBKVkpX7PrdplTn/4fsq+k1H0ntLD4wbXM=;
+        b=oiGmJ5CEao4H6rKyhsxFpBjCTur5f4gOHB+/e6XUgD3noEyw41iKZGX7HYDd5g0GHw
+         UzvV4yb4kOzQvXHGlh8wtFU/8LCZs8C63ZsLmO6EDihFOoc8fgZY6mDh3yd+p8ZzEhTB
+         H2+yOAKGPNw2IIB0JAf8nng/IvRQBabEZrIOweUm1EeNZMYLMP1sOckai1KCF+gJOZ2v
+         AsNU1I+tdVe5RBEoXn1tzxSsM2phQCIR0wFChh3gbnXdBzrg1EjjyvwE18anJ8KVlUnC
+         xPKdCtx6IOPMWr/gk+rzfRmjFbrTg/BDLOVmz5QEo53HENphwDVA0Jj9nT2abnNgFMXP
+         nUag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730888608; x=1731493408;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=alvW05AqLZBKVkpX7PrdplTn/4fsq+k1H0ntLD4wbXM=;
+        b=wF4N3nBsca0fVUE3Q9EitUwd+RYS91tnkeCuRkwKag8wjNLl2gaQK3RaVEbL5P7+Q+
+         6n4bC22Dicc654sJ8IA8a1hkjKy5vuGf4I2XpBwkV//lQ6nJB9NvwVLApCOHuwsvbeCn
+         ezh3Qeyd7bOjy7roO2+/Pn39I6XOQ4ovvJqYXjAsTrEcUQRtxM1FtmYlqzq7zSt5SCEH
+         XQzKgVUZITa5HNDN466239ytKpK563ms9k75cSnFGDaHCVBmg2VszxPcaNiR1iXXCe5I
+         dYXiKwGM2t6LMWdz3bwGm7rWqkCt2vDaaLgntFiyUmXrM0rR6tdO7zLWiVpHWnS4sAvr
+         nU+g==
+X-Forwarded-Encrypted: i=1; AJvYcCWuSinl9FXYFdltFSuBrB549q0B8qCD2j3OwzlHeY2kKqIAroP04bFlhWAukzcTXegP4z6h2QPzwS2Mqrg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwSW9DtyVIT+eZk3BeCTowXfjLjrLQuVqKhaci+E17QOV1vIRqb
+	T1O6DUlVV4gveI+2PsapZ3sfuphj3F2I9kH0Ldn87rWQMahkPnxF3WCYsPHnbXM=
+X-Google-Smtp-Source: AGHT+IFM/sNFa+KEx8YfPwmIWtaTMMW7EIUGwvTNJkiyP0jY1dX7JPo3+l8pDyMtrZbP5YVgM2SUvA==
+X-Received: by 2002:adf:f28f:0:b0:37d:4b73:24c0 with SMTP id ffacd0b85a97d-38061190da2mr24474893f8f.35.1730888608072;
+        Wed, 06 Nov 2024 02:23:28 -0800 (PST)
+Received: from [172.16.24.72] ([154.14.63.34])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381c10e61f9sm18666123f8f.58.2024.11.06.02.23.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 06 Nov 2024 02:23:27 -0800 (PST)
+Message-ID: <d39c7613-fda1-417c-a205-daddbc378bc3@linaro.org>
+Date: Wed, 6 Nov 2024 10:23:26 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1395; i=brauner@kernel.org; h=from:subject:message-id; bh=6DxisW7D7zjNCbF4hlBcke6SsDosV23ni3y7W/phmvs=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaRrO8+q2d6qclPisbCzydK+DzoFdkp9ugoXr/3dcSbkF y9PXNDujlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgIm8+MnwT2v7lefdCj+MPvza vy9fRF/dZJtHTeYX5Q8cV0y2rdI1msTwP2T589KPm2xtJh78WjyHMXr+633bamIVn5z77Po7yXH ePjYA
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/4] media: venus: hfi_parser: add check to avoid out of
+ bound access
+To: Vikash Garodia <quic_vgarodia@quicinc.com>,
+ Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org
+References: <20241105-venus_oob-v1-0-8d4feedfe2bb@quicinc.com>
+ <20241105-venus_oob-v1-1-8d4feedfe2bb@quicinc.com>
+ <640fe933-078d-4bf5-815c-7db0eb8b9de4@linaro.org>
+ <7f350d73-65dd-097e-8b4a-e9a23472aa28@quicinc.com>
+Content-Language: en-US
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+In-Reply-To: <7f350d73-65dd-097e-8b4a-e9a23472aa28@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On Fri, 01 Nov 2024 13:42:48 -0300, André Almeida wrote:
-> After casefold support for tmpfs was merged into vfs tree, two warnings
-> were reported and I also found a small fix in the code.
-> 
-> Thanks Nathan Chancellor and Stephen Rothwell!
-> 
-> Changelog:
-> - Fixed ifdef guard for tmpfs_sysfs_init()
-> v1: https://lore.kernel.org/lkml/20241101013741.295792-1-andrealmeid@igalia.com/
-> 
-> [...]
+On 06/11/2024 07:25, Vikash Garodia wrote:
+>>>            cap = &caps[core->codecs_count++];
+>>>            cap->codec = BIT(bit);
+>>>            cap->domain = VIDC_SESSION_TYPE_ENC;
+>>>
+>> I don't see how codecs_count could be greater than the control, since you
+>> increment by one on each loop but >= is fine too I suppose.
+> Assume the payload from malicious firmware is packed like below
+> HFI_PROPERTY_PARAM_CODEC_SUPPORTED
+> HFI_PROPERTY_PARAM_CODEC_SUPPORTED
+> HFI_PROPERTY_PARAM_CODEC_SUPPORTED
+> .....
+> for 32 or more instances of above type
 
-Applied to the vfs.tmpfs branch of the vfs/vfs.git tree.
-Patches in the vfs.tmpfs branch should appear in linux-next soon.
+But you do this
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+           cap = &caps[core->codecs_count++];
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
+for each bit.
 
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
+Anyway consider Dmitry's input re only calling this function once instead.
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.tmpfs
-
-[1/3] libfs: Fix kernel-doc warning in generic_ci_validate_strict_name
-      https://git.kernel.org/vfs/vfs/c/33b091c08ed8
-[2/3] tmpfs: Fix type for sysfs' casefold attribute
-      https://git.kernel.org/vfs/vfs/c/18d2f10f6284
-[3/3] tmpfs: Initialize sysfs during tmpfs init
-      https://git.kernel.org/vfs/vfs/c/65c481f30896
+---
+bod
 
