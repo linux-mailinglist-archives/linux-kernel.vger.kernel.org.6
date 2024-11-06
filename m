@@ -1,156 +1,99 @@
-Return-Path: <linux-kernel+bounces-398662-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398665-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F3129BF458
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 18:32:55 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E7249BF460
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 18:36:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 859F42835A4
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 17:32:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5718F1F24580
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 17:36:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 998BD2071F7;
-	Wed,  6 Nov 2024 17:32:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D9AE20721D;
+	Wed,  6 Nov 2024 17:36:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ck51gHui"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="HYuQmoUT"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01740204932;
-	Wed,  6 Nov 2024 17:32:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A0352038A6;
+	Wed,  6 Nov 2024 17:36:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730914368; cv=none; b=pVjpiKAVJqPKz5qiwd+5b9ehyE8ACjGTtVBTS6URWMeZzAVMVaBPnVSeGpjCISK5U4L2aqSS9UcRyBb/TTDTCVlLZ+jfxfQR4ZHVW1fCwrRXRAmfshKUnEFYvUe048MVH+xrt/RWMsBPux22qijuDxCMlYSzIYlJ75R5ledAdOE=
+	t=1730914593; cv=none; b=XJZgO1sYqsTjzJfg9PVweQNwQfC0cgbdUSsfDvERfmvCQ7XHOwjL8Bx4xgy6FjWWTpW5n1PIy6AiUQyb0mgz93IcIHmceYTI+9ZggMjhvZbxPYuIwQrcZSVzQaKZnpQRIpIS1ERmdeHC6eb1w+Wn/sRrMy+NddwxBHD3C5TXKAs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730914368; c=relaxed/simple;
-	bh=yt+QqUmEt1w7XSHumooDG7+gE/q8Cm20S03bW9MyURM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=uXI6O5W7bVfKynOWmLXzn9u4ivMecyyQKZlf1vLZzgwjTjIMx26+/TlGpViifuJ2w5nvcRKhMp1mm7TiScGkIlsByay3vO41oUF9sP5pmhIcui+lRuF5yYfjmQtWMg1C6H5qwE77ZVQ91VANTHIY4yuHCBPhPHUu065MAuF7Xpk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ck51gHui; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730914366; x=1762450366;
-  h=message-id:date:mime-version:subject:to:references:from:
-   in-reply-to:content-transfer-encoding;
-  bh=yt+QqUmEt1w7XSHumooDG7+gE/q8Cm20S03bW9MyURM=;
-  b=Ck51gHuiue1fE4XcxUSBw3LP1MPrtzXKhfmPWVN9CTDDTNoaeGWTd7hg
-   fUnoStnmgp5+ridFMN5blMXGKO1WqKhCIz496d9U0sC5sQZMroXsCebbT
-   v22isHyNdwZfvRAtb9sx+NPyQm3pLAKwo61ZxC+J94GXSV45L8DvT54ZN
-   AOty6jttgC1COQ7sw4NkgUrYiqVjuEYbT7+icV3CHZlKRr1KzlF2NkHKX
-   IRAZEDhdUCWX7DX8wvEVZxHIL75p4hmK9SUxXdIn7vh/uWwG5Gi1FKLeN
-   Q83dZpIl+y7MAsebDC1khW06vcBNId9T97O3qlUTUijqMglB6rKJfgFBi
-   Q==;
-X-CSE-ConnectionGUID: xtfxZ87CQDyX3V/bLMfkng==
-X-CSE-MsgGUID: B5JC8WdFS0mZCc6TqPzyVQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11248"; a="30135394"
-X-IronPort-AV: E=Sophos;i="6.11,263,1725346800"; 
-   d="scan'208";a="30135394"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2024 09:32:43 -0800
-X-CSE-ConnectionGUID: n193XzngQ5m/d1wTf/OA/w==
-X-CSE-MsgGUID: Eu+0uK5bQ9G1qLKDDrizKw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,263,1725346800"; 
-   d="scan'208";a="115465987"
-Received: from linux.intel.com ([10.54.29.200])
-  by fmviesa001.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2024 09:32:43 -0800
-Received: from [10.212.82.230] (kliang2-mobl1.ccr.corp.intel.com [10.212.82.230])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by linux.intel.com (Postfix) with ESMTPS id F402C20B5703;
-	Wed,  6 Nov 2024 09:32:40 -0800 (PST)
-Message-ID: <30c22df5-9815-4a73-9a12-165d9045a667@linux.intel.com>
-Date: Wed, 6 Nov 2024 12:32:39 -0500
+	s=arc-20240116; t=1730914593; c=relaxed/simple;
+	bh=1pOmjwpfNyCJNXJY7y/BgWxROZPdpotF0MYZpYajSzc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XJ6TMou+MDL/Q0TeRcKPRGvelrNRr9kl+Qr4q+NL1PcI46c/lz89yrcblCgNaL/JF0X9IF6TTGuJdxIClmp7kwaqvEkUXHvavoVsjEe8z5PeUQ9c7kcC6yl3L4m8KqVqKynjDa3WXvdGiy89TQxNNpZQW3pgdqzOwYnwpjhZuco=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=HYuQmoUT; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=gxTmyUAb89AtPdb+rKahOvBdQ8TDjXHqHlVhRRQ/Uxk=; b=HYuQmoUTGKqkwWsdYILgYJo0bQ
+	KCMaAFPzaF/zxbaCdhV2zLQIT6Hh5xA8tkxMhTcxm+zSV+/QFMgdCrLJxj15iXBKkKqeMWuPU0MtL
+	kACNvID0k+hI99OFEjuyz+bHtAzO7ILoykpJY7mi/zzW//ZogxWkFbEuMWLYJn73kJE8=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1t8jx3-00CMX8-0D; Wed, 06 Nov 2024 18:36:17 +0100
+Date: Wed, 6 Nov 2024 18:36:16 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Leon Romanovsky <leon@kernel.org>,
+	Sanman Pradhan <sanman.p211993@gmail.com>,
+	Bjorn Helgaas <bhelgaas@google.com>, netdev@vger.kernel.org,
+	alexanderduyck@fb.com, kuba@kernel.org, kernel-team@meta.com,
+	davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
+	horms@kernel.org, corbet@lwn.net, mohsin.bashr@gmail.com,
+	sanmanpradhan@meta.com, andrew+netdev@lunn.ch,
+	vadim.fedorenko@linux.dev, jdamato@fastly.com, sdf@fomichev.me,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org
+Subject: Re: [PATCH net-next] eth: fbnic: Add PCIe hardware statistics
+Message-ID: <76fdd29a-c7fa-4b99-ae63-cce17c91dae9@lunn.ch>
+References: <20241106122251.GC5006@unreal>
+ <20241106171257.GA1529850@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 03/22] perf jevents: Add smi metric group for Intel
- models
-To: Ian Rogers <irogers@google.com>, Peter Zijlstra <peterz@infradead.org>,
- Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
- linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
- Perry Taylor <perry.taylor@intel.com>, Samantha Alt
- <samantha.alt@intel.com>, Caleb Biggers <caleb.biggers@intel.com>,
- Weilin Wang <weilin.wang@intel.com>, Edward Baker <edward.baker@intel.com>
-References: <20240926175035.408668-1-irogers@google.com>
- <20240926175035.408668-4-irogers@google.com>
-Content-Language: en-US
-From: "Liang, Kan" <kan.liang@linux.intel.com>
-In-Reply-To: <20240926175035.408668-4-irogers@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241106171257.GA1529850@bhelgaas>
 
-
-
-On 2024-09-26 1:50 p.m., Ian Rogers wrote:
-> Allow duplicated metric to be dropped from json files.
+On Wed, Nov 06, 2024 at 11:12:57AM -0600, Bjorn Helgaas wrote:
+> On Wed, Nov 06, 2024 at 02:22:51PM +0200, Leon Romanovsky wrote:
+> > On Tue, Nov 05, 2024 at 04:26:25PM -0800, Sanman Pradhan wrote:
+> > > Add PCIe hardware statistics support to the fbnic driver. These stats
+> > > provide insight into PCIe transaction performance and error conditions,
+> > > including, read/write and completion TLP counts and DWORD counts and
+> > > debug counters for tag, completion credit and NP credit exhaustion
+> > > 
+> > > The stats are exposed via ethtool and can be used to monitor PCIe
+> > > performance and debug PCIe issues.
+> > 
+> > And how does PCIe statistics belong to ethtool?
+> > 
+> > This PCIe statistics to debug PCIe errors and arguably should be part of
+> > PCI core and not hidden in netdev tool.
 > 
-> Signed-off-by: Ian Rogers <irogers@google.com>
-> ---
->  tools/perf/pmu-events/intel_metrics.py | 21 ++++++++++++++++++++-
->  1 file changed, 20 insertions(+), 1 deletion(-)
-> 
-> diff --git a/tools/perf/pmu-events/intel_metrics.py b/tools/perf/pmu-events/intel_metrics.py
-> index f875eb844c78..f34b4230a4ee 100755
-> --- a/tools/perf/pmu-events/intel_metrics.py
-> +++ b/tools/perf/pmu-events/intel_metrics.py
-> @@ -2,7 +2,7 @@
->  # SPDX-License-Identifier: (LGPL-2.1 OR BSD-2-Clause)
->  from metric import (d_ratio, has_event, max, Event, JsonEncodeMetric,
->                      JsonEncodeMetricGroupDescriptions, LoadEvents, Metric,
-> -                    MetricGroup, Select)
-> +                    MetricGroup, MetricRef, Select)
->  import argparse
->  import json
->  import math
-> @@ -56,6 +56,24 @@ def Rapl() -> MetricGroup:
->                       description="Running Average Power Limit (RAPL) power consumption estimates")
->  
->  
-> +def Smi() -> MetricGroup:
-> +    aperf = Event('msr/aperf/')
-> +    cycles = Event('cycles')
-> +    smi_num = Event('msr/smi/')
-> +    smi_cycles = Select(Select((aperf - cycles) / aperf, smi_num > 0, 0),
-> +                        has_event(aperf),
-> +                        0)
-> +    return MetricGroup('smi', [
-> +        Metric('smi_num', 'Number of SMI interrupts.',
-> +               Select(smi_num, has_event(smi_num), 0), 'SMI#'),
-> +        # Note, the smi_cycles "Event" is really a reference to the metric.
-> +        Metric('smi_cycles',
-> +               'Percentage of cycles spent in System Management Interrupts. '
-> +               'Requires /sys/devices/cpu/freeze_on_smi to be 1.',
+> How would this be done in the PCI core?  As far as I can tell, all
+> these registers are device-specific and live in some device BAR.
 
-It seems not work for hybrid?
+Is this a licences PCIe core?
 
-Thanks,
-Kan
-> +               smi_cycles, '100%', threshold=(MetricRef('smi_cycles') > 0.10))
-> +    ], description = 'System Management Interrupt metrics')
-> +
-> +
->  def main() -> None:
->    global _args
->  
-> @@ -81,6 +99,7 @@ def main() -> None:
->    all_metrics = MetricGroup("", [
->        Idle(),
->        Rapl(),
-> +      Smi(),
->    ])
->  
->  
+Could the same statistics appear in other devices which licence the
+same core? Maybe this needs pulling out into a helper? If this is
+true, other uses of this core might not be networking hardware, so
+ethtool -S would not be the best interfaces. Then they should appear
+in debugfs?
 
+	Andrew
 
