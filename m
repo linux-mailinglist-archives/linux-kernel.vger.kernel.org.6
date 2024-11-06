@@ -1,100 +1,118 @@
-Return-Path: <linux-kernel+bounces-398593-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398594-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13AA09BF341
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 17:31:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C86FF9BF343
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 17:32:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B8DF71F226F8
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 16:31:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7FFF81F22310
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 16:32:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F6B2204F94;
-	Wed,  6 Nov 2024 16:30:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A289203706;
+	Wed,  6 Nov 2024 16:32:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hb0wtUme"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="JscTBjRW"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81B8F84039;
-	Wed,  6 Nov 2024 16:30:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D2F213C67C
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 16:32:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730910657; cv=none; b=rDbAhNu79HMI3QYwQDRXOH65ocW3j5GLiCNMcY1lwuLPr4hZOlyMASlWTeGTgVB+E1fLXIxbHsstfXVS0P4MlWxeyonmt8qmm1+3Jyxfgr8JbXe/QIZLmtTkKD889i1rT/y83ZBDSiH/rjSX5pYcOjfAsw5Vw3RCyZU8D2iw2Bc=
+	t=1730910743; cv=none; b=epOsnypi0XfU7Go7/uqx1EIym4ILU7LFiL1yMQ/h88f4OxKI9iHG3q5aAEL5tz+VQKQpJ8au5YW57xNyA6m8jkC0/j7uAoHzJsRMV9BoYRu5I/QqRooHC97HWR0VnGCq9M/ebCld14VrVJOFla6bVde0hh0vKHHg0Ua0gbY53Vs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730910657; c=relaxed/simple;
-	bh=aq6gzB/Q2PEai0bt8dfut3goVK3r/JhzH5oBN3o9Dfs=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=aJlkj9+PrjGGaZJg8uGThPECstnEpTHR7ocbfEwPmGa61QP1GZ8+nVj1JlN41ssdP6gNzMbydred0YXcS440XDbKWIEQLFx+LozDSl25OdJ9lD+ogcaLc5lGsDMZig/Tzjoc95PqgaLh0meaPooiNQ4bAdQ41FeSx3Spz3j77iA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hb0wtUme; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C54DC4CEC6;
-	Wed,  6 Nov 2024 16:30:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730910657;
-	bh=aq6gzB/Q2PEai0bt8dfut3goVK3r/JhzH5oBN3o9Dfs=;
-	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-	b=hb0wtUmeq2YMjK+oyyzy8prhM/yNV4VomwQDFJGxcvn2S5d6BfNYmd/7z3YBAJM9V
-	 nzSC2FQ+VQvCTh/Vo01KtkAnGy25ps6pdvUj81okRr3Q5ORlVCQLj6xuw7Kb1wvke/
-	 FnpHkY/uYBJKftzpEImKljmniB6tXPkti+2jXl80EeHwWR0Xycm5uTQu3vp8m+OaMa
-	 +vIS5QkA3jq9fOIng2oNr3mNuPesNzw2QAODCPGyhpZ9gcdf2X4Bw4i48H6P247LzZ
-	 z3hYHG6CU+dFRQlLk0QBuhxUJ1wszX5THkbtnQzBDyddjkMvRCwctLsOuQu8rJRrjS
-	 hq3FAajvk482A==
-Date: Wed, 6 Nov 2024 17:30:54 +0100 (CET)
-From: Jiri Kosina <jikos@kernel.org>
-To: Jiri Slaby <jirislaby@kernel.org>
-cc: Nolan Nicholson <nolananicholson@gmail.com>, stable@vger.kernel.org, 
-    bentiss@kernel.org, linux-usb@vger.kernel.org, linux-input@vger.kernel.org, 
-    linux-kernel@vger.kernel.org, anssi.hannula@gmail.com
-Subject: Re: hid-pidff.c: null-pointer deref if optional HID reports are not
- present
-In-Reply-To: <1b40561a-580d-406a-bb2c-1398dce7fb90@kernel.org>
-Message-ID: <nycvar.YFH.7.76.2411061730050.20286@cbobk.fhfr.pm>
-References: <CAL-gK7f5=R0nrrQdPtaZZr1fd-cdAMbDMuZ_NLA8vM0SX+nGSw@mail.gmail.com> <1b40561a-580d-406a-bb2c-1398dce7fb90@kernel.org>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+	s=arc-20240116; t=1730910743; c=relaxed/simple;
+	bh=nSd24sVQRoAp1t1XZEnlfr+xfgk2O456H2Wp8H2P1nw=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=uOUoaEh2aF9hUCCtP/8IdE8B/hofM7opzdCv2CCtAFvTxnqBfaqypnbgeft6O0VzkOOTbRPU5HhvwfQyrii59HrR6s1DyyKOXBN4uE5kNe1FlQRZ2J6WE1aFcB+pXoahi5hobfbk+nKanuVEkzLOBKyKqV5VvVJ7edrjQDyTl2Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=JscTBjRW; arc=none smtp.client-ip=209.85.128.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6e59dc7df64so325237b3.1
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2024 08:32:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1730910741; x=1731515541; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=qbY6DKBNE1QQfrptJr4NxQ9zPHPnsHZbV4Pcue/bRDM=;
+        b=JscTBjRWbsnkmZMNBYhHZxNS7LieviJgdLlZtDvtklsWpWF8waRK00EaIoiY44VroH
+         51loxkKLEtcHrKDZrB+Gs1uPoKXaM1sZRf56a6HIAMQKt30taz/KGJ37DkjlBgtvQK9e
+         eQR+UM9FUsjUrhoEoMCI9ruynh7LEIYltJbT4BsVYPeyB7G49klvH18y4ZOagZJCad63
+         hK9ZHyiW7USXYwkgTZv6DYr424rRgSVzpau3O+yAFf+gTZV/92eqVh583+IDpyfdSqo4
+         AtNCAL3mbMsPJR+8mS/pr3Ur90gRj5UiGhzKGLvxttTi+GFtczPKvT3cw7ytwOmIHljS
+         yEOQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730910741; x=1731515541;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=qbY6DKBNE1QQfrptJr4NxQ9zPHPnsHZbV4Pcue/bRDM=;
+        b=lHtA54gA1ChnI+XS+S//DCi+Gh2jrntGWHzmhgCZFhH2HXRSjeZBw0PounEZVni+A0
+         aLkL4v+Q+g36yB77SgPYJG02tX3ZuRsjVDDDSONdCfXi7doCSPMAY2KDOuxAe++/fTGN
+         Ikc84VvBbg5KyBT/M3Q6k+ryIoudGn9DnOUkw61vM7wJKPmBGKYJiWiOwdzuWOncTlU9
+         V7VfV83yqrSuOE8j9BBRGL1ztGS07Kll7myVayykJjuhKZkSDxwFarzStYKoZ+LPcN81
+         y2e4p5r4vl5IxmBmRfnjvyiRf19hQExWyGeOH1eUoKM36II6w3va5jm2aZ4bfhMD9wr9
+         WRHg==
+X-Forwarded-Encrypted: i=1; AJvYcCXN6+BLNzyk31mTg3ZeRRKNyAhf8bfbnxO2tDr/ds3TYwnjlIbrA4sCpw62Xqb9aja55MmuAsHri+3WlVQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxZEWtcBxrNPioUk9B5C5PXc30MoWtUZNoNIkt7k58MR3g1ANO9
+	pXjbsAZQqMcjcaxaZ874Hch0E7Aaa9l63LOQnM1pOPwzl/hYPgqZZ4qlOOpvIUSUwLpO1Y9XB6T
+	0Sg==
+X-Google-Smtp-Source: AGHT+IFRjqQNM953xMuFIWpGheosTFQ4blOhXMTFf4OB6HIR2lAkuX9eFWWNIVkf9x2I18xzmZhDojhoW+Q=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
+ (user=seanjc job=sendgmr) by 2002:a05:690c:6305:b0:6ea:4b3a:6703 with SMTP id
+ 00721157ae682-6eabeee1708mr857197b3.5.1730910741352; Wed, 06 Nov 2024
+ 08:32:21 -0800 (PST)
+Date: Wed, 6 Nov 2024 08:32:19 -0800
+In-Reply-To: <00a94b5e31fba738b0ad7f35859d8e7b8dceada7.camel@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Mime-Version: 1.0
+References: <20240219074733.122080-1-weijiang.yang@intel.com>
+ <ZjLP8jLWGOWnNnau@google.com> <0d8141b7-804c-40e4-b9f8-ac0ebc0a84cb@intel.com>
+ <838cbb8b21fddf14665376360df4b858ec0e6eaf.camel@intel.com>
+ <8e9f8613-7d3a-4628-9b77-b6ad226b0872@intel.com> <00a94b5e31fba738b0ad7f35859d8e7b8dceada7.camel@intel.com>
+Message-ID: <ZyuaE9ye3J56foBf@google.com>
+Subject: Re: [PATCH v10 00/27] Enable CET Virtualization
+From: Sean Christopherson <seanjc@google.com>
+To: Rick P Edgecombe <rick.p.edgecombe@intel.com>
+Cc: Weijiang Yang <weijiang.yang@intel.com>, Chao Gao <chao.gao@intel.com>, 
+	Dave Hansen <dave.hansen@intel.com>, "x86@kernel.org" <x86@kernel.org>, 
+	"peterz@infradead.org" <peterz@infradead.org>, "john.allen@amd.com" <john.allen@amd.com>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
+	"mlevitsk@redhat.com" <mlevitsk@redhat.com>, "pbonzini@redhat.com" <pbonzini@redhat.com>
+Content-Type: text/plain; charset="us-ascii"
 
-On Tue, 5 Nov 2024, Jiri Slaby wrote:
-
-> > (This is my first time reporting a Linux bug; please accept my apologies for
-> > any mistakes in the process.)
+On Wed, Nov 06, 2024, Rick P Edgecombe wrote:
+> On Wed, 2024-11-06 at 09:45 +0800, Yang, Weijiang wrote:
+> > > > Appreciated for your review and comments!
+> > > It looks like this series is very close. Since this v10, there was some
+> > > discussion on the FPU part that seemed settled:
+> > > https://lore.kernel.org/lkml/1c2fd06e-2e97-4724-80ab-8695aa4334e7@intel.com/
 > > 
-> > When initializing a HID PID device, hid-pidff.c checks for eight required
-> > HID reports and five optional reports. If the eight required reports are
-> > present, the hid_pidff_init() function then attempts to find the necessary
-> > fields in each required or optional report, using the pidff_find_fields()
-> > function. However, if any of the five optional reports is not present,
-> > pidff_find_fields() will trigger a null-pointer dereference.
+> > Hi, Rick,
+> > I have an internal branch to hold a v11 candidate for this series, which
+> > resolved Sean's comments
+> > for this v10, waiting for someone to take over and continue the upstream work.
 > > 
-> > I recently implemented the descriptors for a USB HID device with PID
-> > force-feedback capability. After implementing the required report
-> > descriptors but not the optional ones, I got an OOPS from the
-> > pidff_find_fields function. I saved the OOPS from my Ubuntu installation,
-> > and have attached it here. I later reproduced the issue on 6.11.6.
+> > > 
+> > > Then there was also some discussion on the synthetic MSR solution, which
+> > > seemed
+> > > prescriptive enough:
+> > > https://lore.kernel.org/kvm/20240509075423.156858-1-weijiang.yang@intel.com/
+> > > 
+> > > Weijiang, had you started a v2 on the synthetic MSR series? Where did you
+> > > get to
+> > > on incorporating the other small v10 feedback?
 > > 
-> > I was able to work around the issue by having my device present all of the
-> > optional report descriptors as well as all of the required ones.
+> > Yes, Sean's review feedback for v1 is also included in my above v11 candidate.
 > 
-> Indeed. The code checks the required ones in pidff_reports_ok(). But the
-> optional ones are not checked at all and are directly accessed in both
-> pidff_init_fields() and also likely pidff_find_special_fields().
+> Nice, sounds like another version (which could be the last) is basically ready
+> to go. Please let me know if it gets stuck for lack of someone to take it over.
 
-Thanks for the report.
-
-Nolan, will you be willing to create a patch implement a proper checking, 
-test it with your device that's triggering it, and submit it in order to 
-be applied?
-
-Thanks,
-
--- 
-Jiri Kosina
-SUSE Labs
-
+Or me, if Intel can't conjure up the resource.  I have spent way, way too much
+time and effort on CET virtualization to let it die on the vine :-)
 
