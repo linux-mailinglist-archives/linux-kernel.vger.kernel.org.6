@@ -1,85 +1,124 @@
-Return-Path: <linux-kernel+bounces-397972-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397973-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D3EC9BE33B
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 10:55:39 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F0E29BE340
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 10:55:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CFA4E2844E4
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 09:55:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 367251F2362C
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 09:55:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA7571DCB0C;
-	Wed,  6 Nov 2024 09:55:23 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1890A1DD547;
+	Wed,  6 Nov 2024 09:55:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JBIWBSwt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C69491DBB13;
-	Wed,  6 Nov 2024 09:55:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 617E81DACAF;
+	Wed,  6 Nov 2024 09:55:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730886923; cv=none; b=KbCdJGsKBaHfLXgdkGPX5s3+K6dATeiLLwtwk1dTzy2gRGob7sC/9JZejXUhvjmGSan47M2QwxKyDgYEbI7mvlsqNMw+1SwBPsZhL52w0oGGgekty5DJa4zYj2KC/498urKQmpMIwm2Zq3ymzI3fQ7g77WOlUY6gFSSXv5Nbwfg=
+	t=1730886926; cv=none; b=DbcHRrBWSYYytGAfLBCv1mB+YXOEgv4un0Q4D8TtlqP3BKHZ40ZusKXkNTjtSnYMtzAppN/8LTNZvEt9lwcYxJAICsxnpn3b3xo3f/Xk4N9up3/9kfrN6BhZihGfDVF1zsiKssX8zuKV6d0T3BYr8KrUJQpMLIDJ450dR2zGRBs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730886923; c=relaxed/simple;
-	bh=7Opzae6eJxnPKWoay/5QnazLgTYEphKcrHcvH2svUe4=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
-	 In-Reply-To:Content-Type; b=F8TV+AxLM7bqJmuR/daVfNEfxlOalHZ7/RkAgXLrrGfU3AT7uBT8M5+mUJI8Ma0fw57O2RPgJ/IM3KdtJFDGCduv2FpvAOIc/e+YdOz1qOjVWybLWXdJpPeAaRr7sQxKEojUgARc7ZIk9/aYmWdgK8dBxkhVSJWmxdehDwNlB4k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.17])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4Xk0rx1sg5z1jxjs;
-	Wed,  6 Nov 2024 17:53:37 +0800 (CST)
-Received: from kwepemd200013.china.huawei.com (unknown [7.221.188.133])
-	by mail.maildlp.com (Postfix) with ESMTPS id 198391A0188;
-	Wed,  6 Nov 2024 17:55:18 +0800 (CST)
-Received: from [10.67.110.108] (10.67.110.108) by
- kwepemd200013.china.huawei.com (7.221.188.133) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.34; Wed, 6 Nov 2024 17:55:17 +0800
-Message-ID: <3d166642-4062-42ed-9e24-1771cd819110@huawei.com>
-Date: Wed, 6 Nov 2024 17:55:16 +0800
+	s=arc-20240116; t=1730886926; c=relaxed/simple;
+	bh=RZivVHsX1p8dULP9mNC1LUxwiEF+L/SLxiNfZZN1qRE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=X9E45YGWo/eCO5s55pI12B0eNOnpZ8Ge9tsKpyydTPEPG8qTiP55HBaz8fxzUPoWp1MZFJJJJ0xZSfGP9cYDfDESrkSRH9xEFbetTPrC2D8YgKUOvYmnQPY2VezP02NBZXNJIFzejhVXSf/Qoy+GORoDa2IJUgdSBf8eLOktYmk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JBIWBSwt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0AA9C4CED0;
+	Wed,  6 Nov 2024 09:55:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730886926;
+	bh=RZivVHsX1p8dULP9mNC1LUxwiEF+L/SLxiNfZZN1qRE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JBIWBSwtMF1lHVxk8kFv5Ld+3FgvQU+Up3RYG+nPrJeI/7oWIsTpH3o1OKU+Q0qqh
+	 vsMy90fYuiQWNfhssG0Rx9/yYjW7pD0Tv3uMuO0zU9KilM7TJbeEaq5wkI7Ql+kWIi
+	 4uegJ1Az4kcKGYXINFG2SoB6DPzEaEj/iL+E4UdImwZdlt22kUwGGFu54ut7HBl3sc
+	 inlNY4wajw6+u43BLb15PKxBapCMh4TnVptbaEbkxrZXdnKXcyw/NuMF5jCunwOKLJ
+	 8+PleglAX7gZs3yWnHS8UMAlmH518P7zcXhaZOgXrEhgpfyNmAx06ZpLLgup08EAQu
+	 V0AY4hi5o/INA==
+Date: Wed, 6 Nov 2024 09:55:20 +0000
+From: Lee Jones <lee@kernel.org>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Tony Lindgren <tony@atomide.com>, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-input@vger.kernel.org,
+	linux-leds@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-usb@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>, Pavel Machek <pavel@ucw.cz>,
+	Dominik Brodowski <linux@dominikbrodowski.net>,
+	Daniel Mack <daniel@zonque.org>,
+	Haojian Zhuang <haojian.zhuang@gmail.com>,
+	Robert Jarzmik <robert.jarzmik@free.fr>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH v1 3/6] leds: gpio: Avoid using GPIOF_ACTIVE_LOW
+Message-ID: <20241106095520.GM1807686@google.com>
+References: <20241104093609.156059-1-andriy.shevchenko@linux.intel.com>
+ <20241104093609.156059-4-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: uprobes: Optimize cache flushes for xol slot
-From: "Liao, Chang" <liaochang1@huawei.com>
-To: <mhiramat@kernel.org>, <oleg@redhat.com>, <peterz@infradead.org>,
-	<catalin.marinas@arm.com>, <will@kernel.org>, <mark.rutland@arm.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-trace-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>
-References: <20240919121719.2148361-1-liaochang1@huawei.com>
-In-Reply-To: <20240919121719.2148361-1-liaochang1@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- kwepemd200013.china.huawei.com (7.221.188.133)
+In-Reply-To: <20241104093609.156059-4-andriy.shevchenko@linux.intel.com>
 
-Hi, Will and Catalin
+On Mon, 04 Nov 2024, Andy Shevchenko wrote:
 
-在 2024/9/19 20:17, Liao Chang 写道:
-> On 09/23, Will Deacon wrote:
->> However, we should use __GFP_ZERO anyway
->> because I don't think it's a good idea to map an uninitialised page into
->> userspace.
-> Agreed, and imo this even needs a separate "fix info leak" patch.
+> Avoid using GPIOF_ACTIVE_LOW as it's deprecated and subject to remove.
 > 
-> Oleg.
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> ---
+>  drivers/leds/leds-gpio.c | 9 ++++-----
+>  1 file changed, 4 insertions(+), 5 deletions(-)
 
-Given that Oleg's fix info leak patch has been merged [1], the risk of leakage
-is gone. So I am looking forward to your options about this patch. As many
-functions start with same instructions like 'stp fp, lr, [sp, #imm]' or
-'paciasp'. So I think this patch could avoid unnecessary D/I cache synchronization.
+Acked-by: Lee Jones <lee@kernel.org>
 
-[1] https://lore.kernel.org/all/20240929162047.GA12611@redhat.com/
+> diff --git a/drivers/leds/leds-gpio.c b/drivers/leds/leds-gpio.c
+> index 0d59b0bbc002..a3428b22de3a 100644
+> --- a/drivers/leds/leds-gpio.c
+> +++ b/drivers/leds/leds-gpio.c
+> @@ -212,7 +212,6 @@ static struct gpio_desc *gpio_led_get_gpiod(struct device *dev, int idx,
+>  					    const struct gpio_led *template)
+>  {
+>  	struct gpio_desc *gpiod;
+> -	unsigned long flags = GPIOF_OUT_INIT_LOW;
+>  	int ret;
+>  
+>  	/*
+> @@ -239,10 +238,7 @@ static struct gpio_desc *gpio_led_get_gpiod(struct device *dev, int idx,
+>  	if (!gpio_is_valid(template->gpio))
+>  		return ERR_PTR(-ENOENT);
+>  
+> -	if (template->active_low)
+> -		flags |= GPIOF_ACTIVE_LOW;
+> -
+> -	ret = devm_gpio_request_one(dev, template->gpio, flags,
+> +	ret = devm_gpio_request_one(dev, template->gpio, GPIOF_OUT_INIT_LOW,
+>  				    template->name);
+>  	if (ret < 0)
+>  		return ERR_PTR(ret);
+> @@ -251,6 +247,9 @@ static struct gpio_desc *gpio_led_get_gpiod(struct device *dev, int idx,
+>  	if (!gpiod)
+>  		return ERR_PTR(-EINVAL);
+>  
+> +	if (template->active_low ^ gpiod_is_active_low(gpiod))
+> +		gpiod_toggle_active_low(gpiod);
+> +
+>  	return gpiod;
+>  }
+>  
+> -- 
+> 2.43.0.rc1.1336.g36b5255a03ac
+> 
 
 -- 
-BR
-Liao, Chang
-
+Lee Jones [李琼斯]
 
