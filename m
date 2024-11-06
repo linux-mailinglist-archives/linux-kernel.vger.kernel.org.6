@@ -1,283 +1,157 @@
-Return-Path: <linux-kernel+bounces-397603-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397604-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCB929BDDE5
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 05:11:55 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A482A9BDDE7
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 05:12:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 034CD1C21743
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 04:11:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E60928506B
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 04:12:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5295D18FDCE;
-	Wed,  6 Nov 2024 04:11:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C49771917EE;
+	Wed,  6 Nov 2024 04:11:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="VA3X2yH6"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.22])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Qqc/Jouw"
+Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C2D51362;
-	Wed,  6 Nov 2024 04:11:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B39181917CE;
+	Wed,  6 Nov 2024 04:11:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730866307; cv=none; b=e8f0Ife9zOxER/xOzFQ9qmPEmoWarAWBnfCzswhyT+WhrY3hyoIoPy1zmpW1ecZpufiDVTiHY+pyTB0/ZRV5EuCpC2I+SMh4qwmWiqxpa9PoMI0YosLqbwtWkzmZ9a1Py4ohICzPRztZ5/eFUWboHeNXc3MmzGDxiSAQqUV9p0Y=
+	t=1730866312; cv=none; b=ZBubmAiYwbix3u72v1+nQCbUUDOtEzFKm7kSMiDly+Ntu9sOKboBr6+A6LY28Y88kWT+guQB+7E6n9LjXRQPHHYMMtPjPlardmEbZaGZwHnNbzUExYfFkfeGlZ8fKZ0w/cqKKpK+j/KTCxJ8yktLixocn/Qo1THh7r5gEuH82NY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730866307; c=relaxed/simple;
-	bh=6YPu+laV3kL4NBdAILOhBmO0hd3sVmscvAhmEbnseBU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fZqC8sZvzW95o2BduXlT3Ap0Ht6B7UFJBNYUUIhlUNXvNbqHvBxOgbtLmz9BJzqYqeNYnKr1EUzPcWerfBGHz5o07d0CD2j/gzdMN2MR8ZU7J/DH1Z9uHevpyQcnWpZq92B+e92OiYtCbxokTxmUBMahlh9mdj7DY4mkAPV8Ii8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=VA3X2yH6; arc=none smtp.client-ip=212.227.17.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1730866235; x=1731471035; i=w_armin@gmx.de;
-	bh=P90XY2NUw+OCYceZZLJRRm/ynfK6FT0y/3DCDJdVjRI=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=VA3X2yH6/kxysgwp4PrB0hWgC2BWy6qi/jXpen8JqekbE6tI/M0rH7Zdm6jfgg7y
-	 sZ6Zxa08L8cgjJAfQy3FBcKPUmgDAP3pcNieVk5R0R+4gnYL94sdCBxeEzMkx2LIW
-	 ftK7tbWwZIKivkdjz4Os78sa7KNow4PaQZTPIgxDiwG36TN/ie8+K9F8TyokTJhsD
-	 Dt5dzj6bi7WQDzOHrlfDc1YrAgYz8pi6N7ppljLf4eP0reil+3kEccTwSkJcE+ux/
-	 GRiNMb0/JIORw2fpJQ0Xkym1zAnx3+PcUlLjf+DB6JMZfTsWHHc69CBvOAG3zc77e
-	 CHqE4wzIvqiOQ7w12Q==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [141.30.226.129] ([141.30.226.129]) by mail.gmx.net (mrgmx105
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1Mqs0X-1tdSOp3Chl-00ZTAy; Wed, 06
- Nov 2024 05:10:34 +0100
-Message-ID: <dad36f32-5970-48c2-9ee1-78163958bf02@gmx.de>
-Date: Wed, 6 Nov 2024 05:10:31 +0100
+	s=arc-20240116; t=1730866312; c=relaxed/simple;
+	bh=XkFnXu3Nbs+LBYkhmSZDcZZRbbQQ1gwS6Y0z4RTJorQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=NMCJKhnMTvO/KFSwbsJpb6YzB3W/1Ob9/JoBpUCro4AIL+X01YW/Uv+nq4oQTB8vrfwjiQCADRZXmvbEpqLZ4qIY9XNKJ9XYBWJ+3vBHLCt7KVIexS39G2VqRWYY2mro6t1OHTUNQzYdD7lMV08zDUSDiwoUmKR6RY3uz4cQ104=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Qqc/Jouw; arc=none smtp.client-ip=209.85.215.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-7ed9c16f687so4325231a12.0;
+        Tue, 05 Nov 2024 20:11:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730866310; x=1731471110; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=NNft/kQrWN+6wLuYAR1EXFuR73F5xeJoDqmeVVt2J3s=;
+        b=Qqc/JouwoRYBCc79EbQze2hfIZyWmgAF1aqg8dZwQwuhcOMeihjwlU4pSm76Ic+mlD
+         2++V20D34WWHAuWqS7wOE/VkbFCe5fG2l8hvc5/JtsmQT6DhdQu1Cjo71fpz+kRhD2QG
+         ZZij48J2HP/BNBgFdNHnORJNeaZpd76UBdB5WfHDxUIqKMtnyjNOMDSF5TOPfNTFiNXZ
+         5ZGeizBkhjdstUmMk7FKP25tdfvCMkATIS1Cm/Q7Rf7RcOey1XOOPilmENSdu1WhYJoR
+         5xg90dP904T1bevGU1/onXGIIPAdWeUmOeK/XLos+aZ/yJGRuWd48GFB8nXZsfGvGqxZ
+         Hmzg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730866310; x=1731471110;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=NNft/kQrWN+6wLuYAR1EXFuR73F5xeJoDqmeVVt2J3s=;
+        b=Ix94tSVaF5vkxPsZo4++0X4AWZZZLTVUjn5gcAq83KxcMMLjl8uGTGwCzZURwbaSyo
+         zPtzzrqZGWzdt6OaKbMFpVWcKL4v9GwSiQQKYATnS+k4bU71K83UT/WAFCFbbIRlKr1U
+         p1iFVuMGLPGsJoKC3QwNKhN9VSTUgpXpGzO6h3AmTHXEOWKRl5YMTcC1/iwBqcILLdzO
+         ohKpBucs/9GPhSrwUt7XVshT524EWzfvyr9FAsOJxKlaFotvlNjTtimR4uxS8ij63FE9
+         xq8QvofOi+QDTUxGiRswChu6maTdG+NuYfBxJtv89vbgQMZxGywcvKp6fQx1H1LQ1R2K
+         Ggqw==
+X-Forwarded-Encrypted: i=1; AJvYcCVK25WSEgSrkdA0NKQ0kZbPNQgQouaWiRwBB6icsdswlXnKBftrEC3HX9G4Ap7D3XdHLbFN5weNmXN0@vger.kernel.org, AJvYcCXiuI3cjysVtOIpqRRyxU2PGjCsJZ1gD0au0cG8NvPd7BTySwcJV1ZO8ymn3M4ZRG3dQ8uhOsn3Jy20moc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw7t8QWWh4LVbcC5JyXAuheIyG1Lh4c7znLHjuYC24jkETXIbbV
+	QZRf7htbzYFo4JqOT/m9HTQ94yb4e9tZdbk1nvVhEVphEcjJCGCz
+X-Google-Smtp-Source: AGHT+IE8B4L179M7UCSeRqYieIZg2ubmeuJoXZEdLuYX3aeNZwbrJcGxdxrOeJ94IQhyAU/+GlIUoQ==
+X-Received: by 2002:a17:90b:1c8a:b0:2e2:e4d3:3401 with SMTP id 98e67ed59e1d1-2e93c174c7bmr30756891a91.20.1730866309829;
+        Tue, 05 Nov 2024 20:11:49 -0800 (PST)
+Received: from gmail.com ([24.130.68.0])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e99a580662sm385069a91.24.2024.11.05.20.11.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 05 Nov 2024 20:11:49 -0800 (PST)
+Date: Tue, 5 Nov 2024 20:11:47 -0800
+From: Chang Yu <marcus.yu.56@gmail.com>
+To: andreyknvl@gmail.com
+Cc: gregkh@linuxfoundation.org, viro@zeniv.linux.org.uk,
+	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+	stern@rowland.harvard.edu, skhan@linuxfoundation.org,
+	marcus.yu.56@gmail.com,
+	syzbot+3e563d99e70973c0755c@syzkaller.appspotmail.com
+Subject: [PATCH] usb: raw_gadget: Add debug logs to a troubleshoot a
+ double-free bug in raw_release.
+Message-ID: <Zyrsg3bvNu1rswqb@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 12/20] ACPI: platform_profile: Add profile attribute
- for class interface
-To: Mario Limonciello <mario.limonciello@amd.com>,
- Hans de Goede <hdegoede@redhat.com>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
- Maximilian Luz <luzmaximilian@gmail.com>, Lee Chun-Yi <jlee@suse.com>,
- Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
- Corentin Chary <corentin.chary@gmail.com>, "Luke D . Jones"
- <luke@ljones.dev>, Ike Panhc <ike.pan@canonical.com>,
- Henrique de Moraes Holschuh <hmh@hmh.eng.br>,
- Alexis Belmonte <alexbelm48@gmail.com>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
- Ai Chao <aichao@kylinos.cn>, Gergo Koteles <soyer@irl.hu>,
- open list <linux-kernel@vger.kernel.org>,
- "open list:ACPI" <linux-acpi@vger.kernel.org>,
- "open list:MICROSOFT SURFACE PLATFORM PROFILE DRIVER"
- <platform-driver-x86@vger.kernel.org>,
- "open list:THINKPAD ACPI EXTRAS DRIVER"
- <ibm-acpi-devel@lists.sourceforge.net>,
- Mark Pearson <mpearson-lenovo@squebb.ca>,
- Matthew Schwartz <matthew.schwartz@linux.dev>
-References: <20241105153316.378-1-mario.limonciello@amd.com>
- <20241105153316.378-13-mario.limonciello@amd.com>
-Content-Language: en-US
-From: Armin Wolf <W_Armin@gmx.de>
-In-Reply-To: <20241105153316.378-13-mario.limonciello@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:UIoLoCoMxfrOHXCBbg6f3jcJhJTAg3xcOjE6sneHRY+SBq3V+//
- 5s+Y0upNsN1el4bpz6xUBWGa0MpBTxUkJVxzLwxPtxfy2OsX9TfN+yj/MCfpthmTFUQt3uE
- 6nsa4ufMjN8Cg+ZxGiNwpHH0bIy1CCMmOx3sDorqG1fbsOBMdTbqyRdsDxqZ8IHiGuFXyhZ
- s5ItUai3ZbjyDG4C2ROoA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:c6IgiewnwMU=;MChqbM6jrv7UB2F6lD3CAj59QmX
- Ulk0PK4AisBr9psLp2+2zVGQpjUikUjrOayPMotZa4FJlVLr6kADHj9XJt0+d6mxhoysrVIyL
- UQLmpdTBiNJ0WmpMFHuHqfXXwrXzAflRr4WnP+6raB7UprG6uPLQUq/9sVdyLAW+GNmqDCr3j
- aBejgXh6OY1BPYO3L8nBfTkXjpW2RqrwB1ZzQLdUVTaFONbO4OqfyC/QfVdeqtcJp2PZCKRR2
- Quhmdf9Sq7GSuRuTYpcW5SYJBPezOeE/utdI7OFi045nWHlLbDiyuLAG8c0tkLyi12twUutXe
- pOneledG58r8RayzZbwIbgAxd8ytdgt2SA4zHv1fu3+8eCFzLtvrco1CS5DXpRsTfvWN5fd+E
- K7pO8sSQSidE1wB3yYlLlb2xWUVW9/m9OvaxwCxYJwrWE8VSOSpde+HFBTX5qJiC02BBCy+rY
- Yvcf9QLqRh4kotQWPo3UmUY/09bwknO9dMGf3LUIt1IOp2Xgekso0JdJj0haAPKBNN257qX/q
- tH1dx5lu3oNMesCJy5G+A2mQJj6Ths7MIZHdZKut1qeEfBsWb64XAxbcjkhkn3EqoqxYMLMy2
- rayk6NuTf96Wzurp2iE77hGshjdVD7UorMraS2iy4SZs/n1AuHQB3SF7odSSH0PYDr20pLXtn
- nRsUoKWEmd79wixIl01TnVifbMJim8JMYV5Hkn1T1IZH0Kp1D8QKdnBhD0f7zhYBKmA9pU0D6
- P8EzDu9YJKJCeOXdCi65Lfwlx9eTeEqno2Hg8BA+rcAaK/RjoVXE5+D4Hkqf3iOZ61ogabgMt
- LJELTInIWOOiTDUzODHcjBYg==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Am 05.11.24 um 16:33 schrieb Mario Limonciello:
+syzkaller reported a double free bug
+(https://syzkaller.appspot.com/bug?extid=3e563d99e70973c0755c) in
+raw_release.
 
-> Reading and writing the `profile` sysfs file will use the callbacks for
-> the platform profile handler to read or set the given profile.
->
-> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
-> ---
->   drivers/acpi/platform_profile.c | 118 ++++++++++++++++++++++++++++++++
->   1 file changed, 118 insertions(+)
->
-> diff --git a/drivers/acpi/platform_profile.c b/drivers/acpi/platform_pro=
-file.c
-> index e1b6569c4ee70..79083d0bb22e3 100644
-> --- a/drivers/acpi/platform_profile.c
-> +++ b/drivers/acpi/platform_profile.c
-> @@ -65,6 +65,78 @@ static int _get_class_choices(struct device *dev, uns=
-igned long *choices)
->   	return 0;
->   }
->
-> +/**
-> + * _store_class_profile - Set the profile for a class device
-> + * @dev: The class device
-> + * @data: The profile to set
-> + */
-> +static int _store_class_profile(struct device *dev, void *data)
-> +{
-> +	enum platform_profile_option profile;
-> +	unsigned long choices;
-> +	int *i =3D (int *)data;
-> +	int err;
-> +
-> +	err =3D _get_class_choices(dev, &choices);
-> +	if (err)
-> +		return err;
-> +
-> +	scoped_cond_guard(mutex_intr, return -ERESTARTSYS, &profile_lock) {
-> +		struct platform_profile_handler *handler;
-> +
-> +		if (!test_bit(*i, &choices))
-> +			return -EOPNOTSUPP;
-> +
-> +		handler =3D dev_get_drvdata(dev);
-> +		err =3D handler->profile_get(handler, &profile);
-> +		if (err)
-> +			return err;
-> +
-> +		err =3D handler->profile_set(handler, *i);
-> +		if (err) {
-> +			int recover_err;
-> +
-> +			dev_err(dev, "Failed to set profile: %d\n", err);
-> +			recover_err =3D handler->profile_set(handler, profile);
-> +			if (recover_err)
-> +				dev_err(dev, "Failed to reset profile: %d\n", recover_err);
-> +		}
+From the stack traces it looks like either raw_release was invoked
+twice or there were some between kref_get in raw_ioctl_run and
+kref_put raw_release. But these should not be possible. We need
+more logs to understand the cause.
 
-The whole recovery handling seems unnecessary to me. In setting the platfo=
-rm profile fails, then
-we should just return an error. The platform profile handler will tell us =
-the current platform
-profile anyway.
+Make raw_release and raw_ioctl_run report the ref count before
+and after get/put to help debug this.
 
-> +		sysfs_notify(&handler->class_dev->kobj, NULL, "platform_profile");
-> +		kobject_uevent(&handler->class_dev->kobj, KOBJ_CHANGE);
+Signed-off-by: Chang Yu <marcus.yu.56@gmail.com>
+Reported-by: syzbot+3e563d99e70973c0755c@syzkaller.appspotmail.com
+Link: https://syzkaller.appspot.com/bug?extid=3e563d99e70973c0755c
+---
+ drivers/usb/gadget/legacy/raw_gadget.c | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-Please avoid sending those events when the platform profile is changed thr=
-ough the class sysfs interface.
+diff --git a/drivers/usb/gadget/legacy/raw_gadget.c b/drivers/usb/gadget/legacy/raw_gadget.c
+index 112fd18d8c99..ac4e319c743f 100644
+--- a/drivers/usb/gadget/legacy/raw_gadget.c
++++ b/drivers/usb/gadget/legacy/raw_gadget.c
+@@ -194,6 +194,8 @@ static struct raw_dev *dev_new(void)
+ 		return NULL;
+ 	/* Matches kref_put() in raw_release(). */
+ 	kref_init(&dev->count);
++	dev_dbg(dev->dev, "%s kref count initialized: %d\n",
++		__func__, kref_read(&dev->count));
+ 	spin_lock_init(&dev->lock);
+ 	init_completion(&dev->ep0_done);
+ 	raw_event_queue_init(&dev->queue);
+@@ -464,13 +466,21 @@ static int raw_release(struct inode *inode, struct file *fd)
+ 			dev_err(dev->dev,
+ 				"usb_gadget_unregister_driver() failed with %d\n",
+ 				ret);
++		dev_dbg(dev->dev, "%s kref count before unregister driver put: %d\n",
++				__func__, kref_read(&dev->count));
+ 		/* Matches kref_get() in raw_ioctl_run(). */
+ 		kref_put(&dev->count, dev_free);
++		dev_dbg(dev->dev, "%s kref count after unregister driver put: %d\n",
++				__func__, kref_read(&dev->count));
+ 	}
+ 
+ out_put:
++	dev_dbg(dev->dev, "%s kref count before final put: %d\n",
++			__func__, kref_read(&dev->count));
+ 	/* Matches dev_new() in raw_open(). */
+ 	kref_put(&dev->count, dev_free);
++	dev_dbg(dev->dev, "%s kref count after final put: %d\n",
++			__func__, kref_read(&dev->count));
+ 	return ret;
+ }
+ 
+@@ -603,8 +613,12 @@ static int raw_ioctl_run(struct raw_dev *dev, unsigned long value)
+ 	}
+ 	dev->gadget_registered = true;
+ 	dev->state = STATE_DEV_RUNNING;
++	dev_dbg(dev->dev, "%s kref count before get: %d\n",
++			__func__, kref_read(&dev->count));
+ 	/* Matches kref_put() in raw_release(). */
+ 	kref_get(&dev->count);
++	dev_dbg(dev->dev, "%s kref count after get: %d\n",
++			__func__, kref_read(&dev->count));
+ 
+ out_unlock:
+ 	spin_unlock_irqrestore(&dev->lock, flags);
+-- 
+2.47.0
 
-> +	}
-> +
-> +	sysfs_notify(acpi_kobj, NULL, "platform_profile");
-
-Please avoid sending this event when the platform profile is changed throu=
-gh the legacy sysfs interface.
-
-> +	return err ? err : 0;
-> +}
-> +
-> +/**
-> + * get_class_profile - Show the current profile for a class device
-> + * @dev: The class device
-> + * @profile: The profile to return
-> + * Return: 0 on success, -errno on failure
-> + */
-> +static int get_class_profile(struct device *dev,
-> +			     enum platform_profile_option *profile)
-> +{
-> +	struct platform_profile_handler *handler;
-> +	enum platform_profile_option val;
-> +	int err;
-> +
-> +	scoped_cond_guard(mutex_intr, return -ERESTARTSYS, &profile_lock) {
-> +		handler =3D dev_get_drvdata(dev);
-> +		err =3D handler->profile_get(handler, &val);
-> +		if (err) {
-> +			pr_err("Failed to get profile for handler %s\n", handler->name);
-> +			return err;
-> +		}
-> +	}
-> +
-> +	if (WARN_ON(val >=3D PLATFORM_PROFILE_LAST))
-> +		return -EINVAL;
-> +	*profile =3D val;
-> +
-> +	return 0;
-> +}
->
->   /**
->    * name_show - Show the name of the profile handler
-> @@ -102,12 +174,58 @@ static ssize_t choices_show(struct device *dev,
->   	return _commmon_choices_show(choices, buf);
->   }
->
-> +/**
-> + * profile_show - Show the current profile for a class device
-> + * @dev: The device
-> + * @attr: The attribute
-> + * @buf: The buffer to write to
-> + * Return: The number of bytes written
-> + */
-> +static ssize_t profile_show(struct device *dev,
-> +			    struct device_attribute *attr,
-> +			    char *buf)
-> +{
-> +	enum platform_profile_option profile =3D PLATFORM_PROFILE_LAST;
-> +	int err;
-> +
-> +	err =3D get_class_profile(dev, &profile);
-> +	if (err)
-> +		return err;
-> +
-> +	return sysfs_emit(buf, "%s\n", profile_names[profile]);
-> +}
-> +
-> +/**
-> + * profile_store - Set the profile for a class device
-> + * @dev: The device
-> + * @attr: The attribute
-> + * @buf: The buffer to read from
-> + * @count: The number of bytes to read
-> + * Return: The number of bytes read
-> + */
-> +static ssize_t profile_store(struct device *dev,
-> +			     struct device_attribute *attr,
-> +			     const char *buf, size_t count)
-> +{
-> +	int i, ret;
-> +
-> +	i =3D sysfs_match_string(profile_names, buf);
-> +	if (i < 0)
-> +		return -EINVAL;
-> +
-> +	ret =3D _store_class_profile(dev, (void *)(long)&i);
-
-Please just pass &i.
-
-Thanks,
-Armin Wolf
-
-> +
-> +	return ret ? ret : count;
-> +}
->
->   static DEVICE_ATTR_RO(name);
->   static DEVICE_ATTR_RO(choices);
-> +static DEVICE_ATTR_RW(profile);
-> +
->   static struct attribute *profile_attrs[] =3D {
->   	&dev_attr_name.attr,
->   	&dev_attr_choices.attr,
-> +	&dev_attr_profile.attr,
->   	NULL
->   };
->   ATTRIBUTE_GROUPS(profile);
 
