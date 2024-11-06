@@ -1,179 +1,165 @@
-Return-Path: <linux-kernel+bounces-398508-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398510-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B4189BF227
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 16:49:55 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CB129BF230
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 16:50:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 52F8DB23EE3
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 15:49:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 702901C26358
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 15:50:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14E91204926;
-	Wed,  6 Nov 2024 15:49:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E5652064E3;
+	Wed,  6 Nov 2024 15:49:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cEFmPbv4"
-Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ifpKDqTB"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ED1E1DFD87;
-	Wed,  6 Nov 2024 15:48:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9091204928
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 15:49:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730908139; cv=none; b=qfDR5VxjhhwanXvlSk3+DUNIOjhWFtOycfPkBvn91PnLXKGQctddFWlazYHxqz7tKK/D9dkxs8bdbbZw0E48Lp8OLDloR+lmdK9+nUzfjv4bJV5pT5H9xn4pyeodspNjOCw5FPXfOefOzAXKOZjkxyfE8M/MtZRcF++mk2zz0sQ=
+	t=1730908152; cv=none; b=oxmLxUkPEpuxVP13x6wNMBFOjDXfUQ5qXiBVx8O7pCfSxP1hM6hqUni2EUKBTir3eTKpdiQfGmmjFNPhD/1kCKus+B3W1p9jSfNjGYdWdVpW8j7HXs73tM4IwJBaz54xA9AWIF3Mv5P7q7EDsoJKhGRfMWWnsUzsKRs78hbw6nE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730908139; c=relaxed/simple;
-	bh=BUjlLL3HG2bzwOOY+gGlZ9xoQOKIco0H4L5OAMPb4tI=;
+	s=arc-20240116; t=1730908152; c=relaxed/simple;
+	bh=hVFUihgc6QnT1Xq1fEruAaXhETYPBpDfWfSixYIRYIg=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tzTTuFcMV6jrvp5YvXwueOUac9ccHpGiEYUSSEWBhMLABXMyEIYtilHfSqTApiqqeVp92/5zvlTo6G2u5KHeFSkB5y6h161zX8CQNZhZs5ZkBAr1LYq62bQUyOURcFePY2tpO4sbYiupB0tN9gu8rTWpnkh2MxWSXEjlxaYnoNU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cEFmPbv4; arc=none smtp.client-ip=209.85.208.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2fb5638dd57so66310181fa.0;
-        Wed, 06 Nov 2024 07:48:56 -0800 (PST)
+	 To:Cc:Content-Type; b=Ppsy+QBnNokm/YLbhDD37QcJZlGKrrLJFOhUJSOCHX3PVCtHJ2azF7xKkqZVfHgwK/+Yar48dw6w2np1M7mCKbkvxf1qC3Rjw9uN5rdRLL0SDYJtZ2OH0dTH83+gSSew/lKiWHbEaPAc0LbbaRZGDiWxDW5JE9ZM8F/CFp3f7fw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=ifpKDqTB; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a9e44654ae3so908908866b.1
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2024 07:49:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730908135; x=1731512935; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1730908149; x=1731512949; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=cQn1mBA7i5mwq1Zg7u/t7aW7YEOcPTTZGAm5PudoZGM=;
-        b=cEFmPbv41XRlOQS5SX2n0SLYdWX3o/OJ2zXt/IlKgdYzUeY1WqGAk493mT8n2qXH3I
-         It7r0QXYiQitkpXD8l/zESbvS2FWZPPisvTJPPpruhP6JNcvq5ufOQfnOyk+36N1rxFc
-         llF13hOcRfS41js7hGRoFuFGdTMHCKLSFLjGaZjocEekWty+DQTGTbGjXpCKUI4VuFBv
-         d6616xaLpTeyA9sjI+/AEkiD/bQ1A83hKQo27/IzC41LDg9Gogwq76opauQFh6EWegbQ
-         xjpmxSm24Ln8UhUBZlPpD6QkLvgekk8FTgJGu8Na7r1qeANM7RK5PaPQg/+msjln03fD
-         7HeQ==
+        bh=qPH4C+vsdNY0v9MzcBPeqyGD66BVdCTndzKOwNg3m20=;
+        b=ifpKDqTBv18cn2nXsbM/siAChx4Zj95etoqs8AaaIJpwPzKesVtnyEIfLZR4GUlpbo
+         Jg2nMLDMJ1JF7XD4Em1LIhbghG/V+tWqm0KjzUftEMuDvfpLoZzD79jGRy6TgyXJfJ1A
+         2NUr5rRaWpck6l1PiLYAfliR+3m1X5U/AM8fg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730908135; x=1731512935;
+        d=1e100.net; s=20230601; t=1730908149; x=1731512949;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=cQn1mBA7i5mwq1Zg7u/t7aW7YEOcPTTZGAm5PudoZGM=;
-        b=uRH2MY+i0vj5cs7PdcaSm+8u1qOz8DREuo0EmwVXXAHKfYyQwRLTPSi8PNvgWXLqVb
-         vx0v0aSPDKWhw4dbsPuGlLxFwyXi9Xw4BYfyci8yaRTert99iM6YnerJQPN9APO9/diY
-         PWstuFsmK94qG1mlaJgr5h8zs3yNPRlnsdKZULoMV6G1VsFhJfAT/qtz3iho/grp+Ggy
-         a8KF8L1UL4X8vEX2aAa+7/44jpbBrS3bX6WZ5p1vDteBHt+0WSk91TxDYTmeI9AgysiB
-         loJF8iSi1NbD2OsRSSVQORq086ZMSmrzR8tJKQiSA/LZjfscFu3ESrqMj4N2QzHAasyF
-         zACg==
-X-Forwarded-Encrypted: i=1; AJvYcCVFU7HAqKTkwMkFPYjAnBmOC7soBApc7By84mY2fx69Nl11lQm22ONasJ3wJZbmV8WSs2cB0DixmLvEPsI=@vger.kernel.org, AJvYcCWsYGtJfbtgIKsAdHmBNVm0bIEptinHp6f7N0dRlsQUJAF4jOzMHUwzRsKs8NnhiVr9O0qw4YzlgpCC5g==@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywl3ThhCdVLkQ7FaFuOGp14UGznhFqW+bM8THzX1Vzd/CFgztIf
-	W30mev4A47UNnVQj1MRRaoXmFM7ZWteeZmtB+iEBpRPeoJEs2aGPlKPaS9RoACQSRmzZNazmyXG
-	F7atd26aaflto0MouKrShokwa5K6Lp7i6xQM=
-X-Google-Smtp-Source: AGHT+IHkE8CG0n0VJVnCOEKQzH/pE+L6AD9UJFoYJ+MfW49t/jw0uJOl1LuzPMjIpZ5nB7zm1T6D1X9eRPTRjGp9uwA=
-X-Received: by 2002:a05:651c:1546:b0:2fa:c18c:faba with SMTP id
- 38308e7fff4ca-2fcbe07ac05mr189220751fa.30.1730908134868; Wed, 06 Nov 2024
- 07:48:54 -0800 (PST)
+        bh=qPH4C+vsdNY0v9MzcBPeqyGD66BVdCTndzKOwNg3m20=;
+        b=fgMaJ7nMXchQRw/Xasq+qOByhG72RJPABk2RalZAqwKVJOmw0OVLkoQCwtvNNlQkeN
+         rnFXaavE75fFjWgTRwfD75BplPfL9Rb3dF0K1yD7jhTmFAFTAF4aFTRZrdjNdztMo6JL
+         b379K7TsX8PxtZ+vFFLRxx3VAdp0qmDonAWaLi4YC/RRscJ/jQzMMPlpspHmGdxA2BEd
+         DAavkx6gHFop5U8Ok7kc/jTqtZR2ymDe+W4teNTEj7YzjjGD5A3suUfge1AdWZO0HdsS
+         TtUSjy2DZO3iM9/skFiXbFDwNRtheGoMRtRbVnaBZ7JKtqSeNO+KubE78A9fy8HbvLdY
+         48tQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWVJ07CZfMk9Z0293X+t5OXPnIJtr1DdzlPdMR2z3Fko1PfGdAYwrlpDSXM7rGkbvdINrk7WRBd2A0nkK4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyWMDt3GUZ3s8OhbJvblJcKTZf/w/D1NS03IbxjsyAHOpoXtcEZ
+	ECKKPKIXbijVgzHxdiNhUr4nSIG/62YuN1fnOdzbMzl+mKbak/I4+hhVSosaL3cGANX3PrW9iy4
+	=
+X-Google-Smtp-Source: AGHT+IHj7GccbFYqgJTtoaxBn6glMU8DqtX38Hr2bDUAylw0y1I62CucRXQcSaAGx7KyMfP6HQVQvw==
+X-Received: by 2002:a17:907:318e:b0:a99:f4c3:580d with SMTP id a640c23a62f3a-a9e50b96b50mr2274274866b.42.1730908149166;
+        Wed, 06 Nov 2024 07:49:09 -0800 (PST)
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com. [209.85.208.49])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9eb17f6087sm298532666b.142.2024.11.06.07.49.07
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 06 Nov 2024 07:49:07 -0800 (PST)
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5c934b2c991so13785a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2024 07:49:07 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUPjARWIIYV6fwKwhgzuKFsGVxPU9s+p17TbP34MG+1rclGh+mBtPPRPD3g+l7qVr2b6XQ2dnCINKL7lC0=@vger.kernel.org
+X-Received: by 2002:a05:6402:206c:b0:5c8:a0b1:9c4 with SMTP id
+ 4fb4d7f45d1cf-5cefbcb8e25mr22907a12.6.1730908147253; Wed, 06 Nov 2024
+ 07:49:07 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241106015441.995014-1-anishkmr@amazon.com> <a349a820-7b3f-4739-a506-e2947f6df68d@kernel.org>
-In-Reply-To: <a349a820-7b3f-4739-a506-e2947f6df68d@kernel.org>
-From: anish kumar <yesanishhere@gmail.com>
-Date: Wed, 6 Nov 2024 07:48:42 -0800
-Message-ID: <CABCoZhCxHLbi4KcZUZPTHyeKxen2erB4kHGxNn073P2xq3z1Fw@mail.gmail.com>
-Subject: Re: [PATCH] leds: driver for O2 Micro LED IC
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: anishkmr@amazon.com, pavel@ucw.cz, dmurphy@ti.com, 
-	linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Karthik Poduval <kpoduval@lab126.com>, Yue Hu <yhuamzn@amazon.com>
+References: <20241022-submit-v5-0-552f0fec8cba@chromium.org>
+In-Reply-To: <20241022-submit-v5-0-552f0fec8cba@chromium.org>
+From: Fritz Koenig <frkoenig@chromium.org>
+Date: Wed, 6 Nov 2024 07:48:54 -0800
+X-Gmail-Original-Message-ID: <CAMfZQbx6-11k1eN1FC=_kRSgsh7FbTp2uvk3ufh+gOyhvxgEGw@mail.gmail.com>
+Message-ID: <CAMfZQbx6-11k1eN1FC=_kRSgsh7FbTp2uvk3ufh+gOyhvxgEGw@mail.gmail.com>
+Subject: Re: [PATCH v5 0/2] media: venus: Add hierarchical h.264 controls
+To: Fritz Koenig <frkoenig@chromium.org>
+Cc: Stanimir Varbanov <stanimir.k.varbanov@gmail.com>, 
+	Vikash Garodia <quic_vgarodia@quicinc.com>, "Bryan O'Donoghue" <bryan.odonoghue@linaro.org>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Dikshita Agarwal <quic_dikshita@quicinc.com>, 
+	Nathan Hebert <nhebert@chromium.org>, linux-media@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Nov 6, 2024 at 2:46=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel.org=
-> wrote:
->
-> On 06/11/2024 02:54, anishkmr@amazon.com wrote:
-> > From: Anish Kumar <anishkmr@amazon.com>
-> >
-> > LED Driver for O2 Micro LED IC
-> >
-> > reviewed-by: Anish Kumar <yesanishhere@gmail.com>
-> > Signed-off-by: Karthik Poduval <kpoduval@lab126.com>
-> > Signed-off-by: Yue Hu <yhuamzn@amazon.com>
-> > ---
-> >  .../devicetree/bindings/leds/leds-ozl003.txt  |  23 ++
->
-> 1. Please run scripts/checkpatch.pl and fix reported warnings. Then
-> please run `scripts/checkpatch.pl --strict` and (probably) fix more
-> warnings. Some warnings can be ignored, especially from --strict run,
-> but the code here looks like it needs a fix. Feel free to get in touch
-> if the warning is not clear.
+Stanimir,
 
-It was run on the code but not on this text file. Missed that.
->
-> 2. No bindings in TXT. They must com ine DT schema. It is no 2017
-> anymore. Please reach to your colleagues in Amazon for some internal
-> guidance on upstreaming. Such big companies should perform basic
-> internal review instead of asking community to explain that basic stuff.
+Would it be possible to get this in the 6.13 pull request?
 
-Will convert this to YAML and send.
->
-> 3. Please use scripts/get_maintainers.pl to get a list of necessary
-> people and lists to CC. It might happen, that command when run on an
-> older kernel, gives you outdated entries. Therefore please be sure you
-> base your patches on recent Linux kernel.
+Thanks.
 
-We did but our mistake is we cloned the wrong git, we cloned
-git://git.kernel.org/pub/scm/linux/kernel/git/pavel/linux-leds.git
-
+On Tue, Oct 22, 2024 at 10:40=E2=80=AFAM Fritz Koenig <frkoenig@chromium.or=
+g> wrote:
 >
-> Tools like b4 or scripts/get_maintainer.pl provide you proper list of
-> people, so fix your workflow. Tools might also fail if you work on some
-> ancient tree (don't, instead use mainline) or work on fork of kernel
-> (don't, instead use mainline). Just use b4 and everything should be
-> fine, although remember about `b4 prep --auto-to-cc` if you added new
-> patches to the patchset.
-
-./get_maintainers returned wrong values because of wrong tree.
-
+> v5:
+> - fixed formatting
+> - included reviwed by for patch 2
+> - Link to v4: https://lore.kernel.org/r/20241017-submit-v4-0-d852bc7f7fdc=
+@chromium.org
 >
-> You missed at least devicetree list (maybe more), so this won't be
-> tested by automated tooling. Performing review on untested code might be
-> a waste of time.
-
-will add that.
+> v4:
+> - addressed feedback from Dikshita
+> - included reviewed by for patch 1
+> - Link to v3: https://lore.kernel.org/r/20240814-submit-v3-0-f7d05e3e8560=
+@chromium.org
 >
-> Please kindly resend and include all necessary To/Cc entries.
-
-Will do. Thanks for review.
+> v3:
+> - dropped reordering patch
+> - updated cover letter
 >
+> v2:
+> - cover letter
+> - testing methodology
+> - Signed-off-by
 >
+> V4L2 has support for encoding with hierarchical frames using the
+> V4L2_CID_MPEG_VIDEO_H264_HIERARCHICAL_CODING* controls. This allows for
+> specifing frame references needed for temporal scalability. Encoding a
+> single stream with a single layer allows for the layer to be dropped and
+> the stream to be decoded without artifacts.
 >
-> ...
+> ChromeOS is planning to use this feature for the L1T2 web standard[1].
+> This allows video conferencing apps to encode once for a clients with
+> different performance/bandwidth capabilities. As the application is a
+> real time encoder only P frame support is added.
 >
+> The ChromeOS test framework ("tast") was used to verify that no
+> regressions are present. This was done on SC7180 ("trogdor"). These
+> patches were also run on SC7280, but not with as an extensive test set.
 >
-> > +
-> > +static struct i2c_driver ozl003_driver =3D {
-> > +     .driver =3D {
-> > +             .owner =3D THIS_MODULE,
+> Verification of the added controls was done with a bitstream analyser to
+> make sure that reference frame management is correct.
 >
-> Please do no send downstream, junk code. This was fixed years ago.
-
-ok.
+> [1]: https://www.w3.org/TR/webrtc-svc/#L1T2*
 >
-> > +             .name =3D "ozl003",
-> > +             .of_match_table =3D ozl003_match_table,
-> > +     },
-> > +     .id_table =3D ozl003_id,
-> > +     .probe =3D ozl003_probe,
-> > +     .remove =3D ozl003_remove,
-> > +};
-> > +
+> Signed-off-by: Fritz Koenig <frkoenig@chromium.org>
+> ---
+> Fritz Koenig (2):
+>       media: venus: Helper function for dynamically updating bitrate
+>       media: venus: Enable h.264 hierarchical coding
 >
-> ...
->
-> > +MODULE_LICENSE("GPL");
-> > +MODULE_ALIAS("platform:ozl003-led");
->
-> Drop as well. Useless or incorrect.
-
-ok.
+>  drivers/media/platform/qcom/venus/core.h       |   4 +
+>  drivers/media/platform/qcom/venus/venc.c       |  71 +++++++++-----
+>  drivers/media/platform/qcom/venus/venc_ctrls.c | 126 +++++++++++++++++++=
++++---
+>  3 files changed, 164 insertions(+), 37 deletions(-)
+> ---
+> base-commit: d07b43284ab356daf7ec5ae1858a16c1c7b6adab
+> change-id: 20240814-submit-05880a074377
 >
 > Best regards,
-> Krzysztof
+> --
+> Fritz Koenig <frkoenig@chromium.org>
 >
 
