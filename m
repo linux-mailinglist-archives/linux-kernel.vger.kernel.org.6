@@ -1,111 +1,180 @@
-Return-Path: <linux-kernel+bounces-398929-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398934-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DE119BF827
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 21:42:27 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29E589BF837
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 21:51:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 245931F23A87
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 20:42:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A97C4B232B5
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 20:51:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F302C20CCE1;
-	Wed,  6 Nov 2024 20:42:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eXtGBP3R"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE65120C48F;
+	Wed,  6 Nov 2024 20:51:30 +0000 (UTC)
+Received: from luna.linkmauve.fr (luna.linkmauve.fr [82.65.109.163])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 522D117B439;
-	Wed,  6 Nov 2024 20:42:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFF64204F76;
+	Wed,  6 Nov 2024 20:51:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=82.65.109.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730925727; cv=none; b=cG2LUit3Jg3hfUlLkPAhqm8xi14f9Wr9F0iWC3W8+BzmeQ12LBtszTOliWOiWcuLm4aqHKe7KIdheWQD4cnjhJxxKn9LvMV8yvNmn1fAq/x4+eumtmtD8bvanGmEk2FWjsvwvA5JbR+AE7UgRA6291nPX3FuP+P9rQp8PYgCaY4=
+	t=1730926290; cv=none; b=DpiEXuw1IvVBDkcPl0VC8cmgH/IbD6LYx25v2JXvugcjJWC6YHkA/dPAyQ9kGiB9eAIxVbsQjfaIeeLYqocr71Dso8yhd4wsrNKwk0rMU8RDnnQ/GRuavVzKACB1Q2yuxCkGA+cMqWNFZ9hGUWGI3br+qjqVYQfWwtN9jVl85cA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730925727; c=relaxed/simple;
-	bh=MyX3vKLdgoNWgBlUZe2r+I4QjJHT+W6zplpfpZ/F1mI=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=MTnirQAjpkKHE79DcGSZ0XWwCSmA56mogKsRpe0fEd25dOjGf1RkS5unSvtIv9GkCGaCc0mfanXiSYxTD2gxvcKx7bIaV4zDtCuSdzeq0AJ5SC7TqpwA7ONz/M7N99ncdz7S9d/YZ9v7eryfJ7mOH7Bl84IXb5qql5p4dYNCRCQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eXtGBP3R; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37867C4CED4;
-	Wed,  6 Nov 2024 20:42:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730925726;
-	bh=MyX3vKLdgoNWgBlUZe2r+I4QjJHT+W6zplpfpZ/F1mI=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=eXtGBP3RqH+IvKcwi1Qkk5Nw4s/pFWZCpftB/e9XRwrImO+4M6CBJ/1FLRHVamJiw
-	 PYfL5Cv+2PD+Lx/L0ZDxEM+WaHbjUmpykx1KtaojE3Mgq+Q0rUZ/0NX9gYBvkOFILR
-	 pZb4RiAVTmbul7B1gdaQI0KY9DXdbEa+hQLTUStC/ZDBVaKf5TAiXxZgj5sTt9V3DR
-	 FVe7EdJM9EUUvdpHZWm0IbBKzWnZOukok6no1tk7CzST35iECYGHIPueU/3zgPEZam
-	 NQdbe23z/9fiv+ShgEUNohUnq4uWnYOBk9SP06edwf8wEs1Drl7WetqrDDGHzxfld1
-	 xfklhGblZVLaw==
-From: Mark Brown <broonie@kernel.org>
-To: Hector Martin <marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>, 
- Alyssa Rosenzweig <alyssa@rosenzweig.io>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Janne Grunau <j@jannau.net>
-Cc: asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
- linux-spi@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Nick Chan <towinchenmi@gmail.com>, 
- Conor Dooley <conor.dooley@microchip.com>
-In-Reply-To: <20241106-asahi-spi-v5-0-e81a4f3a8e19@jannau.net>
-References: <20241106-asahi-spi-v5-0-e81a4f3a8e19@jannau.net>
-Subject: Re: (subset) [PATCH v5 0/3] Apple SPI controller driver
-Message-Id: <173092572295.200222.12076711239744365643.b4-ty@kernel.org>
-Date: Wed, 06 Nov 2024 20:42:02 +0000
+	s=arc-20240116; t=1730926290; c=relaxed/simple;
+	bh=pazZYmXayDoYxY475x7F24mNnNY7L+4yLGzHWazIAEM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Tgp9bqh/7JiM/4GMeLqLFmsEw/NUa0SMla1988E6bMQx6iShaDvxKV/8AHHNFQNsDvDeaOQuC8J4YMNU2dmj4EWcA2hFeaAl5xtscyA9ES1tEofhKFwLGY5pF0ia9kI0HC7NWYESjqctBe5cRqQiWOJ0UVxFxNvIxaHkdoC7FSk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linkmauve.fr; spf=pass smtp.mailfrom=linkmauve.fr; arc=none smtp.client-ip=82.65.109.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linkmauve.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linkmauve.fr
+Received: by luna.linkmauve.fr (Postfix, from userid 1000)
+	id 7CC2F15E5A9A; Wed, 06 Nov 2024 21:42:25 +0100 (CET)
+Date: Wed, 6 Nov 2024 21:42:25 +0100
+From: Link Mauve <linkmauve@linkmauve.fr>
+To: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Sebastian Reichel <sebastian.reichel@collabora.com>,
+	Luis de Arquer <ldearquer@gmail.com>,
+	Alexandre ARNOUD <aarnoud@me.com>, kernel@collabora.com,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+	FUKAUMI Naoki <naoki@radxa.com>
+Subject: Re: [PATCH v2 2/5] arm64: dts: rockchip: Enable HDMI0 on rock-5b
+Message-ID: <ZyvUsdc8ZhiD8-DY@desktop>
+References: <20241019-rk3588-hdmi0-dt-v2-0-466cd80e8ff9@collabora.com>
+ <20241019-rk3588-hdmi0-dt-v2-2-466cd80e8ff9@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-9b746
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241019-rk3588-hdmi0-dt-v2-2-466cd80e8ff9@collabora.com>
+Jabber-ID: linkmauve@linkmauve.fr
 
-On Wed, 06 Nov 2024 08:53:59 +0100, Janne Grunau wrote:
-> This updated series address the review comments from the original
-> submission in 2021 [1]. It adds a new SPI controller driver for Apple
-> SoCs and is based on spi-sifive. It has been tested with the generic
-> jedec,spi-nor support and with a downstream driver for an Apple specific
-> HID over SPI transport.
+Hi,
+
+I’ve tested this series on a Radxa Rock 5B using Weston, and thus
+patches 1 and 2 are:
+Tested-by: Link Mauve <linkmauve@linkmauve.fr>
+
+On a TV which erroneously reports 1360×768 as its preferred mode,
+nothing gets displayed.  Only setting a 1920×1080 mode will display
+things correctly, every other mode stays black.
+
+Also, before starting Weston, drm_info reports Status: unknown, 0×0 mm,
+no modes, and no EDID blob.  After starting Weston all of these property
+get loaded properly, aside from the physical size which gets set to the
+obviously invalid 1600×900 mm.
+
+The first start of Weston after reboot takes a total of 7.4s, which
+seems very long just to (I believe) probe the screen and parse the EDID,
+if that’s what the driver is doing.  Subsequent launches complete in
+about 400 ms, which is closer to my expectation.
+
+Thanks a lot for this series!
+
+On Sat, Oct 19, 2024 at 01:12:11PM +0300, Cristian Ciocaltea wrote:
+> Add the necessary DT changes to enable HDMI0 on Radxa ROCK 5B.
 > 
-> As usual, I'm splitting off the MAINTAINERS and DT binding changes.
-> We would rather merge the MAINTAINERS change through the Asahi-SoC
-> tree to avoid merge conflicts as things trickle upstream, since
-> we have other submissions touching that section of the file.
+> Tested-by: FUKAUMI Naoki <naoki@radxa.com>
+> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+> ---
+>  arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts | 47 +++++++++++++++++++++++++
+>  1 file changed, 47 insertions(+)
 > 
-> [...]
+> diff --git a/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts b/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts
+> index d6fff5b86b87020f115ce64795aee90c002a2255..0c3baf74981b714eb2a1edbc3fbbb69cd688cfc2 100644
+> --- a/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts
+> +++ b/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts
+> @@ -4,6 +4,7 @@
+>  
+>  #include <dt-bindings/gpio/gpio.h>
+>  #include <dt-bindings/leds/common.h>
+> +#include <dt-bindings/soc/rockchip,vop2.h>
+>  #include "rk3588.dtsi"
+>  
+>  / {
+> @@ -37,6 +38,17 @@ analog-sound {
+>  		pinctrl-0 = <&hp_detect>;
+>  	};
+>  
+> +	hdmi0-con {
+> +		compatible = "hdmi-connector";
+> +		type = "a";
+> +
+> +		port {
+> +			hdmi0_con_in: endpoint {
+> +				remote-endpoint = <&hdmi0_out_con>;
+> +			};
+> +		};
+> +	};
+> +
+>  	leds {
+>  		compatible = "gpio-leds";
+>  		pinctrl-names = "default";
+> @@ -192,6 +204,26 @@ &gpu {
+>  	status = "okay";
+>  };
+>  
+> +&hdmi0 {
+> +	status = "okay";
+> +};
+> +
+> +&hdmi0_in {
+> +	hdmi0_in_vp0: endpoint {
+> +		remote-endpoint = <&vp0_out_hdmi0>;
+> +	};
+> +};
+> +
+> +&hdmi0_out {
+> +	hdmi0_out_con: endpoint {
+> +		remote-endpoint = <&hdmi0_con_in>;
+> +	};
+> +};
+> +
+> +&hdptxphy_hdmi0 {
+> +	status = "okay";
+> +};
+> +
+>  &i2c0 {
+>  	pinctrl-names = "default";
+>  	pinctrl-0 = <&i2c0m2_xfer>;
+> @@ -858,3 +890,18 @@ &usb_host1_xhci {
+>  &usb_host2_xhci {
+>  	status = "okay";
+>  };
+> +
+> +&vop_mmu {
+> +	status = "okay";
+> +};
+> +
+> +&vop {
+> +	status = "okay";
+> +};
+> +
+> +&vp0 {
+> +	vp0_out_hdmi0: endpoint@ROCKCHIP_VOP2_EP_HDMI0 {
+> +		reg = <ROCKCHIP_VOP2_EP_HDMI0>;
+> +		remote-endpoint = <&hdmi0_in_vp0>;
+> +	};
+> +};
+> 
+> -- 
+> 2.47.0
+> 
+> 
+> _______________________________________________
+> Linux-rockchip mailing list
+> Linux-rockchip@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-rockchip
 
-Applied to
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
-
-Thanks!
-
-[1/3] spi: dt-bindings: apple,spi: Add binding for Apple SPI controllers
-      commit: 18096d339206de6cdb48500b2c3ad5ad0b48aad7
-[2/3] spi: apple: Add driver for Apple SPI controller
-      commit: c36212b2610d09eb42142beb0d5613c70206c658
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
+-- 
+Link Mauve
 
