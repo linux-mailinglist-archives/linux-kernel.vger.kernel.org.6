@@ -1,90 +1,94 @@
-Return-Path: <linux-kernel+bounces-397294-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397295-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0584A9BDA15
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 01:10:14 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69A9B9BDA19
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 01:13:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6E0BCB22589
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 00:10:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD2D71F23A5C
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 00:13:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85AE7A47;
-	Wed,  6 Nov 2024 00:10:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B7F710E4;
+	Wed,  6 Nov 2024 00:13:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="h9QOrDPH"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nULiOJcC"
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC671173
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 00:10:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64A8B173;
+	Wed,  6 Nov 2024 00:13:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730851803; cv=none; b=Z0WkJwbGB4ttb7RxMCfF3IKy9RnmOAIogQ5T6mNm2ZCKVA2ajbt7fDtd0Yna1R/vroj/SrKmIEQEHabTsG66TG1kAgQSUp0tBM8ypcBp51Encq5zA3eYqA1dRiUgLjPq3SjyZgmP6H66TycI5UcKF9RaOSALB+BzdRZ/RPlJ3TM=
+	t=1730851995; cv=none; b=hS8jN/7A6B/WAJCR8ZbRV3V4kAUIgZ6t5dQvftZhupky4BnEhZg2Mt4huamVTZ/bg5jR/AQ1cvcEkPm6ge1sWyaGzHS7JzuD5oUkz2p97bAiONyfVz3EeK27asJ/c0D2GbirZxTScoHstlMg0Jf+3e21Q7W6X47Yun6kTzl7xXM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730851803; c=relaxed/simple;
-	bh=EhONxpoabnBdZIC+pPf3rO5NkMwnpcmCJFF6G7tieUk=;
+	s=arc-20240116; t=1730851995; c=relaxed/simple;
+	bh=CNR2huwrYRnkZkg1Y2KQ6f/0LqS79jl9D+/e9mWZXtI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HStmxGxPpkrmRU8+nE38uaA22Zv+8mRnyK44/iJdILY1XHeyovEiJjj+m84VD5I9vnnWZJZLXlNwVNb69wwj4C+8IUFHyOZ91lT2gSdLygBEwz2niaYG2yy7Cusim07nAz2fRqdxZNz45dAw+TGFTBwHOLvQ2U7fbuKpoxxJzIU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=h9QOrDPH; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1730851800;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xcvvbuQpV6OUCQzxbQQxlxp1LzAk7op1D4yotoJD2ro=;
-	b=h9QOrDPHy8QtsHS+Yosau5YA1yiAXHSPSW2H0zxzeblXe0dHHTxUPDgj7D/6pROL8U+qiS
-	2VN88/tBleqTUG8O7sFxUirvpBnEgtV8riggJpbdPlox9fC2K1hJJSn2C8TL/ePC3C3WdV
-	/+lYrBeXY+Xi9+UNlQGXLItS6sdhQFw=
-Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com
- [209.85.219.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-492-LAJ7BWzdOp6yZp4u3TCiZQ-1; Tue, 05 Nov 2024 19:09:59 -0500
-X-MC-Unique: LAJ7BWzdOp6yZp4u3TCiZQ-1
-Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-6d366904e8fso72249106d6.1
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 16:09:59 -0800 (PST)
+	 Content-Type:Content-Disposition:In-Reply-To; b=KHkb57SxCafphCvjSd20m/w/rW4zPfmfPXbjYUmt101P3gX5hA0eR2gVZCIIW3c73ryLThj01gVy5yF+fIHZGWSkMGzOMSlhrUf+ksTA8AYYs+IUeJg+Yn34sRyTITXEKKQQvZGWfTvRaQKvXNaOsGtK5wMos2aqan42eZs+wTE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nULiOJcC; arc=none smtp.client-ip=209.85.210.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-71e4c2e36daso215566b3a.0;
+        Tue, 05 Nov 2024 16:13:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730851994; x=1731456794; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=hSHh/lcKGOgr8zxmK/zCU2mZe0FLf7CPP8bNcIOgH7Y=;
+        b=nULiOJcCd6MyTxBgXNLxKFc34c2sm1t9P8U19LbUJnn9R/6sn1jKlx0BCwWmWMBusK
+         aJ2icPgi0YWUFTyHKlT3ROR5/cTA+bgeCBPijh0/0q/7hA6bqDDQV/WmzZdt+Zyjnff0
+         b/ZA12sif5nC871dYPmT7T7yrym18C0Hu6KyONz3mumY2xiGuffeslgrvnH0H1klacss
+         PvdmFgKx7stDr8gg1fcgInoqzeW6Et6l0I2NYYaLOBft7TYoL38n89b1eVirR814J5QV
+         HBmMLjiFkbhMFT9mf5I15/M+4CVQH98inXcrjAf+66VUyHOZKoHHAGakX0gLGEz4EZRN
+         npZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730851799; x=1731456599;
-        h=user-agent:in-reply-to:content-transfer-encoding
-         :content-disposition:mime-version:references:message-id:subject:cc
-         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=xcvvbuQpV6OUCQzxbQQxlxp1LzAk7op1D4yotoJD2ro=;
-        b=JhT9hH0mJy49gY2ZY1AMQW6xZCMKH7h5znRQVg/NpYc13AF6QCWRXzoEft3U0zqHm/
-         fTSR8BLkSw2TNOm4kj/oJVujt2gDlMS9j1LYZVckWGEmkoqGPu6i+Dk6SD6y3AMMjVg5
-         Mi0C8ZJjcR+a31FMv2k6udXhTYxNMVOOsQYoUzkeGK+2viICCh8QiKnU+s/HQxl1vlm/
-         BqLCwROvSEqNKDXvD85i1MCVLlQ5jC+FTTPRXx99u75C+T2So9uhtxfsxLVkQs7h5fk+
-         /T+UpFQZ1HbhT4y9h+1FiiCYfrImanjkCo8cDivMGFP0EDYrtMHgqp53KxrjPJ9ELn/z
-         72qg==
-X-Forwarded-Encrypted: i=1; AJvYcCU3v24kNt+jD0H1Uz3sC/KKs2DuU0E0SN2O8WWFdGBmGCUHLbtNs3Q/m55Gy6B/GAJRjdqd4BR35aHpqyU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YznZLwbjBFUYTjzl6Mi/tci6SimWUzOH+6lZJ+VYVrpR/hMKCCu
-	unhktuQqnFP3ICddBER5h6D7Qw3zpPxCgCnDLSULkqa8vgsG/Za/emDoBzfEslerIZM7rm/jxHY
-	jKIRucFtMBjDdchBBE/g7MRmKR1HVNBeJJ1pYRtWm+pvaSu6grteMIA6vQO7ehw==
-X-Received: by 2002:a05:6214:469a:b0:6d3:45ad:d850 with SMTP id 6a1803df08f44-6d345addb51mr376583796d6.26.1730851799158;
-        Tue, 05 Nov 2024 16:09:59 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHXBHa2z2eWneZW6mLo2gXLkw1di+NHGIzzjCFZJq2VQ9t7gcqVWFnTuedpuwJcGgzGcdsJIw==
-X-Received: by 2002:a05:6214:469a:b0:6d3:45ad:d850 with SMTP id 6a1803df08f44-6d345addb51mr376583676d6.26.1730851798860;
-        Tue, 05 Nov 2024 16:09:58 -0800 (PST)
-Received: from x1 (c-98-219-206-88.hsd1.pa.comcast.net. [98.219.206.88])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d35415b1edsm65837366d6.75.2024.11.05.16.09.57
+        d=1e100.net; s=20230601; t=1730851994; x=1731456794;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=hSHh/lcKGOgr8zxmK/zCU2mZe0FLf7CPP8bNcIOgH7Y=;
+        b=j+qW76gTNGGEVVSvH6w0HVLp+KahTaapYu22831BOh69dOIB5IFSHnRnLoCMXBCFvk
+         8S39wWLedFFzv1d/WpiNf5M41GoGbkZHRItNKi+W5RiQsjJzKnZ7HubwMW6AMPCDw+BB
+         LprnzCoBdgBK7YP8znnJ1BQsapfuNNCtZsMqPHbbYrQz3IhGq431YSfgs1Z1CJz7v0Te
+         iAtDB93AZKDuYo+EDh9ZF8RfMo6Ji8cknw2g++q+nsV9yAN8yJH/6u59Slbh9L96vgKv
+         jNOfN7UHejWBnIu5ZPKvAO1KMObof5JMzLafCKcOu/bp+yxr0ctNE+8Z+n7BP6vNquuR
+         hjDg==
+X-Forwarded-Encrypted: i=1; AJvYcCUAf8jxo2XfqNMJzlaRXXyU0hWsaDgLU8Vu/DHd18zJ3xxIIEtLCa4WhzS10fP00QB9HihE+fwnAdVXW6k=@vger.kernel.org, AJvYcCWYprl9thrdL9E1CqLrASe7PFsdJ+NfYD1mWgZr8BbvysiigjSjSG6xdpxhczqRbBsuQ0AtiYoXyDt6et+O0T+6@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyb4MnXvYdFdB9C8TqegTSMo5pUWFVw14Nlw+yyvir9C0W7GphE
+	kBI8dAqfF/c4Z5fZH6luKyyDEJLaPdYk/boReREIpBZuKDqgCI0=
+X-Google-Smtp-Source: AGHT+IGmPWhJM7VO0SLjP2BiRkNrCtx9Le577yZKZryuMH4iFiui4HVC7vlqk2UJzw4Q2xl8R5JU7w==
+X-Received: by 2002:a05:6a20:4322:b0:1d9:dc8:b80d with SMTP id adf61e73a8af0-1dc03386112mr883285637.20.1730851993392;
+        Tue, 05 Nov 2024 16:13:13 -0800 (PST)
+Received: from localhost ([2601:646:9e00:f56e:123b:cea3:439a:b3e3])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7ee452991f0sm9704517a12.13.2024.11.05.16.13.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Nov 2024 16:09:57 -0800 (PST)
-Date: Tue, 5 Nov 2024 19:09:56 -0500
-From: Brian Masney <bmasney@redhat.com>
-To: Saravana Kannan <saravanak@google.com>
-Cc: "Bird, Tim" <Tim.Bird@sony.com>,
-	"linux-embedded@vger.kernel.org" <linux-embedded@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: Boot-time initiative (SIG) thoughts and next steps
-Message-ID: <Zyqz1LBDXZosrjle@x1>
-References: <MW5PR13MB5632321E93B031C0E107DB38FD4F2@MW5PR13MB5632.namprd13.prod.outlook.com>
- <CAGETcx_c2nfFQ++-FcsdUdLUo3e-oe07MkLgbuyrnq2FPrcsXQ@mail.gmail.com>
- <MW5PR13MB5632E4EFFD802E0839027A51FD4A2@MW5PR13MB5632.namprd13.prod.outlook.com>
- <CAGETcx-Y6LHpZZUeexeuSF4RJ1E2MDtNtST=ytEUPAj7kKzwFA@mail.gmail.com>
+        Tue, 05 Nov 2024 16:13:12 -0800 (PST)
+Date: Tue, 5 Nov 2024 16:13:12 -0800
+From: Stanislav Fomichev <stfomichev@gmail.com>
+To: Mina Almasry <almasrymina@google.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	Jesper Dangaard Brouer <hawk@kernel.org>,
+	Ilias Apalodimas <ilias.apalodimas@linaro.org>,
+	Shuah Khan <shuah@kernel.org>, Yi Lai <yi1.lai@linux.intel.com>
+Subject: Re: [PATCH net-next v1 6/7] net: fix SO_DEVMEM_DONTNEED looping too
+ long
+Message-ID: <Zyq0mBCJEBQ2s2Jm@mini-arch>
+References: <20241029205524.1306364-1-almasrymina@google.com>
+ <20241029205524.1306364-2-almasrymina@google.com>
+ <ZyJDxK5stZ_RF71O@mini-arch>
+ <CAHS8izNKbQHFAHm2Sz=bwwO_A0S_dOLNDff7GTSM=tJiJD2m0A@mail.gmail.com>
+ <ZyJLkn3uM1Qz6NZn@mini-arch>
+ <CAHS8izMWbcKSr3uOVWQDmo5=aQvFdcD6o_myz1bw=a1rzrJE_A@mail.gmail.com>
+ <ZyqSHic5hW_vi47l@mini-arch>
+ <CAHS8izOdqnXytOOyg+EATHg5ON+eBDn4qe=L3a3YKd5tzdqV0A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -94,49 +98,85 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAGETcx-Y6LHpZZUeexeuSF4RJ1E2MDtNtST=ytEUPAj7kKzwFA@mail.gmail.com>
-User-Agent: Mutt/2.2.13 (2024-03-09)
+In-Reply-To: <CAHS8izOdqnXytOOyg+EATHg5ON+eBDn4qe=L3a3YKd5tzdqV0A@mail.gmail.com>
 
-On Mon, Oct 28, 2024 at 03:33:29PM -0700, Saravana Kannan wrote:
-> On Sun, Oct 27, 2024 at 6:30 PM Bird, Tim <Tim.Bird@sony.com> wrote:
-> > > On Fri, Oct 25, 2024 at 11:18 AM Bird, Tim <Tim.Bird@sony.com> wrote:
-> > > > = wiki account =
-> > > > The wiki where we'll be maintaining information about
-> > > > boot time, and about activities of the boot time SIG, is the elinux wiki.
-> > > > The page we'll be focusing on is: https://elinux.org/Boot_Time.
-> > > > If you are interested in helping update and maintain the information there
-> > > > (which I hope almost everyone is), then please make sure you have a user
-> > > > account on the wiki.
-> > > > If you don't have one, please go here:
-> > > > https://elinux.org/Special:RequestAccount
-> > > > I have to manually approve accounts in order to fight spambots.  It might
-> > > > take a few days for me to get to your request.  It's very helpful if you
-> > > > put a comment in one of the request fields about this being related to
-> > > > the boot-time initiative or SIG, so I can distinguish your request from
-> > > > spam requests.
+On 11/05, Mina Almasry wrote:
+> On Tue, Nov 5, 2024 at 1:46 PM Stanislav Fomichev <stfomichev@gmail.com> wrote:
+> > > > > Also, the information is useless to the user. If the user sees 'frag
+> > > > > 128 failed to free'. There is nothing really the user can do to
+> > > > > recover at runtime. Only usefulness that could come is for the user to
+> > > > > log the error. We already WARN_ON_ONCE on the error the user would not
+> > > > > be able to trigger.
+> > > >
+> > > > I'm thinking from the pow of user application. It might have bugs as
+> > > > well and try to refill something that should not have been refilled.
+> > > > Having info about which particular token has failed (even just for
+> > > > the logging purposes) might have been nice.
 > > >
-> > > Can we instead keep this all a part of the kernel docs instead of the
-> > > wiki? Couple of reasons for that:
+> > > Yeah, it may have been nice. On the flip side it complicates calling
+> > > sock_devmem_dontneed(). The userspace need to count the freed frags in
+> > > its input, remove them, skip the leaked one, and re-call the syscall.
+> > > On the flipside the userspace gets to know the id of the frag that
+> > > leaked but the usefulness of the information is slightly questionable
+> > > for me. :shrug:
 > >
-> > Ideally, we would put some material in the wiki, and also
-> > produce a document - some kind of "boot-time tuning guide" that can
-> > live in the kernel tree.
+> > Right, because I was gonna suggest for this patch, instead of having
+> > a separate extra loop that returns -E2BIG (since this loop is basically
+> > mostly cycles wasted assuming most of the calls are gonna be well behaved),
+> > can we keep num_frags freed as we go and stop and return once
+> > we reach MAX_DONTNEED_FRAGS?
+> >
+> > for (i = 0; i < num_tokens; i++) {
+> >         for (j ...) {
+> >                 netmem_ref netmem ...
+> >                 ...
+> >         }
+> >         num_frags += tokens[i].token_count;
+> >         if (num_frags > MAX_DONTNEED_FRAGS)
+> >                 return ret;
+> > }
+> >
+> > Or do you still find it confusing because userspace has to handle that?
 > 
-> This is the part I care most about being in the kernel docs. Eg: what
-> configs to use. What commandline params to set. Dos and Don'ts for the
-> drivers, etc. So, good to see that is an acceptable option.
+> Ah, I don't think this will work, because it creates this scenario:
+> 
+> - user calls SO_DEVMEM_DONTNEED passing 1030 tokens.
+> - Kernel returns 500 freed.
+> - User doesn't know whether:
+> (a)  The remaining 530 tokens are all attached to the last
+> tokens.count and that's why the kernel returned early, or
+> (b) the kernel leaked 530 tokens because it could not find any of them
+> in the sk_user_frags.
+> 
+> In (a) the user is supposed to recall SO_DEVMEM_DONTNEED on the
+> remaining 530 tokens, but in (b) the user is not supposed to do that
+> (the tokens have leaked and there is nothing the user can do to
+> recover).
 
-I'm interested to help contribute to a boot speed document, and I
-suspect some others at Red Hat are interested as well. Personally,
-I would prefer to have a section in the kernel documentation over a
-Wiki. Besides arch-specific recommendations, we can also contribute
-some boot speed improvement techniques that we've done that are
-specific to RT.
+I kinda feel like people will still write code against internal limits anyway?
+At least that's what we did with the internal version of your code: you
+know that you can't return more than 128 tokens per call
+so you don't even try. If you get an error, or ret != the expected
+length, you kill the connection. It seems like there is no graceful
+recovery from that?
 
-In addition to the recommended configs, I think it would also be
-beneficial to list some upstream patches that improve boot speed along
-with the kernel version it was introduced in.
+Regarding your (a) vs (b) example, you can try to call DONTNEED another
+time for both cases and either get non-zero and make some progress
+or get 0 and give up?
 
-Brian
+> The current interface is more simple. The kernel either returns an
+> error (nothing has been freed): recall SO_DEVMEM_DONTNEED on all the
+> tokens after resolving the error, or,
+> 
+> the kernel returns a positive value which means all the tokens have
+> been freed (or unrecoverably leaked), and the userspace must not call
+> SO_DEVMEM_DONTNEED on this batch again.
 
+Totally agree that it's more simple. But my worry is that we now
+essentially waste a bunch of cpu looping over and testing for the
+condition that's not gonna happed in a well-behaved applications.
+But maybe I'm over blowing it, idk.
+
+(I'm gonna wait for you to respin before formally sending acks because
+ it's not clear which series goes where...)
 
