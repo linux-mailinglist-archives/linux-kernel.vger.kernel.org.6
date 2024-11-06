@@ -1,308 +1,122 @@
-Return-Path: <linux-kernel+bounces-398006-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398002-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3E069BE41A
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 11:19:08 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6DFB9BE412
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 11:18:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B2C1828391D
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 10:19:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4D8EBB23ADB
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 10:18:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F3E41DE4D3;
-	Wed,  6 Nov 2024 10:18:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A6AD1DDC34;
+	Wed,  6 Nov 2024 10:18:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=imgtec.com header.i=@imgtec.com header.b="U01hpmRY";
-	dkim=pass (1024-bit key) header.d=IMGTecCRM.onmicrosoft.com header.i=@IMGTecCRM.onmicrosoft.com header.b="ohp1lhOi"
-Received: from mx07-00376f01.pphosted.com (mx07-00376f01.pphosted.com [185.132.180.163])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CsDTdUhj"
+Received: from mail-pl1-f194.google.com (mail-pl1-f194.google.com [209.85.214.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A35F61DE3CE;
-	Wed,  6 Nov 2024 10:18:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=185.132.180.163
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730888309; cv=fail; b=Jk1flG10Dyx3umGYabPo3SpAIpMWyWzSRyX+ZMfWItjqwdFtdZTDmh+PWVG7vFWRfUzPOey0MwK48JRKOBlb+KOEFf2Skd+RsFnDSC+r6SKJnJKU/62rfEsHWmb/yj2jE7aYbEK+KkCJ6xPHanbBIEZKGYv+CER00/BiYiBezjk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730888309; c=relaxed/simple;
-	bh=N5pCg3W3pdS8KhJL9gSXYZZWouspcZzm0r2r1uc9Nig=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=WZaGKokeuG6DkNzYuYHLdhsXWHW3pCXa65uPZn2i5jQAfesJ0DPIPLZWeYP6R2p79me5NRq6+Wy772cihoBfKdW1Vbo3eZR/nk/fJ1SpIdfTH+iZ0XNxRNthUGe79QLMFQDggL7mzqa9jbTzbb9QkXs7ZUe1gwRhiW7kcZg/pas=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=imgtec.com; spf=pass smtp.mailfrom=imgtec.com; dkim=pass (2048-bit key) header.d=imgtec.com header.i=@imgtec.com header.b=U01hpmRY; dkim=pass (1024-bit key) header.d=IMGTecCRM.onmicrosoft.com header.i=@IMGTecCRM.onmicrosoft.com header.b=ohp1lhOi; arc=fail smtp.client-ip=185.132.180.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=imgtec.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=imgtec.com
-Received: from pps.filterd (m0168889.ppops.net [127.0.0.1])
-	by mx07-00376f01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A66g64x020584;
-	Wed, 6 Nov 2024 10:18:09 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=imgtec.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=dk201812; bh=VFMrGe+GRpTqcdZMP/IxioM29
-	VUJVDhR7uoQa3TY24o=; b=U01hpmRYBUfzDidsP18U3w2mUpdFbb65WvpLHERhV
-	EtNWgYNCAf7KBGSyl+E0FTjQUMZhnLkQ9ai95c9/Bj56sVkb5coCS0TbUxCZHo2E
-	ajzHG94OiTqSvdZTkoVhwcmk92+OZA69zWmhDqDpBfCMOu0e95FtvWR5a/+muL5e
-	7eMTFZQgC/ddVuHpkqkCfIKJiiTYlDSfwVUYT4QQ9IRmhq2h9klHsqvi+WFLCrr5
-	HbP8eoJfB2EIYaZKaFT0GTLhx1p0qbqYnN6DzZC5TN1uG8IBpSa2+0DKWExeneFo
-	Jnh/GYPH3shbRelvYNapocUS4tCaNOP7jdnXx0JArFb3g==
-Received: from cwxp265cu008.outbound.protection.outlook.com (mail-ukwestazlp17010000.outbound.protection.outlook.com [40.93.68.0])
-	by mx07-00376f01.pphosted.com (PPS) with ESMTPS id 42qw838c3u-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 06 Nov 2024 10:18:08 +0000 (GMT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=C46ZU8bKZm+tB9z9C6U/1BxyiXv0uEyze1AYmSJ+4XpW77I1SfAf8V1LVprwtGOZlTNPhEV44GxUSeTIQovsJB2I7YOhPZanu4vOXTypsnDv2lN+xsmTNshpO7N8ADAntx2W+wm1L7/+bet8lGzQ+Y8fuXlO7sJytGJuMflsCRVJvRcG75hVZ0NM29c+RLH4nXkZ5TLNHHiLYRLoJ6/lZ4BjDZXA5+6FR1GyxAa5nI/WlyE8beKKOh+9CS7z055tOGNtZbf9DezoSzA4PYIi5SiYFVhvtowL6Lv3XJcmMJU7lcQmb0G0moX1ckgOCKx83w+wetkwPPngqCjv5O6qGA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=VFMrGe+GRpTqcdZMP/IxioM29VUJVDhR7uoQa3TY24o=;
- b=mrqU0TbhPXwkT1xukjPhJ271+M7Lr6LaWlOl4GTWiLRMF7FzVeYeAxD2c05neaAyiGaOl+LkgDHWmvyhG/HbMTmWdKIgyqTYub67FhvA6aCv4HtRX5O4On76tdkZn4lyGP0UP95VBsEaf6ekBNYvhj7w0QfEI9hXBrY+BHLQbwGrkVVUriNRwcv5gyNids+tPL89vBTRvqej1NFvx160wgWiLcbOYI19uxpR1T/Mtxs+cSeOlCc5lDEBpdBLamkRNbpU498AUrg6VpyaQCPTtw3e8BLrcxvsyNHNGuPqKuGj6RUsNl27/UEoAgwEoPxxAEC+EELZWYT+D4gBxKlgjw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=imgtec.com; dmarc=pass action=none header.from=imgtec.com;
- dkim=pass header.d=imgtec.com; arc=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C3DA1DD9AB;
+	Wed,  6 Nov 2024 10:18:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.194
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730888300; cv=none; b=pvy5FCJarEbML+HWAMPJM2PjhyOG/91o5ykZ+uWaMH80B9F7uzb/lueFG+l4yf8u/wrl+WHoSBoJt7/5berk9VYjyVjgK/m4QkqvjH/0P1G9KSgDOrYIx75wEYYtGEKa4Buy7L+C8CLs4gi1bLLEfLhKnTZM2ZitYXGVUNBzvQ0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730888300; c=relaxed/simple;
+	bh=bx5wR4OF+tSWOY1oFXdc8WR6H4liG92KD1Gs9ncyhKI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=bF3hPJJRBtFGfksH5oqNJep9sxaw7qxY/XR/ZNSqkAJqhEswLhnkTvv6jARFSMBSSFrEbSpQm6h80eRtSTGjO6fl6j3aP0rsVeN3s4VTycxl8vZDASXcWi6yZvFRYOF6bN4x1jbt6n7kL6CgiDAQTX3qL/k3CNHjgAD7hPNwsqE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CsDTdUhj; arc=none smtp.client-ip=209.85.214.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f194.google.com with SMTP id d9443c01a7336-20cf3e36a76so68360305ad.0;
+        Wed, 06 Nov 2024 02:18:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=IMGTecCRM.onmicrosoft.com; s=selector2-IMGTecCRM-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=VFMrGe+GRpTqcdZMP/IxioM29VUJVDhR7uoQa3TY24o=;
- b=ohp1lhOiY6IdcMWi+44Srb+W/KDkKtybYqIxObaTU4hXDiVkH7GF6L6C8/4argOYc2NNhYB7NGywGUM7FWn4Gb0OpfVzmpImMMnO+ZQdVmFjZvxighdGwYcFbOSbcayT/zbGCat1rQ82rUcSGeFbydREK1PhpMgO30mR1eKmm4o=
-Received: from CWXP265MB3397.GBRP265.PROD.OUTLOOK.COM (2603:10a6:400:e7::8) by
- LO2P265MB7201.GBRP265.PROD.OUTLOOK.COM (2603:10a6:600:32e::10) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8137.18; Wed, 6 Nov 2024 10:18:06 +0000
-Received: from CWXP265MB3397.GBRP265.PROD.OUTLOOK.COM
- ([fe80::8e9d:6b2f:9881:1e15]) by CWXP265MB3397.GBRP265.PROD.OUTLOOK.COM
- ([fe80::8e9d:6b2f:9881:1e15%6]) with mapi id 15.20.8137.018; Wed, 6 Nov 2024
- 10:18:06 +0000
-From: Matt Coster <Matt.Coster@imgtec.com>
-To: Conor Dooley <conor@kernel.org>
-CC: Frank Binns <Frank.Binns@imgtec.com>, David Airlie <airlied@gmail.com>,
-        Simona Vetter <simona@ffwll.ch>,
-        Maarten Lankhorst
-	<maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Tero
- Kristo <kristo@kernel.org>,
-        "dri-devel@lists.freedesktop.org"
-	<dri-devel@lists.freedesktop.org>,
-        "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-        Randolph Sapp <rs@ti.com>, Darren
- Etheridge <detheridge@ti.com>
-Subject: Re: [PATCH 04/21] dt-bindings: gpu: img: Allow dma-coherent
-Thread-Topic: [PATCH 04/21] dt-bindings: gpu: img: Allow dma-coherent
-Thread-Index: AQHbL5uOIBWg76M1VEe3oyjoWPxg1rKo+7oAgAEPZIA=
-Date: Wed, 6 Nov 2024 10:18:06 +0000
-Message-ID: <5e26957f-dc79-42ef-a8a1-597fb386ae51@imgtec.com>
-References: <20241105-sets-bxs-4-64-patch-v1-v1-0-4ed30e865892@imgtec.com>
- <20241105-sets-bxs-4-64-patch-v1-v1-4-4ed30e865892@imgtec.com>
- <20241105-linseed-steadfast-98cd8abe898c@spud>
-In-Reply-To: <20241105-linseed-steadfast-98cd8abe898c@spud>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: yes
-X-MS-TNEF-Correlator:
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: CWXP265MB3397:EE_|LO2P265MB7201:EE_
-x-ms-office365-filtering-correlation-id: 046b1be4-3c51-492f-a89d-08dcfe4c4e1e
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|376014|7416014|366016|1800799024|38070700018;
-x-microsoft-antispam-message-info:
- =?utf-8?B?VjlKRCtVbGZiUVRpdXdHY29QQmpFTVpIUlpCT2xjTDlrd1psZmVOYXBVSE1U?=
- =?utf-8?B?S0F1K0JrT2RhZkJaUHhmRk1iMlFJTjdremxTSWRTeVRrVElXWFlZNEF5bWtv?=
- =?utf-8?B?VzVlZGZnenEzRmlnbkVtTkE1NWp6SlNCMzdIUXp5K0ppWndRRFh1b2MrNkxU?=
- =?utf-8?B?SlozRWI0M0lBSTk0OFFzQVRDekZZMDQxUGhvNFY0UDN4Ymg3c2g0WStUR1FH?=
- =?utf-8?B?ME52aVd6UnlUVWF4RzFHbTlVbElOSm9nMEM1ZTVyL3FpYTNXUXVEcFhIbDNs?=
- =?utf-8?B?SDZUMEJJd283aGZtNnBHTnZjZEdaOGc0VjhwMEpkckk0U1lZYUxvaGZRV2M2?=
- =?utf-8?B?VnE5SkhtdEpoTDZmcWt1UHFxMzRIL1g1ajd6WVRwK3hGYlNvT1RqRFlIaGtm?=
- =?utf-8?B?aG02cGI1bDltOUhVR1NhS1doZ3dHTlpPQmRVTkJ4R3NCL3I2Wno4Z2MvS0dQ?=
- =?utf-8?B?aWVJTTk4SUROOGs3aVpGcUNKUVd6KzBkRDdOQlNaNGpkbFVxODBwVnMyQ0Fk?=
- =?utf-8?B?RFYyS1hyNFhrTXBtZmp4bDFKaW0vV1FBbnlpKzBpd3M1ZzNJQSt4Y0E3aERB?=
- =?utf-8?B?amduV1JDemJEVkZta0Uzc3ZGNWw1eGNZbjJDbUhlTzRRMzhtTmVWL1N2VTc4?=
- =?utf-8?B?SGNubGlKanVFejhZTmViMGJHbHFZbllRMlEyb2dSS2ZQdEN1bGY5UUM2Smpq?=
- =?utf-8?B?WFFQaVBEclY3MnhZczB6UDdWRFBhUFoxL28xYnc3QnlkbnAzSjBwT2tPeW83?=
- =?utf-8?B?dHpaWTNwWWo4UnJFeFZLN0ZLUmJSa3k4bTdtSGpESUYyMXhrOE1ISVJEUEZJ?=
- =?utf-8?B?dkVreFMyUGsrOVZOSWo3RHhNajZOSzdBZDRUaVlTNzdXUGlUVGdRKzRHOVBD?=
- =?utf-8?B?TmNRMEdvMmxuczNwb1RydnpDVStGZXR5QmprMzVqQ3hGRzYwWlhydzQ2VjRN?=
- =?utf-8?B?dFpCRm1Iejg3YjYwdmpqVTBCV1psS1JrdmhObndZcGdobHlpUHBLWldFV2FV?=
- =?utf-8?B?MmFWT0w0Rk9GT3VjYnNlMHNaVlZ0MGh5RU5rZ0RwTVhlTFBGdmpSRWNnTlJh?=
- =?utf-8?B?ZmsxOWRROWFMNUg4akM1aS83Y1V1cS9XV3pUenNaZm5WNDgzdExTSDEwamNs?=
- =?utf-8?B?ZkVZOHNXQXZYTlJLYlBrNDNCUGx5d25oWTRKWEVwSms4TG81VFpIYkVqVmdv?=
- =?utf-8?B?UTBBOGJqakhJYUEwbExqK0EvMkJjY1RadlI2YnRtUzRpRG5Sb3ZkNmZkS3VI?=
- =?utf-8?B?Ri9wd0RHQ3c4VGpZRVYvbFRlZnkwMWZjZndtUkNIZ0szSGRraGdnSzJkakdM?=
- =?utf-8?B?TnNlTjIxZi9WTHZTa0VmU2ZrQlhXRzZhOWV1UVBQOU5zdmluRVVxdi9SMG13?=
- =?utf-8?B?TEFoYlpDT0JqY0NpcDYxclVWRVJkakFJaEdEQUVyaFdwRHYxdEN6SHNsVlhR?=
- =?utf-8?B?OTE0L3BhQlpPWEhCeCtzMHNhaG1Xay9nVTNiNEQ1ckxQUlArNWZVb1ltMTMw?=
- =?utf-8?B?Z0JyY1hKUzlBMXZmUCtGSWhyS3JBTFc4OTZoYTRIelIranJJZlZMdHhUVUtF?=
- =?utf-8?B?MEQ4VkdLSWd5TVJlZWsxSEozS3h3cFNzZjBsVDdIN2F6WVM1TmQ4TVBweGVQ?=
- =?utf-8?B?UjArNG1TSkRmTUsyVVBqemdsRG9EQWR6dzZKVC9id3kwbzJrdGE5RW5XQWox?=
- =?utf-8?B?Z3RrNWhJYVJpaGNvRTdqRllRRXFHVWdPSFhEWHNSZStnZzgvTlF0WGt1cDRp?=
- =?utf-8?B?ckR1MENDd0lmZG5EbmFTcnpLZlViM2xOSHJPTUNLK3hFelJpbnVvYnNwK1A5?=
- =?utf-8?Q?TGIZz0Hg95pjp1I8bG3W2HJiTCMFsJwzEsRn0=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CWXP265MB3397.GBRP265.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024)(38070700018);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?dmNkd01UVG12MHM4ckJRQ3pnRFZ4LzhNWkxXcTk4OEU0TndEUVo3RTVlRGZY?=
- =?utf-8?B?K0M2V0lYaTI2TnVLRnAvUkhaNEIyOVg0NDRkWFg0eUZMYlk5RnN4QWh0WjRM?=
- =?utf-8?B?RVNpQ0l5K3YxVzVzdkp2WlB1ZnQ2RTRTZG13QTAzWk1KaGVXMkxiSm9nUzhk?=
- =?utf-8?B?V3JHbFg3akpHMEl1bE1ITkhvcjBMNGdkTVZEd3Z3bzhZUEhobU1mUTB0Q05U?=
- =?utf-8?B?dTBRWnlRUlVsd05ycUdHd1JMTVBGOThJZlYrbzZFcFhGNlpTVEp0ZVV0TE83?=
- =?utf-8?B?eW0yMXhhV0dwa2hXNkMxcjhGTTlPY3VHSzJvWWxrZ2FwYVdnSGJLZ0ZNQWkz?=
- =?utf-8?B?akJ3U1lWRFpFM1ZaVUFhWER3RnNVZmNMT2g4UjQ3eVY4aFRGcnBRdWRoTUtN?=
- =?utf-8?B?cXpHdzlnOGJQdnpIUTlQMXd3MDZ2THpGb0NLd1RPMGZtTHFaZzlBN0piMzMx?=
- =?utf-8?B?NWhaMjk3K0VVMW9ZZ3ZJdjFSTUFpdkwwMyttemlrcy9sSlIvcHFNUUlIVTlF?=
- =?utf-8?B?NHQ0SFJVcStDaHp4ZCtSVmNnNVpCbnpMZllteGxJWlNrRHJPaFVSRThZMnJr?=
- =?utf-8?B?dFptQ2FlTnlibHVYUUFUeDB4U2xwSWVaWG5Xd3NYWm5ZMlI2dWRsb3d1OVlC?=
- =?utf-8?B?TjNPajVIa1pmTXpJbE1IcytpR2xjMWYxelpNcThWWnFIZEt0VkNjNXpLa1BX?=
- =?utf-8?B?em9vSGxKN25HTFdUeXFQdCs3TTJvN3BSOS9xUkNxRytIN25ZWlZVR2QvWTRs?=
- =?utf-8?B?OVRkcDlRNTJ5KzFtNTQ4d0FQeXBPV3dmcDZFL0pJV1NjeUFLcUQyUU5RcHJl?=
- =?utf-8?B?YXlkekN5VXhhYkNzWlhyWXpXdzZhbnZBZ3IxQjBqTzlNbExtZE9tL3E2UlZE?=
- =?utf-8?B?Z1YxM3RneWRoSFVZV2NhQ1J2eitmWHdIU2NjeDl3R29DYkNJZjZRRllIdDBa?=
- =?utf-8?B?MVZGTDdaRUNwZ0xjUHUyaXN3d1o4ZkpVcG04WVJScmYxMk1sYzE0UDZSZytk?=
- =?utf-8?B?OGRweVBHNld6TG9ENDloRU15ZDU2NEVaZmE2RFlTZEVDMFVZVCtMMjNvblZC?=
- =?utf-8?B?N2QxS1dScEpsRVRUMHFhcVYycUtpREN3bFZFRktoN2Q5VHRQVFFRd0NGb3pl?=
- =?utf-8?B?VytvanBsMXdjTk5rLzhuY0M2dTJBeGZaUHFCMlp4a1BJRkpDdm16UzhoVXND?=
- =?utf-8?B?eWxQdTlmNU85bVUwdm5ORUwxV0c1eEwzdmJHeHFyZEI5MEZmQkJ6bTRYcEtz?=
- =?utf-8?B?cU1UdjRCTWl5QWFZZC9BMkR0R3h5cXJYQVFOS3laUm5KdzNSZnZIVFBZUFNB?=
- =?utf-8?B?K0F3ZzZsNFpQUUNuTFBuZmJET01VTzJmWjBMdFV0Uk0vdkdFZGpOeG4ySExM?=
- =?utf-8?B?MkkzdHpOSUlNY2UxbllNUzJ5SHE1VnJVY05JUjBCVVZLK2wxYnJITTRXV2Ft?=
- =?utf-8?B?THJzYjhVN1FyTnBKV0FEdlZ3WTdnbWRacGRqb0wzLzIvM3FtZ3Z3MlpXekxD?=
- =?utf-8?B?bWpXN0VVZGI1NS9yeVlGeG02dGZDVWdsN3l3enZrblUzdGpvaW43dWVhYlp5?=
- =?utf-8?B?bERpenRFdFVLd0pUUC8zRmZhUmFLMlhCTzBkb3dGZmZYcVo5SC84M3djRU4w?=
- =?utf-8?B?d28vNFZhTnJGTkwxbzUxdlhodE1NeG1OMUR6MVNmMWV1US84cGoraTFoYy9a?=
- =?utf-8?B?R00wQStGL0xhcUFHbjFGL2dWSWxDZk5vSnE5VjFTd0dmM0R5NnRDN1hZWW9J?=
- =?utf-8?B?YUhPV09rRnRlUHVvL1RlUmRnOW96V29GeHc5WEExVHBsaXU2T3JTMlo3ZjNI?=
- =?utf-8?B?eW1Yb29VbTIyUTlvai9XbzJBMFJNTUcrNlljd1c3T0FLWkdUSDk5Q3F4RWhv?=
- =?utf-8?B?bFgxOCt0dzU1bXBNanhYWFowcGJlRko0NVR3Y2VscXMzcXBoVkFaVnNXVEkx?=
- =?utf-8?B?VmZwaTR2blpHTWVWcEVqd3BmR1FMOVE5RnNVMTVJWVpYWDJ4M3M5MDFnaGc0?=
- =?utf-8?B?ZURlTHlIbDhTMTZ5Z1RDaFVUVlBmakFINlc4MC81b2NlaStOZmJ0VDI0dE4z?=
- =?utf-8?B?SEhEcEN1QWMrUWRXbnhvOG9HSGFVVVBCWTRwRUduWWpaVUY5Y3FZZTd2dlFa?=
- =?utf-8?B?TzZZWjNjWVEvamtOZkJHOGZsOXVWMkpxVkplbUgzOThad2hOREIxMlA1clBT?=
- =?utf-8?B?aUE9PQ==?=
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="------------8C14MFx8e9mKU6xhHhB07iKO"
+        d=gmail.com; s=20230601; t=1730888299; x=1731493099; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=XBQMgshDmVosjPwIQ+cfXZfVAtw+llxJuRu3FIFY5fQ=;
+        b=CsDTdUhj4CBWD8IZ+a/IDMumOLQWDR58/OwkKtaLtgoE2oC+NXfWxuY7khzhfl/V8h
+         rBDS4qYpqXhlytubzc7MdRdYGOIhqnce7Za/ttn7ics6INRfCSmoM5d6ITAX0dWdHd22
+         bGDsgCq8Lh4Q7VV1mv6zxL67FtyAu9K56M60O9/B1ALVwvDnnsFFw7NjacYdI7uzKxBF
+         sdy7HnGFDcAxJS06m3axT6JGiO+Bom8Fc+34jWQreUwxVYeahCPIElX10JJMgMW4plOX
+         eOZEtqKAIsNGmQ08WAj0Ef0LvGH7JBXZ2TizANhhv851HGmD0xWS5+nnrFJvEPrYHNNl
+         Tr4A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730888299; x=1731493099;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=XBQMgshDmVosjPwIQ+cfXZfVAtw+llxJuRu3FIFY5fQ=;
+        b=Wa1Iy4I08RyUSf8C7PeE+fxtdJ3Ad+qmlhDsBiJjt4p1xzZuYMeZFM7juxrL26ingL
+         epNmWc1wOeZHCzd4DFvUH+awoiCbUtmQXwtGATyN6iu4qivEexKmD0qoxTbCFerNtWJ0
+         PmrqHA4Y02kCuDzMKgm5MYp3XIzYDTP4V8paqWw/AbjNuhd9ycPMeksHCZVuHFzcvi5N
+         FpPb5cZ2qSLUsnP8JJTyB5tzQlVmuv0ftnONIBX0/Y/YndmNcYMfAFMJ4uluqlVy+0pY
+         NxACm3Zp5MYcuqxHvbTUXbFgy7wCizWqa/28hlZgHrmlCigQI7KYxoiMTVjEWlWoPVmr
+         ExOQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUFMBjPTu+ntV32S30omflJM/4Ok74aiM+8XpCkzYZ2qN+/+seuQH5erKncCyDLo/FMjQAr0UcxiSdx3Us=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxE4e4Rmcp0h0zC9+Vq2xQJzPINgeP80Hco4GBfVTaCappi+kLQ
+	JSwX2ONyQMDhEnHX8xTP8VeQ86XzKAciUT6uhE9yXLDbuvkHOlSM
+X-Google-Smtp-Source: AGHT+IEpXOsaxdQpIGS3apfFuoV3E2KP3OR89WilS8+1iGZz+JdeLo1o/PLSlHFW+9XlzKT+FnvNNA==
+X-Received: by 2002:a17:903:2286:b0:20c:5fd7:d71 with SMTP id d9443c01a7336-21103ace2aemr326528375ad.22.1730888298685;
+        Wed, 06 Nov 2024 02:18:18 -0800 (PST)
+Received: from tom-QiTianM540-A739.. ([106.39.42.118])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211057c0f11sm91831425ad.200.2024.11.06.02.18.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 06 Nov 2024 02:18:18 -0800 (PST)
+From: Qiu-ji Chen <chenqiuji666@gmail.com>
+To: johan@kernel.org,
+	gregkh@linuxfoundation.org
+Cc: linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	baijiaju1990@gmail.com,
+	Qiu-ji Chen <chenqiuji666@gmail.com>
+Subject: [PATCH] fdti_sio: Fix atomicity violation in get_serial_info()
+Date: Wed,  6 Nov 2024 18:18:09 +0800
+Message-Id: <20241106101809.17632-1-chenqiuji666@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: imgtec.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: CWXP265MB3397.GBRP265.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-Network-Message-Id: 046b1be4-3c51-492f-a89d-08dcfe4c4e1e
-X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Nov 2024 10:18:06.1231
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 0d5fd8bb-e8c2-4e0a-8dd5-2c264f7140fe
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 1NYsv3hc7pSlFkLprgJBJdm+Xb7TO8iajd8xtEnV6wlywsauzVj8SqzOWCt/sdyWjGp12mtjdV7dKPyftWbHvw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LO2P265MB7201
-X-Proofpoint-GUID: NniYuYm-gE4oG66EEaP-jGQBOp_rUtA7
-X-Proofpoint-ORIG-GUID: NniYuYm-gE4oG66EEaP-jGQBOp_rUtA7
-X-Authority-Analysis: v=2.4 cv=dMT0m/Zb c=1 sm=1 tr=0 ts=672b4261 cx=c_pps a=mB5N+MKVSatK6YSWG2ccTQ==:117 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=VlfZXiiP6vEA:10 a=WnR_qW7rlZcA:10 a=NgoYpvdbvlAA:10 a=r_1tXGB3AAAA:8 a=j44kWYELhBEY5p3SD2cA:9
- a=QEXdDO2ut3YA:10 a=DnBBr_fVM1EK-JxiNCQA:9 a=FfaGCDsud1wA:10 a=t8nPyN_e6usw4ciXM-Pk:22
+Content-Transfer-Encoding: 8bit
 
---------------8C14MFx8e9mKU6xhHhB07iKO
-Content-Type: multipart/mixed; boundary="------------poELg2Zuwoc70o0tkSgJRX1O";
- protected-headers="v1"
-From: Matt Coster <matt.coster@imgtec.com>
-To: Conor Dooley <conor@kernel.org>
-Cc: Frank Binns <frank.binns@imgtec.com>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Nishanth Menon <nm@ti.com>,
- Vignesh Raghavendra <vigneshr@ti.com>, Tero Kristo <kristo@kernel.org>,
- dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- Randolph Sapp <rs@ti.com>, Darren Etheridge <detheridge@ti.com>
-Message-ID: <5e26957f-dc79-42ef-a8a1-597fb386ae51@imgtec.com>
-Subject: Re: [PATCH 04/21] dt-bindings: gpu: img: Allow dma-coherent
-References: <20241105-sets-bxs-4-64-patch-v1-v1-0-4ed30e865892@imgtec.com>
- <20241105-sets-bxs-4-64-patch-v1-v1-4-4ed30e865892@imgtec.com>
- <20241105-linseed-steadfast-98cd8abe898c@spud>
-In-Reply-To: <20241105-linseed-steadfast-98cd8abe898c@spud>
+Our static checker found a bug where set_serial_info() uses a mutex, but 
+get_serial_info() does not. Fortunately, the impact of this is relatively 
+minor. It doesn't cause a crash or any other serious issues. However, if a 
+race condition occurs between set_serial_info() and get_serial_info(), 
+there is a chance that the data returned by get_serial_info() will be 
+meaningless.
 
---------------poELg2Zuwoc70o0tkSgJRX1O
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Similar issues have been submitted or confirmed: 
+https://lore.kernel.org/all/20241002125845.785464707@linuxfoundation.org/ 
+https://lore.kernel.org/all/20241106095819.15194-1-chenqiuji666@gmail.com/
 
-On 05/11/2024 18:06, Conor Dooley wrote:
-> On Tue, Nov 05, 2024 at 03:58:10PM +0000, Matt Coster wrote:
->> This attribute will be required for the BXS-4-64 MC1 and will be enabl=
-ed in
->> the DTS for the TI k3-j721s2 in a subsequent patch; add it now so
->> dtbs_check doesn't complain later.
->=20
-> Sounds like the property should be made required for that integration.
+Signed-off-by: Qiu-ji Chen <chenqiuji666@gmail.com>
+Fixes: 3ae36bed3a93 ("fdti_sio: switch to ->[sg]et_serial()")
+---
+ drivers/usb/serial/ftdi_sio.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-This is something I went back and forth on. Where is the line drawn
-between things that should be enforced in bindings and things that only
-ever need to be specified once, so should just be left to the dt itself
-to be the source of truth?
+diff --git a/drivers/usb/serial/ftdi_sio.c b/drivers/usb/serial/ftdi_sio.c
+index c6f17d732b95..e07c5e3eb18c 100644
+--- a/drivers/usb/serial/ftdi_sio.c
++++ b/drivers/usb/serial/ftdi_sio.c
+@@ -1443,9 +1443,11 @@ static void get_serial_info(struct tty_struct *tty, struct serial_struct *ss)
+ 	struct usb_serial_port *port = tty->driver_data;
+ 	struct ftdi_private *priv = usb_get_serial_port_data(port);
+ 
++	mutex_lock(&priv->cfg_lock);
+ 	ss->flags = priv->flags;
+ 	ss->baud_base = priv->baud_base;
+ 	ss->custom_divisor = priv->custom_divisor;
++	mutex_unlock(&priv->cfg_lock);
+ }
+ 
+ static int set_serial_info(struct tty_struct *tty, struct serial_struct *ss)
+-- 
+2.34.1
 
-Having said that, I realise TI could spin a new SoC with a new dt but
-use the same compatible string for the GPU; the "single" source of truth
-then wouldn't be so single anymore. I guess by making this property
-required for this compatible string, we're saying any use of it must
-behave in exactly the same way, right?
-
-Cheers,
-Matt
-
->> Signed-off-by: Matt Coster <matt.coster@imgtec.com>
->> ---
->>  Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml | 2 ++
->>  1 file changed, 2 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/gpu/img,powervr-rogue.y=
-aml b/Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml
->> index 55f422be1bc5b7564e3e81f24c4b93857f3e12fe..8a1861ca960c48853b2cee=
-f414f588cc343b49b2 100644
->> --- a/Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml
->> +++ b/Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml
->> @@ -60,6 +60,8 @@ properties:
->>            - const: a
->>            - const: b
->> =20
->> +  dma-coherent: true
->> +
->>  required:
->>    - compatible
->>    - reg
->>
->> --=20
->> 2.47.0
->>
-
---=20
-Matt Coster
-E: matt.coster@imgtec.com
-
---------------poELg2Zuwoc70o0tkSgJRX1O--
-
---------------8C14MFx8e9mKU6xhHhB07iKO
-Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="OpenPGP_signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-wnsEABYIACMWIQS4qDmoJvwmKhjY+nN5vBnz2d5qsAUCZytCXQUDAAAAAAAKCRB5vBnz2d5qsLuG
-APsFtLjlBXGdPmTFchn0SBzy7hFcrlqKda3EyjuD0TYagQEAjxEDBc6jxuQVamvYzmuQgDGfsx5r
-4NGPq1rmHaD5lQE=
-=tqSu
------END PGP SIGNATURE-----
-
---------------8C14MFx8e9mKU6xhHhB07iKO--
 
