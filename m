@@ -1,140 +1,239 @@
-Return-Path: <linux-kernel+bounces-398557-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398562-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BB329BF2D1
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 17:09:24 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 845269BF2DE
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 17:10:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9DA801C26A54
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 16:09:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 44B1A2826F5
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 16:10:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23936205AB7;
-	Wed,  6 Nov 2024 16:08:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 176AE204948;
+	Wed,  6 Nov 2024 16:09:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=laura.nao@collabora.com header.b="fkPvdCYb"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JuQqFPlp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3C9420513F;
-	Wed,  6 Nov 2024 16:08:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730909289; cv=pass; b=CzU27zmVOqsXhTgqG8JGoJ4eMMuAc3cA3iVePjyZtTArTfqrSq29VhviUVOXsIRNYuUg8fVKZflfbHOzKDZYUFZmcntZ6kg+r5CBDN7GMBqQ1jfrX9WOEPeXS1+KWAtqnDvErkQfgb0kJdqzcafZc8tQgu3aQny4MquHcy2bnQE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730909289; c=relaxed/simple;
-	bh=e8ncEEuW7cFbLsRNpBTLTILlUQ0m+ULp/aJ3ntDFyTM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=TPfSFclVxURAVr604G7LJAyme0y4tW/opYpV2PAeirWj+B3tVsreNIl6T4uU28wAgQjioHyE6jZpF6X50MD7JgbYj6aqNfJfUtXzVcq8beFw0DaHMax41+CYa3ZdFRWsYMGw5jo1pO2hnvHwIGHst25i60qUlA7h0ZinRZJLn+c=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=laura.nao@collabora.com header.b=fkPvdCYb; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1730909280; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=EYaNphjKrf1ONSpkisQ1saF8xG7z3ivaqKEAKMptWBeUcRtlQ9mT1sK9JRT3ssrjlSkzhtfVuSprQ/gGY0VzoZ8udlpIqUPnu9lo6SL64EqVRyTWM1Cio3cZp86t8Ub/rtL8AzCalELmLpnOIJnaP4ky2veMcoa5luMx269AL8c=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1730909280; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=ej7PlNROi5y6rJY01LVfYSZ2mQDOu9Gm4uuZ4iC9/7k=; 
-	b=PX9JtJNoFt5/Eol3PKh1/rQ6j5dwhOM/HusW2krj8VUWDxnC0AJ1C6mBZ9GEewrF5MWTtCVojriHCcslUC1K/hPO9HijxxxX+H2VSv+4IjlF54dOF7Zk6Txj5SUqMmWnaiMnzNLbF/1Zc2ETXsF0TW8+ej2qua3tYvJo0Rmk/UE=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=laura.nao@collabora.com;
-	dmarc=pass header.from=<laura.nao@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1730909280;
-	s=zohomail; d=collabora.com; i=laura.nao@collabora.com;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-Id:Message-Id:MIME-Version:Content-Transfer-Encoding:Reply-To;
-	bh=ej7PlNROi5y6rJY01LVfYSZ2mQDOu9Gm4uuZ4iC9/7k=;
-	b=fkPvdCYbLBXCOuPAgBTdLokBGQLdjpPaqRWnAJjGlDi5ymo4UKDWfkyO+VpNGLdm
-	bB4P8Lm8i51f38GHTB4pPd1cE3+Pc0uSTJOVvwNsmO33uugS3Zei+5EI/kXq//Gl+aT
-	gw58eG9n7uewHWoF7tmMy0pedislf4Hik5RmfK9c=
-Received: by mx.zohomail.com with SMTPS id 1730909259613680.21413674386;
-	Wed, 6 Nov 2024 08:07:39 -0800 (PST)
-From: Laura Nao <laura.nao@collabora.com>
-To: regressions@lists.linux.dev
-Cc: linux-kernel@vger.kernel.org,
-	kernel@collabora.com,
-	bpf@vger.kernel.org,
-	chrome-platform@lists.linux.dev
-Subject: [REGRESSION] module BTF validation failure (Error -22) on next
-Date: Wed,  6 Nov 2024 17:08:20 +0100
-Message-Id: <20241106160820.259829-1-laura.nao@collabora.com>
-X-Mailer: git-send-email 2.30.2
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29D301DE8BA;
+	Wed,  6 Nov 2024 16:09:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730909360; cv=none; b=nLbNslz1fu0ijBQ2KS7GuzTWsBcpLoZ18BUl18wPAC04H4nJQJdqOCthVA6w1qhlMrtuq91bHCl9x10NCaMstkDvGusdhPmwG7E6sTbydeXhwoubydAWR5Pjf8mnPv2RvL+zgzzEkkEhRY3ErrNyelAJjHlgm3/zlPAWM6YyHAg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730909360; c=relaxed/simple;
+	bh=VOUAaO8tbrP/wOcy0Hm9JSPbINDxNuLU/AYW8Ip0Zd4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oKKWfdqOmTWt8Movls78gWN3d5s/5DhsgghLU08uypOt6MhtyRPcPfAxnz7QdvSy8pT7trpiVk5/rBWVLOgUN8VhTzoFICtDVDNcM1u5Rrlo6V+i3zqerOyuQU6v+cGh+ZIAXT2TJAQB6qpy0FRkJWii2gn9P4AT7d0J5rorkTQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JuQqFPlp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B361C4CEDA;
+	Wed,  6 Nov 2024 16:09:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730909358;
+	bh=VOUAaO8tbrP/wOcy0Hm9JSPbINDxNuLU/AYW8Ip0Zd4=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=JuQqFPlpGiZAw7TILRMopCknbSMhoSbKx2jz2KR/Z4136chHTIJzi6bsn3gL0+hTS
+	 e2biPgPhKCa3qDTsZK3oGU9ag6yFsmSdHsyCuRlh6zqidBZaOF+DTVoqAZfMX++Uhv
+	 PSkA3uMU8U3BudOhRigGRcWHfPrAIWwmjbH+UwbaDidkQNTNe1X6FpdHr87lQu6nJF
+	 6F4qszR0GXujuSL0Hx1jvOjHS+69UHa30u7ijx0wDL2pGIVmwGiwsXm+6V/I/57AnB
+	 jSruAnH3iySsmiY0+fL2x/BG6YQI65Ewzv8CjSgnBAtbJSqhdPyawhvOWKnlvy+KFf
+	 YpFJa2r1JhqOA==
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-539e5c15fd3so6742744e87.3;
+        Wed, 06 Nov 2024 08:09:18 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUzjS5C2DmQinBTuGovT/ELyDAhpKA8Nq/xAsTgy3JJqaJ3JMbBhHLkLeGA6n5qXlgU/nmZsyJtu2+YQUT3@vger.kernel.org, AJvYcCVSeVafwucFK+nDjqW5Xe7r4xdrg1q4FjvyoFhbx5E85n8QhsLK3L5IY3cJgSGi1u1fCnG+h5xOFjfbH8Vo@vger.kernel.org, AJvYcCWFFEHQbbUcML/CGWhF9usw/ZSIXZRTa+XeAKa8GfKQEfkEC3GUd3LnAj80e6j4i2NePc7GSe0IwZSG@vger.kernel.org, AJvYcCWJ40qd+jfgSryCLd0KdEerEkp7FGyR/qdHZD5ZwMQe+D5qiUIcSidXToIcJKLq0oUT5U6U9OfFHxxg@vger.kernel.org, AJvYcCWLMcuZndJtEa7Gicvc83B+BtimMw4tWsWc3e5oUytgnDaM30V650VvrhEJkmjiv9nwe6aIMbrsn80/@vger.kernel.org, AJvYcCXWi4AYx9ocvpN1dIfBN2PcmtkruccbLd84+RYWsdwFnSpwCPBQ7xAjcPd8e3/XXC++IbDkeMKd/AN2Lg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzX6Q4XJmxYzh7/4uNSxHziSpjXx23K/H1UmrlMXi89IMOpLLhj
+	JSy6/V15L+ujJKUTEpXUWXpGt3zcBnwRxe9LsE8elnetsApxsUbK1qK+gU2tYLlzaLBLMEDKCkn
+	G0/nwAy1L0e69+o02h/Vw3Fp+7i8=
+X-Google-Smtp-Source: AGHT+IFe3LtQOU5rlt2uGICpXWpl9dXGIsyeiu98XXxTi7W/MgXwXeHBmA5AmnRcRDJ/VkMxQJyWrHuX629kG1Abv5I=
+X-Received: by 2002:a05:6512:398d:b0:533:711:35be with SMTP id
+ 2adb3069b0e04-53b348e154fmr20852753e87.26.1730909356944; Wed, 06 Nov 2024
+ 08:09:16 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-ZohoMailClient: External
+References: <20241102175115.1769468-1-xur@google.com>
+In-Reply-To: <20241102175115.1769468-1-xur@google.com>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Thu, 7 Nov 2024 01:08:40 +0900
+X-Gmail-Original-Message-ID: <CAK7LNASdBPtq4vaK0XZQvxicOY15qJFsnqkO2_us4AU4ppHw6A@mail.gmail.com>
+Message-ID: <CAK7LNASdBPtq4vaK0XZQvxicOY15qJFsnqkO2_us4AU4ppHw6A@mail.gmail.com>
+Subject: Re: [PATCH v7 0/7] Add AutoFDO and Propeller support for Clang build
+To: Rong Xu <xur@google.com>
+Cc: Alice Ryhl <aliceryhl@google.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Arnd Bergmann <arnd@arndb.de>, Bill Wendling <morbo@google.com>, Borislav Petkov <bp@alien8.de>, 
+	Breno Leitao <leitao@debian.org>, Brian Gerst <brgerst@gmail.com>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, David Li <davidxl@google.com>, 
+	Han Shen <shenhan@google.com>, Heiko Carstens <hca@linux.ibm.com>, "H. Peter Anvin" <hpa@zytor.com>, 
+	Ingo Molnar <mingo@redhat.com>, Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Josh Poimboeuf <jpoimboe@kernel.org>, Juergen Gross <jgross@suse.com>, 
+	Justin Stitt <justinstitt@google.com>, Kees Cook <kees@kernel.org>, 
+	"Mike Rapoport (IBM)" <rppt@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
+	Nick Desaulniers <ndesaulniers@google.com>, Nicolas Schier <nicolas@fjasle.eu>, 
+	"Paul E. McKenney" <paulmck@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Sami Tolvanen <samitolvanen@google.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	Wei Yang <richard.weiyang@gmail.com>, workflows@vger.kernel.org, 
+	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, Maksim Panchenko <max4bolt@gmail.com>, 
+	"David S. Miller" <davem@davemloft.net>, Andreas Larsson <andreas@gaisler.com>, 
+	Yonghong Song <yonghong.song@linux.dev>, Yabin Cui <yabinc@google.com>, 
+	Krzysztof Pszeniczny <kpszeniczny@google.com>, Sriraman Tallam <tmsriram@google.com>, 
+	Stephane Eranian <eranian@google.com>, x86@kernel.org, linux-arch@vger.kernel.org, 
+	sparclinux@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	llvm@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Sun, Nov 3, 2024 at 2:51=E2=80=AFAM Rong Xu <xur@google.com> wrote:
+>
+> Hi,
+>
+> This patch series is to integrate AutoFDO and Propeller support into
+> the Linux kernel. AutoFDO is a profile-guided optimization technique
+> that leverages hardware sampling to enhance binary performance.
+> Unlike Instrumentation-based FDO (iFDO), AutoFDO offers a user-friendly
+> and straightforward application process. While iFDO generally yields
+> superior profile quality and performance, our findings reveal that
+> AutoFDO achieves remarkable effectiveness, bringing performance close
+> to iFDO for benchmark applications.
+>
+> Propeller is a profile-guided, post-link optimizer that improves
+> the performance of large-scale applications compiled with LLVM. It
+> operates by relinking the binary based on an additional round of runtime
+> profiles, enabling precise optimizations that are not possible at
+> compile time.  Similar to AutoFDO, Propeller too utilizes hardware
+> sampling to collect profiles and apply post-link optimizations to improve
+> the benchmark=E2=80=99s performance over and above AutoFDO.
+>
+> Our empirical data demonstrates significant performance improvements
+> with AutoFDO and Propeller, up to 10% on microbenchmarks and up to 5%
+> on large warehouse-scale benchmarks. This makes a strong case for their
+> inclusion as supported features in the upstream kernel.
+>
+> Background
+>
+> A significant fraction of fleet processing cycles (excluding idle time)
+> from data center workloads are attributable to the kernel. Ware-house
+> scale workloads maximize performance by optimizing the production kernel
+> using iFDO (a.k.a instrumented PGO, Profile Guided Optimization).
+>
+> iFDO can significantly enhance application performance but its use
+> within the kernel has raised concerns. AutoFDO is a variant of FDO that
+> uses the hardware=E2=80=99s Performance Monitoring Unit (PMU) to collect
+> profiling data. While AutoFDO typically yields smaller performance
+> gains than iFDO, it presents unique benefits for optimizing kernels.
+>
+> AutoFDO eliminates the need for instrumented kernels, allowing a single
+> optimized kernel to serve both execution and profile collection. It also
+> minimizes slowdown during profile collection, potentially yielding
+> higher-fidelity profiling, especially for time-sensitive code, compared
+> to iFDO. Additionally, AutoFDO profiles can be obtained from production
+> environments via the hardware=E2=80=99s PMU whereas iFDO profiles require
+> carefully curated load tests that are representative of real-world
+> traffic.
+>
+> AutoFDO facilitates profile collection across diverse targets.
+> Preliminary studies indicate significant variation in kernel hot spots
+> within Google=E2=80=99s infrastructure, suggesting potential performance =
+gains
+> through target-specific kernel customization.
+>
+> Furthermore, other advanced compiler optimization techniques, including
+> ThinLTO and Propeller can be stacked on top of AutoFDO, similar to iFDO.
+> ThinLTO achieves better runtime performance through whole-program
+> analysis and cross module optimizations. The main difference between
+> traditional LTO and ThinLTO is that the latter is scalable in time and
+> memory.
+>
+> This patch series adds AutoFDO and Propeller support to the kernel. The
+> actual solution comes in six parts:
+>
+> [P 1] Add the build support for using AutoFDO in Clang
+>
+>       Add the basic support for AutoFDO build and provide the
+>       instructions for using AutoFDO.
+>
+> [P 2] Fix objtool for bogus warnings when -ffunction-sections is enabled
+>
+> [P 3] Adjust symbol ordering in text output sections
+>
+> [P 4] Add markers for text_unlikely and text_hot sections
+>
+> [P 5] Enable =E2=80=93ffunction-sections for the AutoFDO build
+>
+> [P 6] Enable Machine Function Split (MFS) optimization for AutoFDO
+>
+> [P 7] Add Propeller configuration to the kernel build
+>
+> Patch 1 provides basic AutoFDO build support. Patches 2 to 6 further
+> enhance the performance of AutoFDO builds and are functionally dependent
+> on Patch 1. Patch 7 enables support for Propeller and is dependent on
+> patch 2 to patch 4.
+>
+> Caveats
+>
+> AutoFDO is compatible with both GCC and Clang, but the patches in this
+> series are exclusively applicable to LLVM 17 or newer for AutoFDO and
+> LLVM 19 or newer for Propeller. For profile conversion, two different
+> tools could be used, llvm_profgen or create_llvm_prof. llvm_profgen
+> needs to be the LLVM 19 or newer, or just the LLVM trunk. Alternatively,
+> create_llvm_prof v0.30.1 or newer can be used instead of llvm-profgen.
+>
+> Additionally, the build is only supported on x86 platforms equipped
+> with PMU capabilities, such as LBR on Intel machines. More
+> specifically:
+>  * Intel platforms: works on every platform that supports LBR;
+>    we have tested on Skylake.
+>  * AMD platforms: tested on AMD Zen3 with the BRS feature. The kernel
+>    needs to be configured with =E2=80=9CCONFIG_PERF_EVENTS_AMD_BRS=3Dy", =
+To
+>    check, use
+>    $ cat /proc/cpuinfo | grep =E2=80=9C brs=E2=80=9D
+>    For the AMD Zen4, AMD LBRV2 is supported, but we suspect a bug with
+>    AMD LBRv2 implementation in Genoa which blocks the usage.
+>
+> For ARM, we plan to send patches for SPE-based Propeller when
+> AutoFDO for Arm is ready.
+>
+> Experiments and Results
+>
+> Experiments were conducted to compare the performance of AutoFDO-optimize=
+d
+> kernel images (version 6.9.x) against default builds.. The evaluation
+> encompassed both open source microbenchmarks and real-world production
+> services from Google and Meta. The selected microbenchmarks included Nepe=
+r,
+> a network subsystem benchmark, and UnixBench which is a comprehensive sui=
+te
+> for assessing various kernel operations.
+>
+> For Neper, AutoFDO optimization resulted in a 6.1% increase in throughput
+> and a 10.6% reduction in latency. UnixBench saw a 2.2% improvement in its
+> index score under low system load and a 2.6% improvement under high syste=
+m
+> load.
+>
+> For further details on the improvements observed in Google and Meta's
+> production services, please refer to the LLVM discourse post:
+> https://discourse.llvm.org/t/optimizing-the-linux-kernel-with-autofdo-inc=
+luding-thinlto-and-propeller/79108
+>
+> Thanks,
+>
+> Rong Xu and Han Shen
 
-KernelCI has detected a module loading regression affecting all AMD and 
-Intel Chromebooks in the Collabora LAVA lab, occurring between 
-next-20241024 and next-20241025.
 
-The logs indicate a failure in BTF module validation, preventing all 
-modules from loading correctly (with CONFIG_MODULE_ALLOW_BTF_MISMATCH 
-unset). The example below is from an AMD Chromebook (HP 14b na0052xx), 
-with similar errors observed on other AMD and Intel devices:
+I applied this series to linux-kbuild.
 
-[    5.284373] failed to validate module [cros_kbd_led_backlight] BTF: -22
-[    5.291392] failed to validate module [i2c_hid] BTF: -22
-[    5.293958] failed to validate module [chromeos_pstore] BTF: -22
-[    5.302832] failed to validate module [coreboot_table] BTF: -22
-[    5.309175] failed to validate module [raydium_i2c_ts] BTF: -22
-[    5.309264] failed to validate module [i2c_cros_ec_tunnel] BTF: -22
-[    5.322158] failed to validate module [typec] BTF: -22
-[    5.327554] failed to validate module [snd_timer] BTF: -22
-[    5.327573] failed to validate module [cros_usbpd_notify] BTF: -22
-[    5.339272] failed to validate module [elan_i2c] BTF: -22
-[    5.345821] failed to validate module [industrialio] BTF: -22
-[    5.423113] failed to validate module [cfg80211] BTF: -22
-[    5.443074] failed to validate module [cros_ec_dev] BTF: -22
-[    5.448857] failed to validate module [snd_pci_acp3x] BTF: -22
-[    5.454736] failed to validate module [cros_kbd_led_backlight] BTF: -22
-[    5.461458] failed to validate module [regmap_i2c] BTF: -22
-[    5.470228] failed to validate module [i2c_piix4] BTF: -22
-[    5.491123] failed to validate module [i2c_hid] BTF: -22
-[    5.491226] failed to validate module [chromeos_pstore] BTF: -22
-[    5.496519] failed to validate module [coreboot_table] BTF: -22
-[    5.502632] failed to validate module [snd_timer] BTF: -22
-[    5.538916] failed to validate module [gsmi] BTF: -22
-[    5.604971] failed to validate module [mii] BTF: -22
-[    5.604971] failed to validate module [videobuf2_common] BTF: -22
-[    5.604972] failed to validate module [sp5100_tco] BTF: -22
-[    5.616068] failed to validate module [snd_soc_acpi] BTF: -22
-[    5.680553] failed to validate module [bluetooth] BTF: -22
-[    5.749320] failed to validate module [chromeos_pstore] BTF: -22
-[    5.755440] failed to validate module [mii] BTF: -22
-[    5.760522] failed to validate module [snd_timer] BTF: -22
-[    5.783549] failed to validate module [bluetooth] BTF: -22
-[    5.841561] failed to validate module [mii] BTF: -22
-[    5.846699] failed to validate module [snd_timer] BTF: -22
-[    5.892444] failed to validate module [mii] BTF: -22
-[    5.897708] failed to validate module [snd_timer] BTF: -22
-[    5.945507] failed to validate module [snd_timer] BTF: -22
+As I mentioned before, I do not like #ifdef because
+it hides (not fixes) issues only for default cases.
 
-The full kernel log is available on [1]. The config used is available on
-[2] and the kernel/modules have been built using gcc-12.
 
-The issue is still present on next-20241105.
-
-I'm sending this report to track the regression while a fix is
-identified. The culprit commit hasn't been pinpointed yet, I'll report
-back once it's identified.
-
-Any feedback or suggestion for additional debugging steps would be greatly 
-appreciated.
-
-Best,
-
-Laura
-
-[1] https://pastebin.com/raw/dtvzBkxh
-[2] https://pastebin.com/raw/a1MGi3wH
-
-#regzbot introduced: next-20241024..next-20241025
-
+--=20
+Best Regards
+Masahiro Yamada
 
