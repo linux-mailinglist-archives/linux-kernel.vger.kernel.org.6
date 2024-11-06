@@ -1,149 +1,188 @@
-Return-Path: <linux-kernel+bounces-398935-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398936-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A19A9BF83A
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 21:52:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 71D439BF83E
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 21:57:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 26C37B232B8
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 20:52:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D8C6AB23242
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 20:56:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85B3920C494;
-	Wed,  6 Nov 2024 20:52:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA39520C490;
+	Wed,  6 Nov 2024 20:56:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Bw/NSx1j"
-Received: from out-180.mta0.migadu.com (out-180.mta0.migadu.com [91.218.175.180])
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="WCKKsTn5"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD1A0204F76
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 20:51:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC4EC14F9D9;
+	Wed,  6 Nov 2024 20:56:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730926321; cv=none; b=NlDLy/CloKfepJxIpmuVPEW5cYbz24R3u4lc7SIf6brMgkjcE65WaYY4EC4dsGL6OxKOTlavHMsyJl/2i35kXhRyLhYs9z+6P8TUiJCz23kMNcqcds1E2kp5zUVqxBWMhIh423FsWlxuey5U8oMuyV7MZ1jROWE2HhWcXXU+2Sg=
+	t=1730926612; cv=none; b=L65mq2+XOLSjvl6d4MXDNS5F7rwPIufYjF/MtH918VwnctyYxxQnzvB0PvxHtEpTT6vDhdh/xCRZlu4UvkLVjHY+S+Qtx8jknLkT+kV/LOkHOlH0Ef3+Y6VpUSfx58ZQKtQlzyECpb79gL5IY5o2vUtOdc8vIVAPCat0ZusTzyE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730926321; c=relaxed/simple;
-	bh=BUiy1Lrkui/QDhUO26WuXJ0XiAVZDQ7hDrKZilM9VkY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cW3RdP256CMVdEyrJb2wur0DOnnva5OCnvE13JUEpa3Y/C3BLmXfqpO6eJBFDf68Q0bA0tWcrWiXJnhWR6kTRF3/+xzsrrFJkSBN0Nb4zxdTaqOh84YnJzO5tNz1dUpk0KqL4sGsziHMSr8wsJvkNnDuQb3T9QlosVySz0vE6Xw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Bw/NSx1j; arc=none smtp.client-ip=91.218.175.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Wed, 6 Nov 2024 12:51:40 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1730926316;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=iTbQ6DPhP6MjHwSaDILXhZVjYXEH8BwsiSbm61YVqgE=;
-	b=Bw/NSx1j2z8iH74+2uUPsORZOF/lHwjDSE1XgPO3bR7hc3VDGRgJjxxqihTFVbyt2Vu2w8
-	raQ7DhoPXKD5HHKOAaOJujYj6vS582FOQLBKtpnd3xvd1RSxRYMmmhyO+1CxVOE0maifyR
-	a4U5OreS2n4YhRCs77wj4S8lLE19n7c=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Oliver Upton <oliver.upton@linux.dev>
-To: "Liang, Kan" <kan.liang@linux.intel.com>
-Cc: Colton Lewis <coltonlewis@google.com>, kvm@vger.kernel.org,
-	Sean Christopherson <seanjc@google.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Will Deacon <will@kernel.org>, Russell King <linux@armlinux.org.uk>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Naveen N Rao <naveen@kernel.org>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Sven Schnelle <svens@linux.ibm.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H . Peter Anvin" <hpa@zytor.com>, linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org
-Subject: Re: [PATCH v6 4/5] x86: perf: Refactor misc flag assignments
-Message-ID: <ZyvW3FxcezmYyOMa@linux.dev>
-References: <20241105195603.2317483-1-coltonlewis@google.com>
- <20241105195603.2317483-5-coltonlewis@google.com>
- <65675ed8-e569-47f8-b1eb-40c853751bfb@linux.intel.com>
- <ZyvLOjy8Vfvai5cG@linux.dev>
- <597dbcf6-8169-4084-881c-8942ed363189@linux.intel.com>
+	s=arc-20240116; t=1730926612; c=relaxed/simple;
+	bh=emDfYC5gsNT0ZkPmo70caNBsgspO/o843GkMMi2Sc5M=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=fuQxa19eSIdS2PLe3Yt4g+RMBsFjO78AjmptSngbzTORr7RR2e7r7o/dtgsFqkBOY724vPMTT6ewpt8nK4hg7N5m+fI1vlwBF7XOmAaMGEF2VMDtDYEIgrD7dctRuaVnVd5EsGqbLfWgTknqueg3pw3iV5woM+oypc4UgknlEOk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=WCKKsTn5; arc=none smtp.client-ip=212.227.15.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1730926543; x=1731531343; i=w_armin@gmx.de;
+	bh=7gLnTY8NsEwYaE8L+E3HF94pvqFpm0jDrjzUD9d3p5g=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:From:Subject:To:
+	 Cc:References:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=WCKKsTn5HO/lJStk7LCXkocpUcy9uj/f3rzvrO+M1mq2Dk0rTQDVUI0u8uJfcQ3Z
+	 Ulr8hSqOb159NfweSpLdpROarVy9Yn4MZHkXSi2aBCCFO0QPYw1hjm499x34Hb7Us
+	 8WgddsBKzumz44QDh0Nzd7CnKh/fvTyfAl6YUfvSvuZzlMglxOdPszr7HBTExVQrg
+	 v6Di12v5knWSDcWlm63XTJEPGmC6q0lPVgQ5H7Owa8+8os4sRORGqtsU+xjD4PMRJ
+	 EDTjIPyk3iaO+/rn1hwlHfjZdP6Xk6rS9xHegZVGLiyd2qkwzTluUQDR0vy9hs3CB
+	 zPtMl04zMq+MuH5eZA==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [141.30.226.129] ([141.30.226.129]) by mail.gmx.net (mrgmx005
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1MrhUE-1teYzT2C2O-00kIaB; Wed, 06
+ Nov 2024 21:55:43 +0100
+Message-ID: <2d9e5ff1-1e4b-4e50-86bd-970c652c39c7@gmx.de>
+Date: Wed, 6 Nov 2024 21:55:40 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <597dbcf6-8169-4084-881c-8942ed363189@linux.intel.com>
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+From: Armin Wolf <W_Armin@gmx.de>
+Subject: Re: [PATCH v4 17/20] ACPI: platform_profile: Check all profile
+ handler to calculate next
+To: Mario Limonciello <mario.limonciello@amd.com>,
+ Hans de Goede <hdegoede@redhat.com>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
+ Maximilian Luz <luzmaximilian@gmail.com>, Lee Chun-Yi <jlee@suse.com>,
+ Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
+ Corentin Chary <corentin.chary@gmail.com>, "Luke D . Jones"
+ <luke@ljones.dev>, Ike Panhc <ike.pan@canonical.com>,
+ Henrique de Moraes Holschuh <hmh@hmh.eng.br>,
+ Alexis Belmonte <alexbelm48@gmail.com>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+ Ai Chao <aichao@kylinos.cn>, Gergo Koteles <soyer@irl.hu>,
+ open list <linux-kernel@vger.kernel.org>,
+ "open list:ACPI" <linux-acpi@vger.kernel.org>,
+ "open list:MICROSOFT SURFACE PLATFORM PROFILE DRIVER"
+ <platform-driver-x86@vger.kernel.org>,
+ "open list:THINKPAD ACPI EXTRAS DRIVER"
+ <ibm-acpi-devel@lists.sourceforge.net>,
+ Mark Pearson <mpearson-lenovo@squebb.ca>,
+ Matthew Schwartz <matthew.schwartz@linux.dev>
+References: <20241105153316.378-1-mario.limonciello@amd.com>
+ <20241105153316.378-18-mario.limonciello@amd.com>
+Content-Language: en-US
+In-Reply-To: <20241105153316.378-18-mario.limonciello@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:6T44JRw88vFGOMiDnicxFdYWi3AFF8XZYz2jm6IoJecfW0MTqyb
+ UUXLkU9Dy7igZOWeyOIFHujSEizR6xzbakuu5lQ5TveTuQ5q5VrETF1HacqIyWjCDXANXw/
+ 4T5j2HI53xpWt7TRnqS79KZHYxfoZym6+E2gSRYF1IsyRHbhKEBqMKY6kSyX6fUBVJPB1Cn
+ yaYbSc2uLzGQXJdDW5Zdg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:zaUN1DBUT/U=;7XwXDYxkycQdkmvGQlIt0biBN5h
+ sKXVsc9EZpLNH1olIFhKQXTF0NKu0KeXTc408msvt2F7GfcnWYd2i+e4uLnX04+LdGxfu5pK4
+ lEFumusQDAC73dqvXyvqyOMZnoArvH0hBAeZkOJSV8Wv8PftovDtbj/qF6lJRGY3a4n3QApvZ
+ jZlb6MaHx3YdLSJh3rPs5p9aP7nojgmakB9iFUE7g+k0lIKrZjBF+TrltHK+bMOCoLKSErms7
+ 6nMrm0ZPSFrVMFb7I8A5tFfDQra9FxIMMdOELWsREmjgqRBTIBZ+9FSxexakIOQJyyH03iMeR
+ Lddy+gjqkjbkjuDCzI1zwh865w5r/5tgQVQSFaH3QRojzW5P5D11OUm9NOAHqlIKRbBLMoVtu
+ uRdxu/6nMI/Teaofl/sVNCGWxTUXhQVdZz/UHm/v9VS3I1XMg0DWV0w8G+KCrL6oYbPtA3PbQ
+ sIo2Q2Q6pm2xGcfQy5OcuJ1mpaNSyLfiB2882Q6iXTlorneWReVPbLYvRDyvXDt/p7yf5Ya9r
+ NZn7aByib01vq512wYb6GPiXShQw/BjowfAK2Y6YmaGvbfHmthKv1RPF+p/bYYmZAM4ySxROM
+ Av685fY24SBKgzb9MV9mObOMgC19CcqO7qAV3cUIAEjZb8NHlUVhG28+5vwwYH8fmb9PAyEWc
+ HfFm6zgyk8eAXRMPVZVnDNxnmam9rSWqvTbXnKjQBDfOACV8YNgul+50evetc/DhvxQMWGuR/
+ evk6ZfmosOaQ1KmWAOuMSSDdE4mtA7uVNNhwtaKGMsANwaIVkwl7NBBr/Q5oG6CJwMBXNbVgJ
+ +/SLqZkNgKDOU6pvdZNHi6gOZeFzrcof1eu+NJhi91P6g=
 
-On Wed, Nov 06, 2024 at 03:33:30PM -0500, Liang, Kan wrote:
-> On 2024-11-06 3:02 p.m., Oliver Upton wrote:
-> > On Wed, Nov 06, 2024 at 11:03:10AM -0500, Liang, Kan wrote:
-> >>> +static unsigned long common_misc_flags(struct pt_regs *regs)
-> >>> +{
-> >>> +	if (regs->flags & PERF_EFLAGS_EXACT)
-> >>> +		return PERF_RECORD_MISC_EXACT_IP;
-> >>> +
-> >>> +	return 0;
-> >>> +}
-> >>> +
-> >>> +unsigned long perf_arch_guest_misc_flags(struct pt_regs *regs)
-> >>> +{
-> >>> +	unsigned long guest_state = perf_guest_state();
-> >>> +	unsigned long flags = common_misc_flags(regs);
-> >>> +
-> >>> +	if (guest_state & PERF_GUEST_USER)
-> >>> +		flags |= PERF_RECORD_MISC_GUEST_USER;
-> >>> +	else if (guest_state & PERF_GUEST_ACTIVE)
-> >>> +		flags |= PERF_RECORD_MISC_GUEST_KERNEL;
-> >>> +
-> >>
-> >> The logic of setting the GUEST_KERNEL flag is implicitly changed here.
-> >>
-> >> For the current code, the GUEST_KERNEL flag is set for !PERF_GUEST_USER,
-> >> which include both guest_in_kernel and guest_in_NMI.
-> > 
-> > Where is the "guest_in_NMI" state coming from? KVM only reports user v.
-> > kernel mode.
-> 
-> I may understand the kvm_arch_pmi_in_guest() wrong.
+Am 05.11.24 um 16:33 schrieb Mario Limonciello:
 
-kvm_arch_pmi_in_guest() is trying to *guess* whether or not an overflow
-interrupt caused the most recent VM-exit, implying a counter overflowed
-while in the VM. It has no idea what events are loaded on the PMU and
-which contexts they're intended to sample in.
+> As multiple platform profile handlers might not all support the same
+> profile, cycling to the next profile could have a different result
+> depending on what handler are registered.
+>
+> Check what is active and supported by all handlers to decide what
+> to do.
+>
+> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+> ---
+>   drivers/acpi/platform_profile.c | 35 ++++++++++++++++++---------------
+>   1 file changed, 19 insertions(+), 16 deletions(-)
+>
+> diff --git a/drivers/acpi/platform_profile.c b/drivers/acpi/platform_pro=
+file.c
+> index 7861fccc2e58c..568485e285061 100644
+> --- a/drivers/acpi/platform_profile.c
+> +++ b/drivers/acpi/platform_profile.c
+> @@ -378,34 +378,37 @@ EXPORT_SYMBOL_GPL(platform_profile_notify);
+>
+>   int platform_profile_cycle(void)
+>   {
+> +	enum platform_profile_option next =3D PLATFORM_PROFILE_LAST;
+>   	enum platform_profile_option profile;
+> -	enum platform_profile_option next;
+> +	unsigned long choices;
+>   	int err;
+>
+>   	if (!class_is_registered(&platform_profile_class))
+>   		return -ENODEV;
+>
+> -	scoped_cond_guard(mutex_intr, return -ERESTARTSYS, &profile_lock) {
 
-It only makes sense to check kvm_arch_pmi_in_guest() if you're dealing with
-an event that counts in both host and guest modes and you need to decide who
-to sample.
+Since the aggregated choices might change at any moment, we still need
+some locking here.
 
-> However, the kvm_guest_state() at least return 3 states.
-> 0
-> PERF_GUEST_ACTIVE
-> PERF_GUEST_ACTIVE | PERF_GUEST_USER
-> 
-> The existing code indeed assumes two modes. If it's not user mode, it
-> must be kernel mode.
-> However, the proposed code behave differently, or at least implies there
-> are more modes.
-> If it's not user mode and sets PERF_GUEST_ACTIVE, it's kernel mode.
-
-A precondition of the call to perf_arch_guest_misc_flags() is that guest
-state is nonzero, meaning a vCPU is loaded presently on this CPU.
-
--- 
 Thanks,
-Oliver
+Armin Wolf
+
+> -		if (!cur_profile)
+> -			return -ENODEV;
+> +	err =3D class_for_each_device(&platform_profile_class, NULL,
+> +				    &profile, _aggregate_profiles);
+> +	if (err)
+> +		return err;
+>
+> -		err =3D cur_profile->profile_get(cur_profile, &profile);
+> -		if (err)
+> -			return err;
+> +	err =3D class_for_each_device(&platform_profile_class, NULL,
+> +				    &choices, _aggregate_choices);
+> +	if (err)
+> +		return err;
+>
+> -		next =3D find_next_bit_wrap(cur_profile->choices, PLATFORM_PROFILE_LA=
+ST,
+> -					  profile + 1);
+> +	next =3D find_next_bit_wrap(&choices,
+> +				  PLATFORM_PROFILE_LAST,
+> +				  profile + 1);
+>
+> -		if (WARN_ON(next =3D=3D PLATFORM_PROFILE_LAST))
+> -			return -EINVAL;
+> +	err =3D class_for_each_device(&platform_profile_class, NULL, &next,
+> +				    _store_class_profile);
+>
+> -		err =3D cur_profile->profile_set(cur_profile, next);
+> -		if (err)
+> -			return err;
+> -	}
+> +	if (err)
+> +		return err;
+>
+>   	sysfs_notify(acpi_kobj, NULL, "platform_profile");
+> -	return 0;
+> +
+> +	return err;
+>   }
+>   EXPORT_SYMBOL_GPL(platform_profile_cycle);
+>
 
