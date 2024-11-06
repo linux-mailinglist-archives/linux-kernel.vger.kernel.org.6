@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-398042-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398043-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 589609BE49E
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 11:48:05 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 951FF9BE49F
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 11:48:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 17979285AA1
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 10:48:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 524D51F24D9C
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 10:48:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC3A71DE4E5;
-	Wed,  6 Nov 2024 10:47:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 208A71DE4E9;
+	Wed,  6 Nov 2024 10:47:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="thyoI3xe";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="L9aH2Rxx"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="hPnV3971";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="lb13YhI1"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 487741DE2B9;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 002471DE3A2;
 	Wed,  6 Nov 2024 10:47:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730890067; cv=none; b=tge9FqF5C3GL7EG0S1rSxS9P9lyZKfzpneBIs+bQ7PBJacXgxkM2JcAYqFVddVLlHx+NlXVW6MupLqgVEnv3pneOcB932JMEGKCylLLpp55h+PPufnSHFr542Dtezg9KlhgaWitvxPKDSu62EzMuIwVzAEM47znuxWPsU6BBWFs=
+	t=1730890067; cv=none; b=k6pXe7l7xl0Whn27Xwx7Lx7V7Fx3TG/KGR5x2m/BV1BlBh2l8TNVr1ezTiNhGQLiVhB3itfuHeHsO6dlzvXOzjid57fbVjaE0rCLPWbtuc8MIXECmAj8TiB0HojszKBTyJSSu6ZEQz8e96tujm0/+2z+hhDPc6kq2z08HVxLDjY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1730890067; c=relaxed/simple;
-	bh=z1xPywGHhRzXe0ViPLeZGn4SZ6mX7uOA3sLQw3iigrI=;
+	bh=moV8IWasGTN81Z3Q6PosMhpz3DEijlwV+76x94sMnJw=;
 	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=raHyppUofRALQ9DdqrNPe1PEhlgX7d7rxOs0aviSjrS4lsg+sQwlKaivkqNCnmRvaYxYok1tuVvTtdqw4BXJWxKFoo7UMklT57yGtP9ePeAc+hTECP7F2y/NW3bnaWX8Htb7T8+1Taw26UZssdgxwm+smBxd2wKIf8jWUv1d8s4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=thyoI3xe; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=L9aH2Rxx; arc=none smtp.client-ip=193.142.43.55
+	 Message-ID:Content-Type; b=sGE5SpOVkgr84HvLTmIo1fqEWAvmMNRrlWYVn4TBjdnJn5H41HMV6PRaEHL9OFT5bmMazsb8Nn8mLrEgWKKRBIDCAgVQOXLX4m0wGl08Nn2ZToR/h0MOxq5UwR0e1Jjyj0TvrTReo5BlukpyXJjDwWeu2hwAPnEMGcFYW/tR/bc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=hPnV3971; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=lb13YhI1; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 06 Nov 2024 10:47:42 -0000
+Date: Wed, 06 Nov 2024 10:47:43 -0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1730890063;
+	s=2020; t=1730890064;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=ETMmO1s534qzwfCSNAEUHumjaNxecjywZrqs3yjs2bE=;
-	b=thyoI3xeOZcJ7QLAeF37DXnbpWfOiOuKjZNDLNe84J+wwWKrLxuxjQMy/yVxMy63eFcAHf
-	/32SJz1Jn/Us3hzM1NRxwIrRIqM7jH2yaVGp2S8shFrTeZ2LnbKJeXS2AmuZJqy2vFJ8FO
-	RXcD6V3nwx0/6TgMvSQCNL28f0CuW3dTKnUGyxAUzlO+Cbrioc/uprz1nIh2Gk7yge86eM
-	ovr8RvKq8+bEinS79YUALh4DJyCCOrNPXG1n2ZIM1vhx5M+25vvZCwILUyh86L7t0wiIOP
-	HwEAkA6M1cJybyH4/rEyjw+Ri1mVtyIjsbu3P1v+VgP1+S8pJTE6Z6DWfF9DBA==
+	bh=objdhy+RMyetWLbDPqaexCwVdVwZfK9p36hw0rsZs44=;
+	b=hPnV3971qREZlOfXX8jPxSOlJeo69+fUDFKvE+uJ51PZdTgBvs0yXrpz8n8xjSiuypi28S
+	+PGSKivreXlXQu/mZzo6rNlkoREbSk/H/GmsqF0UwQADSvTQ0u+zcvktU+tidKMXdECp/Q
+	DtxACtmloQN4YPrKscg6W4g2OTtLRAztHSBazigQNxwYNd0qEo4p44mQhYgTk2cqwTy28n
+	6kj7T5Od3ZlUckKHd13oycXzqB7IZ6n1JBtA01d6kKH5OYa26TVB1U0OeAabtbnw8bhXAu
+	sjSlybqbANYJMztEXyacTps6l4Exj9t1vEqzRI3jjdJJ6v0txylZlxFndZhpaw==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1730890063;
+	s=2020e; t=1730890064;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=ETMmO1s534qzwfCSNAEUHumjaNxecjywZrqs3yjs2bE=;
-	b=L9aH2RxxVQekVSdlFYP5PjK2vpbY9IRlAX1j3uRaGoI0CaetfYUNRFkBNzBJ9Y3FLgUFHj
-	KhRuFypEw7v8npAQ==
+	bh=objdhy+RMyetWLbDPqaexCwVdVwZfK9p36hw0rsZs44=;
+	b=lb13YhI1JPgd20JDNp0R9icEE+giJQp8hYEsuF3CaascX6ny4qbzlF6GqwUdd4S4zy12He
+	dqI7vc/xV1GZ+PAg==
 From: "tip-bot2 for Marco Elver" <tip-bot2@linutronix.de>
 Sender: tip-bot2@linutronix.de
 Reply-to: linux-kernel@vger.kernel.org
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip: locking/core] kcsan, seqlock: Support seqcount_latch_t
-Cc: Alexander Potapenko <glider@google.com>,
- "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+Subject: [tip: locking/core] time/sched_clock: Broaden sched_clock()'s
+ instrumentation coverage
+Cc: "Peter Zijlstra (Intel)" <peterz@infradead.org>,
  Marco Elver <elver@google.com>, x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20241104161910.780003-4-elver@google.com>
-References: <20241104161910.780003-4-elver@google.com>
+In-Reply-To: <20241104161910.780003-3-elver@google.com>
+References: <20241104161910.780003-3-elver@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <173089006242.32228.5162533643457006719.tip-bot2@tip-bot2>
+Message-ID: <173089006323.32228.18347923409718973574.tip-bot2@tip-bot2>
 Robot-ID: <tip-bot2@linutronix.de>
 Robot-Unsubscribe:
  Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -81,209 +81,74 @@ Content-Transfer-Encoding: 7bit
 
 The following commit has been merged into the locking/core branch of tip:
 
-Commit-ID:     5c1806c41ce0a0110db5dd4c483cf2dc28b3ddf0
-Gitweb:        https://git.kernel.org/tip/5c1806c41ce0a0110db5dd4c483cf2dc28b3ddf0
+Commit-ID:     8ab40fc2b9086b915e46890bb9252dc7692f1da0
+Gitweb:        https://git.kernel.org/tip/8ab40fc2b9086b915e46890bb9252dc7692f1da0
 Author:        Marco Elver <elver@google.com>
-AuthorDate:    Mon, 04 Nov 2024 16:43:07 +01:00
+AuthorDate:    Mon, 04 Nov 2024 16:43:06 +01:00
 Committer:     Peter Zijlstra <peterz@infradead.org>
 CommitterDate: Tue, 05 Nov 2024 12:55:35 +01:00
 
-kcsan, seqlock: Support seqcount_latch_t
+time/sched_clock: Broaden sched_clock()'s instrumentation coverage
 
-While fuzzing an arm64 kernel, Alexander Potapenko reported:
+Most of sched_clock()'s implementation is ineligible for instrumentation
+due to relying on sched_clock_noinstr().
 
-| BUG: KCSAN: data-race in ktime_get_mono_fast_ns / timekeeping_update
-|
-| write to 0xffffffc082e74248 of 56 bytes by interrupt on cpu 0:
-|  update_fast_timekeeper kernel/time/timekeeping.c:430 [inline]
-|  timekeeping_update+0x1d8/0x2d8 kernel/time/timekeeping.c:768
-|  timekeeping_advance+0x9e8/0xb78 kernel/time/timekeeping.c:2344
-|  update_wall_time+0x18/0x38 kernel/time/timekeeping.c:2360
-|  [...]
-|
-| read to 0xffffffc082e74258 of 8 bytes by task 5260 on cpu 1:
-|  __ktime_get_fast_ns kernel/time/timekeeping.c:372 [inline]
-|  ktime_get_mono_fast_ns+0x88/0x174 kernel/time/timekeeping.c:489
-|  init_srcu_struct_fields+0x40c/0x530 kernel/rcu/srcutree.c:263
-|  init_srcu_struct+0x14/0x20 kernel/rcu/srcutree.c:311
-|  [...]
-|
-| value changed: 0x000002f875d33266 -> 0x000002f877416866
-|
-| Reported by Kernel Concurrency Sanitizer on:
-| CPU: 1 UID: 0 PID: 5260 Comm: syz.2.7483 Not tainted 6.12.0-rc3-dirty #78
+Split the implementation off into an __always_inline function
+__sched_clock(), which is then used by the noinstr and instrumentable
+version, to allow more of sched_clock() to be covered by various
+instrumentation.
 
-This is a false positive data race between a seqcount latch writer and a reader
-accessing stale data. Since its introduction, KCSAN has never understood the
-seqcount_latch interface (due to being unannotated).
+This will allow instrumentation with the various sanitizers (KASAN,
+KCSAN, KMSAN, UBSAN). For KCSAN, we know that raw seqcount_latch usage
+without annotations will result in false positive reports: tell it that
+all of __sched_clock() is "atomic" for the latch reader; later changes
+in this series will take care of the writers.
 
-Unlike the regular seqlock interface, the seqcount_latch interface for latch
-writers never has had a well-defined critical section, making it difficult to
-teach tooling where the critical section starts and ends.
-
-Introduce an instrumentable (non-raw) seqcount_latch interface, with
-which we can clearly denote writer critical sections. This both helps
-readability and tooling like KCSAN to understand when the writer is done
-updating all latch copies.
-
-Fixes: 88ecd153be95 ("seqlock, kcsan: Add annotations for KCSAN")
-Reported-by: Alexander Potapenko <glider@google.com>
 Co-developed-by: "Peter Zijlstra (Intel)" <peterz@infradead.org>
 Signed-off-by: "Peter Zijlstra (Intel)" <peterz@infradead.org>
 Signed-off-by: Marco Elver <elver@google.com>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Link: https://lore.kernel.org/r/20241104161910.780003-4-elver@google.com
+Link: https://lore.kernel.org/r/20241104161910.780003-3-elver@google.com
 ---
- Documentation/locking/seqlock.rst |  2 +-
- include/linux/seqlock.h           | 86 ++++++++++++++++++++++++------
- 2 files changed, 72 insertions(+), 16 deletions(-)
+ kernel/time/sched_clock.c | 16 ++++++++++++++--
+ 1 file changed, 14 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/locking/seqlock.rst b/Documentation/locking/seqlock.rst
-index bfda1a5..ec6411d 100644
---- a/Documentation/locking/seqlock.rst
-+++ b/Documentation/locking/seqlock.rst
-@@ -153,7 +153,7 @@ Use seqcount_latch_t when the write side sections cannot be protected
- from interruption by readers. This is typically the case when the read
- side can be invoked from NMI handlers.
- 
--Check `raw_write_seqcount_latch()` for more information.
-+Check `write_seqcount_latch()` for more information.
- 
- 
- .. _seqlock_t:
-diff --git a/include/linux/seqlock.h b/include/linux/seqlock.h
-index fffeb75..45eee0e 100644
---- a/include/linux/seqlock.h
-+++ b/include/linux/seqlock.h
-@@ -622,6 +622,23 @@ static __always_inline unsigned raw_read_seqcount_latch(const seqcount_latch_t *
+diff --git a/kernel/time/sched_clock.c b/kernel/time/sched_clock.c
+index 85595fc..29bdf30 100644
+--- a/kernel/time/sched_clock.c
++++ b/kernel/time/sched_clock.c
+@@ -80,7 +80,7 @@ notrace int sched_clock_read_retry(unsigned int seq)
+ 	return raw_read_seqcount_latch_retry(&cd.seq, seq);
  }
  
- /**
-+ * read_seqcount_latch() - pick even/odd latch data copy
-+ * @s: Pointer to seqcount_latch_t
-+ *
-+ * See write_seqcount_latch() for details and a full reader/writer usage
-+ * example.
-+ *
-+ * Return: sequence counter raw value. Use the lowest bit as an index for
-+ * picking which data copy to read. The full counter must then be checked
-+ * with read_seqcount_latch_retry().
-+ */
-+static __always_inline unsigned read_seqcount_latch(const seqcount_latch_t *s)
-+{
-+	kcsan_atomic_next(KCSAN_SEQLOCK_REGION_MAX);
-+	return raw_read_seqcount_latch(s);
-+}
-+
-+/**
-  * raw_read_seqcount_latch_retry() - end a seqcount_latch_t read section
-  * @s:		Pointer to seqcount_latch_t
-  * @start:	count, from raw_read_seqcount_latch()
-@@ -636,8 +653,33 @@ raw_read_seqcount_latch_retry(const seqcount_latch_t *s, unsigned start)
- }
- 
- /**
-+ * read_seqcount_latch_retry() - end a seqcount_latch_t read section
-+ * @s:		Pointer to seqcount_latch_t
-+ * @start:	count, from read_seqcount_latch()
-+ *
-+ * Return: true if a read section retry is required, else false
-+ */
-+static __always_inline int
-+read_seqcount_latch_retry(const seqcount_latch_t *s, unsigned start)
-+{
-+	kcsan_atomic_next(0);
-+	return raw_read_seqcount_latch_retry(s, start);
-+}
-+
-+/**
-  * raw_write_seqcount_latch() - redirect latch readers to even/odd copy
-  * @s: Pointer to seqcount_latch_t
-+ */
-+static __always_inline void raw_write_seqcount_latch(seqcount_latch_t *s)
-+{
-+	smp_wmb();	/* prior stores before incrementing "sequence" */
-+	s->seqcount.sequence++;
-+	smp_wmb();      /* increment "sequence" before following stores */
-+}
-+
-+/**
-+ * write_seqcount_latch_begin() - redirect latch readers to odd copy
-+ * @s: Pointer to seqcount_latch_t
-  *
-  * The latch technique is a multiversion concurrency control method that allows
-  * queries during non-atomic modifications. If you can guarantee queries never
-@@ -665,17 +707,11 @@ raw_read_seqcount_latch_retry(const seqcount_latch_t *s, unsigned start)
-  *
-  *	void latch_modify(struct latch_struct *latch, ...)
-  *	{
-- *		smp_wmb();	// Ensure that the last data[1] update is visible
-- *		latch->seq.sequence++;
-- *		smp_wmb();	// Ensure that the seqcount update is visible
-- *
-+ *		write_seqcount_latch_begin(&latch->seq);
-  *		modify(latch->data[0], ...);
-- *
-- *		smp_wmb();	// Ensure that the data[0] update is visible
-- *		latch->seq.sequence++;
-- *		smp_wmb();	// Ensure that the seqcount update is visible
-- *
-+ *		write_seqcount_latch(&latch->seq);
-  *		modify(latch->data[1], ...);
-+ *		write_seqcount_latch_end(&latch->seq);
-  *	}
-  *
-  * The query will have a form like::
-@@ -686,13 +722,13 @@ raw_read_seqcount_latch_retry(const seqcount_latch_t *s, unsigned start)
-  *		unsigned seq, idx;
-  *
-  *		do {
-- *			seq = raw_read_seqcount_latch(&latch->seq);
-+ *			seq = read_seqcount_latch(&latch->seq);
-  *
-  *			idx = seq & 0x01;
-  *			entry = data_query(latch->data[idx], ...);
-  *
-  *		// This includes needed smp_rmb()
-- *		} while (raw_read_seqcount_latch_retry(&latch->seq, seq));
-+ *		} while (read_seqcount_latch_retry(&latch->seq, seq));
-  *
-  *		return entry;
-  *	}
-@@ -716,11 +752,31 @@ raw_read_seqcount_latch_retry(const seqcount_latch_t *s, unsigned start)
-  *	When data is a dynamic data structure; one should use regular RCU
-  *	patterns to manage the lifetimes of the objects within.
-  */
--static inline void raw_write_seqcount_latch(seqcount_latch_t *s)
-+static __always_inline void write_seqcount_latch_begin(seqcount_latch_t *s)
+-unsigned long long noinstr sched_clock_noinstr(void)
++static __always_inline unsigned long long __sched_clock(void)
  {
--	smp_wmb();	/* prior stores before incrementing "sequence" */
--	s->seqcount.sequence++;
--	smp_wmb();      /* increment "sequence" before following stores */
-+	kcsan_nestable_atomic_begin();
-+	raw_write_seqcount_latch(s);
-+}
-+
-+/**
-+ * write_seqcount_latch() - redirect latch readers to even copy
-+ * @s: Pointer to seqcount_latch_t
-+ */
-+static __always_inline void write_seqcount_latch(seqcount_latch_t *s)
-+{
-+	raw_write_seqcount_latch(s);
-+}
-+
-+/**
-+ * write_seqcount_latch_end() - end a seqcount_latch_t write section
-+ * @s:		Pointer to seqcount_latch_t
-+ *
-+ * Marks the end of a seqcount_latch_t writer section, after all copies of the
-+ * latch-protected data have been updated.
-+ */
-+static __always_inline void write_seqcount_latch_end(seqcount_latch_t *s)
-+{
-+	kcsan_nestable_atomic_end();
+ 	struct clock_read_data *rd;
+ 	unsigned int seq;
+@@ -98,11 +98,23 @@ unsigned long long noinstr sched_clock_noinstr(void)
+ 	return res;
  }
  
- #define __SEQLOCK_UNLOCKED(lockname)					\
++unsigned long long noinstr sched_clock_noinstr(void)
++{
++	return __sched_clock();
++}
++
+ unsigned long long notrace sched_clock(void)
+ {
+ 	unsigned long long ns;
+ 	preempt_disable_notrace();
+-	ns = sched_clock_noinstr();
++	/*
++	 * All of __sched_clock() is a seqcount_latch reader critical section,
++	 * but relies on the raw helpers which are uninstrumented. For KCSAN,
++	 * mark all accesses in __sched_clock() as atomic.
++	 */
++	kcsan_nestable_atomic_begin();
++	ns = __sched_clock();
++	kcsan_nestable_atomic_end();
+ 	preempt_enable_notrace();
+ 	return ns;
+ }
 
