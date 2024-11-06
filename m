@@ -1,221 +1,119 @@
-Return-Path: <linux-kernel+bounces-397852-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397860-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E26D9BE165
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 09:56:23 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B85209BE182
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 10:01:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4DB5F2843A9
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 08:56:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C92D283C47
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 09:01:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A36921DA624;
-	Wed,  6 Nov 2024 08:55:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38B3F1D6DAA;
+	Wed,  6 Nov 2024 09:01:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="pobFL2EY"
-Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AzLpq0cj"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAF471D90C5
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 08:55:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 562631D5CFF;
+	Wed,  6 Nov 2024 09:01:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730883322; cv=none; b=u6O6AmomB0HECwfDxvXOtnOeE0mwqeIgIc7t79TSfVyMoL3RAHVtVRcSp6oclp5q4fOCZiV7h9ogWR6RFKc6evcphkLANjN6S6uKh2XDVTGxkWH1ZN4uASV1AwuXm4n8k/p1tQjM9fMXZh+II1vNm7VoAeF+HYbiyar2eMTC/kk=
+	t=1730883686; cv=none; b=Mxvbmk6kex0LRqdxjOujxaj/2xMGfK1rtO5/3rZ5D3SQe0N+QIUw6n8zTQMY4v1fkcttVpsgL90C9ND10uKtfrQmlS4a9GR+g4Gjl6OArcMixU7QLFlj2DOXx/fIIeOE9C1nY/OQpiAn8srme+H4s/hGx+FOZBLHKHjCXj5x8QI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730883322; c=relaxed/simple;
-	bh=zrKk5ywALNSmj9VvfTnk2XFFMhWwhKs6UBoJLohqtoU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=R8nEPPF/SzOHCA5LeTERk0Vyh8TQXxg8Lw8zmPN0vcgwiMHBCEiWJV4ytRLOJ+82+drr/erpR++fyTku2Z/eXUF+H72mmHgm3WAaLlad9gu0SacPhPlFVUq2S/xjK9YDW8zfF1s8h6T/9JbK/bp/ighx9e/4t28y8z8ZAuk3uu4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=pobFL2EY; arc=none smtp.client-ip=217.70.183.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPA id CB7901C000F;
-	Wed,  6 Nov 2024 08:55:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1730883318;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2oiWk53I171KwrAlfwDCvk5jTurbu1icBl8oHWKDmI0=;
-	b=pobFL2EYMefb4EKi6ORoSqJ/fTSlEbYl6DBJxzWb8/8OagTnuTL+wOBF6rYF6WD2FHI23/
-	eUHB5W9n19Hgb1k75DSQp2loSgxvNSzyZCp+J4N5XBxyjheYhkdUWNb6t+sLJVvHYRckAu
-	o6j3p/ELy6JNWyBox+lVO/fQNqjf0WjEPwkZ5TChsWhjzT/GKUU3n/m62K+K+aUY2rEMjf
-	pBob7/NZ+1+jWBqV2MKGnoVjApqN2mPvOfhRrrNQ3+LgmFmeaF1lpU0zODRF2UTUwFici5
-	sXsybcmHrOMHKkQ3f2LfWMD+4WXbGa6xkg0MelsIFymBYmLjHaGa6WI6rDOV8Q==
-From: Bastien Curutchet <bastien.curutchet@bootlin.com>
-To: Santosh Shilimkar <ssantosh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>
-Cc: linux-kernel@vger.kernel.org,
-	linux-mtd@lists.infradead.org,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Herve Codina <herve.codina@bootlin.com>,
-	Christopher Cordahi <christophercordahi@nanometrics.ca>,
-	Bastien Curutchet <bastien.curutchet@bootlin.com>
-Subject: [PATCH v2 6/6] mtd: rawnand: davinci: Implement setup_interface() operation
-Date: Wed,  6 Nov 2024 09:55:07 +0100
-Message-ID: <20241106085507.76425-7-bastien.curutchet@bootlin.com>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20241106085507.76425-1-bastien.curutchet@bootlin.com>
-References: <20241106085507.76425-1-bastien.curutchet@bootlin.com>
+	s=arc-20240116; t=1730883686; c=relaxed/simple;
+	bh=4PoFtxt4Dc071+Aor3cOXjBAyVvWgANaB9cgnRPVnao=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=flK6h8DU7+GLaelXejfEa/nNnzAYnAfp5hhq4nEQTruiRiR8Q2N4HwrkVHP6H0U23y55pcMLkLAMbk9jcoLCS5/+MZ3O1JADe28BylxzcbzFdaQEjKDqpYhsO2xkadWS3Bi4q2AR3VxtcyRfhabUds9z137RT6BdWXCmSKy8hyU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AzLpq0cj; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-20cd76c513cso50703425ad.3;
+        Wed, 06 Nov 2024 01:01:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730883684; x=1731488484; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=dN34SSgBwYUCwi/Jxu+wRXh/eB3/vsROfybEBktpwsg=;
+        b=AzLpq0cjaMOWrRD777LKtyQrWqrrpqoSqTS/iRaFrbK5XiPWBJ2G5lMzBQiomNMZgD
+         1qE/UtokEEkzeIptKBX5gYBlryuKNM7ihji8JlgwvQtW4zlSu2lTjnpc20BdzsCTNbdc
+         wV2CM/2EWldUf2wCHh1IlQ7m2Dmgb31P4sh0NAAlOXzeId/XgN6huJqM8/KVRewbC7/r
+         6rnwZgx+qnrSr9/TDDVlI3XdtUeXl5oeNjX+Q+/blf4Rvj8zPel06rO0O6uM3yAz13Lr
+         QNEX7pUaeLK1ij5Cnx6hGfh8McNmKbYkiv2YPIMQ8Lau1tUSbBw6UH4LhPP2eS4Yp8gO
+         VnBA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730883685; x=1731488485;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=dN34SSgBwYUCwi/Jxu+wRXh/eB3/vsROfybEBktpwsg=;
+        b=k2poSw6EcOlCehVWsbr+8gSZHI1w8hk2nhoXCYD56lwqVvemUAKLimR0vX/KTuw+ll
+         qe3gNiYZ+zsVtXY7f8AGzQRfemttw9xl7/3M0XtVrfdeBqWndspGmQkuxMrk/FXmKKvP
+         k3L5Ek2NDsbc2RJVOV97sbJ0uWBV3+gn0aoF/j+kZzZRh2jYkNz66KLKEIn2VPtsLGMo
+         eRMaKw4sGXoYbe6xS8nxQdD3cpTmXiMUvLQen/ThXP+V1PQoMteh9Lp7qhqS477bjT/t
+         ebVnrwYLAhndQv+FdpPe+T8myUVdChLiGSr6ay1JuTyybooV+C/rLEE+JgA0D3RwsQiM
+         GSZg==
+X-Forwarded-Encrypted: i=1; AJvYcCWzvsav9hQ2qomp7F6C7sekeXONB5x5s+XWqFtyYqEaSMlXjYdS6bbn3hVPb3bo5NPAa2iw8+L+ysFeqjs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzw9dWU3VMBpRGYJvaoNd+IcsuorJU0F0kn4Y4gc1qkJSxpNLu9
+	JHpp/n5MNaI6o9jHPvmgF7e7FpwjsmBnFK03zc5d6vNSajFRH48l
+X-Google-Smtp-Source: AGHT+IGnkFWynLLU5/2Q69B9cDIhpvlGXMSFaoZSiGRLdCoNVTx1MDEWli01wkh9fzWNeKIA/izOUQ==
+X-Received: by 2002:a17:902:cec1:b0:20c:a19b:8ddd with SMTP id d9443c01a7336-210f76f2952mr385802445ad.51.1730883684628;
+        Wed, 06 Nov 2024 01:01:24 -0800 (PST)
+Received: from localhost.localdomain (61-220-246-151.hinet-ip.hinet.net. [61.220.246.151])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211057d380fsm91317665ad.240.2024.11.06.01.01.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 06 Nov 2024 01:01:24 -0800 (PST)
+From: Potin Lai <potin.lai.pt@gmail.com>
+Subject: [PATCH 0/2] ARM: dts: aspeed: catalina: update CPLD IO expander
+ pin definitions
+Date: Wed, 06 Nov 2024 16:58:50 +0800
+Message-Id: <20241106-catalina-cpld-ioexp-update-v1-0-3437bcfcb608@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-GND-Sasl: bastien.curutchet@bootlin.com
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAMovK2cC/x3MQQqDMBAF0KvIrB1IQijUq0gXQ+bbDkgMiRVBv
+ HtDl2/zLmqohkbTcFHFYc223OHHgdJH8hts2k3Bhei9e3CSXVbLwqmsyrbhLPwtKjsYERrdU8I
+ CpR6UisXOfz6/7vsHoiqHUWwAAAA=
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>, 
+ Andrew Jeffery <andrew@codeconstruct.com.au>, 
+ Patrick Williams <patrick@stwcx.xyz>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org, 
+ Potin Lai <potin.lai@quantatw.com>, Cosmo Chou <cosmo.chou@quantatw.com>, 
+ Potin Lai <potin.lai.pt@gmail.com>
+X-Mailer: b4 0.12.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1730883681; l=613;
+ i=potin.lai.pt@gmail.com; s=20240724; h=from:subject:message-id;
+ bh=4PoFtxt4Dc071+Aor3cOXjBAyVvWgANaB9cgnRPVnao=;
+ b=5pNiHn4f7T6DPb7g/9DOVkSstHqYNgW909o72dsst+ZevKNbg7fFnzKUdhkOrOXHuHdJMWbEN
+ uRzgp41XATMAcio4YwxNRdvph8iuwYd/tCnNeLHisu1MY0Iaj+/OQka
+X-Developer-Key: i=potin.lai.pt@gmail.com; a=ed25519;
+ pk=6Z4H4V4fJwLteH/WzIXSsx6TkuY5FOcBBP+4OflJ5gM=
 
-The setup_interface() operation isn't implemented. It forces the driver
-to use the ONFI mode 0, though it could use more optimal modes.
+This patch series updates the CPLD IO expander pin definitions of PDB
+board and HDD board.
 
-Implement the setup_interface() operation. It uses the
-aemif_set_cs_timings() function from the AEMIF driver to update the
-chip select timings. The calculation of the register's contents is
-directly extracted from §20.3.2.3 of the DaVinci TRM [1]
-
-These timings are previously set by the AEMIF driver itself from
-device-tree properties. Therefore, IMHO, failing to update them in the
-setup_interface() isn't critical, which is why 0 is returned even when
-timings aren't updated.
-
-MAX_TH_PS and MAX_TSU_PS are the worst case timings based on the
-Keystone2 and DaVinci datasheets.
-
-[1] : https://www.ti.com/lit/ug/spruh77c/spruh77c.pdf
-
-Signed-off-by: Bastien Curutchet <bastien.curutchet@bootlin.com>
+Signed-off-by: Potin Lai <potin.lai.pt@gmail.com>
 ---
- drivers/mtd/nand/raw/davinci_nand.c | 78 +++++++++++++++++++++++++++++
- 1 file changed, 78 insertions(+)
+Potin Lai (2):
+      ARM: dts: aspeed: catalina: update pdb board cpld ioexp linename
+      ARM: dts: aspeed: catalina: add hdd board cpld ioexp
 
-diff --git a/drivers/mtd/nand/raw/davinci_nand.c b/drivers/mtd/nand/raw/davinci_nand.c
-index 563045c7ce08..2d0c564c8d17 100644
---- a/drivers/mtd/nand/raw/davinci_nand.c
-+++ b/drivers/mtd/nand/raw/davinci_nand.c
-@@ -14,6 +14,7 @@
- #include <linux/err.h>
- #include <linux/iopoll.h>
- #include <linux/kernel.h>
-+#include <linux/memory/ti-aemif.h>
- #include <linux/module.h>
- #include <linux/mtd/rawnand.h>
- #include <linux/mtd/partitions.h>
-@@ -44,6 +45,9 @@
- #define	MASK_ALE		0x08
- #define	MASK_CLE		0x10
- 
-+#define MAX_TSU_PS		3000	/* Input setup time in ps */
-+#define MAX_TH_PS		1600	/* Input hold time in ps */
-+
- struct davinci_nand_pdata {
- 	uint32_t		mask_ale;
- 	uint32_t		mask_cle;
-@@ -120,6 +124,7 @@ struct davinci_nand_info {
- 	uint32_t		core_chipsel;
- 
- 	struct clk		*clk;
-+	struct aemif_device	*aemif;
- };
- 
- static DEFINE_SPINLOCK(davinci_nand_lock);
-@@ -767,9 +772,81 @@ static int davinci_nand_exec_op(struct nand_chip *chip,
- 	return 0;
- }
- 
-+#define TO_CYCLES(ps, period_ns) (DIV_ROUND_UP((ps) / 1000, (period_ns)))
-+
-+static int davinci_nand_setup_interface(struct nand_chip *chip, int chipnr,
-+					const struct nand_interface_config *conf)
-+{
-+	struct davinci_nand_info *info = to_davinci_nand(nand_to_mtd(chip));
-+	const struct nand_sdr_timings *sdr;
-+	struct aemif_cs_timings timings;
-+	s32 cfg, min, cyc_ns;
-+
-+	cyc_ns = 1000000000 / clk_get_rate(info->clk);
-+
-+	sdr = nand_get_sdr_timings(conf);
-+	if (IS_ERR(sdr))
-+		return PTR_ERR(sdr);
-+
-+	cfg = TO_CYCLES(sdr->tCLR_min, cyc_ns) - 1;
-+	timings.rsetup = cfg > 0 ? cfg : 0;
-+
-+	cfg = max_t(s32, TO_CYCLES(sdr->tREA_max + MAX_TSU_PS, cyc_ns),
-+		    TO_CYCLES(sdr->tRP_min, cyc_ns)) - 1;
-+	timings.rstrobe = cfg > 0 ? cfg : 0;
-+
-+	min = TO_CYCLES(sdr->tCEA_max + MAX_TSU_PS, cyc_ns) - 2;
-+	while ((s32)(timings.rsetup + timings.rstrobe) < min)
-+		timings.rstrobe++;
-+
-+	cfg = TO_CYCLES((s32)(MAX_TH_PS - sdr->tCHZ_max), cyc_ns) - 1;
-+	timings.rhold = cfg > 0 ? cfg : 0;
-+
-+	min = TO_CYCLES(sdr->tRC_min, cyc_ns) - 3;
-+	while ((s32)(timings.rsetup + timings.rstrobe + timings.rhold) < min)
-+		timings.rhold++;
-+
-+	cfg = TO_CYCLES((s32)(sdr->tRHZ_max - (timings.rhold + 1) * cyc_ns * 1000), cyc_ns);
-+	cfg = max_t(s32, cfg, TO_CYCLES(sdr->tCHZ_max, cyc_ns)) - 1;
-+	timings.ta = cfg > 0 ? cfg : 0;
-+
-+	cfg = TO_CYCLES(sdr->tWP_min, cyc_ns) - 1;
-+	timings.wstrobe = cfg > 0 ? cfg : 0;
-+
-+	cfg = max_t(s32, TO_CYCLES(sdr->tCLS_min, cyc_ns), TO_CYCLES(sdr->tALS_min, cyc_ns));
-+	cfg = max_t(s32, cfg, TO_CYCLES(sdr->tCS_min, cyc_ns)) - 1;
-+	timings.wsetup = cfg > 0 ? cfg : 0;
-+
-+	min = TO_CYCLES(sdr->tDS_min, cyc_ns) - 2;
-+	while ((s32)(timings.wsetup + timings.wstrobe) < min)
-+		timings.wstrobe++;
-+
-+	cfg = max_t(s32, TO_CYCLES(sdr->tCLH_min, cyc_ns), TO_CYCLES(sdr->tALH_min, cyc_ns));
-+	cfg = max_t(s32, cfg, TO_CYCLES(sdr->tCH_min, cyc_ns));
-+	cfg = max_t(s32, cfg, TO_CYCLES(sdr->tDH_min, cyc_ns)) - 1;
-+	timings.whold = cfg > 0 ? cfg : 0;
-+
-+	min = TO_CYCLES(sdr->tWC_min, cyc_ns) - 2;
-+	while ((s32)(timings.wsetup + timings.wstrobe + timings.whold) < min)
-+		timings.whold++;
-+
-+	dev_dbg(&info->pdev->dev, "RSETUP %x RSTROBE %x RHOLD %x\n",
-+		timings.rsetup, timings.rstrobe, timings.rhold);
-+	dev_dbg(&info->pdev->dev, "TA %x\n", timings.ta);
-+	dev_dbg(&info->pdev->dev, "WSETUP %x WSTROBE %x WHOLD %x\n",
-+		timings.wsetup, timings.wstrobe, timings.whold);
-+
-+	if (aemif_set_cs_timings(info->aemif, info->core_chipsel, &timings) < 0)
-+		dev_info(&info->pdev->dev,
-+			 "Failed to dynamically update the CS timings, keep them unchanged");
-+
-+	return 0;
-+}
-+
- static const struct nand_controller_ops davinci_nand_controller_ops = {
- 	.attach_chip = davinci_nand_attach_chip,
- 	.exec_op = davinci_nand_exec_op,
-+	.setup_interface = davinci_nand_setup_interface,
- };
- 
- static int nand_davinci_probe(struct platform_device *pdev)
-@@ -832,6 +909,7 @@ static int nand_davinci_probe(struct platform_device *pdev)
- 	info->pdev		= pdev;
- 	info->base		= base;
- 	info->vaddr		= vaddr;
-+	info->aemif		= dev_get_drvdata(pdev->dev.parent);
- 
- 	mtd			= nand_to_mtd(&info->chip);
- 	mtd->dev.parent		= &pdev->dev;
+ .../dts/aspeed/aspeed-bmc-facebook-catalina.dts    | 150 ++++++++++++---------
+ 1 file changed, 87 insertions(+), 63 deletions(-)
+---
+base-commit: 59b723cd2adbac2a34fc8e12c74ae26ae45bf230
+change-id: 20241106-catalina-cpld-ioexp-update-e4ed409a2fed
+
+Best regards,
 -- 
-2.47.0
+Potin Lai <potin.lai.pt@gmail.com>
 
 
