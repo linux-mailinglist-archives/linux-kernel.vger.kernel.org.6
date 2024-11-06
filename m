@@ -1,148 +1,167 @@
-Return-Path: <linux-kernel+bounces-397547-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397546-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43B699BDD4A
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 03:51:52 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A41C49BDD46
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 03:51:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ECB6F1F21C40
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 02:51:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 427DD28159A
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 02:51:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C93E18FDDB;
-	Wed,  6 Nov 2024 02:51:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=hpe.com header.i=@hpe.com header.b="CPSIO1oh"
-Received: from mx0b-002e3701.pphosted.com (mx0b-002e3701.pphosted.com [148.163.143.35])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E4B218FDDB;
+	Wed,  6 Nov 2024 02:51:24 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F1CA18B47E;
-	Wed,  6 Nov 2024 02:51:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.143.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22A0618B47E
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 02:51:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730861497; cv=none; b=ROVQ/qtfrvNphFKiEHad7q6J+5sdrG+BTKSIcNg/kkmla7WuR1LVveTLnaodGRYhTornxW6gwxDpLZB0Fy/T2iFPi7U5fRfy/lZ0coWHtZfUBMR72jm4VuQT0sD/QSBoR0gDNVymAsmLUcdeNc+IkxCQrCUQhpqA2oAD9NO5OGs=
+	t=1730861483; cv=none; b=SX9hElazUmSbsConpE2c3UMWkRtfFbWfg+F4x5lm1wYXOgbXzmU3rOG1Avg5ZTUSQnHhvX11zVOhiYKECUoB0wvAhAgQ7yYoFrnFn6/ZT5tE76hh0crknzLSsskEtThaert/AJ2YsSmHXC0TCuLp8m4H0CR2pSCeStcEwhRPQfQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730861497; c=relaxed/simple;
-	bh=zGklckDW0yAzRpIHB36p0nroZKUlM400pZk1ZhfMExw=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=AbytIZeBm+umqHYNtfIA6gDoRzFsJt+lXzKrSvvLn55T3uKcAzUj0XsOj/9R0ck5mgLIr8t5W/2DDGpxDVkWkDTkabmO7pnj0ocCTJuFRxdJd661xaC7jCs93UwzqyLrMgx0dQpAPAbx1j7/dKiR4iaiivm6Wah2CaKTezUx50s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hpe.com; spf=pass smtp.mailfrom=hpe.com; dkim=pass (2048-bit key) header.d=hpe.com header.i=@hpe.com header.b=CPSIO1oh; arc=none smtp.client-ip=148.163.143.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hpe.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hpe.com
-Received: from pps.filterd (m0150244.ppops.net [127.0.0.1])
-	by mx0b-002e3701.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A61igiP017650;
-	Wed, 6 Nov 2024 02:51:05 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hpe.com; h=cc
-	:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=pps0720; bh=fIau/TGBK/Y6E
-	JZSH4sYAY5qCp0ClLkPwdbVUgJbvDw=; b=CPSIO1oh/jpKfndIGm14Np1CbjWQg
-	hyuP8zyjECZjObh4jNnoKW9STq4jgktvUNUridmLgkdl1T1XQUPF9J+pgOTelhtD
-	Jw0ceWFgjylRafJJ4RAhdzY+McmPuCf8aktwkiBrZrroObZLp4pH14eIeY9fyFac
-	CkNlF8txzjfXhAwGYE5RoWBzs1UFfAMCPlCP3Eiihth1zZk9o8HQ9zoGo9nCtB4g
-	F02PPqPE2L4DVX0pj4TpjGK9uPeubyfVLPILUP70O0Lko3B986J2jx382AJnnHOl
-	GRrygh/GJiiuPCSeAQSkanOEGcx+ixFNhEcKIMXUFqK+qne0OdYLMpZYg==
-Received: from p1lg14881.it.hpe.com ([16.230.97.202])
-	by mx0b-002e3701.pphosted.com (PPS) with ESMTPS id 42qqxw3nj1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 06 Nov 2024 02:51:04 +0000 (GMT)
-Received: from localhost (unknown [192.58.206.35])
-	by p1lg14881.it.hpe.com (Postfix) with ESMTP id A0FE0806B3F;
-	Wed,  6 Nov 2024 02:51:02 +0000 (UTC)
-From: Matt Muggeridge <Matt.Muggeridge@hpe.com>
-To: idosch@idosch.org
-Cc: Matt.Muggeridge@hpe.com, davem@davemloft.net, dsahern@kernel.org,
-        edumazet@google.com, horms@kernel.org, kuba@kernel.org,
-        linux-api@vger.kernel.org, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, pabeni@redhat.com, stable@vger.kernel.org
-Subject: Re: [PATCH net 1/1] net/ipv6: Netlink flag for new IPv6 Default Routes
-Date: Tue,  5 Nov 2024 21:50:56 -0500
-Message-Id: <20241106025056.11241-1-Matt.Muggeridge@hpe.com>
-X-Mailer: git-send-email 2.35.3
-In-Reply-To: <Zypgu5l7F1FpIpqo@shredder>
-References: <Zypgu5l7F1FpIpqo@shredder>
+	s=arc-20240116; t=1730861483; c=relaxed/simple;
+	bh=NfP7BlgLxSn2WKKVkdrepVfQTJK7R3TVBFB7/t9tjC8=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=nJ6JuJbBX9T8Z+TdMgBYDUkOBNuHmxk32OGrddvqOpFasUz0bEVe396msWog8YubUA4YpPN1JHNGh+mY0lWVOJBvgXug0lSlAee5GAgpjNHCEmqAESXHD+cnvZyC6I/XGFNPT8BOeDbNiXQXo+5q6Ap5AxGZB0D3uI6idjS8OrY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a4e80ccd1bso54039835ab.2
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 18:51:21 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730861480; x=1731466280;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=47a/jn3+/iOcV/k21j0lppzSJhAAjbRAD5/il+fS9AY=;
+        b=cl1+yX984nGZ+erl2A4zVbjIF7aoCIyPTfptp/4BEqbuH+l/nJ3UIKG9+FYywFqAC5
+         eCqon5odpd7C6Xb0dwOKSwSDbq1KKdIhpHB56uWlIcWH8n6RfMXh0NO1BoNugUCZIUqR
+         kZhIQjL55NLntevJdyWEti/flcQPXryTRyqUGrss9/J4oyA3vjURTisCI1p9oNAJZvOd
+         tdAYO+nQWRqOGMjdydmwaWgNVHhczREoruy41BSaZe805hgPbfSd54pU+HWGLvZA1C1m
+         lB+MD1qEiQbEERo4mHMzDHaYd/W9Mvi/jj1XvNpED9CUQyUQLWV/8t7bLjSmXtedb400
+         2LPA==
+X-Forwarded-Encrypted: i=1; AJvYcCXhbulNkMsbDCAjDS5g+ekCkXwP7sO7bp9DEi3E0HJnAZYIKuPPGVTIyDuUmkO+Q1cpSuPmy8hw/wTBg8U=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz8RgPlbPDrGJMw6cmLRG0RX8qgKqYZRpBGcjafciel4KfwOoUy
+	Tk4kJSH7TK1Nnh5b4JLDxLskiCKlhdffjkHCGw9HA6+WFm4ldjcVpNOU4SA4FPyF2EGUi/Tb0LU
+	iyDRDH8MluCV4bhIA4Zf53yTr2jBI03RmAQFzWkLoYyzvEUnZy4vvM8Y=
+X-Google-Smtp-Source: AGHT+IGFA7vO4U2x3q6uAPBDzuTKgONZPR+0I/WW2RDdNThGI7VcDHE7KiA+lQeHU0V2dPevX7he5TheTnl8dkXWYd5ZPtDh9PWA
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-GUID: IQacsdKuxoAHBraaf122jx6QcKWt9S9_
-X-Proofpoint-ORIG-GUID: IQacsdKuxoAHBraaf122jx6QcKWt9S9_
-X-HPE-SCL: -1
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-05_02,2024-10-04_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 bulkscore=0
- phishscore=0 malwarescore=0 lowpriorityscore=0 impostorscore=0
- suspectscore=0 mlxscore=0 mlxlogscore=866 spamscore=0 priorityscore=1501
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411060020
+X-Received: by 2002:a05:6e02:1487:b0:3a6:aee2:1693 with SMTP id
+ e9e14a558f8ab-3a6b0250c4emr195392805ab.6.1730861480603; Tue, 05 Nov 2024
+ 18:51:20 -0800 (PST)
+Date: Tue, 05 Nov 2024 18:51:20 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <672ad9a8.050a0220.2a847.1aac.GAE@google.com>
+Subject: [syzbot] [usb?] [scsi?] WARNING: bad unlock balance in sd_revalidate_disk
+From: syzbot <syzbot+331e232a5d7a69fa7c81@syzkaller.appspotmail.com>
+To: James.Bottomley@HansenPartnership.com, linux-kernel@vger.kernel.org, 
+	linux-scsi@vger.kernel.org, linux-usb@vger.kernel.org, 
+	martin.petersen@oracle.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Thank you for your review and feedback, Ido.
+Hello,
 
->> Without this flag, when there are mutliple default routers, the kernel
->> coalesces multiple default routes into an ECMP route. The ECMP route
->> ignores per-route REACHABILITY information. If one of the default
->> routers is unresponsive, with a Neighbor Cache entry of INCOMPLETE, then
->> it can still be selected as the nexthop for outgoing packets. This
->> results in an inability to communicate with remote hosts, even though
->> one of the default routers remains REACHABLE. This violates RFC4861
->> section 6.3.6, bullet 1.
->
->Do you have forwarding disabled (it causes RT6_LOOKUP_F_REACHABLE to be
->set)?
+syzbot found the following issue on:
 
-Yes, forwarding is disabled on our embedded system. Though, this needs to
-work on systems regardless of the state of forwarding.
+HEAD commit:    c88416ba074a Add linux-next specific files for 20241101
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=1051f55f980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=704b6be2ac2f205f
+dashboard link: https://syzkaller.appspot.com/bug?extid=331e232a5d7a69fa7c81
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16952b40580000
 
->  Is the problem that fib6_table_lookup() chooses a reachable
->nexthop and then fib6_select_path() overrides it with an unreachable
->one?
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/760a8c88d0c3/disk-c88416ba.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/46e4b0a851a2/vmlinux-c88416ba.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/428e2c784b75/bzImage-c88416ba.xz
 
-I'm afraid I don't know.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+331e232a5d7a69fa7c81@syzkaller.appspotmail.com
 
-The objective is to allow IPv6 Netlink clients to be able to create default
-routes from RAs in the same way the kernel creates default routes from RAs.
-Essentially, I'm trying to have Netlink and Kernel behaviors match.
+sd 2:0:0:1: [sdc] Test Unit Ready failed: Result: hostbyte=DID_NO_CONNECT driverbyte=DRIVER_OK
+=====================================
+WARNING: bad unlock balance detected!
+6.12.0-rc5-next-20241101-syzkaller #0 Not tainted
+-------------------------------------
+udevd/5897 is trying to release lock (&q->q_usage_counter(queue)) at:
+[<ffffffff862f40d3>] sd_revalidate_disk+0x7933/0xbcf0 drivers/scsi/sd.c:3808
+but there are no more locks to release!
 
-My analysis led me to the need for Netlink clients to set the kernel's
-fib6_config flags RTF_RA_ROUTER, where:
+other info that might help us debug this:
+1 lock held by udevd/5897:
+ #0: ffff8881433c14c8 (&disk->open_mutex){+.+.}-{4:4}, at: bdev_open+0xf0/0xc50 block/bdev.c:904
 
-    #define RTF_RA_ROUTER		(RTF_ADDRCONF | RTF_DEFAULT)
+stack backtrace:
+CPU: 1 UID: 0 PID: 5897 Comm: udevd Not tainted 6.12.0-rc5-next-20241101-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+ print_unlock_imbalance_bug+0x25b/0x2d0 kernel/locking/lockdep.c:5287
+ __lock_release kernel/locking/lockdep.c:5526 [inline]
+ lock_release+0x5cb/0xa30 kernel/locking/lockdep.c:5870
+ blk_unfreeze_release_lock block/blk.h:745 [inline]
+ blk_mq_unfreeze_queue+0xd2/0x140 block/blk-mq.c:213
+ sd_revalidate_disk+0x7933/0xbcf0 drivers/scsi/sd.c:3808
+ sd_open+0x21e/0x610 drivers/scsi/sd.c:1534
+ blkdev_get_whole+0x8e/0x450 block/bdev.c:689
+ bdev_open+0x2d4/0xc50 block/bdev.c:916
+ blkdev_open+0x389/0x4f0 block/fops.c:627
+ do_dentry_open+0xbe1/0x1b70 fs/open.c:962
+ vfs_open+0x3e/0x330 fs/open.c:1092
+ do_open fs/namei.c:3774 [inline]
+ path_openat+0x2c84/0x3590 fs/namei.c:3933
+ do_filp_open+0x235/0x490 fs/namei.c:3960
+ do_sys_openat2+0x13e/0x1d0 fs/open.c:1419
+ do_sys_open fs/open.c:1434 [inline]
+ __do_sys_openat fs/open.c:1450 [inline]
+ __se_sys_openat fs/open.c:1445 [inline]
+ __x64_sys_openat+0x247/0x2a0 fs/open.c:1445
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f64b7d169a4
+Code: 24 20 48 8d 44 24 30 48 89 44 24 28 64 8b 04 25 18 00 00 00 85 c0 75 2c 44 89 e2 48 89 ee bf 9c ff ff ff b8 01 01 00 00 0f 05 <48> 3d 00 f0 ff ff 76 60 48 8b 15 55 a4 0d 00 f7 d8 64 89 02 48 83
+RSP: 002b:00007ffcdb024940 EFLAGS: 00000246 ORIG_RAX: 0000000000000101
+RAX: ffffffffffffffda RBX: 00005623a7271270 RCX: 00007f64b7d169a4
+RDX: 00000000000a0800 RSI: 00005623a725b4e0 RDI: 00000000ffffff9c
+RBP: 00005623a725b4e0 R08: 0000000000000006 R09: 7fffffffffffffff
+R10: 0000000000000000 R11: 0000000000000246 R12: 00000000000a0800
+R13: 00005623a726ee60 R14: 0000000000000001 R15: 00005623a724f910
+ </TASK>
+udevd[5897]: inotify_add_watch(7, /dev/sdc, 10) failed: No such file or directory
 
->> +	if (rtm->rtm_flags & RTM_F_RA_ROUTER)
->> +		cfg->fc_flags |= RTF_RA_ROUTER;
->> +
-> 
-> It is possible there are user space programs out there that set this bit
-> (knowingly or not) when sending requests to the kernel and this change
-> will result in a behavior change for them. So, if we were to continue in
-> this path, this would need to be converted to a new netlink attribute to
-> avoid such potential problems.
-> 
 
-Is this a mandated approach to implementing unspecified bits in a flag?
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-I'm a little surprised by this consideration. If we account for poorly
-written buggy user-programs, doesn't this open any API to an explosion
-of new attributes or other odd extensions? I'd imagine the same argument
-would be applicable to ioctl flags, socket flags, and so on. Why would we
-treat implementing unspecified Netlink bits differently to implementing
-unspecified ioctl bits, etc.
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-Naturally, if this is the mandated approach, then I'll reimplement it with
-a new Netlink attribute. I'm just trying to understand what is the
-Linux-lore, here?
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
-> BTW, you can avoid the coalescing problem by using the nexthop API (man
-> ip-nexthop).
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
-I'm not sure how that would help in this case. We need the nexthop to be
-determined according to its REACHABILITY and other considerations described
-in RFC4861.
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
 
-Kind regards,
-Matt.
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
