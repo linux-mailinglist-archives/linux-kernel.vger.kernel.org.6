@@ -1,89 +1,169 @@
-Return-Path: <linux-kernel+bounces-398152-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398151-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3018A9BE674
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 13:00:08 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id ADED99BE66F
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 12:59:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9BD3B1F22F4B
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 12:00:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E8D01F2495F
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 11:59:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AD2D1DF24C;
-	Wed,  6 Nov 2024 11:59:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C13CF1DFE33;
+	Wed,  6 Nov 2024 11:58:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UbPfOMLX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Wa0zQf9r"
+Received: from mail-yw1-f195.google.com (mail-yw1-f195.google.com [209.85.128.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BB271DED53;
-	Wed,  6 Nov 2024 11:59:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A304A1DF97E;
+	Wed,  6 Nov 2024 11:58:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730894363; cv=none; b=pAAoJ49GUa/sN/dpl9A/62IK3SeR5OXQi8TsIqlZHz2QC/4evt5HgeHLMZq3yz+uOXndyD8in8tO4iKJ5Jb+o4hfdRa1ANmImLG2JeIMvHn4e0OBgOTXwhpe/a0jIrtj+2t/Fcu99DgEOQGX+uVLk5y9inzeKpS4Ml/EMID42U8=
+	t=1730894293; cv=none; b=KWRsIILTv6x8A8mBsZOSJMWgAzZL/3DXF56nBa69aTdPW+EByvAahiJd9APN4vGzubPDVsrZ1/+dfr/ccMFEVHlFcKZYntg7YS2vCCrkJRWcVyIHv8m4s2pv0+hJDOfNGanOY+ibmg7s7s51Lluf3EUPKL66mFhaQvlzKlPd2Po=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730894363; c=relaxed/simple;
-	bh=p0bB5Mo6zqDXDHymfVXTwt+F9b2dNtLH64V05Z+5h48=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kABSOQ49UY6WrzTsp0X0cux7vZbB3ReRARdc/VQV5FEgiTQWJMp65/rF3m07bxqe2gU8+UF2BKx4ZWEPNiLJz9PjitZKiszivjyswHlxjRE1lMdqChfd4tjbTmmcpzOYJ/wmFBqlXNaarqO4QKySAIHXFwgza6q/7N7SM4ait9E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UbPfOMLX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D0F5C4CECD;
-	Wed,  6 Nov 2024 11:59:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730894363;
-	bh=p0bB5Mo6zqDXDHymfVXTwt+F9b2dNtLH64V05Z+5h48=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UbPfOMLXrU9obWrgujDCuY9xTJDbgAuEIPwYySIjPZhpyJfW9bQdfBZyJ1n/xyS2x
-	 AgigZRhn52eQ7sgo6pGM0KEwTMqZAZdAiwXniDxus/PKqvg1rm6CNqYeyzAixuwXnH
-	 t1xV+0uztMN8Ans9QJMXWRJUJ+wH55tUg0RLu75iE+qLOxrYoVNMxSf9HmNZ2HXvNT
-	 hPhI/bl8li9X/KmQC3iGShdTwmcsI/ZsXhUt37zhM6vQrwoj6MrTvOShKLJIvyH1Mp
-	 PIID5zC0EsVn8VXGuCyZe7GsmBZo0pqDoOofoOHsnIcQunUcFG3izlL3iSQcO/mkxX
-	 o1w7Kj33lSO3Q==
-Date: Wed, 6 Nov 2024 12:59:18 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Imran Shaik <quic_imrashai@quicinc.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Ajit Pandey <quic_ajipan@quicinc.com>, Taniya Das <quic_tdas@quicinc.com>, 
-	Jagadeesh Kona <quic_jkona@quicinc.com>, Satya Priya Kakitapalli <quic_skakitap@quicinc.com>, 
-	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 3/6] dt-bindings: clock: qcom: Add CAMCC clocks for
- QCS8300
-Message-ID: <pzlvedk7hs2eawu2vpd6zq5cyrcgj7vtdj6ztwr5fb54kxdrvl@h6yrs7ab3ruc>
-References: <20241106-qcs8300-mm-patches-v3-0-f611a8f87f15@quicinc.com>
- <20241106-qcs8300-mm-patches-v3-3-f611a8f87f15@quicinc.com>
+	s=arc-20240116; t=1730894293; c=relaxed/simple;
+	bh=lPtdyFjSX7/UnqsyuM5h54naOd6rYeJQC1kkvUSDPdg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=C+MktolMKXMqHgoJ+yU6S8/UMWHahDlaOqsbdZ8LCCoYr7wGpIbqmo28XVDLH6xkOXSXtBJ4PFwlqsEcHUwROKETRc3mQLdchG7SWdEqeb07UuMJs1+G5c1lbwlTsgBTsoEOWQSoi8ncKfU8T9Zb8N0Q7lKdPUDKPsQPwWIblwI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Wa0zQf9r; arc=none smtp.client-ip=209.85.128.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f195.google.com with SMTP id 00721157ae682-6ea50585bf2so70141787b3.3;
+        Wed, 06 Nov 2024 03:58:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730894290; x=1731499090; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VAqjHxmUrO89VjVjpuY++87pz4fEOVeyoRet1eIwJ2o=;
+        b=Wa0zQf9rrLCvAwQ5d14mvBeuc8Vy5SADkiZxHg27F5vaNiOdl1netCiGu4FeTeoKGi
+         yyvzHo05tjX+hoMOTbjxz1RU+BJSYvCI+7hSJm/xT8UMwIxVWFFND4lTOlQ9e2K9/z5b
+         fykV4heCNgU1i0SjotFgIIXWbiaQPqfX4SIlVMWrNWHIRqmrQupH4ik7LmT6XZE87yiU
+         QFJ32x5IXSnJyBJqaA6RKy+hMlSCkfLU7lAoEmtip3FEPLK0H1mnTjauPsv6aLWBe4ex
+         HDvOy1G/BuuIVrd3o0qOSvXin7A1pja2oKlqq1SvRsgHDbmLkVvn3YY4yxCIToovufjW
+         umCg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730894290; x=1731499090;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=VAqjHxmUrO89VjVjpuY++87pz4fEOVeyoRet1eIwJ2o=;
+        b=TgpVJjwmWQivACxuxnaMljFg56Q7qqsUlTCu+70OgNHDkLe0zfNDzVFmgNyzbtH3Ah
+         w6qHndltCL5UEPZDJCjroeHbJAk5tT16qQZ7mCedxrIwLD8BLW8VOwAeNHEjAu9pTPF4
+         XugITG1J/f1paRxoPLzp2EBLW1QejWkdB+inT5dJItQRK7TtVgZuMAmBnHNJL1tf2eDr
+         0KuD5jAnl0GLb+pyVdNCtfHgu3Yv8gkRXMJerqfoZq7mVFIIgNLs5RwJFjeSzgxG7Fvj
+         7uDKcu5GqI6wJDEQ/9dV65YHEItEZLQ/K043zOhpH6AHw9vXv8+dkvCPFv8/bcbf2n9k
+         JXuA==
+X-Forwarded-Encrypted: i=1; AJvYcCUo+WaWLfygJtZ3ylYAZ1fardzd0V5nDHAXdnJhDpOKebw95FS6ZjeIV5Gm1nnYUGu5TKouQ3uz8+M/l2gax9RZ@vger.kernel.org, AJvYcCV48u8f5Pn2BBpCFrNL2sQNVJW6NVj4fEOSRgqG/5DOZOrqMxBcBDOTnC41efnTAK0G6lA=@vger.kernel.org, AJvYcCVawiQ70dphkzfwwh6TOm+2tNSOHdZ2z23SgI0a5DoW+N/8eJW2xYTPnmNFvMpqbJXCtPwJkfxQQsq2XkRb@vger.kernel.org, AJvYcCVr/eWrNFUAaTdtnJQw4xMC0Kg0xB1twyKhU1aLKrKZoAd4W1w2+Z8Hin8GOfQBf7pK2KlGX2qL@vger.kernel.org
+X-Gm-Message-State: AOJu0YwOIqjJCYeAgxrQHeoQzsOEX7ihL8JPZe8cGEyp+kPYe1/Sjn0O
+	GKSabsMonFUHpivlkOETKzVyFaJkxZiWWFMXgtlLD1gOCDgk0CTgFZ5F8iYJAIewRYzpMj/de8w
+	Y1GrgQFvWp2kmQA6rjunxE2Yl3Zs=
+X-Google-Smtp-Source: AGHT+IEicBeNuuKcBuxj8PHbVAzeh5q36ut7RhJLw1zsm8LW4+5N2cnbcMPl7qD+TVVga0oNtp2Xo5uEhULkgazh6rI=
+X-Received: by 2002:a05:690c:6c88:b0:6e3:3dbc:ca60 with SMTP id
+ 00721157ae682-6ea64a9f24bmr191545627b3.8.1730894290438; Wed, 06 Nov 2024
+ 03:58:10 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241106-qcs8300-mm-patches-v3-3-f611a8f87f15@quicinc.com>
+References: <20241030014145.1409628-1-dongml2@chinatelecom.cn>
+ <20241030014145.1409628-10-dongml2@chinatelecom.cn> <8f83725e-1ea9-438f-8ab1-ff528ca761fb@redhat.com>
+In-Reply-To: <8f83725e-1ea9-438f-8ab1-ff528ca761fb@redhat.com>
+From: Menglong Dong <menglong8.dong@gmail.com>
+Date: Wed, 6 Nov 2024 19:59:18 +0800
+Message-ID: <CADxym3YK5QYHs8oFwY8FQdcpuQSSY5N=Pj8N40U+vaUdi4er-w@mail.gmail.com>
+Subject: Re: [PATCH RESEND net-next v4 9/9] net: ip: make ip_route_use_hint()
+ return drop reasons
+To: Paolo Abeni <pabeni@redhat.com>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
+	horms@kernel.org, dsahern@kernel.org, pablo@netfilter.org, 
+	kadlec@netfilter.org, roopa@nvidia.com, razor@blackwall.org, 
+	gnault@redhat.com, bigeasy@linutronix.de, hawk@kernel.org, idosch@nvidia.com, 
+	dongml2@chinatelecom.cn, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	netfilter-devel@vger.kernel.org, coreteam@netfilter.org, 
+	bridge@lists.linux.dev, bpf@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Nov 06, 2024 at 03:21:58PM +0530, Imran Shaik wrote:
- +
-> +#include "qcom,sa8775p-camcc.h"
-> +
-> +/* QCS8300 introduces below new clocks compared to SA8775P */
-> +
-> +/* CAM_CC clocks */
-> +#define CAM_CC_TITAN_TOP_ACCU_SHIFT_CLK				86
+On Tue, Nov 5, 2024 at 7:28=E2=80=AFPM Paolo Abeni <pabeni@redhat.com> wrot=
+e:
+>
+> On 10/30/24 02:41, Menglong Dong wrote:
+> > diff --git a/net/ipv4/route.c b/net/ipv4/route.c
+> > index e248e5577d0e..7f969c865c81 100644
+> > --- a/net/ipv4/route.c
+> > +++ b/net/ipv4/route.c
+> > @@ -2142,28 +2142,34 @@ ip_mkroute_input(struct sk_buff *skb, struct fi=
+b_result *res,
+> >   * assuming daddr is valid and the destination is not a local broadcas=
+t one.
+> >   * Uses the provided hint instead of performing a route lookup.
+> >   */
+> > -int ip_route_use_hint(struct sk_buff *skb, __be32 daddr, __be32 saddr,
+> > -                   dscp_t dscp, struct net_device *dev,
+> > -                   const struct sk_buff *hint)
+> > +enum skb_drop_reason
+> > +ip_route_use_hint(struct sk_buff *skb, __be32 daddr, __be32 saddr,
+> > +               dscp_t dscp, struct net_device *dev,
+> > +               const struct sk_buff *hint)
+> >  {
+> > +     enum skb_drop_reason reason =3D SKB_DROP_REASON_NOT_SPECIFIED;
+> >       struct in_device *in_dev =3D __in_dev_get_rcu(dev);
+> >       struct rtable *rt =3D skb_rtable(hint);
+> >       struct net *net =3D dev_net(dev);
+> > -     enum skb_drop_reason reason;
+> > -     int err =3D -EINVAL;
+> >       u32 tag =3D 0;
+> >
+> >       if (!in_dev)
+> > -             return -EINVAL;
+> > +             return reason;
+> >
+> > -     if (ipv4_is_multicast(saddr) || ipv4_is_lbcast(saddr))
+> > +     if (ipv4_is_multicast(saddr) || ipv4_is_lbcast(saddr)) {
+> > +             reason =3D SKB_DROP_REASON_IP_INVALID_SOURCE;
+> >               goto martian_source;
+> > +     }
+> >
+> > -     if (ipv4_is_zeronet(saddr))
+> > +     if (ipv4_is_zeronet(saddr)) {
+> > +             reason =3D SKB_DROP_REASON_IP_INVALID_SOURCE;
+> >               goto martian_source;
+> > +     }
+> >
+> > -     if (ipv4_is_loopback(saddr) && !IN_DEV_NET_ROUTE_LOCALNET(in_dev,=
+ net))
+> > +     if (ipv4_is_loopback(saddr) && !IN_DEV_NET_ROUTE_LOCALNET(in_dev,=
+ net)) {
+> > +             reason =3D IP_LOCALNET;
+> >               goto martian_source;
+> > +     }
+> >
+> >       if (rt->rt_type !=3D RTN_LOCAL)
+> >               goto skip_validate_source;
+>
+> Please explicitly replace also the
+>
+>         return 0;
+>
+> with
+>
+>         return SKB_NOT_DROPPED_YET;
+>
+> So that is clear the drop reason is always specified.
 
-I really wonder what you are going to do when sa8775p grows by one clock
-and will get ID of 86 :) (and before you say sa8775p will use 87, let me
-just clarify it will have to get 86 because no gaps would be
-accepted in existing header)
+Okay!
 
-But that's not my problem:
+Thanks!
+Menglong Dong
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Best regards,
-Krzysztof
-
+> Thanks,
+>
+> Paolo
+>
 
