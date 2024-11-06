@@ -1,189 +1,101 @@
-Return-Path: <linux-kernel+bounces-398951-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398952-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABEC19BF864
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 22:17:46 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DDDC49BF868
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 22:18:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E6DA284060
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 21:17:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 94DE71F239C8
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 21:18:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1C4D20C313;
-	Wed,  6 Nov 2024 21:17:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07F7520CCF8;
+	Wed,  6 Nov 2024 21:17:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b="LzIQnRUr"
-Received: from mxout4.routing.net (mxout4.routing.net [134.0.28.9])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i2IEBEy0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84CCA1D6DDA;
-	Wed,  6 Nov 2024 21:17:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=134.0.28.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 506F81D63F8;
+	Wed,  6 Nov 2024 21:17:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730927850; cv=none; b=NysQcgWXeACTh3cPMzkfhhE5JlnhwLB6YScn8tcyyIZwX3/PFLvng9y2K7Ya+H+WjDnS3iQKXaprVcBIMrfNuTFeYNoQNp2urTPr/RZK9JFpYXgcp1pK5sg1M9MTfmK+EbXVv+WyIo+lwhIIC6pYKVwWzYU+fs2VB4RDmlHuXx0=
+	t=1730927862; cv=none; b=HHsESl9uSCfD8+V/mtCa7PhAK59Vi0juzycV00VvAT5Q/cJXHJi1ygJ3AG1duHsORp0CdtRPaTrSq3UVL0vDuphJyF1uGph0Jsgn88XKCXxl6ev2k2YCxDf7psEoRZL1mr4oAO3zSv28YPSmRM7LCbjVkYqHvqJsgos/9Xyz3Fo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730927850; c=relaxed/simple;
-	bh=zEsXT7lp8yFeWdvXkyF7krDOTtoBSR8PseVMIaWwrqI=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=Xh/6nZqqcB7+wegroxQuqx3Yys7HZk/rZ3Btf+4+x71zLjdSz2N/htif9Suzywo+iygOVcmkshnbFwucjVqjPsSGHcANOIX5N69DlRs/OzKAgyzRc61S64rfgSJgDMSWj9q/BVDRSzKXjYj6UZbcA40z7zDhShHZQYN63Sw6SSo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de; spf=pass smtp.mailfrom=fw-web.de; dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b=LzIQnRUr; arc=none smtp.client-ip=134.0.28.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fw-web.de
-Received: from mxbox1.masterlogin.de (unknown [192.168.10.88])
-	by mxout4.routing.net (Postfix) with ESMTP id 5A4E81015D2;
-	Wed,  6 Nov 2024 21:17:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailerdienst.de;
-	s=20200217; t=1730927845;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hBLyzvIh7CKmRzey/NIzdLIeO4OLcavrJ7K8Oj+KhKw=;
-	b=LzIQnRUr49A6oV1zsN6hj4DQg175lI5Ckwwx0fKML1DlY02b6TiyogV0L4LmgS0z10j1Cf
-	zcH+mOp5qGZaocNlvqSXhAUcYDe5fbF2cNHQq3oCkkxWUQwYybxqfC+8rUhsD1C49k5P+l
-	AI7wyL3wE5PK1RctS0hhkd7w7TES++A=
-Received: from webmail.hosting.de (unknown [134.0.26.148])
-	by mxbox1.masterlogin.de (Postfix) with ESMTPSA id B16304009E;
-	Wed,  6 Nov 2024 21:17:24 +0000 (UTC)
+	s=arc-20240116; t=1730927862; c=relaxed/simple;
+	bh=30pjOrftk+x/9JwFj0XfoVd8G3rer8//+ZVC/VnGbV8=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=C1utmz2oLjsbPUXDXMZKDncuJBj8EfT8hiHX+7EYZDDa61hHvuAq3WUryPWWm8QY8n/T6+3SQXXrGeu7KQiLDKdMNt4O/BXSQETWWJmDGZIj+w22l3subD719qSYHZl7WL8A7uwKUf6uf1yVTXNmqRrOgd4Izp9JnHhBzuzIPrc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i2IEBEy0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2A0EC4CEC6;
+	Wed,  6 Nov 2024 21:17:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730927860;
+	bh=30pjOrftk+x/9JwFj0XfoVd8G3rer8//+ZVC/VnGbV8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=i2IEBEy0j5D6Hs5Uelajxim0x5TkJosdCViiVn14KMOBw8KohhHaQgG89hYZF88zK
+	 aMR8vAPDhWthT1BdH1NW/FUsfEza4PvVABrzQeDnfoKiFwTKMEdywdy61ULnVBP2+8
+	 zp+sWqiDVR7a0GIBS67GeWSF94r8ugyryFnBU3qvr8x+b0OyLaTQ9jzX/nygZQDi6b
+	 v7f39T8ICyEkIDNzWosdvngu32r48JRKRT/NJuDDjsIcQ49X22O2iB967W8UknozZl
+	 CTwUencrutetUgfz0Y0Lo4P0lDXtnflnybqcjopiqVTBhYUxPiD16hMcRmAsib+uFo
+	 3es9zqoHZeraA==
+Date: Wed, 6 Nov 2024 15:17:38 -0600
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Leon Romanovsky <leon@kernel.org>
+Cc: Sanman Pradhan <sanman.p211993@gmail.com>,
+	Bjorn Helgaas <bhelgaas@google.com>, netdev@vger.kernel.org,
+	alexanderduyck@fb.com, kuba@kernel.org, kernel-team@meta.com,
+	davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
+	horms@kernel.org, corbet@lwn.net, mohsin.bashr@gmail.com,
+	sanmanpradhan@meta.com, andrew+netdev@lunn.ch,
+	vadim.fedorenko@linux.dev, jdamato@fastly.com, sdf@fomichev.me,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org
+Subject: Re: [PATCH net-next] eth: fbnic: Add PCIe hardware statistics
+Message-ID: <20241106211738.GA1540450@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Wed, 06 Nov 2024 22:17:24 +0100
-From: "Frank Wunderlich (linux)" <linux@fw-web.de>
-To: Rob Herring <robh@kernel.org>
-Cc: Gregory CLEMENT <gregory.clement@bootlin.com>, Andrew Lunn
- <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Russell King <linux@armlinux.org.uk>,
- linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, frank-w@public-files.de
-Subject: Re: [PATCH] arm64: dts: marvell: Drop undocumented SATA phy names
-In-Reply-To: <CAL_JsqKfpVVVh6L0PLmieBO3qMFpcDfWFwd+5=qzH_MbeZt31Q@mail.gmail.com>
-References: <20241014193528.1896905-2-robh@kernel.org>
- <87r07p8x12.fsf@BLaptop.bootlin.com>
- <0A5AFF77-D888-4151-9C15-15A408709857@fw-web.de>
- <CAL_JsqKfpVVVh6L0PLmieBO3qMFpcDfWFwd+5=qzH_MbeZt31Q@mail.gmail.com>
-Message-ID: <4aa7f13e12646722d859ead240177eab@fw-web.de>
-X-Sender: linux@fw-web.de
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 8bit
-X-Mail-ID: 84ed6ef5-32e9-463f-b99c-fd8841002fe1
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241106175054.GG5006@unreal>
 
-Am 2024-11-06 19:39, schrieb Rob Herring:
-> On Wed, Nov 6, 2024 at 12:34 PM Frank Wunderlich <linux@fw-web.de> 
-> wrote:
->> 
->> Am 5. November 2024 17:28:57 MEZ schrieb Gregory CLEMENT 
->> <gregory.clement@bootlin.com>:
->> >"Rob Herring (Arm)" <robh@kernel.org> writes:
->> >
->> >> While "phy-names" is allowed for sata-port nodes, the names used aren't
->> >> documented and are incorrect ("sata-phy" is what's documented). The name
->> >> for a single entry is fairly useless, so just drop the property.
->> >>
->> >> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
->> >
->> >Applied on mvebu/dt64
->> >
->> >Thanks,
->> >
->> >Gregory
->> >> ---
->> >> Cc: Frank Wunderlich <linux@fw-web.de>
->> >>
->> >> There's also this 2 year old patch fixing other SATA errors[1] which
->> >> was never picked up. :(
->> >>
->> >> [1] https://lore.kernel.org/linux-arm-kernel/20220311210357.222830-3-linux@fw-web.de/
->> 
->> Hi
->> 
->> How to deal with my patch pointed by rob?
+On Wed, Nov 06, 2024 at 07:50:54PM +0200, Leon Romanovsky wrote:
+> On Wed, Nov 06, 2024 at 11:12:57AM -0600, Bjorn Helgaas wrote:
+> > On Wed, Nov 06, 2024 at 02:22:51PM +0200, Leon Romanovsky wrote:
+> > > On Tue, Nov 05, 2024 at 04:26:25PM -0800, Sanman Pradhan wrote:
+> > > > Add PCIe hardware statistics support to the fbnic driver. These stats
+> > > > provide insight into PCIe transaction performance and error conditions,
+> > > > including, read/write and completion TLP counts and DWORD counts and
+> > > > debug counters for tag, completion credit and NP credit exhaustion
+> > > > 
+> > > > The stats are exposed via ethtool and can be used to monitor PCIe
+> > > > performance and debug PCIe issues.
+> > > 
+> > > And how does PCIe statistics belong to ethtool?
+> > > 
+> > > This PCIe statistics to debug PCIe errors and arguably should be part of
+> > > PCI core and not hidden in netdev tool.
+> > 
+> > How would this be done in the PCI core?  As far as I can tell, all
+> > these registers are device-specific and live in some device BAR.
 > 
-> I believe it will conflict with mine. Can you rebase on top of
-> mvebu/dt64 and resend it.
+> I would expect some sysfs file/directory exposed through PCI core.
+> That sysfs needs to be connected to the relevant device through
+> callback, like we are doing with .sriov_configure(). So every PCI
+> device will be able to expose statistics without relation to netdev.
 > 
-> Rob
+> That interface should provide read access and write access with zero
+> value to reset the counter/counters.
 
-i have rebased my patch [1], but it seems there are much more errors 
-there (which i tried to fix there too).
+Seems plausible.  We do already have something sort of similar with
+aer_stats_attrs[].  I don't think there's a way to reset them though,
+and they're just all thrown in the top-level device directory, which
+probably isn't scalable.
 
-To be honest marvell is confusing to me finding the right file to patch 
-because of many dtsi files included by each other mixed with some 
-macros.
-
-at least some properties have to be documented in yaml:
-
-arch/arm64/boot/dts/marvell/armada-8040-db.dtb: sata@540000: Unevaluated 
-properties are not allowed ('#address-cells', '#size-cells', 
-'dma-coherent', 'iommus' were unexpected)
-
-sata-node itself seems to be defined in 
-arch/arm64/boot/dts/marvell/armada-cp11x.dtsi (adress/size-cells and 
-dma-coherent are defined here)
-
-iommus seems to be added with
-83a3545d9c37 2020-07-15 arm64: dts: marvell: add SMMU support Marcin 
-Wojtas  (tag: mvebu-dt64-5.9-1)
-which seems not be documented in txt before i converted the binding.
-
-so something like adding this to the binding:
-
-   '#address-cells':
-     const: 1
-
-   '#size-cells':
-     const: 0
-
-   dma-coherent: true
-
-   iommus:
-     maxItems: 1
-
-dma-coherent was there in my version and seem to be broken with
-
-6f997d4bb98b 2022-09-09 dt-bindings: ata: ahci-platform: Move 
-dma-coherent to sata-common.yaml Serge Semin
-
-but maybe i only get the error for it because of my call with my yaml 
-only
-
-ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- make dtbs_check 
-DT_SCHEMA_FILES=Documentation/devicetree/bindings/ata/ahci-platform.yaml
-
-adress/size-cells is strange to me, i'm sure i tested the yaml against 
-the example which also contains them...i guess it was defined somewhere 
-else.
-
-and this one:
-
-arch/arm64/boot/dts/marvell/armada-8040-mcbin.dtb: sata@540000: 
-sata-port@0:phy-names:0: 'sata-phy' was expected
-	from schema $id: http://devicetree.org/schemas/ata/ahci-platform.yaml#
-
-i guess it is taken from here:
-Documentation/devicetree/bindings/ata/ahci-common.yaml:107:        
-const: sata-phy
-
-if i understand it the right way then if phy-names is defined in 
-sata-subnode it has to be value "sata-phy"...so basicly somewhere in the 
-chains of dtsi's a phy-name is defined to another value..am i right?
-
-it looks like it is in 
-arch/arm64/boot/dts/marvell/armada-8040-mcbin.dtsi...if i drop the 
-phy-names for the other sata-ports (below cp1_sata0)
-
-seems dropping them were missing from your patch as you remove another 
-one in same file (&cp0_sata0)
-
-please correct me if i'm wrong
-
-regards Frank
-
-[1] https://github.com/frank-w/BPI-Router-Linux/commits/mvebu/dt64/
+Bjorn
 
