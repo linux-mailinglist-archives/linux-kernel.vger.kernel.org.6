@@ -1,217 +1,170 @@
-Return-Path: <linux-kernel+bounces-398196-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398198-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E63EF9BE893
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 13:25:58 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E16A9BE8EB
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 13:28:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 49D82B24B9D
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 12:25:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 89AB21F23285
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 12:28:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA5111DFDB2;
-	Wed,  6 Nov 2024 12:25:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 712DA1DF992;
+	Wed,  6 Nov 2024 12:28:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="h4Lb0/eh"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="GGzIxi9w"
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ED1C1DED58;
-	Wed,  6 Nov 2024 12:25:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4C2A1DDA15
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 12:28:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730895936; cv=none; b=PSEIq9eAU/I34Bz4hhRXq5VN4Ob6ivR4doBTM+TJH+31fg1X1cdxO5U5Ic2v0H5mWd0Juyo/mDsJ+gGyAR1rjAFJT9PM8w007zolT5Uuu/ZvCFqGdll0ttsaSrxiGiEqEd6DjsbH9JdZCJbapd9UPTgsOvwn4kdBnG3hMSxVH6U=
+	t=1730896110; cv=none; b=LcMV4MyMq7B5U4xRsiPht0eWkzUyr2xiZJcr7RXsLUQcPSbgZu35SlwSgOos6t1lhE+pQ+YM32I72CVEZgG6SyUmMnFBhuGJ0EjPyFRKXzGUt2Fm2ExEMf+gZI5I3kUQEVd2UEnusm3tKWt3ZD1arp9YbTxZ2kLegUn9QpcDGIY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730895936; c=relaxed/simple;
-	bh=/b8UrPQJwW2sNhuczGQ6b+KXkJ3vIhF9YdXxffKTmG0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=JzS4+ERB3TdxvAWv2L1xTYmncEd8Ozuu2ouAX0Gr9l+7VljNeXyn7v6vjF2+7H+/kyE5kg5y97eWWGCcqHmP1eDRbeIrXDB6Evsp72tD4+NniffgwJTqzvzrR0lT7iLr6hMCZbutjKgNjPzouqVnKwhpvKg/VQda1EGsSdoZIvM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=h4Lb0/eh; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A6CA1Vq000422;
-	Wed, 6 Nov 2024 12:25:33 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=pp1; bh=a6pb5bfwDq7BZ2tyP
-	J6CcAP5nys9lC/eq4N0Yls3VuI=; b=h4Lb0/ehSuxiIyFH1hqA4UkZ+wTQU9L9j
-	Z+vKpItO/NfJVMiRZaD8iU/x8QuJR8+kvxwpIAPjmOdAwo61yCfi8I85JW2YKlW1
-	DBCsYUJavqkHNOwzhcJRAQIZKwpBLb6motZchBiGPTLnNvdzGU6QKLng7z9Hbt0Q
-	HE29HCCrlPIbrIwGsUrFfJ3Um/tiMNEfOs2l10Kabl1tU6/ef6xSnTUxggUe/zXJ
-	nHg8dtMkjFyIi9V6RlqPgVPNScxf1y/U47lMk0t6Cip+Ab8Vx5UZP5E6hGuk/ljc
-	BzFkE71A6pgH30kfirnkxzP0Cy5IwkK7VeHnCsmSziIkHqrKVp/7A==
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42r87j82jw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 06 Nov 2024 12:25:33 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4A66HMEi019503;
-	Wed, 6 Nov 2024 12:25:32 GMT
-Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 42p0mj61sv-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 06 Nov 2024 12:25:32 +0000
-Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
-	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4A6CPTt746006628
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 6 Nov 2024 12:25:29 GMT
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 1C9CC20043;
-	Wed,  6 Nov 2024 12:25:29 +0000 (GMT)
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id EA33020040;
-	Wed,  6 Nov 2024 12:25:28 +0000 (GMT)
-Received: from tuxmaker.boeblingen.de.ibm.com (unknown [9.152.85.9])
-	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Wed,  6 Nov 2024 12:25:28 +0000 (GMT)
-From: Steffen Eiden <seiden@linux.ibm.com>
-To: seiden@linux.ibm.com
-Cc: borntraeger@linux.ibm.com, frankja@linux.ibm.com, ifranzki@linux.ibm.com,
-        imbrenda@linux.ibm.com, linux-kernel@vger.kernel.org,
-        linux-s390@vger.kernel.org, schlameuss@linux.ibm.com
-Subject: [PATCH v4] s390/uvdevice: Support longer secret lists
-Date: Wed,  6 Nov 2024 13:25:28 +0100
-Message-ID: <20241106122528.1690511-1-seiden@linux.ibm.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241104153609.1361388-1-seiden@linux.ibm.com>
-References: <20241104153609.1361388-1-seiden@linux.ibm.com>
+	s=arc-20240116; t=1730896110; c=relaxed/simple;
+	bh=22mEWvI6gKzd1z8uuif4HIEMa2HjcN13Aq6+BkotBAo=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cIsBGSUZ5A2HmDJFxQaB4oLVk+QA9Omeo3RJxhXgqChfKmpDaj0egsmR8TWIo1yibiyH4w93h0snrHmZUgMa+gj/O0PELpa4VlJ0bbN1zfI6272KniE7dMBz2rZsch49UCrHwBN228OvE4gX5It3x4TZ8qEH5ZCP4Kk+jR1H/RA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=GGzIxi9w; arc=none smtp.client-ip=209.85.208.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2fb5fa911aaso100052061fa.2
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2024 04:28:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1730896107; x=1731500907; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=iWIaYuWanDJCXpP4xKD1ILcaU1UBHWm0pC+lsLc+oFM=;
+        b=GGzIxi9wSjK7EMLAQNNRGmx+pgC1QgBi54CMvKZmndWXcBWWQT/ZTjD0vSysyNKw5X
+         c1s7eoHhJLBJdfnl3Sos36Y12HiugpBcok5kmjA3ldeA/aLiZuUtzg5hc1tcSY7f1Qc6
+         edj5GuOiDg26qVDx0mfFGBU8/pF49BW1lgSWnOMqHwoXMWSNaRsG5QYxhu8Zk/qa+Nwv
+         G8gLR1TXnvfYSebIpWCPSluZHQ1OtDRTnMRXy7Xgp9vIW58c9MUjrzMvvqz/Pp3iDGVQ
+         Kv9WtjWAgQ4lsfXdUirGUQakHl0frudojCg0Ece6j0fXbIu3/bePCJOhoP94FexYvYAH
+         D5Lg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730896107; x=1731500907;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=iWIaYuWanDJCXpP4xKD1ILcaU1UBHWm0pC+lsLc+oFM=;
+        b=e0hgTWbOYnzaTM0uVUadXKocKxRrcCKTD055YIXuo4cEcck8kJFA+nnPd8DY1INuJy
+         17Kd06C3r048zWy6qZhpsf1Ps0qYdRQnE+AR4ECTXSfNQPG6MmKj4nkxMlKZkHnKH6by
+         V77fyRxDjaM+YGS5aqPNPXUxoLFYxFLYFOeGD/C8csdGlXZ23NBatjYAUN5e2YLTvgaG
+         REJsa2wUB1MP6/dGBYvcmWMZJH9Ik00xLq7G5Yb1H3tLXyKQx4HYDg38vDlRh0aq82I3
+         MjGmfOrcmqnjzdbI55jQmWsnhE7KJs17QwGegQZv1tjW6W8y7qZbCUCSMpaAvKaeAPS5
+         0O1g==
+X-Forwarded-Encrypted: i=1; AJvYcCW+jd5QD/KqGbl0cLr0XTVAa13nw58LtSWSXf/EDGTM9+hx0IrsKhC7rFlGxrT83i5GdzOkkt7Z4SJpNgw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwbFn+ax8DEe1A6FYuysgnl3jXYsVeDYaWbxhM52n9YH3AVL0Qd
+	NV5dAbJYr7YSiS6rU/PNEDOoj91A71aSQVJd+/t0A9lbA0tGkQzp6ZG+lKdzNX0=
+X-Google-Smtp-Source: AGHT+IH01edGD9WqoLaLqcgKuDB7Exq8qeJnSC4L0C1q00at8YKTkQgYxMxULRDTQH3U47fkcdWNvw==
+X-Received: by 2002:a2e:a545:0:b0:2fa:fcf0:7c2a with SMTP id 38308e7fff4ca-2fedb7ca5b3mr158144621fa.24.1730896106943;
+        Wed, 06 Nov 2024 04:28:26 -0800 (PST)
+Received: from localhost (host-79-35-211-193.retail.telecomitalia.it. [79.35.211.193])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9eb17d0adasm272575766b.111.2024.11.06.04.28.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 06 Nov 2024 04:28:26 -0800 (PST)
+From: Andrea della Porta <andrea.porta@suse.com>
+X-Google-Original-From: Andrea della Porta <aporta@suse.de>
+Date: Wed, 6 Nov 2024 13:28:52 +0100
+To: Andrea della Porta <andrea.porta@suse.com>
+Cc: Stanimir Varbanov <svarbanov@suse.de>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof Wilczynski <kw@linux.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Saravana Kannan <saravanak@google.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-gpio@vger.kernel.org,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Stefan Wahren <wahrenst@gmx.net>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Andrew Lunn <andrew@lunn.ch>
+Subject: Re: [PATCH v3 09/12] arm64: dts: rp1: Add support for RaspberryPi's
+ RP1 device
+Message-ID: <ZythBBrjwxxCnzCZ@apocalypse>
+References: <cover.1730123575.git.andrea.porta@suse.com>
+ <1f4cec50493ec5d3168735c0a005771787e5cd59.1730123575.git.andrea.porta@suse.com>
+ <4a474dae-6669-4678-87dd-e0e9692a749b@suse.de>
+ <ZyosSv4ecKxohSrM@apocalypse>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: ppiVV3jiZgRR6qu3n-yisE5lW2Ds6s5k
-X-Proofpoint-ORIG-GUID: ppiVV3jiZgRR6qu3n-yisE5lW2Ds6s5k
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- suspectscore=0 priorityscore=1501 phishscore=0 impostorscore=0 mlxscore=0
- malwarescore=0 clxscore=1015 spamscore=0 mlxlogscore=906 bulkscore=0
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411060099
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZyosSv4ecKxohSrM@apocalypse>
 
-Enable the list IOCTL to provide lists longer than one page (85 entries).
-The list IOCTL now accepts any argument length in page granularity.
-It fills the argument up to this length with entries until the list
-ends. User space unaware of this enhancement will still receive one page
-of data and an uv_rc 0x0100.
+Hi Stan,
 
-Reviewed-by: Janosch Frank <frankja@linux.ibm.com>
-Reviewed-by: Christoph Schlameuss <schlameuss@linux.ibm.com>
-Signed-off-by: Steffen Eiden <seiden@linux.ibm.com>
----
-v4: add r-b, remove WARN
+On 15:31 Tue 05 Nov     , Andrea della Porta wrote:
+> Hi Stan,
+> 
+> On 15:29 Mon 04 Nov     , Stanimir Varbanov wrote:
+> > Hi Andrea,
+> >
 
- drivers/s390/char/uvdevice.c | 69 ++++++++++++++++++++++++++----------
- 1 file changed, 50 insertions(+), 19 deletions(-)
+...
 
-diff --git a/drivers/s390/char/uvdevice.c b/drivers/s390/char/uvdevice.c
-index 1f90976293e8..c5c8dd13590a 100644
---- a/drivers/s390/char/uvdevice.c
-+++ b/drivers/s390/char/uvdevice.c
-@@ -297,6 +297,41 @@ static int uvio_add_secret(struct uvio_ioctl_cb *uv_ioctl)
- 	return ret;
- }
- 
-+/*
-+ * Do the actual secret list creation. Calls the list secrets UVC until there
-+ * is no more space in the user buffer, or the list ends.
-+ */
-+static int uvio_get_list(void *zpage, struct uvio_ioctl_cb *uv_ioctl)
-+{
-+	const size_t data_off = offsetof(struct uv_secret_list, secrets);
-+	u8 __user *user_buf = (u8 __user *)uv_ioctl->argument_addr;
-+	struct uv_secret_list *list = zpage;
-+	u16 num_secrets_stored = 0;
-+	size_t user_off = data_off;
-+	size_t copy_len;
-+
-+	do {
-+		uv_list_secrets(list, list->next_secret_idx, &uv_ioctl->uv_rc,
-+				&uv_ioctl->uv_rrc);
-+		if (uv_ioctl->uv_rc != UVC_RC_EXECUTED &&
-+		    uv_ioctl->uv_rc != UVC_RC_MORE_DATA)
-+			break;
-+
-+		copy_len = sizeof(list->secrets[0]) * list->num_secr_stored;
-+		if (copy_to_user(user_buf + user_off, list->secrets, copy_len))
-+			return -EFAULT;
-+
-+		user_off += copy_len;
-+		num_secrets_stored += list->num_secr_stored;
-+	} while (uv_ioctl->uv_rc == UVC_RC_MORE_DATA &&
-+		 user_off + sizeof(*list) <= uv_ioctl->argument_len);
-+
-+	list->num_secr_stored = num_secrets_stored;
-+	if (copy_to_user(user_buf, list, data_off))
-+		return -EFAULT;
-+	return 0;
-+}
-+
- /** uvio_list_secrets() - perform a List Secret UVC
-  * @uv_ioctl: ioctl control block
-  *
-@@ -308,6 +343,12 @@ static int uvio_add_secret(struct uvio_ioctl_cb *uv_ioctl)
-  *
-  * The argument specifies the location for the result of the UV-Call.
-  *
-+ * Argument length must be a multiple of a page.
-+ * The list secrets IOCTL will call the list UVC multiple times and fill
-+ * the provided user-buffer with list elements until either the list ends or
-+ * the buffer is full. The list header is merged over all list header from the
-+ * individual UVCs.
-+ *
-  * If the List Secrets UV facility is not present, UV will return invalid
-  * command rc. This won't be fenced in the driver and does not result in a
-  * negative return value.
-@@ -318,31 +359,21 @@ static int uvio_add_secret(struct uvio_ioctl_cb *uv_ioctl)
-  */
- static int uvio_list_secrets(struct uvio_ioctl_cb *uv_ioctl)
- {
--	void __user *user_buf_arg = (void __user *)uv_ioctl->argument_addr;
--	struct uv_cb_guest_addr uvcb = {
--		.header.len = sizeof(uvcb),
--		.header.cmd = UVC_CMD_LIST_SECRETS,
--	};
--	void *secrets = NULL;
--	int ret = 0;
-+	void *zpage = NULL;
-+	int rc;
- 
--	if (uv_ioctl->argument_len != UVIO_LIST_SECRETS_LEN)
-+	if (uv_ioctl->argument_len == 0 ||
-+	    uv_ioctl->argument_len % UVIO_LIST_SECRETS_LEN != 0)
- 		return -EINVAL;
- 
--	secrets = kvzalloc(UVIO_LIST_SECRETS_LEN, GFP_KERNEL);
--	if (!secrets)
-+	zpage = (void *)get_zeroed_page(GFP_KERNEL);
-+	if (!zpage)
- 		return -ENOMEM;
- 
--	uvcb.addr = (u64)secrets;
--	uv_call_sched(0, (u64)&uvcb);
--	uv_ioctl->uv_rc = uvcb.header.rc;
--	uv_ioctl->uv_rrc = uvcb.header.rrc;
--
--	if (copy_to_user(user_buf_arg, secrets, UVIO_LIST_SECRETS_LEN))
--		ret = -EFAULT;
-+	rc = uvio_get_list(zpage, uv_ioctl);
- 
--	kvfree(secrets);
--	return ret;
-+	free_page((unsigned long)zpage);
-+	return rc;
- }
- 
- /** uvio_lock_secrets() - perform a Lock Secret Store UVC
--- 
-2.45.2
+> > shouldn't this be:
+> > 
+> > 	rp1_clocks: clocks@18000 {
+> > 		reg = <0x00 0x00018000 0x0 0x10038>;
+> > 		...
+> > 	}
+> > 
+> > ?
+> > 
+> > And for other nodes too...
+> 
+> For that to be @18000 instead of @c040018000, you should also change
+> the "ranges" entry in pci-ep-bus node, as follows:
+> 
+> ranges = <0x00 0x00018000	//This was: 0xc0 0x40000000
+>           0x01 0x00 0x00000000
+>           0x00 0x00400000>;
+> 
+> which is of course feasible, but I prefer to use addresses that 
+> resemble (at least to some extent) the ones in RP1 docs.
+> 
+> Many thanks,
+> Andrea
 
+Sorry, this should be like this 
+
+ranges = <0x00 0x00000000	//This was: 0xc0 0x40000000
+          0x01 0x00 0x00000000
+          0x00 0x00400000>;
+
+i.e. the child address in the range should be 0 and not 0x18000.
+Anyway you got the point: in theory we can replace that address
+with whatever placeholder we want and from a functional perspective,
+it will work, as long as you change all the relevant mappings.
+After some brainstorming we've decided to choose a simpler scheme
+that will resemble more the internal address described in the RP1
+reference manual. 0xC040000000 will become 0x40000000.
+
+Many thanks,
+Andrea
+
+...
 
