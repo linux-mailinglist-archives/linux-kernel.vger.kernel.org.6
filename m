@@ -1,244 +1,303 @@
-Return-Path: <linux-kernel+bounces-398104-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398107-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 502839BE56F
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 12:21:26 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 680B59BE57C
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 12:25:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D6A831F24B85
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 11:21:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2720D285B24
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 11:25:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 302FD1DDC0F;
-	Wed,  6 Nov 2024 11:21:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 617A11DE8A1;
+	Wed,  6 Nov 2024 11:25:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="PpfBHBR2"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nlSG3EDq"
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD4EF18C00E
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 11:21:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C27B646;
+	Wed,  6 Nov 2024 11:25:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730892078; cv=none; b=TrxXZVDpl91IqmIinUu1s96IlNFhc26uMCHfX65jagL3Oe2gKSyDUouy9puf2RZSYnfwQVI3ALs3+4M5eGtTFVhe5sVQpLZLaVDFaUFZiunXV5qiPVidlC9NwvLNjPicfYkeKz4xm2eoa7k7RHvxkjmu+ZvyV9+No4UHtHNbeRU=
+	t=1730892328; cv=none; b=uIQSzNf/kNcDgn+OdSATz7BpR2YLiGKY466dmECi4UcXDpSPZWt/r++Ia+CDTtlMfqZ5qHVqUOqpHZjs9egF643Mmt0YxY0y1ri+Lx/OS3gRLOcdg/hU79KfAS3PenLlpkNgh3ifB0AnHCHKhn4A8AKuMlevmkN8ppU43QqOu64=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730892078; c=relaxed/simple;
-	bh=YXPfgFDdF+d9ngapRnd6AO0SpV7hFZYBlKb7CgdQFBY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IAFVuRJ5cOs3UKTTZyF8kVgVVsjuLRqQwj2uv4cZnC6MAS4im4aws6VlnS+Z0Y5eHaK8IgM6RYayFfATAY8FEeT8LgadknHhgrW2jYltuG42qQt8EHa0Dlr69u5+s/ituqsZFj4EmWl14h0BkkaR4t8RrhGRY4z7aW5P1em7UM0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=fail (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=PpfBHBR2 reason="signature verification failed"; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 79D9040E0163;
-	Wed,  6 Nov 2024 11:21:13 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=fail (4096-bit key)
-	reason="fail (body has been altered)" header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id Duk4RlUzI0Sl; Wed,  6 Nov 2024 11:21:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1730892067; bh=Bu9fc6Dk9TVZNAnf18tH23Loe20vPvoX1unefxwQ4fQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PpfBHBR2siHCoN5sZjsRzzPjtSbUqReZ4o2pwyG2uYaxsqQY5QBrvbtP251iTzDMe
-	 TZPG7ra+qAxDsRNQwPEma/4G/LJSDQFUbGxDKYO08KTdYRLffrgyhLJGxc+tI/zunL
-	 yHRz9GtDJh1vMiQ5/oYolZ8d0tkFvIJ6ID25cYc78Lx1bVicJ5hocNqaWwfmcukGxX
-	 CReJsezzTOgiaCegnYGTFKKig0Rxdw3r+uZ9OJ7Br46YWezJ0xXrCwYKe0mc1GJaJ6
-	 DxHM84wbtNRTJbvjSzkzdhVKCUs5YAD9asmmfYgA+bj5iO/rALIEGwApFOXph9FYWg
-	 vRoSmA8bt7a1R1eSARwHfcAaOwNtVYONfrTJd4COspgUgkpXbgqk48jXGwl2BizxL/
-	 CuaDBzoZMOC8n4S4ZIl/oHMOKawbXc7YFzOp+jXnrpBLOm/T1f0aSLbE6yQMgXKthN
-	 vXE6yMZlXLrFGTKsi66WP6Qe4WjJWM4h0Nka5yRxN+BJkqBPY6pGg07bbTnF5rj+01
-	 MRiNvRw3jse4crVn6psMcy5+6QxcOtquX4aYvoYpDHKE+YawfzqkYPvJG2ug2LRwFp
-	 203P4to4M7z10udhdGdVlKhQvWjpdXyKXxAcVqhDC5r3YIteAYErotYbkx+JKMODDq
-	 YJZ/Lp9pRF0uX+LCqm/GyegM=
-Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 23B5240E0261;
-	Wed,  6 Nov 2024 11:20:58 +0000 (UTC)
-Date: Wed, 6 Nov 2024 12:20:52 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Baoquan He <bhe@redhat.com>
-Cc: Tom Lendacky <thomas.lendacky@amd.com>, linux-kernel@vger.kernel.org,
-	dyoung@redhat.com, daniel.kiper@oracle.com, noodles@fb.com,
-	lijiang@redhat.com, kexec@lists.infradead.org, x86@kernel.org
-Subject: Re: [PATCH v3 1/2] x86/mm: rename the confusing local variable in
- early_memremap_is_setup_data()
-Message-ID: <20241106112052.GCZytRFKTESZI8_3qD@fat_crate.local>
-References: <20240911081615.262202-1-bhe@redhat.com>
- <20240911081615.262202-2-bhe@redhat.com>
- <20241029181101.GXZyElNXVuF6596TKG@fat_crate.local>
- <ZyGDlYsg6YWNXSVo@MiWiFi-R3L-srv>
- <8c81835b-97fe-a0b3-a860-0bbd5c0341f6@amd.com>
- <ZyL8WDTw9F3laupG@MiWiFi-R3L-srv>
- <20241101161849.GCZyT_aSMcGIXnGr1-@fat_crate.local>
- <ZyVxBbGYsEjifLgp@MiWiFi-R3L-srv>
- <20241102110618.GAZyYHquhmVJd4yM9O@fat_crate.local>
+	s=arc-20240116; t=1730892328; c=relaxed/simple;
+	bh=GVMNZrKHnqKRvmphZXkLgY/ueAMpsUn34Uncn1P0ILM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Xf3TWr0CXVrYMtK2wP0OVqhyt5M98nv4HMNSfu/Bh7glBHULarKaYzehJYTD4s021456iJPlcNbWaG7GFl4QHUb/xw41IVEtFuV/DbAuxsDO7k6qMeJGy6nL9Kx5wbaRvQ8Bca1tAHc8t42a8CbXT3w7i/8DqLmY12dvmR7lsWs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nlSG3EDq; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-37d43a9bc03so4559174f8f.2;
+        Wed, 06 Nov 2024 03:25:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730892325; x=1731497125; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=91I/y3wjbBNWvrHPr3/8/6Qvv/qZ19kFsf+7A0QbbUc=;
+        b=nlSG3EDqZBArmIyqz2cXFxv+/ov26gtqHGiHRDp8vZ9MIqKfRJjSQvve9kVECISmEx
+         ayR9WjmbdbhB0husNg/mDi+hEjexCNGOtNg9bc1cqdf4DWmK9Pjdz0OBtLaKCwJKjdVW
+         UfLmSQEmb8bvqdQxKM5uKqzVhknNLvSIfBo0SaE/Pw9ksR7EcauF6tcSS5h/pafEM+cG
+         8OFThoTaoAz6GslemVyy4lGMxTfeUGnLt9zyWKFZ6nXRhrWao3y+lATio77O4gUjTgpl
+         sTY8sdudSjw+uB9sXcZn/0uHhHicc1S0pBZRJPc2EPoitD1uEkktTc3LP/IAqfkuhzTL
+         aMfw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730892325; x=1731497125;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=91I/y3wjbBNWvrHPr3/8/6Qvv/qZ19kFsf+7A0QbbUc=;
+        b=HjqM9X90hn1gX7u+GAKgGcoNEYhTgOWgTQbMZcCmJM9T7Tib9K83IyUQZsKEKacvr2
+         2cPaeCeNupXL/LgnPbHRi5E9dPL2jPb8fOP8yEKaHBP7TYdsb36aaFtT/M6QRyZZjwrt
+         QAfy6hxvJMMuHmJSCd3LcQZdCxUi2XQaTCyLiN5XwcUEse78xqyk+coPeNF9eEIZJjL8
+         g1r9/KRcwun8WYRM28FOQlhkwpgyEZ3GZoXcxBwerKzYK8VG7p2/KwsHwBQJTHZv+WqY
+         CeEMLbNTM9A97N7pO2euvrb4BmdgujyUZiZbYBxbymBJNpsI9FoXOenDa/jgMo0fIi6T
+         Kt9A==
+X-Forwarded-Encrypted: i=1; AJvYcCU8ygEJR+B0lbtVV7Eg7l16kmvjluAMh+qBvigeWzDYxNNwj4JcMLwCrKFfISKd6m4NfG8I/p9LqtjaNc78FSs=@vger.kernel.org, AJvYcCWNp9TIbYUqaNjkVWM4A2hG9p33flXT7GIEygDuen3PuQkW3WM7R9pv6la88ewgXdahOAGr2ZtfHmxCKrRD@vger.kernel.org
+X-Gm-Message-State: AOJu0YzyUo2zWu0dOAiay8fz7nyVNWaeyQnlpnd0Q+rg+5wa49swccIa
+	hgO4fQKm1KnRWO6cGNl/YWNnqdnHqqOQTxElsSYtLSI/XnxgtPOy
+X-Google-Smtp-Source: AGHT+IF+BajsbEorQUT96QOOZ7pdB5zvo3TNqjISc8k04NVfiqyVN0QicXWJNeNcuiC8p5fMg2piJg==
+X-Received: by 2002:a05:6000:4027:b0:37d:4ebe:164a with SMTP id ffacd0b85a97d-381c7ac7704mr17052032f8f.50.1730892324575;
+        Wed, 06 Nov 2024 03:25:24 -0800 (PST)
+Received: from void.void ([31.210.177.158])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381c10d40casm18816533f8f.27.2024.11.06.03.25.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 06 Nov 2024 03:25:24 -0800 (PST)
+From: Andrew Kreimer <algonell@gmail.com>
+To: Karsten Keil <isdn@linux-pingi.de>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Jeff Johnson <quic_jjohnson@quicinc.com>,
+	Simon Horman <horms@kernel.org>,
+	Dan Carpenter <dan.carpenter@linaro.org>
+Cc: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Andrew Kreimer <algonell@gmail.com>
+Subject: [PATCH net-next v2] mISDN: Fix typos
+Date: Wed,  6 Nov 2024 13:24:20 +0200
+Message-ID: <20241106112513.9559-1-algonell@gmail.com>
+X-Mailer: git-send-email 2.47.0.229.g8f8d6eee53
+In-Reply-To: <20241102134856.11322-1-algonell@gmail.com>
+References: <20241102134856.11322-1-algonell@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241102110618.GAZyYHquhmVJd4yM9O@fat_crate.local>
-Content-Transfer-Encoding: quoted-printable
-
-On Sat, Nov 02, 2024 at 12:06:18PM +0100, Borislav Petkov wrote:
-> Ok, I'll take your 2/2 next week and you can then send the cleanup onto=
-p.
-
-OMG what a mess this is. Please test the below before I apply it.
-
-Then, when you do the cleanup, do the following:
-
-- merge early_memremap_is_setup_data() with memremap_is_setup_data() into
-  a common __memremap_is_setup_data() and then add a bool early which
-  determines which memremap variant is called.
-
-- unify the @size argument by dropping it and using a function local size=
-.
-  What we have there now is the definition of bitrot. :-\
-
-- replace all sizeof(*data), sizeof(struct setup_data) with a macro defin=
-ition
-  above the functions to unify it properly.
-
-What an ugly mess... :-\
-
----
-From: Baoquan He <bhe@redhat.com>
-Date: Wed, 11 Sep 2024 16:16:15 +0800
-Subject: [PATCH] x86/mm: Fix a kdump kernel failure on SME system when
- CONFIG_IMA_KEXEC=3Dy
-MIME-Version: 1.0
-Content-Type: text/plain; charset=3DUTF-8
 Content-Transfer-Encoding: 8bit
 
-The kdump kernel is broken on SME systems with CONFIG_IMA_KEXEC=3Dy enabl=
-ed.
-Debugging traced the issue back to
+Fix typos:
+  - syncronized -> synchronized
+  - interfacs -> interface
+  - otherwhise -> otherwise
+  - ony -> only
+  - busses -> buses
+  - maxinum -> maximum
 
-  b69a2afd5afc ("x86/kexec: Carry forward IMA measurement log on kexec").
+Via codespell.
 
-Testing was previously not conducted on SME systems with CONFIG_IMA_KEXEC
-enabled, which led to the oversight, with the following incarnation:
-
-...
-  ima: No TPM chip found, activating TPM-bypass!
-  Loading compiled-in module X.509 certificates
-  Loaded X.509 cert 'Build time autogenerated kernel key: 18ae0bc7e79b647=
-00122bb1d6a904b070fef2656'
-  ima: Allocated hash algorithm: sha256
-  Oops: general protection fault, probably for non-canonical address 0xcf=
-acfdfe6660003e: 0000 [#1] PREEMPT SMP NOPTI
-  CPU: 0 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.11.0-rc2+ #14
-  Hardware name: Dell Inc. PowerEdge R7425/02MJ3T, BIOS 1.20.0 05/03/2023
-  RIP: 0010:ima_restore_measurement_list
-  Call Trace:
-   <TASK>
-   ? show_trace_log_lvl
-   ? show_trace_log_lvl
-   ? ima_load_kexec_buffer
-   ? __die_body.cold
-   ? die_addr
-   ? exc_general_protection
-   ? asm_exc_general_protection
-   ? ima_restore_measurement_list
-   ? vprintk_emit
-   ? ima_load_kexec_buffer
-   ima_load_kexec_buffer
-   ima_init
-   ? __pfx_init_ima
-   init_ima
-   ? __pfx_init_ima
-   do_one_initcall
-   do_initcalls
-   ? __pfx_kernel_init
-   kernel_init_freeable
-   kernel_init
-   ret_from_fork
-   ? __pfx_kernel_init
-   ret_from_fork_asm
-   </TASK>
-  Modules linked in:
-  ---[ end trace 0000000000000000 ]---
-  ...
-  Kernel panic - not syncing: Fatal exception
-  Kernel Offset: disabled
-  Rebooting in 10 seconds..
-
-Adding debug printks showed that the stored addr and size of ima_kexec bu=
-ffer
-are not decrypted correctly like:
-
-  ima: ima_load_kexec_buffer, buffer:0xcfacfdfe6660003e, size:0xe48066052=
-d5df359
-
-Three types of setup_data info
-
-  =E2=80=94 SETUP_EFI,
-  - SETUP_IMA, and
-  - SETUP_RNG_SEED
-
-are passed to the kexec/kdump kernel. Only the ima_kexec buffer
-experienced incorrect decryption. Debugging identified a bug in
-early_memremap_is_setup_data(), where an incorrect range calculation
-occurred due to the len variable in struct setup_data ended up only
-representing the length of the data field, excluding the struct's size,
-and thus leading to miscalculation.
-
-Address a similar issue in memremap_is_setup_data() while at it.
-
-  [ bp: Heavily massage. ]
-
-Fixes: b3c72fc9a78e ("x86/boot: Introduce setup_indirect")
-Signed-off-by: Baoquan He <bhe@redhat.com>
-Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
-Acked-by: Tom Lendacky <thomas.lendacky@amd.com>
-Cc: <stable@kernel.org>
-Link: https://lore.kernel.org/r/20240911081615.262202-3-bhe@redhat.com
+Reported-by: Simon Horman <horms@kernel.org>
+Signed-off-by: Andrew Kreimer <algonell@gmail.com>
 ---
- arch/x86/mm/ioremap.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+v1:
+  - Fix typos in printk messages.
+  - https://lore.kernel.org/netdev/20241102134856.11322-1-algonell@gmail.com/
 
-diff --git a/arch/x86/mm/ioremap.c b/arch/x86/mm/ioremap.c
-index 70b02fc61d93..8d29163568a7 100644
---- a/arch/x86/mm/ioremap.c
-+++ b/arch/x86/mm/ioremap.c
-@@ -656,7 +656,8 @@ static bool memremap_is_setup_data(resource_size_t ph=
-ys_addr,
- 		paddr_next =3D data->next;
- 		len =3D data->len;
-=20
--		if ((phys_addr > paddr) && (phys_addr < (paddr + len))) {
-+		if ((phys_addr > paddr) &&
-+		    (phys_addr < (paddr + sizeof(struct setup_data) + len))) {
- 			memunmap(data);
- 			return true;
- 		}
-@@ -718,7 +719,8 @@ static bool __init early_memremap_is_setup_data(resou=
-rce_size_t phys_addr,
- 		paddr_next =3D data->next;
- 		len =3D data->len;
-=20
--		if ((phys_addr > paddr) && (phys_addr < (paddr + len))) {
-+		if ((phys_addr > paddr) &&
-+		    (phys_addr < (paddr + sizeof(struct setup_data) + len))) {
- 			early_memunmap(data, sizeof(*data));
- 			return true;
- 		}
---=20
-2.43.0
+v2:
+  - Address all non-false-positive suggestions, including comments.
+  - The syncronized ==> synchronized suggestions for struct hfc_multi were skipped.
 
+ drivers/isdn/hardware/mISDN/hfcmulti.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
---=20
-Regards/Gruss,
-    Boris.
+diff --git a/drivers/isdn/hardware/mISDN/hfcmulti.c b/drivers/isdn/hardware/mISDN/hfcmulti.c
+index e5a483fd9ad8..45ff0e198f8f 100644
+--- a/drivers/isdn/hardware/mISDN/hfcmulti.c
++++ b/drivers/isdn/hardware/mISDN/hfcmulti.c
+@@ -25,8 +25,8 @@
+  *	Bit 8     = 0x00100 = uLaw (instead of aLaw)
+  *	Bit 9     = 0x00200 = Disable DTMF detect on all B-channels via hardware
+  *	Bit 10    = spare
+- *	Bit 11    = 0x00800 = Force PCM bus into slave mode. (otherwhise auto)
+- * or   Bit 12    = 0x01000 = Force PCM bus into master mode. (otherwhise auto)
++ *	Bit 11    = 0x00800 = Force PCM bus into slave mode. (otherwise auto)
++ * or   Bit 12    = 0x01000 = Force PCM bus into master mode. (otherwise auto)
+  *	Bit 13	  = spare
+  *	Bit 14    = 0x04000 = Use external ram (128K)
+  *	Bit 15    = 0x08000 = Use external ram (512K)
+@@ -41,7 +41,7 @@
+  * port: (optional or required for all ports on all installed cards)
+  *	HFC-4S/HFC-8S only bits:
+  *	Bit 0	  = 0x001 = Use master clock for this S/T interface
+- *			    (ony once per chip).
++ *			    (only once per chip).
+  *	Bit 1     = 0x002 = transmitter line setup (non capacitive mode)
+  *			    Don't use this unless you know what you are doing!
+  *	Bit 2     = 0x004 = Disable E-channel. (No E-channel processing)
+@@ -82,7 +82,7 @@
+  *	By default (0), the PCM bus id is 100 for the card that is PCM master.
+  *	If multiple cards are PCM master (because they are not interconnected),
+  *	each card with PCM master will have increasing PCM id.
+- *	All PCM busses with the same ID are expected to be connected and have
++ *	All PCM buses with the same ID are expected to be connected and have
+  *	common time slots slots.
+  *	Only one chip of the PCM bus must be master, the others slave.
+  *	-1 means no support of PCM bus not even.
+@@ -930,7 +930,7 @@ hfcmulti_resync(struct hfc_multi *locked, struct hfc_multi *newmaster, int rm)
+ 	if (newmaster) {
+ 		hc = newmaster;
+ 		if (debug & DEBUG_HFCMULTI_PLXSD)
+-			printk(KERN_DEBUG "id=%d (0x%p) = syncronized with "
++			printk(KERN_DEBUG "id=%d (0x%p) = synchronized with "
+ 			       "interface.\n", hc->id, hc);
+ 		/* Enable new sync master */
+ 		plx_acc_32 = hc->plx_membase + PLX_GPIOC;
+@@ -949,7 +949,7 @@ hfcmulti_resync(struct hfc_multi *locked, struct hfc_multi *newmaster, int rm)
+ 			hc = pcmmaster;
+ 			if (debug & DEBUG_HFCMULTI_PLXSD)
+ 				printk(KERN_DEBUG
+-				       "id=%d (0x%p) = PCM master syncronized "
++				       "id=%d (0x%p) = PCM master synchronized "
+ 				       "with QUARTZ\n", hc->id, hc);
+ 			if (hc->ctype == HFC_TYPE_E1) {
+ 				/* Use the crystal clock for the PCM
+@@ -2001,7 +2001,7 @@ hfcmulti_tx(struct hfc_multi *hc, int ch)
+ 	if (Zspace <= 0)
+ 		Zspace += hc->Zlen;
+ 	Zspace -= 4; /* keep not too full, so pointers will not overrun */
+-	/* fill transparent data only to maxinum transparent load (minus 4) */
++	/* fill transparent data only to maximum transparent load (minus 4) */
+ 	if (bch && test_bit(FLG_TRANSPARENT, &bch->Flags))
+ 		Zspace = Zspace - hc->Zlen + hc->max_trans;
+ 	if (Zspace <= 0) /* no space of 4 bytes */
+@@ -4672,7 +4672,7 @@ init_e1_port_hw(struct hfc_multi *hc, struct hm_map *m)
+ 			if (debug & DEBUG_HFCMULTI_INIT)
+ 				printk(KERN_DEBUG
+ 				       "%s: PORT set optical "
+-				       "interfacs: card(%d) "
++				       "interface: card(%d) "
+ 				       "port(%d)\n",
+ 				       __func__,
+ 				       HFC_cnt + 1, 1);
 
-https://people.kernel.org/tglx/notes-about-netiquette
+Interdiff against v1:
+  diff --git a/drivers/isdn/hardware/mISDN/hfcmulti.c b/drivers/isdn/hardware/mISDN/hfcmulti.c
+  index f3af73ea34ae..45ff0e198f8f 100644
+  --- a/drivers/isdn/hardware/mISDN/hfcmulti.c
+  +++ b/drivers/isdn/hardware/mISDN/hfcmulti.c
+  @@ -25,8 +25,8 @@
+    *	Bit 8     = 0x00100 = uLaw (instead of aLaw)
+    *	Bit 9     = 0x00200 = Disable DTMF detect on all B-channels via hardware
+    *	Bit 10    = spare
+  - *	Bit 11    = 0x00800 = Force PCM bus into slave mode. (otherwhise auto)
+  - * or   Bit 12    = 0x01000 = Force PCM bus into master mode. (otherwhise auto)
+  + *	Bit 11    = 0x00800 = Force PCM bus into slave mode. (otherwise auto)
+  + * or   Bit 12    = 0x01000 = Force PCM bus into master mode. (otherwise auto)
+    *	Bit 13	  = spare
+    *	Bit 14    = 0x04000 = Use external ram (128K)
+    *	Bit 15    = 0x08000 = Use external ram (512K)
+  @@ -41,7 +41,7 @@
+    * port: (optional or required for all ports on all installed cards)
+    *	HFC-4S/HFC-8S only bits:
+    *	Bit 0	  = 0x001 = Use master clock for this S/T interface
+  - *			    (ony once per chip).
+  + *			    (only once per chip).
+    *	Bit 1     = 0x002 = transmitter line setup (non capacitive mode)
+    *			    Don't use this unless you know what you are doing!
+    *	Bit 2     = 0x004 = Disable E-channel. (No E-channel processing)
+  @@ -82,7 +82,7 @@
+    *	By default (0), the PCM bus id is 100 for the card that is PCM master.
+    *	If multiple cards are PCM master (because they are not interconnected),
+    *	each card with PCM master will have increasing PCM id.
+  - *	All PCM busses with the same ID are expected to be connected and have
+  + *	All PCM buses with the same ID are expected to be connected and have
+    *	common time slots slots.
+    *	Only one chip of the PCM bus must be master, the others slave.
+    *	-1 means no support of PCM bus not even.
+  @@ -2001,7 +2001,7 @@ hfcmulti_tx(struct hfc_multi *hc, int ch)
+   	if (Zspace <= 0)
+   		Zspace += hc->Zlen;
+   	Zspace -= 4; /* keep not too full, so pointers will not overrun */
+  -	/* fill transparent data only to maxinum transparent load (minus 4) */
+  +	/* fill transparent data only to maximum transparent load (minus 4) */
+   	if (bch && test_bit(FLG_TRANSPARENT, &bch->Flags))
+   		Zspace = Zspace - hc->Zlen + hc->max_trans;
+   	if (Zspace <= 0) /* no space of 4 bytes */
+
+Range-diff against v1:
+1:  e27df5ca2655 ! 1:  69784b0d548a mISDN: Fix typos
+    @@ Commit message
+         mISDN: Fix typos
+     
+         Fix typos:
+    -      - syncronized -> synchronized.
+    -      - interfacs -> interface.
+    +      - syncronized -> synchronized
+    +      - interfacs -> interface
+    +      - otherwhise -> otherwise
+    +      - ony -> only
+    +      - busses -> buses
+    +      - maxinum -> maximum
+     
+    +    Via codespell.
+    +
+    +    Reported-by: Simon Horman <horms@kernel.org>
+         Signed-off-by: Andrew Kreimer <algonell@gmail.com>
+     
+      ## drivers/isdn/hardware/mISDN/hfcmulti.c ##
+    +@@
+    +  *	Bit 8     = 0x00100 = uLaw (instead of aLaw)
+    +  *	Bit 9     = 0x00200 = Disable DTMF detect on all B-channels via hardware
+    +  *	Bit 10    = spare
+    +- *	Bit 11    = 0x00800 = Force PCM bus into slave mode. (otherwhise auto)
+    +- * or   Bit 12    = 0x01000 = Force PCM bus into master mode. (otherwhise auto)
+    ++ *	Bit 11    = 0x00800 = Force PCM bus into slave mode. (otherwise auto)
+    ++ * or   Bit 12    = 0x01000 = Force PCM bus into master mode. (otherwise auto)
+    +  *	Bit 13	  = spare
+    +  *	Bit 14    = 0x04000 = Use external ram (128K)
+    +  *	Bit 15    = 0x08000 = Use external ram (512K)
+    +@@
+    +  * port: (optional or required for all ports on all installed cards)
+    +  *	HFC-4S/HFC-8S only bits:
+    +  *	Bit 0	  = 0x001 = Use master clock for this S/T interface
+    +- *			    (ony once per chip).
+    ++ *			    (only once per chip).
+    +  *	Bit 1     = 0x002 = transmitter line setup (non capacitive mode)
+    +  *			    Don't use this unless you know what you are doing!
+    +  *	Bit 2     = 0x004 = Disable E-channel. (No E-channel processing)
+    +@@
+    +  *	By default (0), the PCM bus id is 100 for the card that is PCM master.
+    +  *	If multiple cards are PCM master (because they are not interconnected),
+    +  *	each card with PCM master will have increasing PCM id.
+    +- *	All PCM busses with the same ID are expected to be connected and have
+    ++ *	All PCM buses with the same ID are expected to be connected and have
+    +  *	common time slots slots.
+    +  *	Only one chip of the PCM bus must be master, the others slave.
+    +  *	-1 means no support of PCM bus not even.
+     @@ drivers/isdn/hardware/mISDN/hfcmulti.c: hfcmulti_resync(struct hfc_multi *locked, struct hfc_multi *newmaster, int rm)
+      	if (newmaster) {
+      		hc = newmaster;
+    @@ drivers/isdn/hardware/mISDN/hfcmulti.c: hfcmulti_resync(struct hfc_multi *locked
+      				       "with QUARTZ\n", hc->id, hc);
+      			if (hc->ctype == HFC_TYPE_E1) {
+      				/* Use the crystal clock for the PCM
+    +@@ drivers/isdn/hardware/mISDN/hfcmulti.c: hfcmulti_tx(struct hfc_multi *hc, int ch)
+    + 	if (Zspace <= 0)
+    + 		Zspace += hc->Zlen;
+    + 	Zspace -= 4; /* keep not too full, so pointers will not overrun */
+    +-	/* fill transparent data only to maxinum transparent load (minus 4) */
+    ++	/* fill transparent data only to maximum transparent load (minus 4) */
+    + 	if (bch && test_bit(FLG_TRANSPARENT, &bch->Flags))
+    + 		Zspace = Zspace - hc->Zlen + hc->max_trans;
+    + 	if (Zspace <= 0) /* no space of 4 bytes */
+     @@ drivers/isdn/hardware/mISDN/hfcmulti.c: init_e1_port_hw(struct hfc_multi *hc, struct hm_map *m)
+      			if (debug & DEBUG_HFCMULTI_INIT)
+      				printk(KERN_DEBUG
+-- 
+2.47.0.229.g8f8d6eee53
+
 
