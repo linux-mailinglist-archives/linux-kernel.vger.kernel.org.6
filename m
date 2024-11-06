@@ -1,104 +1,176 @@
-Return-Path: <linux-kernel+bounces-398755-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398752-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5AA329BF57D
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 19:43:05 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA1F09BF572
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 19:38:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E205288D19
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 18:43:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E7512888B6
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 18:38:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 232ED208226;
-	Wed,  6 Nov 2024 18:42:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9BB420823B;
+	Wed,  6 Nov 2024 18:38:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b="Y9Jzil5A"
-Received: from mxout4.routing.net (mxout4.routing.net [134.0.28.9])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cnS+8Frn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A87D836D;
-	Wed,  6 Nov 2024 18:42:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=134.0.28.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1296036D;
+	Wed,  6 Nov 2024 18:38:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730918578; cv=none; b=oaP6JSpo9kcd7jIH44Dw2gBOvIc76dgYtgKKC7/SI8N7+3T22VGF/vZTWlOpxrqLRw4wfw/IXAkDY0eoLBCYzqHYsFRiDbhAjCz665nH6HW9mG8gd58eeoiJ1tb8XhDsX4Qqp17egOLlZRt8/hqdLI026J2VaCJEsifI7gwP3fU=
+	t=1730918312; cv=none; b=c0BP2I/fOK6lgFzrlwrh4MdapIlFglz41+pAU9e3NJQ/MHpWYIFgX/AwLPrN4j3u/5qxpb4EwIp56qdCZvIu9vYTje/Cy/8tEvAxwvsn2KEWk9Li1HNaF1Co8LEYyAPT38D/7+YaeZDz6ErLvO8ClYQtzC3Yr3tusc9leDMcNQM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730918578; c=relaxed/simple;
-	bh=3gfijm/RLD+lXbuyRgVfXKimTXT6rUTvCVarP1pDH3Y=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=YK3nXL++F3Bl2BwIErsVitV4EdVHEcUHoDY5CW4syPmUqrJ+6Eb2HxyInpc3CM9JOJF6AI+snSSdfDWkeK8fID1vDFBHV904ip3B14sDViuPb0F0mvVKin6lmjZ7yYuINBOjJQ+4ZCRNrNx/thoHdWHbXjUZE9//o17dU9q+Cr4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de; spf=pass smtp.mailfrom=fw-web.de; dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b=Y9Jzil5A; arc=none smtp.client-ip=134.0.28.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fw-web.de
-Received: from mxbox2.masterlogin.de (unknown [192.168.10.89])
-	by mxout4.routing.net (Postfix) with ESMTP id EF3D01019FA;
-	Wed,  6 Nov 2024 18:33:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailerdienst.de;
-	s=20200217; t=1730918034;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3gfijm/RLD+lXbuyRgVfXKimTXT6rUTvCVarP1pDH3Y=;
-	b=Y9Jzil5Av9lktyWzyjck5L5dXnYb6m0yXBzLv3pR4HmNXjiwIcJsGmIZLUOKrL6lMCt5F7
-	JZRgz1b3Zbu/EXW5NJNHWy55/Zu183V1fF70x7JJF6NnVsSwvARaiXOJREA4+UE25lyXeM
-	hjetEtcISGGoqhrUSt8W1UhJZejmmKo=
-Received: from [127.0.0.1] (fttx-pool-217.61.145.66.bambit.de [217.61.145.66])
-	by mxbox2.masterlogin.de (Postfix) with ESMTPSA id 2019910051E;
-	Wed,  6 Nov 2024 18:33:53 +0000 (UTC)
-Date: Wed, 06 Nov 2024 19:33:53 +0100
-From: Frank Wunderlich <linux@fw-web.de>
-To: Gregory CLEMENT <gregory.clement@bootlin.com>,
- "Rob Herring (Arm)" <robh@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
- Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Russell King <linux@armlinux.org.uk>
-CC: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arm64: dts: marvell: Drop undocumented SATA phy names
-User-Agent: K-9 Mail for Android
-In-Reply-To: <87r07p8x12.fsf@BLaptop.bootlin.com>
-References: <20241014193528.1896905-2-robh@kernel.org> <87r07p8x12.fsf@BLaptop.bootlin.com>
-Message-ID: <0A5AFF77-D888-4151-9C15-15A408709857@fw-web.de>
+	s=arc-20240116; t=1730918312; c=relaxed/simple;
+	bh=iNjqtw0pAHcA/82Lxnh30HXCvnZDgw7kxbizRZooTmY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YRiniclJTZwikmjCRPZ+7WJ4rPz4sPsVsL8Yjkc7YViI9aMwsYxXd3iP93CD1vhQtoGD7PnQBKsG4rMGg8CoTFotCBwbWSSkS0j/lbhO+p7sZoKkw0ftfHaW+XnE1/3vSDewi7jHuVmrkhEX8I6o4jaG9rAiCbdkio4fT1rErUA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cnS+8Frn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C74AC4CEC6;
+	Wed,  6 Nov 2024 18:38:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730918311;
+	bh=iNjqtw0pAHcA/82Lxnh30HXCvnZDgw7kxbizRZooTmY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=cnS+8FrnLWJJ2opUVyPBBsjgQtapmYvo9CXHJrwQ6ClBmATA8NBU1+1meIPVuGifP
+	 o4MI6il9v70W8I3UZ7KUdt0PH2dsdxBP812ErrwkfJguLe/CqM4v14cJRjz23O7IbQ
+	 70Ym6E4EEZgge+o6UojP119niZLSEUgWlV8pPNBntqUfPyIhWGLsHelfsNPEC29jUM
+	 4z/susoC+LWH3mrY/pj7QnDwbMneRmn6xl8GeVyleFh3MkobWUm7BoN1pxWWZbCUDZ
+	 rY1BOCoJfGP6s1XArQW5mOPhObua4Vo+9W9bNFkbd4Mf66gGAoos2naNDmeonuj2bC
+	 fIrgfooryVZnw==
+Date: Wed, 6 Nov 2024 18:38:26 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Cedric Encarnacion <cedricjustine.encarnacion@analog.com>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-i2c@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-hwmon@vger.kernel.org, Jean Delvare <jdelvare@suse.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Peter Yin <peteryin.openbmc@gmail.com>,
+	Noah Wang <noahwang.wang@outlook.com>, Marek Vasut <marex@denx.de>,
+	Lukas Wunner <lukas@wunner.de>
+Subject: Re: [PATCH v2 1/2] dt-bindings: trivial-devices: add ltp8800
+Message-ID: <20241106-crate-antihero-bc7b66037640@spud>
+References: <20241106030918.24849-1-cedricjustine.encarnacion@analog.com>
+ <20241106030918.24849-2-cedricjustine.encarnacion@analog.com>
+ <8e4dc080-d779-4b06-8fd1-74784e06323a@roeck-us.net>
+ <20241106-gatherer-glancing-495dbf9d86c7@spud>
+ <20241106-overcast-yummy-9c6462ff2640@spud>
+ <2b731ba8-1b6b-41eb-bae9-3403555506ef@roeck-us.net>
+ <20241106-splurge-slaw-b4f1d33e4b09@spud>
+ <f6e9cc1a-bdd7-4231-844e-2d8c5c3be50f@roeck-us.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="DCvkbFZV2LWmvyWJ"
+Content-Disposition: inline
+In-Reply-To: <f6e9cc1a-bdd7-4231-844e-2d8c5c3be50f@roeck-us.net>
+
+
+--DCvkbFZV2LWmvyWJ
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-X-Mail-ID: 84d1e7cf-5cca-47d1-bd64-002501d9a1b8
 
-Am 5=2E November 2024 17:28:57 MEZ schrieb Gregory CLEMENT <gregory=2Ecleme=
-nt@bootlin=2Ecom>:
->"Rob Herring (Arm)" <robh@kernel=2Eorg> writes:
->
->> While "phy-names" is allowed for sata-port nodes, the names used aren't
->> documented and are incorrect ("sata-phy" is what's documented)=2E The n=
-ame
->> for a single entry is fairly useless, so just drop the property=2E
->>
->> Signed-off-by: Rob Herring (Arm) <robh@kernel=2Eorg>
->
->Applied on mvebu/dt64
->
->Thanks,
->
->Gregory
->> ---
->> Cc: Frank Wunderlich <linux@fw-web=2Ede>
->>
->> There's also this 2 year old patch fixing other SATA errors[1] which=20
->> was never picked up=2E :(
->>
->> [1] https://lore=2Ekernel=2Eorg/linux-arm-kernel/20220311210357=2E22283=
-0-3-linux@fw-web=2Ede/
+On Wed, Nov 06, 2024 at 10:19:19AM -0800, Guenter Roeck wrote:
+> On 11/6/24 08:54, Conor Dooley wrote:
+> > On Wed, Nov 06, 2024 at 08:43:54AM -0800, Guenter Roeck wrote:
+> > > On 11/6/24 08:11, Conor Dooley wrote:
+> > > > On Wed, Nov 06, 2024 at 04:06:02PM +0000, Conor Dooley wrote:
+> > > > > On Tue, Nov 05, 2024 at 08:34:01PM -0800, Guenter Roeck wrote:
+> > > > > > On 11/5/24 19:09, Cedric Encarnacion wrote:
+> > > > > > > Add Analog Devices LTP8800-1A, LTP8800-2, and LTP8800-4A DC/D=
+C =CE=BCModule
+> > > > > > > regulator.
+> > > > >=20
+> > > > > A single compatible for 3 devices is highly suspect. What is
+> > > > > different between these devices?
+> > > >=20
+> > > > Additionally, looking at one of the datasheets, this has several in=
+puts
+> > > > that could be controlled by a GPIO, a clock input and several supply
+> > > > inputs. It also has a regulator output. I don't think it is suitabl=
+e for
+> > > > trivial-devices.yaml.
+> > > >=20
+> > >=20
+> > > All PMBus devices are by definition regulators with input and output =
+voltages.
+> > > After all, PMBus stands for "Power Management Bus". Some of them are =
+listed
+> > > in trivial devices, some are not. Is that a general guidance, or in o=
+ther
+> > > words should I (we) automatically reject patches adding PMBus devices
+> > > to the trivial devices file ?
+> >=20
+> > Personally I like what Jonathan does for iio devices, where he requires
+> > input supplies to be documented, which in turns means they can't go into
+> > trivial-devices.yaml. I wanted to add an input supply option to
+> > trivial-devices.yaml but ?Rob? was not a fan.
+>=20
+> I may be missing something, but doesn't every chip have an input supply ?
+> granted, PMBus chips often have more than one, but still ...
 
-Hi
+Yeah, that's why I wanted to permit a supply in trivial-devices, because
+I bet 99% of devices in there have a supply. IIRC the problem was that
+there wasn't a good "generic" name for one. I don't think it was a "you
+cannot do this" but a "you need to come up with a name for that supply
+that works generically" and I couldn't.
 
-How to deal with my patch pointed by rob?
+> > In this case it would need a dedicated binding to document the regulator
+> > child node and permit things like regulator-always-on or for any
+> > consumers of the regulator to exist. I suppose that probably applies to
+> > all pmbus bindings?
+>=20
+> Yes. There may be a few exceptions, for example if a fan controller is
+> modeled as PMBus device, but that is rare. From a driver perspective,
+> exposing regulator nodes is optional, though.
+>=20
+> > In this case, there seems to be an input "sync" clock that may need to
+> > be enabled, which is another nail in the coffin for
+> > trivial-devices.yaml.
+>=20
+> I really don't know if it is a good idea to expose such data. That clock =
+can
+> be connected to ground. It is only necessary in power-sharing configurati=
+ons,
+> and requires all chips to use the same clock. I'd assume it to be a fixed=
+ clock
+> in pretty much all circumstances. The frequency needs to be configured in=
+to
+> the chip, but that needs to be done during board manufacturing because it
+> determines the switching frequency. Writing wrong data into the chip may
+> render the board unusable or even destroy it (I destroyed several PMBus c=
+hips
+> myself while playing with such parameters on evaluation boards). Maybe th=
+ere
+> is some use case where changing the configuration is necessary, but I am =
+not
+> in favor of exposing it due to the risk involved.
 
-regards Frank
+I figured it'd be fixed, but that doesn't mean it can't have an enable
+(or a supply of its own).
+
+--DCvkbFZV2LWmvyWJ
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZyu3ogAKCRB4tDGHoIJi
+0j9JAPwMo0NQpNZfb0w4MKjX7rzR+jv1SbpMrhZEp2DPOHDTLgD+IfE6snEzPq1g
+zaCZZawKX21yxcT1emw1Rqy1Ab+oQg0=
+=qdES
+-----END PGP SIGNATURE-----
+
+--DCvkbFZV2LWmvyWJ--
 
