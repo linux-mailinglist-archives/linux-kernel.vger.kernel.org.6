@@ -1,105 +1,153 @@
-Return-Path: <linux-kernel+bounces-398058-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398056-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D02519BE4C3
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 11:50:54 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5289F9BE4C0
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 11:50:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 73A6F1F26B99
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 10:50:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 17FD0283F53
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 10:50:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B9C81DFDA1;
-	Wed,  6 Nov 2024 10:48:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2A5B1DEFEB;
+	Wed,  6 Nov 2024 10:48:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="kaUmYTxC"
-Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="II2jd6Tc";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="aq7H1/0w"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0D6F1DED76
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 10:48:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DCC51DED5F;
+	Wed,  6 Nov 2024 10:48:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730890129; cv=none; b=nEJ1t5Y39SvEjN2X2O0sBYQ+m+dwNUTqMbbqPhGQCZSRoa4P/E/BJ2ItXQ69O23midaNI+76O/86qkDo6t6VTAbD/OfPjpT6ojYbDEhsk0Fj/t7aK66w6MH+dLDBuU67sU9eP93o9CzOVTyeHyfGnPS4LwHhvI71XMSmVaR9HiA=
+	t=1730890129; cv=none; b=klVqEc+WwD652JXcVKsiKg+9XEAeFZMbRMbOobjnr1pMW18wcEQ8pIwaCAA75PlqEl+5OAomgw00eZ6C44xCppbKZDcdIDRX6ycD2RI6BlWK7P7L399nBhqgE5DlzcOpvsu+ZVMrlowuDNPaP4Mvb6IDzaTgvnfo0d+QcIBLnq4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1730890129; c=relaxed/simple;
-	bh=pudTfM36kFQMq2RWVOPHfAT6VK0+RurGw7EGVRZsQII=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=mm+FQ/e5ToXtbMl23BnifW3mUNfJCepEj9f38LFAxEDzKfVlsLsfhrUf+uE181AJQxcad7fQNTJjz18W3ceKk/h/cgVPkJnfcknoSXHfl6buoYq4BP9NtjdvsZ3YipQHwgk4WyfBHInWcv9+ic88I1fYn5PRXMzsmOcdiNotX0I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=kaUmYTxC; arc=none smtp.client-ip=217.70.183.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 6DAC160003;
-	Wed,  6 Nov 2024 10:48:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1730890125;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	bh=MVXnPdPQJllIdrLzL2iIVpbQM93WFHdnmlXbcpravcw=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=m1G6iVgMbNWR+C89axagxj5rZlgPJZ2p4YYfmmKa6Hln6D5q17Xx6+mK5/4haXRxwyrOGsszo3fa86GwbiqOgy24CRbT6QgUgCkAHpPtHgj5tsJVZ4kYLJ1/naW6Uwts9FOESYdQoQDvBoKFc6ryQF390OpPYAB8E6K1Etts7QM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=II2jd6Tc; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=aq7H1/0w; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 06 Nov 2024 10:48:44 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1730890125;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=ZWsYONnEgvEeIa9tipWPBTuf84MWmW0KPLgHIvkZDok=;
-	b=kaUmYTxCnAY2Yaz8+lF+h/n9rzbIibLHfOtbjYi0RxCWz7kJHEgqIzosrye/v3wAiLSPLW
-	gO9t/5T1tl6xNTSs2mPVzehbbookhUgglKSomQsH7cMyi+oTmW7jhhYhmKo8xYKRGsT7vQ
-	lM81A82fyV1da9oFru9YDUO9/fIIOVB1h++XisPbFFxHmc9O7c78qxbpzwbYSCYbVD2/kV
-	3yUPLJw07eInHnS1s2gLJ8F2QK8kmW01qB5Gwy/2GOIb6wVy9EB0EzHSXbB4/F5kwkSvTO
-	rAdLAmsK2Beluk6zyorHqG8v54mwsNjHmEUwfihpS+VpYxgbzWfK5mVI2gC+Tg==
-From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-Date: Wed, 06 Nov 2024 11:48:27 +0100
-Subject: [PATCH v2 4/4] drm/connector: warn when cleaning up a refcounted
- connector
+	bh=udvKtdWiQsM/QrzAFdMhl6gO2jLVv405s3eHgdleCN8=;
+	b=II2jd6TcKju6GJo0fFMhLqtm94W9Ii8nQjvIzs51xivbUDuQ7YZrFpI9W6qKXZizBLevsr
+	kKYBLdrL8dmMYnaKjVgaOBowhjmq5XQKx2xHcUsuOOFwA0aL8FuKd44W5uNHMi3WGPhK5p
+	bn9kaGx4bSi0U13VyD2qTRY6Lb/D0K3POQf6Qzg6xOime13NnZysbiaQTvj9gCMotwnQIX
+	4BYq6jMMeVY4ye/nVoDZ7AvB8GrYpY+E4xn4JFd2Wgg8AGVk3eCaDTIp6mkbN/XTqgerQY
+	teEYiiW6wnSp0+6iRFTPYlmzwBwD6bFNe62XJbf7Ik+qdoaIYAnJTndyN1nLMw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1730890125;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=udvKtdWiQsM/QrzAFdMhl6gO2jLVv405s3eHgdleCN8=;
+	b=aq7H1/0w1gBnXTCGi6CYGhE3d0slYuwvxWlINHfFwgYIy0Os28dn2UfhRpEI1CGe3SR6qV
+	M7F3//0SV9qXlLCw==
+From: "tip-bot2 for Jisheng Zhang" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: sched/core] riscv: add PREEMPT_LAZY support
+Cc: Jisheng Zhang <jszhang@kernel.org>,
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+ "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+ Palmer Dabbelt <palmer@rivosinc.com>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20241021151257.102296-4-bigeasy@linutronix.de>
+References: <20241021151257.102296-4-bigeasy@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Message-ID: <173089012493.32228.9669370223751726698.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241106-drm-small-improvements-v2-4-f6e2aef86719@bootlin.com>
-References: <20241106-drm-small-improvements-v2-0-f6e2aef86719@bootlin.com>
-In-Reply-To: <20241106-drm-small-improvements-v2-0-f6e2aef86719@bootlin.com>
-To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
-Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
- Luca Ceresoli <luca.ceresoli@bootlin.com>
-X-Mailer: b4 0.14.2
-X-GND-Sasl: luca.ceresoli@bootlin.com
 
-Calling drm_connector_cleanup() should only be done via the free_cb =>
-.destroy path, which cleans up the struct drm_connector only when the
-refcount drops to zero.
+The following commit has been merged into the sched/core branch of tip:
 
-A cleanup done with a refcount higher than 0 can result from buggy code,
-e.g. by doing cleanup directly in the drivers teardown code. Serious
-trouble can happen if this happens, so warn about it.
+Commit-ID:     22aaec357c1ff85b72c105c90503e3b4187384b8
+Gitweb:        https://git.kernel.org/tip/22aaec357c1ff85b72c105c90503e3b4187384b8
+Author:        Jisheng Zhang <jszhang@kernel.org>
+AuthorDate:    Mon, 21 Oct 2024 17:08:42 +02:00
+Committer:     Peter Zijlstra <peterz@infradead.org>
+CommitterDate: Tue, 05 Nov 2024 12:55:39 +01:00
 
-Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+riscv: add PREEMPT_LAZY support
+
+riscv has switched to GENERIC_ENTRY, so adding PREEMPT_LAZY is as simple
+as adding TIF_NEED_RESCHED_LAZY related definitions and enabling
+ARCH_HAS_PREEMPT_LAZY.
+
+[bigeasy: Replace old PREEMPT_AUTO bits with new PREEMPT_LAZY ]
+
+Signed-off-by: Jisheng Zhang <jszhang@kernel.org>
+Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Acked-by: Palmer Dabbelt <palmer@rivosinc.com>
+Link: https://lkml.kernel.org/r/20241021151257.102296-4-bigeasy@linutronix.de
 ---
- drivers/gpu/drm/drm_connector.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ arch/riscv/Kconfig                   |  1 +
+ arch/riscv/include/asm/thread_info.h | 10 ++++++----
+ 2 files changed, 7 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/gpu/drm/drm_connector.c b/drivers/gpu/drm/drm_connector.c
-index fc35f47e2849ed6786d6223ac9c69e1c359fc648..e0bf9c490af43055de4caaee1580a4befbd608c5 100644
---- a/drivers/gpu/drm/drm_connector.c
-+++ b/drivers/gpu/drm/drm_connector.c
-@@ -624,6 +624,12 @@ void drm_connector_cleanup(struct drm_connector *connector)
- 	struct drm_device *dev = connector->dev;
- 	struct drm_display_mode *mode, *t;
+diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
+index 6254594..3516c58 100644
+--- a/arch/riscv/Kconfig
++++ b/arch/riscv/Kconfig
+@@ -39,6 +39,7 @@ config RISCV
+ 	select ARCH_HAS_MMIOWB
+ 	select ARCH_HAS_NON_OVERLAPPING_ADDRESS_SPACE
+ 	select ARCH_HAS_PMEM_API
++	select ARCH_HAS_PREEMPT_LAZY
+ 	select ARCH_HAS_PREPARE_SYNC_CORE_CMD
+ 	select ARCH_HAS_PTE_DEVMAP if 64BIT && MMU
+ 	select ARCH_HAS_PTE_SPECIAL
+diff --git a/arch/riscv/include/asm/thread_info.h b/arch/riscv/include/asm/thread_info.h
+index 9c10fb1..f5916a7 100644
+--- a/arch/riscv/include/asm/thread_info.h
++++ b/arch/riscv/include/asm/thread_info.h
+@@ -107,9 +107,10 @@ int arch_dup_task_struct(struct task_struct *dst, struct task_struct *src);
+  * - pending work-to-be-done flags are in lowest half-word
+  * - other flags in upper half-word(s)
+  */
+-#define TIF_NOTIFY_RESUME	1	/* callback before returning to user */
+-#define TIF_SIGPENDING		2	/* signal pending */
+-#define TIF_NEED_RESCHED	3	/* rescheduling necessary */
++#define TIF_NEED_RESCHED	0	/* rescheduling necessary */
++#define TIF_NEED_RESCHED_LAZY	1       /* Lazy rescheduling needed */
++#define TIF_NOTIFY_RESUME	2	/* callback before returning to user */
++#define TIF_SIGPENDING		3	/* signal pending */
+ #define TIF_RESTORE_SIGMASK	4	/* restore signal mask in do_signal() */
+ #define TIF_MEMDIE		5	/* is terminating due to OOM killer */
+ #define TIF_NOTIFY_SIGNAL	9	/* signal notifications exist */
+@@ -117,9 +118,10 @@ int arch_dup_task_struct(struct task_struct *dst, struct task_struct *src);
+ #define TIF_32BIT		11	/* compat-mode 32bit process */
+ #define TIF_RISCV_V_DEFER_RESTORE	12 /* restore Vector before returing to user */
  
-+	/*
-+	 * Cleanup must happen when the last ref is put, via the
-+	 * drm_connector_free() callback.
-+	 */
-+	WARN_ON(drm_mode_object_read_refcount(&connector->base) != 0);
-+
- 	/* The connector should have been removed from userspace long before
- 	 * it is finally destroyed.
- 	 */
-
--- 
-2.34.1
-
++#define _TIF_NEED_RESCHED	(1 << TIF_NEED_RESCHED)
++#define _TIF_NEED_RESCHED_LAZY	(1 << TIF_NEED_RESCHED_LAZY)
+ #define _TIF_NOTIFY_RESUME	(1 << TIF_NOTIFY_RESUME)
+ #define _TIF_SIGPENDING		(1 << TIF_SIGPENDING)
+-#define _TIF_NEED_RESCHED	(1 << TIF_NEED_RESCHED)
+ #define _TIF_NOTIFY_SIGNAL	(1 << TIF_NOTIFY_SIGNAL)
+ #define _TIF_UPROBE		(1 << TIF_UPROBE)
+ #define _TIF_RISCV_V_DEFER_RESTORE	(1 << TIF_RISCV_V_DEFER_RESTORE)
 
