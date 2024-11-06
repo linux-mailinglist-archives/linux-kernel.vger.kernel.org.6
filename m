@@ -1,113 +1,153 @@
-Return-Path: <linux-kernel+bounces-398649-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398650-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A49369BF425
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 18:16:13 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C12159BF42A
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 18:18:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 659D428561B
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 17:16:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 864E8285310
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 17:18:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE6DB205AC7;
-	Wed,  6 Nov 2024 17:16:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36BAF20651B;
+	Wed,  6 Nov 2024 17:18:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gwOWV687"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="NlVBoAoZ"
+Received: from smtp-fw-6001.amazon.com (smtp-fw-6001.amazon.com [52.95.48.154])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13F271632F1;
-	Wed,  6 Nov 2024 17:16:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C34951DFDB3;
+	Wed,  6 Nov 2024 17:18:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.95.48.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730913366; cv=none; b=YPueNkaNtjXmhPXuo0/Kyj9q451OAF0gSAohfBvW65BxvfPsSs+9GvQu07bsL1Wnr/2U+xX4EYJsuAGkWS9RnZJ16EIR/ba+4xTLz1pMYWTrIV8ecl5odjU43RyOH/23BYg4u9V7/Xt4/KY9X1Yo4oIKa9E4OlZ8RtJVAmfy820=
+	t=1730913511; cv=none; b=sanfoVlsMEV88f9gxmZz6HMcAS6cteZbAHjvjvLHf5Hr0XMz/kTVtSR8P4o64JCMOOxSGb6cLXBZV3z6ro9NMDRQHUoymLt8KBk9sNXUuNsIgYpNTFnNQdMJE6e9/KnETUrS/alt8NUD5/DzydY+M36PtsCDXm08XZCSdmJxDOk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730913366; c=relaxed/simple;
-	bh=zrY9tDf1KcMuOejBIoRaGmD6eUvRgew+/hXls8OMK5c=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=kzb3c01ujMrcSpgjQItN470RJSpADd5SnSM2uZDXdS9mqTXCZIQRkW0hQswZOYTyjOTjFgCOE9LvCaXrMGUaBjG8pAqODHJ0WzM2MRcfN3Fuoa8qxnP491vn8fhfPOwoGCnYHYsGVygcJ3e17xcdrC6TMmDbiOSF/v3cbvuyxEU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gwOWV687; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73FFCC4CEC6;
-	Wed,  6 Nov 2024 17:16:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730913365;
-	bh=zrY9tDf1KcMuOejBIoRaGmD6eUvRgew+/hXls8OMK5c=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=gwOWV687ClrucQmZOgJVj/bfAIzP8wCM/NY+p4UGqa3cXvWuKIai8aQl71CS/hM7Z
-	 pucbWJrvxt7Ge2OVrax/4VW52iu4t6Uxb1gE+HsRwVtNPYT1Pf1XoFB7FXwY5+oqQz
-	 TmSown4jb/rHpiRPHayERLZ47vgv9aQWZ9X31vcgXk/FYXj9MMBRmNH3bnstD6ij7/
-	 GLB/uA4e4PTGMuCR2nqbMLk6Cgf1JhqLV3C+kV0C7r8oOs5/tCij+Fy2ynhlSUZCAI
-	 36WpPCvowapRSrRTJOE6/l6MrHyYJoWzuGXVyl2+UL2CW43eysuLVs/sjMtvYgchvl
-	 i5D7veOWqRspQ==
-Date: Wed, 6 Nov 2024 11:16:04 -0600
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>
-Cc: Jian-Hong Pan <jhp@endlessos.org>, Johan Hovold <johan@kernel.org>,
-	David Box <david.e.box@linux.intel.com>,
-	Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>,
-	Nirmal Patel <nirmal.patel@linux.intel.com>,
-	Jonathan Derrick <jonathan.derrick@linux.dev>,
-	linux-pci@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-	linux@endlessos.org
-Subject: Re: [PATCH v12 3/3] PCI/ASPM: Make pci_save_aspm_l1ss_state save
- both child and parent's L1SS configuration
-Message-ID: <20241106171604.GA1529996@bhelgaas>
+	s=arc-20240116; t=1730913511; c=relaxed/simple;
+	bh=RS32UbC5YTGUMCM+H2KsQrM6zbTTFPULTJlP9ekHazQ=;
+	h=Subject:From:To:CC:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=Glmm7BfvTyDNkWCBYjUbdBYe6eHfvDpildpBwXzG0nURi/ryiZCXXSxA2BXP19yPHB+h4AdbSnzjONN7Xz4xZJvf8tLBV76jqJEjycEr2EeyWjXJ1mIEsw7tDIu0kqUdAZmLGrfEZD9QzeoJRwaNryM6RuIU6Gq0FneKwZmM8+Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=NlVBoAoZ; arc=none smtp.client-ip=52.95.48.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1730913510; x=1762449510;
+  h=from:to:cc:date:message-id:references:in-reply-to:
+   content-id:content-transfer-encoding:mime-version:subject;
+  bh=RS32UbC5YTGUMCM+H2KsQrM6zbTTFPULTJlP9ekHazQ=;
+  b=NlVBoAoZH0JlmpuO4ENRb/tmlLBaSDz1Az94eb65iWV+em1rt90xF4el
+   Bg93xbz3NtLoorVFxwNS3DqLKnBRKH03ms85pDK7dVXnZQ5sJwl3UbhQR
+   8z4Bo9pfbzpBKEjap9BPjMSR632pR8Obbj70ScsGTQQPvl7xDR3ERWeJN
+   c=;
+X-IronPort-AV: E=Sophos;i="6.11,263,1725321600"; 
+   d="scan'208";a="437718798"
+Subject: Re: [PATCH 1/5] asm-generic: add smp_vcond_load_relaxed()
+Thread-Topic: [PATCH 1/5] asm-generic: add smp_vcond_load_relaxed()
+Received: from iad12-co-svc-p1-lb1-vlan2.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.2])
+  by smtp-border-fw-6001.iad6.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2024 17:18:27 +0000
+Received: from EX19MTAUWC001.ant.amazon.com [10.0.21.151:24002]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.17.195:2525] with esmtp (Farcaster)
+ id 17d0382b-27f1-49a1-9c31-0687b6686f64; Wed, 6 Nov 2024 17:18:25 +0000 (UTC)
+X-Farcaster-Flow-ID: 17d0382b-27f1-49a1-9c31-0687b6686f64
+Received: from EX19D001UWA003.ant.amazon.com (10.13.138.211) by
+ EX19MTAUWC001.ant.amazon.com (10.250.64.174) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
+ Wed, 6 Nov 2024 17:18:25 +0000
+Received: from EX19D001UWA003.ant.amazon.com (10.13.138.211) by
+ EX19D001UWA003.ant.amazon.com (10.13.138.211) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.35;
+ Wed, 6 Nov 2024 17:18:25 +0000
+Received: from EX19D001UWA003.ant.amazon.com ([fe80::256a:26de:3ee6:48a2]) by
+ EX19D001UWA003.ant.amazon.com ([fe80::256a:26de:3ee6:48a2%7]) with mapi id
+ 15.02.1258.035; Wed, 6 Nov 2024 17:18:25 +0000
+From: "Okanovic, Haris" <harisokn@amazon.com>
+To: "will@kernel.org" <will@kernel.org>
+CC: "kvm@vger.kernel.org" <kvm@vger.kernel.org>, "rafael@kernel.org"
+	<rafael@kernel.org>, "boris.ostrovsky@oracle.com"
+	<boris.ostrovsky@oracle.com>, "sudeep.holla@arm.com" <sudeep.holla@arm.com>,
+	"joao.m.martins@oracle.com" <joao.m.martins@oracle.com>,
+	"ankur.a.arora@oracle.com" <ankur.a.arora@oracle.com>,
+	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+	"konrad.wilk@oracle.com" <konrad.wilk@oracle.com>, "wanpengli@tencent.com"
+	<wanpengli@tencent.com>, "cl@gentwo.org" <cl@gentwo.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"catalin.marinas@arm.com" <catalin.marinas@arm.com>, "mingo@redhat.com"
+	<mingo@redhat.com>, "pbonzini@redhat.com" <pbonzini@redhat.com>,
+	"tglx@linutronix.de" <tglx@linutronix.de>, "misono.tomohiro@fujitsu.com"
+	<misono.tomohiro@fujitsu.com>, "daniel.lezcano@linaro.org"
+	<daniel.lezcano@linaro.org>, "arnd@arndb.de" <arnd@arndb.de>,
+	"lenb@kernel.org" <lenb@kernel.org>, "mtosatti@redhat.com"
+	<mtosatti@redhat.com>, "hpa@zytor.com" <hpa@zytor.com>,
+	"peterz@infradead.org" <peterz@infradead.org>, "maobibo@loongson.cn"
+	<maobibo@loongson.cn>, "vkuznets@redhat.com" <vkuznets@redhat.com>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "Okanovic, Haris"
+	<harisokn@amazon.com>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+	"bp@alien8.de" <bp@alien8.de>, "x86@kernel.org" <x86@kernel.org>,
+	"mark.rutland@arm.com" <mark.rutland@arm.com>
+Thread-Index: AQHbL7D0KO91MZWU0ESDfcp3e5ep6bKqIdAAgABekoA=
+Date: Wed, 6 Nov 2024 17:18:25 +0000
+Message-ID: <1d070075c2e2fdf014d0c0ecb8a48f88bc7d229d.camel@amazon.com>
+References: <20240925232425.2763385-1-ankur.a.arora@oracle.com>
+	 <20241105183041.1531976-1-harisokn@amazon.com>
+	 <20241105183041.1531976-2-harisokn@amazon.com>
+	 <20241106113953.GA13801@willie-the-truck>
+In-Reply-To: <20241106113953.GA13801@willie-the-truck>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <9617A0F4EB9ED64E80C1CE412977270C@amazon.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <04b86150-c6f5-2898-5b43-dcf14c19845e@linux.intel.com>
 
-On Wed, Nov 06, 2024 at 12:54:12PM +0200, Ilpo Järvinen wrote:
-> On Tue, 5 Nov 2024, Bjorn Helgaas wrote:
-> > On Tue, Oct 01, 2024 at 04:34:42PM +0800, Jian-Hong Pan wrote:
-> > > PCI devices' parameters on the VMD bus have been programmed properly
-> > > originally. But, cleared after pci_reset_bus() and have not been restored
-> > > correctly. This leads the link's L1.2 between PCIe Root Port and child
-> > > device gets wrong configs.
-> ...
-
-> > > So, if the PCI device has a parent, make pci_save_aspm_l1ss_state() save
-> > > the parent's L1SS configuration, too. This is symmetric on
-> > > pci_restore_aspm_l1ss_state().
-
-> > I see the suggestion for a helper here, but I'm not convinced.
-> > pci_save_aspm_l1ss_state() and pci_restore_aspm_l1ss_state() should
-> > *look* similar, and a helper makes them less similar.
-> > 
-> > I think you should go to some effort to follow the
-> > pci_restore_aspm_l1ss_state() structure, as much as possible doing the
-> > same declarations, checks, and lookups in the same order, e.g.:
-> >
-> >   struct pci_cap_saved_state *pl_save_state, *cl_save_state;
-> >   struct pci_dev *parent = pdev->bus->self;
-> > 
-> >   if (pcie_downstream_port(pdev) || !parent)
-> > 	  return;
-> > 
-> >   if (!pdev->l1ss || !parent->l1ss)
-> > 	  return;
-> > 
-> >   cl_save_state = pci_find_saved_ext_cap(pdev, PCI_EXT_CAP_ID_L1SS);
-> >   pl_save_state = pci_find_saved_ext_cap(parent, PCI_EXT_CAP_ID_L1SS);
-> >   if (!cl_save_state || !pl_save_state)
-> > 	  return;
-> 
-> I understand I'm not the one who has the final say in this, but the reason 
-> why restore has to be done the way it is (the long way), is because of the 
-> strict ordering requirement of operations it performs.
-> 
-> There are no similar ordering requirements on the save side AFAIK.
-
-I'm not suggesting any change to the restore side.  The commit log
-says we're making save/restore symmetric, but IMO they end up looking
-very asymmetric.
-
-Bjorn
+T24gV2VkLCAyMDI0LTExLTA2IGF0IDExOjM5ICswMDAwLCBXaWxsIERlYWNvbiB3cm90ZToNCj4g
+Q0FVVElPTjogVGhpcyBlbWFpbCBvcmlnaW5hdGVkIGZyb20gb3V0c2lkZSBvZiB0aGUgb3JnYW5p
+emF0aW9uLiBEbyBub3QgY2xpY2sgbGlua3Mgb3Igb3BlbiBhdHRhY2htZW50cyB1bmxlc3MgeW91
+IGNhbiBjb25maXJtIHRoZSBzZW5kZXIgYW5kIGtub3cgdGhlIGNvbnRlbnQgaXMgc2FmZS4NCj4g
+DQo+IA0KPiANCj4gT24gVHVlLCBOb3YgMDUsIDIwMjQgYXQgMTI6MzA6MzdQTSAtMDYwMCwgSGFy
+aXMgT2thbm92aWMgd3JvdGU6DQo+ID4gUmVsYXhlZCBwb2xsIHVudGlsIGRlc2lyZWQgbWFzay92
+YWx1ZSBpcyBvYnNlcnZlZCBhdCB0aGUgc3BlY2lmaWVkDQo+ID4gYWRkcmVzcyBvciB0aW1lb3V0
+Lg0KPiA+IA0KPiA+IFRoaXMgbWFjcm8gaXMgYSBzcGVjaWFsaXphdGlvbiBvZiB0aGUgZ2VuZXJp
+YyBzbXBfY29uZF9sb2FkX3JlbGF4ZWQoKSwNCj4gPiB3aGljaCB0YWtlcyBhIHNpbXBsZSBtYXNr
+L3ZhbHVlIGNvbmRpdGlvbiAodmNvbmQpIGluc3RlYWQgb2YgYW4NCj4gPiBhcmJpdHJhcnkgZXhw
+cmVzc2lvbi4gSXQgYWxsb3dzIGFyY2hpdGVjdHVyZXMgdG8gYmV0dGVyIHNwZWNpYWxpemUgdGhl
+DQo+ID4gaW1wbGVtZW50YXRpb24sIGUuZy4gdG8gZW5hYmxlIHdmZSgpIHBvbGxpbmcgb2YgdGhl
+IGFkZHJlc3Mgb24gYXJtLg0KPiANCj4gVGhpcyBkb2Vzbid0IG1ha2Ugc2Vuc2UgdG8gbWUuIFRo
+ZSBleGlzdGluZyBzbXBfY29uZF9sb2FkKCkgZnVuY3Rpb25zDQo+IGFscmVhZHkgdXNlIHdmZSBv
+biBhcm02NCBhbmQgSSBkb24ndCBzZWUgd2h5IHdlIG5lZWQgYSBzcGVjaWFsIGhlbHBlcg0KPiBq
+dXN0IHRvIGRvIGEgbWFzay4NCg0KV2UgY2FuJ3QgdHVybiBhbiBhcmJpdHJhcnkgQyBleHByZXNz
+aW9uIGludG8gYSB3ZmUoKS93ZmV0KCkgZXhpdA0KY29uZGl0aW9uLCB3aGljaCBpcyBvbmUgb2Yg
+dGhlIGlucHV0cyB0byB0aGUgZXhpc3Rpbmcgc21wX2NvbmRfbG9hZCgpLg0KVGhpcyBBUEkgaXMg
+dGhlcmVmb3JlIG1vcmUgYW1lbmFibGUgdG8gaGFyZHdhcmUgYWNjZWxlcmF0aW9uLg0KDQo+IA0K
+PiA+IFNpZ25lZC1vZmYtYnk6IEhhcmlzIE9rYW5vdmljIDxoYXJpc29rbkBhbWF6b24uY29tPg0K
+PiA+IC0tLQ0KPiA+ICBpbmNsdWRlL2FzbS1nZW5lcmljL2JhcnJpZXIuaCB8IDI1ICsrKysrKysr
+KysrKysrKysrKysrKysrKysNCj4gPiAgMSBmaWxlIGNoYW5nZWQsIDI1IGluc2VydGlvbnMoKykN
+Cj4gPiANCj4gPiBkaWZmIC0tZ2l0IGEvaW5jbHVkZS9hc20tZ2VuZXJpYy9iYXJyaWVyLmggYi9p
+bmNsdWRlL2FzbS1nZW5lcmljL2JhcnJpZXIuaA0KPiA+IGluZGV4IGQ0ZjU4MWMxZTIxZC4uMTEy
+MDI3ZWFiYmZjIDEwMDY0NA0KPiA+IC0tLSBhL2luY2x1ZGUvYXNtLWdlbmVyaWMvYmFycmllci5o
+DQo+ID4gKysrIGIvaW5jbHVkZS9hc20tZ2VuZXJpYy9iYXJyaWVyLmgNCj4gPiBAQCAtMjU2LDYg
+KzI1NiwzMSBAQCBkbyB7ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgXA0KPiA+ICB9KQ0KPiA+ICAjZW5kaWYNCj4gPiAN
+Cj4gPiArLyoqDQo+ID4gKyAqIHNtcF92Y29uZF9sb2FkX3JlbGF4ZWQoKSAtIChTcGluKSB3YWl0
+IHVudGlsIGFuIGV4cGVjdGVkIHZhbHVlIGF0IGFkZHJlc3MNCj4gPiArICogd2l0aCBubyBvcmRl
+cmluZyBndWFyYW50ZWVzLiBTcGlucyB1bnRpbCBgKCphZGRyICYgbWFzaykgPT0gdmFsYCBvcg0K
+PiA+ICsgKiBgbnNlY3NgIGVsYXBzZSwgYW5kIHJldHVybnMgdGhlIGxhc3Qgb2JzZXJ2ZWQgYCph
+ZGRyYCB2YWx1ZS4NCj4gPiArICoNCj4gPiArICogQG5zZWNzOiB0aW1lb3V0IGluIG5hbm9zZWNv
+bmRzDQo+ID4gKyAqIEBhZGRyOiBwb2ludGVyIHRvIGFuIGludGVnZXINCj4gPiArICogQG1hc2s6
+IGEgYml0IG1hc2sgYXBwbGllZCB0byByZWFkIHZhbHVlcw0KPiA+ICsgKiBAdmFsOiBFeHBlY3Rl
+ZCB2YWx1ZSB3aXRoIG1hc2sNCj4gPiArICovDQo+ID4gKyNpZm5kZWYgc21wX3Zjb25kX2xvYWRf
+cmVsYXhlZA0KPiANCj4gSSBrbm93IG5hbWluZyBpcyBoYXJkLCBidXQgInZjb25kIiBpcyBlc3Bl
+Y2lhbGx5IHRlcnJpYmxlLg0KPiBQZXJoYXBzIHNtcF9jb25kX2xvYWRfdGltZW91dCgpPw0KDQpJ
+IGFncmVlLCBuYW1pbmcgaXMgaGFyZCEgSSB3YXMgdHJ5aW5nIHRvIGRpZmZlcmVudGlhdGUgaXQg
+ZnJvbQ0Kc21wX2NvbmRfbG9hZCgpIGluIHNvbWUgbWVhbmluZ2Z1bCB3YXkgLSB0aGF0IG9uZSBp
+cyBhbiAiZXhwcmVzc2lvbiINCmNvbmRpdGlvbiB0aGlzIG9uZSBpcyBhICJ2YWx1ZSIgY29uZGl0
+aW9uLg0KDQpJJ2xsIHRoaW5rIGl0IG92ZXIgYSBiaXQgbW9yZS4NCg0KPiANCj4gV2lsbA0KDQo=
 
