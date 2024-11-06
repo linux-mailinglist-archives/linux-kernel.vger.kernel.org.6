@@ -1,169 +1,234 @@
-Return-Path: <linux-kernel+bounces-398151-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398153-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADED99BE66F
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 12:59:45 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 067699BE677
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 13:01:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E8D01F2495F
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 11:59:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B77102856E9
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 12:00:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C13CF1DFE33;
-	Wed,  6 Nov 2024 11:58:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2828D1DEFC1;
+	Wed,  6 Nov 2024 12:00:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Wa0zQf9r"
-Received: from mail-yw1-f195.google.com (mail-yw1-f195.google.com [209.85.128.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=axis.com header.i=@axis.com header.b="GLgTdk45"
+Received: from EUR05-DB8-obe.outbound.protection.outlook.com (mail-db8eur05on2068.outbound.protection.outlook.com [40.107.20.68])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A304A1DF97E;
-	Wed,  6 Nov 2024 11:58:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.195
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730894293; cv=none; b=KWRsIILTv6x8A8mBsZOSJMWgAzZL/3DXF56nBa69aTdPW+EByvAahiJd9APN4vGzubPDVsrZ1/+dfr/ccMFEVHlFcKZYntg7YS2vCCrkJRWcVyIHv8m4s2pv0+hJDOfNGanOY+ibmg7s7s51Lluf3EUPKL66mFhaQvlzKlPd2Po=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730894293; c=relaxed/simple;
-	bh=lPtdyFjSX7/UnqsyuM5h54naOd6rYeJQC1kkvUSDPdg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=C+MktolMKXMqHgoJ+yU6S8/UMWHahDlaOqsbdZ8LCCoYr7wGpIbqmo28XVDLH6xkOXSXtBJ4PFwlqsEcHUwROKETRc3mQLdchG7SWdEqeb07UuMJs1+G5c1lbwlTsgBTsoEOWQSoi8ncKfU8T9Zb8N0Q7lKdPUDKPsQPwWIblwI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Wa0zQf9r; arc=none smtp.client-ip=209.85.128.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f195.google.com with SMTP id 00721157ae682-6ea50585bf2so70141787b3.3;
-        Wed, 06 Nov 2024 03:58:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730894290; x=1731499090; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VAqjHxmUrO89VjVjpuY++87pz4fEOVeyoRet1eIwJ2o=;
-        b=Wa0zQf9rrLCvAwQ5d14mvBeuc8Vy5SADkiZxHg27F5vaNiOdl1netCiGu4FeTeoKGi
-         yyvzHo05tjX+hoMOTbjxz1RU+BJSYvCI+7hSJm/xT8UMwIxVWFFND4lTOlQ9e2K9/z5b
-         fykV4heCNgU1i0SjotFgIIXWbiaQPqfX4SIlVMWrNWHIRqmrQupH4ik7LmT6XZE87yiU
-         QFJ32x5IXSnJyBJqaA6RKy+hMlSCkfLU7lAoEmtip3FEPLK0H1mnTjauPsv6aLWBe4ex
-         HDvOy1G/BuuIVrd3o0qOSvXin7A1pja2oKlqq1SvRsgHDbmLkVvn3YY4yxCIToovufjW
-         umCg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730894290; x=1731499090;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VAqjHxmUrO89VjVjpuY++87pz4fEOVeyoRet1eIwJ2o=;
-        b=TgpVJjwmWQivACxuxnaMljFg56Q7qqsUlTCu+70OgNHDkLe0zfNDzVFmgNyzbtH3Ah
-         w6qHndltCL5UEPZDJCjroeHbJAk5tT16qQZ7mCedxrIwLD8BLW8VOwAeNHEjAu9pTPF4
-         XugITG1J/f1paRxoPLzp2EBLW1QejWkdB+inT5dJItQRK7TtVgZuMAmBnHNJL1tf2eDr
-         0KuD5jAnl0GLb+pyVdNCtfHgu3Yv8gkRXMJerqfoZq7mVFIIgNLs5RwJFjeSzgxG7Fvj
-         7uDKcu5GqI6wJDEQ/9dV65YHEItEZLQ/K043zOhpH6AHw9vXv8+dkvCPFv8/bcbf2n9k
-         JXuA==
-X-Forwarded-Encrypted: i=1; AJvYcCUo+WaWLfygJtZ3ylYAZ1fardzd0V5nDHAXdnJhDpOKebw95FS6ZjeIV5Gm1nnYUGu5TKouQ3uz8+M/l2gax9RZ@vger.kernel.org, AJvYcCV48u8f5Pn2BBpCFrNL2sQNVJW6NVj4fEOSRgqG/5DOZOrqMxBcBDOTnC41efnTAK0G6lA=@vger.kernel.org, AJvYcCVawiQ70dphkzfwwh6TOm+2tNSOHdZ2z23SgI0a5DoW+N/8eJW2xYTPnmNFvMpqbJXCtPwJkfxQQsq2XkRb@vger.kernel.org, AJvYcCVr/eWrNFUAaTdtnJQw4xMC0Kg0xB1twyKhU1aLKrKZoAd4W1w2+Z8Hin8GOfQBf7pK2KlGX2qL@vger.kernel.org
-X-Gm-Message-State: AOJu0YwOIqjJCYeAgxrQHeoQzsOEX7ihL8JPZe8cGEyp+kPYe1/Sjn0O
-	GKSabsMonFUHpivlkOETKzVyFaJkxZiWWFMXgtlLD1gOCDgk0CTgFZ5F8iYJAIewRYzpMj/de8w
-	Y1GrgQFvWp2kmQA6rjunxE2Yl3Zs=
-X-Google-Smtp-Source: AGHT+IEicBeNuuKcBuxj8PHbVAzeh5q36ut7RhJLw1zsm8LW4+5N2cnbcMPl7qD+TVVga0oNtp2Xo5uEhULkgazh6rI=
-X-Received: by 2002:a05:690c:6c88:b0:6e3:3dbc:ca60 with SMTP id
- 00721157ae682-6ea64a9f24bmr191545627b3.8.1730894290438; Wed, 06 Nov 2024
- 03:58:10 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 458E241C69;
+	Wed,  6 Nov 2024 12:00:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.20.68
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730894450; cv=fail; b=dGOyNQQT5OAqzuAKIRBaXLecbhhSwofPfrhxyfDe0xEglgucpGEc/g1HGq/JKR21cgp/YfF1ILt5poaVY/ZhSqGq3WRuSdgC8v2tfcz8oK/29RXulvJpGmBTZ+39tcT1vDDQ+Lu/Mi3kjXDj+pz7O7OX1xBz1TKYpjq34XIk2SU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730894450; c=relaxed/simple;
+	bh=MFw67YHUJwFlR8MDi0LEQu303oKZyPeemYTG9nVrRO0=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=lx1HO+iZWoI41TtSds6MYPGzgNpVG50iphQycFtyH6T6CLrr4q/lO9yLswfA0SqdBB+SDLyhULYrXlPtPGBAfvQwzEppnhgOAS5r08YjQ1LSevY/iPApq89uDTjsbA2s4edlo6AXuHac6J6p5MbRFfSCmIhQ+HDrp9juHv323ls=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=axis.com; spf=pass smtp.mailfrom=axis.com; dkim=pass (1024-bit key) header.d=axis.com header.i=@axis.com header.b=GLgTdk45; arc=fail smtp.client-ip=40.107.20.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=axis.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=axis.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=jcvvXKzsuBiRCnxUh8RLCkDfQolLnOdIoIk3BIUyL+pIXgzwVsmzLqnPDaW+vbiBkN7ETdum2zh/zvqSU8MbNfRNWTlc/0xNYVo0brq8gVSNo2wpNqxkZ3t+4CpErRIGaxLJG4hdXH0ahwu/YGe47MaRT9dO0VWeqj2DcxAyumq5JXgt5qhsBp9HOiePD9YubWDmGAkRLJbHaQVvnPcAVLY8z8g1Qd76PMspjvdPMIY9Syhg7+QEM1zdlsF1ImxP7Dgjh7Bv6C0zxrFZ5UTsPdBTreJyTWPxM5xTVC4uNnQ7tD+WRB2Y7i/r9Zi1Td4aZ4ozIAdX00qMWil6tLsIZA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=o45JHGbAm4tb4wgwhT2Emo6JGeMLTQmV4U0lQnIQ9BQ=;
+ b=Naa/ZEkOAwkTQDYFmBHzIhtGwSGzkOlHjJ2v4YnmsvNJlJrQyjCG0HpZQ0vm7G67SDw6ponD7f/700hLPj4mR1zAoSbF3glZUQrShuYTImf7HigLgpXP5UJ+lbvU2nfbYzwJiSU/YCO18hWsS6BhIBnHsQMJvYNPykinmAaSk32v0spER8dM1n94i6Wau7GqoQvlXMZJPtr+h4U64srBVrXh801R6y8xQRvEuo3gp+0AZ2/ytE8JH4/ee7Pe4qlvhemi98WBzFEtA+zZ8hnbBRdK5Y7pToOwbywkCAGc55TBT+vPwFQn2oWrRtnUG1m1TubRp0cQ7G9xSOt5H3WC1g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 195.60.68.100) smtp.rcpttodomain=kernel.org smtp.mailfrom=axis.com;
+ dmarc=pass (p=none sp=none pct=100) action=none header.from=axis.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=axis.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=o45JHGbAm4tb4wgwhT2Emo6JGeMLTQmV4U0lQnIQ9BQ=;
+ b=GLgTdk45ZnUIdmgr3CTUrypCa7INMg3BX4DgDzRieXoPj1r+nCDUQmiC+h5zXosNgXOZYN+N+5wVPqDiuFpEM22GwxvgIbvhxWS1F0JytcAoBZUOG5i7G7jxGojFgiWKSxrs2+aghLPKlWJR5isdOvMSCfNh+3YnQtvcJp6gZ2c=
+Received: from DU7P195CA0030.EURP195.PROD.OUTLOOK.COM (2603:10a6:10:54d::17)
+ by GV1PR02MB10742.eurprd02.prod.outlook.com (2603:10a6:150:15d::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8114.31; Wed, 6 Nov
+ 2024 12:00:42 +0000
+Received: from DB1PEPF000509EF.eurprd03.prod.outlook.com
+ (2603:10a6:10:54d:cafe::4e) by DU7P195CA0030.outlook.office365.com
+ (2603:10a6:10:54d::17) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.19 via Frontend
+ Transport; Wed, 6 Nov 2024 12:00:42 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 195.60.68.100)
+ smtp.mailfrom=axis.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=axis.com;
+Received-SPF: Pass (protection.outlook.com: domain of axis.com designates
+ 195.60.68.100 as permitted sender) receiver=protection.outlook.com;
+ client-ip=195.60.68.100; helo=mail.axis.com; pr=C
+Received: from mail.axis.com (195.60.68.100) by
+ DB1PEPF000509EF.mail.protection.outlook.com (10.167.242.73) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8137.17 via Frontend Transport; Wed, 6 Nov 2024 12:00:42 +0000
+Received: from SE-MAILARCH01W.axis.com (10.20.40.15) by se-mail01w.axis.com
+ (10.20.40.7) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 6 Nov
+ 2024 13:00:40 +0100
+Received: from se-mail01w.axis.com (10.20.40.7) by SE-MAILARCH01W.axis.com
+ (10.20.40.15) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 6 Nov
+ 2024 13:00:40 +0100
+Received: from se-intmail02x.se.axis.com (10.4.0.28) by se-mail01w.axis.com
+ (10.20.40.7) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
+ Transport; Wed, 6 Nov 2024 13:00:40 +0100
+Received: from pc48051-2208.se.axis.com (pc48051-2208.se.axis.com [10.96.59.31])
+	by se-intmail02x.se.axis.com (Postfix) with ESMTP id A0A2B871;
+	Wed,  6 Nov 2024 13:00:40 +0100 (CET)
+Received: by pc48051-2208.se.axis.com (Postfix, from userid 21236)
+	id 9BFA418E1ECB; Wed,  6 Nov 2024 13:00:40 +0100 (CET)
+From: Per-Daniel Olsson <perdaniel.olsson@axis.com>
+To: Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>,
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+CC: <linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <rickard.andersson@axis.com>,
+	<kernel@axis.com>, Per-Daniel Olsson <perdaniel.olsson@axis.com>
+Subject: [PATCH v5 0/2] Support for Texas Instruments OPT4060 RGBW Color sensor.
+Date: Wed, 6 Nov 2024 13:00:34 +0100
+Message-ID: <20241106120036.986755-1-perdaniel.olsson@axis.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241030014145.1409628-1-dongml2@chinatelecom.cn>
- <20241030014145.1409628-10-dongml2@chinatelecom.cn> <8f83725e-1ea9-438f-8ab1-ff528ca761fb@redhat.com>
-In-Reply-To: <8f83725e-1ea9-438f-8ab1-ff528ca761fb@redhat.com>
-From: Menglong Dong <menglong8.dong@gmail.com>
-Date: Wed, 6 Nov 2024 19:59:18 +0800
-Message-ID: <CADxym3YK5QYHs8oFwY8FQdcpuQSSY5N=Pj8N40U+vaUdi4er-w@mail.gmail.com>
-Subject: Re: [PATCH RESEND net-next v4 9/9] net: ip: make ip_route_use_hint()
- return drop reasons
-To: Paolo Abeni <pabeni@redhat.com>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
-	horms@kernel.org, dsahern@kernel.org, pablo@netfilter.org, 
-	kadlec@netfilter.org, roopa@nvidia.com, razor@blackwall.org, 
-	gnault@redhat.com, bigeasy@linutronix.de, hawk@kernel.org, idosch@nvidia.com, 
-	dongml2@chinatelecom.cn, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	netfilter-devel@vger.kernel.org, coreteam@netfilter.org, 
-	bridge@lists.linux.dev, bpf@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DB1PEPF000509EF:EE_|GV1PR02MB10742:EE_
+X-MS-Office365-Filtering-Correlation-Id: bf067984-af3a-4918-a762-08dcfe5aa376
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|376014|82310400026|36860700013;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?D1eRPuMbTF2QhfdaTSKg0rQmyILpy5dVnbMrpy6bxmRQC2McHdI+NFPkDECc?=
+ =?us-ascii?Q?VxJHTC+07msoqIxaNOaR6xqeRxoG9L9S592rkyrSP1d54fRuzBqjYbBQrDWZ?=
+ =?us-ascii?Q?gg4xHOR91NcM4rSCCTeJfZiKPQf8thjBB2JrS4y6LJv8bKzK2nH+vHtSVbOg?=
+ =?us-ascii?Q?O2/pc1RSNjJH1S1mqMXJq1FHwsWuWM6fkVvgfekLDl4gd1hRHos/3tArRI4d?=
+ =?us-ascii?Q?O8mlxcSQ/RNvRT+XNcuXdwnnLbMKN3KrEETd1uZfe0N2Zrs5MZyD+ld3QaVJ?=
+ =?us-ascii?Q?KrBMiTJkqPJM+a8lrLUwxQ2RWyyE+li8P4SKaoixYArnsoEUIfsvBLkjwmcl?=
+ =?us-ascii?Q?Dl8VX1rllDag/uratlOwy2dfwajX/9LZzEHzfSgMpLFbAhMn2fd2mpgOkWQW?=
+ =?us-ascii?Q?rE/DsSElfgxRpg0EwO4YhS44Qe/OUi4qiQOImcynLHcrhmOHjebvsak+BN6l?=
+ =?us-ascii?Q?8AVQed9VlwedKCgpRFwd+nYYAqJVghvDU1ReMjyPUgDPoE1A1mpWFan55H5h?=
+ =?us-ascii?Q?rzLqodxZrt9yk4jYWjrCMAiktVGfGow0LRBIEx8MIdioFvkbhYt/OCkAagY5?=
+ =?us-ascii?Q?mMzpV9LuIJTuyTRMr/Pq7EBHYVODJqQB5VVzIdbzJnJjhhIde9mU+ceEWrRb?=
+ =?us-ascii?Q?0lfah6jA7e+2b+SglwTWYI67ppyUdVF3F39gtmdirOy3D8mbhnk2CZmRN+Ri?=
+ =?us-ascii?Q?GcxTswKgH70SP5KqTiF6cB7401Z8u+OU1m1JeKYPFDm03T+VSvc55X++nMpR?=
+ =?us-ascii?Q?R+1o6vVOrAebOU7sx+lRiNfjq3McZ1ayeTx5z5dpbQGhMKgETnYv8vtqXoUb?=
+ =?us-ascii?Q?fhdqdubGLJCgXpCbcKLMOskM7qL6gzxS4PhojPNqHKWrNS4jTH161+UEUM2O?=
+ =?us-ascii?Q?Q5Vua9L/hEpBYxE1NwBg8g9PpXZK4y/FykDnT5+OjaXW0gLjyKRP9OJknSn9?=
+ =?us-ascii?Q?j/n7U8fSy0oH0evh0fubOvQ2u8P1hxKZU0oewbAMiaq9p4O8DqCdPkfDWB60?=
+ =?us-ascii?Q?dQET+OEjYlJmkkYPnnB/+BbD1utl5qO0bZA4gIWD2yeavz9b+W5Zy2jBA4HV?=
+ =?us-ascii?Q?QRdWJ2dMlSDvKnUvsA0VWLP8xs2UlmEdz/lHuEpqxWHAkBVha/NZ7XpEs0bH?=
+ =?us-ascii?Q?bi5XCu21FdUYbMCUg8erd0GuJ7JBbV+7hRpTTRJE9sUFhqkD/B621VO0i673?=
+ =?us-ascii?Q?cUkaJVwb3odoTEsjIF5Sx/UC3sgvts+ksu1MwRteNaabi5/6l3gyYEpiBs84?=
+ =?us-ascii?Q?M6x/mB/5s4GLBgVH7bRNbvWHUB0sTEQTx5B+MV/FUXPMKZLlHqJsqueNlv+n?=
+ =?us-ascii?Q?wFxsEPXJQ8vFnoodF8seFeHnUvDVkG5XTPrGBIQchFc/pxI0Iy2e2Z9+MV3/?=
+ =?us-ascii?Q?YAZLYwsPDAtnNxa8waxsERaQRJGGHCXBbkPFzdxSAlb3wXJSQw=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:195.60.68.100;CTRY:SE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.axis.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(376014)(82310400026)(36860700013);DIR:OUT;SFP:1101;
+X-OriginatorOrg: axis.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Nov 2024 12:00:42.1960
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: bf067984-af3a-4918-a762-08dcfe5aa376
+X-MS-Exchange-CrossTenant-Id: 78703d3c-b907-432f-b066-88f7af9ca3af
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=78703d3c-b907-432f-b066-88f7af9ca3af;Ip=[195.60.68.100];Helo=[mail.axis.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DB1PEPF000509EF.eurprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV1PR02MB10742
 
-On Tue, Nov 5, 2024 at 7:28=E2=80=AFPM Paolo Abeni <pabeni@redhat.com> wrot=
-e:
->
-> On 10/30/24 02:41, Menglong Dong wrote:
-> > diff --git a/net/ipv4/route.c b/net/ipv4/route.c
-> > index e248e5577d0e..7f969c865c81 100644
-> > --- a/net/ipv4/route.c
-> > +++ b/net/ipv4/route.c
-> > @@ -2142,28 +2142,34 @@ ip_mkroute_input(struct sk_buff *skb, struct fi=
-b_result *res,
-> >   * assuming daddr is valid and the destination is not a local broadcas=
-t one.
-> >   * Uses the provided hint instead of performing a route lookup.
-> >   */
-> > -int ip_route_use_hint(struct sk_buff *skb, __be32 daddr, __be32 saddr,
-> > -                   dscp_t dscp, struct net_device *dev,
-> > -                   const struct sk_buff *hint)
-> > +enum skb_drop_reason
-> > +ip_route_use_hint(struct sk_buff *skb, __be32 daddr, __be32 saddr,
-> > +               dscp_t dscp, struct net_device *dev,
-> > +               const struct sk_buff *hint)
-> >  {
-> > +     enum skb_drop_reason reason =3D SKB_DROP_REASON_NOT_SPECIFIED;
-> >       struct in_device *in_dev =3D __in_dev_get_rcu(dev);
-> >       struct rtable *rt =3D skb_rtable(hint);
-> >       struct net *net =3D dev_net(dev);
-> > -     enum skb_drop_reason reason;
-> > -     int err =3D -EINVAL;
-> >       u32 tag =3D 0;
-> >
-> >       if (!in_dev)
-> > -             return -EINVAL;
-> > +             return reason;
-> >
-> > -     if (ipv4_is_multicast(saddr) || ipv4_is_lbcast(saddr))
-> > +     if (ipv4_is_multicast(saddr) || ipv4_is_lbcast(saddr)) {
-> > +             reason =3D SKB_DROP_REASON_IP_INVALID_SOURCE;
-> >               goto martian_source;
-> > +     }
-> >
-> > -     if (ipv4_is_zeronet(saddr))
-> > +     if (ipv4_is_zeronet(saddr)) {
-> > +             reason =3D SKB_DROP_REASON_IP_INVALID_SOURCE;
-> >               goto martian_source;
-> > +     }
-> >
-> > -     if (ipv4_is_loopback(saddr) && !IN_DEV_NET_ROUTE_LOCALNET(in_dev,=
- net))
-> > +     if (ipv4_is_loopback(saddr) && !IN_DEV_NET_ROUTE_LOCALNET(in_dev,=
- net)) {
-> > +             reason =3D IP_LOCALNET;
-> >               goto martian_source;
-> > +     }
-> >
-> >       if (rt->rt_type !=3D RTN_LOCAL)
-> >               goto skip_validate_source;
->
-> Please explicitly replace also the
->
->         return 0;
->
-> with
->
->         return SKB_NOT_DROPPED_YET;
->
-> So that is clear the drop reason is always specified.
+This patch series adds support for Texas Instruments OPT4060 RGBW Color sensor
+using the i2c interface.
 
-Okay!
+The driver exposes raw adc values for red, green, blue and clear. The
+illuminance is exposed as a calculated value in lux, the calculation uses the
+wide spectrum green channel as base. The relative normalized color components
+for red, green and blue are exposed as scaled values. Those values give the
+relative colors independently of the light intensity. Integration time can be
+configured through sysfs as well. The OPT4060 sensor supports both rising and
+falling threshold interrupts. These interrupts are exposed as IIO events. The
+driver also implements an IIO triggered buffer with a trigger for conversion
+ready interrupts.
 
-Thanks!
-Menglong Dong
+Changes in v5:
+- Cover letter: Description adapted to new channel and trigger setup.
+- Trigger for threshold removed.
+- Channel setup modified according to email discussion.
+- Switched to aligned_s64 from linux-next.
+- Endianness in buffer changed to IIO_CPU.
+- opt4060_read_raw_value(...) changed to avoid endian issue plus early return.
+- opt4060_read_chan_value(...) split of in several for new channel setup.
+- Improved return values in multiple places.
+- The preenable callback removed, functionality moved to set_state.
+- Irq setup removed from opt4060_irq_thread(...).
+- Flipped logic with early return in opt4060_trigger_one_shot(...).
+- devm_add_action_or_reset(...) moved to after opt4060_load_defaults(...).
+- Documentation: Added sysfs-bus-iio-light-opt4060 with channel descriptions.
+- Added hard coded name indio_dev->name.
+- Modified opt4060_volatile_reg(...) to make test robot happy.
+- Link to V4: https://lore.kernel.org/lkml/20241016213409.3823162-1-perdaniel.olsson@axis.com/
+
+Changes in v4:
+- Fix for a warning found by test robot in opt4060_write_event(...).
+- Correction of early return in opt4060_write_event(...) and opt4060_read_event(...),
+  missed from review of version 2.
+- Correction of timeout for sample conversion.
+- Correction of bug when changing integration time with buffer enabled.
+- Link to V3: https://lore.kernel.org/lkml/20241015143713.2017626-1-perdaniel.olsson@axis.com/
+
+Changes in v3:
+- Cover letter: Removed lux from description.
+- OPT_4060_DRV_NAME define removed.
+- Corrected alignment for struct opt4060_buffer.
+- Added description of the CRC calculation.
+- Cleaned variable declaration in several places.
+- Added a path for the non-irq case in opt4060_read_chan_value(...).
+- Added a description of processed values.
+- Use of regmap_clear_bits in opt4060_power_down(...).
+- Switched to IIO_INTENSITY instead of IIO_LIGHT.
+- Correction of channel index in IIO_UNMOD_EVENT_CODE, found by test robot.
+- Added iio_chan_spec for the non-irq case without events.
+- Fixed braces in a few if-else statements.
+- Refactoring with early returns in a few places to reduce indentation.
+- Replaced for_each_set_bit with iio_for_each_active_channel.
+- Removed various too obvious comments.
+- Fixed various other code style problems.
+- Link to V2: https://lore.kernel.org/lkml/20241005165119.3549472-1-perdaniel.olsson@axis.com/
+
+Changes in v2:
+- dt-bindings: Removed incorrect allOf.
+- dt-bindings: Changed to generic node name.
+- Correction in opt4060_trigger_one_shot(...) for continuous mode.
+- Correction in opt4060_power_down(...), wrong register was read.
+- Corrected usage of active_scan_mask in opt4060_trigger_handler(...).
+- Clean-up of various comments.
+- Link to V1: https://lore.kernel.org/lkml/20241003164932.1162049-1-perdaniel.olsson@axis.com/
 
 
-> Thanks,
->
-> Paolo
->
+Per-Daniel Olsson (2):
+  dt-bindings: iio: light: Document TI OPT4060 RGBW sensor
+  iio: light: Add support for TI OPT4060 color sensor
+
+ .../ABI/testing/sysfs-bus-iio-light-opt4060   |   66 +
+ .../bindings/iio/light/ti,opt4060.yaml        |   51 +
+ drivers/iio/light/Kconfig                     |   13 +
+ drivers/iio/light/Makefile                    |    1 +
+ drivers/iio/light/opt4060.c                   | 1282 +++++++++++++++++
+ 5 files changed, 1413 insertions(+)
+ create mode 100644 Documentation/ABI/testing/sysfs-bus-iio-light-opt4060
+ create mode 100644 Documentation/devicetree/bindings/iio/light/ti,opt4060.yaml
+ create mode 100644 drivers/iio/light/opt4060.c
+
+--
+2.39.5
+
 
