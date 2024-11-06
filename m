@@ -1,148 +1,127 @@
-Return-Path: <linux-kernel+bounces-398494-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398495-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E6DE9BF1E9
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 16:42:36 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89B9E9BF1EB
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 16:43:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 604CD1C2202A
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 15:42:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3FB251F23DE1
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 15:43:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B0B12036F7;
-	Wed,  6 Nov 2024 15:42:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BA242036F0;
+	Wed,  6 Nov 2024 15:43:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="RBSlUJlo"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fgliIiu3"
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86D832022D1
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 15:42:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B307B20110E;
+	Wed,  6 Nov 2024 15:43:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730907750; cv=none; b=Rx/DD4tSHzo9K3T68xk3Ub6rscEb1D92UgMvfUjk/1MWLAjkkfctsPYg8wycuM+xl0E05gBQBAoBKnedPO5X5wpNDxpdJGaw9WuBHO8J5kf1caeh56lCz80OVkd9zwtAagrsVRNOJlMSI4yMV8ffQh14Is9UfJIpBMywvrRi3Zg=
+	t=1730907793; cv=none; b=iFu5Kt1yz4wuKWBWDoaPNMdd2PtqzM3MGFtHf9ln8Ijlx5APGyDfqY74huaiZ5pNTXzNWdFPc8h7fal3PnUfOVLiBDvZs9TV+6lHTbKkeTXzSzIi/2Fdh5mRs56z/tFqTzLmtTpjMphS92UbcCmnWSRCiVAnNfuCXOo7gaxnJZQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730907750; c=relaxed/simple;
-	bh=rXpfHHtaAD5pTcx1X9at8HJg/Dbu27X0NgaP+4zCyjc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XQ4d6mEyaH14eSqAR5LSD2s0Gfa83XdS0248jN0EbXKmnrMp7WMfVwShaNAusoeu26ZdNRg7bmogQj3LbDejx7xA8meQbOApghq8b8XF4zFh8xnn45JBpyuhzqJmXPmmsas+8Xz4jIre7/KNJWx/R1rRLGE4lkbpEqwDkYnwcEE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=RBSlUJlo; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-37d495d217bso5921768f8f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2024 07:42:28 -0800 (PST)
+	s=arc-20240116; t=1730907793; c=relaxed/simple;
+	bh=MAPHfbJLtZHhnegHWlKCHcZuDm68IfEs5pmSWtKlIVA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=lOe7FObIkMEmqvwFUTB0ZnCckKEOv+eDeL+sJGHeAZbK5dbcI8N+4qFts7v4zWy9hjeIZJb3c+l9zULhnvrC8ky3EYW2L4tKCWxOy3ou6JQNFGXivrjqKfUrCRivLtJIqBt2IA+bbrlpEpEi58jixJ75ICTR1jXsDWaVgRlHGYs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fgliIiu3; arc=none smtp.client-ip=209.85.210.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-72061bfec2dso6326658b3a.2;
+        Wed, 06 Nov 2024 07:43:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1730907747; x=1731512547; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=/ti7UsIKyZqf2Hot2MVTOlKId95dgb1Zot1pr3BqVVw=;
-        b=RBSlUJloMrVDNAYbrbIn3vGHJE9lNf1kaSwsLfJiQik3MCXxmm33xsnWIKhugy+C2n
-         k9Xto7JyjuoP3AfQ5bFfF0eNTLx2mZsOzjFQwCRwRpDiF0OEJQko/gm1UsxbWecPVSpk
-         hLDcptH5UcnTO74GOS5eIChvYZ50KwCCKzcef5nKYWCzMOL5cr8xJFmWO+QRFUFuB+5N
-         gvHx1hPf/tHEPJufU4GJTapeP0pGj6A4pa1/jbx9cY4MTtidIg+QxTmMA2weyB2Bmd7a
-         U19nlsyzTcLVmTnuzcUCFQl8MUBRzlpkhbtuf8NKNQ/K8qK6nX4bJoD6Y0cMUqWzeL93
-         shvQ==
+        d=gmail.com; s=20230601; t=1730907791; x=1731512591; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:reply-to:message-id:date
+         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=xGmuTOkwDF5EWyglbyKZX3cdG70GKqEHWRe2DvKnQV4=;
+        b=fgliIiu3SF5PQusg6jkiR6rh/D9VycQaCtJ4nqUicmSSmtF/+CCv1P02ylOxeXV/8e
+         BIOd8lsyHR2AFRnlGljXL2hGB/eLkH5N4B+jZi8f2UiaCzznZBdzwxVozKAdKi1ha2hT
+         cOR9opGGYSQGCXpVhKNs3i+5GdHdhxRjxMPY4XS1oZhdaYvmY8IHHy6b9Gw5E+O8e5fN
+         ejVeqCae5uuuGzeTNW4X7ae2gzSuWBwvjf89liZYbaLHeG00dGUPKI4vHFt/QARrU33q
+         nKXSq9Q/2/WOaqe0KClyU7rkossdzy4NJUNntLauyNwTEwc5UEJgkPB8YzmVHTTXS1FL
+         z6OA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730907747; x=1731512547;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20230601; t=1730907791; x=1731512591;
+        h=content-transfer-encoding:mime-version:reply-to:message-id:date
+         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=/ti7UsIKyZqf2Hot2MVTOlKId95dgb1Zot1pr3BqVVw=;
-        b=p7iQMD/JoYWd/cptzSe9JymzGCJOesLLaQ3pLs/RbrvD66GFSculRabHEYyGyD5h+d
-         rkT3rSLigVPJaN1be2Wlu/rcAziEuGmJnUt5M1bTcLqsYe+BZCmRzHGiM2LADLPe/sQR
-         o6fh3zX2UAlwwAsp7xay6f+JjU/ngzL9kg+0qh1nUtUkDCcWpZC0a2ZSoWYQmY7W08+T
-         MxDE0xB2XTNdJTje+j/zx6QRt2Io7MPKYnWZCKMfo0tWvMHKkyaOU9Vpt3oJJZzwqfRJ
-         6CER9DtW8HS579opHGSz+jAqCW70ACsL7KVrbICqhPK7taPkhvLbEH/KPuDQRUCFsL75
-         QZGA==
-X-Forwarded-Encrypted: i=1; AJvYcCVLlhlKhnFwt/jm+/8pitkKMjdENraQ6Q+U36uS4SCMc4GczzQz+tpb7BdIf7/maa+PDwai9Sm5mPON7mU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzjgVRpn2On3MLcgG0R5F7H3ctOYTFO1jWx8VrTP2EVtxdXO2b0
-	25LpMsHhzWZR08cMUnIk7ftTlyUQQFXDr9IFgcidj0mJBxcmKBjtOu2n9zQpg1Q=
-X-Google-Smtp-Source: AGHT+IHL/9OFC3B7xauZzAm3FztTY/x82hTX3rnLuRwwJLNiavrv7/WtChDCcQs0E4+aSR2o60E95Q==
-X-Received: by 2002:a05:6000:156e:b0:37d:61aa:67de with SMTP id ffacd0b85a97d-381c7ac3be6mr20806701f8f.42.1730907746813;
-        Wed, 06 Nov 2024 07:42:26 -0800 (PST)
-Received: from pathway.suse.cz ([176.114.240.50])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432aa6eb5fesm28133095e9.41.2024.11.06.07.42.24
+        bh=xGmuTOkwDF5EWyglbyKZX3cdG70GKqEHWRe2DvKnQV4=;
+        b=kwSXQmcpBxcBKHvmbW+pFRcz8nxTkrmztvoWddF538sjLmEN+ryfElqsUBQMxSJ56p
+         KXgT3PVFlrz/rkWUJzBBpQW2/Nhfguf/qlwYwuqNANocnVq4s64FJriXTK90+3Ah3nqN
+         MvkEphgPPKA5+0Y3YrEFTNBv6fDtqOrmc7451KHLAMb1jE9tYUnwEmBZaT+XsX4PrLAN
+         cyesjGaC++Jz2kVx3CaGvFNd9V8g7wEF9HMqkS1P29FAfVauIaUZkwlYCZeeaJQ6Lzxe
+         Pl7QMWjbramZOe6XmCTzof2YiDRXqJ/wr3Mshc4SfokU/VhQ4Q6/ZbTDqX7usVG+hL1P
+         R7Ug==
+X-Forwarded-Encrypted: i=1; AJvYcCWYsRh6FPBfMKarQyUGn563x8UgLs62GRm2qetuDbqGiPc8ntlUiRSmxCE0+1qh1Iby/7OmtZRGxPO513w=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzz42emC5ZNNjZAB1f1GYzw4z5TVL8DLPt6W5TL/ebVRTwH+RLX
+	5fwQm4nbmlMuArsdU4Jw43b+POSOIvPBNdW0sKLWoYn9WMU2cjCX
+X-Google-Smtp-Source: AGHT+IFlc3Oj7+Z6MEUkJsrzrLppVGEp2sZo+n/ULuOix484rupL6/GH3IpnCJ+NWD0Mf5afKgKeFw==
+X-Received: by 2002:a05:6a21:2d89:b0:1d9:2ba5:912b with SMTP id adf61e73a8af0-1dba54e7e8bmr27251321637.36.1730907790879;
+        Wed, 06 Nov 2024 07:43:10 -0800 (PST)
+Received: from localhost.localdomain (c-67-160-120-253.hsd1.wa.comcast.net. [67.160.120.253])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-720bc2e9203sm12159431b3a.142.2024.11.06.07.43.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Nov 2024 07:42:26 -0800 (PST)
-Date: Wed, 6 Nov 2024 16:42:23 +0100
-From: Petr Mladek <pmladek@suse.com>
-To: John Ogness <john.ogness@linutronix.de>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Esben Haabendal <esben@geanix.com>, linux-serial@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>, Stefan Wahren <wahrenst@gmx.net>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Markus Schneider-Pargmann <msp@baylibre.com>,
-	Ronald Wahl <ronald.wahl@raritan.com>, Udit Kumar <u-kumar1@ti.com>,
-	Griffin Kroah-Hartman <griffin@kroah.com>,
-	Rengarajan S <rengarajan.s@microchip.com>,
-	Lino Sanfilippo <l.sanfilippo@kunbus.com>,
-	Serge Semin <fancer.lancer@gmail.com>,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH tty-next v3 4/6] serial: 8250: Specify console context
- for rs485_start/stop_tx
-Message-ID: <ZyuOX4VVbfAFhMfV@pathway.suse.cz>
-References: <20241025105728.602310-1-john.ogness@linutronix.de>
- <20241025105728.602310-5-john.ogness@linutronix.de>
+        Wed, 06 Nov 2024 07:43:10 -0800 (PST)
+From: mhkelley58@gmail.com
+X-Google-Original-From: mhklinux@outlook.com
+To: kys@microsoft.com,
+	haiyangz@microsoft.com,
+	wei.liu@kernel.org,
+	decui@microsoft.com,
+	gregkh@linuxfoundation.org,
+	vkuznets@redhat.com
+Cc: linux-hyperv@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/2] Drivers: hv: util: Two fixes in util_probe()
+Date: Wed,  6 Nov 2024 07:42:45 -0800
+Message-Id: <20241106154247.2271-1-mhklinux@outlook.com>
+X-Mailer: git-send-email 2.25.1
+Reply-To: mhklinux@outlook.com
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241025105728.602310-5-john.ogness@linutronix.de>
+Content-Transfer-Encoding: 8bit
 
-On Fri 2024-10-25 13:03:26, John Ogness wrote:
-> For RS485 mode, if SER_RS485_RX_DURING_TX is not available, the
-> console write callback needs to enable/disable TX. It does this
-> by calling the rs485_start/stop_tx() callbacks. However, these
-> callbacks will disable/enable interrupts, which is a problem
-> for console write, as it must be responsible for
-> disabling/enabling interrupts.
+From: Michael Kelley <mhklinux@outlook.com>
 
-It is not clear to me what exactly is the problem. Is the main
-problem calling pm_runtime*() API because it uses extra locks
-and can cause deadlocks? Or is it more complicated?
+Patch 1 fixes util_probe() to not force the error return value to
+ENODEV when the util_init function fails -- just return the error
+code from util_init so the real error code is displayed in messages.
 
-IMHO, it would deserve some explanation.
+Patch 2 fixes a more serious race condition between initialization
+of the VMBus channel and initial operations of the user space
+daemons for KVP and VSS. The fix reorders the initialization in
+util_probe() so the race condition can't happen.
 
-> Add an argument @in_con to the rs485_start/stop_tx() callbacks
-> to specify if they are being called from console write. If so,
-> the callbacks will not handle interrupt disabling/enabling.
-> 
-> For all call sites other than console write, there is no
-> functional change.
-> 
-> Signed-off-by: John Ogness <john.ogness@linutronix.de>
+The two fixes are functionally independent, but Patch 2 introduces
+the util_init_transport function that parallels the existing code
+for the util_init function. Doing Patch 1 first avoids an
+inconsistency in the error handling in similar code for these two
+parts of util_probe().
 
-It looks like the code does what the description says. And honestly,
-I do not have any idea how to improve the naming. I would keep
-it as is after reading John's answers in the thread.
+This series is v2 of a single patch first posted by Dexuan Cui
+to fix the race condition.[1] I've taken over the patch per
+discussion with Dexuan.
 
-IMHO, one thing which makes things comlicated is that
-serial8250_em485_start_tx() and serial8250_em485_stop_tx()
-are not completely reversible operations. Especially,
-the change done by __serial8250_stop_rx_mask_dr() is
-not reverted in serial8250_em485_stop_tx(). It makes
-things look tricky. But I think that it is beyond the scope
-of this patchset to do anything about it.
+[1] https://lore.kernel.org/linux-hyperv/20240909164719.41000-1-decui@microsoft.com/
 
-Just 2 my cents.
+Michael Kelley (2):
+  Drivers: hv: util: Don't force error code to ENODEV in util_probe()
+  Drivers: hv: util: Avoid accessing a ringbuffer not initialized yet
 
-Best Regaards,
-Petr
+ drivers/hv/hv_kvp.c       |  6 ++++++
+ drivers/hv/hv_snapshot.c  |  6 ++++++
+ drivers/hv/hv_util.c      | 13 ++++++++++---
+ drivers/hv/hyperv_vmbus.h |  2 ++
+ include/linux/hyperv.h    |  1 +
+ 5 files changed, 25 insertions(+), 3 deletions(-)
+
+-- 
+2.25.1
+
 
