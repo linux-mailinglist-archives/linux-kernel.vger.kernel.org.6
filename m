@@ -1,285 +1,168 @@
-Return-Path: <linux-kernel+bounces-397617-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397618-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BAD09BDE17
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 05:58:43 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 376739BDE20
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 06:02:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 419FE1C21CEA
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 04:58:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 621911C21D16
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 05:02:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F263E190462;
-	Wed,  6 Nov 2024 04:58:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=amperemail.onmicrosoft.com header.i=@amperemail.onmicrosoft.com header.b="0k3q2/V4"
-Received: from CH5PR02CU005.outbound.protection.outlook.com (mail-northcentralusazon11022129.outbound.protection.outlook.com [40.107.200.129])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F2BC190696;
+	Wed,  6 Nov 2024 05:02:21 +0000 (UTC)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 368E913541B;
-	Wed,  6 Nov 2024 04:58:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.200.129
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730869114; cv=fail; b=e5sj3tnTTz8LWebBta8hB8gq8LLUj5UuGZ/jJUhVMIeo60RZhUs6q8JsK178xaWONrIVMfVu6LODoXZVT9l1TnHLcgdTjibuS9pNkQjQdCJgmL2x+jPxJbh3Da2uKFA3m5mMJxpAd0ueWWSHNsW1FZ5nvsx00h1Ah5JCL+FxoFQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730869114; c=relaxed/simple;
-	bh=tMI+nOqZDTMeeTeKw8tXIYW8lh8cGzHFTeZMmplhJsA=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=Zsc63QaUqK8kM7VRZeWsMoEIaPd9RkQAT4BnasY4BXhyhh5pfxA+2iRicncMdITafxCeVxMcJAZ/dYh8w9Tlt0f/Im1K9wXNINBYpS2ArhPPJoVtyPEzO97SFyctxQQxJioJMhwFJdCN+eA10vxS5bVej3RUbOuQiCS0mVY2NZk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=amperemail.onmicrosoft.com; spf=pass smtp.mailfrom=os.amperecomputing.com; dkim=fail (0-bit key) header.d=amperemail.onmicrosoft.com header.i=@amperemail.onmicrosoft.com header.b=0k3q2/V4 reason="key not found in DNS"; arc=fail smtp.client-ip=40.107.200.129
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=amperemail.onmicrosoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=os.amperecomputing.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=brRM/B1HfozYV36hinOe0JCtggiOfHj4JXQbRPCRx3v3dPGShUGpptR7+IECbTHxPZcmXn0UWTocq390rjt/8Wrp5RG5NFgQgPgzQBgEqFyH5SaWh3Ice6yoYTpLS8k2RYB0EFpu5Qz++AYc8uXskF2xgz1SQpX1zz2fn1zsi4i0CbTSamDcQp/6VTJcGr/wMkOZyvFA/wM9enaocojw1l2Q1Uz33C6Da/+8bWZaRqMMb/0hGJiuhAEBzLphuojD5ojzbXDhXDQQlaMu4UlPVjJ/FkKyX7kfR2qNK8B6VwltQBGdbQ0fYk9WEY+iiQil8SjV5toicfXEsHGc0d7s2A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ecItwFS3ArFGhx0+GgJ8EYmCOPLfUXjdU/5P3NzdDRg=;
- b=dlM7NZstDSdNBQGgYd90sWbRRgjkxmfpQ0kfPlN0/I+g3S7af8MWOiriJ1Z/+4KKAGYBjOllqff1cwJBlAdMehhWtCOMNh8BVhnOE7zZkD+2qqkl2EWyPeNz7mbSH/ohQgAkvtHbzBl9pdtFD1sX+oAiLXGb4Mh6rEydZ6NwbvjfiAgEllWxr8VrZBnOl4M6h1CtUzlcbqKcT+V6pd/E+jZlzcS6WCRq+OUJHG7nYad5KZKXE/3UbfxZxYfdoUZAo1jCyeI61o6c6PYvz0lPj9bl9j0NpLfbqwMNsIVtucEnSHek4FzXSCpnmn6WAW1ZN4cSMe5u2NwtLnBcNO9MTQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=os.amperecomputing.com; dmarc=pass action=none
- header.from=amperemail.onmicrosoft.com; dkim=pass
- header.d=amperemail.onmicrosoft.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amperemail.onmicrosoft.com; s=selector1-amperemail-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ecItwFS3ArFGhx0+GgJ8EYmCOPLfUXjdU/5P3NzdDRg=;
- b=0k3q2/V4Kcj2718AgDjsZ59Sn5RHPmxEUnYmpFWT9VFKt1MZvbOKh95Y9uwGPtf87M9lmHsB4Q3QLnO5TiUAYwPqWryC1Ckp9qlGKRkFZH/k6uM+PZXyg9lQ1DqD/SrbduMHJkii9/tn4NxAjkohnNZgaajPhKVTnPX9xt6DG/I=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amperemail.onmicrosoft.com;
-Received: from BL3PR01MB7057.prod.exchangelabs.com (2603:10b6:208:35c::16) by
- LV2PR01MB7789.prod.exchangelabs.com (2603:10b6:408:172::22) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8114.20; Wed, 6 Nov 2024 04:58:28 +0000
-Received: from BL3PR01MB7057.prod.exchangelabs.com
- ([fe80::b69e:5684:ed7c:4d09]) by BL3PR01MB7057.prod.exchangelabs.com
- ([fe80::b69e:5684:ed7c:4d09%6]) with mapi id 15.20.8137.018; Wed, 6 Nov 2024
- 04:58:26 +0000
-Message-ID: <6c20875c-4145-4c91-b3b5-8f70ecb126f0@amperemail.onmicrosoft.com>
-Date: Wed, 6 Nov 2024 11:58:06 +0700
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/2] dt-bindings: iio: adc: Add binding for Nuvoton
- NCT720x ADCs
-To: Eason Yang <j2anfernee@gmail.com>, avifishman70@gmail.com,
- tmaimon77@gmail.com, tali.perry1@gmail.com, venture@google.com,
- yuenn@google.com, benjaminfair@google.com, jic23@kernel.org,
- lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- nuno.sa@analog.com, dlechner@baylibre.com, javier.carrasco.cruz@gmail.com,
- andy@kernel.org, marcelo.schmitt@analog.com, olivier.moysan@foss.st.com,
- mitrutzceclan@gmail.com, matteomartelli3@gmail.com, alisadariana@gmail.com,
- joao.goncalves@toradex.com, marius.cristea@microchip.com,
- mike.looijmans@topic.nl, chanh@os.amperecomputing.com, KWLIU@nuvoton.com,
- yhyang2@nuvoton.com
-Cc: openbmc@lists.ozlabs.org, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241106023916.440767-1-j2anfernee@gmail.com>
- <20241106023916.440767-2-j2anfernee@gmail.com>
-Content-Language: en-US
-From: Chanh Nguyen <chanh@amperemail.onmicrosoft.com>
-In-Reply-To: <20241106023916.440767-2-j2anfernee@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SG2P153CA0014.APCP153.PROD.OUTLOOK.COM (2603:1096::24) To
- BL3PR01MB7057.prod.exchangelabs.com (2603:10b6:208:35c::16)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72C7A2F50
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 05:02:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730869341; cv=none; b=ta4yqt8zBMb694zGl0cRMV17yhoRFRnd7/xDI90i/wTIhOsKxV+V5cI/3mj+3U1gufIv18pTZGDy1upQqZ3KOq0aF6FzfIPPi/GMgNlGWGy+cFsgAC+s7J2LT0GDXkKL6VmnU9M43kmKdIVk9hS9Hw3r7LocRRbJUhHClPNmv0M=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730869341; c=relaxed/simple;
+	bh=S6HVl5YYmeNgzf4H120DElxRhniXzUnsxIFr8KZvG1Q=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=E2O89dzBM81ONAIlBzf6tsF8ugqnMjZt5Zh9Qm/eGKHJyY0rSXo57dzG1y+piXlsvGGiuaTj6Agoi3gFDunRz20ctAJ56837t43wfThLHg85aqb9F0En2ZZSrCiMPsdmwbVSkcND5GWhAahsU16PlbSW9GdiJrUAUxgt460z0p4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-83b6628a71fso588149239f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Nov 2024 21:02:19 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730869338; x=1731474138;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=+O0Kb3rEGozlsN+xaRfLtSu1aFI8EkV95LDgZv6n7G8=;
+        b=vou1DKzCKrISfUr9UOauYNtMHsrmvny3xeiR8uLshLlz4tfGiV1NQUaLJyRRYXHhgw
+         YH//e374m2QOmeVqtYKE0lTeuo1Hd4oufW+iEQOa6mJ7hdl43O5ib1tCB5v5VVOvV0Rt
+         wDq8NEO3unAGmz7/05g/ObkLSJyx1gX0ntmJWzrUmBjQsQXKNNgcfWQfLJYBMKcmBTc0
+         bFgscA/NIXSif5U/8YBEl0zHscikh0gwM22oiqPluttkmedJlK8NghsPBAPR5i85uNhu
+         05gD0b7Blohk+I8l19dlnrvg4X/U6Lk/ROZzHhNsTbq5x+ryX2Jnb8fFBHqVLMVarQ2/
+         TfMg==
+X-Forwarded-Encrypted: i=1; AJvYcCWrG43NL+uXRXKuFXtXa6cm7TFfi4Y7jBTk74VC16/qSxpkhV5Bb/ZSQRwdQlUlGhWPir2qjJAdh3eEIs0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwrOMrTzQ0jcyFr3Ffg0jgPoUFvofLkJiA2ZKU5/JWD3VuqNeCw
+	0jyyFbcqCuRq6pUNKgP9W+Ng6xajaQ/4mOx1/n4JvTNNFkPpfqPHpSKvT6kKprwcqM4vmBZ8+tL
+	OVFtwcYzlhYL2Ra4i8HJrSxd8KwrLOGNce9M4gKrJBtYfkLSsxLibyE8=
+X-Google-Smtp-Source: AGHT+IFKCCJhaixJy45QcK9k7ayQSOfba2re5g9XCOmmQiFPPBUyevkkPEeMRPp2hNRt3jPgUyXvnsQdOqbCgGoYa55w8c4Sxakz
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL3PR01MB7057:EE_|LV2PR01MB7789:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1534e541-ad9a-47a4-f625-08dcfe1fa61a
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|1800799024|366016|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?Umo3clRNUk5LZVZ2Ym1CV1dadmU1YWJzQU1WZnpiUktIWjVjajJPaFlmK2lo?=
- =?utf-8?B?NW5SckU3YjRjd1JPM3ZlYW5iYTIvajE4VjdidmpCUm85VEQvaGdKYUZqMEJk?=
- =?utf-8?B?ZzZRR2hveFpIOGlLSkNKM2dOTlpMeERya2FDQ0pYWGtOQ1F1bU9ZdkN3TXpC?=
- =?utf-8?B?VnpOTU1vMDhSVjhiUGdPN2tHdnNOM3pjZDRWOEZBUXZxSGJBL0IwSmpIUWhp?=
- =?utf-8?B?UE9Eb2p1Q2EyZ25uMERnUjF5b1ZsS2ZjcnV0eVphM3hOenZFNGFMRHFzMjJ6?=
- =?utf-8?B?Yy9IUGs0ekRybG5qRjBNak5zU2hKanY5SlFZQkoxVW9IcitTK1B1YlNwNThQ?=
- =?utf-8?B?NERzalcrdUhueDQ5QVFhY2tqVEhZbHhJUnVZb2ovV09qQ1pnN2MxMmZwdVpw?=
- =?utf-8?B?WU5qSzNweTJWSUkzQi9ZQ1RGdFV6TW1vcCtDeTdYUDUzRmRXLzloN3NGT09R?=
- =?utf-8?B?aXNUNXNwZmJEcVdhYVRzcUxGUGlqcGVnSkpDV0dNZnBCdm5HRnNveUpDZzRO?=
- =?utf-8?B?Mzh5Q3cveHJhYmloQ05Pd0ZaWHFjd3o4MnAzWlRIcmkwNFlpeS94RSthS05T?=
- =?utf-8?B?SE5oNk01RkJneDFRYUVtdnl6dVpJOXNoT2ZzZUpDZmwwdUdQUjZxV1FkRUx2?=
- =?utf-8?B?NW1IY3BYZEtCQ1MzbU41M3E5TjFEM29Oclo3cW8xYmRrMEdmUzFnM0VjM2lD?=
- =?utf-8?B?Vy9RajJWQmhTcmxlRlJsUW50cHlURnlqcVZOWG5NcWxvMGpZZlk4WUVkQzZw?=
- =?utf-8?B?Z0VqR0lIbVJ6OHBrWUdmTjVwR0lTeFdQQ1dOTWc2Z3RFQTBWVWgrNWtiWjd5?=
- =?utf-8?B?eENVMzFuSjR2c1dNdkMxd1RNOEt5RHZ3Z00xTHpESy9Zd3RSRnhMV0I3WHh3?=
- =?utf-8?B?R1ErZ1ppMUo2bFROWGg3bTVNeDJxWnRzbnFFR3dDT1hZazlIYjdDa0ZLTjJl?=
- =?utf-8?B?UFYyTlFZeDAxcXQ2TlhQcXhwQ2l1QnptMkhDdUVNL0V5ZnRMbWZraEMvMFI5?=
- =?utf-8?B?c2xmQS9ZaXZRZjFoaXFZYXVtYnY4b2VxNGI3YjRoMTlHT2NUcUJQNmdBTkx3?=
- =?utf-8?B?UE5pajdvTUtHVWlCOGFEbC9jLy9jOU9zMktTTFNVMEg1SmZyZTRoQk8xZDUz?=
- =?utf-8?B?L24wK0RzMzdGY3AxNGdmWUdvRWc5S05qT2ZQRTg2WVM1QjhhQWJSd3A5akRD?=
- =?utf-8?B?WGJaSldaUUtVRy9mUjNqaXJhcXJBNnRKOWRielcyL25LdE9qNkFiUWVQVzJp?=
- =?utf-8?B?THNmdUJsS0RxUDMvWXJFeUlVZVA3ODBvZHVUZXdjYnNVSU8rWi8vcjJIWGpO?=
- =?utf-8?B?eTRVYmNhSGF6WGZvM29uWHVLNWVFVzkyMUdzM2gxYU8rZkRjS25oQy80U1Ay?=
- =?utf-8?B?WEVMZkY1SUM1WlFITTlYa2xQUG1aRTVhVTd2M2lua3VWQ3dlZ01qd2p5bzYz?=
- =?utf-8?B?aXo3QVNUSlQ3eGZIVEpZQ3pIQis1K0tFNm9Cdkx1cE0xMUVBNmhMZ0tYbEVJ?=
- =?utf-8?B?ckpJU1k5UjUzcmJaRkFybXpMMk1pMyt3VTZEdldsY0FnT053a3g2OTBIdzNw?=
- =?utf-8?B?VlFSdkFPRDlMME9mYW1rZmZadk1VeE5rVERvMVdOdkxLNzY3Tmt2aHZSdmVU?=
- =?utf-8?B?YWVZeVhjZkt1azNaQlluWDF1eDNXN0lmMGkwWDBZUmJJSmNGUDRKTkIrRTBJ?=
- =?utf-8?B?WVdFMzlCNXVibWdpUjVjNjFEY2JtRE5zWXZtMVY1bjUvczlVcEZiRFZnLzBs?=
- =?utf-8?Q?brb4D36s5Dfu29HgWlX+pABfMScgj6vS67B6rdM?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL3PR01MB7057.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016)(921020);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?WmltanVkM1NPOG93MWVUc0JWU3NLVGc3Rm54aUtBOG12em1BMC9kSEhRQncw?=
- =?utf-8?B?cFRxa0o2KzFMdS9kQURvWGhZajBUT2xNYURtcTIxU2VzU1pmdWhidW1IUlBN?=
- =?utf-8?B?M3ZkYWUybkIrQ2FQN3VCdFhvZFZNeUxHemtOdkxEbE9jZWhTSDJDaWRxNk4x?=
- =?utf-8?B?V25iL1E3cW9uQWxpRlBUci9pclNuN1p1S3BvQXNkRVFROThXZEpLQjhOKzlB?=
- =?utf-8?B?SEI1ay96Q2pTUzNDc1BLYVhtb01FdVlNQ3drRkFUKzFwaUx6ZlJ4UUpPYkJW?=
- =?utf-8?B?RTVRbmtLL2RTUFpaTDU2S2RjTzNtV0V5RVQrNE96OW1RTk91Zm13a1VlaXFX?=
- =?utf-8?B?LzUxdVFHRWtxZjRqT0NPb3pxWG50eTF2elVYNjVtK1MydUs3RUsyejJ1a0t5?=
- =?utf-8?B?KzN0QitOdnFxT1BoZkZVRGt4b2JYdFpxNnZqVmJST0ljYmhYOGhvOEtLYVlG?=
- =?utf-8?B?OXZjaUVXZ3pSZTFwRzU3L0dJVHlKeU8zcGsvdWJHZ3VNTkUwRnBXejRpZ1pH?=
- =?utf-8?B?VWNuYnpsRHZCa04wK013Z1pYZGs4Yk4yelh3R0dveGdLMkVvMHVUOTcxRXdB?=
- =?utf-8?B?VTUvTy8zMnV6d0VJNERYNGJkTHBQVUVvaUN3c0VxUWdnUjlTVThMT2VYY0dm?=
- =?utf-8?B?ZW5sVHV0QUg3U2dpb0RoRUIxd3U1UFdTd25naGxaNUI3dkNmZ0NNOGZIWk5n?=
- =?utf-8?B?MEpZMmlBM296N0lNc2dYY09lTmVLT3JGMlJsSlRpZEs0b3dpUjBhT3I0TlN4?=
- =?utf-8?B?STdHZGY2cU0rdlcyYWFEUmdyeDVFMllIV3EvK21Pd2NmWmh1LzRlNG1HMnZs?=
- =?utf-8?B?cEZkMXUvYmhIV3I1VS80NjVxTnhoNkJOUnNIdTlkZ2ZKM25reVpCbjhLbW1p?=
- =?utf-8?B?U21yNjZxQTN5eTcrWmxTd3VZcG84TWhDUjF6Ry9jN0t5cURpSml3Tkdtcm93?=
- =?utf-8?B?L01VOVlvcHVlMkp4UGIyZi96aU5yQkQ3TU8zQVBQWk8rZDM4aVkvSjlacHFH?=
- =?utf-8?B?S0RDSFJKNXhRSlJUdm1NeG9Zd3hVRmgrVGFPd2ZNTHhlTlp4dnBOWHp1M2VP?=
- =?utf-8?B?am5GVzBFdU55ak5lUk5XT1hmekhIWThWQS9XNlZyZXk1UjNXRjM5dGl5Q3oy?=
- =?utf-8?B?MkZLZmZUTVNDOFFUMm0vR2MwWGt0SmhtaHJNTlRtQjIvOGMveEFNMnZFdS9w?=
- =?utf-8?B?S3dRRVVMWjladk9kK2ZscHIzVE5maEhTUHR1c0tyS20rZ3FiTnA3eFR2VUd6?=
- =?utf-8?B?RlE2ZHdzbm5tTERGNXdWZHhQOWtyaUdFY2M2TCtEbDlZMDBtOVJPSGVRb09q?=
- =?utf-8?B?VHNLbHJoYkFadkpad0RqYU5RUFVlNjdUTkQzMzUxQWpJTW1KTG93WnVLYlZo?=
- =?utf-8?B?NUFybHJkKytwc0JvbUt1ZUNOZzF2OHBzQkVrY3pnaWFHc0hQRmdpQjlWQWZu?=
- =?utf-8?B?Wjk3eGFoTHFnaEdNV2ZhTzBmOE92dnJ5ak1vaUpTZlhwVGtBdGcrM2cvMGN6?=
- =?utf-8?B?azRkOVY0cVQrTkkvSDAyamQvUXFMMFovNURjR3g5dFFUek9EanVJT0cwUkdt?=
- =?utf-8?B?VEkwSy9qRFBGQVgxay8wd2lQUjBod1luY2Qzc3F3RlNGY2dtYmNpdTlPaHZo?=
- =?utf-8?B?M1dxKzJsdTd6SzRmei82WUlpUEpUWHh3bDhTQTN4MXFEaGQzTXRzbHVVZlYv?=
- =?utf-8?B?RnVKcjA2c2Y4cjRQMStWNFZXWDNaaEo2VUpMOWdQbHhKRjkrc1RCS1ZBaERH?=
- =?utf-8?B?aSt3WGF2RXdUYkNnbUpHV1g5NWtNL2tTaHVtaWJzUlNFdDhzRi9TUDlya0FB?=
- =?utf-8?B?OCsxSWdkTjRvY3AxZStrY0p6Ri8yOTRlcnI0Nkx5OWlidmNwOEZxbGd1czVN?=
- =?utf-8?B?QlJMbUlMWmdnTkRXaElWZFRLdml5RFNDYmR1M2ZyNFhaZ1dOT0JoT0kwOHNQ?=
- =?utf-8?B?dXg1VFg2TFNZV0p6Q2tSNW1OR1h0T0JKaEY2YllEY0x1eUpCZUhvOGNLS2o5?=
- =?utf-8?B?ZjgzRmcwY0h4MHNlUGwvU0RSOEJ0TUQ4cWdxWktoaWtxclBNWng1NmZWa2Z3?=
- =?utf-8?B?UlloWDdsYk1Eb0JYaEhYSnVoci9NN0ZNRjFRMGZmanZyZktMZ1k0a2l1WFBE?=
- =?utf-8?B?RU9RZmxhOXBLUEJOTXJyb2JmRGxBaGgxV3IxRDVwSFkyK3NaR0VaOHRFam80?=
- =?utf-8?Q?LSVrqUJQHUbpmpUevsTBnAA=3D?=
-X-OriginatorOrg: amperemail.onmicrosoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1534e541-ad9a-47a4-f625-08dcfe1fa61a
-X-MS-Exchange-CrossTenant-AuthSource: BL3PR01MB7057.prod.exchangelabs.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Nov 2024 04:58:26.5130
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3bc2b170-fd94-476d-b0ce-4229bdc904a7
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: rwsETz1LsFukeZENNeretEVE/h635q5y/PsdTLaMrEg9s/ZDZep9oOnyT24h11JGTpTTYayRDHJuD7WXAPEnSCOADVxDLap5a48nkEYsJUa2O65tUng6iXot9Id0a+xT
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV2PR01MB7789
+X-Received: by 2002:a05:6e02:2163:b0:39f:5efe:ae73 with SMTP id
+ e9e14a558f8ab-3a5e2436614mr278689915ab.5.1730869338630; Tue, 05 Nov 2024
+ 21:02:18 -0800 (PST)
+Date: Tue, 05 Nov 2024 21:02:18 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <672af85a.050a0220.2edce.151c.GAE@google.com>
+Subject: [syzbot] [hfs?] KMSAN: uninit-value in hfsplus_cat_bin_cmp_key
+From: syzbot <syzbot+968ecf5dc01b3e0148ec@syzkaller.appspotmail.com>
+To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+
+Hello,
+
+syzbot found the following issue on:
+
+HEAD commit:    6c52d4da1c74 Merge tag 'for-linus' of git://git.kernel.org..
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=1069c987980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=1edd801cefd6ca3e
+dashboard link: https://syzkaller.appspot.com/bug?extid=968ecf5dc01b3e0148ec
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10e2b55f980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1469c987980000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/4b3257cc2711/disk-6c52d4da.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/826b93a55a16/vmlinux-6c52d4da.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/e7be84048c24/bzImage-6c52d4da.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/1dd80244cd46/mount_0.gz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+968ecf5dc01b3e0148ec@syzkaller.appspotmail.com
+
+loop0: detected capacity change from 0 to 1024
+=====================================================
+BUG: KMSAN: uninit-value in hfsplus_cat_bin_cmp_key+0xf1/0x190 fs/hfsplus/catalog.c:36
+ hfsplus_cat_bin_cmp_key+0xf1/0x190 fs/hfsplus/catalog.c:36
+ hfs_find_rec_by_key+0xb1/0x240 fs/hfsplus/bfind.c:89
+ __hfsplus_brec_find+0x26f/0x7b0 fs/hfsplus/bfind.c:124
+ hfsplus_brec_find+0x445/0x970 fs/hfsplus/bfind.c:184
+ hfsplus_brec_read+0x46/0x1a0 fs/hfsplus/bfind.c:211
+ hfsplus_find_cat+0xdb/0x460 fs/hfsplus/catalog.c:202
+ hfsplus_iget+0x729/0xae0 fs/hfsplus/super.c:82
+ hfsplus_fill_super+0x151b/0x2700 fs/hfsplus/super.c:509
+ mount_bdev+0x39a/0x520 fs/super.c:1679
+ hfsplus_mount+0x4d/0x60 fs/hfsplus/super.c:647
+ legacy_get_tree+0x114/0x290 fs/fs_context.c:662
+ vfs_get_tree+0xb1/0x5a0 fs/super.c:1800
+ do_new_mount+0x71f/0x15e0 fs/namespace.c:3507
+ path_mount+0x742/0x1f10 fs/namespace.c:3834
+ do_mount fs/namespace.c:3847 [inline]
+ __do_sys_mount fs/namespace.c:4057 [inline]
+ __se_sys_mount+0x722/0x810 fs/namespace.c:4034
+ __x64_sys_mount+0xe4/0x150 fs/namespace.c:4034
+ x64_sys_call+0x255a/0x3ba0 arch/x86/include/generated/asm/syscalls_64.h:166
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Uninit was created at:
+ slab_post_alloc_hook mm/slub.c:4091 [inline]
+ slab_alloc_node mm/slub.c:4134 [inline]
+ __do_kmalloc_node mm/slub.c:4263 [inline]
+ __kmalloc_noprof+0x661/0xf30 mm/slub.c:4276
+ kmalloc_noprof include/linux/slab.h:882 [inline]
+ hfsplus_find_init+0x95/0x1d0 fs/hfsplus/bfind.c:21
+ hfsplus_iget+0x3c4/0xae0 fs/hfsplus/super.c:80
+ hfsplus_fill_super+0x151b/0x2700 fs/hfsplus/super.c:509
+ mount_bdev+0x39a/0x520 fs/super.c:1679
+ hfsplus_mount+0x4d/0x60 fs/hfsplus/super.c:647
+ legacy_get_tree+0x114/0x290 fs/fs_context.c:662
+ vfs_get_tree+0xb1/0x5a0 fs/super.c:1800
+ do_new_mount+0x71f/0x15e0 fs/namespace.c:3507
+ path_mount+0x742/0x1f10 fs/namespace.c:3834
+ do_mount fs/namespace.c:3847 [inline]
+ __do_sys_mount fs/namespace.c:4057 [inline]
+ __se_sys_mount+0x722/0x810 fs/namespace.c:4034
+ __x64_sys_mount+0xe4/0x150 fs/namespace.c:4034
+ x64_sys_call+0x255a/0x3ba0 arch/x86/include/generated/asm/syscalls_64.h:166
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+CPU: 1 UID: 0 PID: 5784 Comm: syz-executor301 Not tainted 6.12.0-rc5-syzkaller-00181-g6c52d4da1c74 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+=====================================================
 
 
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-On 06/11/2024 09:39, Eason Yang wrote:
-> This adds a binding specification for the Nuvoton NCT7201/NCT7202
-> family of ADCs.
-> 
-> Signed-off-by: Eason Yang <j2anfernee@gmail.com>
-> ---
->   .../bindings/iio/adc/nuvoton,nct720x.yaml     | 47 +++++++++++++++++++
->   MAINTAINERS                                   |  1 +
->   2 files changed, 48 insertions(+)
->   create mode 100644 Documentation/devicetree/bindings/iio/adc/nuvoton,nct720x.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/iio/adc/nuvoton,nct720x.yaml b/Documentation/devicetree/bindings/iio/adc/nuvoton,nct720x.yaml
-> new file mode 100644
-> index 000000000000..3052039af10e
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/iio/adc/nuvoton,nct720x.yaml
-> @@ -0,0 +1,47 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/iio/adc/nuvoton,nct720x.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Nuvoton nct7202 and similar ADCs
-> +
-> +maintainers:
-> +  - Eason Yang <yhyang2@nuvoton.com>
-> +
-> +description: |
-> +   Family of ADCs with i2c interface.
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - nuvoton,nct7201
-> +      - nuvoton,nct7202
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  read-vin-data-size:
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-Is it generic property or vendor property? I tried to find in the
-https://github.com/torvalds/linux/tree/master/Documentation/devicetree/bindings 
-, but it seems this property hasn't been used on other devices.
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
-If it is vendor property, then I think it should include a vendor 
-prefix. For examples:
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
-https://github.com/torvalds/linux/blob/master/Documentation/devicetree/bindings/iio/adc/adi%2Cad7780.yaml#L50
-https://github.com/torvalds/linux/blob/master/Documentation/devicetree/bindings/iio/adc/fsl%2Cvf610-adc.yaml#L42
-https://github.com/torvalds/linux/blob/master/Documentation/devicetree/bindings/iio/adc/st%2Cstmpe-adc.yaml#L22
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
 
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
 
-> +    description: number of data bits per read vin
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    enum: [8, 16]
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - read-vin-data-size
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    i2c {
-> +        #address-cells = <1>;
-> +        #size-cells = <0>;
-> +
-> +        nct7202@1d {
-
-I think the Node name should follow 
-https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation 
-
-
-For some examples that were merged before
-
-https://github.com/torvalds/linux/blob/master/Documentation/devicetree/bindings/iio/adc/adi%2Cad7091r5.yaml#L102
-https://github.com/torvalds/linux/blob/master/Documentation/devicetree/bindings/iio/adc/maxim%2Cmax1238.yaml#L73
-https://github.com/torvalds/linux/blob/master/Documentation/devicetree/bindings/iio/adc/ti%2Cadc081c.yaml#L49
-
-> +            compatible = "nuvoton,nct7202";
-> +            reg = <0x1d>;
-> +            read-vin-data-size = <8>;
-> +        };
-> +    };
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 91d0609db61b..68570c58e7aa 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -2746,6 +2746,7 @@ L:	openbmc@lists.ozlabs.org (moderated for non-subscribers)
->   S:	Supported
->   F:	Documentation/devicetree/bindings/*/*/*npcm*
->   F:	Documentation/devicetree/bindings/*/*npcm*
-> +F:	Documentation/devicetree/bindings/iio/adc/nuvoton,nct720x.yaml
->   F:	Documentation/devicetree/bindings/rtc/nuvoton,nct3018y.yaml
->   F:	arch/arm/boot/dts/nuvoton/nuvoton-npcm*
->   F:	arch/arm/mach-npcm/
-
+If you want to undo deduplication, reply with:
+#syz undup
 
