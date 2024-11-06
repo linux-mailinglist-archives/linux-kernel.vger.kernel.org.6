@@ -1,157 +1,98 @@
-Return-Path: <linux-kernel+bounces-397409-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397412-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5A039BDBCB
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 03:07:43 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C5D79BDBD0
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 03:08:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D73DA1C22E05
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 02:07:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5DAAE1C22C8D
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 02:08:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1641C18FC74;
-	Wed,  6 Nov 2024 02:07:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9170718F2DF;
+	Wed,  6 Nov 2024 02:08:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VAJFT7ry"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KMiQ4Bt9"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BE4A18EFD4;
-	Wed,  6 Nov 2024 02:07:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E757218C903;
+	Wed,  6 Nov 2024 02:08:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730858854; cv=none; b=F+K4fpDaaisdKiCLT1F0kj7ja9+e5yJArebKPPr9bb4lvWJ1cGpQX6tDWIyKfZ3AKN/HEPAm6/1bOJ2OWp3HFPnbCI1ywwpJeKHMlhjR8kmp+loH1lQytxy25hxgtlPm3S5nE2YIZt0io9zVSMHZF5IoFnLQIa+5X9g9Xj7rtQc=
+	t=1730858903; cv=none; b=XMUnnSjSuPE2QpUSSkAfbr4m2LD1YQ3GupzDlb/EuRZS/rVngRgzjUh3jS7iiePf2wTgF9NUUM11aqyVaTO1Y4sJnaxFiEmUc2q1L4dR0jnQLHExbR7bqFmAkOwXi1Jx4suROy+gRM3P8d8x3zWNiiGmJ91n5jvt80xvsEqR3r0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730858854; c=relaxed/simple;
-	bh=16WZozry3IWIsN9qHKE/zH8myu5XP6InRSKDu/UUqTg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=D2xFZ2Z+D7+SwUq8ns0ZOq0J871WLAiW+r0FNtYhsy0gq+Hy/P26BJSH6NimAmLdQ2Jek5nGfovkMDFGeSpBSMbtdIoqTqo9eefz84xFT3FM5wlyPFI4ngoT2STS2Xvwhx4lXBR91rNy8tVSH/oV7fXi/9U8/VuXT9cTVVwCMzE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VAJFT7ry; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B7D5C4CECF;
-	Wed,  6 Nov 2024 02:07:33 +0000 (UTC)
+	s=arc-20240116; t=1730858903; c=relaxed/simple;
+	bh=niT83f9VBSXRyo1igGF4oOOxDb2VMuMi+uFKkzFID4A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LlBYx7en/JLnTPeAFsQi1iOqoelfgUG7LF43BgXru1PfYpXGJNJJ23Fy1GfRr9cbzDRAOwS0gUM0JN7CLT04ypgGZol2nru4eeGgo4HdSPBtLCyaPEM/LEI/GAepJd775gD5jvQ155D84947+Q3Wo3Io2lrl1SuyrRn43I1VDFE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KMiQ4Bt9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C74C7C4AF09;
+	Wed,  6 Nov 2024 02:08:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730858854;
-	bh=16WZozry3IWIsN9qHKE/zH8myu5XP6InRSKDu/UUqTg=;
-	h=From:To:Cc:Subject:Date:From;
-	b=VAJFT7ryTJ0n5D9qhGRyyBLWHEbEXACNi2zKXDXhR5fIoPhn9uP/1hy4p/6Yo1oGh
-	 p6Q0vaUCbmFSBq31OwCuXdFhmr2HDHPzu7iUtahW9iygYPLNWQksBCpvNB0LxYtDbD
-	 fwXYa6rglLaMegYa1fPhZtbHqqmR4L3/gr77UWvwvKilmq3Gnhvhoyuw8w/v2YeP+e
-	 MLqf8zRKnm6glEjPK77rVudRaxsLHZbx+TWp56Rh+JBPnT7jO10Ms8RD0VeCUneugf
-	 1SLjhkpKa+PvNyB0ENJPAMqK4D345jXlnB16K5jddukLWtf0adx7wduY9eitFxw/jh
-	 W1KK+FYS6dDeg==
-From: Sasha Levin <sashal@kernel.org>
-To: stable@vger.kernel.org,
-	alexghiti@rivosinc.com
-Cc: Jason Montleon <jmontleo@redhat.com>,
-	Palmer Dabbelt <palmer@rivosinc.com>,
-	linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: FAILED: Patch "riscv: Do not use fortify in early code" failed to apply to v6.11-stable tree
-Date: Tue,  5 Nov 2024 21:07:30 -0500
-Message-ID: <20241106020731.164192-1-sashal@kernel.org>
-X-Mailer: git-send-email 2.43.0
+	s=k20201202; t=1730858902;
+	bh=niT83f9VBSXRyo1igGF4oOOxDb2VMuMi+uFKkzFID4A=;
+	h=References:In-Reply-To:Reply-To:From:Date:Subject:To:Cc:From;
+	b=KMiQ4Bt9+ZYm5B3eT+G/Aprta+nBaKFBntEVbNrC9sm8+NzAK7feXPMk8WZP7Ggav
+	 G7zjir5FVbioa+KcznzLYK4MY20Eb54JeFcJ60AdQEkEeobCa3Z7QWtWATp7d1PzsV
+	 c8eAGFGyO1fLlvNb6Jhnv0sJjlTwflj3o4yexTpBj8loR6dguq64666oEVOnpl4962
+	 0gzUXtsE/c1sdZz/qiU1GpKbOVj12RiBKa6TgvGjoi1NzsTKkStjeMfAhvfjLPuwGq
+	 f6gU2CB4lLv4xocid6g7Pgerdrd/HuhH/S9TrdAZFhztgDu01z0eeQkmOWwaIyH9qG
+	 wjLKFffwnGuPg==
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2fb3c3d5513so54717521fa.1;
+        Tue, 05 Nov 2024 18:08:22 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUuSaHv7/1yYwEWzaVcj3iZ45U9r1EhjcEyvDjFZgYEvFaBNmckAdGXFhZvPHCT2j8c7ahugo0E913aloE=@vger.kernel.org, AJvYcCWSWc8JdfAy82E8NLPy7O/K/xGcWQzOQK5ZDKHM1RXps/ASTBmp4FK5bDLT23mBl3kYT6O4A+BI5lEHMg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxjwU2wBGXxXCgoFWV8ZFsa9uRHmKI7rFZMqXJFaIDYosavyKv7
+	6P4Se3tywi1iWdzmDuryeOMlCcpBkAWr+6tF9vYt2gRXkg3ixxFMXuj2pkexTo9HbBpIM5timCU
+	vZQ1FuI+OInqWM9r/9v2NOWbfxEk=
+X-Google-Smtp-Source: AGHT+IHjLCqQlu8B2w0LKG6mkmnlvkZSn1Ty2V+tZy5kmASjqbtG7i8oDm0rbUZqzBvkIFZ/juH1cLZtZ1LoaQGP9GY=
+X-Received: by 2002:a05:651c:2112:b0:2fa:d604:e525 with SMTP id
+ 38308e7fff4ca-2fdecbf0a79mr94046261fa.28.1730858901160; Tue, 05 Nov 2024
+ 18:08:21 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Patchwork-Hint: ignore
-X-stable: review
-Content-Transfer-Encoding: 8bit
+References: <20241106080014.7cba0b1f@canb.auug.org.au>
+In-Reply-To: <20241106080014.7cba0b1f@canb.auug.org.au>
+Reply-To: wens@kernel.org
+From: Chen-Yu Tsai <wens@kernel.org>
+Date: Wed, 6 Nov 2024 10:08:06 +0800
+X-Gmail-Original-Message-ID: <CAGb2v65kkVGhSqSg6wCVkWcWSY6ni0Qxe=HFMbBp2T+99UATBg@mail.gmail.com>
+Message-ID: <CAGb2v65kkVGhSqSg6wCVkWcWSY6ni0Qxe=HFMbBp2T+99UATBg@mail.gmail.com>
+Subject: Re: linux-next: Signed-off-by missing for commit in the sunxi tree
+To: Stephen Rothwell <sfr@canb.auug.org.au>, 
+	Konstantin Ryabitsev <konstantin@linuxfoundation.org>
+Cc: Maxime Ripard <mripard@kernel.org>, =?UTF-8?B?Q3PDs2vDoXMsIEJlbmNl?= <csokas.bence@prolan.hu>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The patch below does not apply to the v6.11-stable tree.
-If someone wants it applied there, or to any other stable or longterm
-tree, then please email the backport, including the original git commit
-id to <stable@vger.kernel.org>.
+On Wed, Nov 6, 2024 at 5:08=E2=80=AFAM Stephen Rothwell <sfr@canb.auug.org.=
+au> wrote:
+>
+> Hi all,
+>
+> Commit
+>
+>   bd4215c71992 ("ARM: dts: allwinner: Remove accidental suniv duplicates"=
+)
+>
+> is missing a Signed-off-by from its author.
+>
+> It looks like the SOB address has been truncated at a comma.
 
-Thanks,
-Sasha
+Thanks for the notification. I definitely was not expecting this.
+Looks like it got truncated by b4. I filed an issue [1] on GitHub for it.
 
------------------- original commit in Linus's tree ------------------
-
-From afedc3126e11ff1404b32e538657b68022e933ca Mon Sep 17 00:00:00 2001
-From: Alexandre Ghiti <alexghiti@rivosinc.com>
-Date: Wed, 9 Oct 2024 09:27:49 +0200
-Subject: [PATCH] riscv: Do not use fortify in early code
-
-Early code designates the code executed when the MMU is not yet enabled,
-and this comes with some limitations (see
-Documentation/arch/riscv/boot.rst, section "Pre-MMU execution").
-
-FORTIFY_SOURCE must be disabled then since it can trigger kernel panics
-as reported in [1].
-
-Reported-by: Jason Montleon <jmontleo@redhat.com>
-Closes: https://lore.kernel.org/linux-riscv/CAJD_bPJes4QhmXY5f63GHV9B9HFkSCoaZjk-qCT2NGS7Q9HODg@mail.gmail.com/ [1]
-Fixes: a35707c3d850 ("riscv: add memory-type errata for T-Head")
-Fixes: 26e7aacb83df ("riscv: Allow to downgrade paging mode from the command line")
-Cc: stable@vger.kernel.org
-Signed-off-by: Alexandre Ghiti <alexghiti@rivosinc.com>
-Link: https://lore.kernel.org/r/20241009072749.45006-1-alexghiti@rivosinc.com
-Signed-off-by: Palmer Dabbelt <palmer@rivosinc.com>
----
- arch/riscv/errata/Makefile    | 6 ++++++
- arch/riscv/kernel/Makefile    | 5 +++++
- arch/riscv/kernel/pi/Makefile | 6 +++++-
- 3 files changed, 16 insertions(+), 1 deletion(-)
-
-diff --git a/arch/riscv/errata/Makefile b/arch/riscv/errata/Makefile
-index 8a27394851233..f0da9d7b39c37 100644
---- a/arch/riscv/errata/Makefile
-+++ b/arch/riscv/errata/Makefile
-@@ -2,6 +2,12 @@ ifdef CONFIG_RELOCATABLE
- KBUILD_CFLAGS += -fno-pie
- endif
- 
-+ifdef CONFIG_RISCV_ALTERNATIVE_EARLY
-+ifdef CONFIG_FORTIFY_SOURCE
-+KBUILD_CFLAGS += -D__NO_FORTIFY
-+endif
-+endif
-+
- obj-$(CONFIG_ERRATA_ANDES) += andes/
- obj-$(CONFIG_ERRATA_SIFIVE) += sifive/
- obj-$(CONFIG_ERRATA_THEAD) += thead/
-diff --git a/arch/riscv/kernel/Makefile b/arch/riscv/kernel/Makefile
-index 7f88cc4931f5c..69dc8aaab3fb3 100644
---- a/arch/riscv/kernel/Makefile
-+++ b/arch/riscv/kernel/Makefile
-@@ -36,6 +36,11 @@ KASAN_SANITIZE_alternative.o := n
- KASAN_SANITIZE_cpufeature.o := n
- KASAN_SANITIZE_sbi_ecall.o := n
- endif
-+ifdef CONFIG_FORTIFY_SOURCE
-+CFLAGS_alternative.o += -D__NO_FORTIFY
-+CFLAGS_cpufeature.o += -D__NO_FORTIFY
-+CFLAGS_sbi_ecall.o += -D__NO_FORTIFY
-+endif
- endif
- 
- extra-y += vmlinux.lds
-diff --git a/arch/riscv/kernel/pi/Makefile b/arch/riscv/kernel/pi/Makefile
-index d5bf1bc7de62e..81d69d45c06c3 100644
---- a/arch/riscv/kernel/pi/Makefile
-+++ b/arch/riscv/kernel/pi/Makefile
-@@ -16,8 +16,12 @@ KBUILD_CFLAGS	:= $(filter-out $(CC_FLAGS_LTO), $(KBUILD_CFLAGS))
- KBUILD_CFLAGS	+= -mcmodel=medany
- 
- CFLAGS_cmdline_early.o += -D__NO_FORTIFY
--CFLAGS_lib-fdt_ro.o += -D__NO_FORTIFY
- CFLAGS_fdt_early.o += -D__NO_FORTIFY
-+# lib/string.c already defines __NO_FORTIFY
-+CFLAGS_ctype.o += -D__NO_FORTIFY
-+CFLAGS_lib-fdt.o += -D__NO_FORTIFY
-+CFLAGS_lib-fdt_ro.o += -D__NO_FORTIFY
-+CFLAGS_archrandom_early.o += -D__NO_FORTIFY
- 
- $(obj)/%.pi.o: OBJCOPYFLAGS := --prefix-symbols=__pi_ \
- 			       --remove-section=.note.gnu.property \
--- 
-2.43.0
+I'll update the commit and manually put in the correct signed-off-by.
 
 
+ChenYu
 
-
+[1] https://github.com/mricon/b4/issues/52
 
