@@ -1,244 +1,309 @@
-Return-Path: <linux-kernel+bounces-398964-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398962-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98A1E9BF88E
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 22:34:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BEB359BF887
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 22:32:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F8D91F23734
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 21:34:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D18E28432A
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 21:32:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EC8020CCDF;
-	Wed,  6 Nov 2024 21:34:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72D6F20CCE1;
+	Wed,  6 Nov 2024 21:32:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=laas.fr header.i=@laas.fr header.b="nG86iHVo"
-Received: from laas.laas.fr (laas.laas.fr [140.93.0.15])
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="JhD4jIlJ"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D1C820C47E
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 21:34:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.93.0.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2818520C303;
+	Wed,  6 Nov 2024 21:32:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730928862; cv=none; b=Ykx5Gr8pFwr9a3dKwmv2TBLHIcx6SyVLeBjBqJOmDtkdBK9Ph7C20GXXneG9tDKyT9ssspkzXL4QeVoXyrg132U3Gb+xCSLN0/dSXpeV9sl8cWKVgKIVXJFMrI9Q4p/jhGOGVZuKGH9ASpxn3C0e+aafoAtfX/ImZCB0ks8sgcQ=
+	t=1730928751; cv=none; b=tFcvWQstdJAgp6P8M1YaRtgJSdZQR4l6YwoKqPKT0DsGGQ7LzGN3mJ6C9iMr0uTZ0Z1u5rl3svgZMg7EA0IBjAljYStKN8ATcF3g/Q+RBgdK7nlwZUZk+7QEyAZyOiG6pYd8R+D7A/RwtHAQ555EOCbqvU2KrdPwewQUfco+O4Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730928862; c=relaxed/simple;
-	bh=p3EdMN5YxUjIjgcd2QoxnSqoHgDWCXsbx1F6vAXJRe8=;
-	h=MIME-Version:Content-Type:Message-ID:Date:From:To:Cc:Subject; b=LXEyW67jTp/D7CDb7w/qlIxb+74n2IENvieLTrSIh4Oeqh+D18VGqo9Gd6Q5c7KnzUBNXxX3nutVnSDs/FpvvhRumOYsrEI+/qNFAOAX+cqIaAKPD1PSJObRkSGbz4eKkoCBtDh6/AFo2ZGyHnpmL7BsSgGz0pCTdr8v1dOoivw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=laas.fr; spf=pass smtp.mailfrom=laas.fr; dkim=pass (1024-bit key) header.d=laas.fr header.i=@laas.fr header.b=nG86iHVo; arc=none smtp.client-ip=140.93.0.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=laas.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=laas.fr
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=laas.fr; h=
-	mime-version:content-type:content-transfer-encoding:message-id
-	:date:from:to:cc:subject; s=20240315; bh=p3EdMN5YxUjIjgcd2QoxnSq
-	oHgDWCXsbx1F6vAXJRe8=; b=nG86iHVobXtZ92OIDPLa34tWBfEy4mopx+Jg4mb
-	a2IFuJP74oYkvYGhpvX5cqrM4b9FMZ30ro0BgXfZJO3WeRR/COXg8rMk1XUIuvrw
-	vs4Vg5OOZR4y5vTSxdMm1w3TUBqPkRiurjP7HXyFqCqe0axSu9xuPftbmEg0RhrI
-	tvcE=
-Received: from cactus.useless-ficus.net (useless-ficus.net [IPv6:2001:470:7ffe:0:0:0:0:cafe])
-	(authenticated bits=0)
-	by laas.laas.fr (8.18.1/8.16.0.29) with ESMTPSA id 4A6LTmtd056595
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-	Wed, 6 Nov 2024 22:29:51 +0100 (CET)
-Received: from ficus.useless-ficus.net (ficus.useless-ficus.net [IPv6:2001:470:7ffe:1::1])
-	by cactus.useless-ficus.net (Postfix) with ESMTP id D8A2AA6;
-	Wed,  6 Nov 2024 22:29:44 +0100 (CET)
-Received: by ficus.useless-ficus.net (Postfix, from userid 1001)
-	id D0DCA60557C; Wed,  6 Nov 2024 22:29:44 +0100 (CET)
+	s=arc-20240116; t=1730928751; c=relaxed/simple;
+	bh=gwhlm0CCnwYi/tqwFOQv659Bi7VoLJYF96hPb74QQoI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kocL0LFZJe16EW0pFb0g+NwDOQvs74daEeIDLhIGVeAvyz+1JaodtoX22GW2l3JZsll55qacv2ywegJM2ResqPZ8XXSfL/tVE2phy5lm2K7AHwyfN8ZCJQfGxnTbnMqTNtU6G29uqz4f5YGDgvDzMPbNH073To7yty05jkzkhLY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=JhD4jIlJ; arc=none smtp.client-ip=212.227.15.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1730928686; x=1731533486; i=w_armin@gmx.de;
+	bh=gwhlm0CCnwYi/tqwFOQv659Bi7VoLJYF96hPb74QQoI=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=JhD4jIlJSSYBbguusVBxMeuMst0Lo4r7MixN2nq2erM2Yw4E/WvXLWAmbcG9QoBq
+	 RpFsnxq91NGGPg/8TuqmnW8B8cFn3OcJf17rJbbXHqUKsLMhDLCxE3rMH9dyqMy2T
+	 Q4mOSIhW40mSFmyZ/Eg9sWAQz7ECUVbAVx6EtiR3F2RjyaDLE8WQ26NEMKCxkDELb
+	 XiU2MJW7B/Oyza/W/j3x6n0KrHTspWHeglIY308CesKUZOfObMP4t3cAzUyeTaU46
+	 QaMub3GcJiubFiUfcwGXi0SFEW0MUi1OgH3HranpYSfolsQ5VVP87GNOR3YTP+ITV
+	 nva4MXH9OZO1+lzSAw==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [141.30.226.129] ([141.30.226.129]) by mail.gmx.net (mrgmx005
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1M8ykW-1tDlyC2SRi-003165; Wed, 06
+ Nov 2024 22:31:26 +0100
+Message-ID: <ffae13ae-ed92-44a0-ae15-b6b941620c8a@gmx.de>
+Date: Wed, 6 Nov 2024 22:31:23 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed;
-	 boundary="2odsP31YlV"
-Content-Transfer-Encoding: 7bit
-Message-ID: <26411.57288.238690.681680@gargle.gargle.HOWL>
-Date: Wed, 6 Nov 2024 22:29:44 +0100
-From: Anthony Mallet <anthony.mallet@laas.fr>
-To: Anna-Maria Behnsen <anna-maria@linutronix.de>,
-        Frederic Weisbecker <frederic@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: posix timer freeze after some random time, under pthread create/destroy load
-X-Mailer: VM 8.2.0b under 28.2 (x86_64--netbsd)
-X-Scanned-By: MIMEDefang 3.4
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 16/20] ACPI: platform_profile: Make sure all profile
+ handlers agree on profile
+To: Mario Limonciello <mario.limonciello@amd.com>,
+ Hans de Goede <hdegoede@redhat.com>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
+ Maximilian Luz <luzmaximilian@gmail.com>, Lee Chun-Yi <jlee@suse.com>,
+ Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
+ Corentin Chary <corentin.chary@gmail.com>, "Luke D . Jones"
+ <luke@ljones.dev>, Ike Panhc <ike.pan@canonical.com>,
+ Henrique de Moraes Holschuh <hmh@hmh.eng.br>,
+ Alexis Belmonte <alexbelm48@gmail.com>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+ Ai Chao <aichao@kylinos.cn>, Gergo Koteles <soyer@irl.hu>,
+ open list <linux-kernel@vger.kernel.org>,
+ "open list:ACPI" <linux-acpi@vger.kernel.org>,
+ "open list:MICROSOFT SURFACE PLATFORM PROFILE DRIVER"
+ <platform-driver-x86@vger.kernel.org>,
+ "open list:THINKPAD ACPI EXTRAS DRIVER"
+ <ibm-acpi-devel@lists.sourceforge.net>,
+ Mark Pearson <mpearson-lenovo@squebb.ca>,
+ Matthew Schwartz <matthew.schwartz@linux.dev>
+References: <20241105153316.378-1-mario.limonciello@amd.com>
+ <20241105153316.378-17-mario.limonciello@amd.com>
+ <a2bde9c6-6aa3-445b-b27b-2338d78d132d@gmx.de>
+ <3cbbecf7-bba4-4a45-97da-ec461609b2f9@amd.com>
+Content-Language: en-US
+From: Armin Wolf <W_Armin@gmx.de>
+In-Reply-To: <3cbbecf7-bba4-4a45-97da-ec461609b2f9@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:rdO59OfRmgLFb0o/Ei2QWw43xNjk+/uC3OsbcLVnL5+STiOAsX6
+ ptwFPk1YkC4G5gByAxH1OWXd3GlukMXON4v9T3zVxe811NY59ugSFDe+qQBq9A1hUKzFVlp
+ 05IMIMlBwRpteaQIauIP+uE5LTlNzdcTY+JkFBEbCc7VZ5hDAt/OlclojgGkHanabWTxAqB
+ RWhqhdZgVFTM3vSa2xwsg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:S9DIC7RETd8=;SnmWkfpFKp6edPvDdCtfQ8H33qf
+ Z+RqYzn+ARQQWAlCEAvuhRP2q7DdA9y/EAogWBDvTHRYyIBd1BDiWtSH4IZSkRjCieuiPkogM
+ StJ8Extc5BFJH0bVD80KayRI+MhJw2SDdJ6EuvWQLoXpLZVdgfcUWldWZ+8SZrwrKArWk1WX+
+ P3favAkqeqmv7Kbqwpck4N77mX6+stK0hLydabnf/LyIWDys9SS+SOSGwkup0a65Pr4ofnuY+
+ I+DUfgNnLiP9dHaWX3L8SvOVyGTcZwXVQcpbrPl+k+G5ZDGG+HvJ4fPWHHrSdeJAdvx1aWZHb
+ R5fL1/oLjaQ2geq6Q6MGd8W/LyRTikpZrELrmH83Z4tYffnVZTMa4rbv9o+c7ZbNZKQ5dRG3t
+ YhcaeTIz4ToIXrJxU1QgUN8ylxHckJy5eR5ZDwc1D4aMPcc305aUmMiOlupDbp0R9q4CieOVx
+ pQENO49UnhEB6nF3/YJ/XMlQEyAimI712S5/XKIdJtNBzsu2X8jbNQwa2NqNzIs5+m4LjYSRq
+ cuxAO7i5/IUeZ/igjzsfUdosBMSaR5vc03tWvFQdFlqJOWdLqZG/GygWpEmhuMAcMkN1Wr4FG
+ C2E9GykEzEHmA7K6LibKHG/ROQyCsnaewxKcwxQzVafptVNspH4ig2+eDK7wSWzW/dgIO3408
+ y64k9Lfm7wZq/UikJVcoN22NzsYDz9qqO00hzNx/liDgKnz73BNGvwMYUwlIq/T1y8C2xjdAu
+ m3uFtp7VwCMBmK7f3biKhpaCTV35vuumQE148yLwmYFTFstjTuVL42RRd81//Kdr45xBxSkDy
+ 1USXJSFXkToQV0jmz9atQ98jwj4MGGVgF/6DFZI3dgwdk=
 
+Am 06.11.24 um 22:25 schrieb Mario Limonciello:
 
---2odsP31YlV
-Content-Type: text/plain; charset=us-ascii
-Content-Description: message body text
-Content-Transfer-Encoding: 7bit
+> On 11/6/2024 14:58, Armin Wolf wrote:
+>> Am 05.11.24 um 16:33 schrieb Mario Limonciello:
+>>
+>>> If for any reason multiple profile handlers don't agree on the profile
+>>> return the custom profile.
+>>>
+>>> Reviewed-by: Mark Pearson <mpearson-lenovo@squebb.ca>
+>>> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+>>> ---
+>>> =C2=A0 drivers/acpi/platform_profile.c | 84
+>>> +++++++++++++++++++++------------
+>>> =C2=A0 1 file changed, 53 insertions(+), 31 deletions(-)
+>>>
+>>> diff --git a/drivers/acpi/platform_profile.c b/drivers/acpi/
+>>> platform_profile.c
+>>> index d8c2d195106c2..7861fccc2e58c 100644
+>>> --- a/drivers/acpi/platform_profile.c
+>>> +++ b/drivers/acpi/platform_profile.c
+>>> @@ -280,55 +280,77 @@ static ssize_t
+>>> platform_profile_choices_show(struct device *dev,
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return _commmon_choices_show(aggregate,=
+ buf);
+>>> =C2=A0 }
+>>>
+>>> -static ssize_t platform_profile_show(struct device *dev,
+>>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct device_attribute *att=
+r,
+>>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 char *buf)
+>>> +/**
+>>> + * _aggregate_profiles - Aggregate the profiles for legacy sysfs
+>>> interface
+>>> + * @dev: The device
+>>> + * @data: The profile to return
+>>> + * Return: 0 on success, -errno on failure
+>>> + */
+>>> +static int _aggregate_profiles(struct device *dev, void *data)
+>>> =C2=A0 {
+>>> -=C2=A0=C2=A0=C2=A0 enum platform_profile_option profile =3D PLATFORM_=
+PROFILE_BALANCED;
+>>> +=C2=A0=C2=A0=C2=A0 enum platform_profile_option *profile =3D data;
+>>> +=C2=A0=C2=A0=C2=A0 enum platform_profile_option val;
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 int err;
+>>>
+>>> -=C2=A0=C2=A0=C2=A0 scoped_cond_guard(mutex_intr, return -ERESTARTSYS,
+>>> &profile_lock) {
+>>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (!cur_profile)
+>>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 re=
+turn -ENODEV;
+>>> +=C2=A0=C2=A0=C2=A0 err =3D get_class_profile(dev, &val);
+>>> +=C2=A0=C2=A0=C2=A0 if (err)
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return err;
+>>>
+>>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 err =3D cur_profile->profi=
+le_get(cur_profile, &profile);
+>>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (err)
+>>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 re=
+turn err;
+>>> -=C2=A0=C2=A0=C2=A0 }
+>>> +=C2=A0=C2=A0=C2=A0 if (*profile !=3D PLATFORM_PROFILE_LAST && *profil=
+e !=3D val)
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 *profile =3D PLATFORM_PROF=
+ILE_CUSTOM;
+>>> +=C2=A0=C2=A0=C2=A0 else
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 *profile =3D val;
+>>>
+>>> -=C2=A0=C2=A0=C2=A0 /* Check that profile is valid index */
+>>> -=C2=A0=C2=A0=C2=A0 if (WARN_ON((profile < 0) || (profile >=3D
+>>> ARRAY_SIZE(profile_names))))
+>>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return -EIO;
+>>
+>> Please check the returned value from profile_get() first before doing
+>> the custom platform
+>> profile check.
+>
+> You might have missed it - that's part of get_class_profile() already.
+>
+You are right, my bad.
 
-Hi,
-
-I'm facing an issue with posix timers configured to send SIGALRM
-signal upon expiry. The symptom is that the timer randomly freezes
-(the signal handler not triggered anymore). After analysis, this happens
-in combination with pthreads creation / destruction.
-
-I have attached a test case that can reliably reproduce my issue on
-affected kernels. It involves creating a timer that increments a
-global counter at each tick, while the main thread is spawning and
-destroying other threads. At some point, the counter gets stalled. In
-the context of this test case, I do heavy thread creation and
-destruction, so that the issue triggers almost immediately. Regarding
-the real-world issue, it happens in the context of aio(7) work, which
-also involves thread creation and destruction but presumably at a much
-lower rate, and the issue consequently triggers much less often.
-
-I could reproduce the issue reliably with mainline kernels from 6.4
-to 6.11 (included), and on several distributions, different hardware
-and glibc versions. Kernels earlier than 6.3 (included) do not exhibit
-the problem at all.
-
-Once the issue triggers, simply resetting the timer (with
-timer_settime(2)) makes it work again, until next
-stall. timer_gettime(2) does not show garbage and the values are still
-as expected. Only the signal handler is not called. Manually sending
-SIGALRM with raise(SIGALRM) also works and invokes the signal handler
-as expected.
-
-Also note that using setitimer(2) instead of a posix timer does not
-show any problem with the same test program.
-
-Before filling a proper bug report, I wanted to have your opinion
-about this. This e-mail is already probably too long for an
-introduction, but I can of course provide you with any missing detail
-that you would deem necessary.
-
-Thanks for you attention,
-Anthony Mallet
-
-
---2odsP31YlV
-Content-Type: text/plain;
-	 name="timer.c"
-Content-Disposition: inline;
-	 filename="timer.c"
-Content-Transfer-Encoding: 7bit
-
-/* Public domain - Anthony Mallet on Mon Nov  4 2024 */
-
-#include <err.h>
-#include <errno.h>
-#include <pthread.h>
-#include <signal.h>
-#include <stdint.h>
-#include <stdio.h>
-#include <time.h>
-
-static volatile int ticks;
-
-/* SIGALRM handler */
-void
-tick(int arg)
-{
-  (void)arg; /* unused */
-
-  /* global counter - even if access is not atomic, we don't care here as the
-   * exact value is not used, only the fact that the value changes is relevant
-   */
-  ticks++;
-}
-
-/* thread forking thread */
-void *
-thr(void *arg)
-{
-  pthread_attr_t attr;
-  pthread_t t;
-  (void)arg; /* unused */
-
-  /* spawn a new thread in detached state so that we don't grow too much */
-  pthread_attr_init(&attr);
-  pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
-  if (pthread_create(&t, &attr, thr, NULL))
-    err(2, "pthread_create");
-
-  return NULL;
-}
-
-int
-main()
-{
-  int hz = 1000; /* 1kHz timer - the higher, the faster the issue happens */
-
-  struct sigaction act;
-  struct itimerspec tv;
-  struct timespec pts, ts, rem;
-  sigset_t sigset;
-  timer_t timer;
-  int i, c1, c2;
-
-  /* SIGALRM handler */
-  act.sa_handler = tick;
-  sigemptyset(&act.sa_mask);
-  act.sa_flags = 0;
-  if (sigaction(SIGALRM, &act, NULL) == -1)
-    err(2, "sigaction");
-
-  sigemptyset(&sigset);
-  sigaddset(&sigset, SIGALRM);
-  if (pthread_sigmask(SIG_UNBLOCK, &sigset, NULL) == -1)
-    err(2, "pthread_sigmask");
-
-
-  /* SIGALRM timer at 'hz' frequency */
-  if (timer_create(CLOCK_REALTIME, NULL, &timer) == -1)
-    err(2, "timer_create");
-
-  tv.it_interval.tv_nsec = 1000000000/hz;
-  tv.it_interval.tv_sec = 0;
-  tv.it_value = tv.it_interval;
-
-
-  /* thread forking threads - this is an issue spotted on ubuntu-22.04 and
-   * 24.04, as well as other distributions, that affects timer signal
-   * delivrery. This seems to affect kernels from 6.4 to 6.11 inclusive. */
-  thr(NULL);
-
-
-  /* start timer */
-  if (timer_settime(timer, 0, &tv, NULL) == -1)
-    err(2, "timer_settime");
-
-  /* 100 periods delay */
-  pts.tv_sec = 0;
-  pts.tv_nsec = tv.it_interval.tv_nsec * 100; /* 100ms */
-  while(pts.tv_nsec >= 1000000000) {
-    pts.tv_nsec -= 1000000000;
-    pts.tv_sec++;
-  }
-  /* for 1s */
-  for (i = 0; i < 10; i++) {
-    ts = pts;
-    c1 = ticks;
-    while (nanosleep(&ts, &rem) != 0 && errno == EINTR) ts = rem;
-    c2 = ticks;
-
-    if (c1 == c2) {
-      /* the counter is stuck, SIGALRM not firing anymore */
-      fprintf(stderr, "SIGALRM issue after %d ticks\n", c1);
-
-      /* just resetting the timer at this point makes it work again: */
-      /* timer_settime(timer, 0, &tv, NULL); */
-      /* (the issue will trigger again after some time) */
-
-      /* also note that timer_gettime(timer, &tv) will show both correct
-       * tv.it_interval and tv.it_value changing normally */
-
-      /* manually sending SIGALRM also still works: */
-      /* raise(SIGALRM); */
-
-      return 2;
-    }
-  }
-
-  printf("OK, no issue\n");
-  return 0;
-}
-
---2odsP31YlV--
+>>
+>>> +=C2=A0=C2=A0=C2=A0 return 0;
+>>> +}
+>>> +
+>>> +/**
+>>> + * platform_profile_show - Show the current profile for legacy
+>>> sysfs interface
+>>> + * @dev: The device
+>>> + * @attr: The attribute
+>>> + * @buf: The buffer to write to
+>>> + * Return: The number of bytes written
+>>> + */
+>>> +static ssize_t platform_profile_show(struct device *dev,
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct device_attribut=
+e *attr,
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 char *buf)
+>>> +{
+>>> +=C2=A0=C2=A0=C2=A0 enum platform_profile_option profile =3D PLATFORM_=
+PROFILE_LAST;
+>>> +=C2=A0=C2=A0=C2=A0 int err;
+>>> +
+>>> +=C2=A0=C2=A0=C2=A0 err =3D class_for_each_device(&platform_profile_cl=
+ass, NULL,
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 &profile, _aggregate_profile=
+s);
+>>
+>> Missing error handling.
+>>
+>
+> Right, got it.
+>
+>>>
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return sysfs_emit(buf, "%s\n", profile_=
+names[profile]);
+>>> =C2=A0 }
+>>>
+>>> +/**
+>>> + * platform_profile_store - Set the profile for legacy sysfs interfac=
+e
+>>> + * @dev: The device
+>>> + * @attr: The attribute
+>>> + * @buf: The buffer to read from
+>>> + * @count: The number of bytes to read
+>>> + * Return: The number of bytes read
+>>> + */
+>>> =C2=A0 static ssize_t platform_profile_store(struct device *dev,
+>>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 struct device_attribute *attr,
+>>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 const char *buf, size_t count)
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct device_at=
+tribute *attr,
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 const char *buf,=
+ size_t count)
+>>> =C2=A0 {
+>>> -=C2=A0=C2=A0=C2=A0 int err, i;
+>>> +=C2=A0=C2=A0=C2=A0 int ret;
+>>> +=C2=A0=C2=A0=C2=A0 int i;
+>>>
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /* Scan for a matching profile */
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 i =3D sysfs_match_string(profile_names,=
+ buf);
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (i < 0)
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return -EINVAL;
+>>> -
+>>> -=C2=A0=C2=A0=C2=A0 scoped_cond_guard(mutex_intr, return -ERESTARTSYS,
+>>> &profile_lock) {
+>>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (!cur_profile)
+>>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 re=
+turn -ENODEV;
+>>> -
+>>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /* Check that platform sup=
+ports this profile choice */
+>>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (!test_bit(i, cur_profi=
+le->choices))
+>>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 re=
+turn -EOPNOTSUPP;
+>>> -
+>>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 err =3D cur_profile->profi=
+le_set(cur_profile, i);
+>>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (err)
+>>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 re=
+turn err;
+>>> +=C2=A0=C2=A0=C2=A0 if (i =3D=3D PLATFORM_PROFILE_CUSTOM) {
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 pr_warn("Custom profile no=
+t supported for legacy sysfs
+>>> interface\n");
+>>
+>> This would allow userspace applications to spam the kernel log. Please
+>> just return -EINVAL here
+>> and document this special case inside the interface specification.
+>>
+> OK.
+>
+>> Thanks,
+>> Armin Wolf
+>>
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return -EINVAL;
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
+>>>
+>>> -=C2=A0=C2=A0=C2=A0 sysfs_notify(acpi_kobj, NULL, "platform_profile");
+>>> -=C2=A0=C2=A0=C2=A0 return count;
+>>> +=C2=A0=C2=A0=C2=A0 ret =3D class_for_each_device(&platform_profile_cl=
+ass, NULL, &i,
+>>> _store_class_profile);
+>>> +
+>>> +=C2=A0=C2=A0=C2=A0 return ret ? ret : count;
+>>> =C2=A0 }
+>>>
+>>> =C2=A0 static DEVICE_ATTR_RO(platform_profile_choices);
+>
+>
 
