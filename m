@@ -1,121 +1,105 @@
-Return-Path: <linux-kernel+bounces-398731-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398732-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BF939BF544
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 19:31:00 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 181199BF549
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 19:32:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6DE151C23898
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 18:30:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF2C72836E1
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 18:32:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50736208991;
-	Wed,  6 Nov 2024 18:30:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 000E4208217;
+	Wed,  6 Nov 2024 18:32:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ncga7DDB"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PkDRv6xT"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C9EC20896A;
-	Wed,  6 Nov 2024 18:30:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B4E6202637;
+	Wed,  6 Nov 2024 18:32:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730917847; cv=none; b=ipZ9vXTyEKQsChVL5I5No32t5YVZv2tu/phVCsrSikuF1S67CbvgMTsg+lCq2tG1HzvyXq+13gUI4zyjpv0D1BFR5aPFkaEYBifWMDUhj5JGhaWm6KPv+kfjfYMHyRYuD1ed1qycy93F0CVTkjWc7jQhOA0N5cPDook/4nFdZUo=
+	t=1730917944; cv=none; b=CQ9asdhQt7f08QWJKGIergJl2Np+12rxcaQ0dO0i4XhiARz33bXMLWJVBNaR5jhFc0cRSlAoXWYuXctNvWNnFiZ8MtPQmqz00nzdPrMLhsafaFqHupUzqqP2Jg7HpOXjZMi9BFPEHReRnh8R1P47DXWmmQjgkqMq5bZiJa614rs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730917847; c=relaxed/simple;
-	bh=lwnwFqyElhS59Xfq7JeJ9Np9U8KffT4TejVqEqCOZp0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SQ3wOJWJsod3o1yJujnBCK+7qsTArbo2HJ1X1lAWofH+CoVO1oeIkIwFwmf7lF+QmczI0ofxkcx+T9Mrg50HOy3xNM1bX3lwas3gys++9PYsV1W4njGuMuWrDNZlRIqtDv+dg0TLQ5xv2uOjGfOFba4ea2BBug/bDdVkB6F+EqQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ncga7DDB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9FF61C4CEC6;
-	Wed,  6 Nov 2024 18:30:43 +0000 (UTC)
+	s=arc-20240116; t=1730917944; c=relaxed/simple;
+	bh=VZAJqAIJ1C/Lh9DLgBZKS+KRl8i2ROrpVpzHBnbbhE4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=f7NM+wNhj6m7PziSNubaMKVwDHXSJnX7UAztSMn6Pk89y58pwjkIb/SRxT2Btaxjw0JaJHQh3sWgwP2XGQS8tlyoqcgHcj6vsGGXG11zyBs6HEjSxkkvHGn7ETprJ0N0kWIKjJu20DmIYanotYjBVrv6IYToU/99BXDxzT8Yceg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PkDRv6xT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D862DC4CED7;
+	Wed,  6 Nov 2024 18:32:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730917847;
-	bh=lwnwFqyElhS59Xfq7JeJ9Np9U8KffT4TejVqEqCOZp0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Ncga7DDBTtU5oQZ5uy2fj4VeVQineuf963jbAweI5cQL8TstTDlhAj0dNYtVpHgT9
-	 NjvMOiaYR8U0g+WtexhB47eFW1KxSqwXHprIWbQ+IThqovpgxFLCJq3bvaHXW0s0TH
-	 Nvi9g1U4hkfr7kVzo3/kIQYTaNqorVnhIn0+gzPIM1HaX5opU2d0i2AyDxEp0vYcWJ
-	 b3y/ndaOYgyNOiXTTHVfl/XquCmbuX9O7NV/LIAy0mb6t0sKa/Iq4Mg+Ux9O313/v/
-	 MfLvBNHGtUsRCKaSgoyYbXtpA2w2fu/DIgkl+bfeEDipcHanKFXw7VCZ2tgCJ589bg
-	 uNfuvfK34/DkQ==
-Date: Wed, 6 Nov 2024 18:30:41 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Matt Coster <Matt.Coster@imgtec.com>
-Cc: Frank Binns <Frank.Binns@imgtec.com>, David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Nishanth Menon <nm@ti.com>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Tero Kristo <kristo@kernel.org>,
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	Randolph Sapp <rs@ti.com>, Darren Etheridge <detheridge@ti.com>
-Subject: Re: [PATCH 04/21] dt-bindings: gpu: img: Allow dma-coherent
-Message-ID: <20241106-dried-spoils-f6ddd8020f40@spud>
-References: <20241105-sets-bxs-4-64-patch-v1-v1-0-4ed30e865892@imgtec.com>
- <20241105-sets-bxs-4-64-patch-v1-v1-4-4ed30e865892@imgtec.com>
- <20241105-linseed-steadfast-98cd8abe898c@spud>
- <5e26957f-dc79-42ef-a8a1-597fb386ae51@imgtec.com>
+	s=k20201202; t=1730917943;
+	bh=VZAJqAIJ1C/Lh9DLgBZKS+KRl8i2ROrpVpzHBnbbhE4=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=PkDRv6xTRctPUKBiyFgsQSDikbJfwz/A9CYVYQYxhpt4w7Qk9NdT54U9iSLGdv2pb
+	 htOJOQD7/rVh/bJBP+dYYZzuG7tkFQ5874OrJWODy/7UAHJu2ZqewmrWhgTPINxHgm
+	 SXrggaF2eXjxrc24zsr8cM43in25irJdCQ+P6LfhoRP1shEYTm+QBhZwNN35BmwJ7a
+	 Zw8iFmfKfz/JPzuCHlegm3JYdZv9HCOm30CphxdKWrErE9QDI6KjHk5v6yIpdes003
+	 DQflz7jGg06FANTss3tbT0q0NKZCEgownWTxkSyIBLDp4xnB3oSpi+If4BDAoyUsd0
+	 prTT3GKnN/XIg==
+Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-6e9ba45d67fso592907b3.1;
+        Wed, 06 Nov 2024 10:32:23 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUUYgOLRvLrI69KeZ/vLUTf786eqqRlWb0J/kKWfckkCit4VQjrjWxfiJccuqrpYiPRZLCHIDcNLaSBVf9a7to=@vger.kernel.org, AJvYcCXbakr3vSErO7VY44Fj2rRaN7pwrkXQhrNy1Q+CAd8xPmZRnr+TtsD6h9RQqcj2pEORw33wHLjxFS3tX/nm@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy6UWdmGHjz9W9Ma+sVMVqO6R1E227+axnYRWMzdQ/F+znZlZzF
+	2R+WXmPWRNl+uOQNA/KVHBu+iO6ir0sdg4CX0TuoUNOd2Em4Si5QE0nF6krgNtKrsP6VPTZ0NA1
+	iqrt/y4wRqkTwlr/A/wWfpTOZlw==
+X-Google-Smtp-Source: AGHT+IHF7huaas71JDmvvH8NbieYOfzeri2Ws8mw0BHdC5V9CTrAnY0eW9Crx/tJlxy/Vp+n09K9FKAFs2dJs+U2oy4=
+X-Received: by 2002:a05:690c:62c6:b0:6e5:9bc2:53a0 with SMTP id
+ 00721157ae682-6ea3b9831c7mr307446817b3.41.1730917943104; Wed, 06 Nov 2024
+ 10:32:23 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="f01tRNt2X5Z6+tQq"
-Content-Disposition: inline
-In-Reply-To: <5e26957f-dc79-42ef-a8a1-597fb386ae51@imgtec.com>
-
-
---f01tRNt2X5Z6+tQq
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20240702161052.3563599-1-robh@kernel.org> <D2RSWMPFF8KK.X5HZZMHANQMO@iki.fi>
+ <D2RT0J8KXY1H.3MEV7KGQXTWHW@iki.fi> <CAL_JsqJDX+uOSoPh6pTNEP0vBLwcP3bKmAW1wCr_0cVr5fsPcg@mail.gmail.com>
+ <D2SSH5HSDHQS.2YJSB22W3MHQK@iki.fi> <CAL_JsqLF+gs9e1TL1yi-xAZJRx4Kz7fOk=2wcF8kCqU3vyMWZA@mail.gmail.com>
+ <D5FAVRTM32ZJ.1HFCHF3L9I68C@kernel.org> <D5FAXEKQ71ZJ.1U9AE15UVWRT9@kernel.org>
+In-Reply-To: <D5FAXEKQ71ZJ.1U9AE15UVWRT9@kernel.org>
+From: Rob Herring <robh@kernel.org>
+Date: Wed, 6 Nov 2024 12:32:12 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqJdabUmgOEe29y4o5muOnh83V7rS=YwfXMtZ+Fugcgzdw@mail.gmail.com>
+Message-ID: <CAL_JsqJdabUmgOEe29y4o5muOnh83V7rS=YwfXMtZ+Fugcgzdw@mail.gmail.com>
+Subject: Re: [PATCH] tpm: atmel: Drop PPC64 specific MMIO setup
+To: Jarkko Sakkinen <jarkko@kernel.org>
+Cc: Jarkko Sakkinen <jarkko.sakkinen@iki.fi>, Peter Huewe <peterhuewe@gmx.de>, 
+	Jason Gunthorpe <jgg@ziepe.ca>, Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, 
+	Christophe Leroy <christophe.leroy@csgroup.eu>, "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>, 
+	linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org, 
+	linuxppc-dev@lists.ozlabs.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Nov 06, 2024 at 10:18:06AM +0000, Matt Coster wrote:
-> On 05/11/2024 18:06, Conor Dooley wrote:
-> > On Tue, Nov 05, 2024 at 03:58:10PM +0000, Matt Coster wrote:
-> >> This attribute will be required for the BXS-4-64 MC1 and will be enabl=
-ed in
-> >> the DTS for the TI k3-j721s2 in a subsequent patch; add it now so
-> >> dtbs_check doesn't complain later.
-> >=20
-> > Sounds like the property should be made required for that integration.
->=20
-> This is something I went back and forth on. Where is the line drawn
-> between things that should be enforced in bindings and things that only
-> ever need to be specified once, so should just be left to the dt itself
-> to be the source of truth?
->=20
-> Having said that, I realise TI could spin a new SoC with a new dt but
-> use the same compatible string for the GPU;
+On Wed, Nov 6, 2024 at 12:19=E2=80=AFPM Jarkko Sakkinen <jarkko@kernel.org>=
+ wrote:
+>
+> On Wed Nov 6, 2024 at 8:17 PM EET, Jarkko Sakkinen wrote:
+> > > Whatever happened to this? Can you please apply my patch if you don't
+> > > have the time for further rework.
+> >
+> > Sorry unintentional.
+> >
+> > I applied with
+> >
+> > -static void __iomem * atmel_get_base_addr(unsigned long *base, int *re=
+gion_size)
+> > +static void __iomem *atmel_get_base_addr(unsigned long *base, int *reg=
+ion_size)
+> >
+> > as this gives checkpatch error.
+>
+> See:
+> https://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git/co=
+mmit/?id=3Db18ffd5e0faaa02bffda61e19a013573451008d4
+>
+> If that looks good to you, I can mirror it to -next.
 
-No they can't. New SoC, new compatible.
+Looks good. Thanks.
 
-> the "single" source of truth
-> then wouldn't be so single anymore. I guess by making this property
-> required for this compatible string, we're saying any use of it must
-> behave in exactly the same way, right?
-
---f01tRNt2X5Z6+tQq
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZyu10QAKCRB4tDGHoIJi
-0oE5AP4yKMe2zZuHfZWRLLe1EVB1RY5SngwUhkXzFSPhIY8wLgEAlaS4WL2LzDDS
-8YfEDzUHezrqSxoOdDYmEg7VZOPVXwQ=
-=AxQP
------END PGP SIGNATURE-----
-
---f01tRNt2X5Z6+tQq--
+Rob
 
