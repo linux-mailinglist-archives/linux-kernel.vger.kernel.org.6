@@ -1,121 +1,87 @@
-Return-Path: <linux-kernel+bounces-398719-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398720-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EE309BF51D
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 19:20:11 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02BE69BF520
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 19:20:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D757D2825CD
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 18:20:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9D2C1B24639
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 18:20:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0199B208204;
-	Wed,  6 Nov 2024 18:20:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IgC5XZw5"
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 481E6208977;
+	Wed,  6 Nov 2024 18:20:11 +0000 (UTC)
+Received: from mail-gw02.astralinux.ru (mail-gw02.astralinux.ru [195.16.41.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 173042076DF;
-	Wed,  6 Nov 2024 18:20:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22267537FF;
+	Wed,  6 Nov 2024 18:20:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.16.41.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730917202; cv=none; b=ZmazkgrcliiLvJCctNVvZ68D762WubEZ9zFc9Lkqp9Ahb4HbmenDnFxLyI89GTXgjbwQwA1xZVT7aiixAXow67jwQgEIESTgZPo4kNC0GIbVOcg3HYHqsXxLlCh4V448wQoMO6aeBmR/s4zEAPifc5Mors+l8VlW+F8U/w9HFxo=
+	t=1730917210; cv=none; b=YPnpmVt4Cz6hGJlR1rskjJQLZdkFRA4xdaGus+IQOWysU4JbKhPuakpmVtWVkaEvuZjmCoARZU9Kz3DvPbBtPuv1o7/2c1oJBI66yq8LbGoqTRrVq816WJyFcdaSHrgoLWQrCbJQgIjr+NtN5XXQu1fsTcWRlTxhxbco6u0+fw4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730917202; c=relaxed/simple;
-	bh=K5WZLSX54TuljmRtP55sPi8GdaghrzyWtHwvHCPcI+g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=djskXCkW+TkKybHIUx+O8xs7FrZWb0WWjETOuTp10JDrtY8Dls2cJr+rjBpwP+efDM3euUXUp5s+XLTWXggIDzqJPzuVUnkytU/l0xdiyYe1ijO6DCZyebH2pyoH2K98TYV/mqhU3axwZzk5EKXpFsuyILZIJRgOoU6zXTWvjmk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IgC5XZw5; arc=none smtp.client-ip=209.85.216.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2e2d83f15f3so13188a91.0;
-        Wed, 06 Nov 2024 10:20:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730917200; x=1731522000; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2CSyCtnTXK2z/ELGxW2knZ8xjo5nUO/vy+j0+w/piiY=;
-        b=IgC5XZw5fW688o6buIH+eeXdK0YeR00IKHdO5YuZFK+cRYa1bbFt82nrxsSg9mrfey
-         x1YVtLkUcGT54uzQluOqxz6xWaCyr0DSqfV9XCT7Ih5444YBg9HPtLFMRiuDM/05LQRL
-         kuZ+dwjt8pYia4SrVHpL69OlrchIQiYW5oB7TsESkBR1x/iH800RIEhxotifV9vUKOzJ
-         TAStOPieT5HnFFdzvGWvnON845OFAljKsjo/JUYY8HFcELL6ZZ1mU8qbKaRoCGAECBZ5
-         UHw4QwlDYajwirM/atsL3/6UYDGiW7BLqx0f/k4zJohFBRW/rgeOVet1CHdTW62tpmmD
-         W6EA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730917200; x=1731522000;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2CSyCtnTXK2z/ELGxW2knZ8xjo5nUO/vy+j0+w/piiY=;
-        b=cqeZZ3AdVRqpfTQdlE9c1hbiIzyoTqj3OYYDxnSZHs5I2FpiY5MdOwO/5K249KsxU9
-         0ekL3R1NW15pVuicjTkIhDi+i22HrDhFTBurXZEWYhc1E+jGPemkyl/FNTmRtdRuii7r
-         bzGfhUsS8jiYVBHrNx5m6tZ+cODne16IfLb7MvMYG1JLsmCQuPM9OifG7cPV9IY69uSw
-         GhZklaKE7jJLD6qBLCxM3p91EfomrGvpGjHETJcXVBIu134rKSrT3tR7ZqZ+xua4siki
-         s62KFphr6boFDMIPtrkJXcuzf/LYfYjUod/F0xFCGUzC/KNfqvEQdiGyqVYE8MKj7QGo
-         UQmA==
-X-Forwarded-Encrypted: i=1; AJvYcCVD7aqiTK4Axch5mlfTpUQyPDPkOtd7oIVQ2MGZ+ISuAIc/OHYbqFXsHhxgk566VS5jFR6x7aTODWTi9Oo=@vger.kernel.org, AJvYcCVLa8bC51AAvKaWbU4exGZqt6PZqGAMV4xbD+k3TOe/JInXvOTlnvHRX/0X17fF7k5r3V+fX8S/yXlE4XLoQdE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyN0t0JVP+UZeLBGrR+l5R31Ir2g18WxF4aOabUxOGhoK5dmiAg
-	80kxh0YgcxXjJ7OA0gzuMZyZVh5L2LSAxOTA45ZCY/Ymv1t5fD4eN4sZrzFSZDFWny1quOgOK7f
-	rVAdL7RRxI6vFw6d9u/4wMRwZZLc=
-X-Google-Smtp-Source: AGHT+IEhQregVD9i1hTW1C+B83pDguVfdjn9ZTHPguO+bdACJ7OG6RUQjRg8g/wcsY0RA74rmbZVDJz0gxwruE/Npvk=
-X-Received: by 2002:a17:90b:38cd:b0:2e9:4a0c:252f with SMTP id
- 98e67ed59e1d1-2e9a4a80d40mr126391a91.1.1730917200171; Wed, 06 Nov 2024
- 10:20:00 -0800 (PST)
+	s=arc-20240116; t=1730917210; c=relaxed/simple;
+	bh=XNfmruMTITRXL4vGR4glrXD+8hOGE1OJq2i/lAjqqAY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JOhSkiS5qOO+CnFnNWbij4BpIq6d+61XsKwB3X8rCiDfuhczAkN4IDaaA2X6n2mOR8KBNx/hLDNLO3OIBR1Lq9P1EvOWIv1RrNgSVriJl+KF+Lxr32LsLoh6R2O5CmvdmhqRS4TLQ5Dy1OwpbYWyPht5P68P6IqbNfHBlSSpACQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=astralinux.ru; spf=pass smtp.mailfrom=astralinux.ru; arc=none smtp.client-ip=195.16.41.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=astralinux.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=astralinux.ru
+Received: from gca-msk-a-srv-ksmg01.astralinux.ru (localhost [127.0.0.1])
+	by mail-gw02.astralinux.ru (Postfix) with ESMTP id C88071F9D4;
+	Wed,  6 Nov 2024 21:20:04 +0300 (MSK)
+Received: from new-mail.astralinux.ru (gca-yc-ruca-srv-mail04.astralinux.ru [10.177.185.109])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail-gw02.astralinux.ru (Postfix) with ESMTPS;
+	Wed,  6 Nov 2024 21:20:03 +0300 (MSK)
+Received: from MBP-Anastasia.DL (unknown [10.198.46.47])
+	by new-mail.astralinux.ru (Postfix) with ESMTPA id 4XkD5G39mpzkWsC;
+	Wed,  6 Nov 2024 21:20:02 +0300 (MSK)
+From: Anastasia Belova <abelova@astralinux.ru>
+To: stable@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Anastasia Belova <abelova@astralinux.ru>,
+	lvc-project@linuxtesting.org,
+	Huang Rui <ray.huang@amd.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 6.6 0/1] cpufreq: amd-pstate: add check for cpufreq_cpu_get's return value
+Date: Wed,  6 Nov 2024 21:19:57 +0300
+Message-ID: <20241106182000.40167-1-abelova@astralinux.ru>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241104-simplify-arc-v1-1-a4ffc290f905@gmail.com>
- <ZylNvC8enwPG4IQ4@Boquns-Mac-mini.local> <CANiq72nQ6b1wO6i6zWW6ZWeQFN4SJVB28b216FDU70KmtCbaxA@mail.gmail.com>
- <CAJ-ks9=xW_WWZXB0CbDvU-3otkYs-TY+PSYeiPyidM58QujC3g@mail.gmail.com>
- <CANiq72=9XiYOMQ9ttDrgqTt=mPZnWJuCL0EgQBjFObfqVmr1UA@mail.gmail.com> <CAJ-ks9kNmH2t2Lo2PdLuH5rwSC3UQRGWd-cTAX9-Q2FE6oGHiQ@mail.gmail.com>
-In-Reply-To: <CAJ-ks9kNmH2t2Lo2PdLuH5rwSC3UQRGWd-cTAX9-Q2FE6oGHiQ@mail.gmail.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Wed, 6 Nov 2024 19:19:48 +0100
-Message-ID: <CANiq72k3AJgMq_US7MYGpzKRqOXZQKpOkBXAd8DwBKyE+Bz3Jg@mail.gmail.com>
-Subject: Re: [PATCH] rust: arc: remove unused PhantomData
-To: Tamir Duberstein <tamird@gmail.com>
-Cc: Boqun Feng <boqun.feng@gmail.com>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-KSMG-AntiPhishing: NotDetected
+X-KSMG-AntiSpam-Auth: dkim=none
+X-KSMG-AntiSpam-Envelope-From: abelova@astralinux.ru
+X-KSMG-AntiSpam-Info: LuaCore: 41 0.3.41 623e98d5198769c015c72f45fabbb9f77bdb702b, {Tracking_from_domain_doesnt_match_to}, astralinux.ru:7.1.1;new-mail.astralinux.ru:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;127.0.0.199:7.1.2, FromAlignment: s
+X-KSMG-AntiSpam-Interceptor-Info: scan successful
+X-KSMG-AntiSpam-Lua-Profiles: 188998 [Nov 06 2024]
+X-KSMG-AntiSpam-Method: none
+X-KSMG-AntiSpam-Rate: 0
+X-KSMG-AntiSpam-Status: not_detected
+X-KSMG-AntiSpam-Version: 6.1.1.7
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.1.0.7854, bases: 2024/11/06 15:41:00 #26827080
+X-KSMG-AntiVirus-Status: NotDetected, skipped
+X-KSMG-LinksScanning: NotDetected
+X-KSMG-Message-Action: skipped
+X-KSMG-Rule-ID: 1
 
-On Wed, Nov 6, 2024 at 5:33=E2=80=AFPM Tamir Duberstein <tamird@gmail.com> =
-wrote:
->
-> I would be happy to add the relevant details to the commit message but
-> this is one citation that I haven't been able to locate. The closest
-> mention I could find[0] only vaguely mentions that this change was
-> made, but does not reference a commit (and certainly not an RFC).
+NULL-dereference is possible in amd_pstate_adjust_perf in 6.6 stable
+release.
 
-In Boqun's first link, there is a reference to the nomicon with
-details, and the section:
+The problem has been fixed by the following upstream patch that was adapted
+to 6.6. The patch couldn't be applied clearly but the changes made are 
+minor.
 
-    https://doc.rust-lang.org/nomicon/phantom-data.html#generic-parameters-=
-and-drop-checking
-
-explains the change, including:
-
-    "But ever since RFC 1238, this is no longer true nor necessary."
-
-There was another RFC (1327) after that, for a finer-grained approach
-(`may_dangle`). The name of the feature gate was also changed.
-
-Anyway, I don't think we need to add any of that to the commit message
-though. Perhaps linking the latest RFC is good for context, so if you
-think it is a good idea, of course please go for it -- but in case you
-are referring to what I said, I didn't say that we should add the RFC
-bits into the commit message.
-
-Cheers,
-Miguel
+Found by Linux Verification Center (linuxtesting.org) with SVACE.
 
