@@ -1,98 +1,112 @@
-Return-Path: <linux-kernel+bounces-398257-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398258-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 287539BEC64
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 14:04:52 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6B7E9BEC78
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 14:05:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF066285C58
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 13:04:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0488C1C23AF2
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 13:05:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8647F1FBF4D;
-	Wed,  6 Nov 2024 12:55:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B3BE1FC7D8;
+	Wed,  6 Nov 2024 12:55:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="r3i4JO0l"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DQQkL6aj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71D9F1FBCBC;
-	Wed,  6 Nov 2024 12:55:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA6191FC7C6;
+	Wed,  6 Nov 2024 12:55:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730897703; cv=none; b=P/rrY8kBLwKX9PO0QP+9mLgqC/2yppO5L2j2iWe1bV0cuo2lRZ8VYywM6Iv5BiU9AxWKmjDLRMM9P20IDkrjjRA8NsWEFB341YtOyXOVOYfqEzTzdO/CY+yHnZkCU0xLNVwnjqaoLQSCIhtW+xnsh6pMltbxVeI9zU9zZxGmRwQ=
+	t=1730897734; cv=none; b=Bcgmk+he5Fuw9wfYPys63jIsslTvbhONeLfDqWgfQQaI3DGlheZfTiVc5ZhaxAlT/A5StdclrIFhWKLyCw47ofVMbmaMdz37MDEGhbGXSyzTz5d0XyMZT66hupvmbWWJ/dsvCkNV/3c1uCwEGIYvF3dVUINDngT9FS2ROR2kDYo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730897703; c=relaxed/simple;
-	bh=C/YyHTsrUA5cNUrNatbZfGIhA6FzfOxnYY7jmTSTWoY=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=qsmNgvfqfwGZhcW/K/q+AqGmlkehSb6r/+P0q2eBC79eF4HFtsdxKVGWOvVrfFp35CKZegpqF86GfGs+xsSFEoxn+esFiU3uhmAhA6J/zpoH7Rzam9rMNCNCUddTZ4FDfV0MfvuJhMl7NGlOv33Vm3Odgm3LmtW6kQSQU+VG+9k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=r3i4JO0l; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
-	s=201909; t=1730897696;
-	bh=iRLJUrrpvdggs7VLYItdrnY/LsBZ/gUpUlld7wSgZg8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=r3i4JO0l9iQ/cxv6XhZ8DpOqJ1j7acgckLxkKMl4bVwXA5RGLe7UDkjwHhojgmrwP
-	 DyZG+tZetPViar+nig97Y1e3NAu0EwOv/NjD9YIC4KKcMvbLrMVIXzuPzcjqLgDovE
-	 XiM9FezvsiY0J/Ty+HMvlufgk1ad3WTlsGYrCIU1Yk/BKEnYjRiJrAmKlkNvcY8j5l
-	 H/+YXKVDwa2XdpIquKUVEghyDfsQ/Y8j7LN3e7GemCZO/Zyj9gas7PIGXGgqu5XD8P
-	 bdqWjxJ8RU72jLFr1PjZPKGKDaQlHM90aHVh9ukfSU1Vu1MCf0lC3u8psiNAsEg0yW
-	 Wh9EveL3Kt/Fw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Xk4t25VRLz4wyh;
-	Wed,  6 Nov 2024 23:54:50 +1100 (AEDT)
-From: Michael Ellerman <mpe@ellerman.id.au>
-To: Lukas Bulwahn <lbulwahn@redhat.com>, Olivia Mackall
- <olivia@selenic.com>, Herbert Xu <herbert@gondor.apana.org.au>,
- linux-crypto@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Lukas
- Bulwahn <lukas.bulwahn@redhat.com>
-Subject: Re: [PATCH] hwrng: amd - remove reference to removed PPC_MAPLE config
-In-Reply-To: <20241106081343.66479-1-lukas.bulwahn@redhat.com>
-References: <20241106081343.66479-1-lukas.bulwahn@redhat.com>
-Date: Wed, 06 Nov 2024 23:54:52 +1100
-Message-ID: <871pzoldyb.fsf@mpe.ellerman.id.au>
+	s=arc-20240116; t=1730897734; c=relaxed/simple;
+	bh=THiRwHU/ItganQsalp7zDHwVZ+vTaXjEv86N7QtU7B8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bH8urew+0Grk04gTKXMXlLzlH7HifiMwrRZ1oTWs9Zn0+5Nkj97a4vELaxa+40A9h7ZFKxiRrVPhOIBapcQgeQ+C3OWKBBMQ7YbqR1idsSDV0yeapSKVkv3TDw2Lt5t5jbTxcuBDlKrUriJis9h02EbgxhOotV3HlO+SBWXs7QQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DQQkL6aj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A6ADC4CECD;
+	Wed,  6 Nov 2024 12:55:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730897733;
+	bh=THiRwHU/ItganQsalp7zDHwVZ+vTaXjEv86N7QtU7B8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DQQkL6ajzVfBy7VuWlIeA14Z9c6xGyE0EjjHhJSHhqQ2Tq+PpAz5Ih5Qw5GfsvRwy
+	 nIna14Oawmgfg0q1Iv7bLgSvL1uS+kNZkVwv9no652K+qH4C1khxWhrG+NVpZmclyv
+	 WYCL5WhEGMheZcIsnr6U1DCj4GClNjsq4R+cc5ptLxT6bvkLa7AwgpFg5RjxS6zK1Y
+	 SdWrgrBJY3MxZNtGkCQmZXQzY2kWtRmAO3jR3qcm040qw7KGtUDyXz7acpYl4PoBbF
+	 2byFOOlU33Xsl85JKyyvrj8UNo/yuTj+fImQ9OSE3qnvD51FyidCU39jesLyD4EP7R
+	 pJx6Q9wJbK6oA==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1t8fZN-000000003aV-31o8;
+	Wed, 06 Nov 2024 13:55:34 +0100
+Date: Wed, 6 Nov 2024 13:55:33 +0100
+From: Johan Hovold <johan@kernel.org>
+To: Sibi Sankar <quic_sibis@quicinc.com>
+Cc: sudeep.holla@arm.com, cristian.marussi@arm.com, andersson@kernel.org,
+	konrad.dybcio@linaro.org, robh+dt@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org, linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, quic_rgottimu@quicinc.com,
+	quic_kshivnan@quicinc.com, conor+dt@kernel.org,
+	arm-scmi@vger.kernel.org
+Subject: Re: [PATCH V4 0/5] arm_scmi: vendors: Qualcomm Generic Vendor
+ Extensions
+Message-ID: <ZytnRc94iKUfMYH0@hovoldconsulting.com>
+References: <20241007061023.1978380-1-quic_sibis@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241007061023.1978380-1-quic_sibis@quicinc.com>
 
-Lukas Bulwahn <lbulwahn@redhat.com> writes:
-> From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
->
-> Commit 62f8f307c80e ("powerpc/64: Remove maple platform") removes the
-> PPC_MAPLE config as a consequence of the platform=E2=80=99s removal.
->
-> The config definition of HW_RANDOM_AMD refers to this removed config opti=
-on
-> in its dependencies.
->
-> Remove the reference to the removed config option.
->
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
-> ---
->  drivers/char/hw_random/Kconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+On Mon, Oct 07, 2024 at 11:40:18AM +0530, Sibi Sankar wrote:
+> The QCOM SCMI vendor protocol provides a generic way of exposing a
+> number of Qualcomm SoC specific features (like memory bus scaling)
+> through a mixture of pre-determined algorithm strings and param_id
+> pairs hosted on the SCMI controller. Introduce a client driver that
+> uses the memlat algorithm string hosted on QCOM SCMI Vendor Protocol
+> to detect memory latency workloads and control frequency/level of
+> the various memory buses (DDR/LLCC/DDR_QOS).
+> 
+> QCOM SCMI Generic Vendor protocol background:
+> It was found that a lot of the vendor protocol used internally was
+> for debug/internal development purposes that would either be super
+> SoC specific or had to be disabled because of some features being
+> fused out during production. This lead to a large number of vendor
+> protocol numbers being quickly consumed and were never released
+> either. Using a generic vendor protocol with functionality abstracted
+> behind algorithm strings gave us the flexibility of allowing such
+> functionality exist during initial development/debugging while
+> still being able to expose functionality like memlat once they have
+> matured enough. The param-ids are certainly expected to act as ABI
+> for algorithms strings like MEMLAT.
 
-Acked-by: Michael Ellerman <mpe@ellerman.id.au> (powerpc)
+I wanted to give this series a quick spin on the x1e80100 CRD, but ran
+into some issues.
 
-Thanks for cleaning it up.
+First, I expected the drivers to be loaded automatically when built as
+modules, but that did not happen so something appears to be missing.
 
-There's also an EDAC and cpufreq driver that need to be removed. I
-posted the patches before [1] but need to resend them to the relevant
-maintainers and with updated change logs.
+Second, after loading the protocol and client drivers manually (in that
+order, shouldn't the client driver pull in the protocol?), I got:
 
-[1]: https://lore.kernel.org/linuxppc-dev/20240823112134.1314561-2-mpe@elle=
-rman.id.au/
+	scmi_module: Loaded SCMI Vendor Protocol 0x80 - Qualcomm  20000
+	arm-scmi arm-scmi.0.auto: QCOM Generic Vendor Version 1.0
+	scmi-qcom-generic-ext-memlat scmi_dev.5: error -EOPNOTSUPP: failed to configure common events
+	scmi-qcom-generic-ext-memlat scmi_dev.5: probe with driver scmi-qcom-generic-ext-memlat failed with error -95
 
-cheers
+which seems to suggest that the firmware on my CRD does not support this
+feature. Is that the way this should be interpreted? And does that mean
+that non of the commercial laptops supports this either?
+
+Johan
 
