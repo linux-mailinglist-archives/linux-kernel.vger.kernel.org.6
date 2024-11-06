@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-397824-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397827-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0968C9BE114
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 09:36:07 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 372E19BE11B
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 09:36:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C019282CBA
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 08:36:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 596E31C23349
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 08:36:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F7EF1D8A04;
-	Wed,  6 Nov 2024 08:35:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8FDE1D619F;
+	Wed,  6 Nov 2024 08:35:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2yvWpNIa"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="oDuXFTYG"
 Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 017331D79A4
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 08:35:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A31F81D79A4
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 08:35:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730882127; cv=none; b=Lp2IeDREWTsd7kY9IUIc0WcIQm+6kbfLNGM6WFdcZfbIdfDqJBe7MA+Lb53CAvVABl/y/nftF5K5wXjKrjKB8bxTi0KadRwn5zvHdNQIMGEWcw8LmWl4t65ImBuDkV+wVRVqe3Qi3gQfywY7w1iOGK71jMkYkQ8fItk2cRjCfTs=
+	t=1730882133; cv=none; b=utSiFSPHlsj1MqvkUnSGXHl4zoes4nJYH/GSLZ3mk2iYUcDfIYvWqLXWdgPLV1spDxrhLX35UK4NAr0YfyCx4yOgTOAKfbj7m/7ghbGVGKaSbrP9IJMknLKyV1EvgOgFAyg6bLl/LJMBe4spfR9ADyRGmr/M76DUT8IS5zL2+UE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730882127; c=relaxed/simple;
-	bh=wSFwOkVM+mO5y/3u8DCOm6hsOTQ9xA6YsY1T5SxSGV4=;
+	s=arc-20240116; t=1730882133; c=relaxed/simple;
+	bh=B6p4p3RaVHzkY9djoERKZSs65zORZnN9q0i4fI+uKAA=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=cMSHw2B7msEdals6jGwD2zgPBY2iUBnGLzPlwtXnVnEJMUhThVsa9QdbXHAqOAzVVUTxZnaHNwmcUdKNEE4TNmpP/OmLJVxMSgiuFHkVC540zejzG5Ah9DwukQlOJWEiDMxKhwDSZ2Bk0DztI5VuWWML39pI5OhSRRhVcHFH+wE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--guanyulin.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2yvWpNIa; arc=none smtp.client-ip=209.85.128.202
+	 To:Cc:Content-Type; b=I99SIXMOP8rWnqYoTxYzVFMImbtc203Z7Xqde7Om4dXuI6mlBEe6eFBu+hEGKfkDwER1VyQOgZWtuGsbtym1OdlB7Qo3wR1c2n/avVPK5pIBA7zaZlC+515eLXAZxUyW60XPPyvxN8VYNbWtONlc31vrFsi3e/vPwRSZU+XfT5I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--guanyulin.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=oDuXFTYG; arc=none smtp.client-ip=209.85.128.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--guanyulin.bounces.google.com
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6ea90b6ee2fso50641367b3.1
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2024 00:35:25 -0800 (PST)
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6e6101877abso120088797b3.0
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2024 00:35:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1730882125; x=1731486925; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1730882131; x=1731486931; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=/+9ba5PoLuD4xHrXW8Z318SApTB5yygR7YGjjV9I6Qk=;
-        b=2yvWpNIa4r6SXgrgnTDwU6bnPG2z+zhWpoxZT2n+VEFbLkQ7lzZS4/DJ4QQOZK4Uqm
-         N7lepL6htrPpovClAfgse1g8SMWRV8TIv7FvwwmMoWgA2Sr6UoT+vRPhWCcx2KfEDm3W
-         b+h8phWkPLxoZfByI5uZxax9i2xEyxQDtPjdavix6XyIqBoVcP2hZ0dhbwy02MlG3G9G
-         BMrnc/O/lvy+Xd6D1ThfelAQZu3odgpxIM/9Qu94MnNfq5v868i03faPZ2K00eF9cmYs
-         9lK0Q5DNWKpBoPqkWKXR/it34HhtXFbcyl+kMhfjiPkfO6FuUKcTS0mDYsAUdvbKZzjH
-         h4Pg==
+        bh=wPOkMkTQsSQ3txDdSeNseAkMjkPXkTfXXf/33SK4kew=;
+        b=oDuXFTYGZyCJw1OCBSztC9i5RQu1+d0RQ43jFN8umn3ReOhbBHCf+AGCby7pir59Tp
+         C5kvMcY6frGDQ5xCTgCRd/0SFpI21Oaqzw5o3BvGI1tCG2b91w+Ygi+MC4PLwxG/ECln
+         k/CMkdzlNxoH8bNKhRzdtRLDQxJl+HH1nM588gVBzXdDDgrMPbZugzqWmTTsRGrY6q/o
+         NxeH49PE9tfBbAxaGYMPEu9JGD+SP3K78dekW0QuSBNftGC16JeuNxOWrEziZ/vyw9PG
+         ggsyDq8zStCzZiuwONdbI24sSkrseDfgQb5mMDNDleUzKp0a1/R7SINEExug9H67y6Oy
+         32yg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730882125; x=1731486925;
+        d=1e100.net; s=20230601; t=1730882131; x=1731486931;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/+9ba5PoLuD4xHrXW8Z318SApTB5yygR7YGjjV9I6Qk=;
-        b=HzzHJcnTFSRw7muzPAYbvGy1m+n3PBgDCZmQ5xUhb5p+P22Mr/ceYioPKHUav+ZbOR
-         EoCAeo215mbM+wHsIaBhIIBWwc+z0HhxMChF6Pw2N88lani/iHL8B4ikmuNmh/9LvDRN
-         ZyWDkfpzrsrRDfCrT5jmD74InVlWcuJXbzLGvGYDdNTWwo8R9xnaG/QFoqCePrR/EhFV
-         ynlW1dQ//LKxTdG6FTZxC+W4sSeP1N6oJBrdH/uSG9FES4frU+tbGDsTMDcSV0sRsKGr
-         qgruKzOiPJQ6dp8vbjZKCiBM1ONislDbfS8as0PoCUHj+qDaBNaiPY/MIfrNFOyTf88c
-         p2vg==
-X-Forwarded-Encrypted: i=1; AJvYcCX7GX295ZDQF5nLQbgizHiDO5VyEy7u4m+q7Eu/Zl+5kuoGTb+Nx2od6CjGcG0pSWoqzldu0KFANjzhP+g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyVYiqr8Esle9QxLjMax7KRA17+WPj64TWc/pteCJkgJZh56kWy
-	VMvJbL7TwigFNMWvP1fp6smXpbbJEBDgwk6fTQDdVqoa2VJ2bFUkan5myp3+4/PSvflIrp1REeN
-	1DZhd7Y4t4RTi+Q==
-X-Google-Smtp-Source: AGHT+IFmbWrVFpsQS9VmcdMhtsMdkxe2ajlxASbMTbD3ZoxaYeV/VYnyNEsdPpB7139H2vGMF8BJ8Yv81OBrzPI=
+        bh=wPOkMkTQsSQ3txDdSeNseAkMjkPXkTfXXf/33SK4kew=;
+        b=l7MGpW++9jGDAX3MY9dr3I/QYelngyNfZL2B0+ZXML9ngB0qaRRB2joklW0iW1Nvk4
+         Yy1OwhLw3ihMaHRCiIC8zDgqPeZwQdZ8Lu1xvNfnZn1J5TiBv3WwtAOC66RcVwByLnfC
+         mabYWnq1xFfZjmbmsGJq/eaxlR9ZP98cieYhTLtScZ6wjDsdG7UjyifDUvqUx7qG4jnw
+         PI//69xDldomA9z1UqQB9uNX85kokiZ/Zw8FW99BDIc0QeKDU98qF2Ro6ujCwQduqIHW
+         QNoo/I9s3op5zbT3+aQ2nLQnfr6wTNbzyCSjUU32SgxgHIW5mcLfLjHdUWNmY67wnMVS
+         9UMQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUMUWf6YRvAhs4kirX9ohZ+rgiEu8h6nkyVx3fBKMiZkYR3cOMQOFlh7zS5IvworVVlavBG4LaB4kpfb+E=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw/Mz9qR3vvBz6tm60d6zhPgMKJhB+zFPMdLJ/vn50qBHZFtMMT
+	sBDiZrnU/yS//OtQ1yM1uLrEutO7QRHSPq7MSKbcxDSzDWhng9pirl/p0WC+RbHSgdZZDX1gUdc
+	5KJAEnhIckDSmiQ==
+X-Google-Smtp-Source: AGHT+IHtr34MzS7WRAqT8AwaCjq3Bo2uic8Vg2HO0cH4FvuSZP7/upGi0yDH3DAk9HejDb7UKRdpuU69EuEYaUU=
 X-Received: from guanyulin.c.googlers.com ([fda3:e722:ac3:cc00:131:cd17:ac11:19c7])
- (user=guanyulin job=sendgmr) by 2002:a25:a3e6:0:b0:e30:be64:f7e6 with SMTP id
- 3f1490d57ef6-e30e5a3cb05mr13136276.3.1730882124935; Wed, 06 Nov 2024 00:35:24
- -0800 (PST)
-Date: Wed,  6 Nov 2024 08:32:56 +0000
+ (user=guanyulin job=sendgmr) by 2002:a05:690c:6482:b0:6c1:298e:5a7 with SMTP
+ id 00721157ae682-6ea64bed332mr3616927b3.5.1730882130762; Wed, 06 Nov 2024
+ 00:35:30 -0800 (PST)
+Date: Wed,  6 Nov 2024 08:32:57 +0000
 In-Reply-To: <20241106083501.408074-1-guanyulin@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,8 +73,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20241106083501.408074-1-guanyulin@google.com>
 X-Mailer: git-send-email 2.47.0.199.ga7371fff76-goog
-Message-ID: <20241106083501.408074-3-guanyulin@google.com>
-Subject: [PATCH v6 2/5] usb: xhci-plat: separate dev_pm_ops for each pm_event
+Message-ID: <20241106083501.408074-4-guanyulin@google.com>
+Subject: [PATCH v6 3/5] usb: add apis for sideband usage tracking
 From: Guan-Yu Lin <guanyulin@google.com>
 To: gregkh@linuxfoundation.org, Thinh.Nguyen@synopsys.com, 
 	mathias.nyman@intel.com, stern@rowland.harvard.edu, sumit.garg@linaro.org, 
@@ -86,75 +86,169 @@ Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
 	Guan-Yu Lin <guanyulin@google.com>
 Content-Type: text/plain; charset="UTF-8"
 
-Separate dev_pm_ops for different power events such as suspend, thaw,
-and hibernation. This is crucial when xhci-plat driver needs to adapt
-its behavior based on different power state changes.
+Introduce sb_usage_count and corresponding apis to track sideband usage
+on each USB device. A sideband refers to the co-processor that accesses
+the usb_device via shared control on the same USB host controller. To
+optimize power usage, it's essential to monitor whether ther sideband is
+actively using the USB device. This information is vital when
+determining if a USB device can be safely suspended during system power
+state transitions.
 
 Signed-off-by: Guan-Yu Lin <guanyulin@google.com>
 ---
- drivers/usb/host/xhci-plat.c | 28 ++++++++++++++++++++++++----
- 1 file changed, 24 insertions(+), 4 deletions(-)
+ drivers/usb/core/driver.c | 77 +++++++++++++++++++++++++++++++++++++++
+ drivers/usb/core/usb.c    |  4 ++
+ include/linux/usb.h       | 20 ++++++++++
+ 3 files changed, 101 insertions(+)
 
-diff --git a/drivers/usb/host/xhci-plat.c b/drivers/usb/host/xhci-plat.c
-index 8dc23812b204..6e49ef1908eb 100644
---- a/drivers/usb/host/xhci-plat.c
-+++ b/drivers/usb/host/xhci-plat.c
-@@ -450,7 +450,7 @@ void xhci_plat_remove(struct platform_device *dev)
- }
- EXPORT_SYMBOL_GPL(xhci_plat_remove);
+diff --git a/drivers/usb/core/driver.c b/drivers/usb/core/driver.c
+index 0c3f12daac79..e53cb4c267b3 100644
+--- a/drivers/usb/core/driver.c
++++ b/drivers/usb/core/driver.c
+@@ -2041,6 +2041,83 @@ int usb_disable_usb2_hardware_lpm(struct usb_device *udev)
  
--static int xhci_plat_suspend(struct device *dev)
-+static int xhci_plat_suspend_common(struct device *dev, struct pm_message pmsg)
- {
- 	struct usb_hcd	*hcd = dev_get_drvdata(dev);
- 	struct xhci_hcd	*xhci = hcd_to_xhci(hcd);
-@@ -478,6 +478,21 @@ static int xhci_plat_suspend(struct device *dev)
- 	return 0;
- }
+ #endif /* CONFIG_PM */
  
-+static int xhci_plat_suspend(struct device *dev)
-+{
-+	return xhci_plat_suspend_common(dev, PMSG_SUSPEND);
-+}
++#ifdef CONFIG_USB_XHCI_SIDEBAND
 +
-+static int xhci_plat_freeze(struct device *dev)
++/**
++ * usb_sideband_get - increment the sb_usage_count of a USB device
++ * @udev: the USB device to increment its sb_usage_count
++ *
++ * Incrementing the sb_usage_count of a usb_device indicates that a sideband is
++ * currently using the device; that is, another entity is actively handling USB
++ * transfers. This information allows the USB driver to adjust its power
++ * management policy based on sideband activity.
++ *
++ * The caller must hold @udev's device lock.
++ *
++ * Return: 0 on success. A negative error code otherwise.
++ */
++int usb_sideband_get(struct usb_device *udev)
 +{
-+	return xhci_plat_suspend_common(dev, PMSG_FREEZE);
-+}
++	if (udev->state == USB_STATE_NOTATTACHED ||
++			udev->state == USB_STATE_SUSPENDED)
++		return -EAGAIN;
 +
-+static int xhci_plat_poweroff(struct device *dev)
++	refcount_inc(&udev->sb_usage_count);
++
++	return 0;
++}
++EXPORT_SYMBOL_GPL(usb_sideband_get);
++
++/**
++ * usb_sideband_put - drop the sb_usage_count of a USB device
++ * @udev: the USB device to drop its sb_usage_count
++ *
++ * The inverse operation of usb_sideband_get, which drops the sb_usage_count of
++ * a USB device. This information allows the USB driver to adjust its power
++ * management policy based on sideband activity.
++ *
++ * The caller must hold @udev's device lock.
++ *
++ * Return: 0 on success. A negative error code otherwise.
++ */
++int usb_sideband_put(struct usb_device *udev)
 +{
-+	return xhci_plat_suspend_common(dev, PMSG_HIBERNATE);
-+}
++	if (udev->state == USB_STATE_NOTATTACHED ||
++			udev->state == USB_STATE_SUSPENDED)
++		return -EAGAIN;
 +
- static int xhci_plat_resume_common(struct device *dev, struct pm_message pmsg)
- {
- 	struct usb_hcd	*hcd = dev_get_drvdata(dev);
-@@ -524,6 +539,11 @@ static int xhci_plat_resume(struct device *dev)
- 	return xhci_plat_resume_common(dev, PMSG_RESUME);
- }
++	refcount_dec(&udev->sb_usage_count);
++
++	return 0;
++}
++EXPORT_SYMBOL_GPL(usb_sideband_put);
++
++/**
++ * usb_sideband_check - check sideband activities on a USB device
++ * @udev: the USB device to check its sideband activity.
++ *
++ * Check if there are any sideband activity on the USB device right now. This
++ * information could be used for power management or other forms or resource
++ * management.
++ *
++ * Returns true on any active sideband existence, false otherwise
++ */
++bool usb_sideband_check(struct usb_device *udev)
++{
++	struct usb_device *child;
++	int port1;
++
++	usb_hub_for_each_child(udev, port1, child) {
++		if (usb_sideband_check(child))
++			return true;
++	}
++
++	return !!refcount_read(&udev->sb_usage_count);
++}
++EXPORT_SYMBOL_GPL(usb_sideband_check);
++
++#endif /* CONFIG_USB_XHCI_SIDEBAND */
++
+ const struct bus_type usb_bus_type = {
+ 	.name =		"usb",
+ 	.match =	usb_device_match,
+diff --git a/drivers/usb/core/usb.c b/drivers/usb/core/usb.c
+index 0b4685aad2d5..00bb00d15875 100644
+--- a/drivers/usb/core/usb.c
++++ b/drivers/usb/core/usb.c
+@@ -672,6 +672,10 @@ struct usb_device *usb_alloc_dev(struct usb_device *parent,
+ 	dev->lpm_disable_count = 1;
+ 	atomic_set(&dev->urbnum, 0);
  
-+static int xhci_plat_thaw(struct device *dev)
-+{
-+	return xhci_plat_resume_common(dev, PMSG_THAW);
-+}
++#ifdef CONFIG_USB_XHCI_SIDEBAND
++	refcount_set(&dev->sb_usage_count, 0);
++#endif
 +
- static int xhci_plat_restore(struct device *dev)
- {
- 	return xhci_plat_resume_common(dev, PMSG_RESTORE);
-@@ -553,9 +573,9 @@ static int __maybe_unused xhci_plat_runtime_resume(struct device *dev)
- const struct dev_pm_ops xhci_plat_pm_ops = {
- 	.suspend = pm_sleep_ptr(xhci_plat_suspend),
- 	.resume = pm_sleep_ptr(xhci_plat_resume),
--	.freeze = pm_sleep_ptr(xhci_plat_suspend),
--	.thaw = pm_sleep_ptr(xhci_plat_resume),
--	.poweroff = pm_sleep_ptr(xhci_plat_suspend),
-+	.freeze = pm_sleep_ptr(xhci_plat_freeze),
-+	.thaw = pm_sleep_ptr(xhci_plat_thaw),
-+	.poweroff = pm_sleep_ptr(xhci_plat_poweroff),
- 	.restore = pm_sleep_ptr(xhci_plat_restore),
+ 	INIT_LIST_HEAD(&dev->ep0.urb_list);
+ 	dev->ep0.desc.bLength = USB_DT_ENDPOINT_SIZE;
+ 	dev->ep0.desc.bDescriptorType = USB_DT_ENDPOINT;
+diff --git a/include/linux/usb.h b/include/linux/usb.h
+index 672d8fc2abdb..c5586532cd12 100644
+--- a/include/linux/usb.h
++++ b/include/linux/usb.h
+@@ -645,6 +645,7 @@ struct usb3_lpm_parameters {
+  *	parent->hub_delay + wHubDelay + tTPTransmissionDelay (40ns)
+  *	Will be used as wValue for SetIsochDelay requests.
+  * @use_generic_driver: ask driver core to reprobe using the generic driver.
++ * @sb_usage_count: number of active sideband accessing this usb device.
+  *
+  * Notes:
+  * Usbcore drivers should not set usbdev->state directly.  Instead use
+@@ -731,6 +732,10 @@ struct usb_device {
  
- 	SET_RUNTIME_PM_OPS(xhci_plat_runtime_suspend,
+ 	u16 hub_delay;
+ 	unsigned use_generic_driver:1;
++
++#ifdef CONFIG_USB_XHCI_SIDEBAND
++	refcount_t sb_usage_count;
++#endif
+ };
+ 
+ #define to_usb_device(__dev)	container_of_const(__dev, struct usb_device, dev)
+@@ -837,6 +842,21 @@ static inline void usb_mark_last_busy(struct usb_device *udev)
+ { }
+ #endif
+ 
++#ifdef CONFIG_USB_XHCI_SIDEBAND
++extern int usb_sideband_get(struct usb_device *udev);
++extern int usb_sideband_put(struct usb_device *udev);
++extern bool usb_sideband_check(struct usb_device *udev);
++
++#else
++
++static inline int usb_sideband_get(struct usb_device *udev)
++{ return 0; }
++static inline int usb_sideband_put(struct usb_device *udev)
++{ return 0; }
++static inline bool usb_sideband_check(struct usb_device *udev)
++{ return false; }
++#endif
++
+ extern int usb_disable_lpm(struct usb_device *udev);
+ extern void usb_enable_lpm(struct usb_device *udev);
+ /* Same as above, but these functions lock/unlock the bandwidth_mutex. */
 -- 
 2.47.0.199.ga7371fff76-goog
 
