@@ -1,147 +1,95 @@
-Return-Path: <linux-kernel+bounces-398847-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398830-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17F919BF711
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 20:40:40 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73F029BF699
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 20:34:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D08AB281959
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 19:40:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E17E1C22A36
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 19:34:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C301212D20;
-	Wed,  6 Nov 2024 19:34:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C182209F3D;
+	Wed,  6 Nov 2024 19:34:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="pv4jW5RR"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="WfSW45u0"
+Received: from out-174.mta1.migadu.com (out-174.mta1.migadu.com [95.215.58.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E1A220F5A0;
-	Wed,  6 Nov 2024 19:34:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6C0E208993
+	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 19:34:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730921696; cv=none; b=TRKVCR5SlkuVuEwBR6ski+vf5oE19WwbXqVxz4hvoXk5p8Nw0AWMj+eXZBtCSibk2qV0/2o4A7azHdLEYRWWZM/DqVS+lKnBqaIuhF+9D9gyaq5Hpikt6FC8NppfxlGriDE0HpsqmjPZROM/VTfu4PZ7nZ7AnEa9tLk4y5wxi3I=
+	t=1730921676; cv=none; b=mJ5HBhebgZ/oKPvi5QdoqYnSokep+QjT4eYPBzUcGVj9nwOWQAV8ojxsyQi4pCBOlqyjfsLymlulI40XZYY5F6/jnjkj2ctfKeRap2Q2z4HNu0pjxpk2vFEbgrgM7VtWXnFQOpEOKsalExJ0kL7Byk9q7e6s3mfs7qlYF7o4yps=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730921696; c=relaxed/simple;
-	bh=qU0dUNxFUuN/ND2hfWc0/b53f/OYr4+0HIcF9EoyLxI=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=l2XzjlcQ8xN3IEdKI7XrwU2bg+ZxV9RhAuIzembmsd2yu9CXtBePvL5wx2ZLe6XAtDY/Fq9aI/KCPc1FGKB1/wZAI+iu5Tc0P7iYyxyfrX6ft1L+rV3RtI/xWN8jeW9tbYLh96gS4+I66jgj2vGDXwBkT5ok1TNNwrgq4WrCPIw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=pv4jW5RR; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A6FSE90010532;
-	Wed, 6 Nov 2024 19:34:39 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	M4IGsOidRHFIubeJL9OdlEYfFZx1GNBQBMy1HdndUaw=; b=pv4jW5RRyIvL6ava
-	hCQfd0sCzbyQKhkd2E0ibF7DkVfko9yM0KcY/5/1CyvJ6Qy25mhXCT5loLnVu5aK
-	qatFJYqXqMG560c0kBEC3/LdhEjM44ml7h7ukvnhrBrwhqcHc7DmiEO2i324PvhS
-	TaQklQo3g1/v0PmpCcDKBruFkezvsulGI4VWwwwo/XTlj3scZKt52Zu5n5D54tNv
-	vUWNZltUBqbVOFSawGtQ7ZdSthoHt9+RkLVG7OgAf9oleWno75TQKmp5ekrW8s9f
-	R+AzGhPa0ugbXwJjy2kQWT0xCj6j8KeGYqZ6C8NtxUIgHOez2U8oxG7CZ9gAi1ZH
-	tAGNHA==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42qn73c51y-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 06 Nov 2024 19:34:38 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4A6JYcuR008680
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 6 Nov 2024 19:34:38 GMT
-Received: from hu-wcheng-lv.qualcomm.com (10.49.16.6) by
- nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Wed, 6 Nov 2024 11:34:37 -0800
-From: Wesley Cheng <quic_wcheng@quicinc.com>
-To: <srinivas.kandagatla@linaro.org>, <mathias.nyman@intel.com>,
-        <perex@perex.cz>, <conor+dt@kernel.org>, <dmitry.torokhov@gmail.com>,
-        <corbet@lwn.net>, <broonie@kernel.org>, <lgirdwood@gmail.com>,
-        <krzk+dt@kernel.org>, <pierre-louis.bossart@linux.intel.com>,
-        <Thinh.Nguyen@synopsys.com>, <tiwai@suse.com>, <robh@kernel.org>,
-        <gregkh@linuxfoundation.org>
-CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-sound@vger.kernel.org>, <linux-usb@vger.kernel.org>,
-        <linux-input@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-doc@vger.kernel.org>, Wesley Cheng <quic_wcheng@quicinc.com>
-Subject: [PATCH v30 30/30] ASoC: usb: Rediscover USB SND devices on USB port add
-Date: Wed, 6 Nov 2024 11:34:13 -0800
-Message-ID: <20241106193413.1730413-31-quic_wcheng@quicinc.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241106193413.1730413-1-quic_wcheng@quicinc.com>
-References: <20241106193413.1730413-1-quic_wcheng@quicinc.com>
+	s=arc-20240116; t=1730921676; c=relaxed/simple;
+	bh=qRfQy4Z3PjLO6M9IimzLtymsPf+ZeSgSgstLoyd5vkk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=o2td23Jrl0EvnyfIcPu8es0YxfiH18qOdk9PsaN90h/1HTGqHP0UeT0PtxNKdNe/udzG5zpYLtZ/32HaHtu5fl2OuncE4V10eq5koAcMmOcfGlKEYuAe1O39xfv9UfUl5oPbUIaGrKfebGkoJbPOnGeruonE3IxJDqlImRQLtWY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=WfSW45u0; arc=none smtp.client-ip=95.215.58.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Wed, 6 Nov 2024 14:34:20 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1730921666;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=AjMMpluojta2AuzxRhbwiOblCVhsItOypqbCCSmEo7M=;
+	b=WfSW45u0ctCKuvHvNM4QJH1AvV8BqEknVj94YpciQo2+UDotwqitjJsKPUTLFoqL9vDVcT
+	2FR7cVgs4+XfQvp9S7ruk/u4ThSdnVq4fqpq+FrYQP6dTbZlP0lgDkgokB4oeLWeP8Y4kC
+	jzc0fRqSzGZL2KmCF4vy3qVMT0Eazmo=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Piotr Zalewski <pZ010001011111@proton.me>
+Cc: linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	skhan@linuxfoundation.org, syzbot+bee87a0c3291c06aa8c6@syzkaller.appspotmail.com
+Subject: Re: [PATCH] Fix wrong max check in bch2_opt_validate
+Message-ID: <zfmodm3fg572yt3ef5zuf3dzc23234d5nrmtiuyxjquki2756w@yyt2fekeyfnr>
+References: <20241031231823.688918-2-pZ010001011111@proton.me>
+ <pkxqQnSTQLReyYEHegx90LNp5dbR6LlpcqUIkBFa2CiL-0P48QWpGJ1YYKtWwu0IFM7H-2T4fYQz0MldP6OqZppPzmqafQDKouhETLnM5o4=@proton.me>
+ <v5wttxaimwpqb5jfpxvcs3rmg27fm4mf7446slutl7ztha6q4p@434ppx3gzv7l>
+ <QYWUohk8PTK2Z_y-IZBUFDFqM6BNsqv4oS95yfOP5DGWuvCNyvC6R1bizXEubPYtqm2ZpRWNN4BH9__biGJ5Ti3Yh88Ge_9HCSSAdyU1MxA=@proton.me>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: g1i3eKsspLBYWBAVOgEWpK8QO6Teuz8z
-X-Proofpoint-GUID: g1i3eKsspLBYWBAVOgEWpK8QO6Teuz8z
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
- mlxlogscore=999 suspectscore=0 spamscore=0 clxscore=1015 phishscore=0
- lowpriorityscore=0 mlxscore=0 adultscore=0 priorityscore=1501 bulkscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411060149
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <QYWUohk8PTK2Z_y-IZBUFDFqM6BNsqv4oS95yfOP5DGWuvCNyvC6R1bizXEubPYtqm2ZpRWNN4BH9__biGJ5Ti3Yh88Ge_9HCSSAdyU1MxA=@proton.me>
+X-Migadu-Flow: FLOW_OUT
 
-In case the USB backend device has not been initialized/probed, USB SND
-device connections can still occur.  When the USB backend is eventually
-made available, previous USB SND device connections are not communicated to
-the USB backend.  Call snd_usb_rediscover_devices() to generate the connect
-callbacks for all USB SND devices connected.  This will allow for the USB
-backend to be updated with the current set of devices available.
+On Wed, Nov 06, 2024 at 06:58:04PM +0000, Piotr Zalewski wrote:
+> 
+> 
+> 
+> 
+> 
+> Sent with Proton Mail secure email.
+> 
+> On Wednesday, November 6th, 2024 at 6:52 PM, Kent Overstreet <kent.overstreet@linux.dev> wrote:
+> 
+> > On Wed, Nov 06, 2024 at 08:11:13AM +0000, Piotr Zalewski wrote:
+> > 
+> > > Hi Kent,
+> > > 
+> > > Did you see this?
+> > 
+> > 
+> > Whoops, I did miss it the first time.
+> 
+> np
+> 
+> > I think it'd be better to fix it in the OPT_STR() macro though.
+> 
+> If changed in OPT_STR() macro it would also require a change in
+> bch2_opt_to_text:434 (it also does -1 there).
 
-The chip array entries are all populated and removed while under the
-register_mutex, so going over potential race conditions:
+*nod*
 
-Thread#1:
-  q6usb_component_probe()
-    --> snd_soc_usb_add_port()
-      --> snd_usb_rediscover_devices()
-        --> mutex_lock(register_mutex)
-
-Thread#2
-  --> usb_audio_disconnect()
-    --> mutex_lock(register_mutex)
-
-So either thread#1 or thread#2 will complete first.  If
-
-Thread#1 completes before thread#2:
-  SOC USB will notify DPCM backend of the device connection.  Shortly
-  after, once thread#2 runs, we will get a disconnect event for the
-  connected device.
-
-Thread#2 completes before thread#1:
-  Then during snd_usb_rediscover_devices() it won't notify of any
-  connection for that particular chip index.
-
-Signed-off-by: Wesley Cheng <quic_wcheng@quicinc.com>
----
- sound/soc/soc-usb.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/sound/soc/soc-usb.c b/sound/soc/soc-usb.c
-index e56826f1df71..ee566ca7c675 100644
---- a/sound/soc/soc-usb.c
-+++ b/sound/soc/soc-usb.c
-@@ -279,6 +279,8 @@ void snd_soc_usb_add_port(struct snd_soc_usb *usb)
- 	mutex_lock(&ctx_mutex);
- 	list_add_tail(&usb->list, &usb_ctx_list);
- 	mutex_unlock(&ctx_mutex);
-+
-+	snd_usb_rediscover_devices();
- }
- EXPORT_SYMBOL_GPL(snd_soc_usb_add_port);
- 
+I think we should do it that way then, we don't want opt->max meaning
+different things in different contexts if we can avoid it
 
