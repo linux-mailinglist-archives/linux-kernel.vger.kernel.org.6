@@ -1,350 +1,170 @@
-Return-Path: <linux-kernel+bounces-398789-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398790-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECC169BF61C
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 20:17:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 471E99BF61F
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 20:17:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1BB451C21CC5
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 19:17:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 78A421C21D86
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 19:17:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C362209663;
-	Wed,  6 Nov 2024 19:16:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19E06209667;
+	Wed,  6 Nov 2024 19:17:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="Fi8yQtHD"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="zQPEz+6t"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C6492010EC;
-	Wed,  6 Nov 2024 19:16:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9942920721D;
+	Wed,  6 Nov 2024 19:17:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730920615; cv=none; b=YQu/nZciYLoaitgXGjcWy5BZuZHr3uKTDtF0hHfMeQWQI8rpzHD3wuUWY3dasLaCpIPnZXC6HOzBNyqXRKTTI6/Mi9N+mEadKkM2Y16TNLs39s8nO6mP95lm0KpM7rxJvvyVwCT6l4LKBw5brPB+KXJUdkh5B+QCfZieCeqTAOI=
+	t=1730920647; cv=none; b=Z8fpgWo230SwqELpJNdg4eK3xKRUbngMzh0G3h7BjVfQJu94JZqpWxASvyvkwia3RRBZutxiRtJFhoNk8TufwBzfuGkfnB/qcfFQgLe5QiBWYp8Nnl8qUj+c3rBtNx4EPPddaUebRotJN0z2ia1ye2LA2wRfd6rR3skbgm6DQA0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730920615; c=relaxed/simple;
-	bh=45IBkLdgPom9EszYKHRj8rzKHuzELQT3qobEO5iN7lY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KoAHXkzMS9rWpvFfIGZB5Katul8/Un+XgCy76Q0ZA1IjhOTllFyb6FBCYLSqeemS9nP1UorQ4xdXirSw6JUG8fhKZr7U+78cBg1GwiBTn6sgPYbZpl6C6pnG/R3p1ULMc208l0HkyjPOupHJDQOSALBhgMa5KCmbEHa78bsOngE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=Fi8yQtHD; arc=none smtp.client-ip=212.227.17.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1730920542; x=1731525342; i=w_armin@gmx.de;
-	bh=45IBkLdgPom9EszYKHRj8rzKHuzELQT3qobEO5iN7lY=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=Fi8yQtHD99Hr5oXDWrpT0/IkwH6hxXAy8jSGFRee5WvvLmBK/SZAD27+kV+cASve
-	 FRjbELWGqF8bm6zOsRKxkBKZhXZOs3yc7pOf0OHYiJHZxxxeE/XZfQORoar3aIeoM
-	 87ez2105xj3Wctwkg6KufqrHUJNASE56vDgvKZtemjp43FLk/CQnJy3nqmnGzWHn6
-	 QlMb0J9YUmzhUWKcdYH8lXUh2VCJP0ft3ps8EoOH4bu+wK742d63B5+3U+G/Fn95Q
-	 zgDObTFofY5rkyK81sgI7+kVEmWvO04HP/tTdQKF3d9GgvDTg++O/educs7vAbC+c
-	 L5BjME7vJ50M3SyLCA==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [141.30.226.129] ([141.30.226.129]) by mail.gmx.net (mrgmx104
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1MWAOQ-1tJCwm2FcQ-00VkMb; Wed, 06
- Nov 2024 20:15:42 +0100
-Message-ID: <9035b49c-d276-484c-9eb0-a4a5c0f62bc8@gmx.de>
-Date: Wed, 6 Nov 2024 20:15:36 +0100
+	s=arc-20240116; t=1730920647; c=relaxed/simple;
+	bh=SiQEeSRkNADgB7z1FpkMKnsPf6At/dTxDrBLVodmNgk=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=oG6/MS/0EQrIDj5OJ3GcciysS8+Qefv2knytHsujgDLMh95+7kqmmzt/+XBoWPws+mZrg5GI+c5DrcqnLaR89ahmuojGx09pz6ygIFx7BYRJCkbwI8aETvoxX04ooqnFpjrjmUAl09sLZgoqItRcM6rnNiwFHiVP+dO0TnHebLY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=zQPEz+6t; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1730920645; x=1762456645;
+  h=from:subject:date:message-id:mime-version:
+   content-transfer-encoding:to:cc;
+  bh=SiQEeSRkNADgB7z1FpkMKnsPf6At/dTxDrBLVodmNgk=;
+  b=zQPEz+6t17r38vEkWMY2ztteUYxvz3849ikdNGtUolzQchWVygbaqQwV
+   ag3n1mMAIfNFNhqgDw/dlbtUlppeZLp96FOYQpWLo4m+fxjtZgpzloDUE
+   CLekBC2+cCeJ41yxt1Jrp0w6gyK2blxiuO7UEkYpzyTITmpm5btlSvaTS
+   KYyQkkfAwkbkxloqNVTq6H0TgupqUu/zHoRsj2wDmkDTBIkR0fGeOfi5G
+   WAfnZNg8HhWwJUCgij/kRFfEr0Z2uvm/qm3i5gg50ocwqgJ9i6LZRnONz
+   daMRbh0VBZ9bbt7WsblTw+sLg8vxCW7IiQ4dySi64k39HYeIf78P4hOcP
+   A==;
+X-CSE-ConnectionGUID: Pj5H9ORUSlaljgmVr541Mw==
+X-CSE-MsgGUID: FNMV5KrAQpmxk4FeLuDC3w==
+X-IronPort-AV: E=Sophos;i="6.11,263,1725346800"; 
+   d="scan'208";a="34481046"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa2.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 06 Nov 2024 12:17:19 -0700
+Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Wed, 6 Nov 2024 12:17:03 -0700
+Received: from DEN-DL-M70577.microchip.com (10.10.85.11) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server id
+ 15.1.2507.35 via Frontend Transport; Wed, 6 Nov 2024 12:17:00 -0700
+From: Daniel Machon <daniel.machon@microchip.com>
+Subject: [PATCH net-next 0/7] net: lan969x: add RGMII support
+Date: Wed, 6 Nov 2024 20:16:38 +0100
+Message-ID: <20241106-sparx5-lan969x-switch-driver-4-v1-0-f7f7316436bd@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 12/20] ACPI: platform_profile: Add profile attribute
- for class interface
-To: Mario Limonciello <superm1@kernel.org>,
- Mario Limonciello <mario.limonciello@amd.com>,
- Hans de Goede <hdegoede@redhat.com>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
- Maximilian Luz <luzmaximilian@gmail.com>, Lee Chun-Yi <jlee@suse.com>,
- Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
- Corentin Chary <corentin.chary@gmail.com>, "Luke D . Jones"
- <luke@ljones.dev>, Ike Panhc <ike.pan@canonical.com>,
- Henrique de Moraes Holschuh <hmh@hmh.eng.br>,
- Alexis Belmonte <alexbelm48@gmail.com>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
- Ai Chao <aichao@kylinos.cn>, Gergo Koteles <soyer@irl.hu>,
- open list <linux-kernel@vger.kernel.org>,
- "open list:ACPI" <linux-acpi@vger.kernel.org>,
- "open list:MICROSOFT SURFACE PLATFORM PROFILE DRIVER"
- <platform-driver-x86@vger.kernel.org>,
- "open list:THINKPAD ACPI EXTRAS DRIVER"
- <ibm-acpi-devel@lists.sourceforge.net>,
- Mark Pearson <mpearson-lenovo@squebb.ca>,
- Matthew Schwartz <matthew.schwartz@linux.dev>
-References: <20241105153316.378-1-mario.limonciello@amd.com>
- <20241105153316.378-13-mario.limonciello@amd.com>
- <dad36f32-5970-48c2-9ee1-78163958bf02@gmx.de>
- <a40ef9a8-0589-4070-921e-f3461fa6759c@kernel.org>
-Content-Language: en-US
-From: Armin Wolf <W_Armin@gmx.de>
-In-Reply-To: <a40ef9a8-0589-4070-921e-f3461fa6759c@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:3Ph9JVeiXOJ6dPyBPkko9/eP3ZzDIzfHDRdc/BDPzWiOU4uQu4/
- cfSpxs8bjkViC73B6AbKS6+nxerecul8iy+K5fKXYosJKEJAP7pgiACLBOONYdq/HkQXPvG
- cmnOKbIK28TzIARt/LbWB8IT7TS9HPCTMYzISD8/TziwaEL2W0kPDeBgjNn5NO5I8ZZfBRV
- B8kxoTpZbz/X9sXd1UknQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:h7//S2SCueo=;iU7Xr3rkHgTgKaYh7KGohRyt0Tf
- DY+d3kc1q4PA0IBN4N6tk3JeBaSCFB5qe21meyuq+7DKdrvGvP9UpDFKBDth5PDLbZbJ5YW+u
- lkbJ4tXZ1V6m91tWV0+b9TWMuAxvxBQC4u9pXZ0qV86SyVKWc+wCmv7U34WVm4nYBEn8cnTss
- iv7qv91OjZnS27MWUb3QXPt9heA5qC8QC8erRrUR7aKHcGAWVnSPoou6cx+TMjyLkFQXIsXfk
- 19/Aq0EyoNUm3pkZKOkELYm++o1NO9TegSMb3m863fF5NQl6L5NGKwaL0TWxrNPXf1OpMKSFU
- e08kEuY0OGiQqvCKce5qS3zCo3t/7iw1K+flh7grGtPTwahI5iFmFXmAIS6yiqDlpXfemmnG2
- eRmLi08yuks1/y2Aor1OwCOa16tD5M7wla3xmIOPfA4AFKKOZkfns7Gbtg9hgUroqMTLz6H2h
- fYlj94MYVi7htTbYBWYZwkdQhpvfEVFh5EUIJZMegycxYc+uAfLk9gwAtBkz1oOh4EOb5kAqj
- pbgL7r9oCyxgWNVhNs8nhC6unnHl8n9uJO61u4TF9wztGdFor7zZK8oz/QaaYtsXV8xZQlJYZ
- Yxl7JBBdj2PgTYnRDIsKhxqN0ncwE0Y8gzZyDlN6wudF+Dc0nUSS8pEE2b9eQxPWSRlica8Cn
- MNGkIOtTUFL/A+r/OZ5171Vf/oFcdrAWpMR9RFP3scoWjFwgFEu42Su9Q5lOockDStRBZQ0WB
- RErTUIC1ZNhkIHGXDsvKfnpB2eKaBe9YiB1J/VBxYmfZEqJ2CkdQTaHiUz+4uASSkOOwl1ejE
- x6k5OOZswptcj3Z3FPKMnRWzEvKRssl2B/QeNR/UFF1km07Da4zgrdBDQtv166UUcqIJg680J
- mpnQA1SWIWh8gIGD7S+gCUiUrkFuK0NSpVm+2NBMqdmXENXAqh5Tv0/Ft
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAJbAK2cC/x2N0QrCMAwAf2Xk2UBXOt38FdlDtkYb0DjSMQtj/
+ 2718Ti42yGzCWe4NjsYb5LlrRXaUwNzIn0wSqwM3vnQti5gXshKh0/S4TwUzB9Z54TRZGPDgLE
+ bpkvvXeg7ghpZjO9S/oMbKK+oXFYYq5koM05GOqff4EWicBxf+ExRcJEAAAA=
+To: <UNGLinuxDriver@microchip.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, "Lars
+ Povlsen" <lars.povlsen@microchip.com>, Steen Hegelund
+	<Steen.Hegelund@microchip.com>, Horatiu Vultur
+	<horatiu.vultur@microchip.com>, Russell King <linux@armlinux.org.uk>,
+	<jacob.e.keller@intel.com>
+CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>
+X-Mailer: b4 0.14-dev
 
-Am 06.11.24 um 06:46 schrieb Mario Limonciello:
+== Description:
 
->
->
-> On 11/5/24 22:10, Armin Wolf wrote:
->> Am 05.11.24 um 16:33 schrieb Mario Limonciello:
->>
->>> Reading and writing the `profile` sysfs file will use the callbacks fo=
-r
->>> the platform profile handler to read or set the given profile.
->>>
->>> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
->>> ---
->>> =C2=A0 drivers/acpi/platform_profile.c | 118
->>> ++++++++++++++++++++++++++++++++
->>> =C2=A0 1 file changed, 118 insertions(+)
->>>
->>> diff --git a/drivers/acpi/platform_profile.c b/drivers/acpi/
->>> platform_profile.c
->>> index e1b6569c4ee70..79083d0bb22e3 100644
->>> --- a/drivers/acpi/platform_profile.c
->>> +++ b/drivers/acpi/platform_profile.c
->>> @@ -65,6 +65,78 @@ static int _get_class_choices(struct device *dev,
->>> unsigned long *choices)
->>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return 0;
->>> =C2=A0 }
->>>
->>> +/**
->>> + * _store_class_profile - Set the profile for a class device
->>> + * @dev: The class device
->>> + * @data: The profile to set
->>> + */
->>> +static int _store_class_profile(struct device *dev, void *data)
->>> +{
->>> +=C2=A0=C2=A0=C2=A0 enum platform_profile_option profile;
->>> +=C2=A0=C2=A0=C2=A0 unsigned long choices;
->>> +=C2=A0=C2=A0=C2=A0 int *i =3D (int *)data;
->>> +=C2=A0=C2=A0=C2=A0 int err;
->>> +
->>> +=C2=A0=C2=A0=C2=A0 err =3D _get_class_choices(dev, &choices);
->>> +=C2=A0=C2=A0=C2=A0 if (err)
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return err;
->>> +
->>> +=C2=A0=C2=A0=C2=A0 scoped_cond_guard(mutex_intr, return -ERESTARTSYS,
->>> &profile_lock) {
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct platform_profile_ha=
-ndler *handler;
->>> +
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (!test_bit(*i, &choices=
-))
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 re=
-turn -EOPNOTSUPP;
->>> +
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 handler =3D dev_get_drvdat=
-a(dev);
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 err =3D handler->profile_g=
-et(handler, &profile);
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (err)
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 re=
-turn err;
->>> +
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 err =3D handler->profile_s=
-et(handler, *i);
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (err) {
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 in=
-t recover_err;
->>> +
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 de=
-v_err(dev, "Failed to set profile: %d\n", err);
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 re=
-cover_err =3D handler->profile_set(handler, profile);
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if=
- (recover_err)
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 dev_err(dev, "Failed to reset profile: %d\n",
->>> recover_err);
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
->>
->> The whole recovery handling seems unnecessary to me. In setting the
->> platform profile fails, then
->> we should just return an error. The platform profile handler will
->> tell us the current platform
->> profile anyway.
->
-> Sure, makes sense.=C2=A0 That also means no need to capture the profile
-> before setting it.
->
->>
->>> + sysfs_notify(&handler->class_dev->kobj, NULL, "platform_profile");
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 kobject_uevent(&handler->c=
-lass_dev->kobj, KOBJ_CHANGE);
->>
->> Please avoid sending those events when the platform profile is
->> changed through the class sysfs interface.
->>
->>> +=C2=A0=C2=A0=C2=A0 }
->>> +
->>> +=C2=A0=C2=A0=C2=A0 sysfs_notify(acpi_kobj, NULL, "platform_profile");
->>
->> Please avoid sending this event when the platform profile is changed
->> through the legacy sysfs interface.
->
-> In both above cases - why?
->
-> * If I change using class interface then that implicitly means that
-> legacy interface changes.
-> * If I change using legacy interface that implicitly means class
-> interface changes too.
->
-I meant that:
-- if the profile is changed using the class interface then only the legacy=
- interface should be notified
-- if the profile is changed using the legacy interface then only the class=
- interface should be notified
+This series is the fourth of a multi-part series, that prepares and adds
+support for the new lan969x switch driver.
 
-Thanks,
-Armin Wolf
+The upstreaming efforts is split into multiple series (might change a
+bit as we go along):
 
->>
->>> +=C2=A0=C2=A0=C2=A0 return err ? err : 0;
->>> +}
->>> +
->>> +/**
->>> + * get_class_profile - Show the current profile for a class device
->>> + * @dev: The class device
->>> + * @profile: The profile to return
->>> + * Return: 0 on success, -errno on failure
->>> + */
->>> +static int get_class_profile(struct device *dev,
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0 enum platform_profile_option *profile)
->>> +{
->>> +=C2=A0=C2=A0=C2=A0 struct platform_profile_handler *handler;
->>> +=C2=A0=C2=A0=C2=A0 enum platform_profile_option val;
->>> +=C2=A0=C2=A0=C2=A0 int err;
->>> +
->>> +=C2=A0=C2=A0=C2=A0 scoped_cond_guard(mutex_intr, return -ERESTARTSYS,
->>> &profile_lock) {
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 handler =3D dev_get_drvdat=
-a(dev);
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 err =3D handler->profile_g=
-et(handler, &val);
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (err) {
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 pr=
-_err("Failed to get profile for handler %s\n",
->>> handler- >name);
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 re=
-turn err;
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
->>> +=C2=A0=C2=A0=C2=A0 }
->>> +
->>> +=C2=A0=C2=A0=C2=A0 if (WARN_ON(val >=3D PLATFORM_PROFILE_LAST))
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return -EINVAL;
->>> +=C2=A0=C2=A0=C2=A0 *profile =3D val;
->>> +
->>> +=C2=A0=C2=A0=C2=A0 return 0;
->>> +}
->>>
->>> =C2=A0 /**
->>> =C2=A0=C2=A0 * name_show - Show the name of the profile handler
->>> @@ -102,12 +174,58 @@ static ssize_t choices_show(struct device *dev,
->>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return _commmon_choices_show(choices, b=
-uf);
->>> =C2=A0 }
->>>
->>> +/**
->>> + * profile_show - Show the current profile for a class device
->>> + * @dev: The device
->>> + * @attr: The attribute
->>> + * @buf: The buffer to write to
->>> + * Return: The number of bytes written
->>> + */
->>> +static ssize_t profile_show(struct device *dev,
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 struct device_attribute *attr,
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 char *buf)
->>> +{
->>> +=C2=A0=C2=A0=C2=A0 enum platform_profile_option profile =3D PLATFORM_=
-PROFILE_LAST;
->>> +=C2=A0=C2=A0=C2=A0 int err;
->>> +
->>> +=C2=A0=C2=A0=C2=A0 err =3D get_class_profile(dev, &profile);
->>> +=C2=A0=C2=A0=C2=A0 if (err)
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return err;
->>> +
->>> +=C2=A0=C2=A0=C2=A0 return sysfs_emit(buf, "%s\n", profile_names[profi=
-le]);
->>> +}
->>> +
->>> +/**
->>> + * profile_store - Set the profile for a class device
->>> + * @dev: The device
->>> + * @attr: The attribute
->>> + * @buf: The buffer to read from
->>> + * @count: The number of bytes to read
->>> + * Return: The number of bytes read
->>> + */
->>> +static ssize_t profile_store(struct device *dev,
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct device_attribute *attr,
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0 const char *buf, size_t count)
->>> +{
->>> +=C2=A0=C2=A0=C2=A0 int i, ret;
->>> +
->>> +=C2=A0=C2=A0=C2=A0 i =3D sysfs_match_string(profile_names, buf);
->>> +=C2=A0=C2=A0=C2=A0 if (i < 0)
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return -EINVAL;
->>> +
->>> +=C2=A0=C2=A0=C2=A0 ret =3D _store_class_profile(dev, (void *)(long)&i=
-);
->>
->> Please just pass &i.
->
-> Ack.
->
->>
->> Thanks,
->> Armin Wolf
->>
->>> +
->>> +=C2=A0=C2=A0=C2=A0 return ret ? ret : count;
->>> +}
->>>
->>> =C2=A0 static DEVICE_ATTR_RO(name);
->>> =C2=A0 static DEVICE_ATTR_RO(choices);
->>> +static DEVICE_ATTR_RW(profile);
->>> +
->>> =C2=A0 static struct attribute *profile_attrs[] =3D {
->>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 &dev_attr_name.attr,
->>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 &dev_attr_choices.attr,
->>> +=C2=A0=C2=A0=C2=A0 &dev_attr_profile.attr,
->>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 NULL
->>> =C2=A0 };
->>> =C2=A0 ATTRIBUTE_GROUPS(profile);
->>
->
+        1) Prepare the Sparx5 driver for lan969x (merged)
+
+        2) Add support for lan969x (same basic features as Sparx5
+           provides excl. FDMA and VCAP, merged).
+
+        3) Add lan969x VCAP functionality (merged).
+
+    --> 4) Add RGMII support.
+
+        5) Add FDMA support.
+
+== RGMII support:
+
+The lan969x switch device includes two RGMII interfaces (port 28 and 29)
+supporting data speeds of 1 Gbps, 100 Mbps and 10 Mbps.
+
+Details are in the commit description of the patches.
+
+== Patch breakdown:
+
+Patch #1 does some preparation work.
+
+Patch #2 adds new function: is_port_rgmii() to the match data ops.
+
+Patch #3 uses the is_port_rgmii() in a number of places.
+
+Patch #4 uses the phy_interface_mode_is_rgmii() in a number of places.
+
+Patch #5 adds checks for RGMII PHY modes in sparx5_verify_speeds().
+
+Patch #6 adds registers required to configure RGMII.
+
+Patch #7 adds RGMII configuration function and uses it.
+
+To: UNGLinuxDriver@microchip.com
+To: Andrew Lunn <andrew+netdev@lunn.ch>
+To: David S. Miller <davem@davemloft.net>
+To: Eric Dumazet <edumazet@google.com>
+To: Jakub Kicinski <kuba@kernel.org>
+To: Paolo Abeni <pabeni@redhat.com>
+To: Lars Povlsen <lars.povlsen@microchip.com>
+To: Steen Hegelund <Steen.Hegelund@microchip.com>
+To: Horatiu Vultur <horatiu.vultur@microchip.com>
+To: Russell King <linux@armlinux.org.uk>
+To: jacob.e.keller@intel.com
+Cc: netdev@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
+
+Signed-off-by: Daniel Machon <daniel.machon@microchip.com>
+---
+Daniel Machon (7):
+      net: sparx5: do some preparation work
+      net: sparx5: add function for RGMII port check
+      net: sparx5: use is_port_rgmii() throughout
+      net: sparx5: use phy_interface_mode_is_rgmii()
+      net: sparx5: verify RGMII speeds
+      net: lan969x: add RGMII registers
+      net: lan969x: add function for configuring RGMII port devices
+
+ drivers/net/ethernet/microchip/lan969x/lan969x.c   | 109 ++++++++++++++++
+ drivers/net/ethernet/microchip/lan969x/lan969x.h   |   5 +
+ .../net/ethernet/microchip/sparx5/sparx5_main.c    |  29 +++--
+ .../net/ethernet/microchip/sparx5/sparx5_main.h    |   6 +
+ .../ethernet/microchip/sparx5/sparx5_main_regs.h   | 145 +++++++++++++++++++++
+ .../net/ethernet/microchip/sparx5/sparx5_phylink.c |   3 +
+ .../net/ethernet/microchip/sparx5/sparx5_port.c    |  57 ++++----
+ .../net/ethernet/microchip/sparx5/sparx5_port.h    |   5 +
+ 8 files changed, 329 insertions(+), 30 deletions(-)
+---
+base-commit: 157a4881225bd0af5444aab9510e7b6da28f2469
+change-id: 20241104-sparx5-lan969x-switch-driver-4-d59b7820485a
+
+Best regards,
+-- 
+Daniel Machon <daniel.machon@microchip.com>
+
 
