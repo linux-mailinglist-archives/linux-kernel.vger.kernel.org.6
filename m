@@ -1,137 +1,114 @@
-Return-Path: <linux-kernel+bounces-397373-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397359-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87FED9BDB24
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 02:25:50 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 362BA9BDAFF
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 02:12:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3EB12283CFD
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 01:25:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94CE628387E
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 01:12:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1EFF10E5;
-	Wed,  6 Nov 2024 01:25:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C56C217E015;
+	Wed,  6 Nov 2024 01:12:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="mYivpvwa"
-Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="B6bpjMOT"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1813418786C;
-	Wed,  6 Nov 2024 01:25:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69CE57DA6A;
+	Wed,  6 Nov 2024 01:12:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730856343; cv=none; b=cpvrhc7gyxHLLedYJwR3lKFTfPqu27fiJ0TgDkxqK6PWKzSNyin4fwsSK2gD/ffnjdvzxWqMZj7Rir0PF53qUbiMWjsYCvhAujlaHzd4/v7d0WH8PeSasNJBZO0fyY0PM+Yl65x3qNu7dDXztNSuga05V5QiJ1t5d87Ts2CHgis=
+	t=1730855564; cv=none; b=BqzPVof2LB3b3/Q/KH4M124BbdOz+Y9K7VBK86kBiNSQl8QDYxINO92qheKxOMrwznQwvd7GKKA0ler0mIbPuSB5r+8gjyKil3yv0h18EEbKhmU2EAuDjHsj8WqfCoxjQGGdcqmzekqmbGhoDL8HsfcHgRjNx4Jn1K29tap8TXg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730856343; c=relaxed/simple;
-	bh=vrtPNrB6+0BcgO9J9p5RfsVNy2E+QVqTdpWFiiQrQoU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gex9D5qyDE5SRsHOr/ogF7VnN627w5eTUaTUjsKNGtKTbfsUT+n5t+VYRWE3ZCZVfaMh1/JlnTVgFU3u6shJYEMsvy75+/9tqfUlp+GPvrvVLtnw6z8EQXl5QvCpJNq7chXZOFLz+C5YVGG2SMWRp4qYjBqGLEZBwpYV5eeIqUk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=mYivpvwa; arc=none smtp.client-ip=85.214.62.61
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
-Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
-	(No client certificate requested)
-	(Authenticated sender: marex@denx.de)
-	by phobos.denx.de (Postfix) with ESMTPSA id 78B3388D8D;
-	Wed,  6 Nov 2024 02:25:38 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
-	s=phobos-20191101; t=1730856339;
-	bh=Z1yoKzgo8+wbpL0mDUyPIejCTWSCHY6sxQ3QEw31KAs=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=mYivpvwalNGXewCotlReMZWG1dRdUf1S1ohdtCbhS1fxo4ihlzs9T6d5R/MNBQ6AS
-	 wUZg2iduzOO0MalQemqPOVhRec8AiaDU8G4DYFtzq2iCFo8bYuYetiypuN30WjmHnU
-	 fHoaIYHmB0BE0vmVzSh+Ca3f8ZDxUrIg9crHRQxz/hDc1+daXd+f+aUeeIQRNzx0Lc
-	 pWmbTgQas5CWMwnaM+uXci77LmiFoVaznHl9Hiw2N83FSqyH3BmQzgkbFLY67nADZ5
-	 0TSCqxwQGO2liQh6vwn0qGU5bzfysD821pASO4NnzeUUe880EwBmLQn1cVufRbuPV3
-	 gmgvOdxUzSHcg==
-Message-ID: <35a05978-a83f-4746-92cd-108b6586ac08@denx.de>
-Date: Wed, 6 Nov 2024 01:30:29 +0100
+	s=arc-20240116; t=1730855564; c=relaxed/simple;
+	bh=7uHxj0fPg50Fn1ZMXOTIZG4UKkbE2jcY9ppYJOvo7Ic=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=WEytQfXVH6jypZONefpwqC5zjIWL3/sUARYL/J2g2qDqSoWv4v8jLEcJ54xsmewh+aa0w0uCljiPhWsg+vKXaA4mBtMTdRV9K6PuxytGm0GyD8KyBWgwmKpVJD+hcl2d7dW/et+Ts74+uFQwvNlnFgRxltoWrurP07YKRV2JmEs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=B6bpjMOT; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730855563; x=1762391563;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=7uHxj0fPg50Fn1ZMXOTIZG4UKkbE2jcY9ppYJOvo7Ic=;
+  b=B6bpjMOTObs8SaoxzBuIPBPC7wi3fzqcSAZujU52eVs5cLiZwt0i3xWs
+   wbl5p9IBFFN3FmjUP1lOBqIcyBkYU9PqW20O/25INb6UpicaCOt16uyN7
+   TLixDoi1wQPXXzy2SkJ191trACyzXRvAXtjFCpHnIR9XyAmBYaRDhMe/1
+   d/Dfha5E4WkH/EIBxLBsGzoxpJZ6qcXrjdHfnsnyN4UOG2tNQGI8YAPn5
+   Gqo5mE7qe76Uizad1h2f8a9V6BOc6LRqJ24xwmgoq0i6rc4K8QM5szW6/
+   kU5Ar+qCb2dphwKAYAMrlsQW9IrLOopgpbQtH7SYm2iTZCg7WX3/4hKI3
+   Q==;
+X-CSE-ConnectionGUID: 8eyd4vdAS5qTeVW2uTZV8g==
+X-CSE-MsgGUID: TR2awBmPTQmZuzhPM2bwLQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11247"; a="18254707"
+X-IronPort-AV: E=Sophos;i="6.11,261,1725346800"; 
+   d="scan'208";a="18254707"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2024 17:12:40 -0800
+X-CSE-ConnectionGUID: FTH7TveFTraT53GM97VNFA==
+X-CSE-MsgGUID: sSRzoFA0TqeVnj31oFVmxg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,261,1725346800"; 
+   d="scan'208";a="84362754"
+Received: from amlin-018-114.igk.intel.com ([10.102.18.114])
+  by fmviesa008.fm.intel.com with ESMTP; 05 Nov 2024 17:12:38 -0800
+From: Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>
+To: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	intel-wired-lan@lists.osuosl.org
+Cc: anthony.l.nguyen@intel.com,
+	przemyslaw.kitszel@intel.com,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	richardcochran@gmail.com,
+	Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>
+Subject: [PATCH net-next v3 0/2] ptp: add control over HW timestamp latch point
+Date: Wed,  6 Nov 2024 02:07:54 +0100
+Message-Id: <20241106010756.1588973-1-arkadiusz.kubalewski@intel.com>
+X-Mailer: git-send-email 2.38.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] ARM: dts: stm32: Describe M24256E write-lockable page
- in DH STM32MP13xx DHCOR SoM DT
-To: Alexandre TORGUE <alexandre.torgue@foss.st.com>,
- linux-arm-kernel@lists.infradead.org
-Cc: Christoph Niedermaier <cniedermaier@dh-electronics.com>,
- Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org,
- kernel@dh-electronics.com, linux-kernel@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com
-References: <20241017190933.131441-1-marex@denx.de>
- <b616628b-f9e3-42dd-b5dd-e7aa0235daae@foss.st.com>
-Content-Language: en-US
-From: Marek Vasut <marex@denx.de>
-In-Reply-To: <b616628b-f9e3-42dd-b5dd-e7aa0235daae@foss.st.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
-X-Virus-Status: Clean
 
-On 10/29/24 4:28 PM, Alexandre TORGUE wrote:
-> Hi Marek
-> 
-> On 10/17/24 21:09, Marek Vasut wrote:
->> The STM32MP13xx DHCOR SoM is populated with M24256E EEPROM which has
->> Additional Write lockable page at separate I2C address. Describe the
->> page in DT to make it available.
->>
->> Note that the WLP page on this device is hardware write-protected by
->> R37 which pulls the nWC signal high to VDD_3V3_1V8 power rail.
->>
->> Signed-off-by: Marek Vasut <marex@denx.de>
->> ---
->> Cc: Alexandre Torgue <alexandre.torgue@foss.st.com>
->> Cc: Christoph Niedermaier <cniedermaier@dh-electronics.com>
->> Cc: Conor Dooley <conor+dt@kernel.org>
->> Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>
->> Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>
->> Cc: Rob Herring <robh@kernel.org>
->> Cc: devicetree@vger.kernel.org
->> Cc: kernel@dh-electronics.com
->> Cc: linux-arm-kernel@lists.infradead.org
->> Cc: linux-kernel@vger.kernel.org
->> Cc: linux-stm32@st-md-mailman.stormreply.com
->> ---
->> V2: Fix up the M25256E in Subject
->> ---
->> DEPENDS:
->> - https://lore.kernel.org/linux-i2c/20241017184152.128395-1- 
->> marex@denx.de/
->> - https://lore.kernel.org/linux-i2c/20241017184152.128395-2- 
->> marex@denx.de/
->> ---
->>   arch/arm/boot/dts/st/stm32mp13xx-dhcor-som.dtsi | 6 ++++++
->>   1 file changed, 6 insertions(+)
->>
->> diff --git a/arch/arm/boot/dts/st/stm32mp13xx-dhcor-som.dtsi b/arch/ 
->> arm/boot/dts/st/stm32mp13xx-dhcor-som.dtsi
->> index 5c633ed548f37..07133bd82efa6 100644
->> --- a/arch/arm/boot/dts/st/stm32mp13xx-dhcor-som.dtsi
->> +++ b/arch/arm/boot/dts/st/stm32mp13xx-dhcor-som.dtsi
->> @@ -202,6 +202,12 @@ eeprom0: eeprom@50 {
->>           pagesize = <64>;
->>       };
->> +    eeprom0wl: eeprom@58 {
->> +        compatible = "st,24256e-wl";    /* ST M24256E WL page of 0x50 */
->> +        pagesize = <64>;
->> +        reg = <0x58>;
->> +    };
->> +
-> 
-> You could have sorted nodes by I2C addresses.
-Fixed in [PATCH] ARM: dts: stm32: Sort M24256E write-lockable page in DH 
-STM32MP13xx DHCOR SoM DT
+HW support of ptp/timesync solutions in network PHY chips can be
+achieved with two different approaches, the timestamp maybe latched
+either in the beginning or after the Start of Frame Delimiter (SFD) [1].
 
-Sorry.
+Allow ptp device drivers to provide user with control over the timestamp
+latch point.
 
-(I also wrote me a sorting tool in the meantime, but it still isn't too 
-good)
+[1] https://www.ieee802.org/3/cx/public/april20/tse_3cx_01_0420.pdf
+
+v3:
+- move new enum ptp_ts_point to uapi ptp_clock.h and add NONE value to
+  indicate that the timestamp latch point was not provided by the HW,
+  allow further changes to ethtool netlink interface exstensions.
+
+Arkadiusz Kubalewski (2):
+  ptp: add control over HW timestamp latch point
+  ice: ptp: add control over HW timestamp latch point
+
+ Documentation/ABI/testing/sysfs-ptp         | 12 +++++
+ drivers/net/ethernet/intel/ice/ice_ptp.c    | 44 +++++++++++++++
+ drivers/net/ethernet/intel/ice/ice_ptp_hw.c | 60 +++++++++++++++++++++
+ drivers/net/ethernet/intel/ice/ice_ptp_hw.h |  2 +
+ drivers/ptp/ptp_sysfs.c                     | 44 +++++++++++++++
+ include/linux/ptp_clock_kernel.h            | 12 +++++
+ include/uapi/linux/ptp_clock.h              | 18 +++++++
+ 7 files changed, 192 insertions(+)
+
+base-commit: 0452a2d8b8b98a5b1a9139c1a9ed98bccee356cc
+-- 
+2.38.1
+
 
