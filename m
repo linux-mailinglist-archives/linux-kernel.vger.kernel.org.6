@@ -1,124 +1,115 @@
-Return-Path: <linux-kernel+bounces-398254-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398255-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D1DD9BEC1A
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 14:02:58 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B31B9BEC52
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 14:04:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF5BF1C2386B
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 13:02:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 016942859DE
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 13:04:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6569E1FAEE3;
-	Wed,  6 Nov 2024 12:52:00 +0000 (UTC)
-Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B92BA1FB89F;
+	Wed,  6 Nov 2024 12:54:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="HrN2wRyS"
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14D331F426A;
-	Wed,  6 Nov 2024 12:51:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF6B11FB891;
+	Wed,  6 Nov 2024 12:54:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730897520; cv=none; b=i+A5BZESwF4bo9YXHA1HsJlUUjIaVBxPPMWNn5Rb35cb61KsZp5NoWcUyP2wlxoDUPeP2kj+jc/JTcsDWEFYL20/LFyzVeTPjsmA/d6qBI3D9u0L46NhQWvKPeWRn2Yh01HEdVMdzYDInLb1nuxN5X7Y78V2CwH+Oy5kM9QTZQY=
+	t=1730897667; cv=none; b=toGs6ElVm4VK7GxY78LAbQ/+2IooSScF90WCEWYKJEfaMMeEtSE2AX1q3QqWYdDanxzhmpO8VQUVc99MPL7sc7gfnZ/9Xvp6WUHBBFr97isvRB0Qkl9kXhbI13OYtk5/8aIVhMcIGRv5iX98zUFiQ0GN3N0VChoaDl0RM1qUe50=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730897520; c=relaxed/simple;
-	bh=ocT+2Lqm7zGdt+U9dlPmYwTu8/bWc/XiFRrsH7iAX+0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=q1FW7fX2lCSVxSAeo7hYzQgMoJFc6GjeV0SRglFH7r4f0zAyBc0bj2hX+x9Ifu01iGze+3foC5Xj/ItsOZ9xnJxQvWxQ6FItledJGYGFAv5MSVQ3yXOPMQIyGGadq+1V/GsAWs7iCGq4ihmL1WxLZy1iMXLxFADfRE+EBZqKLcE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-6e34339d41bso56965787b3.0;
-        Wed, 06 Nov 2024 04:51:57 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730897515; x=1731502315;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=PPHd5Ml+4dhfKf7+W9PSlfsoxE25t0TD5o+m/lVsDyw=;
-        b=qCYsgywD10AXEycUq3ASdAte2KQarLolUifxNJJgObOiKc21fk2T7L5X2v/WsLp+Zp
-         h7SCFdwWy0Tr8poEFPvqgWMRRarRc+XgLHOIrvqZMxejXUrI4/FpYjHOAOgBAWpVANBn
-         bRJDT8BZ84KoES4D7ZkWu1En7gOkfnTEpaXSXvTWFqI7FYCgRg6IkHrnPf+jhVz0SGfu
-         t33AdiVHgK0T2CCwpp47uDjmJQtimGc1FeloA3Ga6YoQawgx797+CDhrJTAIB4eUEm90
-         4keHXUzGOuLYPzxQ/zVRnEnsRs16D1E1Bqoc7kfhUL0O98DiwDpyX5Pgz+2szf/b5gLn
-         nDZg==
-X-Forwarded-Encrypted: i=1; AJvYcCUYYg1/chE9RfyYql9R8GLKqFEEXBT2rkZaZUbPBnV9vfFBr/59F9L5PM/coBgKDWW/a/Xz4isUW1h1AQ==@vger.kernel.org, AJvYcCW5i6vwqg2Rj3Rx6gR1AW6LA54ia0gwyOMmc8bYuHRTzO3snne2c+4Uid7IKWwJNldI4AtU3hIzC3ElvA4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz7wRzm9j+UVXIKDsRb9W45B+elkhWpiwLvJl/qAa9CSeGKSrPZ
-	iNC+HmlZiF5lBoXHpy2h3ERt5iTRqg8SVsatKOFr2zu8SNjCfnqlZFSh4Ki0
-X-Google-Smtp-Source: AGHT+IH+jd+VaBYPbTe6J+NYKfpJFCGLSrhNc0YLq5nKsKaneGnlsYlL/yUDDpFIO7LhmHWQwTPgBQ==
-X-Received: by 2002:a05:690c:311:b0:6ea:c467:a632 with SMTP id 00721157ae682-6eac467c44fmr10185617b3.35.1730897515605;
-        Wed, 06 Nov 2024 04:51:55 -0800 (PST)
-Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com. [209.85.128.178])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6ea6965d0ccsm23137937b3.70.2024.11.06.04.51.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 06 Nov 2024 04:51:53 -0800 (PST)
-Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-6e34339d41bso56965177b3.0;
-        Wed, 06 Nov 2024 04:51:53 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCV3Gk/C+eNCoMzsy0GcO2wJMgTLBMtyMzYSlSgRm2DyPyDhYejft4j9WssrXxU19LJg2f6V7h8CXDcCHEg=@vger.kernel.org, AJvYcCXkzkb0bPfbm5awzFfyKuSMeMggSbC3oFUgR8RM3ETDoP0NSd9MPgUyVKRCKLVTGvOKrUguV+st929JJg==@vger.kernel.org
-X-Received: by 2002:a05:690c:6607:b0:6ea:9bca:9fcd with SMTP id
- 00721157ae682-6ea9bcaa376mr108385977b3.2.1730897513684; Wed, 06 Nov 2024
- 04:51:53 -0800 (PST)
+	s=arc-20240116; t=1730897667; c=relaxed/simple;
+	bh=lkxv6wMPzIk+Q2dOS9GMqa+Rkj5Q9zLdFls5XSUwg40=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=HcWjcDGFVywtYIiyWzfppueaGmdJFi07UBivi9+19kFp/yamoOg4HrAWVIxMZLucQueSShwt0gOUN5mRlw0K7Z9CKwq383bXHB1LbyHxCE8GpEeJliDNcb7IWzUwUdIhnGrssmjMOqUyG9nP/r/vI4ZnCVe8NN8KFzaX/UVUa9M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=HrN2wRyS; arc=none smtp.client-ip=210.61.82.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: 3891e7789c3e11efbd192953cf12861f-20241106
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=VNbbyybsVA/llgCiGv5B8aYzpYH2qcy9VUJy2qkKAvI=;
+	b=HrN2wRySArCax9B4WRxPC50Y0jYLn4tFx8FR9eemNVCTzDrsKEdWOaNGaMZOnBIF4BuIMVzXomXGficksnXh5rB1kCCF68MtFXW4C3nSuYckrlkhJdWKbg7bxaiqbEqnSAKGYUhd9r2xZSHwHbSUF7AzmMoADlYzEBccb+2Enpg=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.42,REQID:890f13e5-24e3-4fdf-b398-faac3b039d95,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:b0fcdc3,CLOUDID:2f948122-a4fe-4046-b5be-d3379e31a9ef,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
+	RL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,
+	SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: 3891e7789c3e11efbd192953cf12861f-20241106
+Received: from mtkmbs09n1.mediatek.inc [(172.21.101.35)] by mailgw02.mediatek.com
+	(envelope-from <zoie.lin@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 1855440004; Wed, 06 Nov 2024 20:54:12 +0800
+Received: from mtkmbs13n2.mediatek.inc (172.21.101.108) by
+ MTKMBS14N1.mediatek.inc (172.21.101.75) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Wed, 6 Nov 2024 20:54:09 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
+ mtkmbs13n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1118.26 via Frontend Transport; Wed, 6 Nov 2024 20:54:09 +0800
+From: Zoie Lin <zoie.lin@mediatek.com>
+To: Qii Wang <qii.wang@mediatek.com>, Andi Shyti <andi.shyti@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
+	<angelogioacchino.delregno@collabora.com>
+CC: <linux-i2c@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>,
+	<Project_Global_Chrome_Upstream_Group@mediatek.com>,
+	<teddy.chen@mediatek.com>, Zoie Lin <zoie.lin@mediatek.com>
+Subject: [v2,0/1] i2c: mediatek: add runtime PM operations and bus regulator control
+Date: Wed, 6 Nov 2024 20:52:11 +0800
+Message-ID: <20241106125212.27362-1-zoie.lin@mediatek.com>
+X-Mailer: git-send-email 2.18.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <9e56c0d03509d79736961ded7a1b90a361fd2e06.1730895069.git.geert+renesas@glider.be>
-In-Reply-To: <9e56c0d03509d79736961ded7a1b90a361fd2e06.1730895069.git.geert+renesas@glider.be>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 6 Nov 2024 13:51:41 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdVkMezR+opdwY=8QQuKRsniMhP3D6EiHVycn69PRUuPeg@mail.gmail.com>
-Message-ID: <CAMuHMdVkMezR+opdwY=8QQuKRsniMhP3D6EiHVycn69PRUuPeg@mail.gmail.com>
-Subject: Re: [PATCH] pcmcia: omap_cf: : Mark driver struct with __refdata to
- prevent section mismatch
-To: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <ukleinek@kernel.org>, 
-	Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Dominik Brodowski <linux@dominikbrodowski.net>, Aaro Koskinen <aaro.koskinen@iki.fi>, 
-	Janusz Krzysztofik <jmkrzyszt@gmail.com>, Tony Lindgren <tony@atomide.com>, linux-omap@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, 
-	Linux ARM <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+X-TM-AS-Product-Ver: SMEX-14.0.0.3152-9.1.1006-23728.005
+X-TM-AS-Result: No-10--2.028600-8.000000
+X-TMASE-MatchedRID: jUWJaIY8sEkfbciQjfRltRC41kTKJMKFYoHH/gi0K9v8rSaNLblw6nWC
+	d6QvVzbeE1RLTRi8AtKQYj0iYjwwnf16VZJq9bHXM8XTtgUzttN9LQinZ4QefCP/VFuTOXUT3n8
+	eBZjGmUzkwjHXXC/4I8prJP8FBOIaQDrrEUSMSmZGNW3Yd29bnG18/yTfVZRoc/Od1SdTsJ9Xz+
+	9mseNN8R4L76ik4lwFRyQrl51F0DySbb/RKI1CTBxYxYG29kEALeu9/Cix+Fl0BNB20+SxH7f8m
+	JY57oZddJaBDYald1lvF9+X2GEIHA==
+X-TM-AS-User-Approved-Sender: No
+X-TM-AS-User-Blocked-Sender: No
+X-TMASE-Result: 10--2.028600-8.000000
+X-TMASE-Version: SMEX-14.0.0.3152-9.1.1006-23728.005
+X-TM-SNTS-SMTP:
+	0CA8BD2969729531D72666269D686E64A92A1F7F1D4AD7EFAB7583DA1ADD897F2000:8
 
-On Wed, Nov 6, 2024 at 1:14=E2=80=AFPM Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
-> As described in the added code comment, a reference to .exit.text is ok
-> for drivers registered via platform_driver_probe().  Make this explicit
-> to prevent the following section mismatch warning
->
->     WARNING: modpost: drivers/pcmcia/omap_cf: section mismatch in referen=
-ce: omap_cf_driver+0x4 (section: .data) -> omap_cf_remove (section: .exit.t=
-ext)
->
-> that triggers on an omap1_defconfig + CONFIG_OMAP_CF=3Dm build.
->
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+This series is based on linux-next, tag: next-20241105
 
-There is one more in the DaVinci cpufreq driver, but that one never
-triggers a warning, as it cannot be a module.
+Changes in v2:
+- author name modification
+- replacement of pm runtime API
+- removal of redundant error messages
+- return value adjustment
+- add runtime pm status check
 
-So either davinci_cpufreq_remove() should be removed (it is never
-emitted), or the __exit and __exit_p() should be dropped (then it can
-be unbound manually, but never rebound).
+The delay before runtime_put_autosuspend() actually executes 
+mtk_i2c_runtime_suspend() depends on the frequency of I2C usage by the 
+devices attached to this bus. A 1000ms delay is a balanced value for 
+latency and power metrics based on the MTK platform.
 
-https://elixir.bootlin.com/linux/v6.11.6/source/drivers/cpufreq/davinci-cpu=
-freq.c#L134
+Zoie Lin (1):
+  i2c: mediatek: add runtime PM operations and bus regulator control
 
-Thoughts?
+ drivers/i2c/busses/i2c-mt65xx.c | 77 ++++++++++++++++++++++++++++-----
+ 1 file changed, 65 insertions(+), 12 deletions(-)
 
-Gr{oetje,eeting}s,
+-- 
+2.45.2
 
-                        Geert
-
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
 
