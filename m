@@ -1,186 +1,138 @@
-Return-Path: <linux-kernel+bounces-398429-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398430-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC48E9BF12A
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 16:06:11 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 633F39BF12D
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 16:06:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1A5D11C21C8B
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 15:06:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2676C28200E
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 15:06:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C8C7185B58;
-	Wed,  6 Nov 2024 15:06:07 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08C58201256;
+	Wed,  6 Nov 2024 15:06:25 +0000 (UTC)
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46E02537FF
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 15:06:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2FDD185B58;
+	Wed,  6 Nov 2024 15:06:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730905566; cv=none; b=Mi+ZPPn4qW3DOobq/28jIln/lL9d8rQJGLAqDSkxBV5E+gjGw1u1fm/6t+BPG4+BGA6mKVaz8BPnUa+jf2347cJkFz+aaE2/PbOKJRww0smtzDdoqE61MszM5NT/ZeLJqaRqMXp8t/pquHumdynW2RthdV616rQ75aFlDpTCjDE=
+	t=1730905584; cv=none; b=JDezk1mGdp1wTPax4+Ls5d8s36Hy/R3iYzIJgTSImZdB/I9sbbtiwh1A4uHczmwKSnCOkg2mthVjgPDdjX/mH20eg1uN4xcUXnc/HqhEPEG8qK2ReynDQ8TcUGQ1ALGyX+965FgI7E0Yac36F6lCH2X3IIu6RBBKHfwkEZIXYNU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730905566; c=relaxed/simple;
-	bh=quYL6+FlHA0cheZYOYCnPncpwtAp1HntMbJZgEAXU80=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=mRTgyj0HnA5V4xy05Y+2M7SO99H3TUXfJX0+mwt0r+bNHgPmd1a9gn0GTUrFdsTF+aOIffrgf/zPJSkBazF52P4jbomIeMwKw9/HLXnoQnZ3A5JOntXU6PYpz6ZXhG619HWaCoyHwy9FVdBE/qV/d0C3/0JynFJwsgDvVTL4ofc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-83aae46538bso710651039f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2024 07:06:05 -0800 (PST)
+	s=arc-20240116; t=1730905584; c=relaxed/simple;
+	bh=T8a5iFhc5Ssx6DFL4DXCQ/DgD7BS7f9QlIrgZZoCbr4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qfGbbc20Z/v0XnYGWdS0YbNM3kKU8sL/Aqj1sFlHZO2jImVINj9mi0/I0D/D5yNqFSYa/9zmvmRAqUsNuV21AlYpETsG+IAhXlZRmucBHu+F7asTddgR/LcEv6XD6f2unnALKt4Tl6sK9FiV50JFqgHr7DMXtO0vPJ5xyv7Dz7U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.167.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-539f53973fdso878715e87.1;
+        Wed, 06 Nov 2024 07:06:22 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730905564; x=1731510364;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Uk9umGkAfRTN0+Uj5VR8v3xY0+9Z/Y+2qBBIBw83Ayg=;
-        b=wU/bM6em28eWGZQe8DBoo2rvnXg5+kASjoOckYSyd+meHBYRb626Npe4D3e32c7yG+
-         6L59c34TogqMFhfJr8JT4nh5mJDwmkzitIQT/dwTn53haxgBiEhdwAd6ZtqDODh21LKS
-         z1bn9IoXf8HKD81HaS2yy64GJ/3O8wvC7+BJCxgLQ+CyrTaRhMsk/46svONYAqyizYL2
-         M1/2Bl4XOeiA+dJRjpB5T6CUd+1tRtIptzN6OrkLa4Sl5A/pH/N5RrmeymKhDpB1j/5z
-         XAU8MaZyN9Q3VX54YUDfLHOh12KNL0Oiigbck5vtk8SN/tKHW6ku+veu68ogampX+gYV
-         64GA==
-X-Forwarded-Encrypted: i=1; AJvYcCXalV7qDz6npJoXpo1cEvG/8G7NUFGYJrSSvCCuRyT69YA5uFzUo1SaRds6QIINO500bVZVU/NjHPlMHis=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxxwilkrExtI+0g2Dkh4p1nGKI6Bl1pjQZUnwqL0a8ZI5SgQ1+K
-	aJeHew8Cdx9DczRkEfpV6L3eP380V1n7xylarNWZxW54oqUkj5s1sshY4F/pBHHvOrzgkO3d2a6
-	Kv6d17HIS5MN+PGBr9QcXMgcVxfoDMcJpAjuVuZbzcGQEVsfFVSdEciI=
-X-Google-Smtp-Source: AGHT+IHLMMBk0ub4WPZFmvIVVgAlxZRIv2z19Tr9OHGTrj6Q/TkT9U+F639yaGiStgXA4u8ZoN1bg3hxLFpEVRDluTDS1nAu2r7K
+        d=1e100.net; s=20230601; t=1730905581; x=1731510381;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3b8V+kZQ7lk3KHYStvRTDKIPiVMbS+yqDViM9lOKTcM=;
+        b=JXDcCVIJs9xUbIgAzB8otsu5ucL9MNiOobmCU5fBqET6Bx3izfRv0NOn4vsUC0OCKB
+         vGbKw5N1arrHN5EUHEZYgjtwe9jdmaLN7ySdc85Fi6/MEyJSQFpClCqzQZFvOEpx8Knm
+         eW78Ug2tZMFZ3wMm7fEAgg5NhxcFHDWhNcZT4jgvLXaC9foDdhagSNsS5jnYyp4/XNSb
+         bnWhWIQicneBMia6Qv/Py0PeeH8eBUGwSSS2W6ypUfUbO2jA4EkQ+KcUw2LEvNuLXj4u
+         WEk2U/dcY8qVQCCn1I73tH8Qrywop6S/XX8bjw/lsv4TB1cXC2PF0M1k0hDC5JvjuYrz
+         BP4g==
+X-Forwarded-Encrypted: i=1; AJvYcCVU1coLc/nKMoD8Kcfq3uFxwZoSz3/P9i5djV0PTuTmxGqHCon6odx8SjUjM/Bbj4ckyfcSa+4KIzjWEuQ=@vger.kernel.org, AJvYcCVzb+P6UFYCvm4h88oFrk6TiZqX6QC34aM5y2UHIhRJSQOcm6BMhzg1zSmGyZl7zm5LaHIj0HIY@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz5gF1QDE5G0wXBnKPhG4z01cHpZM5vTn+OE+HiyhsnHsUNodD0
+	xJFIU3BXJ2+zE7M5UtOsdVebwWBEIP0wKXbMT1m1rZn7M+9q+xJ9xyssDQ==
+X-Google-Smtp-Source: AGHT+IHJMaw45GELJlrNBvI0uH/AkRhX0R2T4x/chYX42ZaqPPrfNufCoeFgJKhWWKI+oL1AKZHBDw==
+X-Received: by 2002:a17:907:daa:b0:a99:ffa9:a27 with SMTP id a640c23a62f3a-a9ec671dae1mr296623566b.26.1730905569680;
+        Wed, 06 Nov 2024 07:06:09 -0800 (PST)
+Received: from gmail.com (fwdproxy-lla-113.fbsv.net. [2a03:2880:30ff:71::face:b00c])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9eb17ce97bsm295144566b.127.2024.11.06.07.06.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 06 Nov 2024 07:06:09 -0800 (PST)
+Date: Wed, 6 Nov 2024 07:06:06 -0800
+From: Breno Leitao <leitao@debian.org>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: horms@kernel.org, davem@davemloft.net, edumazet@google.com,
+	pabeni@redhat.com, thepacketgeek@gmail.com, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, davej@codemonkey.org.uk,
+	vlad.wing@gmail.com, max@kutsevol.com, kernel-team@meta.com,
+	jiri@resnulli.us, jv@jvosburgh.net, andy@greyhouse.net,
+	aehkn@xenhub.one, Rik van Riel <riel@surriel.com>,
+	Al Viro <viro@zeniv.linux.org.uk>
+Subject: Re: [PATCH net-next 1/3] net: netpoll: Defer skb_pool population
+ until setup success
+Message-ID: <20241106-gecko-of-sheer-opposition-dde586@leitao>
+References: <20241025142025.3558051-1-leitao@debian.org>
+ <20241025142025.3558051-2-leitao@debian.org>
+ <20241031182647.3fbb2ac4@kernel.org>
+ <20241101-cheerful-pretty-wapiti-d5f69e@leitao>
+ <20241101-prompt-carrot-hare-ff2aaa@leitao>
+ <20241101190101.4a2b765f@kernel.org>
+ <20241104-nimble-scallop-of-justice-4ab82f@leitao>
+ <20241105170029.719344e7@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:168c:b0:3a6:c43d:12ff with SMTP id
- e9e14a558f8ab-3a6c43d15bcmr123226705ab.8.1730905564286; Wed, 06 Nov 2024
- 07:06:04 -0800 (PST)
-Date: Wed, 06 Nov 2024 07:06:04 -0800
-In-Reply-To: <20241106145044.90199-1-aha310510@gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <672b85dc.050a0220.350062.0262.GAE@google.com>
-Subject: Re: [syzbot] [acpi?] [nvdimm?] KASAN: vmalloc-out-of-bounds Read in
- acpi_nfit_ctl (2)
-From: syzbot <syzbot+7534f060ebda6b8b51b3@syzkaller.appspotmail.com>
-To: aha310510@gmail.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241105170029.719344e7@kernel.org>
 
-Hello,
+Hello Jakub,
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-KASAN: vmalloc-out-of-bounds Read in acpi_nfit_ctl
+On Tue, Nov 05, 2024 at 05:00:29PM -0800, Jakub Kicinski wrote:
+> On Mon, 4 Nov 2024 12:40:00 -0800 Breno Leitao wrote:
+> > Let's assume the pool is full and we start getting OOMs. It doesn't
+> > matter if alloc_skb() will fail in the critical path or in the work
+> > thread, netpoll will have MAX_SKBS skbs buffered to use, and none will
+> > be allocated, thus, just 32 SKBs will be used until a -ENOMEM returns.
+> 
+> Do you assume the worker thread will basically keep up with the output?
+> Vadim was showing me a system earlier today where workqueue workers
+> didn't get scheduled in for minutes :( That's a bit extreme but doesn't
+> inspire confidence in worker replenishing the pool quickly.
 
-9
-==================================================================
-BUG: KASAN: vmalloc-out-of-bounds in cmd_to_func drivers/acpi/nfit/core.c:417 [inline]
-BUG: KASAN: vmalloc-out-of-bounds in acpi_nfit_ctl+0x2061/0x2440 drivers/acpi/nfit/core.c:460
-Read of size 4 at addr ffffc9000166e038 by task syz.0.15/5815
+Interesting. Thanks for the data point.
 
-CPU: 0 UID: 0 PID: 5815 Comm: syz.0.15 Not tainted 6.12.0-rc6-syzkaller-00077-g2e1b3cc9d7f7-dirty #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
- print_address_description mm/kasan/report.c:377 [inline]
- print_report+0x169/0x550 mm/kasan/report.c:488
- kasan_report+0x143/0x180 mm/kasan/report.c:601
- cmd_to_func drivers/acpi/nfit/core.c:417 [inline]
- acpi_nfit_ctl+0x2061/0x2440 drivers/acpi/nfit/core.c:460
- __nd_ioctl drivers/nvdimm/bus.c:1186 [inline]
- nd_ioctl+0x1844/0x1fd0 drivers/nvdimm/bus.c:1264
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:907 [inline]
- __se_sys_ioctl+0xf9/0x170 fs/ioctl.c:893
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f768a37e719
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f768b263038 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 00007f768a535f80 RCX: 00007f768a37e719
-RDX: 0000000020000180 RSI: 00000000c008640a RDI: 0000000000000003
-RBP: 00007f768a3f139e R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000000 R14: 00007f768a535f80 R15: 00007ffec5fc1248
- </TASK>
+> > On the other side, let's suppose there is a bunch of OOM pressure for a
+> > while (10 SKBs are consumed for instance), and then some free memory
+> > show up, causing the pool to be replenished. It is better
+> > to do it in the workthread other than in the hot path.
+> 
+> We could cap how much we replenish in one go?
 
-The buggy address belongs to the virtual mapping at
- [ffffc9000166e000, ffffc90001670000) created by:
- __nd_ioctl drivers/nvdimm/bus.c:1169 [inline]
- nd_ioctl+0x1594/0x1fd0 drivers/nvdimm/bus.c:1264
+If we keep the replenish in the hot path, I think it is worth doing it,
+for sure.
 
-The buggy address belongs to the physical page:
-page: refcount:1 mapcount:0 mapping:0000000000000000 index:0xffff888040f74360 pfn:0x40f74
-flags: 0x4fff00000000000(node=1|zone=1|lastcpupid=0x7ff)
-raw: 04fff00000000000 0000000000000000 dead000000000122 0000000000000000
-raw: ffff888040f74360 0000000000000000 00000001ffffffff 0000000000000000
-page dumped because: kasan: bad access detected
-page_owner tracks the page as allocated
-page last allocated via order 0, migratetype Unmovable, gfp_mask 0x2cc2(GFP_KERNEL|__GFP_HIGHMEM|__GFP_NOWARN), pid 5815, tgid 5814 (syz.0.15), ts 117205092748, free_ts 117198254028
- set_page_owner include/linux/page_owner.h:32 [inline]
- post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1537
- prep_new_page mm/page_alloc.c:1545 [inline]
- get_page_from_freelist+0x303f/0x3190 mm/page_alloc.c:3457
- __alloc_pages_noprof+0x292/0x710 mm/page_alloc.c:4733
- alloc_pages_bulk_noprof+0x729/0xd40 mm/page_alloc.c:4681
- alloc_pages_bulk_array_mempolicy_noprof+0x8ea/0x1600 mm/mempolicy.c:2556
- vm_area_alloc_pages mm/vmalloc.c:3542 [inline]
- __vmalloc_area_node mm/vmalloc.c:3646 [inline]
- __vmalloc_node_range_noprof+0x752/0x13f0 mm/vmalloc.c:3828
- __vmalloc_node_noprof mm/vmalloc.c:3893 [inline]
- vmalloc_noprof+0x79/0x90 mm/vmalloc.c:3926
- __nd_ioctl drivers/nvdimm/bus.c:1169 [inline]
- nd_ioctl+0x1594/0x1fd0 drivers/nvdimm/bus.c:1264
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:907 [inline]
- __se_sys_ioctl+0xf9/0x170 fs/ioctl.c:893
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-page last free pid 5612 tgid 5612 stack trace:
- reset_page_owner include/linux/page_owner.h:25 [inline]
- free_pages_prepare mm/page_alloc.c:1108 [inline]
- free_unref_page+0xcfb/0xf20 mm/page_alloc.c:2638
- __slab_free+0x31b/0x3d0 mm/slub.c:4490
- qlink_free mm/kasan/quarantine.c:163 [inline]
- qlist_free_all+0x9a/0x140 mm/kasan/quarantine.c:179
- kasan_quarantine_reduce+0x14f/0x170 mm/kasan/quarantine.c:286
- __kasan_slab_alloc+0x23/0x80 mm/kasan/common.c:329
- kasan_slab_alloc include/linux/kasan.h:247 [inline]
- slab_post_alloc_hook mm/slub.c:4085 [inline]
- slab_alloc_node mm/slub.c:4134 [inline]
- kmem_cache_alloc_noprof+0x135/0x2a0 mm/slub.c:4141
- getname_flags+0xb7/0x540 fs/namei.c:139
- do_sys_openat2+0xd2/0x1d0 fs/open.c:1409
- do_sys_open fs/open.c:1430 [inline]
- __do_sys_openat fs/open.c:1446 [inline]
- __se_sys_openat fs/open.c:1441 [inline]
- __x64_sys_openat+0x247/0x2a0 fs/open.c:1441
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> > In both cases, the chance of not having SKBs to send the packet seems to
+> > be the same, unless I am not modeling the problem correctly.
+> 
+> Maybe I misunderstood the proposal, I think you said earlier that you
+> want to consume from the pool instead of calling alloc(). If you mean
+> that we'd still alloc in the fast path but not replenish the pool
+> that's different.
 
-Memory state around the buggy address:
- ffffc9000166df00: f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8
- ffffc9000166df80: f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8
->ffffc9000166e000: 00 00 00 00 00 00 00 03 f8 f8 f8 f8 f8 f8 f8 f8
-                                        ^
- ffffc9000166e080: f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8
- ffffc9000166e100: f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8
-==================================================================
+To clarify, let me take a step back and outline what this patchset proposes:
 
+The patchset enhances SKB pool management in three key ways:
 
-Tested on:
+	a) It delays populating the skb pool until the target is active.
+	b) It releases the skb pool when there are no more active users.
+	c) It creates a separate pool for each target.
 
-commit:         2e1b3cc9 Merge tag 'arm-fixes-6.12-2' of git://git.ker..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=16808d87980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=11254d3590b16717
-dashboard link: https://syzkaller.appspot.com/bug?extid=7534f060ebda6b8b51b3
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=1109b6a7980000
+The third point (c) is the one that's open to discussion, as I
+understand.
 
+I proposed that having an individualized skb pool that users can control
+would be beneficial. For example, users could define the number of skbs
+in the pool. This could lead to additional advantages, such as allowing
+netpoll to directly consume from the pool instead of relying on alloc()
+in the optimal scenario, thereby speeding up the critical path.
+
+--breno
 
