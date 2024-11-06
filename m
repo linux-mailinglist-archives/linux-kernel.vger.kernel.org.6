@@ -1,108 +1,239 @@
-Return-Path: <linux-kernel+bounces-398397-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398398-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 671749BF0C9
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 15:54:19 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F5DF9BF0D0
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 15:54:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B92E282EAB
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 14:54:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 964E5B23583
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 14:54:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEFBC2022FE;
-	Wed,  6 Nov 2024 14:53:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50B82201116;
+	Wed,  6 Nov 2024 14:54:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="iNc6fAvY"
-Received: from mail-oo1-f43.google.com (mail-oo1-f43.google.com [209.85.161.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="QWM3DzDB"
+Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3704202620
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 14:53:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B180C202620;
+	Wed,  6 Nov 2024 14:53:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730904832; cv=none; b=ok8FQp1hDBXvH/OZIbHEufMM2WkGA0Hht1XSWXgBuO78/LhfERms5gHlm1ovldUg7ku6bZ4zIPOHRwxiYiDJf4gTkuSC+Y/IpjoEPL8ZIb+aRzngiwFGAQ0o3tBWyfeb7NooeYcWUjVujRBXpjxcVcZEJUJiynAGXExyOLpKEXU=
+	t=1730904840; cv=none; b=Zsldk1aIMCgMViqk8n9RXjSgBLsLtXp4cVTh22fu38nBpYeKuIZkyU2Y2uTpQLa1X1jhaZQLBOuxHdK1YrBgfOTZnJTYfwh5hl5RDnJPg7k+MH5UbeVpz8+65aS+tqLhpmFCPx1PSN/gpNs450H925wzbO3IO2DfCYWtAd2s25k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730904832; c=relaxed/simple;
-	bh=qd2oxWfj8ZkVoRk1/1WgltaqLpvNVj+hI5ourNOsBOA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ERV+YZaObHbF9G2baM2MRtW/sS8vjLQ1wrch3/Uq1FYnMrSYreS/gQuoIaftFGP5dg6e81fVXpnyZB7LqvTGhJTnGSDKA9Na75QBqwO539WztjqE+3D7vO01WulibCSRwcoxmxohEYBW+zfQubtVYeVL5fLuIl4XDiTzdHij/Xs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=iNc6fAvY; arc=none smtp.client-ip=209.85.161.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-oo1-f43.google.com with SMTP id 006d021491bc7-5ebc1af8f10so2956094eaf.2
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Nov 2024 06:53:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1730904829; x=1731509629; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qd2oxWfj8ZkVoRk1/1WgltaqLpvNVj+hI5ourNOsBOA=;
-        b=iNc6fAvYDeRtPQr95FUNmrazZefk5IUyWYVku8Nvjklvc0w/YVHDAK9739iYEshGF5
-         DbtFXsGTDrxtltYCKGm4hQiTJKJh/+49XnAA+gp3Goa10UD6FziCyKvChmqcXhuY0f30
-         opVdF3FZbrUa+ZDGmClDzO9LwDDvRx8eMyNrQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730904829; x=1731509629;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qd2oxWfj8ZkVoRk1/1WgltaqLpvNVj+hI5ourNOsBOA=;
-        b=upPVaTVaO604Gd6bPl4qPzyE5YGuXYPl1bBzEeYMml4pj0F1x1OA6ungRsByvmQ08K
-         oUd30XDU4tPcCvp8kK2JCCqPiAlduHRckdhbGkxJbAlYT+BQ78sqnrN9rkqwPnhq4290
-         b3QUrqo6vSsfQ/QmWsb3yiUWSbMsRbVOzI+wfk3aBNIyDYNjcVN1vSsabKXzA7uuCX4/
-         /8j0XPQa37uK2RUea9EI7NFnmSFyhH87Ds502usJXlBfG1zFumHmxRrsocfEaY+Ew849
-         f+/bqupEsu53Jy2Qa9M5T0F5sCzgM2OLsRsc66tlkq86ZjKBFRsUlMKctgyjhVNdEU3z
-         R5mg==
-X-Forwarded-Encrypted: i=1; AJvYcCV9qwyqtZWwH8vh18ZrEwTPlDWN1dlz9umT+bO/SeKXrDvMUDS7tD8w2DB1nbWXQleB5wNO1f7qHJ/40MQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxtaB/6boOFEei+IPm1jZoHaGzEulGby8gM5MR+HfEyuhUSryN0
-	2X9CUSS8UA6BSuXfGEzw+IHulinaDBY7ESgor2NoF5JWjktyP6GhUAZTQslcWdWCZb0PRCtwY3f
-	yIjl4TxkFr4aUpZ9Ln+Xjel89s5Hp/tF9hXDVeQ==
-X-Google-Smtp-Source: AGHT+IFa9JnN+t6Lfxkdc0ulgnBmj1ApwylswzSBXd0agEog+CiLEpOj+2CvAIt5HGuebycCh4ZaLZNNY+Op5Y+TgtI=
-X-Received: by 2002:a05:6358:729c:b0:1bc:2d00:84ad with SMTP id
- e5c5f4694b2df-1c5f98c78acmr1025710455d.3.1730904828818; Wed, 06 Nov 2024
- 06:53:48 -0800 (PST)
+	s=arc-20240116; t=1730904840; c=relaxed/simple;
+	bh=zYe5NkW/hxPpF8TUsu1Nvg27u9i54/19PVn4G/0LMUA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=PEnSsnfklN0GR7nMml8oBuOmf8PskNGbasn3IPwhnV7XzqKn34hXPYL60fwmzb8d+ljH4xPXorqISk0u6yQ4uTr1aI53I963eTyBwMbo46+ndATqt1QMvJYUmWXYtiWMPYSBgWi9x0rFai78AgU1TZ7Oij5dDAbeug6qMIdzDzI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=QWM3DzDB; arc=none smtp.client-ip=217.70.183.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id CC0B824000A;
+	Wed,  6 Nov 2024 14:53:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1730904836;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=knAYkoTuftyB6SKb9FMRTQyX6kLDlPlZevUIKrFm4vQ=;
+	b=QWM3DzDBC8cttduL3mSWj1EcxRYDkRfdfZWGELdtup94zcvzDKWpfoLQZeSNn/m79nIPCI
+	OLe6IHRh4yUViVOWK6PEXP2o/o/FGAFoX6v1vc7rNMvEUJ8AikLMmGFIfA8SsD0TwGP0c+
+	F2R0ZJFHWrGzbNRZ2h6R6mG34B3cdxlv/J/fG4fcPoJXIfskYPDp6oW+ZvJnm2NsjSRskx
+	UyW9ruV0jl5pzfcBek/slq2az5MwdtERojUoC6O8+9tPoqhH0vqDDVEIY8qtAKj4aiuUEu
+	mj9vmAFVIT5sswfvymQK4DrgUWZIoI+EqZPpSRlaVzuu7Cl0vWvnzwsHPC688g==
+Date: Wed, 6 Nov 2024 15:53:53 +0100
+From: Herve Codina <herve.codina@bootlin.com>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki"
+ <rafael@kernel.org>, Rob Herring <robh@kernel.org>, Saravana Kannan
+ <saravanak@google.com>, Bjorn Helgaas <bhelgaas@google.com>, Lizhi Hou
+ <lizhi.hou@amd.com>, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-pci@vger.kernel.org, Allan Nielsen
+ <allan.nielsen@microchip.com>, Horatiu Vultur
+ <horatiu.vultur@microchip.com>, Steen Hegelund
+ <steen.hegelund@microchip.com>, Thomas Petazzoni
+ <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH 6/6] PCI: of: Create device-tree root bus node
+Message-ID: <20241106155353.4ffd3825@bootlin.com>
+In-Reply-To: <20241105185901.GA1479626@bhelgaas>
+References: <20241104172001.165640-7-herve.codina@bootlin.com>
+	<20241105185901.GA1479626@bhelgaas>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241106-overlayfs-fsopen-log-v1-1-9d883be7e56e@cyphar.com>
- <20241106-mehrzahl-bezaubern-109237c971e3@brauner> <CAOQ4uxirsNEK24=u3K-X5A-EX80ofEx5ycjoqU4gocBoPVxbYw@mail.gmail.com>
- <CAOQ4uxj+gAtM6cY_aEmM7TAqLor7498f0FO3eTek_NpUXUKNaw@mail.gmail.com>
-In-Reply-To: <CAOQ4uxj+gAtM6cY_aEmM7TAqLor7498f0FO3eTek_NpUXUKNaw@mail.gmail.com>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Wed, 6 Nov 2024 15:53:38 +0100
-Message-ID: <CAJfpeguvAB-VMyV1Tin=ZDzPHE=P+ac4REQrsn4C5u8uh3+TmA@mail.gmail.com>
-Subject: Re: [PATCH] overlayfs: port all superblock creation logging to fsopen logs
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Christian Brauner <brauner@kernel.org>, Aleksa Sarai <cyphar@cyphar.com>, Jan Kara <jack@suse.cz>, 
-	linux-unionfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Karel Zak <kzak@redhat.com>, linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-GND-Sasl: herve.codina@bootlin.com
 
-> On Wed, Nov 6, 2024 at 12:00=E2=80=AFPM Amir Goldstein <amir73il@gmail.co=
-m> wrote:
+On Tue, 5 Nov 2024 12:59:01 -0600
+Bjorn Helgaas <helgaas@kernel.org> wrote:
 
-> > I am not sure about the level of risk in this format change.
-> > Miklos, WDYT?
+> On Mon, Nov 04, 2024 at 06:20:00PM +0100, Herve Codina wrote:
+> > PCI devices device-tree nodes can be already created. This was
+> > introduced by commit 407d1a51921e ("PCI: Create device tree node for
+> > bridge").  
+> 
+> I guess 407d1a51921e creates device tree nodes for bridges, including
+> Root Ports, which are enumerated as PCI-to-PCI bridges, right?
 
-I don't think the format change will cause problems, but it does fall
-under the "no regressions" rule, so if something breaks then it needs
-to be reverted.
+It creates DT nodes for bridges and devices.
 
-> > I am not really sure if the discussion about suppressing the kmsg error=
-s was
-> > resolved or dismissed or maybe it only happened in my head??
+> 
+> > In order to have device-tree nodes related to PCI devices attached on
+> > their PCI root bus, a root bus device-tree node is needed. This root bus
+> > node will be used as the parent node of the first level devices scanned
+> > on the bus.
+> >
+> > On non device-tree based system (such as ACPI), a device-tree node for
+> > the PCI root bus does not exist.  ...  
+> 
+> I'm wondering if "root bus" is the right description for this patch
+> and whether "PCI host bridge" might be more accurate.  The bus itself
+> doesn't really have a physical counterpart other than being the
+> secondary side of a PCI host bridge where the primary side is some
+> kind of CPU bus.
 
-All I found is this:
+Indeed, you're right. I will rename "root bus" to "host bridge" everywhere
+in the patch (description but also the code itself).
 
-https://lore.kernel.org/all/CAOQ4uxhgWhe0NTS9p0=3DB+tqEjOgYKsxCFJd=3DiJb46M=
-0MF04Gvw@mail.gmail.com/
+> 
+> An ACPI namespace doesn't include a "root bus" object, but it *does*
+> include a PCI host bridge (PNP0A03) object, which is where any address
+> translation between the CPU bus and the PCI hierarchy is described.
+> 
+> I suspect this patch is adding a DT node that corresponds to the
+> PNP0A03 host bridge object, and the "ranges" property of the new node
+> will describe the mapping from the CPU address space to the PCI
+> address space.
 
-I agree that this needs more thought.
+Exactly.
 
-Thanks,
-Miklos
+> 
+> > Indeed, this component is not described
+> > in a device-tree used at boot.  
+> 
+> But maybe I'm on the wrong track, because obviously PCI host
+> controllers *are* described in DTs used at boot.
+
+They are described in a device-tree used at boot on device-tree based
+systems.
+On x86, we are on ACPI based system -> No DT used at boot -> PCI host
+controller not described in DT.
+
+I could replace with "Indeed, this component is not described in a
+device-tree used at boot because, in that case, device-tree is not
+used to describe the hardware"
+
+> 
+> > The device-tree PCI root bus node creation needs to be done at runtime.
+> > This is done in the same way as for the creation of the PCI device
+> > nodes. I.e. node and properties are created based on computed
+> > information done by the PCI core.  
+> 
+> See address translation question below.
+> 
+> > +void of_pci_make_root_bus_node(struct pci_bus *bus)
+> > +{
+> > +	struct device_node *np = NULL;
+> > +	struct of_changeset *cset;
+> > +	const char *name;
+> > +	int ret;
+> > +
+> > +	/*
+> > +	 * If there is already a device tree node linked to this device,
+> > +	 * return immediately.
+> > +	 */
+> > +	if (pci_bus_to_OF_node(bus))
+> > +		return;
+> > +
+> > +	/* Check if there is a DT root node to attach this created node */
+> > +	if (!of_root) {
+> > +		pr_err("of_root node is NULL, cannot create PCI root bus node");
+> > +		return;
+> > +	}
+> > +
+> > +	name = kasprintf(GFP_KERNEL, "pci-root@%x,%x", pci_domain_nr(bus),
+> > +			 bus->number);  
+> 
+> Should this be "pci%d@%x,%x" to match the typical descriptions of PCI
+> host bridges in DT?
+
+What do you think I should use for the %d you proposed.
+Also I supposed your "@%x,%x" is still pci_domain_nr(bus), bus->number.
+
+> 
+> > +static int of_pci_root_bus_prop_ranges(struct pci_bus *bus,
+> > +				       struct of_changeset *ocs,
+> > +				       struct device_node *np)
+> > +{
+> > +	struct pci_host_bridge *bridge = to_pci_host_bridge(bus->bridge);
+> > +	struct resource_entry *window;
+> > +	unsigned int ranges_sz = 0;
+> > +	unsigned int n_range = 0;
+> > +	struct resource *res;
+> > +	int n_addr_cells;
+> > +	u32 *ranges;
+> > +	u64 val64;
+> > +	u32 flags;
+> > +	int ret;
+> > +
+> > +	n_addr_cells = of_n_addr_cells(np);
+> > +	if (n_addr_cells <= 0 || n_addr_cells > 2)
+> > +		return -EINVAL;
+> > +
+> > +	resource_list_for_each_entry(window, &bridge->windows) {
+> > +		res = window->res;
+> > +		if (!of_pci_is_range_resource(res, &flags))
+> > +			continue;
+> > +		n_range++;
+> > +	}
+> > +
+> > +	if (!n_range)
+> > +		return 0;
+> > +
+> > +	ranges = kcalloc(n_range,
+> > +			 (OF_PCI_ADDRESS_CELLS + OF_PCI_SIZE_CELLS +
+> > +			  n_addr_cells) * sizeof(*ranges),
+> > +			 GFP_KERNEL);
+> > +	if (!ranges)
+> > +		return -ENOMEM;
+> > +
+> > +	resource_list_for_each_entry(window, &bridge->windows) {
+> > +		res = window->res;
+> > +		if (!of_pci_is_range_resource(res, &flags))
+> > +			continue;
+> > +
+> > +		/* PCI bus address */
+> > +		val64 = res->start;
+> > +		of_pci_set_address(NULL, &ranges[ranges_sz], val64, 0, flags, false);
+> > +		ranges_sz += OF_PCI_ADDRESS_CELLS;
+> > +
+> > +		/* Host bus address */
+> > +		if (n_addr_cells == 2)
+> > +			ranges[ranges_sz++] = upper_32_bits(val64);
+> > +		ranges[ranges_sz++] = lower_32_bits(val64);  
+> 
+> IIUC this sets both the parent address (the host bus (CPU) physical
+> address) and the child address (PCI bus address) to the same value.
+> 
+> I think that's wrong because these addresses need not be identical.
+> 
+> I think the parent address should be the res->start value, and the
+> child address should be "res->start - window->offset", similar to
+> what's done by pcibios_resource_to_bus().
+
+I see.
+I will update in the next iteration.
+
+Thanks for your feedback.
+Best regards,
+Hervé
 
