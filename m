@@ -1,180 +1,529 @@
-Return-Path: <linux-kernel+bounces-398802-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398803-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09FA69BF645
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 20:21:27 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8361F9BF648
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 20:21:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F7151F230DE
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 19:21:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 42CFC284E3D
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 19:21:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB032209F4B;
-	Wed,  6 Nov 2024 19:21:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E374A20ADDC;
+	Wed,  6 Nov 2024 19:21:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="4T/gfwpL"
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2042.outbound.protection.outlook.com [40.107.93.42])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Mge1sD3W"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B69D207A16;
-	Wed,  6 Nov 2024 19:21:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.42
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730920862; cv=fail; b=q+r1BFULjLPAIaIVqx1FCOKBdvgLlDX/ztI8DM+bJV6dr7AQk6KxzlIt5uIGEEM1ibqgjcH4E03IMh4ZYK1aRkjZONbU9rgnmD2jqhRhaj5LmzNcoNS4Grhtc6TjKNRHOS/GgV8aYBMomqENbplHL+e24A+ifNKxYVck+uSA2kU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730920862; c=relaxed/simple;
-	bh=6CqtNOwDvVuH86bYX7dI8YPerBslGN448v4uVWHFZdM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=j1o78w5mwk1Js2/4you+OUDWWVO4TdBHnGjwVnlCisr1J8kmYufRUpYq2k8eD6edtvijw1XIaW1d/vBPBI2cGLmZAppO2w6lOoMrjUv23CreZFj0B6yOgSYtVy597AmFxvfQl66tZLmi9oC6RgnG7FFTAFrzkf2cFjbdmNI+L04=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=4T/gfwpL; arc=fail smtp.client-ip=40.107.93.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Ea/ZAY4q2z+hZHdouu8/CVdjXMq+vhrfglTg+0rJz2dsrpqkOgeyUySxgwxSTvxzFDISB+Bs3+tssPllbf96jySxqJNPp0Vb9mi8fdUWBzPrHBVGLR8MONpdOVLFUxIS8OVbKiSOoEBdgpyft5ByNyL6c04/Y1H1y1oM+9gful0Vu1ORtLQZ6+Uc8iv56zl8/v/Yxai9p5n3m1Jvhtm+OS0KQYoCWVFjkdjI/q6RTLiqPfNVUOe0+6EI2LwTxcsO0+8BKW2EKdAdaqtqtPh+l0q43n5FQtdebtAYzAwC3hs8sZ3d8SIP0Avsa4P0iHKJV5OquyoD6i4QJ69w1KkVvQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=iH1FVB40fgckqmepYLcAU2o/Q4Jcd9KQ5V5tF7ADY9k=;
- b=Vy9skTLJ10HP9rjOR9LjXy9RN02dvVtMvFMp2c/uk8FYIHuyVEKqO5ljSij08uQh3h0uC/QtUbqdQCXrRBp4+V092BRN8iehrayDvVXqLNfDh+1OAW3SkLx5cnL4JBOhJmaeFXINzqwRFNsrK9D+gFqsYTQ3ogt2zkc69pHBANghnMsDkCmJISDWtk1pwtD9T92Lep2vria3oZu9YSqQRtXTKeDiBMVWYGFjAvTmeAr8eD29pSzGLcZeAqRVJl6hiV4tKDipni6wdhOiKo7TQhlXaoxmbPzjctSUwvK89huCxCkamsKOEpMoFh0E6ZKoLdU8EYamtCx2XOnxfrOHKg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=iH1FVB40fgckqmepYLcAU2o/Q4Jcd9KQ5V5tF7ADY9k=;
- b=4T/gfwpL+CSXzr2dbh3M9LYRupSEgXn9iPAMgOMYSexQW4klpYDBOxueXsiqr7OHCj/NwaIJHT9Iu3ghTngg2joo80Sxd8kWEg6tTDm1ZQpuChzCor5F9qXBWdhXdeI7Ac0qrQ1/oGUZJBtmFJWkU6k6PPsUkiCw42ndkmmxIeM=
-Received: from MW2PR16CA0033.namprd16.prod.outlook.com (2603:10b6:907::46) by
- PH7PR12MB7795.namprd12.prod.outlook.com (2603:10b6:510:278::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8114.29; Wed, 6 Nov
- 2024 19:20:55 +0000
-Received: from SJ1PEPF000023D0.namprd02.prod.outlook.com
- (2603:10b6:907:0:cafe::da) by MW2PR16CA0033.outlook.office365.com
- (2603:10b6:907::46) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.20 via Frontend
- Transport; Wed, 6 Nov 2024 19:20:54 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- SJ1PEPF000023D0.mail.protection.outlook.com (10.167.244.4) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8137.17 via Frontend Transport; Wed, 6 Nov 2024 19:20:54 +0000
-Received: from [10.23.197.56] (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 6 Nov
- 2024 13:20:51 -0600
-Message-ID: <de5905fe-214d-4740-8b6d-45386efa50ca@amd.com>
-Date: Wed, 6 Nov 2024 11:20:41 -0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FAD120A5DB;
+	Wed,  6 Nov 2024 19:21:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730920869; cv=none; b=GyKyVMP6BLurQ8NJ9AqNzD91IljIEkCASSlCSpDwYYGD8DWg+pxR3/aGjLfnaJlay0VH7TBycp1IVS858t+7RhChkdhhA52nF2MOb0O7lZ+c99fnay0TLt1SSmpxoQuAy9v5DhhpYl0amtbhQ4JT6a8EMpkyseRPYaU6OGdRTHU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730920869; c=relaxed/simple;
+	bh=wIrpR5YAyy3QIoGBaNieENM1Y9tWXgBWCSDzt5zecc4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=gwR6sbshCE3e5u1DOuYu/B3zQHtNIXbfD9QafTOBBQ9xqwS+KqffHI3NTECx3PKiImbHT7rh4n4sj7F2ZbUoajNRtt7fVN4CEFhcDsQtFHZfg1117KKS0h0KDXk0vwrb8F7Qd1cpIVIZ79dB/FiU1WMwGmOBZ/8Tv9MlXRDzjeI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Mge1sD3W; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730920868; x=1762456868;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=wIrpR5YAyy3QIoGBaNieENM1Y9tWXgBWCSDzt5zecc4=;
+  b=Mge1sD3Wl5agFaETz/RBff9SwCGxE6xqULAamoPdmd8qHueoY36Fz5dd
+   qUacvefmvYezGjXegni/YIEqmyVDqAgJ3IjUK2OVHHZFH1jLQGHkYA+Z6
+   mnRx7b2/88meyDQ2tVVVudsKdb8aBuuSH6SHRBZBYigp2oIEoTkCIwpx0
+   INS3dFC+m4xpfDkiOff8t6anNbd9Jqv6aHgo7mTNcVOEy6qz3IVZe8wzg
+   irOaFGZXmUZJrHW/XPkjEvyncJd5TYulAdaSlWZF6BMlE85YLUBD78oZw
+   ef7psSDIVD1awvd8DLCe0GTDokS4bRQerE+S5Xw8o2hSe0EPB+NIzMU4H
+   Q==;
+X-CSE-ConnectionGUID: oblapvTpQZKAWh6ErYBzYQ==
+X-CSE-MsgGUID: bAFk2x0dQZmHgMZR6hLKdQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="41291925"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="41291925"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2024 11:21:07 -0800
+X-CSE-ConnectionGUID: z9GP202VRF2qphOG35jxtQ==
+X-CSE-MsgGUID: jvQYQgdUSzi+k/IX0MxJFQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,263,1725346800"; 
+   d="scan'208";a="88695346"
+Received: from unknown (HELO JF5300-B11A338T.jf.intel.com) ([10.242.51.115])
+  by fmviesa003.fm.intel.com with ESMTP; 06 Nov 2024 11:21:05 -0800
+From: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
+To: linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	hannes@cmpxchg.org,
+	yosryahmed@google.com,
+	nphamcs@gmail.com,
+	chengming.zhou@linux.dev,
+	usamaarif642@gmail.com,
+	ryan.roberts@arm.com,
+	ying.huang@intel.com,
+	21cnbao@gmail.com,
+	akpm@linux-foundation.org,
+	linux-crypto@vger.kernel.org,
+	herbert@gondor.apana.org.au,
+	davem@davemloft.net,
+	clabbe@baylibre.com,
+	ardb@kernel.org,
+	ebiggers@google.com,
+	surenb@google.com,
+	kristen.c.accardi@intel.com,
+	zanussi@kernel.org
+Cc: wajdi.k.feghali@intel.com,
+	vinodh.gopal@intel.com,
+	kanchana.p.sridhar@intel.com
+Subject: [PATCH v3 00/13] zswap IAA compress batching
+Date: Wed,  6 Nov 2024 11:20:52 -0800
+Message-Id: <20241106192105.6731-1-kanchana.p.sridhar@intel.com>
+X-Mailer: git-send-email 2.27.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC 03/14] x86/apic: Populate .read()/.write() callbacks of
- Secure AVIC driver
-To: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>, <linux-kernel@vger.kernel.org>
-CC: <tglx@linutronix.de>, <mingo@redhat.com>, <dave.hansen@linux.intel.com>,
-	<Thomas.Lendacky@amd.com>, <nikunj@amd.com>, <Santosh.Shukla@amd.com>,
-	<Vasant.Hegde@amd.com>, <Suravee.Suthikulpanit@amd.com>, <bp@alien8.de>,
-	<David.Kaplan@amd.com>, <x86@kernel.org>, <hpa@zytor.com>,
-	<peterz@infradead.org>, <seanjc@google.com>, <pbonzini@redhat.com>,
-	<kvm@vger.kernel.org>
-References: <20240913113705.419146-1-Neeraj.Upadhyay@amd.com>
- <20240913113705.419146-4-Neeraj.Upadhyay@amd.com>
-Content-Language: en-US
-From: "Melody (Huibo) Wang" <huibo.wang@amd.com>
-In-Reply-To: <20240913113705.419146-4-Neeraj.Upadhyay@amd.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ1PEPF000023D0:EE_|PH7PR12MB7795:EE_
-X-MS-Office365-Filtering-Correlation-Id: ee9acaaa-a8eb-43c4-4ff0-08dcfe98226d
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|1800799024|36860700013|7416014|82310400026;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?WmpiWmUraytwZ29yaXRLaUN5TEFrSlFuNHZrOVJpNEdjZUVic2RxM3Mzd0tU?=
- =?utf-8?B?S3NGMXJxVGNqdlNwTUkwM1BzWkYvZTJLNVlJaEZnb2lpNEk2TStaSkphcnB0?=
- =?utf-8?B?NVkvWEhYNkpVZmxGYmpGVWFyRkNnZHhBSHVteEErSGdMeDEyT0xKRzFpaXlQ?=
- =?utf-8?B?eGZwZC94VGRIa3RWTDNxOGlJZ3FlMjdLMHc5MmI3VDc3YzRrSWcycnJBK25p?=
- =?utf-8?B?Y0NwNG9zSzNRQkVtYWZVNk1YRWVicXE2a1VIMjlzWjNpWTc0YndMbDFTbTU2?=
- =?utf-8?B?TDhNRHRzamIwRDgrYXdBTStOM01vd3FlL3gzZjdIbi96dmViMFE5T2FpUkM4?=
- =?utf-8?B?RUJObjRJUmpabUFOSzI1WmE4cEo1R0VYVUNUTXlSb251eXJFdVBEM1VoZEY4?=
- =?utf-8?B?STVXNDlsTzdPb1JrUFJiTUtad0dDODBhWmZPdVB6QnQ2MnRrbHE2V0NxMFAr?=
- =?utf-8?B?TnJkREZvYUlqdk9vTk1jWFp4VW40dVNnVzhsZUxnRWxCV2hpYTJJd3BwaitT?=
- =?utf-8?B?OFBGQ1pRSnlMVkFyWTlEclZtZ2xZMG9SZWw3SFNaL0x0VW51amluL25KSCtQ?=
- =?utf-8?B?My9Cd1RGSHZzWUtWdVlwRG10c21lcnhubFMxNmFOYXRvVC9MQVI3N1grTmZT?=
- =?utf-8?B?ZTJYaG5LMitiQ2RsZUcvRGphTTh1L1ViY1JnU3R4UFVmbEFEWm5mM0VVSlVX?=
- =?utf-8?B?ZUJod1laaCs1Y2xDYnVsVDRYRXBOb1JSaWg0TGF1K1ZqZnIvYXkyYWl3N1Uw?=
- =?utf-8?B?WFYyUGU1T1N6TWwwSVN1UFhhelRyM3VSM1BjcXJ1NnA1MEUxQm5zTzcyMWw0?=
- =?utf-8?B?cUVDL3lGUmlXU1luSUxxQ1dmRWlNemxlUC8vcGJ0WjNDTkhQS2QrV3hsK0xJ?=
- =?utf-8?B?Z2lTVEhnVm9vMEdRdzRMWWl0a01xa1VNWHNNTmNYQmFhaWE5MUZuclVvUzFw?=
- =?utf-8?B?YWxGbklub3R6UmkzMTBIR0c2RFpvOTUxaUpzUVB6anhBckF0NS9KMjZNdllJ?=
- =?utf-8?B?U20vbWJwWjFlMXVLTHIxaGErYStYa3R2NGlXMjVVMnlQNG9TYWVNbm1YMGx4?=
- =?utf-8?B?VzZIWTRRVGFOdW93bGU3eW5lWWQ2YTl6UTh0RTlwQmRQVHpNbHkwLzhXUWU5?=
- =?utf-8?B?ZEdpUnUvdDRDb1JhYVJXUDdrZmtnSXluWWlQdHMvaG1GYTk3RDhGT01qc2V6?=
- =?utf-8?B?azZLRS9OSldyNVNJMDQ2Y0QxUkZzaEVNMXBWUVhKMWY5bjVJaVk2c1o1OG93?=
- =?utf-8?B?NmxCMnpyT2xudXY2VHpxSnEzL3NDMkFDdk5reWxvZDZWTSsyYnJwMHRnQ2Iz?=
- =?utf-8?B?YUptMWxzTU55T2ZxZFJsdEZ5V2hQWWdhOE9pdEhISTA1MUJ6SlZQc2ZDOFJm?=
- =?utf-8?B?UlRvMWFCV2xTOTcyQjBuRndoVC9XWjdlMkxSWGQzOW8yUkEzMThqblhaOVRQ?=
- =?utf-8?B?MnVoVFpCS1F5Qld1S3N1cm9rTC96L2ljUGFDMU4ycGMxaU1OUitKYlJCT0VC?=
- =?utf-8?B?QThraFUza2NHS0JsaklScXc0UzAwbzZPdldlSkY0WEd2ZXhTemtpQ2M4YUdG?=
- =?utf-8?B?QlNONVIzc2EvWnpUa3paU3pRakZGUzVHMmFORDdDRnhkcW1PRWl1NEx5V1R5?=
- =?utf-8?B?bTc1bFZkYVJwaC9YdEROQkYzY2pieVo5UjdBMDZMem1GTlRZWkJqdDllU2I2?=
- =?utf-8?B?T1dIdnJZQWdTU0FqT2ZzaFVVVzJheHBFd054SzJzaW1YbXBZSFg3eDkwVlZv?=
- =?utf-8?B?YkY0MzlHa1d3Z3pORjJwNUgxQTFMYlZlZStLRzBKYTRKQlg5cTY3TXZSNGpT?=
- =?utf-8?B?ZkhkWEd1ZmhxY1JaMEFIaVlJM3pmUVV1MGJxSm9kRkJIcjVKM21IL2JkYWYx?=
- =?utf-8?B?eTR4YlFyMVRTR2NVejZTQ1AzWE1pWS9teUZBV2lYTVUzcXc9PQ==?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(1800799024)(36860700013)(7416014)(82310400026);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Nov 2024 19:20:54.3809
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: ee9acaaa-a8eb-43c4-4ff0-08dcfe98226d
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SJ1PEPF000023D0.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB7795
+Content-Transfer-Encoding: 8bit
 
-Hi Neeraj,
 
-On 9/13/2024 4:36 AM, Neeraj Upadhyay wrote:
-> The x2APIC registers are mapped at an offset within the guest APIC
-> backing page which is same as their x2APIC MMIO offset. Secure AVIC
-> adds new registers such as ALLOWED_IRRs (which are at 4-byte offset
-> within the IRR register offset range) and NMI_REQ to the APIC register
-> space. In addition, the APIC_ID register is writable and configured by
-> guest.
-> 
-> Add read() and write() APIC callback functions to read and write x2APIC
-> registers directly from the guest APIC backing page.
-> 
-> The default .read()/.write() callbacks of x2APIC drivers perform
-> a rdmsr/wrmsr of the x2APIC registers. When Secure AVIC is enabled,
-> these would result in #VC exception (for non-accelerated register
-> accesses). The #VC exception handler reads/write the x2APIC register
-> in the guest APIC backing page. Since this would increase the latency
-> of accessing x2APIC registers, the read() and write() callbacks of
-> Secure AVIC driver directly reads/writes to the guest APIC backing page.
-> 
-I think this is important non-obvious information which should be in a comment in the code
-itself, not just in the commit message. 
+IAA Compression Batching:
+=========================
+
+This patch-series introduces the use of the Intel Analytics Accelerator
+(IAA) for parallel compression of pages in large folios.
+
+The patch-series is organized as follows:
+
+ 1) crypto acomp & iaa_crypto driver enablers for batching: Relevant
+    patches are tagged with "crypto:" in the subject:
+
+    Patch 1) New acomp_alg/crypto_acomp batch_compress() and batch_decompress()
+             interfaces, that swap modules can invoke using the new
+             batching API crypto_acomp_batch_compress() and
+             crypto_acomp_batch_decompress().
+    Patch 2) New CRYPTO_ACOMP_REQ_POLL acomp_req flag to act as a gate for
+             async poll mode in iaa_crypto.
+    Patch 3) iaa-crypto driver implementations for async polling,
+             crypto_acomp_batch_compress() and crypto_acomp_batch_decompress().
+    Patch 4) Modifying the default iaa_crypto driver mode to async.
+    Patch 5) Disabling verify_compress by default, to facilitate users to
+             run IAA easily for comparison with software compressors.
+    Patch 6) Changing the cpu-to-iaa mappings to more evenly balance cores
+             to IAA devices.
+    Patch 7) Addition of a "global_wq" per IAA, which can be used as a
+             global resource for compress jobs for the socket. If the user
+             configures 2WQs per IAA device, the driver will distribute
+             compress jobs from all cores on the socket to the "global_wqs"
+             of all the IAA devices on that socket, in a round-robin
+             manner. This can be used to improve compression throughput for
+             workloads that see a lot of swapout activity.
+
+ 2) zswap modifications to enable compress batching in zswap_store() of
+    large folios (including pmd-mappable folios):
+
+    Patch 8) acomp_ctx mutex lock acquire/release once optimizations in
+             zswap_store() and a minor change in releasing the lock in
+             zswap_decompress().
+    Patch 9) Change the "struct crypto_acomp_ctx" to contain a configurable
+             number of acomp_reqs and buffers.
+    Patch 10) Introduce a separate per-cpu "acomp_batch_ctx" member in
+              "struct zswap_pool" to be able to allocate multiple
+              acomp_reqs/buffers for use in batching, as needed, per core.
+    Patch 11) Allocation of the per-cpu "acomp_batch_ctx" for a
+              zswap_pool.
+    Patch 12) Add a new "sysctl vm.compress-batching" 0/1 switch to
+              enable/disable compress batching dynamically at runtime.
+    Patch 13) zswap_store() IAA compress batching implementation with
+              minimal memory footprint cost per-cpu, and using the new
+              crypto_acomp_batch_compress() iaa_crypto driver API.
+
+With the runtime configuration to enable compress batching and the crypto
+batching API added in v2, this feature will be enabled only on Intel
+platforms that have IAA.
+ 
+
+System setup for testing:
+=========================
+Testing of this patch-series was done with mm-unstable as of 10-29-2024,
+commit 9fb8e0a1c486, without and with this patch-series.
+Data was gathered on an Intel Sapphire Rapids server, dual-socket 56 cores
+per socket, 4 IAA devices per socket, 503 GiB RAM and 525G SSD disk
+partition swap. Core frequency was fixed at 2500MHz.
+
+Other kernel configuration parameters:
+
+    zswap compressor  : zstd, deflate-iaa
+    zswap allocator   : zsmalloc
+    vm.page-cluster   : 0, 2
+
+IAA "compression verification" is disabled and IAA is run in the the async
+poll mode (the defaults with this series). 2WQs are configured per IAA
+device. Compress jobs from all cores on a socket are distributed among all
+4 IAA devices on the same socket.
+
+I ran experiments with these workloads:
+
+1) usemem 30 processes with these large folios enabled to "always":
+   - 16k/32k/64k
+   - 2048k
+
+2) Kernel compilation allmodconfig with 2G max memory, run in tmpfs with
+   these large folios enabled to "always":
+   - 16k/32k/64k
+
+
+Performance testing (usemem30):
+===============================
+The vm-scalability "usemem" test was run in a cgroup whose memory.high
+was fixed at 150G. The is no swap limit set for the cgroup. 30 usemem
+processes were run, each allocating and writing 10G of memory, and sleeping
+for 10 sec before exiting:
+
+usemem --init-time -w -O -s 10 -n 30 10g
+
+
+ 16k/32/64k folios: usemem30/deflate-iaa:
+ ========================================
+
+ -------------------------------------------------------------------------------
+                     mm-unstable-10-29-2024             v2 of this patch-series
+ -------------------------------------------------------------------------------
+ zswap compressor               deflate-iaa        deflate-iaa      deflate-iaa      
+ vm.compress-batching                   n/a                  0                1
+ vm.page-cluster                          2                  2                2
+ -------------------------------------------------------------------------------
+ Total throughput (KB/s)          7,756,632          7,753,984        8,075,817 
+ Avg throughput (KB/s)              258,554            258,466          269,193 
+ elapsed time (sec)                   87.75              88.71            85.82 
+ sys time (sec)                    2,073.04           2,147.47         2,030.52 
+                                                                               
+ -------------------------------------------------------------------------------
+ memcg_high                         715,854            714,238          720,459
+ memcg_swap_fail                      1,194              1,175            1,250
+ zswpout                         64,510,869         64,510,832       64,511,219
+ zswpin                                 458                456              450
+ pswpout                                  0                  0                0
+ pswpin                                   0                  0                0
+ thp_swpout                               0                  0                0
+ thp_swpout_fallback                      0                  0                0
+ 16kB-mthp_swpout_fallback                0                  0                0                                          
+ 32kB-mthp_swpout_fallback                0                  0                0
+ 64kB-mthp_swpout_fallback            1,194              1,175            1,250
+ pgmajfault                           3,183              3,513            3,116
+ swap_ra                                108                125              116
+ swap_ra_hit                             45                 65               43
+ ZSWPOUT-16kB                             2                  3                3
+ ZSWPOUT-32kB                             1                  1                2
+ ZSWPOUT-64kB                     4,030,658          4,030,672        4,030,624
+ SWPOUT-16kB                              0                  0                0
+ SWPOUT-32kB                              0                  0                0
+ SWPOUT-64kB                              0                  0                0
+ -------------------------------------------------------------------------------
+
+
+ 16k/32/64k folios: usemem30/zstd:
+ =================================
+
+ -------------------------------------------------------------------------------
+                     mm-unstable-10-29-2024        v2 of this patch-series
+ -------------------------------------------------------------------------------
+ zswap compressor                      zstd                  zstd
+ vm.compress-batching                   n/a                     0 
+ vm.page-cluster                          2                     2
+ -----------------------------------------------------------------------------
+ Total throughput (KB/s)          6,054,147             6,109,360 
+ Avg throughput (KB/s)              201,804               203,645 
+ elapsed time (sec)                  111.66                111.72 
+ sys time (sec)                    2,693.21              2,685.27 
+                                                                 
+ -----------------------------------------------------------------------------
+ memcg_high                         489,133               480,524
+ memcg_swap_fail                      1,045                 1,308
+ zswpout                         48,931,716            48,931,540
+ zswpin                                 407                   394
+ pswpout                                  0                     0
+ pswpin                                   0                     0
+ thp_swpout                               0                     0
+ thp_swpout_fallback                      0                     0
+ 16kB-mthp_swpout_fallback                0                     0                                        
+ 32kB-mthp_swpout_fallback                0                     0
+ 64kB-mthp_swpout_fallback            1,045                 1,308
+ pgmajfault                           3,095                 3,424
+ swap_ra                                136                   101
+ swap_ra_hit                             86                    50
+ ZSWPOUT-16kB                             2                     4
+ ZSWPOUT-32kB                             0                     2
+ ZSWPOUT-64kB                     3,057,161             3,056,927
+ SWPOUT-16kB                              0                     0
+ SWPOUT-32kB                              0                     0
+ SWPOUT-64kB                              0                     0
+ -----------------------------------------------------------------------------
+
+
+ 2M folios: usemem30/deflate-iaa:
+ ================================
+
+ -------------------------------------------------------------------------------
+                     mm-unstable-10-29-2024             v2 of this patch-series
+ -------------------------------------------------------------------------------
+ zswap compressor               deflate-iaa        deflate-iaa      deflate-iaa      
+ vm.compress-batching                   n/a                  0                1
+ vm.page-cluster                          2                  2                2
+ -------------------------------------------------------------------------------
+ Total throughput (KB/s)          7,948,345          8,096,440        8,165,171 
+ Avg throughput (KB/s)              264,944            269,881          272,172 
+ elapsed time (sec)                   88.18              87.13            87.30 
+ sys time (sec)                    2,067.56           2,018.08         2,046.79 
+                                                                               
+ -------------------------------------------------------------------------------
+ memcg_high                          91,002             87,243           92,084
+ memcg_swap_fail                         39                 56               54
+ zswpout                         64,518,833         64,520,439       64,520,116
+ zswpin                                 413                452              504
+ pswpout                                  0                  0                0
+ pswpin                                   0                  0                0
+ thp_swpout                               0                  0                0
+ thp_swpout_fallback                     39                 56               54
+ 2048kB-mthp_swpout_fallback             39                 56               54                                          
+ pgmajfault                          10,946             15,737            9,645
+ swap_ra                             23,456             36,495           19,247
+ swap_ra_hit                         23,406             36,431           19,193
+ ZSWPOUT-2048kB                     125,915            125,913          125,912
+ SWPOUT-2048kB                            0                  0                0
+ -------------------------------------------------------------------------------
+
+
+ 2M folios: usemem30/zstd:
+ =========================
+
+ -------------------------------------------------------------------------------
+                     mm-unstable-10-29-2024        v2 of this patch-series
+ -------------------------------------------------------------------------------
+ zswap compressor                      zstd                  zstd
+ vm.compress-batching                   n/a                     0 
+ vm.page-cluster                          2                     2
+ -----------------------------------------------------------------------------
+ Total throughput (KB/s)          6,300,116             6,278,179 
+ Avg throughput (KB/s)              210,003               209,272 
+ elapsed time (sec)                  110.21                111.72 
+ sys time (sec)                    2,504.45              2,542.59 
+                                                                 
+ -----------------------------------------------------------------------------
+ memcg_high                          57,036                60,090
+ memcg_swap_fail                         61                    50
+ zswpout                         48,934,256            48,904,582
+ zswpin                                 387                   380
+ pswpout                                  0                     0
+ pswpin                                   0                     0
+ thp_swpout                               0                     0
+ thp_swpout_fallback                     61                    50
+ 2048kB-mthp_swpout_fallback             61                    50
+ pgmajfault                           3,713                 6,146
+ swap_ra                              2,004                 8,133
+ swap_ra_hit                          1,960                 8,088
+ ZSWPOUT-2048kB                      95,511                95,460
+ SWPOUT-2048kB                            0                     0
+ -----------------------------------------------------------------------------
+
+
+Performance testing (Kernel compilation, allmodconfig):
+=======================================================
+
+The experiments with kernel compilation test in tmpfs use the
+"allmodconfig" that takes ~12 minutes, and has considerable swapout
+activity. The cgroup's memory.max is set to 2G.
+
+
+ 16k/32k/64k folios: Kernel compilation/allmodconfig/deflate-iaa:
+ ================================================================
+
+ -------------------------------------------------------------------------------
+                     mm-unstable-10-29-2024             v2 of this patch-series
+ -------------------------------------------------------------------------------
+ zswap compressor               deflate-iaa        deflate-iaa      deflate-iaa      
+ vm.compress-batching                   n/a                  0                1
+ vm.page-cluster                          0                  0                0
+ -------------------------------------------------------------------------------
+ real_sec                            801.25            790.87            768.92
+ user_sec                         15,776.31         15,755.97         15,753.89
+ sys_sec                           4,250.34          3,877.02          3,892.17
+ Max_Res_Set_Size_KB              1,869,428         1,873,376         1,871,600
+                                                                                          
+ -------------------------------------------------------------------------------
+ memcg_high                               0                 0                 0
+ memcg_swap_fail                          0                 0                 0
+ zswpout                        106,798,327       105,469,307       104,528,841
+ zswpin                          31,542,093        30,469,671        30,596,840
+ pswpout                                774               290                80
+ pswpin                                 370               288                59
+ thp_swpout                               0                 0                 0
+ thp_swpout_fallback                      0                 0                 0
+ 16kB-mthp_swpout_fallback                0                 0                 0                                          
+ 32kB-mthp_swpout_fallback                0                 0                 0
+ 64kB-mthp_swpout_fallback           16,340            12,633            12,000
+ pgmajfault                      33,983,602        32,783,214        32,731,862
+ swap_ra                                  0                 0                 0
+ swap_ra_hit                          1,467             5,112             3,854
+ ZSWPOUT-16kB                     1,475,121         1,435,571         1,426,738
+ ZSWPOUT-32kB                       821,119           813,202           790,658
+ ZSWPOUT-64kB                     3,483,295         3,490,244         3,435,056
+ SWPOUT-16kB                              1                 0                 0
+ SWPOUT-32kB                              3                 0                 0
+ SWPOUT-64kB                             40                18                 4
+ -------------------------------------------------------------------------------
+
+
+ 16k/32k/64k folios: Kernel compilation/allmodconfig/zstd:
+ =========================================================
+
+ -------------------------------------------------------------------------------
+                   mm-unstable-10-29-2024       v2 of this patch-series
+ -------------------------------------------------------------------------------
+ zswap compressor                    zstd                   zstd
+ vm.compress-batching                 n/a                      0
+ vm.page-cluster                        0                      0
+ -------------------------------------------------------------------------------
+ real_sec                          812.38                 800.09  
+ user_sec                       15,774.12              15,771.02
+ sys_sec                         5,283.64               5,257.05
+ Max_Res_Set_Size_KB            1,872,688              1,873,444
+                                                                
+ -------------------------------------------------------------------------------
+ memcg_high                             0                      0
+ memcg_swap_fail                        0                      0
+ zswpout                       91,540,018             90,338,507
+ zswpin                        26,421,271             26,485,837
+ pswpout                               64                    144
+ pswpin                                64                    114
+ thp_swpout                             0                      0
+ thp_swpout_fallback                    0                      0
+ 16kB-mthp_swpout_fallback              0                      0                         
+ 32kB-mthp_swpout_fallback              0                      0
+ 64kB-mthp_swpout_fallback          4,509                    566
+ pgmajfault                    28,341,722             28,427,509
+ swap_ra                                0                      0
+ swap_ra_hit                        3,359                  2,931
+ ZSWPOUT-16kB                   1,287,206              1,266,947
+ ZSWPOUT-32kB                     707,746                700,270
+ ZSWPOUT-64kB                   2,985,002              2,940,288
+ SWPOUT-16kB                            0                      0
+ SWPOUT-32kB                            0                      0
+ SWPOUT-64kB                            4                      9
+ -------------------------------------------------------------------------------
+
+
+Summary:
+========
+The performance testing data with usemem 30 processes and kernel
+compilation test show throughput gains and elapsed/sys time reduction with
+zswap_store() large folios using IAA compress batching.
+
+The iaa_crypto wq stats will show almost the same number of compress calls
+for wq.1 of all IAA devices. wq.0 will handle decompress calls exclusively.
+We see a latency reduction of 2.5% by distributing compress jobs among all
+IAA devices on the socket (based on v1 data).
+
+We can expect to see even more significant performance and throughput
+improvements if we use the parallelism offered by IAA to batch compress the
+pages comprising a batch of 4K (really any-order) folios, not just batching
+within large folios. This is the reclaim batching patch 13 in v1,
+which will be submitted in a separate patch-series.
+
+Our internal validation of IAA compress/decompress batching in highly
+contended Sapphire Rapids server setups with workloads running on 72 cores
+for ~25 minutes under stringent memory limit constraints have shown up to
+50% reduction in sys time and 3.5% reduction in workload run time as
+compared to software compressors.
+
+
+Changes since v2:
+=================
+1) Rebased to mm-unstable as of 11-5-2024, commit 7994b7ea6ac8.
+2) Fixed an issue in zswap_create_acomp_ctx() with checking for NULL
+   returned by kmalloc_node() for acomp_ctx->buffers and for
+   acomp_ctx->reqs.
+3) Fixed a bug in zswap_pool_can_batch() for returning true if
+   pool->can_batch_comp is found to be equal to BATCH_COMP_ENABLED, and if
+   the per-cpu acomp_batch_ctx tests true for batching resources having
+   been allocated on this cpu. Also, changed from per_cpu_ptr() to
+   raw_cpu_ptr().
+4) Incorporated the zswap_store_propagate_errors() compilation warning fix
+   suggested by Dan Carpenter. Thanks Dan!
+5) Replaced the references to SWAP_CRYPTO_SUB_BATCH_SIZE in comments in
+   zswap.h, with SWAP_CRYPTO_BATCH_SIZE.
+
+Changes since v1:
+=================
+1) Rebased to mm-unstable as of 11-1-2024, commit 5c4cf96cd702.
+2) Incorporated Herbert's suggestions to use an acomp_req flag to indicate
+   async/poll mode, and to encapsulate the polling functionality in the
+   iaa_crypto driver. Thanks Herbert!
+3) Incorporated Herbert's and Yosry's suggestions to implement the batching
+   API in iaa_crypto and to make its use seamless from zswap's
+   perspective. Thanks Herbert and Yosry!
+4) Incorporated Yosry's suggestion to make it more convenient for the user
+   to enable compress batching, while minimizing the memory footprint
+   cost. Thanks Yosry!
+5) Incorporated Yosry's suggestion to de-couple the shrink_folio_list()
+   reclaim batching patch from this series, since it requires a broader
+   discussion.
+
+
+Requesting the maintainers & reviewers to kindly review v3 of this
+patch-series instead of v2.
+
+I would greatly appreciate code review comments for the iaa_crypto driver
+and mm patches included in this series!
 
 Thanks,
-Melody
+Kanchana
+
+
+
+Kanchana P Sridhar (13):
+  crypto: acomp - Define two new interfaces for compress/decompress
+    batching.
+  crypto: iaa - Add an acomp_req flag CRYPTO_ACOMP_REQ_POLL to enable
+    async mode.
+  crypto: iaa - Implement compress/decompress batching API in
+    iaa_crypto.
+  crypto: iaa - Make async mode the default.
+  crypto: iaa - Disable iaa_verify_compress by default.
+  crypto: iaa - Change cpu-to-iaa mappings to evenly balance cores to
+    IAAs.
+  crypto: iaa - Distribute compress jobs to all IAA devices on a NUMA
+    node.
+  mm: zswap: acomp_ctx mutex lock/unlock optimizations.
+  mm: zswap: Modify struct crypto_acomp_ctx to be configurable in nr of
+    acomp_reqs.
+  mm: zswap: Add a per-cpu "acomp_batch_ctx" to struct zswap_pool.
+  mm: zswap: Allocate acomp_batch_ctx resources for a given zswap_pool.
+  mm: Add sysctl vm.compress-batching switch for compress batching
+    during swapout.
+  mm: zswap: Compress batching with Intel IAA in zswap_store() of large
+    folios.
+
+ crypto/acompress.c                         |   2 +
+ drivers/crypto/intel/iaa/iaa_crypto_main.c | 717 +++++++++++++++--
+ include/crypto/acompress.h                 |  87 +++
+ include/crypto/internal/acompress.h        |  16 +
+ include/linux/mm.h                         |   2 +
+ include/linux/zswap.h                      |  91 +++
+ kernel/sysctl.c                            |   9 +
+ mm/swap.c                                  |   6 +
+ mm/zswap.c                                 | 865 +++++++++++++++++++--
+ 9 files changed, 1701 insertions(+), 94 deletions(-)
+
+
+base-commit: 7994b7ea6ac880efd0c38fedfbffd5ab8b1b7b2b
+-- 
+2.27.0
+
 
