@@ -1,131 +1,129 @@
-Return-Path: <linux-kernel+bounces-398579-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-398581-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 120A19BF316
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 17:19:30 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E2399BF31C
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 17:22:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A5CEC1F225BE
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 16:19:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3E0561C20F09
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 16:22:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4739204926;
-	Wed,  6 Nov 2024 16:19:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08D1F204926;
+	Wed,  6 Nov 2024 16:21:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="XN9UEv20"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="cU5QPBMw";
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="cU5QPBMw"
+Received: from bedivere.hansenpartnership.com (bedivere.hansenpartnership.com [96.44.175.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 487401E04AC;
-	Wed,  6 Nov 2024 16:19:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21A6C18B48B;
+	Wed,  6 Nov 2024 16:21:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.44.175.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730909961; cv=none; b=pe6mRKVUY6i1volxurdZulKaWjcvh4PPT47pxVUI4HKdC+Dv/gEeiV1WVRWCRoQTk9fLW9SCbhoUb+iYO3GxI8tij4jJMMNvZIPCjRfHpB0wiGPvB1Cpc02L8aQ2xIuRG2VCslQyOLkv0RKe/qXPADHNmuEy8T6KpFBhYzxpEVo=
+	t=1730910114; cv=none; b=QYIOo+22NVbuBpmf3zj7WB9xYsHSItVeIjuftpNcWsvuoINLI1GIF4Ikq/ZnGHXURXVdUBDpYMV4iQKgWKdfTcoyNNeN1NdgUt79VAEXR/o2CTCLrZbQYFXJsPNaM3B0OoiiODfJxGy87BL3+++ExQDCpmvRBalcM6AgfI5NvgY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730909961; c=relaxed/simple;
-	bh=lf4KBp9perbI55+A88ydAA2j217WM3Kc13Bf8ITCs+k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=G07E8kM0Y4FeLnMkKg/7C4BCRm6VHUAtxCDA5YvT1t0dUFqxyTy3I1A81swCop3yiVn8U/XfNBJ5YiFy5F5x6Jqm997K8atYpS1iqSA1r9w9UHeMXNkm8D1GZzXI+ozWJa6SH8/By8XPNkv2MhW42iJW0vLpYtdPPXWOvosr5lw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=XN9UEv20; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=iRksn2dUlyxiQY8SsSzJ+k2N22EHq4iZeBjynZBsjnQ=; b=XN9UEv20YjYFCljP87EAFs6m7W
-	IHXMmKKdxArReUb359DJLKSM4vEoyXzl7VtO0bRnoCDrG+6VZ/h9acwsCFwrncYruVE3q+p8Gthna
-	6cuOCIJA5v+S8QPUvRpIyuIwBsDH551uD2D8CFqR8QDFEo3M1aMwkFbyw8CBLw7jvUHM=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1t8ikJ-00CMAP-55; Wed, 06 Nov 2024 17:19:03 +0100
-Date: Wed, 6 Nov 2024 17:19:03 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Christian Marangi <ansuelsmth@gmail.com>
-Cc: Florian Fainelli <f.fainelli@gmail.com>,
-	Vladimir Oltean <olteanv@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	upstream@airoha.com
-Subject: Re: [net-next PATCH v3 3/3] net: phy: Add Airoha AN8855 Internal
- Switch Gigabit PHY
-Message-ID: <8e5fd144-2325-43ff-b2b8-92d7f5910392@lunn.ch>
-References: <20241106122254.13228-1-ansuelsmth@gmail.com>
- <20241106122254.13228-4-ansuelsmth@gmail.com>
+	s=arc-20240116; t=1730910114; c=relaxed/simple;
+	bh=HQshn+aokYOzX2PpyF6fG/q8hoNYMwDs17z7ySDbn+I=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=WR7UddHej7salTGlIg8jbpnTWmuSII7HMPv3wH67542/7f8zzmHGppscyQhmaBEauUrmfyAp/jHYbxvXAxtGtK4lTPt/AY6nKlhlFLoqZJg1BJwjXHSvAWWAp/tPOW/RJVeu9sqWCGt9f8KV6CPhMrVE+UwuZk/oOz5GCIxGk2Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=cU5QPBMw; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=cU5QPBMw; arc=none smtp.client-ip=96.44.175.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=hansenpartnership.com; s=20151216; t=1730910110;
+	bh=HQshn+aokYOzX2PpyF6fG/q8hoNYMwDs17z7ySDbn+I=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+	b=cU5QPBMw0ZGmjN/yoxh7HPiQzwCj5iIh2GWiCibNLbuDqXnHEbBP++cZJh7NLQfaj
+	 2PUWA5eoBUff5V46dVuBXE95G365AUDvoAZnZVg5H/qcj9KGyuc98nbud5cU/mVIAv
+	 MH/4GJURB9MmQTZvIS+yvvfXyqRGdDcyU1T1aLbQ=
+Received: from localhost (localhost [127.0.0.1])
+	by bedivere.hansenpartnership.com (Postfix) with ESMTP id 9A9AF1286919;
+	Wed, 06 Nov 2024 11:21:50 -0500 (EST)
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+ by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavis, port 10024)
+ with ESMTP id cgtYq2N-FNZZ; Wed,  6 Nov 2024 11:21:50 -0500 (EST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=hansenpartnership.com; s=20151216; t=1730910110;
+	bh=HQshn+aokYOzX2PpyF6fG/q8hoNYMwDs17z7ySDbn+I=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+	b=cU5QPBMw0ZGmjN/yoxh7HPiQzwCj5iIh2GWiCibNLbuDqXnHEbBP++cZJh7NLQfaj
+	 2PUWA5eoBUff5V46dVuBXE95G365AUDvoAZnZVg5H/qcj9KGyuc98nbud5cU/mVIAv
+	 MH/4GJURB9MmQTZvIS+yvvfXyqRGdDcyU1T1aLbQ=
+Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::a774])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits))
+	(Client did not present a certificate)
+	by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id EE24A1286912;
+	Wed, 06 Nov 2024 11:21:46 -0500 (EST)
+Message-ID: <9e9e54cdd4905b58470f674aefcfd4dabca4108d.camel@HansenPartnership.com>
+Subject: Re: [PATCH 6.6 00/28] fix CVE-2024-46701
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+To: Chuck Lever III <chuck.lever@oracle.com>, Yu Kuai
+ <yukuai1@huaweicloud.com>
+Cc: Greg KH <gregkh@linuxfoundation.org>, linux-stable
+ <stable@vger.kernel.org>,  "harry.wentland@amd.com"
+ <harry.wentland@amd.com>, "sunpeng.li@amd.com" <sunpeng.li@amd.com>, 
+ "Rodrigo.Siqueira@amd.com" <Rodrigo.Siqueira@amd.com>,
+ "alexander.deucher@amd.com" <alexander.deucher@amd.com>,
+ "christian.koenig@amd.com" <christian.koenig@amd.com>, "Xinhui.Pan@amd.com"
+ <Xinhui.Pan@amd.com>,  "airlied@gmail.com" <airlied@gmail.com>, Daniel
+ Vetter <daniel@ffwll.ch>, Al Viro <viro@zeniv.linux.org.uk>, Christian
+ Brauner <brauner@kernel.org>, Liam Howlett <liam.howlett@oracle.com>,
+ Andrew Morton <akpm@linux-foundation.org>, Hugh Dickins <hughd@google.com>,
+ "Matthew Wilcox (Oracle)" <willy@infradead.org>, Sasha Levin
+ <sashal@kernel.org>, "srinivasan.shanmugam@amd.com"
+ <srinivasan.shanmugam@amd.com>, "chiahsuan.chung@amd.com"
+ <chiahsuan.chung@amd.com>, "mingo@kernel.org" <mingo@kernel.org>, 
+ "mgorman@techsingularity.net" <mgorman@techsingularity.net>,
+ "yukuai3@huawei.com" <yukuai3@huawei.com>,  "chengming.zhou@linux.dev"
+ <chengming.zhou@linux.dev>, "zhangpeng.00@bytedance.com"
+ <zhangpeng.00@bytedance.com>, "amd-gfx@lists.freedesktop.org"
+ <amd-gfx@lists.freedesktop.org>, "dri-devel@lists.freedesktop.org"
+ <dri-devel@lists.freedesktop.org>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux FS Devel
+ <linux-fsdevel@vger.kernel.org>,  "maple-tree@lists.infradead.org"
+ <maple-tree@lists.infradead.org>, linux-mm <linux-mm@kvack.org>, 
+ "yi.zhang@huawei.com" <yi.zhang@huawei.com>, yangerkun
+ <yangerkun@huawei.com>
+Date: Wed, 06 Nov 2024 11:21:45 -0500
+In-Reply-To: <7AB98056-93CC-4DE5-AD42-49BA582D3BEF@oracle.com>
+References: <20241024132009.2267260-1-yukuai1@huaweicloud.com>
+	 <2024110625-earwig-deport-d050@gregkh>
+	 <7AB98056-93CC-4DE5-AD42-49BA582D3BEF@oracle.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.42.4 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241106122254.13228-4-ansuelsmth@gmail.com>
+Content-Transfer-Encoding: 7bit
 
-> +static const u8 dsa_r50ohm_table[] = {
-> +	127, 127, 127, 127, 127, 127, 127, 127, 127, 127,
-> +	127, 127, 127, 127, 127, 127, 127, 126, 122, 117,
-> +	112, 109, 104, 101,  97,  94,  90,  88,  84,  80,
-> +	78,  74,  72,  68,  66,  64,  61,  58,  56,  53,
-> +	51,  48,  47,  44,  42,  40,  38,  36,  34,  32,
-> +	31,  28,  27,  24,  24,  22,  20,  18,  16,  16,
-> +	14,  12,  11,   9
-> +};
-> +
-> +static int en8855_get_r50ohm_val(struct device *dev, const char *calib_name,
-> +				 u8 *dest)
-> +{
-> +	u32 shift_sel, val;
-> +	int ret;
-> +	int i;
-> +
-> +	ret = nvmem_cell_read_u32(dev, calib_name, &val);
-> +	if (ret)
-> +		return ret;
-> +
-> +	shift_sel = FIELD_GET(AN8855_SWITCH_EFUSE_R50O, val);
-> +	for (i = 0; i < ARRAY_SIZE(dsa_r50ohm_table); i++)
-> +		if (dsa_r50ohm_table[i] == shift_sel)
-> +			break;
+On Wed, 2024-11-06 at 15:19 +0000, Chuck Lever III wrote:
+> This is the first I've heard of this CVE. It
+> would help if the patch authors got some
+> notification when these are filed.
 
-Is an exact match expected? Should this be >= so the nearest match is
-found?
+Greg did it; it came from the kernel CNA:
 
-> +
-> +	if (i < 8 || i >= ARRAY_SIZE(dsa_r50ohm_table))
-> +		*dest = dsa_r50ohm_table[25];
-> +	else
-> +		*dest = dsa_r50ohm_table[i - 8];
-> +
-> +	return 0;
-> +}
-> +
-> +static int an8855_probe(struct phy_device *phydev)
-> +{
-> +	struct device *dev = &phydev->mdio.dev;
-> +	struct device_node *node = dev->of_node;
-> +	struct air_an8855_priv *priv;
-> +	int ret;
-> +
-> +	/* If we don't have a node, skip get calib */
-> +	if (!node)
-> +		return 0;
+https://www.cve.org/CVERecord?id=CVE-2024-46701
 
-phydev->priv will be a NULL pointer, causing problems in
-an8855_config_init()
+The way it seems to work is that this is simply a wrapper for the
+upstream commit:
 
-	Andrew
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=64a7ce76fb901bf9f9c36cf5d681328fc0fd4b5a
+
+Which is what appears as the last stable reference.  I assume someone
+investigated and added the vulnerable kernel details.  I think the
+theory is that since you reviewed the original upstream patch, stable
+just takes care of the backports and CVE management of the existing fix
+through the normal stable process.
+
+James
+ 
+
+
 
