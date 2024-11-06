@@ -1,141 +1,217 @@
-Return-Path: <linux-kernel+bounces-397814-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397815-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4477D9BE0F5
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 09:30:11 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFE7F9BE0FF
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 09:32:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F12D11F218B4
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 08:30:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E40A51C21290
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 08:32:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77B9E1D435F;
-	Wed,  6 Nov 2024 08:29:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AB861D435F;
+	Wed,  6 Nov 2024 08:32:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="JEGbDi7b"
-Received: from out-187.mta0.migadu.com (out-187.mta0.migadu.com [91.218.175.187])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dwUURdBV"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D8BA1D31BE
-	for <linux-kernel@vger.kernel.org>; Wed,  6 Nov 2024 08:29:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2C3210F2;
+	Wed,  6 Nov 2024 08:32:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730881766; cv=none; b=IGs2M241ifXVhGhq5xOzgyLgk/nCmss1kHinLhwrA9OVUur5OQQeSKlj+oJ9gZLXJqvZSTgk05glvmd/LcLr//MAEdJm+5YqtCxpe6rgHTJDo9XYW+MQtvGRzz/XMzEzyVagXOT1gNEExR+JPl3uOvXKIELwd3Lr9Zfqzw5gCRk=
+	t=1730881966; cv=none; b=P8zMeKqLj34uHS1CxnV7Sl7N/mdzbjiim5pVnSGZkEyBvgWOQ2lrcTQvZMy+VPlsg7zCuqqeCflB2Rl0k9OuMs8XTzcIGe3JRJJ/0S2+Y8JzEfhYB13z1HJam3edUdI4//x3k4HhYJbpwdb2xHVZWjVwDwi+Hu7NP0mlAPCsmnE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730881766; c=relaxed/simple;
-	bh=dFAyRipysVrCgOj8DXzwHoyujxvKsoICM3nwPjVcmqI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=qejJUl5XBN5IphdO7aabBv/bkxg0obPHHf1yAKOgPSUs/nhOrlxs7nvlV/I9yiZZGsLLSjyznt717WBthmym5hzc+b0scdSlefqfU7yFO+9XZ3Bg8UaiOwVuG+hk9u2RUFVutA8BqzW+Fn4A8nZlGQt1dh1DJdic5Ihp/13w6+E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=JEGbDi7b; arc=none smtp.client-ip=91.218.175.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1730881759;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=J0MmFoNY0AUSMi5mGDKglkbROXPa2f8IVFEWY6n5zbw=;
-	b=JEGbDi7bsOHGQcm+XGK35sJWvbTdtJYeyf7ctyYqm9NdQPkTlFhewTGQbi7VzFTPvXbLV0
-	FsRCdes73e70GrOyLMUSGU3+PVfoTBs5nnmMlRsnoErKIUOg4DFF3T9Q2USqOjwOyIf04q
-	S9cL1p3i2sksZbidWKZsUNZFXDf+nrM=
-From: Hao Ge <hao.ge@linux.dev>
-To: jack@suse.cz,
-	sandeen@redhat.com
-Cc: linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Hao Ge <gehao@kylinos.cn>
-Subject: [PATCH] isofs: avoid memory leak in iocharset
-Date: Wed,  6 Nov 2024 16:28:41 +0800
-Message-Id: <20241106082841.51773-1-hao.ge@linux.dev>
+	s=arc-20240116; t=1730881966; c=relaxed/simple;
+	bh=Cs/WodRVZmIX/VI2JdODdxjoBOobCQ65AmVv2eKfwAA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UHs8RXx6kWwQn/OTkJhw8eMkizTZDGPX3DUiPdXOHTyTjHYsFioH75hNTz/+zh3Vb3nEPZZqD2qThpEb3dNiEpBtuIArKyyLOhBjSsAdXp5nzpEdsrXLt38nu830zO4QPQp9ulVa2g36XSIkfK6aVU6y1Ogqroog+laQ23WwZX4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dwUURdBV; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730881965; x=1762417965;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=Cs/WodRVZmIX/VI2JdODdxjoBOobCQ65AmVv2eKfwAA=;
+  b=dwUURdBVCI2+Yv36CF6vstRUZ4y1EPfnHnds4PyHCA0S6jLA11wN1R6z
+   EfgT18zXjeKpzjhwtdiciwle0Ec7l7IU8lTDQKTWIoNp9h/pWnYvZHK3Q
+   6ncyln1rLSI16W7wHixJ5sUcbVc9sSGiU0kWtfVwyzbn5/p0Q0ySyt+pO
+   8BBeniMDlH3xsWmX+Qb2QbATdYNG3PEXTfcfqxAK3iIAhRLH2MRv4ksS1
+   oHPEvAUgD5G/veYpoK6KeIaUBrLkxDBA76Dps+16jt8Fw0i3eGN9CC2NH
+   iBEpSlsp31WfTcqj0Ip8xzf78KCQdh80FydmhTYGLWPHNbSSxRU99ZSvF
+   A==;
+X-CSE-ConnectionGUID: 5vCY+9/+RXGS4ohTbTI7tw==
+X-CSE-MsgGUID: XQefZObvS8moZXdTKUDXKQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11247"; a="42048792"
+X-IronPort-AV: E=Sophos;i="6.11,262,1725346800"; 
+   d="scan'208";a="42048792"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2024 00:32:38 -0800
+X-CSE-ConnectionGUID: yTyKz2cfSNO2ywyt9X/EFQ==
+X-CSE-MsgGUID: 6eGHPVTWRD6hoA44792b1g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,262,1725346800"; 
+   d="scan'208";a="121917951"
+Received: from unknown (HELO [10.238.12.149]) ([10.238.12.149])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2024 00:32:35 -0800
+Message-ID: <cef7b663-bc6d-44a1-9d5e-736aa097ea68@linux.intel.com>
+Date: Wed, 6 Nov 2024 16:32:33 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/2] KVM: x86: Check hypercall's exit to userspace
+ generically
+To: "Huang, Kai" <kai.huang@intel.com>, "seanjc@google.com"
+ <seanjc@google.com>
+Cc: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
+ "Li, Xiaoyao" <xiaoyao.li@intel.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+ "pbonzini@redhat.com" <pbonzini@redhat.com>,
+ "Yamahata, Isaku" <isaku.yamahata@intel.com>,
+ "yuan.yao@linux.intel.com" <yuan.yao@linux.intel.com>
+References: <20240826022255.361406-1-binbin.wu@linux.intel.com>
+ <20240826022255.361406-2-binbin.wu@linux.intel.com>
+ <ZyKbxTWBZUdqRvca@google.com>
+ <3f158732a66829faaeb527a94b8df78d6173befa.camel@intel.com>
+ <ZyLWMGcgj76YizSw@google.com>
+ <1cace497215b025ed8b5f7815bdeb23382ecad32.camel@intel.com>
+ <ZyUEMLoy6U3L4E8v@google.com>
+ <f95cd8c6-af5c-4d8f-99a8-16d0ec56d9a4@linux.intel.com>
+ <95c92ff265cfa48f5459009d48a161e5cbe7ab3d.camel@intel.com>
+ <ZymDgtd3VquVwsn_@google.com>
+ <662b4aa037bfd5e8f3653a833b460f18636e2bc1.camel@intel.com>
+Content-Language: en-US
+From: Binbin Wu <binbin.wu@linux.intel.com>
+In-Reply-To: <662b4aa037bfd5e8f3653a833b460f18636e2bc1.camel@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: Hao Ge <gehao@kylinos.cn>
 
-A memleak was found as below:
 
-unreferenced object 0xffff0000d10164d8 (size 8):
-  comm "pool-udisksd", pid 108217, jiffies 4295408555
-  hex dump (first 8 bytes):
-    75 74 66 38 00 cc cc cc                          utf8....
-  backtrace (crc de430d31):
-    [<ffff800081046e6c>] kmemleak_alloc+0xb8/0xc8
-    [<ffff8000803e6c3c>] __kmalloc_node_track_caller_noprof+0x380/0x474
-    [<ffff800080363b74>] kstrdup+0x70/0xfc
-    [<ffff80007bb3c6a4>] isofs_parse_param+0x228/0x2c0 [isofs]
-    [<ffff8000804d7f68>] vfs_parse_fs_param+0xf4/0x164
-    [<ffff8000804d8064>] vfs_parse_fs_string+0x8c/0xd4
-    [<ffff8000804d815c>] vfs_parse_monolithic_sep+0xb0/0xfc
-    [<ffff8000804d81d8>] generic_parse_monolithic+0x30/0x3c
-    [<ffff8000804d8bfc>] parse_monolithic_mount_data+0x40/0x4c
-    [<ffff8000804b6a64>] path_mount+0x6c4/0x9ec
-    [<ffff8000804b6e38>] do_mount+0xac/0xc4
-    [<ffff8000804b7494>] __arm64_sys_mount+0x16c/0x2b0
-    [<ffff80008002b8dc>] invoke_syscall+0x7c/0x104
-    [<ffff80008002ba44>] el0_svc_common.constprop.1+0xe0/0x104
-    [<ffff80008002ba94>] do_el0_svc+0x2c/0x38
-    [<ffff800081041108>] el0_svc+0x3c/0x1b8
 
-The opt->iocharset is freed inside the isofs_fill_super function,
-But there may be situations where it's not possible to
-enter this function.
+On 11/5/2024 5:20 PM, Huang, Kai wrote:
+>> I think I prefer Binbin's version, as it forces the caller to provide cui(), i.e.
+>> makes it harder KVM to fail to handle the backend of the hypercall.
+> Fine to me.
+>
+> [...]
+>
+>> The one thing I don't love about providing a separate cui() is that it means
+>> duplicating the guts of the completion helper.  Ha!  But we can avoid that by
+>> adding another macro (untested).
+>>
+>> More macros/helpers is a bit ugly too, but I like the symmetry, and it will
+>> definitely be easier to maintain.  E.g. if the completion phase needs to pivot
+>> on the exact hypercall, then we can update common code and don't need to remember
+>> to go update TDX too.
+>>
+>> If no one objects and/or has a better idea, I'll splice together Binbin's patch
+>> with this blob, and post a series tomorrow.
+>>
+>> diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
+>> index 8e8ca6dab2b2..0b0fa9174000 100644
+>> --- a/arch/x86/include/asm/kvm_host.h
+>> +++ b/arch/x86/include/asm/kvm_host.h
+>> @@ -2179,6 +2179,16 @@ static inline void kvm_clear_apicv_inhibit(struct kvm *kvm,
+>>          kvm_set_or_clear_apicv_inhibit(kvm, reason, false);
+>>   }
+>>   
+>> +#define kvm_complete_hypercall_exit(vcpu, ret_reg)                             \
+>> +do {                                                                           \
+>> +       u64 ret = (vcpu)->run->hypercall.ret;                                   \
+>> +                                                                               \
+>> +       if (!is_64_bit_mode(vcpu))                                              \
+>> +               ret = (u32)ret;                                                 \
+>> +       kvm_##ret_reg##_write(vcpu, ret);                                       \
+>> +       ++(vcpu)->stat.hypercalls;                                              \
+>> +} while (0)
+>> +
+>>   int ____kvm_emulate_hypercall(struct kvm_vcpu *vcpu, unsigned long nr,
+>>                                unsigned long a0, unsigned long a1,
+>>                                unsigned long a2, unsigned long a3,
+>> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+>> index 425a301911a6..aec79e132d3b 100644
+>> --- a/arch/x86/kvm/x86.c
+>> +++ b/arch/x86/kvm/x86.c
+>> @@ -9989,12 +9989,8 @@ static void kvm_sched_yield(struct kvm_vcpu *vcpu, unsigned long dest_id)
+>>   
+>>   static int complete_hypercall_exit(struct kvm_vcpu *vcpu)
+>>   {
+>> -       u64 ret = vcpu->run->hypercall.ret;
+>> +       kvm_complete_hypercall_exit(vcpu, rax);
+>>   
+>> -       if (!is_64_bit_mode(vcpu))
+>> -               ret = (u32)ret;
+>> -       kvm_rax_write(vcpu, ret);
+>> -       ++vcpu->stat.hypercalls;
+>>          return kvm_skip_emulated_instruction(vcpu);
+>>   }
+>>   
+> I think there's one issue here:
+>
+> I assume macro kvm_complete_hypercall_exit(vcpu, ret_reg) will also be used by
+> TDX.  The issue is it calls !is_64_bit_mode(vcpu), which has below WARN():
+>
+>          WARN_ON_ONCE(vcpu->arch.guest_state_protected);
+>
+> So IIUC TDX will hit this.
+>
+> Btw, we have below (kinda) duplicated code in ____kvm_emulate_hypercall() too:
+>
+> 	++vcpu->stat.hypercalls;
+>                                                                                                                                                                 
+>          if (!op_64_bit)
+>                  ret = (u32)ret;
+>                                                                                                                                                                 
+>          kvm_register_write_raw(vcpu, ret_reg, ret);
+>
+> If we add a helper to do above, e.g.,
+>
+> static void kvm_complete_hypercall_exit(struct kvm_vcpu *vcpu, int ret_reg,
+> 				        unsigned long ret, bool op_64_bit)
+> {
+> 	if (!op_64_bit)
+> 		ret = (u32)ret;
+> 	kvm_register_write_raw(vcpu, ret_reg, ret);
+> 	++vcpu->stat.hypercalls;
+> }
+If this is going to be the final version, it would be better to make it
+public, and export the symbol, so that TDX code can reuse it.
 
-For example, in the get_tree_bdev_flags function,when
-encountering the situation where "Can't mount, would change RO state,"
-In such a case, isofs_fill_super will not have the opportunity
-to be called,which means that opt->iocharset will not have the chance
-to be freed,ultimately leading to a memory leak.
 
-Let's move the memory freeing of opt->iocharset into
-isofs_free_fc function.
-
-Fixes: 1b17a46c9243 ("isofs: convert isofs to use the new mount API")
-Signed-off-by: Hao Ge <gehao@kylinos.cn>
----
- fs/isofs/inode.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/fs/isofs/inode.c b/fs/isofs/inode.c
-index f50311a6b429..47038e660812 100644
---- a/fs/isofs/inode.c
-+++ b/fs/isofs/inode.c
-@@ -948,8 +948,6 @@ static int isofs_fill_super(struct super_block *s, struct fs_context *fc)
- 		goto out_no_inode;
- 	}
- 
--	kfree(opt->iocharset);
--
- 	return 0;
- 
- 	/*
-@@ -987,7 +985,6 @@ static int isofs_fill_super(struct super_block *s, struct fs_context *fc)
- 	brelse(bh);
- 	brelse(pri_bh);
- out_freesbi:
--	kfree(opt->iocharset);
- 	kfree(sbi);
- 	s->s_fs_info = NULL;
- 	return error;
-@@ -1528,7 +1525,10 @@ static int isofs_get_tree(struct fs_context *fc)
- 
- static void isofs_free_fc(struct fs_context *fc)
- {
--	kfree(fc->fs_private);
-+	struct isofs_options *opt = fc->fs_private;
-+
-+	kfree(opt->iocharset);
-+	kfree(opt);
- }
- 
- static const struct fs_context_operations isofs_context_ops = {
--- 
-2.25.1
+>
+> Then we can have
+>
+> static int complete_hypercall_exit(struct kvm_vcpu *vcpu)
+> {
+> 	kvm_complete_hypercall_exit(vcpu, VCPU_REGS_RAX,
+> 		vcpu->run->hypercall.ret, is_64_bit_mode(vcpu));
+>
+> 	return kvm_skip_emulated_instruction(vcpu);
+> }
+>
+> TDX version can use:
+>
+> 	kvm_complete_hypercall_exit(vcpu, VCPU_REGS_R10,
+> 		vcpu->run->hypercall.ret, true);
+>
+> And ____kvm_emulate_hypercall() can be:
+>
+> static int ____kvm_emulate_hypercall(vcpu, ...)
+> {
+> 	...
+> out:
+> 	kvm_complete_hypercall_exit(vcpu, ret_reg, ret, op_64_bit);
+> 	return 1;
+> }
+>
 
 
