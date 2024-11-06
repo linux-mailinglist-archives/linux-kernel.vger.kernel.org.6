@@ -1,113 +1,169 @@
-Return-Path: <linux-kernel+bounces-397525-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-397518-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DDA29BDCFE
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 03:36:23 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2AE5B9BDCE5
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 03:34:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6FF261C2318F
-	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 02:36:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 73BB0B23633
+	for <lists+linux-kernel@lfdr.de>; Wed,  6 Nov 2024 02:34:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E472A19049B;
-	Wed,  6 Nov 2024 02:22:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEB61190057;
+	Wed,  6 Nov 2024 02:16:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="dAKO0fq5"
-Received: from out203-205-221-202.mail.qq.com (out203-205-221-202.mail.qq.com [203.205.221.202])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MIhBZjsk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DF4C18FC84;
-	Wed,  6 Nov 2024 02:22:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E05CB335B5;
+	Wed,  6 Nov 2024 02:16:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730859735; cv=none; b=DYNOdsTscI4RGDDoHyzoaTVXHl+N3G++48WraQE13AaFOkilkYNIvbHeXzCel6dHIouqR1hayDDF1vHlGdZyhw9HTmfKQ8N1/mPY44o8Xy5qmdW6Y7pobzQstE/2W/rpJDAcu6/vjMpU7LxuBGb3PXWyAMkV7WLcEbXH7QqpRhI=
+	t=1730859364; cv=none; b=c5bj/rUu8S0qIreyl/DAED8VKi9u82OVkO9sRNu6WRGZG7OdtgrkUzcrrRPQdhyCX1Hafpd4UIhEqr4vkg4ywT/w5R0ZUUunt1vDY+0YqrOwFpt9YGIQXi1IHn56nRypzJP7i6XlB0RbpdgFD1AbporXQVfN1LvMAqWITMoufAk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730859735; c=relaxed/simple;
-	bh=2qF+i2GBeBNPPdCfJiQ4Zadi5AbhdAUNHJJo39Uo7WA=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=Z9U39jACoIn4DE3iKZgvbNuduxxeQhe/VCS0qDsYfBDWD+5BSRzk1TQXfVMQvVvlWrO6VC76AMfCdVxcv65mnaNsI80kEQZaL8AatnNG4VMVXjAaXwHTJGpfikmoV0SjE3XhifwsQ2mcxgTgoSGL0+GO1lW/yrIl+dhUNLdyzXw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=dAKO0fq5; arc=none smtp.client-ip=203.205.221.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1730859722; bh=cFaOscYleCwW/uQU8cfrJjLltdjwdkYacmXZzii6qV4=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=dAKO0fq5DECQ7ryAMI9lFWAGuBz5qIK0MwPeHWerRIdeQhAQiUYpwxmtrse9xuZ96
-	 eDyDlpIzhCrNNU0L1HmuGgpsOvCrdbyPdzKgbvTqDVIODrJPUrvCpDkUFrEb8Kp6CL
-	 1qSE5bBOHsdhqppTbB4FyjQ/ILCv1U75YaN2mAt0=
-Received: from pek-lxu-l1.wrs.com ([111.198.227.254])
-	by newxmesmtplogicsvrszb20-0.qq.com (NewEsmtp) with SMTP
-	id 3F030E96; Wed, 06 Nov 2024 10:15:48 +0800
-X-QQ-mid: xmsmtpt1730859348t2o10k8o3
-Message-ID: <tencent_9E3DBD3732961C37FC4AEC74E3763367E209@qq.com>
-X-QQ-XMAILINFO: M/M2SMd6THQPRu+ZY7h9Kqc1izHKLaZ+Hq7t0EUOH9huvykFx5MKg6kuUGmnpJ
-	 bS44rKV2dpkRj5smGJchqTTnSDvGXlb0lcxh1+WoZIb9UClxl1S93A4aNN8gFPKIgsb49dhdM+6K
-	 RHLQ6vW863sxOkwGw863HGOumvgRQ/zOOr6TeLkPbEhHXAGR1qWyKb4ctuF2vqz2j8/Bd4xfl77t
-	 2Juzckm4mDPly9OKcwYIQzhFJTMG48VzwS06BsaA+DhdSwAJq5DWrqn29PC+tBQ7s+r7d0IFipV1
-	 Vu+WI1r3atvFDJPiycqsfj94Ub1DoZbj7gPkMRnFHXvlz8ovMf9eLFFsw/ksLDAApdlnUS7XFBzt
-	 Q6oGNwmu3VyyEeSx6V5qEk9rw14CdU/duFjCtm1jM9IaiuUeim5QCly0+uKhM1HKQqxlcuWgdauu
-	 jUkGDwrjmACuGkOZnHHrPrzmjBBQKVyVXDM3yE1/eUN8QLIqW/joackpLWdVBp/m/VY7pE7namjh
-	 XdBHQ5IcYQyWCSriHQ4W622vHvM2e5HtPmxByui8WG8Yo1qZoOH5CWGjW+fNJFm7ql388McdR5ff
-	 6Pk+X8dJ0brtdCSVFfun4dxAvw8fEGmD/toaYpBCaxDuCPwzAUJKV4zHlqz/wSD4Z6TL4d5Y0nbW
-	 B+Yo9GWa6EZUMfliq/86JX34wLW9URzmgLn5PAwgo+f3OYUJQWRqgKNVSFfu4HvatHO99I96JBGN
-	 vsFEeTvMROP0U3Fx5VDsoCTJGDx9Qg7iMFQdeVxVR/zckA/Ti2fOYOpLrLm5xb9mXQ1C6CFLqS5K
-	 4tEBDQ7ZU5mUl5mxrZk8Zf0gc4RJppT6QtMo0j0r9vaUDvMfs5UgquiNNrbXevbTmclSZ4RR3Bbp
-	 vgqFuC+Guc68PXlKkAutZDpYKi+n/Ft4AaMeNxKse8MN4p5Tzy1AFvd/Piwhi8Yi1m7LlcXKZBgR
-	 5usanpcpI=
-X-QQ-XMRINFO: M/715EihBoGSf6IYSX1iLFg=
-From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+73582d08864d8268b6fd@syzkaller.appspotmail.com
-Cc: linux-kernel@vger.kernel.org,
-	linux-sound@vger.kernel.org,
-	perex@perex.cz,
-	syzkaller-bugs@googlegroups.com,
-	tiwai@suse.com
-Subject: [PATCH] usb: fix a task hung in snd_card_free
-Date: Wed,  6 Nov 2024 10:15:49 +0800
-X-OQ-MSGID: <20241106021548.2253763-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <6726bf35.050a0220.35b515.018b.GAE@google.com>
-References: <6726bf35.050a0220.35b515.018b.GAE@google.com>
+	s=arc-20240116; t=1730859364; c=relaxed/simple;
+	bh=2ceZS9atdvYQglPAeHWkMwFTe23RRaA6HdpaUHEf2oE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YbAT2gD9/OD03sS214zUl44hqf0VbUqL1EIfUUlMkBX9fDhAhQa7WEppxXqZRpCH4fLfaXn9KYFMXxgP8urvAsbcwDgNO3Z7eRac8ns0NCbYl5p/K1mNTJ823JA4BL8d30FEIPEjC8cjexXOOH9Sx0Wmll3o1Bth2zc+aadrsfc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MIhBZjsk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13CBAC4CED1;
+	Wed,  6 Nov 2024 02:16:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730859363;
+	bh=2ceZS9atdvYQglPAeHWkMwFTe23RRaA6HdpaUHEf2oE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MIhBZjsktrtesO5k1TPXMbC8XTanJSHPKWNM0vGLuOl1bFPdHdk7n8gm3zZowb5Ms
+	 j32tLEsR3+YyNkxm9OWTUhs7yOStVihPojeRZG93G5LdAjLCsQVHrDmvnr1qTrY/lG
+	 kc2RqvxU50wYh5cftvuGAdvuETv7RcoLj1Yu6lhwk63mW3Gqm9g/K7awIsb6HzCJ+T
+	 dt8VZUHl0IFsTdAlEyuWyTf4FtZKW7jvUZsdMPvJqLQxG/S90yQP4FkYKIwQJ04qUd
+	 Rh3b8+Ahy00Sir0NK1AIlbFhCBlWKtC9bHag0/Jg8Qbmx1K4OKxKSfj0c0tSPNC9K1
+	 7OPXYta84teZQ==
+Date: Tue, 5 Nov 2024 18:16:01 -0800
+From: Luis Chamberlain <mcgrof@kernel.org>
+To: Matthew Maurer <mmaurer@google.com>
+Cc: Lucas De Marchi <lucas.demarchi@intel.com>,
+	Lucas De Marchi <lucas.de.marchi@gmail.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Naveen N Rao <naveen@kernel.org>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Petr Pavlu <petr.pavlu@suse.com>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	Daniel Gomez <da.gomez@samsung.com>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nicolas Schier <nicolas@fjasle.eu>, Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+	linux-modules@vger.kernel.org, linux-kbuild@vger.kernel.org,
+	rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH v8 2/3] modpost: Produce extended MODVERSIONS information
+Message-ID: <ZyrRYUD0K1f7SwWg@bombadil.infradead.org>
+References: <20241030-extended-modversions-v8-0-93acdef62ce8@google.com>
+ <20241030-extended-modversions-v8-2-93acdef62ce8@google.com>
+ <ZyNr--iMz_6Fj4yq@bombadil.infradead.org>
+ <CAGSQo00F07viDHQkwBS8_1-THxJHYwx9VkS=TXC5rz3i8zSZSw@mail.gmail.com>
+ <ZyVDv0mTm3Bgh1BR@bombadil.infradead.org>
+ <CAGSQo02uDZ5QoRMPOn=3Fa9g5d+VPfKW-vmSsS2H+pOdPYCBFw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAGSQo02uDZ5QoRMPOn=3Fa9g5d+VPfKW-vmSsS2H+pOdPYCBFw@mail.gmail.com>
 
-task 1: snd ctrl will add card_dev ref count and can't call close to dec it,
-        it is blocked waiting for task 2 to release the USB dev lock.
+On Tue, Nov 05, 2024 at 04:26:51PM -0800, Matthew Maurer wrote:
+> On Fri, Nov 1, 2024 at 2:10 PM Luis Chamberlain <mcgrof@kernel.org> wrote:
+> >
+> > On Thu, Oct 31, 2024 at 01:00:28PM -0700, Matthew Maurer wrote:
+> > > > The question is, if only extended moversions are used, what new tooling
+> > > > requirements are there? Can you test using only extended modversions?
+> > > >
+> > > >   Luis
+> > >
+> > > I'm not sure precisely what you're asking for. Do you want:
+> > > 1. A kconfig that suppresses the emission of today's MODVERSIONS
+> > > format?
+> >
+> > Yes that's right, a brave new world, and with the warning of that.
+> 
+> OK, I can send another revision with a suppression config, perhaps
+> CONFIG_NO_BASIC_MODVERSIONS
 
-task 2: usb dev lock has been locked by hung task (here is usb_disconnect),
-        it is hung waiting for task 1 to exit and release card_dev.
+Great.
 
-Adjust the USB lock acquisition method to non-blocking in ioctl to avoid
-hang when the USB connection is closed.
+> > > This would be fairly easy to do, but I was leaving it enabled
+> > > for compatibility's sake, at least until extended modversions become
+> > > more common. This way existing `kmod` tools and kernels would continue
+> > > to be able to load new-style modules.
+> >
+> > Sure, understood why we'd have both.
+> >
+> > > 2. libkmod support for parsing the new format? I can do that fairly
+> > > easily too, but wanted the format actually decided on and accepted
+> > > before I started modifying things that read modversions.
+> >
+> > This is implied, what I'd like is for an A vs B comparison to be able to
+> > be done on even without rust modules, so that we can see if really
+> > libkmod changes are all that's needed. Does boot fail without a new
+> > libkmod for this? If so the Kconfig should specificy that for this new
+> > brave new world.
+> 
+> libkmod changes are not needed for boot - the userspace tools do not
+> examine this data for anything inline with boot at the moment, libkmod
+> only looks at it for kmod_module_get_versions, and modprobe only looks
+> at that with --show-modversions or --dump-modversions, which are not
+> normally part of boot.
+> 
+> With the code as is, the only change will be that if a module with
+> EXTENDED_MODVERSIONS set contains an over-length symbol (which
+> wouldn't have been possible before), the overlong symbol's modversion
+> data will not appear in --show-modversions. After patching `libkmod`
+> in a follow-up patch, long symbols would appear as well. If booted
+> against an old kernel, long symbols will not have their CRCs in the
+> list to be checked. However, the old kernel could not export these
+> symbols, so it will fail to resolve the symbol and fail the load
+> regardless.
 
-Reported-and-tested-by: syzbot+73582d08864d8268b6fd@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=73582d08864d8268b6fd
-Signed-off-by: Edward Adam Davis <eadavis@qq.com>
----
- drivers/usb/core/devio.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Thanks for checking all this. It is exactly what I was looking for.
+All this should be part of the cover letter and Kconfig documentation.
 
-diff --git a/drivers/usb/core/devio.c b/drivers/usb/core/devio.c
-index 3beb6a862e80..dd037dc4cb37 100644
---- a/drivers/usb/core/devio.c
-+++ b/drivers/usb/core/devio.c
-@@ -2605,7 +2605,8 @@ static long usbdev_do_ioctl(struct file *file, unsigned int cmd,
- 	if (!(file->f_mode & FMODE_WRITE))
- 		return -EPERM;
- 
--	usb_lock_device(dev);
-+	if (!usb_trylock_device(dev))
-+		return -EBUSY;
- 
- 	/* Reap operations are allowed even after disconnection */
- 	switch (cmd) {
--- 
-2.43.0
+> If we add and enable NO_BASIC_MODVERSIONS like you suggested above,
+> today's --show-modversions will claim there is no modversions data.
+> Applying a libkmod patch will result in modversions info being
+> displayed by that command again. If booted against a new kernel,
+> everything will be fine.
 
+*This* is is the sort of information I was also looking for and I think
+it would be good to make it clear for the upcoming NO_BASIC_MODVERSIONS.
+
+> If booted against an old kernel, it will
+> behave as though there is no modversions information.
+
+Huh? This I don't get. If you have the new libkmod and boot
+an old kernel, that should just not break becauase well, long
+symbols were not ever supported properly anyway, so no regression.
+
+I'm not quite sure I understood your last comment here though,
+can you clarify what you meant?
+
+Anyway, so now that this is all cleared up, the next question I have
+is, let's compare a NO_BASIC_MODVERSIONS world now, given that the
+userspace requirements aren't large at all, what actual benefits does
+using this new extended mod versions have? Why wouldn't a distro end
+up preferring this for say a future release for all modules?
+
+  Luis
 
